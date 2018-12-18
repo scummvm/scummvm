@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-12-17 21:38+0100\n"
-"PO-Revision-Date: 2018-12-01 15:45+0000\n"
+"PO-Revision-Date: 2018-12-18 21:54+0000\n"
 "Last-Translator: Alex ASP <hshunt@questzone.ru>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -15,9 +15,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 3.2.2\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 3.3\n"
 "X-Language-name: Russian\n"
 
 #: gui/about.cpp:94
@@ -821,14 +821,12 @@ msgid "Failed to apply some of the graphic options changes:"
 msgstr "Не удалось применить изменения некоторых графических настроек:"
 
 #: gui/options.cpp:564
-#, fuzzy
 msgid "the video mode could not be changed"
-msgstr "видеорежим не может быть изменён."
+msgstr "видеорежим не может быть изменён"
 
 #: gui/options.cpp:577
-#, fuzzy
 msgid "the stretch mode could not be changed"
-msgstr "видеорежим не может быть изменён."
+msgstr "режим растягивания не может быть изменён"
 
 #: gui/options.cpp:583
 msgid "the aspect ratio setting could not be changed"
@@ -911,7 +909,7 @@ msgstr "Специальные режимы рендеринга, поддерживаемые некоторыми играми"
 
 #: gui/options.cpp:1079
 msgid "Stretch mode:"
-msgstr ""
+msgstr "Режим растягивания:"
 
 #: gui/options.cpp:1090 backends/graphics/openglsdl/openglsdl-graphics.cpp:637
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2687
@@ -935,12 +933,10 @@ msgid "Correct aspect ratio for 320x200 games"
 msgstr "Корректировать соотношение сторон для игр с разрешением 320x200"
 
 #: gui/options.cpp:1104
-#, fuzzy
 msgid "Preferred device:"
-msgstr "Предпочитаемое:"
+msgstr "Предпочитаемое устройство:"
 
 #: gui/options.cpp:1104
-#, fuzzy
 msgid "Music device:"
 msgstr "Звуковое уст-во:"
 
@@ -954,13 +950,11 @@ msgid "Specifies output sound device or sound card emulator"
 msgstr "Указывает выходное звуковое устройство или эмулятор звуковой карты"
 
 #: gui/options.cpp:1106
-#, fuzzy
 msgctxt "lowres"
 msgid "Preferred dev.:"
-msgstr "Предпочитаемое:"
+msgstr "Предпочитаемое устройство:"
 
 #: gui/options.cpp:1106
-#, fuzzy
 msgctxt "lowres"
 msgid "Music device:"
 msgstr "Звуковое уст-во:"
@@ -974,7 +968,6 @@ msgid "AdLib is used for music in many games"
 msgstr "Звуковая карта AdLib используется многими играми"
 
 #: gui/options.cpp:1147
-#, fuzzy
 msgid "GM device:"
 msgstr "Устройство GM:"
 
@@ -1044,7 +1037,6 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Настоящий Roland MT-32 (без эмуляции GM)"
 
 #: gui/options.cpp:1212
-#, fuzzy
 msgid "Roland GS device (enable MT-32 mappings)"
 msgstr "Устройство Roland GS (разрешить маппинг MT-32)"
 
@@ -1061,7 +1053,6 @@ msgid "Don't use Roland MT-32 music"
 msgstr "Не использовать музыку для MT-32"
 
 #: gui/options.cpp:1248
-#, fuzzy
 msgid "Text and speech:"
 msgstr "Текст и озвучка:"
 
@@ -1082,7 +1073,6 @@ msgid "Subtitle speed:"
 msgstr "Скорость титров:"
 
 #: gui/options.cpp:1258
-#, fuzzy
 msgctxt "lowres"
 msgid "Text and speech:"
 msgstr "Текст и озвучка:"
@@ -1119,7 +1109,6 @@ msgid "Music volume:"
 msgstr "Громк. музыки:"
 
 #: gui/options.cpp:1291
-#, fuzzy
 msgid "Mute all"
 msgstr "Выкл. всё"
 
@@ -1191,9 +1180,8 @@ msgid "Theme:"
 msgstr "Тема:"
 
 #: gui/options.cpp:1641
-#, fuzzy
 msgid "GUI renderer:"
-msgstr "Рисовалка GUI:"
+msgstr "Отрисовщик интерфейса:"
 
 #: gui/options.cpp:1653
 msgid "Autosave:"
@@ -1209,9 +1197,8 @@ msgid "Keys"
 msgstr "Клавиши"
 
 #: gui/options.cpp:1670
-#, fuzzy
 msgid "GUI language:"
-msgstr "Язык GUI:"
+msgstr "Язык интерфейса:"
 
 #: gui/options.cpp:1670
 msgid "Language of ScummVM GUI"
@@ -1219,7 +1206,7 @@ msgstr "Язык графического интерфейса ScummVM"
 
 #: gui/options.cpp:1696
 msgid "Switch the GUI language to the game language"
-msgstr ""
+msgstr "Переключить язык интерфейса на язык игры"
 
 #: gui/options.cpp:1697
 msgid ""
@@ -1227,16 +1214,21 @@ msgid ""
 "if a game uses the ScummVM save and load dialogs, they are in the same "
 "language as the game."
 msgstr ""
+"При старте игры переключить язык интерфейса на язык игры. В этом случае, "
+"если игра использует диалоговые окна ScummVM для загрузки и сохранения, "
+"текст в них будет выводиться на том же языке, который используется в игре."
 
 #: gui/options.cpp:1710
 msgid "Use native system file browser"
-msgstr ""
+msgstr "Использовать системный браузер файлов"
 
 #: gui/options.cpp:1711
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
 msgstr ""
+"Использовать системный браузер файлов для выбора файлов или папок вместо "
+"браузера файлов ScummVM."
 
 #: gui/options.cpp:1720 gui/updates-dialog.cpp:86
 msgid "Update check:"
@@ -1658,7 +1650,6 @@ msgid "Disabled GFX"
 msgstr "Без графики"
 
 #: gui/ThemeEngine.cpp:257
-#, fuzzy
 msgid "Standard renderer"
 msgstr "Стандартный растеризатор"
 
@@ -1667,7 +1658,6 @@ msgid "Standard"
 msgstr "Стандартный"
 
 #: gui/ThemeEngine.cpp:259
-#, fuzzy
 msgid "Antialiased renderer"
 msgstr "Растеризатор со сглаживанием"
 
@@ -1990,9 +1980,8 @@ msgid "Could not switch to video mode: '"
 msgstr "Не удалось переключить видеорежим: '"
 
 #: engines/engine.cpp:334
-#, fuzzy
 msgid "Could not switch to stretch mode: '"
-msgstr "Не удалось переключить видеорежим: '"
+msgstr "Не удалось переключить режим растягивания: '"
 
 #: engines/engine.cpp:343
 msgid "Could not apply aspect ratio setting."
@@ -2059,27 +2048,26 @@ msgid "Start anyway"
 msgstr "Всё равно запустить"
 
 #: engines/game.cpp:158
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The game in '%s' seems to be an unknown game variant.\n"
 "\n"
 "Please report the following data to the ScummVM team at %s along with the "
 "name of the game you tried to add and its version, language, etc.:"
 msgstr ""
-"Похоже, что игра в '%s' является неизвестной игрой на движке %s.\n"
+"Похоже, игра в '%s' является неизвестным вариантом игры.\n"
 "\n"
 "Пожалуйста, сообщите команде ScummVM на %s следующие данные вместе с "
-"названием игры, её версией, языком и др.:"
+"названием игры, её версией, языком и т.п.:"
 
 #: engines/game.cpp:162
-#, fuzzy, c-format
+#, c-format
 msgid "Matched game IDs for the %s engine:"
-msgstr "Возможные ID игры:"
+msgstr "Возможные ID игры для движка %s:"
 
 #: audio/adlib.cpp:2290
-#, fuzzy
 msgid "AdLib emulator"
-msgstr "Эмулятор AdLib:"
+msgstr "Эмулятор AdLib"
 
 #: audio/fmopl.cpp:71
 msgid "MAME OPL emulator"
@@ -2143,7 +2131,6 @@ msgstr ""
 "Подробную информацию см. в файле протокола."
 
 #: audio/mods/paula.cpp:196
-#, fuzzy
 msgid "Amiga Audio emulator"
 msgstr "Эмулятор звука Amiga"
 
@@ -2152,12 +2139,10 @@ msgid "No music"
 msgstr "Без музыки"
 
 #: audio/softsynth/appleiigs.cpp:33
-#, fuzzy
 msgid "Apple II GS emulator (NOT IMPLEMENTED)"
 msgstr "Эмулятор Apple II GS (НЕ ПОДДЕРЖИВАЕТСЯ)"
 
 #: audio/softsynth/cms.cpp:350
-#, fuzzy
 msgid "Creative Music System emulator"
 msgstr "Эмулятор Creative Music System"
 
@@ -2174,22 +2159,18 @@ msgid "Initializing MT-32 Emulator"
 msgstr "Настраиваю эмулятор MT-32"
 
 #: audio/softsynth/mt32.cpp:437
-#, fuzzy
 msgid "MT-32 emulator"
 msgstr "Эмулятор MT-32"
 
 #: audio/softsynth/pcspk.cpp:139
-#, fuzzy
 msgid "PC Speaker emulator"
 msgstr "Эмулятор динамика ПК"
 
 #: audio/softsynth/pcspk.cpp:158
-#, fuzzy
 msgid "IBM PCjr emulator"
 msgstr "Эмулятор IBM PCjr"
 
 #: audio/softsynth/sid.cpp:1430
-#, fuzzy
 msgid "C64 Audio emulator"
 msgstr "Эмулятор звука C64"
 
@@ -2334,24 +2315,23 @@ msgstr "OpenGL"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:272
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
-#, fuzzy
 msgid "Center"
-msgstr "Ввод"
+msgstr "По центру"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:273
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:77
 msgid "Pixel-perfect scaling"
-msgstr ""
+msgstr "Масштабирование пиксель-в-пиксель"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:274
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:78
 msgid "Fit to window"
-msgstr ""
+msgstr "Уменьшить до размеров окна"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:275
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:79
 msgid "Stretch to window"
-msgstr ""
+msgstr "Растянуть до размеров окна"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:639
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2689
@@ -2386,7 +2366,7 @@ msgstr "Фильтрация выключена"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:825
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2572
 msgid "Stretch mode"
-msgstr ""
+msgstr "Режим растягивания"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:55
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:88
@@ -2580,9 +2560,8 @@ msgid "Help"
 msgstr "Помощь"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:199
-#, fuzzy
 msgid "User Manual"
-msgstr "Прервано пользователем"
+msgstr "Руководство пользователя"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:201
 msgid "General Information"
@@ -3173,239 +3152,238 @@ msgstr "Рисует графику с использованием яркой палитры игры"
 
 #: engines/glk/scott/scott.cpp:98
 msgid "I don't understand your command. "
-msgstr ""
+msgstr "Я не понимаю вашу команду. "
 
 #: engines/glk/scott/scott.cpp:101
 msgid "I can't do that yet. "
-msgstr ""
+msgstr "Я пока не могу сделать это. "
 
 #: engines/glk/scott/scott.cpp:117
 msgid "Light has run out! "
-msgstr ""
+msgstr "Свет погас! "
 
 #: engines/glk/scott/scott.cpp:119
 msgid "Your light has run out. "
-msgstr ""
+msgstr "Свет погас. "
 
 #: engines/glk/scott/scott.cpp:128
 msgid "Light runs out in "
-msgstr ""
+msgstr "Свет погаснет через "
 
 #: engines/glk/scott/scott.cpp:130
-#, fuzzy
 msgid " turns. "
-msgstr "включить"
+msgstr " ходов. "
 
 #: engines/glk/scott/scott.cpp:133
 msgid "Your light is growing dim. "
-msgstr ""
+msgstr "Свет тускнеет. "
 
 #: engines/glk/scott/scott.cpp:393
 msgid "North"
-msgstr ""
+msgstr "Север"
 
 #: engines/glk/scott/scott.cpp:393
 msgid "South"
-msgstr ""
+msgstr "Юг"
 
 #: engines/glk/scott/scott.cpp:393
 msgid "East"
-msgstr ""
+msgstr "Восток"
 
 #: engines/glk/scott/scott.cpp:393
 msgid "West"
-msgstr ""
+msgstr "Запад"
 
 #: engines/glk/scott/scott.cpp:405
 msgid "You can't see. It is too dark!\n"
-msgstr ""
+msgstr "Вы ничего не видите. Тут слишком темно!\n"
 
 #: engines/glk/scott/scott.cpp:407
 msgid "I can't see. It is too dark!\n"
-msgstr ""
+msgstr "Я ничего не вижу. Тут слишком темно!\n"
 
 #: engines/glk/scott/scott.cpp:417
 #, c-format
 msgid "You are in a %s\n"
-msgstr ""
+msgstr "Вы находитесь в %s\n"
 
 #: engines/glk/scott/scott.cpp:419
 #, c-format
 msgid "I'm in a %s\n"
-msgstr ""
+msgstr "Я нахожусь в %s\n"
 
 #: engines/glk/scott/scott.cpp:424
 msgid ""
 "\n"
 "Obvious exits: "
 msgstr ""
+"\n"
+"Видимые выходы: "
 
 #: engines/glk/scott/scott.cpp:437
-#, fuzzy
 msgid "none"
-msgstr "<нет>"
+msgstr "нет"
 
 #: engines/glk/scott/scott.cpp:446
 msgid ""
 "\n"
 "You can also see: "
 msgstr ""
+"\n"
+"Вы также видите: "
 
 #: engines/glk/scott/scott.cpp:449
 msgid ""
 "\n"
 "I can also see: "
 msgstr ""
+"\n"
+"Я также вижу: "
 
 #: engines/glk/scott/scott.cpp:529
-#, fuzzy
 msgid "Saved.\n"
-msgstr "Сохранить"
+msgstr "Игра сохранена.\n"
 
 #: engines/glk/scott/scott.cpp:620
 msgid "You use word(s) I don't know! "
-msgstr ""
+msgstr "Вы используете слова, которых я не знаю! "
 
 #: engines/glk/scott/scott.cpp:748 engines/glk/scott/scott.cpp:1071
 #: engines/glk/scott/scott.cpp:1093
 msgid "You are carrying too much. "
-msgstr ""
+msgstr "Вы несёте слишком много предметов. "
 
 #: engines/glk/scott/scott.cpp:750
 msgid "I've too much to carry! "
-msgstr ""
+msgstr "У меня слишком много предметов! "
 
 #: engines/glk/scott/scott.cpp:781
 msgid "You are dead.\n"
-msgstr ""
+msgstr "Вы умерли.\n"
 
 #: engines/glk/scott/scott.cpp:783
 msgid "I am dead.\n"
-msgstr ""
+msgstr "Я умер.\n"
 
 #: engines/glk/scott/scott.cpp:795
-#, fuzzy
 msgid "The game is now over.\n"
-msgstr "Игра НЕ БЫЛА загружена"
+msgstr "Игра окончена.\n"
 
 #: engines/glk/scott/scott.cpp:810
 msgid "You have stored "
-msgstr ""
+msgstr "Вы собрали "
 
 #: engines/glk/scott/scott.cpp:812
-#, fuzzy
 msgid "I've stored "
-msgstr "Восстановить"
+msgstr "Я собрал "
 
 #: engines/glk/scott/scott.cpp:814
 msgid " treasures.  On a scale of 0 to 100, that rates "
-msgstr ""
+msgstr " сокровищ.  По шкале от 0 до 100, это равно "
 
 #: engines/glk/scott/scott.cpp:818
 msgid "Well done.\n"
-msgstr ""
+msgstr "Отлично.\n"
 
 #: engines/glk/scott/scott.cpp:827
 msgid "You are carrying:\n"
-msgstr ""
+msgstr "У вас есть:\n"
 
 #: engines/glk/scott/scott.cpp:829
 msgid "I'm carrying:\n"
-msgstr ""
+msgstr "У меня есть:\n"
 
 #: engines/glk/scott/scott.cpp:844
 msgid "Nothing"
-msgstr ""
+msgstr "ничего"
 
 #: engines/glk/scott/scott.cpp:973
 msgid "Give me a direction too."
-msgstr ""
+msgstr "Укажите также направление."
 
 #: engines/glk/scott/scott.cpp:982
 msgid "Dangerous to move in the dark! "
-msgstr ""
+msgstr "Опасно ходить в темноте! "
 
 #: engines/glk/scott/scott.cpp:990
 msgid "You fell down and broke your neck. "
-msgstr ""
+msgstr "Вы упали и сломали шею. "
 
 #: engines/glk/scott/scott.cpp:992
 msgid "I fell down and broke my neck. "
-msgstr ""
+msgstr "Я упал и сломал себе шею. "
 
 #: engines/glk/scott/scott.cpp:997
 msgid "You can't go in that direction. "
-msgstr ""
+msgstr "Вы не можете идти в этом направлении. "
 
 #: engines/glk/scott/scott.cpp:999
 msgid "I can't go in that direction. "
-msgstr ""
+msgstr "Я не могу идти в этом направлении. "
 
 #: engines/glk/scott/scott.cpp:1057
 msgid "It is dark.\n"
-msgstr ""
+msgstr "Здесь темно.\n"
 
 #: engines/glk/scott/scott.cpp:1073 engines/glk/scott/scott.cpp:1095
 msgid "I've too much to carry. "
-msgstr ""
+msgstr "У меня слишком много предметов! "
 
 #: engines/glk/scott/scott.cpp:1078 engines/glk/scott/scott.cpp:1126
 msgid ": O.K.\n"
-msgstr ""
+msgstr ": O.K.\n"
 
 #: engines/glk/scott/scott.cpp:1084
 msgid "Nothing taken."
-msgstr ""
+msgstr "Нечего брать."
 
 #: engines/glk/scott/scott.cpp:1088 engines/glk/scott/scott.cpp:1136
-#, fuzzy
 msgid "What ? "
-msgstr "Что такое"
+msgstr "Что ? "
 
 #: engines/glk/scott/scott.cpp:1101
 msgid "It is beyond your power to do that. "
-msgstr ""
+msgstr "Это вне ваших возможностей. "
 
 #: engines/glk/scott/scott.cpp:1103
 msgid "It's beyond my power to do that. "
-msgstr ""
+msgstr "Это вне моих возможностей. "
 
 #: engines/glk/scott/scott.cpp:1107
 msgid "O.K. "
-msgstr ""
+msgstr "O.K. "
 
 #: engines/glk/scott/scott.cpp:1132
 msgid "Nothing dropped.\n"
-msgstr ""
+msgstr "Нечему падать.\n"
 
 #: engines/glk/scott/scott.cpp:1142
 msgid "It's beyond your power to do that.\n"
-msgstr ""
+msgstr "Это вне ваших возможностей.\n"
 
 #: engines/glk/scott/scott.cpp:1144
 msgid "It's beyond my power to do that.\n"
-msgstr ""
+msgstr "Это вне моих возможностей.\n"
 
 #: engines/glk/frotz/detection.cpp:154
-#, fuzzy
 msgid "Unnamed savegame"
 msgstr "Сохранённая игра без имени"
 
 #: engines/glk/glulxe/glulxe.cpp:55
 msgid "This is too short to be a valid Glulx file."
-msgstr ""
+msgstr "Файл слишком короткий, чтобы быть правильным Glulx-файлом."
 
 #: engines/glk/glulxe/glulxe.cpp:60
 msgid "This is not a valid Glulx file."
-msgstr ""
+msgstr "Это неправильный Glulx-файл."
 
 #: engines/glk/glulxe/glulxe.cpp:67
 msgid "This Glulx file is too old a version to execute."
-msgstr ""
+msgstr "Версия Glulx-файла слишком стара, её не получится запустить."
 
 #: engines/glk/glulxe/glulxe.cpp:71
 msgid "This Glulx file is too new a version to execute."
-msgstr ""
+msgstr "Версия Glulx-файла слишком новая, её не получится запустить."
 
 #: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:538
@@ -3743,9 +3721,8 @@ msgstr ""
 
 #: engines/mohawk/myst_stacks/menu.cpp:284
 #: engines/mohawk/riven_stacks/aspit.cpp:350
-#, fuzzy
 msgid "Load game"
-msgstr "Загрузить игру:"
+msgstr "Загрузить игру"
 
 #: engines/mohawk/myst_stacks/menu.cpp:300
 #: engines/mohawk/riven_stacks/aspit.cpp:371
@@ -3757,15 +3734,13 @@ msgstr ""
 
 #: engines/mohawk/myst_stacks/menu.cpp:301
 #: engines/mohawk/riven_stacks/aspit.cpp:372
-#, fuzzy
 msgid "New game"
 msgstr "Новое сохранение"
 
 #: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455
-#, fuzzy
 msgid "Are you sure you want to quit? All unsaved progress will be lost."
-msgstr "   Вы уверены, что хотите выйти?   "
+msgstr "Вы уверены, что хотите выйти? Все несохранённые действия будут утеряны."
 
 #: engines/mohawk/riven.cpp:158
 msgid ""
@@ -3971,9 +3946,8 @@ msgstr ""
 "По возможности использует линейную интерполяцию при масштабировании видео"
 
 #: engines/sci/detection.cpp:438
-#, fuzzy
 msgid "Use high-quality \"LarryScale\" cel scaling"
-msgstr "Использовать качественное масштабирование видео"
+msgstr "Использовать \"LarryScale\" алгоритм масштабировании"
 
 #: engines/sci/detection.cpp:439
 msgid "Use special cartoon scaler for drawing character sprites"
@@ -4946,15 +4920,15 @@ msgid "Use the floppy version's intro (CD version only)"
 msgstr "Использовать вступление с гибких дисков (только для CD-версии игры)"
 
 #: engines/supernova/supernova.cpp:193
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
-msgstr "Неверная версия файла движка %s. Ожидается %d.%d, а найдена %d.%d."
+msgstr "Неверная версия файла движка %s. Ожидалась %d, а найдена %d."
 
 #: engines/supernova/supernova.cpp:220
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to locate the text for %s language in '%s' engine data file."
-msgstr "Не удалось найти файл движка %s."
+msgstr "Не удалось найти текст для языка %s в файлах движка %s."
 
 #: engines/sword1/animation.cpp:524
 #, c-format
