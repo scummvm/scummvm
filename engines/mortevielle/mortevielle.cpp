@@ -303,8 +303,7 @@ Common::ErrorCode MortevielleEngine::loadMortDat() {
 
 	// Open the mort.dat file
 	if (!f.open(MORT_DAT)) {
-		Common::String msg = Common::String::format(_("Unable to locate the '%s' engine data file."), MORT_DAT);
-		GUIErrorMessage(msg);
+		GUIErrorMessageFormat(_("Unable to locate the '%s' engine data file."), MORT_DAT);
 		return Common::kReadingFailed;
 	}
 
@@ -312,8 +311,7 @@ Common::ErrorCode MortevielleEngine::loadMortDat() {
 	char fileId[4];
 	f.read(fileId, 4);
 	if (strncmp(fileId, "MORT", 4) != 0) {
-		Common::String msg = Common::String::format(_("The '%s' engine data file is corrupt."), MORT_DAT);
-		GUIErrorMessage(msg);
+		GUIErrorMessageFormat(_("The '%s' engine data file is corrupt."), MORT_DAT);
 		return Common::kReadingFailed;
 	}
 
@@ -322,10 +320,9 @@ Common::ErrorCode MortevielleEngine::loadMortDat() {
 	int minVer = f.readByte();
 
 	if (majVer < MORT_DAT_REQUIRED_VERSION) {
-		Common::String msg = Common::String::format(
+		GUIErrorMessageFormat(
 			_("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d."),
 			MORT_DAT, MORT_DAT_REQUIRED_VERSION, 0, majVer, minVer);
-		GUIErrorMessage(msg);
 		return Common::kReadingFailed;
 	}
 

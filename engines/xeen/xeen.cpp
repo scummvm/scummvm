@@ -310,18 +310,6 @@ void XeenEngine::syncSoundSettings() {
 		_sound->updateSoundSettings();
 }
 
-void XeenEngine::GUIError(const char *msg, ...) {
-	char buffer[STRINGBUFLEN];
-	va_list va;
-
-	// Generate the full error message
-	va_start(va, msg);
-	vsnprintf(buffer, STRINGBUFLEN, msg, va);
-	va_end(va);
-
-	GUIErrorMessage(buffer);
-}
-
 void XeenEngine::saveSettings() {
 	if (_gameWon[0])
 		ConfMan.setBool("game_won", true);

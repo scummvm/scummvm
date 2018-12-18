@@ -111,7 +111,6 @@ public:
 	bool saveGame(uint8 slotNumber, Common::String &caption);
 	Common::String *detectSave(int slotNumber);
 	uint8 saveVersion() { return _saveVersion; }
-	void GUIError(const char *msg, ...) GCC_PRINTF(2, 3);
 
 	uint32 getFeatures() const;
 	LureLanguage getLureLanguage() const;

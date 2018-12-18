@@ -399,6 +399,17 @@ void GUIErrorMessage(const Common::String &msg) {
 	}
 }
 
+void GUIErrorMessageFormat(const char *fmt, ...) {
+	Common::String msg;
+
+	va_list va;
+	va_start(va, fmt);
+	msg = Common::String::vformat(fmt, va);
+	va_end(va);
+
+	GUIErrorMessage(msg);
+}
+
 void Engine::checkCD() {
 #if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 	// It is a known bug under Windows that games that play CD audio cause

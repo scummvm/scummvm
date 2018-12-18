@@ -171,11 +171,6 @@ public:
 	}
 
 	/**
-	 * Display a message in a GUI dialog
-	 */
-	void GUIError(const char *msg, ...);
-
-	/**
 	 * Return the filename for a given save slot
 	 */
 	Common::String getSaveName(uint slot) const {
