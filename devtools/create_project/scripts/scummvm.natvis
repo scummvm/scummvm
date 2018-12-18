@@ -4,12 +4,6 @@
     Debug visualizers for a few common ScummVM types for Visual Studio 2012 and up.
 
     To use, copy this file into Documents\Visual Studio 20xx\Visualizers.
-
-    Known issues:
-
-    * Lists appear to be infinite (the same elements repeat over and over again).
-      Unfortunately, Lists don't store length information, and it's not possible to
-      detect whether a Node is the last one by the Node itself.
 -->
 
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
@@ -74,11 +68,15 @@
     <DisplayString Condition="&amp;_anchor == _anchor._next">{{ empty }}</DisplayString>
     <DisplayString Condition="&amp;_anchor != _anchor._next">{{ non-empty }}</DisplayString>
     <Expand>
-      <LinkedListItems Condition="&amp;_anchor != _anchor._next">
-        <HeadPointer>_anchor._next</HeadPointer>
-        <NextPointer>_next</NextPointer>
-        <ValueNode>((Common::ListInternal::Node&lt;$T1&gt;*)this)->_data</ValueNode>
-      </LinkedListItems>
+      <CustomListItems Condition="&amp;_anchor != _anchor._next">
+        <Variable Name="head" InitialValue="&amp;_anchor"/>
+        <Variable Name="iter" InitialValue="_anchor._next"/>
+        <Loop>
+          <Break Condition="iter == head"/>
+          <Item>((Common::ListInternal::Node&lt;$T1&gt;*)iter)->_data</Item>
+          <Exec>iter = iter->_next</Exec>
+        </Loop>
+      </CustomListItems>
     </Expand>
   </Type>
 
