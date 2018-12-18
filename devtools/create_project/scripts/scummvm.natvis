@@ -67,6 +67,13 @@
     <DisplayString>{_value}</DisplayString>
   </Type>
 
+  <Type Name="Common::HashMap&lt;*,*,*,*&gt;::IteratorImpl&lt;*&gt;">
+    <DisplayString>{_hashmap->_storage[_idx],na}</DisplayString>
+    <Expand>
+      <Item Name="[ptr]">_hashmap->_storage[_idx]</Item>
+    </Expand>
+  </Type>
+
   <Type Name="Common::List&lt;*&gt;">
     <DisplayString Condition="&amp;_anchor == _anchor._next">{{ empty }}</DisplayString>
     <DisplayString Condition="&amp;_anchor != _anchor._next">{{ non-empty }}</DisplayString>
@@ -83,6 +90,18 @@
     </Expand>
   </Type>
 
+  <Type Name="Common::ListInternal::Node&lt;*&gt;">
+    <DisplayString>{_data}</DisplayString>
+  </Type>
+
+  <Type Name="Common::ListInternal::Iterator&lt;*&gt;">
+    <AlternativeType Name="Common::ListInternal::ConstIterator&lt;*&gt;" />
+    <DisplayString>{((Common::ListInternal::Node&lt;$T1&gt;*)_node)->_data}</DisplayString>
+    <Expand>
+      <Item Name="[ptr]">((Common::ListInternal::Node&lt;$T1&gt;*)_node)->_data</Item>
+    </Expand>
+  </Type>
+
   <Type Name="Common::String">
     <DisplayString>{_str,na}</DisplayString>
     <StringView>_str,na</StringView>
@@ -94,6 +113,15 @@
         <Size>_size</Size>
         <ValuePointer>_str</ValuePointer>
       </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="Common::SharedPtr&lt;*&gt;">
+    <DisplayString Condition="_pointer == 0">nullptr</DisplayString>
+    <DisplayString Condition="_pointer != 0">{*_pointer}</DisplayString>
+    <Expand>
+      <Item Condition="_pointer != 0" Name="[ptr]">_pointer</Item>
+      <Item Condition="_refCount != 0" Name="[refCount]">*_refCount</Item>
     </Expand>
   </Type>
 </AutoVisualizer>
