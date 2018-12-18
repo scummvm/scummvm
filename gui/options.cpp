@@ -1711,9 +1711,7 @@ void GlobalOptionsDialog::build() {
 			_("Use the native system file browser instead of the ScummVM one to select a file or directory.")
 		);
 
-		if (ConfMan.hasKey("gui_browser_native")) {
-			_useSystemDialogsCheckbox->setState(ConfMan.getBool("gui_browser_native", _domain));
-		}
+		_useSystemDialogsCheckbox->setState(ConfMan.getBool("gui_browser_native", _domain));
 	}
 
 #ifdef USE_UPDATES
