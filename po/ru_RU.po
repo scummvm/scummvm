@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-12-17 21:38+0100\n"
+"POT-Creation-Date: 2018-12-18 23:42+0100\n"
 "PO-Revision-Date: 2018-12-18 21:54+0000\n"
 "Last-Translator: Alex ASP <hshunt@questzone.ru>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
-"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 3.3\n"
 "X-Language-name: Russian\n"
 
@@ -58,7 +58,7 @@ msgstr "Вверх"
 #: gui/browser.cpp:82 gui/chooser.cpp:46 gui/editgamedialog.cpp:299
 #: gui/editrecorddialog.cpp:67 gui/filebrowser-dialog.cpp:65
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:43 gui/massadd.cpp:92
-#: gui/options.cpp:1801 gui/predictivedialog.cpp:73 gui/recorderdialog.cpp:69
+#: gui/options.cpp:1799 gui/predictivedialog.cpp:73 gui/recorderdialog.cpp:69
 #: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:60
 #: gui/saveload-dialog.cpp:389 gui/saveload-dialog.cpp:451
 #: gui/saveload-dialog.cpp:746 gui/saveload-dialog.cpp:1140
@@ -161,7 +161,7 @@ msgstr ""
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:300
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:42 gui/launcher.cpp:504
-#: gui/launcher.cpp:508 gui/massadd.cpp:89 gui/options.cpp:1803
+#: gui/launcher.cpp:508 gui/massadd.cpp:89 gui/options.cpp:1801
 #: gui/saveload-dialog.cpp:1141 engines/engine.cpp:454 engines/engine.cpp:465
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
@@ -393,22 +393,22 @@ msgstr "Путь сохр:"
 
 #: gui/editgamedialog.cpp:313 gui/editgamedialog.cpp:410
 #: gui/editgamedialog.cpp:469 gui/editgamedialog.cpp:530 gui/options.cpp:1608
-#: gui/options.cpp:1616 gui/options.cpp:1625 gui/options.cpp:1828
-#: gui/options.cpp:1834 gui/options.cpp:1842 gui/options.cpp:1865
-#: gui/options.cpp:1898 gui/options.cpp:1904 gui/options.cpp:1911
-#: gui/options.cpp:1919 gui/options.cpp:2121 gui/options.cpp:2124
-#: gui/options.cpp:2131 gui/options.cpp:2141
+#: gui/options.cpp:1616 gui/options.cpp:1625 gui/options.cpp:1826
+#: gui/options.cpp:1832 gui/options.cpp:1840 gui/options.cpp:1863
+#: gui/options.cpp:1896 gui/options.cpp:1902 gui/options.cpp:1909
+#: gui/options.cpp:1917 gui/options.cpp:2119 gui/options.cpp:2122
+#: gui/options.cpp:2129 gui/options.cpp:2139
 msgctxt "path"
 msgid "None"
 msgstr "Не задан"
 
 #: gui/editgamedialog.cpp:318 gui/editgamedialog.cpp:416
-#: gui/editgamedialog.cpp:534 gui/options.cpp:1822 gui/options.cpp:1892
-#: gui/options.cpp:2127 backends/platform/wii/options.cpp:56
+#: gui/editgamedialog.cpp:534 gui/options.cpp:1820 gui/options.cpp:1890
+#: gui/options.cpp:2125 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "По умолчанию"
 
-#: gui/editgamedialog.cpp:462 gui/options.cpp:2135
+#: gui/editgamedialog.cpp:462 gui/options.cpp:2133
 msgid "Select SoundFont"
 msgstr "Выберите SoundFont"
 
@@ -416,7 +416,7 @@ msgstr "Выберите SoundFont"
 msgid "Select additional game directory"
 msgstr "Выберите дополнительную директорию игры"
 
-#: gui/editgamedialog.cpp:514 gui/options.cpp:2058
+#: gui/editgamedialog.cpp:514 gui/options.cpp:2056
 msgid "Select directory for saved games"
 msgstr "Выберите директорию для сохранений"
 
@@ -1230,117 +1230,117 @@ msgstr ""
 "Использовать системный браузер файлов для выбора файлов или папок вместо "
 "браузера файлов ScummVM."
 
-#: gui/options.cpp:1720 gui/updates-dialog.cpp:86
+#: gui/options.cpp:1718 gui/updates-dialog.cpp:86
 msgid "Update check:"
 msgstr "Проверять обновления:"
 
-#: gui/options.cpp:1720
+#: gui/options.cpp:1718
 msgid "How often to check ScummVM updates"
 msgstr "Как часто проверять обновления ScummVM"
 
-#: gui/options.cpp:1732
+#: gui/options.cpp:1730
 msgid "Check now"
 msgstr "Проверить сейчас"
 
-#: gui/options.cpp:1740
+#: gui/options.cpp:1738
 msgid "Cloud"
 msgstr "Облако"
 
-#: gui/options.cpp:1742
+#: gui/options.cpp:1740
 msgctxt "lowres"
 msgid "Cloud"
 msgstr "Облако"
 
-#: gui/options.cpp:1748
+#: gui/options.cpp:1746
 msgid "Storage:"
 msgstr "Облако:"
 
-#: gui/options.cpp:1748
+#: gui/options.cpp:1746
 msgid "Active cloud storage"
 msgstr "Активное облачное хранилище"
 
-#: gui/options.cpp:1755 gui/options.cpp:2338
+#: gui/options.cpp:1753 gui/options.cpp:2336
 msgid "<none>"
 msgstr "<нет>"
 
-#: gui/options.cpp:1759 backends/platform/wii/options.cpp:114
+#: gui/options.cpp:1757 backends/platform/wii/options.cpp:114
 msgid "Username:"
 msgstr "Пользователь:"
 
-#: gui/options.cpp:1759
+#: gui/options.cpp:1757
 msgid "Username used by this storage"
 msgstr "Имя пользователя в этом облаке"
 
-#: gui/options.cpp:1762
+#: gui/options.cpp:1760
 msgid "Used space:"
 msgstr "Используемый объём:"
 
-#: gui/options.cpp:1762
+#: gui/options.cpp:1760
 msgid "Space used by ScummVM's saved games on this storage"
 msgstr "Объём, занимаемый сохранениями игр ScummVM на этом облаке"
 
-#: gui/options.cpp:1765
+#: gui/options.cpp:1763
 msgid "Last sync time:"
 msgstr "Последняя синхронизация:"
 
-#: gui/options.cpp:1765
+#: gui/options.cpp:1763
 msgid "When the last saved games sync for this storage occured"
 msgstr "Когда производилась последняя синхронизация с этим облаком"
 
-#: gui/options.cpp:1768 gui/storagewizarddialog.cpp:71
+#: gui/options.cpp:1766 gui/storagewizarddialog.cpp:71
 msgid "Connect"
 msgstr "Подключить"
 
-#: gui/options.cpp:1768
+#: gui/options.cpp:1766
 msgid "Open wizard dialog to connect your cloud storage account"
 msgstr "Открывает диалог для установки подключения к облаку"
 
-#: gui/options.cpp:1769
+#: gui/options.cpp:1767
 msgid "Refresh"
 msgstr "Обновить"
 
-#: gui/options.cpp:1769
+#: gui/options.cpp:1767
 msgid "Refresh current cloud storage information (username and usage)"
 msgstr "Обновляет текущую информацию об облаке (имя пользователя и объём)"
 
-#: gui/options.cpp:1770
+#: gui/options.cpp:1768
 msgid "Download"
 msgstr "Загрузить"
 
-#: gui/options.cpp:1770
+#: gui/options.cpp:1768
 msgid "Open downloads manager dialog"
 msgstr "Открывает менеджер загрузок"
 
-#: gui/options.cpp:1772
+#: gui/options.cpp:1770
 msgid "Run server"
 msgstr "Запустить сервер"
 
-#: gui/options.cpp:1772
+#: gui/options.cpp:1770
 msgid "Run local webserver"
 msgstr "Запускает локальный веб-сервер"
 
-#: gui/options.cpp:1773 gui/options.cpp:2448
+#: gui/options.cpp:1771 gui/options.cpp:2446
 msgid "Not running"
 msgstr "Не запущен"
 
-#: gui/options.cpp:1777
+#: gui/options.cpp:1775
 msgid "/root/ Path:"
 msgstr "Корневая директория:"
 
-#: gui/options.cpp:1777 gui/options.cpp:1779 gui/options.cpp:1780
+#: gui/options.cpp:1775 gui/options.cpp:1777 gui/options.cpp:1778
 msgid "Specifies which directory the Files Manager can access"
 msgstr "Указывает путь к директории, куда будет иметь доступ менеджер файлов"
 
-#: gui/options.cpp:1779
+#: gui/options.cpp:1777
 msgctxt "lowres"
 msgid "/root/ Path:"
 msgstr "Корень:"
 
-#: gui/options.cpp:1789
+#: gui/options.cpp:1787
 msgid "Server's port:"
 msgstr "Порт сервера:"
 
-#: gui/options.cpp:1789
+#: gui/options.cpp:1787
 msgid ""
 "Which port is used by the server\n"
 "Auth with server is not available with non-default port"
@@ -1348,27 +1348,27 @@ msgstr ""
 "Номер порта, используемый сервером\n"
 "Установление доступа работает только с портом по умолчанию"
 
-#: gui/options.cpp:1802
+#: gui/options.cpp:1800
 msgid "Apply"
 msgstr "Применить"
 
-#: gui/options.cpp:1945
+#: gui/options.cpp:1943
 msgid "Failed to change cloud storage!"
 msgstr "Не удалось сменить облако!"
 
-#: gui/options.cpp:1948
+#: gui/options.cpp:1946
 msgid "Another cloud storage is already active."
 msgstr "Уже активно другое облачное хранилище."
 
-#: gui/options.cpp:2023
+#: gui/options.cpp:2021
 msgid "Theme does not support selected language!"
 msgstr "Тема не поддерживает выбранный язык!"
 
-#: gui/options.cpp:2026
+#: gui/options.cpp:2024
 msgid "Theme cannot be loaded!"
 msgstr "Невозможно загрузить тему!"
 
-#: gui/options.cpp:2029
+#: gui/options.cpp:2027
 msgid ""
 "\n"
 "Misc settings will be restored."
@@ -1376,48 +1376,48 @@ msgstr ""
 "\n"
 "Настройки на закладке Разное будут восстановлены."
 
-#: gui/options.cpp:2065
+#: gui/options.cpp:2063
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "Не могу писать в выбранную директорию. Пожалуйста, укажите другую."
 
-#: gui/options.cpp:2074
+#: gui/options.cpp:2072
 msgid "Select directory for GUI themes"
 msgstr "Выберите директорию для тем GUI"
 
-#: gui/options.cpp:2084
+#: gui/options.cpp:2082
 msgid "Select directory for extra files"
 msgstr "Выберите директорию с дополнительными файлами"
 
-#: gui/options.cpp:2095
+#: gui/options.cpp:2093
 msgid "Select directory for plugins"
 msgstr "Выберите директорию с плагинами"
 
-#: gui/options.cpp:2107
+#: gui/options.cpp:2105
 msgid "Select directory for Files Manager /root/"
 msgstr "Выберите директорию для корня в менеджере файлов"
 
-#: gui/options.cpp:2345
+#: gui/options.cpp:2343
 #, c-format
 msgid "%llu bytes"
 msgstr "%llu байт"
 
-#: gui/options.cpp:2353
+#: gui/options.cpp:2351
 msgid "<right now>"
 msgstr "<сейчас>"
 
-#: gui/options.cpp:2355
+#: gui/options.cpp:2353
 msgid "<never>"
 msgstr "<никогда>"
 
-#: gui/options.cpp:2439
+#: gui/options.cpp:2437
 msgid "Stop server"
 msgstr "Остановить сервер"
 
-#: gui/options.cpp:2440
+#: gui/options.cpp:2438
 msgid "Stop local webserver"
 msgstr "Останавливает локальный веб-сервер"
 
-#: gui/options.cpp:2531
+#: gui/options.cpp:2529
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
@@ -3740,7 +3740,8 @@ msgstr "Новое сохранение"
 #: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455
 msgid "Are you sure you want to quit? All unsaved progress will be lost."
-msgstr "Вы уверены, что хотите выйти? Все несохранённые действия будут утеряны."
+msgstr ""
+"Вы уверены, что хотите выйти? Все несохранённые действия будут утеряны."
 
 #: engines/mohawk/riven.cpp:158
 msgid ""
