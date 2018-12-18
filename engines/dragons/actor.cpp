@@ -120,4 +120,8 @@ void Actor::updateSequence(uint16 newSequenceID) {
 	flags |= Dragons::ACTOR_FLAG_1;
 }
 
+void Actor::resetSequenceIP() {
+	_seqCodeIp = _actorResource->getSequenceData(_sequenceID);
+}
+
 } // End of namespace Dragons

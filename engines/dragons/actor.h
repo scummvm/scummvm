@@ -73,7 +73,7 @@ public:
 	ActorResource*_actorResource;
 	uint16 actorFileDictionaryIndex;
 	int16 resourceID;
-	int16 _seqCodeIp;
+	byte *_seqCodeIp;
 	void* frame_pointer_maybe;
 	uint16 field_c;
 	int16 var_e;
@@ -109,6 +109,7 @@ public:
 	void init(ActorResource *resource, int16 x, int16 y, uint32 sequenceID);
 	Graphics::Surface *getCurrentFrame();
 	void updateSequence(uint16 newSequenceID);
+	void resetSequenceIP();
 };
 
 } // End of namespace Dragons

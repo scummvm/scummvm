@@ -31,6 +31,7 @@
 #include "dragons.h"
 #include "scene.h"
 #include "screen.h"
+#include "sequenceopcodes.h"
 
 namespace Dragons {
 
@@ -43,10 +44,11 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	_screen = NULL;
 	_nextUpdatetime = 0;
 	_flags = 0;
+	_sequenceOpcodes = new SequenceOpcodes(this);
 }
 
 DragonsEngine::~DragonsEngine() {
-
+	delete _sequenceOpcodes;
 }
 
 void DragonsEngine::updateEvents() {
@@ -179,7 +181,19 @@ void DragonsEngine::updateActorSequences() {
 				!(actor->flags & Dragons::ACTOR_FLAG_400) &&
 				(actor->frameIndex_maybe == 0 || actor->flags & Dragons::ACTOR_FLAG_1)) {
 			debug("Actor[%d] execute sequenceOp", actorId);
+
+			if (actor->flags & Dragons::ACTOR_FLAG_1) {
+				actor->resetSequenceIP();
+				actor->flags &= 0xeff6; //TODO rewrite using ACTOR_FLAG_nnn
+				actor->field_7a = 0;
+			}
 			//TODO execute sequence Opcode here.
+			OpCall opCall;
+			opCall._op = (byte)READ_LE_UINT16(actor->_seqCodeIp);
+			opCall._opSize = (byte)READ_LE_UINT16(actor->_seqCodeIp + 2);
+			opCall._code = actor->_seqCodeIp + 4;
+			opCall._deltaOfs = opCall._opSize;
+			_sequenceOpcodes->execOpcode(actor, opCall);
 			return;
 		}
 	}

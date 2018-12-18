@@ -78,6 +78,9 @@ void SequenceOpcodes::initOpcodes() {
 	// Register opcodes
 	OPCODE(1, opSetFramePointer);
 
+
+	OPCODE(4, opSetFieldC);
+
 }
 
 #undef OPCODE
@@ -95,6 +98,11 @@ void SequenceOpcodes::opSetFramePointer(Actor *actor, OpCall &opCall) {
 	//TODO update frame pointer
 	actor->flags |= Dragons::ACTOR_FLAG_2;
 	actor->frameIndex_maybe = actor->field_c;
+}
+
+void SequenceOpcodes::opSetFieldC(Actor *actor, OpCall &opCall) {
+	ARG_INT16(newFieldC);
+	actor->field_c = (uint16)newFieldC;
 }
 
 //void SequenceOpcodes::opYield(Control *control, OpCall &opCall) {
