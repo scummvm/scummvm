@@ -772,7 +772,7 @@ void Frame::renderText(Graphics::ManagedSurface &surface, uint16 spriteId, Commo
 
 	Graphics::MacFont *macFont = new Graphics::MacFont(textCast->fontId, textCast->fontSize, textCast->textSlant);
 
-	debugC(3, kDebugText, "renderText: x: %d y: %d w: %d h: %d font: '%s'", x, y, width, height, _vm->_wm->_fontMan->getFontName(*macFont));
+	debugC(3, kDebugText, "renderText: x: %d y: %d w: %d h: %d font: '%s'", x, y, width, height, _vm->_wm->_fontMan->getFontName(*macFont).c_str());
 
 	uint16 boxShadow = (uint16)textCast->boxShadow;
 	uint16 borderSize = (uint16)textCast->borderSize;

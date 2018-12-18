@@ -86,7 +86,7 @@ private:
 
 private:
 	const Font *getMenuFont();
-	const char *getAcceleratorString(MacMenuSubItem *item, const char *prefix);
+	const Common::String getAcceleratorString(MacMenuSubItem *item, const char *prefix);
 	int calculateMenuWidth(MacMenuItem *menu);
 	void calcMenuBounds(MacMenuItem *menu);
 	void renderSubmenu(MacMenuItem *menu);
