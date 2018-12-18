@@ -10,8 +10,6 @@
     * Lists appear to be infinite (the same elements repeat over and over again).
       Unfortunately, Lists don't store length information, and it's not possible to
       detect whether a Node is the last one by the Node itself.
-
-    * In HashMaps, missing and dummy nodes are shown along with the useful ones.
 -->
 
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
@@ -56,11 +54,20 @@
       <Item Name="[size]">_size</Item>
       <Item Name="[capacity]">_mask + 1</Item>
       <Item Name="[deleted]">_deleted</Item>
-      <IndexListItems>
-        <Size>_mask + 1</Size>
-        <ValueNode Condition="_storage[$i] &amp;&amp; _storage[$i] != (Common::HashMap&lt;$T1,$T2,$T3,$T4&gt;::Node *)1">*_storage[$i]</ValueNode>
-      </IndexListItems>
+      <CustomListItems MaxItemsPerView="5000" ExcludeView="Test">
+        <Variable Name="ctr" InitialValue="0" />
+        <Size>_size</Size>
+        <Loop>
+          <Break Condition="ctr &gt; _mask" />
+          <Item Condition="_storage[ctr] &gt; 1" Name="[{_storage[ctr]->_key}]">*_storage[ctr],view(MapHelper)</Item>
+          <Exec>ctr++</Exec>
+        </Loop>
+      </CustomListItems>
     </Expand>
+  </Type>
+
+  <Type Name="Common::HashMap&lt;*,*,*,*&gt;::Node" IncludeView="MapHelper">
+    <DisplayString>{_value}</DisplayString>
   </Type>
 
   <Type Name="Common::List&lt;*&gt;">
