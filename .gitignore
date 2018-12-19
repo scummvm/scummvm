@@ -37,6 +37,7 @@ lib*.a
 /Icon.*
 /scummvm-conf.cpp
 /tmp_*.cpp
+/README
 
 /build
 /staging
