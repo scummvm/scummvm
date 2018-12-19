@@ -348,7 +348,7 @@ void Processor::z_get_next_prop() {
 
 	// Return the property id
 	LOW_BYTE(prop_addr, value);
-	store((zword) (value & mask));
+	store((zword)(value & mask));
 }
 
 void Processor::z_get_parent() {
@@ -477,7 +477,7 @@ void Processor::z_get_prop_addr() {
 
 		if (h_version >= V4 && (value & 0x80))
 			prop_addr++;
-		store((zword) (prop_addr + 1));
+		store((zword)(prop_addr + 1));
 
 	} else {
 		store(0);

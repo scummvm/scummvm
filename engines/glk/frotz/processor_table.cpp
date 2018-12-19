@@ -47,7 +47,7 @@ void Processor::z_copy_table() {
 		for (i = size - 1; i >= 0; i--) {
 			addr = zargs[0] + i;
 			LOW_BYTE(addr, value);
-			storeb((zword) (zargs[1] + i), value);
+			storeb((zword)(zargs[1] + i), value);
 		}
 	}
 }
@@ -109,7 +109,7 @@ finished:
 }
 
 void Processor::z_storeb() {
-	storeb((zword) (zargs[0] + zargs[1]), zargs[2]);
+	storeb((zword)(zargs[0] + zargs[1]), zargs[2]);
 }
 
 void Processor::z_storew() {

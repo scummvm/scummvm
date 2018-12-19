@@ -565,9 +565,9 @@ void Processor::z_save() {
 	}
 
 	if (h_version <= V3)
-		branch (success);
+		branch(success);
 	else
-		store (success);
+		store(success);
 }
 
 void Processor::z_restore() {
@@ -593,7 +593,7 @@ void Processor::z_restore() {
 	if (h_version <= V3)
 		branch(result);
 	else
-		store (result);
+		store(result);
 }
 
 void Processor::z_verify() {

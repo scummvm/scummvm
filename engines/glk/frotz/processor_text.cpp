@@ -93,7 +93,7 @@ zbyte Processor::unicode_to_zscii(zchar c) {
 				LOW_WORD(addr, unicode);
 
 				if (c == unicode)
-					return (zbyte) i;
+					return (zbyte)i;
 			}
 
 			return 0;
@@ -101,7 +101,7 @@ zbyte Processor::unicode_to_zscii(zchar c) {
 			// game uses standard set
 			for (i = 0x9b; i <= 0xdf; i++)
 			if (c == ZSCII_TO_LATIN1[i - 0x9b])
-				return (zbyte) i;
+				return (zbyte)i;
 
 			return 0;
 		}
@@ -120,7 +120,7 @@ zbyte Processor::translate_to_zscii(zchar c) {
 	if (c == 0)
 		return 0;
 
-	c = unicode_to_zscii (c);
+	c = unicode_to_zscii(c);
 	if (c == 0)
 	c = '?';
 
@@ -188,8 +188,8 @@ void Processor::find_resolution() {
 		runtimeError(ERR_DICT_LEN);
 	}
 
-	_decoded = (zchar *)malloc (sizeof (zchar) * (3 * _resolution) + 1);
-	_encoded = (zchar *)malloc (sizeof (zchar) * _resolution);
+	_decoded = (zchar *)malloc(sizeof(zchar) * (3 * _resolution) + 1);
+	_encoded = (zchar *)malloc(sizeof(zchar) * _resolution);
 }
 
 void Processor::load_string (zword addr, zword length) {
@@ -256,7 +256,7 @@ void Processor::encode_text(int padding) {
 						goto letter_found;
 
 			// Character not found, store its ZSCII value
-			c2 = translate_to_zscii (c);
+			c2 = translate_to_zscii(c);
 
 			zchars[i++] = 5;
 			zchars[i++] = 6;
@@ -577,7 +577,6 @@ void Processor::tokenise_text(zword text, zword length, zword from, zword parse,
 		addr = lookup_text(0x05, dct);
 
 		if (addr != 0 || !flag) {
-
 			parse += 4 * token_count;
 
 			storew((zword)(parse + 0), addr);
@@ -785,26 +784,26 @@ void Processor::z_check_unicode() {
 		result = 1;
 	}
 
-	store (result);
+	store(result);
 }
 
 void Processor::z_encode_text() {
 	int i;
 
-	load_string((zword) (zargs[0] + zargs[2]), zargs[1]);
+	load_string((zword)(zargs[0] + zargs[2]), zargs[1]);
 
 	encode_text(0x05);
 
 	for (i = 0; i < _resolution; i++)
-	storew((zword) (zargs[3] + 2 * i), _encoded[i]);
+	storew((zword)(zargs[3] + 2 * i), _encoded[i]);
 
 }
 
 void Processor::z_new_line() {
-	new_line ();
+	new_line();
 }
 
-void Processor::z_print () {
+void Processor::z_print() {
 	decode_text(EMBEDDED_STRING, 0);
 }
 
@@ -829,7 +828,7 @@ void Processor::z_print_form() {
 			break;
 
 		if (!first)
-			new_line ();
+			new_line();
 
 		while (count--) {
 			zbyte c;
@@ -837,7 +836,7 @@ void Processor::z_print_form() {
 			LOW_BYTE(addr, c);
 			addr++;
 
-			print_char(translate_from_zscii (c));
+			print_char(translate_from_zscii(c));
 		}
 
 		first = false;

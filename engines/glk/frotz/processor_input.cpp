@@ -166,14 +166,14 @@ void Processor::z_read() {
 			buffer[i] = unicode_tolower (buffer[i]);
 		}
 
-		storeb((zword) (zargs[0] + ((h_version <= V4) ? 1 : 2) + i), translate_to_zscii (buffer[i]));
+		storeb((zword)(zargs[0] + ((h_version <= V4) ? 1 : 2) + i), translate_to_zscii(buffer[i]));
 	}
 
 	// Add null character (V1-V4) or write input length into 2nd byte
 	if (h_version <= V4)
-		storeb((zword) (zargs[0] + 1 + i), 0);
+		storeb((zword)(zargs[0] + 1 + i), 0);
 	else
-		storeb((zword) (zargs[0] + 1), i);
+		storeb((zword)(zargs[0] + 1), i);
 
 	// Tokenise line if a token buffer is present
 	if (key == ZC_RETURN && zargs[1] != 0)
@@ -202,10 +202,10 @@ void Processor::z_read_char() {
 		return;
 
 	// Store key
-	store (translate_to_zscii (key));
+	store(translate_to_zscii(key));
 }
 
-void Processor::z_read_mouse(){
+void Processor::z_read_mouse() {
 	zword btn;
 
 	// Read the mouse position, the last menu click and which buttons are down
@@ -213,10 +213,10 @@ void Processor::z_read_mouse(){
 	hx_mouse_y = mouse_y;
 	hx_mouse_x = mouse_x;
 
-	storew((zword) (zargs[0] + 0), hx_mouse_y);
-	storew((zword) (zargs[0] + 2), hx_mouse_x);
-	storew((zword) (zargs[0] + 4), btn);			// mouse button bits
-	storew((zword) (zargs[0] + 6), menu_selected);	// menu selection
+	storew((zword)(zargs[0] + 0), hx_mouse_y);
+	storew((zword)(zargs[0] + 2), hx_mouse_x);
+	storew((zword)(zargs[0] + 4), btn);				// mouse button bits
+	storew((zword)(zargs[0] + 6), menu_selected);	// menu selection
 }
 
 } // End of namespace Scott

@@ -46,7 +46,7 @@ void Processor::z_draw_picture() {
 	zword x = zargs[2];
 	int i;
 
-	flush_buffer ();
+	flush_buffer();
 
 	if (!x || !y) {
 		// Currently I only support getting the cursor for the text grid area

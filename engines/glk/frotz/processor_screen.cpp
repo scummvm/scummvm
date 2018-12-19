@@ -242,8 +242,8 @@ void Processor::z_erase_window() {
 }
 
 void Processor::z_get_cursor() {
-	storew((zword) (zargs[0] + 0), cury);
-	storew((zword) (zargs[0] + 2), curx);
+	storew((zword)(zargs[0] + 0), cury);
+	storew((zword)(zargs[0] + 2), curx);
 }
 
 void Processor::z_print_table() {

@@ -102,7 +102,7 @@ Common::Error Frotz::loadGameData(strid_t file) {
 		LOW_BYTE(H_SCREEN_COLS, old_screen_cols);
 
 		// Reload cached header fields
-		restart_header ();
+		restart_header();
 
 		/* Since QUETZAL files may be saved on many different machines,
 		 * the screen sizes may vary a lot. Erasing the status window
@@ -110,7 +110,7 @@ Common::Error Frotz::loadGameData(strid_t file) {
 		 */
 		if (h_version > V3 && h_version != V6 && (h_screen_rows != old_screen_rows
 					|| h_screen_cols != old_screen_cols))
-			erase_window (1);
+			erase_window(1);
 	} else {
 		error("Error reading save file");
 	}
