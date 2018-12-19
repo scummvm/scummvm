@@ -108,7 +108,21 @@
     <Expand>
       <Item Name="[size]">_size</Item>
       <Item Condition="_str != _storage" Name="[capacity]">_extern._capacity</Item>
-      <Item Condition="_str != _storage" Name="[refCount]">*_extern._refCount</Item>
+      <Item Condition="_str != _storage &amp;&amp; _extern._refCount != 0" Name="[refCount]">*_extern._refCount</Item>
+      <ArrayItems>
+        <Size>_size</Size>
+        <ValuePointer>_str</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="Common::U32String">
+    <DisplayString>{_str,s32}</DisplayString>
+    <StringView>_str,s32</StringView>
+    <Expand>
+      <Item Name="[size]">_size</Item>
+      <Item Condition="_str != _storage" Name="[capacity]">_extern._capacity</Item>
+      <Item Condition="_str != _storage &amp;&amp; _extern._refCount != 0" Name="[refCount]">*_extern._refCount</Item>
       <ArrayItems>
         <Size>_size</Size>
         <ValuePointer>_str</ValuePointer>
