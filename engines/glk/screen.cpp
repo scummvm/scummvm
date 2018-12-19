@@ -40,7 +40,7 @@ Screen::~Screen() {
 
 void Screen::initialize() {
 	if (!loadFonts())
-		error("Could not load data file");
+		error("Could not load fonts.dat");
 
 	// TODO: See if there's any better way for getting the leading and baseline
 	Common::Rect r1 = _fonts[7]->getBoundingBox('o');
@@ -154,7 +154,7 @@ const Graphics::Font *Screen::loadFont(FACES face, Common::Archive *archive, dou
 	};
 
 	if (!f.open(FILENAMES[face], *archive))
-		error("Could not load font");
+		error("Could not load %s from fonts file", FILENAMES[face]);
 
 	return Graphics::loadTTFFont(f, (int)size, Graphics::kTTFSizeModeCharacter);
 }
