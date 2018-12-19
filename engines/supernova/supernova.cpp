@@ -172,8 +172,7 @@ Common::Error SupernovaEngine::loadGameStrings() {
 	// strings anyway (actually the engine will even refuse to start).
 	Common::File f;
 	if (!f.open(SUPERNOVA_DAT)) {
-		Common::String msg = Common::String::format(_("Unable to locate the '%s' engine data file."), SUPERNOVA_DAT);
-		GUIErrorMessage(msg);
+		GUIErrorMessageFormat(_("Unable to locate the '%s' engine data file."), SUPERNOVA_DAT);
 		return Common::kReadingFailed;
 	}
 
@@ -182,17 +181,15 @@ Common::Error SupernovaEngine::loadGameStrings() {
 	id[4] = lang[4] = '\0';
 	f.read(id, 3);
 	if (strncmp(id, "MSN", 3) != 0) {
-		Common::String msg = Common::String::format(_("The '%s' engine data file is corrupt."), SUPERNOVA_DAT);
-		GUIErrorMessage(msg);
+		GUIErrorMessageFormat(_("The '%s' engine data file is corrupt."), SUPERNOVA_DAT);
 		return Common::kReadingFailed;
 	}
 
 	int version = f.readByte();
 	if (version != SUPERNOVA_DAT_VERSION) {
-		Common::String msg = Common::String::format(
+		GUIErrorMessageFormat(
 			_("Incorrect version of the '%s' engine data file found. Expected %d but got %d."),
 			SUPERNOVA_DAT, SUPERNOVA_DAT_VERSION, version);
-		GUIErrorMessage(msg);
 		return Common::kReadingFailed;
 	}
 
@@ -217,8 +214,7 @@ Common::Error SupernovaEngine::loadGameStrings() {
 	}
 
 	Common::Language l = Common::parseLanguage(cur_lang);
-	Common::String msg = Common::String::format(_("Unable to locate the text for %s language in '%s' engine data file."), Common::getLanguageDescription(l), SUPERNOVA_DAT);
-	GUIErrorMessage(msg);
+	GUIErrorMessageFormat(_("Unable to locate the text for %s language in '%s' engine data file."), Common::getLanguageDescription(l), SUPERNOVA_DAT);
 	return Common::kReadingFailed;
 }
 

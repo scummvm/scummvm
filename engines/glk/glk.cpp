@@ -145,18 +145,6 @@ Common::Error GlkEngine::run() {
 	return Common::kNoError;
 }
 
-void GlkEngine::GUIError(const char *msg, ...) {
-	char buffer[STRINGBUFLEN];
-	va_list va;
-
-	// Generate the full error message
-	va_start(va, msg);
-	vsnprintf(buffer, STRINGBUFLEN, msg, va);
-	va_end(va);
-
-	GUIErrorMessage(buffer);
-}
-
 Common::Error GlkEngine::loadGame() {
 	frefid_t ref = _streams->createByPrompt(fileusage_BinaryMode | fileusage_SavedGame,
 		filemode_Read, 0);

@@ -276,18 +276,6 @@ void TitanicEngine::syncSoundSettings() {
 	}
 }
 
-void TitanicEngine::GUIError(const char *msg, ...) {
-	char buffer[STRINGBUFLEN];
-	va_list va;
-
-	// Generate the full error message
-	va_start(va, msg);
-	vsnprintf(buffer, STRINGBUFLEN, msg, va);
-	va_end(va);
-
-	GUIErrorMessage(buffer);
-}
-
 
 void TitanicEngine::showScummVMSaveDialog() {
 	if (!canSaveGameStateCurrently())

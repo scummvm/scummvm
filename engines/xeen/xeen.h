@@ -218,11 +218,6 @@ public:
 	int getRandomNumber(int minNumber, int maxNumber);
 
 	/**
-	 * Displays an error message in a GUI dialog
-	 */
-	void GUIError(const char *msg, ...) GCC_PRINTF(2, 3);
-
-	/**
 	 * Returns true if the game should be exited (either quitting, exiting to the main menu, or loading a savegame)
 	 */
 	bool shouldExit() const { return _gameMode != GMODE_NONE || isLoadPending() || shouldQuit(); }
