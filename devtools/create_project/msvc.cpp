@@ -172,7 +172,7 @@ std::string MSVCProvider::getPreBuildEvent() const {
 	cmdLine = "@echo off\n"
 	          "echo Executing Pre-Build script...\n"
 	          "echo.\n"
-	          "@call &quot;$(SolutionDir)../../devtools/create_project/scripts/prebuild.cmd&quot; &quot;$(SolutionDir)/../..&quot;  &quot;$(TargetDir)&quot;\n"
+	          "@call &quot;$(SolutionDir)../../devtools/create_project/scripts/prebuild.cmd&quot; &quot;$(SolutionDir)/../..&quot; &quot;$(SolutionDir)&quot;\n"
 	          "EXIT /B0";
 
 	return cmdLine;
