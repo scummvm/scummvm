@@ -6,10 +6,14 @@
 # The default build target: just build the scummvm executable
 ######################################################################
 
-all: $(EXECUTABLE) plugins readme
+all: $(EXECUTABLE) plugins
 
 ifdef SPLIT_DWARF
 all: $(EXECUTABLE).dwp
+endif
+
+ifdef USE_PANDOC
+all: readme
 endif
 
 ######################################################################
@@ -225,11 +229,11 @@ DISTNAME := scummvm-$(DISTVERSION)
 DISTDIR := dist
 VERFILE := $(DISTDIR)/$(DISTNAME)/base/internal_version.h
 
-#ifdef USE_PANDOC
+ifdef USE_PANDOC
 # Convert README.md to plain text for any platform that might require it
 readme: README.md
-	$(QUIET_PANDOC)pandoc $(PANDOCFLAGS)
-#endif
+	$(QUIET_PANDOC)$(PANDOC) $(PANDOCFLAGS)
+endif
 
 # TODO git via $(GITROOT)
 $(VERFILE): $(srcdir)/base/internal_version.h
