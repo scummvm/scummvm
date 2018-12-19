@@ -104,12 +104,12 @@ protected:
 	/**
 	 * Get the command line for copying data files to the build directory.
 	 *
-	 * @param	isWin32		   	Bitness of property file.
-	 * @param	createInstaller	true to create installer
+	 * @param	isWin32	Bitness of property file.
+	 * @param	setup	Description of the desired build setup.
 	 *
 	 * @return	The post build event.
 	 */
-	std::string getPostBuildEvent(bool isWin32, bool createInstaller) const;
+	std::string getPostBuildEvent(bool isWin32, const BuildSetup &setup) const;
 };
 
 } // End of CreateProjectTool namespace
