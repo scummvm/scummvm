@@ -185,7 +185,7 @@ std::string MSVCProvider::getTestPreBuildEvent(const BuildSetup &setup) const {
 	for (StringList::const_iterator it = setup.testDirs.begin(); it != setup.testDirs.end(); ++it)
 		target += " $(SolutionDir)" + *it + "*.h";
 
-	return "&quot;$(SolutionDir)../../test/cxxtest/cxxtestgen.py&quot; --runner=ParenPrinter --no-std --no-eh -o $(SolutionDir)test_runner.cpp" + target;
+	return "&quot;$(SolutionDir)../../test/cxxtest/cxxtestgen.py&quot; --runner=ParenPrinter --no-std --no-eh -o &quot;$(SolutionDir)test_runner.cpp&quot;" + target;
 }
 
 std::string MSVCProvider::getPostBuildEvent(bool isWin32, bool createInstaller) const {
@@ -198,7 +198,7 @@ std::string MSVCProvider::getPostBuildEvent(bool isWin32, bool createInstaller) 
 
 	cmdLine += (isWin32) ? "x86" : "x64";
 
-	cmdLine += " %" LIBS_DEFINE "% ";
+	cmdLine += " &quot;%" LIBS_DEFINE "%&quot; ";
 
 	// Specify if installer needs to be built or not
 	cmdLine += (createInstaller ? "1" : "0");
