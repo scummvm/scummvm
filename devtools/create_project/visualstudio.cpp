@@ -171,7 +171,7 @@ void VisualStudioProvider::outputBuildEvents(std::ostream &project, const BuildS
 		           "\t\t\t\tCommandLine=\"" << getPreBuildEvent() << "\"\n"
 		           "\t\t\t/>\n"
 		           "\t\t\t<Tool\tName=\"VCPostBuildEventTool\"\n"
-		           "\t\t\t\tCommandLine=\"" << getPostBuildEvent(isWin32, setup.createInstaller) << "\"\n"
+		           "\t\t\t\tCommandLine=\"" << getPostBuildEvent(isWin32, setup) << "\"\n"
 		           "\t\t\t/>\n";
 	}
 

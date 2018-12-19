@@ -188,7 +188,7 @@ std::string MSVCProvider::getTestPreBuildEvent(const BuildSetup &setup) const {
 	return "&quot;$(SolutionDir)../../test/cxxtest/cxxtestgen.py&quot; --runner=ParenPrinter --no-std --no-eh -o &quot;$(SolutionDir)test_runner.cpp&quot;" + target;
 }
 
-std::string MSVCProvider::getPostBuildEvent(bool isWin32, bool createInstaller) const {
+std::string MSVCProvider::getPostBuildEvent(bool isWin32, const BuildSetup &setup) const {
 	std::string cmdLine = "";
 
 	cmdLine = "@echo off\n"
@@ -196,12 +196,14 @@ std::string MSVCProvider::getPostBuildEvent(bool isWin32, bool createInstaller) 
 	          "echo.\n"
 	          "@call &quot;$(SolutionDir)../../devtools/create_project/scripts/postbuild.cmd&quot; &quot;$(SolutionDir)/../..&quot; &quot;$(OutDir)&quot; ";
 
-	cmdLine += (isWin32) ? "x86" : "x64";
+	cmdLine += (setup.useSDL2) ? "SDL2" : "SDL";
 
-	cmdLine += " &quot;%" LIBS_DEFINE "%&quot; ";
+	cmdLine += " &quot;%" LIBS_DEFINE "%/lib/";
+	cmdLine += (isWin32) ? "x86" : "x64";
+	cmdLine += "/$(Configuration)&quot; ";
 
 	// Specify if installer needs to be built or not
-	cmdLine += (createInstaller ? "1" : "0");
+	cmdLine += (setup.createInstaller ? "1" : "0");
 
 	cmdLine += "\n"
 	           "EXIT /B0";
