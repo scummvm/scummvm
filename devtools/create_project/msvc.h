@@ -105,7 +105,7 @@ protected:
 	 * Get the command line for copying data files to the build directory.
 	 *
 	 * @param	isWin32		   	Bitness of property file.
-	 * @param	createInstaller	true to NSIS create installer
+	 * @param	createInstaller	true to create installer
 	 *
 	 * @return	The post build event.
 	 */
