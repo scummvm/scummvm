@@ -589,10 +589,11 @@ void Processor::z_restore() {
 		success = loadGame().getCode() == Common::kNoError;
 	}
 
+	int result = success ? 2 : -1;
 	if (h_version <= V3)
-		branch (success);
+		branch(result);
 	else
-		store (success);
+		store (result);
 }
 
 void Processor::z_verify() {
