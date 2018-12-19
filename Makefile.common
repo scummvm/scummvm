@@ -232,7 +232,7 @@ VERFILE := $(DISTDIR)/$(DISTNAME)/base/internal_version.h
 ifdef USE_PANDOC
 # Convert README.md to plain text for any platform that might require it
 readme: README.md
-	$(QUIET_PANDOC)$(PANDOC) $(PANDOCFLAGS)
+	$(QUIET_PANDOC)$(PANDOC) -f gfm -t $(PANDOCFORMAT) -o $(PANDOCOUTPUT) README.md
 endif
 
 # TODO git via $(GITROOT)
@@ -266,7 +266,7 @@ dist-src: \
 # Common files
 DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING COPYING.BSD COPYING.LGPL COPYING.FREEFONT COPYRIGHT NEWS README.md)
 ifdef USE_PANDOC
-DIST_FILES_DOCS+=README
+DIST_FILES_DOCS+=$(PANDOCOUTPUT)
 endif
 
 DIST_FILES_DOCS_languages=cz da de es fr it no-nb se
