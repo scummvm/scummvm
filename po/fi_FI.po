@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-12-19 07:31+0100\n"
-"PO-Revision-Date: 2018-12-12 03:07+0000\n"
+"PO-Revision-Date: 2018-12-20 04:34+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -1207,25 +1207,26 @@ msgid "Switch the GUI language to the game language"
 msgstr "Käytä pelin kieltä ScummVM:ssä"
 
 #: gui/options.cpp:1697
-#, fuzzy
 msgid ""
 "When starting a game, change the GUI language to the game language.That way, "
 "if a game uses the ScummVM save and load dialogs, they are in the same "
 "language as the game."
 msgstr ""
-"Käytä pelin kieltä ScummVM:ssä pelin ollessa käynnissä. Näin pelin "
-"mahdollisesti avaamat ScummVM:n dialogit ovat samalla kielellä kuin itse "
-"peli."
+"Käytä pelissä valittua kieltä ScummVM:n käyttöliittymässä pelin ollessa "
+"käynnissä. Näin pelin mahdollisesti avaamat ScummVM:n dialogit ovat samalla "
+"kielellä kuin itse peli."
 
 #: gui/options.cpp:1710
 msgid "Use native system file browser"
-msgstr ""
+msgstr "Käytä käyttöjärjestelmän tiedostoselainta"
 
 #: gui/options.cpp:1711
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
 msgstr ""
+"Käytä käyttöjärjestelmän tiedostoselainta ScummVM:n toteutuksen sijaan "
+"tiedostojen ja kansioiden valintaan."
 
 #: gui/options.cpp:1718 gui/updates-dialog.cpp:86
 msgid "Update check:"
