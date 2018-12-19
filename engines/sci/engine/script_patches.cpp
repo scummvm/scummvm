@@ -3511,6 +3511,104 @@ static const uint16 longbowPatchBerryBushFix[] = {
 	PATCH_END
 };
 
+// The camp (room 150) has a bug that can prevent the outlaws from ever rescuing
+//  the boys at sunset on day 5 or 6. The rescue occurs when entering camp as an
+//  abbey monk after leaving town exactly 3 times but this assumes that the
+//  counter can't exceed this. Wearing a different disguise can increment the
+//  counter beyond 3 at which point sunset can never occur.
+//
+// We fix this by patching the counter tests to greater than or equals. This
+//  makes them consistent with the other scripts that test this global variable.
+//
+// Applies to: English PC Floppy, German PC Floppy, English Amiga Floppy
+// Responsible method: local procedure #3 in script 150
+// Fixes bug #10839
+static const uint16 longbowSignatureCampSunsetFix[] = {
+	SIG_MAGICDWORD,
+	0x89, 0x8e,                     // lsg 8e [ times left town ]
+	0x35, 0x03,                     // ldi 03
+	0x1a,                           // eq?
+	SIG_END
+};
+
+static const uint16 longbowPatchCampSunsetFix[] = {
+	PATCH_ADDTOOFFSET(+4),
+	0x20,                        	// ge?
+	PATCH_END
+};
+
+// The town map (room 260) has a bug that can send Robin to the wrong room.
+//  Loading the map from town on day 5 or 6 automatically sends Robin to camp
+//  (room 150) after leaving town more than twice. The intent is to start the
+//  sunset scene where the outlaws rescue the boys, but the map doesn't test the
+//  correct sunset conditions and can load an empty camp, even on the wrong day.
+//
+// We fix this by changing the map's logic to match the camp's by requiring the
+//  abbey monk disguise to be worn and the rescue flag to not be set.
+//
+// Applies to: English PC Floppy, German PC Floppy, English Amiga Floppy
+// Responsible method: rm260:init
+// Fixes bug #10839
+static const uint16 longbowSignatureTownMapSunsetFix[] = {
+	SIG_MAGICDWORD,
+	0x39, 0x05,                     // pushi 05
+	0x81, 0x82,                     // lag 82 [ day ]
+	0x24,                           // le?
+	0x30, SIG_UINT16(0x0089),       // bnt 0089 [ no sunset if day < 5 ]
+	0x60,                           // pprev
+	0x35, 0x06,                     // ldi 06
+	0x24,                           // le?
+	0x30, SIG_UINT16(0x0082),       // bnt 0082 [ no sunset if day > 6 ]
+	0x89, 0x8e,                     // lsg 8e
+	0x35, 0x01,                     // ldi 01
+	SIG_END
+};
+
+static const uint16 longbowPatchTownMapSunsetFix[] = {
+	0x89, 0x7e,                     // lsg 7e [ current disguise ]
+	0x35, 0x05,                     // ldi 05 [ abbey monk ]
+	0x1c,                           // ne?
+	0x2f, 0x06,                     // bt 06 [ no sunset if disguise != abbey monk ]
+	0x78,                           // push1
+	0x39, 0x38,                     // pushi 38
+	0x45, 0x05, 0x02,               // callb proc0_5 [ is rescue flag set? ]
+	0x2e, PATCH_UINT16(0x0081),     // bt 0081 [ no sunset if rescue flag is set ]
+	0x81, 0x8e,                     // lag 8e
+	0x78,                           // push1 [ save a byte ]
+	PATCH_END
+};
+
+// Ending day 5 or 6 by choosing to attack the castle fails to set the rescue
+//  flag which tells the next day what to do. This flag is set when rescuing
+//  the boys yourself and when the outlaws rescue them at sunset. Without this
+//  flag, the sunset rescue can repeat the next day and break the game.
+//
+// We fix this by setting the flag when returning the boys to their mother in
+//  room 250 after the attack.
+//
+// Applies to: English PC Floppy, German PC Floppy, English Amiga Floppy
+// Responsible method: boysSaved:changeState(0)
+// Fixes bug #10839
+static const uint16 longbowSignatureRescueFlagFix[] = {
+	0x3c,                           // dup
+	0x35, 0x00,                     // ldi 00
+	0x1a,                           // eq?
+	0x30, SIG_MAGICDWORD,           // bnt 0003 [ state 1 ]
+	      SIG_UINT16(0x0003),
+	0x32, SIG_UINT16(0x025b),       // jmp 025b [ end of method ]
+	SIG_END
+};
+
+static const uint16 longbowPatchRescueFlagFix[] = {
+	0x2f, 0x08,                     // bt 08 [ state 1 ]
+	0x78,                           // push1
+	0x39, 0x38,                     // pushi 38
+	0x45, 0x06, 0x02,               // callb proc0_6 [ set rescue flag ]
+	0x3a,                           // toss
+	0x48,                           // ret
+	PATCH_END
+};
+
 // On day 9, room 350 outside the cobbler's hut is initialized incorrectly if
 //  disguised as a monk. The entrance to the hut is broken and several minor
 //  messages are incorrect. This is due to the room's script assuming that the
@@ -3575,12 +3673,15 @@ static const uint16 longbowPatchAmigaPubFix[] = {
 	PATCH_END
 };
 
-//          script, description,                                      signature                     patch
+//          script, description,                                      signature                          patch
 static const SciScriptPatcherEntry longbowSignatures[] = {
-	{  true,   210, "hand code crash",                             5, longbowSignatureShowHandCode, longbowPatchShowHandCode },
-	{  true,   225, "arithmetic berry bush fix",                   1, longbowSignatureBerryBushFix, longbowPatchBerryBushFix },
-	{  true,   350, "day 9 cobbler hut fix",                      10, longbowSignatureCobblerHut,   longbowPatchCobblerHut },
-	{  true,   530, "amiga pub fix",                               1, longbowSignatureAmigaPubFix,  longbowPatchAmigaPubFix },
+	{  true,   150, "day 5/6 camp sunset fix",                     2, longbowSignatureCampSunsetFix,     longbowPatchCampSunsetFix },
+	{  true,   210, "hand code crash",                             5, longbowSignatureShowHandCode,      longbowPatchShowHandCode },
+	{  true,   225, "arithmetic berry bush fix",                   1, longbowSignatureBerryBushFix,      longbowPatchBerryBushFix },
+	{  true,   250, "day 5/6 rescue flag fix",                     1, longbowSignatureRescueFlagFix,     longbowPatchRescueFlagFix },
+	{  true,   260, "day 5/6 town map sunset fix",                 1, longbowSignatureTownMapSunsetFix,  longbowPatchTownMapSunsetFix },
+	{  true,   350, "day 9 cobbler hut fix",                      10, longbowSignatureCobblerHut,        longbowPatchCobblerHut },
+	{  true,   530, "amiga pub fix",                               1, longbowSignatureAmigaPubFix,       longbowPatchAmigaPubFix },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
