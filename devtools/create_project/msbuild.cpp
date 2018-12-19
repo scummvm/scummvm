@@ -405,6 +405,7 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	properties << "\t\t</Link>\n"
 	              "\t\t<ResourceCompile>\n"
 	              "\t\t\t<AdditionalIncludeDirectories>" << prefix << ";%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
+	              "\t\t\t<PreprocessorDefinitions>" << definesList << "%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
 	              "\t\t</ResourceCompile>\n"
 	              "\t</ItemDefinitionGroup>\n"
 	              "</Project>\n";
