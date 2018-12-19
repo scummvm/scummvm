@@ -36,7 +36,7 @@ win32dist: all
 	cp $(srcdir)/doc/da/HurtigStart $(WIN32PATH)/doc/da/HurtigStart.txt
 	cp $(srcdir)/doc/de/Schnellstart $(WIN32PATH)/doc/de/Schnellstart.txt
 	cp $(srcdir)/doc/se/Snabbstart $(WIN32PATH)/doc/se/Snabbstart.txt
-	cp $(srcdir)/README $(WIN32PATH)/README.txt
+	cp $(srcdir)/README.md $(WIN32PATH)/README.md
 	cp $(WIN32SDLDOCPATH)/README-SDL.txt $(WIN32PATH)/README-SDL.txt
 	cp $(srcdir)/doc/de/LIESMICH $(WIN32PATH)/doc/de/LIESMICH.txt
 	cp $(srcdir)/doc/se/LasMig $(WIN32PATH)/doc/se/LasMig.txt
