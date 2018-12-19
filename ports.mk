@@ -468,6 +468,10 @@ endif
 	@cd $(srcdir)/dists/msvc11 && ../../devtools/create_project/create_project ../.. --msvc --msvc-version 11 >/dev/null && git add -f engines/plugins_table.h *.sln *.vcxproj *.vcxproj.filters *.props
 	@echo Creating MSVC12 project files...
 	@cd $(srcdir)/dists/msvc12 && ../../devtools/create_project/create_project ../.. --msvc --msvc-version 12 >/dev/null && git add -f engines/plugins_table.h *.sln *.vcxproj *.vcxproj.filters *.props
+	@echo Creating MSVC14 project files...
+	@cd $(srcdir)/dists/msvc14 && ../../devtools/create_project/create_project ../.. --msvc --msvc-version 14 >/dev/null && git add -f engines/plugins_table.h *.sln *.vcxproj *.vcxproj.filters *.props
+	@echo Creating MSVC15 project files...
+	@cd $(srcdir)/dists/msvc15 && ../../devtools/create_project/create_project ../.. --msvc --msvc-version 15 >/dev/null && git add -f engines/plugins_table.h *.sln *.vcxproj *.vcxproj.filters *.props
 	@echo
 	@echo All is done.
 	@echo Now run
