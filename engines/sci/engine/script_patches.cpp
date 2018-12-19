@@ -156,7 +156,9 @@ static const char *const selectorNameTable[] = {
 	"plane",        // RAMA
 	"state",        // RAMA
 	"getSubscriberObj", // RAMA
+	"loop",         // QFG4
 	"setLooper",    // QFG4
+	"value",        // QFG4
 #endif
 	NULL
 };
@@ -237,7 +239,9 @@ enum ScriptPatcherSelectors {
 	SELECTOR_plane,
 	SELECTOR_state,
 	SELECTOR_getSubscriberObj,
-	SELECTOR_setLooper
+	SELECTOR_loop,
+	SELECTOR_setLooper,
+	SELECTOR_value
 #endif
 };
 
@@ -8697,9 +8701,149 @@ static const uint16 qfg4DreamGatePatch[] = {
 	PATCH_END
 };
 
+// Some inventory item properties leak across restarts. Most conspicuously, the
+// torch icon appears pre-lit after a restart, if it had been lit before.
+//
+// script 16 - thePiepan (item #28): loop, cel, value
+// script 35 - theBroom (item #39): cel, value
+// script 35 - theTorch (item #44): cel
+//
+// Glory::restart() tries to revert a bunch of globals to their original state.
+// Each value was individually loaded into acc and assigned (ldi+sag, ldi+sag,
+// ldi+sag, etc).
+//
+// One range of globals could be distilled to multiples of 45. We optimize
+// those with a loop. Another range was arbitrary. We stack up those values all
+// at once, then loop over the stack to pop(), assign, and do the next global.
+// We use the freed bytes to reset the 3 items' properties with a subroutine.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: Glory::restart() in script 0
+// Fixes bug: #10768
+static const uint16 qfg4RestartSignature[] = {
+	SIG_MAGICDWORD,
+	0x76,                               // push0 (this range is multiples of 45)
+	0x35, 0x01,                         // ldi 1d
+	0xb1, 0x90,                         // sagi (global[144 + 1] = 0)
+	SIG_ADDTOOFFSET(+40),               // ...
+	0x38, SIG_UINT16(0x013b),           // pushi 315
+	SIG_ADDTOOFFSET(+2),                // ldi ?? (array index here was typoed)
+	0xb1, 0x90,                         // sagi (global[144 + ?] = 315)
+
+	0x35, 0x14,                         // ldi 20d (this assignment doesn't fit a pattern)
+	0xa1, 0xc6,                         // sag global[198]
+
+	0x35, 0x02,                         // ldi 2d (this range has arbitrary values)
+	0xa0, SIG_UINT16(0x016f),           // sag global[367]
+	SIG_ADDTOOFFSET(+95),               // ...
+	0x35, 0x0a,                         // ldi 10d
+	0xa0, SIG_UINT16(0x0183),           // sag global[387]
+	SIG_END
+};
+
+static const uint16 qfg4RestartPatch[] = {
+                                        // (loop to assign multiples of 45)
+	0x76,                               // push0
+	0xad, 0x00,                         // sst temp[0]
+                                        //
+	0x8d, 0x00,                         // lst temp[0] (global[144 + n+1] = n*45)
+	0x35, 0x08,                         // ldi 8
+	0x22,                               // lt?
+	0x31, 0x0c,                         // bnt 12d [end the loop]
+	0x8d, 0x00,                         // lst temp[0]
+	0x35, 0x2d,                         // ldi 45d
+	0x06,                               // mul
+	0x36,                               // push (temp[0] * 45)
+	0xc5, 0x00,                         // +at temp[0]
+	0xb1, 0x90,                         // sagi global[144]
+	0x33, 0xed,                         // jmp [-19] (loop)
+                                        // (that loop freed +30 bytes)
+
+	0x35, 0x14,                         // ldi 20d (leave this assignment as-is)
+	0xa1, 0xc6,                         // sag global[198]
+
+                                        // (stack up arbitrary values; then loop to assign them)
+	0x7a,                               // push2     (global[367] = 2)
+	0x3c,                               // dup       (global[368] = 2)
+	0x39, 0x03,                         // pushi 3d  (global[369] = 3)
+	0x3c,                               // dup       (global[370] = 3)
+	0x3c,                               // dup       (global[371] = 3)
+	0x39, 0x04,                         // pushi 4d  (global[372] = 4)
+	0x39, 0x05,                         // pushi 5d  (global[373] = 5)
+	0x3c,                               // dup       (global[374] = 5)
+	0x39, 0x06,                         // pushi 6d  (global[375] = 6)
+	0x39, 0x07,                         // pushi 7d  (global[376] = 7)
+	0x39, 0x08,                         // pushi 8d  (global[377] = 8)
+	0x3c,                               // dup       (global[378] = 8)
+	0x39, 0x05,                         // pushi 5d  (global[379] = 5)
+	0x39, 0x0a,                         // pushi 10d (global[380] = 10)
+	0x39, 0x0f,                         // pushi 15d (global[381] = 15)
+	0x39, 0x14,                         // pushi 20d (global[382] = 20)
+	0x39, 0x06,                         // pushi 6d  (global[383] = 6)
+	0x39, 0x08,                         // pushi 8d  (global[384] = 8)
+	0x39, 0x07,                         // pushi 7d  (global[385] = 7)
+	0x39, 0x0a,                         // pushi 10d (global[386] = 10)
+	0x3c,                               // dup       (global[387] = 10)
+                                        //
+	0x39, 0x15,                         // pushi 21d (pop() and set, backward from 20 to 0)
+	0xad, 0x00,                         // sst temp[0]
+                                        //
+	0xed, 0x00,                         // -st temp[0]
+	0x35, 0x00,                         // ldi 0
+	0x20,                               // ge?
+	0x31, 0x07,                         // bnt 7d (end the loop)
+	0x85, 0x00,                         // lat temp[0]
+	0xb8, PATCH_UINT16(0x016f),         // ssgi 367d (global[367 + n] = pop())
+	0x33, 0xf2,                         // jmp [-14] (loop)
+                                        // (that loop freed +52 bytes)
+
+                                        // (reset properties for a few items)
+	0x33, 0x1f,                         // jmp 31d (skip subroutine declaration)
+	0x38, PATCH_SELECTOR16(loop),       // pushi loop
+	0x78,                               // push1
+	0x8f, 0x02,                         // lsp[2] (loop varies)
+	0x38, PATCH_SELECTOR16(cel),        // pushi cel
+	0x78,                               // push1
+	0x8f, 0x03,                         // lsp[3] (cel varies)
+	0x38, PATCH_SELECTOR16(value),      // pushi value (weight)
+	0x78,                               // push1
+	0x7a,                               // push2 (these items all weigh 2)
+                                        //
+	0x39, 0x4b,                         // pushi at
+	0x78,                               // push1
+	0x8f, 0x01,                         // lsp[1]
+	0x81, 0x09,                         // global[9] (gloryInv)
+	0x4a, PATCH_UINT16(0x0006),         // send 06
+                                        //
+	0x4a, PATCH_UINT16(0x0012),         // send 18d
+	0x48,                               // ret
+
+	0x39, 0x03,                         // pushi 3d (call has 3 args)
+	0x39, 0x1c,                         // pushi 28d (thePiePan)
+	0x7a,                               // push2 (loop)
+	0x39, 0x0a,                         // pushi 10d (cel)
+	0x40, PATCH_UINT16(0xffd5), PATCH_UINT16(0x0006), // call 6d [-43]
+
+	0x39, 0x03,                         // pushi 3d (call has 3 args)
+	0x39, 0x27,                         // pushi 39d (theBroom)
+	0x39, 0x0a,                         // pushi 10d (loop)
+	0x76,                               // push0 (cel)
+	0x40, PATCH_UINT16(0xffc9), PATCH_UINT16(0x0006), // call 6d [-55]
+
+	0x39, 0x03,                         // pushi 3d (call has 3 args)
+	0x39, 0x2c,                         // pushi 44d (theTorch)
+	0x39, 0x08,                         // pushi 8d (loop)
+	0x39, 0x09,                         // pushi 9d (cel)
+	0x40, PATCH_UINT16(0xffbc), PATCH_UINT16(0x0006), // call 6d [-68]
+
+	0x33, 0x0a,                         // jmp 10d (skip waste bytes)
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qg4AutosaveSignature,          qg4AutosavePatch },
+	{  true,     0, "fix inventory leaks across restarts",         1, qfg4RestartSignature,          qfg4RestartPatch },
 	{  true,     1, "disable volume reset on startup",             1, sci2VolumeResetSignature,      sci2VolumeResetPatch },
 	{  true,     1, "disable video benchmarking",                  1, qfg4BenchmarkSignature,        qfg4BenchmarkPatch },
 	{  true,     7, "fix consecutive moonrises",                   1, qfg4MoonriseSignature,         qfg4MoonrisePatch },
