@@ -51,12 +51,12 @@ void Frotz::runGame(Common::SeekableReadStream *gameFile) {
 	// If save was selected from the launcher, handle loading it
 	int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 	if (saveSlot != -1) {
-		bool success = loadGameState(saveSlot).getCode() == Common::kNoError;
+		int loadResult = loadGameState(saveSlot).getCode() == Common::kNoError ? 2 : -1;
 
 		if (h_version <= V3)
-			branch(success);
+			branch(loadResult);
 		else
-			store(success);
+			store(loadResult);
 	}
 
 	// Game loop
