@@ -159,7 +159,7 @@ void OpenGLSdlGraphicsManager::createOrUpdateScreen() {
 	// Choose the effective window size or fullscreen mode
 	uint effectiveWidth;
 	uint effectiveHeight;
-	if (_fullscreen && !renderToFrameBuffer) {
+	if (_fullscreen && (engineSupportsArbitraryResolutions || renderToFrameBuffer)) {
 		Common::Rect fullscreenResolution = getPreferredFullscreenResolution();
 		effectiveWidth = fullscreenResolution.width();
 		effectiveHeight = fullscreenResolution.height();
