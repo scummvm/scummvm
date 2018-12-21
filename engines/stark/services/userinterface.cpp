@@ -24,10 +24,13 @@
 #include "common/stream.h"
 #include "common/system.h"
 
+#include "engines/engine.h"
+
 #include "engines/stark/services/userinterface.h"
 
 #include "engines/stark/gfx/driver.h"
 
+#include "engines/stark/services/diary.h"
 #include "engines/stark/services/gameinterface.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
@@ -420,42 +423,6 @@ void UserInterface::cycleInventory(bool forward) {
 	selectInventoryItem(nextItem);
 }
 
-void UserInterface::scrollInventoryUp() {
-	_gameScreen->getInventoryWindow()->scrollUp();
-}
-
-void UserInterface::scrollInventoryDown() {
-	_gameScreen->getInventoryWindow()->scrollDown();
-}
-
-void UserInterface::scrollDialogUp() {
-	_gameScreen->getDialogPanel()->scrollUp();
-}
-
-void UserInterface::scrollDialogDown() {
-	_gameScreen->getDialogPanel()->scrollDown();
-}
-
-void UserInterface::focusNextDialogOption() {
-	_gameScreen->getDialogPanel()->focusNextOption();
-}
-
-void UserInterface::focusPrevDialogOption() {
-	_gameScreen->getDialogPanel()->focusPrevOption();
-}
-
-void UserInterface::selectFocusedDialogOption() {
-	_gameScreen->getDialogPanel()->selectFocusedOption();
-}
-
-void UserInterface::selectDialogOptionByIndex(uint index) {
-	_gameScreen->getDialogPanel()->selectOption(index);
-}
-
-void UserInterface::toggleExitDisplay() {
-	_gameScreen->getGameWindow()->toggleExitDisplay();
-}
-
 void UserInterface::doQueuedScreenChange() {
 	if (_quitToMainMenu) {
 		changeScreen(Screen::kScreenGame);
@@ -468,6 +435,112 @@ void UserInterface::doQueuedScreenChange() {
 	if (_shouldGoBackToPreviousScreen) {
 		backPrevScreen();
 		_shouldGoBackToPreviousScreen = false;
+	}
+}
+
+void UserInterface::handleKeyPress(const Common::KeyState &keyState) {
+	if (keyState.keycode == Common::KEYCODE_ESCAPE) {
+		handleEscape();
+	} else if ((keyState.keycode == Common::KEYCODE_RETURN
+				|| keyState.keycode == Common::KEYCODE_KP_ENTER)) {
+		if (isInGameScreen()) {
+			_gameScreen->getDialogPanel()->selectFocusedOption();
+		}
+	} else if (keyState.keycode == Common::KEYCODE_F1) {
+		toggleScreen(Screen::kScreenDiaryIndex);
+	} else if (keyState.keycode == Common::KEYCODE_F2) {
+		if (isInSaveLoadMenuScreen() || g_engine->canSaveGameStateCurrently()) {
+			toggleScreen(Screen::kScreenSaveMenu);
+		}
+	} else if (keyState.keycode == Common::KEYCODE_F3) {
+		toggleScreen(Screen::kScreenLoadMenu);
+	} else if (keyState.keycode == Common::KEYCODE_F4) {
+		toggleScreen(Screen::kScreenDialog);
+	} else if (keyState.keycode == Common::KEYCODE_F5) {
+		if (StarkDiary->isEnabled()) {
+			toggleScreen(Screen::kScreenDiaryPages);
+		}
+	} else if (keyState.keycode == Common::KEYCODE_F6) {
+		toggleScreen(Screen::kScreenFMVMenu);
+	} else if (keyState.keycode == Common::KEYCODE_F7) {
+		toggleScreen(Screen::kScreenSettingsMenu);
+	} else if (keyState.keycode == Common::KEYCODE_F8) {
+		warning("TODO: Implement the screenshot saving to local game directory");
+	} else if (keyState.keycode == Common::KEYCODE_F9) {
+		if (isInGameScreen()) {
+			_shouldToggleSubtitle = !_shouldToggleSubtitle;
+		}
+	} else if (keyState.keycode == Common::KEYCODE_F10) {
+		if (isInGameScreen() || isInDiaryIndexScreen()) {
+			if (confirm(GameMessage::kQuitGamePrompt)) {
+				requestQuitToMainMenu();
+			}
+		}
+	} else if (keyState.keycode == Common::KEYCODE_a) {
+		if (isInGameScreen() && isInteractive()) {
+			cycleInventory(false);
+		}
+	} else if (keyState.keycode == Common::KEYCODE_s) {
+		if (isInGameScreen() && isInteractive()) {
+			cycleInventory(true);
+		}
+	} else if (keyState.keycode == Common::KEYCODE_i) {
+		if (isInGameScreen() && isInteractive()) {
+			inventoryOpen(!isInventoryOpen());
+		}
+	} else if (keyState.keycode == Common::KEYCODE_x
+				&& !keyState.hasFlags(Common::KBD_ALT)) {
+		if (isInGameScreen() && isInteractive()) {
+			_gameScreen->getGameWindow()->toggleExitDisplay();
+		}
+	} else if ((keyState.keycode == Common::KEYCODE_x
+				|| keyState.keycode == Common::KEYCODE_q)
+				&& keyState.hasFlags(Common::KBD_ALT)) {
+		if (confirm(GameMessage::kQuitPrompt)) {
+			notifyShouldExit();
+		}
+	} else if (keyState.keycode == Common::KEYCODE_p) {
+		if (isInGameScreen()) {
+			g_engine->pauseEngine(true);
+			debug("The game is paused");
+		}
+	} else if (keyState.keycode == Common::KEYCODE_PAGEUP) {
+		if (isInGameScreen()) {
+			if (isInventoryOpen()) {
+				_gameScreen->getInventoryWindow()->scrollUp();
+			} else {
+				_gameScreen->getDialogPanel()->scrollUp();
+			}
+		}
+	} else if (keyState.keycode == Common::KEYCODE_UP) {
+		if (isInGameScreen()) {
+			if (isInventoryOpen()) {
+				_gameScreen->getInventoryWindow()->scrollUp();
+			} else {
+				_gameScreen->getDialogPanel()->focusPrevOption();
+			}
+		}
+	} else if (keyState.keycode == Common::KEYCODE_PAGEDOWN) {
+		if (isInGameScreen()) {
+			if (isInventoryOpen()) {
+				_gameScreen->getInventoryWindow()->scrollDown();
+			} else {
+				_gameScreen->getDialogPanel()->scrollDown();
+			}
+		}
+	} else if (keyState.keycode == Common::KEYCODE_DOWN) {
+		if (isInGameScreen()) {
+			if (isInventoryOpen()) {
+				_gameScreen->getInventoryWindow()->scrollDown();
+			} else {
+				_gameScreen->getDialogPanel()->focusNextOption();
+			}
+		}
+	} else if (keyState.keycode >= Common::KEYCODE_1 && keyState.keycode <= Common::KEYCODE_9) {
+		if (isInGameScreen()) {
+			uint index = keyState.keycode - Common::KEYCODE_1;
+			_gameScreen->getDialogPanel()->selectOption(index);
+		}
 	}
 }
 

@@ -58,24 +58,8 @@ namespace Stark {
 StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		Engine(syst),
 		_gameDescription(gameDesc),
-		_gfx(nullptr),
 		_frameLimiter(nullptr),
-		_scene(nullptr),
 		_console(nullptr),
-		_global(nullptr),
-		_gameInterface(nullptr),
-		_archiveLoader(nullptr),
-		_stateProvider(nullptr),
-		_staticProvider(nullptr),
-		_resourceProvider(nullptr),
-		_randomSource(nullptr),
-		_dialogPlayer(nullptr),
-		_diary(nullptr),
-		_userInterface(nullptr),
-		_fontProvider(nullptr),
-		_settings(nullptr),
-		_gameChapter(nullptr),
-		_gameMessage(nullptr),
 		_lastClickTime(0) {
 	// Add the available debug channels
 	DebugMan.addDebugChannel(kDebugArchive, "Archive", "Debug the archive loading");
@@ -85,79 +69,65 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 }
 
 StarkEngine::~StarkEngine() {
-	delete _gameInterface;
-	delete _diary;
-	delete _dialogPlayer;
-	delete _randomSource;
-	delete _scene;
-	delete _console;
-	delete _gfx;
-	delete _frameLimiter;
-	delete _staticProvider;
-	delete _resourceProvider;
-	delete _global;
-	delete _stateProvider;
-	delete _archiveLoader;
-	delete _userInterface;
-	delete _fontProvider;
-	delete _settings;
-	delete _gameChapter;
-	delete _gameMessage;
+	delete StarkServices::instance().gameInterface;
+	delete StarkServices::instance().diary;
+	delete StarkServices::instance().dialogPlayer;
+	delete StarkServices::instance().randomSource;
+	delete StarkServices::instance().scene;
+	delete StarkServices::instance().gfx;
+	delete StarkServices::instance().staticProvider;
+	delete StarkServices::instance().resourceProvider;
+	delete StarkServices::instance().global;
+	delete StarkServices::instance().stateProvider;
+	delete StarkServices::instance().archiveLoader;
+	delete StarkServices::instance().userInterface;
+	delete StarkServices::instance().fontProvider;
+	delete StarkServices::instance().settings;
+	delete StarkServices::instance().gameChapter;
+	delete StarkServices::instance().gameMessage;
 
 	StarkServices::destroy();
+
+	delete _console;
+	delete _frameLimiter;
 }
 
 Common::Error StarkEngine::run() {
 	_console = new Console();
-	_gfx = Gfx::Driver::create();
+	_frameLimiter = new Gfx::FrameLimiter(_system, ConfMan.getInt("engine_speed"));
 
 	// Get the screen prepared
-	_gfx->init();
-
-	_frameLimiter = new Gfx::FrameLimiter(_system, ConfMan.getInt("engine_speed"));
-	_archiveLoader = new ArchiveLoader();
-	_stateProvider = new StateProvider();
-	_global = new Global();
-	_resourceProvider = new ResourceProvider(_archiveLoader, _stateProvider, _global);
-	_staticProvider = new StaticProvider(_archiveLoader);
-	_randomSource = new Common::RandomSource("stark");
-	_fontProvider = new FontProvider();
-	_scene = new Scene(_gfx);
-	_dialogPlayer = new DialogPlayer();
-	_diary = new Diary();
-	_gameInterface = new GameInterface();
-	_userInterface = new UserInterface(_gfx);
-	_settings = new Settings(_mixer, _gameDescription);
-	_gameChapter = new GameChapter();
-	_gameMessage = new GameMessage();
+	Gfx::Driver *gfx = Gfx::Driver::create();
+	gfx->init();
 
 	// Setup the public services
 	StarkServices &services = StarkServices::instance();
-	services.archiveLoader = _archiveLoader;
-	services.dialogPlayer = _dialogPlayer;
-	services.diary = _diary;
-	services.gfx = _gfx;
-	services.global = _global;
-	services.resourceProvider = _resourceProvider;
-	services.randomSource = _randomSource;
-	services.scene = _scene;
-	services.staticProvider = _staticProvider;
-	services.gameInterface = _gameInterface;
-	services.userInterface = _userInterface;
-	services.fontProvider = _fontProvider;
-	services.settings = _settings;
-	services.gameChapter = _gameChapter;
-	services.gameMessage = _gameMessage;
+	services.gfx = gfx;
+	services.archiveLoader = new ArchiveLoader();
+	services.stateProvider = new StateProvider();
+	services.global = new Global();
+	services.resourceProvider = new ResourceProvider(services.archiveLoader, services.stateProvider, services.global);
+	services.staticProvider = new StaticProvider(services.archiveLoader);
+	services.randomSource = new Common::RandomSource("stark");
+	services.fontProvider = new FontProvider();
+	services.scene = new Scene(services.gfx);
+	services.dialogPlayer = new DialogPlayer();
+	services.diary = new Diary();
+	services.gameInterface = new GameInterface();
+	services.userInterface = new UserInterface(services.gfx);
+	services.settings = new Settings(_mixer, _gameDescription);
+	services.gameChapter = new GameChapter();
+	services.gameMessage = new GameMessage();
 
 	// Load global resources
-	_staticProvider->init();
-	_fontProvider->initFonts();
+	services.staticProvider->init();
+	services.fontProvider->initFonts();
 
 	// Apply the sound volume settings
 	syncSoundSettings();
 
 	// Initialize the UI
-	_userInterface->init();
+	services.userInterface->init();
 
 	// Load through ResidualVM launcher
 	if (ConfMan.hasKey("save_slot")) {
@@ -167,8 +137,8 @@ Common::Error StarkEngine::run() {
 	// Start running
 	mainLoop();
 
-	_staticProvider->shutdown();
-	_resourceProvider->shutdown();
+	services.staticProvider->shutdown();
+	services.resourceProvider->shutdown();
 
 	return Common::kNoError;
 }
@@ -179,23 +149,23 @@ void StarkEngine::mainLoop() {
 
 		processEvents();
 
-		if (_userInterface->shouldExit()) {
+		if (StarkUserInterface->shouldExit()) {
 			quitGame();
 			break;
 		}
 
-		_userInterface->doQueuedScreenChange();
+		StarkUserInterface->doQueuedScreenChange();
 
-		if (_resourceProvider->hasLocationChangeRequest()) {
-			_global->setNormalSpeed();
-			_resourceProvider->performLocationChange();
+		if (StarkResourceProvider->hasLocationChangeRequest()) {
+			StarkGlobal->setNormalSpeed();
+			StarkResourceProvider->performLocationChange();
 		}
 
 		updateDisplayScene();
 
 		// Swap buffers
 		_frameLimiter->delayBeforeSwap();
-		_gfx->flipBuffer();
+		StarkGfx->flipBuffer();
 	}
 }
 
@@ -217,128 +187,33 @@ void StarkEngine::processEvents() {
 				continue;
 			}
 
-			if (e.kbd.keycode == Common::KEYCODE_d) {
-				if (e.kbd.flags & Common::KBD_CTRL) {
-					_console->attach();
-					_console->onFrame();
-				}
-			} else if (e.kbd.keycode == Common::KEYCODE_ESCAPE) {
-				_userInterface->handleEscape();
-			} else if ((e.kbd.keycode == Common::KEYCODE_RETURN
-					|| e.kbd.keycode == Common::KEYCODE_KP_ENTER)) {
-				if (e.kbd.hasFlags(Common::KBD_ALT)) {
-					_gfx->toggleFullscreen();
-				} else if (_userInterface->isInGameScreen()){
-					_userInterface->selectFocusedDialogOption();
-				}
-			} else if (e.kbd.keycode == Common::KEYCODE_F1) {
-				_userInterface->toggleScreen(Screen::kScreenDiaryIndex);
-			} else if (e.kbd.keycode == Common::KEYCODE_F2) {
-				if (_userInterface->isInSaveLoadMenuScreen() || canSaveGameStateCurrently()) {
-					_userInterface->toggleScreen(Screen::kScreenSaveMenu);
-				}
-			} else if (e.kbd.keycode == Common::KEYCODE_F3) {
-				_userInterface->toggleScreen(Screen::kScreenLoadMenu);
-			} else if (e.kbd.keycode == Common::KEYCODE_F4) {
-				_userInterface->toggleScreen(Screen::kScreenDialog);
-			} else if (e.kbd.keycode == Common::KEYCODE_F5) {
-				if (_diary->isEnabled()) {
-					_userInterface->toggleScreen(Screen::kScreenDiaryPages);
-				}
-			} else if (e.kbd.keycode == Common::KEYCODE_F6) {
-				_userInterface->toggleScreen(Screen::kScreenFMVMenu);
-			} else if (e.kbd.keycode == Common::KEYCODE_F7) {
-				_userInterface->toggleScreen(Screen::kScreenSettingsMenu);
-			} else if (e.kbd.keycode == Common::KEYCODE_F8) {
-				warning("TODO: Implement the screenshot saving to local game directory");
-			} else if (e.kbd.keycode == Common::KEYCODE_F9) {
-				if (_userInterface->isInGameScreen()) {
-					_userInterface->requestToggleSubtitle();
-				}
-			} else if (e.kbd.keycode == Common::KEYCODE_F10) {
-				if (_userInterface->isInGameScreen() || _userInterface->isInDiaryIndexScreen()) {
-					if (_userInterface->confirm(GameMessage::kQuitGamePrompt)) {
-						_userInterface->requestQuitToMainMenu();
-					}
-				}
-			} else if (e.kbd.keycode == Common::KEYCODE_a) {
-				if (_userInterface->isInteractive()) {
-					_userInterface->cycleBackInventory();
-				}
-			} else if (e.kbd.keycode == Common::KEYCODE_s) {
-				if (_userInterface->isInteractive()) {
-					_userInterface->cycleForwardInventory();
-				}
-			} else if (e.kbd.keycode == Common::KEYCODE_i) {
-				if (_userInterface->isInteractive()) {
-					_userInterface->inventoryOpen(!_userInterface->isInventoryOpen());
-				}
-			} else if (e.kbd.keycode == Common::KEYCODE_x
-					&& !e.kbd.hasFlags(Common::KBD_ALT)) {
-				if (_userInterface->isInteractive()) {
-					_userInterface->toggleExitDisplay();
-				}
-			} else if ((e.kbd.keycode == Common::KEYCODE_x
-					|| e.kbd.keycode == Common::KEYCODE_q)
-					&& e.kbd.hasFlags(Common::KBD_ALT)) {
-				if (_userInterface->confirm(GameMessage::kQuitPrompt)) {
-					_userInterface->notifyShouldExit();
-				}
+			if (e.kbd.keycode == Common::KEYCODE_d && (e.kbd.hasFlags(Common::KBD_CTRL))) {
+				_console->attach();
+				_console->onFrame();
+			} else if ((e.kbd.keycode == Common::KEYCODE_RETURN || e.kbd.keycode == Common::KEYCODE_KP_ENTER)
+						&& e.kbd.hasFlags(Common::KBD_ALT)) {
+					StarkGfx->toggleFullscreen();
 			} else if (e.kbd.keycode == Common::KEYCODE_p) {
-				if (_userInterface->isInGameScreen()) {
+				if (StarkUserInterface->isInGameScreen()) {
 					pauseEngine(true);
 					debug("The game is paused");
 				}
-			} else if (e.kbd.keycode == Common::KEYCODE_PAGEUP) {
-				if (_userInterface->isInGameScreen()) {
-					if (_userInterface->isInventoryOpen()) {
-						_userInterface->scrollInventoryUp();
-					} else {
-						_userInterface->scrollDialogUp();
-					}
-				}
-			} else if (e.kbd.keycode == Common::KEYCODE_UP) {
-				if (_userInterface->isInGameScreen()) {
-					if (_userInterface->isInventoryOpen()) {
-						_userInterface->scrollInventoryUp();
-					} else {
-						_userInterface->focusPrevDialogOption();
-					}
-				}
-			} else if (e.kbd.keycode == Common::KEYCODE_PAGEDOWN) {
-				if (_userInterface->isInGameScreen()) {
-					if (_userInterface->isInventoryOpen()) {
-						_userInterface->scrollInventoryDown();
-					} else {
-						_userInterface->scrollDialogDown();
-					}
-				}
-			} else if (e.kbd.keycode == Common::KEYCODE_DOWN) {
-				if (_userInterface->isInGameScreen()) {
-					if (_userInterface->isInventoryOpen()) {
-						_userInterface->scrollInventoryDown();
-					} else {
-						_userInterface->focusNextDialogOption();
-					}
-				}
-			} else if (e.kbd.keycode >= Common::KEYCODE_1 && e.kbd.keycode <= Common::KEYCODE_9) {
-				if (_userInterface->isInGameScreen()) {
-					_userInterface->selectDialogOptionByIndex(e.kbd.keycode - Common::KEYCODE_1);
-				}
+			} else {
+				StarkUserInterface->handleKeyPress(e.kbd);
 			}
 
 		} else if (e.type == Common::EVENT_LBUTTONUP) {
-			_userInterface->handleMouseUp();
+			StarkUserInterface->handleMouseUp();
 		} else if (e.type == Common::EVENT_MOUSEMOVE) {
-			_userInterface->handleMouseMove(e.mouse);
+			StarkUserInterface->handleMouseMove(e.mouse);
 		} else if (e.type == Common::EVENT_LBUTTONDOWN) {
-			_userInterface->handleClick();
+			StarkUserInterface->handleClick();
 			if (_system->getMillis() - _lastClickTime < _doubleClickDelay) {
-				_userInterface->handleDoubleClick();
+				StarkUserInterface->handleDoubleClick();
 			}
 			_lastClickTime = _system->getMillis();
 		} else if (e.type == Common::EVENT_RBUTTONDOWN) {
-			_userInterface->handleRightClick();
+			StarkUserInterface->handleRightClick();
 		} else if (e.type == Common::EVENT_SCREEN_CHANGED) {
 			onScreenChanged();
 		}
@@ -346,41 +221,41 @@ void StarkEngine::processEvents() {
 }
 
 void StarkEngine::updateDisplayScene() {
-	if (_global->isFastForward()) {
+	if (StarkGlobal->isFastForward()) {
 		// The original engine was frame limited to 30 fps.
 		// Set the frame duration to 1000 / 30 ms so that fast forward
 		// skips the same amount of simulated time as the original.
-		_global->setMillisecondsPerGameloop(33);
+		StarkGlobal->setMillisecondsPerGameloop(33);
 	} else {
-		_global->setMillisecondsPerGameloop(_frameLimiter->getLastFrameDuration());
+		StarkGlobal->setMillisecondsPerGameloop(_frameLimiter->getLastFrameDuration());
 	}
 
 	// Clear the screen
-	_gfx->clearScreen();
+	StarkGfx->clearScreen();
 
 	// Only update the world resources when on the game screen
-	if (_userInterface->isInGameScreen() && !isPaused()) {
+	if (StarkUserInterface->isInGameScreen() && !isPaused()) {
 		int frames = 0;
 		do {
 			// Update the game resources
-			_global->getLevel()->onGameLoop();
-			_global->getCurrent()->getLevel()->onGameLoop();
-			_global->getCurrent()->getLocation()->onGameLoop();
+			StarkGlobal->getLevel()->onGameLoop();
+			StarkGlobal->getCurrent()->getLevel()->onGameLoop();
+			StarkGlobal->getCurrent()->getLocation()->onGameLoop();
 			frames++;
 
 			// When the game is in fast forward mode, update
 			// the game resources for multiple frames,
 			// but render only once.
-		} while (_global->isFastForward() && frames < 100);
-		_global->setNormalSpeed();
+		} while (StarkGlobal->isFastForward() && frames < 100);
+		StarkGlobal->setNormalSpeed();
 	}
 
 	// Render the current scene
 	// Update the UI state before displaying the scene
-	_userInterface->onGameLoop();
+	StarkUserInterface->onGameLoop();
 
 	// Tell the UI to render, and update implicitly, if this leads to new mouse-over events.
-	_userInterface->render();
+	StarkUserInterface->render();
 }
 
 bool StarkEngine::hasFeature(EngineFeature f) const {
@@ -413,28 +288,28 @@ Common::Error StarkEngine::loadGameState(int slot) {
 	}
 
 	// Reset the UI
-	_userInterface->skipFMV();
-	_userInterface->clearLocationDependentState();
-	_userInterface->setInteractive(true);
-	_userInterface->changeScreen(Screen::kScreenGame);
-	_userInterface->inventoryOpen(false);
-	_userInterface->restoreScreenHistory();
+	StarkUserInterface->skipFMV();
+	StarkUserInterface->clearLocationDependentState();
+	StarkUserInterface->setInteractive(true);
+	StarkUserInterface->changeScreen(Screen::kScreenGame);
+	StarkUserInterface->inventoryOpen(false);
+	StarkUserInterface->restoreScreenHistory();
 
 	// Clear the previous world resources
-	_resourceProvider->shutdown();
+	StarkResourceProvider->shutdown();
 
 	if (metadata.version >= 9) {
 		metadata.skipGameScreenThumbnail(&stream);
 	}
 
 	// Read the resource trees state
-	_stateProvider->readStateFromStream(&stream, metadata.version);
+	StarkStateProvider->readStateFromStream(&stream, metadata.version);
 
 	// Read the diary state
-	_diary->readStateFromStream(&stream, metadata.version);
+	StarkDiary->readStateFromStream(&stream, metadata.version);
 
 	// Read the location stack
-	_resourceProvider->readLocationStack(&stream, metadata.version);
+	StarkResourceProvider->readLocationStack(&stream, metadata.version);
 
 	if (stream.eos()) {
 		warning("Unexpected end of file reached when reading '%s'", filename.c_str());
@@ -442,9 +317,9 @@ Common::Error StarkEngine::loadGameState(int slot) {
 	}
 
 	// Initialize the world resources with the loaded state
-	_resourceProvider->initGlobal();
-	_resourceProvider->setShouldRestoreCurrentState();
-	_resourceProvider->requestLocationChange(metadata.levelIndex, metadata.locationIndex);
+	StarkResourceProvider->initGlobal();
+	StarkResourceProvider->setShouldRestoreCurrentState();
+	StarkResourceProvider->requestLocationChange(metadata.levelIndex, metadata.locationIndex);
 
 	if (metadata.version >= 9) {
 		setTotalPlayTime(metadata.totalPlayTime);
@@ -456,12 +331,12 @@ Common::Error StarkEngine::loadGameState(int slot) {
 bool StarkEngine::canSaveGameStateCurrently() {
 	// Disallow saving when there is no level loaded or when a script is running
 	// or when the save & load menu is currently displayed
-	return _global->getLevel() && _userInterface->isInteractive() && !_userInterface->isInSaveLoadMenuScreen();
+	return StarkGlobal->getLevel() && StarkUserInterface->isInteractive() && !StarkUserInterface->isInSaveLoadMenuScreen();
 }
 
 Common::Error StarkEngine::saveGameState(int slot, const Common::String &desc) {
 	// Ensure the state store is up to date
-	_resourceProvider->commitActiveLocationsState();
+	StarkResourceProvider->commitActiveLocationsState();
 
 	// Open the save file
 	Common::String filename = formatSaveName(_targetName.c_str(), slot);
@@ -474,10 +349,10 @@ Common::Error StarkEngine::saveGameState(int slot, const Common::String &desc) {
 	SaveMetadata metadata;
 	metadata.description = desc;
 	metadata.version = StateProvider::kSaveVersion;
-	metadata.levelIndex = _global->getCurrent()->getLevel()->getIndex();
-	metadata.locationIndex = _global->getCurrent()->getLocation()->getIndex();
+	metadata.levelIndex = StarkGlobal->getCurrent()->getLevel()->getIndex();
+	metadata.locationIndex = StarkGlobal->getCurrent()->getLocation()->getIndex();
 	metadata.totalPlayTime = getTotalPlayTime();
-	metadata.gameWindowThumbnail = _userInterface->getGameWindowThumbnail();
+	metadata.gameWindowThumbnail = StarkUserInterface->getGameWindowThumbnail();
 
 	TimeDate timeDate;
 	_system->getTimeAndDate(timeDate);
@@ -487,13 +362,13 @@ Common::Error StarkEngine::saveGameState(int slot, const Common::String &desc) {
 	metadata.writeGameScreenThumbnail(save);
 
 	// 2. Write the resource trees state
-	_stateProvider->writeStateToStream(save);
+	StarkStateProvider->writeStateToStream(save);
 
 	// 3. Write the diary state
-	_diary->writeStateToStream(save);
+	StarkDiary->writeStateToStream(save);
 
 	// 4. Write the location stack
-	_resourceProvider->writeLocationStack(save);
+	StarkResourceProvider->writeLocationStack(save);
 
 	delete save;
 
@@ -508,10 +383,10 @@ void StarkEngine::pauseEngineIntern(bool pause) {
 	Engine::pauseEngineIntern(pause);
 
 	// This function may be called when an error occurs before the engine is fully initialized
-	if (_global && _global->getLevel() && _global->getCurrent()) {
-		_global->getLevel()->onEnginePause(pause);
-		_global->getCurrent()->getLevel()->onEnginePause(pause);
-		_global->getCurrent()->getLocation()->onEnginePause(pause);
+	if (StarkGlobal && StarkGlobal->getLevel() && StarkGlobal->getCurrent()) {
+		StarkGlobal->getLevel()->onEnginePause(pause);
+		StarkGlobal->getCurrent()->getLevel()->onEnginePause(pause);
+		StarkGlobal->getCurrent()->getLocation()->onEnginePause(pause);
 	}
 
 	if (_frameLimiter) {
@@ -519,26 +394,26 @@ void StarkEngine::pauseEngineIntern(bool pause) {
 	}
 
 	// Grab a game screen thumbnail in case we need one when writing a save file
-	if (_userInterface && _userInterface->isInGameScreen()) {
+	if (StarkUserInterface && StarkUserInterface->isInGameScreen()) {
 		if (pause) {
-			_userInterface->saveGameScreenThumbnail();
+			StarkUserInterface->saveGameScreenThumbnail();
 		} else {
-			_userInterface->freeGameScreenThumbnail();
+			StarkUserInterface->freeGameScreenThumbnail();
 		}
 	}
 
 	// The user may have moved the mouse or resized the window while the engine was paused
-	if (!pause && _userInterface) {
+	if (!pause && StarkUserInterface) {
 		onScreenChanged();
-		_userInterface->handleMouseMove(_eventMan->getMousePos());
+		StarkUserInterface->handleMouseMove(_eventMan->getMousePos());
 	}
 }
 
 void StarkEngine::onScreenChanged() const {
-	bool changed = _gfx->computeScreenViewport();
+	bool changed = StarkGfx->computeScreenViewport();
 	if (changed) {
-		_fontProvider->initFonts();
-		_userInterface->onScreenChanged();
+		StarkFontProvider->initFonts();
+		StarkUserInterface->onScreenChanged();
 	}
 }
 

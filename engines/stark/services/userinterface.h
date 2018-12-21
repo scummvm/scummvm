@@ -27,6 +27,7 @@
 
 #include "engines/stark/services/gamemessage.h"
 
+#include "common/keyboard.h"
 #include "common/rect.h"
 #include "common/str-array.h"
 #include "common/stack.h"
@@ -171,34 +172,11 @@ public:
 	void toggleScreen(Screen::Name screenName);
 
 	/** Toggle subtitles on and off */
-	void requestToggleSubtitle() { _shouldToggleSubtitle = !_shouldToggleSubtitle; }
 	bool hasToggleSubtitleRequest() { return _shouldToggleSubtitle; }
 	void performToggleSubtitle();
 
-	/** Cycle back or forward through inventory cursor items */
-	void cycleBackInventory() { cycleInventory(false); }
-	void cycleForwardInventory() { cycleInventory(true); }
-
-	/** Scroll the inventory up or down */
-	void scrollInventoryUp();
-	void scrollInventoryDown();
-
-	/** Scroll the dialog options up or down */
-	void scrollDialogUp();
-	void scrollDialogDown();
-
-	/** Focus on the next or previous dialog option */
-	void focusNextDialogOption();
-	void focusPrevDialogOption();
-
-	/** Select the focused dialog option */
-	void selectFocusedDialogOption();
-
-	/** Directly select a dialog option by index */
-	void selectDialogOptionByIndex(uint index);
-
-	/** Toggle the display of exit locations */
-	void toggleExitDisplay();
+	/** Perform an action after a keypress */
+	void handleKeyPress(const Common::KeyState &keyState);
 
 	static const uint kThumbnailWidth = 160;
 	static const uint kThumbnailHeight = 92;

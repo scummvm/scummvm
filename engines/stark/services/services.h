@@ -47,6 +47,7 @@ class StaticProvider;
 class Scene;
 class UserInterface;
 class Settings;
+class StateProvider;
 class GameChapter;
 class GameMessage;
 
@@ -71,6 +72,7 @@ public:
 		settings = nullptr;
 		gameChapter = nullptr;
 		gameMessage = nullptr;
+		stateProvider = nullptr;
 	}
 
 	ArchiveLoader *archiveLoader;
@@ -88,6 +90,7 @@ public:
 	Settings *settings;
 	GameChapter *gameChapter;
 	GameMessage *gameMessage;
+	StateProvider *stateProvider;
 };
 
 /** Shortcuts for accessing the services. */
@@ -106,6 +109,7 @@ public:
 #define StarkSettings           StarkServices::instance().settings
 #define StarkGameChapter        StarkServices::instance().gameChapter
 #define StarkGameMessage        StarkServices::instance().gameMessage
+#define StarkStateProvider      StarkServices::instance().stateProvider
 
 } // End of namespace Stark
 
