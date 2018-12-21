@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-12-19 07:31+0100\n"
-"PO-Revision-Date: 2018-09-01 10:58+0000\n"
+"PO-Revision-Date: 2018-12-22 09:14+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 2.9\n"
+"X-Generator: Weblate 3.3\n"
 "X-Language-name: Deutsch\n"
 
 #: gui/about.cpp:94
@@ -1215,7 +1215,7 @@ msgstr "Sprache der ScummVM-Oberfläche"
 
 #: gui/options.cpp:1696
 msgid "Switch the GUI language to the game language"
-msgstr ""
+msgstr "Menüsprache auf Spielsprache einstellen"
 
 #: gui/options.cpp:1697
 msgid ""
@@ -1223,16 +1223,22 @@ msgid ""
 "if a game uses the ScummVM save and load dialogs, they are in the same "
 "language as the game."
 msgstr ""
+"Die Sprache der Menüführung wird beim starten des Spiels auf die Sprache des "
+"Spiels gestellt. Damit ist sichergestellt, dass bei der Verwendung der "
+"ScummVM-eigenen \"Speichern und Laden\"-Funktionailität gleiche Sprachen "
+"verwendet werden."
 
 #: gui/options.cpp:1710
 msgid "Use native system file browser"
-msgstr ""
+msgstr "verwende betriebsystemeigenen Dateimanager"
 
 #: gui/options.cpp:1711
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
 msgstr ""
+"Verwende zur Auswahl einer Datei oder eines Verzeichnisses den "
+"betriebsystemeigenen Dateimanager anstelle der ScummVM-eigenen Auswahlmenüs"
 
 #: gui/options.cpp:1718 gui/updates-dialog.cpp:86
 msgid "Update check:"
