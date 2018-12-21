@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-12-19 07:31+0100\n"
-"PO-Revision-Date: 2018-12-18 05:04+0000\n"
+"PO-Revision-Date: 2018-12-22 09:14+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -3185,7 +3185,7 @@ msgstr "Nem látod. Túl sötét van!\n"
 
 #: engines/glk/scott/scott.cpp:407
 msgid "I can't see. It is too dark!\n"
-msgstr "Nem látom. Túl sötét van!\n"
+msgstr "Nem látok. Túl sötét van!\n"
 
 #: engines/glk/scott/scott.cpp:417
 #, c-format
