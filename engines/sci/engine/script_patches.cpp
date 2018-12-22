@@ -118,6 +118,8 @@ static const char *const selectorNameTable[] = {
 	"cycler",       // Space Quest 4 / system selector
 	"setLoop",      // Laura Bow 1 Colonel's Bequest, QFG4
 	"ignoreActors", // Laura Bow 1 Colonel's Bequest
+	"at",           // Longbow
+	"owner",        // Longbow
 #ifdef ENABLE_SCI32
 	"newWith",      // SCI2 array script
 	"scrollSelections", // GK2
@@ -199,7 +201,9 @@ enum ScriptPatcherSelectors {
 	SELECTOR_modeless,
 	SELECTOR_cycler,
 	SELECTOR_setLoop,
-	SELECTOR_ignoreActors
+	SELECTOR_ignoreActors,
+	SELECTOR_at,
+	SELECTOR_owner
 #ifdef ENABLE_SCI32
 	,
 	SELECTOR_newWith,
@@ -3609,6 +3613,55 @@ static const uint16 longbowPatchRescueFlagFix[] = {
 	PATCH_END
 };
 
+// On day 7, Tuck can appear at camp to say that the widow wants to see you when
+//  she really doesn't. This scene is only supposed to occur if you haven't
+//  received the net but the script only tests if the net is currently in
+//  inventory, which it isn't if you've already used it or are in disguise.
+//
+// We fix this by testing the net's owner instead of inventory. If net:owner is
+//  non-zero then it's in inventory or in your cave or has been used.
+//
+// Applies to: English PC Floppy, German PC Floppy, English Amiga Floppy
+// Responsible method: local procedure #3 in script 150
+// Fixes bug #10847
+static const uint16 longbowSignatureTuckNetFix[] = {
+	SIG_MAGICDWORD,
+	0x30, SIG_UINT16(0x03a2),       // bnt 03a2 [ end of method ]
+	0x38, SIG_SELECTOR16(has),      // pushi has
+	0x78,                           // push1
+	0x39, 0x04,                     // pushi 04
+	0x81, 0x00,                     // lag 00
+	0x4a, 0x06,                     // send 6 [ ego: has 4 ]
+	0x18,                           // not
+	0x30, SIG_UINT16(0x0394),       // bnt 0394 [ end of method if net not in inventory ]
+	0x78,                           // push1
+	0x39, 0x47,                     // pushi 47
+	0x45, 0x05, 0x02,               // callb proc0_5 [ is flag 47 set? ]
+	0x18,                           // not
+	0x30, SIG_UINT16(0x038a),       // bnt 038a [ end of method ]
+	SIG_ADDTOOFFSET(+60),
+	0x32, SIG_UINT16(0x034b),       // jmp 034b [ end of method ]
+	SIG_END
+};
+
+static const uint16 longbowPatchTuckNetFix[] = {
+	0x31, 0x55,                     // bnt 55 [ skip scene, save a byte ]
+	0x39, PATCH_SELECTOR8(at),      // pushi at
+	0x78,                           // push1
+	0x39, 0x04,                     // pushi 04
+	0x81, 0x09,                     // lag 09
+	0x4a, 0x06,                     // send 6 [ Inv: at 4 ]
+	0x38, PATCH_SELECTOR16(owner),  // pushi owner
+	0x76,                           // push0
+	0x4a, 0x04,                     // send 4 [ net: owner? ]
+	0x2f, 0x44,                     // bt 44 [ skip scene if net:owner != 0 ]
+	0x78,                           // push1
+	0x39, 0x47,                     // pushi 47
+	0x45, 0x05, 0x02,               // callb proc0_5 [ is flag 47 set? ]
+	0x2f, 0x3c,                     // bt 3c [ skip scene, save 2 bytes ]
+	PATCH_END
+};
+
 // On day 9, room 350 outside the cobbler's hut is initialized incorrectly if
 //  disguised as a monk. The entrance to the hut is broken and several minor
 //  messages are incorrect. This is due to the room's script assuming that the
@@ -3676,6 +3729,7 @@ static const uint16 longbowPatchAmigaPubFix[] = {
 //          script, description,                                      signature                          patch
 static const SciScriptPatcherEntry longbowSignatures[] = {
 	{  true,   150, "day 5/6 camp sunset fix",                     2, longbowSignatureCampSunsetFix,     longbowPatchCampSunsetFix },
+	{  true,   150, "day 7 tuck net fix",                          1, longbowSignatureTuckNetFix,        longbowPatchTuckNetFix },
 	{  true,   210, "hand code crash",                             5, longbowSignatureShowHandCode,      longbowPatchShowHandCode },
 	{  true,   225, "arithmetic berry bush fix",                   1, longbowSignatureBerryBushFix,      longbowPatchBerryBushFix },
 	{  true,   250, "day 5/6 rescue flag fix",                     1, longbowSignatureRescueFlagFix,     longbowPatchRescueFlagFix },
