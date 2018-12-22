@@ -70,6 +70,10 @@ public:
 			a.z * b.x - a.x * b.z,
 			a.x * b.y - a.y * b.x);
 	}
+
+	Vector2 xz() const {
+		return Vector2(x, z);
+	}
 };
 
 inline Vector3 operator+(Vector3 a, Vector3 b) {

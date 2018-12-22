@@ -36,6 +36,7 @@ class Obstacles {
 	static const int kVertexCount        = 150;
 	static const int kPolygonCount       =  50;
 	static const int kPolygonVertexCount = 160;
+	static const int kMaxPathSize        = 500;
 
 	enum VertexType {
 		BOTTOM_LEFT,
@@ -64,8 +65,8 @@ class Obstacles {
 
 	Polygon *_polygons;
 	Polygon *_polygonsBackup;
-	Vector2 *_vertices;
-	int      _verticeCount;
+	Vector2 *_path;
+	int      _pathSize;
 	int      _count;
 	bool     _backup;
 
@@ -83,19 +84,20 @@ public:
 	void add(float x0, float z0, float x1, float z1) { add(RectFloat(x0, z0, x1, z1)); }
 	int findEmptyPolygon() const;
 	static float getLength(float x0, float z0, float x1, float z1);
-	bool find(const Vector3 &from, const Vector3 &to, Vector3 *next) const;
+	bool findNextWaypoint(const Vector3 &from, const Vector3 &to, Vector3 *next);
 
 	bool findIntersectionNearest(int polygonIndex, Vector2 from, Vector2 to,
 	                             int *outVertexIndex, float *outDistance, Vector2 *out) const;
 	bool findIntersectionFarthest(int polygonIndex, Vector2 from, Vector2 to,
 	                              int *outVertexIndex, float *outDistance, Vector2 *out) const;
 
+	float pathTotalDistance(const Vector2 *path, int pathSize, Vector2 from, Vector2 to) const;
 	bool findPolygonVerticeByXZ(int *polygonIndex, int *verticeIndex, int *verticeCount, float x, float z) const;
 	bool findPolygonVerticeByXZWithinTolerance(float x, float z, int *polygonIndex, int *verticeIndex) const;
 
-	void clearVertices();
-	void copyVerticesReverse();
-	void copyVertices();
+	void clearPath();
+	int  buildNegativePath(int polyIndex, int vertStartIndex, Vector2 startPos, int vertEndIndex, Vector2 endPos, Vector2 *path, int pathCapacity, bool *pathBlocked);
+	int  buildPositivePath(int polyIndex, int vertStartIndex, Vector2 startPos, int vertEndIndex, Vector2 endPos, Vector2 *path, int pathCapacity, bool *pathBlocked);
 
 	void backup();
 	void restore();

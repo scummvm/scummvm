@@ -24,8 +24,10 @@
 
 #include "bladerunner/bladerunner.h"
 
+#include "bladerunner/actor.h"
 #include "bladerunner/savefile.h"
 #include "bladerunner/scene.h" // for debug
+#include "bladerunner/set.h"
 #include "bladerunner/view.h"
 
 #include "common/debug.h"
@@ -38,7 +40,7 @@ Obstacles::Obstacles(BladeRunnerEngine *vm) {
 	_vm = vm;
 	_polygons       = new Polygon[kPolygonCount];
 	_polygonsBackup = new Polygon[kPolygonCount];
-	_vertices       = new Vector2[kVertexCount];
+	_path           = new Vector2[kVertexCount];
 	clear();
 }
 
@@ -51,8 +53,8 @@ Obstacles::~Obstacles() {
 	delete[] _polygonsBackup;
 	_polygonsBackup = nullptr;
 
-	delete[] _vertices;
-	_vertices = nullptr;
+	delete[] _path;
+	_path = nullptr;
 }
 
 void Obstacles::clear() {
@@ -64,7 +66,7 @@ void Obstacles::clear() {
 			_polygons[i].vertices[j].y = 0.0f;
 		}
 	}
-	_verticeCount = 0;
+	_pathSize = 0;
 	_backup = false;
 	_count = 0;
 }
@@ -212,8 +214,6 @@ bool Obstacles::mergePolygons(Polygon &polyA, Polygon &polyB) {
 
 		if (linePolygonIntersection(polyLine, polyPrimaryType, polySecondary, &intersectionPoint, &polySecondaryIntersectionIndex)) {
 			if (WITHIN_TOLERANCE(intersectionPoint.x, polyLine.start.x) && WITHIN_TOLERANCE(intersectionPoint.y, polyLine.start.y)) {
-				warning("Set: %d Scene: %d", _vm->_scene->getSetId(), _vm->_scene->getSceneId());
-				warning("Report instances of this to madmoose!");
 				flagAddVertexToVertexList = false;
 				polyMerged.verticeCount--; // TODO(madmoose): How would this work?
 			} else {
@@ -315,9 +315,115 @@ float Obstacles::getLength(float x0, float z0, float x1, float z1) {
 	return fabs(x1 - x0);
 }
 
-bool Obstacles::find(const Vector3 &from, const Vector3 &to, Vector3 *next) const {
-	//TODO
-	*next = to;
+bool Obstacles::findNextWaypoint(const Vector3 &from, const Vector3 &to, Vector3 *next) {
+	static int  recursionLevel = 0;
+	static bool polygonVisited[kPolygonCount];
+
+	if (++recursionLevel == 1) {
+		clearPath();
+		for (int i = 0; i != kPolygonCount; ++i) {
+			polygonVisited[i] = false;
+		}
+	}
+
+	int     polyIndex = -1;
+	int     polyNearVertIndex;
+	float   polyNearDist = 0.0f;
+	Vector2 polyNearPos;
+	int     polyFarVertIndex;
+	float   polyFarDist = 0.0f;
+	Vector2 polyFarPos;
+
+	for (int i = 0; i != kPolygonCount; ++i) {
+		Polygon &poly = _polygons[i];
+		if (!poly.isPresent || polygonVisited[i]) {
+			continue;
+		}
+
+		int     nearVertIndex;
+		float   nearDist;
+		Vector2 nearPos;
+
+		if (!findIntersectionNearest(i, from.xz(), to.xz(), &nearVertIndex, &nearDist, &nearPos)) {
+			continue;
+		}
+
+		int     farVertIndex;
+		float   farDist;
+		Vector2 farPos;
+
+		int hasFar = findIntersectionFarthest(i, from.xz(), to.xz(), &farVertIndex, &farDist, &farPos);
+		assert(hasFar);
+
+		if (polyIndex == -1 || nearDist < polyNearDist) {
+			polyNearDist = nearDist;
+			polyNearPos = nearPos;
+			polyFarDist = farDist;
+			polyFarPos = farPos;
+			polyIndex = i;
+			polyNearVertIndex = nearVertIndex;
+			polyFarVertIndex = farVertIndex;
+		}
+	}
+
+	if (polyIndex < 0) {
+		assert(_pathSize < kVertexCount);
+		_path[_pathSize++] = to.xz();
+	} else {
+		polygonVisited[polyIndex] = true;
+
+		if (polyNearDist == 0.0f && polyFarDist == 0.0f) {
+			assert(_pathSize < kVertexCount);
+			_path[_pathSize++] = polyNearPos;
+		} else {
+			Vector2 pathA[kMaxPathSize];
+			Vector2 pathB[kMaxPathSize];
+
+			bool pathABlocked;
+			bool pathBBlocked;
+
+			int pathASize = buildNegativePath(polyIndex, polyNearVertIndex, polyNearPos, polyFarVertIndex, polyFarPos, pathA, kMaxPathSize, &pathABlocked);
+			int pathBSize = buildPositivePath(polyIndex, polyNearVertIndex, polyNearPos, polyFarVertIndex, polyFarPos, pathB, kMaxPathSize, &pathBBlocked);
+
+			float pathATotalDistance = pathTotalDistance(pathA, pathASize, from.xz(), to.xz());
+			float pathBTotalDistance = pathTotalDistance(pathB, pathBSize, from.xz(), to.xz());
+
+			bool usePathA;
+			if (pathABlocked && !pathBBlocked) {
+				usePathA = false;
+			} else if (pathBBlocked && !pathABlocked) {
+				usePathA = true;
+			} else {
+				usePathA = pathATotalDistance <= pathBTotalDistance;
+			}
+
+			if (usePathA) {
+				assert(_pathSize + pathASize < kVertexCount);
+				for (int i = 0; i != pathASize; ++i) {
+					_path[_pathSize + i] = pathA[i];
+				}
+				_pathSize += pathASize;
+			} else {
+				assert(_pathSize + pathBSize < kVertexCount);
+				for (int i = 0; i != pathBSize; ++i) {
+					_path[_pathSize + i] = pathB[i];
+				}
+				_pathSize += pathBSize;
+			}
+		}
+		assert(_pathSize > 0);
+		Vector3 lastPathPos(_path[_pathSize - 1].x, from.y, _path[_pathSize - 1].y);
+		findNextWaypoint(lastPathPos, to, next);
+	}
+
+	if (--recursionLevel > 1) {
+		return false;
+	}
+
+	// TODO(tmf)
+	// postProcessPath(_path, _pathSize, &next);
+
+	*next = Vector3(_path[0].x, from.y, _path[0].y);
 	return true;
 }
 
@@ -385,6 +491,16 @@ bool Obstacles::findIntersectionFarthest(int polygonIndex, Vector2 from, Vector2
 	return maxVertexIndex != -1;
 }
 
+float Obstacles::pathTotalDistance(const Vector2 *path, int pathSize, Vector2 from, Vector2 to) const {
+	// Yes, 'to' and 'from' are ignored.
+	float totalDistance = 0.0f;
+	for (int i = 0; i != pathSize - 1; ++i) {
+		totalDistance += distance(path[i], path[i+1]);
+	}
+	return totalDistance;
+}
+
+
 bool Obstacles::findPolygonVerticeByXZ(int *polygonIndex, int *verticeIndex, int *verticeCount, float x, float z) const {
 	*polygonIndex = -1;
 	*verticeIndex = -1;
@@ -431,16 +547,82 @@ bool Obstacles::findPolygonVerticeByXZWithinTolerance(float x, float z, int *pol
 	return false;
 }
 
-void Obstacles::clearVertices() {
-	_verticeCount = 0;
+void Obstacles::clearPath() {
+	_pathSize = 0;
 }
 
-void Obstacles::copyVerticesReverse() {
+int Obstacles::buildNegativePath(int polyIndex, int vertStartIndex, Vector2 startPos, int vertEndIndex, Vector2 endPos, Vector2 *path, int pathCapacity, bool *pathBlocked) {
+	int pathSize = 0;
+	*pathBlocked = false;
+	Polygon *poly = &_polygons[polyIndex];
 
+	/* Add start position to path */
+	if (_vm->_scene->_set->findWalkbox(startPos.x, startPos.y) == -1) {
+		*pathBlocked = true;
+	}
+	assert(pathSize < pathCapacity);
+	path[pathSize++] = startPos;
+
+#define DEC_WRAP(x) (((x) + poly->verticeCount - 1) % poly->verticeCount)
+
+	/* Add polygon vertices in negative iteration order */
+	for (int i = vertStartIndex; i != vertEndIndex; i = DEC_WRAP(i)) {
+		Vector2 v = poly->vertices[i];
+		if (_vm->_scene->_set->findWalkbox(v.x, v.y) == -1) {
+			*pathBlocked = true;
+		}
+
+		assert(pathSize < pathCapacity);
+		path[pathSize++] = v;
+	}
+
+#undef DEC_WRAP
+
+	/* Add end position to path */
+	if (_vm->_scene->_set->findWalkbox(endPos.x, endPos.y) == -1) {
+		*pathBlocked = true;
+	}
+	assert(pathSize < pathCapacity);
+	path[pathSize++] = endPos;
+
+	return pathSize;
 }
 
-void Obstacles::copyVertices() {
+int Obstacles::buildPositivePath(int polyIndex, int vertStartIndex, Vector2 startPos, int vertEndIndex, Vector2 endPos, Vector2 *path, int pathCapacity, bool *pathBlocked) {
+	int pathSize = 0;
+	*pathBlocked = false;
+	Polygon *poly = &_polygons[polyIndex];
 
+	/* Add start position to path */
+	if (_vm->_scene->_set->findWalkbox(startPos.x, startPos.y) == -1) {
+		*pathBlocked = true;
+	}
+	assert(pathSize < pathCapacity);
+	path[pathSize++] = startPos;
+
+#define INC_WRAP(x) (((x) + 1) % poly->verticeCount)
+
+	/* Add polygon vertices in positive iteration order */
+	for (int i = INC_WRAP(vertStartIndex); i != vertEndIndex; i = INC_WRAP(i)) {
+		Vector2 v = poly->vertices[i];
+		if (_vm->_scene->_set->findWalkbox(v.x, v.y) == -1) {
+			*pathBlocked = true;
+		}
+
+		assert(pathSize < pathCapacity);
+		path[pathSize++] = v;
+	}
+
+#undef INC_WRAP
+
+	/* Add end position to path */
+	if (_vm->_scene->_set->findWalkbox(endPos.x, endPos.y) == -1) {
+		*pathBlocked = true;
+	}
+	assert(pathSize < pathCapacity);
+	path[pathSize++] = endPos;
+
+	return pathSize;
 }
 
 void Obstacles::backup() {
@@ -492,9 +674,9 @@ void Obstacles::save(SaveFileWriteStream &f) {
 		}
 	}
 	for (int i = 0; i < kVertexCount; ++i) {
-		f.writeVector2(_vertices[i]);
+		f.writeVector2(_path[i]);
 	}
-	f.writeInt(_verticeCount);
+	f.writeInt(_pathSize);
 }
 
 void Obstacles::load(SaveFileReadStream &f) {
@@ -528,12 +710,13 @@ void Obstacles::load(SaveFileReadStream &f) {
 	}
 
 	for (int i = 0; i < kVertexCount; ++i) {
-		_vertices[i] = f.readVector2();
+		_path[i] = f.readVector2();
 	}
-	_verticeCount = f.readInt();
+	_pathSize = f.readInt();
 }
 
 void Obstacles::draw() {
+	float floor = _vm->_playerActor->getY();
 	for (int i = 0; i != kPolygonCount; ++i) {
 		if (!_polygons[i].isPresent) {
 			continue;
@@ -541,14 +724,14 @@ void Obstacles::draw() {
 
 		Vector3 p0 = _vm->_view->calculateScreenPosition(Vector3(
 			_polygons[i].vertices[_polygons[i].verticeCount - 1].x,
-			0,
+			floor,
 			_polygons[i].vertices[_polygons[i].verticeCount - 1].y
 		));
 
 		for (int j = 0; j != _polygons[i].verticeCount; ++j) {
 			Vector3 p1 = _vm->_view->calculateScreenPosition(Vector3(
 				_polygons[i].vertices[j].x,
-				0.0f,
+				floor,
 				_polygons[i].vertices[j].y
 			));
 

@@ -422,7 +422,7 @@ int ActorWalk::nextOnPath(int actorId, const Vector3 &from, const Vector3 &to, V
 		return 0;
 	}
 	Vector3 next1;
-	if (_vm->_obstacles->find(from, to, &next1)) {
+	if (_vm->_obstacles->findNextWaypoint(from, to, &next1)) {
 		next = next1;
 		return 1;
 	}
