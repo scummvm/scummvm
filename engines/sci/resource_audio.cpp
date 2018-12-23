@@ -461,6 +461,13 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 				n = 0x02200001;
 			}
 
+			// QFG4CD has a message whose audio36 resource has the wrong tuple and never plays.
+			//  The message tuple is 510 23 1 0 1 but the audio36 tuple is 510 199 1 0 1. bug #10848
+			if (g_sci->getGameId() == GID_QFG4 && g_sci->isCD() &&
+				map->_mapNumber == 510 && n == 0xc7010001) {
+				n = 0x17010001;
+			}
+
 			if (isEarly) {
 				offset = ptr.getUint32LE();
 				ptr += 4;
