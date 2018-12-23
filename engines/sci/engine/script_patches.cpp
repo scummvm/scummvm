@@ -127,7 +127,7 @@ static const char *const selectorNameTable[] = {
 	"ignoreActors", // Laura Bow 1 Colonel's Bequest
 	"setVol",       // Laura Bow 2 CD
 	"at",           // Longbow, QFG4
-	"owner",        // Longbow
+	"owner",        // Longbow, QFG4
 	"delete",       // EcoQuest 1
 	"size",         // EcoQuest 1
 	"signal",       // EcoQuest 1, GK1
@@ -168,14 +168,22 @@ static const char *const selectorNameTable[] = {
 	"plane",        // RAMA
 	"state",        // RAMA
 	"getSubscriberObj", // RAMA
+	"advanceCurIcon", // QFG4
+	"amount",       // QFG4
 	"approachVerbs", // QFG4
 	"changeState",  // QFG4
 	"cue",          // QFG4
+	"curIcon",      // QFG4
+	"curInvIcon",   // QFG4
+	"getCursor",    // QFG4
 	"heading",      // QFG4
+	"hide",         // QFG4
 	"moveSpeed",    // QFG4
 	"sayMessage",   // QFG4
+	"setCursor",    // QFG4
 	"setLooper",    // QFG4
 	"setSpeed",     // QFG4
+	"useStamina",   // QFG4
 	"value",        // QFG4
 #endif
 	NULL
@@ -269,14 +277,22 @@ enum ScriptPatcherSelectors {
 	SELECTOR_plane,
 	SELECTOR_state,
 	SELECTOR_getSubscriberObj,
+	SELECTOR_advanceCurIcon,
+	SELECTOR_amount,
 	SELECTOR_approachVerbs,
 	SELECTOR_changeState,
 	SELECTOR_cue,
+	SELECTOR_curIcon,
+	SELECTOR_curInvIcon,
+	SELECTOR_getCursor,
 	SELECTOR_heading,
+	SELECTOR_hide,
 	SELECTOR_moveSpeed,
 	SELECTOR_sayMessage,
+	SELECTOR_setCursor,
 	SELECTOR_setLooper,
 	SELECTOR_setSpeed,
+	SELECTOR_useStamina,
 	SELECTOR_value
 #endif
 };
@@ -10810,6 +10826,172 @@ static const uint16 qfg4GuildWalkFloppyPatch3[] = {
 	PATCH_END                           // (don't end the switch, keep testing cases)
 };
 
+// Rations are not properly decremented by daily scheduled meal consumption.
+// Rations are consumed periodically as time advances. If rations are the
+// active inventory item when the last of them is eaten, that icon will persist
+// in the verb bar.
+//
+// We make room by consolidating common gloryMessager::say() args in a
+// subroutine and cache values with temp variables. We add code to clean up
+// the verb bar when rations are exhausted (test if rations were the active
+// item, advance the cursor, hide the bar's invItem icon) - similar to the
+// localproc in script 16, called by combinable items to remove themselves.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: hero::eatMeal() in script 28
+// Fixes bug: #10772
+static const uint16 qfg4LeftoversSignature[] = {
+	0x3f, 0x01,                         // link 1d
+	SIG_ADDTOOFFSET(+9),                // ...
+	SIG_MAGICDWORD,
+	0xe1, 0x88,                         // -ag global[136] (digest a preemptively eaten meal)
+	0x35, 0x01,                         // ldi 1d
+	SIG_ADDTOOFFSET(+238),              // ...
+	0x85, 0x00,                         // lat temp[0] (eaten, unset flags if true)
+	SIG_END
+};
+
+static const uint16 qfg4LeftoversPatch[] = {
+	0x3f, 0x03,                         // link 3d (3 temp vars)
+
+	PATCH_ADDTOOFFSET(+15),             // (cond 1, preemptively eaten meals)
+	0x32, PATCH_UINT16(0x00bb),         // jmp 187d [end the cond]
+
+                                        // (cond 2)
+	0x39, PATCH_SELECTOR8(at),          // pushi at
+	0x78,                               // push1
+	0x39, 0x04,                         // pushi 4d (itemId 4, theRations)
+	0x81, 0x09,                         // lag global[9] (gloryInv)
+	0x4a, PATCH_UINT16(0x0006),         // send 6d
+	0xa5, 0x01,                         // sat temp[1] (theRations)
+
+	0x38, PATCH_SELECTOR16(amount),     // pushi amount
+	0x76,                               // push0
+	0x4a, PATCH_UINT16(0x0004),         // send 4d (theRations amount:)
+	0xa5, 0x02,                         // sat temp[2] (amount)
+
+	0x31, 0x50,                         // bnt 80d [next condition]
+
+	0x38, PATCH_SELECTOR16(amount),     // pushi amount
+	0x78,                               // push1
+	0xed, 0x02,                         // -st temp[2] (amount)
+	0x85, 0x01,                         // lat temp[1] (theRations)
+	0x4a, PATCH_UINT16(0x0006),         // send 6d (decrement amount)
+
+	0x85, 0x02,                         // lat temp[2] (amount)
+	0x2f, 0x3b,                         // bt 59d [skip exhausted item removal]
+
+	0x38, PATCH_SELECTOR16(owner),      // pushi owner
+	0x78,                               // push1
+	0x76,                               // push0
+	0x85, 0x01,                         // lat temp[1] (theRations)
+	0x4a, PATCH_UINT16(0x0006),         // send 6d
+
+	0x38, PATCH_SELECTOR16(curInvIcon), // pushi curInvIcon
+	0x76,                               // push0
+	0x81, 0x45,                         // lag global[69] (mainIconBar)
+	0x4a, PATCH_UINT16(0x0004),         // send 4d
+	0x8d, 0x01,                         // lst temp[1] (theRations)
+	0x1a,                               // eq?
+	0x31, 0x23,                         // bnt 35d [skip icon bar disabling]
+
+	0x38, PATCH_SELECTOR16(curInvIcon), // pushi curInvIcon
+	0x78,                               // push1
+	0x76,                               // push0
+	0x38, PATCH_SELECTOR16(advanceCurIcon), // pushi advanceCurIcon
+	0x76,                               // push0
+	0x38, PATCH_SELECTOR16(disable),    // pushi disable
+	0x78,                               // push1
+	0x39, 0x06,                         // pushi 6d
+	0x81, 0x45,                         // lag global[69] (mainIconBar)
+	0x4a, PATCH_UINT16(0x0010),         // send 16d
+
+	0x38, PATCH_SELECTOR16(hide),       // pushi hide
+	0x76,                               // push0
+                                        //
+	0x7a,                               // push2 (2 call args)
+	0x39, 0x24,                         // pushi 36d
+	0x78,                               // push1
+	0x43, 0x02, PATCH_UINT16(0x0004),   // callk ScriptID, 4d (ScriptID 36 1, invItem)
+                                        //
+	0x4a, PATCH_UINT16(0x0004),         // send 4d (invItem hide:)
+                                        // (exhausted item removal end)
+
+	0x35, 0x01,                         // ldi 1d
+	0xa5, 0x00,                         // sat temp[0] (eaten)
+
+	0x33, 0x54,                         // jmp 84d [end the cond]
+
+                                        // (cond 3)
+	0x78,                               // push1 (1 call arg)
+	0x39, 0x03,                         // pushi 3d ("hungry" flag)
+	0x45, 0x04, PATCH_UINT16(0x0002),   // callb [export 4 of script 0], 2d (test flag 3)
+	0x31, 0x26,                         // bnt 38d [next condition]
+                                        //
+	0x38, PATCH_SELECTOR16(useStamina), // pushi useStamina
+	0x7a,                               // push2
+	0x39, 0x08,                         // pushi 8d
+	0x76,                               // push0
+	0x54, PATCH_UINT16(0x0008),         // self 8d (hero useStamina: 8 0)
+                                        //
+	0x31, 0x09,                         // bnt 9d [hero dies]
+	0x78,                               // push1 (1 call arg)
+	0x39, 0x05,                         // pushi 5d (say cond:5, "You're starving.")
+	0x41, 0x3a, PATCH_UINT16(0x0002),   // call [58], 2d (gloryMessager say: 1 6 5 1 0 28)
+	0x33, 0x36,                         // jmp 54d [end the cond]
+                                        //
+	0x39, 0x04,                         // pushi 4d (4 call args)
+	0x39, 0x08,                         // pushi 8d
+	0x39, 0x1c,                         // pushi 28d
+	0x38, PATCH_UINT16(0x03e3),         // pushi 995d
+	0x78,                               // push1
+	0x47, 0x1a, 0x00, PATCH_UINT16(0x0008), // calle [export 0 of script 26], 8d (hero dies)
+	0x33, 0x25,                         // jmp 37d [end the cond]
+
+                                        // (cond 4)
+	0x78,                               // push1 (1 call arg)
+	0x7a,                               // push2 ("missed meal" flag)
+	0x45, 0x04, PATCH_UINT16(0x0002),   // callb [export 4 of script 0], 2d (test flag 2)
+	0x31, 0x10,                         // bnt 16d [next condition]
+                                        //
+	0x78,                               // push1 (1 call arg)
+	0x39, 0x03,                         // pushi 3d ("hungry" flag)
+	0x45, 0x02, PATCH_UINT16(0x0002),   // callb [export 2 of script 0], 2d (set flag 3)
+                                        //
+	0x78,                               // push1 (1 call arg)
+	0x39, 0x06,                         // pushi 6d (say cond:6, "Really getting hungry.")
+	0x41, 0x11, PATCH_UINT16(0x0002),   // call [17], 2d (gloryMessager say: 1 6 6 1 0 28)
+	0x33, 0x0d,                         // jmp 13d [end the cond]
+
+                                        // (cond else)
+	0x78,                               // push1 (1 call arg)
+	0x7a,                               // push2 ("missed meal" flag)
+	0x45, 0x02, PATCH_UINT16(0x0002),   // callb [export 2 of script 0], 2d (set flag 2)
+                                        //
+	0x78,                               // push1 (1 call arg)
+	0x39, 0x04,                         // pushi 4d (say cond:4, "Get food soon.")
+	0x41, 0x02, PATCH_UINT16(0x0002),   // call [2], 2d (gloryMessager say: 1 6 4 1 0 28)
+
+                                        // (cond end)
+
+	0x33, 0x14,                         // jmp 20d [skip subroutine declaration]
+	0x38, PATCH_SELECTOR16(say),        // pushi say
+	0x39, 0x06,                         // pushi 6d
+	0x78,                               // push1 (noun)
+	0x39, 0x06,                         // pushi 6d (verb)
+	0x8f, 0x01,                         // lsp param[1] (cond varies)
+	0x78,                               // push1 (seq)
+	0x76,                               // push0 (caller)
+	0x39, 0x1c,                         // pushi 28d (message pool)
+	0x81, 0x5b,                         // lag global[91] (gloryMessager say: 1 6 ? 1 0 28)
+	0x4a, PATCH_UINT16(0x0010),         // send 16d
+	0x48,                               // ret
+
+	0x33, 0x16,                         // jmp 22d [skip waste bytes]
+	0x35, 0x00,                         // ldi 0 (erase 2 bytes to keep disasm aligned)
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qfg4AutosaveSignature,         qfg4AutosavePatch },
@@ -10822,6 +11004,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,    11, "fix trigger after summon staff (1/2)",        1, qfg4TriggerStaffSignature1,    qfg4TriggerStaffPatch1 },
 	{  true,    11, "fix trigger after summon staff (2/2)",        1, qfg4TriggerStaffSignature2,    qfg4TriggerStaffPatch2 },
 	{  true,    13, "fix spell effect disposal",                   1, qfg4EffectDisposalSignature,   qfg4EffectDisposalPatch },
+	{  true,    28, "fix lingering rations icon after eating",     1, qfg4LeftoversSignature,        qfg4LeftoversPatch },
 	{  true,    31, "fix setScaler calls",                         1, qfg4SetScalerSignature,        qfg4SetScalerPatch },
 	{  true,    41, "fix conditional void calls",                  3, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
 	{  true,    83, "fix incorrect array type",                    1, qfg4TrapArrayTypeSignature,    qfg4TrapArrayTypePatch },
