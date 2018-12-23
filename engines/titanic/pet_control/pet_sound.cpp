@@ -202,9 +202,9 @@ bool CPetSound::MouseButtonDownMsg(const Point &pt) {
 	CPetSlider *sliders[4] = { &_masterVolume, &_musicVolume, &_parrotVolume, &_speechVolume };
 	for (int idx = MASTER_SLIDER; idx <= SPEECH_SLIDER; ++idx) {
 		CPetSlider *slider = sliders[idx];
-		bool isLeft = rectLeft.contains(pt);
-		bool isRight = rectRight.contains(pt);
-		double offset;
+		const bool isLeft = rectLeft.contains(pt);
+		const bool isRight = rectRight.contains(pt);
+		double offset = 0.0;
 
 		if (isLeft) {
 			slider->stepPosition(-1);
