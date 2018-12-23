@@ -8077,7 +8077,7 @@ static const uint16 qg4InnPathfindingPatch[] = {
 };
 
 // When autosave is enabled, Glory::save() (script 0) deletes savegame files in
-// a loop: while disk space is insufficient for a new save, or while there are
+// a loop, while disk space is insufficient for a new save, or while there are
 // 20+ saves. Since ScummVM handles slots differently and allows far more
 // slots, this deletes all but the most recent 19 manual saves, merely by
 // walking from room to room!
@@ -9013,9 +9013,9 @@ static const uint16 qfg4RestartPatch[] = {
 // broadly tolerate nulls. That'd avoid exceptions but wouldn't restore normal
 // scaling after a climb.
 //
-// As last resort, we simply leave the original scaler on hero, erasing the
-// setScale() call that would freeze hero's size. hero shrinks/grows a little
-// while climbing as a side effect.
+// As a last resort, we simply leave the original scaler on hero, erasing the
+// setScale() call that would freeze hero's size. The hero shrinks/grows a
+// little while climbing as a side effect, but that's barely noticeable.
 //
 // Applies to at least: English CD, English floppy, German floppy
 // Responsible method: sUseTheGrapnel::changeState(5) in script 800
@@ -9044,7 +9044,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "fix inventory leaks across restarts",         1, qfg4RestartSignature,          qfg4RestartPatch },
 	{  true,     1, "disable volume reset on startup",             1, sci2VolumeResetSignature,      sci2VolumeResetPatch },
 	{  true,     1, "disable video benchmarking",                  1, qfg4BenchmarkSignature,        qfg4BenchmarkPatch },
-	{  true,     7, "fix consecutive moonrises",                   1, qfg4MoonriseSignature,         qfg4MoonrisePatch },
+	{  true,     7, "fix consecutive moon rises",                  1, qfg4MoonriseSignature,         qfg4MoonrisePatch },
 	{  true,    10, "fix setLooper calls (2/2)",                   2, qg4SetLooperSignature2,        qg4SetLooperPatch2 },
 	{  true,    31, "fix setScaler calls",                         1, qfg4SetScalerSignature,        qfg4SetScalerPatch },
 	{  true,    41, "fix conditional void calls",                  3, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
@@ -9091,11 +9091,12 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 
 // ===========================================================================
 //  script 298 of sq4/floppy has an issue. object "nest" uses another property
-//   which isn't included in property count. We return 0 in that case, the game
-//   adds it to nest::x. The problem is that the script also checks if x exceeds
-//   we never reach that of course, so the pterodactyl-flight will go endlessly
-//   we could either calculate property count differently somehow fixing this
-//   but I think just patching it out is cleaner.
+//   which isn't included in property count. We return 0 in that case, so that
+//   the game does not increment nest::x. The problem is that the script also
+//   checks if x exceeds nest::x. We never reach that of course, so the
+//   incorrect property means that the pterodactyl flight will continue
+//	 endlessly. We could either calculate the property count differently,
+//   thereby fixing this bug, but I think that just patching it out is cleaner.
 // Fixes bug: #5093
 static const uint16 sq4FloppySignatureEndlessFlight[] = {
 	0x39, 0x04,                         // pushi 04 (selector x)
