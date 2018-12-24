@@ -249,6 +249,33 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 			t.cond = 13;
 		}
 
+		if (g_sci->getGameId() == GID_QFG4 && stack.getModule() == 16 &&
+			t.noun == 49 && t.verb == 1 && t.cond == 0 && t.seq == 2) {
+			// Examining the statue inventory item from the monastery - bug #10770
+			// The description says "squid-like monster", yet the icon is
+			// clearly an insect. It turned Chief into "an enormous beetle". We
+			// change the phrase to "monstrous insect".
+			//
+			// Note: The German string contains accented characters.
+			//  0x84 "a with diaeresis"
+			//  0x94 "o with diaeresis"
+			//
+			// Values were pulled from SCI Companion's raw message data. They
+			// are escaped that way here, as encoded bytes.
+			record.tuple = t;
+			record.refTuple = MessageTuple();
+			record.talker = 99;
+			if (g_sci->getSciLanguage() == K_LANG_GERMAN) {
+				record.string = "Die groteske Skulptur eines schrecklichen, monstr\x94sen insekts ist sorgf\x84ltig in die Einkaufstasche eingewickelt.";
+				record.length = 112;
+			} else {
+				record.string = "Carefully wrapped in a shopping bag is the grotesque sculpture of a horrible, monstrous insect.";
+				record.length = 95;
+			}
+			delete reader;
+			return true;
+		}
+
 		if (g_sci->getGameId() == GID_QFG4 && stack.getModule() == 579 &&
 			t.noun == 0 && t.verb == 0 && t.cond == 0 && t.seq == 1) {
 			// Talking with the Leshy and telling him about "bush in goo" - bug #10137
