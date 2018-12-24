@@ -1,0 +1,7 @@
+targetEncoding=windows-1253
+asciiCharList=!!"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~–ƒΆΈΉΊΌΎΏΐΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩΪΫάέήίΰαβγδεζηθικλμνξοπρςστυφχψωϊϋόύώ
+explicitKerningList=!:1,;:1,`:1,{:1,|:1,}:1
+explicitWidthIncrement=i:0,j:1,l:1
+originalFontName=KIA6PT
+specialOutOfOrderGlyphsUTF8ToAsciiTargetEncoding=é:ƒ,ü:–
+
