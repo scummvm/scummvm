@@ -70,12 +70,9 @@ void Item::getWidthHeight(int *width, int *height) const {
 	*height = _height;
 }
 
-bool Item::isTarget() const {
-	return _isTarget;
-}
-
-bool Item::isPoliceMazeEnemy() const {
-	return _isPoliceMazeEnemy;
+void Item::setFacing(int facing) {
+	_facing = facing;
+	_angle = _facing * (M_PI / 512.0f);
 }
 
 bool Item::tick(Common::Rect *screenRect, bool special) {

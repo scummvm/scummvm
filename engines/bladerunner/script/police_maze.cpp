@@ -286,14 +286,14 @@ bool PoliceMazeTargetTrack::tick() {
 	while (cont) {
 		_dataIndex++;
 
-		debug ("ItemId %3i, pos %3i, instruction %3i", _itemId, _dataIndex - 1,  _data[_dataIndex - 1]);
-
 		switch (_data[_dataIndex - 1]) {
 		case kPMTIActivate:
 			{
 				int variableId = _data[_dataIndex++];
 				int maxValue = _data[_dataIndex++];
-
+#if BLADERUNNER_DEBUG_CONSOLE
+				debug("ItemId: %3i, Activate, VariableId: %i, Max value: %i", _itemId, variableId, maxValue);
+#endif
 				if (Global_Variable_Query(variableId) >= maxValue) {
 					setPaused();
 					cont = false;
@@ -304,16 +304,23 @@ bool PoliceMazeTargetTrack::tick() {
 			}
 
 		case kPMTILeave:
-			if (!_vm->_items->isPoliceMazeEnemy(_itemId) && _vm->_items->isTarget(_itemId)) {
-				Police_Maze_Increment_Score(1);
+			{
+#if BLADERUNNER_DEBUG_CONSOLE
+				debug("ItemId: %3i, Leave", _itemId);
+#endif
+				if (!_vm->_items->isPoliceMazeEnemy(_itemId) && _vm->_items->isTarget(_itemId)) {
+					Police_Maze_Increment_Score(1);
+				}
+				break;
 			}
-			break;
 
 		case kPMTIShoot:
 			{
 				int soundId = _data[_dataIndex++];
 				_dataIndex++; // second argument is not used
-
+#if BLADERUNNER_DEBUG_CONSOLE
+				debug("ItemId: %3i, Shoot, SoundId: %i", _itemId, soundId);
+#endif
 				if (_vm->_items->isTarget(_itemId)) {
 					Sound_Play(soundId, 90, 0, 0, 50);
 					Police_Maze_Decrement_Score(1);
@@ -344,6 +351,9 @@ bool PoliceMazeTargetTrack::tick() {
 		case kPMTIEnemyReset:
 			{
 				int itemId = _data[_dataIndex++];
+#if BLADERUNNER_DEBUG_CONSOLE
+				debug("ItemId: %3i, Enemy reset, OtherItemId: %i", _itemId, itemId);
+#endif
 				_vm->_items->setPoliceMazeEnemy(itemId, false);
 				break;
 			}
@@ -351,6 +361,9 @@ bool PoliceMazeTargetTrack::tick() {
 		case kPMTIEnemySet:
 			{
 				int itemId = _data[_dataIndex++];
+#if BLADERUNNER_DEBUG_CONSOLE
+				debug("ItemId: %3i, Enemy set, OtherItemId: %i", _itemId, itemId);
+#endif
 				_vm->_items->setPoliceMazeEnemy(itemId, true);
 				break;
 			}
@@ -358,6 +371,9 @@ bool PoliceMazeTargetTrack::tick() {
 		case kPMTIFlagReset:
 			{
 				int gameFlagId = _data[_dataIndex++];
+#if BLADERUNNER_DEBUG_CONSOLE
+				debug("ItemId: %3i, Flag reset, FlagId: %i", _itemId, gameFlagId);
+#endif
 				Game_Flag_Reset(gameFlagId);
 				break;
 			}
@@ -365,6 +381,9 @@ bool PoliceMazeTargetTrack::tick() {
 		case kPMTIFlagSet:
 			{
 				int gameFlagId = _data[_dataIndex++];
+#if BLADERUNNER_DEBUG_CONSOLE
+				debug("ItemId: %3i, Flag set, FlagId: %i", _itemId, gameFlagId);
+#endif
 				Game_Flag_Set(gameFlagId);
 				break;
 			}
@@ -372,6 +391,9 @@ bool PoliceMazeTargetTrack::tick() {
 		case kPMTIVariableDec:
 			{
 				int variableId = _data[_dataIndex++];
+#if BLADERUNNER_DEBUG_CONSOLE
+				debug("ItemId: %3i, Variable decrement, VariableId: %i", _itemId, variableId);
+#endif
 				Global_Variable_Decrement(variableId, 1);
 				break;
 			}
@@ -380,6 +402,9 @@ bool PoliceMazeTargetTrack::tick() {
 			{
 				int variableId = _data[_dataIndex++];
 				int maxValue = _data[_dataIndex++];
+#if BLADERUNNER_DEBUG_CONSOLE
+				debug("ItemId: %3i, Variable increment, VariableId: %i, Max value: %i", _itemId, variableId, maxValue);
+#endif
 				if (Global_Variable_Query(variableId) < maxValue) {
 					Global_Variable_Increment(variableId, 1);
 				}
@@ -389,6 +414,9 @@ bool PoliceMazeTargetTrack::tick() {
 		case kPMTIVariableReset:
 			{
 				int variableId = _data[_dataIndex++];
+#if BLADERUNNER_DEBUG_CONSOLE
+				debug("ItemId: %3i, Variable reset, VariableId: %i", _itemId, variableId);
+#endif
 				Global_Variable_Reset(variableId);
 				break;
 			}
@@ -397,6 +425,9 @@ bool PoliceMazeTargetTrack::tick() {
 			{
 				int variableId = _data[_dataIndex++];
 				int value = _data[_dataIndex++];
+#if BLADERUNNER_DEBUG_CONSOLE
+				debug("ItemId: %3i, Variable set, VariableId: %i, Value: %i", _itemId, variableId, value);
+#endif
 				Global_Variable_Set(variableId, value);
 				break;
 			}
@@ -405,16 +436,21 @@ bool PoliceMazeTargetTrack::tick() {
 			{
 				int itemId = _data[_dataIndex++];
 				int value = _data[_dataIndex++];
+#if BLADERUNNER_DEBUG_CONSOLE
+				debug("ItemId: %3i, Target set, OtherItemId: %i, Value: %i", _itemId, itemId, value);
+#endif
 				_vm->_items->setIsTarget(itemId, value);
 				break;
 			}
 
-		case kPMTI12:
+		case kPMTIPausedReset1of3:
 			{
 				int trackId1 = _data[_dataIndex++];
 				int trackId2 = _data[_dataIndex++];
 				int trackId3 = _data[_dataIndex++];
-
+#if BLADERUNNER_DEBUG_CONSOLE
+				debug("ItemId: %3i, Pause reset 1 of 3, TrackId1: %i, TrackId2: %i, TrackId3: %i", _itemId, trackId1, trackId2, trackId3);
+#endif
 				switch (Random_Query(1, 3)) {
 				case 1:
 					_vm->_policeMaze->_tracks[trackId1]->resetPaused();
@@ -432,11 +468,13 @@ bool PoliceMazeTargetTrack::tick() {
 				break;
 			}
 
-		case kPMTI13:
+		case kPMTIPausedReset1of2:
 			{
 				int trackId1 = _data[_dataIndex++];
 				int trackId2 = _data[_dataIndex++];
-
+#if BLADERUNNER_DEBUG_CONSOLE
+				debug("ItemId: %3i, Pause reset 1 of 2, TrackId1: %i, TrackId2: %i", _itemId, trackId1, trackId2);
+#endif
 				if (Random_Query(1, 2) == 1) {
 					_vm->_policeMaze->_tracks[trackId1]->resetPaused();
 				} else {
@@ -448,6 +486,9 @@ bool PoliceMazeTargetTrack::tick() {
 		case kPMTIPausedSet:
 			{
 				int trackId = _data[_dataIndex++];
+#if BLADERUNNER_DEBUG_CONSOLE
+				debug("ItemId: %3i, Pause set, TrackId: %i", _itemId, trackId);
+#endif
 				_vm->_policeMaze->_tracks[trackId]->setPaused();
 				break;
 			}
@@ -455,6 +496,9 @@ bool PoliceMazeTargetTrack::tick() {
 		case kPMTIPausedReset:
 			{
 				int trackId = _data[_dataIndex++];
+#if BLADERUNNER_DEBUG_CONSOLE
+				debug("ItemId: %3i, Pause reset, TrackId: %i", _itemId, trackId);
+#endif
 				_vm->_policeMaze->_tracks[trackId]->resetPaused();
 				break;
 			}
@@ -463,6 +507,9 @@ bool PoliceMazeTargetTrack::tick() {
 			{
 				int soundId = _data[_dataIndex++];
 				int volume = _data[_dataIndex++];
+#if BLADERUNNER_DEBUG_CONSOLE
+				debug("ItemId: %3i, Sound, SoundId: %i, Volume: %i", _itemId, soundId, volume);
+#endif
 				Sound_Play(soundId, volume, 0, 0, 50);
 				break;
 			}
@@ -470,6 +517,9 @@ bool PoliceMazeTargetTrack::tick() {
 		case kPMTIObstacleReset:
 			{
 				int itemId = _data[_dataIndex++];
+#if BLADERUNNER_DEBUG_CONSOLE
+				debug("ItemId: %3i, Obstacle reset, OtherItemId: %i", _itemId, itemId);
+#endif
 				_vm->_items->setIsObstacle(itemId, 0);
 				break;
 			}
@@ -477,6 +527,9 @@ bool PoliceMazeTargetTrack::tick() {
 		case kPMTIObstacleSet:
 			{
 				int itemId = _data[_dataIndex++];
+#if BLADERUNNER_DEBUG_CONSOLE
+				debug("ItemId: %3i, Obstacle set, OtherItemId: %i", _itemId, itemId);
+#endif
 				_vm->_items->setIsObstacle(itemId, 1);
 				break;
 			}
@@ -485,6 +538,9 @@ bool PoliceMazeTargetTrack::tick() {
 			{
 				int randomMin = _data[_dataIndex++];
 				int randomMax = _data[_dataIndex++];
+#if BLADERUNNER_DEBUG_CONSOLE
+				debug("ItemId: %3i, Wait random, Min: %i, Max: %i", _itemId, randomMin, randomMax);
+#endif
 				_timeLeftWait = Random_Query(randomMin, randomMax);
 				_isWaiting = true;
 
@@ -493,46 +549,73 @@ bool PoliceMazeTargetTrack::tick() {
 			}
 
 		case kPMTIRotate:
-			_angleTarget = _data[_dataIndex++];
-			_angleDelta = _data[_dataIndex++];
-			_isRotating = true;
+			{
+				_angleTarget = _data[_dataIndex++];
+				_angleDelta = _data[_dataIndex++];
+#if BLADERUNNER_DEBUG_CONSOLE
+				debug("ItemId: %3i, Rotate, Target: %i, Delta: %i", _itemId, _angleTarget, _angleDelta);
+#endif
+				_isRotating = true;
 
-			cont = false;
-			break;
+				cont = false;
+				break;
+			}
 
 		case kPMTIFacing:
 			{
 				int angle = _data[_dataIndex++];
+#if BLADERUNNER_DEBUG_CONSOLE
+				debug("ItemId: %3i, Set facing, Angle: %i", _itemId, angle);
+#endif
 				_vm->_items->setFacing(_itemId, angle);
 				break;
 			}
 
 		case kPMTIRestart:
-			_dataIndex = 0;
-
-			cont = false;
-			break;
+			{
+				_dataIndex = 0;
+#if BLADERUNNER_DEBUG_CONSOLE
+				debug("ItemId: %3i, Restart", _itemId);
+#endif
+				cont = false;
+				break;
+			}
 
 		case kPMTIWait:
-			_timeLeftWait = _data[_dataIndex++];
-			_isWaiting = true;
+			{
+				_timeLeftWait = _data[_dataIndex++];
+#if BLADERUNNER_DEBUG_CONSOLE
+				debug("ItemId: %3i, Wait, Time: %i", _itemId, _timeLeftWait);
+#endif
+				_isWaiting = true;
 
-			cont = false;
-			break;
+				cont = false;
+				break;
+			}
 
 		case kPMTIMove:
-			_pointTarget = _data[_dataIndex++];
-			_isMoving = true;
+			{
+				_pointTarget = _data[_dataIndex++];
+#if BLADERUNNER_DEBUG_CONSOLE
+				debug("ItemId: %3i, Move, Target: %i", _itemId, _pointTarget);
+#endif
+				_isMoving = true;
 
-			cont = false;
-			break;
+				cont = false;
+				break;
+			}
 
 		case kPMTIPosition:
-			_pointIndex = _data[_dataIndex++];
-			_isMoving = false;
-			_vm->_items->setXYZ(_itemId, _points[_pointIndex]);
-			readdObject(_itemId);
-			break;
+			{
+				_pointIndex = _data[_dataIndex++];
+#if BLADERUNNER_DEBUG_CONSOLE
+				debug("ItemId: %3i, Position, Index: %i", _itemId, _pointIndex);
+#endif
+				_isMoving = false;
+				_vm->_items->setXYZ(_itemId, _points[_pointIndex]);
+				readdObject(_itemId);
+				break;
+			}
 
 		default:
 			return false;

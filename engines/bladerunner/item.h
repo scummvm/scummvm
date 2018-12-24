@@ -69,18 +69,22 @@ public:
 
 	const BoundingBox &getBoundingBox() { return _boundingBox; }
 	const Common::Rect &getScreenRectangle() { return _screenRectangle; }
-	int getFacing() const { return _facing; }
-	void setFacing(int facing) { _facing = facing; }
 
+	int getFacing() const { return _facing; }
+	void setFacing(int facing);
+
+	bool isTarget() const { return _isTarget; }
 	void setIsTarget(bool val) { _isTarget = val; }
 
-	bool isTarget() const;
 	bool isSpinning() const { return _isSpinning; }
+	void spinInWorld();
+
 	bool isVisible() const { return _isVisible; }
 	void setVisible(bool val) { _isVisible = val; }
-	bool isPoliceMazeEnemy() const;
+
+	bool isPoliceMazeEnemy() const { return _isPoliceMazeEnemy; }
 	void setPoliceMazeEnemy(bool val) { _isPoliceMazeEnemy = val; }
-	void spinInWorld();
+
 	bool tick(Common::Rect *screenRect, bool special);
 
 	void setup(int itemId, int setId, int animationId, Vector3 position, int facing, int height, int width, bool isTargetFlag, bool isVisibleFlag, bool isPoliceMazeEnemyFlag);
