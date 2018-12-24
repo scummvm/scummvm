@@ -468,6 +468,14 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 				n = 0x17010001;
 			}
 
+			// QFG4CD has an orphaned audio36 resource that additionally has the wrong tuple.
+			//  The audio36 tuple is 520 2 59 0 3. The message would be 520 2 59 0 2. bug #10849
+			//  We restore the missing message in message.cpp.
+			if (g_sci->getGameId() == GID_QFG4 && g_sci->isCD() &&
+				map->_mapNumber == 520 && n == 0x023b0003) {
+				n = 0x023b0002;
+			}
+
 			if (isEarly) {
 				offset = ptr.getUint32LE();
 				ptr += 4;

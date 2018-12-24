@@ -255,6 +255,42 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 			t.verb = 1;
 		}
 
+		if (g_sci->getGameId() == GID_QFG4 && g_sci->isCD() && stack.getModule() == 520 &&
+			t.noun == 2 && t.verb == 59 && t.cond == 0) {
+			// The CD edition mangled the Rusalka flowers dialogue. - bug #10849
+			// In the floppy edition, there are 3 lines, the first from
+			// the narrator, then two from Rusalka. The CD edition omits
+			// narration and only has the 3rd text, with the 2nd audio! The
+			// 3rd audio is orphaned but available.
+			//
+			// We only restore Rusalka's lines, providing the correct text
+			// for seq:1 to match the audio. We respond to seq:2 requests
+			// with Rusalka's last text. The orphaned audio (seq:3) has its
+			// tuple adjusted to seq:2 in resource_audio.cpp.
+			if (t.seq == 1) {
+				record.tuple = t;
+				record.refTuple = MessageTuple();
+				record.talker = 28;
+				record.string = "Thank you for the beautiful flowers.  No one has been so nice to me since I can remember.";
+				record.length = 89;
+				delete reader;
+				return true;
+			} else if (t.seq == 2) {
+				// The CD edition ships with this text at seq:1.
+				//  Look it up instead of hardcoding.
+				t.seq = 1;
+				if (!reader->findRecord(t, record)) {
+					delete reader;
+					return false;
+				}
+				t.seq = 2;             // Prevent an endless 2=1 -> 2=1 -> 2=1... loop.
+				record.tuple.seq = 2;  // Make the record seq:2 to get the seq:2 audio.
+				record.refTuple = MessageTuple();
+				delete reader;
+				return true;
+			}
+		}
+
 		if (g_sci->getGameId() == GID_LAURABOW2 && !g_sci->isCD() && stack.getModule() == 1885 &&
 			t.noun == 1 && t.verb == 6 && t.cond == 16 && t.seq == 4 &&
 			(g_sci->getEngineState()->currentRoomNumber() == 350 ||
