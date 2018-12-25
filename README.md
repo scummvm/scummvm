@@ -2852,6 +2852,8 @@ file, depends on the OS:
 
   - Windows: In `Users\username\My Pictures\ScummVM Screenshots`.
   - macOS X: On the Desktop.
+  - Other unices: In the XDG Pictures user directory,
+      e.g. ~/Pictures/ScummVM Screenshots
   - Any other OS: In the current directory.
 
 ## 10.0) Compiling
