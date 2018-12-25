@@ -33,7 +33,7 @@ page at: <https://www.scummvm.org/>
       - [3.11) Inherit the Earth: Quest for the Orb
         notes](#311-inherit-the-earth-quest-for-the-orb-notes)      
       - [3.12) Mickey's Space Adventure
-        notes](#312-mickey-s-space-adventure-notes)
+        notes](#312-mickeys-space-adventure-notes)
       - [3.13) Might and Magic Xeen games
         notes](#313-might-and-magic-xeen-games-notes)
       - [3.14) Myst game notes](#314-myst-game-notes)      
@@ -48,7 +48,7 @@ page at: <https://www.scummvm.org/>
       - [3.20) The Feeble Files notes](#320-the-feeble-files-notes)
       - [3.21) The Legend of Kyrandia
         notes](#321-the-legend-of-kyrandia-notes)
-      - [3.22) Troll's Tale notes](#322-troll-s-tale-notes)
+      - [3.22) Troll's Tale notes](#322-trolls-tale-notes)
       - [3.23) Winnie the Pooh notes](#323-winnie-the-pooh-notes)
       - [3.24) Sierra AGI games: Predictive Input
         Dialog](#324-sierra-agi-games-predictive-input-dialog)
@@ -72,7 +72,7 @@ page at: <https://www.scummvm.org/>
       - [6.1) Autosaves](#61-autosaves)
       - [6.2) Converting Saved Games](#62-converting-saved-games)
       - [6.3) Viewing/Loading saved games from the command
-        line](#63-viewing-loading-saved-games-from-the-command-line)
+        line](#63-viewingloading-saved-games-from-the-command-line)
   - [7.0) Music and Sound](#70-music-and-sound)
       - [7.1) AdLib emulation](#71-adlib-emulation)
       - [7.2) FluidSynth MIDI emulation](#72-fluidsynth-midi-emulation)
@@ -84,11 +84,11 @@ page at: <https://www.scummvm.org/>
       - [7.6) UNIX native, ALSA and dmedia sequencer
         support](#76-unix-native-alsa-and-dmedia-sequencer-support)
           - [7.6.1) ALSA sequencer \[UNIX
-            ONLY\]](#761-alsa-sequencer--unix-only-)
+            ONLY\]](#761-alsa-sequencer-unix-only)
           - [7.6.2) IRIX dmedia sequencer: \[UNIX
-            ONLY\]](#762-irix-dmedia-sequencer--unix-only-)
+            ONLY\]](#762-irix-dmedia-sequencer-unix-only)
       - [7.7) TiMidity++ MIDI server
-        support](#77-timidity--midi-server-support)
+        support](#77-timidity-midi-server-support)
       - [7.8) Using compressed audio
         files](#78-using-compressed-audio-files)
           - [7.8.1) Using MP3 files for CD
@@ -104,11 +104,11 @@ page at: <https://www.scummvm.org/>
           - [7.8.6) Compressing MONSTER.SOU with
             Flac](#786-compressing-monstersou-with-flac)
           - [7.8.7) Compressing music/sfx/speech in AGOS
-            games](#787-compressing-music-sfx-speech-in-agos-games)
+            games](#787-compressing-musicsfxspeech-in-agos-games)
           - [7.8.8) Compressing speech/music in Broken
-            Sword](#788-compressing-speech-music-in-broken-sword)
+            Sword](#788-compressing-speechmusic-in-broken-sword)
           - [7.8.9) Compressing speech/music in Broken Sword
-            II](#789-compressing-speech-music-in-broken-sword-ii)
+            II](#789-compressing-speechmusic-in-broken-sword-ii)
       - [7.9) Output sample rate](#79-output-sample-rate)
   - [8.0) Configuration file](#80-configuration-file)
       - [8.1) Recognized configuration
@@ -116,7 +116,7 @@ page at: <https://www.scummvm.org/>
       - [8.2) Custom game options that can be toggled via the
         GUI](#82-custom-game-options-that-can-be-toggled-via-the-gui)
   - [9.0) Screenshots (SDL backend
-    only)](#90-screenshots-sdl-backend-only-)
+    only)](#90-screenshots-sdl-backend-only)
   - [10.0) Compiling](#100-compiling)
   - [11.0) Credits](#110-credits)
 
