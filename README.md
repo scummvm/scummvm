@@ -17,7 +17,7 @@ page at: <https://www.scummvm.org/>
       - [3.2) Datafiles](#32-datafiles)
       - [3.3) Multi-CD games notes](#33-multi-cd-games-notes)
       - [3.4) Known Problems](#34-known-problems)
-      - [3.5) Beneath a Steel Sky notes](#35-beneath-a-steel-sky-notes)
+      - [3.5) Extra Data Files](#35-extra-data-files)      
       - [3.6) Broken Sword games notes](#36-broken-sword-games-notes)
           - [3.6.1) Broken Sword](#361-broken-sword)
           - [3.6.2) Broken Sword II](#362-broken-sword-ii)
@@ -25,47 +25,42 @@ page at: <https://www.scummvm.org/>
             cutscenes](#363-broken-sword-games-cutscenes)
           - [3.6.4) Broken Sword games cutscenes, in
             retrospect](#364-broken-sword-games-cutscenes-in-retrospect)
-      - [3.7) Day of the Tentacle notes](#37-day-of-the-tentacle-notes)
-      - [3.8) Discworld II notes](#38-discworld-ii-notes)
-      - [3.9) Dragon History notes](#39-dragon-history-notes)
-      - [3.10) Flight of the Amazon Queen
-        notes](#310-flight-of-the-amazon-queen-notes)
-      - [3.11) Gobliiins notes](#311-gobliiins-notes)
-      - [3.12) Inherit the Earth: Quest for the Orb
-        notes](#312-inherit-the-earth-quest-for-the-orb-notes)
-      - [3.13) Maniac Mansion Apple II/NES
-        notes](#313-maniac-mansion-apple-ii-nes-notes)
-      - [3.14) Mickey's Space Adventure
-        notes](#314-mickey-s-space-adventure-notes)
-      - [3.15) Might and Magic Xeen games
-        notes](#315-might-and-magic-xeen-games-notes)
-      - [3.16) Myst game notes](#316-myst-game-notes)
-      - [3.17) Nippon Safes Inc. Amiga
-        notes](#317-nippon-safes-inc-amiga-notes)
-      - [3.18) Quest for Glory notes](#318-quest-for-glory-notes)
-      - [3.19) Riven game notes](#319-riven-game-notes)
-      - [3.20) Simon the Sorcerer games
-        notes](#320-simon-the-sorcerer-games-notes)
-      - [3.21) Starship Titanic game
-        notes](#321-starship-titanic-game-notes)
-      - [3.22) The Curse of Monkey Island
-        notes](#322-the-curse-of-monkey-island-notes)
-      - [3.23) The Feeble Files notes](#323-the-feeble-files-notes)
-      - [3.24) The Legend of Kyrandia
-        notes](#324-the-legend-of-kyrandia-notes)
-      - [3.25) Troll's Tale notes](#325-troll-s-tale-notes)
-      - [3.26) Winnie the Pooh notes](#326-winnie-the-pooh-notes)
-      - [3.27) Sierra AGI games: Predictive Input
-        Dialog](#327-sierra-agi-games-predictive-input-dialog)
-      - [3.28) Sierra SCI games: Simultaneous speech and
-        subtitles](#328-sierra-sci-games-simultaneous-speech-and-subtitles)
-      - [3.29) Zork games notes](#329-zork-games-notes)
-          - [3.29.1) Zork Nemesis: The Forbidden
-            Lands](#3291-zork-nemesis-the-forbidden-lands)
-          - [3.29.2) Zork: Grand
-            Inquisitor](#3292-zork-grand-inquisitor)
-      - [3.30) Commodore64 games notes](#330-commodore64-games-notes)
-      - [3.31) Macintosh games notes](#331-macintosh-games-notes)
+      - [3.7) Day of the Tentacle notes](#37-day-of-the-tentacle-notes)      
+      - [3.8) Dragon History notes](#38-dragon-history-notes)
+      - [3.9) Flight of the Amazon Queen
+        notes](#39-flight-of-the-amazon-queen-notes)
+      - [3.10) Gobliiins notes](#310-gobliiins-notes)
+      - [3.11) Inherit the Earth: Quest for the Orb
+        notes](#311-inherit-the-earth-quest-for-the-orb-notes)      
+      - [3.12) Mickey's Space Adventure
+        notes](#312-mickey-s-space-adventure-notes)
+      - [3.13) Might and Magic Xeen games
+        notes](#313-might-and-magic-xeen-games-notes)
+      - [3.14) Myst game notes](#314-myst-game-notes)      
+      - [3.15) Quest for Glory notes](#315-quest-for-glory-notes)
+      - [3.16) Riven game notes](#316-riven-game-notes)
+      - [3.17) Simon the Sorcerer games
+        notes](#317-simon-the-sorcerer-games-notes)
+      - [3.18) Starship Titanic game
+        notes](#318-starship-titanic-game-notes)
+      - [3.19) The Curse of Monkey Island
+        notes](#319-the-curse-of-monkey-island-notes)
+      - [3.20) The Feeble Files notes](#320-the-feeble-files-notes)
+      - [3.21) The Legend of Kyrandia
+        notes](#321-the-legend-of-kyrandia-notes)
+      - [3.22) Troll's Tale notes](#322-troll-s-tale-notes)
+      - [3.23) Winnie the Pooh notes](#323-winnie-the-pooh-notes)
+      - [3.24) Sierra AGI games: Predictive Input
+        Dialog](#324-sierra-agi-games-predictive-input-dialog)
+      - [3.25) Sierra SCI games: Simultaneous speech and
+        subtitles](#325-sierra-sci-games-simultaneous-speech-and-subtitles)
+      - [3.26) Zork games notes](#326-zork-games-notes)
+          - [3.26.1) Zork Nemesis: The Forbidden
+            Lands](#3261-zork-nemesis-the-forbidden-lands)
+          - [3.26.2) Zork: Grand
+            Inquisitor](#3262-zork-grand-inquisitor)
+      - [3.27) Commodore64 games notes](#327-commodore64-games-notes)
+      - [3.28) Macintosh games notes](#328-macintosh-games-notes)
   - [4.0) Supported Platforms](#40-supported-platforms)
   - [5.0) Running ScummVM](#50-running-scummvm)
       - [5.1) Command Line Options](#51-command-line-options)
@@ -697,15 +692,18 @@ Humongous Entertainment games:
   - Only the original load and save interface can be used.
   - No support for multiplayer or printing images.
 
-### 3.5) Beneath a Steel Sky notes
+### 3.5) Extra Data Files
 
-Starting with ScummVM 0.8.0 you need the additional `SKY.CPT` file to
-run Beneath a Steel Sky.
+Some games require additional files that are not part of the original data. Those files can generally be found in our [Downloads](https://www.scummvm.org/downloads/#extras) page.
 
-This file is available on the `Downloads` page of the ScummVM website.
-You can place it in either the directory containing the other game data
-files (SKY.DNR, SKY.DSK), in your extrapath, or in the directory where
-your ScummVM executable resides.
+Games that require additional data:
+  - Beneath a Steel Sky (sky.cpt)
+  - Flight of the Amazon Queen 
+  - Kyrandia Series (kyra.dat)
+  - Lands of Lore Series (kyra.dat)
+  - Lure of the Temptress (lure.dat)
+
+The most up to date list of Engine data files can be found in our [source code repository](https://github.com/scummvm/scummvm/tree/master/dists/engine-data)
 
 ### 3.6) Broken Sword games notes
 
@@ -829,16 +827,7 @@ override the ID of the game to run. Be aware, though, that not all games
 support returning to the launcher, and setting it up to use Day of the
 Tentacle itself as the easter egg game is not recommended.
 
-### 3.8) Discworld II notes
-
-For this game, you will need all of the files in the DW2 subdirectory on
-both CDs. In addition, you will need the SAMPLE.BNK file.
-
-You will need to rename ENGLISH.SMP, ENGLISH.IDX and ENGLISH.TXT on CD1
-to ENGLISH1.SMP, ENGLISH1.IDX and ENGLISH1.txt. The same files on CD2
-need to be renamed to ENGLISH2.SMP, ENGLISH2.IDX and ENGLISH2.TXT.
-
-### 3.9) Dragon History notes
+### 3.8) Dragon History notes
 
 There are 4 language variants of the game: Czech, English, Polish and
 German. Each of them is distributed in a separate archive. The only
@@ -856,11 +845,10 @@ All game files and the walkthrough can be downloaded from:
 
 <http://www.ucw.cz/draci-historie/index-en.html>
 
-### 3.10) Flight of the Amazon Queen notes
+### 3.9) Flight of the Amazon Queen notes
 
-In order to use a non-freeware version of Flight of the Amazon Queen
-(from original CD), you will need to place the `queen.tbl` file
-(available from the `Downloads` page on our website) in either the
+Only the original non-freeware version of Flight of the Amazon Queen
+(from original CD), requires the `queen.tbl` datafile (available from the `Downloads` page on our website) in either the
 directory containing the `queen.1` game data file, in your extrapath, or
 in the directory where your ScummVM executable resides.
 
@@ -870,7 +858,7 @@ specific version, and thus removing the run-time dependency on the
 `queen.tbl` file. This tool also allows you to compress the speech and
 sound effects with MP3, OGG or FLAC.
 
-### 3.11) Gobliiins notes
+### 3.10) Gobliiins notes
 
 The CD versions of the Gobliiins series contain one big audio track
 which you need to rip (see the section on using compressed audio files)
@@ -879,7 +867,7 @@ without the CD in the drive all the time. The speech is also in that
 track and its volume is therefore changed with the music volume control
 as well.
 
-### 3.12) Inherit the Earth: Quest for the Orb notes
+### 3.11) Inherit the Earth: Quest for the Orb notes
 
 In order to run the Mac OS X Wyrmkeep re-release of the game you will
 need to copy over data from the CD to your hard disk. If you're on a PC
@@ -898,38 +886,7 @@ For the old Mac OS 9 release you need to copy the files in MacBinary
 format, as they should include both resource and data forks. Copy all
 'ITE \*' files.
 
-### 3.13) Maniac Mansion Apple II/NES notes
-
-Apple II: You need to rename disk image 1 to maniac1.dsk  
-You need to rename disk image 1 to maniac2.dsk
-
-NES: Supported versions are English GB (E), French (F), German (G),
-Italian (I), Swedish (SW) and English US (U). ScummVM requires just the
-PRG section to run and not the whole ROM.
-
-In order to get the game working, you will have to strip out the first
-16 bytes from the ROM you are trying to work with. Any hex editor will
-work as long as you are able to copy/paste. After you open the ROM with
-the hex editor, copy everything from the second row (17th byte) to the
-end. After you do this, paste it to a new hex file. Name the new file
-"Maniac Mansion (XX).prg" while XX stands for the version you are
-working with (E, F, G, I, SW, or U). The final size should be exactly
-262144 bytes.
-
-If you add the game manually make sure that the platform is set to NES.
-
-Most common mistakes which prevents the game from running:
-
-  - Bad file
-  - ROM extracted with the 0.7.0 tools
-  - You try to feed ScummVM with the FULL ROM and not just the PRG
-    section.
-
-It is also possible to extract the separate LFL files from the PRG
-section. To do so use the `extract_mm_nes` utility from the tools
-package.
-
-### 3.14) Mickey's Space Adventure notes
+### 3.12) Mickey's Space Adventure notes
 
 To run Mickey's Space Adventure under ScummVM, the original executable
 of the game (mickey.exe) is needed together with the game's data files.
@@ -943,7 +900,7 @@ that direction. The player can then simply click on the edges of the
 game's screen to change location, similar to many adventure games, which
 is simpler and more straightforward than moving around using the menu.
 
-### 3.15) Might and Magic Xeen games notes
+### 3.13) Might and Magic Xeen games notes
 
 To properly play the World of Xeen CD Talkie using original discs, use
 LAME or some other encoder to rip the cd audio tracks to files, either
@@ -981,7 +938,7 @@ games in the ScummVM launcher. They are:
     allowing the relative strength/value of armor and weapons to be
     compared.
 
-### 3.16) Myst game notes
+### 3.14) Myst game notes
 
 Left Click: Move/action  
 Space: Pause the game  
@@ -991,15 +948,7 @@ F5: Menu
 Myst will autosave to slot 0 if no save or an autosave is present in
 slot 0.
 
-### 3.17) Nippon Safes Inc. Amiga notes
-
-For this game, you will need disk0, , global.table, pointer and it (en,
-fr, ge for the international version).
-
-In addition, you will need to rename disk image 2 to disk1, disk image 3
-to disk2, disk image 4 to disk3 and disk image 5 to disk4.
-
-### 3.18) Quest for Glory notes
+### 3.15) Quest for Glory notes
 
 It is possible to import characters, beginning with Quest for Glory II,
 from past games to future games and continue from the stats earned from
@@ -1022,7 +971,7 @@ on the import screen.
 
 Example: qfg2-thief.sav
 
-### 3.19) Riven game notes
+### 3.16) Riven game notes
 
 Left Click: Move/action  
 Arrow Keys: Movement  
@@ -1037,19 +986,19 @@ Ctrl-s: Save game
 Riven will autosave to slot 0 if no save or an autosave is present in
 slot 0.
 
-### 3.20) Simon the Sorcerer games notes
+### 3.17) Simon the Sorcerer games notes
 
 If you have the dual version of Simon the Sorcerer 1 or 2 on CD, you
 will find the Windows version in the main directory of the CD and the
 DOS version in the DOS directory of the CD.
 
-### 3.21) Starship Titanic game notes
+### 3.18) Starship Titanic game notes
 
 For the purposes of solving the starfield puzzle, only mouse clicks, L
 and Tab are really needed, though the action glyph in the PET can be
 used instead of Tab.
 
-### 3.22) The Curse of Monkey Island notes
+### 3.19) The Curse of Monkey Island notes
 
 For this game, you will need the comi.la0, comi.la1 and comi.la2 files.
 The comi.la0 file can be found on either CD, but since they are
@@ -1060,7 +1009,7 @@ containing all of the files from -both- "resource" subdirectories on the
 two CDs. Some of the files appear on both CDs, but again they're
 identical.
 
-### 3.23) The Feeble Files notes
+### 3.20) The Feeble Files notes
 
 Amiga/Macintosh: You need to install a small pack of cutscenes that are
 missing in both of these versions of The Feeble Files. It's called "The
@@ -1086,23 +1035,23 @@ follows:
   - Rename voices.wav on CD3 to voices3.wav
   - Rename voices.wav on CD4 to voices4.wav
 
-### 3.24) The Legend of Kyrandia notes
+### 3.21) The Legend of Kyrandia notes
 
 To run The Legend of Kyrandia under ScummVM you need the `kyra.dat`
-file. The file should always be included in official ScummVM packages.
+file. The file should already be included in official ScummVM packages.
 In case ScummVM complains that the file is missing you can find it on
 the `Downloads` page of the ScummVM website. Note that the current
 Windows release of ScummVM should contain the file embedded into the
 executable, thus you only need to grab it in case ScummVM complains
 about the file being missing.
 
-### 3.25) Troll's Tale notes
+### 3.22) Troll's Tale notes
 
 The original game came in a PC booter disk, therefore it is necessary to
 dump the contents of that disk in an image file and name it "troll.img"
 to be able to play the game under ScummVM.
 
-### 3.26) Winnie the Pooh notes
+### 3.23) Winnie the Pooh notes
 
 It is possible to import saved games from the original interpreter of
 the game into ScummVM.
@@ -1116,7 +1065,7 @@ that direction. The player can then simply click on the edges of the
 game's screen to change location, similar to many adventure games, which
 is simpler and more straightforward than moving around using the menu.
 
-### 3.27) Sierra AGI games: Predictive Input Dialog
+### 3.24) Sierra AGI games: Predictive Input Dialog
 
 The Predictive Input Dialog is a ScummVM aid for running AGI engine
 games (which notoriously require command line input) on devices with
@@ -1170,7 +1119,7 @@ been made in some ScummVM ports to make its use more comfortable by
 naturally mapping the functionality to the numeric keypad. Also, the
 dialog's buttons can be navigated with the arrow and the enter keys.
 
-### 3.28) Sierra SCI games: Simultaneous speech and subtitles
+### 3.25) Sierra SCI games: Simultaneous speech and subtitles
 
 Certain CD versions of Sierra SCI games had both speech and text
 resources. Some have an option to toggle between the two, but there are
@@ -1247,13 +1196,13 @@ Captioning" from the in-game "Game" menu. Speech can be disabled by
 selecting "Audio Mixer" from the in-game "Game" menu and setting the
 speech volume to zero.
 
-### 3.29) Zork games notes
+### 3.26) Zork games notes
 
 To run the supported Zork games (Zork Nemesis: The Forbidden Lands and
 Zork: Grand Inquisitor) you need to copy some (extra) data to its
 corresponding destination.
 
-#### 3.29.1) Zork Nemesis: The Forbidden Lands
+#### 3.26.1) Zork Nemesis: The Forbidden Lands
 
 Download the Liberation(tm) fonts package
 <https://releases.pagure.org/liberation-fonts/liberation-fonts-ttf-2.00.1.tar.gz>
@@ -1266,7 +1215,7 @@ issues. Download the subtitles patch
 <https://www.thezorklibrary.com/installguides/znpatch.zip> and unzip the
 addon directory into the game root directory
 
-#### 3.29.2) Zork: Grand Inquisitor
+#### 3.26.2) Zork: Grand Inquisitor
 
 Download the Liberation(tm) fonts package
 <https://releases.pagure.org/liberation-fonts/liberation-fonts-ttf-2.00.1.tar.gz>
@@ -1277,7 +1226,7 @@ ttf files from the sfd directory into your ScummVM extras directory,
 though at the time of writing these fonts cause some text rendering
 issues.
 
-### 3.30) Commodore64 games notes
+### 3.27) Commodore64 games notes
 
 Both Maniac Mansion and Zak McKracken run but Maniac Mansion is not yet
 playable. Simply name the D64 disks "maniac1.d64" and "maniac2.d64"
@@ -1290,7 +1239,7 @@ autodetected by ScummVM, and you must make sure that the platform is set
 to Commodore64. We recommend using the much simpler approach described
 in the previous paragraph.
 
-### 3.31) Macintosh games notes
+### 3.28) Macintosh games notes
 
 All LucasArts SCUMM based adventures, except COMI, also exist in
 versions for the Macintosh. ScummVM can use most (all?) of them,
