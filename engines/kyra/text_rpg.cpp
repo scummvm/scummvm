@@ -327,7 +327,7 @@ void TextDisplayer_rpg::printLine(char *str) {
 	if (sjisTextMode) {
 		bool ct = true;
 
-		if ((lw + _textDimData[sdx].column) > w) {
+		if ((lw + _textDimData[sdx].column) >= w) {
 			if ((lines - 1 - (_waitButtonSpace << 1)) <= _lineCount)
 				// cut off line to leave space for "MORE" button
 				w -= _vm->guiSettings()->buttons.waitReserve;
