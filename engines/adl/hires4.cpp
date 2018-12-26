@@ -157,7 +157,7 @@ void HiRes4Engine::drawText(const Common::String &str, Common::SeekableReadStrea
 	if (shouldQuit())
 		return;
 
-	Common::Point pos(ht * 7, vt * 7.7);
+	Common::Point pos((int16)(ht * 7), (int16)(vt * 7.7f));
 
 	drawChar(99, shapeTable, pos);
 
