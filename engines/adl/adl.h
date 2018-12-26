@@ -419,7 +419,7 @@ private:
 	virtual void switchRegion(byte region) { }
 	void runScript(const char *filename) const;
 	void stopScript() const;
-	void setScriptDelay(uint delay) const { _scriptDelay = delay; }
+	void setScriptDelay(uint scriptDelay) const { _scriptDelay = scriptDelay; }
 	Common::String getScriptLine() const;
 	// Engine
 	Common::Error run();
