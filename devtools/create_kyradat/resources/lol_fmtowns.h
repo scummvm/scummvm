@@ -304,7 +304,7 @@ static const uint16 kLoLIngameSfxIndexFMTowns[500] = {
 
 static const Uint16Provider kLoLIngameSfxIndexFMTownsProvider = { ARRAYSIZE(kLoLIngameSfxIndexFMTowns), kLoLIngameSfxIndexFMTowns };
 
-static const SpellProperty kLoLSpellPropertiesFMTowns[10] = {
+static const SpellProperty kLoLSpellPropertiesFMTowns[17] = {
 	{ 16436, { 5, 10, 15, 25 }, 0, 0, { 0, 0, 0, 0 }, 0, 0, 0x0100 },
 	{ 16437, { 5, 10, 25, 60 }, 0, 0, { 0, 0, 0, 0 }, 0, 0, 0x0001 },
 	{ 16438, { 8, 15, 30, 80 }, 0, 0, { 0, 0, 0, 0 }, 0, 0, 0x0102 },
@@ -314,7 +314,14 @@ static const SpellProperty kLoLSpellPropertiesFMTowns[10] = {
 	{ 16439, { 25, 30, 50, 100 }, 0, 0, { 0, 0, 0, 0 }, 0, 0, 0x0106 },
 	{ 16443, { 3, 6, 12, 24 }, 0, 0, { 0, 0, 0, 0 }, 0, 0, 0x0107 },
 	{ 16975, { 15, 15, 15, 15 }, 0, 0, { 0, 0, 0, 0 }, 0, 0, 0x0108 },
-	{ 16975, { 15, 15, 15, 15 }, 15, 0, { 0, 0, 0, 0 }, 0, 0, 0x0108 }
+	{ 16975, { 15, 15, 15, 15 }, 15, 0, { 0, 0, 0, 0 }, 0, 0, 0x0108 },
+	{ 0, { 0, 0, 0, 0 }, 0, 0, { 0, 0, 0, 0 }, 0, 0, 0 },
+	{ 0, { 0, 0, 0, 0 }, 0, 0, { 0, 0, 0, 0 }, 0, 0, 0 },
+	{ 0, { 0, 0, 0, 0 }, 0, 0, { 0, 0, 0, 0 }, 0, 0, 0 },
+	{ 0, { 0, 0, 0, 0 }, 0, 0, { 0, 0, 0, 0 }, 0, 0, 0 },
+	{ 0, { 0, 0, 0, 0 }, 0, 0, { 0, 0, 0, 0 }, 0, 0, 0 },
+	{ 0, { 0, 0, 0, 0 }, 0, 0, { 0, 0, 0, 0 }, 0, 0, 0 },
+	{ 0, { 0, 0, 0, 0 }, 0, 0, { 0, 0, 0, 0 }, 0, 0, 0 }
 };
 
 static const SpellPropertyProvider kLoLSpellPropertiesFMTownsProvider = { ARRAYSIZE(kLoLSpellPropertiesFMTowns), kLoLSpellPropertiesFMTowns };
