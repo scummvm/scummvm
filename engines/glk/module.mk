@@ -46,6 +46,8 @@ MODULE_OBJS := \
 	frotz/sound_folder.o \
 	glulxe/detection.o \
 	glulxe/glulxe.o \
+	magnetic/detection.o \
+	magnetic/magnetic.o \
 	scott/detection.o \
 	scott/scott.o \
 	tads/detection.o \
