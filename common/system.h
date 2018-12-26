@@ -407,7 +407,7 @@ public:
 
 		/**
 		* Supports for using the native system file browser dialog
-		 through the DialogManager.
+		* through the DialogManager.
 		*/
 		kFeatureSystemBrowserDialog
 
