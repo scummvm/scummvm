@@ -23,7 +23,13 @@ MODULE_OBJS := \
 	window_text_buffer.o \
 	window_text_grid.o \
 	alan2/alan2.o \
+	alan2/decode.o \
 	alan2/detection.o \
+	alan2/execute.o \
+	alan2/interpreter.o \
+	alan2/parse.o \
+	alan2/rules.o \
+	alan2/saveload.o \
 	frotz/config.o \
 	frotz/detection.o \
 	frotz/frotz.o \
