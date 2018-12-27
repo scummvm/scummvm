@@ -94,7 +94,7 @@ int Decode::decodeChar() {
 
 // Save so much about the decoding process, so it is possible to restore
 // and continue later.
-DecodeInfo* Decode::pushDecode() {
+DecodeInfo *Decode::pushDecode() {
 	DecodeInfo *info = new DecodeInfo();
 
 	info->fpos = _txtFile->pos();
@@ -109,7 +109,7 @@ DecodeInfo* Decode::pushDecode() {
 
 // Restore enough info about the decoding process, so it is possible to
 // continue after having decoded something else
-void Decode::popDecode (DecodeInfo *info){
+void Decode::popDecode (DecodeInfo *info) {
 	_txtFile->seek(info->fpos, SEEK_CUR);
 	_decodeBuffer = info->buffer;
 	_bitsToGo = info->bits;

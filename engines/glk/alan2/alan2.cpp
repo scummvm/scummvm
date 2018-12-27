@@ -84,30 +84,25 @@ bool Alan2::is_gamefile_valid() {
 	return true;
 }
 
-void Alan2::output(const Common::String str)
-{
+void Alan2::output(const Common::String str) {
 	// TODO
 }
 
-void Alan2::printMessage(MsgKind msg)
-{
+void Alan2::printMessage(MsgKind msg) {
 	// TODO
 }
 
-void Alan2::printError(MsgKind msg)
-{
+void Alan2::printError(MsgKind msg) {
 	// TODO
 }
 
-void Alan2::paragraph()
-{
+void Alan2::paragraph() {
 	if (col != 1)
 		newLine();
 	newLine();
 }
 
-void Alan2::newLine()
-{
+void Alan2::newLine() {
 	// TODO
 }
 

@@ -40,8 +40,7 @@ typedef struct DecodeInfo {
 	CodeValue low;
 } DecodeInfo;
 
-class Decode
-{
+class Decode {
 public:
 	Decode(Common::File *txtFile, Aword *freq): _txtFile(txtFile), _freq(freq) {}
 	void startDecoding();
