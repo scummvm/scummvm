@@ -41,8 +41,11 @@ public:
 	void switchToFullScreen(bool fullScreen);
 	bool isFullScreen() { return (_foreground.h == 480); }
 	void updateScreen(Graphics::Surface *source);
+	void saveScreen();
+	void restoreScreen();
 	Graphics::Surface _foreground;	// The main surface that most things are drawn to
 	Graphics::Surface _background;	// Used occasionally, mostly (only?) in puzzles
+	Graphics::Surface _savedground; // Buffer to save and restore the current screen. Used when opening the gamebook in 11H
 
 	// Palette fading
 	bool isFading();

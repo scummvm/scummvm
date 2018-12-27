@@ -1192,6 +1192,7 @@ void TlcGame::tatGetProfile() {
 		getScriptVar16(0x5D + 2 * iBin);
 	}
 
+	error("GROOVIE: Function (tatGetProfile) not implemented yet.");
 
 }
 
