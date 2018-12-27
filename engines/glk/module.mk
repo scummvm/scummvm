@@ -22,6 +22,8 @@ MODULE_OBJS := \
 	window_pair.o \
 	window_text_buffer.o \
 	window_text_grid.o \
+	alan2/alan2.o \
+	alan2/detection.o \
 	frotz/config.o \
 	frotz/detection.o \
 	frotz/frotz.o \

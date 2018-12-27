@@ -21,6 +21,8 @@
  */
 
 #include "glk/glk.h"
+#include "glk/alan2/detection.h"
+#include "glk/alan2/alan2.h"
 #include "glk/frotz/detection.h"
 #include "glk/frotz/frotz.h"
 #include "glk/glulxe/detection.h"
@@ -140,7 +142,9 @@ Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 	f.close();
 
 	// Create the correct engine
-	if (Glk::Frotz::FrotzMetaEngine::findGame(gameDesc._gameId.c_str()).description) {
+	if (Glk::Alan2::Alan2MetaEngine::findGame(gameDesc._gameId.c_str()).description) {
+		*engine = new Glk::Alan2::Alan2(syst, gameDesc);
+	} else if (Glk::Frotz::FrotzMetaEngine::findGame(gameDesc._gameId.c_str()).description) {
 		*engine = new Glk::Frotz::Frotz(syst, gameDesc);
 	} else if (Glk::Glulxe::GlulxeMetaEngine::findGame(gameDesc._gameId.c_str()).description) {
 		*engine = new Glk::Glulxe::Glulxe(syst, gameDesc);
@@ -182,6 +186,7 @@ Common::String GlkMetaEngine::findFileByGameId(const Common::String &gameId) con
 
 PlainGameList GlkMetaEngine::getSupportedGames() const {
 	PlainGameList list;
+	Glk::Alan2::Alan2MetaEngine::getSupportedGames(list);
 	Glk::Frotz::FrotzMetaEngine::getSupportedGames(list);
 	Glk::Glulxe::GlulxeMetaEngine::getSupportedGames(list);
 	Glk::Scott::ScottMetaEngine::getSupportedGames(list);
@@ -192,6 +197,9 @@ PlainGameList GlkMetaEngine::getSupportedGames() const {
 
 PlainGameDescriptor GlkMetaEngine::findGame(const char *gameId) const {
 	PlainGameDescriptor gd;
+
+	gd = Glk::Alan2::Alan2MetaEngine::findGame(gameId);
+	if (gd.description) return gd;
 
 	gd = Glk::Frotz::FrotzMetaEngine::findGame(gameId);
 	if (gd.description) return gd;
@@ -213,6 +221,7 @@ DetectedGames GlkMetaEngine::detectGames(const Common::FSList &fslist) const {
 	detectClashes();
 
 	DetectedGames detectedGames;
+	Glk::Alan2::Alan2MetaEngine::detectGames(fslist, detectedGames);
 	Glk::Frotz::FrotzMetaEngine::detectGames(fslist, detectedGames);
 	Glk::Glulxe::GlulxeMetaEngine::detectGames(fslist, detectedGames);
 	Glk::Scott::ScottMetaEngine::detectGames(fslist, detectedGames);
@@ -223,6 +232,7 @@ DetectedGames GlkMetaEngine::detectGames(const Common::FSList &fslist) const {
 
 void GlkMetaEngine::detectClashes() const {
 	Common::StringMap map;
+	Glk::Alan2::Alan2MetaEngine::detectClashes(map);
 	Glk::Frotz::FrotzMetaEngine::detectClashes(map);
 	Glk::Glulxe::GlulxeMetaEngine::detectClashes(map);
 	Glk::Scott::ScottMetaEngine::detectClashes(map);
