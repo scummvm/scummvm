@@ -2123,6 +2123,28 @@ static const uint16 gk1ArtistVeveCopyPatch[] = {
 	PATCH_END
 };
 
+// After phoning Wolfgang on day 7, Gabriel is placed beyond room 220's obstacle
+//  boundary and can walk through walls and behind the room. This also occurs in
+//  the original. The script inconsistently uses accessible and inaccessible
+//  positions for placing ego next to the phone. We patch all instances to use
+//  the accessible position.
+//
+// Applies to: All PC Floppy and CD versions. TODO: Test Mac, should apply
+// Responsible methods: rm220:init, useThePhone:changeState(0)
+// Fixes bug #10853
+static const uint16 gk1EgoPhonePositionSignature[] = {
+	SIG_MAGICDWORD,
+	0x39, 0x68,                         // pushi 68 [ x: 104 ]
+	0x39, 0x7e,                         // pushi 7e [ y: 126 ]
+	SIG_END,
+};
+
+static const uint16 gk1EgoPhonePositionPatch[] = {
+	0x39, 0x6b,                         // pushi 6b [ x: 107 ]
+	0x39, 0x7c,                         // pushi 7c [ y: 124 ]
+	PATCH_END,
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,     0, "remove alt+n syslogger hotkey",               1, gk1SysLoggerHotKeySignature,      gk1SysLoggerHotKeyPatch },
@@ -2130,6 +2152,7 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   211, "fix day 1 grace phone speech timing",         1, gk1Day1GracePhoneSignature,       gk1Day1GracePhonePatch },
 	{  true,   212, "fix day 5 drum book dialogue error",          1, gk1Day5DrumBookDialogueSignature, gk1Day5DrumBookDialoguePatch },
 	{  true,   212, "fix day 5 phone softlock",                    1, gk1Day5PhoneFreezeSignature,      gk1Day5PhoneFreezePatch },
+	{  true,   220, "fix ego phone position",                      2, gk1EgoPhonePositionSignature,     gk1EgoPhonePositionPatch },
 	{  true,   230, "fix day 6 police beignet timer issue (1/2)",  1, gk1Day6PoliceBeignetSignature1,   gk1Day6PoliceBeignetPatch1 },
 	{  true,   230, "fix day 6 police beignet timer issue (2/2)",  1, gk1Day6PoliceBeignetSignature2,   gk1Day6PoliceBeignetPatch2 },
 	{  true,   230, "fix day 6 police sleep timer issue",          1, gk1Day6PoliceSleepSignature,      gk1Day6PoliceSleepPatch },
