@@ -284,13 +284,6 @@ protected:
 	void loadDroppedItemOffsets(Common::ReadStream &stream, byte count);
 
 	// Opcodes
-	typedef Common::Functor1<ScriptEnv &, int> Opcode;
-
-	template <class T>
-	Opcode *opcode(int (T::*f)(ScriptEnv &)) {
-		return new Common::Functor1Mem<ScriptEnv &, int, T>(static_cast<T *>(this), f);
-	}
-
 	int o1_isItemInRoom(ScriptEnv &e);
 	int o1_isMovesGT(ScriptEnv &e);
 	int o1_isVarEQ(ScriptEnv &e);
@@ -364,6 +357,7 @@ protected:
 	bool _textMode;
 
 	// Opcodes
+	typedef Common::Functor1<ScriptEnv &, int> Opcode;
 	Common::Array<const Opcode *> _condOpcodes, _actOpcodes;
 	// Message strings in data file
 	Common::Array<DataBlockPtr> _messages;
