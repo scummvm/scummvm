@@ -228,6 +228,8 @@ public:
 	 */
 	MoveCountType detectMoveCountType();
 
+	int detectPlaneIdBase();
+	
 	bool handleMoveCount() { return detectMoveCountType() == kIncrementMoveCount; }
 
 	bool usesCdTrack() { return _usesCdTrack; }
