@@ -573,7 +573,7 @@ VMDPlayer::IOStatus VMDPlayer::open(const Common::String &fileName, const OpenFl
 void VMDPlayer::init(int16 x, int16 y, const PlayFlags flags, const int16 boostPercent, const int16 boostStartColor, const int16 boostEndColor) {
 	const int16 screenWidth = g_sci->_gfxFrameout->getScreenWidth();
 	const int16 screenHeight = g_sci->_gfxFrameout->getScreenHeight();
-	const bool upscaleVideos = ConfMan.getBool("enable_video_upscale");
+	const bool upscaleVideos = ConfMan.hasKey("enable_video_upscale") ? ConfMan.getBool("enable_video_upscale") : false;
 
 	_doublePixels = (flags & kPlayFlagDoublePixels) || upscaleVideos;
 	_stretchVertical = flags & kPlayFlagStretchVertical;
