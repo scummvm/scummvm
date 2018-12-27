@@ -247,8 +247,8 @@ private:
 	void o2_videofromref();
 	void o2_vdxtransition();
 	void o2_setvideoskip();
-	void o2_copyscreentobg();
-	void o2_copybgtoscreen();
+	void o2_savescreen();
+	void o2_restorescreen();
 	void o2_gamespecial();
 	void o2_stub52();
 	void o2_setscriptend();

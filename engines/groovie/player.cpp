@@ -25,6 +25,7 @@
 
 #include "groovie/player.h"
 #include "groovie/groovie.h"
+#include "audio/mixer.h"
 
 namespace Groovie {
 
@@ -37,6 +38,9 @@ bool VideoPlayer::load(Common::SeekableReadStream *file, uint16 flags) {
 	_file = file;
 	_flags = flags;
 	_overrideSpeed = false;
+	if (_audioStream) {
+		g_system->getMixer()->stopAll();
+	}
 	_audioStream = NULL;
 
 	_fps = loadInternal();

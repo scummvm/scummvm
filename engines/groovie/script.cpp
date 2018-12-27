@@ -321,8 +321,10 @@ void Script::readScriptString(Common::String &str) {
 		case 0x23:
 			c = readScript8bits();
 			c = _variables[c - 0x61] + 0x30;
-			if (c >= 0x41 && c <= 0x5A) {
-				c += 0x20;
+			if (_version == kGroovieT7G) {
+				if (c >= 0x41 && c <= 0x5A) {
+					c += 0x20;
+				}
 			}
 			break;
 		case 0x7C:
@@ -332,8 +334,10 @@ void Script::readScriptString(Common::String &str) {
 			c = _variables[0x0A * parta + partb + 0x19] + 0x30;
 			break;
 		default:
-			if (c >= 0x41 && c <= 0x5A) {
-				c += 0x20;
+			if (_version == kGroovieT7G) {
+				if (c >= 0x41 && c <= 0x5A) {
+					c += 0x20;
+				}
 			}
 		}
 		// Append the current character at the end of the string
@@ -1003,9 +1007,22 @@ void Script::o_strcmpnejmp_var() {			// 0x21
 }
 
 void Script::o_copybgtofg() {			// 0x22
-	debugC(1, kDebugScript, "Groovie::Script: COPY_BG_TO_FG");
-	debugC(2, kDebugVideo, "Groovie::Script: @0x%04X: COPY_BG_TO_FG", _currentInstruction-1);
-	memcpy(_vm->_graphicsMan->_foreground.getPixels(), _vm->_graphicsMan->_background.getPixels(), 640 * _vm->_graphicsMan->_foreground.h * _vm->_graphicsMan->_foreground.format.bytesPerPixel);
+	if (_version == kGroovieT7G) {
+		debugC(1, kDebugScript, "Groovie::Script: COPY_BG_TO_FG");
+		debugC(2, kDebugVideo, "Groovie::Script: @0x%04X: COPY_BG_TO_FG", _currentInstruction - 1);
+		memcpy(_vm->_graphicsMan->_foreground.getPixels(), _vm->_graphicsMan->_background.getPixels(), 640 * _vm->_graphicsMan->_foreground.h * _vm->_graphicsMan->_foreground.format.bytesPerPixel);
+	} else {
+		debugC(1, kDebugScript, "Groovie::Script: COPY_SCREEN_TO_BG");
+		debugC(2, kDebugVideo, "Groovie::Script: @0x%04X: COPY_SCREEN_TO_BG", _currentInstruction - 1);
+
+		Graphics::Surface *screen = _vm->_system->lockScreen();
+		if (_vm->_graphicsMan->isFullScreen()) {
+			_vm->_graphicsMan->_foreground.copyFrom(screen->getSubArea(Common::Rect(0, 0, 640, 480)));
+		} else {
+			_vm->_graphicsMan->_foreground.copyFrom(screen->getSubArea(Common::Rect(0, 80, 640, 400)));
+		}
+		_vm->_system->unlockScreen();
+	}
 }
 
 void Script::o_strcmpeqjmp() {			// 0x23
@@ -1799,31 +1816,33 @@ void Script::o2_vdxtransition() {
 	}
 }
 
-void Script::o2_copyscreentobg() {
+void Script::o2_savescreen() {
 	uint16 val = readScript16bits();
 
 	// TODO: Parameter
 	if (val)
 		warning("Groovie::Script: o2_copyscreentobg: Param is %d", val);
 
-	Graphics::Surface *screen = _vm->_system->lockScreen();
-	_vm->_graphicsMan->_background.copyFrom(screen->getSubArea(Common::Rect(0, 80, 640, 320)));
-	_vm->_system->unlockScreen();
+	// Graphics::Surface *screen = _vm->_system->lockScreen();
+	// _vm->_graphicsMan->_background.copyFrom(screen->getSubArea(Common::Rect(0, 80, 640, 320)));
+	// _vm->_system->unlockScreen();
+	_vm->_graphicsMan->saveScreen();
 
 	debugC(1, kDebugScript, "Groovie::Script: CopyScreenToBG3: 0x%04X", val);
 	debugC(2, kDebugVideo, "Groovie::Script: @0x%04X: CopyScreenToBG3: 0x%04X", _currentInstruction-3, val);
 }
 
-void Script::o2_copybgtoscreen() {
+void Script::o2_restorescreen() {
 	uint16 val = readScript16bits();
 
 	// TODO: Parameter
 	if (val)
 		warning("Groovie::Script: o2_copybgtoscreen: Param is %d", val);
 
-	Graphics::Surface *screen = _vm->_system->lockScreen();
-	_vm->_graphicsMan->_background.copyRectToSurface(*screen, 0, 80, Common::Rect(0, 0, 640, 320 - 80));
-	_vm->_system->unlockScreen();
+	// Graphics::Surface *screen = _vm->_system->lockScreen();
+	// _vm->_graphicsMan->_background.copyRectToSurface(*screen, 0, 80, Common::Rect(0, 0, 640, 320 - 80));
+	// _vm->_system->unlockScreen();
+	_vm->_graphicsMan->restoreScreen();
 
 	debugC(1, kDebugScript, "Groovie::Script: CopyBG3ToScreen: 0x%04X", val);
 	debugC(2, kDebugVideo, "Groovie::Script: @0x%04X: CopyBG3ToScreen: 0x%04X", _currentInstruction-3, val);
@@ -2100,8 +2119,8 @@ Script::OpcodeFunc Script::_opcodesV2[NUM_OPCODES] = {
 	&Script::o_invalid, // 0x4C
 	&Script::o_invalid,
 	&Script::o_invalid,
-	&Script::o2_copyscreentobg,
-	&Script::o2_copybgtoscreen, // 0x50
+	&Script::o2_savescreen,
+	&Script::o2_restorescreen, // 0x50
 	&Script::o2_setvideoskip,
 	&Script::o2_stub52,
 	&Script::o_hotspot_outrect,

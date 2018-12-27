@@ -67,6 +67,7 @@ private:
 
 	// Origin
 	int16 _origX, _origY;
+	int16 _screenOffset;
 	void calcStartStop(int &start, int &stop, int origin, int length);
 
 	// Block coding type
@@ -85,11 +86,12 @@ private:
 	bool _flagTwo;	// If _flagOne is set. Copy frame to the foreground otherwise to the background
 
 	// Buffers
-	Graphics::Surface *_fg, *_bg, *_overBuf;
+	Graphics::Surface *_bg, *_screen, *_overBuf;
 	Graphics::Surface *_currBuf, *_prevBuf;
 	void buildShowBuf();
 	byte _scaleX, _scaleY;
 	byte _offScale;
+	bool _interlacedVideo;
 	bool _dirty;
 	byte _alpha;
 	bool _firstFrame;

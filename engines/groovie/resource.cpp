@@ -227,6 +227,8 @@ uint32 ResMan_v2::getRef(Common::String name, Common::String scriptname) {
 		return false;
 	}
 
+	// resources are always in lowercase
+	name.toLowercase();
 	uint32 resNum;
 	bool found = false;
 	for (resNum = 0; !found && !rlFile.err() && !rlFile.eos(); resNum++) {
