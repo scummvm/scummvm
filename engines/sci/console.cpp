@@ -488,6 +488,9 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 	debugPrintf("Resource map version: %s\n", g_sci->getResMan()->getMapVersionDesc());
 	debugPrintf("Contains selector vocabulary (vocab.997): %s\n", hasVocab997 ? "yes" : "no");
 	debugPrintf("Has CantBeHere selector: %s\n", g_sci->getKernel()->_selectorCache.cantBeHere != -1 ? "yes" : "no");
+	if (getSciVersion() >= SCI_VERSION_2) {
+		debugPrintf("Plane id base: %d\n", g_sci->_features->detectPlaneIdBase());
+	}
 	debugPrintf("Game version (VERSION file): %s\n", gameVersion.c_str());
 	debugPrintf("\n");
 
