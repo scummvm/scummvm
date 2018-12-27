@@ -628,6 +628,14 @@ MessageTypeSyncStrategy GameFeatures::getMessageTypeSyncStrategy() const {
 	return kMessageTypeSyncStrategyNone;
 }
 
+int GameFeatures::detectPlaneIdBase() {
+	if (getSciVersion() == SCI_VERSION_2 &&
+	    g_sci->getGameId() != GID_PQ4)
+		return 0;
+	else
+		return 20000;
+}
+	
 bool GameFeatures::autoDetectMoveCountType() {
 	// Look up the script address
 	reg_t addr = getDetectionAddr("Motion", SELECTOR(doit));
