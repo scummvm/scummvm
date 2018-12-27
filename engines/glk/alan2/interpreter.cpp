@@ -754,10 +754,10 @@ void Interpreter::interpret(Aaddr adr) {
 			break;
 		case C_CURVAR:
 			curVar(i);
-		break;
+			break;
 		case C_STMOP: 
 			stMop(i, oldpc);
-	      break;
+			break;
 	    default:
 			error("Unknown instruction class.");
     }

@@ -61,13 +61,13 @@ void Parser::unknown(char *inputStr) {
 int Parser::lookup(char *wrd) {
 #if 0
 	for (int i = 0; !endOfTable(&dict[i]); i++) {
-		if (strcmp(wrd, (char *) addrTo(dict[i].wrd)) == 0)
-			return (i);
+		if (strcmp(wrd, (char *)addrTo(dict[i].wrd)) == 0)
+			return i;
 	}
 #endif
 
 	unknown(wrd);
-	return(EOF);
+	return EOF;
 }
 
 char *Parser::gettoken(char *tokenBuffer) {
@@ -97,6 +97,7 @@ char *Parser::gettoken(char *tokenBuffer) {
 
 	oldch = *marker;
 	*marker = '\0';
+	
 	return tokenBuffer;
 }
 
@@ -116,20 +117,20 @@ void Parser::agetline() {
 		debug("> ");
 
 #if 0
-	    if (logflg)
+		if (logflg)
 			fprintf(logfil, "> ");
 #endif
 
 #ifdef USE_READLINE
-	    if (!readline(buf)) {
+		if (!readline(buf)) {
 			newline();
 			quit();
-	    }
+		}
 #else
-	    if (fgets(buf, LISTLEN, stdin) == NULL) {
+		if (fgets(buf, LISTLEN, stdin) == NULL) {
 			newline();
 			quit();
-	    }
+		}
 #endif
 
 		getPageSize();
@@ -146,11 +147,11 @@ void Parser::agetline() {
 
 		token = gettoken(isobuf);
 
-	    if (token != NULL && strcmp("debug", token) == 0 && _vm->header->debug) {
+		if (token != NULL && strcmp("debug", token) == 0 && _vm->header->debug) {
 			dbgflg = true;
 			debug();
 			token = NULL;
-	    }
+		}
 	} while (token == NULL);
 
   eol = false;
@@ -194,7 +195,7 @@ void Parser::scan() {
 		} else if (token[0] == '\"') {
 			if (litCount > MAXPARAMS)
 				error("Too many parameters.");
-      
+  
 			wrds[i++] = dictsize + litCount; // Word outside dictionary = literal
 			litValues[litCount].type = TYPSTR;
 
@@ -234,7 +235,7 @@ void Parser::nonverb() {
 }
 
 Abool Parser::objhere(Aword obj) {
-	if (isCnt(objs[obj - OBJMIN].loc)) {    // In something?
+	if (isCnt(objs[obj - OBJMIN].loc)) {	// In something?
 		if (isObj(objs[obj - OBJMIN].loc) || isAct(objs[obj - OBJMIN].loc))
 			return(isHere(objs[obj - OBJMIN].loc));
 // TODO
@@ -279,7 +280,7 @@ void Parser::buildall(ParamElem list[]) {
 	if (!found)
 		_vm->printError(M_WHAT_ALL);
 	else
-	    list[i].code = EOF;
+		list[i].code = EOF;
 }
 
 void Parser::listCopy(ParamElem a[], ParamElem b[]) {
@@ -380,7 +381,7 @@ void Parser::unambig(ParamElem plst[]) {
 
 	if (isLiteral(wrds[wrdidx])) {
 		// Transform the word into a reference to the literal value
-		plst[0].code = wrds[wrdidx++]-dictsize+LITMIN;
+		plst[0].code = wrds[wrdidx++] - dictsize + LITMIN;
 		plst[0].firstWord = EOF;	// No words used!
 		plst[1].code = EOF;
 		return;
@@ -389,7 +390,8 @@ void Parser::unambig(ParamElem plst[]) {
 	plst[0].code = EOF;		// Make empty
 
 	if (isIt(wrds[wrdidx])) {
-	    wrdidx++;
+		wrdidx++;
+		
 		// Use last object in previous command!
 		for (i = listLength(pparams)-1; i >= 0 && (pparams[i].code == 0 || pparams[i].code >= LITMIN); i--);
 		
@@ -447,12 +449,13 @@ void Parser::unambig(ParamElem plst[]) {
 			// Perhaps the last word was also a noun?
 			listCopy(plst, savlst);	// Restore to before last adjective
 			listCopyFromDictionary(refs, (Aword *)addrTo(dict[wrds[wrdidx-1]].nounrefs));
+			
 			if (plst[0].code == EOF)
 				listCopy(plst, refs);
-		else
-			listIntersection(plst, refs);
-	} else
-		_vm->printError(M_NOUN);
+			else
+				listIntersection(plst, refs);
+		} else
+			_vm->printError(M_NOUN);
 	}
 
 	lastWord = wrdidx - 1;
@@ -465,7 +468,7 @@ void Parser::unambig(ParamElem plst[]) {
 
 		listCompact(plst);
 	}
-    
+
 	if (listLength(plst) > 1 || (found && listLength(plst) == 0)) {
 		params[0].code = 0;		/* Just make it anything != EOF */
 		params[0].firstWord = firstWord; /* Remember words for errors below */
@@ -579,15 +582,15 @@ bool Parser::claCheck(ClaElem *cla) {
 	if ((cla->classes&(Aword)CLA_CNT) != 0)
 		ok = ok || isCnt(params[cla->code-1].code);
 	if ((cla->classes&(Aword)CLA_ACT) != 0)
-	    ok = ok || isAct(params[cla->code-1].code);
+		ok = ok || isAct(params[cla->code-1].code);
 	if ((cla->classes&(Aword)CLA_NUM) != 0)
 		ok = ok || isNum(params[cla->code-1].code);
 	if ((cla->classes&(Aword)CLA_STR) != 0)
-	    ok = ok || isStr(params[cla->code-1].code);
+		ok = ok || isStr(params[cla->code-1].code);
 	if ((cla->classes&(Aword)CLA_COBJ) != 0)
-	    ok = ok || (isCnt(params[cla->code-1].code) && isObj(params[cla->code-1].code));
+		ok = ok || (isCnt(params[cla->code-1].code) && isObj(params[cla->code-1].code));
 	if ((cla->classes&(Aword)CLA_CACT) != 0)
-	    ok = ok || (isCnt(params[cla->code-1].code) && isAct(params[cla->code-1].code));
+		ok = ok || (isCnt(params[cla->code-1].code) && isAct(params[cla->code-1].code));
 
 	return ok;
 }
@@ -606,7 +609,7 @@ void Parser::resolve(ParamElem plst[]) {
 				params[1].code = EOF;	// But be sure to terminate
 				_vm->printError(M_NO_SUCH);
 			}
-    }
+	}
 }
 
 bool Parser::endOfTable(StxElem *addr) {
@@ -905,7 +908,7 @@ void Parser::match(ParamElem *mlst) {
 	tryMatch(mlst);			// try to understand what the user said
 
 	if (wrds[wrdidx] != EOF && !isConj(wrds[wrdidx]))
-	    _vm->printError(M_WHAT);
+		_vm->printError(M_WHAT);
 	if (wrds[wrdidx] != EOF)	// More on this line?
 		wrdidx++;			// If so skip the AND
 }
@@ -967,7 +970,7 @@ void Parser::parse() {
 		match(mlst);
 		action(mlst);		// mlst contains possible multiple params
 	} else {
-	    params[0].code = EOF;
+		params[0].code = EOF;
 		pmlst[0].code = EOF;
 		nonverb();
 	}
