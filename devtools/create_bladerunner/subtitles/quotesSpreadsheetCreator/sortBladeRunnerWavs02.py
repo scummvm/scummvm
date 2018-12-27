@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python2.7
 # -*- coding: UTF-8 -*-
 #
 # Created by Praetorian (ShadowNate) for Classic Adventures in Greek
@@ -24,9 +24,12 @@ from treFileLib import *
 #sys.setdefaultencoding('utf8')
 
 company_email = "classic.adventures.in.greek@gmail.com"
-app_version = "0.50"
+app_version = "0.70"
 app_name = "sortBladeRunnerWavs"
-app_name_spaced = "Sort Blade Runner Audio Speech Files"
+app_name_spaced = "Blade Runner Transcript Excel Creator (bare bones)"
+app_short_desc = "Create an Excel (.XLS) for transcribing Blade Runner. It can also extract TRE files and export WAV files for game's resources. "
+traceModeEnabled = False
+
 stringReplacementForRootFolderWithExtractedFiles = ""
 numReplaceStartingCharacters = 0
 
@@ -67,12 +70,18 @@ def calculateFoldHash(strFileName):
 	return hash
 
 # Fill the actorPropertyEntries table
-def initActorPropertyEntries():
+def initActorPropertyEntries(thePathToActorNamesTxt):
 	global actorPropertyEntriesWasInit
 	global actorPropertyEntries
 	firstLine = True
 #	 print "opening actornames"
-	with open("./actornames.txt") as tsv:
+	if thePathToActorNamesTxt is None or not thePathToActorNamesTxt:
+
+		actorNamesTextFile = u'actornames.txt'
+		relPath = u'.'
+		thePathToActorNamesTxt = os.path.join(relPath, actorNamesTextFile)
+		print "Warning:: Actor names text file %s not found in arguments. Attempting to open local file if it exists" % (thePathToActorNamesTxt)	
+	with open(thePathToActorNamesTxt) as tsv:
 		for line in csv.reader(tsv, dialect="excel-tab"):
 			#skip first line header
 			if firstLine == True:
@@ -122,7 +131,7 @@ def getActorShortNameAndLocalQuoteIdByAUDHashID(audHashId):
 	actorShortName = ''
 	actorLocalQuoteId = 0
 	if not actorPropertyEntriesWasInit:
-		print "Error actor properties were not initialized!"
+		print "Error:: actor properties were not initialized!"
 		return (actorId, actorShortName, actorLocalQuoteId)
 
 	for actorEntryTmp in actorPropertyEntries:
@@ -155,7 +164,7 @@ def inputTLKsExtract(inputTLKpath, outputWAVpath):
 	#				fileID
 	#				segment offset
 	#				file size
-	print "Checking in %s for TLK files to extract to %s" % (inputTLKpath, outputWAVpath)
+	print "Info:: Checking in %s for TLK files to extract to %s" % (inputTLKpath, outputWAVpath)
 	inputTLKFilesFound = []
 	# breaking after first for loop yields only the top directory files, which is what we want
 	for (dirpath, dirnames, filenames) in walk(inputTLKpath):
@@ -165,18 +174,20 @@ def inputTLKsExtract(inputTLKpath, outputWAVpath):
 					inputTLKFilesFound.append(tlkTuple)
 		break
 	for tmpTLKfileTuple in inputTLKFilesFound:
-		print "Found TLK: %s" % ('"' + inputTLKpath + tmpTLKfileTuple[0] + '"')
+		if traceModeEnabled:
+			print "Info:: Found TLK: %s" % ('"' + inputTLKpath + tmpTLKfileTuple[0] + '"')
 		errorFound = False
 		inTLKFile = None
 		#
 		# Create output folder if not exists at output path
-		print "Ensuring output directory %s" % (os.path.join(outputWAVpath, tmpTLKfileTuple[1] ))
+		if traceModeEnabled:
+			print "Ensuring output directory %s" % (os.path.join(outputWAVpath, tmpTLKfileTuple[1] ))
 		ensure_dir(os.path.join(outputWAVpath, tmpTLKfileTuple[1] ) )
 		try:
 			inTLKFile = open(os.path.join(inputTLKpath,tmpTLKfileTuple[0]), 'rb')
 		except:
 			errorFound = True
-			print "Unexpected error:", sys.exc_info()[0]
+			print "Error:: Unexpected error:", sys.exc_info()[0]
 			raise
 		if not errorFound:
 			tmpBuff = inTLKFile.read(2)
@@ -192,9 +203,10 @@ def inputTLKsExtract(inputTLKpath, outputWAVpath):
 			# 2 + 4 = 6 bytes short MIX header
 			# 12 bytes per TLK entry in entries table
 			# quick size validation
-			print "Entries: %d, data segment %d bytes" % (numOfEntriesToExtract, allTlkFileSize)
+			if traceModeEnabled:
+				print "Entries: %d, data segment %d bytes" % (numOfEntriesToExtract, allTlkFileSize)
 			if allActualBytesInMixFile != 2 + 4 + 12 * numOfEntriesToExtract + allTlkFileSize:
-				print "Error: TLK file size mismatch with reported size in header for %s!" % (tmpTLKfileTuple[0])
+				print "Error:: TLK file size mismatch with reported size in header for %s!" % (tmpTLKfileTuple[0])
 			else:
 				#
 				# 12 bytes per entry
@@ -213,7 +225,8 @@ def inputTLKsExtract(inputTLKpath, outputWAVpath):
 					tmpBuff = inTLKFile.read(4)
 					tmpRdTuple = struct.unpack('I', tmpBuff)
 					sizeOfAUDEntry = tmpRdTuple[0]
-					print "Entry: %s, offset %s, data segment %s bytes" % (''.join('{:08X}'.format(idOfAUDEntry)), ''.join('{:08X}'.format(offsetOfAUDEntry)),''.join('{:08X}'.format(sizeOfAUDEntry)))
+					if traceModeEnabled:
+						print "Entry: %s, offset %s, data segment %s bytes" % (''.join('{:08X}'.format(idOfAUDEntry)), ''.join('{:08X}'.format(offsetOfAUDEntry)),''.join('{:08X}'.format(sizeOfAUDEntry)))
 					#
 					# put file in AUD object
 					# do we need AUD decode?
@@ -228,7 +241,7 @@ def inputTLKsExtract(inputTLKpath, outputWAVpath):
 					#
 					inTLKFile.seek(2 + 4 + 12*numOfEntriesToExtract + offsetOfAUDEntry)
 					if(offsetOfAUDEntry + sizeOfAUDEntry > allTlkFileSize):
-						print "Error: AUD file size mismatch with reported size in entry header!"
+						print "Error:: AUD file size mismatch with reported size in entry header!"
 					else:
 						audFileBuffer = inTLKFile.read(sizeOfAUDEntry)
 						if (len(audFileBuffer) == sizeOfAUDEntry):
@@ -244,11 +257,12 @@ def inputTLKsExtract(inputTLKpath, outputWAVpath):
 								if not os.path.isfile(os.path.join(outputWAVpath, tmpTLKfileTuple[1], targetSimpleFileName) ):
 									thisAudFile.extract_as_wav(audFileBuffer, os.path.join(outputWAVpath, tmpTLKfileTuple[1], targetSimpleFileName) )
 								else:
-									print "Output file %s already exists. Skipping..." % (os.path.join(outputWAVpath, tmpTLKfileTuple[1], targetSimpleFileName))
+									if traceModeEnabled:
+										print "Info:: Output file %s already exists. Skipping..." % (os.path.join(outputWAVpath, tmpTLKfileTuple[1], targetSimpleFileName))
 							else:
-								print "Error while LOADING aud file!"
+								print "Error:: while LOADING aud file!"
 						else:
-							print "Error while reading AUD file %s into mem buffer" % (''.join('{:08X}'.format(idOfAUDEntry)))
+							print "Error:: while reading AUD file %s into mem buffer" % (''.join('{:08X}'.format(idOfAUDEntry)))
 			inTLKFile.close()
 
 
@@ -257,7 +271,7 @@ def inputTLKsExtract(inputTLKpath, outputWAVpath):
 	return
 
 def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
-	print "Checking in %s for MIX files to extract TRE's from" % (inputMIXpath)
+	print "Info:: Checking in %s for MIX files to extract TRE's from" % (inputMIXpath)
 	inputMIXFilesFound = []
 	# breaking after first for loop yields only the top directory files, which is what we want
 	for (dirpath, dirnames, filenames) in walk(inputMIXpath):
@@ -267,7 +281,8 @@ def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
 					inputMIXFilesFound.append(mixFileName)
 		break
 	for tmpMIXfileName in inputMIXFilesFound:
-		print "Found MIX: %s" % ('"' + inputMIXpath + tmpMIXfileName + '"')
+		if traceModeEnabled:
+			print "Found MIX: %s" % ('"' + inputMIXpath + tmpMIXfileName + '"')
 		errorFound = False
 		inMIXFile = None
 		#
@@ -275,7 +290,7 @@ def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
 			inMIXFile = open(os.path.join(inputMIXpath,tmpMIXfileName), 'rb')
 		except:
 			errorFound = True
-			print "Unexpected error:", sys.exc_info()[0]
+			print "Error:: Unexpected error:", sys.exc_info()[0]
 			raise
 		if not errorFound:
 			totalTREs = 0
@@ -292,9 +307,10 @@ def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
 			# 2 + 4 = 6 bytes short MIX header
 			# 12 bytes per MIX entry in entries table
 			# quick size validation
-			print "Entries: %d, data segment %d bytes" % (numOfEntriesToExtract, allMixFileSize)
+			if traceModeEnabled:
+				print "Entries: %d, data segment %d bytes" % (numOfEntriesToExtract, allMixFileSize)
 			if allActualBytesInMixFile != 2 + 4 + 12 * numOfEntriesToExtract + allMixFileSize:
-				print "Error: MIX file size mismatch with reported size in header for %s!" % (tmpMIXfileName)
+				print "Error:: MIX file size mismatch with reported size in header for %s!" % (tmpMIXfileName)
 			else:
 				#
 				# 12 bytes per entry
@@ -323,7 +339,8 @@ def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
 							break
 
 					if (foundTREFile == True):
-						print "Entry Name: %s, Entry ID: %s, offset %s, data segment %s bytes" % (currTreFileName, ''.join('{:08X}'.format(idOfMIXEntry)), ''.join('{:08X}'.format(offsetOfMIXEntry)),''.join('{:08X}'.format(sizeOfMIXEntry)))
+						if traceModeEnabled:
+							print "Entry Name: %s, Entry ID: %s, offset %s, data segment %s bytes" % (currTreFileName, ''.join('{:08X}'.format(idOfMIXEntry)), ''.join('{:08X}'.format(offsetOfMIXEntry)),''.join('{:08X}'.format(sizeOfMIXEntry)))
 						#
 						# IF TRE FILE:
 						# put file in TRE object
@@ -331,14 +348,15 @@ def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
 						#
 						inMIXFile.seek(2 + 4 + 12*numOfEntriesToExtract + offsetOfMIXEntry)
 						if(offsetOfMIXEntry + sizeOfMIXEntry > allMixFileSize):
-							print "Error: TRE file size mismatch with reported size in entry header!"
+							print "Error:: TRE file size mismatch with reported size in entry header!"
 						else:
 							treFileBuffer = inMIXFile.read(sizeOfMIXEntry)
 							if (len(treFileBuffer) == sizeOfMIXEntry):
 							# load TRE file
 								thisTreFile = treFile()
 								if (thisTreFile.loadTreFile(treFileBuffer, allMixFileSize)):
-									print "TRE file loaded"
+									if traceModeEnabled:
+										print "Info:: TRE file loaded"
 									if excelOutBook != None:
 										sh = excelOutBook.add_sheet(currTreFileName)
 										n = 0 # keeps track of rows
@@ -377,11 +395,11 @@ def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
 									#	pass
 									totalTREs =   totalTREs + 1
 								else:
-									print "Error while LOADING TRE file!"
+									print "Error:: while LOADING TRE file!"
 							else:
-								print "Error while reading TRE file %s into mem buffer" % (''.join('{:08X}'.format(idOfMIXEntry)))
+								print "Error:: while reading TRE file %s into mem buffer" % (''.join('{:08X}'.format(idOfMIXEntry)))
 			inMIXFile.close()
-			print "Total TREs: %d " % (totalTREs)
+			print "Info:: Total TREs: %d " % (totalTREs)
 	return
 
 
@@ -494,15 +512,13 @@ def outputXLS(filename, sheet, list1, parseTREResourcesAlso = False, mixInputFol
 #
 # ########################
 # main
-# 00_0000 -- DealsInInsects					dupl TLK01, TLK0A
-# 00_0510 -- ThinkingOfChangingJobs-Leon	dupl TLK02, TLK03
-# 00-8520 -- WhatDoYouKnow					dupl TLK01, TLK0A
+def main(argsCL):
+	# TODO parse arguments using argparse? https://docs.python.org/3/library/argparse.html#module-argparse
+	global traceModeEnabled
+	traceModeEnabled = False
 
-# Total unique quotes seems to be 5495!
-# TODO rename files in folders to conform to the underscore '_' and '-' format (a few don't -- let's have them all conforming!)
-# #########################
-#
-if __name__ == "__main__":
+	pathToActorNamesTxt = ""
+
 	TMProotFolderWithExtractedFiles = ""
 	TMProotFolderWithInputTLKFiles = ""
 
@@ -510,50 +526,55 @@ if __name__ == "__main__":
 	extractTreFilesMode = False
 
 	invalidSyntax = False
-#	 print "Len of sysargv = %s" % (len(sys.argv))
-	if len(sys.argv) == 2:
-		if(sys.argv[1] == '--help'or sys.argv[1] == '-h'):
+	print "Running %s (%s)..." % (app_name_spaced, app_version)
+#	 print "Len of sysargv = %s" % (len(argsCL))
+	if len(argsCL) == 2:
+		if(argsCL[1] == '--help'or argsCL[1] == '-h'):
 			print "%s %s supports Blade Runner (English version, CD edition)." % (app_name_spaced, app_version)
+			print app_short_desc
 			print "Created by Praetorian of the classic adventures in Greek team."
 			print "Always keep backups!"
 			print "--------------------"
-			print "Preparatory steps:"
-			print "1. Put actornames.txt file in the same folder with this tool."
-			print "--------------------"
-			print "%s takes has one mandatory argument, the folder of the extracted WAV files:" % (app_name_spaced)
-			print "Valid syntax: %s -ip [folderpath_for_TLK_Files] -op [folderpath_for_extracted_wav_Files] -m [stringPathToReplaceFolderpathInExcelLinks]" % (app_name)
+			print "%s takes has one mandatory argument, the folder of the extracted WAV files:" % (app_name)
+			print "Valid syntax: %s -op folderpath_for_extracted_wav_Files [-ip folderpath_for_TLK_Files] [-ian path_to_actornames_txt] [-m stringPathToReplaceFolderpathInExcelLinks] [-xwav] [-xtre] [--trace]" % (app_name)
 			print "The -op switch has an argument that is the path for extracted WAV files folder. The -op switch is REQUIRED always."
 			print "The -ip switch has an argument that is the path for the input (TLK or MIX) files folder (can be the same as the Blade Runner installation folder)."
 			print "The -m switch has an argument that is a replacement string for the path to the folder of extracted WAV files which will be used as a prefix for the links in the output XLS file."
 			print "The -xwav switch enables the WAV audio extract mode from the TLK files. It requires an INPUT path to be set with the -ip switch."
 			print "The -xtre switch enables the TRE parsing mode from the original MIX files. It requires an INPUT path to be set with the -ip switch."
+			print "The --trace switch enables more debug messages being printed during execution."
 			print "If the app finishes successfully a sortedWavs.xls file will be created in the same folder with the app."
 			print "--------------------"
 			print "Thank you for using this app."
 			print "Please provide any feedback to: %s " % (company_email)
 			sys.exit()
-		elif(sys.argv[1] == '--version' or sys.argv[1] == '-v'):
+		elif(argsCL[1] == '--version' or argsCL[1] == '-v'):
 			print "%s %s supports Blade Runner (English version, CD edition)." % (app_name_spaced, app_version)
 			print "Please provide any feedback to: %s " % (company_email)
 			sys.exit()
 		else:
 			invalidSyntax = True
-	elif len(sys.argv) > 2:
-		for i in range(1, len(sys.argv)):
-			if( i < (len(sys.argv) - 1) and sys.argv[i][:1] == '-' and sys.argv[i+1][:1] != '-'):
-				if (sys.argv[i] == '-op'):
-					TMProotFolderWithExtractedFiles = sys.argv[i+1]
+	elif len(argsCL) > 2:
+		for i in range(1, len(argsCL)):
+			if( i < (len(argsCL) - 1) and argsCL[i][:1] == '-' and argsCL[i+1][:1] != '-'):
+				if (argsCL[i] == '-op'):
+					TMProotFolderWithExtractedFiles = argsCL[i+1]
 					numReplaceStartingCharacters = len(TMProotFolderWithExtractedFiles)
-				elif (sys.argv[i] == '-ip'):
-					TMProotFolderWithInputTLKFiles = sys.argv[i+1]
-				elif (sys.argv[i] == '-m'):
-					stringReplacementForRootFolderWithExtractedFiles = sys.argv[i+1]
-			elif (sys.argv[i] == '-xwav'):
+				elif (argsCL[i] == '-ip'):
+					TMProotFolderWithInputTLKFiles = argsCL[i+1]
+				elif (argsCL[i] == '-m'):
+					stringReplacementForRootFolderWithExtractedFiles = argsCL[i+1]
+				elif (argsCL[i] == '-ian'):
+					pathToActorNamesTxt = argsCL[i+1]
+			elif (argsCL[i] == '-xwav'):
 				print "Extract WAVs from TLK files mode enabled."
 				extractWavFilesMode = True
-			elif (sys.argv[i] == '-xtre'):
+			elif (argsCL[i] == '-xtre'):
 				print "Extract TRE mode enabled."
 				extractTreFilesMode = True
+			elif argsCL[i] == '--trace':
+				print "Info:: Trace mode enabled (more debug messages)."
+				traceModeEnabled = True
 		if not TMProotFolderWithExtractedFiles: # this argument is mandatory
 			invalidSyntax = True
 
@@ -563,7 +584,7 @@ if __name__ == "__main__":
 		if not invalidSyntax:
 
 			# parse Actors files:
-			initActorPropertyEntries()
+			initActorPropertyEntries(pathToActorNamesTxt)
 #			 for actorEntryTmp in actorPropertyEntries:
 #				  print "Found actor: %s %s %s" % (actorEntryTmp[0], actorEntryTmp[1], actorEntryTmp[2])
 			#
@@ -708,15 +729,28 @@ if __name__ == "__main__":
 		invalidSyntax = True
 
 	if invalidSyntax == True:
-		print "Invalid syntax\n Try: \n %s -op [folderpath_for_extracted_wav_Files] \n %s --help for more info \n %s --version for version info " % (app_name, app_name, app_name)
+		print "Invalid syntax\n Try: \n %s --help for more info \n %s --version for version info " % (app_name, app_name)
+		print "Valid syntax: %s -op folderpath_for_extracted_wav_Files [-ip folderpath_for_TLK_Files] [-ian path_to_actornames_txt] [-m stringPathToReplaceFolderpathInExcelLinks] [-xwav] [-xtre] [--trace]" % (app_name)
 		tmpi = 0
-		for tmpArg in sys.argv:
+		for tmpArg in argsCL:
 			if tmpi==0: #skip first argument
 				tmpi+=1
 				continue
 			print "\nArgument: %s" % (tmpArg)
 			tmpi+=1
+
+# 00_0000 -- DealsInInsects					dupl TLK01, TLK0A
+# 00_0510 -- ThinkingOfChangingJobs-Leon	dupl TLK02, TLK03
+# 00-8520 -- WhatDoYouKnow					dupl TLK01, TLK0A
+
+# Total unique quotes seems to be 5495!
+# TODO rename files in folders to conform to the underscore '_' and '-' format (a few don't -- let's have them all conforming!)
+#
+# #########################
+#
+if __name__ == '__main__':
+	main(sys.argv[0:])
 else:
 	## debug
-	#print '%s was imported from another module' % (app_name_spaced,)
+	#print 'Debug:: %s was imported from another module' % (app_name)
 	pass
