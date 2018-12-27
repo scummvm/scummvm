@@ -477,16 +477,20 @@ void GlkInterface::gos_cancel_pending_line() {
 }
 
 void GlkInterface::showBeyondZorkTitle() {
-	uint winW, winH, imgW, imgH;
-	winid_t win = glk_window_open(0, 0, 0, wintype_Graphics, 0);
-	glk_window_get_size(win, &winW, &winH);
+	int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 
-	if (os_picture_data(1, &imgW, &imgH)) {
-		os_draw_picture(1, win, Common::Rect(0, 0, winW, winH));
-		_events->waitForPress();
+	if (saveSlot == -1) {
+		uint winW, winH, imgW, imgH;
+		winid_t win = glk_window_open(0, 0, 0, wintype_Graphics, 0);
+		glk_window_get_size(win, &winW, &winH);
+
+		if (os_picture_data(1, &imgW, &imgH)) {
+			os_draw_picture(1, win, Common::Rect(0, 0, winW, winH));
+			_events->waitForPress();
+		}
+
+		glk_window_close(win, nullptr);
 	}
-
-	glk_window_close(win, nullptr);
 }
 
 void GlkInterface::os_draw_picture(int picture, winid_t win, const Common::Point &pos) {
