@@ -159,8 +159,10 @@ static const char *const selectorNameTable[] = {
 	"plane",        // RAMA
 	"state",        // RAMA
 	"getSubscriberObj", // RAMA
+	"cue",          // QFG4
 	"moveSpeed",    // QFG4
 	"setLooper",    // QFG4
+	"setSpeed",     // QFG4
 	"value",        // QFG4
 #endif
 	NULL
@@ -245,8 +247,10 @@ enum ScriptPatcherSelectors {
 	SELECTOR_plane,
 	SELECTOR_state,
 	SELECTOR_getSubscriberObj,
+	SELECTOR_cue,
 	SELECTOR_moveSpeed,
 	SELECTOR_setLooper,
+	SELECTOR_setSpeed,
 	SELECTOR_value
 #endif
 };
@@ -9253,6 +9257,196 @@ static const uint16 qfg4Tarot5PriorityPatch[] = {
 	PATCH_END
 };
 
+// When crossing the cave's tightrope in room 710, a tentacle emerges, and then
+// its animation freezes - in ScummVM, not the original interpreter. This
+// happens because of an extraneous argument passed to setCycle().
+//
+// (tentacle setCycle: RandCycle tentacle)
+//
+// RandCycle can accept an optional arg, but it expects a number, not an
+// object. ScummVM doesn't catch the faulty arithmetic and behaves abnormally.
+// We remove the bad arg.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: sTentacleDeath::changeState(3) in script 710
+// Fixes bug: #10615
+static const uint16 qfg4TentacleWriggleSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(setCycle),     // pushi setCycle
+	0x7a,                               // push2
+	0x51, SIG_ADDTOOFFSET(+1),          // class RandCycle
+	0x36,                               // push
+	0x72, SIG_ADDTOOFFSET(+2),          // loffsa tentacle
+	0x36,                               // push
+	0x72, SIG_ADDTOOFFSET(+2),          // loffsa tentacle
+	0x4a, SIG_UINT16(0x0008),           // send 08
+	SIG_END
+};
+
+static const uint16 qfg4TentacleWrigglePatch[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x78,                               // push1 (1 setCycle arg)
+	PATCH_ADDTOOFFSET(+3),              // ...
+	0x35, 0x00,                         // ldi 0 (erase 2 bytes)
+	0x35, 0x00,                         // ldi 0 (erase 2 bytes)
+	PATCH_ADDTOOFFSET(+3),              // ...
+	0x4a, PATCH_UINT16(0x0006),         // send 06
+	PATCH_END
+};
+
+// When crossing the cave's tightrope in room 710, a tentacle emerges. The
+// tentacle is supposed to reach a state where it waits indefinitely for an
+// external cue() to retract. If the speed slider is too high, a fighter
+// reaches the other side and sends a cue() before the tentacle is ready to
+// receive it. The tentacle never retracts.
+//
+// The fighter script (crossByHand) drains stamina in state 2 as hero moves
+// across. A slower speed would cost extra stamina. We add a delay after that
+// part is over, in state 3, just as hero is about to dismount. When state 4
+// cues, the tentacle script (sTentacleDeath) will be ready (state 3).
+//
+// To create that delay we set the "cycles" property for a countdown and remove
+// all other advancement mechanisms. State 3 had a cue from say() and a
+// self-cue(). The former's "self" arg becomes null. The latter is erased.
+//
+// Crossing from the left (crossByHandLeft) doesn't require fixing.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: crossByHand::changeState(3) in script 710
+// Fixes bug: #10615
+static const uint16 qfg4PitRopeFighterSignature[] = {
+	0x65, SIG_ADDTOOFFSET(+1),          // aTop state
+	SIG_ADDTOOFFSET(+269),              // ...
+	0x31, 0x1e,                         // bnt 30d (set a flag and say() on 1st crossing, else cue)
+	SIG_ADDTOOFFSET(+8),                // ...
+	0x38, SIG_SELECTOR16(say),          // pushi say ("You just barely made it")
+	0x38, SIG_UINT16(0x0005),           // pushi 5d
+	0x39, 0x0a,                         // pushi 10d
+	0x39, 0x06,                         // pushi 6d
+	0x39, 0x20,                         // pushi 32d
+	0x76,                               // push0
+	0x7c,                               // pushSelf
+	SIG_ADDTOOFFSET(+5),                // ...
+	0x32, SIG_ADDTOOFFSET(+2),          // jmp ?? [end the switch]
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(cue),          // pushi cue
+	0x76,                               // push0
+	0x54, SIG_UINT16(0x0004),           // self 04
+	0x32, SIG_ADDTOOFFSET(+2),          // jmp ?? [end the switch]
+	SIG_END
+};
+
+static const uint16 qfg4PitRopeFighterPatch[] = {
+	PATCH_ADDTOOFFSET(+271),            // ... (2 + 269)
+	0x31, 0x1b,                         // bnt 26d (skip the say w/o ending the switch)
+	PATCH_ADDTOOFFSET(+21),             // ... (8 + 13)
+	0x76,                               // push0 (null caller, so say won't cue crossByHand)
+	PATCH_ADDTOOFFSET(+5),              // ...
+                                        // (no jmp, self-cue becomes cycles)
+	0x35, 0x20,                         // ldi 32d
+	0x65, PATCH_GETORIGINALBYTE(1)+6,   // aTop cycles (property offset = @state + 6d)
+	0x33, 0x04,                         // jmp 4d [skip waste bytes, end the switch]
+	PATCH_END
+};
+
+// As above, mages at high speed can get across the pit in room 710 before
+// tentacle is ready to receive a cue().
+//
+// As luck would have it, hero's speed is cached and restored. Twice actually.
+//
+// Overview of the mage script (sLevitateOverPit)
+//  State 1-3:  Cache hero's slider-based speed.
+//              Set a temporary speed as hero unfurls the cloth.
+//              Restore the original value.
+//              Call handsOn(). Wait for an external cue().
+//  State 4:    Call handsOff().
+//              If cued by the Levitate spell (script 21), go to 5-7.
+//              A plain cue() from anywhere else, leads to state 8.
+//  State 5-7:  Move across the pit. Skip to state 9.
+//  State 8:    An abort message.
+//  State 9-10: Cache hero's speed again.
+//              Set a temporary speed as hero folds up the cloth.
+//              Restore the original value, and normalize hero. Call handsOn().
+//
+// Patch 1: We overwrite some derelict code in state 5, caching the
+// slider-based speed again, in case the player adjusted it before casting
+// Levitate, then setting a fixed speed of our own for the crossing.
+//
+// Patch 2: Patch 1 already cached and clobbered the speed. We remove the
+// original attempt to cache again in state 9.
+//
+// The result is caching/restoration at the beginning, aborting or caching and
+// crossing with our fixed value, and a restoration at the end (whichever value
+// was last cached). The added travel time has no side effect for mages.
+//
+// Mages have no other script to levitate across from left to right. At some
+// point in development, the meaning of "register" changed. The derelict
+// state 5 code thought 0/1 meant move right/left. Whereas state 4 decides 0/1
+// means abort/cross, only ever moving left. The rightward MoveTo never runs.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: sLevitateOverPit::changeState(5) in script 710
+// Fixes bug: #10615
+static const uint16 qfg4PitRopeMageSignature1[] = {
+	0x30, SIG_UINT16(0x0017),           // bnt 23d [if register == 0 (never), move right]
+	SIG_ADDTOOFFSET(+20),               // ... (move left)
+	0x32, SIG_ADDTOOFFSET(+2),          // jmp ?? [end the switch]
+
+	0x38, SIG_SELECTOR16(setMotion),    // pushi setMotion (move right)
+	0x38, SIG_UINT16(0x0004),           // pushi 4d
+	0x51, SIG_ADDTOOFFSET(1),           // class MoveTo
+	0x36,                               // push
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x00da),           // pushi 218d
+	0x39, 0x30,                         // pushi 48d
+	0x7c,                               // pushSelf
+	0x81, 0x00,                         // lag global[0] (hero)
+	0x4a, SIG_UINT16(0x000c),           // send 12d
+	0x32, SIG_ADDTOOFFSET(+2),          // jmp ?? [end the switch]
+	SIG_END
+};
+
+static const uint16 qfg4PitRopeMagePatch1[] = {
+	0x34, PATCH_UINT16(0x0000),         // ldi 0 (erase the branch)
+	PATCH_ADDTOOFFSET(+20),             // ...
+
+	0x38, SIG_SELECTOR16(cycleSpeed),   // pushi cycleSpeed
+	0x76,                               // push0
+	0x81, 0x00,                         // lag global[0] (hero)
+	0x4a, SIG_UINT16(0x0004),           // send 4d
+	0xa3, 0x02,                         // sal local[2] (cache again)
+                                        //
+	0x38, SIG_SELECTOR16(setSpeed),     // pushi setSpeed
+	0x78,                               // push1
+	0x39, 0x08,                         // pushi 8d (set our fixed speed)
+	0x81, 0x00,                         // lag global[0] (hero)
+	0x4a, SIG_UINT16(0x0006),           // send 6d
+	0x5c,                               // selfID (erase 1 byte to keep disasm aligned)
+	PATCH_END
+};
+
+// Responsible method: sLevitateOverPit::changeState(9) in script 710
+static const uint16 qfg4PitRopeMageSignature2[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x09,                         // ldi 9d (case 9 label)
+	0x38, SIG_SELECTOR16(cycleSpeed),   // pushi cycleSpeed
+	SIG_ADDTOOFFSET(+6),                // ...
+	0xa3, 0x02,                         // sal local[2] (original re-cache)
+	SIG_ADDTOOFFSET(+48),               // ...
+	0x38, SIG_SELECTOR16(cycleSpeed),   // pushi cycleSpeed
+	0x78,                               // push1
+	0x8b, 0x02,                         // lsl local[2] (restore cached speed)
+	SIG_END
+};
+
+static const uint16 qfg4PitRopeMagePatch2[] = {
+	PATCH_ADDTOOFFSET(+11),             // (don't cache our fixed speed)
+	0x35, 0x00,                         // ldi 0 (erase 2 bytes)
+	PATCH_ADDTOOFFSET(+48),             // ...
+	0x38, PATCH_SELECTOR16(setSpeed),   // pushi setSpeed (keep cycleSpeed & moveSpeed sync'd)
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qg4AutosaveSignature,          qg4AutosavePatch },
@@ -9290,6 +9484,10 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  false,  663, "CD: fix crest bookshelf",                     1, qfg4CrestBookshelfCDSignature, qfg4CrestBookshelfCDPatch },
 	{  false,  663, "Floppy: fix crest bookshelf",                 1, qfg4CrestBookshelfFloppySignature,   qfg4CrestBookshelfFloppyPatch },
 	{  true,   663, "CD/Floppy: fix crest bookshelf motion",       1, qfg4CrestBookshelfMotionSignature,   qfg4CrestBookshelfMotionPatch },
+	{  true,   710, "fix tentacle wriggle cycler",                 1, qfg4TentacleWriggleSignature,  qfg4TentacleWrigglePatch },
+	{  true,   710, "fix tentacle retraction for fighter",         1, qfg4PitRopeFighterSignature,   qfg4PitRopeFighterPatch },
+	{  true,   710, "fix tentacle retraction for mage (1/2)",      1, qfg4PitRopeMageSignature1,     qfg4PitRopeMagePatch1 },
+	{  true,   710, "fix tentacle retraction for mage (2/2)",      1, qfg4PitRopeMageSignature2,     qfg4PitRopeMagePatch2 },
 	{  true,   800, "fix setScaler calls",                         1, qfg4SetScalerSignature,        qfg4SetScalerPatch },
 	{  true,   800, "fix grapnel removing hero's scaler",          1, qfg4RopeScalerSignature,       qfg4RopeScalerPatch },
 	{  true,   803, "fix sliding down slope",                      1, qfg4SlidingDownSlopeSignature, qfg4SlidingDownSlopePatch },
