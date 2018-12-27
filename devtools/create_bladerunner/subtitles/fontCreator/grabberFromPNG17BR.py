@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python2.7
 # -*- coding: UTF-8 -*-
 #-------------------------------------------------------------------------------
 # Name:		   grabberFromPNG15BR
@@ -6,7 +6,7 @@
 #			   FON file for the Westwood Blade Runner PC game.
 #
 # Author:	   antoniou
-#
+#w
 # Created:	   16-05-2018
 # Copyright:   (c) antoniou 2018
 # Licence:
@@ -76,10 +76,12 @@ import os.path
 from fonFileLib import *
 
 company_email = "classic.adventures.in.greek@gmail.com"
-app_version = "0.50"
+app_version = "0.70"
 app_name = "grabberFromPNGHHBR"
-app_name_spaced = "Extract or create Font Files (.FON) for Blade Runner"
+app_name_spaced = "Blade Runner Font Creator/Extractor"
+app_short_desc = "Extract or create Font Files (.FON) for Blade Runner"
 
+traceModeEnabled = False
 
 supportedMIXInputFiles = ['STARTUP.MIX']
 ## 4 font files
@@ -173,10 +175,11 @@ class grabberFromPNG:
 		targetLangOrderAndListOfForeignLettersStrUnicode = None
 		targetLangOrderAndListOfForeignLettersStr = None
 		# Read from an override file if it exists. Filename should be overrideEncoding.txt (overrideEncodingTextFile)
-		if(not self.overrideEncodingPath):
+		if not self.overrideEncodingPath :
 			overrideEncodingTextFile = u'overrideEncoding.txt'
 			relPath = u'.'
 			self.overrideEncodingPath = os.path.join(relPath,overrideEncodingTextFile)
+			print "Warning:: Font Creation Override Encoding file not found in arguments. Attempting to open local file %s if it exists" % (configureFontsTranslationTextFile)
 
 		if os.access(self.overrideEncodingPath, os.F_OK):
 			## debug
@@ -234,14 +237,15 @@ class grabberFromPNG:
 					except:
 						overrideFailed = True
 						raise
-				if not (self.targetEncoding is None or self.targetEncoding  == '' or targetLangOrderAndListOfForeignLettersStrUnicode is None or len(targetLangOrderAndListOfForeignLettersStrUnicode) == 0 or self.originalFontName is None or self.originalFontName == ''):
+				if not (self.targetEncoding is None or not self.targetEncoding or targetLangOrderAndListOfForeignLettersStrUnicode is None or len(targetLangOrderAndListOfForeignLettersStrUnicode) == 0 or self.originalFontName is None or not self.originalFontName):
 					overrideFailed = False
 
-				print "Target Encoding: " , self.targetEncoding
+				print "Info:: Target Encoding: " , self.targetEncoding
 				#print "Lang Order: " , targetLangOrderAndListOfForeignLettersStrUnicode
-				print "Explicit Kern List: " , self.listOfExplicitKerning
-				print "Explicit Width Increment List: " , self.listOfWidthIncrements
-				print "Original Font Name: " , self.originalFontName
+				if traceModeEnabled:
+					print "Explicit Kern List: " , self.listOfExplicitKerning
+					print "Explicit Width Increment List: " , self.listOfWidthIncrements
+				print "Info:: Original Font Name: " , self.originalFontName
 
 			if(len(self.listOfOutOfOrderGlyphs) == 0 and self.specialGlyphMode == True):
 				# Just keep those that are needed
@@ -253,7 +257,8 @@ class grabberFromPNG:
 				elif self.originalFontName == 'TAHOMA': # treat TAHOMA18 and TAHOMA24 similarily here
 					self.listOfOutOfOrderGlyphs.append((u'\xe9', u'\u0192')) 	# french e punctuated
 					self.listOfOutOfOrderGlyphs.append((u'\xfc', u'\u2013')) 	# u umlaut
-			print "Explicit Out Of Order Glyphs List: " , self.listOfOutOfOrderGlyphs
+			if traceModeEnabled:
+				print "Info:: Explicit Out Of Order Glyphs List: " , self.listOfOutOfOrderGlyphs
 		else:
 			## debug
 			print "Error: Override encoding file not found: {0}.".format(self.overrideEncodingPath)
@@ -284,9 +289,11 @@ class grabberFromPNG:
 			sys.exit()	# terminate if override Failed (Blade Runner)
 
 		targetLangOrderAndListOfForeignLetters = list(targetLangOrderAndListOfForeignLettersStr)
-		print  targetLangOrderAndListOfForeignLetters, len(targetLangOrderAndListOfForeignLetters)	   # new
+		if traceModeEnabled:
+			print  targetLangOrderAndListOfForeignLetters, len(targetLangOrderAndListOfForeignLetters)	   # new
 		self.targetLangOrderAndListOfForeignLettersAsciiValues = [ord(i) for i in targetLangOrderAndListOfForeignLetters]
-		print self.targetLangOrderAndListOfForeignLettersAsciiValues, len(self.targetLangOrderAndListOfForeignLettersAsciiValues)
+		if traceModeEnabled:
+			print self.targetLangOrderAndListOfForeignLettersAsciiValues, len(self.targetLangOrderAndListOfForeignLettersAsciiValues)
 		self.maxAsciiValueInEncoding = max(self.targetLangOrderAndListOfForeignLettersAsciiValues)
 
 #	 for charAsciiValue in targetLangOrderAndListOfForeignLetters:
@@ -502,7 +509,8 @@ class grabberFromPNG:
 					if self.tabSpaceWidth == 0:
 						#print "start startPre", startCol, self.startColOfPrevFontLetter
 						self.tabSpaceWidth = startCol - self.startColOfPrevFontLetter
-						print "Tab Space Width detected: %d " % (self.tabSpaceWidth)
+						if traceModeEnabled:
+							print "Tab Space Width detected: %d " % (self.tabSpaceWidth)
 					# new if -- don't use else here, to include the case of when we first detected the tab space width
 					if self.tabSpaceWidth > 0:
 						self.listOfXOffsets.append(startCol - (self.startOfAllLettersIncludingTheExtraDoubleAndWithKern + (self.lettersFound + 1) * self.tabSpaceWidth) ) #	 + self.deductKerningPixels )
@@ -589,6 +597,7 @@ class grabberFromPNG:
 			# TODO the special settings for handling italic native letters should be in the settings(?)
 			filepathSplitTbl = os.path.split(self.imageRowFilePNG)
 			sFilenameOnlyImageRowFilePNG = filepathSplitTbl[1]
+			print "Info:: Parsing input Font glyphs image %s. Please wait..." % (sFilenameOnlyImageRowFilePNG)
 
 			if sFilenameOnlyImageRowFilePNG.startswith("itcrp_") or sFilenameOnlyImageRowFilePNG.startswith("it_"):
 				italicsMode = True
@@ -596,7 +605,8 @@ class grabberFromPNG:
 			if sFilenameOnlyImageRowFilePNG.startswith("itcrp_"):
 				trimTopPixels = 1
 				trimBottomPixels = 1
-				print "Will trim upper line by %d pixels and bottom line by %d pixels" % (trimTopPixels, trimBottomPixels)
+				if traceModeEnabled:
+					print "Will trim upper line by %d pixels and bottom line by %d pixels" % (trimTopPixels, trimBottomPixels)
 			pix = im.load()
 			# pix argument is mutable (will be changed in the parseImage body)
 			if self.parseImage(pix, w1, h1, trimTopPixels, trimBottomPixels, True) == 0:	#first run, just get the start column, ignore the letter - don't store it . We need this for the tab space width calculation and eventually the kerning calc of the letters
@@ -605,7 +615,8 @@ class grabberFromPNG:
 					self.lettersFound = self.lettersFound + 1 # == 0 means one character font was detected so +1 to the counter
 		#	 print self.listOfBaselines
 			#debug
-			print "Font Letters Detected (not including the first double): %d" % (self.lettersFound)
+			if traceModeEnabled:
+				print "Debug:: Font Glyphs Detected (not including the first double): %d" % (self.lettersFound)
 			if (self.lettersFound ) > 0 :
 				#print "widths: ", self.listOfWidths[0:]
 				#print "Plain x offsets:"
@@ -637,7 +648,8 @@ class grabberFromPNG:
 						tmpOrd = self.targetLangOrderAndListOfForeignLettersAsciiValues[kIncIndx]
 						keysOfWidthIncrements, valuesOfWidthIncrements = (zip(*self.listOfWidthIncrements))
 						if tmpOrd in keysOfWidthIncrements:
-							print "Explicit width increment for %d: %d" % (tmpOrd, valuesOfWidthIncrements[keysOfWidthIncrements.index(tmpOrd)])
+							if traceModeEnabled:
+								print "Explicit width increment for %d: %d" % (tmpOrd, valuesOfWidthIncrements[keysOfWidthIncrements.index(tmpOrd)])
 							explicitWidthIncrementVal = valuesOfWidthIncrements[keysOfWidthIncrements.index(tmpOrd)]
 							listOfCalcWidths.append(tmpWidth + explicitWidthIncrementVal )
 					if explicitWidthIncrementVal == 0:
@@ -646,7 +658,8 @@ class grabberFromPNG:
 				#maxFontWidth =	 max(self.listOfWidths)
 				maxFontWidth =	max(listOfCalcWidths)
 				maxFontHeight =	 max(self.listOfHeights)
-				print "Max Width, Max Height (not necessarily for the same character font): %d, %d" % (maxFontWidth, maxFontHeight)
+				if traceModeEnabled:
+					print "Debug:: Max Width, Max Height (not necessarily for the same character glyph): %d, %d" % (maxFontWidth, maxFontHeight)
 				#print "Index\tAsciiOrd\tX Offs\tY Offs\tWidth\tHeight"
 				#print zip(range(1, len(self.listOfXOffsets)), self.targetLangOrderAndListOfForeignLettersAsciiValues[1:], self.listOfXOffsets, self.listOfYOffsets, listOfCalcWidths, self.listOfHeights)
 				targetFontFile = None
@@ -675,7 +688,8 @@ class grabberFromPNG:
 						#				this size should be updated at the end (after filling the file with all font image data)
 						#
 						# pack 'I' unsigned int
-						print "NumberOfEntriesInFontTabl", (self.maxAsciiValueInEncoding + 1 + 1)
+						if traceModeEnabled:
+							print "Number Of Entries In Font Table", (self.maxAsciiValueInEncoding + 1 + 1)
 						numberOfEntriesInFontTable = self.maxAsciiValueInEncoding + 1 + 1  # 0x0100 # This is actually the max ascii value + plus one (1) to get the font index value + plus another one (1) to get the count (since we have zero based indices)
 															# TODO ??? could be more than this if we need to keep other characters (not in our codeset) and expand the ascii table and offset the new characters
 						numberOfEntriesInFontTableInFile = pack('I', numberOfEntriesInFontTable )
@@ -759,7 +773,8 @@ class grabberFromPNG:
 										keysOfExplicitKerning, valuesOfExplicitKerning = (zip(*self.listOfExplicitKerning))
 										if (i - 1) in keysOfExplicitKerning:
 											# found explicit kerning for this
-											print "Explicit kerning for %d " % (i-1)
+											if traceModeEnabled:
+												print "Explicit kerning for %d " % (i-1)
 											self.listOfXOffsets[kIncIndx] = valuesOfExplicitKerning[keysOfExplicitKerning.index(i-1)] # explicit X offset
 
 									tmpXOffsetToWrite = pack('i', self.listOfXOffsets[kIncIndx]) # x offset - from left			# TODO check if ok. Changed to signed int since it can be negative sometimes!
@@ -770,7 +785,8 @@ class grabberFromPNG:
 									if len(self.listOfWidthIncrements ) > 0:
 										keysOfWidthIncrements, valuesOfWidthIncrements = (zip(*self.listOfWidthIncrements))
 										if (i - 1) in keysOfWidthIncrements:
-											print "Explicit width increment for %d " % (i-1)
+											if traceModeEnabled:
+												print "Explicit width increment for %d " % (i-1)
 											foundExplicitWidthIncrement = True
 			 								self.listOfWidths[kIncIndx] = self.listOfWidths[kIncIndx] + valuesOfWidthIncrements[keysOfWidthIncrements.index(i-1)]
 
@@ -802,10 +818,11 @@ class grabberFromPNG:
 									targetFontFile.write(tmpDataOffsetToWrite)
 						# end of for loop over all possible ascii values contained in the fon file
 						# print the corrected properties per glyph font:
-						print "***** FINAL (Explicit Kern, width accounted) *****\nIndex\tAsciiOrd\tX Offs\tY Offs\tWidth\tHeight"
-						tmpListOfTuplesToPrintDbg = zip(range(1, len(self.listOfXOffsets)), self.targetLangOrderAndListOfForeignLettersAsciiValues[1:], self.listOfXOffsets, self.listOfYOffsets, listOfCalcWidths, self.listOfHeights)
-						for itemDbg in tmpListOfTuplesToPrintDbg:
-							print "%4d\t%8d\t%6d\t%6d\t%6d\t%6d" % (itemDbg[0], itemDbg[1], itemDbg[2], itemDbg[3], itemDbg[4], itemDbg[5])
+						if traceModeEnabled:
+							print "***** FINAL (Explicit Kern, width accounted) *****\nIndex\tAsciiOrd\tX Offs\tY Offs\tWidth\tHeight"
+							tmpListOfTuplesToPrintDbg = zip(range(1, len(self.listOfXOffsets)), self.targetLangOrderAndListOfForeignLettersAsciiValues[1:], self.listOfXOffsets, self.listOfYOffsets, listOfCalcWidths, self.listOfHeights)
+							for itemDbg in tmpListOfTuplesToPrintDbg:
+								print "%4d\t%8d\t%6d\t%6d\t%6d\t%6d" % (itemDbg[0], itemDbg[1], itemDbg[2], itemDbg[3], itemDbg[4], itemDbg[5])
 
 						#
 						#
@@ -901,6 +918,10 @@ class grabberFromPNG:
 				errMsg = "No letters were found in input png!"
 				print errMsg
 				retVal = -2
+		if retVal == 0:
+			print "Done."
+		else:
+			print "Errors were found."
 		return (retVal, errMsg, origGameFontSizeEqBaseLine, totalFontLetters, importedNumOfLetters)
 
 	def extractFonFilesFromMix(self):
@@ -1003,11 +1024,10 @@ class grabberFromPNG:
 #
 # ########################
 # main
-#
-# #########################
-#
-if __name__ == '__main__':
-#	main()
+def main(argsCL):
+	# TODO parse arguments using argparse? https://docs.python.org/3/library/argparse.html#module-argparse
+	global traceModeEnabled
+	traceModeEnabled = False
 	invalidSyntax = False
 	extractFonMode = False
 
@@ -1025,11 +1045,12 @@ if __name__ == '__main__':
 	TMPSpaceWidthInPixels = 10
 #	TMPdeductKerningPixels = 0
 	TMPcustomBaseLineOffset = 0
-
-#	 print "Len of sysargv = %s" % (len(sys.argv))
-	if len(sys.argv) == 2:
-		if(sys.argv[1] == '--help'or sys.argv[1] == '-h'):
+	print "Running %s (%s)..." % (app_name_spaced, app_version)
+#	 print "Len of sysargv = %s" % (len(argsCL))
+	if len(argsCL) == 2:
+		if(argsCL[1] == '--help'or argsCL[1] == '-h'):
 			print "%s %s supports Blade Runner (English version, CD edition)." % (app_name_spaced, app_version)
+			print app_short_desc
 			print "Created by Praetorian of the classic adventures in Greek team."
 			print "Always keep backups!"
 			print "--------------------"
@@ -1037,9 +1058,9 @@ if __name__ == '__main__':
 			print "1. Put overrideEncoding.txt file in the same folder with this tool. (Recommended, but not obligatory step)"
 			print "--------------------"
 			print "Valid syntax A - export game fonts:"
-			print "%s -ip [folderpath_for_MIX_Files]\n" % (app_name)
+			print "%s -ip folderpath_for_MIX_Files [--trace]\n" % (app_name)
 			print "Valid syntax B - create subtitle font:"
-			print "%s -im [image_Row_PNG_Filename] -om [output_FON_filename] -pxLL [minSpaceBetweenLettersInRowLeftToLeft] -pxTT [minSpaceBetweenLettersInColumnTopToTop] -pxKn [kerningForFirstDummyFontLetter] -pxWS [whiteSpaceWidthInPixels]\n" % (app_name)    # deductKerningPixels"
+			print "%s -im image_Row_PNG_Filename -om output_FON_filename -pxLL minSpaceBetweenLettersInRowLeftToLeft -pxTT minSpaceBetweenLettersInColumnTopToTop -pxKn kerningForFirstDummyFontLetter -pxWS whiteSpaceWidthInPixels [--noSpecialGlyphs] [--noAutoTabCalculation] [--trace]\n" % (app_name)    # deductKerningPixels"
 			print "The -ip switch has an argument that is the path for the input (MIX) files folder (can be the same as the Blade Runner installation folder)."
 			print "The -oe switch has an argument that is the input overrideEncoding file to use for the particular font creation."
 			print "The -im switch has an argument that is the input PNG image with a row of the font glyphs spaced apart."
@@ -1051,50 +1072,54 @@ if __name__ == '__main__':
 			print "The -pxWS switch has an integer argument that sets the white space width in pixels for this particular font."
 			print "The --noSpecialGlyphs switch removes consideration for special glyphs that exist out of their proper ascii order."
 			print "The --noAutoTabCalculation switch removes the detection of tab spacing between letters (use this switch if you didn't create the PNG row file using a tab spaced list of glyphs)."
+			print "The --trace switch enables more debug messages being printed during execution."
 			print "--------------------"
 			print "Thank you for using this app."
 			print "Please provide any feedback to: %s " % (company_email)
 			sys.exit()
-		elif(sys.argv[1] == '--version' or sys.argv[1] == '-v'):
+		elif(argsCL[1] == '--version' or argsCL[1] == '-v'):
 			print "%s %s supports Blade Runner (English version, CD edition)." % (app_name_spaced, app_version)
 			print "Please provide any feedback to: %s " % (company_email)
 			sys.exit()
 		else:
 			invalidSyntax = True
-	elif len(sys.argv) > 2:
-		for i in range(1, len(sys.argv)):
-			if( i < (len(sys.argv) - 1) and sys.argv[i][:1] == '-' and sys.argv[i+1][:1] != '-'):
-				if (sys.argv[i] == '-ip'):
-					TMPinputPathForMixFiles = sys.argv[i+1]
+	elif len(argsCL) > 2:
+		for i in range(1, len(argsCL)):
+			if( i < (len(argsCL) - 1) and argsCL[i][:1] == '-' and argsCL[i+1][:1] != '-'):
+				if (argsCL[i] == '-ip'):
+					TMPinputPathForMixFiles = argsCL[i+1]
 					extractFonMode = True
 					print "Original FON file extraction mode enabled."
-				elif (sys.argv[i] == '-oe'):
-					TMPOverrideEncodingFilePath = sys.argv[i+1]
-				elif (sys.argv[i] == '-im'):
-					TMPimageRowFilePNG = sys.argv[i+1]
-				elif (sys.argv[i] == '-om'):
-					TMPTargetFONfilename = sys.argv[i+1]
-				elif (sys.argv[i] == '-pxLL'):
-					TMPminSpaceBetweenLettersInRowLeftToLeft = int(sys.argv[i+1])
-				elif (sys.argv[i] == '-pxTT'):
-					TMPminSpaceBetweenLettersInColumnTopToTop = int(sys.argv[i+1])
-				elif (sys.argv[i] == '-pxKn'):
-					TMPkerningForFirstDummyFontLetter = int(sys.argv[i+1])
-				elif (sys.argv[i] == '-pxYo'):
-					TMPYOffsToApplyToAllGlyphsExceptFirstSpecialGamma = int(sys.argv[i+1])
-				elif (sys.argv[i] == '-pxWS'):
-					TMPSpaceWidthInPixels = int(sys.argv[i+1])
-			elif sys.argv[i] == '--noSpecialGlyphs':
-				print "No special out-of-order glyphs mode enabled."
+				elif (argsCL[i] == '-oe'):
+					TMPOverrideEncodingFilePath = argsCL[i+1]
+				elif (argsCL[i] == '-im'):
+					TMPimageRowFilePNG = argsCL[i+1]
+				elif (argsCL[i] == '-om'):
+					TMPTargetFONfilename = argsCL[i+1]
+				elif (argsCL[i] == '-pxLL'):
+					TMPminSpaceBetweenLettersInRowLeftToLeft = int(argsCL[i+1])
+				elif (argsCL[i] == '-pxTT'):
+					TMPminSpaceBetweenLettersInColumnTopToTop = int(argsCL[i+1])
+				elif (argsCL[i] == '-pxKn'):
+					TMPkerningForFirstDummyFontLetter = int(argsCL[i+1])
+				elif (argsCL[i] == '-pxYo'):
+					TMPYOffsToApplyToAllGlyphsExceptFirstSpecialGamma = int(argsCL[i+1])
+				elif (argsCL[i] == '-pxWS'):
+					TMPSpaceWidthInPixels = int(argsCL[i+1])
+			elif argsCL[i] == '--noSpecialGlyphs':
+				print "Info:: No special out-of-order glyphs mode enabled."
 				TMPSpecialGlyphMode = False
-			elif sys.argv[i] == '--noAutoTabCalculation':
-				print "No automatic tab calculation between glyphs."
+			elif argsCL[i] == '--noAutoTabCalculation':
+				print "Info:: No automatic tab calculation between glyphs."
 				TMPAutoTabCalculation = False
+			elif sys.argv[i] == '--trace':
+				print "Info:: Trace mode enabled (more debug messages)."
+				traceModeEnabled = True
 
 		if (extractFonMode == False) and (not TMPTargetFONfilename or not TMPimageRowFilePNG or TMPminSpaceBetweenLettersInRowLeftToLeft <= 0 or TMPminSpaceBetweenLettersInColumnTopToTop <= 0 or TMPkerningForFirstDummyFontLetter <= 0 or TMPSpaceWidthInPixels <= 0)  : # this argument is mandatory
 			invalidSyntax = True
 
-		if (extractFonMode == True) and ( (TMPinputPathForMixFiles == '')  or  not TMPOverrideEncodingFilePath ):
+		if (extractFonMode == True) and ( (not TMPinputPathForMixFiles)  or  not TMPOverrideEncodingFilePath ):
 			invalidSyntax = True
 	else:
 		invalidSyntax = True
@@ -1124,15 +1149,26 @@ if __name__ == '__main__':
 		invalidSyntax = True
 
 	if invalidSyntax == True:
-		print "Invalid syntax\n Try: \n %s -op [folderpath_for_extracted_wav_Files] \n %s --help for more info \n %s --version for version info " % (app_name, app_name, app_name)
+		print "Invalid syntax\n Try: \n %s --help for more info \n %s --version for version info " % (app_name, app_name)
+		print "Valid syntax A - export game fonts:"
+		print "%s -ip folderpath_for_MIX_Files [--trace]\n" % (app_name)
+		print "Valid syntax B - create subtitle font:"
+		print "%s -im image_Row_PNG_Filename -om output_FON_filename -pxLL minSpaceBetweenLettersInRowLeftToLeft -pxTT minSpaceBetweenLettersInColumnTopToTop -pxKn kerningForFirstDummyFontLetter -pxWS whiteSpaceWidthInPixels [--noSpecialGlyphs] [--noAutoTabCalculation] [--trace]\n" % (app_name)    # deductKerningPixels"
 		tmpi = 0
-		for tmpArg in sys.argv:
+		for tmpArg in argsCL:
 			if tmpi==0: #skip first argument
 				tmpi+=1
 				continue
 			print "\nArgument: %s" % (tmpArg)
 			tmpi+=1
+	
+
+#
+# #########################
+#
+if __name__ == '__main__':
+	main(sys.argv[0:])
 else:
-	#debug
-	#print 'font grabber imported from another module'
+	## debug
+	#print 'Debug:: %s was imported from another module' % (app_name)
 	pass
