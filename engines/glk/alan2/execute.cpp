@@ -129,12 +129,12 @@ bool Execute::checklim(Aword cnt, Aword obj) {
 }
 
 void Execute::print(Aword fpos, Aword len) {
-	char str[2 * WIDTH];          // String buffer
-	int outlen = 0;               // Current output length
+	char str[2 * WIDTH];			// String buffer
+	int outlen = 0;					// Current output length
 	int ch;
 	int i;
-	long savfp;                   // Temporary saved text file position
-	bool printFlag = false; // Printing already?
+	long savfp;						// Temporary saved text file position
+	bool printFlag = false;			// Printing already?
 	bool savedPrintFlag = printFlag;
 	DecodeInfo *info;                   // Saved decoding info
 
@@ -175,7 +175,7 @@ void Execute::print(Aword fpos, Aword len) {
 			// TODO
 	/*
 #if ISO == 0
-      fromIso(str, str);
+		fromIso(str, str);
 #endif
 	*/
 			_vm->output(str);
@@ -242,7 +242,7 @@ bool Execute::confirm(MsgKind msgno) {
 	char buf[80];
 
 	// This is a bit of a hack since we really want to compare the input,
-    // it could be affirmative, but for now any input is NOT!
+	// it could be affirmative, but for now any input is NOT!
 	_vm->printMessage(msgno);
 
 	// TODO
@@ -267,17 +267,18 @@ void Execute::quit() {
 	char choices[10];
 
 	_vm->paragraph();
+	
 	while (true) {
 		_vm->col = 1;
-	    _vm->statusLine();
-	    _vm->printMessage(M_QUITACTION);
+		_vm->statusLine();
+		_vm->printMessage(M_QUITACTION);
 
 		// TODO
 #if 0
 #ifdef USE_READLINE
-    if (!readline(buf)) terminate(0);
+	if (!readline(buf)) terminate(0);
 #else
-    if (gets(buf) == NULL) terminate(0);
+	if (gets(buf) == NULL) terminate(0);
 #endif
 #endif
 
@@ -360,9 +361,9 @@ void Execute::schedule(Aword evt, Aword whr, Aword aft) {
   
 	// Bubble this event down
 	for (i = etop; i >= 1 && eventq[i-1].time <= time; i--) {
-	    eventq[i].event = eventq[i-1].event;
-	    eventq[i].time = eventq[i-1].time;
-	    eventq[i].where = eventq[i-1].where;
+		eventq[i].event = eventq[i-1].event;
+		eventq[i].time = eventq[i-1].time;
+		eventq[i].where = eventq[i-1].where;
 	}
   
 	eventq[i].time = time;
@@ -378,8 +379,8 @@ void Execute::schedule(Aword evt, Aword whr, Aword aft) {
  * @param atr		The attribute to read
  */
 Aptr Execute::getatr(Aaddr atradr, Aaddr atr) {
-	AtrElem *at = (AtrElem *) addrTo(atradr);
-	return at[atr-1].val;
+	AtrElem *at = (AtrElem *)addrTo(atradr);
+	return at[atr - 1].val;
 }
 
 /**
@@ -390,8 +391,8 @@ Aptr Execute::getatr(Aaddr atradr, Aaddr atr) {
  * @param val		New value
  */
 void Execute::setatr(Aaddr atradr, Aword atr, Aword val) {
-	AtrElem *at = (AtrElem *) addrTo(atradr);
-	at[atr-1].val = val;
+	AtrElem *at = (AtrElem *)addrTo(atradr);
+	at[atr - 1].val = val;
 }
 
 void Execute::makloc(Aword loc, Aword atr, Aword val) {
@@ -408,13 +409,13 @@ void Execute::makact(Aword act, Aword atr, Aword val) {
 
 void Execute::make(Aword id, Aword atr, Aword val) {
 	if (isObj(id))
-	    makobj(id, atr, val);
+		makobj(id, atr, val);
 	else if (isLoc(id))
 		makloc(id, atr, val);
 	else if (isAct(id))
-	    makact(id, atr, val);
+		makact(id, atr, val);
 	else
-	    error("Can't MAKE item (%ld).", (unsigned long)id);
+		error("Can't MAKE item (%ld).", (unsigned long)id);
 }
 
 void Execute::setloc(Aword loc, Aword atr, Aword val) {
@@ -436,9 +437,9 @@ void Execute::set(Aword id, Aword atr, Aword val) {
 	else if (isLoc(id))
 		setloc(id, atr, val);
 	else if (isAct(id))
-	    setact(id, atr, val);
+		setact(id, atr, val);
 	else
-	  error("Can't SET item (%ld).", (unsigned long)id);
+		error("Can't SET item (%ld).", (unsigned long)id);
 }
 
 void Execute::setstr(Aword id, Aword atr, Aword str) {
@@ -455,7 +456,7 @@ void Execute::setstr(Aword id, Aword atr, Aword str) {
  */
 void Execute::incratr(Aaddr atradr, Aword atr, Aword step) {
 	AtrElem *at = (AtrElem *) addrTo(atradr);
-	at[atr-1].val += step;
+	at[atr - 1].val += step;
 }
 
 void Execute::incrloc(Aword loc, Aword atr, Aword step) {
@@ -486,7 +487,7 @@ void Execute::decr(Aword id, Aword atr, Aword step) {
 	if (isObj(id))
 		incrobj(id, atr, -step);
 	else if (isLoc(id))
-	    incrloc(id, atr, -step);
+		incrloc(id, atr, -step);
 	else if (isAct(id))
 		incract(id, atr, -step);
 	else
@@ -516,13 +517,13 @@ Aptr Execute::attribute(Aword id, Aword atr) {
 	if (isObj(id))
 		return objatr(id, atr);
 	else if (isLoc(id))
-	    return locatr(id, atr);
+		return locatr(id, atr);
 	else if (isAct(id))
-	    return actatr(id, atr);
+		return actatr(id, atr);
 	else if (isLit(id))
-	    return litatr(id, atr);
+		return litatr(id, atr);
 	else
-	    error("Can't ATTRIBUTE item (%ld).", (unsigned long) id);
+		error("Can't ATTRIBUTE item (%ld).", (unsigned long) id);
 }
 
 Aptr Execute::strattr(Aword id, Aword atr) {
@@ -655,13 +656,13 @@ void Execute::locate(Aword id, Aword whr) {
 	if (isObj(id))
 		locobj(id, whr);
 	else if (isAct(id))
-	    locact(id, whr);
+		locact(id, whr);
 	else
-		error("Can't LOCATE item (%ld).", (unsigned long) id);
+		error("Can't LOCATE item (%ld).", (unsigned long)id);
 }
 
 Abool Execute::objhere(Aword obj) {
-	if (isCnt(_objs[obj - OBJMIN].loc)) {    // In something?
+	if (isCnt(_objs[obj - OBJMIN].loc)) {	// In something?
 		if (isObj(_objs[obj - OBJMIN].loc) || isAct(_objs[obj - OBJMIN].loc))
 			return(isHere(_objs[obj - OBJMIN].loc));
 		else // If the container wasn't anywhere, assume where HERO is!
@@ -684,7 +685,7 @@ Abool Execute::isHere(Aword id) {
 }
 
 Aword Execute::objnear(Aword obj) {
-	if (isCnt(_objs[obj-OBJMIN].loc)) {    // In something?
+	if (isCnt(_objs[obj-OBJMIN].loc)) {		// In something?
 		if (isObj(_objs[obj-OBJMIN].loc) || isAct(_objs[obj-OBJMIN].loc))
 			return(isNear(_objs[obj-OBJMIN].loc));
 		else  // If the container wasn't anywhere, assume here, so not nearby!
@@ -705,7 +706,7 @@ Abool Execute::isNear(Aword id) {
 	else if (isAct(id))
 		return actnear(id);
 	else
-	    error("Can't NEAR item (%ld).", (unsigned long) id);
+		error("Can't NEAR item (%ld).", (unsigned long) id);
 }
 
 Abool Execute::in(Aword obj, Aword cnt) {
@@ -945,8 +946,7 @@ void Execute::dscrobjs() {
 				sayarticle(i);
 				say(i);
 				found = true;
-			}
-			else {
+			} else {
 				if (multiple) {
 					_vm->_needSpace = false;
 					_vm->printMessage(M_SEEOBJ2);
@@ -1030,10 +1030,10 @@ Aword Execute::rnd(Aword from, Aword to) {
 
 // Between
 Abool Execute::btw(Aint val, Aint low, Aint high) {
-  if (high > low)
-    return low <= val && val <= high;
-  else
-    return high <= val && val <= low;
+	if (high > low)
+		return low <= val && val <= high;
+	else
+		return high <= val && val <= low;
 }
 
 // TODO: Replace this with Common::String functionality
