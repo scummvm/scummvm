@@ -22,6 +22,7 @@
 
 #include "common/stack.h"
 #include "glk/alan2/alan2.h"
+#include "glk/alan2/decode.h"
 #include "glk/alan2/execute.h"
 #include "glk/alan2/interpreter.h"
 #include "glk/alan2/saveload.h"
@@ -29,7 +30,6 @@
 #include "glk/alan2/util.h"
 #include "common/debug.h"
 #include "common/file.h"
-#include "decode.h"
 
 namespace Glk {
 namespace Alan2 {

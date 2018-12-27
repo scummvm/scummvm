@@ -45,7 +45,7 @@ void Rules::parseRules() {
 		for (i = 1; !endOfTable(&_ruls[i - 1]); i++) {
 			if (!_ruls[i - 1].run) {
 				if (trcflg) {
-					debug("\n<RULE %d (at ", i);
+					debug("\n<RULE %d (at ", i);	// TODO: Debug output formatting?
 					//debugsay(cur.loc);	// TODO
 					if (!stpflg)
 						debug("), Evaluating");

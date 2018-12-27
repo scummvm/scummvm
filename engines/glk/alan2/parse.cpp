@@ -589,7 +589,7 @@ bool Parser::claCheck(ClaElem *cla) {
 	if ((cla->classes&(Aword)CLA_CACT) != 0)
 	    ok = ok || (isCnt(params[cla->code-1].code) && isAct(params[cla->code-1].code));
 
-  return ok;
+	return ok;
 }
 
 // In case the syntax did not indicate omnipotent powers (allowed
@@ -804,7 +804,8 @@ void Parser::tryMatch(ParamElem mlst[]) {
 					}
 				} else
 					params[paramidx++] = tlst[0];
-					params[paramidx].code = EOF;
+				
+				params[paramidx].code = EOF;
 			}
 
 			elms = (ElmElem *) addrTo(elms->next);
