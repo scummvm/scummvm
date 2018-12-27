@@ -31,7 +31,7 @@ namespace Glk {
 namespace Alan2 {
 
 // TODO: Move these
-LitElem litValues[];
+extern LitElem *litValues;
 uint32 litCount = 0;	// for LITMAX
 extern ActElem *acts;	// Actor table pointer
 extern ObjElem *objs;	// Object table pointer
