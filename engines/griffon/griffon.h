@@ -246,11 +246,12 @@ private:
 	float RND();
 
 	void game_addFloatIcon(int ico, float xloc, float yloc);
-	void game_addFloatText(char *stri, float xloc, float yloc, int col);
+	void game_addFloatText(const char *stri, float xloc, float yloc, int col);
 	void game_attack();
 	void game_castspell(int spellnum, float homex, float homey, float enemyx, float enemyy, int damagewho);
 	void game_checkhit();
 	void game_checkinputs();
+	void game_checktrigger();
 	void game_configmenu();
 	void game_damagenpc(int npcnum, int damage, int spell);
 	void game_damageplayer(int damage);
