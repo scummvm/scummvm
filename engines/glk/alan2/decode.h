@@ -31,22 +31,33 @@ namespace Glk {
 namespace Alan2 {
 
 // Structure for saved decode info
-typedef struct DecodeInfo {
+struct DecodeInfo {
 	long fpos;
 	int buffer;
 	int bits;
 	CodeValue value;
 	CodeValue high;
 	CodeValue low;
-} DecodeInfo;
+};
 
 class Decode {
 public:
 	Decode(Common::File *txtFile, Aword *freq): _txtFile(txtFile), _freq(freq) {}
 	void startDecoding();
 	int decodeChar();
+	
+	/**
+	 * Save so much about the decoding process, so it is possible to restore
+	 * and continue later.
+	 */
 	DecodeInfo *pushDecode();
+	
+	/**
+	 * Restore enough info about the decoding process, so it is possible to
+	 * continue after having decoded something else.
+	 */
 	void popDecode(DecodeInfo *info);
+	
 	int inputBit();
 
 private:
@@ -64,6 +75,6 @@ private:
 };
 
 } // End of namespace Alan2
-} // Engine of namespace GLK
+} // End of namespace Glk
 
 #endif

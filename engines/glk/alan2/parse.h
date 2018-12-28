@@ -43,35 +43,106 @@ private:
 	char *gettoken(char *tokenBuffer);
 	void agetline();
 	void scan();
+	
+	/**
+	 * Search for a non-verb command
+	 */
 	void nonverb();
+	
 	Abool objhere(Aword obj);
 	Aword acthere(Aword act);
 	Abool isHere(Aword id);
+	
+	/**
+	 * Build a list of objects matching 'all'
+	 */
 	void buildall(ParamElem list[]);
+	
 	void listCopy(ParamElem a[], ParamElem b[]);
 	bool listContains(ParamElem l[], Aword e);
 	void listIntersection(ParamElem a[], ParamElem b[]);
+	
+	/**
+	 * Copy the refs (in dictionary) to a paramList
+	 */
 	void listCopyFromDictionary(ParamElem p[], Aword r[]);
+	
 	int listLength(ParamElem a[]);
+	
+	/**
+	 * Compact a list, i.e remove any NULL elements
+	 */
 	void listCompact(ParamElem a[]);
+	
+	/**
+	 * Merge the paramElems of one list into the first
+	 */
 	void listMerge(ParamElem a[], ParamElem b[]);
+	
+	/**
+	 * Subtract two lists
+	 */
 	void listSubtract(ParamElem a[], ParamElem b[]);
+	
+	/**
+	 * Match an unambigous object reference
+	 */
 	void unambig(ParamElem plst[]);
+	
+	/**
+	 * Match a simple verb command
+	 */
 	void simple(ParamElem olst[]);
+	
+	/**
+	 * Match a complex verb command
+	 */
 	void complex(ParamElem olst[]);
+	
 	bool claCheck(ClaElem *cla);
+	
+	/**
+	 * In case the syntax did not indicate omnipotent powers (allowed
+	 * access to remote object), we need to remove non - present parameters
+	 */
 	void resolve(ParamElem plst[]);
+	
 	bool endOfTable(StxElem *addr);
 	bool endOfTable(ElmElem *addr);
 	bool endOfTable(ClaElem *addr);
 	bool endOfTable(VrbElem *addr);
 	bool endOfTable(AltElem *addr);
 	bool endOfTable(ChkElem *addr);
+	
+	/**
+	 * Find the verb alternative wanted in a verb list and return
+	 * the address to it.
+	 * 
+	 * @param vrbsadr	Address to start of list
+	 * @param param		Which parameter to match
+	 */	
 	AltElem *findalt(Aword vrbsadr, Aword param);
+	
+	/**
+	 * Tries a check, returns TRUE if it passed, FALSE otherwise
+	 * 
+	 * @param adr	ACODE address to check table
+	 * @param act	Act if it fails?
+	 */
 	bool trycheck(Aaddr adr, bool act);
+
+	/**
+	 * Check if current action is possible according to the CHECKs.
+	 */
 	bool possible();
+	
 	void tryMatch(ParamElem mlst[]);
 	void match(ParamElem *mlst);
+	
+	/**
+	 * Execute all activities commanded. Handles possible multiple actions
+	 * such as THEM or lists of objects.
+	 */
 	void action(ParamElem plst[]);
 
 	// TODO: Initialize / move these
@@ -107,6 +178,6 @@ private:
 };
 
 } // End of namespace Alan2
-} // Engine of namespace GLK
+} // End of namespace Glk
 
 #endif
