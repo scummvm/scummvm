@@ -566,6 +566,7 @@ def main(argsCL):
 			print "Valid syntax: %s -op folderpath_for_extracted_wav_Files [-ip folderpath_for_TLK_Files] [-ian path_to_actornames_txt] [-m stringPathToReplaceFolderpathInExcelLinks] [-xwav] [-xtre] [--trace]" % (app_name)
 			print "The -op switch has an argument that is the path for extracted WAV files folder. The -op switch is REQUIRED always."
 			print "The -ip switch has an argument that is the path for the input (TLK or MIX) files folder (can be the same as the Blade Runner installation folder)."
+			print "The -ian switch is followed by the path to actornames.txt, if it's not in the current working directory."
 			print "The -m switch has an argument that is a replacement string for the path to the folder of extracted WAV files which will be used as a prefix for the links in the output XLS file."
 			print "The -xwav switch enables the WAV audio extract mode from the TLK files. It requires an INPUT path to be set with the -ip switch."
 			print "The -xtre switch enables the TRE parsing mode from the original MIX files. It requires an INPUT path to be set with the -ip switch."
