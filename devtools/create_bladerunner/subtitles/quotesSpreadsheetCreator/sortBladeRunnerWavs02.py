@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 #
 # Created by Praetorian (ShadowNate) for Classic Adventures in Greek
