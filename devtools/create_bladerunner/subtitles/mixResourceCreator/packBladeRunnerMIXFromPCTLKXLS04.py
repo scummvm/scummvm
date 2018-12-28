@@ -15,6 +15,7 @@ ctypesLibFound = False
 csvLibFound = False
 xlrdLibFound = False
 reLibFound = False
+structLibFound = False
 
 try:
 	import shutil 
@@ -51,7 +52,14 @@ except ImportError:
 else:
 	reLibFound = True	
 
-if 	(not shutilLibFound) or (not ctypesLibFound) or (not csvLibFound) or (not xlrdLibFound) or (not reLibFound):
+try:
+	import struct 
+except ImportError:
+	print "Error:: struct python library is required to be installed!" 
+else:
+	structLibFound = True	
+	
+if 	(not shutilLibFound) or (not ctypesLibFound) or (not csvLibFound) or (not xlrdLibFound) or (not reLibFound) or (not structLibFound):
 	sys.stdout.write("Error:: Errors were found when trying to import required python libraries\n")
 	sys.exit(1)
 
@@ -64,6 +72,7 @@ from struct import *
 company_email = "classic.adventures.in.greek@gmail.com"
 app_version = "0.70"
 app_name = "packBladeRunnerMIXFromPCTLKXLS"
+app_wrapper_name = "mixResourceCreator.py"
 app_name_spaced = "Blade Runner MIX Resource Creator"
 app_short_desc = "Get a TRE file from spoken in-game quotes"
 numOfSpokenQuotes = 0
@@ -735,9 +744,9 @@ def main(argsCL):
 			print "Preparatory steps:"
 			print "1. Copy the BladeRunnerPCTLK.xls file (latest version, downloaded from Google Sheets) in some folder on your PC."
 			print "--------------------"
-			print "%s takes 1 mandatory argument:" % (app_name_spaced)
+			print "%s takes 1 mandatory argument:" % (app_wrapper_name)
 			print "Valid syntax: "
-			print "%s -x path_to_BladeRunnerPCTLK_xls [-ian path_to_actornames_txt] [-cft path_to_configureFontsTranslation_txt] [--trace]" % (app_name)
+			print "%s -x path_to_BladeRunnerPCTLK_xls [-ian path_to_actornames_txt] [-cft path_to_configureFontsTranslation_txt] [--trace]" % (app_wrapper_name)
 			print "-x is followed by the path to the excel file with the subtitle quotes."
 			print "-ian is followed by the path to actornames.txt, if it's not in the current working directory."
 			print "-cft is followed by the path to configureFontsTranslation.txt, if it's not in the current working directory."
@@ -787,9 +796,9 @@ def main(argsCL):
 		invalidSyntax = True
 
 	if invalidSyntax == True:
-		print "Invalid syntax\n Try: \n %s --help for more info \n %s --version for version info " % (app_name, app_name)
+		print "Invalid syntax\n Try: \n %s --help for more info \n %s --version for version info " % (app_wrapper_name, app_wrapper_name)
 		print "Valid syntax: "
-		print "%s -x path_to_BladeRunnerPCTLK_xls [-ian path_to_actornames_txt] [-cft path_to_configureFontsTranslation_txt] [--trace]" % (app_name)
+		print "%s -x path_to_BladeRunnerPCTLK_xls [-ian path_to_actornames_txt] [-cft path_to_configureFontsTranslation_txt] [--trace]" % (app_wrapper_name)
 		print "-x is followed by the path to the excel file with the subtitle quotes."
 		print "-ian is followed by the path to actornames.txt, if it's not in the current working directory."
 		print "-cft is followed by the path to configureFontsTranslation.txt, if it's not in the current working directory."
@@ -812,5 +821,5 @@ if __name__ == "__main__":
 	main(sys.argv[0:])
 else:
 	## debug
-	#print 'Debug:: %s was imported from another module' % (app_name)
+	#print 'Debug:: %s was imported from another module' % (app_wrapper_name)
 	pass

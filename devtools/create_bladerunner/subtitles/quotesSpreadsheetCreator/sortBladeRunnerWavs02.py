@@ -37,7 +37,7 @@ except ImportError:
 else:
 	csvLibFound = True
 
-if 	(not shutilLibFound) or (not structLibFound) or (not csvLibFound):
+if 	(not shutilLibFound) or (not xlwtLibFound) or (not csvLibFound):
 	sys.stdout.write("Error:: Errors were found when trying to import required python libraries\n")
 	sys.exit(1)
 
@@ -53,6 +53,7 @@ from treFileLib import *
 company_email = "classic.adventures.in.greek@gmail.com"
 app_version = "0.70"
 app_name = "sortBladeRunnerWavs"
+app_wrapper_name = "quotesSpreadsheetCreator.py"
 app_name_spaced = "Blade Runner Transcript Excel Creator (bare bones)"
 app_short_desc = "Create an Excel (.XLS) for transcribing Blade Runner. It can also extract TRE files and export WAV files for game's resources. "
 traceModeEnabled = False
@@ -309,7 +310,7 @@ def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
 		break
 	for tmpMIXfileName in inputMIXFilesFound:
 		if traceModeEnabled:
-			print "Found MIX: %s" % ('"' + inputMIXpath + tmpMIXfileName + '"')
+			print "Found MIX: %s" % ('"' + tmpMIXfileName + '"')
 		errorFound = False
 		inMIXFile = None
 		#
@@ -562,8 +563,8 @@ def main(argsCL):
 			print "Created by Praetorian of the classic adventures in Greek team."
 			print "Always keep backups!"
 			print "--------------------"
-			print "%s takes has one mandatory argument, the folder of the extracted WAV files:" % (app_name)
-			print "Valid syntax: %s -op folderpath_for_extracted_wav_Files [-ip folderpath_for_TLK_Files] [-ian path_to_actornames_txt] [-m stringPathToReplaceFolderpathInExcelLinks] [-xwav] [-xtre] [--trace]" % (app_name)
+			print "%s takes has one mandatory argument, the folder of the extracted WAV files:" % (app_wrapper_name)
+			print "Valid syntax: %s -op folderpath_for_extracted_wav_Files [-ip folderpath_for_TLK_Files] [-ian path_to_actornames_txt] [-m stringPathToReplaceFolderpathInExcelLinks] [-xwav] [-xtre] [--trace]" % (app_wrapper_name)
 			print "The -op switch has an argument that is the path for extracted WAV files folder. The -op switch is REQUIRED always."
 			print "The -ip switch has an argument that is the path for the input (TLK or MIX) files folder (can be the same as the Blade Runner installation folder)."
 			print "The -ian switch is followed by the path to actornames.txt, if it's not in the current working directory."
@@ -757,8 +758,8 @@ def main(argsCL):
 		invalidSyntax = True
 
 	if invalidSyntax == True:
-		print "Invalid syntax\n Try: \n %s --help for more info \n %s --version for version info " % (app_name, app_name)
-		print "Valid syntax: %s -op folderpath_for_extracted_wav_Files [-ip folderpath_for_TLK_Files] [-ian path_to_actornames_txt] [-m stringPathToReplaceFolderpathInExcelLinks] [-xwav] [-xtre] [--trace]" % (app_name)
+		print "Invalid syntax\n Try: \n %s --help for more info \n %s --version for version info " % (app_wrapper_name, app_wrapper_name)
+		print "Valid syntax: %s -op folderpath_for_extracted_wav_Files [-ip folderpath_for_TLK_Files] [-ian path_to_actornames_txt] [-m stringPathToReplaceFolderpathInExcelLinks] [-xwav] [-xtre] [--trace]" % (app_wrapper_name)
 		tmpi = 0
 		for tmpArg in argsCL:
 			if tmpi==0: #skip first argument
@@ -780,5 +781,5 @@ if __name__ == '__main__':
 	main(sys.argv[0:])
 else:
 	## debug
-	#print 'Debug:: %s was imported from another module' % (app_name)
+	#print 'Debug:: %s was imported from another module' % (app_wrapper_name)
 	pass
