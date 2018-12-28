@@ -35,7 +35,6 @@
  */
 
 #include "griffon/griffon.h"
-#include "griffon/engine.h"
 #include "griffon/config.h"
 #include "griffon/state.h"
 
@@ -92,6 +91,11 @@ namespace Griffon {
  20 - armour3
 
 */
+
+// stubs
+typedef int Mix_Chunk;
+void Mix_Volume(int channel, int volume) {}
+int Mix_PlayChannel(int par1, Mix_Chunk *chunk, int par3);
 
 // system
 Graphics::TransparentSurface *video, *videobuffer, *videobuffer2, *videobuffer3;
@@ -218,12 +222,10 @@ int ysort[2401], lasty, firsty;
 
 int pmenu;
 
-int griffon_main() {
+void GriffonEngine::griffon_main() {
 	sys_initialize();
 	game_showlogos();
 	game_main();
-
-	return 0;
 }
 
 // element tile locations
@@ -395,16 +397,7 @@ int invmap[4][7][13] = {
 #endif
 
 void sdl_blitscale(Graphics::TransparentSurface *src, Common::Rect *srcrect, Graphics::TransparentSurface *dst, Common::Rect *dstrect) {
-	if (src->w != dst->w) {
-		Graphics::TransparentSurface *scale2x = NULL;
-
-		scale2x = zoomSurface(src, 2, 2, 0);
-		SDL_BlitSurface(scale2x, NULL, dst, NULL);
-		SDL_FreeSurface(scale2x);
-	} else {
-		SDL_BlitSurface(src, NULL, dst, NULL);
-	}
-
+	SDL_BlitSurface(src, NULL, dst, NULL);
 }
 
 void game_fillrect(Graphics::TransparentSurface *surface, int x, int y, int w, int h, int color) {
@@ -417,7 +410,7 @@ static float RND() {
 	return (float)rand() * (1.0 / ((float)RAND_MAX + 1.0));
 }
 
-void game_addFloatIcon(int ico, float xloc, float yloc) {
+void GriffonEngine::game_addFloatIcon(int ico, float xloc, float yloc) {
 	for (int i = 0; i < kMaxFloat; i++) {
 		if (floaticon[i][0] == 0) {
 			floaticon[i][0] = 32;
@@ -429,7 +422,7 @@ void game_addFloatIcon(int ico, float xloc, float yloc) {
 	}
 }
 
-void game_addFloatText(char *stri, float xloc, float yloc, int col) {
+void GriffonEngine::game_addFloatText(char *stri, float xloc, float yloc, int col) {
 	for (int i = 0; i < kMaxFloat; i++) {
 		if (floattext[i][0] == 0) {
 			floattext[i][0] = 32;
@@ -442,7 +435,7 @@ void game_addFloatText(char *stri, float xloc, float yloc, int col) {
 	}
 }
 
-void game_attack() {
+void GriffonEngine::game_attack() {
 	float npx, npy;
 
 	npx = player.px + 12;
@@ -826,7 +819,7 @@ void game_attack() {
 	}
 }
 
-void game_castspell(int spellnum, float homex, float homey, float enemyx, float enemyy, int damagewho) {
+void GriffonEngine::game_castspell(int spellnum, float homex, float homey, float enemyx, float enemyy, int damagewho) {
 	// spellnum 7 = sprite 6 spitfire
 
 	for (int i = 0; i < kMaxSpell; i++) {
@@ -910,7 +903,7 @@ void game_castspell(int spellnum, float homex, float homey, float enemyx, float 
 	}
 }
 
-void game_checkhit() {
+void GriffonEngine::game_checkhit() {
 	float npx, npy;
 	float damage;
 
@@ -958,7 +951,7 @@ void game_checkhit() {
 	}
 }
 
-void game_checkinputs() {
+void GriffonEngine::game_checkinputs() {
 	int ntickdelay;
 
 	ntickdelay = 175;
@@ -1303,7 +1296,7 @@ void game_checktrigger() {
 #define SY (38 + (240 - 38) / 2 - 88)
 #endif
 
-void game_configmenu() {
+void GriffonEngine::game_configmenu() {
 	Graphics::TransparentSurface *configwindow;
 	Common::Rect rc;
 	int cursel, curselt, ofullscreen;
@@ -1667,7 +1660,7 @@ void game_configmenu() {
 	SDL_SetAlpha(cloudimg, SDL_SRCALPHA, 64);
 }
 
-void game_damagenpc(int npcnum, int damage, int spell) {
+void GriffonEngine::game_damagenpc(int npcnum, int damage, int spell) {
 	float npx, npy;
 	int lx, ly, cx, cy, alive;
 	char line[256];
@@ -2125,7 +2118,7 @@ void game_damagenpc(int npcnum, int damage, int spell) {
 	}
 }
 
-void game_damageplayer(int damage) {
+void GriffonEngine::game_damageplayer(int damage) {
 	char line[256];
 
 	player.hp -= damage;
@@ -2141,7 +2134,7 @@ void game_damageplayer(int damage) {
 	player.pause = ticks + 1000;
 }
 
-void game_drawanims(int Layer) {
+void GriffonEngine::game_drawanims(int Layer) {
 	for (int sx = 0; sx <= 19; sx++) {
 		for (int sy = 0; sy <= 14; sy++) {
 			int o = objmap[sx][sy];
@@ -2232,7 +2225,7 @@ int hud_recalc(int a, int b, int c) {
 
 #define RGB(R, G, B) (SDL_MapRGB(videobuffer->format, (R), (G), (B)))
 
-void game_drawhud() {
+void GriffonEngine::game_drawhud() {
 	char line[128];
 	//sprintf(line, "fps: %i, map: %i, exp: %i/%i", (int)fps, curmap, player.exp, player.nextlevel);
 	//sys_print(videobuffer, line, 0, 0, 0);
@@ -2492,7 +2485,7 @@ void game_drawhud() {
 	}
 }
 
-void game_drawnpcs(int mode) {
+void GriffonEngine::game_drawnpcs(int mode) {
 	unsigned int ccc;
 
 	ccc = SDL_MapRGB(videobuffer->format, 255, 128, 32);
@@ -3064,7 +3057,7 @@ void game_drawnpcs(int mode) {
 	}
 }
 
-void game_drawover(int modx, int mody) {
+void GriffonEngine::game_drawover(int modx, int mody) {
 	int npx = modx + 12;
 	int npy = mody + 20;
 
@@ -3118,7 +3111,7 @@ void game_drawover(int modx, int mody) {
 	}
 }
 
-void game_drawplayer() {
+void GriffonEngine::game_drawplayer() {
 	long ccc;
 
 	int f = 0;
@@ -3219,7 +3212,7 @@ void game_drawplayer() {
 	SDL_FillRect(videobuffer, &rcDest, ccc);
 }
 
-void game_drawview() {
+void GriffonEngine::game_drawview() {
 	Common::Rect rc;
 
 	SDL_BlitSurface(mapbg, NULL, videobuffer, NULL);
@@ -3257,7 +3250,7 @@ void game_drawview() {
 	SDL_BLITVIDEO(videobuffer, NULL, video, NULL);
 }
 
-void game_endofgame() {
+void GriffonEngine::game_endofgame() {
 	float xofs = 0;
 	int ticks1;
 
@@ -3499,7 +3492,7 @@ void game_endofgame() {
 
 }
 
-void game_eventtext(char *stri) {
+void GriffonEngine::game_eventtext(const char *stri) {
 	int x, fr, pauseticks, bticks;
 
 	SDL_FillRect(videobuffer2, NULL, 0);
@@ -3563,7 +3556,7 @@ void game_eventtext(char *stri) {
 }
 
 
-void game_handlewalking() {
+void GriffonEngine::game_handlewalking() {
 	unsigned int *temp/*, c*/, bgc;
 	float spd, /*ppx, ppy,*/ px, py, opx, opy;
 	float nx, ny, npx, npy;
@@ -3830,7 +3823,7 @@ void game_handlewalking() {
 	}
 }
 
-void game_loadmap(int mapnum) {
+void GriffonEngine::game_loadmap(int mapnum) {
 	unsigned int ccc;
 	Common::Rect trect;
 	FILE *fp;
@@ -4642,12 +4635,12 @@ void game_loadmap(int mapnum) {
 	SDL_BlitSurface(clipbg, NULL, clipbg2, NULL);
 }
 
-void game_main() {
+void GriffonEngine::game_main() {
 	game_title(0);
 	game_saveloadnew();
 }
 
-void game_newgame() {
+void GriffonEngine::game_newgame() {
 	float xofs = 0;
 	float ld = 0, add;
 	int ticks, cnt = 0;
@@ -4821,7 +4814,7 @@ __exit_do:
 	game_playgame();
 }
 
-void game_playgame() {
+void GriffonEngine::game_playgame() {
 	game_swash();
 
 	if (pmenu == 1 && menabled == 1) {
@@ -4850,7 +4843,7 @@ void game_playgame() {
 	} while (1);
 }
 
-void game_processtrigger(int trignum) {
+void GriffonEngine::game_processtrigger(int trignum) {
 	int trigtype, tx, ty, tmap, tjumpstyle, tsx, tsy;
 
 	trigtype = triggers[trignum][0];
@@ -4917,7 +4910,7 @@ void game_processtrigger(int trignum) {
 	}
 }
 
-void game_saveloadnew() {
+void GriffonEngine::game_saveloadnew() {
 	float y;
 	int yy;
 	int currow, curcol, lowerlock;
@@ -5234,7 +5227,7 @@ void game_saveloadnew() {
 	SDL_SetAlpha(cloudimg, SDL_SRCALPHA, 64);
 }
 
-void game_showlogos() {
+void GriffonEngine::game_showlogos() {
 	float y;
 	int ticks1;
 
@@ -5292,7 +5285,7 @@ void game_showlogos() {
 }
 
 
-void game_swash() {
+void GriffonEngine::game_swash() {
 	float y;
 
 	y = 0;
@@ -5373,7 +5366,7 @@ void game_swash() {
 	SDL_SetAlpha(videobuffer, SDL_SRCALPHA, 255);
 }
 
-void game_theend() {
+void GriffonEngine::game_theend() {
 	for (int i = 0; i < kMaxFloat; i++) {
 		floattext[i][0] = 0;
 		floaticon[i][0] = 0;
@@ -5404,7 +5397,7 @@ void game_theend() {
 	game_title(0);
 }
 
-void game_title(int mode) {
+void GriffonEngine::game_title(int mode) {
 	float xofs = 0;
 	int ticks, ticks1, keypause;
 	int cursel, ldstop;
@@ -5576,7 +5569,7 @@ void game_title(int mode) {
 	}
 }
 
-void game_updanims() {
+void GriffonEngine::game_updanims() {
 	for (int i = 0; i <= lastobj; i++) {
 		int nframes = objectinfo[i][0];
 		int oanimspd = objectinfo[i][3];
@@ -5601,7 +5594,7 @@ void game_updanims() {
 	}
 }
 
-void game_updatey() {
+void GriffonEngine::game_updatey() {
 	int yy, ff;
 
 	for (int i = 0; i <= 2400; i++)
@@ -5633,7 +5626,7 @@ void game_updatey() {
 	}
 }
 
-void game_updmusic() {
+void GriffonEngine::game_updmusic() {
 	Mix_Chunk *iplaysound = NULL;
 
 	if (menabled == 1 && config.music == 1) {
@@ -5689,7 +5682,7 @@ void game_updmusic() {
 	}
 }
 
-void game_updnpcs() {
+void GriffonEngine::game_updnpcs() {
 	float npx, npy, onpx, onpy;
 	unsigned int *temp, dq, bgc;
 	float nnxa = 0, nnya = 0, nnxb = 0, nnyb = 0;
@@ -6815,7 +6808,7 @@ void game_updnpcs() {
 	}
 }
 
-void game_updspells() {
+void GriffonEngine::game_updspells() {
 	int foundel[5];
 	float npx, npy;
 	long cl1, cl2, cl3;
@@ -7669,7 +7662,7 @@ void game_updspells() {
 
 
 
-void game_updspellsunder() {
+void GriffonEngine::game_updspellsunder() {
 
 	unsigned int dq, *temp;
 
@@ -7970,7 +7963,7 @@ void game_updspellsunder() {
 	}
 }
 
-void sys_initialize() {
+void GriffonEngine::sys_initialize() {
 	int result;
 
 	// init char *floatstri[kMaxFloat]
@@ -8045,7 +8038,7 @@ void sys_initialize() {
 	sys_setupAudio();
 }
 
-void sys_line(Graphics::TransparentSurface *buffer, int x1, int y1, int x2, int y2, int col) {
+void GriffonEngine::sys_line(Graphics::TransparentSurface *buffer, int x1, int y1, int x2, int y2, int col) {
 	unsigned int *temp;
 
 	SDL_LockSurface(buffer);
@@ -8070,7 +8063,7 @@ void sys_line(Graphics::TransparentSurface *buffer, int x1, int y1, int x2, int 
 	SDL_UnlockSurface(buffer);
 }
 
-void sys_LoadAnims() {
+void GriffonEngine::sys_LoadAnims() {
 	spellimg = IMG_Load("art/spells.bmp");
 	SDL_SetColorKey(spellimg, SDL_SRCCOLORKEY, SDL_MapRGB(spellimg->format, 255, 0, 255));
 
@@ -8218,7 +8211,7 @@ void sys_LoadAnims() {
 	SDL_SetColorKey(anims[12], SDL_SRCCOLORKEY, SDL_MapRGB(anims[12]->format, 255, 0, 255));
 }
 
-void sys_LoadItemImgs() {
+void GriffonEngine::sys_LoadItemImgs() {
 	Graphics::TransparentSurface *temp;
 
 	temp = IMG_Load("art/icons.bmp");
@@ -8238,7 +8231,7 @@ void sys_LoadItemImgs() {
 	SDL_FreeSurface(temp);
 }
 
-void sys_LoadFont() {
+void GriffonEngine::sys_LoadFont() {
 	Graphics::TransparentSurface *font;
 
 	font = IMG_Load("art/font.bmp");
@@ -8267,7 +8260,7 @@ void sys_LoadFont() {
 	SDL_FreeSurface(font);
 }
 
-void sys_LoadTiles() {
+void GriffonEngine::sys_LoadTiles() {
 	tiles[0] = IMG_Load("art/tx.bmp");
 	tiles[1] = IMG_Load("art/tx1.bmp");
 	tiles[2] = IMG_Load("art/tx2.bmp");
@@ -8280,7 +8273,7 @@ void sys_LoadTiles() {
 	SDL_SetColorKey(windowimg, SDL_SRCCOLORKEY, SDL_MapRGB(windowimg->format, 255, 0, 255));
 }
 
-void sys_LoadTriggers() {
+void GriffonEngine::sys_LoadTriggers() {
 	FILE *fp;
 	char line[512];
 
@@ -8295,7 +8288,7 @@ void sys_LoadTriggers() {
 	fclose(fp);
 }
 
-void sys_LoadObjectDB() {
+void GriffonEngine::sys_LoadObjectDB() {
 	FILE *fp;
 	char line[512];
 
@@ -8322,7 +8315,7 @@ void sys_LoadObjectDB() {
 	fclose(fp);
 }
 
-void sys_print(Graphics::TransparentSurface *buffer, char *stri, int xloc, int yloc, int col) {
+void GriffonEngine::sys_print(Graphics::TransparentSurface *buffer, char *stri, int xloc, int yloc, int col) {
 	int l = strlen(stri);
 
 	for (int i = 0; i < l; i++) {
@@ -8333,7 +8326,7 @@ void sys_print(Graphics::TransparentSurface *buffer, char *stri, int xloc, int y
 	}
 }
 
-void sys_progress(int w, int wm) {
+void GriffonEngine::sys_progress(int w, int wm) {
 	long ccc;
 
 	ccc = SDL_MapRGB(videobuffer->format, 0, 255, 0);
@@ -8345,7 +8338,7 @@ void sys_progress(int w, int wm) {
 	SDL_PumpEvents();
 }
 
-void sys_setupAudio() {
+void GriffonEngine::sys_setupAudio() {
 	Graphics::TransparentSurface *loadimg;
 
 	menabled = 1;
