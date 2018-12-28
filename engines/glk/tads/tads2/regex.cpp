@@ -1272,4 +1272,4 @@ int re_context::compile_and_match(const char *pattern, size_t patlen,
 
 } // End of namespace TADS2
 } // End of namespace TADS
-} // Engine of namespace GLK
+} // End of namespace Glk

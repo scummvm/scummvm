@@ -83,6 +83,6 @@ bool endOfTable(ExtElem *addr) {
 }
 
 } // End of namespace Alan2
-} // Engine of namespace GLK
+} // End of namespace Glk
 
 #endif

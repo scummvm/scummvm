@@ -66,6 +66,6 @@ public:
 
 } // End of namespace TADS2
 } // End of namespace TADS
-} // Engine of namespace Glk
+} // End of namespace Glk
 
 #endif
