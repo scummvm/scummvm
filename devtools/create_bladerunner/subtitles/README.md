@@ -64,8 +64,8 @@ python2.7 fontCreator.py -ip folderpathForMIXFiles
 Syntax B - To create the subtitle's font:
 python2.7 fontCreator.py -im imageRowPNGFilename -om targetFONfilename [-oe pathToOverrideEncodingTxt] -pxLL minSpaceBetweenLettersInRowLeftToLeft -pxTT minSpaceBetweenLettersInColumnTopToTop -pxKn kerningForFirstDummyFontLetter -pxWS whiteSpaceWidthInPixels [--trace]
 ```
-This tool __requires__ an overrideEncoding.txt file in its Syntax B mode (subtitle font creation). You can specify the path to this file after a "-oe" switch. If you don't provide this path, the script will search for it in the current working directory.
-The overrideEncoding.txt is a __text file that should be saved in a UTF-8 encoding (no BOM)__, that contains the following:
+This tool __requires__ an override encoding text file in its Syntax B mode (subtitle font creation). You can specify the path to this file after a "-oe" switch. If you don't provide this path, the script will search for an "overrideEncoding.txt" file in the current working directory.
+The override encoding file is a __text file that should be saved in a UTF-8 encoding (no BOM)__, that contains the following:
 1. A key "targetEncoding" with a value of the name of the ASCII codepage that should be used for the character fonts (eg windows-1253).
 2. A key "asciiCharList" with value the "all-characters" string with all the printable characters that will be used in-game, from the specified codepage. Keep in mind that:
     * The first such character (typically this is the '!' character) should be repeated twice!
@@ -92,10 +92,10 @@ __For the exporting the game fonts (to PNG) mode__, the valid syntax expects onl
 
 __For the creation of subtitles' font mode__, there are six (6) mandatory launch arguments for the fontCreator tool:
 1. imageRowPNGFilename: is the filename of the input PNG image file which should contain a row of (preferably) tab separated glyphs. Example: "Tahoma_18ShdwTranspThreshZero003-G5.png". Keep in mind that:
-    * The first glyph should be repeated here too, as in the overrideEncoding.txt file.
+    * The first glyph should be repeated here too, as in the override encoding text file.
 	* Background should be transparent.
 	* All colors used in the character glyphs should not have any transparency value (eg from Gimp 2, set Layer->Transparency->Threshold alpha to 0). There's no partial transparency supported by the game. A pixel will either by fully transparent or fully opaque.
-    * If you use special glyphs that are not in the specified ASCII codepage (eg ñ, é, í, â don't appear in the Greek codepage), then in this image file you should use the actual special glyphs - put them at the position of the placeholder characters in your "all-characters" string that you've specified in the overrideEncoding.txt file.
+    * If you use special glyphs that are not in the specified ASCII codepage (eg ñ, é, í, â don't appear in the Greek codepage), then in this image file you should use the actual special glyphs - put them at the position of the placeholder characters in your "all-characters" string that you've specified in the override encoding text file.
 2. targetFONfilename: Example: "SUBTLS_E.FON". Keep in mind that:
     * As of yet, only the SUBTLS_E.FON is supported by a modified (non-official) version of the BladeRunner ScummVM engine.
 3. minSpaceBetweenLettersInRowLeftToLeft: This is a length (positive integer) in pixels that indicates the __minimum__ distance between the left-most side of a glyph and the left-most side of the immediate subsequent glyph in the input image PNG (row of glyphs) file.
