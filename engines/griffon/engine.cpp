@@ -35,8 +35,12 @@
  */
 
 #include "griffon/griffon.h"
+#include "griffon/engine.h"
 #include "griffon/config.h"
 #include "griffon/state.h"
+
+#include "common/events.h"
+#include "graphics/transparent_surface.h"
 
 namespace Griffon {
 
@@ -93,13 +97,13 @@ namespace Griffon {
 Graphics::TransparentSurface *video, *videobuffer, *videobuffer2, *videobuffer3;
 Graphics::TransparentSurface *titleimg, *titleimg2, *inventoryimg;
 Graphics::TransparentSurface *logosimg, *theendimg;
-SDL_Event event;
+Common::Event event;
 
 Graphics::TransparentSurface *mapbg, *clipbg, *clipbg2;
 unsigned int clipsurround[4][4];
 int fullscreen;
 
-Uint8 *keys;
+uint8 *keys;
 float animspd;
 int rampdata[40][24];
 
@@ -119,12 +123,12 @@ int ticks, tickspassed, nextticks;
 float fp, fps, fpsr;
 int secsingame, secstart;
 
-extern char *story[48];
+extern const char *story[48];
 Graphics::TransparentSurface *mapimg[4];
 extern int invmap[4][7][13];
-extern char *story2[27];
+extern const char *story2[27];
 
-SDL_Rect rcSrc, rcDest;
+Common::Rect rcSrc, rcDest;
 
 // -----------special case
 int dontdrawover;   // used in map24 so that the candles dont draw over the boss, default set to 0
@@ -241,7 +245,7 @@ int elementmap[15][20] = {
 	{ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 }
 };
 
-char *story[48] = {
+const char *story[48] = {
 	"The Griffon Legend",
 	"http://syn9.thehideoutgames.com/",
 	"",
@@ -292,7 +296,7 @@ char *story[48] = {
 	"with that honor as well."
 };
 
-char *story2[27] = {
+const char *story2[27] = {
 	"After the fall of Margrave Gradius,",
 	"All the dragons, struck with panic,",
 	"evacuated the city immediately.",
@@ -390,9 +394,9 @@ int invmap[4][7][13] = {
 #define SDL_BLITVIDEO(X, Y, C, F) sdl_blitscale((X), (Y), (C), NULL)
 #endif
 
-void sdl_blitscale(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect) {
+void sdl_blitscale(Graphics::TransparentSurface *src, Common::Rect *srcrect, Graphics::TransparentSurface *dst, Common::Rect *dstrect) {
 	if (src->w != dst->w) {
-		SDL_Surface *scale2x = NULL;
+		Graphics::TransparentSurface *scale2x = NULL;
 
 		scale2x = zoomSurface(src, 2, 2, 0);
 		SDL_BlitSurface(scale2x, NULL, dst, NULL);
@@ -403,15 +407,8 @@ void sdl_blitscale(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Re
 
 }
 
-void game_fillrect(SDL_Surface *surface, int x, int y, int w, int h, int color) {
-	SDL_Rect src;
-
-	src.x = x;
-	src.y = y;
-	src.w = w;
-	src.h = h;
-
-	SDL_FillRect(surface, &src, color);
+void game_fillrect(Graphics::TransparentSurface *surface, int x, int y, int w, int h, int color) {
+	surface->fillRect(Common::Rect(x, y, x + w, y + h), color);
 }
 
 // copypaste from hRnd_CRT()
@@ -1308,7 +1305,7 @@ void game_checktrigger() {
 
 void game_configmenu() {
 	Graphics::TransparentSurface *configwindow;
-	SDL_Rect rc;
+	Common::Rect rc;
 	int cursel, curselt, ofullscreen;
 	int tickwait, keypause, ticks1;
 
@@ -3223,7 +3220,7 @@ void game_drawplayer() {
 }
 
 void game_drawview() {
-	SDL_Rect rc;
+	Common::Rect rc;
 
 	SDL_BlitSurface(mapbg, NULL, videobuffer, NULL);
 
@@ -3335,7 +3332,7 @@ void game_endofgame() {
 	float y = 140;
 
 	do {
-		SDL_Rect rc;
+		Common::Rect rc;
 
 		rc.x = -xofs;
 		rc.y = 0;
@@ -3835,7 +3832,7 @@ void game_handlewalking() {
 
 void game_loadmap(int mapnum) {
 	unsigned int ccc;
-	SDL_Rect trect;
+	Common::Rect trect;
 	FILE *fp;
 	char name[256];
 	int tempmap[320][200];
@@ -4678,7 +4675,7 @@ void game_newgame() {
 	int ldstop = 0;
 
 	do {
-		SDL_Rect rc;
+		Common::Rect rc;
 
 		ld += 4 * fpsr;
 		if ((int)ld > config.musicvol)
@@ -5445,7 +5442,7 @@ void game_title(int mode) {
 
 	float ld = 0;
 	do {
-		SDL_Rect rc;
+		Common::Rect rc;
 
 		ld += 4.0 * fpsr;
 		if (ld > config.musicvol)
@@ -8048,7 +8045,7 @@ void sys_initialize() {
 	sys_setupAudio();
 }
 
-void sys_line(SDL_Surface *buffer, int x1, int y1, int x2, int y2, int col) {
+void sys_line(Graphics::TransparentSurface *buffer, int x1, int y1, int x2, int y2, int col) {
 	unsigned int *temp;
 
 	SDL_LockSurface(buffer);
@@ -8222,7 +8219,7 @@ void sys_LoadAnims() {
 }
 
 void sys_LoadItemImgs() {
-	SDL_Surface *temp;
+	Graphics::TransparentSurface *temp;
 
 	temp = IMG_Load("art/icons.bmp");
 
@@ -8242,7 +8239,7 @@ void sys_LoadItemImgs() {
 }
 
 void sys_LoadFont() {
-	SDL_Surface *font;
+	Graphics::TransparentSurface *font;
 
 	font = IMG_Load("art/font.bmp");
 
@@ -8325,7 +8322,7 @@ void sys_LoadObjectDB() {
 	fclose(fp);
 }
 
-void sys_print(SDL_Surface *buffer, char *stri, int xloc, int yloc, int col) {
+void sys_print(Graphics::TransparentSurface *buffer, char *stri, int xloc, int yloc, int col) {
 	int l = strlen(stri);
 
 	for (int i = 0; i < l; i++) {
@@ -8349,7 +8346,7 @@ void sys_progress(int w, int wm) {
 }
 
 void sys_setupAudio() {
-	SDL_Surface *loadimg;
+	Graphics::TransparentSurface *loadimg;
 
 	menabled = 1;
 
@@ -8540,7 +8537,7 @@ void sys_update() {
 	SDL_UnlockSurface(clipbg);
 	SDL_BlitSurface(clipbg2, NULL, clipbg, NULL);
 
-	SDL_Rect rc;
+	Common::Rect rc;
 
 	rc.x = player.px - 2;
 	rc.y = player.py - 2;
