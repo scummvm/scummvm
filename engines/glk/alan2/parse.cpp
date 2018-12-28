@@ -216,7 +216,6 @@ void Parser::scan() {
 	} while (!eol);
 }
 
-// Search for a non-verb command
 void Parser::nonverb() {
 	if (isDir(wrds[wrdidx])) {
 		wrdidx++;
@@ -264,7 +263,6 @@ Abool Parser::isHere(Aword id) {
 
 // ----------------------------------------------------------------------------
 
-// Build a list of objects matching 'all'
 void Parser::buildall(ParamElem list[]) {
 	int o, i = 0;
 	bool found = false;
@@ -310,7 +308,6 @@ void Parser::listIntersection(ParamElem a[], ParamElem b[]) {
 	a[last].code = EOF;
 }
 
-// Copy the refs (in dictionary) to a paramList
 void Parser::listCopyFromDictionary(ParamElem p[], Aword r[]) {
 	int i;
 
@@ -331,7 +328,6 @@ int Parser::listLength(ParamElem a[]) {
 	return (i);
 }
 
-// Compact a list, i.e remove any NULL elements
 void Parser::listCompact(ParamElem a[]) {
 	int i, j;
 
@@ -342,7 +338,6 @@ void Parser::listCompact(ParamElem a[]) {
 	a[i].code = EOF;
 }
 
-// Merge the paramElems of one list into the first
 void Parser::listMerge(ParamElem a[], ParamElem b[]) {
 	int i, last;
 
@@ -356,7 +351,6 @@ void Parser::listMerge(ParamElem a[], ParamElem b[]) {
 	}
 }
 
-// Subtract two lists
 void Parser::listSubtract(ParamElem a[], ParamElem b[]) {
 	for (int i = 0; a[i].code != EOF; i++)
 		if (listContains(b, a[i].code))
@@ -365,7 +359,6 @@ void Parser::listSubtract(ParamElem a[], ParamElem b[]) {
 	listCompact(a);
 }
 
-// Match an unambigous object reference
 void Parser::unambig(ParamElem plst[]) {
 	int i;
 	bool found = false;		// Adjective or noun found?
@@ -485,7 +478,6 @@ void Parser::unambig(ParamElem plst[]) {
 	}
 }
 
-// Match a simple verb command
 void Parser::simple(ParamElem olst[]) {
 	static ParamElem *tlst = NULL;
 	int savidx = wrdidx;
@@ -541,7 +533,6 @@ void Parser::simple(ParamElem olst[]) {
 	}
 }
 
-// Match a complex verb command
 void Parser::complex(ParamElem olst[]) {
 	// Above this procedure we can use the is* tests, but not below since
 	// they work on words.Below all is converted to indices into the
@@ -595,8 +586,6 @@ bool Parser::claCheck(ClaElem *cla) {
 	return ok;
 }
 
-// In case the syntax did not indicate omnipotent powers (allowed
-// access to remote object), we need to remove non - present parameters
 void Parser::resolve(ParamElem plst[]) {
 	if (allLength > 0)
 		return;	// ALL has already done this
@@ -642,13 +631,6 @@ bool Parser::endOfTable(ChkElem *addr) {
 	return *x == EOF;
 }
 
-/**
- * Find the verb alternative wanted in a verb list and return
- * the address to it.
- * 
- * @param vrbsadr	Address to start of list
- * @param param		Which parameter to match
- */
 AltElem *Parser::findalt(Aword vrbsadr, Aword param) {
 	VrbElem *vrb;
 	AltElem *alt;
@@ -668,12 +650,6 @@ AltElem *Parser::findalt(Aword vrbsadr, Aword param) {
 	return NULL;
 }
 
-/**
- * Tries a check, returns TRUE if it passed, FALSE otherwise
- * 
- * @param adr	ACODE address to check table
- * @param act	Act if it fails?
- */
 bool Parser::trycheck(Aaddr adr, bool act) {
 	ChkElem *chk = (ChkElem *)addrTo(adr);
 
@@ -694,7 +670,6 @@ bool Parser::trycheck(Aaddr adr, bool act) {
 	}
 }
 
-// Check if current action is possible according to the CHECKs.
 bool Parser::possible() {
 	AltElem *alt[MAXPARAMS + 2];	// List of alt-pointers, one for each param
 	int i;			// Parameter index
@@ -903,7 +878,6 @@ void Parser::tryMatch(ParamElem mlst[]) {
 	plural = anyPlural;		// Remember that we found plural objects
 }
 
-// Find the verb class (not used currently) and 'tryMatch()'
 void Parser::match(ParamElem *mlst) {
 	tryMatch(mlst);			// try to understand what the user said
 
@@ -913,8 +887,6 @@ void Parser::match(ParamElem *mlst) {
 		wrdidx++;			// If so skip the AND
 }
 
-// Execute all activities commanded.Handles possible multiple actions
-// such as THEM or lists of objects.
 void Parser::action(ParamElem plst[]) {
 	int i, mpos;
 	char marker[10];
@@ -977,4 +949,4 @@ void Parser::parse() {
 }
 
 } // End of namespace Alan2
-} // Engine of namespace GLK
+} // End of namespace Glk

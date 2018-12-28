@@ -92,8 +92,6 @@ int Decode::decodeChar() {
 	return symbol - 1;
 }
 
-// Save so much about the decoding process, so it is possible to restore
-// and continue later.
 DecodeInfo *Decode::pushDecode() {
 	DecodeInfo *info = new DecodeInfo();
 
@@ -107,8 +105,6 @@ DecodeInfo *Decode::pushDecode() {
 	return info;
 }
 
-// Restore enough info about the decoding process, so it is possible to
-// continue after having decoded something else
 void Decode::popDecode (DecodeInfo *info) {
 	_txtFile->seek(info->fpos, SEEK_CUR);
 	_decodeBuffer = info->buffer;
