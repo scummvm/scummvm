@@ -41,6 +41,8 @@ Alan2 *_vm = nullptr;
 Alan2::Alan2(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
 		vm_exited_cleanly(false) {
 	_vm = this;
+	looking = false;
+	dscrstkp = 0;
 }
 
 void Alan2::runGame(Common::SeekableReadStream *gameFile) {

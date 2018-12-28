@@ -122,8 +122,8 @@ public:
 	bool _needSpace;		// originally "needsp"
 
 	EvtElem *evts;					// Event table pointer
-	bool looking = false;			// LOOKING? flag
-	int dscrstkp = 0;               // Describe-stack pointer
+	bool looking;					// LOOKING? flag
+	int dscrstkp;   	            // Describe-stack pointer
 	Common::File *_txtFile;
 	bool _anyOutput;
 	winid_t _bottomWindow;

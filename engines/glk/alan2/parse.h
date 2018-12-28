@@ -149,7 +149,7 @@ private:
 	int wrds[LISTLEN / 2];	// List of parsed words
 	int wrdidx;			// and an index into it
 
-	bool plural = false;
+	bool plural;
 
 	// Syntax Parameters
 	int paramidx;			// Index in params

@@ -39,6 +39,7 @@ namespace Alan2 {
 
 Parser::Parser() {
 	wrds[0] = EOF;
+	plural = false;
 
 	// TODO
 }
