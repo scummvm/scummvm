@@ -80,10 +80,12 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
 	, _sound(nullptr)
 	, _resMan(nullptr)
 	, _screen(nullptr)
-	, _delay(33)
-	, _textSpeed(kTextSpeed[2])
 	, _allowLoadGame(true)
-	, _allowSaveGame(true) {
+	, _allowSaveGame(true)
+	, _sleepAutoSave(nullptr)
+	, _sleepAuoSaveVersion(-1)
+	, _delay(33)
+	, _textSpeed(kTextSpeed[2]) {
 	if (ConfMan.hasKey("textspeed"))
 		_textSpeed = ConfMan.getInt("textspeed");
 
@@ -93,6 +95,7 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
 SupernovaEngine::~SupernovaEngine() {
 	DebugMan.clearAllDebugChannels();
 
+	delete _sleepAutoSave;
 	delete _console;
 	delete _gm;
 	delete _sound;
@@ -470,9 +473,45 @@ Common::Error SupernovaEngine::saveGameState(int slot, const Common::String &des
 	return (saveGame(slot, desc) ? Common::kNoError : Common::kWritingFailed);
 }
 
+bool SupernovaEngine::serialize(Common::WriteStream *out) {
+	if (!_gm->serialize(out))
+		return false;
+	out->writeByte(_screen->getGuiBrightness());
+	out->writeByte(_screen->getViewportBrightness());
+	return true;
+}
+
+bool SupernovaEngine::deserialize(Common::ReadStream *in, int version) {
+	if (!_gm->deserialize(in, version))
+		return false;
+	if (version >= 5) {
+		_screen->setGuiBrightness(in->readByte());
+		_screen->setViewportBrightness(in->readByte());
+	} else {
+		_screen->setGuiBrightness(255);
+		_screen->setViewportBrightness(255);
+	}
+	return true;
+}
+
 bool SupernovaEngine::loadGame(int slot) {
 	if (slot < 0)
 		return false;
+
+	// Make sure no message is displayed as this would otherwise delay the
+	// switch to the new location until a mouse click.
+	removeMessage();
+
+	if (slot == kSleepAutosaveSlot) {
+		if (_sleepAutoSave != nullptr && deserialize(_sleepAutoSave, _sleepAuoSaveVersion)) {
+			// We no longer need the sleep autosave
+			delete _sleepAutoSave;
+			_sleepAutoSave = nullptr;
+			return true;
+		}
+		// Old version used to save it literally in the kSleepAutosaveSlot, so
+		// continue to try to load it from there.
+	}
 
 	Common::String filename = Common::String::format("msn_save.%03d", slot);
 	Common::InSaveFile *savefile = _saveFileMan->openForLoading(filename);
@@ -494,23 +533,29 @@ bool SupernovaEngine::loadGame(int slot) {
 		return false; //Common::kUnknownError;
 	}
 
-	// Make sure no message is displayed as this would otherwise delay the
-	// switch to the new location until a mouse click.
-	removeMessage();
-
 	int descriptionSize = savefile->readSint16LE();
 	savefile->skip(descriptionSize);
 	savefile->skip(6);
 	setTotalPlayTime(savefile->readUint32LE() * 1000);
 	Graphics::skipThumbnail(*savefile);
-	_gm->deserialize(savefile, saveVersion);
+	if (!deserialize(savefile, saveVersion)) {
+		delete savefile;
+		return false;
+	};
 
-	if (saveVersion >= 5) {
-		_screen->setGuiBrightness(savefile->readByte());
-		_screen->setViewportBrightness(savefile->readByte());
-	} else {
-		_screen->setGuiBrightness(255);
-		_screen->setViewportBrightness(255);
+	// With version 9 onward the sleep auto-save is save at the end of a normal save.
+	delete _sleepAutoSave;
+	_sleepAutoSave = nullptr;
+	if (saveVersion >= 9) {
+		_sleepAuoSaveVersion = saveVersion;
+		byte hasAutoSave = savefile->readByte();
+		if (hasAutoSave) {
+			_sleepAutoSave = new Common::MemoryReadWriteStream(DisposeAfterUse::YES);
+			uint nb;
+			char buf[4096];
+			while ((nb = savefile->read(buf, 4096)) > 0)
+				_sleepAutoSave->write(buf, nb);
+		}
 	}
 
 	delete savefile;
@@ -521,6 +566,14 @@ bool SupernovaEngine::loadGame(int slot) {
 bool SupernovaEngine::saveGame(int slot, const Common::String &description) {
 	if (slot < 0)
 		return false;
+
+	if (slot == kSleepAutosaveSlot) {
+		delete _sleepAutoSave;
+		_sleepAutoSave = new Common::MemoryReadWriteStream(DisposeAfterUse::YES);
+		_sleepAuoSaveVersion = SAVEGAME_VERSION;
+		serialize(_sleepAutoSave);
+		return true;
+	}
 
 	Common::String filename = Common::String::format("msn_save.%03d", slot);
 	Common::OutSaveFile *savefile = _saveFileMan->openForSaving(filename);
@@ -541,10 +594,14 @@ bool SupernovaEngine::saveGame(int slot, const Common::String &description) {
 	savefile->writeUint16LE(saveTime);
 	savefile->writeUint32LE(getTotalPlayTime() / 1000);
 	Graphics::saveThumbnail(*savefile);
-	_gm->serialize(savefile);
+	serialize(savefile);
 
-	savefile->writeByte(_screen->getGuiBrightness());
-	savefile->writeByte(_screen->getViewportBrightness());
+	if (_sleepAutoSave == nullptr)
+		savefile->writeByte(0);
+	else {
+		savefile->writeByte(1);
+		savefile->write(_sleepAutoSave->getData(), _sleepAutoSave->size());
+	}
 
 	savefile->finalize();
 	delete savefile;

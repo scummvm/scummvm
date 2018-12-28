@@ -29,7 +29,6 @@
 #include "common/scummsys.h"
 #include "engines/engine.h"
 #include "common/file.h"
-#include "common/memstream.h"
 
 #include "supernova/console.h"
 #include "supernova/graphics.h"
@@ -37,11 +36,14 @@
 #include "supernova/rooms.h"
 #include "supernova/sound.h"
 
+namespace Common {
+	class MemoryReadWriteStream;
+}
 
 namespace Supernova {
 
 #define SAVEGAME_HEADER MKTAG('M','S','N','1')
-#define SAVEGAME_VERSION 8
+#define SAVEGAME_VERSION 9
 
 #define SUPERNOVA_DAT "supernova.dat"
 #define SUPERNOVA_DAT_VERSION 1
@@ -75,6 +77,8 @@ public:
 	bool _allowSaveGame;
 	Common::StringArray _gameStrings;
 	Common::String _nullString;
+	int _sleepAuoSaveVersion;
+	Common::MemoryReadWriteStream* _sleepAutoSave;
 
 	uint _delay;
 	int  _textSpeed;
@@ -83,6 +87,8 @@ public:
 	void init();
 	bool loadGame(int slot);
 	bool saveGame(int slot, const Common::String &description);
+	bool serialize(Common::WriteStream *out);
+	bool deserialize(Common::ReadStream *in, int version);
 	bool quitGameDialog();
 	void errorTempSave(bool saving);
 	void setTextSpeed();
