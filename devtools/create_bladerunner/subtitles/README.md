@@ -3,7 +3,7 @@
 # Blade Runner (1997) Subtitles Support
 Some tools written in Python 2.7 to help add support for subtitles in Westwood's point and click adventure game Blade Runner (1997) for PC.
 
-## quotesSpreadsheetCreator (sortBladeRunnerWavs##)
+## quotesSpreadsheetCreator (quoteSpreadsheetCreator.py)
 (requires python lib *xlwt*, *wave*)
 A tool to gather all the speech audio filenames in an Excel file which will include a column with links to the audio file location on the PC. By Ctrl+MouseClick on that column's entries you should be able to listen to the corresponding wav file.
 The output excel file *out.xls* should help with the transcription of all the spoken *in-game* quotes. It also provides extra quote information such as the corresponding actor ID and quote ID per quote.
@@ -16,33 +16,33 @@ Note 2: Using the "-xwav" switch, this tool will export __ALL__ game's audio fil
 
 Usage:
 ```
-python2.7 sortBladeRunnerWavs02.py -ip <folderpath_for_TLK_Files> -op <folderpath_for_extracted_wav_Files> -m <stringPathToReplaceFolderpathInExcelLinks> [-xwav] [-xtre]
+python2.7 quoteSpreadsheetCreator.py -op folderpath_for_extracted_wav_Files [-ip folderpath_for_TLK_Files] [-ian pathToActorNamesTxt] [-m stringPathToReplaceFolderpathInExcelLinks] [-xwav] [-xtre] [--trace]
 ```
-The tool __requires__ the actornames.txt file, which is included in the samples folder, to be in the same folder as the tool's source (.py) file.
+The tool __requires__ the actornames.txt file, which is included in the samples folder.
 
 
-## mixResourceCreator (packBladeRunnerMIXFromPCTLKXLS-##)
+## mixResourceCreator (mixResourceCreator.py)
 (requires python lib *xlrd*)
 A tool to process the aforementioned Excel file with the dialogue transcriptions and output text resource files (TRE) that will be packed along with the external font (see fontCreator tool) into a SUBTITLES.MIX file. Currently, a modified version of the ScummVM's BladeRunner engine is required for this MIX file to work in-game. Multiple TRE files will be created intermediately in order to fully support subtitles in the game. One TRE file includes all in-game spoken quotes and the rest of them correspond to any VQA video sequence that contain voice acting.
 Usage:
 ```
-python2.7 packBladeRunnerMIXFromPCTLKXLS-04.py -x <excelWithTranscriptSheets.xls>
+python2.7 mixResourceCreator.py -x excelWithTranscriptSheets.xls [-ian ./common/actornames.txt] [-cft pathToConfigureFontsTranslationTxt] [--trace]
 ```
-The tool __requires__ the actornames.txt file, which is included in the samples folder, to be in the same folder as the tool's source (.py) file.
+The tool __requires__ the actornames.txt file, which is included in the samples folder.
 
-## fontCreator (grabberFromPNG##BR)
-(requires python image library *PIL*)
+## fontCreator (fontCreator.py)
+(requires python Image library *PIL*)
 A tool to support __both__ the extraction of fonts from the game __and__ the creation of a font file (FON) for use with (currently) a modified version of ScummVM's BladeRunner engine (WIP) in order to resolve various issues with the available fonts (included in the game's own resource files). These issues include alignment, kerning, corrupted format, limited charset and unsupported characters -- especially for languages with too many non-Latin symbols in their alphabet.
 This font tool's code is based off the Monkey Island Special Edition's Translator (https://github.com/ShadowNate/MISETranslator).
 Usage:
 ```
-Syntax A - To export game fonts:
-python2.7 grabberFromPNG17BR.py -ip <folderpathForMIXFiles>
+Syntax A - To export game fonts to PNG images:
+python2.7 fontCreator.py -ip folderpathForMIXFiles
 
 Syntax B - To create subtitle font:
-python2.7 grabberFromPNG17BR.py -im <imageRowPNGFilename> -om <targetFONfilename> -pxLL <minSpaceBetweenLettersInRowLeftToLeft> -pxTT <minSpaceBetweenLettersInColumnTopToTop> -pxKn <kerningForFirstDummyFontLetter> -pxWS <whiteSpaceWidthInPixels>
+python2.7 fontCreator.py -im imageRowPNGFilename -om targetFONfilename -oe pathToOverrideEncodingTxt -pxLL minSpaceBetweenLettersInRowLeftToLeft -pxTT minSpaceBetweenLettersInColumnTopToTop -pxKn kerningForFirstDummyFontLetter -pxWS whiteSpaceWidthInPixels [--trace]
 ```
-This tool also __requires__ an overrideEncoding.txt file to be in the same folder as the tool's source (.py) file.
+This tool also __requires__ an overrideEncoding.txt file in its Syntax B mode (subtitle font creation).
 The overrideEncoding.txt is a __text file that should be saved in a UTF-8 encoding (no BOM)__, that contains the following:
 1. A key "targetEncoding" with a value of the name of the ASCII codepage that should be used for the character fonts (eg windows-1253).
 2. A key "asciiCharList" with value the "all-characters" string with all the printable characters that will be used in-game, from the specified codepage. Keep in mind that:
@@ -66,8 +66,8 @@ The overrideEncoding.txt is a __text file that should be saved in a UTF-8 encodi
 There is a sample of such file in the source folder for the fontCreator tool.
 
 	
-__For the exporting the game fonts mode__, the valid syntax expects only one (1) argument:
-1. folderpathForMIXFiles: is the path where the game's MIX files are located (STARTUP.MIX is required). The exported font files will be: 10PT.FON, TAHOMA18.FON, TAHOMA24.FON and KIA6PT.FON.
+__For the exporting the game fonts (to PNG) mode__, the valid syntax expects only one (1) argument:
+1. folderpathForMIXFiles: is the path where the game's MIX files are located (STARTUP.MIX is required). The exported font files will be: 10PT.FON.PNG, TAHOMA18.FON.PNG, TAHOMA24.FON.PNG and KIA6PT.FON.PNG.
 
 __For the creation of subtitles' font mode__, there are six (6) mandatory launch arguments for the fontCreator tool:
 1. imageRowPNGFilename: is the filename of the input PNG image file which should contain a row of (preferably) tab separated glyphs. Example: "Tahoma_18ShdwTranspThreshZero003-G5.png". Keep in mind that:

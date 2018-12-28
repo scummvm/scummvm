@@ -113,6 +113,7 @@ from fonFileLib import *
 company_email = "classic.adventures.in.greek@gmail.com"
 app_version = "0.70"
 app_name = "grabberFromPNGHHBR"
+app_wrapper_name = "fontCreator.py"
 app_name_spaced = "Blade Runner Font Creator/Extractor"
 app_short_desc = "Extract or create Font Files (.FON) for Blade Runner"
 
@@ -214,7 +215,7 @@ class grabberFromPNG:
 			overrideEncodingTextFile = u'overrideEncoding.txt'
 			relPath = u'.'
 			self.overrideEncodingPath = os.path.join(relPath,overrideEncodingTextFile)
-			print "Warning:: Font Creation Override Encoding file not found in arguments. Attempting to open local file %s if it exists" % (configureFontsTranslationTextFile)
+			print "Warning:: Font Creation Override Encoding file not found in arguments. Attempting to open local file %s if it exists" % (overrideEncodingTextFile)
 
 		if os.access(self.overrideEncodingPath, os.F_OK):
 			## debug
@@ -1092,10 +1093,10 @@ def main(argsCL):
 			print "Preparatory steps:"
 			print "1. Put overrideEncoding.txt file in the same folder with this tool. (Recommended, but not obligatory step)"
 			print "--------------------"
-			print "Valid syntax A - export game fonts:"
-			print "%s -ip folderpath_for_MIX_Files [--trace]\n" % (app_name)
+			print "Valid syntax A - export game fonts to PNG images:"
+			print "%s -ip folderpath_for_MIX_Files [--trace]\n" % (app_wrapper_name)
 			print "Valid syntax B - create subtitle font:"
-			print "%s -im image_Row_PNG_Filename -om output_FON_filename -pxLL minSpaceBetweenLettersInRowLeftToLeft -pxTT minSpaceBetweenLettersInColumnTopToTop -pxKn kerningForFirstDummyFontLetter -pxWS whiteSpaceWidthInPixels [--noSpecialGlyphs] [--noAutoTabCalculation] [--trace]\n" % (app_name)    # deductKerningPixels"
+			print "%s -im image_Row_PNG_Filename -om output_FON_filename -pxLL minSpaceBetweenLettersInRowLeftToLeft -pxTT minSpaceBetweenLettersInColumnTopToTop -pxKn kerningForFirstDummyFontLetter -pxWS whiteSpaceWidthInPixels [--noSpecialGlyphs] [--noAutoTabCalculation] [--trace]\n" % (app_wrapper_name)    # deductKerningPixels"
 			print "The -ip switch has an argument that is the path for the input (MIX) files folder (can be the same as the Blade Runner installation folder)."
 			print "The -oe switch has an argument that is the input overrideEncoding file to use for the particular font creation."
 			print "The -im switch has an argument that is the input PNG image with a row of the font glyphs spaced apart."
@@ -1154,7 +1155,7 @@ def main(argsCL):
 		if (extractFonMode == False) and (not TMPTargetFONfilename or not TMPimageRowFilePNG or TMPminSpaceBetweenLettersInRowLeftToLeft <= 0 or TMPminSpaceBetweenLettersInColumnTopToTop <= 0 or TMPkerningForFirstDummyFontLetter <= 0 or TMPSpaceWidthInPixels <= 0)  : # this argument is mandatory
 			invalidSyntax = True
 
-		if (extractFonMode == True) and ( (not TMPinputPathForMixFiles)  or  not TMPOverrideEncodingFilePath ):
+		if (extractFonMode == True) and ( (not TMPinputPathForMixFiles) ): # not needed for extraction mode --  or  not TMPOverrideEncodingFilePath ):
 			invalidSyntax = True
 	else:
 		invalidSyntax = True
@@ -1174,21 +1175,21 @@ def main(argsCL):
 		myGrabInstance.setSpecialGlyphMode(TMPSpecialGlyphMode)
 		myGrabInstance.setAutoTabCalculation(TMPAutoTabCalculation)
 		myGrabInstance.setOverrideEncodingPath(TMPOverrideEncodingFilePath)
-		myGrabInstance.initOverrideEncoding()
 #		myGrabInstance.setDeductKerningPixels(TMPdeductKerningPixels)
 		if extractFonMode:
 			myGrabInstance.extractFonFilesFromMix()
 		else:
+			myGrabInstance.initOverrideEncoding()
 			myGrabInstance.generateModFiles(TMPcustomBaseLineOffset)
 	else:
 		invalidSyntax = True
 
 	if invalidSyntax == True:
-		print "Invalid syntax\n Try: \n %s --help for more info \n %s --version for version info " % (app_name, app_name)
+		print "Invalid syntax\n Try: \n %s --help for more info \n %s --version for version info " % (app_wrapper_name, app_wrapper_name)
 		print "Valid syntax A - export game fonts:"
-		print "%s -ip folderpath_for_MIX_Files [--trace]\n" % (app_name)
+		print "%s -ip folderpath_for_MIX_Files [--trace]\n" % (app_wrapper_name)
 		print "Valid syntax B - create subtitle font:"
-		print "%s -im image_Row_PNG_Filename -om output_FON_filename -pxLL minSpaceBetweenLettersInRowLeftToLeft -pxTT minSpaceBetweenLettersInColumnTopToTop -pxKn kerningForFirstDummyFontLetter -pxWS whiteSpaceWidthInPixels [--noSpecialGlyphs] [--noAutoTabCalculation] [--trace]\n" % (app_name)    # deductKerningPixels"
+		print "%s -im image_Row_PNG_Filename -om output_FON_filename -pxLL minSpaceBetweenLettersInRowLeftToLeft -pxTT minSpaceBetweenLettersInColumnTopToTop -pxKn kerningForFirstDummyFontLetter -pxWS whiteSpaceWidthInPixels [--noSpecialGlyphs] [--noAutoTabCalculation] [--trace]\n" % (app_wrapper_name)    # deductKerningPixels"
 		tmpi = 0
 		for tmpArg in argsCL:
 			if tmpi==0: #skip first argument
