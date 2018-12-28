@@ -40,6 +40,8 @@
 #include "common/random.h"
 #include "engines/engine.h"
 
+#include "graphics/transparent_surface.h"
+
 namespace Griffon {
 
 #define kMaxNPC      32
@@ -240,6 +242,8 @@ private:
 
 private:
 	void griffon_main();
+
+	float RND();
 
 	void game_addFloatIcon(int ico, float xloc, float yloc);
 	void game_addFloatText(char *stri, float xloc, float yloc, int col);
