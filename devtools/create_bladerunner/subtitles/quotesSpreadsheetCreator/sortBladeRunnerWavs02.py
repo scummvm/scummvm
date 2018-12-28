@@ -10,11 +10,38 @@
 # DONE Add code and switch option: to get the blade runner installation directory as input, then find the TLK files and extract them with proper naming
 # DONE fix proper names for sheets as per latest code changes
 #
-import os, sys, shutil
-from os import walk, errno
-import xlwt
-import csv
-import os.path
+import os, sys
+
+shutilLibFound = False
+xlwtLibFound = False
+csvLibFound = False
+
+try:
+	import shutil 
+except ImportError:
+	print "Error:: Shutil python library is required to be installed!" 
+else:
+	shutilLibFound = True
+
+try:
+	import xlwt 
+except ImportError:
+	print "Error:: xlwt python library is required to be installed!" 
+else:
+	xlwtLibFound = True
+	
+try:
+	import csv 
+except ImportError:
+	print "Error:: csv python library is required to be installed!" 
+else:
+	csvLibFound = True
+
+if 	(not shutilLibFound) or (not structLibFound) or (not csvLibFound):
+	sys.stdout.write("Error:: Errors were found when trying to import required python libraries\n")
+	sys.exit(1)
+
+from os import walk, errno, path
 from xlwt import *
 from audFileLib import *
 from treFileLib import *

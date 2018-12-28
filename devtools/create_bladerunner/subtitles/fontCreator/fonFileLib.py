@@ -1,10 +1,38 @@
 #!/usr/bin/env python2.7
 # -*- coding: UTF-8 -*-
 #
-import os, sys, shutil
-import struct
+import os, sys
+
+shutilLibFound = False
+structLibFound = False
+imagePilLibFound = False
+
+try:
+	import shutil 
+except ImportError:
+	print "Error:: Shutil python library is required to be installed!" 
+else:
+	shutilLibFound = True
+
+try:
+	import struct 
+except ImportError:
+	print "Error:: struct python library is required to be installed!" 
+else:
+	structLibFound = True
+	
+try:
+	import Image 
+except ImportError:
+	print "Error:: Image python library (PIL) is required to be installed!" 
+else:
+	imagePilLibFound = True
+
+if 	(not shutilLibFound) or (not structLibFound) or (not imagePilLibFound):
+	sys.stdout.write("Error:: Errors were found when trying to import required python libraries\n")
+	sys.exit(1)
+
 from struct import *
-import Image
 
 my_module_version = "0.50"
 my_module_name = "fonFileLib"
@@ -205,7 +233,7 @@ if __name__ == '__main__':
 	# assumes a file of name TAHOMA24.FON in same directory
 	inFONFile = None
 	#inFONFileName =  'TAHOMA24.FON'		# USED IN CREDIT END-TITLES and SCORERS BOARD AT POLICE STATION
-	#inFONFileName =	 'TAHOMA18.FON'		   # USED IN CREDIT END-TITLES
+	#inFONFileName =  'TAHOMA18.FON'		# USED IN CREDIT END-TITLES
 	#inFONFileName =  '10PT.FON'			# BLADE RUNNER UNUSED FONT?
 	#inFONFileName =  'KIA6PT.FON'			# BLADE RUNNER MAIN FONT
 	inFONFileName =  'SUBTLS_E.FON'			# Subtitles font custom

@@ -1,8 +1,29 @@
 #!/usr/bin/env python2.7
 # -*- coding: UTF-8 -*-
 #
-import os, sys, shutil
-import struct
+import os, sys
+
+shutilLibFound = False
+structLibFound = False
+
+try:
+	import shutil 
+except ImportError:
+	print "Error:: Shutil python library is required to be installed!" 
+else:
+	shutilLibFound = True
+
+try:
+	import struct 
+except ImportError:
+	print "Error:: struct python library is required to be installed!" 
+else:
+	structLibFound = True
+
+if 	(not shutilLibFound) or (not structLibFound):
+	sys.stdout.write("Error:: Errors were found when trying to import required python libraries\n")
+	sys.exit(1)
+	
 from struct import *
 
 my_module_version = "0.50"
