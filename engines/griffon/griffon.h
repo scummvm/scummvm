@@ -288,7 +288,7 @@ private:
 	void sys_LoadTiles();
 	void sys_LoadTriggers();
 	void sys_LoadObjectDB();
-	void sys_print(Graphics::TransparentSurface *buffer, char *stri, int xloc, int yloc, int col);
+	void sys_print(Graphics::TransparentSurface *buffer, const char *stri, int xloc, int yloc, int col);
 	void sys_progress(int w, int wm);
 	void sys_setupAudio();
 	void sys_update();
