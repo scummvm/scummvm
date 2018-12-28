@@ -27,7 +27,9 @@ $(FONT_OUTPUT): $(BLADERUNNER_SUBTITLES_SAMPLE_INPUT_FOLDER)/$(INPUT_FONT_GLYPHS
 	$(info contains: )
 	$(info *. $(INPUT_FONT_GLYPHS_PNG_FILENAME) - a PNG (image) input file with the Font glyphs)
 	$(info *. $(INPUT_FONT_GLYPHS_PNG_AUX_CONF_FILENAME) - a TXT (text) input file with configuration settings for the glyph image processing)
-	$(info If successful a $(FONT_OUTPUT) file will be created in your working directory)
+	$(info If successful, a $(FONT_OUTPUT) file will be created in your working directory)
+	$(info This is an intermediate file. You don't need to copy this in your Blade Runner game directory)
+	$(info ---------)
 	$(BLADERUNNER_SUBTITLES_SCRIPTS_ROOT_FOLDER)/fontCreator/fontCreator.py -im $(BLADERUNNER_SUBTITLES_SAMPLE_INPUT_FOLDER)/$(INPUT_FONT_GLYPHS_PNG_FILENAME) -oe $(BLADERUNNER_SUBTITLES_SAMPLE_INPUT_FOLDER)/$(INPUT_FONT_GLYPHS_PNG_AUX_CONF_FILENAME) -om $(FONT_OUTPUT) -pxLL 42 -pxTT 30 -pxKn 1 -pxWS 7
 	
 # Creation of final output mix file SUBTILES.MIX
@@ -43,7 +45,8 @@ $(TOOL_OUTPUT): $(FONT_OUTPUT)  $(BLADERUNNER_SUBTITLES_SCRIPTS_ROOT_FOLDER)/com
 	$(info contains: )
 	$(info *. $(INPUT_TRANSCRIPT_FILENAME) - an XLS (Excel) input file with the transcript)
 	$(info *. $(INPUT_TRANSCRIPT_AUX_CONF_FILENAME) - a TXT (text) input file with configuration settings for the transcript processing)
-	$(info If successful a $(TOOL_OUTPUT) file will be created in your working directory)
-	$(info Copy the $(TOOL_OUTPUT) into your Blade Runner game directory)
+	$(info If successful, a $(TOOL_OUTPUT) file will be created in your working directory)
+	$(info Please, copy this $(TOOL_OUTPUT) into your Blade Runner game directory!)
+	$(info ---------)
 	$(BLADERUNNER_SUBTITLES_SCRIPTS_ROOT_FOLDER)/mixResourceCreator/mixResourceCreator.py -x $(BLADERUNNER_SUBTITLES_SAMPLE_INPUT_FOLDER)/$(INPUT_TRANSCRIPT_FILENAME) -ian $(BLADERUNNER_SUBTITLES_SCRIPTS_ROOT_FOLDER)/common/actornames.txt -cft $(BLADERUNNER_SUBTITLES_SAMPLE_INPUT_FOLDER)/$(INPUT_TRANSCRIPT_AUX_CONF_FILENAME)
 	-$(RM) $(INTERMEDIATE_RESOURCE_FILES_UI) $(INTERMEDIATE_RESOURCE_FILES_SUBS)
