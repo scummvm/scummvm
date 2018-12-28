@@ -1,7 +1,7 @@
 # Blade Runner Subtitles
 
 # Blade Runner (1997) Subtitles Support
-Some tools written in Python 2.7 to help add support for subtitles in Westwood's point and click adventure game Blade Runner (1997) for PC.
+Some tools written in __Python 2.7__ to help add support for subtitles in Westwood's point and click adventure game Blade Runner (1997) for PC.
 
 ## quotesSpreadsheetCreator (quoteSpreadsheetCreator.py)
 (requires python lib *xlwt*, *wave*)
@@ -15,10 +15,11 @@ https://docs.google.com/spreadsheets/d/17ew0YyhSwqcqZg6bXrIgz0GkA62dhgViHN15lOu5
 Syntax Notes: 
 1. The "-op" switch should be followed by the path to the folder where the WAV files should be exported; This folder path will also be used as input when the output Excel will be created (for the "INGQUO_E.TRE" sheet with the in-game quotes).
 2. The "-ip" switch should be followed by the path to the game's folder, where the TLK and MIX files reside.
-3. Using the "-xwav" switch, this tool will export __ALL__ game's audio files (AUD) (that are either speech or speech-related) in a WAV format. This is expected to take up quite a lot of your HDD space.
-4. Using the "-xtre" switch, the tool will add a sheet to the output Excel with the contents of each of the game's Text Resource files (TRE).
-5. You may use both, either or neither of the "-xwav" and "-xtre" switches, depending on what you need to do.
-6. The "--trace" switch enables extra debug messages to be printed. 
+3. The "-ian" optional switch is followed by the path to the actornames.txt file -- if this is omitted then the file is assumed to reside in the current working directory.
+4. Using the "-xwav" optional switch, this tool will export __ALL__ game's audio files (AUD) (that are either speech or speech-related) in a WAV format. This is expected to run for a few minutes and take up quite a lot of your HDD space (about 650MB).
+5. Using the "-xtre" optional switch, the tool will add a sheet to the output Excel with the contents of each of the game's Text Resource files (TRE).
+6. You may use both, either or neither of the "-xwav" and "-xtre" switches, depending on what you need to do.
+7. The "--trace" optional switch enables extra debug messages to be printed. 
 
 Usage:
 ```
@@ -32,15 +33,15 @@ The tool __requires__ a valid path to the actornames.txt file; this file is incl
 A tool to process the aforementioned Excel file with the dialogue transcriptions and output text resource files (TRE) that will be packed along with the external font (see fontCreator tool) into a SUBTITLES.MIX file. Currently, a modified version of the ScummVM's BladeRunner engine is required for this MIX file to work in-game. Multiple TRE files will be created intermediately in order to fully support subtitles in the game. One TRE file includes all in-game spoken quotes and the rest of them correspond to any VQA video sequence that contain voice acting.
 Usage:
 ```
-python2.7 mixResourceCreator.py -x excelWithTranscriptSheets.xls [-ian ./common/actornames.txt] [-cft pathToConfigureFontsTranslationTxt] [--trace]
+python2.7 mixResourceCreator.py -x excelWithTranscriptSheets.xls [-ian pathToActorNamesTxt] [-cft pathToConfigureFontsTranslationTxt] [--trace]
 ```
 The tool __requires__ a valid path to the actornames.txt file, which is included in the samples folder.
 
 Syntax Notes: 
 1. The "-x" switch is followed by the path to the input Excel file (xls) which should contain the transcript sheet(s).
-2. The "-ian" switch is followed by the path to the actornames.txt file -- if this is omitted then the actornames.txt is assumed to reside in the current working directory.
-3. The "-cft" switch is followed by the path to the text configuration file "configureFontsTranslation.txt" -- if this is omitted then the file is assumed to reside in the current working directory.
-4. The "--trace" switch enables extra debug messages to be printed. 
+2. The "-ian" optional switch is followed by the path to the actornames.txt file -- if this is omitted then the file is assumed to reside in the current working directory.
+3. The "-cft" optional switch is followed by the path to the text configuration file "configureFontsTranslation.txt" -- if this is omitted then the file is assumed to reside in the current working directory.
+4. The "--trace" optional switch enables extra debug messages to be printed. 
 
 The text configuration file "configureFontsTranslation.txt" a __text file that should be saved in a UTF-8 encoding (no BOM)__, that contains the following:
 1. A key "targetEncoding" with a value of the name of the ASCII codepage that should be used for the character fonts (eg windows-1253).
@@ -60,10 +61,10 @@ Usage:
 Syntax A - To export game fonts to PNG images:
 python2.7 fontCreator.py -ip folderpathForMIXFiles
 
-Syntax B - To create subtitle font:
-python2.7 fontCreator.py -im imageRowPNGFilename -om targetFONfilename -oe pathToOverrideEncodingTxt -pxLL minSpaceBetweenLettersInRowLeftToLeft -pxTT minSpaceBetweenLettersInColumnTopToTop -pxKn kerningForFirstDummyFontLetter -pxWS whiteSpaceWidthInPixels [--trace]
+Syntax B - To create the subtitle's font:
+python2.7 fontCreator.py -im imageRowPNGFilename -om targetFONfilename [-oe pathToOverrideEncodingTxt] -pxLL minSpaceBetweenLettersInRowLeftToLeft -pxTT minSpaceBetweenLettersInColumnTopToTop -pxKn kerningForFirstDummyFontLetter -pxWS whiteSpaceWidthInPixels [--trace]
 ```
-This tool also __requires__ an overrideEncoding.txt file in its Syntax B mode (subtitle font creation).
+This tool __requires__ an overrideEncoding.txt file in its Syntax B mode (subtitle font creation). You can specify the path to this file after a "-oe" switch. If you don't provide this path, the script will search for it in the current working directory.
 The overrideEncoding.txt is a __text file that should be saved in a UTF-8 encoding (no BOM)__, that contains the following:
 1. A key "targetEncoding" with a value of the name of the ASCII codepage that should be used for the character fonts (eg windows-1253).
 2. A key "asciiCharList" with value the "all-characters" string with all the printable characters that will be used in-game, from the specified codepage. Keep in mind that:
@@ -104,7 +105,7 @@ It is highly recommended, though, that the input image file should contain only 
 5. kerningForFirstDummyFontGlyph: This is an integer that explicitly indicates the kerning, ie. offset in pixels (on the x-axis) of the first glyph (the one that is repeated twice). This can be measured by observing the indent that your image processing app adds when you enter the first glyph (typically it should be only a few pixels)
 6. whiteSpaceWidthInPixels: This is a positive integer value that sets the width in pixels for the single white space between words for the subtitles in-game.
 
-The "--trace" switch enables extra debug messages to be printed. 
+The "--trace" optional switch enables extra debug messages to be printed. 
 
 A suggested method of creating decent looking PNG with the row of glyphs for your subtitles' font is the following:
 1. Create the font row in __GIMP__ 
