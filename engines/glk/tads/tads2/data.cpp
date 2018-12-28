@@ -69,4 +69,4 @@ size_t Data::size() const {
 
 } // End of namespace TADS2
 } // End of namespace TADS
-} // Engine of namespace GLK
+} // End of namespace Glk
