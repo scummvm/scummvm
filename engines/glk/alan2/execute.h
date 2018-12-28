@@ -57,6 +57,9 @@ public:
 	void score(Aword sc);
 	void visits(Aword v);
 
+	/**
+	 * Check if any events are pending. If so execute them.
+	 */
 	void eventchk();
 	void schedule(Aword evt, Aword whr, Aword aft);
 	void cancl(Aword evt);
@@ -78,20 +81,57 @@ public:
 
 private:
 	bool exitto(int to, int from);
+	
+	/**
+	 * Count the number of items in a container.
+	 * 
+	 * @param cnt	The container to count
+	 */
 	int count(int cnt);
-	int sumatr(Aword atr, Aword cnt);
-	bool checklim(Aword cnt, Aword obj);
-	Aptr getatr(Aaddr atradr, Aaddr atr);
-	void setatr(Aaddr atradr, Aword atr, Aword val);
-	void makloc(Aword loc, Aword atr, Aword val);
-	void makobj(Aword obj, Aword atr, Aword val);
-	void makact(Aword act, Aword atr, Aword val);
-	void setloc(Aword loc, Aword atr, Aword val);
-	void setobj(Aword obj, Aword atr, Aword val);
-	void setact(Aword act, Aword atr, Aword val);
-	void incratr(Aaddr atradr, Aword atr, Aword step);
-	void incrloc(Aword loc, Aword atr, Aword step);
-	void incrobj(Aword obj, Aword atr, Aword step);
+	
+	/**
+	 * Sum the values of one attribute in a container. Recursively.
+	 * 
+	 * @param atr	The attribute to sum over
+	 * @param cnt	the container to sum
+	 */
+	int sumAttributes(Aword atr, Aword cnt);
+	
+	/**
+	 * Checks if a limit for a container is exceeded.
+	 * 
+	 * @param cnt	Container code
+	 * @param obj	The object to add
+	 */
+	bool checkContainerLimit(Aword cnt, Aword obj);
+
+	/**
+	 * Get an attribute value from an attribute list
+	 * 
+	 * @param atradr	ACODE address to attribute table
+	 * @param atr		The attribute to read
+	 */	
+	Aptr getAttribute(Aaddr atradr, Aaddr atr);
+	
+	/**
+	 * Set a particular attribute to a value.
+	 *
+	 * @param atradr	ACODE address to attribute table
+	 * @param atr		Attribute code
+	 * @param val		New value
+	 */
+	void setAttribute(Aaddr atradr, Aword atr, Aword val);
+
+	/**
+	 * Increment a particular attribute by a value.
+	 * 
+	 * @param atradr	ACODE address to attribute table
+	 * @param atr		Attribute code
+	 * @param step		Step to increment by
+	 */
+	void incAttribute(Aaddr atradr, Aword atr, Aword step);
+	void incLocation(Aword loc, Aword atr, Aword step);
+	void incObject(Aword obj, Aword atr, Aword step);
 	void incract(Aword act, Aword atr, Aword step);
 	Aword objloc(Aword obj);
 	Aword actloc(Aword act);
@@ -101,20 +141,17 @@ private:
 	Aword acthere(Aword act);
 	Aword objnear(Aword obj);
 	Aword actnear(Aword act);
-	void sayloc(Aword loc);
-	void sayobj(Aword obj);
-	void sayact(Aword act);
-	void saylit(Aword lit);
 	void sayarticle(Aword id);
 	void dscrloc(Aword loc);
 	void dscrobj(Aword obj);
 	void dscract(Aword act);
+	
+	/**
+	 * Description of current location
+	 */
 	void dscrobjs();
+	
 	void dscracts();
-	Aptr locatr(Aword loc, Aword atr);
-	Aptr objatr(Aword obj, Aword atr);
-	Aptr actatr(Aword act, Aword atr);
-	Aptr litatr(Aword lit, Aword atr);
 
 	// The event queue
 	EvtqElem *eventq;	// Event queue
@@ -129,6 +166,6 @@ private:
 };
 
 } // End of namespace Alan2
-} // Engine of namespace GLK
+} // End of namespace Glk
 
 #endif
