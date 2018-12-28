@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 import sys
 if not (sys.version_info[0] == 2 and  sys.version_info[1] == 7):
