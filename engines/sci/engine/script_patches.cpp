@@ -116,6 +116,7 @@ static const char *const selectorNameTable[] = {
 	"has",          // King's Quest 6, GK1
 	"modeless",     // King's Quest 6 CD
 	"cycler",       // Space Quest 4 / system selector
+	"loop",         // Laura Bow 1 Colonel's Bequest, QFG4
 	"setLoop",      // Laura Bow 1 Colonel's Bequest, QFG4
 	"ignoreActors", // Laura Bow 1 Colonel's Bequest
 	"at",           // Longbow
@@ -158,7 +159,6 @@ static const char *const selectorNameTable[] = {
 	"plane",        // RAMA
 	"state",        // RAMA
 	"getSubscriberObj", // RAMA
-	"loop",         // QFG4
 	"moveSpeed",    // QFG4
 	"setLooper",    // QFG4
 	"value",        // QFG4
@@ -201,6 +201,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_has,
 	SELECTOR_modeless,
 	SELECTOR_cycler,
+	SELECTOR_loop,
 	SELECTOR_setLoop,
 	SELECTOR_ignoreActors,
 	SELECTOR_at,
@@ -244,7 +245,6 @@ enum ScriptPatcherSelectors {
 	SELECTOR_plane,
 	SELECTOR_state,
 	SELECTOR_getSubscriberObj,
-	SELECTOR_loop,
 	SELECTOR_moveSpeed,
 	SELECTOR_setLooper,
 	SELECTOR_value
@@ -4630,6 +4630,39 @@ static const uint16 laurabow1PatchObstacleCollisionLockupsFix[] = {
 	PATCH_END
 };
 
+// Laura can get stuck walking up the attic stairs diagonally in room 47 and
+//  lockup the game. This also occurs in the original. Room47:doit loads the
+//  attic when ego is on control $10 at the base of the stairs and facing north.
+//  Room47:handleEvent prevents the user from moving ego when on control $10.
+//  Walking up the stairs diagonally puts ego in control $10 facing left or
+//  right and so the room never changes and the user never regains control.
+//
+// We fix this by allowing ego to face any direction except south to trigger the
+//  attic room change. This also fixes an edge case that allows walking through
+//  the staircase wall into Clarence's room.
+//
+// Applies to: DOS, Amiga, Atari ST
+// Responsible method: Room47:doit
+// Fixes bug #9949
+static const uint16 laurabow1SignatureAtticStairsLockupFix[] = {
+	SIG_MAGICDWORD,
+	0x39, SIG_SELECTOR8(loop),          // pushi loop
+	0x76,                               // push0
+	0x81, 0x00,                         // lag 00
+	0x4a, 0x04,                         // send 4 [ ego:loop? ]
+	0x36,                               // push
+	0x35, 0x03,                         // ldi 03 [ facing north ]
+	0x1a,                               // eq?
+	SIG_END
+};
+
+static const uint16 laurabow1PatchAtticStairsLockupFix[] = {
+	PATCH_ADDTOOFFSET(+8),
+	0x35, 0x2,                          // ldi 02 [ facing south ]
+	0x1c,                               // ne?
+	PATCH_END
+};
+
 //          script, description,                                signature                                             patch
 static const SciScriptPatcherEntry laurabow1Signatures[] = {
 	{  true,     4, "easter egg view fix",                      1, laurabow1SignatureEasterEggViewFix,                laurabow1PatchEasterEggViewFix },
@@ -4637,7 +4670,8 @@ static const SciScriptPatcherEntry laurabow1Signatures[] = {
 	{  true,    37, "armor move to fix",                        2, laurabow1SignatureArmorMoveToFix,                  laurabow1PatchArmorMoveToFix },
 	{  true,    37, "allowing input, after oiling arm",         1, laurabow1SignatureArmorOilingArmFix,               laurabow1PatchArmorOilingArmFix },
 	{  true,    44, "lillian bed fix",                          1, laurabow1SignatureLillianBedFix,                   laurabow1PatchLillianBedFix },
-    {  true,    58, "chapel candles persistence",               1, laurabow1SignatureChapelCandlesPersistence,        laurabow1PatchChapelCandlesPersistence },
+	{  true,    47, "attic stairs lockup fix",                  1, laurabow1SignatureAtticStairsLockupFix,            laurabow1PatchAtticStairsLockupFix },
+	{  true,    58, "chapel candles persistence",               1, laurabow1SignatureChapelCandlesPersistence,        laurabow1PatchChapelCandlesPersistence },
 	{  true,   236, "tell Lilly about Gertie blocking fix 1/2", 1, laurabow1SignatureTellLillyAboutGerieBlockingFix1, laurabow1PatchTellLillyAboutGertieBlockingFix1 },
 	{  true,   236, "tell Lilly about Gertie blocking fix 2/2", 1, laurabow1SignatureTellLillyAboutGerieBlockingFix2, laurabow1PatchTellLillyAboutGertieBlockingFix2 },
 	{  true,   998, "obstacle collision lockups fix",           1, laurabow1SignatureObstacleCollisionLockupsFix,     laurabow1PatchObstacleCollisionLockupsFix },
