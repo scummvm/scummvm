@@ -45,7 +45,7 @@
 #           This should get rid of semi-transparent pixels while maintaining the "aliasing" effect. There could be a better way but this should work ok.
 
 
-# TODO: A way to export game fonts to png image (in order to be able to create new expanded fonts keeping glyph consistency!)
+# DONE: A way to export game fonts to png image (in order to be able to create new expanded fonts keeping glyph consistency!)
 #           Also override the corruption in TAHOMA18 while exporting
 # TODO: Re-Check the order of fonts in (in-game resource font files) TAHOMA18 (stored corrupted) and TAHOMA24 (in good condition).
 # TODO: print a warning for mismatch of number of letters in encoding override (or internal) and detected fonts in ROW IMAGE (especially if we expect a double exclamation mark at the start - and we ignoring one of the two)
@@ -1186,7 +1186,7 @@ def main(argsCL):
 
 	if invalidSyntax == True:
 		print "Invalid syntax\n Try: \n %s --help for more info \n %s --version for version info " % (app_wrapper_name, app_wrapper_name)
-		print "Valid syntax A - export game fonts:"
+		print "Valid syntax A - export game fonts to PNG images:"
 		print "%s -ip folderpath_for_MIX_Files [--trace]\n" % (app_wrapper_name)
 		print "Valid syntax B - create subtitle font:"
 		print "%s -im image_Row_PNG_Filename -om output_FON_filename -pxLL minSpaceBetweenLettersInRowLeftToLeft -pxTT minSpaceBetweenLettersInColumnTopToTop -pxKn kerningForFirstDummyFontLetter -pxWS whiteSpaceWidthInPixels [--noSpecialGlyphs] [--noAutoTabCalculation] [--trace]\n" % (app_wrapper_name)    # deductKerningPixels"

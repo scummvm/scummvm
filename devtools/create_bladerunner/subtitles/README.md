@@ -12,13 +12,19 @@ Note 1: A lot of extra information has been added to the output Excel file maint
 __The online Excel file is available here:__
 https://docs.google.com/spreadsheets/d/17ew0YyhSwqcqZg6bXrIgz0GkA62dhgViHN15lOu5Hj8/edit?usp=sharing
 
-Note 2: Using the "-xwav" switch, this tool will export __ALL__ game's audio files (that are either speech or speech-related) in a WAV format. This is expected to take up quite a lot of your HDD space.
+Syntax Notes: 
+1. The "-op" switch should be followed by the path to the folder where the WAV files should be exported; This folder path will also be used as input when the output Excel will be created (for the "INGQUO_E.TRE" sheet with the in-game quotes).
+2. The "-ip" switch should be followed by the path to the game's folder, where the TLK and MIX files reside.
+3. Using the "-xwav" switch, this tool will export __ALL__ game's audio files (AUD) (that are either speech or speech-related) in a WAV format. This is expected to take up quite a lot of your HDD space.
+4. Using the "-xtre" switch, the tool will add a sheet to the output Excel with the contents of each of the game's Text Resource files (TRE).
+5. You may use both, either or neither of the "-xwav" and "-xtre" switches, depending on what you need to do.
+6. The "--trace" switch enables extra debug messages to be printed. 
 
 Usage:
 ```
 python2.7 quoteSpreadsheetCreator.py -op folderpath_for_extracted_wav_Files [-ip folderpath_for_TLK_Files] [-ian pathToActorNamesTxt] [-m stringPathToReplaceFolderpathInExcelLinks] [-xwav] [-xtre] [--trace]
 ```
-The tool __requires__ the actornames.txt file, which is included in the samples folder.
+The tool __requires__ a valid path to the actornames.txt file; this file is included in the samples folder.
 
 
 ## mixResourceCreator (mixResourceCreator.py)
@@ -28,7 +34,22 @@ Usage:
 ```
 python2.7 mixResourceCreator.py -x excelWithTranscriptSheets.xls [-ian ./common/actornames.txt] [-cft pathToConfigureFontsTranslationTxt] [--trace]
 ```
-The tool __requires__ the actornames.txt file, which is included in the samples folder.
+The tool __requires__ a valid path to the actornames.txt file, which is included in the samples folder.
+
+Syntax Notes: 
+1. The "-x" switch is followed by the path to the input Excel file (xls) which should contain the transcript sheet(s).
+2. The "-ian" switch is followed by the path to the actornames.txt file -- if this is omitted then the actornames.txt is assumed to reside in the current working directory.
+3. The "-cft" switch is followed by the path to the text configuration file "configureFontsTranslation.txt" -- if this is omitted then the file is assumed to reside in the current working directory.
+4. The "--trace" switch enables extra debug messages to be printed. 
+
+The text configuration file "configureFontsTranslation.txt" a __text file that should be saved in a UTF-8 encoding (no BOM)__, that contains the following:
+1. A key "targetEncoding" with a value of the name of the ASCII codepage that should be used for the character fonts (eg windows-1253).
+2. Multiple lines with the key "fontNameAndOutOfOrderGlyphs" and a value that contains:
+    * the name of a in-game Font file that should be included in the SUBTITLES.MIX
+    * a '#' character after the font name
+	* a list of comma separated tuples that specify the mapping of special (out of order) character (see fontCreator) to placeholder characters from the selected codepage.
+	* eg. fontNameAndOutOfOrderGlyphs=SUBTLS_E#í:Ά,ñ:¥,â:¦,é:§,Ά:£
+
 
 ## fontCreator (fontCreator.py)
 (requires python Image library *PIL*)
@@ -64,7 +85,6 @@ The overrideEncoding.txt is a __text file that should be saved in a UTF-8 encodi
     * Example: specialOutOfOrderGlyphsUTF8ToAsciiTargetEncoding=í:Ά,ñ:¥,â:¦,é:§,Ά:£
     * Don't use space(s) between the tuples!
 There is a sample of such file in the source folder for the fontCreator tool.
-
 	
 __For the exporting the game fonts (to PNG) mode__, the valid syntax expects only one (1) argument:
 1. folderpathForMIXFiles: is the path where the game's MIX files are located (STARTUP.MIX is required). The exported font files will be: 10PT.FON.PNG, TAHOMA18.FON.PNG, TAHOMA24.FON.PNG and KIA6PT.FON.PNG.
@@ -83,6 +103,8 @@ This basically tells the tool how far (in the x axis) it can search for pixels t
 It is highly recommended, though, that the input image file should contain only a single row of glyphs and this value should be higher than the maximum height among the glyphs, typically this should be set to approximately double the maximum height of glyph.
 5. kerningForFirstDummyFontGlyph: This is an integer that explicitly indicates the kerning, ie. offset in pixels (on the x-axis) of the first glyph (the one that is repeated twice). This can be measured by observing the indent that your image processing app adds when you enter the first glyph (typically it should be only a few pixels)
 6. whiteSpaceWidthInPixels: This is a positive integer value that sets the width in pixels for the single white space between words for the subtitles in-game.
+
+The "--trace" switch enables extra debug messages to be printed. 
 
 A suggested method of creating decent looking PNG with the row of glyphs for your subtitles' font is the following:
 1. Create the font row in __GIMP__ 
