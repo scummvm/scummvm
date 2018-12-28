@@ -1,1 +1,1 @@
-python2.7 sortBladeRunnerWavs02.py -op F:\WORKSPACE_\BladeRunnerExtrTools\br-mixer-master\data\WAV -ip H:/Games/BladeRunner -xtre
+python2.7 quoteSpreadsheetCreator.py -op F:\WORKSPACE_\BladeRunnerExtrTools\br-mixer-master\data\WAV -ip H:/Games/BladeRunner -ian ../common/actornames.txt -xtre --trace
