@@ -1,6 +1,7 @@
 MODULE := engines/griffon
 
 MODULE_OBJS := \
+	engine.o \
 	griffon.o \
 	detection.o
 
