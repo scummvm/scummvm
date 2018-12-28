@@ -32,7 +32,7 @@ namespace Alan2 {
 
 // TODO: Move these
 extern LitElem *litValues;
-uint32 litCount = 0;	// for LITMAX
+extern uint32 litCount;	// for LITMAX - defined in parse.cpp
 extern ActElem *acts;	// Actor table pointer
 extern ObjElem *objs;	// Object table pointer
 

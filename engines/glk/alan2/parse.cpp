@@ -33,6 +33,8 @@
 
 namespace Glk {
 namespace Alan2 {
+	
+uint32 litCount = 0;
 
 // All procedures for getting a command and turning it into a list of
 // dictionary entries are placed here.
