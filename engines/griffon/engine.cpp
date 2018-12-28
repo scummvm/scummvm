@@ -39,7 +39,7 @@
 #include "griffon/state.h"
 
 #include "common/events.h"
-#include "graphics/transparent_surface.h"
+#include "common/system.h"
 
 namespace Griffon {
 
@@ -107,7 +107,6 @@ Graphics::TransparentSurface *mapbg, *clipbg, *clipbg2;
 unsigned int clipsurround[4][4];
 int fullscreen;
 
-uint8 *keys;
 float animspd;
 int rampdata[40][24];
 
@@ -405,9 +404,9 @@ void game_fillrect(Graphics::TransparentSurface *surface, int x, int y, int w, i
 }
 
 // copypaste from hRnd_CRT()
-static float RND() {
+float GriffonEngine::RND() {
 	/* return between 0 and 1 (but never 1) */
-	return (float)rand() * (1.0 / ((float)RAND_MAX + 1.0));
+	return (float)_rnd->getRandomNumber(32767) * (1.0 / 32768.0f);
 }
 
 void GriffonEngine::game_addFloatIcon(int ico, float xloc, float yloc) {
@@ -956,8 +955,7 @@ void GriffonEngine::game_checkinputs() {
 
 	ntickdelay = 175;
 
-	SDL_PollEvent(&event);
-	keys = SDL_GetKeyState(NULL);
+	g_system->getEventManager()->pollEvent(event);
 
 	nposts = 0;
 
@@ -980,28 +978,12 @@ void GriffonEngine::game_checkinputs() {
 	if (attacking == 1 || (forcepause == 1 && itemselon == 0))
 		return;
 
-	if (event.type == SDL_KEYDOWN) {
-		switch (event.key.keysym.sym) {
-		case SDLK_ESCAPE:
+	if (event.type == Common::EVENT_KEYDOWN) {
+		if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 			if (itemticks < ticks)
 				game_title(1);
 			break;
-		case SDLK_RETURN:
-			if (keys[SDLK_LALT] || keys[SDLK_RALT]) {
-				if (fullscreen & SDL_FULLSCREEN) {
-					fullscreen = config.hwaccel | config.hwsurface;
-				} else {
-					fullscreen = SDL_FULLSCREEN | config.hwaccel | config.hwsurface;
-				}
-
-				config.fullscreen = fullscreen & SDL_FULLSCREEN;
-
-				video = SDL_SetVideoMode(config.scr_width, config.scr_height, config.scr_bpp, fullscreen);
-				SDL_UpdateRect(video, 0, 0, config.scr_width, config.scr_height);
-			}
-			break;
-
-		case SDLK_LCTRL:
+		} else if (event.kbd.hasFlags(Common::KBD_CTRL)) {
 			if (itemselon == 0 && itemticks < ticks)
 				game_attack();
 
@@ -1154,9 +1136,7 @@ __exit_do:
 
 				}
 			}
-			break;
-
-		case SDLK_LALT:
+		} else if (event.kbd.hasFlags(Common::KBD_ALT)) {
 			if (itemticks < ticks) {
 				selenemyon = 0;
 				if (itemselon == 1) {
@@ -1170,10 +1150,6 @@ __exit_do:
 					player.itemselshade = 0;
 				}
 			}
-			break;
-
-		default:
-			;
 		}
 	}
 
@@ -1182,13 +1158,13 @@ __exit_do:
 		movingdown = 0;
 		movingleft = 0;
 		movingright = 0;
-		if (keys[SDLK_UP])
+		if (event.kbd.keycode == Common::KEYCODE_UP)
 			movingup = 1;
-		if (keys[SDLK_DOWN])
+		if (event.kbd.keycode == Common::KEYCODE_DOWN)
 			movingdown = 1;
-		if (keys[SDLK_LEFT])
+		if (event.kbd.keycode == Common::KEYCODE_LEFT)
 			movingleft = 1;
-		if (keys[SDLK_RIGHT])
+		if (event.kbd.keycode == Common::KEYCODE_RIGHT)
 			movingright = 1;
 	} else {
 		movingup = 0;
@@ -1198,7 +1174,7 @@ __exit_do:
 
 		if (selenemyon == 1) {
 			if (itemticks < ticks) {
-				if (keys[SDLK_LEFT]) {
+				if (event.kbd.keycode == Common::KEYCODE_LEFT) {
 					int origin = curenemy;
 					do {
 						curenemy = curenemy - 1;
@@ -1213,7 +1189,7 @@ __exit_do:
 					} while (1);
 					itemticks = ticks + ntickdelay;
 				}
-				if (keys[SDLK_RIGHT]) {
+				if (event.kbd.keycode == Common::KEYCODE_RIGHT) {
 					int origin = curenemy;
 					do {
 						curenemy = curenemy + 1;
@@ -1237,7 +1213,7 @@ __exit_do:
 			}
 		} else {
 			if (itemticks < ticks) {
-				if (keys[SDLK_UP]) {
+				if (event.kbd.keycode == Common::KEYCODE_UP) {
 					curitem = curitem - 1;
 					itemticks = ticks + ntickdelay;
 					if (curitem == 4)
@@ -1245,7 +1221,7 @@ __exit_do:
 					if (curitem == -1)
 						curitem = 4;
 				}
-				if (keys[SDLK_DOWN]) {
+				if (event.kbd.keycode == Common::KEYCODE_DOWN) {
 					curitem = curitem + 1;
 					itemticks = ticks + ntickdelay;
 					if (curitem == 5)
@@ -1253,11 +1229,11 @@ __exit_do:
 					if (curitem == 10)
 						curitem = 5;
 				}
-				if (keys[SDLK_LEFT]) {
+				if (event.kbd.keycode == Common::KEYCODE_LEFT) {
 					curitem = curitem - 5;
 					itemticks = ticks + ntickdelay;
 				}
-				if (keys[SDLK_RIGHT]) {
+				if (event.kbd.keycode == Common::KEYCODE_RIGHT) {
 					curitem = curitem + 5;
 					itemticks = ticks + ntickdelay;
 				}
@@ -1473,16 +1449,15 @@ void GriffonEngine::game_configmenu() {
 			itemyloc -= 16;
 
 		if (keypause < ticks) {
-			SDL_PollEvent(&event);
-			keys = SDL_GetKeyState(NULL);
+			g_system->getEventManager()->pollEvent(event);
 
-			if (event.type == SDL_KEYDOWN) {
+			if (event.type == Common::EVENT_KEYDOWN) {
 				keypause = ticks + tickwait;
 
-				if (keys[SDLK_ESCAPE] || keys[SDLK_LALT])
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 					break;
 
-				if (keys[SDLK_LEFT]) {
+				if (event.kbd.keycode == Common::KEYCODE_LEFT) {
 					if (cursel == 11) {
 						config.musicvol = config.musicvol - 25;
 						if (config.musicvol < 0)
@@ -1505,7 +1480,7 @@ void GriffonEngine::game_configmenu() {
 						}
 					}
 				}
-				if (keys[SDLK_RIGHT]) {
+				if (event.kbd.keycode == Common::KEYCODE_RIGHT) {
 					if (cursel == 11) {
 						config.musicvol = config.musicvol + 25;
 						if (config.musicvol > 255)
@@ -1529,18 +1504,18 @@ void GriffonEngine::game_configmenu() {
 					}
 				}
 
-				if (keys[SDLK_UP]) {
+				if (event.kbd.keycode == Common::KEYCODE_UP) {
 					cursel--;
 					if (cursel < MINCURSEL)
 						cursel = 14;
 				}
-				if (keys[SDLK_DOWN]) {
+				if (event.kbd.keycode == Common::KEYCODE_DOWN) {
 					cursel++;
 					if (cursel > 14)
 						cursel = MINCURSEL;
 				}
 
-				if (keys[SDLK_LCTRL] || keys[SDLK_RETURN]) {
+				if (event.kbd.keycode == Common::KEYCODE_RETURN) {
 					if (cursel == 0) {
 						fullscreen = config.fullscreen | config.hwaccel | config.hwsurface;
 
@@ -1640,7 +1615,7 @@ void GriffonEngine::game_configmenu() {
 
 					if (cursel == 14) {
 						// reset keys to avoid returning
-						keys[SDLK_SPACE] = keys[SDLK_RETURN] = 0;
+						// keys[SDLK_SPACE] = keys[SDLK_RETURN] = 0; // FIXME
 						break;
 					}
 				}
@@ -3385,15 +3360,14 @@ void GriffonEngine::game_endofgame() {
 		if (xofs >= 320)
 			xofs = xofs - 320;
 
-		SDL_PollEvent(&event);
-		keys = SDL_GetKeyState(NULL);
+		g_system->getEventManager()->pollEvent(event);
 
-		if (event.type == SDL_KEYDOWN)
+		if (event.type == Common::EVENT_KEYDOWN)
 			spd = 1;
-		if (event.type == SDL_KEYUP)
+		if (event.type == Common::EVENT_KEYUP)
 			spd = 0.2;
 
-		if (keys[SDLK_ESCAPE] || keys[SDLK_LALT])
+		if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 			break;
 	} while (1);
 
@@ -3477,10 +3451,9 @@ void GriffonEngine::game_endofgame() {
 			fp = 0;
 		}
 
-		SDL_PollEvent(&event);
-		keys = SDL_GetKeyState(NULL);
+		g_system->getEventManager()->pollEvent(event);
 
-		if (event.type == SDL_KEYDOWN && keywait < ticks)
+		if (event.type == Common::EVENT_KEYDOWN && keywait < ticks)
 			break;
 
 	} while (1);
@@ -3508,10 +3481,9 @@ void GriffonEngine::game_eventtext(const char *stri) {
 	SDL_BlitSurface(videobuffer, NULL, videobuffer2, NULL);
 
 	do {
-		SDL_PollEvent(&event);
-		keys = SDL_GetKeyState(NULL);
+		g_system->getEventManager()->pollEvent(event);
 
-		if (event.type == SDL_KEYDOWN && pauseticks < ticks)
+		if (event.type == Common::EVENT_KEYDOWN && pauseticks < ticks)
 			break;
 		SDL_BlitSurface(videobuffer2, NULL, videobuffer, NULL);
 
@@ -4730,12 +4702,11 @@ void GriffonEngine::game_newgame() {
 		if (xofs >= 320)
 			xofs = xofs - 320;
 
-		SDL_PollEvent(&event);
-		keys = SDL_GetKeyState(NULL);
+		g_system->getEventManager()->pollEvent(event);
 
-		if (event.type == SDL_KEYDOWN)
+		if (event.type == Common::EVENT_KEYDOWN)
 			cnt = 6;
-		if (keys[SDLK_ESCAPE] || keys[SDLK_LALT])
+		if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 			goto __exit_do;
 
 		SDL_Delay(10);
@@ -4955,14 +4926,13 @@ void GriffonEngine::game_saveloadnew() {
 
 		SDL_BlitSurface(saveloadimg, NULL, videobuffer, NULL);
 
-		SDL_PollEvent(&event);
-		keys = SDL_GetKeyState(NULL);
+		g_system->getEventManager()->pollEvent(event);
 
 		if (tickpause < ticks) {
-			if (event.type == SDL_KEYDOWN) {
+			if (event.type == Common::EVENT_KEYDOWN) {
 				itemticks = ticks + 220;
 
-				if (keys[SDLK_LCTRL] || keys[SDLK_RETURN]) {
+				if (event.kbd.keycode == Common::KEYCODE_RETURN) {
 					// QUIT - non existent :)
 					if (currow == 0 && curcol == 4) {
 						exit(1);
@@ -4970,7 +4940,7 @@ void GriffonEngine::game_saveloadnew() {
 					// RETURN
 					if (currow == 0 && curcol == 3) {
 						// reset keys to avoid returning
-						keys[SDLK_RETURN] = keys[SDLK_SPACE] = 0;
+						// keys[SDLK_RETURN] = keys[SDLK_SPACE] = 0; // FIXME
 						return;
 					}
 					// NEW GAME
@@ -5026,16 +4996,15 @@ void GriffonEngine::game_saveloadnew() {
 					tickpause = ticks + 125;
 				}
 
-				switch (event.key.keysym.sym) {
-				case SDLK_ESCAPE:
-				case SDLK_LALT:
+				switch (event.kbd.keycode) {
+				case Common::KEYCODE_ESCAPE:
 					if (lowerlock == 0)
 						return;
 					lowerlock = 0;
 					currow = 0;
 					tickpause = ticks + 125;
 					break;
-				case SDLK_DOWN:
+				case Common::KEYCODE_DOWN:
 					if (lowerlock == 1) {
 						currow = currow + 1;
 						if (currow == 5)
@@ -5044,7 +5013,7 @@ void GriffonEngine::game_saveloadnew() {
 					}
 					break;
 
-				case SDLK_UP:
+				case Common::KEYCODE_UP:
 					if (lowerlock == 1) {
 						currow = currow - 1;
 						if (currow == 0)
@@ -5053,7 +5022,7 @@ void GriffonEngine::game_saveloadnew() {
 					}
 					break;
 
-				case SDLK_LEFT:
+				case Common::KEYCODE_LEFT:
 					if (lowerlock == 0) {
 						curcol = curcol - 1;
 						if (curcol == -1)
@@ -5062,7 +5031,7 @@ void GriffonEngine::game_saveloadnew() {
 					}
 					break;
 
-				case SDLK_RIGHT:
+				case Common::KEYCODE_RIGHT:
 					if (lowerlock == 0) {
 						curcol = curcol + 1;
 						if (curcol == 4)
@@ -5517,25 +5486,23 @@ void GriffonEngine::game_title(int mode) {
 		while (itemyloc >= 16)
 			itemyloc = itemyloc - 16;
 
-		SDL_PollEvent(&event);
+		g_system->getEventManager()->pollEvent(event);
 
 		if (keypause < ticks) {
-			keys = SDL_GetKeyState(NULL);
-
-			if (event.type == SDL_KEYDOWN) {
+			if (event.type == Common::EVENT_KEYDOWN) {
 				keypause = ticks + 150;
 
-				if ((keys[SDLK_ESCAPE] || keys[SDLK_LALT]) && mode == 1)
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE && mode == 1)
 					break;
-				else if (keys[SDLK_UP]) {
+				else if (event.kbd.keycode == Common::KEYCODE_UP]) {
 					cursel--;
 					if (cursel < 0)
 						cursel = (mode == 1 ? 3 : 2);
-				} else if (keys[SDLK_DOWN]) {
+				} else if (event.kbd.keycode == Common::KEYCODE_DOWN]) {
 					cursel++;
 					if (cursel >= (mode == 1 ? 4 : 3))
 						cursel = 0;
-				} else if (keys[SDLK_LCTRL] || keys[SDLK_RETURN]) {
+				} else if (event.kbd.keycode == Common::KEYCODE_RETURN]) {
 					if (cursel == 0) {
 						game_saveloadnew();
 						ticks = SDL_GetTicks();
