@@ -37,47 +37,47 @@ extern ActElem *acts;	// Actor table pointer
 extern ObjElem *objs;	// Object table pointer
 
 // Type checks 
-bool isObj(Aword x) {
+inline bool isObj(Aword x) {
 	return x >= OBJMIN && x <= OBJMAX;
 }
 
-bool isAct(Aword x) {
+inline bool isAct(Aword x) {
 	return x >= ACTMIN && x <= ACTMAX;
 }
 
-bool isCnt(Aword x) {
+inline bool isCnt(Aword x) {
 	return (x >= CNTMIN && x <= CNTMAX) ||
 		(isObj(x) && objs[x - OBJMIN].cont != 0) ||
 		(isAct(x) && acts[x - ACTMIN].cont != 0);
 }
 
-bool isLoc(Aword x) {
+inline bool isLoc(Aword x) {
 	return x >= LOCMIN && x <= LOCMAX;
 }
 
-bool isNum(Aword x) {
+inline bool isNum(Aword x) {
 	return x >= LITMIN && x <= LITMAX && litValues[x - LITMIN].type == TYPNUM;
 }
 
-bool isStr(Aword x) {
+inline bool isStr(Aword x) {
 	return x >= LITMIN && x <= LITMAX && litValues[x - LITMIN].type == TYPSTR;
 }
 
-bool isLit(Aword x) {
+inline bool isLit(Aword x) {
 	return x >= LITMIN && x <= LITMAX;
 }
 
-bool endOfTable(LimElem *addr) {
+inline bool endOfTable(LimElem *addr) {
 	Aword *x = (Aword *)addr;
 	return *x == EOF;
 }
 
-bool endOfTable(ScrElem *addr) {
+inline bool endOfTable(ScrElem *addr) {
 	Aword *x = (Aword *)addr;
 	return *x == EOF;
 }
 
-bool endOfTable(ExtElem *addr) {
+inline bool endOfTable(ExtElem *addr) {
 	Aword *x = (Aword *)addr;
 	return *x == EOF;
 }
