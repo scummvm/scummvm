@@ -48,11 +48,6 @@ bool Execute::exitto(int to, int from) {
 	return false;
 }
 
-/*
- * Count the number of items in a container.
- * 
- * @param cnt	The container to count
- */
 int Execute::count(int cnt) {
 	int j = 0;
 
@@ -63,19 +58,13 @@ int Execute::count(int cnt) {
 	return j;
 }
 
-/*
- * Sum the values of one attribute in a container.Recursively.
- * 
- * @param atr	The attribute to sum over
- * @param cnt	the container to sum
- */
-int Execute::sumatr(Aword atr, Aword cnt) {
+int Execute::sumAttributes(Aword atr, Aword cnt) {
 	int sum = 0;
 
 	for (int i = OBJMIN; i <= OBJMAX; i++) {
 		if (_objs[i - OBJMIN].loc == cnt) {	// Then it's in this container
 			if (_objs[i - OBJMIN].cont != 0)	// This is also a container!
-				sum = sum + sumatr(atr, i);
+				sum = sum + sumAttributes(atr, i);
 			sum = sum + attribute(i, atr);
 		}
 	}
@@ -83,14 +72,7 @@ int Execute::sumatr(Aword atr, Aword cnt) {
 	return sum;
 }
 
-/**
- * Checks if a limit for a container is exceeded.
- * 
- * @param cnt	Container code
- * @param obj	The object to add
- */
-// 
-bool Execute::checklim(Aword cnt, Aword obj) {
+bool Execute::checkContainerLimit(Aword cnt, Aword obj) {
 	LimElem *lim;
 	Aword props;
 
@@ -115,7 +97,7 @@ bool Execute::checklim(Aword cnt, Aword obj) {
 					return true;		// Limit check failed
 				}
 			} else {
-				if (sumatr(lim->atr, cnt) + attribute(obj, lim->atr) > lim->val) {
+				if (sumAttributes(lim->atr, cnt) + attribute(obj, lim->atr) > lim->val) {
 					_vm->_interpreter->interpret(lim->stms);
 					return true;
 				}
@@ -304,12 +286,6 @@ void Execute::restart() {
 	error("Fallthrough in RESTART");
 }
 
-/*----------------------------------------------------------------------
-  eventchk()
-
-  Check if any events are pending. If so execute them.
-  */
-
 void Execute::eventchk() {
 	while (etop != 0 && eventq[etop - 1].time == _vm->cur.tick) {
 		etop--;
@@ -372,72 +348,35 @@ void Execute::schedule(Aword evt, Aword whr, Aword aft) {
 	etop++;
 }
 
-/**
- * Get an attribute value from an attribute list
- * 
- * @param atradr	ACODE address to attribute table
- * @param atr		The attribute to read
- */
-Aptr Execute::getatr(Aaddr atradr, Aaddr atr) {
+Aptr Execute::getAttribute(Aaddr atradr, Aaddr atr) {
 	AtrElem *at = (AtrElem *)addrTo(atradr);
 	return at[atr - 1].val;
 }
 
-/**
- * Set a particular attribute to a value.
- *
- * @param atradr	ACODE address to attribute table
- * @param atr		Attribute code
- * @param val		New value
- */
-void Execute::setatr(Aaddr atradr, Aword atr, Aword val) {
+void Execute::setAttribute(Aaddr atradr, Aword atr, Aword val) {
 	AtrElem *at = (AtrElem *)addrTo(atradr);
 	at[atr - 1].val = val;
 }
 
-void Execute::makloc(Aword loc, Aword atr, Aword val) {
-	setatr(_locs[loc - LOCMIN].atrs, atr, val);
-}
-
-void Execute::makobj(Aword obj, Aword atr, Aword val) {
-	setatr(_objs[obj - OBJMIN].atrs, atr, val);
-}
-
-void Execute::makact(Aword act, Aword atr, Aword val) {
-	setatr(_acts[act - ACTMIN].atrs, atr, val);
-}
-
 void Execute::make(Aword id, Aword atr, Aword val) {
 	if (isObj(id))
-		makobj(id, atr, val);
+		setAttribute(_objs[id - OBJMIN].atrs, atr, val);
 	else if (isLoc(id))
-		makloc(id, atr, val);
+		setAttribute(_locs[id - LOCMIN].atrs, atr, val);
 	else if (isAct(id))
-		makact(id, atr, val);
+		setAttribute(_acts[id - ACTMIN].atrs, atr, val);
 	else
 		error("Can't MAKE item (%ld).", (unsigned long)id);
 }
 
-void Execute::setloc(Aword loc, Aword atr, Aword val) {
-	setatr(_locs[loc - LOCMIN].atrs, atr, val);
-	_locs[loc - LOCMIN].describe = 0;
-}
-
-void Execute::setobj(Aword obj, Aword atr, Aword val) {
-	setatr(_objs[obj - OBJMIN].atrs, atr, val);
-}
-
-void Execute::setact(Aword act, Aword atr, Aword val) {
-	setatr(_acts[act - ACTMIN].atrs, atr, val);
-}
-
 void Execute::set(Aword id, Aword atr, Aword val) {
 	if (isObj(id))
-		setobj(id, atr, val);
-	else if (isLoc(id))
-		setloc(id, atr, val);
-	else if (isAct(id))
-		setact(id, atr, val);
+		setAttribute(_objs[id - OBJMIN].atrs, atr, val);
+	else if (isLoc(id)) {
+		setAttribute(_locs[id - LOCMIN].atrs, atr, val);
+		_locs[id - LOCMIN].describe = 0;
+	} else if (isAct(id))
+		setAttribute(_acts[id - ACTMIN].atrs, atr, val);
 	else
 		error("Can't SET item (%ld).", (unsigned long)id);
 }
@@ -447,36 +386,29 @@ void Execute::setstr(Aword id, Aword atr, Aword str) {
 	set(id, atr, str);
 }
 
-/**
- * Increment a particular attribute by a value.
- * 
- * @param atradr	ACODE address to attribute table
- * @param atr		Attribute code
- * @param step		Step to increment by
- */
-void Execute::incratr(Aaddr atradr, Aword atr, Aword step) {
+void Execute::incAttribute(Aaddr atradr, Aword atr, Aword step) {
 	AtrElem *at = (AtrElem *) addrTo(atradr);
 	at[atr - 1].val += step;
 }
 
-void Execute::incrloc(Aword loc, Aword atr, Aword step) {
-	incratr(_locs[loc - LOCMIN].atrs, atr, step);
+void Execute::incLocation(Aword loc, Aword atr, Aword step) {
+	incAttribute(_locs[loc - LOCMIN].atrs, atr, step);
 	_locs[loc - LOCMIN].describe = 0;
 }
 
-void Execute::incrobj(Aword obj, Aword atr, Aword step) {
-	incratr(_objs[obj - OBJMIN].atrs, atr, step);
+void Execute::incObject(Aword obj, Aword atr, Aword step) {
+	incAttribute(_objs[obj - OBJMIN].atrs, atr, step);
 }
 
 void Execute::incract(Aword act, Aword atr, Aword step) {
-	incratr(_acts[act - ACTMIN].atrs, atr, step);
+	incAttribute(_acts[act - ACTMIN].atrs, atr, step);
 }
 
 void Execute::incr(Aword id, Aword atr, Aword step) {
 	if (isObj(id))
-		incrobj(id, atr, step);
+		incObject(id, atr, step);
 	else if (isLoc(id))
-		incrloc(id, atr, step);
+		incLocation(id, atr, step);
 	else if (isAct(id))
 		incract(id, atr, step);
 	else
@@ -485,44 +417,28 @@ void Execute::incr(Aword id, Aword atr, Aword step) {
 
 void Execute::decr(Aword id, Aword atr, Aword step) {
 	if (isObj(id))
-		incrobj(id, atr, -step);
+		incObject(id, atr, -step);
 	else if (isLoc(id))
-		incrloc(id, atr, -step);
+		incLocation(id, atr, -step);
 	else if (isAct(id))
 		incract(id, atr, -step);
 	else
 		error("Can't DECR item (%ld).", (unsigned long)id);
 }
 
-Aptr Execute::locatr(Aword loc, Aword atr) {
-	return getatr(_locs[loc - LOCMIN].atrs, atr);
-}
-
-Aptr Execute::objatr(Aword obj, Aword atr) {
-	return getatr(_objs[obj - OBJMIN].atrs, atr);
-}
-
-Aptr Execute::actatr(Aword act, Aword atr) {
-	return getatr(_acts[act - ACTMIN].atrs, atr);
-}
-
-Aptr Execute::litatr(Aword lit, Aword atr) {
-	if (atr == 1)
-		return litValues[lit - LITMIN].value;
-	else
-		error("Unknown attribute for literal (%ld).", (unsigned long) atr);
-}
-
 Aptr Execute::attribute(Aword id, Aword atr) {
 	if (isObj(id))
-		return objatr(id, atr);
+		return getAttribute(_objs[id - OBJMIN].atrs, atr);
 	else if (isLoc(id))
-		return locatr(id, atr);
+		return getAttribute(_locs[id - LOCMIN].atrs, atr);
 	else if (isAct(id))
-		return actatr(id, atr);
-	else if (isLit(id))
-		return litatr(id, atr);
-	else
+		return getAttribute(_acts[id - ACTMIN].atrs, atr);
+	else if (isLit(id)) {
+		if (atr == 1)
+			return litValues[id - LITMIN].value;
+		else
+			error("Unknown attribute for literal (%ld).", (unsigned long)atr);
+	} else
 		error("Can't ATTRIBUTE item (%ld).", (unsigned long) id);
 }
 
@@ -604,7 +520,7 @@ void Execute::locobj(Aword obj, Aword whr) {
 	if (isCnt(whr)) { // Into a container
 		if (whr == obj)
 			error("Locating something inside itself.");
-		if (checklim(whr, obj))
+		if (checkContainerLimit(whr, obj))
 			return;
 		else
 			_objs[obj-OBJMIN].loc = whr;
@@ -718,42 +634,6 @@ Abool Execute::in(Aword obj, Aword cnt) {
 	return(_objs[obj - OBJMIN].loc == cnt);
 }
 
-void Execute::sayloc(Aword loc) {
-	_vm->_interpreter->interpret(_locs[loc - LOCMIN].nams);
-}
-
-void Execute::sayobj(Aword obj) {
-	_vm->_interpreter->interpret(_objs[obj - OBJMIN].dscr2);
-}
-
-void Execute::sayact(Aword act) {
-	_vm->_interpreter->interpret(_acts[act - ACTMIN].nam);
-}
-
-void Execute::sayint(Aword val) {
-	char buf[25];
-
-	if (isHere(HERO)) {
-		sprintf(buf, "%ld", (unsigned long) val);
-		_vm->output(buf);
-	}
-}
-
-void Execute::saystr(char *str) {
-	if (isHere(HERO))
-		_vm->output(str);
-	free(str);
-}
-
-void Execute::saylit(Aword lit) {
-	if (isNum(lit))
-		sayint(litValues[lit - LITMIN].value);
-	else {
-		Common::String str = (char *)litValues[lit - LITMIN].value;
-		saystr((char *)str.c_str());
-	}
-}
-
 void Execute::sayarticle(Aword id) {
 	if (!isObj(id))
 		error("Trying to say article of something *not* an object.");
@@ -766,14 +646,17 @@ void Execute::sayarticle(Aword id) {
 void Execute::say(Aword id) {
 	if (isHere(HERO)) {
 		if (isObj(id))
-			sayobj(id);
+			_vm->_interpreter->interpret(_objs[id - OBJMIN].dscr2);
 		else if (isLoc(id))
-			sayloc(id);
+			_vm->_interpreter->interpret(_locs[id - LOCMIN].nams);
 		else if (isAct(id))
-			sayact(id);
-		else if (isLit(id))
-			saylit(id);
-		else
+			_vm->_interpreter->interpret(_acts[id - ACTMIN].nam);
+		else if (isLit(id)) {
+			if (isNum(id))
+				_vm->output(Common::String::format("%ld", litValues[id - LITMIN].value));
+			else
+				_vm->output((char *)litValues[id - LITMIN].value);
+		} else
 			error("Can't SAY item (%ld).", (unsigned long)id);
 	}
 }
@@ -922,7 +805,6 @@ void Execute::empty(Aword cnt, Aword whr) {
 			locate(i, whr);
 }
 
-// Description of current location
 void Execute::dscrobjs() {
 	int i;
 	int prevobj;
@@ -1062,4 +944,4 @@ Abool Execute::streq(char *a, char *b) {
 }
 
 } // End of namespace Alan2
-} // Engine of namespace GLK
+} // End of namespace Glk
