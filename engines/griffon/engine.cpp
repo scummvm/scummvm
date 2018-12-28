@@ -394,7 +394,7 @@ int invmap[4][7][13] = {
 #define INPUT(A, B)                 \
 	do {                            \
 		Common::String line;        \
-		fp.readLine();              \
+		file.readLine();              \
 		sscanf(line.c_str(), A, B); \
 	} while(0)
 
@@ -411,16 +411,16 @@ void game_fillrect(Graphics::TransparentSurface *surface, int x, int y, int w, i
 }
 
 Graphics::Surface *IMG_Load(const char *name) {
-	Common::File fp;
+	Common::File file;
 
-	fp.open(name);
-	if (!fp.isOpen()) {
+	file.open(name);
+	if (!file.isOpen()) {
 		error("Cannot open file %s", name);
 	}
 
 	Image::BitmapDecoder bitmapDecoder;
-	bitmapDecoder.loadStream(fp);
-	fp.close();
+	bitmapDecoder.loadStream(file);
+	file.close();
 
 	Graphics::Surface *res = bitmapDecoder.getSurface()->convertTo(g_system->getScreenFormat());
 
@@ -1298,7 +1298,7 @@ void GriffonEngine::game_checktrigger() {
 void GriffonEngine::game_configmenu() {
 	Graphics::Surface *configwindow;
 	Common::Rect rc;
-	int cursel, curselt, ofullscreen;
+	int cursel, curselt;
 	int tickwait, keypause, ticks1;
 
 	cursel = MINCURSEL;
@@ -3348,7 +3348,7 @@ void GriffonEngine::game_endofgame() {
 				break;
 		}
 
-		int ya = 255;
+		ya = 255;
 		if (ticks < ticks1 + 1000) {
 			ya = 255 * (ticks - ticks1) / 1000;
 			if (ya < 0)
@@ -3396,24 +3396,24 @@ void GriffonEngine::game_endofgame() {
 
 
 	ticks1 = ticks;
-	y = 0;
+	int y1 = 0;
 
 	SDL_BlitSurface(videobuffer, NULL, videobuffer2, NULL);
 
 	do {
 		if (ticks < ticks1 + 1500) {
-			int y = 255 * (ticks - ticks1) / 1500;
-			if (y < 0)
-				y = 0;
-			if (y > 255)
-				y = 255;
+			y1 = 255 * (ticks - ticks1) / 1500;
+			if (y1 < 0)
+				y1 = 0;
+			if (y1 > 255)
+				y1 = 255;
 			else
 				break;
 		}
 
 		SDL_FillRect(videobuffer, NULL, 0);
 
-		SDL_SetAlpha(videobuffer, 0, y);
+		SDL_SetAlpha(videobuffer, 0, y1);
 		SDL_BlitSurface(videobuffer2, NULL, videobuffer3, NULL);
 		SDL_BlitSurface(videobuffer, NULL, videobuffer3, NULL);
 		SDL_BlitSurface(videobuffer3, NULL, video, NULL);
@@ -3441,21 +3441,21 @@ void GriffonEngine::game_endofgame() {
 	int keywait = 2000 + ticks;
 
 	ticks1 = ticks;
-	y = 0;
+	y1 = 0;
 	do {
 
 		SDL_BlitSurface(theendimg, NULL, videobuffer, NULL);
 
-		y = 255;
+		y1 = 255;
 		if (ticks < ticks1 + 1000) {
-			y = 255 * (ticks - ticks1) / 1000;
-			if (y < 0)
-				y = 0;
-			if (y > 255)
-				y = 255;
+			y1 = 255 * (ticks - ticks1) / 1000;
+			if (y1 < 0)
+				y1 = 0;
+			if (y1 > 255)
+				y1 = 255;
 		}
 
-		SDL_SetAlpha(videobuffer, 0, y);
+		SDL_SetAlpha(videobuffer, 0, y1);
 		SDL_BLITVIDEO(videobuffer, NULL, video, NULL);
 		SDL_SetAlpha(videobuffer, 0, 255);
 
@@ -3877,13 +3877,13 @@ void GriffonEngine::game_loadmap(int mapnum) {
 	sprintf(name, "mapdb/%04i.map", mapnum);
 	debug(1, "Reading %s", name);
 
-	Common::File fp;
-	fp.open(name);
+	Common::File file;
+	file.open(name);
 	for (int x = 0; x <= 319; x++)
 		for (int y = 0; y <= 199; y++) {
 			INPUT("%i", &tempmap[x][y]);
 		}
-	fp.close();
+	file.close();
 
 	for (int x = 0; x <= 319; x++)
 		for (int y = 0; y <= 239; y++) {
@@ -3893,7 +3893,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 	// read *.trg file
 	sprintf(name, "mapdb/%04i.trg", mapnum);
 	debug(1, "Reading %s", name);
-	fp.open(name);
+	file.open(name);
 
 	INPUT("%i", &ntriggers);
 
@@ -3906,7 +3906,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 
 		triggerloc[mapx][mapy] = trig;
 	}
-	fp.close();
+	file.close();
 
 
 	for (int y = 0; y <= 23; y++)
@@ -4146,7 +4146,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 	// read *.npc file
 	sprintf(name, "mapdb/%04i.npc", mapnum);
 	debug(1, "Reading %s", name);
-	fp.open(name);
+	file.open(name);
 
 	for (int i = 0; i < kMaxNPC; i++) {
 		INPUT("%i", &npcinfo[i].spriteset);
@@ -4407,7 +4407,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 		npcinfo[i].pause = ticks;
 	}
 
-	fp.close();
+	file.close();
 
 
 	int cx, cy, npx, npy, lx, ly;
@@ -4905,7 +4905,7 @@ void GriffonEngine::game_processtrigger(int trignum) {
 }
 
 void GriffonEngine::game_saveloadnew() {
-	float y;
+	float y = 0.0;
 	int yy;
 	int currow, curcol, lowerlock;
 	int ticks, ticks1, tickpause;
@@ -6928,7 +6928,6 @@ void GriffonEngine::game_updspells() {
 
 			// metal
 			if (spellnum == 1 && forcepause == 0) {
-				float xdif, ydif;
 				int npc;
 				int fr = (int)((32 - spellinfo[i].frame) * 4) % 3;
 
@@ -7171,8 +7170,8 @@ void GriffonEngine::game_updspells() {
 					int lx = (int)npx / 16;
 					int ly = (int)npy / 16;
 
-					for (int f = 0; f < 5; f++) { // !! f < 5
-						foundel[f] = 0;
+					for (int f1 = 0; f1 < 5; f1++) { // !! f < 5
+						foundel[f1] = 0;
 					}
 
 					for (int xo = -2; xo <= 2; xo++) {
@@ -7213,17 +7212,17 @@ void GriffonEngine::game_updspells() {
 					char line[256];
 					strcpy(line, "Found... nothing...");
 
-					for (int f = 0; f < 5; f++) {
-						if (foundel[f] == 1 && player.foundspell[f] == 0) {
-							player.foundspell[f] = 1;
-							player.spellcharge[f] = 0;
-							if (f == 1)
+					for (int f1 = 0; f1 < 5; f1++) {
+						if (foundel[f1] == 1 && player.foundspell[f1] == 0) {
+							player.foundspell[f1] = 1;
+							player.spellcharge[f1] = 0;
+							if (f1 == 1)
 								strcpy(line, "Found... Water Essence");
-							if (f == 2)
+							if (f1 == 2)
 								strcpy(line, "Found... Metal Essence");
-							if (f == 3)
+							if (f1 == 3)
 								strcpy(line, "Found... Earth Essence");
-							if (f == 4)
+							if (f1 == 4)
 								strcpy(line, "Found... Fire Essence");
 							break;
 						}
@@ -7460,7 +7459,7 @@ void GriffonEngine::game_updspells() {
 
 					int x = apx;
 					orn = 0;
-					for (int y = apy; y <= 239; y++) {
+					for (y = apy; y <= 239; y++) {
 						int rn = (int)(RND() * 3);
 
 						if (orn == 0)
@@ -7517,7 +7516,7 @@ void GriffonEngine::game_updspells() {
 
 					x = apx;
 					orn = 0;
-					for (int y = apy; y >= 0; y--) {
+					for (y = apy; y >= 0; y--) {
 						int rn = (int)(RND() * 3);
 
 						if (orn == 0)
@@ -7597,7 +7596,6 @@ void GriffonEngine::game_updspells() {
 				int orn = 0;
 				for (int y = 0; y <= apy; y++) {
 					if (y < 240) {
-						float xdif, ydif;
 						int rn = (int)(RND() * 3);
 
 						if (orn == 0)
@@ -7690,7 +7688,7 @@ void GriffonEngine::game_updspellsunder() {
 					spellinfo[i].frame = 0;
 
 
-				for (int f = 1; f <= lastnpc; f++) {
+				for (f = 1; f <= lastnpc; f++) {
 					int xdif = spellinfo[i].enemyx - npcinfo[f].x;
 					int ydif = spellinfo[i].enemyy - npcinfo[f].y;
 
@@ -7951,8 +7949,6 @@ void GriffonEngine::game_updspellsunder() {
 }
 
 void GriffonEngine::sys_initialize() {
-	int result;
-
 	// init char *floatstri[kMaxFloat]
 	for (int i = 0; i < kMaxFloat; i++)
 		floatstri[i] = (char *)malloc(64); // 64 bytes each string (should be enough)
@@ -8260,22 +8256,22 @@ void GriffonEngine::sys_LoadTiles() {
 }
 
 void GriffonEngine::sys_LoadTriggers() {
-	Common::File fp;
+	Common::File file;
 
-	fp.open("data/triggers.dat");
+	file.open("data/triggers.dat");
 
 	for (int i = 0; i <= 9999; i++)
 		for (int a = 0; a <= 8; a++) {
 			INPUT("%i", &triggers[i][a]);
 		}
 
-	fp.close();
+	file.close();
 }
 
 void GriffonEngine::sys_LoadObjectDB() {
-	Common::File fp;
+	Common::File file;
 
-	fp.open("objectdb.dat");
+	file.open("objectdb.dat");
 
 	for (int a = 0; a <= 32; a++) {
 		for (int b = 0; b <= 5; b++) {
@@ -8293,7 +8289,7 @@ void GriffonEngine::sys_LoadObjectDB() {
 		}
 	}
 
-	fp.close();
+	file.close();
 }
 
 void GriffonEngine::sys_print(Graphics::TransparentSurface *buffer, const char *stri, int xloc, int yloc, int col) {
