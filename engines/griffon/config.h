@@ -39,7 +39,7 @@
 
 namespace Griffon {
 
-typedef struct {
+struct CONFIG {
 	int scr_width;
 	int scr_height;
 	int scr_bpp;
@@ -50,7 +50,7 @@ typedef struct {
 	int musicvol;
 	int effects;
 	int effectsvol;
-} CONFIG;
+};
 
 extern CONFIG config;
 extern char config_ini[];
