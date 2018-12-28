@@ -3,6 +3,21 @@
 # Blade Runner (1997) Subtitles Support
 Some tools written in __Python 2.7__ to help add support for subtitles in Westwood's point and click adventure game Blade Runner (1997) for PC.
 
+## Building and installing a SUBTITLES.MIX file with a "make" command
+You need to follow these steps:
+1. Download the online excel transcript and save it as "englishTranscript.xls" into the "devtools\create_bladerunner\subtitles\sampleInput" folder.
+__The online Excel file is available here:__
+https://docs.google.com/spreadsheets/d/17ew0YyhSwqcqZg6bXrIgz0GkA62dhgViHN15lOu5Hj8/edit?usp=sharing
+2. Edit your font glyphs PNG file (or use the provided one). This file should be stored as "subtitlesFont.png" into the "devtools\create_bladerunner\subtitles\sampleInput" folder.
+3. Create an overrideEncodingSUBLTS.txt file in the sampleInput folder. This is a configuration file for the font file creation. A sample is provided in the sampleInput folder and documentation about this is below in this document (see "override encoding text file" in fontCreator).
+4. Create a configureFontsTranslation.txt in the sampleInput folder. A configuration file for the MIX file creation. A sample is provided in the sampleInput folder and documentation about this is below in this document (see "text configuration file" in mixResourceCreator).  
+5. From the ScummVM root folder run:
+```
+	make devtools/create_bladerunner/subtitles
+```
+6. Copy the output file "SUBTITLES.MIX", created in the ScummVM root folder, into your Blade Runner game directory.
+7. Launch the Blade Runner game using ScummVM.
+ 
 ## quotesSpreadsheetCreator (quoteSpreadsheetCreator.py)
 (requires python lib *xlwt*, *wave*)
 A tool to gather all the speech audio filenames in an Excel file which will include a column with links to the audio file location on the PC. By Ctrl+MouseClick on that column's entries you should be able to listen to the corresponding wav file.
@@ -43,7 +58,7 @@ Syntax Notes:
 3. The "-cft" optional switch is followed by the path to the text configuration file "configureFontsTranslation.txt" -- if this is omitted then the file is assumed to reside in the current working directory.
 4. The "--trace" optional switch enables extra debug messages to be printed. 
 
-The text configuration file "configureFontsTranslation.txt" a __text file that should be saved in a UTF-8 encoding (no BOM)__, that contains the following:
+The __text configuration file "configureFontsTranslation.txt"__ a __text file that should be saved in a UTF-8 encoding (no BOM)__, that contains the following:
 1. A key "targetEncoding" with a value of the name of the ASCII codepage that should be used for the character fonts (eg windows-1253).
 2. Multiple lines with the key "fontNameAndOutOfOrderGlyphs" and a value that contains:
     * the name of a in-game Font file that should be included in the SUBTITLES.MIX
@@ -64,7 +79,7 @@ python2.7 fontCreator.py -ip folderpathForMIXFiles
 Syntax B - To create the subtitle's font:
 python2.7 fontCreator.py -im imageRowPNGFilename -om targetFONfilename [-oe pathToOverrideEncodingTxt] -pxLL minSpaceBetweenLettersInRowLeftToLeft -pxTT minSpaceBetweenLettersInColumnTopToTop -pxKn kerningForFirstDummyFontLetter -pxWS whiteSpaceWidthInPixels [--trace]
 ```
-This tool __requires__ an override encoding text file in its Syntax B mode (subtitle font creation). You can specify the path to this file after a "-oe" switch. If you don't provide this path, the script will search for an "overrideEncoding.txt" file in the current working directory.
+This tool __requires an override encoding text file__ in its Syntax B mode (subtitle font creation). You can specify the path to this file after a "-oe" switch. If you don't provide this path, the script will search for an "overrideEncoding.txt" file in the current working directory.
 The override encoding file is a __text file that should be saved in a UTF-8 encoding (no BOM)__, that contains the following:
 1. A key "targetEncoding" with a value of the name of the ASCII codepage that should be used for the character fonts (eg windows-1253).
 2. A key "asciiCharList" with value the "all-characters" string with all the printable characters that will be used in-game, from the specified codepage. Keep in mind that:
