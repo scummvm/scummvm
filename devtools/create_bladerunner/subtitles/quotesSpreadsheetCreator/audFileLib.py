@@ -1,12 +1,47 @@
 #!/usr/bin/env python2.7
 # -*- coding: UTF-8 -*-
 #
-import os, sys, shutil 
-import wave
-import struct
+import os, sys
+
+shutilLibFound = False
+waveLibFound = False
+ctypesLibFound = False
+structLibFound = False
+
+try:
+	import shutil 
+except ImportError:
+	print "Error:: Shutil python library is required to be installed!" 
+else:
+	shutilLibFound = True
+	
+try:
+	import wave
+except ImportError:
+	print "Error:: Wave python library is required to be installed!" 
+else:
+	waveLibFound = True
+
+try:
+	import ctypes 
+except ImportError:
+	print "Error:: ctypes python library is required to be installed!" 
+else:
+	ctypesLibFound = True
+
+try:
+	import struct 
+except ImportError:
+	print "Error:: struct python library is required to be installed!" 
+else:
+	structLibFound = True
+
+if 	(not shutilLibFound) or (not waveLibFound) or (not ctypesLibFound) or (not structLibFound):
+	sys.stdout.write("Error:: Errors were found when trying to import required python libraries\n")
+	sys.exit(1)	
+
 from struct import *
 from audFileDecode import *
-import ctypes
 
 my_module_version = "0.50"
 my_module_name = "audFileLib"

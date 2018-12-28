@@ -67,12 +67,47 @@
 # DONE: make space pixels (var spaceWidthInPixels) into an external param?
 # DONE: INFO NOTE IT IS NOT POSSIBLE TO have partial transparency
 
-import os, sys, shutil
-from os import walk, errno
-import Image
+import os, sys
+
+shutilLibFound = False
+structLibFound = False
+imagePilLibFound = False
+reLibFound = False
+
+try:
+	import shutil 
+except ImportError:
+	print "Error:: Shutil python library is required to be installed!" 
+else:
+	shutilLibFound = True
+
+try:
+	import struct 
+except ImportError:
+	print "Error:: struct python library is required to be installed!" 
+else:
+	structLibFound = True
+	
+try:
+	import Image 
+except ImportError:
+	print "Error:: Image python library (PIL) is required to be installed!" 
+else:
+	imagePilLibFound = True
+
+try:
+	import re 
+except ImportError:
+	print "Error:: re (Regular expression operations) python library is required to be installed!" 
+else:
+	reLibFound = True	
+
+if 	(not shutilLibFound) or (not structLibFound) or (not imagePilLibFound) or (not reLibFound):
+	sys.stdout.write("Error:: Errors were found when trying to import required python libraries\n")
+	sys.exit(1)
+
+from os import walk, errno, path
 from struct import *
-import re
-import os.path
 from fonFileLib import *
 
 company_email = "classic.adventures.in.greek@gmail.com"
