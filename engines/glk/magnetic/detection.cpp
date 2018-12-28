@@ -46,7 +46,7 @@ MagneticDescriptor MagneticMetaEngine::findGame(const char *gameId) {
 }
 
 bool MagneticMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
-	const char *const EXTENSIONS[3] = { ".magnetic" };
+	const char *const EXTENSIONS[1] = { ".magnetic" };
 
 	// Loop through the files of the folder
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
@@ -55,7 +55,7 @@ bool MagneticMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames
 			continue;
 		Common::String filename = file->getName();
 		bool hasExt = false;
-		for (int idx = 0; idx < 3 && !hasExt; ++idx)
+		for (int idx = 0; idx < 1 && !hasExt; ++idx)
 			hasExt = filename.hasSuffixIgnoreCase(EXTENSIONS[idx]);
 		if (!hasExt)
 			continue;
