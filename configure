@@ -5108,9 +5108,9 @@ if test "$_pandoc" = yes ; then
     _pandoc = no
   fi
 
+	echo $_pandoc
 fi
 
-echo $_pandoc
 define_in_config_if_yes $_pandoc 'USE_PANDOC'
 
 #
