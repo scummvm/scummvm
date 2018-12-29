@@ -194,6 +194,13 @@ void GlkInterface::initialize() {
 
 	// Add any sound folder or zip
 	addSound();
+
+	// For Beyond Zork the Page Up/Down keys are remapped to scroll the description area,
+	// since the arrow keys the original used are in use now for cycling prior commands
+	if (_storyId == BEYOND_ZORK) {
+		uint32 KEYCODES[2] = { keycode_PageUp, keycode_PageDown };
+		glk_set_terminators_line_event(gos_lower, KEYCODES, 2);
+	}
 }
 
 void GlkInterface::addSound() {
@@ -587,6 +594,16 @@ zchar GlkInterface::os_read_line(int max, zchar *buf, int timeout, int width, in
 	if (gos_upper && mach_status_ht < curr_status_ht)
 		reset_status_ht();
 	curr_status_ht = 0;
+
+	if (ev.val2) {
+		// Line terminator specified, so return it
+		if (_storyId == BEYOND_ZORK && ev.val2 == keycode_PageUp)
+			return ZC_ARROW_UP;
+		else if (_storyId == BEYOND_ZORK && ev.val2 == keycode_PageDown)
+			return ZC_ARROW_DOWN;
+
+		return ev.val2;
+	}
 
 	return ZC_RETURN;
 }

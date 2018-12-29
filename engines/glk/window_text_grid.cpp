@@ -465,7 +465,7 @@ void TextGridWindow::acceptReadLine(uint32 arg) {
 	if (!_inBuf)
 		return;
 
-	if (_lineTerminators && checkTerminator(arg)) {
+	if (_lineTerminators && checkTerminators(arg)) {
 		const uint32 *cx;
 		for (cx = _lineTerminators; *cx; cx++) {
 			if (*cx == arg) {

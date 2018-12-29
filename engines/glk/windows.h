@@ -396,7 +396,7 @@ public:
 
 	gidispatch_rock_t _dispRock;
 public:
-	static bool checkTerminator(uint32 ch);
+	static bool checkBasicTerminators(uint32 ch);
 public:
 	/**
 	 * Constructor
@@ -497,6 +497,8 @@ public:
 	bool imageDraw(uint image, uint align, int val1, int val2);
 
 	int acceptScroll(uint arg);
+
+	bool checkTerminators(uint32 ch);
 
 	void setTerminatorsLineEvent(const uint32 *keycodes, uint count);
 

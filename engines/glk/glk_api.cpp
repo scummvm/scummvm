@@ -138,7 +138,7 @@ uint GlkAPI::glk_gestalt_ext(uint id, uint val, uint *arr, uint arrlen) {
 		return g_conf->_sound;
 
 	case gestalt_LineTerminatorKey:
-		return Window::checkTerminator(val);
+		return Window::checkBasicTerminators(val);
 
 	case gestalt_Timer:
 	case gestalt_Unicode:

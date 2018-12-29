@@ -342,6 +342,10 @@ void Windows::inputScrollFocus() {
 void Windows::inputHandleKey(uint key) {
 	if (_moreFocus) {
 		inputMoreFocus();
+	} else if (_focusWin && (_focusWin->_lineRequest || _focusWin->_lineRequestUni) &&
+			_focusWin->checkTerminators(key)) {
+		// WORKAROUND: Do line terminators checking first. This was first needed for Beyond Zork,
+		// since it needs the Page Up/Down keys to scroll the description area rathern than the buffer area
 	} else {
 		switch (key) {
 		case keycode_Tab:
@@ -633,7 +637,7 @@ const WindowStyle *Window::getStyles() const {
 
 void Window::setTerminatorsLineEvent(const uint32 *keycodes, uint count) {
 	if (dynamic_cast<TextBufferWindow *>(this) || dynamic_cast<TextGridWindow *>(this)) {
-		delete _lineTerminatorsBase;
+		delete[] _lineTerminatorsBase;
 		_lineTerminatorsBase = nullptr;
 
 		if (!keycodes || count == 0) {
@@ -651,13 +655,25 @@ void Window::setTerminatorsLineEvent(const uint32 *keycodes, uint count) {
 	}
 }
 
-bool Window::checkTerminator(uint32 ch) {
+bool Window::checkBasicTerminators(uint32 ch) {
 	if (ch == keycode_Escape)
 		return true;
 	else if (ch >= keycode_Func12 && ch <= keycode_Func1)
 		return true;
 	else
 		return false;
+}
+
+bool Window::checkTerminators(uint32 ch) {
+	if (checkBasicTerminators(ch))
+		return true;
+
+	for (uint idx = 0; idx < _termCt; ++idx) {
+		if (_lineTerminatorsBase[idx] == ch)
+			return true;
+	}
+
+	return false;
 }
 
 bool Window::imageDraw(uint image, uint align, int val1, int val2) {

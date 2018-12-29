@@ -762,9 +762,10 @@ void TextBufferWindow::cancelLineEvent(Event *ev) {
 	_lineRequest = false;
 	_lineRequestUni = false;
 	if (_lineTerminators) {
-		free(_lineTerminators);
+		delete[] _lineTerminators;
 		_lineTerminators = nullptr;
 	}
+
 	_inBuf = nullptr;
 	_inMax = 0;
 
@@ -1246,21 +1247,21 @@ void TextBufferWindow::acceptReadLine(uint32 arg) {
 	if (_height < 2)
 		_scrollPos = 0;
 
-	if (_scrollPos || arg == keycode_PageUp || arg == keycode_MouseWheelUp) {
-		acceptScroll(arg);
-		return;
-	}
-
 	if (!_inBuf)
 		return;
 
-	if (_lineTerminators && checkTerminator(arg)) {
+	if (_lineTerminators && checkTerminators(arg)) {
 		for (cx = _lineTerminators; *cx; cx++) {
 			if (*cx == arg) {
 				acceptLine(arg);
 				return;
 			}
 		}
+	}
+
+	if (_scrollPos || arg == keycode_PageUp || arg == keycode_MouseWheelUp) {
+		acceptScroll(arg);
+		return;
 	}
 
 	switch (arg) {
@@ -1442,10 +1443,16 @@ void TextBufferWindow::acceptLine(uint32 keycode) {
 	_attr = _origAttr;
 
 	if (_lineTerminators) {
-		uint val2 = keycode;
-		if (val2 == keycode_Return)
-			val2 = 0;
-		g_vm->_events->store(evtype_LineInput, this, len, val2);
+		if (keycode == keycode_Return)
+			keycode = 0;
+		else
+			// TODO: Currently particularly for Beyond Zork, we don't echo a newline
+			// for line terminators, allowing description area scrolling to not keep adding
+			// blank lines in the command area. In the future I may need to make it configurable
+			// when I see if any other line terminators need to have a newline
+			_echoLineInput = false;
+
+		g_vm->_events->store(evtype_LineInput, this, len, keycode);
 		free(_lineTerminators);
 		_lineTerminators = nullptr;
 	} else {
