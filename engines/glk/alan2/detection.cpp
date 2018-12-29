@@ -46,7 +46,7 @@ Alan2Descriptor Alan2MetaEngine::findGame(const char *gameId) {
 }
 
 bool Alan2MetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
-	const char *const EXTENSIONS[2] = { ".acd", ".dat" };
+	const char *const EXTENSIONS[] = { ".acd", ".dat", nullptr };
 
 	// Loop through the files of the folder
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
@@ -55,8 +55,8 @@ bool Alan2MetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 			continue;
 		Common::String filename = file->getName();
 		bool hasExt = false;
-		for (int idx = 0; idx < 2 && !hasExt; ++idx)
-			hasExt = filename.hasSuffixIgnoreCase(EXTENSIONS[idx]);
+		for (const char *const *ext = &EXTENSIONS[0]; *ext && !hasExt; ++ext)
+			hasExt = filename.hasSuffixIgnoreCase(*ext);
 		if (!hasExt)
 			continue;
 

@@ -47,7 +47,8 @@ PlainGameDescriptor FrotzMetaEngine::findGame(const char *gameId) {
 }
 
 bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
-	const char *const EXTENSIONS[11] = { ".z1", ".z2", ".z3", ".z4", ".z5", ".z6", ".z7", ".z8", ".zblorb", ".dat", ".zip" };
+	const char *const EXTENSIONS[] = { ".z1", ".z2", ".z3", ".z4", ".z5", ".z6", ".z7", ".z8",
+		".zblorb", ".dat", ".zip", nullptr };
 
 	// Loop through the files of the folder
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
@@ -56,8 +57,8 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 			continue;
 		Common::String filename = file->getName();
 		bool hasExt = false;
-		for (int idx = 0; idx < 11 && !hasExt; ++idx)
-			hasExt = filename.hasSuffixIgnoreCase(EXTENSIONS[idx]);
+		for (const char *const *ext = &EXTENSIONS[0]; *ext && !hasExt; ++ext)
+			hasExt = filename.hasSuffixIgnoreCase(*ext);
 		if (!hasExt)
 			continue;
 

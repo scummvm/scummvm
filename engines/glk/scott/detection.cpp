@@ -44,14 +44,21 @@ PlainGameDescriptor ScottMetaEngine::findGame(const char *gameId) {
 }
 
 bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
+	const char *const EXTENSIONS[] = { ".saga", ".dat", ".blb", ".blorb", nullptr };
 	Common::File gameFile;
 	Common::String md5;
 
 	// Loop through the files of the folder
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		Common::String name = file->getName();
-		if (file->isDirectory() || !(name.hasSuffixIgnoreCase(".saga")
-				|| name.hasSuffixIgnoreCase(".dat") || name.hasSuffixIgnoreCase(".blb")))
+		if (file->isDirectory())
+			continue;
+
+		Common::String filename = file->getName();
+		bool hasExt = false;
+		for (const char *const *ext = &EXTENSIONS[0]; *ext && !hasExt; ++ext)
+			hasExt = filename.hasSuffixIgnoreCase(*ext);
+		if (!hasExt)
 			continue;
 
 		if (gameFile.open(*file)) {
