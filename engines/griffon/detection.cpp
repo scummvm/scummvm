@@ -38,7 +38,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("objectdb.dat", "ec5371da28f01ccf88980b32d9de2232", 27754),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -69,7 +69,10 @@ bool GriffonMetaEngine::hasFeature(MetaEngineFeature f) const {
 }
 
 bool GriffonMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	return false;
+	if (desc)
+		*engine = new Griffon::GriffonEngine(syst);
+
+	return desc != nullptr;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(GRIFFON)

@@ -109,7 +109,7 @@ void SDL_BlitSurface(Graphics::Surface *src, Common::Rect *srcRect, Graphics::Tr
 void SDL_BlitSurface(Graphics::Surface *src, Common::Rect *srcRect, Graphics::Surface *dst, Common::Rect *dstRect) {}
 void SDL_FillRect(Graphics::TransparentSurface *surface, Common::Rect *rect, uint32 color) {}
 int SDL_MapRGB(Graphics::PixelFormat format, int r, int g, int b) { return 0; }
-void SDL_SetColorKey(Graphics::Surface *src, int mode, uint32 color);
+void SDL_SetColorKey(Graphics::Surface *src, int mode, uint32 color) {}
 
 Mix_Chunk *Mix_LoadWAV(const char *name) { return NULL; }
 bool Mix_Playing(int channel) { return true; }

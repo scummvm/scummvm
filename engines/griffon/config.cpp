@@ -60,6 +60,7 @@ char config_ini[64] = "config.ini";
 	} while(0)
 
 void config_load(CONFIG *config) {
+#if 0
 	char line[128];
 	char arg[128];
 	FILE *fp;
@@ -109,9 +110,11 @@ void config_load(CONFIG *config) {
 
 		fclose(fp);
 	}
+#endif
 }
 
 void config_save(CONFIG *config) {
+#if 0
 	FILE *fp = fopen(config_ini, "w");
 
 	if (fp) {
@@ -132,6 +135,7 @@ void config_save(CONFIG *config) {
 		PRINT("%i", config->effectsvol);
 		fclose(fp);
 	}
+#endif
 }
 
 } // end of namespace Griffon

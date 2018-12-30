@@ -60,6 +60,7 @@ extern PLAYERTYPE playera;
 extern int asecstart;
 
 int state_load(int slotnum) {
+#if 0
 	FILE *fp;
 	char line[256];
 
@@ -131,11 +132,13 @@ int state_load(int slotnum) {
 		fclose(fp);
 	}
 
+#endif
 	return 0; // fail
 }
 
 /* fill PLAYERTYPE playera; */
 int state_load_player(int slotnum) {
+#if 0
 	FILE *fp;
 	char line[256];
 
@@ -188,11 +191,13 @@ int state_load_player(int slotnum) {
 
 		fclose(fp);
 	}
+#endif
 
 	return 0; // fail
 }
 
 int state_save(int slotnum) {
+#if 0
 	FILE *fp;
 	char line[256];
 
@@ -262,6 +267,7 @@ int state_save(int slotnum) {
 		return 1; // success
 	}
 
+#endif
 	return 0; // fail
 }
 
