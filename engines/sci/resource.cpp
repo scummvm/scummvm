@@ -2103,7 +2103,12 @@ Resource *ResourceManager::updateResource(ResourceId resId, ResourceSource *src,
 		return res;
 	}
 
-	if (validateResource(resId, sourceMapLocation, src->getLocationName(), offset, size, volumeFile->size())) {
+	// Resources from MacResourceForkResourceSource do not have a source size
+	// since the source "volume file" is the empty data fork, and they don't
+	// have an offset either since the MacResManager handles this, so trying to
+	// validate these resources using the normal validation would always fail
+	if (src->getSourceType() == kSourceMacResourceFork ||
+		validateResource(resId, sourceMapLocation, src->getLocationName(), offset, size, volumeFile->size())) {
 		if (res == nullptr) {
 			res = new Resource(this, resId);
 			_resMap.setVal(resId, res);
