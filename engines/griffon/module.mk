@@ -1,9 +1,11 @@
 MODULE := engines/griffon
 
 MODULE_OBJS := \
+	config.o \
 	engine.o \
 	griffon.o \
-	detection.o
+	detection.o \
+	state.o
 
 MODULE_DIRS += \
 	engines/griffon
