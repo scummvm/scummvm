@@ -7301,12 +7301,52 @@ static const uint16 qfg1vgaPatchAntwerpWander[] = {
 	PATCH_END
 };
 
+// QFG1VGA Mac disables all controls when the antwerp falls in room 78, killing
+//  the player by not allowing them to defend themselves.
+//
+// The antwerp falls in rooms 78 and 85 and the only way to survive is to hold
+//  up a weapon. These two antwerp scripts were identical in the PC version and
+//  enabled all menu icons even though most of them couldn't really be used.
+//  Sierra attempted to improve this in Mac by only enabling the inventory icons
+//  but instead disabled everything in room 78 by not calling the enable procedure.
+//
+// We fix this by calling the enable procedure like the script in room 85 does.
+//
+// Applies to: Mac Floppy
+// Responsible method: antwerped:changeState(1)
+// Fixes bug #10856
+static const uint16 qfg1vgaSignatureMacAntwerpControls[] = {
+	0x30, SIG_UINT16(0x0033),               // bnt 0033 [ state 1 ]
+	SIG_ADDTOOFFSET(+0x30),
+	SIG_MAGICDWORD,
+	0x32, SIG_UINT16(0x014e),               // jmp 014e [ end of method ]
+	0x3c,                                   // dup
+	0x35, 0x01,                             // ldi 01
+	0x1a,                                   // eq?
+	0x30, SIG_UINT16(0x0033),               // bnt 0033 [ state 2 ]
+	0x38, SIG_UINT16(0x00f9),               // pushi 00f9 [ canControl, hard coded for Mac ]
+	SIG_END
+};
+
+static const uint16 qfg1vgaPatchMacAntwerpControls[] = {
+	0x30, PATCH_UINT16(0x0030),             // bnt 0030 [ state 1 ]
+	PATCH_ADDTOOFFSET(+0x30),
+	0x3c,                                   // dup
+	0x35, 0x01,                             // ldi 01
+	0x1a,                                   // eq?
+	0x31, 0x37,                             // bnt 37 [ state 2 ]
+	0x76,                                   // push0
+	0x45, 0x03, 0x00,                       // callb proc0_3 [ enable all input ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                            patch
 static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 	{  true,    41, "moving to castle gate",                       1, qfg1vgaSignatureMoveToCastleGate,    qfg1vgaPatchMoveToCastleGate },
 	{  true,    55, "healer's hut, no delay for buy/steal",        1, qfg1vgaSignatureHealerHutNoDelay,    qfg1vgaPatchHealerHutNoDelay },
 	{  true,    73, "brutus script freeze glitch",                 1, qfg1vgaSignatureBrutusScriptFreeze,  qfg1vgaPatchBrutusScriptFreeze },
 	{  true,    77, "white stag dagger throw animation glitch",    1, qfg1vgaSignatureWhiteStagDagger,     qfg1vgaPatchWhiteStagDagger },
+	{  true,    78, "mac: enable antwerp controls",                1, qfg1vgaSignatureMacAntwerpControls,  qfg1vgaPatchMacAntwerpControls },
 	{  true,    96, "funny room script bug fixed",                 1, qfg1vgaSignatureFunnyRoomFix,        qfg1vgaPatchFunnyRoomFix },
 	{  true,   210, "cheetaur description fixed",                  1, qfg1vgaSignatureCheetaurDescription, qfg1vgaPatchCheetaurDescription },
 	{  true,   215, "fight event issue",                           1, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
