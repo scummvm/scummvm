@@ -1656,6 +1656,38 @@ const KYRAGameDescription adGameDescs[] = {
 
 	{
 		{
+			"eob",
+			0,
+			{
+				{ "TEXT.CPS", 0, "e9c2a9d81c8ce2dc35d92ece5950c45d", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+			ADGF_NO_FLAGS,
+			GUIO4(GUIO_NOSPEECH, GUIO_MIDIAMIGA, GUIO_RENDERAMIGA, GAMEOPTION_EOB_HPGRAPHS)
+		},
+		EOB_FLAGS
+	},
+
+	{
+		{
+			"eob",
+			0,
+			{
+				{ "TEXT.CPS", 0, "66253c0f435c5947e6f7166bd94f21e3", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::DE_DEU,
+			Common::kPlatformAmiga,
+			ADGF_NO_FLAGS,
+			GUIO4(GUIO_NOSPEECH, GUIO_MIDIAMIGA, GUIO_RENDERAMIGA, GAMEOPTION_EOB_HPGRAPHS)
+		},
+		EOB_FLAGS
+	},
+
+	{
+		{
 			"eob2",
 			0,
 			{
