@@ -207,9 +207,11 @@ bool CharacterGenerator::start(EoBCharacter *characters, uint8 ***faceShapes) {
 			} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_UP] || inputFlag == _vm->_keyMap[Common::KEYCODE_DOWN]) {
 				_activeBox ^= 2;
 			} else if (inputFlag == _vm->_keyMap[Common::KEYCODE_ESCAPE]) {
-				// Unlike the original we allow returning to the main menu
-				_vm->snd_stopSound();
-				return false;
+				// Unlike the original we allow returning to the main menu if no character has been created yet or all characters have been deleted
+				if (!_characters[0].name[0] && !_characters[1].name[0] && !_characters[2].name[0] && !_characters[3].name[0]) {
+					_vm->snd_stopSound();
+					return false;
+				}
 			}
 			_vm->_gui->updateBoxFrameHighLight(-1);
 		}
