@@ -1733,6 +1733,38 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		EOB2_FMTOWNS_FLAGS
 	},
+
+	{
+		{
+			"eob2",
+			0,
+			{
+				{ "TEXT.CPS", 0, "e7350914bd7ca68039a4bc6aa42c43d4", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+			ADGF_NO_FLAGS,
+			GUIO4(GUIO_NOSPEECH, GUIO_MIDIAMIGA, GUIO_RENDERAMIGA, GAMEOPTION_EOB_HPGRAPHS)
+		},
+		EOB2_FLAGS
+	},
+
+	{
+		{
+			"eob2",
+			0,
+			{
+				{ "TEXT.CPS", 0, "562adb7c1780481205b4d86ce1a54f20", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::DE_DEU,
+			Common::kPlatformAmiga,
+			ADGF_NO_FLAGS,
+			GUIO4(GUIO_NOSPEECH, GUIO_MIDIAMIGA, GUIO_RENDERAMIGA, GAMEOPTION_EOB_HPGRAPHS)
+		},
+		EOB2_FLAGS
+	},
 #endif // ENABLE_EOB
 
 	{ AD_TABLE_END_MARKER, FLAGS(0, 0, 0, 0, 0, 0, 0, 0, 0, 0) }
