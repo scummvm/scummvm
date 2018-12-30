@@ -90,6 +90,15 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		Tucker::kGameFlagEncodedData,
 		GUIO0()
 	},
+	{ // Russian fan translation
+		"tucker",
+		"",
+		AD_ENTRY1s("infobrgr.txt", "4b5a315e449a7f9eaf2025ec87466cd8", 552),
+		Common::RU_RUS,
+		Common::kPlatformDOS,
+		Tucker::kGameFlagEncodedData,
+		GUIO0()
+	},
 	{
 		"tucker",
 		"Demo",

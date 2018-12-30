@@ -166,7 +166,7 @@ public:
 uint8 *TuckerEngine::loadFile(const char *fname, uint8 *p) {
 	Common::String filename;
 	filename = fname;
-	if (_gameLang == Common::DE_DEU) {
+	if (_gameLang == Common::DE_DEU || _gameLang == Common::RU_RUS) {
 		if (filename == "bgtext.c") {
 			filename = "bgtextgr.c";
 		} else if (filename == "charname.c") {
