@@ -33,12 +33,18 @@ namespace Glk {
 namespace Frotz {
 
 void FrotzMetaEngine::getSupportedGames(PlainGameList &games) {
-	for (const PlainGameDescriptor *pd = FROTZ_GAME_LIST; pd->gameId; ++pd)
+	for (const PlainGameDescriptor *pd = INFOCOM_GAME_LIST; pd->gameId; ++pd)
+		games.push_back(*pd);
+	for (const PlainGameDescriptor *pd = ZCODE_GAME_LIST; pd->gameId; ++pd)
 		games.push_back(*pd);
 }
 
 PlainGameDescriptor FrotzMetaEngine::findGame(const char *gameId) {
-	for (const PlainGameDescriptor *pd = FROTZ_GAME_LIST; pd->gameId; ++pd) {
+	for (const PlainGameDescriptor *pd = INFOCOM_GAME_LIST; pd->gameId; ++pd) {
+		if (!strcmp(gameId, pd->gameId))
+			return *pd;
+	}
+	for (const PlainGameDescriptor *pd = ZCODE_GAME_LIST; pd->gameId; ++pd) {
 		if (!strcmp(gameId, pd->gameId))
 			return *pd;
 	}
@@ -120,7 +126,7 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 				debug("ENTRY0(\"%s\", %s, \"%s\", %u),",
 					fname.c_str(), strlen(serial) ? serial : "nullptr", md5.c_str(), (uint)filesize);
 			}
-			const PlainGameDescriptor &desc = FROTZ_GAME_LIST[0];
+			const PlainGameDescriptor &desc = ZCODE_GAME_LIST[0];
 			gd = DetectedGame(desc.gameId, desc.description, Common::UNK_LANG, Common::kPlatformUnknown);
 		} else {
 			PlainGameDescriptor gameDesc = findGame(p->_gameId);
@@ -136,10 +142,12 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 }
 
 void FrotzMetaEngine::detectClashes(Common::StringMap &map) {
-	for (const PlainGameDescriptor *pd = FROTZ_GAME_LIST; pd->gameId; ++pd) {
-		if (map.contains(pd->gameId))
-			error("Duplicate game Id found - %s", pd->gameId);
-		map[pd->gameId] = "";
+	for (int idx = 0; idx < 2; ++idx) {
+		for (const PlainGameDescriptor *pd = (idx == 0) ? INFOCOM_GAME_LIST : ZCODE_GAME_LIST; pd->gameId; ++pd) {
+			if (map.contains(pd->gameId))
+				error("Duplicate game Id found - %s", pd->gameId);
+			map[pd->gameId] = "";
+		}
 	}
 }
 

@@ -39,9 +39,10 @@ struct FrotzGameDescription {
 	const char *const _guiOptions;
 };
 
-const PlainGameDescriptor FROTZ_GAME_LIST[] = {
-	{ "zcode", "Unknown Z-code game" },
-
+/**
+ * Original games from Infocom
+ */
+const PlainGameDescriptor INFOCOM_GAME_LIST[] = {
 	// Infocom games
 	{ "amfv", "A Mind Forever Voyaging" },
 	{ "arthur", "Arthur: The Quest for Excalibur" },
@@ -82,6 +83,14 @@ const PlainGameDescriptor FROTZ_GAME_LIST[] = {
 	{ "zork2", "Zork II: The Wizard of Frobozz" },
 	{ "zork3", "Zork III: The Dungeon Master" },
 	{ "ztuu", "Zork: The Undiscovered Underground" },
+	{ nullptr, nullptr }
+};
+
+/**
+ * All the other subsequent non-Infocom games using the format
+ */
+const PlainGameDescriptor ZCODE_GAME_LIST[] = {
+	{ "zcode", "Unknown Z-code game" },
 
 	// English games
 	{ "404life",           "404 - Life not found" },
