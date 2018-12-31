@@ -103,11 +103,95 @@ void Mix_Pause(int channel) {}
 void Mix_HaltChannel(int channel) {}
 void Mix_Resume(int channel) {}
 void SDL_SetAlpha(Graphics::Surface *src, int flag, int alpha) {}
-void SDL_Flip(Graphics::TransparentSurface *src) {}
-void SDL_BlitSurface(Graphics::TransparentSurface *src, Common::Rect *srcRect, Graphics::TransparentSurface *dst, Common::Rect *dstRect) {}
-void SDL_BlitSurface(Graphics::Surface *src, Common::Rect *srcRect, Graphics::TransparentSurface *dst, Common::Rect *dstRect) {}
-void SDL_BlitSurface(Graphics::Surface *src, Common::Rect *srcRect, Graphics::Surface *dst, Common::Rect *dstRect) {}
-void SDL_FillRect(Graphics::TransparentSurface *surface, Common::Rect *rect, uint32 color) {}
+void SDL_Flip(Graphics::TransparentSurface *src) { g_system->copyRectToScreen(src->getPixels(), src->pitch, 0, 0, src->w, src->h); g_system->updateScreen(); }
+void SDL_BlitSurface(Graphics::TransparentSurface *src, Common::Rect *srcRect, Graphics::TransparentSurface *dst, Common::Rect *dstRect) {
+	assert(dst);
+	assert(src);
+	if (dstRect) {
+		if (dstRect->left >= 320 || dstRect->top >= 240)
+			return;
+
+		dstRect->debugPrint(1, "dst:");
+	}
+	debug(1, "dstsurf: %d x %d srcsurf: %d x %d", dst->w, dst->h, src->w, src->h);
+	if (srcRect)
+		srcRect->debugPrint(1, "src:");
+	src->blit(*dst, dstRect ? dstRect->left : 0, dstRect ? dstRect->top : 0, Graphics::FLIP_NONE, srcRect);
+}
+void SDL_BlitSurface(Graphics::Surface *src, Common::Rect *srcRect, Graphics::TransparentSurface *dst, Common::Rect *dstRect) {
+	assert(dst);
+	assert(src);
+
+	if (dstRect) {
+		if (dstRect->left >= 320 || dstRect->top >= 240)
+			return;
+		dstRect->debugPrint(1, "dst:");
+	}
+	debug(1, "dstsurf: %d x %d srcsurf: %d x %d", dst->w, dst->h, src->w, src->h);
+	if (srcRect)
+		srcRect->debugPrint(1, "src:");
+
+	int x = dstRect ? dstRect->left : 0;
+	int y = dstRect ? dstRect->top : 0;
+
+	if (srcRect) {
+		dst->copyRectToSurface(*src, x, y, *srcRect);
+	} else {
+		int w = src->w;
+		int h = src->h;
+
+		if (x + w > dst->w) {
+			w = dst->w - x;
+		}
+
+		if (y + h > dst->h) {
+			h = dst->h - y;
+		}
+
+		dst->copyRectToSurface(src->getPixels(), src->pitch, x, y, w, h);
+	}
+}
+void SDL_BlitSurface(Graphics::Surface *src, Common::Rect *srcRect, Graphics::Surface *dst, Common::Rect *dstRect) {
+	assert(dst);
+	assert(src);
+
+	if (dstRect) {
+		if (dstRect->left >= 320 || dstRect->top >= 240)
+			return;
+
+		dstRect->debugPrint(1, "dst:");
+	}
+	debug(1, "dstsurf: %d x %d srcsurf: %d x %d", dst->w, dst->h, src->w, src->h);
+	if (srcRect)
+		srcRect->debugPrint(1, "src:");
+
+	int x = dstRect ? dstRect->left : 0;
+	int y = dstRect ? dstRect->top : 0;
+
+	if (srcRect) {
+		dst->copyRectToSurface(*src, x, y, *srcRect);
+	} else {
+		int w = src->w;
+		int h = src->h;
+
+		if (x + w > dst->w) {
+			w = dst->w - x;
+		}
+
+		if (y + h > dst->h) {
+			h = dst->h - y;
+		}
+
+		dst->copyRectToSurface(src->getPixels(), src->pitch, x, y, w, h);
+	}
+}
+void SDL_FillRect(Graphics::TransparentSurface *surface, Common::Rect *rect, uint32 color) {
+	if (rect)
+		surface->fillRect(*rect, color);
+	else
+		surface->fillRect(Common::Rect(0, 0, surface->w, surface->h), color);
+}
+
 int SDL_MapRGB(Graphics::PixelFormat format, int r, int g, int b) { return 0; }
 void SDL_SetColorKey(Graphics::Surface *src, int mode, uint32 color) {}
 
@@ -417,6 +501,8 @@ Graphics::Surface *IMG_Load(const char *name) {
 	if (!file.isOpen()) {
 		error("Cannot open file %s", name);
 	}
+
+	debug(1, "Loading: %s", name);
 
 	Image::BitmapDecoder bitmapDecoder;
 	bitmapDecoder.loadStream(file);
@@ -1003,6 +1089,8 @@ void GriffonEngine::game_checkinputs() {
 		return;
 
 	if (event.type == Common::EVENT_KEYDOWN) {
+		warning("HERE3");
+
 		if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 			if (itemticks < ticks)
 				game_title(1);
@@ -1473,6 +1561,8 @@ void GriffonEngine::game_configmenu() {
 			g_system->getEventManager()->pollEvent(event);
 
 			if (event.type == Common::EVENT_KEYDOWN) {
+				warning("HERE4");
+
 				keypause = ticks + tickwait;
 
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
@@ -4952,6 +5042,7 @@ void GriffonEngine::game_saveloadnew() {
 		g_system->getEventManager()->pollEvent(event);
 
 		if (tickpause < ticks) {
+			warning("HERE");
 			if (event.type == Common::EVENT_KEYDOWN) {
 				itemticks = ticks + 220;
 
@@ -5246,15 +5337,13 @@ void GriffonEngine::game_showlogos() {
 				y = 255.0;
 		}
 
-		SDL_FillRect(videobuffer, NULL, 0);
-
+		videobuffer->fillRect(Common::Rect(0, 0, 320, 240), 0);
 		SDL_SetAlpha(logosimg, 0, (int)y);
-		SDL_BlitSurface(logosimg, NULL, videobuffer, NULL);
-		SDL_SetAlpha(logosimg, 0, 255);
+		videobuffer->copyRectToSurface(*logosimg, 0, 0, Common::Rect(0, 0, 320, 240));
 
-		SDL_BLITVIDEO(videobuffer, NULL, video, NULL);
+		g_system->copyRectToScreen(videobuffer->getPixels(), videobuffer->pitch, 0, 0, videobuffer->w, videobuffer->h);
+		g_system->updateScreen();
 
-		SDL_Flip(video);
 		g_system->getEventManager()->pollEvent(event);
 
 		tickspassed = ticks;
@@ -5516,6 +5605,7 @@ void GriffonEngine::game_title(int mode) {
 
 		if (keypause < ticks) {
 			if (event.type == Common::EVENT_KEYDOWN) {
+				warning("HERE2");
 				keypause = ticks + 150;
 
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE && mode == 1)
@@ -7953,6 +8043,8 @@ void GriffonEngine::sys_initialize() {
 	for (int i = 0; i < kMaxFloat; i++)
 		floatstri[i] = (char *)malloc(64); // 64 bytes each string (should be enough)
 
+	video = new Graphics::TransparentSurface;
+	video->create(320, 240, g_system->getScreenFormat());
 	videobuffer = new Graphics::TransparentSurface;
 	videobuffer->create(320, 240, g_system->getScreenFormat());
 	videobuffer2 = new Graphics::TransparentSurface;
