@@ -239,6 +239,7 @@ public:
 
 private:
 	Common::RandomSource *_rnd;
+	bool _shouldQuit;
 
 private:
 	void griffon_main();

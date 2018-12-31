@@ -255,6 +255,10 @@ int pmenu;
 void GriffonEngine::griffon_main() {
 	sys_initialize();
 	game_showlogos();
+
+	if (_shouldQuit)
+		return;
+
 	game_main();
 }
 
@@ -1015,9 +1019,12 @@ void GriffonEngine::game_checkinputs() {
 	if (attacking == 1 || (forcepause == 1 && itemselon == 0))
 		return;
 
-	if (event.type == Common::EVENT_KEYDOWN) {
-		warning("HERE3");
+	if (event.type == Common::EVENT_QUIT) {
+		_shouldQuit = true;
+		return;
+	}
 
+	if (event.type == Common::EVENT_KEYDOWN) {
 		if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 			if (itemticks < ticks)
 				game_title(1);
@@ -1487,9 +1494,10 @@ void GriffonEngine::game_configmenu() {
 		if (keypause < ticks) {
 			g_system->getEventManager()->pollEvent(event);
 
-			if (event.type == Common::EVENT_KEYDOWN) {
-				warning("HERE4");
+			if (event.type == Common::EVENT_QUIT)
+				_shouldQuit = true;
 
+			if (event.type == Common::EVENT_KEYDOWN) {
 				keypause = ticks + tickwait;
 
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
@@ -1667,7 +1675,7 @@ void GriffonEngine::game_configmenu() {
 			clouddeg = clouddeg - 360;
 
 		g_system->delayMillis(10);
-	} while (1);
+	} while (!_shouldQuit);
 
 	configwindow->free();
 	itemticks = ticks + 210;
@@ -4649,6 +4657,10 @@ void GriffonEngine::game_loadmap(int mapnum) {
 
 void GriffonEngine::game_main() {
 	game_title(0);
+
+	if (_shouldQuit)
+		return;
+
 	game_saveloadnew();
 }
 
@@ -4749,9 +4761,15 @@ void GriffonEngine::game_newgame() {
 		if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 			goto __exit_do;
 
+		if (event.type == Common::EVENT_QUIT)
+			_shouldQuit = true;
+
 		g_system->delayMillis(10);
-	} while (1);
+	} while (!_shouldQuit);
 __exit_do:
+
+	if (_shouldQuit)
+		return;
 
 	player.px = 0;
 	player.py = 0;
@@ -4851,7 +4869,7 @@ void GriffonEngine::game_playgame() {
 		game_updmusic();
 
 		sys_update();
-	} while (1);
+	} while (!_shouldQuit);
 }
 
 void GriffonEngine::game_processtrigger(int trignum) {
@@ -4968,15 +4986,20 @@ void GriffonEngine::game_saveloadnew() {
 
 		g_system->getEventManager()->pollEvent(event);
 
+		if (event.type == Common::EVENT_QUIT) {
+			_shouldQuit = true;
+			return;
+		}
+
 		if (tickpause < ticks) {
-			warning("HERE");
 			if (event.type == Common::EVENT_KEYDOWN) {
 				itemticks = ticks + 220;
 
 				if (event.kbd.keycode == Common::KEYCODE_RETURN) {
 					// QUIT - non existent :)
 					if (currow == 0 && curcol == 4) {
-						//exit(1); // FIXME
+						_shouldQuit = true;
+						return;
 					}
 					// RETURN
 					if (currow == 0 && curcol == 3) {
@@ -5232,7 +5255,7 @@ void GriffonEngine::game_saveloadnew() {
 			itemyloc -= 16;
 
 		g_system->delayMillis(10);
-	} while (1);
+	} while (!_shouldQuit);
 
 	SDL_SetAlpha(cloudimg, 0, 64);
 }
@@ -5273,6 +5296,9 @@ void GriffonEngine::game_showlogos() {
 
 		g_system->getEventManager()->pollEvent(event);
 
+		if (event.type == Common::EVENT_QUIT)
+			_shouldQuit = true;
+
 		tickspassed = ticks;
 		ticks = g_system->getMillis();
 
@@ -5289,7 +5315,7 @@ void GriffonEngine::game_showlogos() {
 		g_system->delayMillis(10);
 		if (ticks > ticks1 + 4000)
 			break;
-	} while (1);
+	} while (!_shouldQuit);
 }
 
 
@@ -5530,9 +5556,11 @@ void GriffonEngine::game_title(int mode) {
 
 		g_system->getEventManager()->pollEvent(event);
 
+		if (event.type == Common::EVENT_QUIT)
+			_shouldQuit = true;
+
 		if (keypause < ticks) {
 			if (event.type == Common::EVENT_KEYDOWN) {
-				warning("HERE2");
 				keypause = ticks + 150;
 
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE && mode == 1)
@@ -5557,7 +5585,7 @@ void GriffonEngine::game_title(int mode) {
 						keypause = ticks + 150;
 						ticks1 = ticks;
 					} else if (cursel == 2) {
-						//exit(1); // FIXME
+						_shouldQuit = true;
 					} else if (cursel == 3) {
 						break;
 					}
@@ -5567,7 +5595,7 @@ void GriffonEngine::game_title(int mode) {
 
 		SDL_Flip(video);
 		g_system->delayMillis(10);
-	} while (1);
+	} while (!_shouldQuit);
 
 	itemticks = ticks + 210;
 

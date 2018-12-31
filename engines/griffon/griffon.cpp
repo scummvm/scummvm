@@ -39,6 +39,8 @@ GriffonEngine::GriffonEngine(OSystem *syst) : Engine(syst) {
 	SearchMan.addSubDirectoryMatching(gameDataDir, "sound");
 
 	_rnd = new Common::RandomSource("griffon");
+
+	_shouldQuit = false;
 }
 
 GriffonEngine::~GriffonEngine() {
