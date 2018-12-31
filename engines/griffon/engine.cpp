@@ -102,7 +102,7 @@ int Mix_PlayChannel(int par1, Mix_Chunk *chunk, int par3) { return 0; }
 void Mix_Pause(int channel) {}
 void Mix_HaltChannel(int channel) {}
 void Mix_Resume(int channel) {}
-void SDL_SetAlpha(Graphics::Surface *src, int flag, int alpha) {}
+void SDL_SetAlpha(Graphics::TransparentSurface *src, int flag, int alpha) {}
 void SDL_Flip(Graphics::TransparentSurface *src) { g_system->copyRectToScreen(src->getPixels(), src->pitch, 0, 0, src->w, src->h); g_system->updateScreen(); }
 void SDL_BlitSurface(Graphics::TransparentSurface *src, Common::Rect *srcRect, Graphics::TransparentSurface *dst, Common::Rect *dstRect) {
 	assert(dst);
@@ -110,81 +110,10 @@ void SDL_BlitSurface(Graphics::TransparentSurface *src, Common::Rect *srcRect, G
 	if (dstRect) {
 		if (dstRect->left >= 320 || dstRect->top >= 240)
 			return;
-
-		dstRect->debugPrint(1, "dst:");
 	}
-	debug(1, "dstsurf: %d x %d srcsurf: %d x %d", dst->w, dst->h, src->w, src->h);
-	if (srcRect)
-		srcRect->debugPrint(1, "src:");
 	src->blit(*dst, dstRect ? dstRect->left : 0, dstRect ? dstRect->top : 0, Graphics::FLIP_NONE, srcRect);
 }
-void SDL_BlitSurface(Graphics::Surface *src, Common::Rect *srcRect, Graphics::TransparentSurface *dst, Common::Rect *dstRect) {
-	assert(dst);
-	assert(src);
 
-	if (dstRect) {
-		if (dstRect->left >= 320 || dstRect->top >= 240)
-			return;
-		dstRect->debugPrint(1, "dst:");
-	}
-	debug(1, "dstsurf: %d x %d srcsurf: %d x %d", dst->w, dst->h, src->w, src->h);
-	if (srcRect)
-		srcRect->debugPrint(1, "src:");
-
-	int x = dstRect ? dstRect->left : 0;
-	int y = dstRect ? dstRect->top : 0;
-
-	if (srcRect) {
-		dst->copyRectToSurface(*src, x, y, *srcRect);
-	} else {
-		int w = src->w;
-		int h = src->h;
-
-		if (x + w > dst->w) {
-			w = dst->w - x;
-		}
-
-		if (y + h > dst->h) {
-			h = dst->h - y;
-		}
-
-		dst->copyRectToSurface(src->getPixels(), src->pitch, x, y, w, h);
-	}
-}
-void SDL_BlitSurface(Graphics::Surface *src, Common::Rect *srcRect, Graphics::Surface *dst, Common::Rect *dstRect) {
-	assert(dst);
-	assert(src);
-
-	if (dstRect) {
-		if (dstRect->left >= 320 || dstRect->top >= 240)
-			return;
-
-		dstRect->debugPrint(1, "dst:");
-	}
-	debug(1, "dstsurf: %d x %d srcsurf: %d x %d", dst->w, dst->h, src->w, src->h);
-	if (srcRect)
-		srcRect->debugPrint(1, "src:");
-
-	int x = dstRect ? dstRect->left : 0;
-	int y = dstRect ? dstRect->top : 0;
-
-	if (srcRect) {
-		dst->copyRectToSurface(*src, x, y, *srcRect);
-	} else {
-		int w = src->w;
-		int h = src->h;
-
-		if (x + w > dst->w) {
-			w = dst->w - x;
-		}
-
-		if (y + h > dst->h) {
-			h = dst->h - y;
-		}
-
-		dst->copyRectToSurface(src->getPixels(), src->pitch, x, y, w, h);
-	}
-}
 void SDL_FillRect(Graphics::TransparentSurface *surface, Common::Rect *rect, uint32 color) {
 	if (rect)
 		surface->fillRect(*rect, color);
@@ -193,7 +122,7 @@ void SDL_FillRect(Graphics::TransparentSurface *surface, Common::Rect *rect, uin
 }
 
 int SDL_MapRGB(Graphics::PixelFormat format, int r, int g, int b) { return 0; }
-void SDL_SetColorKey(Graphics::Surface *src, int mode, uint32 color) {}
+void SDL_SetColorKey(Graphics::TransparentSurface *src, int mode, uint32 color) {}
 
 Mix_Chunk *Mix_LoadWAV(const char *name) { return NULL; }
 bool Mix_Playing(int channel) { return true; }
@@ -201,8 +130,8 @@ bool Mix_Playing(int channel) { return true; }
 
 // system
 Graphics::TransparentSurface *video, *videobuffer, *videobuffer2, *videobuffer3;
-Graphics::Surface *titleimg, *titleimg2, *inventoryimg;
-Graphics::Surface *logosimg, *theendimg;
+Graphics::TransparentSurface *titleimg, *titleimg2, *inventoryimg;
+Graphics::TransparentSurface *logosimg, *theendimg;
 Common::Event event;
 
 Graphics::TransparentSurface *mapbg, *clipbg, *clipbg2;
@@ -213,9 +142,9 @@ float animspd;
 int rampdata[40][24];
 
 int curmap;
-Graphics::Surface *fontchr[224][5]; // 256 - 32
-Graphics::Surface *itemimg[21], *windowimg;
-Graphics::Surface *spellimg;
+Graphics::TransparentSurface *fontchr[224][5]; // 256 - 32
+Graphics::TransparentSurface *itemimg[21], *windowimg;
+Graphics::TransparentSurface *spellimg;
 
 int itemselon, curitem, itemticks;
 float itemyloc;
@@ -229,7 +158,7 @@ float fp, fps, fpsr;
 int secsingame, secstart;
 
 extern const char *story[48];
-Graphics::Surface *mapimg[4];
+Graphics::TransparentSurface *mapimg[4];
 extern int invmap[4][7][13];
 extern const char *story2[27];
 
@@ -239,7 +168,7 @@ Common::Rect rcSrc, rcDest;
 int dontdrawover;   // used in map24 so that the candles dont draw over the boss, default set to 0
 
 // saveload info
-Graphics::Surface *saveloadimg;
+Graphics::TransparentSurface *saveloadimg;
 
 
 // post info
@@ -247,7 +176,7 @@ float postinfo[21][3];
 int nposts;
 
 // cloud info
-Graphics::Surface *cloudimg;
+Graphics::TransparentSurface *cloudimg;
 float clouddeg = 0;
 int cloudson;
 
@@ -262,16 +191,16 @@ PLAYERTYPE playera;
 int asecstart;
 
 // tile info
-Graphics::Surface *tiles[4];
+Graphics::TransparentSurface *tiles[4];
 int tileinfo[3][40][24][3]; // maplayer, x, y, tiledata (tile, tilelayer)
 
 extern int elementmap[15][20];
 
 
 // animation info
-Graphics::Surface *anims[100];
+Graphics::TransparentSurface *anims[100];
 // id number 0&1 = players
-Graphics::Surface *animsa[100];
+Graphics::TransparentSurface *animsa[100];
 // attack anims
 float playerattackofs[4][16][3];
 // [dir] [frame] [x,y ofs, completed(0/1)]
@@ -494,7 +423,7 @@ void game_fillrect(Graphics::TransparentSurface *surface, int x, int y, int w, i
 	surface->fillRect(Common::Rect(x, y, x + w, y + h), color);
 }
 
-Graphics::Surface *IMG_Load(const char *name) {
+Graphics::TransparentSurface *IMG_Load(const char *name) {
 	Common::File file;
 
 	file.open(name);
@@ -508,9 +437,7 @@ Graphics::Surface *IMG_Load(const char *name) {
 	bitmapDecoder.loadStream(file);
 	file.close();
 
-	Graphics::Surface *res = bitmapDecoder.getSurface()->convertTo(g_system->getScreenFormat());
-
-	return res;
+	return new Graphics::TransparentSurface(*bitmapDecoder.getSurface()->convertTo(g_system->getScreenFormat()));
 }
 
 // copypaste from hRnd_CRT()
@@ -1384,7 +1311,7 @@ void GriffonEngine::game_checktrigger() {
 #endif
 
 void GriffonEngine::game_configmenu() {
-	Graphics::Surface *configwindow;
+	Graphics::TransparentSurface *configwindow;
 	Common::Rect rc;
 	int cursel, curselt;
 	int tickwait, keypause, ticks1;
@@ -8284,12 +8211,12 @@ void GriffonEngine::sys_LoadAnims() {
 }
 
 void GriffonEngine::sys_LoadItemImgs() {
-	Graphics::Surface *temp;
+	Graphics::TransparentSurface *temp;
 
 	temp = IMG_Load("art/icons.bmp");
 
 	for (int i = 0; i <= 20; i++) {
-		itemimg[i] = new Graphics::Surface;
+		itemimg[i] = new Graphics::TransparentSurface;
 		itemimg[i]->create(16, 16, g_system->getScreenFormat());
 		SDL_SetColorKey(itemimg[i], 0, SDL_MapRGB(itemimg[i]->format, 255, 0, 255));
 
@@ -8305,7 +8232,7 @@ void GriffonEngine::sys_LoadItemImgs() {
 }
 
 void GriffonEngine::sys_LoadFont() {
-	Graphics::Surface *font;
+	Graphics::TransparentSurface *font;
 
 	font = IMG_Load("art/font.bmp");
 
@@ -8313,7 +8240,7 @@ void GriffonEngine::sys_LoadFont() {
 		for (int f = 0; f <= 4; f++) {
 			int i2 = i - 32;
 
-			fontchr[i2][f] = new Graphics::Surface;
+			fontchr[i2][f] = new Graphics::TransparentSurface;
 			fontchr[i2][f]->create(8, 8, g_system->getScreenFormat());
 			SDL_SetColorKey(fontchr[i2][f], 0, SDL_MapRGB(fontchr[i2][f]->format, 255, 0, 255));
 
@@ -8408,7 +8335,7 @@ void GriffonEngine::sys_progress(int w, int wm) {
 }
 
 void GriffonEngine::sys_setupAudio() {
-	Graphics::Surface *loadimg;
+	Graphics::TransparentSurface *loadimg;
 
 	menabled = 1;
 
