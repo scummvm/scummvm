@@ -122,7 +122,6 @@ void SDL_FillRect(Graphics::TransparentSurface *surface, Common::Rect *rect, uin
 }
 
 int SDL_MapRGB(Graphics::PixelFormat format, int r, int g, int b) { return 0; }
-void SDL_SetColorKey(Graphics::TransparentSurface *src, int mode, uint32 color) {}
 
 Mix_Chunk *Mix_LoadWAV(const char *name) { return NULL; }
 bool Mix_Playing(int channel) { return true; }
@@ -427,7 +426,7 @@ void game_fillrect(Graphics::TransparentSurface *surface, int x, int y, int w, i
 	surface->fillRect(Common::Rect(x, y, x + w, y + h), color);
 }
 
-Graphics::TransparentSurface *IMG_Load(const char *name) {
+Graphics::TransparentSurface *IMG_Load(const char *name, bool colorkey = false) {
 	Common::File file;
 
 	file.open(name);
@@ -441,7 +440,12 @@ Graphics::TransparentSurface *IMG_Load(const char *name) {
 	bitmapDecoder.loadStream(file);
 	file.close();
 
-	return new Graphics::TransparentSurface(*bitmapDecoder.getSurface()->convertTo(g_system->getScreenFormat()));
+	Graphics::TransparentSurface *surface = new Graphics::TransparentSurface(*bitmapDecoder.getSurface()->convertTo(g_system->getScreenFormat()));
+
+	if (colorkey)
+		surface->applyColorKey(255, 0, 255);
+
+	return surface;
 }
 
 // copypaste from hRnd_CRT()
@@ -1329,8 +1333,7 @@ void GriffonEngine::game_configmenu() {
 	tickwait = 100;
 	keypause = ticks + tickwait;
 
-	configwindow = IMG_Load("art/configwindow.bmp");
-	SDL_SetColorKey(configwindow, 0, SDL_MapRGB(configwindow->format, 255, 0, 255));
+	configwindow = IMG_Load("art/configwindow.bmp", true);
 	SDL_SetAlpha(configwindow, 0, 160);
 
 	ticks1 = ticks;
@@ -5288,8 +5291,7 @@ void GriffonEngine::game_showlogos() {
 		}
 
 		videobuffer->fillRect(Common::Rect(0, 0, 320, 240), 0);
-		SDL_SetAlpha(logosimg, 0, (int)y);
-		videobuffer->copyRectToSurface(*logosimg, 0, 0, Common::Rect(0, 0, 320, 240));
+		logosimg->blit(*videobuffer, 0, 0, Graphics::FLIP_NONE, nullptr, TS_ARGB((int)y, (int)y, (int)y, (int)y));
 
 		g_system->copyRectToScreen(videobuffer->getPixels(), videobuffer->pitch, 0, 0, videobuffer->w, videobuffer->h);
 		g_system->updateScreen();
@@ -8017,26 +8019,21 @@ void GriffonEngine::sys_initialize() {
 		char name[128];
 
 		sprintf(name, "art/map%i.bmp", i + 1);
-		mapimg[i] = IMG_Load(name);
-		SDL_SetColorKey(mapimg[i], 0, SDL_MapRGB(mapimg[i]->format, 255, 0, 255));
+		mapimg[i] = IMG_Load(name, true);
 	}
 
-	cloudimg = IMG_Load("art/clouds.bmp");
-	SDL_SetColorKey(cloudimg, 0, SDL_MapRGB(cloudimg->format, 255, 0, 255));
+	cloudimg = IMG_Load("art/clouds.bmp", true);
 	SDL_SetAlpha(cloudimg, 0 | 0, 96);
 
 
-	saveloadimg = IMG_Load("art/saveloadnew.bmp");
-	SDL_SetColorKey(saveloadimg, 0, SDL_MapRGB(saveloadimg->format, 255, 0, 255));
+	saveloadimg = IMG_Load("art/saveloadnew.bmp", true);
 	SDL_SetAlpha(saveloadimg, 0 | 0, 160);
 
 	titleimg = IMG_Load("art/titleb.bmp");
-	titleimg2 = IMG_Load("art/titlea.bmp");
-	SDL_SetColorKey(titleimg2, 0, SDL_MapRGB(titleimg2->format, 255, 0, 255));
+	titleimg2 = IMG_Load("art/titlea.bmp", true);
 	//SDL_SetAlpha(titleimg2, 0 | 0, 204);
 
-	inventoryimg = IMG_Load("art/inventory.bmp");
-	SDL_SetColorKey(inventoryimg, 0, SDL_MapRGB(inventoryimg->format, 255, 0, 255));
+	inventoryimg = IMG_Load("art/inventory.bmp", true);
 
 	logosimg = IMG_Load("art/logos.bmp");
 	theendimg = IMG_Load("art/theend.bmp");
@@ -8091,29 +8088,14 @@ void GriffonEngine::sys_line(Graphics::TransparentSurface *buffer, int x1, int y
 }
 
 void GriffonEngine::sys_LoadAnims() {
-	spellimg = IMG_Load("art/spells.bmp");
-	SDL_SetColorKey(spellimg, 0, SDL_MapRGB(spellimg->format, 255, 0, 255));
-
-	anims[0] = IMG_Load("art/anims0.bmp");
-	SDL_SetColorKey(anims[0], 0, SDL_MapRGB(anims[0]->format, 255, 0, 255));
-
-	animsa[0] = IMG_Load("art/anims0a.bmp");
-	SDL_SetColorKey(animsa[0], 0, SDL_MapRGB(animsa[0]->format, 255, 0, 255));
-
-	anims[13] = IMG_Load("art/anims0x.bmp");
-	SDL_SetColorKey(anims[13], 0, SDL_MapRGB(anims[13]->format, 255, 0, 255));
-
-	animsa[13] = IMG_Load("art/anims0xa.bmp");
-	SDL_SetColorKey(animsa[13], 0, SDL_MapRGB(animsa[13]->format, 255, 0, 255));
-
-	anims[1] = IMG_Load("art/anims1.bmp");
-	SDL_SetColorKey(anims[1], 0, SDL_MapRGB(anims[1]->format, 255, 0, 255));
-
-	animsa[1] = IMG_Load("art/anims1a.bmp");
-	SDL_SetColorKey(animsa[1], 0, SDL_MapRGB(animsa[1]->format, 255, 0, 255));
-
-	anims[2] = IMG_Load("art/anims2.bmp");
-	SDL_SetColorKey(anims[2], 0, SDL_MapRGB(anims[2]->format, 255, 0, 255));
+	spellimg = IMG_Load("art/spells.bmp", true);
+	anims[0] = IMG_Load("art/anims0.bmp", true);
+	animsa[0] = IMG_Load("art/anims0a.bmp", true);
+	anims[13] = IMG_Load("art/anims0x.bmp", true);
+	animsa[13] = IMG_Load("art/anims0xa.bmp", true);
+	anims[1] = IMG_Load("art/anims1.bmp", true);
+	animsa[1] = IMG_Load("art/anims1a.bmp", true);
+	anims[2] = IMG_Load("art/anims2.bmp", true);
 
 	// huge
 	animset2[0].xofs = 8;
@@ -8158,8 +8140,7 @@ void GriffonEngine::sys_LoadAnims() {
 	animset2[5].w = 42;
 	animset2[5].h = 36;
 
-	anims[9] = IMG_Load("art/anims9.bmp");
-	SDL_SetColorKey(anims[9], 0, SDL_MapRGB(anims[9]->format, 255, 0, 255));
+	anims[9] = IMG_Load("art/anims9.bmp", true);
 
 	// huge
 	animset9[0].xofs = 8;
@@ -8204,49 +8185,27 @@ void GriffonEngine::sys_LoadAnims() {
 	animset9[5].w = 42;
 	animset9[5].h = 36;
 
-	anims[3] = IMG_Load("art/anims3.bmp");
-	SDL_SetColorKey(anims[3], 0, SDL_MapRGB(anims[3]->format, 255, 0, 255));
-
-	anims[4] = IMG_Load("art/anims4.bmp");
-	SDL_SetColorKey(anims[4], 0, SDL_MapRGB(anims[4]->format, 255, 0, 255));
-
-	anims[5] = IMG_Load("art/anims5.bmp");
-	SDL_SetColorKey(anims[5], 0, SDL_MapRGB(anims[5]->format, 255, 0, 255));
-
-	anims[6] = IMG_Load("art/anims6.bmp");
-	SDL_SetColorKey(anims[6], 0, SDL_MapRGB(anims[6]->format, 255, 0, 255));
-
-	anims[7] = IMG_Load("art/anims7.bmp");
-	SDL_SetColorKey(anims[7], 0, SDL_MapRGB(anims[7]->format, 255, 0, 255));
-
-	anims[8] = IMG_Load("art/anims8.bmp");
-	SDL_SetColorKey(anims[8], 0, SDL_MapRGB(anims[8]->format, 255, 0, 255));
-
-	anims[10] = IMG_Load("art/anims10.bmp");
-	SDL_SetColorKey(anims[10], 0, SDL_MapRGB(anims[10]->format, 255, 0, 255));
-
-	animsa[10] = IMG_Load("art/anims10a.bmp");
-	SDL_SetColorKey(animsa[10], 0, SDL_MapRGB(animsa[10]->format, 255, 0, 255));
-
-	anims[11] = IMG_Load("art/anims11.bmp");
-	SDL_SetColorKey(anims[11], 0, SDL_MapRGB(anims[11]->format, 255, 0, 255));
-
-	animsa[11] = IMG_Load("art/anims11a.bmp");
-	SDL_SetColorKey(animsa[11], 0, SDL_MapRGB(animsa[11]->format, 255, 0, 255));
-
-	anims[12] = IMG_Load("art/anims12.bmp");
-	SDL_SetColorKey(anims[12], 0, SDL_MapRGB(anims[12]->format, 255, 0, 255));
+	anims[3] = IMG_Load("art/anims3.bmp", true);
+	anims[4] = IMG_Load("art/anims4.bmp", true);
+	anims[5] = IMG_Load("art/anims5.bmp", true);
+	anims[6] = IMG_Load("art/anims6.bmp", true);
+	anims[7] = IMG_Load("art/anims7.bmp", true);
+	anims[8] = IMG_Load("art/anims8.bmp", true);
+	anims[10] = IMG_Load("art/anims10.bmp", true);
+	animsa[10] = IMG_Load("art/anims10a.bmp", true);
+	anims[11] = IMG_Load("art/anims11.bmp", true);
+	animsa[11] = IMG_Load("art/anims11a.bmp", true);
+	anims[12] = IMG_Load("art/anims12.bmp", true);
 }
 
 void GriffonEngine::sys_LoadItemImgs() {
 	Graphics::TransparentSurface *temp;
 
-	temp = IMG_Load("art/icons.bmp");
+	temp = IMG_Load("art/icons.bmp", true);
 
 	for (int i = 0; i <= 20; i++) {
 		itemimg[i] = new Graphics::TransparentSurface;
 		itemimg[i]->create(16, 16, g_system->getScreenFormat());
-		SDL_SetColorKey(itemimg[i], 0, SDL_MapRGB(itemimg[i]->format, 255, 0, 255));
 
 		rcSrc.left = i * 16;
 		rcSrc.top = 0;
@@ -8262,7 +8221,7 @@ void GriffonEngine::sys_LoadItemImgs() {
 void GriffonEngine::sys_LoadFont() {
 	Graphics::TransparentSurface *font;
 
-	font = IMG_Load("art/font.bmp");
+	font = IMG_Load("art/font.bmp", true);
 
 	for (int i = 32; i <= 255; i++)
 		for (int f = 0; f <= 4; f++) {
@@ -8270,7 +8229,6 @@ void GriffonEngine::sys_LoadFont() {
 
 			fontchr[i2][f] = new Graphics::TransparentSurface;
 			fontchr[i2][f]->create(8, 8, g_system->getScreenFormat());
-			SDL_SetColorKey(fontchr[i2][f], 0, SDL_MapRGB(fontchr[i2][f]->format, 255, 0, 255));
 
 			int col = i2 % 40;
 
@@ -8290,16 +8248,12 @@ void GriffonEngine::sys_LoadFont() {
 }
 
 void GriffonEngine::sys_LoadTiles() {
-	tiles[0] = IMG_Load("art/tx.bmp");
-	tiles[1] = IMG_Load("art/tx1.bmp");
-	tiles[2] = IMG_Load("art/tx2.bmp");
-	tiles[3] = IMG_Load("art/tx3.bmp");
+	tiles[0] = IMG_Load("art/tx.bmp", true);
+	tiles[1] = IMG_Load("art/tx1.bmp", true);
+	tiles[2] = IMG_Load("art/tx2.bmp", true);
+	tiles[3] = IMG_Load("art/tx3.bmp", true);
 
-	for (int i = 0; i <= 3; i++)
-		SDL_SetColorKey(tiles[i], 0, SDL_MapRGB(tiles[i]->format, 255, 0, 255));
-
-	windowimg = IMG_Load("art/window.bmp");
-	SDL_SetColorKey(windowimg, 0, SDL_MapRGB(windowimg->format, 255, 0, 255));
+	windowimg = IMG_Load("art/window.bmp", true);
 }
 
 void GriffonEngine::sys_LoadTriggers() {
@@ -8376,8 +8330,7 @@ void GriffonEngine::sys_setupAudio() {
 	const char *stri = "Loading...";
 	sys_print(videobuffer, stri, 160 - 4 * strlen(stri), 116, 0);
 
-	loadimg = IMG_Load("art/load.bmp");
-	SDL_SetColorKey(loadimg, 0, SDL_MapRGB(loadimg->format, 255, 0, 255));
+	loadimg = IMG_Load("art/load.bmp", true);
 
 	rcSrc.left = 0;
 	rcSrc.top = 0;
