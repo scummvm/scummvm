@@ -135,6 +135,8 @@ int16 ButtonsDialog::update() {
 	// Process events
 	Common::Event event;
 	while (_vm->getEventManager()->pollEvent(event)) {
+		_vm->processEventForKeyboardState(event);
+
 		if (event.type == Common::EVENT_MOUSEMOVE) {
 			// Compute local mouse coordinates
 			_vm->_cursor->updatePosition(event.mouse);
@@ -188,6 +190,9 @@ int16 GamepadDialog::update() {
 	// Process events
 	Common::Event event;
 	while (_vm->getEventManager()->pollEvent(event)) {
+		_vm->processEventForKeyboardState(event);
+		_vm->processEventForGamepad(event);
+
 		if (event.type == Common::EVENT_MOUSEMOVE) {
 			// Compute local mouse coordinates
 			_vm->_cursor->updatePosition(event.mouse);

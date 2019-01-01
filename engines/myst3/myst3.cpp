@@ -451,6 +451,8 @@ void Myst3Engine::processInput(bool interactive) {
 			processEventForGamepad(event);
 		}
 
+		processEventForKeyboardState(event);
+
 		if (event.type == Common::EVENT_MOUSEMOVE) {
 			if (_state->getViewType() == kCube
 					&& _cursor->isPositionLocked()) {
@@ -488,7 +490,6 @@ void Myst3Engine::processInput(bool interactive) {
 
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
-				_inputEscapePressed = true;
 				_inputEscapePressedNotConsumed = true;
 				break;
 			case Common::KEYCODE_RETURN:
@@ -496,15 +497,8 @@ void Myst3Engine::processInput(bool interactive) {
 				if (event.kbd.hasFlags(Common::KBD_ALT)) {
 					_gfx->toggleFullscreen();
 				} else {
-					_inputEnterPressed = true;
 					shouldInteractWithHoveredElement = true;
 				}
-				break;
-			case Common::KEYCODE_SPACE:
-				_inputSpacePressed = true;
-				break;
-			case Common::KEYCODE_BACKQUOTE: // tilde, used to trigger the easter eggs
-				_inputTildePressed = true;
 				break;
 			case Common::KEYCODE_F5:
 				// Open main menu
@@ -525,25 +519,6 @@ void Myst3Engine::processInput(bool interactive) {
 					mouseInverted = !mouseInverted;
 					ConfMan.setBool("mouse_inverted", mouseInverted);
 				}
-				break;
-			default:
-				break;
-			}
-		} else if (event.type == Common::EVENT_KEYUP) {
-			switch (event.kbd.keycode) {
-			case Common::KEYCODE_ESCAPE:
-				_inputEscapePressed = false;
-				_inputEscapePressedNotConsumed = false;
-				break;
-			case Common::KEYCODE_RETURN:
-			case Common::KEYCODE_KP_ENTER:
-				_inputEnterPressed = false;
-				break;
-			case Common::KEYCODE_SPACE:
-				_inputSpacePressed = false;
-				break;
-			case Common::KEYCODE_BACKQUOTE:
-				_inputTildePressed = false;
 				break;
 			default:
 				break;
@@ -583,12 +558,62 @@ void Myst3Engine::processInput(bool interactive) {
 	}
 }
 
+void Myst3Engine::processEventForKeyboardState(const Common::Event &event) {
+	if (event.type == Common::EVENT_KEYDOWN) {
+		if (event.kbdRepeat) {
+			// Ignore keyboard repeat except when entering save names
+			return;
+		}
+
+		switch (event.kbd.keycode) {
+			case Common::KEYCODE_ESCAPE:
+				_inputEscapePressed = true;
+				break;
+			case Common::KEYCODE_RETURN:
+			case Common::KEYCODE_KP_ENTER:
+				if (!event.kbd.hasFlags(Common::KBD_ALT)) {
+					_inputEnterPressed = true;
+				}
+				break;
+			case Common::KEYCODE_SPACE:
+				_inputSpacePressed = true;
+				break;
+			case Common::KEYCODE_BACKQUOTE: // tilde, used to trigger the easter eggs
+				_inputTildePressed = true;
+				break;
+			default:
+				break;
+		}
+	} else if (event.type == Common::EVENT_KEYUP) {
+		switch (event.kbd.keycode) {
+			case Common::KEYCODE_ESCAPE:
+				_inputEscapePressed = false;
+				_inputEscapePressedNotConsumed = false;
+				break;
+			case Common::KEYCODE_RETURN:
+			case Common::KEYCODE_KP_ENTER:
+				_inputEnterPressed = false;
+				break;
+			case Common::KEYCODE_SPACE:
+				_inputSpacePressed = false;
+				break;
+			case Common::KEYCODE_BACKQUOTE:
+				_inputTildePressed = false;
+				break;
+			default:
+				break;
+		}
+	}
+}
+
 void Myst3Engine::processEventForGamepad(const Common::Event &event) {
 	if (event.type == Common::EVENT_LBUTTONDOWN) {
 		_state->setGamePadActionPressed(true);
 	} else if (event.type == Common::EVENT_LBUTTONUP) {
 		_state->setGamePadActionPressed(false);
 	} else if (event.type == Common::EVENT_KEYDOWN) {
+		if (event.kbdRepeat) return;
+
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_RETURN:
 		case Common::KEYCODE_KP_ENTER:
@@ -632,25 +657,6 @@ void Myst3Engine::updateInputState() {
 	_state->setInputTildePressed(_inputTildePressed);
 	_state->setInputSpacePressed(_inputSpacePressed);
 	_state->setInputEscapePressed(_inputEscapePressed);
-}
-
-void Myst3Engine::resetInput() {
-	_inputSpacePressed = false;
-	_inputEnterPressed = false;
-	_inputEscapePressed = false;
-	_inputEscapePressedNotConsumed = false;
-	_inputTildePressed = false;
-
-	updateInputState();
-
-	if (_state->hasVarGamePadUpPressed()) {
-		_state->setGamePadUpPressed(false);
-		_state->setGamePadDownPressed(false);
-		_state->setGamePadLeftPressed(false);
-		_state->setGamePadRightPressed(false);
-		_state->setGamePadActionPressed(false);
-		_state->setGamePadCancelPressed(false);
-	}
 }
 
 void Myst3Engine::interactWithHoveredElement() {
@@ -1452,11 +1458,6 @@ int16 Myst3Engine::openDialog(uint16 id) {
 	_drawables.pop_back();
 
 	delete dialog;
-
-	// Reset the input state because events consumed while the dialog was open
-	// can lead to unbalanced states where the engine believes keys are still
-	// pressed while they are not.
-	resetInput();
 
 	return result;
 }

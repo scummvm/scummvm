@@ -120,12 +120,16 @@ void Transition::draw(TransitionType type) {
 		while (_vm->getEventManager()->pollEvent(event)) {
 			// Ignore all the events happening during transitions, so that the view does not move
 			// between the initial transition screen shoot and the first frame drawn after the transition.
-		}
 
-		// Reset the input state because events discarded during the transition
-		// can lead to unbalanced states where the engine believes keys are still
-		// pressed while they are not.
-		_vm->resetInput();
+			// However, keep updating the keyboard state so we don't end up in
+			// an unbalanced state where the engine believes keys are still
+			// pressed while they are not.
+			_vm->processEventForKeyboardState(event);
+
+			if (_vm->_state->hasVarGamePadUpPressed()) {
+				_vm->processEventForGamepad(event);
+			}
+		}
 	}
 
 	_vm->_gfx->freeTexture(sourceTexture);

@@ -178,8 +178,9 @@ public:
 	void drawFrame(bool noSwap = false);
 
 	void processInput(bool interactive);
+	void processEventForKeyboardState(const Common::Event &event);
+	void processEventForGamepad(const Common::Event &event);
 	void updateInputState();
-	void resetInput();
 
 	bool inputValidatePressed();
 	bool inputEscapePressed();
@@ -189,6 +190,7 @@ public:
 	void settingsInitDefaults();
 	void settingsLoadToVars();
 	void settingsApplyFromVars();
+
 private:
 	OSystem *_system;
 	Console *_console;
@@ -248,7 +250,6 @@ private:
 	bool isInventoryVisible();
 
 	void interactWithHoveredElement();
-	void processEventForGamepad(const Common::Event &event);
 
 	friend class Console;
 };
