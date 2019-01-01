@@ -102,7 +102,7 @@ int Mix_PlayChannel(int par1, Mix_Chunk *chunk, int par3) { return 0; }
 void Mix_Pause(int channel) {}
 void Mix_HaltChannel(int channel) {}
 void Mix_Resume(int channel) {}
-void SDL_SetAlpha(Graphics::TransparentSurface *src, int flag, int alpha) {}
+void SDL_SetAlpha(Graphics::TransparentSurface *src, int flag, int alpha) { src->setAlpha(alpha); }
 void SDL_Flip(Graphics::TransparentSurface *src) { g_system->copyRectToScreen(src->getPixels(), src->pitch, 0, 0, src->w, src->h); g_system->updateScreen(); }
 void SDL_BlitSurface(Graphics::TransparentSurface *src, Common::Rect *srcRect, Graphics::TransparentSurface *dst, Common::Rect *dstRect) {
 	assert(dst);
@@ -1334,7 +1334,7 @@ void GriffonEngine::game_configmenu() {
 	keypause = ticks + tickwait;
 
 	configwindow = IMG_Load("art/configwindow.bmp", true);
-	SDL_SetAlpha(configwindow, 0, 160);
+	configwindow->setAlpha(160);
 
 	ticks1 = ticks;
 	do {
@@ -1345,18 +1345,18 @@ void GriffonEngine::game_configmenu() {
 		rcDest.setWidth(320);
 		rcDest.setHeight(240);
 
-		SDL_SetAlpha(cloudimg, 0, 128);
+		cloudimg->setAlpha(128);
 		SDL_BlitSurface(cloudimg, &rcDest, videobuffer, NULL);
-		SDL_SetAlpha(cloudimg, 0, 64);
+		cloudimg->setAlpha(64);
 
 		rcDest.left = 256;
 		rcDest.top = 192;
 		rcDest.setWidth(320);
 		rcDest.setHeight(240);
 
-		SDL_SetAlpha(cloudimg, 0, 128);
+		cloudimg->setAlpha(128);
 		SDL_BlitSurface(cloudimg, &rcDest, videobuffer, NULL);
-		SDL_SetAlpha(cloudimg, 0, 64);
+		cloudimg->setAlpha(64);
 
 		SDL_BlitSurface(configwindow, NULL, videobuffer, NULL);
 
@@ -1470,9 +1470,9 @@ void GriffonEngine::game_configmenu() {
 				yy = 255.0;
 		}
 
-		SDL_SetAlpha(videobuffer, 0, (int)yy);
+		videobuffer->setAlpha((int)yy);
 		SDL_BLITVIDEO(videobuffer, NULL, video, NULL);
-		SDL_SetAlpha(videobuffer, 0, 255);
+		videobuffer->setAlpha(255);
 
 		SDL_Flip(video);
 		g_system->getEventManager()->pollEvent(event);
@@ -1683,7 +1683,7 @@ void GriffonEngine::game_configmenu() {
 	configwindow->free();
 	itemticks = ticks + 210;
 
-	SDL_SetAlpha(cloudimg, 0, 64);
+	cloudimg->setAlpha(64);
 }
 
 void GriffonEngine::game_damagenpc(int npcnum, int damage, int spell) {
@@ -2294,7 +2294,7 @@ void GriffonEngine::game_drawhud() {
 			if (ico != 99)
 				SDL_BlitSurface(itemimg[ico], NULL, videobuffer, &rcDest);
 			if (ico == 99) {
-				SDL_SetAlpha(spellimg, 0, (int)(RND() * 96) + 96);
+				spellimg->setAlpha((int)(RND() * 96) + 96);
 
 				rcSrc.left = 16 * (int)(RND() * 2);
 				rcSrc.top = 80;
@@ -2306,7 +2306,7 @@ void GriffonEngine::game_drawhud() {
 
 				SDL_BlitSurface(spellimg, &rcSrc, videobuffer, &rcDest);
 
-				SDL_SetAlpha(spellimg, 0, 255);
+				spellimg->setAlpha(255);
 			}
 		}
 	}
@@ -2342,17 +2342,17 @@ void GriffonEngine::game_drawhud() {
 		rcDest.top = 0;
 		rcDest.right = 320;
 		rcDest.bottom = 240;
-		SDL_SetAlpha(videobuffer2, 0, (int)(player.itemselshade * 4));
 		SDL_FillRect(videobuffer2, &rcDest, 0);
+		videobuffer2->setAlpha((int)(player.itemselshade * 4)); // FIXME
 		SDL_BlitSurface(videobuffer2, NULL, videobuffer, NULL);
 
 		int sy = 202;
 		rcSrc.left = 46;
 		rcSrc.top = 46;
 
-		SDL_SetAlpha(inventoryimg, 0, 160); // 128
+		inventoryimg->setAlpha(160); // 128
 		SDL_BlitSurface(inventoryimg, NULL, videobuffer, &rcSrc);
-		SDL_SetAlpha(inventoryimg, 0, 255);
+		inventoryimg->setAlpha(255);
 
 		int sx = 54;
 		sy = 55;
@@ -2689,9 +2689,9 @@ void GriffonEngine::game_drawnpcs(int mode) {
 							int x = 192 + ((int)(itemyloc + ff * 5) % 3) * 64;
 							if (x > 255)
 								x = 255;
-							SDL_SetAlpha(spellimg, 0, x);
+							spellimg->setAlpha(x);
 							SDL_BlitSurface(spellimg, &rcSrc, videobuffer, &rcDest);
-							SDL_SetAlpha(spellimg, 0, 255);
+							spellimg->setAlpha(255);
 
 							for (int f = 1; f <= 8; f++) {
 								rcSrc.left = 16 * (int)(RND() * 2);
@@ -2705,9 +2705,9 @@ void GriffonEngine::game_drawnpcs(int mode) {
 								x = 192 + f % 3 * 64;
 								if (x > 255)
 									x = 255;
-								SDL_SetAlpha(spellimg, 0, x);
+								spellimg->setAlpha(x);
 								SDL_BlitSurface(spellimg, &rcSrc, videobuffer, &rcDest);
-								SDL_SetAlpha(spellimg, 0, 255);
+								spellimg->setAlpha(255);
 							}
 
 							rcSrc.left = 0;
@@ -2718,10 +2718,9 @@ void GriffonEngine::game_drawnpcs(int mode) {
 							rcDest.left = npcinfo[i].bodysection[10 * ff + 9].x - 21;
 							rcDest.top = npcinfo[i].bodysection[10 * ff + 9].y - 21;
 
-							SDL_SetAlpha(spellimg, 0, 192);
+							spellimg->setAlpha(192);
 							SDL_BlitSurface(anims[5], &rcSrc, videobuffer, &rcDest);
-							SDL_SetAlpha(spellimg, 0, 255);
-
+							spellimg->setAlpha(255);
 						}
 
 					}
@@ -2895,7 +2894,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 					int sy = (float)(npy + 12 - 50 - 3 * sin(3.141592 * 2 * npcinfo[i].floating / 16));
 
 					for (int fr = 0; fr <= 3; fr++) {
-						SDL_SetAlpha(spellimg, 0, 128 + (int)(RND() * 96));
+						spellimg->setAlpha(128 + (int)(RND() * 96));
 
 						rcSrc.left = 16 * (int)(RND() * 2);
 						rcSrc.top = 80;
@@ -2922,7 +2921,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 							rcDest.left = (float)(sx + 36 + ii * 8 - ii * cos(3.14159 * 2 * (fr3 - ii) / 16) * 2);
 							rcDest.top = (float)(sy + 16 + ii * sin(3.14159 * 2 * (fr3 - ii) / 16) * 3 - ii); //  * 4
 
-							SDL_SetAlpha(spellimg, 0, i2 / 3 * 224);
+							spellimg->setAlpha(i2 / 3 * 224);
 
 							SDL_BlitSurface(spellimg, &rcSrc, videobuffer, &rcDest);
 
@@ -2948,7 +2947,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 							rcDest.left = (float)(sx + 36 - ii * 8 + ii * cos(3.14159 * 2 * (fr3 - ii) / 16) * 2);
 							rcDest.top = (float)(sy + 16 + ii * sin(3.14159 * 2 * (fr3 - ii) / 16) * 3 - ii); //  * 4
 
-							SDL_SetAlpha(spellimg, 0, i2 / 3 * 224);
+							spellimg->setAlpha(i2 / 3 * 224);
 
 							SDL_BlitSurface(spellimg, &rcSrc, videobuffer, &rcDest);
 
@@ -2971,7 +2970,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 						}
 					}
 
-					SDL_SetAlpha(spellimg, 0, 255);
+					spellimg->setAlpha(255);
 
 					if (npcinfo[i].attacking == 0) {
 						int cframe = (int)(frame);
@@ -3323,11 +3322,11 @@ void GriffonEngine::game_endofgame() {
 
 		SDL_FillRect(videobuffer, NULL, 0);
 
-		SDL_SetAlpha(videobuffer, 0, ya);
+		videobuffer->setAlpha(ya);
 		SDL_BlitSurface(videobuffer2, NULL, videobuffer3, NULL);
 		SDL_BlitSurface(videobuffer, NULL, videobuffer3, NULL);
 		SDL_BlitSurface(videobuffer3, NULL, video, NULL);
-		SDL_SetAlpha(videobuffer, 0, 255);
+		videobuffer->setAlpha(255);
 
 		SDL_Flip(video);
 		g_system->getEventManager()->pollEvent(event);
@@ -3385,9 +3384,9 @@ void GriffonEngine::game_endofgame() {
 				ya = 255;
 		}
 
-		SDL_SetAlpha(videobuffer, 0, ya);
+		videobuffer->setAlpha(ya);
 		SDL_BLITVIDEO(videobuffer, NULL, video, NULL);
-		SDL_SetAlpha(videobuffer, 0, 255);
+		videobuffer->setAlpha(255);
 
 		SDL_Flip(video);
 		g_system->getEventManager()->pollEvent(event);
@@ -3441,11 +3440,11 @@ void GriffonEngine::game_endofgame() {
 
 		SDL_FillRect(videobuffer, NULL, 0);
 
-		SDL_SetAlpha(videobuffer, 0, y1);
+		videobuffer->setAlpha(y1);
 		SDL_BlitSurface(videobuffer2, NULL, videobuffer3, NULL);
 		SDL_BlitSurface(videobuffer, NULL, videobuffer3, NULL);
 		SDL_BlitSurface(videobuffer3, NULL, video, NULL);
-		SDL_SetAlpha(videobuffer, 0, 255);
+		videobuffer->setAlpha(255);
 
 		SDL_Flip(video);
 		g_system->getEventManager()->pollEvent(event);
@@ -3483,9 +3482,9 @@ void GriffonEngine::game_endofgame() {
 				y1 = 255;
 		}
 
-		SDL_SetAlpha(videobuffer, 0, y1);
+		videobuffer->setAlpha(y1);
 		SDL_BLITVIDEO(videobuffer, NULL, video, NULL);
-		SDL_SetAlpha(videobuffer, 0, 255);
+		videobuffer->setAlpha(255);
 
 		SDL_Flip(video);
 		g_system->getEventManager()->pollEvent(event);
@@ -3547,13 +3546,13 @@ void GriffonEngine::game_eventtext(const char *stri) {
 		if (fr > 192)
 			fr = 192;
 
-		SDL_SetAlpha(windowimg, 0, fr);
+		windowimg->setAlpha(fr);
 
 		SDL_BlitSurface(windowimg, NULL, videobuffer, NULL);
 		if (pauseticks < ticks)
 			sys_print(videobuffer, stri, x, 15, 0);
 
-		SDL_SetAlpha(windowimg, 0, 255);
+		windowimg->setAlpha(255);
 		SDL_BLITVIDEO(videobuffer, NULL, video, NULL);
 
 		SDL_Flip(video);
@@ -3992,7 +3991,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 							ffa = 20 * 5 - 1 + ff * 20;
 							ffb = 20 * 5 + 4 + ff * 20;
 							if (curtile > ffa && curtile < ffb) {
-								SDL_SetAlpha(tiles[curtilel], 0, 128);
+								tiles[curtilel]->setAlpha(128);
 							}
 						}
 					}
@@ -4000,13 +3999,13 @@ void GriffonEngine::game_loadmap(int mapnum) {
 						for (int ff = 0; ff <= 4; ff++) {
 							ffa = 20 * (5 + ff) + 3;
 							if (curtile == ffa) {
-								SDL_SetAlpha(tiles[curtilel], 0, 192);
+								tiles[curtilel]->setAlpha(192);
 							}
 						}
 					}
 
 					SDL_BlitSurface(tiles[curtilel], &rcSrc, mapbg, &rcDest);
-					SDL_SetAlpha(tiles[curtilel], 0, 255);
+					tiles[curtilel]->setAlpha(255);
 
 					rcDest.left = x * 8;
 					rcDest.top = y * 8;
@@ -4950,8 +4949,8 @@ void GriffonEngine::game_saveloadnew() {
 
 	clouddeg = 0;
 
-	SDL_SetAlpha(videobuffer, 0, 255);
-	SDL_SetAlpha(saveloadimg, 0, 192);
+	videobuffer->setAlpha(255);
+	saveloadimg->setAlpha(192);
 
 	currow = 0;
 	curcol = 0;
@@ -4972,18 +4971,18 @@ void GriffonEngine::game_saveloadnew() {
 		rcDest.setWidth(320);
 		rcDest.setHeight(240);
 
-		SDL_SetAlpha(cloudimg, 0, 128);
+		cloudimg->setAlpha(128);
 		SDL_BlitSurface(cloudimg, &rcDest, videobuffer, NULL);
-		SDL_SetAlpha(cloudimg, 0, 64);
+		cloudimg->setAlpha(64);
 
 		rcDest.left = 256;
 		rcDest.top = 192;
 		rcDest.setWidth(320);
 		rcDest.setHeight(240);
 
-		SDL_SetAlpha(cloudimg, 0, 128);
+		cloudimg->setAlpha(128);
 		SDL_BlitSurface(cloudimg, &rcDest, videobuffer, NULL);
-		SDL_SetAlpha(cloudimg, 0, 64);
+		cloudimg->setAlpha(64);
 
 		SDL_BlitSurface(saveloadimg, NULL, videobuffer, NULL);
 
@@ -5229,9 +5228,9 @@ void GriffonEngine::game_saveloadnew() {
 				yy = 255;
 		}
 
-		SDL_SetAlpha(videobuffer, 0, (int)yy);
+		videobuffer->setAlpha((int)yy);
 		SDL_BLITVIDEO(videobuffer, NULL, video, NULL);
-		SDL_SetAlpha(videobuffer, 0, 255);
+		videobuffer->setAlpha(255);
 
 		SDL_Flip(video);
 		g_system->getEventManager()->pollEvent(event);
@@ -5260,7 +5259,7 @@ void GriffonEngine::game_saveloadnew() {
 		g_system->delayMillis(10);
 	} while (!_shouldQuit);
 
-	SDL_SetAlpha(cloudimg, 0, 64);
+	cloudimg->setAlpha(64);
 }
 
 void GriffonEngine::game_showlogos() {
@@ -5329,7 +5328,7 @@ void GriffonEngine::game_swash() {
 	do {
 		y = y + 1 * fpsr;
 
-		SDL_SetAlpha(videobuffer, 0, (int)y);
+		videobuffer->setAlpha((int)y);
 		SDL_FillRect(videobuffer, NULL, 0);
 		SDL_BLITVIDEO(videobuffer, NULL, video, NULL);
 
@@ -5362,7 +5361,7 @@ void GriffonEngine::game_swash() {
 	do {
 		y = y + 1 * fpsr;
 
-		SDL_SetAlpha(videobuffer, 0, (int)(y * 25));
+		videobuffer->setAlpha((int)(y * 25));
 		SDL_BlitSurface(mapbg, NULL, videobuffer, NULL);
 
 		if (cloudson == 1) {
@@ -5401,7 +5400,7 @@ void GriffonEngine::game_swash() {
 	} while (1);
 
 
-	SDL_SetAlpha(videobuffer, 0, 255);
+	videobuffer->setAlpha(255);
 }
 
 void GriffonEngine::game_theend() {
@@ -5411,7 +5410,7 @@ void GriffonEngine::game_theend() {
 	}
 
 	for (float y = 0; y < 100; y += fpsr) {
-		SDL_SetAlpha(videobuffer, 0, (int)y);
+		videobuffer->setAlpha((int)y);
 		SDL_FillRect(videobuffer, NULL, 0);
 		SDL_BLITVIDEO(videobuffer, NULL, video, NULL);
 
@@ -5526,9 +5525,9 @@ void GriffonEngine::game_title(int mode) {
 				yf = 255.0;
 		}
 
-		SDL_SetAlpha(videobuffer, 0, (int)yf);
+		videobuffer->setAlpha((int)yf);
 		SDL_BLITVIDEO(videobuffer, NULL, video, NULL);
-		SDL_SetAlpha(videobuffer, 0, 255);
+		videobuffer->setAlpha(255);
 
 		tickspassed = ticks;
 		ticks = g_system->getMillis();
@@ -6918,9 +6917,9 @@ void GriffonEngine::game_updspells() {
 						}
 
 						if (xloc > -16 && xloc < 304 && yloc > -16 && yloc < 224) {
-							SDL_SetAlpha(spellimg, 0, alf);
+							spellimg->setAlpha(alf);
 							SDL_BlitSurface(spellimg, &rcSrc, videobuffer, &rcDest);
-							SDL_SetAlpha(spellimg, 0, 255);
+							spellimg->setAlpha(255);
 
 							if (spellinfo[i].damagewho == 0) {
 								for (int e = 1; e <= lastnpc; e++) {
@@ -7202,9 +7201,9 @@ void GriffonEngine::game_updspells() {
 				if (fra > 24)
 					f = 192 * (1 - (fra - 24) / 8);
 
-				SDL_SetAlpha(spellimg, 0, f);
+				spellimg->setAlpha(f);
 				SDL_BlitSurface(spellimg, &rcSrc, videobuffer, &rcDest);
-				SDL_SetAlpha(spellimg, 0, 255);
+				spellimg->setAlpha(255);
 
 				spellinfo[i].frame = spellinfo[i].frame - 0.3 * fpsr;
 				if (spellinfo[i].frame < 0) {
@@ -7285,7 +7284,7 @@ void GriffonEngine::game_updspells() {
 				if (spellinfo[i].frame > 16) {
 					float fr = (32 - spellinfo[i].frame);
 
-					SDL_SetAlpha(spellimg, 0, 192 * sin(3.14159 * fr / 4));
+					spellimg->setAlpha(192 * sin(3.14159 * fr / 4));
 
 					rcSrc.left = 16 * (int)(RND() * 2);
 					rcSrc.top = 80;
@@ -7303,9 +7302,9 @@ void GriffonEngine::game_updspells() {
 						SDL_BlitSurface(spellimg, &rcSrc, videobuffer, &rcDest);
 					}
 
-					SDL_SetAlpha(spellimg, 0, 255);
+					spellimg->setAlpha(255);
 				} else {
-					SDL_SetAlpha(spellimg, 0, 192);
+					spellimg->setAlpha(192);
 
 					rcSrc.left = 16 * (int)(RND() * 2);
 					rcSrc.top = 80;
@@ -7342,7 +7341,7 @@ void GriffonEngine::game_updspells() {
 							spellinfo[i].ballon[ff] = 0;
 					}
 
-					SDL_SetAlpha(spellimg, 0, 255);
+					spellimg->setAlpha(255);
 				}
 
 				spellinfo[i].frame = spellinfo[i].frame - 0.2 * fpsr;
@@ -7726,9 +7725,9 @@ void GriffonEngine::game_updspellsunder() {
 				if (fra > 24)
 					f = 160 * (1 - (fra - 24) / 8);
 
-				SDL_SetAlpha(spellimg, 0, f);
+				spellimg->setAlpha(f);
 				SDL_BlitSurface(spellimg, &rcSrc, videobuffer, &rcDest);
-				SDL_SetAlpha(spellimg, 0, 255);
+				spellimg->setAlpha(255);
 
 				spellinfo[i].frame = spellinfo[i].frame - 0.2 * fpsr;
 				if (spellinfo[i].frame < 0)
@@ -7814,7 +7813,7 @@ void GriffonEngine::game_updspellsunder() {
 				for (int f = 0; f <= 4; f++) {
 					for (int x = 0; x <= fra; x += 2) {
 						if (spellinfo[i].legalive[f] >= x) {
-							SDL_SetAlpha(spellimg, 0, 192 * sin(3.14159 * x / 32) * s / 8);
+							spellimg->setAlpha(192 * sin(3.14159 * x / 32) * s / 8);
 
 							float an = 360 / 5 * f + x / 32 * 180;
 
@@ -7911,7 +7910,7 @@ void GriffonEngine::game_updspellsunder() {
 					}
 				}
 
-				SDL_SetAlpha(spellimg, 0, 255);
+				spellimg->setAlpha(255);
 
 				spellinfo[i].frame = spellinfo[i].frame - 0.2 * fpsr;
 				if (spellinfo[i].frame < 0)
@@ -7943,7 +7942,7 @@ void GriffonEngine::game_updspellsunder() {
 					if (alpha > 255)
 						alpha = 255;
 
-					SDL_SetAlpha(spellimg, 0, alpha);
+					spellimg->setAlpha(alpha);
 
 					rcSrc.left = 16 * (int)(RND() * 2);
 					rcSrc.top = 80;
@@ -7981,7 +7980,7 @@ void GriffonEngine::game_updspellsunder() {
 
 				}
 
-				SDL_SetAlpha(spellimg, 0, 255);
+				spellimg->setAlpha(255);
 				spellinfo[i].frame = spellinfo[i].frame - 0.5 * fpsr;
 				if (spellinfo[i].frame < 0)
 					spellinfo[i].frame = 0;
