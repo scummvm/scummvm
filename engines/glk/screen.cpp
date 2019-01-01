@@ -50,7 +50,7 @@ void Screen::initialize() {
 		Common::Rect r1 = f->getBoundingBox('o');
 		Common::Rect r2 = f->getBoundingBox('y');
 		double baseLine = (double)r1.bottom;
-		double leading = (double)r2.bottom + 2;
+		double leading = (double)((idx == 0) ? r2.bottom : r2.bottom + 2);
 
 		i->_leading = static_cast<int>(MAX((double)i->_leading, leading));
 		i->_baseLine = static_cast<int>(MAX((double)i->_baseLine, baseLine));
