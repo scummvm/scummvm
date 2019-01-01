@@ -167,7 +167,7 @@ public:
 	/**
 	 * Returns any options returned with the game's detection entry
 	 */
-	const uint getOptions() const { return _gameDescription._options; }
+	uint getOptions() const { return _gameDescription._options; }
 
 	/**
 	 * Return the game engine's target name
