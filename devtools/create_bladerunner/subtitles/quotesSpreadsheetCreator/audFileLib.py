@@ -82,7 +82,7 @@ class audFile:
 	
 	# std::fstream& fs, AudFileNS::pos_type startAudFilepos, AudFileNS::pos_type endAudFilepos, const std::string& filename
 	def extract_as_wav(self, audBytesBuff, filename):
-		print "Saving to wav: " + filename
+		print "Info:: Saving to wav: " + filename
 
 		cvirtualBinaryD = self.decode(audBytesBuff)
 #		TODO DEBUG REMOVED	FOR NOW. TODO RESTORE THIS!!!
@@ -138,10 +138,10 @@ class audFile:
 		tmpTuple = struct.unpack_from('b', audBytesBuff, offsInAudFile)
 		self.header().compression = tmpTuple[0]
 		offsInAudFile += 1
-		print "samplerate: %d\tsizeIn: %d\tsizeOut: %d\tflags: %d\tcompression: %d" % (self.get_samplerate(), self.header().size_in, self.header().size_out, self.header().flags, self.header().compression)
+		print "Debug:: Sample rate= %d\tsizeIn= %d\tsizeOut= %d\tflags= %d\tcompression= %d" % (self.get_samplerate(), self.header().size_in, self.header().size_out, self.header().flags, self.header().compression)
 		
 		if self.get_samplerate() < 8000 or self.get_samplerate() > 48000 or self.header().size_in > (maxLength - SIZE_OF_AUD_HEADER_IN_BYTES ):
-			print "AUD HEADER SIZE ERROR::2"
+			print "Error:: Bad AUD Header size::2"
 			return False
 		else:
 			if self.header().compression == 1:
@@ -205,7 +205,7 @@ class audFile:
 	def get_chunk_data(self, inAudFileBytesBuffer, startOffs, sizeToRead):
 		#fs.read((char*)byteChunkDataPtr, sizeToRead)
 		outChunkDataLst = []
-		#print "startOffs %d, sizeToRead %d" % (startOffs, sizeToRead)
+		#print "Debug:: startOffs %d, sizeToRead %d" % (startOffs, sizeToRead)
 		for i in range(startOffs, startOffs + sizeToRead):
 			#outChunkDataLst.append(ctypes.c_char(inAudFileBytesBuffer[i]).value)
 			#outChunkDataLst.append(ctypes.c_byte(inAudFileBytesBuffer[i]).value)
@@ -221,7 +221,7 @@ class audFile:
 	def decode(self, audBytesBuff):
 		# The * operator unpacks an argument list. It allows you to call a function with the list items as individual arguments.
 		# binDataOut = struct.pack('i'*len(data), *data)
-		print "DECODING..."
+		print "Info:: DECODING..."
 #		Cvirtual_binary d;
 		binaryDataOutLst = []
 		binaryDataOutBuff = None
@@ -238,9 +238,9 @@ class audFile:
 				#out_chunk_header = AudChunkHeader()
 				(errGetChunk, bufferDataPos, out_chunk_header) = self.get_chunk_header(chunk_i, audBytesBuff, len(audBytesBuff)) 	
 				if errGetChunk != 0:
-#					print "Error OR End file case while getting uncompressed chunk header!"
+#					print "Warning:: Error OR End file case while getting uncompressed chunk header!"
 					break
-				#print "Get uncompressed chunk header returned:: %d " % (out_chunk_header.id)
+				#print "Debug:: Get uncompressed chunk header returned:: %d " % (out_chunk_header.id)
 				#Cvirtual_binary out_chunk_data;
 				#AudFileNS::byte* byteChunkDataPtr = out_chunk_data.write_start(out_chunk_header.size_in);
 				(errorGCD, byteChunkDataLst) = self.get_chunk_data(audBytesBuff, bufferDataPos, out_chunk_header.size_in)
@@ -259,24 +259,24 @@ class audFile:
 			chunk_i = 0
 			wIndex = 0
 			while (wIndex < cb_audio):
-				#print("chunkI: %d\t Windex: %d\t cb_audio: %d") % (chunk_i,wIndex,cb_audio)
+				#print("Debug:: chunkI= %d\t Windex= %d\t cb_audio= %d") % (chunk_i,wIndex,cb_audio)
 				#AudChunkHeader out_chunk_header;																
 				#out_chunk_header = AudChunkHeader()
 				#errGetChunk = self.get_chunk_header(chunk_i, fs, startAudFilepos, endAudFilepos, out_chunk_header);
 				(errGetChunk, bufferDataPos, out_chunk_header) = self.get_chunk_header(chunk_i, audBytesBuff, len(audBytesBuff))
 				if errGetChunk != 0:
-					print "Error OR End file case while getting COMPRESSED chunk header!"
+					print "Warning:: Error OR End file case while getting COMPRESSED chunk header!"
 					break
-				#print "Get COMPRESSED chunk header returned:: headerInSize: %d headerOutSize: %d id: %d" % (out_chunk_header.size_in, out_chunk_header.size_out,  out_chunk_header.id) 
+				#print "Debug:: Get COMPRESSED chunk header returned:: headerInSize: %d headerOutSize: %d id: %d" % (out_chunk_header.size_in, out_chunk_header.size_out,  out_chunk_header.id) 
 				#Cvirtual_binary out_chunk_data;
 				#AudFileNS::byte* byteChunkDataPtr = out_chunk_data.write_start(out_chunk_header.size_in);
 				(errorGCD, byteChunkDataLst) = self.get_chunk_data(audBytesBuff, bufferDataPos, out_chunk_header.size_in)
 				# export decoded chunk to w (output) buffer (of SHORTS) at the point where we're currently at (so append there)
-				#print "byteChunkDataLst len: %d, size_in was: %d" % (len(byteChunkDataLst), out_chunk_header.size_in)
+				#print "Debug:: byteChunkDataLst len= %d, size_in was= %d" % (len(byteChunkDataLst), out_chunk_header.size_in)
 				decodedAudioChunkAsLst = decodeInstance.decode_chunk(byteChunkDataLst, out_chunk_header.size_out / self.get_cb_sample());
 				binaryDataOutLst.extend(decodedAudioChunkAsLst)
 				wIndex += out_chunk_header.size_out
-				#print("new Windex: %d\t cb_audio: %d") % (wIndex,cb_audio)
+				#print("Debug:: New Windex= %d\t cb_audio= %d") % (wIndex,cb_audio)
 				chunk_i += 1
 			binaryDataOutBuff = struct.pack('h'*len(binaryDataOutLst), *binaryDataOutLst)
 		return binaryDataOutBuff
@@ -302,7 +302,7 @@ class audFile:
 #		
 if __name__ == '__main__':
 	#	 main()
-	print "Running %s as main module" % (my_module_name)
+	print "Debug:: Running %s as main module" % (my_module_name)
 	# assumes a file of name 000000.AUD in same directory
 	inAUDFile = None
 	errorFound = False
@@ -310,7 +310,7 @@ if __name__ == '__main__':
 		inAUDFile = open(os.path.join('.','00000000.AUD'), 'rb')
 	except:
 		errorFound = True
-		print "Unexpected error:", sys.exc_info()[0]
+		print "Error:: Unexpected event:", sys.exc_info()[0]
 		raise
 	if not errorFound:	
 		allOfAudFileInBuffer = inAUDFile.read()
@@ -320,5 +320,5 @@ if __name__ == '__main__':
 		inAUDFile.close()
 else:
 	#debug
-	#print "Running	 %s imported from another module" % (my_module_name)
+	#print "Debug:: Running %s imported from another module" % (my_module_name)
 	pass
