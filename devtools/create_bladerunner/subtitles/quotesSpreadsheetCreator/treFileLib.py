@@ -57,7 +57,7 @@ class treFile:
 			#
 			# string IDs table (each entry is unsigned integer 4 bytes)
 			#
-			print "Total texts in TRE: %d" % (self.header().numOfTextResources)
+			print "Info:: Total texts in Text Resource file= %d" % (self.header().numOfTextResources)
 			for idx in range(0, self.header().numOfTextResources):
 				tmpTuple = struct.unpack_from('I', treBytesBuff, offsInTreFile)  # unsigned integer 4 bytes
 				self.stringEntriesLst.append( (tmpTuple[0], '') )
@@ -75,7 +75,7 @@ class treFile:
 			#absStartOfOffsetTable = absStartOfIndexTable + (self.header().numOfTextResources * 4)
 			#absStartOfStringTable = absStartOfOffsetTable + ((self.header().numOfTextResources+1) * 4)
 
-			#print "buffer type " , type(treBytesBuff) # it is str
+			#print "Debug:: buffer type " , type(treBytesBuff) # it is str
 
 			for idx in range(0, self.header().numOfTextResources):
 				currOffset = self.stringOffsets[idx] + absStartOfIndexTable
@@ -85,16 +85,16 @@ class treFile:
 				# This works ok.
 				#
 				allTextsFound = treBytesBuff[currOffset:].split('\x00')
-				# check "problematic" character cases:
-				if  currOffset == 5982 or currOffset == 6050 or currOffset == 2827  or currOffset == 2880:
-				 	print "Offs: %d\tFound String: %s" % ( currOffset,''.join(allTextsFound[0]) )
-					 #print "Offs: %d\tFound String: %s" % ( currOffset,''.join(allTextsFound[0]) )
+				## check "problematic" character cases:
+				#if  currOffset == 5982 or currOffset == 6050 or currOffset == 2827  or currOffset == 2880:
+				# 	print "Debug:: Offs= %d\tFound String= %s" % ( currOffset,''.join(allTextsFound[0]) )
+				#	 #print "Debug:: Offs: %d\tFound String= %s" % ( currOffset,''.join(allTextsFound[0]) )
 				(theId, stringOfIdx) = self.stringEntriesLst[idx]
 				self.stringEntriesLst[idx] = (theId, ''.join(allTextsFound[0]))
-				#print "ID: %d\tFound String: %s" % ( theId,''.join(allTextsFound[0]) )
+				#print "Debug:: ID= %d\tFound String= %s" % ( theId,''.join(allTextsFound[0]) )
 			return True
   		except:
-			print "Loading failure!"
+			print "Error:: Loading Text Resource Failed!"
 			return False
 
 	def header(self):
@@ -104,7 +104,7 @@ class treFile:
 #
 if __name__ == '__main__':
 	#	 main()
-	print "Running %s as main module" % (my_module_name)
+	print "Debug:: Running %s as main module" % (my_module_name)
 	# assumes a file of name ACTORS.TRE in same directory
 	inTREFile = None
 	errorFound = False
@@ -112,17 +112,17 @@ if __name__ == '__main__':
 		inTREFile = open(os.path.join('.','ACTORS.TRE'), 'rb')
 	except:
 		errorFound = True
-		print "Unexpected error:", sys.exc_info()[0]
+		print "Error:: Unexpected event= ", sys.exc_info()[0]
 		raise
 	if not errorFound:
 		allOfTreFileInBuffer = inTREFile.read()
 		treFileInstance = treFile()
 		if (treFileInstance.loadTreFile(allOfTreFileInBuffer, len(allOfTreFileInBuffer))):
-			print "TRE file loaded successfully!"
+			print "Info:: Text Resource file loaded successfully!"
 		else:
-			print "Error while loading TRE file!"
+			print "Error:: Error while loading Text Resource file!"
 		inTREFile.close()
 else:
 	#debug
-	#print "Running	 %s imported from another module" % (my_module_name)
+	#print "Debug:: Running	 %s imported from another module" % (my_module_name)
 	pass
