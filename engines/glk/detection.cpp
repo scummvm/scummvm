@@ -73,8 +73,6 @@ template<class META, class ENG>Engine *create(OSystem *syst, Glk::GlkGameDescrip
 	}
 }
 
-#define CREATE(META, ENG) if (!(*engine = create<META, ENG>(syst, gameDesc)))
-
 Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
 	Glk::GameDescriptor td = Glk::GameDescriptor::empty();
 	assert(engine);
@@ -108,11 +106,12 @@ Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 	f.close();
 
 	// Create the correct engine
-	CREATE(Glk::Alan2::Alan2MetaEngine, Glk::Alan2::Alan2)
-	CREATE(Glk::Frotz::FrotzMetaEngine, Glk::Frotz::Frotz)
-	CREATE(Glk::Glulxe::GlulxeMetaEngine, Glk::Glulxe::Glulxe)
-	CREATE(Glk::Scott::ScottMetaEngine, Glk::Scott::Scott)
-	if (!((td = Glk::TADS::TADSMetaEngine::findGame(gameDesc._gameId.c_str()))._description)) {
+	*engine = nullptr;
+	if ((*engine = create<Glk::Alan2::Alan2MetaEngine, Glk::Alan2::Alan2>(syst, gameDesc)) != nullptr) {}
+	else if ((*engine = create<Glk::Frotz::FrotzMetaEngine, Glk::Frotz::Frotz>(syst, gameDesc)) != nullptr) {}
+	else if ((*engine = create<Glk::Glulxe::GlulxeMetaEngine, Glk::Glulxe::Glulxe>(syst, gameDesc)) != nullptr) {}
+	else if ((*engine = create<Glk::Scott::ScottMetaEngine, Glk::Scott::Scott>(syst, gameDesc)) != nullptr) {}
+	else if ((td = Glk::TADS::TADSMetaEngine::findGame(gameDesc._gameId.c_str()))._description) {
 		if (td._options & Glk::TADS::OPTION_TADS3)
 			*engine = new Glk::TADS::TADS3::TADS3(syst, gameDesc);
 		else
@@ -123,8 +122,6 @@ Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 
 	return Common::kNoError;
 }
-
-#undef CREATE
 
 Common::String GlkMetaEngine::findFileByGameId(const Common::String &gameId) const {
 	// Get the list of files in the folder and return detection against them
