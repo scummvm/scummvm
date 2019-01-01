@@ -630,8 +630,12 @@ protected:
 	zword lookup_text(int padding, zword dct);
 
 	/**
-	 * tokenise_text
-	 *
+	 * Handles converting abbreviations that weren't handled by early Infocom games
+	 * into their expanded versions
+	 */
+	void handleAbbreviations();
+
+	/**
 	 * Translate a single word to a token and append it to the token
 	 * buffer. Every token consists of the address of the dictionary
 	 * entry, the length of the word and the offset of the word from
