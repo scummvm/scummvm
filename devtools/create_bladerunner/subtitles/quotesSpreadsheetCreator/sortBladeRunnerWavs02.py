@@ -717,7 +717,7 @@ def main(argsCL):
 			print "The -ian switch is followed by the path to actornames.txt, if it's not in the current working directory."
 			print "The -m switch has an argument that is a replacement string for the path to the folder of extracted WAV files which will be used as a prefix for the links in the output XLS file."
 			print "The -ld switch has an argument that is the language description of the original game files that you use as input."
-			printInfoMessageForLanguageSelection()
+			printInfoMessageForLanguageSelectionSyntax()
 			print "The -xwav switch enables the WAV audio extract mode from the TLK files. It requires an INPUT path to be set with the -ip switch."
 			print "The -xtre switch enables the TR%s parsing mode from the original MIX files. It requires an INPUT path to be set with the -ip switch." % (gActiveLanguageDescriptionCodeTuple[1])
 			print "The --trace switch enables more debug messages being printed during execution."
