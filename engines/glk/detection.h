@@ -24,9 +24,13 @@
 #define GLK_DETECTION_H
 
 #include "engines/advancedDetector.h"
+#include "engines/game.h"
 
 #define MAX_SAVES 99
 
+/**
+ * ScummVM Meta Engine interface
+ */
 class GlkMetaEngine : public MetaEngine {
 private:
 	Common::String findFileByGameId(const Common::String &gameId) const;
@@ -70,5 +74,34 @@ public:
 	 */
 	void detectClashes() const;
 };
+
+namespace Glk {
+
+/**
+ * Holds the name of a recognised game
+ */
+struct GameDescriptor {
+	const char *_gameId;
+	const char *_description;
+	uint _options;
+
+	GameDescriptor(const char *gameId, const char *description, uint options) :
+		_gameId(gameId), _description(description), _options(options) {}
+	GameDescriptor(const PlainGameDescriptor &gd) : _gameId(gd.gameId), _description(gd.description),
+		_options(0) {}
+
+	static PlainGameDescriptor empty() {
+		return GameDescriptor(nullptr, nullptr, 0);
+	}
+
+	operator PlainGameDescriptor() const {
+		PlainGameDescriptor pd;
+		pd.gameId = _gameId;
+		pd.description = _description;
+		return pd;
+	}
+};
+
+} // End of namespace Glk
 
 #endif

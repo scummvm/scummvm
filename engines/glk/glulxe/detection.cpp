@@ -31,18 +31,18 @@ namespace Glk {
 namespace Glulxe {
 
 void GlulxeMetaEngine::getSupportedGames(PlainGameList &games) {
-	for (const GlulxeDescriptor *pd = GLULXE_GAME_LIST; pd->gameId; ++pd) {
+	for (const PlainGameDescriptor *pd = GLULXE_GAME_LIST; pd->gameId; ++pd) {
 		games.push_back(*pd);
 	}
 }
 
-GlulxeDescriptor GlulxeMetaEngine::findGame(const char *gameId) {
-	for (const GlulxeDescriptor *pd = GLULXE_GAME_LIST; pd->gameId; ++pd) {
+GameDescriptor GlulxeMetaEngine::findGame(const char *gameId) {
+	for (const PlainGameDescriptor *pd = GLULXE_GAME_LIST; pd->gameId; ++pd) {
 		if (!strcmp(gameId, pd->gameId))
 			return *pd;
 	}
 
-	return GlulxeDescriptor();
+	return GameDescriptor::empty();
 }
 
 bool GlulxeMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
@@ -107,7 +107,7 @@ bool GlulxeMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &
 }
 
 void GlulxeMetaEngine::detectClashes(Common::StringMap &map) {
-	for (const GlulxeDescriptor *pd = GLULXE_GAME_LIST; pd->gameId; ++pd) {
+	for (const PlainGameDescriptor *pd = GLULXE_GAME_LIST; pd->gameId; ++pd) {
 		if (map.contains(pd->gameId))
 			error("Duplicate game Id found - %s", pd->gameId);
 		map[pd->gameId] = "";

@@ -26,24 +26,10 @@
 #include "common/fs.h"
 #include "common/hash-str.h"
 #include "engines/game.h"
+#include "glk/detection.h"
 
 namespace Glk {
 namespace Alan2 {
-
-/**
- * Alan2 game descriptior
- */
-struct Alan2Descriptor {
-	const char *gameId;
-	const char *description;
-
-	operator PlainGameDescriptor() const {
-		PlainGameDescriptor pd;
-		pd.gameId = gameId;
-		pd.description = description;
-		return pd;
-	}
-};
 
 /**
  * Meta engine for Alan2 interpreter
@@ -58,7 +44,7 @@ public:
 	/**
 	 * Returns a game description for the given game Id, if it's supported
 	 */
-	static Alan2Descriptor findGame(const char *gameId);
+	static GameDescriptor findGame(const char *gameId);
 
 	/**
 	 * Detect supported games

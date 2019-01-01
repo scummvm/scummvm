@@ -64,7 +64,7 @@ bool Glk::GlkEngine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
-	Glk::TADS::TADSDescriptor td;
+	Glk::GameDescriptor td = Glk::GameDescriptor::empty();
 	assert(engine);
 
 	// Populate the game description
@@ -96,16 +96,16 @@ Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 	f.close();
 
 	// Create the correct engine
-	if (Glk::Alan2::Alan2MetaEngine::findGame(gameDesc._gameId.c_str()).description) {
+	if (Glk::Alan2::Alan2MetaEngine::findGame(gameDesc._gameId.c_str())._description) {
 		*engine = new Glk::Alan2::Alan2(syst, gameDesc);
-	} else if (Glk::Frotz::FrotzMetaEngine::findGame(gameDesc._gameId.c_str()).description) {
+	} else if (Glk::Frotz::FrotzMetaEngine::findGame(gameDesc._gameId.c_str())._description) {
 		*engine = new Glk::Frotz::Frotz(syst, gameDesc);
-	} else if (Glk::Glulxe::GlulxeMetaEngine::findGame(gameDesc._gameId.c_str()).description) {
+	} else if (Glk::Glulxe::GlulxeMetaEngine::findGame(gameDesc._gameId.c_str())._description) {
 		*engine = new Glk::Glulxe::Glulxe(syst, gameDesc);
-	} else if (Glk::Scott::ScottMetaEngine::findGame(gameDesc._gameId.c_str()).description) {
+	} else if (Glk::Scott::ScottMetaEngine::findGame(gameDesc._gameId.c_str())._description) {
 		*engine = new Glk::Scott::Scott(syst, gameDesc);
-	} else if ((td = Glk::TADS::TADSMetaEngine::findGame(gameDesc._gameId.c_str())).description) {
-		if (td.isTADS3)
+	} else if ((td = Glk::TADS::TADSMetaEngine::findGame(gameDesc._gameId.c_str()))._description) {
+		if (td._options & Glk::TADS::OPTION_TADS3)
 			*engine = new Glk::TADS::TADS3::TADS3(syst, gameDesc);
 		else
 			*engine = new Glk::TADS::TADS2::TADS2(syst, gameDesc);
@@ -150,22 +150,20 @@ PlainGameList GlkMetaEngine::getSupportedGames() const {
 }
 
 PlainGameDescriptor GlkMetaEngine::findGame(const char *gameId) const {
-	PlainGameDescriptor gd;
-
-	gd = Glk::Alan2::Alan2MetaEngine::findGame(gameId);
-	if (gd.description) return gd;
+	Glk::GameDescriptor gd = Glk::Alan2::Alan2MetaEngine::findGame(gameId);
+	if (gd._description) return gd;
 
 	gd = Glk::Frotz::FrotzMetaEngine::findGame(gameId);
-	if (gd.description) return gd;
+	if (gd._description) return gd;
 
 	gd = Glk::Glulxe::GlulxeMetaEngine::findGame(gameId);
-	if (gd.description) return gd;
+	if (gd._description) return gd;
 
 	gd = Glk::Scott::ScottMetaEngine::findGame(gameId);
-	if (gd.description) return gd;
+	if (gd._description) return gd;
 
 	gd = Glk::TADS::TADSMetaEngine::findGame(gameId);
-	if (gd.description) return gd;
+	if (gd._description) return gd;
 
 	return PlainGameDescriptor();
 }

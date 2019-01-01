@@ -31,18 +31,18 @@ namespace Glk {
 namespace TADS {
 
 void TADSMetaEngine::getSupportedGames(PlainGameList &games) {
-	for (const TADSDescriptor *pd = TADS_GAME_LIST; pd->gameId; ++pd) {
+	for (const GameDescriptor *pd = TADS_GAME_LIST; pd->_gameId; ++pd) {
 		games.push_back(*pd);
 	}
 }
 
-TADSDescriptor TADSMetaEngine::findGame(const char *gameId) {
-	for (const TADSDescriptor *pd = TADS_GAME_LIST; pd->gameId; ++pd) {
-		if (!strcmp(gameId, pd->gameId))
+GameDescriptor TADSMetaEngine::findGame(const char *gameId) {
+	for (const GameDescriptor *pd = TADS_GAME_LIST; pd->_gameId; ++pd) {
+		if (!strcmp(gameId, pd->_gameId))
 			return *pd;
 	}
 
-	return TADSDescriptor();;
+	return GameDescriptor::empty();
 }
 
 bool TADSMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
@@ -81,8 +81,8 @@ bool TADSMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &ga
 
 				debug("ENTRY0(\"%s\", \"%s\", %u),", fname.c_str(), md5.c_str(), (uint)filesize);
 			}
-			const TADSDescriptor &desc = TADS_GAME_LIST[0];
-			gd = DetectedGame(desc.gameId, desc.description, Common::UNK_LANG, Common::kPlatformUnknown);
+			const GameDescriptor &desc = TADS_GAME_LIST[0];
+			gd = DetectedGame(desc._gameId, desc._description, Common::UNK_LANG, Common::kPlatformUnknown);
 		}
 		else {
 			PlainGameDescriptor gameDesc = findGame(p->_gameId);
@@ -97,10 +97,10 @@ bool TADSMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &ga
 }
 
 void TADSMetaEngine::detectClashes(Common::StringMap &map) {
-	for (const TADSDescriptor *pd = TADS_GAME_LIST; pd->gameId; ++pd) {
-		if (map.contains(pd->gameId))
-			error("Duplicate game Id found - %s", pd->gameId);
-		map[pd->gameId] = "";
+	for (const GameDescriptor *pd = TADS_GAME_LIST; pd->_gameId; ++pd) {
+		if (map.contains(pd->_gameId))
+			error("Duplicate game Id found - %s", pd->_gameId);
+		map[pd->_gameId] = "";
 	}
 }
 

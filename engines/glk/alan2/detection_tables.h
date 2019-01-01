@@ -38,9 +38,8 @@ struct Alan2GameDescription {
 	Common::Language _language;
 };
 
-const Alan2Descriptor ALAN2_GAME_LIST[] = {
+const PlainGameDescriptor ALAN2_GAME_LIST[] = {
 	{ "alan2", "Alan2 Game" },
-	//{ "cragne", "Cragne Manor" },
 
 	{ nullptr, nullptr }
 };

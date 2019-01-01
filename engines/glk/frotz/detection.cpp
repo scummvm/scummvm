@@ -39,7 +39,7 @@ void FrotzMetaEngine::getSupportedGames(PlainGameList &games) {
 		games.push_back(*pd);
 }
 
-PlainGameDescriptor FrotzMetaEngine::findGame(const char *gameId) {
+GameDescriptor FrotzMetaEngine::findGame(const char *gameId) {
 	for (const PlainGameDescriptor *pd = INFOCOM_GAME_LIST; pd->gameId; ++pd) {
 		if (!strcmp(gameId, pd->gameId))
 			return *pd;
@@ -49,7 +49,7 @@ PlainGameDescriptor FrotzMetaEngine::findGame(const char *gameId) {
 			return *pd;
 	}
 
-	return PlainGameDescriptor();;
+	return GameDescriptor::empty();
 }
 
 bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
@@ -129,8 +129,8 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 			const PlainGameDescriptor &desc = ZCODE_GAME_LIST[0];
 			gd = DetectedGame(desc.gameId, desc.description, Common::UNK_LANG, Common::kPlatformUnknown);
 		} else {
-			PlainGameDescriptor gameDesc = findGame(p->_gameId);
-			gd = DetectedGame(p->_gameId, gameDesc.description, p->_language, Common::kPlatformUnknown, p->_extra);
+			GameDescriptor gameDesc = findGame(p->_gameId);
+			gd = DetectedGame(p->_gameId, gameDesc._description, p->_language, Common::kPlatformUnknown, p->_extra);
 			gd.setGUIOptions(p->_guiOptions);
 		}
 

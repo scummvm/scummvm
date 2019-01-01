@@ -27,6 +27,7 @@
 #include "common/hash-str.h"
 #include "engines/game.h"
 #include "glk/streams.h"
+#include "glk/detection.h"
 
 namespace Glk {
 namespace Frotz {
@@ -38,11 +39,10 @@ public:
 	 */
 	static void getSupportedGames(PlainGameList &games);
 
-
 	/**
 	 * Returns a game description for the given game Id, if it's supported
 	 */
-	static PlainGameDescriptor findGame(const char *gameId);
+	static GameDescriptor findGame(const char *gameId);
 
 	/**
 	 * Detect supported games

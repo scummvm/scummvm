@@ -38,7 +38,7 @@ struct GlulxeGameDescription {
 	Common::Language _language;
 };
 
-const GlulxeDescriptor GLULXE_GAME_LIST[] = {
+const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "glulxe", "Glulxe Game" },
 	{ "cragne", "Cragne Manor" },
 

@@ -31,18 +31,18 @@ namespace Glk {
 namespace Alan2 {
 
 void Alan2MetaEngine::getSupportedGames(PlainGameList &games) {
-	for (const Alan2Descriptor *pd = ALAN2_GAME_LIST; pd->gameId; ++pd) {
+	for (const PlainGameDescriptor *pd = ALAN2_GAME_LIST; pd->gameId; ++pd) {
 		games.push_back(*pd);
 	}
 }
 
-Alan2Descriptor Alan2MetaEngine::findGame(const char *gameId) {
-	for (const Alan2Descriptor *pd = ALAN2_GAME_LIST; pd->gameId; ++pd) {
+GameDescriptor Alan2MetaEngine::findGame(const char *gameId) {
+	for (const PlainGameDescriptor *pd = ALAN2_GAME_LIST; pd->gameId; ++pd) {
 		if (!strcmp(gameId, pd->gameId))
 			return *pd;
 	}
 
-	return Alan2Descriptor();
+	return GameDescriptor::empty();
 }
 
 bool Alan2MetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
@@ -107,7 +107,7 @@ bool Alan2MetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 }
 
 void Alan2MetaEngine::detectClashes(Common::StringMap &map) {
-	for (const Alan2Descriptor *pd = ALAN2_GAME_LIST; pd->gameId; ++pd) {
+	for (const PlainGameDescriptor *pd = ALAN2_GAME_LIST; pd->gameId; ++pd) {
 		if (map.contains(pd->gameId))
 			error("Duplicate game Id found - %s", pd->gameId);
 		map[pd->gameId] = "";

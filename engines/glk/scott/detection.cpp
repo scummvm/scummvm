@@ -34,13 +34,13 @@ void ScottMetaEngine::getSupportedGames(PlainGameList &games) {
 		games.push_back(*pd);
 }
 
-PlainGameDescriptor ScottMetaEngine::findGame(const char *gameId) {
+GameDescriptor ScottMetaEngine::findGame(const char *gameId) {
 	for (const PlainGameDescriptor *pd = SCOTT_GAME_LIST; pd->gameId; ++pd) {
 		if (!strcmp(gameId, pd->gameId))
 			return *pd;
 	}
 
-	return PlainGameDescriptor();;
+	return GameDescriptor::empty();
 }
 
 bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {

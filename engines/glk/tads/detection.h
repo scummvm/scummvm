@@ -25,25 +25,12 @@
 
 #include "common/fs.h"
 #include "engines/game.h"
+#include "glk/detection.h"
 
 namespace Glk {
 namespace TADS {
 
-/**
- * TADS game descriptior
- */
-struct TADSDescriptor {
-	const char *gameId;
-	const char *description;
-	bool isTADS3;
-
-	operator PlainGameDescriptor() const {
-		PlainGameDescriptor pd;
-		pd.gameId = gameId;
-		pd.description = description;
-		return pd;
-	}
-};
+enum TADSOption { OPTION_TADS2 = 0, OPTION_TADS3 = 1 };
 
 /**
  * Meta engine for TADS interpreter
@@ -58,7 +45,7 @@ public:
 	/**
 	 * Returns a game description for the given game Id, if it's supported
 	 */
-	static TADSDescriptor findGame(const char *gameId);
+	static GameDescriptor findGame(const char *gameId);
 
 	/**
 	 * Detect supported games
