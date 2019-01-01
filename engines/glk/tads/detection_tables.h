@@ -38,14 +38,15 @@ struct TADSGameDescription {
 	Common::Language _language;
 };
 
-const GameDescriptor TADS_GAME_LIST[] = {
-	// TADS 2 Games
-	{ "tads2", "TADS 2 Game", OPTION_TADS2 },
-	{ "oncefuture", "Once and Future", OPTION_TADS2 },
+const PlainGameDescriptor TADS2_GAME_LIST[] = {
+	{ "tads2", "TADS 2 Game" },
+	{ "oncefuture", "Once and Future" },
+	{ nullptr, nullptr }
+};
 
-	// TADS 3 Games
-	{ "tads3", "TADS 3 Game", OPTION_TADS3 },
-	{ nullptr, nullptr, 0 }
+const PlainGameDescriptor TADS3_GAME_LIST[] = {
+	{ "tads3", "TADS 3 Game" },
+	{ nullptr, nullptr }
 };
 
 #define ENTRY0(ID, MD5, FILESIZE) { ID, "", MD5, FILESIZE, Common::EN_ANY }
