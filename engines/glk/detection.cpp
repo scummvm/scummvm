@@ -21,6 +21,7 @@
  */
 
 #include "glk/glk.h"
+#include "glk/detection.h"
 #include "glk/alan2/detection.h"
 #include "glk/alan2/alan2.h"
 #include "glk/frotz/detection.h"
@@ -39,57 +40,10 @@
 #include "common/savefile.h"
 #include "common/str-array.h"
 #include "common/system.h"
-#include "engines/advancedDetector.h"
 #include "graphics/colormasks.h"
 #include "graphics/surface.h"
 #include "common/config-manager.h"
 #include "common/file.h"
-
-#define MAX_SAVES 99
-
-class GlkMetaEngine : public MetaEngine {
-private:
-	Common::String findFileByGameId(const Common::String &gameId) const;
-public:
-	GlkMetaEngine() : MetaEngine() {}
-
-	virtual const char *getName() const {
-		return "ScummGlk";
-	}
-
-	virtual const char *getOriginalCopyright() const {
-		return "Infocom games (C) Infocom\nScott Adams games (C) Scott Adams";
-	}
-
-	virtual bool hasFeature(MetaEngineFeature f) const override;
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const override;
-	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
-	virtual void removeSaveState(const char *target, int slot) const;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
-
-	/**
-	 * Returns a list of games supported by this engine.
-	 */
-	virtual PlainGameList getSupportedGames() const override;
-
-	/**
-	 * Runs the engine's game detector on the given list of files, and returns a
-	 * (possibly empty) list of games supported by the engine which it was able
-	 * to detect amongst the given files.
-	 */
-	virtual DetectedGames detectGames(const Common::FSList &fslist) const override;
-
-	/**
-	 * Query the engine for a PlainGameDescriptor for the specified gameid, if any.
-	 */
-	virtual PlainGameDescriptor findGame(const char *gameId) const override;
-
-	/**
-	 * Calls each sub-engine in turn to ensure no game Id accidentally shares the same Id
-	 */
-	void detectClashes() const;
-};
 
 bool GlkMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
