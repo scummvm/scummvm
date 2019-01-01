@@ -72,6 +72,28 @@ U32String::U32String(const U32String &str)
 	assert(_str != nullptr);
 }
 
+U32String::U32String(const char *str) : _size(0), _str(_storage) {
+	if (str == nullptr) {
+		_storage[0] = 0;
+		_size = 0;
+	} else {
+		initWithCStr(str, strlen(str));
+	}
+}
+
+U32String::U32String(const char *str, uint32 len) : _size(0), _str(_storage) {
+	initWithCStr(str, len);
+}
+
+U32String::U32String(const char *beginP, const char *endP) : _size(0), _str(_storage) {
+	assert(endP >= beginP);
+	initWithCStr(beginP, endP - beginP);
+}
+
+U32String::U32String(const String &str) : _size(0) {
+	initWithCStr(str.c_str(), str.size());
+}
+
 U32String::~U32String() {
 	decRefCount(_extern._refCount);
 }
@@ -95,6 +117,20 @@ U32String &U32String::operator=(const U32String &str) {
 		_str = str._str;
 	}
 
+	return *this;
+}
+
+U32String &U32String::operator=(const String &str) {
+	initWithCStr(str.c_str(), str.size());
+	return *this;
+}
+
+U32String &U32String::operator=(const value_type *str) {
+	return U32String::operator=(U32String(str));
+}
+
+U32String &U32String::operator=(const char *str) {
+	initWithCStr(str, strlen(str));
 	return *this;
 }
 
@@ -122,6 +158,38 @@ U32String &U32String::operator+=(value_type c) {
 	return *this;
 }
 
+bool U32String::operator==(const U32String &x) const {
+	return equals(x);
+}
+
+bool U32String::operator==(const String &x) const {
+	return equals(x);
+}
+
+bool U32String::operator==(const value_type *x) const {
+	return equals(U32String(x));
+}
+
+bool U32String::operator==(const char *x) const {
+	return equals(x);
+}
+
+bool U32String::operator!=(const U32String &x) const {
+	return !equals(x);
+}
+
+bool U32String::operator!=(const String &x) const {
+	return !equals(x);
+}
+
+bool U32String::operator!=(const value_type *x) const {
+	return !equals(U32String(x));
+}
+
+bool U32String::operator!=(const char *x) const {
+	return !equals(x);
+}
+
 bool U32String::equals(const U32String &x) const {
 	if (this == &x || _str == x._str) {
 		return true;
@@ -132,6 +200,17 @@ bool U32String::equals(const U32String &x) const {
 	}
 
 	return !memcmp(_str, x._str, _size * sizeof(value_type));
+}
+
+bool U32String::equals(const String &x) const {
+	if (x.size() != _size)
+		return false;
+
+	for (size_t idx = 0; idx < _size; ++idx)
+		if (_str[idx] != x[idx])
+			return false;
+
+	return true;
 }
 
 bool U32String::contains(value_type x) const {
@@ -324,6 +403,28 @@ void U32String::initWithCStr(const value_type *str, uint32 len) {
 
 	// Copy the string into the storage area
 	memmove(_str, str, len * sizeof(value_type));
+	_str[len] = 0;
+}
+
+void U32String::initWithCStr(const char *str, uint32 len) {
+	assert(str);
+
+	_storage[0] = 0;
+
+	_size = len;
+
+	if (len >= _builtinCapacity) {
+		// Not enough internal storage, so allocate more
+		_extern._capacity = computeCapacity(len + 1);
+		_extern._refCount = nullptr;
+		_str = new value_type[_extern._capacity];
+		assert(_str != nullptr);
+	}
+
+	// Copy the string into the storage area
+	for (size_t idx = 0; idx < len; ++idx, ++str)
+		_str[idx] = *str;
+
 	_str[len] = 0;
 }
 
