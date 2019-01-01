@@ -31,14 +31,17 @@ Syntax Notes:
 1. The "-op" switch should be followed by the path to the folder where the WAV files should be exported; This folder path will also be used as input when the output Excel will be created (for the "INGQUO_E.TRE" sheet with the in-game quotes).
 2. The "-ip" switch should be followed by the path to the game's folder, where the TLK and MIX files reside.
 3. The "-ian" optional switch is followed by the path to the actornames.txt file -- if this is omitted then the file is assumed to reside in the current working directory.
-4. Using the "-xwav" optional switch, this tool will export __ALL__ game's audio files (AUD) (that are either speech or speech-related) in a WAV format. This is expected to run for a few minutes and take up quite a lot of your HDD space (about 650MB).
-5. Using the "-xtre" optional switch, the tool will add a sheet to the output Excel with the contents of each of the game's Text Resource files (TRE).
-6. You may use both, either or neither of the "-xwav" and "-xtre" switches, depending on what you need to do.
-7. The "--trace" optional switch enables extra debug messages to be printed. 
+4. The "-ld" optional switch is followed by a language description for the language of the game you are exporting Text Resources from. This switch is meaningful when you also use the "-xtre" switch to export Text Resource files.
+    * Valid language values are: EN_ANY, DE_DEU, FR_FRA, IT_ITA, RU_RUS, ES_ESP
+    * Default language value is: EN_ANY (English)	
+5. Using the "-xwav" optional switch, this tool will export __ALL__ game's audio files (AUD) (that are either speech or speech-related) in a WAV format. This is expected to run for a few minutes and take up quite a lot of your HDD space (about 650MB).
+6. Using the "-xtre" optional switch, the tool will add a sheet to the output Excel with the contents of each of the game's Text Resource files (TRE).
+7. You may use both, either or neither of the "-xwav" and "-xtre" switches, depending on what you need to do.
+8. The "--trace" optional switch enables extra debug messages to be printed. 
 
 Usage:
 ```
-python2.7 quoteSpreadsheetCreator.py -op folderpath_for_extracted_wav_Files [-ip folderpath_for_TLK_Files] [-ian pathToActorNamesTxt] [-m stringPathToReplaceFolderpathInExcelLinks] [-xwav] [-xtre] [--trace]
+python2.7 quoteSpreadsheetCreator.py -op folderpath_for_extracted_wav_Files [-ip folderpath_for_TLK_Files] [-ian pathToActorNamesTxt] [-m stringPathToReplaceFolderpathInExcelLinks] [-ld languageDescription] [-xwav] [-xtre] [--trace]
 ```
 The tool __requires__ a valid path to the actornames.txt file; this file is included in the samples folder.
 
