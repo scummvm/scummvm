@@ -41,8 +41,11 @@ void FrotzMetaEngine::getSupportedGames(PlainGameList &games) {
 
 GameDescriptor FrotzMetaEngine::findGame(const char *gameId) {
 	for (const PlainGameDescriptor *pd = INFOCOM_GAME_LIST; pd->gameId; ++pd) {
-		if (!strcmp(gameId, pd->gameId))
-			return *pd;
+		if (!strcmp(gameId, pd->gameId)) {
+			GameDescriptor gd(*pd);
+			gd._options |= OPTION_INFOCOM;
+			return gd;
+		}
 	}
 	for (const PlainGameDescriptor *pd = ZCODE_GAME_LIST; pd->gameId; ++pd) {
 		if (!strcmp(gameId, pd->gameId))

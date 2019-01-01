@@ -32,6 +32,13 @@
 namespace Glk {
 namespace Frotz {
 
+/**
+ * Game descriptor detection options
+ */
+enum DetectionOption {
+	OPTION_INFOCOM = 1
+};
+
 class FrotzMetaEngine {
 public:
 	/**

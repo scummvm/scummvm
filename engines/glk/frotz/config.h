@@ -155,6 +155,11 @@ struct UserOptions {
 	 * Constructor
 	 */
 	UserOptions();
+
+	/**
+	 * Returns true if the game being played is one of the original Infocom releases
+	 */
+	bool isInfocom() const;
 };
 
 /**

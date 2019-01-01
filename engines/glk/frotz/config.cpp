@@ -21,6 +21,8 @@
  */
 
 #include "glk/frotz/config.h"
+#include "glk/frotz/detection.h"
+#include "glk/glk.h"
 #include "common/config-manager.h"
 #include "common/textconsole.h"
 
@@ -160,6 +162,10 @@ UserOptions::UserOptions() : _undo_slots(MAX_UNDO_SLOTS), _sound(true), _quetzal
 
 	_defaultForeground = getConfigInt("foreground", 0xffffff, 0xffffff);
 	_defaultBackground = getConfigInt("background", 0x000080, 0xffffff);
+}
+
+bool UserOptions::isInfocom() const {
+	return g_vm->getOptions() & OPTION_INFOCOM;
 }
 
 } // End of namespace Scott

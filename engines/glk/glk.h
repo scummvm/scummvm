@@ -60,6 +60,7 @@ struct GlkGameDescription {
 	Common::Platform _platform;
 	Common::String _filename;
 	Common::String _md5;
+	uint _options;
 };
 
 /**
@@ -162,6 +163,11 @@ public:
 	 * Returns the primary filename for the game
 	 */
 	const Common::String &getFilename() const { return _gameDescription._filename; }
+
+	/**
+	 * Returns any options returned with the game's detection entry
+	 */
+	const uint getOptions() const { return _gameDescription._options; }
 
 	/**
 	 * Return the game engine's target name

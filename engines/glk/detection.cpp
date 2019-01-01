@@ -63,6 +63,18 @@ bool Glk::GlkEngine::hasFeature(EngineFeature f) const {
 	    (f == kSupportsSavingDuringRuntime);
 }
 
+template<class META, class ENG>Engine *create(OSystem *syst, Glk::GlkGameDescription &gameDesc) {
+	Glk::GameDescriptor gd = META::findGame(gameDesc._gameId.c_str());
+	if (gd._description) {
+		gameDesc._options = gd._options;
+		return new ENG(syst, gameDesc);
+	} else {
+		return nullptr;
+	}
+}
+
+#define CREATE(META, ENG) if (!(*engine = create<META, ENG>(syst, gameDesc)))
+
 Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
 	Glk::GameDescriptor td = Glk::GameDescriptor::empty();
 	assert(engine);
@@ -96,15 +108,11 @@ Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 	f.close();
 
 	// Create the correct engine
-	if (Glk::Alan2::Alan2MetaEngine::findGame(gameDesc._gameId.c_str())._description) {
-		*engine = new Glk::Alan2::Alan2(syst, gameDesc);
-	} else if (Glk::Frotz::FrotzMetaEngine::findGame(gameDesc._gameId.c_str())._description) {
-		*engine = new Glk::Frotz::Frotz(syst, gameDesc);
-	} else if (Glk::Glulxe::GlulxeMetaEngine::findGame(gameDesc._gameId.c_str())._description) {
-		*engine = new Glk::Glulxe::Glulxe(syst, gameDesc);
-	} else if (Glk::Scott::ScottMetaEngine::findGame(gameDesc._gameId.c_str())._description) {
-		*engine = new Glk::Scott::Scott(syst, gameDesc);
-	} else if ((td = Glk::TADS::TADSMetaEngine::findGame(gameDesc._gameId.c_str()))._description) {
+	CREATE(Glk::Alan2::Alan2MetaEngine, Glk::Alan2::Alan2)
+	CREATE(Glk::Frotz::FrotzMetaEngine, Glk::Frotz::Frotz)
+	CREATE(Glk::Glulxe::GlulxeMetaEngine, Glk::Glulxe::Glulxe)
+	CREATE(Glk::Scott::ScottMetaEngine, Glk::Scott::Scott)
+	if (!((td = Glk::TADS::TADSMetaEngine::findGame(gameDesc._gameId.c_str()))._description)) {
 		if (td._options & Glk::TADS::OPTION_TADS3)
 			*engine = new Glk::TADS::TADS3::TADS3(syst, gameDesc);
 		else
@@ -115,6 +123,8 @@ Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 
 	return Common::kNoError;
 }
+
+#undef CREATE
 
 Common::String GlkMetaEngine::findFileByGameId(const Common::String &gameId) const {
 	// Get the list of files in the folder and return detection against them

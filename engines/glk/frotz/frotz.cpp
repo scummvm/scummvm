@@ -48,6 +48,8 @@ void Frotz::runGame(Common::SeekableReadStream *gameFile) {
 	story_fp = gameFile;
 	initialize();
 
+	debug("Game %s an Infocom original", isInfocom() ? "is" : "isn't");
+
 	// If save was selected from the launcher, handle loading it
 	int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 	if (saveSlot != -1) {
