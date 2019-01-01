@@ -212,8 +212,8 @@ bool Selection::getSelection(const Rect &r, int *rx0, int *rx1) const {
 	row = (y0 + y1) / 2;
 	upper = row - (row - y0) / 2;
 	lower = row + (y1 - row) / 2;
-	above = upper - (g_conf->_leading) / 2;
-	below = lower + (g_conf->_leading) / 2;
+	above = upper - (g_conf->_propInfo._leading) / 2;
+	below = lower + (g_conf->_propInfo._leading) / 2;
 
 	cx0 = MIN(_select.left, _select.right);
 	cx1 = MAX(_select.left, _select.right);

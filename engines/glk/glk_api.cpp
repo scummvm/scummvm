@@ -508,8 +508,8 @@ void GlkAPI::glk_stylehint_set(uint wintype, uint style, uint hint, int val) {
 	}
 
 	if (wintype == wintype_TextBuffer && style == style_Normal && hint == stylehint_TextColor) {
-		memcpy(g_conf->_moreColor, styles[style].fg, 3);
-		memcpy(g_conf->_caretColor, styles[style].fg, 3);
+		memcpy(g_conf->_propInfo._moreColor, styles[style].fg, 3);
+		memcpy(g_conf->_propInfo._caretColor, styles[style].fg, 3);
 	}
 }
 

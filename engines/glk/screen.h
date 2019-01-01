@@ -27,6 +27,7 @@
 #include "common/array.h"
 #include "graphics/screen.h"
 #include "graphics/font.h"
+#include "glk/fonts.h"
 #include "glk/utils.h"
 
 namespace Glk {
@@ -36,10 +37,6 @@ namespace Glk {
 enum CaretShape {
 	SMALL_DOT = 0, FAT_DOT = 1, THIN_LINE = 2, FAT_LINE = 3, BLOCK = 4
 };
-
-enum FACES { MONOR, MONOB, MONOI, MONOZ, PROPR, PROPB, PROPI, PROPZ, CUSTOM, CUSTOM2 };
-enum TYPES { MONOF, PROPF };
-enum STYLES { FONTR, FONTB, FONTI, FONTZ };
 
 /**
  * Screen surface class
@@ -93,13 +90,6 @@ public:
 	 * Fill a given area of the screen with an rgb color
 	 */
 	void fillRect(const Rect &box, const byte *rgb);
-
-	/**
-	 * Draws the text input caret at the given position
-	 * @remarks     The position specifies the caret's bottom-left corner,
-	 *      and the X position is in multiples of GLI_SUBPIX
-	 */
-	void drawCaret(const Point &pos);
 
 	/**
 	 * Draws a string using the specified font at the given co-ordinates

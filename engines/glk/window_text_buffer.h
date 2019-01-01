@@ -26,6 +26,7 @@
 #include "glk/windows.h"
 #include "glk/picture.h"
 #include "glk/speech.h"
+#include "glk/conf.h"
 #include "common/array.h"
 #include "common/ustr.h"
 
@@ -53,6 +54,8 @@ class TextBufferWindow : public Window, Speech {
 		TextBufferRow();
 	};
 	typedef Common::Array<TextBufferRow> TextBufferRows;
+private:
+	PropFontInfo &_font;
 private:
 	void reflow();
 	void touchScroll();
@@ -148,6 +151,11 @@ public:
 	int acceptScroll(uint arg);
 
 	uint drawPicture(uint image, uint align, uint scaled, uint width, uint height);
+
+	/**
+	 * Get the font info structure associated with the window
+	 */
+	virtual FontInfo *getFontInfo() override { return &_font; }
 
 	/**
 	 * Rearranges the window

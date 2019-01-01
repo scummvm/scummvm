@@ -68,35 +68,23 @@ Conf::Conf(InterpreterType interpType) {
 	_imageW = g_system->getWidth();
 	_imageH = g_system->getHeight();
 	_cellW = _cellH = 8;
-	_leading = 0;
-	_baseLine = 0;
 
-	get("moreprompt", _morePrompt, "\207 more \207");
-	get("morecolor", _moreColor);
-	get("morecolor", _moreSave);
-	get("morefont", _moreFont, PROPB);
-	get("morealign", _moreAlign);
-	get("monoaspect", _monoAspect, 1.0);
-	get("propaspect", _propAspect, 1.0);
-	get("monosize", _monoSize, 11);
-	get("monor", _monoR);
-	get("monob", _monoR);
-	get("monoi", _monoI);
-	get("monoz", _monoZ);
-	get("monofont", _monoFont, "Liberation Mono");
-	get("propsize", _propSize, 12);
-	get("propr", _propR);
-	get("propb", _propR);
-	get("propi", _propI);
-	get("propz", _propZ);
-	get("propfont", _propFont, "Linux Libertine O");
+	get("moreprompt", _propInfo._morePrompt, "\207 more \207");
+	get("morecolor", _propInfo._moreColor);
+	get("morecolor", _propInfo._moreSave);
+	get("morefont", _propInfo._moreFont, PROPB);
+	get("morealign", _propInfo._moreAlign);
+	get("monoaspect", _monoInfo._aspect, 1.0);
+	get("propaspect", _propInfo._aspect, 1.0);
+	get("monosize", _monoInfo._size, 11);
+	get("propsize", _propInfo._size, 12);
 	get("rows", _rows, 25);
 	get("cols", _cols, 60);
 
 	if (ConfMan.hasKey("leading"))
-		_leading = static_cast<int>(atof(ConfMan.get("leading").c_str()) + 0.5);
+		_monoInfo._leading = _propInfo._leading = static_cast<int>(atof(ConfMan.get("leading").c_str()) + 0.5);
 	if (ConfMan.hasKey("baseline"))
-		_baseLine = static_cast<int>(atof(ConfMan.get("baseline").c_str()) + 0.5);
+		_propInfo._baseLine = static_cast<int>(atof(ConfMan.get("baseline").c_str()) + 0.5);
 
 	if (ConfMan.hasKey("minrows"))
 		_rows = MAX(_rows, strToInt(ConfMan.get("minrows").c_str()));
@@ -125,27 +113,30 @@ Conf::Conf(InterpreterType interpType) {
 	get("tmarginy", _tMarginY, 7);
 	get("gamma", _gamma, 1.0);
 
-	get("caretcolor", _caretColor);
-	get("caretcolor", _caretSave);
-	get("linkcolor", _linkColor, BLUE);
-	get("linkcolor", _linkSave, BLUE);
+	get("linkcolor", _propInfo._linkColor, BLUE);
+	Common::copy(&_propInfo._linkColor[0], &_propInfo._linkSave[3], &_monoInfo._linkColor[0]);
+	Common::copy(&_propInfo._linkColor[0], &_propInfo._linkSave[3], &_propInfo._linkSave[0]);
+
 	get("bordercolor", _borderColor);
 	get("bordercolor", _borderSave);
 	get("windowcolor", _windowColor, WHITE);
 	get("windowcolor", _windowSave, WHITE);
 	get("lcd", _lcd, 1);
-	get("caretshape", _caretShape, 2);
+	get("caretcolor", _propInfo._caretColor);
+	get("caretcolor", _propInfo._caretSave);
+	get("caretshape", _propInfo._caretShape, 2);
 
-	_linkStyle = ConfMan.hasKey("linkstyle") && !strToInt(ConfMan.get("linkstyle").c_str()) ? 0 : 1;
+	_propInfo._linkStyle = _monoInfo._linkStyle = ConfMan.hasKey("linkstyle")
+		&& !strToInt(ConfMan.get("linkstyle").c_str()) ? 0 : 1;
 
 	get("scrollwidth", _scrollWidth);
 	get("scrollbg", _scrollBg, SCROLL_BG);
 	get("scrollfg", _scrollFg, SCROLL_FG);
-	get("justify", _justify);
-	get("quotes", _quotes, 1);
-	get("dashes", _dashes, 1);
-	get("spaces", _spaces);
-	get("caps", _caps);
+	get("justify", _propInfo._justify);
+	get("quotes", _propInfo._quotes, 1);
+	get("dashes", _propInfo._dashes, 1);
+	get("spaces", _propInfo._spaces);
+	get("caps", _propInfo._caps);
 	get("graphics", _graphics, true);
 	get("sound", _sound, true);
 	get("speak", _speak);

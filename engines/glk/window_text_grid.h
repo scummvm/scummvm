@@ -24,6 +24,7 @@
 #define GLK_WINDOW_TEXT_GRID_H
 
 #include "glk/windows.h"
+#include "glk/conf.h"
 
 namespace Glk {
 
@@ -50,6 +51,8 @@ class TextGridWindow : public Window {
 		void resize(size_t newSize);
 	};
 	typedef Common::Array<TextGridRow> TextGridRows;
+private:
+	MonoFontInfo &_font;
 private:
 	/**
 	 * Mark a given text row as modified
@@ -86,6 +89,11 @@ public:
 	 * Destructor
 	 */
 	virtual ~TextGridWindow();
+
+	/**
+	 * Get the font info structure associated with the window
+	 */
+	virtual FontInfo *getFontInfo() override { return &_font; }
 
 	/**
 	 * Rearranges the window

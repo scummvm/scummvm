@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	conf.o \
 	detection.o \
 	events.o \
+	fonts.o \
 	glk.o \
 	glk_api.o \
 	picture.o \

@@ -54,7 +54,7 @@ void FrotzScreen::loadFonts(Common::Archive *archive) {
 	if (!f.open("NotoSansRunic-Regular.ttf", *archive))
 		error("Could not load font");
 
-	_fonts.push_back(Graphics::loadTTFFont(f, g_conf->_propSize, Graphics::kTTFSizeModeCharacter));
+	_fonts.push_back(Graphics::loadTTFFont(f, g_conf->_propInfo._size, Graphics::kTTFSizeModeCharacter));
 	f.close();
 }
 

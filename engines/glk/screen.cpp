@@ -42,16 +42,21 @@ void Screen::initialize() {
 	if (!loadFonts())
 		error("Could not load fonts.dat");
 
-	// TODO: See if there's any better way for getting the leading and baseline
-	Common::Rect r1 = _fonts[7]->getBoundingBox('o');
-	Common::Rect r2 = _fonts[7]->getBoundingBox('y');
-	double baseLine = (double)r1.bottom;
-	double leading = (double)r2.bottom + 2;
+	for (int idx = 0; idx < 2; ++idx) {
+		FontInfo *i = (idx == 0) ? &g_conf->_monoInfo : &g_conf->_propInfo;
+		const Graphics::Font *f = (idx == 0) ? _fonts[0] : _fonts[7];
 
-	g_conf->_leading = static_cast<int>(MAX((double)g_conf->_leading, leading));
-	g_conf->_baseLine = static_cast<int>(MAX((double)g_conf->_baseLine, baseLine));
-	g_conf->_cellW = _fonts[0]->getStringWidth("0");
-	g_conf->_cellH = g_conf->_leading;
+		// TODO: See if there's any better way for getting the leading and baseline
+		Common::Rect r1 = f->getBoundingBox('o');
+		Common::Rect r2 = f->getBoundingBox('y');
+		double baseLine = (double)r1.bottom;
+		double leading = (double)r2.bottom + 2;
+
+		i->_leading = static_cast<int>(MAX((double)i->_leading, leading));
+		i->_baseLine = static_cast<int>(MAX((double)i->_baseLine, baseLine));
+		i->_cellW = _fonts[0]->getStringWidth("0");
+		i->_cellH = i->_leading;
+	}
 }
 
 void Screen::fill(const byte *rgb) {
@@ -62,40 +67,6 @@ void Screen::fill(const byte *rgb) {
 void Screen::fillRect(const Rect &box, const byte *rgb) {
 	uint color = format.RGBToColor(rgb[0], rgb[1], rgb[2]);
 	Graphics::Screen::fillRect(box, color);
-}
-
-void Screen::drawCaret(const Point &pos) {
-	const byte *rgb = g_conf->_caretColor;
-	uint color = format.RGBToColor(rgb[0], rgb[1], rgb[2]);
-	int x = pos.x / GLI_SUBPIX, y = pos.y;
-
-	switch (g_conf->_caretShape) {
-	case SMALL_DOT:
-		hLine(x + 0, y + 1, x + 0, color);
-		hLine(x - 1, y + 2, x + 1, color);
-		hLine(x - 2, y + 3, x + 2, color);
-		break;
-
-	case FAT_DOT:
-		hLine(x + 0, y + 1, x + 0, color);
-		hLine(x - 1, y + 2, x + 1, color);
-		hLine(x - 2, y + 3, x + 2, color);
-		hLine(x - 3, y + 4, x + 3, color);
-		break;
-
-	case THIN_LINE:
-		vLine(x, y - g_conf->_baseLine + 1, y - 1, color);
-		break;
-
-	case FAT_LINE:
-		Graphics::Screen::fillRect(Rect(x, y - g_conf->_baseLine + 1, x + 1,  y - 1), color);
-		break;
-
-	default:
-		// BLOCK
-		Graphics::Screen::fillRect(Rect(x, y - g_conf->_baseLine + 1, x + g_conf->_cellW, y - 1), color);
-		break;
-	}
 }
 
 bool Screen::loadFonts() {
@@ -129,10 +100,10 @@ bool Screen::loadFonts() {
 
 void Screen::loadFonts(Common::Archive *archive) {
 	// R ead in the fonts
-	double monoAspect = g_conf->_monoAspect;
-	double propAspect = g_conf->_propAspect;
-	double monoSize = g_conf->_monoSize;
-	double propSize = g_conf->_propSize;
+	double monoAspect = g_conf->_monoInfo._aspect;
+	double propAspect = g_conf->_propInfo._aspect;
+	double monoSize = g_conf->_monoInfo._size;
+	double propSize = g_conf->_propInfo._size;
 
 	_fonts.resize(FONTS_TOTAL);
 	_fonts[0] = loadFont(MONOR, archive, monoSize, monoAspect, FONTR);
@@ -172,7 +143,8 @@ FACES Screen::getFontId(const Common::String &name) {
 }
 
 int Screen::drawString(const Point &pos, int fontIdx, const byte *rgb, const Common::String &text, int spw) {
-	Point pt(pos.x / GLI_SUBPIX, pos.y - g_conf->_baseLine);
+	int baseLine = (fontIdx >= PROPR) ? g_conf->_propInfo._baseLine : g_conf->_monoInfo._baseLine;
+	Point pt(pos.x / GLI_SUBPIX, pos.y - baseLine);
 	const Graphics::Font *font = _fonts[fontIdx];
 	const uint32 color = format.RGBToColor(rgb[0], rgb[1], rgb[2]);
 	font->drawString(this, text, pt.x, pt.y, w - pt.x, color);
@@ -182,7 +154,8 @@ int Screen::drawString(const Point &pos, int fontIdx, const byte *rgb, const Com
 }
 
 int Screen::drawStringUni(const Point &pos, int fontIdx, const byte *rgb, const Common::U32String &text, int spw) {
-	Point pt(pos.x / GLI_SUBPIX, pos.y - g_conf->_baseLine);
+	int baseLine = (fontIdx >= PROPR) ? g_conf->_propInfo._baseLine : g_conf->_monoInfo._baseLine;
+	Point pt(pos.x / GLI_SUBPIX, pos.y - baseLine);
 	const Graphics::Font *font = _fonts[fontIdx];
 	const uint32 color = format.RGBToColor(rgb[0], rgb[1], rgb[2]);
 	font->drawString(this, text, pt.x, pt.y, w - pt.x, color);

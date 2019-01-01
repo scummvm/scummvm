@@ -28,6 +28,7 @@
 #include "common/rect.h"
 #include "graphics/screen.h"
 #include "glk/events.h"
+#include "glk/fonts.h"
 #include "glk/glk_types.h"
 #include "glk/screen.h"
 #include "glk/selection.h"
@@ -412,6 +413,11 @@ public:
 	 * Close and delete the window
 	 */
 	void close(bool recurse = true);
+
+	/**
+	 * Get the font info structure associated with the window
+	 */
+	virtual FontInfo *getFontInfo();
 
 	/**
 	 * Rearranges the window

@@ -24,6 +24,7 @@
 #define GLK_CONF_H
 
 #include "glk/glk_types.h"
+#include "glk/fonts.h"
 #include "glk/windows.h"
 
 namespace Glk {
@@ -68,26 +69,8 @@ private:
 	 */
 	void parseColor(const Common::String &str, byte *color);
 public:
-	Common::String _morePrompt;
-	byte _moreColor[3], _moreSave[3];
-	FACES _moreFont;
-	int _moreAlign;
-	double _monoAspect;
-	double _propAspect;
-	double _monoSize;
-	Common::String _monoR;
-	Common::String _monoB;
-	Common::String _monoI;
-	Common::String _monoZ;
-	Common::String _monoFont;
-	double _propSize;
-	Common::String _propR;
-	Common::String _propB;
-	Common::String _propI;
-	Common::String _propZ;
-	Common::String _propFont;
-	int _leading;
-	int _baseLine;
+	MonoFontInfo _monoInfo;
+	PropFontInfo _propInfo;
 	int _cols, _rows;
 	int _lockCols, _lockRows;
 	int _wMarginX, _wMarginY;
@@ -96,20 +79,11 @@ public:
 	int _wBorderX, _wBorderY;
 	int _tMarginX, _tMarginY;
 	double _gamma;
-	byte _caretColor[3], _caretSave[3];
-	byte _linkColor[3], _linkSave[3];
 	byte _borderColor[3], _borderSave[3];
 	byte _windowColor[3], _windowSave[3];
 	int _lcd;
-	int _caretShape;
-	int _linkStyle;
 	int _scrollWidth;
 	byte _scrollBg[3], _scrollFg[3];
-	int _justify;
-	int _quotes;
-	int _dashes;
-	int _spaces;
-	int _caps;
 	bool _graphics;
 	bool _sound;
 	bool _speak;

@@ -245,24 +245,26 @@ void WindowStream::setZColors(uint fg, uint bg) {
 	back[2] = (bg) & 0xff;
 
 	if (fg != zcolor_Transparent && fg != zcolor_Cursor) {
+		PropFontInfo *info = &g_conf->_propInfo;
+
 		if (fg == zcolor_Default) {
 			_window->_attr.fgset = 0;
 			_window->_attr.fgcolor = 0;
 			Windows::_overrideFgSet = false;
 			Windows::_overrideFgVal = 0;
 
-			Common::copy(g_conf->_moreSave, g_conf->_moreSave + 3, g_conf->_moreColor);
-			Common::copy(g_conf->_caretSave, g_conf->_caretSave + 3, g_conf->_caretColor);
-			Common::copy(g_conf->_linkSave, g_conf->_linkSave + 3, g_conf->_linkColor);
+			Common::copy(info->_moreSave, info->_moreSave + 3, info->_moreColor);
+			Common::copy(info->_caretSave, info->_caretSave + 3, info->_caretColor);
+			Common::copy(info->_linkSave, info->_linkSave + 3, info->_linkColor);
 		} else if (fg != zcolor_Current) {
 			_window->_attr.fgset = 1;
 			_window->_attr.fgcolor = fg;
 			Windows::_overrideFgSet = true;
 			Windows::_overrideFgVal = fg;
 
-			Common::copy(fore, fore + 3, g_conf->_moreColor);
-			Common::copy(fore, fore + 3, g_conf->_caretColor);
-			Common::copy(fore, fore + 3, g_conf->_linkColor);
+			Common::copy(fore, fore + 3, info->_moreColor);
+			Common::copy(fore, fore + 3, info->_caretColor);
+			Common::copy(fore, fore + 3, info->_linkColor);
 		}
 	}
 

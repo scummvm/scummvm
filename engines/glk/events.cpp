@@ -87,7 +87,7 @@ void Events::initializeCursors() {
 
 	// Setup selection cusor sized to the vertical line size
 	Surface &sel = _cursors[CURSOR_IBEAM];
-	sel.create(5, g_conf->_leading, g_system->getScreenFormat());
+	sel.create(5, g_conf->_propInfo._leading, g_system->getScreenFormat());
 	sel.fillRect(Common::Rect(0, 0, sel.w, sel.h), TRANSPARENT);
 	sel.hLine(0, 0, 4, 0);
 	sel.hLine(0, sel.h - 1, 4, 0);

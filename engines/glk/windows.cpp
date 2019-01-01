@@ -502,7 +502,7 @@ Window::Window(Windows *windows, uint rock) : _windows(windows), _rock(rock),
 	_attr.hyper = 0;
 
 	Common::copy(&g_conf->_windowColor[0], &g_conf->_windowColor[3], &_bgColor[0]);
-	Common::copy(&g_conf->_moreColor[0], &g_conf->_moreColor[3], _fgColor);
+	Common::copy(&g_conf->_propInfo._moreColor[0], &g_conf->_propInfo._moreColor[3], _fgColor);
 	_dispRock.num = 0;
 
 	Streams &streams = *g_vm->_streams;
@@ -560,6 +560,10 @@ void Window::close(bool recurse) {
 
 	// Finally, delete the window
 	delete this;
+}
+
+FontInfo *Window::getFontInfo() {
+	error("Tried to get font info for a non-text window");
 }
 
 void Window::cancelLineEvent(Event *ev) {
