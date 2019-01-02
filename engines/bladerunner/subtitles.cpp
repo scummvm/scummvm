@@ -59,13 +59,13 @@ const Common::String Subtitles::SUBTITLES_FONT_FILENAME_EXTERNAL = "SUBTLS_E.FON
 
 /*
 * All entries need to have the language code appended (after a '_').
-* And all entries should get the suffix extension ".TRE" (or FUTURE: the last letter in extension "TR*" should also be the language code)
-* If/When adding new TRE resources here --> Update kMaxTextResourceEntries and also update method getIdxForSubsTreName()
+* And all entries should get the suffix extension ".TRx"; the last letter in extension "TR*" should also be the language code
+* If/When adding new Text Resources here --> Update kMaxTextResourceEntries and also update method getIdxForSubsTreName()
 */
 const Common::String Subtitles::SUBTITLES_FILENAME_PREFIXES[kMaxTextResourceEntries] = {
 	"INGQUO",           // 0 // (in-game subtitles, not VQA subtitles)
-	"WSTLGO",           // 1
-	"BRLOGO",           // 2
+	"WSTLGO",           // 1 // all game (language) versions have the English ('E') version of WSTLGO
+	"BRLOGO",           // 2 // all game (language) versions have the English ('E') version of BRLOGO
 	"INTRO",            // 3
 	"MW_A",             // 4
 	"MW_B01",           // 5
@@ -137,8 +137,13 @@ void Subtitles::init(void) {
 	for (int i = 0; i < kMaxTextResourceEntries; i++) {
 		_vqaSubsTextResourceEntries[i] = new TextResource(_vm);
 		Common::String tmpConstructedFileName = "";
-		tmpConstructedFileName = SUBTITLES_FILENAME_PREFIXES[i] + "_" + _vm->_languageCode;
-		//tmpConstructedFileName += ".TRE";   // = Common::String::format("%s.TR%s", tmpConstructedFileName.c_str(), _vm->_languageCode.c_str());
+		if (SUBTITLES_FILENAME_PREFIXES[i] == "WSTLGO" || SUBTITLES_FILENAME_PREFIXES[i] == "BRLOGO") {
+			tmpConstructedFileName = SUBTITLES_FILENAME_PREFIXES[i] + "_E"; // Only English versions of these exist
+		}
+		else {
+			tmpConstructedFileName = SUBTITLES_FILENAME_PREFIXES[i] + "_" + _vm->_languageCode;
+		}
+
 		if ( _vqaSubsTextResourceEntries[i]->open(tmpConstructedFileName)) {
 			_gameSubsResourceEntriesFound[i] = true;
 		}
@@ -174,12 +179,17 @@ void Subtitles::setSubtitlesSystemInactive(bool flag) {
 
 /**
 *
-* Returns the index of the specified .TRE filename in the SUBTITLES_FILENAME_PREFIXES table
+* Returns the index of the specified Text Resource filename in the SUBTITLES_FILENAME_PREFIXES table
 */
 int Subtitles::getIdxForSubsTreName(const Common::String &treName) const {
 	Common::String tmpConstructedFileName = "";
 	for (int i = 0; i < kMaxTextResourceEntries; ++i) {
-		tmpConstructedFileName = SUBTITLES_FILENAME_PREFIXES[i] + "_" + _vm->_languageCode;
+		if (SUBTITLES_FILENAME_PREFIXES[i] == "WSTLGO" || SUBTITLES_FILENAME_PREFIXES[i] == "BRLOGO") {
+			tmpConstructedFileName = SUBTITLES_FILENAME_PREFIXES[i] + "_E"; // Only English versions of these exist
+		}
+		else {
+			tmpConstructedFileName = SUBTITLES_FILENAME_PREFIXES[i] + "_" + _vm->_languageCode;
+		}
 		if (tmpConstructedFileName == treName) {
 			return i;
 		}
