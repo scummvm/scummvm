@@ -13,7 +13,7 @@ https://docs.google.com/spreadsheets/d/17ew0YyhSwqcqZg6bXrIgz0GkA62dhgViHN15lOu5
 4. Create a configureFontsTranslation.txt in the sampleInput folder. A configuration file for the MIX file creation. A sample is provided in the sampleInput folder and documentation about this is below in this document (see "text configuration file" in mixResourceCreator).  
 5. From the ScummVM root folder run:
 ```
-	make devtools/create_bladerunner/subtitles
+make devtools/create_bladerunner/subtitles
 ```
 6. Copy the output file "SUBTITLES.MIX", created in the ScummVM root folder, into your Blade Runner game directory.
 7. Launch the Blade Runner game using ScummVM.
