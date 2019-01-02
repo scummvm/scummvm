@@ -1,1 +1,1 @@
-python2.7 mixResourceCreator.py	-x ../sampleInput/englishTranscript.xls -ian ../common/actornames.txt -cft ../sampleInput/configureFontsTranslation.txt --trace
+python2.7 mixResourceCreator.py	-x ../sampleInput/englishTranscript.xls -ian ../common/actornames.txt -cft ../sampleInput/configureFontsTranslation.txt -ld EN_ANY --trace

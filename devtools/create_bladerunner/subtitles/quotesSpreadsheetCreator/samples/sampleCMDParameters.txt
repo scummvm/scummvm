@@ -1,1 +1,1 @@
-python2.7 quoteSpreadsheetCreator.py -op F:\WORKSPACE_\BladeRunnerExtrTools\br-mixer-master\data\WAV -ip H:/Games/BladeRunner -ian ../common/actornames.txt -xtre --trace
+python2.7 quoteSpreadsheetCreator.py -op /d/BladeRunnerLPBackup/ENG_data/WAV -ip "/d/Westwood/BladeRunnerENG" -ian ../common/actornames.txt -ld EN_ANY -xtre -xwav --trace

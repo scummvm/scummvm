@@ -1,14 +1,13 @@
-# Blade Runner Subtitles
-
-# Blade Runner (1997) Subtitles Support
+# Blade Runner (Westwood Studios, 1997) Subtitles Support
 Some tools written in __Python 2.7__ to help add support for subtitles in Westwood's point and click adventure game Blade Runner (1997) for PC.
+The official English, German, French, Italian and Spanish versions of the game should be supported.
 
 ## Building and installing a SUBTITLES.MIX file with a "make" command
-You need to follow these steps:
-1. Download the online excel transcript and save it as "englishTranscript.xls" into the "devtools\create_bladerunner\subtitles\sampleInput" folder.
+You need to follow these instructions:
+1. Download the online Excel transcript and save it as "englishTranscript.xls" into the "devtools\create_bladerunner\subtitles\sampleInput" folder.
 __The online Excel file is available here:__
 https://docs.google.com/spreadsheets/d/17ew0YyhSwqcqZg6bXrIgz0GkA62dhgViHN15lOu5Hj8/edit?usp=sharing
-2. Edit your font glyphs PNG file (or use the provided one). This file should be stored as "subtitlesFont.png" into the "devtools\create_bladerunner\subtitles\sampleInput" folder.
+2. Edit your font glyphs PNG file (or use the provided one in the sampleInput folder). This file should be stored as "subtitlesFont.png" into the "devtools\create_bladerunner\subtitles\sampleInput" folder.
 3. Create an overrideEncodingSUBLTS.txt file in the sampleInput folder. This is a configuration file for the font file creation. A sample is provided in the sampleInput folder and documentation about this is below in this document (see "override encoding text file" in fontCreator).
 4. Create a configureFontsTranslation.txt in the sampleInput folder. A configuration file for the MIX file creation. A sample is provided in the sampleInput folder and documentation about this is below in this document (see "text configuration file" in mixResourceCreator).  
 5. From the ScummVM root folder run:
@@ -21,34 +20,34 @@ make devtools/create_bladerunner/subtitles
 ## quotesSpreadsheetCreator (quoteSpreadsheetCreator.py)
 (requires python lib *xlwt*, *wave*)
 A tool to gather all the speech audio filenames in an Excel file which will include a column with links to the audio file location on the PC. By Ctrl+MouseClick on that column's entries you should be able to listen to the corresponding wav file.
-The output excel file *out.xls* should help with the transcription of all the spoken *in-game* quotes. It also provides extra quote information such as the corresponding actor ID and quote ID per quote.
+The output Excel file *out.xls* should help with the transcription of all the spoken *in-game* quotes. It also provides extra quote information such as the corresponding actor ID and quote ID per quote.
 
-Note 1: A lot of extra information has been added to the output Excel file maintained for the English transcription, such as whether a quote is unused or untriggered, the person a quote refers to (when applicable), as well as extra quotes that are not separate Audio files (AUD) in the game's archives but are part of a video file (VQA) or were text resources (TRE) for dialogue menus, UI etc. Therefore, this tool is provided here mostly for archiving purposes.
+Note 1: A lot of extra information has been added to the output Excel file maintained for the English transcription, such as whether a quote is unused or untriggered, the person a quote refers to (when applicable), as well as extra quotes that are not separate Audio files (AUD) in the game's archives but are part of a video file (VQA) or were text resources (TRx) for dialogue menus, UI etc. Therefore, this tool is provided here mostly for archiving purposes.
 __The online Excel file is available here:__
 https://docs.google.com/spreadsheets/d/17ew0YyhSwqcqZg6bXrIgz0GkA62dhgViHN15lOu5Hj8/edit?usp=sharing
 
 Syntax Notes: 
-1. The "-op" switch should be followed by the path to the folder where the WAV files should be exported; This folder path will also be used as input when the output Excel will be created (for the "INGQUO_E.TRE" sheet with the in-game quotes).
+1. The "-op" switch should be followed by the path to the folder where the WAV files should be exported; This folder path will also be used as input when the output Excel will be created (for the "INGQUO_x.TRx" sheet with the in-game quotes).
 2. The "-ip" switch should be followed by the path to the game's folder, where the TLK and MIX files reside.
 3. The "-ian" optional switch is followed by the path to the actornames.txt file -- if this is omitted then the file is assumed to reside in the current working directory.
 4. The "-ld" optional switch is followed by a language description for the language of the game you are exporting Text Resources from. This switch is meaningful when you also use the "-xtre" switch to export Text Resource files.
-    * Valid language values are: EN_ANY, DE_DEU, FR_FRA, IT_ITA, RU_RUS, ES_ESP
-    * Default language value is: EN_ANY (English)	
+    * Valid language values are: EN_ANY, DE_DEU, FR_FRA, IT_ITA, ES_ESP, RU_RUS 
+    * Default language value is: EN_ANY (English)
 5. Using the "-xwav" optional switch, this tool will export __ALL__ game's audio files (AUD) (that are either speech or speech-related) in a WAV format. This is expected to run for a few minutes and take up quite a lot of your HDD space (about 650MB).
-6. Using the "-xtre" optional switch, the tool will add a sheet to the output Excel with the contents of each of the game's Text Resource files (TRE).
+6. Using the "-xtre" optional switch, the tool will add a sheet to the output Excel with the contents of each of the game's Text Resource files (TRx).
 7. You may use both, either or neither of the "-xwav" and "-xtre" switches, depending on what you need to do.
 8. The "--trace" optional switch enables extra debug messages to be printed. 
 
 Usage:
 ```
-python2.7 quoteSpreadsheetCreator.py -op folderpath_for_extracted_wav_Files [-ip folderpath_for_TLK_Files] [-ian pathToActorNamesTxt] [-m stringPathToReplaceFolderpathInExcelLinks] [-ld languageDescription] [-xwav] [-xtre] [--trace]
+python2.7 quoteSpreadsheetCreator.py -op folderpath_for_exported_wav_Files [-ip folderpath_for_TLK_Files] [-ian pathToActorNamesTxt] [-m stringPathToReplaceFolderpathInExcelLinks] [-ld languageDescription] [-xwav] [-xtre] [--trace]
 ```
 The tool __requires__ a valid path to the actornames.txt file; this file is included in the samples folder.
 
 
 ## mixResourceCreator (mixResourceCreator.py)
 (requires python lib *xlrd*)
-A tool to process the aforementioned Excel file with the dialogue transcriptions and output text resource files (TRE) that will be packed along with the external font (see fontCreator tool) into a SUBTITLES.MIX file. Currently, a modified version of the ScummVM's BladeRunner engine is required for this MIX file to work in-game. Multiple TRE files will be created intermediately in order to fully support subtitles in the game. One TRE file includes all in-game spoken quotes and the rest of them correspond to any VQA video sequence that contain voice acting.
+A tool to process the aforementioned Excel file with the dialogue transcriptions and output text resource files (TRx) that will be packed along with the external font (see fontCreator tool) into a SUBTITLES.MIX file. Multiple TRx files will be created intermediately in order to fully support subtitles in the game. One TRx file includes all in-game spoken quotes and the rest of them correspond to any VQA video sequence that contain voice acting.
 Usage:
 ```
 python2.7 mixResourceCreator.py -x excelWithTranscriptSheets.xls [-ian pathToActorNamesTxt] [-cft pathToConfigureFontsTranslationTxt] [--trace]
@@ -59,7 +58,10 @@ Syntax Notes:
 1. The "-x" switch is followed by the path to the input Excel file (xls) which should contain the transcript sheet(s).
 2. The "-ian" optional switch is followed by the path to the actornames.txt file -- if this is omitted then the file is assumed to reside in the current working directory.
 3. The "-cft" optional switch is followed by the path to the text configuration file "configureFontsTranslation.txt" -- if this is omitted then the file is assumed to reside in the current working directory.
-4. The "--trace" optional switch enables extra debug messages to be printed. 
+4. The "-ld" optional switch is followed by a language description for the language of the game you are exporting Text Resources from. This switch is meaningful when you also use the "-xtre" switch to export Text Resource files.
+    * Valid language values are: EN_ANY, DE_DEU, FR_FRA, IT_ITA, ES_ESP, RU_RUS 
+    * Default language value is: EN_ANY (English)
+5. The "--trace" optional switch enables extra debug messages to be printed. 
 
 The __text configuration file "configureFontsTranslation.txt"__ a __text file that should be saved in a UTF-8 encoding (no BOM)__, that contains the following:
 1. A key "targetEncoding" with a value of the name of the ASCII codepage that should be used for the character fonts (eg windows-1253).
@@ -72,7 +74,7 @@ The __text configuration file "configureFontsTranslation.txt"__ a __text file th
 
 ## fontCreator (fontCreator.py)
 (requires python Image library *PIL*)
-A tool to support __both__ the extraction of fonts from the game __and__ the creation of a font file (FON) for use with (currently) a modified version of ScummVM's BladeRunner engine (WIP) in order to resolve various issues with the available fonts (included in the game's own resource files). These issues include alignment, kerning, corrupted format, limited charset and unsupported characters -- especially for languages with too many non-Latin symbols in their alphabet.
+A tool to support __both__ the exporting of fonts from the game (to PNG images) __and__ the creation of a font file (FON) in order to resolve various issues with the available fonts (included in the game's own resource files). These issues include alignment, kerning, corrupted format, limited charset and unsupported characters -- especially for languages with too many non-Latin symbols in their alphabet.
 This font tool's code is based off the Monkey Island Special Edition's Translator (https://github.com/ShadowNate/MISETranslator).
 Usage:
 ```
@@ -114,8 +116,7 @@ __For the creation of subtitles' font mode__, there are six (6) mandatory launch
 	* Background should be transparent.
 	* All colors used in the character glyphs should not have any transparency value (eg from Gimp 2, set Layer->Transparency->Threshold alpha to 0). There's no partial transparency supported by the game. A pixel will either by fully transparent or fully opaque.
     * If you use special glyphs that are not in the specified ASCII codepage (eg ñ, é, í, â don't appear in the Greek codepage), then in this image file you should use the actual special glyphs - put them at the position of the placeholder characters in your "all-characters" string that you've specified in the override encoding text file.
-2. targetFONfilename: Example: "SUBTLS_E.FON". Keep in mind that:
-    * As of yet, only the SUBTLS_E.FON is supported by a modified (non-official) version of the BladeRunner ScummVM engine.
+2. targetFONfilename: Example: "SUBTLS_E.FON" for the subtitles.
 3. minSpaceBetweenLettersInRowLeftToLeft: This is a length (positive integer) in pixels that indicates the __minimum__ distance between the left-most side of a glyph and the left-most side of the immediate subsequent glyph in the input image PNG (row of glyphs) file.
 This basically tells the tool how far (in the x axis) it can search for pixels that belong to the same glyph). You can input an approximate value here and adjust it based on the output of the tool (the tool should be able to detect ALL the glyphs in the PNG row image file and it will report how many it detected in its output)
 4. minSpaceBetweenLettersInColumnTopToTop: This is a positive integer in pixels that indicates the __minimum__ distance between the top-most pixel of a glyph and the top-most pixel of a glyph on another row of the input image file.
