@@ -23,6 +23,8 @@
 #ifndef GLK_FROTZ_WINDOWS
 #define GLK_FROTZ_WINDOWS
 
+#include "glk/windows.h"
+
 namespace Glk {
 namespace Frotz {
 
@@ -80,15 +82,12 @@ public:
 	/**
 	 * Constructor
 	 */
-	Windows() : _lower(_windows[0]), _upper(_windows[1]) {}
+	Windows();
 
 	/**
 	 * Array access
 	 */
-	Window &operator[](uint idx) {
-		assert(idx < 8);
-		return _windows[idx];
-	}
+	Window &operator[](uint idx);
 };
 
 } // End of namespace Frotz
