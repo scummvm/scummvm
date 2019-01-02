@@ -646,11 +646,14 @@ void TextGridWindow::getSize(uint *width, uint *height) const {
 /*--------------------------------------------------------------------------*/
 
 void TextGridWindow::TextGridRow::resize(size_t newSize) {
-	_chars.clear();
-	_attrs.clear();
-	_chars.resize(newSize);
-	_attrs.resize(newSize);
-	Common::fill(&_chars[0], &_chars[0] + newSize, ' ');
+	size_t oldSize = _chars.size();
+	if (newSize != oldSize) {
+		_chars.resize(newSize);
+		_attrs.resize(newSize);
+
+		if (newSize > oldSize)
+			Common::fill(&_chars[0] + oldSize, &_chars[0] + newSize, ' ');
+	}
 }
 
 } // End of namespace Glk

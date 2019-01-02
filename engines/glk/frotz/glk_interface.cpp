@@ -591,6 +591,7 @@ zchar GlkInterface::os_read_line(int max, zchar *buf, int timeout, int width, in
 	glk_request_timer_events(0);
 	buf[ev.val1] = '\0';
 
+	// If the upper status line area was expanded to show a text box/quotation, restore it back
 	if (gos_upper && mach_status_ht < curr_status_ht)
 		reset_status_ht();
 	curr_status_ht = 0;
