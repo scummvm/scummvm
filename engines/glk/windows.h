@@ -427,6 +427,21 @@ public:
 	}
 
 	/**
+	 * Set the size of a window
+	 */
+	virtual void setSize(const Point &newSize) {
+		_bbox.setWidth(newSize.x);
+		_bbox.setHeight(newSize.y);
+	}
+
+	/**
+	 * Sets the position of a window
+	 */
+	virtual void setPosition(const Point &newPos) {
+		_bbox.moveTo(newPos);
+	}
+
+	/**
 	 * Get window split size within parent pair window
 	 */
 	virtual uint getSplit(uint size, bool vertical) const {

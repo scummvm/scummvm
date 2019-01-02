@@ -35,7 +35,7 @@ public:
 	Window *_child1, *_child2;
 
 	// split info...
-	uint _dir;               ///< winmethod_Left, Right, Above, or Below
+	uint _dir;               ///< winmethod_Left, Right, Above, Below, or OnTop
 	bool _vertical, _backward; ///< flags
 	uint _division;          ///< winmethod_Fixed or winmethod_Proportional
 	Window *_key;              ///< nullptr or a leaf-descendant (not a Pair)

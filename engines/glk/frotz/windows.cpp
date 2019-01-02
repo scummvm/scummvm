@@ -42,10 +42,16 @@ Window &Windows::operator[](uint idx) {
 
 /*--------------------------------------------------------------------------*/
 
+Window::Window() : _windows(nullptr), _win(nullptr), _tempVal(0) {}
+
+
 winid_t Window::getWindow() {
 	if (!_win) {
 		// Window doesn't exist, so create it
-		// TODO
+		// TODO: For now I'm assuming all the extra created windows will be graphics, since Glk requires
+		// us to specify it at creation time. Not sure if it's true or not for all V6 games
+		winid_t parent = _windows->_lower;
+		_win = g_vm->glk_window_open(parent, winmethod_OnTop | winmethod_Fixed, 0, wintype_Graphics, 0);
 	}
 
 	return _win;
@@ -54,9 +60,8 @@ winid_t Window::getWindow() {
 void Window::setSize(const Point &newSize) {
 	winid_t win = getWindow();
 
+	win->setSize(newSize);
 /* TODO
-	y_size = zargs[1];
-	_wp[win].x_size = zargs[2];
 
 	// Keep the cursor within the window
 	if (wp[win].y_cursor > zargs[1] || wp[win].x_cursor > zargs[2])
@@ -69,12 +74,44 @@ void Window::setSize(const Point &newSize) {
 void Window::setPosition(const Point &newPos) {
 	winid_t win = getWindow();
 
-	/* TODO
-	if (win == cwin)
-		update_cursor();
-	*/
+	win->setPosition(newPos);
 }
 
+const uint16 &Window::operator[](WindowProperty propType) {
+	_tempVal = getProperty(propType);
+	return _tempVal;
+}
+
+uint16 Window::getProperty(WindowProperty propType) {
+	winid_t win = getWindow();
+	Point pt;
+
+	switch (propType) {
+	case Y_POS:
+		return win->_bbox.top;
+	case X_POS:
+		return win->_bbox.left;
+	case Y_SIZE:
+		return win->_bbox.height();
+	case X_SIZE:
+		return win->_bbox.width();
+	case Y_CURSOR:
+		return win->getCursor().y;
+	case X_CURSOR:
+		return win->getCursor().x;
+	default:
+		error("Read of an unimplemented property");
+		/*
+			LEFT_MARGIN = 6, RIGHT_MARGIN = 7, NEWLINE_INTERRUPT = 8, INTERRUPT_COUNTDOWN = 9,
+			TEXT_STYLE = 10, COLOUR_DATA = 11, FONT_NUMBER = 12, FONT_SIZE = 13, ATTRIBUTES = 14,
+			LINE_COUNT = 15, TRUE_FG_COLOR = 16, TRUE_BG_COLOR = 17
+		*/
+	}
+}
+
+void Window::setProperty(WindowProperty propType, uint16 value) {
+	// TODO
+}
 
 } // End of namespace Frotz
 } // End of namespace Glk

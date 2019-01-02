@@ -50,6 +50,28 @@ void PairWindow::rearrange(const Rect &box) {
 
 	_bbox = box;
 
+	if (!_backward) {
+		ch1 = _child1;
+		ch2 = _child2;
+	} else {
+		ch1 = _child2;
+		ch2 = _child1;
+	}
+
+
+	if (_dir == winmethod_OnTop) {
+		// ch2 is on top of ch1
+		ch1->rearrange(box1);
+		if (!ch2->_bbox.isEmpty() && !ch2->_bbox.contains(box)) {
+			// ch2 is outside new bounds, so clip it to the new dimensions
+			Rect subRect = ch2->_bbox;
+			subRect.clip(box);
+			ch2->rearrange(subRect);
+		}
+
+		return;
+	}
+
 	if (_vertical) {
 		min = _bbox.left;
 		max = _bbox.right;
@@ -111,14 +133,6 @@ void PairWindow::rearrange(const Rect &box) {
 		box1.right = _bbox.right;
 		box2.left = _bbox.left;
 		box2.right = _bbox.right;
-	}
-
-	if (!_backward) {
-		ch1 = _child1;
-		ch2 = _child2;
-	} else {
-		ch1 = _child2;
-		ch2 = _child1;
 	}
 
 	ch1->rearrange(box1);

@@ -103,8 +103,8 @@ Window *Windows::windowOpen(Window *splitwin, uint method, uint size,
 		}
 
 		val = (method & winmethod_DirMask);
-		if (val != winmethod_Above && val != winmethod_Below
-				&& val != winmethod_Left && val != winmethod_Right) {
+		if (val != winmethod_Above && val != winmethod_Below && val != winmethod_Left
+				&& val != winmethod_Right && val != winmethod_OnTop) {
 			warning("window_open: invalid method (bad direction)");
 			return nullptr;
 		}

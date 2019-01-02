@@ -96,6 +96,24 @@ public:
 	virtual FontInfo *getFontInfo() override { return &_font; }
 
 	/**
+	 * Set the size of a window
+	 */
+	virtual void setSize(const Point &newSize) {
+		Window::setSize(newSize);
+		_curX = CLIP((int16)_curX, _bbox.left, _bbox.right);
+		_curY = CLIP((int16)_curY, _bbox.top, _bbox.bottom);
+	}
+
+	/**
+	 * Sets the position of a window
+	 */
+	virtual void setPosition(const Point &newPos) {
+		_bbox.moveTo(newPos);
+		_curX = CLIP((int16)_curX, _bbox.left, _bbox.right);
+		_curY = CLIP((int16)_curY, _bbox.top, _bbox.bottom);
+	}
+
+	/**
 	 * Rearranges the window
 	 */
 	virtual void rearrange(const Rect &box) override;

@@ -31,6 +31,13 @@ namespace Frotz {
 #include "glk/windows.h"
 #include "glk/utils.h"
 
+enum WindowProperty {
+	Y_POS = 0, X_POS = 1, Y_SIZE = 2, X_SIZE = 3, Y_CURSOR = 4, X_CURSOR = 5,
+	LEFT_MARGIN = 6, RIGHT_MARGIN = 7, NEWLINE_INTERRUPT = 8, INTERRUPT_COUNTDOWN = 9,
+	TEXT_STYLE = 10, COLOUR_DATA = 11, FONT_NUMBER = 12, FONT_SIZE = 13, ATTRIBUTES = 14,
+	LINE_COUNT = 15, TRUE_FG_COLOR = 16, TRUE_BG_COLOR = 17
+};
+
 class Windows;
 
 /**
@@ -41,16 +48,27 @@ class Window {
 private:
 	Windows *_windows;
 	winid_t _win;
+	uint16 _tempVal;		///< used in calls to square brackets operator
 private:
 	/**
 	 * Gets a reference to the window, creating a new one if one doesn't already exist
 	 */
 	winid_t getWindow();
+
+	/**
+	 * Get a property value
+	 */
+	uint16 getProperty(WindowProperty propType);
+
+	/**
+	 * Set a property value
+	 */
+	void setProperty(WindowProperty propType, uint16 value);
 public:
 	/**
 	 * Constructor
 	 */
-	Window() : _win(nullptr) {}
+	Window();
 
 	/**
 	 * Assignment operator
@@ -71,15 +89,9 @@ public:
 	operator bool() const { return _win != nullptr; }
 
 	/**
-	 * Property access. There are the following properties defined by the spec:
-	 * 0  y coordinate    6   left margin size            12  font number
-	 * 1  x coordinate    7   right margin size           13  font size
-	 * 2  y size          8   newline interrupt routine   14  attributes
-	 * 3  x size          9   interrupt countdown         15  line count
-	 * 4  y cursor        10  text style                  16 true foreground colour
-	 * 5  x cursor        11  colour data                 17 true background colour
+	 * Property accessor
 	 */
-	//zword &operator[](uint idx);
+	const uint16 &operator[](WindowProperty propType);
 
 	/**
 	 * Set the window size
