@@ -1,1 +1,1 @@
-python2.7 mixResourceCreator.py	-x ./outSpeech-02-09-2018-1358-TranslatingComms-117PatrasLinks.xls -ian ./common/actornames.txt -cft ./configureFontsTranslation.txt --trace
+python2.7 mixResourceCreator.py	-x ../sampleInput/englishTranscript.xls -ian ../common/actornames.txt -cft ../sampleInput/configureFontsTranslation.txt --trace

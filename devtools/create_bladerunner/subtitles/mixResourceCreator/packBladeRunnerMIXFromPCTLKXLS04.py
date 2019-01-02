@@ -77,15 +77,18 @@ APP_WRAPPER_NAME = "mixResourceCreator.py"
 APP_NAME_SPACED = "Blade Runner MIX Resource Creator"
 APP_SHORT_DESC = "Make a Text Resource file for spoken in-game quotes and pack Text Resources with Fonts into a SUBTITLES.MIX file."
 
+# TODO- maybe the '_E' part is not needed
 DEFAULT_SUBTITLES_FONT_NAME = 'SUBTLS_E.FON'
 DEFAULT_SUBTITLES_MIX_OUTPUT_NAME = u'SUBTITLES.MIX'
 
 # all dialogue sheets get the SUBTLS_E.FON for translation to a Text Resource (TRx)
 # In-game dialogue sheet
 # TODO- maybe the '_E' part is not needed, since we use the suffix (x) of the extension (TRx) to signify the language
-SUPPORTED_INGAME_DIALOGUE_SHEETS = ['INGQUO_E.TR']
+SUPPORTED_INGAME_DIALOGUE_SHEETS = ['INGQUO_']
 # Video cut-scenes' dialogue sheets - these need the appendix of (x) for the language code, and a suffix of '.VQA'. 
-SUPPORTED_VIDEO_DIALOGUE_SHEETS = ['WSTLGO_', 'BRLOGO_', 'INTRO_', 'MW_A_', 'MW_B01_', 'MW_B02_', 'MW_B03_', 'MW_B04_', 'MW_B05_', 'INTRGT_', 'MW_D_', 'MW_C01_', 'MW_C02_', 'MW_C03_', 'END04A_', 'END04B_', 'END04C_', 'END06_', 'END01A_', 'END01B_', 'END01C_', 'END01D_', 'END01E_', 'END01F_', 'END03_']
+# These two first videos seem to be in _E (english) language across translations
+SUPPORTED_VIDEO_DIALOGUE_SHEETS_ENGLISH = ['WSTLGO_', 'BRLOGO_']
+SUPPORTED_VIDEO_DIALOGUE_SHEETS_LOCALIZED = ['INTRO_', 'MW_A_', 'MW_B01_', 'MW_B02_', 'MW_B03_', 'MW_B04_', 'MW_B05_', 'INTRGT_', 'MW_D_', 'MW_C01_', 'MW_C02_', 'MW_C03_', 'END04A_', 'END04B_', 'END04C_', 'END06_', 'END01A_', 'END01B_', 'END01C_', 'END01D_', 'END01E_', 'END01F_', 'END03_']
 #
 # Each Text Resource (TRx) sheet gets a specific font to handle their translation to Text Resource
 # TAHOMA means both TAHOMA Fonts (18 and 24)(their translation should be identical (although in the original they have minor differences but they don't affect anything)
@@ -103,27 +106,30 @@ gTraceModeEnabled = False
 gActiveLanguageDescriptionCodeTuple = ''
 gNumOfSpokenQuotes = 0
 
+gActorPropertyEntries = []
+gActorPropertyEntriesWasInit = False
 
-origEncoding = 'windows-1252'
-defaultTargetEncoding = 'windows-1252'
-defaultTargetEncodingUnicode = unicode(defaultTargetEncoding, 'utf-8')
-targetEncoding = ''
-targetEncodingUnicode = ''
+gTableOfStringIds = []
+gTableOfStringOffsets = []
+gTableOfStringEntries = []
 
-tableOfStringIds = []
-tableOfStringOffsets = []
-tableOfStringEntries = []
-
-# this list is used in order to replace the actual indices of characters with delegate font indices (ASCII indexes of the target code-page) which have been used during the font creation (or exist in in the internal TAHOMA font)
+# This list is used in order to replace the actual indices of characters with delegate font indices (ASCII indexes of the target code-page) which have been used during the font creation (or exist in in the internal TAHOMA font)
 # contains tuples of two values. First value is actual UTF char, the second is a replacement ASCII char
-listOfFontNamesToOutOfOrderGlyphs = []
-arrangedListOfFontNamesToOutOfOrderGlyphs = []
+gListOfFontNamesToOutOfOrderGlyphs = []
+gArrangedListOfFontNamesToOutOfOrderGlyphs = []
 
-actorPropertyEntries = []
-actorPropertyEntriesWasInit = False
+ORIGINAL_ENCODING = 'windows-1252'
+#DEFAULT_TARGET_ENCODING = 'windows-1252'
+#DEFAULT_TARGET_ENCODING_UNICODE = unicode(DEFAULT_TARGET_ENCODING, 'utf-8')
+gTargetEncoding = ''
 
+#
+#
+#
 def initOverrideEncoding(pathToConfigureFontsTranslationTxt):
-	global targetEncoding
+	global gTargetEncoding
+	global gListOfFontNamesToOutOfOrderGlyphs
+	global gArrangedListOfFontNamesToOutOfOrderGlyphs
 
 	if pathToConfigureFontsTranslationTxt is None or not pathToConfigureFontsTranslationTxt:
 		configureFontsTranslationTextFile = u'configureFontsTranslation.txt'
@@ -134,6 +140,7 @@ def initOverrideEncoding(pathToConfigureFontsTranslationTxt):
 	configureTranslationFailed = True
 	try:
 		if os.access(pathToConfigureFontsTranslationTxt, os.F_OK):
+			print "[Info] Font Translation Configuration file found: {0}".format(pathToConfigureFontsTranslationTxt)
 			conFontsTranslationFile = open(pathToConfigureFontsTranslationTxt, 'r')
 			linesLst = conFontsTranslationFile.readlines()
 			conFontsTranslationFile.close()
@@ -141,7 +148,7 @@ def initOverrideEncoding(pathToConfigureFontsTranslationTxt):
 				configureTranslationFailed = True
 			else:
 				if gTraceModeEnabled:
-					print "[Info] Font Translation Configuration Info: "
+					print "[Debug] Parsing Font Translation Configuration file info..."
 				involvedTokensLst =[]
 				for readEncodLine in linesLst:
 					tmplineTokens = re.findall("[^\t\n]+",readEncodLine )
@@ -152,8 +159,8 @@ def initOverrideEncoding(pathToConfigureFontsTranslationTxt):
 					nameKeyTupl = tokenNameKeyPair.split('=', 1)
 					try:
 						if len(nameKeyTupl) == 2 and nameKeyTupl[0] == 'targetEncoding' and nameKeyTupl[1] is not None and nameKeyTupl[1] != '-' and nameKeyTupl[1] != '':
-							targetEncodingUnicode = unicode(nameKeyTupl[1], 'utf-8')
-							targetEncoding = unicode.encode("%s" % targetEncodingUnicode, origEncoding)
+							tmpTargetEncodingUnicode = unicode(nameKeyTupl[1], 'utf-8')
+							gTargetEncoding = unicode.encode("%s" % tmpTargetEncodingUnicode, ORIGINAL_ENCODING)
 						elif len(nameKeyTupl) == 2 and nameKeyTupl[0] == 'fontNameAndOutOfOrderGlyphs' and nameKeyTupl[1] is not None and nameKeyTupl[1] != '':
 							# split at hash tag first
 							tmpListOfOutOfOrderGlyphs = []
@@ -163,15 +170,15 @@ def initOverrideEncoding(pathToConfigureFontsTranslationTxt):
 								tmpFontName = fontNameAndOOOGlyphsTuple[0]
 								# split at comma, then split at ':' and store tuples of character
 								explicitOutOfOrderGlyphsTokenUnicode = unicode(fontNameAndOOOGlyphsTuple[1], 'utf-8') # unicode(fontNameAndOOOGlyphsTuple[1], 'utf-8')
-								#explicitOutOfOrderGlyphsTokenStr =  unicode.encode("%s" % explicitOutOfOrderGlyphsTokenUnicode, targetEncoding)
-								#explicitOutOfOrderGlyphsTokenStr =  explicitOutOfOrderGlyphsTokenUnicode.decode(targetEncoding) # unicode.encode("%s" % explicitOutOfOrderGlyphsTokenUnicode, 'utf-8')
+								#explicitOutOfOrderGlyphsTokenStr =  unicode.encode("%s" % explicitOutOfOrderGlyphsTokenUnicode, gTargetEncoding)
+								#explicitOutOfOrderGlyphsTokenStr =  explicitOutOfOrderGlyphsTokenUnicode.decode(gTargetEncoding) # unicode.encode("%s" % explicitOutOfOrderGlyphsTokenUnicode, 'utf-8')
 								tokensOfOutOfOrderGlyphsStrList = explicitOutOfOrderGlyphsTokenUnicode.split(',')
 								for tokenX in tokensOfOutOfOrderGlyphsStrList:
 									tokensOfTupleList = tokenX.split(':')
 									tmpListOfOutOfOrderGlyphs.append( (unichr(ord(tokensOfTupleList[0])), unichr(ord(tokensOfTupleList[1])))  )
 
-								if tmpFontName not in [x[0] for x in listOfFontNamesToOutOfOrderGlyphs]:
-									listOfFontNamesToOutOfOrderGlyphs.append(  ( tmpFontName,  tmpListOfOutOfOrderGlyphs) )
+								if tmpFontName not in [x[0] for x in gListOfFontNamesToOutOfOrderGlyphs]:
+									gListOfFontNamesToOutOfOrderGlyphs.append(  ( tmpFontName,  tmpListOfOutOfOrderGlyphs) )
 
 							else:
 								configureTranslationFailed = True
@@ -180,22 +187,21 @@ def initOverrideEncoding(pathToConfigureFontsTranslationTxt):
 						configureTranslationFailed = True
 						raise
 
-				if not (targetEncoding is None or not targetEncoding):
+				if not (gTargetEncoding is None or not gTargetEncoding):
 					configureTranslationFailed = False
 
 	except:
-		print "[Error] while trying to access file for encoding info: %s" % (pathToConfigureFontsTranslationTxt)
+		print "[Error] while trying to access file for Font Translation Configuration info: %s" % (pathToConfigureFontsTranslationTxt)
 		raise
 		configureTranslationFailed = True
 
 	if 	configureTranslationFailed == True:
-#		targetEncoding = defaultTargetEncoding
-		print "[Error] Could not find proper override encoding info in: %s" % (pathToConfigureFontsTranslationTxt)
-		sys.exit()	# terminate if override Failed (Blade Runner)
+		print "[Error] Could not find proper Font Translation Configuration info in: %s" % (pathToConfigureFontsTranslationTxt)
+		sys.exit(1)	# terminate if override Failed (Blade Runner)
 	#
 	# TODO ASDF fix this!!!
 	#
-	if(len(listOfFontNamesToOutOfOrderGlyphs) == 0):
+	if(len(gListOfFontNamesToOutOfOrderGlyphs) == 0):
 		tmpFontType = DEFAULT_SUBTITLES_FONT_NAME[:-4] # remove the .FON extensionFromTheName
 		print "[Info] Empty list for out of order glyphs. Assuming default out of order glyphs and only for the %s font" % (tmpFontType)
 		tmplistOfOutOfOrderGlyphs = []
@@ -203,15 +209,15 @@ def initOverrideEncoding(pathToConfigureFontsTranslationTxt):
 		tmplistOfOutOfOrderGlyphs.append((u'\xf1', u'\xa5')) # spanish n (senor)
 		tmplistOfOutOfOrderGlyphs.append((u'\xe2', u'\xa6')) # a for (liver) pate
 		tmplistOfOutOfOrderGlyphs.append((u'\xe9', u'\xa7')) # e for (liver) pate
-		listOfFontNamesToOutOfOrderGlyphs.append( (tmpFontType, tmplistOfOutOfOrderGlyphs))
+		gListOfFontNamesToOutOfOrderGlyphs.append( (tmpFontType, tmplistOfOutOfOrderGlyphs))
 	if gTraceModeEnabled:
-		print "[Info] Explicit Out Of Order Glyphs List: " , listOfFontNamesToOutOfOrderGlyphs
+		print "[Info] Explicit Out Of Order Glyphs List: " , gListOfFontNamesToOutOfOrderGlyphs
 	# arrange list properly:
 	# check if the list contains same item as key and value (in different pairs)
 	# if such case then the pair with the key should preceed the pair with the value matched,
 	# to avoid replacing instances of a special character (key) with a delegate (value) that will be later replaced again due to the second pair
 	#
-	for (itFontName, itOOOGlyphList) in listOfFontNamesToOutOfOrderGlyphs:
+	for (itFontName, itOOOGlyphList) in gListOfFontNamesToOutOfOrderGlyphs:
 		while (True):
 			foundMatchingPairs = False
 			for glyphDelegItA in itOOOGlyphList:
@@ -226,65 +232,69 @@ def initOverrideEncoding(pathToConfigureFontsTranslationTxt):
 					break
 			if(foundMatchingPairs == False):
 				break # the whole while loop
-        arrangedListOfFontNamesToOutOfOrderGlyphs.append( ( itFontName, itOOOGlyphList))
+        gArrangedListOfFontNamesToOutOfOrderGlyphs.append( ( itFontName, itOOOGlyphList))
 	if gTraceModeEnabled:
-		print "[Info] Arranged Glyphs Delegates List: " , arrangedListOfFontNamesToOutOfOrderGlyphs
+		print "[Debug] Arranged Glyphs Delegates List: " , gArrangedListOfFontNamesToOutOfOrderGlyphs
 	return
 
 #
-# Fill the actorPropertyEntries table
+# Fill the gActorPropertyEntries table
 def initActorPropertyEntries(thePathToActorNamesTxt):
-	global actorPropertyEntriesWasInit
-	global actorPropertyEntries
+	global gActorPropertyEntriesWasInit
+	global gActorPropertyEntries
 	firstLine = True
-#	 print "[Debug] opening actornames"
+	#if gTraceModeEnabled:
+	#	print "[Debug] opening actornames"
 	if thePathToActorNamesTxt is None or not thePathToActorNamesTxt:
 
 		actorNamesTextFile = u'actornames.txt'
 		relPath = u'.'
 		thePathToActorNamesTxt = os.path.join(relPath, actorNamesTextFile)
 		print "[Warning] Actor names text file %s not found in arguments. Attempting to open local file if it exists" % (thePathToActorNamesTxt)
-	with open(thePathToActorNamesTxt) as tsv:
-		for line in csv.reader(tsv, dialect="excel-tab"):
-			#skip first line header
-			if firstLine == True:
-#				 print "[Debug] skipping Header line in Excel sheet"
-				firstLine = False
-			else:
-				actorPropertyEntries.append(line)
-	actorPropertyEntriesWasInit = True
-	tsv.close()
+
+	if os.access(thePathToActorNamesTxt, os.F_OK):
+		print "[Info] Actor names text file found: {0}".format(thePathToActorNamesTxt)
+
+		with open(thePathToActorNamesTxt) as tsv:
+			for line in csv.reader(tsv, dialect="excel-tab"):
+				#skip first line header
+				if firstLine == True:
+					#if gTraceModeEnabled:
+					#	print "[Debug] skipping Header line in Excel sheet"
+					firstLine = False
+				else:
+					gActorPropertyEntries.append(line)
+		gActorPropertyEntriesWasInit = True
+		tsv.close()
+	else:
+		## error
+		print "[Error] Actor names text file not found: {0}".format(thePathToActorNamesTxt)
+		sys.exit(1)	# terminate if finding actor names file failed (Blade Runner)		
 
 def getActorShortNameById(lookupActorId):
-	global actorPropertyEntriesWasInit
-	global actorPropertyEntries
-	if not actorPropertyEntriesWasInit:
+	if not gActorPropertyEntriesWasInit:
 		return ''
 	else:
-		for actorEntryTmp in actorPropertyEntries:
+		for actorEntryTmp in gActorPropertyEntries:
 			if int(actorEntryTmp[0]) == int(lookupActorId):
 				return actorEntryTmp[1]
 	return ''
 
 
 def getActorFullNameById(lookupActorId):
-	global actorPropertyEntriesWasInit
-	global actorPropertyEntries
-	if not actorPropertyEntriesWasInit:
+	if not gActorPropertyEntriesWasInit:
 		return ''
 	else:
-		for actorEntryTmp in actorPropertyEntries:
+		for actorEntryTmp in gActorPropertyEntries:
 			if int(actorEntryTmp[0]) == int(lookupActorId):
 				return actorEntryTmp[2]
 	return ''
 
 def getActorIdByShortName(lookupActorShortName):
-	global actorPropertyEntriesWasInit
-	global actorPropertyEntries
-	if not actorPropertyEntriesWasInit:
+	if not gActorPropertyEntriesWasInit:
 		return ''
 	else:
-		for actorEntryTmp in actorPropertyEntries:
+		for actorEntryTmp in gActorPropertyEntries:
 			if actorEntryTmp[1] == lookupActorShortName:
 				return actorEntryTmp[0].zfill(2)
 	return ''
@@ -314,7 +324,7 @@ def calculateFoldHash(strFileName):
 		hash = ((hash << 1) | ((hash >> 31) & 1)) + groupSum
 	hash &= 0xFFFFFFFF	   # mask here!
 	if gTraceModeEnabled:
-		print (strParam +': '  +''.join('{:08X}'.format(hash)))
+		print '[Debug] ', (strParam +': '  +''.join('{:08X}'.format(hash)))
 	return hash
 
 #
@@ -332,7 +342,7 @@ def outputMIX():
 	#calculateFoldHash('AR02-MIN.SET')
 	#calculateFoldHash('CLOVDIES.AUD')
 	#calculateFoldHash('INTRO.VQA')
-	print "[Info] Writing to output file %s..." % (DEFAULT_SUBTITLES_MIX_OUTPUT_NAME)
+	print "[Info] Writing to output MIX file: %s..." % (DEFAULT_SUBTITLES_MIX_OUTPUT_NAME)
 
 	errorFound = False
 	outMIXFile = None
@@ -373,15 +383,20 @@ def outputMIX():
 		mixFileEntries = []
 		totalFilesDataSize = 0
 		currOffsetForDataSegment = 0 # we start after header and table of index entries, from 0, (but this means that when reading the offset we need to add 6 + numOfFiles * 12). This does not concern us though.
-		for sheetDialogueName in SUPPORTED_DIALOGUE_SHEETS:
-			sheetDialogueNameTRx =	sheetDialogueName[:-4] + '.TRE'
+		
+		mergedListOfSupportedSubtitleSheets = [(x + '%s.TR%s' % (gActiveLanguageDescriptionCodeTuple[1], gActiveLanguageDescriptionCodeTuple[1])) for x in SUPPORTED_INGAME_DIALOGUE_SHEETS]
+		mergedListOfSupportedSubtitleSheets = mergedListOfSupportedSubtitleSheets + [(x + 'E.VQA') for x in SUPPORTED_VIDEO_DIALOGUE_SHEETS_ENGLISH]
+		mergedListOfSupportedSubtitleSheets = mergedListOfSupportedSubtitleSheets + [(x + '%s.VQA' % (gActiveLanguageDescriptionCodeTuple[1])) for x in SUPPORTED_VIDEO_DIALOGUE_SHEETS_LOCALIZED]
+		#mergedListOfSupportedSubtitleSheets = SUPPORTED_INGAME_DIALOGUE_SHEETS + SUPPORTED_VIDEO_DIALOGUE_SHEETS
+		for sheetDialogueName in mergedListOfSupportedSubtitleSheets:
+			sheetDialogueNameTRx =	sheetDialogueName[:-4] + ('.TR%s' %(gActiveLanguageDescriptionCodeTuple[1]))
 			if os.path.isfile('./' + sheetDialogueNameTRx):
 				entryID = calculateFoldHash(sheetDialogueNameTRx)
 				mixEntryfileSizeBytes = os.path.getsize('./' + sheetDialogueNameTRx)
 				mixFileEntries.append((entryID, sheetDialogueNameTRx, mixEntryfileSizeBytes))
 				totalFilesDataSize += mixEntryfileSizeBytes
 
-		for translatedTREFileName in [ x[0] for x in SUPPORTED_TRANSLATION_SHEETS] :
+		for translatedTREFileName in [ (x[0] + '%s' % (gActiveLanguageDescriptionCodeTuple[1])) for x in SUPPORTED_TRANSLATION_SHEETS] :
 			if os.path.isfile('./' + translatedTREFileName):
 				entryID = calculateFoldHash(translatedTREFileName)
 				mixEntryfileSizeBytes = os.path.getsize('./' + translatedTREFileName)
@@ -407,7 +422,7 @@ def outputMIX():
 		outMIXFile.write(totalFilesDataSizeToWrite)
 
 		if gTraceModeEnabled:
-			print ("[Debug] Sorted Entries based on EntryId")
+			print ("[Debug] Sorted Entries based on EntryId.")
 		for mixFileEntry in mixFileEntries:
 			if gTraceModeEnabled:
 				print (''.join('{:08X}'.format(mixFileEntry[0])) + ': ' + mixFileEntry[1] + ' : ' + ''.join('{:08X}'.format(mixFileEntry[2])))
@@ -448,11 +463,11 @@ def outputMIX():
 	#TODO extra pass once the quotes have been updated for weird unicode characters
 	#TODO some ' quotes appear as \u2019 and others appear normally as '. what's that about?
 	#DONE manually I've replaced all weird \u2019 single quotes with '''
-	#the spanish n is \xf1 -> we put it at ascii value: \xA5 -- font index 0xA6 ?
-	#the spanish i is \xed -> we put it at ascii value: \xA2 -- font index 0xA3 ?
+	#the Spanish n is \xf1 -> we put it at ASCII value: \xA5 -- font index 0xA6 ?
+	#the Spanish i is \xed -> we put it at ASCII value: \xA2 -- font index 0xA3 ?
 	#pâté
-	#	 a actual ascii value is 0xE2 in codepage 1252 -- put it in ascii value 0xA6 (165) -- font index 0xA7
-	#	 e actual ascii value is 0xE9 in codepage 1252 -- put it in ascii value 0xA7 (166) -- font index 0xA8
+	#	 a actual ASCII value is 0xE2 in codepage 1252 -- put it in ASCII value 0xA6 (165) -- font index 0xA7
+	#	 e actual ASCII value is 0xE9 in codepage 1252 -- put it in ASCII value 0xA7 (166) -- font index 0xA8
 	#TODO what are other characters are special?
 	#TODO transition to ASCII chars to store in TRE file?
 	#DONE manually I've replaced all one-char '...' with three dots
@@ -461,27 +476,35 @@ def outputMIX():
 
 def translateQuoteToAsciiProper(cellObj, pSheetName):
 	newQuoteReplaceSpecials =  cellObj.value.encode("utf-8")
-	#print ('[Debug] Encoded to unicode: %s ' % (newQuoteReplaceSpecials))
+	#if gTraceModeEnabled:
+	#	print ('[Debug] Encoded to unicode: %s' % (newQuoteReplaceSpecials))
 	newQuoteReplaceSpecials = newQuoteReplaceSpecials.decode("utf-8")
 
 	pertinentListOfOutOfOrderGlyphs = []
-	#print pSheetName
-	#print SUPPORTED_DIALOGUE_SHEETS
-	#print DEFAULT_SUBTITLES_FONT_NAME[:-4]
-	#print [x[0] for x in listOfFontNamesToOutOfOrderGlyphs]
-	if pSheetName in SUPPORTED_DIALOGUE_SHEETS and DEFAULT_SUBTITLES_FONT_NAME[:-4] in [x[0] for x in listOfFontNamesToOutOfOrderGlyphs]:
-		for (tmpFontName, tmpOOOList) in listOfFontNamesToOutOfOrderGlyphs:
+	
+	mergedListOfSupportedSubtitleSheets = [(x + '%s.TR%s' % (gActiveLanguageDescriptionCodeTuple[1], gActiveLanguageDescriptionCodeTuple[1])) for x in SUPPORTED_INGAME_DIALOGUE_SHEETS]
+	mergedListOfSupportedSubtitleSheets = mergedListOfSupportedSubtitleSheets + [(x + 'E.VQA') for x in SUPPORTED_VIDEO_DIALOGUE_SHEETS_ENGLISH]
+	mergedListOfSupportedSubtitleSheets = mergedListOfSupportedSubtitleSheets + [(x + '%s.VQA' % (gActiveLanguageDescriptionCodeTuple[1])) for x in SUPPORTED_VIDEO_DIALOGUE_SHEETS_LOCALIZED]
+	#mergedListOfSupportedSubtitleSheets = SUPPORTED_INGAME_DIALOGUE_SHEETS + SUPPORTED_VIDEO_DIALOGUE_SHEETS
+	#if gTraceModeEnabled:
+	#	print '[Debug] ', pSheetName
+	#	print '[Debug] ', mergedListOfSupportedSubtitleSheets
+	#	print '[Debug] ', DEFAULT_SUBTITLES_FONT_NAME[:-4]
+	#	print [x[0] for x in gListOfFontNamesToOutOfOrderGlyphs]
+	if pSheetName in mergedListOfSupportedSubtitleSheets and DEFAULT_SUBTITLES_FONT_NAME[:-4] in [x[0] for x in gListOfFontNamesToOutOfOrderGlyphs]:
+		for (tmpFontName, tmpOOOList) in gListOfFontNamesToOutOfOrderGlyphs:
 			if tmpFontName == DEFAULT_SUBTITLES_FONT_NAME[:-4]:
 				pertinentListOfOutOfOrderGlyphs = tmpOOOList
 				break
-	elif pSheetName in [x[0] for x in SUPPORTED_TRANSLATION_SHEETS]:
+	elif pSheetName in [(x[0] + '%s' % (gActiveLanguageDescriptionCodeTuple[1])) for x in SUPPORTED_TRANSLATION_SHEETS]:
 		pertinentFontType = ''
         #[treAndFontTypeTuple for treAndFontTypeTuple in SUPPORTED_TRANSLATION_SHEETS if treAndFontTypeTuple[0] == pSheetName]
 		for (tmpSheetName, tmpFontType) in SUPPORTED_TRANSLATION_SHEETS:
+			tmpSheetName = tmpSheetName + '%s' % (gActiveLanguageDescriptionCodeTuple[1])
 			if tmpSheetName == pSheetName:
 				pertinentFontType = tmpFontType
 				break
-		for (tmpFontName, tmpOOOList) in listOfFontNamesToOutOfOrderGlyphs:
+		for (tmpFontName, tmpOOOList) in gListOfFontNamesToOutOfOrderGlyphs:
 			if tmpFontName ==  pertinentFontType:
 				pertinentListOfOutOfOrderGlyphs = tmpOOOList
 				break
@@ -489,16 +512,16 @@ def translateQuoteToAsciiProper(cellObj, pSheetName):
 	#newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u0386", u"\u00A3")
 	for repTuple in pertinentListOfOutOfOrderGlyphs:
 		newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(repTuple[0], repTuple[1])
-	# WORKAROUND, we re-replace the spanish i delegate again here!
-#	newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u'\xa2', u'\u0386')   # this is needed for spanish i because in utf-8 it's actually the u'\u0386' that's assigned to A tonomeno which is the delegate.
-#	newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u0386", u"\u00A3")
-#	#newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u0386", u"\u00A3")	 # greek alpha tonomeno -- TODO which character is this in the excel (utf value) ???
-#	newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u00ed", u"\u00A2")	 # spanish i
-#	newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u00f1", u"\u00A5")	 # spanish n
-#	#newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u00A4", u"\u00A5")  # spanish n
-#	newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u00e2", u"\u00A6")	 # a from pate -- todo this is not confirmed in-game font (but it is in our external font as of	 yet)
-#	newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u00e9", u"\u00A7")	 # e from pate -- todo this is not confirmed in-game font (but it is in our external font as of	 yet)
-	# other replacements.
+	# WORKAROUND, we re-replace the Spanish i delegate again here!
+	#newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u'\xa2', u'\u0386')   # this is needed for spanish i because in utf-8 it's actually the u'\u0386' that's assigned to A tonomeno which is the delegate.
+	#newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u0386", u"\u00A3")
+	##newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u0386", u"\u00A3")	 # greek alpha tonomeno -- TODO which character is this in the excel (utf value) ???
+	#newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u00ed", u"\u00A2")	 # spanish i
+	#newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u00f1", u"\u00A5")	 # spanish n
+	##newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u00A4", u"\u00A5")  # spanish n
+	#newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u00e2", u"\u00A6")	 # a from pate -- todo this is not confirmed in-game font (but it is in our external font as of	 yet)
+	#newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u00e9", u"\u00A7")	 # e from pate -- todo this is not confirmed in-game font (but it is in our external font as of	 yet)
+	## other replacements.
 	newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u2019", u"\u0027")	 # right single quote
 	newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u2018", u"\u0027")	 # left single quote
 	newQuoteReplaceSpecials = newQuoteReplaceSpecials.replace(u"\u2026", u"\u002e\u002e\u002e")	 # three dots together (changes length)
@@ -507,43 +530,52 @@ def translateQuoteToAsciiProper(cellObj, pSheetName):
 	# TODO? replace new line ???	with another char (maybe |)?
 
 	#newQuoteReplaceSpecialsUnicode = unicode(newQuoteReplaceSpecials, 'utf-8')
-	#newQuoteReplaceSpecialsStr = unicode.encode("%s" % newQuoteReplaceSpecials, targetEncoding)
-
-	#print type(newQuoteReplaceSpecials)                 # type is unicode
-	#print type(newQuoteReplaceSpecials.encode('utf-8')) # type is str
-#	print targetEncoding
-#	print newQuoteReplaceSpecials
-#	newQuoteReplaceSpecialsDec = newQuoteReplaceSpecials.decode(targetEncoding)
+	#newQuoteReplaceSpecialsStr = unicode.encode("%s" % newQuoteReplaceSpecials, gTargetEncoding)
+	#if gTraceModeEnabled:
+	#	print '[Debug] ', type(newQuoteReplaceSpecials)                 # type is unicode
+	#	print '[Debug] ', type(newQuoteReplaceSpecials.encode('utf-8')) # type is str
+	#	print '[Debug] ', gTargetEncoding
+	#	print '[Debug] ', newQuoteReplaceSpecials
+	#newQuoteReplaceSpecialsDec = newQuoteReplaceSpecials.decode(gTargetEncoding)
 	newQuoteReplaceSpecialsRetStr = ''
-	newQuoteReplaceSpecialsRetStr = newQuoteReplaceSpecials.encode(targetEncoding)
-#	try:
-#		newQuoteReplaceSpecialsRetStr = newQuoteReplaceSpecials.encode(targetEncoding)
-#	except:
-#		print "==============================================================================="
-#		print "==============================================================================="
-#		print "ERROR:"
-#		print newQuoteReplaceSpecials
-#		print newQuoteReplaceSpecials.encode(targetEncoding, errors='xmlcharrefreplace')
-#		print "==============================================================================="
-#		print "==============================================================================="
-#		newQuoteReplaceSpecialsRetStr = newQuoteReplaceSpecials.encode(targetEncoding, errors='xmlcharrefreplace')
+	newQuoteReplaceSpecialsRetStr = newQuoteReplaceSpecials.encode(gTargetEncoding)
+	#try:
+	#	newQuoteReplaceSpecialsRetStr = newQuoteReplaceSpecials.encode(gTargetEncoding)
+	#except:
+	#	print "==============================================================================="
+	#	print "==============================================================================="
+	#	print "ERROR:"
+	#	print newQuoteReplaceSpecials
+	#	print newQuoteReplaceSpecials.encode(gTargetEncoding, errors='xmlcharrefreplace')
+	#	print "==============================================================================="
+	#	print "==============================================================================="
+	#	newQuoteReplaceSpecialsRetStr = newQuoteReplaceSpecials.encode(gTargetEncoding, errors='xmlcharrefreplace')
 	return newQuoteReplaceSpecialsRetStr
-#	return newQuoteReplaceSpecialsEnStr
+	#return newQuoteReplaceSpecialsEnStr
 
 
 def inputXLS(filename):
 	global gNumOfSpokenQuotes
-	global tableOfStringIds
-	global tableOfStringOffsets
-	global tableOfStringEntries
+	global gTableOfStringIds
+	global gTableOfStringOffsets
+	global gTableOfStringEntries
 	# Open the workbook
-	xl_workbook = xlrd.open_workbook(filename, encoding_override="utf-8")
+	xl_workbook = None
+	try:
+		xl_workbook = xlrd.open_workbook(filename, encoding_override="utf-8")
+		if xl_workbook is not None:
+			print "[Info] Opened Excel input file: %s" % (filename)
+	except Exception as e:
+		print '[Debug] Could not open the Excel input file::'  + str(e)
 
-
+	if xl_workbook is None:
+		print '[Info] Could not open the Excel input file: %s' % (filename)
+		sys.exit(1) # Terminate if the input Excel was not found
 	# List sheet names, and pull a sheet by name
 	#
-	# sheet_names = xl_workbook.sheet_names()
-	#print('Sheet Names', sheet_names)
+	#sheet_names = xl_workbook.sheet_names()
+	#if gTraceModeEnabled:
+	#	print('[Debug] Sheet Names', sheet_names)
 	#
 	#xl_sheet = xl_workbook.sheet_by_name(sheet_names[0])
 
@@ -551,16 +583,28 @@ def inputXLS(filename):
 	#  (sheets are zero-indexed)
 	# First sheet is the in-game quotes
 	#
-	# xl_sheet = xl_workbook.sheet_by_index(0)
+	#xl_sheet = xl_workbook.sheet_by_index(0)
 	#
 	#
-	mergedListOfSubtitleSheetsAndTranslatedTREs = SUPPORTED_DIALOGUE_SHEETS + [ x[0] for x in SUPPORTED_TRANSLATION_SHEETS ]
+	mergedListOfSupportedSubtitleSheets = [(x + '%s.TR%s' % (gActiveLanguageDescriptionCodeTuple[1], gActiveLanguageDescriptionCodeTuple[1])) for x in SUPPORTED_INGAME_DIALOGUE_SHEETS]
+	mergedListOfSupportedSubtitleSheets = mergedListOfSupportedSubtitleSheets + [(x + 'E.VQA') for x in SUPPORTED_VIDEO_DIALOGUE_SHEETS_ENGLISH]
+	mergedListOfSupportedSubtitleSheets = mergedListOfSupportedSubtitleSheets + [(x + '%s.VQA' % (gActiveLanguageDescriptionCodeTuple[1])) for x in SUPPORTED_VIDEO_DIALOGUE_SHEETS_LOCALIZED]
+	#mergedListOfSupportedSubtitleSheets = SUPPORTED_INGAME_DIALOGUE_SHEETS + SUPPORTED_VIDEO_DIALOGUE_SHEETS
+	mergedListOfSupportedSubtitleSheetsAndTranslatedTREs = mergedListOfSupportedSubtitleSheets + [ (x[0] + '%s' % (gActiveLanguageDescriptionCodeTuple[1])) for x in SUPPORTED_TRANSLATION_SHEETS ]
 
-	for sheetDialogueName in mergedListOfSubtitleSheetsAndTranslatedTREs:
-		xl_sheet = xl_workbook.sheet_by_name(sheetDialogueName)
-		if(xl_sheet is not None):
+	for sheetDialogueName in mergedListOfSupportedSubtitleSheetsAndTranslatedTREs:
+		xl_sheet = None
+		try:
+			xl_sheet = xl_workbook.sheet_by_name(sheetDialogueName)
+		except Exception as e:
 			if gTraceModeEnabled:
-				print ('[Info] Sheet name: %s' % xl_sheet.name)
+				print '[Debug] Could not open requested sheet in Excel::' + str(e)
+			
+		if xl_sheet is None:
+			print '[Warning] %s sheet was not found in input Excel file.' % (sheetDialogueName)
+		else: #if(xl_sheet is not None):
+			if gTraceModeEnabled:
+				print ('[Debug] Sheet name: %s' % xl_sheet.name)
 			gNumOfSpokenQuotes = xl_sheet.nrows - 2 # all rows minus the first TWO rows with headers
 			if gTraceModeEnabled:
 				print ('[Debug] Number of spoken quotes: %d' % gNumOfSpokenQuotes)
@@ -582,31 +626,33 @@ def inputXLS(filename):
 			tmpStartFrame = 0			# for VQA sheets
 			tmpEndFrame = 0				# for VQA sheets
 			mode = 0					# init to unknown
-			if xl_sheet.name == SUPPORTED_DIALOGUE_SHEETS[0]:
+			if xl_sheet.name == mergedListOfSupportedSubtitleSheets[0]:
 				if gTraceModeEnabled:
 					print '[Debug] IN GAME QUOTES'
 				mode = 1 #in-game quote
-			elif xl_sheet.name in SUPPORTED_DIALOGUE_SHEETS:
+			elif xl_sheet.name in mergedListOfSupportedSubtitleSheets:
 				if gTraceModeEnabled:
 					print '[Debug] VQA SCENE DIALOGUE'
 				mode = 2 #VQA
-			elif xl_sheet.name in [ x[0] for x in SUPPORTED_TRANSLATION_SHEETS ]:
+			elif xl_sheet.name in [ (x[0] + '%s' % (gActiveLanguageDescriptionCodeTuple[1])) for x in SUPPORTED_TRANSLATION_SHEETS ]:
 				if gTraceModeEnabled:
 					print '[Debug] TRANSLATED TEXT RESOURCE'
 				mode = 3 # Translated TRE
 			#
-			del tableOfStringIds[:]
-			del tableOfStringEntries[:]
-			del tableOfStringOffsets[:]
+			del gTableOfStringIds[:]
+			del gTableOfStringEntries[:]
+			del gTableOfStringOffsets[:]
 			for row_idx in range(2, xl_sheet.nrows):
-				#print "[Debug] Line %d" % (row_idx)
+				#if gTraceModeEnabled:
+				#	print "[Debug] Line %d" % (row_idx)
 				for col_idx in range(0, xl_sheet.ncols):
 					cell_obj = xl_sheet.cell(row_idx, col_idx)
 					#
 					# FOR IN-GAME QUOTES -- Iterate through columns starting from col 0. We need cols: 0, 2
 					#
 					if mode == 1:
-					   #print ('[Debug] Column: [%s] cell_obj: [%s]' % (col_idx, cell_obj))
+						#if gTraceModeEnabled:
+						#	print ('[Debug] Column: [%s] cell_obj: [%s]' % (col_idx, cell_obj))
 						if(col_idx == 0):
 							#switchFlagShowQuote = False
 							twoTokensfirstColSplitAtDotXLS = cell_obj.value.split('.', 1)
@@ -614,24 +660,28 @@ def inputXLS(filename):
 								twoTokensfirstColSplitAtDashXLS = twoTokensfirstColSplitAtDotXLS[0].split('-', 1)
 								if len(twoTokensfirstColSplitAtDashXLS) == 2:
 									tmpQuoteID = int( twoTokensfirstColSplitAtDashXLS[0]) * 10000 + int(twoTokensfirstColSplitAtDashXLS[1])
-									#print ('[Debug] row_idx: %d. tag %s: quoteId [%d]' % (row_idx, twoTokensfirstColSplitAtDotXLS[0], tmpQuoteID))
-									tableOfStringIds.append(tmpQuoteID)
+									#if gTraceModeEnabled:
+									#	print ('[Debug] Row_idx: %d. Tag: %s, QuoteId: [%d]' % (row_idx, twoTokensfirstColSplitAtDotXLS[0], tmpQuoteID))
+									gTableOfStringIds.append(tmpQuoteID)
 									#if(tmpQuoteID == 160110 or tmpQuoteID == 160010):
-									#	 switchFlagShowQuote = True
+									#	switchFlagShowQuote = True
 
 						elif(col_idx == 1) :
 							#if switchFlagShowQuote == True:
-							#	 print ('[Debug] length: %d: %s' % (len(cell_obj.value), cell_obj.value))
-							#	 print ('[Debug] object: %s' % (cell_obj))
-							#	 #newQuoteReplaceSpecials =	 cell_obj.value.decode("utf-8") # unicode(cell_obj.value, 'windows-1252')
-							#	 #print ('[Debug] decoded to unicode: %s ' % (newQuoteReplaceSpecials)) # error with char xf1
+								#if gTraceModeEnabled:
+								#	print ('[Debug] length: %d: %s' % (len(cell_obj.value), cell_obj.value))
+								#	print ('[Debug] object: %s' % (cell_obj))
+								##	newQuoteReplaceSpecials =	 cell_obj.value.decode("utf-8") # unicode(cell_obj.value, 'windows-1252')
+								##	print ('[Debug] decoded to unicode: %s ' % (newQuoteReplaceSpecials)) # error with char xf1
 							newQuoteReplaceSpecialsAscii = translateQuoteToAsciiProper(cell_obj, xl_sheet.name)
 							#if switchFlagShowQuote == True:
-							#	 print ('[Debug] length: %d: %s' % (len(newQuoteReplaceSpecialsAscii), newQuoteReplaceSpecialsAscii))
-							#print ':'.join(x.encode('hex') for x in newQuoteReplaceSpecialsAscii)	 # seems to work.  new chars are non-printable but exist in string
+								#if gTraceModeEnabled:
+								#	print ('[Debug] length: %d: %s' % (len(newQuoteReplaceSpecialsAscii), newQuoteReplaceSpecialsAscii))
+							#if gTraceModeEnabled:
+							#	print ':'.join(x.encode('hex') for x in newQuoteReplaceSpecialsAscii)	 # seems to work.  new chars are non-printable but exist in string
 
-							tableOfStringEntries.append(newQuoteReplaceSpecialsAscii)
-							tableOfStringOffsets.append(curStrStartOffset)
+							gTableOfStringEntries.append(newQuoteReplaceSpecialsAscii)
+							gTableOfStringOffsets.append(curStrStartOffset)
 							curStrStartOffset += (len(newQuoteReplaceSpecialsAscii) + 1)
 							if ( longestLength < len(newQuoteReplaceSpecialsAscii)):
 								longestLength = len(newQuoteReplaceSpecialsAscii)
@@ -647,7 +697,7 @@ def inputXLS(filename):
 							newQuoteReplaceSpecialsAscii = translateQuoteToAsciiProper(cell_obj, xl_sheet.name)
 							#print ('[Debug] length: %d: %s' % (len(newQuoteReplaceSpecialsAscii), newQuoteReplaceSpecialsAscii))
 							#print ':'.join(x.encode('hex') for x in newQuoteReplaceSpecialsAscii)	# seems to work.  new chars are non-printable but exist in string
-							# don't append to tableOfStringEntries yet
+							# don't append to gTableOfStringEntries yet
 						elif(col_idx == 9): # startFrame
 							#print "[Debug] cell: %s" % (cell_obj.value)
 							tmpStartFrame =	 int(cell_obj.value)
@@ -655,9 +705,9 @@ def inputXLS(filename):
 							tmpEndFrame = int(cell_obj.value)
 							tmpQuoteID = tmpStartFrame | (tmpEndFrame << 16) # top 16 bits are end frame (up to 65536 frames which is enough) and low 16 bits are startFrame
 
-							tableOfStringIds.append(tmpQuoteID)
-							tableOfStringEntries.append(newQuoteReplaceSpecialsAscii)
-							tableOfStringOffsets.append(curStrStartOffset)
+							gTableOfStringIds.append(tmpQuoteID)
+							gTableOfStringEntries.append(newQuoteReplaceSpecialsAscii)
+							gTableOfStringOffsets.append(curStrStartOffset)
 							curStrStartOffset += (len(newQuoteReplaceSpecialsAscii) + 1)
 							if ( longestLength < len(newQuoteReplaceSpecialsAscii)):
 								longestLength = len(newQuoteReplaceSpecialsAscii)
@@ -671,7 +721,7 @@ def inputXLS(filename):
 					   #print ('[Debug] Column: [%s] cell_obj: [%s]' % (col_idx, cell_obj))
 						if(col_idx == 0):
 							tmpQuoteID = int(cell_obj.value)
-							tableOfStringIds.append(tmpQuoteID)
+							gTableOfStringIds.append(tmpQuoteID)
 						elif(col_idx == 1) :
 							#if switchFlagShowQuote == True:
 							#	 print ('[Debug] length: %d: %s' % (len(cell_obj.value), cell_obj.value))
@@ -683,8 +733,8 @@ def inputXLS(filename):
 							#	 print ('[Debug] length: %d: %s' % (len(newQuoteReplaceSpecialsAscii), newQuoteReplaceSpecialsAscii))
 							#print ':'.join(x.encode('hex') for x in newQuoteReplaceSpecialsAscii)	 # seems to work.  new chars are non-printable but exist in string
 
-							tableOfStringEntries.append(newQuoteReplaceSpecialsAscii)
-							tableOfStringOffsets.append(curStrStartOffset)
+							gTableOfStringEntries.append(newQuoteReplaceSpecialsAscii)
+							gTableOfStringOffsets.append(curStrStartOffset)
 							curStrStartOffset += (len(newQuoteReplaceSpecialsAscii) + 1)
 							if ( longestLength < len(newQuoteReplaceSpecialsAscii)):
 								longestLength = len(newQuoteReplaceSpecialsAscii)
@@ -693,7 +743,7 @@ def inputXLS(filename):
 								quoteNumAboveThreshold += 1
 								#print ('[Debug] row_idx: %d. tag %s: quoteId [%d], length: %d: %s' % (row_idx, twoTokensfirstColSplitAtDotXLS[0], tmpQuoteID, len(newQuoteReplaceSpecialsAscii), newQuoteReplaceSpecialsAscii))
 
-			tableOfStringOffsets.append(curStrStartOffset) # the final extra offset entry
+			gTableOfStringOffsets.append(curStrStartOffset) # the final extra offset entry
 			if gTraceModeEnabled:
 				print '[Debug] Longest Length: %d, Quotes above threshold (%d): %d' % (longestLength, predefinedLengthThreshold, quoteNumAboveThreshold)
 				for extremQuotTuple in extremeQuotesList:
@@ -705,24 +755,24 @@ def inputXLS(filename):
 			outTREFile = None
 			outTREFileName = sheetDialogueName[:-4]
 			try:
-				outTREFile = open("./" + outTREFileName + ".TRE", 'wb')
+				outTREFile = open("./" + outTREFileName + (".TR%s" %(gActiveLanguageDescriptionCodeTuple[1])), 'wb')
 			except Exception as e:
 				errorFound = True
-				print '[Error] Unable to write to output TRE file. ' + str(e)
+				print ('[Error] Unable to write to output TR%s file:: ' %(gActiveLanguageDescriptionCodeTuple[1])) + str(e)
 			if not errorFound:
 				numOfSpokenQuotesToWrite = pack('I', gNumOfSpokenQuotes)	# unsigned integer 4 bytes
 				outTREFile.write(numOfSpokenQuotesToWrite)
 				# write string IDs table
-				for idxe in range(0, len(tableOfStringIds)):
-					idOfStringToWrite = pack('I', tableOfStringIds[idxe])  # unsigned integer 4 bytes
+				for idxe in range(0, len(gTableOfStringIds)):
+					idOfStringToWrite = pack('I', gTableOfStringIds[idxe])  # unsigned integer 4 bytes
 					outTREFile.write(idOfStringToWrite)
 				# write string offsets table
-				for idxe in range(0, len(tableOfStringOffsets)):
-					offsetOfStringToWrite = pack('I', tableOfStringOffsets[idxe])  # unsigned integer 4 bytes
+				for idxe in range(0, len(gTableOfStringOffsets)):
+					offsetOfStringToWrite = pack('I', gTableOfStringOffsets[idxe])  # unsigned integer 4 bytes
 					outTREFile.write(offsetOfStringToWrite)
 				#write strings with null terminator
-				for idxe in range(0, len(tableOfStringEntries)):
-					outTREFile.write(tableOfStringEntries[idxe])
+				for idxe in range(0, len(gTableOfStringEntries)):
+					outTREFile.write(gTableOfStringEntries[idxe])
 					outTREFile.write('\0')
 				outTREFile.close()
 	return
@@ -765,10 +815,12 @@ def main(argsCL):
 	pathToQuoteExcelFile = ""
 	pathToActorNamesTxt = ""
 	pathToConfigureFontsTranslationTxt = ""
+	
+	candidateLangDescriptionTxt = ""
 
 	invalidSyntax = False
 	print "Running %s (%s)..." % (APP_NAME_SPACED, APP_VERSION)
-#	 print "Len of sysargv = %s" % (len(argsCL))
+	#print "Len of sysargv = %s" % (len(argsCL))
 	if len(argsCL) == 2:
 		if(argsCL[1] == '--help'or argsCL[1] == '-h'):
 			print "%s %s supports Westwood's Blade Runner PC Game (1997)." % (APP_NAME_SPACED, APP_VERSION)
@@ -812,6 +864,8 @@ def main(argsCL):
 					pathToActorNamesTxt = argsCL[i+1]
 				elif (argsCL[i] == '-cft'):
 					pathToConfigureFontsTranslationTxt = argsCL[i+1]
+				elif (argsCL[i] == '-ld'):
+					candidateLangDescriptionTxt = argsCL[i+1]					
 			elif sys.argv[i] == '--trace':
 				print "[Info] Trace mode enabled (more debug messages)."
 				gTraceModeEnabled = True
@@ -827,15 +881,25 @@ def main(argsCL):
 
 		if not invalidSyntax:
 			print "[Info] Game Language Selected: %s (%s)" % (gActiveLanguageDescriptionCodeTuple[0], gActiveLanguageDescriptionCodeTuple[2])
+			#
+			# Early check for external subtitles font file, since we no longer support internal font
+			relPath = u'.'
+			thePathToExternalFontFileFon = os.path.join(relPath, DEFAULT_SUBTITLES_FONT_NAME)
+			if not os.path.isfile(thePathToExternalFontFileFon):
+				print "[Error] Font file %s for subtitles was not found!" % (thePathToExternalFontFileFon)
+				sys.exit(1)
+			else:
+				print "[Info] Supported font file for subtitles found: {0}".format(thePathToExternalFontFileFon)
+				
 			# parse any overrideEncoding file if exists:
 			initOverrideEncoding(pathToConfigureFontsTranslationTxt)
-
 
 			# parse the EXCEL File
 			# parse Actors files:
 			initActorPropertyEntries(pathToActorNamesTxt)
-#			 for actorEntryTmp in actorPropertyEntries:
-#				  print "[Debug] Found actor: %s %s %s" % (actorEntryTmp[0], actorEntryTmp[1], actorEntryTmp[2])
+			#if gTraceModeEnabled:
+			#	for actorEntryTmp in gActorPropertyEntries:
+			#		print "[Debug] Found actor: %s %s %s" % (actorEntryTmp[0], actorEntryTmp[1], actorEntryTmp[2])
 			inputXLS(pathToQuoteExcelFile)
 			outputMIX()
 

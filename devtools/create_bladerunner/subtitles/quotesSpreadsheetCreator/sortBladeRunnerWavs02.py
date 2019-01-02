@@ -106,6 +106,7 @@ def initActorPropertyEntries(thePathToActorNamesTxt):
 	global gActorPropertyEntriesWasInit
 	global gActorPropertyEntries
 	firstLine = True
+	gActorPropertyEntriesWasInit = False
 #	 print "[Debug] opening actornames"
 	if thePathToActorNamesTxt is None or not thePathToActorNamesTxt:
 
@@ -113,20 +114,29 @@ def initActorPropertyEntries(thePathToActorNamesTxt):
 		relPath = u'.'
 		thePathToActorNamesTxt = os.path.join(relPath, actorNamesTextFile)
 		print "[Warning] Actor names text file %s not found in arguments. Attempting to open local file if it exists" % (thePathToActorNamesTxt)	
-	with open(thePathToActorNamesTxt) as tsv:
-		for line in csv.reader(tsv, dialect="excel-tab"):
-			#skip first line header
-			if firstLine == True:
-#				 print "[Debug] Skipping Header line in Excel sheet"
-				firstLine = False
-			else:
-				gActorPropertyEntries.append(line)
-	gActorPropertyEntriesWasInit = True
-	tsv.close()
+
+	if os.access(thePathToActorNamesTxt, os.F_OK):
+		print "[Info] Actor names text file found: {0}.".format(thePathToActorNamesTxt)
+
+		with open(thePathToActorNamesTxt) as tsv:
+			if gTraceModeEnabled: 
+				print "[Debug] Parsing Override Encoding file info..."
+			for line in csv.reader(tsv, dialect="excel-tab"):
+				#skip first line header
+				if firstLine == True:
+					#if gTraceModeEnabled:
+					#	print "[Debug] Skipping Header line in Excel sheet"
+					firstLine = False
+				else:
+					gActorPropertyEntries.append(line)
+		gActorPropertyEntriesWasInit = True
+		tsv.close()
+	else:
+		## error
+		print "[Error] Actor names text file not found: {0}.".format(thePathToActorNamesTxt)
+		sys.exit(1)	# terminate if finding actor names file failed (Blade Runner)
 
 def getActorShortNameById(lookupActorId):
-	global gActorPropertyEntriesWasInit
-	global gActorPropertyEntries
 	if not gActorPropertyEntriesWasInit:
 		return ''
 	else:
@@ -137,8 +147,6 @@ def getActorShortNameById(lookupActorId):
 
 
 def getActorFullNameById(lookupActorId):
-	global gActorPropertyEntriesWasInit
-	global gActorPropertyEntries
 	if not gActorPropertyEntriesWasInit:
 		return ''
 	else:
@@ -148,8 +156,6 @@ def getActorFullNameById(lookupActorId):
 	return ''
 
 def getActorIdByShortName(lookupActorShortName):
-	global gActorPropertyEntriesWasInit
-	global gActorPropertyEntries
 	if not gActorPropertyEntriesWasInit:
 		return ''
 	else:

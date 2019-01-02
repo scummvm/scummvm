@@ -304,26 +304,26 @@ class grabberFromPNG:
 
 		if overrideFailed:
 			## error
-			print "[Error] Override encoding file parsing has failed: Error Code 1." #" Initializing for {0}...".format(defaultTargetLang)
+			print "[Error] Override encoding file parsing has failed: Error Code 1." #" Initializing for {0}...".format(self.defaultTargetLang)
 			#if gTraceModeEnabled:
 			#	self.targetEncoding = self.defaultTargetEncoding
 			#	self.targetEncodingUnicode = self.defaultTargetEncodingUnicode
 			#	targetLangOrderAndListOfForeignLettersStrUnicode = unicode(allOfGreekChars, 'utf-8')
 			#	print '[Debug] ', targetLangOrderAndListOfForeignLettersStrUnicode
-			sys.exit()	# terminate if override Failed (Blade Runner)
+			sys.exit(1)	# terminate if override Failed (Blade Runner)
 
 		try:
 			targetLangOrderAndListOfForeignLettersStr = unicode.encode("%s" % targetLangOrderAndListOfForeignLettersStrUnicode, self.targetEncoding)
 		except:
 			## error
-			print "[Error] Override encoding file parsing has failed: Error Code 2." #"Initializing for {0}...".format(defaultTargetLang)
+			print "[Error] Override encoding file parsing has failed: Error Code 2." #"Initializing for {0}...".format(self.defaultTargetLang)
 			#if gTraceModeEnabled:
 			#	self.targetEncoding = self.defaultTargetEncoding
 			#	self.targetEncodingUnicode = self.defaultTargetEncodingUnicode
 			#	targetLangOrderAndListOfForeignLettersStrUnicode = unicode(allOfGreekChars, 'utf-8')
 			#	targetLangOrderAndListOfForeignLettersStr = unicode.encode("%s" % targetLangOrderAndListOfForeignLettersStrUnicode, self.targetEncoding)
 			#	print '[Debug] ' + targetLangOrderAndListOfForeignLettersStrUnicode
-			sys.exit()	# terminate if override Failed (Blade Runner)
+			sys.exit(1)	# terminate if override Failed (Blade Runner)
 
 		targetLangOrderAndListOfForeignLetters = list(targetLangOrderAndListOfForeignLettersStr)
 		if gTraceModeEnabled:
