@@ -5,8 +5,9 @@
 # classic.adventures.in.greek@gmail.com
 # Works with Excel version outSpeech-15-06-2018-1856-TranslatingComms-080.xls and above
 #
+# TODO Print a warning if packing a Text Resource (TRx) without the corresponding font(s) -- only a warning though
+#
 # DONE - Support at least one translation too (ie Greek)
-# Print a warning if packing a TRE without the corresponding font(s) -- only a warning though
 #
 import os, sys
 
@@ -20,47 +21,47 @@ structLibFound = False
 try:
 	import shutil 
 except ImportError:
-	print "Error:: Shutil python library is required to be installed!" 
+	print "[Error] Shutil python library is required to be installed!" 
 else:
 	shutilLibFound = True
 
 try:
 	import ctypes 
 except ImportError:
-	print "Error:: ctypes python library is required to be installed!" 
+	print "[Error] ctypes python library is required to be installed!" 
 else:
 	ctypesLibFound = True
 
 try:
 	import csv 
 except ImportError:
-	print "Error:: csv python library is required to be installed!" 
+	print "[Error] csv python library is required to be installed!" 
 else:
 	csvLibFound = True
 	
 try:
 	import xlrd 
 except ImportError:
-	print "Error:: xlrd python library is required to be installed!" 
+	print "[Error] xlrd python library is required to be installed!" 
 else:
 	xlrdLibFound = True
 
 try:
 	import re 
 except ImportError:
-	print "Error:: re (Regular expression operations) python library is required to be installed!" 
+	print "[Error] re (Regular expression operations) python library is required to be installed!" 
 else:
 	reLibFound = True	
 
 try:
 	import struct 
 except ImportError:
-	print "Error:: struct python library is required to be installed!" 
+	print "[Error] struct python library is required to be installed!" 
 else:
 	structLibFound = True	
 	
 if 	(not shutilLibFound) or (not ctypesLibFound) or (not csvLibFound) or (not xlrdLibFound) or (not reLibFound) or (not structLibFound):
-	sys.stdout.write("Error:: Errors were found when trying to import required python libraries\n")
+	sys.stdout.write("[Error] Errors were found when trying to import required python libraries\n")
 	sys.exit(1)
 
 
@@ -69,16 +70,39 @@ from xlrd import *
 # for pack
 from struct import *
 
-company_email = "classic.adventures.in.greek@gmail.com"
-app_version = "0.70"
-app_name = "packBladeRunnerMIXFromPCTLKXLS"
-app_wrapper_name = "mixResourceCreator.py"
-app_name_spaced = "Blade Runner MIX Resource Creator"
-app_short_desc = "Get a TRE file from spoken in-game quotes"
-numOfSpokenQuotes = 0
+COMPANY_EMAIL = "classic.adventures.in.greek@gmail.com"
+APP_VERSION = "0.80"
+APP_NAME = "packBladeRunnerMIXFromPCTLKXLS"
+APP_WRAPPER_NAME = "mixResourceCreator.py"
+APP_NAME_SPACED = "Blade Runner MIX Resource Creator"
+APP_SHORT_DESC = "Make a Text Resource file for spoken in-game quotes and pack Text Resources with Fonts into a SUBTITLES.MIX file."
 
-defaultSubtitlesFontName = 'SUBTLS_E.FON'
-defaultSubtitlesMixOutputName = u'SUBTITLES.MIX'
+DEFAULT_SUBTITLES_FONT_NAME = 'SUBTLS_E.FON'
+DEFAULT_SUBTITLES_MIX_OUTPUT_NAME = u'SUBTITLES.MIX'
+
+# all dialogue sheets get the SUBTLS_E.FON for translation to a Text Resource (TRx)
+# In-game dialogue sheet
+# TODO- maybe the '_E' part is not needed, since we use the suffix (x) of the extension (TRx) to signify the language
+SUPPORTED_INGAME_DIALOGUE_SHEETS = ['INGQUO_E.TR']
+# Video cut-scenes' dialogue sheets - these need the appendix of (x) for the language code, and a suffix of '.VQA'. 
+SUPPORTED_VIDEO_DIALOGUE_SHEETS = ['WSTLGO_', 'BRLOGO_', 'INTRO_', 'MW_A_', 'MW_B01_', 'MW_B02_', 'MW_B03_', 'MW_B04_', 'MW_B05_', 'INTRGT_', 'MW_D_', 'MW_C01_', 'MW_C02_', 'MW_C03_', 'END04A_', 'END04B_', 'END04C_', 'END06_', 'END01A_', 'END01B_', 'END01C_', 'END01D_', 'END01E_', 'END01F_', 'END03_']
+#
+# Each Text Resource (TRx) sheet gets a specific font to handle their translation to Text Resource
+# TAHOMA means both TAHOMA Fonts (18 and 24)(their translation should be identical (although in the original they have minor differences but they don't affect anything)
+# We use a single naming for TAHOMA here because both TAHOMA18 and TAHOMA24 are used for ENDCRED.TRx
+# The TRx files that are identically named to the originals are supposed to override them (needs ScummVM compatible functionality for that)
+# This is so that fan made translations are supported.
+SUPPORTED_TRANSLATION_SHEETS = [('OPTIONS.TR', 'KIA6PT'), ('DLGMENU.TR', 'KIA6PT'), ('SCORERS.TR', 'TAHOMA'), ('VK.TR', 'KIA6PT'), ('CLUES.TR', 'KIA6PT'), ('CRIMES.TR', 'KIA6PT'), ('ACTORS.TR', 'KIA6PT'), ('HELP.TR', 'KIA6PT'), ('AUTOSAVE.TR', 'KIA6PT'), ('ERRORMSG.TR', 'KIA6PT'), ('SPINDEST.TR', 'KIA6PT'), ('KIA.TR', 'KIA6PT'),  ('KIACRED.TR', 'KIA6PT'), ('CLUETYPE.TR', 'KIA6PT'), ('ENDCRED.TR', 'TAHOMA'), ('POGO.TR', 'KIA6PT')]
+# The FON files that are identically named to the originals are supposed to override them (needs ScummVM compatible functionality for that)
+SUPPORTED_OTHER_FILES_FOR_MIX = [DEFAULT_SUBTITLES_FONT_NAME, 'KIA6PT.FON', 'TAHOMA18.FON', 'TAHOMA24.FON'] # , '10PT.FON'] # we don't deal with 10PT.FON since it's not used -- TODO verify this.
+
+SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST = [('EN_ANY', 'E', 'English'), ('DE_DEU', 'G', 'German'), ('FR_FRA', 'F', 'French'), ('IT_ITA', 'I', 'Italian'), ('ES_ESP', 'S', 'Spanish'), ('RU_RUS', 'R', 'Russian')]
+DEFAULT_LANG_DESC_CODE = SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST[0]
+
+gTraceModeEnabled = False
+gActiveLanguageDescriptionCodeTuple = ''
+gNumOfSpokenQuotes = 0
+
 
 origEncoding = 'windows-1252'
 defaultTargetEncoding = 'windows-1252'
@@ -86,29 +110,12 @@ defaultTargetEncodingUnicode = unicode(defaultTargetEncoding, 'utf-8')
 targetEncoding = ''
 targetEncodingUnicode = ''
 
-traceModeEnabled = False
-
-# DONE ADD ALL SHEETS NEEDED FROM THE XLS
-# all dialogue sheets get the SUBTLS_E.FON for translation to TRE
-# - TODO maybe merge this with TAHOMA18.FON eventually
-supportedDialogueSheets = ['INGQUO_E.TRE', 'WSTLGO_E.VQA', 'BRLOGO_E.VQA', 'INTRO_E.VQA', 'MW_A_E.VQA', 'MW_B01_E.VQA', 'MW_B02_E.VQA', 'MW_B03_E.VQA', 'MW_B04_E.VQA', 'MW_B05_E.VQA', 'INTRGT_E.VQA', 'MW_D_E.VQA', 'MW_C01_E.VQA', 'MW_C02_E.VQA', 'MW_C03_E.VQA', 'END04A_E.VQA', 'END04B_E.VQA', 'END04C_E.VQA', 'END06_E.VQA', 'END01A_E.VQA', 'END01B_E.VQA', 'END01C_E.VQA', 'END01D_E.VQA', 'END01E_E.VQA', 'END01F_E.VQA', 'END03_E.VQA']
-#
-# Each TRE sheet gets a specific font to handle their translation to TRE
-# TAHOMA means both TAHOMA (their translation should be identical (although in the original they have minor differences but they don't affect anything)
-# We use a single naming for TAHOMA here because both TAHOMA18 and TAHOMA24 are used for ENDCRED.TRE
-# The TRE files that are identically named to the originals are supposed to override them (needs ScummVM compatible functionality for that)
-
-supportedTranslationSheets = [('OPTIONS.TRE', 'KIA6PT'), ('DLGMENU.TRE', 'KIA6PT'), ('SCORERS.TRE', 'TAHOMA'), ('VK.TRE', 'KIA6PT'), ('CLUES.TRE', 'KIA6PT'), ('CRIMES.TRE', 'KIA6PT'), ('ACTORS.TRE', 'KIA6PT'), ('HELP.TRE', 'KIA6PT'), ('AUTOSAVE.TRE', 'KIA6PT'), ('ERRORMSG.TRE', 'KIA6PT'), ('SPINDEST.TRE', 'KIA6PT'), ('KIA.TRE', 'KIA6PT'),  ('KIACRED.TRE', 'KIA6PT'), ('CLUETYPE.TRE', 'KIA6PT'), ('ENDCRED.TRE', 'TAHOMA'), ('POGO.TRE', 'KIA6PT')]
-# The FON files that are identically named to the originals are supposed to override them (needs ScummVM compatible functionality for that)
-supportedOtherFilesForMix = [defaultSubtitlesFontName, 'KIA6PT.FON', 'TAHOMA18.FON', 'TAHOMA24.FON'] # , '10PT.FON'] # we don't deal with 10PT.FON since it's not used -- TODO verify this.
-
-
 tableOfStringIds = []
 tableOfStringOffsets = []
 tableOfStringEntries = []
 
 # this list is used in order to replace the actual indices of characters with delegate font indices (ASCII indexes of the target code-page) which have been used during the font creation (or exist in in the internal TAHOMA font)
-# contains tuples of two values. First value is actual Utf char, the second is a replacement ASCII char
+# contains tuples of two values. First value is actual UTF char, the second is a replacement ASCII char
 listOfFontNamesToOutOfOrderGlyphs = []
 arrangedListOfFontNamesToOutOfOrderGlyphs = []
 
@@ -122,7 +129,7 @@ def initOverrideEncoding(pathToConfigureFontsTranslationTxt):
 		configureFontsTranslationTextFile = u'configureFontsTranslation.txt'
 		relPath = u'.'
 		pathToConfigureFontsTranslationTxt = os.path.join(relPath, configureFontsTranslationTextFile)
-		print "Warning:: Font Translation Configuration file not found in arguments. Attempting to open local file %s if it exists" % (configureFontsTranslationTextFile)
+		print "[Warning] Font Translation Configuration file not found in arguments. Attempting to open local file %s if it exists" % (configureFontsTranslationTextFile)
 
 	configureTranslationFailed = True
 	try:
@@ -133,8 +140,8 @@ def initOverrideEncoding(pathToConfigureFontsTranslationTxt):
 			if linesLst is None or len(linesLst) == 0:
 				configureTranslationFailed = True
 			else:
-				if traceModeEnabled:
-					print "Info:: Font Translation Configuration Info: "
+				if gTraceModeEnabled:
+					print "[Info] Font Translation Configuration Info: "
 				involvedTokensLst =[]
 				for readEncodLine in linesLst:
 					tmplineTokens = re.findall("[^\t\n]+",readEncodLine )
@@ -177,28 +184,28 @@ def initOverrideEncoding(pathToConfigureFontsTranslationTxt):
 					configureTranslationFailed = False
 
 	except:
-		print "Error:: while trying to access file for encoding info: %s" % (pathToConfigureFontsTranslationTxt)
+		print "[Error] while trying to access file for encoding info: %s" % (pathToConfigureFontsTranslationTxt)
 		raise
 		configureTranslationFailed = True
 
 	if 	configureTranslationFailed == True:
 #		targetEncoding = defaultTargetEncoding
-		print "Error: Could not find proper override encoding info in: %s" % (pathToConfigureFontsTranslationTxt)
+		print "[Error] Could not find proper override encoding info in: %s" % (pathToConfigureFontsTranslationTxt)
 		sys.exit()	# terminate if override Failed (Blade Runner)
 	#
 	# TODO ASDF fix this!!!
 	#
 	if(len(listOfFontNamesToOutOfOrderGlyphs) == 0):
-		tmpFontType = defaultSubtitlesFontName[:-4] # remove the .FON extensionFromTheName
-		print "Info:: Empty list for out of order glyphs. Assuming default out of order glyphs and only for the %s font" % (tmpFontType)
+		tmpFontType = DEFAULT_SUBTITLES_FONT_NAME[:-4] # remove the .FON extensionFromTheName
+		print "[Info] Empty list for out of order glyphs. Assuming default out of order glyphs and only for the %s font" % (tmpFontType)
 		tmplistOfOutOfOrderGlyphs = []
 		tmplistOfOutOfOrderGlyphs.append((u'\xed', u'\u0386')) # spanish i (si)
 		tmplistOfOutOfOrderGlyphs.append((u'\xf1', u'\xa5')) # spanish n (senor)
 		tmplistOfOutOfOrderGlyphs.append((u'\xe2', u'\xa6')) # a for (liver) pate
 		tmplistOfOutOfOrderGlyphs.append((u'\xe9', u'\xa7')) # e for (liver) pate
 		listOfFontNamesToOutOfOrderGlyphs.append( (tmpFontType, tmplistOfOutOfOrderGlyphs))
-	if traceModeEnabled:
-		print "Info:: Explicit Out Of Order Glyphs List: " , listOfFontNamesToOutOfOrderGlyphs
+	if gTraceModeEnabled:
+		print "[Info] Explicit Out Of Order Glyphs List: " , listOfFontNamesToOutOfOrderGlyphs
 	# arrange list properly:
 	# check if the list contains same item as key and value (in different pairs)
 	# if such case then the pair with the key should preceed the pair with the value matched,
@@ -220,8 +227,8 @@ def initOverrideEncoding(pathToConfigureFontsTranslationTxt):
 			if(foundMatchingPairs == False):
 				break # the whole while loop
         arrangedListOfFontNamesToOutOfOrderGlyphs.append( ( itFontName, itOOOGlyphList))
-	if traceModeEnabled:
-		print "Info:: Arranged Glyphs Delegates List: " , arrangedListOfFontNamesToOutOfOrderGlyphs
+	if gTraceModeEnabled:
+		print "[Info] Arranged Glyphs Delegates List: " , arrangedListOfFontNamesToOutOfOrderGlyphs
 	return
 
 #
@@ -230,18 +237,18 @@ def initActorPropertyEntries(thePathToActorNamesTxt):
 	global actorPropertyEntriesWasInit
 	global actorPropertyEntries
 	firstLine = True
-#	 print "opening actornames"
+#	 print "[Debug] opening actornames"
 	if thePathToActorNamesTxt is None or not thePathToActorNamesTxt:
 
 		actorNamesTextFile = u'actornames.txt'
 		relPath = u'.'
 		thePathToActorNamesTxt = os.path.join(relPath, actorNamesTextFile)
-		print "Warning:: Actor names text file %s not found in arguments. Attempting to open local file if it exists" % (thePathToActorNamesTxt)
+		print "[Warning] Actor names text file %s not found in arguments. Attempting to open local file if it exists" % (thePathToActorNamesTxt)
 	with open(thePathToActorNamesTxt) as tsv:
 		for line in csv.reader(tsv, dialect="excel-tab"):
 			#skip first line header
 			if firstLine == True:
-#				 print "skippingHeader"
+#				 print "[Debug] skipping Header line in Excel sheet"
 				firstLine = False
 			else:
 				actorPropertyEntries.append(line)
@@ -306,7 +313,7 @@ def calculateFoldHash(strFileName):
 				groupSum |= 0
 		hash = ((hash << 1) | ((hash >> 31) & 1)) + groupSum
 	hash &= 0xFFFFFFFF	   # mask here!
-	if traceModeEnabled:
+	if gTraceModeEnabled:
 		print (strParam +': '  +''.join('{:08X}'.format(hash)))
 	return hash
 
@@ -319,21 +326,23 @@ def getSortMixFilesKey(item):
 	return signedKeyTmp
 #
 def outputMIX():
-	# output file should be defaultSubtitlesMixOutputName
+	# output file should be DEFAULT_SUBTITLES_MIX_OUTPUT_NAME
 	# checking with known hashes to verify calculateFoldHash
 	#calculateFoldHash('AR01-MIN.SET')
 	#calculateFoldHash('AR02-MIN.SET')
 	#calculateFoldHash('CLOVDIES.AUD')
 	#calculateFoldHash('INTRO.VQA')
+	print "[Info] Writing to output file %s..." % (DEFAULT_SUBTITLES_MIX_OUTPUT_NAME)
 
 	errorFound = False
 	outMIXFile = None
 	try:
 		relPath = u'.'
-		outputMixPath = os.path.join(relPath, defaultSubtitlesMixOutputName)
+		outputMixPath = os.path.join(relPath, DEFAULT_SUBTITLES_MIX_OUTPUT_NAME)
 		outMIXFile = open(outputMixPath, 'wb')
-	except:
+	except Exception as e:
 		errorFound = True
+		print '[Error] Unable to write to output MIX file. ' + str(e)
 	if not errorFound:
 		# Write header
 		# 2 bytes: number of entries (NumFiles)
@@ -358,28 +367,28 @@ def outputMIX():
 		#	^^ this is done manually by making sure the filenames in the sheets of the excel as compliant
 		# Based on observations from STARTUP.MIX:
 		# 1) the hash ids can overflow and so lower numbers seem to appear down in the index table entries list
-		#		 -- So we sort hash but we first tranlste the unsigned key to signed with ctypes
+		#		 -- So we sort hash but we first translate the unsigned key to signed with ctypes
 		# 2) the offsets are not necessarily sorted, meaning that the first entry in the index table won't necessarily have the 0x00000000 offset
 		i = 0
 		mixFileEntries = []
 		totalFilesDataSize = 0
 		currOffsetForDataSegment = 0 # we start after header and table of index entries, from 0, (but this means that when reading the offset we need to add 6 + numOfFiles * 12). This does not concern us though.
-		for sheetDialogueName in supportedDialogueSheets:
-			sheetDialogueNameTRE =	sheetDialogueName[:-4] + '.TRE'
-			if os.path.isfile('./' + sheetDialogueNameTRE):
-				entryID = calculateFoldHash(sheetDialogueNameTRE)
-				mixEntryfileSizeBytes = os.path.getsize('./' + sheetDialogueNameTRE)
-				mixFileEntries.append((entryID, sheetDialogueNameTRE, mixEntryfileSizeBytes))
+		for sheetDialogueName in SUPPORTED_DIALOGUE_SHEETS:
+			sheetDialogueNameTRx =	sheetDialogueName[:-4] + '.TRE'
+			if os.path.isfile('./' + sheetDialogueNameTRx):
+				entryID = calculateFoldHash(sheetDialogueNameTRx)
+				mixEntryfileSizeBytes = os.path.getsize('./' + sheetDialogueNameTRx)
+				mixFileEntries.append((entryID, sheetDialogueNameTRx, mixEntryfileSizeBytes))
 				totalFilesDataSize += mixEntryfileSizeBytes
 
-		for translatedTREFileName in [ x[0] for x in supportedTranslationSheets] :
+		for translatedTREFileName in [ x[0] for x in SUPPORTED_TRANSLATION_SHEETS] :
 			if os.path.isfile('./' + translatedTREFileName):
 				entryID = calculateFoldHash(translatedTREFileName)
 				mixEntryfileSizeBytes = os.path.getsize('./' + translatedTREFileName)
 				mixFileEntries.append((entryID, translatedTREFileName, mixEntryfileSizeBytes))
 				totalFilesDataSize += mixEntryfileSizeBytes
 
-		for otherFileName in supportedOtherFilesForMix:
+		for otherFileName in SUPPORTED_OTHER_FILES_FOR_MIX:
 			if os.path.isfile('./' + otherFileName):
 				entryID = calculateFoldHash(otherFileName)
 				mixEntryfileSizeBytes = os.path.getsize('./' + otherFileName)
@@ -397,10 +406,10 @@ def outputMIX():
 		totalFilesDataSizeToWrite = pack('I',totalFilesDataSize)  # unsigned integer 4 bytes
 		outMIXFile.write(totalFilesDataSizeToWrite)
 
-		if traceModeEnabled:
-			print ("Debug:: Sorted Entries based on EntryId")
+		if gTraceModeEnabled:
+			print ("[Debug] Sorted Entries based on EntryId")
 		for mixFileEntry in mixFileEntries:
-			if traceModeEnabled:
+			if gTraceModeEnabled:
 				print (''.join('{:08X}'.format(mixFileEntry[0])) + ': ' + mixFileEntry[1] + ' : ' + ''.join('{:08X}'.format(mixFileEntry[2])))
 			entryID = mixFileEntry[0] & 0xFFFFFFFF
 			entryIDToWrite = pack('I',entryID)	# unsigned integer 4 bytes
@@ -423,11 +432,12 @@ def outputMIX():
 				outMIXFile.write(inEntryMIXFile.read())
 				inEntryMIXFile.close()
 			else:
-				print ("Error while reading in ENTRY file")
+				print ("[Error] Error while reading in ENTRY file")
 				break
 
 		outMIXFile.close()
-		print "Info:: Total Resource files packed in %s: %d" % (defaultSubtitlesMixOutputName, numOfFiles)
+		print "[Info] Total Resource files packed in %s: %d" % (DEFAULT_SUBTITLES_MIX_OUTPUT_NAME, numOfFiles)
+		print "[Info] Done."
 	return
 #
 # END FOR MIX FILE
@@ -451,23 +461,23 @@ def outputMIX():
 
 def translateQuoteToAsciiProper(cellObj, pSheetName):
 	newQuoteReplaceSpecials =  cellObj.value.encode("utf-8")
-	#print ('Encoded to unicode: %s ' % (newQuoteReplaceSpecials))
+	#print ('[Debug] Encoded to unicode: %s ' % (newQuoteReplaceSpecials))
 	newQuoteReplaceSpecials = newQuoteReplaceSpecials.decode("utf-8")
 
 	pertinentListOfOutOfOrderGlyphs = []
 	#print pSheetName
-	#print supportedDialogueSheets
-	#print defaultSubtitlesFontName[:-4]
+	#print SUPPORTED_DIALOGUE_SHEETS
+	#print DEFAULT_SUBTITLES_FONT_NAME[:-4]
 	#print [x[0] for x in listOfFontNamesToOutOfOrderGlyphs]
-	if pSheetName in supportedDialogueSheets and defaultSubtitlesFontName[:-4] in [x[0] for x in listOfFontNamesToOutOfOrderGlyphs]:
+	if pSheetName in SUPPORTED_DIALOGUE_SHEETS and DEFAULT_SUBTITLES_FONT_NAME[:-4] in [x[0] for x in listOfFontNamesToOutOfOrderGlyphs]:
 		for (tmpFontName, tmpOOOList) in listOfFontNamesToOutOfOrderGlyphs:
-			if tmpFontName == defaultSubtitlesFontName[:-4]:
+			if tmpFontName == DEFAULT_SUBTITLES_FONT_NAME[:-4]:
 				pertinentListOfOutOfOrderGlyphs = tmpOOOList
 				break
-	elif pSheetName in [x[0] for x in supportedTranslationSheets]:
+	elif pSheetName in [x[0] for x in SUPPORTED_TRANSLATION_SHEETS]:
 		pertinentFontType = ''
-        #[treAndFontTypeTuple for treAndFontTypeTuple in supportedTranslationSheets if treAndFontTypeTuple[0] == pSheetName]
-		for (tmpSheetName, tmpFontType) in supportedTranslationSheets:
+        #[treAndFontTypeTuple for treAndFontTypeTuple in SUPPORTED_TRANSLATION_SHEETS if treAndFontTypeTuple[0] == pSheetName]
+		for (tmpSheetName, tmpFontType) in SUPPORTED_TRANSLATION_SHEETS:
 			if tmpSheetName == pSheetName:
 				pertinentFontType = tmpFontType
 				break
@@ -522,7 +532,7 @@ def translateQuoteToAsciiProper(cellObj, pSheetName):
 
 
 def inputXLS(filename):
-	global numOfSpokenQuotes
+	global gNumOfSpokenQuotes
 	global tableOfStringIds
 	global tableOfStringOffsets
 	global tableOfStringEntries
@@ -544,16 +554,16 @@ def inputXLS(filename):
 	# xl_sheet = xl_workbook.sheet_by_index(0)
 	#
 	#
-	mergedListOfSubtitleSheetsAndTranslatedTREs = supportedDialogueSheets + [ x[0] for x in supportedTranslationSheets ]
+	mergedListOfSubtitleSheetsAndTranslatedTREs = SUPPORTED_DIALOGUE_SHEETS + [ x[0] for x in SUPPORTED_TRANSLATION_SHEETS ]
 
 	for sheetDialogueName in mergedListOfSubtitleSheetsAndTranslatedTREs:
 		xl_sheet = xl_workbook.sheet_by_name(sheetDialogueName)
 		if(xl_sheet is not None):
-			if traceModeEnabled:
-				print ('Sheet name: %s' % xl_sheet.name)
-			numOfSpokenQuotes = xl_sheet.nrows - 2 # all rows minus the first TWO rows with headers
-			if traceModeEnabled:
-				print ('Debug:: num of spoken quotes: %d' % numOfSpokenQuotes)
+			if gTraceModeEnabled:
+				print ('[Info] Sheet name: %s' % xl_sheet.name)
+			gNumOfSpokenQuotes = xl_sheet.nrows - 2 # all rows minus the first TWO rows with headers
+			if gTraceModeEnabled:
+				print ('[Debug] Number of spoken quotes: %d' % gNumOfSpokenQuotes)
 			# stats for debug
 			extremeQuotesList = []
 			longestLength = 0
@@ -563,8 +573,8 @@ def inputXLS(filename):
 
 
 			absStartOfIndexTable = 4
-			absStartOfOffsetTable = absStartOfIndexTable + (numOfSpokenQuotes * 4)		# = 4 + 0x1577 * 4 = 4 + 0x55DC = 0x55E0
-			absStartOfStringTable = absStartOfOffsetTable + ((numOfSpokenQuotes+1) * 4) # =	 0x55E0 + (0x1578 * 4) = 0xABC0
+			absStartOfOffsetTable = absStartOfIndexTable + (gNumOfSpokenQuotes * 4)		# = 4 + 0x1577 * 4 = 4 + 0x55DC = 0x55E0
+			absStartOfStringTable = absStartOfOffsetTable + ((gNumOfSpokenQuotes + 1) * 4) # =	 0x55E0 + (0x1578 * 4) = 0xABC0
 			curStrStartOffset = absStartOfStringTable - 4
 			newQuoteReplaceSpecialsAscii = ''
 			tmpQuoteID = 0
@@ -572,31 +582,31 @@ def inputXLS(filename):
 			tmpStartFrame = 0			# for VQA sheets
 			tmpEndFrame = 0				# for VQA sheets
 			mode = 0					# init to unknown
-			if xl_sheet.name == supportedDialogueSheets[0]:
-				if traceModeEnabled:
-					print 'IN GAME QUOTES'
+			if xl_sheet.name == SUPPORTED_DIALOGUE_SHEETS[0]:
+				if gTraceModeEnabled:
+					print '[Debug] IN GAME QUOTES'
 				mode = 1 #in-game quote
-			elif xl_sheet.name in supportedDialogueSheets:
-				if traceModeEnabled:
-					print 'VQA SCENE DIALOGUE'
+			elif xl_sheet.name in SUPPORTED_DIALOGUE_SHEETS:
+				if gTraceModeEnabled:
+					print '[Debug] VQA SCENE DIALOGUE'
 				mode = 2 #VQA
-			elif xl_sheet.name in [ x[0] for x in supportedTranslationSheets ]:
-				if traceModeEnabled:
-					print 'TRANSLATED TRE'
+			elif xl_sheet.name in [ x[0] for x in SUPPORTED_TRANSLATION_SHEETS ]:
+				if gTraceModeEnabled:
+					print '[Debug] TRANSLATED TEXT RESOURCE'
 				mode = 3 # Translated TRE
 			#
 			del tableOfStringIds[:]
 			del tableOfStringEntries[:]
 			del tableOfStringOffsets[:]
 			for row_idx in range(2, xl_sheet.nrows):
-				#print "Line %d" % (row_idx)
+				#print "[Debug] Line %d" % (row_idx)
 				for col_idx in range(0, xl_sheet.ncols):
 					cell_obj = xl_sheet.cell(row_idx, col_idx)
 					#
 					# FOR IN-GAME QUOTES -- Iterate through columns starting from col 0. We need cols: 0, 2
 					#
 					if mode == 1:
-					   #print ('Column: [%s] cell_obj: [%s]' % (col_idx, cell_obj))
+					   #print ('[Debug] Column: [%s] cell_obj: [%s]' % (col_idx, cell_obj))
 						if(col_idx == 0):
 							#switchFlagShowQuote = False
 							twoTokensfirstColSplitAtDotXLS = cell_obj.value.split('.', 1)
@@ -604,20 +614,20 @@ def inputXLS(filename):
 								twoTokensfirstColSplitAtDashXLS = twoTokensfirstColSplitAtDotXLS[0].split('-', 1)
 								if len(twoTokensfirstColSplitAtDashXLS) == 2:
 									tmpQuoteID = int( twoTokensfirstColSplitAtDashXLS[0]) * 10000 + int(twoTokensfirstColSplitAtDashXLS[1])
-									#print ('row_idx %d. tag %s = quoteId [%d]' % (row_idx, twoTokensfirstColSplitAtDotXLS[0], tmpQuoteID))
+									#print ('[Debug] row_idx: %d. tag %s: quoteId [%d]' % (row_idx, twoTokensfirstColSplitAtDotXLS[0], tmpQuoteID))
 									tableOfStringIds.append(tmpQuoteID)
 									#if(tmpQuoteID == 160110 or tmpQuoteID == 160010):
 									#	 switchFlagShowQuote = True
 
 						elif(col_idx == 1) :
 							#if switchFlagShowQuote == True:
-							#	 print ('length: %d: %s' % (len(cell_obj.value), cell_obj.value))
-							#	 print ('object: %s' % (cell_obj))
+							#	 print ('[Debug] length: %d: %s' % (len(cell_obj.value), cell_obj.value))
+							#	 print ('[Debug] object: %s' % (cell_obj))
 							#	 #newQuoteReplaceSpecials =	 cell_obj.value.decode("utf-8") # unicode(cell_obj.value, 'windows-1252')
-							#	 #print ('decoded to unicode: %s ' % (newQuoteReplaceSpecials)) # error with char xf1
+							#	 #print ('[Debug] decoded to unicode: %s ' % (newQuoteReplaceSpecials)) # error with char xf1
 							newQuoteReplaceSpecialsAscii = translateQuoteToAsciiProper(cell_obj, xl_sheet.name)
 							#if switchFlagShowQuote == True:
-							#	 print ('length: %d: %s' % (len(newQuoteReplaceSpecialsAscii), newQuoteReplaceSpecialsAscii))
+							#	 print ('[Debug] length: %d: %s' % (len(newQuoteReplaceSpecialsAscii), newQuoteReplaceSpecialsAscii))
 							#print ':'.join(x.encode('hex') for x in newQuoteReplaceSpecialsAscii)	 # seems to work.  new chars are non-printable but exist in string
 
 							tableOfStringEntries.append(newQuoteReplaceSpecialsAscii)
@@ -628,18 +638,18 @@ def inputXLS(filename):
 							if ( predefinedLengthThreshold < len(newQuoteReplaceSpecialsAscii)):
 								extremeQuotesList.append((tmpQuoteID, newQuoteReplaceSpecialsAscii))
 								quoteNumAboveThreshold += 1
-								#print ('row_idx %d. tag %s = quoteId [%d], length: %d: %s' % (row_idx, twoTokensfirstColSplitAtDotXLS[0], tmpQuoteID, len(newQuoteReplaceSpecialsAscii), newQuoteReplaceSpecialsAscii))
+								#print ('[Debug] row_idx: %d. tag %s: quoteId [%d], length: %d: %s' % (row_idx, twoTokensfirstColSplitAtDotXLS[0], tmpQuoteID, len(newQuoteReplaceSpecialsAscii), newQuoteReplaceSpecialsAscii))
 					#
 					# FOR VQAs -- Iterate through columns starting from col 2. We need cols: 2, 9, 10
 					#
 					elif mode == 2:
 						if(col_idx == 2): # subtitle text
 							newQuoteReplaceSpecialsAscii = translateQuoteToAsciiProper(cell_obj, xl_sheet.name)
-							#print ('length: %d: %s' % (len(newQuoteReplaceSpecialsAscii), newQuoteReplaceSpecialsAscii))
+							#print ('[Debug] length: %d: %s' % (len(newQuoteReplaceSpecialsAscii), newQuoteReplaceSpecialsAscii))
 							#print ':'.join(x.encode('hex') for x in newQuoteReplaceSpecialsAscii)	# seems to work.  new chars are non-printable but exist in string
 							# don't append to tableOfStringEntries yet
 						elif(col_idx == 9): # startFrame
-							#print "cell: %s" % (cell_obj.value)
+							#print "[Debug] cell: %s" % (cell_obj.value)
 							tmpStartFrame =	 int(cell_obj.value)
 						elif(col_idx == 10): # endFrame
 							tmpEndFrame = int(cell_obj.value)
@@ -658,19 +668,19 @@ def inputXLS(filename):
 					# For translated TRE sheets the id is already in first column, the text is in the next one
 					#
 					elif mode == 3:
-					   #print ('Column: [%s] cell_obj: [%s]' % (col_idx, cell_obj))
+					   #print ('[Debug] Column: [%s] cell_obj: [%s]' % (col_idx, cell_obj))
 						if(col_idx == 0):
 							tmpQuoteID = int(cell_obj.value)
 							tableOfStringIds.append(tmpQuoteID)
 						elif(col_idx == 1) :
 							#if switchFlagShowQuote == True:
-							#	 print ('length: %d: %s' % (len(cell_obj.value), cell_obj.value))
-							#	 print ('object: %s' % (cell_obj))
+							#	 print ('[Debug] length: %d: %s' % (len(cell_obj.value), cell_obj.value))
+							#	 print ('[Debug] object: %s' % (cell_obj))
 							#	 #newQuoteReplaceSpecials =	 cell_obj.value.decode("utf-8") # unicode(cell_obj.value, 'windows-1252')
-							#	 #print ('decoded to unicode: %s ' % (newQuoteReplaceSpecials)) # error with char xf1
+							#	 #print ('[Debug] decoded to unicode: %s ' % (newQuoteReplaceSpecials)) # error with char xf1
 							newQuoteReplaceSpecialsAscii = translateQuoteToAsciiProper(cell_obj, xl_sheet.name)
 							#if switchFlagShowQuote == True:
-							#	 print ('length: %d: %s' % (len(newQuoteReplaceSpecialsAscii), newQuoteReplaceSpecialsAscii))
+							#	 print ('[Debug] length: %d: %s' % (len(newQuoteReplaceSpecialsAscii), newQuoteReplaceSpecialsAscii))
 							#print ':'.join(x.encode('hex') for x in newQuoteReplaceSpecialsAscii)	 # seems to work.  new chars are non-printable but exist in string
 
 							tableOfStringEntries.append(newQuoteReplaceSpecialsAscii)
@@ -681,13 +691,13 @@ def inputXLS(filename):
 							if ( predefinedLengthThreshold < len(newQuoteReplaceSpecialsAscii)):
 								extremeQuotesList.append((tmpQuoteID, newQuoteReplaceSpecialsAscii))
 								quoteNumAboveThreshold += 1
-								#print ('row_idx %d. tag %s = quoteId [%d], length: %d: %s' % (row_idx, twoTokensfirstColSplitAtDotXLS[0], tmpQuoteID, len(newQuoteReplaceSpecialsAscii), newQuoteReplaceSpecialsAscii))
+								#print ('[Debug] row_idx: %d. tag %s: quoteId [%d], length: %d: %s' % (row_idx, twoTokensfirstColSplitAtDotXLS[0], tmpQuoteID, len(newQuoteReplaceSpecialsAscii), newQuoteReplaceSpecialsAscii))
 
 			tableOfStringOffsets.append(curStrStartOffset) # the final extra offset entry
-			if traceModeEnabled:
-				print 'Debug:: Longest Length = %d, quotes above threshold (%d): %d' % (longestLength, predefinedLengthThreshold, quoteNumAboveThreshold)
+			if gTraceModeEnabled:
+				print '[Debug] Longest Length: %d, Quotes above threshold (%d): %d' % (longestLength, predefinedLengthThreshold, quoteNumAboveThreshold)
 				for extremQuotTuple in extremeQuotesList:
-					print "Id: %d, Q: %s" % (extremQuotTuple[0], extremQuotTuple[1])
+					print "[Debug] Id: %d, Q: %s" % (extremQuotTuple[0], extremQuotTuple[1])
 			#
 			# WRITE TO TRE FILE
 			#
@@ -696,24 +706,45 @@ def inputXLS(filename):
 			outTREFileName = sheetDialogueName[:-4]
 			try:
 				outTREFile = open("./" + outTREFileName + ".TRE", 'wb')
-			except:
+			except Exception as e:
 				errorFound = True
+				print '[Error] Unable to write to output TRE file. ' + str(e)
 			if not errorFound:
-				numOfSpokenQuotesToWrite = pack('I',numOfSpokenQuotes)	# unsigned integer 4 bytes
+				numOfSpokenQuotesToWrite = pack('I', gNumOfSpokenQuotes)	# unsigned integer 4 bytes
 				outTREFile.write(numOfSpokenQuotesToWrite)
 				# write string IDs table
-				for idxe in range(0,len(tableOfStringIds)):
-					idOfStringToWrite = pack('I',tableOfStringIds[idxe])  # unsigned integer 4 bytes
+				for idxe in range(0, len(tableOfStringIds)):
+					idOfStringToWrite = pack('I', tableOfStringIds[idxe])  # unsigned integer 4 bytes
 					outTREFile.write(idOfStringToWrite)
 				# write string offsets table
-				for idxe in range(0,len(tableOfStringOffsets)):
-					offsetOfStringToWrite = pack('I',tableOfStringOffsets[idxe])  # unsigned integer 4 bytes
+				for idxe in range(0, len(tableOfStringOffsets)):
+					offsetOfStringToWrite = pack('I', tableOfStringOffsets[idxe])  # unsigned integer 4 bytes
 					outTREFile.write(offsetOfStringToWrite)
 				#write strings with null terminator
-				for idxe in range(0,len(tableOfStringEntries)):
+				for idxe in range(0, len(tableOfStringEntries)):
 					outTREFile.write(tableOfStringEntries[idxe])
 					outTREFile.write('\0')
 				outTREFile.close()
+	return
+
+#	
+# Aux function to validate input language description
+#
+def getLanguageDescCodeTuple(candidateLangDescriptionStr):
+	if (candidateLangDescriptionStr is None or not candidateLangDescriptionStr ):
+		resultTuple = DEFAULT_LANG_DESC_CODE
+	else: 
+		tmpMatchTuplesList = [ (x,y,z) for (x,y,z) in SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST if  x ==  candidateLangDescriptionStr]
+		if tmpMatchTuplesList is not None and len(tmpMatchTuplesList) > 0: 
+			resultTuple = tmpMatchTuplesList[0]			
+		else: 
+			resultTuple = None
+	return resultTuple
+	
+def printInfoMessageForLanguageSelectionSyntax():
+	tmpCSVSupportedLangDescValues = ", ".join( zip(*SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST)[0] )
+	print "Valid values for language selection are: %s" % (tmpCSVSupportedLangDescValues)
+	print "Default value is: %s (%s)" % (DEFAULT_LANG_DESC_CODE[0], DEFAULT_LANG_DESC_CODE[2])
 	return
 #
 #
@@ -725,41 +756,50 @@ def inputXLS(filename):
 # 00-8520 -- WhatDoYouKnow					dupl TLK01, TLK0A
 def main(argsCL):
 	# TODO parse arguments using argparse? https://docs.python.org/3/library/argparse.html#module-argparse
-	global traceModeEnabled
-	traceModeEnabled = False
+	global gTraceModeEnabled
+	global gActiveLanguageDescriptionCodeTuple
+	
+	gTraceModeEnabled = False
+	gActiveLanguageDescriptionCodeTuple = DEFAULT_LANG_DESC_CODE
+	
 	pathToQuoteExcelFile = ""
 	pathToActorNamesTxt = ""
 	pathToConfigureFontsTranslationTxt = ""
 
 	invalidSyntax = False
-	print "Running %s (%s)..." % (app_name_spaced, app_version)
+	print "Running %s (%s)..." % (APP_NAME_SPACED, APP_VERSION)
 #	 print "Len of sysargv = %s" % (len(argsCL))
 	if len(argsCL) == 2:
 		if(argsCL[1] == '--help'or argsCL[1] == '-h'):
-			print "%s %s supports Blade Runner (English version, CD edition)." % (app_name_spaced, app_version)
-			print app_short_desc
+			print "%s %s supports Westwood's Blade Runner PC Game (1997)." % (APP_NAME_SPACED, APP_VERSION)
+			print APP_SHORT_DESC
 			print "Created by Praetorian of the classic adventures in Greek team."
 			print "Always keep backups!"
 			print "--------------------"
 			print "Preparatory steps:"
-			print "1. Copy the BladeRunnerPCTLK.xls file (latest version, downloaded from Google Sheets) in some folder on your PC."
+			print "1. Copy the transcript Excel file (eg. BladeRunnerPCTLK.xls, latest version, downloaded from Google Sheets) in some folder on your PC."
 			print "--------------------"
-			print "%s takes 1 mandatory argument:" % (app_wrapper_name)
+			print "%s takes 1 mandatory argument:" % (APP_WRAPPER_NAME)
 			print "Valid syntax: "
-			print "%s -x path_to_BladeRunnerPCTLK_xls [-ian path_to_actornames_txt] [-cft path_to_configureFontsTranslation_txt] [--trace]" % (app_wrapper_name)
+			print "%s -x path_to_BladeRunnerPCTLK_xls [-ian path_to_actornames_txt] [-cft path_to_configureFontsTranslation_txt] [-ld gameInputLanguageDescription] [--trace]" % (APP_WRAPPER_NAME)
 			print "-x is followed by the path to the excel file with the subtitle quotes."
 			print "-ian is followed by the path to actornames.txt, if it's not in the current working directory."
 			print "-cft is followed by the path to configureFontsTranslation.txt, if it's not in the current working directory."
+			print "-ld is followed by the language description of the target game version that you will install the subtitles to."
+			printInfoMessageForLanguageSelectionSyntax()
 			print "The --trace switch enables more debug messages being printed during execution."
-			print "If the app finishes successfully a " + supportedDialogueSheets[0] + " and a few other .TRE files for the VQAs "
-			print "in the Excel file as well as a %s file containing all of them will be created in the same folder with the app." % (defaultSubtitlesMixOutputName)
+			print "--------------------"
+			print "If the app finishes successfully, it creates a %sx file and a few other Text Resource (TRx) files " % (SUPPORTED_INGAME_DIALOGUE_SHEETS[0])
+			print "for each VQAs sheet in the input Excel file respectively. Additionally, a %s file containing all " % (DEFAULT_SUBTITLES_MIX_OUTPUT_NAME)
+			print "of the resources in the Excel file and a few extra (subtitle font, (optional) edited fonts) is created as well." 
+			print "All output files are written in the current working directory." 
 			print "--------------------"
 			print "Thank you for using this app."
-			print "Please provide any feedback to: %s " % (company_email)
+			print "Please provide any feedback to: %s " % (COMPANY_EMAIL)
 			sys.exit()
 		elif(argsCL[1] == '--version' or argsCL[1] == '-v'):
-			print "%s %s supports Blade Runner (English version, CD edition)." % (app_name_spaced, app_version)
-			print "Please provide any feedback to: %s " % (company_email)
+			print "%s %s supports Westwood's Blade Runner PC Game (1997)." % (APP_NAME_SPACED, APP_VERSION)
+			print "Please provide any feedback to: %s " % (COMPANY_EMAIL)
 			sys.exit()
 		else:
 			invalidSyntax = True
@@ -773,13 +813,20 @@ def main(argsCL):
 				elif (argsCL[i] == '-cft'):
 					pathToConfigureFontsTranslationTxt = argsCL[i+1]
 			elif sys.argv[i] == '--trace':
-				print "Info:: Trace mode enabled (more debug messages)."
-				traceModeEnabled = True
+				print "[Info] Trace mode enabled (more debug messages)."
+				gTraceModeEnabled = True
 
 		if not pathToQuoteExcelFile:
 			invalidSyntax = True
+		
+		gActiveLanguageDescriptionCodeTuple = getLanguageDescCodeTuple(candidateLangDescriptionTxt)	
+		if (not invalidSyntax) and gActiveLanguageDescriptionCodeTuple is None:	
+			print "[Error] Invalid language code was specified"
+			printInfoMessageForLanguageSelectionSyntax()
+			invalidSyntax = True
 
 		if not invalidSyntax:
+			print "[Info] Game Language Selected: %s (%s)" % (gActiveLanguageDescriptionCodeTuple[0], gActiveLanguageDescriptionCodeTuple[2])
 			# parse any overrideEncoding file if exists:
 			initOverrideEncoding(pathToConfigureFontsTranslationTxt)
 
@@ -788,7 +835,7 @@ def main(argsCL):
 			# parse Actors files:
 			initActorPropertyEntries(pathToActorNamesTxt)
 #			 for actorEntryTmp in actorPropertyEntries:
-#				  print "Found actor: %s %s %s" % (actorEntryTmp[0], actorEntryTmp[1], actorEntryTmp[2])
+#				  print "[Debug] Found actor: %s %s %s" % (actorEntryTmp[0], actorEntryTmp[1], actorEntryTmp[2])
 			inputXLS(pathToQuoteExcelFile)
 			outputMIX()
 
@@ -796,21 +843,16 @@ def main(argsCL):
 		invalidSyntax = True
 
 	if invalidSyntax == True:
-		print "Invalid syntax\n Try: \n %s --help for more info \n %s --version for version info " % (app_wrapper_name, app_wrapper_name)
+		print "[Error] Invalid syntax\n Try: \n %s --help for more info \n %s --version for version info " % (APP_WRAPPER_NAME, APP_WRAPPER_NAME)
 		print "Valid syntax: "
-		print "%s -x path_to_BladeRunnerPCTLK_xls [-ian path_to_actornames_txt] [-cft path_to_configureFontsTranslation_txt] [--trace]" % (app_wrapper_name)
-		print "-x is followed by the path to the excel file with the subtitle quotes."
-		print "-ian is followed by the path to actornames.txt, if it's not in the current working directory."
-		print "-cft is followed by the path to configureFontsTranslation.txt, if it's not in the current working directory."
-		print "The --trace switch enabled more debug messages being printed during execution."
-		print "If the app finishes successfully a " + supportedDialogueSheets[0] + " and a few other .TRE files for the VQAs "
-		print "in the Excel file as well as a %s file containing all of them will be created in the same folder with the app." % (defaultSubtitlesMixOutputName)
+		print "%s -x path_to_BladeRunnerPCTLK_xls [-ian path_to_actornames_txt] [-cft path_to_configureFontsTranslation_txt] [-ld gameInputLanguageDescription] [--trace]" % (APP_WRAPPER_NAME)
+		print "\nDetected arguments:"
 		tmpi = 0
 		for tmpArg in argsCL:
 			if tmpi==0: #skip first argument
 				tmpi+=1
 				continue
-			print "\nArgument: %s" % (tmpArg)
+			print "Argument: %s" % (tmpArg)
 			tmpi+=1
 
 # Total unique quotes seems to be 5495!
@@ -821,5 +863,5 @@ if __name__ == "__main__":
 	main(sys.argv[0:])
 else:
 	## debug
-	#print 'Debug:: %s was imported from another module' % (app_wrapper_name)
+	#print '[Debug] %s was imported from another module' % (APP_WRAPPER_NAME)
 	pass

@@ -4,7 +4,7 @@
 # Created by Praetorian (ShadowNate) for Classic Adventures in Greek
 # classic.adventures.in.greek@gmail.com
 #
-# DONE Add code and switch option: to get the blade runner installation directory as input, then find the TLK files and extract them with proper naming
+# DONE Add code and switch option: to get the blade runner installation directory as input, then find the TLK files and export them with proper naming
 # DONE fix proper names for sheets as per latest code changes
 #
 import os, sys
@@ -16,26 +16,26 @@ csvLibFound = False
 try:
 	import shutil 
 except ImportError:
-	print "Error:: Shutil python library is required to be installed!" 
+	print "[Error] Shutil python library is required to be installed!" 
 else:
 	shutilLibFound = True
 
 try:
 	import xlwt 
 except ImportError:
-	print "Error:: xlwt python library is required to be installed!" 
+	print "[Error] xlwt python library is required to be installed!" 
 else:
 	xlwtLibFound = True
 	
 try:
 	import csv 
 except ImportError:
-	print "Error:: csv python library is required to be installed!" 
+	print "[Error] csv python library is required to be installed!" 
 else:
 	csvLibFound = True
 
 if 	(not shutilLibFound) or (not xlwtLibFound) or (not csvLibFound):
-	sys.stdout.write("Error:: Errors were found when trying to import required python libraries\n")
+	sys.stdout.write("[Error] Errors were found when trying to import required python libraries\n")
 	sys.exit(1)
 
 from os import walk, errno, path
@@ -51,15 +51,11 @@ COMPANY_EMAIL = "classic.adventures.in.greek@gmail.com"
 APP_VERSION = "0.80"
 APP_NAME = "sortBladeRunnerWavs"
 APP_WRAPPER_NAME = "quotesSpreadsheetCreator.py"
-APP_NAME_spaced = "Blade Runner Transcript Excel Creator (bare bones)"
-APP_SHORT_DESC = "Create an Excel (.XLS) for transcribing Blade Runner. It can also extract TRx (x is the language code of the game) files and export WAV files for game's resources. "
-gTraceModeEnabled = False
-gActiveLanguageDescriptionCodeTuple = ''
+APP_NAME_SPACED = "Blade Runner Transcript Excel Creator (bare bones)"
+APP_SHORT_DESC = "* Create an Excel (.XLS) for transcribing Blade Runner.\n* (Optional) Extract TRx (x is the language code) files as additional sheets in the Excel\n* (Optional) Export speech files from the game's TLK resources to WAV format."
 
-gStringReplacementForRootFolderWithExtractedFiles = ""
-gNumReplaceStartingCharacters = 0
-
-OUTPUT_XLS_FILENAME = 'out.xls'
+OUTPUT_XLS_FILENAME = 'out'
+OUTPUT_XLS_FILENAME_EXT = '.xls'
 OUTPUT_XLS_QUOTES_SHEET = 'INGQUO_E.TR'
 
 SUPPORTED_TLK_INPUT_FILES = [('1.TLK', 'TLK01'), ('2.TLK', 'TLK02'), ('3.TLK', 'TLK03'), ('A.TLK', 'TLK0A'), ('SPCHSFX.TLK', 'TLKSPCHSFX')]
@@ -68,8 +64,14 @@ SUPPORTED_MIX_INPUT_FILES = ['STARTUP.MIX']
 SUPPORTED_EXPORTED_TRx_FILES = ['CLUES.TR','ACTORS.TR','CRIMES.TR','CLUETYPE.TR','KIA.TR','SPINDEST.TR','VK.TR','OPTIONS.TR','DLGMENU.TR','ENDCRED.TR','HELP.TR','SCORERS.TR','KIACRED.TR','ERRORMSG.TR','AUTOSAVE.TR']
 SUPPORTED_PLACEHOLDER_VQA_FILES = ['WSTLGO_', 'BRLOGO_', 'INTRO_', 'MW_A_', 'MW_B01_', 'MW_B02_', 'MW_B03_', 'MW_B04_', 'MW_B05_', 'INTRGT_', 'MW_D_', 'MW_C01_', 'MW_C02_', 'MW_C03_', 'END04A_', 'END04B_', 'END04C_', 'END06_', 'END01A_', 'END01B_', 'END01C_', 'END01D_', 'END01E_', 'END01F_', 'END03_']
 
-SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST = [('EN_ANY', 'E', 'English'), ('DE_DEU', 'G', 'German'), ('FR_FRA', 'F', 'French'), ('IT_ITA', 'I', 'Italian'), ('RU_RUS', 'R', 'Russian'), ('ES_ESP', 'S', 'Spanish')]
+SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST = [('EN_ANY', 'E', 'English'), ('DE_DEU', 'G', 'German'), ('FR_FRA', 'F', 'French'), ('IT_ITA', 'I', 'Italian'), ('ES_ESP', 'S', 'Spanish'), ('RU_RUS', 'R', 'Russian')]
 DEFAULT_LANG_DESC_CODE = SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST[0]
+
+gTraceModeEnabled = False
+gActiveLanguageDescriptionCodeTuple = ''
+
+gStringReplacementForRootFolderWithExportedFiles = ""
+gNumReplaceStartingCharacters = 0
 
 gWavFiles = []
 gWavFilesNoDups = []
@@ -104,18 +106,18 @@ def initActorPropertyEntries(thePathToActorNamesTxt):
 	global gActorPropertyEntriesWasInit
 	global gActorPropertyEntries
 	firstLine = True
-#	 print "opening actornames"
+#	 print "[Debug] opening actornames"
 	if thePathToActorNamesTxt is None or not thePathToActorNamesTxt:
 
 		actorNamesTextFile = u'actornames.txt'
 		relPath = u'.'
 		thePathToActorNamesTxt = os.path.join(relPath, actorNamesTextFile)
-		print "Warning:: Actor names text file %s not found in arguments. Attempting to open local file if it exists" % (thePathToActorNamesTxt)	
+		print "[Warning] Actor names text file %s not found in arguments. Attempting to open local file if it exists" % (thePathToActorNamesTxt)	
 	with open(thePathToActorNamesTxt) as tsv:
 		for line in csv.reader(tsv, dialect="excel-tab"):
 			#skip first line header
 			if firstLine == True:
-#				 print "skippingHeader"
+#				 print "[Debug] Skipping Header line in Excel sheet"
 				firstLine = False
 			else:
 				gActorPropertyEntries.append(line)
@@ -161,7 +163,7 @@ def getActorShortNameAndLocalQuoteIdByAUDHashID(audHashId):
 	actorShortName = ''
 	actorLocalQuoteId = 0
 	if not gActorPropertyEntriesWasInit:
-		print "Error:: actor properties were not initialized!"
+		print "[Error] actor properties were not initialized!"
 		return (actorId, actorShortName, actorLocalQuoteId)
 
 	for actorEntryTmp in gActorPropertyEntries:
@@ -183,7 +185,7 @@ def ensure_dir(directory):
 #
 # Reading in the INPUT TLK files and checking all the AUD file properties
 #
-def inputTLKsExtract(inputTLKpath, outputWAVpath):
+def inputTLKsExport(inputTLKpath, outputWAVpath):
 	# try to open all TLK file entries from SUPPORTED_TLK_INPUT_FILES
 	# then per TLK file
 	#	create an output folder in the OUTPUT PATH named TLK## for the 1, 2, 3 TLK and TLKSPCHSFX for the SPCHSFX.TLK
@@ -194,7 +196,7 @@ def inputTLKsExtract(inputTLKpath, outputWAVpath):
 	#				fileID
 	#				segment offset
 	#				file size
-	print "Info:: Checking in %s for TLK files to extract to %s" % (inputTLKpath, outputWAVpath)
+	print "[Info] Checking in %s for TLK files to export to %s" % (inputTLKpath, outputWAVpath)
 	inputTLKFilesFound = []
 	# breaking after first for loop yields only the top directory files, which is what we want
 	for (dirpath, dirnames, filenames) in walk(inputTLKpath):
@@ -205,7 +207,7 @@ def inputTLKsExtract(inputTLKpath, outputWAVpath):
 		break
 	for tmpTLKfileTuple in inputTLKFilesFound:
 		if gTraceModeEnabled:
-			print "Info:: Found TLK: %s" % ('"' + inputTLKpath + tmpTLKfileTuple[0] + '"')
+			print "[Info] Found TLK: %s" % ('"' + inputTLKpath + tmpTLKfileTuple[0] + '"')
 		errorFound = False
 		inTLKFile = None
 		#
@@ -217,13 +219,13 @@ def inputTLKsExtract(inputTLKpath, outputWAVpath):
 			inTLKFile = open(os.path.join(inputTLKpath,tmpTLKfileTuple[0]), 'rb')
 		except:
 			errorFound = True
-			print "Error:: Unexpected event:", sys.exc_info()[0]
+			print "[Error] Unexpected event:", sys.exc_info()[0]
 			raise
 		if not errorFound:
 			tmpBuff = inTLKFile.read(2)
 			# H: unsigned short (2 bytes) followed by I: unsigned int (4 bytes)
 			tlkFileEntriesNumTuple = struct.unpack('H', tmpBuff)
-			numOfEntriesToExtract = tlkFileEntriesNumTuple[0]
+			numOfTREEntriesToExtract = tlkFileEntriesNumTuple[0]
 			tmpBuff = inTLKFile.read(4)
 			tlkFileDataSegmentSizeTuple = struct.unpack('I', tmpBuff)
 			allTlkFileSize = tlkFileDataSegmentSizeTuple[0]
@@ -234,9 +236,9 @@ def inputTLKsExtract(inputTLKpath, outputWAVpath):
 			# 12 bytes per TLK entry in entries table
 			# quick size validation
 			if gTraceModeEnabled:
-				print "Debug:: Entries= %d, Data segment size= %d bytes" % (numOfEntriesToExtract, allTlkFileSize)
-			if allActualBytesInMixFile != 2 + 4 + 12 * numOfEntriesToExtract + allTlkFileSize:
-				print "Error:: TLK file size mismatch with reported size in header for %s!" % (tmpTLKfileTuple[0])
+				print "[Debug] Entries: %d, Data segment size: %d bytes" % (numOfTREEntriesToExtract, allTlkFileSize)
+			if allActualBytesInMixFile != 2 + 4 + 12 * numOfTREEntriesToExtract + allTlkFileSize:
+				print "[Error] TLK file size mismatch with reported size in header for %s!" % (tmpTLKfileTuple[0])
 			else:
 				#
 				# 12 bytes per entry
@@ -244,7 +246,7 @@ def inputTLKsExtract(inputTLKpath, outputWAVpath):
 				#		4 bytes: Offset in data segment
 				#		4 bytes: Size of data
 				#
-				for i in range(0, numOfEntriesToExtract):
+				for i in range(0, numOfTREEntriesToExtract):
 					inTLKFile.seek(2 + 4 + 12*i)
 					tmpBuff = inTLKFile.read(4)
 					tmpRdTuple = struct.unpack('I', tmpBuff)
@@ -256,7 +258,7 @@ def inputTLKsExtract(inputTLKpath, outputWAVpath):
 					tmpRdTuple = struct.unpack('I', tmpBuff)
 					sizeOfAUDEntry = tmpRdTuple[0]
 					if gTraceModeEnabled:
-						print "Debug:: Entry= %s, offset %s, Data segment size= %s bytes" % (''.join('{:08X}'.format(idOfAUDEntry)), ''.join('{:08X}'.format(offsetOfAUDEntry)),''.join('{:08X}'.format(sizeOfAUDEntry)))
+						print "[Debug] Entry: %s, offset: %s, Data segment size: %s bytes" % (''.join('{:08X}'.format(idOfAUDEntry)), ''.join('{:08X}'.format(offsetOfAUDEntry)),''.join('{:08X}'.format(sizeOfAUDEntry)))
 					#
 					# put file in AUD object
 					# do we need AUD decode?
@@ -266,33 +268,36 @@ def inputTLKsExtract(inputTLKpath, outputWAVpath):
 					# then:
 					#	AudFile aud;
 					#	aud.loadAudFile(fs); (fs is file stream)
-					#	aud.extract_as_wav(fs, offset, offset + int(sizeof(AudHeader)) + aud.header().size_in, target);
+					#	aud.export_as_wav(fs, offset, offset + int(sizeof(AudHeader)) + aud.header().size_in, target);
 					#
 					#
-					inTLKFile.seek(2 + 4 + 12*numOfEntriesToExtract + offsetOfAUDEntry)
+					inTLKFile.seek(2 + 4 + 12*numOfTREEntriesToExtract + offsetOfAUDEntry)
 					if(offsetOfAUDEntry + sizeOfAUDEntry > allTlkFileSize):
-						print "Error:: AUD file size mismatch with reported size in entry header!"
+						print "[Error] audio file (AUD) file size mismatch with reported size in entry header!"
 					else:
+						targetSimpleAudFileName = ''.join('{:08X}'.format(idOfAUDEntry)).upper()+'.AUD'	
 						audFileBuffer = inTLKFile.read(sizeOfAUDEntry)
 						if (len(audFileBuffer) == sizeOfAUDEntry):
-						# load Aud file
-							thisAudFile = audFile()
-							if (thisAudFile.loadAudFile(audFileBuffer, allTlkFileSize)):
-								# print "AUD file load successful!"
+						# load audio file (AUD) file
+							thisAudFile = audFile(gTraceModeEnabled)
+							if (thisAudFile.loadAudFile(audFileBuffer, allTlkFileSize, targetSimpleAudFileName)):
+								if gTraceModeEnabled:
+									print "[Debug] Audio file (AUD) file %s was loaded successfully!" % (targetSimpleAudFileName)
 								# find
-								# print "Emulating Wav write to appropriate folder..."
+								# print "[Debug] Emulating Wav write to appropriate folder..."
 								(actorID, actorSName, localQuoteId) = getActorShortNameAndLocalQuoteIdByAUDHashID(idOfAUDEntry)
-								targetSimpleFileName = actorSName + '_' + str(localQuoteId).zfill(4) + '_' + ''.join('{:08X}'.format(idOfAUDEntry)).upper()+'.WAV'
-								#print os.path.join(outputWAVpath, tmpTLKfileTuple[1], targetSimpleFileName)
-								if not os.path.isfile(os.path.join(outputWAVpath, tmpTLKfileTuple[1], targetSimpleFileName) ):
-									thisAudFile.extract_as_wav(audFileBuffer, os.path.join(outputWAVpath, tmpTLKfileTuple[1], targetSimpleFileName) )
+								targetSimpleWavFileName = actorSName + '_' + str(localQuoteId).zfill(4) + '_' + ''.join('{:08X}'.format(idOfAUDEntry)).upper()+'.WAV'
+								#print os.path.join(outputWAVpath, tmpTLKfileTuple[1], targetSimpleWavFileName)
+								if not os.path.isfile(os.path.join(outputWAVpath, tmpTLKfileTuple[1], targetSimpleWavFileName) ):
+									thisAudFile.export_as_wav(audFileBuffer, os.path.join(outputWAVpath, tmpTLKfileTuple[1], targetSimpleWavFileName) )
 								else:
 									if gTraceModeEnabled:
-										print "Info:: Output file %s already exists. Skipping..." % (os.path.join(outputWAVpath, tmpTLKfileTuple[1], targetSimpleFileName))
+										print "[Info] Output file %s already exists. Skipping..." % (os.path.join(outputWAVpath, tmpTLKfileTuple[1], targetSimpleWavFileName))
 							else:
-								print "Error:: while LOADING aud file!"
+								print "[Error] while loading audio file (AUD) %s!" % (targetSimpleAudFileName)
 						else:
-							print "Error:: while reading AUD file %s into mem buffer" % (''.join('{:08X}'.format(idOfAUDEntry)))
+							print "[Error] while reading audio file (AUD) file %s into mem buffer" % (targetSimpleAudFileName)
+							#print "[Error] while reading audio file (AUD) file %s into mem buffer" % (''.join('{:08X}'.format(idOfMIXEntry)))
 			inTLKFile.close()
 
 
@@ -301,7 +306,7 @@ def inputTLKsExtract(inputTLKpath, outputWAVpath):
 	return
 
 def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
-	print "Info:: Checking in %s for MIX files to extract Text Resources (TR%ss) from..." % (inputMIXpath, gActiveLanguageDescriptionCodeTuple[1])
+	print "[Info] Checking in %s for MIX files to extract Text Resources (TR%ss) from..." % (inputMIXpath, gActiveLanguageDescriptionCodeTuple[1])
 	inputMIXFilesFound = []
 	# breaking after first for loop yields only the top directory files, which is what we want
 	for (dirpath, dirnames, filenames) in walk(inputMIXpath):
@@ -312,7 +317,7 @@ def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
 		break
 	for tmpMIXfileName in inputMIXFilesFound:
 		if gTraceModeEnabled:
-			print "Info:: Found MIX file: %s" % ('"' + tmpMIXfileName + '"')
+			print "[Info] Found MIX file: %s" % ('"' + tmpMIXfileName + '"')
 		errorFound = False
 		inMIXFile = None
 		#
@@ -320,14 +325,14 @@ def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
 			inMIXFile = open(os.path.join(inputMIXpath,tmpMIXfileName), 'rb')
 		except:
 			errorFound = True
-			print "Error:: Unexpected event:", sys.exc_info()[0]
+			print "[Error] Unexpected event:", sys.exc_info()[0]
 			raise
 		if not errorFound:
 			totalTREs = 0
 			tmpBuff = inMIXFile.read(2)
 			# H: unsigned short (2 bytes) followed by I: unsigned int (4 bytes)
 			mixFileEntriesNumTuple = struct.unpack('H', tmpBuff)
-			numOfEntriesToExtract = mixFileEntriesNumTuple[0]
+			numOfTREEntriesToExtract = mixFileEntriesNumTuple[0]
 			tmpBuff = inMIXFile.read(4)
 			mixFileDataSegmentSizeTuple = struct.unpack('I', tmpBuff)
 			allMixFileSize = mixFileDataSegmentSizeTuple[0]
@@ -338,9 +343,9 @@ def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
 			# 12 bytes per MIX entry in entries table
 			# quick size validation
 			if gTraceModeEnabled:
-				print "Debug:: Entries= %d, Data segment size= %d bytes" % (numOfEntriesToExtract, allMixFileSize)
-			if allActualBytesInMixFile != 2 + 4 + 12 * numOfEntriesToExtract + allMixFileSize:
-				print "Error:: MIX file size mismatch with reported size in header for %s!" % (tmpMIXfileName)
+				print "[Debug] Entries: %d, Data segment size: %d bytes" % (numOfTREEntriesToExtract, allMixFileSize)
+			if allActualBytesInMixFile != 2 + 4 + 12 * numOfTREEntriesToExtract + allMixFileSize:
+				print "[Error] MIX file size mismatch with reported size in header for %s!" % (tmpMIXfileName)
 			else:
 				#
 				# 12 bytes per entry
@@ -348,7 +353,7 @@ def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
 				#		4 bytes: Offset in data segment
 				#		4 bytes: Size of data
 				#
-				for i in range(0, numOfEntriesToExtract):
+				for i in range(0, numOfTREEntriesToExtract):
 					foundTREFile = False
 					currTreFileName = 'UNKNOWN.TR%s' % (gActiveLanguageDescriptionCodeTuple[1])
 					inMIXFile.seek(2 + 4 + 12*i)
@@ -371,23 +376,23 @@ def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
 
 					if (foundTREFile == True):
 						if gTraceModeEnabled:
-							print "Debug:: Entry Name= %s, Entry ID= %s, offset= %s, Data segment size= %s bytes" % (currTreFileName, ''.join('{:08X}'.format(idOfMIXEntry)), ''.join('{:08X}'.format(offsetOfMIXEntry)),''.join('{:08X}'.format(sizeOfMIXEntry)))
+							print "[Debug] Entry Name: %s, Entry ID: %s, offset: %s, Data segment size: %s bytes" % (currTreFileName, ''.join('{:08X}'.format(idOfMIXEntry)), ''.join('{:08X}'.format(offsetOfMIXEntry)),''.join('{:08X}'.format(sizeOfMIXEntry)))
 						#
 						# IF TRE FILE:
 						# put file in TRE object
 						#
 						#
-						inMIXFile.seek(2 + 4 + 12*numOfEntriesToExtract + offsetOfMIXEntry)
+						inMIXFile.seek(2 + 4 + 12*numOfTREEntriesToExtract + offsetOfMIXEntry)
 						if(offsetOfMIXEntry + sizeOfMIXEntry > allMixFileSize):
-							print "Error:: TR%s file size mismatch with reported size in entry header!" % (gActiveLanguageDescriptionCodeTuple[1])
+							print "[Error] TR%s file size mismatch with reported size in entry header!" % (gActiveLanguageDescriptionCodeTuple[1])
 						else:
 							treFileBuffer = inMIXFile.read(sizeOfMIXEntry)
 							if (len(treFileBuffer) == sizeOfMIXEntry):
 							# load TRE file
-								thisTreFile = treFile()
-								if (thisTreFile.loadTreFile(treFileBuffer, allMixFileSize)):
+								thisTreFile = treFile(gTraceModeEnabled)
+								if (thisTreFile.loadTreFile(treFileBuffer, allMixFileSize, currTreFileName)):
 									if gTraceModeEnabled:
-										print "Info:: TR%s file loaded" % (gActiveLanguageDescriptionCodeTuple[1])
+										print "[Debug] TR%s file %s was loaded successfully!" % (gActiveLanguageDescriptionCodeTuple[1], currTreFileName)
 									if excelOutBook != None:
 										sh = excelOutBook.add_sheet(currTreFileName)
 										n = 0 # keeps track of rows
@@ -530,21 +535,22 @@ def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
 											try:
 												objUTF8Unicode = unicode(objUTF8SafeStr, 'utf-8')
 											except Exception as e:
-												print 'Error:: Failed to create unicode string: ' + str(e)
+												print '[Error] Failed to create unicode string: ' + str(e)
 												objUTF8Unicode = unicode("???", 'utf-8')
 											sh.write(m, 1, objUTF8Unicode)
 
 
 									#for tupleIdString in thisTreFile.stringEntriesLst:
-									#	#print "Id: %d\t Text: %s" % (tupleIdString[0], tupleIdString[1])
+									#	#print "[Debug] Id: %d\t Text: %s" % (tupleIdString[0], tupleIdString[1])
 									#	pass
 									totalTREs =   totalTREs + 1
 								else:
-									print "Error:: while LOADING TR%s file!" % (gActiveLanguageDescriptionCodeTuple[1])
+									print "[Error] while loading TR%s %s file!" % (gActiveLanguageDescriptionCodeTuple[1], currTreFileName)
 							else:
-								print "Error:: while reading TR%s file %s into mem buffer" % (gActiveLanguageDescriptionCodeTuple[1], ''.join('{:08X}'.format(idOfMIXEntry)))
+								print "[Error] while reading TR%s file %s into mem buffer" % (gActiveLanguageDescriptionCodeTuple[1], currTreFileName)
+								#print "[Error] while reading TR%s file %s into mem buffer" % (gActiveLanguageDescriptionCodeTuple[1], ''.join('{:08X}'.format(idOfMIXEntry)))
 			inMIXFile.close()
-			print "Info:: Total TR%ss handled: %d " % (gActiveLanguageDescriptionCodeTuple[1], totalTREs)
+			print "[Info] Total TR%ss processed: %d " % (gActiveLanguageDescriptionCodeTuple[1], totalTREs)
 	return
 
 
@@ -552,7 +558,7 @@ def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
 # Creating the OUTPUT XLS file with one sheet named as the @param sheet with entries based on the list1 (wav files, without duplicates)
 #
 def outputXLS(filename, sheet, list1, parseTREResourcesAlso = False, mixInputFolderPath = ''):
-	global gStringReplacementForRootFolderWithExtractedFiles
+	global gStringReplacementForRootFolderWithExportedFiles
 	global gNumReplaceStartingCharacters
 	book = xlwt.Workbook()
 	sh = book.add_sheet(sheet)
@@ -620,8 +626,8 @@ def outputXLS(filename, sheet, list1, parseTREResourcesAlso = False, mixInputFol
 				# real path of filename
 				realPathOfFileNameToLink = twoTokensOfRelDirnameAndFilenameXLS[2]
 				# checks if not empty
-				if gStringReplacementForRootFolderWithExtractedFiles and gNumReplaceStartingCharacters > 0:
-					realPathOfFileNameToLink = realPathOfFileNameToLink.replace(realPathOfFileNameToLink[:gNumReplaceStartingCharacters], gStringReplacementForRootFolderWithExtractedFiles)
+				if gStringReplacementForRootFolderWithExportedFiles and gNumReplaceStartingCharacters > 0:
+					realPathOfFileNameToLink = realPathOfFileNameToLink.replace(realPathOfFileNameToLink[:gNumReplaceStartingCharacters], gStringReplacementForRootFolderWithExportedFiles)
 
 				#works in Linux + Libreoffice
 				# also works in Windows + LibreOffice (run from msys) -- tried something like:
@@ -651,8 +657,9 @@ def outputXLS(filename, sheet, list1, parseTREResourcesAlso = False, mixInputFol
 		# TODO handle special string characters (to UTF-8)
 	try:
 		book.save(filename)
-	except:
-		print "Error:: Could not save the output Excel file (maybe it's open?)"
+		print "[Info] Done."
+	except Exception as e:
+		print "[Error] Could not save the output Excel file (maybe it's open?). " + str(e)
 
 #	
 # Aux function to validate input language description
@@ -681,7 +688,7 @@ def printInfoMessageForLanguageSelectionSyntax():
 def main(argsCL):
 	# TODO parse arguments using argparse? https://docs.python.org/3/library/argparse.html#module-argparse
 	global gTraceModeEnabled
-	global gStringReplacementForRootFolderWithExtractedFiles
+	global gStringReplacementForRootFolderWithExportedFiles
 	global gNumReplaceStartingCharacters
 	global gActiveLanguageDescriptionCodeTuple 
 	global gWavFiles
@@ -694,40 +701,41 @@ def main(argsCL):
 	pathToActorNamesTxt = ""
 	candidateLangDescriptionTxt = ""
 
-	TMProotFolderWithExtractedFiles = ""
+	TMProotFolderWithExportedFiles = ""
 	TMProotFolderWithInputTLKFiles = ""
 
-	extractWavFilesMode = False
+	exportWavFilesMode = False
 	extractTreFilesMode = False
 
 	invalidSyntax = False
-	print "Running %s (%s)..." % (APP_NAME_spaced, APP_VERSION)
+	print "Running %s (%s)..." % (APP_NAME_SPACED, APP_VERSION)
 #	 print "Len of sysargv = %s" % (len(argsCL))
 	if len(argsCL) == 2:
 		if(argsCL[1] == '--help'or argsCL[1] == '-h'):
-			print "%s %s supports Blade Runner (English version, CD edition)." % (APP_NAME_spaced, APP_VERSION)
+			print "%s %s supports Westwood's Blade Runner PC Game (1997)." % (APP_NAME_SPACED, APP_VERSION)
 			print APP_SHORT_DESC
 			print "Created by Praetorian of the classic adventures in Greek team."
 			print "Always keep backups!"
 			print "--------------------"
-			print "%s takes has one mandatory argument, the folder of the extracted WAV files:" % (APP_WRAPPER_NAME)
-			print "Valid syntax: %s -op folderpath_for_extracted_wav_Files [-ip folderpath_for_TLK_Files] [-ian path_to_actornames_txt] [-m stringPathToReplaceFolderpathInExcelLinks] [-ld gameInputLanguageDescription] [-xwav] [-xtre] [--trace]" % (APP_WRAPPER_NAME)
-			print "The -op switch has an argument that is the path for extracted WAV files folder. The -op switch is REQUIRED always."
+			print "%s takes has one mandatory argument, ie. the folder of the exported WAV files:" % (APP_WRAPPER_NAME)
+			print "Valid syntax: %s -op folderpath_for_exported_wav_Files [-ip folderpath_for_TLK_Files] [-ian path_to_actornames_txt] [-m stringPathToReplaceFolderpathInExcelLinks] [-ld gameInputLanguageDescription] [-xwav] [-xtre] [--trace]" % (APP_WRAPPER_NAME)
+			print "The -op switch has an argument that is the path for exported WAV files folder. The -op switch is REQUIRED always."
 			print "The -ip switch has an argument that is the path for the input (TLK or MIX) files folder (can be the same as the Blade Runner installation folder)."
 			print "The -ian switch is followed by the path to actornames.txt, if it's not in the current working directory."
-			print "The -m switch has an argument that is a replacement string for the path to the folder of extracted WAV files which will be used as a prefix for the links in the output XLS file."
+			print "The -m switch has an argument that is a replacement string for the path to the folder of exported WAV files which will be used as a prefix for the links in the output XLS file."
 			print "The -ld switch has an argument that is the language description of the original game files that you use as input."
 			printInfoMessageForLanguageSelectionSyntax()
-			print "The -xwav switch enables the WAV audio extract mode from the TLK files. It requires an INPUT path to be set with the -ip switch."
-			print "The -xtre switch enables the TR%s parsing mode from the original MIX files. It requires an INPUT path to be set with the -ip switch." % (gActiveLanguageDescriptionCodeTuple[1])
+			print "The -xwav switch enables the WAV audio export mode from the TLK files. It requires an INPUT path to be set with the -ip switch."
+			print "The -xtre switch enables the TRx parsing mode from the original MIX files. It requires an INPUT path to be set with the -ip switch."
 			print "The --trace switch enables more debug messages being printed during execution."
-			print "If the app finishes successfully a sortedWavs.xls file will be created in the same folder with the app."
+			print "--------------------"
+			print "If the app finishes successfully, a file named %s-(language)%s will be created in the current working folder." % (OUTPUT_XLS_FILENAME, OUTPUT_XLS_FILENAME_EXT)
 			print "--------------------"
 			print "Thank you for using this app."
 			print "Please provide any feedback to: %s " % (COMPANY_EMAIL)
 			sys.exit()
 		elif(argsCL[1] == '--version' or argsCL[1] == '-v'):
-			print "%s %s supports Blade Runner (English version, CD edition)." % (APP_NAME_spaced, APP_VERSION)
+			print "%s %s supports Westwood's Blade Runner PC Game (1997)." % (APP_NAME_SPACED, APP_VERSION)
 			print "Please provide any feedback to: %s " % (COMPANY_EMAIL)
 			sys.exit()
 		else:
@@ -736,56 +744,56 @@ def main(argsCL):
 		for i in range(1, len(argsCL)):
 			if( i < (len(argsCL) - 1) and argsCL[i][:1] == '-' and argsCL[i+1][:1] != '-'):
 				if (argsCL[i] == '-op'):
-					TMProotFolderWithExtractedFiles = argsCL[i+1]
-					gNumReplaceStartingCharacters = len(TMProotFolderWithExtractedFiles)
+					TMProotFolderWithExportedFiles = argsCL[i+1]
+					gNumReplaceStartingCharacters = len(TMProotFolderWithExportedFiles)
 				elif (argsCL[i] == '-ip'):
 					TMProotFolderWithInputTLKFiles = argsCL[i+1]
 				elif (argsCL[i] == '-m'):
-					gStringReplacementForRootFolderWithExtractedFiles = argsCL[i+1]
+					gStringReplacementForRootFolderWithExportedFiles = argsCL[i+1]
 				elif (argsCL[i] == '-ian'):
 					pathToActorNamesTxt = argsCL[i+1]
 				elif (argsCL[i] == '-ld'):
-					candidateLangDescriptionTxt = argsCL[i+1]					
+					candidateLangDescriptionTxt = argsCL[i+1]
 			elif (argsCL[i] == '-xwav'):
-				print "Info:: Extract WAVs from TLK files mode enabled."
-				extractWavFilesMode = True
+				print "[Info] Export WAVs from TLK files mode enabled."
+				exportWavFilesMode = True
 			elif (argsCL[i] == '-xtre'):
-				print "Info:: Extract Text Resources (TR%ss) mode enabled." % (gActiveLanguageDescriptionCodeTuple[1])
+				print "[Info] Extract Text Resources (TRx) mode enabled."
 				extractTreFilesMode = True
 			elif argsCL[i] == '--trace':
-				print "Info:: Trace mode enabled (more debug messages)."
+				print "[Info] Trace mode enabled (more debug messages)."
 				gTraceModeEnabled = True
-		if not TMProotFolderWithExtractedFiles: # this argument is mandatory
+		if not TMProotFolderWithExportedFiles: # this argument is mandatory
 			invalidSyntax = True
 
-		if (not invalidSyntax) and (extractWavFilesMode == True or extractTreFilesMode == True) and (TMProotFolderWithInputTLKFiles == ''):
+		if (not invalidSyntax) and (exportWavFilesMode == True or extractTreFilesMode == True) and (TMProotFolderWithInputTLKFiles == ''):
 			invalidSyntax = True
 		
-		gActiveLanguageDescriptionCodeTuple = getLanguageDescCodeTuple(candidateLangDescriptionTxt)	
+		gActiveLanguageDescriptionCodeTuple = getLanguageDescCodeTuple(candidateLangDescriptionTxt)
 		if (not invalidSyntax) and gActiveLanguageDescriptionCodeTuple is None:	
-			print "Error:: Invalid language code was specified"
+			print "[Error] Invalid language code was specified"
 			printInfoMessageForLanguageSelectionSyntax()
 			invalidSyntax = True
 			
 		if not invalidSyntax:
-			print "Info:: Game Language Selected: %s (%s)" % (gActiveLanguageDescriptionCodeTuple[0], gActiveLanguageDescriptionCodeTuple[2])
+			print "[Info] Game Language Selected: %s (%s)" % (gActiveLanguageDescriptionCodeTuple[0], gActiveLanguageDescriptionCodeTuple[2])
 			# parse Actors files:
 			initActorPropertyEntries(pathToActorNamesTxt)
 #			 for actorEntryTmp in gActorPropertyEntries:
-#				  print "Found actor: %s %s %s" % (actorEntryTmp[0], actorEntryTmp[1], actorEntryTmp[2])
+#				  print "[Debug] Found actor: %s %s %s" % (actorEntryTmp[0], actorEntryTmp[1], actorEntryTmp[2])
 			#
-			# Checking for the optional case of parsing the input TLK files to extract to WAV
+			# Checking for the optional case of parsing the input TLK files to export to WAV
 			#
 			if TMProotFolderWithInputTLKFiles != '':
-				if (extractWavFilesMode == True):
-					inputTLKsExtract(TMProotFolderWithInputTLKFiles, TMProotFolderWithExtractedFiles)
+				if (exportWavFilesMode == True):
+					inputTLKsExport(TMProotFolderWithInputTLKFiles, TMProotFolderWithExportedFiles)
 				#if (extractTreFilesMode == True):
 				#	inputMIXExtractTREs(TMProotFolderWithInputTLKFiles)
 			#
-			# Parsing the extracted WAV files
+			# Parsing the exported WAV files
 			#
-			print "Info:: Parsing the extracted WAV audio files. Please wait (this could take a while)..."
-			for (dirpath, dirnames, filenames) in walk(TMProotFolderWithExtractedFiles):
+			print "[Info] Parsing the exported WAV audio files. Please wait (this could take a while)..."
+			for (dirpath, dirnames, filenames) in walk(TMProotFolderWithExportedFiles):
 				 for nameIdx, nameTmp in enumerate(filenames):
 					  relDirName = ''
 # os.path.split would Split the pathname path into a pair, (head, tail) where tail is the last pathname component and head is everything leading up to that. The tail part will never contain a slash
@@ -801,19 +809,19 @@ def main(argsCL):
 			for fileIdx, filenameTmp in enumerate(gWavFiles):
 				twoTokensOfFilenameAndRelDirname = filenameTmp.split('&', 1)
 				if len(twoTokensOfFilenameAndRelDirname) != 2:
-					print "ERROR in filename and rel dirname split: %s" % (filenameTmp)
+					print "[Error] in filename and rel dirname split: %s" % (filenameTmp)
 					sys.exit(0)
 				twoTokensOfFilenameForExt = twoTokensOfFilenameAndRelDirname[0].split('.', 1)
 				if len(twoTokensOfFilenameForExt) == 2:
 					if twoTokensOfFilenameForExt[1] != 'WAV' and  twoTokensOfFilenameForExt[1] != 'wav':
-						print "ERROR in proper extension (not WAV): %s" % (twoTokensOfFilenameAndRelDirname[0])
+						print "[Error] in proper extension (not WAV): %s" % (twoTokensOfFilenameAndRelDirname[0])
 						sys.exit(0)
 				else:
-					print "ERROR in extension split: %s" % (twoTokensOfFilenameAndRelDirname[0])
+					print "[Error] in extension split: %s" % (twoTokensOfFilenameAndRelDirname[0])
 					sys.exit(0)
 				#remove WAV extension here
 #				 filenameTmp =	twoTokensOfFilenameAndRelDirname[0] + '&' + twoTokensOfFilenameForExt[0]
-#				 print "Found %s" % (filenameTmp)
+#				 print "[Debug] Found %s" % (filenameTmp)
 
 				threeTokensOfFilename = twoTokensOfFilenameForExt[0].split('_', 2)
 				if len(threeTokensOfFilename) == 3:
@@ -830,11 +838,11 @@ def main(argsCL):
 							threeTokensOfFilename.append(tmpActorFullName)
 						else:
 					#fatal error if something cannot convert to spot it immediately
-							print "ERROR in actorIdMatch match: %s %s" % (tmpActorId, twoTokensOfFilenameForExt[0])
+							print "[Error] in actorIdMatch match: %s %s" % (tmpActorId, twoTokensOfFilenameForExt[0])
 							sys.exit(0)
 					else:
 					#fatal error if something cannot convert to spot it immediately
-						print "ERROR in shorthand match: %s %s" % (threeTokensOfFilename[0], twoTokensOfFilenameForExt[0])
+						print "[Error] in shorthand match: %s %s" % (threeTokensOfFilename[0], twoTokensOfFilenameForExt[0])
 						sys.exit(0)
 #
 #
@@ -850,7 +858,7 @@ def main(argsCL):
 					filenameTmp =  twoTokensOfFilenameForExt[0] + '&' + twoTokensOfFilenameAndRelDirname[1]
 					gWavFiles[fileIdx] = filenameTmp
 				else:
-					print "ERROR in spliting tokens on _: %s" % (filenameTmp)
+					print "[Error] in splitting tokens on _: %s" % (filenameTmp)
 					sys.exit(0)
 			#sort in-place
 			#
@@ -886,7 +894,7 @@ def main(argsCL):
 			#
 			for filenameSrcTmp in gWavFiles:
 				duplicateFound = False
-#				  print "Converted %s" % (filenameSrcTmp)
+#				  print "[Debug]Converted %s" % (filenameSrcTmp)
 			 # Weed out duplicates by copying to another table (quick and dirty)
 				twoTokensOfRelDirnameAndFilenameSrc = filenameSrcTmp.split('&', 2)
 				tmpRelDirNameSrc = twoTokensOfRelDirnameAndFilenameSrc[1]
@@ -900,28 +908,30 @@ def main(argsCL):
 					#concatenate actorID and quoteID for search key
 					keyForDuplicateSearchTarg =	 threeTokensOfQuoteFilenameTarg[0] + threeTokensOfQuoteFilenameTarg[1]
 					if(keyForDuplicateSearchSrc == keyForDuplicateSearchTarg):
-						#print "Found duplicate %s" % (filenameSrcTmp)
+						#print "[Debug] Found duplicate %s" % (filenameSrcTmp)
 						duplicateFound = True
 						gWavFilesNoDups[fileTargIdx] = twoTokensOfRelDirnameAndFilenameTarg[0] + '&' +  tmpRelDirNameSrc + ',' + tmpRelDirNameTarg + '&' + twoTokensOfRelDirnameAndFilenameTarg[2]
 						break
 				if(duplicateFound == False):
 					gWavFilesNoDups.append(filenameSrcTmp)
 #			 for filenameSrcTmp in gWavFilesNoDups:
-#				 print "Unique %s" % (filenameSrcTmp)
-			print "Info:: Creating output excel %s file..." % (OUTPUT_XLS_FILENAME)
-			outputXLS(OUTPUT_XLS_FILENAME, OUTPUT_XLS_QUOTES_SHEET + gActiveLanguageDescriptionCodeTuple[1], gWavFilesNoDups, extractTreFilesMode, TMProotFolderWithInputTLKFiles)
+#				 print "[Debug] Unique %s" % (filenameSrcTmp)
+			constructedOutputFilename = "%s-%s%s" % (OUTPUT_XLS_FILENAME, gActiveLanguageDescriptionCodeTuple[2], OUTPUT_XLS_FILENAME_EXT)
+			print "[Info] Creating output excel %s file..." % (constructedOutputFilename)
+			outputXLS(constructedOutputFilename, OUTPUT_XLS_QUOTES_SHEET + gActiveLanguageDescriptionCodeTuple[1], gWavFilesNoDups, extractTreFilesMode, TMProotFolderWithInputTLKFiles)
 	else:
 		invalidSyntax = True
 
 	if invalidSyntax == True:
-		print "Error:: Invalid syntax!\n Try: \n %s --help for more info \n %s --version for version info " % (APP_WRAPPER_NAME, APP_WRAPPER_NAME)
-		print "Valid syntax: %s -op folderpath_for_extracted_wav_Files [-ip folderpath_for_TLK_Files] [-ian path_to_actornames_txt] [-m stringPathToReplaceFolderpathInExcelLinks] [-ld gameInputLanguageDescription] [-xwav] [-xtre] [--trace]" % (APP_WRAPPER_NAME)
+		print "[Error] Invalid syntax!\n Try: \n %s --help for more info \n %s --version for version info " % (APP_WRAPPER_NAME, APP_WRAPPER_NAME)
+		print "Valid syntax: %s -op folderpath_for_exported_wav_Files [-ip folderpath_for_TLK_Files] [-ian path_to_actornames_txt] [-m stringPathToReplaceFolderpathInExcelLinks] [-ld gameInputLanguageDescription] [-xwav] [-xtre] [--trace]" % (APP_WRAPPER_NAME)
+		print "\nDetected arguments:"
 		tmpi = 0
 		for tmpArg in argsCL:
 			if tmpi==0: #skip first argument
 				tmpi+=1
 				continue
-			print "\nArgument: %s" % (tmpArg)
+			print "Argument: %s" % (tmpArg)
 			tmpi+=1
 
 # 00_0000 -- DealsInInsects					dupl TLK01, TLK0A
@@ -937,5 +947,5 @@ if __name__ == '__main__':
 	main(sys.argv[0:])
 else:
 	## debug
-	#print 'Debug:: %s was imported from another module' % (APP_WRAPPER_NAME)
+	#print '[Debug] %s was imported from another module' % (APP_WRAPPER_NAME)
 	pass
