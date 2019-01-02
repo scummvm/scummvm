@@ -21,17 +21,60 @@
  */
 
 #include "glk/frotz/windows.h"
+#include "glk/frotz/frotz.h"
 
 namespace Glk {
 namespace Frotz {
 
 Windows::Windows() : _lower(_windows[0]), _upper(_windows[1]) {
+	for (size_t idx = 0; idx < 8; ++idx)
+		_windows[idx]._windows = this;
+}
+
+size_t Windows::size() const {
+	return (g_vm->h_version < 6) ? 2 : 8;
 }
 
 Window &Windows::operator[](uint idx) {
-	assert(idx < 8);
+	assert(idx < size());
 	return _windows[idx];
 }
+
+/*--------------------------------------------------------------------------*/
+
+winid_t Window::getWindow() {
+	if (!_win) {
+		// Window doesn't exist, so create it
+		// TODO
+	}
+
+	return _win;
+}
+
+void Window::setSize(const Point &newSize) {
+	winid_t win = getWindow();
+
+/* TODO
+	y_size = zargs[1];
+	_wp[win].x_size = zargs[2];
+
+	// Keep the cursor within the window
+	if (wp[win].y_cursor > zargs[1] || wp[win].x_cursor > zargs[2])
+		reset_cursor(win);
+
+	os_window_height(win, _wp[win].y_size);
+	*/
+}
+
+void Window::setPosition(const Point &newPos) {
+	winid_t win = getWindow();
+
+	/* TODO
+	if (win == cwin)
+		update_cursor();
+	*/
+}
+
 
 } // End of namespace Frotz
 } // End of namespace Glk

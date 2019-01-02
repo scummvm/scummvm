@@ -178,35 +178,19 @@ void Processor::z_set_margins() {
 }
 
 void Processor::z_move_window(void) {
-#ifdef TODO
 	zword win = winarg0();
 
 	flush_buffer();
 
-	wp[win].y_pos = zargs[1];
-	wp[win].x_pos = zargs[2];
-
-	if (win == cwin)
-		update_cursor();
-#endif
+	_wp[win].setPosition(Point(zargs[2], zargs[1]));
 }
 
 void Processor::z_window_size() {
-#ifdef TODO
 	zword win = winarg0();
 
 	flush_buffer();
 
-	wp[win].y_size = zargs[1];
-	wp[win].x_size = zargs[2];
-
-	/* Keep the cursor within the window */
-
-	if (wp[win].y_cursor > zargs[1] || wp[win].x_cursor > zargs[2])
-		reset_cursor(win);
-
-	os_window_height(win, wp[win].y_size);
-#endif
+	_wp[win].setSize(Point(zargs[2], zargs[1]));
 }
 
 void Processor::z_window_style() {

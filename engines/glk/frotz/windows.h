@@ -29,13 +29,23 @@ namespace Glk {
 namespace Frotz {
 
 #include "glk/windows.h"
+#include "glk/utils.h"
+
+class Windows;
 
 /**
  * Represents one of the virtual windows
  */
 class Window {
+	friend class Windows;
 private:
+	Windows *_windows;
 	winid_t _win;
+private:
+	/**
+	 * Gets a reference to the window, creating a new one if one doesn't already exist
+	 */
+	winid_t getWindow();
 public:
 	/**
 	 * Constructor
@@ -69,10 +79,21 @@ public:
 	 * 4  y cursor        10  text style                  16 true foreground colour
 	 * 5  x cursor        11  colour data                 17 true background colour
 	 */
+	//zword &operator[](uint idx);
+
+	/**
+	 * Set the window size
+	 */
+	void setSize(const Point &newSize);
+
+	/**
+	 * Set the position of a window
+	 */
+	void setPosition(const Point &newPos);
 };
 
 /**
- * The Z-machine has 8 virtual windows
+ * Windows manager
  */
 class Windows {
 private:
@@ -85,6 +106,11 @@ public:
 	 * Constructor
 	 */
 	Windows();
+
+	/**
+	 * Returns the number of allowable windows
+	 */
+	size_t size() const;
 
 	/**
 	 * Array access
