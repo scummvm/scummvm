@@ -122,8 +122,29 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 	const char *textDark = _vm->_textOptions->getText(14);
 	const char *textLight = _vm->_textOptions->getText(15);
 	const char *textDesignersCut = _vm->_textOptions->getText(18);
+
 	// Allow this to be loading as an extra text item in the resource for text options
-	const char *textSubtitles  = strcmp(_vm->_textOptions->getText(42), "") == 0? "Subtitles" : _vm->_textOptions->getText(42); // +1 to the max of original index of textOptions which is 41
+	const char *subtitlesTranslation = "Subtitles";
+	if (_vm->_languageCode == "E") {
+		subtitlesTranslation = "Subtitles"; // EN_ANY
+	}
+	else if (_vm->_languageCode == "G") {
+		subtitlesTranslation = "Untertitel"; // DE_DEU
+	}
+	else if (_vm->_languageCode == "F") {
+		subtitlesTranslation = "Sous-titres"; // FR_FRA
+	}
+	else if (_vm->_languageCode == "I") {
+		subtitlesTranslation = "Sottotitoli"; // IT_ITA
+	}
+	else if (_vm->_languageCode == "R") {
+		subtitlesTranslation = "Subtitry";  // RU_RUS
+	}
+	else if (_vm->_languageCode == "S") {
+		subtitlesTranslation = "Subtitulos"; // ES_ESP
+	}
+
+	const char *textSubtitles  = strcmp(_vm->_textOptions->getText(42), "") == 0? subtitlesTranslation : _vm->_textOptions->getText(42); // +1 to the max of original index of textOptions which is 41
 
 	int posConversationChoices = 320 - _vm->_mainFont->getTextWidth(textConversationChoices) / 2;
 	int posMusic = 320 - _vm->_mainFont->getTextWidth(textMusic) / 2;
