@@ -330,5 +330,5 @@ zword Processor::winarg2() {
 	return zargs[2];
 }
 
-} // End of namespace Scott
+} // End of namespace Frotz
 } // End of namespace Glk

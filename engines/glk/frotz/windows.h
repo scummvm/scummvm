@@ -28,6 +28,8 @@
 namespace Glk {
 namespace Frotz {
 
+#include "glk/windows.h"
+
 /**
  * Represents one of the virtual windows
  */

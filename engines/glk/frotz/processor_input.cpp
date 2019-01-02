@@ -219,5 +219,5 @@ void Processor::z_read_mouse() {
 	storew((zword)(zargs[0] + 6), menu_selected);	// menu selection
 }
 
-} // End of namespace Scott
+} // End of namespace Frotz
 } // End of namespace Glk

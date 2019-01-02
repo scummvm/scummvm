@@ -142,5 +142,5 @@ Common::SeekableReadStream *SoundZip::createReadStreamForMember(const Common::St
 	return _zip->createReadStreamForMember(_filenames[name]);
 }
 
-} // End of namespace Scott
+} // End of namespace Frotz
 } // End of namespace Glk

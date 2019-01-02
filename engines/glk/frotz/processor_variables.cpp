@@ -195,5 +195,5 @@ void Processor::z_store() {
 	}
 }
 
-} // End of namespace Scott
+} // End of namespace Frotz
 } // End of namespace Glk

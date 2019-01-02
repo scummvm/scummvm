@@ -168,5 +168,5 @@ bool UserOptions::isInfocom() const {
 	return g_vm->getOptions() & OPTION_INFOCOM;
 }
 
-} // End of namespace Scott
+} // End of namespace Frotz
 } // End of namespace Glk

@@ -906,5 +906,5 @@ void Processor::z_tokenise() {
 	tokenise_line(zargs[0], zargs[1], zargs[2], zargs[3] != 0);
 }
 
-} // End of namespace Scott
+} // End of namespace Frotz
 } // End of namespace Glk

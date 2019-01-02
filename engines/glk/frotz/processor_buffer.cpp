@@ -188,5 +188,5 @@ void Processor::runtimeError(ErrorCode errNum) {
 	}
 }
 
-} // End of namespace Scott
+} // End of namespace Frotz
 } // End of namespace Glk

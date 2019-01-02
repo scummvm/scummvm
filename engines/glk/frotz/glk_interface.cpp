@@ -606,5 +606,5 @@ zchar GlkInterface::os_read_line(int max, zchar *buf, int timeout, int width, in
 	return ZC_RETURN;
 }
 
-} // End of namespace Scott
+} // End of namespace Frotz
 } // End of namespace Glk

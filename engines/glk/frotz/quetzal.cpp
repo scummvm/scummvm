@@ -490,5 +490,5 @@ int Quetzal::restore(Common::SeekableReadStream *svf, Processor *proc) {
 	return (progress == GOT_ALL ? 2 : fatal);
 }
 
-} // End of namespace Scott
+} // End of namespace Frotz
 } // End of namespace Glk

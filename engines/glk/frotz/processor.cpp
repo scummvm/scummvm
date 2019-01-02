@@ -662,5 +662,5 @@ void Processor::z_restore_undo(void) {
 	store((zword)restore_undo());
 }
 
-} // End of namespace Scott
+} // End of namespace Frotz
 } // End of namespace Glk

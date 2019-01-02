@@ -116,5 +116,5 @@ void Processor::z_storew() {
 	storew((zword)(zargs[0] + 2 * zargs[1]), zargs[2]);
 }
 
-} // End of namespace Scott
+} // End of namespace Frotz
 } // End of namespace Glk

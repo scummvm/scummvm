@@ -118,5 +118,5 @@ Common::Error Frotz::loadGameData(strid_t file) {
 	return Common::kNoError;
 }
 
-} // End of namespace Scott
+} // End of namespace Frotz
 } // End of namespace Glk

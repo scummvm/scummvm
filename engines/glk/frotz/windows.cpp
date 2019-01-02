@@ -33,5 +33,5 @@ Window &Windows::operator[](uint idx) {
 	return _windows[idx];
 }
 
-} // End of namespace Scott
+} // End of namespace Frotz
 } // End of namespace Glk

@@ -190,11 +190,7 @@ void Processor::z_buffer_mode() {
 }
 
 void Processor::z_buffer_screen() {
-#ifdef TODO
-store((zword)os_buffer_screen((zargs[0] == (zword)-1) ? -1 : zargs[0]));
-#else
 	store(0);
-#endif
 }
 
 void Processor::z_erase_line() {
@@ -209,8 +205,7 @@ void Processor::z_erase_line() {
 
 void Processor::z_erase_window() {
 	short w = zargs[0];
-	if (w == -2)
-	{
+	if (w == -2) {
 		if (_wp._upper) {
 			glk_set_window(_wp._upper);
 #ifdef GARGLK
@@ -221,8 +216,7 @@ void Processor::z_erase_window() {
 		}
 		glk_window_clear(_wp._lower);
 	}
-	if (w == -1)
-	{
+	if (w == -1) {
 		if (_wp._upper) {
 			glk_set_window(_wp._upper);
 #ifdef GARGLK
@@ -588,5 +582,5 @@ void Processor::z_split_window() {
 	split_window(zargs[0]);
 }
 
-} // End of namespace Scott
+} // End of namespace Frotz
 } // End of namespace Glk

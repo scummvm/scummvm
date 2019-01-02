@@ -609,5 +609,5 @@ void Processor::z_verify() {
 	branch(checksum == h_checksum);
 }
 
-} // End of namespace Scott
+} // End of namespace Frotz
 } // End of namespace Glk

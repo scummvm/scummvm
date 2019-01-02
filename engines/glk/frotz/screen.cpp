@@ -93,5 +93,5 @@ void BitmapFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint
 	}
 }
 
-} // End of namespace Scott
+} // End of namespace Frotz
 } // End of namespace Glk

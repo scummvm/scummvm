@@ -728,5 +728,5 @@ void Processor::z_test_attr() {
 	branch(value & (0x80 >> (zargs[1] & 7)));
 }
 
-} // End of namespace Scott
+} // End of namespace Frotz
 } // End of namespace Glk

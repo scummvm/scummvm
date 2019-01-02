@@ -303,5 +303,5 @@ void Mem::mem_undiff(zbyte *diff, long diff_length, zbyte *dest) {
 	}
 }
 
-} // End of namespace Scott
+} // End of namespace Frotz
 } // End of namespace Glk
