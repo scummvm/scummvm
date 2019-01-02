@@ -53,6 +53,7 @@ MODULE_OBJS := \
 	frotz/quetzal.o \
 	frotz/screen.o \
 	frotz/sound_folder.o \
+	frotz/windows.o \
 	glulxe/detection.o \
 	glulxe/glulxe.o \
 	magnetic/detection.o \

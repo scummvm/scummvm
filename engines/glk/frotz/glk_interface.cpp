@@ -33,13 +33,11 @@ namespace Frotz {
 
 GlkInterface::GlkInterface(OSystem *syst, const GlkGameDescription &gameDesc) :
 		GlkAPI(syst, gameDesc),
-		_pics(nullptr), oldstyle(0), curstyle(0), cury(1), curx(1), fixforced(0),
-		curr_fg(-2), curr_bg(-2), curr_font(1), prev_font(1), temp_font(0),
-		curr_status_ht(0), mach_status_ht(0), gos_status(nullptr), gos_upper(nullptr),
-		gos_lower(nullptr), gos_curwin(nullptr), gos_linepending(0), gos_linebuf(nullptr),
-		gos_linewin(nullptr), gos_channel(nullptr), cwin(0), mwin(0), mouse_x(0), mouse_y(0),
-		menu_selected(0), enable_wrapping(false), enable_scripting(false),
-		enable_scrolling(false), enable_buffering(false), next_sample(0), next_volume(0),
+		_pics(nullptr), oldstyle(0), curstyle(0), cury(1), curx(1), fixforced(0), curr_fg(-2), curr_bg(-2),
+		curr_font(1), prev_font(1), temp_font(0), curr_status_ht(0), mach_status_ht(0), gos_status(nullptr),
+		gos_curwin(nullptr), gos_linepending(0), gos_linebuf(nullptr), gos_linewin(nullptr),
+		gos_channel(nullptr), cwin(0), mwin(0), mouse_x(0), mouse_y(0), menu_selected(0), enable_wrapping(false),
+		enable_scripting(false), enable_scrolling(false), enable_buffering(false), next_sample(0), next_volume(0),
 		_soundLocked(false), _soundPlaying(false) {
 	Common::fill(&statusline[0], &statusline[256], '\0');
 }
@@ -103,46 +101,13 @@ void GlkInterface::initialize() {
 	 * Get the screen size
 	 */
 
-	gos_lower = glk_window_open(0, 0, 0, wintype_TextGrid, 0);
-	if (!gos_lower)
-		gos_lower = glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
-	glk_window_get_size(gos_lower, &width, &height);
-	glk_window_close(gos_lower, nullptr);
+	_wp._lower = glk_window_open(0, 0, 0, wintype_TextGrid, 0);
+	if (!_wp._lower)
+		_wp._lower = glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
+	glk_window_get_size(_wp._lower, &width, &height);
+	glk_window_close(_wp._lower, nullptr);
 
 	gos_channel = nullptr;
-
-	/*
-	 * Icky magic bit setting
-	 */
-
-	if (h_version == V3 && _tandyBit)
-		h_config |= CONFIG_TANDY;
-
-	if (h_version == V3 && gos_upper)
-		h_config |= CONFIG_SPLITSCREEN;
-
-	if (h_version == V3 && !gos_upper)
-		h_config |= CONFIG_NOSTATUSLINE;
-
-	if (h_version >= V4)
-		h_config |= CONFIG_BOLDFACE | CONFIG_EMPHASIS |
-		CONFIG_FIXED | CONFIG_TIMEDINPUT | CONFIG_COLOUR;
-
-	if (h_version >= V5)
-		h_flags &= ~(GRAPHICS_FLAG | MOUSE_FLAG | MENU_FLAG);
-
-	if ((h_version >= 5) && (h_flags & SOUND_FLAG))
-		h_flags |= SOUND_FLAG;
-
-	if ((h_version == 3) && (h_flags & OLD_SOUND_FLAG))
-		h_flags |= OLD_SOUND_FLAG;
-
-	if ((h_version == 6) && (_sound != 0))
-		h_config |= CONFIG_SOUND;
-
-	if (h_version >= V5 && (h_flags & UNDO_FLAG))
-		if (_undo_slots == 0)
-			h_flags &= ~UNDO_FLAG;
 
 	h_screen_cols = width;
 	h_screen_rows = height;
@@ -180,14 +145,48 @@ void GlkInterface::initialize() {
 	if (_storyId == BEYOND_ZORK)
 		showBeyondZorkTitle();
 
-	gos_lower = glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
-	gos_upper = glk_window_open(gos_lower,
-		winmethod_Above | winmethod_Fixed,
-		0,
-		wintype_TextGrid, 0);
+	_wp._lower = glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
+	_wp._upper = glk_window_open(_wp._lower, winmethod_Above | winmethod_Fixed, 0, wintype_TextGrid, 0);
 
-	glk_set_window(gos_lower);
-	gos_curwin = gos_lower;
+	glk_set_window(_wp._lower);
+	gos_curwin = _wp._lower;
+
+	/*
+	 * Icky magic bit setting
+	 */
+
+	if (h_version == V3 && _tandyBit)
+		h_config |= CONFIG_TANDY;
+
+	if (h_version == V3 && _wp._upper)
+		h_config |= CONFIG_SPLITSCREEN;
+
+	if (h_version == V3 && !_wp._upper)
+		h_config |= CONFIG_NOSTATUSLINE;
+
+	if (h_version >= V4)
+		h_config |= CONFIG_BOLDFACE | CONFIG_EMPHASIS |
+		CONFIG_FIXED | CONFIG_TIMEDINPUT | CONFIG_COLOUR;
+
+	if (h_version >= V5)
+		h_flags &= ~(GRAPHICS_FLAG | MOUSE_FLAG | MENU_FLAG);
+
+	if ((h_version >= 5) && (h_flags & SOUND_FLAG))
+		h_flags |= SOUND_FLAG;
+
+	if ((h_version == 3) && (h_flags & OLD_SOUND_FLAG))
+		h_flags |= OLD_SOUND_FLAG;
+
+	if ((h_version == 6) && (_sound != 0))
+		h_config |= CONFIG_SOUND;
+
+	if (h_version >= V5 && (h_flags & UNDO_FLAG))
+		if (_undo_slots == 0)
+			h_flags &= ~UNDO_FLAG;
+
+	/*
+	 * Miscellaneous
+	 */
 
 	// Set the screen colors
 	garglk_set_zcolors(_defaultForeground, _defaultBackground);
@@ -199,7 +198,7 @@ void GlkInterface::initialize() {
 	// since the arrow keys the original used are in use now for cycling prior commands
 	if (_storyId == BEYOND_ZORK) {
 		uint32 KEYCODES[2] = { keycode_PageUp, keycode_PageDown };
-		glk_set_terminators_line_event(gos_lower, KEYCODES, 2);
+		glk_set_terminators_line_event(_wp._lower, KEYCODES, 2);
 	}
 }
 
@@ -322,12 +321,12 @@ void GlkInterface::start_next_sample() {
 
 void GlkInterface::gos_update_width() {
 	uint width;
-	if (gos_upper) {
-		glk_window_get_size(gos_upper, &width, nullptr);
+	if (_wp._upper) {
+		glk_window_get_size(_wp._upper, &width, nullptr);
 		h_screen_cols = width;
 		SET_BYTE(H_SCREEN_COLS, width);
 		if ((uint)curx > width) {
-			glk_window_move_cursor(gos_upper, 0, cury - 1);
+			glk_window_move_cursor(_wp._upper, 0, cury - 1);
 			curx = 1;
 		}
 	}
@@ -337,8 +336,8 @@ void GlkInterface::gos_update_height() {
 	uint height_upper;
 	uint height_lower;
 	if (gos_curwin) {
-		glk_window_get_size(gos_upper, nullptr, &height_upper);
-		glk_window_get_size(gos_lower, nullptr, &height_lower);
+		glk_window_get_size(_wp._upper, nullptr, &height_upper);
+		glk_window_get_size(_wp._lower, nullptr, &height_lower);
 		h_screen_rows = height_upper + height_lower + 1;
 		SET_BYTE(H_SCREEN_ROWS, h_screen_rows);
 	}
@@ -346,11 +345,11 @@ void GlkInterface::gos_update_height() {
 
 void GlkInterface::reset_status_ht() {
 	uint height;
-	if (gos_upper) {
-		glk_window_get_size(gos_upper, nullptr, &height);
+	if (_wp._upper) {
+		glk_window_get_size(_wp._upper, nullptr, &height);
 		if ((uint)mach_status_ht != height) {
 			glk_window_set_arrangement(
-				glk_window_get_parent(gos_upper),
+				glk_window_get_parent(_wp._upper),
 				winmethod_Above | winmethod_Fixed,
 				mach_status_ht, nullptr);
 		}
@@ -359,23 +358,21 @@ void GlkInterface::reset_status_ht() {
 
 void GlkInterface::erase_window(zword w) {
 	if (w == 0)
-		glk_window_clear(gos_lower);
-	else if (gos_upper) {
+		glk_window_clear(_wp._lower);
+	else if (_wp._upper) {
 #ifdef GARGLK
-		garglk_set_reversevideo_stream(
-			glk_window_get_stream(gos_upper),
-			true);
+		garglk_set_reversevideo_stream(glk_window_get_stream(_wp._upper), true);
 #endif /* GARGLK */
 		
 		memset(statusline, ' ', sizeof statusline);
-		glk_window_clear(gos_upper);
+		glk_window_clear(_wp._upper);
 		reset_status_ht();
 		curr_status_ht = 0;
 	}
 }
 
 void GlkInterface::split_window(zword lines) {
-	if (!gos_upper)
+	if (!_wp._upper)
 		return;
 
 	// The top line is always set for V1 to V3 games
@@ -385,10 +382,10 @@ void GlkInterface::split_window(zword lines) {
 	if (!lines || lines > curr_status_ht) {
 		uint height;
 
-		glk_window_get_size(gos_upper, nullptr, &height);
+		glk_window_get_size(_wp._upper, nullptr, &height);
 		if (lines != height)
 			glk_window_set_arrangement(
-				glk_window_get_parent(gos_upper),
+				glk_window_get_parent(_wp._upper),
 				winmethod_Above | winmethod_Fixed,
 				lines, nullptr);
 		curr_status_ht = lines;
@@ -396,13 +393,13 @@ void GlkInterface::split_window(zword lines) {
 	mach_status_ht = lines;
 	if (cury > lines)
 	{
-		glk_window_move_cursor(gos_upper, 0, 0);
+		glk_window_move_cursor(_wp._upper, 0, 0);
 		curx = cury = 1;
 	}
 	gos_update_width();
 
 	if (h_version == V3)
-		glk_window_clear(gos_upper);
+		glk_window_clear(_wp._upper);
 }
 
 void GlkInterface::restart_screen() {
@@ -471,9 +468,9 @@ void GlkInterface::smartstatusline() {
 	memcpy(buf + 1 + scoreofs, c, scorelen * sizeof(zchar));
 	memcpy(buf + 1, a, roomlen * sizeof(zchar));
 
-	glk_window_move_cursor(gos_upper, 0, 0);
+	glk_window_move_cursor(_wp._upper, 0, 0);
 	glk_put_buffer_uni(buf, h_screen_cols);
-	glk_window_move_cursor(gos_upper, cury - 1, curx - 1);
+	glk_window_move_cursor(_wp._upper, cury - 1, curx - 1);
 }
 
 void GlkInterface::gos_cancel_pending_line() {
@@ -510,7 +507,7 @@ void GlkInterface::os_draw_picture(int picture, winid_t win, const Common::Rect 
 
 zchar GlkInterface::os_read_key(int timeout, bool show_cursor) {
 	event_t ev;
-	winid_t win = gos_curwin ? gos_curwin : gos_lower;
+	winid_t win = gos_curwin ? gos_curwin : _wp._lower;
 
 	if (gos_linepending)
 		gos_cancel_pending_line();
@@ -536,7 +533,7 @@ zchar GlkInterface::os_read_key(int timeout, bool show_cursor) {
 
 	glk_request_timer_events(0);
 
-	if (gos_upper && mach_status_ht < curr_status_ht)
+	if (_wp._upper && mach_status_ht < curr_status_ht)
 		reset_status_ht();
 	curr_status_ht = 0;
 
@@ -558,7 +555,7 @@ zchar GlkInterface::os_read_key(int timeout, bool show_cursor) {
 
 zchar GlkInterface::os_read_line(int max, zchar *buf, int timeout, int width, int continued) {
 	event_t ev;
-	winid_t win = gos_curwin ? gos_curwin : gos_lower;
+	winid_t win = gos_curwin ? gos_curwin : _wp._lower;
 
 	if (!continued && gos_linepending)
 		gos_cancel_pending_line();
@@ -592,7 +589,7 @@ zchar GlkInterface::os_read_line(int max, zchar *buf, int timeout, int width, in
 	buf[ev.val1] = '\0';
 
 	// If the upper status line area was expanded to show a text box/quotation, restore it back
-	if (gos_upper && mach_status_ht < curr_status_ht)
+	if (_wp._upper && mach_status_ht < curr_status_ht)
 		reset_status_ht();
 	curr_status_ht = 0;
 

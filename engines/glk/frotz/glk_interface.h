@@ -25,6 +25,7 @@
 
 #include "glk/glk_api.h"
 #include "glk/frotz/mem.h"
+#include "glk/frotz/windows.h"
 
 namespace Glk {
 namespace Frotz {
@@ -67,9 +68,8 @@ public:
 	int curr_status_ht;
 	int mach_status_ht;
 
+	Windows _wp;
 	winid_t gos_status;
-	winid_t gos_upper;
-	winid_t gos_lower;
 	winid_t gos_curwin;
 	int gos_linepending;
 	zchar *gos_linebuf;

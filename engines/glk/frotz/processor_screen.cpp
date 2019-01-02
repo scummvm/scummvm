@@ -26,7 +26,7 @@ namespace Glk {
 namespace Frotz {
 
 void Processor::screen_mssg_on() {
-	if (gos_curwin == gos_lower) {
+	if (gos_curwin == _wp._lower) {
 		oldstyle = curstyle;
 		glk_set_style(style_Preformatted);
 		glk_put_string("\n    ");
@@ -34,7 +34,7 @@ void Processor::screen_mssg_on() {
 }
 
 void Processor::screen_mssg_off() {
-	if (gos_curwin == gos_lower) {
+	if (gos_curwin == _wp._lower) {
 		glk_put_char('\n');
 		zargs[0] = 0;
 		z_set_text_style();
@@ -98,7 +98,7 @@ uint32 Processor::zchar_to_unicode_rune(zchar c) {
 void Processor::screen_char(zchar c) {
 	if (gos_linepending && (gos_curwin == gos_linewin)) {
 		gos_cancel_pending_line();
-		if (gos_curwin == gos_upper) {
+		if (gos_curwin == _wp._upper) {
 			curx = 1;
 			cury ++;
 		}
@@ -119,7 +119,7 @@ void Processor::screen_char(zchar c) {
 		fixforced = false;
 	}
 
-	if (gos_upper && gos_curwin == gos_upper) {
+	if (_wp._upper && gos_curwin == _wp._upper) {
 		if (c == '\n' || c == ZC_RETURN) {
 			glk_put_char('\n');
 			curx = 1;
@@ -151,7 +151,7 @@ void Processor::screen_char(zchar c) {
 				curx++;
 			}
 		}
-	} else if (gos_curwin == gos_lower) {
+	} else if (gos_curwin == _wp._lower) {
 		if (c == ZC_RETURN)
 			glk_put_char('\n');
 		else {
@@ -200,7 +200,7 @@ store((zword)os_buffer_screen((zargs[0] == (zword)-1) ? -1 : zargs[0]));
 void Processor::z_erase_line() {
 	int i;
 
-	if (gos_upper && gos_curwin == gos_upper) {
+	if (_wp._upper && gos_curwin == _wp._upper) {
 		for (i = 0; i < h_screen_cols + 1 - curx; i++)
 			glk_put_char(' ');
 		glk_window_move_cursor(gos_curwin, curx - 1, cury - 1);
@@ -211,34 +211,33 @@ void Processor::z_erase_window() {
 	short w = zargs[0];
 	if (w == -2)
 	{
-		if (gos_upper) {
-			glk_set_window(gos_upper);
+		if (_wp._upper) {
+			glk_set_window(_wp._upper);
 #ifdef GARGLK
 			garglk_set_zcolors(curr_fg, curr_bg);
 #endif /* GARGLK */
-			glk_window_clear(gos_upper);
+			glk_window_clear(_wp._upper);
 			glk_set_window(gos_curwin);
 		}
-		glk_window_clear(gos_lower);
+		glk_window_clear(_wp._lower);
 	}
 	if (w == -1)
 	{
-		if (gos_upper) {
-			glk_set_window(gos_upper);
+		if (_wp._upper) {
+			glk_set_window(_wp._upper);
 #ifdef GARGLK
 			garglk_set_zcolors(curr_fg, curr_bg);
 #endif /* GARGLK */
-			glk_window_clear(gos_upper);
+			glk_window_clear(_wp._upper);
 		}
-		glk_window_clear(gos_lower);
+		glk_window_clear(_wp._lower);
 		split_window(0);
-		glk_set_window(gos_lower);
-		gos_curwin = gos_lower;
+		glk_set_window(_wp._lower);
+		gos_curwin = _wp._lower;
 	}
-	if (w == 0)
-		glk_window_clear(gos_lower);
-	if (w == 1 && gos_upper)
-		glk_window_clear(gos_upper);
+
+	if (w >= 0 && _wp[w])
+		glk_window_clear(_wp[w]);
 }
 
 void Processor::z_get_cursor() {
@@ -260,7 +259,7 @@ void Processor::z_print_table() {
 
 	// Write text in width x height rectangle
 	for (i = 0; i < zargs[2]; i++, curx = xs, cury++) {
-		glk_window_move_cursor(cwin == 0 ? gos_lower : gos_upper, xs - 1, cury - 1);
+		glk_window_move_cursor(_wp[cwin], xs - 1, cury - 1);
 
 		for (j = 0; j < zargs[1]; j++) {
 			LOW_BYTE(addr, c);
@@ -384,7 +383,7 @@ void Processor::z_set_font() {
 
 void Processor::z_set_cursor() {
 	int x = (int16)zargs[1], y = (int16)zargs[0];
-	assert(gos_upper);
+	assert(_wp._upper);
 
 	flush_buffer();
 
@@ -394,7 +393,8 @@ void Processor::z_set_cursor() {
 	}
 
 	if (!x || !y) {
-		Point cursorPos = gos_upper->getCursor();
+		winid_t win = _wp._upper;
+		Point cursorPos = win->getCursor();
 		if (!x)
 			x = cursorPos.x;
 		if (!y)
@@ -409,7 +409,7 @@ void Processor::z_set_cursor() {
 		reset_status_ht();
 	}
 
-	glk_window_move_cursor(gos_upper, curx - 1, cury - 1);
+	glk_window_move_cursor(_wp._upper, curx - 1, cury - 1);
 }
 
 void Processor::z_set_text_style() {
@@ -468,12 +468,12 @@ void Processor::z_set_window() {
 	cwin = zargs[0];
 
 	if (cwin == 0) {
-		glk_set_window(gos_lower);
-		gos_curwin = gos_lower;
+		glk_set_window(_wp._lower);
+		gos_curwin = _wp._lower;
 	} else {
-		if (gos_upper)
-			glk_set_window(gos_upper);
-		gos_curwin = gos_upper;
+		if (_wp._upper)
+			glk_set_window(_wp._upper);
+		gos_curwin = _wp._upper;
 	}
 
 	if (cwin == 0)
@@ -500,7 +500,7 @@ void Processor::z_show_status() {
 
 	bool brief = false;
 
-	if (!gos_upper)
+	if (!_wp._upper)
 		return;
 
 	// One V5 game (Wishbringer Solid Gold) contains this opcode by accident,
@@ -519,15 +519,15 @@ void Processor::z_show_status() {
 	LOW_WORD(addr, global2);
 
 	// Move to top of the status window, and print in reverse style.
-	glk_set_window(gos_upper);
-	gos_curwin = gos_upper;
+	glk_set_window(_wp._upper);
+	gos_curwin = _wp._upper;
 
 #ifdef GARGLK
 	garglk_set_reversevideo(true);
 #endif /* GARGLK */
 
 	curx = cury = 1;
-	glk_window_move_cursor(gos_upper, 0, 0);
+	glk_window_move_cursor(_wp._upper, 0, 0);
 
 	// If the screen width is below 55 characters then we have to use
 	// the brief status line format
@@ -580,8 +580,8 @@ void Processor::z_show_status() {
 	pad_status_line (0);
 
 	// Return to the lower window
-	glk_set_window(gos_lower);
-	gos_curwin = gos_lower;
+	glk_set_window(_wp._lower);
+	gos_curwin = _wp._lower;
 }
 
 void Processor::z_split_window() {
