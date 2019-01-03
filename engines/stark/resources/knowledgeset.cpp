@@ -105,7 +105,7 @@ Visual *KnowledgeSet::getInventoryItemVisual(uint16 itemIndex) {
 }
 
 int16 KnowledgeSet::getNeighborInventoryItem(int16 selectedIndex, bool forward) {
-	if (selectedIndex < 0) {
+	if (selectedIndex < 0 && !_inventoryItemOrder.empty()) {
 		return forward ? _inventoryItemOrder.front() : _inventoryItemOrder.back();
 	}
 
