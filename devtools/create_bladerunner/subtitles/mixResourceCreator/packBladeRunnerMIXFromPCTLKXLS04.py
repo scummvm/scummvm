@@ -538,7 +538,11 @@ def translateQuoteToAsciiProper(cellObj, pSheetName):
 	#	print '[Debug] ', newQuoteReplaceSpecials
 	#newQuoteReplaceSpecialsDec = newQuoteReplaceSpecials.decode(gTargetEncoding)
 	newQuoteReplaceSpecialsRetStr = ''
-	newQuoteReplaceSpecialsRetStr = newQuoteReplaceSpecials.encode(gTargetEncoding)
+	try:
+		newQuoteReplaceSpecialsRetStr = newQuoteReplaceSpecials.encode(gTargetEncoding)
+	except Exception as e:
+		print "[Error] Could not encode text::" + str(e)
+		newQuoteReplaceSpecialsRetStr = "??????????"
 	#try:
 	#	newQuoteReplaceSpecialsRetStr = newQuoteReplaceSpecials.encode(gTargetEncoding)
 	#except:
@@ -869,6 +873,9 @@ def main(argsCL):
 			elif sys.argv[i] == '--trace':
 				print "[Info] Trace mode enabled (more debug messages)."
 				gTraceModeEnabled = True
+			elif argsCL[i][:1] == '-':
+				invalidSyntax = True
+				break				
 
 		if not pathToQuoteExcelFile:
 			invalidSyntax = True

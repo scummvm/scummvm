@@ -1176,7 +1176,10 @@ def main(argsCL):
 			elif sys.argv[i] == '--trace':
 				print "[Info] Trace mode enabled (more debug messages)."
 				gTraceModeEnabled = True
-
+			elif argsCL[i][:1] == '-':
+				invalidSyntax = True
+				break
+				
 		if (exportFonMode == False) and (not TMPTargetFONfilename or not TMPimageRowFilePNG or TMPminSpaceBetweenLettersInRowLeftToLeft <= 0 or TMPminSpaceBetweenLettersInColumnTopToTop <= 0 or TMPkerningForFirstDummyFontLetter <= 0 or TMPSpaceWidthInPixels <= 0)  : # this argument is mandatory
 			invalidSyntax = True
 

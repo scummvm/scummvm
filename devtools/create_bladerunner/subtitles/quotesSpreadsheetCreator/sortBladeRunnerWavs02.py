@@ -372,8 +372,40 @@ def appendVQAPlaceHolderSheets(excelOutBook = None):
 					sh.write(n, colIdx, colNameIt)
 					colIdx+=1
 				#n+=1
-
 	return
+	
+def appendPOGOTextSheet(excelOutBook = None):
+	if excelOutBook != None:
+		print "[Info] Adding POGO sheet..."
+		currTreFileName = '%s%s' % (SUPPORTED_SPECIAL_POGO_FILE, gActiveLanguageDescriptionCodeTuple[1]) # POGO
+		if gTraceModeEnabled:
+			print "[Debug] TR%s file %s was loaded successfully!" % (gActiveLanguageDescriptionCodeTuple[1], currTreFileName) # POGO
+		sh = excelOutBook.add_sheet(currTreFileName)
+		n = 0 # keeps track of rows
+		col1_name = 'Text Resource File: %s' % (currTreFileName)
+		sh.write(n, 0, col1_name)
+		# Second Row
+		n = 1
+		col1_name = 'TextId'
+		col2_name = 'Text'
+		sh.write(n, 0, col1_name)
+		sh.write(n, 1, col2_name)
+		n+=1
+		pogoTRInstance = pogoTextResource(gTraceModeEnabled)
+		
+		for m, e1 in enumerate(pogoTRInstance.getPogoEntriesList(), n):
+			sh.write(m, 0, e1[0])
+			objStr = e1[1]
+			objUTF8SafeStr = ""
+			for i in range(0, len(objStr)):
+				objUTF8SafeStr += objStr[i]
+			try:
+				objUTF8Unicode = unicode(objUTF8SafeStr, 'utf-8')
+			except Exception as e:
+				print '[Error] Failed to create unicode string: ' + str(e)
+				objUTF8Unicode = unicode("???", 'utf-8')
+			sh.write(m, 1, objUTF8Unicode)
+	
 	
 def appendDevCommentarySheet(excelOutBook = None):
 	if excelOutBook != None:
@@ -669,44 +701,14 @@ def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
 								print "[Error] while reading TR%s file %s into mem buffer" % (gActiveLanguageDescriptionCodeTuple[1], currTreFileName)
 								#print "[Error] while reading TR%s file %s into mem buffer" % (gActiveLanguageDescriptionCodeTuple[1], ''.join('{:08X}'.format(idOfMIXEntry)))
 			inMIXFile.close()
-			print "[Info] Total TR%ss processed: %d " % (gActiveLanguageDescriptionCodeTuple[1], totalTREs)
-			print "[Info] Adding POGO sheet..."
-			currTreFileName = '%s%s' % (SUPPORTED_SPECIAL_POGO_FILE, gActiveLanguageDescriptionCodeTuple[1]) # POGO
-			if gTraceModeEnabled:
-				print "[Debug] TR%s file %s was loaded successfully!" % (gActiveLanguageDescriptionCodeTuple[1], currTreFileName) # POGO
-			if excelOutBook != None:
-				sh = excelOutBook.add_sheet(currTreFileName)
-				n = 0 # keeps track of rows
-				col1_name = 'Text Resource File: %s' % (currTreFileName)
-				sh.write(n, 0, col1_name)
-				# Second Row
-				n = 1
-				col1_name = 'TextId'
-				col2_name = 'Text'
-				sh.write(n, 0, col1_name)
-				sh.write(n, 1, col2_name)
-				n+=1
-				pogoTRInstance = pogoTextResource(gTraceModeEnabled)
-				
-				for m, e1 in enumerate(pogoTRInstance.getPogoEntriesList(), n):
-					sh.write(m, 0, e1[0])
-					objStr = e1[1]
-					objUTF8SafeStr = ""
-					for i in range(0, len(objStr)):
-						objUTF8SafeStr += objStr[i]
-					try:
-						objUTF8Unicode = unicode(objUTF8SafeStr, 'utf-8')
-					except Exception as e:
-						print '[Error] Failed to create unicode string: ' + str(e)
-						objUTF8Unicode = unicode("???", 'utf-8')
-					sh.write(m, 1, objUTF8Unicode)
+			print "[Info] Total TR%ss processed: %d " % (gActiveLanguageDescriptionCodeTuple[1], totalTREs)		
 	return
 
 
 #
 # Creating the OUTPUT XLS file with one sheet named as the @param sheet with entries based on the list1 (wav files, without duplicates)
 #
-def outputXLS(filename, sheet, list1, parseTREResourcesAlso = False, mixInputFolderPath = ''):
+def outputXLS(filename, sheet, list1, parseTREResourcesAlso = False, addDevCommAndExtraSFXSheetEnabled = False, addPOGOTextSheetEnabled = False, mixInputFolderPath = ''):
 	global gStringReplacementForRootFolderWithExportedFiles
 	global gNumReplaceStartingCharacters
 	book = xlwt.Workbook()
@@ -804,7 +806,11 @@ def outputXLS(filename, sheet, list1, parseTREResourcesAlso = False, mixInputFol
 	if parseTREResourcesAlso == True and mixInputFolderPath != '':
 		inputMIXExtractTREs(mixInputFolderPath, book)
 
-	appendDevCommentarySheet(book)
+	if addPOGOTextSheetEnabled == True:
+		appendPOGOTextSheet(book)		
+		
+	if addDevCommAndExtraSFXSheetEnabled == True:	
+		appendDevCommentarySheet(book)
 		
 	try:
 		book.save(filename)
@@ -857,7 +863,9 @@ def main(argsCL):
 
 	exportWavFilesMode = False
 	extractTreFilesMode = False
-
+	extractDevCommAndExtraSFXMode = False
+	extractPOGOTextMode = False
+	
 	invalidSyntax = False
 	print "Running %s (%s)..." % (APP_NAME_SPACED, APP_VERSION)
 #	 print "Len of sysargv = %s" % (len(argsCL))
@@ -869,7 +877,7 @@ def main(argsCL):
 			print "Always keep backups!"
 			print "--------------------"
 			print "%s takes has one mandatory argument, ie. the folder of the exported WAV files:" % (APP_WRAPPER_NAME)
-			print "Valid syntax: %s -op folderpath_for_exported_wav_Files [-ip folderpath_for_TLK_Files] [-ian path_to_actornames_txt] [-m stringPathToReplaceFolderpathInExcelLinks] [-ld gameInputLanguageDescription] [-xwav] [-xtre] [--trace]" % (APP_WRAPPER_NAME)
+			print "Valid syntax: %s -op folderpath_for_exported_wav_Files [-ip folderpath_for_TLK_Files] [-ian path_to_actornames_txt] [-m stringPathToReplaceFolderpathInExcelLinks] [-ld gameInputLanguageDescription] [-xwav] [-xtre] [-xdevs] [-xpogo] [--trace]" % (APP_WRAPPER_NAME)
 			print "The -op switch has an argument that is the path for exported WAV files folder. The -op switch is REQUIRED always."
 			print "The -ip switch has an argument that is the path for the input (TLK or MIX) files folder (can be the same as the Blade Runner installation folder)."
 			print "The -ian switch is followed by the path to actornames.txt, if it's not in the current working directory."
@@ -878,6 +886,8 @@ def main(argsCL):
 			printInfoMessageForLanguageSelectionSyntax()
 			print "The -xwav switch enables the WAV audio export mode from the TLK files. It requires an INPUT path to be set with the -ip switch."
 			print "The -xtre switch enables the TRx parsing mode from the original MIX files. It requires an INPUT path to be set with the -ip switch."
+			print "The -xdevs switch will add a sheet for Developer Commentary text and some additional voice-overs from SFX.MIX."
+			print "The -xpogo switch will add a sheet for the POGO text."
 			print "The --trace switch enables more debug messages being printed during execution."
 			print "--------------------"
 			print "If the app finishes successfully, a file named %s-(language)%s will be created in the current working folder." % (OUTPUT_XLS_FILENAME, OUTPUT_XLS_FILENAME_EXT)
@@ -905,15 +915,26 @@ def main(argsCL):
 					pathToActorNamesTxt = argsCL[i+1]
 				elif (argsCL[i] == '-ld'):
 					candidateLangDescriptionTxt = argsCL[i+1]
+
 			elif (argsCL[i] == '-xwav'):
-				print "[Info] Export WAVs from TLK files mode enabled."
+				print "[Info] Export WAVs from TLK files mode enabled (only missing files will be exported)."
 				exportWavFilesMode = True
 			elif (argsCL[i] == '-xtre'):
 				print "[Info] Extract Text Resources (TRx) mode enabled."
 				extractTreFilesMode = True
+			elif (argsCL[i] == '-xdevs'):
+				print "[Info] Additional Sheet for developer commentary and extra SFX mode enabled."
+				extractDevCommAndExtraSFXMode = True
+			elif (argsCL[i] == '-xpogo'):
+				print "[Info] Additional Sheet for POGO text mode enabled."
+				extractPOGOTextMode = True
 			elif argsCL[i] == '--trace':
 				print "[Info] Trace mode enabled (more debug messages)."
 				gTraceModeEnabled = True
+			elif argsCL[i][:1] == '-':
+				invalidSyntax = True
+				break
+				
 		if not TMProotFolderWithExportedFiles: # this argument is mandatory
 			invalidSyntax = True
 
@@ -1069,13 +1090,13 @@ def main(argsCL):
 #				 print "[Debug] Unique %s" % (filenameSrcTmp)
 			constructedOutputFilename = "%s-%s%s" % (OUTPUT_XLS_FILENAME, gActiveLanguageDescriptionCodeTuple[2], OUTPUT_XLS_FILENAME_EXT)
 			print "[Info] Creating output excel %s file..." % (constructedOutputFilename)
-			outputXLS(constructedOutputFilename, OUTPUT_XLS_QUOTES_SHEET + gActiveLanguageDescriptionCodeTuple[1] + '.TR' + gActiveLanguageDescriptionCodeTuple[1], gWavFilesNoDups, extractTreFilesMode, TMProotFolderWithInputTLKFiles)
+			outputXLS(constructedOutputFilename, OUTPUT_XLS_QUOTES_SHEET + gActiveLanguageDescriptionCodeTuple[1] + '.TR' + gActiveLanguageDescriptionCodeTuple[1], gWavFilesNoDups, extractTreFilesMode, extractDevCommAndExtraSFXMode, extractPOGOTextMode, TMProotFolderWithInputTLKFiles)
 	else:
 		invalidSyntax = True
 
 	if invalidSyntax == True:
 		print "[Error] Invalid syntax!\n Try: \n %s --help for more info \n %s --version for version info " % (APP_WRAPPER_NAME, APP_WRAPPER_NAME)
-		print "Valid syntax: %s -op folderpath_for_exported_wav_Files [-ip folderpath_for_TLK_Files] [-ian path_to_actornames_txt] [-m stringPathToReplaceFolderpathInExcelLinks] [-ld gameInputLanguageDescription] [-xwav] [-xtre] [--trace]" % (APP_WRAPPER_NAME)
+		print "Valid syntax: %s -op folderpath_for_exported_wav_Files [-ip folderpath_for_TLK_Files] [-ian path_to_actornames_txt] [-m stringPathToReplaceFolderpathInExcelLinks] [-ld gameInputLanguageDescription] [-xwav] [-xtre] [-xdevs] [-xpogo] [--trace]" % (APP_WRAPPER_NAME)
 		print "\nDetected arguments:"
 		tmpi = 0
 		for tmpArg in argsCL:
