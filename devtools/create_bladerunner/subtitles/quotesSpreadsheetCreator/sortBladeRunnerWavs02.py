@@ -241,6 +241,11 @@ def inputTLKsExport(inputTLKpath, outputWAVpath):
 				if filename.upper() == tlkTuple[0]:
 					inputTLKFilesFound.append(tlkTuple)
 		break
+		
+	if len(inputTLKFilesFound) == 0:
+		print "[Error] No valid speech audio files (TLK) were found in the specified input path (-ip switch)"
+		sys.exit(1)
+		
 	for tmpTLKfileTuple in inputTLKFilesFound:
 		if gTraceModeEnabled:
 			print "[Info] Found TLK: %s" % ('"' + inputTLKpath + tmpTLKfileTuple[0] + '"')
@@ -466,6 +471,11 @@ def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
 				if filename.upper() == mixFileName:
 					inputMIXFilesFound.append(mixFileName)
 		break
+		
+	if len(inputMIXFilesFound) == 0:
+		print "[Error] No supported game archive resource files (MIX) were found in the specified input path (-ip switch)"
+		sys.exit(1)
+		
 	for tmpMIXfileName in inputMIXFilesFound:
 		if gTraceModeEnabled:
 			print "[Info] Found MIX file: %s" % ('"' + tmpMIXfileName + '"')
@@ -782,8 +792,8 @@ def outputXLS(filename, sheet, list1, parseTREResourcesAlso = False, addDevCommA
 
 				#works in Linux + Libreoffice
 				# also works in Windows + LibreOffice (run from msys) -- tried something like:
-				#	python sortBladeRunnerWavs.py -p /g/WORKSPACE/BladeRunnerWorkspace/br-mixer-master/data/WAV -m "G:/WORKSPACE/BladeRunnerWorkspace/br-mixer-master/data/WAV"
-				#TODO put real full path for each file as FILE URL, and real (or approximate shorthand file name as alias)
+				#	python sortBladeRunnerWavs.py -op /g/WORKSPACE/BladeRunnerWorkspace/br-mixer-master/data/WAV -m "G:/WORKSPACE/BladeRunnerWorkspace/br-mixer-master/data/WAV"
+				# put real full path for each file as FILE URL, and real (or approximate shorthand file name as alias)
 				hyperlinkAudioFormula = 'HYPERLINK("file://%s","%s")' % (realPathOfFileNameToLink, shortHandFileName)
 				sh.write(m, 6, Formula(hyperlinkAudioFormula))
 			else:
@@ -935,11 +945,26 @@ def main(argsCL):
 				invalidSyntax = True
 				break
 				
+		if (not exportWavFilesMode):
+			print "[Info] Export WAVs from TLK files mode disabled."
+		if (not extractTreFilesMode):
+			print "[Info] Extract Text Resources (TRx) mode disabled."
+		if (not extractDevCommAndExtraSFXMode):
+			print "[Info] Additional Sheet for developer commentary and extra SFX mode disabled."
+		if (not extractPOGOTextMode):
+			print "[Info] Additional Sheet for POGO text mode disabled."
+		
 		if not TMProotFolderWithExportedFiles: # this argument is mandatory
+			print "[Error] The output path for exported files (-op switch) argument is mandatory!"
 			invalidSyntax = True
 
 		if (not invalidSyntax) and (exportWavFilesMode == True or extractTreFilesMode == True) and (TMProotFolderWithInputTLKFiles == ''):
+			print "[Error] No game input path (-ip switch) specified, while the export audio to WAV mode or the extract Text Resources mode is enabled."
 			invalidSyntax = True
+		
+		if (not invalidSyntax) and (exportWavFilesMode == False and extractTreFilesMode == False) and (TMProotFolderWithInputTLKFiles != ''):
+			print "[Warning] Specified game input path (-ip switch) will be ignored, since the export audio to WAV mode and the extract Text Resources mode are disabled."
+			# not invalid syntax though
 		
 		gActiveLanguageDescriptionCodeTuple = getLanguageDescCodeTuple(candidateLangDescriptionTxt)
 		if (not invalidSyntax) and gActiveLanguageDescriptionCodeTuple is None:	
@@ -953,6 +978,19 @@ def main(argsCL):
 			initActorPropertyEntries(pathToActorNamesTxt)
 #			 for actorEntryTmp in gActorPropertyEntries:
 #				  print "[Debug] Found actor: %s %s %s" % (actorEntryTmp[0], actorEntryTmp[1], actorEntryTmp[2])
+			#
+			# Early checks for invalid cases
+			# 1. if TMProotFolderWithInputTLKFiles is not valid and -xtre or -xwav -> error!
+			# 		use os.path.isdir?
+			#
+			# 2. if not -wav and -op path is invalid then empty INGQUOT sheet -> error
+			# 3 [We check for this further bellow, before call for outputXLS]. if not -wav and -op path is empty (has no WAVs) then empty INGQUOT sheet -> Treat as an error case!
+			if ((exportWavFilesMode == True or extractTreFilesMode == True) and (not os.path.isdir(TMProotFolderWithInputTLKFiles))):
+				print "[Error] Invalid game input path (-ip switch) was specified, while the export audio to WAV mode or the extract Text Resources mode is enabled."
+				sys.exit(1)
+			if ((exportWavFilesMode == False) and (not os.path.isdir(TMProotFolderWithExportedFiles))):
+				print "[Error] Invalid output path for exported files (-op switch) was specified, while the export audio to WAV mode is disabled (if enabled, it would create the path)."
+				sys.exit(1)				
 			#
 			# Checking for the optional case of parsing the input TLK files to export to WAV
 			#
@@ -981,15 +1019,15 @@ def main(argsCL):
 			for fileIdx, filenameTmp in enumerate(gWavFiles):
 				twoTokensOfFilenameAndRelDirname = filenameTmp.split('&', 1)
 				if len(twoTokensOfFilenameAndRelDirname) != 2:
-					print "[Error] in filename and rel dirname split: %s" % (filenameTmp)
+					print "[Error] While attempting filename and relative dirname split: %s" % (filenameTmp)
 					sys.exit(0)
 				twoTokensOfFilenameForExt = twoTokensOfFilenameAndRelDirname[0].split('.', 1)
 				if len(twoTokensOfFilenameForExt) == 2:
 					if twoTokensOfFilenameForExt[1] != 'WAV' and  twoTokensOfFilenameForExt[1] != 'wav':
-						print "[Error] in proper extension (not WAV): %s" % (twoTokensOfFilenameAndRelDirname[0])
+						print "[Error] Found non supported file extension (not WAV): %s" % (twoTokensOfFilenameAndRelDirname[0])
 						sys.exit(0)
 				else:
-					print "[Error] in extension split: %s" % (twoTokensOfFilenameAndRelDirname[0])
+					print "[Error] While attempting extension split: %s" % (twoTokensOfFilenameAndRelDirname[0])
 					sys.exit(0)
 				#remove WAV extension here
 #				 filenameTmp =	twoTokensOfFilenameAndRelDirname[0] + '&' + twoTokensOfFilenameForExt[0]
@@ -1088,6 +1126,10 @@ def main(argsCL):
 					gWavFilesNoDups.append(filenameSrcTmp)
 #			 for filenameSrcTmp in gWavFilesNoDups:
 #				 print "[Debug] Unique %s" % (filenameSrcTmp)
+			if len(gWavFilesNoDups) == 0:
+				print "[Error] No supported audio files (WAV) were found in the output folder path (-op switch)." 
+				sys.exit(1)
+			
 			constructedOutputFilename = "%s-%s%s" % (OUTPUT_XLS_FILENAME, gActiveLanguageDescriptionCodeTuple[2], OUTPUT_XLS_FILENAME_EXT)
 			print "[Info] Creating output excel %s file..." % (constructedOutputFilename)
 			outputXLS(constructedOutputFilename, OUTPUT_XLS_QUOTES_SHEET + gActiveLanguageDescriptionCodeTuple[1] + '.TR' + gActiveLanguageDescriptionCodeTuple[1], gWavFilesNoDups, extractTreFilesMode, extractDevCommAndExtraSFXMode, extractPOGOTextMode, TMProotFolderWithInputTLKFiles)
