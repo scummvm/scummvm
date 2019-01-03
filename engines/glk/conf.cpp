@@ -67,7 +67,6 @@ Conf::Conf(InterpreterType interpType) {
 	g_conf = this;
 	_imageW = g_system->getWidth();
 	_imageH = g_system->getHeight();
-	_cellW = _cellH = 8;
 
 	get("moreprompt", _propInfo._morePrompt, "\207 more \207");
 	get("morecolor", _propInfo._moreColor);

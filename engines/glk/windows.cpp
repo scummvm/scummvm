@@ -76,7 +76,7 @@ Windows::~Windows() {
 
 Window *Windows::windowOpen(Window *splitwin, uint method, uint size,
 							uint wintype, uint rock) {
-	Window *newwin, *oldparent;
+	Window *newwin, *oldparent = nullptr;
 	PairWindow *pairWin;
 	uint val;
 
@@ -262,21 +262,22 @@ PairWindow *Windows::newPairWindow(uint method, Window *key, uint size) {
 void Windows::rearrange() {
 	if (_rootWin) {
 		Rect box;
+		Point cell(g_conf->_monoInfo._cellW, g_conf->_monoInfo._cellH);
 
 		if (g_conf->_lockCols) {
-			int desired_width = g_conf->_wMarginSaveX * 2 + g_conf->_cellW * g_conf->_cols;
+			int desired_width = g_conf->_wMarginSaveX * 2 + cell.x * g_conf->_cols;
 			if (desired_width > g_conf->_imageW)
 				g_conf->_wMarginX = g_conf->_wMarginSaveX;
 			else
-				g_conf->_wMarginX = (g_conf->_imageW - g_conf->_cellW * g_conf->_cols) / 2;
+				g_conf->_wMarginX = (g_conf->_imageW - cell.x * g_conf->_cols) / 2;
 		}
 
 		if (g_conf->_lockRows) {
-			int desired_height = g_conf->_wMarginSaveY * 2 + g_conf->_cellH * g_conf->_rows;
+			int desired_height = g_conf->_wMarginSaveY * 2 + cell.y * g_conf->_rows;
 			if (desired_height > g_conf->_imageH)
 				g_conf->_wMarginY = g_conf->_wMarginSaveY;
 			else
-				g_conf->_wMarginY = (g_conf->_imageH - g_conf->_cellH * g_conf->_rows) / 2;
+				g_conf->_wMarginY = (g_conf->_imageH - cell.y * g_conf->_rows) / 2;
 		}
 
 		box.left = g_conf->_wMarginX;

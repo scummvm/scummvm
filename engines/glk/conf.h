@@ -97,7 +97,6 @@ public:
 	WindowStyle _gStylesDefault[style_NUMSTYLES];
 
 	int _imageW, _imageH;
-	int _cellW, _cellH;
 public:
 	/**
 	 * Constructor
