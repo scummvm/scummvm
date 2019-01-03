@@ -23,6 +23,7 @@
 #include "glk/frotz/windows.h"
 #include "glk/frotz/frotz.h"
 #include "glk/window_pair.h"
+#include "glk/conf.h"
 
 namespace Glk {
 namespace Frotz {
@@ -63,7 +64,8 @@ void Window::setSize(const Point &newSize) {
 	winid_t win = getWindow();
 	checkRepositionLower();
 
-	win->setSize(newSize);
+	Point s(newSize.x * g_conf->_monoInfo._cellW, newSize.y * g_conf->_monoInfo._cellH);
+	win->setSize(s);
 /* TODO
 
 	// Keep the cursor within the window
@@ -78,7 +80,8 @@ void Window::setPosition(const Point &newPos) {
 	winid_t win = getWindow();
 	checkRepositionLower();
 
-	win->setPosition(newPos);
+	Point pos((newPos.x - 1) * g_conf->_monoInfo._cellW, (newPos.y - 1) * g_conf->_monoInfo._cellH);
+	win->setPosition(pos);
 }
 
 const uint16 &Window::operator[](WindowProperty propType) {
