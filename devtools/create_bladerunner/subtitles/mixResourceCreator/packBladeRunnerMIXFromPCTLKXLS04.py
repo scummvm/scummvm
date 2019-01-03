@@ -77,8 +77,11 @@ APP_WRAPPER_NAME = "mixResourceCreator.py"
 APP_NAME_SPACED = "Blade Runner MIX Resource Creator"
 APP_SHORT_DESC = "Make a Text Resource file for spoken in-game quotes and pack Text Resources with Fonts into a SUBTITLES.MIX file."
 
+WINDOWS_1252_ENCODING = 'windows-1252'
+
 # TODO- maybe the '_E' part is not needed
-DEFAULT_SUBTITLES_FONT_NAME = 'SUBTLS_E.FON'
+SUBTITLES_FONT_NAME_CATEGORY = 'SUBTLS_E'
+DEFAULT_SUBTITLES_FONT_NAME = SUBTITLES_FONT_NAME_CATEGORY + '.FON'
 DEFAULT_SUBTITLES_MIX_OUTPUT_NAME = u'SUBTITLES.MIX'
 
 # all dialogue sheets get the SUBTLS_E.FON for translation to a Text Resource (TRx)
@@ -95,12 +98,33 @@ SUPPORTED_VIDEO_DIALOGUE_SHEETS_LOCALIZED = ['INTRO_', 'MW_A_', 'MW_B01_', 'MW_B
 # We use a single naming for TAHOMA here because both TAHOMA18 and TAHOMA24 are used for ENDCRED.TRx
 # The TRx files that are identically named to the originals are supposed to override them (needs ScummVM compatible functionality for that)
 # This is so that fan made translations are supported.
-SUPPORTED_TRANSLATION_SHEETS = [('OPTIONS.TR', 'KIA6PT'), ('DLGMENU.TR', 'KIA6PT'), ('SCORERS.TR', 'TAHOMA'), ('VK.TR', 'KIA6PT'), ('CLUES.TR', 'KIA6PT'), ('CRIMES.TR', 'KIA6PT'), ('ACTORS.TR', 'KIA6PT'), ('HELP.TR', 'KIA6PT'), ('AUTOSAVE.TR', 'KIA6PT'), ('ERRORMSG.TR', 'KIA6PT'), ('SPINDEST.TR', 'KIA6PT'), ('KIA.TR', 'KIA6PT'),  ('KIACRED.TR', 'KIA6PT'), ('CLUETYPE.TR', 'KIA6PT'), ('ENDCRED.TR', 'TAHOMA'), ('POGO.TR', 'KIA6PT')]
+SUPPORTED_TRANSLATION_SHEETS = [('OPTIONS.TR', 'KIA6PT'), 
+								('DLGMENU.TR', 'KIA6PT'), 
+								('SCORERS.TR', 'TAHOMA'), 
+								('VK.TR', 'KIA6PT'), 
+								('CLUES.TR', 'KIA6PT'), 
+								('CRIMES.TR', 'KIA6PT'), 
+								('ACTORS.TR', 'KIA6PT'), 
+								('HELP.TR', 'KIA6PT'), 
+								('AUTOSAVE.TR', 'KIA6PT'), 
+								('ERRORMSG.TR', 'SYSTEM'), 
+								('SPINDEST.TR', 'KIA6PT'), 
+								('KIA.TR', 'KIA6PT'),  
+								('KIACRED.TR', 'KIA6PT'), 
+								('CLUETYPE.TR', 'KIA6PT'), 
+								('ENDCRED.TR', 'TAHOMA'), 
+								('POGO.TR', 'KIA6PT')]
 # The FON files that are identically named to the originals are supposed to override them (needs ScummVM compatible functionality for that)
-SUPPORTED_OTHER_FILES_FOR_MIX = [DEFAULT_SUBTITLES_FONT_NAME, 'KIA6PT.FON', 'TAHOMA18.FON', 'TAHOMA24.FON'] # , '10PT.FON'] # we don't deal with 10PT.FON since it's not used -- TODO verify this.
+# We don't deal with 10PT.FON since it's not used.
+# Also we don't deal with the SYSTEM (external OS font) that ERRORMSG.TRx uses!
+# TODO we probably could skip importing ERRORMSG.TRx (to SUBTITLES.MIX) altogether, since translating that has no point!
+SUPPORTED_OTHER_FILES_FOR_MIX = [DEFAULT_SUBTITLES_FONT_NAME, 'KIA6PT.FON', 'TAHOMA18.FON', 'TAHOMA24.FON'] 
 
 SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST = [('EN_ANY', 'E', 'English'), ('DE_DEU', 'G', 'German'), ('FR_FRA', 'F', 'French'), ('IT_ITA', 'I', 'Italian'), ('ES_ESP', 'S', 'Spanish'), ('RU_RUS', 'R', 'Russian')]
 DEFAULT_LANG_DESC_CODE = SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST[0]
+
+DEFAULT_TARGET_ENCODING_PER_FONT = [(SUBTITLES_FONT_NAME_CATEGORY, WINDOWS_1252_ENCODING), ('KIA6PT', 'cp437'), ('TAHOMA', 'cp437'), ('SYSTEM', 'latin-1')] 
+gTargetEncodingPerFont = [] # global var
 
 gTraceModeEnabled = False
 gActiveLanguageDescriptionCodeTuple = ''
@@ -118,16 +142,11 @@ gTableOfStringEntries = []
 gListOfFontNamesToOutOfOrderGlyphs = []
 gArrangedListOfFontNamesToOutOfOrderGlyphs = []
 
-ORIGINAL_ENCODING = 'windows-1252'
-#DEFAULT_TARGET_ENCODING = 'windows-1252'
-#DEFAULT_TARGET_ENCODING_UNICODE = unicode(DEFAULT_TARGET_ENCODING, 'utf-8')
-gTargetEncoding = ''
-
 #
 #
 #
 def initOverrideEncoding(pathToConfigureFontsTranslationTxt):
-	global gTargetEncoding
+	global gTargetEncodingPerFont
 	global gListOfFontNamesToOutOfOrderGlyphs
 	global gArrangedListOfFontNamesToOutOfOrderGlyphs
 
@@ -137,7 +156,7 @@ def initOverrideEncoding(pathToConfigureFontsTranslationTxt):
 		pathToConfigureFontsTranslationTxt = os.path.join(relPath, configureFontsTranslationTextFile)
 		print "[Warning] Font Translation Configuration file not found in arguments. Attempting to open local file %s if it exists" % (configureFontsTranslationTextFile)
 
-	configureTranslationFailed = True
+	configureTranslationFailed = False
 	try:
 		if os.access(pathToConfigureFontsTranslationTxt, os.F_OK):
 			print "[Info] Font Translation Configuration file found: {0}".format(pathToConfigureFontsTranslationTxt)
@@ -145,6 +164,7 @@ def initOverrideEncoding(pathToConfigureFontsTranslationTxt):
 			linesLst = conFontsTranslationFile.readlines()
 			conFontsTranslationFile.close()
 			if linesLst is None or len(linesLst) == 0:
+				print '[Error] Empty configureFontsTranslation text file!'
 				configureTranslationFailed = True
 			else:
 				if gTraceModeEnabled:
@@ -158,38 +178,75 @@ def initOverrideEncoding(pathToConfigureFontsTranslationTxt):
 				for tokenNameKeyPair in involvedTokensLst:
 					nameKeyTupl = tokenNameKeyPair.split('=', 1)
 					try:
-						if len(nameKeyTupl) == 2 and nameKeyTupl[0] == 'targetEncoding' and nameKeyTupl[1] is not None and nameKeyTupl[1] != '-' and nameKeyTupl[1] != '':
-							tmpTargetEncodingUnicode = unicode(nameKeyTupl[1], 'utf-8')
-							gTargetEncoding = unicode.encode("%s" % tmpTargetEncodingUnicode, ORIGINAL_ENCODING)
-						elif len(nameKeyTupl) == 2 and nameKeyTupl[0] == 'fontNameAndOutOfOrderGlyphs' and nameKeyTupl[1] is not None and nameKeyTupl[1] != '':
+						if len(nameKeyTupl) == 2 and nameKeyTupl[0] == 'fontNameAndOutOfOrderGlyphs' and nameKeyTupl[1] is not None and nameKeyTupl[1] != '':
 							# split at hash tag first
 							tmpListOfOutOfOrderGlyphs = []
 							del(tmpListOfOutOfOrderGlyphs[:])
-							fontNameAndOOOGlyphsTuple = nameKeyTupl[1].split('#', 1)
-							if (len (fontNameAndOOOGlyphsTuple) == 2 and fontNameAndOOOGlyphsTuple[0] != '' and fontNameAndOOOGlyphsTuple[1] is not None and fontNameAndOOOGlyphsTuple[1] != ''):
-								tmpFontName = fontNameAndOOOGlyphsTuple[0]
-								# split at comma, then split at ':' and store tuples of character
-								explicitOutOfOrderGlyphsTokenUnicode = unicode(fontNameAndOOOGlyphsTuple[1], 'utf-8') # unicode(fontNameAndOOOGlyphsTuple[1], 'utf-8')
-								#explicitOutOfOrderGlyphsTokenStr =  unicode.encode("%s" % explicitOutOfOrderGlyphsTokenUnicode, gTargetEncoding)
-								#explicitOutOfOrderGlyphsTokenStr =  explicitOutOfOrderGlyphsTokenUnicode.decode(gTargetEncoding) # unicode.encode("%s" % explicitOutOfOrderGlyphsTokenUnicode, 'utf-8')
-								tokensOfOutOfOrderGlyphsStrList = explicitOutOfOrderGlyphsTokenUnicode.split(',')
-								for tokenX in tokensOfOutOfOrderGlyphsStrList:
-									tokensOfTupleList = tokenX.split(':')
-									tmpListOfOutOfOrderGlyphs.append( (unichr(ord(tokensOfTupleList[0])), unichr(ord(tokensOfTupleList[1])))  )
+							fontCateg_targetEnc_OOOGlyphs_Tuple = nameKeyTupl[1].split('#', 2)
+							#print nameKeyTupl[1] + ': %d' % (len(fontCateg_targetEnc_OOOGlyphs_Tuple))
+							#print fontCateg_targetEnc_OOOGlyphs_Tuple
+							if (len(fontCateg_targetEnc_OOOGlyphs_Tuple) == 3 \
+									and fontCateg_targetEnc_OOOGlyphs_Tuple[0] != ''\
+									and fontCateg_targetEnc_OOOGlyphs_Tuple[1] is not None \
+									and fontCateg_targetEnc_OOOGlyphs_Tuple[1] != ''):
+								tmpFontCateg = fontCateg_targetEnc_OOOGlyphs_Tuple[0]
+								tmpTargetEncodingForThisFont = fontCateg_targetEnc_OOOGlyphs_Tuple[1]
+								if ( tmpFontCateg not in zip(*DEFAULT_TARGET_ENCODING_PER_FONT)[0]):
+									print '[Error] Invalid Font name specified in configureFontsTranslation text file!'
+									print '        Valid values are: ', ", ".join( zip(*DEFAULT_TARGET_ENCODING_PER_FONT)[0] )
+									configureTranslationFailed = True
+									break
+								
+								elif len(gTargetEncodingPerFont) == 0 \
+									or (tmpFontCateg not in zip(*gTargetEncodingPerFont)[0]):
+									gTargetEncodingPerFont.append(  ( tmpFontCateg,  tmpTargetEncodingForThisFont) )
+								
+								if ( fontCateg_targetEnc_OOOGlyphs_Tuple[2] is not None \
+									and fontCateg_targetEnc_OOOGlyphs_Tuple[2] != ''):
+									# split at comma, then split at ':' and store tuples of character
+									explicitOutOfOrderGlyphsTokenUnicode = unicode(fontCateg_targetEnc_OOOGlyphs_Tuple[2], 'utf-8') # unicode(fontCateg_targetEnc_OOOGlyphs_Tuple[2], 'utf-8')
+									#explicitOutOfOrderGlyphsTokenStr =  unicode.encode("%s" % explicitOutOfOrderGlyphsTokenUnicode, gTargetEncoding)
+									#explicitOutOfOrderGlyphsTokenStr =  explicitOutOfOrderGlyphsTokenUnicode.decode(gTargetEncoding) # unicode.encode("%s" % explicitOutOfOrderGlyphsTokenUnicode, 'utf-8')
+									tokensOfOutOfOrderGlyphsStrList = explicitOutOfOrderGlyphsTokenUnicode.split(',')
+									for tokenX in tokensOfOutOfOrderGlyphsStrList:
+										tokensOfTupleList = tokenX.split(':')
+										if len(tokensOfTupleList) == 2:
+											tmpListOfOutOfOrderGlyphs.append( (unichr(ord(tokensOfTupleList[0])), unichr(ord(tokensOfTupleList[1])))  )
+										else:
+											print '[Error] Bad tuple syntax in configureFontsTranslation text file!'
+											configureTranslationFailed = True
 
-								if tmpFontName not in [x[0] for x in gListOfFontNamesToOutOfOrderGlyphs]:
-									gListOfFontNamesToOutOfOrderGlyphs.append(  ( tmpFontName,  tmpListOfOutOfOrderGlyphs) )
-
+									if not configureTranslationFailed \
+										and tmpFontCateg not in [x[0] for x in gListOfFontNamesToOutOfOrderGlyphs]:
+										gListOfFontNamesToOutOfOrderGlyphs.append(  ( tmpFontCateg,  tmpListOfOutOfOrderGlyphs) )
+									elif configureTranslationFailed:
+										break
 							else:
+								print '[Error] Bad line syntax in configureFontsTranslation text file!'
 								configureTranslationFailed = True
 								break
 					except:
 						configureTranslationFailed = True
 						raise
-
-				if not (gTargetEncoding is None or not gTargetEncoding):
-					configureTranslationFailed = False
-
+				#
+				# end of for loop over configureFontsTranslation's lines
+				#
+				if (configureTranslationFailed == False):	
+					for tmpFontToTargetEncCateg in DEFAULT_TARGET_ENCODING_PER_FONT:
+						if (len (gTargetEncodingPerFont) == 0 \
+							or  tmpFontToTargetEncCateg[0] not in zip(*gTargetEncodingPerFont)[0]):
+							# append the defaults for the mappings not explicitly specified in configureFontsTranslation
+							gTargetEncodingPerFont.append(tmpFontToTargetEncCateg)
+					
+					if len(gTargetEncodingPerFont) != len(DEFAULT_TARGET_ENCODING_PER_FONT):
+						# should never happen
+						print '[Error] Failed to populate internal target encoding per font structure!'
+						configureTranslationFailed = True
+					else:
+						if gTraceModeEnabled:
+							print '[Debug] My encodings list: ', gTargetEncodingPerFont
+						configureTranslationFailed = False
+					
 	except:
 		print "[Error] while trying to access file for Font Translation Configuration info: %s" % (pathToConfigureFontsTranslationTxt)
 		raise
@@ -214,7 +271,7 @@ def initOverrideEncoding(pathToConfigureFontsTranslationTxt):
 		print "[Info] Explicit Out Of Order Glyphs List: " , gListOfFontNamesToOutOfOrderGlyphs
 	# arrange list properly:
 	# check if the list contains same item as key and value (in different pairs)
-	# if such case then the pair with the key should preceed the pair with the value matched,
+	# if such case then the pair with the key should precede the pair with the value matched,
 	# to avoid replacing instances of a special character (key) with a delegate (value) that will be later replaced again due to the second pair
 	#
 	for (itFontName, itOOOGlyphList) in gListOfFontNamesToOutOfOrderGlyphs:
@@ -486,12 +543,20 @@ def translateQuoteToAsciiProper(cellObj, pSheetName):
 	mergedListOfSupportedSubtitleSheets = mergedListOfSupportedSubtitleSheets + [(x + 'E.VQA') for x in SUPPORTED_VIDEO_DIALOGUE_SHEETS_ENGLISH]
 	mergedListOfSupportedSubtitleSheets = mergedListOfSupportedSubtitleSheets + [(x + '%s.VQA' % (gActiveLanguageDescriptionCodeTuple[1])) for x in SUPPORTED_VIDEO_DIALOGUE_SHEETS_LOCALIZED]
 	#mergedListOfSupportedSubtitleSheets = SUPPORTED_INGAME_DIALOGUE_SHEETS + SUPPORTED_VIDEO_DIALOGUE_SHEETS
+	localTargetEncoding = ''
+		
 	#if gTraceModeEnabled:
 	#	print '[Debug] ', pSheetName
 	#	print '[Debug] ', mergedListOfSupportedSubtitleSheets
 	#	print '[Debug] ', DEFAULT_SUBTITLES_FONT_NAME[:-4]
 	#	print [x[0] for x in gListOfFontNamesToOutOfOrderGlyphs]
-	if pSheetName in mergedListOfSupportedSubtitleSheets and DEFAULT_SUBTITLES_FONT_NAME[:-4] in [x[0] for x in gListOfFontNamesToOutOfOrderGlyphs]:
+	if pSheetName in mergedListOfSupportedSubtitleSheets:
+
+		for (tmpFontName, tmpTargetEnc) in gTargetEncodingPerFont:
+			if tmpFontName == DEFAULT_SUBTITLES_FONT_NAME[:-4]:
+				localTargetEncoding = tmpTargetEnc
+				break
+				
 		for (tmpFontName, tmpOOOList) in gListOfFontNamesToOutOfOrderGlyphs:
 			if tmpFontName == DEFAULT_SUBTITLES_FONT_NAME[:-4]:
 				pertinentListOfOutOfOrderGlyphs = tmpOOOList
@@ -504,6 +569,12 @@ def translateQuoteToAsciiProper(cellObj, pSheetName):
 			if tmpSheetName == pSheetName:
 				pertinentFontType = tmpFontType
 				break
+
+		for (tmpFontName, tmpTargetEnc) in gTargetEncodingPerFont:
+			if tmpFontName == pertinentFontType:
+				localTargetEncoding = tmpTargetEnc
+				break
+				
 		for (tmpFontName, tmpOOOList) in gListOfFontNamesToOutOfOrderGlyphs:
 			if tmpFontName ==  pertinentFontType:
 				pertinentListOfOutOfOrderGlyphs = tmpOOOList
@@ -530,30 +601,30 @@ def translateQuoteToAsciiProper(cellObj, pSheetName):
 	# TODO? replace new line ???	with another char (maybe |)?
 
 	#newQuoteReplaceSpecialsUnicode = unicode(newQuoteReplaceSpecials, 'utf-8')
-	#newQuoteReplaceSpecialsStr = unicode.encode("%s" % newQuoteReplaceSpecials, gTargetEncoding)
+	#newQuoteReplaceSpecialsStr = unicode.encode("%s" % newQuoteReplaceSpecials, localTargetEncoding)
 	#if gTraceModeEnabled:
 	#	print '[Debug] ', type(newQuoteReplaceSpecials)                 # type is unicode
 	#	print '[Debug] ', type(newQuoteReplaceSpecials.encode('utf-8')) # type is str
-	#	print '[Debug] ', gTargetEncoding
+	#	print '[Debug] ', localTargetEncoding
 	#	print '[Debug] ', newQuoteReplaceSpecials
-	#newQuoteReplaceSpecialsDec = newQuoteReplaceSpecials.decode(gTargetEncoding)
+	#newQuoteReplaceSpecialsDec = newQuoteReplaceSpecials.decode(localTargetEncoding)
 	newQuoteReplaceSpecialsRetStr = ''
 	try:
-		newQuoteReplaceSpecialsRetStr = newQuoteReplaceSpecials.encode(gTargetEncoding)
+		newQuoteReplaceSpecialsRetStr = newQuoteReplaceSpecials.encode(localTargetEncoding)
 	except Exception as e:
 		print "[Error] Could not encode text::" + str(e)
 		newQuoteReplaceSpecialsRetStr = "??????????"
 	#try:
-	#	newQuoteReplaceSpecialsRetStr = newQuoteReplaceSpecials.encode(gTargetEncoding)
+	#	newQuoteReplaceSpecialsRetStr = newQuoteReplaceSpecials.encode(localTargetEncoding)
 	#except:
 	#	print "==============================================================================="
 	#	print "==============================================================================="
 	#	print "ERROR:"
 	#	print newQuoteReplaceSpecials
-	#	print newQuoteReplaceSpecials.encode(gTargetEncoding, errors='xmlcharrefreplace')
+	#	print newQuoteReplaceSpecials.encode(localTargetEncoding, errors='xmlcharrefreplace')
 	#	print "==============================================================================="
 	#	print "==============================================================================="
-	#	newQuoteReplaceSpecialsRetStr = newQuoteReplaceSpecials.encode(gTargetEncoding, errors='xmlcharrefreplace')
+	#	newQuoteReplaceSpecialsRetStr = newQuoteReplaceSpecials.encode(localTargetEncoding, errors='xmlcharrefreplace')
 	return newQuoteReplaceSpecialsRetStr
 	#return newQuoteReplaceSpecialsEnStr
 

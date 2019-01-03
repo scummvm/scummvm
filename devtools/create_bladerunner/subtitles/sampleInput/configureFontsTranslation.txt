@@ -1,4 +1,4 @@
-targetEncoding=windows-1253
-fontNameAndOutOfOrderGlyphs=SUBTLS_E#í:Ά,ñ:¥,â:¦,é:§,Ά:£
-fontNameAndOutOfOrderGlyphs=KIA6PT#é:ƒ,ü:–
-fontNameAndOutOfOrderGlyphs=TAHOMA#é:ƒ,ü:–
+fontNameAndOutOfOrderGlyphs=SUBTLS_E#windows-1253#í:Ά,ñ:¥,â:¦,é:§,Ά:£
+fontNameAndOutOfOrderGlyphs=KIA6PT#cp437#
+fontNameAndOutOfOrderGlyphs=TAHOMA#cp437#
+fontNameAndOutOfOrderGlyphs=SYSTEM#latin-1#
