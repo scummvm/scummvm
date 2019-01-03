@@ -786,8 +786,9 @@ static SciKernelMapEntry s_kernelMap[] = {
 #endif
 	{ MAP_CALL(ResCheck),          SIG_EVERYWHERE,           "ii(iiii)",              NULL,            kResCheck_workarounds },
 	{ MAP_CALL(RespondsTo),        SIG_EVERYWHERE,           ".i",                    NULL,            NULL },
-	{ MAP_CALL(RestartGame),       SIG_EVERYWHERE,           "",                      NULL,            NULL },
+	{ MAP_CALL(RestartGame),       SIG_SCI16, SIGFOR_ALL,    "",                      NULL,            NULL },
 #ifdef ENABLE_SCI32
+	{ MAP_EMPTY(RestartGame),      SIG_SCI32, SIGFOR_ALL,    "",                      NULL,            NULL },
 	{ "RestoreGame", kRestoreGame32, SIG_THRU_SCI21EARLY, SIGFOR_ALL, "ri[r0]",       NULL,            NULL },
 #endif
 	{ MAP_CALL(RestoreGame),       SIG_EVERYWHERE,           "[r0]i[r0]",             NULL,            NULL },
