@@ -92,6 +92,7 @@ Header::Header() : h_version(0), h_config(0), h_release(0), h_resident_size(0), 
 }
 
 void Header::loadHeader(Common::SeekableReadStream &f) {
+	f.seek(0);
 	h_version = f.readByte();
 	h_config = f.readByte();
 

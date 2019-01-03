@@ -21,6 +21,7 @@
  */
 
 #include "glk/frotz/screen.h"
+#include "glk/frotz/frotz.h"
 #include "glk/conf.h"
 #include "common/file.h"
 #include "graphics/fonts/ttf.h"
@@ -36,6 +37,17 @@ FrotzScreen::FrotzScreen() : Glk::Screen() {
 }
 
 void FrotzScreen::loadFonts(Common::Archive *archive) {
+	// Get the zmachine version. At this point the header isn't loaded, so we have to do it manually
+	g_vm->_gameFile.seek(0);
+	byte version = g_vm->_gameFile.readByte();
+
+	if (version == 6) {
+		// For graphical games, force both mono and proportinate fonts to be the same size.
+		// This simplifies calculation of pixels when setting window position and sizes
+		g_conf->_monoInfo._size = g_conf->_propInfo._size = MAX(g_conf->_monoInfo._size, g_conf->_propInfo._size);
+	}
+
+	// Load the basic fonts
 	Screen::loadFonts(archive);
 
 	// Add character graphics font
@@ -46,7 +58,7 @@ void FrotzScreen::loadFonts(Common::Archive *archive) {
 
 	Common::Point fontSize(_fonts[0]->getMaxCharWidth(), _fonts[0]->getFontHeight());
 	decoder.loadStream(f);
-	_fonts.push_back(new Frotz::BitmapFont(*decoder.getSurface(), fontSize));
+	_fonts.push_back(new BitmapFont(*decoder.getSurface(), fontSize));
 	f.close();
 
 	// Add Runic font. It provides cleaner versions of the runic characters in the

@@ -107,11 +107,10 @@ void GlkEngine::initGraphicsMode() {
 }
 
 Common::Error GlkEngine::run() {
+	// Open up the game file
 	Common::String filename = getFilename();
 	if (!Common::File::exists(filename))
 		return Common::kNoGameDataFoundError;
-
-	initialize();
 
 	if (Blorb::isBlorb(filename)) {
 		// Blorb archive
@@ -139,6 +138,10 @@ Common::Error GlkEngine::run() {
 			return Common::kNoGameDataFoundError;
 	}
 
+	// Perform initialization
+	initialize();
+
+	// Play the game
 	runGame();
 
 	return Common::kNoError;

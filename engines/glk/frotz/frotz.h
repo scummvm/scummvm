@@ -28,10 +28,13 @@
 namespace Glk {
 namespace Frotz {
 
+class FrotzScreen;
+
 /**
  * Frotz interpreter for Z-code games
  */
 class Frotz : public Processor {
+	friend class FrotzScreen;
 protected:
 	/**
 	 * Create the screen class
