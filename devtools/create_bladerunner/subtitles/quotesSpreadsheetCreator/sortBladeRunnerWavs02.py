@@ -42,6 +42,8 @@ from os import walk, errno, path
 from xlwt import *
 from audFileLib import *
 from treFileLib import *
+from pogoTextResource import *
+from devCommentaryText import *
 
 # encoding=utf8
 #reload(sys)
@@ -56,13 +58,41 @@ APP_SHORT_DESC = "* Create an Excel (.XLS) for transcribing Blade Runner.\n* (Op
 
 OUTPUT_XLS_FILENAME = 'out'
 OUTPUT_XLS_FILENAME_EXT = '.xls'
-OUTPUT_XLS_QUOTES_SHEET = 'INGQUO_E.TR'
+OUTPUT_XLS_QUOTES_SHEET = 'INGQUO_' # needs suffix x.TRx where x is the language code
 
 SUPPORTED_TLK_INPUT_FILES = [('1.TLK', 'TLK01'), ('2.TLK', 'TLK02'), ('3.TLK', 'TLK03'), ('A.TLK', 'TLK0A'), ('SPCHSFX.TLK', 'TLKSPCHSFX')]
 SUPPORTED_MIX_INPUT_FILES = ['STARTUP.MIX']
 # 15 TRx files
 SUPPORTED_EXPORTED_TRx_FILES = ['CLUES.TR','ACTORS.TR','CRIMES.TR','CLUETYPE.TR','KIA.TR','SPINDEST.TR','VK.TR','OPTIONS.TR','DLGMENU.TR','ENDCRED.TR','HELP.TR','SCORERS.TR','KIACRED.TR','ERRORMSG.TR','AUTOSAVE.TR']
-SUPPORTED_PLACEHOLDER_VQA_FILES = ['WSTLGO_', 'BRLOGO_', 'INTRO_', 'MW_A_', 'MW_B01_', 'MW_B02_', 'MW_B03_', 'MW_B04_', 'MW_B05_', 'INTRGT_', 'MW_D_', 'MW_C01_', 'MW_C02_', 'MW_C03_', 'END04A_', 'END04B_', 'END04C_', 'END06_', 'END01A_', 'END01B_', 'END01C_', 'END01D_', 'END01E_', 'END01F_', 'END03_']
+SUPPORTED_PLACEHOLDER_VQA_ENGLISH_FILES = [
+	('WSTLGO_', 'Westwood Studios Partnership Intro'), 
+	('BRLOGO_', 'Blade Runner Logo')]
+SUPPORTED_PLACEHOLDER_VQA_LOCALIZED_FILES = [
+	('INTRO_', 'Intro cutscene - Prologue'),
+	('MW_A_', 'Eisenduller murder scene'),
+	('MW_B01_', 'Act 3 intro part - Start part'),
+	('MW_B02_', 'Act 3 intro part - Lucy is Replicant'),
+	('MW_B03_', 'Act 3 intro part - Dektora is Replicant'),
+	('MW_B04_', 'Act 3 intro part - Lucy and Dektora are human'),
+	('MW_B05_', 'Act 3 intro part - End part '),
+	('INTRGT_', 'Interrogation scene - Baker, Holloway, McCoy'),
+	('MW_C01_', 'Clovis and Sadik pay a visit to the Twins - Start Part'),
+	('MW_C02_', 'Clovis and Sadik pay a visit to the Twins - Clovis has an INCEPT PHOTO'),
+	('MW_C03_', 'Clovis and Sadik pay a visit to the Twins - Clovis DOES NOT have an INCEPT PHOTO'),
+	('MW_D_', 'Tyrell, Kolvig and Clovis meet-up at Tyrell Corp'),
+	('END01A_', 'Underground getaway - Lucy Human'),
+	('END01B_', 'Underground getaway - Lucy with DNA'),
+	('END01C_', 'Underground getaway - Lucy not enough DNA'),
+	('END01D_', 'Underground getaway - Dektora Human'),
+	('END01E_', 'Underground getaway - Dektora with DNA'),
+	('END01F_', 'Underground getaway - Dektora, not enough DNA'),
+	('END03_', 'Underground getaway - McCoy alone'),
+	('END04A_', 'Finale - McCoy on Moonbus'),
+	('END04B_', 'Finale - McCoy with Lucy on Moonbus'),
+	('END04C_', 'Finale - McCoy with Dektora on Moonbus'),
+	('END06_', 'Underground getaway - Steele Ending')
+	]
+SUPPORTED_SPECIAL_POGO_FILE = 'POGO.TR'
 
 SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST = [('EN_ANY', 'E', 'English'), ('DE_DEU', 'G', 'German'), ('FR_FRA', 'F', 'French'), ('IT_ITA', 'I', 'Italian'), ('ES_ESP', 'S', 'Spanish'), ('RU_RUS', 'R', 'Russian')]
 DEFAULT_LANG_DESC_CODE = SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST[0]
@@ -309,6 +339,89 @@ def inputTLKsExport(inputTLKpath, outputWAVpath):
 
 	# SYS EXIT IS HERE ONLY FOR DEBUG PURPOSES OF PARSING TLK FILES - SHOULD BE COMMENTED OUT NORMALLY
 	# sys.exit(0)
+	return
+	
+	
+def appendVQAPlaceHolderSheets(excelOutBook = None):
+	if excelOutBook != None:
+		print "[Info] Appending placeholder sheets for supported video cutscenes (VQA)..."
+		currVQAFileNameLclzd = None
+		for currVQAFileNameDesc in SUPPORTED_PLACEHOLDER_VQA_ENGLISH_FILES + SUPPORTED_PLACEHOLDER_VQA_LOCALIZED_FILES:
+			if currVQAFileNameDesc in SUPPORTED_PLACEHOLDER_VQA_ENGLISH_FILES:
+				currVQAFileNameLclzd = currVQAFileNameDesc[0] + 'E.VQA'
+			elif currVQAFileNameDesc in SUPPORTED_PLACEHOLDER_VQA_LOCALIZED_FILES:
+				currVQAFileNameLclzd = currVQAFileNameDesc[0] + ('%s' % (gActiveLanguageDescriptionCodeTuple[1])) + '.VQA'
+			if 	currVQAFileNameLclzd is not None:
+				if gTraceModeEnabled:
+					print "[Debug] Creating placeholder sheet %s: %s!" % (currVQAFileNameLclzd, currVQAFileNameDesc[1])
+				sh = excelOutBook.add_sheet(currVQAFileNameLclzd)
+				# First Row
+				n = 0 # keeps track of rows
+				col_names = ['VQA File: %s' % (currVQAFileNameLclzd), '22050 audio sampling rate', currVQAFileNameDesc[1] ]
+				colIdx = 0
+				for colNameIt in col_names:
+					sh.write(n, colIdx, colNameIt)
+					colIdx+=1
+
+				# Second Row
+				n = 1
+
+				col_names = ['Start (YT)', 'End (YT)', 'Subtitle', 'By Actor', 'StartTime', 'Time Diff-SF', 'TimeDiff-SF(ms)', 'TimeDiff-EF', 'TimeDiff-EF(ms)', 'Frame Start', 'Frame End', 'Notes']
+				colIdx = 0
+				for colNameIt in col_names:
+					sh.write(n, colIdx, colNameIt)
+					colIdx+=1
+				#n+=1
+
+	return
+	
+def appendDevCommentarySheet(excelOutBook = None):
+	if excelOutBook != None:
+		print "[Info] Appending Developer Commentary sheet..."
+		if excelOutBook != None:
+			sh = excelOutBook.add_sheet("DEV COMMENTARY")
+			devCommentaryTextInstance = devCommentaryText(gTraceModeEnabled)
+			# First Segment
+			n = 0 # keeps track of rows
+			col_names = ['AUDIO COMMENTARY']
+			colIdx = 0
+			for colNameIt in col_names:
+				sh.write(n, colIdx, colNameIt)
+				colIdx+=1
+			n+= 1
+			
+			for idStr, textStr in devCommentaryTextInstance.getAudioCommentaryTextEntriesList():
+				sh.write(n, 0, idStr)
+				objUTF8SafeStr = ""
+				for i in range(0, len(textStr)):
+					objUTF8SafeStr += textStr[i]
+				try:
+					objUTF8Unicode = unicode(objUTF8SafeStr, 'utf-8')
+				except Exception as e:
+					print '[Error] Failed to create unicode string: ' + str(e)
+					objUTF8Unicode = unicode("???", 'utf-8')
+				sh.write(n, 1, objUTF8Unicode)				
+				n+=1
+			# Second Segment
+			col_names = ['I_SEZ QUOTES']
+			colIdx = 0
+			for colNameIt in col_names:
+				sh.write(n, colIdx, colNameIt)
+				colIdx+=1
+			n+= 1
+
+			for idStr, textStr in devCommentaryTextInstance.getISEZTextEntriesList():
+				sh.write(n, 0, idStr)
+				objUTF8SafeStr = ""
+				for i in range(0, len(textStr)):
+					objUTF8SafeStr += textStr[i]
+				try:
+					objUTF8Unicode = unicode(objUTF8SafeStr, 'utf-8')
+				except Exception as e:
+					print '[Error] Failed to create unicode string: ' + str(e)
+					objUTF8Unicode = unicode("???", 'utf-8')
+				sh.write(n, 1, objUTF8Unicode)				
+				n+=1
 	return
 
 def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
@@ -557,6 +670,36 @@ def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
 								#print "[Error] while reading TR%s file %s into mem buffer" % (gActiveLanguageDescriptionCodeTuple[1], ''.join('{:08X}'.format(idOfMIXEntry)))
 			inMIXFile.close()
 			print "[Info] Total TR%ss processed: %d " % (gActiveLanguageDescriptionCodeTuple[1], totalTREs)
+			print "[Info] Adding POGO sheet..."
+			currTreFileName = '%s%s' % (SUPPORTED_SPECIAL_POGO_FILE, gActiveLanguageDescriptionCodeTuple[1]) # POGO
+			if gTraceModeEnabled:
+				print "[Debug] TR%s file %s was loaded successfully!" % (gActiveLanguageDescriptionCodeTuple[1], currTreFileName) # POGO
+			if excelOutBook != None:
+				sh = excelOutBook.add_sheet(currTreFileName)
+				n = 0 # keeps track of rows
+				col1_name = 'Text Resource File: %s' % (currTreFileName)
+				sh.write(n, 0, col1_name)
+				# Second Row
+				n = 1
+				col1_name = 'TextId'
+				col2_name = 'Text'
+				sh.write(n, 0, col1_name)
+				sh.write(n, 1, col2_name)
+				n+=1
+				pogoTRInstance = pogoTextResource(gTraceModeEnabled)
+				
+				for m, e1 in enumerate(pogoTRInstance.getPogoEntriesList(), n):
+					sh.write(m, 0, e1[0])
+					objStr = e1[1]
+					objUTF8SafeStr = ""
+					for i in range(0, len(objStr)):
+						objUTF8SafeStr += objStr[i]
+					try:
+						objUTF8Unicode = unicode(objUTF8SafeStr, 'utf-8')
+					except Exception as e:
+						print '[Error] Failed to create unicode string: ' + str(e)
+						objUTF8Unicode = unicode("???", 'utf-8')
+					sh.write(m, 1, objUTF8Unicode)
 	return
 
 
@@ -656,16 +799,18 @@ def outputXLS(filename, sheet, list1, parseTREResourcesAlso = False, mixInputFol
 
 #	 for m, e2 in enumerate(list2, n+1):
 #		 sh.write(m, 1, e2)
+	appendVQAPlaceHolderSheets(book)
 
 	if parseTREResourcesAlso == True and mixInputFolderPath != '':
 		inputMIXExtractTREs(mixInputFolderPath, book)
-		# TODO add sheets
-		# TODO handle special string characters (to UTF-8)
+
+	appendDevCommentarySheet(book)
+		
 	try:
 		book.save(filename)
 		print "[Info] Done."
 	except Exception as e:
-		print "[Error] Could not save the output Excel file (maybe it's open?). " + str(e)
+		print "[Error] Could not save the output Excel file:: " + str(e)
 
 #	
 # Aux function to validate input language description
@@ -924,7 +1069,7 @@ def main(argsCL):
 #				 print "[Debug] Unique %s" % (filenameSrcTmp)
 			constructedOutputFilename = "%s-%s%s" % (OUTPUT_XLS_FILENAME, gActiveLanguageDescriptionCodeTuple[2], OUTPUT_XLS_FILENAME_EXT)
 			print "[Info] Creating output excel %s file..." % (constructedOutputFilename)
-			outputXLS(constructedOutputFilename, OUTPUT_XLS_QUOTES_SHEET + gActiveLanguageDescriptionCodeTuple[1], gWavFilesNoDups, extractTreFilesMode, TMProotFolderWithInputTLKFiles)
+			outputXLS(constructedOutputFilename, OUTPUT_XLS_QUOTES_SHEET + gActiveLanguageDescriptionCodeTuple[1] + '.TR' + gActiveLanguageDescriptionCodeTuple[1], gWavFilesNoDups, extractTreFilesMode, TMProotFolderWithInputTLKFiles)
 	else:
 		invalidSyntax = True
 
