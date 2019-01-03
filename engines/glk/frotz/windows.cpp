@@ -46,7 +46,6 @@ Window &Windows::operator[](uint idx) {
 
 Window::Window() : _windows(nullptr), _win(nullptr), _tempVal(0) {}
 
-
 winid_t Window::getWindow() {
 	if (!_win) {
 		// Window doesn't exist, so create it
@@ -94,24 +93,36 @@ uint16 Window::getProperty(WindowProperty propType) {
 
 	switch (propType) {
 	case Y_POS:
-		return win->_bbox.top;
+		return win->_bbox.top / g_conf->_monoInfo._cellH;
 	case X_POS:
-		return win->_bbox.left;
+		return win->_bbox.left / g_conf->_monoInfo._cellW;
 	case Y_SIZE:
-		return win->_bbox.height();
+		return win->_bbox.height() / g_conf->_monoInfo._cellH;
 	case X_SIZE:
-		return win->_bbox.width();
+		return win->_bbox.width() / g_conf->_monoInfo._cellW;
 	case Y_CURSOR:
 		return win->getCursor().y;
 	case X_CURSOR:
 		return win->getCursor().x;
+
 	default:
 		error("Read of an unimplemented property");
 		/*
 			LEFT_MARGIN = 6, RIGHT_MARGIN = 7, NEWLINE_INTERRUPT = 8, INTERRUPT_COUNTDOWN = 9,
 			TEXT_STYLE = 10, COLOUR_DATA = 11, FONT_NUMBER = 12, FONT_SIZE = 13, ATTRIBUTES = 14,
 			LINE_COUNT = 15, TRUE_FG_COLOR = 16, TRUE_BG_COLOR = 17
-		*/
+
+	case TRUE_FG_COLOR:
+		store(os_to_true_colour(lo(wp[winarg0()].colour)));
+
+	case TRUE_BG_COLOR:
+		zword bg = hi(wp[winarg0()].colour);
+
+		if (bg == TRANSPARENT_COLOUR)
+			store((zword)-4);
+		else
+			store(os_to_true_colour(bg));
+			*/
 	}
 }
 

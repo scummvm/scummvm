@@ -178,18 +178,16 @@ void Processor::z_set_margins() {
 }
 
 void Processor::z_move_window(void) {
-	zword win = winarg0();
-
 	flush_buffer();
 
+	zword win = winarg0();
 	_wp[win].setPosition(Point(zargs[2], zargs[1]));
 }
 
 void Processor::z_window_size() {
-	zword win = winarg0();
-
 	flush_buffer();
 
+	zword win = winarg0();
 	_wp[win].setSize(Point(zargs[2], zargs[1]));
 }
 
@@ -220,28 +218,15 @@ void Processor::z_window_style() {
 }
 
 void Processor::z_get_wind_prop() {
-#ifdef TODO
 	flush_buffer();
 
-	if (zargs[1] < 16)
-		store(((zword *)(wp + winarg0()))[zargs[1]]);
+	zword win = winarg0();
+	zword prop = zargs[1];
 
-	else if (zargs[1] == 16)
-		store(os_to_true_colour(lo(wp[winarg0()].colour)));
-
-	else if (zargs[1] == 17) {
-
-		zword bg = hi(wp[winarg0()].colour);
-
-		if (bg == TRANSPARENT_COLOUR)
-			store((zword)-4);
-		else
-			store(os_to_true_colour(bg));
-
-	}
+	if (prop <= TRUE_BG_COLOR)
+		store(_wp[win][(WindowProperty)prop]);
 	else
 		runtimeError(ERR_ILL_WIN_PROP);
-#endif
 }
 
 void Processor::z_put_wind_prop() {
