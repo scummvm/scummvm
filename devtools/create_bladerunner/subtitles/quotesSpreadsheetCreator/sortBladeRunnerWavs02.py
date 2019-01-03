@@ -14,23 +14,23 @@ xlwtLibFound = False
 csvLibFound = False
 
 try:
-	import shutil 
+	import shutil
 except ImportError:
-	print "[Error] Shutil python library is required to be installed!" 
+	print "[Error] Shutil python library is required to be installed!"
 else:
 	shutilLibFound = True
 
 try:
-	import xlwt 
+	import xlwt
 except ImportError:
-	print "[Error] xlwt python library is required to be installed!" 
+	print "[Error] xlwt python library is required to be installed!"
 else:
 	xlwtLibFound = True
-	
+
 try:
-	import csv 
+	import csv
 except ImportError:
-	print "[Error] csv python library is required to be installed!" 
+	print "[Error] csv python library is required to be installed!"
 else:
 	csvLibFound = True
 
@@ -65,7 +65,7 @@ SUPPORTED_MIX_INPUT_FILES = ['STARTUP.MIX']
 # 15 TRx files
 SUPPORTED_EXPORTED_TRx_FILES = ['CLUES.TR','ACTORS.TR','CRIMES.TR','CLUETYPE.TR','KIA.TR','SPINDEST.TR','VK.TR','OPTIONS.TR','DLGMENU.TR','ENDCRED.TR','HELP.TR','SCORERS.TR','KIACRED.TR','ERRORMSG.TR','AUTOSAVE.TR']
 SUPPORTED_PLACEHOLDER_VQA_ENGLISH_FILES = [
-	('WSTLGO_', 'Westwood Studios Partnership Intro'), 
+	('WSTLGO_', 'Westwood Studios Partnership Intro'),
 	('BRLOGO_', 'Blade Runner Logo')]
 SUPPORTED_PLACEHOLDER_VQA_LOCALIZED_FILES = [
 	('INTRO_', 'Intro cutscene - Prologue'),
@@ -143,13 +143,13 @@ def initActorPropertyEntries(thePathToActorNamesTxt):
 		actorNamesTextFile = u'actornames.txt'
 		relPath = u'.'
 		thePathToActorNamesTxt = os.path.join(relPath, actorNamesTextFile)
-		print "[Warning] Actor names text file %s not found in arguments. Attempting to open local file if it exists" % (thePathToActorNamesTxt)	
+		print "[Warning] Actor names text file %s not found in arguments. Attempting to open local file if it exists" % (thePathToActorNamesTxt)
 
 	if os.access(thePathToActorNamesTxt, os.F_OK):
 		print "[Info] Actor names text file found: {0}.".format(thePathToActorNamesTxt)
 
 		with open(thePathToActorNamesTxt) as tsv:
-			if gTraceModeEnabled: 
+			if gTraceModeEnabled:
 				print "[Debug] Parsing Override Encoding file info..."
 			for line in csv.reader(tsv, dialect="excel-tab"):
 				#skip first line header
@@ -241,11 +241,11 @@ def inputTLKsExport(inputTLKpath, outputWAVpath):
 				if filename.upper() == tlkTuple[0]:
 					inputTLKFilesFound.append(tlkTuple)
 		break
-		
+
 	if len(inputTLKFilesFound) == 0:
 		print "[Error] No valid speech audio files (TLK) were found in the specified input path (-ip switch)"
 		sys.exit(1)
-		
+
 	for tmpTLKfileTuple in inputTLKFilesFound:
 		if gTraceModeEnabled:
 			print "[Info] Found TLK: %s" % ('"' + inputTLKpath + tmpTLKfileTuple[0] + '"')
@@ -316,7 +316,7 @@ def inputTLKsExport(inputTLKpath, outputWAVpath):
 					if(offsetOfAUDEntry + sizeOfAUDEntry > allTlkFileSize):
 						print "[Error] audio file (AUD) file size mismatch with reported size in entry header!"
 					else:
-						targetSimpleAudFileName = ''.join('{:08X}'.format(idOfAUDEntry)).upper()+'.AUD'	
+						targetSimpleAudFileName = ''.join('{:08X}'.format(idOfAUDEntry)).upper()+'.AUD'
 						audFileBuffer = inTLKFile.read(sizeOfAUDEntry)
 						if (len(audFileBuffer) == sizeOfAUDEntry):
 						# load audio file (AUD) file
@@ -345,8 +345,8 @@ def inputTLKsExport(inputTLKpath, outputWAVpath):
 	# SYS EXIT IS HERE ONLY FOR DEBUG PURPOSES OF PARSING TLK FILES - SHOULD BE COMMENTED OUT NORMALLY
 	# sys.exit(0)
 	return
-	
-	
+
+
 def appendVQAPlaceHolderSheets(excelOutBook = None):
 	if excelOutBook != None:
 		print "[Info] Appending placeholder sheets for supported video cutscenes (VQA)..."
@@ -378,10 +378,10 @@ def appendVQAPlaceHolderSheets(excelOutBook = None):
 					colIdx+=1
 				#n+=1
 	return
-	
+
 def appendPOGOTextSheet(excelOutBook = None):
 	if excelOutBook != None:
-		print "[Info] Adding POGO sheet..."
+		print "[Info] Appending POGO sheet..."
 		currTreFileName = '%s%s' % (SUPPORTED_SPECIAL_POGO_FILE, gActiveLanguageDescriptionCodeTuple[1]) # POGO
 		if gTraceModeEnabled:
 			print "[Debug] TR%s file %s was loaded successfully!" % (gActiveLanguageDescriptionCodeTuple[1], currTreFileName) # POGO
@@ -397,21 +397,19 @@ def appendPOGOTextSheet(excelOutBook = None):
 		sh.write(n, 1, col2_name)
 		n+=1
 		pogoTRInstance = pogoTextResource(gTraceModeEnabled)
-		
+
 		for m, e1 in enumerate(pogoTRInstance.getPogoEntriesList(), n):
 			sh.write(m, 0, e1[0])
 			objStr = e1[1]
-			objUTF8SafeStr = ""
-			for i in range(0, len(objStr)):
-				objUTF8SafeStr += objStr[i]
 			try:
-				objUTF8Unicode = unicode(objUTF8SafeStr, 'utf-8')
+				# We assume utf-8 charset for POGO (since we get the text from a python script)
+				objUTF8Unicode = unicode(objStr, 'utf-8')
 			except Exception as e:
 				print '[Error] Failed to create unicode string: ' + str(e)
 				objUTF8Unicode = unicode("???", 'utf-8')
 			sh.write(m, 1, objUTF8Unicode)
-	
-	
+
+
 def appendDevCommentarySheet(excelOutBook = None):
 	if excelOutBook != None:
 		print "[Info] Appending Developer Commentary sheet..."
@@ -426,18 +424,16 @@ def appendDevCommentarySheet(excelOutBook = None):
 				sh.write(n, colIdx, colNameIt)
 				colIdx+=1
 			n+= 1
-			
+
 			for idStr, textStr in devCommentaryTextInstance.getAudioCommentaryTextEntriesList():
 				sh.write(n, 0, idStr)
-				objUTF8SafeStr = ""
-				for i in range(0, len(textStr)):
-					objUTF8SafeStr += textStr[i]
+				# We assume utf-8 charset for Audio Commentary and extra text entries (since we get the text from a python script)
 				try:
-					objUTF8Unicode = unicode(objUTF8SafeStr, 'utf-8')
+					objUTF8Unicode = unicode(textStr, 'utf-8')
 				except Exception as e:
 					print '[Error] Failed to create unicode string: ' + str(e)
 					objUTF8Unicode = unicode("???", 'utf-8')
-				sh.write(n, 1, objUTF8Unicode)				
+				sh.write(n, 1, objUTF8Unicode)
 				n+=1
 			# Second Segment
 			col_names = ['I_SEZ QUOTES']
@@ -449,15 +445,13 @@ def appendDevCommentarySheet(excelOutBook = None):
 
 			for idStr, textStr in devCommentaryTextInstance.getISEZTextEntriesList():
 				sh.write(n, 0, idStr)
-				objUTF8SafeStr = ""
-				for i in range(0, len(textStr)):
-					objUTF8SafeStr += textStr[i]
+				# We assume utf-8 charset for I_SEZ Commentary (since we get the text from a python script)
 				try:
-					objUTF8Unicode = unicode(objUTF8SafeStr, 'utf-8')
+					objUTF8Unicode = unicode(textStr, 'utf-8')
 				except Exception as e:
 					print '[Error] Failed to create unicode string: ' + str(e)
 					objUTF8Unicode = unicode("???", 'utf-8')
-				sh.write(n, 1, objUTF8Unicode)				
+				sh.write(n, 1, objUTF8Unicode)
 				n+=1
 	return
 
@@ -471,11 +465,11 @@ def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
 				if filename.upper() == mixFileName:
 					inputMIXFilesFound.append(mixFileName)
 		break
-		
+
 	if len(inputMIXFilesFound) == 0:
 		print "[Error] No supported game archive resource files (MIX) were found in the specified input path (-ip switch)"
 		sys.exit(1)
-		
+
 	for tmpMIXfileName in inputMIXFilesFound:
 		if gTraceModeEnabled:
 			print "[Info] Found MIX file: %s" % ('"' + tmpMIXfileName + '"')
@@ -566,152 +560,73 @@ def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
 										sh.write(n, 0, col1_name)
 										sh.write(n, 1, col2_name)
 										n+=1
+										
 										for m, e1 in enumerate(thisTreFile.stringEntriesLst, n):
 											sh.write(m, 0, e1[0])
 											objStr = e1[1]
-											#print type (objUTF8SafeStr) # the type is STR here
-											# python strings are immutable (can't replace characters) but we have an issue with certain special characters in the ORIGINAL TRE (kiacred and endcred)
-											# (they are out of their order from their proper order in windows-1252)
-											# so we need to create a new string.
-											# TODO: The following check could be streamlined if it could use semi-auto constructed glyph mappings per font per Text Resource file.
-											# TODO: ^^ This could help support Russian versions -- but one the other hand maybe it's a bit over-engineering (?)											
-											objUTF8SafeStr = ""
-											for i in range(0, len(objStr)):
-												if ( currTreFileName[:-1] == 'ERRORMSG.TR'): 
-													# ERRORMSG.TRx uses different font than the others and there are conflicts, so we can't put it in the same checks with the other TRxs
-													#
-													# ENG version has no ERRORMSG exceptions
-													# GER
-													if (objStr[i] == '\xe4'):   # DEU - ERRORMSG.TRG
-														objUTF8SafeStr += 'ä'
-													elif (objStr[i] == '\xf6'): # DEU - ERRORMSG.TRG
-														objUTF8SafeStr += 'ö'
-													elif (objStr[i] == '\xfc'): # DEU - ERRORMSG.TRG
-														objUTF8SafeStr += 'ü'
-													# FRA
-													elif (objStr[i] == '\x82'): # FRA - ERRORMSG.TRF
-														objUTF8SafeStr += 'é'	 # this is identical to the KIA6PT mapping
+											if ( currTreFileName[:-1] == 'ERRORMSG.TR'):
+												# ERRORMSG.TRx uses different font than the others 
+												# and there are conflicts (with the other in-game fonts)
+												# Supposedly these messages would be printed by an OS font
+												# They seem to mostly use the Latin-1 codepage, although there are a few 
+												# characters that don't encode right (but they do with a IBM437 like the rest of the TRx
+												# Probably, these are forgotten (buggy) characters from a previous plan (print error messages with in-game font?)
+												# So we treat them as bugs and fix them. 
+												# Further proof that they are buggy, there are language versions that have two codes for the same character
+												# in ERRORMSG TRx. 
+												# Eg. in Spanish version they use \xa2 (correct with IBM437) and \xf3 (correct with Latin-1) for the 'ó' character
+												#  or in French version 'è' uses both \x8a and \xe8
+												objEncodeSafeStr = ""
+												for i in range(0, len(objStr)):
+													# ENG version has no buggy character exceptions
+													# GER version has no buggy character exceptions
+													# FRA version
+													if (objStr[i] == '\x82'): # FRA - ERRORMSG.TRF
+														objEncodeSafeStr += '\xe9'	# fixing buggy character 'é'
 													elif (objStr[i] == '\x85'): # FRA - ERRORMSG.TRF (also used in ITA ERRORMSG.TRI - same glyph)
-														objUTF8SafeStr += 'à'	 # this is identical to the KIA6PT mapping
+														objEncodeSafeStr += '\xe0'	 # fixing buggy character 'à'
 													elif (objStr[i] == '\x8a'): # FRA - ERRORMSG.TRF (also used in ITA ERRORMSG.TRI - same glyph)
-														objUTF8SafeStr += 'è'    # this is identical to the KIA6PT mapping
-													elif (objStr[i] == '\xe0'): # FRA - ERRORMSG.TRF
-														objUTF8SafeStr += 'à'
-													elif (objStr[i] == '\xe8'): # FRA - ERRORMSG.TRF
-														objUTF8SafeStr += 'è'
-													elif (objStr[i] == '\xe9'): # FRA - ERRORMSG.TRF (also used in ESP ERRORMSG.TRS - same glyph)
-														objUTF8SafeStr += 'é'
-													elif (objStr[i] == '\xea'): # FRA - ERRORMSG.TRF
-														objUTF8SafeStr += 'ê'
-													# ITA
+														objEncodeSafeStr += '\xe8'    # fixing buggy character 'è'
+													# ITA version
 													#elif (objStr[i] == '\x85'): # ITA - ERRORMSG.TRI [commented out: already covered in FRA check above]
-													#	objUTF8SafeStr += 'à'	 # this is identical to the KIA6PT mapping
+													#	objEncodeSafeStr += '\xe0'	 # buggy - fixed above
 													#elif (objStr[i] == '\x8a'): # ITA - ERRORMSG.TRI [commented out: already covered in FRA check above]
-													#	objUTF8SafeStr += 'è'    # this is identical to the KIA6PT mapping													
+													#	objEncodeSafeStr += '\xe8'    # buggy - fixed above
 													elif (objStr[i] == '\x97'): # ITA - ERRORMSG.TRI
-														objUTF8SafeStr += 'ù'    # this is identical to the KIA6PT mapping													
-													# ESP
+														objEncodeSafeStr += '\xf9'    # fixing buggy character 'ù'
+													# ESP version
 													elif (objStr[i] == '\xa2'): # ESP - ERRORMSG.TRS
-														objUTF8SafeStr += 'ó' 	# this is identical to the KIA6PT mapping
-													elif (objStr[i] == '\xe1'): # ESP - ERRORMSG.TRS
-														objUTF8SafeStr += 'á'
-													#elif (objStr[i] == '\xe9'): # ESP - ERRORMSG.TRS [commented out: already covered in FRA check above]
-													#	objUTF8SafeStr += 'é'
-													elif (objStr[i] == '\xed'): # ESP - ERRORMSG.TRS
-														objUTF8SafeStr += 'í'
-													elif (objStr[i] == '\xf3'): # ESP - ERRORMSG.TRS
-														objUTF8SafeStr += 'ó'
+														objEncodeSafeStr += '\xf3' 	# fixing buggy character 'ó'
 													else:
-														objUTF8SafeStr += objStr[i]
-												else:
-												# all the other TRx use the KIA6PT.FON
-												# There could be variances of the KIA6PT.FON per Blade Runner version
-												# TODO: For now, we assume that there aren't significant variances that warrant a more elaborate approach
-													if (objStr[i] == '\x81'):	# EN, DEU, FRA, ITA, ESP
-														objUTF8SafeStr += 'ü'
-													elif (objStr[i] == '\x82'): # EN, DEU, FRA, ITA, ESP
-														objUTF8SafeStr += 'é'
-													## Extras (DEU):
-													elif (objStr[i] == '\x84'): # DEU 
-														objUTF8SafeStr += 'ä'	#
-													elif (objStr[i] == '\x8e'): # DEU 
-														objUTF8SafeStr += 'Ä'	#
-													elif (objStr[i] == '\x94'): # DEU 
-														objUTF8SafeStr += 'ö'	#
-													elif (objStr[i] == '\x9a'): # DEU 
-														objUTF8SafeStr += 'Ü'	#
-													elif (objStr[i] == '\xe1'): # DEU (ENDCRED.TRG)
-														objUTF8SafeStr += 'ß'	#
-													## Extras (FRA):
-													elif (objStr[i] == '\x85'): # FRA, ITA
-														objUTF8SafeStr += 'à'	# re-used in ITA, same glyph
-													elif (objStr[i] == '\x87'): # FRA
-														objUTF8SafeStr += 'ç'
-													elif (objStr[i] == '\x88'): # FRA
-														objUTF8SafeStr += 'ê'
-													elif (objStr[i] == '\x8a'): # FRA, ITA
-														objUTF8SafeStr += 'è'	# re-used in ITA, same glyph
-													elif (objStr[i] == '\x8b'): # FRA
-														objUTF8SafeStr += 'ï'
-													elif (objStr[i] == '\x8c'): # FRA
-														objUTF8SafeStr += 'î'
-													elif (objStr[i] == '\x93'): # FRA
-														objUTF8SafeStr += 'ô'
-													elif (objStr[i] == '\x96'): # FRA
-														objUTF8SafeStr += 'û'
-													elif (objStr[i] == '\x97'): # FRA, ITA
-														objUTF8SafeStr += 'ù' # re-used in ITA, same glyph
-													## Extras (ITA):
-													#elif (objStr[i] == '\x85'): # ITA [commented out: already covered in FRA check above]
-													#	objUTF8SafeStr += 'à'
-													#elif (objStr[i] == '\x8a'): # ITA [commented out: already covered in FRA check above]
-													#	objUTF8SafeStr += 'è'
-													elif (objStr[i] == '\x8d'): # ITA
-														objUTF8SafeStr += 'ì'
-													#elif (objStr[i] == '\x97'): # ITA [commented out: already covered in FRA check above]
-													#	objUTF8SafeStr += 'ù'
-													# Extras (ESP):
-													elif (objStr[i] == '\xa0'): # ESP
-														objUTF8SafeStr += 'á'
-													elif (objStr[i] == '\xa1'): # ESP
-														objUTF8SafeStr += 'í'
-													elif (objStr[i] == '\xa2'): # ESP
-														objUTF8SafeStr += 'ó'
-													elif (objStr[i] == '\xa3'): # ESP
-														objUTF8SafeStr += 'ú'
-													elif (objStr[i] == '\xa4'): # ESP
-														objUTF8SafeStr += 'ñ'
-													elif (objStr[i] == '\xa5'): # ESP
-														objUTF8SafeStr += 'Ñ'
-													elif (objStr[i] == '\xa8'): # ESP
-														objUTF8SafeStr += '¿'
-													elif (objStr[i] == '\xad'): # ESP
-														objUTF8SafeStr += '¡'
-													elif (objStr[i] == '\x90'): # ESP
-														objUTF8SafeStr += 'É'
-													else:
-														objUTF8SafeStr += objStr[i]
-											#objUTF8Safe = objUTF8Safe.replace('\x81',u'u') #'ü' # this does not work
-											#objUTF8Safe = objUTF8Safe.replace('\x82',u'e') #'é' # this does not work
-											try:
-												objUTF8Unicode = unicode(objUTF8SafeStr, 'utf-8')
-											except Exception as e:
-												print '[Error] Failed to create unicode string: ' + str(e)
-												objUTF8Unicode = unicode("???", 'utf-8')
+														objEncodeSafeStr += objStr[i]
+													#
+													try:
+														objUTF8Unicode = unicode(objEncodeSafeStr, 'latin-1')
+													except Exception as e:
+														print '[Error] Failed to create unicode string: ' + str(e)
+														objUTF8Unicode = unicode("???", 'latin-1')
+											else:
+											# all the other official game TRx use the KIA6PT.FON
+											# There could be variances of the KIA6PT.FON per Blade Runner version
+											# TODO: For now, we assume that there aren't significant variances that warrant a more elaborate approach
+											# TODO: Tested for EN, DEU, FRA, ITA, ESP. Pending testing for Russian version.
+												try:
+													objUTF8Unicode = unicode(objStr, 'cp437')
+												except Exception as e:
+													print '[Error] Failed to create unicode string: ' + str(e)
+													objUTF8Unicode = unicode("???", 'cp437')
 											sh.write(m, 1, objUTF8Unicode)
-
-
 									#for tupleIdString in thisTreFile.stringEntriesLst:
 									#	#print "[Debug] Id: %d\t Text: %s" % (tupleIdString[0], tupleIdString[1])
 									#	pass
-									totalTREs =   totalTREs + 1
+									totalTREs =  totalTREs + 1
 								else:
 									print "[Error] while loading TR%s %s file!" % (gActiveLanguageDescriptionCodeTuple[1], currTreFileName)
 							else:
 								print "[Error] while reading TR%s file %s into mem buffer" % (gActiveLanguageDescriptionCodeTuple[1], currTreFileName)
 								#print "[Error] while reading TR%s file %s into mem buffer" % (gActiveLanguageDescriptionCodeTuple[1], ''.join('{:08X}'.format(idOfMIXEntry)))
 			inMIXFile.close()
-			print "[Info] Total TR%ss processed: %d " % (gActiveLanguageDescriptionCodeTuple[1], totalTREs)		
+			print "[Info] Total TR%ss processed: %d " % (gActiveLanguageDescriptionCodeTuple[1], totalTREs)
 	return
 
 
@@ -817,31 +732,31 @@ def outputXLS(filename, sheet, list1, parseTREResourcesAlso = False, addDevCommA
 		inputMIXExtractTREs(mixInputFolderPath, book)
 
 	if addPOGOTextSheetEnabled == True:
-		appendPOGOTextSheet(book)		
-		
-	if addDevCommAndExtraSFXSheetEnabled == True:	
+		appendPOGOTextSheet(book)
+
+	if addDevCommAndExtraSFXSheetEnabled == True:
 		appendDevCommentarySheet(book)
-		
+
 	try:
 		book.save(filename)
 		print "[Info] Done."
 	except Exception as e:
 		print "[Error] Could not save the output Excel file:: " + str(e)
 
-#	
+#
 # Aux function to validate input language description
 #
 def getLanguageDescCodeTuple(candidateLangDescriptionStr):
 	if (candidateLangDescriptionStr is None or not candidateLangDescriptionStr ):
 		resultTuple = DEFAULT_LANG_DESC_CODE
-	else: 
+	else:
 		tmpMatchTuplesList = [ (x,y,z) for (x,y,z) in SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST if  x ==  candidateLangDescriptionStr]
-		if tmpMatchTuplesList is not None and len(tmpMatchTuplesList) > 0: 
-			resultTuple = tmpMatchTuplesList[0]			
-		else: 
+		if tmpMatchTuplesList is not None and len(tmpMatchTuplesList) > 0:
+			resultTuple = tmpMatchTuplesList[0]
+		else:
 			resultTuple = None
 	return resultTuple
-	
+
 def printInfoMessageForLanguageSelectionSyntax():
 	tmpCSVSupportedLangDescValues = ", ".join( zip(*SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST)[0] )
 	print "Valid values for language selection are: %s" % (tmpCSVSupportedLangDescValues)
@@ -857,14 +772,14 @@ def main(argsCL):
 	global gTraceModeEnabled
 	global gStringReplacementForRootFolderWithExportedFiles
 	global gNumReplaceStartingCharacters
-	global gActiveLanguageDescriptionCodeTuple 
+	global gActiveLanguageDescriptionCodeTuple
 	global gWavFiles
 	global gWavFilesNoDups
-	
+
 	gTraceModeEnabled = False
 	gActiveLanguageDescriptionCodeTuple = DEFAULT_LANG_DESC_CODE
 
-	
+
 	pathToActorNamesTxt = ""
 	candidateLangDescriptionTxt = ""
 
@@ -875,7 +790,7 @@ def main(argsCL):
 	extractTreFilesMode = False
 	extractDevCommAndExtraSFXMode = False
 	extractPOGOTextMode = False
-	
+
 	invalidSyntax = False
 	print "Running %s (%s)..." % (APP_NAME_SPACED, APP_VERSION)
 #	 print "Len of sysargv = %s" % (len(argsCL))
@@ -944,7 +859,7 @@ def main(argsCL):
 			elif argsCL[i][:1] == '-':
 				invalidSyntax = True
 				break
-				
+
 		if (not exportWavFilesMode):
 			print "[Info] Export WAVs from TLK files mode disabled."
 		if (not extractTreFilesMode):
@@ -953,7 +868,7 @@ def main(argsCL):
 			print "[Info] Additional Sheet for developer commentary and extra SFX mode disabled."
 		if (not extractPOGOTextMode):
 			print "[Info] Additional Sheet for POGO text mode disabled."
-		
+
 		if not TMProotFolderWithExportedFiles: # this argument is mandatory
 			print "[Error] The output path for exported files (-op switch) argument is mandatory!"
 			invalidSyntax = True
@@ -961,17 +876,17 @@ def main(argsCL):
 		if (not invalidSyntax) and (exportWavFilesMode == True or extractTreFilesMode == True) and (TMProotFolderWithInputTLKFiles == ''):
 			print "[Error] No game input path (-ip switch) specified, while the export audio to WAV mode or the extract Text Resources mode is enabled."
 			invalidSyntax = True
-		
+
 		if (not invalidSyntax) and (exportWavFilesMode == False and extractTreFilesMode == False) and (TMProotFolderWithInputTLKFiles != ''):
 			print "[Warning] Specified game input path (-ip switch) will be ignored, since the export audio to WAV mode and the extract Text Resources mode are disabled."
 			# not invalid syntax though
-		
+
 		gActiveLanguageDescriptionCodeTuple = getLanguageDescCodeTuple(candidateLangDescriptionTxt)
-		if (not invalidSyntax) and gActiveLanguageDescriptionCodeTuple is None:	
+		if (not invalidSyntax) and gActiveLanguageDescriptionCodeTuple is None:
 			print "[Error] Invalid language code was specified"
 			printInfoMessageForLanguageSelectionSyntax()
 			invalidSyntax = True
-			
+
 		if not invalidSyntax:
 			print "[Info] Game Language Selected: %s (%s)" % (gActiveLanguageDescriptionCodeTuple[0], gActiveLanguageDescriptionCodeTuple[2])
 			# parse Actors files:
@@ -990,7 +905,7 @@ def main(argsCL):
 				sys.exit(1)
 			if ((exportWavFilesMode == False) and (not os.path.isdir(TMProotFolderWithExportedFiles))):
 				print "[Error] Invalid output path for exported files (-op switch) was specified, while the export audio to WAV mode is disabled (if enabled, it would create the path)."
-				sys.exit(1)				
+				sys.exit(1)
 			#
 			# Checking for the optional case of parsing the input TLK files to export to WAV
 			#
@@ -1127,9 +1042,9 @@ def main(argsCL):
 #			 for filenameSrcTmp in gWavFilesNoDups:
 #				 print "[Debug] Unique %s" % (filenameSrcTmp)
 			if len(gWavFilesNoDups) == 0:
-				print "[Error] No supported audio files (WAV) were found in the output folder path (-op switch)." 
+				print "[Error] No supported audio files (WAV) were found in the output folder path (-op switch)."
 				sys.exit(1)
-			
+
 			constructedOutputFilename = "%s-%s%s" % (OUTPUT_XLS_FILENAME, gActiveLanguageDescriptionCodeTuple[2], OUTPUT_XLS_FILENAME_EXT)
 			print "[Info] Creating output excel %s file..." % (constructedOutputFilename)
 			outputXLS(constructedOutputFilename, OUTPUT_XLS_QUOTES_SHEET + gActiveLanguageDescriptionCodeTuple[1] + '.TR' + gActiveLanguageDescriptionCodeTuple[1], gWavFilesNoDups, extractTreFilesMode, extractDevCommAndExtraSFXMode, extractPOGOTextMode, TMProotFolderWithInputTLKFiles)

@@ -990,6 +990,11 @@ class grabberFromPNG:
 					if filename.upper() == mixFileName:
 						inputMIXFilesFound.append(mixFileName)
 			break
+		
+		if len(inputMIXFilesFound) == 0:
+			print "[Error] No supported game archive resource files (MIX) were found in the specified input path (-ip switch)"
+			sys.exit(1)
+			
 		for tmpMIXfileName in inputMIXFilesFound:
 			print "[Info] Found MIX file: %s" % ('"' + tmpMIXfileName + '"')
 			errorFound = False
