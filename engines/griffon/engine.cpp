@@ -4067,7 +4067,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 						rcDest.top = y1;
 						rcDest.setWidth(8);
 						rcDest.setHeight(8);
-						SDL_FillRect(clipbg, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
+						SDL_FillRect(clipbg, &rcDest, ccc);
 					} else if (d == 6) {
 						sys_line(clipbg, x1 + 7, y1, x1 + 7, y1 + 7, ccc);
 						sys_line(clipbg, x1 + 6, y1, x1 + 6, y1 + 7, ccc);
@@ -4132,9 +4132,9 @@ void GriffonEngine::game_loadmap(int mapnum) {
 					rcDest.setHeight(8);
 
 					if (objectinfo[o][4] == 1)
-						SDL_FillRect(clipbg, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
+						SDL_FillRect(clipbg, &rcDest, ccc);
 					if (objectinfo[o][4] == 3)
-						SDL_FillRect(clipbg, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
+						SDL_FillRect(clipbg, &rcDest, ccc);
 				}
 			}
 			if (npc == 1) {
@@ -4459,7 +4459,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 		if (lx == cx && ly == cy)
 			player.py = player.py + 16;
 
-		SDL_FillRect(clipbg, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
+		SDL_FillRect(clipbg, &rcDest, ccc);
 	}
 
 	// academy crystal
@@ -4483,7 +4483,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 		if (lx == cx && ly == cy)
 			player.py = player.py + 16;
 
-		SDL_FillRect(clipbg, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
+		SDL_FillRect(clipbg, &rcDest, ccc);
 	}
 
 	// gardens master key
@@ -4507,7 +4507,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 		if (lx == cx && ly == cy)
 			player.py = player.py + 16;
 
-		SDL_FillRect(clipbg, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
+		SDL_FillRect(clipbg, &rcDest, ccc);
 	}
 
 	// gardens fidelis sword
@@ -4531,7 +4531,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 		if (lx == cx && ly == cy)
 			player.py = player.py + 16;
 
-		SDL_FillRect(clipbg, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
+		SDL_FillRect(clipbg, &rcDest, ccc);
 	}
 
 	// citadel armour
@@ -4555,7 +4555,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 		if (lx == cx && ly == cy)
 			player.py = player.py + 16;
 
-		SDL_FillRect(clipbg, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
+		SDL_FillRect(clipbg, &rcDest, ccc);
 	}
 
 	// citadel master key
@@ -4579,7 +4579,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 		if (lx == cx && ly == cy)
 			player.py = player.py + 16;
 
-		SDL_FillRect(clipbg, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
+		SDL_FillRect(clipbg, &rcDest, ccc);
 	}
 
 
@@ -4604,7 +4604,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 		if (lx == cx && ly == cy)
 			player.py = player.py + 16;
 
-		SDL_FillRect(clipbg, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
+		SDL_FillRect(clipbg, &rcDest, ccc);
 	}
 
 	if (curmap == 83 && scriptflag[16][0] == 1 && player.shield < 3) {
@@ -4627,7 +4627,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 		if (lx == cx && ly == cy)
 			player.py = player.py + 16;
 
-		SDL_FillRect(clipbg, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
+		SDL_FillRect(clipbg, &rcDest, ccc);
 	}
 
 	if (curmap == 83 && scriptflag[17][0] == 1 && player.armour < 3) {
@@ -4650,7 +4650,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 		if (lx == cx && ly == cy)
 			player.py = player.py + 16;
 
-		SDL_FillRect(clipbg, &rcDest, SDL_MapRGB(clipbg->format, 255, 255, 255));
+		SDL_FillRect(clipbg, &rcDest, ccc);
 	}
 
 	SDL_BlitSurface(clipbg, NULL, clipbg2, NULL);
