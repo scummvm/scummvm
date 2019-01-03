@@ -24,15 +24,17 @@
 #define GLK_WINDOW_PAIR_H
 
 #include "glk/windows.h"
+#include "glk/utils.h"
 
 namespace Glk {
 
 /**
- * Pair window
+ * Acts as a container of child windows. Under most cases there will be exactly two children,
+ * though in a special new "OnTop" mode, there can be more than two
  */
 class PairWindow : public Window {
 public:
-	Window *_child1, *_child2;
+	Array<Window *> _children;
 
 	// split info...
 	uint _dir;               ///< winmethod_Left, Right, Above, Below, or OnTop

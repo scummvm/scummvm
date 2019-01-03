@@ -34,13 +34,13 @@ PairWindow::PairWindow(Windows *windows, uint method, Window *key, uint size) :
 	_wBorder((method & winmethod_BorderMask) == winmethod_Border),
 	_vertical(_dir == winmethod_Left || _dir == winmethod_Right),
 	_backward(_dir == winmethod_Left || _dir == winmethod_Above),
-	_key(key), _size(size), _keyDamage(0), _child1(nullptr), _child2(nullptr) {
+	_key(key), _size(size), _keyDamage(0) {
 	_type = wintype_Pair;
 }
 
 PairWindow::~PairWindow() {
-	delete _child1;
-	delete _child2;
+	for (uint idx = 0; idx < _children.size(); ++idx)
+		delete _children[idx];
 }
 
 void PairWindow::rearrange(const Rect &box) {
@@ -51,24 +51,23 @@ void PairWindow::rearrange(const Rect &box) {
 	_bbox = box;
 
 	if (!_backward) {
-		ch1 = _child1;
-		ch2 = _child2;
+		ch1 = _children[0];
+		ch2 = _children[1];
 	} else {
-		ch1 = _child2;
-		ch2 = _child1;
+		ch1 = _children[1];
+		ch2 = _children[0];
 	}
 
-
-	if (_dir == winmethod_OnTop) {
-		// ch2 is on top of ch1
-		ch1->rearrange(box1);
-		if (!ch2->_bbox.isEmpty() && !ch2->_bbox.contains(box)) {
-			// ch2 is outside new bounds, so clip it to the new dimensions
-			Rect subRect = ch2->_bbox;
-			subRect.clip(box);
-			ch2->rearrange(subRect);
+	if (_dir == winmethod_Arbitrary) {
+		// When a pair window is in "arbitrary" mode, each child window has it's own independant positioning,
+		// so thre's no need to be readjusting it
+		/*
+		for (int ctr = 0, idx = (_backward ? (int)_children.size() - 1 : 0); ctr < (int)_children.size();
+				++ctr, idx += (_backward ? -1 : 1)) {
+			Window *w = _children[idx];
+			w->rearrange();
 		}
-
+		*/
 		return;
 	}
 
@@ -142,10 +141,12 @@ void PairWindow::rearrange(const Rect &box) {
 void PairWindow::redraw() {
 	Window::redraw();
 
-	_child1->redraw();
-	_child2->redraw();
+	for (int ctr = 0, idx = (_backward ? (int)_children.size() - 1 : 0); ctr < (int)_children.size();
+		++ctr, idx += (_backward ? -1 : 1)) {
+		_children[idx]->redraw();
+	}
 
-	Window *child = !_backward ? _child1 : _child2;
+	Window *child = !_backward ? _children.front() : _children.back();
 	Rect box(child->_bbox.left, child->_yAdj ? child->_bbox.top - child->_yAdj : child->_bbox.top,
 			 child->_bbox.right, child->_bbox.bottom);
 
@@ -184,6 +185,7 @@ void PairWindow::getArrangement(uint *method, uint *size, Window **keyWin) {
 void PairWindow::setArrangement(uint method, uint size, Window *keyWin) {
 	uint newDir;
 	bool newVertical, newBackward;
+	assert((method & winmethod_DirMask) != winmethod_Arbitrary && _dir != winmethod_Arbitrary);
 
 	if (_key) {
 		Window *wx;
@@ -226,9 +228,7 @@ void PairWindow::setArrangement(uint method, uint size, Window *keyWin) {
 
 	if ((newBackward && !_backward) || (!newBackward && _backward)) {
 		// switch the children
-		Window *tmpWin = _child1;
-		_child1 = _child2;
-		_child2 = tmpWin;
+		SWAP(_children[0], _children[1]);
 	}
 
 	// set up everything else
@@ -245,11 +245,12 @@ void PairWindow::setArrangement(uint method, uint size, Window *keyWin) {
 }
 
 void PairWindow::click(const Point &newPos) {
-	if (_child1->_bbox.contains(newPos))
-		_child1->click(newPos);
-
-	if (_child2->_bbox.contains(newPos))
-		_child2->click(newPos);
+	for (int ctr = 0, idx = (!_backward ? (int)_children.size() - 1 : 0); ctr < (int)_children.size();
+		++ctr, idx += (_backward ? -1 : 1)) {
+		Window *w = _children[idx];
+		if (w->_bbox.contains(newPos))
+			w->click(newPos);
+	}
 }
 
 } // End of namespace Glk

@@ -258,10 +258,11 @@ winid_t GlkAPI::glk_window_get_sibling(winid_t win) {
 	if (!parentWin)
 		return nullptr;
 
-	if (parentWin->_child1 == win)
-		return parentWin->_child2;
-	else if (parentWin->_child2 == win)
-		return parentWin->_child1;
+	int index = parentWin->_children.indexOf(win);
+	if (index == ((int)parentWin->_children.size() - 1))
+		return parentWin->_children.front();
+	else if (index >= 0)
+		return parentWin->_children[index + 1];
 
 	return nullptr;
 }

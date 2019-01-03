@@ -104,15 +104,22 @@ Window *Windows::windowOpen(Window *splitwin, uint method, uint size,
 
 		val = (method & winmethod_DirMask);
 		if (val != winmethod_Above && val != winmethod_Below && val != winmethod_Left
-				&& val != winmethod_Right && val != winmethod_OnTop) {
+				&& val != winmethod_Right && val != winmethod_Arbitrary) {
 			warning("window_open: invalid method (bad direction)");
 			return nullptr;
 		}
 
-		oldparent = splitwin->_parent;
-		if (oldparent && oldparent->_type != wintype_Pair) {
-			warning("window_open: parent window is not Pair");
-			return nullptr;
+		if (splitwin->_type == wintype_Pair) {
+			if ((method & winmethod_DirMask) != winmethod_Arbitrary) {
+				warning("window_open: Can only add windows to a Pair window in arbitrary mode");
+				return nullptr;
+			}
+		} else {
+			oldparent = splitwin->_parent;
+			if (oldparent && oldparent->_type != wintype_Pair) {
+				warning("window_open: parent window is not Pair");
+				return nullptr;
+			}
 		}
 	}
 
@@ -125,11 +132,16 @@ Window *Windows::windowOpen(Window *splitwin, uint method, uint size,
 
 	if (!splitwin) {
 		_rootWin = newwin;
+	} else if (splitwin->_type == wintype_Pair) {
+		pairWin = static_cast<PairWindow *>(splitwin);
+		pairWin->_dir = winmethod_Arbitrary;
+		pairWin->_children.push_back(newwin);
+		newwin->_parent = pairWin;
 	} else {
 		// create pairWin, with newwin as the key
 		pairWin = newPairWindow(method, newwin, size);
-		pairWin->_child1 = splitwin;
-		pairWin->_child2 = newwin;
+		pairWin->_children.push_back(splitwin);
+		pairWin->_children.push_back(newwin);
 
 		splitwin->_parent = pairWin;
 		newwin->_parent = pairWin;
@@ -138,10 +150,11 @@ Window *Windows::windowOpen(Window *splitwin, uint method, uint size,
 		if (oldparent) {
 			PairWindow *parentWin = dynamic_cast<PairWindow *>(oldparent);
 			assert(parentWin);
-			if (parentWin->_child1 == splitwin)
-				parentWin->_child1 = pairWin;
-			else
-				parentWin->_child2 = pairWin;
+
+			for (uint idx = 0; idx < parentWin->_children.size(); ++idx) {
+				if (parentWin->_children[idx] == splitwin)
+					parentWin->_children[idx] = pairWin;
+			}
 		} else {
 			_rootWin = pairWin;
 		}
@@ -168,24 +181,22 @@ void Windows::windowClose(Window *win, StreamResult *result) {
 		PairWindow *pairWin = dynamic_cast<PairWindow *>(win->_parent);
 		PairWindow *grandparWin;
 
-		if (win == pairWin->_child1) {
-			sibWin = pairWin->_child2;
-		} else if (win == pairWin->_child2) {
-			sibWin = pairWin->_child1;
-		} else {
+		int index = pairWin->_children.indexOf(win);
+		if (index == -1) {
 			warning("windowClose: window tree is corrupted");
 			return;
 		}
+
+		sibWin = (index = ((int)pairWin->_children.size() - 1)) ?
+			pairWin->_children.front() : pairWin->_children[index + 1];
 
 		grandparWin = dynamic_cast<PairWindow *>(pairWin->_parent);
 		if (!grandparWin) {
 			_rootWin = sibWin;
 			sibWin->_parent = nullptr;
 		} else {
-			if (grandparWin->_child1 == pairWin)
-				grandparWin->_child1 = sibWin;
-			else
-				grandparWin->_child2 = sibWin;
+			index = grandparWin->_children.indexOf(pairWin);
+			grandparWin->_children[index] = sibWin;
 			sibWin->_parent = grandparWin;
 		}
 
@@ -197,10 +208,8 @@ void Windows::windowClose(Window *win, StreamResult *result) {
 		win->close(true);
 
 		// This probably isn't necessary, but the child *is* gone, so just in case.
-		if (win == pairWin->_child1)
-			pairWin->_child1 = nullptr;
-		else if (win == pairWin->_child2)
-			pairWin->_child2 = nullptr;
+		index = pairWin->_children.indexOf(win);
+		pairWin->_children[index] = nullptr;
 
 		// Now we can delete the parent pair.
 		pairWin->close(false);
@@ -462,21 +471,20 @@ Window *Windows::iterateTreeOrder(Window *win) {
 
 	PairWindow *pairWin = dynamic_cast<PairWindow *>(win);
 	if (pairWin) {
-		if (!pairWin->_backward)
-			return pairWin->_child1;
-		else
-			return pairWin->_child2;
+		return pairWin->_backward ? pairWin->_children.back() : pairWin->_children.front();
 	} else {
 		while (win->_parent) {
 			pairWin = dynamic_cast<PairWindow *>(win->_parent);
 			assert(pairWin);
+			int index = pairWin->_children.indexOf(win);
+			assert(index != -1);
 
 			if (!pairWin->_backward) {
-				if (win == pairWin->_child1)
-					return pairWin->_child2;
+				if (index < ((int)pairWin->_children.size() - 1))
+					return pairWin->_children[index + 1];
 			} else {
-				if (win == pairWin->_child2)
-					return pairWin->_child1;
+				if (index > 0)
+					return pairWin->_children[index - 1];
 			}
 
 			win = pairWin;
@@ -515,10 +523,11 @@ Window::~Window() {
 
 	// Remove the window from any parent
 	PairWindow *parent = dynamic_cast<PairWindow *>(_parent);
-	if (parent && parent->_child1 == this)
-		parent->_child1 = nullptr;
-	if (parent && parent->_child2 == this)
-		parent->_child2 = nullptr;
+	if (parent) {
+		int index = parent->_children.indexOf(this);
+		if (index != -1)
+			parent->_children[index] = nullptr;
+	}
 
 	// Delete any attached window stream
 	_echoStream = nullptr;
@@ -554,8 +563,8 @@ void Window::close(bool recurse) {
 
 	PairWindow *pairWin = dynamic_cast<PairWindow *>(this);
 	if (pairWin) {
-		pairWin->_child1->close(recurse);
-		pairWin->_child2->close(recurse);
+		for (uint idx = 0; idx < pairWin->_children.size(); ++idx)
+			pairWin->_children[idx]->close();
 	}
 
 	// Finally, delete the window

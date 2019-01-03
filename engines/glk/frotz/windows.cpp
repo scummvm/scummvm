@@ -22,6 +22,7 @@
 
 #include "glk/frotz/windows.h"
 #include "glk/frotz/frotz.h"
+#include "glk/window_pair.h"
 
 namespace Glk {
 namespace Frotz {
@@ -51,7 +52,8 @@ winid_t Window::getWindow() {
 		// TODO: For now I'm assuming all the extra created windows will be graphics, since Glk requires
 		// us to specify it at creation time. Not sure if it's true or not for all V6 games
 		winid_t parent = _windows->_lower;
-		_win = g_vm->glk_window_open(parent, winmethod_OnTop | winmethod_Fixed, 0, wintype_Graphics, 0);
+		_win = g_vm->glk_window_open(g_vm->glk_window_get_root(), winmethod_Arbitrary | winmethod_Fixed,
+			0, wintype_Graphics, 0);
 	}
 
 	return _win;
@@ -59,6 +61,7 @@ winid_t Window::getWindow() {
 
 void Window::setSize(const Point &newSize) {
 	winid_t win = getWindow();
+	checkRepositionLower();
 
 	win->setSize(newSize);
 /* TODO
@@ -73,6 +76,7 @@ void Window::setSize(const Point &newSize) {
 
 void Window::setPosition(const Point &newPos) {
 	winid_t win = getWindow();
+	checkRepositionLower();
 
 	win->setPosition(newPos);
 }
@@ -111,6 +115,18 @@ uint16 Window::getProperty(WindowProperty propType) {
 
 void Window::setProperty(WindowProperty propType, uint16 value) {
 	// TODO
+}
+
+void Window::checkRepositionLower() {
+	if (&_windows->_lower == this) {
+		PairWindow *parent = dynamic_cast<PairWindow *>(_win->_parent);
+		if (!parent)
+			error("Parent was not a pair window");
+
+		// Ensure the parent pair window is flagged as having children at arbitrary positions,
+		// just in case it isn't already
+		parent->_dir = winmethod_Arbitrary;
+	}
 }
 
 } // End of namespace Frotz

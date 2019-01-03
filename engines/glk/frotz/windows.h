@@ -64,6 +64,11 @@ private:
 	 * Set a property value
 	 */
 	void setProperty(WindowProperty propType, uint16 value);
+
+	/**
+	 * Called when trying to reposition or resize windows. Does special handling for the lower window
+	 */
+	void checkRepositionLower();
 public:
 	/**
 	 * Constructor

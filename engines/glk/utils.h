@@ -23,13 +23,20 @@
 #ifndef GLK_UTILS_H
 #define GLK_UTILS_H
 
+#include "common/array.h"
 #include "common/rect.h"
 #include "glk/glk_types.h"
 
 namespace Glk {
 
+/**
+ * Two dimensional point
+ */
 typedef Common::Point Point;
 
+/**
+ * Contains a square box/rect area
+ */
 struct Rect : public Common::Rect {
 public:
 	static Rect fromXYWH(int x, int y, int w, int h) {
@@ -39,6 +46,24 @@ public:
 	Rect() : Common::Rect() {}
 	Rect(int16 w, int16 h) : Common::Rect(w, h) {}
 	Rect(int16 x1, int16 y1, int16 x2, int16 y2) : Common::Rect(x1, y1, x2, y2) {}
+};
+
+/**
+ * Derived array class
+ */
+template<class T>class Array : public Common::Array<T> {
+public:
+	/**
+	 * Return the index in the array of a passed item
+	 */
+	int indexOf(T val) {
+		for (size_t idx = 0; idx < this->size(); ++idx) {
+			if ((*this).operator[](idx) == val)
+				return idx;
+		}
+
+		return -1;
+	}
 };
 
 /**

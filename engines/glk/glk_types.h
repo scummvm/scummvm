@@ -150,12 +150,12 @@ enum WinType {
 };
 
 enum WinMethod {
-	winmethod_Left    = 0x00,
-	winmethod_Right   = 0x01,
-	winmethod_Above   = 0x02,
-	winmethod_Below   = 0x03,
-	winmethod_OnTop   = 0x04,		///< Newly introduced for ScummGlk
-	winmethod_DirMask = 0x0f,
+	winmethod_Left         = 0x00,
+	winmethod_Right        = 0x01,
+	winmethod_Above        = 0x02,
+	winmethod_Below        = 0x03,
+	winmethod_Arbitrary    = 0x04,		///< Newly introduced for ScummGlk
+	winmethod_DirMask      = 0x0f,
 
 	winmethod_Fixed        = 0x10,
 	winmethod_Proportional = 0x20,
