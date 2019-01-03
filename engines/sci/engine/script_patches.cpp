@@ -9473,6 +9473,35 @@ static const uint16 qfg4PitRopeMagePatch2[] = {
 	PATCH_END
 };
 
+// WORKAROUND: Script needed, because of differences in our pathfinding
+// algorithm.
+// When entering forest room 557 from the east (563), hero is supposed to move
+// only a short distance into the room. ScummVM's pathfinding sends hero off
+// course, to the middle of the room and back.
+//
+// There's an unwalkable stream in the SE corner, and hero's coords were within
+// its polygon. We lower the top two points to keep hero on the outside.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: rm557::init() in script 557
+// Fixes bug: #10857
+static const uint16 qfg4Forest557PathfindingSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x0119),           // pushi 281d (point 3)
+	0x38, SIG_UINT16(0x0087),           // pushi 135d
+	0x38, SIG_UINT16(0x013f),           // pushi 319d (point 4)
+	0x38, SIG_UINT16(0x0087),           // pushi 135d
+	SIG_END
+};
+
+static const uint16 qfg4Forest557PathfindingPatch[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x38, PATCH_UINT16(0x0089),         // pushi 137d
+	PATCH_ADDTOOFFSET(+3),
+	0x38, PATCH_UINT16(0x0089),         // pushi 137d
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qfg4AutosaveSignature,         qfg4AutosavePatch },
@@ -9501,6 +9530,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   542, "fix setLooper calls (1/2)",                   5, qfg4SetLooperSignature1,       qfg4SetLooperPatch1 },
 	{  true,   543, "fix setLooper calls (1/2)",                   5, qfg4SetLooperSignature1,       qfg4SetLooperPatch1 },
 	{  true,   545, "fix setLooper calls (1/2)",                   5, qfg4SetLooperSignature1,       qfg4SetLooperPatch1 },
+	{  true,   557, "fix forest 557 entry from east",              1, qfg4Forest557PathfindingSignature, qfg4Forest557PathfindingPatch },
 	{  true,   630, "fix great hall entry from barrel room",       1, qfg4GreatHallEntrySignature,   qfg4GreatHallEntryPatch },
 	{  true,   633, "fix stairway pathfinding",                    1, qfg4StairwayPathfindingSignature, qfg4StairwayPathfindingPatch },
 	{  true,   643, "fix iron safe's east door sending hero west", 1, qfg4SafeDoorEastSignature,     qfg4SafeDoorEastPatch },

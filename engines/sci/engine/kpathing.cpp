@@ -1407,15 +1407,22 @@ static void AStar(PathfindingState *s) {
 			// This difference might lead to problems, but none are
 			// known at the time of writing.
 
-			// WORKAROUND: This check fails in QFG1VGA, room 81 (bug report #3568452).
-			// However, it is needed in other SCI1.1 games, such as LB2. Therefore, we
-			// add this workaround for that scene in QFG1VGA, until our algorithm matches
-			// better what SSCI is doing. With this workaround, QFG1VGA no longer freezes
-			// in that scene.
-			bool qfg1VgaWorkaround = (g_sci->getGameId() == GID_QFG1VGA &&
-									  g_sci->getEngineState()->currentRoomNumber() == 81);
+			// WORKAROUND: This check is needed in SCI1.1 games, such as LB2. Until our
+			// algorithm matches better what SSCI is doing, we exempt certain rooms where
+			// the check fails.
+			bool penaltyWorkaround =
+				// QFG1VGA room 81 - Hero gets stuck when walking to the SE corner (bug #6140).
+				(g_sci->getGameId() == GID_QFG1VGA && g_sci->getEngineState()->currentRoomNumber() == 81) ||
+#ifdef ENABLE_SCI32
+				// QFG4 room 563 - Hero zig-zags into the room (bug #10858).
+				// Entering from the south (564) off-screen behind an obstacle, hero
+				// fails to turn at a point on the screen edge, passes the poly's corner,
+				// then approaches the destination from deeper in the room.
+				(g_sci->getGameId() == GID_QFG4 && g_sci->getEngineState()->currentRoomNumber() == 563) ||
+#endif
+				false;
 
-			if (s->pointOnScreenBorder(vertex->v) && !qfg1VgaWorkaround)
+			if (s->pointOnScreenBorder(vertex->v) && !penaltyWorkaround)
 				new_dist += 10000;
 
 			if (new_dist < vertex->costG) {
