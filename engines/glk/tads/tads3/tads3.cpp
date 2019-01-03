@@ -29,7 +29,7 @@ namespace TADS3 {
 TADS3::TADS3(OSystem *syst, const GlkGameDescription &gameDesc) : TADS(syst, gameDesc) {
 }
 
-void TADS3::runGame(Common::SeekableReadStream *gameFile) {
+void TADS3::runGame() {
 	// TODO
 }
 

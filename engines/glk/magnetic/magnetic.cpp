@@ -31,9 +31,7 @@ Magnetic::Magnetic(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(s
 		vm_exited_cleanly(false) {
 }
 
-void Magnetic::runGame(Common::SeekableReadStream *gameFile) {
-	_gameFile = gameFile;
-
+void Magnetic::runGame() {
 	if (!is_gamefile_valid())
 		return;
 
@@ -51,18 +49,18 @@ Common::Error Magnetic::saveGameData(strid_t file, const Common::String &desc) {
 }
 
 bool Magnetic::is_gamefile_valid() {
-	if (_gameFile->size() < 8) {
+	if (_gameFile.size() < 8) {
 		GUIErrorMessage(_("This is too short to be a valid Glulx file."));
 		return false;
 	}
 
-	if (_gameFile->readUint32BE() != MKTAG('G', 'l', 'u', 'l')) {
+	if (_gameFile.readUint32BE() != MKTAG('G', 'l', 'u', 'l')) {
 		GUIErrorMessage(_("This is not a valid Glulx file."));
 		return false;
 	}
 
 	// We support version 2.0 through 3.1.*
-	uint version = _gameFile->readUint32BE();
+	uint version = _gameFile.readUint32BE();
 	if (version < 0x20000) {
 		GUIErrorMessage(_("This Glulx file is too old a version to execute."));
 		return false;

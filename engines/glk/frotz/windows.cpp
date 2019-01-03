@@ -52,7 +52,6 @@ winid_t Window::getWindow() {
 		// Window doesn't exist, so create it
 		// TODO: For now I'm assuming all the extra created windows will be graphics, since Glk requires
 		// us to specify it at creation time. Not sure if it's true or not for all V6 games
-		winid_t parent = _windows->_lower;
 		_win = g_vm->glk_window_open(g_vm->glk_window_get_root(), winmethod_Arbitrary | winmethod_Fixed,
 			0, wintype_Graphics, 0);
 	}

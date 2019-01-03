@@ -45,9 +45,7 @@ Alan2::Alan2(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, g
 	dscrstkp = 0;
 }
 
-void Alan2::runGame(Common::SeekableReadStream *gameFile) {
-	_gameFile = gameFile;
-
+void Alan2::runGame() {
 	// TODO: Initialize these properly
 	int tmp = 0;
 	Common::String gameFileName;
@@ -73,12 +71,12 @@ Common::Error Alan2::saveGameData(strid_t file, const Common::String &desc) {
 }
 
 bool Alan2::is_gamefile_valid() {
-	if (_gameFile->size() < 8) {
+	if (_gameFile.size() < 8) {
 		GUIErrorMessage(_("This is too short to be a valid Alan2 file."));
 		return false;
 	}
 
-	if (_gameFile->readUint32BE() != MKTAG(2, 8, 1, 0)) {
+	if (_gameFile.readUint32BE() != MKTAG(2, 8, 1, 0)) {
 		GUIErrorMessage(_("This is not a valid Alan2 file."));
 		return false;
 	}

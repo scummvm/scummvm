@@ -174,7 +174,7 @@ public:
 	/**
 	 * Execute the game
 	 */
-	virtual void runGame(Common::SeekableReadStream *gameFile) override;
+	virtual void runGame() override;
 
 	/**
 	 * Load a savegame from the passed stream

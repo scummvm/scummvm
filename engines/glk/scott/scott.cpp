@@ -35,7 +35,7 @@ Scott::Scott(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, g
 	Common::fill(&_roomSaved[0], &_roomSaved[16], 0);
 }
 
-void Scott::runGame(Common::SeekableReadStream *gameFile) {
+void Scott::runGame() {
 	int vb, no;
 	initialize();
 
@@ -70,7 +70,7 @@ void Scott::runGame(Common::SeekableReadStream *gameFile) {
 	_saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 
 	// Load the game
-	loadDatabase(gameFile, (_options & DEBUGGING) ? 1 : 0);
+	loadDatabase(&_gameFile, (_options & DEBUGGING) ? 1 : 0);
 
 	// Main game loop
 	while (!shouldQuit()) {

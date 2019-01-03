@@ -81,6 +81,7 @@ protected:
 	const GlkGameDescription _gameDescription;
 	Common::RandomSource _random;
 	int _loadSaveSlot;
+	Common::File _gameFile;
 
 	// Engine APIs
 	virtual Common::Error run();
@@ -98,7 +99,7 @@ protected:
 	/**
 	 * Main game loop for the individual interpreters
 	 */
-	virtual void runGame(Common::SeekableReadStream *gameFile) = 0;
+	virtual void runGame() = 0;
 public:
 	Blorb *_blorb;
 	Clipboard *_clipboard;

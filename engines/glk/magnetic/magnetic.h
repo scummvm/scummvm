@@ -34,7 +34,6 @@ namespace Magnetic {
  */
 class Magnetic : public GlkAPI {
 public:
-	Common::SeekableReadStream *_gameFile;
 	bool vm_exited_cleanly;
 private:
 	/**
@@ -50,7 +49,7 @@ public:
 	/**
 	 * Run the game
 	 */
-	void runGame(Common::SeekableReadStream *gameFile);
+	void runGame();
 
 	/**
 	 * Returns the running interpreter type

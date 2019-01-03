@@ -44,8 +44,8 @@ Screen *Frotz::createScreen() {
 	return new FrotzScreen();
 }
 
-void Frotz::runGame(Common::SeekableReadStream *gameFile) {
-	story_fp = gameFile;
+void Frotz::runGame() {
+	story_fp = &_gameFile;
 	initialize();
 
 	// If save was selected from the launcher, handle loading it

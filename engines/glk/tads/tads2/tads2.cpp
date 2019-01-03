@@ -30,7 +30,7 @@ TADS2::TADS2(OSystem *syst, const GlkGameDescription &gameDesc) : OS(syst, gameD
 	cmap_init_default();
 }
 
-void TADS2::runGame(Common::SeekableReadStream *gameFile) {
+void TADS2::runGame() {
 	errcxdef errctx;
 	errctx.errcxlgc = &errctx;
 	errctx.errcxfp = nullptr;

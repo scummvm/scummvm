@@ -42,7 +42,7 @@ public:
 	/**
 	 * Execute the game
 	 */
-	virtual void runGame(Common::SeekableReadStream *gameFile) override;
+	virtual void runGame() override;
 
 	/**
 	 * Returns the running interpreter type
