@@ -82,11 +82,13 @@ uint32 Processor::zchar_to_unicode_rune(zchar c) {
 	// This produced an ugly mix of runes and map-drawing characters, etc.
 	// which is probably why it was removed in later versions.
 	//
-	// Apart from the runes, I believe the up/down arrows are the only
-	// special characters to be printed in the lower window. Maybe they,
-	// too, should be mapped to Unicode characters, but since they are
-	// mapped to \ and ] respectively that probably menas we can convert
-	// upper case to lower case and use the appropriate rune for that.
+	// Still, it's probably a good idea to convert the upper case letters
+	// to lower case to get an appropriate rune. As far as I can tell, the
+	// upper case letters are all used for drawing maps and progress bars.
+	// I don't think they're ever intended for the lower window.
+	//
+	// Apart from the runes, the arrow glyphs could perhaps also be
+	// sensibly converted to Unicode?
 	if (c >= 'a' && c <= 'z')
 		return zchar_runes[c - 'a'];
 	else if (c >= 'A' && c <= 'Z')
