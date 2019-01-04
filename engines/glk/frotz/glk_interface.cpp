@@ -291,7 +291,14 @@ bool GlkInterface::os_picture_data(int picture, uint *height, uint *width) {
 		*height = _pics->size();
 		return true;
 	} else {
-		return glk_image_get_info(picture, width, height);
+		bool result = glk_image_get_info(picture, width, height);
+
+		int cellW = g_conf->_monoInfo._cellW;
+		int cellH = g_conf->_monoInfo._cellH;
+		*width = (*width + cellW - 1) / cellW;
+		*height = (*height + cellH - 1) / cellH;
+
+		return result;
 	}
 }
 
