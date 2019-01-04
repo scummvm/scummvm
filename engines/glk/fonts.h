@@ -62,7 +62,7 @@ struct MonoFontInfo : public FontInfo {
 };
 
 /**
- * Font info fro proportinate (variable size) fonts
+ * Font info for proportional (variable size) fonts
  */
 struct PropFontInfo : public MonoFontInfo {
 	byte _caretColor[3], _caretSave[3];
