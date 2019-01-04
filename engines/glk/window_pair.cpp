@@ -245,7 +245,7 @@ void PairWindow::setArrangement(uint method, uint size, Window *keyWin) {
 }
 
 void PairWindow::click(const Point &newPos) {
-	for (int ctr = 0, idx = (!_backward ? (int)_children.size() - 1 : 0); ctr < (int)_children.size();
+	for (int ctr = 0, idx = (_backward ? (int)_children.size() - 1 : 0); ctr < (int)_children.size();
 		++ctr, idx += (_backward ? -1 : 1)) {
 		Window *w = _children[idx];
 		if (w->_bbox.contains(newPos))
