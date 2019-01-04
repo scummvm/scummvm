@@ -56,7 +56,7 @@ bool RawDecoder::loadStream(Common::SeekableReadStream &stream) {
 	stream.readByte();
 	_surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 
-	assert((stream.size() - stream.pos()) == (int)(width * height));
+	assert((stream.size() - stream.pos()) <= (int)(width * height));
 	byte *pixels = (byte *)_surface.getPixels();
 	stream.read(pixels, width * height);
 
