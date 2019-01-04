@@ -4653,7 +4653,7 @@ void GriffonEngine::game_loadmap(int mapnum) {
 		SDL_FillRect(clipbg, &rcDest, ccc);
 	}
 
-	SDL_BlitSurface(clipbg, NULL, clipbg2, NULL);
+	clipbg2->copyRectToSurface(clipbg->getPixels(), clipbg->pitch, 0, 0, clipbg->w, clipbg->h);
 }
 
 void GriffonEngine::game_main() {
@@ -8496,7 +8496,7 @@ void GriffonEngine::sys_update() {
 		}
 	}
 
-	SDL_BlitSurface(clipbg2, NULL, clipbg, NULL);
+	clipbg->copyRectToSurface(clipbg2->getPixels(), clipbg2->pitch, 0, 0, clipbg2->w, clipbg2->h);
 
 	Common::Rect rc;
 
