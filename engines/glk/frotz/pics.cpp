@@ -41,6 +41,8 @@ Pics::Pics() : Common::Archive(), _filename(getFilename()) {
 	if (!f.open(_filename))
 		error("Error reading Pics file");
 
+	_palette = new Common::Array<byte>();
+
 	Common::Array<uint> offsets;
 	byte buffer[16];
 	f.read(buffer, 16);
@@ -95,6 +97,10 @@ Pics::Pics() : Common::Archive(), _filename(getFilename()) {
 	f.close();
 }
 
+Pics::~Pics() {
+	delete _palette;
+}
+
 Common::String Pics::getFilename() {
 	Common::String filename = g_vm->getFilename();
 	while (filename.contains('.'))
@@ -137,22 +143,23 @@ Common::SeekableReadStream *Pics::createReadStreamForMember(const Common::String
 	for (uint idx = 0; idx < _index.size(); ++idx) {
 		const Entry &e = _index[idx];
 		if (e._filename.equalsIgnoreCase(name)) {
-			Common::Array<byte> palette;
 			Common::File f;
 			Common::SeekableReadStream *dest;
 			if (!f.open(_filename))
 				error("Reading failed");
 
 			if (e._dataSize) {
-				// Read in the image's palette
-				assert(e._paletteOffset);
-				f.seek(e._paletteOffset);
-				palette.resize(f.readByte() * 3);
-				f.read(&palette[0], palette.size());
+				if (e._paletteOffset) {
+					// Read in the image's palette
+					assert(e._paletteOffset);
+					f.seek(e._paletteOffset);
+					_palette->resize(f.readByte() * 3);
+					f.read(&(*_palette)[0], _palette->size());					
+				}
 
 				f.seek(e._dataOffset);
 				Common::SeekableReadStream *src = f.readStream(e._dataSize);
-				dest = decoder.decode(*src, e._flags, palette, kMCGA, e._width, e._height);
+				dest = decoder.decode(*src, e._flags, *_palette, kMCGA, e._width, e._height);
 				delete src;
 			} else {
 				byte *rect = (byte *)malloc(2 * sizeof(uint16));

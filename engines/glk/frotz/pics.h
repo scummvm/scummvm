@@ -65,6 +65,7 @@ private:
 	Common::Array<Entry> _index;	///< list of entries
 	uint _entrySize;
 	uint _version;
+	Common::Array<byte> *_palette;
 private:
 	/**
 	 * Returns the filename for the pictures archive
@@ -80,6 +81,11 @@ public:
 	 * Constructor
 	 */
 	Pics();
+
+	/**
+	 * Destructor
+	 */
+	~Pics();
 
 	/**
 	 * Return the number of entries in the file
