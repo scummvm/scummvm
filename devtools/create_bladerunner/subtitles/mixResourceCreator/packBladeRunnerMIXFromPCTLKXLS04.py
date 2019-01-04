@@ -117,8 +117,8 @@ SUPPORTED_TRANSLATION_SHEETS = [('OPTIONS.TR', 'KIA6PT'),
 # The FON files that are identically named to the originals are supposed to override them (needs ScummVM compatible functionality for that)
 # We don't deal with 10PT.FON since it's not used.
 # Also we don't deal with the SYSTEM (external OS font) that ERRORMSG.TRx uses!
-# TODO we probably could skip importing ERRORMSG.TRx (to SUBTITLES.MIX) altogether, since translating that has no point!
-SUPPORTED_OTHER_FILES_FOR_MIX = [DEFAULT_SUBTITLES_FONT_NAME, 'KIA6PT.FON', 'TAHOMA18.FON', 'TAHOMA24.FON'] 
+# TODO we probably could skip importing ERRORMSG.TRx (to SUBTITLES.MIX) altogether, since translating that has no point! In that case SYSTEM.FON should be removed from here since it's currently of no use otherwise and support for it is not really required...
+SUPPORTED_OTHER_FILES_FOR_MIX = [DEFAULT_SUBTITLES_FONT_NAME, 'KIA6PT.FON', 'TAHOMA18.FON', 'TAHOMA24.FON', 'SYSTEM.FON'] 
 
 SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST = [('EN_ANY', 'E', 'English'), ('DE_DEU', 'G', 'German'), ('FR_FRA', 'F', 'French'), ('IT_ITA', 'I', 'Italian'), ('ES_ESP', 'S', 'Spanish'), ('RU_RUS', 'R', 'Russian')]
 DEFAULT_LANG_DESC_CODE = SUPPORTED_LANGUAGES_DESCRIPTION_CODE_TLIST[0]

@@ -64,14 +64,23 @@ Syntax Notes:
 5. The "--trace" optional switch enables extra debug messages to be printed. 
 
 The __text configuration file "configureFontsTranslation.txt"__ a __text file that should be saved in a UTF-8 encoding (no BOM)__, that contains the following:
-1. A key "targetEncoding" with a value of the name of the ASCII codepage that should be used for the character fonts (eg windows-1253).
-2. Multiple lines with the key "fontNameAndOutOfOrderGlyphs" and a value that contains:
-    * the name of a in-game Font file that should be included in the SUBTITLES.MIX
-    * a '#' character after the font name
-	* a list of comma separated tuples that specify the mapping of special (out of order) character (see fontCreator) to placeholder characters from the selected codepage.
-	* eg. fontNameAndOutOfOrderGlyphs=SUBTLS_E#í:Ά,ñ:¥,â:¦,é:§,Ά:£
-
-
+1. Multiple lines (practically one per imported Font type) with the key "fontNameAndOutOfOrderGlyphs" and a '#'-separated value that contains:
+    * the name of an in-game Font "type" that will be included in the SUBTITLES.MIX resource archive. You could also have lines for Font "types" not imported in the SUBTITLES.MIX, but are already Font types used by the game (eg. KIA6PT) especially when you intend to add translated/ updated TRx files in the SUBTITLES.MIX (however even in that case, there are default settings for those fonts that the script will use if you don't specify alternative settings in this file to override them). Valid values can be: SUBTLS_E (for all subtitles), KIA6PT, TAHOMA (for both TAHOMA18 and TAHOMA24), SYSTEM (this is basically for the ERRORMSG.TRx).
+    * a '#' character after the font type
+    * the name of the 8-bit string encoding (codepage) (eg. cp437 or windows-1252) that should be used to store the texts that uses this particular font "type" in the game's TRx text resource files. Valid values can be the standard encodings listed in python's page:
+	https://docs.python.org/2.7/library/codecs.html#standard-encodings
+    * a '#' character after the target Encoding
+	* a list of comma separated tuples that specify the mapping of special (out of order) character to placeholder characters from the selected codepage. See fontCreator section for more details on this.
+	* eg. 
+	````
+	fontNameAndOutOfOrderGlyphs=SUBTLS_E#windows-1253#í:Ά,ñ:¥,â:¦,é:§,Ά:£
+	fontNameAndOutOfOrderGlyphs=KIA6PT#cp437#
+	fontNameAndOutOfOrderGlyphs=TAHOMA#cp437#
+	fontNameAndOutOfOrderGlyphs=SYSTEM#latin-1#
+	````
+	* Note: for font files (FON) that you have created or edited with the fontCreator tool (e.g for the SUBTLS_E file for subtitles, or another in-game font file eg. KIA6PT, TAHOMA) you __should__ copy the 8-bit encoding and the comma separated out of order character tuples from the respective "override encoding" text file that you used with the fontCreator tool for each new/ edited font. Additionally, all the new and edited fonts (FON files that were output by the fontCreator script) should be in your working directory in order to include them in the SUBTITLES.MIX. It's important to keep the naming of those files unchanged. __Supported name values for imported FON files__ are:
+	SUBTLS_E.FON, KIA6PT.FON, TAHOMA18.FON, TAHOMA24.FON and SYSTEM.FON (practically you won't be using the last one). 
+	
 ## fontCreator (fontCreator.py)
 (requires python Image library *PIL*)
 A tool to support __both__ the exporting of fonts from the game (to PNG images) __and__ the creation of a font file (FON) in order to resolve various issues with the available fonts (included in the game's own resource files). These issues include alignment, kerning, corrupted format, limited charset and unsupported characters -- especially for languages with too many non-Latin symbols in their alphabet.
@@ -86,7 +95,8 @@ python2.7 fontCreator.py -im imageRowPNGFilename -om targetFONfilename [-oe path
 ```
 This tool __requires an override encoding text file__ in its Syntax B mode (subtitle font creation). You can specify the path to this file after a "-oe" switch. If you don't provide this path, the script will search for an "overrideEncoding.txt" file in the current working directory.
 The override encoding file is a __text file that should be saved in a UTF-8 encoding (no BOM)__, that contains the following:
-1. A key "targetEncoding" with a value of the name of the ASCII codepage that should be used for the character fonts (eg windows-1253).
+1. A key "targetEncoding" with a value of the name of the ASCII codepage (8-bit encoding) that should be used for the character fonts (eg windows-1253). Valid values can be the standard encodings listed in python's page:
+	https://docs.python.org/2.7/library/codecs.html#standard-encodings
 2. A key "asciiCharList" with value the "all-characters" string with all the printable characters that will be used in-game, from the specified codepage. Keep in mind that:
     * The first such character (typically this is the '!' character) should be repeated twice!
     * All characters must belong to the specified codepage.
