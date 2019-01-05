@@ -232,6 +232,8 @@ struct gameIdList {
 struct Mouse {
 	int button;
 	Common::Point pos;
+
+	Mouse() : button(0) {}
 };
 
 // Used by AGI Mouse protocol 1.0 for v27 (i.e. button pressed -variable).
@@ -491,6 +493,68 @@ struct AgiGame {
 	int16 nonBlockingTextCyclesLeft;
 
 	bool automaticRestoreGame;
+
+	AgiGame() : _vm(nullptr), adjMouseX(0), adjMouseY(0), crc(0), horizon(0),
+		cycleInnerLoopActive(false), cycleInnerLoopType(0), curLogicNr(0),
+		playerControl(false), exitAllLogics(false), pictureShown(false),
+		gameFlags(0), gfxMode(false), numObjects(0), _curLogic(nullptr),
+		automaticSave(false), mouseEnabled(false), mouseHidden(false),
+		testResult(0), max_logics(0), nonBlockingTextShown(false),
+		nonBlockingTextCyclesLeft(0), automaticRestoreGame(false) {
+		execStack.clear();
+		memset(&block, 0, sizeof(block));
+		memset(name, 0, sizeof(name));
+		memset(id, 0, sizeof(id));
+		memset(flags, 0, sizeof(flags));
+		memset(vars, 0, sizeof(vars));
+
+		for (int i = 0; i < ARRAYSIZE(controllerOccured); i++) {
+			controllerOccured[i] = false;
+		}
+
+		for (int i = 0; i < ARRAYSIZE(controllerKeyMapping); i++) {
+			controllerKeyMapping[i].keycode = 0;
+			controllerKeyMapping[i].controllerSlot = false;
+		}
+
+		memset(strings, 0, sizeof(strings));
+
+		for (int i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
+			memset(&dirLogic[i], 0, sizeof(struct AgiDir));
+			memset(&dirPic[i], 0, sizeof(struct AgiDir));
+			memset(&dirView[i], 0, sizeof(struct AgiDir));
+			memset(&dirSound[i], 0, sizeof(struct AgiDir));
+
+			pictures[i].flen = 0;
+			pictures[i].rdata = nullptr;
+
+			logics[i].data = nullptr;
+			logics[i].size = 0;
+			logics[i].sIP = 0;
+			logics[i].cIP = 0;
+			logics[i].numTexts = 0;
+			logics[i].texts = nullptr;
+
+			views[i].headerStepSize = 0;
+			views[i].headerCycleTime = 0;
+			views[i].description = nullptr;
+			views[i].loopCount = 0;
+			views[i].loop = nullptr;
+
+			sounds[i] = nullptr;
+		}
+
+		_curLogic = nullptr;
+
+		for (int i = 0; i < ARRAYSIZE(screenObjTable); i++) {
+			screenObjTable[i].reset();
+		}
+
+		addToPicView.reset();
+		memset(automaticSaveDescription, 0, sizeof(automaticSaveDescription));
+
+		memset(logic_list, 0, sizeof(logic_list));
+	}
 };
 
 class AgiLoader {

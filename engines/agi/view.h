@@ -133,7 +133,47 @@ struct ScreenObjEntry {
 	// end of motion related variables
 	uint8 loop_flag;
 
-	ScreenObjEntry() { memset(this, 0, sizeof(ScreenObjEntry)); }
+	ScreenObjEntry() { reset(); }
+
+	void reset() {
+		objectNr = 0;
+		stepTime = 0;
+		stepTimeCount = 0;
+		xPos = 0;
+		yPos = 0;
+		currentViewNr = 0;
+		viewReplaced = false;
+		viewResource = nullptr;
+		currentLoopNr = 0;
+		loopCount = 0;
+		loopData = nullptr;
+		currentCelNr = 0;
+		celCount = 0;
+		celData = nullptr;
+		xSize = 0;
+		ySize = 0;
+		xPos_prev = 0;
+		yPos_prev = 0;
+		xSize_prev = 0;
+		ySize_prev = 0;
+		stepSize = 0;
+		cycleTime = 0;
+		cycleTimeCount = 0;
+		direction = 0;
+		motionType = kMotionNormal;
+		cycle = kCycleNormal;
+		priority = 0;
+		flags = 0;
+		move_x = 0;
+		move_y = 0;
+		move_stepSize = 0;
+		move_flag = 0;
+		follow_stepSize = 0;
+		follow_flag = 0;
+		follow_count = 0;
+		wander_count = 0;
+		loop_flag = 0;
+	}
 }; // struct vt_entry
 
 } // End of namespace Agi
