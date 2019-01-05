@@ -645,7 +645,7 @@ MessageQueue *sceneHandler04_kozFly5(StaticANIObject *ani, double phase) {
 
 	MessageQueue *mq1 = aniHandler.makeRunQueue(&mkQueue);
 
-	memset(&mkQueue, 0, sizeof(mkQueue));
+	mkQueue.reset();
 	mkQueue.ani = ani;
 	mkQueue.staticsId1 = ST_KZW_JUMPOUT;
 	mkQueue.staticsId2 = ST_KZW_SIT;
