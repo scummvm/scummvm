@@ -44,6 +44,7 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	_screen = NULL;
 	_nextUpdatetime = 0;
 	_flags = 0;
+	_unkFlags1 = 0;
 	_sequenceOpcodes = new SequenceOpcodes(this);
 }
 
@@ -71,7 +72,7 @@ Common::Error DragonsEngine::run() {
 	_dragonINIResource = new DragonINIResource(_bigfileArchive);
 	ActorResourceLoader *actorResourceLoader = new ActorResourceLoader(_bigfileArchive);
 	_actorManager = new ActorManager(actorResourceLoader);
-	_scene = new Scene(_screen, _bigfileArchive, _actorManager, _dragonRMS, _dragonINIResource);
+	_scene = new Scene(this, _screen, _bigfileArchive, _actorManager, _dragonRMS, _dragonINIResource);
 	_flags = 0x1046;
 
 	_scene->loadScene(0x12, 0x1e);
@@ -96,12 +97,55 @@ void DragonsEngine::gameLoop() {
 	while (!shouldQuit()) {
 		updateHandler();
 		updateEvents();
+		_scene->draw();
+		_screen->updateScreen();
 		wait();
 	}
 }
 
 void DragonsEngine::updateHandler() {
 	updateActorSequences();
+
+	//TODO logic here
+	for (uint16 i = 0; i < 0x17; i++) {
+		Actor *actor = _actorManager->getActor(i);
+		if (actor->flags & Dragons::ACTOR_FLAG_40) {
+			if (!(actor->flags & Dragons::ACTOR_FLAG_100)) {
+				int16 priority = _scene->getPriorityAtPosition(Common::Point(actor->x_pos, actor->y_pos));
+				DragonINI *flicker = _dragonINIResource->getFlickerRecord();
+				if (flicker && _scene->contains(flicker) && flicker->actor->_actorID == i) {
+					if (priority < 8 || priority == 0x10) {
+						actor->field16 = priority;
+					}
+				} else {
+					if (priority != -1) {
+						actor->field16 = priority;
+					}
+				}
+
+				if (actor->field16 >= 0x11) {
+					actor->field16 = 0;
+				}
+
+				if (actor->field16 >= 9) {
+					actor->field16 -= 8;
+				}
+			}
+
+			if (actor->sequenceTimer != 0) {
+				actor->sequenceTimer--;
+			}
+		}
+	}
+
+	if (_flags & Dragons::ENGINE_FLAG_80) {
+		for (uint16 i = 0x17; i < DRAGONS_ENGINE_NUM_ACTORS; i++) {
+			Actor *actor = _actorManager->getActor(i);
+			if (actor->sequenceTimer != 0) {
+				actor->sequenceTimer--;
+			}
+		}
+	}
 }
 
 const char *DragonsEngine::getSavegameFilename(int num) {
@@ -162,14 +206,14 @@ void DragonsEngine::wait() {
 
 void DragonsEngine::updateActorSequences() {
 	if (!(_flags & Dragons::ENGINE_FLAG_4)) {
-		return;
+//TODO 		return;
 	}
 
 	//TODO ResetRCnt(0xf2000001);
 
 	int16 actorId = _flags & Dragons::ENGINE_FLAG_80 ? (int16)64 : (int16)23;
 
-	while (actorId >= 0) {
+	while (actorId > 0) {
 		actorId--;
 		Actor *actor = _actorManager->getActor((uint16)actorId);
 		if (actorId < 2 && _flags & Dragons::ENGINE_FLAG_40) {
@@ -179,7 +223,7 @@ void DragonsEngine::updateActorSequences() {
 		if (actor->flags & Dragons::ACTOR_FLAG_40 &&
 				!(actor->flags & Dragons::ACTOR_FLAG_4) &&
 				!(actor->flags & Dragons::ACTOR_FLAG_400) &&
-				(actor->frameIndex_maybe == 0 || actor->flags & Dragons::ACTOR_FLAG_1)) {
+				(actor->sequenceTimer == 0 || actor->flags & Dragons::ACTOR_FLAG_1)) {
 			debug("Actor[%d] execute sequenceOp", actorId);
 
 			if (actor->flags & Dragons::ACTOR_FLAG_1) {
@@ -189,14 +233,31 @@ void DragonsEngine::updateActorSequences() {
 			}
 			//TODO execute sequence Opcode here.
 			OpCall opCall;
-			opCall._op = (byte)READ_LE_UINT16(actor->_seqCodeIp);
-			opCall._opSize = (byte)READ_LE_UINT16(actor->_seqCodeIp + 2);
-			opCall._code = actor->_seqCodeIp + 4;
-			opCall._deltaOfs = opCall._opSize;
-			_sequenceOpcodes->execOpcode(actor, opCall);
-			return;
+			opCall._result = 1;
+			while (opCall._result == 1) {
+				opCall._op = (byte) READ_LE_UINT16(actor->_seqCodeIp);
+				opCall._code = actor->_seqCodeIp + 2;
+				_sequenceOpcodes->execOpcode(actor, opCall);
+				actor->_seqCodeIp += opCall._deltaOfs;
+			}
 		}
 	}
+}
+
+void DragonsEngine::setFlags(uint32 flags) {
+	_flags |= flags;
+}
+
+void DragonsEngine::clearFlags(uint32 flags) {
+	_flags &= ~flags;
+}
+
+void DragonsEngine::setUnkFlags(uint32 flags) {
+	_unkFlags1 |= flags;
+}
+
+void DragonsEngine::clearUnkFlags(uint32 flags) {
+	_unkFlags1 &= ~flags;
 }
 
 } // End of namespace Dragons

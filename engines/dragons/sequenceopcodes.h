@@ -64,10 +64,15 @@ protected:
 	Common::String _opcodeNames[DRAGONS_NUM_SEQ_OPCODES];
 	void initOpcodes();
 	void freeOpcodes();
+	void updateReturn(OpCall &opCall, uint16 size);
 
 	// Opcodes
 	void opSetFramePointer(Actor *actor, OpCall &opCall);
+	void opSetFramePointerAndStop(Actor *actor, OpCall &opCall);
 	void opSetFieldC(Actor *actor, OpCall &opCall);
+	void opSetActorFlag4AndStop(Actor *actor, OpCall &opCall);
+	void opSetActorFlags404(Actor *actor, OpCall &opCall);
+	void opPlaySound(Actor *actor, OpCall &opCall);
 
 };
 

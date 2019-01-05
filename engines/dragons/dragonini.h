@@ -29,6 +29,18 @@ namespace Dragons {
 
 class Actor;
 
+enum IniFlags {
+	INI_FLAG_1 = 1,
+	INI_FLAG_2 = 2,
+	INI_FLAG_4 = 4,
+	INI_FLAG_8 = 8,
+	INI_FLAG_10 = 10,
+	INI_FLAG_20 = 20,
+	INI_FLAG_40 = 40,
+	INI_FLAG_80 = 80
+};
+
+
 struct DragonINI
 	{
 		int16 iptIndex_maybe;
@@ -39,7 +51,7 @@ struct DragonINI
 		Actor *actor;
 		uint16 sceneId;
 		int16 field_e;
-		uint16 field_10;
+		int16 field_10;
 		int16 field_12;
 		int16 field_14;
 		int16 x;

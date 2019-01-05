@@ -24,7 +24,6 @@
 
 #include "gui/EventRecorder.h"
 #include "engines/engine.h"
-#include "background.h"
 
 namespace Dragons {
 
@@ -65,7 +64,19 @@ enum Flags {
 	ENGINE_FLAG_80 = 80
 };
 
+enum UnkFlags {
+	ENGINE_UNK1_FLAG_1 = 1,
+	ENGINE_UNK1_FLAG_2 = 2,
+	ENGINE_UNK1_FLAG_4 = 4,
+	ENGINE_UNK1_FLAG_8 = 8,
+	ENGINE_UNK1_FLAG_10 = 10,
+	ENGINE_UNK1_FLAG_20 = 20,
+	ENGINE_UNK1_FLAG_40 = 40,
+	ENGINE_UNK1_FLAG_80 = 80
+};
+
 class BigfileArchive;
+class BackgroundResourceLoader;
 class DragonRMS;
 class DragonINIResource;
 class Scene;
@@ -85,6 +96,7 @@ private:
 	SequenceOpcodes *_sequenceOpcodes;
 	uint32 _nextUpdatetime;
 	uint32 _flags;
+	uint32 _unkFlags1;
 
 public:
 	DragonsEngine(OSystem *syst);
@@ -98,6 +110,11 @@ public:
 	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, SaveHeader &header, bool skipThumbnail = true);
 
 	void updateActorSequences();
+	void setFlags(uint32 flags);
+	void clearFlags(uint32 flags);
+
+	void setUnkFlags(uint32 flags);
+	void clearUnkFlags(uint32 flags);
 
 private:
 	void gameLoop();

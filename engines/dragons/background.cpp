@@ -51,7 +51,7 @@ void Dragons::PriorityLayer::load(TileMap &tileMap, byte *tiles) {
 	memcpy(_values, tiles, tileSize);
 }
 
-int PriorityLayer::getPriority(Common::Point pos) {
+int16 PriorityLayer::getPriority(Common::Point pos) {
 	pos.x = CLIP<int16>(pos.x, 0, _width - 1);
 	pos.y = CLIP<int16>(pos.y, 0, _height - 1);
 	const int16 tx = pos.x / 32, sx = pos.x % 32;
@@ -151,6 +151,14 @@ uint16 Background::getWidth() {
 uint16 Background::getHeight() {
 	assert (_bgLayer);
 	return _bgLayer->h;
+}
+
+int16 Background::getPriorityAtPoint(Common::Point pos) {
+	if (pos.x < 0 || pos.x >= _bgLayer->w || pos.y < 0 || pos.y >= _bgLayer->h) {
+		return -1;
+	}
+	int16 priority = _priorityLayer->getPriority(pos);
+	return priority < 0x10 ? priority : 0;
 }
 
 BackgroundResourceLoader::BackgroundResourceLoader(BigfileArchive *bigFileArchive, DragonRMS *dragonRMS) : _bigFileArchive(

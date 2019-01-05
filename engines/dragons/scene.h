@@ -27,6 +27,7 @@
 
 namespace Dragons {
 
+class DragonsEngine;
 class ActorManager;
 class Background;
 class DragonRMS;
@@ -34,9 +35,11 @@ class BackgroundResourceLoader;
 class DragonINIResource;
 class BigfileArchive;
 class Screen;
+class DragonINI;
 
 class Scene {
 private:
+	DragonsEngine *_vm;
 	Screen *_screen;
 	ActorManager *_actorManager;
 	Background *_stage;
@@ -49,11 +52,12 @@ private:
 	Common::Point _camera;
 
 public:
-	Scene(Screen *screen, BigfileArchive *bigfileArchive, ActorManager *actorManager, DragonRMS *_dragonRMS, DragonINIResource *_dragonINIResource);
+	Scene(DragonsEngine *vm, Screen *screen, BigfileArchive *bigfileArchive, ActorManager *actorManager, DragonRMS *_dragonRMS, DragonINIResource *_dragonINIResource);
 
 	void loadScene(uint32 sceneId, uint32 cameraPointId);
-
+	int16 getPriorityAtPosition(Common::Point pos);
 	void draw();
+	bool contains(DragonINI *ini);
 };
 
 } // End of namespace Dragons

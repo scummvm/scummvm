@@ -23,6 +23,8 @@
 #include "dragons/dragons.h"
 #include "dragons/sequenceopcodes.h"
 #include "dragons/actor.h"
+#include "sequenceopcodes.h"
+
 
 namespace Dragons {
 // OpCall
@@ -77,9 +79,15 @@ void SequenceOpcodes::initOpcodes() {
 	}
 	// Register opcodes
 	OPCODE(1, opSetFramePointer);
+	OPCODE(2, opSetFramePointerAndStop);
 
 
 	OPCODE(4, opSetFieldC);
+
+	OPCODE(9, opSetActorFlag4AndStop);
+
+	OPCODE(11, opSetActorFlags404);
+	OPCODE(17, opPlaySound);
 
 }
 
@@ -91,19 +99,49 @@ void SequenceOpcodes::freeOpcodes() {
 	}
 }
 
+void SequenceOpcodes::updateReturn(OpCall &opCall, uint16 size) {
+	opCall._deltaOfs = size * 2 + 2;
+}
+
 // Opcodes
 
 void SequenceOpcodes::opSetFramePointer(Actor *actor, OpCall &opCall) {
 	ARG_INT16(framePointer);
-	//TODO update frame pointer
+	debug(3, "set frame pointer %X", framePointer);
+	actor->loadFrame((uint16)framePointer);
 	actor->flags |= Dragons::ACTOR_FLAG_2;
-	actor->frameIndex_maybe = actor->field_c;
+	actor->sequenceTimer = actor->field_c;
+	updateReturn(opCall, 1);
+}
+
+void SequenceOpcodes::opSetFramePointerAndStop(Actor *actor, OpCall &opCall) {
+	opSetFramePointer(actor, opCall);
+	opCall._result = 0;
 }
 
 void SequenceOpcodes::opSetFieldC(Actor *actor, OpCall &opCall) {
 	ARG_INT16(newFieldC);
 	actor->field_c = (uint16)newFieldC;
+	updateReturn(opCall, 1);
 }
+
+void SequenceOpcodes::opSetActorFlag4AndStop(Actor *actor, OpCall &opCall) {
+	actor->flags |= Dragons::ACTOR_FLAG_4;
+	opCall._deltaOfs = 0;
+	opCall._result = 0;
+	//updateReturn(opCall, 1);
+}
+
+void SequenceOpcodes::opSetActorFlags404(Actor *actor, OpCall &opCall) {
+	actor->flags |= (Dragons::ACTOR_FLAG_4 | Dragons::ACTOR_FLAG_400 );
+	updateReturn(opCall, 1);
+}
+void SequenceOpcodes::opPlaySound(Actor *actor, OpCall &opCall) {
+	ARG_INT16(soundId);
+	// TODO play sound here.
+	updateReturn(opCall, 1);
+}
+
 
 //void SequenceOpcodes::opYield(Control *control, OpCall &opCall) {
 //	opCall._result = 2;
