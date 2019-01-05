@@ -35,6 +35,8 @@ struct TimerSlot {
 	uint32 nextFireTimeMicro;	// microseconds part of nextFire
 
 	TimerSlot *next;
+
+	TimerSlot() : callback(nullptr), refCon(nullptr), interval(0), nextFireTime(0), nextFireTimeMicro(0), next(nullptr) {}
 };
 
 void insertPrioQueue(TimerSlot *head, TimerSlot *newSlot) {
@@ -63,7 +65,6 @@ DefaultTimerManager::DefaultTimerManager() :
 	_head(0) {
 
 	_head = new TimerSlot();
-	memset(_head, 0, sizeof(TimerSlot));
 }
 
 DefaultTimerManager::~DefaultTimerManager() {
