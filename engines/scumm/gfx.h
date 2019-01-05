@@ -53,6 +53,18 @@ struct CameraData {
 	int _leftTrigger, _rightTrigger;
 	byte _follows, _mode;
 	bool _movingToActor;
+
+	void reset() {
+		_cur.x = _cur.y = 0;
+		_dest.x = _dest.y = 0;
+		_accel.x = _accel.y = 0;
+		_last.x = _last.y = 0;
+		_leftTrigger = 0;
+		_rightTrigger = 0;
+		_follows = 0;
+		_mode = 0;
+		_movingToActor = 0;
+	}
 };
 
 /** Virtual screen identifiers */

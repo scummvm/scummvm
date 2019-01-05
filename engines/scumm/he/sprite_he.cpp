@@ -1086,8 +1086,13 @@ void Sprite::resetGroup(int spriteGroupId) {
 }
 
 void Sprite::resetTables(bool refreshScreen) {
-	memset(_spriteTable, 0, (_varNumSprites + 1) * sizeof(SpriteInfo));
-	memset(_spriteGroups, 0, (_varNumSpriteGroups + 1) * sizeof(SpriteGroup));
+	for (int i = 0; i < _varNumSprites; i++) {
+		_spriteTable[i].reset();
+	}
+	for (int i = 0; i < _varNumSpriteGroups; i++) {
+		_spriteGroups[i].reset();
+	}
+
 	for (int curGrp = 1; curGrp < _varNumSpriteGroups; ++curGrp)
 		resetGroup(curGrp);
 

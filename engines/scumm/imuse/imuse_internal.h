@@ -106,7 +106,15 @@ struct HookDatas {
 
 	int query_param(int param, byte chan);
 	int set(byte cls, byte value, byte chan);
-	HookDatas() { memset(this, 0, sizeof(HookDatas)); }
+	HookDatas() { reset(); }
+	void reset() {
+		_transpose = 0;
+		memset(_jump, 0, sizeof(_jump));
+		memset(_part_onoff, 0, sizeof(_part_onoff));
+		memset(_part_volume, 0, sizeof(_part_volume));
+		memset(_part_program, 0, sizeof(_part_program));
+		memset(_part_transpose, 0, sizeof(_part_transpose));
+	}
 };
 
 struct ParameterFader {

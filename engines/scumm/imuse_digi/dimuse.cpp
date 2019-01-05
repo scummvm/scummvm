@@ -55,7 +55,7 @@ IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, Audio::Mixer *mixer, int fps)
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		_track[l] = new Track;
 		assert(_track[l]);
-		memset(_track[l], 0, sizeof(Track));
+		_track[l]->reset();
 		_track[l]->trackId = l;
 	}
 	_vm->getTimerManager()->installTimerProc(timer_handler, 1000000 / _callbackFps, this, "IMuseDigital");
@@ -147,7 +147,7 @@ void IMuseDigital::saveLoadEarly(Common::Serializer &s) {
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		Track *track = _track[l];
 		if (s.isLoading()) {
-			memset(track, 0, sizeof(Track));
+			track->reset();
 		}
 		syncWithSerializer(s, *track);
 		if (s.isLoading()) {
@@ -210,7 +210,7 @@ void IMuseDigital::callback() {
 			// mark it as unused.
 			if (!track->stream) {
 				if (!_mixer->isSoundHandleActive(track->mixChanHandle))
-					memset(track, 0, sizeof(Track));
+					track->reset();
 				continue;
 			}
 

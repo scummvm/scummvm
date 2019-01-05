@@ -75,7 +75,34 @@ struct Track {
 	Audio::SoundHandle mixChanHandle;					// sound mixer's channel handle
 	Audio::QueuingAudioStream *stream;		// sound mixer's audio stream handle for *.la1 and *.bun
 
-	Track() : soundId(-1), used(false), stream(NULL) {
+	Track() : soundId(-1), used(false), stream(nullptr) {
+	}
+
+	void reset() {
+		trackId = 0;
+		pan = 0;
+		vol = 0;
+		volFadeDest = 0;
+		volFadeStep = 0;
+		volFadeDelay = 0;
+		volFadeUsed = false;
+		soundId = 0;
+		memset(soundName, 0, sizeof(soundName));
+		used = false;
+		toBeRemoved = false;
+		souStreamUsed = false;
+		sndDataExtComp = false;
+		soundPriority = 0;
+		regionOffset = 0;
+		dataOffset = 0;
+		curRegion = 0;
+		curHookId = 0;
+		soundType = 0;
+		feedSize = 0;
+		dataMod12Bit = 0;
+		mixerFlags = 0;
+		soundDesc = nullptr;
+		stream = nullptr;
 	}
 
 	int getPan() const { return (pan != 64) ? 2 * pan - 127 : 0; }
