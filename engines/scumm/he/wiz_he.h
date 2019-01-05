@@ -33,6 +33,16 @@ struct WizPolygon {
 	int id;
 	int numVerts;
 	bool flag;
+
+	void reset() {
+		for (int i = 0; i < ARRAYSIZE(vert); i++) {
+			vert[i].x = vert[i].y = 0;
+		}
+		bound.top = bound.left = bound.bottom = bound.right = 0;
+		id = 0;
+		numVerts = 0;
+		flag = 0;
+	}
 };
 
 struct WizImage {
@@ -107,6 +117,46 @@ struct WizParameters {
 	int spriteGroup;
 	int conditionBits;
 	WizImage img;
+
+	void reset() {
+		field_0 = 0;
+		memset(filename, 0, sizeof(filename));
+		box.top = box.left = box.bottom = box.right = 0;
+		processFlags = 0;
+		processMode = 0;
+		field_11C = 0;
+		field_120 = 0;
+		field_124 = 0;
+		field_128 = 0;
+		field_12C = 0;
+		field_130 = 0;
+		field_134 = 0;
+		field_138 = 0;
+		compType = 0;
+		fileWriteMode = 0;
+		angle = 0;
+		scale = 0;
+		polygonId1 = 0;
+		polygonId2 = 0;
+		resDefImgW = 0;
+		resDefImgH = 0;
+		sourceImage = 0;
+		params1 = 0;
+		params2 = 0;
+		memset(remapColor, 0, sizeof(remapColor));
+		memset(remapIndex, 0, sizeof(remapIndex));
+		remapNum = 0;
+		dstResNum = 0;
+		fillColor = 0;
+		memset(&fontProperties, 0, sizeof(FontProperties));
+		memset(&ellipseProperties, 0, sizeof(EllipseProperties));
+		box2.left = box2.top = box2.bottom = box2.right = 0;
+		blendFlags = 0;
+		spriteId = 0;
+		spriteGroup = 0;
+		conditionBits = 0;
+		memset(&img, 0, sizeof(WizImage));
+	}
 };
 
 enum WizImageFlags {

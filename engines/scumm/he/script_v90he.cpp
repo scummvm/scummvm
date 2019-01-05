@@ -1486,7 +1486,7 @@ void ScummEngine_v90he::o90_floodFill() {
 		pop();
 		break;
 	case 57:
-		memset(&_floodFillParams, 0, sizeof(_floodFillParams));
+		_floodFillParams.reset();
 		_floodFillParams.box.left = 0;
 		_floodFillParams.box.top = 0;
 		_floodFillParams.box.right = 639;
@@ -1630,7 +1630,7 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 				push(0);
 			} else {
 				WizPolygon wp;
-				memset(&wp, 0, sizeof(wp));
+				wp.reset();
 				wp.numVerts = n1;
 				assert(n1 < ARRAYSIZE(wp.vert));
 				for (int i = 0; i < n1; ++i) {

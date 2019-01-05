@@ -163,7 +163,7 @@ void Player::clear() {
 }
 
 void Player::hook_clear() {
-	memset(&_hook, 0, sizeof(_hook));
+	_hook.reset();
 }
 
 int Player::start_seq_sound(int sound, bool reset_vars) {

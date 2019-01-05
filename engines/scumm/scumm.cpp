@@ -245,7 +245,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_screenHeight = 0;
 	_screenWidth = 0;
 	memset(_virtscr, 0, sizeof(_virtscr));
-	memset(&camera, 0, sizeof(CameraData));
+	camera.reset();
 	memset(_colorCycle, 0, sizeof(_colorCycle));
 	memset(_colorUsedByCycle, 0, sizeof(_colorUsedByCycle));
 	_ENCD_offs = 0;
@@ -331,8 +331,18 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_townsPaletteFlags = 0;
 	_townsClearLayerFlag = 1;
 	_townsActiveLayerFlags = 3;
-	memset(&_curStringRect, -1, sizeof(Common::Rect));
-	memset(&_cyclRects, 0, 16 * sizeof(Common::Rect));
+	_curStringRect.top = -1;
+	_curStringRect.left = -1;
+	_curStringRect.bottom = -1;
+	_curStringRect.right = -1;
+
+	for (int i = 0; i < ARRAYSIZE(_cyclRects); i++) {
+		_cyclRects[i].top = 0;
+		_cyclRects[i].left = 0;
+		_cyclRects[i].bottom = 0;
+		_cyclRects[i].right = 0;
+	}
+
 	_numCyclRects = 0;
 #endif
 
@@ -1781,7 +1791,7 @@ void ScummEngine_v90he::resetScumm() {
 	_hePaletteNum = 0;
 
 	_sprite->resetTables(0);
-	memset(&_wizParams, 0, sizeof(_wizParams));
+	_wizParams.reset();
 
 	if (_game.heversion >= 98)
 		_logicHE = LogicHE::makeLogicHE(this);
