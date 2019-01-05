@@ -896,9 +896,9 @@ bool GlkAPI::glk_image_draw(winid_t win, uint image, int val1, int val2) {
 		GraphicsWindow *gfxWin = dynamic_cast<GraphicsWindow *>(win);
 
 		if (textWin)
-			textWin->drawPicture(image, val1, false, 0, 0);
+			return textWin->drawPicture(image, val1, false, 0, 0);
 		else if (gfxWin)
-			gfxWin->drawPicture(image, val1, val2, false, 0, 0);
+			return gfxWin->drawPicture(image, val1, val2, false, 0, 0);
 	}
 
 	return false;
@@ -913,9 +913,9 @@ bool GlkAPI::glk_image_draw_scaled(winid_t win, uint image, int val1, int val2,
 		GraphicsWindow *gfxWin = dynamic_cast<GraphicsWindow *>(win);
 
 		if (textWin)
-			textWin->drawPicture(image, val1, true, width, height);
+			return textWin->drawPicture(image, val1, true, width, height);
 		else if (gfxWin)
-			gfxWin->drawPicture(image, val1, val2, true, width, height);
+			return gfxWin->drawPicture(image, val1, val2, true, width, height);
 	}
 
 	return false;

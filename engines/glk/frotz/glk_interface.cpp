@@ -490,9 +490,9 @@ void GlkInterface::showBeyondZorkTitle() {
 
 	if (saveSlot == -1) {
 		winid_t win = glk_window_open(0, 0, 0, wintype_Graphics, 0);
-		glk_image_draw_scaled(win, 1, 0, 0, g_vm->_screen->w, g_vm->_screen->h);
+		if (glk_image_draw_scaled(win, 1, 0, 0, g_vm->_screen->w, g_vm->_screen->h))
+			_events->waitForPress();
 
-		_events->waitForPress();
 		glk_window_close(win, nullptr);
 	}
 }
