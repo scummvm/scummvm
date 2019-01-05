@@ -24,6 +24,7 @@
 #define GLK_FROTZ_WINDOWS
 
 #include "glk/windows.h"
+#include "glk/frotz/frotz_types.h"
 
 namespace Glk {
 namespace Frotz {
@@ -45,20 +46,49 @@ class Windows;
  */
 class Window {
 	friend class Windows;
+
+	/**
+	 * Stub class for accessing window properties via the square brackets operator
+	 */
+	class PropertyAccessor {
+	private:
+		Window *_owner;
+		WindowProperty _prop;
+	public:
+		/**
+		 * Constructor
+		 */
+		PropertyAccessor(Window *owner, WindowProperty prop) : _owner(owner), _prop(prop) {}
+
+		/**
+		 * Get
+		 */
+		operator zword() const {
+			return _owner->getProperty(_prop);
+		}
+
+		/**
+		 * Set
+		 */
+		PropertyAccessor &operator=(zword val) {
+			_owner->setProperty(_prop, val);
+			return *this;
+		}
+	};
 private:
 	Windows *_windows;
 	winid_t _win;
-	uint16 _properties[TRUE_BG_COLOR + 1];
+	zword _properties[TRUE_BG_COLOR + 1];
 private:
 	/**
 	 * Get a property value
 	 */
-	const uint16 &getProperty(WindowProperty propType);
+	const zword &getProperty(WindowProperty propType);
 
 	/**
 	 * Set a property value
 	 */
-	void setProperty(WindowProperty propType, uint16 value);
+	void setProperty(WindowProperty propType, zword value);
 
 	/**
 	 * Called when trying to reposition or resize windows. Does special handling for the lower window
@@ -99,7 +129,7 @@ public:
 	/**
 	 * Property accessor
 	 */
-	const uint16 &operator[](WindowProperty propType) { return getProperty(propType); }
+	PropertyAccessor operator[](WindowProperty propType) { return PropertyAccessor(this, propType); }
 
 	/**
 	 * Set the window size

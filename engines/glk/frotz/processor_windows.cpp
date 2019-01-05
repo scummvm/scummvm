@@ -228,14 +228,16 @@ void Processor::z_get_wind_prop() {
 }
 
 void Processor::z_put_wind_prop() {
-#ifdef TODO
 	flush_buffer();
 
-	if (zargs[1] >= 16)
+	zword win = winarg0();
+	WindowProperty prop = (WindowProperty)zargs[1];
+	zword val = zargs[2];
+
+	if (prop >= TRUE_FG_COLOR)
 		runtimeError(ERR_ILL_WIN_PROP);
 
-	((zword *)(wp + winarg0()))[zargs[1]] = zargs[2];
-#endif
+	_wp[win][prop] = val;
 }
 
 void Processor::z_scroll_window() {

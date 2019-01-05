@@ -110,15 +110,18 @@ void Window::setPosition(const Point &newPos) {
 		_win->setPosition(Point((newPos.x - 1) * g_conf->_monoInfo._cellW, (newPos.y - 1) * g_conf->_monoInfo._cellH));
 }
 
-const uint16 &Window::getProperty(WindowProperty propType) {
+const zword &Window::getProperty(WindowProperty propType) {
 	if (_win)
 		update();
 
 	return _properties[propType];
 }
 
-void Window::setProperty(WindowProperty propType, uint16 value) {
-	// TODO
+void Window::setProperty(WindowProperty propType, zword value) {
+	switch (propType) {
+	default:
+		warning("Setting window property %d not yet supported", (int)propType);
+	}
 }
 
 void Window::checkRepositionLower() {
