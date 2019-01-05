@@ -317,7 +317,7 @@ reg_t kMapKeyToDir(EngineState *s, int argc, reg_t *argv);
 reg_t kGlobalToLocal(EngineState *s, int argc, reg_t *argv);
 reg_t kLocalToGlobal(EngineState *s, int argc, reg_t *argv);
 reg_t kWait(EngineState *s, int argc, reg_t *argv);
-reg_t kRestartGame(EngineState *s, int argc, reg_t *argv);
+reg_t kRestartGame16(EngineState *s, int argc, reg_t *argv);
 reg_t kDeviceInfo(EngineState *s, int argc, reg_t *argv);
 reg_t kGetEvent(EngineState *s, int argc, reg_t *argv);
 reg_t kCheckFreeSpace(EngineState *s, int argc, reg_t *argv);
