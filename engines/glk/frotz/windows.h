@@ -48,17 +48,12 @@ class Window {
 private:
 	Windows *_windows;
 	winid_t _win;
-	uint16 _tempVal;		///< used in calls to square brackets operator
+	uint16 _properties[TRUE_BG_COLOR + 1];
 private:
-	/**
-	 * Gets a reference to the window, creating a new one if one doesn't already exist
-	 */
-	winid_t getWindow();
-
 	/**
 	 * Get a property value
 	 */
-	uint16 getProperty(WindowProperty propType);
+	const uint16 &getProperty(WindowProperty propType);
 
 	/**
 	 * Set a property value
@@ -69,6 +64,11 @@ private:
 	 * Called when trying to reposition or resize windows. Does special handling for the lower window
 	 */
 	void checkRepositionLower();
+
+	/**
+	 * Updates the local window properties based on an attached Glk window
+	 */
+	void update();
 public:
 	/**
 	 * Constructor
@@ -86,17 +86,20 @@ public:
 	/**
 	 * Cast operator for getting a Glk window
 	 */
-	operator winid_t() const { return _win; }
+	operator winid_t() const {
+		assert(_win);
+		return _win;
+	}
 
 	/**
-	 * Cast operator for testing if the window is valid (present)
+	 * Cast operator for testing if the window has a proper Glk window attached to it
 	 */
 	operator bool() const { return _win != nullptr; }
 
 	/**
 	 * Property accessor
 	 */
-	const uint16 &operator[](WindowProperty propType);
+	const uint16 &operator[](WindowProperty propType) { return getProperty(propType); }
 
 	/**
 	 * Set the window size
@@ -116,6 +119,7 @@ class Windows {
 private:
 	Window _windows[8];
 public:
+	winid_t _background;
 	Window &_lower;
 	Window &_upper;
 public:
@@ -133,6 +137,11 @@ public:
 	 * Array access
 	 */
 	Window &operator[](uint idx);
+
+	/**
+	 * Setup the screen
+	 */
+	void setup(bool isVersion6);
 };
 
 } // End of namespace Frotz

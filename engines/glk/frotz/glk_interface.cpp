@@ -145,10 +145,8 @@ void GlkInterface::initialize() {
 	if (_storyId == BEYOND_ZORK)
 		showBeyondZorkTitle();
 
-	_wp._lower = glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
-	_wp._upper = glk_window_open(_wp._lower, winmethod_Above | winmethod_Fixed, 0, wintype_TextGrid, 0);
-
-	glk_set_window(_wp._lower);
+	_wp.setup(h_version == 6);
+	cwin = 0;
 	gos_curwin = _wp._lower;
 
 	/*
