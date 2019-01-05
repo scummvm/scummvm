@@ -28,6 +28,9 @@ namespace Dragons {
 class Actor;
 class ActorResourceLoader;
 class ActorResource;
+struct ActorFrame;
+
+#define DRAGONS_ENGINE_NUM_ACTORS 64
 
 enum ActorFlags {
 	ACTOR_FLAG_1 = 1,
@@ -45,7 +48,7 @@ enum ActorFlags {
 	ACTOR_FLAG_1000 = 0x1000,
 	ACTOR_FLAG_2000 = 0x2000,
 	ACTOR_FLAG_4000 = 0x4000,
-	ACTOR_FLAG_8000 = 0x8000
+	ACTOR_FLAG_8000 = 0x8000  //Seems turn off semi trans mode when selected.
 };
 
 class ActorManager {
@@ -63,6 +66,8 @@ public:
 	Actor *loadActor(uint32 resourceId, uint32 sequenceId, int16 x, int16 y);
 	Actor *loadActor(uint32 resourceId, uint32 sequenceId, int16 x, int16 y, uint16 field16);
 	Actor *getActor(uint16 actorId);
+	void clearActorFlags(uint16 startingActorId);
+
 private:
 	Actor *findFreeActor(int16 resourceID);
 };
@@ -75,12 +80,14 @@ public:
 	int16 resourceID;
 	byte *_seqCodeIp;
 	void* frame_pointer_maybe;
+	ActorFrame *frame;
+	Graphics::Surface *surface;
 	uint16 field_c;
 	int16 var_e;
-	uint16 frameIndex_maybe;
+	uint16 sequenceTimer;
 	uint16 _sequenceID;
 	uint16 _sequenceID2;
-	uint16 field16;
+	int16 field16;
 	uint16 flags;
 	int16 x_pos;
 	int16 y_pos;
@@ -110,6 +117,7 @@ public:
 	Graphics::Surface *getCurrentFrame();
 	void updateSequence(uint16 newSequenceID);
 	void resetSequenceIP();
+	void loadFrame(uint16 frameOffset);
 };
 
 } // End of namespace Dragons

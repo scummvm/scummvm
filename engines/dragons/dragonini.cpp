@@ -45,7 +45,7 @@ DragonINIResource::DragonINIResource(BigfileArchive *bigfileArchive) {
 		_dragonINI[i].actor = NULL;
 		_dragonINI[i].sceneId = readStream->readUint16LE();
 		_dragonINI[i].field_e = readStream->readSint16LE();
-		_dragonINI[i].field_10 = readStream->readUint16LE();
+		_dragonINI[i].field_10 = readStream->readSint16LE();
 		_dragonINI[i].field_12 = readStream->readSint16LE();
 		_dragonINI[i].field_14 = readStream->readSint16LE();
 		_dragonINI[i].x = readStream->readSint16LE();

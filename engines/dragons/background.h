@@ -59,6 +59,7 @@ public:
 	Graphics::Surface *getBgLayer() { return _bgLayer; }
 	Graphics::Surface *getMgLayer() { return _mgLayer; }
 	Graphics::Surface *getFgLayer() { return _fgLayer; }
+	int16 getPriorityAtPoint(Common::Point pos);
 	Common::Point getPoint2(uint32 pointIndex);
 	byte *getPalette() { return _palette; }
 
@@ -71,7 +72,7 @@ private:
 class PriorityLayer {
 public:
 	void load(TileMap &tileMap, byte *tiles);
-	int getPriority(Common::Point pos);
+	int16 getPriority(Common::Point pos);
 protected:
 	int16 _width, _height;
 	int16 _mapWidth, _mapHeight;

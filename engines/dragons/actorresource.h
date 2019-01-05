@@ -30,8 +30,8 @@ class BigfileArchive;
 class ActorResource;
 
 struct ActorFrame {
-	int16 field_0;
-	int16 field_2;
+	int16 xOffset;
+	int16 yOffset;
 	uint8 width;
 	uint8 height;
 	byte *frameDataOffset;
@@ -50,6 +50,7 @@ public:
 
 class ActorResource {
 private:
+	uint32 _id;
 	byte *_data;
 	ActorFrame *_frames;
 	uint16 _framesCount;
@@ -58,10 +59,14 @@ private:
 	uint16 _sequenceCount;
 
 public:
-	bool load(byte *dataStart, Common::SeekableReadStream &stream);
+	bool load(uint32 id, byte *dataStart, Common::SeekableReadStream &stream);
 	Graphics::Surface *loadFrame(uint16 frameNumber);
+	Graphics::Surface *loadFrame(ActorFrame &frameNumber);
+	ActorFrame *loadFrameHeader(uint16 frameOffset);
+
 	ActorFrame *getFrameHeader(uint16 frameNumber);
 	byte *getSequenceData(int16 sequenceId);
+	const char *getFilename();
 
 private:
 	void writePixelBlock(byte *pixels, byte *data);

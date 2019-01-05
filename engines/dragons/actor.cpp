@@ -26,7 +26,7 @@
 namespace Dragons {
 
 ActorManager::ActorManager(ActorResourceLoader *actorResourceLoader) : _actorResourceLoader(actorResourceLoader) {
-	for (uint16 i = 0; i < 64; i++) {
+	for (uint16 i = 0; i < DRAGONS_ENGINE_NUM_ACTORS; i++) {
 		_actors.push_back(Actor(i));
 	}
 }
@@ -68,8 +68,15 @@ Actor *ActorManager::findFreeActor(int16 resourceId) {
 }
 
 Actor *ActorManager::getActor(uint16 actorId) {
-	assert(actorId < 64);
+	assert(actorId < DRAGONS_ENGINE_NUM_ACTORS);
 	return &_actors[actorId];
+}
+
+void ActorManager::clearActorFlags(uint16 startingActorId) {
+	assert(startingActorId < DRAGONS_ENGINE_NUM_ACTORS);
+	for(uint16 i = startingActorId; i < DRAGONS_ENGINE_NUM_ACTORS; i++) {
+		_actors[i].flags = 0;
+	}
 }
 
 Actor::Actor(uint16 id) : _actorID(id) {
@@ -88,13 +95,15 @@ Actor::Actor(uint16 id) : _actorID(id) {
 	frame_height = 0;
 	frame_flags = 0;
 	clut = 0;
+	frame = NULL;
+	surface = NULL;
 }
 
 void Actor::init(ActorResource *resource, int16 x, int16 y, uint32 sequenceID) {
 	_actorResource = resource;
 	x_pos = x;
 	y_pos = y;
-	frameIndex_maybe = 0;
+	sequenceTimer = 0;
 	target_x_pos = x;
 	target_y_pos = y;
 	var_e = 0x100;
@@ -109,9 +118,9 @@ void Actor::init(ActorResource *resource, int16 x, int16 y, uint32 sequenceID) {
 }
 
 Graphics::Surface *Actor::getCurrentFrame() {
-	frame_vram_x = _actorResource->getFrameHeader(frameIndex_maybe)->field_0;
-	frame_vram_y = _actorResource->getFrameHeader(frameIndex_maybe)->field_2;
-	return _actorResource->loadFrame(frameIndex_maybe);
+	frame_vram_x = _actorResource->getFrameHeader(sequenceTimer)->xOffset;
+	frame_vram_y = _actorResource->getFrameHeader(sequenceTimer)->yOffset;
+	return _actorResource->loadFrame(sequenceTimer);
 }
 
 void Actor::updateSequence(uint16 newSequenceID) {
@@ -122,6 +131,21 @@ void Actor::updateSequence(uint16 newSequenceID) {
 
 void Actor::resetSequenceIP() {
 	_seqCodeIp = _actorResource->getSequenceData(_sequenceID);
+}
+
+void Actor::loadFrame(uint16 frameOffset) {
+	if (frame) {
+		delete frame;
+	}
+	if (surface) {
+		delete surface;
+	}
+
+	frame = _actorResource->loadFrameHeader(frameOffset);
+	surface = _actorResource->loadFrame(*frame);
+
+	debug(3, "load frame header: (%d,%d)", frame->width, frame->height);
+
 }
 
 } // End of namespace Dragons

@@ -42,11 +42,12 @@ ActorResource *ActorResourceLoader::load(uint32 resourceId) {
 	Common::SeekableReadStream *readStream = new Common::MemoryReadStream(scrData, size, DisposeAfterUse::NO);
 
 	debug("Loading '%s'", filename);
-	actorResource->load(scrData, *readStream);
+	actorResource->load(resourceId, scrData, *readStream);
 	return actorResource;
 }
 
-bool ActorResource::load(byte *dataStart, Common::SeekableReadStream &stream) {
+bool ActorResource::load(uint32 id, byte *dataStart, Common::SeekableReadStream &stream) {
+	_id = id;
 	_data = dataStart;
 	stream.seek(0x6);
 	_sequenceTableOffset = stream.readUint16LE();
@@ -69,8 +70,8 @@ bool ActorResource::load(byte *dataStart, Common::SeekableReadStream &stream) {
 
 		uint16 offset = stream.readUint16LE();
 		stream.seek(offset);
-		_frames[i].field_0 = stream.readSint16LE();
-		_frames[i].field_2 = stream.readSint16LE();
+		_frames[i].xOffset = stream.readSint16LE();
+		_frames[i].yOffset = stream.readSint16LE();
 		_frames[i].width = stream.readByte() * 2; //FIXME the original checks actor->frame_flags bit 0 here at 0x80018438
 		_frames[i].height = stream.readByte();
 		uint32 frameDataOffset = stream.readUint32LE();
@@ -97,18 +98,22 @@ void ActorResource::writePixelBlock(byte *pixels, byte *data) {
 
 Graphics::Surface *ActorResource::loadFrame(uint16 frameNumber) {
 	assert (frameNumber < _framesCount);
+	return loadFrame(_frames[frameNumber]);
+}
+
+Graphics::Surface *ActorResource::loadFrame(ActorFrame &actorFrame) {
 
 	Graphics::Surface *surface = new Graphics::Surface();
 	Graphics::PixelFormat pixelFormat16(2, 5, 5, 5, 1, 10, 5, 0, 15); //TODO move this to a better location.
-	surface->create(_frames[frameNumber].width, _frames[frameNumber].height, pixelFormat16);
+	surface->create(actorFrame.width, actorFrame.height, pixelFormat16);
 
 	byte *pixels = (byte *)surface->getPixels();
 
-	int32 blockSize = ((_frames[frameNumber].width / 2) * _frames[frameNumber].height * 2) / 4;
+	int32 blockSize = ((actorFrame.width / 2) * actorFrame.height * 2) / 4;
 
-	debug("Frame blockSize: %d width: %d height: %d", blockSize, _frames[frameNumber].width, _frames[frameNumber].height);
+	debug("Frame blockSize: %d width: %d height: %d", blockSize, actorFrame.width, actorFrame.height);
 
-	byte *data = _frames[frameNumber].frameDataOffset;
+	byte *data = actorFrame.frameDataOffset;
 
 	while(blockSize > 0) {
 		int32 size = READ_BE_INT32(data);
@@ -158,6 +163,27 @@ byte *ActorResource::getSequenceData(int16 sequenceId)
 {
 	uint16 offset = READ_LE_UINT16(_data + _sequenceTableOffset + (sequenceId * 2));
 	return &_data[offset];
+}
+
+ActorFrame *ActorResource::loadFrameHeader(uint16 frameOffset) {
+	Common::SeekableReadStream *stream = new Common::MemoryReadStream(_data + frameOffset, sizeof(ActorFrame), DisposeAfterUse::NO);
+
+	ActorFrame *frame = new ActorFrame;
+	frame->xOffset = stream->readSint16LE();
+	frame->yOffset = stream->readSint16LE();
+	frame->width = stream->readByte() * 2; //FIXME the original checks actor->frame_flags bit 0 here at 0x80018438
+	frame->height = stream->readByte();
+	uint32 frameDataOffset = stream->readUint32LE();
+	frame->frameDataOffset = &_data[frameDataOffset];
+	frame->flags = stream->readUint16LE();
+	frame->field_c = stream->readUint16LE();
+
+	delete stream;
+	return frame;
+}
+
+const char *ActorResource::getFilename() {
+	return actorResourceFiles[_id];
 }
 
 } // End of namespace Dragons
