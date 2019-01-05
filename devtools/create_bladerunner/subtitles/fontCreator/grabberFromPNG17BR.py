@@ -66,13 +66,26 @@
 # DONE: ability to manually set extra width (additional columns at the end of glyph, with transparent color) for fonts by letter like a list in parameters or in overrideEncoding.txt }	 i:1,j:2,l:1 - POSITIVE VALUES ONLY
 # DONE: make space pixels (var spaceWidthInPixels) into an external param?
 # DONE: INFO NOTE IT IS NOT POSSIBLE TO have partial transparency
-
-import os, sys
-
+osLibFound = False
+sysLibFound = False
 shutilLibFound = False
 structLibFound = False
 imagePilLibFound = False
 reLibFound = False
+
+try:
+	import os 
+except ImportError:
+	print "[Error] os python library is required to be installed!" 
+else:
+	osLibFound = True
+	
+try:
+	import sys 
+except ImportError:
+	print "[Error] sys python library is required to be installed!" 
+else:
+	sysLibFound = True
 
 try:
 	import shutil 
@@ -102,7 +115,12 @@ except ImportError:
 else:
 	reLibFound = True	
 
-if 	(not shutilLibFound) or (not structLibFound) or (not imagePilLibFound) or (not reLibFound):
+if 	(not osLibFound) \
+	or (not sysLibFound) \
+	or (not shutilLibFound) \
+	or (not structLibFound) \
+	or (not imagePilLibFound) \
+	or (not reLibFound):
 	sys.stdout.write("[Error] Errors were found when trying to import required python libraries\n")
 	sys.exit(1)
 

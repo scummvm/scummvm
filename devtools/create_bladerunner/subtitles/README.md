@@ -33,10 +33,12 @@ Syntax Notes:
 4. The "-ld" optional switch is followed by a language description for the language of the game you are exporting Text Resources from. This switch is meaningful when you also use the "-xtre" switch to export Text Resource files.
     * Valid language values are: EN_ANY, DE_DEU, FR_FRA, IT_ITA, ES_ESP, RU_RUS 
     * Default language value is: EN_ANY (English)
-5. Using the "-xwav" optional switch, this tool will export __ALL__ game's audio files (AUD) (that are either speech or speech-related) in a WAV format. This is expected to run for a few minutes and take up quite a lot of your HDD space (about 650MB).
-6. Using the "-xtre" optional switch, the tool will add a sheet to the output Excel with the contents of each of the game's Text Resource files (TRx).
-7. You may use both, either or neither of the "-xwav" and "-xtre" switches, depending on what you need to do.
-8. The "--trace" optional switch enables extra debug messages to be printed. 
+5. The "-xwav" optional switch will export __ALL__ game's audio files (AUD) (that are either speech or speech-related) in a WAV format. This is expected to run for a few minutes and take up quite a lot of your HDD space (about 650MB).
+6. The "-xtre" optional switch will add extra sheets to the output Excel with the contents of each of the game's Text Resource files (TRx) (on sheet per TRx file).
+7. The "-xdevs" optional switch will add a sheet for Developer Commentary text and some additional voice-overs from SFX.MIX.
+8. The "-xpogo" optional switch will add a sheet for the POGO text.
+9. You may use all, a subset or none of the "-xwav", "-xtre", "-xpogo", "-xdevs" switches, depending on what you need to do.
+10. The "--trace" optional switch enables extra debug messages to be printed. 
 
 Usage:
 ```
@@ -78,7 +80,7 @@ The __text configuration file "configureFontsTranslation.txt"__ a __text file th
 	fontNameAndOutOfOrderGlyphs=TAHOMA#cp437#
 	fontNameAndOutOfOrderGlyphs=SYSTEM#latin-1#
 	````
-	* Note: for font files (FON) that you have created or edited with the fontCreator tool (e.g for the SUBTLS_E file for subtitles, or another in-game font file eg. KIA6PT, TAHOMA) you __should__ copy the 8-bit encoding and the comma separated out of order character tuples from the respective "override encoding" text file that you used with the fontCreator tool for each new/ edited font. Additionally, all the new and edited fonts (FON files that were output by the fontCreator script) should be in your working directory in order to include them in the SUBTITLES.MIX. It's important to keep the naming of those files unchanged. __Supported name values for imported FON files__ are:
+	* Note: for font files (FON) that you have created or edited with the fontCreator tool (e.g for the SUBTLS_E file for subtitles, or another in-game font file eg. KIA6PT, TAHOMA) you __should copy the 8-bit encoding and the comma separated out of order character tuples from the respective "override encoding" text file that you used with the fontCreator tool for each new/ edited font in the configureFontsTranslation.txt fields__. Additionally, __all the new and edited fonts (FON files that were output by the fontCreator script) should be in your working directory__ in order to include them in the SUBTITLES.MIX. It's important to keep the naming of those files unchanged. __Supported name values for imported FON files__ are:
 	SUBTLS_E.FON, KIA6PT.FON, TAHOMA18.FON, TAHOMA24.FON and SYSTEM.FON (practically you won't be using the last one). 
 	
 ## fontCreator (fontCreator.py)
@@ -117,7 +119,7 @@ The override encoding file is a __text file that should be saved in a UTF-8 enco
     * Don't use space(s) between the tuples!
 There is a sample of such file in the source folder for the fontCreator tool.
 	
-__For the exporting the game fonts (to PNG) mode__, the valid syntax expects only one (1) argument:
+__For the exporting of the game fonts (to PNG) mode__, the valid syntax expects only one (1) argument:
 1. folderpathForMIXFiles: is the path where the game's MIX files are located (STARTUP.MIX is required). The exported font files will be: 10PT.FON.PNG, TAHOMA18.FON.PNG, TAHOMA24.FON.PNG and KIA6PT.FON.PNG.
 
 __For the creation of subtitles' font mode__, there are six (6) mandatory launch arguments for the fontCreator tool:

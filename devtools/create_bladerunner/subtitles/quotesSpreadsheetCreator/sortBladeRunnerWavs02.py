@@ -7,12 +7,26 @@
 # DONE Add code and switch option: to get the blade runner installation directory as input, then find the TLK files and export them with proper naming
 # DONE fix proper names for sheets as per latest code changes
 #
-import os, sys
-
+osLibFound = False
+sysLibFound = False
 shutilLibFound = False
 xlwtLibFound = False
 csvLibFound = False
 
+try:
+	import os 
+except ImportError:
+	print "[Error] os python library is required to be installed!" 
+else:
+	osLibFound = True
+	
+try:
+	import sys 
+except ImportError:
+	print "[Error] sys python library is required to be installed!" 
+else:
+	sysLibFound = True
+	
 try:
 	import shutil
 except ImportError:
@@ -34,7 +48,11 @@ except ImportError:
 else:
 	csvLibFound = True
 
-if 	(not shutilLibFound) or (not xlwtLibFound) or (not csvLibFound):
+if 	(not osLibFound) \
+	or (not sysLibFound) \
+	or (not shutilLibFound) \
+	or (not xlwtLibFound) \
+	or (not csvLibFound):
 	sys.stdout.write("[Error] Errors were found when trying to import required python libraries\n")
 	sys.exit(1)
 
@@ -61,7 +79,29 @@ OUTPUT_XLS_FILENAME_EXT = '.xls'
 OUTPUT_XLS_QUOTES_SHEET = 'INGQUO_' # needs suffix x.TRx where x is the language code
 
 SUPPORTED_TLK_INPUT_FILES = [('1.TLK', 'TLK01'), ('2.TLK', 'TLK02'), ('3.TLK', 'TLK03'), ('A.TLK', 'TLK0A'), ('SPCHSFX.TLK', 'TLKSPCHSFX')]
-SUPPORTED_MIX_INPUT_FILES = ['STARTUP.MIX']
+SUPPORTED_MIX_INPUT_FOR_EXTRA_SPEECH_EXPORT_FILES = [('SFX.MIX', 'SFX')]
+SUPPORTED_EXPORTED_AUD_FROM_MIX_FILES = [('COLONY.AUD', 'SFX.MIX'), \
+										('MA04VO1A.AUD', 'SFX.MIX'), \
+										('CT01VO1A.AUD', 'SFX.MIX'), \
+										('HC01VO1A.AUD', 'SFX.MIX'), \
+										('67_0470R.AUD', 'SFX.MIX'), \
+										('67_0480R.AUD', 'SFX.MIX'), \
+										('67_0500R.AUD', 'SFX.MIX'), \
+										('67_0540R.AUD', 'SFX.MIX'), \
+										('67_0560R.AUD', 'SFX.MIX'), \
+										('67_0870R.AUD', 'SFX.MIX'), \
+										('67_0880R.AUD', 'SFX.MIX'), \
+										('67_0900R.AUD', 'SFX.MIX'),\
+										('67_0940R.AUD', 'SFX.MIX'), \
+										('67_0960R.AUD', 'SFX.MIX'), \
+										('67_1070R.AUD', 'SFX.MIX'), \
+										('67_1080R.AUD', 'SFX.MIX'), \
+										('67_1100R.AUD', 'SFX.MIX'), \
+										('67_1140R.AUD', 'SFX.MIX'), \
+										('67_1160R.AUD', 'SFX.MIX') \
+										]
+
+SUPPORTED_MIX_INPUT_FOR_TRX_EXPORT_FILES = ['STARTUP.MIX']
 # 15 TRx files
 SUPPORTED_EXPORTED_TRx_FILES = ['CLUES.TR','ACTORS.TR','CRIMES.TR','CLUETYPE.TR','KIA.TR','SPINDEST.TR','VK.TR','OPTIONS.TR','DLGMENU.TR','ENDCRED.TR','HELP.TR','SCORERS.TR','KIACRED.TR','ERRORMSG.TR','AUTOSAVE.TR']
 SUPPORTED_PLACEHOLDER_VQA_ENGLISH_FILES = [
@@ -103,8 +143,11 @@ gActiveLanguageDescriptionCodeTuple = ''
 gStringReplacementForRootFolderWithExportedFiles = ""
 gNumReplaceStartingCharacters = 0
 
-gWavFiles = []
-gWavFilesNoDups = []
+gMIXWavFiles = []
+gMIXWavFilesNoDups = []
+gTLKWavFiles = []
+gTLKWavFilesNoDups = []
+
 gActorPropertyEntries = []				#[0]:id,	[1]:ShortHand Name	[2]:Full Name
 gActorPropertyEntriesWasInit = False
 
@@ -137,7 +180,7 @@ def initActorPropertyEntries(thePathToActorNamesTxt):
 	global gActorPropertyEntries
 	firstLine = True
 	gActorPropertyEntriesWasInit = False
-#	 print "[Debug] opening actornames"
+	#print "[Debug] opening actornames"
 	if thePathToActorNamesTxt is None or not thePathToActorNamesTxt:
 
 		actorNamesTextFile = u'actornames.txt'
@@ -220,9 +263,9 @@ def ensure_dir(directory):
 
 #
 # Reading in the INPUT TLK files and checking all the AUD file properties
-#
-def inputTLKsExport(inputTLKpath, outputWAVpath):
-	# try to open all TLK file entries from SUPPORTED_TLK_INPUT_FILES
+
+def inputTLKsExport(inputTLKpath, outputWAVpath, pExportWavFilesMode, pExtractDevCommAndExtraSFXMode):
+	# try to open all TLK, MIX file entries from SUPPORTED_TLK_INPUT_FILES + SUPPORTED_MIX_INPUT_FOR_EXTRA_SPEECH_EXPORT_FILES
 	# then per TLK file
 	#	create an output folder in the OUTPUT PATH named TLK## for the 1, 2, 3 TLK and TLKSPCHSFX for the SPCHSFX.TLK
 	#	printout:
@@ -232,54 +275,72 @@ def inputTLKsExport(inputTLKpath, outputWAVpath):
 	#				fileID
 	#				segment offset
 	#				file size
-	print "[Info] Checking in %s for TLK files to export to %s" % (inputTLKpath, outputWAVpath)
-	inputTLKFilesFound = []
-	# breaking after first for loop yields only the top directory files, which is what we want
+	if not pExportWavFilesMode and not pExtractDevCommAndExtraSFXMode:
+		return # nothing to do
+	print "[Info] Checking in:\n\t%s\n\tfor TLK or MIX files containing supported speech audio (AUD) to export as WAV to:\n\t%s" % (inputTLKpath, outputWAVpath)
+	inputTLKFilesForSpeechFound = []
+	inputMIXFilesForSpeechFound = []	# breaking after first for loop yields only the top directory files, which is what we want
 	for (dirpath, dirnames, filenames) in walk(inputTLKpath):
 		for filename in filenames:
-			for tlkTuple in SUPPORTED_TLK_INPUT_FILES:
-				if filename.upper() == tlkTuple[0]:
-					inputTLKFilesFound.append(tlkTuple)
+			if pExportWavFilesMode:
+				for tlkTuple in (SUPPORTED_TLK_INPUT_FILES):
+					if filename.upper() == tlkTuple[0]:
+						inputTLKFilesForSpeechFound.append(tlkTuple)
+			if pExtractDevCommAndExtraSFXMode:
+				for tlkTuple in SUPPORTED_MIX_INPUT_FOR_EXTRA_SPEECH_EXPORT_FILES:
+					if filename.upper() == tlkTuple[0]:
+						inputMIXFilesForSpeechFound.append(tlkTuple)
 		break
 
-	if len(inputTLKFilesFound) == 0:
-		print "[Error] No valid speech audio files (TLK) were found in the specified input path (-ip switch)"
-		sys.exit(1)
+	if pExportWavFilesMode:
+		if len(inputTLKFilesForSpeechFound) == 0:
+			print "[Error] No valid speech audio files (TLK) were found in the specified input path (-ip switch)"
+			sys.exit(1)
+	if pExtractDevCommAndExtraSFXMode:
+		if len(inputMIXFilesForSpeechFound) == 0:
+			print "[Error] No valid extras speech audio files (MIX) were found in the specified input path (-ip switch)"
+			sys.exit(1)
 
-	for tmpTLKfileTuple in inputTLKFilesFound:
+	# get the supported AUD files from TLK or MIX archives
+	for tmpTLKorMIXFileTuple in (inputTLKFilesForSpeechFound + inputMIXFilesForSpeechFound):
 		if gTraceModeEnabled:
-			print "[Info] Found TLK: %s" % ('"' + inputTLKpath + tmpTLKfileTuple[0] + '"')
+			print "[Info] Found supported audio file: %s" % ('"' + inputTLKpath + tmpTLKorMIXFileTuple[0] + '"')
 		errorFound = False
-		inTLKFile = None
+		inTLKorMIXFile = None
+		fileIsMIX = False
+		#print "[Trace] Type of file is: %s" % (tmpTLKorMIXFileTuple[0][-3:])
+		if tmpTLKorMIXFileTuple[0][-3:].upper() == 'MIX':
+			fileIsMIX = True
+			print "[Info] Checking MIX file %s for speech audio (-xdevs mode)... " % (tmpTLKorMIXFileTuple[0])
 		#
 		# Create output folder if not exists at output path
 		if gTraceModeEnabled:
-			print "Ensuring output directory %s" % (os.path.join(outputWAVpath, tmpTLKfileTuple[1] ))
-		ensure_dir(os.path.join(outputWAVpath, tmpTLKfileTuple[1] ) )
+			print "[Debug] Ensuring output directory %s" % (os.path.join(outputWAVpath, tmpTLKorMIXFileTuple[1] ))
+		ensure_dir(os.path.join(outputWAVpath, tmpTLKorMIXFileTuple[1] ) )
 		try:
-			inTLKFile = open(os.path.join(inputTLKpath,tmpTLKfileTuple[0]), 'rb')
+			inTLKorMIXFile = open(os.path.join(inputTLKpath,tmpTLKorMIXFileTuple[0]), 'rb')
 		except:
 			errorFound = True
 			print "[Error] Unexpected event:", sys.exc_info()[0]
 			raise
 		if not errorFound:
-			tmpBuff = inTLKFile.read(2)
+			tmpBuff = inTLKorMIXFile.read(2)
 			# H: unsigned short (2 bytes) followed by I: unsigned int (4 bytes)
 			tlkFileEntriesNumTuple = struct.unpack('H', tmpBuff)
-			numOfTREEntriesToExtract = tlkFileEntriesNumTuple[0]
-			tmpBuff = inTLKFile.read(4)
+			numOfAUDEntriesToExtract = tlkFileEntriesNumTuple[0]
+			tmpBuff = inTLKorMIXFile.read(4)
 			tlkFileDataSegmentSizeTuple = struct.unpack('I', tmpBuff)
 			allTlkFileSize = tlkFileDataSegmentSizeTuple[0]
-			inTLKFile.seek(0, 2) # go to file end
-			allActualBytesInMixFile = inTLKFile.tell()
-			inTLKFile.seek(6, 0) # go to start of table of TLK file entries (right after the 6 bytes header)
+			inTLKorMIXFile.seek(0, 2) # go to file end
+			allActualBytesInMixFile = inTLKorMIXFile.tell()
+			inTLKorMIXFile.seek(6, 0) # go to start of table of TLK file entries (right after the 6 bytes header)
 			# 2 + 4 = 6 bytes short MIX header
 			# 12 bytes per TLK entry in entries table
 			# quick size validation
 			if gTraceModeEnabled:
-				print "[Debug] Entries: %d, Data segment size: %d bytes" % (numOfTREEntriesToExtract, allTlkFileSize)
-			if allActualBytesInMixFile != 2 + 4 + 12 * numOfTREEntriesToExtract + allTlkFileSize:
-				print "[Error] TLK file size mismatch with reported size in header for %s!" % (tmpTLKfileTuple[0])
+				print "[Debug] Entries: %d, Data segment size: %d bytes" % (numOfAUDEntriesToExtract, allTlkFileSize)
+			if allActualBytesInMixFile != 2 + 4 + 12 * numOfAUDEntriesToExtract + allTlkFileSize:
+				print "[Error] Audio Archive file size mismatch with reported size in header for %s!" % (tmpTLKorMIXFileTuple[0])
 			else:
 				#
 				# 12 bytes per entry
@@ -287,19 +348,35 @@ def inputTLKsExport(inputTLKpath, outputWAVpath):
 				#		4 bytes: Offset in data segment
 				#		4 bytes: Size of data
 				#
-				for i in range(0, numOfTREEntriesToExtract):
-					inTLKFile.seek(2 + 4 + 12*i)
-					tmpBuff = inTLKFile.read(4)
+				for i in range(0, numOfAUDEntriesToExtract):
+					inTLKorMIXFile.seek(2 + 4 + 12*i)
+					tmpBuff = inTLKorMIXFile.read(4)
 					tmpRdTuple = struct.unpack('I', tmpBuff)
 					idOfAUDEntry = tmpRdTuple[0]
-					tmpBuff = inTLKFile.read(4)
+					tmpBuff = inTLKorMIXFile.read(4)
 					tmpRdTuple = struct.unpack('I', tmpBuff)
 					offsetOfAUDEntry = tmpRdTuple[0]
-					tmpBuff = inTLKFile.read(4)
+					tmpBuff = inTLKorMIXFile.read(4)
 					tmpRdTuple = struct.unpack('I', tmpBuff)
 					sizeOfAUDEntry = tmpRdTuple[0]
-					if gTraceModeEnabled:
-						print "[Debug] Entry: %s, offset: %s, Data segment size: %s bytes" % (''.join('{:08X}'.format(idOfAUDEntry)), ''.join('{:08X}'.format(offsetOfAUDEntry)),''.join('{:08X}'.format(sizeOfAUDEntry)))
+
+					targetSimpleAudFileName = ''.join('{:08X}'.format(idOfAUDEntry)).upper()+'.AUD'
+					foundSupportedAUDFromMIXFile = False
+					if fileIsMIX:	# MIX file like SFX.MIX which has some spoken dialogue
+						#print 'idOfEntry: %d' % (idOfAUDEntry)
+						for suppAUDFromMIXFileName in zip(*SUPPORTED_EXPORTED_AUD_FROM_MIX_FILES)[0]:
+							#print 'checked with: %d' % (calculateFoldHash(suppAUDFromMIXFileName))
+							if(idOfAUDEntry == calculateFoldHash(suppAUDFromMIXFileName)):
+								foundSupportedAUDFromMIXFile = True
+								targetSimpleAudFileName = suppAUDFromMIXFileName
+								break
+						if foundSupportedAUDFromMIXFile:
+							if gTraceModeEnabled:
+								print "[Debug] Entry: %s, offset: %s, Data segment size: %s bytes" % (''.join('{:08X}'.format(idOfAUDEntry)), ''.join('{:08X}'.format(offsetOfAUDEntry)),''.join('{:08X}'.format(sizeOfAUDEntry)))
+								#print "[Debug] Filename: " + targetSimpleAudFileName
+					else:			# TLK file
+						if gTraceModeEnabled:
+							print "[Debug] Entry: %s, offset: %s, Data segment size: %s bytes" % (''.join('{:08X}'.format(idOfAUDEntry)), ''.join('{:08X}'.format(offsetOfAUDEntry)),''.join('{:08X}'.format(sizeOfAUDEntry)))
 					#
 					# put file in AUD object
 					# do we need AUD decode?
@@ -312,34 +389,37 @@ def inputTLKsExport(inputTLKpath, outputWAVpath):
 					#	aud.export_as_wav(fs, offset, offset + int(sizeof(AudHeader)) + aud.header().size_in, target);
 					#
 					#
-					inTLKFile.seek(2 + 4 + 12*numOfTREEntriesToExtract + offsetOfAUDEntry)
-					if(offsetOfAUDEntry + sizeOfAUDEntry > allTlkFileSize):
-						print "[Error] audio file (AUD) file size mismatch with reported size in entry header!"
-					else:
-						targetSimpleAudFileName = ''.join('{:08X}'.format(idOfAUDEntry)).upper()+'.AUD'
-						audFileBuffer = inTLKFile.read(sizeOfAUDEntry)
-						if (len(audFileBuffer) == sizeOfAUDEntry):
-						# load audio file (AUD) file
-							thisAudFile = audFile(gTraceModeEnabled)
-							if (thisAudFile.loadAudFile(audFileBuffer, allTlkFileSize, targetSimpleAudFileName)):
-								if gTraceModeEnabled:
-									print "[Debug] Audio file (AUD) file %s was loaded successfully!" % (targetSimpleAudFileName)
-								# find
-								# print "[Debug] Emulating Wav write to appropriate folder..."
-								(actorID, actorSName, localQuoteId) = getActorShortNameAndLocalQuoteIdByAUDHashID(idOfAUDEntry)
-								targetSimpleWavFileName = actorSName + '_' + str(localQuoteId).zfill(4) + '_' + ''.join('{:08X}'.format(idOfAUDEntry)).upper()+'.WAV'
-								#print os.path.join(outputWAVpath, tmpTLKfileTuple[1], targetSimpleWavFileName)
-								if not os.path.isfile(os.path.join(outputWAVpath, tmpTLKfileTuple[1], targetSimpleWavFileName) ):
-									thisAudFile.export_as_wav(audFileBuffer, os.path.join(outputWAVpath, tmpTLKfileTuple[1], targetSimpleWavFileName) )
-								else:
-									if gTraceModeEnabled:
-										print "[Info] Output file %s already exists. Skipping..." % (os.path.join(outputWAVpath, tmpTLKfileTuple[1], targetSimpleWavFileName))
-							else:
-								print "[Error] while loading audio file (AUD) %s!" % (targetSimpleAudFileName)
+					if foundSupportedAUDFromMIXFile or not fileIsMIX:
+						inTLKorMIXFile.seek(2 + 4 + 12*numOfAUDEntriesToExtract + offsetOfAUDEntry)
+						if(offsetOfAUDEntry + sizeOfAUDEntry > allTlkFileSize):
+							print "[Error] audio file (AUD) file size mismatch with reported size in entry header!"
 						else:
-							print "[Error] while reading audio file (AUD) file %s into mem buffer" % (targetSimpleAudFileName)
-							#print "[Error] while reading audio file (AUD) file %s into mem buffer" % (''.join('{:08X}'.format(idOfMIXEntry)))
-			inTLKFile.close()
+							audFileBuffer = inTLKorMIXFile.read(sizeOfAUDEntry)
+							if (len(audFileBuffer) == sizeOfAUDEntry):
+							# load audio file (AUD) file
+								thisAudFile = audFile(gTraceModeEnabled)
+								if (thisAudFile.loadAudFile(audFileBuffer, allTlkFileSize, targetSimpleAudFileName)):
+									if gTraceModeEnabled:
+										print "[Debug] Audio file (AUD) file %s was loaded successfully!" % (targetSimpleAudFileName)
+									# find
+									# print "[Debug] Emulating Wav write to appropriate folder..."
+									targetSimpleWavFileName = targetSimpleAudFileName[:-4] + '.WAV' # remove the .AUD before adding the .WAV
+									if not fileIsMIX: # TLK file
+										(actorID, actorSName, localQuoteId) = getActorShortNameAndLocalQuoteIdByAUDHashID(idOfAUDEntry)
+										targetSimpleWavFileName = actorSName + '_' + str(localQuoteId).zfill(4) + '_' + ''.join('{:08X}'.format(idOfAUDEntry)).upper()+'.WAV'
+									#print os.path.join(outputWAVpath, tmpTLKorMIXFileTuple[1], targetSimpleWavFileName)
+									# tmpTLKorMIXFileTuple[1] is the subfolder where the AUD -> WAV files for this archive are written
+									if not os.path.isfile(os.path.join(outputWAVpath, tmpTLKorMIXFileTuple[1], targetSimpleWavFileName) ):
+										thisAudFile.export_as_wav(audFileBuffer, os.path.join(outputWAVpath, tmpTLKorMIXFileTuple[1], targetSimpleWavFileName) )
+									else:
+										if gTraceModeEnabled:
+											print "[Info] Output file %s already exists. Skipping..." % (os.path.join(outputWAVpath, tmpTLKorMIXFileTuple[1], targetSimpleWavFileName))
+								else:
+									print "[Error] while loading audio file (AUD) %s!" % (targetSimpleAudFileName)
+							else:
+								print "[Error] while reading audio file (AUD) file %s into mem buffer" % (targetSimpleAudFileName)
+								#print "[Error] while reading audio file (AUD) file %s into mem buffer" % (''.join('{:08X}'.format(idOfMIXEntry)))
+			inTLKorMIXFile.close()
 
 
 	# SYS EXIT IS HERE ONLY FOR DEBUG PURPOSES OF PARSING TLK FILES - SHOULD BE COMMENTED OUT NORMALLY
@@ -397,7 +477,8 @@ def appendPOGOTextSheet(excelOutBook = None):
 		sh.write(n, 1, col2_name)
 		n+=1
 		pogoTRInstance = pogoTextResource(gTraceModeEnabled)
-
+		
+		objUTF8Unicode = None
 		for m, e1 in enumerate(pogoTRInstance.getPogoEntriesList(), n):
 			sh.write(m, 0, e1[0])
 			objStr = e1[1]
@@ -409,59 +490,154 @@ def appendPOGOTextSheet(excelOutBook = None):
 				objUTF8Unicode = unicode("???", 'utf-8')
 			sh.write(m, 1, objUTF8Unicode)
 
+# aux: populate a row in extra audio sheets
+def auxPopulateExtraSpeechAudioRow(sh = None, n = 0, pFilenameStr = '', pTextStr = '', pListOfExtraWavsForDevSheet = None):
+	if sh is None \
+		or not pFilenameStr \
+		or pListOfExtraWavsForDevSheet is None \
+		or len(pListOfExtraWavsForDevSheet) == 0:
+		return False
+		
+	foundMatch = False
+	for dcAUDFilename, dcArchiveMIXFile in SUPPORTED_EXPORTED_AUD_FROM_MIX_FILES:
+		if dcAUDFilename == pFilenameStr:
+			sh.write(n, 0, pFilenameStr)				# Filename
+			# We assume utf-8 charset for Audio Commentary and extra text entries (since we get the text from a python script)
+			try:
+				objUTF8Unicode = unicode(pTextStr, 'utf-8')
+			except Exception as e:
+				print '[Error] Failed to create unicode string: ' + str(e)
+				objUTF8Unicode = unicode("???", 'utf-8')
+			sh.write(n, 1, objUTF8Unicode)				# Quote
+			sh.write(n, 2, 'N/A')						# By Actor
+			sh.write(n, 3, '')							# Notes
+			sh.write(n, 4, 'N/A')						# To Actor
+			smArchiveMIXFile = ''
+			for smArchiveMIXFile, smArchiveMIXShort in SUPPORTED_MIX_INPUT_FOR_EXTRA_SPEECH_EXPORT_FILES:
+				if smArchiveMIXFile == dcArchiveMIXFile:
+					sh.write(n, 5, smArchiveMIXShort)	# Resource - proper
+					break
+			
+			for extraWavFDS in pListOfExtraWavsForDevSheet:
+				twoTokensOfRelDirnameAndFilenameXLS = extraWavFDS.split('&', 2)
+				if len(twoTokensOfRelDirnameAndFilenameXLS) == 3:
+					tokensOfFilename = twoTokensOfRelDirnameAndFilenameXLS[0].split('#', 3)
+					#ShortHandFileName
+					if (tokensOfFilename[0][:-4]+'.AUD') in zip(*SUPPORTED_EXPORTED_AUD_FROM_MIX_FILES)[0] \
+						and (tokensOfFilename[0][:-4]+'.AUD') == dcAUDFilename:
+						shortHandFileName = tokensOfFilename[0]
+						# real path of filename
+						realPathOfFileNameToLink = twoTokensOfRelDirnameAndFilenameXLS[2]
+						# checks if not empty
+						if gStringReplacementForRootFolderWithExportedFiles and gNumReplaceStartingCharacters > 0:
+							realPathOfFileNameToLink = realPathOfFileNameToLink.replace(realPathOfFileNameToLink[:gNumReplaceStartingCharacters], gStringReplacementForRootFolderWithExportedFiles)
 
-def appendDevCommentarySheet(excelOutBook = None):
-	if excelOutBook != None:
+						hyperlinkAudioFormula = 'HYPERLINK("file://%s","%s")' % (realPathOfFileNameToLink, shortHandFileName)
+						sh.write(n, 6, Formula(hyperlinkAudioFormula))
+						break
+			foundMatch = True
+			break
+	return foundMatch
+	
+def appendDevCommentarySheet(excelOutBook = None, listOfExtraWavsForDevSheet = None ):
+		
+	if excelOutBook != None \
+		and listOfExtraWavsForDevSheet != None \
+		and len(listOfExtraWavsForDevSheet) > 0:
+		
+		objUTF8Unicode = None
 		print "[Info] Appending Developer Commentary sheet..."
-		if excelOutBook != None:
-			sh = excelOutBook.add_sheet("DEV COMMENTARY")
-			devCommentaryTextInstance = devCommentaryText(gTraceModeEnabled)
-			# First Segment
-			n = 0 # keeps track of rows
-			col_names = ['AUDIO COMMENTARY']
-			colIdx = 0
-			for colNameIt in col_names:
-				sh.write(n, colIdx, colNameIt)
-				colIdx+=1
-			n+= 1
+		
+		sh = excelOutBook.add_sheet("DEV AUDIO")
+		devCommentaryTextInstance = devCommentaryText(gTraceModeEnabled)
+		#
+		#
+		# First Sheet
+		n = 0 # keeps track of rows
+		col_names = ["DEVELOPERS' AUDIO COMMENTARY"]
+		colIdx = 0
+		for colNameIt in col_names:
+			sh.write(n, colIdx, colNameIt)
+			colIdx+=1
+		n+= 1
+		
+		col_names = ['Filename', 'Quote', 'By Actor', 'Notes', 'To Actor', 'Resource', 'ShortHandFileName']
+		colIdx = 0
+		for colNameIt in col_names:
+			sh.write(n, colIdx, colNameIt)
+			colIdx+=1
+		n+= 1
+		# populate audio commentary rows
+		for pFilenameStr, pTextStr in devCommentaryTextInstance.getAudioCommentaryTextEntriesList():
+			if auxPopulateExtraSpeechAudioRow(sh, n, pFilenameStr, pTextStr, listOfExtraWavsForDevSheet) == True:
+				n+=1 # change row
+		#
+		#
+		# Second Sheet (EXTRA SPEECH)
+		sh = excelOutBook.add_sheet("SPEECH (SFX)")
+		n = 0 # keeps track of rows
+		col_names = ['EXTRA SPEECH (SFX)']
+		colIdx = 0
+		for colNameIt in col_names:
+			sh.write(n, colIdx, colNameIt)
+			colIdx+=1
+		n+= 1
+		
+		col_names = ['Filename', 'Quote', 'By Actor', 'Notes', 'To Actor', 'Resource', 'ShortHandFileName']
+		colIdx = 0
+		for colNameIt in col_names:
+			sh.write(n, colIdx, colNameIt)
+			colIdx+=1
+		n+= 1
+		
+		# populate extra speech audio rows
+		for pFilenameStr, pTextStr in devCommentaryTextInstance.getExtraSpeechAudioEntriesList():
+			if auxPopulateExtraSpeechAudioRow(sh, n, pFilenameStr, pTextStr, listOfExtraWavsForDevSheet) == True:
+				n+=1 # change row
+		#
+		#
+		# Third Sheet
+		sh = excelOutBook.add_sheet("DEV I_SEZ")
+		n = 0 # keeps track of rows
+		col_names = ['I_SEZ QUOTES']
+		colIdx = 0
+		for colNameIt in col_names:
+			sh.write(n, colIdx, colNameIt)
+			colIdx+=1
+		n+= 1
 
-			for idStr, textStr in devCommentaryTextInstance.getAudioCommentaryTextEntriesList():
-				sh.write(n, 0, idStr)
-				# We assume utf-8 charset for Audio Commentary and extra text entries (since we get the text from a python script)
-				try:
-					objUTF8Unicode = unicode(textStr, 'utf-8')
-				except Exception as e:
-					print '[Error] Failed to create unicode string: ' + str(e)
-					objUTF8Unicode = unicode("???", 'utf-8')
-				sh.write(n, 1, objUTF8Unicode)
-				n+=1
-			# Second Segment
-			col_names = ['I_SEZ QUOTES']
-			colIdx = 0
-			for colNameIt in col_names:
-				sh.write(n, colIdx, colNameIt)
-				colIdx+=1
-			n+= 1
-
-			for idStr, textStr in devCommentaryTextInstance.getISEZTextEntriesList():
-				sh.write(n, 0, idStr)
-				# We assume utf-8 charset for I_SEZ Commentary (since we get the text from a python script)
-				try:
-					objUTF8Unicode = unicode(textStr, 'utf-8')
-				except Exception as e:
-					print '[Error] Failed to create unicode string: ' + str(e)
-					objUTF8Unicode = unicode("???", 'utf-8')
-				sh.write(n, 1, objUTF8Unicode)
-				n+=1
+		col_names = ['AssignedID', 'Quote', 'By Actor', 'Notes', 'To Actor', 'Resource', 'ShortHandFileName']
+		colIdx = 0
+		for colNameIt in col_names:
+			sh.write(n, colIdx, colNameIt)
+			colIdx+=1
+		n+= 1	
+		
+		for idStr, textStr in devCommentaryTextInstance.getISEZTextEntriesList():
+			sh.write(n, 0, idStr)
+			# We assume utf-8 charset for I_SEZ Commentary (since we get the text from a python script)
+			try:
+				objUTF8Unicode = unicode(textStr, 'utf-8')
+			except Exception as e:
+				print '[Error] Failed to create unicode string: ' + str(e)
+				objUTF8Unicode = unicode("???", 'utf-8')
+			sh.write(n, 1, objUTF8Unicode)
+			sh.write(n, 2, 'N/A')	# by actor
+			sh.write(n, 3, '')	# notes
+			sh.write(n, 4, 'N/A')	# to actor
+			sh.write(n, 5, 'N/A')	# Resources
+			sh.write(n, 6, 'N/A')	# ShortHandFilename and URL
+			n+=1
 	return
 
 def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
 	print "[Info] Checking in %s for MIX files to extract Text Resources (TR%ss) from..." % (inputMIXpath, gActiveLanguageDescriptionCodeTuple[1])
 	inputMIXFilesFound = []
+	objUTF8Unicode = None
 	# breaking after first for loop yields only the top directory files, which is what we want
 	for (dirpath, dirnames, filenames) in walk(inputMIXpath):
 		for filename in filenames:
-			for mixFileName in SUPPORTED_MIX_INPUT_FILES:
+			for mixFileName in SUPPORTED_MIX_INPUT_FOR_TRX_EXPORT_FILES:
 				if filename.upper() == mixFileName:
 					inputMIXFilesFound.append(mixFileName)
 		break
@@ -631,30 +807,33 @@ def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
 
 
 #
-# Creating the OUTPUT XLS file with one sheet named as the @param sheet with entries based on the list1 (wav files, without duplicates)
+# Creating the OUTPUT XLS file with one sheet named as the @param sheet with entries based on the 
+#	listTlkWavs (wav files from TLK files, without duplicates)
+#	and /or
+#	listDevsWavs (extra (supported) wav files practicaclly from the SFX.MIX file), without duplicates)
 #
-def outputXLS(filename, sheet, list1, parseTREResourcesAlso = False, addDevCommAndExtraSFXSheetEnabled = False, addPOGOTextSheetEnabled = False, mixInputFolderPath = ''):
+def outputXLS(filename, sheet, listTlkWavs, listDevsWavs, parseTREResourcesAlso = False, addDevCommAndExtraSFXSheetEnabled = False, addPOGOTextSheetEnabled = False, mixInputFolderPath = ''):
 	global gStringReplacementForRootFolderWithExportedFiles
 	global gNumReplaceStartingCharacters
+
 	book = xlwt.Workbook()
 	sh = book.add_sheet(sheet)
-# First Row
+	# First Row
 	n = 0      # keeps track of rows
-#	 variables = [x, y, z]
-#	 x_desc = 'Display'
-#	 y_desc = 'Dominance'
-#	 z_desc = 'Test'
-#	 desc = [x_desc, y_desc, z_desc]
-#
-#
-#	 #You may need to group the variables together
-#	 #for n, (v_desc, v) in enumerate(zip(desc, variables)):
-#	 for n, (v_desc, v) in enumerate(zip(desc, variables)):
-#		 sh.write(n, 0, v_desc)
-#		 sh.write(n, 1, v)
+	#variables = [x, y, z]
+	#x_desc = 'Display'
+	#y_desc = 'Dominance'
+	#z_desc = 'Test'
+	#desc = [x_desc, y_desc, z_desc]
+	#
+	#	
+	# You may need to group the variables together
+	#for n, (v_desc, v) in enumerate(zip(desc, variables)):
+		#sh.write(n, 0, v_desc)
+		#sh.write(n, 1, v)
 	col1_name = 'BladeRunnerTLK In-Game dialogue / voiceover quotes'
 	sh.write(n, 0, col1_name)
-# Second Row
+	# Second Row
 	n = 1
 	col1_name = 'Filename'
 	col2_name = 'Quote'
@@ -674,7 +853,7 @@ def outputXLS(filename, sheet, list1, parseTREResourcesAlso = False, addDevCommA
 
 	n+=1
 
-	for m, e1 in enumerate(list1, n):
+	for m, e1 in enumerate(listTlkWavs, n):
 		twoTokensOfRelDirnameAndFilenameXLS = e1.split('&', 2)
 		if len(twoTokensOfRelDirnameAndFilenameXLS) == 3:
 			fourTokensOfFilename = twoTokensOfRelDirnameAndFilenameXLS[0].split('#', 3)
@@ -724,8 +903,8 @@ def outputXLS(filename, sheet, list1, parseTREResourcesAlso = False, addDevCommA
 		# works for filenames where some rogue greek characters exist
 		#sh.write(m, 0, str.decode("%s" % e1, 'utf-8'))
 
-#	 for m, e2 in enumerate(list2, n+1):
-#		 sh.write(m, 1, e2)
+	#for m, e2 in enumerate(list2, n+1):
+	#	sh.write(m, 1, e2)
 	appendVQAPlaceHolderSheets(book)
 
 	if parseTREResourcesAlso == True and mixInputFolderPath != '':
@@ -735,13 +914,59 @@ def outputXLS(filename, sheet, list1, parseTREResourcesAlso = False, addDevCommA
 		appendPOGOTextSheet(book)
 
 	if addDevCommAndExtraSFXSheetEnabled == True:
-		appendDevCommentarySheet(book)
+		appendDevCommentarySheet(book, listDevsWavs)
 
 	try:
 		book.save(filename)
 		print "[Info] Done."
 	except Exception as e:
 		print "[Error] Could not save the output Excel file:: " + str(e)
+
+#
+# Aux function to weed out duplicates from wav file lists 
+# valid listTypes: 'TLKWAVS', 'EXTRAMIXWAVS'
+def wavDupsRemove(listOfWavFiles, listType):
+	if listType != 'TLKWAVS' and listType != 'EXTRAMIXWAVS':
+		print '[Error] Invalid listtype %s specified to remove duplicate wav files' % (listType)
+		sys.exit(1)
+	
+	listOfWavFilesNoDups = []
+	for filenameSrcTmp in listOfWavFiles:
+		duplicateFound = False
+		#print "[Debug]Converted %s" % (filenameSrcTmp)
+		# Weed out duplicates by copying to another table (quick and dirty)
+		twoTokensOfRelDirnameAndFilenameSrc = filenameSrcTmp.split('&', 2)
+		tmpRelDirNameSrc = twoTokensOfRelDirnameAndFilenameSrc[1] # eg. TLK1
+		keyForDuplicateSearchSrc = None
+		keyForDuplicateSearchTarg = None
+		
+		if (listType == 'EXTRAMIXWAVS'):
+			keyForDuplicateSearchSrc = twoTokensOfRelDirnameAndFilenameSrc[0]		
+		else:
+			threeTokensOfQuoteFilenameSrc = twoTokensOfRelDirnameAndFilenameSrc[0].split('#', 2)
+			#concatenate actorID and quoteID for search key
+			keyForDuplicateSearchSrc = threeTokensOfQuoteFilenameSrc[0] + threeTokensOfQuoteFilenameSrc[1]
+		
+		for fileTargIdx, filenameTargTmp in enumerate(listOfWavFilesNoDups):
+			twoTokensOfRelDirnameAndFilenameTarg = filenameTargTmp.split('&', 2)
+			tmpRelDirNameTarg = twoTokensOfRelDirnameAndFilenameTarg[1]
+
+			if (listType == 'EXTRAMIXWAVS'):
+				keyForDuplicateSearchTarg = twoTokensOfRelDirnameAndFilenameTarg[0]			
+			else:
+				threeTokensOfQuoteFilenameTarg = twoTokensOfRelDirnameAndFilenameTarg[0].split('#', 2)
+				#concatenate actorID and quoteID for search key
+				keyForDuplicateSearchTarg =	 threeTokensOfQuoteFilenameTarg[0] + threeTokensOfQuoteFilenameTarg[1]
+			if(keyForDuplicateSearchSrc == keyForDuplicateSearchTarg):
+				#print "[Debug] Found duplicate %s" % (filenameSrcTmp)
+				duplicateFound = True
+				listOfWavFilesNoDups[fileTargIdx] = twoTokensOfRelDirnameAndFilenameTarg[0] + '&' +  tmpRelDirNameSrc + ',' + tmpRelDirNameTarg + '&' + twoTokensOfRelDirnameAndFilenameTarg[2]
+				break
+		if(duplicateFound == False):
+			listOfWavFilesNoDups.append(filenameSrcTmp)
+	#for filenameSrcTmp in listOfWavFilesNoDups:
+	#	print "[Debug] Unique %s" % (filenameSrcTmp)
+	return listOfWavFilesNoDups
 
 #
 # Aux function to validate input language description
@@ -773,9 +998,11 @@ def main(argsCL):
 	global gStringReplacementForRootFolderWithExportedFiles
 	global gNumReplaceStartingCharacters
 	global gActiveLanguageDescriptionCodeTuple
-	global gWavFiles
-	global gWavFilesNoDups
-
+	global gMIXWavFiles
+	global gMIXWavFilesNoDups
+	global gTLKWavFiles
+	global gTLKWavFilesNoDups
+	
 	gTraceModeEnabled = False
 	gActiveLanguageDescriptionCodeTuple = DEFAULT_LANG_DESC_CODE
 
@@ -793,7 +1020,7 @@ def main(argsCL):
 
 	invalidSyntax = False
 	print "Running %s (%s)..." % (APP_NAME_SPACED, APP_VERSION)
-#	 print "Len of sysargv = %s" % (len(argsCL))
+	#print "Len of sysargv = %s" % (len(argsCL))
 	if len(argsCL) == 2:
 		if(argsCL[1] == '--help'or argsCL[1] == '-h'):
 			print "%s %s supports Westwood's Blade Runner PC Game (1997)." % (APP_NAME_SPACED, APP_VERSION)
@@ -873,12 +1100,16 @@ def main(argsCL):
 			print "[Error] The output path for exported files (-op switch) argument is mandatory!"
 			invalidSyntax = True
 
-		if (not invalidSyntax) and (exportWavFilesMode == True or extractTreFilesMode == True) and (TMProotFolderWithInputTLKFiles == ''):
-			print "[Error] No game input path (-ip switch) specified, while the export audio to WAV mode or the extract Text Resources mode is enabled."
+		if (not invalidSyntax) \
+			and (exportWavFilesMode == True or extractDevCommAndExtraSFXMode == True or extractTreFilesMode == True) \
+			and (TMProotFolderWithInputTLKFiles == ''):
+			print "[Error] No game input path (-ip switch) specified, while any of the export audio to WAV mode (-xwav), the export extras (-xdevs) or the extract Text Resources mode (-xtre) is enabled."
 			invalidSyntax = True
 
-		if (not invalidSyntax) and (exportWavFilesMode == False and extractTreFilesMode == False) and (TMProotFolderWithInputTLKFiles != ''):
-			print "[Warning] Specified game input path (-ip switch) will be ignored, since the export audio to WAV mode and the extract Text Resources mode are disabled."
+		if (not invalidSyntax) \
+			and (exportWavFilesMode == False and extractDevCommAndExtraSFXMode == False and extractTreFilesMode == False) \
+			and (TMProotFolderWithInputTLKFiles != ''):
+			print "[Warning] Specified game input path (-ip switch) will be ignored, since the export audio to WAV mode (-xwav), the export extras (-xdevs) and the extract Text Resources mode (-xtre) are disabled."
 			# not invalid syntax though
 
 		gActiveLanguageDescriptionCodeTuple = getLanguageDescCodeTuple(candidateLangDescriptionTxt)
@@ -891,8 +1122,8 @@ def main(argsCL):
 			print "[Info] Game Language Selected: %s (%s)" % (gActiveLanguageDescriptionCodeTuple[0], gActiveLanguageDescriptionCodeTuple[2])
 			# parse Actors files:
 			initActorPropertyEntries(pathToActorNamesTxt)
-#			 for actorEntryTmp in gActorPropertyEntries:
-#				  print "[Debug] Found actor: %s %s %s" % (actorEntryTmp[0], actorEntryTmp[1], actorEntryTmp[2])
+			#for actorEntryTmp in gActorPropertyEntries:
+			#	print "[Debug] Found actor: %s %s %s" % (actorEntryTmp[0], actorEntryTmp[1], actorEntryTmp[2])
 			#
 			# Early checks for invalid cases
 			# 1. if TMProotFolderWithInputTLKFiles is not valid and -xtre or -xwav -> error!
@@ -900,55 +1131,67 @@ def main(argsCL):
 			#
 			# 2. if not -wav and -op path is invalid then empty INGQUOT sheet -> error
 			# 3 [We check for this further bellow, before call for outputXLS]. if not -wav and -op path is empty (has no WAVs) then empty INGQUOT sheet -> Treat as an error case!
-			if ((exportWavFilesMode == True or extractTreFilesMode == True) and (not os.path.isdir(TMProotFolderWithInputTLKFiles))):
-				print "[Error] Invalid game input path (-ip switch) was specified, while the export audio to WAV mode or the extract Text Resources mode is enabled."
+			if ((exportWavFilesMode == True or extractDevCommAndExtraSFXMode == True or extractTreFilesMode == True) and (not os.path.isdir(TMProotFolderWithInputTLKFiles))):
+				print "[Error] Invalid game input path (-ip switch) was specified, while the export audio to WAV mode (-xwav), export extras (-xdevs) or the extract Text Resources mode (-xtre) is enabled."
 				sys.exit(1)
-			if ((exportWavFilesMode == False) and (not os.path.isdir(TMProotFolderWithExportedFiles))):
-				print "[Error] Invalid output path for exported files (-op switch) was specified, while the export audio to WAV mode is disabled (if enabled, it would create the path)."
+			if ((exportWavFilesMode == False and extractDevCommAndExtraSFXMode == False) and (not os.path.isdir(TMProotFolderWithExportedFiles))):
+				print "[Error] Invalid output path for exported files (-op switch) was specified, while the export audio to WAV mode (-xwav) and export extras (-xdevs) are disabled (if enabled, it would create the path)."
 				sys.exit(1)
 			#
 			# Checking for the optional case of parsing the input TLK files to export to WAV
 			#
 			if TMProotFolderWithInputTLKFiles != '':
-				if (exportWavFilesMode == True):
-					inputTLKsExport(TMProotFolderWithInputTLKFiles, TMProotFolderWithExportedFiles)
+				if (exportWavFilesMode == True or extractDevCommAndExtraSFXMode == True):
+					inputTLKsExport(TMProotFolderWithInputTLKFiles, TMProotFolderWithExportedFiles, exportWavFilesMode, extractDevCommAndExtraSFXMode)
 				#if (extractTreFilesMode == True):
 				#	inputMIXExtractTREs(TMProotFolderWithInputTLKFiles)
 			#
 			# Parsing the exported WAV files
-			#
-			print "[Info] Parsing the exported WAV audio files. Please wait (this could take a while)..."
+			# NO: depending on the mode don't parse the irrellevant WAVs?
+			print "[Info] Parsing the (exported) WAV audio files in the -op path.\n\tPlease wait (this could take a while)..."
+			# The broad search here is intentional
 			for (dirpath, dirnames, filenames) in walk(TMProotFolderWithExportedFiles):
-				 for nameIdx, nameTmp in enumerate(filenames):
-					  relDirName = ''
-# os.path.split would Split the pathname path into a pair, (head, tail) where tail is the last pathname component and head is everything leading up to that. The tail part will never contain a slash
-					  pathTokens = dirpath.split(os.path.sep)
-					  for pTokenTmp in pathTokens:
-						   if pTokenTmp.find("TLK") != -1:
-								relDirName = pTokenTmp
-#					   print os.path.dirname(dirpath)
-#					   print os.path.abspath(os.path.join(os.path.join(dirpath, nameTmp), os.pardir))
-					  filenames[nameIdx] = filenames[nameIdx] +'&' + relDirName + '&' + os.path.join(dirpath, nameTmp)
-				 gWavFiles.extend(filenames)
-#				 break
-			for fileIdx, filenameTmp in enumerate(gWavFiles):
+				for nameIdx, nameTmp in enumerate(filenames):
+					if (len(nameTmp) > 4) \
+						and nameTmp.upper()[-4:] == '.WAV' \
+						and len(nameTmp.split('.', 1)) == 2: # radical heal (but practical) - don't allow cases like .AUD.WAV or any intermediate dots in the filename!
+						relDirName = ''				
+						# os.path.split would Split the pathname path into a pair, 
+						# (head, tail) where tail is the last pathname component and head is everything leading up to that. The tail part will never contain a slash
+						pathTokens = dirpath.split(os.path.sep)
+						idxOfLastTLKToken = -1
+						idxOfLastSFXToken = -1
+						for tokenIdx, pTokenTmp in enumerate(pathTokens):
+							posOfTLKWithinRightmostToken = pTokenTmp.find("TLK")
+							posOfSFXWithinRightmostToken = pTokenTmp.find("SFX")
+							
+							if posOfTLKWithinRightmostToken != -1:
+								idxOfLastTLKToken = tokenIdx
+							if posOfSFXWithinRightmostToken != -1:
+								idxOfLastSFXToken = tokenIdx
+								
+							if (posOfTLKWithinRightmostToken != -1 \
+								or posOfSFXWithinRightmostToken != -1):
+								relDirName = pTokenTmp	# don't break, we are interested in right-most matching token in the path
+						#if (nameTmp.upper()[:-4] + '.AUD') in zip(*SUPPORTED_EXPORTED_AUD_FROM_MIX_FILES)[0]:
+						#	print '[Trace] 1 file: %s' % (nameTmp.upper())
+						#	print 'TLKss %d vs SFXss:%d ' % (idxOfLastTLKToken, idxOfLastSFXToken)
+
+						if (idxOfLastSFXToken > idxOfLastTLKToken \
+							and (nameTmp.upper()[:-4] + '.AUD') in zip(*SUPPORTED_EXPORTED_AUD_FROM_MIX_FILES)[0]):
+							gMIXWavFiles.append(filenames[nameIdx] +'&' + relDirName + '&' + os.path.join(dirpath, nameTmp))
+						else:	
+							gTLKWavFiles.append(filenames[nameIdx] +'&' + relDirName + '&' + os.path.join(dirpath, nameTmp))
+				#break
+			for fileIdx, filenameTmp in enumerate(gTLKWavFiles):
 				twoTokensOfFilenameAndRelDirname = filenameTmp.split('&', 1)
 				if len(twoTokensOfFilenameAndRelDirname) != 2:
 					print "[Error] While attempting filename and relative dirname split: %s" % (filenameTmp)
 					sys.exit(0)
-				twoTokensOfFilenameForExt = twoTokensOfFilenameAndRelDirname[0].split('.', 1)
-				if len(twoTokensOfFilenameForExt) == 2:
-					if twoTokensOfFilenameForExt[1] != 'WAV' and  twoTokensOfFilenameForExt[1] != 'wav':
-						print "[Error] Found non supported file extension (not WAV): %s" % (twoTokensOfFilenameAndRelDirname[0])
-						sys.exit(0)
-				else:
-					print "[Error] While attempting extension split: %s" % (twoTokensOfFilenameAndRelDirname[0])
-					sys.exit(0)
-				#remove WAV extension here
-#				 filenameTmp =	twoTokensOfFilenameAndRelDirname[0] + '&' + twoTokensOfFilenameForExt[0]
-#				 print "[Debug] Found %s" % (filenameTmp)
-
-				threeTokensOfFilename = twoTokensOfFilenameForExt[0].split('_', 2)
+				#
+				# Remove WAV extension here
+				# AUD file from TLK archive
+				threeTokensOfFilename = twoTokensOfFilenameAndRelDirname[0][:-4].split('_', 2)
 				if len(threeTokensOfFilename) == 3:
 					# fix rogue _ chars in 3rd token of filename (split at '_')
 					threeTokensOfFilename[2] = threeTokensOfFilename[2].replace("_", "-")
@@ -963,91 +1206,65 @@ def main(argsCL):
 							threeTokensOfFilename.append(tmpActorFullName)
 						else:
 					#fatal error if something cannot convert to spot it immediately
-							print "[Error] in actorIdMatch match: %s %s" % (tmpActorId, twoTokensOfFilenameForExt[0])
+							print "[Error] in actorIdMatch match: %s %s" % (tmpActorId, twoTokensOfFilenameAndRelDirname[0][:-4])
 							sys.exit(0)
 					else:
 					#fatal error if something cannot convert to spot it immediately
-						print "[Error] in shorthand match: %s %s" % (threeTokensOfFilename[0], twoTokensOfFilenameForExt[0])
+						print "[Error] in shorthand match: %s %s" % (threeTokensOfFilename[0], twoTokensOfFilenameAndRelDirname[0][:-4])
 						sys.exit(0)
-#
-#
-#					  foundMatchForActorShortHand = False
-#					  for actorEntryTmp in gActorPropertyEntries:
-#						   if actorEntryTmp[1] == threeTokensOfFilename[0]:
-#								 threeTokensOfFilename[0] = actorEntryTmp[0].zfill(2)
-#								 threeTokensOfFilename.append(actorEntryTmp[2])
-#								 foundMatchForActorShortHand = True
-#								 break
-					 # end of replace actor name shorthand
-					twoTokensOfFilenameForExt[0] = '#'.join(threeTokensOfFilename)
-					filenameTmp =  twoTokensOfFilenameForExt[0] + '&' + twoTokensOfFilenameAndRelDirname[1]
-					gWavFiles[fileIdx] = filenameTmp
+					#
+					#
+					#foundMatchForActorShortHand = False
+					#for actorEntryTmp in gActorPropertyEntries:
+					#	if actorEntryTmp[1] == threeTokensOfFilename[0]:
+					#		threeTokensOfFilename[0] = actorEntryTmp[0].zfill(2)
+					#		threeTokensOfFilename.append(actorEntryTmp[2])
+					#		foundMatchForActorShortHand = True
+					#		break
+					# end of replace actor name shorthand
+					tmpHealedSimpleFilename = '#'.join(threeTokensOfFilename)
+					filenameTmp =  tmpHealedSimpleFilename + '&' + twoTokensOfFilenameAndRelDirname[1]
+					gTLKWavFiles[fileIdx] = filenameTmp
 				else:
 					print "[Error] in splitting tokens on _: %s" % (filenameTmp)
 					sys.exit(0)
+			# 
+			# Now handle the extra speech files (-xdevs mode)
+			for fileIdx, filenameTmp in enumerate(gMIXWavFiles): # 
+				# if it's a AUD file from a MIX archive, we treat it differently here 
+				# (we will put it in another sheet)
+				twoTokensOfFilenameAndRelDirname = filenameTmp.split('&', 1)
+				if len(twoTokensOfFilenameAndRelDirname) != 2:
+					print "[Error] While attempting filename and relative dirname split on extra speech file: %s" % (filenameTmp)
+					sys.exit(0)
+
+				if (gTraceModeEnabled):
+					print "[Debug] No healing action needed on: %s" % (twoTokensOfFilenameAndRelDirname[0])
+
 			#sort in-place
 			#
 			#
-			gWavFiles.sort()
-#			  #
-#			  #
-#			  #	 Code for renaming non conforming filenames - just to be consistent in file naming
-#			  # TO BE RUN ONCE FOR CONFORMANCE. No NEED TO Re-RUN
-#			  # If its run though, comment this section and re-run the tool to get proper links in Excel file
-#			  #
-#			  for filenameSrcTmp in gWavFiles:
-#				  # get real full path from last token when split at &
-#				  # create target full path from the parentdir of last token and the current state of first 3 tokens when splitting at '#'
-#				  # report mismatch
-#				  # print (BUT DON'T PROCEED AT THIS POINT) what you would rename to what.
-#				  threeTokensOfFilenameAndRelDirname = filenameSrcTmp.split('&', 2)
-#				  currentSrcFullPath = threeTokensOfFilenameAndRelDirname[2]
-#				  fourTokensOfTargetFileName = threeTokensOfFilenameAndRelDirname[0].split('#', 3)
-#				  tmpActorShortHand = getActorShortNameById(fourTokensOfTargetFileName[0])
-#				  targetFileName = tmpActorShortHand + '_' + fourTokensOfTargetFileName[1] + '_' + fourTokensOfTargetFileName[2] + '.WAV'
-#				  # os.path.split would Split the pathname path into a pair, (head, tail) where tail is the last pathname component and head is everything leading up to that. The tail part will never contain a slash
-#				  (srcParentDir, srcTail) = os.path.split(currentSrcFullPath)
-#				  targetFullPath = os.path.join(srcParentDir, targetFileName)
-#				  # os.rename(src, dst)
-#				  if(currentSrcFullPath != targetFullPath):
-#					 print currentSrcFullPath
-#					 print targetFullPath
-#					 os.rename(currentSrcFullPath, targetFullPath)
-			#
-			# END OF: Code for renaming non conforming filenames - just to be consistent in file naming
+			gTLKWavFiles.sort()
+			gMIXWavFiles.sort()
 			#
 			#
-			for filenameSrcTmp in gWavFiles:
-				duplicateFound = False
-#				  print "[Debug]Converted %s" % (filenameSrcTmp)
-			 # Weed out duplicates by copying to another table (quick and dirty)
-				twoTokensOfRelDirnameAndFilenameSrc = filenameSrcTmp.split('&', 2)
-				tmpRelDirNameSrc = twoTokensOfRelDirnameAndFilenameSrc[1]
-				threeTokensOfQuoteFilenameSrc = twoTokensOfRelDirnameAndFilenameSrc[0].split('#', 2)
-				#concatenate actorID and quoteID for search key
-				keyForDuplicateSearchSrc =	threeTokensOfQuoteFilenameSrc[0] + threeTokensOfQuoteFilenameSrc[1]
-				for fileTargIdx, filenameTargTmp in enumerate(gWavFilesNoDups):
-					twoTokensOfRelDirnameAndFilenameTarg = filenameTargTmp.split('&', 2)
-					tmpRelDirNameTarg = twoTokensOfRelDirnameAndFilenameTarg[1]
-					threeTokensOfQuoteFilenameTarg = twoTokensOfRelDirnameAndFilenameTarg[0].split('#', 2)
-					#concatenate actorID and quoteID for search key
-					keyForDuplicateSearchTarg =	 threeTokensOfQuoteFilenameTarg[0] + threeTokensOfQuoteFilenameTarg[1]
-					if(keyForDuplicateSearchSrc == keyForDuplicateSearchTarg):
-						#print "[Debug] Found duplicate %s" % (filenameSrcTmp)
-						duplicateFound = True
-						gWavFilesNoDups[fileTargIdx] = twoTokensOfRelDirnameAndFilenameTarg[0] + '&' +  tmpRelDirNameSrc + ',' + tmpRelDirNameTarg + '&' + twoTokensOfRelDirnameAndFilenameTarg[2]
-						break
-				if(duplicateFound == False):
-					gWavFilesNoDups.append(filenameSrcTmp)
-#			 for filenameSrcTmp in gWavFilesNoDups:
-#				 print "[Debug] Unique %s" % (filenameSrcTmp)
-			if len(gWavFilesNoDups) == 0:
-				print "[Error] No supported audio files (WAV) were found in the output folder path (-op switch)."
+			# Remove duplicates from TLK AUD speech files (-xwav mode) 
+			#
+			gTLKWavFilesNoDups = wavDupsRemove(gTLKWavFiles, 'TLKWAVS')
+			if len(gTLKWavFilesNoDups) == 0:
+				print "[Error] No supported speech audio files (WAV) were found in the output folder path (-op switch)."
 				sys.exit(1)
-
+			#
+			# Remove duplicates from extra speech files (-xdevs mode)
+			#
+			gMIXWavFilesNoDups = wavDupsRemove(gMIXWavFiles, 'EXTRAMIXWAVS')
+			if extractDevCommAndExtraSFXMode and len(gMIXWavFilesNoDups) == 0:
+				print "[Error] No supported extra speech audio files (WAV) were found in the output folder path (-op switch)."
+				sys.exit(1)
+				
 			constructedOutputFilename = "%s-%s%s" % (OUTPUT_XLS_FILENAME, gActiveLanguageDescriptionCodeTuple[2], OUTPUT_XLS_FILENAME_EXT)
 			print "[Info] Creating output excel %s file..." % (constructedOutputFilename)
-			outputXLS(constructedOutputFilename, OUTPUT_XLS_QUOTES_SHEET + gActiveLanguageDescriptionCodeTuple[1] + '.TR' + gActiveLanguageDescriptionCodeTuple[1], gWavFilesNoDups, extractTreFilesMode, extractDevCommAndExtraSFXMode, extractPOGOTextMode, TMProotFolderWithInputTLKFiles)
+			outputXLS(constructedOutputFilename, OUTPUT_XLS_QUOTES_SHEET + gActiveLanguageDescriptionCodeTuple[1] + '.TR' + gActiveLanguageDescriptionCodeTuple[1], gTLKWavFilesNoDups, gMIXWavFilesNoDups, extractTreFilesMode, extractDevCommAndExtraSFXMode, extractPOGOTextMode, TMProotFolderWithInputTLKFiles)
 	else:
 		invalidSyntax = True
 

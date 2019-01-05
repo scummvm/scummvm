@@ -18,7 +18,8 @@ except ImportError:
 else:
 	structLibFound = True
 
-if 	(not ctypesLibFound) or (not structLibFound):
+if 	(not ctypesLibFound) \
+	or (not structLibFound):
 	sys.stdout.write("[Error] Errors were found when trying to import required python libraries\n")
 	sys.exit(1)	
 	
