@@ -106,7 +106,7 @@ static const char *const selectorNameTable[] = {
 	"handsOn",      // system selector
 	"localize",     // Freddy Pharkas
 	"put",          // Police Quest 1 VGA
-	"say",          // Quest For Glory 1 VGA
+	"say",          // Quest For Glory 1 VGA, QFG4
 	"script",       // Quest For Glory 1 VGA
 	"solvePuzzle",  // Quest For Glory 3
 	"timesShownID", // Space Quest 1 VGA
@@ -119,14 +119,14 @@ static const char *const selectorNameTable[] = {
 	"loop",         // Laura Bow 1 Colonel's Bequest, QFG4
 	"setLoop",      // Laura Bow 1 Colonel's Bequest, QFG4
 	"ignoreActors", // Laura Bow 1 Colonel's Bequest
-	"at",           // Longbow
+	"at",           // Longbow, QFG4
 	"owner",        // Longbow
 #ifdef ENABLE_SCI32
 	"newWith",      // SCI2 array script
 	"scrollSelections", // GK2
 	"posn",         // SCI2 benchmarking script
 	"detailLevel",  // GK2 benchmarking
-	"view",         // RAMA benchmarking, GK1
+	"view",         // RAMA benchmarking, GK1, QFG4
 	"fade",         // Shivers
 	"handleEvent",  // Shivers
 	"test",         // Torin
@@ -137,7 +137,7 @@ static const char *const selectorNameTable[] = {
 	"set",          // Torin
 	"clear",        // Torin
 	"masterVolume", // SCI2 master volume reset
-	"data",         // Phant2
+	"data",         // Phant2, QFG4
 	"format",       // Phant2
 	"setSize",      // Phant2
 	"setCel",       // Phant2, GK1
@@ -160,6 +160,7 @@ static const char *const selectorNameTable[] = {
 	"state",        // RAMA
 	"getSubscriberObj", // RAMA
 	"cue",          // QFG4
+	"heading",      // QFG4
 	"moveSpeed",    // QFG4
 	"setLooper",    // QFG4
 	"setSpeed",     // QFG4
@@ -248,6 +249,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_state,
 	SELECTOR_getSubscriberObj,
 	SELECTOR_cue,
+	SELECTOR_heading,
 	SELECTOR_moveSpeed,
 	SELECTOR_setLooper,
 	SELECTOR_setSpeed,
@@ -1339,7 +1341,7 @@ static const uint16 gk1Day9VineSwingSignature[] = {
 	0x39, 0x08,                       // pushi $8
 	0x39, 0x10,                       // pushi $10
 	0x78,                             // push1
-	0x81, 0x5b,                       // lsg global[$5b]
+	0x81, 0x5b,                       // lag global[$5b]
 	0x4a, SIG_UINT16(0x000c),         // send $c
 	SIG_END
 };
@@ -1364,7 +1366,7 @@ static const uint16 gk1Day9VineSwingPatch[] = {
 	0x39, 0x10,                       // pushi $10
 	0x78,                             // push1
 	0x7c,                             // pushSelf
-	0x81, 0x5b,                       // lsg global[$5b]
+	0x81, 0x5b,                       // lag global[$5b]
 	0x4a, SIG_UINT16(0x000e),         // send $c
 	PATCH_END
 };
@@ -2492,7 +2494,7 @@ static const uint16 kq6PatchInventoryStackFix[] = {
 	0x12,                               // and
 	0x2f, 0x02,                         // bt [not first refresh] - saves 3 bytes in total
 	0x65, 0x1e,                         // aTop curIcon
-	0x00,                               // neg (either 2000 or 0000 in acc, this will create dfff or ffff) - saves 2 bytes
+	0x00,                               // bnot (neg, either 2000 or 0000 in acc, this will create dfff or ffff) - saves 2 bytes
 	0x12,                               // and
 	0x65, 0x30,                         // aTop state
 	0x38,                               // pushi "show"
@@ -8002,64 +8004,51 @@ static const SciScriptPatcherEntry qfg3Signatures[] = {
 #pragma mark -
 #pragma mark Quest for Glory 4
 
-// The 'Trap::init' code incorrectly creates an int array for string data.
-// Applies to at least: English CD
+// Cranium's TRAP screen in room 380 incorrectly creates an int array for
+// string data.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: trap::init() in script 83
+// Fixes bug: #10766
 static const uint16 qfg4TrapArrayTypeSignature[] = {
-	0x38, SIG_SELECTOR16(new), // pushi new
-	0x78,                      // push1
-	0x38, SIG_UINT16(0x80),    // pushi $80 (128)
+	0x38, SIG_SELECTOR16(new),          // pushi new
+	0x78,                               // push1
 	SIG_MAGICDWORD,
-	0x51, 0x0b,                // class $b (IntArray)
-	0x4a, SIG_UINT16(0x06),    // send 6
+	0x38, SIG_UINT16(0x0080),           // pushi 128d (array size)
+	0x51, SIG_ADDTOOFFSET(+1),          // class IntArray (CD=0x0b. floppy=0x0a)
+	0x4a, SIG_UINT16(0x0006),           // send 6
 	SIG_END
 };
 
 static const uint16 qfg4TrapArrayTypePatch[] = {
-	PATCH_ADDTOOFFSET(+4),     // pushi $92 (new), push1
-	0x38, PATCH_UINT16(0x100), // pushi $100 (256)
-	0x51, 0x0d,                // class $d (ByteArray)
-	PATCH_END
-};
-
-// The 'Trap::init' code incorrectly creates an int array for string data.
-// Applies to at least: English floppy, German floppy
-static const uint16 qfg4TrapArrayTypeFloppySignature[] = {
-	0x38, SIG_SELECTOR16(new), // pushi new
-	0x78,                      // push1
-	0x38, SIG_UINT16(0x80),    // pushi $80 (128)
-	SIG_MAGICDWORD,
-	0x51, 0x0a,                // class $a (IntArray)
-	0x4a, SIG_UINT16(0x06),    // send 6
-	SIG_END
-};
-
-static const uint16 qfg4TrapArrayTypeFloppyPatch[] = {
-	PATCH_ADDTOOFFSET(+4),     // pushi $92 (new), push1
-	0x38, PATCH_UINT16(0x100), // pushi $100 (256)
-	0x51, 0x0c,                // class $c (ByteArray)
+	PATCH_ADDTOOFFSET(+4),
+	0x38, PATCH_UINT16(0x0100),               // pushi 256d (array size)
+	0x51, PATCH_GETORIGINALBYTEADJUST(8, +2), // class ByteArray (CD=0x0d, floppy=0x0c)
 	PATCH_END
 };
 
 // QFG4 has custom video benchmarking code inside a subroutine, which is called
-// by 'glryInit::init', that needs to be disabled; see sci2BenchmarkSignature
-// Applies to at least: English CD, German Floppy
+// by 'glryInit::init', that needs to be disabled. See: sci2BenchmarkSignature.
+//
+// Applies to at least: English CD, English floppy, German Floppy
+// Responsible method: localproc_0010() in script 1
 static const uint16 qfg4BenchmarkSignature[] = {
-	0x38, SIG_SELECTOR16(new), // pushi new
-	0x76,                      // push0
-	0x51, SIG_ADDTOOFFSET(+1), // class View
-	0x4a, SIG_UINT16(0x04),    // send 4
-	0xa5, 0x00,                // sat 0
-	0x39, SIG_SELECTOR8(view), // pushi $e (view)
+	0x38, SIG_SELECTOR16(new),          // pushi new
+	0x76,                               // push0
+	0x51, SIG_ADDTOOFFSET(+1),          // class View
+	0x4a, SIG_UINT16(0x0004),           // send 4
+	0xa5, 0x00,                         // sat temp[0]
+	0x39, SIG_SELECTOR8(view),          // pushi view
 	SIG_MAGICDWORD,
-	0x78,                      // push1
-	0x38, SIG_UINT16(0x270f),  // push $270f (9999)
+	0x78,                               // push1
+	0x38, SIG_UINT16(0x270f),           // pushi $270f (9999)
 	SIG_END
 };
 
 static const uint16 qfg4BenchmarkPatch[] = {
-	0x35, 0x01, // ldi 0
-	0xa1, 0xbf, // sag $bf (191)
-	0x48,       // ret
+	0x35, 0x01,                         // ldi 0
+	0xa1, 0xbf,                         // sag global[191]
+	0x48,                               // ret
 	PATCH_END
 };
 
@@ -8068,9 +8057,9 @@ static const uint16 qfg4BenchmarkPatch[] = {
 //
 // We delay a bit, so that hero::cycler should always be set.
 //
-// Applies to: English CD, English floppy, German floppy
-// Responsible method: sFallsBackSide::changeState (script 803)
-// Fixes bug #9801
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: sFallsBackSide::changeState in script 803
+// Fixes bug: #9801
 static const uint16 qfg4SlidingDownSlopeSignature[] = {
 	0x87, 0x01,                       // lap param[1]
 	0x65, SIG_ADDTOOFFSET(+1),        // aTop state
@@ -8150,10 +8139,10 @@ static const uint16 qfg4SlidingDownSlopePatch[] = {
 // the walkable polygon is valid, and the pathfinding algorithm can
 // work properly.
 //
-// Applies to: English CD, English floppy, German floppy
-//
-// Fixes bug #10693
-static const uint16 qg4InnPathfindingSignature[] = {
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: rm320::init() in script 320
+// Fixes bug: #10693
+static const uint16 qfg4InnPathfindingSignature[] = {
 	SIG_MAGICDWORD,
 	0x38, SIG_UINT16(0x0154),  // pushi x = 340
 	0x39, 0x77,                // pushi y = 119
@@ -8172,7 +8161,7 @@ static const uint16 qg4InnPathfindingSignature[] = {
 	SIG_END
 };
 
-static const uint16 qg4InnPathfindingPatch[] = {
+static const uint16 qfg4InnPathfindingPatch[] = {
 	PATCH_ADDTOOFFSET(+30),
 	0x38, PATCH_UINT16(0x013f), // pushi x = 319 (was 324)
 	0x39, 0x77,                 // pushi y = 119
@@ -8199,18 +8188,18 @@ static const uint16 qg4InnPathfindingPatch[] = {
 // unreachable.
 //
 // Applies to at least: English CD, English floppy, German floppy
-// Responsible method: Glory::save()
+// Responsible method: Glory::save() in script 0
 // Fixes bug: #10758
-static const uint16 qg4AutosaveSignature[] = {
-	0x30, SIG_ADDTOOFFSET(+2),          // bnt [end the loop]
+static const uint16 qfg4AutosaveSignature[] = {
+	0x30, SIG_ADDTOOFFSET(+2),          // bnt ?? [end the loop]
 	0x78,                               // push1
-	0x39, 0x79,                         // pushi data
+	0x39, SIG_SELECTOR8(data),          // pushi data
 	0x76,                               // push0
-	SIG_ADDTOOFFSET(+2),                // CD="lag global29", floppy="lat temp6"
-	0x4a, SIG_UINT16(0x0004),           // send 04
+	SIG_ADDTOOFFSET(+2),                // CD="lag global[29]", floppy="lat temp[6]"
+	0x4a, SIG_UINT16(0x0004),           // send 4d
 	0x36,                               // push
 	SIG_MAGICDWORD,
-	0x43, 0x3f, SIG_UINT16(0x0002),     // callk CheckFreeSpace[3f], 02
+	0x43, 0x3f, SIG_UINT16(0x0002),     // callk 2d (CheckFreeSpace)
 	0x18,                               // not
 	0x2f, 0x05,                         // bt 05 [skip other OR condition]
 	0x8d, 0x09,                         // lst temp[9] (savegame file count)
@@ -8219,7 +8208,7 @@ static const uint16 qg4AutosaveSignature[] = {
 	SIG_END
 };
 
-static const uint16 qg4AutosavePatch[] = {
+static const uint16 qfg4AutosavePatch[] = {
 	0x32, // ...                        // jmp [end the loop]
 	PATCH_END
 };
@@ -8229,10 +8218,10 @@ static const uint16 qg4AutosavePatch[] = {
 // property. This leads to arithmetic crashes later. We change it to
 // Actor::setLooper().
 //
-// Applies to at least: English CD, English floppy
+// Applies to at least: English CD, English floppy, German floppy
 // Responsible method:
 //                     Script 440
-//                         sToWater::changeState()
+//                         sToWater::changeState(3)
 //                     Script 530, 535
 //                         sGlideFromTuff::changeState(1)
 //                         sGoGlide::changeState(2)
@@ -8251,38 +8240,35 @@ static const uint16 qg4AutosavePatch[] = {
 //                         sFromEast::changeState(0)
 //                         sFromWest::changeState(0)
 // Fixes bug: #10777
-static const uint16 qg4SetLooperSignature1[] = {
+static const uint16 qfg4SetLooperSignature1[] = {
 	SIG_MAGICDWORD,
 	0x38, SIG_SELECTOR16(setLoop),      // pushi setLoop
-	0x78,                               // push 1
+	0x78,                               // push1
 	0x51, 0x5a,                         // class Grooper
 	SIG_END
 };
 
-static const uint16 qg4SetLooperPatch1[] = {
+static const uint16 qfg4SetLooperPatch1[] = {
 	0x38, PATCH_SELECTOR16(setLooper),  // pushi setLooper
 	PATCH_END
 };
 
 // As above, except it's an exported subclass of Grooper: stopGroop.
 //
-// Applies to at least: English CD, English floppy
-// Responsible method:
-//                      Script 10
-//                          sJumpWater::changeState(3)
-//                          sToJump::changeState(2)
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: sJumpWater::changeState(3), sToJump::changeState(2) in script 10
 // Fixes bug: #10777
-static const uint16 qg4SetLooperSignature2[] = {
+static const uint16 qfg4SetLooperSignature2[] = {
 	SIG_MAGICDWORD,
 	0x38, SIG_SELECTOR16(setLoop),      // pushi setLoop
 	0x78,                               // push1
 	0x7a,                               // push2
 	0x39, 0x1c,                         // pushi 28d
 	0x78,                               // push1
-	0x43, 0x02, SIG_UINT16(0x0004),     // callk 04 (ScriptID 28 1)
+	0x43, 0x02, SIG_UINT16(0x0004),     // callk 4d (ScriptID 28 1)
 	SIG_END
 };
-static const uint16 qg4SetLooperPatch2[] = {
+static const uint16 qfg4SetLooperPatch2[] = {
 	0x38, PATCH_SELECTOR16(setLooper),  // pushi setLooper
 	PATCH_END
 };
@@ -8303,10 +8289,10 @@ static const uint16 qfg4MoonriseSignature[] = {
 	0x81, 0x7a,                         // lag global[122]
 	0xa5, 0x00,                         // sat temp[0]
 	0x89, 0x7b,                         // lsg global[123]
-	0x35, 0x06,                         // ldi 6
+	0x35, 0x06,                         // ldi 6d
 	0x1c,                               // ne?
 	0x2f, 0x06,                         // bt 6d [skip remaining OR conditions]
-	0x89, 0x78,                         // lsg 120d
+	0x89, 0x78,                         // lsg global[120]
 	0x34, SIG_UINT16(0x01f4),           // ldi 500d
 	0x1e,                               // gt?
 	0x31, 0x02,                         // bnt 2d [skip the if block]
@@ -8316,7 +8302,7 @@ static const uint16 qfg4MoonriseSignature[] = {
 static const uint16 qfg4MoonrisePatch[] = {
 	0x35, 0x00,                         // ldi 0 (reset the is-night var)
 	0xa3, 0x05,                         // sal local[5]
-	0x33, 0x0f,                         // jmp 15d (skip waste bytes)
+	0x33, 0x0f,                         // jmp 15d [skip waste bytes]
 	PATCH_END
 };
 
@@ -8351,29 +8337,29 @@ static const uint16 qfg4MoonrisePatch[] = {
 // sprite never would've been scheduled separately in the first place.
 //
 // Applies to at least: English CD, English floppy, German floppy
-// Responsible method: rm320::init()
+// Responsible method: rm320::init() in script 320
 // Fixes bug: #10753
 static const uint16 qfg4AbsentInnkeeperSignature[] = {
-	SIG_MAGICDWORD,                     // (Block 10, partway through.)
+	SIG_MAGICDWORD,                     // (block 10, partway through)
 	0x31, 0x1c,                         // bnt 28d [block 11]
 	0x89, 0x7b,                         // lsg global[123]
 	0x35, 0x03,                         // ldi 3d
 	0x24,                               // le?
-                                        // (~~ Junk begins ~~)
+                                        // (~~ junk begins ~~)
 	0x2f, 0x0f,                         // bt 15d [after the calle]
 	0x39, 0x03,                         // pushi 3d
 	0x89, 0x7b,                         // lsg global[123]
 	0x39, 0x04,                         // pushi 4d
 	0x39, 0x05,                         // pushi 5d
-	0x46, SIG_UINT16(0xfde7), SIG_UINT16(0x0005), SIG_UINT16(0x0006), // calle proc64999_5(global[123], 4, 5) 06
-                                        // (~~ Junk ends ~~)
+	0x46, SIG_UINT16(0xfde7), SIG_UINT16(0x0005), SIG_UINT16(0x0006), // calle 6d (proc64999_5(global[123], 4, 5))
+                                        // (~~ junk ends ~~)
 	0x31, 0x04,                         // bnt 4d [block 11]
 	0x35, 0x0a,                         // ldi 10d
-	0x33, 0x29,                         // jmp 41d (done, local[2]=acc)
+	0x33, 0x29,                         // jmp 41d [done, local[2]=acc]
                                         //
-	SIG_ADDTOOFFSET(+25),               // (...Block 11...) (Patch ends after this.)
-	SIG_ADDTOOFFSET(+14),               // (...Block 12...)
-	SIG_ADDTOOFFSET(+2),                // (...Else 0...)
+	SIG_ADDTOOFFSET(+25),               // (...block 11...) (patch ends after this)
+	SIG_ADDTOOFFSET(+14),               // (...block 12...)
+	SIG_ADDTOOFFSET(+2),                // (...else 0...)
 	0xa3, 0x02,                         // sal local[2] (all blocks set acc and jmp here)
 	PATCH_END
 };
@@ -8386,38 +8372,38 @@ static const uint16 qfg4AbsentInnkeeperPatch[] = {
                                         // (*snip*)
 	0x31, 0x07,                         // bnt 7d [block 11]
 	0x35, 0x0a,                         // ldi 10d
-	0x33, 0x3a,                         // jmp 58d (done, local[2]=acc)
+	0x33, 0x3a,                         // jmp 58d [done, local[2]=acc]
                                         //
 	0x34, PATCH_UINT16(0x0000),         // ldi 0 (waste 3 bytes)
                                         // (14 freed bytes remain.)
-                                        // (Use 7 freed bytes to prepend block 11.)
-                                        // (And shift all of block 11 up by 7 bytes.)
-                                        // (Use that new gap below to prepend block 12.)
+                                        // (use 7 freed bytes to prepend block 11)
+                                        // (and shift all of block 11 up by 7 bytes)
+                                        // (use that new gap below to prepend block 12)
                                         //
-                                        // (Block 11. Prepend a time check.)
+                                        // (block 11, prepend a time check)
 	0x89, 0x7b,                         // lsg global[123]
 	0x35, 0x05,                         // ldi 5d
 	0x24,                               // le?
 	0x31, 0x19,                         // bnt 25d [block 12]
-                                        // (Block 11 original ops shift up.)
+                                        // (block 11, original ops shift up)
 	0x78,                               // push1
-	0x38, PATCH_UINT16(0x0084),         // pushi 132
-	0x45, 0x04, PATCH_UINT16(0x0002),   // callb proc0_4(132) 02
+	0x38, PATCH_UINT16(0x0084),         // pushi 132d
+	0x45, 0x04, PATCH_UINT16(0x0002),   // callb 2d (proc0_4(132))
 	0x31, 0x0f,                         // bnt 15d [next block]
 	0x78,                               // push1
-	0x38, PATCH_UINT16(0x0086),         // pushi 134
-	0x45, 0x04, PATCH_UINT16(0x0002),   // callb proc0_4(134) 02
+	0x38, PATCH_UINT16(0x0086),         // pushi 134d
+	0x45, 0x04, PATCH_UINT16(0x0002),   // callb 2d (proc0_4(134))
 	0x18,                               // not
 	0x31, 0x04,                         // bnt 4d [block 12]
 	0x35, 0x0b,                         // ldi 11d
-	0x33, 0x17,                         // jmp 23d (done, local[2]=acc)
+	0x33, 0x17,                         // jmp 23d [done, local[2]=acc]
                                         //
-                                        // (Block 12. Prepend a time check.)
+                                        // (block 12, prepend a time check)
 	0x89, 0x7b,                         // lsg global[123]
 	0x35, 0x05,                         // ldi 5d
 	0x24,                               // le?
 	0x31, 0x0e,                         // bnt 14d [else block]
-                                        // (Block 12 original ops continue here.)
+                                        // (block 12, original ops continue here)
   	PATCH_END
 };
 
@@ -8507,16 +8493,16 @@ static const uint16 qfg4SetScalerPatch[] = {
 // Fixes bug: #10756
 static const uint16 qfg4CrestBookshelfCDSignature[] = {
 	SIG_MAGICDWORD,
-	0x4a, SIG_UINT16(0x003e),           // send 3e
+	0x4a, SIG_UINT16(0x003e),           // send 62d
 	0x36,                               // push
 	SIG_ADDTOOFFSET(+5),                // ...
 	0x38, SIG_SELECTOR16(handsOn),      // pushi handsOn (begin clobbering)
 	0x76,                               // push0
 	0x81, 0x01,                         // lag global[1] (Glory)
-	0x4a, SIG_UINT16(0x0004),           // send 04
+	0x4a, SIG_UINT16(0x0004),           // send 4d
 	0x38, SIG_SELECTOR16(dispose),      // pushi dispose
 	0x76,                               // push0
-	0x54, SIG_UINT16(0x0004),           // self 04
+	0x54, SIG_UINT16(0x0004),           // self 4d
 	SIG_END
 };
 
@@ -8527,7 +8513,7 @@ static const uint16 qfg4CrestBookshelfCDPatch[] = {
 	0x72, PATCH_UINT16(0x01a4),         // lofsa sLeaveSecretly
 	0x36,                               // push
 	0x81, 0x02,                         // lag global[2] (rm663)
-	0x4a, PATCH_UINT16(0x0006),         // send 06
+	0x4a, PATCH_UINT16(0x0006),         // send 6d
 	0x34, PATCH_UINT16(0x0000),         // ldi 0 (waste 3 bytes)
 	PATCH_END
 };
@@ -8535,16 +8521,16 @@ static const uint16 qfg4CrestBookshelfCDPatch[] = {
 // Applies to at least: English floppy, German floppy
 static const uint16 qfg4CrestBookshelfFloppySignature[] = {
 	SIG_MAGICDWORD,
-	0x4a, SIG_UINT16(0x003e),           // send 3e
+	0x4a, SIG_UINT16(0x003e),           // send 62d
 	0x36,                               // push
 	SIG_ADDTOOFFSET(+5),                // ...
 	0x38, SIG_SELECTOR16(handsOn),      // pushi handsOn (begin clobbering)
 	0x76,                               // push0
 	0x81, 0x01,                         // lag global[1] (Glory)
-	0x4a, SIG_UINT16(0x0004),           // send 04
+	0x4a, SIG_UINT16(0x0004),           // send 4d
 	0x38, SIG_SELECTOR16(dispose),      // pushi dispose
 	0x76,                               // push0
-	0x54, SIG_UINT16(0x0004),           // self 04
+	0x54, SIG_UINT16(0x0004),           // self 4d
 	SIG_END
 };
 
@@ -8555,7 +8541,7 @@ static const uint16 qfg4CrestBookshelfFloppyPatch[] = {
 	0x72, PATCH_UINT16(0x018c),         // lofsa sLeaveSecretly
 	0x36,                               // push
 	0x81, 0x02,                         // lag global[2] (rm663)
-	0x4a, PATCH_UINT16(0x0006),         // send 06
+	0x4a, PATCH_UINT16(0x0006),         // send 6d
 	0x34, PATCH_UINT16(0x0000),         // ldi 0 (waste 3 bytes)
 	PATCH_END
 };
@@ -8588,8 +8574,8 @@ static const uint16 qfg4CrestBookshelfMotionPatch[] = {
 	PATCH_END
 };
  
-// The castle's great hall has a doorMat region that intermittently sends hero
-// back to the room they just left (the barrel room) the instant they arrive.
+// The castle's great hall (630) has a doorMat region that intermittently sends
+// hero back to the room they just left (barrel room) the instant they arrive.
 //
 // Entry from room 623 starts hero at (0, 157), the edge of the doorMat. We
 // shrink the region by 2 pixels. Then sEnterTheRoom moves hero safely across.
@@ -8598,12 +8584,12 @@ static const uint16 qfg4CrestBookshelfMotionPatch[] = {
 // Does not apply to English floppy 1.0. It lacked a western doorMat entirely.
 //
 // Applies to at least: English CD, English floppy, German floppy
-// Responsible method: vClosentDoor::init()
+// Responsible method: vClosentDoor::init() in script 630
 // Fixes bug: #10731
 static const uint16 qfg4GreatHallEntrySignature[] = {
 	SIG_MAGICDWORD,
 	0x76,                               // push0 (point 0)
-	0x38, SIG_UINT16(0x0088),           // pushi 136
+	0x38, SIG_UINT16(0x0088),           // pushi 136d
 	SIG_ADDTOOFFSET(+10),               // ...
 	0x76,                               // push0 0d (point 3)
 	0x38, SIG_UINT16(0x00b4),           // pushi 180d
@@ -8661,7 +8647,7 @@ static const uint16 qfg4GreatHallEntryPatch[] = {
 // Fixes bug: #10138, #10419, #10710, #10814
 static const uint16 qfg4ConditionalVoidSignature[] = {
 	SIG_MAGICDWORD,
-	0x43, 0x0a, SIG_UINT16(0x00002),    // callk 02 (SetNowSeen stackedView)
+	0x43, 0x0a, SIG_UINT16(0x00002),    // callk 2d (SetNowSeen(stackedView))
 	0x36,                               // push (void func didn't set acc!)
 	0x35, 0x01,                         // ldi 1d
 	0x14,                               // or (whatever that was, make it non-zero)
@@ -8670,7 +8656,7 @@ static const uint16 qfg4ConditionalVoidSignature[] = {
 
 static const uint16 qfg4ConditionalVoidPatch[] = {
 	PATCH_ADDTOOFFSET(+4),              //
-	0x78,                               // push1 (Feed OR a literal 1)
+	0x78,                               // push1 (feed OR a literal 1)
 	PATCH_END
 };
 
@@ -8694,10 +8680,10 @@ static const uint16 qfg4ConditionalVoidPatch[] = {
 // Fixes bug: #10751
 static const uint16 qfg4GraveyardRopeSignature1[] = {
 	SIG_MAGICDWORD,                     // (rope1 properties)
-	SIG_UINT16(0x0064),                 // x = 100
-	SIG_UINT16(0xfff6),                 // y = -10
+	SIG_UINT16(0x0064),                 // x = 100d
+	SIG_UINT16(0xfff6),                 // y = -10d
 	SIG_ADDTOOFFSET(+24),               // ...
-	SIG_UINT16(0x01f6),                 // view = 502
+	SIG_UINT16(0x01f6),                 // view = 502d
 	SIG_ADDTOOFFSET(+8),                // ...
 	SIG_UINT16(0x6000),                 // signal = 0x6000
 	SIG_END
@@ -8711,10 +8697,10 @@ static const uint16 qfg4GraveyardRopePatch1[] = {
 
 static const uint16 qfg4GraveyardRopeSignature2[] = {
 	SIG_MAGICDWORD,                     // (rope2 properties)
-	SIG_UINT16(0x007f),                 // x = 127
-	SIG_UINT16(0xfffb),                 // y = -5
+	SIG_UINT16(0x007f),                 // x = 127d
+	SIG_UINT16(0xfffb),                 // y = -5d
 	SIG_ADDTOOFFSET(+24),               // ...
-	SIG_UINT16(0x01f6),                 // view = 502
+	SIG_UINT16(0x01f6),                 // view = 502d
 	SIG_ADDTOOFFSET(+8),                // ...
 	SIG_UINT16(0x6000),                 // signal = 0x6000
 	SIG_END
@@ -8737,16 +8723,16 @@ static const uint16 qfg4DoubleDoorSoundSignature[] = {
 	0x35, 0x04,                         // ldi 4d (state 4)
 	SIG_ADDTOOFFSET(+3),                // ...
 	SIG_MAGICDWORD,
-	0x39, 0x33,                         // pushi play
+	0x39, SIG_SELECTOR8(play),          // pushi play
 	0x76,                               // push0
 	0x72, SIG_UINT16(0x0376),           // lofsa doorSound
-	0x4a, SIG_UINT16(0x0004),           // send 04
+	0x4a, SIG_UINT16(0x0004),           // send 4d
 	SIG_END
 };
 
 static const uint16 qfg4DoubleDoorSoundPatch[] = {
 	PATCH_ADDTOOFFSET(+5),
-	0x33, 0x07,                         // jmp 7d (skip waste bytes)
+	0x33, 0x07,                         // jmp 7d [skip waste bytes]
 	PATCH_END
 };
 
@@ -8770,9 +8756,9 @@ static const uint16 qfg4SafeDoorEastSignature[] = {
 	SIG_MAGICDWORD,                     // (else block, right door)
 	0x78,                               // push1
 	0x38, SIG_UINT16(0x00d7),           // pushi 215d
-	0x45, 0x04, SIG_UINT16(0x0002),     // callb 02 (proc0_4(215), test right door oiled flag)
+	0x45, 0x04, SIG_UINT16(0x0002),     // callb 2d (proc0_4(215), test right door oiled flag)
 	0x18,                               // not
-	0x31, SIG_ADDTOOFFSET(+1),          // bnt [end the else block]
+	0x31, SIG_ADDTOOFFSET(+1),          // bnt ?? [end the else block]
                                         //
 	0x35, 0x00,                         // ldi 0
 	0xa3, 0x02,                         // sal local[2]
@@ -8785,9 +8771,9 @@ static const uint16 qfg4SafeDoorEastPatch[] = {
                                         //
 	0x78,                               // push1
 	0x38, PATCH_UINT16(0x00d7),         // pushi 215d
-	0x45, 0x04, PATCH_UINT16(0x0002),   // callb 02 (proc0_4(215))
+	0x45, 0x04, PATCH_UINT16(0x0002),   // callb 2d (proc0_4(215))
 	0x18,                               // not
-	0x31, PATCH_GETORIGINALBYTEADJUST(10, -4), // bnt [end the else block]
+	0x31, PATCH_GETORIGINALBYTEADJUST(10, -4), // bnt ?? [end the else block]
 	PATCH_END
 };
 
@@ -8796,21 +8782,21 @@ static const uint16 qfg4SafeDoorEastPatch[] = {
 // respective doors properly from the outside. We switch the flags inside.
 //
 // Applies to at least: English CD, English floppy, German floppy
-// Responsible method: Script 643 - vBackDoor::doVerb(32), vLeftDoor::doVerb(32)
+// Responsible method: vBackDoor::doVerb(32), vLeftDoor::doVerb(32) in script 643
 // Fixes bug: #10829
 static const uint16 qfg4SafeDoorOilSignature[] = {
 	0x35, 0x20,                         // ldi 32d (vBackDoor::doVerb(oil), right door)
 	SIG_ADDTOOFFSET(+5),                // ...
 	SIG_MAGICDWORD,
 	0x38, SIG_UINT16(0x00d6),           // pushi 214d
-	0x45, 0x02, SIG_UINT16(0x0002),     // callb 02 (proc0_2(214), set left oiled flag!?)
+	0x45, 0x02, SIG_UINT16(0x0002),     // callb 2d (proc0_2(214), set left oiled flag!?)
 
 	SIG_ADDTOOFFSET(+152),              // ...
 
 	0x35, 0x20,                         // ldi 32d (vLeftDoor::doVerb(oil), left door)
 	SIG_ADDTOOFFSET(+5),                // ...
 	0x38, SIG_UINT16(0x00d7),           // pushi 215d
-	0x45, 0x02, SIG_UINT16(0x0002),     // callb 02 (proc0_2(215), set right oiled flag!?)
+	0x45, 0x02, SIG_UINT16(0x0002),     // callb 2d (proc0_2(215), set right oiled flag!?)
 	SIG_END
 };
 
@@ -8822,11 +8808,11 @@ static const uint16 qfg4SafeDoorOilPatch[] = {
 	PATCH_END
 };
 
-// Waking after a dream by the staff in town prevents the room from creating a
-// doorMat at nightfall, if hero rests repeatedly. The town gate closes at
-// night. Without the doorMat, hero isn't prompted to climb over the gate.
-// Instead, hero casually walks south and gets stuck in the next room behind
-// the closed gate.
+// Waking after a dream by the staff in town (room 270) prevents the room from
+// creating a doorMat at nightfall, if hero rests repeatedly. The town gate
+// closes at night. Without the doorMat, hero isn't prompted to climb over the
+// gate. Instead, hero casually walks south and gets stuck in the next room
+// behind the closed gate.
 //
 // Since hero wakes in the morning, sAfterTheDream disposes any existing
 // doorMat. It neglects to reset local[2], which toggles rm270::doit()'s
@@ -8846,47 +8832,47 @@ static const uint16 qfg4SafeDoorOilPatch[] = {
 // Fixes bug: #10830
 static const uint16 qfg4DreamGateSignature[] = {
 	SIG_MAGICDWORD,
-	0x39, 0x43,                         // pushi heading
+	0x39, SIG_SELECTOR8(heading),       // pushi heading
 	0x76,                               // push0
 	0x72, SIG_ADDTOOFFSET(+2),          // lofsa fSouth
-	0x4a, SIG_UINT16(0x0004),           // send 04
+	0x4a, SIG_UINT16(0x0004),           // send 4d
 	0x31, 0x1a,                         // bnt 26d [skip disposing/nulling] (no heading)
                                         //
 	0x38, SIG_SELECTOR16(dispose),      // pushi dispose
 	0x76,                               // push0
-	0x39, 0x43,                         // pushi heading
+	0x39, SIG_SELECTOR8(heading),       // pushi heading
 	0x76,                               // push0
 	0x72, SIG_ADDTOOFFSET(+2),          // lofsa fSouth
-	0x4a, SIG_UINT16(0x0004),           // send 04 (accumulate heading)
-	0x4a, SIG_UINT16(0x0004),           // send 04 (dispose heading)
+	0x4a, SIG_UINT16(0x0004),           // send 4d (accumulate heading)
+	0x4a, SIG_UINT16(0x0004),           // send 4d (dispose heading)
                                         //
-	0x39, 0x43,                         // pushi heading
+	0x39, SIG_SELECTOR8(heading),       // pushi heading
 	0x78,                               // push1
 	0x76,                               // push0
 	0x72, SIG_ADDTOOFFSET(+2),          // lofsa fSouth
-	0x4a, SIG_UINT16(0x0006),           // send 06 (set fSouth's heading to null)
+	0x4a, SIG_UINT16(0x0006),           // send 6d (set fSouth's heading to null)
 	SIG_END
 };
 
 static const uint16 qfg4DreamGatePatch[] = {
 	0x3f, 0x01,                         // link 1d (cache heading for reuse)
-	0x39, 0x43,                         // pushi heading
+	0x39, PATCH_SELECTOR8(heading),     // pushi heading
 	0x76,                               // push0
 	0x72, PATCH_GETORIGINALUINT16(4),   // lofsa fSouth
-	0x4a, PATCH_UINT16(0x0004),         // send 04
+	0x4a, PATCH_UINT16(0x0004),         // send 4d
 	0xa5, 0x00,                         // sat temp[0]
 	0x31, 0x13,                         // bnt 19d [skip disposing/nulling] (no heading)
                                         //
 	0x38, PATCH_SELECTOR16(dispose),    // pushi dispose
 	0x76,                               // push0
 	0x85, 0x00,                         // lat temp[0]
-	0x4a, PATCH_UINT16(0x0004),         // send 04 (dispose heading)
+	0x4a, PATCH_UINT16(0x0004),         // send 4d (dispose: heading:)
                                         //
-	0x39, 0x43,                         // pushi heading
+	0x39, PATCH_SELECTOR8(heading),     // pushi heading
 	0x78,                               // push1
 	0x76,                               // push0
 	0x72, PATCH_GETORIGINALUINT16(4),   // lofsa fSouth
-	0x4a, PATCH_UINT16(0x0006),         // send 06 (set fSouth's heading to null)
+	0x4a, PATCH_UINT16(0x0006),         // send 6d (set fSouth's heading to null)
                                         //
 	0x76,                               // push0
 	0xab, 0x02,                         // ssl local[2] (let doit() watch for nightfall)
@@ -8918,7 +8904,7 @@ static const uint16 qfg4RestartSignature[] = {
 	0x35, 0x01,                         // ldi 1d
 	0xb1, 0x90,                         // sagi (global[144 + 1] = 0)
 	SIG_ADDTOOFFSET(+40),               // ...
-	0x38, SIG_UINT16(0x013b),           // pushi 315
+	0x38, SIG_UINT16(0x013b),           // pushi 315d
 	SIG_ADDTOOFFSET(+2),                // ldi ?? (array index here was typoed)
 	0xb1, 0x90,                         // sagi (global[144 + ?] = 315)
 
@@ -8939,7 +8925,7 @@ static const uint16 qfg4RestartPatch[] = {
 	0xad, 0x00,                         // sst temp[0]
                                         //
 	0x8d, 0x00,                         // lst temp[0] (global[144 + n+1] = n*45)
-	0x35, 0x08,                         // ldi 8
+	0x35, 0x08,                         // ldi 8d
 	0x22,                               // lt?
 	0x31, 0x0c,                         // bnt 12d [end the loop]
 	0x8d, 0x00,                         // lst temp[0]
@@ -8983,29 +8969,29 @@ static const uint16 qfg4RestartPatch[] = {
 	0xed, 0x00,                         // -st temp[0]
 	0x35, 0x00,                         // ldi 0
 	0x20,                               // ge?
-	0x31, 0x07,                         // bnt 7d (end the loop)
+	0x31, 0x07,                         // bnt 7d [end the loop]
 	0x85, 0x00,                         // lat temp[0]
 	0xb8, PATCH_UINT16(0x016f),         // ssgi 367d (global[367 + n] = pop())
 	0x33, 0xf2,                         // jmp [-14] (loop)
                                         // (that loop freed +52 bytes)
 
                                         // (reset properties for a few items)
-	0x33, 0x1f,                         // jmp 31d (skip subroutine declaration)
+	0x33, 0x1f,                         // jmp 31d [skip subroutine declaration]
 	0x38, PATCH_SELECTOR16(loop),       // pushi loop
 	0x78,                               // push1
-	0x8f, 0x02,                         // lsp[2] (loop varies)
+	0x8f, 0x02,                         // lsp param[2] (loop varies)
 	0x38, PATCH_SELECTOR16(cel),        // pushi cel
 	0x78,                               // push1
-	0x8f, 0x03,                         // lsp[3] (cel varies)
+	0x8f, 0x03,                         // lsp param[3] (cel varies)
 	0x38, PATCH_SELECTOR16(value),      // pushi value (weight)
 	0x78,                               // push1
 	0x7a,                               // push2 (these items all weigh 2)
                                         //
-	0x39, 0x4b,                         // pushi at
+	0x39, PATCH_SELECTOR8(at),          // pushi at
 	0x78,                               // push1
-	0x8f, 0x01,                         // lsp[1]
+	0x8f, 0x01,                         // lsp param[1]
 	0x81, 0x09,                         // global[9] (gloryInv)
-	0x4a, PATCH_UINT16(0x0006),         // send 06
+	0x4a, PATCH_UINT16(0x0006),         // send 6d
                                         //
 	0x4a, PATCH_UINT16(0x0012),         // send 18d
 	0x48,                               // ret
@@ -9028,7 +9014,7 @@ static const uint16 qfg4RestartPatch[] = {
 	0x39, 0x09,                         // pushi 9d (cel)
 	0x40, PATCH_UINT16(0xffbc), PATCH_UINT16(0x0006), // call 6d [-68]
 
-	0x33, 0x0a,                         // jmp 10d (skip waste bytes)
+	0x33, 0x0a,                         // jmp 10d [skip waste bytes]
 	PATCH_END
 };
 
@@ -9094,7 +9080,7 @@ static const uint16 qfg4RopeScalerPatch[] = {
 // Fixes bug: #10824
 static const uint16 qfg4Tarot3QueenSignature[] = {
 	SIG_MAGICDWORD,
-	0x34, SIG_UINT16(0x03f1),           // ldi 1009d (Queen of Cups)
+	0x34, SIG_UINT16(0x03f1),           // ldi 1009d ("Queen of Cups")
 	0xa3, 0x00,                         // sal local[0]
 	SIG_ADDTOOFFSET(+46),               // ...
 	0x39, 0x1f,                         // pushi 31d (say: 1 6 31 0 self)
@@ -9102,7 +9088,7 @@ static const uint16 qfg4Tarot3QueenSignature[] = {
 };
 
 static const uint16 qfg4Tarot3QueenPatch[] = {
-	0x34, PATCH_UINT16(0x03ed),         // ldi 1005d (Queen of Swords)
+	0x34, PATCH_UINT16(0x03ed),         // ldi 1005d ("Queen of Swords")
 	PATCH_END
 };
 
@@ -9116,7 +9102,7 @@ static const uint16 qfg4Tarot3QueenPatch[] = {
 // Fixes bug: #10823
 static const uint16 qfg4Tarot3DeathSignature[] = {
 	SIG_MAGICDWORD,
-	0x34, SIG_UINT16(0x03fa),           // ldi 1018d (The Devil)
+	0x34, SIG_UINT16(0x03fa),           // ldi 1018d ("The Devil")
 	0xa3, 0x00,                         // sal local[0]
 	SIG_ADDTOOFFSET(+46),               // ...
 	0x39, 0x23,                         // pushi 35d (say: 1 6 35 0 self)
@@ -9124,7 +9110,7 @@ static const uint16 qfg4Tarot3DeathSignature[] = {
 };
 
 static const uint16 qfg4Tarot3DeathPatch[] = {
-	0x34, PATCH_UINT16(0x03fd),         // ldi 1021d (Death)
+	0x34, PATCH_UINT16(0x03fd),         // ldi 1021d ("Death")
 	PATCH_END
 };
 
@@ -9162,7 +9148,7 @@ static const uint16 qfg4Tarot3TwoOfCupsSignature[] = {
 };
 
 static const uint16 qfg4Tarot3TwoOfCupsPatch[] = {
-	0x33, 0x31,                         // jmp 49d (skip subroutine declaration)
+	0x33, 0x31,                         // jmp 49d [skip subroutine declaration]
 	0x38, PATCH_SELECTOR16(moveSpeed),  // pushi moveSpeed
 	0x78,                               // push1
 	0x76,                               // push0
@@ -9198,7 +9184,7 @@ static const uint16 qfg4Tarot3TwoOfCupsPatch[] = {
 	0x38, PATCH_UINT16(0x00d2),         // pushi 210d (setMotion, x arg)
                                         //
 	0x8b, 0x00,                         // lsl local[0] (test the card's View number)
-	0x34, PATCH_UINT16(0x03ff),         // ldi 1023 (Two of Cups is special)
+	0x34, PATCH_UINT16(0x03ff),         // ldi 1023d ("Two of Cups" is special)
 	0x1a,                               // eq?
 	0x31, 0x04,                         // bnt 4d [regular y arg]
 	0x39, 0x66,                         // pushi 102d  (setMotion, special y arg)
@@ -9218,7 +9204,7 @@ static const uint16 qfg4Tarot3TwoOfCupsPatch[] = {
 	0x39, 0x32,                         // pushi 50d (setMotion, y arg)
 	0x41, 0x9b, PATCH_UINT16(0x0006),   // call 6d [-101]
 
-	0x33, 0x0c,                         // jmp 12d (skip to the original toss that ends this switch)
+	0x33, 0x0c,                         // jmp 12d [skip to the original toss that ends this switch]
 	PATCH_END
 };
 
@@ -9238,7 +9224,7 @@ static const uint16 qfg4Tarot3TwoOfCupsPatch[] = {
 static const uint16 qfg4Tarot3PrioritySignature[] = {
 	0x78,                               // push1 (setPri: 1, "Eight of Swords", West, V)
 	SIG_ADDTOOFFSET(+14),               // ...
-	0x39, 0x20,                         // pushi 32 (say cond:32)
+	0x39, 0x20,                         // pushi 32d (say cond:32)
 	SIG_ADDTOOFFSET(+68),               // ...
 	0x76,                               // push0 (setPri: 0, "Strength", West, H)
 	SIG_ADDTOOFFSET(+84),               // ...
@@ -9247,8 +9233,8 @@ static const uint16 qfg4Tarot3PrioritySignature[] = {
 	0x76,                               // push0 (setPri: 0, "Death", South, H)
 	SIG_ADDTOOFFSET(+12),               // ...
 	SIG_MAGICDWORD,
-	0x39, 0x06,                         // pushi 6 (say verb:6)
-	0x39, 0x23,                         // pushi 36 (say cond:35)
+	0x39, 0x06,                         // pushi 6d (say verb:6)
+	0x39, 0x23,                         // pushi 36d (say cond:35)
 	SIG_END
 };
 
@@ -9286,9 +9272,9 @@ static const uint16 qfg4Tarot5PrioritySignature[] = {
 	0x78,                               // push1 (setPri: 1, "Six of Swords")
 	SIG_MAGICDWORD,
 	0x83, 0x01,                         // lal local[1] (card obj)
-	0x4a, SIG_UINT16(0x0006),           // send 06
+	0x4a, SIG_UINT16(0x0006),           // send 6d
 	SIG_ADDTOOFFSET(+9),                // ...
-	0x39, 0x44,                         // pushi 68 (say cond:68)
+	0x39, 0x44,                         // pushi 68d (say cond:68)
 	SIG_END
 };
 
@@ -9319,7 +9305,7 @@ static const uint16 qfg4TentacleWriggleSignature[] = {
 	0x72, SIG_ADDTOOFFSET(+2),          // loffsa tentacle
 	0x36,                               // push
 	0x72, SIG_ADDTOOFFSET(+2),          // loffsa tentacle
-	0x4a, SIG_UINT16(0x0008),           // send 08
+	0x4a, SIG_UINT16(0x0008),           // send 8d
 	SIG_END
 };
 
@@ -9330,7 +9316,7 @@ static const uint16 qfg4TentacleWrigglePatch[] = {
 	0x35, 0x00,                         // ldi 0 (erase 2 bytes)
 	0x35, 0x00,                         // ldi 0 (erase 2 bytes)
 	PATCH_ADDTOOFFSET(+3),              // ...
-	0x4a, PATCH_UINT16(0x0006),         // send 06
+	0x4a, PATCH_UINT16(0x0006),         // send 6d
 	PATCH_END
 };
 
@@ -9371,20 +9357,20 @@ static const uint16 qfg4PitRopeFighterSignature[] = {
 	SIG_MAGICDWORD,
 	0x38, SIG_SELECTOR16(cue),          // pushi cue
 	0x76,                               // push0
-	0x54, SIG_UINT16(0x0004),           // self 04
+	0x54, SIG_UINT16(0x0004),           // self 4d
 	0x32, SIG_ADDTOOFFSET(+2),          // jmp ?? [end the switch]
 	SIG_END
 };
 
 static const uint16 qfg4PitRopeFighterPatch[] = {
 	PATCH_ADDTOOFFSET(+271),            // ... (2 + 269)
-	0x31, 0x1b,                         // bnt 26d (skip the say w/o ending the switch)
+	0x31, 0x1b,                         // bnt 26d [skip the say w/o ending the switch]
 	PATCH_ADDTOOFFSET(+21),             // ... (8 + 13)
 	0x76,                               // push0 (null caller, so say won't cue crossByHand)
 	PATCH_ADDTOOFFSET(+5),              // ...
                                         // (no jmp, self-cue becomes cycles)
 	0x35, 0x20,                         // ldi 32d
-	0x65, PATCH_GETORIGINALBYTE(1)+6,   // aTop cycles (property offset = @state + 6d)
+	0x65, PATCH_GETORIGINALBYTEADJUST(1, +6), // aTop cycles (property offset = @state + 6d)
 	0x33, 0x04,                         // jmp 4d [skip waste bytes, end the switch]
 	PATCH_END
 };
@@ -9489,41 +9475,40 @@ static const uint16 qfg4PitRopeMagePatch2[] = {
 
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
-	{  true,     0, "prevent autosave from deleting save games",   1, qg4AutosaveSignature,          qg4AutosavePatch },
+	{  true,     0, "prevent autosave from deleting save games",   1, qfg4AutosaveSignature,         qfg4AutosavePatch },
 	{  true,     0, "fix inventory leaks across restarts",         1, qfg4RestartSignature,          qfg4RestartPatch },
 	{  true,     1, "disable volume reset on startup",             1, sci2VolumeResetSignature,      sci2VolumeResetPatch },
 	{  true,     1, "disable video benchmarking",                  1, qfg4BenchmarkSignature,        qfg4BenchmarkPatch },
-	{  true,     7, "fix consecutive moon rises",                  1, qfg4MoonriseSignature,         qfg4MoonrisePatch },
-	{  true,    10, "fix setLooper calls (2/2)",                   2, qg4SetLooperSignature2,        qg4SetLooperPatch2 },
+	{  true,     7, "fix consecutive moonrises",                   1, qfg4MoonriseSignature,         qfg4MoonrisePatch },
+	{  true,    10, "fix setLooper calls (2/2)",                   2, qfg4SetLooperSignature2,       qfg4SetLooperPatch2 },
 	{  true,    31, "fix setScaler calls",                         1, qfg4SetScalerSignature,        qfg4SetScalerPatch },
 	{  true,    41, "fix conditional void calls",                  3, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
 	{  true,    83, "fix incorrect array type",                    1, qfg4TrapArrayTypeSignature,    qfg4TrapArrayTypePatch },
-	{  true,    83, "fix incorrect array type (floppy)",           1, qfg4TrapArrayTypeFloppySignature,    qfg4TrapArrayTypeFloppyPatch },
 	{  true,   270, "fix town gate after a staff dream",           1, qfg4DreamGateSignature,        qfg4DreamGatePatch },
-	{  true,   320, "fix pathfinding at the inn",                  1, qg4InnPathfindingSignature,    qg4InnPathfindingPatch },
+	{  true,   320, "fix pathfinding at the inn",                  1, qfg4InnPathfindingSignature,   qfg4InnPathfindingPatch },
 	{  true,   320, "fix talking to absent innkeeper",             1, qfg4AbsentInnkeeperSignature,  qfg4AbsentInnkeeperPatch },
-	{  true,   440, "fix setLooper calls (1/2)",                   1, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
+	{  true,   440, "fix setLooper calls (1/2)",                   1, qfg4SetLooperSignature1,       qfg4SetLooperPatch1 },
 	{  true,   475, "fix tarot 3 queen card",                      1, qfg4Tarot3QueenSignature,      qfg4Tarot3QueenPatch },
 	{  true,   475, "fix tarot 3 death card",                      1, qfg4Tarot3DeathSignature,      qfg4Tarot3DeathPatch },
 	{  true,   475, "fix tarot 3 two of cups placement",           1, qfg4Tarot3TwoOfCupsSignature,  qfg4Tarot3TwoOfCupsPatch },
-	{  true,   475, "fix tarot 3 card priority",                   1, qfg4Tarot3PrioritySignature,  qfg4Tarot3PriorityPatch },
-	{  true,   475, "fix tarot 5 card priority",                   1, qfg4Tarot5PrioritySignature,  qfg4Tarot5PriorityPatch },
+	{  true,   475, "fix tarot 3 card priority",                   1, qfg4Tarot3PrioritySignature,   qfg4Tarot3PriorityPatch },
+	{  true,   475, "fix tarot 5 card priority",                   1, qfg4Tarot5PrioritySignature,   qfg4Tarot5PriorityPatch },
 	{  false,  500, "CD: fix rope during Igor rescue (1/2)",       1, qfg4GraveyardRopeSignature1,   qfg4GraveyardRopePatch1 },
 	{  false,  500, "CD: fix rope during Igor rescue (2/2)",       1, qfg4GraveyardRopeSignature2,   qfg4GraveyardRopePatch2 },
-	{  true,   530, "fix setLooper calls (1/2)",                   4, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
-	{  true,   535, "fix setLooper calls (1/2)",                   4, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
-	{  true,   541, "fix setLooper calls (1/2)",                   5, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
-	{  true,   542, "fix setLooper calls (1/2)",                   5, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
-	{  true,   543, "fix setLooper calls (1/2)",                   5, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
-	{  true,   545, "fix setLooper calls (1/2)",                   5, qg4SetLooperSignature1,        qg4SetLooperPatch1 },
+	{  true,   530, "fix setLooper calls (1/2)",                   4, qfg4SetLooperSignature1,       qfg4SetLooperPatch1 },
+	{  true,   535, "fix setLooper calls (1/2)",                   4, qfg4SetLooperSignature1,       qfg4SetLooperPatch1 },
+	{  true,   541, "fix setLooper calls (1/2)",                   5, qfg4SetLooperSignature1,       qfg4SetLooperPatch1 },
+	{  true,   542, "fix setLooper calls (1/2)",                   5, qfg4SetLooperSignature1,       qfg4SetLooperPatch1 },
+	{  true,   543, "fix setLooper calls (1/2)",                   5, qfg4SetLooperSignature1,       qfg4SetLooperPatch1 },
+	{  true,   545, "fix setLooper calls (1/2)",                   5, qfg4SetLooperSignature1,       qfg4SetLooperPatch1 },
 	{  true,   630, "fix great hall entry from barrel room",       1, qfg4GreatHallEntrySignature,   qfg4GreatHallEntryPatch },
 	{  true,   633, "fix stairway pathfinding",                    1, qfg4StairwayPathfindingSignature, qfg4StairwayPathfindingPatch },
 	{  true,   643, "fix iron safe's east door sending hero west", 1, qfg4SafeDoorEastSignature,     qfg4SafeDoorEastPatch },
-	{  true,   643, "fix iron safe's door oil flags",              1, qfg4SafeDoorOilSignature,     qfg4SafeDoorOilPatch },
+	{  true,   643, "fix iron safe's door oil flags",              1, qfg4SafeDoorOilSignature,      qfg4SafeDoorOilPatch },
 	{  true,   645, "fix extraneous door sound in the castle",     1, qfg4DoubleDoorSoundSignature,  qfg4DoubleDoorSoundPatch },
 	{  false,  663, "CD: fix crest bookshelf",                     1, qfg4CrestBookshelfCDSignature, qfg4CrestBookshelfCDPatch },
-	{  false,  663, "Floppy: fix crest bookshelf",                 1, qfg4CrestBookshelfFloppySignature,   qfg4CrestBookshelfFloppyPatch },
-	{  true,   663, "CD/Floppy: fix crest bookshelf motion",       1, qfg4CrestBookshelfMotionSignature,   qfg4CrestBookshelfMotionPatch },
+	{  false,  663, "Floppy: fix crest bookshelf",                 1, qfg4CrestBookshelfFloppySignature, qfg4CrestBookshelfFloppyPatch },
+	{  true,   663, "CD/Floppy: fix crest bookshelf motion",       1, qfg4CrestBookshelfMotionSignature, qfg4CrestBookshelfMotionPatch },
 	{  true,   710, "fix tentacle wriggle cycler",                 1, qfg4TentacleWriggleSignature,  qfg4TentacleWrigglePatch },
 	{  true,   710, "fix tentacle retraction for fighter",         1, qfg4PitRopeFighterSignature,   qfg4PitRopeFighterPatch },
 	{  true,   710, "fix tentacle retraction for mage (1/2)",      1, qfg4PitRopeMageSignature1,     qfg4PitRopeMagePatch1 },
