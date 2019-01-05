@@ -38,7 +38,7 @@
 
 namespace Sci {
 
-reg_t kRestartGame(EngineState *s, int argc, reg_t *argv) {
+reg_t kRestartGame16(EngineState *s, int argc, reg_t *argv) {
 	s->shrinkStackToBase();
 
 	s->abortScriptProcessing = kAbortRestartGame; // Force vm to abort ASAP
