@@ -1,11 +1,25 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 #
-import os, sys
-
+osLibFound = False
+sysLibFound = False
 shutilLibFound = False
 structLibFound = False
 imagePilLibFound = False
+
+try:
+	import os 
+except ImportError:
+	print "[Error] os python library is required to be installed!" 
+else:
+	osLibFound = True
+	
+try:
+	import sys 
+except ImportError:
+	print "[Error] sys python library is required to be installed!" 
+else:
+	sysLibFound = True
 
 try:
 	import shutil 
@@ -28,7 +42,11 @@ except ImportError:
 else:
 	imagePilLibFound = True
 
-if 	(not shutilLibFound) or (not structLibFound) or (not imagePilLibFound):
+if 	(not osLibFound) \
+	or (not sysLibFound) \
+	or (not shutilLibFound) \
+	or (not structLibFound) \
+	or (not imagePilLibFound):
 	sys.stdout.write("[Error] Errors were found when trying to import required python libraries\n")
 	sys.exit(1)
 
