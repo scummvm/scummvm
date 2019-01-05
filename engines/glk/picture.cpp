@@ -32,8 +32,10 @@ namespace Glk {
 
 void Pictures::clear() {
 	for (uint idx = 0; idx < _store.size(); ++idx) {
-		_store[idx]._picture->decrement();
-		_store[idx]._scaled->decrement();
+		if (_store[idx]._picture)
+			_store[idx]._picture->decrement();
+		if (_store[idx]._scaled)
+			_store[idx]._scaled->decrement();
 	}
 
 	_store.clear();

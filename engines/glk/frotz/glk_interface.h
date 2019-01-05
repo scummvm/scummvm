@@ -171,12 +171,12 @@ protected:
 	/**
 	 * Display a picture at the given coordinates. Top left is (1,1).
 	 */
-	void os_draw_picture(int picture, winid_t win, const Common::Point &pos);
+	void os_draw_picture(int picture, const Common::Point &pos);
 
 	/**
 	 * Display a picture using the specified bounds
 	 */
-	void os_draw_picture(int picture, winid_t win, const Common::Rect &r);
+	void os_draw_picture(int picture, const Common::Rect &r);
 
 	/**
 	 * Call the IO interface to play a sample.

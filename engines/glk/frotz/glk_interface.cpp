@@ -489,25 +489,20 @@ void GlkInterface::showBeyondZorkTitle() {
 	int saveSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 
 	if (saveSlot == -1) {
-		uint winW, winH, imgW, imgH;
 		winid_t win = glk_window_open(0, 0, 0, wintype_Graphics, 0);
-		glk_window_get_size(win, &winW, &winH);
+		glk_image_draw_scaled(win, 1, 0, 0, g_vm->_screen->w, g_vm->_screen->h);
 
-		if (os_picture_data(1, &imgW, &imgH)) {
-			os_draw_picture(1, win, Common::Rect(0, 0, winW, winH));
-			_events->waitForPress();
-		}
-
+		_events->waitForPress();
 		glk_window_close(win, nullptr);
 	}
 }
 
-void GlkInterface::os_draw_picture(int picture, winid_t win, const Common::Point &pos) {
-	glk_image_draw(win, picture, pos.x - 1, pos.y - 1);
+void GlkInterface::os_draw_picture(int picture, const Common::Point &pos) {
+	glk_image_draw(_wp._background, picture, pos.x - 1, pos.y - 1);
 }
 
-void GlkInterface::os_draw_picture(int picture, winid_t win, const Common::Rect &r) {
-	glk_image_draw_scaled(win, picture, r.left, r.top, r.width(), r.height());
+void GlkInterface::os_draw_picture(int picture, const Common::Rect &r) {
+	glk_image_draw_scaled(_wp._background, picture, r.left, r.top, r.width(), r.height());
 }
 
 zchar GlkInterface::os_read_key(int timeout, bool show_cursor) {

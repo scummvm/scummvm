@@ -48,21 +48,19 @@ void Processor::z_draw_picture() {
 
 	flush_buffer();
 
+	Window &win = _wp[cwin];
 	if (!x || !y) {
-		// Currently I only support getting the cursor for the text grid area
-		assert(cwin == 1);
-		winid_t win = _wp._upper;
-		Point cursPos = win->getCursor();
+
 		// use cursor column if x-coordinate is 0
 		if (!x)
-			x = cursPos.x;
+			x = win[X_CURSOR];
 		// use cursor line if y-coordinate is 0
 		if (!y)
-			y = cursPos.y;
+			y = win[Y_CURSOR];
 	}
 
-//	y += cwp->y_pos - 1;
-//	x += cwp->x_pos - 1;
+	y += win[Y_POS] - 1;
+	x += win[X_POS] - 1;
 
 	/* The following is necessary to make Amiga and Macintosh story
 	 * files work with MCGA graphics files.  Some screen-filling
@@ -83,18 +81,18 @@ void Processor::z_draw_picture() {
 			if (_storyId == ARTHUR && pic == 54)
 			delta = h_screen_width / 160;
 
-			os_draw_picture(mapper[i].pic1, _wp._lower, Point(x + delta, y + height1));
-			os_draw_picture(mapper[i].pic2, _wp._lower, Point(x + width1 - width2 - delta, y + height1));
+			os_draw_picture(mapper[i].pic1, Point(x + delta, y + height1));
+			os_draw_picture(mapper[i].pic2, Point(x + width1 - width2 - delta, y + height1));
 		}
 	}
 
-	os_draw_picture(pic, _wp._lower, Point(x, y));
+	os_draw_picture(pic, Point(x, y));
 
 	if (_storyId == SHOGUN && pic == 3) {
 		uint height, width;
 
 		os_picture_data(59, &height, &width);
-		os_draw_picture(59, _wp._lower, Point(h_screen_width - width + 1, y));
+		os_draw_picture(59, Point(h_screen_width - width + 1, y));
 	}
 }
 
