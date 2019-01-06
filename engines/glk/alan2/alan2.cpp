@@ -46,9 +46,10 @@ Alan2::Alan2(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, g
 }
 
 void Alan2::runGame() {
+	Common::String gameFileName = _gameFile.getName();
+
 	// TODO: Initialize these properly
 	int tmp = 0;
-	Common::String gameFileName;
 	_decode = new Decode(nullptr, nullptr);
 	_execute = new Execute();
 	_saveLoad = new SaveLoad(gameFileName, nullptr, nullptr, nullptr, nullptr, &tmp);
