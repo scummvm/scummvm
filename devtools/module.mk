@@ -14,9 +14,9 @@ DEVTOOLS := \
 	devtools/md5table$(EXEEXT) \
 	devtools/make-scumm-fontdata$(EXEEXT)
 
-include $(srcdir)/devtools/*/module.mk $(srcdir)/devtools/*/*/module.mk
+include $(srcdir)/devtools/*/module.mk
 
-.PHONY: $(srcdir)/devtools/*/module.mk $(srcdir)/devtools/*/*/module.mk
+.PHONY: $(srcdir)/devtools/*/module.mk
 
 # Make sure the 'all' / 'clean' targets build/clean the devtools, too
 #all:
