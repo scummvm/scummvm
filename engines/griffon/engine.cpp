@@ -36,7 +36,6 @@
 
 #include "griffon/griffon.h"
 #include "griffon/config.h"
-#include "griffon/state.h"
 
 #include "common/events.h"
 #include "common/file.h"
