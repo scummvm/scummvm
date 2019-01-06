@@ -230,7 +230,7 @@ void GraphicsWindow::drawPicture(Picture *src,  int x0, int y0, int width, int h
 	w = sx1 - sx0;
 	h = sy1 - sy0;
 
-	_surface->transBlitFrom(*src, Rect(sx0, sy0, sx0 + w, sy0 + h), Point(0, 0), src->getTransparentColor());
+	_surface->transBlitFrom(*src, Rect(sx0, sy0, sx0 + w, sy0 + h), Point(x0, y0), src->getTransparentColor());
 }
 
 void GraphicsWindow::getSize(uint *width, uint *height) const {

@@ -498,11 +498,15 @@ void GlkInterface::showBeyondZorkTitle() {
 }
 
 void GlkInterface::os_draw_picture(int picture, const Common::Point &pos) {
-	glk_image_draw(_wp._background, picture, pos.x - 1, pos.y - 1);
+	glk_image_draw(_wp._background, picture,
+		(pos.x - 1) * g_conf->_monoInfo._cellW,
+		(pos.y - 1) * g_conf->_monoInfo._cellH);
 }
 
 void GlkInterface::os_draw_picture(int picture, const Common::Rect &r) {
-	glk_image_draw_scaled(_wp._background, picture, r.left, r.top, r.width(), r.height());
+	Point cell(g_conf->_monoInfo._cellW, g_conf->_monoInfo._cellH);
+	glk_image_draw_scaled(_wp._background, picture, (r.left - 1) * cell.x, (r.top - 1) * cell.y,
+		r.width() * cell.x, r.height() * cell.y);
 }
 
 zchar GlkInterface::os_read_key(int timeout, bool show_cursor) {
