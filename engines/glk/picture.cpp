@@ -110,6 +110,7 @@ Picture *Pictures::load(uint32 id) {
 	const Graphics::Surface *img;
 	const byte *palette = nullptr;
 	uint palCount = 0;
+	int transColor = -1;
 	Picture *pic;
 
 	// Check if the picture is already in the store
@@ -131,6 +132,7 @@ Picture *Pictures::load(uint32 id) {
 		img = raw.getSurface();
 		palette = raw.getPalette();
 		palCount = raw.getPaletteColorCount();
+		transColor = raw.getTransparentColor();
 	} else if (f.open(Common::String::format("pic%u.rect", id))) {
 		rectImg.w = f.readUint16LE();
 		rectImg.h = f.readUint16LE();
@@ -144,6 +146,8 @@ Picture *Pictures::load(uint32 id) {
 	pic->_refCount = 1;
     pic->_id = id;
     pic->_scaled = false;
+	if (transColor != -1)
+		pic->clear(pic->getTransparentColor());
 
 	if (!img->getPixels()) {
 		// Area definition without any content
@@ -158,11 +162,13 @@ Picture *Pictures::load(uint32 id) {
 		const byte *srcP = (const byte *)img->getPixels();
 		byte *destP = (byte *)pic->getPixels();
 		for (int idx = 0; idx < img->w * img->h; ++idx, srcP++, destP += pic->format.bytesPerPixel) {
-			uint val = (*srcP >= palCount) ? 0 : pal[*srcP];
-			if (pic->format.bytesPerPixel == 2)
-				WRITE_LE_UINT16(destP, val);
-			else
-				WRITE_LE_UINT32(destP, val);
+			if ((int)*srcP != transColor) {
+				uint val = (*srcP >= palCount) ? 0 : pal[*srcP];
+				if (pic->format.bytesPerPixel == 2)
+					WRITE_LE_UINT16(destP, val);
+				else
+					WRITE_LE_UINT32(destP, val);
+			}
 		}
 	}
 
@@ -187,6 +193,13 @@ Picture *Pictures::scale(Picture *src, size_t sx, size_t sy) {
 }
 
 /*--------------------------------------------------------------------------*/
+
+Picture::Picture(int width, int height, const Graphics::PixelFormat &fmt) :
+		Graphics::ManagedSurface(width, height, fmt), _refCount(0), _id(0), _scaled(false) {
+
+	// Default transparent color chosen at random
+	_transColor = format.RGBToColor(0x77, 0x77, 0x77);
+}
 
 void Picture::increment() {
 	++_refCount;

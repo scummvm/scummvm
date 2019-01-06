@@ -26,7 +26,8 @@
 
 namespace Glk {
 
-RawDecoder::RawDecoder() : Image::ImageDecoder(), _palette(nullptr), _paletteColorCount(0) {
+RawDecoder::RawDecoder() : Image::ImageDecoder(), _palette(nullptr), _paletteColorCount(0),
+	_transColor(0) {
 }
 
 RawDecoder::~RawDecoder() {
@@ -52,11 +53,15 @@ bool RawDecoder::loadStream(Common::SeekableReadStream &stream) {
 	_palette = new byte[_paletteColorCount * 3];
 	stream.read(_palette, _paletteColorCount * 3);
 
+	// Get the transparent color
+	byte transColor = stream.readByte();
+	if (transColor < _paletteColorCount)
+		_transColor = transColor;
+
 	// Set up the surface and read it in
-	stream.readByte();
 	_surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 
-	assert((stream.size() - stream.pos()) <= (int)(width * height));
+	assert((stream.size() - stream.pos()) == (int)(width * height));
 	byte *pixels = (byte *)_surface.getPixels();
 	stream.read(pixels, width * height);
 

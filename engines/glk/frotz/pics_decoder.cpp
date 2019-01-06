@@ -114,7 +114,7 @@ Common::SeekableReadStream *PictureDecoder::decode(Common::ReadStream &src, uint
 	// Write out palette
 	out.writeUint16LE(palette.size() / 3 + 2);
 	for (int idx = 0; idx < 6; ++idx)
-		out.writeByte(0);
+		out.writeByte((idx < 3) ? 0x77 : 0);
 	if (!palette.empty())
 		out.write(&palette[0], palette.size());
 

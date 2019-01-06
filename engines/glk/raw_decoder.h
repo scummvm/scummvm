@@ -45,6 +45,7 @@ private:
 	Graphics::Surface _surface;
 	byte *_palette;
 	uint16 _paletteColorCount;
+	int _transColor;
 public:
 	RawDecoder();
 	~RawDecoder();
@@ -54,6 +55,7 @@ public:
 	virtual const Graphics::Surface *getSurface() const override { return &_surface; }
 	virtual const byte *getPalette() const override { return _palette; }
 	virtual uint16 getPaletteColorCount() const override { return _paletteColorCount; }
+	int getTransparentColor() const { return _transColor; }
 };
 
 } // End of namespace Glk
