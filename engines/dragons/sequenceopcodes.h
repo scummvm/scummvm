@@ -36,7 +36,7 @@ class Actor;
 struct OpCall {
 	byte _op;
 	byte _opSize;
-	int16 _deltaOfs;
+	int32 _deltaOfs;
 	byte *_code;
 	int _result;
 	void skip(uint size);
@@ -48,6 +48,7 @@ struct OpCall {
 // Convenience macros
 #define ARG_SKIP(x) opCall.skip(x);
 #define ARG_BYTE(name) byte name = opCall.readByte(); debug(5, "ARG_BYTE(" #name " = %d)", name);
+#define ARG_INT8(name) int8 name = opCall.readByte(); debug(5, "ARG_INT8(" #name " = %d)", name);
 #define ARG_INT16(name) int16 name = opCall.readSint16(); debug(5, "ARG_INT16(" #name " = %d)", name);
 #define ARG_UINT32(name) uint32 name = opCall.readUint32(); debug(5, "ARG_UINT32(" #name " = %08X)", name);
 
@@ -69,10 +70,22 @@ protected:
 	// Opcodes
 	void opSetFramePointer(Actor *actor, OpCall &opCall);
 	void opSetFramePointerAndStop(Actor *actor, OpCall &opCall);
+	void opJmp(Actor *actor, OpCall &opCall);
 	void opSetFieldC(Actor *actor, OpCall &opCall);
+	void opSetSequenceTimer(Actor *actor, OpCall &opCall);
+	void opUpdateXYResetSeqTimer(Actor *actor, OpCall &opCall);
+	void opUpdateXYResetSeqTimerAndStop(Actor *actor, OpCall &opCall);
+
 	void opSetActorFlag4AndStop(Actor *actor, OpCall &opCall);
 	void opSetActorFlags404(Actor *actor, OpCall &opCall);
+	void opClearActorFlag400(Actor *actor, OpCall &opCall);
+	void opChangeSequence(Actor *actor, OpCall &opCall);
+
+	void opSetField7a(Actor *actor, OpCall &opCall);
+	void opUpdateFlags(Actor *actor, OpCall &opCall);
 	void opPlaySound(Actor *actor, OpCall &opCall);
+	void opSetXY(Actor *actor, OpCall &opCall);
+	void opSetXYAndStop(Actor *actor, OpCall &opCall);
 
 };
 

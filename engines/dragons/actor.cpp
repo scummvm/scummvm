@@ -148,4 +148,8 @@ void Actor::loadFrame(uint16 frameOffset) {
 
 }
 
+byte *Actor::getSeqIpAtOffset(uint32 offset) {
+	return _actorResource->getSequenceDataAtOffset(offset);
+}
+
 } // End of namespace Dragons

@@ -52,6 +52,7 @@ class ActorResource {
 private:
 	uint32 _id;
 	byte *_data;
+	int32 _fileSize;
 	ActorFrame *_frames;
 	uint16 _framesCount;
 	byte _palette[512];
@@ -66,6 +67,7 @@ public:
 
 	ActorFrame *getFrameHeader(uint16 frameNumber);
 	byte *getSequenceData(int16 sequenceId);
+	byte *getSequenceDataAtOffset(uint32 offset);
 	const char *getFilename();
 
 private:
