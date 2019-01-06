@@ -350,13 +350,11 @@ void GlkInterface::gos_update_height() {
 
 void GlkInterface::reset_status_ht() {
 	uint height;
-	if (_wp._upper) {
+	if (_wp._upper && h_version != 6) {
 		glk_window_get_size(_wp._upper, nullptr, &height);
 		if ((uint)mach_status_ht != height) {
-			glk_window_set_arrangement(
-				glk_window_get_parent(_wp._upper),
-				winmethod_Above | winmethod_Fixed,
-				mach_status_ht, nullptr);
+			glk_window_set_arrangement(glk_window_get_parent(_wp._upper),
+				winmethod_Above | winmethod_Fixed, mach_status_ht, nullptr);
 		}
 	}
 }

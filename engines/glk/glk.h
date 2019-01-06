@@ -72,11 +72,6 @@ private:
 	 * Handles basic initialization
 	 */
 	void initialize();
-
-	/**
-	 * Setup the video mode
-	 */
-	void initGraphicsMode();
 protected:
 	const GlkGameDescription _gameDescription;
 	Common::RandomSource _random;
@@ -90,6 +85,11 @@ protected:
 	  * Returns true whether a given feature is supported by the engine
 	  */
 	virtual bool hasFeature(EngineFeature f) const;
+
+	/**
+	 * Setup the video mode
+	 */
+	virtual void initGraphicsMode();
 
 	/**
 	 * Create the screen

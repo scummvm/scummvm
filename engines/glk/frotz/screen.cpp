@@ -42,9 +42,9 @@ void FrotzScreen::loadFonts(Common::Archive *archive) {
 	byte version = g_vm->_gameFile.readByte();
 
 	if (version == 6) {
-		// For graphical games, force both mono and proportinate fonts to be the same size.
-		// This simplifies calculation of pixels when setting window position and sizes
-		g_conf->_monoInfo._size = g_conf->_propInfo._size = MAX(g_conf->_monoInfo._size, g_conf->_propInfo._size);
+		// For graphical games, ignore any font configurations and force their size
+		g_conf->_monoInfo._size = g_conf->_propInfo._size = 7;
+		g_conf->_monoInfo._aspect = g_conf->_propInfo._aspect = 1.0;
 	}
 
 	// Load the basic fonts

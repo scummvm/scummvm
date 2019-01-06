@@ -24,6 +24,7 @@
 #include "glk/frotz/frotz_types.h"
 #include "glk/frotz/screen.h"
 #include "glk/frotz/quetzal.h"
+#include "engines/util.h"
 #include "common/config-manager.h"
 
 namespace Glk {
@@ -38,6 +39,19 @@ Frotz::Frotz(OSystem *syst, const GlkGameDescription &gameDesc) :
 
 Frotz::~Frotz() {
 	reset_memory();
+}
+
+void Frotz::initGraphicsMode() {
+	_gameFile.seek(0);
+	byte version = _gameFile.readByte();
+
+	if (version == 6) {
+		// The V6 games have graphics that expect 320x200 mode
+		Graphics::PixelFormat pixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+		initGraphics(320, 200, &pixelFormat);
+	} else {
+		GlkEngine::initGraphicsMode();
+	}
 }
 
 Screen *Frotz::createScreen() {

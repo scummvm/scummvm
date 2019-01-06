@@ -37,6 +37,11 @@ class Frotz : public Processor {
 	friend class FrotzScreen;
 protected:
 	/**
+	 * Setup the video mode
+	 */
+	virtual void initGraphicsMode();
+
+	/**
 	 * Create the screen class
 	 */
 	virtual Screen *createScreen() override;
