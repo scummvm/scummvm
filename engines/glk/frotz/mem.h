@@ -72,14 +72,19 @@ private:
 	void initializeStoryFile();
 
 	/**
-	 * Setup undo data
-	 */
-	void initializeUndo();
-
-	/**
 	 * Handles loading the game header
 	 */
 	void loadGameHeader();
+
+	/**
+	 * Initializes memory and loads the story data
+	 */
+	void loadMemory();
+
+	/**
+	 * Setup undo data
+	 */
+	void initializeUndo();
 protected:
 	/**
 	 * Read a value from the header extension (former mouse table).
