@@ -117,6 +117,7 @@ public:
 	Graphics::Surface *getCurrentFrame();
 	void updateSequence(uint16 newSequenceID);
 	void resetSequenceIP();
+	byte *getSeqIpAtOffset(uint32 offset);
 	void loadFrame(uint16 frameOffset);
 };
 

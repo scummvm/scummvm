@@ -49,6 +49,7 @@ ActorResource *ActorResourceLoader::load(uint32 resourceId) {
 bool ActorResource::load(uint32 id, byte *dataStart, Common::SeekableReadStream &stream) {
 	_id = id;
 	_data = dataStart;
+	_fileSize = stream.size();
 	stream.seek(0x6);
 	_sequenceTableOffset = stream.readUint16LE();
 	uint16 frameOffset = stream.readUint16LE();
@@ -184,6 +185,11 @@ ActorFrame *ActorResource::loadFrameHeader(uint16 frameOffset) {
 
 const char *ActorResource::getFilename() {
 	return actorResourceFiles[_id];
+}
+
+byte *ActorResource::getSequenceDataAtOffset(uint32 offset) {
+	assert(offset < _fileSize);
+	return &_data[offset];
 }
 
 } // End of namespace Dragons

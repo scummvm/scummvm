@@ -80,14 +80,23 @@ void SequenceOpcodes::initOpcodes() {
 	// Register opcodes
 	OPCODE(1, opSetFramePointer);
 	OPCODE(2, opSetFramePointerAndStop);
-
-
+	OPCODE(3, opJmp);
 	OPCODE(4, opSetFieldC);
-
+	OPCODE(5, opSetSequenceTimer);
+	OPCODE(6, opUpdateXYResetSeqTimer);
+	OPCODE(7, opUpdateXYResetSeqTimerAndStop);
+	// unused
 	OPCODE(9, opSetActorFlag4AndStop);
-
+	// unused
 	OPCODE(11, opSetActorFlags404);
+	OPCODE(12, opClearActorFlag400);
+	OPCODE(13, opChangeSequence);
+	// unused
+	OPCODE(15, opSetField7a);
+	OPCODE(16, opUpdateFlags);
 	OPCODE(17, opPlaySound);
+	OPCODE(18, opSetXY);
+	OPCODE(19, opSetXYAndStop);
 
 }
 
@@ -119,10 +128,47 @@ void SequenceOpcodes::opSetFramePointerAndStop(Actor *actor, OpCall &opCall) {
 	opCall._result = 0;
 }
 
+void SequenceOpcodes::opJmp(Actor *actor, OpCall &opCall) {
+	ARG_INT16(newIp);
+
+	if (!(actor->flags & Dragons::ACTOR_FLAG_1000)) {
+		byte *newOffset = actor->getSeqIpAtOffset((uint32)newIp);
+		opCall._deltaOfs = (int32)(newOffset - opCall._code);
+		debug(3, "opJump delta: %d", opCall._deltaOfs);
+	} else {
+		updateReturn(opCall, 1);
+	}
+}
+
 void SequenceOpcodes::opSetFieldC(Actor *actor, OpCall &opCall) {
 	ARG_INT16(newFieldC);
 	actor->field_c = (uint16)newFieldC;
+	debug(3, "set fieldC: %d", newFieldC);
 	updateReturn(opCall, 1);
+}
+
+void SequenceOpcodes::opSetSequenceTimer(Actor *actor, OpCall &opCall) {
+	ARG_INT16(newSeqTimer);
+	actor->sequenceTimer = (uint16)newSeqTimer;
+	debug(3, "set sequenceTimer: %d", newSeqTimer);
+	updateReturn(opCall, 1);
+	opCall._result = 0;
+}
+
+void SequenceOpcodes::opUpdateXYResetSeqTimer(Actor *actor, OpCall &opCall) {
+	ARG_INT8(xOffset);
+	ARG_INT8(yOffset);
+	actor->x_pos += xOffset;
+	actor->y_pos += yOffset;
+	actor->sequenceTimer = actor->field_c;
+
+	debug(3, "update actor %d XY offset (%d,%d) new values (%d, %d) %d", actor->_actorID, xOffset, yOffset, actor->x_pos, actor->y_pos, actor->sequenceTimer);
+	updateReturn(opCall, 1);
+}
+
+void SequenceOpcodes::opUpdateXYResetSeqTimerAndStop(Actor *actor, OpCall &opCall) {
+	opUpdateXYResetSeqTimer(actor, opCall);
+	opCall._result = 0;
 }
 
 void SequenceOpcodes::opSetActorFlag4AndStop(Actor *actor, OpCall &opCall) {
@@ -136,11 +182,54 @@ void SequenceOpcodes::opSetActorFlags404(Actor *actor, OpCall &opCall) {
 	actor->flags |= (Dragons::ACTOR_FLAG_4 | Dragons::ACTOR_FLAG_400 );
 	updateReturn(opCall, 1);
 }
+
+void SequenceOpcodes::opClearActorFlag400(Actor *actor, OpCall &opCall) {
+	actor->flags &= ~Dragons::ACTOR_FLAG_400;
+	updateReturn(opCall, 1);
+}
+
+void SequenceOpcodes::opChangeSequence(Actor *actor, OpCall &opCall) {
+	ARG_INT16(newValue);
+	actor->_sequenceID = (uint16)newValue;
+	updateReturn(opCall, 1);
+}
+
+void SequenceOpcodes::opSetField7a(Actor *actor, OpCall &opCall) {
+	ARG_INT16(newValue);
+	actor->field_7a = (uint16)newValue;
+	updateReturn(opCall, 1);
+}
+
+void SequenceOpcodes::opUpdateFlags(Actor *actor, OpCall &opCall) {
+	if (actor->flags & Dragons::ACTOR_FLAG_1000) {
+		actor->flags &= Dragons::ACTOR_FLAG_4;
+	}
+	updateReturn(opCall, 0);
+}
+
 void SequenceOpcodes::opPlaySound(Actor *actor, OpCall &opCall) {
 	ARG_INT16(soundId);
+	debug(3, "opPlaySound actorId: %d soundId: %d", actor->_actorID, soundId);
+
 	// TODO play sound here.
 	updateReturn(opCall, 1);
 }
+
+void SequenceOpcodes::opSetXY(Actor *actor, OpCall &opCall) {
+	ARG_INT16(x);
+	ARG_INT16(y);
+	actor->x_pos = x;
+	actor->y_pos = y;
+	updateReturn(opCall, 2);
+}
+
+void SequenceOpcodes::opSetXYAndStop(Actor *actor, OpCall &opCall) {
+	opSetXY(actor, opCall);
+	opCall._result = 0;
+}
+
+
+
 
 
 //void SequenceOpcodes::opYield(Control *control, OpCall &opCall) {

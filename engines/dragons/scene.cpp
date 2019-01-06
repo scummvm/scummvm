@@ -156,15 +156,15 @@ void Scene::draw() {
 				actor->flags & Dragons::ACTOR_FLAG_40 &&
 				actor->surface) {
 				Graphics::Surface *s = actor->surface;
-				int x = ini->x - actor->frame->xOffset;
-				int y = ini->y - actor->frame->yOffset;
+				int x = actor->x_pos - actor->frame->xOffset;
+				int y = actor->y_pos - actor->frame->yOffset;
 				//int x = ini->x;// - actor->frame_vram_x;
 				//int y = ini->y;// - actor->frame_vram_y;
 				if (x >= 0 && y >= 0 && x + s->w < 320 && y + s->h < 200) {
-					debug("Actor %d %s (%d, %d)", actor->_actorID, actor->_actorResource->getFilename(), x, y);
-					_stage->getFgLayer()->copyRectToSurface(*s, x, y, Common::Rect(s->w, s->h));
+					debug(4, "Actor %d %s (%d, %d) w:%d h:%d", actor->_actorID, actor->_actorResource->getFilename(), x, y, s->w, s->h);
+					_screen->copyRectToSurface(*s, x, y, Common::Rect(s->w, s->h));
 				} else {
-					debug("Actor (not displayed) %d %s (%d, %d)", actor->_actorID, actor->_actorResource->getFilename(), x, y);
+					debug(4, "Actor (not displayed) %d %s (%d, %d)", actor->_actorID, actor->_actorResource->getFilename(), x, y);
 					// _stage->getFgLayer()->copyRectToSurface(*s, 0, 0, Common::Rect(s->w, s->h));
 				}
 			}
