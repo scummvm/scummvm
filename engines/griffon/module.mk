@@ -5,7 +5,7 @@ MODULE_OBJS := \
 	engine.o \
 	griffon.o \
 	detection.o \
-	state.o
+	saveload.o
 
 MODULE_DIRS += \
 	engines/griffon

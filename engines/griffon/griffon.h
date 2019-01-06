@@ -294,6 +294,10 @@ private:
 	void sys_progress(int w, int wm);
 	void sys_setupAudio();
 	void sys_update();
+
+	int state_load(int slotnum);
+	int state_load_player(int slotnum);
+	int state_save(int slotnum);
 };
 
 }

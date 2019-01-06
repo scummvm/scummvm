@@ -35,7 +35,6 @@
  */
 
 #include "griffon/griffon.h"
-#include "griffon/state.h"
 
 namespace Griffon {
 
@@ -59,7 +58,7 @@ char player_sav[256] = "data/player%i.sav";
 extern PLAYERTYPE playera;
 extern int asecstart;
 
-int state_load(int slotnum) {
+int GriffonEngine::state_load(int slotnum) {
 #if 0
 	FILE *fp;
 	char line[256];
@@ -137,7 +136,7 @@ int state_load(int slotnum) {
 }
 
 /* fill PLAYERTYPE playera; */
-int state_load_player(int slotnum) {
+int GriffonEngine::state_load_player(int slotnum) {
 #if 0
 	FILE *fp;
 	char line[256];
@@ -196,7 +195,7 @@ int state_load_player(int slotnum) {
 	return 0; // fail
 }
 
-int state_save(int slotnum) {
+int GriffonEngine::state_save(int slotnum) {
 #if 0
 	FILE *fp;
 	char line[256];
