@@ -62,12 +62,10 @@ void Parser::unknown(char *inputStr) {
 }
 
 int Parser::lookup(char *wrd) {
-#if 0
 	for (int i = 0; !endOfTable(&dict[i]); i++) {
 		if (strcmp(wrd, (char *)addrTo(dict[i].wrd)) == 0)
 			return i;
 	}
-#endif
 
 	unknown(wrd);
 	return EOF;
@@ -236,30 +234,41 @@ void Parser::nonverb() {
 		_vm->printError(M_WHAT);
 }
 
+Aword Parser::where(Aword id) {
+	if (isObj(id))
+		return objloc(id);
+	else if (isAct(id))
+		return acts[id - ACTMIN].loc;
+	else
+		error("Can't WHERE item (%ld).", (unsigned long)id);
+}
+
+Aword Parser::objloc(Aword obj) {
+	if (isCnt(objs[obj - OBJMIN].loc)) // In something ?
+		if (isObj(objs[obj - OBJMIN].loc) || isAct(objs[obj - OBJMIN].loc))
+			return where(objs[obj - OBJMIN].loc);
+		else // Containers not anywhere is where the hero is!
+			return where(HERO);
+	else
+		return(objs[obj - OBJMIN].loc);
+}
+
 Abool Parser::objhere(Aword obj) {
 	if (isCnt(objs[obj - OBJMIN].loc)) {	// In something?
 		if (isObj(objs[obj - OBJMIN].loc) || isAct(objs[obj - OBJMIN].loc))
-			return(isHere(objs[obj - OBJMIN].loc));
-// TODO
-#if 0
+			return isHere(objs[obj - OBJMIN].loc);
 		else // If the container wasn't anywhere, assume where HERO is!
-			return(where(HERO) == _vm->cur.loc);
-#endif
-
+			return where(HERO) == _vm->cur.loc;
 	} else
 		return(objs[obj - OBJMIN].loc == _vm->cur.loc);
 }
 
 
-Aword Parser::acthere(Aword act) {
-	return(acts[act - ACTMIN].loc == _vm->cur.loc);
-}
-
 Abool Parser::isHere(Aword id) {
 	if (isObj(id))
 		return objhere(id);
 	else if (isAct(id))
-		return acthere(id);
+		return acts[id - ACTMIN].loc == _vm->cur.loc;
 	else
 		error("Can't HERE item (%ld).", (unsigned long)id);
 }
@@ -571,20 +580,20 @@ void Parser::complex(ParamElem olst[]) {
 bool Parser::claCheck(ClaElem *cla) {
 	bool ok = false;
 
-	if ((cla->classes&(Aword)CLA_OBJ) != 0)
-		ok = ok || isObj(params[cla->code-1].code);
-	if ((cla->classes&(Aword)CLA_CNT) != 0)
-		ok = ok || isCnt(params[cla->code-1].code);
-	if ((cla->classes&(Aword)CLA_ACT) != 0)
-		ok = ok || isAct(params[cla->code-1].code);
-	if ((cla->classes&(Aword)CLA_NUM) != 0)
-		ok = ok || isNum(params[cla->code-1].code);
-	if ((cla->classes&(Aword)CLA_STR) != 0)
-		ok = ok || isStr(params[cla->code-1].code);
-	if ((cla->classes&(Aword)CLA_COBJ) != 0)
-		ok = ok || (isCnt(params[cla->code-1].code) && isObj(params[cla->code-1].code));
-	if ((cla->classes&(Aword)CLA_CACT) != 0)
-		ok = ok || (isCnt(params[cla->code-1].code) && isAct(params[cla->code-1].code));
+	if ((cla->classes & (Aword)CLA_OBJ) != 0)
+		ok = ok || isObj(params[cla->code - 1].code);
+	if ((cla->classes & (Aword)CLA_CNT) != 0)
+		ok = ok || isCnt(params[cla->code - 1].code);
+	if ((cla->classes & (Aword)CLA_ACT) != 0)
+		ok = ok || isAct(params[cla->code - 1].code);
+	if ((cla->classes & (Aword)CLA_NUM) != 0)
+		ok = ok || isNum(params[cla->code - 1].code);
+	if ((cla->classes & (Aword)CLA_STR) != 0)
+		ok = ok || isStr(params[cla->code - 1].code);
+	if ((cla->classes & (Aword)CLA_COBJ) != 0)
+		ok = ok || (isCnt(params[cla->code - 1].code) && isObj(params[cla->code - 1].code));
+	if ((cla->classes & (Aword)CLA_CACT) != 0)
+		ok = ok || (isCnt(params[cla->code - 1].code) && isAct(params[cla->code - 1].code));
 
 	return ok;
 }
@@ -595,12 +604,13 @@ void Parser::resolve(ParamElem plst[]) {
 
 	// Resolve ambiguities by presence
 	for (int i = 0; plst[i].code != EOF; i++)  {
-		if (plst[i].code < LITMIN)	// Literals are always 'here'
+		if (plst[i].code < LITMIN) { // Literals are always 'here'
 			if (!isHere(plst[i].code)) {
 				params[0] = plst[i];	// Copy error param as first one for message
 				params[1].code = EOF;	// But be sure to terminate
 				_vm->printError(M_NO_SUCH);
 			}
+		}
 	}
 }
 
@@ -630,6 +640,11 @@ bool Parser::endOfTable(AltElem *addr) {
 }
 
 bool Parser::endOfTable(ChkElem *addr) {
+	Aword *x = (Aword *)addr;
+	return *x == EOF;
+}
+
+bool Parser::endOfTable(WrdElem *addr) {
 	Aword *x = (Aword *)addr;
 	return *x == EOF;
 }

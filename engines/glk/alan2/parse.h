@@ -50,9 +50,10 @@ private:
 	void nonverb();
 	
 	Abool objhere(Aword obj);
-	Aword acthere(Aword act);
+	Aword objloc(Aword obj);
 	Abool isHere(Aword id);
-	
+	Aword where(Aword id);
+
 	/**
 	 * Build a list of objects matching 'all'
 	 */
@@ -113,6 +114,7 @@ private:
 	bool endOfTable(VrbElem *addr);
 	bool endOfTable(AltElem *addr);
 	bool endOfTable(ChkElem *addr);
+	bool endOfTable(WrdElem *addr);
 	
 	/**
 	 * Find the verb alternative wanted in a verb list and return
