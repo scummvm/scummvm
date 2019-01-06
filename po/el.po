@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-12-19 07:31+0100\n"
-"PO-Revision-Date: 2018-08-06 21:26+0000\n"
-"Last-Translator: Arius <alidop@pathfinder.gr>\n"
+"PO-Revision-Date: 2019-01-09 20:57+0000\n"
+"Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
 "Language: el\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-7\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 2.9\n"
+"X-Generator: Weblate 3.3\n"
 "X-Language-name: Greek\n"
 
 #: gui/about.cpp:94
@@ -38,7 +38,7 @@ msgstr "Εμφάνιση κρυφών αρχείων"
 
 #: gui/browser.cpp:75
 msgid "Show files marked with the hidden attribute"
-msgstr "Εμφάνειση αρχείων που έχουν επισημανθεί ως κρυφά"
+msgstr "Εμφάνιση αρχείων που έχουν επισημανθεί ως κρυφά"
 
 #: gui/browser.cpp:79 gui/remotebrowser.cpp:57
 msgid "Go up"
@@ -85,7 +85,7 @@ msgstr "Επιλογή"
 
 #: gui/downloaddialog.cpp:49
 msgid "Select directory where to download game data"
-msgstr "Επιλέξτε φάκελο για να μεταφορτώσετε τα δεδομένα παιχνιδιών"
+msgstr "Επιλέξτε φάκελο για να μεταφορτώσετε τα δεδομένα παιχνιδιού"
 
 #: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:482 gui/launcher.cpp:198
 msgid "Select directory with game data"
@@ -809,24 +809,20 @@ msgid "Never"
 msgstr "Ποτέ"
 
 #: gui/options.cpp:122
-#, fuzzy
 msgid "Every 5 mins"
-msgstr "κάθε 5 λεπτά"
+msgstr "Κάθε 5 λεπτά"
 
 #: gui/options.cpp:122
-#, fuzzy
 msgid "Every 10 mins"
-msgstr "κάθε 10 λεπτά"
+msgstr "Κάθε 10 λεπτά"
 
 #: gui/options.cpp:122
-#, fuzzy
 msgid "Every 15 mins"
-msgstr "κάθε 15 λεπτά"
+msgstr "Κάθε 15 λεπτά"
 
 #: gui/options.cpp:122
-#, fuzzy
 msgid "Every 30 mins"
-msgstr "κάθε 30 λεπτά"
+msgstr "Κάθε 30 λεπτά"
 
 #: gui/options.cpp:361 gui/options.cpp:691 gui/options.cpp:829
 #: gui/options.cpp:911 gui/options.cpp:1184
@@ -839,14 +835,12 @@ msgid "Failed to apply some of the graphic options changes:"
 msgstr "Δεν ήταν δυνατή η εφαρμογή ορισμένων αλλαγών στις επιλογές γραφικών:"
 
 #: gui/options.cpp:564
-#, fuzzy
 msgid "the video mode could not be changed"
-msgstr "δεν ήταν δυνατή η αλλαγή της λειτουργίας βίντεο."
+msgstr "δεν ήταν δυνατή η αλλαγή της λειτουργίας βίντεο"
 
 #: gui/options.cpp:577
-#, fuzzy
 msgid "the stretch mode could not be changed"
-msgstr "δεν ήταν δυνατή η αλλαγή της λειτουργίας βίντεο."
+msgstr "δεν ήταν δυνατή η αλλαγή της λειτουργίας επέκτασης εικόνας"
 
 #: gui/options.cpp:583
 msgid "the aspect ratio setting could not be changed"
@@ -900,20 +894,20 @@ msgstr "Περιοχή αδράνειας χειριστήριου:"
 
 #: gui/options.cpp:1032
 msgid "HW Shader:"
-msgstr ""
+msgstr "Σκιαστής Υλικού:"
 
 #: gui/options.cpp:1032 gui/options.cpp:1034
 msgid "Different hardware shaders give different visual effects"
-msgstr ""
+msgstr "Διαφορετικοί σκιαστές υλικού δίνουν διαφορετικά οπτικά εφέ"
 
 #: gui/options.cpp:1034
 msgctxt "lowres"
 msgid "HW Shader:"
-msgstr ""
+msgstr "Σκιαστής Υλικού:"
 
 #: gui/options.cpp:1035
 msgid "Different shaders give different visual effects"
-msgstr ""
+msgstr "Διαφορετικοί σκιαστές δίνουν διαφορετικά οπτικά εφέ"
 
 #: gui/options.cpp:1052
 msgid "Graphics mode:"
@@ -931,7 +925,7 @@ msgstr ""
 
 #: gui/options.cpp:1079
 msgid "Stretch mode:"
-msgstr ""
+msgstr "Λειτουργία επέκτασης:"
 
 #: gui/options.cpp:1090 backends/graphics/openglsdl/openglsdl-graphics.cpp:637
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2687
@@ -955,12 +949,10 @@ msgid "Correct aspect ratio for 320x200 games"
 msgstr "Διόρθωση αναλογίας διαστάσεων για παιχνίδια 320x200"
 
 #: gui/options.cpp:1104
-#, fuzzy
 msgid "Preferred device:"
 msgstr "Προτιμώμενη συσκευή:"
 
 #: gui/options.cpp:1104
-#, fuzzy
 msgid "Music device:"
 msgstr "Συσκευή Μουσικής:"
 
@@ -973,16 +965,14 @@ msgid "Specifies output sound device or sound card emulator"
 msgstr "Καθορίζει τη συσκευή εξόδου ήχου ή εξομοιωτή κάρτας ήχου"
 
 #: gui/options.cpp:1106
-#, fuzzy
 msgctxt "lowres"
 msgid "Preferred dev.:"
-msgstr "Προτιμ. Συσκ.:"
+msgstr "Προτιμώμενη Συσκ.:"
 
 #: gui/options.cpp:1106
-#, fuzzy
 msgctxt "lowres"
 msgid "Music device:"
-msgstr "Συσκευή Μουσικής:"
+msgstr "Συσκευή μουσικής:"
 
 #: gui/options.cpp:1133
 msgid "AdLib emulator:"
@@ -993,7 +983,6 @@ msgid "AdLib is used for music in many games"
 msgstr "Η Adlib χρησιμοποιείται για μουσική σε πολλά παιχνίδια"
 
 #: gui/options.cpp:1147
-#, fuzzy
 msgid "GM device:"
 msgstr "Συσκευή GM:"
 
@@ -1063,7 +1052,6 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Πραγματική Roland MT-32 (χωρίς εξομοίωση GM)"
 
 #: gui/options.cpp:1212
-#, fuzzy
 msgid "Roland GS device (enable MT-32 mappings)"
 msgstr "Συσκευή Roland GS (ενεργοποίηση αντιστοιχίσεων MT-32)"
 
@@ -1080,9 +1068,8 @@ msgid "Don't use Roland MT-32 music"
 msgstr "Μη χρήση μουσικής Roland MT-32"
 
 #: gui/options.cpp:1248
-#, fuzzy
 msgid "Text and speech:"
-msgstr "Κείμενο και Ομιλία:"
+msgstr "Κείμενο και ομιλία:"
 
 #: gui/options.cpp:1252 gui/options.cpp:1262
 msgid "Speech"
@@ -1101,10 +1088,9 @@ msgid "Subtitle speed:"
 msgstr "Ταχύτητα υποτίτλων:"
 
 #: gui/options.cpp:1258
-#, fuzzy
 msgctxt "lowres"
 msgid "Text and speech:"
-msgstr "Κείμενο και Ομιλία:"
+msgstr "Κείμενο και ομιλία:"
 
 #: gui/options.cpp:1262
 msgid "Spch"
@@ -1138,9 +1124,8 @@ msgid "Music volume:"
 msgstr "Ένταση μουσικής:"
 
 #: gui/options.cpp:1291
-#, fuzzy
 msgid "Mute all"
-msgstr "Σίγαση Όλων"
+msgstr "Σίγαση όλων"
 
 #: gui/options.cpp:1294
 msgid "SFX volume:"
@@ -1166,7 +1151,7 @@ msgstr "Ένταση ομιλίας:"
 
 #: gui/options.cpp:1536
 msgid "Shader"
-msgstr ""
+msgstr "Σκιαστής"
 
 #: gui/options.cpp:1548
 msgid "Control"
@@ -1210,9 +1195,8 @@ msgid "Theme:"
 msgstr "Θέμα:"
 
 #: gui/options.cpp:1641
-#, fuzzy
 msgid "GUI renderer:"
-msgstr "Απεικόνιση GUI:"
+msgstr "Απόδοση εικόνας GUI:"
 
 #: gui/options.cpp:1653
 msgid "Autosave:"
@@ -1228,7 +1212,6 @@ msgid "Keys"
 msgstr "Πλήκτρα"
 
 #: gui/options.cpp:1670
-#, fuzzy
 msgid "GUI language:"
 msgstr "Γλώσσα GUI:"
 
@@ -1238,7 +1221,7 @@ msgstr "Γλώσσα του ScummVM GUI"
 
 #: gui/options.cpp:1696
 msgid "Switch the GUI language to the game language"
-msgstr ""
+msgstr "Χρήση γλώσσας παιχνιδιού ως γλώσσα του GUI"
 
 #: gui/options.cpp:1697
 msgid ""
@@ -1246,16 +1229,22 @@ msgid ""
 "if a game uses the ScummVM save and load dialogs, they are in the same "
 "language as the game."
 msgstr ""
+"Όταν ξεκινάει ένα παιχνίδι, να γίνεται χρήση της γλώσσας παιχνιδιού ως "
+"γλώσσα του GUI. Έτσι, αν ένα παιχνίδι χρησιμοποιεί τα παράθυρα διαλόγου του "
+"ScummVM για αποθήκευση και φόρτωση, αυτά θα είναι στην ίδια γλώσσα με το "
+"παιχνίδι."
 
 #: gui/options.cpp:1710
 msgid "Use native system file browser"
-msgstr ""
+msgstr "Χρήση του εγγενούς περιηγητή αρχείων"
 
 #: gui/options.cpp:1711
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
 msgstr ""
+"Χρήση του εγγενούς περιηγητή αρχείων που παρέχει το λειτουργικό σύστημα αντί "
+"αυτού από το ScummVM για την επιλογή αρχείου ή καταλόγου."
 
 #: gui/options.cpp:1718 gui/updates-dialog.cpp:86
 msgid "Update check:"
@@ -1686,18 +1675,16 @@ msgid "Disabled GFX"
 msgstr "Απενεργ. γραφικά"
 
 #: gui/ThemeEngine.cpp:257
-#, fuzzy
 msgid "Standard renderer"
-msgstr "Κανονική Απεικόνιση"
+msgstr "Κανονική απόδοση"
 
 #: gui/ThemeEngine.cpp:257 engines/scumm/dialogs.cpp:660
 msgid "Standard"
 msgstr "Κανονικό"
 
 #: gui/ThemeEngine.cpp:259
-#, fuzzy
 msgid "Antialiased renderer"
-msgstr "Εξομαλυμένη Απόδοση"
+msgstr "Εξομαλυμένη απόδοση"
 
 #: gui/ThemeEngine.cpp:259
 msgid "Antialiased"
@@ -1705,42 +1692,43 @@ msgstr "Εξομαλυμένη"
 
 #: gui/unknown-game-dialog.cpp:52
 msgid "Copy to clipboard"
-msgstr ""
+msgstr "Αντιγραφή στο πρόχειρο"
 
 #: gui/unknown-game-dialog.cpp:67
-#, fuzzy
 msgid "Report game"
-msgstr "Επαναφορά παιχνιδιού:"
+msgstr "Αναφορά παιχνιδιού"
 
 #: gui/unknown-game-dialog.cpp:114
 msgid ""
 "Use the button below to copy the required game information into your "
 "clipboard."
 msgstr ""
+"Χρησιμοποιείστε το παρακάτω κουμπί για να αντιγράψετε την απαιτούμενη "
+"πληροφορία από το παιχνίδι στο πρόχειρό σας."
 
 #: gui/unknown-game-dialog.cpp:121
 msgid "You can also directly report your game to the Bug Tracker."
 msgstr ""
+"Μπορείτε επίσης να αναφέρετε το παιχνίδι σας απευθείας στον Bug Tracker."
 
 #: gui/unknown-game-dialog.cpp:203
 msgid ""
 "All necessary information about your game has been copied into the clipboard"
 msgstr ""
+"Όλη η απαιτούμενη πληροφορία για το παιχνίδι σας έχει αντιγραφεί στο πρόχειρο"
 
 #: gui/unknown-game-dialog.cpp:205
 msgid "Copying the game information to the clipboard has failed!"
-msgstr ""
+msgstr "Η αντιγραφή της πληροφορίας παιχνιδιού στο πρόχειρο απέτυχε!"
 
 #: gui/updates-dialog.cpp:49
-#, fuzzy
 msgid ""
 "ScummVM now supports automatic check for updates\n"
 "which requires access to the Internet. Would you\n"
 "like to enable this feature?"
 msgstr ""
-"Το ScummVM τώρα υποστηρίζει αυτόματο έλεγχο για ενημερώσεις\n"
-"το οποίο απαιτεί πρόσβαση στο Internet.\n"
-"\n"
+"Το ScummVM τώρα υποστηρίζει αυτόματο έλεγχο\n"
+"για ενημερώσεις, που απαιτεί πρόσβαση στο Internet.\n"
 "Θέλετε να ενεργοποιήσετε αυτή τη δυνατότητα;"
 
 #: gui/updates-dialog.cpp:52
@@ -1811,7 +1799,7 @@ msgstr "Μη υποστηριζόμενη λειτουργία χρώματος"
 
 #: common/error.cpp:46
 msgid "Audio device initialization failed"
-msgstr ""
+msgstr "Η αρχικοποίηση της συσκευής ήχου απέτυχε"
 
 #: common/error.cpp:49
 msgid "Read permission denied"
@@ -2023,9 +2011,8 @@ msgid "Could not switch to video mode: '"
 msgstr "Δεν ήταν δυνατή η αλλαγή σε λειτουργία οθόνης: '"
 
 #: engines/engine.cpp:334
-#, fuzzy
 msgid "Could not switch to stretch mode: '"
-msgstr "Δεν ήταν δυνατή η αλλαγή σε λειτουργία οθόνης: '"
+msgstr "Δεν ήταν δυνατή η αλλαγή σε λειτουργία επέκτασης εικόνας: '"
 
 #: engines/engine.cpp:343
 msgid "Could not apply aspect ratio setting."
@@ -2093,28 +2080,27 @@ msgid "Start anyway"
 msgstr "Εκκίνηση ούτως ή άλλως"
 
 #: engines/game.cpp:158
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The game in '%s' seems to be an unknown game variant.\n"
 "\n"
 "Please report the following data to the ScummVM team at %s along with the "
 "name of the game you tried to add and its version, language, etc.:"
 msgstr ""
-"Το παιχνίδι στο '%s' φαίνεται να είναι άγνωστο.\n"
-"Παρακαλούμε, αναφέρετε τα ακόλουθα στοιχεία στην ομάδα ScummVM μαζί με το "
-"όνομα\n"
-"του παιχνιδιού που προσπαθήσατε να προσθέσετε και την έκδοση, τη γλώσσα του, "
-"κλπ.:"
+"Το παιχνίδι στο '%s' φαίνεται να είναι μια άγνωστη εκδοχή παιχνιδιού.\n"
+"\n"
+"Παρακαλούμε, αναφέρετε τα ακόλουθα στοιχεία στην ομάδα ScummVM στο %s μαζί "
+"με το όνομα του παιχνιδιού που προσπαθήσατε να προσθέσετε και την έκδοση, τη "
+"γλώσσα του, κλπ.:"
 
 #: engines/game.cpp:162
 #, c-format
 msgid "Matched game IDs for the %s engine:"
-msgstr ""
+msgstr "Αντιστοιχισμένα αναγνωριστικά παιχνιδιού για την μηχανή %s:"
 
 #: audio/adlib.cpp:2290
-#, fuzzy
 msgid "AdLib emulator"
-msgstr "Εξομοιωτής Adlib:"
+msgstr "Εξομοιωτής Adlib"
 
 #: audio/fmopl.cpp:71
 msgid "MAME OPL emulator"
@@ -2178,7 +2164,6 @@ msgstr ""
 "αρχείο καταγραφής για περισσότερες πληροφορίες."
 
 #: audio/mods/paula.cpp:196
-#, fuzzy
 msgid "Amiga Audio emulator"
 msgstr "Εξομοιωτής Ήχου Amiga"
 
@@ -2187,12 +2172,10 @@ msgid "No music"
 msgstr "Χωρίς μουσική"
 
 #: audio/softsynth/appleiigs.cpp:33
-#, fuzzy
 msgid "Apple II GS emulator (NOT IMPLEMENTED)"
 msgstr "Εξομοιωτής Apple II GS (ΔΕΝ ΕΧΕΙ ΥΛΟΠΟΙΗΘΕΙ)"
 
 #: audio/softsynth/cms.cpp:350
-#, fuzzy
 msgid "Creative Music System emulator"
 msgstr "Εξομοιωτής Creative Music System"
 
@@ -2209,22 +2192,18 @@ msgid "Initializing MT-32 Emulator"
 msgstr "Προετοιμασία Εξομοιωτή MT-32"
 
 #: audio/softsynth/mt32.cpp:437
-#, fuzzy
 msgid "MT-32 emulator"
 msgstr "Εξομοιωτής MT-32"
 
 #: audio/softsynth/pcspk.cpp:139
-#, fuzzy
 msgid "PC Speaker emulator"
-msgstr "Εξομοιωτής Ηχείου PC"
+msgstr "Εξομοιωτής PC Speaker"
 
 #: audio/softsynth/pcspk.cpp:158
-#, fuzzy
 msgid "IBM PCjr emulator"
 msgstr "Εξομοιωτής IBM PCjr"
 
 #: audio/softsynth/sid.cpp:1430
-#, fuzzy
 msgid "C64 Audio emulator"
 msgstr "Εξομοιωτής Ήχου C64"
 
@@ -2271,7 +2250,7 @@ msgstr "Προωθητής"
 
 #: backends/events/default/default-events.cpp:212
 msgid "Do you really want to quit?"
-msgstr "Είστε σίγουροι ότι θέλετε να βγείτε από το πρόγραμμα;"
+msgstr "Θέλετε πραγματικά να βγείτε από το πρόγραμμα;"
 
 #: backends/events/default/default-events.cpp:212
 #: backends/platform/symbian/src/SymbianActions.cpp:52
@@ -2369,24 +2348,23 @@ msgstr "OpenGL"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:272
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
-#, fuzzy
 msgid "Center"
-msgstr "Enter"
+msgstr "Στο κέντρο"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:273
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:77
 msgid "Pixel-perfect scaling"
-msgstr ""
+msgstr "Κλιμάκωση απόλυτης-ακρίβειας-πίξελ"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:274
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:78
 msgid "Fit to window"
-msgstr ""
+msgstr "Προσαρμογή στο παράθυρο"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:275
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:79
 msgid "Stretch to window"
-msgstr ""
+msgstr "Επέκταση εικόνας για να γεμίσει το παράθυρο"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:639
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2689
@@ -2421,7 +2399,7 @@ msgstr "Απενεργοποίηση φιλτραρίσματος"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:825
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2572
 msgid "Stretch mode"
-msgstr ""
+msgstr "Λειτουργία επέκτασης εικόνας"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:55
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:88
@@ -2612,40 +2590,39 @@ msgstr "Ελαχιστοποίηση"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:198
 msgid "Help"
-msgstr ""
+msgstr "Βοήθεια"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:199
-#, fuzzy
 msgid "User Manual"
-msgstr "Ο χρήστης ακύρωσε"
+msgstr "Εγχειρίδιο Χρήσης"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:201
 msgid "General Information"
-msgstr ""
+msgstr "Γενικές Πληροφορίες"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:202
 msgid "What's New in ScummVM"
-msgstr ""
+msgstr "Τι νέο υπάρχει στο ScummVM"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:204
 msgid "Credits"
-msgstr ""
+msgstr "Συντελεστές"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:205
 msgid "GPL License"
-msgstr ""
+msgstr "Άδεια GPL"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:206
 msgid "LGPL License"
-msgstr ""
+msgstr "Άδεια LGPL"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:207
 msgid "Freefont License"
-msgstr ""
+msgstr "Άδεια Freefont"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:208
 msgid "BSD License"
-msgstr ""
+msgstr "Άδεια BSD"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:38
 #: backends/platform/wince/CEActionsSmartphone.cpp:39
@@ -3212,239 +3189,238 @@ msgstr "Προβολή γραφικών με χρήση της λαμπερής παλέτας του παιχνιδιού"
 
 #: engines/glk/scott/scott.cpp:98
 msgid "I don't understand your command. "
-msgstr ""
+msgstr "Δεν καταλαβαίνω την εντολή σου. "
 
 #: engines/glk/scott/scott.cpp:101
 msgid "I can't do that yet. "
-msgstr ""
+msgstr "Δεν μπορώ να το κάνω αυτό ακόμα. "
 
 #: engines/glk/scott/scott.cpp:117
 msgid "Light has run out! "
-msgstr ""
+msgstr "Το φως έχει σβήσει! "
 
 #: engines/glk/scott/scott.cpp:119
 msgid "Your light has run out. "
-msgstr ""
+msgstr "Το φως σου έχει σβήσει. "
 
 #: engines/glk/scott/scott.cpp:128
 msgid "Light runs out in "
-msgstr ""
+msgstr "Το φως θα σβήσει σε "
 
 #: engines/glk/scott/scott.cpp:130
-#, fuzzy
 msgid " turns. "
-msgstr "άναψε (N)"
+msgstr " γύρους. "
 
 #: engines/glk/scott/scott.cpp:133
 msgid "Your light is growing dim. "
-msgstr ""
+msgstr "Το φως σου γίνεται αδύναμο. "
 
 #: engines/glk/scott/scott.cpp:393
 msgid "North"
-msgstr ""
+msgstr "Βόρεια"
 
 #: engines/glk/scott/scott.cpp:393
 msgid "South"
-msgstr ""
+msgstr "Νότια"
 
 #: engines/glk/scott/scott.cpp:393
 msgid "East"
-msgstr ""
+msgstr "Ανατολικά"
 
 #: engines/glk/scott/scott.cpp:393
 msgid "West"
-msgstr ""
+msgstr "Δυτικά"
 
 #: engines/glk/scott/scott.cpp:405
 msgid "You can't see. It is too dark!\n"
-msgstr ""
+msgstr "Δεν μπορείς να δεις. Είναι πολύ σκοτεινά!\n"
 
 #: engines/glk/scott/scott.cpp:407
 msgid "I can't see. It is too dark!\n"
-msgstr ""
+msgstr "Δεν μπορώ να δω. Είναι πολύ σκοτεινά!\n"
 
 #: engines/glk/scott/scott.cpp:417
 #, c-format
 msgid "You are in a %s\n"
-msgstr ""
+msgstr "Βρίσκεσαι σε ένα %s\n"
 
 #: engines/glk/scott/scott.cpp:419
 #, c-format
 msgid "I'm in a %s\n"
-msgstr ""
+msgstr "Βρίσκομαι σε ένα %s\n"
 
 #: engines/glk/scott/scott.cpp:424
 msgid ""
 "\n"
 "Obvious exits: "
 msgstr ""
+"\n"
+"Προφανείς έξοδοι: "
 
 #: engines/glk/scott/scott.cpp:437
-#, fuzzy
 msgid "none"
-msgstr "<καμία>"
+msgstr "καμία"
 
 #: engines/glk/scott/scott.cpp:446
 msgid ""
 "\n"
 "You can also see: "
 msgstr ""
+"\n"
+"Μπορείς επίσης να δεις: "
 
 #: engines/glk/scott/scott.cpp:449
 msgid ""
 "\n"
 "I can also see: "
 msgstr ""
+"\n"
+"Μπορώ επίσης να δω: "
 
 #: engines/glk/scott/scott.cpp:529
-#, fuzzy
 msgid "Saved.\n"
-msgstr "Αποθήκευση"
+msgstr "Αποθηκεύτηκε.\n"
 
 #: engines/glk/scott/scott.cpp:620
 msgid "You use word(s) I don't know! "
-msgstr ""
+msgstr "Χρησιμοποιείς λέξεις που δεν γνωρίζω! "
 
 #: engines/glk/scott/scott.cpp:748 engines/glk/scott/scott.cpp:1071
 #: engines/glk/scott/scott.cpp:1093
 msgid "You are carrying too much. "
-msgstr ""
+msgstr "Κουβαλάς πάρα πολλά πράγματα. "
 
 #: engines/glk/scott/scott.cpp:750
 msgid "I've too much to carry! "
-msgstr ""
+msgstr "Κουβαλάω πάρα πολλά πράγματα! "
 
 #: engines/glk/scott/scott.cpp:781
 msgid "You are dead.\n"
-msgstr ""
+msgstr "Είσαι νεκρός.\n"
 
 #: engines/glk/scott/scott.cpp:783
 msgid "I am dead.\n"
-msgstr ""
+msgstr "Είμαι νεκρός.\n"
 
 #: engines/glk/scott/scott.cpp:795
-#, fuzzy
 msgid "The game is now over.\n"
-msgstr "Το παιχνίδι ΔΕΝ φορτώθηκε"
+msgstr "Το παιχνίδι έχει τελειώσει τώρα.\n"
 
 #: engines/glk/scott/scott.cpp:810
 msgid "You have stored "
-msgstr ""
+msgstr "Έχεις συγκεντρώσει "
 
 #: engines/glk/scott/scott.cpp:812
-#, fuzzy
 msgid "I've stored "
-msgstr "Επαναφορά"
+msgstr "Έχω συγκεντρώσει "
 
 #: engines/glk/scott/scott.cpp:814
 msgid " treasures.  On a scale of 0 to 100, that rates "
-msgstr ""
+msgstr " θησαυρούς.  Σε κλίμακα από το 0 έως το 100, το σκόρ είναι "
 
 #: engines/glk/scott/scott.cpp:818
 msgid "Well done.\n"
-msgstr ""
+msgstr "Μπράβο.\n"
 
 #: engines/glk/scott/scott.cpp:827
 msgid "You are carrying:\n"
-msgstr ""
+msgstr "Κουβαλάς:\n"
 
 #: engines/glk/scott/scott.cpp:829
 msgid "I'm carrying:\n"
-msgstr ""
+msgstr "Κουβαλάω:\n"
 
 #: engines/glk/scott/scott.cpp:844
 msgid "Nothing"
-msgstr ""
+msgstr "Τίποτα"
 
 #: engines/glk/scott/scott.cpp:973
 msgid "Give me a direction too."
-msgstr ""
+msgstr "Δώσε μου και μια κατεύθυνση."
 
 #: engines/glk/scott/scott.cpp:982
 msgid "Dangerous to move in the dark! "
-msgstr ""
+msgstr "Επικίνδυνο να μετακινείσαι στο σκοτάδι! "
 
 #: engines/glk/scott/scott.cpp:990
 msgid "You fell down and broke your neck. "
-msgstr ""
+msgstr "Έπεσες κάτω και έσπασες το σβέρκο σου. "
 
 #: engines/glk/scott/scott.cpp:992
 msgid "I fell down and broke my neck. "
-msgstr ""
+msgstr "Έπεσα και έσπασα το σβέρκο μου. "
 
 #: engines/glk/scott/scott.cpp:997
 msgid "You can't go in that direction. "
-msgstr ""
+msgstr "Δεν μπορείς να πας προς εκείνη την κατεύθυνση. "
 
 #: engines/glk/scott/scott.cpp:999
 msgid "I can't go in that direction. "
-msgstr ""
+msgstr "Δεν μπορώ να πάω προς εκείνη την κατεύθυνση. "
 
 #: engines/glk/scott/scott.cpp:1057
 msgid "It is dark.\n"
-msgstr ""
+msgstr "Είναι σκοτεινά.\n"
 
 #: engines/glk/scott/scott.cpp:1073 engines/glk/scott/scott.cpp:1095
 msgid "I've too much to carry. "
-msgstr ""
+msgstr "Κουβαλάω πάρα πολλά πράγματα. "
 
 #: engines/glk/scott/scott.cpp:1078 engines/glk/scott/scott.cpp:1126
 msgid ": O.K.\n"
-msgstr ""
+msgstr ": Εντάξει\n"
 
 #: engines/glk/scott/scott.cpp:1084
 msgid "Nothing taken."
-msgstr ""
+msgstr "Δεν λήφθηκε τίποτα."
 
 #: engines/glk/scott/scott.cpp:1088 engines/glk/scott/scott.cpp:1136
-#, fuzzy
 msgid "What ? "
-msgstr "Τι είναι"
+msgstr "Ορίστε ; "
 
 #: engines/glk/scott/scott.cpp:1101
 msgid "It is beyond your power to do that. "
-msgstr ""
+msgstr "Είναι πέρα από τη δύναμή σου να το κάνεις αυτό. "
 
 #: engines/glk/scott/scott.cpp:1103
 msgid "It's beyond my power to do that. "
-msgstr ""
+msgstr "Είναι πέρα από τη δύναμή μου να το κάνω αυτό. "
 
 #: engines/glk/scott/scott.cpp:1107
 msgid "O.K. "
-msgstr ""
+msgstr "Εντάξει "
 
 #: engines/glk/scott/scott.cpp:1132
 msgid "Nothing dropped.\n"
-msgstr ""
+msgstr "Δεν ρίχτηκε τίποτα.\n"
 
 #: engines/glk/scott/scott.cpp:1142
 msgid "It's beyond your power to do that.\n"
-msgstr ""
+msgstr "Είναι πέρα από τη δύναμή σου να το κάνεις αυτό.\n"
 
 #: engines/glk/scott/scott.cpp:1144
 msgid "It's beyond my power to do that.\n"
-msgstr ""
+msgstr "Είναι πέρα από τη δύναμή μου να το κάνω αυτό.\n"
 
 #: engines/glk/frotz/detection.cpp:154
-#, fuzzy
 msgid "Unnamed savegame"
 msgstr "Αποθηκευμένο παιχνίδι χωρίς όνομα"
 
 #: engines/glk/glulxe/glulxe.cpp:55
 msgid "This is too short to be a valid Glulx file."
-msgstr ""
+msgstr "Αυτό είναι πολύ σύντομο για να είναι έγκυρο αρχείο Glulx."
 
 #: engines/glk/glulxe/glulxe.cpp:60
 msgid "This is not a valid Glulx file."
-msgstr ""
+msgstr "Αυτό δεν είναι ένα έγκυρο αρχείο Glulx."
 
 #: engines/glk/glulxe/glulxe.cpp:67
 msgid "This Glulx file is too old a version to execute."
-msgstr ""
+msgstr "Αυτή η έκδοση αρχείου Glulx είναι πολύ παλιά για να εκτελεστεί."
 
 #: engines/glk/glulxe/glulxe.cpp:71
 msgid "This Glulx file is too new a version to execute."
-msgstr ""
+msgstr "Αυτή η έκδοση αρχείου Glulx είναι πολύ νέα για να εκτελεστεί."
 
 #: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:538
@@ -3782,30 +3758,33 @@ msgid ""
 "Are you sure you want to load a saved game? All unsaved progress will be "
 "lost."
 msgstr ""
+"Είστε σίγουροι ότι θέλετε να φορτώσετε ένα αποθηκευμένο παιχνίδι; Όλη η μη "
+"αποθηκευμένη πρόοδός σας θα χαθεί."
 
 #: engines/mohawk/myst_stacks/menu.cpp:284
 #: engines/mohawk/riven_stacks/aspit.cpp:350
-#, fuzzy
 msgid "Load game"
-msgstr "Φόρτωση παιχνιδιού:"
+msgstr "Φόρτωση παιχνιδιού"
 
 #: engines/mohawk/myst_stacks/menu.cpp:300
 #: engines/mohawk/riven_stacks/aspit.cpp:371
 msgid ""
 "Are you sure you want to start a new game? All unsaved progress will be lost."
 msgstr ""
+"Είστε σίγουροι ότι θέλετε να ξεκινήσετε ένα νέο παιχνίδι; Όλη η μη "
+"αποθηκευμένη πρόοδός σας θα χαθεί."
 
 #: engines/mohawk/myst_stacks/menu.cpp:301
 #: engines/mohawk/riven_stacks/aspit.cpp:372
-#, fuzzy
 msgid "New game"
-msgstr "Νέα Αποθήκευση"
+msgstr "Νέο παιχνίδι"
 
 #: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455
-#, fuzzy
 msgid "Are you sure you want to quit? All unsaved progress will be lost."
-msgstr "   Είστε σίγουροι ότι θέλετε να βγείτε από το πρόγραμμα ;   "
+msgstr ""
+"Είστε σίγουροι ότι θέλετε να βγείτε από το παιχνίδι; Όλη η μη αποθηκευμένη "
+"πρόοδός σας θα χαθεί."
 
 #: engines/mohawk/riven.cpp:158
 msgid ""
@@ -4008,20 +3987,19 @@ msgstr ""
 
 #: engines/sci/detection.cpp:427
 msgid "Use high-quality video scaling"
-msgstr "Χρήση κλιμάκωσης video υψηλής ποιότητας "
+msgstr "Χρήση κλιμάκωσης video υψηλής ποιότητας"
 
 #: engines/sci/detection.cpp:428
-#, fuzzy
 msgid "Use linear interpolation when upscaling videos, where possible"
-msgstr "Χρήση γραμμικού φιλτραρίσματος για την κλιμάκωση γραφικών"
+msgstr "Χρήση γραμμικής παρεμβολής για την κλιμάκωση βίντεο, όπου είναι δυνατή"
 
 #: engines/sci/detection.cpp:438
 msgid "Use high-quality \"LarryScale\" cel scaling"
-msgstr ""
+msgstr "Χρήση υψηλής ποιότητας κλιμάκωσης cel \"LarryScale\""
 
 #: engines/sci/detection.cpp:439
 msgid "Use special cartoon scaler for drawing character sprites"
-msgstr ""
+msgstr "Χρήση ειδικού καρτούν-κλιμακωτή στη σχεδίαση των sprite των χαρακτήρων"
 
 #: engines/sci/detection.cpp:448
 msgid "Prefer digital sound effects"
@@ -4072,9 +4050,8 @@ msgstr ""
 "Χρήση των εναλλακτικών ασημένιων δρομέων αντί των προκαθορισμένων χρυσών"
 
 #: engines/sci/detection.cpp:512
-#, fuzzy
 msgid "Enable content censoring"
-msgstr "Ενεργοποίηση δρομέων κατεύθυνσης"
+msgstr "Ενεργοποίηση λογοκρισίας περιεχομένου"
 
 #: engines/sci/detection.cpp:513
 msgid "Enable the game's built-in optional content censoring"
@@ -4082,11 +4059,11 @@ msgstr "Ενεργοποίηση του προαιρετικού ενσωματωμένου φίλτρου λογοκρισίας"
 
 #: engines/sci/detection.cpp:523
 msgid "Upscale videos"
-msgstr ""
+msgstr "Αύξηση κλιμάκωσης βίντεο"
 
 #: engines/sci/detection.cpp:524
 msgid "Upscale videos to double their size"
-msgstr ""
+msgstr "Αύξηση κλιμάκωσης εικόνας στα βίντεο σε διπλάσιο μέγεθός"
 
 #: engines/sci/detection.cpp:854 engines/sci/engine/kfile.cpp:481
 msgid "(Autosave)"
@@ -4170,7 +4147,7 @@ msgid ""
 msgstr ""
 "Οι υπότιτλοι είναι ενεργοί αλλά ο υποτιτλισμός στο King's Quest 7 ήταν "
 "ημιτελής και απενεργοποιήθηκε στην τελική έκδοση του παιχνιδιού. Το ScummVM "
-"επιτρέπει να ενεργοποιηθούν οι υπότιτλοι αλλά επειδή είχαν αφαιρεθεί από το "
+"επιτρέπει να ενεργοποιηθούν οι υπότιτλοι αλλά, επειδή είχαν αφαιρεθεί από το "
 "πρωτότυπο παιχνίδι, δεν εμφανίζονται πάντα σωστά ή δεν είναι ίδιοι με την "
 "ομιλία του παιχνιδιού. Αυτό δεν είναι σφάλμα του ScummVM, είναι πρόβλημα του "
 "παιχνιδιού."
@@ -4957,7 +4934,7 @@ msgstr "Πιξελιασμένες μεταβάσεις σκηνής"
 
 #: engines/sherlock/detection.cpp:82
 msgid "When changing scenes, a randomized pixel transition is done"
-msgstr "Στην εναλλαγή σκηνών, πραγματοποιείται μια τυχαία μετάβαση pixel"
+msgstr "Στην εναλλαγή σκηνών, πραγματοποιείται μια τυχαία μεταβολή pixel"
 
 #: engines/sherlock/detection.cpp:91
 msgid "Don't show hotspots when moving mouse"
@@ -5008,17 +4985,19 @@ msgid "Use the floppy version's intro (CD version only)"
 msgstr "Χρήση της εισαγωγής από την έκδοση δισκέτας (έκδοση CD μόνο)"
 
 #: engines/supernova/supernova.cpp:191
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
 msgstr ""
-"Βρέθηκε λανθασμένη έκδοση του '%s' αρχείου παιχνιδιού. Αναμενόμενη %d.%d "
-"αλλά βρέθηκε η %d.%d."
+"Βρέθηκε λανθασμένη έκδοση του '%s' αρχείου μηχανής παιχνιδιού. Αναμενόμενη η "
+"%d αλλά βρέθηκε η %d."
 
 #: engines/supernova/supernova.cpp:217
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to locate the text for %s language in '%s' engine data file."
-msgstr "Δεν ήταν δυνατή η εύρεση του αρχείου παιχνιδιού '%s'."
+msgstr ""
+"Δεν ήταν δυνατή η εύρεση του κειμένου σε γλώσσα %s στο αρχείο παιχνιδιού "
+"'%s'."
 
 #: engines/sword1/animation.cpp:524
 #, c-format
@@ -5162,21 +5141,25 @@ msgstr "Εφαρμογή διγραμμικού φιλτραρίσματος σε μεμονωμένα στοιχεία"
 
 #: engines/xeen/detection.cpp:89
 msgid "Show item costs in standard inventory mode"
-msgstr ""
+msgstr "Εμφάνιση κόστους στη λειτουργία απλής παρουσίασης αντικειμένων"
 
 #: engines/xeen/detection.cpp:90
 msgid ""
 "Shows item costs in standard inventory mode, allowing the value of items to "
 "be compared"
 msgstr ""
+"Εμφανίζει το κόστος στην λειτουργία απλής παρουσίασης αντικειμένων, "
+"επιτρέποντας την σύγκριση της αξίας τους"
 
 #: engines/xeen/detection.cpp:99
 msgid "More durable armor"
-msgstr ""
+msgstr "Πιο ανθεκτική πανοπλία"
 
 #: engines/xeen/detection.cpp:100
 msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
 msgstr ""
+"Πανοπλία που δεν θα σπάσει ώσπου ο χαρακτήρας να είναι σε -80HP, αντί για "
+"μόλις στα -10HP"
 
 #: engines/zvision/detection_tables.h:61
 msgid "Double FPS"
