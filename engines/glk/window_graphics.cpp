@@ -62,7 +62,9 @@ void GraphicsWindow::rearrange(const Rect &box) {
 	if (newhgt < bothhgt)
 		bothhgt = newhgt;
 
-	newSurface = new Graphics::ManagedSurface(newwid, newhgt, g_system->getScreenFormat());
+	Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
+	newSurface = new Graphics::ManagedSurface(newwid, newhgt, pixelFormat);
+	newSurface->clear(pixelFormat.RGBToColor(_bgnd[0], _bgnd[1], _bgnd[2]));
 
 	// If the new surface is equal or bigger than the old one, copy it over
 	if (_surface && bothwid && bothhgt)
@@ -145,7 +147,7 @@ void GraphicsWindow::eraseRect(bool whole, const Rect &box) {
 	// zero out hyperlinks for these coordinates
 	g_vm->_selection->putHyperlink(0, hx0, hy0, hx1, hy1);
 
-	_surface->fillRect(Rect(x0, y0, x1, y1), MKTAG(_bgnd[0], _bgnd[1], _bgnd[2], 0));
+	_surface->fillRect(Rect(x0, y0, x1, y1), _surface->format.RGBToColor(_bgnd[0], _bgnd[1], _bgnd[2]));
 	touch();
 }
 
