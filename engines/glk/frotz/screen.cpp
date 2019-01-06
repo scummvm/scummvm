@@ -45,6 +45,8 @@ void FrotzScreen::loadFonts(Common::Archive *archive) {
 		// For graphical games, ignore any font configurations and force their size
 		g_conf->_monoInfo._size = g_conf->_propInfo._size = 7;
 		g_conf->_monoInfo._aspect = g_conf->_propInfo._aspect = 1.0;
+		g_vm->_defaultForeground = 0;
+		g_vm->_defaultBackground = 0xffffff;
 	}
 
 	// Load the basic fonts
