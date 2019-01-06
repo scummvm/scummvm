@@ -1331,7 +1331,7 @@ void GriffonEngine::game_configmenu() {
 		cloudimg->blit(*videobuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
 		cloudimg->setAlpha(64, true);
 
-		configwindow->blit(*videobuffer);
+		videobuffer->copyRectToSurface(configwindow->getPixels(), configwindow->pitch, 0, 0, configwindow->w, configwindow->h);
 
 		int sy = SY;
 
@@ -3212,7 +3212,7 @@ void GriffonEngine::game_drawplayer() {
 void GriffonEngine::game_drawview() {
 	Common::Rect rc;
 
-	mapbg->blit(*videobuffer);
+	videobuffer->copyRectToSurface(mapbg->getPixels(), mapbg->pitch, 0, 0, mapbg->w, mapbg->h);
 
 	game_updspellsunder();
 
@@ -3266,7 +3266,7 @@ void GriffonEngine::game_endofgame() {
 
 	videobuffer2->fillRect(Common::Rect(0, 0, videobuffer2->w, videobuffer2->h), 0);
 	videobuffer3->fillRect(Common::Rect(0, 0, videobuffer3->w, videobuffer3->h), 0);
-	videobuffer->blit(*videobuffer2);
+	videobuffer2->copyRectToSurface(videobuffer->getPixels(), videobuffer->pitch, 0, 0, videobuffer->w, videobuffer->h);
 
 	float ld = 0;
 	int ldstop = 0;
@@ -3295,8 +3295,8 @@ void GriffonEngine::game_endofgame() {
 		videobuffer->fillRect(Common::Rect(0, 0, videobuffer->w, videobuffer->h), 0);
 
 		videobuffer->setAlpha(ya);
-		videobuffer2->blit(*videobuffer3);
-		videobuffer->blit(*videobuffer3);
+		videobuffer3->copyRectToSurface(videobuffer2->getPixels(), videobuffer2->pitch, 0, 0, videobuffer2->w, videobuffer2->h);
+		videobuffer3->copyRectToSurface(videobuffer->getPixels(), videobuffer->pitch, 0, 0, videobuffer->w, videobuffer->h);
 
 		g_system->copyRectToScreen(videobuffer3->getPixels(), videobuffer3->pitch, 0, 0, videobuffer3->w, videobuffer3->h);
 		g_system->updateScreen();
@@ -3396,7 +3396,7 @@ void GriffonEngine::game_endofgame() {
 	ticks1 = ticks;
 	int y1 = 0;
 
-	videobuffer->blit(*videobuffer2);
+	videobuffer2->copyRectToSurface(videobuffer->getPixels(), videobuffer->pitch, 0, 0, videobuffer->w, videobuffer->h);
 
 	do {
 		if (ticks < ticks1 + 1500) {
@@ -3442,7 +3442,7 @@ void GriffonEngine::game_endofgame() {
 	y1 = 0;
 	do {
 
-		theendimg->blit(*videobuffer);
+		videobuffer->copyRectToSurface(theendimg->getPixels(), theendimg->pitch, 0, 0, theendimg->w, theendimg->h);
 
 		y1 = 255;
 		if (ticks < ticks1 + 1000) {
