@@ -20,44 +20,27 @@
  *
  */
 
-#include "common/config-manager.h"
-#include "common/debug.h"
-#include "common/debug-channels.h"
-#include "common/error.h"
-#include "common/file.h"
-#include "common/fs.h"
-#include "graphics/pixelformat.h"
+#include "gui/debugger.h"
 
-#include "engines/util.h"
-
-#include "griffon/griffon.h"
 #include "griffon/console.h"
 
 namespace Griffon {
 
-GriffonEngine::GriffonEngine(OSystem *syst) : Engine(syst) {
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
-	SearchMan.addSubDirectoryMatching(gameDataDir, "sound");
-
-	_rnd = new Common::RandomSource("griffon");
-
-	_console = nullptr;
-
-	_shouldQuit = false;
+Console::Console() {
+	_godMode = false;
+	 registerCmd("godmode", WRAP_METHOD(Console, Cmd_godMode));
 }
 
-GriffonEngine::~GriffonEngine() {
-	delete _rnd;
+bool Console::Cmd_godMode(int argc, const char** argv) {
+	if (argc != 1) {
+		debugPrintf("Usage: %s\n", argv[0]);
+		debugPrintf("Enables/Disables invincibility and megadamage\n");
+		return true;
+	}
+
+	_godMode ^= true;
+	debugPrintf("God mode is now %s\n", _godMode ? "Enabled" : "Disabled");
+	return true;
 }
 
-Common::Error GriffonEngine::run() {
-	initGraphics(320, 240, new Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
-
-	_console = new Console();
-
-	griffon_main();
-
-	return Common::kNoError;
-}
-
-}
+} // End of namespace Plumbers

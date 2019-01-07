@@ -2,6 +2,7 @@ MODULE := engines/griffon
 
 MODULE_OBJS := \
 	config.o \
+	console.o \
 	engine.o \
 	griffon.o \
 	detection.o \

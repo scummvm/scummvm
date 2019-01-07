@@ -44,6 +44,8 @@
 
 namespace Griffon {
 
+class Console;
+
 #define kMaxNPC      32
 #define kMaxFloat    32
 #define kMaxSpell    32
@@ -240,6 +242,8 @@ public:
 private:
 	Common::RandomSource *_rnd;
 	bool _shouldQuit;
+
+	Console *_console;
 
 private:
 	void griffon_main();

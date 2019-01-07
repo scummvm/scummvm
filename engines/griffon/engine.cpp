@@ -36,6 +36,7 @@
 
 #include "griffon/griffon.h"
 #include "griffon/config.h"
+#include "griffon/console.h"
 
 #include "common/events.h"
 #include "common/file.h"
@@ -936,6 +937,10 @@ void GriffonEngine::game_checkhit() {
 				if (ps > 1)
 					ps = ps * 0.75;
 				damage = (float)player.sworddamage * (1.0 + RND() * 1.0) * player.attackstrength / 100.0 * ps;
+
+				if (_console->_godMode)
+					damage = 1000;
+
 				if (player.attackstrength == 100)
 					damage = damage * 1.5;
 
@@ -1004,6 +1009,9 @@ void GriffonEngine::game_checkinputs() {
 		if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 			if (itemticks < ticks)
 				game_title(1);
+		} else if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL)) {
+			_console->attach();
+			event.type = Common::EVENT_INVALID;
 		} else if (event.kbd.hasFlags(Common::KBD_CTRL)) {
 			if (itemselon == 0 && itemticks < ticks)
 				game_attack();
@@ -2118,7 +2126,9 @@ void GriffonEngine::game_damagenpc(int npcnum, int damage, int spell) {
 void GriffonEngine::game_damageplayer(int damage) {
 	char line[256];
 
-	player.hp -= damage;
+	if (!_console->_godMode)
+		player.hp -= damage;
+
 	if (player.hp < 0)
 		player.hp = 0;
 
@@ -3822,6 +3832,8 @@ void GriffonEngine::game_loadmap(int mapnum) {
 	char name[256];
 	int tempmap[320][200];
 
+	debug(2, "Loaded map %d", mapnum);
+
 	ccc = clipbg->format.RGBToColor(255, 255, 255);
 
 	curmap = mapnum;
@@ -4837,6 +4849,8 @@ void GriffonEngine::game_playgame() {
 		game_drawview();
 
 		game_updmusic();
+
+		 _console->onFrame();
 
 		sys_update();
 	} while (!_shouldQuit);
