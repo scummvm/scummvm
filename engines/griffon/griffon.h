@@ -295,6 +295,7 @@ private:
 	void sys_setupAudio();
 	void sys_update();
 
+	Common::String makeSaveGameName(int slot);
 	int state_load(int slotnum);
 	int state_load_player(int slotnum);
 	int state_save(int slotnum);

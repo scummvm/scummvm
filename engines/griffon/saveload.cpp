@@ -36,238 +36,227 @@
 
 #include "griffon/griffon.h"
 
+#include "common/savefile.h"
+
 namespace Griffon {
 
 char player_sav[256] = "data/player%i.sav";
 
-#define PRINT(A,B)          \
-	do {                    \
-		char line[256];         \
-		sprintf(line, A "\n", B);   \
-		fputs(line, fp);        \
+#define PRINT(A,B)                      \
+	do {                                \
+		char line[256];                 \
+		sprintf(line, A "\n", B);       \
+		file->write(line, strlen(line)); \
 	} while(0)
 
-#define INPUT(A, B)         \
-	do {                    \
-		char line[256];         \
-		fgets(line, sizeof(line), fp);  \
-		sscanf(line, A, B);     \
+#define INPUT(A, B)                 \
+	do {                            \
+		Common::String line;        \
+		line = file->readLine();     \
+		sscanf(line.c_str(), A, B); \
 	} while(0)
 
 // externs (to be removed later)
 extern PLAYERTYPE playera;
 extern int asecstart;
 
+Common::String GriffonEngine::makeSaveGameName(int slot) {
+	return (_targetName + Common::String::format(".%02d", slot));
+}
+
 int GriffonEngine::state_load(int slotnum) {
-#if 0
-	FILE *fp;
-	char line[256];
+	Common::String filename = makeSaveGameName(slotnum);
+	Common::InSaveFile *file;
+	if (!(file = _saveFileMan->openForLoading(filename)))
+		return 0;
 
-	sprintf(line, player_sav, slotnum);
+	INPUT("%i", &player.level);
 
-	fp = fopen(line, "r");
-	if (fp) {
+	if (player.level > 0) {
+		char temp[256];
+
+		INPUT("%i", &secstart);
+		INPUT("%s", temp);
+
+		INPUT("%f", &player.px);
+		INPUT("%f", &player.py);
+		INPUT("%f", &player.opx);
+		INPUT("%f", &player.opy);
+		INPUT("%i", &player.walkdir);
+		INPUT("%f", &player.walkframe);
+		INPUT("%f", &player.walkspd);
+		INPUT("%f", &player.attackframe);
+		INPUT("%f", &player.attackspd);
+		INPUT("%i", &player.hp);
+		INPUT("%i", &player.maxhp);
+		INPUT("%f", &player.hpflash);
 		INPUT("%i", &player.level);
-
-		if (player.level > 0) {
-			INPUT("%i", &secstart);
-			INPUT("%s", line);
-
-			INPUT("%f", &player.px);
-			INPUT("%f", &player.py);
-			INPUT("%f", &player.opx);
-			INPUT("%f", &player.opy);
-			INPUT("%i", &player.walkdir);
-			INPUT("%f", &player.walkframe);
-			INPUT("%f", &player.walkspd);
-			INPUT("%f", &player.attackframe);
-			INPUT("%f", &player.attackspd);
-			INPUT("%i", &player.hp);
-			INPUT("%i", &player.maxhp);
-			INPUT("%f", &player.hpflash);
-			INPUT("%i", &player.level);
-			INPUT("%i", &player.maxlevel);
-			INPUT("%i", &player.sword);
-			INPUT("%i", &player.shield);
-			INPUT("%i", &player.armour);
-			for (int i = 0; i < 5; i++) {
-				INPUT("%i", &player.foundspell[i]);
-				INPUT("%f", &player.spellcharge[i]);
+		INPUT("%i", &player.maxlevel);
+		INPUT("%i", &player.sword);
+		INPUT("%i", &player.shield);
+		INPUT("%i", &player.armour);
+		for (int i = 0; i < 5; i++) {
+			INPUT("%i", &player.foundspell[i]);
+			INPUT("%f", &player.spellcharge[i]);
+		}
+		for (int a = 0; a < 5; a++) {
+			INPUT("%i", &player.inventory[a]);
+		}
+		INPUT("%f", &player.attackstrength);
+		INPUT("%i", &player.spelldamage);
+		INPUT("%i", &player.sworddamage);
+		INPUT("%i", &player.exp);
+		INPUT("%i", &player.nextlevel);
+		for (int a = 0; a <= 99; a++) {
+			for (int b = 0; b <= 9; b++) {
+				INPUT("%i", &scriptflag[a][b]);
 			}
-			for (int a = 0; a < 5; a++) {
-				INPUT("%i", &player.inventory[a]);
-			}
-			INPUT("%f", &player.attackstrength);
-			INPUT("%i", &player.spelldamage);
-			INPUT("%i", &player.sworddamage);
-			INPUT("%i", &player.exp);
-			INPUT("%i", &player.nextlevel);
-			for (int a = 0; a <= 99; a++) {
-				for (int b = 0; b <= 9; b++) {
-					INPUT("%i", &scriptflag[a][b]);
+		}
+		INPUT("%i", &curmap);
+
+		for (int a = 0; a <= 999; a++) {
+			for (int b = 0; b <= 20; b++) {
+				for (int c = 0; c <= 14; c++) {
+					INPUT("%i", &objmapf[a][b][c]);
 				}
 			}
-			INPUT("%i", &curmap);
-
-			for (int a = 0; a <= 999; a++) {
-				for (int b = 0; b <= 20; b++) {
-					for (int c = 0; c <= 14; c++) {
-						INPUT("%i", &objmapf[a][b][c]);
-					}
-				}
-			}
-
-			for (int a = 0; a <= 200; a++) {
-				INPUT("%i", &roomlocks[a]);
-			}
-
-			INPUT("%f", &player.spellstrength);
-
-			fclose(fp);
-
-			return 1; // success
 		}
 
-		fclose(fp);
+		for (int a = 0; a <= 200; a++) {
+			INPUT("%i", &roomlocks[a]);
+		}
+
+		INPUT("%f", &player.spellstrength);
+
+		return 1; // success
 	}
 
-#endif
-	return 0; // fail
+	return 0; // faliure
 }
 
 /* fill PLAYERTYPE playera; */
 int GriffonEngine::state_load_player(int slotnum) {
-#if 0
-	FILE *fp;
-	char line[256];
-
-	sprintf(line, player_sav, slotnum);
+	Common::String filename = makeSaveGameName(slotnum);
+	Common::InSaveFile *file;
 
 	playera.level = 0;
 
-	fp = fopen(line, "r");
-	if (fp) {
+	if (!(file = _saveFileMan->openForLoading(filename)))
+		return 0;
+
+	INPUT("%i", &playera.level);
+
+	if (playera.level > 0) {
+		char temp[256];
+
+		INPUT("%i", &asecstart);
+		INPUT("%s", temp);
+
+		INPUT("%f", &playera.px);
+		INPUT("%f", &playera.py);
+		INPUT("%f", &playera.opx);
+		INPUT("%f", &playera.opy);
+		INPUT("%i", &playera.walkdir);
+		INPUT("%f", &playera.walkframe);
+		INPUT("%f", &playera.walkspd);
+		INPUT("%f", &playera.attackframe);
+		INPUT("%f", &playera.attackspd);
+		INPUT("%i", &playera.hp);
+		INPUT("%i", &playera.maxhp);
+		INPUT("%f", &playera.hpflash);
 		INPUT("%i", &playera.level);
-
-		if (playera.level > 0) {
-			INPUT("%i", &asecstart);
-			INPUT("%s", line);
-
-			INPUT("%f", &playera.px);
-			INPUT("%f", &playera.py);
-			INPUT("%f", &playera.opx);
-			INPUT("%f", &playera.opy);
-			INPUT("%i", &playera.walkdir);
-			INPUT("%f", &playera.walkframe);
-			INPUT("%f", &playera.walkspd);
-			INPUT("%f", &playera.attackframe);
-			INPUT("%f", &playera.attackspd);
-			INPUT("%i", &playera.hp);
-			INPUT("%i", &playera.maxhp);
-			INPUT("%f", &playera.hpflash);
-			INPUT("%i", &playera.level);
-			INPUT("%i", &playera.maxlevel);
-			INPUT("%i", &playera.sword);
-			INPUT("%i", &playera.shield);
-			INPUT("%i", &playera.armour);
-			for (int i = 0; i < 5; i++) {
-				INPUT("%i", &playera.foundspell[i]);
-				INPUT("%f", &playera.spellcharge[i]);
-			}
-			for (int a = 0; a < 5; a++) {
-				INPUT("%i", &playera.inventory[a]);
-			}
-			INPUT("%f", &playera.attackstrength);
-			INPUT("%i", &playera.spelldamage);
-			INPUT("%i", &playera.sworddamage);
-			INPUT("%i", &playera.exp);
-			INPUT("%i", &playera.nextlevel);
-
-			fclose(fp);
-
-			return 1; // success
+		INPUT("%i", &playera.maxlevel);
+		INPUT("%i", &playera.sword);
+		INPUT("%i", &playera.shield);
+		INPUT("%i", &playera.armour);
+		for (int i = 0; i < 5; i++) {
+			INPUT("%i", &playera.foundspell[i]);
+			INPUT("%f", &playera.spellcharge[i]);
 		}
+		for (int a = 0; a < 5; a++) {
+			INPUT("%i", &playera.inventory[a]);
+		}
+		INPUT("%f", &playera.attackstrength);
+		INPUT("%i", &playera.spelldamage);
+		INPUT("%i", &playera.sworddamage);
+		INPUT("%i", &playera.exp);
+		INPUT("%i", &playera.nextlevel);
 
-		fclose(fp);
+		return 1; // success
 	}
-#endif
 
 	return 0; // fail
 }
 
 int GriffonEngine::state_save(int slotnum) {
-#if 0
-	FILE *fp;
-	char line[256];
+	Common::String filename = makeSaveGameName(slotnum);
+	Common::OutSaveFile *file;
 
-	sprintf(line, player_sav, slotnum);
-
-	fp = fopen(line, "w");
-	if (fp) {
-		PRINT("%i", player.level);
-
-		if (player.level > 0) {
-			PRINT("%i", (secstart + secsingame));
-			PRINT("%s", "a");
-
-			PRINT("%f", player.px);
-			PRINT("%f", player.py);
-			PRINT("%f", player.opx);
-			PRINT("%f", player.opy);
-			PRINT("%i", player.walkdir);
-			PRINT("%f", player.walkframe);
-			PRINT("%f", player.walkspd);
-			PRINT("%f", player.attackframe);
-			PRINT("%f", player.attackspd);
-			PRINT("%i", player.hp);
-			PRINT("%i", player.maxhp);
-			PRINT("%f", player.hpflash);
-			PRINT("%i", player.level);
-			PRINT("%i", player.maxlevel);
-			PRINT("%i", player.sword);
-			PRINT("%i", player.shield);
-			PRINT("%i", player.armour);
-			for (int i = 0; i < 5; i++) {
-				PRINT("%i", player.foundspell[i]);
-				PRINT("%f", player.spellcharge[i]);
-			}
-			for (int a = 0; a < 5; a++) {
-				PRINT("%i", player.inventory[a]);
-			}
-			PRINT("%f", player.attackstrength);
-			PRINT("%i", player.spelldamage);
-			PRINT("%i", player.sworddamage);
-			PRINT("%i", player.exp);
-			PRINT("%i", player.nextlevel);
-			for (int a = 0; a <= 99; a++) {
-				for (int b = 0; b <= 9; b++) {
-					PRINT("%i", scriptflag[a][b]);
-				}
-			}
-			PRINT("%i", curmap);
-
-			for (int a = 0; a <= 999; a++) {
-				for (int b = 0; b <= 20; b++) {
-					for (int c = 0; c <= 14; c++) {
-						PRINT("%i", objmapf[a][b][c]);
-					}
-				}
-			}
-
-			for (int a = 0; a <= 200; a++) {
-				PRINT("%i", roomlocks[a]);
-			}
-
-			PRINT("%f", player.spellstrength);
-		}
-
-		fclose(fp);
-
-		return 1; // success
+	if (!(file = _saveFileMan->openForSaving(filename))) {
+		warning("Cannot open %s for saving", filename.c_str());
+		return 0;
 	}
 
-#endif
-	return 0; // fail
+	PRINT("%i", player.level);
+
+	if (player.level > 0) {
+		PRINT("%i", (secstart + secsingame));
+		PRINT("%s", "a");
+
+		PRINT("%f", player.px);
+		PRINT("%f", player.py);
+		PRINT("%f", player.opx);
+		PRINT("%f", player.opy);
+		PRINT("%i", player.walkdir);
+		PRINT("%f", player.walkframe);
+		PRINT("%f", player.walkspd);
+		PRINT("%f", player.attackframe);
+		PRINT("%f", player.attackspd);
+		PRINT("%i", player.hp);
+		PRINT("%i", player.maxhp);
+		PRINT("%f", player.hpflash);
+		PRINT("%i", player.level);
+		PRINT("%i", player.maxlevel);
+		PRINT("%i", player.sword);
+		PRINT("%i", player.shield);
+		PRINT("%i", player.armour);
+		for (int i = 0; i < 5; i++) {
+			PRINT("%i", player.foundspell[i]);
+			PRINT("%f", player.spellcharge[i]);
+		}
+		for (int a = 0; a < 5; a++) {
+			PRINT("%i", player.inventory[a]);
+		}
+		PRINT("%f", player.attackstrength);
+		PRINT("%i", player.spelldamage);
+		PRINT("%i", player.sworddamage);
+		PRINT("%i", player.exp);
+		PRINT("%i", player.nextlevel);
+		for (int a = 0; a <= 99; a++) {
+			for (int b = 0; b <= 9; b++) {
+				PRINT("%i", scriptflag[a][b]);
+			}
+		}
+		PRINT("%i", curmap);
+
+		for (int a = 0; a <= 999; a++) {
+			for (int b = 0; b <= 20; b++) {
+				for (int c = 0; c <= 14; c++) {
+					PRINT("%i", objmapf[a][b][c]);
+				}
+			}
+		}
+
+		for (int a = 0; a <= 200; a++) {
+			PRINT("%i", roomlocks[a]);
+		}
+
+		PRINT("%f", player.spellstrength);
+	}
+
+	file->finalize();
+
+	return 1; // success
 }
 
 } // end of namespace Griffon
