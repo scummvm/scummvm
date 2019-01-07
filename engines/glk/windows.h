@@ -432,6 +432,7 @@ public:
 	virtual void setSize(const Point &newSize) {
 		_bbox.setWidth(newSize.x);
 		_bbox.setHeight(newSize.y);
+		rearrange(_bbox);
 	}
 
 	/**
@@ -439,6 +440,7 @@ public:
 	 */
 	virtual void setPosition(const Point &newPos) {
 		_bbox.moveTo(newPos);
+		rearrange(_bbox);
 	}
 
 	/**

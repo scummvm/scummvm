@@ -75,8 +75,8 @@ void TextBufferWindow::rearrange(const Rect &box) {
 	int newwid, newhgt;
 	int rnd;
 
-	newwid = (box.width() - g_conf->_tMarginX * 2 - g_conf->_scrollWidth) / _font._cellW;
-	newhgt = (box.height() - g_conf->_tMarginY * 2) / _font._cellH;
+	newwid = MAX((box.width() - g_conf->_tMarginX * 2 - g_conf->_scrollWidth) / _font._cellW, 0);
+	newhgt = MAX((box.height() - g_conf->_tMarginY * 2) / _font._cellH, 0);
 
 	// align text with bottom
 	rnd = newhgt * _font._cellH + g_conf->_tMarginY * 2;

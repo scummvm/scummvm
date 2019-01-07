@@ -57,8 +57,8 @@ void TextGridWindow::rearrange(const Rect &box) {
 	Window::rearrange(box);
 	int newwid, newhgt;
 
-	newwid = box.width() / _font._cellW;
-	newhgt = box.height() / _font._cellH;
+	newwid = MAX(box.width() / _font._cellW, 0);
+	newhgt = MAX(box.height() / _font._cellH, 0);
 
 	if (newwid == _width && newhgt == _height)
 		return;
