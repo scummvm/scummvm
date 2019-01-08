@@ -281,6 +281,7 @@ public:
 	bool playerHasControl();
 	void playerLosesControl();
 	void playerGainsControl();
+	void playerDied();
 
 	bool saveGame(Common::WriteStream &stream, const Graphics::Surface &thumbnail);
 	bool loadGame(Common::SeekableReadStream &stream);

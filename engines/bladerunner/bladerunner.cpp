@@ -832,7 +832,10 @@ bool BladeRunnerEngine::isMouseButtonDown() const {
 void BladeRunnerEngine::gameLoop() {
 	_gameIsRunning = true;
 	do {
-		/* TODO: check player death */
+		if (_playerDead) {
+			playerDied();
+			_playerDead = false;
+		}
 		gameTick();
 	} while (_gameIsRunning);
 }
@@ -1757,6 +1760,24 @@ void BladeRunnerEngine::playerGainsControl() {
 	if (_playerLosesControlCounter == 0) {
 		_mouse->enable();
 	}
+}
+
+void BladeRunnerEngine::playerDied() {
+	playerLosesControl();
+
+	int timeWaitEnd = _time->current() + 5000;
+	while (_time->current() < timeWaitEnd) {
+		gameTick();
+	}
+
+	_actorDialogueQueue->flush(1, false);
+
+	while (_playerLosesControlCounter > 0) {
+		playerGainsControl();
+	}
+
+	_kia->_forceOpen = true;
+	_kia->open(kKIASectionLoad);
 }
 
 bool BladeRunnerEngine::saveGame(Common::WriteStream &stream, const Graphics::Surface &thumbnail) {
