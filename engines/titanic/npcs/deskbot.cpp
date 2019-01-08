@@ -204,6 +204,7 @@ bool CDeskbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 		default:
 			break;
 		}
+		break;
 
 	case 20:
 		if (getPassengerClass() == 1) {

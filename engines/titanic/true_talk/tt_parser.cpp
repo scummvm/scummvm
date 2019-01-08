@@ -689,6 +689,7 @@ int TTparser::loadRequests(TTword *word) {
 		default:
 			break;
 		}
+		break;
 
 	case WC_ADJECTIVE:
 		if (word->_id == 304) {
