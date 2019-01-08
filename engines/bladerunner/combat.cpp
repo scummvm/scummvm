@@ -159,10 +159,12 @@ void Combat::shoot(int actorId, Vector3 &to, int screenX) {
 			actor->combatModeOff();
 		}
 		actor->stopWalking(false);
-		actor->changeAnimationMode(48, false);
+		actor->changeAnimationMode(kAnimationModeDie, false);
+
 		actor->retire(true, 72, 36, kActorMcCoy);
 		actor->setAtXYZ(actor->getXYZ(), actor->getFacing(), true, false, true);
 		_vm->_sceneObjects->setRetired(actorId + kSceneObjectOffsetActors, true);
+
 		sentenceId = 9020;
 	}
 

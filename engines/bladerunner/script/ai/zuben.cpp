@@ -375,7 +375,7 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case 14:
 		if (Actor_Query_Goal_Number(kActorMcCoy) != 1) {
 			Player_Loses_Control();
-			Actor_Change_Animation_Mode(kActorMcCoy, 48);
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
 			Game_Flag_Set(210);
 			Game_Flag_Set(719);
 		}
@@ -720,7 +720,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 				_animationFrame = 0;
 				_animationState = 13;
 				*animation = 405;
-				Actor_Change_Animation_Mode(kActorZuben, 48);
+				Actor_Change_Animation_Mode(kActorZuben, kAnimationModeDie);
 			} else {
 				_animationFrame = 0;
 				_animationState = 0;
@@ -737,7 +737,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 				_animationFrame = 0;
 				_animationState = 13;
 				*animation = 405;
-				Actor_Change_Animation_Mode(kActorZuben, 48);
+				Actor_Change_Animation_Mode(kActorZuben, kAnimationModeDie);
 			} else {
 				_animationFrame = 0;
 				_animationState = 0;
@@ -754,7 +754,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 				_animationFrame = 0;
 				_animationState = 14;
 				*animation = 393;
-				Actor_Change_Animation_Mode(kActorZuben, 48);
+				Actor_Change_Animation_Mode(kActorZuben, kAnimationModeDie);
 			} else {
 				_animationFrame = 0;
 				_animationState = 7;
@@ -771,7 +771,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 				_animationFrame = 0;
 				_animationState = 14;
 				*animation = 393;
-				Actor_Change_Animation_Mode(kActorZuben, 48);
+				Actor_Change_Animation_Mode(kActorZuben, kAnimationModeDie);
 			} else {
 				_animationFrame = 0;
 				_animationState = 7;
@@ -1021,7 +1021,7 @@ bool AIScriptZuben::ChangeAnimationMode(int mode) {
 		_animationState = 25;
 		_animationFrame = 0;
 		break;
-	case 21:
+	case kAnimationModeHit:
 		switch (_animationState) {
 		case 2:
 		case 4:
@@ -1035,8 +1035,7 @@ bool AIScriptZuben::ChangeAnimationMode(int mode) {
 			}
 			_animationFrame = 0;
 			break;
-		case 3:
-		case 6:
+		default:
 			if (Random_Query(0, 1)) {
 				_animationState = 9;
 			} else {
@@ -1046,7 +1045,7 @@ bool AIScriptZuben::ChangeAnimationMode(int mode) {
 			break;
 		}
 		break;
-	case 22:
+	case kAnimationModeCombatHit:
 		if (Random_Query(0, 1)) {
 			_animationState = 11;
 		} else {
@@ -1066,7 +1065,7 @@ bool AIScriptZuben::ChangeAnimationMode(int mode) {
 		_animationState = 28;
 		_animationFrame = 0;
 		break;
-	case 48:
+	case kAnimationModeDie:
 		Actor_Set_Targetable(kActorZuben, false);
 		switch (_animationState) {
 			case 2:
@@ -1079,16 +1078,13 @@ bool AIScriptZuben::ChangeAnimationMode(int mode) {
 				_animationState = 14;
 				_animationFrame = 0;
 				break;
-			case 3:
-			case 6:
-			case 9:
-			case 10:
+			default:
 				_animationState = 13;
 				_animationFrame = 0;
 				break;
 		}
 		break;
-	case 49:
+	case kAnimationModeCombatDie:
 		Actor_Set_Targetable(kActorZuben, false);
 		_animationState = 14;
 		_animationFrame = 0;
