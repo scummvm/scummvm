@@ -1274,7 +1274,11 @@ void BladeRunnerEngine::handleMouseAction(int x, int y, bool mainButton, bool bu
 		}
 	} else if (buttonDown) {
 		if (_playerActor->inWalkLoop()) {
+			if (!_isWalkingInterruptible) {
+				return;
+			}
 			_playerActor->stopWalking(false);
+			_interruptWalking = true;
 		}
 		_combat->change();
 	}
