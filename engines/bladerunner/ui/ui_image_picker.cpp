@@ -262,7 +262,7 @@ void UIImagePicker::drawTooltip(Graphics::Surface &surface, int x, int y) {
 		rect.left = 636 - width;
 	}
 
-	rect.bottom = height + rect.top + 1;
+	rect.bottom = height + rect.top + 2;
 	if (rect.bottom >= 480) {
 		rect.bottom = 479;
 		rect.top = 478 - height;
