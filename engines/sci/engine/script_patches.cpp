@@ -9502,6 +9502,108 @@ static const uint16 qfg4Forest557PathfindingPatch[] = {
 	PATCH_END
 };
 
+// The Trigger spell stalls and never reaches handsOn when preceded by a
+// successful Summon Staff. An IF block calls hero::setCycle(Beg, self), which
+// cues self on completion. Its condition tests hero's "view" property and
+// executes if the staff is absent. There are no means to advance when the
+// staff is present.
+//
+// Open (script 13) is largely identical w/o this bug. We match its behavior.
+//
+// Due to differences between editions, this is addressed with two patches. The
+// first inserts a "seconds" property assignment before the IF, where it'll
+// always cue. We make room by condensing the IF conditions. There are two
+// "view" comparisons. Instead of sending for it twice, we recycle the view
+// with pprev. The second patch removes setCycle's cue by nulling its last arg.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: castTriggerScript::changeState(2) in script 11
+// Fixes bug: #10860
+static const uint16 qfg4TriggerStaffSignature1[] = {
+	0x65, SIG_ADDTOOFFSET(+1),          // aTop register
+
+	SIG_ADDTOOFFSET(+9),                // ... (send for hero's view, push for comparison)
+	0x35, 0x11,                         // ldi 17d
+	0x1e,                               // gt?
+	0x31, SIG_ADDTOOFFSET(+1),          // bnt ?? [to the not]
+	SIG_ADDTOOFFSET(+9),                // ... (send for hero's view and push again)
+	SIG_MAGICDWORD,
+	0x35, 0x15,                         // ldi 21d
+	0x22,                               // lt?
+	0x31, SIG_ADDTOOFFSET(+1),          // bnt ?? [to the not]
+	//0x33, 0x00,                       // (Floppy has a jmp 0 here)
+	//0x18,                             // not ( !(view > 17 && view < 21) )
+	SIG_END
+};
+
+static const uint16 qfg4TriggerStaffPatch1[] = {
+	PATCH_ADDTOOFFSET(+2),                    // (free bytes later, use them up here)
+	0x35, 0x03,                               // ldi 3d
+	0x65, PATCH_GETORIGINALBYTEADJUST(1, -8), // aTop seconds (property offset = @register - 8d)
+	0x35, 0x00,                         // ldi 0 (waste 2 bytes)
+	0x34, PATCH_UINT16(0x0000),         // ldi 0 (waste 3 bytes)
+
+	0x39, PATCH_SELECTOR8(view),        // pushi view
+	0x76,                               // push0
+	0x81, 0x00,                         // lag global[0] (hero)
+	0x4a, PATCH_UINT16(0x0004),         // send 4d
+                                        //
+	0x39, 0x11,                         // pushi 17d (push the literal, leave view in acc)
+	0x22,                               // lt? (view > 17 becomes 17 < view, set prev = acc)
+	0x31, PATCH_GETORIGINALBYTEADJUST(15, -8), // bnt ?? [to the not]
+                                        //
+	0x60,                               // pprev (push the view from prev, ldi 21 comparison is next)
+	PATCH_END
+};
+
+static const uint16 qfg4TriggerStaffSignature2[] = {
+	SIG_MAGICDWORD,
+	0x31, 0x0d,                         // bnt 13d [conditions failed, skip the send]
+	0x38, SIG_SELECTOR16(setCycle),     // pushi setCycle
+	0x7a,                               // push2
+	0x51, SIG_ADDTOOFFSET(+1),          // class Beg
+	0x36,                               // push
+	0x7c,                               // pushSelf (caller arg is cued afterward)
+	SIG_END
+};
+
+static const uint16 qfg4TriggerStaffPatch2[] = {
+	PATCH_ADDTOOFFSET(+9),
+	0x76,                               // push0 (null caller arg, no cue)
+	PATCH_END
+};
+
+// The Open and Trigger spells init a green Prop for their effect. They don't
+// dispose it the first time, and the effect is absent on further castings.
+//
+// The author specifically nerfed dispose() on its first call by testing if a
+// variable has been set before allowing super::dispose(). We erase the
+// branch to ensure that the effect is always disposed.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: triggerEffect::dispose() in script 11
+//                     openEffect::dispose() in script 13
+// Fixes bug: #10860
+static const uint16 qfg4EffectDisposalSignature[] = {
+	0x83, SIG_ADDTOOFFSET(+1),          // lal local[?] (0 on first call, 1 thereafter)
+	SIG_MAGICDWORD,
+	0x31, 0x0a,                         // bnt 10d [skip super::dispose()]
+	0x38, SIG_SELECTOR16(dispose),      // pushi dispose
+	0x76,                               // push0
+	0x57, SIG_ADDTOOFFSET(+1), SIG_UINT16(0x0004), // super 4d (Prop)
+	0x33, 0x04,                         // jmp 4d [ret]
+
+	0x35, 0x01,                         // ldi 1d (enable normal disposal)
+	0xa3, SIG_ADDTOOFFSET(+1),          // sal local[?]
+	SIG_END
+};
+
+static const uint16 qfg4EffectDisposalPatch[] = {
+	PATCH_ADDTOOFFSET(+2),
+	0x35, 0x00,                         // ldi 0 (erase the branch to always dispose)
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qfg4AutosaveSignature,         qfg4AutosavePatch },
@@ -9510,6 +9612,10 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     1, "disable video benchmarking",                  1, qfg4BenchmarkSignature,        qfg4BenchmarkPatch },
 	{  true,     7, "fix consecutive moonrises",                   1, qfg4MoonriseSignature,         qfg4MoonrisePatch },
 	{  true,    10, "fix setLooper calls (2/2)",                   2, qfg4SetLooperSignature2,       qfg4SetLooperPatch2 },
+	{  true,    11, "fix spell effect disposal",                   1, qfg4EffectDisposalSignature,   qfg4EffectDisposalPatch },
+	{  true,    11, "fix trigger after summon staff (1/2)",        1, qfg4TriggerStaffSignature1,    qfg4TriggerStaffPatch1 },
+	{  true,    11, "fix trigger after summon staff (2/2)",        1, qfg4TriggerStaffSignature2,    qfg4TriggerStaffPatch2 },
+	{  true,    13, "fix spell effect disposal",                   1, qfg4EffectDisposalSignature,   qfg4EffectDisposalPatch },
 	{  true,    31, "fix setScaler calls",                         1, qfg4SetScalerSignature,        qfg4SetScalerPatch },
 	{  true,    41, "fix conditional void calls",                  3, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
 	{  true,    83, "fix incorrect array type",                    1, qfg4TrapArrayTypeSignature,    qfg4TrapArrayTypePatch },
