@@ -209,8 +209,8 @@ bool Scene::close(bool isLoadingGame) {
 	return result;
 }
 
-int Scene::advanceFrame() {
-	int frame = _vqaPlayer->update();
+int Scene::advanceFrame(bool useTime) {
+	int frame = _vqaPlayer->update(false, true, useTime);
 	if (frame >= 0) {
 		blit(_vm->_surfaceBack, _vm->_surfaceFront);
 		_vqaPlayer->updateZBuffer(_vm->_zbuffer);
@@ -268,7 +268,7 @@ void Scene::resume(bool isLoadingGame) {
 		if (_defaultLoopPreloadedSet) {
 			_specialLoopMode = kSceneLoopModeNone;
 			startDefaultLoop();
-			advanceFrame();
+			advanceFrame(false);
 			loopStartSpecial(_specialLoopMode, _specialLoop, false);
 		} else {
 			_defaultLoopPreloadedSet = true;
@@ -285,7 +285,7 @@ void Scene::resume(bool isLoadingGame) {
 
 	int frame;
 	do {
-		frame = advanceFrame();
+		frame = advanceFrame(false);
 	} while (frame >= 0 && frame != targetFrame);
 
 	if (!isLoadingGame) {

@@ -108,7 +108,7 @@ public:
 	bool open();
 	void close();
 
-	int  update(bool forceDraw = false, bool advanceFrame = true, Graphics::Surface *customSurface = nullptr);
+	int  update(bool forceDraw = false, bool advanceFrame = true, bool useTime = true, Graphics::Surface *customSurface = nullptr);
 	void updateZBuffer(ZBuffer *zbuffer);
 	void updateView(View *view);
 	void updateScreenEffects(ScreenEffects *screenEffects);

@@ -911,7 +911,6 @@ void BladeRunnerEngine::gameTick() {
 			_sceneScript->sceneFrameAdvanced(frame);
 			backgroundChanged = true;
 		}
-		(void)backgroundChanged;
 		blit(_surfaceBack, _surfaceFront);
 
 		_overlays->tick();
@@ -1112,8 +1111,16 @@ void BladeRunnerEngine::handleKeyUp(Common::Event &event) {
 
 void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
 	if ((event.kbd.keycode == Common::KEYCODE_d) && (event.kbd.flags & Common::KBD_CTRL)) {
+		_time->pause();
 		getDebugger()->attach();
 		getDebugger()->onFrame();
+
+		_time->resume();
+
+		if (!_kia->isOpen() && !_spinner->isOpen() && !_elevator->isOpen() && !_esper->isOpen() && !_dialogueMenu->isOpen() && !_scores->isOpen()) {
+			_scene->resume();
+		}
+
 		return;
 	}
 

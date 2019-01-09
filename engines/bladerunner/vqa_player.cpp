@@ -71,7 +71,7 @@ void VQAPlayer::close() {
 	_s = nullptr;
 }
 
-int VQAPlayer::update(bool forceDraw, bool advanceFrame, Graphics::Surface *customSurface) {
+int VQAPlayer::update(bool forceDraw, bool advanceFrame, bool useTime, Graphics::Surface *customSurface) {
 	uint32 now = 60 * _vm->_system->getMillis();
 	int result = -1;
 
@@ -106,7 +106,7 @@ int VQAPlayer::update(bool forceDraw, bool advanceFrame, Graphics::Surface *cust
 		result = -1;
 	} else if (_frameNext > _frameEnd) {
 		result = -3;
-	} else if (now < _frameNextTime) {
+	} else if (useTime && (now < _frameNextTime)) {
 		result = -1;
 	} else if (advanceFrame) {
 		_frame = _frameNext;
@@ -131,11 +131,13 @@ int VQAPlayer::update(bool forceDraw, bool advanceFrame, Graphics::Surface *cust
 				queueAudioFrame(_decoder.decodeAudioFrame());
 			}
 		}
-		if (_frameNextTime == 0) {
-			_frameNextTime = now + 60000 / 15;
-		}
-		else {
-			_frameNextTime += 60000 / 15;
+		if (useTime) {
+			if (_frameNextTime == 0) {
+				_frameNextTime = now + 60000 / 15;
+			}
+			else {
+				_frameNextTime += 60000 / 15;
+			}
 		}
 		_frameNext++;
 		result = _frame;
