@@ -1419,6 +1419,10 @@ static void AStar(PathfindingState *s) {
 				// fails to turn at a point on the screen edge, passes the poly's corner,
 				// then approaches the destination from deeper in the room.
 				(g_sci->getGameId() == GID_QFG4 && g_sci->getEngineState()->currentRoomNumber() == 563) ||
+
+				// QFG4 room 580 - Hero zig-zags into the room (bug #10870).
+				// Entering from the south (581) off-screen behind an obstacle, as above.
+				(g_sci->getGameId() == GID_QFG4 && g_sci->getEngineState()->currentRoomNumber() == 580) ||
 #endif
 				false;
 
