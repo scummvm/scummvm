@@ -24,13 +24,18 @@
 
 namespace BladeRunner {
 
+enum kCT03Loops {
+	kCT03LoopInshoot = 0,
+	kCT03LoopMain    = 1
+};
+
 void SceneScriptCT04::InitializeScene() {
-	if (Game_Flag_Query(72)) {
-		Scene_Loop_Start_Special(0, 0, 0);
-		Scene_Loop_Set_Default(1);
+	if (Game_Flag_Query(kFlagCT03toCT04)) {
+		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kCT03LoopInshoot, false);
+		Scene_Loop_Set_Default(kCT03LoopMain);
 		Setup_Scene_Information(-150.0f, -621.3f, 357.0f, 533);
 	} else {
-		Scene_Loop_Set_Default(1);
+		Scene_Loop_Set_Default(kCT03LoopMain);
 		Setup_Scene_Information(-82.86f, -621.3f, 769.03f, 1020);
 	}
 	Scene_Exit_Add_2D_Exit(0, 590, 0, 639, 479, 1);
@@ -54,8 +59,8 @@ void SceneScriptCT04::SceneLoaded() {
 	Obstacle_Object("BACK-BLDNG", true);
 	Clickable_Object("DUMPSTER");
 	Footstep_Sounds_Set(0, 1);
-	if (Game_Flag_Query(72)) {
-		Game_Flag_Reset(72);
+	if (Game_Flag_Query(kFlagCT03toCT04)) {
+		Game_Flag_Reset(kFlagCT03toCT04);
 	}
 	if (!Actor_Query_Goal_Number(kActorTransient)) {
 		Actor_Change_Animation_Mode(kActorTransient, 38);
@@ -124,9 +129,9 @@ bool SceneScriptCT04::ClickedOn3DObject(const char *objectName, bool a2) {
 	return false;
 }
 
-void SceneScriptCT04::sub_401D4C() {
+void SceneScriptCT04::dialogueWithHomeless() {
 	Dialogue_Menu_Clear_List();
-	if (Global_Variable_Query(2) > 10 || Query_Difficulty_Level() == 0) {
+	if (Global_Variable_Query(kVariableChinyen) > 10 || Query_Difficulty_Level() == 0) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(410, 8, 4, -1);
 	}
 	DM_Add_To_List_Never_Repeat_Once_Selected(420, 2, 6, 8);
@@ -148,7 +153,7 @@ void SceneScriptCT04::sub_401D4C() {
 }
 
 bool SceneScriptCT04::ClickedOnActor(int actorId) {
-	if (actorId == 12) {
+	if (actorId == kActorTransient) {
 		if (Game_Flag_Query(169)) {
 			if (!Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorTransient, 36, 1, false)) {
 				Actor_Voice_Over(290, kActorVoiceOver);
@@ -167,7 +172,7 @@ bool SceneScriptCT04::ClickedOnActor(int actorId) {
 						Music_Stop(3);
 						Actor_Says(kActorMcCoy, 425, 3);
 						Actor_Says(kActorTransient, 0, 13);
-						sub_401D4C();
+						dialogueWithHomeless();
 						Actor_Set_Goal_Number(kActorTransient, 2);
 					}
 					Game_Flag_Set(137);
@@ -194,8 +199,8 @@ bool SceneScriptCT04::ClickedOnExit(int exitId) {
 			if (!Actor_Query_Goal_Number(kActorTransient)) {
 				Actor_Set_Goal_Number(kActorTransient, 2);
 			}
-			Game_Flag_Set(74);
-			Set_Enter(28, kSceneCT05);
+			Game_Flag_Set(kFlagCT04toCT05);
+			Set_Enter(kSetCT05, kSceneCT05);
 		}
 		return true;
 	}
@@ -203,8 +208,8 @@ bool SceneScriptCT04::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -187.0f, -621.3f, 437.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(73);
-			Set_Enter(5, kSceneCT03);
+			Game_Flag_Set(kFlagCT04toCT03);
+			Set_Enter(kSetCT03_CT04, kSceneCT03);
 		}
 		return true;
 	}

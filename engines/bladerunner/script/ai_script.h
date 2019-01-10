@@ -114,7 +114,7 @@ DECLARE_SCRIPT(McCoy)
 	void sub_4054F0();
 	void sub_405660();
 	void sub_405800();
-	void sub_4058B0();
+	void dodge();
 	void sub_405920();
 	void sub_405940(float a1);
 	void sub_4059D0(float a1);

@@ -35,7 +35,7 @@ void AIScriptTransient::Initialize() {
 
 	Actor_Put_In_Set(kActorTransient, kSetCT03_CT04);
 	Actor_Set_At_XYZ(kActorTransient, -171.41f, -621.3f, 736.52f, 580);
-	Actor_Set_Goal_Number(kActorTransient, 0);
+	Actor_Set_Goal_Number(kActorTransient, kGoalTransientDefault);
 	Actor_Set_Targetable(kActorTransient, true);
 }
 
@@ -44,7 +44,7 @@ bool AIScriptTransient::Update() {
 		Actor_Put_In_Set(kActorTransient, kSetFreeSlotG);
 		Actor_Set_At_Waypoint(kActorTransient, 39, false);
 	}
-	if (Global_Variable_Query(kVariableChapter) == 2 && (Actor_Query_Goal_Number(kActorTransient) == 0 || Actor_Query_Goal_Number(kActorTransient) == 10)) {
+	if (Global_Variable_Query(kVariableChapter) == 2 && (Actor_Query_Goal_Number(kActorTransient) == kGoalTransientDefault || Actor_Query_Goal_Number(kActorTransient) == 10)) {
 		Actor_Set_Goal_Number(kActorTransient, 200);
 	}
 	if (Global_Variable_Query(kVariableChapter) == 3 && Game_Flag_Query(169) && Game_Flag_Query(170) && !Game_Flag_Query(171) && !Game_Flag_Query(172)) {
@@ -83,7 +83,7 @@ void AIScriptTransient::TimerExpired(int timer) {
 		}
 	}
 	if (timer == 1) {
-		if (Actor_Query_Goal_Number(kActorTransient) == 0) {
+		if (Actor_Query_Goal_Number(kActorTransient) == kGoalTransientDefault) {
 			Actor_Set_Goal_Number(kActorTransient, 10);
 			Actor_Change_Animation_Mode(kActorTransient, kAnimationModeIdle);
 		}

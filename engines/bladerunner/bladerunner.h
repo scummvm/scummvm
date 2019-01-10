@@ -37,7 +37,7 @@
 
 //TODO: remove these when game is playable
 #define BLADERUNNER_DEBUG_CONSOLE 0
-#define BLADERUNNER_DEBUG_GAME 0
+#define BLADERUNNER_DEBUG_GAME 1
 
 namespace Common {
 struct Event;

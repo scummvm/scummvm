@@ -747,7 +747,7 @@ void ScriptBase::Player_Gains_Control() {
 
 void ScriptBase::Player_Set_Combat_Mode(bool activate) {
 	if (!_vm->_combat->isActive() || activate) {
-		if (_vm->_combat->isActive() && activate) {
+		if (!_vm->_combat->isActive() && activate) {
 			_vm->_combat->activate();
 		}
 	} else {

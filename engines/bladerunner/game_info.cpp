@@ -109,22 +109,22 @@ bool GameInfo::open(const Common::String &name) {
 #if BLADERUNNER_DEBUG_CONSOLE
 	debug("\nScene names\n----------------");
 	for (uint32 i = 0; i != _sceneNamesCount; ++i) {
-		debug("%3d: %s", i, _sceneNames[i]);
+		debug("%3d: %s", i, _sceneNames[i].c_str());
 	}
 
 	debug("\nSfx tracks\n----------------");
 	for (uint32 i = 0; i != _sfxTrackCount; ++i) {
-		debug("%3d: %s", i, _sfxTracks[i]);
+		debug("%3d: %s", i, _sfxTracks[i].c_str());
 	}
 
 	debug("\nMusic tracks\n----------------");
 	for (uint32 i = 0; i != _musicTrackCount; ++i) {
-		debug("%3d: %s", i, _musicTracks[i]);
+		debug("%3d: %s", i, _musicTracks[i].c_str());
 	}
 
 	debug("\nOuttakes\n----------------");
 	for (uint32 i = 0; i != _outtakeCount; ++i) {
-		debug("%2d: %s.VQA", i, _outtakes[i]);
+		debug("%2d: %s.VQA", i, _outtakes[i].c_str());
 	}
 #endif
 

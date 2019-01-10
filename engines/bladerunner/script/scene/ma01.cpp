@@ -97,13 +97,13 @@ bool SceneScriptMA01::ClickedOnItem(int itemId, bool a2) {
 }
 
 bool SceneScriptMA01::ClickedOnExit(int exitId) {
-	if (Actor_Query_Goal_Number(kActorZuben) == 21) {
+	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenMA01AttackMcCoy) {
 		return true;
 	}
 	if (exitId == kMA01ExitMA06) {
-		if (Actor_Query_Goal_Number(kActorZuben) == 20) {
+		if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenFled) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1446.0f, 0.0f, -725.0f, 72, 1, false, 0)) {
-				Actor_Set_Goal_Number(kActorZuben, 21);
+				Actor_Set_Goal_Number(kActorZuben, kGoalZubenMA01AttackMcCoy);
 				Scene_Exits_Disable();
 			}
 		} else if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1446.0f, 0.0f, -725.0f, 12, 1, false, 0)) {

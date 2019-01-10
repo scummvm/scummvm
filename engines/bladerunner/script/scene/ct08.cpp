@@ -42,7 +42,7 @@ void SceneScriptCT08::InitializeScene() {
 	Actor_Force_Stop_Walking(kActorMcCoy);
 	if (Game_Flag_Query(380)) {
 		Setup_Scene_Information(-11.0f, 0.0f, -156.0f, 769);
-	} else if (Game_Flag_Query(79)) {
+	} else if (Game_Flag_Query(kFlagCT06toCT08)) {
 		Setup_Scene_Information(-143.0f, 0.0f, -92.0f, 420);
 	} else {
 		Setup_Scene_Information(-183.0f, 0.0f, 128.0f, 205);
@@ -166,18 +166,18 @@ void SceneScriptCT08::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptCT08::PlayerWalkedIn() {
 	if (Game_Flag_Query(550)) {
-		Actor_Change_Animation_Mode(kActorMcCoy, 3);
-		Actor_Change_Animation_Mode(kActorMcCoy, 0);
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeTalk);
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
 		Actor_Set_At_XYZ(kActorMcCoy, -148.0f, 0.0f, 4.0f, 256);
 		Player_Set_Combat_Mode_Access(false);
 		Scene_Exits_Disable();
 		Game_Flag_Reset(380);
-		Game_Flag_Reset(79);
+		Game_Flag_Reset(kFlagCT06toCT08);
 		Autosave_Game(1);
 	} else if (Game_Flag_Query(380)) {
 		Game_Flag_Reset(380);
-	} else if (Game_Flag_Query(79)) {
-		Game_Flag_Reset(79);
+	} else if (Game_Flag_Query(kFlagCT06toCT08)) {
+		Game_Flag_Reset(kFlagCT06toCT08);
 	} else {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -156.0f, 0.0f, 128.0f, 0, 0, false, 0);
 		Game_Flag_Reset(84);

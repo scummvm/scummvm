@@ -272,8 +272,8 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	switch (newGoalNumber) {
 	case 0:
 		return true;
-	case 1:
-		sub_4058B0();
+	case kGoalMcCoyDodge:
+		dodge();
 		return true;
 	case 2:
 		sub_405920();
@@ -1258,7 +1258,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 				return true;
 			case 15:
 				_animationState = 16;
-				_animationFrame = 16 - 16 * _animationFrame / 12;
+				_animationFrame = 16 - ((16 * _animationFrame) / 12);
 				return true;
 			case 16:
 			case 25:
@@ -1276,16 +1276,16 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 			}
 		} else {
 			if (_animationFrame <= 6) {
-				int v3 = Random_Query(0, 2);
-				int v4 = 0;
-				if (v3 == 0) {
-					v4 = 595;
-				} else if (v3 == 1) {
-					v4 = 594;
-				} else if (v3 == 2) {
-					v4 = 593;
+				int random = Random_Query(0, 2);
+				int soundId = 0;
+				if (random == 0) {
+					soundId = 595;
+				} else if (random == 1) {
+					soundId = 594;
+				} else if (random == 2) {
+					soundId = 593;
 				}
-				Ambient_Sounds_Play_Sound(v4, 39, 0, 0, 99);
+				Ambient_Sounds_Play_Sound(soundId, 39, 0, 0, 99);
 			}
 			_animationState = 57;
 			_animationFrame = 0;
@@ -1333,7 +1333,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 			break;
 		case 16:
 			_animationState = 15;
-			_animationFrame = 12 - 12 * _animationFrame / 16;
+			_animationFrame = 12 - ((12 * _animationFrame) / 16);
 			break;
 		case 17:
 		case 20:
@@ -1490,18 +1490,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		}
 		break;
 	case 20:
-		{
-			int setId = Actor_Query_Which_Set_In(kActorMcCoy);
-			if (setId == kSetCT02) {
-				_animationState = 51;
-				_animationFrame = 0;
-				Player_Loses_Control();
-				Game_Flag_Set(210);
-			} else if (setId == kSetRC03 || setId == kSetUG15) {
-				_animationState = 56;
-				_animationFrame = 0;
-			}
-		}
+		dodge();
 		break;
 	case kAnimationModeHit:
 		switch (_animationState) {
@@ -1815,13 +1804,13 @@ void AIScriptMcCoy::sub_405800() {
 	}
 }
 
-void AIScriptMcCoy::sub_4058B0() {
+void AIScriptMcCoy::dodge() {
 	int setId = Actor_Query_Which_Set_In(kActorMcCoy);
 	if (setId == kSetCT02) {
 		_animationState = 51;
 		_animationFrame = 0;
 		Player_Loses_Control();
-		Game_Flag_Set(210);
+		Game_Flag_Set(kFlagCT02ZubenFled);
 	} else if (setId == kSetRC03 || setId == kSetUG15) {
 		_animationState = 56;
 		_animationFrame = 0;

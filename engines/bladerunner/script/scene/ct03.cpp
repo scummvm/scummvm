@@ -25,13 +25,13 @@
 namespace BladeRunner {
 
 void SceneScriptCT03::InitializeScene() {
-	if (Game_Flag_Query(719)) {
+	if (Game_Flag_Query(kFlagCT02McCoyFell)) {
 		Setup_Scene_Information(-852.58f, -621.3f, 285.6f, 0);
-	} else if (Game_Flag_Query(69)) {
-		Game_Flag_Reset(69);
+	} else if (Game_Flag_Query(kFlagCT02toCT03)) {
+		Game_Flag_Reset(kFlagCT02toCT03);
 		Setup_Scene_Information(-557.1f, -616.31f, 224.29f, 249);
-	} else if (Game_Flag_Query(73)) {
-		Game_Flag_Reset(73);
+	} else if (Game_Flag_Query(kFlagCT04toCT03)) {
+		Game_Flag_Reset(kFlagCT04toCT03);
 		Setup_Scene_Information(-173.99f, -619.19f, 347.54f, 808);
 	} else {
 		Setup_Scene_Information(-708.58f, -619.19f, 277.6f, 239);
@@ -81,24 +81,24 @@ bool SceneScriptCT03::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptCT03::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -745.09f, -619.09f, 293.36f, 0, 1, false, 0)) {
-			Game_Flag_Set(71);
-			Set_Enter(4, kSceneCT01);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -745.09f, -619.09f, 293.36f, 0, true, false, 0)) {
+			Game_Flag_Set(kFlagCT03toCT01);
+			Set_Enter(kSetCT01_CT12, kSceneCT01);
 		}
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -604.38f, -616.15f, 221.6f, 0, 1, false, 0)) {
-			Game_Flag_Set(70);
-			Set_Enter(27, kSceneCT02);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -604.38f, -616.15f, 221.6f, 0, true, false, 0)) {
+			Game_Flag_Set(kFlagCT03toCT02);
+			Set_Enter(kSetCT02, kSceneCT02);
 		}
 		return true;
 	}
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -150.0f, -621.3f, 357.0f, 0, 1, false, 0)) {
-			Game_Flag_Set(72);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -150.0f, -621.3f, 357.0f, 0, true, false, 0)) {
+			Game_Flag_Set(kFlagCT03toCT04);
 			Async_Actor_Walk_To_XYZ(kActorMcCoy, -67.0f, -621.3f, 477.0f, 0, false);
-			Set_Enter(5, kSceneCT04);
+			Set_Enter(kSetCT03_CT04, kSceneCT04);
 		}
 		return true;
 	}
@@ -116,13 +116,13 @@ void SceneScriptCT03::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptCT03::PlayerWalkedIn() {
-	if (Actor_Query_Goal_Number(kActorZuben) == 2) {
-		Actor_Set_Goal_Number(kActorZuben, 13);
+	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT02Flee) {
+		Actor_Set_Goal_Number(kActorZuben, kGoalZubenCT06Hide);
 	}
 }
 
 void SceneScriptCT03::PlayerWalkedOut() {
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 }
 
