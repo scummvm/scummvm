@@ -161,9 +161,11 @@ static const char *const selectorNameTable[] = {
 	"plane",        // RAMA
 	"state",        // RAMA
 	"getSubscriberObj", // RAMA
+	"approachVerbs", // QFG4
 	"cue",          // QFG4
 	"heading",      // QFG4
 	"moveSpeed",    // QFG4
+	"obstacles",    // QFG4
 	"sayMessage",   // QFG4
 	"setLooper",    // QFG4
 	"setSpeed",     // QFG4
@@ -253,9 +255,11 @@ enum ScriptPatcherSelectors {
 	SELECTOR_plane,
 	SELECTOR_state,
 	SELECTOR_getSubscriberObj,
+	SELECTOR_approachVerbs,
 	SELECTOR_cue,
 	SELECTOR_heading,
 	SELECTOR_moveSpeed,
+	SELECTOR_obstacles,
 	SELECTOR_sayMessage,
 	SELECTOR_setLooper,
 	SELECTOR_setSpeed,
@@ -9990,6 +9994,254 @@ static const uint16 qfg4StuckDoorPatch[] = {
 	PATCH_END
 };
 
+// In the thieves' guild (room 430), the tunnel is not immediately walkable
+// when it is revealed (by moving a barrel and solving a puzzle). Hero must
+// re-enter the room to update the polygon.
+//
+// Curing Chief *will* immediately replace the polygon. However, most players
+// will lack the item necessary on the first visit. Meeting Chief is how they
+// learn about the item. If they go get it, they'll re-enter the room.
+//
+// The room's init has a cond block to check plot flags and declare one of 3
+// polygons. The 3rd condition also inits secritExit, an invisible Feature
+// that sends hero out of town when walked upon.
+//
+// Patch 1: Other patches ensure the passage will be walkable the moment it is
+//  revealed. Chief is standing inside it. We skip the original code that would
+//  set up the passage as he gets cured. It is redundant now. If hero can reach
+//  him, the passage is already revealed. We won't let secritExit init twice.
+//
+// Patch 2: We free bytes in rm340::init() by condensing Feature inits with a
+//  loop. Stack up their addresses. Pop & send repeatedly. Then we declare a
+//  subroutine that disposes any existing obstacles, jumps into the cond block
+//  to declare the 3rd poly, jumps back, passes it to addObstacles(), and inits
+//  secritExit.
+//
+//  When the cond block's 3rd condition runs, we immediately call our
+//  subroutine to do everything and end the cond, leaving the original polygon
+//  declaration intact below the jump.
+//
+// Patch 3: The passage starts opening at sBarrelMove state 8. We need more
+//  room than case 8 can offer, so we arrange for *multiple* cases to run
+//  during state 8 - by omitting the final jump that would short-circuit.
+//
+//  Cases 1-5 have derelict code, once intended to move the barrel back and
+//  forth, now only left. This is because barrel::doVerb(4) schedules
+//  sBarrelMove in the absence of flag 254 and sets register=1 if the barrel is
+//  in the left position already. Case 0 uses the same criteria in deciding to
+//  skip to state 6. Thus cases 1-5 never see register==1. The barrel never
+//  moves back, and bytes predicated on register==1 are available.
+//
+//  We reduce case 2 to only the necessary ops and splice in a new case that
+//  runs during state 8 as a prologue to the original case 8. Our prologue
+//  calls the subroutine to add the 3rd polygon. This patch has two variants,
+//  toggled to match the detected edition with enablePatch() below. Aside from
+//  the call offset, they are identical.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: sChangeThief::changeState() in script 340
+// Fixes bug: #9894
+static const uint16 qfg4GuildWalkSignature1[] = {
+	0x38, SIG_SELECTOR16(dispose),      // pushi dispose
+	SIG_ADDTOOFFSET(+20),               // ... (dispose and null global[2]'s "obstacles" property)
+	0x4a, SIG_UINT16(0x0006),           // send 6d
+	SIG_ADDTOOFFSET(+85),               // ...
+	SIG_ADDTOOFFSET(+238),              // ... (secritExit init and addObstacle)
+	SIG_MAGICDWORD,
+	0x4a, SIG_UINT16(0x00a6),           // send 166d (polygon init)
+	0x36,                               // push
+	SIG_ADDTOOFFSET(+5),                // ... (global[2] addObstacle: polygon)
+	SIG_END
+};
+
+static const uint16 qfg4GuildWalkPatch1[] = {
+	0x32, PATCH_UINT16(0x0017),         // jmp 23d (skip obstacles disposal)
+	PATCH_ADDTOOFFSET(+108),
+	0x32, PATCH_UINT16(0x00f4),         // jmp 244d (skip secritExit and polygon)
+	PATCH_END
+};
+
+// Responsible method: rm340::init() in script 340
+static const uint16 qfg4GuildWalkSignature2[] = {
+	0x38, SIG_SELECTOR16(init),          // pushi init
+	0x76,                                // push0
+	0x38, SIG_SELECTOR16(approachVerbs), // pushi approachVerbs
+	0x78,                                // push1
+	0x39, 0x04,                          // pushi 4d
+	0x72, SIG_ADDTOOFFSET(+2),           // lofsa steps1
+	0x4a, SIG_UINT16(0x000a),            // send 10d
+
+	SIG_ADDTOOFFSET(+10),               // ... (similar inits follow)
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa steps2
+	SIG_ADDTOOFFSET(+13),               // ...
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa barrels1
+	SIG_ADDTOOFFSET(+13),               // ...
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa barrels2
+	SIG_ADDTOOFFSET(+13),               // ...
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa crack1
+	SIG_ADDTOOFFSET(+13),               // ...
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa crack2
+	SIG_ADDTOOFFSET(+13),               // ...
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa pillar
+	SIG_ADDTOOFFSET(+3),                // ...
+
+	SIG_ADDTOOFFSET(+26),               // ... (global[78]::add() steps1 and steps2)
+
+	SIG_ADDTOOFFSET(+459),              // ... (cond block for polygons)
+	SIG_MAGICDWORD,
+	0x32, SIG_UINT16(0x00f7),           // jmp 247d [end the cond] (2nd condition done)
+
+                                        // (else condition)
+	0x38, SIG_SELECTOR16(init),         // pushi init
+	0x76,                               // push0
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa secritExit
+	0x4a, SIG_UINT16(0x0004),           // send 4d
+	SIG_ADDTOOFFSET(+4),                // ... (addObstacle and its arg count)
+	SIG_ADDTOOFFSET(+228),              // ... (3rd Polygon type, init, and push)
+	SIG_ADDTOOFFSET(+5),                // ... (end of the polygons cond)
+
+	0x38, SIG_SELECTOR16(init),         // pushi init (super init:)
+	SIG_END
+};
+
+static const uint16 qfg4GuildWalkPatch2[] = {
+	0x3f, 0x02,                         // link 02 (set up loop vars, op affects the stack)
+	0x74, PATCH_GETORIGINALUINT16(11),  // lofss steps1
+	0x74, PATCH_GETORIGINALUINT16(27),  // lofss steps2
+	0x74, PATCH_GETORIGINALUINT16(43),  // lofss barrels1
+	0x74, PATCH_GETORIGINALUINT16(59),  // lofss barrels2
+	0x74, PATCH_GETORIGINALUINT16(75),  // lofss crack1
+	0x74, PATCH_GETORIGINALUINT16(91),  // lofss crack2
+	0x74, PATCH_GETORIGINALUINT16(107), // lofss pillar
+                                        //
+	0x35, 0x08,                         // ldi 8d (decrement and send 7 times, while != 0)
+	0xa5, 0x00,                         // sat temp[0]
+                                        //
+	0xe5, 0x00,                         // -at temp[0]
+	0x31, 0x13,                         // bnt 19d [on 0, end the loop]
+	0xad, 0x01,                            // sst temp[1] (pop the next object into a temp var)
+	0x38, PATCH_SELECTOR16(init),          // pushi init
+	0x76,                                  // push0
+	0x38, PATCH_SELECTOR16(approachVerbs), // pushi approachVerbs
+	0x78,                                  // push1
+	0x39, 0x04,                            // pushi 4d
+	0x85, 0x01,                            // lat temp[1] (accumulate the object)
+	0x4a, PATCH_UINT16(0x000a),            // send 10d
+	0x33, 0xe9,                         // jmp -23d [loop]
+
+	0x33, 0x33,                         // jmp 51d [skip subroutine declaration]
+	0x38, PATCH_SELECTOR16(obstacles),  // pushi obstacles (look up "obstacles", might be null)
+	0x76,                               // push0
+	0x81, 0x02,                         // lag global[2]
+	0x4a, PATCH_UINT16(0x0004),         // send 4d
+	0x31, 0x11,                         // bnt 17d [skip disposal and nulling]
+	0x38, PATCH_SELECTOR16(dispose),    // pushi dispose
+	0x76,                               // push0
+	0x4a, PATCH_UINT16(0x0004),         // send 4d ((global[2] obstacles?) dispose:)
+                                        //
+	0x38, PATCH_SELECTOR16(obstacles),  // pushi obstacles (null the "obstacles" property)
+	0x78,                               // push1
+	0x76,                               // push0
+	0x81, 0x02,                         // lag global[2]
+	0x4a, PATCH_UINT16(0x0006),         // send 6d
+                                        //
+	0x38, PATCH_SELECTOR16(addObstacle), // pushi addObstacle
+	0x78,                               // push1
+	0x32, PATCH_UINT16(0x020f),         // jmp 527d [3rd polygon type, init, and push]
+                                        // (That will jmp back here)
+	0x81, 0x02,                         // lag global[2]
+	0x4a, PATCH_UINT16(0x0006),         // send 6d
+                                        //
+	0x38, PATCH_SELECTOR16(init),       // pushi init
+	0x76,                               // push0
+	0x72, PATCH_GETORIGINALUINT16(605), // lofsa secritExit
+	0x4a, PATCH_UINT16(0x0004),         // send 4d
+	0x48,                               // ret
+
+	0x33, 0x07,                         // jmp 7d [skip waste bytes, to (global[78] add: steps1)]
+	0x5c,                               // selfID (waste 1 byte)
+	PATCH_ADDTOOFFSET(+494),            // ...
+	0x76,                               // push0 (0 call args, clobber the old secritExit init)
+	0x40, PATCH_UINT16(0xfdd6), PATCH_UINT16(0x0000), // call 0d [-554] (the subroutine does everything)
+	0x32, PATCH_UINT16(0x00ee),         // jmp 238d [end the cond]
+	0x5c,                               // selfID (waste 1 byte)
+	PATCH_ADDTOOFFSET(+4),              // ...
+	PATCH_ADDTOOFFSET(+228),            // ... (3rd polygon type, init, and push)
+	0x32, PATCH_UINT16(0xfd0a),         // jmp -758d [back into the subroutine]
+	0x35, 0x00,                         // ldi 0 (erase 2 bytes to keep disasm aligned)
+	PATCH_END
+};
+
+// Applies to at least: English CD
+// Responsible method: sBarrelMove::changeState(2) in script 340
+static const uint16 qfg4GuildWalkCDSignature3[] = {
+	SIG_MAGICDWORD,
+	0x30, SIG_UINT16(0x0032),           // bnt 50d [next case]
+	0x35, 0x02,                         // ldi 2d (case 2 label)
+	SIG_ADDTOOFFSET(+26),               // ... (register branch and derelict say())
+	SIG_ADDTOOFFSET(+19),               // ... (else, the rest of case 2 is a necessary say())
+	0x32, SIG_ADDTOOFFSET(+2),          // jmp ?? [end the switch]
+	SIG_END
+};
+
+static const uint16 qfg4GuildWalkCDPatch3[] = {
+	0x31, 0x15,                         // bnt 21d [next case]
+	0x38, PATCH_SELECTOR16(say),        // pushi say
+	0x39, 0x05,                         // pushi 5d
+	0x39, 0x06,                         // pushi 6d
+	0x39, 0x04,                         // pushi 4d
+	0x39, 0x13,                         // pushi 19d
+	0x76,                               // push0
+	0x7c,                               // pushSelf
+	0x81, 0x5b,                         // lag global[91]
+	0x4a, PATCH_UINT16(0x000e),         // send 14d
+	0x32, PATCH_GETORIGINALUINT16ADJUST(51, +30), // jmp ?? [end the switch]
+
+	0x3c,                               // dup (case 8 prologue)
+	0x35, 0x08,                         // ldi 8d
+	0x1a,                               // eq?
+	0x31, 0x06,                         // bnt 6d [next case]
+	0x76,                               // push0 (0 call args)
+	0x40, PATCH_UINT16(0xf592), PATCH_UINT16(0x0000), // call [-2670], 0d (patch 2's subroutine)
+	0x33, 0x10,                         // jmp 16d [skip waste bytes]
+	PATCH_END                           // (don't end the switch, keep testing cases)
+};
+
+// Applies to at least: English floppy, German floppy
+// Responsible method: sBarrelMove::changeState(2) in script 340
+static const uint16 qfg4GuildWalkFloppySignature3[] = {
+	SIG_MAGICDWORD,
+	0x30, SIG_UINT16(0x0032),           // bnt 50d [next case]
+	0x35, 0x02,                         // ldi 2d (case 2 label)
+	SIG_ADDTOOFFSET(+26),               // ... (register branch and derelict say())
+	SIG_ADDTOOFFSET(+19),               // ... (else, the rest of case 2 is a necessary say())
+	0x32, SIG_ADDTOOFFSET(+2),          // jmp ?? [end the switch]
+	SIG_END
+};
+
+static const uint16 qfg4GuildWalkFloppyPatch3[] = {
+	0x31, 0x15,                         // bnt 21d [next case]
+	0x38, PATCH_SELECTOR16(say),        // pushi say
+	0x39, 0x05,                         // pushi 5d
+	0x39, 0x06,                         // pushi 6d
+	0x39, 0x04,                         // pushi 4d
+	0x39, 0x13,                         // pushi 19d
+	0x76,                               // push0
+	0x7c,                               // pushSelf
+	0x81, 0x5b,                         // lag global[91]
+	0x4a, PATCH_UINT16(0x000e),         // send 14d
+	0x32, PATCH_GETORIGINALUINT16ADJUST(51, +30), // jmp ?? [end the switch]
+
+	0x3c,                               // dup (case 8 prologue)
+	0x35, 0x08,                         // ldi 8d
+	0x1a,                               // eq?
+	0x31, 0x06,                         // bnt 6d [next case]
+	0x76,                               // push0 (0 call args)
+	0x40, PATCH_UINT16(0xf5a8), PATCH_UINT16(0x0000), // call [-2648], 0d (patch 2's subroutine)
+	0x33, 0x10,                         // jmp 16d [skip waste bytes]
+	PATCH_END                           // (don't end the switch, keep testing cases)
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qfg4AutosaveSignature,         qfg4AutosavePatch },
@@ -10008,6 +10260,10 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   270, "fix town gate after a staff dream",           1, qfg4DreamGateSignature,        qfg4DreamGatePatch },
 	{  true,   320, "fix pathfinding at the inn",                  1, qfg4InnPathfindingSignature,   qfg4InnPathfindingPatch },
 	{  true,   320, "fix talking to absent innkeeper",             1, qfg4AbsentInnkeeperSignature,  qfg4AbsentInnkeeperPatch },
+	{  true,   340, "CD/Floppy: fix guild tunnel access (1/3)",    1, qfg4GuildWalkSignature1,       qfg4GuildWalkPatch1 },
+	{  true,   340, "CD/Floppy: fix guild tunnel access (2/3)",    1, qfg4GuildWalkSignature2,       qfg4GuildWalkPatch2 },
+	{  false,  340, "CD: fix guild tunnel access (3/3)",           1, qfg4GuildWalkCDSignature3,     qfg4GuildWalkCDPatch3 },
+	{  false,  340, "Floppy: fix guild tunnel access (3/3)",       1, qfg4GuildWalkFloppySignature3, qfg4GuildWalkFloppyPatch3 },
 	{  true,   440, "fix setLooper calls (1/2)",                   1, qfg4SetLooperSignature1,       qfg4SetLooperPatch1 },
 	{  true,   475, "fix tarot 3 queen card",                      1, qfg4Tarot3QueenSignature,      qfg4Tarot3QueenPatch },
 	{  true,   475, "fix tarot 3 death card",                      1, qfg4Tarot3DeathSignature,      qfg4Tarot3DeathPatch },
@@ -11888,9 +12144,11 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 					enablePatch(signatureTable, "CD: fix rope during Igor rescue (1/2)");
 					enablePatch(signatureTable, "CD: fix rope during Igor rescue (2/2)");
 
-					// Similar signatures that patch with a different lofsa address
+					// Similar signatures that patch with different addresses/offsets
+					enablePatch(signatureTable, "CD: fix guild tunnel access (3/3)");
 					enablePatch(signatureTable, "CD: fix crest bookshelf");
 				} else {
+					enablePatch(signatureTable, "Floppy: fix guild tunnel access (3/3)");
 					enablePatch(signatureTable, "Floppy: fix crest bookshelf");
 				}
 				break;
