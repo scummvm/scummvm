@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-12-19 07:31+0100\n"
-"PO-Revision-Date: 2018-12-17 18:27+0000\n"
+"PO-Revision-Date: 2019-01-15 21:37+0000\n"
 "Last-Translator: Paolo Bossi <pbossi86@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -1217,6 +1217,9 @@ msgid ""
 "if a game uses the ScummVM save and load dialogs, they are in the same "
 "language as the game."
 msgstr ""
+"Quando si avvia un gioco, cambia la lingua dell'interfaccia  allla lingua "
+"del gioco. In questo modo, se un gioco utilizza i menu di salvataggio di "
+"ScummVM, esse saranno nella stessa lingua del gioco avviato."
 
 #: gui/options.cpp:1710
 msgid "Use native system file browser"
@@ -1227,6 +1230,8 @@ msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
 msgstr ""
+"Utilizza il selettore di file nativo invece di quello di ScummVM per "
+"scegliere un file o una cartella."
 
 #: gui/options.cpp:1718 gui/updates-dialog.cpp:86
 msgid "Update check:"
@@ -3159,23 +3164,23 @@ msgstr "Visualizza la grafica con i colori brillanti del gioco"
 
 #: engines/glk/scott/scott.cpp:98
 msgid "I don't understand your command. "
-msgstr ""
+msgstr "Non comprendo il tuo comando. "
 
 #: engines/glk/scott/scott.cpp:101
 msgid "I can't do that yet. "
-msgstr ""
+msgstr "Non lo posso ancora fare. "
 
 #: engines/glk/scott/scott.cpp:117
 msgid "Light has run out! "
-msgstr ""
+msgstr "Non c'è più luce! "
 
 #: engines/glk/scott/scott.cpp:119
 msgid "Your light has run out. "
-msgstr ""
+msgstr "La tua luce si è spenta. "
 
 #: engines/glk/scott/scott.cpp:128
 msgid "Light runs out in "
-msgstr ""
+msgstr "La luce si spegne in "
 
 #: engines/glk/scott/scott.cpp:130
 msgid " turns. "
@@ -3183,47 +3188,49 @@ msgstr " .gira. "
 
 #: engines/glk/scott/scott.cpp:133
 msgid "Your light is growing dim. "
-msgstr ""
+msgstr "La tua luce si sta affievolendo. "
 
 #: engines/glk/scott/scott.cpp:393
 msgid "North"
-msgstr ""
+msgstr "Nord"
 
 #: engines/glk/scott/scott.cpp:393
 msgid "South"
-msgstr ""
+msgstr "Sud"
 
 #: engines/glk/scott/scott.cpp:393
 msgid "East"
-msgstr ""
+msgstr "Est"
 
 #: engines/glk/scott/scott.cpp:393
 msgid "West"
-msgstr ""
+msgstr "Ovest"
 
 #: engines/glk/scott/scott.cpp:405
 msgid "You can't see. It is too dark!\n"
-msgstr ""
+msgstr "Non riesci a vedere. C'è troppo buio!\n"
 
 #: engines/glk/scott/scott.cpp:407
 msgid "I can't see. It is too dark!\n"
-msgstr ""
+msgstr "Non riesco a vedere. C'è troppo buio.\n"
 
 #: engines/glk/scott/scott.cpp:417
 #, c-format
 msgid "You are in a %s\n"
-msgstr ""
+msgstr "Sei in un %s\n"
 
 #: engines/glk/scott/scott.cpp:419
 #, c-format
 msgid "I'm in a %s\n"
-msgstr ""
+msgstr "Sono in un %s\n"
 
 #: engines/glk/scott/scott.cpp:424
 msgid ""
 "\n"
 "Obvious exits: "
 msgstr ""
+"\n"
+"Uscite in evidenza: "
 
 #: engines/glk/scott/scott.cpp:437
 msgid "none"
@@ -3234,12 +3241,16 @@ msgid ""
 "\n"
 "You can also see: "
 msgstr ""
+"\n"
+"Puoi anche vedere: "
 
 #: engines/glk/scott/scott.cpp:449
 msgid ""
 "\n"
 "I can also see: "
 msgstr ""
+"\n"
+"Posso anche vedere: "
 
 #: engines/glk/scott/scott.cpp:529
 msgid "Saved.\n"
@@ -3247,24 +3258,24 @@ msgstr "Salvato\n"
 
 #: engines/glk/scott/scott.cpp:620
 msgid "You use word(s) I don't know! "
-msgstr ""
+msgstr "Stai usando dei termini che non conosco! "
 
 #: engines/glk/scott/scott.cpp:748 engines/glk/scott/scott.cpp:1071
 #: engines/glk/scott/scott.cpp:1093
 msgid "You are carrying too much. "
-msgstr ""
+msgstr "Stai portando troppe cose con te "
 
 #: engines/glk/scott/scott.cpp:750
 msgid "I've too much to carry! "
-msgstr ""
+msgstr "Sto portando troppe cose con me! "
 
 #: engines/glk/scott/scott.cpp:781
 msgid "You are dead.\n"
-msgstr ""
+msgstr "Sei morto\n"
 
 #: engines/glk/scott/scott.cpp:783
 msgid "I am dead.\n"
-msgstr ""
+msgstr "Sono morto\n"
 
 #: engines/glk/scott/scott.cpp:795
 msgid "The game is now over.\n"
@@ -3272,7 +3283,7 @@ msgstr "La partita è finita\n"
 
 #: engines/glk/scott/scott.cpp:810
 msgid "You have stored "
-msgstr ""
+msgstr "Hai messo nell'inventario "
 
 #: engines/glk/scott/scott.cpp:812
 msgid "I've stored "
@@ -3280,27 +3291,27 @@ msgstr "Ho messo nell'inventario "
 
 #: engines/glk/scott/scott.cpp:814
 msgid " treasures.  On a scale of 0 to 100, that rates "
-msgstr ""
+msgstr " .tesori. ..Da 0 a 100 vale. "
 
 #: engines/glk/scott/scott.cpp:818
 msgid "Well done.\n"
-msgstr ""
+msgstr "Ben fatto.\n"
 
 #: engines/glk/scott/scott.cpp:827
 msgid "You are carrying:\n"
-msgstr ""
+msgstr "Stai portando:\n"
 
 #: engines/glk/scott/scott.cpp:829
 msgid "I'm carrying:\n"
-msgstr ""
+msgstr "Sto portando:\n"
 
 #: engines/glk/scott/scott.cpp:844
 msgid "Nothing"
-msgstr ""
+msgstr "Nulla"
 
 #: engines/glk/scott/scott.cpp:973
 msgid "Give me a direction too."
-msgstr ""
+msgstr "Dammi anche una direzione."
 
 #: engines/glk/scott/scott.cpp:982
 msgid "Dangerous to move in the dark! "
