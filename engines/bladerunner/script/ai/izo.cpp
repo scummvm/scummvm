@@ -223,24 +223,23 @@ void AIScriptIzo::Retired(int byActorId) {
 		return; //false;
 	}
 
-	Global_Variable_Decrement(51, 1);
+	Global_Variable_Decrement(kVariableReplicants, 1);
 	Actor_Set_Goal_Number(kActorIzo, 599);
 
-	if (Global_Variable_Query(51)) {
-		return; //false;
+	if (Global_Variable_Query(kVariableReplicants) == 0) {
+		Player_Loses_Control();
+		Delay(2000);
+		Player_Set_Combat_Mode(0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, -41.58f, 72.0f, 0, 1, 0, 0);
+		Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+		Ambient_Sounds_Remove_All_Looping_Sounds(1);
+		Game_Flag_Set(579);
+		Game_Flag_Reset(653);
+		Set_Enter(kSetKP05_KP06, kSetKP03);
+		return; //true;
 	}
 
-	Player_Loses_Control();
-	Delay(2000);
-	Player_Set_Combat_Mode(0);
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, -41.58f, 72.0f, 0, 1, 0, 0);
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
-	Ambient_Sounds_Remove_All_Looping_Sounds(1);
-	Game_Flag_Set(579);
-	Game_Flag_Reset(653);
-	Set_Enter(kSetKP05_KP06, kSetKP03);
-
-	return; //true;
+	return; //false;
 }
 
 int AIScriptIzo::GetFriendlinessModifierIfGetsClue(int otherActorId, int clueId) {

@@ -166,10 +166,10 @@ bool AIScriptClovis::ShotAtAndHit() {
 void AIScriptClovis::Retired(int byActorId) {
 	if (Game_Flag_Query(653)) {
 		if (Actor_Query_In_Set(kActorClovis, kSetKP07)) {
-			Global_Variable_Decrement(51, 1);
+			Global_Variable_Decrement(kVariableReplicants, 1);
 			Actor_Set_Goal_Number(kActorClovis, 599);
 
-			if (!Global_Variable_Query(51)) {
+			if (Global_Variable_Query(kVariableReplicants) == 0) {
 				Player_Loses_Control();
 				Delay(2000);
 				Player_Set_Combat_Mode(false);
@@ -366,8 +366,8 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Put_In_Set(kActorClovis, kSetKP07);
 		Actor_Set_Targetable(kActorClovis, true);
 		if (Game_Flag_Query(653)) {
-			Global_Variable_Set(51, 0);
-			Global_Variable_Increment(51, 1);
+			Global_Variable_Set(kVariableReplicants, 0);
+			Global_Variable_Increment(kVariableReplicants, 1);
 			Actor_Set_At_XYZ(kActorClovis, 45.0f, -41.52f, -85.0f, 750);
 		} else {
 			Actor_Set_At_XYZ(kActorClovis, 84.85f, -50.56f, -68.87f, 800);
@@ -428,11 +428,11 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case 517:
 		if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_In_Set(kActorLucy, kSetKP07)) {
 			Actor_Set_Goal_Number(kActorLucy, 599);
-			Global_Variable_Decrement(51, 1);
+			Global_Variable_Decrement(kVariableReplicants, 1);
 		}
 		if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_In_Set(kActorLuther, kSetKP07)) {
 			Actor_Set_Goal_Number(kActorLuther, 599);
-			Global_Variable_Decrement(51, 1);
+			Global_Variable_Decrement(kVariableReplicants, 1);
 		}
 		if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_In_Set(kActorDektora, kSetKP07)) {
 			Non_Player_Actor_Combat_Mode_On(kActorDektora, kActorCombatStateIdle, false, kActorMcCoy, 19, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 10, 300, false);

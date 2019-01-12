@@ -184,10 +184,10 @@ void AIScriptSadik::Retired(int byActorId) {
 		Scene_Exits_Enable();
 	}
 	if (Actor_Query_In_Set(kActorSadik, kSetKP07)) {
-		Global_Variable_Decrement(51, 1);
+		Global_Variable_Decrement(kVariableReplicants, 1);
 		Actor_Set_Goal_Number(kActorSadik, 599);
 
-		if (!Global_Variable_Query(51)) {
+		if (Global_Variable_Query(kVariableReplicants) == 0) {
 			Player_Loses_Control();
 			Delay(2000);
 			Player_Set_Combat_Mode(0);

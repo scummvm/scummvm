@@ -558,6 +558,7 @@ enum Flags {
 	kFlagPS05TV4 = 692,
 	kFlagRC51Discovered = 709,
 	kFlagMA04WatchedTV = 711,
+	kFlagMcCoyShotAtZuben = 712,
 	kFlagCT02McCoyFell = 719,
 	kFlagCT02McCoyCombatReady = 720,
 	kFlagZubenBountyPaid = 723
@@ -575,6 +576,7 @@ enum Variables {
 	kVariableWalkLoopRun = 38,
 	kVariableAffectionTowards = 45, // 0 none, 1 steele, 2 dektora, 3 lucy
 	kVariableDNAEvidences = 48,
+	kVariableReplicants = 51,
 	kVariableNextTvNews = 52
 };
 
@@ -705,7 +707,7 @@ enum Scenes {
 	kSceneKP04 = 44,
 	kSceneKP05 = 45,
 	kSceneKP06 = 46,
-	kSceneKP07 = 47,
+	kSceneKP07 = 47, // Kipple - Moonbus inside
 	kSceneMA01 = 48, // McCoy's Apartment - Roof
 	kSceneMA02 = 49, // McCoy's Apartment - Living room
 	kSceneMA04 = 50, // McCoy's Apartment - Sleeping room
@@ -771,7 +773,8 @@ enum Scenes {
 	kSceneBB12 = 120
 };
 
-enum Sets {
+enum Sets
+{
 	kSetAR01_AR02 = 0,
 	kSetBB02_BB04_BB06_BB51 = 1,
 	kSetBB06_BB07 = 2, //BB06
@@ -972,7 +975,10 @@ enum GoalZuben {
 	kGoalZubenDefault = 0,
 	kGoalZubenCT01Leave = 1,
 	kGoalZubenCT02Flee = 2,
+	kGoalZubenCT07Spared = 4,
+	kGoalZubenCT07Leave = 5,
 	kGoalZubenDie = 6,
+	kGoalZubenSpared = 7,
 	kGoalZubenCT02PushPot = 8,
 	kGoalZubenCT02RunToDoor = 9,
 	kGoalZubenCT02OpenDoor = 10,
