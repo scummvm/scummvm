@@ -46,7 +46,7 @@ void AIScriptZuben::Initialize() {
 }
 
 bool AIScriptZuben::Update() {
-	if (Actor_Query_Goal_Number(kActorZuben) == 599 && Actor_Query_Which_Set_In(kActorZuben) != kSetFreeSlotI) {
+	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenDead && Actor_Query_Which_Set_In(kActorZuben) != kSetFreeSlotI) {
 		if (Actor_Query_Which_Set_In(kActorZuben) != Player_Query_Current_Set() ) {
 			Actor_Put_In_Set(kActorZuben, kSetFreeSlotI);
 			Actor_Set_At_Waypoint(kActorZuben, 41, 0);
@@ -173,7 +173,7 @@ void AIScriptZuben::ReceivedClue(int clueId, int fromActorId) {
 }
 
 void AIScriptZuben::ClickedByPlayer() {
-	if (Actor_Query_Goal_Number(kActorZuben) == 599) {
+	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenDead) {
 		if (Player_Query_Current_Scene() == kSceneCT06) {
 			// return true;
 			return;
@@ -253,7 +253,7 @@ void AIScriptZuben::Retired(int byActorId) {
 		return;
 	}
 	Global_Variable_Decrement(51, 1);
-	Actor_Set_Goal_Number(kActorZuben, 599);
+	Actor_Set_Goal_Number(kActorZuben, kGoalZubenDead);
 	if (Global_Variable_Query(51)) {
 		// return false;
 		return;
@@ -332,7 +332,7 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Player_Set_Combat_Mode(false);
 			Actor_Set_Goal_Number(kActorGaff, 3);
 		}
-		Actor_Set_Goal_Number(kActorZuben, 599);
+		Actor_Set_Goal_Number(kActorZuben, kGoalZubenDead);
 		return false;
 	case kGoalZubenCT02PushPot:
 		_animationFrame = 0;

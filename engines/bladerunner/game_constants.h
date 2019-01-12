@@ -960,12 +960,12 @@ enum PoliceMazeTrackInstruction {
 
 enum GoalMcCoy {
 	kGoalMcCoyDefault = 0,
-	kGoalMcCoyDodge = 1,
+	kGoalMcCoyDodge = 1
 };
 
 enum GoalTransient {
 	kGoalTransientDefault = 0,
-	kGoalTransientCT04Leave = 2,
+	kGoalTransientCT04Leave = 2
 };
 
 enum GoalZuben {
@@ -981,7 +981,8 @@ enum GoalZuben {
 	kGoalZubenCT06Hide = 13,
 	kGoalZubenCT02PotDodgeCheck = 14,
 	kGoalZubenFled = 20,
-	kGoalZubenMA01AttackMcCoy = 21
+	kGoalZubenMA01AttackMcCoy = 21,
+	kGoalZubenDead = 599
 
 };
 
