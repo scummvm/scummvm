@@ -29,7 +29,7 @@
 /** @file
  * "SETANIM " <objectId> " " <frame>
  *
- * Sets the frame for the specified object and redraws it.
+ * Draws the frame for the specified object without changing the object's current frame.
  * If the object is active, it is deactivated.
  */
 
@@ -51,7 +51,8 @@ Command::ExecuteResult SetObjectFrameCommand::execute(ScriptExecutionContext &sc
 	Object *const object = scriptExecCtx.getGameData().getCurrentScene()->getObject(_objectId);
 
 	object->_active = 0;
-	scriptExecCtx.getGame().getRoom().drawObject(_objectId);
+	// The object's current frame is not changed, so use frame override instead.
+	scriptExecCtx.getGame().getRoom().drawObject(_objectId, _frame);
 
 	return Finished;
 }

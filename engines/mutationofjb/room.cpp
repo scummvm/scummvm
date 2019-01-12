@@ -148,11 +148,11 @@ void Room::drawObjectAnimation(uint8 objectId, int animOffset) {
 		blit_if(_surfaces[animFrame], _background, Common::Point(object->_x, object->_y), ThresholdBlitOperation());
 }
 
-void Room::drawObject(uint8 objectId) {
+void Room::drawObject(uint8 objectId, uint8 overrideFrame) {
 	Scene *const currentScene = _game->getGameData().getCurrentScene();
 	Object *const object = currentScene->getObject(objectId);
 
-	drawObjectAnimation(objectId, object->_currentFrame - _objectsStart[objectId - 1] - 1);
+	drawObjectAnimation(objectId, (overrideFrame ? overrideFrame : object->_currentFrame) - _objectsStart[objectId - 1] - 1);
 }
 
 void Room::drawBitmap(uint8 bitmapId) {
@@ -169,6 +169,16 @@ void Room::drawBitmap(uint8 bitmapId) {
 
 	Common::Rect bitmapArea(bitmap->_x1, bitmap->_y1, bitmap->_x2 + 1, bitmap->_y2 + 1);
 	drawFrames(bitmap->_roomFrame - 1, bitmap->_roomFrame - 1, bitmapArea, 0xC0);
+}
+
+void Room::drawStatic(Static *const stat) {
+	if (!stat || !stat->allowsImplicitPickup()) {
+		return;
+	}
+
+	const uint8 frame = stat->_active ? 1 : 2; // Hardcoded values. Active is taken from frame 1 and inactive from frame 2.
+	const Common::Rect staticArea(stat->_x, stat->_y, stat->_x + stat->_width, stat->_y + stat->_height);
+	drawFrames(frame, frame, staticArea, 0xC0); // Hardcoded threshold.
 }
 
 void Room::drawFrames(uint8 fromFrame, uint8 toFrame, const Common::Rect &area, uint8 threshold) {
@@ -195,15 +205,19 @@ void Room::drawFrames(uint8 fromFrame, uint8 toFrame, const Common::Rect &area, 
 		AnimationDecoder decoder(fileName, _background);
 		decoder.setPartialMode(fromFrame, toFrame, area, threshold);
 		decoder.decode(nullptr);
-		if (!area.isEmpty())
-			_screen->getSubArea(area); // Add dirty rect.
-		else
-			_screen->makeAllDirty();
 	}
 }
 
 void Room::initialDraw() {
 	Scene *const currentScene = _game->getGameData().getCurrentScene();
+
+	for (uint8 i = 0; i < currentScene->getNoStatics(); ++i) {
+		Static *const stat = currentScene->getStatic(i + 1);
+		if (stat->_active && stat->allowsImplicitPickup()) {
+			drawStatic(stat);
+		}
+	}
+
 	for (uint8 i = 0; i < currentScene->getNoObjects(); ++i) {
 		Object *const obj = currentScene->getObject(i + 1);
 		if (obj->_active) {

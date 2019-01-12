@@ -28,6 +28,7 @@
 #include "mutationofjb/gamedata.h"
 #include "mutationofjb/mutationofjb.h"
 #include "mutationofjb/inventory.h"
+#include "mutationofjb/room.h"
 #include "mutationofjb/util.h"
 #include "mutationofjb/widgets/conversationwidget.h"
 #include "mutationofjb/widgets/gamewidget.h"
@@ -405,6 +406,7 @@ void GameScreen::onGameStaticClicked(GameWidget *, Static *stat) {
 
 				_game.getGameData().getInventory().addItem(inventoryName);
 				stat->_active = 0;
+				_game.getRoom().drawStatic(stat);
 			}
 		}
 	}
