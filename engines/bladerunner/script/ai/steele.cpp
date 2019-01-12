@@ -386,7 +386,7 @@ void AIScriptSteele::EnteredScene(int sceneId) {
 
 	if (Actor_Query_Goal_Number(kActorSteele) != 5
 			|| !Actor_Query_In_Set(kActorSteele, kSetCT03_CT04)
-			|| Game_Flag_Query(169) != 1
+			|| !Game_Flag_Query(kFlagHomelessShot)
 			|| Game_Flag_Query(170)
 			|| Game_Flag_Query(171)) {
 		return; //false;

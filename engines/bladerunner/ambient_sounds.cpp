@@ -117,6 +117,11 @@ void AmbientSounds::playSound(int sfxId, int volume, int panStart, int panEnd, i
 	_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(sfxId), volume * _ambientVolume / 100, panStart, panEnd, priority, kAudioPlayerOverrideVolume);
 }
 
+void AmbientSounds::playSpeech(int actorId, int sentenceId, int volume, int panStart, int panEnd, int priority) {
+	Common::String name = Common::String::format( "%02d-%04d%s.AUD", actorId, sentenceId, _vm->_languageCode.c_str());
+	_vm->_audioPlayer->playAud(name, volume * _ambientVolume / 100, panStart, panEnd, priority, kAudioPlayerOverrideVolume);
+}
+
 void AmbientSounds::addLoopingSound(int sfxId, int volume, int pan, int delay) {
 	const Common::String &name = _vm->_gameInfo->getSfxTrack(sfxId);
 	int32 hash = MIXArchive::getHash(name);

@@ -145,7 +145,7 @@ void SceneScriptPS04::sub_4017E4() {
 			DM_Add_To_List_Never_Repeat_Once_Selected(150, 7, 6, 5);
 		}
 	}
-	if (Game_Flag_Query(169) == 1) {
+	if (Game_Flag_Query(kFlagHomelessShot)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(140, 3, -1, -1);
 	}
 	DM_Add_To_List(130, 1, 1, 1);

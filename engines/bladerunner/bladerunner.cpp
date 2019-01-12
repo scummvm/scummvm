@@ -81,6 +81,7 @@
 #include "common/events.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/debug-channels.h"
 
 #include "engines/util.h"
 #include "engines/advancedDetector.h"
@@ -92,6 +93,8 @@ namespace BladeRunner {
 BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *desc)
 	: Engine(syst),
 	  _rnd("bladerunner") {
+
+	DebugMan.addDebugChannel(kDebugScript, "Script", "Debug the scripts");
 
 	_windowIsActive = true;
 	_gameIsRunning  = true;

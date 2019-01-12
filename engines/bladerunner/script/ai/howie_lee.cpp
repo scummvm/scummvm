@@ -100,11 +100,11 @@ void AIScriptHowieLee::ClickedByPlayer() {
 
 void AIScriptHowieLee::EnteredScene(int sceneId) {
 	if (Actor_Query_Goal_Number(kActorHowieLee) == 4 && Actor_Query_In_Set(kActorHowieLee, kSetCT03_CT04)) {
-		if (Game_Flag_Query(169) && !Game_Flag_Query(170) && !Game_Flag_Query(171)) {
+		if (Game_Flag_Query(kFlagHomelessShot) && !Game_Flag_Query(170) && !Game_Flag_Query(171)) {
 			Game_Flag_Set(171);
 			// return false;
 		}
-		if (!Game_Flag_Query(169) && Game_Flag_Query(170) && !Game_Flag_Query(171) && Random_Query(1, 10) == 1) {
+		if (!Game_Flag_Query(kFlagHomelessShot) && Game_Flag_Query(170) && !Game_Flag_Query(171) && Random_Query(1, 10) == 1) {
 			Game_Flag_Set(171);
 			// return true;
 		}

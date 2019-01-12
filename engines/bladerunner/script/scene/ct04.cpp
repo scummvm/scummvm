@@ -72,12 +72,12 @@ bool SceneScriptCT04::MouseClick(int x, int y) {
 }
 
 bool SceneScriptCT04::ClickedOn3DObject(const char *objectName, bool a2) {
-	if (objectName) {
-		if (!Game_Flag_Query(137) && !Game_Flag_Query(169) && !Actor_Query_Goal_Number(kActorTransient)) {
-			Game_Flag_Set(137);
-			Actor_Set_Goal_Number(kActorTransient, 2);
+	if (objectName) { // this can be only "DUMPSTER"
+		if (!Game_Flag_Query(kFlagHomelessTalkedTo) && !Game_Flag_Query(kFlagHomelessShot) && Actor_Query_Goal_Number(kActorTransient) == kGoalTransientDefault) {
+			Game_Flag_Set(kFlagHomelessTalkedTo);
+			Actor_Set_Goal_Number(kActorTransient, kGoalTransientCT04Leave);
 		}
-		if (Game_Flag_Query(169) && !Game_Flag_Query(170) && !Game_Flag_Query(171) && !Game_Flag_Query(172) && Global_Variable_Query(kVariableChapter) == 1) {
+		if (Game_Flag_Query(kFlagHomelessShot) && !Game_Flag_Query(170) && !Game_Flag_Query(171) && !Game_Flag_Query(172) && Global_Variable_Query(kVariableChapter) == 1) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -147.41f, -621.3f, 724.57f, 0, 1, false, 0)) {
 				Player_Loses_Control();
 				Actor_Face_Heading(kActorMcCoy, 792, false);
@@ -143,7 +143,7 @@ void SceneScriptCT04::dialogueWithHomeless() {
 		Actor_Says(kActorTransient, 20, 14);
 		Actor_Modify_Friendliness_To_Other(kActorTransient, kActorMcCoy, 5);
 		if (Query_Difficulty_Level() != 0) {
-			Global_Variable_Decrement(2, 10);
+			Global_Variable_Decrement(kVariableChinyen, 10);
 		}
 	} else if (answer == 420) {
 		Actor_Says(kActorMcCoy, 430, 3);
@@ -154,28 +154,28 @@ void SceneScriptCT04::dialogueWithHomeless() {
 
 bool SceneScriptCT04::ClickedOnActor(int actorId) {
 	if (actorId == kActorTransient) {
-		if (Game_Flag_Query(169)) {
-			if (!Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorTransient, 36, 1, false)) {
+		if (Game_Flag_Query(kFlagHomelessShot)) {
+			if (!Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorTransient, 36, true, false)) {
 				Actor_Voice_Over(290, kActorVoiceOver);
 				Actor_Voice_Over(300, kActorVoiceOver);
 				Actor_Voice_Over(310, kActorVoiceOver);
 			}
 		} else {
 			Actor_Set_Targetable(kActorTransient, false);
-			if (!Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorTransient, 36, 1, false)) {
+			if (!Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorTransient, 36, true, false)) {
 				Actor_Face_Actor(kActorMcCoy, kActorTransient, true);
-				if (!Game_Flag_Query(137)) {
+				if (!Game_Flag_Query(kFlagHomelessTalkedTo)) {
 					if (Game_Flag_Query(kFlagZubenRetired)) {
 						Actor_Says(kActorMcCoy, 435, 3);
-						Actor_Set_Goal_Number(kActorTransient, 2);
+						Actor_Set_Goal_Number(kActorTransient, kGoalTransientCT04Leave);
 					} else {
 						Music_Stop(3);
 						Actor_Says(kActorMcCoy, 425, 3);
 						Actor_Says(kActorTransient, 0, 13);
 						dialogueWithHomeless();
-						Actor_Set_Goal_Number(kActorTransient, 2);
+						Actor_Set_Goal_Number(kActorTransient, kGoalTransientCT04Leave);
 					}
-					Game_Flag_Set(137);
+					Game_Flag_Set(kFlagHomelessTalkedTo);
 				} else {
 					Actor_Face_Actor(kActorMcCoy, kActorTransient, true);
 					Actor_Says(kActorMcCoy, 435, 3);
@@ -194,10 +194,10 @@ bool SceneScriptCT04::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptCT04::ClickedOnExit(int exitId) {
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -82.86f, -621.3f, 769.03f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			if (!Actor_Query_Goal_Number(kActorTransient)) {
-				Actor_Set_Goal_Number(kActorTransient, 2);
+			if (Actor_Query_Goal_Number(kActorTransient) == kGoalTransientDefault) {
+				Actor_Set_Goal_Number(kActorTransient, kGoalTransientCT04Leave);
 			}
 			Game_Flag_Set(kFlagCT04toCT05);
 			Set_Enter(kSetCT05, kSceneCT05);
@@ -206,7 +206,7 @@ bool SceneScriptCT04::ClickedOnExit(int exitId) {
 	}
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -187.0f, -621.3f, 437.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagCT04toCT03);
 			Set_Enter(kSetCT03_CT04, kSceneCT03);

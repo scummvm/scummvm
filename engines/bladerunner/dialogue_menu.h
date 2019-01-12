@@ -89,6 +89,7 @@ public:
 	bool hide();
 	bool addToList(int answer, bool done, int priorityPolite, int priorityNormal, int prioritySurly);
 	bool addToListNeverRepeatOnceSelected(int answer, int priorityPolite, int priorityNormal, int prioritySurly);
+	bool removeFromList(int answer);
 	bool clearList();
 	int  queryInput();
 	int  listSize() const;

@@ -51,6 +51,10 @@ struct ADGameDescription;
 
 namespace BladeRunner {
 
+enum DebugLevels {
+	kDebugScript = 1 << 0
+};
+
 class Actor;
 class ActorDialogueQueue;
 class ScreenEffects;

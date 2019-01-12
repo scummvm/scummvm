@@ -146,6 +146,22 @@ bool DialogueMenu::addToListNeverRepeatOnceSelected(int answer, int priorityPoli
 	return addToList(answer, false, priorityPolite, priorityNormal, prioritySurly);
 }
 
+bool DialogueMenu::removeFromList(int answer) {
+	int index = getAnswerIndex(answer);
+	if (index != -1) {
+		return false;
+	}
+	if (index < _listSize - 1) {
+		for (int i = index; i < _listSize; ++i) {
+			_items[index] = _items[index + 1];
+		}
+	}
+	--_listSize;
+
+	calculatePosition();
+	return true;
+}
+
 int DialogueMenu::queryInput() {
 	if (!_isVisible || _listSize == 0) {
 		return -1;

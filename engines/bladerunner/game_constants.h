@@ -505,6 +505,7 @@ enum Flags {
 	kFlagPS02toPS03 = 132,
 	kFlagPS02toPS09 = 133,
 	kFlagPS05toPS06 = 136,
+	kFlagHomelessTalkedTo = 137,
 	kFlagKleinInsulted = 138,
 	kFlagRC02LucyDeskAvailable = 141,
 	kFlagCT07toCT06 = 144,
@@ -516,6 +517,7 @@ enum Flags {
 	kFlagGuzzaTalkZubenRetired = 159,
 	kFlagGuzzaTalkZubenEscaped = 160,
 	kFlagChromeDebrisTaken = 163,
+	kFlagHomelessShot = 169,
 	kFlagRC01PoliceDone = 186,
 	kFlagShellCasingsTaken = 190,
 	kFlagBoughtHowieLeeFood = 192,
@@ -542,6 +544,7 @@ enum Flags {
 	kFlagGenericWalkerWaiting = 443,
 	kFlagMaggieIsHurt = 461,
 	kFlagKIAPrivacyAddon = 487,
+	kFlagCT04HomelessTrashFinish = 492,
 	kFlagCT07ZubenAttack = 516,
 	kFlagKIAPrivacyAddonIntro = 599,
 	kFlagMcCoySleeping = 647,
@@ -962,6 +965,7 @@ enum GoalMcCoy {
 
 enum GoalTransient {
 	kGoalTransientDefault = 0,
+	kGoalTransientCT04Leave = 2,
 };
 
 enum GoalZuben {
