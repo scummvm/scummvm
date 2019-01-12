@@ -57,6 +57,18 @@ void GameWidget::clearState() {
 void GameWidget::draw(Graphics::ManagedSurface &) {
 	Room &room = _gui.getGame().getRoom();
 
+	// Full redraw using background buffer.
+	if (_dirtyBits == DIRTY_ALL) {
+		room.redraw();
+		return;
+	}
+
+	// Full redraw without background buffer.
+	if (_dirtyBits & DIRTY_AFTER_SCENE_CHANGE) {
+		room.redraw(false); // Don't use background buffer.
+		return;
+	}
+
 	// Only selection changed.
 	if (_dirtyBits & DIRTY_MAP_SELECTION) {
 		if (_currentMapObjectId != _nextMapObjectId) {
@@ -68,12 +80,6 @@ void GameWidget::draw(Graphics::ManagedSurface &) {
 			}
 			_currentMapObjectId = _nextMapObjectId;
 		}
-	}
-
-	// Full redraw.
-	if (_dirtyBits == DIRTY_ALL) {
-		room.redraw();
-		return;
 	}
 }
 

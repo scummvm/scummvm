@@ -51,6 +51,7 @@
 #include "mutationofjb/commands/loadplayercommand.h"
 #include "mutationofjb/commands/bitmapvisibilitycommand.h"
 #include "mutationofjb/commands/playanimationcommand.h"
+#include "mutationofjb/commands/setobjectframecommand.h"
 #include "mutationofjb/game.h"
 
 namespace MutationOfJB {
@@ -85,6 +86,7 @@ static CommandParser **getParsers() {
 		new LoadPlayerCommandParser,
 		new BitmapVisibilityCommandParser,
 		new PlayAnimationCommandParser,
+		new SetObjectFrameCommandParser,
 		nullptr
 	};
 

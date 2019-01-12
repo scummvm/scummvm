@@ -24,6 +24,7 @@ MODULE_OBJS := \
 	commands/saycommand.o \
 	commands/seqcommand.o \
 	commands/setcolorcommand.o \
+	commands/setobjectframecommand.o \
 	commands/specialshowcommand.o \
 	commands/switchpartcommand.o \
 	commands/talkcommand.o \

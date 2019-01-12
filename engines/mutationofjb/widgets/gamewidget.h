@@ -48,6 +48,11 @@ public:
 		GAME_FULL_AREA_HEIGHT = 200
 	};
 
+	enum DirtyFlags {
+		DIRTY_AFTER_SCENE_CHANGE = 1 << 1,
+		DIRTY_MAP_SELECTION = 1 << 2
+	};
+
 	GameWidget(GuiScreen &gui);
 	void setCallback(GameWidgetCallback *callback) {
 		_callback = callback;
@@ -60,10 +65,6 @@ protected:
 	virtual void draw(Graphics::ManagedSurface &);
 
 private:
-	enum {
-		DIRTY_MAP_SELECTION = 1 << 1
-	};
-
 	/**
 	 * Handling for normal (non-map) scenes.
 	 *

@@ -220,7 +220,7 @@ void GameScreen::refreshAfterSceneChanged() {
 	event.mouse = _game.getEngine().getEventManager()->getMousePos();
 	_gameWidget->handleEvent(event);
 
-	_gameWidget->markDirty();
+	_gameWidget->markDirty(GameWidget::DIRTY_AFTER_SCENE_CHANGE);
 	_gameWidget->update(*_screen); // Force immediate update.
 }
 

@@ -86,7 +86,7 @@ void ObjectAnimationTask::updateObjects() {
 
 		const bool drawObject = handleHardcodedAnimation(object);
 		if (drawObject) {
-			getTaskManager()->getGame().getRoom().drawObjectAnimation(i, nextAnimationOffset);
+			getTaskManager()->getGame().getRoom().drawObject(i);
 		}
 	}
 }
