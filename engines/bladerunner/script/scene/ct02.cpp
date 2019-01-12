@@ -27,7 +27,7 @@ namespace BladeRunner {
 enum kCT02Loops {
 	kCT02LoopMain          = 0,
 	kCT02LoopTippingPot    = 2,
-	kCT02LoopMainPotTipped = 3,
+	kCT02LoopMainPotTipped = 3
 };
 
 enum kCT02Exits {
