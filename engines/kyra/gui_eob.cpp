@@ -32,6 +32,7 @@
 #include "backends/keymapper/keymapper.h"
 #include "common/system.h"
 #include "common/savefile.h"
+#include "common/config-manager.h"
 #include "graphics/scaler.h"
 
 namespace Kyra {
@@ -873,10 +874,21 @@ int EoBCoreEngine::clickedWeaponSlot(Button *button) {
 	static const uint8 sY[] = { 27, 27, 79, 79, 131, 131 };
 	int slot = sY[button->arg] > _mouseY ? 0 : 1;
 
-	if ((_gui->_flagsMouseLeft & 0x7F) == 1)
+	bool useItem = (_gui->_flagsMouseLeft & 0x7F) != 1;
+	// Do not swap buttons if there's an item held by mouse. Then we probably 
+	// want to put it in hand, not to attack with that hand.
+	bool itemInMouse = _itemInHand != 0;
+	if (??? && !itemInMouse) {
+		// Otherwise, whenever I fight, I end up taking swords 
+		// from my characters’ hands instead of hitting enemies with them.
+		useItem = !useItem;
+	}
+
+	if (useItem) {
 		gui_processWeaponSlotClickLeft(button->arg, slot);
-	else
+	} else {
 		gui_processWeaponSlotClickRight(button->arg, slot);
+	}
 
 	return 1;
 }
