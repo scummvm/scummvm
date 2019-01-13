@@ -135,6 +135,10 @@ const char *gScummVMFeatures = ""
 	"AAC "
 #endif
 
+#ifdef USE_A52
+	"A/52 "
+#endif
+
 #ifdef USE_FREETYPE2
 	"FreeType2 "
 #endif
