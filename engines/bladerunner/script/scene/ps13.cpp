@@ -26,10 +26,10 @@ namespace BladeRunner {
 
 void SceneScriptPS13::InitializeScene() {
 	Police_Maze_Set_Pause_State(true);
-	if (Game_Flag_Query(18)) {
+	if (Game_Flag_Query(kFlagPS12toPS13)) {
 		Scene_Loop_Start_Special(0, 0, 0);
 		Scene_Loop_Set_Default(1);
-		Game_Flag_Reset(18);
+		Game_Flag_Reset(kFlagPS12toPS13);
 		Setup_Scene_Information(World_Waypoint_Query_X(10), World_Waypoint_Query_Y(10), World_Waypoint_Query_Z(10), 200);
 	} else {
 		Scene_Loop_Set_Default(1);

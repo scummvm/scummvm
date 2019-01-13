@@ -72,7 +72,7 @@ void SceneScriptUG10::InitializeScene() {
 
 void SceneScriptUG10::SceneLoaded() {
 	Obstacle_Object("SLUICEGATE_LEVER", true);
-	if (Global_Variable_Query(kVariableChapter) == 4 && !Game_Flag_Query(474) && Game_Flag_Query(172) && !Game_Flag_Query(693)) {
+	if (Global_Variable_Query(kVariableChapter) == 4 && !Game_Flag_Query(474) && Game_Flag_Query(kFlagDumpsterEmptied) && !Game_Flag_Query(693)) {
 		Scene_Loop_Set_Default(1);
 		Scene_Loop_Start_Special(kSceneLoopModeOnce, 6, true);
 		Game_Flag_Set(693);

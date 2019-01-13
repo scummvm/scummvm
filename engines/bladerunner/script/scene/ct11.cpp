@@ -108,8 +108,8 @@ bool SceneScriptCT11::ClickedOnExit(int exitId) {
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -300.0f, 9.68f, 66.0f, 0, 1, false, 0)) {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -400.0f, 9.68f, -70.0f, 0, 1, false, 0);
-			Game_Flag_Set(86);
-			Set_Enter(4, kSceneCT12);
+			Game_Flag_Set(kFlagCT11toCT12);
+			Set_Enter(kSetCT01_CT12, kSceneCT12);
 		}
 		return true;
 	}
@@ -198,7 +198,7 @@ void SceneScriptCT11::PlayerWalkedIn() {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 125.0f, 9.68f, 74.0f, 0, 0, false, 0);
 		Actor_Set_Immunity_To_Obstacles(kActorMcCoy, false);
 		Player_Gains_Control();
-		Game_Flag_Reset(83);
+		Game_Flag_Reset(kFlagCT09toCT11);
 	}
 }
 

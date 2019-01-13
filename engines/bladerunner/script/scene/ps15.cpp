@@ -138,7 +138,7 @@ void SceneScriptPS15::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptPS15::PlayerWalkedIn() {
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -326.93f, -113.43f, 101.42f, 0, 0, false, 0);
-	if (!Game_Flag_Query(43)) {
+	if (!Game_Flag_Query(kFlagPS15Entered)) {
 		Actor_Face_Actor(kActorMcCoy, kActorSergeantWalls, true);
 		Actor_Face_Actor(kActorSergeantWalls, kActorMcCoy, true);
 		Actor_Says(kActorSergeantWalls, 0, 12);
@@ -155,7 +155,7 @@ void SceneScriptPS15::PlayerWalkedIn() {
 		Actor_Says(kActorSergeantWalls, 110, 15);
 		Actor_Says(kActorSergeantWalls, 120, 15);
 		Actor_Says(kActorMcCoy, 4555, 14);
-		Game_Flag_Set(43);
+		Game_Flag_Set(kFlagPS15Entered);
 		//return true;
 		return;
 	} else {

@@ -37,108 +37,128 @@ void AIScriptOfficerLeary::Initialize() {
 	var_45D5BC = 0;
 	_animationNext = 0;
 
-	Actor_Put_In_Set(kActorOfficerLeary, 69);
+	Actor_Put_In_Set(kActorOfficerLeary, kSetRC01);
 	Actor_Set_At_XYZ(kActorOfficerLeary, -261.80f, 6.00f, 79.58f, 512);
-	Actor_Set_Goal_Number(kActorOfficerLeary, 0);
+	Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyDefault);
 	Actor_Set_Frame_Rate_FPS(kActorOfficerLeary, 8);
 }
 
 bool AIScriptOfficerLeary::Update() {
-	if (Global_Variable_Query(kVariableChapter) == 4 && Actor_Query_Goal_Number(kActorOfficerLeary) < 300) {
+	if (Global_Variable_Query(kVariableChapter) == 4
+	 && Actor_Query_Goal_Number(kActorOfficerLeary) < 300
+	) {
 		AI_Movement_Track_Flush(kActorOfficerLeary);
 		Actor_Set_Goal_Number(kActorOfficerLeary, 300);
-	} else if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_Goal_Number(kActorOfficerLeary) < 400) {
+	} else if (Global_Variable_Query(kVariableChapter) == 5
+	        && Actor_Query_Goal_Number(kActorOfficerLeary) < 400
+	) {
 		AI_Movement_Track_Flush(kActorOfficerLeary);
 		Actor_Set_Goal_Number(kActorOfficerLeary, 400);
-	} else if (!Game_Flag_Query(182) && Game_Flag_Query(147) == 1 && Game_Flag_Query(kFlagChromeDebrisTaken) == 1 && Player_Query_Current_Scene() != 78 && Global_Variable_Query(kVariableChapter) < 3) {
+	} else if (!Game_Flag_Query(182)
+	        &&  Game_Flag_Query(147)
+	        &&  Game_Flag_Query(kFlagChromeDebrisTaken)
+	        &&  Player_Query_Current_Scene() != kSceneRC01
+	        &&  Global_Variable_Query(kVariableChapter) < 3
+	) {
 		Game_Flag_Set(kFlagRC01PoliceDone);
 		Actor_Set_Goal_Number(kActorOfficerLeary, 3);
-	} else if (Actor_Query_Goal_Number(kActorOfficerLeary) != 1 && Actor_Query_Goal_Number(kActorOfficerLeary) != 2 && Game_Flag_Query(199) == 1) {
+	} else if (Actor_Query_Goal_Number(kActorOfficerLeary) != kGoalOfficerLearyCrowdInterrogation
+	        && Actor_Query_Goal_Number(kActorOfficerLeary) != 2
+	        && Game_Flag_Query(199)
+	) {
 		Game_Flag_Reset(199);
-	} else if (Global_Variable_Query(15) > 4 && !Actor_Clue_Query(kActorOfficerLeary, kClueMcCoyIsStupid)) {
+	} else if ( Global_Variable_Query(15) > 4
+	        && !Actor_Clue_Query(kActorOfficerLeary, kClueMcCoyIsStupid)
+	) {
 		Actor_Clue_Acquire(kActorOfficerLeary, kClueMcCoyIsStupid, 1, -1);
-	} else if (Game_Flag_Query(629) == 1) {
+	} else if (Game_Flag_Query(629)) {
 		Game_Flag_Reset(629);
-	} else if (Game_Flag_Query(623) == 1 && !Game_Flag_Query(664)) {
+	} else if ( Game_Flag_Query(623)
+	        && !Game_Flag_Query(664)
+	) {
 		Game_Flag_Set(664);
 		Actor_Set_Goal_Number(kActorOfficerLeary, 305);
-	} else if (Actor_Query_Goal_Number(kActorOfficerLeary) == 310 && Actor_Query_Which_Set_In(kActorOfficerLeary) != Player_Query_Current_Set()) {
+	} else if (Actor_Query_Goal_Number(kActorOfficerLeary) == 310
+	        && Actor_Query_Which_Set_In(kActorOfficerLeary) != Player_Query_Current_Set()
+	) {
 		Non_Player_Actor_Combat_Mode_Off(kActorOfficerLeary);
 		Actor_Set_Goal_Number(kActorOfficerLeary, 305);
-	} else if (Actor_Query_Goal_Number(kActorOfficerLeary) == 599 && Actor_Query_Which_Set_In(kActorOfficerLeary) != Player_Query_Current_Set()) {
+	} else if (Actor_Query_Goal_Number(kActorOfficerLeary) == 599
+	        && Actor_Query_Which_Set_In(kActorOfficerLeary) != Player_Query_Current_Set()
+	) {
 		Actor_Set_Health(kActorOfficerLeary, 40, 40);
 		Actor_Set_Goal_Number(kActorOfficerLeary, 305);
 	} else if (Actor_Query_Goal_Number(kActorOfficerLeary) == 305) {
 		switch (Actor_Query_Which_Set_In(kActorOfficerLeary)) {
-		case 7:
+		case kSetDR01_DR02_DR04:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, 310);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 0, 4, 7, 8, -1, -1, -1, 10, 300, 0);
 			}
 			break;
-		case 20:
+		case kSetBB01:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, 310);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 1, 4, 7, 8, -1, -1, -1, 10, 300, 0);
 			}
 			break;
-		case 33:
+		case kSetCT11:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, 310);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 5, 4, 7, 8, -1, -1, -1, 10, 300, 0);
 			}
 			break;
-		case 53:
+		case kSetMA07:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, 310);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 7, 4, 7, 8, -1, -1, -1, 10, 300, 0);
 			}
 			break;
-		case 54:
+		case kSetNR01:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, 310);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 3, 4, 7, 8, -1, -1, -1, 10, 300, 0);
 			}
 			break;
-		case 70:
+		case kSetRC03:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, 310);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 18, 4, 7, 8, -1, -1, -1, 10, 300, 0);
 			}
 			break;
-		case 74:
+		case kSetUG01:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, 310);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 11, 4, 7, 8, -1, -1, -1, 10, 300, 0);
 			}
 			break;
-		case 77:
-		case 78:
-		case 79:
+		case kSetUG04:
+		case kSetUG05:
+		case kSetUG06:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, 310);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 10, 4, 7, 8, -1, -1, -1, 10, 300, 0);
 			}
 			break;
-		case 81:
+		case kSetUG08:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, 310);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 13, 4, 7, 8, -1, -1, -1, 10, 300, 0);
 			}
 			break;
-		case 83:
+		case kSetUG10:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, 310);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 14, 4, 7, 8, -1, -1, -1, 10, 300, 0);
 			}
 			break;
-		case 84:
+		case kSetUG12:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, 310);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 16, 4, 7, 8, -1, -1, -1, 10, 300, 0);
 			}
 			break;
-		case 86:
+		case kSetUG14:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, 310);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 17, 4, 7, 8, -1, -1, -1, 10, 300, 0);
@@ -280,12 +300,12 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 		}
 		if (Game_Flag_Query(182)) {
 			if (Actor_Clue_Query(kActorOfficerLeary, kClueCrowdInterviewA) && Actor_Clue_Query(kActorOfficerLeary, kClueCrowdInterviewB)) {
-				Actor_Set_Goal_Number(kActorOfficerLeary, 0);
+				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyDefault);
 			} else {
-				Actor_Set_Goal_Number(kActorOfficerLeary, 1);
+				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyCrowdInterrogation);
 			}
 		} else {
-			Actor_Set_Goal_Number(kActorOfficerLeary, 0);
+			Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyDefault);
 		}
 		return true;
 	case 3:

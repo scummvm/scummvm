@@ -46,19 +46,26 @@ void AIScriptZuben::Initialize() {
 }
 
 bool AIScriptZuben::Update() {
-	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenDead && Actor_Query_Which_Set_In(kActorZuben) != kSetFreeSlotI) {
-		if (Actor_Query_Which_Set_In(kActorZuben) != Player_Query_Current_Set() ) {
-			Actor_Put_In_Set(kActorZuben, kSetFreeSlotI);
-			Actor_Set_At_Waypoint(kActorZuben, 41, 0);
-		}
+	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenDead
+	 && Actor_Query_Which_Set_In(kActorZuben) != kSetFreeSlotI
+	 && Actor_Query_Which_Set_In(kActorZuben) != Player_Query_Current_Set()
+	) {
+		Actor_Put_In_Set(kActorZuben, kSetFreeSlotI);
+		Actor_Set_At_Waypoint(kActorZuben, 41, 0);
 	}
-	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenDefault && Player_Query_Current_Scene() == kSceneCT01 && !Game_Flag_Query(kFlagZubenCheckOnMcCoy) ) {
+	if ( Actor_Query_Goal_Number(kActorZuben) == kGoalZubenDefault
+	 &&  Player_Query_Current_Scene() == kSceneCT01
+	 && !Game_Flag_Query(kFlagZubenCheckOnMcCoy)
+	) {
 		AI_Countdown_Timer_Reset(kActorZuben, 2);
 		AI_Countdown_Timer_Start(kActorZuben, 2, 30);
 		Game_Flag_Set(kFlagZubenCheckOnMcCoy);
 		return true;
 	}
-	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenDefault && Actor_Query_Friendliness_To_Other(kActorZuben, kActorMcCoy) < 48 && Actor_Query_Is_In_Current_Set(kActorZuben)) {
+	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenDefault
+	 && Actor_Query_Friendliness_To_Other(kActorZuben, kActorMcCoy) < 48
+	 && Actor_Query_Is_In_Current_Set(kActorZuben)
+	) {
 		Actor_Face_Actor(kActorZuben, kActorHowieLee, true);
 		Actor_Says(kActorZuben, 0, 14);
 		if (Random_Query(1, 3) == 1) {
@@ -68,17 +75,25 @@ bool AIScriptZuben::Update() {
 		Actor_Set_Goal_Number(kActorZuben, kGoalZubenCT01Leave);
 		return true;
 	}
-	if (Global_Variable_Query(kVariableChapter) >= 4 && !Game_Flag_Query(kFlagZubenRetired) && Actor_Query_Goal_Number(kActorZuben) < 200) {
+	if ( Global_Variable_Query(kVariableChapter) >= 4
+	 && !Game_Flag_Query(kFlagZubenRetired)
+	 &&  Actor_Query_Goal_Number(kActorZuben) < 200
+	) {
 		AI_Movement_Track_Flush(kActorZuben);
 		Actor_Set_Goal_Number(kActorZuben, 200);
 		return true;
 	}
-	if (Global_Variable_Query(kVariableChapter) == 5 && !Game_Flag_Query(kFlagZubenRetired) && Actor_Query_Goal_Number(kActorZuben) < 400) {
+	if ( Global_Variable_Query(kVariableChapter) == 5
+	 && !Game_Flag_Query(kFlagZubenRetired)
+	 &&  Actor_Query_Goal_Number(kActorZuben) < 400
+	) {
 		AI_Movement_Track_Flush(kActorZuben);
 		Actor_Set_Goal_Number(kActorZuben, 400);
 		return true;
 	}
-	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT06AttackMcCoy && Player_Query_Current_Scene() == kSceneCT07) {
+	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT06AttackMcCoy
+	 && Player_Query_Current_Scene() == kSceneCT07
+	) {
 		AI_Countdown_Timer_Reset(kActorZuben, 0);
 		Game_Flag_Set(kFlagWarehouseOpen);
 		Actor_Set_Targetable(kActorZuben, true);
@@ -87,7 +102,9 @@ bool AIScriptZuben::Update() {
 		}
 		return true;
 	}
-	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT02PotDodgeCheck && !Game_Flag_Query(kFlagCT02ZubenFled)) {
+	if ( Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT02PotDodgeCheck
+	 && !Game_Flag_Query(kFlagCT02ZubenFled)
+	) {
 		Game_Flag_Set(kFlagCT02ZubenFled);
 		return true;
 	}
@@ -96,7 +113,10 @@ bool AIScriptZuben::Update() {
 
 void AIScriptZuben::TimerExpired(int timer) {
 	if (timer == 2) { // Check on McCoy every 30s
-		if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenDefault && Player_Query_Current_Scene() == kSceneCT01 && Random_Query(1, 3) < 3) {
+		if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenDefault
+		 && Player_Query_Current_Scene() == kSceneCT01
+		 && Random_Query(1, 3) < 3
+		) {
 			Actor_Modify_Friendliness_To_Other(kActorZuben, kActorMcCoy, -1);
 		}
 		Game_Flag_Reset(kFlagZubenCheckOnMcCoy);
@@ -120,14 +140,18 @@ void AIScriptZuben::TimerExpired(int timer) {
 }
 
 void AIScriptZuben::CompletedMovementTrack() {
-	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT02Flee && Game_Flag_Query(kFlagCT02McCoyFell)) {
+	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT02Flee
+	 && Game_Flag_Query(kFlagCT02McCoyFell)
+	) {
 		Set_Enter(kSetCT03_CT04, kSceneCT03);
 	}
 
 	if (Actor_Query_Goal_Number(kActorZuben) == 3) { // not set anywhere
 		Actor_Set_Goal_Number(kActorZuben, kGoalZubenCT07Leave);
 		//return true;
-	} else if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT06Hide && Game_Flag_Query(kFlagCT02McCoyFell)) {
+	} else if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT06Hide
+	        && Game_Flag_Query(kFlagCT02McCoyFell)
+	) {
 		AI_Countdown_Timer_Reset(kActorZuben, 0);
 		Game_Flag_Reset(kFlagCT02McCoyFell);
 		Game_Flag_Set(kFlagCT02McCoyCombatReady);
@@ -146,7 +170,7 @@ void AIScriptZuben::CompletedMovementTrack() {
 			Delay(2000);
 			Game_Flag_Set(144);
 			Game_Flag_Set(kFlagZubenSpared);
-			Game_Flag_Set(31);
+			Game_Flag_Set(kFlagCT01ZubenGone);
 			Actor_Set_Goal_Number(kActorZuben, kGoalZubenSpared);
 			Actor_Set_Goal_Number(kActorGaff, 1);
 			Set_Enter(kSetCT06, kSceneCT06);
@@ -218,7 +242,11 @@ void AIScriptZuben::OtherAgentExitedThisScene(int otherActorId) {
 }
 
 void AIScriptZuben::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
-	if (otherActorId == kActorMcCoy && !combatMode && Game_Flag_Query(kFlagCT07ZubenAttack) && !Game_Flag_Query(kFlagMcCoyShotAtZuben)) {
+	if ( otherActorId == kActorMcCoy
+	 && !combatMode
+	 &&  Game_Flag_Query(kFlagCT07ZubenAttack)
+	 && !Game_Flag_Query(kFlagMcCoyShotAtZuben)
+	) {
 		Non_Player_Actor_Combat_Mode_Off(kActorZuben);
 		Game_Flag_Reset(kFlagCT07ZubenAttack);
 		AI_Movement_Track_Flush(kActorZuben);
@@ -236,7 +264,9 @@ void AIScriptZuben::ShotAtAndMissed() {
 
 bool AIScriptZuben::ShotAtAndHit() {
 	Game_Flag_Set(kFlagMcCoyShotAtZuben);
-	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT07Leave && !Actor_Clue_Query(kActorZuben, kClueMcCoyShotZubenInTheBack)) {
+	if ( Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT07Leave
+	 && !Actor_Clue_Query(kActorZuben, kClueMcCoyShotZubenInTheBack)
+	) {
 		Actor_Clue_Acquire(kActorZuben, kClueMcCoyShotZubenInTheBack, true, -1);
 		Actor_Clue_Lose(kActorZuben, kClueMcCoyLetZubenEscape);
 		Actor_Start_Speech_Sample(kActorMcCoy, 490);
@@ -323,7 +353,7 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return false;
 	case kGoalZubenDie:
 		Game_Flag_Set(kFlagZubenRetired);
-		Game_Flag_Set(31);
+		Game_Flag_Set(kFlagCT01ZubenGone);
 		if (Actor_Query_In_Set(kActorZuben, kSetCT07)) {
 			Game_Flag_Set(kFlagCT07toCT06);
 			Actor_Set_Goal_Number(kActorGaff, 1);

@@ -156,7 +156,9 @@ void SceneScriptMA02::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagMA04ToMA02)) {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -148.12f, -144.13f, 34.27f, 0, 1, false, 0);
 	}
-	if (Global_Variable_Query(kVariableChapter) == 4 && !Game_Flag_Query(655)) {
+	if ( Global_Variable_Query(kVariableChapter) == 4
+	 && !Game_Flag_Query(655)
+	) {
 		Game_Flag_Set(623);
 		Game_Flag_Set(655);
 		dialogueWithRajif();
@@ -166,7 +168,9 @@ void SceneScriptMA02::PlayerWalkedIn() {
 		//	return true;
 		return;
 	}
-	if (Global_Variable_Query(kVariableChapter) == 5 && !Game_Flag_Query(654)) {
+	if ( Global_Variable_Query(kVariableChapter) == 5
+	 && !Game_Flag_Query(654)
+	) {
 		if (Game_Flag_Query(653)) {
 			Actor_Says(kActorMcCoy, 2390, 0);
 			Music_Play(2, 25, 0, 3, -1, 0, 0);
@@ -176,10 +180,13 @@ void SceneScriptMA02::PlayerWalkedIn() {
 		Game_Flag_Set(654);
 		Autosave_Game(3);
 	}
-	if (Global_Variable_Query(kVariableChapter) < 4 && !Game_Flag_Query(kFlagMA04ToMA02) && Actor_Query_Goal_Number(kActorMaggie) != 2) {
+	if ( Global_Variable_Query(kVariableChapter) < 4
+	 && !Game_Flag_Query(kFlagMA04ToMA02)
+	 &&  Actor_Query_Goal_Number(kActorMaggie) != 2
+	) {
 		Actor_Set_Goal_Number(kActorMaggie, 1);
-		if (!Game_Flag_Query(60)) {
-			Game_Flag_Set(60);
+		if (!Game_Flag_Query(kFlagMA02MaggieIntroduced)) {
+			Game_Flag_Set(kFlagMA02MaggieIntroduced);
 			Actor_Face_Actor(kActorMcCoy, kActorMaggie, true);
 			Actor_Voice_Over(1210, kActorVoiceOver);
 			if (!Game_Flag_Query(kFlagDirectorsCut)) {
@@ -242,7 +249,7 @@ void SceneScriptMA02::selectNextTvNews() {
 	if (Global_Variable_Query(kVariableChapter) >= 2 && Global_Variable_Query(kVariableChapter) <= 4) {
 		arr[i++] = 3;
 	}
-	if (Game_Flag_Query(171) && Game_Flag_Query(170)) {
+	if (Game_Flag_Query(kFlagHomelessBodyFound) && Game_Flag_Query(kFlagHomelessBodyInDumpster)) {
 		arr[i++] = 4;
 	}
 	Global_Variable_Set(kVariableNextTvNews, arr[Random_Query(0, i - 1)]);

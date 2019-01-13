@@ -27,7 +27,7 @@ namespace BladeRunner {
 void SceneScriptCT09::InitializeScene() {
 	if (Game_Flag_Query(85)) {
 		Setup_Scene_Information(160.0f, 349.0f, 587.0f, 490);
-	} else if (Game_Flag_Query(81)) {
+	} else if (Game_Flag_Query(kFlagCT08toCT09)) {
 		Setup_Scene_Information(235.0f, 3348.52f, 599.0f, 800);
 	} else {
 		Setup_Scene_Information(107.0f, 348.52f, 927.0f, 200);
@@ -111,8 +111,8 @@ bool SceneScriptCT09::ClickedOnExit(int exitId) {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 235.0f, 348.52f, 599.0f, 0, 0, false, 0);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(84);
-			Set_Enter(6, kSceneCT08);
+			Game_Flag_Set(kFlagCT09toCT08);
+			Set_Enter(kSetCT08_CT51_UG12, kSceneCT08);
 		}
 		return true;
 	}
@@ -120,8 +120,8 @@ bool SceneScriptCT09::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 107.0f, 348.52f, 927.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(83);
-			Set_Enter(33, kSceneCT11);
+			Game_Flag_Set(kFlagCT09toCT11);
+			Set_Enter(kSetCT11, kSceneCT11);
 		}
 		return true;
 	}
@@ -129,8 +129,8 @@ bool SceneScriptCT09::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 159.0f, 349.0f, 570.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(82);
-			Set_Enter(32, kSceneCT10);
+			Game_Flag_Set(kFlagCT09toCT10);
+			Set_Enter(kSetCT10, kSceneCT10);
 		}
 		return true;
 	}
@@ -157,15 +157,15 @@ void SceneScriptCT09::PlayerWalkedIn() {
 		Actor_Set_Goal_Number(kActorLeon, 1);
 		v0 = true;
 	}
-	if (Game_Flag_Query(85)) {
-		Game_Flag_Reset(85);
-	} else if (Game_Flag_Query(81)) {
+	if (Game_Flag_Query(kFlagCT10toCT09)) {
+		Game_Flag_Reset(kFlagCT10toCT09);
+	} else if (Game_Flag_Query(kFlagCT08toCT09)) {
 		if (v0) {
 			Async_Actor_Walk_To_XYZ(kActorMcCoy, 206.0f, 348.52f, 599.0f, 0, false);
 		} else {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 206.0f, 348.52f, 599.0f, 0, 0, false, 0);
 		}
-		Game_Flag_Reset(81);
+		Game_Flag_Reset(kFlagCT08toCT09);
 	} else {
 		if (v0) {
 			Async_Actor_Walk_To_XYZ(kActorMcCoy, 124.0f, 348.52f, 886.0f, 0, false);

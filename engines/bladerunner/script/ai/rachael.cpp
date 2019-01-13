@@ -62,7 +62,7 @@ void AIScriptRachael::ClickedByPlayer() {
 		AI_Movement_Track_Pause(57);
 		dialogue_start();
 
-		if (Player_Query_Agenda() == 2 || Player_Query_Agenda() == 3) {
+		if (Player_Query_Agenda() == kPlayerAgendaSurly || Player_Query_Agenda() == kPlayerAgendaErratic) {
 			dialogue_agenda2();
 		} else if (Player_Query_Agenda()) {
 			if (Actor_Query_Friendliness_To_Other(kActorSteele, kActorMcCoy) > Actor_Query_Friendliness_To_Other(kActorClovis, kActorMcCoy)) {

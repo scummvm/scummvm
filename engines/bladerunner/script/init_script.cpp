@@ -111,7 +111,7 @@ void InitScript::Init_Game_Flags() {
 	}
 
 	Game_Flag_Set(182);
-	Game_Flag_Set(kFlagSpinnerToRC01);
+	Game_Flag_Set(kFlagSpinnerAtRC01);
 }
 
 void InitScript::Init_Clues() {

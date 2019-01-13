@@ -40,7 +40,7 @@ void SceneScriptHF01::InitializeScene() {
 	if (!Game_Flag_Query(663)) {
 		Scene_Exit_Add_2D_Exit(1, 304, 239, 492, 339, 0);
 		Scene_Exit_Add_2D_Exit(2, 560, 231, 639, 360, 0);
-		if (Game_Flag_Query(kFlagSpinnerToHF01)) {
+		if (Game_Flag_Query(kFlagSpinnerAtHF01)) {
 			Scene_Exit_Add_2D_Exit(3, 0, 311, 66, 417, 2);
 		}
 	}
@@ -61,7 +61,7 @@ void SceneScriptHF01::InitializeScene() {
 	Ambient_Sounds_Add_Sound(375, 10, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(376, 10, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(377, 10, 180, 50, 100, 0, 0, -101, -101, 0, 0);
-	if (Game_Flag_Query(kFlagSpinnerToHF01)) {
+	if (Game_Flag_Query(kFlagSpinnerAtHF01)) {
 		if (!Game_Flag_Query(309) && !Game_Flag_Query(311) && !Game_Flag_Query(313)) {
 			Scene_Loop_Start_Special(0, 0, 0);
 		}
@@ -75,7 +75,7 @@ void SceneScriptHF01::InitializeScene() {
 
 void SceneScriptHF01::SceneLoaded() {
 	Obstacle_Object("LOFT41", true);
-	if (!Game_Flag_Query(kFlagSpinnerToHF01)) {
+	if (!Game_Flag_Query(kFlagSpinnerAtHF01)) {
 		Unobstacle_Object("OBSTACLE BOX15", true);
 	}
 }
@@ -190,64 +190,64 @@ bool SceneScriptHF01::ClickedOnExit(int exitId) {
 			switch (spinnerDest) {
 			case 0:
 				Game_Flag_Set(178);
-				Game_Flag_Reset(kFlagSpinnerToHF01);
-				Game_Flag_Set(kFlagSpinnerToPS01);
+				Game_Flag_Reset(kFlagSpinnerAtHF01);
+				Game_Flag_Set(kFlagSpinnerAtPS01);
 				Set_Enter(61, kScenePS01);
 				Scene_Loop_Start_Special(1, 4, 1);
 				break;
 			case 1:
 				Game_Flag_Set(179);
-				Game_Flag_Reset(kFlagSpinnerToHF01);
-				Game_Flag_Set(kFlagSpinnerToMA01);
+				Game_Flag_Reset(kFlagSpinnerAtHF01);
+				Game_Flag_Set(kFlagSpinnerAtMA01);
 				Set_Enter(49, kSceneMA01);
 				Scene_Loop_Start_Special(1, 4, 1);
 				break;
 			case 2:
 				Game_Flag_Set(182);
-				Game_Flag_Reset(kFlagSpinnerToHF01);
-				Game_Flag_Set(kFlagSpinnerToRC01);
+				Game_Flag_Reset(kFlagSpinnerAtHF01);
+				Game_Flag_Set(kFlagSpinnerAtRC01);
 				Set_Enter(69, kSceneRC01);
 				Scene_Loop_Start_Special(1, 4, 1);
 				break;
 			case 3:
 				Game_Flag_Set(176);
-				Game_Flag_Reset(kFlagSpinnerToHF01);
-				Game_Flag_Set(kFlagSpinnerToCT01);
+				Game_Flag_Reset(kFlagSpinnerAtHF01);
+				Game_Flag_Set(kFlagSpinnerAtCT01);
 				Set_Enter(4, kSceneCT01);
 				Scene_Loop_Start_Special(1, 4, 1);
 				break;
 			case 5:
 				Game_Flag_Set(261);
-				Game_Flag_Reset(kFlagSpinnerToHF01);
-				Game_Flag_Set(kFlagSpinnerToTB02);
+				Game_Flag_Reset(kFlagSpinnerAtHF01);
+				Game_Flag_Set(kFlagSpinnerAtTB02);
 				Set_Enter(17, kSceneTB02);
 				Scene_Loop_Start_Special(1, 4, 1);
 				break;
 			case 4:
 				Game_Flag_Set(180);
-				Game_Flag_Reset(kFlagSpinnerToHF01);
-				Game_Flag_Set(kFlagSpinnerToAR01);
+				Game_Flag_Reset(kFlagSpinnerAtHF01);
+				Game_Flag_Set(kFlagSpinnerAtAR01);
 				Set_Enter(0, kSceneAR01);
 				Scene_Loop_Start_Special(1, 4, 1);
 				break;
 			case 7:
 				Game_Flag_Set(258);
-				Game_Flag_Reset(kFlagSpinnerToHF01);
-				Game_Flag_Set(kFlagSpinnerToBB01);
+				Game_Flag_Reset(kFlagSpinnerAtHF01);
+				Game_Flag_Set(kFlagSpinnerAtBB01);
 				Set_Enter(20, kSceneBB01);
 				Scene_Loop_Start_Special(1, 4, 1);
 				break;
 			case 6:
 				Game_Flag_Set(177);
-				Game_Flag_Reset(kFlagSpinnerToHF01);
-				Game_Flag_Set(kFlagSpinnerToDR01);
+				Game_Flag_Reset(kFlagSpinnerAtHF01);
+				Game_Flag_Set(kFlagSpinnerAtDR01);
 				Set_Enter(7, kSceneDR01);
 				Scene_Loop_Start_Special(1, 4, 1);
 				break;
 			case 8:
 				Game_Flag_Set(181);
-				Game_Flag_Reset(kFlagSpinnerToHF01);
-				Game_Flag_Set(kFlagSpinnerToNR01);
+				Game_Flag_Reset(kFlagSpinnerAtHF01);
+				Game_Flag_Set(kFlagSpinnerAtNR01);
 				Set_Enter(54, kSceneNR01);
 				Scene_Loop_Start_Special(1, 4, 1);
 				break;

@@ -407,7 +407,7 @@ DECLARE_SCRIPT(PS15)
 END_SCRIPT
 
 DECLARE_SCRIPT(RC01)
-	void investigateCrowd();
+	void interrogateCrowd();
 	void walkToCenter();
 END_SCRIPT
 

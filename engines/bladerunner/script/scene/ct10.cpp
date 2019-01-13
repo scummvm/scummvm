@@ -26,7 +26,7 @@ namespace BladeRunner {
 
 void SceneScriptCT10::InitializeScene() {
 	Setup_Scene_Information(-121.0f, 0.0f, -78.0f, 446);
-	Game_Flag_Reset(84);
+	Game_Flag_Reset(kFlagCT09toCT08); // a bug?
 	Scene_Exit_Add_2D_Exit(0, 135, 74, 238, 340, 0);
 	Ambient_Sounds_Add_Looping_Sound(336, 28, 0, 1);
 	Ambient_Sounds_Add_Sound(375, 6, 180, 33, 33, 0, 0, -101, -101, 0, 0);
@@ -120,8 +120,8 @@ bool SceneScriptCT10::ClickedOnExit(int exitId) {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -121.0f, 0.0f, -78.0f, 0, 0, false, 0);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(85);
-			Set_Enter(31, kSceneCT09);
+			Game_Flag_Set(kFlagCT10toCT09);
+			Set_Enter(kSetCT09, kSceneCT09);
 		}
 	}
 	return false;

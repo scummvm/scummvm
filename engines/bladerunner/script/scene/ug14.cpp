@@ -171,7 +171,7 @@ void SceneScriptUG14::PlayerWalkedIn() {
 		Actor_Face_Heading(kActorMcCoy, 807, false);
 		Game_Flag_Reset(347);
 	}
-	if (Global_Variable_Query(kVariableChapter) == 4 && Game_Flag_Query(172) && !Game_Flag_Query(694)) {
+	if (Global_Variable_Query(kVariableChapter) == 4 && Game_Flag_Query(kFlagDumpsterEmptied) && !Game_Flag_Query(694)) {
 		Overlay_Play("UG14OVER", 0, 0, 1, 0);
 		Delay(1000);
 		Actor_Face_Heading(kActorMcCoy, 609, false);

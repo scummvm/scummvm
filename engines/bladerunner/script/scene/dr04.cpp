@@ -27,7 +27,7 @@ namespace BladeRunner {
 void SceneScriptDR04::InitializeScene() {
 	if (Game_Flag_Query(515)) {
 		Setup_Scene_Information(0.0f, 0.0f, 0.0f, 0);
-	} else if (Game_Flag_Query(10)) {
+	} else if (Game_Flag_Query(kFlagDR01toDR04)) {
 		Setup_Scene_Information(-711.0f, -0.04f, 70.0f, 472);
 	} else if (Game_Flag_Query(229)) {
 		Setup_Scene_Information(-1067.0f, 7.18f, 421.0f, 125);
@@ -57,7 +57,7 @@ void SceneScriptDR04::InitializeScene() {
 	} else {
 		Scene_Loop_Set_Default(4);
 	}
-	if (Game_Flag_Query(10)) {
+	if (Game_Flag_Query(kFlagDR01toDR04)) {
 		if (Game_Flag_Query(272)) {
 			Scene_Loop_Start_Special(0, 0, 0);
 		} else {
@@ -137,8 +137,8 @@ bool SceneScriptDR04::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -761.0f, -0.04f, 97.0f, 0, 1, false, 0)) {
 			Async_Actor_Walk_To_XYZ(kActorMcCoy, -683.0f, -0.04f, 43.0f, 0, false);
-			Game_Flag_Set(11);
-			Set_Enter(7, kSceneDR01);
+			Game_Flag_Set(kFlagDR04toDR01);
+			Set_Enter(kSetDR01_DR02_DR04, kSceneDR01);
 		}
 		return true;
 	}
@@ -252,7 +252,7 @@ void SceneScriptDR04::PlayerWalkedIn() {
 			Footstep_Sound_Override_Off();
 		}
 	}
-	Game_Flag_Reset(10);
+	Game_Flag_Reset(kFlagDR01toDR04);
 	Game_Flag_Reset(229);
 	Game_Flag_Reset(231);
 }

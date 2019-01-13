@@ -357,44 +357,43 @@ void AIScriptSteele::ClickedByPlayer() {
 
 void AIScriptSteele::EnteredScene(int sceneId) {
 	if (Actor_Query_Goal_Number(kActorSteele) == 2) {
-		if (Game_Flag_Query(147) || Random_Query(1, 3) != 1) {
-			if (Game_Flag_Query(148) || Random_Query(1, 3) != 1) {
-				if (!Game_Flag_Query(149) && Random_Query(1, 20) == 1) {
-					Actor_Clue_Acquire(kActorSteele, 7, 1, -1);
-					Game_Flag_Set(149);
-
-					if (Game_Flag_Query(709))
-						Item_Remove_From_World(98);
-				}
-			} else {
-				Actor_Clue_Acquire(kActorSteele, 6, 1, -1);
-				Game_Flag_Set(148);
-
-				if (Game_Flag_Query(709))
-					Item_Remove_From_World(79);
-			}
-		} else {
+		if (!Game_Flag_Query(147) && Random_Query(1, 3) == 1) {
 			Actor_Clue_Acquire(kActorSteele, 8, 1, -1);
 			Game_Flag_Set(147);
 
-			if (Game_Flag_Query(709))
+			if (Game_Flag_Query(709)) {
 				Item_Remove_From_World(82);
+			}
 
 			Global_Variable_Increment(14, 1);
+		} else if (!Game_Flag_Query(148) && Random_Query(1, 3) == 1) {
+			Actor_Clue_Acquire(kActorSteele, 6, 1, -1);
+			Game_Flag_Set(148);
+
+			if (Game_Flag_Query(709)) {
+				Item_Remove_From_World(79);
+			}
+		} else if (!Game_Flag_Query(149) && Random_Query(1, 20) == 1) {
+			Actor_Clue_Acquire(kActorSteele, 7, 1, -1);
+			Game_Flag_Set(149);
+
+			if (Game_Flag_Query(709)) {
+				Item_Remove_From_World(98);
+			}
 		}
 	}
 
-	if (Actor_Query_Goal_Number(kActorSteele) != 5
-			|| !Actor_Query_In_Set(kActorSteele, kSetCT03_CT04)
-			|| !Game_Flag_Query(kFlagHomelessShot)
-			|| Game_Flag_Query(170)
-			|| Game_Flag_Query(171)) {
-		return; //false;
+	if ( Actor_Query_Goal_Number(kActorSteele) == 5
+	 &&  Actor_Query_In_Set(kActorSteele, kSetCT03_CT04)
+	 &&  Game_Flag_Query(kFlagMcCoyKilledHomeless)
+	 && !Game_Flag_Query(kFlagHomelessBodyInDumpster)
+	 && !Game_Flag_Query(kFlagHomelessBodyFound)
+	) {
+		Game_Flag_Set(kFlagHomelessBodyFound);
+		return; //true;
 	}
 
-	Game_Flag_Set(171);
-
-	return; //true;
+	return; //false;
 }
 
 void AIScriptSteele::OtherAgentEnteredThisScene(int otherActorId) {

@@ -29,14 +29,6 @@ class BladeRunnerEngine;
 class SaveFileReadStream;
 class SaveFileWriteStream;
 
-enum PlayerAgenda {
-	kPlayerAgendaPolite = 0,
-	kPlayerAgendaNormal = 1,
-	kPlayerAgendaSurly = 2,
-	kPlayerAgendaErratic = 3,
-	kPlayerAgendaUserChoice = 4
-};
-
 class Settings {
 	BladeRunnerEngine *_vm;
 

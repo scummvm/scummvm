@@ -292,7 +292,7 @@ bool Debugger::cmdSay(int argc, const char **argv) {
 	int sentenceId = atoi(argv[2]);
 
 	Actor *actor = nullptr;
-	if (actorId >= 0 && actorId < (int)_vm->_gameInfo->getActorCount()) {
+	if ((actorId >= 0 && actorId < (int)_vm->_gameInfo->getActorCount()) || (actorId == kActorVoiceOver)) {
 		actor = _vm->_actors[actorId];
 	}
 

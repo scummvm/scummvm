@@ -46,7 +46,7 @@ void SceneScriptUG13::InitializeScene() {
 	Ambient_Sounds_Add_Sound(369, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
 	Ambient_Sounds_Add_Sound(397, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
 	Ambient_Sounds_Add_Sound(398, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
-	if (Global_Variable_Query(kVariableChapter) == 4 && !Game_Flag_Query(kFlagHomelessShot)) {
+	if (Global_Variable_Query(kVariableChapter) == 4 && !Game_Flag_Query(kFlagMcCoyKilledHomeless)) {
 		Actor_Set_Goal_Number(kActorTransient, 390);
 	}
 	if (Actor_Query_Goal_Number(kActorTransient) == 599) {
@@ -72,7 +72,7 @@ void SceneScriptUG13::SceneLoaded() {
 	Clickable_Object("BASKET");
 	Clickable_Object("BOLLARD");
 	Unclickable_Object("BASKET");
-	if (Global_Variable_Query(kVariableChapter) >= 3 && !Actor_Clue_Query(kActorMcCoy, kClueOriginalRequisitionForm) && Game_Flag_Query(kFlagHomelessShot) && (Actor_Clue_Query(kActorMcCoy, kClueShippingForm) || Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm))) {
+	if (Global_Variable_Query(kVariableChapter) >= 3 && !Actor_Clue_Query(kActorMcCoy, kClueOriginalRequisitionForm) && Game_Flag_Query(kFlagMcCoyKilledHomeless) && (Actor_Clue_Query(kActorMcCoy, kClueShippingForm) || Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm))) {
 		Item_Add_To_World(111, 958, 85, -209.01f, 70.76f, -351.79f, 0, 16, 12, false, true, false, true);
 	}
 }
@@ -234,7 +234,7 @@ void SceneScriptUG13::PlayerWalkedIn() {
 		Game_Flag_Reset(429);
 		Player_Gains_Control();
 	}
-	if (Actor_Query_Goal_Number(kActorTransient) >= 390 && !Game_Flag_Query(kFlagHomelessShot)) {
+	if (Actor_Query_Goal_Number(kActorTransient) >= 390 && !Game_Flag_Query(kFlagMcCoyKilledHomeless)) {
 		if (Game_Flag_Query(553)) {
 			if (Random_Query(1, 3) == 1) {
 				Actor_Set_Goal_Number(kActorTransient, 395);

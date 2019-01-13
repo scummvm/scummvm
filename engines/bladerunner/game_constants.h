@@ -439,39 +439,68 @@ enum SpinnerDestinations {
 };
 
 enum Flags {
+	// 0 is never checked
 	kFlagRC02Discovered = 1,
+	// 2 is never used
 	kFlagGotOfficersStatement = 3,
 	kFlagRC02FirstLeave = 4,
+	// 5 is never used
+	kFlagRunciterInterviewA = 6,
+	// 7 is never used
 	kFlagRC01toRC02 = 8,
 	kFlagRC02toRC01 = 9,
+	kFlagDR01toDR04 = 10,
+	kFlagDR04toDR01 = 11,
 	kFlagKleinTalkShellCasings = 12,
 	kFlagKleinTalkOfficersStatement = 13,
+	kFlagPS10toPS11 = 14,
+	kFlagPS11toPS10 = 15,
+	kFlagPS11toPS12 = 16,
+	kFlagPS12toPS11 = 17, // is never checked
+	kFlagPS12toPS13 = 18,
 	kFlagPS13toPS12 = 19,
+	// 20 is never used
 	kFlagPS13toPS05 = 21,
 	kFlagPS02toPS05 = 22,
 	kFlagPS06toPS05 = 23,
 	kFlagIntroPlayed = 24,
 	kFlagCT01Visited = 25,
+	kFlagCT01McCoyTalkedToHowieLee = 26,
+	kFlagCT01Evidence1Linked = 27,
+	kFlagCT01Evidence2Linked = 28,
 	kFlagCT01ZubenLeft = 29,
+	// 30 is never set
+	kFlagCT01ZubenGone = 31,
+	kFlagCT01McCoyTalkedToGordo = 32,
 	kFlagMA02toMA06 = 33,
 	kFlagMA06ToMA02 = 34,
 	kFlagMA02ToMA04 = 35,
 	kFlagMA04ToMA02 = 36,
 	kFlagMA01toMA06 = 37,
 	kFlagMA06toMA01 = 38,
+	kFlagPS04toPS03 = 39,
 	kFlagZubenRetired = 40,
 	kFlagZubenSpared = 41,
+	kFlagPS03toPS04 = 42,
+	kFlagPS15Entered = 43,
 	kFlagIzoIsReplicant = 44,
 	kFlagGordoIsReplicant = 45,
 	kFlagLucyIsReplicant = 46,
 	kFlagDektoraIsReplicant = 47,
 	kFlagSadikIsReplicant = 48,
+
 	kFlagMA07toMA06 = 57,
 	kFlagMA06toMA07 = 58,
 	kFlagCT02ZubenTalk = 59,
 	kFlagChapter1Ended = 61,
+	kFlagMA02MaggieIntroduced = 60,
+	// 61 is never used
 	kFlagMA04toMA05 = 62,
 	kFlagMA05toMA04 = 63,
+
+	// 65 is never used
+	// 66 is never used
+	// 67 is never used
 	kFlagCT02toCT01 = 68,
 	kFlagCT02toCT03 = 69,
 	kFlagCT03toCT02 = 70,
@@ -484,17 +513,48 @@ enum Flags {
 	kFlagCT05toCT06 = 77,
 	kFlagCT06toCT05 = 78,
 	kFlagCT06toCT08 = 79,
+	kFlagCT08toCT06 = 80, // is never checked
+	kFlagCT08toCT09 = 81,
+	kFlagCT09toCT10 = 82, // is never checked
+	kFlagCT09toCT11 = 83, // is never checked
+	kFlagCT09toCT08 = 84, // is never checked
+	kFlagCT10toCT09 = 85,
+	kFlagCT11toCT12 = 86,
+	// 87 is never used
 	kFlagCT12toCT01 = 88,
 	kFlagCT12toCT03 = 89,
 	kFlagCT12toCT05 = 90,
 	kFlagCT12toCT11 = 91,
+	// 92 is never used
+	// 93 is never used
 	kFlagWarehouseOpen = 94,
+	kFlagTB05toTB02 = 95,
+	kFlagTB02toTB05 = 96, // is never checked
+	kFlagTB05toTB06 = 97, // is never checked
+	kFlagTB06toTB05 = 98,
+
+	// 103 is never set
 	kFlagKleinTalkPaintTransfer = 104,
 	kFlagKleinTalkChromeDebris = 105,
+	kFlagIsabellaIntroduced = 105,
+	kFlagHC04toRC03 = 107,
+	kFlagRC03toHC04 = 108,
+	kFlagHC04toHC02 = 109,
+	kFlagHC02toHC04 = 110,
 	kFlagKleinTalkClues = 111,
+	// 112 is never used
+	// 113 is never used
 	kFlagRC03toRC01 = 114,
 	kFlagRC01toRC03 = 115,
+	kFlagRC03toAR02 = 116,
+	kFlagAR02toRC03 = 117,
+	kFlagRC03toUG01 = 118,
+	kFlagUG01toRC03 = 119,
+	kFlagRC03toRC04 = 120, // is never checked
+	kFlagRC04toRC03 = 121,
+	// 122 is never used
 	kFlagCT01toCT12 = 123,
+	// 122 is never used
 	kFlagPlayerHasShellCasings = 125,
 	kFlagPlayerHasOfficersStatement = 126,
 	kFlagPlayerHasPaintTransfer = 127,
@@ -507,36 +567,55 @@ enum Flags {
 	kFlagPS05toPS06 = 136,
 	kFlagHomelessTalkedTo = 137,
 	kFlagKleinInsulted = 138,
+	// 140 is never used
 	kFlagRC02LucyDeskAvailable = 141,
+	// 142 is never checked
+	// 143 is never used
 	kFlagCT07toCT06 = 144,
+
 	kFlagChapter1Ending = 146,
 	kFlagChopstickWrapperTaken = 147,
 	kFlagCandyTaken = 148,
 	kFlagDogTaken = 149,
+	// 150 has no use
+	kFlagRC03UnlockedToUG01 = 151,
+	kFlagUG15toUG16 = 152,
+	kFlagUG16toUG15 = 153,
+	kFlagTB02toTB03 = 154, // is never checked
+	kFlagTB03toTB02 = 155,
 	kFlagKleinInsultedTalk = 156,
+	// 157 is never used
+
 	kFlagGuzzaTalkZubenRetired = 159,
 	kFlagGuzzaTalkZubenEscaped = 160,
+
 	kFlagChromeDebrisTaken = 163,
-	kFlagHomelessShot = 169,
+	kFlagMcCoyKilledHomeless = 169,
+	kFlagHomelessBodyInDumpster = 170,
+	kFlagHomelessBodyFound = 171,
+	kFlagDumpsterEmptied = 172,
+	kFlagHomelessBodyInDumpsterNotChecked = 173, // is never checked
+	kFlagLicensePlaceFound = 174,
 	kFlagRC01PoliceDone = 186,
+	kFlagRC02TalkedToRunciter = 187,
 	kFlagShellCasingsTaken = 190,
 	kFlagBoughtHowieLeeFood = 192,
 	kFlagPS15toPS05 = 204,
 	kFlagCT02ZubenFled = 210,
 	kFlagCT02toCT01walk = 234,
 	kFlagArrivedFromSpinner = 247,
-	kFlagSpinnerToCT01 = 248,
-	kFlagSpinnerToRC01 = 249,
-	kFlagSpinnerToMA01 = 250,
-	kFlagSpinnerToPS01 = 251,
-	kFlagSpinnerToAR01 = 252,
-	kFlagSpinnerToDR01 = 253,
-	kFlagSpinnerToBB01 = 254,
-	kFlagSpinnerToNR01 = 255,
-	kFlagSpinnerToHF01 = 256,
+	kFlagSpinnerAtCT01 = 248,
+	kFlagSpinnerAtRC01 = 249,
+	kFlagSpinnerAtMA01 = 250,
+	kFlagSpinnerAtPS01 = 251,
+	kFlagSpinnerAtAR01 = 252,
+	kFlagSpinnerAtDR01 = 253,
+	kFlagSpinnerAtBB01 = 254,
+	kFlagSpinnerAtNR01 = 255,
+	kFlagSpinnerAtHF01 = 256,
 	kFlagCT02PotTipped = 293,
 	kFlagGaffSpinnerCT12 = 294,
-	kFlagSpinnerToTB02 = 307,
+	kFlagSpinnerAtTB02 = 307,
 	kFlagDirectorsCut = 378,
 	KFlagMcCoyAndOfficerLearyTalking = 392,
 	KFlagMcCoyAndOfficerLearyArtMetaphor = 397,
@@ -961,6 +1040,14 @@ enum PoliceMazeTrackInstruction {
 	kPMTI26 = 0
 };
 
+enum PlayerAgenda {
+	kPlayerAgendaPolite = 0,
+	kPlayerAgendaNormal = 1,
+	kPlayerAgendaSurly = 2,
+	kPlayerAgendaErratic = 3,
+	kPlayerAgendaUserChoice = 4
+};
+
 enum GoalMcCoy {
 	kGoalMcCoyDefault = 0,
 	kGoalMcCoyDodge = 1
@@ -989,7 +1076,11 @@ enum GoalZuben {
 	kGoalZubenFled = 20,
 	kGoalZubenMA01AttackMcCoy = 21,
 	kGoalZubenDead = 599
+};
 
+enum GoalOfficerLeary {
+	kGoalOfficerLearyDefault = 0,
+	kGoalOfficerLearyCrowdInterrogation = 1
 };
 
 } // End of namespace BladeRunner

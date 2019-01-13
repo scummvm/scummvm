@@ -25,10 +25,10 @@
 namespace BladeRunner {
 
 void SceneScriptPS11::InitializeScene() {
-	if (Game_Flag_Query(14)) {
+	if (Game_Flag_Query(kFlagPS10toPS11)) {
 		Scene_Loop_Start_Special(0, 0, 0);
 		Scene_Loop_Set_Default(1);
-		Game_Flag_Reset(14);
+		Game_Flag_Reset(kFlagPS10toPS11);
 		Setup_Scene_Information(World_Waypoint_Query_X(6), World_Waypoint_Query_Y(6), World_Waypoint_Query_Z(6), 840);
 	} else {
 		Scene_Loop_Set_Default(1);
@@ -224,19 +224,19 @@ bool SceneScriptPS11::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptPS11::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 6, 12, 1, false)) {
-			Game_Flag_Set(15);
+			Game_Flag_Set(kFlagPS11toPS10);
 			sub_402744();
-			Set_Enter(14, kScenePS10);
+			Set_Enter(kSetPS10_PS11_PS12_PS13, kScenePS10);
 		}
 		return true;
 	}
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 8, 12, 1, false)) {
-			Game_Flag_Set(16);
+			Game_Flag_Set(kFlagPS11toPS12);
 			sub_402744();
 			Global_Variable_Decrement(9, 20 - Global_Variable_Query(11));
 			Global_Variable_Set(11, 20);
-			Set_Enter(14, kScenePS12);
+			Set_Enter(kSetPS10_PS11_PS12_PS13, kScenePS12);
 		}
 		return true;
 	}

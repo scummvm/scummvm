@@ -25,10 +25,10 @@
 namespace BladeRunner {
 
 void SceneScriptTB05::InitializeScene() {
-	if (Game_Flag_Query(98)) {
+	if (Game_Flag_Query(kFlagTB06toTB05)) {
 		Setup_Scene_Information(23.0f, 151.53f, -205.0f, 450);
 		Game_Flag_Set(102);
-		Game_Flag_Reset(98);
+		Game_Flag_Reset(kFlagTB06toTB05);
 	} else {
 		Setup_Scene_Information(14.0f, 151.53f, -77.0f, 6);
 	}
@@ -150,16 +150,16 @@ bool SceneScriptTB05::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptTB05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 23.0f, 151.53f, -205.0f, 12, 1, false, 0)) {
-			Game_Flag_Set(97);
-			Set_Enter(73, kSceneTB06);
+			Game_Flag_Set(kFlagTB05toTB06);
+			Set_Enter(kSetTB06, kSceneTB06);
 			Scene_Loop_Start_Special(1, 2, 1);
 		}
 		return true;
 	}
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 14.0f, 147.12f, 123.0f, 0, 1, false, 0)) {
-			Game_Flag_Set(95);
-			Set_Enter(17, kSceneTB02);
+			Game_Flag_Set(kFlagTB05toTB02);
+			Set_Enter(kSetTB02_TB03, kSceneTB02);
 		}
 		return true;
 	}

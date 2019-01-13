@@ -319,7 +319,7 @@ static const int *getPoliceMazePS10TrackData9() {
 
 void SceneScriptPS10::InitializeScene() {
 	Police_Maze_Set_Pause_State(true);
-	if (Game_Flag_Query(15)) {
+	if (Game_Flag_Query(kFlagPS11toPS10)) {
 		float x = World_Waypoint_Query_X(4);
 		float y = World_Waypoint_Query_Y(4);
 		float z = World_Waypoint_Query_Z(4);
@@ -469,7 +469,7 @@ bool SceneScriptPS10::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptPS10::ClickedOnExit(int exitId) {
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 6, 12, true, false)) {
-			Game_Flag_Set(14);
+			Game_Flag_Set(kFlagPS10toPS11);
 			removeTargets();
 			Global_Variable_Decrement(kVariablePoliceMazeScore, kPoliceMazePS10TargetCount - Global_Variable_Query(kVariablePoliceMazePS10TargetCounter));
 			Global_Variable_Set(kVariablePoliceMazePS10TargetCounter, kPoliceMazePS10TargetCount);
@@ -492,10 +492,10 @@ void SceneScriptPS10::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptPS10::PlayerWalkedIn() {
-	if (Game_Flag_Query(15)) {
+	if (Game_Flag_Query(kFlagPS11toPS10)) {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -352.09f, -9.23f, 267.95f, 0, false, true, 0);
 		Police_Maze_Set_Pause_State(false);
-		Game_Flag_Reset(15);
+		Game_Flag_Reset(kFlagPS11toPS10);
 		//return true;
 		return;
 	} else {

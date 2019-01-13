@@ -175,7 +175,7 @@ bool AIScriptMutant3::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Append(kActorMutant3, 39, 0);
 		AI_Movement_Track_Repeat(kActorMutant3);
 
-		if (Game_Flag_Query(kFlagHomelessShot)) {
+		if (Game_Flag_Query(kFlagMcCoyKilledHomeless)) {
 			Actor_Set_Combat_Aggressiveness(kActorMutant3, 80);
 			Actor_Set_Friendliness_To_Other(kActorMutant3, kActorMcCoy, 20);
 		}
@@ -345,7 +345,7 @@ bool AIScriptMutant3::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Set_Intelligence(kActorMutant3, 40);
 		Actor_Set_Health(kActorMutant3, 10 * Query_Difficulty_Level() + 50, 10 * Query_Difficulty_Level() + 50);
 
-		if (Game_Flag_Query(kFlagHomelessShot)) {
+		if (Game_Flag_Query(kFlagMcCoyKilledHomeless)) {
 			Actor_Set_Combat_Aggressiveness(kActorMutant3, 80);
 			Actor_Set_Friendliness_To_Other(kActorMutant3, kActorMcCoy, 20);
 		} else {

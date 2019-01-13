@@ -62,7 +62,7 @@ void SceneScriptCT04::SceneLoaded() {
 	if (Game_Flag_Query(kFlagCT03toCT04)) {
 		Game_Flag_Reset(kFlagCT03toCT04);
 	}
-	if (!Actor_Query_Goal_Number(kActorTransient)) {
+	if (Actor_Query_Goal_Number(kActorTransient) == kGoalTransientDefault) {
 		Actor_Change_Animation_Mode(kActorTransient, 38);
 	}
 }
@@ -73,56 +73,63 @@ bool SceneScriptCT04::MouseClick(int x, int y) {
 
 bool SceneScriptCT04::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (objectName) { // this can be only "DUMPSTER"
-		if (!Game_Flag_Query(kFlagHomelessTalkedTo) && !Game_Flag_Query(kFlagHomelessShot) && Actor_Query_Goal_Number(kActorTransient) == kGoalTransientDefault) {
+		if (!Game_Flag_Query(kFlagHomelessTalkedTo)
+		 && !Game_Flag_Query(kFlagMcCoyKilledHomeless)
+		 &&  Actor_Query_Goal_Number(kActorTransient) == kGoalTransientDefault
+		) {
 			Game_Flag_Set(kFlagHomelessTalkedTo);
 			Actor_Set_Goal_Number(kActorTransient, kGoalTransientCT04Leave);
 		}
-		if (Game_Flag_Query(kFlagHomelessShot) && !Game_Flag_Query(170) && !Game_Flag_Query(171) && !Game_Flag_Query(172) && Global_Variable_Query(kVariableChapter) == 1) {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -147.41f, -621.3f, 724.57f, 0, 1, false, 0)) {
+		if ( Game_Flag_Query(kFlagMcCoyKilledHomeless)
+		 && !Game_Flag_Query(kFlagHomelessBodyInDumpster)
+		 && !Game_Flag_Query(kFlagHomelessBodyFound)
+		 && !Game_Flag_Query(kFlagDumpsterEmptied)
+		 &&  Global_Variable_Query(kVariableChapter) == 1
+		) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -147.41f, -621.3f, 724.57f, 0, true, false, 0)) {
 				Player_Loses_Control();
 				Actor_Face_Heading(kActorMcCoy, 792, false);
-				Actor_Put_In_Set(kActorTransient, 99);
+				Actor_Put_In_Set(kActorTransient, kSetFreeSlotI);
 				Actor_Set_At_XYZ(kActorTransient, 0, 0, 0, 0);
 				Actor_Change_Animation_Mode(kActorMcCoy, 40);
 				Actor_Voice_Over(320, kActorVoiceOver);
 				Actor_Voice_Over(330, kActorVoiceOver);
 				Actor_Voice_Over(340, kActorVoiceOver);
-				Game_Flag_Set(170);
-				Game_Flag_Set(173);
+				Game_Flag_Set(kFlagHomelessBodyInDumpster);
+				Game_Flag_Set(kFlagHomelessBodyInDumpsterNotChecked);
 			}
 			return false;
 		}
-		if (Game_Flag_Query(170)) {
-			if (Game_Flag_Query(172)) {
+		if (Game_Flag_Query(kFlagHomelessBodyInDumpster)) {
+			if (Game_Flag_Query(kFlagDumpsterEmptied)) {
 				Actor_Voice_Over(270, kActorVoiceOver);
 				Actor_Voice_Over(280, kActorVoiceOver);
-			} else if (Game_Flag_Query(171)) {
+			} else if (Game_Flag_Query(kFlagHomelessBodyFound)) {
 				Actor_Voice_Over(250, kActorVoiceOver);
 				Actor_Voice_Over(260, kActorVoiceOver);
 			} else {
 				Actor_Voice_Over(230, kActorVoiceOver);
 				Actor_Voice_Over(240, kActorVoiceOver);
-				Game_Flag_Reset(173);
+				Game_Flag_Reset(kFlagHomelessBodyInDumpsterNotChecked);
 			}
 			return true;
 		}
-		if (Game_Flag_Query(174)) {
-			if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 75, 0, 1, false)) {
+		if (Game_Flag_Query(kFlagLicensePlaceFound)) {
+			if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 75, 0, true, false)) {
 				Actor_Face_Heading(kActorMcCoy, 707, false);
 				Actor_Change_Animation_Mode(kActorMcCoy, 38);
-				Ambient_Sounds_Play_Sound(553, 45, 30, 30, 0);
-				Actor_Voice_Over(1810, kActorVoiceOver);
-				Actor_Voice_Over(1820, kActorVoiceOver);
+				Actor_Clue_Acquire(kActorMcCoy, kClueLicensePlate, 1, -1);
+				Item_Pickup_Spin_Effect(952, 392, 225);
+				Game_Flag_Set(kFlagLicensePlaceFound);
 				return true;
 			}
-			return false;
 		}
-		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 75, 0, 1, false)) {
+		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 75, 0, true, false)) {
 			Actor_Face_Heading(kActorMcCoy, 707, false);
 			Actor_Change_Animation_Mode(kActorMcCoy, 38);
-			Actor_Clue_Acquire(kActorMcCoy, kClueLicensePlate, 1, -1);
-			Item_Pickup_Spin_Effect(952, 392, 225);
-			Game_Flag_Set(174);
+			Ambient_Sounds_Play_Sound(553, 45, 30, 30, 0);
+			Actor_Voice_Over(1810, kActorVoiceOver);
+			Actor_Voice_Over(1820, kActorVoiceOver);
 			return true;
 		}
 	}
@@ -154,7 +161,7 @@ void SceneScriptCT04::dialogueWithHomeless() {
 
 bool SceneScriptCT04::ClickedOnActor(int actorId) {
 	if (actorId == kActorTransient) {
-		if (Game_Flag_Query(kFlagHomelessShot)) {
+		if (Game_Flag_Query(kFlagMcCoyKilledHomeless)) {
 			if (!Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorTransient, 36, true, false)) {
 				Actor_Voice_Over(290, kActorVoiceOver);
 				Actor_Voice_Over(300, kActorVoiceOver);
@@ -166,11 +173,11 @@ bool SceneScriptCT04::ClickedOnActor(int actorId) {
 				Actor_Face_Actor(kActorMcCoy, kActorTransient, true);
 				if (!Game_Flag_Query(kFlagHomelessTalkedTo)) {
 					if (Game_Flag_Query(kFlagZubenRetired)) {
-						Actor_Says(kActorMcCoy, 435, 3);
+						Actor_Says(kActorMcCoy, 435, kAnimationModeTalk);
 						Actor_Set_Goal_Number(kActorTransient, kGoalTransientCT04Leave);
 					} else {
 						Music_Stop(3);
-						Actor_Says(kActorMcCoy, 425, 3);
+						Actor_Says(kActorMcCoy, 425, kAnimationModeTalk);
 						Actor_Says(kActorTransient, 0, 13);
 						dialogueWithHomeless();
 						Actor_Set_Goal_Number(kActorTransient, kGoalTransientCT04Leave);
@@ -178,7 +185,7 @@ bool SceneScriptCT04::ClickedOnActor(int actorId) {
 					Game_Flag_Set(kFlagHomelessTalkedTo);
 				} else {
 					Actor_Face_Actor(kActorMcCoy, kActorTransient, true);
-					Actor_Says(kActorMcCoy, 435, 3);
+					Actor_Says(kActorMcCoy, 435, kAnimationModeTalk);
 				}
 			}
 		}

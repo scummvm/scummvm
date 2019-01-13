@@ -26,7 +26,7 @@ namespace BladeRunner {
 
 void SceneScriptPS12::InitializeScene() {
 	Police_Maze_Set_Pause_State(true);
-	if (Game_Flag_Query(16)) {
+	if (Game_Flag_Query(kFlagPS11toPS12)) {
 		Scene_Loop_Start_Special(0, 0, 0);
 		Scene_Loop_Set_Default(1);
 		Setup_Scene_Information(World_Waypoint_Query_X(8), World_Waypoint_Query_Y(8), World_Waypoint_Query_Z(8), 512);
@@ -233,9 +233,9 @@ bool SceneScriptPS12::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptPS12::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 8, 12, 1, false)) {
-			Game_Flag_Set(17);
+			Game_Flag_Set(kFlagPS12toPS11);
 			sub_4028C4();
-			Set_Enter(14, kScenePS11);
+			Set_Enter(kSetPS10_PS11_PS12_PS13, kScenePS11);
 		}
 		return true;
 	}
@@ -244,11 +244,11 @@ bool SceneScriptPS12::ClickedOnExit(int exitId) {
 			Player_Loses_Control();
 			Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 10, 12, 0, false);
 			Player_Gains_Control();
-			Game_Flag_Set(18);
+			Game_Flag_Set(kFlagPS12toPS13);
 			sub_4028C4();
 			Global_Variable_Decrement(9, 20 - Global_Variable_Query(12));
 			Global_Variable_Set(12, 20);
-			Set_Enter(14, kScenePS13);
+			Set_Enter(kSetPS10_PS11_PS12_PS13, kScenePS13);
 		}
 		return true;
 	}
@@ -266,9 +266,9 @@ void SceneScriptPS12::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptPS12::PlayerWalkedIn() {
-	if (Game_Flag_Query(16)) {
+	if (Game_Flag_Query(kFlagPS11toPS12)) {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -546.0f, -9.06f, 570.0f, 0, 1, false, 0);
-		Game_Flag_Reset(16);
+		Game_Flag_Reset(kFlagPS11toPS12);
 	}
 	Police_Maze_Set_Pause_State(false);
 }

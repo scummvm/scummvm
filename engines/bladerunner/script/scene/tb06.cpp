@@ -127,8 +127,8 @@ bool SceneScriptTB06::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptTB06::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -16.0f, 149.0f, -427.0f, 12, 1, false, 0)) {
-			Game_Flag_Set(98);
-			Set_Enter(72, kSceneTB05);
+			Game_Flag_Set(kFlagTB06toTB05);
+			Set_Enter(kSetTB05, kSceneTB05);
 			Scene_Loop_Start_Special(1, 2, 1);
 		}
 		return true;

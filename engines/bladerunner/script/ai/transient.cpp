@@ -40,20 +40,41 @@ void AIScriptTransient::Initialize() {
 }
 
 bool AIScriptTransient::Update() {
-	if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_Which_Set_In(kActorTransient) != kSetFreeSlotG) {
+	if (Global_Variable_Query(kVariableChapter) == 5
+	 && Actor_Query_Which_Set_In(kActorTransient) != kSetFreeSlotG
+	) {
 		Actor_Put_In_Set(kActorTransient, kSetFreeSlotG);
 		Actor_Set_At_Waypoint(kActorTransient, 39, false);
 	}
-	if (Global_Variable_Query(kVariableChapter) == 2 && (Actor_Query_Goal_Number(kActorTransient) == kGoalTransientDefault || Actor_Query_Goal_Number(kActorTransient) == 10)) {
+
+	if (Global_Variable_Query(kVariableChapter) == 2
+	 && (Actor_Query_Goal_Number(kActorTransient) == kGoalTransientDefault
+	  || Actor_Query_Goal_Number(kActorTransient) == 10
+	 )
+	) {
 		Actor_Set_Goal_Number(kActorTransient, 200);
 	}
-	if (Global_Variable_Query(kVariableChapter) == 3 && Game_Flag_Query(kFlagHomelessShot) && Game_Flag_Query(170) && !Game_Flag_Query(171) && !Game_Flag_Query(172)) {
-		Game_Flag_Set(172);
+
+	if ( Global_Variable_Query(kVariableChapter) == 3
+	 &&  Game_Flag_Query(kFlagMcCoyKilledHomeless)
+	 &&  Game_Flag_Query(kFlagHomelessBodyInDumpster)
+	 && !Game_Flag_Query(kFlagHomelessBodyFound)
+	 && !Game_Flag_Query(kFlagDumpsterEmptied)
+	) {
+		Game_Flag_Set(kFlagDumpsterEmptied);
 	}
-	if (Global_Variable_Query(kVariableChapter) < 4 && Game_Flag_Query(171) && Actor_Query_Goal_Number(kActorTransient) != 6 && Actor_Query_Goal_Number(kActorTransient) != 599) {
+
+	if (Global_Variable_Query(kVariableChapter) < 4
+	 && Game_Flag_Query(kFlagHomelessBodyFound)
+	 && Actor_Query_Goal_Number(kActorTransient) != 6
+	 && Actor_Query_Goal_Number(kActorTransient) != 599
+	) {
 		Actor_Set_Goal_Number(kActorTransient, 6);
 	}
-	if (Player_Query_Current_Scene() == kSceneCT04 && !Game_Flag_Query(kFlagCT04HomelessTrashFinish)) {
+
+	if ( Player_Query_Current_Scene() == kSceneCT04
+	 && !Game_Flag_Query(kFlagCT04HomelessTrashFinish)
+	) {
 		Game_Flag_Set(kFlagCT04HomelessTrashFinish);
 		AI_Countdown_Timer_Reset(kActorTransient, 1);
 		AI_Countdown_Timer_Start(kActorTransient, 1, 12);
@@ -83,7 +104,7 @@ void AIScriptTransient::TimerExpired(int timer) {
 		}
 	}
 	if (timer == 1) {
-		if (Actor_Query_Goal_Number(kActorTransient) == kGoalTransientDefault) {
+		if (Actor_Query_Goal_Number(kActorTransient) == kGoalTransientDefault) { // stop diggin the trash
 			Actor_Set_Goal_Number(kActorTransient, 10);
 			Actor_Change_Animation_Mode(kActorTransient, kAnimationModeIdle);
 		}
@@ -142,7 +163,7 @@ bool AIScriptTransient::ShotAtAndHit() {
 		Actor_Set_Goal_Number(kActorTransient, 599);
 	}
 
-	Game_Flag_Set(kFlagHomelessShot);
+	Game_Flag_Set(kFlagMcCoyKilledHomeless);
 
 	return false;
 }

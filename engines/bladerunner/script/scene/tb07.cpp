@@ -96,56 +96,56 @@ bool SceneScriptTB07::ClickedOnExit(int exitId) {
 				switch (Spinner_Interface_Choose_Dest(-1, 0)) {
 				case 9:
 					Game_Flag_Set(257);
-					Game_Flag_Reset(kFlagSpinnerToTB02);
-					Game_Flag_Set(kFlagSpinnerToHF01);
+					Game_Flag_Reset(kFlagSpinnerAtTB02);
+					Game_Flag_Set(kFlagSpinnerAtHF01);
 					Set_Enter(37, kSceneHF01);
 					break;
 				case 8:
 					Game_Flag_Set(181);
-					Game_Flag_Reset(kFlagSpinnerToTB02);
-					Game_Flag_Set(kFlagSpinnerToNR01);
+					Game_Flag_Reset(kFlagSpinnerAtTB02);
+					Game_Flag_Set(kFlagSpinnerAtNR01);
 					Set_Enter(54, kSceneNR01);
 					break;
 				case 7:
 					Game_Flag_Set(258);
-					Game_Flag_Reset(kFlagSpinnerToTB02);
-					Game_Flag_Set(kFlagSpinnerToBB01);
+					Game_Flag_Reset(kFlagSpinnerAtTB02);
+					Game_Flag_Set(kFlagSpinnerAtBB01);
 					Set_Enter(20, kSceneBB01);
 					break;
 				case 6:
 					Game_Flag_Set(177);
-					Game_Flag_Reset(kFlagSpinnerToTB02);
-					Game_Flag_Set(kFlagSpinnerToDR01);
+					Game_Flag_Reset(kFlagSpinnerAtTB02);
+					Game_Flag_Set(kFlagSpinnerAtDR01);
 					Set_Enter(7, kSceneDR01);
 					break;
 				case 4:
 					Game_Flag_Set(180);
-					Game_Flag_Reset(kFlagSpinnerToTB02);
-					Game_Flag_Set(kFlagSpinnerToAR01);
+					Game_Flag_Reset(kFlagSpinnerAtTB02);
+					Game_Flag_Set(kFlagSpinnerAtAR01);
 					Set_Enter(0, kSceneAR01);
 					break;
 				case 3:
 					Game_Flag_Set(176);
-					Game_Flag_Reset(kFlagSpinnerToTB02);
-					Game_Flag_Set(kFlagSpinnerToCT01);
+					Game_Flag_Reset(kFlagSpinnerAtTB02);
+					Game_Flag_Set(kFlagSpinnerAtCT01);
 					Set_Enter(4, kSceneCT01);
 					break;
 				case 2:
 					Game_Flag_Set(182);
-					Game_Flag_Reset(kFlagSpinnerToTB02);
-					Game_Flag_Set(kFlagSpinnerToRC01);
+					Game_Flag_Reset(kFlagSpinnerAtTB02);
+					Game_Flag_Set(kFlagSpinnerAtRC01);
 					Set_Enter(69, kSceneRC01);
 					break;
 				case 1:
 					Game_Flag_Set(179);
-					Game_Flag_Reset(kFlagSpinnerToTB02);
-					Game_Flag_Set(kFlagSpinnerToMA01);
+					Game_Flag_Reset(kFlagSpinnerAtTB02);
+					Game_Flag_Set(kFlagSpinnerAtMA01);
 					Set_Enter(49, kSceneMA01);
 					break;
 				case 0:
 					Game_Flag_Set(178);
-					Game_Flag_Reset(kFlagSpinnerToTB02);
-					Game_Flag_Set(kFlagSpinnerToPS01);
+					Game_Flag_Reset(kFlagSpinnerAtTB02);
+					Game_Flag_Set(kFlagSpinnerAtPS01);
 					Set_Enter(61, kScenePS01);
 					break;
 				default:

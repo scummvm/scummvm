@@ -301,7 +301,7 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorGordo);
 		break;
 	case 90:
-		Game_Flag_Set(32);
+		Game_Flag_Set(kFlagCT01McCoyTalkedToGordo);
 		Actor_Set_Goal_Number(kActorGordo, 99);
 		Actor_Change_Animation_Mode(kActorGordo, 29);
 		break;
@@ -1579,7 +1579,7 @@ void AIScriptGordo::sub_41090C() {
 		Actor_Says(kActorGordo, 370, 13);
 		Actor_Says(kActorGordo, 380, 12);
 		Actor_Says(kActorGordo, 390, 14);
-		if (Player_Query_Agenda() == 2) {
+		if (Player_Query_Agenda() == kPlayerAgendaSurly) {
 			Actor_Says(kActorMcCoy, 3265, 13);
 			Actor_Says(kActorGordo, 400, 12);
 			Actor_Modify_Friendliness_To_Other(kActorGordo, kActorMcCoy, -3);

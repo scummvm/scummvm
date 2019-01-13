@@ -33,7 +33,7 @@ void SceneScriptCT12::InitializeScene() {
 			Game_Flag_Set(150);
 		}
 		Game_Flag_Reset(432);
-	} else if (Game_Flag_Query(86)) {
+	} else if (Game_Flag_Query(kFlagCT11toCT12)) {
 		Setup_Scene_Information(-493.0f, -6.5f, 1174.0f, 990);
 	} else {
 		Setup_Scene_Information(-386.13f, -6.5f, 1132.72f, 783);
@@ -64,13 +64,13 @@ void SceneScriptCT12::InitializeScene() {
 		Actor_Set_At_XYZ(kActorGaff, -534.0f, -6.5f, 952.0f, 367);
 		Game_Flag_Set(kFlagGaffSpinnerCT12);
 	}
-	if (Game_Flag_Query(kFlagCT01toCT12) && Game_Flag_Query(kFlagSpinnerToCT01)) {
+	if (Game_Flag_Query(kFlagCT01toCT12) && Game_Flag_Query(kFlagSpinnerAtCT01)) {
 		if (Global_Variable_Query(kVariableChapter) != 2 && Global_Variable_Query(kVariableChapter) != 3) {
 			Scene_Loop_Start_Special(0, 1, 0);
 		}
 		Scene_Loop_Set_Default(2);
 		Game_Flag_Reset(kFlagCT01toCT12);
-	} else if (Game_Flag_Query(kFlagCT01toCT12) && !Game_Flag_Query(kFlagSpinnerToCT01)) {
+	} else if (Game_Flag_Query(kFlagCT01toCT12) && !Game_Flag_Query(kFlagSpinnerAtCT01)) {
 		if (Global_Variable_Query(kVariableChapter) != 2 && Global_Variable_Query(kVariableChapter) != 3) {
 			Scene_Loop_Start_Special(0, 0, 0);
 		}
@@ -264,9 +264,9 @@ void SceneScriptCT12::PlayerWalkedIn() {
 		}
 		Actor_Set_Goal_Number(kActorGaff, 2);
 	}
-	if (Game_Flag_Query(86)) {
+	if (Game_Flag_Query(kFlagCT11toCT12)) {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -520.0f, -6.5f, 1103.0f, 0, 0, false, 0);
-		Game_Flag_Reset(86);
+		Game_Flag_Reset(kFlagCT11toCT12);
 	}
 }
 

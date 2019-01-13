@@ -25,9 +25,9 @@
 namespace BladeRunner {
 
 void SceneScriptHC04::InitializeScene() {
-	if (Game_Flag_Query(108)) {
+	if (Game_Flag_Query(kFlagRC03toHC04)) {
 		Setup_Scene_Information(-112.0f, 0.14f, -655.0f, 460);
-		Game_Flag_Reset(108);
+		Game_Flag_Reset(kFlagRC03toHC04);
 	} else {
 		Setup_Scene_Information(-88.0f, 0.14f, -463.0f, 1013);
 	}
@@ -59,10 +59,10 @@ void SceneScriptHC04::InitializeScene() {
 	Ambient_Sounds_Add_Sound(260, 3, 60, 16, 16, -100, -100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(261, 3, 60, 16, 16, -100, -100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(262, 3, 60, 16, 16, -100, -100, -101, -101, 0, 0);
-	if (Game_Flag_Query(110)) {
+	if (Game_Flag_Query(kFlagHC02toHC04)) {
 		Scene_Loop_Start_Special(0, 0, 0);
 		Scene_Loop_Set_Default(1);
-		Game_Flag_Reset(110);
+		Game_Flag_Reset(kFlagHC02toHC04);
 	} else {
 		Scene_Loop_Set_Default(1);
 	}
@@ -87,14 +87,14 @@ bool SceneScriptHC04::ClickedOnActor(int actorId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -155.0f, 0.0f, -475.0f, 12, 1, false, 0)) {
 			Actor_Face_Actor(kActorMcCoy, kActorIsabella, true);
 			Actor_Face_Actor(kActorIsabella, kActorMcCoy, true);
-			if (Game_Flag_Query(106)) {
+			if (Game_Flag_Query(kFlagIsabellaIntroduced)) {
 				sub_401B90();
 				return true;
 			} else {
 				Actor_Says(kActorIsabella, 0, 3);
 				Actor_Says(kActorMcCoy, 1280, 3);
 				Actor_Says(kActorIsabella, 20, 3);
-				Game_Flag_Set(106);
+				Game_Flag_Set(kFlagIsabellaIntroduced);
 				return true;
 			}
 		}
@@ -110,17 +110,17 @@ bool SceneScriptHC04::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -108.0f, 0.14f, -639.0f, 0, 1, false, 0)) {
 			Music_Stop(2);
-			Game_Flag_Set(107);
+			Game_Flag_Set(kFlagHC04toRC03);
 			Game_Flag_Reset(479);
 			Game_Flag_Set(182);
-			Set_Enter(70, kSceneRC03);
+			Set_Enter(kSetRC03, kSceneRC03);
 		}
 		return true;
 	}
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -72.0f, 0.14f, -399.0f, 0, 1, false, 0)) {
-			Game_Flag_Set(109);
-			Set_Enter(8, kSceneHC02);
+			Game_Flag_Set(kFlagHC04toHC02);
+			Set_Enter(kSetHC01_HC02_HC03_HC04, kSceneHC02);
 		}
 		return true;
 	}
