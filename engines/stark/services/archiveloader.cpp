@@ -139,7 +139,7 @@ Common::String ArchiveLoader::buildArchiveName(Resources::Level *level, Resource
 	return archive;
 }
 
-Common::SeekableReadStream *ArchiveLoader::getExternalFile(const Common::String &fileName, const Common::String &archiveName) const {
+Common::String ArchiveLoader::getExternalFilePath(const Common::String &fileName, const Common::String &archiveName) const {
 	static const char separator = '/';
 
 	// Build a path of the type 45/00/
@@ -149,7 +149,11 @@ Common::SeekableReadStream *ArchiveLoader::getExternalFile(const Common::String 
 	}
 	filePath += "xarc/" + fileName;
 
-	// Open the file
+	return filePath;
+}
+
+Common::SeekableReadStream *ArchiveLoader::getExternalFile(const Common::String &fileName, const Common::String &archiveName) const {
+	Common::String filePath = getExternalFilePath(fileName, archiveName);
 	return SearchMan.createReadStreamForMember(filePath);
 }
 

@@ -31,6 +31,7 @@
 namespace Stark {
 
 class Visual;
+class VisualImageXMG;
 namespace Formats {
 class XRCReadStream;
 }
@@ -108,6 +109,8 @@ protected:
 
 	// Image API
 	void initVisual() override;
+
+	bool loadPNGOverride(Stark::VisualImageXMG *visual) const;
 
 	bool _noName;
 };

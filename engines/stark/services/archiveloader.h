@@ -88,6 +88,7 @@ public:
 
 	/** Retrieve a file relative to a specified archive */
 	Common::SeekableReadStream *getExternalFile(const Common::String &fileName, const Common::String &archiveName) const;
+	Common::String getExternalFilePath(const Common::String &fileName, const Common::String &archiveName) const;
 
 private:
 	class LoadedArchive {

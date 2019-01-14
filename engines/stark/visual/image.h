@@ -50,7 +50,21 @@ public:
 	explicit VisualImageXMG(Gfx::Driver *gfx);
 	~VisualImageXMG() override;
 
+	/**
+	 * Load the pixel data from a XMG image
+	 */
 	void load(Common::ReadStream *stream);
+
+	/**
+	 * Load the size from an XMG image
+	 */
+	void readOriginalSize(Common::ReadStream *stream);
+
+	/**
+	 * Load the pixel data from a PNG image
+	 */
+	bool loadPNG(Common::SeekableReadStream *stream);
+
 	void render(const Common::Point &position, bool useOffset);
 	void render(const Common::Point &position, bool useOffset, bool unscaled);
 
@@ -83,6 +97,8 @@ private:
 	Gfx::Texture *_texture;
 	Graphics::Surface *_surface;
 	Common::Point _hotspot;
+	uint _originalWidth;
+	uint _originalHeight;
 };
 
 } // End of namespace Stark

@@ -84,4 +84,8 @@ void Settings::setIntSetting(IntSettingIndex index, int value) {
 	_mixer->setVolumeForSoundType(type, value);
 }
 
+bool Settings::isAssetsModEnabled() const {
+	return ConfMan.getBool("enable_assets_mod");
+}
+
 } // End of namespace Stark

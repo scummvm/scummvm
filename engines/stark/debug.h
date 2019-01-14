@@ -27,7 +27,8 @@ enum {
 	kDebugArchive = 1 << 0,
 	kDebugXMG = 1 << 1,
 	kDebugXRC = 1 << 2,
-	kDebugUnknown = 1 << 3
+	kDebugModding = 1 << 3,
+	kDebugUnknown = 1 << 4
 };
 
 #endif // STARK_DEBUG_H

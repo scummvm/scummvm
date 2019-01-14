@@ -23,9 +23,12 @@
 #include "engines/stark/resources/image.h"
 
 #include "common/debug.h"
+#include "image/png.h"
 
+#include "engines/stark/debug.h"
 #include "engines/stark/formats/xrc.h"
 #include "engines/stark/services/archiveloader.h"
+#include "engines/stark/services/settings.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/visual/effects/bubbles.h"
 #include "engines/stark/visual/effects/fireflies.h"
@@ -208,15 +211,48 @@ void ImageStill::initVisual() {
 		return; // No file to load
 	}
 
-	Common::ReadStream *stream = StarkArchiveLoader->getFile(_filename, _archiveName);
+	Common::ReadStream *xmgStream = StarkArchiveLoader->getFile(_filename, _archiveName);
 
-	VisualImageXMG *xmg = new VisualImageXMG(StarkGfx);
-	xmg->load(stream);
-	xmg->setHotSpot(_hotspot);
+	VisualImageXMG *visual = new VisualImageXMG(StarkGfx);
 
-	_visual = xmg;
+	if (StarkSettings->isAssetsModEnabled() && loadPNGOverride(visual)) {
+		visual->readOriginalSize(xmgStream);
+	} else {
+		visual->load(xmgStream);
+	}
 
-	delete stream;
+	visual->setHotSpot(_hotspot);
+
+	_visual = visual;
+
+	delete xmgStream;
+}
+
+bool ImageStill::loadPNGOverride(VisualImageXMG *visual) const {
+	if (!_filename.hasSuffixIgnoreCase(".xmg")) {
+		return false;
+	}
+
+	Common::String pngFilename = Common::String(_filename.c_str(), _filename.size() - 4) + ".png";
+	Common::String pngFilePath = StarkArchiveLoader->getExternalFilePath(pngFilename, _archiveName);
+
+	debugC(kDebugModding, "Attempting to load %s", pngFilePath.c_str());
+
+	Common::SeekableReadStream *pngStream = SearchMan.createReadStreamForMember(pngFilePath);
+	if (!pngStream) {
+		return false;
+	}
+
+	if (!visual->loadPNG(pngStream)) {
+		warning("Failed to load %s. It is not a valid PNG file.", pngFilePath.c_str());
+		delete pngStream;
+		return false;
+	}
+
+	debugC(kDebugModding, "Loaded %s", pngFilePath.c_str());
+
+	delete pngStream;
+	return true;
 }
 
 void ImageStill::printData() {

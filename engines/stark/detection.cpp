@@ -27,6 +27,7 @@
 
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 namespace Stark {
 
@@ -296,11 +297,27 @@ static const ADFileBasedFallback fileBasedFallback[] = {
 	{NULL, {NULL}}
 };*/
 
+#define GAMEOPTION_ASSETS_MOD GUIO_GAMEOPTIONS1
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_ASSETS_MOD,
+		{
+			_s("Load modded assets"),
+			_s("Enable loading of external replacement assets."),
+			"enable_assets_mod",
+			true
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 class StarkMetaEngine : public AdvancedMetaEngine {
 public:
-	StarkMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(ADGameDescription), starkGames) {
+	StarkMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(ADGameDescription), starkGames, optionsList) {
 		_singleId = "stark";
-		_guiOptions = GUIO1(GUIO_NOMIDI);
+		_guiOptions = GUIO2(GUIO_NOMIDI, GAMEOPTION_ASSETS_MOD);
 	}
 
 	const char *getName() const override {

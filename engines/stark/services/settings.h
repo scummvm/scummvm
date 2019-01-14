@@ -94,6 +94,9 @@ public:
 	/** Check whether the book of secrets is enabled */
 	bool hasBookOfSecrets() { return ConfMan.hasKey("xoBfOsterceS"); }
 
+	/** Should the game try to load external replacement assets? */
+	bool isAssetsModEnabled() const;
+
 private:
 	Audio::Mixer *_mixer;
 	bool _hasLowRes;

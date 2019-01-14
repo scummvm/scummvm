@@ -38,16 +38,18 @@ namespace Formats {
 class XMGDecoder {
 public:
 	static Graphics::Surface *decode(Common::ReadStream *stream);
+	static void readSize(Common::ReadStream *stream, uint32 &width, uint32 &height);
 
 private:
-	XMGDecoder();
+	explicit XMGDecoder(Common::ReadStream *stream);
 
 	struct Block {
 		uint32 a1, a2;
 		uint32 b1, b2;
 	};
 
-	Graphics::Surface *decodeImage(Common::ReadStream *stream);
+	void readHeader();
+	Graphics::Surface *decodeImage();
 	Block decodeBlock(byte op);
 	void drawBlock(const Block &block, Graphics::Surface *surface);
 

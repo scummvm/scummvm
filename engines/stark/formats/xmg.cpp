@@ -33,55 +33,64 @@
 namespace Stark {
 namespace Formats {
 
-XMGDecoder::XMGDecoder() :
+XMGDecoder::XMGDecoder(Common::ReadStream *stream) :
 		_width(0),
 		_height(0),
 		_currX(0),
 		_currY(0),
-		_stream(nullptr),
+		_stream(stream),
 		_transColor(0) {
 }
 
 Graphics::Surface *XMGDecoder::decode(Common::ReadStream *stream) {
-	XMGDecoder dec;
-	return dec.decodeImage(stream);
+	XMGDecoder dec(stream);
+	dec.readHeader();
+	return dec.decodeImage();
 }
 
-Graphics::Surface *XMGDecoder::decodeImage(Common::ReadStream *stream) {
-	_stream = stream;
+void XMGDecoder::readSize(Common::ReadStream *stream, uint &width, uint &height) {
+	XMGDecoder dec(stream);
+	dec.readHeader();
 
+	width = dec._width;
+	height = dec._height;
+}
+
+void XMGDecoder::readHeader() {
 	// Read the file version
-	uint32 version = stream->readUint32LE();
+	uint32 version = _stream->readUint32LE();
 	if (version != 3) {
 		error("Stark::XMG: File version unknown: %d", version);
 	}
 
 	// Read the transparency color (RGBA)
-	_transColor = stream->readUint32LE();
+	_transColor = _stream->readUint32LE();
 
 	// Read the image size
-	_width = stream->readUint32LE();
-	_height = stream->readUint32LE();
+	_width = _stream->readUint32LE();
+	_height = _stream->readUint32LE();
 	debugC(10, kDebugXMG, "Stark::XMG: Version=%d, TransparencyColor=0x%08x, size=%dx%d", version, _transColor, _width, _height);
 
 	// Read the scan length
-	uint32 scanLen = stream->readUint32LE();
+	uint32 scanLen = _stream->readUint32LE();
 	if (scanLen != 3 * _width) {
 		error("Stark::XMG: The scan length (%d) doesn't match the width bytes (%d)", scanLen, 3 * _width);
 	}
 
 	// Unknown
-	uint32 unknown2 = stream->readUint32LE();
+	uint32 unknown2 = _stream->readUint32LE();
 	debugC(kDebugUnknown, "Stark::XMG: unknown2 = %08x = %d", unknown2, unknown2);
-	uint32 unknown3 = stream->readUint32LE();
+	uint32 unknown3 = _stream->readUint32LE();
 	debugC(kDebugUnknown, "Stark::XMG: unknown3 = %08x = %d", unknown3, unknown3);
+}
 
+Graphics::Surface *XMGDecoder::decodeImage() {
 	// Create the destination surface
 	Graphics::Surface *surface = new Graphics::Surface();
 	surface->create(_width, _height, Gfx::Driver::getRGBAPixelFormat());
 
 	_currX = 0, _currY = 0;
-	while (!stream->eos()) {
+	while (!_stream->eos()) {
 		if (_currX >= _width) {
 			assert(_currX == _width);
 			_currX = 0;
@@ -91,12 +100,12 @@ Graphics::Surface *XMGDecoder::decodeImage(Common::ReadStream *stream) {
 		}
 
 		// Read the number and mode of the tiles
-		byte op = stream->readByte();
+		byte op = _stream->readByte();
 		uint16 count;
 		if ((op & 0xC0) != 0xC0) {
 			count = op & 0x3F;
 		} else {
-			count = ((op & 0xF) << 8) + stream->readByte();
+			count = ((op & 0xF) << 8) + _stream->readByte();
 			op <<= 2;
 		}
 		op &= 0xC0;
