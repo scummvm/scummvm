@@ -54,10 +54,10 @@ void Dragons::PriorityLayer::load(TileMap &tileMap, byte *tiles) {
 int16 PriorityLayer::getPriority(Common::Point pos) {
 	pos.x = CLIP<int16>(pos.x, 0, _width - 1);
 	pos.y = CLIP<int16>(pos.y, 0, _height - 1);
-	const int16 tx = pos.x / 32, sx = pos.x % 32;
-	const int16 ty = pos.y / 8, sy = pos.y % 8;
-	uint16 mapIndex = READ_LE_UINT16(_map + 2 * (tx + ty * _mapWidth)) - 1;
-	return _values[mapIndex * 32 * 8 + sx + sy * 32];
+	const int16 tx = pos.x / TILE_WIDTH, sx = pos.x % TILE_WIDTH;
+	const int16 ty = pos.y / TILE_HEIGHT, sy = pos.y % TILE_HEIGHT;
+	uint16 mapIndex = READ_LE_UINT16(_map + 2 * (tx + ty * _mapWidth));
+	return _values[mapIndex * 32 * 8 + sx + sy * 32] + 1;
 
 }
 
@@ -73,7 +73,7 @@ bool Background::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	stream.seek(0x308);
 
 	uint32 tilemapOffset = 0x324;
-	TileMap tileMap[3];
+	TileMap tileMap[4];
 	for(int i=0;i< 3;i++) {
 		tileMap[i].w = stream.readUint16LE();
 		tileMap[i].h = stream.readUint16LE();
@@ -87,10 +87,17 @@ bool Background::load(byte *dataStart, Common::SeekableReadStream &stream) {
 
 	uint32 finalSize = stream.readUint32LE();
 
-	_priorityLayer = new PriorityLayer();
-	_priorityLayer->load(tileMap[0], dataStart + tilemapOffset);
+	tileMap[3].w = tileMap[0].w;
+	tileMap[3].h = tileMap[0].h;
+	tileMap[3].size = tileMap[0].size;
+	tileMap[3].map = dataStart + tilemapOffset;
+	tileMap[3].tileIndexOffset = tileindexOffset;
 
 	uint32 tilesOffset = tilemapOffset + finalSize;
+
+	_priorityLayer = new PriorityLayer();
+	_priorityLayer->load(tileMap[3], dataStart + tilesOffset);
+
 	debug("Tiles: %X", tilesOffset);
 	debug("tileIndexOffset: %d", tileMap[0].tileIndexOffset);
 	_bgLayer = loadGfxLayer(tileMap[0], dataStart + tilesOffset);

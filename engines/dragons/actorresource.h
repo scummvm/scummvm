@@ -32,8 +32,8 @@ class ActorResource;
 struct ActorFrame {
 	int16 xOffset;
 	int16 yOffset;
-	uint8 width;
-	uint8 height;
+	uint16 width;
+	uint16 height;
 	byte *frameDataOffset;
 	uint16 flags;
 	uint16 field_c;
@@ -61,8 +61,7 @@ private:
 
 public:
 	bool load(uint32 id, byte *dataStart, Common::SeekableReadStream &stream);
-	Graphics::Surface *loadFrame(uint16 frameNumber);
-	Graphics::Surface *loadFrame(ActorFrame &frameNumber);
+	Graphics::Surface *loadFrame(ActorFrame &frameNumber, byte *palette);
 	ActorFrame *loadFrameHeader(uint16 frameOffset);
 
 	ActorFrame *getFrameHeader(uint16 frameNumber);
@@ -71,7 +70,7 @@ public:
 	const char *getFilename();
 
 private:
-	void writePixelBlock(byte *pixels, byte *data);
+	void writePixelBlock(byte *pixels, byte *data, byte *palette);
 };
 
 } // End of namespace Dragons
