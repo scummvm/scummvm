@@ -25,6 +25,7 @@
 #include "common/error.h"
 #include "actor.h"
 #include "actorresource.h"
+#include "background.h"
 #include "bigfile.h"
 #include "dragonrms.h"
 #include "dragonini.h"
@@ -37,6 +38,12 @@ namespace Dragons {
 
 #define DRAGONS_TICK_INTERVAL 17
 
+static DragonsEngine *_engine = nullptr;
+
+DragonsEngine *getEngine() {
+	return _engine;
+}
+
 DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	_bigfileArchive = NULL;
 	_dragonRMS = NULL;
@@ -46,6 +53,8 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	_flags = 0;
 	_unkFlags1 = 0;
 	_sequenceOpcodes = new SequenceOpcodes(this);
+	_engine = this;
+	_cursorPosition = Common::Point();
 }
 
 DragonsEngine::~DragonsEngine() {
@@ -74,6 +83,25 @@ Common::Error DragonsEngine::run() {
 	_actorManager = new ActorManager(actorResourceLoader);
 	_scene = new Scene(this, _screen, _bigfileArchive, _actorManager, _dragonRMS, _dragonINIResource);
 	_flags = 0x1046;
+
+	Actor *cursor = _actorManager->loadActor(0, 0); //Load cursor
+	cursor->x_pos = _cursorPosition.x = 160;
+	cursor->y_pos = _cursorPosition.y = 100;
+	cursor->priorityLayer = 6;
+	cursor->flags = 0;
+	cursor->field_e = 0x100;
+	cursor->updateSequence(0);
+	cursor->flags |= (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_80 | Dragons::ACTOR_FLAG_100 | Dragons::ACTOR_FLAG_200);
+
+	Actor *inventory = _actorManager->loadActor(1, 1); //Load inventory
+	inventory->x_pos = 2;
+	inventory->y_pos = 0;
+	inventory->priorityLayer = 6;
+	inventory->flags = 0;
+	inventory->field_e = 0x100;
+	inventory->updateSequence(0);
+	inventory->flags |= (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_80 | Dragons::ACTOR_FLAG_100 | Dragons::ACTOR_FLAG_200);
+
 
 	_scene->loadScene(0x12, 0x1e);
 
@@ -115,20 +143,20 @@ void DragonsEngine::updateHandler() {
 				DragonINI *flicker = _dragonINIResource->getFlickerRecord();
 				if (flicker && _scene->contains(flicker) && flicker->actor->_actorID == i) {
 					if (priority < 8 || priority == 0x10) {
-						actor->field16 = priority;
+						actor->priorityLayer = priority;
 					}
 				} else {
 					if (priority != -1) {
-						actor->field16 = priority;
+						actor->priorityLayer = priority;
 					}
 				}
 
-				if (actor->field16 >= 0x11) {
-					actor->field16 = 0;
+				if (actor->priorityLayer >= 0x11) {
+					actor->priorityLayer = 0;
 				}
 
-				if (actor->field16 >= 9) {
-					actor->field16 -= 8;
+				if (actor->priorityLayer >= 9) {
+					actor->priorityLayer -= 8;
 				}
 			}
 
@@ -258,6 +286,11 @@ void DragonsEngine::setUnkFlags(uint32 flags) {
 
 void DragonsEngine::clearUnkFlags(uint32 flags) {
 	_unkFlags1 &= ~flags;
+}
+
+byte *DragonsEngine::getBackgroundPalette() {
+	assert(_scene);
+	return _scene->getPalette();
 }
 
 } // End of namespace Dragons

@@ -20,6 +20,7 @@
  *
  */
 #include <common/debug.h>
+#include "dragons.h"
 #include "actorresource.h"
 #include "actor.h"
 
@@ -32,10 +33,10 @@ ActorManager::ActorManager(ActorResourceLoader *actorResourceLoader) : _actorRes
 }
 
 
-Actor *ActorManager::loadActor(uint32 resourceId, uint32 sequenceId, int16 x, int16 y, uint16 field16) {
+Actor *ActorManager::loadActor(uint32 resourceId, uint32 sequenceId, int16 x, int16 y, uint16 priorityLayer) {
 	Actor *actor = loadActor(resourceId, sequenceId, x, y);
 	if(actor) {
-		actor->field16 = field16;
+		actor->priorityLayer = priorityLayer;
 	}
 	return actor;
 }
@@ -79,12 +80,18 @@ void ActorManager::clearActorFlags(uint16 startingActorId) {
 	}
 }
 
+Actor *ActorManager::loadActor(uint32 resourceId, uint16 actorId) {
+	Actor *actor = getActor(actorId);
+	actor->_actorResource = _actorResourceLoader->load(resourceId);
+	return actor;
+}
+
 Actor::Actor(uint16 id) : _actorID(id) {
 	_actorResource = NULL;
 	resourceID = -1;
 	_seqCodeIp = 0;
 	frame_pointer_maybe = NULL;
-	field16 = 3;
+	priorityLayer = 3;
 	x_pos = 160;
 	y_pos = 110;
 	target_x_pos = 0;
@@ -100,13 +107,14 @@ Actor::Actor(uint16 id) : _actorID(id) {
 }
 
 void Actor::init(ActorResource *resource, int16 x, int16 y, uint32 sequenceID) {
+	debug(3, "actor %d Init", _actorID);
 	_actorResource = resource;
 	x_pos = x;
 	y_pos = y;
 	sequenceTimer = 0;
 	target_x_pos = x;
 	target_y_pos = y;
-	var_e = 0x100;
+	field_e = 0x100;
 	_sequenceID2 = 0;
 	flags = (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_4);
 	frame_width = 0;
@@ -115,12 +123,6 @@ void Actor::init(ActorResource *resource, int16 x, int16 y, uint32 sequenceID) {
 	//TODO sub_80017010();
 
 	updateSequence((uint16)sequenceID);
-}
-
-Graphics::Surface *Actor::getCurrentFrame() {
-	frame_vram_x = _actorResource->getFrameHeader(sequenceTimer)->xOffset;
-	frame_vram_y = _actorResource->getFrameHeader(sequenceTimer)->yOffset;
-	return _actorResource->loadFrame(sequenceTimer);
 }
 
 void Actor::updateSequence(uint16 newSequenceID) {
@@ -142,9 +144,18 @@ void Actor::loadFrame(uint16 frameOffset) {
 	}
 
 	frame = _actorResource->loadFrameHeader(frameOffset);
-	surface = _actorResource->loadFrame(*frame);
+	uint16 paletteId = 0;
+	if (flags & Dragons::ACTOR_FLAG_4000) {
+		paletteId = 0xf7;
+	} else if (flags & Dragons::ACTOR_FLAG_8000) {
+		paletteId = 0xf1;
+	} else {
+		paletteId = 0;
+	}
 
-	debug(3, "load frame header: (%d,%d)", frame->width, frame->height);
+	surface = _actorResource->loadFrame(*frame, NULL); // TODO paletteId == 0xf1 ? getEngine()->getBackgroundPalette() : NULL);
+
+	debug(3, "ActorId: %d load frame header: (%d,%d) palette: %X", _actorID, frame->width, frame->height, paletteId);
 
 }
 

@@ -41,6 +41,8 @@ public:
 	void copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect srcRect);
 	void copyRectToSurface(const void *buffer, int srcPitch, int destX, int destY, int width, int height);
 	void updateScreen();
+private:
+	Common::Rect clipRectToScreen(int destX, int destY, const Common::Rect rect);
 };
 
 } // End of namespace Dragons

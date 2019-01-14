@@ -79,30 +79,28 @@ bool ActorResource::load(uint32 id, byte *dataStart, Common::SeekableReadStream 
 		_frames[i].frameDataOffset = &dataStart[frameDataOffset];
 		_frames[i].flags = stream.readUint16LE();
 		_frames[i].field_c = stream.readUint16LE();
-//		debug("Frame[%d] field_0: %d field_2: %d (%d, %d) offset: %X, flags: %X field_c: %d",
-//				i, _frames[i].field_0, _frames[i].field_2, _frames[i].width, _frames[i].height, frameDataOffset, _frames[i].flags, _frames[i].field_c);
+		debug("Frame[%d] @%X, xOffset: %d field_2: %d (%d, %d) offset: %X, flags: %X field_c: %d",
+				i, offset, _frames[i].xOffset, _frames[i].yOffset, _frames[i].width, _frames[i].height, frameDataOffset, _frames[i].flags, _frames[i].field_c);
 	}
 
 	return false;
 }
 
-void ActorResource::writePixelBlock(byte *pixels, byte *data) {
-	pixels[0] = _palette[data[0] * 2];
-	pixels[1] = _palette[data[0] * 2 + 1];
-	pixels[2] = _palette[data[1] * 2];
-	pixels[3] = _palette[data[1] * 2 + 1];
-	pixels[4] = _palette[data[2] * 2];
-	pixels[5] = _palette[data[2] * 2 + 1];
-	pixels[6] = _palette[data[3] * 2];
-	pixels[7] = _palette[data[3] *2 + 1];
+void ActorResource::writePixelBlock(byte *pixels, byte *data, byte *palette) {
+	pixels[0] = palette[data[0] * 2];
+	pixels[1] = palette[data[0] * 2 + 1];
+	pixels[2] = palette[data[1] * 2];
+	pixels[3] = palette[data[1] * 2 + 1];
+	pixels[4] = palette[data[2] * 2];
+	pixels[5] = palette[data[2] * 2 + 1];
+	pixels[6] = palette[data[3] * 2];
+	pixels[7] = palette[data[3] * 2 + 1];
 }
 
-Graphics::Surface *ActorResource::loadFrame(uint16 frameNumber) {
-	assert (frameNumber < _framesCount);
-	return loadFrame(_frames[frameNumber]);
-}
-
-Graphics::Surface *ActorResource::loadFrame(ActorFrame &actorFrame) {
+Graphics::Surface *ActorResource::loadFrame(ActorFrame &actorFrame, byte *palette) {
+	if (!palette) {
+		palette = _palette;
+	}
 
 	Graphics::Surface *surface = new Graphics::Surface();
 	Graphics::PixelFormat pixelFormat16(2, 5, 5, 5, 1, 10, 5, 0, 15); //TODO move this to a better location.
@@ -128,7 +126,7 @@ Graphics::Surface *ActorResource::loadFrame(ActorFrame &actorFrame) {
 			if (size != 0) {
 				for(int32 i = size; i != 0; i--) {
 					//TODO clean up this copy.
-					writePixelBlock(pixels, data);
+					writePixelBlock(pixels, data, palette);
 
 					data += 4;
 					pixels += 8;
@@ -143,11 +141,11 @@ Graphics::Surface *ActorResource::loadFrame(ActorFrame &actorFrame) {
 			if (size != 0) {
 				for(int32 i = size; i != 0; i--) {
 					//TODO write bytes to pixel data.
-					writePixelBlock(pixels, data);
+					writePixelBlock(pixels, data, palette);
 					pixels += 8;
 				}
-				data += 4;
 			}
+			data += 4;
 		}
 	}
 

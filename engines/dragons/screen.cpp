@@ -48,7 +48,19 @@ void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, i
 }
 
 void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect srcRect) {
-	copyRectToSurface(srcSurface.getBasePtr(srcRect.left, srcRect.top), srcSurface.pitch, destX, destY, srcRect.width(), srcRect.height());
+	Common::Rect clipRect = clipRectToScreen( destX,  destY, srcRect);
+	if (clipRect.width() == 0 || clipRect.height() == 0) {
+		return;
+	}
+
+	if (destX < 0) {
+		destX = 0;
+	}
+	if (destY < 0) {
+		destY = 0;
+	}
+
+	copyRectToSurface(srcSurface.getBasePtr(clipRect.left, clipRect.top), srcSurface.pitch, destX, destY, clipRect.width(), clipRect.height());
 }
 
 void Screen::copyRectToSurface(const void *buffer, int srcPitch, int destX, int destY, int width, int height) {
@@ -73,6 +85,41 @@ void Screen::copyRectToSurface(const void *buffer, int srcPitch, int destX, int 
 		src += srcPitch;
 		dst += _backSurface->pitch;
 	}
+}
+
+Common::Rect Screen::clipRectToScreen(int destX, int destY, const Common::Rect rect) {
+	int16 x, y, w, h;
+	x = rect.left;
+	y = rect.top;
+	w = rect.width();
+	h = rect.height();
+
+	if (destX >= 320) {
+		w = 0;
+	}
+
+	if (destY >= 200) {
+		h = 0;
+	}
+
+	if (destX < 0) {
+		w += destX;
+		x += destX;
+	}
+
+	if (destY < 0) {
+		h += destY;
+		y += destY;
+	}
+
+	if (destX + w >= 320) {
+		w -= (destX + w) - 320;
+	}
+
+	if (destY + h >= 200) {
+		h -= (destY + h) - 200;
+	}
+	return Common::Rect(x, y, x + w, y + h);
 }
 
 } // End of namespace Dragons

@@ -97,6 +97,7 @@ private:
 	uint32 _nextUpdatetime;
 	uint32 _flags;
 	uint32 _unkFlags1;
+	Common::Point _cursorPosition;
 
 public:
 	DragonsEngine(OSystem *syst);
@@ -116,12 +117,16 @@ public:
 	void setUnkFlags(uint32 flags);
 	void clearUnkFlags(uint32 flags);
 
+	byte *getBackgroundPalette();
+
 private:
 	void gameLoop();
 	void updateHandler();
 	uint32 calulateTimeLeft();
 	void wait();
 };
+
+DragonsEngine *getEngine();
 
 } // End of namespace Dragons
 

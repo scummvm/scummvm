@@ -145,27 +145,36 @@ void Scene::loadScene(uint32 sceneId, uint32 cameraPointId) {
 
 void Scene::draw() {
 	Common::Rect rect(_camera.x, _camera.y, 320, 200);
-	_screen->copyRectToSurface(*_stage->getBgLayer(), 0, 0, rect);
-	_screen->copyRectToSurface(*_stage->getMgLayer(), 0, 0, rect);
-	_screen->copyRectToSurface(*_stage->getFgLayer(), 0, 0, rect);
-	for(int i=0;i < _dragonINIResource->totalRecords(); i++) {
-		DragonINI *ini = _dragonINIResource->getRecord(i);
-		if (ini->sceneId == _currentSceneId && (ini->field_1a_flags_maybe & 1)) {
-			Actor *actor = ini->actor;
+
+	for(uint16 priority = 1; priority < 16; priority++) {
+		if (priority == 1) {
+			_screen->copyRectToSurface(*_stage->getBgLayer(), 0, 0, rect);
+		} else if (priority == 2) {
+			_screen->copyRectToSurface(*_stage->getMgLayer(), 0, 0, rect);
+		} else if (priority == 3) {
+			_screen->copyRectToSurface(*_stage->getFgLayer(), 0, 0, rect);
+		}
+
+		for (uint16 i = 0; i < DRAGONS_ENGINE_NUM_ACTORS; i++) {
+			Actor *actor = _actorManager->getActor(i);
 			if (actor &&
 				actor->flags & Dragons::ACTOR_FLAG_40 &&
 				actor->surface) {
 				Graphics::Surface *s = actor->surface;
+				//TODO fix for scenes that are larger than a screen.
 				int x = actor->x_pos - actor->frame->xOffset;
 				int y = actor->y_pos - actor->frame->yOffset;
 				//int x = ini->x;// - actor->frame_vram_x;
 				//int y = ini->y;// - actor->frame_vram_y;
-				if (x >= 0 && y >= 0 && x + s->w < 320 && y + s->h < 200) {
-					debug(4, "Actor %d %s (%d, %d) w:%d h:%d", actor->_actorID, actor->_actorResource->getFilename(), x, y, s->w, s->h);
+				if (actor->priorityLayer == priority) { //} && x + s->w < 320 && y + s->h < 200) {
+					debug(4, "Actor %d %s (%d, %d) w:%d h:%d Priority: %d", actor->_actorID, actor->_actorResource->getFilename(), x,
+						  y,
+						  s->w, s->h, actor->priorityLayer);
 					_screen->copyRectToSurface(*s, x, y, Common::Rect(s->w, s->h));
 				} else {
-					debug(4, "Actor (not displayed) %d %s (%d, %d)", actor->_actorID, actor->_actorResource->getFilename(), x, y);
-					// _stage->getFgLayer()->copyRectToSurface(*s, 0, 0, Common::Rect(s->w, s->h));
+					debug(4, "Actor (not displayed) %d %s (%d, %d) Priority: %d", actor->_actorID,
+						  actor->_actorResource->getFilename(),
+						  x, y, actor->priorityLayer);
 				}
 			}
 		}
@@ -179,6 +188,11 @@ int16 Scene::getPriorityAtPosition(Common::Point pos) {
 bool Scene::contains(DragonINI *ini) {
 	assert(ini);
 	return ini->sceneId == _currentSceneId;
+}
+
+byte *Scene::getPalette() {
+	assert(_stage);
+	return _stage->getPalette();
 }
 
 } // End of namespace Dragons

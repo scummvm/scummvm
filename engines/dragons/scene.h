@@ -35,7 +35,7 @@ class BackgroundResourceLoader;
 class DragonINIResource;
 class BigfileArchive;
 class Screen;
-class DragonINI;
+struct DragonINI;
 
 class Scene {
 private:
@@ -58,6 +58,7 @@ public:
 	int16 getPriorityAtPosition(Common::Point pos);
 	void draw();
 	bool contains(DragonINI *ini);
+	byte *getPalette();
 };
 
 } // End of namespace Dragons
