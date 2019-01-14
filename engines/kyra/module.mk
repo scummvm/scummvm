@@ -123,7 +123,9 @@ MODULE_OBJS += \
 	script/script_eob.o \
 	sequence/sequences_eob.o \
 	sequence/sequences_darkmoon.o \
-	sound/sound_towns_darkmoon.o
+	sound/sound_amiga_eob.o \
+	sound/sound_towns_darkmoon.o \
+	sound/drivers/audiomaster2.o
 endif
 
 # This module can be built as a plugin

@@ -404,6 +404,8 @@ Common::Error EoBCoreEngine::init() {
 		_sound = new SoundTowns_Darkmoon(this, _mixer);
 	} else if (_flags.platform == Common::kPlatformPC98) {
 
+	} else if (_flags.platform == Common::kPlatformAmiga) {
+		_sound = new SoundAmiga_EoB(this, _mixer);
 	}
 
 	assert(_sound);

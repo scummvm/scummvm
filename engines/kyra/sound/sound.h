@@ -73,6 +73,15 @@ struct SoundResourceInfo_TownsEoB {
 	int pcmVolume;
 };
 
+
+struct SoundResourceInfo_AmigaEoB {
+	SoundResourceInfo_AmigaEoB(const char *const *files, int numFiles, const char *const *sounds, int numSounds) : fileList(files), fileListSize(numFiles), soundList(sounds), soundListSize(numSounds) {}
+	const char *const *fileList;
+	uint fileListSize;
+	const char *const *soundList;
+	uint soundListSize;
+};
+
 /**
  * Analog audio output device API for Kyrandia games.
  * It contains functionality to play music tracks,

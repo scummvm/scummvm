@@ -402,6 +402,37 @@ private:
 	TownsAudioInterface *_intf;
 };
 
+class AudioMaster2;
+class SoundAmiga_EoB: public Sound {
+public:
+	SoundAmiga_EoB(KyraEngine_v1 *vm, Audio::Mixer *mixer);
+	virtual ~SoundAmiga_EoB();
+
+	kType getMusicType() const;
+
+	bool init();
+	void initAudioResourceInfo(int set, void *info);
+	void selectAudioResourceSet(int set);
+	bool hasSoundFile(uint file) const;
+	void loadSoundFile(uint file);
+	void loadSoundFile(Common::String file);
+	void playTrack(uint8 track);
+	void haltTrack();
+	void playSoundEffect(uint8 track, uint8 volume = 0xFF);
+	void beginFadeOut();
+
+private:
+	uint8 *_fileBuffer;
+
+	KyraEngine_v1 *_vm;
+	AudioMaster2 *_driver;
+	SoundResourceInfo_AmigaEoB *_resInfo[3];
+	int _currentResourceSet;
+
+	bool _version2;
+	bool _ready;
+};
+
 } // End of namespace Kyra
 
 #endif
