@@ -36,7 +36,7 @@ void SceneScriptPS15::InitializeScene() {
 	Ambient_Sounds_Add_Sound(158, 5, 20, 30, 30, -70, 70, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(73, 5, 20, 5, 9, -70, 70, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(74, 5, 20, 5, 9, -70, 70, -101, -101, 0, 0);
-	Actor_Put_In_Set(kActorSergeantWalls, 101);
+	Actor_Put_In_Set(kActorSergeantWalls, kSetPS15);
 	Actor_Set_At_XYZ(kActorSergeantWalls, -265.4f, -113.43f, -31.29f, 623);
 }
 

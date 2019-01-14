@@ -106,7 +106,7 @@ bool SceneScriptUG03::ClickedOnExit(int exitId) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Game_Flag_Set(336);
-				Set_Enter(83, kSceneUG10);
+				Set_Enter(kSetUG10, kSceneUG10);
 			}
 		}
 		return true;
@@ -116,7 +116,7 @@ bool SceneScriptUG03::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(334);
-			Set_Enter(77, kSceneUG04);
+			Set_Enter(kSetUG04, kSceneUG04);
 		}
 		return true;
 	}

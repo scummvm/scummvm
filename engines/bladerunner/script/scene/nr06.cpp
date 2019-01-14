@@ -84,7 +84,7 @@ bool SceneScriptNR06::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 48.0f, -71.88f, -26.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Game_Flag_Set(441);
-			Set_Enter(57, kSceneNR07);
+			Set_Enter(kSetNR07, kSceneNR07);
 		}
 		return true;
 	}
@@ -96,7 +96,7 @@ bool SceneScriptNR06::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(439);
-			Set_Enter(13, kSceneNR08);
+			Set_Enter(kSetNR05_NR08, kSceneNR08);
 		}
 		return true;
 	}

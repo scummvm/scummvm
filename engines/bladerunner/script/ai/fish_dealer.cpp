@@ -35,7 +35,7 @@ void AIScriptFishDealer::Initialize() {
 	_animationNext = 0;
 
 	_flag = false;
-	Actor_Put_In_Set(kActorFishDealer, 0);
+	Actor_Put_In_Set(kActorFishDealer, kSetAR01_AR02);
 	Actor_Set_At_Waypoint(kActorFishDealer, 120, 424);
 	Actor_Set_Goal_Number(kActorFishDealer, 0);
 }

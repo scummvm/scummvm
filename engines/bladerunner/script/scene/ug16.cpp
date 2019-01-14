@@ -153,7 +153,7 @@ bool SceneScriptUG16::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(551);
-			Set_Enter(36, kSceneDR06);
+			Set_Enter(kSetDR06, kSceneDR06);
 		}
 		return true;
 	}

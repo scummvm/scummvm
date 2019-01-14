@@ -172,7 +172,7 @@ int AIScriptRunciter::GetFriendlinessModifierIfGetsClue(int otherActorId, int cl
 
 bool AIScriptRunciter::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	if (newGoalNumber == 0) {
-		Actor_Put_In_Set(kActorRunciter, 16);
+		Actor_Put_In_Set(kActorRunciter, kSetRC02_RC51);
 		Actor_Set_At_Waypoint(kActorRunciter, 92, 567);
 		return false;
 	}
@@ -202,7 +202,7 @@ bool AIScriptRunciter::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return false;
 	}
 	if (newGoalNumber == 300) {
-		Actor_Put_In_Set(kActorRunciter, 16);
+		Actor_Put_In_Set(kActorRunciter, kSetRC02_RC51);
 		Actor_Set_At_Waypoint(kActorRunciter, 93, 1007);
 		return false;
 	}

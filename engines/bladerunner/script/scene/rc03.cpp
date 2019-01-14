@@ -154,8 +154,8 @@ bool SceneScriptRC03::ClickedOnExit(int exitId) {
 				Game_Flag_Set(702);
 			}
 			Game_Flag_Set(kFlagRC03toAR02);
-			Game_Flag_Reset(182);
-			Game_Flag_Set(180);
+			Game_Flag_Reset(kFlagMcCoyAtRCxx);
+			Game_Flag_Set(kFlagMcCoyAtARxx);
 			Set_Enter(kSetAR01_AR02, kSceneAR02);
 		}
 		return true;
@@ -163,8 +163,8 @@ bool SceneScriptRC03::ClickedOnExit(int exitId) {
 	if (exitId == 2) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 147.51f, -4.0f, 166.48f, 0, 1, false, 0)) {
 			Game_Flag_Set(kFlagRC03toUG01);
-			Game_Flag_Reset(182);
-			Game_Flag_Set(259);
+			Game_Flag_Reset(kFlagMcCoyAtRCxx);
+			Game_Flag_Set(kFlagMcCoyAtUGxx);
 			if (Game_Flag_Query(289)) {
 				Game_Flag_Set(702);
 			}
@@ -176,7 +176,7 @@ bool SceneScriptRC03::ClickedOnExit(int exitId) {
 	if (exitId == 3) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -487.0f, 1.0f, 116.0f, 0, 1, false, 0)) {
 			Game_Flag_Set(kFlagRC03toHC04);
-			Game_Flag_Reset(182);
+			Game_Flag_Reset(kFlagMcCoyAtRCxx);
 			Game_Flag_Set(479);
 			if (Game_Flag_Query(289)) {
 				Game_Flag_Set(702);
@@ -241,7 +241,7 @@ void SceneScriptRC03::PlayerWalkedIn() {
 			Player_Set_Combat_Mode(false);
 			Player_Loses_Control();
 			Actor_Set_At_XYZ(kActorMcCoy, 147.51f, -4.0f, 166.48f, 500);
-			Actor_Put_In_Set(kActorIzo, 70);
+			Actor_Put_In_Set(kActorIzo, kSetRC03);
 			Actor_Set_At_XYZ(kActorIzo, 196.0f, -4.0f, 184.0f, 775);
 			Actor_Face_Actor(kActorIzo, kActorMcCoy, true);
 			Actor_Face_Actor(kActorMcCoy, kActorIzo, true);
@@ -260,7 +260,7 @@ void SceneScriptRC03::PlayerWalkedIn() {
 			}
 			Player_Gains_Control();
 		} else {
-			Actor_Put_In_Set(kActorIzo, 70);
+			Actor_Put_In_Set(kActorIzo, kSetRC03);
 			Actor_Set_At_XYZ(kActorIzo, -226.0f, 1.72f, 86.0f, 0);
 			Actor_Set_Targetable(kActorIzo, true);
 			Actor_Set_Goal_Number(kActorIzo, 110);
@@ -269,7 +269,7 @@ void SceneScriptRC03::PlayerWalkedIn() {
 	if (Actor_Query_Goal_Number(kActorIzo) == 103) {
 		Player_Loses_Control();
 		Actor_Set_Goal_Number(kActorSteele, 200);
-		Actor_Put_In_Set(kActorSteele, 70);
+		Actor_Put_In_Set(kActorSteele, kSetRC03);
 		if (Game_Flag_Query(kFlagUG01toRC03)
 		 || Game_Flag_Query(kFlagRC04toRC03)
 		) {

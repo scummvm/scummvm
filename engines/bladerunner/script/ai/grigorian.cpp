@@ -38,8 +38,10 @@ void AIScriptGrigorian::Initialize() {
 }
 
 bool AIScriptGrigorian::Update() {
-	if (Actor_Query_Friendliness_To_Other(kActorGrigorian, kActorMcCoy) < 30 && !Game_Flag_Query(51)) {
-		Game_Flag_Set(51);
+	if ( Actor_Query_Friendliness_To_Other(kActorGrigorian, kActorMcCoy) < 30
+	 && !Game_Flag_Query(kFlagGrigorianDislikeMcCoy)
+	) {
+		Game_Flag_Set(kFlagGrigorianDislikeMcCoy);
 		return true;
 	}
 	return false;

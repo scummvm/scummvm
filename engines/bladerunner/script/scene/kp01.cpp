@@ -83,7 +83,7 @@ bool SceneScriptKP01::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(415);
-			Set_Enter(47, kSceneKP04);
+			Set_Enter(kSetKP04, kSceneKP04);
 		}
 		return true;
 	}
@@ -92,7 +92,7 @@ bool SceneScriptKP01::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(417);
-			Set_Enter(46, kSceneKP03);
+			Set_Enter(kSetKP03, kSceneKP03);
 		}
 		return true;
 	}
@@ -101,7 +101,7 @@ bool SceneScriptKP01::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(414);
-			Set_Enter(45, kSceneKP02);
+			Set_Enter(kSetKP02, kSceneKP02);
 		}
 		return true;
 	}
@@ -136,7 +136,7 @@ void SceneScriptKP01::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(417);
-			Set_Enter(46, kSceneKP03);
+			Set_Enter(kSetKP03, kSceneKP03);
 			//return true;
 		}
 	}

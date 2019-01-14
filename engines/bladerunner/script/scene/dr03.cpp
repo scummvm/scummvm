@@ -25,17 +25,17 @@
 namespace BladeRunner {
 
 void SceneScriptDR03::InitializeScene() {
-	if (Game_Flag_Query(226)) {
-		Game_Flag_Reset(226);
+	if (Game_Flag_Query(kFlagDR02toDR03)) {
+		Game_Flag_Reset(kFlagDR02toDR03);
 		Setup_Scene_Information(330.31f, 4.27f, -910.91f, 297);
 	}
 	Setup_Scene_Information(330.31f, 4.27f, -910.91f, 297);
 	Scene_Exit_Add_2D_Exit(0, 377, 122, 445, 266, 0);
 	if (Global_Variable_Query(kVariableChapter) == 3) {
-		Actor_Put_In_Set(kActorChew, 34);
+		Actor_Put_In_Set(kActorChew, kSetDR03);
 		Actor_Set_At_XYZ(kActorChew, 431.21f, 4.27f, -776.26f, 0);
 	} else {
-		Actor_Put_In_Set(kActorChew, 34);
+		Actor_Put_In_Set(kActorChew, kSetDR03);
 		Actor_Set_At_XYZ(kActorChew, 360.77f, 4.4f, -806.67f, 126);
 	}
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -127,8 +127,8 @@ bool SceneScriptDR03::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptDR03::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 330.31f, 4.27f, -910.91f, 24, 1, false, 0)) {
-			Game_Flag_Set(227);
-			Set_Enter(7, kSceneDR02);
+			Game_Flag_Set(kFlagDR03toDR02);
+			Set_Enter(kSetDR01_DR02_DR04, kSceneDR02);
 		}
 		return true;
 	}
@@ -153,7 +153,7 @@ void SceneScriptDR03::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptDR03::PlayerWalkedIn() {
-	if (!Game_Flag_Query(226)) {
+	if (!Game_Flag_Query(kFlagDR02toDR03)) {
 		if (Random_Query(1, 2) == 1) {
 			Actor_Says(kActorChew, 660, 14);
 			Actor_Says(kActorChew, 680, 14);

@@ -70,10 +70,10 @@ void SceneScriptUG18::SceneLoaded() {
 	Clickable_Object("MACHINE_01");
 	Unclickable_Object("MACHINE_01");
 	if (Game_Flag_Query(671)) {
-		Actor_Put_In_Set(kActorGuzza, 99);
+		Actor_Put_In_Set(kActorGuzza, kSetFreeSlotI);
 		Actor_Set_At_Waypoint(kActorGuzza, 41, 0);
 		if (Actor_Query_Which_Set_In(kActorSadik) == 89) {
-			Actor_Put_In_Set(kActorSadik, 91);
+			Actor_Put_In_Set(kActorSadik, kSetFreeSlotA);
 			Actor_Set_At_Waypoint(kActorSadik, 33, 0);
 		}
 	}
@@ -114,7 +114,7 @@ bool SceneScriptUG18::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(435);
-			Set_Enter(85, kSceneUG13);
+			Set_Enter(kSetUG13, kSceneUG13);
 		}
 		return true;
 	}

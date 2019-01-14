@@ -121,7 +121,7 @@ bool SceneScriptNR07::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(442);
-			Set_Enter(56, kSceneNR06);
+			Set_Enter(kSetNR06, kSceneNR06);
 		}
 		return true;
 	}
@@ -140,7 +140,7 @@ void SceneScriptNR07::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptNR07::PlayerWalkedIn() {
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -110.0f, -73.5f, -169.0f, 0, 0, false, 0);
-	if (Actor_Query_In_Set(kActorDektora, 57)) {
+	if (Actor_Query_In_Set(kActorDektora, kSetNR07)) {
 		if (Game_Flag_Query(508)) {
 			Actor_Modify_Friendliness_To_Other(kActorDektora, kActorMcCoy, -2);
 			Actor_Says(kActorDektora, 530, 31);
@@ -182,7 +182,7 @@ void SceneScriptNR07::sub_4018D4() {
 	} else {
 		Actor_Set_Goal_Number(kActorDektora, 295);
 		Game_Flag_Set(591);
-		Actor_Put_In_Set(kActorDektora, 91);
+		Actor_Put_In_Set(kActorDektora, kSetFreeSlotA);
 		Actor_Set_At_Waypoint(kActorDektora, 33, 0);
 	}
 	Player_Gains_Control();

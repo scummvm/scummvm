@@ -67,7 +67,7 @@ void SceneScriptHC01::InitializeScene() {
 
 void SceneScriptHC01::SceneLoaded() {
 	Obstacle_Object("PILLAR", true);
-	if (Game_Flag_Query(322)) {
+	if (Game_Flag_Query(kFlagAR01toHC01)) {
 		Preload(19);
 		Preload(426);
 		Preload(430);
@@ -145,17 +145,17 @@ bool SceneScriptHC01::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 814.0f, 0.14f, 153.0f, 0, 1, false, 0)) {
 			Music_Adjust(12, 0, 2);
-			Game_Flag_Set(323);
-			Set_Enter(0, kSceneAR01);
+			Game_Flag_Set(kFlagHC01toAR01);
+			Set_Enter(kSetAR01_AR02, kSceneAR01);
 			Game_Flag_Reset(479);
-			Game_Flag_Set(180);
+			Game_Flag_Set(kFlagMcCoyAtARxx);
 		}
 		return true;
 	}
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 607.0f, 0.14f, 9.0f, 0, 1, false, 0)) {
 			Game_Flag_Set(386);
-			Set_Enter(8, kSceneHC03);
+			Set_Enter(kSetHC01_HC02_HC03_HC04, kSceneHC03);
 		}
 		return true;
 	}
@@ -163,7 +163,7 @@ bool SceneScriptHC01::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 105.0f, 0.14f, 103.0f, 0, 1, false, 0)) {
 			Game_Flag_Set(384);
 			Async_Actor_Walk_To_XYZ(kActorMcCoy, -57.0f, 0.14f, 83.0f, 0, false);
-			Set_Enter(8, kSceneHC02);
+			Set_Enter(kSetHC01_HC02_HC03_HC04, kSceneHC02);
 		}
 		return true;
 	}
@@ -208,8 +208,8 @@ void SceneScriptHC01::PlayerWalkedIn() {
 	if (Game_Flag_Query(387)) {
 		Game_Flag_Reset(387);
 	}
-	if (Game_Flag_Query(322)) {
-		Game_Flag_Reset(322);
+	if (Game_Flag_Query(kFlagAR01toHC01)) {
+		Game_Flag_Reset(kFlagAR01toHC01);
 	}
 }
 

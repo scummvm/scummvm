@@ -54,8 +54,8 @@ bool AIScriptOfficerLeary::Update() {
 	) {
 		AI_Movement_Track_Flush(kActorOfficerLeary);
 		Actor_Set_Goal_Number(kActorOfficerLeary, 400);
-	} else if (!Game_Flag_Query(182)
-	        &&  Game_Flag_Query(147)
+	} else if (!Game_Flag_Query(kFlagMcCoyAtRCxx)
+	        &&  Game_Flag_Query(kFlagChopstickWrapperTaken)
 	        &&  Game_Flag_Query(kFlagChromeDebrisTaken)
 	        &&  Player_Query_Current_Scene() != kSceneRC01
 	        &&  Global_Variable_Query(kVariableChapter) < 3
@@ -172,7 +172,7 @@ bool AIScriptOfficerLeary::Update() {
 void AIScriptOfficerLeary::TimerExpired(int timer) {
 	if (timer == 1) {
 		AI_Countdown_Timer_Reset(kActorOfficerLeary, 1);
-		if (Actor_Query_In_Set(kActorMcCoy, 41)) {
+		if (Actor_Query_In_Set(kActorMcCoy, kSetHF05)) {
 			Actor_Set_Goal_Number(kActorOfficerLeary, 430);
 			Actor_Set_Goal_Number(kActorOfficerGrayford, 430);
 		} else {
@@ -298,7 +298,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 				Actor_Clue_Acquire(kActorOfficerLeary, kClueCrowdInterviewB, 0, -1);
 			}
 		}
-		if (Game_Flag_Query(182)) {
+		if (Game_Flag_Query(kFlagMcCoyAtRCxx)) {
 			if (Actor_Clue_Query(kActorOfficerLeary, kClueCrowdInterviewA) && Actor_Clue_Query(kActorOfficerLeary, kClueCrowdInterviewB)) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyDefault);
 			} else {

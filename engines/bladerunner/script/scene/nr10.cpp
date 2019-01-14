@@ -91,7 +91,7 @@ bool SceneScriptNR10::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -152.78f, 2.84f, -238.43f, 0, 1, false, 0)) {
 			Game_Flag_Set(476);
-			Set_Enter(58, kSceneNR09);
+			Set_Enter(kSetNR09, kSceneNR09);
 			return true;
 		}
 	}
@@ -100,7 +100,7 @@ bool SceneScriptNR10::ClickedOnExit(int exitId) {
 			Actor_Face_Heading(kActorMcCoy, 55, false);
 			Loop_Actor_Travel_Ladder(kActorMcCoy, 8, 1, 0);
 			Game_Flag_Set(641);
-			Set_Enter(60, kSceneNR11);
+			Set_Enter(kSetNR11, kSceneNR11);
 			return true;
 		}
 	}

@@ -44,7 +44,7 @@ bool AIScriptMurray::Update() {
 	if (Global_Variable_Query(kVariableChapter) == 4 && Actor_Query_Goal_Number(kActorMurray) != 300)
 		Actor_Set_Goal_Number(kActorMurray, 300);
 
-	if (Player_Query_Current_Set() == 37) {
+	if (Player_Query_Current_Set() == kSetHF01) {
 		if (!Actor_Query_In_Set(kActorMcCoy, kSetHF01)
 				|| !Actor_Query_In_Set(kActorMurray, kSetHF01)
 				|| Actor_Query_Inch_Distance_From_Actor(kActorMcCoy, kActorMurray) >= 48

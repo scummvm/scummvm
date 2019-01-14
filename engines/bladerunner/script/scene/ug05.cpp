@@ -116,19 +116,19 @@ bool SceneScriptUG05::ClickedOnExit(int exitId) {
 		if (Game_Flag_Query(663) && !Game_Flag_Query(368)) {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -356.35f, 132.77f, -1092.36f, 0, 0, false, 0);
 			Game_Flag_Set(361);
-			Set_Enter(43, kSceneHF07);
+			Set_Enter(kSetHF07, kSceneHF07);
 		} else if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -156.72f, 3.03f, -1118.17f, 0, 1, false, 0)) {
 			Actor_Face_Heading(kActorMcCoy, 760, false);
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 3, 1, 0);
 			Game_Flag_Set(361);
-			Set_Enter(43, kSceneHF07);
+			Set_Enter(kSetHF07, kSceneHF07);
 		}
 		return true;
 	}
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 4.0f, -11.67f, -4.0f, 0, 1, false, 0)) {
 			Game_Flag_Set(339);
-			Set_Enter(77, kSceneUG04);
+			Set_Enter(kSetUG04, kSceneUG04);
 		}
 		return true;
 	}
@@ -173,29 +173,29 @@ void SceneScriptUG05::PlayerWalkedIn() {
 	if (Game_Flag_Query(663)) {
 		if (Game_Flag_Query(368)) {
 			Music_Stop(2);
-			Actor_Put_In_Set(kActorOfficerGrayford, 78);
+			Actor_Put_In_Set(kActorOfficerGrayford, kSetUG05);
 			Actor_Set_At_XYZ(kActorOfficerGrayford, 4.22f, -1.37f, -925.0f, 750);
 			Actor_Set_Goal_Number(kActorOfficerGrayford, 599);
 			Actor_Retired_Here(kActorOfficerGrayford, 70, 36, 1, -1);
 			int v0 = sub_4021B0();
 			if (v0 == kActorDektora) {
-				Actor_Put_In_Set(kActorDektora, 78);
+				Actor_Put_In_Set(kActorDektora, kSetUG05);
 				Actor_Set_At_XYZ(kActorDektora, -100.0f, -10.31f, -906.0f, 866);
 				Actor_Force_Stop_Walking(kActorDektora);
 			} else if (v0 == kActorLucy){
-				Actor_Put_In_Set(kActorLucy, 78);
+				Actor_Put_In_Set(kActorLucy, kSetUG05);
 				Actor_Set_At_XYZ(kActorLucy, -100.0f, -10.31f, -906.0f, 866);
 				Actor_Force_Stop_Walking(kActorLucy);
 			}
 		} else {
-			if (!Actor_Query_In_Set(kActorOfficerLeary, 78)) {
-				Actor_Put_In_Set(kActorOfficerLeary, 78);
+			if (!Actor_Query_In_Set(kActorOfficerLeary, kSetUG05)) {
+				Actor_Put_In_Set(kActorOfficerLeary, kSetUG05);
 				Actor_Set_At_XYZ(kActorOfficerLeary, 0.0f, -1.37f, -1400.0f, 768);
 			}
-			if (!Actor_Query_In_Set(kActorOfficerGrayford, 78)) {
+			if (!Actor_Query_In_Set(kActorOfficerGrayford, kSetUG05)) {
 				ADQ_Flush();
 				ADQ_Add(kActorOfficerGrayford, 280, 3);
-				Actor_Put_In_Set(kActorOfficerGrayford, 78);
+				Actor_Put_In_Set(kActorOfficerGrayford, kSetUG05);
 				Actor_Set_At_XYZ(kActorOfficerGrayford, -16.0f, -1.37f, -960.0f, 768);
 			}
 		}

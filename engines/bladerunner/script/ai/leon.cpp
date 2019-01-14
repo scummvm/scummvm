@@ -151,7 +151,7 @@ int AIScriptLeon::GetFriendlinessModifierIfGetsClue(int otherActorId, int clueId
 bool AIScriptLeon::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	switch (newGoalNumber) {
 	case 8:
-		Actor_Put_In_Set(kActorLeon, 91);
+		Actor_Put_In_Set(kActorLeon, kSetFreeSlotA);
 		AI_Movement_Track_Flush(kActorLeon);
 		return true;
 	case 7:
@@ -226,7 +226,7 @@ bool AIScriptLeon::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case 1:
 		Actor_Change_Animation_Mode(kActorDeskClerk, 72);
 		Actor_Change_Animation_Mode(kActorLeon, 72);
-		Actor_Put_In_Set(kActorLeon, 31);
+		Actor_Put_In_Set(kActorLeon, kSetCT09);
 		Actor_Set_At_XYZ(kActorLeon, 264.0f, 348.52f, 827.0f, 0);
 		Actor_Face_Actor(kActorDeskClerk, kActorLeon, true);
 		ADQ_Add(kActorLeon, 0, 16);
@@ -236,7 +236,7 @@ bool AIScriptLeon::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		ADQ_Add(kActorLeon, 20, 16);
 		return true;
 	case 0:
-		Actor_Put_In_Set(kActorLeon, 91);
+		Actor_Put_In_Set(kActorLeon, kSetFreeSlotA);
 		Actor_Change_Animation_Mode(kActorLeon, 0);
 		return true;
 	}

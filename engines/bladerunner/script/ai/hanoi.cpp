@@ -424,7 +424,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 			Actor_Face_Actor(kActorMcCoy, kActorHanoi, 1);
 			Actor_Set_Invisible(kActorMcCoy, 0);
 
-			if (Actor_Query_In_Set(kActorHanoi, kSetNR01) == 1) {
+			if (Actor_Query_In_Set(kActorHanoi, kSetNR01)) {
 				AI_Movement_Track_Flush(kActorHanoi);
 				AI_Movement_Track_Append(kActorHanoi, 350, 0);
 				AI_Movement_Track_Append(kActorHanoi, 39, 0);

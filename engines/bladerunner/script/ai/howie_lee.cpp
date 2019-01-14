@@ -50,12 +50,12 @@ bool AIScriptHowieLee::Update() {
 	if (Actor_Query_Goal_Number(kActorHowieLee) == 0) {
 		Actor_Set_Goal_Number(kActorHowieLee, 1);
 	}
-	if (Game_Flag_Query(176) && !Actor_Query_In_Set(kActorHowieLee, kSetCT01_CT12)) {
+	if (Game_Flag_Query(kFlagMcCoyAtCTxx) && !Actor_Query_In_Set(kActorHowieLee, kSetCT01_CT12)) {
 		AI_Movement_Track_Flush(kActorHowieLee);
 		AI_Movement_Track_Append(kActorHowieLee, 67, 0);
 		Actor_Set_Goal_Number(kActorHowieLee, 0);
 	}
-	if (Actor_Query_Goal_Number(kActorHowieLee) == 1 && Game_Flag_Query(kFlagBoughtHowieLeeFood) && !Game_Flag_Query(176)) {
+	if (Actor_Query_Goal_Number(kActorHowieLee) == 1 && Game_Flag_Query(kFlagBoughtHowieLeeFood) && !Game_Flag_Query(kFlagMcCoyAtCTxx)) {
 		Actor_Set_Goal_Number(kActorHowieLee, 4);
 		return true;
 	}

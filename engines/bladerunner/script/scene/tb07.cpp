@@ -65,7 +65,7 @@ bool SceneScriptTB07::ClickedOnActor(int actorId) {
 }
 
 bool SceneScriptTB07::ClickedOnItem(int itemId, bool a2) {
-	if (!Loop_Actor_Walk_To_Item(kActorMcCoy, itemId, 36, 1, false)) {
+	if (!Loop_Actor_Walk_To_Item(kActorMcCoy, itemId, 36, true, false)) {
 		Actor_Face_Item(kActorMcCoy, itemId, true);
 		if (itemId == 83) {
 			Item_Pickup_Spin_Effect(941, 331, 296);
@@ -78,79 +78,79 @@ bool SceneScriptTB07::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptTB07::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 68.0f, 12.0f, 288.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 68.0f, 12.0f, 288.0f, 0, true, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			if (Global_Variable_Query(kVariableChapter) == 4) {
-				Game_Flag_Set(608);
-				Set_Enter(17, kSceneTB02);
+				Game_Flag_Set(kFlagTB07toTB02);
+				Set_Enter(kSetTB02_TB03, kSceneTB02);
 			} else {
-				Game_Flag_Reset(176);
-				Game_Flag_Reset(182);
-				Game_Flag_Reset(179);
-				Game_Flag_Reset(178);
-				Game_Flag_Reset(258);
-				Game_Flag_Reset(257);
-				Game_Flag_Reset(261);
+				Game_Flag_Reset(kFlagMcCoyAtCTxx);
+				Game_Flag_Reset(kFlagMcCoyAtRCxx);
+				Game_Flag_Reset(kFlagMcCoyAtMAxx);
+				Game_Flag_Reset(kFlagMcCoyAtPSxx);
+				Game_Flag_Reset(kFlagMcCoyAtBBxx);
+				Game_Flag_Reset(kFlagMcCoyAtHFxx);
+				Game_Flag_Reset(kFlagMcCoyAtTBxx);
 				Game_Flag_Reset(450);
-				switch (Spinner_Interface_Choose_Dest(-1, 0)) {
-				case 9:
-					Game_Flag_Set(257);
-					Game_Flag_Reset(kFlagSpinnerAtTB02);
-					Game_Flag_Set(kFlagSpinnerAtHF01);
-					Set_Enter(37, kSceneHF01);
-					break;
-				case 8:
-					Game_Flag_Set(181);
-					Game_Flag_Reset(kFlagSpinnerAtTB02);
-					Game_Flag_Set(kFlagSpinnerAtNR01);
-					Set_Enter(54, kSceneNR01);
-					break;
-				case 7:
-					Game_Flag_Set(258);
-					Game_Flag_Reset(kFlagSpinnerAtTB02);
-					Game_Flag_Set(kFlagSpinnerAtBB01);
-					Set_Enter(20, kSceneBB01);
-					break;
-				case 6:
-					Game_Flag_Set(177);
-					Game_Flag_Reset(kFlagSpinnerAtTB02);
-					Game_Flag_Set(kFlagSpinnerAtDR01);
-					Set_Enter(7, kSceneDR01);
-					break;
-				case 4:
-					Game_Flag_Set(180);
-					Game_Flag_Reset(kFlagSpinnerAtTB02);
-					Game_Flag_Set(kFlagSpinnerAtAR01);
-					Set_Enter(0, kSceneAR01);
-					break;
-				case 3:
-					Game_Flag_Set(176);
-					Game_Flag_Reset(kFlagSpinnerAtTB02);
-					Game_Flag_Set(kFlagSpinnerAtCT01);
-					Set_Enter(4, kSceneCT01);
-					break;
-				case 2:
-					Game_Flag_Set(182);
-					Game_Flag_Reset(kFlagSpinnerAtTB02);
-					Game_Flag_Set(kFlagSpinnerAtRC01);
-					Set_Enter(69, kSceneRC01);
-					break;
-				case 1:
-					Game_Flag_Set(179);
-					Game_Flag_Reset(kFlagSpinnerAtTB02);
-					Game_Flag_Set(kFlagSpinnerAtMA01);
-					Set_Enter(49, kSceneMA01);
-					break;
-				case 0:
-					Game_Flag_Set(178);
+				switch (Spinner_Interface_Choose_Dest(-1, false)) {
+				case kSpinnerDestinationPoliceStation:
+					Game_Flag_Set(kFlagMcCoyAtPSxx);
 					Game_Flag_Reset(kFlagSpinnerAtTB02);
 					Game_Flag_Set(kFlagSpinnerAtPS01);
-					Set_Enter(61, kScenePS01);
+					Set_Enter(kSetPS01, kScenePS01);
+					break;
+				case kSpinnerDestinationMcCoysApartment:
+					Game_Flag_Set(kFlagMcCoyAtMAxx);
+					Game_Flag_Reset(kFlagSpinnerAtTB02);
+					Game_Flag_Set(kFlagSpinnerAtMA01);
+					Set_Enter(kSetMA01, kSceneMA01);
+					break;
+				case kSpinnerDestinationRuncitersAnimals:
+					Game_Flag_Set(kFlagMcCoyAtRCxx);
+					Game_Flag_Reset(kFlagSpinnerAtTB02);
+					Game_Flag_Set(kFlagSpinnerAtRC01);
+					Set_Enter(kSetRC01, kSceneRC01);
+					break;
+				case kSpinnerDestinationChinatown:
+					Game_Flag_Set(kFlagMcCoyAtCTxx);
+					Game_Flag_Reset(kFlagSpinnerAtTB02);
+					Game_Flag_Set(kFlagSpinnerAtCT01);
+					Set_Enter(kSetCT01_CT12, kSceneCT01);
+					break;
+				case kSpinnerDestinationAnimoidRow:
+					Game_Flag_Set(kFlagMcCoyAtARxx);
+					Game_Flag_Reset(kFlagSpinnerAtTB02);
+					Game_Flag_Set(kFlagSpinnerAtAR01);
+					Set_Enter(kSetAR01_AR02, kSceneAR01);
+					break;
+				case kSpinnerDestinationDNARow:
+					Game_Flag_Set(kFlagMcCoyAtDRxx);
+					Game_Flag_Reset(kFlagSpinnerAtTB02);
+					Game_Flag_Set(kFlagSpinnerAtDR01);
+					Set_Enter(kSetDR01_DR02_DR04, kSceneDR01);
+					break;
+				case kSpinnerDestinationBradburyBuilding:
+					Game_Flag_Set(kFlagMcCoyAtBBxx);
+					Game_Flag_Reset(kFlagSpinnerAtTB02);
+					Game_Flag_Set(kFlagSpinnerAtBB01);
+					Set_Enter(kSetBB01, kSceneBB01);
+					break;
+				case kSpinnerDestinationNightclubRow:
+					Game_Flag_Set(kFlagMcCoyAtNRxx);
+					Game_Flag_Reset(kFlagSpinnerAtTB02);
+					Game_Flag_Set(kFlagSpinnerAtNR01);
+					Set_Enter(kSetNR01, kSceneNR01);
+					break;
+				case kSpinnerDestinationHysteriaHall:
+					Game_Flag_Set(kFlagMcCoyAtHFxx);
+					Game_Flag_Reset(kFlagSpinnerAtTB02);
+					Game_Flag_Set(kFlagSpinnerAtHF01);
+					Set_Enter(kSetHF01, kSceneHF01);
 					break;
 				default:
-					Game_Flag_Set(261);
-					Loop_Actor_Walk_To_XYZ(kActorMcCoy, 44.0f, 12.0f, 176.0f, 0, 0, false, 0);
+					Game_Flag_Set(kFlagMcCoyAtTBxx);
+					Loop_Actor_Walk_To_XYZ(kActorMcCoy, 44.0f, 12.0f, 176.0f, 0, false, false, 0);
 					break;
 				}
 			}
@@ -195,7 +195,7 @@ void SceneScriptTB07::sub_401B0C() {
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 44.98f, 12.0f, 49.79f, 0, 0, false, 0);
 	Actor_Face_Heading(kActorMcCoy, 178, true);
 	Delay(3000);
-	Actor_Put_In_Set(kActorRachael, 18);
+	Actor_Put_In_Set(kActorRachael, kSetTB07);
 	Actor_Set_At_XYZ(kActorRachael, -260.15f, 12.0f, -19.16f, 256);
 	Actor_Change_Animation_Mode(kActorRachael, 0);
 	Outtake_Play(kOuttakeRachel, true, -1);
@@ -250,7 +250,7 @@ void SceneScriptTB07::sub_401B0C() {
 	Actor_Says_With_Pause(kActorMcCoy, 5415, 1.0f, 17);
 	Actor_Says(kActorMcCoy, 5420, 14);
 	Actor_Says(kActorRachael, 660, 15);
-	Actor_Put_In_Set(kActorTyrell, 18);
+	Actor_Put_In_Set(kActorTyrell, kSetTB07);
 	Actor_Set_At_XYZ(kActorTyrell, 68.0f, 12.0f, 288.0f, 0);
 	Actor_Change_Animation_Mode(kActorTyrell, 0);
 	Scene_Loop_Set_Default(3);

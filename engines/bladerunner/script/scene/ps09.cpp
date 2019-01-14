@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 void SceneScriptPS09::InitializeScene() {
-	if (Game_Flag_Query(465)) {
+	if (Game_Flag_Query(kFlagMcCoyArrested)) {
 		Setup_Scene_Information(-410.0f, 0.26f, -200.0f, 512);
 	} else {
 		Setup_Scene_Information(-559.0f, 0.0f, -85.06f, 250);
@@ -38,21 +38,21 @@ void SceneScriptPS09::InitializeScene() {
 	Ambient_Sounds_Add_Sound(125, 15, 60, 7, 10, 100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(126, 25, 60, 7, 10, 100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(127, 25, 60, 7, 10, 100, 100, -101, -101, 0, 0);
-	if (!Game_Flag_Query(55)) {
-		Actor_Put_In_Set(kActorGrigorian, 67);
+	if (!Game_Flag_Query(kFlagGrigorianArrested)) {
+		Actor_Put_In_Set(kActorGrigorian, kSetPS09);
 		Actor_Set_At_XYZ(kActorGrigorian, -417.88f, 0.0f, -200.74f, 512);
-		Game_Flag_Set(55);
+		Game_Flag_Set(kFlagGrigorianArrested);
 	}
-	if (Game_Flag_Query(465)) {
-		Actor_Put_In_Set(kActorGrigorian, 94);
+	if (Game_Flag_Query(kFlagMcCoyArrested)) {
+		Actor_Put_In_Set(kActorGrigorian, kSetFreeSlotD);
 		Actor_Set_At_XYZ(kActorGrigorian, 0.0f, 0.0f, 0.0f, 512);
 	}
-	if (Game_Flag_Query(164)) {
-		Actor_Put_In_Set(kActorIzo, 67);
+	if (Game_Flag_Query(kFlagIzoArrested)) {
+		Actor_Put_In_Set(kActorIzo, kSetPS09);
 		Actor_Set_At_XYZ(kActorIzo, -476.0f, 0.2f, -225.0f, 518);
 	}
-	if (Game_Flag_Query(165)) {
-		Actor_Put_In_Set(kActorCrazylegs, 67);
+	if (Game_Flag_Query(kFlagCrazylegsArrested)) {
+		Actor_Put_In_Set(kActorCrazylegs, kSetPS09);
 		Actor_Set_At_XYZ(kActorCrazylegs, -290.0f, 0.33f, -235.0f, 207);
 	}
 }
@@ -72,98 +72,148 @@ bool SceneScriptPS09::ClickedOn3DObject(const char *objectName, bool a2) {
 }
 
 bool SceneScriptPS09::ClickedOnActor(int actorId) {
-	if (actorId == 11 && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, -381.11f, 0.0f, -135.55f, 0, 1, false, 0)) {
-		Actor_Face_Actor(kActorMcCoy, kActorGrigorian, true);
-		Actor_Face_Actor(kActorGrigorian, kActorMcCoy, true);
-		if (!Game_Flag_Query(49)) {
-			Actor_Says(kActorGrigorian, 0, 12);
-			Actor_Says(kActorMcCoy, 4235, 18);
-			Actor_Says(kActorGrigorian, 10, 13);
-			Game_Flag_Set(49);
-			return true;
-		}
-		if (Game_Flag_Query(49) && !Game_Flag_Query(54) && !Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA) && !Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1) && !Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2)) {
-			Actor_Says(kActorMcCoy, 4245, 14);
-			Actor_Says(kActorGrigorian, 20, 14);
-			Game_Flag_Set(54);
-			return true;
-		}
-		if ((!Game_Flag_Query(53) && Game_Flag_Query(49) && Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA)) || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1) || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2) || Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)) {
-			Game_Flag_Set(53);
-			Actor_Says(kActorMcCoy, 4240, 13);
-			Actor_Says(kActorGrigorian, 550, 15);
-			Actor_Says(kActorGrigorian, 480, 16);
-			sub_402090();
-			return true;
-		}
-		if (Game_Flag_Query(51)) {
+	if (actorId == kActorGrigorian) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -381.11f, 0.0f, -135.55f, 0, true, false, 0)) {
+			Actor_Face_Actor(kActorMcCoy, kActorGrigorian, true);
+			Actor_Face_Actor(kActorGrigorian, kActorMcCoy, true);
+
+			if (!Game_Flag_Query(kFlagPS09GrigorianTalk1)) {
+				Actor_Says(kActorGrigorian, 0, 12);
+				Actor_Says(kActorMcCoy, 4235, 18);
+				Actor_Says(kActorGrigorian, 10, 13);
+				Game_Flag_Set(kFlagPS09GrigorianTalk1);
+				return true;
+			}
+
+			if ( Game_Flag_Query(kFlagPS09GrigorianTalk1)
+			 && !Game_Flag_Query(kFlagPS09GrigorianTalk2)
+			 && !Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA)
+			 && !Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1)
+			 && !Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2)
+			) {
+				Actor_Says(kActorMcCoy, 4245, 14);
+				Actor_Says(kActorGrigorian, 20, 14);
+				Game_Flag_Set(kFlagPS09GrigorianTalk2);
+				return true;
+			}
+
+			if ((!Game_Flag_Query(kFlagPS09GrigorianDialogue)
+			  &&  Game_Flag_Query(kFlagPS09GrigorianTalk1)
+			  &&  Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA)
+			 )
+			 || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1)
+			 || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2)
+			 || Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)
+			) {
+				Game_Flag_Set(kFlagPS09GrigorianDialogue);
+				Actor_Says(kActorMcCoy, 4240, 13);
+				Actor_Says(kActorGrigorian, 550, 15);
+				Actor_Says(kActorGrigorian, 480, 16);
+				dialogueWithGregorian();
+				return true;
+			}
+
+			if (Game_Flag_Query(kFlagGrigorianDislikeMcCoy)) {
+				Actor_Says(kActorMcCoy, 4270, 18);
+				Actor_Says(kActorGrigorian, 30, 14);
+				Actor_Says(kActorGrigorian, 40, 13);
+				return true;
+			}
+
+			if (Game_Flag_Query(kFlagPS09GrigorianDialogue)
+			 && Game_Flag_Query(kFlagPS09GrigorianTalk1)
+			 && (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA)
+			  || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1)
+			  || Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)
+			 )
+			) {
+				dialogueWithGregorian();
+				return true;
+			}
+
 			Actor_Says(kActorMcCoy, 4270, 18);
 			Actor_Says(kActorGrigorian, 30, 14);
 			Actor_Says(kActorGrigorian, 40, 13);
 			return true;
 		}
-		if (Game_Flag_Query(53) && Game_Flag_Query(49) && (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA) || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1) || Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote))) {
-			sub_402090();
-			return true;
-		}
-		Actor_Says(kActorMcCoy, 4270, 18);
-		Actor_Says(kActorGrigorian, 30, 14);
-		Actor_Says(kActorGrigorian, 40, 13);
-		return true;
 	}
-	if (actorId == 7 && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, -473.0f, 0.2f, -133.0f, 12, 1, false, 0)) {
-		Actor_Face_Actor(kActorMcCoy, kActorIzo, true);
-		Actor_Face_Actor(kActorIzo, kActorMcCoy, true);
-		if (!Game_Flag_Query(167)) {
-			Actor_Says(kActorMcCoy, 4200, 14);
-			Actor_Says(kActorIzo, 570, 3);
-			Actor_Says(kActorMcCoy, 4205, 18);
-			Game_Flag_Set(167);
-			return true;
-		}
-		if (Game_Flag_Query(167) && !Game_Flag_Query(168)) {
-			Actor_Says(kActorMcCoy, 4210, 18);
-			Actor_Says(kActorIzo, 580, 3);
-			Actor_Says(kActorMcCoy, 4215, 14);
-			Actor_Says(kActorIzo, 590, 3);
-			Actor_Says(kActorIzo, 600, 3);
-			Actor_Says(kActorMcCoy, 4220, 18);
-			Actor_Says(kActorIzo, 610, 3);
-			Actor_Says(kActorMcCoy, 4225, 19);
-			Actor_Says(kActorIzo, 620, 3);
-			Actor_Says(kActorMcCoy, 4230, 14);
-			Game_Flag_Set(168);
-			return true;
-		}
-		Actor_Says(kActorMcCoy, 4200, 13);
-	}
-	if (actorId == 9 && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, -295.0f, 0.34f, -193.0f, 12, 1, false, 0)) {
-		Actor_Face_Actor(kActorMcCoy, kActorCrazylegs, true);
-		Actor_Face_Actor(kActorCrazylegs, kActorMcCoy, true);
-		//TODO: cleanup
-		if (Game_Flag_Query(166) || (Actor_Says(kActorMcCoy, 4415, 18) , Actor_Says(kActorCrazylegs, 1090, 3) , Actor_Says(kActorMcCoy, 4420, 18) , Game_Flag_Set(166) , Game_Flag_Query(166) != 1) || Game_Flag_Query(55) != 1 || Game_Flag_Query(56)) {
-			if (!Game_Flag_Query(166) || Game_Flag_Query(55) || Game_Flag_Query(175)) {
-				Actor_Says(kActorMcCoy, 4425, 18);
-				Actor_Says(kActorCrazylegs, 1160, 3);
+
+	if (actorId == kActorIzo) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -473.0f, 0.2f, -133.0f, 12, true, false, 0)) {
+			Actor_Face_Actor(kActorMcCoy, kActorIzo, true);
+			Actor_Face_Actor(kActorIzo, kActorMcCoy, true);
+
+			if (!Game_Flag_Query(kFlagPS09IzoTalk1)) {
+				Actor_Says(kActorMcCoy, 4200, 14);
+				Actor_Says(kActorIzo, 570, 3);
+				Actor_Says(kActorMcCoy, 4205, 18);
+				Game_Flag_Set(kFlagPS09IzoTalk1);
 				return true;
-			} else {
+			}
+
+			if ( Game_Flag_Query(kFlagPS09IzoTalk1)
+			 && !Game_Flag_Query(kFlagPS09IzoTalk2)
+			) {
+				Actor_Says(kActorMcCoy, 4210, 18);
+				Actor_Says(kActorIzo, 580, 3);
+				Actor_Says(kActorMcCoy, 4215, 14);
+				Actor_Says(kActorIzo, 590, 3);
+				Actor_Says(kActorIzo, 600, 3);
+				Actor_Says(kActorMcCoy, 4220, 18);
+				Actor_Says(kActorIzo, 610, 3);
+				Actor_Says(kActorMcCoy, 4225, 19);
+				Actor_Says(kActorIzo, 620, 3);
+				Actor_Says(kActorMcCoy, 4230, 14);
+				Game_Flag_Set(kFlagPS09IzoTalk2);
+				return true;
+			}
+
+			Actor_Says(kActorMcCoy, 4200, 13);
+			return true;
+		}
+	}
+
+	if (actorId == kActorCrazylegs) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -295.0f, 0.34f, -193.0f, 12, true, false, 0)) {
+			Actor_Face_Actor(kActorMcCoy, kActorCrazylegs, true);
+			Actor_Face_Actor(kActorCrazylegs, kActorMcCoy, true);
+
+			if (!Game_Flag_Query(kFlagPS09CrazylegsTalk1)) {
+				Actor_Says(kActorMcCoy, 4415, 18);
+				Actor_Says(kActorCrazylegs, 1090, 3);
+				Actor_Says(kActorMcCoy, 4420, 18);
+				Game_Flag_Set(kFlagPS09CrazylegsTalk1);
+			}
+
+			if ( Game_Flag_Query(kFlagPS09CrazylegsTalk1)
+			 &&  Game_Flag_Query(kFlagGrigorianArrested)
+			 && !Game_Flag_Query(kFlagPS09CrazylegsGrigorianTalk)
+			) {
+				Actor_Face_Actor(kActorGrigorian, kActorCrazylegs, true);
+				Actor_Says(kActorGrigorian, 420, 14);
+				Actor_Face_Actor(kActorCrazylegs, kActorGrigorian, true);
+				Actor_Says(kActorCrazylegs, 1120, 3);
+				Actor_Face_Actor(kActorMcCoy, kActorGrigorian, true);
+				Actor_Says(kActorMcCoy, 4435, 14);
+				Actor_Says(kActorGrigorian, 430, 16);
+				Actor_Says(kActorCrazylegs, 1130, 3);
+				Game_Flag_Set(kFlagPS09CrazylegsGrigorianTalk);
+				return true;
+			}
+
+			if ( Game_Flag_Query(kFlagPS09CrazylegsTalk1)
+			 && !Game_Flag_Query(kFlagGrigorianArrested)
+			 && !Game_Flag_Query(kFlagPS09CrazylegsTalk2)) {
 				Actor_Says(kActorMcCoy, 4425, 18);
 				Actor_Says(kActorCrazylegs, 1100, 3);
 				Actor_Says(kActorMcCoy, 4430, 19);
 				Actor_Says(kActorCrazylegs, 1110, 3);
-				Game_Flag_Set(175);
+				Game_Flag_Set(kFlagPS09CrazylegsTalk2);
 				return true;
 			}
-		} else {
-			Actor_Face_Actor(kActorGrigorian, kActorCrazylegs, true);
-			Actor_Says(kActorGrigorian, 420, 14);
-			Actor_Face_Actor(kActorCrazylegs, kActorGrigorian, true);
-			Actor_Says(kActorCrazylegs, 1120, 3);
-			Actor_Face_Actor(kActorMcCoy, kActorGrigorian, true);
-			Actor_Says(kActorMcCoy, 4435, 14);
-			Actor_Says(kActorGrigorian, 430, 16);
-			Actor_Says(kActorCrazylegs, 1130, 3);
-			Game_Flag_Set(56);
+
+			Actor_Says(kActorMcCoy, 4425, 18);
+			Actor_Says(kActorCrazylegs, 1160, 3);
 			return true;
 		}
 	}
@@ -179,8 +229,8 @@ bool SceneScriptPS09::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -559.15f, 0.0f, -85.06f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Set_Enter(62, kScenePS02);
-			Game_Flag_Reset(211);
+			Set_Enter(kSetPS02, kScenePS02);
+			Game_Flag_Reset(kFlagPS09Entered);
 		}
 		return true;
 	}
@@ -202,18 +252,18 @@ void SceneScriptPS09::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptPS09::PlayerWalkedIn() {
-	if (Game_Flag_Query(465)) {
+	if (Game_Flag_Query(kFlagMcCoyArrested)) {
 		Player_Loses_Control();
 		Delay(2000);
 		Actor_Retired_Here(kActorMcCoy, 6, 6, 1, -1);
 		//return true;
 		return;
 	}
-	if (!Game_Flag_Query(211)) {
+	if (!Game_Flag_Query(kFlagPS09Entered)) {
 		Player_Loses_Control();
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -491.15f, 0.0f, -73.06f, 0, 0, false, 0);
 		Player_Gains_Control();
-		Game_Flag_Set(211);
+		Game_Flag_Set(kFlagPS09Entered);
 	}
 	if (Game_Flag_Query(kFlagPS02toPS09)) {
 		Game_Flag_Reset(kFlagPS02toPS09);
@@ -229,14 +279,22 @@ void SceneScriptPS09::PlayerWalkedOut() {
 void SceneScriptPS09::DialogueQueueFlushed(int a1) {
 }
 
-void SceneScriptPS09::sub_402090() {
+void SceneScriptPS09::dialogueWithGregorian() {
 	Dialogue_Menu_Clear_List();
-	if (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA) || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1) || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2)) {
+	if (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA)
+	 || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1)
+	 || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2)
+	) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(170, 5, 5, 3);
 		DM_Add_To_List_Never_Repeat_Once_Selected(180, -1, 5, 5);
 		DM_Add_To_List_Never_Repeat_Once_Selected(200, -1, 3, 6);
 	}
-	if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote) && (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA) || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1) || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2))) {
+	if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)
+	 && (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA)
+	  || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1)
+	  || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2)
+	 )
+	) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(190, 5, 6, -1);
 	}
 	Dialogue_Menu_Add_To_List(210);
@@ -292,7 +350,7 @@ void SceneScriptPS09::sub_402090() {
 		Actor_Says(kActorGrigorian, 290, 15);
 		Actor_Says(kActorMcCoy, 4340, 13);
 		Actor_Modify_Friendliness_To_Other(kActorGrigorian, kActorMcCoy, -5);
-		if (Game_Flag_Query(165)) {
+		if (Game_Flag_Query(kFlagCrazylegsArrested)) {
 			Actor_Says(kActorGrigorian, 300, 12);
 			Actor_Face_Actor(kActorCrazylegs, kActorGrigorian, true);
 			Actor_Says(kActorCrazylegs, 1010, 3);

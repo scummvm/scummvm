@@ -291,7 +291,7 @@ void SceneScriptMA04::PlayerWalkedIn() {
 				Item_Remove_From_World(kItemChromeDebris);
 			}
 			Actor_Set_Goal_Number(kActorOfficerLeary, 99);
-			Actor_Put_In_Set(kActorOfficerLeary, 93);
+			Actor_Put_In_Set(kActorOfficerLeary, kSetFreeSlotC);
 			Actor_Set_At_Waypoint(kActorOfficerLeary, 35, 0);
 			Autosave_Game(0);
 		}
@@ -365,7 +365,7 @@ void SceneScriptMA04::phoneCallWithDektora() {
 	Actor_Says(kActorMcCoy, 2495, 0);
 	Actor_Says(kActorDektora, 340, 3);
 	Actor_Says(kActorDektora, 350, 3);
-	if (Game_Flag_Query(165) || Actor_Query_Goal_Number(kActorCrazylegs) == 2) {
+	if (Game_Flag_Query(kFlagCrazylegsArrested) || Actor_Query_Goal_Number(kActorCrazylegs) == 2) {
 		answer = 1170;
 	} else {
 		Dialogue_Menu_Clear_List();
@@ -418,7 +418,7 @@ void SceneScriptMA04::phoneCallWithLucy() {
 	Actor_Says(kActorLucy, 570, 3);
 	Actor_Says(kActorMcCoy, 2560, 17);
 	Actor_Says(kActorLucy, 580, 3);
-	if (Game_Flag_Query(165) || Actor_Query_Goal_Number(kActorCrazylegs) == 2) {
+	if (Game_Flag_Query(kFlagCrazylegsArrested) || Actor_Query_Goal_Number(kActorCrazylegs) == 2) {
 		Actor_Says(kActorLucy, 630, 3);
 		Actor_Says_With_Pause(kActorMcCoy, 2575, 0.0f, 15);
 		if (!Game_Flag_Query(kFlagDirectorsCut)) {

@@ -83,11 +83,11 @@ bool SceneScriptBB11::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptBB11::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 43.39f, -10.27f, -68.52f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 43.39f, -10.27f, -68.52f, 0, true, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(223);
-			Set_Enter(25, kSceneBB10);
+			Game_Flag_Set(kFlagBB11toBB10);
+			Set_Enter(kSetBB10, kSceneBB10);
 		}
 		return true;
 	}

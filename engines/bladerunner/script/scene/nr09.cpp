@@ -75,7 +75,7 @@ bool SceneScriptNR09::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -564.07f, 0.35f, 399.04f, 0, 1, false, 0)) {
 			Game_Flag_Set(475);
-			Set_Enter(59, kSceneNR10);
+			Set_Enter(kSetNR10, kSceneNR10);
 			return true;
 		}
 	}
@@ -85,7 +85,7 @@ bool SceneScriptNR09::ClickedOnExit(int exitId) {
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		if (!v1) {
 			Game_Flag_Set(615);
-			Set_Enter(13, kSceneNR08);
+			Set_Enter(kSetNR05_NR08, kSceneNR08);
 			return true;
 		}
 	}

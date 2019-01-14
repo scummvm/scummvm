@@ -90,7 +90,7 @@ void AIScriptGaff::CompletedMovementTrack() {
 		Actor_Clue_Acquire(kActorMcCoy, kClueGaffsInformation, 1, kActorGaff);
 		CDB_Set_Crime(kClueZuben, kCrimeMoonbusHijacking);
 		Actor_Clue_Acquire(kActorGaff, kClueMcCoyRetiredZuben, 1, -1);
-		Game_Flag_Set(64);
+		Game_Flag_Set(kFlagGaffApproachedMcCoyAboutZuben);
 		Player_Gains_Control();
 		Actor_Set_Goal_Number(kActorGaff, 4);
 	}
@@ -117,7 +117,11 @@ void AIScriptGaff::ReceivedClue(int clueId, int fromActorId) {
 }
 
 void AIScriptGaff::ClickedByPlayer() {
-	if ((Global_Variable_Query(kVariableChapter) == 2 || Global_Variable_Query(kVariableChapter) == 3) && Game_Flag_Query(471)){
+	if ((Global_Variable_Query(kVariableChapter) == 2
+	  || Global_Variable_Query(kVariableChapter) == 3
+	 )
+	 && Game_Flag_Query(471)
+	) {
 		AI_Movement_Track_Pause(kActorGaff);
 		Actor_Face_Actor(kActorMcCoy, kActorGaff, true);
 		Actor_Face_Actor(kActorGaff, kActorMcCoy, true);
@@ -286,10 +290,10 @@ bool AIScriptGaff::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case 302:
 		return true;
 	case 303:
-		Actor_Face_Actor(kActorGaff, kActorMcCoy, 1);
+		Actor_Face_Actor(kActorGaff, kActorMcCoy, true);
 		Actor_Change_Animation_Mode(kActorGaff, kAnimationModeCombatAttack);
 		Sound_Play(27, 100, 0, 0, 50);
-		Actor_Change_Animation_Mode(kActorMcCoy, 48);
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
 		Actor_Retired_Here(kActorMcCoy, 12, 12, 1, -1);
 		return true;
 	case 499:

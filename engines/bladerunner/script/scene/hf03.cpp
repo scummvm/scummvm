@@ -189,22 +189,22 @@ bool SceneScriptHF03::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptHF03::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 179.0f, 46.76f, -824.0f, 0, 1, false, 0)) {
-			Game_Flag_Set(311);
-			Set_Enter(37, kSceneHF01);
+			Game_Flag_Set(kFlagHF03toHF01);
+			Set_Enter(kSetHF01, kSceneHF01);
 		}
 		return true;
 	}
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 479.0f, 47.76f, -524.0f, 0, 1, false, 0)) {
 			Game_Flag_Set(528);
-			Set_Enter(38, kSceneHF02);
+			Set_Enter(kSetHF02, kSceneHF02);
 		}
 		return true;
 	}
 	if (exitId == 2) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 942.0f, 47.76f, -847.0f, 0, 1, false, 0)) {
 			Game_Flag_Set(566);
-			Set_Enter(40, kSceneHF04);
+			Set_Enter(kSetHF04, kSceneHF04);
 		}
 		return true;
 	}
@@ -227,7 +227,7 @@ void SceneScriptHF03::PlayerWalkedIn() {
 		Game_Flag_Reset(527);
 	} else {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 179.0f, 47.76f, -824.0f, 0, 0, false, 0);
-		Game_Flag_Reset(310);
+		Game_Flag_Reset(kFlagHF01toHF03);
 	}
 	if (Actor_Query_Goal_Number(kActorLucy) == 250) {
 		Actor_Set_Goal_Number(kActorLucy, 212);

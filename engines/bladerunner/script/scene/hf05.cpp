@@ -69,10 +69,15 @@ bool SceneScriptHF05::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("TOP CON", objectName) == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 95.0f, 40.63f, 308.0f, 0, 1, false, 0)) {
 			Actor_Face_Object(kActorMcCoy, "TOP CON", true);
-			if (Actor_Query_In_Set(kActorCrazylegs, 41) && Actor_Query_Goal_Number(kActorCrazylegs) != 1 && Actor_Query_Goal_Number(kActorCrazylegs) != 2) {
+			if (Actor_Query_In_Set(kActorCrazylegs, kSetHF05)
+			 && Actor_Query_Goal_Number(kActorCrazylegs) != 1
+			 && Actor_Query_Goal_Number(kActorCrazylegs) != 2
+			) {
 				Actor_Face_Actor(kActorCrazylegs, kActorMcCoy, true);
 				Actor_Says(kActorCrazylegs, 480, 13);
-			} else if (!Game_Flag_Query(662) || Game_Flag_Query(369)) {
+			} else if (!Game_Flag_Query(662)
+			         || Game_Flag_Query(369)
+			) {
 				Actor_Change_Animation_Mode(kActorMcCoy, 23);
 				Sound_Play(412, 100, 0, 0, 50);
 			} else {
@@ -129,7 +134,7 @@ bool SceneScriptHF05::ClickedOn3DObject(const char *objectName, bool a2) {
 
 bool SceneScriptHF05::ClickedOnActor(int actorId) {
 	if (actorId == 9) {
-		if (!Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorCrazylegs, 60, 1, false)) {
+		if (!Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorCrazylegs, 60, true, false)) {
 			Actor_Face_Actor(kActorMcCoy, kActorCrazylegs, true);
 			Actor_Face_Actor(kActorCrazylegs, kActorMcCoy, true);
 			sub_402AE4();
@@ -145,8 +150,8 @@ bool SceneScriptHF05::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptHF05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 483.0f, 40.63f, -189.0f, 0, 1, false, 0) && !Game_Flag_Query(684)) {
-			Game_Flag_Set(313);
-			Set_Enter(37, kSceneHF01);
+			Game_Flag_Set(kFlagHF05toHF01);
+			Set_Enter(kSetHF01, kSceneHF01);
 		}
 		return true;
 	}
@@ -158,14 +163,14 @@ bool SceneScriptHF05::ClickedOnExit(int exitId) {
 				Actor_Says(kActorMcCoy, 1810, 16);
 			}
 			Game_Flag_Set(359);
-			Set_Enter(43, kSceneHF07);
+			Set_Enter(kSetHF07, kSceneHF07);
 		}
 		return true;
 	}
 	if (exitId == 2) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 277.0f, 40.63f, 410.0f, 0, 1, false, 0) && !Game_Flag_Query(684)) {
 			Game_Flag_Set(529);
-			Set_Enter(42, kSceneHF06);
+			Set_Enter(kSetHF06, kSceneHF06);
 		}
 		return true;
 	}
@@ -234,9 +239,9 @@ void SceneScriptHF05::PlayerWalkedIn() {
 	if (Game_Flag_Query(662)) {
 		int v0 = sub_404858();
 		if (Game_Flag_Query(662) && v0 != -1) {
-			Actor_Put_In_Set(v0, 41);
+			Actor_Put_In_Set(v0, kSetHF05);
 			Actor_Force_Stop_Walking(v0);
-			if (Game_Flag_Query(312)) {
+			if (Game_Flag_Query(kFlagHF01toHF05)) {
 				Actor_Set_At_XYZ(v0, 506.81f, 40.63f, -140.92f, 0);
 				Async_Actor_Walk_To_Waypoint(v0, 437, 36, 0);
 			} else if (Game_Flag_Query(530)) {
@@ -265,13 +270,13 @@ void SceneScriptHF05::PlayerWalkedIn() {
 		} else {
 			sub_403A34(v0);
 		}
-	} else if (Game_Flag_Query(312) == 1) {
+	} else if (Game_Flag_Query(kFlagHF01toHF05)) {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 399.0f, 40.63f, -85.0f, 0, 0, false, 0);
 	} else if (Game_Flag_Query(358)) {
 		Actor_Set_At_XYZ(kActorMcCoy, 346.0f, 4.63f, -151.0f, 603);
 		Loop_Actor_Travel_Stairs(kActorMcCoy, 4, 1, 0);
 	}
-	if (Actor_Query_In_Set(kActorCrazylegs, 41)) {
+	if (Actor_Query_In_Set(kActorCrazylegs, kSetHF05)) {
 		if (Game_Flag_Query(562)) {
 			if (!Game_Flag_Query(563) && Global_Variable_Query(kVariableChapter) == 3) {
 				sub_402970();
@@ -282,7 +287,7 @@ void SceneScriptHF05::PlayerWalkedIn() {
 			Game_Flag_Set(562);
 		}
 	}
-	Game_Flag_Reset(312);
+	Game_Flag_Reset(kFlagHF01toHF05);
 	Game_Flag_Reset(530);
 	Game_Flag_Reset(358);
 
@@ -463,16 +468,16 @@ void SceneScriptHF05::sub_403738() {
 		Actor_Says(kActorMcCoy, 1990, 17);
 		Actor_Says(kActorCrazylegs, 600, 16);
 		Actor_Says(kActorMcCoy, 1995, 3);
-		Game_Flag_Set(165);
-		Actor_Put_In_Set(kActorCrazylegs, 67);
+		Game_Flag_Set(kFlagCrazylegsArrested);
+		Actor_Put_In_Set(kActorCrazylegs, kSetPS09);
 		Actor_Set_At_XYZ(kActorCrazylegs, -315.15f, 0.0f, 241.06f, 583);
 		Actor_Set_Goal_Number(kActorCrazylegs, 699);
 		Game_Flag_Set(652);
 		if (Game_Flag_Query(kFlagSpinnerAtNR01)) {
-			Set_Enter(54, kSceneNR01);
+			Set_Enter(kSetNR01, kSceneNR01);
 		} else {
-			Game_Flag_Set(313);
-			Set_Enter(37, kSceneHF01);
+			Game_Flag_Set(kFlagHF05toHF01);
+			Set_Enter(kSetHF01, kSceneHF01);
 		}
 	} else if (answer == 1260) {
 		Actor_Says(kActorMcCoy, 1965, 12);
@@ -543,7 +548,7 @@ void SceneScriptHF05::sub_40410C() {
 }
 
 void SceneScriptHF05::sub_403A34(int actorId) {
-	if (actorId != -1 && Actor_Query_In_Set(kActorCrazylegs, 41)) {
+	if (actorId != -1 && Actor_Query_In_Set(kActorCrazylegs, kSetHF05)) {
 		Async_Actor_Walk_To_Waypoint(actorId, 437, 36, 0);
 		Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 437, 0, 0, false);
 		Actor_Face_Actor(kActorCrazylegs, kActorMcCoy, true);
@@ -588,7 +593,7 @@ void SceneScriptHF05::sub_403A34(int actorId) {
 		Async_Actor_Walk_To_XYZ(actorId, 309.0f, 40.63f, 402.0f, 0, false);
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 277.0f, 40.63f, 410.0f, 0, 0, false, 0);
 		Game_Flag_Set(529);
-		Set_Enter(42, kSceneHF06);
+		Set_Enter(kSetHF06, kSceneHF06);
 	}
 }
 
@@ -661,10 +666,10 @@ void SceneScriptHF05::sub_404474() {
 }
 
 int SceneScriptHF05::sub_4048C0() {
-	if (Actor_Query_In_Set(kActorDektora, 41) == 1 && Actor_Query_Goal_Number(kActorDektora) != 599) {
+	if (Actor_Query_In_Set(kActorDektora, kSetHF05) && Actor_Query_Goal_Number(kActorDektora) != 599) {
 		return kActorDektora;
 	}
-	if (Actor_Query_In_Set(kActorLucy, 41) == 1 && Actor_Query_Goal_Number(kActorLucy) != 599) {
+	if (Actor_Query_In_Set(kActorLucy, kSetHF05) && Actor_Query_Goal_Number(kActorLucy) != 599) {
 		return kActorLucy;
 	}
 	return kActorMcCoy;
