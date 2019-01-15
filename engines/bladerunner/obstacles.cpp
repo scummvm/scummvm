@@ -32,6 +32,8 @@
 
 #include "common/debug.h"
 
+#define DISABLE_PATHFINDING 1
+
 #define WITHIN_TOLERANCE(a, b) (((a) - 0.009) < (b) && ((a) + 0.009) > (b))
 
 namespace BladeRunner {
@@ -315,6 +317,14 @@ float Obstacles::getLength(float x0, float z0, float x1, float z1) {
 	return fabs(x1 - x0);
 }
 
+#if DISABLE_PATHFINDING
+bool Obstacles::findNextWaypoint(const Vector3 &from, const Vector3 &to, Vector3 *next) {
+	*next = to;
+
+	return true;
+}
+#else
+
 bool Obstacles::findNextWaypoint(const Vector3 &from, const Vector3 &to, Vector3 *next) {
 	static int  recursionLevel = 0;
 	static bool polygonVisited[kPolygonCount];
@@ -426,6 +436,7 @@ bool Obstacles::findNextWaypoint(const Vector3 &from, const Vector3 &to, Vector3
 	*next = Vector3(_path[0].x, from.y, _path[0].y);
 	return true;
 }
+#endif
 
 bool Obstacles::findIntersectionNearest(int polygonIndex, Vector2 from, Vector2 to,
                                         int *outVertexIndex, float *outDistance, Vector2 *out) const
