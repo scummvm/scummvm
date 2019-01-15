@@ -65,6 +65,11 @@ private:
 
 	Common::ReadStream *_stream;
 
+	/**
+	 * The transparency color in the RGB and transparency blocks.
+	 * In the output surface, the transparent color is black with zero
+	 * alpha. So the images are effectively pre-multiplied alpha.
+	 */
 	uint32 _transColor;
 };
 

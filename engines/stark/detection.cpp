@@ -297,7 +297,8 @@ static const ADFileBasedFallback fileBasedFallback[] = {
 	{NULL, {NULL}}
 };*/
 
-#define GAMEOPTION_ASSETS_MOD GUIO_GAMEOPTIONS1
+#define GAMEOPTION_ASSETS_MOD       GUIO_GAMEOPTIONS1
+#define GAMEOPTION_LINEAR_FILTERING GUIO_GAMEOPTIONS2
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
@@ -309,6 +310,15 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			true
 		}
 	},
+	{
+		GAMEOPTION_LINEAR_FILTERING,
+		{
+			_s("Enable linear filtering of the backgrounds images"),
+			_s("When linear filtering is enabled the background graphics are smoother in full screen mode, at the cost of some details."),
+			"use_linear_filtering",
+			true
+		}
+	},
 
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
@@ -317,7 +327,7 @@ class StarkMetaEngine : public AdvancedMetaEngine {
 public:
 	StarkMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(ADGameDescription), starkGames, optionsList) {
 		_singleId = "stark";
-		_guiOptions = GUIO2(GUIO_NOMIDI, GAMEOPTION_ASSETS_MOD);
+		_guiOptions = GUIO3(GUIO_NOMIDI, GAMEOPTION_ASSETS_MOD, GAMEOPTION_LINEAR_FILTERING);
 	}
 
 	const char *getName() const override {

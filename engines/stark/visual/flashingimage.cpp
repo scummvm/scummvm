@@ -31,6 +31,7 @@
 
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
+#include "engines/stark/services/settings.h"
 
 namespace Stark {
 
@@ -55,6 +56,7 @@ void VisualFlashingImage::initFromSurface(const Graphics::Surface *surface) {
 	assert(!_texture);
 
 	_texture = _gfx->createTexture(surface);
+	_texture->setSamplingFilter(StarkSettings->getImageSamplingFilter());
 }
 
 void VisualFlashingImage::updateFadeLevel() {

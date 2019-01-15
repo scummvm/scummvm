@@ -29,6 +29,8 @@
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/surfacerenderer.h"
 #include "engines/stark/gfx/texture.h"
+#include "engines/stark/services/services.h"
+#include "engines/stark/services/settings.h"
 
 namespace Stark {
 
@@ -61,6 +63,7 @@ void VisualImageXMG::load(Common::ReadStream *stream) {
 	// Decode the XMG
 	_surface = Formats::XMGDecoder::decode(stream);
 	_texture = _gfx->createTexture(_surface);
+	_texture->setSamplingFilter(StarkSettings->getImageSamplingFilter());
 
 	_originalWidth  = _surface->w;
 	_originalHeight = _surface->h;
@@ -81,7 +84,7 @@ bool VisualImageXMG::loadPNG(Common::SeekableReadStream *stream) {
 
 	_surface = pngDecoder.getSurface()->convertTo(Gfx::Driver::getRGBAPixelFormat());
 	_texture = _gfx->createTexture(_surface);
-	_texture->setSamplingFilter(Gfx::Texture::kLinear);
+	_texture->setSamplingFilter(StarkSettings->getImageSamplingFilter());
 
 	return true;
 }

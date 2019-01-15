@@ -27,6 +27,8 @@
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/surfacerenderer.h"
 #include "engines/stark/gfx/texture.h"
+#include "engines/stark/services/services.h"
+#include "engines/stark/services/settings.h"
 
 namespace Stark {
 
@@ -40,6 +42,7 @@ VisualEffect::VisualEffect(VisualType type, const Common::Point &size, Gfx::Driv
 	_surface->create(size.x, size.y, Gfx::Driver::getRGBAPixelFormat());
 
 	_texture = _gfx->createTexture(_surface);
+	_texture->setSamplingFilter(StarkSettings->getImageSamplingFilter());
 
 	_surfaceRenderer = _gfx->createSurfaceRenderer();
 }

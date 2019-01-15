@@ -31,6 +31,7 @@
 
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
+#include "engines/stark/services/settings.h"
 
 namespace Stark {
 
@@ -57,7 +58,9 @@ void VisualExplodingImage::initFromSurface(const Graphics::Surface *surface) {
 	// Decode the XMG
 	_surface = new Graphics::Surface();
 	_surface->copyFrom(*surface);
+
 	_texture = _gfx->createTexture(_surface);
+	_texture->setSamplingFilter(StarkSettings->getImageSamplingFilter());
 
 	// Create an explosion unit for each pixel in the surface
 	_units.resize(_surface->w * _surface->h);

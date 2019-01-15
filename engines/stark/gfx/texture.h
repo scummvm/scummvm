@@ -40,11 +40,19 @@ public:
 	Texture();
 	virtual ~Texture();
 
+	enum SamplingFilter {
+		kNearest,
+		kLinear
+	};
+
 	/** Make the texture active */
 	virtual void bind() const = 0;
 
 	/** Define or update the texture pixel data */
 	virtual void update(const Graphics::Surface *surface, const byte *palette = nullptr) = 0;
+
+	/** Set the filter used when sampling the texture */
+	virtual void setSamplingFilter(SamplingFilter filter) = 0;
 
 	/**
 	 * Define the total number of levels of details

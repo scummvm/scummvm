@@ -162,7 +162,11 @@ void OpenGLSDriver::start2DMode() {
 	// Enable alpha blending
 	glEnable(GL_BLEND);
 	//glBlendEquation(GL_FUNC_ADD); // It's the default
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	// This blend mode prevents color fringes due to filtering.
+	// It requires the textures to have their color values pre-multiplied
+	// with their alpha value. This is the "Premultiplied Alpha" technique.
+	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);

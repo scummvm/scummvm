@@ -25,6 +25,7 @@
 
 #include "common/config-manager.h"
 
+#include "engines/stark/gfx/texture.h"
 #include "engines/stark/services/services.h"
 
 struct ADGameDescription;
@@ -96,6 +97,9 @@ public:
 
 	/** Should the game try to load external replacement assets? */
 	bool isAssetsModEnabled() const;
+
+	/** Should linear filtering be used when sampling the background image textures? */
+	Gfx::Texture::SamplingFilter getImageSamplingFilter() const;
 
 private:
 	Audio::Mixer *_mixer;

@@ -140,6 +140,8 @@ void VisualText::createTexture() {
 
 	// Create a texture from the surface
 	_texture = _gfx->createTexture(&surface);
+	_texture->setSamplingFilter(Gfx::Texture::kNearest);
+
 	surface.free();
 }
 

@@ -255,7 +255,7 @@ Screen *UserInterface::getScreenByName(Screen::Name screenName) const {
 }
 
 bool UserInterface::isInGameScreen() const {
-	return _currentScreen->getName() == Screen::kScreenGame;
+	return _currentScreen && (_currentScreen->getName() == Screen::kScreenGame);
 }
 
 bool UserInterface::isInSaveLoadMenuScreen() const {

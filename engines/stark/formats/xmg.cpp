@@ -198,10 +198,10 @@ XMGDecoder::Block XMGDecoder::processYCrCb() {
 XMGDecoder::Block XMGDecoder::processTrans() {
 	Block block;
 
-	block.a1 = _transColor;
-	block.a2 = _transColor;
-	block.b1 = _transColor;
-	block.b2 = _transColor;
+	block.a1 = 0;
+	block.a2 = 0;
+	block.b1 = 0;
+	block.b2 = 0;
 
 	return block;
 }
@@ -214,24 +214,32 @@ XMGDecoder::Block XMGDecoder::processRGB() {
 	color += _stream->readByte() << 16;
 	if (color != _transColor)
 		color += 255 << 24;
+	else
+		color = 0;
 	block.a1 = color;
 
 	color = _stream->readUint16LE();
 	color += _stream->readByte() << 16;
 	if (color != _transColor)
 		color += 255 << 24;
+	else
+		color = 0;
 	block.a2 = color;
 
 	color = _stream->readUint16LE();
 	color += _stream->readByte() << 16;
 	if (color != _transColor)
 		color += 255 << 24;
+	else
+		color = 0;
 	block.b1 = color;
 
 	color = _stream->readUint16LE();
 	color += _stream->readByte() << 16;
 	if (color != _transColor)
 		color += 255 << 24;
+	else
+		color = 0;
 	block.b2 = color;
 
 	return block;

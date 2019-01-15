@@ -27,6 +27,7 @@
 #include "engines/stark/gfx/texture.h"
 #include "engines/stark/scene.h"
 #include "engines/stark/services/services.h"
+#include "engines/stark/services/settings.h"
 
 #include "common/str.h"
 #include "common/archive.h"
@@ -63,6 +64,7 @@ void VisualSmacker::load(Common::SeekableReadStream *stream) {
 	rewind();
 
 	_texture = _gfx->createTexture();
+	_texture->setSamplingFilter(StarkSettings->getImageSamplingFilter());
 
 	update();
 }

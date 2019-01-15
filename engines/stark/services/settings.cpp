@@ -88,4 +88,8 @@ bool Settings::isAssetsModEnabled() const {
 	return ConfMan.getBool("enable_assets_mod");
 }
 
+Gfx::Texture::SamplingFilter Settings::getImageSamplingFilter() const {
+	return ConfMan.getBool("use_linear_filtering") ? Gfx::Texture::kLinear : Gfx::Texture::kNearest;
+}
+
 } // End of namespace Stark

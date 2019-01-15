@@ -45,6 +45,8 @@ FMVScreen::FMVScreen(Gfx::Driver *gfx, Cursor *cursor) :
 	_decoder->setSoundType(Audio::Mixer::kSFXSoundType);
 
 	_texture = _gfx->createTexture();
+	_texture->setSamplingFilter(StarkSettings->getImageSamplingFilter());
+
 	_surfaceRenderer = _gfx->createSurfaceRenderer();
 }
 
