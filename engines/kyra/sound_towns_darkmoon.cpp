@@ -62,6 +62,8 @@ bool SoundTowns_Darkmoon::init() {
 	_intf->callback(8, 0x47, 127);
 	_intf->callback(67, 1, 127, 127);
 
+	_intf->setSoundEffectChanMask(-1);
+
 	_lastSfxChan = 0x46;
 	_lastEnvChan = 0x40;
 
