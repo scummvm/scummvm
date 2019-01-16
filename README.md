@@ -472,6 +472,17 @@ mods for the game. These are the currently supported modding features:
   setting allows to load regular transparency PNGs when set to `true` for
   convenience when testing.
 
+  * Load replacement video files for the Smacker animations.
+    The replacement files can be either in Smacker or Bink encoding. With
+  Smacker, only 1-bit transparency can be used. Transparent pixels must have
+  the Cyan color (#00FFFF). When using Bink, 8-bit transparency can be used.
+  The alpha channel should be encoded in the pre-multiplied alpha format.
+    The replacement videos can have larger dimensions than the originals
+  but must have the same number of frames and the same frame rate.
+    Like with PNG files, replacement video files are loaded from mod folders:
+  for instance `mods/[my_mod]/08/02/xarc/011001.bik` is the animation where
+  the tree spirit lifts the egg back into the nest.
+
 Contact us if you need further capabilities for your mod.
 
 ## 9. Bug reports

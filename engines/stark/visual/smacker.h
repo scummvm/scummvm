@@ -29,7 +29,7 @@
 #include "common/stream.h"
 
 namespace Video {
-class SmackerDecoder;
+class VideoDecoder;
 }
 
 namespace Graphics {
@@ -51,7 +51,8 @@ public:
 	VisualSmacker(Gfx::Driver *gfx);
 	virtual ~VisualSmacker();
 
-	void load(Common::SeekableReadStream *stream);
+	void loadSmacker(Common::SeekableReadStream *stream);
+	void loadBink(Common::SeekableReadStream *stream);
 	void update();
 	void render(const Common::Point &position);
 	bool isDone();
@@ -61,6 +62,11 @@ public:
 
 	/** Perform a transparency hit test on a point */
 	bool isPointSolid(const Common::Point &point) const;
+
+	/**
+	 * Load the size from a Smacker video
+	 */
+	void readOriginalSize(Common::SeekableReadStream *stream);
 
 	int getWidth() const;
 	int getHeight() const;
@@ -81,10 +87,15 @@ public:
 	void pause(bool pause);
 
 private:
-	Video::SmackerDecoder *_smacker;
+	void init();
+
+	Video::VideoDecoder *_decoder;
 	const Graphics::Surface *_surface;
 
 	Common::Point _position;
+	int32 _originalWidth;
+	int32 _originalHeight;
+
 	Gfx::Driver *_gfx;
 	Gfx::SurfaceRenderer *_surfaceRenderer;
 	Gfx::Texture *_texture;

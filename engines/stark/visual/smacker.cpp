@@ -32,6 +32,7 @@
 #include "common/str.h"
 #include "common/archive.h"
 
+#include "video/bink_decoder.h"
 #include "video/smk_decoder.h"
 
 namespace Stark {
@@ -41,25 +42,46 @@ VisualSmacker::VisualSmacker(Gfx::Driver *gfx) :
 		_gfx(gfx),
 		_surface(nullptr),
 		_texture(nullptr),
-		_smacker(nullptr),
+		_decoder(nullptr),
 		_position(0, 0),
+		_originalWidth(0),
+		_originalHeight(0),
 		_overridenFramerate(-1) {
 	_surfaceRenderer = _gfx->createSurfaceRenderer();
 }
 
 VisualSmacker::~VisualSmacker() {
 	delete _texture;
-	delete _smacker;
+	delete _decoder;
 	delete _surfaceRenderer;
 }
 
-void VisualSmacker::load(Common::SeekableReadStream *stream) {
+void VisualSmacker::loadSmacker(Common::SeekableReadStream *stream) {
 	delete _texture;
-	delete _smacker;
+	delete _decoder;
 
-	_smacker = new Video::SmackerDecoder();
-	_smacker->setSoundType(Audio::Mixer::kSFXSoundType);
-	_smacker->loadStream(stream);
+	_decoder = new Video::SmackerDecoder();
+	_decoder->setSoundType(Audio::Mixer::kSFXSoundType);
+	_decoder->loadStream(stream);
+
+	init();
+}
+
+void VisualSmacker::loadBink(Common::SeekableReadStream *stream) {
+	delete _texture;
+	delete _decoder;
+
+	_decoder = new Video::BinkDecoder();
+	_decoder->setSoundType(Audio::Mixer::kSFXSoundType);
+	_decoder->setDefaultHighColorFormat(Gfx::Driver::getRGBAPixelFormat());
+	_decoder->loadStream(stream);
+
+	init();
+}
+
+void VisualSmacker::init() {
+	_originalWidth  = _decoder->getWidth();
+	_originalHeight = _decoder->getHeight();
 
 	rewind();
 
@@ -69,8 +91,16 @@ void VisualSmacker::load(Common::SeekableReadStream *stream) {
 	update();
 }
 
+void VisualSmacker::readOriginalSize(Common::SeekableReadStream *stream) {
+	Video::SmackerDecoder smacker;
+	smacker.loadStream(stream);
+
+	_originalWidth  = smacker.getWidth();
+	_originalHeight = smacker.getHeight();
+}
+
 void VisualSmacker::render(const Common::Point &position) {
-	if (_smacker->getCurFrame() < 0) {
+	if (_decoder->getCurFrame() < 0) {
 		// The video has not yet been updated
 		// TODO: Make sure this is correct. Perhaps we should always
 		//  update animations on the same frame they are started.
@@ -78,70 +108,83 @@ void VisualSmacker::render(const Common::Point &position) {
 	}
 
 	// The position argument contains the scroll offset
-	_surfaceRenderer->render(_texture, _position - position);
+	_surfaceRenderer->render(_texture, _position - position, _originalWidth, _originalHeight);
 }
 
 void VisualSmacker::update() {
-	if (_smacker->needsUpdate()) {
-		_surface = _smacker->decodeNextFrame();
-		const byte *palette = _smacker->getPalette();
+	if (_decoder->needsUpdate()) {
+		_surface = _decoder->decodeNextFrame();
+		const byte *palette = _decoder->getPalette();
 
-		// Convert the surface to RGBA
-		Graphics::Surface *convertedSurface = new Graphics::Surface();
-		convertedSurface->create(_surface->w, _surface->h, Gfx::Driver::getRGBAPixelFormat());
+		if (palette) {
+			// Convert the surface to RGBA
+			Graphics::Surface convertedSurface;
+			convertedSurface.create(_surface->w, _surface->h, Gfx::Driver::getRGBAPixelFormat());
 
-		for (int y = 0; y < _surface->h; y++) {
-			const byte *srcRow = (const byte *)_surface->getBasePtr(0, y);
-			byte *dstRow = (byte *)convertedSurface->getBasePtr(0, y);
+			for (int y = 0; y < _surface->h; y++) {
+				const byte *srcRow = (const byte *)_surface->getBasePtr(0, y);
+				byte *dstRow = (byte *)convertedSurface.getBasePtr(0, y);
 
-			for (int x = 0; x < _surface->w; x++) {
-				byte index = *srcRow++;
+				for (int x = 0; x < _surface->w; x++) {
+					byte index = *srcRow++;
 
-				byte r = palette[index * 3];
-				byte g = palette[index * 3 + 1];
-				byte b = palette[index * 3 + 2];
+					byte r = palette[index * 3];
+					byte g = palette[index * 3 + 1];
+					byte b = palette[index * 3 + 2];
 
-				if (r != 0 || g != 255 || b != 255) {
-					*dstRow++ = r;
-					*dstRow++ = g;
-					*dstRow++ = b;
-					*dstRow++ = 0xFF;
-				} else {
-					// Cyan is the transparent color
-					*dstRow++ = 0;
-					*dstRow++ = 0;
-					*dstRow++ = 0;
-					*dstRow++ = 0;
+					if (r != 0 || g != 255 || b != 255) {
+						*dstRow++ = r;
+						*dstRow++ = g;
+						*dstRow++ = b;
+						*dstRow++ = 0xFF;
+					} else {
+						// Cyan is the transparent color
+						*dstRow++ = 0;
+						*dstRow++ = 0;
+						*dstRow++ = 0;
+						*dstRow++ = 0;
+					}
 				}
 			}
+
+			_texture->update(&convertedSurface);
+
+			convertedSurface.free();
+		} else {
+			_texture->update(_surface);
 		}
-
-		_texture->update(convertedSurface);
-
-		convertedSurface->free();
-		delete convertedSurface;
 	}
 }
 
 bool VisualSmacker::isPointSolid(const Common::Point &point) const {
-	if (!_smacker || !_surface) {
+	if (!_decoder || !_surface) {
 		return false;
 	}
 
-	const byte *ptr = (const byte *)_surface->getBasePtr(point.x, point.y);
-	const byte *palette = _smacker->getPalette();
+	Common::Point scaledPoint;
+	scaledPoint.x = point.x * _surface->w / _originalWidth;
+	scaledPoint.y = point.y * _surface->h / _originalHeight;
+	scaledPoint.x = CLIP<uint16>(scaledPoint.x, 0, _surface->w);
+	scaledPoint.y = CLIP<uint16>(scaledPoint.y, 0, _surface->h);
 
-	byte r = palette[*ptr * 3];
-	byte g = palette[*ptr * 3 + 1];
-	byte b = palette[*ptr * 3 + 2];
+	const byte *ptr = (const byte *)_surface->getBasePtr(scaledPoint.x, scaledPoint.y);
+	const byte *palette = _decoder->getPalette();
+	if (palette) {
+		byte r = palette[*ptr * 3];
+		byte g = palette[*ptr * 3 + 1];
+		byte b = palette[*ptr * 3 + 2];
 
-	// Cyan is the transparent color
-	return r != 0x00 || g != 0xFF || b != 0xFF;
+		// Cyan is the transparent color
+		return r != 0x00 || g != 0xFF || b != 0xFF;
+	} else {
+		// Maybe implement this method in some other way to avoid having to keep the surface in memory
+		return *(ptr + 3) == 0xFF;
+	}
 }
 
 int VisualSmacker::getFrameNumber() const {
-	if (_smacker && _smacker->isPlaying()) {
-		return _smacker->getCurFrame();
+	if (_decoder && _decoder->isPlaying()) {
+		return _decoder->getCurFrame();
 	}
 	return -1;
 }
@@ -151,30 +194,41 @@ bool VisualSmacker::isDone() {
 }
 
 int VisualSmacker::getWidth() const {
-	return _smacker->getWidth();
+	return _originalWidth;
 }
 
 int VisualSmacker::getHeight() const {
-	return _smacker->getHeight();
+	return _originalHeight;
 }
 
 uint32 VisualSmacker::getDuration() const {
-	return (_smacker->getRate().getInverse() * _smacker->getDuration().msecs()).toInt();
+	return (_decoder->getRate().getInverse() * _decoder->getDuration().msecs()).toInt();
 }
 
 void VisualSmacker::rewind() {
-	_smacker->rewind();
-	_smacker->start();
+	_decoder->rewind();
+	_decoder->start();
 
 	if (_overridenFramerate != -1) {
-		Common::Rational originalFrameRate = _smacker->getFrameRate();
+		Common::Rational originalFrameRate;
+
+		Video::SmackerDecoder *smacker = dynamic_cast<Video::SmackerDecoder *>(_decoder);
+		if (smacker) {
+			originalFrameRate = smacker->getFrameRate();
+		}
+
+		Video::BinkDecoder *bink = dynamic_cast<Video::BinkDecoder *>(_decoder);
+		if (bink) {
+			originalFrameRate = bink->getFrameRate();
+		}
+
 		Common::Rational playbackRate = _overridenFramerate / originalFrameRate;
-		_smacker->setRate(playbackRate);
+		_decoder->setRate(playbackRate);
 	}
 }
 
 uint32 VisualSmacker::getCurrentTime() const {
-	return (_smacker->getRate().getInverse() * _smacker->getTime()).toInt();
+	return (_decoder->getRate().getInverse() * _decoder->getTime()).toInt();
 }
 
 void VisualSmacker::overrideFrameRate(int32 framerate) {
@@ -182,7 +236,7 @@ void VisualSmacker::overrideFrameRate(int32 framerate) {
 }
 
 void VisualSmacker::pause(bool pause) {
-	_smacker->pauseVideo(pause);
+	_decoder->pauseVideo(pause);
 }
 
 } // End of namespace Stark

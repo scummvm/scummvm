@@ -22,6 +22,7 @@
 
 #include "common/debug.h"
 
+#include "engines/stark/debug.h"
 #include "engines/stark/formats/biffmesh.h"
 #include "engines/stark/formats/tm.h"
 #include "engines/stark/formats/xrc.h"
@@ -38,6 +39,7 @@
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
+#include "engines/stark/services/settings.h"
 #include "engines/stark/services/stateprovider.h"
 
 #include "engines/stark/model/skeleton_anim.h"
@@ -306,13 +308,53 @@ void AnimVideo::readData(Formats::XRCReadStream *stream) {
 
 void AnimVideo::onAllLoaded() {
 	if (!_smacker) {
-		Common::SeekableReadStream *stream = StarkArchiveLoader->getExternalFile(_smackerFile, _archiveName);
 
 		_smacker = new VisualSmacker(StarkGfx);
-		_smacker->load(stream);
+
+		Common::SeekableReadStream *overrideStreamBink = nullptr;
+		Common::SeekableReadStream *overrideStreamSmacker = nullptr;
+		if (StarkSettings->isAssetsModEnabled()) {
+			overrideStreamBink = openOverrideFile(".bik");
+			if (!overrideStreamBink) {
+				overrideStreamSmacker = openOverrideFile(".smk");
+			}
+		}
+
+		Common::SeekableReadStream *stream = StarkArchiveLoader->getExternalFile(_smackerFile, _archiveName);
+		if (overrideStreamBink) {
+			_smacker->loadBink(overrideStreamBink);
+			_smacker->readOriginalSize(stream);
+		} else if (overrideStreamSmacker) {
+			_smacker->loadSmacker(overrideStreamSmacker);
+			_smacker->readOriginalSize(stream);
+		} else {
+			_smacker->loadSmacker(stream);
+		}
+
 		_smacker->overrideFrameRate(_frameRateOverride);
+
 		updateSmackerPosition();
 	}
+}
+
+Common::SeekableReadStream *AnimVideo::openOverrideFile(const Common::String &extension) const {
+	if (!_smackerFile.hasSuffixIgnoreCase(".sss")) {
+		return nullptr;
+	}
+
+	Common::String filename = Common::String(_smackerFile.c_str(), _smackerFile.size() - 4) + extension;
+	Common::String filePath = StarkArchiveLoader->getExternalFilePath(filename, _archiveName);
+
+	debugC(kDebugModding, "Attempting to load %s", filePath.c_str());
+
+	Common::SeekableReadStream *smkStream = SearchMan.createReadStreamForMember(filePath);
+	if (!smkStream) {
+		return nullptr;
+	}
+
+	debugC(kDebugModding, "Loaded %s", filePath.c_str());
+
+	return smkStream;
 }
 
 void AnimVideo::onGameLoop() {
@@ -354,7 +396,11 @@ Visual *AnimVideo::getVisual() {
 
 void AnimVideo::updateSmackerPosition() {
 	int frame = _smacker->getFrameNumber();
-	if (frame != -1 && frame < (int) _positions.size()) {
+	if (frame == -1) {
+		return;
+	}
+
+	if (frame < (int) _positions.size()) {
 		_smacker->setPosition(_positions[frame]);
 	}
 }

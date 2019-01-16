@@ -28,6 +28,10 @@
 
 #include "engines/stark/resources/object.h"
 
+namespace Common {
+class SeekableReadStream;
+}
+
 namespace Stark {
 
 class SkeletonAnim;
@@ -229,6 +233,7 @@ protected:
 	typedef Common::Array<Common::Rect> RectArray;
 
 	void printData() override;
+	Common::SeekableReadStream *openOverrideFile(const Common::String &extension) const;
 
 	/** Update the position of the video for the current frame */
 	void updateSmackerPosition();
