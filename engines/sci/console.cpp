@@ -4013,7 +4013,7 @@ bool Console::cmdBreakpointAction(int argc, const char **argv) {
 
 	if (usage) {
 		debugPrintf("Change the action for the breakpoint with the specified index.\n");
-		debugPrintf("Usage: %s <breakpoint index> break|log|bt|inspect|none\n", argv[0]);
+		debugPrintf("Usage: %s <breakpoint index> break|log|bt|inspect|ignore\n", argv[0]);
 		debugPrintf("<index> * will process all breakpoints\n");
 		debugPrintf("Actions: break  : break into debugger\n");
 		debugPrintf("         log    : log without breaking\n");
