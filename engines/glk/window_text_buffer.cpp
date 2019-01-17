@@ -781,7 +781,6 @@ void TextBufferWindow::cancelLineEvent(Event *ev) {
 }
 
 void TextBufferWindow::redraw() {
-	TextBufferRow *ln;
 	int linelen;
 	int nsp, spw, pw;
 	int x0, y0, x1, y1;
@@ -801,10 +800,6 @@ void TextBufferWindow::redraw() {
 
 	_lines[0]._len = _numChars;
 	sx0 = sx1 = selleft = selright = 0;
-
-	ln = new TextBufferRow();
-	if (!ln)
-		return;
 
 	x0 = (_bbox.left + g_conf->_tMarginX) * GLI_SUBPIX;
 	x1 = (_bbox.right - g_conf->_tMarginX - g_conf->_scrollWidth) * GLI_SUBPIX;
@@ -834,14 +829,14 @@ void TextBufferWindow::redraw() {
 		if (selrow)
 			_lines[i]._dirty = true;
 
-		memcpy(ln, &_lines[i], sizeof(TextBufferRow));
+		TextBufferRow ln(_lines[i]);
 
 		// skip if we can
-		if (!ln->_dirty && !ln->_repaint && !Windows::_forceRedraw && _scrollPos == 0)
+		if (!ln._dirty && !ln._repaint && !Windows::_forceRedraw && _scrollPos == 0)
 			continue;
 
 		// repaint previously selected lines if needed
-		if (ln->_repaint && !Windows::_forceRedraw)
+		if (ln._repaint && !Windows::_forceRedraw)
 			_windows->redrawRect(Rect(x0 / GLI_SUBPIX, y,
 									  x1 / GLI_SUBPIX, y + _font._leading));
 
@@ -857,29 +852,29 @@ void TextBufferWindow::redraw() {
 		if (i == _scrollPos && i > 0)
 			continue;
 
-		linelen = ln->_len;
+		linelen = ln._len;
 
 		// kill spaces at the end unless they're a different color
 		color = Windows::_overrideBgSet ? g_conf->_windowColor : _bgColor;
-		while (i > 0 && linelen > 1 && ln->_chars[linelen - 1] == ' '
-				&& _styles[ln->_attrs[linelen - 1].style].bg == color
-				&& !_styles[ln->_attrs[linelen - 1].style].reverse)
+		while (i > 0 && linelen > 1 && ln._chars[linelen - 1] == ' '
+				&& _styles[ln._attrs[linelen - 1].style].bg == color
+				&& !_styles[ln._attrs[linelen - 1].style].reverse)
 			linelen --;
 
 		// kill characters that would overwrite the scroll bar
-		while (linelen > 1 && calcWidth(ln->_chars, ln->_attrs, 0, linelen, -1) >= pw)
+		while (linelen > 1 && calcWidth(ln._chars, ln._attrs, 0, linelen, -1) >= pw)
 			linelen --;
 
 		/*
 		 * count spaces and width for justification
 		 */
-		if (_font._justify && !ln->_newLine && i > 0) {
+		if (_font._justify && !ln._newLine && i > 0) {
 			for (a = 0, nsp = 0; a < linelen; a++)
-				if (ln->_chars[a] == ' ')
+				if (ln._chars[a] == ' ')
 					nsp ++;
-			w = calcWidth(ln->_chars, ln->_attrs, 0, linelen, 0);
+			w = calcWidth(ln._chars, ln._attrs, 0, linelen, 0);
 			if (nsp)
-				spw = (x1 - x0 - ln->_lm - ln->_rm - 2 * SLOP - w) / nsp;
+				spw = (x1 - x0 - ln._lm - ln._rm - 2 * SLOP - w) / nsp;
 			else
 				spw = 0;
 		} else {
@@ -894,20 +889,20 @@ void TextBufferWindow::redraw() {
 			// optimized case for all chars selected
 			if (selleft && selright) {
 				rsc = linelen > 0 ? linelen - 1 : 0;
-				selchar = calcWidth(ln->_chars, ln->_attrs, lsc, rsc, spw) / GLI_SUBPIX;
+				selchar = calcWidth(ln._chars, ln._attrs, lsc, rsc, spw) / GLI_SUBPIX;
 			} else {
 				// optimized case for leftmost char selected
 				if (selleft) {
 					tsc = linelen > 0 ? linelen - 1 : 0;
-					selchar = calcWidth(ln->_chars, ln->_attrs, lsc, tsc, spw) / GLI_SUBPIX;
+					selchar = calcWidth(ln._chars, ln._attrs, lsc, tsc, spw) / GLI_SUBPIX;
 				} else {
 					// find the substring contained by the selection
-					tx = (x0 + SLOP + ln->_lm) / GLI_SUBPIX;
+					tx = (x0 + SLOP + ln._lm) / GLI_SUBPIX;
 					// measure string widths until we find left char
 					for (tsc = 0; tsc < linelen; tsc++) {
-						tsw = calcWidth(ln->_chars, ln->_attrs, 0, tsc, spw) / GLI_SUBPIX;
+						tsw = calcWidth(ln._chars, ln._attrs, 0, tsc, spw) / GLI_SUBPIX;
 						if (tsw + tx >= sx0 ||
-								((tsw + tx + GLI_SUBPIX) >= sx0 && ln->_chars[tsc] != ' ')) {
+								((tsw + tx + GLI_SUBPIX) >= sx0 && ln._chars[tsc] != ' ')) {
 							lsc = tsc;
 							selchar = true;
 							break;
@@ -921,7 +916,7 @@ void TextBufferWindow::redraw() {
 					} else {
 						// measure string widths until we find right char
 						for (tsc = lsc; tsc < linelen; tsc++) {
-							tsw = calcWidth(ln->_chars, ln->_attrs, lsc, tsc, spw) / GLI_SUBPIX;
+							tsw = calcWidth(ln._chars, ln._attrs, lsc, tsc, spw) / GLI_SUBPIX;
 							if (tsw + sx0 < sx1)
 								rsc = tsc;
 						}
@@ -933,13 +928,13 @@ void TextBufferWindow::redraw() {
 			// reverse colors for selected chars
 			if (selchar) {
 				for (tsc = lsc; tsc <= rsc; tsc++) {
-					ln->_attrs[tsc].reverse = !ln->_attrs[tsc].reverse;
-					_copyBuf[_copyPos] = ln->_chars[tsc];
+					ln._attrs[tsc].reverse = !ln._attrs[tsc].reverse;
+					_copyBuf[_copyPos] = ln._chars[tsc];
 					_copyPos++;
 				}
 			}
 			// add newline if we reach the end of the line
-			if (ln->_len == 0 || ln->_len == (rsc + 1)) {
+			if (ln._len == 0 || ln._len == (rsc + 1)) {
 				_copyBuf[_copyPos] = '\n';
 				_copyPos++;
 			}
@@ -956,14 +951,14 @@ void TextBufferWindow::redraw() {
 		screen.fillRect(Rect::fromXYWH(x0 / GLI_SUBPIX, y, (x1 - x0) / GLI_SUBPIX, _font._leading),
 						color);
 
-		x = x0 + SLOP + ln->_lm;
+		x = x0 + SLOP + ln._lm;
 		a = 0;
 		for (b = 0; b < linelen; b++) {
-			if (ln->_attrs[a] != ln->_attrs[b]) {
-				link = ln->_attrs[a].hyper;
-				font = ln->_attrs[a].attrFont(_styles);
-				color = ln->_attrs[a].attrBg(_styles);
-				w = screen.stringWidthUni(font, Common::U32String(ln->_chars + a, b - a), spw);
+			if (ln._attrs[a] != ln._attrs[b]) {
+				link = ln._attrs[a].hyper;
+				font = ln._attrs[a].attrFont(_styles);
+				color = ln._attrs[a].attrBg(_styles);
+				w = screen.stringWidthUni(font, Common::U32String(ln._chars + a, b - a), spw);
 				screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX, y, w / GLI_SUBPIX, _font._leading),
 								color);
 				if (link) {
@@ -977,10 +972,10 @@ void TextBufferWindow::redraw() {
 				a = b;
 			}
 		}
-		link = ln->_attrs[a].hyper;
-		font = ln->_attrs[a].attrFont(_styles);
-		color = ln->_attrs[a].attrBg(_styles);
-		w = screen.stringWidthUni(font, Common::U32String(ln->_chars + a, b - a), spw);
+		link = ln._attrs[a].hyper;
+		font = ln._attrs[a].attrFont(_styles);
+		color = ln._attrs[a].attrBg(_styles);
+		w = screen.stringWidthUni(font, Common::U32String(ln._chars + a, b - a), spw);
 		screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX, y, w / GLI_SUBPIX, _font._leading), color);
 		if (link) {
 			screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX + 1, y + _font._baseLine + 1,
@@ -1001,29 +996,29 @@ void TextBufferWindow::redraw() {
 		if (_windows->getFocusWindow() == this && i == 0 && (_lineRequest || _lineRequestUni)) {
 			w = calcWidth(_chars, _attrs, 0, _inCurs, spw);
 			if (w < pw - _font._caretShape * 2 * GLI_SUBPIX)
-				_font.drawCaret(Point(x0 + SLOP + ln->_lm + w, y + _font._baseLine));
+				_font.drawCaret(Point(x0 + SLOP + ln._lm + w, y + _font._baseLine));
 		}
 
 		/*
 		 * draw text
 		 */
 
-		x = x0 + SLOP + ln->_lm;
+		x = x0 + SLOP + ln._lm;
 		a = 0;
 		for (b = 0; b < linelen; b++) {
-			if (ln->_attrs[a] != ln->_attrs[b]) {
-				link = ln->_attrs[a].hyper;
-				font = ln->_attrs[a].attrFont(_styles);
-				color = link ? _font._linkColor : ln->_attrs[a].attrFg(_styles);
+			if (ln._attrs[a] != ln._attrs[b]) {
+				link = ln._attrs[a].hyper;
+				font = ln._attrs[a].attrFont(_styles);
+				color = link ? _font._linkColor : ln._attrs[a].attrFg(_styles);
 				x = screen.drawStringUni(Point(x, y + _font._baseLine),
-										 font, color, Common::U32String(ln->_chars + a, b - a), spw);
+										 font, color, Common::U32String(ln._chars + a, b - a), spw);
 				a = b;
 			}
 		}
-		link = ln->_attrs[a].hyper;
-		font = ln->_attrs[a].attrFont(_styles);
-		color = link ? _font._linkColor : ln->_attrs[a].attrFg(_styles);
-		screen.drawStringUni(Point(x, y + _font._baseLine), font, color, Common::U32String(ln->_chars + a, linelen - a), spw);
+		link = ln._attrs[a].hyper;
+		font = ln._attrs[a].attrFont(_styles);
+		color = link ? _font._linkColor : ln._attrs[a].attrFg(_styles);
+		screen.drawStringUni(Point(x, y + _font._baseLine), font, color, Common::U32String(ln._chars + a, linelen - a), spw);
 	}
 
 	/*
@@ -1065,34 +1060,34 @@ void TextBufferWindow::redraw() {
 	 * draw the images
 	 */
 	for (i = 0; i < _scrollBack; i++) {
-		memcpy(ln, &_lines[i], sizeof(TextBufferRow));
+		TextBufferRow ln(_lines[i]);
 
 		y = y0 + (_height - (i - _scrollPos) - 1) * _font._leading;
 
-		if (ln->_lPic) {
-			if (y < y1 && y + ln->_lPic->h > y0) {
-				ln->_lPic->drawPicture(Point(x0 / GLI_SUBPIX, y),
+		if (ln._lPic) {
+			if (y < y1 && y + ln._lPic->h > y0) {
+				ln._lPic->drawPicture(Point(x0 / GLI_SUBPIX, y),
 					Rect(x0 / GLI_SUBPIX, y0, x1 / GLI_SUBPIX, y1));
-				link = ln->_lHyper;
+				link = ln._lHyper;
 				hy0 = y > y0 ? y : y0;
-				hy1 = y + ln->_lPic->h < y1 ? y + ln->_lPic->h : y1;
+				hy1 = y + ln._lPic->h < y1 ? y + ln._lPic->h : y1;
 				hx0 = x0 / GLI_SUBPIX;
-				hx1 = x0 / GLI_SUBPIX + ln->_lPic->w < x1 / GLI_SUBPIX
-					  ? x0 / GLI_SUBPIX + ln->_lPic->w
+				hx1 = x0 / GLI_SUBPIX + ln._lPic->w < x1 / GLI_SUBPIX
+					  ? x0 / GLI_SUBPIX + ln._lPic->w
 					  : x1 / GLI_SUBPIX;
 				g_vm->_selection->putHyperlink(link, hx0, hy0, hx1, hy1);
 			}
 		}
 
-		if (ln->_rPic) {
-			if (y < y1 && y + ln->_rPic->h > y0) {
-				ln->_rPic->drawPicture(Point(x1 / GLI_SUBPIX - ln->_rPic->w, y),
+		if (ln._rPic) {
+			if (y < y1 && y + ln._rPic->h > y0) {
+				ln._rPic->drawPicture(Point(x1 / GLI_SUBPIX - ln._rPic->w, y),
 					Rect(x0 / GLI_SUBPIX, y0, x1 / GLI_SUBPIX, y1));
-				link = ln->_rHyper;
+				link = ln._rHyper;
 				hy0 = y > y0 ? y : y0;
-				hy1 = y + ln->_rPic->h < y1 ? y + ln->_rPic->h : y1;
-				hx0 = x1 / GLI_SUBPIX - ln->_rPic->w > x0 / GLI_SUBPIX
-					  ? x1 / GLI_SUBPIX - ln->_rPic->w
+				hy1 = y + ln._rPic->h < y1 ? y + ln._rPic->h : y1;
+				hx0 = x1 / GLI_SUBPIX - ln._rPic->w > x0 / GLI_SUBPIX
+					  ? x1 / GLI_SUBPIX - ln._rPic->w
 					  : x0 / GLI_SUBPIX;
 				hx1 = x1 / GLI_SUBPIX;
 				g_vm->_selection->putHyperlink(link, hx0, hy0, hx1, hy1);
@@ -1153,8 +1148,6 @@ void TextBufferWindow::redraw() {
 	// no more prompt means all text has been seen
 	if (!_moreRequest)
 		_lastSeen = 0;
-
-	delete ln;
 }
 
 int TextBufferWindow::acceptScroll(uint arg) {
