@@ -162,6 +162,7 @@ static const char *const selectorNameTable[] = {
 	"cue",          // QFG4
 	"heading",      // QFG4
 	"moveSpeed",    // QFG4
+	"sayMessage",   // QFG4
 	"setLooper",    // QFG4
 	"setSpeed",     // QFG4
 	"value",        // QFG4
@@ -251,6 +252,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_cue,
 	SELECTOR_heading,
 	SELECTOR_moveSpeed,
+	SELECTOR_sayMessage,
 	SELECTOR_setLooper,
 	SELECTOR_setSpeed,
 	SELECTOR_value
@@ -9604,6 +9606,47 @@ static const uint16 qfg4EffectDisposalPatch[] = {
 	PATCH_END
 };
 
+// In the room (644) attached to the lower door of the bat-infested stairway,
+// a rogue will get stuck when attempting to open either door. Unlike in other
+// castle rooms, the door Tellers here aren't arranging to be cued after the
+// "It won't budge" message. Without the cue, a Teller won't clean() and return
+// control to the player.
+//
+// We follow the style of other rooms and replace gloryMessager::say() with
+// super::sayMessage(), which implicitly cues.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: leftDoorTeller::sayMessage(), rightDoorTeller::sayMessage() in script 644
+// Fixes bug: #10874
+static const uint16 qfg4StuckDoorSignature[] = {
+	0x38, SIG_SELECTOR16(say),          // pushi say
+	0x38, SIG_UINT16(0x0006),           // pushi 6d
+	0x39, 0x03,                         // pushi 3d
+	SIG_MAGICDWORD,
+	0x39, 0x06,                         // pushi 6d
+	0x39, 0x09,                         // pushi 9d
+	0x78,                               // push1
+	0x76,                               // push0
+	0x38, SIG_UINT16(0x0280),           // pushi 640d
+	0x81, 0x5b,                         // lag global[91]
+	0x4a, SIG_UINT16(0x0010),           // send 16d
+	SIG_ADDTOOFFSET(+89),               // ...
+	0x57, SIG_ADDTOOFFSET(+1), SIG_UINT16(0x0004), // super 4d (Teller)
+	SIG_END
+};
+
+static const uint16 qfg4StuckDoorPatch[] = {
+	0x38, PATCH_SELECTOR16(sayMessage), // pushi sayMessage
+	0x39, 0x03,                         // pushi 3d
+	0x3c,                               // dup
+	0x39, 0x06,                         // pushi 6d
+	0x39, 0x09,                         // pushi 9d
+	0x59, 0x01,                         // &rest 1d
+	0x57, PATCH_GETORIGINALBYTE(112), PATCH_UINT16(0x000a), // super 10d (Teller)
+	0x32, PATCH_UINT16(0x0003),         // jmp 3d [skip waste bytes]
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qfg4AutosaveSignature,         qfg4AutosavePatch },
@@ -9641,6 +9684,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   633, "fix stairway pathfinding",                    1, qfg4StairwayPathfindingSignature, qfg4StairwayPathfindingPatch },
 	{  true,   643, "fix iron safe's east door sending hero west", 1, qfg4SafeDoorEastSignature,     qfg4SafeDoorEastPatch },
 	{  true,   643, "fix iron safe's door oil flags",              1, qfg4SafeDoorOilSignature,      qfg4SafeDoorOilPatch },
+	{  true,   644, "fix castle door open message for rogue",      2, qfg4StuckDoorSignature,        qfg4StuckDoorPatch },
 	{  true,   645, "fix extraneous door sound in the castle",     1, qfg4DoubleDoorSoundSignature,  qfg4DoubleDoorSoundPatch },
 	{  false,  663, "CD: fix crest bookshelf",                     1, qfg4CrestBookshelfCDSignature, qfg4CrestBookshelfCDPatch },
 	{  false,  663, "Floppy: fix crest bookshelf",                 1, qfg4CrestBookshelfFloppySignature, qfg4CrestBookshelfFloppyPatch },
