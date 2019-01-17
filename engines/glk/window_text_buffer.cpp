@@ -1587,8 +1587,7 @@ void TextBufferWindow::scrollResize() {
 	_scrollBack += SCROLLBACK;
 }
 
-int TextBufferWindow::calcWidth(uint32 *chars, Attributes *attrs, int startchar,
-								int numChars, int spw) {
+int TextBufferWindow::calcWidth(const uint32 *chars, const Attributes *attrs, int startchar, int numChars, int spw) {
 	Screen &screen = *g_vm->_screen;
 	int w = 0;
 	int a, b;
