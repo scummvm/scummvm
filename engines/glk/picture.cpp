@@ -213,8 +213,10 @@ void Picture::decrement() {
 }
 
 void Picture::drawPicture(const Common::Point &destPos, const Common::Rect &box) {
-	Graphics::Surface s = g_vm->_screen->getSubArea(box);
-	s.copyRectToSurface(*this, destPos.x - box.left, destPos.y, getBounds());
+	Graphics::ManagedSurface s(*g_vm->_screen, box);
+	Common::Point pt(destPos.x - box.left, destPos.y - box.top);
+
+	s.blitFrom(*this, pt);
 }
 
 } // End of namespace Glk
