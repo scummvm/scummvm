@@ -82,11 +82,45 @@ bool VisualImageXMG::loadPNG(Common::SeekableReadStream *stream) {
 		return false;
 	}
 
-	_surface = pngDecoder.getSurface()->convertTo(Gfx::Driver::getRGBAPixelFormat());
+	if (StarkSettings->shouldPreMultiplyReplacementPNGs()) {
+		// We can do alpha pre-multiplication when loading for
+		// convenience when testing modded graphics.
+		_surface = multiplyColorWithAlpha(pngDecoder.getSurface());
+	} else {
+		_surface = pngDecoder.getSurface()->convertTo(Gfx::Driver::getRGBAPixelFormat());
+	}
+
 	_texture = _gfx->createTexture(_surface);
 	_texture->setSamplingFilter(StarkSettings->getImageSamplingFilter());
 
 	return true;
+}
+
+Graphics::Surface *VisualImageXMG::multiplyColorWithAlpha(const Graphics::Surface *source) {
+	assert(source->format.bytesPerPixel == 4);
+
+	Graphics::Surface *dest = new Graphics::Surface();
+	dest->create(source->w, source->h, Gfx::Driver::getRGBAPixelFormat());
+
+	for (uint y = 0; y < source->h; y++) {
+		const uint32 *srcPixel = (const uint32 *) source->getBasePtr(0, y);
+		uint32 *dstPixel = (uint32 *) dest->getBasePtr(0, y);
+
+		for (uint x = 0; x < source->w; x++) {
+			byte a, r, g, b;
+			source->format.colorToARGB(*srcPixel++, a, r, g, b);
+
+			if (a != 0xFF) {
+				r = (int) r * a / 255;
+				g = (int) g * a / 255;
+				b = (int) b * a / 255;
+			}
+
+			*dstPixel++ = dest->format.ARGBToColor(a, r, g, b);
+		}
+	}
+
+	return dest;
 }
 
 void VisualImageXMG::render(const Common::Point &position, bool useOffset) {

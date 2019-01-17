@@ -56,6 +56,7 @@ Settings::Settings(Audio::Mixer *mixer, const ADGameDescription *gd) :
 	ConfMan.registerDefault(_boolKey[kHighFMV], true);
 	ConfMan.registerDefault(_boolKey[kTimeSkip], false);
 	ConfMan.registerDefault(_intKey[kSaveLoadPage], 0);
+	ConfMan.registerDefault("replacement_png_premultiply_alpha", false);
 
 	// Use the FunCom logo video to check low-resolution fmv
 	Common::SeekableReadStream *lowResFMV = StarkArchiveLoader->getExternalFile("1402_lo_res.bbb", "Global/");
@@ -86,6 +87,10 @@ void Settings::setIntSetting(IntSettingIndex index, int value) {
 
 bool Settings::isAssetsModEnabled() const {
 	return ConfMan.getBool("enable_assets_mod");
+}
+
+bool Settings::shouldPreMultiplyReplacementPNGs() const {
+	return ConfMan.getBool("replacement_png_premultiply_alpha");
 }
 
 Gfx::Texture::SamplingFilter Settings::getImageSamplingFilter() const {

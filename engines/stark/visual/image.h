@@ -92,6 +92,8 @@ public:
 	const Graphics::Surface *getSurface() const;
 
 private:
+	Graphics::Surface *multiplyColorWithAlpha(const Graphics::Surface *source);
+
 	Gfx::Driver *_gfx;
 	Gfx::SurfaceRenderer *_surfaceRenderer;
 	Gfx::Texture *_texture;
