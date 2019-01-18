@@ -50,7 +50,8 @@ enum {
 	kStartCodePrivateStream2 = 0x1BF
 };
 
-MPEGPSDecoder::MPEGPSDecoder() {
+MPEGPSDecoder::MPEGPSDecoder(double decibel) {
+	_decibel = decibel;
 	_demuxer = new MPEGPSDemuxer();
 }
 
@@ -104,7 +105,7 @@ MPEGPSDecoder::MPEGStream *MPEGPSDecoder::getStream(uint32 startCode, Common::Se
 
 #ifdef USE_A52
 				handled = true;
-				AC3AudioTrack *ac3Track = new AC3AudioTrack(*packet, getSoundType());
+				AC3AudioTrack *ac3Track = new AC3AudioTrack(*packet, _decibel, getSoundType());
 				stream = ac3Track;
 				_streamMap[startCode] = ac3Track;
 				addTrack(ac3Track);
@@ -704,9 +705,9 @@ Audio::AudioStream *MPEGPSDecoder::MPEGAudioTrack::getAudioStream() const {
 
 #ifdef USE_A52
 
-MPEGPSDecoder::AC3AudioTrack::AC3AudioTrack(Common::SeekableReadStream &firstPacket, Audio::Mixer::SoundType soundType) :
+MPEGPSDecoder::AC3AudioTrack::AC3AudioTrack(Common::SeekableReadStream &firstPacket, double decibel, Audio::Mixer::SoundType soundType) :
 		AudioTrack(soundType) {
-	_audStream = Audio::makeAC3Stream(firstPacket);
+	_audStream = Audio::makeAC3Stream(firstPacket, decibel);
 	if (!_audStream)
 		error("Could not create AC-3 stream");
 }

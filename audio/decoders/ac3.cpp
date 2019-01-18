@@ -24,6 +24,7 @@
 #include "common/ptr.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
+#include "common/util.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/ac3.h"
@@ -37,7 +38,7 @@ namespace Audio {
 
 class AC3Stream : public PacketizedAudioStream {
 public:
-	AC3Stream();
+	AC3Stream(double decibel);
 	~AC3Stream();
 
 	bool init(Common::SeekableReadStream &firstPacket);
@@ -62,9 +63,14 @@ private:
 	byte *_inBufPtr;
 	int _flags;
 	int _sampleRate;
+	double _audioGain;
 };
 
-AC3Stream::AC3Stream() : _a52State(0), _frameSize(0), _inBufPtr(0), _flags(0), _sampleRate(0) {
+AC3Stream::AC3Stream(double decibel = 0.0) : _a52State(0), _frameSize(0), _inBufPtr(0), _flags(0), _sampleRate(0) {
+	if (decibel != 0.0)
+		_audioGain = pow(2, decibel / 6);
+	else
+		_audioGain = 1.0;
 }
 
 AC3Stream::~AC3Stream() {
@@ -153,7 +159,7 @@ void AC3Stream::queuePacket(Common::SeekableReadStream *data) {
 		} else {
 			// TODO: Eventually support more than just stereo max
 			int flags = A52_STEREO | A52_ADJUST_LEVEL;
-			sample_t level = 32767;
+			sample_t level = 32767 * _audioGain;
 
 			if (a52_frame(_a52State, _inBuf, &flags, &level, 0) != 0)
 				error("Frame fail");
@@ -165,8 +171,8 @@ void AC3Stream::queuePacket(Common::SeekableReadStream *data) {
 				if (a52_block(_a52State) == 0) {
 					sample_t *samples = a52_samples(_a52State);
 					for (int j = 0; j < 256; j++) {
-						*outputPtr++ = (int16)samples[j];
-						*outputPtr++ = (int16)samples[j + 256];
+						*outputPtr++ = (int16)CLIP<sample_t>(samples[j], -32768, 32767);
+						*outputPtr++ = (int16)CLIP<sample_t>(samples[j + 256], -32768, 32767);
 					}
 
 					outputLength += 1024;
@@ -189,8 +195,8 @@ void AC3Stream::queuePacket(Common::SeekableReadStream *data) {
 	}
 }
 
-PacketizedAudioStream *makeAC3Stream(Common::SeekableReadStream &firstPacket) {
-	Common::ScopedPtr<AC3Stream> stream(new AC3Stream());
+PacketizedAudioStream *makeAC3Stream(Common::SeekableReadStream &firstPacket, double decibel) {
+	Common::ScopedPtr<AC3Stream> stream(new AC3Stream(decibel));
 	if (!stream->init(firstPacket))
 		return 0;
 
