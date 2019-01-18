@@ -54,7 +54,7 @@ namespace Video {
  */
 class MPEGPSDecoder : public VideoDecoder {
 public:
-	MPEGPSDecoder();
+	MPEGPSDecoder(double decibel = 0.0);
 	virtual ~MPEGPSDecoder();
 
 	bool loadStream(Common::SeekableReadStream *stream);
@@ -166,7 +166,7 @@ private:
 #ifdef USE_A52
 	class AC3AudioTrack : public AudioTrack, public MPEGStream {
 	public:
-		AC3AudioTrack(Common::SeekableReadStream &firstPacket, Audio::Mixer::SoundType soundType);
+		AC3AudioTrack(Common::SeekableReadStream &firstPacket, double decibel, Audio::Mixer::SoundType soundType);
 		~AC3AudioTrack();
 
 		bool sendPacket(Common::SeekableReadStream *packet, uint32 pts, uint32 dts);
@@ -199,6 +199,8 @@ private:
 	// A map from stream types to stream handlers
 	typedef Common::HashMap<int, MPEGStream *> StreamMap;
 	StreamMap _streamMap;
+
+	double _decibel;
 };
 
 } // End of namespace Video

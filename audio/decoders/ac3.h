@@ -41,7 +41,7 @@ class PacketizedAudioStream;
  * @param firstPacket  The stream containing the first packet of data
  * @return             A new PacketizedAudioStream, or NULL on error
  */
-PacketizedAudioStream *makeAC3Stream(Common::SeekableReadStream &firstPacket);
+PacketizedAudioStream *makeAC3Stream(Common::SeekableReadStream &firstPacket, double decibel = 0.0);
 
 } // End of namespace Audio
 
