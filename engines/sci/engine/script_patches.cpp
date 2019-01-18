@@ -9643,7 +9643,7 @@ static const uint16 qfg4DungeonGatePatch[] = {
 	0x34, PATCH_UINT16(0x0000),         // ldi 0 (erase the Dungeon arg)
 	PATCH_ADDTOOFFSET(+9),              // ...
 	0x46, PATCH_UINT16(0xfde7), PATCH_UINT16(0x0005), PATCH_UINT16(0x0008), // calle 8d (proc64999_5(...))
-  PATCH_END
+	PATCH_END
 };
 
 // In the room (644) attached to the lower door of the bat-infested stairway,
