@@ -9606,6 +9606,46 @@ static const uint16 qfg4EffectDisposalPatch[] = {
 	PATCH_END
 };
 
+// After hero is geas'd in the dungeon (room 670) and teleported to the gate
+// (600), hero can walk through the closed gate and exit north to the castle
+// entrance. Two IF blocks with inconsistent conditions decide whether the
+// gate is open and whether to use a polygon that extends beyond the gate.
+// When re-entering from the forest (552), the gate is only open and passable
+// if hero is qualified.
+//
+// The room has distinct situations for merely teleporting from the dungeon
+// (local[0] = 11) and for entering from the forest while geas'd and carrying
+// all the ritual scrolls (local[0] = 10). The latter sets a vital plot flag.
+// Adding those checks and the flag to the former, plus opening the gate,
+// would be non-trivial.
+//
+// We edit the polygon's IF condition to remove the dungeon check, making the
+// closed gate impassable so hero will have to return from the forest.
+//
+// Applies to at least: English CD, English floppy, German floppy
+// Responsible method: rm600::init() in script 600
+// Fixes bug: #10871
+static const uint16 qfg4DungeonGateSignature[] = {
+	0x39, 0x05,                         // pushi 5d (5 call args)
+	0x89, 0x0c,                         // lsg global[12]
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x029e),           // pushi 670 (Dungeon)
+	0x38, SIG_UINT16(0x032a),           // pushi 810 (Combat)
+	0x38, SIG_UINT16(0x0262),           // pushi 610 (Castle entrance)
+	0x38, SIG_UINT16(0x0276),           // pushi 630 (Great hall)
+	0x46, SIG_UINT16(0xfde7), SIG_UINT16(0x0005), SIG_UINT16(0x000a), // calle 10d (proc64999_5(...))
+	SIG_END
+};
+
+static const uint16 qfg4DungeonGatePatch[] = {
+	0x39, 0x04,                         // pushi 4d (4 call args)
+	PATCH_ADDTOOFFSET(+2),              // ...
+	0x34, PATCH_UINT16(0x0000),         // ldi 0 (erase the Dungeon arg)
+	PATCH_ADDTOOFFSET(+9),              // ...
+	0x46, PATCH_UINT16(0xfde7), PATCH_UINT16(0x0005), PATCH_UINT16(0x0008), // calle 8d (proc64999_5(...))
+  PATCH_END
+};
+
 // In the room (644) attached to the lower door of the bat-infested stairway,
 // a rogue will get stuck when attempting to open either door. Unlike in other
 // castle rooms, the door Tellers here aren't arranging to be cued after the
@@ -9680,6 +9720,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   543, "fix setLooper calls (1/2)",                   5, qfg4SetLooperSignature1,       qfg4SetLooperPatch1 },
 	{  true,   545, "fix setLooper calls (1/2)",                   5, qfg4SetLooperSignature1,       qfg4SetLooperPatch1 },
 	{  true,   557, "fix forest 557 entry from east",              1, qfg4Forest557PathfindingSignature, qfg4Forest557PathfindingPatch },
+	{  true,   600, "fix passable closed gate after geas",         1, qfg4DungeonGateSignature,      qfg4DungeonGatePatch },
 	{  true,   630, "fix great hall entry from barrel room",       1, qfg4GreatHallEntrySignature,   qfg4GreatHallEntryPatch },
 	{  true,   633, "fix stairway pathfinding",                    1, qfg4StairwayPathfindingSignature, qfg4StairwayPathfindingPatch },
 	{  true,   643, "fix iron safe's east door sending hero west", 1, qfg4SafeDoorEastSignature,     qfg4SafeDoorEastPatch },
