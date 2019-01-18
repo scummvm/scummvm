@@ -152,7 +152,7 @@ bool SceneScriptTB05::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 23.0f, 151.53f, -205.0f, 12, 1, false, 0)) {
 			Game_Flag_Set(kFlagTB05toTB06);
 			Set_Enter(kSetTB06, kSceneTB06);
-			Scene_Loop_Start_Special(1, 2, 1);
+			Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 2, 1);
 		}
 		return true;
 	}

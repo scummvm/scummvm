@@ -270,7 +270,7 @@ bool SceneScriptRC02::ClickedOnActor(int actorId) {
 	}
 	if (Game_Flag_Query(kFlagRC02TalkedToRunciter)) {
 		if (Player_Query_Agenda() == kPlayerAgendaPolite) {
-			Game_Flag_Reset(0);
+			Game_Flag_Reset(kFlagNotUsed0);
 			dialogueWithRunciter();
 			AI_Movement_Track_Unpause(kActorRunciter);
 			return true;

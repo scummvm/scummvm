@@ -180,14 +180,14 @@ bool SceneScriptDR06::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -733.0f, 136.6f, -980.0f, 0, 1, false, 0)) {
 			Game_Flag_Set(231);
-			Set_Enter(7, kSceneDR04);
+			Set_Enter(kSetDR01_DR02_DR04, kSceneDR04);
 		}
 		return true;
 	}
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -707.57f, 136.6f, -1132.64f, 0, 1, false, 0)) {
 			Game_Flag_Set(552);
-			Set_Enter(19, kSceneUG16);
+			Set_Enter(kSetUG16, kSceneUG16);
 		}
 		return true;
 	}

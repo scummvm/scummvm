@@ -191,12 +191,12 @@ void AIScriptFreeSlotA::OtherAgentEnteredCombatMode(int otherActorId, int combat
 }
 
 void AIScriptFreeSlotA::ShotAtAndMissed() {
-	if (Actor_Query_In_Set(kActorFreeSlotA, kSetUG15) == 1)
+	if (Actor_Query_In_Set(kActorFreeSlotA, kSetUG15))
 		calcHit();
 }
 
 bool AIScriptFreeSlotA::ShotAtAndHit() {
-	if (Actor_Query_In_Set(kActorFreeSlotA, kSetUG15) == 1) {
+	if (Actor_Query_In_Set(kActorFreeSlotA, kSetUG15)) {
 		calcHit();
 		Actor_Set_Goal_Number(kActorFreeSlotA, 305);
 		return true;

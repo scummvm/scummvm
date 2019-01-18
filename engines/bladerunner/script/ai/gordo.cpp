@@ -1530,8 +1530,8 @@ void AIScriptGordo::sub_410590() {
 		Game_Flag_Set(251);
 		Game_Flag_Set(592);
 		Scene_Exits_Enable();
-		Game_Flag_Reset(181);
-		Game_Flag_Set(178);
+		Game_Flag_Reset(kFlagMcCoyAtNRxx);
+		Game_Flag_Set(kFlagMcCoyAtPSxx);
 		Set_Enter(kSetPS09, kScenePS09);
 	} else if (answer == 830) {
 		Actor_Says(kActorMcCoy, 3100, 16);

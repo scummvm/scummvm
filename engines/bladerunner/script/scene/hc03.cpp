@@ -25,10 +25,10 @@
 namespace BladeRunner {
 
 void SceneScriptHC03::InitializeScene() {
-	if (Game_Flag_Query(318)) {
+	if (Game_Flag_Query(kFlagUG02toHC03)) {
 		Setup_Scene_Information(656.0f, 1.61f, -95.0f, 497);
 		Game_Flag_Set(388);
-		Game_Flag_Reset(318);
+		Game_Flag_Reset(kFlagUG02toHC03);
 	} else {
 		Setup_Scene_Information(607.0f, 0.14f, 13.0f, 57);
 		Game_Flag_Reset(386);
@@ -131,19 +131,19 @@ bool SceneScriptHC03::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 607.0f, 0.14f, 9.0f, 0, 1, false, 0)) {
 			Game_Flag_Set(387);
-			Set_Enter(8, kSceneHC01);
+			Set_Enter(kSetHC01_HC02_HC03_HC04, kSceneHC01);
 		}
 		return true;
 	}
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 628.0f, 2.04f, -123.0f, 0, 1, false, 0)) {
 			if (Game_Flag_Query(388)) {
-				Game_Flag_Set(319);
+				Game_Flag_Set(kFlagHC03toUG02);
 				Game_Flag_Reset(479);
-				Game_Flag_Set(259);
+				Game_Flag_Set(kFlagMcCoyAtUGxx);
 				Game_Flag_Set(388);
 				Music_Stop(2);
-				Set_Enter(75, kSceneUG02);
+				Set_Enter(kSetUG02, kSceneUG02);
 			} else {
 				Scene_Loop_Set_Default(6);
 				Scene_Loop_Start_Special(kSceneLoopModeOnce, 5, true);

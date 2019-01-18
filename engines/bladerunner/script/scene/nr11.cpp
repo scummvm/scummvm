@@ -208,7 +208,7 @@ bool SceneScriptNR11::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 100.0f, 1.75f, -8.0f, 0, 1, false, 0)) {
 			Game_Flag_Set(477);
-			Set_Enter(59, kSceneNR10);
+			Set_Enter(kSetNR10, kSceneNR10);
 			return true;
 		}
 	}
@@ -296,7 +296,7 @@ void SceneScriptNR11::PlayerWalkedIn() {
 	if (Game_Flag_Query(632)) {
 		Game_Flag_Reset(632);
 		Game_Flag_Set(634);
-		Actor_Put_In_Set(kActorDektora, 99);
+		Actor_Put_In_Set(kActorDektora, kSetFreeSlotI);
 		Actor_Set_At_Waypoint(kActorDektora, 41, 0);
 		Actor_Set_Invisible(kActorMcCoy, false);
 		Player_Set_Combat_Mode(false);
@@ -323,7 +323,7 @@ void SceneScriptNR11::PlayerWalkedIn() {
 				Actor_Says_With_Pause(kActorSteele, 1730, 0.2f, 14);
 				Actor_Says(kActorSteele, 1740, 15);
 				Actor_Set_Goal_Number(kActorDektora, 599);
-				Actor_Put_In_Set(kActorDektora, 99);
+				Actor_Put_In_Set(kActorDektora, kSetFreeSlotI);
 				Actor_Set_At_Waypoint(kActorDektora, 41, 0);
 				Actor_Set_Goal_Number(kActorSteele, 275);
 			}

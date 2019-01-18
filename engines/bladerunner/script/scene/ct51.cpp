@@ -96,7 +96,7 @@ bool SceneScriptCT51::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(380);
-			Set_Enter(6, kSceneCT08);
+			Set_Enter(kSetCT08_CT51_UG12, kSceneCT08);
 		}
 		return true;
 	}

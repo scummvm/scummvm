@@ -50,18 +50,19 @@ bool AIScriptSteele::Update() {
 	if (Global_Variable_Query(14) <= 5 || Actor_Clue_Query(kActorSteele, 239)) {
 		switch (Global_Variable_Query(kVariableChapter)) {
 		case 1:
-			if (Game_Flag_Query(182) == 1 && Game_Flag_Query(183) == 1) {
+			if (Game_Flag_Query(kFlagMcCoyAtRCxx) && Game_Flag_Query(kFlagMcCoyAtRCxx)) {
 				Actor_Set_Goal_Number(kActorSteele, 3);
 				return true;
-			} else if (Game_Flag_Query(176) == 1 && Game_Flag_Query(184) == 1) {
+			} else if (Game_Flag_Query(kFlagMcCoyAtCTxx) && Game_Flag_Query(184)) {
 				Actor_Set_Goal_Number(kActorSteele, 6);
 				return true;
-			} else if (Game_Flag_Query(178) == 1 && Game_Flag_Query(185) == 1) {
+			} else if (Game_Flag_Query(kFlagMcCoyAtPSxx) && Game_Flag_Query(185)) {
 				Actor_Set_Goal_Number(kActorSteele, 10);
 				return true;
 			} else if (Actor_Query_Goal_Number(kActorSteele)
-						|| Game_Flag_Query(182)
-						|| Player_Query_Current_Scene() == kSceneRC01) {
+			        || Game_Flag_Query(kFlagMcCoyAtRCxx)
+			        || Player_Query_Current_Scene() == kSceneRC01
+			) {
 				if (Actor_Query_Goal_Number(kActorSteele) != 11) {
 					break; // go to after switch
 				}
@@ -243,7 +244,7 @@ void AIScriptSteele::CompletedMovementTrack() {
 			if (Actor_Query_Goal_Number(kActorIzo) != 199) {
 				if (Actor_Query_In_Between_Two_Actors(kActorMcCoy, kActorSteele, kActorIzo)) {
 					Actor_Set_Goal_Number(kActorSteele, 125);
-				} else if (Game_Flag_Query(44)) {
+				} else if (Game_Flag_Query(kFlagIzoIsReplicant)) {
 					Actor_Set_Goal_Number(kActorSteele, 120);
 				} else {
 					Actor_Set_Goal_Number(kActorSteele, 121);
@@ -560,7 +561,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 	case 11:
 		Actor_Clue_Acquire(kActorSteele, kClueGrigorianInterviewA, 1, kActorGrigorian);
-		if (Game_Flag_Query(44)) {
+		if (Game_Flag_Query(kFlagIzoIsReplicant)) {
 			Actor_Clue_Acquire(kActorSteele, kClueGrigorianInterviewB1, 1, kActorGrigorian);
 		} else {
 			Actor_Clue_Acquire(kActorSteele, kClueGrigorianInterviewB2, 1, kActorGrigorian);
@@ -569,7 +570,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 	case 100:
 		AI_Movement_Track_Flush(kActorSteele);
-		if (Game_Flag_Query(44)) {
+		if (Game_Flag_Query(kFlagIzoIsReplicant)) {
 			AI_Movement_Track_Append_Run(kActorSteele, 202, 0);
 			AI_Movement_Track_Append_Run(kActorSteele, 203, 0);
 		} else {
@@ -838,9 +839,9 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Set_Enter(kSetNR02, kSetNR03);
 		return true;
 	case 233:
-		Game_Flag_Set(310);
-		Game_Flag_Reset(181);
-		Game_Flag_Set(257);
+		Game_Flag_Set(kFlagHF01toHF03);
+		Game_Flag_Reset(kFlagMcCoyAtNRxx);
+		Game_Flag_Set(kFlagMcCoyAtHFxx);
 		Actor_Put_In_Set(kActorSteele, kSetHF03);
 		Actor_Set_At_XYZ(kActorSteele, 291.0f, 47.76f, -892.0f, 453);
 		Set_Enter(kSetHF03, kSetDR06);

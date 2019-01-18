@@ -458,7 +458,7 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
 		_animationState = 0;
 		_animationFrame = 0;
-		Game_Flag_Set(465);
+		Game_Flag_Set(kFlagMcCoyArrested);
 		Set_Enter(kSetPS09, kScenePS09);
 		return true;
 	}

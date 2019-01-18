@@ -26,11 +26,11 @@ namespace BladeRunner {
 
 void SceneScriptBB09::InitializeScene() {
 	Setup_Scene_Information(111.2f, -8.96f, 134.65f, 0);
-	if (Game_Flag_Query(221)) {
-		Game_Flag_Reset(221);
+	if (Game_Flag_Query(kFlagBB10toBB09)) {
+		Game_Flag_Reset(kFlagBB10toBB09);
 		Setup_Scene_Information(115.45f, -8.96f, 134.0f, 628);
-	} else if (Game_Flag_Query(218)) {
-		Game_Flag_Reset(218);
+	} else if (Game_Flag_Query(kFlagBB08toBB09)) {
+		Game_Flag_Reset(kFlagBB08toBB09);
 		Setup_Scene_Information(107.45f, -9.14f, 166.0f, 244);
 	}
 	Scene_Exit_Add_2D_Exit(0, 224, 213, 286, 353, 1);
@@ -84,9 +84,9 @@ bool SceneScriptBB09::ClickedOnExit(int exitId) {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 450.56f, -9.0f, 250.31f, 0, 0, false, 0);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(216);
-			Game_Flag_Set(220);
-			Set_Enter(25, kSceneBB10);
+			Game_Flag_Set(kFlagBB09toBB10a);
+			Game_Flag_Set(kFlagBB09toBB10b);
+			Set_Enter(kSetBB10, kSceneBB10);
 		}
 		return true;
 	}
@@ -94,8 +94,8 @@ bool SceneScriptBB09::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 71.0f, -9.0f, 136.0f, 72, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(219);
-			Set_Enter(23, kSceneBB08);
+			Game_Flag_Set(kFlagBB09toBB08);
+			Set_Enter(kSetBB08, kSceneBB08);
 		}
 		return true;
 	}

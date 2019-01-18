@@ -83,7 +83,7 @@ bool SceneScriptPS14::ClickedOnExit(int exitId) {
 				Loop_Actor_Travel_Stairs(kActorMcCoy, 3, 0, 0);
 			} else {
 				Game_Flag_Set(135);
-				Set_Enter(63, kScenePS03);
+				Set_Enter(kSetPS03, kScenePS03);
 			}
 		}
 		return true;
@@ -91,9 +91,9 @@ bool SceneScriptPS14::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -785.45f, 508.14f, -1652.0f, 0, 1, false, 0)) {
 			Game_Flag_Set(673);
-			Game_Flag_Reset(178);
-			Game_Flag_Set(179);
-			Set_Enter(53, kSceneMA07);
+			Game_Flag_Reset(kFlagMcCoyAtPSxx);
+			Game_Flag_Set(kFlagMcCoyAtMAxx);
+			Set_Enter(kSetMA07, kSceneMA07);
 		}
 		return true;
 	}

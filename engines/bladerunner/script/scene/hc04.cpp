@@ -32,7 +32,7 @@ void SceneScriptHC04::InitializeScene() {
 		Setup_Scene_Information(-88.0f, 0.14f, -463.0f, 1013);
 	}
 	Music_Play(4, 14, -90, 1, -1, 1, 2);
-	Actor_Put_In_Set(kActorIsabella, 8);
+	Actor_Put_In_Set(kActorIsabella, kSetHC01_HC02_HC03_HC04);
 	Actor_Set_At_XYZ(kActorIsabella, -210.0f, 0.0f, -445.0f, 250);
 	Scene_Exit_Add_2D_Exit(0, 539, 51, 639, 309, 0);
 	Scene_Exit_Add_2D_Exit(1, 0, 456, 639, 479, 2);
@@ -112,7 +112,7 @@ bool SceneScriptHC04::ClickedOnExit(int exitId) {
 			Music_Stop(2);
 			Game_Flag_Set(kFlagHC04toRC03);
 			Game_Flag_Reset(479);
-			Game_Flag_Set(182);
+			Game_Flag_Set(kFlagMcCoyAtRCxx);
 			Set_Enter(kSetRC03, kSceneRC03);
 		}
 		return true;

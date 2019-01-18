@@ -1091,9 +1091,10 @@ double AIScriptDektora::comp_distance(int actorId, float x1, float y1, float z1)
 }
 
 void AIScriptDektora::checkCombat() {
-	if (Actor_Query_In_Set(kActorDektora, kSetHF01) == 1
-			&& Global_Variable_Query(kVariableChapter) == 5
-			&& Actor_Query_Goal_Number(kActorDektora) != 450) {
+	if (Actor_Query_In_Set(kActorDektora, kSetHF01)
+	 && Global_Variable_Query(kVariableChapter) == 5
+	 && Actor_Query_Goal_Number(kActorDektora) != 450
+	) {
 		if (Global_Variable_Query(kVariableAffectionTowards) == 2) {
 			Global_Variable_Set(kVariableAffectionTowards, 0);
 		}

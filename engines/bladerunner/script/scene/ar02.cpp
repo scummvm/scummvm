@@ -62,14 +62,16 @@ void SceneScriptAR02::InitializeScene() {
 	Ambient_Sounds_Add_Sound(375, 10, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(376, 10, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(377, 10, 180, 50, 100, 0, 0, -101, -101, 0, 0);
-	if (Game_Flag_Query(kFlagSpinnerAtAR01) && Game_Flag_Query(320)) {
-		Scene_Loop_Start_Special(0, 1, 0);
+	if (Game_Flag_Query(kFlagSpinnerAtAR01)
+	 && Game_Flag_Query(kFlagAR01toAR02)) {
+		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 1, false);
 		Scene_Loop_Set_Default(2);
-		Game_Flag_Reset(320);
-	} else if (!Game_Flag_Query(kFlagSpinnerAtAR01) && Game_Flag_Query(320)) {
-		Scene_Loop_Start_Special(0, 0, 0);
+		Game_Flag_Reset(kFlagAR01toAR02);
+	} else if (!Game_Flag_Query(kFlagSpinnerAtAR01)
+	        &&  Game_Flag_Query(kFlagAR01toAR02)) {
+		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
 		Scene_Loop_Set_Default(2);
-		Game_Flag_Reset(320);
+		Game_Flag_Reset(kFlagAR01toAR02);
 	} else {
 		Scene_Loop_Set_Default(2);
 	}
@@ -81,7 +83,7 @@ void SceneScriptAR02::SceneLoaded() {
 		Item_Add_To_World(106, 976, 0, -442.84f, 36.77f, -1144.51f, 360, 36, 36, false, true, false, true);
 	}
 	if (Global_Variable_Query(kVariableChapter) == 4 && !Game_Flag_Query(374)) {
-		Game_Flag_Set(0);
+		Game_Flag_Set(kFlagNotUsed0);
 		Item_Remove_From_World(106);
 	}
 }
@@ -199,7 +201,7 @@ bool SceneScriptAR02::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptAR02::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -182.0f, 0.0f, -551.0f, 0, 1, false, 0)) {
-			Game_Flag_Set(321);
+			Game_Flag_Set(kFlagAR02toAR01);
 			Async_Actor_Walk_To_XYZ(kActorMcCoy, -182.0f, 0.0f, -407.0f, 0, false);
 			Set_Enter(kSetAR01_AR02, kSceneAR01);
 		}
@@ -209,8 +211,8 @@ bool SceneScriptAR02::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -465.0f, 0.0f, -799.0f, 0, 1, false, 0)) {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -560.0f, 0.0f, -799.0f, 0, 0, false, 0);
 			Game_Flag_Set(kFlagAR02toRC03);
-			Game_Flag_Reset(180);
-			Game_Flag_Set(182);
+			Game_Flag_Reset(kFlagMcCoyAtARxx);
+			Game_Flag_Set(kFlagMcCoyAtRCxx);
 			Music_Stop(3);
 			Set_Enter(kSetRC03, kSceneRC03);
 		}

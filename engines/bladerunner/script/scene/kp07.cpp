@@ -122,7 +122,7 @@ bool SceneScriptKP07::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(579);
-			Set_Enter(9, kSceneKP06);
+			Set_Enter(kSetKP05_KP06, kSceneKP06);
 		}
 		return true;
 	}
@@ -148,7 +148,7 @@ void SceneScriptKP07::PlayerWalkedIn() {
 			Actor_Says(kActorMcCoy, 8500, 3);
 			Actor_Says(kActorClovis, 1250, 3);
 			if (Actor_Query_Goal_Number(kActorSadik) == 416) {
-				Actor_Put_In_Set(kActorSadik, 48);
+				Actor_Put_In_Set(kActorSadik, kSetKP07);
 				Global_Variable_Increment(kVariableReplicants, 1);
 				Actor_Set_At_XYZ(kActorSadik, -12.0f, -41.58f, 72.0f, 0);
 				Actor_Face_Actor(kActorSadik, kActorClovis, true);

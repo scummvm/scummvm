@@ -97,7 +97,7 @@ bool SceneScriptNR08::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1102.88f, 0.0f, 107.43f, 0, 1, false, 0)) {
 			Game_Flag_Set(547);
-			Set_Enter(13, kSceneNR05);
+			Set_Enter(kSetNR05_NR08, kSceneNR05);
 		}
 		return true;
 	}
@@ -106,7 +106,7 @@ bool SceneScriptNR08::ClickedOnExit(int exitId) {
 			Actor_Face_Heading(kActorMcCoy, 505, false);
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 4, 1, 0);
 			Game_Flag_Set(440);
-			Set_Enter(56, kSceneNR06);
+			Set_Enter(kSetNR06, kSceneNR06);
 		}
 		return true;
 	}
@@ -117,7 +117,7 @@ bool SceneScriptNR08::ClickedOnExit(int exitId) {
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 6, 1, 0);
 			Footstep_Sound_Override_Off();
 			Game_Flag_Set(614);
-			Set_Enter(58, kSceneNR09);
+			Set_Enter(kSetNR09, kSceneNR09);
 		}
 	}
 	return false;
@@ -153,7 +153,7 @@ void SceneScriptNR08::SceneFrameAdvanced(int frame) {
 		Scene_Loop_Start_Special(kSceneLoopModeOnce, 3, true);
 	}
 	if (frame == 95) {
-		Actor_Put_In_Set(kActorDektora, 91);
+		Actor_Put_In_Set(kActorDektora, kSetFreeSlotA);
 		Actor_Set_At_Waypoint(kActorDektora, 33, 0);
 		Actor_Change_Animation_Mode(kActorDektora, 0);
 		Actor_Set_Goal_Number(kActorDektora, 200);

@@ -31,7 +31,7 @@ void SceneScriptPS04::InitializeScene() {
 	}
 	Setup_Scene_Information(-668.0f, -354.0f, 974.0f, 475);
 	if (Global_Variable_Query(kVariableChapter) == 1) {
-		Actor_Put_In_Set(kActorGuzza, 64);
+		Actor_Put_In_Set(kActorGuzza, kSetPS04);
 		Actor_Set_At_XYZ(kActorGuzza, -728.0f, -354.0f, 1090.0f, 150);
 		Actor_Change_Animation_Mode(kActorGuzza, 53);
 	}
@@ -155,7 +155,9 @@ void SceneScriptPS04::sub_4017E4() {
 	Dialogue_Menu_Disappear();
 	switch (answer) {
 	case 130:
-		if (Game_Flag_Query(kFlagZubenRetired) && !Game_Flag_Query(kFlagGuzzaTalkZubenRetired)) {
+		if ( Game_Flag_Query(kFlagZubenRetired)
+		 && !Game_Flag_Query(kFlagGuzzaTalkZubenRetired)
+		) {
 			Actor_Says(kActorMcCoy, 3920, 13);
 			Actor_Says(kActorGuzza, 140, 30);
 			Actor_Face_Current_Camera(kActorGuzza, true);
@@ -187,7 +189,9 @@ void SceneScriptPS04::sub_4017E4() {
 				Global_Variable_Increment(kVariableChinyen, 200);
 			}
 			Game_Flag_Set(kFlagZubenBountyPaid);
-		} else if (Game_Flag_Query(kFlagZubenSpared) && !Game_Flag_Query(kFlagGuzzaTalkZubenEscaped)) {
+		} else if ( Game_Flag_Query(kFlagZubenSpared)
+		        && !Game_Flag_Query(kFlagGuzzaTalkZubenEscaped)
+		) {
 			Actor_Says(kActorMcCoy, 3955, 13);
 			Actor_Says(kActorGuzza, 280, 30);
 			Actor_Says(kActorMcCoy, 3960, 18);
@@ -201,9 +205,9 @@ void SceneScriptPS04::sub_4017E4() {
 		 (   Actor_Clue_Query(kActorMcCoy, kClueChopstickWrapper)
 		  || Actor_Clue_Query(kActorMcCoy, kClueSushiMenu)
 		 )
-		 && Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewA)
-		 && Actor_Query_Friendliness_To_Other(kActorGuzza, kActorMcCoy) < 50
-		 && !Game_Flag_Query(161)
+		 &&  Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewA)
+		 &&  Actor_Query_Friendliness_To_Other(kActorGuzza, kActorMcCoy) < 50
+		 && !Game_Flag_Query(kFlagGuzzaTalk1)
 		) {
 			Actor_Says(kActorMcCoy, 3970, 18);
 			Actor_Says(kActorGuzza, 330, 30);
@@ -218,18 +222,18 @@ void SceneScriptPS04::sub_4017E4() {
 			Actor_Says(kActorMcCoy, 3985, 18);
 			Actor_Says(kActorGuzza, 400, 34);
 			Actor_Says(kActorGuzza, 410, 31);
-			Game_Flag_Set(161);
+			Game_Flag_Set(kFlagGuzzaTalk1);
 		} else if (
 		 (   Actor_Clue_Query(kActorMcCoy, kClueChopstickWrapper)
 		  || Actor_Clue_Query(kActorMcCoy, kClueSushiMenu)
 		 )
-		 && Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewA)
-		 && !Game_Flag_Query(162)
+		 &&  Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewA)
+		 && !Game_Flag_Query(kFlagGuzzaTalk2)
 		) {
 			Actor_Says(kActorMcCoy, 3920, 13);
 			Actor_Says(kActorGuzza, 570, 32);
 			Actor_Says(kActorMcCoy, 4070, 13);
-			Game_Flag_Set(162);
+			Game_Flag_Set(kFlagGuzzaTalk2);
 		} else if (Actor_Query_Friendliness_To_Other(kActorGuzza, kActorMcCoy) >= 50) {
 			Actor_Says(kActorMcCoy, 4020, 13);
 			Actor_Says(kActorGuzza, 580, 34);

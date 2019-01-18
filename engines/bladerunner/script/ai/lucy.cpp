@@ -857,9 +857,10 @@ void AIScriptLucy::voightKempTest() {
 
 void AIScriptLucy::checkCombat() {
 	Game_Flag_Set(701);
-	if (Actor_Query_In_Set(kActorLucy, kSetHF01) == 1
-			&& Global_Variable_Query(kVariableChapter) == 5
-			&& Actor_Query_Goal_Number(kActorLucy) != 450) {
+	if (Actor_Query_In_Set(kActorLucy, kSetHF01)
+	 && Global_Variable_Query(kVariableChapter) == 5
+	 && Actor_Query_Goal_Number(kActorLucy) != 450
+	) {
 		if (Global_Variable_Query(kVariableAffectionTowards) == 3) {
 			Global_Variable_Set(kVariableAffectionTowards, 0);
 		}

@@ -65,8 +65,10 @@ void ActionPlay::onStart() {
 	if (_stopFrame == -1 || _stopFrame >= frameCount)
 		_stopFrame = frameCount - 1;
 
-	if (_startFrame >= _decoder.getFrameCount())
-		_startFrame = 0;
+	if (_startFrame >= _decoder.getFrameCount()) {
+		_actor->endAction();
+		return;
+	}
 
 	ActionCEL::setFrame(_startFrame);
 	// doesn't need to decode startFrame here. Update method will decode

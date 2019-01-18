@@ -29,7 +29,7 @@ void SceneScriptRC04::InitializeScene() {
 	Game_Flag_Reset(kFlagRC03toRC04);
 	Scene_Exit_Add_2D_Exit(0, 225, 47, 359, 248, 0);
 	if (!Game_Flag_Query(289)) {
-		Actor_Put_In_Set(kActorBulletBob, 71);
+		Actor_Put_In_Set(kActorBulletBob, kSetRC04);
 		Actor_Set_At_XYZ(kActorBulletBob, -60.0f, -11.0f, 62.0f, 12);
 	}
 	if (Game_Flag_Query(289)) {

@@ -27,12 +27,12 @@ namespace BladeRunner {
 void SceneScriptCT12::InitializeScene() {
 	if (Game_Flag_Query(kFlagCT01toCT12)) {
 		Setup_Scene_Information(-419.0f, -6.5f, 696.0f, 616);
-	} else if (Game_Flag_Query(432)) {
+	} else if (Game_Flag_Query(kFlagUG09toCT12)) {
 		Setup_Scene_Information(-292.0f, -6.5f, 990.0f, 827);
-		if (!Game_Flag_Query(150)) {
-			Game_Flag_Set(150);
+		if (!Game_Flag_Query(kFlagNotUsed150)) {
+			Game_Flag_Set(kFlagNotUsed150);
 		}
-		Game_Flag_Reset(432);
+		Game_Flag_Reset(kFlagUG09toCT12);
 	} else if (Game_Flag_Query(kFlagCT11toCT12)) {
 		Setup_Scene_Information(-493.0f, -6.5f, 1174.0f, 990);
 	} else {
@@ -60,7 +60,7 @@ void SceneScriptCT12::InitializeScene() {
 	Ambient_Sounds_Add_Sound(376, 50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(377, 50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 	if (Global_Variable_Query(kVariableChapter) < 2 && Actor_Query_Goal_Number(kActorGaff) == 1) {
-		Actor_Put_In_Set(kActorGaff, 4);
+		Actor_Put_In_Set(kActorGaff, kSetCT01_CT12);
 		Actor_Set_At_XYZ(kActorGaff, -534.0f, -6.5f, 952.0f, 367);
 		Game_Flag_Set(kFlagGaffSpinnerCT12);
 	}
@@ -192,7 +192,7 @@ bool SceneScriptCT12::ClickedOn2DRegion(int region) {
 }
 
 void SceneScriptCT12::SceneFrameAdvanced(int frame) {
-	if (!((frame - 1) % 10)) {
+	if (((frame - 1) % 10) == 0) {
 		/*int v2 = Random_Query(0, 1);
 		if (v2 <= 1)
 		{
@@ -230,9 +230,12 @@ void SceneScriptCT12::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptCT12::PlayerWalkedIn() {
-	if (Global_Variable_Query(kVariableChapter) < 2 && !Game_Flag_Query(64) && Actor_Query_Goal_Number(kActorGaff) == 1) {
+	if ( Global_Variable_Query(kVariableChapter) < 2
+	 && !Game_Flag_Query(kFlagGaffApproachedMcCoyAboutZuben)
+	 &&  Actor_Query_Goal_Number(kActorGaff) == 1
+	) {
 		Player_Loses_Control();
-		Loop_Actor_Walk_To_Actor(kActorGaff, kActorMcCoy, 48, 0, false);
+		Loop_Actor_Walk_To_Actor(kActorGaff, kActorMcCoy, 48, false, false);
 		Actor_Face_Actor(kActorGaff, kActorMcCoy, true);
 		Actor_Face_Actor(kActorMcCoy, kActorGaff, true);
 		Actor_Says(kActorGaff, 0, 3);
@@ -246,35 +249,41 @@ void SceneScriptCT12::PlayerWalkedIn() {
 		Actor_Says(kActorGaff, 40, 3);
 		Actor_Says(kActorMcCoy, 690, 3);
 		Actor_Clue_Acquire(kActorMcCoy, kClueGaffsInformation, 1, kActorGaff);
-		Game_Flag_Set(64);
+		Game_Flag_Set(kFlagGaffApproachedMcCoyAboutZuben);
 		CDB_Set_Crime(kClueZuben, kCrimeMoonbusHijacking);
-		if (Game_Flag_Query(64) && Game_Flag_Query(40)) {
+
+		if (Game_Flag_Query(kFlagGaffApproachedMcCoyAboutZuben)
+		 && Game_Flag_Query(kFlagZubenRetired)
+		) {
 			Actor_Says(kActorGaff, 50, 3);
 			Actor_Says(kActorMcCoy, 695, 3);
 			Actor_Says(kActorGaff, 60, 3);
 			Actor_Says(kActorMcCoy, 700, 3);
 			Actor_Says(kActorGaff, 70, 3);
 			Actor_Clue_Acquire(kActorGaff, kClueMcCoyRetiredZuben, 1, -1);
-		} else if (Game_Flag_Query(64) && Game_Flag_Query(kFlagZubenSpared)) {
+		} else if (Game_Flag_Query(kFlagGaffApproachedMcCoyAboutZuben)
+		        && Game_Flag_Query(kFlagZubenSpared)
+		) {
 			Actor_Says(kActorGaff, 80, 3);
 			Actor_Says(kActorGaff, 90, 3);
 			Actor_Says(kActorMcCoy, 705, 3);
 			Actor_Says(kActorGaff, 100, 3);
 			Actor_Clue_Acquire(kActorGaff, kClueMcCoyLetZubenEscape, 1, -1);
 		}
+
 		Actor_Set_Goal_Number(kActorGaff, 2);
 	}
 	if (Game_Flag_Query(kFlagCT11toCT12)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -520.0f, -6.5f, 1103.0f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -520.0f, -6.5f, 1103.0f, 0, false, false, 0);
 		Game_Flag_Reset(kFlagCT11toCT12);
 	}
 }
 
 void SceneScriptCT12::PlayerWalkedOut() {
 	Game_Flag_Reset(kFlagGenericWalkerWaiting);
-	if (Game_Flag_Query(433)) {
-		Game_Flag_Reset(176);
-		Game_Flag_Set(259);
+	if (Game_Flag_Query(kFlagCT12ToUG09)) {
+		Game_Flag_Reset(kFlagMcCoyAtCTxx);
+		Game_Flag_Set(kFlagMcCoyAtUGxx);
 	}
 }
 

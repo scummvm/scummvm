@@ -106,7 +106,7 @@ void AIScriptIzo::CompletedMovementTrack() {
 		return; //true;
 
 	case 120:
-		Game_Flag_Set(164);
+		Game_Flag_Set(kFlagIzoArrested);
 		Actor_Set_Goal_Number(kActorIzo, 180);
 		Scene_Exits_Enable();
 		return; //true;
@@ -142,7 +142,7 @@ void AIScriptIzo::ClickedByPlayer() {
 		return; //true;
 	}
 
-	if (Actor_Query_Goal_Number(kActorIzo) == 101 && Player_Query_Current_Set() == 75) {
+	if (Actor_Query_Goal_Number(kActorIzo) == 101 && Player_Query_Current_Set() == kSetUG02) {
 		Player_Loses_Control();
 		Actor_Set_Goal_Number(kActorIzo, 100);
 		Actor_Face_Actor(kActorMcCoy, kActorIzo, 1);
@@ -179,7 +179,7 @@ void AIScriptIzo::OtherAgentExitedThisScene(int otherActorId) {
 
 void AIScriptIzo::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
 	if (Actor_Query_Goal_Number(kActorIzo) == 110) {
-		Game_Flag_Query(44);
+		Game_Flag_Query(kFlagIzoIsReplicant);
 	}
 	return; //false;
 }
@@ -252,7 +252,7 @@ bool AIScriptIzo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		|| newGoalNumber == 198
 		|| newGoalNumber == 180
 		|| newGoalNumber == 103) {
-			Spinner_Set_Selectable_Destination_Flag(6, 1);
+			Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationDNARow, true);
 		}
 
 	switch (newGoalNumber) {
@@ -328,7 +328,7 @@ bool AIScriptIzo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case 115:
 		AI_Movement_Track_Flush(kActorIzo);
 		AI_Movement_Track_Append(kActorIzo, 39, 60);
-		if (Game_Flag_Query(44)) {
+		if (Game_Flag_Query(kFlagIzoIsReplicant)) {
 			AI_Movement_Track_Append(kActorIzo, 33, 0);
 		} else {
 			AI_Movement_Track_Append(kActorIzo, 34, 0);
@@ -356,7 +356,7 @@ bool AIScriptIzo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case 155:
 		AI_Movement_Track_Flush(kActorIzo);
 		AI_Movement_Track_Append(kActorIzo, 149, 0);
-		if (Game_Flag_Query(44)) {
+		if (Game_Flag_Query(kFlagIzoIsReplicant)) {
 			AI_Movement_Track_Append(kActorIzo, 39, 5);
 			AI_Movement_Track_Append(kActorIzo, 34, Random_Query(10, 20));
 			AI_Movement_Track_Append(kActorIzo, 39, 5);
@@ -1012,7 +1012,7 @@ void AIScriptIzo::someDialog() {
 		break;
 
 	case 10:
-		if (Game_Flag_Query(44) == 1) {
+		if (Game_Flag_Query(kFlagIzoIsReplicant)) {
 			Actor_Says(kActorMcCoy, 5475, 18);
 			Actor_Says(kActorIzo, 720, 12);
 			Actor_Says(kActorMcCoy, 5485, 13);

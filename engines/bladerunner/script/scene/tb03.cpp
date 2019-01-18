@@ -55,7 +55,7 @@ void SceneScriptTB03::InitializeScene() {
 		Ambient_Sounds_Add_Sound(194, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
 		Ambient_Sounds_Add_Sound(195, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
 	}
-	Actor_Put_In_Set(kActorTyrellGuard, 17);
+	Actor_Put_In_Set(kActorTyrellGuard, kSetTB02_TB03);
 	Actor_Set_At_XYZ(kActorTyrellGuard, -38.53f, 2.93f, 1475.97f, 673);
 	if (Global_Variable_Query(kVariableChapter) == 4) {
 		int goal = Actor_Query_Goal_Number(kActorTyrellGuard);
@@ -108,7 +108,7 @@ bool SceneScriptTB03::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(447);
-			Set_Enter(88, kSceneUG17);
+			Set_Enter(kSetUG17, kSceneUG17);
 		}
 		return true;
 	}

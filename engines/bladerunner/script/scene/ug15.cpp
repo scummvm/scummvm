@@ -108,7 +108,7 @@ bool SceneScriptUG15::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(352);
-			Set_Enter(88, kSceneUG17);
+			Set_Enter(kSetUG17, kSceneUG17);
 		}
 		return true;
 	}
@@ -129,7 +129,7 @@ bool SceneScriptUG15::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(354);
-			Set_Enter(19, kSceneUG16);
+			Set_Enter(kSetUG16, kSceneUG16);
 		}
 		return true;
 	}
@@ -138,7 +138,7 @@ bool SceneScriptUG15::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(350);
-			Set_Enter(85, kSceneUG13);
+			Set_Enter(kSetUG13, kSceneUG13);
 		}
 		return true;
 	}

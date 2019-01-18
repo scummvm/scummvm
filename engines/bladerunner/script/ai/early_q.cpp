@@ -395,7 +395,7 @@ bool AIScriptEarlyQ::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		break;
 
 	case 220:
-		if (Player_Query_Current_Set() == 13) {
+		if (Player_Query_Current_Set() == kSetNR05_NR08) {
 			Actor_Set_Goal_Number(kActorEarlyQ, 230);
 		} else {
 			Actor_Put_In_Set(kActorEarlyQ, kSetNR05_NR08);

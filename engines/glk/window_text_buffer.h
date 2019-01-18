@@ -91,7 +91,7 @@ private:
 
 	void scrollOneLine(bool forced);
 	void scrollResize();
-	int calcWidth(uint32 *chars, Attributes *attrs, int startchar, int numchars, int spw);
+	int calcWidth(const uint32 *chars, const Attributes *attrs, int startchar, int numchars, int spw);
 public:
 	int _width, _height;
 	int _spaced;

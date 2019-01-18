@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 void SceneScriptBB08::InitializeScene() {
-	if (Game_Flag_Query(219)) {
+	if (Game_Flag_Query(kFlagBB09toBB08)) {
 		Setup_Scene_Information(204.0f, 0.0f, 92.0f, 875);
 	} else {
 		Setup_Scene_Information(247.0f, 0.0f, 27.0f, 790);
@@ -87,8 +87,8 @@ bool SceneScriptBB08::ClickedOnExit(int exitId) {
 			Footstep_Sound_Override_Off();
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(218);
-			Set_Enter(24, kSceneBB09);
+			Game_Flag_Set(kFlagBB08toBB09);
+			Set_Enter(kSetBB09, kSceneBB09);
 		}
 		return true;
 	}
@@ -97,7 +97,7 @@ bool SceneScriptBB08::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(506);
-			Set_Enter(102, kSceneBB12);
+			Set_Enter(kSetBB12, kSceneBB12);
 		}
 		return true;
 	}
@@ -115,13 +115,13 @@ void SceneScriptBB08::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptBB08::PlayerWalkedIn() {
-	if (Game_Flag_Query(219)) {
+	if (Game_Flag_Query(kFlagBB09toBB08)) {
 		Actor_Set_At_XYZ(kActorMcCoy, 204.0f, 96.1f, 94.0f, 256);
 		Footstep_Sound_Override_On(2);
 		Loop_Actor_Travel_Ladder(kActorMcCoy, 8, 0, 0);
 		Footstep_Sound_Override_Off();
 		Actor_Face_Heading(kActorMcCoy, 768, false);
-		Game_Flag_Reset(219);
+		Game_Flag_Reset(kFlagBB09toBB08);
 	} else {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 188.0f, 0.1f, 28.0f, 0, 0, false, 0);
 	}

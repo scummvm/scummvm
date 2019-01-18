@@ -31,7 +31,7 @@ void AIScriptKlein::Initialize() {
 	_animationState = 0;
 	_animationFrame = 0;
 	_animationStateNext = 0;
-	Actor_Put_In_Set(kActorKlein, 66);
+	Actor_Put_In_Set(kActorKlein, kSetPS07);
 	Actor_Set_At_XYZ(kActorKlein, 338.0f, 0.22f, -612.0f, 768);
 	Actor_Set_Goal_Number(kActorKlein, 0);
 }
@@ -49,24 +49,24 @@ bool AIScriptKlein::Update() {
 		return true;
 	}
 	if ( Actor_Clue_Query(kActorMcCoy, kClueOfficersStatement)
-	 && !Game_Flag_Query(kFlagPlayerHasOfficersStatement)
+	 && !Game_Flag_Query(kFlagMcCoyHasOfficersStatement)
 	) {
-		Game_Flag_Set(kFlagPlayerHasOfficersStatement);
+		Game_Flag_Set(kFlagMcCoyHasOfficersStatement);
 	}
 	if ( Actor_Clue_Query(kActorMcCoy, kCluePaintTransfer)
-	 && !Game_Flag_Query(kFlagPlayerHasPaintTransfer)
+	 && !Game_Flag_Query(kFlagMcCoyHasPaintTransfer)
 	) {
-		Game_Flag_Set(kFlagPlayerHasPaintTransfer);
+		Game_Flag_Set(kFlagMcCoyHasPaintTransfer);
 	}
 	if ( Actor_Clue_Query(kActorMcCoy, kClueShellCasings)
-	 && !Game_Flag_Query(kFlagPlayerHasShellCasings)
+	 && !Game_Flag_Query(kFlagMcCoyHasShellCasings)
 	) {
-		Game_Flag_Set(kFlagPlayerHasShellCasings);
+		Game_Flag_Set(kFlagMcCoyHasShellCasings);
 	}
 	if ( Actor_Clue_Query(kActorMcCoy, kClueChromeDebris)
-	 && !Game_Flag_Query(kFlagPlayerHasChromeDebris)
+	 && !Game_Flag_Query(kFlagMcCoyHasChromeDebris)
 	) {
-		Game_Flag_Set(kFlagPlayerHasChromeDebris);
+		Game_Flag_Set(kFlagMcCoyHasChromeDebris);
 	}
 	if ( Player_Query_Current_Scene() == kScenePS07
 	 &&  Actor_Query_Friendliness_To_Other(kActorKlein, kActorMcCoy) < 35

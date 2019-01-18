@@ -35,7 +35,7 @@ void SceneScriptTB06::InitializeScene() {
 		//return false;
 		return;
 	} else {
-		Actor_Put_In_Set(kActorMarcus, 73);
+		Actor_Put_In_Set(kActorMarcus, kSetTB06);
 		Actor_Set_At_XYZ(kActorMarcus, 135.0f, 151.0f, -671.0f, 800);
 		Actor_Retired_Here(kActorMarcus, 60, 32, 1, -1);
 		//return true;
@@ -129,7 +129,7 @@ bool SceneScriptTB06::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -16.0f, 149.0f, -427.0f, 12, 1, false, 0)) {
 			Game_Flag_Set(kFlagTB06toTB05);
 			Set_Enter(kSetTB05, kSceneTB05);
-			Scene_Loop_Start_Special(1, 2, 1);
+			Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 2, 1);
 		}
 		return true;
 	}

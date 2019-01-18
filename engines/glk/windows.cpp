@@ -730,7 +730,7 @@ void Attributes::clear() {
 	style = 0;
 }
 
-byte *Attributes::attrBg(WindowStyle *styles) {
+const byte *Attributes::attrBg(const WindowStyle *styles) {
 	int revset = reverse || (styles[style].reverse && !Windows::_overrideReverse);
 
 	int zfset = fgset ? fgset : Windows::_overrideFgSet;
@@ -771,7 +771,7 @@ byte *Attributes::attrBg(WindowStyle *styles) {
 	}
 }
 
-byte *Attributes::attrFg(WindowStyle *styles) {
+const byte *Attributes::attrFg(const WindowStyle *styles) {
 	int revset = reverse || (styles[style].reverse && !Windows::_overrideReverse);
 
 	int zfset = fgset ? fgset : Windows::_overrideFgSet;

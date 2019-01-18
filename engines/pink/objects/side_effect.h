@@ -45,7 +45,6 @@ public:
 private:
 	Common::String _nextModule;
 	Common::String _nextPage;
-	Common::StringMap map;
 };
 
 class SideEffectLocation : public SideEffect {

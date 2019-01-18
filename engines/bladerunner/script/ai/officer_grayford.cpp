@@ -52,7 +52,7 @@ bool AIScriptOfficerGrayford::Update() {
 	} else if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_Goal_Number(kActorOfficerGrayford) < 400) {
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
 		Actor_Set_Goal_Number(kActorOfficerGrayford, 400);
-	} else if (!Game_Flag_Query(177)
+	} else if (!Game_Flag_Query(kFlagMcCoyAtDRxx)
 			&& Actor_Query_Goal_Number(kActorOfficerGrayford) > 102
 			&& Actor_Query_Goal_Number(kActorOfficerGrayford) < 110) {
 		Actor_Set_Goal_Number(kActorOfficerGrayford, 110);

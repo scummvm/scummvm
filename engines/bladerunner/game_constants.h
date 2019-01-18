@@ -439,7 +439,7 @@ enum SpinnerDestinations {
 };
 
 enum Flags {
-	// 0 is never checked
+	kFlagNotUsed0 = 0, // is never checked
 	kFlagRC02Discovered = 1,
 	// 2 is never used
 	kFlagGotOfficersStatement = 3,
@@ -469,7 +469,7 @@ enum Flags {
 	kFlagCT01Evidence1Linked = 27,
 	kFlagCT01Evidence2Linked = 28,
 	kFlagCT01ZubenLeft = 29,
-	// 30 is never set
+	kFlagNotUsed30 = 30,  // is never set
 	kFlagCT01ZubenGone = 31,
 	kFlagCT01McCoyTalkedToGordo = 32,
 	kFlagMA02toMA06 = 33,
@@ -488,16 +488,23 @@ enum Flags {
 	kFlagLucyIsReplicant = 46,
 	kFlagDektoraIsReplicant = 47,
 	kFlagSadikIsReplicant = 48,
-
+	kFlagPS09GrigorianTalk1 = 49,
+	// 50 is never used
+	kFlagGrigorianDislikeMcCoy = 51,
+	// 52 is never used
+	kFlagPS09GrigorianDialogue = 53,
+	kFlagPS09GrigorianTalk2 = 54,
+	kFlagGrigorianArrested = 55,
+	kFlagPS09CrazylegsGrigorianTalk = 56,
 	kFlagMA07toMA06 = 57,
 	kFlagMA06toMA07 = 58,
 	kFlagCT02ZubenTalk = 59,
-	kFlagChapter1Ended = 61,
 	kFlagMA02MaggieIntroduced = 60,
+	kFlagChapter1Ended = 61,
 	// 61 is never used
 	kFlagMA04toMA05 = 62,
 	kFlagMA05toMA04 = 63,
-
+	kFlagGaffApproachedMcCoyAboutZuben = 64,
 	// 65 is never used
 	// 66 is never used
 	// 67 is never used
@@ -555,10 +562,10 @@ enum Flags {
 	// 122 is never used
 	kFlagCT01toCT12 = 123,
 	// 122 is never used
-	kFlagPlayerHasShellCasings = 125,
-	kFlagPlayerHasOfficersStatement = 126,
-	kFlagPlayerHasPaintTransfer = 127,
-	kFlagPlayerHasChromeDebris = 128,
+	kFlagMcCoyHasShellCasings = 125,
+	kFlagMcCoyHasOfficersStatement = 126,
+	kFlagMcCoyHasPaintTransfer = 127,
+	kFlagMcCoyHasChromeDebris = 128,
 	kFlagZubenCheckOnMcCoy = 129,
 	kFlagPS02toPS01 = 130,
 	kFlagPS02toPS07 = 131,
@@ -569,15 +576,15 @@ enum Flags {
 	kFlagKleinInsulted = 138,
 	// 140 is never used
 	kFlagRC02LucyDeskAvailable = 141,
-	// 142 is never checked
+	kFlagNotUsed142 = 142, // is never checked
 	// 143 is never used
 	kFlagCT07toCT06 = 144,
-
+	kFlagZubenPhoto = 145,
 	kFlagChapter1Ending = 146,
 	kFlagChopstickWrapperTaken = 147,
 	kFlagCandyTaken = 148,
 	kFlagDogTaken = 149,
-	// 150 has no use
+	kFlagNotUsed150 = 150, // has no use
 	kFlagRC03UnlockedToUG01 = 151,
 	kFlagUG15toUG16 = 152,
 	kFlagUG16toUG15 = 153,
@@ -588,21 +595,59 @@ enum Flags {
 
 	kFlagGuzzaTalkZubenRetired = 159,
 	kFlagGuzzaTalkZubenEscaped = 160,
-
+	kFlagGuzzaTalk1 = 161,
+	kFlagGuzzaTalk2 = 162,
 	kFlagChromeDebrisTaken = 163,
+	kFlagIzoArrested = 164,
+	kFlagCrazylegsArrested = 165,
+	kFlagPS09CrazylegsTalk1 = 166,
+	kFlagPS09IzoTalk1 = 167,
+	kFlagPS09IzoTalk2 = 168,
 	kFlagMcCoyKilledHomeless = 169,
 	kFlagHomelessBodyInDumpster = 170,
 	kFlagHomelessBodyFound = 171,
 	kFlagDumpsterEmptied = 172,
 	kFlagHomelessBodyInDumpsterNotChecked = 173, // is never checked
 	kFlagLicensePlaceFound = 174,
+	kFlagPS09CrazylegsTalk2 = 175,
+	kFlagMcCoyAtCTxx = 176,
+	kFlagMcCoyAtDRxx = 177,
+	kFlagMcCoyAtPSxx = 178,
+	kFlagMcCoyAtMAxx = 179,
+	kFlagMcCoyAtARxx = 180,
+	kFlagMcCoyAtNRxx = 181,
+	kFlagMcCoyAtRCxx = 182,
+
 	kFlagRC01PoliceDone = 186,
 	kFlagRC02TalkedToRunciter = 187,
+
 	kFlagShellCasingsTaken = 190,
+	// 191 is never used
 	kFlagBoughtHowieLeeFood = 192,
+
 	kFlagPS15toPS05 = 204,
+
 	kFlagCT02ZubenFled = 210,
+	kFlagPS09Entered = 211,
+	kFlagNotUsed212 = 212, // is never checked
+	// 213 is never used
+	// 214 is never used
+	// 215 is never used
+	kFlagBB09toBB10a = 216,
+	// 217 is never used
+	kFlagBB08toBB09 = 218,
+	kFlagBB09toBB08 = 219,
+	kFlagBB09toBB10b = 220,
+	kFlagBB10toBB09 = 221,
+	kFlagBB10toBB11 = 222, // is never checked
+	kFlagBB11toBB10 = 223,
+	kFlagDR01toDR02 = 224,
+	kFlagDR02toDR01 = 225,
+	kFlagDR02toDR03 = 226,
+	kFlagDR03toDR02 = 227,
+
 	kFlagCT02toCT01walk = 234,
+
 	kFlagArrivedFromSpinner = 247,
 	kFlagSpinnerAtCT01 = 248,
 	kFlagSpinnerAtRC01 = 249,
@@ -613,19 +658,48 @@ enum Flags {
 	kFlagSpinnerAtBB01 = 254,
 	kFlagSpinnerAtNR01 = 255,
 	kFlagSpinnerAtHF01 = 256,
+	kFlagMcCoyAtHFxx = 257,
+	kFlagMcCoyAtBBxx = 258,
+	kFlagMcCoyAtUGxx = 259,
+	// 260 is never used
+	kFlagMcCoyAtTBxx = 261,
+	kFlagBB01toBB02 = 262,
+	kFlagBB02toBB01 = 263,
+	kFlagBB01toDR02 = 264,
+	kFlagDR02toBB01 = 265,
+
 	kFlagCT02PotTipped = 293,
 	kFlagGaffSpinnerCT12 = 294,
 	kFlagSpinnerAtTB02 = 307,
+	kFlagHF01toHF02 = 308,
+	kFlagHF02toHF01 = 309,
+	kFlagHF01toHF03 = 310,
+	kFlagHF03toHF01 = 311,
+	kFlagHF01toHF05 = 312,
+	kFlagHF05toHF01 = 313,
+	kFlagUG01toUG02 = 314,
+	kFlagUG02toUG01 = 315,
+	kFlagUG01toUG10 = 316,
+	kFlagUG10toUG01 = 317,
+	kFlagUG02toHC03 = 318,
+	kFlagHC03toUG02 = 319,
+	kFlagAR01toAR02 = 320,
+	kFlagAR02toAR01 = 321,
+	kFlagAR01toHC01 = 322,
+	kFlagHC01toAR01 = 323,
 	kFlagDirectorsCut = 378,
 	KFlagMcCoyAndOfficerLearyTalking = 392,
 	KFlagMcCoyAndOfficerLearyArtMetaphor = 397,
-	kFlagCT12ToUG09 = 443,
+	kFlagUG09toCT12 = 432,
+	kFlagCT12ToUG09 = 433,
 	kFlagGenericWalkerWaiting = 443,
 	kFlagMaggieIsHurt = 461,
+	kFlagMcCoyArrested = 465,
 	kFlagKIAPrivacyAddon = 487,
 	kFlagCT04HomelessTrashFinish = 492,
 	kFlagCT07ZubenAttack = 516,
 	kFlagKIAPrivacyAddonIntro = 599,
+	kFlagTB07toTB02 = 608,
 	kFlagMcCoySleeping = 647,
 	kFlagPhoneMessageFromClovis = 649,
 	kFlagPhoneMessageFromLucy = 650,
