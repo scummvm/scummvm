@@ -608,12 +608,12 @@ bool Actor::tick(bool forceDraw, Common::Rect *screenRect) {
 				int facingChange = angleChange * (512.0f / M_PI);
 				if (facingChange != 0) {
 					_facing = _facing - facingChange;
-					if (_facing < 0) {
+					while (_facing < 0) {
 						_facing += 1024;
 					}
 
-					if (_facing >= 1024) {
-						_facing = _facing - 1024;
+					while (_facing >= 1024) {
+						_facing -= 1024;
 					}
 				}
 			}
@@ -760,7 +760,15 @@ void Actor::setFacing(int facing, bool halfOrSet) {
 		}
 	}
 
-	_facing = (_facing + offset) % 1024;
+	_facing += offset;
+
+	while (_facing < 0) {
+		_facing += 1024;
+	}
+
+	while (_facing >= 1024) {
+		_facing -= 1024;
+	}
 }
 
 void Actor::setBoundingBox(const Vector3 &position, bool retired) {
