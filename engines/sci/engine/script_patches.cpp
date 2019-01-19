@@ -7623,7 +7623,7 @@ static const uint16 qfg3SignatureImportDialog[] = {
 	0x7a,                               // push2
 	0x39, 0x03,                         // pushi 03
 	0x36,                               // push
-	0x43, 0x72, 0x04,                   // callk Memory 4
+	0x43, 0x72, 0x04,                   // callk Memory, 4
 	0x35, 0x00,                         // ldi 00
 	0x65, 0x2a,                         // aTop text
 	SIG_END
@@ -7635,21 +7635,21 @@ static const uint16 qfg3PatchImportDialog[] = {
 	PATCH_END
 };
 
-
-
-// ===========================================================================
 // Patch for the Woo dialog option in Uhura's conversation.
+//
 // Problem: The Woo dialog option (0xffb5) is negative, and therefore
-// treated as an option opening a submenu. This leads to uhuraTell::doChild
-// being called, which calls hero::solvePuzzle and then proceeds with
-// Teller::doChild to open the submenu. However, there is no actual submenu
-// defined for option -75 since -75 does not show up in uhuraTell::keys.
-// This will cause Teller::doChild to run out of bounds while scanning through
-// uhuraTell::keys.
+//  treated as an option opening a submenu. This leads to uhuraTell::doChild
+//  being called, which calls hero::solvePuzzle and then proceeds with
+//  Teller::doChild to open the submenu. However, there is no actual submenu
+//  defined for option -75 since -75 does not show up in uhuraTell::keys.
+//  This will cause Teller::doChild to run out of bounds while scanning through
+//  uhuraTell::keys.
+//
 // Strategy: there is another conversation option in uhuraTell::doChild calling
-// hero::solvePuzzle (0xfffc) which does a ret afterwards without going to
-// Teller::doChild. We jump to this call of hero::solvePuzzle to get that same
-// behaviour.
+//  hero::solvePuzzle (0xfffc) which does a ret afterwards without going to
+//  Teller::doChild. We jump to this call of hero::solvePuzzle to get that same
+//  behaviour.
+//
 // Applies to at least: English, German, Italian, French, Spanish Floppy
 // Responsible method: uhuraTell::doChild
 // Fixes bug: #5172
@@ -7663,11 +7663,11 @@ static const uint16 qfg3SignatureWooDialog[] = {
 	0x35, 0x9b,                         // ldi 9b
 	0x1a,                               // eq?
 	0x31, 0x0c,                         // bnt 0c
-	0x38, SIG_SELECTOR16(solvePuzzle),  // pushi 0297
+	0x38, SIG_SELECTOR16(solvePuzzle),  // pushi solvePuzzle (0297)
 	0x7a,                               // push2
 	0x38, SIG_UINT16(0x010c),           // pushi 010c
 	0x7a,                               // push2
-	0x81, 0x00,                         // lag 00
+	0x81, 0x00,                         // lag global[0]
 	0x4a, 0x08,                         // send 08
 	0x67, 0x12,                         // pTos 12 (query)
 	0x35, 0xb5,                         // ldi b5
@@ -7676,7 +7676,7 @@ static const uint16 qfg3SignatureWooDialog[] = {
 
 static const uint16 qfg3PatchWooDialog[] = {
 	PATCH_ADDTOOFFSET(+0x29),
-	0x33, 0x11,                         // jmp to 0x6a2, the call to hero::solvePuzzle for 0xFFFC
+	0x33, 0x11,                         // jmp [to 0x6a2, the call to hero::solvePuzzle for 0xFFFC]
 	PATCH_END
 };
 
@@ -7691,11 +7691,11 @@ static const uint16 qfg3SignatureWooDialogAlt[] = {
 	0x35, 0x9b,                         // ldi 9b
 	0x1a,                               // eq?
 	0x30, SIG_UINT16(0x000c),           // bnt 0c
-	0x38, SIG_SELECTOR16(solvePuzzle),  // pushi 0297
+	0x38, SIG_SELECTOR16(solvePuzzle),  // pushi solvePuzzle (0297)
 	0x7a,                               // push2
 	0x38, SIG_UINT16(0x010c),           // pushi 010c
 	0x7a,                               // push2
-	0x81, 0x00,                         // lag 00
+	0x81, 0x00,                         // lag global[0]
 	0x4a, 0x08,                         // send 08
 	0x67, 0x12,                         // pTos 12 (query)
 	0x35, 0xb5,                         // ldi b5
@@ -7703,48 +7703,47 @@ static const uint16 qfg3SignatureWooDialogAlt[] = {
 };
 
 static const uint16 qfg3PatchWooDialogAlt[] = {
-	PATCH_ADDTOOFFSET(+0x2C),
-	0x33, 0x12,                         // jmp to 0x708, the call to hero::solvePuzzle for 0xFFFC
+	PATCH_ADDTOOFFSET(+44),
+	0x33, 0x12,                         // jmp [to 0x708, the call to hero::solvePuzzle for 0xFFFC]
 	PATCH_END
 };
 
 // When exporting characters at the end of Quest for Glory 3, the underlying
-//  code has issues with values, that are above 9999.
+//  code has issues with values above 9999.
 //  For further study: https://github.com/Blazingstix/QFGImporter/blob/master/QFGImporter/QFGImporter/QFG3.txt
 //
-// If a value is above 9999, parts or even the whole character file will get corrupted.
-//
-// We are fixing the code because of that. We are patching code, that is calculating the checksum
-//  and add extra code to lower such values to 9999.
+// If a value is above 9999, parts or even the whole character file will get
+//  corrupted. We calculate the checksum and add extra code to lower such
+//  values to 9999.
 //
 // Applies to at least: English, French, German, Italian, Spanish floppy
 // Responsible method: saveHero::changeState
-// Fixes bug #6807
+// Fixes bug: #6807
 static const uint16 qfg3SignatureExportChar[] = {
-	0x35, SIG_ADDTOOFFSET(+1),          // ldi  00 / ldi 01 (2 loops, we patch both)
-	0xa5, 0x00,                         // sat  temp[0] [contains index to data]
-	0x8d, 0x00,                         // lst  temp[0]
+	0x35, SIG_ADDTOOFFSET(+1),          // ldi 00 / ldi 01 (2 loops, we patch both)
+	0xa5, 0x00,                         // sat temp[0] [contains index to data]
+	0x8d, 0x00,                         // lst temp[0]
 	SIG_MAGICDWORD,
-	0x35, 0x2c,                         // ldi  2c
-	0x22,                               // lt?  [index above or equal 2Ch (44d)?
-	0x31, 0x23,                         // bnt  [exit loop]
+	0x35, 0x2c,                         // ldi 2c
+	0x22,                               // lt? (index above or equal to 2Ch (44d)?)
+	0x31, 0x23,                         // bnt [exit loop]
 	// from this point it's actually useless code, maybe a sci compiler bug
-	0x8d, 0x00,                         // lst  temp[0]
-	0x35, 0x01,                         // ldi  01
+	0x8d, 0x00,                         // lst temp[0]
+	0x35, 0x01,                         // ldi 01
 	0x02,                               // add
 	0x9b, 0x00,                         // lsli local[0] ---------- load local[0 + ACC] onto stack
-	0x8d, 0x00,                         // lst  temp[0]
-	0x35, 0x01,                         // ldi  01
+	0x8d, 0x00,                         // lst temp[0]
+	0x35, 0x01,                         // ldi 01
 	0x02,                               // add
 	0xb3, 0x00,                         // sali local[0] ---------- save stack to local[0 + ACC]
 	// end of useless code
-	0x8b, SIG_ADDTOOFFSET(+1),          // lsl  local[36h/37h] ---- load local[36h/37h] onto stack
-	0x8d, 0x00,                         // lst  temp[0]
-	0x35, 0x01,                         // ldi  01
+	0x8b, SIG_ADDTOOFFSET(+1),          // lsl local[36h/37h] ----- load local[36h/37h] onto stack
+	0x8d, 0x00,                         // lst temp[0]
+	0x35, 0x01,                         // ldi 01
 	0x02,                               // add
 	0x93, 0x00,                         // lali local[0] ---------- load local[0 + ACC] into ACC
 	0x02,                               // add -------------------- add ACC + stack and put into ACC
-	0xa3, SIG_ADDTOOFFSET(+1),          // sal  local[36h/37h] ---- save ACC to local[36h/37h]
+	0xa3, SIG_ADDTOOFFSET(+1),          // sal local[36h/37h] ----- save ACC to local[36h/37h]
 	0x8d, 0x00,                         // lst temp[0] ------------ temp[0] to stack
 	0x35, 0x02,                         // ldi 02
 	0x02,                               // add -------------------- add 2 to stack
@@ -7755,26 +7754,27 @@ static const uint16 qfg3SignatureExportChar[] = {
 
 static const uint16 qfg3PatchExportChar[] = {
 	PATCH_ADDTOOFFSET(+11),
-	0x85, 0x00,                         // lat  temp[0]
+	0x85, 0x00,                         // lat temp[0]
 	0x9b, 0x01,                         // lsli local[0] + 1 ------ load local[ ACC + 1] onto stack
 	0x3c,                               // dup
-	0x34, PATCH_UINT16(0x2710),         // ldi  2710h (10000d)
+	0x34, PATCH_UINT16(0x2710),         // ldi 2710h (10000d)
 	0x2c,                               // ult? ------------------- is value smaller than 10000?
-	0x2f, 0x0a,                         // bt   [jump over]
+	0x2f, 0x0a,                         // bt [jump over]
 	0x3a,                               // toss
 	0x38, PATCH_UINT16(0x270f),         // pushi 270fh (9999d)
 	0x3c,                               // dup
-	0x85, 0x00,                         // lat  temp[0]
-	0xba, PATCH_UINT16(0x0001),         // ssli local[0] + 1 ------ save stack to local[ ACC + 1] (UINT16 to waste 1 byte)
+	0x85, 0x00,                         // lat temp[0]
+	0xba, PATCH_UINT16(0x0001),         // ssli local[0] + 1 ------ save stack to local[ACC + 1] (UINT16 to waste 1 byte)
 	// jump offset
-	0x83, PATCH_GETORIGINALBYTE(+26),   // lal  local[37h/36h] ---- load local[37h/36h] into ACC
+	0x83, PATCH_GETORIGINALBYTE(+26),   // lal local[37h/36h] ----- load local[37h/36h] into ACC
 	0x02,                               // add -------------------- add local[37h/36h] + data value
 	PATCH_END
 };
 
-// Quest for Glory 3 doesn't properly import the character type of Quest for Glory 1 character files.
-//  This issue was never addressed. It's caused by Sierra reading data directly from the local
-//  area, which is only set by Quest For Glory 2 import data, instead of reading the properly set global variable.
+// Quest for Glory 3 doesn't properly import the character type of QFG1
+//  character files. This issue was never addressed. It's caused by Sierra
+//  reading data directly from the local area, which is only set by QFG2
+//  import data, instead of reading the properly set global variable.
 //
 // We fix it, by also directly setting the local variable.
 //
@@ -7792,8 +7792,8 @@ static const uint16 qfg3SignatureImportQfG1Char[] = {
 
 static const uint16 qfg3PatchImportQfG1Char[] = {
 	PATCH_ADDTOOFFSET(+8),
-	0xa3, 0x01,                         // sal 01           -> also set local[01]
-	0x89, 0xfc,                         // lsg global[0xFD] -> save 2 bytes
+	0xa3, 0x01,                         // sal local[1]
+	0x89, 0xfc,                         // lsg global[0xfc] (save 2 bytes vs global[0xfb + 1])
 	PATCH_END
 };
 
@@ -7803,7 +7803,7 @@ static const uint16 qfg3PatchImportQfG1Char[] = {
 //
 // Applies to at least: English, French, German, Italian, Spanish floppy
 // Responsible method: heap in script 640
-// Fixes bug #5173
+// Fixes bug: #5173
 static const uint16 qfg3SignatureChiefPriority[] = {
 	SIG_MAGICDWORD,
 	SIG_UINT16(0x0002),                 // yStep     0x0002
@@ -7818,9 +7818,9 @@ static const uint16 qfg3SignatureChiefPriority[] = {
 
 static const uint16 qfg3PatchChiefPriority[] = {
 	PATCH_ADDTOOFFSET(+8),
-	PATCH_UINT16(0x000A),               // new priority 0x000A (10d)
+	PATCH_UINT16(0x000a),               // priority  0x000A (10d)
 	PATCH_ADDTOOFFSET(+2),
-	PATCH_UINT16(0x1010),               // signal       0x1010 (set fixed priority flag)
+	PATCH_UINT16(0x1010),               // signal    0x1010 (set fixed priority flag)
 	PATCH_END
 };
 
@@ -7828,54 +7828,54 @@ static const uint16 qfg3PatchChiefPriority[] = {
 // awarded for telling Rakeesh and Kreesha (room 285) about the Simabni
 // initiation.
 // However the array of posibble messages the hero can tell in that room
-// (local 156) is missing the "Tell about Initiation" message (#31) which
+// (local[156]) is missing the "Tell about Initiation" message (#31) which
 // awards these points.
 // This patch adds the message to that array, thus allowing the hero to tell
 // that message (after completing the initiation) and gain the 3 points.
-// A side effect of increasing the local156 array is that the next local
+// A side effect of increasing the local[156] array is that the next local
 // array is shifted and shrinks in size from 4 words to 3. The patch changes
 // the 2 locations in the script that reference that array, to point to the new
-// location ($aa --> $ab). It is safe to shrink the 2nd array to 3 words
-// because only the first element in it is ever used.
+// location (local[$aa] --> local[$ab]). It is safe to shrink the 2nd array to
+// 3 words because only the first element in it is ever used.
 //
 // Note: You have to re-enter the room in case a saved game was loaded from a
 // previous version of ScummVM and that saved game was made inside that room.
 //
 // Applies to: English, French, German, Italian, Spanish and the GOG release.
 // Responsible method: heap in script 285
-// Fixes bug #7086
+// Fixes bug: #7086
 static const uint16 qfg3SignatureMissingPoints1[] = {
 	// local[$9c] = [0 -41 -76 1 -30 -77 -33 -34 -35 -36 -37 -42 -80 999]
 	// local[$aa] = [0 0 0 0]
 	SIG_UINT16(0x0000),                 //   0 START MARKER
 	SIG_MAGICDWORD,
-	SIG_UINT16(0xFFD7),                 // -41 "Greet"
-	SIG_UINT16(0xFFB4),                 // -76 "Say Good-bye"
+	SIG_UINT16(0xffd7),                 // -41 "Greet"
+	SIG_UINT16(0xffb4),                 // -76 "Say Good-bye"
 	SIG_UINT16(0x0001),                 //   1 "Tell about Tarna"
-	SIG_UINT16(0xFFE2),                 // -30 "Tell about Simani"
-	SIG_UINT16(0xFFB3),                 // -77 "Tell about Prisoner"
-	SIG_UINT16(0xFFDF),                 // -33 "Dispelled Leopard Lady"
-	SIG_UINT16(0xFFDE),                 // -34 "Tell about Leopard Lady"
-	SIG_UINT16(0xFFDD),                 // -35 "Tell about Leopard Lady"
-	SIG_UINT16(0xFFDC),                 // -36 "Tell about Leopard Lady"
-	SIG_UINT16(0xFFDB),                 // -37 "Tell about Village"
-	SIG_UINT16(0xFFD6),                 // -42 "Greet"
-	SIG_UINT16(0xFFB0),                 // -80 "Say Good-bye"
-	SIG_UINT16(0x03E7),                 // 999 END MARKER
+	SIG_UINT16(0xffe2),                 // -30 "Tell about Simani"
+	SIG_UINT16(0xffb3),                 // -77 "Tell about Prisoner"
+	SIG_UINT16(0xffdf),                 // -33 "Dispelled Leopard Lady"
+	SIG_UINT16(0xffde),                 // -34 "Tell about Leopard Lady"
+	SIG_UINT16(0xffdd),                 // -35 "Tell about Leopard Lady"
+	SIG_UINT16(0xffdc),                 // -36 "Tell about Leopard Lady"
+	SIG_UINT16(0xffdb),                 // -37 "Tell about Village"
+	SIG_UINT16(0xffd6),                 // -42 "Greet"
+	SIG_UINT16(0xffb0),                 // -80 "Say Good-bye"
+	SIG_UINT16(0x03e7),                 // 999 END MARKER
 	SIG_ADDTOOFFSET(+2),                // local[$aa][0]
 	SIG_END
 };
 
 static const uint16 qfg3PatchMissingPoints1[] = {
 	PATCH_ADDTOOFFSET(+14),
-	PATCH_UINT16(0xFFE1),               // -31 "Tell about Initiation"
-	PATCH_UINT16(0xFFDE),               // -34 "Tell about Leopard Lady"
-	PATCH_UINT16(0xFFDD),               // -35 "Tell about Leopard Lady"
-	PATCH_UINT16(0xFFDC),               // -36 "Tell about Leopard Lady"
-	PATCH_UINT16(0xFFDB),               // -37 "Tell about Village"
-	PATCH_UINT16(0xFFD6),               // -42 "Greet"
-	PATCH_UINT16(0xFFB0),               // -80 "Say Good-bye"
-	PATCH_UINT16(0x03E7),               // 999 END MARKER
+	PATCH_UINT16(0xffe1),               // -31 "Tell about Initiation"
+	PATCH_UINT16(0xffde),               // -34 "Tell about Leopard Lady"
+	PATCH_UINT16(0xffdd),               // -35 "Tell about Leopard Lady"
+	PATCH_UINT16(0xffdc),               // -36 "Tell about Leopard Lady"
+	PATCH_UINT16(0xffdb),               // -37 "Tell about Village"
+	PATCH_UINT16(0xffd6),               // -42 "Greet"
+	PATCH_UINT16(0xffb0),               // -80 "Say Good-bye"
+	PATCH_UINT16(0x03e7),               // 999 END MARKER
 	PATCH_GETORIGINALUINT16(+28),       // local[$aa][0]
 	PATCH_END
 };
@@ -7896,10 +7896,9 @@ static const uint16 qfg3SignatureMissingPoints2b[] = {
 
 static const uint16 qfg3PatchMissingPoints2[] = {
 	PATCH_ADDTOOFFSET(+3),
-	0xab,                               // local[$aa] ==> local[$ab]
+	0xab,                               // local[$ab] (replace local[$aa])
 	PATCH_END
 };
-
 
 // Partly WORKAROUND:
 // During combat, the game is not properly throttled. That's because the game uses
@@ -7913,7 +7912,7 @@ static const uint16 qfg3PatchMissingPoints2[] = {
 //
 // Applies to at least: English, French, German, Italian, Spanish PC floppy
 // Responsible method: combatControls::dispatchEvent (script 550) + WarriorObj in heap
-// Fixes bug #6247
+// Fixes bug: #6247
 static const uint16 qfg3SignatureCombatSpeedThrottling1[] = {
 	0x31, 0x0d,                         // bnt [skip code]
 	SIG_MAGICDWORD,
@@ -7930,33 +7929,33 @@ static const uint16 qfg3SignatureCombatSpeedThrottling1[] = {
 static const uint16 qfg3PatchCombatSpeedThrottling1[] = {
 	0x80, 0xd2,                         // lsg global[D2h]
 	0x14,                               // or
-	0x31, 0x06,                         // bnt [skip code] - saves 4 bytes
+	0x31, 0x06,                         // bnt [skip code] (saves 4 bytes)
 	0xe1, 0xd2,                         // -ag global[D2h]
 	0x81, 0x58,                         // lag global[58h]
 	0xa3, 0x01,                         // sal local[01] (jump skips over this)
 	// our code
 	0x76,                               // push0
-	0x43, 0x2c, 0x00,                   // callk GameIsRestarting <-- add this so that our speed throttler is triggered
+	0x43, 0x2c, 0x00,                   // callk GameIsRestarting (add this to trigger our speed throttler)
 	PATCH_END
 };
 
 static const uint16 qfg3SignatureCombatSpeedThrottling2[] = {
 	SIG_MAGICDWORD,
 	SIG_UINT16(12),                     // priority 12
-	SIG_UINT16(0),                      // underbits 0
+	SIG_UINT16(0x0000),                 // underbits 0
 	SIG_UINT16(0x4010),                 // signal 4010h
 	SIG_ADDTOOFFSET(+18),
-	SIG_UINT16(0),                      // scaleSignal 0
-	SIG_UINT16(128),                    // scaleX
-	SIG_UINT16(128),                    // scaleY
-	SIG_UINT16(128),                    // maxScale
-	SIG_UINT16(0),                      // cycleSpeed
+	SIG_UINT16(0x0000),                 // scaleSignal 0
+	SIG_UINT16(128),                    // scaleX 128
+	SIG_UINT16(128),                    // scaleY 128
+	SIG_UINT16(128),                    // maxScale 128
+	SIG_UINT16(0x0000),                 // cycleSpeed 0
 	SIG_END
 };
 
 static const uint16 qfg3PatchCombatSpeedThrottling2[] = {
 	PATCH_ADDTOOFFSET(+32),
-	PATCH_UINT16(5),                    // set cycleSpeed to 5
+	PATCH_UINT16(0x0005),               // set cycleSpeed to 5
 	PATCH_END
 };
 
@@ -7972,16 +7971,16 @@ static const uint16 qfg3PatchCombatSpeedThrottling2[] = {
 //
 // Applies to: English, French, German, Italian, Spanish and the GOG release.
 // Responsible method: enterEast::changeState (script 750)
-// Fixes bug #6693
+// Fixes bug: #6693
 static const uint16 qfg3SignatureRoom750Bounds1[] = {
 	// (if (< (ego y?) 42)
-	0x76,                               // push0 ("y")
+	0x76,                               // push0 (y)
 	0x76,                               // push0
 	0x81, 0x00,                         // lag global[0] (ego)
 	0x4a, 0x04,                         // send 4
 	SIG_MAGICDWORD,
 	0x36,                               // push
-	0x35,   42,                         // ldi 42 <-- comparing ego.y with 42
+	0x35,   42,                         // ldi 42 (if ego.y < 42)
 	0x22,                               // lt?
 	SIG_END
 };
@@ -7989,19 +7988,19 @@ static const uint16 qfg3SignatureRoom750Bounds1[] = {
 static const uint16 qfg3PatchRoom750Bounds1[] = {
 	// (if (< (ego y?) 50)
 	PATCH_ADDTOOFFSET(+8),
-	50,                                 // 42 --> 50
+	  50,                               // 50 (replace 42)
 	PATCH_END
 };
 
 static const uint16 qfg3SignatureRoom750Bounds2[] = {
 	// (ego x: 294 y: 39)
-	0x78,                               // push1 ("x")
+	0x78,                               // push1 (x)
 	0x78,                               // push1
 	0x38, SIG_UINT16(294),              // pushi 294
-	0x76,                               // push0 ("y")
+	0x76,                               // push0 (y)
 	0x78,                               // push1
 	SIG_MAGICDWORD,
-	0x39,   29,                         // pushi 29
+	0x39, 0x1d,                         // pushi 29
 	0x81, 0x00,                         // lag global[0] (ego)
 	0x4a, 0x0c,                         // send 12
 	SIG_END
@@ -8010,15 +8009,15 @@ static const uint16 qfg3SignatureRoom750Bounds2[] = {
 static const uint16 qfg3PatchRoom750Bounds2[] = {
 	// (ego x: 320 y: 39)
 	PATCH_ADDTOOFFSET(+3),
-	PATCH_UINT16(320),                  // 294 --> 320
+	PATCH_UINT16(320),                  // 320 (replace 294)
 	PATCH_ADDTOOFFSET(+3),
-	39,                                 //  29 -->  39
+	  39,                               // 39 (replace 29)
 	PATCH_END
 };
 
 static const uint16 qfg3SignatureRoom750Bounds3[] = {
 	// (ego setMotion: MoveTo 282 29 self)
-	0x38, SIG_SELECTOR16(setMotion),    // pushi "setMotion" 0x133 in QfG3
+	0x38, SIG_SELECTOR16(setMotion),    // pushi setMotion (0x133)
 	0x39, 0x04,                         // pushi 4
 	0x51, SIG_ADDTOOFFSET(+1),          // class MoveTo
 	0x36,                               // push
@@ -8034,9 +8033,9 @@ static const uint16 qfg3SignatureRoom750Bounds3[] = {
 static const uint16 qfg3PatchRoom750Bounds3[] = {
 	// (ego setMotion: MoveTo 309 35 self)
 	PATCH_ADDTOOFFSET(+9),
-	PATCH_UINT16(309),                  // 282 --> 309
+	PATCH_UINT16(309),                  // 309 (replace 282)
 	PATCH_ADDTOOFFSET(+1),
-	35,                                 //  29 -->  35
+	  35,                               // 35 (replace 29)
 	PATCH_END
 };
 
