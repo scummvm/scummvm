@@ -6352,7 +6352,7 @@ static const SciScriptPatcherEntry phantasmagoria2Signatures[] = {
 // Fixes bug: #5865
 static const uint16 pq1vgaSignatureBriefingGettingStuck[] = {
 	0x76,                                // push0
-	0x45, 0x02, 0x00,                    // call export 2 of script 0 (disable control)
+	0x45, 0x02, 0x00,                    // callb [export 2 of script 0], 00 (disable control)
 	0x38, SIG_ADDTOOFFSET(+2),           // pushi notify
 	0x76,                                // push0
 	0x81, 0x02,                          // lag global[2] (get current room)
@@ -6365,7 +6365,7 @@ static const uint16 pq1vgaSignatureBriefingGettingStuck[] = {
 };
 
 static const uint16 pq1vgaPatchBriefingGettingStuck[] = {
-	0x33, 0x0a,                      // jmp to lsl local[2], skip over export 2 and ::notify
+	0x33, 0x0a,                      // jmp [to lsl local[2], skip over export 2 and ::notify]
 	PATCH_END                        // rm015::notify would try to make ego walk to the chair
 };
 
@@ -6379,26 +6379,26 @@ static const uint16 pq1vgaPatchBriefingGettingStuck[] = {
 //  when the 2 seconds have passed and the locker got closed.
 // Applies to at least: English floppy
 // Responsible method: putGun::changeState (script 341)
-// Fixes bug: #5705 / #6400
+// Fixes bug: #5705, #6400
 static const uint16 pq1vgaSignaturePutGunInLockerBug[] = {
 	0x35, 0x00,                      // ldi 00
 	0x1a,                            // eq?
 	0x31, 0x25,                      // bnt [next state check]
 	SIG_ADDTOOFFSET(+22),            // [skip 22 bytes]
 	SIG_MAGICDWORD,
-	0x38, SIG_SELECTOR16(put),       // pushi "put"
+	0x38, SIG_SELECTOR16(put),       // pushi put
 	0x78,                            // push1
 	0x76,                            // push0
-	0x81, 0x00,                      // lag 00
+	0x81, 0x00,                      // lag global[0]
 	0x4a, 0x06,                      // send 06 - ego::put(0)
 	0x35, 0x02,                      // ldi 02
 	0x65, 0x1c,                      // aTop 1c (set timer to 2 seconds)
 	0x33, 0x0e,                      // jmp [end of method]
-	0x3c,                            // dup --- next state check target
+	0x3c,                            // dup (state check)
 	0x35, 0x01,                      // ldi 01
 	0x1a,                            // eq?
 	0x31, 0x08,                      // bnt [end of method]
-	0x39, SIG_SELECTOR8(dispose),    // pushi "dispose"
+	0x39, SIG_SELECTOR8(dispose),    // pushi dispose
 	0x76,                            // push0
 	0x72, SIG_UINT16(0x0088),        // lofsa 0088
 	0x4a, 0x04,                      // send 04 - locker::dispose
@@ -6412,14 +6412,14 @@ static const uint16 pq1vgaPatchPutGunInLockerBug[] = {
 	0x35, 0x02,                      // ldi 02
 	0x65, 0x1c,                      // aTop 1c (set timer to 2 seconds)
 	0x33, 0x17,                      // jmp [end of method]
-	0x3c,                            // dup --- next state check target
+	0x3c,                            // dup (state check)
 	0x35, 0x01,                      // ldi 01
 	0x1a,                            // eq?
 	0x31, 0x11,                      // bnt [end of method]
-	0x38, PATCH_SELECTOR16(put),     // pushi "put"
+	0x38, PATCH_SELECTOR16(put),     // pushi put
 	0x78,                            // push1
 	0x76,                            // push0
-	0x81, 0x00,                      // lag 00
+	0x81, 0x00,                      // lag global[0]
 	0x4a, 0x06,                      // send 06 - ego::put(0)
 	PATCH_END
 };
@@ -6441,16 +6441,16 @@ static const uint16 pq1vgaSignatureMapSaveRestoreBug[] = {
 	0x38, 0x64, 0x80,                    // pushi 8064
 	0x76,                                // push0
 	0x89, 0x28,                          // lsg global[28]
-	0x43, 0x08, 0x08,                    // kDrawPic (8)
+	0x43, 0x08, 0x08,                    // callk DrawPic, 8
 	SIG_END
 };
 
 static const uint16 pq1vgaPatchMapSaveRestoreBug[] = {
-	0x38, PATCH_SELECTOR16(overlay), // pushi "overlay"
+	0x38, PATCH_SELECTOR16(overlay), // pushi overlay
 	0x7a,                            // push2
 	0x89, 0xf9,                      // lsg global[f9]
 	0x39, 0x64,                      // pushi 64 (no transition)
-	0x81, 0x02,                      // lag global[02] (current room object)
+	0x81, 0x02,                      // lag global[2] (current room object)
 	0x4a, 0x08,                      // send 08
 	0x18,                            // not (waste byte)
 	PATCH_END
@@ -6463,7 +6463,6 @@ static const SciScriptPatcherEntry pq1vgaSignatures[] = {
 	{  true,   500, "map save/restore bug",                           2, pq1vgaSignatureMapSaveRestoreBug,    pq1vgaPatchMapSaveRestoreBug },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
-
 
 // ===========================================================================
 // Police Quest 3
@@ -6510,7 +6509,7 @@ static const uint16 pq3PatchGiveLocketPoints[] = {
 	0x7a,                                // push2
 	0x38, PATCH_UINT16(0x00ff),          // pushi 0x00ff - using last flag slot, seems to be unused
 	0x39, 0x0a,                          // pushi 10d - 10 points
-	0x45, 0x06, 0x04,                    // callb export000_6, 4
+	0x45, 0x06, 0x04,                    // callb [export 6 of script 0], 4
 	// original code
 	0x39, 0x20,                          // pushi 20h (state)
 	0x78,                                // push1
@@ -6561,21 +6560,21 @@ static const uint16 pq4CdSpeechAndSubtitlesSignature[] = {
 	0x76,                         // push0
 	0x43, 0x22, SIG_UINT16(0x00), // callk IsHiRes
 	SIG_ADDTOOFFSET(+45),         // skip over the remaining code
-	0x38, SIG_SELECTOR16(init),   // pushi $93 (init)
+	0x38, SIG_SELECTOR16(init),   // pushi init ($93)
 	0x76,                         // push0
 	0x59, 0x01,                   // &rest 01
-	0x57, 0x8f, SIG_UINT16(0x04), // super GCItem
+	0x57, 0x8f, SIG_UINT16(0x04), // super GCItem, 4
 	0x48,                         // ret
 
 	// iconText::select
-	0x38, SIG_SELECTOR16(select), // pushi $1c4 (select)
+	0x38, SIG_SELECTOR16(select), // pushi select ($1c4)
 	0x76,                         // push0
 	0x59, 0x01,                   // &rest 01
 	0x57, 0x8f, SIG_UINT16(0x04), // super GCItem, 4
 	0x89, 0x5a,                   // lsg global[$5a]
 	0x35, 0x02,                   // ldi 2
 	0x12,                         // and
-	0x30, SIG_UINT16(0x1f),       // bnt [jump to currently-in-text-mode code]
+	0x30, SIG_UINT16(0x001f),     // bnt [to currently-in-text-mode code]
 	SIG_ADDTOOFFSET(+67),         // skip over the rest
 	0x48,                         // ret
 	SIG_END
@@ -6615,31 +6614,34 @@ static const uint16 pq4CdSpeechAndSubtitlesPatch[] = {
 
 	// iconText::select
 	PATCH_ADDTOOFFSET(+10),         // skip over the super code
-	0xc1, 0x5a,                     // +ag $5a
-	0xa1, 0x5a,                     // sag $5a
+	0xc1, 0x5a,                     // +ag global[$5a]
+	0xa1, 0x5a,                     // sag global[$5a]
 	0x36,                           // push
 	0x35, 0x04,                     // ldi 4
 	0x28,                           // uge?
 	0x31, 0x03,                     // bnt [skip over follow up code]
 	0x78,                           // push1
-	0xa9, 0x5a,                     // ssg $5a
+	0xa9, 0x5a,                     // ssg global[$5a]
 	0x76,                           // push0
 	0x41, 0x99, PATCH_UINT16(0x00), // call [our new subroutine which sets view+loop+cel, effectively -103], 0
 	0x33, 0x2f,                     // jmp [to end of original select, show call]
 	PATCH_END
 };
 
-// When showing the red shoe to Barbie after showing the police badge but before
-// exhausting the normal dialogue tree, the game plays the expected dialogue but
-// fails to award points or set an internal flag indicating this interaction has
-// occurred (which is needed to progress in the game). This is because the game
-// checks global $9a (dialogue progress flag) instead of local 3 (badge shown
-// flag) when interacting with Barbie. The game uses the same
-// `shoeShoe::changeState(0)` method for showing the shoe to the young woman at the
-// bar earlier in the game, and checks local 3 then, so just check local 3 in
-// both cases to prevent the game from appearing to be in an unwinnable state
-// just because the player interacted in the "wrong" order.
+// When showing the red shoe to Barbie, after showing the police badge but
+// before exhausting the normal dialogue tree, the game plays the expected
+// dialogue but fails to award points or set an internal flag indicating this
+// interaction has occurred (which is needed to progress in the game).
+//
+// This is because the game checks global[$9a] (dialogue progress flag) instead
+// of local[3] (badge shown flag) when interacting with Barbie. The game uses
+// the same `shoeShoe::changeState(0)` method for showing the shoe to the young
+// woman at the bar earlier in the game, and checks local[3] then, so just
+// check local[3] in both cases to prevent the game from appearing to be in an
+// unwinnable state just because the player interacted in the "wrong" order.
+//
 // Applies to at least: English floppy, German floppy, English CD, German CD
+// Fixes bug: #9849
 static const uint16 pq4BittyKittyShowBarieRedShoeSignature[] = {
 	// stripper::noun check is for checking, if police badge was shown
 	SIG_MAGICDWORD,
@@ -6647,14 +6649,14 @@ static const uint16 pq4BittyKittyShowBarieRedShoeSignature[] = {
 	0x35, 0x02,                         // ldi 2
 	0x1e,                               // gt?
 	0x30, SIG_UINT16(0x0028),           // bnt [skip 2 points code]
-	0x39, SIG_SELECTOR8(points),       // pushi $61 (points)
+	0x39, SIG_SELECTOR8(points),        // pushi points ($61)
 	SIG_END
 };
 
 static const uint16 pq4BittyKittyShowBarbieRedShoePatch[] = {
 	0x83, 0x03,                         // lal local[3]
 	0x30, PATCH_UINT16(0x002b),         // bnt [skip 2 points code]
-	0x33, 1,                            // jmp 1 (waste some bytes)
+	0x33, 0x01,                         // jmp 1 (waste some bytes)
 	PATCH_END
 };
 
@@ -6670,42 +6672,43 @@ static const uint16 pq4BittyKittyShowBarbieRedShoePatch[] = {
 // be less than one second if the timer is set in between hardware clock
 // seconds, so the values are increased slightly from their equivalent tick
 // values to compensate for this.
+//
+// TODO: The object structure changed in PQ4CD so ticks moved from 0x20 to 0x22.
+// Additional signatures/patches will need to be added for CD version.
+//
 // Applies to at least: English Floppy, German floppy
 // Responsible method: metzAttack::changeState(2) - 120 ticks (player needs to draw gun)
 //                     stickScr::changeState(0) - 180 ticks (player needs to tell enemy to drop gun)
 //                     dropStick::changeState(5) - 120 ticks (player needs to tell enemy to turn around)
 //                     turnMetz::changeState(5) - 600/420 ticks (player needs to cuff Metz)
 //                     all in script 390
-//
-// TODO: The object structure changed in PQ4CD so ticks moved from 0x20 to 0x22.
-// Additional signatures/patches will need to be added for CD version.
 static const uint16 pq4FloppyCityHallDrawGunTimerSignature[] = {
 	SIG_MAGICDWORD,
 	0x4a, SIG_UINT16(0x08), // send 8
 	0x32,                   // jmp [ret]
 	SIG_ADDTOOFFSET(+8),    // skip over some code
-	0x35, 0x78,             // pushi $78 (120)
+	0x35, 0x78,             // ldi $78 (120)
 	0x65, 0x20,             // aTop ticks
 	SIG_END
 };
 
 static const uint16 pq4FloppyCityHallDrawGunTimerPatch[] = {
 	PATCH_ADDTOOFFSET(+12), // send 8, jmp, skip over some code
-	0x35, 0x05,             // pushi 4 (120t/2s -> 4s)
+	0x35, 0x05,             // ldi 5 (120t/2s -> 5s)
 	0x65, 0x1c,             // aTop seconds
 	PATCH_END
 };
 
 static const uint16 pq4FloppyCityHallTellEnemyDropWeaponTimerSignature[] = {
 	SIG_MAGICDWORD,
-	0x34, SIG_UINT16(0xb4), // pushi $b4 (180)
+	0x34, SIG_UINT16(0xb4), // ldi $b4 (180)
 	0x65, 0x20,             // aTop ticks
-	0x32, SIG_UINT16(0x5e), // jmp to ret
+	0x32, SIG_UINT16(0x5e), // jmp [to ret]
 	SIG_END
 };
 
 static const uint16 pq4FloppyCityHallTellEnemyDropWeaponTimerPatch[] = {
-	0x34, PATCH_UINT16(0x05), // pushi 5 (180t/3s -> 5s)
+	0x34, PATCH_UINT16(0x05), // ldi 5 (180t/3s -> 5s)
 	0x65, 0x1c,               // aTop seconds
 	PATCH_END
 };
@@ -6713,50 +6716,51 @@ static const uint16 pq4FloppyCityHallTellEnemyDropWeaponTimerPatch[] = {
 static const uint16 pq4FloppyCityHallTellEnemyTurnAroundTimerSignature[] = {
 	SIG_MAGICDWORD,
 	0x4a, SIG_UINT16(0x04), // send 4
-	0x35, 0x78,             // pushi $78 (120)
+	0x35, 0x78,             // ldi $78 (120)
 	0x65, 0x20,             // aTop ticks
 	SIG_END
 };
 
 static const uint16 pq4FloppyCityHallTellEnemyTurnAroundTimerPatch[] = {
 	PATCH_ADDTOOFFSET(+3), // send 4
-	0x35, 0x03,            // pushi 3 (120t/2s -> 3s)
+	0x35, 0x03,            // ldi 3 (120t/2s -> 3s)
 	0x65, 0x1c,            // aTop seconds
 	PATCH_END
 };
 
 static const uint16 pq4FloppyCityHallCuffEnemyTimerSignature[] = {
 	SIG_MAGICDWORD,
-	0x34, SIG_UINT16(0x258), // pushi $258 (600)
-	0x65, 0x20,              // aTop ticks
+	0x34, SIG_UINT16(0x0258), // ldi $258 (600)
+	0x65, 0x20,               // aTop ticks
 	SIG_ADDTOOFFSET(+3),
-	0x34, SIG_UINT16(0x1a4), // pushi $1a4 (420)
-	0x65, 0x20,              // aTop ticks
+	0x34, SIG_UINT16(0x01a4), // ldi $1a4 (420)
+	0x65, 0x20,               // aTop ticks
 	SIG_END
 };
 
 static const uint16 pq4FloppyCityHallCuffEnemyTimerPatch[] = {
-	0x34, PATCH_UINT16(0x0a), // pushi 10 (600t/10s)
+	0x34, PATCH_UINT16(0x0a), // ldi 10 (600t/10s)
 	0x65, 0x1c,               // aTop seconds
 	PATCH_ADDTOOFFSET(+3),
-	0x34, SIG_UINT16(0x07),   // pushi 7 (420t/7s)
+	0x34, PATCH_UINT16(0x07), // ldi 7 (420t/7s)
 	0x65, 0x1c,               // aTop seconds
 	PATCH_END
 };
 
 // The end game action sequence also uses ticks instead of seconds. See the
 // description of city hall action sequence issues for more information.
+//
 // Applies to at least: English Floppy, German floppy, English CD
 // Responsible method: comeInLast::changeState(11)
 static const uint16 pq4LastActionHeroTimerSignature[] = {
 	SIG_MAGICDWORD,
-	0x34, SIG_UINT16(0x12c),   // pushi $12c (300)
+	0x34, SIG_UINT16(0x012c),  // ldi $12c (300)
 	0x65, SIG_ADDTOOFFSET(+1), // aTop ticks ($20 for floppy, $22 for CD)
 	SIG_END
 };
 
 static const uint16 pq4LastActionHeroTimerPatch[] = {
-	0x34, PATCH_UINT16(0x05),                 // pushi 5 (300t/5s)
+	0x34, PATCH_UINT16(0x0005),               // ldi 5 (300t/5s)
 	0x65, PATCH_GETORIGINALBYTEADJUST(4, -4), // aTop seconds
 	PATCH_END
 };
@@ -6785,17 +6789,18 @@ static const SciScriptPatcherEntry pq4Signatures[] = {
 // master sound volume to 127, but the game should always use the volume stored
 // in ScummVM.
 // Applies to at least: English CD
+// Fixes bug: #9700
 static const uint16 pqSwatVolumeResetSignature[] = {
 	SIG_MAGICDWORD,
 	0x38, SIG_SELECTOR16(masterVolume), // pushi masterVolume
 	0x78,                               // push1
-	0x39, 0x7f,                         // push $7f
-	0x54, SIG_UINT16(0x06),             // self 6
+	0x39, 0x7f,                         // pushi $7f
+	0x54, SIG_UINT16(0x0006),           // self 6
 	SIG_END
 };
 
 static const uint16 pqSwatVolumeResetPatch[] = {
-	0x32, PATCH_UINT16(6), // jmp 6 [past volume reset]
+	0x32, PATCH_UINT16(0x0006),         // jmp 6 [past volume reset]
 	PATCH_END
 };
 
