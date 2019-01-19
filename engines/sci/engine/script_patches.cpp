@@ -5788,31 +5788,32 @@ static const SciScriptPatcherEntry mothergooseHiresSignatures[] = {
 // game volumes through the launcher, so stop the game from overwriting the
 // ScummVM volumes with volumes from save games.
 // Applies to at least: English CD
+// Fixes bug: #9700
 static const uint16 phant1SavedVolumeSignature[] = {
 	0x7a,                           // push2
 	0x39, 0x08,                     // pushi 8
-	0x38, SIG_SELECTOR16(readWord), // push $20b (readWord)
+	0x38, SIG_SELECTOR16(readWord), // pushi readWord ($20b)
 	0x76,                           // push0
 	0x72, SIG_UINT16(0x13c),        // lofsa $13c (PREF.DAT)
 	0x4a, SIG_UINT16(0x04),         // send 4
 	SIG_MAGICDWORD,
-	0xa1, 0xbc,                     // sag $bc
+	0xa1, 0xbc,                     // sag global[$bc]
 	0x36,                           // push
 	0x43, 0x76, SIG_UINT16(0x04),   // callk DoAudio[76], 4
 	0x7a,                           // push2
 	0x76,                           // push0
-	0x38, SIG_SELECTOR16(readWord), // push $20b (readWord)
+	0x38, SIG_SELECTOR16(readWord), // pushi readWord ($20b)
 	0x76,                           // push0
 	0x72, SIG_UINT16(0x13c),        // lofsa $13c (PREF.DAT)
 	0x4a, SIG_UINT16(0x04),         // send 4
-	0xa1, 0xbb,                     // sag $bb
+	0xa1, 0xbb,                     // sag global[$bb]
 	0x36,                           // push
 	0x43, 0x75, SIG_UINT16(0x04),   // callk DoSound[75], 4
 	SIG_END
 };
 
 static const uint16 phant1SavedVolumePatch[] = {
-	0x32, PATCH_UINT16(36),         // jmp [to prefFile::close]
+	0x32, PATCH_UINT16(0x0024),     // jmp [skip the whole sig, to prefFile::close]
 	PATCH_END
 };
 
@@ -5831,13 +5832,14 @@ static const uint16 phant1SavedVolumePatch[] = {
 // background. This patch stops the game script from initialising the bad rat
 // view entirely.
 // Applies to at least: English CD, French CD
+// Fixes bug: #9957
 static const uint16 phant1RatSignature[] = {
 	SIG_MAGICDWORD,
-	0x78,                         // push1
-	0x39, 0x1a,                   // pushi $1a
-	0x45, 0x03, SIG_UINT16(0x02), // callb 3, 2
-	0x18,                         // not
-	0x31, 0x18,                   // bnt $18
+	0x78,                               // push1
+	0x39, 0x1a,                         // pushi $1a
+	0x45, 0x03, SIG_UINT16(0x0002),     // callb [export 3 of script 0], 02
+	0x18,                               // not
+	0x31, 0x18,                         // bnt $18
 	SIG_END
 };
 
@@ -5853,24 +5855,25 @@ static const uint16 phant1RatPatch[] = {
 // once.
 // This happens because the quit confirmation dialogue creates its own
 // event handling loop which prevents the main event loop from handling the
-// cursor leaving the button (which would reset global 193 to 0), and the
-// dialogue does not reset global193 itself, so it remains at 2 until a new
+// cursor leaving the button (which would reset global[193] to 0), and the
+// dialogue does not reset global[193] itself, so it remains at 2 until a new
 // button gets hovered and unhovered.
 // There is not enough space in the confirmation dialogue code to add a reset
-// of global 193, so we just remove the check entirely, since it is only used
+// of global[193], so we just remove the check entirely, since it is only used
 // to avoid resetting the cursor's view on every mouse movement, and this
 // button type is only used on the main menu and the in-game control panel.
 //
 // Applies to at least: English CD
+// Fixes bug: #9977
 static const uint16 phant1RedQuitCursorSignature[] = {
 	SIG_MAGICDWORD,
-	0x89, 0xc1,                   // lsg $c1
+	0x89, 0xc1,                   // lsg global[193]
 	0x35, 0x02,                   // ldi 02
 	SIG_END
 };
 
 static const uint16 phant1RedQuitCursorPatch[] = {
-	0x33, 0x05,                   // jmp [past global193 check]
+	0x33, 0x05,                   // jmp [past global[193] check]
 	PATCH_END
 };
 
@@ -5895,9 +5898,9 @@ static const SciScriptPatcherEntry phantasmagoriaSignatures[] = {
 static const uint16 phant2WaitParam1Signature[] = {
 	SIG_MAGICDWORD,
 	0x35, 0x00, // ldi 0
-	0xa5, 0x00, // sat 0
-	0x8d, 0x00, // lst 0
-	0x87, 0x01, // lap 1
+	0xa5, 0x00, // sat temp[0]
+	0x8d, 0x00, // lst temp[0]
+	0x87, 0x01, // lap param[1]
 	SIG_END
 };
 
@@ -5911,22 +5914,21 @@ static const uint16 phant2WaitParam1Patch[] = {
 
 // The interface bars at the top and bottom of the screen fade in and out when
 // hovered over. This fade is performed by a script loop that calls kFrameOut
-// directly and uses global 227 as the fade delta for each frame. Global 227
-// normally contains the value 1, which means that these fades are quite slow.
-// This patch replaces the use of global 227 with an immediate value that gives
-// a reasonable fade speed.
+// directly and uses global[227] as the fade delta for each frame. It normally
+// is set to 1, which means that these fades are quite slow. We replace the use
+// of global[227] with an immediate value for a reasonable fade speed.
 // Applies to at least: US English
 static const uint16 phant2SlowIFadeSignature[] = {
-	0x43, 0x21, SIG_UINT16(0), // callk FrameOut, 0
+	0x43, 0x21, SIG_UINT16(0x0000),     // callk FrameOut, 0
 	SIG_MAGICDWORD,
-	0x67, 0x03,                // pTos 03 (scratch)
-	0x81, 0xe3,                // lag $e3 (227)
+	0x67, 0x03,                         // pTos 03 (scratch)
+	0x81, 0xe3,                         // lag global[227]
 	SIG_END
 };
 
 static const uint16 phant2SlowIFadePatch[] = {
-	PATCH_ADDTOOFFSET(6),      // skip to lag
-	0x35, 0x05,                // ldi 5
+	PATCH_ADDTOOFFSET(+6),              // skip to lag
+	0x35, 0x05,                         // ldi 5
 	PATCH_END
 };
 
@@ -5937,10 +5939,10 @@ static const uint16 phant2SlowIFadePatch[] = {
 // Responsible method: P2SongPlyr::wait4Fade
 static const uint16 phant2Wait4FadeSignature[] = {
 	SIG_MAGICDWORD,
-	0x76,                      // push0
-	0x43, 0x79, SIG_UINT16(0), // callk GetTime, 0
-	0xa5, 0x01,                // sat 1
-	0x78,                      // push1
+	0x76,                               // push0
+	0x43, 0x79, SIG_UINT16(0x0000),     // callk GetTime, 0
+	0xa5, 0x01,                         // sat temp[1]
+	0x78,                               // push1
 	SIG_END
 };
 
@@ -5965,36 +5967,36 @@ static const uint16 phant2GetVersionSignature[] = {
 	0x39, 0x04,                   // pushi 4
 	0x39, 0x05,                   // pushi 5
 	SIG_MAGICDWORD,
-	0x89, 0x1b,                   // lsg $1b
-	0x8d, 0x05,                   // lst 5
+	0x89, 0x1b,                   // lsg global[$1b]
+	0x8d, 0x05,                   // lst temp[5]
 	0x39, 0x09,                   // pushi 9
 	0x43, 0x5d, SIG_UINT16(0x08), // callk FileIO, 8
 	0x7a,                         // push2
 	0x78,                         // push1
-	0x8d, 0x05,                   // lst 5
+	0x8d, 0x05,                   // lst temp[5]
 	0x43, 0x5d, SIG_UINT16(0x04), // callk FileIO, 4
 	0x35, 0x01,                   // ldi 1
-	0xa1, 0xd8,                   // sag $d8
+	0xa1, 0xd8,                   // sag global[$d8]
 	SIG_END
 };
 
 static const uint16 phant2GetVersionPatch[] = {
 	0x39, 0x04,                     // pushi 4
 	0x39, 0x05,                     // pushi 5
-	0x81, 0x1b,                     // lag $1b
+	0x81, 0x1b,                     // lag global[$1b]
 	0x39, PATCH_SELECTOR8(data),    // pushi data
 	0x76,                           // push0
-	0x4a, PATCH_UINT16(4),          // send 4
+	0x4a, PATCH_UINT16(0x0004),     // send 4
 	0x36,                           // push
 	0x39, 0x09,                     // pushi 9
-	0x8d, 0x05,                     // lst 5
+	0x8d, 0x05,                     // lst temp[5]
 	0x43, 0x5d, PATCH_UINT16(0x08), // callk FileIO, 8
 	0x7a,                           // push2
 	0x78,                           // push1
-	0x8d, 0x05,                     // lst 5
+	0x8d, 0x05,                     // lst temp[5]
 	0x43, 0x5d, PATCH_UINT16(0x04), // callk FileIO, 4
 	0x78,                           // push1
-	0xa9, 0xd8,                     // ssg $d8
+	0xa9, 0xd8,                     // ssg global[$d8]
 	PATCH_END
 };
 
@@ -6003,7 +6005,7 @@ static const uint16 phant2GetVersionPatch[] = {
 // with a call to ScummVM kWait.
 // Applies to at least: US English
 static const uint16 phant2RatboySignature[] = {
-	0x8d, 0x01,                   // lst 1
+	0x8d, 0x01,                   // lst temp[1]
 	0x35, 0x1e,                   // ldi $1e
 	0x22,                         // lt?
 	SIG_MAGICDWORD,
@@ -6023,11 +6025,12 @@ static const uint16 phant2RatboyPatch[] = {
 };
 
 // Phant2 has separate in-game volume controls for handling movie volume and
-// in-game volume (misleading labelled "music volume"), but really needs the
+// in-game volume (misleadingly labelled "music volume"), but really needs the
 // in-game volume to always be significantly lower than the movie volume in
-// order for dialogue in movies to be consistently audible, so patch the in-game
-// volume slider to limit it to our maximum.
+// order for dialogue in movies to be consistently audible, so patch the
+// in-game volume slider to limit it to our maximum.
 // Applies to at least: US English
+// Fixes bug: #10165
 static const uint16 phant2AudioVolumeSignature[] = {
 	SIG_MAGICDWORD,
 	0x39, 0x7f,           // pushi 127 (clientMax value)
@@ -6035,7 +6038,7 @@ static const uint16 phant2AudioVolumeSignature[] = {
 	SIG_ADDTOOFFSET(+10), // skip other init arguments
 	0x51, 0x5e,           // class P2ScrollBar
 	SIG_ADDTOOFFSET(+3),  // skip send
-	0xa3, 0x06,           // sal 6 (identifies correct slider)
+	0xa3, 0x06,           // sal local[6] (identifies correct slider)
 	SIG_END
 };
 
@@ -6050,6 +6053,7 @@ static const uint16 phant2AudioVolumePatch[] = {
 // bunch of spaces. This is annoying and not helpful, so just disable all of
 // this nonsense.
 // Applies to at least: US English
+// Fixes bug: #10035
 static const uint16 phant2SaveNameSignature1[] = {
 	SIG_MAGICDWORD,
 	0x57, 0x4b, SIG_UINT16(0x06), // super SREdit, 6
@@ -6065,13 +6069,13 @@ static const uint16 phant2SaveNamePatch1[] = {
 
 static const uint16 phant2SaveNameSignature2[] = {
 	SIG_MAGICDWORD,
-	0xa5, 0x00,                  // sat 0
+	0xa5, 0x00,                  // sat temp[0]
 	0x39, SIG_SELECTOR8(format), // pushi format
 	SIG_END
 };
 
 static const uint16 phant2SaveNamePatch2[] = {
-	PATCH_ADDTOOFFSET(+2), // sat 0
+	PATCH_ADDTOOFFSET(+2), // sat temp[0]
 	0x33, 0x68,            // jmp [past name mangling]
 	PATCH_END
 };
@@ -6080,28 +6084,28 @@ static const uint16 phant2SaveNamePatch2[] = {
 // Applies to at least: English CD
 static const uint16 phant2NumSavesSignature1[] = {
 	SIG_MAGICDWORD,
-	0x8d, 0x01, // lst 1
+	0x8d, 0x01, // lst temp[1]
 	0x35, 0x14, // ldi 20
 	0x1a,       // eq?
 	SIG_END
 };
 
 static const uint16 phant2NumSavesPatch1[] = {
-	PATCH_ADDTOOFFSET(+2), // lst 1
+	PATCH_ADDTOOFFSET(+2), // lst temp[1]
 	0x35, 0x63,            // ldi 99
 	PATCH_END
 };
 
 static const uint16 phant2NumSavesSignature2[] = {
 	SIG_MAGICDWORD,
-	0x8d, 0x00, // lst 0
+	0x8d, 0x00, // lst temp[0]
 	0x35, 0x14, // ldi 20
 	0x22,       // lt?
 	SIG_END
 };
 
 static const uint16 phant2NumSavesPatch2[] = {
-	PATCH_ADDTOOFFSET(+2), // lst 0
+	PATCH_ADDTOOFFSET(+2), // lst temp[0]
 	0x35, 0x63,            // ldi 99
 	PATCH_END
 };
@@ -6118,11 +6122,11 @@ static const uint16 phant2NumSavesPatch2[] = {
 // Applies to at least: US English
 static const uint16 phant2SlowScrollSignature[] = {
 	SIG_MAGICDWORD,
-	0x35, 0x0a,                // ldi 10
-	0x22,                      // lt?
-	0x31, 0x17,                // bnt [end of loop]
-	0x76,                      // push0
-	0x43, 0x79, SIG_UINT16(0), // callk GetTime, 0
+	0x35, 0x0a,                         // ldi 10
+	0x22,                               // lt?
+	0x31, 0x17,                         // bnt [end of loop]
+	0x76,                               // push0
+	0x43, 0x79, SIG_UINT16(0x0000),     // callk GetTime, 0
 	SIG_END
 };
 
@@ -6143,13 +6147,14 @@ static const uint16 phant2SlowScrollPatch[] = {
 // computer is displaying scary messages, since every time the scary message is
 // rendered the text fields re-render at the top-left corner of the screen.
 // Applies to at least: US English
+// Fixes bug: #10036
 static const uint16 phant2BadPositionSignature[] = {
 	SIG_MAGICDWORD,
 	0x39, SIG_SELECTOR8(setSize), // pushi setSize
 	0x76,                         // push0
 	0x39, SIG_SELECTOR8(init),    // pushi init
 	0x78,                         // pushi 1
-	0x89, 0x03,                   // lsg 3
+	0x89, 0x03,                   // lsg global[3]
 	0x39, SIG_SELECTOR8(posn),    // pushi posn
 	0x7a,                         // push2
 	0x66, SIG_ADDTOOFFSET(+2),    // pTos (x position)
@@ -6166,7 +6171,7 @@ static const uint16 phant2BadPositionPatch[] = {
 	0x76,                               // push0
 	0x39, PATCH_SELECTOR8(init),        // pushi init
 	0x78,                               // pushi 1
-	0x89, 0x03,                         // lsg 3
+	0x89, 0x03,                         // lsg global[3]
 	PATCH_END
 };
 
@@ -6186,8 +6191,8 @@ static const uint16 phant2BadIconSignature[] = {
 	0x38, SIG_SELECTOR16(iconV),  // pushi iconV
 	0x76,                         // push0
 	0x62, SIG_ADDTOOFFSET(+2),    // pToa curFolder/curDoco
-	0x4a, SIG_UINT16(0x04),       // send 4
-	0x4a, SIG_UINT16(0x06),       // send 6
+	0x4a, SIG_UINT16(0x0004),     // send 4
+	0x4a, SIG_UINT16(0x0006),     // send 6
 	SIG_END
 };
 
@@ -6195,7 +6200,7 @@ static const uint16 phant2BadIconPatch[] = {
 	PATCH_ADDTOOFFSET(+5),          // pushi setCel, push1, push1
 	0x38, PATCH_SELECTOR16(update), // pushi update
 	0x76,                           // push0
-	0x4a, PATCH_UINT16(0x0a),       // send 10
+	0x4a, PATCH_UINT16(0x000a),     // send 10
 	0x33, 0x04,                     // jmp [past unused bytes]
 	PATCH_END
 };
@@ -6204,27 +6209,28 @@ static const uint16 phant2BadIconPatch[] = {
 // inventory item is wide, which causes the inventory to creep to the left by
 // one pixel per scrolled item.
 // Applies to at least: US English
+// Fixes bug: #10037
 static const uint16 phant2InvLeftDeltaSignature[] = {
 	SIG_MAGICDWORD,
-	SIG_UINT16(0x42), // delta
-	SIG_UINT16(0x19), // moveDelay
+	SIG_UINT16(0x0042),                 // delta
+	SIG_UINT16(0x0019),                 // moveDelay
 	SIG_END
 };
 
 static const uint16 phant2InvLeftDeltaPatch[] = {
-	PATCH_UINT16(0x41), // delta
+	PATCH_UINT16(0x0041),               // delta
 	PATCH_END
 };
 
 static const uint16 phant2InvRightDeltaSignature[] = {
 	SIG_MAGICDWORD,
-	SIG_UINT16(0xffbe), // delta
-	SIG_UINT16(0x19),   // moveDelay
+	SIG_UINT16(0xffbe),                 // delta
+	SIG_UINT16(0x0019),                 // moveDelay
 	SIG_END
 };
 
 static const uint16 phant2InvRightDeltaPatch[] = {
-	PATCH_UINT16(0xffbf), // delta
+	PATCH_UINT16(0xffbf),               // delta
 	PATCH_END
 };
 
@@ -6233,13 +6239,13 @@ static const uint16 phant2InvRightDeltaPatch[] = {
 // Applies to at least: US English
 static const uint16 phant2InvOffsetSignature[] = {
 	SIG_MAGICDWORD,
-	0x35, 0x26,                 // ldi 38
-	0x64, SIG_SELECTOR16(xOff), // aTop xOff
+	0x35, 0x26,                         // ldi 38
+	0x64, SIG_SELECTOR16(xOff),         // aTop xOff
 	SIG_END
 };
 
 static const uint16 phant2InvOffsetPatch[] = {
-	0x35, 0x1d, // ldi 29
+	0x35, 0x1d,                         // ldi 29
 	PATCH_END
 };
 
@@ -6249,6 +6255,7 @@ static const uint16 phant2InvOffsetPatch[] = {
 // We fix this by changing the position of those 2 inside the heap of
 // subclass 'WynNetDoco' slightly.
 // Applies to at least: English CD, Japanese CD, German CD
+// Fixes bug: #10034
 static const uint16 phant2DocuStoreFileNotePlacementSignature[] = {
 	SIG_MAGICDWORD,
 	SIG_UINT16(0x0046),   // nameX
@@ -6261,9 +6268,9 @@ static const uint16 phant2DocuStoreFileNotePlacementSignature[] = {
 
 static const uint16 phant2DocuStoreFileNotePlacementPatch[] = {
 	PATCH_ADDTOOFFSET(+2),
-	PATCH_UINT16(0x0006),  // new nameY
+	PATCH_UINT16(0x0006),   // new nameY
 	PATCH_ADDTOOFFSET(+12),
-	PATCH_UINT16(0x001b),  // new noteY
+	PATCH_UINT16(0x001b),   // new noteY
 	PATCH_END
 };
 
@@ -6282,11 +6289,11 @@ static const uint16 phant2DocuStoreEmailPlacementSignature[] = {
 };
 
 static const uint16 phant2DocuStoreEmailPlacementPatch[] = {
-	PATCH_UINT16(0x0050), // new nameX
-	PATCH_UINT16(0x0006), // new nameY
-	SIG_ADDTOOFFSET(+10),
-	PATCH_UINT16(0x0050), // new noteX
-	PATCH_UINT16(0x001b), // new noteY
+	PATCH_UINT16(0x0050),   // new nameX
+	PATCH_UINT16(0x0006),   // new nameY
+	PATCH_ADDTOOFFSET(+10),
+	PATCH_UINT16(0x0050),   // new noteX
+	PATCH_UINT16(0x001b),   // new noteY
 	PATCH_END
 };
 
