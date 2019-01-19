@@ -2207,10 +2207,11 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 // button's delta instead of 1 in 'ScrollButton::track'.
 //
 // Applies to at least: English CD 1.00, English Steam 1.01
+// Fixes bug: #9648
 static const uint16 gk2InvScrollSignature[] = {
-	0x7e, SIG_ADDTOOFFSET(2),               // line whatever
+	0x7e, SIG_ADDTOOFFSET(+2),              // line whatever
 	SIG_MAGICDWORD,
-	0x38, SIG_SELECTOR16(scrollSelections), // pushi $2c3
+	0x38, SIG_SELECTOR16(scrollSelections), // pushi scrollSelections ($2c3)
 	0x78,                                   // push1
 	0x78,                                   // push1
 	0x63, 0x98,                             // pToa $98
@@ -2219,12 +2220,12 @@ static const uint16 gk2InvScrollSignature[] = {
 };
 
 static const uint16 gk2InvScrollPatch[] = {
-	0x38, PATCH_SELECTOR16(scrollSelections), // pushi $2c3
+	0x38, PATCH_SELECTOR16(scrollSelections), // pushi scrollSelections ($2c3)
 	0x78,                                     // push1
 	0x67, 0x9a,                               // pTos $9a (delta)
 	0x63, 0x98,                               // pToa $98
 	0x4a, PATCH_UINT16(0x06),                 // send 6
-	0x18, 0x18,                               // waste bytes
+	0x18, 0x18,                               // (waste bytes)
 	PATCH_END
 };
 
@@ -2232,10 +2233,11 @@ static const uint16 gk2InvScrollPatch[] = {
 // the music volume to 63, but the game should always use the volume stored in
 // ScummVM.
 // Applies to at least: English 1.00 CD
+// Fixes bug: #9700
 static const uint16 gk2VolumeResetSignature[] = {
 	SIG_MAGICDWORD,
 	0x35, 0x3f, // ldi $3f
-	0xa1, 0x4c, // sag $4c (music volume)
+	0xa1, 0x4c, // sag global[$4c] (music volume)
 	SIG_END
 };
 
@@ -2253,10 +2255,10 @@ static const uint16 gk2BenchmarkSignature[] = {
 	0x76,                      // push0
 	0x51, SIG_ADDTOOFFSET(+1), // class Actor
 	0x4a, SIG_UINT16(0x04),    // send 4
-	0xa5, 0x00,                // sat 0
+	0xa5, 0x00,                // sat temp[0]
 	0x7e, SIG_ADDTOOFFSET(+2), // line
 	0x7e, SIG_ADDTOOFFSET(+2), // line
-	0x39, SIG_SELECTOR8(view), // pushi $e (view)
+	0x39, SIG_SELECTOR8(view), // pushi view ($e)
 	SIG_MAGICDWORD,
 	0x78,                      // push1
 	0x38, SIG_UINT16(0xfdd4),  // pushi 64980
@@ -2266,9 +2268,9 @@ static const uint16 gk2BenchmarkSignature[] = {
 static const uint16 gk2BenchmarkPatch[] = {
 	0x38, PATCH_SELECTOR16(detailLevel), // pushi detailLevel
 	0x78,                                // push1
-	0x38, PATCH_UINT16(399),             // pushi 10000 / 25 - 1
-	0x81, 0x01,                          // lag 1
-	0x4a, PATCH_UINT16(0x06),            // send 6
+	0x38, PATCH_UINT16(399),             // pushi 399 (10000 / 25 - 1)
+	0x81, 0x01,                          // lag global[1]
+	0x4a, PATCH_UINT16(0x0006),          // send 6
 	0x34, PATCH_UINT16(10000),           // ldi 10000
 	0x48,                                // ret
 	PATCH_END
