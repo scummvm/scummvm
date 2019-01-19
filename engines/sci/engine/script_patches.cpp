@@ -1165,6 +1165,7 @@ static const SciScriptPatcherEntry hoyle5BridgeSignatures[] = {
 // `daySixBeignet::changeState(4)` is called when the cop goes outside. It sets
 // cycles to 220. This is a CPU-speed dependent value and not usually enough
 // time to get to the door, so patch it to 22 seconds.
+//
 // Applies to at least: English PC-CD, German PC-CD, English Mac
 static const uint16 gk1Day6PoliceBeignetSignature1[] = {
 	0x35, 0x04,                    // ldi 4
@@ -1188,18 +1189,20 @@ static const uint16 gk1Day6PoliceBeignetPatch1[] = {
 	PATCH_END
 };
 
-// `sInGateWithPermission::changeState(0)` is called whenever the player walks
-// through the swinging door. On day 6, when the cop is outside for the beignet,
-// this action will also reset the puzzle timer so the player has 200 cycles to
-// get through the area before the cop returns. This is a CPU-speed dependent
-// value and not usually enough time to get to the door, so patch it to 20
-// seconds instead.
+// On day 6 when the cop is outside for the beignet, walking through the
+// swinging door will also reset the puzzle timer so the player has 200 cycles
+// to get through the area before the cop returns. This is a CPU-speed
+// dependent value and not usually enough time to get to the door, so we patch
+// it to 20 seconds instead.
+//
 // Applies to at least: English PC-CD, German PC-CD, English Mac
+// Responsible method: sInGateWithPermission::changeState(0)
+// Fixes bug: #9805
 static const uint16 gk1Day6PoliceBeignetSignature2[] = {
 	0x72, SIG_ADDTOOFFSET(+2),    // lofsa daySixBeignet
 	0x1a,                         // eq?
 	0x31, 0x0d,                   // bnt [skip set cycles]
-	0x38, SIG_SELECTOR16(cycles), // pushi (cycles)
+	0x38, SIG_SELECTOR16(cycles), // pushi cycles
 	0x78,                         // push1
 	SIG_MAGICDWORD,
 	0x38, SIG_UINT16(0xc8),       // pushi 200
@@ -1209,7 +1212,7 @@ static const uint16 gk1Day6PoliceBeignetSignature2[] = {
 
 static const uint16 gk1Day6PoliceBeignetPatch2[] = {
 	PATCH_ADDTOOFFSET(+6),
-	0x38, PATCH_SELECTOR16(seconds), // pushi (seconds)
+	0x38, PATCH_SELECTOR16(seconds), // pushi seconds
 	0x78,                            // push1
 	0x38, PATCH_UINT16(0x14),        // pushi 20
 	PATCH_END
@@ -1218,6 +1221,7 @@ static const uint16 gk1Day6PoliceBeignetPatch2[] = {
 // `sargSleeping::changeState(8)` is called when the cop falls asleep and sets
 // the puzzle timer to 220 cycles. This is CPU-speed dependent and not usually
 // enough time to get to the door, so patch it to 22 seconds instead.
+//
 // Applies to at least: English PC-CD, German PC-CD, English Mac
 static const uint16 gk1Day6PoliceSleepSignature[] = {
 	0x35, 0x08,                // ldi 8
@@ -1264,14 +1268,14 @@ static const uint16 gk1Day6PoliceSleepPatch[] = {
 // Applies to at least: English PC-CD, German PC-CD
 static const uint16 gk1Day5DrumBookDialogueSignature[] = {
 	0x31, 0x0b,                         // bnt [skip giving player drum book code]
-	0x38, SIG_SELECTOR16(get),          // pushi $200 (get)
+	0x38, SIG_SELECTOR16(get),          // pushi get ($200)
 	0x78,                               // push1
 	SIG_MAGICDWORD,
 	0x39, 0x0e,                         // pushi $e
 	0x81, 0x00,                         // lag global[0]
 	0x4a, SIG_UINT16(0x06),             // send 6 - GKEgo::get($e)
 	// end of giving player drum book code
-	0x38, SIG_SELECTOR16(has),          // pushi $202 (has)
+	0x38, SIG_SELECTOR16(has),          // pushi has ($202)
 	0x78,                               // push1
 	0x39, 0x0e,                         // pushi $e
 	0x81, 0x00,                         // lag global[0]
@@ -1284,19 +1288,20 @@ static const uint16 gk1Day5DrumBookDialogueSignature[] = {
 static const uint16 gk1Day5DrumBookDialoguePatch[] = {
 	0x31, 0x0d,                         // bnt [skip giving player drum book code] adjusted
 	PATCH_ADDTOOFFSET(+11),             // skip give player drum book original code
-	0x33, 0x0D,                         // jmp [over the check inventory for drum book code]
+	0x33, 0x0d,                         // jmp [over the check inventory for drum book code]
 	// check inventory for drum book
-	0x38, PATCH_SELECTOR16(has),        // pushi $202 (has)
+	0x38, PATCH_SELECTOR16(has),        // pushi has ($202)
 	0x78,                               // push1
 	0x39, 0x0e,                         // pushi $e
 	0x81, 0x00,                         // lag global[0]
-	0x4a, PATCH_UINT16(0x06),           // send 6 - GKEgo::has($e)
+	0x4a, PATCH_UINT16(0x0006),         // send 6 - GKEgo::has($e)
 	0x2f, 0x23,                         // bt [veve newspaper code] (adjusted, saves 2 bytes)
 	PATCH_END
 };
 
 // When Gabriel goes to the phone, the script softlocks at
 // `startOfDay5::changeState(32)`.
+//
 // Applies to at least: English PC-CD, German PC-CD, English Mac
 static const uint16 gk1Day5PhoneFreezeSignature[] = {
 	0x4a,                             // send ...
@@ -1311,33 +1316,35 @@ static const uint16 gk1Day5PhoneFreezeSignature[] = {
 
 static const uint16 gk1Day5PhoneFreezePatch[] = {
 	PATCH_ADDTOOFFSET(+3),                     // send $c
-	0x35, 0x06,                                // ldi 1
+	0x35, 0x06,                                // ldi 6
 	0x65, PATCH_GETORIGINALBYTEADJUST(+6, +6), // aTop ticks
 	PATCH_END
 };
 
-// When Gabriel is grabbing a vine 'vineSwing::changeState(1)',
-// him saying "I can't believe I'm doing this..." is cut off.
-// We change it so the scripts wait for the audio.
+// When Gabriel is grabbing a vine, his saying "I can't believe I'm doing
+// this..." is cut off. We change it so the scripts wait for the audio.
+//
 // This is not supposed to be applied to the Floppy version.
 //
-// Applies to at lesat: English PC-CD, German PC-CD, Spanish PC-CD
+// Applies to at least: English PC-CD, German PC-CD, Spanish PC-CD
+// Responsible method: vineSwing::changeState(1)
+// Fixes bug: #9820
 static const uint16 gk1Day9VineSwingSignature[] = {
-	0x38, SIG_UINT16(4),              // pushi $4
+	0x38, SIG_UINT16(0x0004),         // pushi $4
 	0x51, 0x17,                       // class CT
 	0x36,                             // push
 	0x39, 0x0b,                       // pushi $b
 	0x78,                             // push1
 	0x7c,                             // pushSelf
 	0x81, 0x00,                       // lag global[$0]
-	0x4a, SIG_UINT16(0x20),           // send $20
+	0x4a, SIG_UINT16(0x0020),         // send $20
 	0x38, SIG_SELECTOR16(setMotion),  // pushi setMotion
 	0x78,                             // push1
 	0x76,                             // push0
 	0x72, SIG_UINT16(0x0412),         // lofsa guard1
-	0x4a, SIG_UINT16(0x06),           // send $6
+	0x4a, SIG_UINT16(0x0006),         // send $6
 	0x38, SIG_SELECTOR16(say),        // pushi say
-	0x38, SIG_UINT16(0x04),           // pushi $4
+	0x38, SIG_UINT16(0x0004),         // pushi $4
 	SIG_MAGICDWORD,
 	0x39, 0x07,                       // pushi $7
 	0x39, 0x08,                       // pushi $8
@@ -1349,27 +1356,27 @@ static const uint16 gk1Day9VineSwingSignature[] = {
 };
 
 static const uint16 gk1Day9VineSwingPatch[] = {
-	0x38, SIG_UINT16(3),              // pushi $3
-	0x51, 0x17,                       // class CT
-	0x36,                             // push
-	0x39, 0x0b,                       // pushi $b
-	0x78,                             // push1
-	0x81, 0x00,                       // lag global[$0]
-	0x4a, SIG_UINT16(0x1e),           // send $20
-	0x38, SIG_SELECTOR16(setMotion),  // pushi setMotion
-	0x78,                             // push1
-	0x76,                             // push0
-	0x72, SIG_UINT16(0x0412),         // lofsa guard1
-	0x4a, SIG_UINT16(0x06),           // send $6
-	0x38, SIG_SELECTOR16(say),        // pushi say
-	0x38, SIG_UINT16(0x05),           // pushi $5
-	0x39, 0x07,                       // pushi $7
-	0x39, 0x08,                       // pushi $8
-	0x39, 0x10,                       // pushi $10
-	0x78,                             // push1
-	0x7c,                             // pushSelf
-	0x81, 0x5b,                       // lag global[$5b]
-	0x4a, SIG_UINT16(0x000e),         // send $c
+	0x38, PATCH_UINT16(0x0003),         // pushi $3
+	0x51, 0x17,                         // class CT
+	0x36,                               // push
+	0x39, 0x0b,                         // pushi $b
+	0x78,                               // push1
+	0x81, 0x00,                         // lag global[$0]
+	0x4a, PATCH_UINT16(0x001e),         // send $20
+	0x38, PATCH_SELECTOR16(setMotion),  // pushi setMotion
+	0x78,                               // push1
+	0x76,                               // push0
+	0x72, PATCH_UINT16(0x0412),         // lofsa guard1
+	0x4a, PATCH_UINT16(0x0006),         // send $6
+	0x38, PATCH_SELECTOR16(say),        // pushi say
+	0x38, PATCH_UINT16(0x0005),         // pushi $5
+	0x39, 0x07,                         // pushi $7
+	0x39, 0x08,                         // pushi $8
+	0x39, 0x10,                         // pushi $10
+	0x78,                               // push1
+	0x7c,                               // pushSelf
+	0x81, 0x5b,                         // lag global[$5b]
+	0x4a, PATCH_UINT16(0x000e),         // send $c
 	PATCH_END
 };
 
@@ -1397,59 +1404,59 @@ static const uint16 gk1Day9VineSwingPatch[] = {
 //
 // Applies to: All PC Floppy and CD versions. TODO: Test Mac
 // Responsible method: rightWay:changeState(1)
-// Fixes bug #10828
+// Fixes bug: #10828
 static const uint16 gk1MummyAnimateFloppySignature[] = {
-    0x39, SIG_SELECTOR8(view),          // pushi view [ full guard1 init ]
-    SIG_MAGICDWORD,
-    0x78,                               // push1
-    0x38, SIG_UINT16(0x02c5),           // pushi 709d
-    SIG_ADDTOOFFSET(+674),
-    0x38, SIG_SELECTOR16(setMotion),    // pushi setMotion [ partial guard1 init ]
-    0x38, SIG_UINT16(0x0004),           // pushi 0004
-    0x51, 0x70,                         // class PChase
-    0x36,                               // push
-    0x89, 0x00,                         // lsg 00
-    0x39, 0x0f,                         // pushi 0f
-    SIG_END
+	0x39, SIG_SELECTOR8(view),          // pushi view [ full guard1 init ]
+	SIG_MAGICDWORD,
+	0x78,                               // push1
+	0x38, SIG_UINT16(0x02c5),           // pushi 709d
+	SIG_ADDTOOFFSET(+674),
+	0x38, SIG_SELECTOR16(setMotion),    // pushi setMotion [ partial guard1 init ]
+	0x38, SIG_UINT16(0x0004),           // pushi 0004
+	0x51, 0x70,                         // class PChase
+	0x36,                               // push
+	0x89, 0x00,                         // lsg global[0]
+	0x39, 0x0f,                         // pushi 0f
+	SIG_END
 };
 
 static const uint16 gk1MummyAnimateFloppyPatch[] = {
-    PATCH_ADDTOOFFSET(+680),
-    0x39, PATCH_SELECTOR8(view),        // pushi view [ waste 6 stack items to be compatible with ]
-    0x76,                               // push0      [  the send instruction in full guard1 init ]
-    0x39, PATCH_SELECTOR8(view),        // pushi view
-    0x76,                               // push0
-    0x39, PATCH_SELECTOR8(view),        // pushi view
-    0x39, 00,                           // pushi 00
-    0x32, PATCH_UINT16(0xfd4b),         // jmp -693d [ continue full guard1 init in keyWorks state 7 ]
-    PATCH_END
+	PATCH_ADDTOOFFSET(+680),
+	0x39, PATCH_SELECTOR8(view),        // pushi view [ waste 6 stack items to be compatible with ]
+	0x76,                               // push0      [  the send instruction in full guard1 init ]
+	0x39, PATCH_SELECTOR8(view),        // pushi view
+	0x76,                               // push0
+	0x39, PATCH_SELECTOR8(view),        // pushi view
+	0x39, 0x00,                         // pushi 00
+	0x32, PATCH_UINT16(0xfd4b),         // jmp -693d [ continue full guard1 init in keyWorks state 7 ]
+	PATCH_END
 };
 
 static const uint16 gk1MummyAnimateCDSignature[] = {
-    0x39, SIG_SELECTOR8(view),          // pushi view [ full guard1 init ]
-    SIG_MAGICDWORD,
-    0x78,                               // push1
-    0x38, SIG_UINT16(0x02c5),           // pushi 709d
-    SIG_ADDTOOFFSET(+750),
-    0x38, SIG_SELECTOR16(setMotion),    // pushi setMotion [ partial guard1 init ]
-    0x38, SIG_UINT16(0x0004),           // pushi 0004
-    0x51, 0x70,                         // class PChase
-    0x36,                               // push
-    0x89, 0x00,                         // lsg 00
-    0x39, 0x0f,                         // pushi 0f
-    SIG_END
+	0x39, SIG_SELECTOR8(view),          // pushi view [ full guard1 init ]
+	SIG_MAGICDWORD,
+	0x78,                               // push1
+	0x38, SIG_UINT16(0x02c5),           // pushi 709d
+	SIG_ADDTOOFFSET(+750),
+	0x38, SIG_SELECTOR16(setMotion),    // pushi setMotion [ partial guard1 init ]
+	0x38, SIG_UINT16(0x0004),           // pushi 0004
+	0x51, 0x70,                         // class PChase
+	0x36,                               // push
+	0x89, 0x00,                         // lsg global[0]
+	0x39, 0x0f,                         // pushi 0f
+	SIG_END
 };
 
 static const uint16 gk1MummyAnimateCDPatch[] = {
-    PATCH_ADDTOOFFSET(+756),
-    0x39, PATCH_SELECTOR8(view),        // pushi view [ waste 6 stack items to be compatible with ]
-    0x76,                               // push0      [  the send instruction in full guard1 init ]
-    0x39, PATCH_SELECTOR8(view),        // pushi view
-    0x76,                               // push0
-    0x39, PATCH_SELECTOR8(view),        // pushi view
-    0x39, 00,                           // pushi 00
-    0x32, PATCH_UINT16(0xfcff),         // jmp -769d [ continue full guard1 init in keyWorks state 7 ]
-    PATCH_END
+	PATCH_ADDTOOFFSET(+756),
+	0x39, PATCH_SELECTOR8(view),        // pushi view [ waste 6 stack items to be compatible with ]
+	0x76,                               // push0      [  the send instruction in full guard1 init ]
+	0x39, PATCH_SELECTOR8(view),        // pushi view
+	0x76,                               // push0
+	0x39, PATCH_SELECTOR8(view),        // pushi view
+	0x39, 0x00,                         // pushi 00
+	0x32, PATCH_UINT16(0xfcff),         // jmp -769d [ continue full guard1 init in keyWorks state 7 ]
+	PATCH_END
 };
 
 // In GK1, the `view` selector is used to store view numbers in some cases and
@@ -1457,30 +1464,31 @@ static const uint16 gk1MummyAnimateCDPatch[] = {
 // an object stored in the `view` selector with a number (which is not valid)
 // because its checks are in the wrong order. The check order was fixed in the
 // CD version, so just do what the CD version does.
-// Applies to at least: English Floppy
+//
 // TODO: Check if English Mac is affected too and if this patch applies
+// Applies to at least: English Floppy
 static const uint16 gk1InterrogationBugSignature[] = {
 	SIG_MAGICDWORD,
 	0x65, 0x4c,                      // aTop $4c
 	0x67, 0x50,                      // pTos $50
 	0x34, SIG_UINT16(0x2710),        // ldi $2710
 	0x1e,                            // gt?
-	0x31, 0x08,                      // bnt 8  [05a0]
+	0x31, 0x08,                      // bnt 8 [05a0]
 	0x67, 0x50,                      // pTos $50
 	0x34, SIG_UINT16(0x2710),        // ldi $2710
 	0x04,                            // sub
 	0x65, 0x50,                      // aTop $50
 	0x63, 0x50,                      // pToa $50
-	0x31, 0x15,                      // bnt $15  [05b9]
-	0x39, SIG_SELECTOR8(view),       // pushi $e (view)
+	0x31, 0x15,                      // bnt $15 [05b9]
+	0x39, SIG_SELECTOR8(view),       // pushi view ($e)
 	0x76,                            // push0
 	0x4a, SIG_UINT16(0x04),          // send 4
-	0xa5, 0x00,                      // sat 0
+	0xa5, 0x00,                      // sat temp[0]
 	0x38, SIG_SELECTOR16(dispose),   // pushi dispose
 	0x76,                            // push0
 	0x63, 0x50,                      // pToa $50
 	0x4a, SIG_UINT16(0x04),          // send 4
-	0x85, 0x00,                      // lat 0
+	0x85, 0x00,                      // lat temp[0]
 	0x65, 0x50,                      // aTop $50
 	SIG_END
 };
@@ -1488,21 +1496,21 @@ static const uint16 gk1InterrogationBugSignature[] = {
 static const uint16 gk1InterrogationBugPatch[] = {
 	0x65, 0x4c,                      // aTop $4c
 	0x63, 0x50,                      // pToa $50
-	0x31, 0x15,                      // bnt $15  [05b9]
-	0x39, PATCH_SELECTOR8(view),     // pushi $e (view)
+	0x31, 0x15,                      // bnt $15 [05b9]
+	0x39, PATCH_SELECTOR8(view),     // pushi view ($e)
 	0x76,                            // push0
 	0x4a, PATCH_UINT16(0x04),        // send 4
-	0xa5, 0x00,                      // sat 00
+	0xa5, 0x00,                      // sat temp[0]
 	0x38, PATCH_SELECTOR16(dispose), // pushi dispose
 	0x76,                            // push0
 	0x63, 0x50,                      // pToa $50
 	0x4a, PATCH_UINT16(0x04),        // send 4
-	0x85, 0x00,                      // lat 0
+	0x85, 0x00,                      // lat temp[0]
 	0x65, 0x50,                      // aTop $50
 	0x67, 0x50,                      // pTos $50
 	0x34, PATCH_UINT16(0x2710),      // ldi $2710
 	0x1e,                            // gt?
-	0x31, 0x08,                      // bnt 8  [05b9]
+	0x31, 0x08,                      // bnt 8 [05b9]
 	0x67, 0x50,                      // pTos $50
 	0x34, PATCH_UINT16(0x2710),      // ldi $2710
 	0x04,                            // sub
@@ -1519,6 +1527,9 @@ static const uint16 gk1InterrogationBugPatch[] = {
 // This is an edge case, which was apparently acceptable in SSCI. We
 // change the upper border of the walk area slightly, so that Gabriel
 // can be placed inside, and the pathfinding algorithm works correctly.
+//
+// Responsible method: rm280:init
+// Fixes bug: #9770
 static const uint16 gk1CazanouxPathfindingSignature[] = {
 	SIG_MAGICDWORD,
 	0x78,                            // push1 x = 1
@@ -1555,21 +1566,21 @@ static const uint16 gk1CazanouxPathfindingPatch[] = {
 //
 // Applies to: English PC Floppy only
 // Responsible method: sUnlockDoor:changeState(2)
-// Fixes bug #10767
+// Fixes bug: #10767
 static const uint16 gk1HonfourUnlockDoorSignature[] = {
 	0x7c,                           // pushSelf
-	0x81, 0x5b,                     // lag 5b
+	0x81, 0x5b,                     // lag global[5b]
 	0x4a, SIG_MAGICDWORD,           // send e [ gkMessager:say ... self ]
 	SIG_UINT16(0x000e),
-	0x38, SIG_UINT16(0x0216),       // push 0216 [ handsOff ]
+	0x38, SIG_UINT16(0x0216),       // pushi 0216 [ handsOff ]
 	SIG_END
 };
 
 static const uint16 gk1HonfourUnlockDoorPatch[] = {
 	0x76,                           // push0
-	0x81, 0x5b,                     // lag 5b
+	0x81, 0x5b,                     // lag global[5b]
 	0x4a, PATCH_UINT16(0x000e),     // send e [ gkMessager:say ... 0 ]
-	0x38, PATCH_UINT16(0x0217),     // push 0217 [ handsOn ]
+	0x38, PATCH_UINT16(0x0217),     // pushi 0217 [ handsOn ]
 	PATCH_END
 };
 
@@ -1585,7 +1596,7 @@ static const uint16 gk1HonfourUnlockDoorPatch[] = {
 //
 // Applies to: English PC Floppy
 // Responsible method: neJackson:init
-// Fixes bug #10797
+// Fixes bug: #10797
 static const uint16 gk1Day2BinocularsLockupSignature[] = {
 	SIG_MAGICDWORD,
 	0x30, SIG_UINT16(0x01d6),           // bnt 01d6 [ english pc floppy 1.0 only ]
@@ -1621,7 +1632,7 @@ static const uint16 gk1Day2BinocularsLockupPatch[] = {
 	0x72, PATCH_UINT16(0x0538),         // lofsa easel
 	0x4a, PATCH_UINT16(0x0004),         // send 4 [ easel: init ]
 
-	0x89, 0x0c,                         // lsg 0c [ previous room ]
+	0x89, 0x0c,                         // lsg global[0c] [ previous room ]
 	0x34, PATCH_UINT16(0x0190),         // ldi 0190 [ overlook ]
 	0x1c,                               // ne?
 	0x31, 0x09,                         // bnt 09 [ drawing doesn't blow away ]
@@ -1637,15 +1648,15 @@ static const uint16 gk1Day2BinocularsLockupPatch[] = {
 //
 // Applies to: English PC Floppy
 // Responsible method: showMoselyPaper:changeState(5)
-// Fixes bug #10763
+// Fixes bug: #10763
 static const uint16 gk1Day5MoselyVevePointsSignature[] = {
 	0x78,                                   // push1
 	0x39, 0x1b,                             // pushi 1b
-	0x47, 0x0d, 0x00, SIG_UINT16(0x002),    // calle proc13_0 [ is flag 1b set? ]
+	0x47, 0x0d, 0x00, SIG_UINT16(0x0002),   // calle [export 0 of script 13], 02 [ is flag 1b set? ]
 	0x30, SIG_UINT16(0x001e),               // bnt 001e [ haven't shown notes yet ]
 	0x78,                                   // push1
 	0x39, 0x1a,                             // pushi 1a
-	0x47, 0x0d, 0x01, SIG_UINT16(0x002),    // calle pro13_1 [ set flag 1a ]
+	0x47, 0x0d, 0x01, SIG_UINT16(0x0002),   // calle [export 1 of script 13], 02 [ set flag 1a ]
 	0x38, SIG_UINT16(0x00f2),               // pushi 00f2 [ say ]
 	0x38, SIG_UINT16(0x0005),               // pushi 0005
 	0x39, 0x11,                             // pushi 11 [ noun ]
@@ -1654,7 +1665,7 @@ static const uint16 gk1Day5MoselyVevePointsSignature[] = {
 	0x39, 0x38,                             // pushi 38 [ cond ]
 	0x76,                                   // push0
 	0x7c,                                   // pushSelf
-	0x81, 0x5b,                             // lag 5b [ GkMessager ]
+	0x81, 0x5b,                             // lag global[5b] [ GkMessager ]
 	0x4a, SIG_UINT16(0x000e),               // send 000e [ GkMessager:say ]
 	0x32, SIG_UINT16(0x0013),               // jmp 0013
 	0x38, SIG_UINT16(0x00f2),               // pushi 00f2 [ say ]
@@ -1662,23 +1673,23 @@ static const uint16 gk1Day5MoselyVevePointsSignature[] = {
 };
 
 static const uint16 gk1Day5MoselyVevePointsPatch[] = {
-	0x38, SIG_UINT16(0x00f2),               // pushi 00f2 [ say ]
+	0x38, PATCH_UINT16(0x00f2),             // pushi 00f2 [ say ]
 	0x39, 0x05,                             // pushi 05
 	0x39, 0x11,                             // pushi 11 [ noun ]
 	0x39, 0x10,                             // pushi 10 [ verb ]
 	0x78,                                   // push1
 	0x39, 0x1b,                             // pushi 1b
-	0x47, 0x0d, 0x00, SIG_UINT16(0x002),    // calle proc13_0 [ is flag 1b set? ]
+	0x47, 0x0d, 0x00, PATCH_UINT16(0x0002), // calle [export 0 of script 13], 02 [ is flag 1b set? ]
 	0x31, 0x20,                             // bnt 20 [ pushi 37, continue GkMessager:say ]
-	0x38, SIG_UINT16(0x02fa),               // pushi 02fa [ getPoints ]
+	0x38, PATCH_UINT16(0x02fa),             // pushi 02fa [ getPoints ]
 	0x7a,                                   // push2
-	0x38, SIG_UINT16(0xfc19),               // pushi fc19 [ no flag ]
+	0x38, PATCH_UINT16(0xfc19),             // pushi fc19 [ no flag ]
 	0x7a,                                   // push2 [ 2 points ]
-	0x81, 0x00,                             // lag 0
-	0x4a, SIG_UINT16(0x0008),               // send 8 [ GKEgo:getPoints -999 2 ]
+	0x81, 0x00,                             // lag global[0]
+	0x4a, PATCH_UINT16(0x0008),             // send 8 [ GKEgo:getPoints -999 2 ]
 	0x78,                                   // push1
 	0x39, 0x1a,                             // pushi 1a
-	0x47, 0x0d, 0x01, SIG_UINT16(0x002),    // calle pro13_1 [ set flag 1a ]
+	0x47, 0x0d, 0x01, PATCH_UINT16(0x0002), // calle [export 1 of script 13], 02 [ set flag 1a ]
 	0x39, 0x38,                             // pushi 38 [ cond ]
 	0x33, 0x09,                             // jmp 9 [ continue GkMessager:say ]
 	PATCH_END
@@ -1690,19 +1701,19 @@ static const uint16 gk1Day5MoselyVevePointsPatch[] = {
 //
 // Applies to: English PC Floppy 1.0
 // Responsible method: magentia:doVerb
-// Fixes bug #10782
+// Fixes bug: #10782
 static const uint16 gk1ShowMagentiaItemSignature[] = {
 	SIG_MAGICDWORD,
 	0x76,                           // push0
-	0x39, 0x23,                     // push 23 [ invalid message cond ]
+	0x39, 0x23,                     // pushi 23 [ invalid message cond ]
 	0x76,                           // push0
-	0x81, 0x5b,                     // lag 51 [ GkMessager ]
+	0x81, 0x5b,                     // lag global[5b] [ GkMessager ]
 	SIG_END
 };
 
 static const uint16 gk1ShowMagentiaItemPatch[] = {
 	PATCH_ADDTOOFFSET(+1),
-	0x39, 0x00,                     // push 0 [ "Does this mean anything to you?" ]
+	0x39, 0x00,                     // pushi 0 [ "Does this mean anything to you?" ]
 	PATCH_END
 };
 
@@ -1733,7 +1744,7 @@ static const uint16 gk1ShowMagentiaItemPatch[] = {
 //
 // Applies to: All PC Floppy and CD versions. TODO: Test Mac, should apply
 // Responsible method: snakeAttack:changeState
-// Fixes bug #10793
+// Fixes bug: #10793
 static const uint16 gk1Day5SnakeAttackSignature1[] = {
 	0x65, 0x1a,                         // aTop cycles
 	0x32, SIG_ADDTOOFFSET(+2),          // jmp [ end of method ]
@@ -1756,7 +1767,7 @@ static const uint16 gk1Day5SnakeAttackSignature1[] = {
 	0x78,                               // push1
 	0x39, SIG_SELECTOR8(signal),        // pushi signal
 	0x76,                               // push0
-	0x81, 0x00,                         // lag 00
+	0x81, 0x00,                         // lag global[0]
 	0x4a, SIG_UINT16(0x0004),           // send 4 [ GKEgo:signal? ]
 	SIG_ADDTOOFFSET(+18),
 	0x39, 0x64,                         // pushi 64 [ initial x ]
@@ -1791,31 +1802,31 @@ static const uint16 gk1Day5SnakeAttackPatch1[] = {
 	PATCH_END
 };
 
-// this just changes ego's second x coordinate but unfortunately that promotes it to 16 bits
+// This just changes ego's second x coordinate but unfortunately that promotes it to 16 bits
 static const uint16 gk1Day5SnakeAttackSignature2[] = {
 	SIG_MAGICDWORD,
-	0x39, 0x7a,                         // push 7a [ x for second walking loop ]
-	0x39, 0x7c,                         // push 7c
+	0x39, 0x7a,                         // pushi 7a [ x for second walking loop ]
+	0x39, 0x7c,                         // pushi 7c
 	0x38, SIG_SELECTOR16(setCycle),     // pushi setCycle
 	0x7a,                               // push2
 	0x51, 0x18,                         // class End
 	0x36,                               // push
 	0x7c,                               // pushSelf
-	0x81, 0x00,                         // lag 00
+	0x81, 0x00,                         // lag global[0]
 	0x4a, SIG_UINT16(0x0022),           // send 22
 	0x32, SIG_ADDTOOFFSET(+2),          // jmp [ end of method ]
 	SIG_END
 };
 
 static const uint16 gk1Day5SnakeAttackPatch2[] = {
-	0x38, PATCH_UINT16(0x008b),         // push 008b [ new x for second walking loop ]
-	0x39, 0x7c,                         // push 7c
+	0x38, PATCH_UINT16(0x008b),         // pushi 008b [ new x for second walking loop ]
+	0x39, 0x7c,                         // pushi 7c
 	0x38, PATCH_SELECTOR16(setCycle),   // pushi setCycle
 	0x7a,                               // push2
 	0x51, 0x18,                         // class End
 	0x36,                               // push
 	0x7c,                               // pushSelf
-	0x81, 0x00,                         // lag 00
+	0x81, 0x00,                         // lag global[0]
 	0x4a, PATCH_UINT16(0x0022),         // send 22
 	0x3a,                               // toss
 	0x48,                               // ret
@@ -1833,13 +1844,13 @@ static const uint16 gk1Day5SnakeAttackPatch2[] = {
 //
 // Applies to: All PC Floppy and CD versions. TODO: Test Mac, should apply
 // Responsible method: sGabeEnters:changeState(4)
-// Fixes bug #10780
+// Fixes bug: #10780
 static const uint16 gk1PoliceEgoSpeedFixSignature[] = {
 	0x38, SIG_MAGICDWORD,               // pushi ignoreActors
 	      SIG_SELECTOR16(ignoreActors),
 	0x78,                               // push1
 	0x76,                               // push0
-	0x81, 0x00,                         // lag 00
+	0x81, 0x00,                         // lag global[0]
 	0x4a, SIG_UINT16(0x000c),           // send c [ GKEgo: ..., ignoreActors: 0 ]
 	SIG_END
 };
@@ -1847,7 +1858,7 @@ static const uint16 gk1PoliceEgoSpeedFixSignature[] = {
 static const uint16 gk1PoliceEgoSpeedFixPatch[] = {
 	0x38, PATCH_SELECTOR16(normalize),  // pushi normalize
 	0x39, 0x00,                         // pushi 00
-	0x81, 0x00,                         // lag 00
+	0x81, 0x00,                         // lag global[0]
 	0x4a, PATCH_UINT16(0x000a),         // send a [ GKEgo: ..., normalize ]
 	PATCH_END
 };
@@ -1861,7 +1872,7 @@ static const uint16 gk1PoliceEgoSpeedFixPatch[] = {
 //
 // Applies to: All PC Floppy and CD versions. TODO: Test Mac, should apply
 // Responsible method: egoExits:changeState
-// Fixes bug #10780
+// Fixes bug: #10780
 static const uint16 gk1DrugStoreEgoSpeedFixSignature[] = {
 	0x30, SIG_UINT16(0x003f),           // bnt 003f [ state 1 ]
 	SIG_ADDTOOFFSET(+60),
@@ -1874,7 +1885,7 @@ static const uint16 gk1DrugStoreEgoSpeedFixSignature[] = {
 	0x38, SIG_SELECTOR16(newRoom),      // pushi newRoom
 	0x78,                               // push1
 	0x38, SIG_UINT16(0x00c8),           // pushi 00c8 [ map ]
-	0x81, 0x02,                         // lag 2
+	0x81, 0x02,                         // lag global[2]
 	0x4a, SIG_UINT16(0x0006),           // send 6 [ rm250:newRoom = map ]
 	0x3a,                               // toss
 	SIG_END
@@ -1887,12 +1898,12 @@ static const uint16 gk1DrugStoreEgoSpeedFixPatch[] = {
 	0x48,                               // ret
 	0x38, PATCH_SELECTOR16(normalize),  // pushi normalize
 	0x76,                               // push0
-	0x81, 0x00,                         // lag 0
+	0x81, 0x00,                         // lag global[0]
 	0x4a, PATCH_UINT16(0x0004),         // send 4 [ GKEgo:normalize ]
 	0x38, PATCH_SELECTOR16(newRoom),    // pushi newRoom
 	0x78,                               // push1
 	0x38, PATCH_UINT16(0x00c8),         // pushi 00c8 [ map ]
-	0x81, 0x02,                         // lag 2
+	0x81, 0x02,                         // lag global[2]
 	0x4a, PATCH_UINT16(0x0006),         // send 6 [ rm250:newRoom = map ]
 	PATCH_END
 };
@@ -1917,7 +1928,7 @@ static const uint16 gk1DrugStoreEgoSpeedFixPatch[] = {
 //
 // Applies to: All CD versions
 // Responsible method: startingCartoon:changeState(18)
-// Fixes bug #10787
+// Fixes bug: #10787
 static const uint16 gk1Day1GracePhoneSignature[] = {
 	SIG_MAGICDWORD,
 	0x35, 0x12,                 // ldi 12
@@ -1929,7 +1940,7 @@ static const uint16 gk1Day1GracePhoneSignature[] = {
 	0x36,                       // push
 	0x78,                       // push1
 	0x7c,                       // pushSelf
-	0x81, 0x00,                 // lag 00
+	0x81, 0x00,                 // lag global[0]
 	0x4a, SIG_UINT16(0x0024),   // send 24 [ GKEgo: ... setCycle: Osc 1 self ]
 	0x32, SIG_ADDTOOFFSET(+2),  // jmp [ end of method ]
 	SIG_END
@@ -1941,7 +1952,7 @@ static const uint16 gk1Day1GracePhonePatch[] = {
 	0x51, 0x69,                 // class Osc
 	0x36,                       // push
 	0x78,                       // push1
-	0x81, 0x00,                 // lag 00
+	0x81, 0x00,                 // lag global[0]
 	0x4a, PATCH_UINT16(0x0022), // send 22 [ GKEgo: ... setCycle: Osc 1 ]
 
 	// advance to the next state in 6 seconds instead of when Gabriel finishes
@@ -1963,7 +1974,7 @@ static const uint16 gk1Day1GracePhonePatch[] = {
 //
 // Applies to: French and Spanish PC CD
 // Responsible method: GK:handleEvent
-// Fixes bug #10781
+// Fixes bug: #10781
 static const uint16 gk1SysLoggerHotKeySignature[] = {
 	SIG_MAGICDWORD,
 	0x34, SIG_UINT16(0x3100),       // ldi 3100 [ ALT+N ]
@@ -2009,7 +2020,7 @@ static const uint16 gk1SysLoggerHotKeyPatch[] = {
 //
 // Applies to: All PC Floppy and CD versions. TODO: Test Mac, should apply
 // Responsible method: rm380:init
-// Fixes bugs #9760, #10707
+// Fixes bug: #9760, #10707
 static const uint16 gk1GranRoomInitSignature[] = {
 	0x38, SIG_SELECTOR16(setCel),       // pushi setCel
 	0x78,                               // push1
@@ -2024,10 +2035,10 @@ static const uint16 gk1GranRoomInitSignature[] = {
 	0x7a,                               // push2
 	0x38, SIG_UINT16(0x00af),           // pushi 00af
 	0x39, 0x75,                         // pushi 75
-	0x81, 0x00,                         // lag 0
+	0x81, 0x00,                         // lag global[0]
 	0x4a, SIG_UINT16(0x001e),           // send 1e [ GKEgo: ... setCel: 5, setLoop: 0 ... ]
 	0x35, 0x01,                         // ldi 1
-	0xa3, 0x00,                         // sal local0 [ local0 = 1, a non-zero value indicates ego is sitting ]
+	0xa3, 0x00,                         // sal local[0] [ 1, a non-zero value indicates ego is sitting ]
 	SIG_END
 };
 
@@ -2045,8 +2056,8 @@ static const uint16 gk1GranRoomInitPatch[] = {
 	0x7a,                               // push2
 	0x38, PATCH_UINT16(0x00af),         // pushi 00af
 	0x39, 0x75,                         // pushi 75
-	0x81, 0x00,                         // lag 0
-	0xa3, 0x00,                         // sal local0 [ setting local0 to a non-zero object instead of 1 saves 2 bytes ]
+	0x81, 0x00,                         // lag global[0]
+	0xa3, 0x00,                         // sal local[0] [ setting a non-zero object instead of 1 saves 2 bytes ]
 	0x4a, PATCH_UINT16(0x0020),         // send 20 [ GKEgo: ... cel: 5, setLoop: 0 1 ... ]
 	0x33, 0x87,                         // jmp -79 [ add knitting basket obstacle to room ]
 	PATCH_END
@@ -2068,14 +2079,14 @@ static const uint16 gk1GranRoomInitPatch[] = {
 //
 // Applies to: All PC Floppy and CD versions. TODO: Test Mac, should apply
 // Responsible method: lorelei:doVerb(32)
-// Fixes bug #10819
+// Fixes bug: #10819
 static const uint16 gk1LoreleiMoneySignature[] = {
 	0x30, SIG_UINT16(0x000d),           // bnt 000d [ lorelei is sitting ]
 	SIG_ADDTOOFFSET(+19),
 	SIG_MAGICDWORD,
-	0x7a,                               // pushi2   [ noun ]
-	0x8f, 0x01,                         // lsp 01   [ verb (32d) ]
-	0x39, 0x03,                         // pushi 03 [ cond ]
+	0x7a,                               // push2        [ noun ]
+	0x8f, 0x01,                         // lsp param[1] [ verb (32d) ]
+	0x39, 0x03,                         // pushi 03     [ cond ]
 	SIG_END
 };
 
@@ -2092,7 +2103,7 @@ static const uint16 gk1LoreleiMoneyPatch[] = {
 //
 // Applies to: English PC Floppy 1.0
 // Responsible method: chair2:doVerb(8)
-// Fixes bug #10820
+// Fixes bug: #10820
 static const uint16 gk1OperateLoreleiChairSignature[] = {
 	// we have to reach far ahead of the doVerb method for a unique byte
 	//  sequence to base a signature off of. chair2:doVerb has no unique bytes
@@ -2102,7 +2113,7 @@ static const uint16 gk1OperateLoreleiChairSignature[] = {
 	0x36,                               // push
 	SIG_ADDTOOFFSET(+913),
 	0x39, 0x03,                         // pushi 03 [ cond ]
-	0x81, 0x5b,                         // lag 5b [ gkMessager ]
+	0x81, 0x5b,                         // lag global[5b] [ gkMessager ]
 	SIG_END
 };
 
@@ -2118,7 +2129,7 @@ static const uint16 gk1OperateLoreleiChairPatch[] = {
 //
 // Applies to: All PC Floppy and CD versions. TODO: Test Mac, should apply
 // Responsible method: artist:doVerb(24)
-// Fixes bug #10818
+// Fixes bug: #10818
 static const uint16 gk1ArtistVeveCopySignature[] = {
 	SIG_MAGICDWORD,
 	0x39, 0x30,                         // pushi 30 [ verb: original veve file ]
@@ -2139,7 +2150,7 @@ static const uint16 gk1ArtistVeveCopyPatch[] = {
 //
 // Applies to: All PC Floppy and CD versions. TODO: Test Mac, should apply
 // Responsible methods: rm220:init, useThePhone:changeState(0)
-// Fixes bug #10853
+// Fixes bug: #10853
 static const uint16 gk1EgoPhonePositionSignature[] = {
 	SIG_MAGICDWORD,
 	0x39, 0x68,                         // pushi 68 [ x: 104 ]
