@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-12-19 07:31+0100\n"
-"PO-Revision-Date: 2019-01-15 21:37+0000\n"
+"PO-Revision-Date: 2019-01-21 03:20+0000\n"
 "Last-Translator: Paolo Bossi <pbossi86@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -3315,39 +3315,39 @@ msgstr "Dammi anche una direzione."
 
 #: engines/glk/scott/scott.cpp:982
 msgid "Dangerous to move in the dark! "
-msgstr ""
+msgstr "E' pericoloso muoversì nell'oscurità! "
 
 #: engines/glk/scott/scott.cpp:990
 msgid "You fell down and broke your neck. "
-msgstr ""
+msgstr "Sei caduto e ti sei spezzato il collo. "
 
 #: engines/glk/scott/scott.cpp:992
 msgid "I fell down and broke my neck. "
-msgstr ""
+msgstr "Sono caduto e mi sono spezzato il collo. "
 
 #: engines/glk/scott/scott.cpp:997
 msgid "You can't go in that direction. "
-msgstr ""
+msgstr "Non puoi andare in quella direzione. "
 
 #: engines/glk/scott/scott.cpp:999
 msgid "I can't go in that direction. "
-msgstr ""
+msgstr "Non posso andare in quella direzione. "
 
 #: engines/glk/scott/scott.cpp:1057
 msgid "It is dark.\n"
-msgstr ""
+msgstr "C'è buio.\n"
 
 #: engines/glk/scott/scott.cpp:1073 engines/glk/scott/scott.cpp:1095
 msgid "I've too much to carry. "
-msgstr ""
+msgstr "Ho troppe cose da portare. "
 
 #: engines/glk/scott/scott.cpp:1078 engines/glk/scott/scott.cpp:1126
 msgid ": O.K.\n"
-msgstr ""
+msgstr ":O.K.\n"
 
 #: engines/glk/scott/scott.cpp:1084
 msgid "Nothing taken."
-msgstr ""
+msgstr "Non è stato preso nulla."
 
 #: engines/glk/scott/scott.cpp:1088 engines/glk/scott/scott.cpp:1136
 msgid "What ? "
@@ -3355,27 +3355,27 @@ msgstr "Cosa? "
 
 #: engines/glk/scott/scott.cpp:1101
 msgid "It is beyond your power to do that. "
-msgstr ""
+msgstr "Fare ciò è oltre le tue possibilità. "
 
 #: engines/glk/scott/scott.cpp:1103
 msgid "It's beyond my power to do that. "
-msgstr ""
+msgstr "Fare ciò è oltre le mie possibilità. "
 
 #: engines/glk/scott/scott.cpp:1107
 msgid "O.K. "
-msgstr ""
+msgstr "O.K. "
 
 #: engines/glk/scott/scott.cpp:1132
 msgid "Nothing dropped.\n"
-msgstr ""
+msgstr "Non è stato lasciato a terra niente.\n"
 
 #: engines/glk/scott/scott.cpp:1142
 msgid "It's beyond your power to do that.\n"
-msgstr ""
+msgstr "Fare ciò è oltre le tue possibilità.\n"
 
 #: engines/glk/scott/scott.cpp:1144
 msgid "It's beyond my power to do that.\n"
-msgstr ""
+msgstr "Fare ciò è oltre le mie possibilità.\n"
 
 #: engines/glk/frotz/detection.cpp:154
 msgid "Unnamed savegame"
@@ -3383,19 +3383,20 @@ msgstr "Salvataggio senza nome"
 
 #: engines/glk/glulxe/glulxe.cpp:55
 msgid "This is too short to be a valid Glulx file."
-msgstr ""
+msgstr "E' troppo corto per essere un file Glulx valido."
 
 #: engines/glk/glulxe/glulxe.cpp:60
 msgid "This is not a valid Glulx file."
-msgstr ""
+msgstr "Questo non è un file Glulx valido."
 
 #: engines/glk/glulxe/glulxe.cpp:67
 msgid "This Glulx file is too old a version to execute."
-msgstr ""
+msgstr "La versione di questo file Glulx è troppo vecchia per essere eseguita."
 
 #: engines/glk/glulxe/glulxe.cpp:71
 msgid "This Glulx file is too new a version to execute."
 msgstr ""
+"La versione di questo file Glulx è troppo aggiornata per essere eseguita."
 
 #: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:538
