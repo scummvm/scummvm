@@ -3443,42 +3443,41 @@ static const SciScriptPatcherEntry lighthouseSignatures[] = {
 #endif
 
 // ===========================================================================
-// Script 210 in the German version of Longbow handles the case where Robin
-// hands out the scroll to Marion and then types his name using the hand code.
-// The German version script contains a typo (probably a copy/paste error),
-// and the function that is used to show each letter is called twice. The
-// second time that the function is called, the second parameter passed to
-// the function is undefined, thus kStrCat() that is called inside the function
-// reads a random pointer and crashes. We patch all of the 5 function calls
-// (one for each letter typed from "R", "O", "B", "I", "N") so that they are
-// the same as the English version.
+// When Robin hands out the scroll to Marion and then types his name using the
+// hand code, the German version's script contains a typo (likely a copy/paste
+// error), and the local procedure that shows each letter is called twice. The
+// The procedure expects a letter arg and returns no value, so the first call
+// takes its letter and feeds an undefined value to the second call. Thus the
+// kStrCat() within the procedure reads a random pointer and crashes.
+// 
+// We patch all of the 5 doubled local calls (one for each letter typed from
+// "R", "O", "B", "I", "N") to be the same as the English version.
 // Applies to at least: German floppy
-// Responsible method: unknown
+// Responsible method: giveScroll::changeState(19,21,23,25,27) in script 210
 // Fixes bug: #5264
 static const uint16 longbowSignatureShowHandCode[] = {
-	0x78,                            // push1
-	0x78,                            // push1
-	0x72, SIG_ADDTOOFFSET(+2),       // lofsa (letter, that was typed)
+	0x78,                            // push1 (1 call arg)
+                                     //
+	0x78,                            // push1 (1 call arg)
+	0x72, SIG_ADDTOOFFSET(+2),       // lofsa (letter that was typed)
 	0x36,                            // push
-	0x40, SIG_ADDTOOFFSET(+2),       // call
-	0x02,                            // perform the call above with 2 parameters
-	0x36,                            // push
-	0x40, SIG_ADDTOOFFSET(+2),       // call
-	SIG_MAGICDWORD,
-	0x02,                            // perform the call above with 2 parameters
-	0x38, SIG_SELECTOR16(setMotion), // pushi "setMotion" (0x11c in Longbow German)
-	0x39, SIG_SELECTOR8(x),          // pushi "x" (0x04 in Longbow German)
+	0x40, SIG_ADDTOOFFSET(+2), 0x02, // call [localproc], 02
+                                     //
+	0x36,                            // push (the result is an arg for the next call)
+	0x40, SIG_ADDTOOFFSET(+2), SIG_MAGICDWORD, 0x02, // call [localproc], 02
+                                     //
+	0x38, SIG_SELECTOR16(setMotion), // pushi setMotion (0x11c in Longbow German)
+	0x39, SIG_SELECTOR8(x),          // pushi x (0x04 in Longbow German)
 	0x51, 0x1e,                      // class MoveTo
 	SIG_END
 };
 
 static const uint16 longbowPatchShowHandCode[] = {
 	0x39, 0x01,                      // pushi 1 (combine the two push1's in one, like in the English version)
-	PATCH_ADDTOOFFSET(+3),           // leave the lofsa call untouched
-	// The following will remove the duplicate call
-	0x32, PATCH_UINT16(0x0002),      // jmp 02 - skip 2 bytes (the remainder of the first call)
-	0x48,                            // ret (dummy, should never be reached)
-	0x48,                            // ret (dummy, should never be reached)
+	PATCH_ADDTOOFFSET(+3),           // leave the lofsa untouched
+	// The following will remove the first push & call
+	0x32, PATCH_UINT16(0x0002),      // jmp 02 [to the second push & call]
+	0x35, 0x00,                      // ldi 0 (waste 2 bytes)
 	PATCH_END
 };
 
@@ -3530,7 +3529,7 @@ static const uint16 longbowSignatureBerryBushFix[] = {
 	// jump location for the "bt" instructions
 	0x30, SIG_UINT16(0x0011),        // bnt [skip over follow up code, to offset 0c35]
 	// 55 bytes until here
-	0x85, 00,                        // lat temp[0]
+	0x85, 0x00,                      // lat temp[0]
 	SIG_MAGICDWORD,
 	0x9a, SIG_UINT16(0x0110),        // lsli local[110h] -> 110h points normally to 110h / 2Bh
 	// 5 bytes
@@ -3559,20 +3558,20 @@ static const uint16 longbowPatchBerryBushFix[] = {
 	0x85, 0x00,                      // lat temp[0]
 	0x2f, 0x05,                      // bt [skip over case 0]
 	// temp[0] == 0
-	0x38, SIG_UINT16(0x0110),        // pushi 0110h - that's what's normally at local[110h]
+	0x38, PATCH_UINT16(0x0110),      // pushi 0110h - that's what's normally at local[110h]
 	0x33, 0x18,                      // jmp [kRandom call]
 	// check temp[0] further
 	0x78,                            // push1
 	0x1a,                            // eq?
-	0x31, 0x05,                      // bt [skip over case 1]
+	0x31, 0x05,                      // bnt [skip over case 1]
 	// temp[0] == 1
-	0x38, SIG_UINT16(0x002b),        // pushi 002Bh - that's what's normally at local[111h]
-	0x33, 0x0F,                      // jmp [kRandom call]
+	0x38, PATCH_UINT16(0x002b),      // pushi 002Bh - that's what's normally at local[111h]
+	0x33, 0x0f,                      // jmp [kRandom call]
 	// temp[0] >= 2
-	0x8d, 00,                        // lst temp[0]
+	0x8d, 0x00,                      // lst temp[0]
 	0x35, 0x02,                      // ldi 02
 	0x04,                            // sub
-	0x9a, SIG_UINT16(0x0112),        // lsli local[112h] -> look up value in 2nd table
+	0x9a, PATCH_UINT16(0x0112),      // lsli local[112h] -> look up value in 2nd table
 	                                 // this may not be needed at all and was just added for safety reasons
 	// waste 9 spare bytes
 	0x35, 0x00,                      // ldi 00
@@ -3592,10 +3591,10 @@ static const uint16 longbowPatchBerryBushFix[] = {
 //
 // Applies to: English PC Floppy, German PC Floppy, English Amiga Floppy
 // Responsible method: local procedure #3 in script 150
-// Fixes bug #10839
+// Fixes bug: #10839
 static const uint16 longbowSignatureCampSunsetFix[] = {
 	SIG_MAGICDWORD,
-	0x89, 0x8e,                     // lsg 8e [ times left town ]
+	0x89, 0x8e,                     // lsg global[8e] [ times left town ]
 	0x35, 0x03,                     // ldi 03
 	0x1a,                           // eq?
 	SIG_END
@@ -3618,32 +3617,32 @@ static const uint16 longbowPatchCampSunsetFix[] = {
 //
 // Applies to: English PC Floppy, German PC Floppy, English Amiga Floppy
 // Responsible method: rm260:init
-// Fixes bug #10839
+// Fixes bug: #10839
 static const uint16 longbowSignatureTownMapSunsetFix[] = {
 	SIG_MAGICDWORD,
 	0x39, 0x05,                     // pushi 05
-	0x81, 0x82,                     // lag 82 [ day ]
+	0x81, 0x82,                     // lag global[82] [ day ]
 	0x24,                           // le?
 	0x30, SIG_UINT16(0x0089),       // bnt 0089 [ no sunset if day < 5 ]
 	0x60,                           // pprev
 	0x35, 0x06,                     // ldi 06
 	0x24,                           // le?
 	0x30, SIG_UINT16(0x0082),       // bnt 0082 [ no sunset if day > 6 ]
-	0x89, 0x8e,                     // lsg 8e
+	0x89, 0x8e,                     // lsg global[8e]
 	0x35, 0x01,                     // ldi 01
 	SIG_END
 };
 
 static const uint16 longbowPatchTownMapSunsetFix[] = {
-	0x89, 0x7e,                     // lsg 7e [ current disguise ]
+	0x89, 0x7e,                     // lsg global[7e] [ current disguise ]
 	0x35, 0x05,                     // ldi 05 [ abbey monk ]
 	0x1c,                           // ne?
 	0x2f, 0x06,                     // bt 06 [ no sunset if disguise != abbey monk ]
 	0x78,                           // push1
 	0x39, 0x38,                     // pushi 38
-	0x45, 0x05, 0x02,               // callb proc0_5 [ is rescue flag set? ]
+	0x45, 0x05, 0x02,               // callb [export 5 of script 0], 02 [ is rescue flag set? ]
 	0x2e, PATCH_UINT16(0x0081),     // bt 0081 [ no sunset if rescue flag is set ]
-	0x81, 0x8e,                     // lag 8e
+	0x81, 0x8e,                     // lag global[8e]
 	0x78,                           // push1 [ save a byte ]
 	PATCH_END
 };
@@ -3658,7 +3657,7 @@ static const uint16 longbowPatchTownMapSunsetFix[] = {
 //
 // Applies to: English PC Floppy, German PC Floppy, English Amiga Floppy
 // Responsible method: boysSaved:changeState(0)
-// Fixes bug #10839
+// Fixes bug: #10839
 static const uint16 longbowSignatureRescueFlagFix[] = {
 	0x3c,                           // dup
 	0x35, 0x00,                     // ldi 00
@@ -3673,7 +3672,7 @@ static const uint16 longbowPatchRescueFlagFix[] = {
 	0x2f, 0x08,                     // bt 08 [ state 1 ]
 	0x78,                           // push1
 	0x39, 0x38,                     // pushi 38
-	0x45, 0x06, 0x02,               // callb proc0_6 [ set rescue flag ]
+	0x45, 0x06, 0x02,               // callb [export 6 of script 0], 02 [ set rescue flag ]
 	0x3a,                           // toss
 	0x48,                           // ret
 	PATCH_END
@@ -3689,20 +3688,20 @@ static const uint16 longbowPatchRescueFlagFix[] = {
 //
 // Applies to: English PC Floppy, German PC Floppy, English Amiga Floppy
 // Responsible method: local procedure #3 in script 150
-// Fixes bug #10847
+// Fixes bug: #10847
 static const uint16 longbowSignatureTuckNetFix[] = {
 	SIG_MAGICDWORD,
 	0x30, SIG_UINT16(0x03a2),       // bnt 03a2 [ end of method ]
 	0x38, SIG_SELECTOR16(has),      // pushi has
 	0x78,                           // push1
 	0x39, 0x04,                     // pushi 04
-	0x81, 0x00,                     // lag 00
+	0x81, 0x00,                     // lag global[0]
 	0x4a, 0x06,                     // send 6 [ ego: has 4 ]
 	0x18,                           // not
 	0x30, SIG_UINT16(0x0394),       // bnt 0394 [ end of method if net not in inventory ]
 	0x78,                           // push1
 	0x39, 0x47,                     // pushi 47
-	0x45, 0x05, 0x02,               // callb proc0_5 [ is flag 47 set? ]
+	0x45, 0x05, 0x02,               // callb [export 5 of script 0], 02 [ is flag 47 set? ]
 	0x18,                           // not
 	0x30, SIG_UINT16(0x038a),       // bnt 038a [ end of method ]
 	SIG_ADDTOOFFSET(+60),
@@ -3715,7 +3714,7 @@ static const uint16 longbowPatchTuckNetFix[] = {
 	0x39, PATCH_SELECTOR8(at),      // pushi at
 	0x78,                           // push1
 	0x39, 0x04,                     // pushi 04
-	0x81, 0x09,                     // lag 09
+	0x81, 0x09,                     // lag global[9]
 	0x4a, 0x06,                     // send 6 [ Inv: at 4 ]
 	0x38, PATCH_SELECTOR16(owner),  // pushi owner
 	0x76,                           // push0
@@ -3723,7 +3722,7 @@ static const uint16 longbowPatchTuckNetFix[] = {
 	0x2f, 0x44,                     // bt 44 [ skip scene if net:owner != 0 ]
 	0x78,                           // push1
 	0x39, 0x47,                     // pushi 47
-	0x45, 0x05, 0x02,               // callb proc0_5 [ is flag 47 set? ]
+	0x45, 0x05, 0x02,               // callb [export 5 of script 0], 02 [ is flag 47 set? ]
 	0x2f, 0x3c,                     // bt 3c [ skip scene, save 2 bytes ]
 	PATCH_END
 };
@@ -3741,10 +3740,10 @@ static const uint16 longbowPatchTuckNetFix[] = {
 // Applies to: English PC Floppy, German PC Floppy, English Amiga Floppy
 // Responsible methods: rm350:init, lobbsHut:doVerb, lobbsDoor:doVerb,
 //                      lobbsCover:doVerb, tailorDoor:doVerb
-// Fixes bug #10834
+// Fixes bug: #10834
 static const uint16 longbowSignatureCobblerHut[] = {
 	SIG_MAGICDWORD,
-	0x89, 0x7e,                     // lsg 7e [ current disguise ]
+	0x89, 0x7e,                     // lsg global[7e] [ current disguise ]
 	0x35, 0x04,                     // ldi 04 [ yeoman ]
 	0x1a,                           // eq?    [ is current disguise yeoman? ]
 	SIG_END
@@ -3771,15 +3770,15 @@ static const uint16 longbowPatchCobblerHut[] = {
 //
 // Applies to: English Amiga Floppy
 // Responsible method: fDrunk:onMe
-// Fixes bug #9688
+// Fixes bug: #9688
 static const uint16 longbowSignatureAmigaPubFix[] = {
 	SIG_MAGICDWORD,
 	0x67, 0x20,                     // pTos onMeCheck
 	0x39, 0x03,                     // pushi 03
 	0x39, 0x04,                     // pushi 04
-	0x8f, 0x01,                     // lsp 01
-	0x8f, 0x02,                     // lsp 02
-	0x43, 0x4e, 0x06,               // callk OnControl 6
+	0x8f, 0x01,                     // lsp param[1]
+	0x8f, 0x02,                     // lsp param[2]
+	0x43, 0x4e, 0x06,               // callk OnControl, 6
 	SIG_END
 };
 
@@ -3787,7 +3786,7 @@ static const uint16 longbowPatchAmigaPubFix[] = {
 	0x38, PATCH_UINT16(0x00c4),     // pushi 00c4 [ onMe, hard-coded for amiga ]
 	0x76,                           // push0
 	0x59, 0x01,                     // &rest 1
-	0x57, 0x2c, 0x04,               // super Feature 4 [ super: onMe &rest ]
+	0x57, 0x2c, 0x04,               // super Feature, 4 [ super: onMe &rest ]
 	0x48,                           // ret
 	PATCH_END
 };
