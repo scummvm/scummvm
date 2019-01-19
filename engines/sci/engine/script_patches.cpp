@@ -3941,26 +3941,26 @@ static const SciScriptPatcherEntry larry1Signatures[] = {
 // The script tries to read an out-of-bounds global variable, which somewhat
 //  "worked" in SSCI, but ScummVM/SCI doesn't allow that.
 // That's why those points weren't granted here at all.
-// We patch the script to use global 90, which seems to be unused in the whole game.
+// We patch to use global[5a], which seems to be unused in the whole game.
 // Applies to at least: English floppy
 // Responsible method: rm63Script::handleEvent
 // Fixes bug: #6346
 static const uint16 larry2SignatureWearParachutePoints[] = {
 	0x35, 0x01,                      // ldi 01
-	0xa1, SIG_MAGICDWORD, 0x8e,      // sag 8e
-	0x80, SIG_UINT16(0x01e0),        // lag 1e0
+	0xa1, SIG_MAGICDWORD, 0x8e,      // sag global[8e]
+	0x80, SIG_UINT16(0x01e0),        // lag global[1e0]
 	0x18,                            // not
 	0x30, SIG_UINT16(0x000f),        // bnt [don't give points]
 	0x35, 0x01,                      // ldi 01
-	0xa0, 0xe0, 0x01,                // sag 1e0
+	0xa0, 0xe0, 0x01,                // sag global[1e0]
 	SIG_END
 };
 
 static const uint16 larry2PatchWearParachutePoints[] = {
 	PATCH_ADDTOOFFSET(+4),
-	0x80, PATCH_UINT16(0x005a),      // lag 5a (global 90)
+	0x80, PATCH_UINT16(0x005a),      // lag global[5a]
 	PATCH_ADDTOOFFSET(+6),
-	0xa0, PATCH_UINT16(0x005a),      // sag 5a (global 90)
+	0xa0, PATCH_UINT16(0x005a),      // sag global[5a]
 	PATCH_END
 };
 
@@ -3989,17 +3989,17 @@ static const uint16 larry5SignatureGreenCardLimoBug[] = {
 	SIG_MAGICDWORD,
 	0x39, 0x07,                         // pushi 07
 	0x39, 0x0c,                         // pushi 0Ch
-	0x45, 0x0a, 0x04,                   // call export 10 of script 0
+	0x45, 0x0a, 0x04,                   // callb [export 10 of script 0], 04
 	0x78,                               // push1
 	0x39, 0x26,                         // pushi 26h (limo arrived flag)
-	0x45, 0x07, 0x02,                   // call export 7 of script 0 (sets flag)
+	0x45, 0x07, 0x02,                   // callb [export 7 of script 0], 02 (sets flag)
 	SIG_END
 };
 
 static const uint16 larry5PatchGreenCardLimoBug[] = {
 	PATCH_ADDTOOFFSET(+8),
-	0x34, PATCH_UINT16(0),              // ldi 0000 (dummy)
-	0x34, PATCH_UINT16(0),              // ldi 0000 (dummy)
+	0x34, PATCH_UINT16(0x0000),         // ldi 0000 (dummy)
+	0x34, PATCH_UINT16(0x0000),         // ldi 0000 (dummy)
 	PATCH_END
 };
 
@@ -4020,7 +4020,7 @@ static const uint16 larry5SignatureGermanEndingPattiTalker[] = {
 };
 
 static const uint16 larry5PatchGermanEndingPattiTalker[] = {
-	PATCH_UINT16(0x005a),               // change pattiTalker::x to 90
+	PATCH_UINT16(0x005a),               // object pattiTalker::x (90)
 	PATCH_END
 };
 
@@ -4032,47 +4032,46 @@ static const SciScriptPatcherEntry larry5Signatures[] = {
 };
 
 // ===========================================================================
-// this is called on every death dialog. Problem is at least the german
+// This is called on every death dialog. Problem is at least the German
 //  version of lsl6 gets title text that is far too long for the
-//  available temp space resulting in temp space corruption
-//  This patch moves the title text around, so this overflow
-//  doesn't happen anymore. We would otherwise get a crash
-//  calling for invalid views (this happens of course also
-//  in sierra sci)
+//  available temp space resulting in temp space corruption. This patch
+//  moves the title text around, so this overflow doesn't happen anymore. We
+//  would otherwise get a crash calling for invalid views (this happens of
+//  course also in sierra sci).
 // Applies to at least: German PC-CD
 // Responsible method: unknown
 static const uint16 larry6SignatureDeathDialog[] = {
 	SIG_MAGICDWORD,
 	0x3e, SIG_UINT16(0x0133),        // link 0133 (offset 0x20)
 	0x35, 0xff,                      // ldi ff
-	0xa3, 0x00,                      // sal 00
-	SIG_ADDTOOFFSET(+680),           // [skip 680 bytes]
-	0x8f, 0x01,                      // lsp 01 (offset 0x2cf)
+	0xa3, 0x00,                      // sal local[0]
+	SIG_ADDTOOFFSET(+680),           // ...
+	0x8f, 0x01,                      // lsp param[1] (offset 0x2cf)
 	0x7a,                            // push2
-	0x5a, SIG_UINT16(0x0004), SIG_UINT16(0x010e), // lea 0004 010e
+	0x5a, SIG_UINT16(0x0004), SIG_UINT16(0x010e), // lea temp[010e]
 	0x36,                            // push
-	0x43, 0x7c, 0x0e,                // kMessage[7c] 0e
-	SIG_ADDTOOFFSET(+90),            // [skip 90 bytes]
+	0x43, 0x7c, 0x0e,                // callk Message[7c], 0e
+	SIG_ADDTOOFFSET(+90),            // ...
 	0x38, SIG_UINT16(0x00d6),        // pushi 00d6 (offset 0x335)
 	0x78,                            // push1
-	0x5a, SIG_UINT16(0x0004), SIG_UINT16(0x010e), // lea 0004 010e
+	0x5a, SIG_UINT16(0x0004), SIG_UINT16(0x010e), // lea temp[010e]
 	0x36,                            // push
-	SIG_ADDTOOFFSET(+76),            // [skip 76 bytes]
+	SIG_ADDTOOFFSET(+76),            // ...
 	0x38, SIG_UINT16(0x00cd),        // pushi 00cd (offset 0x38b)
 	0x39, 0x03,                      // pushi 03
-	0x5a, SIG_UINT16(0x0004), SIG_UINT16(0x010e), // lea 0004 010e
+	0x5a, SIG_UINT16(0x0004), SIG_UINT16(0x010e), // lea temp[010e]
 	0x36,
 	SIG_END
 };
 
 static const uint16 larry6PatchDeathDialog[] = {
-	0x3e, 0x00, 0x02,                // link 0200
+	0x3e, 0x00, 0x02,                                 // link 0200
 	PATCH_ADDTOOFFSET(+687),
-	0x5a, PATCH_UINT16(0x0004), PATCH_UINT16(0x0140), // lea 0004 0140
+	0x5a, PATCH_UINT16(0x0004), PATCH_UINT16(0x0140), // lea temp[0140]
 	PATCH_ADDTOOFFSET(+98),
-	0x5a, PATCH_UINT16(0x0004), PATCH_UINT16(0x0140), // lea 0004 0140
+	0x5a, PATCH_UINT16(0x0004), PATCH_UINT16(0x0140), // lea temp[0140]
 	PATCH_ADDTOOFFSET(+82),
-	0x5a, PATCH_UINT16(0x0004), PATCH_UINT16(0x0140), // lea 0004 0140
+	0x5a, PATCH_UINT16(0x0004), PATCH_UINT16(0x0140), // lea temp[0140]
 	PATCH_END
 };
 
@@ -4093,14 +4092,14 @@ static const SciScriptPatcherEntry larry6Signatures[] = {
 // larger and so a debug message "y value less than vanishingY" is displayed.
 static const uint16 larry6HiresSetScaleSignature[] = {
 	SIG_MAGICDWORD,
-	0x38, SIG_SELECTOR16(setScale), // pushi $14b (setScale)
-	0x38, SIG_UINT16(0x05),         // pushi 5
-	0x51, 0x2c,                     // class 2c (Scaler)
+	0x38, SIG_SELECTOR16(setScale), // pushi setScale ($14b)
+	0x38, SIG_UINT16(0x0005),       // pushi 5
+	0x51, 0x2c,                     // class Scaler
 	SIG_END
 };
 
 static const uint16 larry6HiresSetScalePatch[] = {
-	0x38, PATCH_SELECTOR16(setScaler), // pushi $14f (setScaler)
+	0x38, PATCH_SELECTOR16(setScaler), // pushi setScaler ($14f)
 	PATCH_END
 };
 
@@ -4108,15 +4107,16 @@ static const uint16 larry6HiresSetScalePatch[] = {
 // master music volume to 12 (and the volume dial to 11), but the game should
 // always use the volume stored in ScummVM.
 // Applies to at least: English CD
+// Fixes bug: #9700
 static const uint16 larry6HiresVolumeResetSignature[] = {
 	SIG_MAGICDWORD,
 	0x35, 0x0b,                         // ldi $0b
-	0xa1, 0xc2,                         // sag $c2
+	0xa1, 0xc2,                         // sag global[$c2]
 	SIG_END
 };
 
 static const uint16 larry6HiresVolumeResetPatch[] = {
-	0x32, PATCH_UINT16(1),  // jmp 1 [past volume change]
+	0x32, PATCH_UINT16(0x0001),         // jmp 1 [past volume change]
 	PATCH_END
 };
 
@@ -4142,19 +4142,19 @@ static const SciScriptPatcherEntry larry6HiresSignatures[] = {
 // Applies to at least: English CD
 static const uint16 larry7VolumeResetSignature1[] = {
 	SIG_MAGICDWORD,
-	0x35, 0x41,               // ldi $41
-	0xa1, 0xe3,               // sag $e3 (music volume)
-	0x7e, SIG_ADDTOOFFSET(2), // line whatever
-	0x35, 0x3c,               // ldi $3c
-	0xa1, 0xe4,               // sag $e4 (sfx volume)
-	0x7e, SIG_ADDTOOFFSET(2), // line whatever
-	0x35, 0x64,               // ldi $64
-	0xa1, 0xe5,               // sag $e5 (speech volume)
+	0x35, 0x41,                         // ldi $41
+	0xa1, 0xe3,                         // sag global[$e3] (music volume)
+	0x7e, SIG_ADDTOOFFSET(+2),          // (line whatever)
+	0x35, 0x3c,                         // ldi $3c
+	0xa1, 0xe4,                         // sag global[$e4] (sfx volume)
+	0x7e, SIG_ADDTOOFFSET(+2),          // (line whatever)
+	0x35, 0x64,                         // ldi $64
+	0xa1, 0xe5,                         // sag global[$e5] (speech volume)
 	SIG_END
 };
 
 static const uint16 larry7VolumeResetPatch1[] = {
-	0x33, 0x10, // jmp [past volume resets]
+	0x33, 0x10,                         // jmp [past volume resets]
 	PATCH_END
 };
 
@@ -4165,28 +4165,28 @@ static const uint16 larry7VolumeResetPatch1[] = {
 // Applies to at least: English CD
 static const uint16 larry7VolumeResetSignature2[] = {
 	SIG_MAGICDWORD,
-	0x38, SIG_SELECTOR16(readWord), // pushi readWord
-	0x76,                           // push0
-	SIG_ADDTOOFFSET(6),             // advance file stream
-	0xa1, 0xe3,                     // sag $e3 (music volume)
-	SIG_ADDTOOFFSET(3),             // line whatever
-	SIG_ADDTOOFFSET(10),            // advance file stream
-	0xa1, 0xe4,                     // sag $e4 (sfx volume)
-	SIG_ADDTOOFFSET(3),             // line whatever
-	SIG_ADDTOOFFSET(10),            // advance file stream
-	0xa1, 0xe5,                     // sag $e5 (speech volume)
+	0x38, SIG_SELECTOR16(readWord),     // pushi readWord
+	0x76,                               // push0
+	SIG_ADDTOOFFSET(+6),                // ...
+	0xa1, 0xe3,                         // sag global[$e3] (music volume)
+	SIG_ADDTOOFFSET(+3),                // (line whatever)
+	SIG_ADDTOOFFSET(+10),               // ...
+	0xa1, 0xe4,                         // sag global[$e4] (sfx volume)
+	SIG_ADDTOOFFSET(+3),                // (line whatever)
+	SIG_ADDTOOFFSET(+10),               // ...
+	0xa1, 0xe5,                         // sag global[$e5] (speech volume)
 	SIG_END
 };
 
 static const uint16 larry7VolumeResetPatch2[] = {
-	PATCH_ADDTOOFFSET(10), // advance file stream
-	0x18, 0x18,            // waste bytes
-	PATCH_ADDTOOFFSET(3),  // line whatever
-	PATCH_ADDTOOFFSET(10), // advance file stream
-	0x18, 0x18,            // waste bytes
-	PATCH_ADDTOOFFSET(3),  // line whatever
-	PATCH_ADDTOOFFSET(10), // advance file stream
-	0x18, 0x18,            // waste bytes
+	PATCH_ADDTOOFFSET(+10),
+	0x18, 0x18,                         // (waste bytes)
+	PATCH_ADDTOOFFSET(+3),              // (line whatever)
+	PATCH_ADDTOOFFSET(+10),             // ...
+	0x18, 0x18,                         // (waste bytes)
+	PATCH_ADDTOOFFSET(+3),              // (line whatever)
+	PATCH_ADDTOOFFSET(+10),             // ...
+	0x18, 0x18,                         // (waste bytes)
 	PATCH_END
 };
 
@@ -4230,16 +4230,16 @@ static const uint16 larry7MakeCheeseCyclerPatch[] = {
 // Applies to at least: English PC-CD, German PC-CD
 // Responsible method: soMakeCheese::changeState(2) in script 540
 static const uint16 larry7MakeCheesePrioritySignature[] = {
-	0x38, SIG_SELECTOR16(setPri),    // pushi (setPri)
+	0x38, SIG_SELECTOR16(setPri),    // pushi setPri
 	SIG_MAGICDWORD,
 	0x78,                            // push1
-	0x38, SIG_UINT16(500),           // pushi $1f4
+	0x38, SIG_UINT16(0x01f4),        // pushi 500
 	SIG_END
 };
 
 static const uint16 larry7MakeCheesePriorityPatch[] = {
 	PATCH_ADDTOOFFSET(+4),           // pushi setPri, push1
-	0x38, PATCH_UINT16(374),         // pushi $176
+	0x38, PATCH_UINT16(0x0176),      // pushi 374
 	PATCH_END
 };
 
@@ -4253,7 +4253,7 @@ static const uint16 larry7MakeCheesePriorityPatch[] = {
 static const uint16 larry7MessageTypeResetSignature[] = {
 	SIG_MAGICDWORD,
 	0x35, 0x02, // ldi 2
-	0xa1, 0x5a, // sag $5a
+	0xa1, 0x5a, // sag global[$5a]
 	SIG_END
 };
 
