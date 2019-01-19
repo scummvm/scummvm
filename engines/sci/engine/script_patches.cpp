@@ -10530,10 +10530,10 @@ static const uint16 ramaBenchmarkPatch[] = {
 // own numbers, as it tries to do here in `SaveManager::readWord`.
 static const uint16 ramaSerializeRegTSignature1[] = {
 	SIG_MAGICDWORD,
-	0x38, SIG_SELECTOR16(newWith), // pushi $10b (newWith)
+	0x38, SIG_SELECTOR16(newWith), // pushi newWith ($10b)
 	0x7a,                          // push2
 	0x7a,                          // push2
-	0x72, SIG_UINT16(0x00),        // lofsa ""
+	0x72, SIG_UINT16(0x0000),      // lofsa ""
 	0x36,                          // push
 	0x51, 0x0f,                    // class Str
 	SIG_END
@@ -10543,7 +10543,7 @@ static const uint16 ramaSerializeRegTPatch1[] = {
 	0x38, PATCH_SELECTOR16(readWord),    // pushi readWord
 	0x76,                                // push0
 	0x62, PATCH_SELECTOR16(saveFilePtr), // pToa saveFilePtr
-	0x4a, PATCH_UINT16(0x04),            // send 4
+	0x4a, PATCH_UINT16(0x0004),          // send 4
 	0x48,                                // ret
 	PATCH_END
 };
@@ -10556,33 +10556,34 @@ static const uint16 ramaSerializeRegTPatch1[] = {
 // uninitialised param reads to 0 so the game was following the wrong path and
 // breaking.
 // Applies to at least: US English
+// Fixes bug: #10263
 static const uint16 ramaNukeTimerSignature[] = {
 	0x7e, SIG_ADDTOOFFSET(+2),              // line whatever
 	SIG_MAGICDWORD,
-	0x38, SIG_SELECTOR16(getSubscriberObj), // pushi $3ca (getSubscriberObj)
+	0x38, SIG_SELECTOR16(getSubscriberObj), // pushi getSubscriberObj ($3ca)
 	0x76,                                   // push0
-	0x54, SIG_UINT16(0x04),                 // self 4
+	0x54, SIG_UINT16(0x0004),               // self 4
 	SIG_END
 };
 
 static const uint16 ramaNukeTimerPatch[] = {
-	0x38, PATCH_SELECTOR16(getSubscriberObj), // pushi $3ca (getSubscriberObj)
+	0x38, PATCH_SELECTOR16(getSubscriberObj), // pushi getSubscriberObj ($3ca)
 	0x78,                                     // push1
-	0x38, PATCH_UINT16(0x01),                 // pushi 1 (wasting bytes)
-	0x54, PATCH_UINT16(0x06),                 // self 6
+	0x38, PATCH_UINT16(0x0001),               // pushi 1 (wasting bytes)
+	0x54, PATCH_UINT16(0x0006),               // self 6
 	PATCH_END
 };
 
 // When opening a datacube on the pocket computer, `DocReader::init` will try
-// to perform arithmetic on a pointer to `thighComputer::plane` and then use the
+// to perform arithmetic on a pointer to `thighComputer::plane` then use the
 // resulting value as the priority for the DocReader. This happened to work in
 // SSCI because the plane pointer would just be a high numeric value, but
 // ScummVM needs an actual number, not a pointer.
 // Applies to at least: US English
 static const uint16 ramaDocReaderInitSignature[] = {
-	0x39, SIG_SELECTOR8(priority), // pushi $1a (priority)
+	0x39, SIG_SELECTOR8(priority), // pushi priority ($1a)
 	0x78,                          // push1
-	0x39, SIG_SELECTOR8(plane),    // pushi $19 (plane)
+	0x39, SIG_SELECTOR8(plane),    // pushi plane ($19)
 	0x76,                          // push0
 	0x7a,                          // push2
 	SIG_MAGICDWORD,
@@ -10598,16 +10599,16 @@ static const uint16 ramaDocReaderInitPatch[] = {
 	PATCH_END
 };
 
-// It is not possible to change the directory for ScummVM save games, so disable
-// the "change directory" button in the RAMA save dialogue
+// It is not possible to change the directory for ScummVM save games, so
+// disable the "change directory" button in the RAMA save dialog.
 static const uint16 ramaChangeDirSignature[] = {
 	SIG_MAGICDWORD,
-	0x7e, SIG_UINT16(0x64),     // line 100
-	0x39, SIG_SELECTOR8(state), // pushi $1d (state)
+	0x7e, SIG_UINT16(0x0064),   // line 100
+	0x39, SIG_SELECTOR8(state), // pushi state ($1d)
 	0x78,                       // push1
 	0x39, 0x03,                 // pushi 3
 	0x72, SIG_ADDTOOFFSET(+2),  // lofsa changeDirI
-	0x4a, SIG_UINT16(0x0e),     // send 14
+	0x4a, SIG_UINT16(0x000e),   // send 14
 	SIG_END
 };
 
@@ -10646,9 +10647,9 @@ static const uint16 shiversEventSuperCallSignature[] = {
 	SIG_MAGICDWORD,
 	0x38, SIG_SELECTOR16(handleEvent), // pushi handleEvent
 	0x78,                              // push1
-	0x8f, 0x01,                        // lsp 1
+	0x8f, 0x01,                        // lsp param[1]
 	0x59, 0x02,                        // &rest 2
-	0x57, 0x7f, SIG_UINT16(0x06),      // super ShiversProp[7f], 6
+	0x57, 0x7f, SIG_UINT16(0x0006),    // super ShiversProp[7f], 6
 	SIG_END
 };
 
@@ -10668,13 +10669,13 @@ static const uint16 shiversEventSuperCallPatch[] = {
 // Applies to at least: English CD
 static const uint16 shiversGodsIxupiPlaySoundSignature[] = {
 	SIG_MAGICDWORD,
-	0x39, SIG_SELECTOR8(play), // pushi $33
-	0x38, SIG_UINT16(0x06),    // pushi 6
+	0x39, SIG_SELECTOR8(play), // pushi play ($33)
+	0x38, SIG_UINT16(0x0006),  // pushi 6
 	SIG_END
 };
 
 static const uint16 shiversGodsIxupiPlaySoundPatch[] = {
-	0x38, PATCH_SELECTOR16(fade), // pushi $f3
+	0x38, PATCH_SELECTOR16(fade), // pushi fade ($f3)
 	0x39, 0x06,                   // pushi 6
 	PATCH_END
 };
