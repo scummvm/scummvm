@@ -71,6 +71,7 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 	registerCmd("say", WRAP_METHOD(Debugger, cmdSay));
 	registerCmd("scene", WRAP_METHOD(Debugger, cmdScene));
 	registerCmd("var", WRAP_METHOD(Debugger, cmdVariable));
+	registerCmd("clue", WRAP_METHOD(Debugger, cmdClue));
 	registerCmd("load", WRAP_METHOD(Debugger, cmdLoad));
 	registerCmd("save", WRAP_METHOD(Debugger, cmdSave));
 }
@@ -487,6 +488,42 @@ bool Debugger::cmdVariable(int argc, const char **argv) {
 	} else {
 		debugPrintf("Variable id must be between 0 and %i\n", variableCount - 1);
 	}
+	return true;
+}
+
+bool Debugger::cmdClue(int argc, const char **argv) {
+	if (argc != 3 && argc != 4) {
+		debugPrintf("Get or changes clue for an actor.\n");
+		debugPrintf("Usage: %s <actorId> <clueId> [<value>]\n", argv[0]);
+		return true;
+	}
+
+	int actorId = atoi(argv[1]);
+
+	Actor *actor = nullptr;
+	if ((actorId >= 0 && actorId < (int)_vm->_gameInfo->getActorCount()) || (actorId == kActorVoiceOver)) {
+		actor = _vm->_actors[actorId];
+	}
+
+	if (actor == nullptr) {
+		debugPrintf("Unknown actor %i\n", actorId);
+		return true;
+	}
+
+	int clueId = atoi(argv[2]);
+
+	// TODO: check clueId
+
+	if (argc == 4) {
+		int value = atoi(argv[3]);
+		if (value != 0) {
+			actor->acquireClue(clueId, true, -1);
+		} else {
+			actor->loseClue(clueId);
+		}
+	}
+	debugPrintf("actorClue(%i, %i) = %i\n", actorId, clueId, actor->hasClue(clueId));
+
 	return true;
 }
 
