@@ -5621,10 +5621,10 @@ static const uint16 mothergoose256SignatureReplay[] = {
 	0x36,                            // push
 	0x35, 0x20,                      // ldi 20
 	0x04,                            // sub
-	0xa1, SIG_ADDTOOFFSET(+1),       // sag global[57h] -> FM-Towns [9Dh]
+	0xa1, SIG_ADDTOOFFSET(+1),       // sag global[57h], for FM-Towns: sag global[9Dh]
 	// 35 bytes
 	0x39, 0x03,                      // pushi 03
-	0x89, SIG_ADDTOOFFSET(+1),       // lsg global[1Dh] -> FM-Towns [1Eh]
+	0x89, SIG_ADDTOOFFSET(+1),       // lsg global[1Dh], for FM-Towns: lsg global[1Eh]
 	0x76,                            // push0
 	0x7a,                            // push2
 	0x5b, 0x00, 0xbe,                // lea global[BEh]
@@ -5638,7 +5638,7 @@ static const uint16 mothergoose256SignatureReplay[] = {
 	0x43, 0x62, 0x06,                // callk StrAt
 	// 22 bytes
 	0x7a,                            // push2
-	0x5b, 0x00, 0xbe,                // lea global[BE]
+	0x5b, 0x00, 0xbe,                // lea global[BEh]
 	0x36,                            // push
 	0x39, 0x03,                      // pushi 03
 	0x43, 0x62, 0x04,                // callk StrAt
@@ -5646,7 +5646,7 @@ static const uint16 mothergoose256SignatureReplay[] = {
 	0x36,                            // push
 	0x35, SIG_MAGICDWORD, 0x20,      // ldi 20
 	0x04,                            // sub
-	0xa1, 0xb3,                      // sag global[b3]
+	0xa1, 0xb3,                      // sag global[B3h]
 	// 6 bytes
 	SIG_END
 };
@@ -5677,8 +5677,8 @@ static const uint16 mothergoose256PatchReplay[] = {
 	0x39, 0x0c,                      // pushi 0Ch
 	0x76,                            // push0
 	0x76,                            // push0
-	0x38, PATCH_UINT16(200),         // push 200
-	0x38, PATCH_UINT16(320),         // push 320
+	0x38, PATCH_UINT16(200),         // pushi 200
+	0x38, PATCH_UINT16(320),         // pushi 320
 	0x78,                            // push1
 	0x43, 0x6c, 0x0c,                // callk Graph -> send everything to screen
 	// 16 bytes
@@ -5738,11 +5738,11 @@ static const SciScriptPatcherEntry mothergoose256Signatures[] = {
 // Applies to at least: English CD from King's Quest Collection
 // Responsible method: sShowLogo::changeState
 static const uint16 mothergooseHiresLogoSignature[] = {
-	0x38, SIG_SELECTOR16(init),      // pushi $8e (init)
+	0x38, SIG_SELECTOR16(init),      // pushi init ($8e)
 	SIG_MAGICDWORD,
 	0x76,                            // push0
-	0x72, SIG_UINT16(0x82),          // lofsa logo[82]
-	0x4a, SIG_UINT16(0x04),          // send $4
+	0x72, SIG_UINT16(0x0082),        // lofsa logo[82]
+	0x4a, SIG_UINT16(0x0004),        // send $4
 	SIG_END
 };
 
@@ -5760,14 +5760,14 @@ static const uint16 mothergooseHiresLogoPatch[] = {
 // Responsible method: rhymeScript::changeState
 static const uint16 mothergooseHiresHorseSignature[] = {
 	SIG_MAGICDWORD,
-	0x39, SIG_SELECTOR8(setPri), // pushi $4a (setPri)
+	0x39, SIG_SELECTOR8(setPri), // pushi setPri ($4a)
 	0x78,                        // push1
-	0x38, SIG_UINT16(0xb7),      // pushi $b7
+	0x38, SIG_UINT16(0x00b7),    // pushi $b7
 	SIG_END
 };
 
 static const uint16 mothergooseHiresHorsePatch[] = {
-	PATCH_ADDTOOFFSET(3),     // pushi setPri, push1
+	PATCH_ADDTOOFFSET(+3),    // pushi setPri, push1
 	0x38, PATCH_UINT16(0x59), // pushi $59
 	PATCH_END
 };
