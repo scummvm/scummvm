@@ -504,14 +504,14 @@ static const uint16 ecoquest1SignatureStayAndHelp[] = {
 	0x1a,                            // eq?
 	0x31, 0x1c,                      // bnt [next state]
 	0x76,                            // push0
-	0x45, 0x01, 0x00,                // callb export1 from script 0 (switching control off)
+	0x45, 0x01, 0x00,                // callb [export 1 of script 0], 00 (switching control off)
 	SIG_MAGICDWORD,
 	0x38, SIG_UINT16(0x0122),        // pushi 0122
 	0x78,                            // push1
 	0x76,                            // push0
 	0x81, 0x00,                      // lag global[0]
 	0x4a, 0x06,                      // send 06 - call ego::setMotion(0)
-	0x39, SIG_SELECTOR8(init),       // pushi "init"
+	0x39, SIG_SELECTOR8(init),       // pushi init
 	0x39, 0x04,                      // pushi 04
 	0x76,                            // push0
 	0x76,                            // push0
@@ -529,13 +529,13 @@ static const uint16 ecoquest1PatchStayAndHelp[] = {
 	0x36,                            // push
 	0x2f, 0x22,                      // bt [next state] (this optimization saves 6 bytes)
 	0x39, 0x00,                      // pushi 0 (wasting 1 byte here)
-	0x45, 0x01, 0x00,                // callb export1 from script 0 (switching control off)
+	0x45, 0x01, 0x00,                // callb [export 1 of script 0], 00 (switching control off)
 	0x38, PATCH_UINT16(0x0122),      // pushi 0122
 	0x78,                            // push1
 	0x76,                            // push0
 	0x81, 0x00,                      // lag global[0]
 	0x4a, 0x06,                      // send 06 - call ego::setMotion(0)
-	0x39, PATCH_SELECTOR8(init),     // pushi "init"
+	0x39, PATCH_SELECTOR8(init),     // pushi init
 	0x39, 0x06,                      // pushi 06
 	0x39, 0x02,                      // pushi 02 (additional 2 bytes)
 	0x76,                            // push0
@@ -573,10 +573,10 @@ static const uint16 ecoquest2SignatureEcorder[] = {
 	0x39, 0x66,                      // pushi 66
 	0x39, 0x17,                      // pushi 17
 	0x39, 0x69,                      // pushi 69
-	0x38, PATCH_UINT16(0x2631),      // pushi 2631
+	0x38, SIG_UINT16(0x2631),        // pushi 2631
 	0x39, 0x6a,                      // pushi 6a
 	0x39, 0x64,                      // pushi 64
-	0x43, 0x1b, 0x14,                // call kDisplay
+	0x43, 0x1b, 0x14,                // callk Display
 	0x35, 0x0a,                      // ldi 0a
 	0x65, 0x20,                      // aTop ticks
 	0x33,                            // jmp [end]
@@ -589,29 +589,28 @@ static const uint16 ecoquest2SignatureEcorder[] = {
 };
 
 static const uint16 ecoquest2PatchEcorder[] = {
-	0x2f, 0x02,                      // bt [to pushi 07]
+	0x2f, 0x02,                      // bt [to pushi 7]
 	0x3a,                            // toss
 	0x48,                            // ret
-	0x38, PATCH_UINT16(0x0007),      // pushi 07 (parameter count) (waste 1 byte)
-	0x39, 0x0b,                      // push (FillBoxAny)
+	0x38, PATCH_UINT16(0x0007),      // pushi 7d (parameter count) (waste 1 byte)
+	0x39, 0x0b,                      // pushi 11d (FillBoxAny)
 	0x39, 0x1d,                      // pushi 29d
 	0x39, 0x73,                      // pushi 115d
 	0x39, 0x5e,                      // pushi 94d
 	0x38, PATCH_UINT16(0x00d7),      // pushi 215d
 	0x78,                            // push1 (visual screen)
-	0x38, PATCH_UINT16(0x0017),      // pushi 17 (color) (waste 1 byte)
-	0x43, 0x6c, 0x0e,                // call kGraph
-	0x38, PATCH_UINT16(0x0005),      // pushi 05 (parameter count) (waste 1 byte)
+	0x38, PATCH_UINT16(0x0017),      // pushi 23d (color) (waste 1 byte)
+	0x43, 0x6c, 0x0e,                // callk Graph
+	0x38, PATCH_UINT16(0x0005),      // pushi 5d (parameter count) (waste 1 byte)
 	0x39, 0x0c,                      // pushi 12d (UpdateBox)
 	0x39, 0x1d,                      // pushi 29d
 	0x39, 0x73,                      // pushi 115d
 	0x39, 0x5e,                      // pushi 94d
 	0x38, PATCH_UINT16(0x00d7),      // pushi 215d
-	0x43, 0x6c, 0x0a,                // call kGraph
+	0x43, 0x6c, 0x0a,                // callk Graph
 	PATCH_END
 };
 
-// ===========================================================================
 // Same patch as above for the ecorder introduction.
 // Two workarounds are needed for this patch in workarounds.cpp (when calling
 // kGraphFillBoxAny and kGraphUpdateBox), as there isn't enough space to patch
@@ -632,7 +631,7 @@ static const uint16 ecoquest2SignatureEcorderTutorial[] = {
 	0x38, SIG_UINT16(0x2631),        // pushi 2631
 	0x39, 0x6a,                      // pushi 6a
 	0x39, 0x64,                      // pushi 64
-	0x43, 0x1b, 0x14,                // call kDisplay
+	0x43, 0x1b, 0x14,                // callk Display
 	0x35, 0x1e,                      // ldi 1e
 	0x65, 0x20,                      // aTop ticks
 	0x32,                            // jmp [end]
@@ -645,31 +644,31 @@ static const uint16 ecoquest2PatchEcorderTutorial[] = {
 	// The parameter count below should be 7, but we're out of bytes
 	// to patch! A workaround has been added because of this
 	0x78,                            // push1 (parameter count)
-	//0x39, 0x07,                    // pushi 07 (parameter count)
-	0x39, 0x0b,                      // push (FillBoxAny)
+	//0x39, 0x07,                    // pushi 7d (parameter count)
+	0x39, 0x0b,                      // pushi 11d (FillBoxAny)
 	0x39, 0x1d,                      // pushi 29d
 	0x39, 0x73,                      // pushi 115d
 	0x39, 0x5e,                      // pushi 94d
 	0x38, PATCH_UINT16(0x00d7),      // pushi 215d
 	0x78,                            // push1 (visual screen)
-	0x39, 0x17,                      // pushi 17 (color)
-	0x43, 0x6c, 0x0e,                // call kGraph
+	0x39, 0x17,                      // pushi 23d (color)
+	0x43, 0x6c, 0x0e,                // callk Graph
 	// The parameter count below should be 5, but we're out of bytes
 	// to patch! A workaround has been added because of this
 	0x78,                            // push1 (parameter count)
-	//0x39, 0x05,                    // pushi 05 (parameter count)
+	//0x39, 0x05,                    // pushi 5d (parameter count)
 	0x39, 0x0c,                      // pushi 12d (UpdateBox)
 	0x39, 0x1d,                      // pushi 29d
 	0x39, 0x73,                      // pushi 115d
 	0x39, 0x5e,                      // pushi 94d
 	0x38, PATCH_UINT16(0x00d7),      // pushi 215d
-	0x43, 0x6c, 0x0a,                // call kGraph
+	0x43, 0x6c, 0x0a,                // callk Graph
 	// We are out of bytes to patch at this point,
-	// so we skip 494 (0x1EE) bytes to reuse this code:
+	// so we skip 494 (0x1ee) bytes to reuse this code:
 	// ldi 1e
 	// aTop 20
 	// jmp 030e (jump to end)
-	0x32, PATCH_UINT16(0x01ee),      // skip 494 (0x1EE) bytes
+	0x32, PATCH_UINT16(0x01ee),      // jmp 494d
 	PATCH_END
 };
 
