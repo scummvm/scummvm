@@ -683,14 +683,13 @@ static const SciScriptPatcherEntry ecoquest2Signatures[] = {
 // Fan-made games
 // Attention: Try to make script patches as specific as possible
 
-// CascadeQuest::autosave in script 994 is called various times to auto-save the game.
-// The script use a fixed slot "999" for this purpose. This doesn't work in ScummVM, because we do not let
-//  scripts save directly into specific slots, but instead use virtual slots / detect scripts wanting to
-//  create a new slot.
-//
-// For this game we patch the code to use slot 99 instead. kSaveGame also checks for Cascade Quest,
-//  will then check, if slot 99 is asked for and will then use the actual slot 0, which is the official
-//  ScummVM auto-save slot.
+// CascadeQuest::autosave in script 994 is called various times to auto-save.
+//  It uses a fixed slot (999) for this purpose. This doesn't work in ScummVM,
+//  because we do not let scripts save directly into specific slots, but
+//  instead use virtual slots / detect scripts wanting to create a new slot.
+// We patch the code to use slot 99 instead. kSaveGame also checks for Cascade
+//  Quest, and if slot 99 is asked for, it will then use the actual slot 0,
+//  which is the official ScummVM auto-save slot.
 //
 // Responsible method: CascadeQuest::autosave
 // Fixes bug: #7007
@@ -698,7 +697,7 @@ static const uint16 fanmadeSignatureCascadeQuestFixAutoSaving[] = {
 	SIG_MAGICDWORD,
 	0x38, SIG_UINT16(0x03e7),        // pushi 3E7 (999d) -> save game slot 999
 	0x74, SIG_UINT16(0x06f8),        // lofss "AutoSave"
-	0x89, 0x1e,                      // lsg global[1E]
+	0x89, 0x1e,                      // lsg global[1e]
 	0x43, 0x2d, 0x08,                // callk SaveGame
 	SIG_END
 };
@@ -716,7 +715,7 @@ static const uint16 fanmadePatchCascadeQuestFixAutoSaving[] = {
 static const uint16 fanmadeSignatureDemoQuestInfiniteLoop[] = {
 	0x38, SIG_UINT16(0x004c),        // pushi 004c
 	0x39, 0x00,                      // pushi 00
-	0x87, 0x01,                      // lap 01
+	0x87, 0x01,                      // lap param[1]
 	0x4b, 0x04,                      // send 04
 	SIG_MAGICDWORD,
 	0x18,                            // not
