@@ -9836,29 +9836,32 @@ static const uint16 sq4FloppyPatchEndlessFlight[] = {
 	PATCH_END
 };
 
-// Floppy-only: When the player tries to throw something at the sequel police in Space Quest X (zero g zone),
-//   the game will first show a textbox and then cause a signature mismatch in ScummVM/
-//   crash the whole game in Sierra SCI/display garbage (the latter when the Sierra "patch" got applied).
+// Floppy-only: When the player tries to throw something at the sequel police
+//   in Space Quest X (zero g zone), the game will first show a textbox and
+//   then cause a signature mismatch in ScummVM. In Sierra SCI, it'd crash the
+//   whole game - or, when the Sierra "patch" got applied, display garbage.
 //
-// All of this is caused by a typo in the script. Right after the code for showing the textbox,
-//  there is more similar code for showing another textbox, but without a pointer to the text.
-//  This has to be a typo, because there is no unused text to be found within that script.
+// All of this is caused by a typo in the script. Right after the code for
+//  showing the textbox, there is similar code for showing another textbox, but
+//  without a pointer to the text. This has to be a typo, because there is no
+//  unused text to be found within that script.
 //
-// Sierra's "patch" didn't include a proper fix (as in a modified script). Instead they shipped a dummy
-//  text resource, which somewhat "solved" the issue in Sierra SCI, but it still showed another textbox
-//  with garbage in it. Funnily Sierra must have known that, because that new text resource contains:
-//  "Hi! This is a kludge!"
+// Sierra's "patch" didn't include a proper fix (as in a modified script).
+//  Instead they shipped a dummy text resource, which somewhat "solved" the
+//  issue in Sierra SCI, but it still showed another textbox with garbage in
+//  it. Funnily Sierra must have known that, because that new text resource
+//  contains: "Hi! This is a kludge!"
 //
 // We properly fix it by removing the faulty code.
 // Applies to at least: English Floppy
 // Responsible method: sp1::doVerb
 // Fixes bug: found by SCI developer
 static const uint16 sq4FloppySignatureThrowStuffAtSequelPoliceBug[] = {
-	0x47, 0xff, 0x00, 0x02,             // call export 255_0, 2
+	0x47, 0xff, 0x00, 0x02,             // calle [export 0 of script 255], 2
 	0x3a,                               // toss
 	SIG_MAGICDWORD,
 	0x36,                               // push
-	0x47, 0xff, 0x00, 0x02,             // call export 255_0, 2
+	0x47, 0xff, 0x00, 0x02,             // calle [export 0 of script 255], 2
 	SIG_END
 };
 
@@ -9890,7 +9893,7 @@ static const uint16 sq4CdSignatureWalkInFromBelowRoom45[] = {
 	0x38, SIG_UINT16(0x00bd),           // pushi 00BDh
 	0x38, SIG_ADDTOOFFSET(+2),          // pushi [setMotion selector]
 	0x39, 0x03,                         // pushi 3
-	0x51, SIG_ADDTOOFFSET(+1),          // class [MoveTo]
+	0x51, SIG_ADDTOOFFSET(+1),          // class MoveTo
 	0x36,                               // push
 	0x78,                               // push1
 	0x76,                               // push0
@@ -9929,18 +9932,18 @@ static const uint16 sq4CdSignatureMissingAudioUniversalRemote[] = {
 	0x35, 0x01,                         // ldi 01
 	0x1a,                               // eq?
 	0x30, SIG_UINT16(0x0021),           // bnt [skip over substate 1 code]
-	0x39, SIG_SELECTOR8(number),        // pushi (number)
+	0x39, SIG_SELECTOR8(number),        // pushi number
 	0x78,                               // push1
 	0x7a,                               // push2
 	0x38, SIG_UINT16(0x0188),           // pushi 188h
 	0x38, SIG_UINT16(0x018b),           // pushi 18Bh
-	0x43, 0x3C, 0x04,                   // call kRandom, 4
+	0x43, 0x3c, 0x04,                   // callk Random, 4
 	0x36,                               // push
-	0x39, SIG_SELECTOR8(play),          // pushi (play)
+	0x39, SIG_SELECTOR8(play),          // pushi play
 	0x76,                               // push0
 	0x81, 0x64,                         // lag global[64h]
 	0x4a, 0x0a,                         // send 0Ah
-	0x38, SIG_SELECTOR16(setScript),    // pushi (setScript)
+	0x38, SIG_SELECTOR16(setScript),    // pushi setScript
 	0x78,                               // push1
 	0x72, SIG_UINT16(0x0488),           // lofsa startTerminal
 	0x36,                               // push
@@ -9954,7 +9957,7 @@ static const uint16 sq4CdSignatureMissingAudioUniversalRemote[] = {
 	0x1a,                               // eq?
 	0x31, 0x0e,                         // bnt [skip last state and toss/ret]
 	0x35, 0x1d,                         // ldi 1Dh
-	0x38, SIG_SELECTOR16(setScript),    // pushi (setScript)
+	0x38, SIG_SELECTOR16(setScript),    // pushi setScript
 	0x78,                               // push1
 	0x72, SIG_UINT16(0x0488),           // lofsa startTerminal
 	0x36,                               // push
@@ -9966,20 +9969,20 @@ static const uint16 sq4CdSignatureMissingAudioUniversalRemote[] = {
 };
 
 static const uint16 sq4CdPatchMissingAudioUniversalRemote[] = {
-	0x30, SIG_UINT16(0x00b7),           // bnt [now directly to last state code, saving 6 bytes]
-	0x32, PATCH_UINT16(+154),           // jmp [to our new code]
+	0x30, PATCH_UINT16(0x00b7),         // bnt [directly to last state code, saving 6 bytes]
+	0x32, PATCH_UINT16(0x009a),         // jmp 154d [to our new code]
 	// 1 not used byte here
-	SIG_ADDTOOFFSET(+128),              // skip over to substate 1 code of state 1Ch code
+	PATCH_ADDTOOFFSET(+128),            // skip over to substate 1 code of state 1Ch code
 	0x32, PATCH_UINT16(0x003f),         // substate 0 code, jumping to toss/ret
 	// directly start with substate 1 code, saving 7 bytes
-	0x39, PATCH_SELECTOR8(number),      // pushi 28h (number)
+	0x39, PATCH_SELECTOR8(number),      // pushi number
 	0x78,                               // push1
 	0x7a,                               // push2
 	0x38, PATCH_UINT16(0x0188),         // pushi 188h
 	0x38, PATCH_UINT16(0x018b),         // pushi 18Bh
-	0x43, 0x3C, 0x04,                   // call kRandom, 4
+	0x43, 0x3c, 0x04,                   // callk Random, 4
 	0x36,                               // push
-	0x39, PATCH_SELECTOR8(play),        // pushi (play)
+	0x39, PATCH_SELECTOR8(play),        // pushi play
 	0x76,                               // push0
 	0x81, 0x64,                         // lag global[64h]
 	0x4a, 0x0a,                         // send 0Ah
@@ -9989,7 +9992,7 @@ static const uint16 sq4CdPatchMissingAudioUniversalRemote[] = {
 	0x35, 0x01,                         // ldi 1
 	0x1c,                               // ne?
 	0x31, 0x0b,                         // bnt [skip play audio]
-	0x38, PATCH_SELECTOR16(say),        // pushi 0123h (say)
+	0x38, PATCH_SELECTOR16(say),        // pushi say (0123h)
 	0x78,                               // push1
 	0x39, 0x14,                         // pushi 14h
 	0x72, PATCH_UINT16(0x0850),         // lofsa newRob
@@ -10000,22 +10003,21 @@ static const uint16 sq4CdPatchMissingAudioUniversalRemote[] = {
 	PATCH_END
 };
 
-// It seems that Sierra forgot to set a script flag, when cleaning out the bank account
-// in Space Quest 4 CD. This was probably caused by the whole bank account interaction
-// getting a rewrite and polish in the CD version.
+// It seems that Sierra forgot to set a script flag when cleaning out the bank
+// account in Space Quest 4 CD. This was probably caused by the whole bank
+// account interaction getting a rewrite and polish in the CD version.
 //
-// Because of this bug, points for changing back clothes will not get awarded, which
-// makes it impossible to get a perfect point score in the CD version of the game.
-// The points are awarded by rm371::doit in script 371.
+// Because of this bug, points for changing back clothes will not get awarded,
+// which makes it impossible to get a perfect point score in the CD version of
+// the game. The points are awarded by rm371::doit in script 371.
 //
-// We fix this. Bug also happened, when using the original interpreter.
-// Bug does not happen for PC floppy.
+// We fix this. PC floppy does not have this bug.
 //
-// Attention: Some Let's Plays on youtube show that points are in fact awarded. Which is true.
-//            But those Let's Plays were actually created by playing a hacked Space Quest 4 version
-//            (which is part Floppy, part CD version - we consider it to be effectively pirated)
-//            and not the actual CD version of Space Quest 4.
-//            It's easy to identify - talkie + store called "Radio Shack" -> is hacked version.
+// Note: Some Let's Plays on YouTube show points are in fact awarded. But those
+//  Let's Plays were of a hacked Space Quest 4 version. It was part Floppy,
+//  part CD version. We consider it to be effectively pirated and not a
+//  canonical CD version of Space Quest 4. It's easy to identify for having
+//  both voices and a store called "Radio Shock" instead of "Hz. So Good".
 //
 // Applies to at least: English PC CD
 // Responsible method: but2Script::changeState(2)
@@ -10046,8 +10048,8 @@ static const uint16 sq4CdPatchGetPointsForChangingBackClothes[] = {
 	0x33, 0x39,                         // jmp [end of state 2, set cycles code]
 	PATCH_ADDTOOFFSET(+51),
 	0x78,                               // push1
-	0x39, 0x1d,                         // ldi 1Dh
-	0x45, 0x07, 0x02,                   // call export 7 of script 0 (set flag) -> effectively sets global 73h, bit 2
+	0x39, 0x1d,                         // pushi 1Dh
+	0x45, 0x07, 0x02,                   // callb [export 7 of script 0], 02 (set flag 1Dh - located at global[73h] bit 2)
 	0x35, 0x02,                         // ldi 02
 	0x65, 0x1c,                         // aTop cycles
 	0x33, 0x05,                         // jmp [toss/ret]
@@ -10055,14 +10057,14 @@ static const uint16 sq4CdPatchGetPointsForChangingBackClothes[] = {
 	PATCH_END
 };
 
-
-// For Space Quest 4 CD, Sierra added a pick up animation for Roger, when he picks up the rope.
+// For Space Quest 4 CD, Sierra added a pick up animation for Roger when he
+// picks up the rope.
 //
-// When the player is detected by the zombie right at the start of the game, while picking up the rope,
-// scripts bomb out. This also happens, when using the original interpreter.
+// When the player is detected by the zombie right at the start of the game,
+// while picking up the rope, scripts bomb out.
 //
-// This is caused by code, that's supposed to make Roger face the arriving drone.
-// We fix it, by checking if ego::cycler is actually set before calling that code.
+// This is caused by code intended to make Roger face the arriving drone. We
+// fix it by checking if ego::cycler is actually set before calling that code.
 //
 // Applies to at least: English PC CD
 // Responsible method: droidShoots::changeState(3)
@@ -10077,7 +10079,7 @@ static const uint16 sq4CdSignatureGettingShotWhileGettingRope[] = {
 	0x1a,                               // eq?
 	0x31, 0x0b,                         // bnt [state 3 check]
 	0x76,                               // push0
-	0x45, 0x02, 0x00,                   // call export 2 of script 0 -> disable controls
+	0x45, 0x02, 0x00,                   // callb [export 2 of script 0], 00 (disable controls)
 	0x35, 0x02,                         // ldi 02
 	0x65, 0x1a,                         // aTop cycles
 	0x32, SIG_UINT16(0x02e9),           // jmp [end]
@@ -10086,12 +10088,12 @@ static const uint16 sq4CdSignatureGettingShotWhileGettingRope[] = {
 	0x1a,                               // eq?
 	0x31, 0x1e,                         // bnt [state 4 check]
 	0x76,                               // push0
-	0x45, 0x02, 0x00,                   // call export 2 of script 0 -> disable controls again??
+	0x45, 0x02, 0x00,                   // callb [export 2 of script 0], 00 (disable controls again??)
 	0x7a,                               // push2
 	0x89, 0x00,                         // lsg global[0]
 	0x72, SIG_UINT16(0x0242),           // lofsa deathDroid
 	0x36,                               // push
-	0x45, 0x0d, 0x04,                   // call export 13 of script 0 -> set heading of ego to face droid
+	0x45, 0x0d, 0x04,                   // callb [export 13 of script 0], 04 (set heading of ego to face droid)
 	SIG_END
 };
 
@@ -10106,25 +10108,26 @@ static const uint16 sq4CdPatchGettingShotWhileGettingRope[] = {
 	0x31, 0x29,                         // bnt [state 4 check]
 	// new state 3 code
 	0x76,                               // push0
-	0x45, 0x02, 0x00,                   // call export 2 of script 0 (disable controls, actually not needed)
+	0x45, 0x02, 0x00,                   // callb [export 2 of script 0], 00 (disable controls, actually not needed)
 	0x38, PATCH_SELECTOR16(cycler),     // pushi cycler
 	0x76,                               // push0
 	0x81, 0x00,                         // lag global[0]
 	0x4a, 0x04,                         // send 04 (get ego::cycler)
-	0x30, PATCH_UINT16(10),             // bnt [jump over heading call]
+	0x30, PATCH_UINT16(0x000a),         // bnt [skip the heading call]
 	PATCH_END
 };
 
 // The scripts in SQ4CD support simultaneous playing of speech and subtitles,
 // but this was not available as an option. The following two patches enable
 // this functionality in the game's GUI options dialog.
+//
 // Patch 1: iconTextSwitch::show, called when the text options button is shown.
-// This is patched to add the "Both" text resource (i.e. we end up with
-// "Speech", "Text" and "Both")
+//   This is patched to add the "Both" text resource (i.e. we end up with
+//   "Speech", "Text" and "Both")
 static const uint16 sq4CdSignatureTextOptionsButton[] = {
 	SIG_MAGICDWORD,
 	0x35, 0x01,                         // ldi 0x01
-	0xa1, 0x53,                         // sag 0x53
+	0xa1, 0x53,                         // sag global[0x53]
 	0x39, 0x03,                         // pushi 0x03
 	0x78,                               // push1
 	0x39, 0x09,                         // pushi 0x09
@@ -10138,48 +10141,51 @@ static const uint16 sq4CdPatchTextOptionsButton[] = {
 	PATCH_END
 };
 
-// Patch 2: Adjust a check in babbleIcon::init, which handles the babble icon
-// (e.g. the two guys from Andromeda) shown when dying/quitting.
+// Patch 2: Adjust a check in babbleIcon::init (the two guys from Andromeda),
+//  shown when dying/quitting.
+//
+// Responsible method: babbleIcon::init
 // Fixes bug: #6068
 static const uint16 sq4CdSignatureBabbleIcon[] = {
 	SIG_MAGICDWORD,
-	0x89, 0x5a,                         // lsg 5a
+	0x89, 0x5a,                         // lsg global[5a]
 	0x35, 0x02,                         // ldi 02
 	0x1a,                               // eq?
-	0x31, 0x26,                         // bnt 26  [02a7]
+	0x31, 0x26,                         // bnt 26 [02a7]
 	SIG_END
 };
 
 static const uint16 sq4CdPatchBabbleIcon[] = {
-	0x89, 0x5a,                         // lsg 5a
+	0x89, 0x5a,                         // lsg global[5a]
 	0x35, 0x01,                         // ldi 01
 	0x1a,                               // eq?
-	0x2f, 0x26,                         // bt 26  [02a7]
+	0x2f, 0x26,                         // bt 26 [02a7]
 	PATCH_END
 };
 
-// Patch 3: Add the ability to toggle among the three available options,
-// when the text options button is clicked: "Speech", "Text" and "Both".
-// Refer to the patch above for additional details.
-// iconTextSwitch::doit (called when the text options button is clicked)
+// Patch 3: Add the ability to toggle among the three available options
+//  when the text options button is clicked: "Speech", "Text" and "Both".
+//  Refer to the patch above for additional details.
+//
+// Responsible method: iconTextSwitch::doit
 static const uint16 sq4CdSignatureTextOptions[] = {
 	SIG_MAGICDWORD,
-	0x89, 0x5a,                         // lsg 0x5a (load global 90 to stack)
+	0x89, 0x5a,                         // lsg global[90]
 	0x3c,                               // dup
 	0x35, 0x01,                         // ldi 0x01
-	0x1a,                               // eq? (global 90 == 1)
+	0x1a,                               // eq?
 	0x31, 0x06,                         // bnt 0x06 (0x0691)
 	0x35, 0x02,                         // ldi 0x02
-	0xa1, 0x5a,                         // sag 0x5a (save acc to global 90)
+	0xa1, 0x5a,                         // sag global[90]
 	0x33, 0x0a,                         // jmp 0x0a (0x69b)
 	0x3c,                               // dup
 	0x35, 0x02,                         // ldi 0x02
-	0x1a,                               // eq? (global 90 == 2)
+	0x1a,                               // eq?
 	0x31, 0x04,                         // bnt 0x04 (0x069b)
 	0x35, 0x01,                         // ldi 0x01
-	0xa1, 0x5a,                         // sag 0x5a (save acc to global 90)
+	0xa1, 0x5a,                         // sag global[90]
 	0x3a,                               // toss
-	0x38, SIG_SELECTOR16(show),         // pushi 0x00d9
+	0x38, SIG_SELECTOR16(show),         // pushi show (0x00d9)
 	0x76,                               // push0
 	0x54, 0x04,                         // self 0x04
 	0x48,                               // ret
@@ -10187,17 +10193,17 @@ static const uint16 sq4CdSignatureTextOptions[] = {
 };
 
 static const uint16 sq4CdPatchTextOptions[] = {
-	0x89, 0x5a,                         // lsg 0x5a (load global 90 to stack)
+	0x89, 0x5a,                         // lsg global[90]
 	0x3c,                               // dup
 	0x35, 0x03,                         // ldi 0x03 (acc = 3)
-	0x1a,                               // eq? (global 90 == 3)
+	0x1a,                               // eq? (global[90] == 3)
 	0x2f, 0x07,                         // bt 0x07
-	0x89, 0x5a,                         // lsg 0x5a (load global 90 to stack again)
+	0x89, 0x5a,                         // lsg global[90]
 	0x35, 0x01,                         // ldi 0x01 (acc = 1)
-	0x02,                               // add: acc = global 90 (on stack) + 1 (previous acc value)
+	0x02,                               // add (acc = global[90] + 1)
 	0x33, 0x02,                         // jmp 0x02
 	0x35, 0x01,                         // ldi 0x01 (reset acc to 1)
-	0xa1, 0x5a,                         // sag 0x5a (save acc to global 90)
+	0xa1, 0x5a,                         // sag global[90]
 	0x33, 0x03,                         // jmp 0x03 (jump over the wasted bytes below)
 	0x34, PATCH_UINT16(0x0000),         // ldi 0x0000 (waste 3 bytes)
 	0x3a,                               // toss
@@ -10232,7 +10238,7 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 // Responsible method: robotIntoShip::changeState(9)
 static const uint16 sq1vgaSignatureUlenceFlatsTimepodGfxGlitch[] = {
 	0x39,
-	SIG_MAGICDWORD, SIG_SELECTOR8(cel), // pushi "cel"
+	SIG_MAGICDWORD, SIG_SELECTOR8(cel), // pushi cel
 	0x78,                               // push1
 	0x39, 0x0a,                         // pushi 0x0a (set ship::cel to 10)
 	0x38, SIG_UINT16(0x00a0),           // pushi 0x00a0 (ship::setLoop)
@@ -10246,18 +10252,20 @@ static const uint16 sq1vgaPatchUlenceFlatsTimepodGfxGlitch[] = {
 };
 
 // In Ulence Flats, there is a space ship, that you will use at some point.
-//  Near that space ship are 2 force field generators.
-//  When you look at the top of those generators, the game will crash.
-//  This happens also in Sierra SCI. It's caused by a jump, that goes out of bounds.
-//  We currently do not know if this was caused by a compiler glitch or if it was a developer error.
-//  Anyway we patch this glitchy code, so that the game won't crash anymore.
+//  Near that space ship are 2 force field generators. When you look at the top
+//  of those generators, the game will crash. This happens also in Sierra SCI.
+//  It's caused by a jump, that goes out of bounds.
+//
+// We currently do not know if this was caused by a compiler glitch or if it
+//  was a developer error. Anyway we patch this glitchy code, so that the game
+//  won't crash anymore.
 //
 // Applies to at least: English Floppy
 // Responsible method: radar1::doVerb
 // Fixes bug: #6816
 static const uint16 sq1vgaSignatureUlenceFlatsGeneratorGlitch[] = {
 	SIG_MAGICDWORD, 0x1a,               // eq?
-	0x30, SIG_UINT16(0xcdf4),           // bnt absolute 0xf000
+	0x30, SIG_UINT16(0xcdf4),           // bnt [absolute 0xf000]
 	SIG_END
 };
 
@@ -10270,9 +10278,9 @@ static const uint16 sq1vgaPatchUlenceFlatsGeneratorGlitch[] = {
 // No documentation for this patch (TODO)
 static const uint16 sq1vgaSignatureEgoShowsCard[] = {
 	SIG_MAGICDWORD,
-	0x38, SIG_SELECTOR16(timesShownID), // push "timesShownID"
+	0x38, SIG_SELECTOR16(timesShownID), // pushi timesShownID
 	0x78,                               // push1
-	0x38, SIG_SELECTOR16(timesShownID), // push "timesShownID"
+	0x38, SIG_SELECTOR16(timesShownID), // pushi timesShownID
 	0x76,                               // push0
 	0x51, 0x7c,                         // class DeltaurRegion
 	0x4a, 0x04,                         // send 0x04 (get timesShownID)
@@ -10291,7 +10299,7 @@ static const uint16 sq1vgaSignatureEgoShowsCard[] = {
 // Note that this script patch is merely a reordering of the
 // instructions in the original script.
 static const uint16 sq1vgaPatchEgoShowsCard[] = {
-	0x38, PATCH_SELECTOR16(timesShownID), // push "timesShownID"
+	0x38, PATCH_SELECTOR16(timesShownID), // pushi timesShownID
 	0x76,                               // push0
 	0x51, 0x7c,                         // class DeltaurRegion
 	0x4a, 0x04,                         // send 0x04 (get timesShownID)
@@ -10299,7 +10307,7 @@ static const uint16 sq1vgaPatchEgoShowsCard[] = {
 	0x35, 0x01,                         // ldi 1
 	0x02,                               // add
 	0x36,                               // push (this push corresponds to the wrong one above)
-	0x38, PATCH_SELECTOR16(timesShownID), // push "timesShownID"
+	0x38, PATCH_SELECTOR16(timesShownID), // pushi timesShownID
 	0x78,                               // push1
 	0x36,                               // push
 	0x51, 0x7c,                         // class DeltaurRegion
@@ -10327,38 +10335,38 @@ static const uint16 sq1vgaSignatureSpiderDroidTiming[] = {
 	0x38, SIG_UINT16(0x0088),           // pushi 0088h (script)
 	0x76,                               // push0
 	0x81, 0x02,                         // lag global[2] (current room)
-	0x4a, 0x04,                         // send 04 (get [current room].script)
+	0x4a, 0x04,                         // send 04 (get room script)
 	0x30, SIG_UINT16(0x0005),           // bnt [further method code]
 	0x35, 0x00,                         // ldi 00
 	0x32, SIG_UINT16(0x0052),           // jmp [super-call]
-	0x89, 0xa6,                         // lsg global[a6] <-- flag gets set to 1 when ego went up the skeleton tail, when going down it's set to 2
+	0x89, 0xa6,                         // lsg global[a6] (set to 1 when ego went up the skeleton tail, set to 2 when going down)
 	0x35, 0x01,                         // ldi 01
 	0x1a,                               // eq?
-	0x30, SIG_UINT16(0x0012),           // bnt [PChase set code], in case global A6 <> 1
+	0x30, SIG_UINT16(0x0012),           // bnt [PChase set code] (when global[A6] != 1)
 	0x81, 0xb5,                         // lag global[b5]
-	0x30, SIG_UINT16(0x000d),           // bnt [PChase set code], in case global B5 == 0
+	0x30, SIG_UINT16(0x000d),           // bnt [PChase set code] (when global[B5] == 0)
 	0x38, SIG_UINT16(0x008c),           // pushi 008c
 	0x78,                               // push1
-	0x72, SIG_UINT16(0x1cb6),           // lofsa 1CB6 (moveToPath)
+	0x72, SIG_UINT16(0x1cb6),           // lofsa moveToPath
 	0x36,                               // push
 	0x54, 0x06,                         // self 06
 	0x32, SIG_UINT16(0x0038),           // jmp [super-call]
 	// PChase set call
 	0x81, 0xb5,                         // lag global[B5]
 	0x18,                               // not
-	0x30, SIG_UINT16(0x0032),           // bnt [super-call], in case global B5 <> 0
+	0x30, SIG_UINT16(0x0032),           // bnt [super-call] (when global[B5] != 0)
 	// followed by:
 	// is spider in current room
-	// is global A6h == 2? -> set PChase
+	// is global[A6h] == 2? -> set PChase
 	SIG_END
 }; // 58 bytes)
 
-// Global A6h <> 1 (did NOT went up the skeleton)
-//  Global B5h = 0 -> set PChase
-//  Global B5h <> 0 -> do not do anything
-// Global A6h = 1 (did went up the skeleton)
-//  Global B5h = 0 -> set PChase
-//  Global B5h <> 0 -> set moveToPath
+// global[A6h] != 1 (did NOT went up the skeleton)
+//  global[B5h] = 0 -> set PChase
+//  global[B5h] != 0 -> do not do anything
+// global[A6h] = 1 (did went up the skeleton)
+//  global[B5h] = 0 -> set PChase
+//  global[B5h] != 0 -> set moveToPath
 
 static const uint16 sq1vgaPatchSpiderDroidTiming[] = {
 	0x63, 0x4e,                         // pToa script
@@ -10379,7 +10387,7 @@ static const uint16 sq1vgaPatchSpiderDroidTiming[] = {
 	0x35, 0x03,                         // ldi 03
 	0x0c,                               // shr
 	0x02,                               // add --> egoMoveSpeed + (egoMoveSpeed >> 3)
-	0x39, 0x01,                         // push 01 (waste 1 byte)
+	0x39, 0x01,                         // pushi 01 (waste 1 byte)
 	0x02,                               // add --> egoMoveSpeed++
 	0x65, 0x4c,                         // aTop cycleSpeed
 	0x65, 0x5e,                         // aTop moveSpeed
@@ -10411,23 +10419,21 @@ static const SciScriptPatcherEntry sq1vgaSignatures[] = {
 
 // ===========================================================================
 // The toolbox in sq5 is buggy. When you click on the upper part of the "put
-//  in inventory"-button (some items only - for example the hole puncher - at the
-//  upper left), points will get awarded correctly and the item will get put into
-//  the player's inventory, but you will then get a "not here" message and the
-//  item will also remain to be the current mouse cursor.
-// The bug report also says that items may get lost. I wasn't able to reproduce
-//  that part.
+//  in inventory" button (some items only - for example the hole puncher at the
+//  upper left), points will get awarded correctly, and the item will get put
+//  into the player's inventory, but you will then get a "not here" message,
+//  and the item will also remain as the current mouse cursor.
+// The bug report says items may get lost when exiting the toolbox screen,
+//  That was not reproduced.
 // This is caused by the mouse-click event getting reprocessed (which wouldn't
-//  be a problem by itself) and during this reprocessing coordinates are not
-//  processed the same as during the first click (script 226 includes a local
-//  subroutine, which checks coordinates in a hardcoded way w/o port-adjustment).
-// Because of this, the hotspot for the button is lower than it should be, which
-//  then results in the game thinking that the user didn't click on the button
-//  and also results in the previously mentioned message.
-// This happened in Sierra SCI as well (of course).
+//  be a problem by itself). Reprocessing treats coordinates differently from
+//  the first click (script 226 includes a local subroutine, which checks
+//  coordinates in a hardcoded way w/o port-adjustment).
+// Because of this, the hotspot for the button is lower than it should be,
+//  which results in the game thinking the user didn't click on the button and
+//  also results in the "not here" message.
 // We fix it by combining state 0 + 1 of takeTool::changeState and so stopping
-//  the event to get reprocessed. This was the only way possible, because everything
-//  else is done in SCI system scripts and I don't want to touch those.
+//  the event from being reprocessed... without touching SCI system scripts.
 // Applies to at least: English/German/French PC floppy
 // Responsible method: takeTool::changeState
 // Fixes bug: #6457
@@ -10441,9 +10447,9 @@ static const uint16 sq5SignatureToolboxFix[] = {
 	0x39, 0x03,                    // pushi 03
 	0x76,                          // push0
 	0x7c,                          // pushSelf
-	0x81, 0x5b,                    // lag 5b
+	0x81, 0x5b,                    // lag global[5b]
 	0x4a, 0x0e,                    // send 0e
-	0x32, SIG_UINT16(0x0088),      // jmp [end-of-method]
+	0x32, SIG_UINT16(0x0088),      // jmp [end of method]
 	0x3c,                          // dup
 	0x35, 0x01,                    // ldi 01
 	0x1a,                          // eq?
@@ -10474,7 +10480,7 @@ static const uint16 sq5PatchToolboxFix[] = {
 //
 // Applies to: PC Floppy
 // Responsible method: sEnterFromHall:changeState(0)
-// Fixes bug #7155
+// Fixes bug: #7155
 static const uint16 sq5SignatureDriveBayPathfindingFix[] = {
 	SIG_MAGICDWORD,
 	0x39, 0x0e,                     // pushi 0e [ x = 14d ]
