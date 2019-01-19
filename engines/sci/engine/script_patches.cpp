@@ -750,7 +750,7 @@ static const SciScriptPatcherEntry fanmadeSignatures[] = {
 static const uint16 freddypharkasSignatureIntroScaling[] = {
 	0x38, SIG_ADDTOOFFSET(+2),       // pushi (setLoop) (009b for PC CD)
 	0x78,                            // push1
-	PATCH_ADDTOOFFSET(1),            // push0 for first code, push1 for second code
+	SIG_ADDTOOFFSET(+1),             // push0 for first code, push1 for second code
 	0x38, SIG_ADDTOOFFSET(+2),       // pushi (setStep) (0143 for PC CD)
 	0x7a,                            // push2
 	0x39, 0x05,                      // pushi 05
@@ -782,29 +782,30 @@ static const uint16 freddypharkasPatchIntroScaling[] = {
 	0xa3, 0x02,                      // sal local[2]
 	// start of new inner loop
 	0x39, 0x00,                      // pushi 00
-	0x43, 0x2c, 0x00,                // callk GameIsRestarting <-- add this so that our speed throttler is triggered
-	SIG_ADDTOOFFSET(+47),            // skip almost all of inner loop
+	0x43, 0x2c, 0x00,                // callk GameIsRestarting (add this to trigger our speed throttler)
+	PATCH_ADDTOOFFSET(+47),          // skip almost all of inner loop
 	0x33, 0xca,                      // jmp [inner loop start]
 	PATCH_END
 };
 
-//  script 0 of freddy pharkas/CD PointsSound::check waits for a signal and if
-//   no signal received will call kDoSound(0xD) which is a dummy in sierra sci
-//   and ScummVM and will use acc (which is not set by the dummy) to trigger
-//   sound disposal. This somewhat worked in sierra sci, because the sample
-//   was already playing in the sound driver. In our case we would also stop
-//   the sample from playing, so we patch it out
-//   The "score" code is already buggy and sets volume to 0 when playing
+// PointsSound::check waits for a signal. If no signal is received, it'll call
+//   kDoSound(0x0d) which is a dummy in sierra sci. ScummVM and will use acc
+//   (which is not set by the dummy) to trigger sound disposal. This somewhat
+//   worked in sierra sci because the sample was already playing in the sound
+//   driver. In our case, that would also stop the sample from playing, so we
+//   patch it out. The "score" code is already buggy and sets volume to 0 when
+//   playing.
 // Applies to at least: English PC-CD
-// Responsible method: unknown
+// Responsible method: PointsSound::check in script 0
+// Fixes bug: #5059
 static const uint16 freddypharkasSignatureScoreDisposal[] = {
 	0x67, 0x32,                      // pTos 32 (selector theAudCount)
 	0x78,                            // push1
 	SIG_MAGICDWORD,
 	0x39, 0x0d,                      // pushi 0d
-	0x43, 0x75, 0x02,                // call kDoAudio
+	0x43, 0x75, 0x02,                // callk DoAudio
 	0x1c,                            // ne?
-	0x31,                            // bnt (-> to skip disposal)
+	0x31,                            // bnt [skip disposal]
 	SIG_END
 };
 
@@ -815,22 +816,22 @@ static const uint16 freddypharkasPatchScoreDisposal[] = {
 	PATCH_END
 };
 
-//  script 235 of freddy pharkas rm235::init and sEnterFrom500::changeState
-//   disable icon 7+8 of iconbar (CD only). When picking up the canister after
-//   placing it down, the scripts will disable all the other icons. This results
-//   in IconBar::disable doing endless loops even in sierra sci, because there
-//   is no enabled icon left. We remove disabling of icon 8 (which is help),
-//   this fixes the issue.
+// In script 235, rm235::init and sEnterFrom500 disable icon 7+8 of iconbar (CD
+//  only). When picking up the canister after placing it down, the scripts will
+//  disable all the other icons. This results in IconBar::disable doing endless
+//  loops even in sierra sci because there is no enabled icon left. We remove
+//  the disabling of icon 8 (which is help). This fixes the issue.
 // Applies to at least: English PC-CD
 // Responsible method: rm235::init and sEnterFrom500::changeState
+// Fixes bug: #5245
 static const uint16 freddypharkasSignatureCanisterHang[] = {
 	0x38, SIG_SELECTOR16(disable),   // pushi disable
 	0x7a,                            // push2
 	SIG_MAGICDWORD,
 	0x39, 0x07,                      // pushi 07
 	0x39, 0x08,                      // pushi 08
-	0x81, 0x45,                      // lag 45
-	0x4a, 0x08,                      // send 08 - call IconBar::disable(7, 8)
+	0x81, 0x45,                      // lag global[45]
+	0x4a, 0x08,                      // send 08 (call IconBar::disable(7, 8))
 	SIG_END
 };
 
@@ -838,22 +839,24 @@ static const uint16 freddypharkasPatchCanisterHang[] = {
 	PATCH_ADDTOOFFSET(+3),
 	0x78,                            // push1
 	PATCH_ADDTOOFFSET(+2),
-	0x33, 0x00,                      // ldi 00 (waste 2 bytes)
+	0x33, 0x00,                      // jmp 0 (waste 2 bytes)
 	PATCH_ADDTOOFFSET(+3),
-	0x06,                            // send 06 - call IconBar::disable(7)
+	0x06,                            // send 06 (call IconBar::disable(7))
 	PATCH_END
 };
 
-//  script 215 of freddy pharkas lowerLadder::doit and highLadder::doit actually
-//   process keyboard-presses when the ladder is on the screen in that room.
-//   They strangely also call kGetEvent. Because the main User::doit also calls
+// In script 215, lowerLadder::doit and highLadder::doit actually process
+//   keyboard presses when the ladder is on the screen in that room. They
+//   strangely also call kGetEvent. Because the main User::doit also calls
 //   kGetEvent, it's pure luck, where the event will hit. It's the same issue
-//   as in QfG1VGA and if you turn dos-box to max cycles, and click around for
-//   ego, sometimes clicks also won't get registered. Strangely it's not nearly
+//   as in QfG1VGA. If you turn DOSBox to max cycles and click around for ego,
+//   sometimes clicks also won't get registered. Strangely it's not nearly
 //   as bad as in our sci, but these differences may be caused by timing.
-//   We just reuse the active event, thus removing the duplicate kGetEvent call.
+//   We just reuse the active event, thus removing the duplicate kGetEvent
+//   call.
 // Applies to at least: English PC-CD, German Floppy, English Mac
 // Responsible method: lowerLadder::doit and highLadder::doit
+// Fixes bug: #5060
 static const uint16 freddypharkasSignatureLadderEvent[] = {
 	0x39, SIG_MAGICDWORD,
 	SIG_SELECTOR8(new),              // pushi new
@@ -864,9 +867,9 @@ static const uint16 freddypharkasSignatureLadderEvent[] = {
 	0x4a, 0x04,                      // send 04 - read User::curEvent
 	0x4a, 0x04,                      // send 04 - call curEvent::new
 	0xa5, 0x00,                      // sat temp[0]
-	0x38, SIG_SELECTOR16(localize),
+	0x38, SIG_SELECTOR16(localize),  // pushi localize
 	0x76,                            // push0
-	0x4a, 0x04,                      // send 04 - call curEvent::localize
+	0x4a, 0x04,                      // send 04 (call curEvent::localize)
 	SIG_END
 };
 
@@ -884,14 +887,14 @@ static const uint16 freddypharkasPatchLadderEvent[] = {
 // property selectors. They hacked the script to work around the issue,
 // so we revert the script back to using the values of the DOS script.
 // Applies to at least: English Mac
-// Responsible method: unknown
+// Responsible method: publicfpInv::drawInvWindow in script 15
 static const uint16 freddypharkasSignatureMacInventory[] = {
 	SIG_MAGICDWORD,
 	0x39, 0x23,                      // pushi 23
 	0x39, 0x74,                      // pushi 74
 	0x78,                            // push1
 	0x38, SIG_UINT16(0x0174),        // pushi 0174 (on mac it's actually 0x01, 0x74)
-	0x85, 0x15,                      // lat 15
+	0x85, 0x15,                      // lat temp[15]
 	SIG_END
 };
 
