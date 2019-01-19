@@ -3212,19 +3212,19 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 // Applies to at least: PC CD 1.4 English, 1.51 English, 1.51 German, 2.00 English
 static const uint16 kq7SubtitleFixSignature1[] = {
 	SIG_MAGICDWORD,
-	0x39, SIG_SELECTOR8(fore), // pushi $25 (fore)
+	0x39, SIG_SELECTOR8(fore), // pushi fore ($25)
 	0x78,                      // push1
 	0x39, 0x06,                // pushi 6 - sets fore to 6
-	0x39, SIG_SELECTOR8(back), // pushi $26 (back)
+	0x39, SIG_SELECTOR8(back), // pushi back ($26)
 	0x78,                      // push1
 	0x78,                      // push1 - sets back to 1
-	0x39, SIG_SELECTOR8(font), // pushi $2a (font)
+	0x39, SIG_SELECTOR8(font), // pushi font ($2a)
 	0x78,                      // push1
 	0x89, 0x16,                // lsg global[$16] - sets font to global[$16]
 	0x7a,                      // push2 (y)
 	0x78,                      // push1
 	0x76,                      // push0 - sets y to 0
-	0x54, SIG_UINT16(0x18),    // self $18
+	0x54, SIG_UINT16(0x0018),  // self $18
 	SIG_END
 };
 
@@ -3243,7 +3243,7 @@ static const uint16 kq7SubtitleFixSignature2[] = {
 	0x38, SIG_SELECTOR16(masterVolume), // pushi masterVolume (0212h for 2.00, 0219h for 1.51)
 	0x76,                               // push0
 	0x81, 0x01,                         // lag global[1]
-	0x4a, SIG_UINT16(0x04),             // send 4
+	0x4a, SIG_UINT16(0x0004),           // send 4
 	0x65, 0x32,                         // aTop curVolume
 	0x38, SIG_SELECTOR16(masterVolume), // pushi masterVolume (0212h for 2.00, 0219h for 1.51)
 	0x78,                               // push1
@@ -3255,7 +3255,7 @@ static const uint16 kq7SubtitleFixSignature2[] = {
 	0x08,                               // div
 	0x36,                               // push
 	0x81, 0x01,                         // lag global[1]
-	0x4a, SIG_UINT16(0x06),             // send 6
+	0x4a, SIG_UINT16(0x0006),           // send 6
 	// end of volume code
 	0x35, 0x01,                         // ldi 1
 	0x65, 0x28,                         // aTop initialized
@@ -3290,7 +3290,7 @@ static const uint16 kq7SubtitleFixSignature3[] = {
 	0x31, 0x07,                 // bnt [skip init code]
 	0x38, SIG_SELECTOR16(init), // pushi init ($8e for 2.00, $93 for 1.51)
 	0x76,                       // push0
-	0x54, SIG_UINT16(0x04),     // self 4
+	0x54, SIG_UINT16(0x0004),   // self 4
 	// end of init code
 	0x8f, 0x00,                 // lsp param[0]
 	0x35, 0x01,                 // ldi 1
@@ -3306,22 +3306,21 @@ static const uint16 kq7SubtitleFixSignature3[] = {
 };
 
 static const uint16 kq7SubtitleFixPatch3[] = {
-	PATCH_ADDTOOFFSET(+2),       // skip over "pToa initialized code"
-	0x2f, 0x0c,                  // bt [skip init code] - saved 1 byte
-	0x38,
-	PATCH_GETORIGINALUINT16(+6), // pushi (init)
-	0x76,                        // push0
-	0x54, PATCH_UINT16(0x04),    // self 4
+	PATCH_ADDTOOFFSET(+2),              // skip over "pToa initialized code"
+	0x2f, 0x0c,                         // bt [skip init code] - saved 1 byte
+	0x38, PATCH_GETORIGINALUINT16(+6),  // pushi init
+	0x76,                               // push0
+	0x54, PATCH_UINT16(0x0004),         // self 4
 	// additionally set background color here (5 bytes)
-	0x34, PATCH_UINT16(0xFF),    // pushi 255
-	0x65, 0x2e,                  // aTop back
+	0x34, PATCH_UINT16(0x00ff),         // ldi 255
+	0x65, 0x2e,                         // aTop back
 	// end of init code
-	0x8f, 0x00,                  // lsp param[0]
-	0x35, 0x01,                  // ldi 1 - this may get optimized to get another byte
-	0x1e,                        // gt?
-	0x31, 0x04,                  // bnt [set acc to 0]
-	0x87, 0x02,                  // lap param[2]
-	0x2f, 0x02,                  // bt [over set acc to 0 code]
+	0x8f, 0x00,                         // lsp param[0]
+	0x35, 0x01,                         // ldi 1 (this may get optimized to get another byte)
+	0x1e,                               // gt?
+	0x31, 0x04,                         // bnt [set acc to 0]
+	0x87, 0x02,                         // lap param[2]
+	0x2f, 0x02,                         // bt [over set acc to 0 code]
 	PATCH_END
 };
 
@@ -3331,9 +3330,9 @@ static const uint16 kq7BenchmarkSignature[] = {
 	0x38, SIG_SELECTOR16(new), // pushi new
 	0x76,                      // push0
 	0x51, SIG_ADDTOOFFSET(+1), // class Actor
-	0x4a, SIG_UINT16(0x04),    // send 4
-	0xa5, 0x00,                // sat 0
-	0x39, SIG_SELECTOR8(view), // pushi $e (view)
+	0x4a, SIG_UINT16(0x0004),  // send 4
+	0xa5, 0x00,                // sat temp[0]
+	0x39, SIG_SELECTOR8(view), // pushi view ($e)
 	SIG_MAGICDWORD,
 	0x78,                      // push1
 	0x38, SIG_UINT16(0xfdd4),  // pushi 64980
@@ -3347,16 +3346,20 @@ static const uint16 kq7BenchmarkPatch[] = {
 };
 
 // When attempting to use an inventory item on an object that does not interact
-// with that item, the game temporarily displays an X cursor, but does this by
-// spinning for 90000 cycles inside 'KQ7CD::pragmaFail', which make the duration
-// dependent on CPU speed, maxes out the CPU for no reason, and keeps the engine
-// from polling for events (which may make the window appear nonresponsive to the OS)
+// with that item, the game briefly displays an X cursor. It does this by
+// spinning for 90000 cycles, which makes the duration dependent on CPU speed,
+// maxes out the CPU for no reason, and keeps the engine from polling for
+// events (which may make the window appear nonresponsive to the OS).
+//
+// We replace the loop with a call to kWait().
+//
 // Applies to at least: KQ7 English 2.00b
+// Responsible method: KQ7CD::pragmaFail in script 0
 static const uint16 kq7PragmaFailSpinSignature[] = {
 	0x35, 0x00,               // ldi 0
-	0xa5, 0x02,               // sat 2
+	0xa5, 0x02,               // sat temp[2]
 	SIG_MAGICDWORD,
-	0x8d, 0x02,               // lst 2
+	0x8d, 0x02,               // lst temp[2]
 	0x35, 0x03,               // ldi 3
 	0x22,                     // lt?
 	SIG_END
@@ -3366,14 +3369,14 @@ static const uint16 kq7PragmaFailSpinPatch[] = {
 	0x78,                                     // push1
 	0x39, 0x12,                               // pushi 18 (~300ms)
 	0x43, kScummVMWaitId, PATCH_UINT16(0x02), // callk Wait, 2
-	0x33, 0x16,                               // jmp to setCursor
+	0x33, 0x16,                               // jmp [to setCursor]
 	PATCH_END
 };
 
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry kq7Signatures[] = {
 	{  true,     0, "disable video benchmarking",                  1, kq7BenchmarkSignature,                    kq7BenchmarkPatch },
-	{  true,     0, "remove hardcoded spinloop",                   1, kq7PragmaFailSpinSignature,               kq7PragmaFailSpinPatch },
+	{  true,     0, "remove hardcoded spin loop",                  1, kq7PragmaFailSpinSignature,               kq7PragmaFailSpinPatch },
 	{  true,    31, "enable subtitles (1/3)",                      1, kq7SubtitleFixSignature1,                 kq7SubtitleFixPatch1 },
 	{  true, 64928, "enable subtitles (2/3)",                      1, kq7SubtitleFixSignature2,                 kq7SubtitleFixPatch2 },
 	{  true, 64928, "enable subtitles (3/3)",                      1, kq7SubtitleFixSignature3,                 kq7SubtitleFixPatch3 },
