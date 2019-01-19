@@ -7980,28 +7980,41 @@ static const uint16 qfg3PatchMissingPoints2[] = {
 // Responsible method: combatControls::dispatchEvent (script 550) + WarriorObj in heap
 // Fixes bug: #6247
 static const uint16 qfg3SignatureCombatSpeedThrottling1[] = {
-	0x31, 0x0d,                         // bnt [skip code]
+	0x3f, 0x03,                         // link 3d (these temp vars are never used)
+	0x76,                               // push0
+	0x43, 0x42, 0x00,                   // callk GetTime, 0d
+	0xa1, 0x58,                         // sag global[88]
+	0x36,                               // push
+	0x83, 0x01,                         // lal local[1]
+	SIG_ADDTOOFFSET(+3),                // ...
 	SIG_MAGICDWORD,
-	0x89, 0xd2,                         // lsg global[D2h]
+	0x89, 0xd2,                         // lsg global[210]
 	0x35, 0x00,                         // ldi 0
 	0x1e,                               // gt?
-	0x31, 0x06,                         // bnt [skip code]
-	0xe1, 0xd2,                         // -ag global[D2h] (jump skips over this)
-	0x81, 0x58,                         // lag global[58h]
-	0xa3, 0x01,                         // sal local[01]
+	SIG_ADDTOOFFSET(+6),                // ...
+	0xa3, 0x01,                         // sal local[1]
 	SIG_END
 };
 
 static const uint16 qfg3PatchCombatSpeedThrottling1[] = {
-	0x80, 0xd2,                         // lsg global[D2h]
-	0x14,                               // or
-	0x31, 0x06,                         // bnt [skip code] (saves 4 bytes)
-	0xe1, 0xd2,                         // -ag global[D2h]
-	0x81, 0x58,                         // lag global[58h]
-	0xa3, 0x01,                         // sal local[01] (jump skips over this)
-	// our code
-	0x76,                               // push0
-	0x43, 0x2c, 0x00,                   // callk GameIsRestarting (add this to trigger our speed throttler)
+	0x76,                               // push0  (no link, freed +2 bytes)
+	0x43, 0x42, 0x00,                   // callk GetTime, 0d
+	0xa1, 0x58,                         // sag global[88] (no push, leave time in acc)
+	0x8b, 0x01,                         // lsl local[1] (stack up the local instead, freed +1 byte)
+	0x1c,                               // ne?
+	0x31, 0x0c,                         // bnt 12d [after sal]
+                                        //
+	0x81, 0xd2,                         // lag global[210] (load into acc instead of stack)
+	0x76,                               // push0 (push0 instead of ldi 0, freed +1 byte)
+	0x22,                               // lt? (flip the comparison)
+	0x31, 0x06,                         // bnt 6d [after sal]
+                                        //
+	0xe1, 0xd2,                         // -ag global[210]
+	0x81, 0x58,                         // lag global[88]
+	0xa3, 0x01,                         // sal local[1]
+
+	0x76,                               // push0 (0 call args)
+	0x43, 0x2c, 0x00,                   // callk GameIsRestarting, 0d (add this to trigger our speed throttler)
 	PATCH_END
 };
 
