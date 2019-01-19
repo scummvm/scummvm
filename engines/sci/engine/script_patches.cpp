@@ -447,8 +447,8 @@ static const uint16 torinLarry7NumSavesPatch[] = {
 //  get an "Oops" message in Sierra SCI.
 //
 // This is caused by peepingTom in script 169 not getting properly initialized.
-// peepingTom calls the object behind global b9h. This global variable is
-//  properly initialized, when walking there manually (method fawaz::doit).
+// peepingTom calls the object behind global[b9h]. This global variable is
+//  properly initialized when walking there manually (method fawaz::doit).
 // When you instead walk there automatically (method fawaz::handleEvent), that
 //  global isn't initialized, which then results in the Oops-message in Sierra SCI
 //  and an error message in ScummVM/SCI.
@@ -458,16 +458,16 @@ static const uint16 torinLarry7NumSavesPatch[] = {
 // Fixes bug: #6402
 static const uint16 camelotSignaturePeepingTom[] = {
 	0x72, SIG_MAGICDWORD, SIG_UINT16(0x077e), // lofsa fawaz <-- start of proper initializion code
-	0xa1, 0xb9,                      // sag b9h
-	SIG_ADDTOOFFSET(+571),           // skip 571 bytes
+	0xa1, 0xb9,                      // sag global[b9h]
+	SIG_ADDTOOFFSET(+571),           // ...
 	0x39, 0x7a,                      // pushi 7a <-- initialization code when walking automatically
 	0x78,                            // push1
 	0x7a,                            // push2
-	0x38, SIG_UINT16(0x00a9), // + 0xa9, 0x00,   // pushi 00a9 - script 169
+	0x38, SIG_UINT16(0x00a9),        // pushi 00a9 - script 169
 	0x78,                            // push1
-	0x43, 0x02, 0x04,                // call kScriptID
+	0x43, 0x02, 0x04,                // callk ScriptID
 	0x36,                            // push
-	0x81, 0x00,                      // lag 00
+	0x81, 0x00,                      // lag global[0]
 	0x4a, 0x06,                      // send 06
 	0x32, SIG_UINT16(0x0520),        // jmp [end of fawaz::handleEvent]
 	SIG_END
@@ -475,7 +475,7 @@ static const uint16 camelotSignaturePeepingTom[] = {
 
 static const uint16 camelotPatchPeepingTom[] = {
 	PATCH_ADDTOOFFSET(+576),
-	0x32, PATCH_UINT16(0xfdbd),      // jmp to fawaz::doit / properly init peepingTom code
+	0x32, PATCH_UINT16(0xfdbd),      // jmp [to fawaz::doit] (properly init peepingTom code)
 	PATCH_END
 };
 
