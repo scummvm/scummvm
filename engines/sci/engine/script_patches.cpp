@@ -2290,23 +2290,26 @@ static const SciScriptPatcherEntry gk2Signatures[] = {
 #endif
 
 // ===========================================================================
-// at least during harpy scene export 29 of script 0 is called in kq5cd and
-//  has an issue for those calls, where temp 3 won't get inititialized, but
-//  is later used to set master volume. This issue makes sierra sci set
-//  the volume to max. We fix the export, so volume won't get modified in
-//  those cases.
+// At least during the harpy scene, export 29 of script 0 is called and has an
+//  issue where temp[3] won't get inititialized, but is later used to set
+//  master volume. This makes SSCI set the volume to max. We fix the procedure,
+//  so volume won't get modified in those cases.
+//
+// Applies to at least: PC CD
+// Responsible method: export 29 in script 0
+// Fixes bug: #5209
 static const uint16 kq5SignatureCdHarpyVolume[] = {
 	SIG_MAGICDWORD,
 	0x80, SIG_UINT16(0x0191),        // lag global[191h]
 	0x18,                            // not
-	0x30, SIG_UINT16(0x002c),        // bnt [jump further] (jumping, if global 191h is 1)
+	0x30, SIG_UINT16(0x002c),        // bnt [jump further] (jumping, if global[191h] is 1)
 	0x35, 0x01,                      // ldi 01
-	0xa0, SIG_UINT16(0x0191),        // sag global[191h] (setting global 191h to 1)
+	0xa0, SIG_UINT16(0x0191),        // sag global[191h] (setting to 1)
 	0x38, SIG_UINT16(0x017b),        // pushi 017b
 	0x76,                            // push0
 	0x81, 0x01,                      // lag global[1]
 	0x4a, 0x04,                      // send 04 - read KQ5::masterVolume
-	0xa5, 0x03,                      // sat temp[3] (store volume in temp 3)
+	0xa5, 0x03,                      // sat temp[3] (store volume)
 	0x38, SIG_UINT16(0x017b),        // pushi 017b
 	0x76,                            // push0
 	0x81, 0x01,                      // lag global[1]
@@ -2322,28 +2325,25 @@ static const uint16 kq5PatchCdHarpyVolume[] = {
 	0x76,                            // push0 (1 new byte)
 	0x51, 0x88,                      // class SpeakTimer (2 new bytes)
 	0x4a, 0x04,                      // send 04 (2 new bytes) -> read SpeakTimer::theVol
-	0xa5, 0x03,                      // sat temp[3] (2 new bytes) -> write to temp 3
+	0xa5, 0x03,                      // sat temp[3] (2 new bytes)
 	0x80, PATCH_UINT16(0x0191),      // lag global[191h]
 	// saving 1 byte due optimization
-	0x2e, PATCH_UINT16(0x0023),      // bt [jump further] (jumping, if global 191h is 1)
+	0x2e, PATCH_UINT16(0x0023),      // bt [jump further] (jumping, if global[191h] is 1)
 	0x35, 0x01,                      // ldi 01
-	0xa0, PATCH_UINT16(0x0191),      // sag global[191h] (setting global 191h to 1)
+	0xa0, PATCH_UINT16(0x0191),      // sag global[191h] (setting to 1)
 	0x38, PATCH_UINT16(0x017b),      // pushi 017b
 	0x76,                            // push0
 	0x81, 0x01,                      // lag global[1]
 	0x4a, 0x04,                      // send 04 - read KQ5::masterVolume
-	0xa5, 0x03,                      // sat temp[3] (store volume in temp 3)
+	0xa5, 0x03,                      // sat temp[3] (store volume)
 	// saving 8 bytes due removing of duplicate code
 	0x39, 0x04,                      // pushi 04 (saving 1 byte due swapping)
 	0x22,                            // lt? (because we switched values)
 	PATCH_END
 };
 
-// This is a heap patch, and it modifies the properties of an object, instead
-// of patching script code.
-//
 // The witchCage object in script 200 is broken and claims to have 12
-// variables instead of the 8 it should have because it is a Cage.
+// properties instead of the 8 it should have because it is a Cage.
 // Additionally its top,left,bottom,right properties are set to 0 rather
 // than the right values. We fix the object by setting the right values.
 // If they are all zero, this causes an impossible position check in
@@ -2354,6 +2354,8 @@ static const uint16 kq5PatchCdHarpyVolume[] = {
 // to be bypassed entirely.
 // See also the warning+comment in Object::initBaseObject
 //
+// Applies to at least: PC CD, English PC floppy
+// Responsible method: heap in script 200
 // Fixes bug: #4964
 static const uint16 kq5SignatureWitchCageInit[] = {
 	SIG_UINT16(0x0000),         // top
@@ -2376,12 +2378,12 @@ static const uint16 kq5PatchWitchCageInit[] = {
 	PATCH_END
 };
 
-// The multilingual releases of KQ5 hang right at the end during the magic battle with Mordack.
-// It seems additional code was added to wait for signals, but the signals are never set and thus
-// the game hangs. We disable that code, so that the battle works again.
-// This also happened in the original interpreter.
-// We must not change similar code, that happens before.
-
+// The multilingual releases of KQ5 hang right at the end during the magic
+// battle with Mordack. It seems additional code was added to wait for signals,
+// but the signals are never set and thus the game hangs. We disable that code,
+// so that the battle works again. This also happened in the original
+// interpreter. We must not change similar code, that happens before.
+//
 // Applies to at least: French PC floppy, German PC floppy, Spanish PC floppy
 // Responsible method: stingScript::changeState, dragonScript::changeState, snakeScript::changeState
 static const uint16 kq5SignatureMultilingualEndingGlitch[] = {
@@ -2399,29 +2401,34 @@ static const uint16 kq5SignatureMultilingualEndingGlitch[] = {
 
 static const uint16 kq5PatchMultilingualEndingGlitch[] = {
 	PATCH_ADDTOOFFSET(+6),
-	0x32,                            // change BNT into JMP
+	0x32,                            // jmp (replace bnt)
 	PATCH_END
 };
 
 // In the final battle, the DOS version uses signals in the music to handle
 // timing, while in the Windows version another method is used and the GM
-// tracks do not contain these signals.
-// The original kq5 interpreter used global 400 to distinguish between
-// Windows (1) and DOS (0) versions.
-// We replace the 4 relevant checks for global 400 by a fixed true when
-// we use these GM tracks.
+// tracks do not contain these signals. The original kq5 interpreter used
+// global[400] to distinguish between Windows (1) and DOS (0) versions.
 //
-// Instead, we could have set global 400, but this has the possibly unwanted
+// We replace the global[400] checks with a fixed true. This is toggled with
+// enablePatch() below when alternative Windows GM MIDI tracks are used.
+//
+// Instead, we could have set global[400], but this has the possibly unwanted
 // side effects of switching to black&white cursors (which also needs complex
-// changes to GameFeatures::detectsetCursorType() ) and breaking savegame
+// changes to GameFeatures::detectsetCursorType()) and breaking savegame
 // compatibilty between the DOS and Windows CD versions of KQ5.
-// TODO: Investigate these side effects more closely.
+//
+// TODO: Investigate those side effects more closely.
+// Applies to at least: Win CD
+// Responsible method: mordOneScript::changeState(1), dragonScript::changeState(1),
+//                     fireScript::changeState() in script 124
+// Fixes bug: #6251
 static const uint16 kq5SignatureWinGMSignals[] = {
 	SIG_MAGICDWORD,
-	0x80, SIG_UINT16(0x0190),        // lag 0x190
+	0x80, SIG_UINT16(0x0190),        // lag global[400]
 	0x18,                            // not
-	0x30, SIG_UINT16(0x001b),        // bnt +0x001B
-	0x89, 0x57,                      // lsg 0x57
+	0x30, SIG_UINT16(0x001b),        // bnt 0x001b
+	0x89, 0x57,                      // lsg global[87]
 	SIG_END
 };
 
@@ -2433,9 +2440,9 @@ static const uint16 kq5PatchWinGMSignals[] = {
 //          script, description,                                      signature                  patch
 static const SciScriptPatcherEntry kq5Signatures[] = {
 	{  true,     0, "CD: harpy volume change",                     1, kq5SignatureCdHarpyVolume,            kq5PatchCdHarpyVolume },
-	{  true,   200, "CD: witch cage init",                         1, kq5SignatureWitchCageInit,            kq5PatchWitchCageInit },
 	{  true,   124, "Multilingual: Ending glitching out",          3, kq5SignatureMultilingualEndingGlitch, kq5PatchMultilingualEndingGlitch },
 	{ false,   124, "Win: GM Music signal checks",                 4, kq5SignatureWinGMSignals,             kq5PatchWinGMSignals },
+	{  true,   200, "CD: witch cage init",                         1, kq5SignatureWitchCageInit,            kq5PatchWitchCageInit },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
