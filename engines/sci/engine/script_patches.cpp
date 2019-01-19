@@ -10696,15 +10696,16 @@ static const SciScriptPatcherEntry shiversSignatures[] = {
 // a dramatic long fade, but does this with an unreasonably large number of
 // divisions which takes tens of seconds to finish (because transitions are not
 // CPU-dependent in ScummVM).
+// Fixes bug: #9590
 static const uint16 sq6SlowTransitionSignature1[] = {
 	SIG_MAGICDWORD,
-	0x38, SIG_UINT16(0x578), // pushi $578
-	0x51, 0x33,              // class Styler
+	0x38, SIG_UINT16(0x0578),           // pushi $578
+	0x51, 0x33,                         // class Styler
 	SIG_END
 };
 
 static const uint16 sq6SlowTransitionPatch1[] = {
-	0x38, SIG_UINT16(0x1f4), // pushi 500
+	0x38, PATCH_UINT16(0x01f4),         // pushi 500
 	PATCH_END
 };
 
@@ -10712,15 +10713,16 @@ static const uint16 sq6SlowTransitionPatch1[] = {
 // be a much larger value at startup (200 vs 30) if it thinks it is running in
 // Windows. Room 410 (eulogy room) also unconditionally resets divisions to the
 // larger value.
+// Fixes bug: #9590
 static const uint16 sq6SlowTransitionSignature2[] = {
 	SIG_MAGICDWORD,
-	0x38, SIG_UINT16(0xc8), // pushi $c8
-	0x51, 0x33,             // class Styler
+	0x38, SIG_UINT16(0x00c8),           // pushi $c8
+	0x51, 0x33,                         // class Styler
 	SIG_END
 };
 
 static const uint16 sq6SlowTransitionPatch2[] = {
-	0x38, SIG_UINT16(0x1e), // pushi 30
+	0x38, PATCH_UINT16(0x001e),         // pushi 30
 	PATCH_END
 };
 
@@ -10732,7 +10734,7 @@ static const uint16 sq6BenchmarkSignature[] = {
 	0x38, SIG_SELECTOR16(init),  // pushi init
 	0x76,                        // push0
 	0x7e, SIG_ADDTOOFFSET(+2),   // line
-	0x38, SIG_SELECTOR16(posn),  // pushi $140 (posn)
+	0x38, SIG_SELECTOR16(posn),  // pushi posn
 	SIG_END
 };
 
@@ -10760,14 +10762,15 @@ static const SciScriptPatcherEntry sq6Signatures[] = {
 // in ScummVM. This patch is basically identical to the patch for LSL7, except
 // that they left line numbers in the LSL7 scripts and changed the music volume.
 // Applies to at least: English CD
+// Fixes bug: #9700
 static const uint16 torinVolumeResetSignature1[] = {
 	SIG_MAGICDWORD,
 	0x35, 0x28, // ldi $28
-	0xa1, 0xe3, // sag $e3 (music volume)
+	0xa1, 0xe3, // sag global[$e3] (music volume)
 	0x35, 0x3c, // ldi $3c
-	0xa1, 0xe4, // sag $e4 (sfx volume)
+	0xa1, 0xe4, // sag global[$e4] (sfx volume)
 	0x35, 0x64, // ldi $64
-	0xa1, 0xe5, // sag $e5 (speech volume)
+	0xa1, 0xe5, // sag global[$e5] (speech volume)
 	SIG_END
 };
 
@@ -10781,44 +10784,46 @@ static const uint16 torinVolumeResetPatch1[] = {
 // the volume stored in ScummVM. This patch is basically identical to the patch
 // for LSL7, except that they left line numbers in the LSL7 scripts.
 // Applies to at least: English CD
+// Fixes bug: #9700
 static const uint16 torinVolumeResetSignature2[] = {
 	SIG_MAGICDWORD,
-	0x38, SIG_SELECTOR16(readWord), // pushi $020b (readWord)
-	0x76,                           // push0
-	SIG_ADDTOOFFSET(6),             // advance file stream
-	0xa1, 0xe3,                     // sag $e3 (music volume)
-	SIG_ADDTOOFFSET(10),            // advance file stream
-	0xa1, 0xe4,                     // sag $e4 (sfx volume)
-	SIG_ADDTOOFFSET(10),            // advance file stream
-	0xa1, 0xe5,                     // sag $e5 (speech volume)
+	0x38, SIG_SELECTOR16(readWord),     // pushi readWord ($020b)
+	0x76,                               // push0
+	SIG_ADDTOOFFSET(+6),                // ...
+	0xa1, 0xe3,                         // sag global[$e3] (music volume)
+	SIG_ADDTOOFFSET(+10),               // ...
+	0xa1, 0xe4,                         // sag global[$e4] (sfx volume)
+	SIG_ADDTOOFFSET(+10),               // ...
+	0xa1, 0xe5,                         // sag global[$e5] (speech volume)
 	SIG_END
 };
 
 static const uint16 torinVolumeResetPatch2[] = {
-	PATCH_ADDTOOFFSET(10), // advance file stream
-	0x18, 0x18,            // waste bytes
-	PATCH_ADDTOOFFSET(10), // advance file stream
-	0x18, 0x18,            // waste bytes
-	PATCH_ADDTOOFFSET(10), // advance file stream
-	0x18, 0x18,            // waste bytes
+	PATCH_ADDTOOFFSET(+10),
+	0x18, 0x18,                         // (waste bytes)
+	PATCH_ADDTOOFFSET(+10),             // ...
+	0x18, 0x18,                         // (waste bytes)
+	PATCH_ADDTOOFFSET(+10),             // ...
+	0x18, 0x18,                         // (waste bytes)
 	PATCH_END
 };
 
 // In Escarpa, it is possible for Boogle to be left outside of Torin's bag
 // when fast-forwarding through the exit animation of the seraglio. If this
-// happens, when the player goes from the seraglio to the dragon's cave and then
-// tries to worm Boogle to the left side of the cave, the game will hang because
-// Boogle is on the wrong side of the navigable area barrier and cannot move
-// through it to continue the cutscene. This patch fixes the fast-forward code
-// 'soBoogleBackUp::ff' in the seraglio so that Boogle's in-the-bag flag is set
-// when fast forwarding.
+// happens, when the player goes from the seraglio to the dragon's cave and
+// then tries to worm Boogle to the left side of the cave, the game will hang
+// because Boogle is on the wrong side of the navigable area barrier and cannot
+// move through it to continue the cutscene. This patch fixes the fast-forward
+// code 'soBoogleBackUp::ff' in the seraglio so that Boogle's in-the-bag flag
+// is set when fast-forwarding.
 // Applies to at least: English CD, Spanish CD
+// Fixes bug: #9836
 static const uint16 torinSeraglioBoogleFlagSignature[] = {
 	0x35, 0x00,                 // ldi 0
 	SIG_MAGICDWORD,
-	0xa3, 0x00,                 // sal 0
+	0xa3, 0x00,                 // sal local[0]
 	0x38, SIG_SELECTOR16(test), // pushi test
-	SIG_ADDTOOFFSET(0x5a),      // all the rest of the method
+	SIG_ADDTOOFFSET(+0x5a),     // all the rest of the method
 	// CHECKME: Spanish version seems to have a total of 0x5d bytes from this point to the ret
 	// FIXME: Check for end of method (e.g. ret) and add different signatures in case localized versions are different
 	SIG_END
@@ -10826,79 +10831,79 @@ static const uint16 torinSeraglioBoogleFlagSignature[] = {
 
 static const uint16 torinSeraglioBoogleFlagPatch[] = {
 	// @1e5f
-	// ldi 0, sal 0 removed from here (+4 bytes)
+	// ldi 0, sal local[0] removed from here (+4 bytes)
 
 	// @1e5f (+4 bytes)
 	// local[0] = /* oFlags */ ScriptID(64017, 0);
-	0x7a,                        // push2
-	0x38, PATCH_UINT16(0xfa11),  // pushi 64017
-	0x76,                        // push0
-	0x43, 0x02, PATCH_UINT16(4), // callk ScriptID[2], 4
-	0xa3, 0x00,                  // sal 0 (-2 bytes)
+	0x7a,                               // push2
+	0x38, PATCH_UINT16(0xfa11),         // pushi 64017
+	0x76,                               // push0
+	0x43, 0x02, PATCH_UINT16(0x0004),   // callk ScriptID[2], 4
+	0xa3, 0x00,                         // sal local[0] (-2 bytes)
 
 	// @1e6a (+2 bytes)
 	// acc = local[0].test(94);
-	0x38, PATCH_SELECTOR16(test), // pushi test
-	0x78,                         // push1
-	0x39, 0x5e,                   // pushi 94
-	0x4a, PATCH_UINT16(0x06),     // send 6
+	0x38, PATCH_SELECTOR16(test),       // pushi test
+	0x78,                               // push1
+	0x39, 0x5e,                         // pushi 94
+	0x4a, PATCH_UINT16(0x0006),         // send 6
 
 	// @1e73 (+2 bytes)
 	// if (!acc) goto elseCase;
-	0x30, PATCH_UINT16(0x34),     // bnt 0x31 + 3
+	0x30, PATCH_UINT16(0x0034),         // bnt 0x31 + 3
 
 	// @1e76 (+2 bytes)
 	// global[0].get(ScriptID(64001, 0).get(20));
-	0x38, PATCH_SELECTOR16(get), // pushi get
-	0x78,                        // push1
-	0x38, PATCH_SELECTOR16(get), // pushi get
-	0x78,                        // push1
-	0x39, 0x14,                  // pushi 20
-	0x7a,                        // push2
-	0x38, PATCH_UINT16(0xfa01),  // pushi 64001
-	0x76,                        // push0
-	0x43, 0x02, PATCH_UINT16(4), // callk ScriptID[2], 4
-	0x4a, PATCH_UINT16(0x06),    // send 6
-	0x36,                        // push
-	0x81, 0x00,                  // lag 0 (ego)
-	0x4a, PATCH_UINT16(0x06),    // send 6
+	0x38, PATCH_SELECTOR16(get),        // pushi get
+	0x78,                               // push1
+	0x38, PATCH_SELECTOR16(get),        // pushi get
+	0x78,                               // push1
+	0x39, 0x14,                         // pushi 20
+	0x7a,                               // push2
+	0x38, PATCH_UINT16(0xfa01),         // pushi 64001
+	0x76,                               // push0
+	0x43, 0x02, PATCH_UINT16(0x0004),   // callk ScriptID[2], 4
+	0x4a, PATCH_UINT16(0x0006),         // send 6
+	0x36,                               // push
+	0x81, 0x00,                         // lag global[0] (ego)
+	0x4a, PATCH_UINT16(0x0006),         // send 6
 
 	// @1e92 (+2 bytes)
 	// local[0].set(52);
-	0x38, PATCH_SELECTOR16(set), // pushi set
-	0x78,                        // push1
-	0x39, 0x34,                  // pushi 52
-	0x83, 0x00,                  // lal 0 (+7 byte)
-	0x4a, PATCH_UINT16(0x06),    // send 6
+	0x38, PATCH_SELECTOR16(set),        // pushi set
+	0x78,                               // push1
+	0x39, 0x34,                         // pushi 52
+	0x83, 0x00,                         // lal local[0] (+7 byte)
+	0x4a, PATCH_UINT16(0x0006),         // send 6
 
 	// @1e9d (+9 bytes)
 	// goto endOfBranch;
-	0x33, 0x0b,                  // jmp [to end of conditional branch] (+1 byte)
+	0x33, 0x0b,                         // jmp [to end of conditional branch] (+1 byte)
 
 	// @1e9f (+10 bytes)
 	// elseCase: local[0].clear(97);
-	0x38, PATCH_SELECTOR16(clear), // pushi clear
-	0x78,                          // push1
-	0x39, 0x61,                    // pushi 97
-	0x83, 0x00,                    // lal 0 (+7 bytes)
-	0x4a, PATCH_UINT16(0x06),      // send 6
+	0x38, PATCH_SELECTOR16(clear),      // pushi clear
+	0x78,                               // push1
+	0x39, 0x61,                         // pushi 97
+	0x83, 0x00,                         // lal local[0] (+7 bytes)
+	0x4a, PATCH_UINT16(0x0006),         // send 6
 
 	// @1eaa (+17 bytes)
 	// endOfBranch: local[0].set(232);
-	0x38, PATCH_SELECTOR16(set),   // pushi set (-3 bytes)
-	0x78,                          // push1 (-1 byte)
-	0x38, PATCH_UINT16(0xe8),      // pushi 232 (Boogle-in-bag flag) (-3 bytes)
-	0x83, 0x00,                    // lal 0 (-2 bytes)
-	0x4a, PATCH_UINT16(0x06),      // send 6 (-3 bytes)
+	0x38, PATCH_SELECTOR16(set),        // pushi set (-3 bytes)
+	0x78,                               // push1 (-1 byte)
+	0x38, PATCH_UINT16(0x00e8),         // pushi 232 (Boogle-in-bag flag) (-3 bytes)
+	0x83, 0x00,                         // lal local[0] (-2 bytes)
+	0x4a, PATCH_UINT16(0x0006),         // send 6 (-3 bytes)
 
 	// @1eb6 (+5 bytes)
 	// local[0] = 0; self.dispose();
-	0x38, PATCH_SELECTOR16(dispose), // pushi dispose
-	0x76,                            // push0
-	0x3c,                            // dup (-1 byte)
-	0xab, 0x00,                      // ssl 0 (-2 bytes)
-	0x54, PATCH_UINT16(4),           // self 4
-	0x48,                            // ret
+	0x38, PATCH_SELECTOR16(dispose),    // pushi dispose
+	0x76,                               // push0
+	0x3c,                               // dup (-1 byte)
+	0xab, 0x00,                         // ssl local[0] (-2 bytes)
+	0x54, PATCH_UINT16(0x0004),         // self 4
+	0x48,                               // ret
 
 	// @1ec1 (+2 bytes)
 	PATCH_END
