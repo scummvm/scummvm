@@ -4731,7 +4731,7 @@ static const SciScriptPatcherEntry laurabow1Signatures[] = {
 //
 // Moving away the painting in the room with the hidden safe is problematic
 //  for the CD version of the game. safePic::doVerb gets triggered by the mouse-click.
-// This method sets local 0 as signal, which is only meant to get handled, when
+// This method sets local[0] as signal, which is only meant to get handled, when
 //  the player clicks again to move the painting back. This signal is processed by
 //  the room doit-script.
 // That doit-script checks safePic::cel to be not equal 0 and would then skip over
@@ -4760,7 +4760,7 @@ static const uint16 laurabow2CDSignaturePaintingClosing[] = {
 	0x7a,                               // push2
 	0x38, SIG_UINT16(0x0231),           // pushi 0231h (561)
 	0x76,                               // push0
-	0x43, 0x02, 0x04,                   // kScriptID (get export 0 of script 561)
+	0x43, 0x02, 0x04,                   // callk ScriptID, 04 (get export 0 of script 561)
 	0x4a, 0x04,                         // send 04 (gets safePicture::cel)
 	0x18,                               // not
 	0x31, 0x21,                         // bnt [exit]
@@ -4769,14 +4769,14 @@ static const uint16 laurabow2CDSignaturePaintingClosing[] = {
 	0x7a,                               // push2
 	0x39, 0x20,                         // pushi 20
 	0x76,                               // push0
-	0x43, 0x02, 0x04,                   // kScriptID (get export 0 of script 32)
+	0x43, 0x02, 0x04,                   // callk ScriptID, 04 (get export 0 of script 32)
 	0x4a, 0x04,                         // send 04 (get sHeimlich::room)
 	0x36,                               // push
 	0x81, 0x0b,                         // lag global[b] (current room)
 	0x1c,                               // ne?
 	0x31, 0x0e,                         // bnt [exit]
 	0x35, 0x00,                         // ldi 00
-	0xa3, 0x00,                         // sal local[0] -> reset safePic signal
+	0xa3, 0x00,                         // sal local[0] (reset safePic signal)
 	SIG_END
 };
 
@@ -4785,11 +4785,11 @@ static const uint16 laurabow2CDPatchPaintingClosing[] = {
 	0x3c,                               // dup (1 additional byte)
 	0x76,                               // push0
 	0x3c,                               // dup (1 additional byte)
-	0xab, 0x00,                         // ssl local[0] -> reset safePic signal
+	0xab, 0x00,                         // ssl local[0] (reset safePic signal)
 	0x7a,                               // push2
 	0x38, PATCH_UINT16(0x0231),         // pushi 0231h (561)
 	0x76,                               // push0
-	0x43, 0x02, 0x04,                   // kScriptID (get export 0 of script 561)
+	0x43, 0x02, 0x04,                   // callk ScriptID, 04 (get export 0 of script 561)
 	0x4a, 0x04,                         // send 04 (gets safePicture::cel)
 	0x1a,                               // eq?
 	0x31, 0x1d,                         // bnt [exit]
@@ -4798,7 +4798,7 @@ static const uint16 laurabow2CDPatchPaintingClosing[] = {
 	0x7a,                               // push2
 	0x39, 0x20,                         // pushi 20
 	0x76,                               // push0
-	0x43, 0x02, 0x04,                   // kScriptID (get export 0 of script 32)
+	0x43, 0x02, 0x04,                   // callk ScriptID, 04 (get export 0 of script 32)
 	0x4a, 0x04,                         // send 04 (get sHeimlich::room)
 	0x36,                               // push
 	0x81, 0x0b,                         // lag global[b] (current room)
@@ -4837,7 +4837,7 @@ static const uint16 laurabow2CDSignatureFixProblematicIconBar[] = {
 
 static const uint16 laurabow2CDPatchFixProblematicIconBar[] = {
 	0x35, 0x00,                      // ldi 00
-	0xa1, 0x74,                      // sag 74h
+	0xa1, 0x74,                      // sag global[74]
 	0x35, 0x00,                      // ldi 00 (waste bytes)
 	0x35, 0x00,                      // ldi 00
 	PATCH_END
@@ -4867,36 +4867,35 @@ static const uint16 laurabow2CDSignatureFixYvetteTutResponse[] = {
 	0x1a,                               // eq? [ asked about tut? ]
 	0x30, SIG_UINT16(0x0036),           // bnt 0036
 	0x78,                               // push1
-	0x38, SIG_UINT16(0x0086),           // push 0086 [ pippin-dead flag ]
-	0x45, 0x02, 0x02,                   // call proc0_2 [ is pippin-dead flag set? ]
+	0x38, SIG_UINT16(0x0086),           // pushi 0086 [ pippin-dead flag ]
+	0x45, 0x02, 0x02,                   // callb [export 2 of script 0], 02 [ is pippin-dead flag set? ]
 	0x30, SIG_UINT16(0x0016),           // bnt 0016 [ pippin-dead message ]
 	SIG_END
 };
 
 static const uint16 laurabow2CDPatchFixYvetteTutResponse[] = {
 	PATCH_ADDTOOFFSET(+14),
-	0x2e,                               // change to bt
+	0x2e,                               // bt (replace bnt)
 	PATCH_END
 };
 
-// When entering the main musem party room (w/ the golden Egyptian head),
-// Laura is waslking a bit into the room automatically.
-// In case you press a mouse button while this is happening, you will get
-// stuck inside that room and won't be able to exit it anymore.
+// When entering the main musem party room (w/ the golden Egyptian head), Laura
+// is walking a bit into the room automatically. If you press a mouse button
+// while this is happening, you will get stuck inside that room and won't be
+// able to exit it anymore.
 //
-// Users, who played the game w/ a previous version of ScummVM can simply
-// enter the debugger and then enter "send rm350 script 0:0", which will
-// fix the script state.
+// Users, who played the game w/ a previous version of ScummVM can simply enter
+// the debugger and then enter "send rm350 script 0:0", which will fix the
+// script state.
 //
-// This is caused by the user controls not being locked at that point.
-// Pressing a button will cause the cue from the PolyPath walker to never
-// happen, which then causes sEnterSouth to never dispose itself.
+// This is caused by the user controls not being locked at that point. Pressing
+// a button will cause the cue from the PolyPath walker to never happen, which
+// then causes sEnterSouth to never dispose itself.
 //
-// User controls are locked in the previous room 335, but controls
-// are unlocked by frontDoor::cue.
-// We do not want to change this, because it could have side-effects.
-// We instead add another LB2::handsOff call inside the script responsible
-// for making Laura walk into the room (sEnterSouth::changeState(0).
+// User controls are locked in the previous room 335, but controls are unlocked
+// by frontDoor::cue. We do not want to change this, because it could have
+// side-effects. We instead add another LB2::handsOff call inside the script
+// responsible for Laura's walk into the room (sEnterSouth::changeState(0).
 //
 // Applies to at least: English PC-CD, English PC-Floppy, German PC-Floppy
 // Responsible method: sEnterSouth::changeState
@@ -4927,8 +4926,8 @@ static const uint16 laurabow2SignatureMuseumPartyFixEnteringSouth1[] = {
 static const uint16 laurabow2PatchMuseumPartyFixEnteringSouth1[] = {
 	0x2e, PATCH_UINT16(0x00a6),        // bt [state 2 code] (we skip state 1, because it's a NOP anyways)
 	// state 0 processing
-	0x32, PATCH_UINT16(+151),
-	SIG_ADDTOOFFSET(+149),             // skip to end of follow-up code
+	0x32, PATCH_UINT16(0x0097),        // jmp 151d [after this ret]
+	PATCH_ADDTOOFFSET(+149),           // skip to end of follow-up code
 	// save 1 byte by replacing jump to [ret] into straight toss/ret
 	0x3a,                              // toss
 	0x48,                              // ret
@@ -4941,14 +4940,15 @@ static const uint16 laurabow2PatchMuseumPartyFixEnteringSouth1[] = {
 	0x76,                              // push0
 	0x81, 0x01,                        // lag global[1]
 	0x4a, 0x04,                        // send 04
-	0x32, PATCH_UINT16(0xFF5e),        // jmp [back to start of step 0 processing]
+	0x32, PATCH_UINT16(0xff5e),        // jmp [back to start of step 0 processing]
 	PATCH_END
 };
 
-// second patch, which only inserts pushi handsOff inside our new code
-// There is no other way to do this except making 2 full patches for floppy + CD, because handsOff/handsOn
-// is not the same value between floppy + CD *and* floppy doesn't even have a vocab, so we can't figure out the id
-// by ourselves.
+// Second patch, which only inserts pushi handsOff inside our new code. There
+// is no other way to do this except making 2 full patches for floppy + CD,
+// because handsOff/handsOn is not the same value between floppy + CD *and*
+// floppy doesn't even have a vocab, so we can't figure out the id by
+// ourselves.
 static const uint16 laurabow2SignatureMuseumPartyFixEnteringSouth2[] = {
 	0x18,                              // our injected code
 	0x18,
@@ -4966,20 +4966,17 @@ static const uint16 laurabow2SignatureMuseumPartyFixEnteringSouth2[] = {
 };
 
 static const uint16 laurabow2PatchMuseumPartyFixEnteringSouth2[] = {
-	0x38,                              // pushi
-	PATCH_GETORIGINALUINT16ADJUST(+96, -1), // get handsOff code and ubstract 1 from it to get handsOn
+	0x38, PATCH_GETORIGINALUINT16ADJUST(+96, -1), // pushi handsOff (@handsOn - 1)
 	PATCH_END
 };
 
-// Opening/Closing the east door in the pterodactyl room doesn't
-//  check, if it's locked and will open/close the door internally
-//  even when it is.
+// Opening/Closing the east door in the pterodactyl room doesn't check, if it's
+//  locked and will open/close the door internally even when it is.
 //
-// It will get wired shut later in the game by Laura Bow and will be
-//  "locked" because of this. We patch in a check for the locked
-//  state. We also add code, that will set the "locked" state
-//  in case our eastDoor-wired-global is set. This makes the locked
-//  state effectively persistent.
+// It will get wired shut later in the game by Laura Bow and will be "locked"
+//  because of this. We patch in a check for the locked state. We also add
+//  code, that will set the "locked" state in case our eastDoor-wired-global is
+//  set. This makes the locked state effectively persistent.
 //
 // Applies to at least: English PC-CD, English PC-Floppy
 // Responsible method (CD): eastDoor::doVerb
@@ -4987,42 +4984,42 @@ static const uint16 laurabow2PatchMuseumPartyFixEnteringSouth2[] = {
 // Fixes bug: #6458 (partly, see additional patch below)
 static const uint16 laurabow2SignatureFixWiredEastDoor[] = {
 	0x30, SIG_UINT16(0x0022),           // bnt [skip hand action]
-	0x67, SIG_ADDTOOFFSET(+1),          // pTos CD: doorState, Floppy: state
+	0x67, SIG_ADDTOOFFSET(+1),          // pTos (CD: doorState, Floppy: state)
 	0x35, 0x00,                         // ldi 00
 	0x1a,                               // eq?
 	0x31, 0x08,                         // bnt [close door code]
 	0x78,                               // push1
 	SIG_MAGICDWORD,
 	0x39, 0x63,                         // pushi 63h
-	0x45, 0x04, 0x02,                   // callb export000_4, 02 (sets door-bitflag)
+	0x45, 0x04, 0x02,                   // callb [export 4 of script 0], 02 (sets door-bitflag)
 	0x33, 0x06,                         // jmp [super-code]
 	0x78,                               // push1
 	0x39, 0x63,                         // pushi 63h
-	0x45, 0x03, 0x02,                   // callb export000_3, 02 (resets door-bitflag)
-	0x38, SIG_ADDTOOFFSET(+2),          // pushi CD: 011dh, Floppy: 012ch
+	0x45, 0x03, 0x02,                   // callb [export 3 of script 0], 02 (resets door-bitflag)
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi (CD: 011dh, Floppy: 012ch)
 	0x78,                               // push1
-	0x8f, 0x01,                         // lsp param[01]
+	0x8f, 0x01,                         // lsp param[1]
 	0x59, 0x02,                         // rest 02
-	0x57, SIG_ADDTOOFFSET(+1), 0x06,    // super CD: LbDoor, Floppy: Door, 06
+	0x57, SIG_ADDTOOFFSET(+1), 0x06,    // super (CD: LbDoor, Floppy: Door), 06
 	0x33, 0x0b,                         // jmp [ret]
 	SIG_END
 };
 
 static const uint16 laurabow2PatchFixWiredEastDoor[] = {
 	0x31, 0x23,                         // bnt [skip hand action] (saves 1 byte)
-	0x81,   97,                         // lag 97d (get our eastDoor-wired-global)
+	0x81, 0x61,                         // lag global[97d] (get our eastDoor-wired-global)
 	0x31, 0x04,                         // bnt [skip setting locked property]
 	0x35, 0x01,                         // ldi 01
 	0x65, 0x6a,                         // aTop locked (set eastDoor::locked to 1)
 	0x63, 0x6a,                         // pToa locked (get eastDoor::locked)
 	0x2f, 0x17,                         // bt [skip hand action]
-	0x63, PATCH_GETORIGINALBYTE(+4),    // pToa CD: doorState, Floppy: state
+	0x63, PATCH_GETORIGINALBYTE(+4),    // pToa (CD: doorState, Floppy: state)
 	0x78,                               // push1
 	0x39, 0x63,                         // pushi 63h
 	0x2f, 0x05,                         // bt [close door code]
-	0x45, 0x04, 0x02,                   // callb export000_4, 02 (sets door-bitflag)
+	0x45, 0x04, 0x02,                   // callb [export 4 of script 0], 02 (sets door-bitflag)
 	0x33, 0x0b,                         // jmp [super-code]
-	0x45, 0x03, 0x02,                   // callb export000_3, 02 (resets door-bitflag)
+	0x45, 0x03, 0x02,                   // callb [export 3 of script 0], 02 (resets door-bitflag)
 	0x33, 0x06,                         // jmp [super-code]
 	PATCH_END
 };
@@ -5047,7 +5044,7 @@ static const uint16 laurabow2SignatureRememberWiredEastDoor[] = {
 static const uint16 laurabow2PatchRememberWiredEastDoor[] = {
 	PATCH_ADDTOOFFSET(+2),              // skip jmp [ret]
 	0x34, PATCH_UINT16(0x0001),         // ldi 0001
-	0xa1, PATCH_UINT16(97),             // sag 97d (set our eastDoor-wired-global)
+	0xa1, PATCH_UINT16(0x0061),         // sag global[97d] (set our eastDoor-wired-global)
 	PATCH_END
 };
 
@@ -5062,7 +5059,7 @@ static const uint16 laurabow2PatchRememberWiredEastDoor[] = {
 //
 // Applies to: All Floppy and CD versions
 // Responsible method: transomDoor:createPoly
-// Fixes bug #9952
+// Fixes bug: #9952
 static const uint16 laurabow2SignatureFixArmorHallDoorPathfinding[] = {
 	SIG_MAGICDWORD,
 	0x39, 0x6c,                         // pushi 6c [ x = 108 ]
@@ -5084,32 +5081,33 @@ static const uint16 laurabow2PatchFixArmorHallDoorPathfinding[] = {
 //  back through the elevator door.
 //
 // The state of the wall crate that blocks the elevator door is tracked by
-//  setting local0 to 1 when you push it out of the way, but Sierra forgot
-//  to reinitialize local0 when you re-enter via the elevator door, causing
+//  setting local[0] to 1 when you push it out of the way, but Sierra forgot
+//  to reinitialize local[0] when you re-enter via the elevator door, causing
 //  it to be out of sync with the room state. When you then swing the hanging
-//  crate, sSwingIt:changeState(6) tests local0 to see which polygon it should
-//  set as the room's obstacle and incorrectly uses the one that blocks both
-//  doors. Attempting to use the elevator door then locks up the game as the
-//  obstacle polygon prevents ego from reaching the destination.
+//  crate, sSwingIt:changeState(6) tests local[0] to see which polygon it
+//  should set as the room's obstacle and incorrectly uses the one that blocks
+//  both doors. Attempting to use the elevator door then locks up the game as
+//  the obstacle polygon prevents ego from reaching the destination.
 //
-// Someone noticed that local0 wasn't always initialized as shoveCrate:doVerb(4)
-//  tests both local0 and the previous room to see if it was the elevator.
+// Someone noticed that local[0] wasn't always initialized as
+//  shoveCrate:doVerb(4) tests both local[0] and the previous room to see if it
+//  was the elevator.
 //
-// We fix this by setting local0 to 1 if the previous room was the elevator
+// We fix this by setting local[0] to 1 if the previous room was the elevator
 //  during sSwingIt:changeState(3), just in time before it gets tested in
 //  sSwingIt:changeState(6). Luckily for us, the handlers for states 3 and 4
 //  don't do anything but load zero, making them two consecutive conditions
 //  of no-ops. By merging them into a single condition for state 3 we have
-//  a whopping 13 bytes available to add code to set local0 correctly.
+//  a whopping 13 bytes available to add code to set local[0] correctly.
 //
-// Affects floppy/cd, all versions, all languages, and occurs in Sierra's interpreter.
-// Fixes bug #10701
+// Applies to: All Floppy and CD versions
+// Fixes bug: #10701
 static const uint16 laurabow2SignatureFixCrateRoomEastDoorLockup[] = {
 	0x1a,                               // eq? [ state 3? ]
 	SIG_MAGICDWORD,
 	0x31, 0x05,                         // bnt [ state 4 ]
 	0x35, 0x00,                         // ldi 0
-	0x32, SIG_ADDTOOFFSET(2),           // jmp [ exit switch. floppy: b3, cd: bb ]
+	0x32, SIG_ADDTOOFFSET(+2),          // jmp [ exit switch. floppy: b3, cd: bb ]
 	0x3c,                               // dup
 	0x35, 0x04,                         // ldi 4
 	0x1a,                               // eq? [ state 4? ]
@@ -5118,14 +5116,14 @@ static const uint16 laurabow2SignatureFixCrateRoomEastDoorLockup[] = {
 };
 
 static const uint16 laurabow2PatchFixCrateRoomEastDoorLockup[] = {
-	PATCH_ADDTOOFFSET(1),               // eq? [ state 3? ]
+	PATCH_ADDTOOFFSET(+1),              // eq? [ state 3? ]
 	0x31, 0x10,                         // bnt [ state 5 ]
-	0x89, 0x0c,                         // lsg global12 [ previous room # ]
+	0x89, 0x0c,                         // lsg global[0c] [ previous room # ]
 	0x34, PATCH_UINT16(0x0294),         // ldi 660d [ elevator room # ]
 	0x1a,                               // eq?
-	0x8b, 0x00,                         // lsl local0
+	0x8b, 0x00,                         // lsl local[0]
 	0x02,                               // add
-	0xa3, 0x00,                         // sal local0 [ local0 += (global12 == 660d) ]
+	0xa3, 0x00,                         // sal local[0] [ local[0] += (global[0c] == 660d) ]
 	PATCH_END
 };
 
@@ -5135,7 +5133,7 @@ static const uint16 laurabow2PatchFixCrateRoomEastDoorLockup[] = {
 //  This is a heap patch for the coordinates used in poly2660a:points.
 //
 // Applies to: All Floppy and CD versions
-// Fixes bug #10702
+// Fixes bug: #10702
 static const uint16 laurabow2SignatureFixElevatorLockup[] = {
 	SIG_MAGICDWORD,
 	SIG_UINT16(0x008b),                 // x = 139d
@@ -5173,58 +5171,59 @@ static const uint16 laurabow2PatchFixElevatorLockup[] = {
 //
 // Affects: All Floppy and CD versions
 // Responsible method: backRub:doVerb/<noname300> in script 550
-// Fixes bug #10729
+// Fixes bug: #10729
 static const uint16 laurabow2SignatureFixBackRubEastEntranceLockup[] = {
 	SIG_MAGICDWORD,
 	0x31, 0x0c,                         // bnt 0c    [ unused default verb handler ]
-	0x38, PATCH_UINT16(0x0092),         // push 0092 [ setScript/<noname146> ]
+	0x38, SIG_UINT16(0x0092),           // pushi 0092 [ setScript/<noname146> ]
 	0x78,                               // push1
 	0x72, SIG_ADDTOOFFSET(+2),          // lofsa sBackRubInterrupted [ cd: 0c94, floppy: 0c70 ]
 	0x36,                               // push
 	0x54, 0x06,                         // self 6 [ self:setScript sBackRubInterrupted ]
 	0x33, 0x09,                         // jmp 9  [ exit switch ]
-	0x38, SIG_ADDTOOFFSET(+2),          // push doVerb/<noname300> [ cd: 011d, floppy: 012c ]
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi doVerb/<noname300> [ cd: 011d, floppy: 012c ]
 	SIG_END
 };
 
 static const uint16 laurabow2PatchFixBackRubEastEntranceLockup[] = {
 	PATCH_ADDTOOFFSET(+10),
-	0x81, 0x02,                         // lag 2  [ rm550 ]
+	0x81, 0x02,                         // lag global[2] [ rm550 ]
 	0x4a, 0x06,                         // send 6 [ rm550:setScript sBackRubInterrupted ]
 	0x32, PATCH_UINT16(0x0006),         // jmp 6  [ exit switch ]
 	PATCH_END
 };
 
 // LB2 Floppy 1.0 doesn't initialize act 4 correctly when triggered by finding
-//  the dagger, causing the act 4 scene in Yvette's (room 550) to lockup the game.
+//  the dagger, causing the act 4 scene in Yvette's (room 550) to lockup.
 //
-// The Yvette/Olympia/Steve scene in act 4 (rooms 550 and 510) expects global111
-//  to be set to 11. This global tracks Yvette's state throughout acts 3 and 4
-//  and increments as you listen to her conversations and witness her scenes.
-//  Some of these are optional and so at the end of act 3 it can be less than 11.
-//  rm510:init initializes global111 to 11 when act 4 is triggered by reporting
-//  Ernie's death but no such initialization occurs when act 4 is triggered by
-//  finding the dagger (rooms 610 and 620). What happens when the global isn't 11
-//  depends on its value but some values, such as 8, cause the act 4 scene to
-//  never complete and never restore control to the user.
+// The Yvette/Olympia/Steve scene in act 4 (rooms 550 and 510) expects
+//  global[111] to be 11. This global tracks Yvette's state throughout acts 3
+//  and 4, incrementing as you listen to her conversations and witness her
+//  scenes. Some of these are optional, so at the end of act 3 it can be less
+//  than 11. rm510:init initializes global[111] to 11 when act 4 is triggered
+//  by reporting Ernie's death, but no such initialization occurs when act 4 is
+//  triggered by finding the dagger (rooms 610 and 620). What happens when the
+//  global isn't 11 depends on its value. Some values, such as 8, cause the act
+//  4 scene to never complete and never restore control to the user.
 //
-// We fix this the way Sierra did in floppy 1.1 and cd versions by setting global111
-//  to 11 in actBreak:init when act 4 starts so that it's always initialized.
+// We fix this the way Sierra did in floppy 1.1 and cd versions by setting
+//  global[111] to 11 in actBreak:init when act 4 starts so that it's always
+//  initialized.
 //
 // Applies to: Floppy 1.0 English only
 // Responsible method: actBreak:<noname150> which is really init
 // Fixes bug: #10716
 static const uint16 laurabow2SignatureFixAct4Initialization[] = {
 	SIG_MAGICDWORD,
-	0xa3, 0x08,                         // sal 8    [ 1.0 floppy only ]
-	0x89, 0x0c,                         // lsg 0c   [ previous room ]
-	0x34, SIG_UINT16(0x026c),           // ldi 026c [ room 620 ]
+	0xa3, 0x08,                         // sal local[8]   [ 1.0 floppy only ]
+	0x89, 0x0c,                         // lsg global[0c] [ previous room ]
+	0x34, SIG_UINT16(0x026c),           // ldi 026c       [ room 620 ]
 	0x1a,                               // eq?
 	0x31, 0x05,                         // bnt 5
 	0x34, SIG_UINT16(0x0262),           // ldi 0262 [ room 610 ]
 	0x33, 0x03,                         // jmp 3
 	0x34, SIG_UINT16(0x01fe),           // ldi 01fe [ room 510 ]
-	0xa3, 0x00,                         // sal 0    [ local0 = (previous room == 620) ? 610 : 510 ]
+	0xa3, 0x00,                         // sal local[0]   [ (previous room == 620) ? 610 : 510 ]
 	0x33, 0x2d,                         // jmp 2d   [ exit switch ]
 	SIG_END
 };
@@ -5232,13 +5231,13 @@ static const uint16 laurabow2SignatureFixAct4Initialization[] = {
 static const uint16 laurabow2PatchFixAct4Initialization[] = {
 	PATCH_ADDTOOFFSET(+2),
 	0x35, 0x0b,                         // ldi 0b
-	0xa1, 0x6f,                         // sag 6f   [ global111 = 11 ]
-	0x89, 0x0c,                         // lsg 0c   [ previous room ]
-	0x34, PATCH_UINT16(0x026c),         // ldi 026c [ room 620 ]
+	0xa1, 0x6f,                         // sag global[6f] [ global[111d] = 11 ]
+	0x89, 0x0c,                         // lsg global[0c] [ previous room ]
+	0x34, PATCH_UINT16(0x026c),         // ldi 026c       [ room 620 ]
 	0x1a,                               // eq?
-	0x39, 0x64,                         // push 64
+	0x39, 0x64,                         // pushi 64
 	0x06,                               // mul
-	0x38, PATCH_UINT16(0x01fe),         // push 01fe
+	0x38, PATCH_UINT16(0x01fe),         // pushi 01fe
 	0x02,                               // add      [ acc = ((previous room == 620) * 100) + 510 ]
 	0x32, PATCH_UINT16(0x0013),         // jmp 0013 [ jmp to: sal 0, jmp exit switch ]
 	PATCH_END
@@ -5295,10 +5294,10 @@ static const uint16 laurabow2PatchMissingDeskLampMessage[] = {
 static const uint16 laurabow2SignatureHandleArmorInsetEvents[] = {
 	SIG_MAGICDWORD,
 	0x31, 0x0b,                         // bnt 0b [ event type isn't Move ]
-	0x38, SIG_UINT16(0x0085),           // push 0085 [ <noname113> aka handleEvent ]
+	0x38, SIG_UINT16(0x0085),           // pushi 0085 [ <noname113> aka handleEvent ]
 	0x78,                               // push1
-	0x8f, 0x01,                         // lsp 01
-	0x57, 0x7a, 0x06,                   // super LBRoom[7a] 6 [ handle event ]
+	0x8f, 0x01,                         // lsp param[1]
+	0x57, 0x7a, 0x06,                   // super LBRoom[7a], 6 [ handle event ]
 	0x33, 0x03,                         // jmp 3
 	0x35, 0x00,                         // ldi 0 [ event not handled ]
 	0x48,                               // ret
@@ -5310,10 +5309,10 @@ static const uint16 laurabow2PatchHandleArmorInsetEvents[] = {
 	0x2f, 0x04,                         // bt 4 [ event type is Move ]
 	0x63, 0x3a,                         // pToa <noname365> aka inset
 	0x31, 0x09,                         // bnt 9 [ room has no inset, event not handled ]
-	0x38, PATCH_UINT16(0x0085),         // push 0085 [ <noname113> aka handleEvents ]
+	0x38, PATCH_UINT16(0x0085),         // pushi 0085 [ <noname113> aka handleEvents ]
 	0x78,                               // push1
-	0x8f, 0x01,                         // lsp 01
-	0x57, 0x7a, 0x06,                   // super LBRoom[7a] 6 [ handle event ]
+	0x8f, 0x01,                         // lsp param[1]
+	0x57, 0x7a, 0x06,                   // super LBRoom[7a], 6 [ handle event ]
 	PATCH_END
 };
 
@@ -5344,7 +5343,7 @@ static const uint16 laurabow2PatchHandleArmorInsetEvents[] = {
 //
 // Applies to: All Floppy and CD versions
 // Responsible method: bugsWithMeat:cue/<noname145>
-// Fixes bug #10730
+// Fixes bug: #10730
 static const uint16 laurabow2FloppySignatureFixBugsWithMeat[] = {
 	SIG_MAGICDWORD,
 	0x57, 0x32, 0x06,                   // super Actor[32], 6 [ floppy: 32, cd: 31 ]
@@ -5352,7 +5351,7 @@ static const uint16 laurabow2FloppySignatureFixBugsWithMeat[] = {
 	0x48,                               // ret [ end of bugsWithMeat:<noname300> aka doVerb ]
 	0x38, SIG_UINT16(0x008e),           // pushi 008e [ <noname142> aka script ]
 	0x76,                               // push0
-	0x81, 0x02,                         // lag 2 [ rm600 ]
+	0x81, 0x02,                         // lag global[2] [ rm600 ]
 	0x4a, 0x04,                         // send 4
 	0x31, 0x0e,                         // bnt 0e [ run sDoMeat if not rm600:<noname142>? ]
 	SIG_END
@@ -5362,7 +5361,7 @@ static const uint16 laurabow2FloppyPatchFixBugsWithMeat[] = {
 	PATCH_ADDTOOFFSET(+5),
 	0x38, PATCH_UINT16(0x00ed),         // pushi 00ed [ <noname237> aka canControl ]
 	0x76,                               // push0
-	0x81, 0x50,                         // lag 50 [ User ]
+	0x81, 0x50,                         // lag global[50] [ User ]
 	0x4a, 0x04,                         // send 4
 	0x2f, 0x0e,                         // bt 0e [ run sDoMeat if User:<noname237>? ]
 	PATCH_END
@@ -5376,7 +5375,7 @@ static const uint16 laurabow2CDSignatureFixBugsWithMeat[] = {
 	0x48,                               // ret [ end of bugsWithMeat:doVerb ]
 	0x38, SIG_UINT16(0x008e),           // pushi 008e [ script ]
 	0x76,                               // push0
-	0x81, 0x02,                         // lag 2 [ rm600 ]
+	0x81, 0x02,                         // lag global[2] [ rm600 ]
 	0x4a, 0x04,                         // send 4
 	0x31, 0x0e,                         // bnt 0e [ run sDoMeat if not rm600:script? ]
 	SIG_END
@@ -5386,7 +5385,7 @@ static const uint16 laurabow2CDPatchFixBugsWithMeat[] = {
 	PATCH_ADDTOOFFSET(+5),
 	0x38, PATCH_UINT16(0x00f6),         // pushi 00f6 [ canControl ]
 	0x76,                               // push0
-	0x81, 0x50,                         // lag 50 [ User ]
+	0x81, 0x50,                         // lag global[50] [ User ]
 	0x4a, 0x04,                         // send 4
 	0x2f, 0x0e,                         // bt 0e [ run sDoMeat if User:canControl? ]
 	PATCH_END
@@ -5413,7 +5412,7 @@ static const uint16 laurabow2CDPatchFixBugsWithMeat[] = {
 //
 // Applies to: All CD versions
 // Responsible method: sOrileyCaught:doit
-// Fixes bug #10808
+// Fixes bug: #10808
 static const uint16 laurabow2CDSignatureFixAct5FinaleMusic[] = {
 	SIG_MAGICDWORD,
 	0x38, SIG_UINT16(0x00ab),           // pushi 00ab [ prevSignal ]
@@ -5450,25 +5449,25 @@ static const uint16 laurabow2CDPatchFixAct5FinaleMusic[] = {
 //
 // Applies to: All Floppy and CD versions
 // Responsible method: startGame:doit/<noname57>
-// Fixes bug #10761
+// Fixes bug: #10761
 static const uint16 laurabow2SignatureDisableSpeedTest[] = {
-	0x89, 0x57,                         // lsg 87 [ speed test result ]
+	0x89, 0x57,                         // lsg global[57] [ speed test result ]
 	SIG_MAGICDWORD,
 	0x35, 0x03,                         // ldi 03 [ low-speed threshold ]
 	0x24,                               // le?
 	0x31, 0x04,                         // bnt 04
 	0x35, 0x01,                         // ldi 01 [ lowest detail ]
 	0x33, 0x0d,                         // jmp 0d
-	0x89, 0x57,                         // lsg global87 [ speed test result ]
+	0x89, 0x57,                         // lsg global[57] [ speed test result ]
 	SIG_END
 };
 
 static const uint16 laurabow2PatchDisableSpeedTest[] = {
 	0x38, PATCH_UINT16(0x0005),         // pushi 0005
-	0x81, 0x01,                         // lag 01
+	0x81, 0x01,                         // lag global[1]
 	0x4a, 0x06,                         // send 06 [ LB2:detailLevel = 5, max detail ]
 	0x35, 0x0f,                         // ldi 0f
-	0xa1, 0x57,                         // sag global87 [ global87 = f, max cpu speed ]
+	0xa1, 0x57,                         // sag global[57] [ global[57] = f, max cpu speed ]
 	0x33, 0x10,                         // jmp 10 [ continue init ]
 	PATCH_END
 };
@@ -5491,11 +5490,11 @@ static const uint16 laurabow2CDPatchAudioTextSupportModeReset[] = {
 	PATCH_END
 };
 
-// Directly use global 5a for view-cel id
+// Directly use global[5a] for view-cel id
 //  That way it's possible to use a new "dual" mode view in the game menu
 // View 995, loop 13, cel 0 -> "text"
 // View 995, loop 13, cel 1 -> "speech"
-// View 995, loop 13, cel 2 -> "dual"  (this view is injected by us into the game)
+// View 995, loop 13, cel 2 -> "dual" (this view is injected by us into the game)
 // Patched method: gcWin::open
 static const uint16 laurabow2CDSignatureAudioTextMenuSupport1[] = {
 	SIG_MAGICDWORD,
@@ -5552,7 +5551,7 @@ static const uint16 laurabow2CDPatchAudioTextMenuSupport2[] = {
 	0x89, 0x5a,                         // lsg global[5a]
 	0x35, 0x01,                         // ldi 01
 	0x04,                               // sub
-	0xa5, 0x00,                         // sat temp[0] - calculate global[5a] - 1 to use as view cel id
+	0xa5, 0x00,                         // sat temp[0] [ calculate global[5a] - 1 to use as view cel id ]
 	0x33, 0x07,                         // jmp [draw cel code, don't do toss]
 	PATCH_END
 };
