@@ -150,7 +150,7 @@ void KIASectionLoad::scrollBoxCallback(void *callbackData, void *source, int lin
 		} else if (lineData == self->_newGameHardLineId) {
 			self->_vm->newGame(2);
 		} else {
-			self->_vm->loadGameState(lineData);
+			self->_vm->loadGameState(self->_saveList[lineData].getSaveSlot());
 		}
 
 		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(513), 90, 0, 0, 50, 0);
