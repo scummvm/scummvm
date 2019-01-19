@@ -7423,72 +7423,73 @@ static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 // ===========================================================================
 
 // This is a very complicated bug.
-// When the player encounters an enemy in the desert while riding a saurus and later
-//  tries to get back on it by entering "ride", the game will not give control back
-//  to the player.
+// When the player encounters an enemy in the desert while riding a saurus and
+//  later tries to get back on it by entering "ride", the game will not give
+//  control back to the player.
 //
-// This is caused by script mountSaurus getting triggered twice.
-//  Once by entering the command "ride" and then a second time by a proximity check.
+// This is caused by script mountSaurus getting triggered twice. Once by
+//  entering the command "ride" and then a second time by a proximity check.
 //
-// Both are calling mountSaurus::init() in script 20, this one disables controls
-//  then mountSaurus::changeState() from script 660 is triggered
-//  mountSaurus::changeState(5) finally calls mountSaurus::dispose(), which is also in script 20
-//  which finally re-enables controls
+// Both are calling mountSaurus::init() in script 20. This one disables
+//  controls. Then mountSaurus::changeState() from script 660 is triggered.
+//  Finally, mountSaurus::changeState(5) calls mountSaurus::dispose(), also in
+//  script 20, which re-enables controls.
 //
-// A fix is difficult to implement. The code in script 20 is generic and used by multiple objects
+// A fix is difficult to implement. The code in script 20 is generic and used
+//  by multiple objects
 //
-// Originally I decided to change the responsible globals (66h and A1h) during mountSaurus::changeState(5).
-//  This worked as far as for controls, but mountSaurus::init changes a few selectors of ego as well, which
-//  won't get restored in that situation, which then messes up room changes and other things.
+// An early attempt changed the responsible vars (global[102], global[161])
+//  during mountSaurus::changeState(5). This worked for controls, but
+//  mountSaurus::init changes a few selectors of ego as well, which won't get
+//  restored in that situation, which then messes up room changes and other
+//  things.
 //
-// I have now decided to change sheepScript::changeState(2) in script 665 instead.
+// Instead we change sheepScript::changeState(2) in script 665.
 //
-// This fix could cause issues in case there is a cutscene, where ego is supposed to get onto the saurus using
-//  sheepScript.
+// Note: This could cause issues in case there is a cutscene, where ego is
+//  supposed to get onto the saurus using sheepScript.
 //
 // Applies to at least: English PC Floppy, English Amiga Floppy
 // Responsible method: mountSaurus::changeState(), mountSaurus::init(), mountSaurus::dispose()
 // Fixes bug: #5156
 static const uint16 qfg2SignatureSaurusFreeze[] = {
 	0x3c,                               // dup
-	0x35, 0x02,                         // ldi 5
+	0x35, 0x02,                         // ldi 2
 	SIG_MAGICDWORD,
 	0x1a,                               // eq?
 	0x30, SIG_UINT16(0x0043),           // bnt [ret]
 	0x76,                               // push0
 	SIG_ADDTOOFFSET(+61),               // skip to dispose code
-	0x39, SIG_SELECTOR8(dispose),       // pushi "dispose"
+	0x39, SIG_SELECTOR8(dispose),       // pushi dispose
 	0x76,                               // push0
 	0x54, 0x04,                         // self 04
 	SIG_END
 };
 
 static const uint16 qfg2PatchSaurusFreeze[] = {
-	0x81, 0x66,                         // lag 66h
-	0x2e, SIG_UINT16(0x0040),           // bt [to dispose code]
+	0x81, 0x66,                         // lag global[66h]
+	0x2e, PATCH_UINT16(0x0040),         // bt [to dispose code]
 	0x35, 0x00,                         // ldi 0 (waste 2 bytes)
 	PATCH_END
 };
 
 // The Jackalmen combat code has at least one serious issue.
 //
-// Jackalmen may attack in groups.
-// This is handled by 2 globals.
-// Global 136h contains the amount of cur. Jackalmen alive.
-// Global 137h contains the amount of cur. Jackalmen killed during combat.
+// Jackalmen may attack in groups. This is handled by 2 globals.
+//  global[136h]: amount of Jackalmen still alive.
+//  global[137h]: amount of Jackalmen killed so far during combat.
 //
-// Global 137h is subtracted from Global 136h after combat
-// has ended, BUT when the player manages to hit the last enemy
-// AFTER defeating it during its death animation (yes, that is possible - don't ask),
-// the code is called a second time. Subtracting 137h twice, which will make global 136h
-// negative and which will then make it so that there is an inconsistent state.
-// Some variables will show that there is still an enemy, while others don't.
+// After combat has ended, global[137h] is subtracted from global[136h]. BUT
+// when the player manages to hit the last enemy AFTER defeating it during its
+// death animation (yes, that is possible - don't ask), the code is called a
+// second time. Subtracting global[137h] twice, which will make global[136h]
+// negative and will then create an inconsistent state. Some variables will
+// show that there is still an enemy, while others don't. The game will crash
+// when leaving the room. The original interpreter would show the infamous
+// "Oops, you did something we weren't expecting..."
 //
-// Which will then make the game crash when leaving the current room.
-// The original interpreter would show the infamous "Oops, you did something we weren't expecting...".
-// 
-// Applies to at least: English Floppy (1.102+1.105)
 // TODO: Check, if patch works for 1.000. That version surely has the same bug.
+// Applies to at least: English Floppy (1.102+1.105)
 // Responsible method: jackalMan::die (script 695)
 // Fixes bug: #10218
 static const uint16 qfg2SignatureOopsJackalMen[] = {
@@ -7511,11 +7512,11 @@ static const uint16 qfg2SignatureOopsJackalMen[] = {
 
 static const uint16 qfg2PatchOopsJackalMen[] = {
 	0x80, PATCH_UINT16(0x0136),         // lag global[136h]
-	0x31, 0x0E,                         // bnt [skip everything] - requires 5 extra bytes
+	0x31, 0x0e,                         // bnt [skip everything] - requires 5 extra bytes
 	0x8b, 0x00,                         // lsl local[0]
 	0x35, 0x00,                         // ldi 0
 	0x22,                               // lt?
-	0x31, 0x08,                         // bnt [Jackalman death animation code] - save 1 byte
+	0x31, 0x08,                         // bnt [Jackalman death animation code] (save 1 byte)
 	0x38, PATCH_GETORIGINALUINT16(+9),  // pushi (die)
 	0x76,                               // push0
 	0x57, 0x66, 0x04,                   // super Monster, 4
@@ -7523,7 +7524,7 @@ static const uint16 qfg2PatchOopsJackalMen[] = {
 	// Jackalman death animation code
 	0x83, 0x00,                         // lal local[0]
 	0x18,                               // not
-	0x31, 0x03,                         // bnt [make next enemy walk in] - save 1 byte
+	0x31, 0x03,                         // bnt [make next enemy walk in] (save 1 byte)
 	PATCH_END
 };
 
@@ -7546,7 +7547,7 @@ static const uint16 qfg2SignatureImportDialog[] = {
 	0x7a,                               // push2
 	0x39, 0x03,                         // pushi 03
 	0x36,                               // push
-	0x43, 0x72, 0x04,                   // callk Memory 4
+	0x43, 0x72, 0x04,                   // callk Memory, 4
 	0x35, 0x00,                         // ldi 00
 	0x65, 0x20,                         // aTop text
 	SIG_END
@@ -7595,9 +7596,9 @@ static const uint16 qfg2PatchImportCharType[] = {
 	0x35, 0x04,                         // ldi 04
 	0x08,                               // div
 	0x36,                               // push
-	0xa8, SIG_UINT16(0x0248),           // ssg global[0248h] <-- patched to save 2 bytes
+	0xa8, PATCH_UINT16(0x0248),         // ssg global[0248h] <-- patched to save 2 bytes
 	0x8b, 0x1f,                         // lsl local[1Fh]
-	0xa8, SIG_UINT16(0x0155),           // ssg global[0155h] <-- patched to save 2 bytes
+	0xa8, PATCH_UINT16(0x0155),         // ssg global[0155h] <-- patched to save 2 bytes
 	// new code, directly from the official sierra patch file
 	0x83, 0x01,                         // lal local[01h]
 	0xa1, 0xbb,                         // sag global[BBh]
