@@ -264,10 +264,10 @@ enum ScriptPatcherSelectors {
 // the "change directory" button in the standard save dialogue
 static const uint16 sci2ChangeDirSignature[] = {
 	0x72, SIG_ADDTOOFFSET(+2), // lofsa changeDirI
-	0x4a, SIG_UINT16(0x04),    // send 4
+	0x4a, SIG_UINT16(0x0004),  // send 4
 	SIG_MAGICDWORD,
 	0x36,                      // push
-	0x35, 0xF7,                // ldi $f7
+	0x35, 0xf7,                // ldi $f7
 	0x12,                      // and
 	0x36,                      // push
 	SIG_END
@@ -321,7 +321,7 @@ static const uint16 sci21IntArraySignature[] = {
 	SIG_MAGICDWORD,
 	0x36,                          // push
 	0x51, 0x0b,                    // class IntArray
-	0x4a, 0x8,                     // send $8
+	0x4a, 0x08,                    // send $8
 	SIG_END
 };
 
@@ -367,13 +367,13 @@ static const uint16 sci2VolumeResetSignature[] = {
 	0x38, SIG_SELECTOR16(masterVolume), // pushi masterVolume
 	0x78,                               // push1
 	0x39, SIG_ADDTOOFFSET(+1),          // pushi [default volume]
-	0x81, 0x01,                         // lag 1
-	0x4a, SIG_UINT16(0x06),             // send 6
+	0x81, 0x01,                         // lag global[1]
+	0x4a, SIG_UINT16(0x0006),           // send 6
 	SIG_END
 };
 
 static const uint16 sci2VolumeResetPatch[] = {
-	0x32, PATCH_UINT16(8), // jmp 8 [past volume reset]
+	0x32, PATCH_UINT16(0x0008),         // jmp 8 [past volume reset]
 	PATCH_END
 };
 
@@ -388,12 +388,12 @@ static const uint16 sci2BrokenStrStripSignature[] = {
 	0x85, 0x06,                         // lat temp[6]
 	0x31, 0x10,                         // bnt [jump to code that passes 2 parameters]
 	0x38, SIG_UINT16(0x00c2),           // pushi 00c2 (callKernel)
-	0x38, SIG_UINT16(3),                // pushi 03
+	0x38, SIG_UINT16(0x0003),           // pushi 03
 	0x39, 0x0e,                         // pushi 0e
 	0x8d, 0x0b,                         // lst temp[0b]
 	0x36,                               // push
 	0x54, SIG_UINT16(0x000a),           // self 0a
-	0x33, 0x0b,                         // jmp to [ret]
+	0x33, 0x0b,                         // jmp [ret]
 	// 2 parameter code
 	0x38, SIG_UINT16(0x00c2),           // pushi 00c2
 	0x7a,                               // push2
@@ -417,7 +417,6 @@ static const uint16 sci2BrokenStrStripPatch[] = {
 	0x48,                               // ret
 	PATCH_END
 };
-
 
 // Torin/LSL7-specific version of sci2NumSavesSignature1/2
 // Applies to at least: English CD
