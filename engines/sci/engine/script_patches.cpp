@@ -2155,13 +2155,13 @@ static const uint16 gk1EgoPhonePositionSignature[] = {
 	SIG_MAGICDWORD,
 	0x39, 0x68,                         // pushi 68 [ x: 104 ]
 	0x39, 0x7e,                         // pushi 7e [ y: 126 ]
-	SIG_END,
+	SIG_END
 };
 
 static const uint16 gk1EgoPhonePositionPatch[] = {
 	0x39, 0x6b,                         // pushi 6b [ x: 107 ]
 	0x39, 0x7c,                         // pushi 7c [ y: 124 ]
-	PATCH_END,
+	PATCH_END
 };
 
 //          script, description,                                      signature                         patch
@@ -6854,16 +6854,17 @@ static const SciScriptPatcherEntry qfg1egaSignatures[] = {
 //  script 215 of qfg1vga pointBox::doit actually processes button-presses
 //   during fighting with monsters. It strangely also calls kGetEvent. Because
 //   the main User::doit also calls kGetEvent it's pure luck, where the event
-//   will hit. It's the same issue as in freddy pharkas and if you turn dos-box
+//   will hit. It's the same issue as in freddy pharkas and if you turn DOSBox
 //   to max cycles, sometimes clicks also won't get registered. Strangely it's
 //   not nearly as bad as in our sci, but these differences may be caused by
 //   timing.
 //   We just reuse the active event, thus removing the duplicate kGetEvent call.
 // Applies to at least: English floppy
 // Responsible method: pointBox::doit
+// Fixes bug: #5038
 static const uint16 qfg1vgaSignatureFightEvents[] = {
 	0x39, SIG_MAGICDWORD,
-	SIG_SELECTOR8(new),                 // pushi "new"
+	SIG_SELECTOR8(new),                 // pushi new
 	0x76,                               // push0
 	0x51, 0x07,                         // class Event
 	0x4a, 0x04,                         // send 04 - call Event::new
@@ -6883,7 +6884,7 @@ static const uint16 qfg1vgaSignatureFightEvents[] = {
 };
 
 static const uint16 qfg1vgaPatchFightEvents[] = {
-	0x38, PATCH_SELECTOR16(curEvent), // pushi 15a (selector curEvent)
+	0x38, PATCH_SELECTOR16(curEvent), // pushi curEvent (15a)
 	0x76,                            // push0
 	0x81, 0x50,                      // lag global[50]
 	0x4a, 0x04,                      // send 04 - read User::curEvent -> needs one byte more than previous code
@@ -6914,7 +6915,7 @@ static const uint16 qfg1vgaPatchFightEvents[] = {
 static const uint16 qfg1vgaSignatureTempSpace[] = {
 	SIG_MAGICDWORD,
 	0x3f, 0xba,                         // link 0xba
-	0x87, 0x00,                         // lap 0
+	0x87, 0x00,                         // lap param[0]
 	SIG_END
 };
 
@@ -6983,7 +6984,7 @@ static const uint16 qfg1vgaPatchMoveToCrusher[] = {
 //
 // Applies to: PC Floppy
 // Responsible method: rm331:doit
-// Fixes bug #10826
+// Fixes bug: #10826
 static const uint16 qfg1vgaSignatureCrusherCardGame[] = {
 	SIG_MAGICDWORD,
 	0x63, 0x12,                         // pToa script
@@ -6991,12 +6992,12 @@ static const uint16 qfg1vgaSignatureCrusherCardGame[] = {
 	0x33, 0x28,                         // jmp 28 [ card table location tests ]
 	0x38, SIG_SELECTOR16(script),       // pushi script
 	0x76,                               // push0
-	0x81, 0x00,                         // lag 00
+	0x81, 0x00,                         // lag global[0]
 	0x4a, 0x04,                         // send 4 [ ego:script? ]
 	0x31, 0x04,                         // bnt 04
 	0x35, 0x00,                         // ldi 00 [ does nothing ]
 	0x33, 0x1a,                         // jmp 1a [ card table location tests ]
-	SIG_ADDTOOFFSET(0x71),
+	SIG_ADDTOOFFSET(+113),
 	0x39, SIG_SELECTOR8(doit),          // pushi doit [ pc version only ]
 	SIG_END
 };
@@ -7004,7 +7005,7 @@ static const uint16 qfg1vgaSignatureCrusherCardGame[] = {
 static const uint16 qfg1vgaPatchCrusherCardGame[] = {
 	0x38, PATCH_SELECTOR16(script),     // pushi script
 	0x76,                               // push0
-	0x81, 0x00,                         // lag 00
+	0x81, 0x00,                         // lag global[0]
 	0x4a, 0x04,                         // send 4 [ ego:script? ]
 	0x31, 0x06,                         // bnt 06
 	0x74, PATCH_UINT16(0x0ee4),         // lofss cardScript
@@ -7049,13 +7050,13 @@ static const uint16 qfg1vgaPatchMoveToCastleGate[] = {
 // The code treats both monster types the same.
 // Applies to at least: English floppy
 // Responsible method: smallMonster::doVerb
-// Fixes bug #6249
+// Fixes bug: #6249
 static const uint16 qfg1vgaSignatureCheetaurDescription[] = {
 	SIG_MAGICDWORD,
 	0x34, SIG_UINT16(0x01b8),           // ldi 01b8
 	0x1a,                               // eq?
 	0x31, 0x16,                         // bnt 16
-	0x38, SIG_SELECTOR16(say),          // pushi 0127h (selector "say")
+	0x38, SIG_SELECTOR16(say),          // pushi say (0127h)
 	0x39, 0x06,                         // pushi 06
 	0x39, 0x03,                         // pushi 03
 	0x78,                               // push1
@@ -7072,36 +7073,36 @@ static const uint16 qfg1vgaPatchCheetaurDescription[] = {
 // In the "funny" room (Yorick's room) in QfG1 VGA, pulling the chain and
 //  then pressing the button on the right side of the room results in
 //  a broken game. This also happens in SSCI.
-// Problem is that the Sierra programmers forgot to disable the door, that
+// Problem is that the Sierra programmers forgot to disable the door that
 //  gets opened by pulling the chain. So when ego falls down and then
 //  rolls through the door, one method thinks that the player walks through
 //  it and acts that way and the other method is still doing the roll animation.
-// Local 5 of that room is a timer, that closes the door (object door11).
-// Setting it to 1 during happyFace::changeState(0) stops door11::doit from
-//  calling goTo6::init, so the whole issue is stopped from happening.
+// The timer that closes the door (door11) is local[5]. Setting it to 1 during
+//  happyFace::changeState(0) stops door11::doit from calling goTo6::init, so
+//  the whole issue is stopped from happening.
 //
 // Applies to at least: English floppy
 // Responsible method: happyFace::changeState, door11::doit
-// Fixes bug #6181
+// Fixes bug: #6181
 static const uint16 qfg1vgaSignatureFunnyRoomFix[] = {
 	0x65, 0x14,                         // aTop 14 (state)
 	0x36,                               // push
 	0x3c,                               // dup
 	0x35, 0x00,                         // ldi 00
 	0x1a,                               // eq?
-	0x30, SIG_UINT16(0x0025),           // bnt 0025 [-> next state]
+	0x30, SIG_UINT16(0x0025),           // bnt 0025 [next state]
 	SIG_MAGICDWORD,
 	0x35, 0x01,                         // ldi 01
-	0xa3, 0x4e,                         // sal 4e
+	0xa3, 0x4e,                         // sal local[4e]
 	SIG_END
 };
 
 static const uint16 qfg1vgaPatchFunnyRoomFix[] = {
 	PATCH_ADDTOOFFSET(+3),
-	0x2e, PATCH_UINT16(0x0029),         // bt 0029 [-> next state] - saves 4 bytes
+	0x2e, PATCH_UINT16(0x0029),         // bt 0029 [next state] - saves 4 bytes
 	0x35, 0x01,                         // ldi 01
-	0xa3, 0x4e,                         // sal 4e
-	0xa3, 0x05,                         // sal 05 (sets local 5 to 1)
+	0xa3, 0x4e,                         // sal local[4e]
+	0xa3, 0x05,                         // sal local[5] (set to 1)
 	0xa3, 0x05,                         // and again to make absolutely sure (actually to waste 2 bytes)
 	PATCH_END
 };
@@ -7117,18 +7118,18 @@ static const uint16 qfg1vgaPatchFunnyRoomFix[] = {
 //
 // Applies to at least: English floppy
 // Responsible method: cueItScript::changeState
-// Fixes bug #6706
+// Fixes bug: #6706
 static const uint16 qfg1vgaSignatureHealerHutNoDelay[] = {
 	0x65, 0x14,                         // aTop 14 (state)
 	0x36,                               // push
 	0x3c,                               // dup
 	0x35, 0x00,                         // ldi 00
 	0x1a,                               // eq?
-	0x31, 0x07,                         // bnt 07 [-> next state]
+	0x31, 0x07,                         // bnt 07 [next state]
 	SIG_MAGICDWORD,
 	0x35, 0x3c,                         // ldi 3c (60 ticks)
 	0x65, 0x20,                         // aTop ticks
-	0x32,                               // jmp [-> end of method]
+	0x32,                               // jmp [end of method]
 	SIG_END
 };
 
@@ -7138,13 +7139,14 @@ static const uint16 qfg1vgaPatchHealerHutNoDelay[] = {
 	PATCH_END
 };
 
-// When following the white stag, you can actually enter the 2nd room from the mushroom/fairy location,
-//  which results in ego entering from the top. When you then throw a dagger at the stag, one animation
-//  frame will stay on screen, because of a script bug.
+// When following the white stag, you can actually enter the 2nd room from the
+//  mushroom/fairy location, which results in ego entering from the top. When
+//  you then throw a dagger at the stag, one animation frame will stay on
+//  screen, because of a script bug.
 //
 // Applies to at least: English floppy, Mac floppy
 // Responsible method: stagHurt::changeState
-// Fixes bug #6135
+// Fixes bug: #6135
 static const uint16 qfg1vgaSignatureWhiteStagDagger[] = {
 	0x87, 0x01,                         // lap param[1]
 	0x65, 0x14,                         // aTop state
@@ -7154,9 +7156,9 @@ static const uint16 qfg1vgaSignatureWhiteStagDagger[] = {
 	0x1a,                               // eq?
 	0x31, 0x16,                         // bnt [next parameter check]
 	0x76,                               // push0
-	0x45, 0x02, 0x00,                   // callb export 2 from script 0, 0
+	0x45, 0x02, 0x00,                   // callb [export 2 of script 0], 0
 	SIG_MAGICDWORD,
-	0x38, SIG_SELECTOR16(say),          // pushi 0127h (selector "say")
+	0x38, SIG_SELECTOR16(say),          // pushi say (0127h)
 	0x39, 0x05,                         // pushi 05
 	0x39, 0x03,                         // pushi 03
 	0x39, 0x51,                         // pushi 51h
@@ -7165,11 +7167,11 @@ static const uint16 qfg1vgaSignatureWhiteStagDagger[] = {
 	0x7c,                               // pushSelf
 	0x81, 0x5b,                         // lag global[5Bh] -> qg1Messager
 	0x4a, 0x0e,                         // send 0Eh -> qg1Messager::say(3, 51h, 0, 0, stagHurt)
-	0x33, 0x12,                         // jmp -> [ret]
+	0x33, 0x12,                         // jmp [end of method]
 	0x3c,                               // dup
 	0x35, 0x01,                         // ldi 1
 	0x1a,                               // eq?
-	0x31, 0x0c,                         // bnt [ret]
+	0x31, 0x0c,                         // bnt [end of method]
 	0x38,                               // pushi...
 	SIG_ADDTOOFFSET(+11),
 	0x3a,                               // toss
@@ -7190,8 +7192,8 @@ static const uint16 qfg1vgaPatchWhiteStagDagger[] = {
 	0x31, 0x16,                         // bnt [state = 2 code]
 	// state = 1 code
 	0x76,                               // push0
-	0x45, 0x02, 0x00,                   // callb export 2 from script 0, 0
-	0x38, PATCH_SELECTOR16(say),        // pushi 0127h (selector "say")
+	0x45, 0x02, 0x00,                   // callb [export 2 of script 0], 0
+	0x38, PATCH_SELECTOR16(say),        // pushi say (0127h)
 	0x39, 0x05,                         // pushi 05
 	0x39, 0x03,                         // pushi 03
 	0x39, 0x51,                         // pushi 51h
@@ -7207,31 +7209,33 @@ static const uint16 qfg1vgaPatchWhiteStagDagger[] = {
 	PATCH_END
 };
 
-// The dagger range has a script bug that can freeze the game or cause Brutus to kill you even after you've killed him.
-// This is a bug in the original game.
+// The dagger range has a script bug that can freeze the game or cause Brutus
+// to kill hero even after Brutus dies.
 //
-// When Bruno leaves, a 300 tick countdown starts. If you kill Brutus or leave room 73 within those 300 ticks then
-// the game is left in a broken state. For the rest of the game, if you ever return to the dagger range from the
-// east or west during the first half of the day then the game will freeze or Brutus will come back to life
-// and kill you, even if you already killed him.
+// When Bruno leaves, a 300 tick countdown starts. If hero kills Brutus or
+// leaves room 73 within those 300 ticks, then the game is left in a broken
+// state. For the rest of the game, if hero ever returns to the dagger range
+// from the east or west during the first half of the day, then the game will
+// freeze or Brutus, dead or not, will kill hero.
 //
-// Special thanks, credits and kudos to sluicebox, who did a ton of research on this and even found this game bug originally.
+// Special thanks, credits and kudos to sluicebox, who did a ton of research on
+// this and even found this game bug originally.
 //
 // Applies to at least: English floppy, Mac floppy
 // Responsible method: brutusWaits::changeState
-// Fixes bug #9558
+// Fixes bug: #9558
 static const uint16 qfg1vgaSignatureBrutusScriptFreeze[] = {
 	0x78,                               // push1
-	0x38, SIG_UINT16(0x144),            // pushi 144h (324d)
-	0x45, 0x05, 0x02,                   // call export 5 of script 0
+	0x38, SIG_UINT16(0x0144),           // pushi 144h (324d)
+	0x45, 0x05, 0x02,                   // callb [export 5 of script 0], 2
 	SIG_MAGICDWORD,
-	0x34, SIG_UINT16(0x12c),            // ldi 12Ch (300d)
+	0x34, SIG_UINT16(0x012c),           // ldi 12Ch (300d)
 	0x65, 0x20,                         // aTop ticks
 	SIG_END
 };
 
 static const uint16 qfg1vgaPatchBrutusScriptFreeze[] = {
-	0x34, PATCH_UINT16(0),              // ldi 0 (waste 7 bytes)
+	0x34, PATCH_UINT16(0x0000),         // ldi 0 (waste 7 bytes)
 	0x35, 0x00,                         // ldi 0
 	0x35, 0x00,                         // ldi 0
 	PATCH_END
@@ -7244,9 +7248,9 @@ static const uint16 qfg1vgaPatchBrutusScriptFreeze[] = {
 // Method changed: speedTest::changeState
 static const uint16 qfg1vgaSignatureSpeedTest[] = {
 	0x76,                               // push0
-	0x43, 0x42, 0x00,                   // callk GetTime 0
+	0x43, 0x42, 0x00,                   // callk GetTime, 0
 	SIG_MAGICDWORD,
-	0xa3, 0x01,                         // sal 1
+	0xa3, 0x01,                         // sal local[1]
 	0x35, 0x32,                         // ldi 50
 	0x65, 0x1a,                         // aTop cycles
 	SIG_END
@@ -7272,17 +7276,17 @@ static const uint16 qfg1vgaPatchSpeedTest[] = {
 //  causes ours to fail an assertion due to constructing an invalid Rect.
 //
 // We fix both problems by not allowing antwerps south of 180 so that they
-//  remain on screen and can't block ego's exit. This is consistent with room 85
-//  where they also appear but without a southern exit. The Wander motion is
-//  only used by antwerps and the sparkles above Yorick in room 96 so it can be
-//  safely patched to enforce a southern limit. We make room for this patch by
-//  replacing Wander's calculations with their known results, since the default
-//  Wander:distance of 30 is always used, and by overwriting Wander:onTarget
-//  which no script calls and just returns zero.
+//  remain on screen and can't block ego's exit. This is consistent with
+//  room 85 where they also appear but without a southern exit. The Wander
+//  motion is only used by antwerps and the sparkles above Yorick in room 96,
+//  so it can be safely patched to enforce a southern limit. We make room for
+//  this patch by replacing Wander's calculations with their known results,
+//  since the default Wander:distance of 30 is always used, and by overwriting
+//  Wander:onTarget which no script calls and just returns zero.
 //
 // Applies to: PC Floppy, Mac Floppy
 // Responsible method: Wander:setTarget
-// Fixes bug #9564
+// Fixes bug: #9564
 static const uint16 qfg1vgaSignatureAntwerpWander[] = {
 	SIG_MAGICDWORD,
 	0x3f, 0x01,                             // link 01
@@ -7297,12 +7301,12 @@ static const uint16 qfg1vgaSignatureAntwerpWander[] = {
 	0x67, 0x30,                             // pTos distance
 	0x35, 0x02,                             // ldi 02
 	0x06,                                   // mul
-	0xa5, 0x00,                             // sat 00 [ temp0 = distance * 2 ]
+	0xa5, 0x00,                             // sat temp[0] [ distance * 2 ]
 	0x36,                                   // push
-	0x43, 0x3c, 0x04,                       // callk Random 4
+	0x43, 0x3c, 0x04,                       // callk Random, 4
 	0x04,                                   // sub
 	0x02,                                   // add
-	0x65, 0x16,                             // aTop x [ x = client:x + (distance - Random(0, temp0)) ]
+	0x65, 0x16,                             // aTop x [ x = client:x + (distance - Random(0, temp[0])) ]
 	0x76,                                   // push0
 	0x76,                                   // push0
 	0x63, 0x12,                             // pToa client
@@ -7311,11 +7315,11 @@ static const uint16 qfg1vgaSignatureAntwerpWander[] = {
 	0x67, 0x30,                             // pTos distance
 	0x7a,                                   // push2
 	0x76,                                   // push0
-	0x8d, 0x00,                             // lst 00
-	0x43, 0x3c, 0x04,                       // callk Random 4
+	0x8d, 0x00,                             // lst temp[0]
+	0x43, 0x3c, 0x04,                       // callk Random, 4
 	0x04,                                   // sub
 	0x02,                                   // add
-	0x65, 0x18,                             // aTop y [ y = client:y + (distance - Random(0, temp0)) ]
+	0x65, 0x18,                             // aTop y [ y = client:y + (distance - Random(0, temp[0])) ]
 	0x48,                                   // ret
 	0x35, 0x00,                             // ldi 00 [ start of Wander:onTarget, returns 0 and isn't called ]
 	SIG_END
@@ -7331,7 +7335,7 @@ static const uint16 qfg1vgaPatchAntwerpWander[] = {
 	0x7a,                                   // push2
 	0x76,                                   // push0
 	0x39, 0x3c,                             // pushi 3c
-	0x43, 0x3c, 0x04,                       // callk Random 4
+	0x43, 0x3c, 0x04,                       // callk Random, 4
 	0x04,                                   // sub
 	0x02,                                   // add
 	0x65, 0x16,                             // aTop x [ x = client:x + (30d - Random(0, 60d)) ]
@@ -7344,13 +7348,13 @@ static const uint16 qfg1vgaPatchAntwerpWander[] = {
 	0x7a,                                   // push2
 	0x76,                                   // push0
 	0x39, 0x3c,                             // pushi 3c
-	0x43, 0x3c, 0x04,                       // callk Random 4
+	0x43, 0x3c, 0x04,                       // callk Random, 4
 	0x04,                                   // sub
 	0x02,                                   // add
 	0x7a,                                   // push2
 	0x36,                                   // push
 	0x38, PATCH_UINT16(0x00b4),             // pushi 00b4
-	0x46, PATCH_UINT16(0x03e7),             // calle proc999_2 4 [ Min ]
+	0x46, PATCH_UINT16(0x03e7),             // calle [export 2 of script 999], 4 [ Min ]
 	      PATCH_UINT16(0x0002), 0x04,
 	0x65, 0x18,                             // aTop y [ y = Min(client:y + (30d - Random(0, 60d))), 180d) ]
 	PATCH_END
@@ -7359,20 +7363,21 @@ static const uint16 qfg1vgaPatchAntwerpWander[] = {
 // QFG1VGA Mac disables all controls when the antwerp falls in room 78, killing
 //  the player by not allowing them to defend themselves.
 //
-// The antwerp falls in rooms 78 and 85 and the only way to survive is to hold
+// The antwerp falls in rooms 78 and 85, and the only way to survive is to hold
 //  up a weapon. These two antwerp scripts were identical in the PC version and
 //  enabled all menu icons even though most of them couldn't really be used.
-//  Sierra attempted to improve this in Mac by only enabling the inventory icons
-//  but instead disabled everything in room 78 by not calling the enable procedure.
+//  Sierra attempted to improve this in Mac by only enabling the inventory
+//  icons but instead disabled everything in room 78 by not calling the enable
+//  procedure.
 //
 // We fix this by calling the enable procedure like the script in room 85 does.
 //
 // Applies to: Mac Floppy
 // Responsible method: antwerped:changeState(1)
-// Fixes bug #10856
+// Fixes bug: #10856
 static const uint16 qfg1vgaSignatureMacAntwerpControls[] = {
 	0x30, SIG_UINT16(0x0033),               // bnt 0033 [ state 1 ]
-	SIG_ADDTOOFFSET(+0x30),
+	SIG_ADDTOOFFSET(+48),
 	SIG_MAGICDWORD,
 	0x32, SIG_UINT16(0x014e),               // jmp 014e [ end of method ]
 	0x3c,                                   // dup
@@ -7385,13 +7390,13 @@ static const uint16 qfg1vgaSignatureMacAntwerpControls[] = {
 
 static const uint16 qfg1vgaPatchMacAntwerpControls[] = {
 	0x30, PATCH_UINT16(0x0030),             // bnt 0030 [ state 1 ]
-	PATCH_ADDTOOFFSET(+0x30),
+	PATCH_ADDTOOFFSET(+48),
 	0x3c,                                   // dup
 	0x35, 0x01,                             // ldi 01
 	0x1a,                                   // eq?
 	0x31, 0x37,                             // bnt 37 [ state 2 ]
 	0x76,                                   // push0
-	0x45, 0x03, 0x00,                       // callb proc0_3 [ enable all input ]
+	0x45, 0x03, 0x00,                       // callb [export 3 of script 0], 00 [ enable all input ]
 	PATCH_END
 };
 
