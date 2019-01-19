@@ -2447,22 +2447,26 @@ static const SciScriptPatcherEntry kq5Signatures[] = {
 };
 
 // ===========================================================================
-// When giving the milk bottle to one of the babies in the garden in KQ6 (room
-// 480), script 481 starts a looping baby cry sound. However, that particular
-// script also has an overriden check method (cryMusic::check). This method
-// explicitly restarts the sound, even if it's set to be looped, thus the same
-// sound is played twice, squelching all other sounds. We just rip the
-// unnecessary cryMusic::check method out, thereby stopping the sound from
-// constantly restarting (since it's being looped anyway), thus the normal
+// In the garden (room 480), when giving the milk bottle to one of the babies,
+// script 481 starts a looping a baby cry sound (cryMusic). However, that
+// particular sound has an overriden check() method that explicitly restarts
+// the sound, even if it's set to be looped. Thus the same sound is played
+// twice, squelching all other sounds.
+//
+// We just rip out the unnecessary check() method, thereby stopping the sound
+// from constantly restarting (since it's being looped anyway), thus the normal
 // game speech can work while the baby cry sound is heard.
+//
+// Applies to at least: PC-CD
+// Responsible method: cryMusic::check in script 481
 // Fixes bug: #4955
 static const uint16 kq6SignatureDuplicateBabyCry[] = {
 	SIG_MAGICDWORD,
-	0x83, 0x00,                      // lal 00
-	0x31, 0x1e,                      // bnt 1e  [07f4]
+	0x83, 0x00,                      // lal local[0]
+	0x31, 0x1e,                      // bnt 1e [07f4]
 	0x78,                            // push1
 	0x39, 0x04,                      // pushi 04
-	0x43, 0x75, 0x02,                // callk DoAudio[75] 02
+	0x43, 0x75, 0x02,                // callk DoAudio[75], 02
 	SIG_END
 };
 
@@ -2476,8 +2480,9 @@ static const uint16 kq6PatchDuplicateBabyCry[] = {
 //  grow the stack, because it's calling itself per switch.
 // Which means after a while ScummVM will bomb out because the stack frame
 //  will be too large. This patch fixes the buggy script.
+//
 // Applies to at least: PC-CD, English PC floppy, German PC floppy, English Mac
-// Responsible method: KqInv::showSelf
+// Responsible method: KqInv::showSelf in script 907
 // Fixes bug: #5681
 static const uint16 kq6SignatureInventoryStackFix[] = {
 	0x67, 0x30,                         // pTos state
@@ -2492,7 +2497,7 @@ static const uint16 kq6SignatureInventoryStackFix[] = {
 	0x34, SIG_UINT16(0xdfff),           // ldi dfff
 	0x12,                               // and
 	0x65, 0x30,                         // aTop state
-	0x38, SIG_SELECTOR16(show),         // pushi "show" ("show" is e1h for KQ6CD)
+	0x38, SIG_SELECTOR16(show),         // pushi show (e1h for KQ6CD)
 	0x78,                               // push1
 	0x87, 0x00,                         // lap param[0]
 	0x31, 0x04,                         // bnt [use global for show]
@@ -2519,20 +2524,18 @@ static const uint16 kq6PatchInventoryStackFix[] = {
 	0x00,                               // bnot (neg, either 2000 or 0000 in acc, this will create dfff or ffff) - saves 2 bytes
 	0x12,                               // and
 	0x65, 0x30,                         // aTop state
-	0x38,                               // pushi "show"
-	PATCH_GETORIGINALUINT16(+22),
+	0x38, PATCH_GETORIGINALUINT16(+22), // pushi show
 	0x78,                               // push1
 	0x87, 0x00,                         // lap param[0]
-	0x31, 0x04,                         // bnt [call show using global 0]
+	0x31, 0x04,                         // bnt [call show using global[0]]
 	0x8f, 0x01,                         // lsp param[1], save 1 byte total with lsg global[0] combined
-	0x33, 0x02,                         // jmp [call show using param 1]
+	0x33, 0x02,                         // jmp [call show using param[1]]
 	0x89, 0x00,                         // lsg global[0], save 1 byte total, see above
 	0x54, 0x06,                         // self 06 (call x::show)
-	0x31,                               // bnt [menu exit code]
-	PATCH_GETORIGINALBYTEADJUST(+39, +6),// dynamic offset must be 0x0E for PC and 0x0D for mac
+	0x31, PATCH_GETORIGINALBYTEADJUST(+39, +6), // bnt [menu exit code] (0x0e for pc, 0x0d for mac)
 	0x34, PATCH_UINT16(0x2000),         // ldi 2000
 	0x12,                               // and
-	0x2f, 0x05,                         // bt [to return]
+	0x2f, 0x05,                         // bt [to ret]
 	0x39, 0x39,                         // pushi 39
 	0x76,                               // push0
 	0x54, 0x04,                         // self 04 (self::doit)
@@ -2540,13 +2543,14 @@ static const uint16 kq6PatchInventoryStackFix[] = {
 	PATCH_END
 };
 
-// The "Drink Me" bottle code doesn't repaint the AddToPics elements to the screen,
-//  when Alexander returns back from the effect of the bottle.
-//  It's pretty strange that Sierra didn't find this bug, because it occurs when
-//  drinking the bottle right on the screen, where the bottle is found.
+// The "Drink Me" bottle code doesn't repaint the AddToPics elements to the
+//  screen, when Alexander returns back from the effect of the bottle.
+//  It's pretty strange that Sierra didn't find this bug, because it occurs
+//  when drinking the bottle right on the screen, where the bottle is found.
 // This bug also occurs in Sierra SCI.
+//
 // Applies to at least: PC-CD, English PC floppy, German PC floppy, English Mac
-// Responsible method: drinkMeScript::changeState
+// Responsible method: drinkMeScript::changeState in script 87
 // Fixes bug: #5252
 static const uint16 kq6SignatureDrinkMeFix[] = {
 	SIG_MAGICDWORD,
@@ -2576,49 +2580,49 @@ static const uint16 kq6SignatureDrinkMeFix[] = {
 
 static const uint16 kq6PatchDrinkMeFix[] = {
 	PATCH_ADDTOOFFSET(+5),              // skip to bnt offset
-	PATCH_GETORIGINALBYTEADJUST(+5, +13), // adjust jump to [check for 11h code]
+	PATCH_GETORIGINALBYTEADJUST(+5, +13), // [check for 11h code] (adjust bnt offset)
 	PATCH_ADDTOOFFSET(+162),
-	0x39, PATCH_SELECTOR8(doit),        // pushi (doit)
+	0x39, PATCH_SELECTOR8(doit),        // pushi doit
 	0x76,                               // push0
-	0x81, 0x0a,                         // lag 0a
+	0x81, 0x0a,                         // lag global[0a]
 	0x4a, 0x04,                         // send 04 (call addToPics::doit)
 	0x3a,                               // toss
 	0x48,                               // ret
 	PATCH_ADDTOOFFSET(+8),              // skip to check 11h code
-	0x35, 0x10,                         // ldi 10 instead of 11
+	0x35, 0x10,                         // ldi 10 (instead of 11)
 	PATCH_ADDTOOFFSET(+23),             // skip to check 12h code
-	0x35, 0x11,                         // ldi 11 instead of 12
+	0x35, 0x11,                         // ldi 11 (instead of 12)
 	PATCH_ADDTOOFFSET(+23),             // skip to check 13h code
-	0x35, 0x12,                         // ldi 12 instead of 13
+	0x35, 0x12,                         // ldi 12 (instead of 13)
 	PATCH_END
 };
 
 // During the common Game Over cutscene, one of the guys says "Tickets, only",
-// but the subtitle says "Tickets, please".
-// Normally people wouldn't have noticed, but ScummVM supports audio + subtitles
-// in this game at the same time.
-// This is caused by a buggy message, which really has this text + audio attached.
-// We assume that "Tickets, only" (the audio) is the correct one and there is a
-// message with "Tickets, only" in both text and audio.
-// We change message 1, 0, 1, 1 to message 5, 0, 0, 2 to fix this issue.
-//
+//  but the subtitle says "Tickets, please". Normally people wouldn't have
+//  noticed, but ScummVM supports audio + subtitles in this game at the same
+//  time. This is caused by a buggy message, which really has this text + audio
+//  attached.
+// We assume that "Tickets, only" (the audio) is the correct one. There is
+//  another message with "Tickets, only" in both text and audio. We change
+//  message 1, 0, 1, 1 to message 5, 0, 0, 2 to fix this issue.
 // This mismatch also occurs in Sierra SCI.
+//
 // Applies to at least: PC-CD
-// Responsible method: modeLessScript::changeState(0)
+// Responsible method: modeLessScript::changeState(0) in script 640
 static const uint16 kq6SignatureTicketsOnly[] = {
 	0x3c,                               // dup
 	0x35, 0x00,                         // ldi 0
 	0x1a,                               // eq?
 	SIG_MAGICDWORD,
 	0x31, 0x2b,                         // bnt [skip over state 0]
-	0x39, 0x1e,                         // pushi (font) (we keep the hardcoded selectors in here simply because this is only for KQ6-CD)
+	0x39, 0x1e,                         // pushi font (we keep the hardcoded selectors in here simply because this is only for KQ6-CD)
 	0x78,                               // push1
 	0x89, 0x16,                         // lsg global[16h]
-	0x38, SIG_UINT16(0x009a),           // pushi (posn)
+	0x38, SIG_UINT16(0x009a),           // pushi posn
 	0x7a,                               // push2
 	0x38, SIG_UINT16(0x00c8),           // pushi 00c8h (200d)
 	0x39, 0x64,                         // pushi 64h (100d)
-	0x38, SIG_UINT16(0x00ab),           // pushi (say)
+	0x38, SIG_UINT16(0x00ab),           // pushi say
 	0x39, 0x05,                         // pushi 05 (parameter count for say)
 	0x76,                               // push0
 	0x78,                               // push1
@@ -2631,14 +2635,14 @@ static const uint16 kq6SignatureTicketsOnly[] = {
 static const uint16 kq6PatchTicketsOnly[] = {
 	0x32, PATCH_UINT16(0x0000),         // jmp (waste 3 bytes)
 	0x2f, 0x2c,                         // bt [skip over state 0] (saves 1 byte)
-	0x39, 0x1e,                         // pushi (font) (we keep the hardcoded selectors in here simply because this is only for KQ6-CD)
+	0x39, 0x1e,                         // pushi font (we keep the hardcoded selectors in here simply because this is only for KQ6-CD)
 	0x78,                               // push1
 	0x89, 0x16,                         // lsg global[16h]
-	0x38, PATCH_UINT16(0x009a),         // pushi (posn)
+	0x38, PATCH_UINT16(0x009a),         // pushi posn
 	0x7a,                               // push2
 	0x38, PATCH_UINT16(0x00c8),         // pushi 00c8h (200d)
 	0x39, 0x64,                         // pushi 64h (100d)
-	0x38, PATCH_UINT16(0x00ab),         // pushi (say)
+	0x38, PATCH_UINT16(0x00ab),         // pushi say
 	0x39, 0x05,                         // pushi 05 (parameter count for say)
 	0x76,                               // push0
 	0x39, 0x05,                         // pushi 05
@@ -2671,15 +2675,15 @@ static const uint16 kq6PatchTicketsOnly[] = {
 //  but it happens to work. Those items are always on the same page due to their
 //  low item numbers and the clothes are removed from inventory before the hair.
 //
-// Applies to: PC Floppy, PC CD, Mac Floppy
-// Responsible method: ribbon:doVerb(1)
-// Fixes bug #10801
+// Applies to: PC CD, PC Floppy, Mac Floppy
+// Responsible method: ribbon:doVerb(1) in script 907
+// Fixes bug: #10801
 static const uint16 kq6SignatureLookRibbonFix[] = {
 	0x30, SIG_ADDTOOFFSET(+2),          // bnt [ verb != Look ]
 	0x38, SIG_SELECTOR16(has),          // pushi has
 	0x78,                               // push1
 	0x39, 0x04,                         // pushi 04
-	0x81, SIG_MAGICDWORD, 0x00,         // lag 00
+	0x81, SIG_MAGICDWORD, 0x00,         // lag global[0]
 	0x4a, 0x06,                         // send 6 [ ego:has 4 (beauty's hair) ]
 	0x2e,                               // bt [ continue hair tests ]
 	SIG_END
@@ -2689,7 +2693,7 @@ static const uint16 kq6PatchLookRibbonFix[] = {
 	PATCH_ADDTOOFFSET(+3),
 	0x78,                               // push1
 	0x38, PATCH_UINT16(0x008f),         // pushi 008f
-	0x46, PATCH_UINT16(0x0391),         // calle proc913_0 [ is flag 8f set? ]
+	0x46, PATCH_UINT16(0x0391),         // calle [export 0 of script 13], 02 [ is flag 8f set? ]
 	      PATCH_UINT16(0x0000), 0x02,
 	PATCH_END
 };
@@ -2714,8 +2718,8 @@ static const uint16 kq6PatchLookRibbonFix[] = {
 //  Text mode. This patch does not affect audio modes Speech and Both.
 //
 // Applies to: PC CD
-// Responsible method: wallFlowerDance:changeState(9)
-// Fixes bug #10811
+// Responsible method: wallFlowerDance:changeState(9) in script 480
+// Fixes bug: #10811
 static const uint16 kq6CDSignatureWallFlowerDanceFix[] = {
 	SIG_MAGICDWORD,
 	0x39, SIG_SELECTOR8(init),          // pushi init
@@ -2741,9 +2745,10 @@ static const uint16 kq6CDPatchWallFlowerDanceFix[] = {
 	PATCH_END
 };
 
-// Audio + subtitles support - SHARED! - used for King's Quest 6 and Laura Bow 2
-//  this patch gets enabled, when the user selects "both" in the ScummVM "Speech + Subtitles" menu
-//  We currently use global 98d to hold a kMemory pointer.
+// Audio + subtitles support - SHARED! - used for King's Quest 6 and Laura Bow 2.
+//  This patch gets enabled when the user selects "both" in the ScummVM
+//  "Speech + Subtitles" menu. We currently use global[98d] to hold a kMemory
+//  pointer.
 // Applies to at least: KQ6 PC-CD, LB2 PC-CD
 // Patched method: Messager::sayNext / lb2Messager::sayNext (always use text branch)
 static const uint16 kq6laurabow2CDSignatureAudioTextSupport1[] = {
@@ -2768,14 +2773,14 @@ static const uint16 kq6laurabow2CDSignatureAudioTextSupport2[] = {
 	0x7a,                               // push2
 	0x78,                               // push1
 	0x39, 0x0c,                         // pushi 0c
-	0x43, SIG_MAGICDWORD, 0x72, 0x04,   // kMemory
-	0xa5, 0xc9,                         // sat global[c9]
+	0x43, SIG_MAGICDWORD, 0x72, 0x04,   // callk Memory
+	0xa5, 0xc9,                         // sat temp[c9]
 	SIG_END
 };
 
 static const uint16 kq6laurabow2CDPatchAudioTextSupport2[] = {
 	PATCH_ADDTOOFFSET(+7),
-	0xa1, 98,                           // sag global[98d]
+	0xa1, 0x62,                         // sag global[62] (global[98d])
 	PATCH_END
 };
 
@@ -2786,13 +2791,13 @@ static const uint16 kq6laurabow2CDSignatureAudioTextSupport3[] = {
 	0x39, 0x03,                         // pushi 03
 	SIG_MAGICDWORD,
 	0x8d, 0xc9,                         // lst temp[c9]
-	0x43, 0x72, 0x04,                   // kMemory
+	0x43, 0x72, 0x04,                   // callk Memory
 	SIG_END
 };
 
 static const uint16 kq6laurabow2CDPatchAudioTextSupport3[] = {
 	PATCH_ADDTOOFFSET(+3),
-	0x89, 98,                           // lsg global[98d]
+	0x89, 0x62,                         // lsg global[62] (global[98d])
 	PATCH_END
 };
 
@@ -2840,9 +2845,9 @@ static const uint16 kq6laurabow2CDPatchAudioTextSupport4[] = {
 	0x81, 0x5a,                         // lag global[5a]
 	0x7a,                               // push2
 	0x12,                               // and
-	0x33, 0x03,                         // skip over 3 unused bytes
+	0x33, 0x03,                         // jmp 3 [skip unused bytes]
 	PATCH_ADDTOOFFSET(+22),
-	0x89, 98,                           // lsp global[98d]
+	0x89, 0x62,                         // lsg global[62] (global[98d])
 	PATCH_END
 };
 
@@ -2857,7 +2862,7 @@ static const uint16 kq6laurabow2CDSignatureAudioTextSupport5[] = {
 };
 
 static const uint16 kq6laurabow2CDPatchAudioTextSupport5[] = {
-	0x18, 0x18, 0x18, 0x18,             // waste bytes, do nothing
+	0x18, 0x18, 0x18, 0x18,             // (waste bytes)
 	PATCH_END
 };
 
@@ -2907,21 +2912,27 @@ static const uint16 kq6CDPatchAudioTextSupport2[] = {
 };
 
 // Additional patch specifically for King's Quest 6
-//  Fixes special windows, used for example in the Pawn shop (room 280),
-//   when the man in a robe complains about no more mints.
-//   Or also in room 300 at the cliffs (aka copy protection), when Alexander falls down the cliffs (closes automatically, but too late).
-//   Or in room 210, when Alexander gives the ring to the nightingale (these ones will need a mouse click).
+//  Fixes special windows, used for example in...
+//   The Pawn shop (room 280), when the man in a robe complains about no more
+//    mints.
+//   Room 300 at the cliffs (aka copy protection), when Alexander falls down
+//    the cliffs (closes automatically, but too late).
+//   Room 210, when Alexander gives the ring to the nightingale (these need a
+//    mouse click).
 //
-//  We have to change even more code, because the game uses PODialog class for
-//   text windows and myDialog class for audio. Both are saved to KQ6Print::dialog
+//  We have to change even more code because the game uses PODialog class for
+//   text windows and myDialog class for audio. Both are saved to
+//   KQ6Print::dialog.
 //
-//  Changing KQ6Print::dialog is disabled for now, because it has side-effects (breaking game over screens)
+//  Changing KQ6Print::dialog is disabled for now, because it has side-effects
+//   (breaking game over screens).
 //
 //  Original comment:
 //  Sadly PODialog is created during KQ6Print::addText, myDialog is set during
-//   KQ6Print::showSelf, which is called much later and KQ6Print::addText requires
-//   KQ6Print::dialog to be set, which means we have to set it before calling addText
-//   for audio mode, otherwise the user would have to click to get those windows disposed.
+//   KQ6Print::showSelf, which is called much later and KQ6Print::addText
+//   requires KQ6Print::dialog to be set, which means we have to set it before
+//   calling addText for audio mode, otherwise the user would have to click to
+//   get those windows disposed.
 //
 // Applies to at least: PC-CD
 // Patched method: KQ6Print::say
@@ -2943,10 +2954,10 @@ static const uint16 kq6CDSignatureAudioTextSupport3[] = {
 };
 
 static const uint16 kq6CDPatchAudioTextSupport3[] = {
-	0x31, 0x68,                         // adjust jump to reuse audio mode addText-calling code
-	PATCH_ADDTOOFFSET(+85),             // right at the MAGIC_DWORD
+	0x31, 0x68,                         // bnt (adjust branch to reuse audio mode addText-calling code)
+	PATCH_ADDTOOFFSET(+85),             // (right at the MAGIC_DWORD)
 	// check, if text is supposed to be shown. If yes, skip the follow-up check (param[1])
-	0x89, 0x5a,                         // lsg global[5Ah]
+	0x89, 0x5a,                         // lsg global[5a]
 	0x35, 0x01,                         // ldi 01
 	0x12,                               // and
 	0x2f, 0x07,                         // bt [skip over param check]
@@ -2957,8 +2968,8 @@ static const uint16 kq6CDPatchAudioTextSupport3[] = {
 	0x31, 0x10,                         // bnt [code to set property repressText to 1], adjusted
 	// waste 5 bytes instead of using myDialog class for now
 	// setting myDialog class all the time causes game over screens to misbehave (bug #9771)
-	0x34, 0x00, 0x00,
-	0x35, 0x00,
+	0x34, PATCH_UINT16(0x0000),         // ldi 0 (waste 3 bytes)
+	0x35, 0x00,                         // ldi 0 (waste 2 bytes)
 	// use myDialog class, so that text box automatically disappears (this is not done for text only mode, like in the original)
 	//0x72, 0x0e, 0x00,                   // lofsa myDialog
 	//0x65, 0x12,                         // aTop dialog
@@ -2987,14 +2998,14 @@ static const uint16 kq6CDSignatureAudioTextSupport4[] = {
 	0x63, 0x94,                         // pToa raving
 	0x31, 0x0a,                         // bnt [no rave code]
 	0x35, 0x00,                         // ldi 00
-	SIG_ADDTOOFFSET(6),                 // skip reset of bust, eyes and mouth
+	SIG_ADDTOOFFSET(+6),                // skip reset of bust, eyes and mouth
 	0x33, 0x24,                         // jmp [to super class code]
 	SIG_END
 };
 
 static const uint16 kq6CDPatchAudioTextSupport4[] = {
 	PATCH_ADDTOOFFSET(+12),
-	0x33, PATCH_GETORIGINALBYTEADJUST(+13, -6), // adjust jump to also include setSize call
+	0x33, PATCH_GETORIGINALBYTEADJUST(+13, -6), // (adjust jump to also include setSize call)
 	PATCH_END
 };
 
@@ -3121,7 +3132,7 @@ static const uint16 kq6CDSignatureAudioTextMenuSupport[] = {
 
 static const uint16 kq6CDPatchAudioTextMenuSupport[] = {
 	PATCH_ADDTOOFFSET(+13),
-	0x33, 0x79,                         // jmp to new text+dual code
+	0x33, 0x79,                         // jmp [to new text+dual code]
 	PATCH_ADDTOOFFSET(+104),            // seek to iconTextSwitch::doit
 	0x81, 0x5a,                         // lag global[5a]
 	0x78,                               // push1
@@ -3149,12 +3160,12 @@ static const uint16 kq6CDPatchAudioTextMenuSupport[] = {
 
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry kq6Signatures[] = {
-	{  true,   481, "duplicate baby cry",                          1, kq6SignatureDuplicateBabyCry,             kq6PatchDuplicateBabyCry },
-	{  true,   907, "inventory stack fix",                         1, kq6SignatureInventoryStackFix,            kq6PatchInventoryStackFix },
-	{  true,   907, "look ribbon fix",                             1, kq6SignatureLookRibbonFix,                kq6PatchLookRibbonFix },
-	{  true,    87, "Drink Me bottle fix",                         1, kq6SignatureDrinkMeFix,                   kq6PatchDrinkMeFix },
-	{  true,   640, "Tickets, only fix",                           1, kq6SignatureTicketsOnly,                  kq6PatchTicketsOnly },
-	{  true,   480, "CD: wallflower dance fix",                    1, kq6CDSignatureWallFlowerDanceFix,         kq6CDPatchWallFlowerDanceFix },
+	{  true,    87, "fix Drink Me bottle",                            1, kq6SignatureDrinkMeFix,                   kq6PatchDrinkMeFix },
+	{  true,   480, "CD: fix wallflower dance",                       1, kq6CDSignatureWallFlowerDanceFix,         kq6CDPatchWallFlowerDanceFix },
+	{  true,   481, "fix duplicate baby cry",                         1, kq6SignatureDuplicateBabyCry,             kq6PatchDuplicateBabyCry },
+	{  true,   640, "fix 'Tickets, only' message",                    1, kq6SignatureTicketsOnly,                  kq6PatchTicketsOnly },
+	{  true,   907, "fix inventory stack leak",                       1, kq6SignatureInventoryStackFix,            kq6PatchInventoryStackFix },
+	{  true,   907, "fix hair detection for ribbon's look msg",       1, kq6SignatureLookRibbonFix,                kq6PatchLookRibbonFix },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
 	// *** King's Quest 6 audio + text support ***
 	{ false,   924, "CD: audio + text support KQ6&LB2 1",             1, kq6laurabow2CDSignatureAudioTextSupport1,     kq6laurabow2CDPatchAudioTextSupport1 },
