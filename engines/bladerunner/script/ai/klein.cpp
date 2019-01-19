@@ -224,23 +224,29 @@ bool AIScriptKlein::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 bool AIScriptKlein::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
-		if (Actor_Query_Goal_Number(kActorKlein) == 1 || Actor_Query_Goal_Number(kActorKlein) == 2) {
+		if (Actor_Query_Goal_Number(kActorKlein) == 1
+		 || Actor_Query_Goal_Number(kActorKlein) == 2
+		) {
 			*animation = 691;
 			_animationFrame++;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(691)) {
 				_animationFrame = 0;
 			}
-		} else if (!Game_Flag_Query(196) && Actor_Query_Goal_Number(kActorKlein) == 3) {
+		} else if (!Game_Flag_Query(kFlagKleinAnimation1)
+		        &&  Actor_Query_Goal_Number(kActorKlein) == 3
+		) {
 			*animation = 689;
 			_animationFrame++;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(689)) {
 				_animationFrame = 0;
 				if (Random_Query(1, 10) == 1) {
-					Game_Flag_Set(196);
+					Game_Flag_Set(kFlagKleinAnimation1);
 				}
 			}
 		} else {
-			if (Game_Flag_Query(198) && Actor_Query_Goal_Number(kActorKlein) == 3) {
+			if (Game_Flag_Query(kFlagKleinAnimation3)
+			 && Actor_Query_Goal_Number(kActorKlein) == 3
+			) {
 				_animationFrame--;
 				if (_animationFrame < 0) {
 					_animationFrame = 0;
@@ -251,24 +257,24 @@ bool AIScriptKlein::UpdateAnimation(int *animation, int *frame) {
 
 			*animation = 690;
 			if (_animationFrame <= 9) {
-				if (Game_Flag_Query(198)) {
-					Game_Flag_Reset(198);
+				if (Game_Flag_Query(kFlagKleinAnimation3)) {
+					Game_Flag_Reset(kFlagKleinAnimation3);
 				}
 			}
 			if (_animationFrame == 14) {
 				if (Random_Query(1, 5) == 1) {
-					Game_Flag_Set(197);
+					Game_Flag_Set(kFlagKleinAnimation2);
 				}
 			}
 			if (_animationFrame == 15) {
-				if (Game_Flag_Query(197) == 1) {
-					Game_Flag_Reset(197);
-					Game_Flag_Set(198);
+				if (Game_Flag_Query(kFlagKleinAnimation2)) {
+					Game_Flag_Reset(kFlagKleinAnimation2);
+					Game_Flag_Set(kFlagKleinAnimation3);
 				}
 			}
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(690)) {
 				_animationFrame = 0;
-				Game_Flag_Reset(196);
+				Game_Flag_Reset(kFlagKleinAnimation1);
 			}
 		}
 		break;

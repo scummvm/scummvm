@@ -72,7 +72,7 @@ void SceneScriptCT10::sub_401844() {
 			Actor_Voice_Over(3700, kActorVoiceOver);
 		} else {
 			Item_Pickup_Spin_Effect(931, 435, 258);
-			Actor_Clue_Acquire(kActorMcCoy, kClueHoldensBadge, 1, -1);
+			Actor_Clue_Acquire(kActorMcCoy, kClueHoldensBadge, true, -1);
 		}
 		Player_Gains_Control();
 	}
@@ -90,7 +90,7 @@ bool SceneScriptCT10::ClickedOn3DObject(const char *objectName, bool a2) {
 			if (Actor_Clue_Query(kActorMcCoy, kClueStrangeScale1)) {
 				Actor_Voice_Over(3700, kActorVoiceOver);
 			} else {
-				Actor_Clue_Acquire(kActorMcCoy, kClueStrangeScale1, 1, -1);
+				Actor_Clue_Acquire(kActorMcCoy, kClueStrangeScale1, true, -1);
 				Item_Pickup_Spin_Effect(969, 364, 214);
 			}
 			Delay(1000);

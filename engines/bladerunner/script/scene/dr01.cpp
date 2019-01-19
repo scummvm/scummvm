@@ -55,12 +55,12 @@ void SceneScriptDR01::InitializeScene() {
 	Ambient_Sounds_Add_Sound(378, 5, 80, 50, 100, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(379, 5, 80, 50, 100, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(380, 5, 80, 50, 100, -100, 100, -101, -101, 0, 0);
-	if (Game_Flag_Query(272)
+	if (Game_Flag_Query(kFlagDR05BombExploded)
 	 && Game_Flag_Query(kFlagDR04toDR01)
 	) {
 		Scene_Loop_Start_Special(0, 3, 0);
 		Scene_Loop_Set_Default(4);
-	} else if (!Game_Flag_Query(272)
+	} else if (!Game_Flag_Query(kFlagDR05BombExploded)
 	        &&  Game_Flag_Query(kFlagDR04toDR01)
 	) {
 		Scene_Loop_Start_Special(0, 2, 0);

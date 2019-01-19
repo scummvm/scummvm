@@ -98,7 +98,7 @@ bool SceneScriptCT08::ClickedOnActor(int actorId) {
 bool SceneScriptCT08::ClickedOnItem(int itemId, bool a2) {
 	if (itemId == 81) {
 		if (!Loop_Actor_Walk_To_Item(kActorMcCoy, 81, 36, 1, false) && !Game_Flag_Query(550)) {
-			Actor_Clue_Acquire(kActorMcCoy, kClueCheese, 1, -1);
+			Actor_Clue_Acquire(kActorMcCoy, kClueCheese, true, -1);
 			Item_Pickup_Spin_Effect(936, 266, 328);
 			Item_Remove_From_World(81);
 			Actor_Voice_Over(480, kActorVoiceOver);

@@ -43,140 +43,178 @@ void AIScriptSteele::Initialize() {
 	Actor_Put_In_Set(kActorSteele, kSetFreeSlotG);
 	Actor_Set_At_Waypoint(kActorSteele, 39, 0);
 	Actor_Set_Goal_Number(kActorSteele, 0);
-	Actor_Clue_Acquire(kActorSteele, kClueCrimeSceneNotes, 1, -1);
+	Actor_Clue_Acquire(kActorSteele, kClueCrimeSceneNotes, true, -1);
 }
 
 bool AIScriptSteele::Update() {
-	if (Global_Variable_Query(14) <= 5 || Actor_Clue_Query(kActorSteele, 239)) {
-		switch (Global_Variable_Query(kVariableChapter)) {
-		case 1:
-			if (Game_Flag_Query(kFlagMcCoyAtRCxx) && Game_Flag_Query(kFlagMcCoyAtRCxx)) {
-				Actor_Set_Goal_Number(kActorSteele, 3);
-				return true;
-			} else if (Game_Flag_Query(kFlagMcCoyAtCTxx) && Game_Flag_Query(184)) {
-				Actor_Set_Goal_Number(kActorSteele, 6);
-				return true;
-			} else if (Game_Flag_Query(kFlagMcCoyAtPSxx) && Game_Flag_Query(185)) {
-				Actor_Set_Goal_Number(kActorSteele, 10);
-				return true;
-			} else if (Actor_Query_Goal_Number(kActorSteele)
-			        || Game_Flag_Query(kFlagMcCoyAtRCxx)
-			        || Player_Query_Current_Scene() == kSceneRC01
-			) {
-				if (Actor_Query_Goal_Number(kActorSteele) != 11) {
-					break; // go to after switch
-				}
-				Actor_Set_Goal_Number(kActorSteele, 0);
-				return true;
-			} else {
-				Actor_Set_Goal_Number(kActorSteele, 1);
-				Game_Flag_Set(183);
-				return true;
-			}
-
-		case 2:
-			if (Game_Flag_Query(451) != 1 || Game_Flag_Query(457)) {
-				if (Actor_Query_Goal_Number(kActorSteele) == 110 && Game_Flag_Query(456) == 1) {
-					Actor_Set_Goal_Number(kActorSteele, 111);
-					return true;
-				} else if (Game_Flag_Query(460) || Actor_Query_Goal_Number(kActorSteele) != 112) {
-					if (Actor_Query_Goal_Number(kActorSteele) != 190) {
-						break; // go to after switch
-					}
-					Game_Flag_Reset(460);
-					Actor_Set_Goal_Number(kActorSteele, 112);
-					return true;
-				} else {
-					Actor_Set_Goal_Number(kActorSteele, 113);
-					Game_Flag_Set(460);
-					return true;
-				}
-			} else {
-				Actor_Set_Goal_Number(kActorSteele, 110);
-				Game_Flag_Set(457);
-				return true;
-			}
-
-		case 3:
-			if (Global_Variable_Query(kVariableChapter) != 3) {
-				break; // go to after switch
-			}
-			if (Actor_Query_Goal_Number(kActorSteele) < 205)
-				Actor_Set_Goal_Number(kActorSteele, 205);
-
-			if (Actor_Query_Goal_Number(kActorSteele) == 251
-					&& Player_Query_Current_Scene() == kSceneNR01
-					&& Actor_Query_In_Between_Two_Actors(0, 1, 2)) {
-				Actor_Set_Goal_Number(kActorSteele, 255);
-			}
-			if (Actor_Query_Goal_Number(kActorSteele) == 213) {
-				Actor_Set_Goal_Number(kActorSteele, 214);
-				return true;
-			} else if (Actor_Query_Goal_Number(kActorSteele) == 261) {
-				Actor_Set_Goal_Number(kActorSteele, 262);
-				return true;
-			} else {
-				if (Actor_Query_Goal_Number(kActorSteele) != 271) {
-					break; // go to after switch
-				}
-				Actor_Set_Goal_Number(kActorSteele, 270);
-				return true;
-			}
-
-		case 4:
-			if (Actor_Query_Goal_Number(kActorSteele) < 300) {
-				Actor_Set_Goal_Number(kActorSteele, 300);
-			}
-			break; // go to after switch
-
-		case 5:
-			if (Game_Flag_Query(653) != 1 || Actor_Query_Goal_Number(kActorSteele) >= 400) {
-				break; // go to after switch
-			}
-			Actor_Set_Goal_Number(kActorSteele, 400);
-			return true;
-
-		default:
-			break; // go to after switch
-		}
-
-		if (Actor_Query_Goal_Number(kActorSteele) == 599 && !Actor_Query_In_Set(kActorSteele, kSetFreeSlotI)) {
-			if (Actor_Query_Which_Set_In(kActorMcCoy) != Actor_Query_Which_Set_In(kActorSteele)) {
-				AI_Movement_Track_Flush(kActorSteele);
-				AI_Movement_Track_Append(kActorSteele, 41, 100);
-				AI_Movement_Track_Repeat(kActorSteele);
-			}
-		}
-		return false;
-	} else {
-		Actor_Clue_Acquire(kActorSteele, 239, 1, -1);
+	if ( Global_Variable_Query(kVariableMcCoyEvidenceMissed) > 5
+	 && !Actor_Clue_Query(kActorSteele, kClueMcCoyIsStupid)
+	) {
+		Actor_Clue_Acquire(kActorSteele, kClueMcCoyIsStupid, true, -1);
 		return true;
 	}
+
+	switch (Global_Variable_Query(kVariableChapter)) {
+	case 1:
+		if (Game_Flag_Query(kFlagMcCoyAtRCxx)
+		 && Game_Flag_Query(183)
+		) {
+			Actor_Set_Goal_Number(kActorSteele, 3);
+			return true;
+		}
+
+		if (Game_Flag_Query(kFlagMcCoyAtCTxx)
+		 && Game_Flag_Query(184)
+		) {
+			Actor_Set_Goal_Number(kActorSteele, 6);
+			return true;
+		}
+
+		if (Game_Flag_Query(kFlagMcCoyAtPSxx)
+		 && Game_Flag_Query(185)
+		) {
+			Actor_Set_Goal_Number(kActorSteele, 10);
+			return true;
+		}
+
+		if ( Actor_Query_Goal_Number(kActorSteele) == 0
+		 && !Game_Flag_Query(kFlagMcCoyAtRCxx)
+		 &&  Player_Query_Current_Scene() != kSceneRC01
+		) {
+			Actor_Set_Goal_Number(kActorSteele, 1);
+			Game_Flag_Set(183);
+			return true;
+		}
+
+		if (Actor_Query_Goal_Number(kActorSteele) == 11) {
+			Actor_Set_Goal_Number(kActorSteele, 0);
+			return true;
+		}
+
+		break;
+
+	case 2:
+		if ( Game_Flag_Query(kFlagTB05Entered)
+		 && !Game_Flag_Query(kFlagTB02SteeleEnter)
+		) {
+			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleGoToTB02);
+			Game_Flag_Set(kFlagTB02SteeleEnter);
+			return true;
+		}
+
+		if (Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleGoToTB02
+		 && Game_Flag_Query(kFlagTB02SteeleTalk)) {
+			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleLeaveTB02);
+			return true;
+		 }
+
+		if (!Game_Flag_Query(kFlagSteeleWalkingAround)
+		 && Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleGoToPoliceStation
+		) {
+			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleWalkAround);
+			Game_Flag_Set(kFlagSteeleWalkingAround);
+			return true;
+		}
+
+		if (Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleWalkAroundRestart) {
+			Game_Flag_Reset(kFlagSteeleWalkingAround);
+			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleGoToPoliceStation);
+			return true;
+		}
+
+		break;
+
+	case 3:
+		if (Global_Variable_Query(kVariableChapter) != 3) { // why is this here? double check?
+			break;
+		}
+
+		if (Actor_Query_Goal_Number(kActorSteele) < 205) {
+			Actor_Set_Goal_Number(kActorSteele, 205);
+		}
+
+		if (Actor_Query_Goal_Number(kActorSteele) == 251
+		 && Player_Query_Current_Scene() == kSceneNR01
+		 && Actor_Query_In_Between_Two_Actors(kActorMcCoy, kActorSteele, kActorGordo)
+		) {
+			Actor_Set_Goal_Number(kActorSteele, 255);
+		}
+
+		if (Actor_Query_Goal_Number(kActorSteele) == 213) {
+			Actor_Set_Goal_Number(kActorSteele, 214);
+			return true;
+		}
+
+		if (Actor_Query_Goal_Number(kActorSteele) == 261) {
+			Actor_Set_Goal_Number(kActorSteele, 262);
+			return true;
+		}
+
+		if (Actor_Query_Goal_Number(kActorSteele) != 271) {
+			Actor_Set_Goal_Number(kActorSteele, 270);
+		}
+
+		break;
+
+	case 4:
+		if (Actor_Query_Goal_Number(kActorSteele) < 300) {
+			Actor_Set_Goal_Number(kActorSteele, 300);
+		}
+
+		break;
+
+	case 5:
+		if (Game_Flag_Query(653)
+		 && Actor_Query_Goal_Number(kActorSteele) < 400
+		) {
+			Actor_Set_Goal_Number(kActorSteele, 400);
+			return true;
+		}
+
+		break;
+
+	default:
+		break;
+	}
+
+	if ( Actor_Query_Goal_Number(kActorSteele) == 599
+		&& !Actor_Query_In_Set(kActorSteele, kSetFreeSlotI)
+	) {
+		if (Actor_Query_Which_Set_In(kActorMcCoy) != Actor_Query_Which_Set_In(kActorSteele)) {
+			AI_Movement_Track_Flush(kActorSteele);
+			AI_Movement_Track_Append(kActorSteele, 41, 100);
+			AI_Movement_Track_Repeat(kActorSteele);
+		}
+	}
+	return false;
+
 }
 
 void AIScriptSteele::TimerExpired(int timer) {
-	if (Actor_Query_Goal_Number(kActorSteele) != 210 || timer || Player_Query_Current_Scene() != kSceneNR11) {
-		if (Actor_Query_Goal_Number(kActorSteele) != 210 || timer) {
-			if (timer == 1) {
-				int goal = Actor_Query_Goal_Number(kActorSteele);
-
-				AI_Countdown_Timer_Reset(kActorSteele, 1);
-
-				if (goal == 415) {
-					Actor_Set_Goal_Number(kActorSteele, 416);
-				} else if (goal == 416) {
-					Actor_Set_Goal_Number(kActorSteele, 419);
-				}
-			}
-			return; // false;
+	if (timer == 0
+	 && Actor_Query_Goal_Number(kActorSteele) == 210
+	 && Player_Query_Current_Scene() == kSceneNR11
+	) {
+		if (Player_Query_Current_Scene() == kSceneNR11) {
+			Actor_Set_Goal_Number(kActorSteele, 212);
 		} else {
 			Actor_Set_Goal_Number(kActorSteele, 211);
-			return; // true;
 		}
-	} else {
-		Actor_Set_Goal_Number(kActorSteele, 212);
 		return; // true;
 	}
+
+	if (timer == 1) {
+		int goal = Actor_Query_Goal_Number(kActorSteele);
+
+		AI_Countdown_Timer_Reset(kActorSteele, 1);
+
+		if (goal == 415) {
+			Actor_Set_Goal_Number(kActorSteele, 416);
+		} else if (goal == 416) {
+			Actor_Set_Goal_Number(kActorSteele, 419);
+		}
+	}
+	return; // false;
 }
 
 void AIScriptSteele::CompletedMovementTrack() {
@@ -195,8 +233,11 @@ void AIScriptSteele::CompletedMovementTrack() {
 			Actor_Clues_Transfer_New_From_Mainframe(kActorSteele);
 		}
 
-		if (Query_Score(kActorMcCoy) > Query_Score(kActorSteele) && Query_Score(kActorMcCoy) < 75)
+		if (Query_Score(kActorMcCoy) > Query_Score(kActorSteele)
+		 && Query_Score(kActorMcCoy) < 75
+		) {
 			Set_Score(kActorSteele, Random_Query(2, 5) + Query_Score(kActorMcCoy));
+		}
 
 		Actor_Set_Goal_Number(kActorSteele, 4);
 		break;
@@ -238,7 +279,7 @@ void AIScriptSteele::CompletedMovementTrack() {
 		break;
 
 	case 100:
-		if (Actor_Query_Goal_Number(kActorSteele) == 100) {
+		if (Actor_Query_Goal_Number(kActorSteele) == 100) { //why is this here? double check?
 			Player_Set_Combat_Mode(kActorMcCoy);
 
 			if (Actor_Query_Goal_Number(kActorIzo) != 199) {
@@ -253,12 +294,12 @@ void AIScriptSteele::CompletedMovementTrack() {
 		}
 		break;
 
-	case 111:
-		Actor_Set_Goal_Number(kActorSteele, 112);
+	case kGoalSteeleLeaveTB02:
+		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleGoToPoliceStation);
 		break;
 
-	case 113:
-		Actor_Set_Goal_Number(kActorSteele, 190);
+	case kGoalSteeleWalkAround:
+		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleWalkAroundRestart);
 		break;
 
 	case 241:
@@ -290,11 +331,11 @@ void AIScriptSteele::CompletedMovementTrack() {
 		Actor_Says(kActorSteele, 670, 59);
 		Actor_Set_Goal_Number(kActorSteele, 433);
 		Player_Set_Combat_Mode(kActorSteele);
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -731.0f, 8.26f, -657.0f, 0, 0, 0, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -731.0f, 8.26f, -657.0f, 0, false, false, 0);
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		Game_Flag_Set(578);
-		Set_Enter(kSetKP07, kSetKP04);
+		Set_Enter(kSetKP07, kSceneKP07);
 		break;
 
 	default:
@@ -358,29 +399,42 @@ void AIScriptSteele::ClickedByPlayer() {
 
 void AIScriptSteele::EnteredScene(int sceneId) {
 	if (Actor_Query_Goal_Number(kActorSteele) == 2) {
-		if (!Game_Flag_Query(147) && Random_Query(1, 3) == 1) {
-			Actor_Clue_Acquire(kActorSteele, 8, 1, -1);
-			Game_Flag_Set(147);
+		if (!Game_Flag_Query(kFlagChopstickWrapperTaken)
+		 &&  Random_Query(1, 3) == 1
+		) {
+			Actor_Clue_Acquire(kActorSteele, kClueChopstickWrapper, true, -1);
+			Game_Flag_Set(kFlagChopstickWrapperTaken);
 
-			if (Game_Flag_Query(709)) {
-				Item_Remove_From_World(82);
+			if (Game_Flag_Query(kFlagRC51Discovered)) {
+				Item_Remove_From_World(kItemChopstickWrapper);
 			}
 
-			Global_Variable_Increment(14, 1);
-		} else if (!Game_Flag_Query(148) && Random_Query(1, 3) == 1) {
-			Actor_Clue_Acquire(kActorSteele, 6, 1, -1);
-			Game_Flag_Set(148);
+			Global_Variable_Increment(kVariableMcCoyEvidenceMissed, 1);
+			return;  //true;
+		}
 
-			if (Game_Flag_Query(709)) {
-				Item_Remove_From_World(79);
-			}
-		} else if (!Game_Flag_Query(149) && Random_Query(1, 20) == 1) {
-			Actor_Clue_Acquire(kActorSteele, 7, 1, -1);
-			Game_Flag_Set(149);
+		if (!Game_Flag_Query(kFlagCandyTaken)
+		 &&  Random_Query(1, 3) == 1
+		) {
+			Actor_Clue_Acquire(kActorSteele, kClueCandy, true, -1);
+			Game_Flag_Set(kFlagCandyTaken);
 
-			if (Game_Flag_Query(709)) {
-				Item_Remove_From_World(98);
+			if (Game_Flag_Query(kFlagRC51Discovered)) {
+				Item_Remove_From_World(kItemCandy);
 			}
+			return; //true;
+		}
+
+		if (!Game_Flag_Query(kFlagToyDogTaken)
+		 &&  Random_Query(1, 20) == 1
+		) {
+			Actor_Clue_Acquire(kActorSteele, kClueToyDog, true, -1);
+			Game_Flag_Set(kFlagToyDogTaken);
+
+			if (Game_Flag_Query(kFlagRC51Discovered)) {
+				Item_Remove_From_World(kItemToyDog);
+			}
+			return; //true;
 		}
 	}
 
@@ -406,7 +460,9 @@ void AIScriptSteele::OtherAgentExitedThisScene(int otherActorId) {
 }
 
 void AIScriptSteele::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
-	if (!otherActorId && Actor_Query_Goal_Number(kActorSteele) == 410)
+	if (otherActorId == kActorMcCoy
+	 && Actor_Query_Goal_Number(kActorSteele) == 410
+	)
 		Actor_Set_Goal_Number(kActorSteele, 418);
 }
 
@@ -415,8 +471,9 @@ void AIScriptSteele::ShotAtAndMissed() {
 }
 
 bool AIScriptSteele::ShotAtAndHit() {
-	if (Actor_Query_Goal_Number(kActorSteele) == 251)
+	if (Actor_Query_Goal_Number(kActorSteele) == 251) {
 		Actor_Set_Goal_Number(kActorSteele, 271);
+	}
 
 	if (/* !a1 && */ Actor_Query_In_Set(kActorSteele, kSetHF06))
 		Non_Player_Actor_Combat_Mode_On(kActorSteele, kActorCombatStateUncover, true, kActorMcCoy, 15, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 25, 300, false);
@@ -439,43 +496,44 @@ void AIScriptSteele::Retired(int byActorId) {
 }
 
 int AIScriptSteele::GetFriendlinessModifierIfGetsClue(int otherActorId, int clueId) {
-	if (otherActorId != kActorMcCoy)
+	if (otherActorId != kActorMcCoy) {
 		return 0;
+	}
 
 	switch (clueId) {
-	case 202:
-	case 223:
-	case 224:
-	case 226:
-	case 227:
-	case 228:
-	case 231:
-	case 241:
-	case 242:
+	case kClueMcCoyRecoveredHoldensBadge:
+	case kClueMcCoyRetiredLucy:
+	case kClueMcCoyRetiredDektora:
+	case kClueMcCoyRetiredSadik:
+	case kClueMcCoyShotZubenInTheBack:
+	case kClueMcCoyRetiredLutherLance:
+	case kClueClovisOrdersMcCoysDeath:
+	case kClueMcCoyIsKind:
+	case kClueMcCoyIsInsane:
 		return 5;
 
-	case 212:
-	case 221:
-	case 230:
+	case kClueMcCoyKilledRunciter1:
+	case kClueMcCoyShotGuzza:
+	case kClueMcCoyKilledRunciter2:
 		return 0;
 
-	case 215:
+	case kClueMcCoyLetZubenEscape:
 		return -4;
 
-	case 216:
-	case 217:
-	case 218:
-	case 219:
-	case 220:
+	case kClueMcCoyWarnedIzo:
+	case kClueMcCoyHelpedIzoIzoIsAReplicant:
+	case kClueMcCoyHelpedDektora:
+	case kClueMcCoyHelpedLucy:
+	case kClueMcCoyHelpedGordo:
 		return -5;
 
-	case 222:
+	case kClueMcCoyRetiredZuben:
 		return 4;
 
-	case 239:
+	case kClueMcCoyIsStupid:
 		return -3;
 
-	case 240:
+	case kClueMcCoyIsAnnoying:
 		return -2;
 	}
 
@@ -501,16 +559,19 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Append(kActorSteele, 12, 5);
 		AI_Movement_Track_Repeat(kActorSteele);
 		return true;
+
 	case 2:
 		AI_Movement_Track_Flush(kActorSteele);
 		AI_Movement_Track_Append(kActorSteele, 61, 30);
 		AI_Movement_Track_Repeat(kActorSteele);
 		return true;
+
 	case 3:
 		AI_Movement_Track_Flush(kActorSteele);
 		AI_Movement_Track_Append(kActorSteele, 35, 45);
 		AI_Movement_Track_Repeat(kActorSteele);
 		return true;
+
 	case 4:
 		AI_Movement_Track_Flush(kActorSteele);
 		Game_Flag_Set(184);
@@ -518,6 +579,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Append(kActorSteele, 39, 45);
 		AI_Movement_Track_Repeat(kActorSteele);
 		return true;
+
 	case 5:
 		AI_Movement_Track_Flush(kActorSteele);
 		if (Random_Query(1, 10) == 1) {
@@ -527,11 +589,13 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		}
 		AI_Movement_Track_Repeat(kActorSteele);
 		return true;
+
 	case 6:
 		AI_Movement_Track_Flush(kActorSteele);
 		AI_Movement_Track_Append(kActorSteele, 35, 45);
 		AI_Movement_Track_Repeat(kActorSteele);
 		return true;
+
 	case 7:
 		AI_Movement_Track_Flush(kActorSteele);
 		Game_Flag_Set(185);
@@ -539,6 +603,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Append(kActorSteele, 39, 45);
 		AI_Movement_Track_Repeat(kActorSteele);
 		return true;
+
 	case 8:
 		AI_Movement_Track_Flush(kActorSteele);
 		if (Random_Query(1, 2) == 1) {
@@ -548,26 +613,30 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		}
 		AI_Movement_Track_Repeat(kActorSteele);
 		return true;
+
 	case 9:
 		AI_Movement_Track_Flush(kActorSteele);
 		AI_Movement_Track_Append(kActorSteele, 62, 1);
 		AI_Movement_Track_Repeat(kActorSteele);
 		return true;
+
 	case 10:
 		AI_Movement_Track_Flush(kActorSteele);
 		Game_Flag_Reset(185);
 		AI_Movement_Track_Append(kActorSteele, 39, 30);
 		AI_Movement_Track_Repeat(kActorSteele);
 		return true;
+
 	case 11:
-		Actor_Clue_Acquire(kActorSteele, kClueGrigorianInterviewA, 1, kActorGrigorian);
+		Actor_Clue_Acquire(kActorSteele, kClueGrigorianInterviewA, true, kActorGrigorian);
 		if (Game_Flag_Query(kFlagIzoIsReplicant)) {
-			Actor_Clue_Acquire(kActorSteele, kClueGrigorianInterviewB1, 1, kActorGrigorian);
+			Actor_Clue_Acquire(kActorSteele, kClueGrigorianInterviewB1, true, kActorGrigorian);
 		} else {
-			Actor_Clue_Acquire(kActorSteele, kClueGrigorianInterviewB2, 1, kActorGrigorian);
+			Actor_Clue_Acquire(kActorSteele, kClueGrigorianInterviewB2, true, kActorGrigorian);
 		}
 		Actor_Set_Goal_Number(kActorSteele, 0);
 		return true;
+
 	case 100:
 		AI_Movement_Track_Flush(kActorSteele);
 		if (Game_Flag_Query(kFlagIzoIsReplicant)) {
@@ -579,34 +648,40 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		}
 		AI_Movement_Track_Repeat(kActorSteele);
 		return true;
-	case 110:
+
+	case kGoalSteeleGoToTB02:
 		AI_Movement_Track_Flush(kActorSteele);
 		AI_Movement_Track_Append(kActorSteele, 192, 0);
 		AI_Movement_Track_Repeat(kActorSteele);
 		return true;
-	case 111:
+
+	case kGoalSteeleLeaveTB02:
 		Loop_Actor_Walk_To_XYZ(kActorSteele, -187.82f, 0.08f, 1460.74f, 0, 0, 0, 0);
-		Actor_Face_Heading(kActorSteele, 802, 0);
-		Loop_Actor_Travel_Stairs(kActorSteele, 10, 0, 0);
+		Actor_Face_Heading(kActorSteele, 802, false);
+		Loop_Actor_Travel_Stairs(kActorSteele, 10, false, kAnimationModeIdle);
 		AI_Movement_Track_Flush(kActorSteele);
 		AI_Movement_Track_Append(kActorSteele, 35, 0);
 		AI_Movement_Track_Repeat(kActorSteele);
 		return true;
-	case 112:
+
+	case kGoalSteeleGoToPoliceStation:
 		if (Random_Query(1, 2) == 1) {
 			Actor_Clues_Transfer_New_To_Mainframe(kActorSteele);
 			Actor_Clues_Transfer_New_From_Mainframe(kActorSteele);
 		}
-		if (Query_Score(kActorMcCoy) > Query_Score(kActorSteele) && Query_Score(kActorMcCoy) < 75) {
+		if (Query_Score(kActorMcCoy) > Query_Score(kActorSteele)
+		 && Query_Score(kActorMcCoy) < 75
+		) {
 			Set_Score(kActorSteele, Random_Query(2, 5) + Query_Score(kActorMcCoy));
 		}
 		AI_Movement_Track_Flush(kActorSteele);
 		AI_Movement_Track_Append(kActorSteele, 35, Random_Query(45, 120));
 		AI_Movement_Track_Repeat(kActorSteele);
 		return true;
-	case 113:
+
+	case kGoalSteeleWalkAround:
 		AI_Movement_Track_Flush(kActorSteele);
-		if (Random_Query(1, 5) == 1) {
+		if (Random_Query(1, 5) == 1) { // Animoid row & Bradbury building
 			AI_Movement_Track_Append(kActorSteele, 222, 0);
 			AI_Movement_Track_Append_With_Facing(kActorSteele, 223, 3, 973);
 			AI_Movement_Track_Append(kActorSteele, 224, 5);
@@ -624,34 +699,34 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			AI_Movement_Track_Append(kActorSteele, 228, 0);
 			AI_Movement_Track_Append(kActorSteele, 229, 10);
 			AI_Movement_Track_Repeat(kActorSteele);
-		} else {
-			if (Random_Query(1, 3) == 1) {
-				AI_Movement_Track_Append(kActorSteele, 232, 0);
-				AI_Movement_Track_Append(kActorSteele, 233, 0);
-				AI_Movement_Track_Append(kActorSteele, 234, 3);
-				AI_Movement_Track_Append(kActorSteele, 237, 0);
-				AI_Movement_Track_Append(kActorSteele, 238, 0);
-				AI_Movement_Track_Append(kActorSteele, 239, 0);
-				AI_Movement_Track_Append(kActorSteele, 240, 10);
-				AI_Movement_Track_Append(kActorSteele, 39, 120);
-				AI_Movement_Track_Append(kActorSteele, 243, 0);
-				AI_Movement_Track_Append(kActorSteele, 244, 10);
-			} else {
-				AI_Movement_Track_Append(kActorSteele, 248, 0);
-				AI_Movement_Track_Append(kActorSteele, 249, 0);
-				AI_Movement_Track_Append(kActorSteele, 250, 10);
-				AI_Movement_Track_Append(kActorSteele, 253, 0);
-				AI_Movement_Track_Append_With_Facing(kActorSteele, 254, 3, 1015);
-				AI_Movement_Track_Append_With_Facing(kActorSteele, 255, 2, 1015);
-				AI_Movement_Track_Append_With_Facing(kActorSteele, 256, 3, 1015);
-				AI_Movement_Track_Append(kActorSteele, 257, 0);
-				AI_Movement_Track_Append(kActorSteele, 39, 30);
-				AI_Movement_Track_Append(kActorSteele, 35, 120);
-				AI_Movement_Track_Append(kActorSteele, 39, 30);
-			}
+		} else if (Random_Query(1, 3) == 1) { // Chinatown & DNA row
+			AI_Movement_Track_Append(kActorSteele, 232, 0);
+			AI_Movement_Track_Append(kActorSteele, 233, 0);
+			AI_Movement_Track_Append(kActorSteele, 234, 3);
+			AI_Movement_Track_Append(kActorSteele, 237, 0);
+			AI_Movement_Track_Append(kActorSteele, 238, 0);
+			AI_Movement_Track_Append(kActorSteele, 239, 0);
+			AI_Movement_Track_Append(kActorSteele, 240, 10);
+			AI_Movement_Track_Append(kActorSteele, 39, 120);
+			AI_Movement_Track_Append(kActorSteele, 243, 0);
+			AI_Movement_Track_Append(kActorSteele, 244, 10);
+			AI_Movement_Track_Repeat(kActorSteele);
+		} else { // Police station
+			AI_Movement_Track_Append(kActorSteele, 248, 0);
+			AI_Movement_Track_Append(kActorSteele, 249, 0);
+			AI_Movement_Track_Append(kActorSteele, 250, 10);
+			AI_Movement_Track_Append(kActorSteele, 253, 0);
+			AI_Movement_Track_Append_With_Facing(kActorSteele, 254, 3, 1015);
+			AI_Movement_Track_Append_With_Facing(kActorSteele, 255, 2, 1015);
+			AI_Movement_Track_Append_With_Facing(kActorSteele, 256, 3, 1015);
+			AI_Movement_Track_Append(kActorSteele, 257, 0);
+			AI_Movement_Track_Append(kActorSteele, 39, 30);
+			AI_Movement_Track_Append(kActorSteele, 35, 120);
+			AI_Movement_Track_Append(kActorSteele, 39, 30);
 			AI_Movement_Track_Repeat(kActorSteele);
 		}
 		return true;
+
 	case 120:
 		Actor_Force_Stop_Walking(kActorMcCoy);
 		Sound_Play(27, 100, 0, 0, 50);
@@ -677,6 +752,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Set_Goal_Number(kActorSteele, 130);
 		Player_Gains_Control();
 		return true;
+
 	case 121:
 		Actor_Force_Stop_Walking(kActorMcCoy);
 		Actor_Face_Actor(kActorSteele, kActorIzo, 1);
@@ -715,6 +791,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Set_Goal_Number(kActorSteele, 130);
 		Actor_Set_Goal_Number(kActorSteele, 0);
 		return true;
+
 	case 125:
 		Actor_Force_Stop_Walking(kActorMcCoy);
 		Actor_Set_Goal_Number(kActorIzo, 114);
@@ -731,35 +808,42 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Set_Goal_Number(kActorSteele, 130);
 		Scene_Exits_Enable();
 		return true;
+
 	case 126:
 		return true;
+
 	case 130:
 		AI_Movement_Track_Flush(kActorSteele);
 		AI_Movement_Track_Append(kActorSteele, 174, 0);
 		AI_Movement_Track_Append(kActorSteele, 35, 0);
 		AI_Movement_Track_Repeat(kActorSteele);
 		return true;
+
 	case 200:
 		AI_Movement_Track_Flush(kActorSteele);
 		return true;
+
 	case 205:
 		if (Query_Score(kActorMcCoy) > Query_Score(kActorSteele) && Query_Score(kActorMcCoy) < 75) {
 			Set_Score(kActorSteele, Random_Query(2, 5) + Query_Score(kActorMcCoy));
 		}
-		if (Game_Flag_Query(702)) {
+		if (Game_Flag_Query(kFlagRC04Locked)) {
 			Game_Flag_Set(643);
 		}
 		AI_Movement_Track_Flush(kActorSteele);
 		Actor_Put_In_Set(kActorSteele, kSetFreeSlotC);
 		Actor_Set_At_Waypoint(kActorSteele, 35, 0);
 		return true;
+
 	case 210:
 		AI_Countdown_Timer_Reset(kActorSteele, 0);
 		AI_Countdown_Timer_Start(kActorSteele, 0, 15);
 		return true;
+
 	case 211:
 		AI_Countdown_Timer_Reset(kActorSteele, 0);
 		return true;
+
 	case 212:
 		if (comp_distance(kActorMcCoy, -4.0, 0.33f, 0.0f, 100.0f, 0.33f, -4.0f) < 48.0f) {
 			Loop_Actor_Walk_To_XYZ(0, 32.0f, 0.33f, 17.0f, 0, 0, 0, 0);
@@ -774,10 +858,12 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		_animationState = 10;
 		_animationFrame = 0;
 		return true;
+
 	case 213:
 	case 216:
 	case 271:
 		return true;
+
 	case 214:
 		Player_Gains_Control();
 		switch (Actor_Query_Goal_Number(kActorDektora)) {
@@ -817,34 +903,39 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Set_Goal_Number(kActorSteele, 275);
 		}
 		return true;
+
 	case 215:
 		Game_Flag_Set(635);
 		Actor_Change_Animation_Mode(kActorSteele, 6);
 		Scene_Exits_Disable();
 		return true;
+
 	case 230:
 		AI_Movement_Track_Flush(kActorSteele);
 		Actor_Put_In_Set(kActorSteele, kSetNR01);
 		Actor_Set_At_XYZ(kActorSteele, 94.03f, 23.88f, -794.46f, 685);
 		return true;
+
 	case 231:
 		AI_Movement_Track_Flush(kActorSteele);
 		Actor_Put_In_Set(kActorSteele, kSetNR05_NR08);
 		Actor_Set_At_XYZ(kActorSteele, -1034.09f, 0.32f, 224.77f, 440);
 		Game_Flag_Set(722);
-		Set_Enter(kSetNR05_NR08, kSetPS01);
+		Set_Enter(kSetNR05_NR08, kSceneNR08);
 		return true;
+
 	case 232:
 		Game_Flag_Set(532);
-		Set_Enter(kSetNR02, kSetNR03);
+		Set_Enter(kSetNR02, kSceneNR02);
 		return true;
+
 	case 233:
 		Game_Flag_Set(kFlagHF01toHF03);
 		Game_Flag_Reset(kFlagMcCoyAtNRxx);
 		Game_Flag_Set(kFlagMcCoyAtHFxx);
 		Actor_Put_In_Set(kActorSteele, kSetHF03);
 		Actor_Set_At_XYZ(kActorSteele, 291.0f, 47.76f, -892.0f, 453);
-		Set_Enter(kSetHF03, kSetDR06);
+		Set_Enter(kSetHF03, kSceneHF03);
 		return true;
 	case 234:
 		AI_Movement_Track_Flush(kActorSteele);
@@ -852,16 +943,19 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Append(kActorSteele, 35, 0);
 		AI_Movement_Track_Repeat(kActorSteele);
 		return true;
+
 	case 235:
 		AI_Movement_Track_Flush(kActorSteele);
 		AI_Movement_Track_Append_Run(kActorSteele, 467, 0);
 		AI_Movement_Track_Append(kActorSteele, 35, 0);
 		AI_Movement_Track_Repeat(kActorSteele);
 		return true;
+
 	case 236:
 		Actor_Put_In_Set(kActorSteele, kSetNR10);
 		Actor_Set_At_XYZ(kActorSteele, -118.13f, 2.84f, -197.90f, 305);
 		return true;
+
 	case 240:
 		AI_Movement_Track_Flush(kActorSteele);
 		AI_Movement_Track_Flush(kActorLucy);
@@ -870,6 +964,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Put_In_Set(kActorLucy, kSetHF02);
 		Actor_Set_At_XYZ(kActorLucy, 596.49f, 47.76f, -260.04f, 731);
 		return true;
+
 	case 241:
 		Actor_Change_Animation_Mode(kActorSteele, 6);
 		Delay(500);
@@ -883,6 +978,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Delay(500);
 		ADQ_Add(6, 340, 48);
 		return true;
+
 	case 242:
 		AI_Movement_Track_Flush(kActorSteele);
 		Player_Loses_Control();
@@ -912,21 +1008,23 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Set_At_XYZ(kActorSteele, 12.17f, 23.88f, -533.37f, 674);
 			Game_Flag_Reset(255);
 			Game_Flag_Reset(256);
-			Set_Enter(kSetNR01, kSetNR01);
+			Set_Enter(kSetNR01, kSceneNR01);
 		} else {
 			Actor_Put_In_Set(kActorSteele, kSetHF01);
 			Actor_Set_At_XYZ(kActorSteele, 324.32f, 8.0f, -465.87f, 674);
 			Game_Flag_Reset(255);
 			Game_Flag_Reset(256);
-			Set_Enter(kSetHF01, kSetDR03);
+			Set_Enter(kSetHF01, kSceneHF04);
 		}
 		return true;
+
 	case 243:
 		Player_Loses_Control();
 		Delay(500);
 		Actor_Put_In_Set(kActorSteele, kSetHF02);
 		Actor_Set_At_XYZ(kActorSteele, 254.94f, 47.76f, -262.58f, 210);
 		return true;
+
 	case 244:
 		Actor_Face_Actor(kActorMcCoy, kActorSteele, 1);
 		Actor_Says(kActorMcCoy, 1560, 14);
@@ -936,6 +1034,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Says(kActorSteele, 120, 15);
 		Actor_Set_Goal_Number(kActorSteele, 246);
 		return true;
+
 	case 245:
 		Actor_Face_Actor(kActorSteele, kActorMcCoy, 1);
 		Actor_Says(kActorSteele, 150, 13);
@@ -949,6 +1048,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Says(kActorSteele, 200, 15);
 		Actor_Set_Goal_Number(kActorSteele, 246);
 		return true;
+
 	case 246:
 		Actor_Says(kActorSteele, 130, 13);
 		Actor_Says(kActorSteele, 140, 13);
@@ -960,15 +1060,16 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Set_At_XYZ(kActorSteele, 12.17f, 23.88f, -533.37f, 674);
 			Game_Flag_Reset(255);
 			Game_Flag_Reset(256);
-			Set_Enter(kSetNR01, kSetNR01);
+			Set_Enter(kSetNR01, kSceneNR01);
 		} else {
 			Actor_Put_In_Set(kActorSteele, kSetHF01);
 			Actor_Set_At_XYZ(kActorSteele, 324.32f, 8.0f, -465.87f, 674);
 			Game_Flag_Reset(255);
 			Game_Flag_Reset(256);
-			Set_Enter(kSetHF01, kSetDR03);
+			Set_Enter(kSetHF01, kSceneHF01);
 		}
 		return true;
+
 	case 250:
 		AI_Movement_Track_Flush(kActorSteele);
 		Actor_Put_In_Set(kActorSteele, kSetNR01);
@@ -981,9 +1082,11 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Change_Animation_Mode(kActorSteele, 0);
 		_var1 = 3;
 		return true;
+
 	case 251:
 		Actor_Set_Targetable(kActorSteele, 1);
 		return true;
+
 	case 252:
 		Player_Loses_Control();
 		Actor_Change_Animation_Mode(kActorSteele, 6);
@@ -1009,11 +1112,12 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Game_Flag_Set(617);
 			Game_Flag_Reset(255);
 			Game_Flag_Reset(256);
-			Set_Enter(kSetHF01, kSetDR03);
+			Set_Enter(kSetHF01, kSceneHF01);
 		} else {
 			Actor_Set_Goal_Number(kActorSteele, 280);
 		}
 		return true;
+
 	case 255:
 		ADQ_Flush();
 		Actor_Change_Animation_Mode(kActorSteele, 6);
@@ -1024,6 +1128,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Set_Goal_Number(kActorGordo, 251);
 		Actor_Says(kActorSteele, 1250, 3);
 		return true;
+
 	case 258:
 		Game_Flag_Reset(603);
 		ADQ_Flush();
@@ -1052,6 +1157,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Player_Gains_Control();
 		Actor_Set_Goal_Number(kActorSteele, 280);
 		return true;
+
 	case 260:
 		ADQ_Flush();
 		Actor_Change_Animation_Mode(kActorMcCoy, 6);
@@ -1064,6 +1170,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Set_Targetable(kActorSteele, 0);
 		Player_Loses_Control();
 		return true;
+
 	case 262:
 		Actor_Face_Actor(kActorSteele, kActorMcCoy, 1);
 		Actor_Says(kActorSteele, 1160, 15);
@@ -1085,6 +1192,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Player_Gains_Control();
 		Actor_Set_Goal_Number(kActorSteele, 280);
 		return true;
+
 	case 270:
 		ADQ_Flush();
 		Player_Loses_Control();
@@ -1096,6 +1204,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Delay(5000);
 		Actor_Set_Goal_Number(kActorMcCoy, 500);
 		return true;
+
 	case 275:
 		Delay(500);
 		Game_Flag_Set(617);
@@ -1105,15 +1214,16 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Set_At_XYZ(kActorSteele, 12.17f, 23.88f, -533.37f, 674);
 			Game_Flag_Reset(255);
 			Game_Flag_Reset(256);
-			Set_Enter(kSetNR01, kSetNR01);
+			Set_Enter(kSetNR01, kSceneNR01);
 		} else {
 			Actor_Put_In_Set(kActorSteele, kSetHF01);
 			Actor_Set_At_XYZ(kActorSteele, 324.32f, 8.0f, -465.87f, 674);
 			Game_Flag_Reset(255);
 			Game_Flag_Reset(256);
-			Set_Enter(kSetHF01, kSetDR03);
+			Set_Enter(kSetHF01, kSceneHF01);
 		}
 		return true;
+
 	case 280:
 		Actor_Says(kActorMcCoy, 2970, 15);
 		Actor_Face_Actor(kActorSteele, kActorMcCoy, 1);
@@ -1149,13 +1259,15 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Set_Goal_Number(kActorSteele, 291);
 		}
 		return true;
+
 	case 285:
 		Actor_Set_Goal_Number(kActorSteele, 290);
 		return true;
+
 	case 290:
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -281.0f, 31.93f, -1061.0f, 0, 0, 1, 0);
 		Actor_Face_Heading(kActorMcCoy, 45, 0);
-		Loop_Actor_Travel_Stairs(kActorMcCoy, 3, 0, 0);
+		Loop_Actor_Travel_Stairs(kActorMcCoy, 3, 0, kAnimationModeIdle);
 		Global_Variable_Set(1, 4);
 		Scene_Exits_Enable();
 		Actor_Set_Health(kActorMcCoy, 50, 50);
@@ -1164,6 +1276,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Game_Flag_Set(680);
 		Chapter_Enter(4, 79, 91);
 		return true;
+
 	case 291:
 		Game_Flag_Set(722);
 		Global_Variable_Set(1, 4);
@@ -1172,6 +1285,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Game_Flag_Set(680);
 		Chapter_Enter(4, 79, 91);
 		return true;
+
 	case 300:
 		if (Query_Score(kActorMcCoy) > Query_Score(kActorSteele) && Query_Score(kActorMcCoy) < 75) {
 			Set_Score(kActorSteele, Random_Query(2, 5) + Query_Score(kActorMcCoy));
@@ -1181,14 +1295,17 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		}
 		Actor_Set_Goal_Number(kActorSteele, 305);
 		return true;
+
 	case 305:
 		Actor_Put_In_Set(kActorSteele, kSetFreeSlotC);
 		Actor_Set_At_Waypoint(kActorSteele, 35, 0);
 		return true;
+
 	case 400:
 	case 401:
 	case 423:
 		return true;
+
 	case 410:
 		Actor_Set_Targetable(kActorSteele, 1);
 		Actor_Face_Actor(kActorSteele, kActorMcCoy, 1);
@@ -1198,6 +1315,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Delay(3000);
 		Async_Actor_Walk_To_XYZ(kActorSteele, -109.0f, -36.55f, 26.0f, 0, 0);
 		return true;
+
 	case 411:
 		Actor_Face_Actor(kActorMcCoy, kActorSteele, 1);
 		Actor_Says(kActorSteele, 430, 14);
@@ -1205,17 +1323,21 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Delay(4000);
 		Async_Actor_Walk_To_XYZ(kActorSteele, -109.0f, -36.55f, 26.0f, 0, 0);
 		return true;
+
 	case 412:
 		Actor_Force_Stop_Walking(kActorSteele);
 		return true;
+
 	case 413:
 		Async_Actor_Walk_To_XYZ(kActorSteele, 1.0, -36.55f, 111.0f, 0, 0);
 		return true;
+
 	case 415:
 		Actor_Force_Stop_Walking(kActorSteele);
 		Actor_Change_Animation_Mode(kActorSteele, 51);
 		AI_Countdown_Timer_Start(kActorSteele, 1, 2);
 		return true;
+
 	case 416:
 		Actor_Set_At_XYZ(kActorSteele, -48.83f, -36.55f, 69.98f, 280);
 		Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorSteele, 36, 0, 1);
@@ -1235,23 +1357,27 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		}
 		AI_Countdown_Timer_Start(kActorSteele, 1, 3);
 		return true;
+
 	case 418:
 		Actor_Face_Actor(kActorSteele, kActorMcCoy, 1);
 		Actor_Change_Animation_Mode(kActorSteele, 6);
 		Actor_Change_Animation_Mode(kActorMcCoy, 48);
 		Actor_Retired_Here(kActorMcCoy, 72, 18, 1, -1);
 		return true;
+
 	case 419:
 		Actor_Set_Targetable(kActorSteele, 0);
 		Game_Flag_Set(646);
 		Actor_Set_Goal_Number(kActorSteele, 599);
 		Actor_Retired_Here(kActorSteele, 60, 12, 1, -1);
 		return true;
+
 	case 420:
 		Actor_Put_In_Set(kActorSteele, kSetKP01);
 		Actor_Set_At_XYZ(kActorSteele, 20.0f, -12.2f, -97.0f, 907);
 		Actor_Change_Animation_Mode(kActorSteele, 43);
 		return true;
+
 	case 421:
 		Game_Flag_Reset(482);
 		Delay(2000);
@@ -1266,41 +1392,49 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Says(kActorSteele, 390, 13);
 		Actor_Set_Goal_Number(kActorSteele, 422);
 		return true;
+
 	case 422:
 		AI_Movement_Track_Flush(kActorSteele);
 		AI_Movement_Track_Append(kActorSteele, 530, 0);
 		AI_Movement_Track_Repeat(kActorSteele);
 		return true;
+
 	case 430:
 		Actor_Put_In_Set(kActorSteele, kSetKP05_KP06);
 		Actor_Set_At_XYZ(kActorSteele, -1110.0f, 0.0f, 952.0f, 155);
 		Actor_Change_Animation_Mode(kActorSteele, 4);
 		return true;
+
 	case 431:
 		AI_Movement_Track_Flush(kActorSteele);
 		AI_Movement_Track_Append_Run(kActorSteele, 541, 0);
 		AI_Movement_Track_Repeat(kActorSteele);
 		return true;
+
 	case 432:
 		Actor_Set_At_Waypoint(kActorSteele, 542, 0);
 		AI_Movement_Track_Flush(kActorSteele);
 		AI_Movement_Track_Append_Run(kActorSteele, 543, 0);
 		AI_Movement_Track_Repeat(kActorSteele);
 		return true;
+
 	case 433:
 		AI_Movement_Track_Flush(kActorSteele);
 		AI_Movement_Track_Append_Run(kActorSteele, 542, 0);
 		AI_Movement_Track_Repeat(kActorSteele);
 		return true;
+
 	case 450:
 		Actor_Put_In_Set(kActorSteele, kSetKP05_KP06);
 		Actor_Set_At_XYZ(kActorSteele, -947.39f, 0.0f, 728.89f, 0);
 		return true;
+
 	case 499:
 		AI_Movement_Track_Flush(kActorSteele);
 		Actor_Put_In_Set(kActorSteele, kSetKP05_KP06);
 		Actor_Set_At_XYZ(kActorSteele, -782.15f, 8.26f, -263.64f, 52);
 		return true;
+
 	default:
 		return false;
 	}
@@ -2052,8 +2186,10 @@ void AIScriptSteele::SetAnimationState(int animationState, int animationFrame, i
 }
 
 bool AIScriptSteele::ReachedMovementTrackWaypoint(int waypointId) {
-	if (waypointId == 174 && Actor_Query_Goal_Number(kActorSteele) == 130)
-		Actor_Set_Goal_Number(kActorSteele, 112);
+	if (waypointId == 174
+	 && Actor_Query_Goal_Number(kActorSteele) == 130
+	)
+		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleGoToPoliceStation);
 
 	return true;
 }

@@ -385,19 +385,19 @@ void VKScript::SCRIPT_VK_DLL_Shutdown(int actorId, int humanPercentage, int repl
 		VK_Play_Speech_Line(kActorAnsweringMachine, 430, 0.5f);
 		switch (actorId) {
 		case kActorRunciter:
-			Actor_Clue_Acquire(kActorMcCoy, kClueVKRunciterReplicant, 1, -1);
+			Actor_Clue_Acquire(kActorMcCoy, kClueVKRunciterReplicant, true, -1);
 			break;
 		case kActorBulletBob:
-			Actor_Clue_Acquire(kActorMcCoy, kClueVKBobGorskyReplicant, 1, -1);
+			Actor_Clue_Acquire(kActorMcCoy, kClueVKBobGorskyReplicant, true, -1);
 			break;
 		case kActorGrigorian:
-			Actor_Clue_Acquire(kActorMcCoy, kClueVKGrigorianReplicant, 1, -1);
+			Actor_Clue_Acquire(kActorMcCoy, kClueVKGrigorianReplicant, true, -1);
 			break;
 		case kActorLucy:
-			Actor_Clue_Acquire(kActorMcCoy, kClueVKLucyReplicant, 1, -1);
+			Actor_Clue_Acquire(kActorMcCoy, kClueVKLucyReplicant, true, -1);
 			break;
 		case kActorDektora:
-			Actor_Clue_Acquire(kActorMcCoy, kClueVKDektoraReplicant, 1, -1);
+			Actor_Clue_Acquire(kActorMcCoy, kClueVKDektoraReplicant, true, -1);
 			break;
 		}
 	} else if (humanPercentage > 79) {
@@ -405,19 +405,19 @@ void VKScript::SCRIPT_VK_DLL_Shutdown(int actorId, int humanPercentage, int repl
 		VK_Play_Speech_Line(kActorAnsweringMachine, 440, 0.5f);
 		switch (actorId) {
 		case kActorRunciter:
-			Actor_Clue_Acquire(kActorMcCoy, kClueVKRunciterHuman, 1, -1);
+			Actor_Clue_Acquire(kActorMcCoy, kClueVKRunciterHuman, true, -1);
 			break;
 		case kActorBulletBob:
-			Actor_Clue_Acquire(kActorMcCoy, kClueVKBobGorskyHuman, 1, -1);
+			Actor_Clue_Acquire(kActorMcCoy, kClueVKBobGorskyHuman, true, -1);
 			break;
 		case kActorGrigorian:
-			Actor_Clue_Acquire(kActorMcCoy, kClueVKGrigorianHuman, 1, -1);
+			Actor_Clue_Acquire(kActorMcCoy, kClueVKGrigorianHuman, true, -1);
 			break;
 		case kActorLucy:
-			Actor_Clue_Acquire(kActorMcCoy, kClueVKLucyHuman, 1, -1);
+			Actor_Clue_Acquire(kActorMcCoy, kClueVKLucyHuman, true, -1);
 			break;
 		case kActorDektora:
-			Actor_Clue_Acquire(kActorMcCoy, kClueVKDektoraHuman, 1, -1);
+			Actor_Clue_Acquire(kActorMcCoy, kClueVKDektoraHuman, true, -1);
 			break;
 		}
 	}

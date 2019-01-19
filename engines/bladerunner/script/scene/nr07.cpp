@@ -217,7 +217,7 @@ void SceneScriptNR07::sub_401C60() {
 	Actor_Face_Object(kActorMcCoy, "VASE", true);
 	if (Actor_Query_Is_In_Current_Set(kActorDektora)) {
 		if (!Actor_Clue_Query(kActorMcCoy, kClueDektoraInterview3)) {
-			Actor_Clue_Acquire(kActorMcCoy, kClueDektoraInterview3, 1, -1);
+			Actor_Clue_Acquire(kActorMcCoy, kClueDektoraInterview3, true, -1);
 			int v0 = Actor_Query_Friendliness_To_Other(kActorDektora, kActorMcCoy);
 			if (v0 > 50) {
 				Actor_Modify_Friendliness_To_Other(kActorDektora, kActorMcCoy, 2);
@@ -233,7 +233,7 @@ void SceneScriptNR07::sub_401C60() {
 	} else if (Actor_Clue_Query(kActorMcCoy, kClueDektorasCard)) {
 		Actor_Says(kActorMcCoy, 8585, 14);
 	} else {
-		Actor_Clue_Acquire(kActorMcCoy, kClueDektorasCard, 1, -1);
+		Actor_Clue_Acquire(kActorMcCoy, kClueDektorasCard, true, -1);
 		Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "VASE", 100, true, false);
 		Actor_Change_Animation_Mode(kActorMcCoy, 23);
 		Item_Pickup_Spin_Effect(935, 526, 268);
@@ -243,7 +243,7 @@ void SceneScriptNR07::sub_401C60() {
 }
 
 void SceneScriptNR07::sub_401EF4() {
-	Actor_Clue_Acquire(kActorMcCoy, kClueDektoraInterview2, 1, -1);
+	Actor_Clue_Acquire(kActorMcCoy, kClueDektoraInterview2, true, -1);
 	Actor_Says(kActorMcCoy, 3625, 19);
 	Actor_Says(kActorDektora, 570, 30);
 	Actor_Says_With_Pause(kActorDektora, 580, 1.0f, 31);
@@ -255,7 +255,7 @@ void SceneScriptNR07::sub_401EF4() {
 	Actor_Face_Actor(kActorMcCoy, kActorDektora, true);
 	Actor_Face_Actor(kActorDektora, kActorMcCoy, true);
 	Game_Flag_Set(638);
-	Actor_Clue_Acquire(kActorMcCoy, kClueDragonflyBelt, 1, kActorDektora);
+	Actor_Clue_Acquire(kActorMcCoy, kClueDragonflyBelt, true, kActorDektora);
 	int v0 = Actor_Query_Friendliness_To_Other(kActorDektora, kActorMcCoy);
 	if (!Game_Flag_Query(kFlagDektoraIsReplicant) && v0 < 40) {
 		sub_4018D4();
@@ -288,7 +288,7 @@ void SceneScriptNR07::sub_4020F0() {
 }
 
 void SceneScriptNR07::sub_402284() {
-	Actor_Clue_Acquire(kActorMcCoy, kClueDektoraInterview1, 1, -1);
+	Actor_Clue_Acquire(kActorMcCoy, kClueDektoraInterview1, true, -1);
 	Actor_Start_Speech_Sample(kActorMcCoy, 3660);
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -109.0f, -73.0f, -89.0f, 0, 0, false, 0);
 	Actor_Face_Actor(kActorMcCoy, kActorDektora, true);

@@ -130,7 +130,7 @@ bool SceneScriptCT11::ClickedOn2DRegion(int region) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 686.0f, 0.0f, 658.0f, 12, 1, false, 0)) {
 			Actor_Face_Heading(kActorMcCoy, 47, false);
 			Item_Remove_From_World(115);
-			Actor_Clue_Acquire(kActorMcCoy, kClueLichenDogWrapper, 0, -1);
+			Actor_Clue_Acquire(kActorMcCoy, kClueLichenDogWrapper, false, -1);
 			Item_Pickup_Spin_Effect(951, 510, 319);
 			Game_Flag_Reset(725);
 			Game_Flag_Set(645);
@@ -170,7 +170,7 @@ bool SceneScriptCT11::ClickedOn2DRegion(int region) {
 				Actor_Voice_Over(520, kActorVoiceOver);
 				Actor_Voice_Over(530, kActorVoiceOver);
 				Actor_Voice_Over(540, kActorVoiceOver);
-				Actor_Clue_Acquire(kActorMcCoy, kClueCar, 0, -1);
+				Actor_Clue_Acquire(kActorMcCoy, kClueCar, false, -1);
 				Scene_2D_Region_Remove(1);
 			}
 		}

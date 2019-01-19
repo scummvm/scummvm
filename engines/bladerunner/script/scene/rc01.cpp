@@ -309,7 +309,7 @@ bool SceneScriptRC01::ClickedOnActor(int actorId) {
 		if (!Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorOfficerLeary, 36, true, false)) {
 			Actor_Face_Actor(kActorMcCoy, kActorOfficerLeary, true);
 			Actor_Face_Actor(kActorOfficerLeary, kActorMcCoy, true);
-			if (Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyCrowdInterrogation) {
+			if (Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01WalkToCrowd) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyDefault);
 			}
 			if (Game_Flag_Query(kFlagGotOfficersStatement)) {
@@ -583,7 +583,7 @@ void SceneScriptRC01::interrogateCrowd() {
 			Actor_Says(kActorMcCoy, 4500, 14);
 			I_Sez("MG: We don't want any of that abstract art oozing out onto the street.");
 			Actor_Says(kActorOfficerLeary, 10, 14);
-			Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyCrowdInterrogation);
+			Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyRC01WalkToCrowd);
 		}
 	}
 }

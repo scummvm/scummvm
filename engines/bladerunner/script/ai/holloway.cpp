@@ -184,7 +184,7 @@ bool AIScriptHolloway::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Player_Gains_Control();
 		}
 		Game_Flag_Set(334);
-		Set_Enter(kSetUG04, kSetUG18);
+		Set_Enter(kSetUG04, kSceneUG04);
 		break;
 
 	default:

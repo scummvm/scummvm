@@ -117,22 +117,25 @@ int AIScriptCrazylegs::GetFriendlinessModifierIfGetsClue(int otherActorId, int c
 }
 
 bool AIScriptCrazylegs::GoalChanged(int currentGoalNumber, int newGoalNumber) {
-	if (newGoalNumber > 2)
-		return false;
-
-	if (newGoalNumber) {
-		if (newGoalNumber != 1) {
-			AI_Movement_Track_Flush(kActorCrazylegs);
-			AI_Movement_Track_Append(kActorCrazylegs, 360, 0);
-			AI_Movement_Track_Append(kActorCrazylegs, 40, 0);
-			AI_Movement_Track_Repeat(kActorCrazylegs);
-			return true;
-		}
-		AI_Movement_Track_Flush(kActorCrazylegs);
-		Actor_Set_Targetable(kActorCrazylegs, 0);
+	if (newGoalNumber == 0) {
+		return true;
 	}
 
-	return true;
+	if (newGoalNumber == 1) {
+		AI_Movement_Track_Flush(kActorCrazylegs);
+		Actor_Set_Targetable(kActorCrazylegs, 0);
+		return true;
+	}
+
+	if (newGoalNumber == 2) {
+		AI_Movement_Track_Flush(kActorCrazylegs);
+		AI_Movement_Track_Append(kActorCrazylegs, 360, 0);
+		AI_Movement_Track_Append(kActorCrazylegs, 40, 0);
+		AI_Movement_Track_Repeat(kActorCrazylegs);
+		return true;
+	}
+
+	return false;
 }
 
 bool AIScriptCrazylegs::UpdateAnimation(int *animation, int *frame) {
@@ -378,19 +381,6 @@ bool AIScriptCrazylegs::ChangeAnimationMode(int mode) {
 		_animationState = 4;
 		_animationFrame = 0;
 		break;
-	case 2:
-	case 4:
-	case 5:
-	case 6:
-	case 7:
-	case 8:
-	case 9:
-	case 10:
-	case 11:
-	case 20:
-	case 21:
-	case 22:
-		return true;
 	case 3:
 		if (_animationState == 2) {
 			_animationState = 15;
@@ -444,8 +434,8 @@ bool AIScriptCrazylegs::ChangeAnimationMode(int mode) {
 		_animationState = 3;
 		_animationFrame = 0;
 		break;
-	default:
-		if (mode == 43 && _animationState != 2) {
+	case 43:
+		if (_animationState != 2) {
 			_animationState = 18;
 			_animationFrame = Slice_Animation_Query_Number_Of_Frames(469) - 1;
 		}

@@ -88,7 +88,7 @@ bool SceneScriptNR04::ClickedOn3DObject(const char *objectName, bool a2) {
 				} else if (Actor_Clue_Query(kActorMcCoy, kClueCollectionReceipt)) {
 					Actor_Says(kActorMcCoy, 8580, 3);
 				} else {
-					Actor_Clue_Acquire(kActorMcCoy, kClueCollectionReceipt, 0, -1);
+					Actor_Clue_Acquire(kActorMcCoy, kClueCollectionReceipt, false, -1);
 					Item_Pickup_Spin_Effect(961, 247, 141);
 					Actor_Voice_Over(1560, kActorVoiceOver);
 					Actor_Voice_Over(1570, kActorVoiceOver);
@@ -109,7 +109,7 @@ bool SceneScriptNR04::ClickedOn3DObject(const char *objectName, bool a2) {
 		Item_Pickup_Spin_Effect(975, 358, 160);
 		Actor_Voice_Over(1620, kActorVoiceOver);
 		Actor_Voice_Over(1630, kActorVoiceOver);
-		Actor_Clue_Acquire(kActorMcCoy, kClueEarlyQsClub, 0, -1);
+		Actor_Clue_Acquire(kActorMcCoy, kClueEarlyQsClub, false, -1);
 		Actor_Set_Goal_Number(kActorEarlyQ, 201);
 	}
 	return false;
@@ -190,7 +190,7 @@ void SceneScriptNR04::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 			//return true;
 			break;
 		case 213:
-			Actor_Clue_Acquire(kActorMcCoy, kClueDektorasDressingRoom, 0, kActorEarlyQ);
+			Actor_Clue_Acquire(kActorMcCoy, kClueDektorasDressingRoom, false, kActorEarlyQ);
 			Item_Pickup_Spin_Effect(984, 200, 160);
 			Actor_Says(kActorEarlyQ, 200, 30);
 			Actor_Says(kActorEarlyQ, 210, 30);
@@ -223,7 +223,7 @@ void SceneScriptNR04::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 			Actor_Change_Animation_Mode(kActorEarlyQ, 85);
 			Actor_Face_Actor(kActorMcCoy, kActorEarlyQ, true);
 			Actor_Set_Goal_Number(kActorEarlyQ, 208);
-			Actor_Clue_Acquire(kActorMcCoy, kClueEarlyQInterview, 0, kActorEarlyQ);
+			Actor_Clue_Acquire(kActorMcCoy, kClueEarlyQInterview, false, kActorEarlyQ);
 			//return true;
 			break;
 		case 204:

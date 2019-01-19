@@ -562,6 +562,10 @@ bool Actor::tick(bool forceDraw, Common::Rect *screenRect) {
 		int newAnimation = 0, newFrame = 0;
 		_vm->_aiScripts->updateAnimation(_id, &newAnimation, &newFrame);
 
+		if (newFrame < 0) {
+			assert(newFrame >= 0);
+		}
+
 		if (_animationId != newAnimation) {
 			if (_fps != 0 && _fps != -1) {
 				_animationId = newAnimation;

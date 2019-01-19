@@ -80,6 +80,7 @@ bool SceneScriptCT04::ClickedOn3DObject(const char *objectName, bool a2) {
 			Game_Flag_Set(kFlagHomelessTalkedTo);
 			Actor_Set_Goal_Number(kActorTransient, kGoalTransientCT04Leave);
 		}
+
 		if ( Game_Flag_Query(kFlagMcCoyKilledHomeless)
 		 && !Game_Flag_Query(kFlagHomelessBodyInDumpster)
 		 && !Game_Flag_Query(kFlagHomelessBodyFound)
@@ -100,6 +101,7 @@ bool SceneScriptCT04::ClickedOn3DObject(const char *objectName, bool a2) {
 			}
 			return false;
 		}
+
 		if (Game_Flag_Query(kFlagHomelessBodyInDumpster)) {
 			if (Game_Flag_Query(kFlagDumpsterEmptied)) {
 				Actor_Voice_Over(270, kActorVoiceOver);
@@ -114,16 +116,18 @@ bool SceneScriptCT04::ClickedOn3DObject(const char *objectName, bool a2) {
 			}
 			return true;
 		}
-		if (Game_Flag_Query(kFlagLicensePlaceFound)) {
+
+		if (!Game_Flag_Query(kFlagLicensePlaceFound)) {
 			if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 75, 0, true, false)) {
 				Actor_Face_Heading(kActorMcCoy, 707, false);
 				Actor_Change_Animation_Mode(kActorMcCoy, 38);
-				Actor_Clue_Acquire(kActorMcCoy, kClueLicensePlate, 1, -1);
+				Actor_Clue_Acquire(kActorMcCoy, kClueLicensePlate, true, -1);
 				Item_Pickup_Spin_Effect(952, 392, 225);
 				Game_Flag_Set(kFlagLicensePlaceFound);
 				return true;
 			}
 		}
+
 		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 75, 0, true, false)) {
 			Actor_Face_Heading(kActorMcCoy, 707, false);
 			Actor_Change_Animation_Mode(kActorMcCoy, 38);
@@ -138,24 +142,32 @@ bool SceneScriptCT04::ClickedOn3DObject(const char *objectName, bool a2) {
 
 void SceneScriptCT04::dialogueWithHomeless() {
 	Dialogue_Menu_Clear_List();
-	if (Global_Variable_Query(kVariableChinyen) > 10 || Query_Difficulty_Level() == 0) {
-		DM_Add_To_List_Never_Repeat_Once_Selected(410, 8, 4, -1);
+	if (Global_Variable_Query(kVariableChinyen) > 10
+	 || Query_Difficulty_Level() == 0
+	) {
+		DM_Add_To_List_Never_Repeat_Once_Selected(410, 8, 4, -1); // YES
 	}
-	DM_Add_To_List_Never_Repeat_Once_Selected(420, 2, 6, 8);
+	DM_Add_To_List_Never_Repeat_Once_Selected(420, 2, 6, 8); // NO
+
 	Dialogue_Menu_Appear(320, 240);
 	int answer = Dialogue_Menu_Query_Input();
 	Dialogue_Menu_Disappear();
-	if (answer == 410) {
+
+	switch (answer) {
+	case 410: // YES
 		Actor_Says(kActorTransient, 10, 14);
 		Actor_Says(kActorTransient, 20, 14);
 		Actor_Modify_Friendliness_To_Other(kActorTransient, kActorMcCoy, 5);
 		if (Query_Difficulty_Level() != 0) {
 			Global_Variable_Decrement(kVariableChinyen, 10);
 		}
-	} else if (answer == 420) {
+		break;
+
+	case 420: // NO
 		Actor_Says(kActorMcCoy, 430, 3);
 		Actor_Says(kActorTransient, 30, 14);
 		Actor_Modify_Friendliness_To_Other(kActorTransient, kActorMcCoy, -5);
+		break;
 	}
 }
 

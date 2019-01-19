@@ -280,7 +280,7 @@ bool AIScriptHanoi::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Put_In_Set(kActorHanoi, kSetNR01);
 		Actor_Set_At_XYZ(kActorHanoi, -444.0f, 24.0f, -845.0f, 512);
 		Actor_Change_Animation_Mode(kActorHanoi, 78);
-		Set_Enter(kSetNR01, kSetNR01);
+		Set_Enter(kSetNR01, kSceneNR01);
 		break;
 
 	case 230:

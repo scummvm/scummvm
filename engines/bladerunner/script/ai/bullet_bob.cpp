@@ -42,56 +42,68 @@ void AIScriptBulletBob::Initialize() {
 	_var3 = 1;
 	_var4 = 0;
 
-	Actor_Set_Goal_Number(kActorBulletBob, 0);
-	Actor_Set_Targetable(kActorBulletBob, 1);
+	Actor_Set_Goal_Number(kActorBulletBob, kGoalBulletBobDefault);
+	Actor_Set_Targetable(kActorBulletBob, true);
 }
 
 bool AIScriptBulletBob::Update() {
-	if (Game_Flag_Query(289) && Actor_Query_Goal_Number(kActorBulletBob) != 4) {
-		Actor_Set_Goal_Number(kActorBulletBob, 4);
-	}
-	if (Player_Query_Combat_Mode() != 1
-			|| Player_Query_Current_Scene() != kSceneRC04
-			|| Game_Flag_Query(296)
-			|| Global_Variable_Query(kVariableChapter) >= 4) {
-		if (Actor_Query_Goal_Number(kActorBulletBob) == 1 && !Player_Query_Combat_Mode()) {
-			AI_Countdown_Timer_Reset(kActorBulletBob, 2);
-			Game_Flag_Reset(296);
-			Game_Flag_Set(303);
-			Actor_Set_Goal_Number(kActorBulletBob, 0);
-		}
-	} else {
-		AI_Countdown_Timer_Reset(kActorBulletBob, 2);
-		AI_Countdown_Timer_Start(kActorBulletBob, 2, 10);
-		Actor_Set_Goal_Number(kActorBulletBob, 1);
-		Actor_Modify_Friendliness_To_Other(kActorBulletBob, kActorMcCoy, -15);
-		Game_Flag_Set(296);
-	}
-	if (Actor_Query_Goal_Number(kActorBulletBob) != 2 || Game_Flag_Query(295) || _animationState) {
-		if (Game_Flag_Query(303) == 1 && Player_Query_Combat_Mode() == 1 && Actor_Query_Goal_Number(kActorBulletBob) != 4) {
-			Actor_Set_Goal_Number(kActorBulletBob, 2);
-		} else {
-			return false;
-		}
-	} else {
-		Actor_Face_Heading(kActorBulletBob, 208, 0);
-		_animationFrame = 0;
-		_animationState = 2;
-		Actor_Set_Goal_Number(kActorBulletBob, 3);
-		Game_Flag_Set(295);
+	if (Game_Flag_Query(kFlagRC04McCoyShotBob)
+	 && Actor_Query_Goal_Number(kActorBulletBob) != kGoalBulletBobDead
+	) {
+		Actor_Set_Goal_Number(kActorBulletBob, kGoalBulletBobDead);
 	}
 
-	return true;
+	if ( Player_Query_Combat_Mode()
+	 &&  Player_Query_Current_Scene() == kSceneRC04
+	 && !Game_Flag_Query(kFlagRC04McCoyCombatMode)
+	 &&  Global_Variable_Query(kVariableChapter) < 4
+	) {
+		AI_Countdown_Timer_Reset(kActorBulletBob, 2);
+		AI_Countdown_Timer_Start(kActorBulletBob, 2, 10);
+		Actor_Set_Goal_Number(kActorBulletBob, kGoalBulletBobWarningMcCoy);
+		Actor_Modify_Friendliness_To_Other(kActorBulletBob, kActorMcCoy, -15);
+		Game_Flag_Set(kFlagRC04McCoyCombatMode);
+	} else if ( Actor_Query_Goal_Number(kActorBulletBob) == kGoalBulletBobWarningMcCoy
+	        && !Player_Query_Combat_Mode()
+	) {
+		AI_Countdown_Timer_Reset(kActorBulletBob, 2);
+		Game_Flag_Reset(kFlagRC04McCoyCombatMode);
+		Game_Flag_Set(kFlagRC04McCoyWarned);
+		Actor_Set_Goal_Number(kActorBulletBob, kGoalBulletBobDefault);
+	}
+
+	if ( Actor_Query_Goal_Number(kActorBulletBob) == kGoalBulletBobShootMcCoy
+	 && !Game_Flag_Query(kFlagRC04BobShootMcCoy)
+	 &&  _animationState == 0
+	) {
+		Actor_Face_Heading(kActorBulletBob, 208, false);
+		_animationFrame = 0;
+		_animationState = 2;
+		Actor_Set_Goal_Number(kActorBulletBob, kGoalBulletBobShotMcCoy);
+		Game_Flag_Set(kFlagRC04BobShootMcCoy);
+		return true;
+	}
+
+	if (Game_Flag_Query(kFlagRC04McCoyWarned)
+	 && Player_Query_Combat_Mode()
+	 && Actor_Query_Goal_Number(kActorBulletBob) != kGoalBulletBobDead
+	) {
+		Actor_Set_Goal_Number(kActorBulletBob, kGoalBulletBobShootMcCoy);
+		return true;
+	}
+
+	return false;
 }
 
 void AIScriptBulletBob::TimerExpired(int timer) {
-	if (timer != 2 || Actor_Query_Goal_Number(kActorBulletBob) != 1)
-		return; //false;
-
-	Actor_Set_Goal_Number(kActorBulletBob, 2);
-	AI_Countdown_Timer_Reset(kActorBulletBob, 2);
-
-	return; //true;
+	if (timer == 2
+	 && Actor_Query_Goal_Number(kActorBulletBob) == kGoalBulletBobWarningMcCoy
+	) {
+		Actor_Set_Goal_Number(kActorBulletBob, kGoalBulletBobShootMcCoy);
+		AI_Countdown_Timer_Reset(kActorBulletBob, 2);
+		return; //true;
+	}
+	return; //false;
 }
 
 void AIScriptBulletBob::CompletedMovementTrack() {
@@ -127,14 +139,14 @@ void AIScriptBulletBob::ShotAtAndMissed() {
 }
 
 bool AIScriptBulletBob::ShotAtAndHit() {
-	Global_Variable_Increment(24, 1);
-	if (Global_Variable_Query(24) > 0) {
-		Actor_Set_Targetable(kActorBulletBob, 0);
+	Global_Variable_Increment(kVariableBobShot, 1);
+	if (Global_Variable_Query(kVariableBobShot) > 0) {
+		Actor_Set_Targetable(kActorBulletBob, false);
 		Actor_Set_Goal_Number(kActorBulletBob, 99);
 		_animationFrame = 0;
  		_animationState = 3;
 		Ambient_Sounds_Play_Speech_Sound(2, 9000, 100, 0, 0, 0);
-		Actor_Face_Heading(kActorBulletBob, 281, 0);
+		Actor_Face_Heading(kActorBulletBob, 281, false);
 	}
 
 	return false;
@@ -149,35 +161,45 @@ int AIScriptBulletBob::GetFriendlinessModifierIfGetsClue(int otherActorId, int c
 }
 
 bool AIScriptBulletBob::GoalChanged(int currentGoalNumber, int newGoalNumber) {
-	if (newGoalNumber || Game_Flag_Query(303) != 1 || Player_Query_Current_Scene() != kSceneRC04) {
-		if (newGoalNumber == 1 && !Game_Flag_Query(303) && Player_Query_Current_Scene() == kSceneRC04) {
-			Actor_Says(kActorBulletBob, 120, 37);
-			Actor_Says(kActorMcCoy, 4915, 13);
-			return true;
-		}
-		if (newGoalNumber == 6) {
-			Scene_Exits_Disable();
-			Actor_Force_Stop_Walking(kActorMcCoy);
-			Ambient_Sounds_Play_Speech_Sound(kActorMcCoy, 9900, 100, 0, 0, 0);
-			Actor_Change_Animation_Mode(kActorMcCoy, 48);
-			Actor_Retired_Here(kActorMcCoy, 6, 6, 1, -1);
-			Scene_Exits_Enable();
-		}
-		if (newGoalNumber != 4) {
-			return false;
-		}
-		if (Actor_Clue_Query(kActorMcCoy, 164) != 1) {
-			Delay(2000);
-			Actor_Voice_Over(2100, kActorVoiceOver);
-			Actor_Voice_Over(2110, kActorVoiceOver);
-			Actor_Voice_Over(2120, kActorVoiceOver);
-			Actor_Voice_Over(2130, kActorVoiceOver);
-		}
-	} else {
+	if (newGoalNumber == kGoalBulletBobDefault
+	 && Game_Flag_Query(kFlagRC04McCoyWarned)
+	 && Player_Query_Current_Scene() == kSceneRC04
+	) {
 		Actor_Says(kActorBulletBob, 140, 16);
+		return true;
 	}
 
-	return true;
+	if ( newGoalNumber == kGoalBulletBobWarningMcCoy
+	 && !Game_Flag_Query(kFlagRC04McCoyWarned)
+	 &&  Player_Query_Current_Scene() == kSceneRC04
+	) {
+		Actor_Says(kActorBulletBob, 120, 37);
+		Actor_Says(kActorMcCoy, 4915, 13);
+		return true;
+	}
+
+	if (newGoalNumber == kGoalBulletBobDead
+	 && !Actor_Clue_Query(kActorMcCoy, kClueVKBobGorskyReplicant)
+	) {
+		Delay(2000);
+		Actor_Voice_Over(2100, kActorVoiceOver);
+		Actor_Voice_Over(2110, kActorVoiceOver);
+		Actor_Voice_Over(2120, kActorVoiceOver);
+		Actor_Voice_Over(2130, kActorVoiceOver);
+		return true;
+	}
+
+	if (newGoalNumber == 6) {
+		Scene_Exits_Disable();
+		Actor_Force_Stop_Walking(kActorMcCoy);
+		Ambient_Sounds_Play_Speech_Sound(kActorMcCoy, 9900, 100, 0, 0, 0);
+		Actor_Change_Animation_Mode(kActorMcCoy, 48);
+		Actor_Retired_Here(kActorMcCoy, 6, 6, 1, -1);
+		Scene_Exits_Enable();
+		return true;
+	}
+
+	return false;
 }
 
 bool AIScriptBulletBob::UpdateAnimation(int *animation, int *frame) {
@@ -256,7 +278,7 @@ bool AIScriptBulletBob::UpdateAnimation(int *animation, int *frame) {
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(510) - 1) {
 			_animationFrame = Slice_Animation_Query_Number_Of_Frames(510) - 1;
 			_animationState = 16;
-			Game_Flag_Set(289);
+			Game_Flag_Set(kFlagRC04McCoyShotBob);
 		}
 		break;
 
@@ -414,14 +436,14 @@ bool AIScriptBulletBob::UpdateAnimation(int *animation, int *frame) {
 
 bool AIScriptBulletBob::ChangeAnimationMode(int mode) {
 	switch (mode) {
-	case 0:
+	case kAnimationModeIdle:
 		if (_animationState > 4 || _animationState) {
 			_animationState = 0;
 			_animationFrame = 0;
 		}
 		break;
 
-	case 3:
+	case kAnimationModeTalk:
 	case 9:
 	case 30:
 		if (_animationState < 6 || _animationState > 13) {
@@ -431,14 +453,14 @@ bool AIScriptBulletBob::ChangeAnimationMode(int mode) {
 		}
 		break;
 
-	case 4:
+	case kAnimationModeCombatIdle:
 		if (_animationState <= 4 && !_animationState) {
 			_animationState = 14;
 			_animationFrame = 0;
 		}
 		break;
 
-	case 6:
+	case kAnimationModeCombatAttack:
 		_animationState = 2;
 		_animationFrame = 0;
 		break;
@@ -461,8 +483,8 @@ bool AIScriptBulletBob::ChangeAnimationMode(int mode) {
 		}
 		break;
 
-	case 21:
-	case 22:
+	case kAnimationModeHit:
+	case kAnimationModeCombatHit:
 		_animationState = 3;
 		_animationFrame = 0;
 		break;

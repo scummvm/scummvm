@@ -141,9 +141,9 @@ bool SceneScriptAR02::ClickedOnActor(int actorId) {
 						Actor_Says(kActorInsectDealer, 340, 13);
 						Actor_Says(kActorInsectDealer, 350, 12);
 						Actor_Says(kActorMcCoy, 235, 16);
-						Actor_Clue_Acquire(kActorMcCoy, kCluePurchasedScorpions, 0, kActorInsectDealer);
+						Actor_Clue_Acquire(kActorMcCoy, kCluePurchasedScorpions, false, kActorInsectDealer);
 					}
-					Actor_Clue_Acquire(kActorMcCoy, kClueDragonflyCollection, 0, kActorInsectDealer);
+					Actor_Clue_Acquire(kActorMcCoy, kClueDragonflyCollection, false, kActorInsectDealer);
 				} else {
 					Actor_Says(kActorMcCoy, 240, 17);
 					Actor_Says(kActorInsectDealer, 360, 13);
@@ -285,7 +285,7 @@ void SceneScriptAR02::sub_402694() {
 		Actor_Says(kActorMcCoy, 100, 16);
 		Actor_Says(kActorInsectDealer, 180, 13);
 		Game_Flag_Set(329);
-		Actor_Clue_Acquire(kActorMcCoy, kCluePeruvianLadyInterview, 1, kActorInsectDealer);
+		Actor_Clue_Acquire(kActorMcCoy, kCluePeruvianLadyInterview, true, kActorInsectDealer);
 		break;
 	case 510:
 		Actor_Says(kActorMcCoy, 8475, 12);
@@ -313,7 +313,7 @@ void SceneScriptAR02::sub_402AE0() {
 		if (Query_Difficulty_Level() != 0) {
 			Global_Variable_Decrement(2, 15);
 		}
-		Actor_Clue_Acquire(kActorMcCoy, kClueMaggieBracelet, 1, kActorInsectDealer);
+		Actor_Clue_Acquire(kActorMcCoy, kClueMaggieBracelet, true, kActorInsectDealer);
 		Actor_Modify_Friendliness_To_Other(kActorInsectDealer, kActorMcCoy, 5);
 	} else if (answerValue == 540) {
 		Actor_Says(kActorMcCoy, 125, 13);
@@ -381,7 +381,7 @@ void SceneScriptAR02::sub_402CE4() {
 			Actor_Says(kActorHasan, 110, 12);
 			Actor_Says(kActorHasan, 120, 13);
 			Actor_Modify_Friendliness_To_Other(kActorHasan, kActorMcCoy, -1);
-			Actor_Clue_Acquire(kActorMcCoy, kClueHasanInterview, 0, kActorHasan);
+			Actor_Clue_Acquire(kActorMcCoy, kClueHasanInterview, false, kActorHasan);
 		}
 		break;
 	}

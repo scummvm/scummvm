@@ -438,7 +438,7 @@ void SceneScriptHF01::sub_4026B4() {
 		Actor_Says(kActorMurray, 220, 13);
 		Actor_Says(kActorMia, 140, 12);
 		Actor_Says(kActorMurray, 230, 13);
-		Actor_Clue_Acquire(kActorMcCoy, kClueSpecialIngredient, 0, kActorMurray);
+		Actor_Clue_Acquire(kActorMcCoy, kClueSpecialIngredient, false, kActorMurray);
 		break;
 	case 470:
 		Actor_Says(kActorMcCoy, 1495, 14);

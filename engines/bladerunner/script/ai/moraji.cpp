@@ -42,46 +42,49 @@ void AIScriptMoraji::Initialize() {
 }
 
 bool AIScriptMoraji::Update() {
-	if (Actor_Query_Goal_Number(kActorMoraji) || Player_Query_Current_Scene() != 29 || Game_Flag_Query(269)) {
-		if (Actor_Query_Goal_Number(kActorMoraji) == 19) {
-			Actor_Says(kActorMoraji, 80, 13);
-			_animationState = 9;
-			_animationFrame = -1;
-			Actor_Set_Goal_Number(kActorMoraji, 18);
-		}
-		return false;
-	} else {
+	if ( Actor_Query_Goal_Number(kActorMoraji) == 0
+	 &&  Player_Query_Current_Scene() == kSceneDR05
+	 && !Game_Flag_Query(kFlagDR05BombActivated)
+	) {
 		AI_Countdown_Timer_Reset(kActorMoraji, 2);
 		AI_Countdown_Timer_Start(kActorMoraji, 2, 30);
-		Game_Flag_Set(269);
+		Game_Flag_Set(kFlagDR05BombActivated);
 		return true;
 	}
 
+	if (Actor_Query_Goal_Number(kActorMoraji) == 19) {
+		Actor_Says(kActorMoraji, 80, 13);
+		_animationState = 9;
+		_animationFrame = -1;
+		Actor_Set_Goal_Number(kActorMoraji, 18);
+	}
+	return false;
 }
 
 void AIScriptMoraji::TimerExpired(int timer) {
-	if (timer != 2) {
-		return; //false;
+	if (timer == 2) {
+		AI_Countdown_Timer_Reset(kActorMoraji, 2);
+		if (Actor_Query_Goal_Number(kActorMoraji) != 20
+		 && Actor_Query_Goal_Number(kActorMoraji) != 21
+		 && Actor_Query_Goal_Number(kActorMoraji) != 99
+		) {
+			Game_Flag_Set(kFlagDR05BombWillExplode);
+		}
+		return; //true;
 	}
 
-	AI_Countdown_Timer_Reset(kActorMoraji, 2);
-	if (Actor_Query_Goal_Number(kActorMoraji) != 20
-			&& Actor_Query_Goal_Number(kActorMoraji) != 21
-			&& Actor_Query_Goal_Number(kActorMoraji) != 99) {
-		Game_Flag_Set(271);
-	}
-	return; //true;
+	return; //false;
 }
 
 void AIScriptMoraji::CompletedMovementTrack() {
-	if (Actor_Query_Goal_Number(kActorMoraji) != 11)
-		return; //false
+	if (Actor_Query_Goal_Number(kActorMoraji) == 11) {
+		AI_Countdown_Timer_Reset(kActorMoraji, 2);
+		Game_Flag_Set(kFlagDR05BombWillExplode);
+		_animationState = 3;
 
-	AI_Countdown_Timer_Reset(kActorMoraji, 2);
-	Game_Flag_Set(271);
-	_animationState = 3;
-
-	return; //true;
+		return; //true;
+	}
+	return; //false
 }
 
 void AIScriptMoraji::ReceivedClue(int clueId, int fromActorId) {
@@ -184,16 +187,16 @@ bool AIScriptMoraji::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 		break;
 	case 30:
-		if (Player_Query_Current_Scene() == 29) {
-			Game_Flag_Set(515);
-			Set_Enter(kSetDR01_DR02_DR04, kSetCT05);
+		if (Player_Query_Current_Scene() == kSceneDR05) {
+			Game_Flag_Set(kFlagDR05BombExplosionView);
+			Set_Enter(kSetDR01_DR02_DR04, kSceneDR04);
 		} else {
 			if (Actor_Query_In_Set(kActorMoraji, kSetDR05)) {
 				Actor_Set_Goal_Number(kActorMoraji, 99);
 			} else {
 				Actor_Set_Goal_Number(kActorMoraji, 20);
 			}
-			Game_Flag_Set(266);
+			Game_Flag_Set(kFlagMorajiExploded);
 		}
 		return true;
 	case 99:

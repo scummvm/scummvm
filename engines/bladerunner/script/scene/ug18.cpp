@@ -102,7 +102,7 @@ bool SceneScriptUG18::ClickedOnItem(int itemId, bool a2) {
 			Item_Pickup_Spin_Effect(987, 368, 243);
 			Item_Remove_From_World(itemId);
 			Game_Flag_Set(703);
-			Actor_Clue_Acquire(kActorMcCoy, kClueBriefcase, 1, kActorGuzza);
+			Actor_Clue_Acquire(kActorMcCoy, kClueBriefcase, true, kActorGuzza);
 		}
 	}
 	return false;

@@ -100,7 +100,7 @@ bool SceneScriptBB05::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -212.0f, -60.31f, 131.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(286);
+			Game_Flag_Set(kFlagBB05toBB03);
 			Set_Enter(kSetBB03, kSceneBB03);
 		}
 		return true;
@@ -157,7 +157,7 @@ void SceneScriptBB05::PlayerWalkedIn() {
 		Game_Flag_Reset(302);
 	} else {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -76.0f, -60.31f, 131.0f, 0, 0, false, 0);
-		Game_Flag_Reset(285);
+		Game_Flag_Reset(kFlagBB03toBB05);
 	}
 	if (Actor_Query_Goal_Number(kActorSebastian) == 200) {
 		Actor_Face_Actor(kActorSebastian, kActorMcCoy, true);

@@ -59,6 +59,7 @@ public:
 	bool cmdSay(int argc, const char **argv);
 	bool cmdScene(int argc, const char **argv);
 	bool cmdVariable(int argc, const char **argv);
+	bool cmdClue(int argc, const char **argv);
 	bool cmdLoad(int argc, const char **argv);
 	bool cmdSave(int argc, const char **argv);
 

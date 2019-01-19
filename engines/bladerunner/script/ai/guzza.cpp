@@ -44,14 +44,18 @@ void AIScriptGuzza::Initialize() {
 
 bool AIScriptGuzza::Update() {
 	if (Global_Variable_Query(kVariableChapter) == 2) {
-		if (!Game_Flag_Query(462)) {
-			Game_Flag_Set(462);
+		if (!Game_Flag_Query(kFlagPS04GuzzaLeft)) {
+			Game_Flag_Set(kFlagPS04GuzzaLeft);
 			Actor_Put_In_Set(kActorGuzza, kSetFreeSlotC);
 			Actor_Set_At_Waypoint(kActorGuzza, 35, 0);
-			Actor_Set_Goal_Number(kActorGuzza, 100);
+			Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaLeaveOffice);
 			return true;
 		}
-		if (Actor_Query_Goal_Number(kActorGuzza) != 101 && !Game_Flag_Query(463) && Game_Flag_Query(464)) {
+
+		if ( Actor_Query_Goal_Number(kActorGuzza) != kGoalGuzzaGoToHawkersCircle
+		 && !Game_Flag_Query(463)
+		 &&  Game_Flag_Query(464)
+		) {
 			Game_Flag_Set(463);
 			Actor_Set_Goal_Number(kActorGuzza, 103);
 			return true;
@@ -66,26 +70,30 @@ void AIScriptGuzza::TimerExpired(int timer) {
 
 void AIScriptGuzza::CompletedMovementTrack() {
 	switch (Actor_Query_Goal_Number(kActorGuzza)) {
-	case 100:
-		Actor_Set_Goal_Number(kActorGuzza, 102);
+	case kGoalGuzzaLeaveOffice:
+		Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaGoToOffice);
 		// return true;
 		break;
-	case 102:
+
+	case kGoalGuzzaGoToOffice:
 		if (Random_Query(1, 2) == 1) {
-			Actor_Set_Goal_Number(kActorGuzza, 101);
+			Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaGoToHawkersCircle);
 		} else {
 			Actor_Set_Goal_Number(kActorGuzza, 104);
 		}
 		// return true;
 		break;
+
 	case 103:
-		Actor_Set_Goal_Number(kActorGuzza, 100);
+		Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaLeaveOffice);
 		// return true;
 		break;
+
 	case 105:
-		Actor_Set_Goal_Number(kActorGuzza, 100);
+		Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaLeaveOffice);
 		// return true;
 		break;
+
 	}
 	// return false;
 }
@@ -95,7 +103,9 @@ void AIScriptGuzza::ReceivedClue(int clueId, int fromActorId) {
 }
 
 void AIScriptGuzza::ClickedByPlayer() {
-	if (Global_Variable_Query(kVariableChapter) == 2 && Game_Flag_Query(462) == 1) {
+	if (Global_Variable_Query(kVariableChapter) == 2
+	 && Game_Flag_Query(kFlagPS04GuzzaLeft)
+	) {
 		Actor_Face_Actor(kActorMcCoy, kActorGuzza, true);
 		if (Actor_Query_Friendliness_To_Other(kActorGordo, kActorMcCoy) < 48) {
 			Actor_Says(kActorMcCoy, 3970, 13);
@@ -164,14 +174,15 @@ int AIScriptGuzza::GetFriendlinessModifierIfGetsClue(int otherActorId, int clueI
 
 bool AIScriptGuzza::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	switch (newGoalNumber) {
-	case 100:
+	case kGoalGuzzaLeaveOffice:
 		AI_Movement_Track_Flush(kActorGuzza);
 		AI_Movement_Track_Append_With_Facing(kActorGuzza, 263, 0, 150);
 		AI_Movement_Track_Append_With_Facing(kActorGuzza, 263, 5, 150);
 		AI_Movement_Track_Append(kActorGuzza, 35, 90);
 		AI_Movement_Track_Repeat(kActorGuzza);
 		return true;
-	case 101:
+
+	case kGoalGuzzaGoToHawkersCircle:
 		AI_Movement_Track_Flush(kActorGuzza);
 		AI_Movement_Track_Append(kActorGuzza, 258, 0);
 		AI_Movement_Track_Append(kActorGuzza, 260, 8);
@@ -179,12 +190,14 @@ bool AIScriptGuzza::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Append(kActorGuzza, 262, 0);
 		AI_Movement_Track_Repeat(kActorGuzza);
 		return true;
-	case 102:
+
+	case kGoalGuzzaGoToOffice:
 		AI_Movement_Track_Flush(kActorGuzza);
 		AI_Movement_Track_Flush(kActorGuzza);
 		AI_Movement_Track_Append_With_Facing(kActorGuzza, 263, 600, 150);
 		AI_Movement_Track_Repeat(kActorGuzza);
 		return true;
+
 	case 103:
 		AI_Movement_Track_Flush(kActorGuzza);
 		AI_Movement_Track_Append(kActorGuzza, 258, 0);
@@ -192,16 +205,19 @@ bool AIScriptGuzza::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Append(kActorGuzza, 258, 0);
 		AI_Movement_Track_Repeat(kActorGuzza);
 		return true;
+
 	case 104:
 		AI_Movement_Track_Flush(kActorGuzza);
 		AI_Movement_Track_Append(kActorGuzza, 34, 60);
 		AI_Movement_Track_Repeat(kActorGuzza);
 		return true;
+
 	case 105:
 		AI_Movement_Track_Flush(kActorGuzza);
 		AI_Movement_Track_Append(kActorGuzza, 39, 120);
 		AI_Movement_Track_Repeat(kActorGuzza);
 		return true;
+
 	case 201:
 		Actor_Change_Animation_Mode(kActorGuzza, 53);
 		_animationState = 1;
@@ -209,19 +225,23 @@ bool AIScriptGuzza::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Put_In_Set(kActorGuzza, kSetNR03);
 		Actor_Set_At_XYZ(kActorGuzza, -229.0f, -70.19f, -469.0f, 400);
 		return true;
+
 	case 300:
 		Actor_Put_In_Set(kActorGuzza, kSetUG18);
 		Actor_Set_At_XYZ(kActorGuzza, 10.79f, 0.0f, -354.17f, 400);
 		Actor_Change_Animation_Mode(kActorGuzza, kAnimationModeIdle);
 		return true;
+
 	case 301:
 		Actor_Set_Targetable(kActorGuzza, true);
 		return true;
+
 	case 302:
 	case 303:
 	case 304:
 		Actor_Set_Targetable(kActorGuzza, false);
 		return true;
+
 	case 305:
 	case 306:
 	case 307:

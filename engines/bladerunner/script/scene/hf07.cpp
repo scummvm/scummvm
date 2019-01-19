@@ -78,7 +78,7 @@ bool SceneScriptHF07::ClickedOnExit(int exitId) {
 			if (!Game_Flag_Query(662)) {
 				Actor_Face_Heading(kActorMcCoy, 0, false);
 				Footstep_Sound_Override_On(3);
-				Loop_Actor_Travel_Stairs(kActorMcCoy, 30, true, 0);
+				Loop_Actor_Travel_Stairs(kActorMcCoy, 30, true, kAnimationModeIdle);
 				Footstep_Sound_Override_Off();
 			}
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
@@ -128,7 +128,7 @@ void SceneScriptHF07::PlayerWalkedIn() {
 	} else if (Game_Flag_Query(359)) {
 		Actor_Set_At_XYZ(kActorMcCoy, 267.72f, 329.43f, -86.75f, 940);
 		Footstep_Sound_Override_On(3);
-		Loop_Actor_Travel_Stairs(kActorMcCoy, 30, false, 0);
+		Loop_Actor_Travel_Stairs(kActorMcCoy, 30, false, kAnimationModeIdle);
 		Footstep_Sound_Override_Off();
 	}
 	Game_Flag_Reset(359);

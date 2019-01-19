@@ -296,7 +296,7 @@ void AIScriptDektora::Retired(int byActorId) {
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(579);
 			Game_Flag_Reset(653);
-			Set_Enter(kSetKP05_KP06, kSetKP03);
+			Set_Enter(kSetKP05_KP06, kSceneKP06);
 
 			return; //true;
 		}
@@ -422,7 +422,7 @@ bool AIScriptDektora::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Set_At_XYZ(kActorDektora, -177.0f, 23.88f, -373.0f, 300);
 		_animationState = 36;
 		_animationFrame = 0;
-		Set_Enter(kSetNR01, kSetNR01);
+		Set_Enter(kSetNR01, kSceneNR01);
 		break;
 
 	case 279:

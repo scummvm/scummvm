@@ -131,11 +131,11 @@ bool SceneScriptHC01::ClickedOnItem(int itemId, bool a2) {
 		Delay(1500);
 		Item_Pickup_Spin_Effect(984, 330, 384);
 		if (Game_Flag_Query(374)) {
-			Actor_Clue_Acquire(kActorMcCoy, kCluePhotoOfMcCoy1, 1, kActorIzo);
+			Actor_Clue_Acquire(kActorMcCoy, kCluePhotoOfMcCoy1, true, kActorIzo);
 		} else {
-			Actor_Clue_Acquire(kActorMcCoy, kCluePhotoOfMcCoy2, 1, kActorIzo);
+			Actor_Clue_Acquire(kActorMcCoy, kCluePhotoOfMcCoy2, true, kActorIzo);
 		}
-		Actor_Clue_Acquire(kActorMcCoy, kClueChinaBar, 1, kActorIzo);
+		Actor_Clue_Acquire(kActorMcCoy, kClueChinaBar, true, kActorIzo);
 		return true;
 	}
 	return false;
@@ -147,7 +147,7 @@ bool SceneScriptHC01::ClickedOnExit(int exitId) {
 			Music_Adjust(12, 0, 2);
 			Game_Flag_Set(kFlagHC01toAR01);
 			Set_Enter(kSetAR01_AR02, kSceneAR01);
-			Game_Flag_Reset(479);
+			Game_Flag_Reset(kFlagMcCoyAtHCxx);
 			Game_Flag_Set(kFlagMcCoyAtARxx);
 		}
 		return true;
@@ -279,7 +279,7 @@ void SceneScriptHC01::sub_402384() {
 		}
 		if (answer == 1010) {
 			Dialogue_Menu_Remove_From_List(1010);
-			Actor_Clue_Acquire(kActorMcCoy, kClueIzoInterview, 0, kActorIzo);
+			Actor_Clue_Acquire(kActorMcCoy, kClueIzoInterview, false, kActorIzo);
 			Actor_Says(kActorMcCoy, 1070, 13);
 			Actor_Says(kActorIzo, 200, 17);
 			Actor_Says(kActorIzo, 210, 12);

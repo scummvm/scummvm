@@ -58,7 +58,7 @@ bool AIScriptGenericWalkerA::Update() {
 				movingUpdate();
 			}
 			break;
-		case 200:
+		case 200: // Automatic gun at Bullet Bob
 			Actor_Face_Actor(kActorGenwalkerA, kActorMcCoy, true);
 			break;
 	}

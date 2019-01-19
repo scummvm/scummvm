@@ -44,7 +44,7 @@ void SceneScriptPS01::InitializeScene() {
 		}
 	} else {
 		Actor_Set_Invisible(kActorMcCoy, true);
-		Game_Flag_Set(273);
+		Game_Flag_Set(kFlagArrivedFromSpinner2);
 		Scene_Loop_Start_Special(0, 0, 0);
 		Scene_Loop_Set_Default(1);
 		Player_Loses_Control();
@@ -163,7 +163,7 @@ bool SceneScriptPS01::ClickedOnExit(int exitId) {
 			default:
 				Actor_Face_Heading(kActorMcCoy, 870, false);
 				Game_Flag_Set(kFlagMcCoyAtPSxx);
-				Game_Flag_Set(273);
+				Game_Flag_Set(kFlagArrivedFromSpinner2);
 				Player_Loses_Control();
 				Scene_Loop_Start_Special(2, 3, 1);
 				break;
@@ -200,7 +200,7 @@ void SceneScriptPS01::SceneFrameAdvanced(int frame) {
 	if (frame == 275) {
 		Sound_Play(117, 40, 0, 0, 50);
 	}
-	if (!Game_Flag_Query(273)) {
+	if (!Game_Flag_Query(kFlagArrivedFromSpinner2)) {
 		switch (frame) {
 		case 196:
 			Actor_Face_Heading(kActorMcCoy, 870, false);
@@ -224,14 +224,14 @@ void SceneScriptPS01::SceneFrameAdvanced(int frame) {
 		return;
 	}
 	if (frame == 119) {
-		Game_Flag_Reset(273);
+		Game_Flag_Reset(kFlagArrivedFromSpinner2);
 		Player_Gains_Control();
 		//return true;
 		return;
 	}
 	if (frame > 195) {
 		if (frame == 239) {
-			Game_Flag_Reset(273);
+			Game_Flag_Reset(kFlagArrivedFromSpinner2);
 			Player_Gains_Control();
 		}
 		//return true;

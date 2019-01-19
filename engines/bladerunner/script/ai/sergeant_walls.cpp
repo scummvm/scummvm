@@ -35,8 +35,10 @@ void AIScriptSergeantWalls::Initialize() {
 }
 
 bool AIScriptSergeantWalls::Update() {
-	if (Game_Flag_Query(206) && Game_Flag_Query(158)) {
-		Game_Flag_Reset(206);
+	if (Game_Flag_Query(kFlagSergeantWallsBuzzInRequest)
+	 && Game_Flag_Query(kFlagSergeantWallsBuzzInDone)
+	) {
+		Game_Flag_Reset(kFlagSergeantWallsBuzzInRequest);
 	}
 	return false;
 }
@@ -97,11 +99,13 @@ bool AIScriptSergeantWalls::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
 		_animationFrame++;
-		if (Game_Flag_Query(206) && !Game_Flag_Query(158)) {
+		if ( Game_Flag_Query(kFlagSergeantWallsBuzzInRequest)
+		 && !Game_Flag_Query(kFlagSergeantWallsBuzzInDone)
+		) {
 			*animation = 724;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(724)) {
 				_animationFrame = 0;
-				Game_Flag_Set(158);
+				Game_Flag_Set(kFlagSergeantWallsBuzzInDone);
 			}
 		} else {
 			*animation = 722;

@@ -102,7 +102,9 @@ void AIScriptGordo::TimerExpired(int timer) {
 }
 
 void AIScriptGordo::CompletedMovementTrack() {
-	if (Actor_Query_Goal_Number(kActorGordo) == 1 || Actor_Query_Goal_Number(kActorGordo) == 91) {
+	if (Actor_Query_Goal_Number(kActorGordo) == 1
+	 || Actor_Query_Goal_Number(kActorGordo) == 91
+	) {
 		Actor_Set_Goal_Number(kActorGordo, 2);
 		return;// true;
 	}
@@ -120,7 +122,7 @@ void AIScriptGordo::CompletedMovementTrack() {
 			Player_Set_Combat_Mode(false);
 			Player_Gains_Control();
 		}
-		Actor_Clue_Acquire(kActorGordo, kClueMcCoyRetiredZuben, 1, -1);
+		Actor_Clue_Acquire(kActorGordo, kClueMcCoyRetiredZuben, true, -1);
 		Actor_Set_Goal_Number(kActorGordo, 4);
 		return;// true;
 	}
@@ -1408,7 +1410,10 @@ void AIScriptGordo::sub_40FD00() {
 	Player_Loses_Control();
 	Actor_Face_Actor(kActorMcCoy, kActorGordo, true);
 	if (Game_Flag_Query(543)) {
-		if (!Game_Flag_Query(272) || Actor_Clue_Query(kActorMcCoy, kClueGordoInterview1) || Actor_Clue_Query(kActorMcCoy, kClueGordoInterview2)) {
+		if (!Game_Flag_Query(kFlagDR05BombExploded)
+		 ||  Actor_Clue_Query(kActorMcCoy, kClueGordoInterview1)
+		 ||  Actor_Clue_Query(kActorMcCoy, kClueGordoInterview2)
+		) {
 			if (Game_Flag_Query(544)) {
 				switch(Random_Query(1, 4)) {
 					case 1:
@@ -1447,7 +1452,7 @@ void AIScriptGordo::sub_40FD00() {
 				Actor_Says(kActorGordo, 1020, 13);
 				Actor_Says(kActorMcCoy, 6500, 14);
 				Actor_Says(kActorGordo, 1030, 15);
-				Actor_Clue_Acquire(kActorMcCoy, kClueGordoInterview1, 0, kActorGordo);
+				Actor_Clue_Acquire(kActorMcCoy, kClueGordoInterview1, false, kActorGordo);
 			} else {
 				Actor_Says(kActorGordo, 1040, 12);
 				Actor_Says(kActorGordo, 1050, 13);
@@ -1456,7 +1461,7 @@ void AIScriptGordo::sub_40FD00() {
 				Actor_Says(kActorGordo, 1070, 14);
 				Actor_Says(kActorMcCoy, 6510, 16);
 				Actor_Says(kActorGordo, 1080, 15);
-				Actor_Clue_Acquire(kActorMcCoy, kClueGordoInterview2, 0, kActorGordo);
+				Actor_Clue_Acquire(kActorMcCoy, kClueGordoInterview2, false, kActorGordo);
 			}
 			AI_Movement_Track_Unpause(kActorGordo);
 		}
@@ -1543,7 +1548,7 @@ void AIScriptGordo::sub_410590() {
 			Actor_Says(kActorGordo, 260, 18);
 			Actor_Says(kActorMcCoy, 3115, 14);
 			Actor_Says(kActorGordo, 270, 15);
-			Actor_Clue_Acquire(kActorGordo, kClueMcCoyHelpedGordo, 1, -1);
+			Actor_Clue_Acquire(kActorGordo, kClueMcCoyHelpedGordo, true, -1);
 		} else {
 			Delay(1000);
 			Actor_Says(kActorGordo, 570, 13);
@@ -1596,7 +1601,7 @@ void AIScriptGordo::sub_41090C() {
 		if (Game_Flag_Query(kFlagGordoIsReplicant)) {
 			Actor_Says(kActorGordo, 450, 17);
 			Actor_Says(kActorMcCoy, 3280, 15);
-			Actor_Clue_Acquire(kActorMcCoy, kClueGordoInterview3, 0, kActorGordo);
+			Actor_Clue_Acquire(kActorMcCoy, kClueGordoInterview3, false, kActorGordo);
 		}
 		Actor_Says(kActorGordo, 460, 15);
 		break;
@@ -1637,7 +1642,7 @@ void AIScriptGordo::sub_41090C() {
 		Actor_Says(kActorGordo, 560, 13);
 		Actor_Says(kActorMcCoy, 3315, 15);
 		Actor_Says(kActorGordo, 570, 14);
-		Actor_Clue_Acquire(kActorMcCoy, kClueGordoConfession, 0, kActorGordo);
+		Actor_Clue_Acquire(kActorMcCoy, kClueGordoConfession, false, kActorGordo);
 		break;
 	case 810:
 		Actor_Says(kActorMcCoy, 3255, kAnimationModeTalk);

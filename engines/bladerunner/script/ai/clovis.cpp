@@ -178,7 +178,7 @@ void AIScriptClovis::Retired(int byActorId) {
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Game_Flag_Set(579);
 				Game_Flag_Reset(653);
-				Set_Enter(kSetKP05_KP06, kSetKP03);
+				Set_Enter(kSetKP05_KP06, kSceneKP06);
 			}
 		}
 	}
@@ -273,14 +273,14 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Says(kActorClovis, 100, 17);
 		Delay(1000);
 		if (!Game_Flag_Query(48)) {
-			Actor_Clue_Acquire(kActorMcCoy, kClueStaggeredbyPunches, 1, kActorSadik);
+			Actor_Clue_Acquire(kActorMcCoy, kClueStaggeredbyPunches, true, kActorSadik);
 		}
 		Game_Flag_Set(383);
 		Game_Flag_Reset(509);
 		Global_Variable_Set(kVariableChapter, 3);
 		Actor_Set_Goal_Number(kActorClovis, 200);
 		Actor_Set_Goal_Number(kActorSadik, 200);
-		Actor_Clue_Acquire(kActorMcCoy, kClueAct2Ended, 1, -1);
+		Actor_Clue_Acquire(kActorMcCoy, kClueAct2Ended, true, -1);
 		Player_Gains_Control();
 		Chapter_Enter(3, 6, 20);
 		Game_Flag_Set(550);

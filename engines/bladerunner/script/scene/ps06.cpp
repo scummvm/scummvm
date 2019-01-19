@@ -71,19 +71,19 @@ bool SceneScriptPS06::ClickedOn3DObject(const char *objectName, bool a2) {
 				Actor_Voice_Over(3810, kActorVoiceOver);
 				Actor_Voice_Over(3820, kActorVoiceOver);
 				Actor_Voice_Over(3830, kActorVoiceOver);
-				Actor_Clue_Acquire(kActorMcCoy, kClueCarRegistration1, 1, -1);
+				Actor_Clue_Acquire(kActorMcCoy, kClueCarRegistration1, true, -1);
 			} else if (Game_Flag_Query(kFlagGordoIsReplicant)) {
 				Actor_Voice_Over(3840, kActorVoiceOver);
 				Actor_Voice_Over(3850, kActorVoiceOver);
 				Actor_Voice_Over(3860, kActorVoiceOver);
 				Actor_Voice_Over(3870, kActorVoiceOver);
-				Actor_Clue_Acquire(kActorMcCoy, kClueCarRegistration2, 1, -1);
+				Actor_Clue_Acquire(kActorMcCoy, kClueCarRegistration2, true, -1);
 			} else {
 				Actor_Voice_Over(3880, kActorVoiceOver);
 				Actor_Voice_Over(3890, kActorVoiceOver);
 				Actor_Voice_Over(3900, kActorVoiceOver);
 				Actor_Voice_Over(3910, kActorVoiceOver);
-				Actor_Clue_Acquire(kActorMcCoy, kClueCarRegistration3, 1, -1);
+				Actor_Clue_Acquire(kActorMcCoy, kClueCarRegistration3, true, -1);
 			}
 			Actor_Clues_Transfer_New_To_Mainframe(kActorMcCoy);
 			Actor_Clues_Transfer_New_From_Mainframe(kActorMcCoy);

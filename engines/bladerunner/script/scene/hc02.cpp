@@ -104,10 +104,10 @@ bool SceneScriptHC02::ClickedOnActor(int actorId) {
 				Actor_Says(kActorMcCoy, 4545, 11);
 				Actor_Says(kActorHawkersBarkeep, 120, 12);
 				Actor_Says(kActorHawkersBarkeep, 180, 13);
-				Actor_Clue_Acquire(kActorMcCoy, kClueChinaBarSecurityDisc, 1, kActorHawkersBarkeep);
+				Actor_Clue_Acquire(kActorMcCoy, kClueChinaBarSecurityDisc, true, kActorHawkersBarkeep);
 				Item_Pickup_Spin_Effect(975, 229, 215);
 			} else if (Actor_Clue_Query(kActorMcCoy, kClueHomelessManInterview1) && !Actor_Clue_Query(kActorMcCoy, kClueFlaskOfAbsinthe) && (Global_Variable_Query(2) > 20 || Query_Difficulty_Level() == 0)) {
-				Actor_Clue_Acquire(kActorMcCoy, kClueFlaskOfAbsinthe, 1, kActorHawkersBarkeep);
+				Actor_Clue_Acquire(kActorMcCoy, kClueFlaskOfAbsinthe, true, kActorHawkersBarkeep);
 				Actor_Says(kActorMcCoy, 1230, 13);
 				Actor_Says(kActorHawkersBarkeep, 20, 12);
 				Actor_Says(kActorMcCoy, 1235, 13);
@@ -124,7 +124,9 @@ bool SceneScriptHC02::ClickedOnActor(int actorId) {
 				}
 				Actor_Says(kActorMcCoy, 1245, 13);
 			} else {
-				if (Actor_Clue_Query(kActorMcCoy, kClueMaggieBracelet)  && !Game_Flag_Query(405)) {
+				if ( Actor_Clue_Query(kActorMcCoy, kClueMaggieBracelet)
+				 && !Game_Flag_Query(405)
+				) {
 					Actor_Says(kActorHawkersBarkeep, 80, 16);
 					Actor_Says(kActorMcCoy, 1265, 13);
 					Actor_Says(kActorHawkersBarkeep, 90, 13);

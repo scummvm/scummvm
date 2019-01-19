@@ -25,13 +25,13 @@
 namespace BladeRunner {
 
 void SceneScriptDR04::InitializeScene() {
-	if (Game_Flag_Query(515)) {
+	if (Game_Flag_Query(kFlagDR05BombExplosionView)) {
 		Setup_Scene_Information(0.0f, 0.0f, 0.0f, 0);
 	} else if (Game_Flag_Query(kFlagDR01toDR04)) {
 		Setup_Scene_Information(-711.0f, -0.04f, 70.0f, 472);
-	} else if (Game_Flag_Query(229)) {
+	} else if (Game_Flag_Query(kFlagDR05toDR04)) {
 		Setup_Scene_Information(-1067.0f, 7.18f, 421.0f, 125);
-	} else if (Game_Flag_Query(231)) {
+	} else if (Game_Flag_Query(kFlagDR06toDR04)) {
 		Setup_Scene_Information(-897.75f, 134.45f, 569.75f, 512);
 	} else {
 		Setup_Scene_Information(-810.0f, -0.04f, 242.0f, 125);
@@ -52,13 +52,13 @@ void SceneScriptDR04::InitializeScene() {
 	Ambient_Sounds_Add_Sound(378, 5, 80, 50, 100, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(379, 5, 80, 50, 100, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(380, 5, 80, 50, 100, 0, 0, -101, -101, 0, 0);
-	if (Game_Flag_Query(272)) {
+	if (Game_Flag_Query(kFlagDR05BombExploded)) {
 		Scene_Loop_Set_Default(1);
 	} else {
 		Scene_Loop_Set_Default(4);
 	}
 	if (Game_Flag_Query(kFlagDR01toDR04)) {
-		if (Game_Flag_Query(272)) {
+		if (Game_Flag_Query(kFlagDR05BombExploded)) {
 			Scene_Loop_Start_Special(0, 0, 0);
 		} else {
 			Scene_Loop_Start_Special(0, 3, 0);
@@ -92,33 +92,34 @@ bool SceneScriptDR04::ClickedOn3DObject(const char *objectName, bool a2) {
 }
 
 bool SceneScriptDR04::ClickedOnActor(int actorId) {
-	if (actorId == 35 && !Player_Query_Combat_Mode()) {
-		if (Actor_Query_Goal_Number(kActorMoraji) != 21) {
-			if (Actor_Query_Goal_Number(kActorMoraji) == 23) {
-				if (!Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorMoraji, 36, 1, false)) {
-					Actor_Set_Goal_Number(kActorOfficerGrayford, 106);
-					return true;
-				}
+	if ( actorId == kActorMoraji
+	 && !Player_Query_Combat_Mode()
+	) {
+		if (Actor_Query_Goal_Number(kActorMoraji) == 21) {
+			if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 109, 0, true, true)) {
+				Actor_Face_Actor(kActorMcCoy, kActorMoraji, true);
+				Actor_Says(kActorMcCoy, 945, 13);
+				Actor_Says(kActorMoraji, 0, 3);
+				Actor_Says(kActorMoraji, 10, 3);
+				Actor_Says(kActorMcCoy, 950, 13);
+				Actor_Says(kActorMoraji, 20, 3);
+				Actor_Says(kActorMoraji, 30, 3);
+				Actor_Says(kActorMcCoy, 955, 13);
+				Actor_Says_With_Pause(kActorMoraji, 40, 0.0f, 3);
+				Actor_Says(kActorMoraji, 50, 3);
+				Actor_Clue_Acquire(kActorMcCoy, kClueMorajiInterview, true, kActorMoraji);
+				Actor_Set_Goal_Number(kActorMoraji, 22);
+				Actor_Set_Goal_Number(kActorOfficerGrayford, 101);
+				return true;
 			}
-			return false;
 		}
-		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 109, 0, 1, true)) {
-			Actor_Face_Actor(kActorMcCoy, kActorMoraji, true);
-			Actor_Says(kActorMcCoy, 945, 13);
-			Actor_Says(kActorMoraji, 0, 3);
-			Actor_Says(kActorMoraji, 10, 3);
-			Actor_Says(kActorMcCoy, 950, 13);
-			Actor_Says(kActorMoraji, 20, 3);
-			Actor_Says(kActorMoraji, 30, 3);
-			Actor_Says(kActorMcCoy, 955, 13);
-			Actor_Says_With_Pause(kActorMoraji, 40, 0.0f, 3);
-			Actor_Says(kActorMoraji, 50, 3);
-			Actor_Clue_Acquire(kActorMcCoy, kClueMorajiInterview, 1, kActorMoraji);
-			Actor_Set_Goal_Number(kActorMoraji, 22);
-			Actor_Set_Goal_Number(kActorOfficerGrayford, 101);
-			return true;
+
+		if (Actor_Query_Goal_Number(kActorMoraji) == 23) {
+			if (!Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorMoraji, 36, true, false)) {
+				Actor_Set_Goal_Number(kActorOfficerGrayford, 106);
+				return true;
+			}
 		}
-		return false;
 	}
 	return false;
 }
@@ -144,8 +145,8 @@ bool SceneScriptDR04::ClickedOnExit(int exitId) {
 	}
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1067.0f, 7.18f, 421.0f, 0, 1, false, 0)) {
-			Game_Flag_Set(232);
-			Game_Flag_Set(228);
+			Game_Flag_Set(kFlagNotUsed232);
+			Game_Flag_Set(kFlagDR04toDR05);
 			Set_Enter(kSetDR05, kSceneDR05);
 		}
 		return true;
@@ -155,13 +156,13 @@ bool SceneScriptDR04::ClickedOnExit(int exitId) {
 			Footstep_Sound_Override_On(3);
 			Actor_Set_Immunity_To_Obstacles(kActorMcCoy, true);
 			Actor_Face_Heading(kActorMcCoy, 512, false);
-			Loop_Actor_Travel_Stairs(kActorMcCoy, 7, 1, 0);
+			Loop_Actor_Travel_Stairs(kActorMcCoy, 7, 1, kAnimationModeIdle);
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -899.0f, 71.64f, 647.0f, 0, 0, false, 0);
 			Actor_Face_Heading(kActorMcCoy, 0, false);
-			Loop_Actor_Travel_Stairs(kActorMcCoy, 7, 1, 0);
+			Loop_Actor_Travel_Stairs(kActorMcCoy, 7, 1, kAnimationModeIdle);
 			Actor_Set_Immunity_To_Obstacles(kActorMcCoy, false);
 			Footstep_Sound_Override_Off();
-			Game_Flag_Set(230);
+			Game_Flag_Set(kFlagDR04toDR06);
 			Set_Enter(kSetDR06, kSceneDR06);
 		}
 		return true;
@@ -180,17 +181,17 @@ bool SceneScriptDR04::sub_401160() {
 }
 
 void SceneScriptDR04::SceneFrameAdvanced(int frame) {
-	if (Game_Flag_Query(515)) {
-		Game_Flag_Reset(515);
-		Game_Flag_Reset(271);
+	if (Game_Flag_Query(kFlagDR05BombExplosionView)) {
+		Game_Flag_Reset(kFlagDR05BombExplosionView);
+		Game_Flag_Reset(kFlagDR05BombWillExplode);
 		Scene_Loop_Set_Default(1);
 		Scene_Loop_Start_Special(kSceneLoopModeOnce, 6, true);
 		Music_Stop(4);
 		Actor_Set_Goal_Number(kActorMoraji, 99);
 	} else {
-		if (Game_Flag_Query(271)) {
-			Game_Flag_Reset(271);
-			Game_Flag_Set(272);
+		if (Game_Flag_Query(kFlagDR05BombWillExplode)) {
+			Game_Flag_Reset(kFlagDR05BombWillExplode);
+			Game_Flag_Set(kFlagDR05BombExploded);
 			Scene_Loop_Set_Default(1);
 			Scene_Loop_Start_Special(kSceneLoopModeOnce, 6, true);
 			Item_Remove_From_World(78);
@@ -215,7 +216,10 @@ void SceneScriptDR04::SceneFrameAdvanced(int frame) {
 			Player_Gains_Control();
 			break;
 		case 235:
-			if (Actor_Query_Goal_Number(kActorMoraji) != 20 && Actor_Query_Goal_Number(kActorMoraji) != 21 && Actor_Query_Goal_Number(kActorMoraji) != 99) {
+			if (Actor_Query_Goal_Number(kActorMoraji) != 20
+			 && Actor_Query_Goal_Number(kActorMoraji) != 21
+			 && Actor_Query_Goal_Number(kActorMoraji) != 99
+			) {
 				Actor_Set_Goal_Number(kActorOfficerGrayford, 101);
 			}
 			Scene_Exits_Enable();
@@ -231,30 +235,33 @@ void SceneScriptDR04::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptDR04::PlayerWalkedIn() {
-	if (Game_Flag_Query(515)) {
+	if (Game_Flag_Query(kFlagDR05BombExplosionView)) {
 		Player_Loses_Control();
 		Delay(4000);
 		Actor_Retired_Here(kActorMcCoy, 6, 6, 1, -1);
 	} else {
-		if (Game_Flag_Query(269) && !Game_Flag_Query(272)) {
+		if ( Game_Flag_Query(kFlagDR05BombActivated)
+		 && !Game_Flag_Query(kFlagDR05BombExploded)
+		) {
 			Scene_Exits_Disable();
 		}
-		if (Game_Flag_Query(231)) {
+
+		if (Game_Flag_Query(kFlagDR06toDR04)) {
 			Footstep_Sound_Override_On(3);
 			Actor_Set_Immunity_To_Obstacles(kActorMcCoy, true);
 			Actor_Face_Heading(kActorMcCoy, 512, false);
-			Loop_Actor_Travel_Stairs(kActorMcCoy, 7, 0, 0);
+			Loop_Actor_Travel_Stairs(kActorMcCoy, 7, 0, kAnimationModeIdle);
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -851.0f, 71.64f, 647.0f, 0, 0, false, 0);
 			Actor_Face_Heading(kActorMcCoy, 0, false);
-			Loop_Actor_Travel_Stairs(kActorMcCoy, 7, 0, 0);
+			Loop_Actor_Travel_Stairs(kActorMcCoy, 7, 0, kAnimationModeIdle);
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -774.85f, 7.18f, 386.67f, 0, 0, false, 0);
 			Actor_Set_Immunity_To_Obstacles(kActorMcCoy, false);
 			Footstep_Sound_Override_Off();
 		}
 	}
 	Game_Flag_Reset(kFlagDR01toDR04);
-	Game_Flag_Reset(229);
-	Game_Flag_Reset(231);
+	Game_Flag_Reset(kFlagDR05toDR04);
+	Game_Flag_Reset(kFlagDR06toDR04);
 }
 
 void SceneScriptDR04::PlayerWalkedOut() {

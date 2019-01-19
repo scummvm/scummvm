@@ -69,7 +69,7 @@ bool SceneScriptTB07::ClickedOnItem(int itemId, bool a2) {
 		Actor_Face_Item(kActorMcCoy, itemId, true);
 		if (itemId == 83) {
 			Item_Pickup_Spin_Effect(941, 331, 296);
-			Actor_Clue_Acquire(kActorMcCoy, kClueDNATyrell, 0, -1);
+			Actor_Clue_Acquire(kActorMcCoy, kClueDNATyrell, false, -1);
 		}
 		Item_Remove_From_World(itemId);
 	}
@@ -92,7 +92,7 @@ bool SceneScriptTB07::ClickedOnExit(int exitId) {
 				Game_Flag_Reset(kFlagMcCoyAtBBxx);
 				Game_Flag_Reset(kFlagMcCoyAtHFxx);
 				Game_Flag_Reset(kFlagMcCoyAtTBxx);
-				Game_Flag_Reset(450);
+				Game_Flag_Reset(kFlagTB02ElevatorToTB05);
 				switch (Spinner_Interface_Choose_Dest(-1, false)) {
 				case kSpinnerDestinationPoliceStation:
 					Game_Flag_Set(kFlagMcCoyAtPSxx);
@@ -282,8 +282,8 @@ void SceneScriptTB07::sub_401B0C() {
 	Actor_Says_With_Pause(kActorMcCoy, 5450, 1.0f, 15);
 	Actor_Says(kActorMcCoy, 5455, 12);
 	Actor_Says(kActorTyrell, 100, 14);
-	Actor_Clue_Acquire(kActorMcCoy, kClueRachaelInterview, 0, kActorRachael);
-	Actor_Clue_Acquire(kActorMcCoy, kClueTyrellInterview, 0, kActorTyrell);
+	Actor_Clue_Acquire(kActorMcCoy, kClueRachaelInterview, false, kActorRachael);
+	Actor_Clue_Acquire(kActorMcCoy, kClueTyrellInterview, false, kActorTyrell);
 	Loop_Actor_Walk_To_XYZ(kActorTyrell, -260.15f, 12.0f, -19.16f, 0, 0, false, 0);
 }
 

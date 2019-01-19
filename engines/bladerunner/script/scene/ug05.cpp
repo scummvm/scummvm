@@ -119,7 +119,7 @@ bool SceneScriptUG05::ClickedOnExit(int exitId) {
 			Set_Enter(kSetHF07, kSceneHF07);
 		} else if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -156.72f, 3.03f, -1118.17f, 0, 1, false, 0)) {
 			Actor_Face_Heading(kActorMcCoy, 760, false);
-			Loop_Actor_Travel_Stairs(kActorMcCoy, 3, 1, 0);
+			Loop_Actor_Travel_Stairs(kActorMcCoy, 3, 1, kAnimationModeIdle);
 			Game_Flag_Set(361);
 			Set_Enter(kSetHF07, kSceneHF07);
 		}
@@ -204,7 +204,7 @@ void SceneScriptUG05::PlayerWalkedIn() {
 		if (Game_Flag_Query(663) && !Game_Flag_Query(368)) {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -288.35f, 132.77f, -1092.36f, 0, 1, false, 0);
 		} else {
-			Loop_Actor_Travel_Stairs(kActorMcCoy, 2, 0, 0);
+			Loop_Actor_Travel_Stairs(kActorMcCoy, 2, 0, kAnimationModeIdle);
 		}
 	}
 	if (Game_Flag_Query(663)) {

@@ -114,7 +114,7 @@ bool SceneScriptUG10::ClickedOnExit(int exitId) {
 		if ((!Game_Flag_Query(474) && x < 120.0f) || Game_Flag_Query(474)) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1.83f, 1.15f, -410.8f, 0, 1, false, 0)) {
 				Actor_Face_Heading(kActorMcCoy, 0, false);
-				Loop_Actor_Travel_Stairs(kActorMcCoy, 9, 1, 0);
+				Loop_Actor_Travel_Stairs(kActorMcCoy, 9, 1, kAnimationModeIdle);
 				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -92.0f, 81.83f, -652.0f, 0, 0, false, 0);
 				Game_Flag_Set(337);
 				Set_Enter(kSetUG03, kSceneUG03);
@@ -214,7 +214,7 @@ void SceneScriptUG10::PlayerWalkedIn() {
 		Game_Flag_Reset(336);
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1.83f, 81.33f, -518.8f, 0, 0, false, 0);
 		Actor_Face_Heading(kActorMcCoy, 506, false);
-		Loop_Actor_Travel_Stairs(kActorMcCoy, 9, 0, 0);
+		Loop_Actor_Travel_Stairs(kActorMcCoy, 9, 0, kAnimationModeIdle);
 	}
 	if (Game_Flag_Query(474)) {
 		Unobstacle_Object("BOX01 BRIDGE", true);

@@ -41,24 +41,36 @@ void AIScriptHowieLee::Initialize() {
 }
 
 bool AIScriptHowieLee::Update() {
-	if (Actor_Query_Goal_Number(kActorHowieLee) < 100 && Global_Variable_Query(kVariableChapter) == 2) {
+	if (Actor_Query_Goal_Number(kActorHowieLee) < 100
+	 && Global_Variable_Query(kVariableChapter) == 2
+	) {
 		Actor_Set_Goal_Number(kActorHowieLee, 100);
 	}
+
 	if (Global_Variable_Query(kVariableChapter) > 1) {
 		return true;
 	}
+
 	if (Actor_Query_Goal_Number(kActorHowieLee) == 0) {
 		Actor_Set_Goal_Number(kActorHowieLee, 1);
 	}
-	if (Game_Flag_Query(kFlagMcCoyAtCTxx) && !Actor_Query_In_Set(kActorHowieLee, kSetCT01_CT12)) {
+
+	if ( Game_Flag_Query(kFlagMcCoyAtCTxx)
+	 && !Actor_Query_In_Set(kActorHowieLee, kSetCT01_CT12)
+	) {
 		AI_Movement_Track_Flush(kActorHowieLee);
 		AI_Movement_Track_Append(kActorHowieLee, 67, 0);
 		Actor_Set_Goal_Number(kActorHowieLee, 0);
 	}
-	if (Actor_Query_Goal_Number(kActorHowieLee) == 1 && Game_Flag_Query(kFlagBoughtHowieLeeFood) && !Game_Flag_Query(kFlagMcCoyAtCTxx)) {
+
+	if ( Actor_Query_Goal_Number(kActorHowieLee) == 1
+	 &&  Game_Flag_Query(kFlagBoughtHowieLeeFood)
+	 && !Game_Flag_Query(kFlagMcCoyAtCTxx)
+	) {
 		Actor_Set_Goal_Number(kActorHowieLee, 4);
 		return true;
 	}
+
 	return false;
 }
 
@@ -69,23 +81,33 @@ void AIScriptHowieLee::TimerExpired(int timer) {
 void AIScriptHowieLee::CompletedMovementTrack() {
 	if (Actor_Query_Goal_Number(kActorHowieLee) == 1) {
 		Actor_Set_Goal_Number(kActorHowieLee, 2);
-		// return true;
-	} else if (Actor_Query_Goal_Number(kActorHowieLee) == 2) {
+		return; // true;
+	}
+
+	if (Actor_Query_Goal_Number(kActorHowieLee) == 2) {
 		Actor_Set_Goal_Number(kActorHowieLee, 3);
-		// return true;
-	} else if (Actor_Query_Goal_Number(kActorHowieLee) == 3) {
+		return; // true;
+	}
+
+	if (Actor_Query_Goal_Number(kActorHowieLee) == 3) {
 		Actor_Set_Goal_Number(kActorHowieLee, 0);
-		// return true;
-	} else if (Actor_Query_Goal_Number(kActorHowieLee) == 3) {
-		// Bug/intentional in original game
+		return; // true;
+	}
+
+	// Bug/intentional in original game?
+	if (Actor_Query_Goal_Number(kActorHowieLee) == 3) {
 		Actor_Set_Goal_Number(kActorHowieLee, 4);
-		// return true;
-	} else if (Actor_Query_Goal_Number(kActorHowieLee) == 4) {
+		return; // true;
+	}
+
+	if (Actor_Query_Goal_Number(kActorHowieLee) == 4) {
 		Actor_Set_Goal_Number(kActorHowieLee, 5);
-		// return true;
-	} else if (Actor_Query_Goal_Number(kActorHowieLee) == 5) {
+		return; // true;
+	}
+
+	if (Actor_Query_Goal_Number(kActorHowieLee) == 5) {
 		Actor_Set_Goal_Number(kActorHowieLee, 0);
-		// return true;
+		return; // true;
 	}
 	// return false;
 }
@@ -238,7 +260,7 @@ bool AIScriptHowieLee::UpdateAnimation(int *animation, int *frame) {
 				_animationFrame = 0;
 				var_45DFB8 = Random_Query(0, 1);
 			} else {
-				Game_Flag_Set(239);
+				Game_Flag_Set(kFlagHowieLeeAnimation1);
 			}
 			*animation = 673;
 		}
@@ -251,8 +273,8 @@ bool AIScriptHowieLee::UpdateAnimation(int *animation, int *frame) {
 		}
 		break;
 	case 3:
-		if (Game_Flag_Query(239)) {
-			Game_Flag_Reset(239);
+		if (Game_Flag_Query(kFlagHowieLeeAnimation1)) {
+			Game_Flag_Reset(kFlagHowieLeeAnimation1);
 			_animationState = 0;
 			_animationFrame = 0;
 			var_45DFB8 = Random_Query(0, 1);
@@ -326,7 +348,7 @@ bool AIScriptHowieLee::ChangeAnimationMode(int mode) {
 			_animationFrame = 0;
 			var_45DFB8 = Random_Query(0, 1);
 		} else {
-			Game_Flag_Set(239);
+			Game_Flag_Set(kFlagHowieLeeAnimation1);
 		}
 		break;
 	case kAnimationModeWalk:

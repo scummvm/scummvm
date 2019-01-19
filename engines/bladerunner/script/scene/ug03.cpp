@@ -83,7 +83,7 @@ bool SceneScriptUG03::ClickedOn3DObject(const char *objectName, bool a2) {
 			Actor_Voice_Over(2570, kActorVoiceOver);
 			Actor_Voice_Over(2580, kActorVoiceOver);
 			Actor_Voice_Over(2590, kActorVoiceOver);
-			Actor_Clue_Acquire(kActorMcCoy, kClueScaryChair, 1, -1);
+			Actor_Clue_Acquire(kActorMcCoy, kClueScaryChair, true, -1);
 		}
 	}
 	return false;

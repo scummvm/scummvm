@@ -74,7 +74,7 @@ bool SceneScriptKP05::ClickedOnItem(int itemId, bool a2) {
 	if (itemId == 118) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1058.0f, 0.0f, 852.0f, 0, 1, false, 0)) {
 			Actor_Face_Item(kActorMcCoy, 118, true);
-			Actor_Clue_Acquire(kActorMcCoy, kCluePowerSource, 1, -1);
+			Actor_Clue_Acquire(kActorMcCoy, kCluePowerSource, true, -1);
 			Item_Remove_From_World(118);
 			Item_Pickup_Spin_Effect(960, 58, 321);
 		}

@@ -274,7 +274,7 @@ void SceneScriptHF05::PlayerWalkedIn() {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 399.0f, 40.63f, -85.0f, 0, 0, false, 0);
 	} else if (Game_Flag_Query(358)) {
 		Actor_Set_At_XYZ(kActorMcCoy, 346.0f, 4.63f, -151.0f, 603);
-		Loop_Actor_Travel_Stairs(kActorMcCoy, 4, 1, 0);
+		Loop_Actor_Travel_Stairs(kActorMcCoy, 4, 1, kAnimationModeIdle);
 	}
 	if (Actor_Query_In_Set(kActorCrazylegs, kSetHF05)) {
 		if (Game_Flag_Query(562)) {
@@ -569,7 +569,7 @@ void SceneScriptHF05::sub_403A34(int actorId) {
 		Loop_Actor_Walk_To_Actor(kActorCrazylegs, kActorMcCoy, 28, 0, false);
 		Item_Pickup_Spin_Effect(986, 315, 327);
 		Actor_Says(kActorCrazylegs, 80, 23);
-		Actor_Clue_Acquire(kActorMcCoy, kClueSpinnerKeys, 1, kActorCrazylegs);
+		Actor_Clue_Acquire(kActorMcCoy, kClueSpinnerKeys, true, kActorCrazylegs);
 		Actor_Says(kActorCrazylegs, 90, 15);
 		Actor_Says(kActorMcCoy, 1735, 17);
 		Actor_Says(kActorCrazylegs, 100, 16);

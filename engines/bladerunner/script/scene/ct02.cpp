@@ -119,10 +119,12 @@ bool SceneScriptCT02::ClickedOn3DObject(const char *objectName, bool a2) {
 void SceneScriptCT02::dialogueWithZuben() {
 	Dialogue_Menu_Clear_List();
 	if (Actor_Clue_Query(kActorMcCoy, kClueLucy)) {
-		DM_Add_To_List_Never_Repeat_Once_Selected(270, 8, 5, 3);
+		DM_Add_To_List_Never_Repeat_Once_Selected(270, 8, 5, 3); // LUCY PHOTO
 	}
-	if (Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewA) && !Actor_Clue_Query(kActorMcCoy, kClueLucy)) {
-		DM_Add_To_List_Never_Repeat_Once_Selected(280, 8, 5, 3);
+	if ( Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewA)
+	 && !Actor_Clue_Query(kActorMcCoy, kClueLucy)
+	) {
+		DM_Add_To_List_Never_Repeat_Once_Selected(280, 8, 5, 3); // LUCY
 	}
 	int evidenceCount = 0;
 	if (Actor_Clue_Query(kActorMcCoy, kClueDoorForced2)) {
@@ -141,29 +143,33 @@ void SceneScriptCT02::dialogueWithZuben() {
 		++evidenceCount;
 	}
 	if (evidenceCount > 3) {
-		DM_Add_To_List_Never_Repeat_Once_Selected(290, -1, 4, 8);
+		DM_Add_To_List_Never_Repeat_Once_Selected(290, -1, 4, 8); // VOIGT-KAMPFF
 	}
-	Dialogue_Menu_Add_DONE_To_List(300);
+	Dialogue_Menu_Add_DONE_To_List(300); // DONE
+
 	Dialogue_Menu_Appear(320, 240);
 	int answerValue = Dialogue_Menu_Query_Input();
 	Dialogue_Menu_Disappear();
+
 	switch (answerValue) {
-	case 270:
+	case 270: // LUCY PHOTO
 		Actor_Says(kActorMcCoy, 380, 11);
 		Actor_Says(kActorZuben, 30, 17);
 		Actor_Says(kActorZuben, 40, 15);
 		Actor_Says(kActorMcCoy, 410, 9);
 		Actor_Says(kActorZuben, 50, 18);
 		Actor_Says(kActorMcCoy, 415, 10);
-		Actor_Clue_Acquire(kActorMcCoy, kClueZubenInterview, 0, -1);
+		Actor_Clue_Acquire(kActorMcCoy, kClueZubenInterview, false, -1);
 		Actor_Modify_Friendliness_To_Other(kActorZuben, kActorMcCoy, -5);
 		break;
-	case 280:
+
+	case 280: // LUCY
 		Actor_Says(kActorMcCoy, 385, 9);
 		Actor_Says(kActorZuben, 40, 19);
 		Actor_Modify_Friendliness_To_Other(kActorZuben, kActorMcCoy, -2);
 		break;
-	case 290:
+
+	case 290: // VOIGT-KAMPFF
 		Actor_Says(kActorMcCoy, 395, 9);
 		Actor_Says(kActorMcCoy, 400, 9);
 		Actor_Says(kActorZuben, 70, 17);
@@ -171,14 +177,15 @@ void SceneScriptCT02::dialogueWithZuben() {
 		Actor_Says(kActorZuben, 80, 14);
 		Actor_Modify_Friendliness_To_Other(kActorZuben, kActorMcCoy, -10);
 		break;
-	case 300:
+
+	case 300: // DONE
 		Actor_Says(kActorMcCoy, 405, 11);
 		break;
 	}
 
 	if (Actor_Query_Friendliness_To_Other(kActorZuben, kActorMcCoy) < 44) {
 		Scene_Exits_Disable();
-		Actor_Clue_Acquire(kActorMcCoy, kClueZubenRunsAway, 1, -1);
+		Actor_Clue_Acquire(kActorMcCoy, kClueZubenRunsAway, true, -1);
 		Actor_Set_Goal_Number(kActorZuben, kGoalZubenCT02PushPot);
 		Game_Flag_Set(kFlagCT02PotTipped);
 		Scene_Loop_Set_Default(kCT02LoopMainPotTipped);
@@ -188,7 +195,7 @@ void SceneScriptCT02::dialogueWithZuben() {
 
 bool SceneScriptCT02::ClickedOnActor(int actorId) {
 	if (actorId == kActorZuben && Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT01Leave) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -255.02f, -145.11f, 212.42f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -255.02f, -145.11f, 212.42f, 0, true, false, 0)) {
 			Actor_Face_Actor(kActorMcCoy, kActorZuben, true);
 			Actor_Face_Actor(kActorZuben, kActorMcCoy, true);
 			if (!Game_Flag_Query(kFlagCT02ZubenTalk)) {

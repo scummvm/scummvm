@@ -146,7 +146,7 @@ bool SceneScriptNR11::ClickedOn3DObject(const char *objectName, bool a2) {
 					Loop_Actor_Walk_To_XYZ(kActorDektora, -135.0f, 0.33f, -267.0f, 0, 0, false, 0);
 					Actor_Face_Actor(kActorDektora, kActorMcCoy, true);
 					Actor_Face_Actor(kActorMcCoy, kActorDektora, true);
-					Actor_Clue_Acquire(kActorMcCoy, kClueDektoraInterview4, 1, kActorDektora);
+					Actor_Clue_Acquire(kActorMcCoy, kClueDektoraInterview4, true, kActorDektora);
 					Actor_Says(kActorDektora, 990, 13);
 					Actor_Says(kActorDektora, 1000, 14);
 					Loop_Actor_Walk_To_Actor(kActorDektora, kActorMcCoy, 108, 0, false);

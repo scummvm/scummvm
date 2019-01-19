@@ -280,9 +280,6 @@ END_SCRIPT
 DECLARE_SCRIPT(OfficerLeary)
 	int var_45D5B8;
 	int var_45D5BC;
-
-	bool sub_431408();
-	bool sub_431420();
 END_SCRIPT
 
 DECLARE_SCRIPT(OfficerGrayford)

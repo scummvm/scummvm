@@ -42,15 +42,18 @@ void AIScriptPhotographer::Initialize() {
 }
 
 bool AIScriptPhotographer::Update() {
-	if (Game_Flag_Query(450) != 1 || Game_Flag_Query(485))
-		return false;
+	if ( Game_Flag_Query(kFlagTB02ElevatorToTB05)
+	 && !Game_Flag_Query(kFlagPhotographerToTB06)
+	) {
+		Actor_Put_In_Set(kActorPhotographer, kSetFreeSlotC);
+		Actor_Set_At_Waypoint(kActorPhotographer, 35, 0);
+		Game_Flag_Set(kFlagPhotographerToTB06);
+		Actor_Set_Goal_Number(kActorPhotographer, 100);
 
-	Actor_Put_In_Set(kActorPhotographer, kSetFreeSlotC);
-	Actor_Set_At_Waypoint(kActorPhotographer, 35, 0);
-	Game_Flag_Set(485);
-	Actor_Set_Goal_Number(kActorPhotographer, 100);
+		return true;
+	}
 
-	return true;
+	return false;
 }
 
 void AIScriptPhotographer::TimerExpired(int timer) {
@@ -83,22 +86,25 @@ void AIScriptPhotographer::ReceivedClue(int clueId, int fromActorId) {
 }
 
 void AIScriptPhotographer::ClickedByPlayer() {
-	if (Actor_Clue_Query(kActorMcCoy, 44) != 1 || Actor_Clue_Query(kActorMcCoy, 50) || Game_Flag_Query(707)) {
-		AI_Movement_Track_Pause(37);
-		Actor_Face_Actor(kActorMcCoy, kActorPhotographer, 1);
-		Actor_Face_Actor(kActorPhotographer, kActorMcCoy, 1);
-		Actor_Says(kActorMcCoy, 5310, 11);
-		Actor_Says(kActorPhotographer, 40, 3);
-		AI_Movement_Track_Unpause(37);
-	} else {
-		AI_Movement_Track_Pause(37);
-		Actor_Face_Actor(kActorMcCoy, kActorPhotographer, 1);
+	if ( Actor_Clue_Query(kActorMcCoy, kClueDragonflyEarring)
+	 && !Actor_Clue_Query(kActorMcCoy, kClueVictimInformation)
+	 && !Game_Flag_Query(kFlagTB06PhotographTalk1)
+	) {
+		AI_Movement_Track_Pause(kActorPhotographer);
+		Actor_Face_Actor(kActorMcCoy, kActorPhotographer, true);
 		Actor_Says(kActorMcCoy, 5300, 14);
-		Actor_Face_Actor(kActorPhotographer, kActorMcCoy, 1);
-		Actor_Says(kActorPhotographer, 20, 3);
+		Actor_Face_Actor(kActorPhotographer, kActorMcCoy, true);
+		Actor_Says(kActorPhotographer, 20, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 5305, 15);
-		Game_Flag_Set(707);
-		AI_Movement_Track_Unpause(37);
+		Game_Flag_Set(kFlagTB06PhotographTalk1);
+		AI_Movement_Track_Unpause(kActorPhotographer);
+	} else {
+		AI_Movement_Track_Pause(kActorPhotographer);
+		Actor_Face_Actor(kActorMcCoy, kActorPhotographer, true);
+		Actor_Face_Actor(kActorPhotographer, kActorMcCoy, true);
+		Actor_Says(kActorMcCoy, 5310, 11);
+		Actor_Says(kActorPhotographer, 40, kAnimationModeTalk);
+		AI_Movement_Track_Unpause(kActorPhotographer);
 	}
 }
 
@@ -140,55 +146,49 @@ bool AIScriptPhotographer::GoalChanged(int currentGoalNumber, int newGoalNumber)
 		AI_Movement_Track_Flush(kActorPhotographer);
 		AI_Movement_Track_Append(kActorPhotographer, 35, 0);
 		AI_Movement_Track_Repeat(kActorPhotographer);
-
 		return true;
 
 	case 101:
 		AI_Movement_Track_Flush(kActorPhotographer);
-		switch (Random_Query(1, 3) - 1) {
-		case 0:
+		switch (Random_Query(1, 3)) {
+		case 1:
 			AI_Movement_Track_Append(kActorPhotographer, 280, 4);
 			break;
 
-		case 1:
+		case 2:
 			AI_Movement_Track_Append(kActorPhotographer, 279, 8);
 			break;
 
-		case 2:
+		case 3:
 			AI_Movement_Track_Append(kActorPhotographer, 280, 3);
 			break;
 		}
-
 		AI_Movement_Track_Repeat(kActorPhotographer);
-
 		return false;
 
 	case 102:
 		AI_Movement_Track_Flush(kActorPhotographer);
 		AI_Movement_Track_Append(kActorPhotographer, 279, 5);
 		AI_Movement_Track_Repeat(kActorPhotographer);
-		return 1;
+		return true;
 
 	case 199:
 		Actor_Put_In_Set(kActorPhotographer, kSetFreeSlotC);
 		Actor_Set_At_Waypoint(kActorPhotographer, 35, 0);
 		Actor_Put_In_Set(kActorMarcus, kSetFreeSlotI);
 		Actor_Set_At_Waypoint(kActorMarcus, 41, 0);
-
-		if (Game_Flag_Query(102)) {
-			Item_Remove_From_World(103);
-			Item_Remove_From_World(104);
-			Item_Remove_From_World(105);
+		if (Game_Flag_Query(kFlagTB06Visited)) {
+			Item_Remove_From_World(kItemDeadDogA);
+			Item_Remove_From_World(kItemDeadDogB);
+			Item_Remove_From_World(kItemDeadDogC);
 		}
-
-		if (!Actor_Clue_Query(kActorMcCoy, 65)) {
-			Actor_Clue_Acquire(kActorSteele, kClueDogCollar1, 1, -1);
-			if (Game_Flag_Query(102)) {
-				Item_Remove_From_World(84);
+		if (!Actor_Clue_Query(kActorMcCoy, kClueDogCollar1)) {
+			Actor_Clue_Acquire(kActorSteele, kClueDogCollar1, true, -1);
+			if (Game_Flag_Query(kFlagTB06Visited)) {
+				Item_Remove_From_World(kItemDogCollar);
 			}
-			Global_Variable_Increment(14, 1);
+			Global_Variable_Increment(kVariableMcCoyEvidenceMissed, 1);
 		}
-
 		return true;
 
 	default:
@@ -216,11 +216,13 @@ bool AIScriptPhotographer::UpdateAnimation(int *animation, int *frame) {
 
 	case 2:
 		*animation = 747;
-		if (!_animationFrame && _flag) {
+		if (_animationFrame == 0
+		 && _flag
+		) {
 			*animation = 745;
 			_animationState = 0;
 			_var2 = 0;
-			_flag = 0;
+			_flag = false;
 		} else {
 			_animationFrame++;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(747)) {
@@ -275,7 +277,7 @@ bool AIScriptPhotographer::UpdateAnimation(int *animation, int *frame) {
 				*animation = 745;
 				_animationState = 0;
 				_animationFrame = 0;
-				Actor_Change_Animation_Mode(kActorPhotographer, 0);
+				Actor_Change_Animation_Mode(kActorPhotographer, kAnimationModeIdle);
 			}
 		}
 		break;
@@ -290,48 +292,48 @@ bool AIScriptPhotographer::UpdateAnimation(int *animation, int *frame) {
 
 bool AIScriptPhotographer::ChangeAnimationMode(int mode) {
 	switch (mode) {
-	case 0:
-		if (_animationState > 5) {
+	case kAnimationModeIdle:
+		if (_animationState < 2 || _animationState > 5) {
 			_animationState = 0;
 			_var2 = 0;
 			_animationFrame = 0;
 		} else {
-			_flag = 1;
+			_flag = true;
 		}
 		break;
 
-	case 1:
+	case kAnimationModeWalk:
 		_animationState = 1;
 		_var2 = 0;
 		_animationFrame = 0;
 		break;
 
-	case 3:
+	case kAnimationModeTalk:
 		_animationState = 2;
 		_var2 = 0;
 		_animationFrame = 0;
-		_flag = 0;
+		_flag = false;
 		break;
 
 	case 12:
 		_animationState = 3;
 		_var2 = 0;
 		_animationFrame = 0;
-		_flag = 0;
+		_flag = false;
 		break;
 
 	case 13:
 		_animationState = 4;
 		_var2 = 0;
 		_animationFrame = 0;
-		_flag = 0;
+		_flag = false;
 		break;
 
 	case 14:
 		_animationState = 5;
 		_var2 = 0;
 		_animationFrame = 0;
-		_flag = 0;
+		_flag = false;
 		break;
 
 	case 43:
@@ -360,8 +362,12 @@ void AIScriptPhotographer::SetAnimationState(int animationState, int animationFr
 }
 
 bool AIScriptPhotographer::ReachedMovementTrackWaypoint(int waypointId) {
-	if (waypointId == 276 || waypointId == 278 || waypointId == 280)
+	if (waypointId == 276
+	 || waypointId == 278
+	 || waypointId == 280
+	) {
 		ChangeAnimationMode(43);
+	}
 
 	return true;
 }

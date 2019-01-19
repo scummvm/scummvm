@@ -61,7 +61,7 @@ void SceneScriptMA01::InitializeScene() {
 		Game_Flag_Reset(kFlagMA06toMA01);
 	} else {
 		Actor_Set_Invisible(kActorMcCoy, true);
-		Game_Flag_Set(273);
+		Game_Flag_Set(kFlagArrivedFromSpinner2);
 		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kMA01LoopInshotRoof, false);
 		Scene_Loop_Set_Default(kMA01LoopMain);
 	}
@@ -226,12 +226,18 @@ void SceneScriptMA01::SceneFrameAdvanced(int frame) {
 	if (frame == 58) {
 		Sound_Play(122, 17, 20, 20, 50);
 	}
-	if ((frame == 75 || frame == 196) && Game_Flag_Query(273)) {
+	if ((frame == 75
+	  || frame == 196
+	 )
+	 && Game_Flag_Query(kFlagArrivedFromSpinner2)
+	) {
 		Actor_Face_Heading(kActorMcCoy, 736, false);
 		Actor_Change_Animation_Mode(kActorMcCoy, 42);
-		Game_Flag_Reset(273);
+		Game_Flag_Reset(kFlagArrivedFromSpinner2);
 	} else {
-		if (frame == 196 && !Game_Flag_Query(273)) {
+		if ( frame == 196
+		 && !Game_Flag_Query(kFlagArrivedFromSpinner2)
+		) {
 			Actor_Change_Animation_Mode(kActorMcCoy, 41);
 			//return true;
 			return;

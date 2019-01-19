@@ -194,7 +194,7 @@ void AIScriptMcCoy::ReceivedClue(int clueId, int fromActorId) {
 			Actor_Voice_Over(3420, kActorVoiceOver);
 			break;
 		}
-		Actor_Clue_Acquire(kActorMcCoy, kClueGuzzaFramedMcCoy, 1, -1);
+		Actor_Clue_Acquire(kActorMcCoy, kClueGuzzaFramedMcCoy, true, -1);
 		if (clueId == kClueFolder) {
 			Actor_Voice_Over(2780, kActorVoiceOver);
 			Actor_Voice_Over(2800, kActorVoiceOver);
@@ -1156,14 +1156,14 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 3:
 	case 4:
-		if (_animationFrame == 0 && !Game_Flag_Query(236)) {
+		if (_animationFrame == 0 && !Game_Flag_Query(kFlagMcCoyAnimation1)) {
 			_animationFrame = 1;
 			_animationState = dword_45A0F0;
 			*animation = dword_45A0F4;
 			dword_45A0F0 = 4;
 			dword_45A0F4 = 20;
-		} else if (_animationFrame <= 4 && Game_Flag_Query(236)) {
-			Game_Flag_Reset(236);
+		} else if (_animationFrame <= 4 && Game_Flag_Query(kFlagMcCoyAnimation1)) {
+			Game_Flag_Reset(kFlagMcCoyAnimation1);
 			*animation = 19;
 			_animationFrame = 0;
 			_animationState = 0;
@@ -1241,7 +1241,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 			case 10:
 			case 11:
 			case 12:
-				Game_Flag_Set(236);
+				Game_Flag_Set(kFlagMcCoyAnimation1);
 				dword_45A0D8 = 0;
 				dword_45A0DC = 30;
 				dword_45A0E4 = 0;
@@ -1319,7 +1319,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 			_animationStateNext = 3;
 			_animationNext = 20;
 		} else {
-			Game_Flag_Reset(236);
+			Game_Flag_Reset(kFlagMcCoyAnimation1);
 			dword_45A0F0 = 4;
 			dword_45A0F4 = 20;
 		}
@@ -1405,7 +1405,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 			_animationStateNext = 5;
 			_animationNext = 21;
 		} else {
-			Game_Flag_Reset(236);
+			Game_Flag_Reset(kFlagMcCoyAnimation1);
 			dword_45A0F0 = 5;
 			dword_45A0F4 = 21;
 		}
@@ -1417,7 +1417,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 			_animationStateNext = 6;
 			_animationNext = 27;
 		} else {
-			Game_Flag_Reset(236);
+			Game_Flag_Reset(kFlagMcCoyAnimation1);
 			dword_45A0F0 = 6;
 			dword_45A0F4 = 27;
 		}
@@ -1429,7 +1429,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 			_animationStateNext = 7;
 			_animationNext = 22;
 		} else {
-			Game_Flag_Reset(236);
+			Game_Flag_Reset(kFlagMcCoyAnimation1);
 			dword_45A0F0 = 7;
 			dword_45A0F4 = 22;
 		}
@@ -1440,7 +1440,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 			_animationStateNext = 8;
 			_animationNext = 23;
 		} else {
-			Game_Flag_Reset(236);
+			Game_Flag_Reset(kFlagMcCoyAnimation1);
 			dword_45A0F0 = 8;
 			dword_45A0F4 = 23;
 		}
@@ -1451,7 +1451,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 			_animationStateNext = 9;
 			_animationNext = 24;
 		} else {
-			Game_Flag_Reset(236);
+			Game_Flag_Reset(kFlagMcCoyAnimation1);
 			dword_45A0F0 = 9;
 			dword_45A0F4 = 24;
 		}
@@ -1462,7 +1462,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 			_animationStateNext = 10;
 			_animationNext = 25;
 		} else {
-			Game_Flag_Reset(236);
+			Game_Flag_Reset(kFlagMcCoyAnimation1);
 			dword_45A0F0 = 10;
 			dword_45A0F4 = 25;
 		}
@@ -1473,7 +1473,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 			_animationStateNext = 11;
 			_animationNext = 26;
 		} else {
-			Game_Flag_Reset(236);
+			Game_Flag_Reset(kFlagMcCoyAnimation1);
 			dword_45A0F0 = 11;
 			dword_45A0F4 = 26;
 		}
@@ -1484,7 +1484,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 			_animationStateNext = 12;
 			_animationNext = 27;
 		} else {
-			Game_Flag_Reset(236);
+			Game_Flag_Reset(kFlagMcCoyAnimation1);
 			dword_45A0F0 = 12;
 			dword_45A0F4 = 27;
 		}
@@ -1719,25 +1719,6 @@ void AIScriptMcCoy::sub_405660() {
 		return;
 	}
 	switch (_animationState) {
-	case 17:
-	case 20:
-	case 21:
-	case 36:
-		_animationState = 16;
-		_animationFrame = 0;
-		break;
-	case 16:
-	case 25:
-	case 26:
-		break;
-	case 15:
-		_animationState = 16;
-		_animationFrame = 16 - 16 * _animationFrame / 12;
-		break;
-	case 14:
-		_animationState = 16;
-		_animationFrame = 0;
-		break;
 	case 3:
 	case 4:
 	case 5:
@@ -1748,12 +1729,31 @@ void AIScriptMcCoy::sub_405660() {
 	case 10:
 	case 11:
 	case 12:
-		Game_Flag_Set(236);
+		Game_Flag_Set(kFlagMcCoyAnimation1);
 		dword_45A0D8 = 0;
 		dword_45A0DC = 30;
 		dword_45A0E4 = 0;
 		_animationFrameDelta = 1;
 		dword_45A0E8 = 3;
+		break;
+	case 14:
+		_animationState = 16;
+		_animationFrame = 0;
+		break;
+	case 15:
+		_animationState = 16;
+		_animationFrame = 16 - 16 * _animationFrame / 12;
+		break;
+	case 17:
+	case 20:
+	case 21:
+	case 36:
+		_animationState = 16;
+		_animationFrame = 0;
+		break;
+	case 16:
+	case 25:
+	case 26:
 		break;
 	case 60:
 		_animationState = 61;

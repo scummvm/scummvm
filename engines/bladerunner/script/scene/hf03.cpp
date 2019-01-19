@@ -119,7 +119,7 @@ void SceneScriptHF03::sub_401C80() {
 			Actor_Says(kActorLucy, 220, 13);
 			Actor_Says(kActorMcCoy, 1660, 15);
 			Actor_Says(kActorLucy, 230, 14);
-			Actor_Clue_Acquire(kActorLucy, kClueMcCoyHelpedLucy, 1, kActorMcCoy);
+			Actor_Clue_Acquire(kActorLucy, kClueMcCoyHelpedLucy, true, kActorMcCoy);
 			if (Game_Flag_Query(kFlagLucyIsReplicant)) {
 				Actor_Set_Goal_Number(kActorLucy, 212);
 			} else {
@@ -140,7 +140,7 @@ void SceneScriptHF03::sub_401C80() {
 		Actor_Says(kActorLucy, 300, 16);
 		Actor_Says(kActorMcCoy, 1675, 12);
 		Actor_Says(kActorLucy, 310, 13);
-		Actor_Clue_Acquire(kActorMcCoy, kClueLucyInterview, 0, kActorLucy);
+		Actor_Clue_Acquire(kActorMcCoy, kClueLucyInterview, false, kActorLucy);
 		break;
 	case 880:
 		Actor_Says(kActorMcCoy, 1650, 14);

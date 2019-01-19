@@ -117,11 +117,11 @@ bool SceneScriptHC03::ClickedOnItem(int itemId, bool a2) {
 		Delay(1500);
 		Item_Pickup_Spin_Effect(984, 58, 435);
 		if (Game_Flag_Query(374)) {
-			Actor_Clue_Acquire(kActorMcCoy, kCluePhotoOfMcCoy1, 1, kActorIzo);
+			Actor_Clue_Acquire(kActorMcCoy, kCluePhotoOfMcCoy1, true, kActorIzo);
 		} else {
-			Actor_Clue_Acquire(kActorMcCoy, kCluePhotoOfMcCoy2, 1, kActorIzo);
+			Actor_Clue_Acquire(kActorMcCoy, kCluePhotoOfMcCoy2, true, kActorIzo);
 		}
-		Actor_Clue_Acquire(kActorMcCoy, kClueChinaBar, 1, kActorIzo);
+		Actor_Clue_Acquire(kActorMcCoy, kClueChinaBar, true, kActorIzo);
 		return true;
 	}
 	return false;
@@ -139,7 +139,7 @@ bool SceneScriptHC03::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 628.0f, 2.04f, -123.0f, 0, 1, false, 0)) {
 			if (Game_Flag_Query(388)) {
 				Game_Flag_Set(kFlagHC03toUG02);
-				Game_Flag_Reset(479);
+				Game_Flag_Reset(kFlagMcCoyAtHCxx);
 				Game_Flag_Set(kFlagMcCoyAtUGxx);
 				Game_Flag_Set(388);
 				Music_Stop(2);

@@ -196,7 +196,7 @@ void AIScriptSadik::Retired(int byActorId) {
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(579);
 			Game_Flag_Reset(653);
-			Set_Enter(kSetKP05_KP06, kSetKP03);
+			Set_Enter(kSetKP05_KP06, kSceneKP06);
 			return; //true;
 		}
 	}

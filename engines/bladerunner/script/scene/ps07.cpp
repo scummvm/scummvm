@@ -68,10 +68,18 @@ bool SceneScriptPS07::ClickedOnActor(int actorId) {
 	if (actorId == kActorKlein) {
 		Actor_Face_Actor(kActorMcCoy, kActorKlein, true);
 		Actor_Set_Goal_Number(kActorKlein, 3);
+
 		if (!Game_Flag_Query(kFlagKleinTalkClues)) {
 			Actor_Says(kActorMcCoy, 4115, 13);
 		}
-		if (!Game_Flag_Query(kFlagKleinTalkClues) && (Game_Flag_Query(kFlagMcCoyHasShellCasings) || Game_Flag_Query(kFlagMcCoyHasOfficersStatement) || Game_Flag_Query(kFlagMcCoyHasPaintTransfer) || Game_Flag_Query(kFlagMcCoyHasChromeDebris))) {
+
+		if (!Game_Flag_Query(kFlagKleinTalkClues)
+		 && (Game_Flag_Query(kFlagMcCoyHasShellCasings)
+		  || Game_Flag_Query(kFlagMcCoyHasOfficersStatement)
+		  || Game_Flag_Query(kFlagMcCoyHasPaintTransfer)
+		  || Game_Flag_Query(kFlagMcCoyHasChromeDebris)
+		 )
+		) {
 			Actor_Face_Actor(kActorKlein, kActorMcCoy, true);
 			Actor_Says(kActorKlein, 30, 12);
 			Game_Flag_Set(kFlagKleinTalkClues);
@@ -80,9 +88,12 @@ bool SceneScriptPS07::ClickedOnActor(int actorId) {
 				Actor_Says(kActorMcCoy, 4130, 18);
 			}
 		}
-		if (Game_Flag_Query(kFlagMcCoyHasShellCasings) && !Game_Flag_Query(kFlagKleinTalkShellCasings)) {
+
+		if ( Game_Flag_Query(kFlagMcCoyHasShellCasings)
+		 && !Game_Flag_Query(kFlagKleinTalkShellCasings)
+		) {
 			Game_Flag_Set(kFlagKleinTalkShellCasings);
-			Actor_Clue_Acquire(kActorMcCoy, kClueLabShellCasings, 0, kActorKlein);
+			Actor_Clue_Acquire(kActorMcCoy, kClueLabShellCasings, false, kActorKlein);
 			Actor_Says(kActorKlein, 50, 16);
 			Actor_Says(kActorMcCoy, 4135, 13);
 			Actor_Says(kActorKlein, 60, 15);
@@ -93,9 +104,12 @@ bool SceneScriptPS07::ClickedOnActor(int actorId) {
 			Actor_Set_Goal_Number(kActorKlein, 1);
 			return true;
 		}
-		if (Game_Flag_Query(kFlagMcCoyHasOfficersStatement) && !Game_Flag_Query(kFlagKleinTalkOfficersStatement)) {
+
+		if ( Game_Flag_Query(kFlagMcCoyHasOfficersStatement)
+		 && !Game_Flag_Query(kFlagKleinTalkOfficersStatement)
+		) {
 			Game_Flag_Set(kFlagKleinTalkOfficersStatement);
-			Actor_Clue_Acquire(kActorMcCoy, kClueLabCorpses, 0, kActorKlein);
+			Actor_Clue_Acquire(kActorMcCoy, kClueLabCorpses, false, kActorKlein);
 			Actor_Says(kActorKlein, 100, 13);
 			Actor_Says(kActorMcCoy, 4145, 13);
 			Actor_Says(kActorKlein, 110, 12);
@@ -113,9 +127,12 @@ bool SceneScriptPS07::ClickedOnActor(int actorId) {
 			Actor_Set_Goal_Number(kActorKlein, 1);
 			return true;
 		}
-		if (Game_Flag_Query(kFlagMcCoyHasPaintTransfer) && !Game_Flag_Query(kFlagKleinTalkPaintTransfer)) {
+
+		if ( Game_Flag_Query(kFlagMcCoyHasPaintTransfer)
+		 && !Game_Flag_Query(kFlagKleinTalkPaintTransfer)
+		) {
 			Game_Flag_Set(kFlagKleinTalkPaintTransfer);
-			Actor_Clue_Acquire(kActorMcCoy, kClueLabPaintTransfer, 0, kActorKlein);
+			Actor_Clue_Acquire(kActorMcCoy, kClueLabPaintTransfer, false, kActorKlein);
 			Actor_Says(kActorKlein, 170, 14);
 			Actor_Says(kActorMcCoy, 4180, 13);
 			Actor_Says(kActorKlein, 180, 12);
@@ -127,7 +144,10 @@ bool SceneScriptPS07::ClickedOnActor(int actorId) {
 			Actor_Set_Goal_Number(kActorKlein, 1);
 			return true;
 		}
-		if (Game_Flag_Query(kFlagMcCoyHasChromeDebris) && !Game_Flag_Query(kFlagKleinTalkChromeDebris)) {
+
+		if ( Game_Flag_Query(kFlagMcCoyHasChromeDebris)
+		 && !Game_Flag_Query(kFlagKleinTalkChromeDebris)
+		) {
 			Game_Flag_Set(kFlagKleinTalkChromeDebris);
 			Actor_Says(kActorKlein, 220, 12);
 			Actor_Says(kActorMcCoy, 4190, 13);

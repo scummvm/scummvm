@@ -73,7 +73,7 @@ bool SceneScriptBB07::ClickedOn3DObject(const char *objectName, bool a2) {
 				Item_Pickup_Spin_Effect(941, 439, 242);
 				Actor_Voice_Over(140, kActorVoiceOver);
 				Game_Flag_Set(398);
-				Actor_Clue_Acquire(kActorMcCoy, kClueDNASebastian, 1, -1);
+				Actor_Clue_Acquire(kActorMcCoy, kClueDNASebastian, true, -1);
 			} else if (Game_Flag_Query(396) && Game_Flag_Query(398)) {
 				Actor_Face_Object(kActorMcCoy, "PRINTER", true);
 				Actor_Says(kActorMcCoy, 8570, 13);

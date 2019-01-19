@@ -25,9 +25,9 @@
 namespace BladeRunner {
 
 void SceneScriptBB04::InitializeScene() {
-	if (Game_Flag_Query(283)) {
+	if (Game_Flag_Query(kFlagBB03toBB04)) {
 		Setup_Scene_Information(-107.0f, -26.6f, 397.0f, 29);
-		Game_Flag_Reset(283);
+		Game_Flag_Reset(kFlagBB03toBB04);
 	} else {
 		Setup_Scene_Information(-15.0f, -25.17f, 45.0f, 691);
 	}
@@ -95,7 +95,7 @@ bool SceneScriptBB04::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -107.0f, -26.6f, 397.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(284);
+			Game_Flag_Set(kFlagBB04toBB03);
 			Set_Enter(kSetBB03, kSceneBB03);
 		}
 		return true;

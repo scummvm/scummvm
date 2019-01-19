@@ -472,7 +472,7 @@ void AIScriptSebastian::dialogue() {
 }
 
 void AIScriptSebastian::setMcCoyIsABladeRunner() {
-	Actor_Clue_Acquire(kActorSebastian, kClueMcCoyIsABladeRunner, 1, 0);
+	Actor_Clue_Acquire(kActorSebastian, kClueMcCoyIsABladeRunner, true, 0);
 	Actor_Modify_Friendliness_To_Other(kActorSebastian, kActorMcCoy, -5);
 	Actor_Says(kActorSebastian, 560, 15);
 	Actor_Says(kActorMcCoy, 7200, 14);

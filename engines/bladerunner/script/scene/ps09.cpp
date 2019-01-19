@@ -285,9 +285,9 @@ void SceneScriptPS09::dialogueWithGregorian() {
 	 || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1)
 	 || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2)
 	) {
-		DM_Add_To_List_Never_Repeat_Once_Selected(170, 5, 5, 3);
-		DM_Add_To_List_Never_Repeat_Once_Selected(180, -1, 5, 5);
-		DM_Add_To_List_Never_Repeat_Once_Selected(200, -1, 3, 6);
+		DM_Add_To_List_Never_Repeat_Once_Selected(170, 5, 5, 3); // PROTEST
+		DM_Add_To_List_Never_Repeat_Once_Selected(180, -1, 5, 5); // CARS
+		DM_Add_To_List_Never_Repeat_Once_Selected(200, -1, 3, 6); // VOIGT-KAMPFF
 	}
 	if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)
 	 && (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA)
@@ -295,14 +295,16 @@ void SceneScriptPS09::dialogueWithGregorian() {
 	  || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2)
 	 )
 	) {
-		DM_Add_To_List_Never_Repeat_Once_Selected(190, 5, 6, -1);
+		DM_Add_To_List_Never_Repeat_Once_Selected(190, 5, 6, -1); // NOTE
 	}
-	Dialogue_Menu_Add_To_List(210);
+	Dialogue_Menu_Add_To_List(210); // DONE
+
 	Dialogue_Menu_Appear(320, 240);
 	int answer = Dialogue_Menu_Query_Input();
 	Dialogue_Menu_Disappear();
+
 	switch (answer) {
-	case 170:
+	case 170: // PROTEST
 		Actor_Says(kActorMcCoy, 4270, 13);
 		Actor_Says(kActorMcCoy, 4250, 18);
 		Actor_Says(kActorGrigorian, 50, 13);
@@ -334,7 +336,8 @@ void SceneScriptPS09::dialogueWithGregorian() {
 			return;
 		}
 		break;
-	case 180:
+
+	case 180: // CARS
 		Actor_Says(kActorMcCoy, 4270, 18);
 		Actor_Says(kActorMcCoy, 4255, 3);
 		Actor_Says(kActorGrigorian, 210, 12);
@@ -378,7 +381,8 @@ void SceneScriptPS09::dialogueWithGregorian() {
 			Actor_Says(kActorMcCoy, 4375, 18);
 		}
 		break;
-	case 190:
+
+	case 190: // NOTE
 		Actor_Says(kActorMcCoy, 4270, 18);
 		Actor_Says(kActorMcCoy, 4260, 3);
 		Actor_Says(kActorGrigorian, 360, 16);
@@ -391,7 +395,8 @@ void SceneScriptPS09::dialogueWithGregorian() {
 		Actor_Says(kActorGrigorian, 390, 12);
 		Actor_Modify_Friendliness_To_Other(kActorGrigorian, kActorMcCoy, -5);
 		break;
-	case 200:
+
+	case 200: // VOIGT-KAMPFF
 		Actor_Says(kActorMcCoy, 4265, 14);
 		Actor_Says(kActorGrigorian, 400, 13);
 		Actor_Says(kActorMcCoy, 4400, 13);
@@ -401,7 +406,8 @@ void SceneScriptPS09::dialogueWithGregorian() {
 		Voight_Kampff_Activate(kActorGrigorian, 20);
 		Actor_Modify_Friendliness_To_Other(kActorGrigorian, kActorMcCoy, -10);
 		break;
-	case 210:
+
+	case 210: // DONE
 		Actor_Says(kActorMcCoy, 8600, 18);
 		Actor_Says(kActorGrigorian, 20, 15);
 		break;

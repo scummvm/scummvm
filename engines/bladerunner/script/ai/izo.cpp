@@ -235,7 +235,7 @@ void AIScriptIzo::Retired(int byActorId) {
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		Game_Flag_Set(579);
 		Game_Flag_Reset(653);
-		Set_Enter(kSetKP05_KP06, kSetKP03);
+		Set_Enter(kSetKP05_KP06, kSceneKP06);
 		return; //true;
 	}
 
@@ -446,16 +446,17 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 			} else {
 				_animationFrame += _var2;
 				if (_animationFrame < 0) {
-					_animationFrame--;
+					_animationFrame = Slice_Animation_Query_Number_Of_Frames(297) - 1;
 				} else if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(297)) {
 					_animationFrame = 0;
 				}
-				if (!--_var1) {
+				--_var1;
+				if (_var1 == 0) {
 					_var2 = 2 * Random_Query(0, 1) - 1;
 					_var1 = Random_Query(6, 14);
 					_var3 = Random_Query(0, 2);
 				}
-				if (!_animationFrame) {
+				if (_animationFrame == 0) {
 					if (!Random_Query(0, 5)) {
 						_var4 = 1;
 					}

@@ -53,7 +53,7 @@ void SceneScriptRC51::SceneLoaded() {
 	if (!Game_Flag_Query(kFlagCandyTaken)) {
 		Item_Add_To_World(kItemCandy, 933, kSetRC02_RC51, 67.28f, -1193.38f, 108011.27f, 0, 6, 6, false, true, false, true);
 	}
-	if (!Game_Flag_Query(kFlagDogTaken)) {
+	if (!Game_Flag_Query(kFlagToyDogTaken)) {
 		Item_Add_To_World(kItemToyDog, 971, kSetRC02_RC51, -69.65f, -1238.89f, 107995.24f, 256, 18, 18, false, true, false, true);
 	}
 }
@@ -76,42 +76,52 @@ bool SceneScriptRC51::ClickedOnActor(int actorId) {
 }
 
 bool SceneScriptRC51::ClickedOnItem(int itemId, bool a2) {
-	if (itemId == kItemChopstickWrapper && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, 17.97f, -1238.89f, 108053.5f, 0, false, false, 0)) {
-		Actor_Face_Item(kActorMcCoy, kItemChopstickWrapper, true);
-		Actor_Clue_Acquire(kActorMcCoy, kClueChopstickWrapper, 1, -1);
-		Item_Remove_From_World(kItemChopstickWrapper);
-		Item_Pickup_Spin_Effect(937, 437, 407);
-		Actor_Voice_Over(2010, kActorVoiceOver);
-		Game_Flag_Set(kFlagChopstickWrapperTaken);
-		return true;
+	if (itemId == kItemChopstickWrapper) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 17.97f, -1238.89f, 108053.5f, 0, false, false, 0)) {
+			Actor_Face_Item(kActorMcCoy, kItemChopstickWrapper, true);
+			Actor_Clue_Acquire(kActorMcCoy, kClueChopstickWrapper, true, -1);
+			Item_Remove_From_World(kItemChopstickWrapper);
+			Item_Pickup_Spin_Effect(937, 437, 407);
+			Actor_Voice_Over(2010, kActorVoiceOver);
+			Game_Flag_Set(kFlagChopstickWrapperTaken);
+			return true;
+		}
 	}
-	if (itemId == kItemCandy && !Loop_Actor_Walk_To_Item(kActorMcCoy, kItemCandy, 36, true, false)) {
-		Actor_Face_Item(kActorMcCoy, kItemCandy, true);
-		Actor_Clue_Acquire(kActorMcCoy, kClueCandy, 1, -1);
-		Item_Remove_From_World(kItemCandy);
-		Item_Pickup_Spin_Effect(933, 445, 230);
-		Actor_Says(kActorMcCoy, 8735, 3);
-		Actor_Says(kActorMcCoy, 8529, 3);
-		Game_Flag_Set(kFlagCandyTaken);
-		return true;
+
+	if (itemId == kItemCandy) {
+		if (!Loop_Actor_Walk_To_Item(kActorMcCoy, kItemCandy, 36, true, false)) {
+			Actor_Face_Item(kActorMcCoy, kItemCandy, true);
+			Actor_Clue_Acquire(kActorMcCoy, kClueCandy, true, -1);
+			Item_Remove_From_World(kItemCandy);
+			Item_Pickup_Spin_Effect(933, 445, 230);
+			Actor_Says(kActorMcCoy, 8735, 3);
+			Actor_Says(kActorMcCoy, 8529, 3);
+			Game_Flag_Set(kFlagCandyTaken);
+			return true;
+		}
 	}
-	if (itemId == kItemToyDog && !Loop_Actor_Walk_To_Item(kActorMcCoy, kItemToyDog, 36, true, false)) {
-		Actor_Face_Item(kActorMcCoy, kItemToyDog, true);
-		Actor_Clue_Acquire(kActorMcCoy, kClueToyDog, 1, -1);
-		Item_Remove_From_World(kItemToyDog);
-		Item_Pickup_Spin_Effect(971, 55, 376);
-		Actor_Says(kActorMcCoy, 8525, 3);
-		Actor_Says(kActorMcCoy, 8740, 3);
-		Game_Flag_Set(kFlagDogTaken);
-		return true;
+
+	if (itemId == kItemToyDog) {
+		if (!Loop_Actor_Walk_To_Item(kActorMcCoy, kItemToyDog, 36, true, false)) {
+			Actor_Face_Item(kActorMcCoy, kItemToyDog, true);
+			Actor_Clue_Acquire(kActorMcCoy, kClueToyDog, true, -1);
+			Item_Remove_From_World(kItemToyDog);
+			Item_Pickup_Spin_Effect(971, 55, 376);
+			Actor_Says(kActorMcCoy, 8525, 3);
+			Actor_Says(kActorMcCoy, 8740, 3);
+			Game_Flag_Set(kFlagToyDogTaken);
+			return true;
+		}
 	}
 	return false;
 }
 
 bool SceneScriptRC51::ClickedOnExit(int exitId) {
-	if (exitId == kRC51ExitRC02 && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, -8.87f, -1238.89f, 108173.27f, 0, true, false, 0)) {
-		Set_Enter(kSetRC02_RC51, kSceneRC02);
-		return true;
+	if (exitId == kRC51ExitRC02) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -8.87f, -1238.89f, 108173.27f, 0, true, false, 0)) {
+			Set_Enter(kSetRC02_RC51, kSceneRC02);
+			return true;
+		}
 	}
 	return false;
 }

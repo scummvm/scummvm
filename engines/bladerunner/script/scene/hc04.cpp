@@ -111,7 +111,7 @@ bool SceneScriptHC04::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -108.0f, 0.14f, -639.0f, 0, 1, false, 0)) {
 			Music_Stop(2);
 			Game_Flag_Set(kFlagHC04toRC03);
-			Game_Flag_Reset(479);
+			Game_Flag_Reset(kFlagMcCoyAtHCxx);
 			Game_Flag_Set(kFlagMcCoyAtRCxx);
 			Set_Enter(kSetRC03, kSceneRC03);
 		}
@@ -220,7 +220,7 @@ void SceneScriptHC04::sub_401B90() {
 		Actor_Says(kActorIsabella, 320, 3);
 		Actor_Says(kActorMcCoy, 1395, 3);
 		Actor_Says(kActorIsabella, 330, 3);
-		Actor_Clue_Acquire(kActorMcCoy, kClueStolenCheese, 0, kActorIsabella);
+		Actor_Clue_Acquire(kActorMcCoy, kClueStolenCheese, false, kActorIsabella);
 		break;
 	case 390:
 		Actor_Says(kActorMcCoy, 1310, 3);

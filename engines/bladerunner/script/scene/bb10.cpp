@@ -103,7 +103,7 @@ bool SceneScriptBB10::ClickedOnExit(int exitId) {
 			Player_Set_Combat_Mode(false);
 			Actor_Face_Heading(kActorMcCoy, 274, false);
 			Footstep_Sound_Override_On(2);
-			Loop_Actor_Travel_Stairs(kActorMcCoy, 2, 1, 0);
+			Loop_Actor_Travel_Stairs(kActorMcCoy, 2, 1, kAnimationModeIdle);
 			Footstep_Sound_Override_Off();
 			Footstep_Sound_Override_On(2);
 			Loop_Actor_Travel_Ladder(kActorMcCoy, 3, 1, 0);
@@ -190,7 +190,7 @@ void SceneScriptBB10::PlayerWalkedIn() {
 		Footstep_Sound_Override_Off();
 		Actor_Face_Heading(kActorMcCoy, 768, false);
 		Footstep_Sound_Override_On(2);
-		Loop_Actor_Travel_Stairs(kActorMcCoy, 3, 0, 0);
+		Loop_Actor_Travel_Stairs(kActorMcCoy, 3, 0, kAnimationModeIdle);
 		Footstep_Sound_Override_Off();
 		Game_Flag_Reset(kFlagBB11toBB10);
 	}

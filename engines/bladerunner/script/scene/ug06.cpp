@@ -102,7 +102,7 @@ bool SceneScriptUG06::ClickedOnExit(int exitId) {
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 66.0f, 0.0f, -90.0f, 0, 1, false, 0)) {
 			Actor_Face_Heading(kActorMcCoy, 0, false);
-			Loop_Actor_Travel_Stairs(kActorMcCoy, 17, 1, 0);
+			Loop_Actor_Travel_Stairs(kActorMcCoy, 17, 1, kAnimationModeIdle);
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 66.0f, 153.0f, -446.0f, 0, 0, false, 0);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -130,7 +130,7 @@ void SceneScriptUG06::PlayerWalkedIn() {
 		Game_Flag_Reset(340);
 	}
 	if (Game_Flag_Query(343)) {
-		Loop_Actor_Travel_Stairs(kActorMcCoy, 17, 0, 0);
+		Loop_Actor_Travel_Stairs(kActorMcCoy, 17, 0, kAnimationModeIdle);
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 66.0f, 0.0f, -36.91f, 0, 0, false, 0);
 		Game_Flag_Reset(343);
 	}

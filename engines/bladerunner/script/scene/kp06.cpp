@@ -80,7 +80,7 @@ bool SceneScriptKP06::ClickedOnActor(int actorId) {
 		} else if (Actor_Clue_Query(kActorMcCoy, kCluePowerSource) ) {
 			Actor_Says(kActorSadik, 280, 3);
 			Actor_Says(kActorSadik, 290, 3);
-			Actor_Clue_Acquire(kActorSadik, kCluePowerSource, 1, kActorMcCoy);
+			Actor_Clue_Acquire(kActorSadik, kCluePowerSource, true, kActorMcCoy);
 		} else {
 			Actor_Says(kActorMcCoy, 2320, 3);
 			Actor_Says(kActorMcCoy, 2325, 3);
@@ -125,7 +125,7 @@ bool SceneScriptKP06::ClickedOnExit(int exitId) {
 		} else if (Actor_Clue_Query(kActorMcCoy, kCluePowerSource) ) {
 			Actor_Says(kActorSadik, 280, 3);
 			Actor_Says(kActorSadik, 290, 3);
-			Actor_Clue_Acquire(kActorSadik, kCluePowerSource, 1, kActorMcCoy);
+			Actor_Clue_Acquire(kActorSadik, kCluePowerSource, true, kActorMcCoy);
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -731.0f, 8.26f, -657.0f, 0, 0, true, 0);
 			Player_Set_Combat_Mode(false);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);

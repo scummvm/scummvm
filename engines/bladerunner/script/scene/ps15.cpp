@@ -43,7 +43,7 @@ void SceneScriptPS15::InitializeScene() {
 void SceneScriptPS15::SceneLoaded() {
 	Obstacle_Object("E.ARCH", true);
 	if (Global_Variable_Query(kVariableChapter) == 2) {
-		Item_Add_To_World(110, 983, 101, -208.0f, -113.43f, 30.28f, 750, 16, 12, false, true, false, true);
+		Item_Add_To_World(kItemWeaponsCrate, 983, 101, -208.0f, -113.43f, 30.28f, 750, 16, 12, false, true, false, true);
 	}
 }
 
@@ -56,9 +56,13 @@ bool SceneScriptPS15::ClickedOn3DObject(const char *objectName, bool a2) {
 }
 
 bool SceneScriptPS15::ClickedOnActor(int actorId) {
-	if (actorId == 34) {
-		if ((Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm) || Actor_Clue_Query(kActorMcCoy, kCluePoliceIssueWeapons)) && !Actor_Clue_Query(kActorMcCoy, kClueShippingForm)) {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -256.0f, -113.43f, 43.51f, 0, 1, false, 0)) {
+	if (actorId == kActorSergeantWalls) {
+		if ((Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm)
+		  || Actor_Clue_Query(kActorMcCoy, kCluePoliceIssueWeapons)
+		 )
+		 && !Actor_Clue_Query(kActorMcCoy, kClueShippingForm)
+		) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -256.0f, -113.43f, 43.51f, 0, true, false, 0)) {
 				Actor_Face_Actor(kActorMcCoy, kActorSergeantWalls, true);
 				Actor_Face_Actor(kActorSergeantWalls, kActorMcCoy, true);
 				Actor_Says(kActorMcCoy, 4470, 17);
@@ -68,9 +72,9 @@ bool SceneScriptPS15::ClickedOnActor(int actorId) {
 				Actor_Says(kActorSergeantWalls, 140, 16);
 				Item_Pickup_Spin_Effect(965, 211, 239);
 				Actor_Says(kActorSergeantWalls, 150, 14);
-				Actor_Clue_Acquire(kActorMcCoy, kClueShippingForm, 1, kActorSergeantWalls);
-				if (!Game_Flag_Query(727)) {
-					Item_Remove_From_World(111);
+				Actor_Clue_Acquire(kActorMcCoy, kClueShippingForm, true, kActorSergeantWalls);
+				if (!Game_Flag_Query(kFlagPS04WeaponsOrderForm)) {
+					Item_Remove_From_World(kItemWeaponsOrderForm);
 				}
 			}
 		} else {
@@ -84,8 +88,10 @@ bool SceneScriptPS15::ClickedOnActor(int actorId) {
 }
 
 bool SceneScriptPS15::ClickedOnItem(int itemId, bool a2) {
-	if (itemId == 110) {
-		if (Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm) && Actor_Clue_Query(kActorMcCoy, kCluePoliceIssueWeapons)) {
+	if (itemId == kItemWeaponsCrate) {
+		if (Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm)
+		 && Actor_Clue_Query(kActorMcCoy, kCluePoliceIssueWeapons)
+		) {
 			Actor_Says(kActorMcCoy, 8570, 14);
 		} else {
 			Actor_Face_Actor(kActorMcCoy, kActorSergeantWalls, true);
@@ -94,8 +100,8 @@ bool SceneScriptPS15::ClickedOnItem(int itemId, bool a2) {
 			Actor_Says(kActorSergeantWalls, 160, 14);
 			Actor_Says(kActorMcCoy, 4490, 12);
 			Actor_Says(kActorSergeantWalls, 170, 13);
-			Actor_Clue_Acquire(kActorMcCoy, kClueWeaponsOrderForm, 1, kActorMcCoy);
-			Actor_Clue_Acquire(kActorMcCoy, kCluePoliceIssueWeapons, 1, kActorMcCoy);
+			Actor_Clue_Acquire(kActorMcCoy, kClueWeaponsOrderForm, true, kActorMcCoy);
+			Actor_Clue_Acquire(kActorMcCoy, kCluePoliceIssueWeapons, true, kActorMcCoy);
 		}
 		return true;
 	}
@@ -104,20 +110,21 @@ bool SceneScriptPS15::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptPS15::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -360.0f, -113.43f, 50.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -360.0f, -113.43f, 50.0f, 0, true, false, 0)) {
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagPS15toPS05);
 			Set_Enter(kSetPS05, kScenePS05);
 		}
 		return true;
 	}
+
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -183.58f, -113.43f, 91.7f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -183.58f, -113.43f, 91.7f, 0, true, false, 0)) {
 			Actor_Says(kActorMcCoy, 4440, 18);
 			Actor_Says(kActorSergeantWalls, 150, 17);
 			Sound_Play(155, 90, 0, 0, 50);
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Set_Enter(kSetPS10_PS11_PS12_PS13, kScenePS10);
 		}
@@ -137,7 +144,7 @@ void SceneScriptPS15::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptPS15::PlayerWalkedIn() {
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -326.93f, -113.43f, 101.42f, 0, 0, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -326.93f, -113.43f, 101.42f, 0, false, false, 0);
 	if (!Game_Flag_Query(kFlagPS15Entered)) {
 		Actor_Face_Actor(kActorMcCoy, kActorSergeantWalls, true);
 		Actor_Face_Actor(kActorSergeantWalls, kActorMcCoy, true);
