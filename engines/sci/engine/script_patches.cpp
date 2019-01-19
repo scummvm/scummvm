@@ -3386,11 +3386,11 @@ static const SciScriptPatcherEntry kq7Signatures[] = {
 #pragma mark -
 #pragma mark Lighthouse
 
-// When going to room 5 (the sierra logo & menu room) from room 380 (the credits
-// room), the game tries to clear flags from 0 (global 116 bit 0) to 1423
-// (global 204 bit 15), but global 201 is not a flag global (it holds a
-// reference to theInvisCursor). This patch stops clearing after 1359 (global
-// 200 bit 15). Hopefully that is good enough to not break the game.
+// When going to room 5 (sierra logo & menu room) from room 380 (the credits
+// room), the game tries to clear flags from 0 (global[116] bit 0) to 1423
+// (global[204] bit 15), but global[201] is not a flag global (it holds a
+// reference to theInvisCursor). This patch stops clearing after flag 1359
+// (global[200] bit 15). Hopefully that is good enough to not break the game.
 // Applies to at least: English 1.0c & 2.0a
 static const uint16 lighthouseFlagResetSignature[] = {
 	SIG_MAGICDWORD,
@@ -3412,24 +3412,23 @@ static const uint16 lighthouseFlagResetPatch[] = {
 // Applies to at least: US English 1.0c
 static const uint16 lighthouseMemoryCountSignature[] = {
 	SIG_MAGICDWORD,
-	0x8d, 0x02,             // lst 2
+	0x8d, 0x02,             // lst temp[2]
 	0x35, 0x0a,             // ldi 10
 	0x24,                   // le?
 	0x31, 0x3b,             // bnt [to second digit overflow]
 	SIG_ADDTOOFFSET(+4),    // ldi, sat
-	0x8d, 0x03,             // lst 3
+	0x8d, 0x03,             // lst temp[3]
 	0x35, 0x0a,             // ldi 10
 	SIG_END
 };
 
 static const uint16 lighthouseMemoryCountPatch[] = {
-	PATCH_ADDTOOFFSET(+2), // lst 2
+	PATCH_ADDTOOFFSET(+2), // lst temp[2]
 	0x35, 0x02,            // ldi 2
 	PATCH_ADDTOOFFSET(+9), // le?, bnt, ldi, sat, lst
 	0x35, 0x02,            // ldi 2
 	PATCH_END
 };
-
 
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry lighthouseSignatures[] = {
