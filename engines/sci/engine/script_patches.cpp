@@ -4287,14 +4287,14 @@ static const SciScriptPatcherEntry larry7Signatures[] = {
 // This is only broken in the PC version. It was fixed for Amiga + Atari ST.
 //
 // Credits to OmerMor, for finding it.
-
+//
 // Applies to at least: English PC Floppy
 // Responsible method: room4::init
 static const uint16 laurabow1SignatureEasterEggViewFix[] = {
 	0x78,                               // push1
 	0x76,                               // push0
 	SIG_MAGICDWORD,
-	0x38, SIG_SELECTOR16(setLoop),      // pushi "setLoop"
+	0x38, SIG_SELECTOR16(setLoop),      // pushi setLoop
 	0x78,                               // push1
 	0x39, 0x03,                         // pushi 3 (loop 3, view only has 3 loops)
 	SIG_END
@@ -4302,25 +4302,28 @@ static const uint16 laurabow1SignatureEasterEggViewFix[] = {
 
 static const uint16 laurabow1PatchEasterEggViewFix[] = {
 	PATCH_ADDTOOFFSET(+7),
-	0x02,                            // change loop to 2
+	0x02,                               // (change loop to 2)
 	PATCH_END
 };
 
-// When oiling the armor or opening the visor of the armor, the scripts
-//  first check if Laura/ego is near the armor and if she is not, they will move her
-//  to the armor. After that further code is executed.
+// When oiling the armor or opening the visor of the armor, the scripts first
+//  check if Laura/ego is near the armor and if she is not, they will move her
+//  to the armor. After that, further code is executed.
 //
 // The current location is checked by a ego::inRect() call.
 //
-// The given rect for the inRect call inside openVisor::changeState was made larger for Atari ST/Amiga versions.
-//  We change the PC version to use the same rect.
+// The given rect for the inRect call inside openVisor::changeState was made
+//  larger for Atari ST/Amiga versions. We change the PC version to use the
+//  same rect.
 //
-// Additionally the coordinate, that Laura is moved to, is 152, 107 and may not be reachable depending on where
-//  Laura/ego was, when "use oil on helmet of armor" / "open visor of armor" got entered.
-//  Bad coordinates are for example 82, 110, which then cause collisions and effectively an endless loop.
-//  Game will effectively "freeze" and the user is only able to restore a previous game.
-//  This also happened, when using the original interpreter.
-//  We change the destination coordinate to 152, 110, which seems to be reachable all the time.
+// Additionally, the coordinate that Laura is moved to (152, 107) may not be
+//  reachable depending on where Laura was when "use oil on helmet of armor"
+//  or "open visor of armor" got entered. Bad coordinates such as (82, 110),
+//  cause collisions and effectively an endless loop, effectively freezing the
+//  game. The user is only able to restore a previous game.
+//
+//  We change the destination coordinate to (152, 110), which seems to be
+//   reachable all the time.
 //
 // The following patch fixes the rect for the PC version of the game.
 //
@@ -4331,18 +4334,18 @@ static const uint16 laurabow1SignatureArmorOpenVisorFix[] = {
 	0x39, 0x04,                         // pushi 04
 	SIG_MAGICDWORD,
 	0x39, 0x6a,                         // pushi 6a (106d)
-	0x38, SIG_UINT16(0x96),             // pushi 0096 (150d)
+	0x38, SIG_UINT16(0x0096),           // pushi 0096 (150d)
 	0x39, 0x6c,                         // pushi 6c (108d)
-	0x38, SIG_UINT16(0x98),             // pushi 0098 (152d)
+	0x38, SIG_UINT16(0x0098),           // pushi 0098 (152d)
 	SIG_END
 };
 
 static const uint16 laurabow1PatchArmorOpenVisorFix[] = {
 	PATCH_ADDTOOFFSET(+2),
 	0x39, 0x68,                         // pushi 68 (104d)   (-2)
-	0x38, SIG_UINT16(0x94),             // pushi 0094 (148d) (-2)
+	0x38, PATCH_UINT16(0x0094),         // pushi 0094 (148d) (-2)
 	0x39, 0x6f,                         // pushi 6f (111d)   (+3)
-	0x38, SIG_UINT16(0x9a),             // pushi 009a (154d) (+2)
+	0x38, PATCH_UINT16(0x009a),         // pushi 009a (154d) (+2)
 	PATCH_END
 };
 
@@ -4367,13 +4370,15 @@ static const uint16 laurabow1PatchArmorMoveToFix[] = {
 	PATCH_END
 };
 
-// In some cases like for example when the player oils the arm of the armor, command input stays
-// disabled, even when the player exits fast enough, so that Laura doesn't die.
+// In some cases like for example when the player oils the arm of the armor,
+// command input stays disabled, even when the player exits fast enough, so
+// that Laura doesn't die.
 //
-// This is caused by the scripts only enabling control (directional movement), but do not enable command input as well.
+// This is caused by the scripts only enabling control (directional movement),
+// but do not enable command input as well.
 //
-// This bug also happens, when using the original interpreter.
-// And it was fixed for the Atari ST + Amiga versions of the game.
+// This bug also happens, when using the original interpreter. It was fixed for
+// the Atari ST + Amiga versions of the game.
 //
 // Applies to at least: English PC Floppy
 // Responsible method: 2nd subroutine in script 37, called by oiling::changeState(7)
@@ -4419,19 +4424,19 @@ static const uint16 laurabow1PatchArmorOilingArmFix[] = {
 	0x3c,                               // dup
 	// saves a total of 6 bytes
 	0x76,                               // push0
-	0x72, SIG_UINT16(0x1a59),           // lofsa "Can"
+	0x72, PATCH_UINT16(0x1a59),         // lofsa "Can"
 	0x4a, 0x04,                         // send 04
 	0x76,                               // push0
-	0x72, SIG_UINT16(0x19a1),           // lofsa "Visor"
+	0x72, PATCH_UINT16(0x19a1),         // lofsa "Visor"
 	0x4a, 0x04,                         // send 04
 	0x76,                               // push0
-	0x72, SIG_UINT16(0x194d),           // lofsa "note"
+	0x72, PATCH_UINT16(0x194d),         // lofsa "note"
 	0x4a, 0x04,                         // send 04
 	0x76,                               // push0
-	0x72, SIG_UINT16(0x18f9),           // lofsa "valve" 18f3
+	0x72, PATCH_UINT16(0x18f9),         // lofsa "valve" 18f3
 	0x4a, 0x04,                         // send 04
 	// new code to enable input as well, needs 9 spare bytes
-	0x38, SIG_UINT16(0x00e2),           // canInput
+	0x38, PATCH_UINT16(0x00e2),         // pushi canInput
 	0x78,                               // push1
 	0x78,                               // push1
 	0x51, 0x2b,                         // class User
@@ -4458,17 +4463,17 @@ static const uint16 laurabow1PatchArmorOilingArmFix[] = {
 //  lit when re-entering until the next act. This is due to Room58:init
 //  incorrectly testing the global variable that tracks Jeeves' act 2 state.
 //
-// We fix this by changing the test from if global155 equals 11, which it
+// We fix this by changing the test from if global[155] equals 11, which it
 //  never does, to if it's greater than 11. The global is set to 12 in
 //  lightCandles:changeState(11) and it continues to increment as Jeeves'
 //  chore sequence progresses, ending with 17.
 //
 // Applies to: DOS, Amiga, Atari ST
 // Responsible method: Room58:init
-// Fixes bug #10743
+// Fixes bug: #10743
 static const uint16 laurabow1SignatureChapelCandlesPersistence[] = {
 	SIG_MAGICDWORD,
-	0x89, 0x9b,                         // lsg global155 [ Jeeves' act 2 state ]
+	0x89, 0x9b,                         // lsg global[155] [ Jeeves' act 2 state ]
 	0x35, 0x0b,                         // ldi b
 	0x1a,                               // eq?
 	SIG_END
@@ -4482,18 +4487,18 @@ static const uint16 laurabow1PatchChapelCandlesPersistence[] = {
 
 // LB1 DOS doesn't acknowledge Lillian's presence in room 44 when she's sitting
 //  on the bed in act 4. Look, talk, etc respond that she's not there.
-//  This is due to not setting global 195 which tracks who is in the room.
+//  This is due to not setting global[195] which tracks who is in the room.
 //  We fix this by setting the global as Amiga and Atari ST versions do.
 //
 // Applies to: DOS only
 // Responsible method: Room44:init
-// Fixes bug #10742
+// Fixes bug: #10742
 static const uint16 laurabow1SignatureLillianBedFix[] = {
 	SIG_MAGICDWORD,
 	0x72, SIG_UINT16(0x10f8),           // lofsa suit2 [ only matches DOS version ]
 	0x4a, 0x14,                         // send 14
 	SIG_ADDTOOFFSET(+8),
-	0x89, 0x76,                         // lsg global118
+	0x89, 0x76,                         // lsg global[118]
 	0x35, 0x02,                         // ldi 2
 	0x12,                               // and
 	0x30, SIG_UINT16(0x000d),           // bnt d [ haven't seen Lillian in study ]
@@ -4503,30 +4508,33 @@ static const uint16 laurabow1SignatureLillianBedFix[] = {
 
 static const uint16 laurabow1PatchLillianBedFix[] = {
 	PATCH_ADDTOOFFSET(+13),
-	0x81, 0x76,                         // lag global118
+	0x81, 0x76,                         // lag global[118]
 	0x7a,                               // push2
 	0x12,                               // and
 	0x31, 0x0f,                         // bnt f [ haven't seen Lillian in study ]
 	0x35, 0x20,                         // ldi 20 [ Lillian ]
-	0xa1, 0xc3,                         // sag global195 [ set Lillian as in the room ]
+	0xa1, 0xc3,                         // sag global[195] [ set Lillian as in the room ]
 	PATCH_END
 };
 
-// When you tell Lilly about Gertie in room 35, Lilly will then walk to the left and off the screen.
-// In case Laura (ego) is in the way, the whole game will basically block and you won't be able
-// to do anything except saving + restoring the game.
+// When you tell Lilly about Gertie in room 35, Lilly will then walk to the
+// left and off the screen. If Laura (ego) is in the way, the whole game will
+// basically block and you won't be able to do anything except saving or
+// restoring the game.
 //
-// If this happened already, the player can enter
-// "send Lillian ignoreActors 1" inside the debugger to fix this situation.
+// If this happened already, the player can enter "send Lillian ignoreActors 1"
+// inside the debugger to fix this situation.
 //
-// This issue is very difficult to solve, because Lilly also walks diagonally after walking to the left right
-// under the kitchen table. This means that even if we added a few more rectangle checks, there could still be
-// spots, where the game would block.
+// This issue is very difficult to solve, because Lilly also walks diagonally
+// after walking to the left right under the kitchen table. This means that
+// even if we added a few more rectangle checks, there could still be spots,
+// where the game would block.
 //
-// Also the mover "PathOut" is used for Lillian instead of the regular "MoveTo", which would avoid other
-// actors by itself.
+// Also the mover "PathOut" is used for Lillian instead of the regular
+// "MoveTo", which would avoid other actors by itself.
 //
-// So instead we set Lilly to ignore other actors during that cutscene, which is the least invasive solution.
+// So instead we set Lilly to ignore other actors during that cutscene, which
+// is the least invasive solution.
 //
 // Applies to at least: English PC Floppy, English Amiga Floppy, English Atari ST Floppy
 // Responsible method: goSee::changeState(1) in script 236
@@ -4536,7 +4544,7 @@ static const uint16 laurabow1SignatureTellLillyAboutGerieBlockingFix1[] = {
 	SIG_MAGICDWORD,
 	0x38, SIG_UINT16(0x00c1),           // pushi 00C1h
 	0x38, SIG_UINT16(0x008f),           // pushi 008Fh
-	0x38, SIG_SELECTOR16(ignoreActors), // pushi (ignoreActors)
+	0x38, SIG_SELECTOR16(ignoreActors), // pushi ignoreActors
 	0x78,                               // push1
 	0x76,                               // push0
 	SIG_END
@@ -4554,10 +4562,10 @@ static const uint16 laurabow1SignatureTellLillyAboutGerieBlockingFix2[] = {
 	0x35, 0x09,                         // ldi 09
 	0x1a,                               // eq?
 	0x30, SIG_UINT16(0x003f),           // bnt [ret]
-	0x39, SIG_ADDTOOFFSET(+1),          // pushi (view)
+	0x39, SIG_ADDTOOFFSET(+1),          // pushi view
 	0x78,                               // push1
 	0x38, SIG_UINT16(0x0203),           // pushi 203h (515d)
-	0x38, SIG_ADDTOOFFSET(+2),          // pushi (posn)
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi posn
 	0x7a,                               // push2
 	0x38, SIG_UINT16(0x00c9),           // pushi C9h (201d)
 	SIG_MAGICDWORD,
@@ -4568,7 +4576,7 @@ static const uint16 laurabow1SignatureTellLillyAboutGerieBlockingFix2[] = {
 };
 
 static const uint16 laurabow1PatchTellLillyAboutGertieBlockingFix2[] = {
-	0x38, PATCH_SELECTOR16(ignoreActors), // pushi (ignoreActors)
+	0x38, PATCH_SELECTOR16(ignoreActors), // pushi ignoreActors
 	0x78,                                 // push1
 	0x76,                                 // push0
 	0x33, 0x00,                           // ldi 00 (waste 2 bytes)
@@ -4602,7 +4610,7 @@ static const uint16 laurabow1PatchTellLillyAboutGertieBlockingFix2[] = {
 
 // Applies to: DOS, Amiga, Atari ST and occurs in Sierra's interpreter.
 // Responsible method: Act:setMotion
-// Fixes bug #10733
+// Fixes bug: #10733
 static const uint16 laurabow1SignatureObstacleCollisionLockupsFix[] = {
 	SIG_MAGICDWORD,
 	0x30, SIG_UINT16(0x002f),           // bnt 2f
@@ -4611,7 +4619,7 @@ static const uint16 laurabow1SignatureObstacleCollisionLockupsFix[] = {
 	0x54, 0x04,                         // self 4
 	0x7a,                               // push2 [ -info- ]
 	0x76,                               // push0
-	0x87, 0x01,                         // lap param1
+	0x87, 0x01,                         // lap param[1]
 	0x4a, 0x04,                         // send 4
 	0x36,                               // push
 	0x34, SIG_UINT16(0x8000),           // ldi 8000
@@ -4619,10 +4627,10 @@ static const uint16 laurabow1SignatureObstacleCollisionLockupsFix[] = {
 	0x30, SIG_UINT16(0x000a),           // bnt a
 	0x39, 0x56,                         // pushi 56 [ new ]
 	0x76,                               // push0
-	0x87, 0x01,                         // lap param1
+	0x87, 0x01,                         // lap param[1]
 	0x4a, 0x04,                         // send 4
 	0x32, SIG_UINT16(0x0002),           // jmp 2
-	0x87, 0x01,                         // lap param1
+	0x87, 0x01,                         // lap param[1]
 	0x65, 0x4c,                         // aTop mover
 	0x39, 0x57,                         // pushi 57 [ init ]
 	0x78,                               // push1
@@ -4648,17 +4656,17 @@ static const uint16 laurabow1PatchObstacleCollisionLockupsFix[] = {
 	0x54, 0x04,                         // self 4
 	0x7a,                               // push2 [ -info- ]
 	0x76,                               // push0
-	0x87, 0x01,                         // lap param1
+	0x87, 0x01,                         // lap param[1]
 	0x4a, 0x04,                         // send 4
 	0x38, PATCH_UINT16(0x8000),         // pushi 8000 [ save 1 byte ]
 	0x12,                               // and
 	0x31, 0x09,                         // bnt 9 [ save 1 byte ]
 	0x39, 0x56,                         // pushi 56 [ new ]
 	0x76,                               // push0
-	0x87, 0x01,                         // lap param1
+	0x87, 0x01,                         // lap param[1]
 	0x4a, 0x04,                         // send 4
 	0x33, 0x02,                         // jmp 2 [ save 1 byte ]
-	0x87, 0x01,                         // lap param1
+	0x87, 0x01,                         // lap param[1]
 	0x65, 0x4c,                         // aTop mover
 	0x39, 0x57,                         // pushi 57 [ init ]
 	0x78,                               // push1
@@ -4683,12 +4691,12 @@ static const uint16 laurabow1PatchObstacleCollisionLockupsFix[] = {
 //
 // Applies to: DOS, Amiga, Atari ST
 // Responsible method: Room47:doit
-// Fixes bug #9949
+// Fixes bug: #9949
 static const uint16 laurabow1SignatureAtticStairsLockupFix[] = {
 	SIG_MAGICDWORD,
 	0x39, SIG_SELECTOR8(loop),          // pushi loop
 	0x76,                               // push0
-	0x81, 0x00,                         // lag 00
+	0x81, 0x00,                         // lag global[0]
 	0x4a, 0x04,                         // send 4 [ ego:loop? ]
 	0x36,                               // push
 	0x35, 0x03,                         // ldi 03 [ facing north ]
@@ -4698,7 +4706,7 @@ static const uint16 laurabow1SignatureAtticStairsLockupFix[] = {
 
 static const uint16 laurabow1PatchAtticStairsLockupFix[] = {
 	PATCH_ADDTOOFFSET(+8),
-	0x35, 0x2,                          // ldi 02 [ facing south ]
+	0x35, 0x02,                         // ldi 02 [ facing south ]
 	0x1c,                               // ne?
 	PATCH_END
 };
