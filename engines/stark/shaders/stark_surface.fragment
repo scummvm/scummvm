@@ -6,5 +6,6 @@ uniform float fadeLevel;
 uniform sampler2D tex;
 
 void main() {
-	outColor = texture(tex, Texcoord) + vec4(fadeLevel, fadeLevel, fadeLevel, 0);
+	vec4 texColor = texture(tex, Texcoord);
+	outColor = texColor + vec4(fadeLevel, fadeLevel, fadeLevel, 0) * texColor.a;
 }
