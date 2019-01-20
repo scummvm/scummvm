@@ -448,6 +448,31 @@ Command               | Description
 `location`            | Display the current location
 `testDecompiler`      | Test decompilation of all the scripts in game
 
+### 8.5. Modding The Longest Journey ###
+
+ResidualVM can load replacement assets instead of the original files for
+some of the asset types. By leveraging this capability, users can create
+mods for the game. These are the currently supported modding features:
+
+  * Load mods from the `mods` directory inside the game data path.
+  Each mod should be its own directory in the `mods` subdirectory.
+  Mods are loaded in alphabetical order.
+
+  * Load external PNG files instead of the XMG files inside the game
+  archives.
+    The replacement PNG files can have larger dimensions when compared to
+  the original XMG images, enabling the creation of a high resolution mod.
+    The game looks for the replacement files in a mod directory and then
+  in the `xarc` subdirectory of the directory containing the archive in
+  which the XMG picture to be replaced is located. For instance:
+  `mods/[my_mod]/1e/00/xarc/fountain_layercenter.png` needs to be used for
+  the Venice park background.
+    ResidualVM expects PNGs to be in pre-multiplied alpha format for improved
+  load times. However the `replacement_png_premultiply_alpha` `residualvm.ini`
+  setting allows to load regular transparency PNGs when set to `true` for
+  convenience when testing.
+
+Contact us if you need further capabilities for your mod.
 
 ## 9. Bug reports
 ResidualVM still has a few bugs, many might already have been reported,

@@ -48,6 +48,7 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
+#include "common/fs.h"
 #include "common/random.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -67,6 +68,8 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 	DebugMan.addDebugChannel(kDebugXRC, "XRC", "Debug the loading of XRC resource trees");
 	DebugMan.addDebugChannel(kDebugModding, "Modding", "Debug the loading of modded assets");
 	DebugMan.addDebugChannel(kDebugUnknown, "Unknown", "Debug unknown values on the data");
+
+	addModsToSearchPath();
 }
 
 StarkEngine::~StarkEngine() {
@@ -257,6 +260,25 @@ void StarkEngine::updateDisplayScene() {
 
 	// Tell the UI to render, and update implicitly, if this leads to new mouse-over events.
 	StarkUserInterface->render();
+}
+
+static bool modsCompare(const Common::FSNode &a, const Common::FSNode &b) {
+	return a.getName() < b.getName();
+}
+
+void StarkEngine::addModsToSearchPath() const {
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	const Common::FSNode modsDir = gameDataDir.getChild("mods");
+	if (modsDir.exists()) {
+		Common::FSList list;
+		modsDir.getChildren(list);
+
+		Common::sort(list.begin(), list.end(), modsCompare);
+
+		for (uint i = 0; i < list.size(); i++) {
+			SearchMan.addDirectory("mod_" + list[i].getName(), list[i], 0, 4);
+		}
+	}
 }
 
 bool StarkEngine::hasFeature(EngineFeature f) const {

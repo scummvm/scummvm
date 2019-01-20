@@ -79,6 +79,7 @@ private:
 	void updateDisplayScene();
 	void processEvents();
 	void onScreenChanged() const;
+	void addModsToSearchPath() const;
 
 	Gfx::FrameLimiter *_frameLimiter;
 	Console *_console;
