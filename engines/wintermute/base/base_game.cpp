@@ -1260,6 +1260,21 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
+#ifdef ENABLE_FOXTAIL
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] RegistryFlush
+	// Return value is never used
+	// Used at SaveGameSettings() and Game.RegistryFlush()
+	// Called after a series of RegWriteNumber calls
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "RegistryFlush") == 0) {
+		stack->correctParams(0);
+		ConfMan.flushToDisk();
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// RegWriteNumber
 	//////////////////////////////////////////////////////////////////////////
