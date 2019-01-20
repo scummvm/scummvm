@@ -138,8 +138,8 @@ bool RenderEntry::containsPoint(const Common::Point &position, Common::Point &re
 		imageRect.translate(_position.x, _position.y);
 		imageRect.translate(-image->getHotspot().x, -image->getHotspot().y);
 
-		relativePosition.x = position.x - imageRect.left - image->getHotspot().x;
-		relativePosition.y = position.y - imageRect.top - image->getHotspot().y;
+		relativePosition.x = position.x - imageRect.left;
+		relativePosition.y = position.y - imageRect.top;
 		if (imageRect.contains(position) && image->isPointSolid(relativePosition)) {
 			return true;
 		}
