@@ -21,6 +21,8 @@
  */
 
 #include "glk/frotz/processor.h"
+#include "glk/frotz/frotz.h"
+#include "glk/events.h"
 
 namespace Glk {
 namespace Frotz {
@@ -385,7 +387,11 @@ void Processor::z_set_cursor() {
 
 	if (y < 0) {
 		// Cursor on/off
-		error("TODO: Turning cursor on/off");
+		if (y == -2)
+			g_vm->_events->showMouseCursor(true);
+		else if (y == -1)
+			g_vm->_events->showMouseCursor(false);
+		return;
 	}
 
 	if (!x || !y) {

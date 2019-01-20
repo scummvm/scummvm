@@ -275,6 +275,13 @@ public:
 	void setCursor(CursorId cursorId);
 
 	/**
+	 * Sets whether the mouse cursor is visible
+	 * @remarks Normally the cursor is visible for all games, even for those that didn't have mouse originally,
+	 * so as to allow for common Glk functionality for selecting ranges of text
+	 */
+	void showMouseCursor(bool visible);
+
+	/**
 	 * Set a timer interval
 	 * @param   milli       Time in millieseconds for intervals, or 0 for off
 	 */

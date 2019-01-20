@@ -393,6 +393,10 @@ void Events::setCursor(CursorId cursorId) {
 	}
 }
 
+void Events::showMouseCursor(bool visible) {
+	CursorMan.showMouse(visible);
+}
+
 void Events::setTimerInterval(uint milli) {
 	_timerMilli = milli;
 	_timerTimeExpiry = g_system->getMillis() + milli;
