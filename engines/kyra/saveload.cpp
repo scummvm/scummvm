@@ -128,6 +128,8 @@ WARN_UNUSED_RESULT KyraEngine_v1::ReadSaveHeaderError KyraEngine_v1::readSaveHea
 			if (!skipThumbnail)
 				return kRSHEIoError;
 		}
+	} else {
+		header.thumbnail = 0;
 	}
 
 	return ((in->err() || in->eos()) ? kRSHEIoError : kRSHENoError);
