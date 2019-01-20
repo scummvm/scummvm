@@ -273,7 +273,7 @@ void BaseFontBitmap::drawChar(byte c, int x, int y) {
 		}
 	}
 	if (!handled && _subframe) {
-		_subframe->_surface->displayTrans(x, y, rect);
+		_subframe->_surface->displayTrans(x, y, rect, _subframe->_alpha);
 	}
 }
 
@@ -317,6 +317,9 @@ TOKEN_DEF(EDITOR_PROPERTY)
 TOKEN_DEF(SPRITE)
 TOKEN_DEF(WIDTHS_FRAME)
 TOKEN_DEF(PAINT_WHOLE_CELL)
+#ifdef ENABLE_FOXTAIL
+TOKEN_DEF(COLOR)
+#endif
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////
 bool BaseFontBitmap::loadBuffer(char *buffer) {
@@ -337,6 +340,9 @@ bool BaseFontBitmap::loadBuffer(char *buffer) {
 	TOKEN_TABLE(SPRITE)
 	TOKEN_TABLE(WIDTHS_FRAME)
 	TOKEN_TABLE(PAINT_WHOLE_CELL)
+#ifdef ENABLE_FOXTAIL
+	TOKEN_TABLE(COLOR)
+#endif
 	TOKEN_TABLE_END
 
 	char *params;
@@ -355,6 +361,10 @@ bool BaseFontBitmap::loadBuffer(char *buffer) {
 	int i;
 	int r = 255, g = 255, b = 255;
 	bool custoTrans = false;
+#ifdef ENABLE_FOXTAIL
+	int ar = 255, ag = 255, ab = 255;
+	bool custoAlpha = false;
+#endif
 	char *surfaceFile = nullptr;
 	char *spriteFile = nullptr;
 
@@ -377,6 +387,13 @@ bool BaseFontBitmap::loadBuffer(char *buffer) {
 			parser.scanStr(params, "%d,%d,%d", &r, &g, &b);
 			custoTrans = true;
 			break;
+
+#ifdef ENABLE_FOXTAIL
+		case TOKEN_COLOR:
+			parser.scanStr(params, "%d,%d,%d", &ar, &ag, &ab);
+			custoAlpha = true;
+			break;
+#endif
 
 		case TOKEN_WIDTHS:
 			parser.scanStr(params, "%D", widths, &num);
@@ -455,6 +472,11 @@ bool BaseFontBitmap::loadBuffer(char *buffer) {
 		} else {
 			_subframe->setSurface(surfaceFile);
 		}
+#ifdef ENABLE_FOXTAIL
+		if (custoAlpha) {
+			_subframe->_alpha = BYTETORGBA(ar, ag, ab, 255);
+		}
+#endif
 	}
 
 
