@@ -62,8 +62,8 @@ if 	(not osLibFound) \
 from struct import *
 from audFileDecode import *
 
-my_module_version = "0.80"
-my_module_name = "audFileLib"
+MY_MODULE_VERSION = "0.80"
+MY_MODULE_NAME = "audFileLib"
 
 #constants
 aud_chunk_id = 0x0000deaf
@@ -129,9 +129,11 @@ class audFile:
 				cbinaryDataOutLst.append(tmpTupleH[0])
 			cvirtualBinaryD = struct.pack('B'*len(cbinaryDataOutLst), *cbinaryDataOutLst)
 
-		if (not cvirtualBinaryD):
-			print "[Error] audio file could not be exported properly (0 data read): " + filename			
+		if (not cvirtualBinaryD and (len(audBytesBuff) - SIZE_OF_AUD_HEADER_IN_BYTES) > 0):
+			print "[Error] audio file could not be exported properly (0 data read): %s" % (filename)
 			return 1
+		elif (len(audBytesBuff) - SIZE_OF_AUD_HEADER_IN_BYTES) == 0:
+			print "[Warning] Creating empty wav file: %s" % (filename)
 		
 		cb_sample = self.get_cb_sample()
 		cs_remaining = self.get_c_samples()
@@ -188,8 +190,18 @@ class audFile:
 			print "[Debug] Sample rate: %d\tsizeIn: %d\tsizeOut: %d\tflags: %d\tcompression: %d" % (self.get_samplerate(), self.header().m_size_in, self.header().m_size_out, self.header().m_flags, self.header().m_compression)
 		
 		if self.get_samplerate() < 8000 or self.get_samplerate() > 48000 or self.header().m_size_in > (maxLength - SIZE_OF_AUD_HEADER_IN_BYTES ):
-			print "[Error] Bad AUD Header size in file %s" % (self.m_simpleAudioFileName)
-			return False
+			print "[Warning] Bad AUD Header info in file %s, size_in: %d, maxLen: %d" % (self.m_simpleAudioFileName, self.header().m_size_in, (maxLength - SIZE_OF_AUD_HEADER_IN_BYTES))
+			if self.header().m_size_in == 0:
+				# handle special case where only the header of the AUD file is present and the size_in is 0. 
+				# fill the header with "valid" info for an empty wav file
+				self.header().m_size_out = 0
+				self.header().m_samplerate = 22050
+				self.header().m_compression = 0
+				self.header().m_flags = 2
+				self.header().m_populated = True
+				return True
+			else:
+				return False
 		else:
 			if self.header().m_compression == 1:
 				if (self.header().m_flags != 0):
@@ -360,16 +372,16 @@ class audFile:
 #		
 if __name__ == '__main__':
 	#	 main()
-	print "[Debug] Running %s as main module" % (my_module_name)
-	# assumes a file of name 000000.AUD in same directory
+	# (by default) assumes a file of name 000000.AUD in same directory
+	# otherwise tries to use the first command line argument as input file
 	inAUDFile = None
 	inAUDFileName = '00000000.AUD'
 	if len(sys.argv[1:])  > 0 \
 		and os.path.isfile(os.path.join('.', sys.argv[1])) \
-		and len (sys.argv[1]) > 5 \
+		and len(sys.argv[1]) > 5 \
 		and sys.argv[1][-3:] == 'AUD':
 		inAUDFileName = sys.argv[1]
-	print "[Debug] Using %s as input AUD file..." % (inAUDFileName)	
+	print "[Info] Using %s as input AUD file..." % (inAUDFileName)	
 	
 	errorFound = False
 	try:
@@ -381,10 +393,12 @@ if __name__ == '__main__':
 	if not errorFound:	
 		allOfAudFileInBuffer = inAUDFile.read()
 		audFileInstance = audFile(True)
+		if audFileInstance.m_traceModeEnabled:
+			print "[Debug] Running %s (%s) as main module" % (MY_MODULE_NAME, MY_MODULE_VERSION)
 		audFileInstance.loadAudFile(allOfAudFileInBuffer, len(allOfAudFileInBuffer), inAUDFileName)
 		audFileInstance.export_as_wav(allOfAudFileInBuffer, './tmp.wav')
 		inAUDFile.close()
 else:
 	#debug
-	#print "[Debug] Running %s imported from another module" % (my_module_name)
+	#print "[Debug] Running %s (%s) imported from another module" % (MY_MODULE_NAME, MY_MODULE_VERSION)
 	pass

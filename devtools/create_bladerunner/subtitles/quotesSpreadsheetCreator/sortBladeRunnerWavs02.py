@@ -394,6 +394,11 @@ def inputTLKsExport(inputTLKpath, outputWAVpath, pExportWavFilesMode, pExtractDe
 						if(offsetOfAUDEntry + sizeOfAUDEntry > allTlkFileSize):
 							print "[Error] audio file (AUD) file size mismatch with reported size in entry header!"
 						else:
+							targetSimpleWavFileName = targetSimpleAudFileName[:-4] + '.WAV' # remove the .AUD before adding the .WAV
+							if not fileIsMIX: # TLK file
+								(actorID, actorSName, localQuoteId) = getActorShortNameAndLocalQuoteIdByAUDHashID(idOfAUDEntry)
+								targetSimpleWavFileName = actorSName + '_' + str(localQuoteId).zfill(4) + '_' + ''.join('{:08X}'.format(idOfAUDEntry)).upper()+'.WAV'
+							
 							audFileBuffer = inTLKorMIXFile.read(sizeOfAUDEntry)
 							if (len(audFileBuffer) == sizeOfAUDEntry):
 							# load audio file (AUD) file
@@ -401,12 +406,6 @@ def inputTLKsExport(inputTLKpath, outputWAVpath, pExportWavFilesMode, pExtractDe
 								if (thisAudFile.loadAudFile(audFileBuffer, allTlkFileSize, targetSimpleAudFileName)):
 									if gTraceModeEnabled:
 										print "[Debug] Audio file (AUD) file %s was loaded successfully!" % (targetSimpleAudFileName)
-									# find
-									# print "[Debug] Emulating Wav write to appropriate folder..."
-									targetSimpleWavFileName = targetSimpleAudFileName[:-4] + '.WAV' # remove the .AUD before adding the .WAV
-									if not fileIsMIX: # TLK file
-										(actorID, actorSName, localQuoteId) = getActorShortNameAndLocalQuoteIdByAUDHashID(idOfAUDEntry)
-										targetSimpleWavFileName = actorSName + '_' + str(localQuoteId).zfill(4) + '_' + ''.join('{:08X}'.format(idOfAUDEntry)).upper()+'.WAV'
 									#print os.path.join(outputWAVpath, tmpTLKorMIXFileTuple[1], targetSimpleWavFileName)
 									# tmpTLKorMIXFileTuple[1] is the subfolder where the AUD -> WAV files for this archive are written
 									if not os.path.isfile(os.path.join(outputWAVpath, tmpTLKorMIXFileTuple[1], targetSimpleWavFileName) ):
@@ -415,7 +414,7 @@ def inputTLKsExport(inputTLKpath, outputWAVpath, pExportWavFilesMode, pExtractDe
 										if gTraceModeEnabled:
 											print "[Info] Output file %s already exists. Skipping..." % (os.path.join(outputWAVpath, tmpTLKorMIXFileTuple[1], targetSimpleWavFileName))
 								else:
-									print "[Error] while loading audio file (AUD) %s!" % (targetSimpleAudFileName)
+									print "[Warning] Failed to load a proper audio file (AUD) %s (to export it to %s)! Size of input is: %d" % (targetSimpleAudFileName, targetSimpleWavFileName,  sizeOfAUDEntry)
 							else:
 								print "[Error] while reading audio file (AUD) file %s into mem buffer" % (targetSimpleAudFileName)
 								#print "[Error] while reading audio file (AUD) file %s into mem buffer" % (''.join('{:08X}'.format(idOfMIXEntry)))

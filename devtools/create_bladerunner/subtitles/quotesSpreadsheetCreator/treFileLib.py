@@ -43,8 +43,8 @@ if 	(not osLibFound) \
 	
 from struct import *
 
-my_module_version = "0.50"
-my_module_name = "treFileLib"
+MY_MODULE_VERSION = "0.50"
+MY_MODULE_NAME = "treFileLib"
 
 
 class TreHeader:
@@ -129,10 +129,17 @@ class treFile:
 #
 if __name__ == '__main__':
 	#	 main()
-	print "[Debug] Running %s as main module" % (my_module_name)
-	# assumes a file of name ACTORS.TRE in same directory
+	# (by default) assumes a file of name ACTORS.TRE in same directory
+	# otherwise tries to use the first command line argument as input file
 	inTREFile = None
 	inTREFileName =  'ACTORS.TRE'
+	
+	if len(sys.argv[1:])  > 0 \
+		and os.path.isfile(os.path.join('.', sys.argv[1])) \
+		and len(sys.argv[1]) > 5 \
+		and sys.argv[1][-3:] == 'TRE':
+		inTREFileName = sys.argv[1]
+	print "[Info] Using %s as input TRE file..." % (inTREFileName)	
 
 	errorFound = False
 	
@@ -146,6 +153,9 @@ if __name__ == '__main__':
 	if not errorFound:
 		allOfTreFileInBuffer = inTREFile.read()
 		treFileInstance = treFile(True)
+		if treFileInstance.m_traceModeEnabled:
+			print "[Debug] Running %s (%s) as main module" % (MY_MODULE_NAME, MY_MODULE_VERSION)
+
 		if (treFileInstance.loadTreFile(allOfTreFileInBuffer, len(allOfTreFileInBuffer, inTREFileName))):
 			print "[Info] Text Resource file loaded successfully!"
 		else:
@@ -153,5 +163,5 @@ if __name__ == '__main__':
 		inTREFile.close()
 else:
 	#debug
-	#print "[Debug] Running	 %s imported from another module" % (my_module_name)
+	#print "[Debug] Running %s (%s) imported from another module" % (MY_MODULE_NAME, MY_MODULE_VERSION)
 	pass

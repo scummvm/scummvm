@@ -25,8 +25,8 @@ if 	(not ctypesLibFound) \
 	
 from struct import *
 
-my_module_version = "0.60"
-my_module_name = "audFileDecode"
+MY_MODULE_VERSION = "0.60"
+MY_MODULE_NAME = "audFileDecode"
 
 aud_ima_index_adjust_table = [-1, -1, -1, -1, 2, 4, 6, 8]
 
@@ -225,11 +225,12 @@ class audFileDecode:
 
 if __name__ == '__main__':
 	#	 main()
-	print "[Debug] Running %s as main module" % (my_module_name)
 	decodeInstance = audFileDecode()
+	if decodeInstance.m_traceModeEnabled:
+		print "[Debug] Running %s (%s) as main module" % (MY_MODULE_NAME, MY_MODULE_VERSION)
 	
 else:
 	#debug
-	#print "[Debug] Running	 %s imported from another module" % (my_module_name)
+	#print "[Debug] Running %s (%s) imported from another module" % (MY_MODULE_NAME, MY_MODULE_VERSION)
 	pass
 	
