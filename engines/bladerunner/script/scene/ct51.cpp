@@ -93,7 +93,7 @@ bool SceneScriptCT51::ClickedOnExit(int exitId) {
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 0.0f, 0.0f, -102.0f, 0, 1, false, 0)) {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -11.0f, 0.0f, -156.0f, 0, 0, false, 0);
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(380);
 			Set_Enter(kSetCT08_CT51_UG12, kSceneCT08);

@@ -50,7 +50,9 @@ void AIScriptInsectDealer::Initialize() {
 }
 
 bool AIScriptInsectDealer::Update() {
-	if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_Goal_Number(kActorInsectDealer) < 400)
+	if (Global_Variable_Query(kVariableChapter) == 5
+	 && Actor_Query_Goal_Number(kActorInsectDealer) < 400
+	)
 		Actor_Set_Goal_Number(kActorInsectDealer, 400);
 
 	return false;
@@ -111,7 +113,7 @@ bool AIScriptInsectDealer::GoalChanged(int currentGoalNumber, int newGoalNumber)
 
 		if (!Game_Flag_Query(374)) {
 			Game_Flag_Set(374);
-			Item_Remove_From_World(106);
+			Item_Remove_From_World(kItemScrorpions);
 		}
 	}
 

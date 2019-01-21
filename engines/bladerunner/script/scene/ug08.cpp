@@ -86,7 +86,7 @@ bool SceneScriptUG08::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptUG08::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -432.0f, 0.0f, -152.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(426);
 			Set_Enter(kSetUG07, kSceneUG07);

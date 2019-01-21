@@ -42,20 +42,20 @@ static const int *getPoliceMazePS10TrackData1() {
 	static int trackData[] = {
 		kPMTIActivate, kVariablePoliceMazePS10TargetCounter, kPoliceMazePS10TargetCount,
 		kPMTIVariableInc, kVariablePoliceMazePS10TargetCounter, kPoliceMazePS10TargetCount,
-		kPMTIObstacleReset, kItemPoliceMazeTarget1,
-		kPMTIObstacleReset, kItemPoliceMazeTarget2,
+		kPMTIObstacleReset, kItemPS10Target1,
+		kPMTIObstacleReset, kItemPS10Target2,
 		kPMTIFacing, 989,
 		kPMTIPosition, 0,
-		kPMTITargetSet, kItemPoliceMazeTarget1, 1,
-		kPMTITargetSet, kItemPoliceMazeTarget2, 1,
-		kPMTIEnemyReset, kItemPoliceMazeTarget1,
+		kPMTITargetSet, kItemPS10Target1, 1,
+		kPMTITargetSet, kItemPS10Target2, 1,
+		kPMTIEnemyReset, kItemPS10Target1,
 		kPMTIWaitRandom, 3000, 5000,
-		kPMTIObstacleSet, kItemPoliceMazeTarget1,
+		kPMTIObstacleSet, kItemPS10Target1,
 		kPMTIPlaySound, 159, 100,
 		kPMTIMove, 14,
 		kPMTIWait, 1000,
 		kPMTIRotate, 740, 80,
-		kPMTIEnemySet, kItemPoliceMazeTarget1,
+		kPMTIEnemySet, kItemPS10Target1,
 		kPMTIWait, 0,
 		kPMTIRotate, 488, 80,
 		kPMTIWait, 1000,
@@ -63,13 +63,12 @@ static const int *getPoliceMazePS10TrackData1() {
 		kPMTIWait, 0,
 		kPMTIRotate, 740, 80,
 		kPMTIPausedReset, kPoliceMazePS10Track2,
-		kPMTIObstacleReset, kItemPoliceMazeTarget1,
-		kPMTIObstacleSet, kItemPoliceMazeTarget2,
+		kPMTIObstacleReset, kItemPS10Target1,
+		kPMTIObstacleSet, kItemPS10Target2,
 		kPMTIPausedSet, kPoliceMazePS10Track1,
 		kPMTIPosition, 0,
 		kPMTIRestart
 	};
-
 	return trackData;
 }
 
@@ -77,10 +76,10 @@ static const int *getPoliceMazePS10TrackData2() {
 	static int trackData[] = {
 		kPMTIFacing, 740,
 		kPMTIPosition, 0,
-		kPMTIEnemySet, kItemPoliceMazeTarget2,
+		kPMTIEnemySet, kItemPS10Target2,
 		kPMTIMove, 69,
 		kPMTIWait, 500,
-		kPMTIObstacleReset, kItemPoliceMazeTarget2,
+		kPMTIObstacleReset, kItemPS10Target2,
 		kPMTIPausedReset, kPoliceMazePS10Track5,
 		kPMTIPausedSet, kPoliceMazePS10Track2,
 		kPMTIPosition, 0,
@@ -93,17 +92,17 @@ static const int *getPoliceMazePS10TrackData3() {
 	static int trackData[] = {
 		kPMTIActivate, kVariablePoliceMazePS10TargetCounter, kPoliceMazePS10TargetCount,
 		kPMTIVariableInc, kVariablePoliceMazePS10TargetCounter, kPoliceMazePS10TargetCount,
-		kPMTIObstacleReset, kItemPoliceMazeTarget3,
+		kPMTIObstacleReset, kItemPS10Target3,
 		kPMTIFacing, 993,
 		kPMTIPosition, 0,
 		kPMTIWaitRandom, 3000, 5000,
-		kPMTIObstacleSet, kItemPoliceMazeTarget3,
+		kPMTIObstacleSet, kItemPS10Target3,
 		kPMTIPlaySound, 159, 100,
-		kPMTITargetSet, kItemPoliceMazeTarget3, 1,
-		kPMTIEnemyReset, kItemPoliceMazeTarget3,
+		kPMTITargetSet, kItemPS10Target3, 1,
+		kPMTIEnemyReset, kItemPS10Target3,
 		kPMTIMove, 5,
 		kPMTIWait, 1000,
-		kPMTIEnemySet, kItemPoliceMazeTarget3,
+		kPMTIEnemySet, kItemPS10Target3,
 		kPMTIRotate, 233, 80,
 		kPMTIWait, 0,
 		kPMTIRotate, 491, 80,
@@ -115,7 +114,7 @@ static const int *getPoliceMazePS10TrackData3() {
 		kPMTIRotate, 993, 80,
 		kPMTIPlaySound, 34, 33,
 		kPMTIMove, 0,
-		kPMTIObstacleReset, kItemPoliceMazeTarget3,
+		kPMTIObstacleReset, kItemPS10Target3,
 		kPMTIRestart
 	};
 	return trackData;
@@ -125,20 +124,20 @@ static const int *getPoliceMazePS10TrackData4() {
 	static int trackData[] = {
 		kPMTIActivate, kVariablePoliceMazePS10TargetCounter, kPoliceMazePS10TargetCount,
 		kPMTIVariableInc, kVariablePoliceMazePS10TargetCounter, kPoliceMazePS10TargetCount,
-		kPMTIObstacleReset, kItemPoliceMazeTarget4,
+		kPMTIObstacleReset, kItemPS10Target4,
 		kPMTIFacing, 993,
 		kPMTIPosition, 0,
 		kPMTIWaitRandom, 3000, 6000,
-		kPMTIObstacleSet, kItemPoliceMazeTarget4,
+		kPMTIObstacleSet, kItemPS10Target4,
 		kPMTIPlaySound, 159, 100,
-		kPMTITargetSet, kItemPoliceMazeTarget4, 1,
-		kPMTIEnemyReset, kItemPoliceMazeTarget4,
+		kPMTITargetSet, kItemPS10Target4, 1,
+		kPMTIEnemyReset, kItemPS10Target4,
 		kPMTIMove, 34,
 		kPMTIWait, 500,
 		kPMTIRotate, 491, 80,
 		kPMTIMove, 0,
 		kPMTILeave,
-		kPMTIObstacleReset, kItemPoliceMazeTarget4,
+		kPMTIObstacleReset, kItemPS10Target4,
 		kPMTIPausedReset, kPoliceMazePS10Track8,
 		kPMTIPausedSet, kPoliceMazePS10Track4,
 		kPMTIRestart
@@ -150,14 +149,14 @@ static const int *getPoliceMazePS10TrackData5() {
 	static int trackData[] = {
 		kPMTIActivate, kVariablePoliceMazePS10TargetCounter, kPoliceMazePS10TargetCount,
 		kPMTIVariableInc, kVariablePoliceMazePS10TargetCounter, kPoliceMazePS10TargetCount,
-		kPMTIObstacleReset, kItemPoliceMazeTarget5,
+		kPMTIObstacleReset, kItemPS10Target5,
 		kPMTIFacing, 0,
 		kPMTIPosition, 0,
 		kPMTIWaitRandom, 4000, 6000,
-		kPMTIObstacleSet, kItemPoliceMazeTarget5,
+		kPMTIObstacleSet, kItemPS10Target5,
 		kPMTIPlaySound, 159, 100,
-		kPMTITargetSet, kItemPoliceMazeTarget5, 1,
-		kPMTIEnemyReset, kItemPoliceMazeTarget5,
+		kPMTITargetSet, kItemPS10Target5, 1,
+		kPMTIEnemyReset, kItemPS10Target5,
 		kPMTIMove, 5,
 		kPMTIWait, 1000,
 		kPMTIRotate, 512, 100,
@@ -166,7 +165,7 @@ static const int *getPoliceMazePS10TrackData5() {
 		kPMTIPlaySound, 34, 33,
 		kPMTIMove, 0,
 		kPMTILeave,
-		kPMTIObstacleReset, kItemPoliceMazeTarget5,
+		kPMTIObstacleReset, kItemPS10Target5,
 		kPMTIPausedReset, kPoliceMazePS10Track1,
 		kPMTIPausedSet, kPoliceMazePS10Track5,
 		kPMTIRestart
@@ -178,17 +177,17 @@ static const int *getPoliceMazePS10TrackData6() {
 	static int trackData[] = {
 		kPMTIActivate, kVariablePoliceMazePS10TargetCounter, kPoliceMazePS10TargetCount,
 		kPMTIVariableInc, kVariablePoliceMazePS10TargetCounter, kPoliceMazePS10TargetCount,
-		kPMTIObstacleReset, kItemPoliceMazeTarget6,
+		kPMTIObstacleReset, kItemPS10Target6,
 		kPMTIFacing, 999,
 		kPMTIPosition, 0,
 		kPMTIWaitRandom, 4000, 6000,
-		kPMTIObstacleSet, kItemPoliceMazeTarget6,
+		kPMTIObstacleSet, kItemPS10Target6,
 		kPMTIPlaySound, 159, 100,
-		kPMTITargetSet, kItemPoliceMazeTarget6, 1,
-		kPMTIEnemyReset, kItemPoliceMazeTarget6,
+		kPMTITargetSet, kItemPS10Target6, 1,
+		kPMTIEnemyReset, kItemPS10Target6,
 		kPMTIMove, 7,
 		kPMTIWait, 500,
-		kPMTIEnemySet, kItemPoliceMazeTarget6,
+		kPMTIEnemySet, kItemPS10Target6,
 		kPMTIRotate, 750, 80,
 		kPMTIWait, 0,
 		kPMTIRotate, 500, 80,
@@ -200,7 +199,7 @@ static const int *getPoliceMazePS10TrackData6() {
 		kPMTIRotate, 999, 80,
 		kPMTIPlaySound, 34, 33,
 		kPMTIMove, 0,
-		kPMTIObstacleReset, kItemPoliceMazeTarget6,
+		kPMTIObstacleReset, kItemPS10Target6,
 		kPMTIPausedReset, kPoliceMazePS10Track7,
 		kPMTIPausedReset, kPoliceMazePS10Track9,
 		kPMTIPausedSet, kPoliceMazePS10Track6,
@@ -213,19 +212,19 @@ static const int *getPoliceMazePS10TrackData7() {
 	static int trackData[] = {
 		kPMTIActivate, kVariablePoliceMazePS10TargetCounter, kPoliceMazePS10TargetCount,
 		kPMTIVariableInc, kVariablePoliceMazePS10TargetCounter, kPoliceMazePS10TargetCount,
-		kPMTIObstacleReset, kItemPoliceMazeTarget7,
+		kPMTIObstacleReset, kItemPS10Target7,
 		kPMTIFacing, 264,
 		kPMTIPosition, 0,
 		kPMTIWaitRandom, 3000, 6000,
-		kPMTITargetSet, kItemPoliceMazeTarget7, 1,
-		kPMTIEnemyReset, kItemPoliceMazeTarget7,
-		kPMTIObstacleSet, kItemPoliceMazeTarget7,
+		kPMTITargetSet, kItemPS10Target7, 1,
+		kPMTIEnemyReset, kItemPS10Target7,
+		kPMTIObstacleSet, kItemPS10Target7,
 		kPMTIMove, 89,
 		kPMTIWaitRandom, 4000, 8000,
 		kPMTIFacing, 776,
 		kPMTIMove, 0,
 		kPMTILeave,
-		kPMTIObstacleReset, kItemPoliceMazeTarget7,
+		kPMTIObstacleReset, kItemPS10Target7,
 		kPMTIPausedSet, kPoliceMazePS10Track7,
 		kPMTIRestart
 	};
@@ -236,23 +235,23 @@ static const int *getPoliceMazePS10TrackData8() {
 	static int trackData[] = {
 		kPMTIActivate, kVariablePoliceMazePS10TargetCounter, kPoliceMazePS10TargetCount,
 		kPMTIVariableInc, kVariablePoliceMazePS10TargetCounter, kPoliceMazePS10TargetCount,
-		kPMTIObstacleReset, kItemPoliceMazeTarget8,
+		kPMTIObstacleReset, kItemPS10Target8,
 		kPMTIFacing, 993,
 		kPMTIPosition, 0,
 		kPMTIWaitRandom, 4000, 6000,
-		kPMTIObstacleSet, kItemPoliceMazeTarget8,
+		kPMTIObstacleSet, kItemPS10Target8,
 		kPMTIPlaySound, 159, 100,
-		kPMTITargetSet, kItemPoliceMazeTarget8, 1,
-		kPMTIEnemyReset, kItemPoliceMazeTarget8,
+		kPMTITargetSet, kItemPS10Target8, 1,
+		kPMTIEnemyReset, kItemPS10Target8,
 		kPMTIMove, 34,
 		kPMTIWait, 500,
-		kPMTIEnemySet, kItemPoliceMazeTarget8,
+		kPMTIEnemySet, kItemPS10Target8,
 		kPMTIRotate, 491, 80,
 		kPMTIMove, 20,
 		kPMTIWait, 0,
 		kPMTIShoot, 27, 33,
 		kPMTIMove, 0,
-		kPMTIObstacleReset, kItemPoliceMazeTarget8,
+		kPMTIObstacleReset, kItemPS10Target8,
 		kPMTIPausedReset, kPoliceMazePS10Track4,
 		kPMTIPausedSet, kPoliceMazePS10Track8,
 		kPMTIRestart
@@ -264,13 +263,13 @@ static const int *getPoliceMazePS10TrackData9() {
 	static int trackData[] = {
 		kPMTIActivate, kVariablePoliceMazePS10TargetCounter, kPoliceMazePS10TargetCount,
 		kPMTIVariableInc, kVariablePoliceMazePS10TargetCounter, kPoliceMazePS10TargetCount,
-		kPMTIObstacleReset, kItemPoliceMazeTarget9,
+		kPMTIObstacleReset, kItemPS10Target9,
 		kPMTIFacing, 738,
 		kPMTIPosition, 0,
 		kPMTIWaitRandom, 2000, 5000,
-		kPMTITargetSet, kItemPoliceMazeTarget9, 1,
-		kPMTIEnemySet, kItemPoliceMazeTarget9,
-		kPMTIObstacleSet, kItemPoliceMazeTarget9,
+		kPMTITargetSet, kItemPS10Target9, 1,
+		kPMTIEnemySet, kItemPS10Target9,
+		kPMTIObstacleSet, kItemPS10Target9,
 		kPMTIPlaySound, 0, 33,
 		kPMTIMove, 23,
 		kPMTIPlaySound, 0, 33,
@@ -296,8 +295,8 @@ static const int *getPoliceMazePS10TrackData9() {
 		kPMTIMove, 89,
 		kPMTIPlaySound, 0, 33,
 		kPMTIWaitRandom, 4000, 6000,
-		kPMTITargetSet, kItemPoliceMazeTarget9, 1,
-		kPMTIEnemySet, kItemPoliceMazeTarget9,
+		kPMTITargetSet, kItemPS10Target9, 1,
+		kPMTIEnemySet, kItemPS10Target9,
 		kPMTIFacing, 216,
 		kPMTIPlaySound, 32, 33,
 		kPMTIMove, 69,
@@ -310,7 +309,7 @@ static const int *getPoliceMazePS10TrackData9() {
 		kPMTIRotate, 216, 100,
 		kPMTIPlaySound, 32, 33,
 		kPMTIMove, 0,
-		kPMTIObstacleReset, kItemPoliceMazeTarget9,
+		kPMTIObstacleReset, kItemPS10Target9,
 		kPMTIPausedSet, kPoliceMazePS10Track9,
 		kPMTIRestart
 	};
@@ -330,8 +329,8 @@ void SceneScriptPS10::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(1, 0, 0, 20, 479, 3);
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(0);
 	Ambient_Sounds_Add_Looping_Sound(387, 50, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound(54, 50, 1, 1);
-	Ambient_Sounds_Add_Sound( 1,  10,  50, 16, 25, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound( 54, 50, 1, 1);
+	Ambient_Sounds_Add_Sound(  1, 10,  50, 16, 25, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(389,  5,  50, 16, 25, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(390,  6,  50, 16, 25, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(443,  2, 100, 14, 16, -100, 100, -101, -101, 0, 0);
@@ -368,26 +367,26 @@ void SceneScriptPS10::SceneLoaded() {
 	Unclickable_Object("PARKMETR16");
 	Unobstacle_Object("E.SM.WIRE01", true);
 	if (!Query_System_Currently_Loading_Game()) {
-		Item_Add_To_World(kItemPoliceMazeTarget1, 443, 14,  -240.0f, -80.74f, 145.0f, 989, 72, 36, true, false, false, true);
-		Item_Add_To_World(kItemPoliceMazeTarget2, 443, 14,  -240.0f,  -8.74f, 145.0f, 740, 72, 36, true, false, false, true);
-		Item_Add_To_World(kItemPoliceMazeTarget3, 445, 14,  -165.0f, 111.53f, -10.0f, 993, 72, 36, true, false, false, true);
-		Item_Add_To_World(kItemPoliceMazeTarget4, 447, 14,  -125.0f,  160.0f, -10.0f, 993, 72, 36, true, false, false, true);
-		Item_Add_To_World(kItemPoliceMazeTarget5, 441, 14, -246.71f, 205.51f, -20.0f,   0, 72, 36, true, false, false, true);
-		Item_Add_To_World(kItemPoliceMazeTarget6, 445, 14,  -27.69f, -86.92f, 434.0f, 999, 72, 36, true, false, false, true);
-		Item_Add_To_World(kItemPoliceMazeTarget7, 441, 14, -347.15f,   7.68f, -20.0f, 264, 72, 36, true, false, false, true);
-		Item_Add_To_World(kItemPoliceMazeTarget8, 449, 14,   -51.0f,  160.0f, -10.0f, 993, 72, 36, true, false, false, true);
-		Item_Add_To_World(kItemPoliceMazeTarget9, 445, 14,    39.0f,   9.16f, -20.0f, 738, 72, 36, true, false, false, true);
+		Item_Add_To_World(kItemPS10Target1, 443, kSetPS10_PS11_PS12_PS13,  -240.0f, -80.74f, 145.0f, 989, 72, 36, true, false, false, true);
+		Item_Add_To_World(kItemPS10Target2, 443, kSetPS10_PS11_PS12_PS13,  -240.0f,  -8.74f, 145.0f, 740, 72, 36, true, false, false, true);
+		Item_Add_To_World(kItemPS10Target3, 445, kSetPS10_PS11_PS12_PS13,  -165.0f, 111.53f, -10.0f, 993, 72, 36, true, false, false, true);
+		Item_Add_To_World(kItemPS10Target4, 447, kSetPS10_PS11_PS12_PS13,  -125.0f,  160.0f, -10.0f, 993, 72, 36, true, false, false, true);
+		Item_Add_To_World(kItemPS10Target5, 441, kSetPS10_PS11_PS12_PS13, -246.71f, 205.51f, -20.0f,   0, 72, 36, true, false, false, true);
+		Item_Add_To_World(kItemPS10Target6, 445, kSetPS10_PS11_PS12_PS13,  -27.69f, -86.92f, 434.0f, 999, 72, 36, true, false, false, true);
+		Item_Add_To_World(kItemPS10Target7, 441, kSetPS10_PS11_PS12_PS13, -347.15f,   7.68f, -20.0f, 264, 72, 36, true, false, false, true);
+		Item_Add_To_World(kItemPS10Target8, 449, kSetPS10_PS11_PS12_PS13,   -51.0f,  160.0f, -10.0f, 993, 72, 36, true, false, false, true);
+		Item_Add_To_World(kItemPS10Target9, 445, kSetPS10_PS11_PS12_PS13,    39.0f,   9.16f, -20.0f, 738, 72, 36, true, false, false, true);
 	}
 
-	Police_Maze_Target_Track_Add(kItemPoliceMazeTarget1,  -240.0f, -80.74f, 145.0f,  -240.0f,  -8.74f, 145.0f, 15, getPoliceMazePS10TrackData1(), false);
-	Police_Maze_Target_Track_Add(kItemPoliceMazeTarget2,  -240.0f,  -8.74f, 145.0f,  -450.0f,  -8.74f, 145.0f, 70, getPoliceMazePS10TrackData2(), false);
-	Police_Maze_Target_Track_Add(kItemPoliceMazeTarget3,  -165.0f, 111.53f, -10.0f,  -165.0f, 167.53f, -10.0f,  6, getPoliceMazePS10TrackData3(), true);
-	Police_Maze_Target_Track_Add(kItemPoliceMazeTarget4,  -125.0f,  160.0f, -10.0f,   -51.0f,  160.0f, -10.0f, 35, getPoliceMazePS10TrackData4(), false);
-	Police_Maze_Target_Track_Add(kItemPoliceMazeTarget5, -246.71f, 205.51f, -20.0f, -246.71f, 241.51f, -20.0f,  6, getPoliceMazePS10TrackData5(), true);
-	Police_Maze_Target_Track_Add(kItemPoliceMazeTarget6,  -27.69f, -86.92f, 434.0f,  -27.69f, -18.92f, 434.0f,  8, getPoliceMazePS10TrackData6(), true);
-	Police_Maze_Target_Track_Add(kItemPoliceMazeTarget7, -347.15f,   7.68f, -20.0f,    39.0f,   9.16f, -20.0f, 90, getPoliceMazePS10TrackData7(), false);
-	Police_Maze_Target_Track_Add(kItemPoliceMazeTarget8,   -51.0f,  160.0f, -10.0f,  -125.0f,  160.0f, -10.0f, 35, getPoliceMazePS10TrackData8(), true);
-	Police_Maze_Target_Track_Add(kItemPoliceMazeTarget9,    39.0f,   9.16f, -20.0f, -347.15f,   7.68f, -20.0f, 90, getPoliceMazePS10TrackData9(), false);
+	Police_Maze_Target_Track_Add(kItemPS10Target1,  -240.0f, -80.74f, 145.0f,  -240.0f,  -8.74f, 145.0f, 15, getPoliceMazePS10TrackData1(), false);
+	Police_Maze_Target_Track_Add(kItemPS10Target2,  -240.0f,  -8.74f, 145.0f,  -450.0f,  -8.74f, 145.0f, 70, getPoliceMazePS10TrackData2(), false);
+	Police_Maze_Target_Track_Add(kItemPS10Target3,  -165.0f, 111.53f, -10.0f,  -165.0f, 167.53f, -10.0f,  6, getPoliceMazePS10TrackData3(),  true);
+	Police_Maze_Target_Track_Add(kItemPS10Target4,  -125.0f,  160.0f, -10.0f,   -51.0f,  160.0f, -10.0f, 35, getPoliceMazePS10TrackData4(), false);
+	Police_Maze_Target_Track_Add(kItemPS10Target5, -246.71f, 205.51f, -20.0f, -246.71f, 241.51f, -20.0f,  6, getPoliceMazePS10TrackData5(),  true);
+	Police_Maze_Target_Track_Add(kItemPS10Target6,  -27.69f, -86.92f, 434.0f,  -27.69f, -18.92f, 434.0f,  8, getPoliceMazePS10TrackData6(),  true);
+	Police_Maze_Target_Track_Add(kItemPS10Target7, -347.15f,   7.68f, -20.0f,    39.0f,   9.16f, -20.0f, 90, getPoliceMazePS10TrackData7(), false);
+	Police_Maze_Target_Track_Add(kItemPS10Target8,   -51.0f,  160.0f, -10.0f,  -125.0f,  160.0f, -10.0f, 35, getPoliceMazePS10TrackData8(),  true);
+	Police_Maze_Target_Track_Add(kItemPS10Target9,    39.0f,   9.16f, -20.0f, -347.15f,   7.68f, -20.0f, 90, getPoliceMazePS10TrackData9(), false);
 	Preload(441);
 	Preload(442);
 	Preload(443);
@@ -404,7 +403,7 @@ bool SceneScriptPS10::MouseClick(int x, int y) {
 	return false;
 }
 
-bool SceneScriptPS10::ClickedOn3DObject(const char *objectName, bool a2) {
+bool SceneScriptPS10::ClickedOn3DObject(const char *objectName, bool combatMode) {
 	return false;
 }
 
@@ -412,16 +411,16 @@ bool SceneScriptPS10::ClickedOnActor(int actorId) {
 	return false;
 }
 
-bool SceneScriptPS10::ClickedOnItem(int itemId, bool a2) {
+bool SceneScriptPS10::ClickedOnItem(int itemId, bool combatMode) {
 	if (Player_Query_Combat_Mode()) {
 		switch (itemId) {
-		case kItemPoliceMazeTarget4:
+		case kItemPS10Target4:
 			Sound_Play(4, 50, 0, 0, 50);
 			break;
-		case kItemPoliceMazeTarget5:
+		case kItemPS10Target5:
 			Sound_Play(555, 50, 0, 0, 50);
 			break;
-		case kItemPoliceMazeTarget7:
+		case kItemPS10Target7:
 			Sound_Play(555, 50, 0, 0, 50);
 			break;
 		default:
@@ -429,34 +428,34 @@ bool SceneScriptPS10::ClickedOnItem(int itemId, bool a2) {
 			break;
 		}
 		Item_Spin_In_World(itemId);
-		if (itemId == kItemPoliceMazeTarget1) {
-			Item_Flag_As_Non_Target(kItemPoliceMazeTarget1);
-			Item_Flag_As_Non_Target(kItemPoliceMazeTarget2);
+		if (itemId == kItemPS10Target1) {
+			Item_Flag_As_Non_Target(kItemPS10Target1);
+			Item_Flag_As_Non_Target(kItemPS10Target2);
 		}
-		if (itemId == kItemPoliceMazeTarget2) {
-			Item_Flag_As_Non_Target(kItemPoliceMazeTarget1);
-			Item_Flag_As_Non_Target(kItemPoliceMazeTarget2);
+		if (itemId == kItemPS10Target2) {
+			Item_Flag_As_Non_Target(kItemPS10Target1);
+			Item_Flag_As_Non_Target(kItemPS10Target2);
 		}
-		if (itemId == kItemPoliceMazeTarget3) {
-			Item_Flag_As_Non_Target(kItemPoliceMazeTarget3);
+		if (itemId == kItemPS10Target3) {
+			Item_Flag_As_Non_Target(kItemPS10Target3);
 		}
-		if (itemId == kItemPoliceMazeTarget4) {
-			Item_Flag_As_Non_Target(kItemPoliceMazeTarget4);
+		if (itemId == kItemPS10Target4) {
+			Item_Flag_As_Non_Target(kItemPS10Target4);
 		}
-		if (itemId == kItemPoliceMazeTarget5) {
-			Item_Flag_As_Non_Target(kItemPoliceMazeTarget5);
+		if (itemId == kItemPS10Target5) {
+			Item_Flag_As_Non_Target(kItemPS10Target5);
 		}
-		if (itemId == kItemPoliceMazeTarget6) {
-			Item_Flag_As_Non_Target(kItemPoliceMazeTarget6);
+		if (itemId == kItemPS10Target6) {
+			Item_Flag_As_Non_Target(kItemPS10Target6);
 		}
-		if (itemId == kItemPoliceMazeTarget7) {
-			Item_Flag_As_Non_Target(kItemPoliceMazeTarget7);
+		if (itemId == kItemPS10Target7) {
+			Item_Flag_As_Non_Target(kItemPS10Target7);
 		}
-		if (itemId == kItemPoliceMazeTarget8) {
-			Item_Flag_As_Non_Target(kItemPoliceMazeTarget8);
+		if (itemId == kItemPS10Target8) {
+			Item_Flag_As_Non_Target(kItemPS10Target8);
 		}
-		if (itemId == kItemPoliceMazeTarget9) {
-			Item_Flag_As_Non_Target(kItemPoliceMazeTarget9);
+		if (itemId == kItemPS10Target9) {
+			Item_Flag_As_Non_Target(kItemPS10Target9);
 		} else {
 			Item_Flag_As_Non_Target(itemId);
 		}
@@ -517,15 +516,15 @@ void SceneScriptPS10::DialogueQueueFlushed(int a1) {
 }
 
 void SceneScriptPS10::removeTargets() {
-	Item_Remove_From_World(kItemPoliceMazeTarget1);
-	Item_Remove_From_World(kItemPoliceMazeTarget2);
-	Item_Remove_From_World(kItemPoliceMazeTarget3);
-	Item_Remove_From_World(kItemPoliceMazeTarget4);
-	Item_Remove_From_World(kItemPoliceMazeTarget5);
-	Item_Remove_From_World(kItemPoliceMazeTarget6);
-	Item_Remove_From_World(kItemPoliceMazeTarget7);
-	Item_Remove_From_World(kItemPoliceMazeTarget8);
-	Item_Remove_From_World(kItemPoliceMazeTarget9);
+	Item_Remove_From_World(kItemPS10Target1);
+	Item_Remove_From_World(kItemPS10Target2);
+	Item_Remove_From_World(kItemPS10Target3);
+	Item_Remove_From_World(kItemPS10Target4);
+	Item_Remove_From_World(kItemPS10Target5);
+	Item_Remove_From_World(kItemPS10Target6);
+	Item_Remove_From_World(kItemPS10Target7);
+	Item_Remove_From_World(kItemPS10Target8);
+	Item_Remove_From_World(kItemPS10Target9);
 }
 
 } // End of namespace BladeRunner

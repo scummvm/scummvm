@@ -119,7 +119,7 @@ bool SceneScriptHF05::ClickedOn3DObject(const char *objectName, bool a2) {
 					ADQ_Add(kActorVoiceOver, 940, -1);
 					Ambient_Sounds_Play_Sound(147, 50, 99, 0, 0);
 					Delay(1500);
-					Loop_Actor_Walk_To_XYZ(kActorMcCoy, 181.54f, 40.63f, 388.09f, 0, 0, true, 0);
+					Loop_Actor_Walk_To_XYZ(kActorMcCoy, 181.54f, 40.63f, 388.09f, 0, false, true, 0);
 					Actor_Face_Heading(kActorMcCoy, 0, false);
 					Actor_Change_Animation_Mode(kActorMcCoy, 23);
 					Actor_Clue_Lose(kActorMcCoy, kClueBomb);
@@ -133,7 +133,7 @@ bool SceneScriptHF05::ClickedOn3DObject(const char *objectName, bool a2) {
 }
 
 bool SceneScriptHF05::ClickedOnActor(int actorId) {
-	if (actorId == 9) {
+	if (actorId == kActorCrazylegs) {
 		if (!Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorCrazylegs, 60, true, false)) {
 			Actor_Face_Actor(kActorMcCoy, kActorCrazylegs, true);
 			Actor_Face_Actor(kActorCrazylegs, kActorMcCoy, true);
@@ -149,28 +149,37 @@ bool SceneScriptHF05::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptHF05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 483.0f, 40.63f, -189.0f, 0, 1, false, 0) && !Game_Flag_Query(684)) {
-			Game_Flag_Set(kFlagHF05toHF01);
-			Set_Enter(kSetHF01, kSceneHF01);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 483.0f, 40.63f, -189.0f, 0, true, false, 0)) {
+			if (!Game_Flag_Query(684)) {
+				Game_Flag_Set(kFlagHF05toHF01);
+				Set_Enter(kSetHF01, kSceneHF01);
+			}
 		}
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 330.0f, 40.63f, -85.0f, 0, 1, false, 0) && !Game_Flag_Query(684)) {
-			int v2 = sub_404858();
-			if (Game_Flag_Query(663) && Game_Flag_Query(368) && v2 != -1) {
-				Actor_Face_Actor(kActorMcCoy, v2, true);
-				Actor_Says(kActorMcCoy, 1810, 16);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 330.0f, 40.63f, -85.0f, 0, true, false, 0)) {
+			if (!Game_Flag_Query(684)) {
+				int affectionTowardsActor = getAffectionTowardsActor();
+				if (Game_Flag_Query(663)
+				&& Game_Flag_Query(368)
+				&& affectionTowardsActor != -1
+				) {
+					Actor_Face_Actor(kActorMcCoy, affectionTowardsActor, true);
+					Actor_Says(kActorMcCoy, 1810, 16);
+				}
+				Game_Flag_Set(359);
+				Set_Enter(kSetHF07, kSceneHF07);
 			}
-			Game_Flag_Set(359);
-			Set_Enter(kSetHF07, kSceneHF07);
 		}
 		return true;
 	}
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 277.0f, 40.63f, 410.0f, 0, 1, false, 0) && !Game_Flag_Query(684)) {
-			Game_Flag_Set(529);
-			Set_Enter(kSetHF06, kSceneHF06);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 277.0f, 40.63f, 410.0f, 0, true, false, 0)) {
+			if (!Game_Flag_Query(684)) {
+				Game_Flag_Set(529);
+				Set_Enter(kSetHF06, kSceneHF06);
+			}
 		}
 		return true;
 	}
@@ -228,7 +237,7 @@ void SceneScriptHF05::SceneFrameAdvanced(int frame) {
 }
 
 void SceneScriptHF05::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
-	if (actorId == 23 && newGoal == 430) {
+	if (actorId == kActorOfficerLeary && newGoal == 430) {
 		Game_Flag_Set(684);
 		sub_4042E4();
 	}
@@ -237,19 +246,19 @@ void SceneScriptHF05::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptHF05::PlayerWalkedIn() {
 	if (Game_Flag_Query(662)) {
-		int v0 = sub_404858();
-		if (Game_Flag_Query(662) && v0 != -1) {
-			Actor_Put_In_Set(v0, kSetHF05);
-			Actor_Force_Stop_Walking(v0);
+		int affectionTowardsActor = getAffectionTowardsActor();
+		if (Game_Flag_Query(662) && affectionTowardsActor != -1) {
+			Actor_Put_In_Set(affectionTowardsActor, kSetHF05);
+			Actor_Force_Stop_Walking(affectionTowardsActor);
 			if (Game_Flag_Query(kFlagHF01toHF05)) {
-				Actor_Set_At_XYZ(v0, 506.81f, 40.63f, -140.92f, 0);
-				Async_Actor_Walk_To_Waypoint(v0, 437, 36, 0);
+				Actor_Set_At_XYZ(affectionTowardsActor, 506.81f, 40.63f, -140.92f, 0);
+				Async_Actor_Walk_To_Waypoint(affectionTowardsActor, 437, 36, 0);
 			} else if (Game_Flag_Query(530)) {
-				Actor_Set_At_XYZ(v0, 288.0f, 40.63f, 410.0f, 909);
+				Actor_Set_At_XYZ(affectionTowardsActor, 288.0f, 40.63f, 410.0f, 909);
 			} else if (Game_Flag_Query(358)) {
-				Actor_Set_At_XYZ(v0, 298.0f, 40.63f, -107.0f, 512);
+				Actor_Set_At_XYZ(affectionTowardsActor, 298.0f, 40.63f, -107.0f, 512);
 			} else {
-				Actor_Set_At_XYZ(v0, 284.0f, 40.63f, 286.0f, 0);
+				Actor_Set_At_XYZ(affectionTowardsActor, 284.0f, 40.63f, 286.0f, 0);
 			}
 		}
 		if (Game_Flag_Query(684)) {
@@ -268,7 +277,7 @@ void SceneScriptHF05::PlayerWalkedIn() {
 				}
 			}
 		} else {
-			sub_403A34(v0);
+			sub_403A34(affectionTowardsActor);
 		}
 	} else if (Game_Flag_Query(kFlagHF01toHF05)) {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 399.0f, 40.63f, -85.0f, 0, 0, false, 0);
@@ -298,7 +307,7 @@ void SceneScriptHF05::PlayerWalkedOut() {
 	if (Actor_Query_Goal_Number(kActorCrazylegs) == 210) {
 		Actor_Set_Goal_Number(kActorCrazylegs, 2);
 	}
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 }
 
@@ -487,11 +496,15 @@ void SceneScriptHF05::sub_403738() {
 	}
 }
 
-int SceneScriptHF05::sub_404858() {
-	if (Global_Variable_Query(kVariableAffectionTowards) == 2 && Actor_Query_Goal_Number(kActorDektora) != 599) {
+int SceneScriptHF05::getAffectionTowardsActor() {
+	if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsDektora
+	 && Actor_Query_Goal_Number(kActorDektora) != 599
+	) {
 		return kActorDektora;
 	}
-	if (Global_Variable_Query(kVariableAffectionTowards) == 3 && Actor_Query_Goal_Number(kActorLucy) != 599) {
+	if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy
+	 && Actor_Query_Goal_Number(kActorLucy) != 599
+	) {
 		return kActorLucy;
 	}
 	return -1;
@@ -547,13 +560,13 @@ void SceneScriptHF05::sub_40410C() {
 	Actor_Says_With_Pause(kActorMcCoy, 1780, 1.0f, 18);
 }
 
-void SceneScriptHF05::sub_403A34(int actorId) {
-	if (actorId != -1 && Actor_Query_In_Set(kActorCrazylegs, kSetHF05)) {
-		Async_Actor_Walk_To_Waypoint(actorId, 437, 36, 0);
+void SceneScriptHF05::sub_403A34(int affectionTowardsActor) {
+	if (affectionTowardsActor != -1 && Actor_Query_In_Set(kActorCrazylegs, kSetHF05)) {
+		Async_Actor_Walk_To_Waypoint(affectionTowardsActor, 437, 36, 0);
 		Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 437, 0, 0, false);
 		Actor_Face_Actor(kActorCrazylegs, kActorMcCoy, true);
 		Actor_Face_Actor(kActorMcCoy, kActorCrazylegs, true);
-		Actor_Face_Actor(actorId, kActorCrazylegs, true);
+		Actor_Face_Actor(affectionTowardsActor, kActorCrazylegs, true);
 		Actor_Says(kActorCrazylegs, 0, 3);
 		Actor_Says(kActorCrazylegs, 10, 12);
 		Actor_Says(kActorMcCoy, 1715, 19);
@@ -574,8 +587,8 @@ void SceneScriptHF05::sub_403A34(int actorId) {
 		Actor_Says(kActorMcCoy, 1735, 17);
 		Actor_Says(kActorCrazylegs, 100, 16);
 		Actor_Says(kActorCrazylegs, 110, 3);
-		Actor_Face_Actor(actorId, kActorMcCoy, true);
-		if (actorId == kActorDektora) {
+		Actor_Face_Actor(affectionTowardsActor, kActorMcCoy, true);
+		if (affectionTowardsActor == kActorDektora) {
 			Actor_Says(kActorDektora, 90, 3);
 		} else {
 			Actor_Says(kActorLucy, 380, 3);
@@ -583,14 +596,14 @@ void SceneScriptHF05::sub_403A34(int actorId) {
 		Actor_Says(kActorMcCoy, 1740, 14);
 		Actor_Says(kActorCrazylegs, 120, 12);
 		Actor_Set_Goal_Number(kActorCrazylegs, 2);
-		if (actorId == kActorDektora) {
+		if (affectionTowardsActor == kActorDektora) {
 			Actor_Says(kActorDektora, 100, 3);
 		} else {
 			Actor_Says(kActorLucy, 390, 3);
 		}
-		Actor_Face_Actor(kActorMcCoy, actorId, true);
+		Actor_Face_Actor(kActorMcCoy, affectionTowardsActor, true);
 		Actor_Says(kActorMcCoy, 1745, 3);
-		Async_Actor_Walk_To_XYZ(actorId, 309.0f, 40.63f, 402.0f, 0, false);
+		Async_Actor_Walk_To_XYZ(affectionTowardsActor, 309.0f, 40.63f, 402.0f, 0, false);
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 277.0f, 40.63f, 410.0f, 0, 0, false, 0);
 		Game_Flag_Set(529);
 		Set_Enter(kSetHF06, kSceneHF06);

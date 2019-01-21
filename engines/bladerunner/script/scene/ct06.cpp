@@ -33,7 +33,7 @@ void SceneScriptCT06::InitializeScene() {
 	} else {
 		Setup_Scene_Information(175.91f, -58.23f, 24.47f, 768);
 	}
-	Scene_Exit_Add_2D_Exit(0, 0, 440, 639, 479, 2);
+	Scene_Exit_Add_2D_Exit(0,   0, 440, 639, 479, 2);
 	Scene_Exit_Add_2D_Exit(1, 401, 162, 536, 317, 0);
 	if (Game_Flag_Query(kFlagZubenRetired) && Actor_Query_In_Set(kActorZuben, kSetCT07)) {
 		Actor_Put_In_Set(kActorZuben, kSetCT06);
@@ -41,13 +41,13 @@ void SceneScriptCT06::InitializeScene() {
 		Actor_Retired_Here(kActorZuben, 72, 36, 1, kActorMcCoy);
 	}
 	Ambient_Sounds_Add_Looping_Sound(381, 100, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound(205, 20, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(205,  20, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(60,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(60, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(60, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(60, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Sound(67, 80, 180, 16, 25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(68, 50, 180, 16, 25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(67,  80, 180, 16, 25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(68,  50, 180, 16, 25, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(379, 50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(380, 70, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(377, 60, 180, 50, 100, 0, 0, -101, -101, 0, 0);
@@ -118,7 +118,7 @@ bool SceneScriptCT06::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptCT06::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 20.41f, -58.23f, -2.17f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagCT06toCT05);
 			Set_Enter(kSetCT05, kSceneCT05);
@@ -144,7 +144,7 @@ bool SceneScriptCT06::ClickedOnExit(int exitId) {
 				Actor_Face_Object(kActorMcCoy, "DOOR", true);
 				Actor_Says(kActorMcCoy, 8522, 12);
 			} else {
-				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Game_Flag_Set(kFlagCT06toCT08);
 				Set_Enter(kSetCT08_CT51_UG12, kSceneCT08);

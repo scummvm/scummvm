@@ -174,7 +174,7 @@ void AIScriptClovis::Retired(int byActorId) {
 				Delay(2000);
 				Player_Set_Combat_Mode(false);
 				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, -41.58f, 72.0f, 0, true, false, 0);
-				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Game_Flag_Set(579);
 				Game_Flag_Reset(653);
@@ -413,15 +413,19 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Says(kActorMcCoy, 8505, kAnimationModeTalk);
 		Actor_Says(kActorClovis, 1300, kAnimationModeTalk);
 		Actor_Says(kActorClovis, 1310, kAnimationModeTalk);
-		Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
-		Outtake_Play(20, 0, -1);
-		if (Global_Variable_Query(kVariableAffectionTowards) == 3 && Game_Flag_Query(46)) {
-			Outtake_Play(21, 0, -1);
-		} else if (Global_Variable_Query(kVariableAffectionTowards) == 2 && Game_Flag_Query(47)) {
-			Outtake_Play(22, 0, -1);
+		Outtake_Play(kOuttakeEnd4A, 0, -1);
+		if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy
+		 && Game_Flag_Query(kFlagLucyIsReplicant)
+		) {
+			Outtake_Play(kOuttakeEnd4B, 0, -1);
+		} else if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsDektora
+		       && Game_Flag_Query(kFlagDektoraIsReplicant)
+		) {
+			Outtake_Play(kOuttakeEnd4C, 0, -1);
 		}
-		Outtake_Play(23, 0, -1);
+		Outtake_Play(kOuttakeEnd4D, 0, -1);
 		Game_Over();
 		return true;
 

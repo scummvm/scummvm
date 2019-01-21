@@ -96,8 +96,10 @@ void SceneScriptHF03::sub_401C80() {
 			Actor_Says(kActorLucy, 210, 13);
 			Actor_Says(kActorMcCoy, 1655, 15);
 			Actor_Modify_Friendliness_To_Other(kActorLucy, kActorMcCoy, Random_Query(9, 10));
-			if (Actor_Query_Friendliness_To_Other(kActorLucy, kActorMcCoy) > 59 && Global_Variable_Query(kVariableAffectionTowards) == 0) {
-				Global_Variable_Set(kVariableAffectionTowards, 3);
+			if (Actor_Query_Friendliness_To_Other(kActorLucy, kActorMcCoy) > 59
+			 && Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsNone
+			) {
+				Global_Variable_Set(kVariableAffectionTowards, kAffectionTowardsLucy);
 				Actor_Says(kActorLucy, 940, 14);
 				Actor_Says(kActorMcCoy, 6780, 11);
 				Actor_Says(kActorLucy, 950, 12);
@@ -149,7 +151,7 @@ void SceneScriptHF03::sub_401C80() {
 }
 
 bool SceneScriptHF03::ClickedOnActor(int actorId) {
-	if (actorId == 6 && Actor_Query_Goal_Number(kActorLucy) == 205) {
+	if (actorId == kActorLucy && Actor_Query_Goal_Number(kActorLucy) == 205) {
 		if (Game_Flag_Query(kFlagLucyIsReplicant) ? !Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 377, 0, 1, false) : !Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 378, 0, 1, false)) {
 			Actor_Face_Actor(kActorMcCoy, kActorLucy, true);
 			if (!Game_Flag_Query(613)) {
@@ -244,7 +246,7 @@ void SceneScriptHF03::PlayerWalkedIn() {
 }
 
 void SceneScriptHF03::PlayerWalkedOut() {
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 }
 

@@ -61,7 +61,7 @@ void SceneScriptPS04::SceneLoaded() {
 	 && !Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm)
 	 && !Game_Flag_Query(kFlagPS04WeaponsOrderForm)
 	) {
-		Item_Add_To_World(kItemWeaponsOrderForm, 958, 64, -643.5f, -318.82f, 1148.87f, 525, 16, 12, false, true, false, true);
+		Item_Add_To_World(kItemWeaponsOrderForm, 958, kSetPS04, -643.5f, -318.82f, 1148.87f, 525, 16, 12, false, true, false, true);
 		Game_Flag_Set(kFlagPS04WeaponsOrderForm);
 	}
 
@@ -108,7 +108,7 @@ bool SceneScriptPS04::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -668.0f, -350.85f, 962.0f, 0, true, false, 0)) {
 			Game_Flag_Set(kFlagPS04toPS03);
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Set_Enter(kSetPS03, kScenePS03);
 		}

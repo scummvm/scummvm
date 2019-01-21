@@ -363,7 +363,7 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Says(kActorLucy, 360, 13);
 		Actor_Says(kActorMcCoy, 1710, 13);
 
-		if (Global_Variable_Query(kVariableAffectionTowards) == 3) {
+		if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy) {
 			Actor_Says(kActorLucy, 940, 13);
 			Actor_Says(kActorMcCoy, 6780, 12);
 			Actor_Says(kActorLucy, 950, 12);
@@ -371,11 +371,13 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Says(kActorMcCoy, 6785, 13);
 			Actor_Says(kActorLucy, 970, 16);
 			Actor_Says(kActorLucy, 980, 13);
-			if (Game_Flag_Query(47)) {
+			if (Game_Flag_Query(kFlagDektoraIsReplicant)) {
 				Actor_Says(kActorLucy, 990, 15);
 			}
 			Actor_Says(kActorMcCoy, 6790, 13);
-			if (Game_Flag_Query(47) && Game_Flag_Query(46)) {
+			if (Game_Flag_Query(kFlagDektoraIsReplicant)
+			 && Game_Flag_Query(kFlagLucyIsReplicant)
+			) {
 				Actor_Says(kActorLucy, 1000, 12);
 			}
 			Actor_Says(kActorLucy, 1010, 15);
@@ -450,7 +452,7 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case 300:
 		Actor_Put_In_Set(kActorLucy, kSetFreeSlotA);
 		Actor_Set_At_Waypoint(kActorLucy, 33, 0);
-		if (Global_Variable_Query(kVariableAffectionTowards) == 3) {
+		if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy) {
 			Actor_Set_Goal_Number(kActorLucy, 310);
 		}
 		break;
@@ -861,8 +863,8 @@ void AIScriptLucy::checkCombat() {
 	 && Global_Variable_Query(kVariableChapter) == 5
 	 && Actor_Query_Goal_Number(kActorLucy) != 450
 	) {
-		if (Global_Variable_Query(kVariableAffectionTowards) == 3) {
-			Global_Variable_Set(kVariableAffectionTowards, 0);
+		if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy) {
+			Global_Variable_Set(kVariableAffectionTowards, kAffectionTowardsNone);
 		}
 		Actor_Set_Goal_Number(kActorLucy, 450);
 		Non_Player_Actor_Combat_Mode_On(kActorLucy, kActorCombatStateIdle, false, kActorMcCoy, 4, kAnimationModeIdle, kAnimationModeWalk, kAnimationModeRun, -1, 0, 0, 10, 300, false);

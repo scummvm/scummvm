@@ -97,7 +97,9 @@ void SceneScriptRC01::InitializeScene() {
 	if (Game_Flag_Query(kFlagSpinnerAtRC01)) {
 		Scene_Exit_Add_2D_Exit(kRC01ExitSpinner, 482, 226, 639, 280, 2);
 	}
-	if (Global_Variable_Query(kVariableChapter) > 1 && Game_Flag_Query(710)) {
+	if (Global_Variable_Query(kVariableChapter) > 1
+	 && Game_Flag_Query(kFlagAR01Entered)
+	) {
 		Scene_Exit_Add_2D_Exit(kRC01ExitRC03, 0, 0, 10, 479, 3);
 	}
 	if (!Game_Flag_Query(kFlagRC01PoliceDone)) {
@@ -125,9 +127,9 @@ void SceneScriptRC01::InitializeScene() {
 	}
 
 	Ambient_Sounds_Add_Looping_Sound(81, 60, 100, 1); // RCAMBR1.AUD
-	Ambient_Sounds_Add_Sound(82, 5, 30, 30, 50, -100, 100, -101, -101, 0, 0); // RCCARBY1.AUD
-	Ambient_Sounds_Add_Sound(83, 5, 30, 30, 55, -100, 100, -101, -101, 0, 0); // RCCARBY2.AUD
-	Ambient_Sounds_Add_Sound(84, 5, 30, 30, 50, -100, 100, -101, -101, 0, 0); // RCCARBY3.AUD
+	Ambient_Sounds_Add_Sound(82,  5, 30, 30, 50, -100, 100, -101, -101, 0, 0); // RCCARBY1.AUD
+	Ambient_Sounds_Add_Sound(83,  5, 30, 30, 55, -100, 100, -101, -101, 0, 0); // RCCARBY2.AUD
+	Ambient_Sounds_Add_Sound(84,  5, 30, 30, 50, -100, 100, -101, -101, 0, 0); // RCCARBY3.AUD
 	Ambient_Sounds_Add_Sound(67, 10, 50, 30, 50, -100, 100, -101, -101, 0, 0); // SPIN2A.AUD
 	Ambient_Sounds_Add_Sound(87, 20, 80, 20, 40, -100, 100, -101, -101, 0, 0); // SIREN2.AUD
 
@@ -263,7 +265,7 @@ bool SceneScriptRC01::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("HYDRANT02", objectName)) {
 		if (!Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "HYDRANT02", 60, true, false)) {
 			if (Actor_Clue_Query(kActorMcCoy, kCluePaintTransfer)) {
-				Actor_Says(kActorMcCoy, 6975, 3);
+				Actor_Says(kActorMcCoy, 6975, kAnimationModeTalk);
 			} else {
 				Actor_Face_Object(kActorMcCoy, "HYDRANT02", true);
 				Actor_Voice_Over(1880, kActorVoiceOver);
@@ -347,7 +349,7 @@ bool SceneScriptRC01::ClickedOnActor(int actorId) {
 				Actor_Says(kActorMcCoy, 4515, 13);
 				Game_Flag_Set(KFlagMcCoyAndOfficerLearyTalking);
 				Actor_Says(kActorOfficerLeary, 40, 13);
-				if (!Game_Flag_Query(kFlagRC02Discovered)) {
+				if (!Game_Flag_Query(kFlagRC02Entered)) {
 					Actor_Says(kActorOfficerLeary, 50, 14);
 					Actor_Says(kActorOfficerLeary, 60, 15);
 					I_Sez("MG: It's all fun and games until someone loses a tiger cub.");
@@ -425,7 +427,7 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == kRC01ExitSpinner) {
-		if (Game_Flag_Query(486)) {
+		if (Game_Flag_Query(kFlagDNARowAvailable)) {
 			Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationDNARow, true);
 		}
 		I_Sez("MG: Leaving already?  The fun is just beginning!");
@@ -433,13 +435,15 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 			Player_Loses_Control();
 			Actor_Set_Immunity_To_Obstacles(kActorMcCoy, true);
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -10.98f, -0.3f, 318.15f, 0, 0, false, 0);
-			if (Game_Flag_Query(486) && !Game_Flag_Query(660)) {
+			if ( Game_Flag_Query(kFlagDNARowAvailable)
+			 && !Game_Flag_Query(kFlagDNARowAvailableTalk)
+			) {
 				Actor_Voice_Over(4310, kActorVoiceOver);
 				Actor_Voice_Over(4320, kActorVoiceOver);
 				Actor_Voice_Over(4330, kActorVoiceOver);
 				Actor_Voice_Over(4340, kActorVoiceOver);
 				Actor_Voice_Over(4350, kActorVoiceOver);
-				Game_Flag_Set(660);
+				Game_Flag_Set(kFlagDNARowAvailableTalk);
 			}
 			Actor_Set_Immunity_To_Obstacles(kActorMcCoy, false);
 			Player_Gains_Control();
@@ -641,7 +645,7 @@ void SceneScriptRC01::PlayerWalkedIn() {
 		Player_Gains_Control();
 		Game_Flag_Reset(kFlagRC02toRC01);
 
-		if (Game_Flag_Query(kFlagRC02Discovered) && !Game_Flag_Query(kFlagRC02FirstLeave)) {
+		if (Game_Flag_Query(kFlagRC02Entered) && !Game_Flag_Query(kFlagRC02FirstLeave)) {
 			Actor_Voice_Over(1910, kActorVoiceOver);
 			Actor_Voice_Over(1920, kActorVoiceOver);
 			Actor_Voice_Over(1930, kActorVoiceOver);

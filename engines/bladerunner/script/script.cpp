@@ -46,6 +46,7 @@
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/script/police_maze.h"
+#include "bladerunner/script/scene_script.h"
 #include "bladerunner/slice_animations.h"
 #include "bladerunner/slice_renderer.h"
 #include "bladerunner/suspects_database.h"
@@ -90,8 +91,11 @@ void ScriptBase::Actor_Set_At_Waypoint(int actorId, int waypointId, int angle) {
 
 bool ScriptBase::Region_Check(int left, int top, int right, int down) {
 	debugC(kDebugScript, "Region_Check(%d, %d, %d, %d)", left, top, right, down);
-	//TODO: return _vm->_mouse.x >= left && _vm->_mouse.y >= top && _vm->_mouse.x <= right && _vm->_mouse.y <= down;
-	warning("Region_Check(%d, %d, %d, %d)", left, top, right, down);
+
+	return _vm->_sceneScript->_mouseX >= left
+		&& _vm->_sceneScript->_mouseY >= top
+		&& _vm->_sceneScript->_mouseX <= right
+		&& _vm->_sceneScript->_mouseY <= down;
 
 	return false;
 }
@@ -1436,7 +1440,7 @@ bool ScriptBase::Query_System_Currently_Loading_Game() {
 	return _vm->_gameIsLoading;
 }
 
-void ScriptBase::Actor_Retired_Here(int actorId, int width, int height, int retired, int retiredByActorId) {
+void ScriptBase::Actor_Retired_Here(int actorId, int width, int height, bool retired, int retiredByActorId) {
 	debugC(kDebugScript, "Actor_Retired_Here(%d, %d, %d, %d, %d)", actorId, width, height, retired, retiredByActorId);
 	Actor *actor = _vm->_actors[actorId];
 	actor->retire(retired, width, height, retiredByActorId);

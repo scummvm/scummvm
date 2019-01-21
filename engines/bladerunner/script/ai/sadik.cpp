@@ -50,30 +50,33 @@ void AIScriptSadik::Initialize() {
 }
 
 bool AIScriptSadik::Update() {
-	if (Global_Variable_Query(kVariableChapter) != 2 || Player_Query_Current_Scene() != 10 || Game_Flag_Query(391)) {
-		if (_var1) {
-			Sound_Play(_var1, 100, 0, 0, 50);
-			_var1 = 0;
-		}
-		if (Global_Variable_Query(kVariableChapter) == 3 && Actor_Query_Goal_Number(kActorSadik) < 200) {
-			Actor_Set_Goal_Number(kActorSadik, 200);
-		}
-		if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_Goal_Number(kActorSadik) < 400) {
-			Actor_Set_Goal_Number(kActorSadik, 400);
-		}
-		if (Actor_Query_Goal_Number(kActorSadik) == 411) {
-			if (Game_Flag_Query(657)) {
-				Actor_Set_Goal_Number(kActorSadik, 412);
-			}
-		}
-		return false;
-	} else {
+	if (Global_Variable_Query(kVariableChapter) == 2
+	 && Player_Query_Current_Scene() == kSceneBB09
+	 && !Game_Flag_Query(391)
+	) {
 		Actor_Set_Goal_Number(kActorSadik, 101);
-		Actor_Set_Targetable(kActorSadik, 1);
+		Actor_Set_Targetable(kActorSadik, true);
 		Game_Flag_Set(391);
 		Game_Flag_Set(406);
 		return true;
 	}
+
+	if (_var1) {
+		Sound_Play(_var1, 100, 0, 0, 50);
+		_var1 = 0;
+	}
+	if (Global_Variable_Query(kVariableChapter) == 3 && Actor_Query_Goal_Number(kActorSadik) < 200) {
+		Actor_Set_Goal_Number(kActorSadik, 200);
+	}
+	if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_Goal_Number(kActorSadik) < 400) {
+		Actor_Set_Goal_Number(kActorSadik, 400);
+	}
+	if (Actor_Query_Goal_Number(kActorSadik) == 411) {
+		if (Game_Flag_Query(657)) {
+			Actor_Set_Goal_Number(kActorSadik, 412);
+		}
+	}
+	return false;
 }
 
 void AIScriptSadik::TimerExpired(int timer) {
@@ -192,7 +195,7 @@ void AIScriptSadik::Retired(int byActorId) {
 			Delay(2000);
 			Player_Set_Combat_Mode(0);
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, -41.58f, 72.0f, 0, 1, 0, 0);
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(579);
 			Game_Flag_Reset(653);

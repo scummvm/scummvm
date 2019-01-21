@@ -105,7 +105,7 @@ bool SceneScriptUG15::ClickedOnExit(int exitId) {
 
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -25.0f, 26.31f, -434.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(352);
 			Set_Enter(kSetUG17, kSceneUG17);
@@ -114,7 +114,7 @@ bool SceneScriptUG15::ClickedOnExit(int exitId) {
 	}
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -17.0f, 26.31f, -346.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagUG15toUG16);
 			Set_Enter(kSetUG16, kSceneUG16);
@@ -126,7 +126,7 @@ bool SceneScriptUG15::ClickedOnExit(int exitId) {
 		if (v1 >= 300 && v1 <= 303) {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -137.61f, 48.07f, 147.12f, 0, 1, false, 0);
 		} else if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 18.0f, 52.28f, 46.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(354);
 			Set_Enter(kSetUG16, kSceneUG16);
@@ -135,7 +135,7 @@ bool SceneScriptUG15::ClickedOnExit(int exitId) {
 	}
 	if (exitId == 3) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -238.0f, 52.46f, 222.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(350);
 			Set_Enter(kSetUG13, kSceneUG13);

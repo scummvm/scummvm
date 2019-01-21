@@ -33,18 +33,18 @@ void SceneScriptTB05::InitializeScene() {
 		Setup_Scene_Information(14.0f, 151.53f, -77.0f, 6);
 	}
 	Scene_Exit_Add_2D_Exit(0, 62, 193, 206, 419, 0);
-	Scene_Exit_Add_2D_Exit(1, 0, 455, 639, 479, 2);
+	Scene_Exit_Add_2D_Exit(1,  0, 455, 639, 479, 2);
 	Ambient_Sounds_Add_Looping_Sound(236, 100, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(237, 100, 0, 1);
 	Ambient_Sounds_Add_Sound(217, 5, 30, 25, 33, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(218, 5, 30, 25, 33, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(219, 5, 30, 25, 33, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(220, 5, 30, 25, 33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(146, 2, 30, 20, 25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(147, 2, 30, 20, 25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(148, 2, 30, 20, 25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(149, 2, 30, 20, 25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(151, 2, 30, 20, 25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(146, 2, 30, 20, 25,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(147, 2, 30, 20, 25,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(148, 2, 30, 20, 25,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(149, 2, 30, 20, 25,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(151, 2, 30, 20, 25,    0,   0, -101, -101, 0, 0);
 	Scene_Loop_Set_Default(0);
 }
 
@@ -52,7 +52,7 @@ void SceneScriptTB05::SceneLoaded() {
 	Clickable_Object("MONITOR05");
 	Unclickable_Object("SMUDGE_GLASS01");
 	if (!Actor_Clue_Query(kActorMcCoy, kClueDragonflyEarring)) {
-		Item_Add_To_World(kItemDragonflyEarring, 940, 72, 76.16f, 147.36f, -235.15f, 0, 6, 6, false, true, false, true);
+		Item_Add_To_World(kItemDragonflyEarring, 940, kSetTB05, 76.16f, 147.36f, -235.15f, 0, 6, 6, false, true, false, true);
 	}
 	if (!Actor_Clue_Query(kActorMcCoy, kClueTyrellSalesPamphlet1)
 	 && !Actor_Clue_Query(kActorMcCoy, kClueTyrellSalesPamphlet2)
@@ -60,7 +60,7 @@ void SceneScriptTB05::SceneLoaded() {
 	  || Game_Flag_Query(kFlagLucyIsReplicant)
 	 )
 	) {
-		Item_Add_To_World(kItemTyrellSalesPamphlet, 972, 72, 129.01f, 147.12f, -162.98f, 0, 8, 8, false, true, false, true);
+		Item_Add_To_World(kItemTyrellSalesPamphlet, 972, kSetTB05, 129.01f, 147.12f, -162.98f, 0, 8, 8, false, true, false, true);
 	}
 }
 
@@ -212,7 +212,7 @@ void SceneScriptTB05::PlayerWalkedIn() {
 }
 
 void SceneScriptTB05::PlayerWalkedOut() {
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 }
 

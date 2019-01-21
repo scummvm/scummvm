@@ -130,7 +130,7 @@ void SceneScriptUG04::PlayerWalkedIn() {
 }
 
 void SceneScriptUG04::PlayerWalkedOut() {
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 }
 

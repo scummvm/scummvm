@@ -101,7 +101,7 @@ bool SceneScriptDR01::ClickedOn3DObject(const char *objectName, bool a2) {
 }
 
 bool SceneScriptDR01::ClickedOnActor(int actorId) {
-	return actorId == 50;
+	return actorId == kActorShoeshineMan;
 }
 
 bool SceneScriptDR01::ClickedOnItem(int itemId, bool a2) {
@@ -259,7 +259,7 @@ void SceneScriptDR01::PlayerWalkedOut() {
 	 && !Game_Flag_Query(kFlagDR01toDR02)
 	 && !Game_Flag_Query(558)
 	) {
-		Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		Outtake_Play(kOuttakeInside2, true, -1);
 	}

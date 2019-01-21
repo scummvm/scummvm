@@ -26,7 +26,7 @@ namespace BladeRunner {
 
 void SceneScriptCT08::InitializeScene() {
 	if (Game_Flag_Query(679)) {
-		Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		Outtake_Play(kOuttakeMovieB1, false, -1);
 		if (Game_Flag_Query(kFlagLucyIsReplicant)) {
@@ -113,7 +113,7 @@ bool SceneScriptCT08::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptCT08::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -183.0f, 0.0f, 128.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagCT08toCT09);
 			Set_Enter(kSetCT09, kSceneCT09);
@@ -123,7 +123,7 @@ bool SceneScriptCT08::ClickedOnExit(int exitId) {
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -11.0f, 0.0f, -156.0f, 0, 1, false, 0)) {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 0.0f, 0.0f, -102.0f, 0, 0, false, 0);
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(379);
 			Set_Enter(kSetCT08_CT51_UG12, kSceneCT51);
@@ -132,7 +132,7 @@ bool SceneScriptCT08::ClickedOnExit(int exitId) {
 	}
 	if (exitId == 2) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -143.0f, 0.0f, -92.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagCT08toCT06);
 			Set_Enter(kSetCT06, kSceneCT06);

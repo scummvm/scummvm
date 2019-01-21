@@ -100,7 +100,7 @@ bool SceneScriptCT11::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptCT11::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 121.0f, 9.68f, -42.0f, 0, 1, false, 0)) {
-			Game_Flag_Set(304);
+			Game_Flag_Set(kFlagCT11toCT09);
 			Set_Enter(kSetCT09, kSceneCT09);
 		}
 		return true;
@@ -203,7 +203,7 @@ void SceneScriptCT11::PlayerWalkedIn() {
 }
 
 void SceneScriptCT11::PlayerWalkedOut() {
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 }
 

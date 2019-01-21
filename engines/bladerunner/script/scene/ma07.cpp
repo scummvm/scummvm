@@ -97,7 +97,7 @@ bool SceneScriptMA07::ClickedOnExit(int exitId) {
 	}
 	if (exitId == 2) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 8.0f, -172.43f, 356.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(357);
 			Set_Enter(kSetUG19, kSceneUG19);
@@ -115,7 +115,7 @@ void SceneScriptMA07::SceneFrameAdvanced(int frame) {
 }
 
 void SceneScriptMA07::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
-	if (actorId == 53 && newGoal == 302) {
+	if (actorId == kActorGaff && newGoal == 302) {
 		Scene_Exits_Enable();
 	}
 }

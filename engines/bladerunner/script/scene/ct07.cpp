@@ -28,22 +28,22 @@ void SceneScriptCT07::InitializeScene() {
 	Setup_Scene_Information(202.32f, -58.23f, -12.86f, 225);
 	Actor_Put_In_Set(kActorZuben, kSetCT07);
 	Actor_Set_At_XYZ(kActorZuben, -9.68f, -58.23f, 11.14f, 250);
-	Ambient_Sounds_Add_Looping_Sound(54, 30, 90, 1);
+	Ambient_Sounds_Add_Looping_Sound( 54, 30, 90, 1);
 	Ambient_Sounds_Add_Looping_Sound(205, 20, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound(56, 40, 100, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound( 56, 40, 100, 1);
+	Ambient_Sounds_Add_Speech_Sound(60,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(60, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(60, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(60, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Sound(67, 80, 180, 16, 25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(68, 50, 180, 16, 25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(379, 10, 60, 50, 100, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(375, 6, 50, 50, 100, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(377, 10, 70, 50, 100, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(61, 10, 30, 12, 14, 100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(62, 10, 30, 12, 14, 100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(63, 10, 30, 12, 14, 100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(64, 10, 30, 12, 14, 100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound( 67, 80, 180, 16,  25,   0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound( 68, 50, 180, 16,  25,   0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(379, 10,  60, 50, 100,   0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(375,  6,  50, 50, 100,   0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(377, 10,  70, 50, 100,   0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound( 61, 10,  30, 12,  14, 100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound( 62, 10,  30, 12,  14, 100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound( 63, 10,  30, 12,  14, 100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound( 64, 10,  30, 12,  14, 100, 100, -101, -101, 0, 0);
 }
 
 void SceneScriptCT07::SceneLoaded() {

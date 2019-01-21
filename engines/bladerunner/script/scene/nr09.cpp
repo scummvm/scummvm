@@ -81,7 +81,7 @@ bool SceneScriptNR09::ClickedOnExit(int exitId) {
 	}
 	if (exitId == 1) {
 		int v1 = Loop_Actor_Walk_To_XYZ(kActorMcCoy, -704.07f, 0.35f, 663.04f, 0, 1, false, 0);
-		Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		if (!v1) {
 			Game_Flag_Set(615);

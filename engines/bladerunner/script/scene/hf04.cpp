@@ -83,7 +83,7 @@ bool SceneScriptHF04::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptHF04::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1132.27f, -0.31f, -113.46f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(567);
 			Set_Enter(kSetHF02, kSceneHF02);

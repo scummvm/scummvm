@@ -24,10 +24,12 @@
 
 namespace BladeRunner {
 
+static int kPoliceMazePS12TargetCount = 20;
+
 void SceneScriptPS12::InitializeScene() {
 	Police_Maze_Set_Pause_State(true);
 	if (Game_Flag_Query(kFlagPS11toPS12)) {
-		Scene_Loop_Start_Special(0, 0, 0);
+		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
 		Scene_Loop_Set_Default(1);
 		Setup_Scene_Information(World_Waypoint_Query_X(8), World_Waypoint_Query_Y(8), World_Waypoint_Query_Z(8), 512);
 	} else {
@@ -35,7 +37,7 @@ void SceneScriptPS12::InitializeScene() {
 		Setup_Scene_Information(World_Waypoint_Query_X(9), World_Waypoint_Query_Y(9), World_Waypoint_Query_Z(9), 0);
 	}
 	Scene_Exit_Add_2D_Exit(0, 0, 460, 639, 479, 2);
-	Scene_Exit_Add_2D_Exit(1, 0, 5, 110, 196, 3);
+	Scene_Exit_Add_2D_Exit(1, 0,   5, 110, 196, 3);
 }
 
 static int track_data_29[] = {-26, 12, 20, -18, 12, 20, -9, 29, -5, 200, -1, 0, -7, 4000, 10000, -8, 29, -10, 33, 33, -15, 29, 1, -22, 29, -2, 5, -3, 500, -24, 27, 33, -10, 34, 33, -2, 0, -9, 29, -13, 44, 42, -12, 29, -4};
@@ -76,47 +78,47 @@ void SceneScriptPS12::SceneLoaded() {
 	Unclickable_Object("PARKMETR15");
 	Unclickable_Object("PARKMETR16");
 	if (!Query_System_Currently_Loading_Game()) {
-		Item_Add_To_World(29, 449, 14, -691.8f, -9.06f, 587.67f, 200, 72, 36, true, false, false, true);
-		Item_Add_To_World(30, 445, 14, -679.6f, -45.4f, 721.05f, 67, 72, 36, true, false, false, true);
-		Item_Add_To_World(31, 447, 14, -414.04f, -8.98f, 711.91f, 480, 72, 36, true, false, false, true);
-		Item_Add_To_World(32, 443, 14, -440.0f, -8.97f, 1137.0f, 1010, 72, 36, true, false, false, true);
-		Item_Add_To_World(33, 441, 14, -764.92f, -0.84f, 950.22f, 540, 72, 36, true, false, false, true);
-		Item_Add_To_World(34, 449, 14, -696.0f, -5.7f, 1185.0f, 469, 72, 36, true, false, false, true);
-		Item_Add_To_World(35, 449, 14, -635.0f, -5.7f, 1165.0f, 198, 72, 36, true, false, false, true);
-		Item_Add_To_World(36, 449, 14, -620.0f, -8.63f, 1366.0f, 469, 72, 36, true, false, false, true);
-		Item_Add_To_World(37, 447, 14, -584.0f, -79.4f, 775.0f, 1010, 72, 36, true, false, false, true);
-		Item_Add_To_World(38, 445, 14, -578.0f, -79.4f, 810.0f, 990, 72, 36, true, false, false, true);
-		Item_Add_To_World(39, 443, 14, -400.0f, -12.0f, 1110.0f, 513, 72, 36, true, false, false, true);
-		Item_Add_To_World(40, 449, 14, -414.04f, -8.98f, 711.91f, 480, 72, 36, true, false, false, true);
-		Item_Add_To_World(41, 447, 14, -400.0f, -12.0f, 1110.0f, 513, 72, 36, true, false, false, true);
-		Item_Add_To_World(42, 449, 14, -731.0f, 93.66f, 788.0f, 109, 72, 36, true, false, false, true);
-		Item_Add_To_World(43, 441, 14, -580.0f, -80.0f, 925.0f, 540, 72, 36, true, false, false, true);
-		Item_Add_To_World(44, 441, 14, -731.0f, 93.66f, 788.0f, 109, 72, 36, true, false, false, true);
-		Item_Add_To_World(45, 443, 14, -580.0f, -80.0f, 925.0f, 540, 72, 36, true, false, false, true);
+		Item_Add_To_World(kItemPS12Target1,  449, kSetPS10_PS11_PS12_PS13,  -691.8f, -9.06f, 587.67f,  200, 72, 36, true, false, false, true);
+		Item_Add_To_World(kItemPS12Target2,  445, kSetPS10_PS11_PS12_PS13,  -679.6f, -45.4f, 721.05f,   67, 72, 36, true, false, false, true);
+		Item_Add_To_World(kItemPS12Target3,  447, kSetPS10_PS11_PS12_PS13, -414.04f, -8.98f, 711.91f,  480, 72, 36, true, false, false, true);
+		Item_Add_To_World(kItemPS12Target4,  443, kSetPS10_PS11_PS12_PS13,  -440.0f, -8.97f, 1137.0f, 1010, 72, 36, true, false, false, true);
+		Item_Add_To_World(kItemPS12Target5,  441, kSetPS10_PS11_PS12_PS13, -764.92f, -0.84f, 950.22f,  540, 72, 36, true, false, false, true);
+		Item_Add_To_World(kItemPS12Target6,  449, kSetPS10_PS11_PS12_PS13,  -696.0f,  -5.7f, 1185.0f,  469, 72, 36, true, false, false, true);
+		Item_Add_To_World(kItemPS12Target7,  449, kSetPS10_PS11_PS12_PS13,  -635.0f,  -5.7f, 1165.0f,  198, 72, 36, true, false, false, true);
+		Item_Add_To_World(kItemPS12Target8,  449, kSetPS10_PS11_PS12_PS13,  -620.0f, -8.63f, 1366.0f,  469, 72, 36, true, false, false, true);
+		Item_Add_To_World(kItemPS12Target9,  447, kSetPS10_PS11_PS12_PS13,  -584.0f, -79.4f,  775.0f, 1010, 72, 36, true, false, false, true);
+		Item_Add_To_World(kItemPS12Target10, 445, kSetPS10_PS11_PS12_PS13,  -578.0f, -79.4f,  810.0f,  990, 72, 36, true, false, false, true);
+		Item_Add_To_World(kItemPS12Target11, 443, kSetPS10_PS11_PS12_PS13,  -400.0f, -12.0f, 1110.0f,  513, 72, 36, true, false, false, true);
+		Item_Add_To_World(kItemPS12Target12, 449, kSetPS10_PS11_PS12_PS13, -414.04f, -8.98f, 711.91f,  480, 72, 36, true, false, false, true);
+		Item_Add_To_World(kItemPS12Target13, 447, kSetPS10_PS11_PS12_PS13,  -400.0f, -12.0f, 1110.0f,  513, 72, 36, true, false, false, true);
+		Item_Add_To_World(kItemPS12Target14, 449, kSetPS10_PS11_PS12_PS13,  -731.0f, 93.66f,  788.0f,  109, 72, 36, true, false, false, true);
+		Item_Add_To_World(kItemPS12Target15, 441, kSetPS10_PS11_PS12_PS13,  -580.0f, -80.0f,  925.0f,  540, 72, 36, true, false, false, true);
+		Item_Add_To_World(kItemPS12Target16, 441, kSetPS10_PS11_PS12_PS13,  -731.0f, 93.66f,  788.0f,  109, 72, 36, true, false, false, true);
+		Item_Add_To_World(kItemPS12Target17, 443, kSetPS10_PS11_PS12_PS13,  -580.0f, -80.0f,  925.0f,  540, 72, 36, true, false, false, true);
 	}
-	Police_Maze_Target_Track_Add(29, -691.8f, -9.06f, 587.67f, -649.11f, -9.06f, 587.71f, 6, track_data_29, true);
-	Police_Maze_Target_Track_Add(30, -679.6f, -45.4f, 721.05f, -679.6f, -1.4f, 721.05f, 6, track_data_30, true);
-	Police_Maze_Target_Track_Add(31, -414.04f, -8.98f, 711.91f, -459.54f, -8.99f, 707.81f, 6, track_data_31, false);
-	Police_Maze_Target_Track_Add(32, -440.0f, -8.97f, 1137.0f, -430.0f, -8.97f, 921.0f, 6, track_data_32, false);
-	Police_Maze_Target_Track_Add(33, -764.92f, -0.84f, 950.22f, -722.92f, -0.84f, 950.22f, 6, track_data_33, false);
-	Police_Maze_Target_Track_Add(34, -696.0f, -5.7f, 1185.0f, -635.0f, -5.7f, 1185.0f, 20, track_data_34, false);
-	Police_Maze_Target_Track_Add(35, -635.0f, -5.7f, 1165.0f, -620.0f, -8.63f, 1366.0f, 10, track_data_35, false);
-	Police_Maze_Target_Track_Add(36, -620.0f, -8.63f, 1366.0f, -595.0f, -8.63f, 1366.0f, 10, track_data_36, false);
-	Police_Maze_Target_Track_Add(37, -584.0f, -79.4f, 775.0f, -584.0f, -27.4f, 775.0f, 10, track_data_37, true);
-	Police_Maze_Target_Track_Add(38, -578.0f, -79.4f, 810.0f, -578.0f, -27.4f, 810.0f, 10, track_data_38, false);
-	Police_Maze_Target_Track_Add(39, -400.0f, -12.0f, 1110.0f, -400.0f, 60.0f, 1110.0f, 6, track_data_39, false);
-	Police_Maze_Target_Track_Add(40, -414.04f, -8.98f, 711.91f, -459.54f, -8.99f, 707.81f, 6, track_data_40, true);
-	Police_Maze_Target_Track_Add(41, -400.0f, -12.0f, 1110.0f, -400.0f, 60.0f, 1110.0f, 6, track_data_41, false);
-	Police_Maze_Target_Track_Add(42, -731.0f, 93.66f, 788.0f, -702.0f, 93.66f, 788.0f, 6, track_data_42, false);
-	Police_Maze_Target_Track_Add(43, -580.0f, -80.0f, 925.0f, -580.0f, -8.0f, 925.0f, 10, track_data_43, true);
-	Police_Maze_Target_Track_Add(44, -731.0f, 93.66f, 788.0f, -702.0f, 93.66f, 788.0f, 6, track_data_44, false);
-	Police_Maze_Target_Track_Add(45, -580.0f, -80.0f, 925.0f, -580.0f, -8.0f, 925.0f, 10, track_data_45, false);
+	Police_Maze_Target_Track_Add(kItemPS12Target1,   -691.8f, -9.06f, 587.67f, -649.11f, -9.06f, 587.71f,  6, track_data_29,  true);
+	Police_Maze_Target_Track_Add(kItemPS12Target2,   -679.6f, -45.4f, 721.05f,  -679.6f,  -1.4f, 721.05f,  6, track_data_30,  true);
+	Police_Maze_Target_Track_Add(kItemPS12Target3,  -414.04f, -8.98f, 711.91f, -459.54f, -8.99f, 707.81f,  6, track_data_31, false);
+	Police_Maze_Target_Track_Add(kItemPS12Target4,   -440.0f, -8.97f, 1137.0f,  -430.0f, -8.97f,  921.0f,  6, track_data_32, false);
+	Police_Maze_Target_Track_Add(kItemPS12Target5,  -764.92f, -0.84f, 950.22f, -722.92f, -0.84f, 950.22f,  6, track_data_33, false);
+	Police_Maze_Target_Track_Add(kItemPS12Target6,   -696.0f,  -5.7f, 1185.0f,  -635.0f,  -5.7f, 1185.0f, 20, track_data_34, false);
+	Police_Maze_Target_Track_Add(kItemPS12Target7,   -635.0f,  -5.7f, 1165.0f,  -620.0f, -8.63f, 1366.0f, 10, track_data_35, false);
+	Police_Maze_Target_Track_Add(kItemPS12Target8,   -620.0f, -8.63f, 1366.0f,  -595.0f, -8.63f, 1366.0f, 10, track_data_36, false);
+	Police_Maze_Target_Track_Add(kItemPS12Target9,   -584.0f, -79.4f,  775.0f,  -584.0f, -27.4f,  775.0f, 10, track_data_37,  true);
+	Police_Maze_Target_Track_Add(kItemPS12Target10,  -578.0f, -79.4f,  810.0f,  -578.0f, -27.4f,  810.0f, 10, track_data_38, false);
+	Police_Maze_Target_Track_Add(kItemPS12Target11,  -400.0f, -12.0f, 1110.0f,  -400.0f,  60.0f, 1110.0f,  6, track_data_39, false);
+	Police_Maze_Target_Track_Add(kItemPS12Target12, -414.04f, -8.98f, 711.91f, -459.54f, -8.99f, 707.81f,  6, track_data_40,  true);
+	Police_Maze_Target_Track_Add(kItemPS12Target13,  -400.0f, -12.0f, 1110.0f,  -400.0f,  60.0f, 1110.0f,  6, track_data_41, false);
+	Police_Maze_Target_Track_Add(kItemPS12Target14,  -731.0f, 93.66f,  788.0f,  -702.0f, 93.66f,  788.0f,  6, track_data_42, false);
+	Police_Maze_Target_Track_Add(kItemPS12Target15,  -580.0f, -80.0f,  925.0f,  -580.0f,  -8.0f,  925.0f, 10, track_data_43,  true);
+	Police_Maze_Target_Track_Add(kItemPS12Target16,  -731.0f, 93.66f,  788.0f,  -702.0f, 93.66f,  788.0f,  6, track_data_44, false);
+	Police_Maze_Target_Track_Add(kItemPS12Target17,  -580.0f, -80.0f,  925.0f,  -580.0f,  -8.0f,  925.0f, 10, track_data_45, false);
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(0);
 	Ambient_Sounds_Add_Looping_Sound(387, 50, 1, 1);
 	Ambient_Sounds_Add_Looping_Sound(54, 50, 1, 1);
-	Ambient_Sounds_Add_Sound(1, 10, 50, 16, 25, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(389, 5, 50, 16, 25, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(390, 6, 50, 16, 25, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(1,  10,  50, 16, 25, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(389, 5,  50, 16, 25, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(390, 6,  50, 16, 25, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(443, 2, 100, 14, 16, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(444, 2, 100, 14, 16, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(445, 2, 100, 14, 16, -100, 100, -101, -101, 0, 0);
@@ -144,22 +146,22 @@ bool SceneScriptPS12::ClickedOnActor(int actorId) {
 bool SceneScriptPS12::ClickedOnItem(int itemId, bool a2) {
 	if (Player_Query_Combat_Mode()) {
 		switch (itemId) {
-		case 31:
+		case kItemPS12Target3:
 			Sound_Play(4, 50, 0, 0, 50);
 			break;
-		case 37:
-			Sound_Play(4, 50, 0, 0, 50);
-			break;
-		case 41:
-			Sound_Play(4, 50, 0, 0, 50);
-			break;
-		case 33:
+		case kItemPS12Target5:
 			Sound_Play(555, 50, 0, 0, 50);
 			break;
-		case 43:
+		case kItemPS12Target9:
+			Sound_Play(4, 50, 0, 0, 50);
+			break;
+		case kItemPS12Target13:
+			Sound_Play(4, 50, 0, 0, 50);
+			break;
+		case kItemPS12Target15:
 			Sound_Play(555, 50, 0, 0, 50);
 			break;
-		case 44:
+		case kItemPS12Target16:
 			Sound_Play(555, 50, 0, 0, 50);
 			break;
 		default:
@@ -168,62 +170,62 @@ bool SceneScriptPS12::ClickedOnItem(int itemId, bool a2) {
 		}
 		Item_Spin_In_World(itemId);
 		Item_Flag_As_Non_Target(itemId);
-		if (itemId == 29) {
-			Item_Flag_As_Non_Target(29);
+		if (itemId == kItemPS12Target1) {
+			Item_Flag_As_Non_Target(kItemPS12Target1);
 		}
-		if (itemId == 30) {
-			Item_Flag_As_Non_Target(30);
+		if (itemId == kItemPS12Target2) {
+			Item_Flag_As_Non_Target(kItemPS12Target2);
 		}
-		if (itemId == 31) {
-			Item_Flag_As_Non_Target(31);
+		if (itemId == kItemPS12Target3) {
+			Item_Flag_As_Non_Target(kItemPS12Target3);
 		}
-		if (itemId == 32) {
-			Item_Flag_As_Non_Target(32);
+		if (itemId == kItemPS12Target4) {
+			Item_Flag_As_Non_Target(kItemPS12Target4);
 		}
-		if (itemId == 33) {
-			Item_Flag_As_Non_Target(33);
+		if (itemId == kItemPS12Target5) {
+			Item_Flag_As_Non_Target(kItemPS12Target5);
 		}
-		if (itemId == 34) {
-			Item_Flag_As_Non_Target(34);
-			Item_Flag_As_Non_Target(35);
-			Item_Flag_As_Non_Target(36);
+		if (itemId == kItemPS12Target6) {
+			Item_Flag_As_Non_Target(kItemPS12Target6);
+			Item_Flag_As_Non_Target(kItemPS12Target7);
+			Item_Flag_As_Non_Target(kItemPS12Target8);
 		}
-		if (itemId == 35) {
-			Item_Flag_As_Non_Target(34);
-			Item_Flag_As_Non_Target(35);
-			Item_Flag_As_Non_Target(36);
+		if (itemId == kItemPS12Target7) {
+			Item_Flag_As_Non_Target(kItemPS12Target6);
+			Item_Flag_As_Non_Target(kItemPS12Target7);
+			Item_Flag_As_Non_Target(kItemPS12Target8);
 		}
-		if (itemId == 36) {
-			Item_Flag_As_Non_Target(34);
-			Item_Flag_As_Non_Target(35);
-			Item_Flag_As_Non_Target(36);
+		if (itemId == kItemPS12Target8) {
+			Item_Flag_As_Non_Target(kItemPS12Target6);
+			Item_Flag_As_Non_Target(kItemPS12Target7);
+			Item_Flag_As_Non_Target(kItemPS12Target8);
 		}
-		if (itemId == 37) {
-			Item_Flag_As_Non_Target(37);
+		if (itemId == kItemPS12Target9) {
+			Item_Flag_As_Non_Target(kItemPS12Target9);
 		}
-		if (itemId == 38) {
-			Item_Flag_As_Non_Target(38);
+		if (itemId == kItemPS12Target10) {
+			Item_Flag_As_Non_Target(kItemPS12Target10);
 		}
-		if (itemId == 39) {
-			Item_Flag_As_Non_Target(39);
+		if (itemId == kItemPS12Target11) {
+			Item_Flag_As_Non_Target(kItemPS12Target11);
 		}
-		if (itemId == 40) {
-			Item_Flag_As_Non_Target(40);
+		if (itemId == kItemPS12Target12) {
+			Item_Flag_As_Non_Target(kItemPS12Target12);
 		}
-		if (itemId == 41) {
-			Item_Flag_As_Non_Target(41);
+		if (itemId == kItemPS12Target13) {
+			Item_Flag_As_Non_Target(kItemPS12Target13);
 		}
-		if (itemId == 42) {
-			Item_Flag_As_Non_Target(42);
+		if (itemId == kItemPS12Target14) {
+			Item_Flag_As_Non_Target(kItemPS12Target14);
 		}
-		if (itemId == 43) {
-			Item_Flag_As_Non_Target(43);
+		if (itemId == kItemPS12Target15) {
+			Item_Flag_As_Non_Target(kItemPS12Target15);
 		}
-		if (itemId == 44) {
-			Item_Flag_As_Non_Target(44);
+		if (itemId == kItemPS12Target16) {
+			Item_Flag_As_Non_Target(kItemPS12Target16);
 		}
-		if (itemId == 45) {
-			Item_Flag_As_Non_Target(45);
+		if (itemId == kItemPS12Target17) {
+			Item_Flag_As_Non_Target(kItemPS12Target17);
 		}
 		return true;
 	}
@@ -232,22 +234,22 @@ bool SceneScriptPS12::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptPS12::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 8, 12, 1, false)) {
+		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 8, 12, true, false)) {
 			Game_Flag_Set(kFlagPS12toPS11);
-			sub_4028C4();
+			removeTargets();
 			Set_Enter(kSetPS10_PS11_PS12_PS13, kScenePS11);
 		}
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 9, 12, 1, false)) {
+		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 9, 12, true, false)) {
 			Player_Loses_Control();
-			Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 10, 12, 0, false);
+			Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 10, 12, false, false);
 			Player_Gains_Control();
 			Game_Flag_Set(kFlagPS12toPS13);
-			sub_4028C4();
-			Global_Variable_Decrement(9, 20 - Global_Variable_Query(12));
-			Global_Variable_Set(12, 20);
+			removeTargets();
+			Global_Variable_Decrement(kVariablePoliceMazeScore, kPoliceMazePS12TargetCount - Global_Variable_Query(kVariablePoliceMazePS12TargetCounter));
+			Global_Variable_Set(kVariablePoliceMazePS12TargetCounter, kPoliceMazePS12TargetCount);
 			Set_Enter(kSetPS10_PS11_PS12_PS13, kScenePS13);
 		}
 		return true;
@@ -267,7 +269,7 @@ void SceneScriptPS12::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptPS12::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagPS11toPS12)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -546.0f, -9.06f, 570.0f, 0, 1, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -546.0f, -9.06f, 570.0f, 0, true, false, 0);
 		Game_Flag_Reset(kFlagPS11toPS12);
 	}
 	Police_Maze_Set_Pause_State(false);
@@ -279,24 +281,24 @@ void SceneScriptPS12::PlayerWalkedOut() {
 void SceneScriptPS12::DialogueQueueFlushed(int a1) {
 }
 
-void SceneScriptPS12::sub_4028C4() {
-	Item_Remove_From_World(29);
-	Item_Remove_From_World(30);
-	Item_Remove_From_World(31);
-	Item_Remove_From_World(32);
-	Item_Remove_From_World(33);
-	Item_Remove_From_World(34);
-	Item_Remove_From_World(35);
-	Item_Remove_From_World(36);
-	Item_Remove_From_World(37);
-	Item_Remove_From_World(38);
-	Item_Remove_From_World(39);
-	Item_Remove_From_World(40);
-	Item_Remove_From_World(41);
-	Item_Remove_From_World(42);
-	Item_Remove_From_World(43);
-	Item_Remove_From_World(44);
-	Item_Remove_From_World(45);
+void SceneScriptPS12::removeTargets() {
+	Item_Remove_From_World(kItemPS12Target1);
+	Item_Remove_From_World(kItemPS12Target2);
+	Item_Remove_From_World(kItemPS12Target3);
+	Item_Remove_From_World(kItemPS12Target4);
+	Item_Remove_From_World(kItemPS12Target5);
+	Item_Remove_From_World(kItemPS12Target6);
+	Item_Remove_From_World(kItemPS12Target7);
+	Item_Remove_From_World(kItemPS12Target8);
+	Item_Remove_From_World(kItemPS12Target9);
+	Item_Remove_From_World(kItemPS12Target10);
+	Item_Remove_From_World(kItemPS12Target11);
+	Item_Remove_From_World(kItemPS12Target12);
+	Item_Remove_From_World(kItemPS12Target13);
+	Item_Remove_From_World(kItemPS12Target14);
+	Item_Remove_From_World(kItemPS12Target15);
+	Item_Remove_From_World(kItemPS12Target16);
+	Item_Remove_From_World(kItemPS12Target17);
 }
 
 } // End of namespace BladeRunner

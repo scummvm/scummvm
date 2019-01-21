@@ -266,7 +266,7 @@ void SceneScriptDR04::PlayerWalkedIn() {
 
 void SceneScriptDR04::PlayerWalkedOut() {
 	Music_Stop(2);
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 }
 

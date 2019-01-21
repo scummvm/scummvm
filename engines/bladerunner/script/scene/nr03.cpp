@@ -101,22 +101,24 @@ bool SceneScriptNR03::ClickedOn3DObject(const char *objectName, bool a2) {
 }
 
 bool SceneScriptNR03::ClickedOnActor(int actorId) {
-	if (actorId == 25 && !Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorHanoi, 48, 1, false)) {
-		AI_Movement_Track_Pause(kActorHanoi);
-		Actor_Face_Actor(kActorMcCoy, kActorHanoi, true);
-		if (Game_Flag_Query(611)) {
-			Actor_Says(kActorMcCoy, 3350, 16);
-			Actor_Says(kActorHanoi, 50, 17);
-		} else {
-			Game_Flag_Set(611);
-			Actor_Says(kActorMcCoy, 3340, 3);
-			Actor_Face_Actor(kActorHanoi, kActorMcCoy, true);
-			Actor_Says(kActorHanoi, 30, 13);
-			Actor_Says(kActorMcCoy, 3345, 14);
-			Actor_Says(kActorHanoi, 40, 14);
+	if (actorId == kActorHanoi) {
+		if (!Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorHanoi, 48, true, false)) {
+			AI_Movement_Track_Pause(kActorHanoi);
+			Actor_Face_Actor(kActorMcCoy, kActorHanoi, true);
+			if (Game_Flag_Query(611)) {
+				Actor_Says(kActorMcCoy, 3350, 16);
+				Actor_Says(kActorHanoi, 50, 17);
+			} else {
+				Game_Flag_Set(611);
+				Actor_Says(kActorMcCoy, 3340, 3);
+				Actor_Face_Actor(kActorHanoi, kActorMcCoy, true);
+				Actor_Says(kActorHanoi, 30, 13);
+				Actor_Says(kActorMcCoy, 3345, 14);
+				Actor_Says(kActorHanoi, 40, 14);
+			}
+			AI_Movement_Track_Unpause(kActorHanoi);
+			return true;
 		}
-		AI_Movement_Track_Unpause(kActorHanoi);
-		return true;
 	}
 	return false;
 }
@@ -128,7 +130,7 @@ bool SceneScriptNR03::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptNR03::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 410.0f, -70.19f, -715.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(534);
 			Set_Enter(kSetNR01, kSceneNR01);
@@ -154,7 +156,7 @@ bool SceneScriptNR03::ClickedOnExit(int exitId) {
 			}
 			Global_Variable_Increment(44, 1);
 		} else {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(438);
 			Set_Enter(kSetNR04, kSceneNR04);
@@ -170,7 +172,7 @@ bool SceneScriptNR03::ClickedOnExit(int exitId) {
 				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -229.0f, -70.19f, -469.0f, 0, 0, false, 1);
 				Actor_Face_Heading(kActorMcCoy, 656, false);
 				Actor_Change_Animation_Mode(kActorMcCoy, 53);
-				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Game_Flag_Set(536);
 				Set_Enter(kSetNR05_NR08, kSceneNR05);

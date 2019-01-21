@@ -92,13 +92,13 @@ bool SceneScriptHF01::ClickedOn3DObject(const char *objectName, bool a2) {
 }
 
 bool SceneScriptHF01::ClickedOnActor(int actorId) {
-	int v1;
-	if (Global_Variable_Query(kVariableAffectionTowards) == 2) {
-		v1 = kActorDektora;
-	} else if (Global_Variable_Query(kVariableAffectionTowards) == 3) {
-		v1 = kActorLucy;
+	int affectionTowardsActor;
+	if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsDektora) {
+		affectionTowardsActor = kActorDektora;
+	} else if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy) {
+		affectionTowardsActor = kActorLucy;
 	} else {
-		v1 = -1;
+		affectionTowardsActor = -1;
 	}
 	if (actorId == kActorMia || actorId == kActorMurray) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 504.04f, 8.0f, -242.17f, 12, 1, false, 0)) {
@@ -128,9 +128,9 @@ bool SceneScriptHF01::ClickedOnActor(int actorId) {
 		}
 		return false;
 	}
-	if (v1 != -1 && actorId == v1) {
+	if (affectionTowardsActor != -1 && actorId == affectionTowardsActor) {
 		if (!Loop_Actor_Walk_To_Actor(kActorMcCoy, actorId, 28, 1, false)) {
-			if (Actor_Query_Goal_Number(v1) == 599) {
+			if (Actor_Query_Goal_Number(affectionTowardsActor) == 599) {
 				Actor_Says(kActorMcCoy, 8630, 13);
 				return true;
 			}
@@ -144,14 +144,14 @@ bool SceneScriptHF01::ClickedOnActor(int actorId) {
 			 && !Game_Flag_Query(662)
 			) {
 				Game_Flag_Set(662);
-				Actor_Face_Actor(kActorMcCoy, v1, true);
-				Actor_Face_Actor(v1, kActorMcCoy, true);
-				if (v1 == kActorDektora) {
+				Actor_Face_Actor(kActorMcCoy, affectionTowardsActor, true);
+				Actor_Face_Actor(affectionTowardsActor, kActorMcCoy, true);
+				if (affectionTowardsActor == kActorDektora) {
 					sub_4032DC();
-				} else if (v1 == kActorLucy) {
+				} else if (affectionTowardsActor == kActorLucy) {
 					sub_403484();
 				}
-				Async_Actor_Walk_To_XYZ(v1, -175.0f, 8.0f, -617.0f, 0, false);
+				Async_Actor_Walk_To_XYZ(affectionTowardsActor, -175.0f, 8.0f, -617.0f, 0, false);
 				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -137.0f, 8.0f, -577.0f, 0, 0, false, 1);
 				Game_Flag_Set(kFlagHF01toHF05);
 				Set_Enter(kSetHF05, kSceneHF05);
@@ -310,11 +310,17 @@ void SceneScriptHF01::PlayerWalkedIn() {
 		Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, kActorCombatStateUncover, true, kActorMcCoy, 4, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 0, 100, 300, false);
 	}
 	if (!Game_Flag_Query(kFlagCrazylegsArrested) && Actor_Query_Goal_Number(kActorCrazylegs) != 2) {
-		if (Actor_Clue_Query(kActorMcCoy, kCluePhoneCallLucy1) && Global_Variable_Query(kVariableAffectionTowards) == 3 && Actor_Query_Goal_Number(kActorLucy) != 599) {
+		if (Actor_Clue_Query(kActorMcCoy, kCluePhoneCallLucy1)
+		 && Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy
+		 && Actor_Query_Goal_Number(kActorLucy) != 599
+		) {
 			Actor_Put_In_Set(kActorLucy, kSetHF01);
 			Actor_Set_At_XYZ(kActorLucy, -5.0f, 8.0f, -622.0f, 419);
 			Actor_Set_Targetable(kActorLucy, true);
-		} else if (Actor_Clue_Query(kActorMcCoy, kCluePhoneCallDektora1) && Global_Variable_Query(kVariableAffectionTowards) == 2 && Actor_Query_Goal_Number(kActorDektora) != 599) {
+		} else if (Actor_Clue_Query(kActorMcCoy, kCluePhoneCallDektora1)
+		        && Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsDektora
+		        && Actor_Query_Goal_Number(kActorDektora) != 599
+		) {
 			Actor_Put_In_Set(kActorDektora, kSetHF01);
 			Actor_Set_At_XYZ(kActorDektora, -5.0f, 8.0f, -622.0f, 419);
 			Actor_Set_Targetable(kActorDektora, true);
@@ -359,14 +365,14 @@ void SceneScriptHF01::PlayerWalkedIn() {
 }
 
 void SceneScriptHF01::PlayerWalkedOut() {
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 	if (!Game_Flag_Query(kFlagHF01toHF05)
 	 && !Game_Flag_Query(kFlagHF01toHF02)
 	 && !Game_Flag_Query(kFlagHF01toHF03)
 	 && !Game_Flag_Query(722)
 	) {
-		Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		Outtake_Play(kOuttakeInside2, true, -1);
 		Outtake_Play(kOuttakeTowards3, true, -1);
@@ -389,16 +395,18 @@ void SceneScriptHF01::DialogueQueueFlushed(int a1) {
 
 void SceneScriptHF01::sub_4026B4() {
 	Dialogue_Menu_Clear_List();
-	if (Actor_Clue_Query(kActorMcCoy, kClueLucy) == 1) {
+	if (Actor_Clue_Query(kActorMcCoy, kClueLucy)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(440, 8, 6, 3);
 	}
-	if (!Actor_Clue_Query(kActorMcCoy, kClueLucy) && Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewA) == 1) {
+	if (!Actor_Clue_Query(kActorMcCoy, kClueLucy)
+	 &&  Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewA)
+	) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(450, 7, 6, 3);
 	}
-	if (Actor_Clue_Query(kActorMcCoy, kClueCheese) == 1) {
+	if (Actor_Clue_Query(kActorMcCoy, kClueCheese)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(460, 3, 5, 6);
 	}
-	if (Actor_Clue_Query(kActorMcCoy, kClueLichenDogWrapper) == 1) {
+	if (Actor_Clue_Query(kActorMcCoy, kClueLichenDogWrapper)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(470, -1, 3, 8);
 	}
 	Dialogue_Menu_Add_DONE_To_List(480);

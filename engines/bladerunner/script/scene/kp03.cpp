@@ -64,10 +64,10 @@ bool SceneScriptKP03::MouseClick(int x, int y) {
 	return false;
 }
 
-bool SceneScriptKP03::ClickedOn3DObject(const char *objectName, bool a2) {
+bool SceneScriptKP03::ClickedOn3DObject(const char *objectName, bool combatMode) {
 	Actor_Face_Object(kActorSteele, "BRACK MID", true);
 	if (Object_Query_Click("BRACK MID", objectName) && !Game_Flag_Query(422)) {
-		if (a2) {
+		if (combatMode) {
 			Scene_Loop_Set_Default(5);
 			Scene_Loop_Start_Special(kSceneLoopModeOnce, 4, true);
 			Actor_Change_Animation_Mode(kActorMcCoy, 39);
@@ -104,7 +104,7 @@ bool SceneScriptKP03::ClickedOn3DObject(const char *objectName, bool a2) {
 }
 
 bool SceneScriptKP03::ClickedOnActor(int actorId) {
-	if (actorId == 1 && Actor_Query_Goal_Number(kActorSteele) == 411) {
+	if (actorId == kActorSteele && Actor_Query_Goal_Number(kActorSteele) == 411) {
 		Actor_Face_Object(kActorSteele, "BRACK MID", true);
 		sub_401E54();
 	}
@@ -121,7 +121,7 @@ bool SceneScriptKP03::ClickedOnExit(int exitId) {
 	} else {
 		if (exitId == 0) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1.0f, -36.55f, 111.0f, 0, 1, false, 0)) {
-				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Music_Stop(2);
 				Game_Flag_Reset(417);
@@ -133,7 +133,7 @@ bool SceneScriptKP03::ClickedOnExit(int exitId) {
 		}
 		if (exitId == 1) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -321.0f, -36.55f, 26.0f, 0, 1, false, 0)) {
-				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Music_Stop(2);
 				Game_Flag_Reset(417);
@@ -250,7 +250,7 @@ void SceneScriptKP03::sub_401E54() {
 	Ambient_Sounds_Play_Sound(151, 40, -60, -60, 0);
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1.0f, -36.55f, 111.0f, 0, 0, false, 0);
 	Actor_Set_Goal_Number(kActorSteele, 430);
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 	Game_Flag_Reset(417);
 	Game_Flag_Reset(420);

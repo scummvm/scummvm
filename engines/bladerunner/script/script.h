@@ -242,7 +242,7 @@ protected:
 	void Assign_Player_Gun_Miss_Sounds(int ammoType, int soundId1, int soundId2, int soundId3);
 	void Disable_Shadows(int animationsIdsList[], int listSize);
 	bool Query_System_Currently_Loading_Game();
-	void Actor_Retired_Here(int actorId, int width, int height, int retired, int retiredByActorId);
+	void Actor_Retired_Here(int actorId, int width, int height, bool retired, int retiredByActorId);
 	void Clickable_Object(const char *objectName);
 	void Unclickable_Object(const char *objectName);
 	void Obstacle_Object(const char *objectName, bool updateWalkpath);

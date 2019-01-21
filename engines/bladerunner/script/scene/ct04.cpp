@@ -38,14 +38,14 @@ void SceneScriptCT04::InitializeScene() {
 		Scene_Loop_Set_Default(kCT03LoopMain);
 		Setup_Scene_Information(-82.86f, -621.3f, 769.03f, 1020);
 	}
-	Scene_Exit_Add_2D_Exit(0, 590, 0, 639, 479, 1);
+	Scene_Exit_Add_2D_Exit(0, 590,  0, 639, 479, 1);
 	Scene_Exit_Add_2D_Exit(1, 194, 84, 320, 274, 0);
-	Ambient_Sounds_Add_Looping_Sound(54, 50, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(54, 50,    1, 1);
 	Ambient_Sounds_Add_Looping_Sound(56, 15, -100, 1);
 	Ambient_Sounds_Add_Looping_Sound(105, 34, 100, 1);
 	Ambient_Sounds_Add_Sound(68, 10, 40, 33, 50, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(69, 10, 40, 33, 50, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Speech_Sound(60, 0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(60,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(60, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(60, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(60, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);

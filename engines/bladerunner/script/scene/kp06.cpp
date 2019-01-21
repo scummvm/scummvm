@@ -72,7 +72,7 @@ bool SceneScriptKP06::ClickedOn3DObject(const char *objectName, bool a2) {
 }
 
 bool SceneScriptKP06::ClickedOnActor(int actorId) {
-	if (actorId == 8 && !Game_Flag_Query(714)) {
+	if (actorId == kActorSadik && !Game_Flag_Query(714)) {
 		if (Actor_Clue_Query(kActorSadik, kCluePowerSource)) {
 			Actor_Face_Actor(kActorMcCoy, kActorSadik, true);
 			Actor_Says(kActorMcCoy, 8610, 15);
@@ -98,7 +98,7 @@ bool SceneScriptKP06::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptKP06::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -868.0f, 8.26f, -68.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(577);
 			Set_Enter(kSetKP05_KP06, kSceneKP05);
@@ -117,7 +117,7 @@ bool SceneScriptKP06::ClickedOnExit(int exitId) {
 				} else {
 					Actor_Set_Goal_Number(kActorGaff, 499);
 				}
-				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Game_Flag_Set(578);
 				Set_Enter(kSetKP07, kSceneKP07);
@@ -128,7 +128,7 @@ bool SceneScriptKP06::ClickedOnExit(int exitId) {
 			Actor_Clue_Acquire(kActorSadik, kCluePowerSource, true, kActorMcCoy);
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -731.0f, 8.26f, -657.0f, 0, 0, true, 0);
 			Player_Set_Combat_Mode(false);
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(578);
 			Set_Enter(kSetKP07, kSceneKP07);
@@ -173,7 +173,7 @@ void SceneScriptKP06::PlayerWalkedIn() {
 			Delay(1000);
 			Actor_Says(kActorMcCoy, 6220, -1);
 			Delay(3000);
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Outtake_Play(kOuttakeEnd6, false, -1);
 			Game_Over();

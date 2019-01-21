@@ -207,7 +207,7 @@ void SceneScriptNR08::PlayerWalkedIn() {
 }
 
 void SceneScriptNR08::PlayerWalkedOut() {
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 	if (!Game_Flag_Query(547)) {
 		Music_Stop(2);

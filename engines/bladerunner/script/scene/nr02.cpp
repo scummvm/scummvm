@@ -97,14 +97,18 @@ bool SceneScriptNR02::ClickedOn3DObject(const char *objectName, bool a2) {
 }
 
 bool SceneScriptNR02::ClickedOnActor(int actorId) {
-	if (actorId == 2 && Actor_Query_Goal_Number(kActorGordo) == 201 && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, 67.37f, -24.0f, 389.32f, 0, 1, false, 0)) {
-		Actor_Set_Goal_Number(kActorGordo, 215);
+	if (actorId == kActorGordo
+	 && Actor_Query_Goal_Number(kActorGordo) == 201
+	) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 67.37f, -24.0f, 389.32f, 0, true, false, 0)) {
+			Actor_Set_Goal_Number(kActorGordo, 215);
+		}
 	}
 	return false;
 }
 
 bool SceneScriptNR02::ClickedOnItem(int itemId, bool a2) {
-	if ((itemId == 89 || itemId == 90) && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, 109.38f, -24.0f, 420.5f, 0, 1, false, 0)) {
+	if ((itemId == 89 || itemId == 90) && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, 109.38f, -24.0f, 420.5f, 0, true, false, 0)) {
 		Actor_Face_Heading(kActorMcCoy, 423, false);
 		if (itemId == 89) {
 			Item_Remove_From_World(89);
@@ -126,7 +130,7 @@ bool SceneScriptNR02::ClickedOnExit(int exitId) {
 			if (Actor_Query_Goal_Number(kActorGordo) < 230 || Actor_Query_Goal_Number(kActorGordo) > 250) {
 				Music_Stop(2);
 			}
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(533);
 			Set_Enter(kSetNR01, kSceneNR01);

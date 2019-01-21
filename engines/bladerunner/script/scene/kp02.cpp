@@ -81,12 +81,12 @@ bool SceneScriptKP02::ClickedOnExit(int exitId) {
 				Non_Player_Actor_Combat_Mode_Off(kActorFreeSlotA);
 				Actor_Set_Goal_Number(kActorFreeSlotB, 400);
 				Actor_Set_Goal_Number(kActorFreeSlotA, 400);
-				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Game_Flag_Set(411);
 				Set_Enter(kSetUG12, kSceneUG12);
 			} else {
-				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Game_Flag_Set(411);
 				Set_Enter(kSetUG12, kSceneUG12);
@@ -101,12 +101,12 @@ bool SceneScriptKP02::ClickedOnExit(int exitId) {
 				Non_Player_Actor_Combat_Mode_Off(kActorFreeSlotA);
 				Actor_Set_Goal_Number(kActorFreeSlotB, 400);
 				Actor_Set_Goal_Number(kActorFreeSlotA, 400);
-				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Game_Flag_Set(413);
 				Set_Enter(kSetKP01, kSceneKP01);
 			} else {
-				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Game_Flag_Set(413);
 				Set_Enter(kSetKP01, kSceneKP01);

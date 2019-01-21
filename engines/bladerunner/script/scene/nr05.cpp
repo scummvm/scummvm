@@ -185,7 +185,7 @@ void SceneScriptNR05::PlayerWalkedOut() {
 	if (Game_Flag_Query(537)) {
 		Music_Stop(2);
 	}
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 }
 
@@ -226,13 +226,13 @@ void SceneScriptNR05::sub_4020B4() {
 			Actor_Says(kActorEarlyQBartender, 40, 13);
 			Actor_Change_Animation_Mode(kActorEarlyQBartender, 23);
 			Actor_Change_Animation_Mode(kActorMcCoy, 75);
-			Global_Variable_Increment(42, 1);
+			Global_Variable_Increment(kVariableMcCoyDrinks, 1);
 		} else {
 			Actor_Says(kActorMcCoy, 3475, 17);
 			Actor_Says(kActorEarlyQBartender, 20, 23);
 			Game_Flag_Set(589);
 			Actor_Change_Animation_Mode(kActorMcCoy, 75);
-			Global_Variable_Increment(42, 1);
+			Global_Variable_Increment(kVariableMcCoyDrinks, 1);
 		}
 	} else {
 		Actor_Says(kActorEarlyQBartender, 0, 13);
@@ -240,7 +240,7 @@ void SceneScriptNR05::sub_4020B4() {
 		Actor_Says(kActorEarlyQBartender, 10, 23);
 		Game_Flag_Set(588);
 		Actor_Change_Animation_Mode(kActorMcCoy, 75);
-		Global_Variable_Increment(42, 1);
+		Global_Variable_Increment(kVariableMcCoyDrinks, 1);
 	}
 }
 

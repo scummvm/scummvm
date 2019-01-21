@@ -82,7 +82,7 @@ bool SceneScriptBB09::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 454.56f, -9.0f, 190.31f, 0, 1, false, 0)) {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 450.56f, -9.0f, 250.31f, 0, 0, false, 0);
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagBB09toBB10a);
 			Game_Flag_Set(kFlagBB09toBB10b);
@@ -92,7 +92,7 @@ bool SceneScriptBB09::ClickedOnExit(int exitId) {
 	}
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 71.0f, -9.0f, 136.0f, 72, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagBB09toBB08);
 			Set_Enter(kSetBB08, kSceneBB08);

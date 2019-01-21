@@ -57,7 +57,7 @@ void SceneScriptCT02::InitializeScene() {
 	Ambient_Sounds_Add_Sound(62, 10, 30, 7, 7, 100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(63, 10, 30, 8, 8, 100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(64, 10, 30, 7, 7, 100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Speech_Sound(60, 0, 10, 260, 17, 19, 100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(60,  0, 10, 260, 17, 19, 100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(60, 20, 10, 260, 17, 19, 100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(60, 40, 10, 260, 17, 19, 100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(60, 50, 10, 260, 17, 19, 100, 100, -101, -101, 1, 1);
@@ -218,7 +218,7 @@ bool SceneScriptCT02::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptCT02::ClickedOnExit(int exitId) {
 	if (exitId == kCT02ExitCT01) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -111.2f, -145.11f, 243.28f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagCT02toCT01walk);
 			Game_Flag_Set(kFlagCT02toCT01);
@@ -234,7 +234,7 @@ bool SceneScriptCT02::ClickedOnExit(int exitId) {
 			v1 = Loop_Actor_Walk_To_XYZ(kActorMcCoy, -154.83f, -145.11f, -82.61f, 0, 1, false, 0);
 		}
 		if (!v1) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagCT02toCT03);
 			Set_Enter(kSetCT03_CT04, kSceneCT03);

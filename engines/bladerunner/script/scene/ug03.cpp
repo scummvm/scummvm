@@ -103,7 +103,7 @@ bool SceneScriptUG03::ClickedOnExit(int exitId) {
 			if (Global_Variable_Query(kVariableChapter) < 4) {
 				Actor_Says(kActorMcCoy, 8522, 14);
 			} else {
-				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Game_Flag_Set(336);
 				Set_Enter(kSetUG10, kSceneUG10);
@@ -113,7 +113,7 @@ bool SceneScriptUG03::ClickedOnExit(int exitId) {
 	}
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -51.0f, 0.0f, 255.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(334);
 			Set_Enter(kSetUG04, kSceneUG04);

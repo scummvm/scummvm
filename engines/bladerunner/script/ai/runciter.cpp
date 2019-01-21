@@ -48,14 +48,18 @@ void AIScriptRunciter::Initialize() {
 	var_45CD80 = 1;
 	var_45CD84 = 0;
 	var_45CD88 = 0;
-	Actor_Set_Goal_Number(kActorRunciter, 0);
+	Actor_Set_Goal_Number(kActorRunciter, kGoalRunciterDefault);
 }
 
 bool AIScriptRunciter::Update() {
-	if (Actor_Query_Goal_Number(kActorRunciter) == 0 && Game_Flag_Query(kFlagRC01PoliceDone)) {
-		Actor_Set_Goal_Number(kActorRunciter, 2);
+	if (Actor_Query_Goal_Number(kActorRunciter) == kGoalRunciterDefault
+	 && Game_Flag_Query(kFlagRC01PoliceDone)
+	) {
+		Actor_Set_Goal_Number(kActorRunciter, kGoalRunciterHide);
 	}
-	if (Global_Variable_Query(kVariableChapter) == 4 && Actor_Query_Goal_Number(kActorRunciter) < 300) {
+	if (Global_Variable_Query(kVariableChapter) == 4
+	 && Actor_Query_Goal_Number(kActorRunciter) < 300
+	) {
 		Actor_Set_Goal_Number(kActorRunciter, 300);
 	}
 	return false;
@@ -149,8 +153,8 @@ void AIScriptRunciter::ShotAtAndMissed() {}
 
 bool AIScriptRunciter::ShotAtAndHit() {
 	Actor_Set_Targetable(kActorRunciter, false);
-	Actor_Change_Animation_Mode(kActorRunciter, 48);
-	Actor_Set_Goal_Number(kActorRunciter, 599);
+	Actor_Change_Animation_Mode(kActorRunciter, kAnimationModeDie);
+	Actor_Set_Goal_Number(kActorRunciter, kGoalRunciterDead);
 	Delay(2000);
 	if (Actor_Clue_Query(kActorMcCoy, kClueZubensMotive)) {
 		Actor_Voice_Over(2050, kActorVoiceOver);
@@ -171,12 +175,12 @@ int AIScriptRunciter::GetFriendlinessModifierIfGetsClue(int otherActorId, int cl
 }
 
 bool AIScriptRunciter::GoalChanged(int currentGoalNumber, int newGoalNumber) {
-	if (newGoalNumber == 0) {
+	if (newGoalNumber == kGoalRunciterDefault) {
 		Actor_Put_In_Set(kActorRunciter, kSetRC02_RC51);
 		Actor_Set_At_Waypoint(kActorRunciter, 92, 567);
 		return false;
 	}
-	if (newGoalNumber == 1) {
+	if (newGoalNumber == kGoalRunciterWalkAround) {
 		AI_Movement_Track_Flush(kActorRunciter);
 		if (Random_Query(0, 1) == 1) {
 			if (Random_Query(0, 1) == 0) {
@@ -194,14 +198,14 @@ bool AIScriptRunciter::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorRunciter);
 		return true;
 	}
-	if (newGoalNumber == 2) {
+	if (newGoalNumber == kGoalRunciterHide) {
 		AI_Movement_Track_Flush(kActorRunciter);
 		AI_Movement_Track_Append(kActorRunciter, 39, 120);
 		AI_Movement_Track_Append(kActorRunciter, 40, 0);
 		AI_Movement_Track_Repeat(kActorRunciter);
 		return false;
 	}
-	if (newGoalNumber == 300) {
+	if (newGoalNumber == kGoalRunciterAtShop) {
 		Actor_Put_In_Set(kActorRunciter, kSetRC02_RC51);
 		Actor_Set_At_Waypoint(kActorRunciter, 93, 1007);
 		return false;

@@ -165,10 +165,10 @@ bool AIScriptHolloway::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		break;
 
 	case 257:
-		Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		Player_Gains_Control();
-		Outtake_Play(11, 0, 1);
+		Outtake_Play(kOuttakeInterrogation, 0, 1);
 		if (Global_Variable_Query(40) == 1) {
 			Actor_Set_Goal_Number(kActorDektora, 245);
 			Actor_Change_Animation_Mode(kActorDektora, kAnimationModeIdle);

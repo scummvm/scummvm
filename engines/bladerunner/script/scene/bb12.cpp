@@ -31,7 +31,7 @@ void SceneScriptBB12::InitializeScene() {
 		Setup_Scene_Information(-129.0f, 0.0f, 64.0f, 307);
 	} else {
 		Setup_Scene_Information(54.0f, 0.0f, 200.0f, 0);
-		Game_Flag_Reset(301);
+		Game_Flag_Reset(kFlagBB05toBB12);
 	}
 	Scene_Exit_Add_2D_Exit(0, 0, 0, 30, 479, 3);
 	Scene_Exit_Add_2D_Exit(1, 589, 0, 639, 479, 1);
@@ -81,7 +81,7 @@ bool SceneScriptBB12::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptBB12::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -129.0f, 0.0f, 64.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(507);
 			Set_Enter(kSetBB08, kSceneBB08);
@@ -90,7 +90,7 @@ bool SceneScriptBB12::ClickedOnExit(int exitId) {
 	}
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 138.0f, 0.0f, 104.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(365);
 			Set_Enter(kSetBB07, kSceneBB07);
@@ -99,9 +99,9 @@ bool SceneScriptBB12::ClickedOnExit(int exitId) {
 	}
 	if (exitId == 2) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 54.0f, 0.0f, 200.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(302);
+			Game_Flag_Set(kFlagBB12toBB05);
 			Set_Enter(kSetBB05, kSceneBB05);
 		}
 		return true;

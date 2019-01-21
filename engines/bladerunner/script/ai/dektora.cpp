@@ -87,12 +87,13 @@ bool AIScriptDektora::Update() {
 			Actor_Set_Goal_Number(kActorDektora, 300);
 		}
 	} else if (Game_Flag_Query(489)) {
-		if (Game_Flag_Query(504) == 1
-				&& !Game_Flag_Query(374)
-				&& Player_Query_Current_Scene()
-				&& Player_Query_Current_Scene() != 1) {
-			if (Game_Flag_Query(726)) {
-				Item_Remove_From_World(106);
+		if ( Game_Flag_Query(504) == 1
+		 && !Game_Flag_Query(374)
+		 &&  Player_Query_Current_Scene()
+		 &&  Player_Query_Current_Scene() != 1
+		) {
+			if (Game_Flag_Query(kFlagAR02Entered)) {
+				Item_Remove_From_World(kItemScrorpions);
 			}
 			Game_Flag_Set(374);
 		}
@@ -292,7 +293,7 @@ void AIScriptDektora::Retired(int byActorId) {
 			Delay(2000);
 			Player_Set_Combat_Mode(false);
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, -41.58f, 72.0f, 0, true, false, 0);
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(579);
 			Game_Flag_Reset(653);
@@ -1095,8 +1096,8 @@ void AIScriptDektora::checkCombat() {
 	 && Global_Variable_Query(kVariableChapter) == 5
 	 && Actor_Query_Goal_Number(kActorDektora) != 450
 	) {
-		if (Global_Variable_Query(kVariableAffectionTowards) == 2) {
-			Global_Variable_Set(kVariableAffectionTowards, 0);
+		if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsDektora) {
+			Global_Variable_Set(kVariableAffectionTowards, kAffectionTowardsNone);
 		}
 
 		Actor_Set_Goal_Number(kActorDektora, 450);

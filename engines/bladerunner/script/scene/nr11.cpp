@@ -109,10 +109,10 @@ bool SceneScriptNR11::MouseClick(int x, int y) {
 	return false;
 }
 
-bool SceneScriptNR11::ClickedOn3DObject(const char *objectName, bool a2) {
+bool SceneScriptNR11::ClickedOn3DObject(const char *objectName, bool combatMode) {
 
 	if (Object_Query_Click("CLOTHING02", objectName) || Object_Query_Click("BOX27", objectName) || Object_Query_Click("BOX39", objectName) || Object_Query_Click("BOX44", objectName) || Object_Query_Click("DRESS", objectName) || Object_Query_Click("COATRACK", objectName) || Object_Query_Click("COLUMN3 DETS", objectName) || Object_Query_Click("COLUMN PIPE01", objectName) || Object_Query_Click("RECTANGLE02", objectName) || Object_Query_Click("COLUMN04", objectName) || Object_Query_Click("COATRACK01", objectName) || Object_Query_Click("SHIRT", objectName) || Object_Query_Click("SKIRT 02", objectName) || Object_Query_Click("CLOTHING B 03", objectName) || Object_Query_Click("BUST BUST", objectName)) {
-		if (a2) {
+		if (combatMode) {
 			Actor_Set_Goal_Number(kActorSteele, 211);
 			Scene_Exits_Disable();
 			sub_4028EC();
@@ -140,7 +140,7 @@ bool SceneScriptNR11::ClickedOn3DObject(const char *objectName, bool a2) {
 				} else {
 					Actor_Says(kActorMcCoy, 3840, 18);
 					Delay(1000);
-					if (Actor_Query_Friendliness_To_Other(kActorDektora, kActorMcCoy) > 59 && Global_Variable_Query(kVariableAffectionTowards) == 0) {
+					if (Actor_Query_Friendliness_To_Other(kActorDektora, kActorMcCoy) > 59 && Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsNone) {
 						Music_Play(21, 35, 0, 3, -1, 0, 0);
 					}
 					Loop_Actor_Walk_To_XYZ(kActorDektora, -135.0f, 0.33f, -267.0f, 0, 0, false, 0);
@@ -164,8 +164,10 @@ bool SceneScriptNR11::ClickedOn3DObject(const char *objectName, bool a2) {
 					Actor_Says(kActorMcCoy, 3870, 3);
 					Actor_Says(kActorDektora, 1070, 14);
 					Actor_Modify_Friendliness_To_Other(kActorDektora, kActorMcCoy, 5);
-					if (Actor_Query_Friendliness_To_Other(kActorDektora, kActorMcCoy) > 55 && Global_Variable_Query(kVariableAffectionTowards) == 0) {
-						Global_Variable_Set(kVariableAffectionTowards, 2);
+					if (Actor_Query_Friendliness_To_Other(kActorDektora, kActorMcCoy) > 55
+					 && Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsNone
+					) {
+						Global_Variable_Set(kVariableAffectionTowards, kAffectionTowardsDektora);
 						Actor_Says(kActorDektora, 1130, 17);
 						Actor_Says(kActorMcCoy, 6365, 12);
 						Actor_Says(kActorDektora, 1140, 14);

@@ -94,9 +94,9 @@ bool SceneScriptUG18::ClickedOnActor(int actorId) {
 	return false;
 }
 
-bool SceneScriptUG18::ClickedOnItem(int itemId, bool a2) {
+bool SceneScriptUG18::ClickedOnItem(int itemId, bool combatMode) {
 	if (itemId == 91) {
-		if (a2) {
+		if (combatMode) {
 			Item_Remove_From_World(91);
 		} else if (!Loop_Actor_Walk_To_Item(kActorMcCoy, 91, 12, 1, false)) {
 			Item_Pickup_Spin_Effect(987, 368, 243);
@@ -111,7 +111,7 @@ bool SceneScriptUG18::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptUG18::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -684.71f, 0.0f, 171.59f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(435);
 			Set_Enter(kSetUG13, kSceneUG13);
@@ -129,7 +129,7 @@ void SceneScriptUG18::SceneFrameAdvanced(int frame) {
 }
 
 void SceneScriptUG18::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
-	if (actorId == 4) {
+	if (actorId == kActorGuzza) {
 		if (newGoal == 303) {
 			Game_Flag_Set(607);
 			ADQ_Flush();
@@ -150,7 +150,7 @@ void SceneScriptUG18::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 			Scene_Exits_Enable();
 			Actor_Set_Goal_Number(kActorGuzza, 306);
 		}
-	} else if (actorId == 8) {
+	} else if (actorId == kActorSadik) {
 		if (newGoal == 302) {
 			if (Actor_Query_Friendliness_To_Other(kActorClovis, kActorMcCoy) > 55 && Game_Flag_Query(607)) {
 				sub_403588();
@@ -324,7 +324,9 @@ void SceneScriptUG18::sub_402734() {
 
 void SceneScriptUG18::sub_402DE8() {
 	if (Player_Query_Agenda() != kPlayerAgendaPolite) {
-		if (Global_Variable_Query(kVariableAffectionTowards) > 1 || Player_Query_Agenda() == kPlayerAgendaSurly) {
+		if (Global_Variable_Query(kVariableAffectionTowards) > 1
+		 || Player_Query_Agenda() == kPlayerAgendaSurly
+		) {
 			sub_403114();
 		} else {
 			sub_402F8C();

@@ -36,19 +36,19 @@ void SceneScriptCT03::InitializeScene() {
 	} else {
 		Setup_Scene_Information(-708.58f, -619.19f, 277.6f, 239);
 	}
-	Scene_Exit_Add_2D_Exit(0, 0, 460, 639, 479, 2);
-	Scene_Exit_Add_2D_Exit(1, 40, 40, 134, 302, 3);
-	Scene_Exit_Add_2D_Exit(2, 390, 0, 539, 230, 1);
-	Ambient_Sounds_Add_Looping_Sound(54, 50, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound(56, 22, -100, 1);
+	Scene_Exit_Add_2D_Exit(0,   0, 460, 639, 479, 2);
+	Scene_Exit_Add_2D_Exit(1,  40,  40, 134, 302, 3);
+	Scene_Exit_Add_2D_Exit(2, 390,   0, 539, 230, 1);
+	Ambient_Sounds_Add_Looping_Sound( 54, 50,    1, 1);
+	Ambient_Sounds_Add_Looping_Sound( 56, 22, -100, 1);
 	Ambient_Sounds_Add_Looping_Sound(105, 34, -100, 1);
-	Ambient_Sounds_Add_Sound(68, 10, 40, 33, 50, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(69, 10, 40, 33, 50, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(61, 3, 30, 8, 10, -100, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(62, 3, 30, 8, 10, -100, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(63, 3, 30, 8, 10, -100, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(64, 3, 30, 8, 10, -100, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Speech_Sound(60, 0, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Sound(68, 10, 40, 33, 50,   0,  0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(69, 10, 40, 33, 50,   0,  0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(61,  3, 30,  8, 10, -100, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(62,  3, 30,  8, 10, -100, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(63,  3, 30,  8, 10, -100, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(64,  3, 30,  8, 10, -100, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Speech_Sound(60,  0, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(60, 20, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(60, 40, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(60, 50, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);

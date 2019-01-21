@@ -119,61 +119,15 @@ bool AIScriptHawkersBarkeep::GoalChanged(int currentGoalNumber, int newGoalNumbe
 bool AIScriptHawkersBarkeep::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
-		if (_var1 == 1) {
-			if (_var1 == 1) {
-				*animation = 706;
-				if (_animationFrame <= 3)
-					_var3 = 1;
-
-				if (_animationFrame == 11) {
-					if (Random_Query(0, 2))
-						_var3 = -1;
-				}
-
-				_animationFrame += _var3;
-
-				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(706)) {
-					*animation = 705;
-					_animationFrame = 0;
-					_var1 = 0;
-				}
-			} else {
-				*animation = 707;
-
-				if (_var2) {
-					_var2--;
-
-					if (_var2 == 0)
-						_var3 = 2 * Random_Query(0, 1) - 1;
-				} else {
-					if (_animationFrame <= 11)
-						_var3 = 1;
-
-					if (_animationFrame == 14) {
-						if (Random_Query(0, 2))
-							_var3 = -1;
-					}
-
-					if (_animationFrame == 18)
-						_var2 = Random_Query(5, 15);
-
-					_animationFrame++;
-					if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(707)) {
-						*animation = 705;
-						_animationFrame = 0;
-						_var1 = 0;
-						_var2 = 0;
-					}
-				}
-			}
-		} else if (_var1 == 0) {
+		if (_var1 == 0) {
 			*animation = 705;
 
 			if (_var2) {
 				_var2--;
 
-				if (!Random_Query(0, 6))
+				if (Random_Query(0, 6) == 0) {
 					_var3 = -_var3;
+				}
 			} else {
 				_animationFrame += _var3;
 
@@ -203,48 +157,95 @@ bool AIScriptHawkersBarkeep::UpdateAnimation(int *animation, int *frame) {
 					}
 				}
 			}
+		} else if (_var1 == 1) {
+			*animation = 706;
+			if (_animationFrame <= 3)
+				_var3 = 1;
+
+			if (_animationFrame == 11) {
+				if (Random_Query(0, 2))
+					_var3 = -1;
+			}
+
+			_animationFrame += _var3;
+
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(706)) {
+				*animation = 705;
+				_animationFrame = 0;
+				_var1 = 0;
+			}
+		} else if (_var1 == 2) {
+			*animation = 707;
+
+			if (_var2) {
+				_var2--;
+
+				if (_var2 == 0)
+					_var3 = 2 * Random_Query(0, 1) - 1;
+			} else {
+				if (_animationFrame <= 11)
+					_var3 = 1;
+
+				if (_animationFrame == 14) {
+					if (Random_Query(0, 2) != 0) {
+						_var3 = -1;
+					}
+				}
+
+				if (_animationFrame == 18) {
+					_var2 = Random_Query(5, 15);
+				}
+
+				_animationFrame++;
+				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(707)) {
+					*animation = 705;
+					_animationFrame = 0;
+					_var1 = 0;
+					_var2 = 0;
+				}
+			}
 		}
 		break;
 
 	case 1:
-		if (_var1 == 1) {
-			if (_var1 == 1) {
-				*animation = 706;
-				_animationFrame++;
-
-				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(706)) {
-					_animationFrame = 0;
-					_animationState = _animationStateNext;
-					*animation = _animationNext;
-				}
-			} else {
-				*animation = 707;
-				_animationFrame += 2;
-
-				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(707)) {
-					_animationFrame = 0;
-					_animationState = _animationStateNext;
-					*animation = _animationNext;
-				}
-			}
-		} else if (_var1 == 0) {
+		if (_var1 == 0) {
 			_animationFrame = 0;
 			_animationState = _animationStateNext;
 			*animation = _animationNext;
+		} else if (_var1 == 1) {
+			*animation = 706;
+			_animationFrame++;
+
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(706)) {
+				_animationFrame = 0;
+				_animationState = _animationStateNext;
+				*animation = _animationNext;
+			}
+		} else if (_var1 == 2) {
+			*animation = 707;
+			_animationFrame += 2;
+
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(707)) {
+				_animationFrame = 0;
+				_animationState = _animationStateNext;
+				*animation = _animationNext;
+			}
 		}
+
 		break;
 
 	case 2:
 		*animation = 710;
 
-		if (!_animationFrame && _flag) {
+		if (_animationFrame == 0 && _flag) {
 			_animationState = 0;
 			_var1 = 0;
 		} else {
 			_animationFrame++;
 
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(710))
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(710)) {
 				_animationFrame = 0;
+			}
 		}
 		break;
 

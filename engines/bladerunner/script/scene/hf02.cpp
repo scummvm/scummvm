@@ -85,7 +85,7 @@ bool SceneScriptHF02::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptHF02::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 42.0f, 47.76f, -296.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagHF02toHF01);
 			Set_Enter(kSetHF01, kSceneHF01);
@@ -94,7 +94,7 @@ bool SceneScriptHF02::ClickedOnExit(int exitId) {
 	}
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 470.0f, 47.76f, -444.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(527);
 			Set_Enter(kSetHF03, kSceneHF03);

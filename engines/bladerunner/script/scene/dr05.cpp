@@ -189,7 +189,7 @@ void SceneScriptDR05::PlayerWalkedIn() {
 }
 
 void SceneScriptDR05::PlayerWalkedOut() {
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 	if (Actor_Query_Goal_Number(kActorMoraji) == 10 || Actor_Query_Goal_Number(kActorMoraji) == 18 || Actor_Query_Goal_Number(kActorMoraji) == 19) {
 		Actor_Set_Goal_Number(kActorMoraji, 11);

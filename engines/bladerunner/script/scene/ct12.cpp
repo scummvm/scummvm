@@ -157,7 +157,7 @@ bool SceneScriptCT12::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptCT12::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -419.15f, -6.5f, 696.94f, 0, true, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Game_Flag_Set(kFlagCT12toCT01);
 			Set_Enter(kSetCT01_CT12, kSceneCT01);
 		}
@@ -165,7 +165,7 @@ bool SceneScriptCT12::ClickedOnExit(int exitId) {
 	}
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -182.69f, -6.5f, 696.94f, 0, true, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagCT12toCT03);
 			Set_Enter(kSetCT03_CT04, kSceneCT03);
@@ -174,7 +174,7 @@ bool SceneScriptCT12::ClickedOnExit(int exitId) {
 	}
 	if (exitId == 2) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -386.13f, -6.5f, 1132.72f, 0, true, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagCT12toCT05);
 			Set_Enter(kSetCT05, kSceneCT05);
@@ -183,7 +183,7 @@ bool SceneScriptCT12::ClickedOnExit(int exitId) {
 	}
 	if (exitId == 3) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -493.0f, -6.5f, 1174.0f, 0, true, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagCT12toCT11);
 			Set_Enter(kSetCT11, kSceneCT11);
@@ -195,7 +195,7 @@ bool SceneScriptCT12::ClickedOnExit(int exitId) {
 			if (Global_Variable_Query(kVariableChapter) == 4) {
 				Game_Flag_Set(629);
 			}
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagCT12ToUG09);
 			Set_Enter(kSetUG09, kSceneUG09);

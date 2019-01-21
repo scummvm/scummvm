@@ -89,7 +89,7 @@ bool SceneScriptUG19::ClickedOnExit(int exitId) {
 			Footstep_Sound_Override_On(3);
 			Loop_Actor_Travel_Ladder(kActorMcCoy, 8, 1, 0);
 			Footstep_Sound_Override_Off();
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(356);
 			Set_Enter(kSetMA07, kSceneMA07);
@@ -98,7 +98,7 @@ bool SceneScriptUG19::ClickedOnExit(int exitId) {
 	}
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 181.0f, 11.52f, -18.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(349);
 			Set_Enter(kSetUG14, kSceneUG14);

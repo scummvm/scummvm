@@ -87,7 +87,7 @@ bool SceneScriptUG05::ClickedOn3DObject(const char *objectName, bool a2) {
 bool SceneScriptUG05::ClickedOnActor(int actorId) {
 	if (!Loop_Actor_Walk_To_Actor(kActorMcCoy, actorId, 30, 1, false)) {
 		Actor_Face_Actor(kActorMcCoy, actorId, true);
-		int v1 = sub_4021B0();
+		int affectionTowardsActor = getAffectionTowardsActor();
 		if (actorId == kActorOfficerGrayford && Game_Flag_Query(368) && !Game_Flag_Query(683)) {
 			Actor_Says(kActorOfficerGrayford, 220, -1);
 			Actor_Says(kActorMcCoy, 5540, 14);
@@ -98,7 +98,7 @@ bool SceneScriptUG05::ClickedOnActor(int actorId) {
 			Game_Flag_Set(683);
 			return false;
 		}
-		if (actorId == v1) {
+		if (actorId == affectionTowardsActor) {
 			sub_402218();
 			return true;
 		}
@@ -143,12 +143,12 @@ bool SceneScriptUG05::ClickedOnExit(int exitId) {
 				return true;
 			}
 		} else {
-			int v1 = sub_4021B0();
+			int affectionTowardsActor = getAffectionTowardsActor();
 			bool v2;
-			if (v1 == -1) {
+			if (affectionTowardsActor == -1) {
 				v2 = Loop_Actor_Walk_To_XYZ(kActorMcCoy, 0.0f, -1.37f, -1500.0f, 0, 1, false, 0) != 0;
 			} else {
-				v2 = Loop_Actor_Walk_To_Actor(kActorMcCoy, v1, 30, 1, false) != 0;
+				v2 = Loop_Actor_Walk_To_Actor(kActorMcCoy, affectionTowardsActor, 30, 1, false) != 0;
 			}
 			if (!v2) {
 				sub_402218();
@@ -177,12 +177,12 @@ void SceneScriptUG05::PlayerWalkedIn() {
 			Actor_Set_At_XYZ(kActorOfficerGrayford, 4.22f, -1.37f, -925.0f, 750);
 			Actor_Set_Goal_Number(kActorOfficerGrayford, 599);
 			Actor_Retired_Here(kActorOfficerGrayford, 70, 36, 1, -1);
-			int v0 = sub_4021B0();
-			if (v0 == kActorDektora) {
+			int affectionTowardsActor = getAffectionTowardsActor();
+			if (affectionTowardsActor == kActorDektora) {
 				Actor_Put_In_Set(kActorDektora, kSetUG05);
 				Actor_Set_At_XYZ(kActorDektora, -100.0f, -10.31f, -906.0f, 866);
 				Actor_Force_Stop_Walking(kActorDektora);
-			} else if (v0 == kActorLucy){
+			} else if (affectionTowardsActor == kActorLucy){
 				Actor_Put_In_Set(kActorLucy, kSetUG05);
 				Actor_Set_At_XYZ(kActorLucy, -100.0f, -10.31f, -906.0f, 866);
 				Actor_Force_Stop_Walking(kActorLucy);
@@ -214,38 +214,42 @@ void SceneScriptUG05::PlayerWalkedIn() {
 }
 
 void SceneScriptUG05::PlayerWalkedOut() {
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 }
 
 void SceneScriptUG05::DialogueQueueFlushed(int a1) {
 }
 
-int SceneScriptUG05::sub_4021B0() {
-	if (Global_Variable_Query(kVariableAffectionTowards) == 2 && Actor_Query_Goal_Number(kActorDektora) != 599) {
+int SceneScriptUG05::getAffectionTowardsActor() {
+	if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsDektora
+	 && Actor_Query_Goal_Number(kActorDektora) != 599
+	) {
 		return kActorDektora;
 	}
-	if (Global_Variable_Query(kVariableAffectionTowards) == 3 && Actor_Query_Goal_Number(kActorLucy) != 599) {
+	if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy
+	 && Actor_Query_Goal_Number(kActorLucy) != 599
+	) {
 		return kActorLucy;
 	}
 	return -1;
 }
 
 void SceneScriptUG05::sub_402218() {
-	int v0 = sub_4021B0();
-	if (v0 != -1) {
-		Actor_Face_Actor(kActorMcCoy, v0, true);
-		Actor_Face_Actor(v0, kActorMcCoy, true);
+	int affectionTowardsActor = getAffectionTowardsActor();
+	if (affectionTowardsActor != -1) {
+		Actor_Face_Actor(kActorMcCoy, affectionTowardsActor, true);
+		Actor_Face_Actor(affectionTowardsActor, kActorMcCoy, true);
 		Actor_Says(kActorMcCoy, 5535, 13);
-		if (v0 == kActorDektora) {
+		if (affectionTowardsActor == kActorDektora) {
 			Actor_Says(kActorDektora, 1110, 15);
 		} else {
 			Actor_Says(kActorLucy, 670, 17);
 		}
 	}
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
-	if (v0 == kActorLucy) {
+	if (affectionTowardsActor == kActorLucy) {
 		if (Game_Flag_Query(kFlagLucyIsReplicant)) {
 			if (Global_Variable_Query(kVariableDNAEvidences) > 3) {
 				Outtake_Play(kOuttakeEnd1B, false, -1);
@@ -255,7 +259,7 @@ void SceneScriptUG05::sub_402218() {
 		} else {
 			Outtake_Play(kOuttakeEnd1A, false, -1);
 		}
-	} else if (v0 == kActorDektora) {
+	} else if (affectionTowardsActor == kActorDektora) {
 		if (Game_Flag_Query(kFlagDektoraIsReplicant)) {
 			if (Global_Variable_Query(kVariableDNAEvidences) > 3) {
 				Outtake_Play(kOuttakeEnd1E, false, -1);

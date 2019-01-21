@@ -79,7 +79,7 @@ bool SceneScriptTB07::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptTB07::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 68.0f, 12.0f, 288.0f, 0, true, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			if (Global_Variable_Query(kVariableChapter) == 4) {
 				Game_Flag_Set(kFlagTB07toTB02);

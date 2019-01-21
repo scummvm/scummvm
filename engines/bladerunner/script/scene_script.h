@@ -36,9 +36,9 @@ public:
 	virtual void InitializeScene() = 0;
 	virtual void SceneLoaded() = 0;
 	virtual bool MouseClick(int x, int y) = 0;
-	virtual bool ClickedOn3DObject(const char *objectName, bool attack) = 0;
+	virtual bool ClickedOn3DObject(const char *objectName, bool combatMode) = 0;
 	virtual bool ClickedOnActor(int actorId) = 0;
-	virtual bool ClickedOnItem(int itemId, bool a2) = 0;
+	virtual bool ClickedOnItem(int itemId, bool combatMode) = 0;
 	virtual bool ClickedOnExit(int exitId) = 0;
 	virtual bool ClickedOn2DRegion(int region) = 0;
 	virtual void SceneFrameAdvanced(int frame) = 0;
@@ -57,9 +57,9 @@ public: \
 	void InitializeScene(); \
 	void SceneLoaded(); \
 	bool MouseClick(int x, int y); \
-	bool ClickedOn3DObject(const char *objectName, bool attack); \
+	bool ClickedOn3DObject(const char *objectName, bool combatMode); \
 	bool ClickedOnActor(int actorId); \
-	bool ClickedOnItem(int itemId, bool a2); \
+	bool ClickedOnItem(int itemId, bool combatMode); \
 	bool ClickedOnExit(int exitId); \
 	bool ClickedOn2DRegion(int region); \
 	void SceneFrameAdvanced(int frame); \
@@ -74,9 +74,9 @@ DECLARE_SCRIPT(AR01)
 END_SCRIPT
 
 DECLARE_SCRIPT(AR02)
-	void sub_402694();
-	void sub_402AE0();
-	void sub_402CE4();
+	void dialogueWithInsectDealer1();
+	void dialogueWithInsectDealer2();
+	void dialogueWithHassan();
 END_SCRIPT
 
 DECLARE_SCRIPT(BB01)
@@ -182,8 +182,8 @@ DECLARE_SCRIPT(DR06)
 END_SCRIPT
 
 DECLARE_SCRIPT(HC01)
-	void sub_402384();
-	void sub_40346C();
+	void dialogueWithIzo();
+	void takePhotoAndRunAway();
 END_SCRIPT
 
 DECLARE_SCRIPT(HC02)
@@ -193,7 +193,7 @@ DECLARE_SCRIPT(HC03)
 END_SCRIPT
 
 DECLARE_SCRIPT(HC04)
-	void sub_401B90();
+	void dialogueWithIsabella();
 END_SCRIPT
 
 DECLARE_SCRIPT(HF01)
@@ -222,7 +222,7 @@ DECLARE_SCRIPT(HF05)
 	void sub_40410C();
 	void sub_4042E4();
 	void sub_404474();
-	int sub_404858();
+	int getAffectionTowardsActor();
 	int sub_4048C0();
 END_SCRIPT
 
@@ -232,7 +232,7 @@ DECLARE_SCRIPT(HF06)
 END_SCRIPT
 
 DECLARE_SCRIPT(HF07)
-	int sub_401864();
+	int getAffectionTowardsActor();
 END_SCRIPT
 
 DECLARE_SCRIPT(KP01)
@@ -389,15 +389,15 @@ DECLARE_SCRIPT(PS10)
 END_SCRIPT
 
 DECLARE_SCRIPT(PS11)
-	void sub_402744();
+	void removeTargets();
 END_SCRIPT
 
 DECLARE_SCRIPT(PS12)
-	void sub_4028C4();
+	void removeTargets();
 END_SCRIPT
 
 DECLARE_SCRIPT(PS13)
-	void sub_40267C();
+	void removeTargets();
 END_SCRIPT
 
 DECLARE_SCRIPT(PS14)
@@ -448,7 +448,7 @@ DECLARE_SCRIPT(UG01)
 END_SCRIPT
 
 DECLARE_SCRIPT(UG02)
-	bool sub_402354();
+	bool walkToCenter();
 END_SCRIPT
 
 DECLARE_SCRIPT(UG03)
@@ -458,7 +458,7 @@ DECLARE_SCRIPT(UG04)
 END_SCRIPT
 
 DECLARE_SCRIPT(UG05)
-	int sub_4021B0();
+	int getAffectionTowardsActor();
 	void sub_402218();
 END_SCRIPT
 
@@ -527,6 +527,9 @@ protected:
 	SceneScriptBase   *_currentScript;
 
 public:
+	int _mouseX;
+	int _mouseY;
+
 	SceneScript(BladeRunnerEngine *vm);
 	~SceneScript();
 
@@ -535,9 +538,9 @@ public:
 	void initializeScene();
 	void sceneLoaded();
 	bool mouseClick(int x, int y);
-	bool clickedOn3DObject(const char *objectName, bool attack);
+	bool clickedOn3DObject(const char *objectName, bool combatMode);
 	bool clickedOnActor(int actorId);
-	bool clickedOnItem(int itemId, bool a2);
+	bool clickedOnItem(int itemId, bool combatMode);
 	bool clickedOnExit(int exitId);
 	bool clickedOn2DRegion(int region);
 	void sceneFrameAdvanced(int frame);

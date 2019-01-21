@@ -69,7 +69,7 @@ bool SceneScriptCT09::ClickedOn3DObject(const char *objectName, bool a2) {
 }
 
 bool SceneScriptCT09::ClickedOnActor(int actorId) {
-	if (actorId == 27) {
+	if (actorId == kActorDeskClerk) {
 		if (!Actor_Query_Goal_Number(kActorDeskClerk) && Actor_Query_Which_Set_In(kActorLeon) != 31) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 270.0f, 348.52f, 846.0f, 12, 1, false, 0)) {
 				Player_Loses_Control();
@@ -109,7 +109,7 @@ bool SceneScriptCT09::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 206.0f, 348.52f, 599.0f, 0, 1, false, 0)) {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 235.0f, 348.52f, 599.0f, 0, 0, false, 0);
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagCT09toCT08);
 			Set_Enter(kSetCT08_CT51_UG12, kSceneCT08);
@@ -118,7 +118,7 @@ bool SceneScriptCT09::ClickedOnExit(int exitId) {
 	}
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 107.0f, 348.52f, 927.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagCT09toCT11);
 			Set_Enter(kSetCT11, kSceneCT11);
@@ -127,7 +127,7 @@ bool SceneScriptCT09::ClickedOnExit(int exitId) {
 	}
 	if (exitId == 2) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 159.0f, 349.0f, 570.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagCT09toCT10);
 			Set_Enter(kSetCT10, kSceneCT10);
@@ -172,7 +172,7 @@ void SceneScriptCT09::PlayerWalkedIn() {
 		} else {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 124.0f, 348.52f, 886.0f, 0, 0, false, 0);
 		}
-		Game_Flag_Reset(304);
+		Game_Flag_Reset(kFlagCT11toCT09);
 	}
 	if (Actor_Query_Goal_Number(kActorDeskClerk) == 2) {
 		if (Game_Flag_Query(539)) {

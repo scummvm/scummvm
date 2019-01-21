@@ -116,7 +116,7 @@ bool SceneScriptNR04::ClickedOn3DObject(const char *objectName, bool a2) {
 }
 
 bool SceneScriptNR04::ClickedOnActor(int actorId) {
-	if (actorId == 18 && Game_Flag_Query(606)) {
+	if (actorId == kActorEarlyQ && Game_Flag_Query(606)) {
 		Actor_Voice_Over(1640, kActorVoiceOver);
 		Actor_Voice_Over(1650, kActorVoiceOver);
 		Actor_Voice_Over(1660, kActorVoiceOver);
@@ -134,7 +134,7 @@ bool SceneScriptNR04::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptNR04::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 45.0f, 0.0f, -106.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(437);
 			Set_Enter(kSetNR03, kSceneNR03);
@@ -180,7 +180,7 @@ void SceneScriptNR04::SceneFrameAdvanced(int frame) {
 }
 
 void SceneScriptNR04::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
-	if (actorId == 18) {
+	if (actorId == kActorEarlyQ) {
 		switch (newGoal) {
 		case 214:
 			Actor_Change_Animation_Mode(kActorEarlyQ, 29);

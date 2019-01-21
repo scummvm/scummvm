@@ -109,7 +109,7 @@ bool SceneScriptUG13::ClickedOn3DObject(const char *objectName, bool a2) {
 }
 
 bool SceneScriptUG13::ClickedOnActor(int actorId) {
-	if (actorId == 12
+	if (actorId == kActorTransient
 	 && Global_Variable_Query(kVariableChapter) == 4
 	) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -248.0f, 44.0f, -390.0f, 12, true, false, 0)) {
@@ -269,7 +269,7 @@ void SceneScriptUG13::PlayerWalkedOut() {
 		Ambient_Sounds_Remove_Sound(397, false);
 		Ambient_Sounds_Remove_Sound(398, false);
 	} else {
-		Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	}
 }
 

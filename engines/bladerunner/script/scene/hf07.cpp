@@ -81,7 +81,7 @@ bool SceneScriptHF07::ClickedOnExit(int exitId) {
 				Loop_Actor_Travel_Stairs(kActorMcCoy, 30, true, kAnimationModeIdle);
 				Footstep_Sound_Override_Off();
 			}
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Set_Enter(kSetHF05, kSceneHF05);
 		}
@@ -94,7 +94,7 @@ bool SceneScriptHF07::ClickedOnExit(int exitId) {
 			Async_Actor_Walk_To_XYZ(kActorLucy, -73.0f, 58.43f, -7.0f, 0, false);
 		}
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -84.0f, 58.43f, -105.0f, 0, true, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(360);
 			Set_Enter(kSetUG05, kSceneUG05);
@@ -116,7 +116,7 @@ void SceneScriptHF07::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptHF07::PlayerWalkedIn() {
 	if (Game_Flag_Query(662)) {
-		int actorId = sub_401864();
+		int actorId = getAffectionTowardsActor();
 		if (Game_Flag_Query(662) && actorId != -1) {
 			Actor_Put_In_Set(actorId, kSetHF07);
 			if (Game_Flag_Query(361)) {
@@ -141,11 +141,15 @@ void SceneScriptHF07::PlayerWalkedOut() {
 void SceneScriptHF07::DialogueQueueFlushed(int a1) {
 }
 
-int SceneScriptHF07::sub_401864() {
-	if (Global_Variable_Query(kVariableAffectionTowards) == 2 && Actor_Query_Goal_Number(kActorDektora) != 599) {
+int SceneScriptHF07::getAffectionTowardsActor() {
+	if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsDektora
+	 && Actor_Query_Goal_Number(kActorDektora) != 599
+	) {
 		return kActorDektora;
 	}
-	if (Global_Variable_Query(kVariableAffectionTowards) == 3 && Actor_Query_Goal_Number(kActorLucy) != 599) {
+	if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy
+	 && Actor_Query_Goal_Number(kActorLucy) != 599
+	) {
 		return kActorLucy;
 	}
 	return -1;

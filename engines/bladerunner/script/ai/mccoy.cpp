@@ -266,8 +266,7 @@ int AIScriptMcCoy::GetFriendlinessModifierIfGetsClue(int otherActorId, int clueI
 }
 
 bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
-	unsigned int v5;
-	unsigned int v7;
+	unsigned int affectionTowards;
 
 	switch (newGoalNumber) {
 	case 0:
@@ -412,13 +411,13 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case 400:
 		Actor_Set_Health(kActorMcCoy, 50, 50);
 		Game_Flag_Set(373);
-		v5 = Global_Variable_Query(kVariableAffectionTowards);
-		if (v5 == 1) {
+		affectionTowards = Global_Variable_Query(kVariableAffectionTowards);
+		if (affectionTowards == kAffectionTowardsSteele) {
 			Actor_Modify_Friendliness_To_Other(kActorSteele, kActorMcCoy, 3);
-		} else if (v5 == 2) {
+		} else if (affectionTowards == kAffectionTowardsDektora) {
 			Actor_Modify_Friendliness_To_Other(kActorSteele, kActorMcCoy, -5);
 			Actor_Modify_Friendliness_To_Other(kActorClovis, kActorMcCoy, 3);
-		} else if (v5 == 3) {
+		} else if (affectionTowards == kAffectionTowardsLucy) {
 			Actor_Modify_Friendliness_To_Other(kActorSteele, kActorMcCoy, -5);
 			Actor_Modify_Friendliness_To_Other(kActorClovis, kActorMcCoy, 5);
 		}
@@ -428,20 +427,22 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		if (Actor_Query_Friendliness_To_Other(kActorSteele, kActorMcCoy) < Actor_Query_Friendliness_To_Other(kActorClovis, kActorMcCoy)) {
 			Game_Flag_Set(653);
 		}
-		v7 = Global_Variable_Query(kVariableAffectionTowards);
-		if (v7 == 1) {
+		affectionTowards = Global_Variable_Query(kVariableAffectionTowards);
+		if (affectionTowards == kAffectionTowardsSteele) {
 			if (Game_Flag_Query(653)) {
-				Global_Variable_Set(kVariableAffectionTowards, 0);
+				Global_Variable_Set(kVariableAffectionTowards, kAffectionTowardsNone);
 			}
-		} else if (v7 == 2 || v7 == 3) {
+		} else if (affectionTowards == kAffectionTowardsDektora
+		        || affectionTowards == kAffectionTowardsLucy
+		) {
 			if (!Game_Flag_Query(653)) {
-				Global_Variable_Set(kVariableAffectionTowards, 0);
+				Global_Variable_Set(kVariableAffectionTowards, kAffectionTowardsNone);
 			}
 		}
 		if (!Game_Flag_Query(653)) {
 			Game_Flag_Set(kFlagMaggieIsHurt);
 		}
-		Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		Global_Variable_Set(kVariableChapter, 5);
 		Outtake_Play(kOuttakeMovieD, false, -1);
@@ -598,7 +599,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 			dword_45A0DC = 0;
 			_animationState = 0;
 			Player_Gains_Control();
-			Item_Add_To_World(109, 982, 6, -110.0, 0.0, -192.0, 0, 48, 32, false, true, false, false);
+			Item_Add_To_World(109, 982, kSetCT08_CT51_UG12, -110.0, 0.0, -192.0, 0, 48, 32, false, true, false, false);
 		}
 		break;
 	case 58:

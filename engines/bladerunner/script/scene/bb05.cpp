@@ -25,11 +25,11 @@
 namespace BladeRunner {
 
 void SceneScriptBB05::InitializeScene() {
-	if (Game_Flag_Query(298)) {
+	if (Game_Flag_Query(kFlagBB06toBB05)) {
 		Setup_Scene_Information(95.0f, -60.31f, 331.0f, 0);
-	} else if (Game_Flag_Query(302)) {
+	} else if (Game_Flag_Query(kFlagBB12toBB05)) {
 		Setup_Scene_Information(87.0f, -60.34f, -96.0f, 0);
-	} else if (Game_Flag_Query(300)) {
+	} else if (Game_Flag_Query(kFlagBB07toBB05)) {
 		Setup_Scene_Information(271.0f, -60.31f, 203.0f, 0);
 	} else {
 		Setup_Scene_Information(-212.0f, -60.31f, 131.0f, 0);
@@ -98,7 +98,7 @@ bool SceneScriptBB05::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptBB05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -212.0f, -60.31f, 131.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagBB05toBB03);
 			Set_Enter(kSetBB03, kSceneBB03);
@@ -107,27 +107,27 @@ bool SceneScriptBB05::ClickedOnExit(int exitId) {
 	}
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 95.0f, -60.31f, 331.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(297);
+			Game_Flag_Set(kFlagBB05toBB06);
 			Set_Enter(kSetBB06_BB07, kSceneBB06);
 		}
 		return true;
 	}
 	if (exitId == 2) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 271.0f, -60.31f, 203.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(299);
+			Game_Flag_Set(kFlagBB05toBB07);
 			Set_Enter(kSetBB07, kSceneBB07);
 		}
 		return true;
 	}
 	if (exitId == 3) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 151.0f, -60.34f, -108.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(301);
+			Game_Flag_Set(kFlagBB05toBB12);
 			Set_Enter(kSetBB12, kSceneBB12);
 		}
 		return true;
@@ -146,15 +146,15 @@ void SceneScriptBB05::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptBB05::PlayerWalkedIn() {
-	if (Game_Flag_Query(298)) {
+	if (Game_Flag_Query(kFlagBB06toBB05)) {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 95.0f, -60.31f, 303.0f, 0, 0, false, 0);
-		Game_Flag_Reset(298);
-	} else if (Game_Flag_Query(300)) {
+		Game_Flag_Reset(kFlagBB06toBB05);
+	} else if (Game_Flag_Query(kFlagBB07toBB05)) {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 231.0f, -60.31f, 203.0f, 0, 0, false, 0);
-		Game_Flag_Reset(300);
-	} else if (Game_Flag_Query(302)) {
+		Game_Flag_Reset(kFlagBB07toBB05);
+	} else if (Game_Flag_Query(kFlagBB12toBB05)) {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 111.0f, -60.31f, -24.0f, 0, 0, false, 0);
-		Game_Flag_Reset(302);
+		Game_Flag_Reset(kFlagBB12toBB05);
 	} else {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -76.0f, -60.31f, 131.0f, 0, 0, false, 0);
 		Game_Flag_Reset(kFlagBB03toBB05);

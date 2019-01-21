@@ -61,8 +61,8 @@ bool SceneScriptNR10::MouseClick(int x, int y) {
 	return Game_Flag_Query(642);
 }
 
-bool SceneScriptNR10::ClickedOn3DObject(const char *objectName, bool a2) {
-	if (Object_Query_Click("BOX18", objectName) && a2 && Game_Flag_Query(642)) {
+bool SceneScriptNR10::ClickedOn3DObject(const char *objectName, bool combatMode) {
+	if (Object_Query_Click("BOX18", objectName) && combatMode && Game_Flag_Query(642)) {
 		Actor_Set_Goal_Number(kActorDektora, 250);
 		Game_Flag_Set(640);
 		Game_Flag_Reset(642);

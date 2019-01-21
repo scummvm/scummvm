@@ -93,7 +93,7 @@ bool SceneScriptUG14::ClickedOnExit(int exitId) {
 			Footstep_Sound_Override_Off();
 		}
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -278.0f, 12.97f, -152.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(348);
 			Set_Enter(kSetUG19, kSceneUG19);
@@ -111,7 +111,7 @@ bool SceneScriptUG14::ClickedOnExit(int exitId) {
 			Footstep_Sound_Override_Off();
 		}
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -50.0f, 129.0f, -814.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(345);
 			Set_Enter(kSetCT08_CT51_UG12, kSceneUG12);
@@ -134,7 +134,7 @@ bool SceneScriptUG14::ClickedOnExit(int exitId) {
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 6, 1, kAnimationModeIdle);
 			Footstep_Sound_Override_Off();
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 233.0f, 186.04f, -32.0f, 0, 0, false, 0);
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(346);
 			Set_Enter(kSetUG10, kSceneUG10);
