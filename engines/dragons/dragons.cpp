@@ -27,12 +27,14 @@
 #include "actorresource.h"
 #include "background.h"
 #include "bigfile.h"
-#include "dragonrms.h"
 #include "dragonini.h"
+#include "dragonobd.h"
+#include "dragonrms.h"
 #include "dragons.h"
 #include "scene.h"
 #include "screen.h"
 #include "sequenceopcodes.h"
+#include "scriptopcodes.h"
 
 namespace Dragons {
 
@@ -53,12 +55,14 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	_flags = 0;
 	_unkFlags1 = 0;
 	_sequenceOpcodes = new SequenceOpcodes(this);
+	_scriptOpcodes = new ScriptOpcodes(this);
 	_engine = this;
 	_cursorPosition = Common::Point();
 }
 
 DragonsEngine::~DragonsEngine() {
 	delete _sequenceOpcodes;
+	delete _scriptOpcodes;
 }
 
 void DragonsEngine::updateEvents() {
@@ -77,11 +81,12 @@ void DragonsEngine::updateEvents() {
 Common::Error DragonsEngine::run() {
 	_screen = new Screen();
 	_bigfileArchive = new BigfileArchive("bigfile.dat", Common::Language::EN_ANY);
-	_dragonRMS = new DragonRMS(_bigfileArchive);
+	_dragonOBD = new DragonOBD(_bigfileArchive);
+	_dragonRMS = new DragonRMS(_bigfileArchive, _dragonOBD);
 	_dragonINIResource = new DragonINIResource(_bigfileArchive);
 	ActorResourceLoader *actorResourceLoader = new ActorResourceLoader(_bigfileArchive);
 	_actorManager = new ActorManager(actorResourceLoader);
-	_scene = new Scene(this, _screen, _bigfileArchive, _actorManager, _dragonRMS, _dragonINIResource);
+	_scene = new Scene(this, _screen, _scriptOpcodes, _bigfileArchive, _actorManager, _dragonRMS, _dragonINIResource);
 	_flags = 0x1046;
 
 	Actor *cursor = _actorManager->loadActor(0, 0); //Load cursor
@@ -291,6 +296,10 @@ void DragonsEngine::clearUnkFlags(uint32 flags) {
 byte *DragonsEngine::getBackgroundPalette() {
 	assert(_scene);
 	return _scene->getPalette();
+}
+
+bool DragonsEngine::isFlagSet(uint32 flag) {
+	return (bool)(_flags & flag);
 }
 
 } // End of namespace Dragons

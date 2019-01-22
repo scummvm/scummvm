@@ -26,12 +26,13 @@
 #include "dragonini.h"
 #include "screen.h"
 #include "actorresource.h"
+#include "scriptopcodes.h"
 
 namespace Dragons {
 
 
-Scene::Scene(DragonsEngine *vm, Screen *screen, BigfileArchive *bigfileArchive, ActorManager *actorManager, DragonRMS *dragonRMS, DragonINIResource *dragonINIResource)
-		: _vm(vm), _screen(screen), _stage(0), _bigfileArchive(bigfileArchive), _actorManager(actorManager), _dragonRMS(dragonRMS), _dragonINIResource(dragonINIResource) {
+Scene::Scene(DragonsEngine *vm, Screen *screen, ScriptOpcodes *scriptOpcodes, BigfileArchive *bigfileArchive, ActorManager *actorManager, DragonRMS *dragonRMS, DragonINIResource *dragonINIResource)
+		: _vm(vm), _screen(screen), _scriptOpcodes(scriptOpcodes), _stage(0), _bigfileArchive(bigfileArchive), _actorManager(actorManager), _dragonRMS(dragonRMS), _dragonINIResource(dragonINIResource) {
 	_backgroundLoader = new BackgroundResourceLoader(_bigfileArchive, _dragonRMS);
 }
 
@@ -45,7 +46,13 @@ void Scene::loadScene(uint32 sceneId, uint32 cameraPointId) {
 	}
 
 	if (!(sceneId & 0x8000)) {
-		// TODO opcodes here.
+		byte *obd = _dragonRMS->getObdDataField10(sceneId);
+		ScriptOpCall scriptOpCall;
+		scriptOpCall._code = obd + 4;
+		scriptOpCall._codeEnd = scriptOpCall._code + READ_LE_UINT32(obd);
+		_currentSceneId = -1;
+		_scriptOpcodes->runScript(scriptOpCall);
+		_currentSceneId = (uint16)(sceneId & 0x7fff);
 	}
 
 	_actorManager->clearActorFlags(2);
@@ -139,6 +146,17 @@ void Scene::loadScene(uint32 sceneId, uint32 cameraPointId) {
 			//break;
 		}
 		_currentSceneId = (uint16)(sceneId & 0x7fff);
+	}
+
+	if (!(sceneId & 0x8000)) {
+		byte *obd = _dragonRMS->getObdData(sceneId);
+		ScriptOpCall scriptOpCall;
+		scriptOpCall._code = obd + 4;
+		scriptOpCall._codeEnd = scriptOpCall._code + READ_LE_UINT32(obd);
+		_currentSceneId = -1;
+		_scriptOpcodes->runScript(scriptOpCall);
+		_currentSceneId = (uint16)(sceneId & 0x7fff);
+
 	}
 
 }

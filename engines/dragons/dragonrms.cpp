@@ -21,13 +21,14 @@
  */
 #include <common/memstream.h>
 #include "dragonrms.h"
+#include "dragonobd.h"
 #include "bigfile.h"
 
 namespace Dragons {
 
 #define DRAGON_RMS_STRUCT_SIZE 0x1c
 
-DragonRMS::DragonRMS(BigfileArchive *bigfileArchive) {
+DragonRMS::DragonRMS(BigfileArchive *bigfileArchive, DragonOBD *dragonOBD) : _dragonOBD(dragonOBD) {
 	uint32 fileSize;
 	byte *data = bigfileArchive->load("dragon.rms", fileSize);
 	Common::SeekableReadStream *readStream = new Common::MemoryReadStream(data, fileSize, DisposeAfterUse::YES);
@@ -49,9 +50,23 @@ DragonRMS::DragonRMS(BigfileArchive *bigfileArchive) {
 }
 
 char *DragonRMS::getSceneName(uint32 sceneId) {
-	if(sceneId > 1 && sceneId - 2 < _count) {
-		return _rmsObjects[sceneId - 2]._sceneName;
-	}
-	return NULL;
+	return getRMS(sceneId)->_sceneName;
 }
+
+byte *DragonRMS::getObdData(uint32 sceneId) {
+	return _dragonOBD->getObdAtOffset(getRMS(sceneId)->_obdOffset);
+}
+
+byte *DragonRMS::getObdDataField10(uint32 sceneId) {
+	return _dragonOBD->getObdAtOffset(getRMS(sceneId)->_field10ObdOffset);
+}
+
+RMS *DragonRMS::getRMS(uint32 sceneId) {
+	sceneId &= 0x7fff;
+	assert(sceneId > 1);
+	assert(sceneId - 2 < _count);
+	return &_rmsObjects[sceneId - 2];
+}
+
+
 } // End of namespace Dragons

@@ -58,10 +58,13 @@ enum Flags {
 	ENGINE_FLAG_2 = 2,
 	ENGINE_FLAG_4 = 4,
 	ENGINE_FLAG_8 = 8,
-	ENGINE_FLAG_10 = 10,
-	ENGINE_FLAG_20 = 20,
-	ENGINE_FLAG_40 = 40,
-	ENGINE_FLAG_80 = 80
+	ENGINE_FLAG_10 = 0x10,
+	ENGINE_FLAG_20 = 0x20,
+	ENGINE_FLAG_40 = 0x40,
+	ENGINE_FLAG_80 = 0x80,
+
+	ENGINE_FLAG_80000 =   0x80000,
+	ENGINE_FLAG_100000 = 0x100000
 };
 
 enum UnkFlags {
@@ -69,31 +72,35 @@ enum UnkFlags {
 	ENGINE_UNK1_FLAG_2 = 2,
 	ENGINE_UNK1_FLAG_4 = 4,
 	ENGINE_UNK1_FLAG_8 = 8,
-	ENGINE_UNK1_FLAG_10 = 10,
-	ENGINE_UNK1_FLAG_20 = 20,
-	ENGINE_UNK1_FLAG_40 = 40,
-	ENGINE_UNK1_FLAG_80 = 80
+	ENGINE_UNK1_FLAG_10 = 0x10,
+	ENGINE_UNK1_FLAG_20 = 0x20,
+	ENGINE_UNK1_FLAG_40 = 0x40,
+	ENGINE_UNK1_FLAG_80 = 0x80
 };
 
 class BigfileArchive;
 class BackgroundResourceLoader;
+class DragonOBD;
 class DragonRMS;
 class DragonINIResource;
 class Scene;
 class Screen;
 class ActorManager;
 class SequenceOpcodes;
+class ScriptOpcodes;
 
 class DragonsEngine : public Engine {
 private:
 	Screen *_screen;
 	BigfileArchive *_bigfileArchive;
+	DragonOBD *_dragonOBD;
 	DragonRMS *_dragonRMS;
 	DragonINIResource *_dragonINIResource;
 	BackgroundResourceLoader *_backgroundResourceLoader;
 	ActorManager *_actorManager;
 	Scene *_scene;
 	SequenceOpcodes *_sequenceOpcodes;
+	ScriptOpcodes *_scriptOpcodes;
 	uint32 _nextUpdatetime;
 	uint32 _flags;
 	uint32 _unkFlags1;
@@ -113,6 +120,7 @@ public:
 	void updateActorSequences();
 	void setFlags(uint32 flags);
 	void clearFlags(uint32 flags);
+	bool isFlagSet(uint32 flag);
 
 	void setUnkFlags(uint32 flags);
 	void clearUnkFlags(uint32 flags);

@@ -7,10 +7,12 @@ MODULE_OBJS := \
     bigfile.o \
 	detection.o \
     dragonini.o \
+    dragonobd.o \
     dragonrms.o \
 	dragons.o \
 	scene.o \
 	screen.o \
+	scriptopcodes.o
 	sequenceopcodes.o
 
 MODULE_DIRS += \

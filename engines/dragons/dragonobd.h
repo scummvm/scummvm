@@ -19,42 +19,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#ifndef SCUMMVM_DRAGONRMS_H
-#define SCUMMVM_DRAGONRMS_H
+#ifndef SCUMMVM_DRAGONOBD_H
+#define SCUMMVM_DRAGONOBD_H
 
 #include "common/system.h"
 
 namespace Dragons {
 
-struct RMS {
-	int32 _field0;
-	char _sceneName[4];
-	uint32 _obdOffset;
-	int32 _fieldC;
-	uint32 _field10ObdOffset;
-	int16 _inventoryBagPosition;
-	int32 _field16;
-	int16 _field1a;
-};
-
 class BigfileArchive;
-class DragonOBD;
 
-class DragonRMS {
+class DragonOBD {
 private:
-	int16 _count;
-	RMS *_rmsObjects;
-	DragonOBD *_dragonOBD;
+	byte *_data;
+	uint32_t _dataSize;
 public:
-	DragonRMS(BigfileArchive *bigfileArchive, DragonOBD *dragonOBD);
-	char *getSceneName(uint32 sceneId);
-	byte *getObdData(uint32 sceneId);
-	byte *getObdDataField10(uint32 sceneId);
+	virtual ~DragonOBD();
 
-private:
-	RMS *getRMS(uint32 sceneId);
+	DragonOBD(BigfileArchive *bigfileArchive);
+	byte *getObdAtOffset(uint32 offset);
 };
 
 } // End of namespace Dragons
 
-#endif //SCUMMVM_DRAGONRMS_H
+#endif //SCUMMVM_DRAGONOBD_H
