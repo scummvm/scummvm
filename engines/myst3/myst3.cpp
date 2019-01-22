@@ -1406,37 +1406,18 @@ Graphics::Surface *Myst3Engine::decodeJpeg(const DirectorySubEntry *jpegDesc) {
 	Common::MemoryReadStream *jpegStream = jpegDesc->getData();
 
 	Image::JPEGDecoder jpeg;
+	jpeg.setOutputPixelFormat(Texture::getRGBAPixelFormat());
+
 	if (!jpeg.loadStream(*jpegStream))
 		error("Could not decode Myst III JPEG");
 	delete jpegStream;
 
 	const Graphics::Surface *bitmap = jpeg.getSurface();
-	assert(bitmap->format == Graphics::PixelFormat(4, 8, 8, 8, 0, 24, 16, 8, 0));
+	assert(bitmap->format == Texture::getRGBAPixelFormat());
 
-	// Convert the surface to RGBA if needed.
-	// RGBA being the order of the bytes in memory, not in a 32 bits word.
-	Graphics::PixelFormat rgbaFormat = Texture::getRGBAPixelFormat();
+	// JPEGDecoder owns the decoded surface, we have to make a copy...
 	Graphics::Surface *rgbaSurface = new Graphics::Surface();
-
-#ifdef SCUMM_BIG_ENDIAN
-	assert(rgbaFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 	rgbaSurface->copyFrom(*bitmap);
-	rgbaSurface->format = rgbaFormat;
-#else
-	assert(rgbaFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
-
-	rgbaSurface->create(bitmap->w, bitmap->h, rgbaFormat);
-
-	// Use SWAP_BYTES_32 as an optimization. This path is hot.
-	for (uint y = 0; y < bitmap->h; y++) {
-		const uint32 *srcRow = (const uint32 *) bitmap->getBasePtr(0, y);
-		uint32 *dstRow = (uint32 *) rgbaSurface->getBasePtr(0, y);
-		for (uint x = 0; x < bitmap->w; x++) {
-			*dstRow++ = SWAP_BYTES_32(*srcRow++);
-		}
-	}
-#endif
-
 	return rgbaSurface;
 }
 
