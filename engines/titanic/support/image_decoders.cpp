@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/system.h"
 #include "titanic/support/image_decoders.h"
 
 namespace Titanic {
@@ -29,7 +30,8 @@ void CJPEGDecode::decode(OSVideoSurface &surface, const CString &name) {
 	StdCWadFile file;
 	file.open(name);
 
-	// Use the ScucmmVM deoder to decode it
+	// Use the ScummVM decoder to decode it
+	setOutputPixelFormat(g_system->getScreenFormat());
 	loadStream(*file.readStream());
 	const Graphics::Surface *srcSurf = getSurface();
 
@@ -38,15 +40,14 @@ void CJPEGDecode::decode(OSVideoSurface &surface, const CString &name) {
 			|| surface.getHeight() != srcSurf->h)
 		surface.recreate(srcSurf->w, srcSurf->h, 16);
 
-	// Convert the decoded surface to the correct pixel format, and then copy it over
+	// Copy the decoded surface
 	surface.lock();
-	Graphics::Surface *convertedSurface = srcSurf->convertTo(surface._rawSurface->format);
 
-	Common::copy((byte *)convertedSurface->getPixels(), (byte *)convertedSurface->getPixels() +
+	assert(srcSurf->format == surface._rawSurface->format);
+
+	Common::copy((const byte *)srcSurf->getPixels(), (const byte *)srcSurf->getPixels() +
 		surface.getPitch() * surface.getHeight(), (byte *)surface._rawSurface->getPixels());
 
-	convertedSurface->free();
-	delete convertedSurface;
 	surface.unlock();
 }
 

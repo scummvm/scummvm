@@ -125,6 +125,7 @@ Picture *Pictures::load(uint32 id) {
 		palette = png.getPalette();
 		palCount = png.getPaletteColorCount();
 	} else if (f.open(Common::String::format("pic%u.jpg", id))) {
+		jpg.setOutputPixelFormat(g_system->getScreenFormat());
 		jpg.loadStream(f);
 		img = jpg.getSurface();
 	} else if (f.open(Common::String::format("pic%u.raw", id))) {
