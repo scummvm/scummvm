@@ -35,6 +35,7 @@ class BackgroundResourceLoader;
 class DragonINIResource;
 class BigfileArchive;
 class Screen;
+class ScriptOpcodes;
 struct DragonINI;
 
 class Scene {
@@ -47,12 +48,13 @@ private:
 	DragonRMS *_dragonRMS;
 	DragonINIResource *_dragonINIResource;
 	BackgroundResourceLoader *_backgroundLoader;
+	ScriptOpcodes *_scriptOpcodes;
 
-	uint16 _currentSceneId;
+	int16 _currentSceneId;
 	Common::Point _camera;
 
 public:
-	Scene(DragonsEngine *vm, Screen *screen, BigfileArchive *bigfileArchive, ActorManager *actorManager, DragonRMS *_dragonRMS, DragonINIResource *_dragonINIResource);
+	Scene(DragonsEngine *vm, Screen *screen, ScriptOpcodes *scriptOpcodes, BigfileArchive *bigfileArchive, ActorManager *actorManager, DragonRMS *_dragonRMS, DragonINIResource *_dragonINIResource);
 
 	void loadScene(uint32 sceneId, uint32 cameraPointId);
 	int16 getPriorityAtPosition(Common::Point pos);
