@@ -1541,7 +1541,9 @@ const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename, cons
 	const Graphics::Font *font = 0;
 
 	// Prefer scalable fonts over non-scalable fonts
-	font = loadScalableFont(scalableFilename, charset, pointsize, fontName);
+	if (!scalableFilename.empty())
+		font = loadScalableFont(scalableFilename, charset, pointsize, fontName);
+
 	if (!font)
 		font = loadFont(filename, fontName);
 
