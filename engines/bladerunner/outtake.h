@@ -33,11 +33,11 @@ class BladeRunnerEngine;
 
 class OuttakePlayer {
 	BladeRunnerEngine *_vm;
+	Graphics::Surface  _surfaceVideo;
 
 public:
-	OuttakePlayer(BladeRunnerEngine *vm) {
-		_vm = vm;
-	}
+	OuttakePlayer(BladeRunnerEngine *vm);
+	~OuttakePlayer();
 
 	void play(const Common::String &name, bool noLocalization, int container);
 };

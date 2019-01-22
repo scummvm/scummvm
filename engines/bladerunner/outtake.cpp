@@ -32,6 +32,15 @@
 
 namespace BladeRunner {
 
+OuttakePlayer::OuttakePlayer(BladeRunnerEngine *vm) {
+	_vm = vm;
+	_surfaceVideo.create(_vm->_surfaceBack.w, _vm->_surfaceBack.h, createRGB555());
+}
+
+OuttakePlayer::~OuttakePlayer() {
+	_surfaceVideo.free();
+}
+
 void OuttakePlayer::play(const Common::String &name, bool noLocalization, int container) {
 	if (container > 0) {
 		debug("OuttakePlayer::play TODO");
@@ -45,7 +54,7 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 	Common::String resNameNoVQASuffix = resName;
 	resName = resName + ".VQA";
 
-	VQAPlayer vqa_player(_vm, &_vm->_surfaceBack, resName); // surfaceBack is needed here for subtitles rendering properly, original was _surfaceFront here
+	VQAPlayer vqa_player(_vm, &_surfaceVideo, resName); // in original game _surfaceFront is used here, but for proper subtitles rendering we need separate surface
 
 	vqa_player.open();
 
@@ -57,9 +66,10 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 				return;
 
 		int frame = vqa_player.update();
-		blit(_vm->_surfaceBack, _vm->_surfaceFront); // This helps to make subtitles disappear properly, if the video is rendered in surface back and then pushed to the front surface
-		if (frame == -3)
+		blit(_surfaceVideo, _vm->_surfaceFront); // This helps to make subtitles disappear properly, if the video is rendered in separate surface and then pushed to the front surface
+		if (frame == -3) { // end of video
 			break;
+		}
 
 		if (frame >= 0) {
 			_vm->_subtitles->getOuttakeSubsText(resNameNoVQASuffix, frame);
@@ -69,6 +79,8 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 
 		_vm->_system->delayMillis(10);
 	}
+
+	// TODO: scene video is played fast after end of outtake, fix it (visible in tb07)
 }
 
 } // End of namespace BladeRunner
