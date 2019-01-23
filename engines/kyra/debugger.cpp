@@ -642,7 +642,7 @@ bool Debugger_EoB::cmdPrintMap(int, const char **) {
 		if (s == 3 || s == 4)
 			c = '/';
 		else if (s == 2 || s == 8)
-			c = '°';
+			c = (uint8)'°';
 		else if (f & 8)
 			c = 216;
 		else if (f & 1)
