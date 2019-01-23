@@ -111,7 +111,7 @@ protected:
 
 private:
 	virtual void programChange(uint8 program) = 0;
-	virtual void prepareFrequencyAndVolume(bool updateVolume);
+	virtual bool prepareFrequencyAndVolume(bool updateVolume);
 	virtual void sendSoundOnOff(bool noteOn) = 0;
 	virtual void sendFrequency() = 0;
 	virtual void sendVolume() = 0;	
@@ -156,7 +156,7 @@ public:
 
 private:
 	void programChange(uint8 program);
-	void prepareFrequencyAndVolume(bool updateVolume);
+	bool prepareFrequencyAndVolume(bool updateVolume);
 	void processSounds();
 	void sendSoundOnOff(bool noteOn);
 	void sendVolume();
@@ -406,7 +406,9 @@ void SoundChannel_PC9801::processNoteEvent(uint8 note, bool noteOn) {
 		_flags |= kChanVbrRestartEnv;
 	}
 
-	prepareFrequencyAndVolume(noteOn);
+	if (!prepareFrequencyAndVolume(noteOn))
+		noteOn = false;
+
 	sendSoundOnOff(noteOn);
 }
 
@@ -480,6 +482,8 @@ int SoundChannel_PC9801::recalculateFrequency(uint16 note, uint16 modifier, uint
 
 	if (_type != 2)
 		res |= (block << 11);
+	else if (block == 0)
+		return -1;
 
 	if (pb)
 		res += (((pb * pitchVbrMultiplier) & 0x0FF0) >> 8);
@@ -591,12 +595,15 @@ void SoundChannel_PC9801::writeReg(uint8 part, uint8 reg, uint8 val) {
 	_pc98a->writeReg(part, reg, val);
 }
 
-void SoundChannel_PC9801::prepareFrequencyAndVolume(bool updateVolume) {
+bool SoundChannel_PC9801::prepareFrequencyAndVolume(bool updateVolume) {
 	if (recalculateFrequency(_note, 0, &_frequencyBlock, &_frequencyCourse, &_frequencyNoteModifier) == -1)
-		return;
+		return false;
+
 	sendFrequency();
 	if (updateVolume)
 		sendVolume();
+
+	return true;
 }
 
 SoundChannel_PC9801_FM4OP::SoundChannel_PC9801_FM4OP(uint8 id, PC98AudioCore *pc98a, MidiPart_PC9801 **parts, SciVersion version, SciSpan<const uint8> instrumentData, uint8 patchSize, bool &soundOn)
@@ -736,14 +743,17 @@ void SoundChannel_PC9801_FM2OP::programChange(uint8 program) {
 		writeReg(_regPrt, i, data[pos++]);
 }
 
-void SoundChannel_PC9801_FM2OP::prepareFrequencyAndVolume(bool updateVolume) {
+bool SoundChannel_PC9801_FM2OP::prepareFrequencyAndVolume(bool updateVolume) {
 	if (recalculateFrequency(_note, _opFreqOffset[_operatorFrqIndex[0]], 0, &_frequencyCourse, &_frequencyNoteModifier) == -1)
-		return;
+		return false;
 	if (recalculateFrequency(_note, _opFreqOffset[_operatorFrqIndex[1]], 0, &_frequencyCourse2, &_frequencyNoteModifier2) == -1)
-		return;
+		return false;
+
 	sendFrequency();
 	if (updateVolume)
 		sendVolume();
+
+	return true;
 }
 
 void SoundChannel_PC9801_FM2OP::sendSoundOnOff(bool noteOn) {
