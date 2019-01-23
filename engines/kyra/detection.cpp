@@ -130,6 +130,18 @@ const ADExtraGuiOptionsMap gameGuiOptions[] = {
 			true
 		}
 	},
+
+	{
+		GAMEOPTION_EOB_MOUSESWAP,
+		{
+			// I18N: L/R stands for Left/Right
+			_s("Fight Button L/R Swap"),
+			_s("Left button to attack, right button to pick up items"),
+			"mousebtswap",
+			false
+		}
+	},
+
 #endif
 
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR

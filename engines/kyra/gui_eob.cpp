@@ -873,7 +873,9 @@ int EoBCoreEngine::clickedWeaponSlot(Button *button) {
 	static const uint8 sY[] = { 27, 27, 79, 79, 131, 131 };
 	int slot = sY[button->arg] > _mouseY ? 0 : 1;
 
-	if ((_gui->_flagsMouseLeft & 0x7F) == 1)
+	uint16 flags = _configMouseBtSwap ? _gui->_flagsMouseRight : _gui->_flagsMouseLeft;
+
+	if ((flags & 0x7F) == 1)
 		gui_processWeaponSlotClickLeft(button->arg, slot);
 	else
 		gui_processWeaponSlotClickRight(button->arg, slot);

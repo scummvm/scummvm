@@ -767,6 +767,7 @@ protected:
 	const uint8 **_compassShapes;
 	uint8 _charExchangeSwap;
 	bool _configHpBarGraphs;
+	bool _configMouseBtSwap;
 
 	Graphics::Surface _thumbNail;
 

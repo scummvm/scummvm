@@ -121,6 +121,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags)
 	_exchangeCharacterId = -1;
 	_charExchangeSwap = 0;
 	_configHpBarGraphs = true;
+	_configMouseBtSwap = false;
 
 	memset(_dialogueLastBitmap, 0, 13);
 	_npcSequenceSub = 0;
@@ -595,11 +596,13 @@ Common::Error EoBCoreEngine::go() {
 void EoBCoreEngine::registerDefaultSettings() {
 	KyraEngine_v1::registerDefaultSettings();
 	ConfMan.registerDefault("hpbargraphs", true);
+	ConfMan.registerDefault("mousebtswap", false);
 	ConfMan.registerDefault("importOrigSaves", true);
 }
 
 void EoBCoreEngine::readSettings() {
 	_configHpBarGraphs = ConfMan.getBool("hpbargraphs");
+	_configMouseBtSwap = ConfMan.getBool("mousebtswap");
 	_configSounds = ConfMan.getBool("sfx_mute") ? 0 : 1;
 	_configMusic = _configSounds ? 1 : 0;
 
@@ -609,6 +612,7 @@ void EoBCoreEngine::readSettings() {
 
 void EoBCoreEngine::writeSettings() {
 	ConfMan.setBool("hpbargraphs", _configHpBarGraphs);
+	ConfMan.setBool("mousebtswap", _configMouseBtSwap);
 	ConfMan.setBool("sfx_mute", _configSounds == 0);
 
 	if (_sound) {
