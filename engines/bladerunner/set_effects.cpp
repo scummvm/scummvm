@@ -58,10 +58,10 @@ void SetEffects::read(Common::ReadStream *stream, int frameCount) {
 		Fog *fog = nullptr;
 		switch (type) {
 		case 0:
-			fog = new FogCone();
+			fog = new FogSphere();
 			break;
 		case 1:
-			fog = new FogSphere();
+			fog = new FogCone();
 			break;
 		case 2:
 			fog = new FogBox();
@@ -92,6 +92,9 @@ void SetEffects::reset() {
 }
 
 void SetEffects::setupFrame(int frame) {
+	for (Fog *fog = _fogs; fog != nullptr; fog = fog->_next) {
+		fog->setupFrame(frame);
+	}
 }
 
 void SetEffects::setFadeColor(float r, float g, float b) {

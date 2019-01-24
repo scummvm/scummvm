@@ -61,15 +61,16 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 
 	_isDebuggerOverlay = false;
 
-	_viewSceneObjects = false;
 	_viewActorsOnly = false;
 	_viewLights = false;
 	_viewFogs = false;
+	_viewSceneObjects = false;
+	_viewScreenEffects = false;
+	_viewObstacles = false;
 	_viewRegions = false;
+	_viewUI = false;
 	_viewWaypoints = false;
 	_viewWalkboxes = false;
-	_viewObstacles = false;
-	_viewUI = false;
 	_viewZBuffer = false;
 
 	registerCmd("anim", WRAP_METHOD(Debugger, cmdAnimation));
@@ -122,53 +123,72 @@ bool Debugger::cmdAnimation(int argc, const char **argv) {
 
 bool Debugger::cmdDraw(int argc, const char **argv) {
 	if (argc != 2) {
-		debugPrintf("Enables debug rendering of scene objects, obstacles, ui elements, zbuffer or disables debug rendering.\n");
-		debugPrintf("Usage: %s (obj | reg | lit | fog | way | walk | act | obstacles | ui | zbuf | reset)\n", argv[0]);
+		debugPrintf("Enables debug rendering of actors, screen effect, fogs, lights, scene objects, obstacles, regsions, ui elements, walk boxes, waypoints, zbuffer or disables debug rendering.\n");
+		debugPrintf("Usage: %s (act | eff | fog | lit | obj | obstacles | reg | ui | walk | way | zbuf | reset)\n", argv[0]);
 		return true;
 	}
 
 	Common::String arg = argv[1];
-	if (arg == "obj") {
+	if (arg == "act") {
 		_viewSceneObjects = !_viewSceneObjects;
-		debugPrintf("Drawing scene objects = %i\n", _viewSceneObjects);
-	} else if (arg == "reg") {
-		_viewRegions = !_viewRegions;
-		debugPrintf("Drawing regions = %i\n", _viewRegions);
-	} else if (arg == "lit") {
-		_viewLights = !_viewLights;
-		debugPrintf("Drawing lights = %i\n", _viewLights);
+		_viewActorsOnly = _viewSceneObjects;
+		debugPrintf("Drawing actors = %i\n", _viewSceneObjects);
+	} else if (arg == "eff") {
+		_viewScreenEffects = !_viewScreenEffects;
+		debugPrintf("Drawing screen effects = %i\n", _viewScreenEffects);
 	} else if (arg == "fog") {
 		_viewFogs = !_viewFogs;
 		debugPrintf("Drawing fogs = %i\n", _viewFogs);
-	} else if (arg == "way") {
-		_viewWaypoints = !_viewWaypoints;
-		debugPrintf("Drawing waypoints = %i\n", _viewWaypoints);
-	} else if (arg == "walk") {
-		_viewWalkboxes = !_viewWalkboxes;
-		debugPrintf("Drawing walk boxes = %i\n", _viewWalkboxes);
-	} else if (arg == "actors") {
+	} else if (arg == "lit") {
+		_viewLights = !_viewLights;
+		debugPrintf("Drawing lights = %i\n", _viewLights);
+	} else if (arg == "reg") {
+		_viewRegions = !_viewRegions;
+		debugPrintf("Drawing regions = %i\n", _viewRegions);
+	}else if (arg == "obj") {
 		_viewSceneObjects = !_viewSceneObjects;
-		_viewActorsOnly = _viewSceneObjects;
-		debugPrintf("Drawing scene actors = %i\n", _viewSceneObjects);
+		debugPrintf("Drawing scene objects = %i\n", _viewSceneObjects);
 	} else if (arg == "obstacles") {
 		_viewObstacles = !_viewObstacles;
 		debugPrintf("Drawing obstacles = %i\n", _viewObstacles);
 	} else if (arg == "ui") {
 		_viewUI = !_viewUI;
 		debugPrintf("Drawing UI elements = %i\n", _viewUI);
+	} else if (arg == "way") {
+		_viewWaypoints = !_viewWaypoints;
+		debugPrintf("Drawing waypoints = %i\n", _viewWaypoints);
+	} else if (arg == "walk") {
+		_viewWalkboxes = !_viewWalkboxes;
+		debugPrintf("Drawing walk boxes = %i\n", _viewWalkboxes);
 	} else if (arg == "zbuf") {
 		_viewZBuffer = !_viewZBuffer;
 		debugPrintf("Drawing Z buffer = %i\n", _viewZBuffer);
 	} else if (arg == "reset") {
+		_viewActorsOnly = false;
+		_viewScreenEffects = false;
+		_viewFogs = false;
+		_viewLights = false;
+		_viewObstacles = false;
+		_viewRegions = false;
 		_viewSceneObjects = false;
 		_viewUI = false;
+		_viewWaypoints = false;
+		_viewWalkboxes = false;
 		_viewZBuffer = false;
+
+		debugPrintf("Drawing screen effects = %i\n", _viewScreenEffects);
+		debugPrintf("Drawing fogs = %i\n", _viewFogs);
+		debugPrintf("Drawing lights = %i\n", _viewLights);
+		debugPrintf("Drawing obstacles = %i\n", _viewObstacles);
+		debugPrintf("Drawing regions = %i\n", _viewRegions);
 		debugPrintf("Drawing scene objects = %i\n", _viewSceneObjects);
 		debugPrintf("Drawing UI elements = %i\n", _viewUI);
+		debugPrintf("Drawing waypoints = %i\n", _viewWaypoints);
+		debugPrintf("Drawing walkboxes = %i\n", _viewWalkboxes);
 		debugPrintf("Drawing Z buffer = %i\n", _viewZBuffer);
 	}
 
-	_isDebuggerOverlay = _viewSceneObjects | _viewRegions | _viewLights | _viewFogs | _viewWaypoints | _viewWalkboxes;
+	_isDebuggerOverlay = _viewSceneObjects | _viewScreenEffects | _viewRegions | _viewLights | _viewFogs | _viewWaypoints | _viewWalkboxes;
 	return true;
 }
 
@@ -650,6 +670,7 @@ bool Debugger::cmdSave(int argc, const char **argv) {
 
 void Debugger::drawDebuggerOverlay() {
 	if (_viewSceneObjects) drawSceneObjects();
+	if (_viewScreenEffects) drawScreenEffects();
 	if (_viewLights) drawLights();
 	if (_viewFogs) drawFogs();
 	if (_viewRegions) drawRegions();
@@ -760,13 +781,14 @@ void Debugger::drawLights() {
 
 		Vector3 posOriginT = _vm->_view->calculateScreenPosition(posOrigin);
 		Vector3 posTargetT = _vm->_view->calculateScreenPosition(posTarget);
+
 		_vm->_surfaceFront.drawLine(posOriginT.x, posOriginT.y, posTargetT.x, posTargetT.y, color);
+
 		_vm->_mainFont->drawColor(light->_name, _vm->_surfaceFront, posOriginT.x, posOriginT.y, color);
 	}
 }
 
 void Debugger::drawFogs() {
-	// draw fogs
 	for (Fog *fog = _vm->_scene->_set->_effects->_fogs; fog != nullptr; fog = fog->_next) {
 
 		// Matrix4x3 m = fog->_matrix;
@@ -779,6 +801,10 @@ void Debugger::drawFogs() {
 		posOrigin.y = posOrigin.z;
 		posOrigin.z = -t;
 
+		Vector3 posTarget = m * Vector3(0.0f, 0.0f, -100.0f);
+		t = posTarget.y;
+		posTarget.y = posTarget.z;
+		posTarget.z = -t;
 
 		Vector3 size = Vector3(5.0f, 5.0f, 5.0f);
 		int colorR = (fog->_fogColor.r * 31.0f);
@@ -789,8 +815,11 @@ void Debugger::drawFogs() {
 		drawBBox(posOrigin - size, posOrigin + size, _vm->_view, &_vm->_surfaceFront, color);
 
 		Vector3 posOriginT = _vm->_view->calculateScreenPosition(posOrigin);
-		// Vector3 posTargetT = _vm->_view->calculateScreenPosition(posTarget);
-		// _vm->_surfaceFront.drawLine(posOriginT.x, posOriginT.y, posTargetT.x, posTargetT.y, color);
+		Vector3 posTargetT = _vm->_view->calculateScreenPosition(posTarget);
+
+		// TODO: draw line only for cone fogs, draw boxes or circles for the other types
+		_vm->_surfaceFront.drawLine(posOriginT.x, posOriginT.y, posTargetT.x, posTargetT.y, color);
+
 		_vm->_mainFont->drawColor(fog->_name, _vm->_surfaceFront, posOriginT.x, posOriginT.y, color);
 	}
 }

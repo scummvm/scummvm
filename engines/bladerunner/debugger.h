@@ -42,15 +42,16 @@ class Debugger : public GUI::Debugger{
 public:
 	bool _isDebuggerOverlay;
 
-	bool _viewSceneObjects;
 	bool _viewActorsOnly;
-	bool _viewLights;
 	bool _viewFogs;
+	bool _viewLights;
+	bool _viewScreenEffects;
+	bool _viewSceneObjects;
+	bool _viewObstacles;
 	bool _viewRegions;
+	bool _viewUI;
 	bool _viewWaypoints;
 	bool _viewWalkboxes;
-	bool _viewObstacles;
-	bool _viewUI;
 	bool _viewZBuffer;
 
 

@@ -32,6 +32,8 @@
 namespace BladeRunner {
 
 class SetEffects {
+	friend class Debugger;
+
 	BladeRunnerEngine *_vm;
 
 	Color _distanceColor;
