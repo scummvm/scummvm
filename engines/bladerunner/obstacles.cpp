@@ -284,9 +284,17 @@ restart:
 			continue;
 		}
 
+		if (polyA.verticeCount == 0) {
+				continue;
+		}
+
 		for (int j = i+1; j < kPolygonCount; ++j) {
 			Polygon &polyB = _polygons[j];
 			if (!polyB.isPresent) {
+				continue;
+			}
+
+			if (polyB.verticeCount == 0) {
 				continue;
 			}
 
