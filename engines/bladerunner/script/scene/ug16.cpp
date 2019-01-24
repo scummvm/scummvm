@@ -28,19 +28,22 @@ void SceneScriptUG16::InitializeScene() {
 	if (Game_Flag_Query(552)) {
 		Setup_Scene_Information(-270.76f, -34.88f, -504.02f, 404);
 		Game_Flag_Reset(552);
-	} else if (Game_Flag_Query(kFlagUG15toUG16)) {
+	} else if (Game_Flag_Query(kFlagUG15toUG16a)) {
 		Setup_Scene_Information(-322.0f, -34.0f, -404.0f, 345);
-		Game_Flag_Reset(kFlagUG15toUG16);
+		Game_Flag_Reset(kFlagUG15toUG16a);
 	} else {
 		Setup_Scene_Information(-318.0f, -34.0f, -216.0f, 340);
-		Game_Flag_Reset(354);
+		Game_Flag_Reset(kFlagUG15toUG16b);
 	}
+
 	Scene_Exit_Add_2D_Exit(0, 242, 169, 282, 262, 3);
 	Scene_Exit_Add_2D_Exit(1, 375, 166, 407, 251, 3);
 	Scene_Exit_Add_2D_Exit(2, 461, 148, 523, 248, 0);
+
 	Ambient_Sounds_Add_Looping_Sound(516, 33, 81, 0);
-	Ambient_Sounds_Add_Looping_Sound(332, 40, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(333, 40, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(332, 40,  0, 1);
+	Ambient_Sounds_Add_Looping_Sound(333, 40,  0, 1);
+
 	if (Game_Flag_Query(568)) {
 		Scene_Loop_Set_Default(5);
 	} else {
@@ -132,24 +135,26 @@ bool SceneScriptUG16::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -322.0f, -34.0f, -216.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(355);
+			Game_Flag_Set(kFlagUG16toUG15b);
 			Set_Enter(kSetUG15, kSceneUG15);
 		}
 		return true;
 	}
+
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -322.0f, -34.0f, -404.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(kFlagUG16toUG15);
+			Game_Flag_Set(kFlagUG16toUG15a);
 			Set_Enter(kSetUG15, kSceneUG15);
 		}
 		return true;
 	}
+
 	if (exitId == 2) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -316.78f, -34.88f, -533.27f, 0, 1, false, 0)) {
 			Actor_Face_Heading(kActorMcCoy, 0, false);
-			Loop_Actor_Travel_Stairs(kActorMcCoy, 13, 1, kAnimationModeIdle);
+			Loop_Actor_Travel_Stairs(kActorMcCoy, 13, true, kAnimationModeIdle);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(551);

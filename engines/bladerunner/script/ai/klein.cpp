@@ -70,11 +70,11 @@ bool AIScriptKlein::Update() {
 	}
 	if ( Player_Query_Current_Scene() == kScenePS07
 	 &&  Actor_Query_Friendliness_To_Other(kActorKlein, kActorMcCoy) < 35
-	 && !Game_Flag_Query(kFlagKleinInsulted)
+	 && !Game_Flag_Query(kFlagPS07KleinInsulted)
 	) {
 		AI_Countdown_Timer_Reset(kActorKlein, 2);
 		AI_Countdown_Timer_Start(kActorKlein, 2, 5);
-		Game_Flag_Set(kFlagKleinInsulted);
+		Game_Flag_Set(kFlagPS07KleinInsulted);
 		return true;
 	}
 	if (Actor_Query_Goal_Number(kActorKlein) == 7) {
@@ -92,8 +92,8 @@ bool AIScriptKlein::Update() {
 
 void AIScriptKlein::TimerExpired(int timer) {
 	if (timer == 2) {
-		if ( Game_Flag_Query(kFlagKleinInsulted)
-		 && !Game_Flag_Query(kFlagKleinInsultedTalk)
+		if ( Game_Flag_Query(kFlagPS07KleinInsulted)
+		 && !Game_Flag_Query(kFlagPS07KleinInsultedTalk)
 		 &&  Actor_Query_Is_In_Current_Set(kActorKlein)
 		) {
 			Actor_Face_Actor(kActorKlein, kActorMcCoy, true);
@@ -101,7 +101,7 @@ void AIScriptKlein::TimerExpired(int timer) {
 			Actor_Says(kActorMcCoy, 4120, kAnimationModeTalk);
 			Actor_Says(kActorKlein, 20, kAnimationModeTalk);
 			Actor_Says(kActorMcCoy, 4125, kAnimationModeTalk);
-			Game_Flag_Set(kFlagKleinInsultedTalk);
+			Game_Flag_Set(kFlagPS07KleinInsultedTalk);
 			Actor_Set_Goal_Number(kActorKlein, 4);
 		} else {
 			Actor_Says(kActorKlein, 10, kAnimationModeTalk);

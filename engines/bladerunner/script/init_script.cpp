@@ -110,7 +110,7 @@ void InitScript::Init_Game_Flags() {
 		Global_Variable_Set(40, 3);
 	}
 
-	Game_Flag_Set(kFlagMcCoyAtRCxx);
+	Game_Flag_Set(kFlagMcCoyInRunciters);
 	Game_Flag_Set(kFlagSpinnerAtRC01);
 }
 

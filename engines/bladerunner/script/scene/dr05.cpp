@@ -24,18 +24,27 @@
 
 namespace BladeRunner {
 
+enum kDR05Loops {
+	kDR05LoopMain          = 0,
+	kDR05LoopMainDestroyed = 2
+};
+
 void SceneScriptDR05::InitializeScene() {
 	Setup_Scene_Information(-22.0f, 0.3f, 221.0f, 0);
+
 	Game_Flag_Reset(kFlagDR04toDR05);
+
 	Scene_Exit_Add_2D_Exit(0, 0, 38, 80, 467, 3);
+
 	Ambient_Sounds_Add_Looping_Sound(383, 25, 0, 1);
+
 	if (!Game_Flag_Query(kFlagDR05BombExploded)) {
-		Overlay_Play("DR05OVER", 0, 1, 0, 0);
+		Overlay_Play("DR05OVER", 0, true, false, 0);
 	}
 	if (Game_Flag_Query(kFlagDR05BombExploded)) {
-		Scene_Loop_Set_Default(2);
+		Scene_Loop_Set_Default(kDR05LoopMainDestroyed);
 	} else {
-		Scene_Loop_Set_Default(0);
+		Scene_Loop_Set_Default(kDR05LoopMain);
 	}
 }
 
@@ -44,10 +53,11 @@ void SceneScriptDR05::SceneLoaded() {
 	Unobstacle_Object("BOX06", true);
 	Unobstacle_Object("BOX183", true);
 	Clickable_Object("T2 DOORWAY");
+
 	if (!Game_Flag_Query(kFlagDR05BombExploded)) {
-		Item_Add_To_World(78, 932, 35, -1.57f, 31.33f, 75.21f, 540, 16, 16, true, true, false, true);
-		if (Actor_Query_Goal_Number(kActorMoraji) == 0) {
-			Item_Add_To_World(122, 931, 35, 37.35f, 1.59f, 46.72f, 0, 20, 20, true, true, false, true);
+		Item_Add_To_World(kItemBomb, 932, kSetDR05, -1.57f, 31.33f, 75.21f, 540, 16, 16, true, true, false, true);
+		if (Actor_Query_Goal_Number(kActorMoraji) == kGoalMorajiDefault) {
+			Item_Add_To_World(kItemChain, 931, kSetDR05, 37.35f, 1.59f, 46.72f, 0, 20, 20, true, true, false, true);
 		}
 	}
 }
@@ -58,19 +68,20 @@ bool SceneScriptDR05::MouseClick(int x, int y) {
 
 bool SceneScriptDR05::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("T2 DOORWAY", objectName)) {
-		if (Game_Flag_Query(kFlagNotUsed276)
-		 || Actor_Query_Goal_Number(kActorMoraji) != 0
+		if (!Game_Flag_Query(kFlagNotUsed276)
+		 &&  Actor_Query_Goal_Number(kActorMoraji) == kGoalMorajiDefault
 		) {
+			Actor_Face_Object(kActorMcCoy, "T2 DOORWAY", true);
+			Actor_Says(kActorMcCoy, 1020, 14);
+			Actor_Says(kActorMoraji, 90, 13);
+		} else {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 57.61f, 0.3f, 69.27f, 0, true, false, 0)) {
 				Actor_Face_Object(kActorMcCoy, "T2 DOORWAY", true);
 				Actor_Says(kActorMcCoy, 8522, 13);
 				Actor_Says(kActorMcCoy, 8521, 14);
 			}
-		} else {
-			Actor_Face_Object(kActorMcCoy, "T2 DOORWAY", true);
-			Actor_Says(kActorMcCoy, 1020, 14);
-			Actor_Says(kActorMoraji, 90, 13);
 		}
+
 		return true;
 	}
 	return false;
@@ -81,30 +92,31 @@ bool SceneScriptDR05::ClickedOnActor(int actorId) {
 }
 
 bool SceneScriptDR05::ClickedOnItem(int itemId, bool a2) {
-	if (itemId == 78) {
+	if (itemId == kItemBomb) {
 		if (Player_Query_Combat_Mode()) {
 			Game_Flag_Set(kFlagDR05BombWillExplode);
-			Actor_Set_Goal_Number(kActorMoraji, 30);
+			Actor_Set_Goal_Number(kActorMoraji, kGoalMorajiChooseFate);
 		} else if (!Game_Flag_Query(kFlagDR05BombExploded)
-		        && !Loop_Actor_Walk_To_Item(kActorMcCoy, 78, 24, 1, true)
-		        &&  Actor_Query_Goal_Number(kActorMoraji) != 11
+		        && !Loop_Actor_Walk_To_Item(kActorMcCoy, kItemBomb, 24, true, true)
+		        &&  Actor_Query_Goal_Number(kActorMoraji) != kGoalMorajiRunOut
 		) {
 			if (!Actor_Query_Goal_Number(kActorMoraji)) {
 				Actor_Says_With_Pause(kActorMcCoy, 1015, 0.1f, 12);
 				Actor_Says(kActorMoraji, 70, 13);
 			}
-			Actor_Set_Goal_Number(kActorMoraji, 30);
+			Actor_Set_Goal_Number(kActorMoraji, kGoalMorajiChooseFate);
 		}
 		//return true; //bug?
 	}
-	if (itemId == 122
+
+	if (itemId == kItemChain
 	 && Player_Query_Combat_Mode()
-	 && Actor_Query_Goal_Number(kActorMoraji) == 0
+	 && Actor_Query_Goal_Number(kActorMoraji) == kGoalOfficerLearyDefault
 	) {
-		Overlay_Play("DR05OVER", 1, 0, 1, 0);
-		Item_Remove_From_World(122);
+		Overlay_Play("DR05OVER", 1, false, true, 0);
+		Item_Remove_From_World(kItemChain);
 		Game_Flag_Set(kFlagDR05ChainShot);
-		Actor_Set_Goal_Number(kActorMoraji, 10);
+		Actor_Set_Goal_Number(kActorMoraji, kGoalMorajiFreed);
 		Music_Play(18, 71, 0, 0, -1, 0, 2);
 		return true;
 	}
@@ -131,11 +143,12 @@ void SceneScriptDR05::SceneFrameAdvanced(int frame) {
 	if (frame == 49) {
 		Sound_Play(148, Random_Query(50, 50), 80, 80, 50);
 	}
+
 	if (Game_Flag_Query(kFlagDR05BombWillExplode)) {
-		Item_Remove_From_World(78);
+		Item_Remove_From_World(kItemBomb);
 		Game_Flag_Reset(kFlagDR05BombWillExplode);
 		Game_Flag_Set(kFlagDR05BombExploded);
-		Actor_Set_Goal_Number(kActorMoraji, 30);
+		Actor_Set_Goal_Number(kActorMoraji, kGoalMorajiChooseFate);
 	}
 }
 
@@ -147,11 +160,11 @@ void SceneScriptDR05::PlayerWalkedIn() {
 	 && !Game_Flag_Query(kFlagDR05ChainShot)
 	 &&  Game_Flag_Query(kFlagDR05BombExploded)
 	) {
-		Item_Remove_From_World(122);
+		Item_Remove_From_World(kItemChain);
 	}
 
 	if (Game_Flag_Query(kFlagDR05BombExploded)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -10.0f, 0.3f, 133.0f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -10.0f, 0.3f, 133.0f, 0, false, false, 0);
 		if (!Game_Flag_Query(kFlagDR05ExplodedEntered)) {
 			Game_Flag_Set(kFlagDR05ExplodedEntered);
 			if (Game_Flag_Query(kFlagSadikIsReplicant)) {
@@ -170,18 +183,18 @@ void SceneScriptDR05::PlayerWalkedIn() {
 			}
 		}
 	} else {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -10.0f, 0.3f, 133.0f, 0, 0, true, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -10.0f, 0.3f, 133.0f, 0, false, true, 0);
 	}
 
 	if (!Game_Flag_Query(kFlagDR05MorajiTalk)
-	 && !Actor_Query_Goal_Number(kActorMoraji)
+	 &&  Actor_Query_Goal_Number(kActorMoraji) == kGoalMorajiDefault
 	) {
 		Actor_Face_Actor(kActorMcCoy, kActorMoraji, true);
 		Actor_Says(kActorMcCoy, 1010, 13);
-		Actor_Face_Item(kActorMcCoy, 78, true);
+		Actor_Face_Item(kActorMcCoy, kItemBomb, true);
 		Player_Set_Combat_Mode(true);
 		Actor_Says(kActorMoraji, 60, 12);
-		Actor_Change_Animation_Mode(kActorMcCoy, 0);
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
 		Game_Flag_Set(kFlagDR05MorajiTalk);
 		//return true;
 	}
@@ -191,8 +204,12 @@ void SceneScriptDR05::PlayerWalkedIn() {
 void SceneScriptDR05::PlayerWalkedOut() {
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
-	if (Actor_Query_Goal_Number(kActorMoraji) == 10 || Actor_Query_Goal_Number(kActorMoraji) == 18 || Actor_Query_Goal_Number(kActorMoraji) == 19) {
-		Actor_Set_Goal_Number(kActorMoraji, 11);
+
+	if (Actor_Query_Goal_Number(kActorMoraji) == kGoalMorajiFreed
+	 || Actor_Query_Goal_Number(kActorMoraji) == kGoalMorajiGetUp
+	 || Actor_Query_Goal_Number(kActorMoraji) == kGoalMorajiScream
+	) {
+		Actor_Set_Goal_Number(kActorMoraji, kGoalMorajiRunOut);
 		//return true;
 	}
 	//return false;

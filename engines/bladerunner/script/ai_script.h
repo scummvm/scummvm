@@ -137,10 +137,10 @@ DECLARE_SCRIPT(Gordo)
 	int _frameMax;
 	int _state;
 
-	void sub_40FD00();
+	void McCoyTalkWithGordo();
 	void sub_4103B8();
-	void sub_410590();
-	void sub_41090C();
+	void dialogueWithGordo2();
+	void dialogueWithGordo1();
 	void sub_41117C();
 END_SCRIPT
 
@@ -185,7 +185,7 @@ DECLARE_SCRIPT(Izo)
 	int _var4;
 	bool _flag;
 
-	void someDialog();
+	void dialogueWithIzo();
 	void modifyWaypoints();
 END_SCRIPT
 

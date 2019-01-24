@@ -168,11 +168,11 @@ DECLARE_SCRIPT(DR02)
 END_SCRIPT
 
 DECLARE_SCRIPT(DR03)
-	void sub_401B18();
+	void dialogueWithChew();
 END_SCRIPT
 
 DECLARE_SCRIPT(DR04)
-	bool sub_401160();
+	bool farEnoughFromExplosion();
 END_SCRIPT
 
 DECLARE_SCRIPT(DR05)
@@ -441,7 +441,7 @@ DECLARE_SCRIPT(TB06)
 END_SCRIPT
 
 DECLARE_SCRIPT(TB07)
-	void sub_401B0C();
+	void McCoyTalkWithRachaelAndTyrell();
 END_SCRIPT
 
 DECLARE_SCRIPT(UG01)

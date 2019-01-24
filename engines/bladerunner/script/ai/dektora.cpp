@@ -38,94 +38,94 @@ void AIScriptDektora::Initialize() {
 	_flag = false;
 	_x = _y = _z = 0.0f;
 
-	Actor_Set_Goal_Number(kActorDektora, 0);
+	Actor_Set_Goal_Number(kActorDektora, kGoalDektoraDefault);
 }
 
 bool AIScriptDektora::Update() {
-	int chapter = Global_Variable_Query(kVariableChapter) - 2;
+	int chapter = Global_Variable_Query(kVariableChapter);
 
-	if (chapter > 2)
-		return true;
-
-	if (chapter) {
-		if (chapter == 1) {
-			if (Actor_Query_Goal_Number(kActorDektora) < 199) {
-				Actor_Set_Goal_Number(kActorDektora, 199);
-			} else {
-				switch (Actor_Query_Goal_Number(kActorDektora)) {
-				case 269:
-					Actor_Set_Goal_Number(kActorDektora, 270);
-					return 1;
-
-				case 270:
-				case 272:
-				case 274:
-					return 1;
-
-				case 271:
-					if (Actor_Query_Inch_Distance_From_Actor(kActorDektora, kActorMcCoy) <= 48) {
-						Actor_Set_Goal_Number(kActorDektora, 279);
-						return 1;
-					}
-
-					if (comp_distance(kActorMcCoy, _x, _y, _z) > 12.0f) {
-						Actor_Query_XYZ(kActorMcCoy, &_x, &_y, &_z);
-						Async_Actor_Walk_To_XYZ(kActorDektora, _x, _y, _z, 36, 0);
-					}
-					break;
-
-				case 273:
-					Actor_Set_Goal_Number(kActorDektora, 274);
-					return 1;
-
-				case 275:
-					Actor_Set_Goal_Number(kActorDektora, 276);
-					return 1;
+	if (chapter == 2) {
+		if (!Game_Flag_Query(kFlagDektoraChapter2Started)) {
+			Game_Flag_Set(kFlagDektoraChapter2Started);
+			Actor_Put_In_Set(kActorDektora, kSetFreeSlotG);
+			Actor_Set_At_Waypoint(kActorDektora, 39, 0);
+			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraStartWalkingAround);
+		} else {
+			if ( Game_Flag_Query(kFlagAR02DektoraWillBuyScorpions)
+			 && !Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)
+			 &&  Player_Query_Current_Scene() != kSceneAR01
+			 &&  Player_Query_Current_Scene() != kSceneAR02
+			) {
+				if (Game_Flag_Query(kFlagAR02Entered)) {
+					Item_Remove_From_World(kItemScrorpions);
 				}
+				Game_Flag_Set(kFlagAR02DektoraBoughtScorpions);
 			}
-		} else if (Actor_Query_Goal_Number(kActorDektora) < 300) {
+		}
+		return true;
+	}
+
+	if (chapter == 3) {
+		if (Actor_Query_Goal_Number(kActorDektora) < 199) {
+			Actor_Set_Goal_Number(kActorDektora, 199);
+		} else {
+			switch (Actor_Query_Goal_Number(kActorDektora)) {
+			case 269:
+				Actor_Set_Goal_Number(kActorDektora, 270);
+				break;
+
+			case 271:
+				if (Actor_Query_Inch_Distance_From_Actor(kActorDektora, kActorMcCoy) <= 48) {
+					Actor_Set_Goal_Number(kActorDektora, 279);
+					break;
+				}
+
+				if (comp_distance(kActorMcCoy, _x, _y, _z) > 12.0f) {
+					Actor_Query_XYZ(kActorMcCoy, &_x, &_y, &_z);
+					Async_Actor_Walk_To_XYZ(kActorDektora, _x, _y, _z, 36, 0);
+				}
+				break;
+
+			case 273:
+				Actor_Set_Goal_Number(kActorDektora, 274);
+				break;
+
+			case 275:
+				Actor_Set_Goal_Number(kActorDektora, 276);
+				break;
+			}
+		}
+		return true;
+	}
+
+	if (chapter == 4) {
+		if (Actor_Query_Goal_Number(kActorDektora) < 300) {
 			Actor_Set_Goal_Number(kActorDektora, 300);
 		}
-	} else if (Game_Flag_Query(489)) {
-		if ( Game_Flag_Query(504) == 1
-		 && !Game_Flag_Query(374)
-		 &&  Player_Query_Current_Scene()
-		 &&  Player_Query_Current_Scene() != 1
-		) {
-			if (Game_Flag_Query(kFlagAR02Entered)) {
-				Item_Remove_From_World(kItemScrorpions);
-			}
-			Game_Flag_Set(374);
-		}
-	} else {
-		Game_Flag_Set(489);
-		Actor_Put_In_Set(kActorDektora, kSetFreeSlotG);
-		Actor_Set_At_Waypoint(kActorDektora, 39, 0);
-		Actor_Set_Goal_Number(kActorDektora, 100);
+		return true;
 	}
 
 	return true;
 }
 
 void AIScriptDektora::TimerExpired(int timer) {
-	if (timer)
-		return; //false;
-
-	if (Actor_Query_Goal_Number(kActorDektora) == 210) {
-		if (Player_Query_Current_Scene() == 61) {
-			AI_Countdown_Timer_Reset(kActorDektora, 0);
-			AI_Countdown_Timer_Start(kActorDektora, 0, 10);
-		} else {
-			Actor_Set_Goal_Number(kActorDektora, 211);
-			AI_Countdown_Timer_Reset(kActorDektora, 0);
+	if (timer == 0) {
+		if (Actor_Query_Goal_Number(kActorDektora) == 210) {
+			if (Player_Query_Current_Scene() == 61) {
+				AI_Countdown_Timer_Reset(kActorDektora, 0);
+				AI_Countdown_Timer_Start(kActorDektora, 0, 10);
+			} else {
+				Actor_Set_Goal_Number(kActorDektora, 211);
+				AI_Countdown_Timer_Reset(kActorDektora, 0);
+			}
+			return; //true;
 		}
-		return; //true;
-	}
 
-	if (Actor_Query_Goal_Number(kActorDektora) == 270) {
-		AI_Countdown_Timer_Reset(kActorDektora, 0);
-		Actor_Set_Goal_Number(kActorDektora, 271);
-		return; //true;
+		if (Actor_Query_Goal_Number(kActorDektora) == 270) {
+			AI_Countdown_Timer_Reset(kActorDektora, 0);
+			Actor_Set_Goal_Number(kActorDektora, 271);
+			return; //true;
+		}
 	}
 
 	return; //false;
@@ -133,34 +133,35 @@ void AIScriptDektora::TimerExpired(int timer) {
 
 void AIScriptDektora::CompletedMovementTrack() {
 	switch (Actor_Query_Goal_Number(kActorDektora)) {
-	case 100:
-		if (Game_Flag_Query(47) == 1) {
-			Actor_Set_Goal_Number(kActorDektora, 101);
+	case kGoalDektoraStartWalkingAround:
+		if (Game_Flag_Query(kFlagDektoraIsReplicant)) {
+			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraWalkAroundAsReplicant);
 		} else {
-			Actor_Set_Goal_Number(kActorDektora, 102);
+			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraWalkAroundAsHuman);
 		}
 		break;
 
-
-	case 101:
+	case kGoalDektoraWalkAroundAsReplicant:
 		if (Random_Query(1, 7) == 1
-				&& Actor_Query_Goal_Number(kActorEarlyQ) != 1
-				&& Actor_Query_Goal_Number(kActorEarlyQ) != 101) {
-			Game_Flag_Set(504);
-			Actor_Set_Goal_Number(kActorDektora, 100);
+		 && Actor_Query_Goal_Number(kActorEarlyQ) != 1
+		 && Actor_Query_Goal_Number(kActorEarlyQ) != 101
+		) {
+			Game_Flag_Set(kFlagAR02DektoraWillBuyScorpions);
+			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraStartWalkingAround);
 		} else {
-			Actor_Set_Goal_Number(kActorDektora, 100);
+			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraStartWalkingAround);
 		}
 		break;
 
-	case 102:
+	case kGoalDektoraWalkAroundAsHuman:
 		if (Random_Query(1, 5) == 1
-				&& Actor_Query_Goal_Number(kActorEarlyQ) != 1
-				&& Actor_Query_Goal_Number(kActorEarlyQ) != 101) {
-			Game_Flag_Set(504);
-			Actor_Set_Goal_Number(kActorDektora, 100);
+		 && Actor_Query_Goal_Number(kActorEarlyQ) != 1
+		 && Actor_Query_Goal_Number(kActorEarlyQ) != 101
+		) {
+			Game_Flag_Set(kFlagAR02DektoraWillBuyScorpions);
+			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraStartWalkingAround);
 		} else {
-			Actor_Set_Goal_Number(kActorDektora, 100);
+			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraStartWalkingAround);
 		}
 		break;
 
@@ -191,14 +192,14 @@ void AIScriptDektora::ReceivedClue(int clueId, int fromActorId) {
 
 void AIScriptDektora::ClickedByPlayer() {
 	if (Actor_Query_Goal_Number(kActorDektora) == 599) {
-		Actor_Face_Actor(0, kActorDektora, 1);
+		Actor_Face_Actor(0, kActorDektora, true);
 		Actor_Says(kActorMcCoy, 8630, 12);
 
 		return; //true;
 	}
 
 	if (Actor_Query_Goal_Number(kActorDektora) < 199) {
-		Actor_Face_Actor(kActorMcCoy, kActorDektora, 1);
+		Actor_Face_Actor(kActorMcCoy, kActorDektora, true);
 		Actor_Says(kActorMcCoy, 8590, 13);
 	}
 
@@ -220,7 +221,9 @@ void AIScriptDektora::EnteredScene(int sceneId) {
 }
 
 void AIScriptDektora::OtherAgentEnteredThisScene(int otherActorId) {
-	if (!otherActorId && Actor_Query_Goal_Number(kActorDektora) == 246) {
+	if (otherActorId == kActorMcCoy
+	 && Actor_Query_Goal_Number(kActorDektora) == 246
+	) {
 		Scene_Exits_Disable();
 		Actor_Change_Animation_Mode(kActorDektora, 23);
 	}
@@ -243,8 +246,9 @@ void AIScriptDektora::ShotAtAndMissed() {
 
 bool AIScriptDektora::ShotAtAndHit() {
 	if (Actor_Query_Goal_Number(kActorDektora) == 270
-			|| Actor_Query_Goal_Number(kActorDektora) == 271
-			|| Actor_Query_Goal_Number(kActorDektora) == 272) {
+	 || Actor_Query_Goal_Number(kActorDektora) == 271
+	 || Actor_Query_Goal_Number(kActorDektora) == 272
+	) {
 		Actor_Set_Health(kActorDektora, 100, 100);
 
 		if (Actor_Query_Goal_Number(kActorDektora) != 272) {
@@ -252,6 +256,7 @@ bool AIScriptDektora::ShotAtAndHit() {
 		}
 		return true;
 	}
+
 	if (Actor_Query_Goal_Number(kActorDektora) == 260) {
 		AI_Movement_Track_Flush(kActorDektora);
 		Actor_Set_Health(kActorDektora, 0, 100);
@@ -276,11 +281,14 @@ bool AIScriptDektora::ShotAtAndHit() {
 }
 
 void AIScriptDektora::Retired(int byActorId) {
-	if (!byActorId) {
+	if (byActorId == kActorMcCoy) {
 		Actor_Modify_Friendliness_To_Other(kActorClovis, 0, -5);
 	}
 
-	if (byActorId == kActorSteele && Actor_Query_In_Set(kActorSteele, kSetHF06) && Actor_Query_In_Set(kActorMcCoy, kSetHF06)) {
+	if (byActorId == kActorSteele
+	 && Actor_Query_In_Set(kActorSteele, kSetHF06)
+	 && Actor_Query_In_Set(kActorMcCoy, kSetHF06)
+	) {
 		Non_Player_Actor_Combat_Mode_On(kActorSteele, kActorCombatStateUncover, true, kActorMcCoy, 15, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 25, 300, false);
 	}
 
@@ -317,6 +325,83 @@ int AIScriptDektora::GetFriendlinessModifierIfGetsClue(int otherActorId, int clu
 
 bool AIScriptDektora::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	switch (newGoalNumber) {
+	case kGoalDektoraStartWalkingAround:
+		AI_Movement_Track_Flush(kActorDektora);
+		AI_Movement_Track_Append(kActorDektora, 39, 10);
+		AI_Movement_Track_Repeat(kActorDektora);
+		break;
+
+	case kGoalDektoraWalkAroundAsReplicant:
+		AI_Movement_Track_Flush(kActorDektora);
+		AI_Movement_Track_Append_With_Facing(kActorDektora, 287, 15, 278);
+
+		if (Game_Flag_Query(kFlagZubenRetired)) {
+			AI_Movement_Track_Append(kActorDektora, 33, 240);
+		} else if (Game_Flag_Query(kFlagZubenSpared)) {
+			AI_Movement_Track_Append(kActorDektora, 33, 120);
+		} else {
+			AI_Movement_Track_Append(kActorDektora, 33, 90);
+		}
+
+		AI_Movement_Track_Append_With_Facing(kActorDektora, 288, 35, 528);
+
+		if (Random_Query(1, 2) == 1
+		 && Game_Flag_Query(kFlagAR02DektoraWillBuyScorpions)
+		) {
+			AI_Movement_Track_Append(kActorDektora, 289, 0);
+			AI_Movement_Track_Append_With_Facing(kActorDektora, 290, 2, 979);
+			AI_Movement_Track_Append(kActorDektora, 289, 0);
+			AI_Movement_Track_Append(kActorDektora, 39, 120);
+		} else {
+			AI_Movement_Track_Append(kActorDektora, 39, 180);
+		}
+
+		AI_Movement_Track_Append(kActorDektora, 282, 0);
+		AI_Movement_Track_Append(kActorDektora, 283, 0);
+		AI_Movement_Track_Append(kActorDektora, 284, 0);
+		AI_Movement_Track_Append(kActorDektora, 285, 0);
+		AI_Movement_Track_Append_With_Facing(kActorDektora, 286, 30, 329);
+		AI_Movement_Track_Repeat(kActorDektora);
+		break;
+
+	case kGoalDektoraWalkAroundAsHuman:
+		AI_Movement_Track_Flush(kActorDektora);
+		AI_Movement_Track_Append_With_Facing(kActorDektora, 287, 15, 278);
+		AI_Movement_Track_Append(kActorDektora, 40, 90);
+
+		if (Game_Flag_Query(kFlagZubenRetired)
+		 && Game_Flag_Query(kFlagLucyIsReplicant)
+		) {
+			AI_Movement_Track_Append(kActorDektora, 33, 180);
+		} else {
+			AI_Movement_Track_Append(kActorDektora, 33, 160);
+		}
+
+		AI_Movement_Track_Append_With_Facing(kActorDektora, 288, 20, 528);
+
+		if (Random_Query(1, 2) == 1) {
+			AI_Movement_Track_Append(kActorDektora, 289, 0);
+			AI_Movement_Track_Append_With_Facing(kActorDektora, 290, 3, 979);
+			AI_Movement_Track_Append(kActorDektora, 289, 0);
+			AI_Movement_Track_Append(kActorDektora, 39, 120);
+		} else {
+			AI_Movement_Track_Append(kActorDektora, 39, 180);
+		}
+
+		AI_Movement_Track_Append(kActorDektora, 282, 0);
+		AI_Movement_Track_Append(kActorDektora, 283, 0);
+		AI_Movement_Track_Append(kActorDektora, 284, 0);
+		AI_Movement_Track_Append(kActorDektora, 285, 0);
+		AI_Movement_Track_Append_With_Facing(kActorDektora, 286, 35, 329);
+		AI_Movement_Track_Repeat(kActorDektora);
+		break;
+
+	case kGoalDektoraStopWalkingAround:
+		AI_Movement_Track_Flush(kActorDektora);
+		AI_Movement_Track_Append(kActorDektora, 39, 240);
+		AI_Movement_Track_Repeat(kActorDektora);
+		break;
+
 	case 199:
 		AI_Movement_Track_Flush(kActorDektora);
 		Actor_Set_Goal_Number(kActorDektora, 200);
@@ -449,79 +534,6 @@ bool AIScriptDektora::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Flush(kActorDektora);
 		Actor_Put_In_Set(kActorDektora, kSetFreeSlotA);
 		Actor_Set_At_Waypoint(kActorDektora, 33, 0);
-		break;
-
-	case 100:
-		AI_Movement_Track_Flush(kActorDektora);
-		AI_Movement_Track_Append(kActorDektora, 39, 10);
-		AI_Movement_Track_Repeat(kActorDektora);
-		break;
-
-	case 101:
-		AI_Movement_Track_Flush(kActorDektora);
-		AI_Movement_Track_Append_With_Facing(kActorDektora, 287, 15, 278);
-
-		if (Game_Flag_Query(40) == 1) {
-			AI_Movement_Track_Append(kActorDektora, 33, 240);
-		} else if (Game_Flag_Query(41) == 1) {
-			AI_Movement_Track_Append(kActorDektora, 33, 120);
-		} else {
-			AI_Movement_Track_Append(kActorDektora, 33, 90);
-		}
-
-		AI_Movement_Track_Append_With_Facing(kActorDektora, 288, 35, 528);
-
-		if (Random_Query(1, 2) == 1 && Game_Flag_Query(504)) {
-			AI_Movement_Track_Append(kActorDektora, 289, 0);
-			AI_Movement_Track_Append_With_Facing(kActorDektora, 290, 2, 979);
-			AI_Movement_Track_Append(kActorDektora, 289, 0);
-			AI_Movement_Track_Append(kActorDektora, 39, 120);
-		} else {
-			AI_Movement_Track_Append(kActorDektora, 39, 180);
-		}
-
-		AI_Movement_Track_Append(kActorDektora, 282, 0);
-		AI_Movement_Track_Append(kActorDektora, 283, 0);
-		AI_Movement_Track_Append(kActorDektora, 284, 0);
-		AI_Movement_Track_Append(kActorDektora, 285, 0);
-		AI_Movement_Track_Append_With_Facing(kActorDektora, 286, 30, 329);
-		AI_Movement_Track_Repeat(kActorDektora);
-		break;
-
-	case 102:
-		AI_Movement_Track_Flush(kActorDektora);
-		AI_Movement_Track_Append_With_Facing(kActorDektora, 287, 15, 278);
-		AI_Movement_Track_Append(kActorDektora, 40, 90);
-
-		if (Game_Flag_Query(40) == 1 && Game_Flag_Query(46) == 1) {
-			AI_Movement_Track_Append(kActorDektora, 33, 180);
-		} else {
-			AI_Movement_Track_Append(kActorDektora, 33, 160);
-		}
-
-		AI_Movement_Track_Append_With_Facing(kActorDektora, 288, 20, 528);
-
-		if (Random_Query(1, 2) == 1) {
-			AI_Movement_Track_Append(kActorDektora, 289, 0);
-			AI_Movement_Track_Append_With_Facing(kActorDektora, 290, 3, 979);
-			AI_Movement_Track_Append(kActorDektora, 289, 0);
-			AI_Movement_Track_Append(kActorDektora, 39, 120);
-		} else {
-			AI_Movement_Track_Append(kActorDektora, 39, 180);
-		}
-
-		AI_Movement_Track_Append(kActorDektora, 282, 0);
-		AI_Movement_Track_Append(kActorDektora, 283, 0);
-		AI_Movement_Track_Append(kActorDektora, 284, 0);
-		AI_Movement_Track_Append(kActorDektora, 285, 0);
-		AI_Movement_Track_Append_With_Facing(kActorDektora, 286, 35, 329);
-		AI_Movement_Track_Repeat(kActorDektora);
-		break;
-
-	case 103:
-		AI_Movement_Track_Flush(kActorDektora);
-		AI_Movement_Track_Append(kActorDektora, 39, 240);
-		AI_Movement_Track_Repeat(kActorDektora);
 		break;
 
 	default:
@@ -1058,6 +1070,300 @@ bool AIScriptDektora::UpdateAnimation(int *animation, int *frame) {
 }
 
 bool AIScriptDektora::ChangeAnimationMode(int mode) {
+	switch (mode) {
+	case kAnimationModeIdle:
+		if (Game_Flag_Query(633)) {
+			_animationState = 32;
+			_animationFrame = 0;
+			break;
+		}
+		switch (_animationState) {
+		case 2:
+		case 3:
+		case 4:
+		case 5:
+		case 6:
+		case 7:
+		case 8:
+		case 27:
+		case 28:
+			_flag = true;
+			break;
+		case 9:
+		case 10:
+		case 12:
+		case 13:
+		case 14:
+		case 15:
+		case 16:
+		case 17:
+			_animationState = 11;
+			_animationFrame = 0;
+			break;
+		case 11:
+		case 18:
+		case 19:
+		case 20:
+		case 26:
+		case 29:
+		case 30:
+			break;
+		case 25:
+			_animationState = 25;
+			_animationFrame = 0;
+			break;
+		case 31:
+			_animationState = 31;
+			_animationFrame = 0;
+			break;
+		default:
+			_animationState = 0;
+			_animationFrame = 0;
+			break;
+		}
+		break;
+
+	case kAnimationModeWalk:
+		if (!Game_Flag_Query(633)) {
+			_animationFrame = 0;
+			_animationState = 21;
+		} else {
+			_animationState = 33;
+			_animationFrame = 0;
+		}
+		break;
+
+	case kAnimationModeRun:
+		_animationFrame = 0;
+		_animationState = 22;
+		break;
+
+	case kAnimationModeTalk:
+		if (_animationState < 2
+		 || _animationState > 8
+		) {
+			_animationState = 2;
+			_animationFrame = 0;
+			_flag = false;
+		}
+		break;
+
+	case kAnimationModeCombatIdle:
+		switch (_animationState) {
+		case 9:
+		case 10:
+		case 16:
+		case 17:
+			break;
+		case 25:
+		case 27:
+		case 28:
+			_animationState = 29;
+			_animationFrame = 0;
+			break;
+		case 31:
+			_animationState = 30;
+			_animationFrame = Slice_Animation_Query_Number_Of_Frames(154) - 1;
+			break;
+		default:
+			_animationState = 10;
+			_animationFrame = 0;
+			break;
+		}
+		break;
+
+	case kAnimationModeCombatAttack:
+		if (_animationState == 31) {
+			_animationState = 26;
+		} else if (Random_Query(0, 1) == 1) {
+			_animationState = 16;
+		} else {
+			_animationState = 17;
+		}
+		_animationFrame = 0;
+		break;
+
+	case kAnimationModeCombatWalk:
+		if (!Game_Flag_Query(633)) {
+			_animationFrame = 0;
+			_animationState = 21;
+		} else {
+			_animationState = 33;
+			_animationFrame = 0;
+		}
+		break;
+
+	case kAnimationModeCombatRun:
+		_animationFrame = 0;
+		_animationState = 22;
+		break;
+
+	case 12:
+		if (_animationState < 2
+		 || _animationState > 8
+		) {
+			_animationState = 3;
+			_animationFrame = 0;
+			_flag = false;
+		}
+		break;
+
+	case 13:
+		if (_animationState < 2
+		 || _animationState > 8
+		) {
+			_animationState = 4;
+			_animationFrame = 0;
+			_flag = false;
+		}
+		break;
+
+	case 14:
+		if (_animationState < 2
+		 || _animationState > 8
+		) {
+			_animationState = 5;
+			_animationFrame = 0;
+			_flag = 0;
+		}
+		break;
+
+	case 15:
+		if (_animationState < 2
+		 || _animationState > 8
+		) {
+			_animationState = 6;
+			_animationFrame = 0;
+			_flag = false;
+		}
+		break;
+
+	case 16:
+		if (_animationState < 2
+		 || _animationState > 8
+		) {
+			_animationState = 7;
+			_animationFrame = 0;
+			_flag = false;
+		}
+		break;
+
+	case 17:
+		if (_animationState < 2
+		 || _animationState > 8
+		) {
+			_animationState = 8;
+			_animationFrame = 0;
+			_flag = false;
+		}
+		break;
+
+	case 21:
+		if (Game_Flag_Query(633)) {
+			_animationState = 34;
+			_animationFrame = 0;
+			break;
+		}
+		switch (_animationState) {
+		case 9:
+		case 10:
+		case 11:
+		case 12:
+		case 13:
+		case 16:
+		case 17:
+			if (Random_Query(0, 1) == 1) {
+				_animationState = 14;
+			} else {
+				_animationState = 15;
+			}
+			break;
+		case 14:
+		case 15:
+			if (Random_Query(0, 1) == 1) {
+				_animationState = 18;
+			} else {
+				_animationState = 19;
+			}
+			break;
+		}
+		_animationFrame = 0;
+		break;
+
+	case 23:
+		_animationState = 41;
+		_animationFrame = 0;
+		break;
+
+	case 30:
+		if (_animationState != 27
+		 && _animationState != 28
+		) {
+			_animationState = 27;
+			_animationFrame = 0;
+			_flag = false;
+		}
+		break;
+
+	case 31:
+		if (_animationState != 27
+		 && _animationState != 28
+		) {
+			_animationState = 28;
+			_animationFrame = 0;
+			_flag = false;
+		}
+		break;
+
+	case kAnimationModeWalkUp:
+		_animationFrame = 0;
+		_animationState = 23;
+		break;
+
+	case kAnimationModeWalkDown:
+		_animationFrame = 0;
+		_animationState = 24;
+		break;
+
+	case kAnimationModeDie:
+		_animationState = 20;
+		_animationFrame = 0;
+		break;
+
+	case 53:
+		switch (_animationState) {
+		case 26:
+		case 29:
+		case 30:
+		case 31:
+			break;
+		case 27:
+		case 28:
+			_flag = true;
+			break;
+		default:
+			_animationState = 25;
+			_animationFrame = 0;
+			break;
+		}
+		break;
+
+	case 70:
+		_animationState = 17;
+		_animationFrame = 0;
+		break;
+
+	case 71:
+		_animationState = 16;
+		_animationFrame = 0;
+		break;
+
+	case 79:
+		_animationState = 37;
+		_animationFrame = 0;
+		break;
+	}
+
 	return true;
 }
 

@@ -68,7 +68,7 @@ void SceneScriptUG02::SceneLoaded() {
 	Footstep_Sounds_Set(0, 0);
 	Footstep_Sounds_Set(8, 2);
 
-	if (!Game_Flag_Query(kFlagRagiationGooglesTaken)
+	if (!Game_Flag_Query(kFlagUG02RagiationGooglesTaken)
 	  && Game_Flag_Query(kFlagIzoIsReplicant)
 	) {
 		Item_Add_To_World(kItemRadiationGoogles, 963, kSetUG02, -300.37f, 120.16f, -81.31f, 0, 8, 8, false, true, false, true);
@@ -153,7 +153,7 @@ bool SceneScriptUG02::ClickedOnItem(int itemId, bool a2) {
 	if (itemId == kItemRadiationGoogles) {
 		Actor_Face_Item(kActorMcCoy, kItemRadiationGoogles, true);
 		Actor_Clue_Acquire(kActorMcCoy, kClueRadiationGoggles, true, -1);
-		Game_Flag_Set(kFlagRagiationGooglesTaken);
+		Game_Flag_Set(kFlagUG02RagiationGooglesTaken);
 		Item_Remove_From_World(kItemRadiationGoogles);
 		Item_Pickup_Spin_Effect(963, 426, 316);
 		return true;
@@ -192,12 +192,12 @@ bool SceneScriptUG02::ClickedOnExit(int exitId) {
 		Actor_Face_Heading(kActorMcCoy, 14, false);
 		Loop_Actor_Travel_Ladder(kActorMcCoy, 9, true, 0);
 		Game_Flag_Set(kFlagUG02toHC03);
-		Game_Flag_Reset(kFlagMcCoyAtUGxx);
-		Game_Flag_Set(kFlagMcCoyAtHCxx);
+		Game_Flag_Reset(kFlagMcCoyInUnderground);
+		Game_Flag_Set(kFlagMcCoyInHawkersCircle);
 		if (!Game_Flag_Query(kFlagHC03CageOpen)) {
 			Game_Flag_Set(kFlagHC03TrapDoorOpen);
 			Game_Flag_Set(kFlagHC03CageOpen);
-			Item_Remove_From_World(kItemHC03Lock);
+			Item_Remove_From_World(kItemGreenPawnLock);
 		}
 		Set_Enter(kSetHC01_HC02_HC03_HC04, kSceneHC03);
 		return true;

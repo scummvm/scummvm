@@ -442,17 +442,17 @@ enum Flags {
 	kFlagNotUsed0 = 0, // is never checked
 	kFlagRC02Entered = 1,
 	// 2 is never used
-	kFlagGotOfficersStatement = 3,
-	kFlagRC02FirstLeave = 4,
+	kFlagRC01GotOfficersStatement = 3,
+	kFlagRC02Left = 4,
 	// 5 is never used
-	kFlagRunciterInterviewA = 6,
+	kFlagRC02RunciterInterview = 6,
 	// 7 is never used
 	kFlagRC01toRC02 = 8,
 	kFlagRC02toRC01 = 9,
 	kFlagDR01toDR04 = 10,
 	kFlagDR04toDR01 = 11,
-	kFlagKleinTalkShellCasings = 12,
-	kFlagKleinTalkOfficersStatement = 13,
+	kFlagPS07KleinTalkShellCasings = 12,
+	kFlagPS07KleinTalkOfficersStatement = 13,
 	kFlagPS10toPS11 = 14,
 	kFlagPS11toPS10 = 15,
 	kFlagPS11toPS12 = 16,
@@ -471,7 +471,7 @@ enum Flags {
 	kFlagCT01ZubenLeft = 29,
 	kFlagNotUsed30 = 30,  // is never set
 	kFlagCT01ZubenGone = 31,
-	kFlagCT01McCoyTalkedToGordo = 32,
+	kFlagCT01GordoTalk = 32,
 	kFlagMA02toMA06 = 33,
 	kFlagMA06ToMA02 = 34,
 	kFlagMA02ToMA04 = 35,
@@ -533,7 +533,7 @@ enum Flags {
 	kFlagCT12toCT11 = 91,
 	// 92 is never used
 	// 93 is never used
-	kFlagWarehouseOpen = 94,
+	kFlagCT05WarehouseOpen = 94,
 	kFlagTB05toTB02 = 95,
 	kFlagTB02toTB05 = 96, // is never checked
 	kFlagTB05toTB06 = 97, // is never checked
@@ -543,14 +543,14 @@ enum Flags {
 	kFlagTB05MonitorDone = 101,
 	kFlagTB06Visited = 102,
 	kFlagNotUsed103 = 103, // is never set
-	kFlagKleinTalkPaintTransfer = 104,
-	kFlagKleinTalkChromeDebris = 105,
-	kFlagIsabellaIntroduced = 106,
+	kFlagPS07KleinTalkPaintTransfer = 104,
+	kFlagPS07KleinTalkChromeDebris = 105,
+	kFlagHC04IsabellaTalk = 106,
 	kFlagHC04toRC03 = 107,
 	kFlagRC03toHC04 = 108,
 	kFlagHC04toHC02 = 109,
 	kFlagHC02toHC04 = 110,
-	kFlagKleinTalkClues = 111,
+	kFlagPS07KleinTalkClues = 111,
 	// 112 is never used
 	// 113 is never used
 	kFlagRC03toRC01 = 114,
@@ -568,7 +568,7 @@ enum Flags {
 	kFlagMcCoyHasOfficersStatement = 126,
 	kFlagMcCoyHasPaintTransfer = 127,
 	kFlagMcCoyHasChromeDebris = 128,
-	kFlagZubenCheckOnMcCoy = 129,
+	kFlagCT01ZubenMcCoyCheck = 129,
 	kFlagPS02toPS01 = 130,
 	kFlagPS02toPS07 = 131,
 	kFlagPS02toPS03 = 132,
@@ -576,52 +576,52 @@ enum Flags {
 	kFlagPS03toPS14 = 134,
 	kFlagPS14toPS03 = 135,
 	kFlagPS05toPS06 = 136,
-	kFlagHomelessTalkedTo = 137,
-	kFlagKleinInsulted = 138,
+	kFlagCT04HomelessTalk = 137,
+	kFlagPS07KleinInsulted = 138,
 	// 139 is never used
 	// 140 is never used
 	kFlagRC51Available = 141,
 	kFlagNotUsed142 = 142, // is never checked
 	// 143 is never used
 	kFlagCT07toCT06 = 144,
-	kFlagZubenPhoto = 145,
+	kFlagCT06ZubenPhoto = 145,
 	kFlagChapter1Ending = 146,
-	kFlagChopstickWrapperTaken = 147,
-	kFlagCandyTaken = 148,
-	kFlagToyDogTaken = 149,
+	kFlagRC51ChopstickWrapperTaken = 147,
+	kFlagRC51CandyTaken = 148,
+	kFlagRC51ToyDogTaken = 149,
 	kFlagNotUsed150 = 150, // has no use
 	kFlagRC03UnlockedToUG01 = 151,
-	kFlagUG15toUG16 = 152,
-	kFlagUG16toUG15 = 153,
+	kFlagUG15toUG16a = 152,
+	kFlagUG16toUG15a = 153,
 	kFlagTB02toTB03 = 154, // is never checked
 	kFlagTB03toTB02 = 155,
-	kFlagKleinInsultedTalk = 156,
+	kFlagPS07KleinInsultedTalk = 156,
 	// 157 is never used
 	kFlagSergeantWallsBuzzInDone = 158,
-	kFlagGuzzaTalkZubenRetired = 159,
-	kFlagGuzzaTalkZubenEscaped = 160,
-	kFlagGuzzaTalk1 = 161,
-	kFlagGuzzaTalk2 = 162,
-	kFlagChromeDebrisTaken = 163,
+	kFlagPS04GuzzaTalkZubenRetired = 159,
+	kFlagPS04GuzzaTalkZubenEscaped = 160,
+	kFlagPS04GuzzaTalk1 = 161,
+	kFlagPS04GuzzaTalk2 = 162,
+	kFlagRC01ChromeDebrisTaken = 163,
 	kFlagIzoArrested = 164,
 	kFlagCrazylegsArrested = 165,
 	kFlagPS09CrazylegsTalk1 = 166,
 	kFlagPS09IzoTalk1 = 167,
 	kFlagPS09IzoTalk2 = 168,
-	kFlagMcCoyKilledHomeless = 169,
-	kFlagHomelessBodyInDumpster = 170,
-	kFlagHomelessBodyFound = 171,
-	kFlagDumpsterEmptied = 172,
-	kFlagHomelessBodyInDumpsterNotChecked = 173, // is never checked
-	kFlagLicensePlaceFound = 174,
+	kFlagCT04HomelessKilledByMcCoy = 169,
+	kFlagCT04HomelessBodyInDumpster = 170,
+	kFlagCT04HomelessBodyFound = 171,
+	kFlagCT04HomelessBodyThrownAway = 172,
+	kFlagCT04HomelessBodyInDumpsterNotChecked = 173, // is never checked
+	kFlagCT04LicensePlaceFound = 174,
 	kFlagPS09CrazylegsTalk2 = 175,
-	kFlagMcCoyAtCTxx = 176,
-	kFlagMcCoyAtDRxx = 177,
-	kFlagMcCoyAtPSxx = 178,
-	kFlagMcCoyAtMAxx = 179,
-	kFlagMcCoyAtARxx = 180,
-	kFlagMcCoyAtNRxx = 181,
-	kFlagMcCoyAtRCxx = 182,
+	kFlagMcCoyInChinaTown = 176,
+	kFlagMcCoyInDNARow = 177,
+	kFlagMcCoyInPoliceStation = 178,
+	kFlagMcCoyInMcCoyApartment = 179,
+	kFlagMcCoyInAnimoidRow = 180,
+	kFlagMcCoyInNightclubRow = 181,
+	kFlagMcCoyInRunciters = 182,
 
 
 
@@ -629,9 +629,9 @@ enum Flags {
 	kFlagRC02TalkedToRunciter = 187,
 	// 188 is never used
 	// 189 is never used
-	kFlagShellCasingsTaken = 190,
+	kFlagRC02ShellCasingsTaken = 190,
 	// 191 is never used
-	kFlagBoughtHowieLeeFood = 192,
+	kFlagCT01BoughtHowieLeeFood = 192,
 	// 193 is never used
 	// 194 is never used
 	// 195 is never used
@@ -696,16 +696,16 @@ enum Flags {
 	kFlagSpinnerAtBB01 = 254,
 	kFlagSpinnerAtNR01 = 255,
 	kFlagSpinnerAtHF01 = 256,
-	kFlagMcCoyAtHFxx = 257,
-	kFlagMcCoyAtBBxx = 258,
-	kFlagMcCoyAtUGxx = 259,
+	kFlagMcCoyInHysteriaHall = 257,
+	kFlagMcCoyInBradburyBuilding = 258,
+	kFlagMcCoyInUnderground = 259,
 	// 260 is never used
-	kFlagMcCoyAtTBxx = 261,
+	kFlagMcCoyInTyrellBuilding = 261,
 	kFlagBB01toBB02 = 262,
 	kFlagBB02toBB01 = 263,
 	kFlagBB01toDR02 = 264,
 	kFlagDR02toBB01 = 265,
-	kFlagMorajiExploded = 266,
+	kFlagDR05JustExploded = 266,
 	kFlagDR03ChewTalk1 = 267,
 	kFlagDR06JesterActive = 268,
 	kFlagDR05BombActivated = 269,
@@ -733,7 +733,7 @@ enum Flags {
 	// 291 is never used
 	kFlagRC04BobTalk2 = 292,
 	kFlagCT02PotTipped = 293,
-	kFlagGaffSpinnerCT12 = 294,
+	kFlagCT12GaffSpinner = 294,
 	kFlagRC04BobShootMcCoy = 295,
 	kFlagRC04McCoyCombatMode = 296,
 	kFlagBB05toBB06 = 297,
@@ -764,16 +764,53 @@ enum Flags {
 	kFlagAR01toHC01 = 322,
 	kFlagHC01toAR01 = 323,
 	kFlagUG01SteamOff = 324,
-
-	kFlagFishDealerTalk = 328,
-	kFlagInsectDealerInterviewed = 329,
-	kFlagHassanTalk = 330,
-	kFlagScorpionsChecked = 331,
-
-	kFlagInsectDealerTalk = 366,
-	kFlagStungByScorpion = 367,
+	kFlagCT04BodyDumped = 325,
+	kFlagBB01Available = 326,
+	// 327 is never used
+	kFlagAR01FishDealerTalk = 328,
+	kFlagAR02InsectDealerInterviewed = 329,
+	kFlagAR02HassanTalk = 330,
+	kFlagAR02ScorpionsChecked = 331,
+	kFlagBB02toBB04 = 332,
+	kFlagBB04toBB02 = 333,
+	kFlagUG03toUG04 = 334, // is never checked
+	kFlagUG04toUG03 = 335,
+	kFlagUG03toUG10 = 336,
+	kFlagUG10toUG03 = 337,
+	kFlagUG04toUG05 = 338, // is never checked
+	kFlagUG05toUG04 = 339,
+	kFlagUG04toUG06 = 340,
+	kFlagUG06toUG04 = 341,
+	kFlagUG06toNR01 = 342,
+	kFlagNR01toUG06 = 343,
+	kFlagUG12toUG14 = 344,
+	kFlagUG14toUG12 = 345, // is never checked
+	kFlagUG14toUG10 = 346,
+	kFlagUG10toUG14 = 347, // is never checked
+	kFlagUG14toUG19 = 348,
+	kFlagUG19toUG14 = 349,
+	kFlagUG15toUG13 = 350,
+	kFlagUG13toUG15 = 351,
+	kFlagUG15toUG17 = 352,
+	kFlagUG17toUG15 = 353,
+	kFlagUG15toUG16b = 354, // is never checked
+	kFlagUG16toUG15b = 355,
+	kFlagUG19toMA07 = 356,
+	kFlagMA07toUG19 = 357,
+	kFlagHF07toHF05 = 358,
+	kFlagHF05toHF07 = 359,
+	kFlagHF07toUG06 = 360,
+	kFlagUG06toHF07 = 361,
+	kFlagBB07toBB06 = 362,
+	kFlagBB06toBB07 = 363,
+	kFlagBB07toBB12 = 364,
+	kFlagBB12toBB07 = 365,
+	kFlagAR02InsectDealerTalk = 366,
+	kFlagAR02StungByScorpion = 367,
 
 	kFlagNotUsed370 = 370, // is never checked
+
+	kFlagAR02DektoraBoughtScorpions = 374,
 
 	kFlagDirectorsCut = 378,
 
@@ -785,17 +822,20 @@ enum Flags {
 	// 389 is never used
 	// 390 is never used
 
-	KFlagMcCoyAndOfficerLearyTalking = 392,
+	kFlagRC01McCoyAndOfficerLearyTalking = 392,
+	kFlagBB06toBB51 = 393, // is never checked
+	kFlagBB51toBB06a = 394,
+	kFlagBB51toBB06b = 395,
 
-	KFlagMcCoyAndOfficerLearyArtMetaphor = 397,
+	kFlagRC01McCoyAndOfficerLearyArtMetaphor = 397,
 
-	kFlagIzoTalk1 = 400,
-	kFlagIzoTalk2 = 401,
+	kFlagHC01IzoTalk1 = 400,
+	kFlagHC01IzoTalk2 = 401,
 	kFlagHC03Available = 402,
 	kFlagHC03CageOpen = 403,
-	kFlagHawkersBarkeepIntroduction = 404,
-	kFlagHawkersBarkeepBraceletTalk = 405,
-
+	kFlagHC02HawkersBarkeepIntroduction = 404,
+	kFlagHC02HawkersBarkeepBraceletTalk = 405,
+	kFlagUnused406 = 406, // is never checked
 	kFlagUnused407 = 407, // is never checked
 
 	kFlagUG09toCT12 = 432,
@@ -816,34 +856,50 @@ enum Flags {
 	kFlagMcCoyArrested = 465,
 	kFlagUG10GateOpen = 474,
 	kFlagMcCoyAtPS03 = 478, // has no use
-	kFlagMcCoyAtHCxx = 479,
+	kFlagMcCoyInHawkersCircle = 479,
 	kFlagTB06Introduction = 483,
-	kFlagPhotographerToTB06 = 485,
+	kFlagTB06Photographer = 485,
 	kFlagDNARowAvailable = 486,
 	kFlagKIAPrivacyAddon = 487,
+	kFlagDektoraChapter2Started = 489,
 	kFlagCT04HomelessTrashFinish = 492,
+	kFlagBB02ElevatorDown = 493,
+	kFlagBB02Entered = 494,
 	kFlagUG02FromUG01 = 498,
 	kFlagUG02Interactive = 499,
-
+	kFlagAR02DektoraWillBuyScorpions = 504,
+	kFlagDR03ChewTalkExplosion = 505,
 	kFlagDR05ExplodedEntered = 511,
-	kFlagDR05BombExplosionView = 515,
+	kFlagDR05ViewExplosion = 515,
 	kFlagCT07ZubenAttack = 516,
 	kFlagTB06DogCollarTaken = 519,
 	kFlagTB06KitchenBoxTaken = 520,
+	kFlagCT11toDR01 = 531,
+	kFlagGordoTalk1 = 543,
+	kFlagGordoTalk2 = 544,
+	kFlagDR06MannequinHeadOpen = 548,
+	kFlagDR01toCT11 = 558,
 	kFlagKIAPrivacyAddonIntro = 599,
 	kFlagTB07toTB02 = 608,
-	kFlagMcCoySleeping = 647,
-	kFlagPhoneMessageFromClovis = 649,
-	kFlagPhoneMessageFromLucy = 650,
-	kFlagRagiationGooglesTaken = 656,
+	kFlagTB07RachaelTalk = 612,
+	kFlagMA04McCoySleeping = 647,
+	kFlagMA04PhoneMessageFromClovis = 649,
+	kFlagMA04PhoneMessageFromLucy = 650,
+	kFlagUG02RagiationGooglesTaken = 656,
+
 	kFlagDNARowAvailableTalk = 660,
+	kFlagTB07ShadeDown = 661, // is never set
+	kFlagMA07toPS14 = 672,
+	kFlagPS14toMA07 = 673,
 	kFlagChapter2Intro = 678,
+
 	kFlagPS05TV0 = 688,
 	kFlagPS05TV1 = 689,
 	kFlagPS05TV2 = 690,
 	kFlagPS05TV3 = 691,
 	kFlagPS05TV4 = 692,
 	kFlagUG03DeadHomeless = 693,
+	kFlagUG14DeadHomeless = 694,
 	kFlagRC04Locked = 702,
 	kFlagTB06PhotographTalk1 = 707,
 	kFlagUG02AmmoTaken = 708,
@@ -851,6 +907,7 @@ enum Flags {
 	kFlagAR01Entered = 710,
 	kFlagMA04WatchedTV = 711,
 	kFlagMcCoyShotAtZuben = 712,
+	kFlagDR04McCoyShotMoraji = 713,
 	kFlagRC04BobTalk3 = 717,
 	kFlagCT02McCoyFell = 719,
 	kFlagCT02McCoyCombatReady = 720,
@@ -875,6 +932,7 @@ enum Variables {
 	kVariableGenericWalkerCModel = 34,
 	kVariableWalkLoopActor = 37,
 	kVariableWalkLoopRun = 38,
+	kVariableDR06MannequinHeadOpened = 39,
 	kVariableMcCoyDrinks = 42, // is never checked
 	kVariableAffectionTowards = 45, // 0 none, 1 steele, 2 dektora, 3 lucy
 	kVariableDNAEvidences = 48,
@@ -937,6 +995,7 @@ enum AnimationModes {
 	kAnimationModeCombatAttack = 6,
 	kAnimationModeCombatWalk = 7,
 	kAnimationModeCombatRun = 8,
+	// 12 - 17 various talk modes
 	kAnimationModeHit = 21,
 	kAnimationModeCombatHit = 22,
 	kAnimationModeSpinnerGetIn = 41,
@@ -965,37 +1024,37 @@ enum SceneLoopMode {
 };
 
 enum Scenes {
-	kSceneAR01 = 0,
-	kSceneAR02 = 1,
-	kSceneBB01 = 2,
-	kSceneBB02 = 3,
-	kSceneBB03 = 4,
-	kSceneBB04 = 5,
-	kSceneBB05 = 6,
-	kSceneBB06 = 7,
+	kSceneAR01 = 0, // Animoid Row - Fish dealer
+	kSceneAR02 = 1, // Animoid Row - Insect dealer
+	kSceneBB01 = 2, // Bradbury building - Outside
+	kSceneBB02 = 3, // Bradbury building - elevator down
+	kSceneBB03 = 4, // Bradbury building - Entrance
+	kSceneBB04 = 5, // Bradbury building - elevator up
+	kSceneBB05 = 6, // Bradbury building - Entry hall
+	kSceneBB06 = 7, // Bradbury building - Billiard room - front
 	kSceneBB07 = 8,
-	kSceneBB08 = 9,
-	kSceneBB09 = 10,
-	kSceneBB10 = 11,
-	kSceneBB11 = 12,
+	kSceneBB08 = 9, // Bradbury building - Bathroom
+	kSceneBB09 = 10, // Bradbury building - Above bathroom
+	kSceneBB10 = 11, // Bradbury building - Cupboard
+	kSceneBB11 = 12, // Bradbury building - Roof
 	kSceneCT01 = 13, // Chinatown - Howie Lee Restaurant
-	kSceneCT02 = 14, // Chinatown - Kitchen
-	kSceneCT03 = 15, // Chinatown - Back alley
+	kSceneCT02 = 14, // Chinatown - Restaurant - Kitchen
+	kSceneCT03 = 15, // Chinatown - Back alley - Restaurant
 	kSceneCT04 = 16, // Chinatown - Back alley - Dumpster
 	kSceneCT05 = 17, // Chinatown - Warehouse - Inside
-	kSceneCT06 = 18, // Chinatown - Passage
+	kSceneCT06 = 18, // Chinatown - Passage from front
 	kSceneCT07 = 19, // Chinatown - Passage form back
 	kSceneCT08 = 20, // Chinatown - Yukon Hotel - Backroom
 	kSceneCT09 = 21, // Chinatown - Yukon Hotel - Lobby
 	kSceneCT10 = 22, // Chinatown - Yukon Hotel - Room
 	kSceneCT11 = 23, // Chinatown - Yukon Hotel - Outside
 	kSceneCT12 = 24, // Chinatown - Warehouse - Outside
-	kSceneDR01 = 25,
-	kSceneDR02 = 26,
-	kSceneDR03 = 27,
-	kSceneDR04 = 28,
-	kSceneDR05 = 29,
-	kSceneDR06 = 30,
+	kSceneDR01 = 25, // DNA Row - Street
+	kSceneDR02 = 26, // DNA Row - Eye world - Outside
+	kSceneDR03 = 27, // DNA Row - Eye world - Inside
+	kSceneDR04 = 28, // DNA Row - Dermo design - Outside
+	kSceneDR05 = 29, // DNA Row - Dermo design - Inside
+	kSceneDR06 = 30, // DNA Row - Twin's office
 	kSceneHC01 = 31, // Hawker's circle - Green pawn - Outside
 	kSceneHC02 = 32, // Hawker's circle - China bar
 	kSceneHC03 = 33, // Hawker's circle - Green pawn - Inside
@@ -1012,7 +1071,7 @@ enum Scenes {
 	kSceneKP04 = 44,
 	kSceneKP05 = 45,
 	kSceneKP06 = 46,
-	kSceneKP07 = 47, // Kipple - Moonbus inside
+	kSceneKP07 = 47, // Kipple - Moonbus - Inside
 	kSceneMA01 = 48, // McCoy's Apartment - Roof
 	kSceneMA02 = 49, // McCoy's Apartment - Living room
 	kSceneMA04 = 50, // McCoy's Apartment - Sleeping room
@@ -1038,19 +1097,19 @@ enum Scenes {
 	kScenePS06 = 70,
 	kScenePS07 = 71,
 	kScenePS09 = 72, // Police Station - Lockup
-	kScenePS10 = 73,
-	kScenePS11 = 74,
-	kScenePS12 = 75,
-	kScenePS13 = 76,
-	kScenePS14 = 77,
+	kScenePS10 = 73, // Police Station - Shooting range 1
+	kScenePS11 = 74, // Police Station - Shooting range 2
+	kScenePS12 = 75, // Police Station - Shooting range 3
+	kScenePS13 = 76, // Police Station - Shooting range 4
+	kScenePS14 = 77, // Police Station - Outside
 	kSceneRC01 = 78, // Runciter - Outside
 	kSceneRC02 = 79, // Runciter - Inside
-	kSceneRC03 = 80, // Bullet Bob - outside
-	kSceneRC04 = 81, // Bullet Bob - inside
-	kSceneTB02 = 82, // Tyrell Building - reception
+	kSceneRC03 = 80, // Bullet Bob - Outside
+	kSceneRC04 = 81, // Bullet Bob - Inside
+	kSceneTB02 = 82, // Tyrell Building - Reception
 	kSceneTB03 = 83,
-	kSceneTB05 = 84, // Tyrell Building - Grav Test Lab - outside
-	kSceneTB06 = 85, // Tyrell Building - Grav Test Lab - inside
+	kSceneTB05 = 84, // Tyrell Building - Grav Test Lab - Iutside
+	kSceneTB06 = 85, // Tyrell Building - Grav Test Lab - Inside
 	kSceneUG01 = 86, // Underground - Under Bullet Bob entrance
 	kSceneUG02 = 87, // Underground - Under Green pawn
 	kSceneUG03 = 88,
@@ -1060,7 +1119,7 @@ enum Scenes {
 	kSceneUG07 = 92,
 	kSceneUG08 = 93,
 	kSceneUG09 = 94,
-	kSceneUG10 = 95,
+	kSceneUG10 = 95, // Undergound - Bridge
 	kSceneUG12 = 96,
 	kSceneUG13 = 97,
 	kSceneUG14 = 98,
@@ -1069,7 +1128,7 @@ enum Scenes {
 	kSceneUG17 = 101,
 	kSceneUG18 = 102,
 	kSceneUG19 = 103,
-	kSceneBB51 = 104,
+	kSceneBB51 = 104, // Bradbury building - Billiard room - Back
 	kSceneCT51 = 105,
 	kSceneHC04 = 106, // Hawker's circle - Kingston kitchen
 	kSceneRC51 = 107, // Runciter - Lucy's desk
@@ -1264,6 +1323,7 @@ enum GameItems {
 	// 75 is never used
 	// 76 is never used
 	kItemDragonflyEarring = 76,
+	kItemBomb = 78,
 	kItemCandy = 79,
 	kItemChopstickWrapper = 82,
 	kItemDogCollar = 84,
@@ -1281,7 +1341,8 @@ enum GameItems {
 	kItemWeaponsCrate = 110,
 	kItemWeaponsOrderForm = 111,
 	kItemTyrellSalesPamphlet = 119,
-	kItemHC03Lock = 121
+	kItemGreenPawnLock = 121,
+	kItemChain = 122
 };
 
 enum Elevators {
@@ -1361,6 +1422,16 @@ enum AffectionTowards {
 	kAffectionTowardsLucy = 3
 };
 
+/*
+ * Common goals:
+ *   0 -  99 - first chapter
+ * 100 - 199 - second chapter
+ * 200 - 299 - third chapter
+ * 300 - 399 - fourth chapter
+ * 400 - 499 - fifth chapter
+ * 599       - dead / gone
+ */
+
 enum GoalMcCoy {
 	kGoalMcCoyDefault = 0,
 	kGoalMcCoyDodge = 1
@@ -1378,6 +1449,34 @@ enum GoalSteele {
 	kGoalSteeleIzoBlockedByMcCoy = 125,
 	kGoalSteeleLeaveRC03 = 130,
 	kGoalSteeleWalkAroundRestart = 190
+};
+
+enum GoalDektora {
+	kGoalDektoraDefault = 0,
+	kGoalDektoraStartWalkingAround = 100,
+	kGoalDektoraWalkAroundAsReplicant = 101,
+	kGoalDektoraWalkAroundAsHuman = 102,
+	kGoalDektoraStopWalkingAround = 103
+};
+
+enum GoalGordo {
+	// chapter 1
+	kGoalGordoDefault = 0,
+	kGoalGordoLeaveCT01 = 1,
+	kGoalGordoLeftCT01 = 2,
+	kGoalGordoWalkThroughCT05 = 3,
+	kGoalGordoLeaveCT05 = 4,
+	kGoalGordoLeftCT05 = 5,
+	kGoalGordoGetUpCT01 = 90,
+	kGoalGordoWalkOutFromCT01 = 91,
+	kGoalGordoBidFarewellToHowieLee = 92,
+	kGoalGordoWalkToHowieLee = 93,
+	// chapter 2
+	kGoalGordoWalkAround = 100,
+	kGoalGordoGoToDNARow = 101,
+	kGoalGordoGoToChinaTown = 102,
+	kGoalGordoGoToFreeSlotHAGJ = 103,
+	kGoalGordoGoToFreeSlotAH = 104
 };
 
 enum GoalGuzza {
@@ -1423,18 +1522,18 @@ enum GoalBulletBob {
 
 enum GoalRunciter {
 	kGoalRunciterDefault = 0,
-	kGoalRunciterWalkAround = 1,
-	kGoalRunciterHide = 2,
+	kGoalRunciterWalkAroundRC02 = 1,
+	kGoalRunciterGoToFreeSlotGH = 2,
 	kGoalRunciterAtShop = 300,
 	kGoalRunciterDead = 599
 };
 
 enum GoalZuben {
 	kGoalZubenDefault = 0,
-	kGoalZubenCT01Leave = 1,
-	kGoalZubenCT02Flee = 2,
+	kGoalZubenCT01WalkToCT02 = 1,
+	kGoalZubenCT02RunToFreeSlotG = 2,
 	kGoalZubenCT07Spared = 4,
-	kGoalZubenCT07Leave = 5,
+	kGoalZubenCT07RunToFreeSlotA = 5,
 	kGoalZubenDie = 6,
 	kGoalZubenSpared = 7,
 	kGoalZubenCT02PushPot = 8,
@@ -1442,7 +1541,7 @@ enum GoalZuben {
 	kGoalZubenCT02OpenDoor = 10,
 	kGoalZubenCT06JumpDown = 11,
 	kGoalZubenCT06AttackMcCoy = 12,
-	kGoalZubenCT06Hide = 13,
+	kGoalZubenCT06HideAtFreeSlotA = 13,
 	kGoalZubenCT02PotDodgeCheck = 14,
 	kGoalZubenFled = 20,
 	kGoalZubenMA01AttackMcCoy = 21,
@@ -1453,6 +1552,21 @@ enum GoalOfficerLeary {
 	kGoalOfficerLearyDefault = 0,
 	kGoalOfficerLearyRC01WalkToCrowd = 1,
 	kGoalOfficerLearyRC01CrowdInterrogation = 2
+};
+
+enum GoalMoraji {
+	kGoalMorajiDefault = 0,
+	kGoalMorajiShot = 5,
+	kGoalMorajiFreed = 10,
+	kGoalMorajiRunOut = 11,
+	kGoalMorajiGetUp = 18,
+	kGoalMorajiScream = 19,
+	kGoalMorajiJump = 20,
+	kGoalMorajiLayDown = 21,
+	kGoalMorajiDie = 22,
+	kGoalMorajiDead = 23,
+	kGoalMorajiChooseFate = 30,
+	kGoalMorajiPerished = 99
 };
 
 } // End of namespace BladeRunner

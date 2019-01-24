@@ -50,7 +50,7 @@ void SceneScriptMA04::InitializeScene() {
 		}
 	} else if (Game_Flag_Query(kFlagMA02ToMA04)) {
 		Setup_Scene_Information(-7099.0f, 954.0f, 1866.0f, 502);
-	} else if (Game_Flag_Query(kFlagMcCoySleeping)) {
+	} else if (Game_Flag_Query(kFlagMA04McCoySleeping)) {
 		Setup_Scene_Information(-7107.0f, 954.0f, 1742.0f, 502);
 		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kMA04LoopWakeup, false);
 	} else {
@@ -189,7 +189,7 @@ bool SceneScriptMA04::ClickedOn2DRegion(int region) {
 				Music_Play(2, 52, 0, 3, -1, 0, 0);
 				return false;
 			}
-			if (Actor_Clue_Query(kActorClovis, kClueMcCoyRetiredZuben) && !Game_Flag_Query(kFlagPhoneMessageFromClovis)) {
+			if (Actor_Clue_Query(kActorClovis, kClueMcCoyRetiredZuben) && !Game_Flag_Query(kFlagMA04PhoneMessageFromClovis)) {
 				Sound_Play(123, 100, 0, 0, 50);
 				Overlay_Remove("MA04OVER");
 				Delay(500);
@@ -202,10 +202,10 @@ bool SceneScriptMA04::ClickedOn2DRegion(int region) {
 				}
 				Actor_Says(kActorMcCoy, 2445, 13);
 				Sound_Play(123, 100, 0, 0, 50);
-				Game_Flag_Set(kFlagPhoneMessageFromClovis);
+				Game_Flag_Set(kFlagMA04PhoneMessageFromClovis);
 				return true;
 			}
-			if (Actor_Clue_Query(kActorLucy, kClueMcCoyLetZubenEscape) && !Game_Flag_Query(kFlagPhoneMessageFromLucy)) {
+			if (Actor_Clue_Query(kActorLucy, kClueMcCoyLetZubenEscape) && !Game_Flag_Query(kFlagMA04PhoneMessageFromLucy)) {
 				Sound_Play(123, 100, 0, 0, 50);
 				Overlay_Remove("MA04OVER");
 				Delay(500);
@@ -218,7 +218,7 @@ bool SceneScriptMA04::ClickedOn2DRegion(int region) {
 				}
 				Actor_Says(kActorMcCoy, 2445, 13);
 				Sound_Play(123, 100, 0, 0, 50);
-				Game_Flag_Set(kFlagPhoneMessageFromLucy);
+				Game_Flag_Set(kFlagMA04PhoneMessageFromLucy);
 				return true;
 			}
 			Actor_Says(kActorMcCoy, 2670, 13);
@@ -240,7 +240,7 @@ void SceneScriptMA04::SceneFrameAdvanced(int frame) {
 	} else {
 		Set_Fade_Density(0.0f);
 	}
-	if (frame == 121 && (Game_Flag_Query(kFlagZubenRetired) || Game_Flag_Query(kFlagZubenSpared)) && !Game_Flag_Query(kFlagGuzzaTalkZubenRetired)) {
+	if (frame == 121 && (Game_Flag_Query(kFlagZubenRetired) || Game_Flag_Query(kFlagZubenSpared)) && !Game_Flag_Query(kFlagPS04GuzzaTalkZubenRetired)) {
 		Sound_Play(403, 50, 0, 0, 50);
 	}
 }
@@ -249,20 +249,20 @@ void SceneScriptMA04::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptMA04::PlayerWalkedIn() {
-	if (Game_Flag_Query(kFlagMcCoySleeping)) {
+	if (Game_Flag_Query(kFlagMA04McCoySleeping)) {
 		Player_Gains_Control();
 	}
 	if (isPhoneMessageWaiting() || isPhoneRinging()) {
 		Overlay_Play("MA04OVER", 0, 1, 0, 0);
 	}
-	if (Game_Flag_Query(kFlagMcCoySleeping)) {
+	if (Game_Flag_Query(kFlagMA04McCoySleeping)) {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7139.0f, 954.0f, 1746.0f, 0, true, false, 0);
 	} else if (Game_Flag_Query(kFlagMA02ToMA04)) {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7143.0f, 954.0f, 1868.0f, 0, true, false, 0);
 	}
 	Game_Flag_Reset(kFlagMA02ToMA04);
 	Game_Flag_Reset(kFlagMA05toMA04);
-	Game_Flag_Reset(kFlagMcCoySleeping);
+	Game_Flag_Reset(kFlagMA04McCoySleeping);
 	if (Game_Flag_Query(kFlagChapter1Ended)) {
 		if (Global_Variable_Query(kVariableChapter) == 2 && !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallGuzza)) {
 			Sound_Play(403, 100, 0, 0, 50);
@@ -286,8 +286,8 @@ void SceneScriptMA04::PlayerWalkedIn() {
 			Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallGuzza, false, kActorGuzza);
 			Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationTyrellBuilding, true);
 			Game_Flag_Set(kFlagRC01PoliceDone);
-			if (!Game_Flag_Query(kFlagChromeDebrisTaken)) {
-				Game_Flag_Set(kFlagChromeDebrisTaken);
+			if (!Game_Flag_Query(kFlagRC01ChromeDebrisTaken)) {
+				Game_Flag_Set(kFlagRC01ChromeDebrisTaken);
 				Item_Remove_From_World(kItemChromeDebris);
 			}
 			Actor_Set_Goal_Number(kActorOfficerLeary, 99);
@@ -338,8 +338,8 @@ bool SceneScriptMA04::isPhoneRinging() {
 }
 
 bool SceneScriptMA04::isPhoneMessageWaiting() {
-	return (Actor_Clue_Query(kActorClovis, kClueMcCoyRetiredZuben) && !Game_Flag_Query(kFlagPhoneMessageFromClovis))
-	    || (Actor_Clue_Query(kActorLucy, kClueMcCoyLetZubenEscape) && !Game_Flag_Query(kFlagPhoneMessageFromLucy));
+	return (Actor_Clue_Query(kActorClovis, kClueMcCoyRetiredZuben) && !Game_Flag_Query(kFlagMA04PhoneMessageFromClovis))
+	    || (Actor_Clue_Query(kActorLucy, kClueMcCoyLetZubenEscape) && !Game_Flag_Query(kFlagMA04PhoneMessageFromLucy));
 }
 
 void SceneScriptMA04::phoneCallWithDektora() {
@@ -562,7 +562,7 @@ void SceneScriptMA04::sleep() {
 			Overlay_Remove("MA04OVER");
 		}
 		Player_Loses_Control();
-		Game_Flag_Set(kFlagMcCoySleeping);
+		Game_Flag_Set(kFlagMA04McCoySleeping);
 		if ((Game_Flag_Query(kFlagZubenRetired) || Game_Flag_Query(kFlagZubenSpared)) && Global_Variable_Query(kVariableChapter) == 1) {
 			if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenDead) {
 				Actor_Put_In_Set(kActorZuben, kSetFreeSlotA);

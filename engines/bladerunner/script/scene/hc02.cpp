@@ -89,7 +89,7 @@ bool SceneScriptHC02::ClickedOnActor(int actorId) {
 	if (actorId == kActorHawkersBarkeep) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -150.51f, 0.14f, 62.74f, 0, true, false, 0)) {
 			Actor_Face_Actor(kActorMcCoy, kActorHawkersBarkeep, true);
-			if (!Game_Flag_Query(kFlagHawkersBarkeepIntroduction)) {
+			if (!Game_Flag_Query(kFlagHC02HawkersBarkeepIntroduction)) {
 				Actor_Says(kActorMcCoy, 1225, 13);
 				Actor_Says_With_Pause(kActorHawkersBarkeep, 0, 0.0f, 13);
 				Actor_Says(kActorHawkersBarkeep, 10, 16);
@@ -99,7 +99,7 @@ bool SceneScriptHC02::ClickedOnActor(int actorId) {
 				Actor_Change_Animation_Mode(kActorMcCoy, 75);
 				Delay(1500);
 				Global_Variable_Increment(kVariableMcCoyDrinks, 1);
-				Game_Flag_Set(kFlagHawkersBarkeepIntroduction);
+				Game_Flag_Set(kFlagHC02HawkersBarkeepIntroduction);
 			} else if ( Actor_Clue_Query(kActorMcCoy, kClueChinaBarSecurityCamera)
 			        && !Actor_Clue_Query(kActorMcCoy, kClueChinaBarSecurityDisc)
 			) {
@@ -110,8 +110,8 @@ bool SceneScriptHC02::ClickedOnActor(int actorId) {
 				Item_Pickup_Spin_Effect(975, 229, 215);
 			} else if ( Actor_Clue_Query(kActorMcCoy, kClueHomelessManInterview1)
 			        && !Actor_Clue_Query(kActorMcCoy, kClueFlaskOfAbsinthe)
-			        && (Global_Variable_Query(kVariableChinyen) > 20
-			         || Query_Difficulty_Level() == 0
+			        &&  (Global_Variable_Query(kVariableChinyen) > 20
+			         ||  Query_Difficulty_Level() == 0
 			        )
 			) {
 				Actor_Clue_Acquire(kActorMcCoy, kClueFlaskOfAbsinthe, true, kActorHawkersBarkeep);
@@ -132,12 +132,12 @@ bool SceneScriptHC02::ClickedOnActor(int actorId) {
 				Actor_Says(kActorMcCoy, 1245, 13);
 			} else {
 				if ( Actor_Clue_Query(kActorMcCoy, kClueMaggieBracelet)
-				 && !Game_Flag_Query(kFlagHawkersBarkeepBraceletTalk)
+				 && !Game_Flag_Query(kFlagHC02HawkersBarkeepBraceletTalk)
 				) {
 					Actor_Says(kActorHawkersBarkeep, 80, 16);
 					Actor_Says(kActorMcCoy, 1265, 13);
 					Actor_Says(kActorHawkersBarkeep, 90, 13);
-					Game_Flag_Set(kFlagHawkersBarkeepBraceletTalk);
+					Game_Flag_Set(kFlagHC02HawkersBarkeepBraceletTalk);
 				}
 				if (Global_Variable_Query(kVariableChinyen) > 5
 				 || Query_Difficulty_Level() == 0

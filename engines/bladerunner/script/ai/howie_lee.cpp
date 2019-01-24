@@ -55,7 +55,7 @@ bool AIScriptHowieLee::Update() {
 		Actor_Set_Goal_Number(kActorHowieLee, 1);
 	}
 
-	if ( Game_Flag_Query(kFlagMcCoyAtCTxx)
+	if ( Game_Flag_Query(kFlagMcCoyInChinaTown)
 	 && !Actor_Query_In_Set(kActorHowieLee, kSetCT01_CT12)
 	) {
 		AI_Movement_Track_Flush(kActorHowieLee);
@@ -64,8 +64,8 @@ bool AIScriptHowieLee::Update() {
 	}
 
 	if ( Actor_Query_Goal_Number(kActorHowieLee) == 1
-	 &&  Game_Flag_Query(kFlagBoughtHowieLeeFood)
-	 && !Game_Flag_Query(kFlagMcCoyAtCTxx)
+	 &&  Game_Flag_Query(kFlagCT01BoughtHowieLeeFood)
+	 && !Game_Flag_Query(kFlagMcCoyInChinaTown)
 	) {
 		Actor_Set_Goal_Number(kActorHowieLee, 4);
 		return true;
@@ -124,20 +124,20 @@ void AIScriptHowieLee::EnteredScene(int sceneId) {
 	if (Actor_Query_Goal_Number(kActorHowieLee) == 4
 	 && Actor_Query_In_Set(kActorHowieLee, kSetCT03_CT04)
 	) {
-		if ( Game_Flag_Query(kFlagMcCoyKilledHomeless)
-		 && !Game_Flag_Query(kFlagHomelessBodyInDumpster)
-		 && !Game_Flag_Query(kFlagHomelessBodyFound)
+		if ( Game_Flag_Query(kFlagCT04HomelessKilledByMcCoy)
+		 && !Game_Flag_Query(kFlagCT04HomelessBodyInDumpster)
+		 && !Game_Flag_Query(kFlagCT04HomelessBodyFound)
 		) {
-			Game_Flag_Set(kFlagHomelessBodyFound);
+			Game_Flag_Set(kFlagCT04HomelessBodyFound);
 			// return false;
 		}
 
-		if (!Game_Flag_Query(kFlagMcCoyKilledHomeless)
-		 &&  Game_Flag_Query(kFlagHomelessBodyInDumpster)
-		 && !Game_Flag_Query(kFlagHomelessBodyFound)
+		if (!Game_Flag_Query(kFlagCT04HomelessKilledByMcCoy)
+		 &&  Game_Flag_Query(kFlagCT04HomelessBodyInDumpster)
+		 && !Game_Flag_Query(kFlagCT04HomelessBodyFound)
 		 &&  Random_Query(1, 10) == 1
 		) {
-			Game_Flag_Set(kFlagHomelessBodyFound);
+			Game_Flag_Set(kFlagCT04HomelessBodyFound);
 			// return true;
 		}
 		// return false;

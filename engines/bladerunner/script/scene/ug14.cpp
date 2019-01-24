@@ -25,32 +25,34 @@
 namespace BladeRunner {
 
 void SceneScriptUG14::InitializeScene() {
-	if (Game_Flag_Query(349)) {
-		Setup_Scene_Information(-278.0f, 12.97f, -152.0f, 200);
-	} else if (Game_Flag_Query(344)) {
-		Setup_Scene_Information(-50.0f, 129.0f, -814.0f, 533);
+	if (Game_Flag_Query(kFlagUG19toUG14)) {
+		Setup_Scene_Information(-278.0f,  12.97f, -152.0f, 200);
+	} else if (Game_Flag_Query(kFlagUG12toUG14)) {
+		Setup_Scene_Information( -50.0f,  129.0f, -814.0f, 533);
 	} else {
-		Setup_Scene_Information(233.0f, 186.04f, -32.0f, 865);
+		Setup_Scene_Information( 233.0f, 186.04f,  -32.0f, 865);
 	}
-	Scene_Exit_Add_2D_Exit(0, 0, 232, 45, 427, 3);
-	Scene_Exit_Add_2D_Exit(1, 175, 44, 228, 115, 0);
-	Scene_Exit_Add_2D_Exit(2, 537, 0, 639, 190, 1);
+
+	Scene_Exit_Add_2D_Exit(0,   0, 232,  45, 427, 3);
+	Scene_Exit_Add_2D_Exit(1, 175,  44, 228, 115, 0);
+	Scene_Exit_Add_2D_Exit(2, 537,   0, 639, 190, 1);
+
 	Ambient_Sounds_Add_Looping_Sound(331, 28, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(332, 40, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(333, 40, 0, 1);
-	Ambient_Sounds_Add_Sound(291, 2, 20, 20, 25, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(292, 2, 20, 20, 25, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(401, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(402, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(369, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(397, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(398, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(293, 2, 20, 20, 25, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(294, 2, 20, 20, 25, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(295, 2, 20, 20, 25, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(303, 5, 50, 17, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(304, 5, 50, 17, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(305, 5, 50, 17, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(291, 2,  20, 20, 25, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(292, 2,  20, 20, 25, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(401, 2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(402, 2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(369, 2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(397, 2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(398, 2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(293, 2,  20, 20, 25, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(294, 2,  20, 20, 25, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(295, 2,  20, 20, 25, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(303, 5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(304, 5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(305, 5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
 }
 
 void SceneScriptUG14::SceneLoaded() {
@@ -84,36 +86,36 @@ bool SceneScriptUG14::ClickedOnExit(int exitId) {
 	}
 	if (!exitId) {
 		if (v1) {
-			if (Loop_Actor_Walk_To_XYZ(kActorMcCoy, 141.47f, 128.92f, -150.16f, 0, 1, false, 0)) {
+			if (Loop_Actor_Walk_To_XYZ(kActorMcCoy, 141.47f, 128.92f, -150.16f, 0, true, false, 0)) {
 				return false;
 			}
 			Actor_Face_XYZ(kActorMcCoy, -14.53f, 12.12f, -150.16f, true);
 			Footstep_Sound_Override_On(3);
-			Loop_Actor_Travel_Stairs(kActorMcCoy, 13, 0, kAnimationModeIdle);
+			Loop_Actor_Travel_Stairs(kActorMcCoy, 13, false, kAnimationModeIdle);
 			Footstep_Sound_Override_Off();
 		}
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -278.0f, 12.97f, -152.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -278.0f, 12.97f, -152.0f, 0, true, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(348);
+			Game_Flag_Set(kFlagUG14toUG19);
 			Set_Enter(kSetUG19, kSceneUG19);
 		}
 		return true;
 	}
 	if (exitId == 1) {
 		if (!v1) {
-			if (Loop_Actor_Walk_To_XYZ(kActorMcCoy, -14.53f, 12.12f, -150.16f, 0, 1, false, 0)) {
+			if (Loop_Actor_Walk_To_XYZ(kActorMcCoy, -14.53f, 12.12f, -150.16f, 0, true, false, 0)) {
 				return false;
 			}
 			Actor_Face_XYZ(kActorMcCoy, 141.47f, 128.92f, -150.16f, true);
 			Footstep_Sound_Override_On(3);
-			Loop_Actor_Travel_Stairs(kActorMcCoy, 13, 1, kAnimationModeIdle);
+			Loop_Actor_Travel_Stairs(kActorMcCoy, 13, true, kAnimationModeIdle);
 			Footstep_Sound_Override_Off();
 		}
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -50.0f, 129.0f, -814.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -50.0f, 129.0f, -814.0f, 0, true, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(345);
+			Game_Flag_Set(kFlagUG14toUG12);
 			Set_Enter(kSetCT08_CT51_UG12, kSceneUG12);
 		}
 		return true;
@@ -121,22 +123,22 @@ bool SceneScriptUG14::ClickedOnExit(int exitId) {
 
 	if (exitId == 2) {
 		if (!v1) {
-			if (Loop_Actor_Walk_To_XYZ(kActorMcCoy, -14.53f, 12.12f, -150.16f, 0, 1, false, 0)) {
+			if (Loop_Actor_Walk_To_XYZ(kActorMcCoy, -14.53f, 12.12f, -150.16f, 0, true, false, 0)) {
 				return false;
 			}
 			Actor_Face_XYZ(kActorMcCoy, 141.47f, 128.92f, -150.16f, true);
 			Footstep_Sound_Override_On(3);
-			Loop_Actor_Travel_Stairs(kActorMcCoy, 13, 1, kAnimationModeIdle);
+			Loop_Actor_Travel_Stairs(kActorMcCoy, 13, true, kAnimationModeIdle);
 			Footstep_Sound_Override_Off();
 		}
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 157.0f, 128.92f, -108.01f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 157.0f, 128.92f, -108.01f, 0, true, false, 0)) {
 			Footstep_Sound_Override_On(3);
-			Loop_Actor_Travel_Stairs(kActorMcCoy, 6, 1, kAnimationModeIdle);
+			Loop_Actor_Travel_Stairs(kActorMcCoy, 6, true, kAnimationModeIdle);
 			Footstep_Sound_Override_Off();
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 233.0f, 186.04f, -32.0f, 0, 0, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 233.0f, 186.04f, -32.0f, 0, false, false, 0);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(346);
+			Game_Flag_Set(kFlagUG14toUG10);
 			Set_Enter(kSetUG10, kSceneUG10);
 		}
 		return true;
@@ -155,23 +157,26 @@ void SceneScriptUG14::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptUG14::PlayerWalkedIn() {
-	if (Game_Flag_Query(349)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -250.0f, 12.97f, -152.0f, 0, 0, false, 0);
-		Game_Flag_Reset(349);
-	} else if (Game_Flag_Query(344)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -50.0f, 129.0f, -604.0f, 0, 0, false, 0);
-		Game_Flag_Reset(344);
+	if (Game_Flag_Query(kFlagUG19toUG14)) {
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -250.0f, 12.97f, -152.0f, 0, false, false, 0);
+		Game_Flag_Reset(kFlagUG19toUG14);
+	} else if (Game_Flag_Query(kFlagUG12toUG14)) {
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -50.0f, 129.0f, -604.0f, 0, false, false, 0);
+		Game_Flag_Reset(kFlagUG12toUG14);
 	} else {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 157.0f, 186.04f, -44.01f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 157.0f, 186.04f, -44.01f, 0, false, false, 0);
 		Actor_Face_Heading(kActorMcCoy, 10, false);
 		Footstep_Sound_Override_On(3);
-		Loop_Actor_Travel_Stairs(kActorMcCoy, 6, 0, kAnimationModeIdle);
+		Loop_Actor_Travel_Stairs(kActorMcCoy, 6, false, kAnimationModeIdle);
 		Footstep_Sound_Override_Off();
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 157.0f, 128.92f, -148.01f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 157.0f, 128.92f, -148.01f, 0, false, false, 0);
 		Actor_Face_Heading(kActorMcCoy, 807, false);
-		Game_Flag_Reset(347);
+		Game_Flag_Reset(kFlagUG10toUG14);
 	}
-	if (Global_Variable_Query(kVariableChapter) == 4 && Game_Flag_Query(kFlagDumpsterEmptied) && !Game_Flag_Query(694)) {
+	if ( Global_Variable_Query(kVariableChapter) == 4
+	 &&  Game_Flag_Query(kFlagCT04HomelessBodyThrownAway)
+	 && !Game_Flag_Query(kFlagUG14DeadHomeless)
+	) {
 		Overlay_Play("UG14OVER", 0, 0, 1, 0);
 		Delay(1000);
 		Actor_Face_Heading(kActorMcCoy, 609, false);
@@ -179,7 +184,7 @@ void SceneScriptUG14::PlayerWalkedIn() {
 		Actor_Voice_Over(270, kActorVoiceOver);
 		Delay(2150);
 		Actor_Voice_Over(300, kActorVoiceOver);
-		Game_Flag_Set(694);
+		Game_Flag_Set(kFlagUG14DeadHomeless);
 	}
 	//return false;
 }

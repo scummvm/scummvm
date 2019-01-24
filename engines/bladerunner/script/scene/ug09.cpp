@@ -145,8 +145,8 @@ void SceneScriptUG09::PlayerWalkedOut() {
 	}
 
 	if (Game_Flag_Query(kFlagUG09toCT12)) {
-		Game_Flag_Set(kFlagMcCoyAtCTxx);
-		Game_Flag_Reset(kFlagMcCoyAtUGxx);
+		Game_Flag_Set(kFlagMcCoyInChinaTown);
+		Game_Flag_Reset(kFlagMcCoyInUnderground);
 	}
 }
 

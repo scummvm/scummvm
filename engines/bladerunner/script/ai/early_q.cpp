@@ -330,7 +330,7 @@ bool AIScriptEarlyQ::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		break;
 
 	case 208:
-		if (Game_Flag_Query(374) == 1) {
+		if (Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)) {
 			Actor_Set_Goal_Number(kActorEarlyQ, 210);
 		} else {
 			Actor_Set_Goal_Number(kActorEarlyQ, 209);

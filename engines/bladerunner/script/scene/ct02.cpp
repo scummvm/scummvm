@@ -194,7 +194,7 @@ void SceneScriptCT02::dialogueWithZuben() {
 }
 
 bool SceneScriptCT02::ClickedOnActor(int actorId) {
-	if (actorId == kActorZuben && Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT01Leave) {
+	if (actorId == kActorZuben && Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT01WalkToCT02) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -255.02f, -145.11f, 212.42f, 0, true, false, 0)) {
 			Actor_Face_Actor(kActorMcCoy, kActorZuben, true);
 			Actor_Face_Actor(kActorZuben, kActorMcCoy, true);

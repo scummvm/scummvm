@@ -152,7 +152,7 @@ bool SceneScriptNR04::ClickedOn2DRegion(int region) {
 		if (Game_Flag_Query(606) == 1) {
 			return true;
 		}
-		if (Game_Flag_Query(374)) {
+		if (Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)) {
 			Player_Loses_Control();
 			Actor_Voice_Over(4180, kActorVoiceOver);
 			Actor_Change_Animation_Mode(kActorMcCoy, 48);
@@ -260,7 +260,7 @@ void SceneScriptNR04::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptNR04::PlayerWalkedIn() {
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 53.0f, 0.0f, -26.0f, 0, 0, false, 0);
-	if (Game_Flag_Query(374)) {
+	if (Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)) {
 		Overlay_Play("nr04over", 0, 1, 0, 0);
 		Delay(4000);
 		Overlay_Remove("nr04over");

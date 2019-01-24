@@ -27,7 +27,7 @@ namespace BladeRunner {
 void SceneScriptHF05::InitializeScene() {
 	if (Game_Flag_Query(530)) {
 		Setup_Scene_Information(257.0f, 40.63f, 402.0f, 1000);
-	} else if (Game_Flag_Query(358)) {
+	} else if (Game_Flag_Query(kFlagHF07toHF05)) {
 		Setup_Scene_Information(330.0f, 40.63f, -107.0f, 603);
 	} else {
 		Setup_Scene_Information(483.0f, 40.63f, -189.0f, 600);
@@ -162,13 +162,13 @@ bool SceneScriptHF05::ClickedOnExit(int exitId) {
 			if (!Game_Flag_Query(684)) {
 				int affectionTowardsActor = getAffectionTowardsActor();
 				if (Game_Flag_Query(663)
-				&& Game_Flag_Query(368)
-				&& affectionTowardsActor != -1
+				 && Game_Flag_Query(368)
+				 && affectionTowardsActor != -1
 				) {
 					Actor_Face_Actor(kActorMcCoy, affectionTowardsActor, true);
 					Actor_Says(kActorMcCoy, 1810, 16);
 				}
-				Game_Flag_Set(359);
+				Game_Flag_Set(kFlagHF05toHF07);
 				Set_Enter(kSetHF07, kSceneHF07);
 			}
 		}
@@ -255,7 +255,7 @@ void SceneScriptHF05::PlayerWalkedIn() {
 				Async_Actor_Walk_To_Waypoint(affectionTowardsActor, 437, 36, 0);
 			} else if (Game_Flag_Query(530)) {
 				Actor_Set_At_XYZ(affectionTowardsActor, 288.0f, 40.63f, 410.0f, 909);
-			} else if (Game_Flag_Query(358)) {
+			} else if (Game_Flag_Query(kFlagHF07toHF05)) {
 				Actor_Set_At_XYZ(affectionTowardsActor, 298.0f, 40.63f, -107.0f, 512);
 			} else {
 				Actor_Set_At_XYZ(affectionTowardsActor, 284.0f, 40.63f, 286.0f, 0);
@@ -281,7 +281,7 @@ void SceneScriptHF05::PlayerWalkedIn() {
 		}
 	} else if (Game_Flag_Query(kFlagHF01toHF05)) {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 399.0f, 40.63f, -85.0f, 0, 0, false, 0);
-	} else if (Game_Flag_Query(358)) {
+	} else if (Game_Flag_Query(kFlagHF07toHF05)) {
 		Actor_Set_At_XYZ(kActorMcCoy, 346.0f, 4.63f, -151.0f, 603);
 		Loop_Actor_Travel_Stairs(kActorMcCoy, 4, 1, kAnimationModeIdle);
 	}
@@ -298,7 +298,7 @@ void SceneScriptHF05::PlayerWalkedIn() {
 	}
 	Game_Flag_Reset(kFlagHF01toHF05);
 	Game_Flag_Reset(530);
-	Game_Flag_Reset(358);
+	Game_Flag_Reset(kFlagHF07toHF05);
 
 	//return false;
 }

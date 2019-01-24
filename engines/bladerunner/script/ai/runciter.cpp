@@ -55,7 +55,7 @@ bool AIScriptRunciter::Update() {
 	if (Actor_Query_Goal_Number(kActorRunciter) == kGoalRunciterDefault
 	 && Game_Flag_Query(kFlagRC01PoliceDone)
 	) {
-		Actor_Set_Goal_Number(kActorRunciter, kGoalRunciterHide);
+		Actor_Set_Goal_Number(kActorRunciter, kGoalRunciterGoToFreeSlotGH);
 	}
 	if (Global_Variable_Query(kVariableChapter) == 4
 	 && Actor_Query_Goal_Number(kActorRunciter) < 300
@@ -180,7 +180,7 @@ bool AIScriptRunciter::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Set_At_Waypoint(kActorRunciter, 92, 567);
 		return false;
 	}
-	if (newGoalNumber == kGoalRunciterWalkAround) {
+	if (newGoalNumber == kGoalRunciterWalkAroundRC02) {
 		AI_Movement_Track_Flush(kActorRunciter);
 		if (Random_Query(0, 1) == 1) {
 			if (Random_Query(0, 1) == 0) {
@@ -198,7 +198,7 @@ bool AIScriptRunciter::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorRunciter);
 		return true;
 	}
-	if (newGoalNumber == kGoalRunciterHide) {
+	if (newGoalNumber == kGoalRunciterGoToFreeSlotGH) {
 		AI_Movement_Track_Flush(kActorRunciter);
 		AI_Movement_Track_Append(kActorRunciter, 39, 120);
 		AI_Movement_Track_Append(kActorRunciter, 40, 0);

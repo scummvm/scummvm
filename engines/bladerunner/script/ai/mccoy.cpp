@@ -750,7 +750,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 	case 44:
 		*animation = 30;
 		if (_animationFrame++ == 127) {
-			Game_Flag_Set(325);
+			Game_Flag_Set(kFlagCT04BodyDumped);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(30)) {
 			*animation = 19;
@@ -807,7 +807,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		} else if (_animationFrame == 4) {
 			Sound_Right_Footstep_Walk(kActorMcCoy);
 		}
-		if (Game_Flag_Query(359)) {
+		if (Game_Flag_Query(kFlagHF05toHF07)) {
 			sub_4059D0(-0.2f);
 		}
 		break;
@@ -823,7 +823,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		} else if (_animationFrame == 3) {
 			Sound_Right_Footstep_Walk(kActorMcCoy);
 		}
-		if (Game_Flag_Query(358)) {
+		if (Game_Flag_Query(kFlagHF07toHF05)) {
 			sub_405940(0.5f);
 		}
 		break;
@@ -839,7 +839,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		} else if (_animationFrame == 3) {
 			Sound_Right_Footstep_Walk(kActorMcCoy);
 		}
-		if (Game_Flag_Query(359)) {
+		if (Game_Flag_Query(kFlagHF05toHF07)) {
 			sub_4059D0(-0.2f);
 		}
 		break;
@@ -855,7 +855,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		} else if (_animationFrame == 4) {
 			Sound_Right_Footstep_Walk(kActorMcCoy);
 		}
-		if (Game_Flag_Query(358)) {
+		if (Game_Flag_Query(kFlagHF07toHF05)) {
 			sub_405940(0.5f);
 		}
 		break;

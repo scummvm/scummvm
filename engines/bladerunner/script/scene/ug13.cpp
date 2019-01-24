@@ -27,17 +27,19 @@ namespace BladeRunner {
 void SceneScriptUG13::InitializeScene() {
 	if (Game_Flag_Query(435)) {
 		Setup_Scene_Information(-477.0f, 141.9f, -870.0f, 378);
-	} else if (Game_Flag_Query(350)) {
-		Setup_Scene_Information(39.0f, 52.94f, -528.0f, 600);
+	} else if (Game_Flag_Query(kFlagUG15toUG13)) {
+		Setup_Scene_Information(  39.0f, 52.94f, -528.0f, 600);
 	} else {
-		Setup_Scene_Information(-22.0f, 54.63f, -883.0f, 578);
+		Setup_Scene_Information( -22.0f, 54.63f, -883.0f, 578);
 		Actor_Set_Invisible(kActorMcCoy, false);
 	}
+
 	if (!Game_Flag_Query(431)) {
 		Scene_Exit_Add_2D_Exit(0, 394, 205, 464, 281, 0);
 	}
 	Scene_Exit_Add_2D_Exit(1, 560, 90, 639, 368, 1);
 	Scene_Exit_Add_2D_Exit(2, 108, 85, 175, 210, 3);
+
 	Ambient_Sounds_Add_Looping_Sound(331, 15, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(332, 40, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(333, 40, 0, 1);
@@ -46,7 +48,10 @@ void SceneScriptUG13::InitializeScene() {
 	Ambient_Sounds_Add_Sound(369, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
 	Ambient_Sounds_Add_Sound(397, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
 	Ambient_Sounds_Add_Sound(398, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
-	if (Global_Variable_Query(kVariableChapter) == 4 && !Game_Flag_Query(kFlagMcCoyKilledHomeless)) {
+
+	if ( Global_Variable_Query(kVariableChapter) == 4
+	 && !Game_Flag_Query(kFlagCT04HomelessKilledByMcCoy)
+	) {
 		Actor_Set_Goal_Number(kActorTransient, 390);
 	}
 	if (Actor_Query_Goal_Number(kActorTransient) == 599) {
@@ -74,7 +79,7 @@ void SceneScriptUG13::SceneLoaded() {
 	Unclickable_Object("BASKET");
 	if ( Global_Variable_Query(kVariableChapter) >= 3
 	 && !Actor_Clue_Query(kActorMcCoy, kClueOriginalRequisitionForm)
-	 &&  Game_Flag_Query(kFlagMcCoyKilledHomeless)
+	 &&  Game_Flag_Query(kFlagCT04HomelessKilledByMcCoy)
 	 &&  (Actor_Clue_Query(kActorMcCoy, kClueShippingForm)
 	  ||  Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm)
 	 )
@@ -175,7 +180,7 @@ bool SceneScriptUG13::ClickedOnExit(int exitId) {
 	}
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 39.0f, 52.94f, -528.0f, 0, 1, false, 0)) {
-			Game_Flag_Set(351);
+			Game_Flag_Set(kFlagUG13toUG15);
 			Set_Enter(kSetUG15, kSceneUG15);
 		}
 		return true;
@@ -238,15 +243,15 @@ void SceneScriptUG13::PlayerWalkedIn() {
 		Loop_Actor_Travel_Stairs(kActorMcCoy, 11, 0, kAnimationModeIdle);
 		Footstep_Sound_Override_Off();
 		Game_Flag_Reset(435);
-	} else if (Game_Flag_Query(350)) {
+	} else if (Game_Flag_Query(kFlagUG15toUG13)) {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, 44.0f, -528.0f, 0, 0, false, 0);
-		Game_Flag_Reset(350);
+		Game_Flag_Reset(kFlagUG15toUG13);
 	} else {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -60.0f, 55.24f, -816.0f, 0, 0, false, 0);
 		Game_Flag_Reset(429);
 		Player_Gains_Control();
 	}
-	if (Actor_Query_Goal_Number(kActorTransient) >= 390 && !Game_Flag_Query(kFlagMcCoyKilledHomeless)) {
+	if (Actor_Query_Goal_Number(kActorTransient) >= 390 && !Game_Flag_Query(kFlagCT04HomelessKilledByMcCoy)) {
 		if (Game_Flag_Query(553)) {
 			if (Random_Query(1, 3) == 1) {
 				Actor_Set_Goal_Number(kActorTransient, 395);

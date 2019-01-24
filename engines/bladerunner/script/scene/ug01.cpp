@@ -115,8 +115,8 @@ bool SceneScriptUG01::ClickedOnExit(int exitId) {
 			Actor_Face_Heading(kActorMcCoy, 768, false);
 			Loop_Actor_Travel_Ladder(kActorMcCoy, 12, true, 0);
 			Game_Flag_Set(kFlagUG01toRC03);
-			Game_Flag_Reset(kFlagMcCoyAtUGxx);
-			Game_Flag_Set(kFlagMcCoyAtRCxx);
+			Game_Flag_Reset(kFlagMcCoyInUnderground);
+			Game_Flag_Set(kFlagMcCoyInRunciters);
 			Set_Enter(kSetRC03, kSceneRC03);
 		}
 		return true;

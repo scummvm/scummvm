@@ -56,21 +56,21 @@ bool AIScriptSteele::Update() {
 
 	switch (Global_Variable_Query(kVariableChapter)) {
 	case 1:
-		if (Game_Flag_Query(kFlagMcCoyAtRCxx)
+		if (Game_Flag_Query(kFlagMcCoyInRunciters)
 		 && Game_Flag_Query(183)
 		) {
 			Actor_Set_Goal_Number(kActorSteele, 3);
 			return true;
 		}
 
-		if (Game_Flag_Query(kFlagMcCoyAtCTxx)
+		if (Game_Flag_Query(kFlagMcCoyInChinaTown)
 		 && Game_Flag_Query(184)
 		) {
 			Actor_Set_Goal_Number(kActorSteele, 6);
 			return true;
 		}
 
-		if (Game_Flag_Query(kFlagMcCoyAtPSxx)
+		if (Game_Flag_Query(kFlagMcCoyInPoliceStation)
 		 && Game_Flag_Query(185)
 		) {
 			Actor_Set_Goal_Number(kActorSteele, 10);
@@ -78,7 +78,7 @@ bool AIScriptSteele::Update() {
 		}
 
 		if ( Actor_Query_Goal_Number(kActorSteele) == 0
-		 && !Game_Flag_Query(kFlagMcCoyAtRCxx)
+		 && !Game_Flag_Query(kFlagMcCoyInRunciters)
 		 &&  Player_Query_Current_Scene() != kSceneRC01
 		) {
 			Actor_Set_Goal_Number(kActorSteele, 1);
@@ -399,11 +399,11 @@ void AIScriptSteele::ClickedByPlayer() {
 
 void AIScriptSteele::EnteredScene(int sceneId) {
 	if (Actor_Query_Goal_Number(kActorSteele) == 2) {
-		if (!Game_Flag_Query(kFlagChopstickWrapperTaken)
+		if (!Game_Flag_Query(kFlagRC51ChopstickWrapperTaken)
 		 &&  Random_Query(1, 3) == 1
 		) {
 			Actor_Clue_Acquire(kActorSteele, kClueChopstickWrapper, true, -1);
-			Game_Flag_Set(kFlagChopstickWrapperTaken);
+			Game_Flag_Set(kFlagRC51ChopstickWrapperTaken);
 
 			if (Game_Flag_Query(kFlagRC51Discovered)) {
 				Item_Remove_From_World(kItemChopstickWrapper);
@@ -413,11 +413,11 @@ void AIScriptSteele::EnteredScene(int sceneId) {
 			return;  //true;
 		}
 
-		if (!Game_Flag_Query(kFlagCandyTaken)
+		if (!Game_Flag_Query(kFlagRC51CandyTaken)
 		 &&  Random_Query(1, 3) == 1
 		) {
 			Actor_Clue_Acquire(kActorSteele, kClueCandy, true, -1);
-			Game_Flag_Set(kFlagCandyTaken);
+			Game_Flag_Set(kFlagRC51CandyTaken);
 
 			if (Game_Flag_Query(kFlagRC51Discovered)) {
 				Item_Remove_From_World(kItemCandy);
@@ -425,11 +425,11 @@ void AIScriptSteele::EnteredScene(int sceneId) {
 			return; //true;
 		}
 
-		if (!Game_Flag_Query(kFlagToyDogTaken)
+		if (!Game_Flag_Query(kFlagRC51ToyDogTaken)
 		 &&  Random_Query(1, 20) == 1
 		) {
 			Actor_Clue_Acquire(kActorSteele, kClueToyDog, true, -1);
-			Game_Flag_Set(kFlagToyDogTaken);
+			Game_Flag_Set(kFlagRC51ToyDogTaken);
 
 			if (Game_Flag_Query(kFlagRC51Discovered)) {
 				Item_Remove_From_World(kItemToyDog);
@@ -440,11 +440,11 @@ void AIScriptSteele::EnteredScene(int sceneId) {
 
 	if ( Actor_Query_Goal_Number(kActorSteele) == 5
 	 &&  Actor_Query_In_Set(kActorSteele, kSetCT03_CT04)
-	 &&  Game_Flag_Query(kFlagMcCoyKilledHomeless)
-	 && !Game_Flag_Query(kFlagHomelessBodyInDumpster)
-	 && !Game_Flag_Query(kFlagHomelessBodyFound)
+	 &&  Game_Flag_Query(kFlagCT04HomelessKilledByMcCoy)
+	 && !Game_Flag_Query(kFlagCT04HomelessBodyInDumpster)
+	 && !Game_Flag_Query(kFlagCT04HomelessBodyFound)
 	) {
-		Game_Flag_Set(kFlagHomelessBodyFound);
+		Game_Flag_Set(kFlagCT04HomelessBodyFound);
 		return; //true;
 	}
 
@@ -931,8 +931,8 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case 233:
 		Game_Flag_Set(kFlagHF01toHF03);
-		Game_Flag_Reset(kFlagMcCoyAtNRxx);
-		Game_Flag_Set(kFlagMcCoyAtHFxx);
+		Game_Flag_Reset(kFlagMcCoyInNightclubRow);
+		Game_Flag_Set(kFlagMcCoyInHysteriaHall);
 		Actor_Put_In_Set(kActorSteele, kSetHF03);
 		Actor_Set_At_XYZ(kActorSteele, 291.0f, 47.76f, -892.0f, 453);
 		Set_Enter(kSetHF03, kSceneHF03);
@@ -1265,25 +1265,25 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case 290:
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -281.0f, 31.93f, -1061.0f, 0, 0, 1, 0);
-		Actor_Face_Heading(kActorMcCoy, 45, 0);
-		Loop_Actor_Travel_Stairs(kActorMcCoy, 3, 0, kAnimationModeIdle);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -281.0f, 31.93f, -1061.0f, 0, false, true, 0);
+		Actor_Face_Heading(kActorMcCoy, 45, false);
+		Loop_Actor_Travel_Stairs(kActorMcCoy, 3, false, kAnimationModeIdle);
 		Global_Variable_Set(1, 4);
 		Scene_Exits_Enable();
 		Actor_Set_Health(kActorMcCoy, 50, 50);
 		Game_Flag_Set(523);
-		Game_Flag_Set(343);
+		Game_Flag_Set(kFlagNR01toUG06);
 		Game_Flag_Set(680);
-		Chapter_Enter(4, 79, 91);
+		Chapter_Enter(4, kSetUG06, kSceneUG06);
 		return true;
 
 	case 291:
 		Game_Flag_Set(722);
-		Global_Variable_Set(1, 4);
+		Global_Variable_Set(kVariableChapter, 4);
 		Scene_Exits_Enable();
 		Game_Flag_Set(523);
 		Game_Flag_Set(680);
-		Chapter_Enter(4, 79, 91);
+		Chapter_Enter(4, kSetUG06, kSceneUG06);
 		return true;
 
 	case 300:

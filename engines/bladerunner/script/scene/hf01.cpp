@@ -191,79 +191,79 @@ bool SceneScriptHF01::ClickedOnExit(int exitId) {
 	}
 	if (exitId == 3) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 100.0f, 0.0f, -260.0f, 0, true, false, 0)) {
-			Game_Flag_Reset(kFlagMcCoyAtCTxx);
-			Game_Flag_Reset(kFlagMcCoyAtRCxx);
-			Game_Flag_Reset(kFlagMcCoyAtMAxx);
-			Game_Flag_Reset(kFlagMcCoyAtPSxx);
-			Game_Flag_Reset(kFlagMcCoyAtBBxx);
-			Game_Flag_Reset(kFlagMcCoyAtHFxx);
+			Game_Flag_Reset(kFlagMcCoyInChinaTown);
+			Game_Flag_Reset(kFlagMcCoyInRunciters);
+			Game_Flag_Reset(kFlagMcCoyInMcCoyApartment);
+			Game_Flag_Reset(kFlagMcCoyInPoliceStation);
+			Game_Flag_Reset(kFlagMcCoyInBradburyBuilding);
+			Game_Flag_Reset(kFlagMcCoyInHysteriaHall);
 			int spinnerDest = Spinner_Interface_Choose_Dest(3, false);
 			switch (spinnerDest) {
 			case kSpinnerDestinationPoliceStation:
-				Game_Flag_Set(kFlagMcCoyAtPSxx);
+				Game_Flag_Set(kFlagMcCoyInPoliceStation);
 				Game_Flag_Reset(kFlagSpinnerAtHF01);
 				Game_Flag_Set(kFlagSpinnerAtPS01);
 				Set_Enter(kSetPS01, kScenePS01);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
 			case kSpinnerDestinationMcCoysApartment:
-				Game_Flag_Set(kFlagMcCoyAtMAxx);
+				Game_Flag_Set(kFlagMcCoyInMcCoyApartment);
 				Game_Flag_Reset(kFlagSpinnerAtHF01);
 				Game_Flag_Set(kFlagSpinnerAtMA01);
 				Set_Enter(kSetMA01, kSceneMA01);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
 			case kSpinnerDestinationRuncitersAnimals:
-				Game_Flag_Set(kFlagMcCoyAtRCxx);
+				Game_Flag_Set(kFlagMcCoyInRunciters);
 				Game_Flag_Reset(kFlagSpinnerAtHF01);
 				Game_Flag_Set(kFlagSpinnerAtRC01);
 				Set_Enter(kSetRC01, kSceneRC01);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
 			case kSpinnerDestinationChinatown:
-				Game_Flag_Set(kFlagMcCoyAtCTxx);
+				Game_Flag_Set(kFlagMcCoyInChinaTown);
 				Game_Flag_Reset(kFlagSpinnerAtHF01);
 				Game_Flag_Set(kFlagSpinnerAtCT01);
 				Set_Enter(kSetCT01_CT12, kSceneCT01);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
 			case kSpinnerDestinationAnimoidRow:
-				Game_Flag_Set(kFlagMcCoyAtTBxx);
+				Game_Flag_Set(kFlagMcCoyInTyrellBuilding);
 				Game_Flag_Reset(kFlagSpinnerAtHF01);
 				Game_Flag_Set(kFlagSpinnerAtTB02);
 				Set_Enter(kSetTB02_TB03, kSceneTB02);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
 			case kSpinnerDestinationTyrellBuilding:
-				Game_Flag_Set(kFlagMcCoyAtARxx);
+				Game_Flag_Set(kFlagMcCoyInAnimoidRow);
 				Game_Flag_Reset(kFlagSpinnerAtHF01);
 				Game_Flag_Set(kFlagSpinnerAtAR01);
 				Set_Enter(kSetAR01_AR02, kSceneAR01);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
 			case kSpinnerDestinationDNARow:
-				Game_Flag_Set(kFlagMcCoyAtDRxx);
+				Game_Flag_Set(kFlagMcCoyInDNARow);
 				Game_Flag_Reset(kFlagSpinnerAtHF01);
 				Game_Flag_Set(kFlagSpinnerAtDR01);
 				Set_Enter(kSetDR01_DR02_DR04, kSceneDR01);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
 			case kSpinnerDestinationBradburyBuilding:
-				Game_Flag_Set(kFlagMcCoyAtBBxx);
+				Game_Flag_Set(kFlagMcCoyInBradburyBuilding);
 				Game_Flag_Reset(kFlagSpinnerAtHF01);
 				Game_Flag_Set(kFlagSpinnerAtBB01);
 				Set_Enter(kSetBB01, kSceneBB01);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
 			case kSpinnerDestinationNightclubRow:
-				Game_Flag_Set(kFlagMcCoyAtNRxx);
+				Game_Flag_Set(kFlagMcCoyInNightclubRow);
 				Game_Flag_Reset(kFlagSpinnerAtHF01);
 				Game_Flag_Set(kFlagSpinnerAtNR01);
 				Set_Enter(kSetNR01, kSceneNR01);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
 			default:
-				Game_Flag_Set(kFlagMcCoyAtHFxx);
+				Game_Flag_Set(kFlagMcCoyInHysteriaHall);
 				Loop_Actor_Walk_To_XYZ(kActorMcCoy, 100.0f, 0.0f, -300.0f, 0, true, false, 0);
 				break;
 			}

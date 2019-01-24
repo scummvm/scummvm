@@ -227,7 +227,7 @@ void SceneScriptRC01::SceneLoaded() {
 		Preload(589);
 	}
 
-	if (!Game_Flag_Query(kFlagChromeDebrisTaken)) {
+	if (!Game_Flag_Query(kFlagRC01ChromeDebrisTaken)) {
 		Item_Add_To_World(kItemChromeDebris, 938, kSetRC01, -148.60f, -0.30f, 225.15f, 256, 24, 24, false, true, false, true);
 	}
 
@@ -314,15 +314,15 @@ bool SceneScriptRC01::ClickedOnActor(int actorId) {
 			if (Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01WalkToCrowd) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyDefault);
 			}
-			if (Game_Flag_Query(kFlagGotOfficersStatement)) {
+			if (Game_Flag_Query(kFlagRC01GotOfficersStatement)) {
 				Actor_Says(kActorMcCoy, 4535, 13);
-				Game_Flag_Set(KFlagMcCoyAndOfficerLearyTalking);
+				Game_Flag_Set(kFlagRC01McCoyAndOfficerLearyTalking);
 				if (Actor_Clue_Query(kActorOfficerLeary, kClueCrowdInterviewA) && !Actor_Clue_Query(kActorMcCoy, kClueCrowdInterviewA)) {
 					Actor_Face_Object(kActorOfficerLeary, "70_1", true);
 					Actor_Says(kActorOfficerLeary, 100, 15);
 					Actor_Face_Actor(kActorOfficerLeary, kActorMcCoy, true);
 					Actor_Clue_Acquire(kActorMcCoy, kClueCrowdInterviewA, true, kActorOfficerLeary);
-					Game_Flag_Reset(KFlagMcCoyAndOfficerLearyTalking);
+					Game_Flag_Reset(kFlagRC01McCoyAndOfficerLearyTalking);
 				} else if (Actor_Clue_Query(kActorOfficerLeary, kClueCrowdInterviewB) && !Actor_Clue_Query(kActorMcCoy, kClueCrowdInterviewB)) {
 					Actor_Face_Object(kActorOfficerLeary, "70_5", true);
 					Actor_Says(kActorOfficerLeary, 120, 19);
@@ -330,24 +330,24 @@ bool SceneScriptRC01::ClickedOnActor(int actorId) {
 					Actor_Says(kActorOfficerLeary, 130, 14);
 					I_Sez("JM: Did it have a huge, ugly piece of chrome on it?");
 					Actor_Clue_Acquire(kActorMcCoy, kClueCrowdInterviewB, true, kActorOfficerLeary);
-					Game_Flag_Reset(KFlagMcCoyAndOfficerLearyTalking);
+					Game_Flag_Reset(kFlagRC01McCoyAndOfficerLearyTalking);
 				} else {
 					Actor_Says(kActorOfficerLeary, 90, 16);
 					I_Sez("JM: This officer has a talent for vivid metaphors.");
-					if (!Game_Flag_Query(KFlagMcCoyAndOfficerLearyArtMetaphor)) {
+					if (!Game_Flag_Query(kFlagRC01McCoyAndOfficerLearyArtMetaphor)) {
 						I_Sez("DL: What is that supposed to mean?  I didn't write this line...");
 						Actor_Says(kActorMcCoy, 4540, 16);
-						Game_Flag_Set(KFlagMcCoyAndOfficerLearyArtMetaphor);
+						Game_Flag_Set(kFlagRC01McCoyAndOfficerLearyArtMetaphor);
 					}
-					Game_Flag_Reset(KFlagMcCoyAndOfficerLearyTalking);
+					Game_Flag_Reset(kFlagRC01McCoyAndOfficerLearyTalking);
 				}
 			} else {
 				I_Sez("MG: Hey, leave that officer alone. Can't you see he's busy?");
 				I_Sez("JM: (...mmm, donuts...)");
-				Game_Flag_Set(kFlagGotOfficersStatement);
+				Game_Flag_Set(kFlagRC01GotOfficersStatement);
 				Actor_Clue_Acquire(kActorMcCoy, kClueOfficersStatement, true, kActorOfficerLeary);
 				Actor_Says(kActorMcCoy, 4515, 13);
-				Game_Flag_Set(KFlagMcCoyAndOfficerLearyTalking);
+				Game_Flag_Set(kFlagRC01McCoyAndOfficerLearyTalking);
 				Actor_Says(kActorOfficerLeary, 40, 13);
 				if (!Game_Flag_Query(kFlagRC02Entered)) {
 					Actor_Says(kActorOfficerLeary, 50, 14);
@@ -359,7 +359,7 @@ bool SceneScriptRC01::ClickedOnActor(int actorId) {
 					Actor_Says(kActorOfficerLeary, 80, 18);
 					Actor_Says(kActorMcCoy, 4530, 15);
 				}
-				Game_Flag_Reset(KFlagMcCoyAndOfficerLearyTalking);
+				Game_Flag_Reset(kFlagRC01McCoyAndOfficerLearyTalking);
 			}
 		}
 		return true;
@@ -375,7 +375,7 @@ bool SceneScriptRC01::ClickedOnItem(int itemId, bool a2) {
 			Actor_Clue_Acquire(kActorMcCoy, kClueChromeDebris, true, -1);
 			Actor_Face_Actor(kActorOfficerLeary, kActorMcCoy, true);
 			Actor_Says(kActorOfficerLeary, 20, 12);
-			Game_Flag_Set(kFlagChromeDebrisTaken);
+			Game_Flag_Set(kFlagRC01ChromeDebrisTaken);
 			Item_Remove_From_World(kItemChromeDebris);
 			Item_Pickup_Spin_Effect(938, 426, 316);
 			I_Sez("JM: Chrome...is that what that is?");
@@ -395,7 +395,7 @@ bool SceneScriptRC01::ClickedOnItem(int itemId, bool a2) {
 
 void SceneScriptRC01::walkToCenter() {
 	Player_Loses_Control();
-	Game_Flag_Set(kFlagMcCoyAtRCxx);
+	Game_Flag_Set(kFlagMcCoyInRunciters);
 	Actor_Set_Immunity_To_Obstacles(kActorMcCoy, true);
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -151.98f, -0.3f, 318.15f, 0, 0, false, 0);
 	Actor_Set_Immunity_To_Obstacles(kActorMcCoy, false);
@@ -426,6 +426,7 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 		}
 		return true;
 	}
+
 	if (exitId == kRC01ExitSpinner) {
 		if (Game_Flag_Query(kFlagDNARowAvailable)) {
 			Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationDNARow, true);
@@ -447,10 +448,10 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 			}
 			Actor_Set_Immunity_To_Obstacles(kActorMcCoy, false);
 			Player_Gains_Control();
-			Game_Flag_Reset(kFlagMcCoyAtCTxx);
-			Game_Flag_Reset(kFlagMcCoyAtRCxx);
-			Game_Flag_Reset(kFlagMcCoyAtMAxx);
-			Game_Flag_Reset(kFlagMcCoyAtPSxx);
+			Game_Flag_Reset(kFlagMcCoyInChinaTown);
+			Game_Flag_Reset(kFlagMcCoyInRunciters);
+			Game_Flag_Reset(kFlagMcCoyInMcCoyApartment);
+			Game_Flag_Reset(kFlagMcCoyInPoliceStation);
 			int spinnerDest;
 			if (Game_Flag_Query(kFlagRC01PoliceDone)) {
 				spinnerDest = Spinner_Interface_Choose_Dest(kRC01LoopDoorAnimNoCrowd, true);
@@ -460,7 +461,7 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 
 			switch (spinnerDest) {
 			case kSpinnerDestinationPoliceStation:
-				Game_Flag_Set(kFlagMcCoyAtPSxx);
+				Game_Flag_Set(kFlagMcCoyInPoliceStation);
 				Game_Flag_Reset(kFlagSpinnerAtRC01);
 				Game_Flag_Set(kFlagSpinnerAtPS01);
 				Set_Enter(kSetPS01, kScenePS01);
@@ -471,7 +472,7 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 				}
 				break;
 			case kSpinnerDestinationMcCoysApartment:
-				Game_Flag_Set(kFlagMcCoyAtMAxx);
+				Game_Flag_Set(kFlagMcCoyInMcCoyApartment);
 				Game_Flag_Reset(kFlagSpinnerAtRC01);
 				Game_Flag_Set(kFlagSpinnerAtMA01);
 				Set_Enter(kSetMA01, kSceneMA01);
@@ -482,7 +483,7 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 				}
 				break;
 			case kSpinnerDestinationChinatown:
-				Game_Flag_Set(kFlagMcCoyAtCTxx);
+				Game_Flag_Set(kFlagMcCoyInChinaTown);
 				Game_Flag_Reset(kFlagSpinnerAtRC01);
 				Game_Flag_Set(kFlagSpinnerAtCT01);
 				Set_Enter(kSetCT01_CT12, kSceneCT01);
@@ -493,7 +494,7 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 				}
 				break;
 			case kSpinnerDestinationTyrellBuilding:
-				Game_Flag_Set(kFlagMcCoyAtTBxx);
+				Game_Flag_Set(kFlagMcCoyInTyrellBuilding);
 				Game_Flag_Reset(kFlagSpinnerAtRC01);
 				Game_Flag_Set(kFlagSpinnerAtTB02);
 				Set_Enter(kSetTB02_TB03, kSceneTB02);
@@ -504,7 +505,7 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 				}
 				break;
 			case kSpinnerDestinationAnimoidRow:
-				Game_Flag_Set(kFlagMcCoyAtARxx);
+				Game_Flag_Set(kFlagMcCoyInAnimoidRow);
 				Game_Flag_Reset(kFlagSpinnerAtRC01);
 				Game_Flag_Set(kFlagSpinnerAtAR01);
 				Set_Enter(kSetAR01_AR02, kSceneAR01);
@@ -515,7 +516,7 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 				}
 				break;
 			case kSpinnerDestinationDNARow:
-				Game_Flag_Set(kFlagMcCoyAtDRxx);
+				Game_Flag_Set(kFlagMcCoyInDNARow);
 				Game_Flag_Reset(kFlagSpinnerAtRC01);
 				Game_Flag_Set(kFlagSpinnerAtDR01);
 				Set_Enter(kSetDR01_DR02_DR04, kSceneDR01);
@@ -526,7 +527,7 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 				}
 				break;
 			case kSpinnerDestinationBradburyBuilding:
-				Game_Flag_Set(kFlagMcCoyAtBBxx);
+				Game_Flag_Set(kFlagMcCoyInBradburyBuilding);
 				Game_Flag_Reset(kFlagSpinnerAtRC01);
 				Game_Flag_Set(kFlagSpinnerAtBB01);
 				Set_Enter(kSetBB01, kSceneBB01);
@@ -537,7 +538,7 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 				}
 				break;
 			case kSpinnerDestinationNightclubRow:
-				Game_Flag_Set(kFlagMcCoyAtNRxx);
+				Game_Flag_Set(kFlagMcCoyInNightclubRow);
 				Game_Flag_Reset(kFlagSpinnerAtRC01);
 				Game_Flag_Set(kFlagSpinnerAtNR01);
 				Set_Enter(kSetNR01, kSceneNR01);
@@ -548,7 +549,7 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 				}
 				break;
 			case kSpinnerDestinationHysteriaHall:
-				Game_Flag_Set(kFlagMcCoyAtHFxx);
+				Game_Flag_Set(kFlagMcCoyInHysteriaHall);
 				Game_Flag_Reset(kFlagSpinnerAtRC01);
 				Game_Flag_Set(kFlagSpinnerAtHF01);
 				Set_Enter(kSetHF01, kSceneHF01);
@@ -565,6 +566,7 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 		}
 		return true;
 	}
+
 	if (exitId == kRC01ExitRC03) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -471.98f, -0.3f, 258.15f, 4, true, false, 0)) {
 			Game_Flag_Set(kFlagRC01toRC03);
@@ -645,11 +647,13 @@ void SceneScriptRC01::PlayerWalkedIn() {
 		Player_Gains_Control();
 		Game_Flag_Reset(kFlagRC02toRC01);
 
-		if (Game_Flag_Query(kFlagRC02Entered) && !Game_Flag_Query(kFlagRC02FirstLeave)) {
+		if ( Game_Flag_Query(kFlagRC02Entered)
+		 && !Game_Flag_Query(kFlagRC02Left)
+		) {
 			Actor_Voice_Over(1910, kActorVoiceOver);
 			Actor_Voice_Over(1920, kActorVoiceOver);
 			Actor_Voice_Over(1930, kActorVoiceOver);
-			Game_Flag_Set(kFlagRC02FirstLeave);
+			Game_Flag_Set(kFlagRC02Left);
 		}
 		//return true;
 	}

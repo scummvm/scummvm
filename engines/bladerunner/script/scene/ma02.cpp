@@ -246,10 +246,14 @@ void SceneScriptMA02::selectNextTvNews() {
 	if (Global_Variable_Query(kVariableChapter) >= 3) {
 		arr[i++] = 2;
 	}
-	if (Global_Variable_Query(kVariableChapter) >= 2 && Global_Variable_Query(kVariableChapter) <= 4) {
+	if (Global_Variable_Query(kVariableChapter) >= 2
+	 && Global_Variable_Query(kVariableChapter) <= 4
+	) {
 		arr[i++] = 3;
 	}
-	if (Game_Flag_Query(kFlagHomelessBodyFound) && Game_Flag_Query(kFlagHomelessBodyInDumpster)) {
+	if (Game_Flag_Query(kFlagCT04HomelessBodyFound)
+	 && Game_Flag_Query(kFlagCT04HomelessBodyInDumpster)
+	) {
 		arr[i++] = 4;
 	}
 	Global_Variable_Set(kVariableNextTvNews, arr[Random_Query(0, i - 1)]);

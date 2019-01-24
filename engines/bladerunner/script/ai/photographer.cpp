@@ -43,11 +43,11 @@ void AIScriptPhotographer::Initialize() {
 
 bool AIScriptPhotographer::Update() {
 	if ( Game_Flag_Query(kFlagTB02ElevatorToTB05)
-	 && !Game_Flag_Query(kFlagPhotographerToTB06)
+	 && !Game_Flag_Query(kFlagTB06Photographer)
 	) {
 		Actor_Put_In_Set(kActorPhotographer, kSetFreeSlotC);
 		Actor_Set_At_Waypoint(kActorPhotographer, 35, 0);
-		Game_Flag_Set(kFlagPhotographerToTB06);
+		Game_Flag_Set(kFlagTB06Photographer);
 		Actor_Set_Goal_Number(kActorPhotographer, 100);
 
 		return true;

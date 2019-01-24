@@ -116,8 +116,8 @@ void SceneScriptCT03::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptCT03::PlayerWalkedIn() {
-	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT02Flee) {
-		Actor_Set_Goal_Number(kActorZuben, kGoalZubenCT06Hide);
+	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT02RunToFreeSlotG) {
+		Actor_Set_Goal_Number(kActorZuben, kGoalZubenCT06HideAtFreeSlotA);
 	}
 }
 

@@ -31,14 +31,17 @@ void SceneScriptUG17::InitializeScene() {
 	} else {
 		Setup_Scene_Information(1000.0f, 67.96f, -1539.0f, 0);
 	}
-	Scene_Exit_Add_2D_Exit(0, 610, 0, 639, 479, 1);
+
+	Scene_Exit_Add_2D_Exit(0, 610,   0, 639, 479, 1);
 	Scene_Exit_Add_2D_Exit(1, 551, 347, 594, 386, 0);
+
 	Ambient_Sounds_Add_Looping_Sound(589, 100, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound(384, 50, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(384,  50, 1, 1);
 	Ambient_Sounds_Add_Sound(72, 5, 80, 10, 11, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(73, 5, 80, 10, 11, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(74, 5, 80, 10, 11, -100, 100, -101, -101, 0, 0);
-	Overlay_Play("UG17OVER", 0, 1, 0, 0);
+
+	Overlay_Play("UG17OVER", 0, true, false, 0);
 }
 
 void SceneScriptUG17::SceneLoaded() {
@@ -67,7 +70,7 @@ bool SceneScriptUG17::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1000.0f, 67.96f, -1539.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(353);
+			Game_Flag_Set(kFlagUG17toUG15);
 			Set_Enter(kSetUG15, kSceneUG15);
 		}
 		return true;
@@ -101,9 +104,9 @@ void SceneScriptUG17::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptUG17::PlayerWalkedIn() {
-	if (Game_Flag_Query(352)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 961.0f, 67.96f, -1539.0f, 0, 0, false, 0);
-		Game_Flag_Reset(352);
+	if (Game_Flag_Query(kFlagUG15toUG17)) {
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 961.0f, 67.96f, -1539.0f, 0, false, false, 0);
+		Game_Flag_Reset(kFlagUG15toUG17);
 	}
 	//return false;
 }

@@ -87,11 +87,11 @@ bool SceneScriptHC04::ClickedOnActor(int actorId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -155.0f, 0.0f, -475.0f, 12, true, false, 0)) {
 			Actor_Face_Actor(kActorMcCoy, kActorIsabella, true);
 			Actor_Face_Actor(kActorIsabella, kActorMcCoy, true);
-			if (!Game_Flag_Query(kFlagIsabellaIntroduced)) {
+			if (!Game_Flag_Query(kFlagHC04IsabellaTalk)) {
 				Actor_Says(kActorIsabella, 0, kAnimationModeTalk);
 				Actor_Says(kActorMcCoy, 1280, kAnimationModeTalk);
 				Actor_Says(kActorIsabella, 20, kAnimationModeTalk);
-				Game_Flag_Set(kFlagIsabellaIntroduced);
+				Game_Flag_Set(kFlagHC04IsabellaTalk);
 				return true;
 			} else {
 				dialogueWithIsabella();
@@ -111,8 +111,8 @@ bool SceneScriptHC04::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -108.0f, 0.14f, -639.0f, 0, true, false, 0)) {
 			Music_Stop(2);
 			Game_Flag_Set(kFlagHC04toRC03);
-			Game_Flag_Reset(kFlagMcCoyAtHCxx);
-			Game_Flag_Set(kFlagMcCoyAtRCxx);
+			Game_Flag_Reset(kFlagMcCoyInHawkersCircle);
+			Game_Flag_Set(kFlagMcCoyInRunciters);
 			Set_Enter(kSetRC03, kSceneRC03);
 		}
 		return true;

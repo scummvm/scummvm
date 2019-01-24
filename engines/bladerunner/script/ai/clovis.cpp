@@ -282,7 +282,7 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Set_Goal_Number(kActorSadik, 200);
 		Actor_Clue_Acquire(kActorMcCoy, kClueAct2Ended, true, -1);
 		Player_Gains_Control();
-		Chapter_Enter(3, 6, 20);
+		Chapter_Enter(3, kSetCT08_CT51_UG12, kSceneCT08);
 		Game_Flag_Set(550);
 		Game_Flag_Set(679);
 		return true;

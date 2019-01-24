@@ -56,16 +56,16 @@ bool AIScriptTransient::Update() {
 	}
 
 	if ( Global_Variable_Query(kVariableChapter) == 3
-	 &&  Game_Flag_Query(kFlagMcCoyKilledHomeless)
-	 &&  Game_Flag_Query(kFlagHomelessBodyInDumpster)
-	 && !Game_Flag_Query(kFlagHomelessBodyFound)
-	 && !Game_Flag_Query(kFlagDumpsterEmptied)
+	 &&  Game_Flag_Query(kFlagCT04HomelessKilledByMcCoy)
+	 &&  Game_Flag_Query(kFlagCT04HomelessBodyInDumpster)
+	 && !Game_Flag_Query(kFlagCT04HomelessBodyFound)
+	 && !Game_Flag_Query(kFlagCT04HomelessBodyThrownAway)
 	) {
-		Game_Flag_Set(kFlagDumpsterEmptied);
+		Game_Flag_Set(kFlagCT04HomelessBodyThrownAway);
 	}
 
 	if (Global_Variable_Query(kVariableChapter) < 4
-	 && Game_Flag_Query(kFlagHomelessBodyFound)
+	 && Game_Flag_Query(kFlagCT04HomelessBodyFound)
 	 && Actor_Query_Goal_Number(kActorTransient) != 6
 	 && Actor_Query_Goal_Number(kActorTransient) != 599
 	) {
@@ -163,7 +163,7 @@ bool AIScriptTransient::ShotAtAndHit() {
 		Actor_Set_Goal_Number(kActorTransient, 599);
 	}
 
-	Game_Flag_Set(kFlagMcCoyKilledHomeless);
+	Game_Flag_Set(kFlagCT04HomelessKilledByMcCoy);
 
 	return false;
 }

@@ -211,7 +211,7 @@ bool AIScriptGaff::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorGaff);
 		return true;
 	case 10:
-		Game_Flag_Reset(kFlagGaffSpinnerCT12);
+		Game_Flag_Reset(kFlagCT12GaffSpinner);
 		Scene_Loop_Set_Default(2);
 		Scene_Loop_Start_Special(2, 6, true);
 		return true;

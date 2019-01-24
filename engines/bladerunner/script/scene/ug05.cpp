@@ -25,21 +25,25 @@
 namespace BladeRunner {
 
 void SceneScriptUG05::InitializeScene() {
-	if (Game_Flag_Query(360)) {
-		if (Game_Flag_Query(663) && !Game_Flag_Query(368)) {
+	if (Game_Flag_Query(kFlagHF07toUG06)) {
+		if ( Game_Flag_Query(663)
+		 && !Game_Flag_Query(368)
+		) {
 			Setup_Scene_Information(-356.35f, 132.77f, -1092.36f, 389);
 		} else {
 			Setup_Scene_Information(-180.0f, 37.28f, -1124.0f, 296);
 		}
 	} else {
 		Setup_Scene_Information(0.0f, -1.37f, 0.0f, 0);
-		Game_Flag_Reset(338);
+		Game_Flag_Reset(kFlagUG04toUG05);
 	}
 	Scene_Exit_Add_2D_Exit(0, 215, 240, 254, 331, 3);
 	if (!Game_Flag_Query(663)) {
 		Scene_Exit_Add_2D_Exit(1, 303, 422, 639, 479, 2);
 	}
-	if (!Game_Flag_Query(663) || Game_Flag_Query(368)) {
+	if (!Game_Flag_Query(663)
+	 ||  Game_Flag_Query(368)
+	) {
 		Scene_Exit_Add_2D_Exit(2, 352, 256, 393, 344, 0);
 	}
 	Ambient_Sounds_Add_Looping_Sound(105, 28, 0, 1);
@@ -115,19 +119,19 @@ bool SceneScriptUG05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (Game_Flag_Query(663) && !Game_Flag_Query(368)) {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -356.35f, 132.77f, -1092.36f, 0, 0, false, 0);
-			Game_Flag_Set(361);
+			Game_Flag_Set(kFlagUG06toHF07);
 			Set_Enter(kSetHF07, kSceneHF07);
 		} else if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -156.72f, 3.03f, -1118.17f, 0, 1, false, 0)) {
 			Actor_Face_Heading(kActorMcCoy, 760, false);
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 3, 1, kAnimationModeIdle);
-			Game_Flag_Set(361);
+			Game_Flag_Set(kFlagUG06toHF07);
 			Set_Enter(kSetHF07, kSceneHF07);
 		}
 		return true;
 	}
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 4.0f, -11.67f, -4.0f, 0, 1, false, 0)) {
-			Game_Flag_Set(339);
+			Game_Flag_Set(kFlagUG05toUG04);
 			Set_Enter(kSetUG04, kSceneUG04);
 		}
 		return true;
@@ -200,7 +204,7 @@ void SceneScriptUG05::PlayerWalkedIn() {
 			}
 		}
 	}
-	if (Game_Flag_Query(360)) {
+	if (Game_Flag_Query(kFlagHF07toUG06)) {
 		if (Game_Flag_Query(663) && !Game_Flag_Query(368)) {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -288.35f, 132.77f, -1092.36f, 0, 1, false, 0);
 		} else {
@@ -210,7 +214,7 @@ void SceneScriptUG05::PlayerWalkedIn() {
 	if (Game_Flag_Query(663)) {
 		Game_Flag_Query(368); // bug in game?
 	}
-	Game_Flag_Reset(360);
+	Game_Flag_Reset(kFlagHF07toUG06);
 }
 
 void SceneScriptUG05::PlayerWalkedOut() {

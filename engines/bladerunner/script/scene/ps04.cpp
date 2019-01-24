@@ -152,7 +152,7 @@ void SceneScriptPS04::dialogueWithGuzza() {
 			DM_Add_To_List_Never_Repeat_Once_Selected(150, 7, 6, 5); // HOLDEN'S BADGE
 		}
 	}
-	if (Game_Flag_Query(kFlagMcCoyKilledHomeless)) {
+	if (Game_Flag_Query(kFlagCT04HomelessKilledByMcCoy)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(140, 3, -1, -1); // CONFESS TO SHOOTING
 	}
 	DM_Add_To_List(130, 1, 1, 1); // REPORT IN
@@ -192,7 +192,7 @@ void SceneScriptPS04::dialogueWithGuzza() {
 
 	case 130: // REPORT IN
 		if ( Game_Flag_Query(kFlagZubenRetired)
-		 && !Game_Flag_Query(kFlagGuzzaTalkZubenRetired)
+		 && !Game_Flag_Query(kFlagPS04GuzzaTalkZubenRetired)
 		) {
 			Actor_Says(kActorMcCoy, 3920, 13);
 			Actor_Says(kActorGuzza, 140, 30);
@@ -220,13 +220,13 @@ void SceneScriptPS04::dialogueWithGuzza() {
 			Actor_Says(kActorGuzza, 250, 34);
 			Actor_Says(kActorGuzza, 260, 33);
 			Actor_Says(kActorGuzza, 270, 32);
-			Game_Flag_Set(kFlagGuzzaTalkZubenRetired);
+			Game_Flag_Set(kFlagPS04GuzzaTalkZubenRetired);
 			if (Query_Difficulty_Level() != 0) {
 				Global_Variable_Increment(kVariableChinyen, 200);
 			}
 			Game_Flag_Set(kFlagZubenBountyPaid);
 		} else if ( Game_Flag_Query(kFlagZubenSpared)
-		        && !Game_Flag_Query(kFlagGuzzaTalkZubenEscaped)
+		        && !Game_Flag_Query(kFlagPS04GuzzaTalkZubenEscaped)
 		) {
 			Actor_Says(kActorMcCoy, 3955, 13);
 			Actor_Says(kActorGuzza, 280, 30);
@@ -236,14 +236,14 @@ void SceneScriptPS04::dialogueWithGuzza() {
 			Actor_Says(kActorMcCoy, 3965, 13);
 			Actor_Says(kActorGuzza, 310, 33);
 			Actor_Says(kActorGuzza, 320, 34);
-			Game_Flag_Set(kFlagGuzzaTalkZubenEscaped);
+			Game_Flag_Set(kFlagPS04GuzzaTalkZubenEscaped);
 		} else if (
 		 (   Actor_Clue_Query(kActorMcCoy, kClueChopstickWrapper)
 		  || Actor_Clue_Query(kActorMcCoy, kClueSushiMenu)
 		 )
 		 &&  Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewA)
 		 &&  Actor_Query_Friendliness_To_Other(kActorGuzza, kActorMcCoy) < 50
-		 && !Game_Flag_Query(kFlagGuzzaTalk1)
+		 && !Game_Flag_Query(kFlagPS04GuzzaTalk1)
 		) {
 			Actor_Says(kActorMcCoy, 3970, 18);
 			Actor_Says(kActorGuzza, 330, 30);
@@ -258,18 +258,18 @@ void SceneScriptPS04::dialogueWithGuzza() {
 			Actor_Says(kActorMcCoy, 3985, 18);
 			Actor_Says(kActorGuzza, 400, 34);
 			Actor_Says(kActorGuzza, 410, 31);
-			Game_Flag_Set(kFlagGuzzaTalk1);
+			Game_Flag_Set(kFlagPS04GuzzaTalk1);
 		} else if (
 		 (   Actor_Clue_Query(kActorMcCoy, kClueChopstickWrapper)
 		  || Actor_Clue_Query(kActorMcCoy, kClueSushiMenu)
 		 )
 		 &&  Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewA)
-		 && !Game_Flag_Query(kFlagGuzzaTalk2)
+		 && !Game_Flag_Query(kFlagPS04GuzzaTalk2)
 		) {
 			Actor_Says(kActorMcCoy, 3920, 13);
 			Actor_Says(kActorGuzza, 570, 32);
 			Actor_Says(kActorMcCoy, 4070, 13);
-			Game_Flag_Set(kFlagGuzzaTalk2);
+			Game_Flag_Set(kFlagPS04GuzzaTalk2);
 		} else if (Actor_Query_Friendliness_To_Other(kActorGuzza, kActorMcCoy) >= 50) {
 			Actor_Says(kActorMcCoy, 4020, 13);
 			Actor_Says(kActorGuzza, 580, 34);

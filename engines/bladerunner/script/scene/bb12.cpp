@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 void SceneScriptBB12::InitializeScene() {
-	if (Game_Flag_Query(364)) {
+	if (Game_Flag_Query(kFlagBB07toBB12)) {
 		Setup_Scene_Information(138.0f, 0.0f, 104.0f, 760);
 	} else if (Game_Flag_Query(506)) {
 		Setup_Scene_Information(-129.0f, 0.0f, 64.0f, 307);
@@ -92,7 +92,7 @@ bool SceneScriptBB12::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 138.0f, 0.0f, 104.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(365);
+			Game_Flag_Set(kFlagBB12toBB07);
 			Set_Enter(kSetBB07, kSceneBB07);
 		}
 		return true;
@@ -126,9 +126,9 @@ void SceneScriptBB12::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptBB12::PlayerWalkedIn() {
-	if (Game_Flag_Query(364)) {
+	if (Game_Flag_Query(kFlagBB07toBB12)) {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 114.0f, 0.0f, 104.0f, 0, 0, false, 0);
-		Game_Flag_Reset(364);
+		Game_Flag_Reset(kFlagBB07toBB12);
 	} else if (Game_Flag_Query(506)) {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -101.0f, 0.0f, 64.0f, 0, 0, false, 0);
 		Game_Flag_Reset(506);

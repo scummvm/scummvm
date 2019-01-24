@@ -57,7 +57,7 @@ bool AIScriptSadik::Update() {
 		Actor_Set_Goal_Number(kActorSadik, 101);
 		Actor_Set_Targetable(kActorSadik, true);
 		Game_Flag_Set(391);
-		Game_Flag_Set(406);
+		Game_Flag_Set(kFlagUnused406);
 		return true;
 	}
 

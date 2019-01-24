@@ -52,7 +52,7 @@ bool AIScriptOfficerGrayford::Update() {
 	} else if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_Goal_Number(kActorOfficerGrayford) < 400) {
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
 		Actor_Set_Goal_Number(kActorOfficerGrayford, 400);
-	} else if (!Game_Flag_Query(kFlagMcCoyAtDRxx)
+	} else if (!Game_Flag_Query(kFlagMcCoyInDNARow)
 			&& Actor_Query_Goal_Number(kActorOfficerGrayford) > 102
 			&& Actor_Query_Goal_Number(kActorOfficerGrayford) < 110) {
 		Actor_Set_Goal_Number(kActorOfficerGrayford, 110);
@@ -471,7 +471,7 @@ bool AIScriptOfficerGrayford::GoalChanged(int currentGoalNumber, int newGoalNumb
 		Actor_Face_Actor(kActorOfficerGrayford, kActorMcCoy, true);
 		Actor_Face_Actor(kActorMcCoy, kActorOfficerGrayford, true);
 
-		if (Game_Flag_Query(713)) {
+		if (Game_Flag_Query(kFlagDR04McCoyShotMoraji)) {
 			Actor_Set_Goal_Number(kActorMcCoy, 500);
 		} else {
 			Actor_Says(kActorMcCoy, 960, 15);

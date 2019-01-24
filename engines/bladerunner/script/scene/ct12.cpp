@@ -64,7 +64,7 @@ void SceneScriptCT12::InitializeScene() {
 	) {
 		Actor_Put_In_Set(kActorGaff, kSetCT01_CT12);
 		Actor_Set_At_XYZ(kActorGaff, -534.0f, -6.5f, 952.0f, 367);
-		Game_Flag_Set(kFlagGaffSpinnerCT12);
+		Game_Flag_Set(kFlagCT12GaffSpinner);
 	}
 	if (Game_Flag_Query(kFlagCT01toCT12)
 	 && Game_Flag_Query(kFlagSpinnerAtCT01)
@@ -87,12 +87,12 @@ void SceneScriptCT12::InitializeScene() {
 		Scene_Loop_Set_Default(2);
 		Game_Flag_Reset(kFlagCT01toCT12);
 	} else if (Game_Flag_Query(kFlagCT05toCT12)
-	        && Game_Flag_Query(kFlagGaffSpinnerCT12)
+	        && Game_Flag_Query(kFlagCT12GaffSpinner)
 	) {
 		Game_Flag_Reset(kFlagCT05toCT12);
 		Scene_Loop_Set_Default(4);
 	} else if ( Game_Flag_Query(kFlagCT05toCT12)
-	        && !Game_Flag_Query(kFlagGaffSpinnerCT12)
+	        && !Game_Flag_Query(kFlagCT12GaffSpinner)
 	) {
 		Game_Flag_Reset(kFlagCT05toCT12);
 		Scene_Loop_Set_Default(2);
@@ -288,8 +288,8 @@ void SceneScriptCT12::PlayerWalkedIn() {
 void SceneScriptCT12::PlayerWalkedOut() {
 	Game_Flag_Reset(kFlagGenericWalkerWaiting);
 	if (Game_Flag_Query(kFlagCT12ToUG09)) {
-		Game_Flag_Reset(kFlagMcCoyAtCTxx);
-		Game_Flag_Set(kFlagMcCoyAtUGxx);
+		Game_Flag_Reset(kFlagMcCoyInChinaTown);
+		Game_Flag_Set(kFlagMcCoyInUnderground);
 	}
 }
 

@@ -99,8 +99,8 @@ bool SceneScriptHC01::ClickedOnActor(int actorId) {
 	 )
 	) {
 		AI_Movement_Track_Pause(kActorIzo);
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 624.43f, 0.14f, 83.0f, 0, 1, false, 0)) {
-			if (!Game_Flag_Query(kFlagIzoTalk1)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 624.43f, 0.14f, 83.0f, 0, true, false, 0)) {
+			if (!Game_Flag_Query(kFlagHC01IzoTalk1)) {
 				Actor_Face_Actor(kActorIzo, kActorMcCoy, true);
 				Actor_Says_With_Pause(kActorIzo, 10, 0.2f, 13);
 				Actor_Face_Actor(kActorMcCoy, kActorIzo, true);
@@ -114,7 +114,7 @@ bool SceneScriptHC01::ClickedOnActor(int actorId) {
 				Actor_Says_With_Pause(kActorIzo, 70, 1.0f, 13);
 				Actor_Says_With_Pause(kActorMcCoy, 1045, 0.6f, 14);
 				Actor_Says(kActorIzo, 80, 18);
-				Game_Flag_Set(kFlagIzoTalk1);
+				Game_Flag_Set(kFlagHC01IzoTalk1);
 			} else {
 				Actor_Face_Actor(kActorMcCoy, kActorIzo, true);
 				Actor_Face_Actor(kActorIzo, kActorMcCoy, true);
@@ -134,7 +134,7 @@ bool SceneScriptHC01::ClickedOnItem(int itemId, bool a2) {
 		Item_Pickup_Spin_Effect(984, 377, 397);
 		Delay(1500);
 		Item_Pickup_Spin_Effect(984, 330, 384);
-		if (Game_Flag_Query(374)) {
+		if (Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)) {
 			Actor_Clue_Acquire(kActorMcCoy, kCluePhotoOfMcCoy1, true, kActorIzo);
 		} else {
 			Actor_Clue_Acquire(kActorMcCoy, kCluePhotoOfMcCoy2, true, kActorIzo);
@@ -151,8 +151,8 @@ bool SceneScriptHC01::ClickedOnExit(int exitId) {
 			Music_Adjust(12, 0, 2);
 			Game_Flag_Set(kFlagHC01toAR01);
 			Set_Enter(kSetAR01_AR02, kSceneAR01);
-			Game_Flag_Reset(kFlagMcCoyAtHCxx);
-			Game_Flag_Set(kFlagMcCoyAtARxx);
+			Game_Flag_Reset(kFlagMcCoyInHawkersCircle);
+			Game_Flag_Set(kFlagMcCoyInAnimoidRow);
 		}
 		return true;
 	}
@@ -197,7 +197,7 @@ void SceneScriptHC01::SceneFrameAdvanced(int frame) {
 	}
 	if (frame == 80) {
 		Ambient_Sounds_Play_Sound(316, 40, 100, 100, 0);
-		Item_Add_To_World(kItemHC03Lock, 931, kSetHC01_HC02_HC03_HC04, 582.0f, 27.0f, -41.0f, 0, 8, 8, true, true, false, true);
+		Item_Add_To_World(kItemGreenPawnLock, 931, kSetHC01_HC02_HC03_HC04, 582.0f, 27.0f, -41.0f, 0, 8, 8, true, true, false, true);
 	}
 }
 
@@ -227,12 +227,12 @@ void SceneScriptHC01::DialogueQueueFlushed(int a1) {
 }
 
 void SceneScriptHC01::dialogueWithIzo() {
-	if (!Game_Flag_Query(kFlagIzoTalk2)) {
+	if (!Game_Flag_Query(kFlagHC01IzoTalk2)) {
 		Actor_Says(kActorMcCoy, 1055, 13);
 		Actor_Says(kActorIzo, 130, 13);
 		Actor_Says_With_Pause(kActorMcCoy, 1060, 0.2f, 13);
 		Actor_Says(kActorIzo, 140, 13);
-		Game_Flag_Set(kFlagIzoTalk2);
+		Game_Flag_Set(kFlagHC01IzoTalk2);
 	}
 
 	Dialogue_Menu_Clear_List();

@@ -46,7 +46,7 @@ void SceneScriptHC03::InitializeScene() {
 	if (Game_Flag_Query(kFlagHC03CageOpen)
 	 || Global_Variable_Query(kVariableChapter) > 3
 	) {
-		Item_Remove_From_World(kItemHC03Lock);
+		Item_Remove_From_World(kItemGreenPawnLock);
 		Game_Flag_Set(kFlagHC03CageOpen);
 		Scene_Exit_Add_2D_Exit(1, 400, 275, 515, 375, 2);
 	}
@@ -115,12 +115,12 @@ bool SceneScriptHC03::ClickedOnActor(int actorId) {
 }
 
 bool SceneScriptHC03::ClickedOnItem(int itemId, bool combatMode) {
-	if (itemId == kItemHC03Lock) {
+	if (itemId == kItemGreenPawnLock) {
 		if (combatMode) {
 			Scene_Loop_Set_Default(kHC03LoopMainCageOpen);
 			Scene_Loop_Start_Special(kSceneLoopModeOnce, kHC03LoopCageDoorOpening, true);
 			Game_Flag_Set(kFlagHC03CageOpen);
-			Item_Remove_From_World(kItemHC03Lock);
+			Item_Remove_From_World(kItemGreenPawnLock);
 			Unobstacle_Object("GPscisGate", true);
 		} else {
 			Actor_Says(kActorMcCoy, 8522, 12);
@@ -135,7 +135,7 @@ bool SceneScriptHC03::ClickedOnItem(int itemId, bool combatMode) {
 		Item_Pickup_Spin_Effect(984, 78, 435);
 		Delay(1500);
 		Item_Pickup_Spin_Effect(984, 58, 435);
-		if (Game_Flag_Query(374)) {
+		if (Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)) {
 			Actor_Clue_Acquire(kActorMcCoy, kCluePhotoOfMcCoy1, true, kActorIzo);
 		} else {
 			Actor_Clue_Acquire(kActorMcCoy, kCluePhotoOfMcCoy2, true, kActorIzo);
@@ -163,8 +163,8 @@ bool SceneScriptHC03::ClickedOnExit(int exitId) {
 				Game_Flag_Set(kFlagHC03TrapDoorOpen);
 			} else {
 				Game_Flag_Set(kFlagHC03toUG02);
-				Game_Flag_Reset(kFlagMcCoyAtHCxx);
-				Game_Flag_Set(kFlagMcCoyAtUGxx);
+				Game_Flag_Reset(kFlagMcCoyInHawkersCircle);
+				Game_Flag_Set(kFlagMcCoyInUnderground);
 				Game_Flag_Set(kFlagHC03TrapDoorOpen);
 				Music_Stop(2);
 				Set_Enter(kSetUG02, kSceneUG02);

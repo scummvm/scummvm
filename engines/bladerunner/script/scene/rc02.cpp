@@ -84,7 +84,7 @@ void SceneScriptRC02::SceneLoaded() {
 	if (Actor_Clue_Query(kActorMcCoy, kClueRuncitersVideo) || Global_Variable_Query(kVariableChapter) > 1) {
 		Unclickable_Object("SCRTY CA03");
 	}
-	if (!Game_Flag_Query(kFlagShellCasingsTaken)) {
+	if (!Game_Flag_Query(kFlagRC02ShellCasingsTaken)) {
 		Item_Add_To_World(kItemShellCasingA, 966, kSetRC02_RC51, -52.88f, -1238.89f, 108467.74f, 256, 6, 6, false, true, false, true);
 		Item_Add_To_World(kItemShellCasingB, 966, kSetRC02_RC51, -37.16f, -1238.89f, 108456.59f, 512, 6, 6, false, true, false, true);
 		Item_Add_To_World(kItemShellCasingC, 966, kSetRC02_RC51, -62.86f, -1238.89f, 108437.52f, 625, 6, 6, false, true, false, true);
@@ -259,7 +259,7 @@ bool SceneScriptRC02::ClickedOnActor(int actorId) {
 		AI_Movement_Track_Pause(kActorRunciter);
 		Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorRunciter, 48, true, false);
 		Actor_Face_Actor(kActorMcCoy, kActorRunciter, true);
-		if (!Game_Flag_Query(kFlagRunciterInterviewA)) {
+		if (!Game_Flag_Query(kFlagRC02RunciterInterview)) {
 			Actor_Says(kActorMcCoy, 4560, 13);
 			Actor_Face_Actor(kActorRunciter, kActorMcCoy, true);
 			Actor_Says(kActorRunciter, 40, 16);
@@ -268,7 +268,7 @@ bool SceneScriptRC02::ClickedOnActor(int actorId) {
 			Actor_Says(kActorRunciter, 60, 14);
 			Actor_Says(kActorMcCoy, 4570, 18);
 			Actor_Says(kActorRunciter, 70, 13);
-			Game_Flag_Set(kFlagRunciterInterviewA);
+			Game_Flag_Set(kFlagRC02RunciterInterview);
 			Actor_Clue_Acquire(kActorMcCoy, kClueRunciterInterviewA, true, kActorRunciter);
 			AI_Movement_Track_Unpause(kActorRunciter);
 			return true;
@@ -321,7 +321,7 @@ bool SceneScriptRC02::ClickedOnItem(int itemId, bool a2) {
 		if (!Loop_Actor_Walk_To_Item(kActorMcCoy, kItemShellCasingA, 24, true, false)) {
 			Actor_Face_Item(kActorMcCoy, kItemShellCasingA, true);
 			Actor_Clue_Acquire(kActorMcCoy, kClueShellCasings, true, -1);
-			Game_Flag_Set(kFlagShellCasingsTaken);
+			Game_Flag_Set(kFlagRC02ShellCasingsTaken);
 			Item_Remove_From_World(kItemShellCasingA);
 			Item_Remove_From_World(kItemShellCasingB);
 			Item_Remove_From_World(kItemShellCasingC);
@@ -384,7 +384,7 @@ void SceneScriptRC02::PlayerWalkedIn() {
 		if (Actor_Query_Which_Set_In(kActorRunciter) == kSetRC02_RC51
 		 && Actor_Query_Goal_Number(kActorRunciter) < kGoalRunciterAtShop
 		) {
-			Actor_Set_Goal_Number(kActorRunciter, kGoalRunciterWalkAround);
+			Actor_Set_Goal_Number(kActorRunciter, kGoalRunciterWalkAroundRC02);
 		}
 		if ( Actor_Query_Goal_Number(kActorRunciter) == kGoalRunciterAtShop
 		 && !Game_Flag_Query(704)

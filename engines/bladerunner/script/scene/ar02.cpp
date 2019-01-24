@@ -79,11 +79,11 @@ void SceneScriptAR02::InitializeScene() {
 
 void SceneScriptAR02::SceneLoaded() {
 	Obstacle_Object("DF_BOOTH", true);
-	if (!Game_Flag_Query(374)) {
+	if (!Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)) {
 		Item_Add_To_World(kItemScrorpions, 976, kSetAR01_AR02, -442.84f, 36.77f, -1144.51f, 360, 36, 36, false, true, false, true);
 	}
 	if ( Global_Variable_Query(kVariableChapter) == 4
-	 && !Game_Flag_Query(374)
+	 && !Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)
 	) {
 		Game_Flag_Set(kFlagNotUsed0);
 		Item_Remove_From_World(kItemScrorpions);
@@ -104,10 +104,10 @@ bool SceneScriptAR02::ClickedOnActor(int actorId) {
 			Actor_Face_Actor(kActorMcCoy, kActorInsectDealer, true);
 			Actor_Face_Actor(kActorInsectDealer, kActorMcCoy, true);
 			if (Global_Variable_Query(kVariableChapter) == 2) {
-				if ( Game_Flag_Query(kFlagInsectDealerInterviewed)
-				 && !Game_Flag_Query(kFlagInsectDealerTalk)
+				if ( Game_Flag_Query(kFlagAR02InsectDealerInterviewed)
+				 && !Game_Flag_Query(kFlagAR02InsectDealerTalk)
 				) {
-					Game_Flag_Set(kFlagInsectDealerTalk);
+					Game_Flag_Set(kFlagAR02InsectDealerTalk);
 					Player_Loses_Control();
 					ADQ_Flush();
 					ADQ_Add(kActorInsectDealer, 210, 14);
@@ -121,7 +121,7 @@ bool SceneScriptAR02::ClickedOnActor(int actorId) {
 					Actor_Says(kActorInsectDealer, 250, 14);
 					Player_Gains_Control();
 					dialogueWithInsectDealer2();
-				} else if (Game_Flag_Query(kFlagInsectDealerInterviewed)) {
+				} else if (Game_Flag_Query(kFlagAR02InsectDealerInterviewed)) {
 					Actor_Says(kActorMcCoy, 75, 18);
 					Actor_Says(kActorInsectDealer, 60, 12);
 					Actor_Says(kActorInsectDealer, 70, 14);
@@ -138,7 +138,7 @@ bool SceneScriptAR02::ClickedOnActor(int actorId) {
 					Actor_Says(kActorMcCoy, 210, 15);
 					Actor_Says(kActorInsectDealer, 310, 12);
 					Actor_Says(kActorMcCoy, 215, 13);
-					if (Game_Flag_Query(374)) {
+					if (Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)) {
 						Actor_Says(kActorMcCoy, 220, 14);
 						Actor_Says(kActorInsectDealer, 320, 12);
 						Actor_Says(kActorMcCoy, 225, 13);
@@ -167,10 +167,10 @@ bool SceneScriptAR02::ClickedOnActor(int actorId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -240.79f, 0.0f, -1328.89f, 12, true, false, 0)) {
 			Actor_Face_Actor(kActorMcCoy, kActorHasan, true);
 			Actor_Face_Actor(kActorHasan, kActorMcCoy, true);
-			if (!Game_Flag_Query(kFlagHassanTalk)) {
+			if (!Game_Flag_Query(kFlagAR02HassanTalk)) {
 				Actor_Says(kActorHasan, 0, 14);
 				Actor_Says(kActorMcCoy, 140, 18);
-				Game_Flag_Set(kFlagHassanTalk);
+				Game_Flag_Set(kFlagAR02HassanTalk);
 				return true;
 			}
 			dialogueWithHassan();
@@ -183,22 +183,22 @@ bool SceneScriptAR02::ClickedOnItem(int itemId, bool a2) {
 	if (itemId == kItemScrorpions) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -386.96f, 0.0f, -1078.45f, 12, true, false, 0)) {
 			Actor_Face_Actor(kActorMcCoy, kActorInsectDealer, true);
-			if (!Game_Flag_Query(kFlagScorpionsChecked)) {
+			if (!Game_Flag_Query(kFlagAR02ScorpionsChecked)) {
 				Actor_Says(kActorInsectDealer, 0, 14);
 				Actor_Says(kActorMcCoy, 55, 18);
 				Actor_Says(kActorInsectDealer, 10, 14);
 				Actor_Says(kActorMcCoy, 60, 18);
 				Actor_Says(kActorInsectDealer, 20, 14);
-				Game_Flag_Set(kFlagScorpionsChecked);
-			} else if ( Game_Flag_Query(kFlagScorpionsChecked)
-			        && !Game_Flag_Query(kFlagStungByScorpion)
+				Game_Flag_Set(kFlagAR02ScorpionsChecked);
+			} else if ( Game_Flag_Query(kFlagAR02ScorpionsChecked)
+			        && !Game_Flag_Query(kFlagAR02StungByScorpion)
 			) {
 				Actor_Says(kActorMcCoy, 65, 21);
 				Actor_Says(kActorInsectDealer, 30, 14);
 				Actor_Says(kActorInsectDealer, 40, 14);
 				Actor_Says(kActorMcCoy, 70, 18);
 				Actor_Says(kActorInsectDealer, 50, 14);
-				Game_Flag_Set(kFlagStungByScorpion);
+				Game_Flag_Set(kFlagAR02StungByScorpion);
 			} else {
 				Actor_Says(kActorMcCoy, 8527, 14);
 			}
@@ -222,8 +222,8 @@ bool SceneScriptAR02::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -465.0f, 0.0f, -799.0f, 0, 1, false, 0)) {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -560.0f, 0.0f, -799.0f, 0, 0, false, 0);
 			Game_Flag_Set(kFlagAR02toRC03);
-			Game_Flag_Reset(kFlagMcCoyAtARxx);
-			Game_Flag_Set(kFlagMcCoyAtRCxx);
+			Game_Flag_Reset(kFlagMcCoyInAnimoidRow);
+			Game_Flag_Set(kFlagMcCoyInRunciters);
 			Music_Stop(3);
 			Set_Enter(kSetRC03, kSceneRC03);
 		}
@@ -302,7 +302,7 @@ void SceneScriptAR02::dialogueWithInsectDealer1() {
 		Actor_Says(kActorInsectDealer, 170, 14);
 		Actor_Says(kActorMcCoy, 100, 16);
 		Actor_Says(kActorInsectDealer, 180, 13);
-		Game_Flag_Set(kFlagInsectDealerInterviewed);
+		Game_Flag_Set(kFlagAR02InsectDealerInterviewed);
 		Actor_Clue_Acquire(kActorMcCoy, kCluePeruvianLadyInterview, true, kActorInsectDealer);
 		break;
 

@@ -147,7 +147,7 @@ bool SceneScriptRC03::ClickedOnExit(int exitId) {
 			}
 			Game_Flag_Set(kFlagRC03toRC01);
 			Set_Enter(kSetRC01, kSceneRC01);
-			Actor_Set_Goal_Number(kActorDektora, 100);
+			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraStartWalkingAround);
 		}
 		return true;
 	}
@@ -157,8 +157,8 @@ bool SceneScriptRC03::ClickedOnExit(int exitId) {
 				Game_Flag_Set(kFlagRC04Locked);
 			}
 			Game_Flag_Set(kFlagRC03toAR02);
-			Game_Flag_Reset(kFlagMcCoyAtRCxx);
-			Game_Flag_Set(kFlagMcCoyAtARxx);
+			Game_Flag_Reset(kFlagMcCoyInRunciters);
+			Game_Flag_Set(kFlagMcCoyInAnimoidRow);
 			Set_Enter(kSetAR01_AR02, kSceneAR02);
 		}
 		return true;
@@ -166,26 +166,26 @@ bool SceneScriptRC03::ClickedOnExit(int exitId) {
 	if (exitId == 2) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 147.51f, -4.0f, 166.48f, 0, true, false, 0)) {
 			Game_Flag_Set(kFlagRC03toUG01);
-			Game_Flag_Reset(kFlagMcCoyAtRCxx);
-			Game_Flag_Set(kFlagMcCoyAtUGxx);
+			Game_Flag_Reset(kFlagMcCoyInRunciters);
+			Game_Flag_Set(kFlagMcCoyInUnderground);
 			if (Game_Flag_Query(kFlagRC04McCoyShotBob)) {
 				Game_Flag_Set(kFlagRC04Locked);
 			}
 			Set_Enter(kSetUG01, kSceneUG01);
-			Actor_Set_Goal_Number(kActorDektora, 100);
+			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraStartWalkingAround);
 		}
 		return true;
 	}
 	if (exitId == 3) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -487.0f, 1.0f, 116.0f, 0, true, false, 0)) {
 			Game_Flag_Set(kFlagRC03toHC04);
-			Game_Flag_Reset(kFlagMcCoyAtRCxx);
-			Game_Flag_Set(kFlagMcCoyAtHCxx);
+			Game_Flag_Reset(kFlagMcCoyInRunciters);
+			Game_Flag_Set(kFlagMcCoyInHawkersCircle);
 			if (Game_Flag_Query(kFlagRC04McCoyShotBob)) {
 				Game_Flag_Set(kFlagRC04Locked);
 			}
 			Set_Enter(kSetHC01_HC02_HC03_HC04, kSceneHC04);
-			Actor_Set_Goal_Number(kActorDektora, 100);
+			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraStartWalkingAround);
 		}
 		return true;
 	}
@@ -297,7 +297,7 @@ void SceneScriptRC03::PlayerWalkedIn() {
 	if (Global_Variable_Query(kVariableChapter) == 1
 	 || Global_Variable_Query(kVariableChapter) == 2
 	) {
-		Actor_Set_Goal_Number(kActorDektora, 103);
+		Actor_Set_Goal_Number(kActorDektora, kGoalDektoraStopWalkingAround);
 	}
 }
 

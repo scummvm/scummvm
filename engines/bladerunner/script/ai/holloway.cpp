@@ -183,7 +183,7 @@ bool AIScriptHolloway::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		if (Global_Variable_Query(40) != 1) {
 			Player_Gains_Control();
 		}
-		Game_Flag_Set(334);
+		Game_Flag_Set(kFlagUG03toUG04);
 		Set_Enter(kSetUG04, kSceneUG04);
 		break;
 

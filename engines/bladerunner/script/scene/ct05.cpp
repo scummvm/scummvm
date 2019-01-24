@@ -33,7 +33,7 @@ void SceneScriptCT05::InitializeScene() {
 	} else {
 		Setup_Scene_Information(-375.0f, -109.91f, 750.0f, 600);
 	}
-	if (Game_Flag_Query(kFlagWarehouseOpen)) {
+	if (Game_Flag_Query(kFlagCT05WarehouseOpen)) {
 		Scene_Exit_Add_2D_Exit(0, 228, 205, 293, 300, 0);
 	}
 	Scene_Exit_Add_2D_Exit(1, 320, 458, 639, 479, 2);
@@ -44,7 +44,7 @@ void SceneScriptCT05::InitializeScene() {
 	Ambient_Sounds_Add_Sound( 90, 5, 20, 8, 10, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound( 91, 5, 20, 8, 10, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(205, 5, 30, 18, 30, -100, 100, -101, -101, 0, 0);
-	if (Game_Flag_Query(kFlagWarehouseOpen)) {
+	if (Game_Flag_Query(kFlagCT05WarehouseOpen)) {
 		Scene_Loop_Set_Default(2);
 	} else {
 		Scene_Loop_Set_Default(0);
@@ -217,6 +217,7 @@ void SceneScriptCT05::PlayerWalkedIn() {
 		}
 		Player_Gains_Control();
 	}
+
 	if (Game_Flag_Query(kFlagCT06toCT05)) {
 		Footstep_Sound_Override_On(2);
 		Loop_Actor_Travel_Stairs(kActorMcCoy, 7, false, kAnimationModeIdle);
@@ -224,10 +225,10 @@ void SceneScriptCT05::PlayerWalkedIn() {
 		Loop_Actor_Travel_Stairs(kActorMcCoy, 10, false, kAnimationModeIdle);
 		Game_Flag_Reset(kFlagCT06toCT05);
 		Footstep_Sound_Override_Off();
-		if (Actor_Query_Goal_Number(kActorGordo) == 2
-		 && Game_Flag_Query(kFlagZubenPhoto)
+		if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoLeftCT01
+		 && Game_Flag_Query(kFlagCT06ZubenPhoto)
 		) {
-			Actor_Set_Goal_Number(kActorGordo, 3);
+			Actor_Set_Goal_Number(kActorGordo, kGoalGordoWalkThroughCT05);
 		}
 	}
 }
