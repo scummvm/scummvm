@@ -41,6 +41,7 @@ namespace BladeRunner {
 
 #define kAESC 0x41455343
 #define kCBFZ 0x4342465A
+#define kCBPZ 0x4342505A
 #define kCIND 0x43494E44
 #define kCINF 0x43494E46
 #define kCINH 0x43494E48
@@ -366,6 +367,7 @@ bool VQADecoder::VQAVideoTrack::readVQFR(Common::SeekableReadStream *s, uint32 s
 		bool rc = false;
 		switch (chd.id) {
 		case kCBFZ: rc = ((readFlags & kVQAReadCodebook          ) == 0) ? s->skip(roundup(chd.size)) : readCBFZ(s, chd.size); break;
+		case kCBPZ: rc = ((readFlags & kVQAReadCodebook          ) == 0) ? s->skip(roundup(chd.size)) : readCBFZ(s, chd.size); break;
 		case kVPTR: rc = ((readFlags & kVQAReadVectorPointerTable) == 0) ? s->skip(roundup(chd.size)) : readVPTR(s, chd.size); break;
 		default:
 			s->skip(roundup(chd.size));
