@@ -96,17 +96,12 @@ void Anim::removeFromItem(Item *item) {
 	_refCount--;
 }
 
-bool Anim::isInUse() {
+bool Anim::isInUse() const {
 	return _refCount > 0;
 }
 
 int Anim::getPointHotspotIndex(const Common::Point &point) const {
 	// Most anim types only have one hotspot
-	return 0;
-}
-
-uint32 Anim::getDuration() const {
-	warning("Anim::getDuration is not implemented");
 	return 0;
 }
 
@@ -120,9 +115,17 @@ bool Anim::isAtTime(uint32 time) const {
 	return true;
 }
 
-uint32 Anim::getRemainingTime() const {
-	warning("Anim::getRemainingTime is not implemented");
-	return 0;
+void Anim::shouldResetItem(bool resetItem) {
+	warning("Anim::shouldResetItem is not implemented");
+}
+
+void Anim::resetItem() {
+	warning("Anim::resetItem is not implemented");
+}
+
+bool Anim::isDone() const {
+	warning("Anim::isDone is not implemented");
+	return false;
 }
 
 uint32 Anim::getMovementSpeed() const {
@@ -278,7 +281,9 @@ AnimVideo::AnimVideo(Object *parent, byte subType, uint16 index, const Common::S
 		_frameRateOverride(-1),
 		_preload(false),
 		_loop(false),
-		_actionItem(nullptr) {
+		_actionItem(nullptr),
+		_shouldResetItem(true),
+		_done(false) {
 }
 
 void AnimVideo::readData(Formats::XRCReadStream *stream) {
@@ -364,10 +369,10 @@ void AnimVideo::onGameLoop() {
 
 	if (_smacker->isDone()) {
 		// The last frame has been reached
-		if (!_loop && _actionItem) {
-			// Reset our item if needed
-			_actionItem->resetActionAnim();
-			_actionItem = nullptr;
+		_done = true;
+
+		if (_shouldResetItem) {
+			resetItem();
 		}
 
 		if (_loop) {
@@ -381,6 +386,16 @@ void AnimVideo::onGameLoop() {
 	}
 }
 
+void AnimVideo::resetItem() {
+	if (!_loop && _actionItem) {
+		// Reset our item if needed
+		if (_actionItem->getActionAnim() == this) {
+			_actionItem->resetActionAnim();
+		}
+		_actionItem = nullptr;
+	}
+}
+
 void AnimVideo::onEnginePause(bool pause) {
 	Object::onEnginePause(pause);
 
@@ -388,7 +403,6 @@ void AnimVideo::onEnginePause(bool pause) {
 		_smacker->pause(pause);
 	}
 }
-
 
 Visual *AnimVideo::getVisual() {
 	return _smacker;
@@ -405,16 +419,21 @@ void AnimVideo::updateSmackerPosition() {
 	}
 }
 
-uint32 AnimVideo::getDuration() const {
-	return _smacker->getDuration();
+void AnimVideo::shouldResetItem(bool resetItem) {
+	_shouldResetItem = resetItem;
 }
 
 void AnimVideo::playAsAction(ItemVisual *item) {
 	_actionItem = item;
+	_shouldResetItem = true;
+	_done = false;
 
 	if (!_loop) {
 		_smacker->rewind();
 	}
+
+	// Update here so we have something up to date to show when rendering this frame
+	_smacker->update();
 }
 
 bool AnimVideo::isAtTime(uint32 time) const {
@@ -458,7 +477,7 @@ void AnimVideo::printData() {
 
 AnimSkeleton::~AnimSkeleton() {
 	delete _visual;
-	delete _seletonAnim;
+	delete _skeletonAnim;
 }
 
 AnimSkeleton::AnimSkeleton(Object *parent, byte subType, uint16 index, const Common::String &name) :
@@ -467,10 +486,12 @@ AnimSkeleton::AnimSkeleton(Object *parent, byte subType, uint16 index, const Com
 		_loop(false),
 		_movementSpeed(100),
 		_idleActionFrequency(1),
-		_seletonAnim(nullptr),
+		_skeletonAnim(nullptr),
 		_currentTime(0),
 		_totalTime(0),
-		_actionItem(nullptr) {
+		_done(false),
+		_actionItem(nullptr),
+		_shouldResetItem(true) {
 	_visual = StarkGfx->createActorRenderer();
 }
 
@@ -494,7 +515,7 @@ void AnimSkeleton::applyToItem(Item *item) {
 	_visual->setAnimHandler(mesh->getAnimHandler());
 	_visual->setTexture(texture->getTexture());
 	_visual->setTextureFacial(nullptr);
-	_visual->setAnim(_seletonAnim);
+	_visual->setAnim(_skeletonAnim);
 	_visual->setTime(_currentTime);
 	_visual->setCastShadow(_castsShadow);
 }
@@ -542,8 +563,8 @@ void AnimSkeleton::readData(Formats::XRCReadStream *stream) {
 void AnimSkeleton::onPostRead() {
 	ArchiveReadStream *stream = StarkArchiveLoader->getFile(_animFilename, _archiveName);
 
-	_seletonAnim = new SkeletonAnim();
-	_seletonAnim->createFromStream(stream);
+	_skeletonAnim = new SkeletonAnim();
+	_skeletonAnim->createFromStream(stream);
 
 	delete stream;
 }
@@ -551,7 +572,7 @@ void AnimSkeleton::onPostRead() {
 void AnimSkeleton::onAllLoaded() {
 	Anim::onAllLoaded();
 
-	_totalTime = _seletonAnim->getLength();
+	_totalTime = _skeletonAnim->getLength();
 	_currentTime = 0;
 }
 
@@ -562,14 +583,24 @@ void AnimSkeleton::onGameLoop() {
 		uint32 newTime = _currentTime + StarkGlobal->getMillisecondsPerGameloop();
 
 		if (!_loop && newTime >= _totalTime) {
-			if (_actionItem) {
-				_actionItem->resetActionAnim();
-				_actionItem = nullptr;
+			_done = true;
+
+			if (_shouldResetItem) {
+				resetItem();
 			}
 		} else {
 			_currentTime = newTime % _totalTime;
 			_visual->setTime(_currentTime);
 		}
+	}
+}
+
+void AnimSkeleton::resetItem() {
+	if (_actionItem) {
+		if (_actionItem->getActionAnim() == this) {
+			_actionItem->resetActionAnim();
+		}
+		_actionItem = nullptr;
 	}
 }
 
@@ -592,10 +623,6 @@ uint32 AnimSkeleton::getMovementSpeed() const {
 	return _movementSpeed;
 }
 
-uint32 AnimSkeleton::getDuration() const {
-	return _totalTime;
-}
-
 uint32 AnimSkeleton::getCurrentTime() const {
 	return _currentTime;
 }
@@ -605,8 +632,14 @@ uint32 AnimSkeleton::getRemainingTime() const {
 	return CLIP<int32>(remainingTime, 0, _totalTime);
 }
 
+void AnimSkeleton::shouldResetItem(bool resetItem) {
+	_shouldResetItem = resetItem;
+}
+
 void AnimSkeleton::playAsAction(ItemVisual *item) {
 	_actionItem = item;
+	_done = false;
+	_shouldResetItem = true;
 
 	if (!_loop) {
 		_currentTime = 0;

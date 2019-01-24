@@ -24,6 +24,7 @@
 
 #include "engines/stark/formats/xrc.h"
 
+#include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/command.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/scroll.h"
@@ -205,10 +206,6 @@ void Script::updateSuspended() {
 		_pauseTimeLeft = -1;
 	}
 
-	if (_nextCommand->getSubType() == Command::kItemSetActivity && _pauseTimeLeft < 0) {
-		_nextCommand->resumeItemSetActivity();
-	}
-
 	bool commandChanged = false;
 
 	if (_suspendingResource) {
@@ -271,9 +268,22 @@ void Script::updateSuspended() {
 			}
 			break;
 		}
+		case Type::kAnim: {
+			Anim *anim = Object::cast<Anim>(_suspendingResource);
+			if (anim->isDone()) {
+				anim->resetItem();
+				// Resume the script execution once the animation is complete
+				_suspendingResource = nullptr;
+			}
+			break;
+		}
 		default:
 			error("Unhandled suspending resource type %s", _suspendingResource->getType().getName());
 		}
+	}
+
+	if (_nextCommand->getSubType() == Command::kItemSetActivity && !_suspendingResource) {
+		_nextCommand->resumeItemSetActivity();
 	}
 
 	if (!isSuspended() && _shouldResetGameSpeed) {

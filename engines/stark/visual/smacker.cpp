@@ -100,12 +100,7 @@ void VisualSmacker::readOriginalSize(Common::SeekableReadStream *stream) {
 }
 
 void VisualSmacker::render(const Common::Point &position) {
-	if (_decoder->getCurFrame() < 0) {
-		// The video has not yet been updated
-		// TODO: Make sure this is correct. Perhaps we should always
-		//  update animations on the same frame they are started.
-		return;
-	}
+	assert(_decoder->getCurFrame() >= 0);
 
 	// The position argument contains the scroll offset
 	_surfaceRenderer->render(_texture, _position - position, _originalWidth, _originalHeight);

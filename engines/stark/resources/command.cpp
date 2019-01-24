@@ -605,7 +605,8 @@ Command *Command::opItemSetActivity(Script *script, const ResourceReference &ite
 	Anim *actionAnim = sceneItem->getActionAnim();
 
 	if (wait && actionAnim) {
-		script->pause(actionAnim->getRemainingTime());
+		assert(actionAnim->getSubType() == Anim::kAnimSkeleton || actionAnim->getSubType() == Anim::kAnimVideo);
+		script->suspend(actionAnim);
 		return this;
 	} else {
 		resumeItemSetActivity();
@@ -651,11 +652,10 @@ Command *Command::opPlayAnimation(Script *script, const ResourceReference &animR
 	sceneItem->setMovement(nullptr);
 	sceneItem->playActionAnim(anim);
 
-	// TODO: Check if the anim should reset the anim hirarchy upon completion
-
 	if (suspend) {
-		uint32 animDuration = anim->getDuration();
-		script->pause(animDuration);
+		assert(anim->getSubType() == Anim::kAnimSkeleton || anim->getSubType() == Anim::kAnimVideo);
+		anim->shouldResetItem(false); // The script system will take care of that when resuming
+		script->suspend(anim);
 		return this; // Stay on the same command while suspended
 	} else {
 		return nextCommand();

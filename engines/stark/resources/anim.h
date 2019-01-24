@@ -110,7 +110,7 @@ public:
 	virtual void removeFromItem(Item *item);
 
 	/** Check is the animation is being used by an item */
-	bool isInUse();
+	bool isInUse() const;
 
 	/** Obtain the purpose of this anim */
 	uint32 getActivity() const;
@@ -120,9 +120,6 @@ public:
 
 	/** Get the hotspot position for a given index of a pat-table */
 	virtual Common::Point getHotspotPosition(uint index) const { return Common::Point(-1, -1); }
-
-	/** Get the animation typical duration in milliseconds */
-	virtual uint32 getDuration() const;
 
 	/**
 	 * Play the animation as an action for an item.
@@ -134,14 +131,34 @@ public:
 	/** Checks if the elapsed time since the animation start is greater than a specified duration */
 	virtual bool isAtTime(uint32 time) const;
 
-	/** Get the duration in milliseconds before the animation loops ends */
-	virtual uint32 getRemainingTime() const;
-
 	/** Get the anim movement speed in units per seconds */
 	virtual uint32 getMovementSpeed() const;
 
 	/** Get the chance the animation has to play among other idle actions from the same anim hierarchy */
 	virtual uint32 getIdleActionFrequency() const;
+
+	/**
+	 * When this animation is playing as an action should a new animation
+	 * be chosen for the item as soon as this one completes based on
+	 * the item's activity?
+	 * This is true by default, but setting it to false allows scripts
+	 * to chose precisely the new animation to play, and to start it
+	 * in the same frame as this one is removed.
+	 */
+	virtual void shouldResetItem(bool resetItem);
+
+	/**
+	 * Remove this action animation for the item and select a new animation
+	 * based on the item's current activity.
+	 */
+	virtual void resetItem();
+
+	/**
+	 * Is this animation done playing.
+	 *
+	 * Only valid for animations started with playAsAction.
+	 */
+	virtual bool isDone() const;
 
 protected:
 	virtual void printData() override;
@@ -225,8 +242,10 @@ public:
 	// Anim API
 	Visual *getVisual() override;
 	void playAsAction(ItemVisual *item) override;
-	uint32 getDuration() const override;
+	void shouldResetItem(bool resetItem) override;
+	void resetItem();
 	bool isAtTime(uint32 time) const override;
+	bool isDone() const { return _done || !isInUse(); }
 
 protected:
 	typedef Common::Array<Common::Point> PointArray;
@@ -252,8 +271,10 @@ protected:
 	int32 _frameRateOverride;
 	bool _preload;
 	bool _loop;
+	bool _done;
 
 	ItemVisual *_actionItem;
+	bool _shouldResetItem;
 };
 
 /**
@@ -276,12 +297,16 @@ public:
 	void applyToItem(Item *item) override;
 	void removeFromItem(Item *item) override;
 	Visual *getVisual() override;
-	uint32 getDuration() const override;
 	void playAsAction(ItemVisual *item) override;
 	bool isAtTime(uint32 time) const override;
+	bool isDone() const { return _done || !isInUse(); }
 	uint32 getMovementSpeed() const override;
 	uint32 getIdleActionFrequency() const override;
-	uint32 getRemainingTime() const override;
+	void shouldResetItem(bool resetItem) override;
+	void resetItem();
+
+	/** Get the duration in milliseconds before the animation loops ends */
+	uint32 getRemainingTime() const;
 
 	/** Get the position in the animation loop in milliseconds */
 	uint32 getCurrentTime() const;
@@ -298,11 +323,13 @@ protected:
 
 	uint32 _totalTime;
 	uint32 _currentTime;
+	bool _done;
 
-	SkeletonAnim *_seletonAnim;
+	SkeletonAnim *_skeletonAnim;
 	VisualActor *_visual;
 
 	ItemVisual *_actionItem;
+	bool _shouldResetItem;
 };
 
 } // End of namespace Resources
