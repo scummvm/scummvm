@@ -27,6 +27,7 @@
 #include "bladerunner/boundingbox.h"
 #include "bladerunner/combat.h"
 #include "bladerunner/font.h"
+#include "bladerunner/fog.h"
 #include "bladerunner/game_constants.h"
 #include "bladerunner/game_flags.h"
 #include "bladerunner/game_info.h"
@@ -36,8 +37,10 @@
 #include "bladerunner/savefile.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
+#include "bladerunner/screen_effects.h"
 #include "bladerunner/settings.h"
 #include "bladerunner/set.h"
+#include "bladerunner/set_effects.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/vector.h"
 #include "bladerunner/view.h"
@@ -56,8 +59,15 @@ namespace BladeRunner {
 Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 	_vm = vm;
 
+	_isDebuggerOverlay = false;
+
 	_viewSceneObjects = false;
 	_viewActorsOnly = false;
+	_viewLights = false;
+	_viewFogs = false;
+	_viewRegions = false;
+	_viewWaypoints = false;
+	_viewWalkboxes = false;
 	_viewObstacles = false;
 	_viewUI = false;
 	_viewZBuffer = false;
@@ -72,6 +82,7 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 	registerCmd("scene", WRAP_METHOD(Debugger, cmdScene));
 	registerCmd("var", WRAP_METHOD(Debugger, cmdVariable));
 	registerCmd("clue", WRAP_METHOD(Debugger, cmdClue));
+	registerCmd("timer", WRAP_METHOD(Debugger, cmdTimer));
 	registerCmd("load", WRAP_METHOD(Debugger, cmdLoad));
 	registerCmd("save", WRAP_METHOD(Debugger, cmdSave));
 }
@@ -101,7 +112,7 @@ bool Debugger::cmdAnimation(int argc, const char **argv) {
 	if (argc == 3) {
 		int animationMode = atoi(argv[2]);
 		debugPrintf("actorAnimationMode(%i) = %i\n", actorId, animationMode);
-		actor->changeAnimationMode(animationMode);
+		actor->changeAnimationMode(animationMode, true);
 		return false;
 	}
 
@@ -112,7 +123,7 @@ bool Debugger::cmdAnimation(int argc, const char **argv) {
 bool Debugger::cmdDraw(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Enables debug rendering of scene objects, obstacles, ui elements, zbuffer or disables debug rendering.\n");
-		debugPrintf("Usage: %s (obj | actors | obstacles | ui | zbuf | reset)\n", argv[0]);
+		debugPrintf("Usage: %s (obj | reg | lit | fog | way | walk | act | obstacles | ui | zbuf | reset)\n", argv[0]);
 		return true;
 	}
 
@@ -120,6 +131,21 @@ bool Debugger::cmdDraw(int argc, const char **argv) {
 	if (arg == "obj") {
 		_viewSceneObjects = !_viewSceneObjects;
 		debugPrintf("Drawing scene objects = %i\n", _viewSceneObjects);
+	} else if (arg == "reg") {
+		_viewRegions = !_viewRegions;
+		debugPrintf("Drawing regions = %i\n", _viewRegions);
+	} else if (arg == "lit") {
+		_viewLights = !_viewLights;
+		debugPrintf("Drawing lights = %i\n", _viewLights);
+	} else if (arg == "fog") {
+		_viewFogs = !_viewFogs;
+		debugPrintf("Drawing fogs = %i\n", _viewFogs);
+	} else if (arg == "way") {
+		_viewWaypoints = !_viewWaypoints;
+		debugPrintf("Drawing waypoints = %i\n", _viewWaypoints);
+	} else if (arg == "walk") {
+		_viewWalkboxes = !_viewWalkboxes;
+		debugPrintf("Drawing walk boxes = %i\n", _viewWalkboxes);
 	} else if (arg == "actors") {
 		_viewSceneObjects = !_viewSceneObjects;
 		_viewActorsOnly = _viewSceneObjects;
@@ -142,6 +168,7 @@ bool Debugger::cmdDraw(int argc, const char **argv) {
 		debugPrintf("Drawing Z buffer = %i\n", _viewZBuffer);
 	}
 
+	_isDebuggerOverlay = _viewSceneObjects | _viewRegions | _viewLights | _viewFogs | _viewWaypoints | _viewWalkboxes;
 	return true;
 }
 
@@ -527,6 +554,48 @@ bool Debugger::cmdClue(int argc, const char **argv) {
 	return true;
 }
 
+bool Debugger::cmdTimer(int argc, const char **argv) {
+	if (argc != 2 && argc != 4) {
+		debugPrintf("Get or changes timers for an actor.\n");
+		debugPrintf("Usage: %s <actorId> [<timer> <value>]\n", argv[0]);
+		return true;
+	}
+
+	int actorId = atoi(argv[1]);
+
+	Actor *actor = nullptr;
+	if ((actorId >= 0 && actorId < (int)_vm->_gameInfo->getActorCount()) || (actorId == kActorVoiceOver)) {
+		actor = _vm->_actors[actorId];
+	}
+
+	if (actor == nullptr) {
+		debugPrintf("Unknown actor %i\n", actorId);
+		return true;
+	}
+
+	if (argc == 4) {
+		int timer = atoi(argv[2]);
+		int value = atoi(argv[3]);
+
+		if (timer < 0 || timer > 6) {
+			debugPrintf("Timer must be [0..6]");
+			return true;
+		}
+
+		if (value == 0) {
+			actor->timerReset(timer);
+		} else {
+			actor->timerStart(timer, value);
+		}
+	}
+
+	for (int i = 0; i < 7; ++i) {
+		debugPrintf("actorTimer(%i, %i) = %i ms\n", actorId, i, actor->timerLeft(i));
+	}
+
+	return true;
+}
+
 bool Debugger::cmdLoad(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Loads a save game from original format.\n");
@@ -577,6 +646,15 @@ bool Debugger::cmdSave(int argc, const char **argv) {
 	delete saveFile;
 
 	return true;
+}
+
+void Debugger::drawDebuggerOverlay() {
+	if (_viewSceneObjects) drawSceneObjects();
+	if (_viewLights) drawLights();
+	if (_viewFogs) drawFogs();
+	if (_viewRegions) drawRegions();
+	if (_viewWaypoints) drawWaypoints();
+	if (_viewWalkboxes) drawWalkboxes();
 }
 
 void Debugger::drawBBox(Vector3 start, Vector3 end, View *view, Graphics::Surface *surface, int color) {
@@ -653,36 +731,9 @@ void Debugger::drawSceneObjects() {
 			}
 		}
 	}
+}
 
-	if (_viewActorsOnly)
-		return;
-
-	//draw regions
-	for (int i = 0; i < 10; i++) {
-		Regions::Region *region = &_vm->_scene->_regions->_regions[i];
-		if (!region->present) continue;
-		_vm->_surfaceFront.frameRect(region->rectangle, 0x001F); // 00000 00000 11111
-	}
-
-	for (int i = 0; i < 10; i++) {
-		Regions::Region *region = &_vm->_scene->_exits->_regions[i];
-		if (!region->present) continue;
-		_vm->_surfaceFront.frameRect(region->rectangle, 0x7FFF); // 11111 11111 11111
-	}
-
-	//draw walkboxes
-	for (int i = 0; i < _vm->_scene->_set->_walkboxCount; i++) {
-		Set::Walkbox *walkbox = &_vm->_scene->_set->_walkboxes[i];
-
-		for (int j = 0; j < walkbox->vertexCount; j++) {
-			Vector3 start = _vm->_view->calculateScreenPosition(walkbox->vertices[j]);
-			Vector3 end = _vm->_view->calculateScreenPosition(walkbox->vertices[(j + 1) % walkbox->vertexCount]);
-			_vm->_surfaceFront.drawLine(start.x, start.y, end.x, end.y, 0x7FE0); // 11111 11111 00000
-			Vector3 pos = _vm->_view->calculateScreenPosition(0.5 * (start + end));
-			_vm->_mainFont->drawColor(walkbox->name, _vm->_surfaceFront, pos.x, pos.y, 0x7FE0); // 11111 11111 00000
-		}
-	}
-
+void Debugger::drawLights() {
 	// draw lights
 	for (int i = 0; i < (int)_vm->_lights->_lights.size(); i++) {
 		Light *light = _vm->_lights->_lights[i];
@@ -712,8 +763,56 @@ void Debugger::drawSceneObjects() {
 		_vm->_surfaceFront.drawLine(posOriginT.x, posOriginT.y, posTargetT.x, posTargetT.y, color);
 		_vm->_mainFont->drawColor(light->_name, _vm->_surfaceFront, posOriginT.x, posOriginT.y, color);
 	}
+}
 
-	//draw waypoints
+void Debugger::drawFogs() {
+	// draw fogs
+	for (Fog *fog = _vm->_scene->_set->_effects->_fogs; fog != nullptr; fog = fog->_next) {
+
+		// Matrix4x3 m = fog->_matrix;
+		// m = invertMatrix(m);
+		Matrix4x3 m = fog->_inverted;
+
+		//todo do this properly
+		Vector3 posOrigin = m * Vector3(0.0f, 0.0f, 0.0f);
+		float t = posOrigin.y;
+		posOrigin.y = posOrigin.z;
+		posOrigin.z = -t;
+
+
+		Vector3 size = Vector3(5.0f, 5.0f, 5.0f);
+		int colorR = (fog->_fogColor.r * 31.0f);
+		int colorG = (fog->_fogColor.g * 31.0f);
+		int colorB = (fog->_fogColor.b * 31.0f);
+		int color = (colorR << 10) + (colorG << 5) + colorB;
+
+		drawBBox(posOrigin - size, posOrigin + size, _vm->_view, &_vm->_surfaceFront, color);
+
+		Vector3 posOriginT = _vm->_view->calculateScreenPosition(posOrigin);
+		// Vector3 posTargetT = _vm->_view->calculateScreenPosition(posTarget);
+		// _vm->_surfaceFront.drawLine(posOriginT.x, posOriginT.y, posTargetT.x, posTargetT.y, color);
+		_vm->_mainFont->drawColor(fog->_name, _vm->_surfaceFront, posOriginT.x, posOriginT.y, color);
+	}
+}
+
+void Debugger::drawRegions() {
+	//draw regions
+	for (int i = 0; i < 10; i++) {
+		Regions::Region *region = &_vm->_scene->_regions->_regions[i];
+		if (!region->present) continue;
+		_vm->_surfaceFront.frameRect(region->rectangle, 0x001F); // 00000 00000 11111
+	}
+
+	//draw exits
+	for (int i = 0; i < 10; i++) {
+		Regions::Region *region = &_vm->_scene->_exits->_regions[i];
+		if (!region->present) continue;
+		_vm->_surfaceFront.frameRect(region->rectangle, 0x7FFF); // 11111 11111 11111
+	}
+}
+
+void Debugger::drawWaypoints() {
+	//draw world waypoints
 	for (int i = 0; i < _vm->_waypoints->_count; i++) {
 		Waypoints::Waypoint *waypoint = &_vm->_waypoints->_waypoints[i];
 		if(waypoint->setId != _vm->_scene->getSetId()) {
@@ -760,11 +859,27 @@ void Debugger::drawSceneObjects() {
 		sprintf(fleeText, "flee %i", i);
 		_vm->_mainFont->drawColor(fleeText, _vm->_surfaceFront, spos.x, spos.y, color);
 	}
+}
 
-#if 0
+void Debugger::drawWalkboxes() {
+	//draw walkboxes
+	for (int i = 0; i < _vm->_scene->_set->_walkboxCount; i++) {
+		Set::Walkbox *walkbox = &_vm->_scene->_set->_walkboxes[i];
+
+		for (int j = 0; j < walkbox->vertexCount; j++) {
+			Vector3 start = _vm->_view->calculateScreenPosition(walkbox->vertices[j]);
+			Vector3 end = _vm->_view->calculateScreenPosition(walkbox->vertices[(j + 1) % walkbox->vertexCount]);
+			_vm->_surfaceFront.drawLine(start.x, start.y, end.x, end.y, 0x7FE0); // 11111 11111 00000
+			Vector3 pos = _vm->_view->calculateScreenPosition(0.5 * (start + end));
+			_vm->_mainFont->drawColor(walkbox->name, _vm->_surfaceFront, pos.x, pos.y, 0x7FE0); // 11111 11111 00000
+		}
+	}
+}
+
+void Debugger::drawScreenEffects() {
 	//draw aesc
-	for (uint i = 0; i < _screenEffects->_entries.size(); i++) {
-		ScreenEffects::Entry &entry = _screenEffects->_entries[i];
+	for (uint i = 0; i < _vm->_screenEffects->_entries.size(); i++) {
+		ScreenEffects::Entry &entry = _vm->_screenEffects->_entries[i];
 		int j = 0;
 		for (int y = 0; y < entry.height; y++) {
 			for (int x = 0; x < entry.width; x++) {
@@ -779,11 +894,11 @@ void Debugger::drawSceneObjects() {
 					CLIP(color.r * bladeToScummVmConstant, 0, 255),
 					CLIP(color.g * bladeToScummVmConstant, 0, 255),
 					CLIP(color.b * bladeToScummVmConstant, 0, 255));
-				_surfaceFront.fillRect(r, color555);
+				_vm->_surfaceFront.fillRect(r, color555);
 			}
 		}
 	}
-#endif
 }
+
 
 } // End of namespace BladeRunner

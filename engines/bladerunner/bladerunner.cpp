@@ -962,9 +962,10 @@ void BladeRunnerEngine::gameTick() {
 				_walkSoundId = -1;
 			}
 
-			if (_debugger->_viewSceneObjects) {
-				_debugger->drawSceneObjects();
+			if (_debugger->_isDebuggerOverlay) {
+				_debugger->drawDebuggerOverlay();
 			}
+
 			if (_debugger->_viewObstacles) {
 				_obstacles->draw();
 			}
