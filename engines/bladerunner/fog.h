@@ -81,18 +81,22 @@ protected:
 
 class FogSphere : public Fog {
 private:
-	float _radius = 0.0f;
+	float _radius;
 
 public:
+	FogSphere():_radius(0.0f) {};
+
 	void read(Common::ReadStream *stream, int frameCount);
 	void calculateCoeficient(Vector3 position, Vector3 viewPosition, float *coeficient);
 };
 
 class FogCone : public Fog {
 private:
-	float _coneAngle = 0.0f;
+	float _coneAngle;
 
 public:
+	FogCone():_coneAngle(0.0f) {};
+
 	void read(Common::ReadStream *stream, int frameCount);
 	void calculateCoeficient(Vector3 position, Vector3 viewPosition, float *coeficient);
 };
@@ -102,6 +106,8 @@ private:
 	Vector3 _size;
 
 public:
+	FogBox():_size() {};
+
 	void read(Common::ReadStream *stream, int frameCount);
 	void calculateCoeficient(Vector3 position, Vector3 viewPosition, float *coeficient);
 };
