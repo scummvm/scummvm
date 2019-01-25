@@ -248,7 +248,7 @@ static const char *const kEoB2WandStringsDOSGerman[1] = {
 static const StringListProvider kEoB2WandStringsDOSGermanProvider = { ARRAYSIZE(kEoB2WandStringsDOSGerman), kEoB2WandStringsDOSGerman };
 
 static const char *const kEoB2ItemMisuseStringsDOSGerman[3] = {
-	" kann diesen Gegenstand nicht nutzen.\r",
+	"%s kann diesen Gegenstand nicht nutzen.\r",
 	"Der Gegenstand wird automatisch beim tragen benutzt.\r",
 	"Das kann man so nicht benutzen.\r"
 };

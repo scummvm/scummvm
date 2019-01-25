@@ -341,7 +341,7 @@ static const char *const kEoB1WandStringsDOSItalian[2] = {
 static const StringListProvider kEoB1WandStringsDOSItalianProvider = { ARRAYSIZE(kEoB1WandStringsDOSItalian), kEoB1WandStringsDOSItalian };
 
 static const char *const kEoB1ItemMisuseStringsDOSItalian[3] = {
-	" non pu""\x11"" usare quest'oggetto.\r",
+	"%s non pu""\x11"" usare quest'oggetto.\r",
 	"Se indossato quest'oggetto funziona in automatico.\r",
 	"Questo oggetto non si usa cos""\x10"".\r"
 };
