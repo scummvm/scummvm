@@ -46,7 +46,8 @@ Cursor::Cursor(Gfx::Driver *gfx) :
 		_currentCursorType(kImage),
 		_fading(false),
 		_fadeLevelIncreasing(true),
-		_fadeLevel(0) {
+		_fadeLevel(0),
+		_hintDisplayDelay(150) {
 	setCursorType(kDefault);
 }
 
@@ -70,6 +71,7 @@ void Cursor::setCursorImage(VisualImageXMG *image) {
 
 void Cursor::setMousePosition(const Common::Point &pos) {
 	_mousePos = pos;
+	_hintDisplayDelay = 150;
 }
 
 void Cursor::setFading(bool fading) {
@@ -98,14 +100,25 @@ void Cursor::updateFadeLevel() {
 	}
 }
 
+void Cursor::updateHintDelay() {
+	if (_hintDisplayDelay >= 0) {
+		_hintDisplayDelay -= StarkGlobal->getMillisecondsPerGameloop();
+
+		if (_hintDisplayDelay <= 0) {
+			_hintDisplayDelay = -1;
+		}
+	}
+}
+
 void Cursor::render() {
 	updateFadeLevel();
+	updateHintDelay();
 
 	if (!_gfx->isPosInScreenBounds(_mousePos)) {
 		setCursorType(Cursor::kPassive);
 	}
 
-	if (_mouseText && _gfx->gameViewport().contains(_mousePos)) {
+	if (_mouseText && _gfx->gameViewport().contains(_mousePos) && _hintDisplayDelay <= 0) {
 		_gfx->setScreenViewport(false);
 
 		// TODO: Should probably query the image for the width of the cursor
@@ -156,6 +169,7 @@ void Cursor::setMouseHint(const Common::String &hint) {
 			_mouseText = nullptr;
 		}
 		_currentHint = hint;
+		_hintDisplayDelay = 150;
 	}
 }
 

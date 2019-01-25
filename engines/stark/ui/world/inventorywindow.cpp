@@ -40,11 +40,16 @@
 
 namespace Stark {
 
+static const int kAutoCloseSuspended = -1;
+static const int kAutoCloseDisabled  = -2;
+static const int kAutoCloseDelay     = 200;
+
 InventoryWindow::InventoryWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu) :
 		Window(gfx, cursor),
 	_actionMenu(actionMenu),
 	_selectedInventoryItem(-1),
-	_firstVisibleSlot(0) {
+	_firstVisibleSlot(0),
+	_autoCloseTimeRemaining(kAutoCloseDisabled) {
 	// The window has the same size as the game window
 	_position = Common::Rect(Gfx::Driver::kGameViewportWidth, Gfx::Driver::kGameViewportHeight);
 	_position.translate(0, Gfx::Driver::kTopBorderHeight);
@@ -73,6 +78,10 @@ void InventoryWindow::open() {
 	}
 
 	_visible = true;
+
+	// The user needs to move the mouse over the background at least once
+	// before autoclose is enabled.
+	_autoCloseTimeRemaining = kAutoCloseDisabled;
 }
 
 void InventoryWindow::close() {
@@ -198,6 +207,14 @@ void InventoryWindow::onMouseMove(const Common::Point &pos) {
 	} else {
 		_cursor->setMouseHint("");
 	}
+
+	if (!_backgroundRect.contains(pos)) {
+		if (_autoCloseTimeRemaining == kAutoCloseSuspended) {
+			_autoCloseTimeRemaining = kAutoCloseDelay;
+		}
+	} else {
+		_autoCloseTimeRemaining = kAutoCloseSuspended;
+	}
 }
 
 void InventoryWindow::onClick(const Common::Point &pos) {
@@ -269,6 +286,17 @@ void InventoryWindow::scrollDown() {
 void InventoryWindow::scrollUp() {
 	if (canScrollUp()) {
 		_firstVisibleSlot -= _visibleSlotsCount;
+	}
+}
+
+void InventoryWindow::onGameLoop() {
+	if (_autoCloseTimeRemaining >= 0 && !_actionMenu->isVisible()) {
+		_autoCloseTimeRemaining -= StarkGlobal->getMillisecondsPerGameloop();
+
+		if (_autoCloseTimeRemaining <= 0) {
+			_autoCloseTimeRemaining = kAutoCloseSuspended;
+			close();
+		}
 	}
 }
 } // End of namespace Stark

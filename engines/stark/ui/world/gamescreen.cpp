@@ -137,6 +137,7 @@ void GameScreen::onScreenChanged() {
 	_dialogPanel->onScreenChanged();
 	_topMenu->onScreenChanged();
 	_gameWindow->onScreenChanged();
+	_actionMenu->onScreenChanged();
 }
 
 void GameScreen::notifyInventoryItemEnabled(uint16 itemIndex) {

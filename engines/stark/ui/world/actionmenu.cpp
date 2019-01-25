@@ -42,16 +42,30 @@
 #include "engines/stark/scene.h"
 
 #include "engines/stark/visual/image.h"
+#include "engines/stark/visual/text.h"
+
 
 namespace Stark {
+
+static const int kAutoCloseSuspended = -1;
+static const int kAutoCloseDisabled  = -2;
+static const int kAutoCloseDelay     = 200;
 
 ActionMenu::ActionMenu(Gfx::Driver *gfx, Cursor *cursor) :
 		Window(gfx, cursor),
 		_inventory(nullptr),
 		_item(nullptr),
-		_fromInventory(false) {
+		_itemDescription(nullptr),
+		_fromInventory(false),
+		_autoCloseTimeRemaining(kAutoCloseDisabled) {
 
 	_background = StarkStaticProvider->getUIElement(StaticProvider::kActionMenuBg);
+
+	_itemDescription = new VisualText(gfx);
+	_itemDescription->setColor(0xFFFFFFFF);
+	_itemDescription->setBackgroundColor(0x80000000);
+	_itemDescription->setFont(FontProvider::kSmallFont);
+	_itemDescription->setTargetWidth(96);
 
 	_buttons[kActionHand].action = Resources::PATTable::kActionUse;
 	_buttons[kActionHand].rect = Common::Rect(90, 15, 126, 63);
@@ -64,6 +78,7 @@ ActionMenu::ActionMenu(Gfx::Driver *gfx, Cursor *cursor) :
 }
 
 ActionMenu::~ActionMenu() {
+	delete _itemDescription;
 }
 
 void ActionMenu::open(Resources::ItemVisual *item, const Common::Point &itemRelativePos) {
@@ -76,6 +91,9 @@ void ActionMenu::open(Resources::ItemVisual *item, const Common::Point &itemRela
 	_itemRelativePos = itemRelativePos;
 	_item = item;
 	_fromInventory = item->getSubType() == Resources::Item::kItemInventory;
+	_itemDescription->setText(StarkGameInterface->getItemTitle(item));
+
+	_cursor->setMouseHint("");
 
 	clearActions();
 
@@ -127,6 +145,12 @@ void ActionMenu::onRender() {
 			visual->render(Common::Point(_buttons[i].rect.left, _buttons[i].rect.top), false);
 		}
 	}
+
+	Common::Rect descriptionSize = _itemDescription->getRect();
+	int descriptionX = 60 + (_itemDescription->getTargetWidth() - descriptionSize.width()) / 2;
+	int descriptionY = _position.height() - descriptionSize.height();
+
+	_itemDescription->render(Common::Point(descriptionX, descriptionY));
 }
 
 void ActionMenu::clearActions() {
@@ -157,6 +181,8 @@ void ActionMenu::onMouseMove(const Common::Point &pos) {
 	} else {
 		_cursor->setCursorType(Cursor::kDefault);
 	}
+
+	_autoCloseTimeRemaining = kAutoCloseSuspended;
 }
 
 void ActionMenu::onClick(const Common::Point &pos) {
@@ -183,6 +209,23 @@ void ActionMenu::onClick(const Common::Point &pos) {
 
 void ActionMenu::setInventory(InventoryWindow *inventory) {
 	_inventory = inventory;
+}
+
+void ActionMenu::onGameLoop() {
+	if (!isMouseInside() && _autoCloseTimeRemaining == kAutoCloseSuspended) {
+		_autoCloseTimeRemaining = kAutoCloseDelay;
+	} else if (_autoCloseTimeRemaining >= 0) {
+		_autoCloseTimeRemaining -= StarkGlobal->getMillisecondsPerGameloop();
+
+		if (_autoCloseTimeRemaining <= 0) {
+			_autoCloseTimeRemaining = kAutoCloseSuspended;
+			close();
+		}
+	}
+}
+
+void ActionMenu::onScreenChanged() {
+	_itemDescription->resetTexture();
 }
 
 } // End of namespace Stark

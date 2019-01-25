@@ -603,8 +603,6 @@ void AnimSkeleton::onGameLoop() {
 	}
 }
 
-
-
 void AnimSkeleton::resetItem() {
 	if (_actionItem) {
 		if (_actionItem->getActionAnim() == this) {
@@ -615,10 +613,7 @@ void AnimSkeleton::resetItem() {
 }
 
 void AnimSkeleton::onPreDestroy() {
-	if (_actionItem) {
-		_actionItem->resetActionAnim();
-		_actionItem = nullptr;
-	}
+	resetItem();
 
 	Anim::onPreDestroy();
 }

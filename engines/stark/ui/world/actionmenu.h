@@ -29,6 +29,7 @@ namespace Stark {
 
 class Cursor;
 class VisualImageXMG;
+class VisualText;
 class InventoryWindow;
 class GameWindow;
 
@@ -39,21 +40,27 @@ class ItemVisual;
 class ActionMenu : public Window {
 public:
 	ActionMenu(Gfx::Driver *gfx, Cursor *cursor);
-	~ActionMenu();
+	~ActionMenu() override;
 
 	void setInventory(InventoryWindow *inventory);
 
 	void open(Resources::ItemVisual *item, const Common::Point &itemRelativePos);
 	void close();
 
+	void onScreenChanged();
+
 protected:
 	Common::Rect computePosition(const Common::Point &mouse) const;
 
 	void onMouseMove(const Common::Point &pos) override;
 	void onClick(const Common::Point &pos) override;
+	void onGameLoop() override;
 	void onRender() override;
 
 private:
+	void clearActions();
+	void enableAction(uint32 action);
+
 	enum ActionMenuType {
 		kActionHand  = 0,
 		kActionEye   = 1,
@@ -70,14 +77,14 @@ private:
 	ActionButton _buttons[3];
 
 	VisualImageXMG *_background;
+	VisualText *_itemDescription;
 
 	Common::Point _itemRelativePos;
 	Resources::ItemVisual *_item;
 
 	InventoryWindow *_inventory;
 
-	void clearActions();
-	void enableAction(uint32 action);
+	int32 _autoCloseTimeRemaining;
 };
 
 } // End of namespace Stark

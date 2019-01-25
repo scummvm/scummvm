@@ -265,15 +265,6 @@ void ItemVisual::saveLoadCurrent(ResourceSerializer *serializer) {
 	}
 }
 
-void ItemVisual::onPreDestroy() {
-	if (_actionAnim) {
-		_actionAnim->removeFromItem(this);
-		_actionAnim = nullptr;
-	}
-
-	Item::onPreDestroy();
-}
-
 void ItemVisual::setEnabled(bool enabled) {
 	Item::setEnabled(enabled);
 

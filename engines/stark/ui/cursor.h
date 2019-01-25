@@ -75,10 +75,13 @@ public:
 	void setMouseHint(const Common::String &hint);
 private:
 	void updateFadeLevel();
+	void updateHintDelay();
 
 	Gfx::Driver *_gfx;
 
 	Common::String _currentHint;
+	int32 _hintDisplayDelay;
+
 	Common::Point _mousePos;
 	VisualImageXMG *_cursorImage;
 	VisualText *_mouseText;

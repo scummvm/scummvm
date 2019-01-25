@@ -42,7 +42,7 @@ class Anim;
 class InventoryWindow : public Window {
 public:
 	InventoryWindow(Gfx::Driver *gfx, Cursor *cursor, ActionMenu *actionMenu);
-	virtual ~InventoryWindow() {}
+	~InventoryWindow() override {}
 
 	void open();
 	void close();
@@ -61,6 +61,7 @@ protected:
 	void onMouseMove(const Common::Point &pos) override;
 	void onClick(const Common::Point &pos) override;
 	void onRightClick(const Common::Point &pos) override;
+	void onGameLoop() override;
 	void onRender() override;
 
 	void checkObjectAtPos(Common::Point pos, Resources::ItemVisual **item, int16 selectedInventoryItem, int16 &singlePossibleAction);
@@ -87,6 +88,8 @@ private:
 
 	Gfx::RenderEntryArray _renderEntries;
 	int16 _selectedInventoryItem;
+
+	int32 _autoCloseTimeRemaining;
 };
 
 } // End of namespace Stark
