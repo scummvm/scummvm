@@ -28,7 +28,7 @@ void SceneScriptBB03::InitializeScene() {
 	Setup_Scene_Information(20.0f, 60.16f, 0.0f, 0);
 	Game_Flag_Reset(kFlagBB02toBB03);
 	if (Game_Flag_Query(kFlagBB04toBB03)) {
-		Setup_Scene_Information(176.0f, 60.16f, 0.0f, 900);
+		Setup_Scene_Information(176.0f, 60.16f,    0.0f, 900);
 	}
 	if (Game_Flag_Query(kFlagBB05toBB03)) {
 		Setup_Scene_Information(204.0f, 60.16f, -164.0f, 740);

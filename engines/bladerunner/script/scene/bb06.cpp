@@ -33,7 +33,7 @@ void SceneScriptBB06::InitializeScene() {
 		Setup_Scene_Information(-115.0f, 0.0f, -103.0f, 375);
 		Game_Flag_Reset(kFlagBB07toBB06);
 	} else {
-		Setup_Scene_Information(-37.0f, 0.0f, 178.0f, 0);
+		Setup_Scene_Information( -37.0f, 0.0f,  178.0f,   0);
 	}
 
 	Scene_Exit_Add_2D_Exit(0,   0,  43,  14, 478, 3);
@@ -64,15 +64,16 @@ void SceneScriptBB06::InitializeScene() {
 	} else {
 		Scene_Loop_Set_Default(1);
 	}
-	if (Game_Flag_Query(410)) {
-		Overlay_Play("BB06OVER", 1, true, false, 0);
+
+	if (Game_Flag_Query(kFlagBB06AndroidDestroyed)) {
+		Overlay_Play("BB06OVER", 1, true, false, 0); // TODO: check, it's is playing while the background is still panning so it looks pretty weird
 	}
 }
 
 void SceneScriptBB06::SceneLoaded() {
 	Obstacle_Object("V2CHESSTBL01", true);
 	Clickable_Object("BOX31");
-	Item_Add_To_World(77, 931, kSetBB02_BB04_BB06_BB51, -127.0f, 68.42f, 57.0f, 0, 8, 8, true, true, false, true);
+	Item_Add_To_World(kItemBB06ControlBox, 931, kSetBB02_BB04_BB06_BB51, -127.0f, 68.42f, 57.0f, 0, 8, 8, true, true, false, true);
 }
 
 bool SceneScriptBB06::MouseClick(int x, int y) {
@@ -83,7 +84,7 @@ bool SceneScriptBB06::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("BOX31", objectName)) {
 		if (!Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "BOX31", 24, true, false)) {
 			Actor_Face_Object(kActorMcCoy, "BOX31", true);
-			if (Game_Flag_Query(410)) {
+			if (Game_Flag_Query(kFlagBB06AndroidDestroyed)) {
 				Actor_Voice_Over(60, kActorVoiceOver);
 				Actor_Voice_Over(70, kActorVoiceOver);
 			} else {
@@ -99,11 +100,11 @@ bool SceneScriptBB06::ClickedOnActor(int actorId) {
 }
 
 bool SceneScriptBB06::ClickedOnItem(int itemId, bool a2) {
-	if (itemId == 77) {
+	if (itemId == kItemBB06ControlBox) {
 		if (Player_Query_Combat_Mode()) {
 			Overlay_Play("BB06OVER", 1, true, true, 0);
-			Game_Flag_Set(410);
-			Item_Remove_From_World(77);
+			Game_Flag_Set(kFlagBB06AndroidDestroyed);
+			Item_Remove_From_World(kItemBB06ControlBox);
 			return true;
 		}
 	}

@@ -38,62 +38,60 @@ void AIScriptGeneralDoll::Initialize() {
 
 	Actor_Put_In_Set(kActorGeneralDoll, kSetFreeSlotG);
 	Actor_Set_At_Waypoint(kActorGeneralDoll, 39, 0);
+
 	Actor_Set_Goal_Number(kActorGeneralDoll, 100);
 }
 
 bool AIScriptGeneralDoll::Update() {
 	if (Global_Variable_Query(kVariableChapter) == 2
-			&& Actor_Query_Goal_Number(kActorGeneralDoll) <= 101
-			&& Player_Query_Current_Scene() == kSceneBB05) {
+	 && Actor_Query_Goal_Number(kActorGeneralDoll) <= 101
+	 && Player_Query_Current_Scene() == kSceneBB05
+	) {
 		Actor_Set_Goal_Number(kActorGeneralDoll, 101);
-	} else if (Global_Variable_Query(kVariableChapter) != 3 || Actor_Query_Goal_Number(kActorGeneralDoll) >= 200) {
-		return false;
+		return true;
 	}
 
-	return true;
+	if (Global_Variable_Query(kVariableChapter) == 3
+	 && Actor_Query_Goal_Number(kActorGeneralDoll) < 200
+	) {
+		return true;
+	}
+
+	return false;
 }
 
 void AIScriptGeneralDoll::TimerExpired(int timer) {
-	if (timer != 2)
-		return; //false;
-
-	Actor_Change_Animation_Mode(kActorMcCoy, 48);
-	Actor_Change_Animation_Mode(kActorGeneralDoll, 48);
-	AI_Countdown_Timer_Reset(kActorGeneralDoll, 2);
-
-	return; //true;
+	if (timer == 2) {
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
+		Actor_Change_Animation_Mode(kActorGeneralDoll, kAnimationModeDie);
+		AI_Countdown_Timer_Reset(kActorGeneralDoll, 2);
+		return; //true;
+	}
+	return; //false;
 }
 
 void AIScriptGeneralDoll::CompletedMovementTrack() {
 	switch (Actor_Query_Goal_Number(kActorGeneralDoll)) {
-	case 200:
-		Actor_Set_Goal_Number(kActorGeneralDoll, 201);
-		return; //true;
-
-	case 201:
-		Actor_Set_Goal_Number(kActorGeneralDoll, 200);
-		return; //true;
-
 	case 101:
 		if (Player_Query_Current_Scene() == 6) {
 			switch (Random_Query(0, 5)) {
 			case 0:
-				Ambient_Sounds_Play_Speech_Sound(58, 0, 80, 0, 0, 0);
+				Ambient_Sounds_Play_Speech_Sound(kActorGeneralDoll, 0, 80, 0, 0, 0);
 				break;
 			case 1:
-				Ambient_Sounds_Play_Speech_Sound(58, 10, 80, 0, 0, 0);
+				Ambient_Sounds_Play_Speech_Sound(kActorGeneralDoll, 10, 80, 0, 0, 0);
 				break;
 			case 2:
-				Ambient_Sounds_Play_Speech_Sound(58, 20, 80, 0, 0, 0);
+				Ambient_Sounds_Play_Speech_Sound(kActorGeneralDoll, 20, 80, 0, 0, 0);
 				break;
 			case 3:
-				Ambient_Sounds_Play_Speech_Sound(58, 30, 80, 0, 0, 0);
+				Ambient_Sounds_Play_Speech_Sound(kActorGeneralDoll, 30, 80, 0, 0, 0);
 				break;
 			case 4:
-				Ambient_Sounds_Play_Speech_Sound(58, 40, 80, 0, 0, 0);
+				Ambient_Sounds_Play_Speech_Sound(kActorGeneralDoll, 40, 80, 0, 0, 0);
 				break;
 			case 5:
-				Ambient_Sounds_Play_Speech_Sound(58, 50, 80, 0, 0, 0);
+				Ambient_Sounds_Play_Speech_Sound(kActorGeneralDoll, 50, 80, 0, 0, 0);
 				break;
 			}
 			Actor_Set_Goal_Number(kActorGeneralDoll, 102);
@@ -110,6 +108,13 @@ void AIScriptGeneralDoll::CompletedMovementTrack() {
 		Actor_Set_Goal_Number(kActorGeneralDoll, 101);
 		return; //true;
 
+	case 200:
+		Actor_Set_Goal_Number(kActorGeneralDoll, 201);
+		return; //true;
+
+	case 201:
+		Actor_Set_Goal_Number(kActorGeneralDoll, 200);
+		return; //true;
 	}
 
 	return; //false
@@ -120,7 +125,7 @@ void AIScriptGeneralDoll::ReceivedClue(int clueId, int fromActorId) {
 }
 
 void AIScriptGeneralDoll::ClickedByPlayer() {
-	Actor_Face_Actor(kActorMcCoy, kActorGeneralDoll, 1);
+	Actor_Face_Actor(kActorMcCoy, kActorGeneralDoll, true);
 	Actor_Voice_Over(30, kActorVoiceOver);
 	Actor_Voice_Over(40, kActorVoiceOver);
 }
@@ -147,13 +152,15 @@ void AIScriptGeneralDoll::ShotAtAndMissed() {
 
 bool AIScriptGeneralDoll::ShotAtAndHit() {
 	AI_Movement_Track_Flush(kActorGeneralDoll);
-	Global_Variable_Increment(25, 1);
-	if (!Game_Flag_Query(399) && Global_Variable_Query(25) == 1) {
+	Global_Variable_Increment(kVariableGeneralDollShot, 1);
+	if (!Game_Flag_Query(kFlagGeneralDollShot)
+	 &&  Global_Variable_Query(kVariableGeneralDollShot) == 1
+	) {
 		Sound_Play(121, 100, 0, 0, 50);
-		Game_Flag_Set(399);
+		Game_Flag_Set(kFlagGeneralDollShot);
 		Actor_Set_Goal_Number(kActorGeneralDoll, 104);
-		ChangeAnimationMode(48);
-		Actor_Set_Targetable(kActorGeneralDoll, 0);
+		ChangeAnimationMode(kAnimationModeDie);
+		Actor_Set_Targetable(kActorGeneralDoll, false);
 	}
 
 	return false;

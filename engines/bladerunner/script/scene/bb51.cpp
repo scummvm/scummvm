@@ -27,22 +27,25 @@ namespace BladeRunner {
 void SceneScriptBB51::InitializeScene() {
 	Setup_Scene_Information(101.0f, 0.0f, -25.0f, 152);
 	Game_Flag_Reset(kFlagBB06toBB51);
-	Scene_Exit_Add_2D_Exit(0, 615, 0, 639, 479, 1);
-	Scene_Exit_Add_2D_Exit(1, 0, 323, 241, 479, 2);
+
+	Scene_Exit_Add_2D_Exit(0, 615,   0, 639, 479, 1);
+	Scene_Exit_Add_2D_Exit(1,   0, 323, 241, 479, 2);
+
 	Ambient_Sounds_Add_Looping_Sound(103, 28, 0, 1);
-	Ambient_Sounds_Add_Sound(303, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(304, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(303, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(304, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(443, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(444, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(445, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(446, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(305, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(306, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(307, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(308, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(309, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(310, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Scene_Loop_Start_Special(0, 0, 0);
+	Ambient_Sounds_Add_Sound(305, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(306, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(307, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(308, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(309, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(310, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
+
+	Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
 	Scene_Loop_Set_Default(1);
 }
 
@@ -62,6 +65,7 @@ bool SceneScriptBB51::ClickedOn3DObject(const char *objectName, bool a2) {
 		Actor_Voice_Over(80, kActorVoiceOver);
 		Actor_Voice_Over(90, kActorVoiceOver);
 	}
+
 	if (Object_Query_Click("TOP02", objectName)) {
 		Actor_Face_Object(kActorMcCoy, "TOP02", true);
 		Actor_Voice_Over(100, kActorVoiceOver);
@@ -89,6 +93,7 @@ bool SceneScriptBB51::ClickedOnExit(int exitId) {
 		}
 		return true;
 	}
+
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 55.0f, 0.0f, -96.0f, 0, true, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);

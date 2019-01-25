@@ -813,7 +813,10 @@ enum Flags {
 	kFlagAR02DektoraBoughtScorpions = 374,
 
 	kFlagDirectorsCut = 378,
+	kFlagCT08toCT51 = 379, // is never checked
+	kFlagCT51toCT08 = 380,
 
+	kFlagNotUsed383 = 383,
 	kFlagHC01toHC02 = 384,
 	kFlagHC02toHC01 = 385,
 	kFlagHC01toHC03 = 386, // is never checked
@@ -821,14 +824,15 @@ enum Flags {
 	kFlagHC03TrapDoorOpen = 388,
 	// 389 is never used
 	// 390 is never used
-
+	kFlagBB09SadikRun = 391,
 	kFlagRC01McCoyAndOfficerLearyTalking = 392,
 	kFlagBB06toBB51 = 393, // is never checked
 	kFlagBB51toBB06a = 394,
 	kFlagBB51toBB06b = 395,
-
+	kFlagBB07ElectricityOn = 396,
 	kFlagRC01McCoyAndOfficerLearyArtMetaphor = 397,
-
+	kFlagBB07PrinterChecked = 398,
+	kFlagGeneralDollShot = 399,
 	kFlagHC01IzoTalk1 = 400,
 	kFlagHC01IzoTalk2 = 401,
 	kFlagHC03Available = 402,
@@ -837,6 +841,8 @@ enum Flags {
 	kFlagHC02HawkersBarkeepBraceletTalk = 405,
 	kFlagUnused406 = 406, // is never checked
 	kFlagUnused407 = 407, // is never checked
+
+	kFlagBB06AndroidDestroyed = 410,
 
 	kFlagUG09toCT12 = 432,
 	kFlagCT12ToUG09 = 433,
@@ -854,6 +860,11 @@ enum Flags {
 	kFlagMaggieIsHurt = 461,
 	kFlagPS04GuzzaLeft = 462,
 	kFlagMcCoyArrested = 465,
+	kFlagBB10Shelf1Available = 466,
+	kFlagBB10Shelf2Available = 467,
+	kFlagBB10Shelf3Available = 468,
+	kFlagBB10Shelf4Available = 469,
+	kFlagBB10Shelf5Available = 470,
 	kFlagUG10GateOpen = 474,
 	kFlagMcCoyAtPS03 = 478, // has no use
 	kFlagMcCoyInHawkersCircle = 479,
@@ -865,10 +876,16 @@ enum Flags {
 	kFlagCT04HomelessTrashFinish = 492,
 	kFlagBB02ElevatorDown = 493,
 	kFlagBB02Entered = 494,
+	kFlagBB05Entered = 495,
+	kFlagBB08Entered = 496,
+	kFlagBB12Entered = 497,
 	kFlagUG02FromUG01 = 498,
 	kFlagUG02Interactive = 499,
 	kFlagAR02DektoraWillBuyScorpions = 504,
 	kFlagDR03ChewTalkExplosion = 505,
+	kFlagBB08toBB12 = 506,
+	kFlagBB12toBB08 = 507, // is never checked
+	kFlagBB11SadikFight = 509,
 	kFlagDR05ExplodedEntered = 511,
 	kFlagDR05ViewExplosion = 515,
 	kFlagCT07ZubenAttack = 516,
@@ -878,6 +895,7 @@ enum Flags {
 	kFlagGordoTalk1 = 543,
 	kFlagGordoTalk2 = 544,
 	kFlagDR06MannequinHeadOpen = 548,
+	kFlagMcCoyTiedDown = 550,
 	kFlagDR01toCT11 = 558,
 	kFlagKIAPrivacyAddonIntro = 599,
 	kFlagTB07toTB02 = 608,
@@ -886,13 +904,13 @@ enum Flags {
 	kFlagMA04PhoneMessageFromClovis = 649,
 	kFlagMA04PhoneMessageFromLucy = 650,
 	kFlagUG02RagiationGooglesTaken = 656,
-
 	kFlagDNARowAvailableTalk = 660,
 	kFlagTB07ShadeDown = 661, // is never set
 	kFlagMA07toPS14 = 672,
 	kFlagPS14toMA07 = 673,
 	kFlagChapter2Intro = 678,
-
+	kFlagChapter3Intro = 679,
+	kFlagNotUsed686 = 686,
 	kFlagPS05TV0 = 688,
 	kFlagPS05TV1 = 689,
 	kFlagPS05TV2 = 690,
@@ -927,9 +945,12 @@ enum Variables {
 	kVariableMcCoyEvidenceMissed = 14,
 	kVariableIzoShot = 19, // has no use
 	kVariableBobShot = 24, // has no use
+	kVariableGeneralDollShot = 25, // has no use
 	kVariableGenericWalkerAModel = 32,
 	kVariableGenericWalkerBModel = 33,
 	kVariableGenericWalkerCModel = 34,
+
+	kVariableBB10ShelvesAvailable = 36,
 	kVariableWalkLoopActor = 37,
 	kVariableWalkLoopRun = 38,
 	kVariableDR06MannequinHeadOpened = 39,
@@ -1027,17 +1048,17 @@ enum Scenes {
 	kSceneAR01 = 0, // Animoid Row - Fish dealer
 	kSceneAR02 = 1, // Animoid Row - Insect dealer
 	kSceneBB01 = 2, // Bradbury building - Outside
-	kSceneBB02 = 3, // Bradbury building - elevator down
+	kSceneBB02 = 3, // Bradbury building - Inside
 	kSceneBB03 = 4, // Bradbury building - Entrance
-	kSceneBB04 = 5, // Bradbury building - elevator up
+	kSceneBB04 = 5, // Bradbury building - Elevator
 	kSceneBB05 = 6, // Bradbury building - Entry hall
 	kSceneBB06 = 7, // Bradbury building - Billiard room - front
-	kSceneBB07 = 8,
-	kSceneBB08 = 9, // Bradbury building - Bathroom
-	kSceneBB09 = 10, // Bradbury building - Above bathroom
-	kSceneBB10 = 11, // Bradbury building - Cupboard
-	kSceneBB11 = 12, // Bradbury building - Roof
-	kSceneCT01 = 13, // Chinatown - Howie Lee Restaurant
+	kSceneBB07 = 8, // Bradbury building - Sebastian's office
+	kSceneBB08 = 9, // Bradbury Building - Bathroom
+	kSceneBB09 = 10, // Bradbury Building - Above bathroom
+	kSceneBB10 = 11, // Bradbury Building - Bookcase
+	kSceneBB11 = 12, // Bradbury Building - Roof
+	kSceneCT01 = 13, // Chinatown - Howie Lee's Restaurant
 	kSceneCT02 = 14, // Chinatown - Restaurant - Kitchen
 	kSceneCT03 = 15, // Chinatown - Back alley - Restaurant
 	kSceneCT04 = 16, // Chinatown - Back alley - Dumpster
@@ -1050,14 +1071,14 @@ enum Scenes {
 	kSceneCT11 = 23, // Chinatown - Yukon Hotel - Outside
 	kSceneCT12 = 24, // Chinatown - Warehouse - Outside
 	kSceneDR01 = 25, // DNA Row - Street
-	kSceneDR02 = 26, // DNA Row - Eye world - Outside
-	kSceneDR03 = 27, // DNA Row - Eye world - Inside
+	kSceneDR02 = 26, // DNA Row - Eyeworld - Outside
+	kSceneDR03 = 27, // DNA Row - Eyeworld - Inside
 	kSceneDR04 = 28, // DNA Row - Dermo design - Outside
 	kSceneDR05 = 29, // DNA Row - Dermo design - Inside
 	kSceneDR06 = 30, // DNA Row - Twin's office
-	kSceneHC01 = 31, // Hawker's circle - Green pawn - Outside
-	kSceneHC02 = 32, // Hawker's circle - China bar
-	kSceneHC03 = 33, // Hawker's circle - Green pawn - Inside
+	kSceneHC01 = 31, // Hawker's Circle - Green pawn - Outside
+	kSceneHC02 = 32, // Hawker's Circle - China bar
+	kSceneHC03 = 33, // Hawker's Circle - Green pawn - Inside
 	kSceneHF01 = 34,
 	kSceneHF02 = 35,
 	kSceneHF03 = 36,
@@ -1104,8 +1125,8 @@ enum Scenes {
 	kScenePS14 = 77, // Police Station - Outside
 	kSceneRC01 = 78, // Runciter - Outside
 	kSceneRC02 = 79, // Runciter - Inside
-	kSceneRC03 = 80, // Bullet Bob - Outside
-	kSceneRC04 = 81, // Bullet Bob - Inside
+	kSceneRC03 = 80, // Bullet Bob's runner surplus - Outside
+	kSceneRC04 = 81, // Bullet Bob's runner surplus - Inside
 	kSceneTB02 = 82, // Tyrell Building - Reception
 	kSceneTB03 = 83,
 	kSceneTB05 = 84, // Tyrell Building - Grav Test Lab - Iutside
@@ -1128,13 +1149,13 @@ enum Scenes {
 	kSceneUG17 = 101,
 	kSceneUG18 = 102,
 	kSceneUG19 = 103,
-	kSceneBB51 = 104, // Bradbury building - Billiard room - Back
-	kSceneCT51 = 105,
-	kSceneHC04 = 106, // Hawker's circle - Kingston kitchen
+	kSceneBB51 = 104, // Bradbury Building - Billiard room - Back
+	kSceneCT51 = 105, // Chinatown - Yukon Hotel - Backroom - back
+	kSceneHC04 = 106, // Hawker's Circle - Kingston kitchen
 	kSceneRC51 = 107, // Runciter - Lucy's desk
 	kSceneTB07 = 108,
 	kScenePS15 = 119, // Police Station - Armory
-	kSceneBB12 = 120
+	kSceneBB12 = 120  // Bradbury Building - Monkey room
 };
 
 enum Sets
@@ -1323,10 +1344,13 @@ enum GameItems {
 	// 75 is never used
 	// 76 is never used
 	kItemDragonflyEarring = 76,
+	kItemBB06ControlBox = 77,
 	kItemBomb = 78,
 	kItemCandy = 79,
+	kItemCheese = 81,
 	kItemChopstickWrapper = 82,
 	kItemDogCollar = 84,
+	kItemRagDoll = 85,
 	kItemRadiationGoogles = 88,
 	kItemToyDog = 98,
 	kItemShellCasingA = 100,
@@ -1338,9 +1362,11 @@ enum GameItems {
 	kItemScrorpions = 106,
 	kItemCamera = 107,
 	kItemKitchenBox = 108,
+	kItemChair = 109,
 	kItemWeaponsCrate = 110,
 	kItemWeaponsOrderForm = 111,
 	kItemTyrellSalesPamphlet = 119,
+	kItemMoonbusPhoto = 120,
 	kItemGreenPawnLock = 121,
 	kItemChain = 122
 };

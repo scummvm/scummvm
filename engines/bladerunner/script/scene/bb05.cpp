@@ -60,9 +60,9 @@ void SceneScriptBB05::InitializeScene() {
 	Ambient_Sounds_Add_Sound( 73, 5,  80, 14, 14, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound( 74, 5,  80, 14, 14, -100, 100, -101, -101, 0, 0);
 
-	if (!Game_Flag_Query(495)) {
-		Overlay_Play("BB05OVER", 0, false, false, 0);
-		Game_Flag_Set(495);
+	if (!Game_Flag_Query(kFlagBB05Entered)) {
+		Overlay_Play("BB05OVER", 0, false, false, 0); // Sadik's shadow in lower left corner
+		Game_Flag_Set(kFlagBB05Entered);
 	}
 }
 
@@ -180,7 +180,7 @@ void SceneScriptBB05::PlayerWalkedIn() {
 		Actor_Says(kActorMcCoy, 7040, 14);
 		Actor_Says(kActorSebastian, 180, 16);
 		Actor_Says(kActorMcCoy, 7045, 14);
-		if (Game_Flag_Query(399)) {
+		if (Game_Flag_Query(kFlagGeneralDollShot)) {
 			Actor_Says(kActorSebastian, 190, 15);
 			Actor_Says(kActorMcCoy, 7050, 17);
 			Actor_Says(kActorSebastian, 200, 16);

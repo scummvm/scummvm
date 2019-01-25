@@ -50,13 +50,13 @@ void AIScriptSadik::Initialize() {
 }
 
 bool AIScriptSadik::Update() {
-	if (Global_Variable_Query(kVariableChapter) == 2
-	 && Player_Query_Current_Scene() == kSceneBB09
-	 && !Game_Flag_Query(391)
+	if ( Global_Variable_Query(kVariableChapter) == 2
+	 &&  Player_Query_Current_Scene() == kSceneBB09
+	 && !Game_Flag_Query(kFlagBB09SadikRun)
 	) {
 		Actor_Set_Goal_Number(kActorSadik, 101);
 		Actor_Set_Targetable(kActorSadik, true);
-		Game_Flag_Set(391);
+		Game_Flag_Set(kFlagBB09SadikRun);
 		Game_Flag_Set(kFlagUnused406);
 		return true;
 	}
@@ -65,12 +65,19 @@ bool AIScriptSadik::Update() {
 		Sound_Play(_var1, 100, 0, 0, 50);
 		_var1 = 0;
 	}
-	if (Global_Variable_Query(kVariableChapter) == 3 && Actor_Query_Goal_Number(kActorSadik) < 200) {
+
+	if (Global_Variable_Query(kVariableChapter) == 3
+	 && Actor_Query_Goal_Number(kActorSadik) < 200
+	) {
 		Actor_Set_Goal_Number(kActorSadik, 200);
 	}
-	if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_Goal_Number(kActorSadik) < 400) {
+
+	if (Global_Variable_Query(kVariableChapter) == 5
+	 && Actor_Query_Goal_Number(kActorSadik) < 400
+	) {
 		Actor_Set_Goal_Number(kActorSadik, 400);
 	}
+
 	if (Actor_Query_Goal_Number(kActorSadik) == 411) {
 		if (Game_Flag_Query(657)) {
 			Actor_Set_Goal_Number(kActorSadik, 412);
@@ -80,7 +87,7 @@ bool AIScriptSadik::Update() {
 }
 
 void AIScriptSadik::TimerExpired(int timer) {
-	if (!timer) {
+	if (timer == 0) {
 		AI_Countdown_Timer_Reset(kActorSadik, 0);
 
 		switch (Actor_Query_Goal_Number(kActorSadik)) {
@@ -101,10 +108,6 @@ void AIScriptSadik::TimerExpired(int timer) {
 
 void AIScriptSadik::CompletedMovementTrack() {
 	switch (Actor_Query_Goal_Number(kActorSadik)) {
-	case 301:
-		Actor_Set_Goal_Number(kActorSadik, 302);
-		break;
-
 	case 101:
 		Actor_Set_Goal_Number(kActorSadik, 102);
 		break;
@@ -115,6 +118,10 @@ void AIScriptSadik::CompletedMovementTrack() {
 
 	case 105:
 		Actor_Set_Goal_Number(kActorSadik, 106);
+		break;
+
+	case 301:
+		Actor_Set_Goal_Number(kActorSadik, 302);
 		break;
 
 	default:
@@ -130,7 +137,7 @@ void AIScriptSadik::ReceivedClue(int clueId, int fromActorId) {
 
 void AIScriptSadik::ClickedByPlayer() {
 	if (Actor_Query_Goal_Number(kActorSadik) == 599) {
-		Actor_Face_Actor(kActorMcCoy, kActorSadik, 1);
+		Actor_Face_Actor(kActorMcCoy, kActorSadik, true);
 		Actor_Says(kActorMcCoy, 8580, 16);
 	}
 }
@@ -152,9 +159,11 @@ void AIScriptSadik::OtherAgentEnteredCombatMode(int otherActorId, int combatMode
 }
 
 void AIScriptSadik::ShotAtAndMissed() {
-	if (Actor_Query_Goal_Number(kActorSadik) == 414 || Actor_Query_Goal_Number(kActorSadik) == 416) {
+	if (Actor_Query_Goal_Number(kActorSadik) == 414
+	 || Actor_Query_Goal_Number(kActorSadik) == 416
+	) {
 		Game_Flag_Set(714);
-		if (Actor_Query_Which_Set_In(kActorSadik) != 48) {
+		if (Actor_Query_Which_Set_In(kActorSadik) != kSetKP07) {
 			Actor_Set_Goal_Number(kActorSadik, 418);
 			Scene_Exits_Disable();
 		}
@@ -162,30 +171,37 @@ void AIScriptSadik::ShotAtAndMissed() {
 }
 
 bool AIScriptSadik::ShotAtAndHit() {
+
 	if (Actor_Query_Goal_Number(kActorSadik) == 301) {
-		if (Game_Flag_Query(48)) {
+		if (Game_Flag_Query(kFlagSadikIsReplicant)) {
 			Actor_Set_Health(kActorSadik, 60, 60);
 		} else {
 			Actor_Set_Health(kActorSadik, 40, 40);
 		}
 		return true;
-	} else {
-		if (Actor_Query_Goal_Number(kActorSadik) == 414 || Actor_Query_Goal_Number(kActorSadik) == 416) {
-			Game_Flag_Set(714);
-			if (Actor_Query_Which_Set_In(kActorSadik) != 48) {
-				Actor_Set_Goal_Number(kActorSadik, 418);
-				Scene_Exits_Disable();
-			}
-		}
-		return false;
 	}
+
+	if (Actor_Query_Goal_Number(kActorSadik) == 414
+	 || Actor_Query_Goal_Number(kActorSadik) == 416
+	) {
+		Game_Flag_Set(714);
+		if (Actor_Query_Which_Set_In(kActorSadik) != kSetKP07) {
+			Actor_Set_Goal_Number(kActorSadik, 418);
+			Scene_Exits_Disable();
+		}
+	}
+	return false;
 }
 
 void AIScriptSadik::Retired(int byActorId) {
-	if ((Actor_Query_Goal_Number(kActorSadik) == 418 || Actor_Query_Goal_Number(kActorSadik) == 450)
-			&& Actor_Query_Which_Set_In(kActorSadik) != 48) {
+	if ((Actor_Query_Goal_Number(kActorSadik) == 418
+	  || Actor_Query_Goal_Number(kActorSadik) == 450
+	 )
+	 && Actor_Query_Which_Set_In(kActorSadik) != kSetKP07
+	) {
 		Scene_Exits_Enable();
 	}
+
 	if (Actor_Query_In_Set(kActorSadik, kSetKP07)) {
 		Global_Variable_Decrement(kVariableReplicants, 1);
 		Actor_Set_Goal_Number(kActorSadik, 599);
@@ -193,8 +209,8 @@ void AIScriptSadik::Retired(int byActorId) {
 		if (Global_Variable_Query(kVariableReplicants) == 0) {
 			Player_Loses_Control();
 			Delay(2000);
-			Player_Set_Combat_Mode(0);
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, -41.58f, 72.0f, 0, 1, 0, 0);
+			Player_Set_Combat_Mode(false);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, -41.58f, 72.0f, 0, true, false, 0);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(579);
@@ -233,7 +249,7 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Flush(kActorSadik);
 		AI_Movement_Track_Append(kActorSadik, 313, 0);
 		AI_Movement_Track_Repeat(kActorSadik);
-		Game_Flag_Set(509);
+		Game_Flag_Set(kFlagBB11SadikFight);
 		return true;
 
 	case 103:
@@ -241,7 +257,7 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Face_Heading(kActorSadik, kActorMcCoy, kActorMcCoy);
 		_animationState = 32;
 		_animationFrame = -1;
-		Actor_Change_Animation_Mode(kActorMcCoy, 48);
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
 		return true;
 
 	case 104:
@@ -280,7 +296,7 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case 301:
-		Actor_Set_Targetable(kActorSadik, 1);
+		Actor_Set_Targetable(kActorSadik, true);
 		World_Waypoint_Set(436, 89, -356.11f, 0.0f, 652.42f);
 		AI_Movement_Track_Flush(kActorSadik);
 		AI_Movement_Track_Append_Run(kActorSadik, 436, 0);
@@ -288,7 +304,7 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case 302:
-		Actor_Set_Targetable(kActorSadik, 0);
+		Actor_Set_Targetable(kActorSadik, false);
 		return true;
 
 	case 303:
@@ -297,7 +313,7 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case 304:
-		Actor_Set_Targetable(kActorSadik, 0);
+		Actor_Set_Targetable(kActorSadik, false);
 		AI_Countdown_Timer_Reset(kActorSadik, 0);
 		return true;
 
@@ -314,10 +330,10 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case 308:
 		if (Player_Query_Current_Scene() == 102) {
 			Actor_Force_Stop_Walking(kActorMcCoy);
-			Actor_Change_Animation_Mode(kActorSadik, 6);
+			Actor_Change_Animation_Mode(kActorSadik, kAnimationModeCombatAttack);
 			Sound_Play(12, 100, 0, 0, 50);
-			Actor_Change_Animation_Mode(kActorMcCoy, 48);
-			Actor_Retired_Here(kActorMcCoy, 6, 6, 1, -1);
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
+			Actor_Retired_Here(kActorMcCoy, 6, 6, true, -1);
 		}
 		return true;
 
@@ -357,8 +373,8 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case 413:
-		Loop_Actor_Walk_To_XYZ(kActorSadik, -1062.0f, 0.0f, 219.0f, 0, 0, 1, 0);
-		Actor_Set_Targetable(kActorSadik, 1);
+		Loop_Actor_Walk_To_XYZ(kActorSadik, -1062.0f, 0.0f, 219.0f, 0, false, true, 0);
+		Actor_Set_Targetable(kActorSadik, true);
 		Non_Player_Actor_Combat_Mode_On(kActorSadik, kActorCombatStateIdle, true, kActorMcCoy, 9, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, -1, -1, 15, 300, false);
 		Actor_Set_Goal_Number(kActorSadik, 450);
 		return true;
@@ -366,49 +382,49 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case 414:
 		Actor_Put_In_Set(kActorSadik, kSetKP05_KP06);
 		Actor_Set_At_XYZ(kActorSadik, -961.0f, 0.0f, -778.0f, 150);
-		Actor_Set_Targetable(kActorSadik, 1);
+		Actor_Set_Targetable(kActorSadik, true);
 		return true;
 
 	case 415:
-		Actor_Says(kActorSadik, 110, 3);
-		Actor_Says(kActorMcCoy, 2290, 3);
-		Actor_Says(kActorSadik, 310, 3);
-		Actor_Says(kActorMcCoy, 2300, 3);
-		if (Game_Flag_Query(48)) {
-			Actor_Says(kActorSadik, 180, 3);
-			Actor_Says(kActorSadik, 190, 3);
-			Actor_Says(kActorMcCoy, 2310, 3);
-			Actor_Says(kActorSadik, 200, 3);
+		Actor_Says(kActorSadik, 110, kAnimationModeTalk);
+		Actor_Says(kActorMcCoy, 2290, kAnimationModeTalk);
+		Actor_Says(kActorSadik, 310, kAnimationModeTalk);
+		Actor_Says(kActorMcCoy, 2300, kAnimationModeTalk);
+		if (Game_Flag_Query(kFlagSadikIsReplicant)) {
+			Actor_Says(kActorSadik, 180, kAnimationModeTalk);
+			Actor_Says(kActorSadik, 190, kAnimationModeTalk);
+			Actor_Says(kActorMcCoy, 2310, kAnimationModeTalk);
+			Actor_Says(kActorSadik, 200, kAnimationModeTalk);
 		} else {
-			Actor_Says(kActorSadik, 140, 3);
-			Actor_Says(kActorSadik, 150, 3);
-			Actor_Says(kActorMcCoy, 2305, 3);
-			Actor_Says(kActorSadik, 160, 3);
-			Actor_Says(kActorSadik, 170, 3);
+			Actor_Says(kActorSadik, 140, kAnimationModeTalk);
+			Actor_Says(kActorSadik, 150, kAnimationModeTalk);
+			Actor_Says(kActorMcCoy, 2305, kAnimationModeTalk);
+			Actor_Says(kActorSadik, 160, kAnimationModeTalk);
+			Actor_Says(kActorSadik, 170, kAnimationModeTalk);
 		}
-		Actor_Says(kActorMcCoy, 2315, 3);
-		Actor_Says(kActorSadik, 210, 3);
-		Actor_Says(kActorSadik, 220, 3);
-		Actor_Says(kActorSadik, 230, 3);
-		Actor_Says(kActorSadik, 240, 3);
-		Actor_Says(kActorSadik, 250, 3);
-		Actor_Says(kActorSadik, 260, 3);
+		Actor_Says(kActorMcCoy, 2315, kAnimationModeTalk);
+		Actor_Says(kActorSadik, 210, kAnimationModeTalk);
+		Actor_Says(kActorSadik, 220, kAnimationModeTalk);
+		Actor_Says(kActorSadik, 230, kAnimationModeTalk);
+		Actor_Says(kActorSadik, 240, kAnimationModeTalk);
+		Actor_Says(kActorSadik, 250, kAnimationModeTalk);
+		Actor_Says(kActorSadik, 260, kAnimationModeTalk);
 		Actor_Set_Goal_Number(kActorSadik, 416);
 		return true;
 
 	case 416:
-		Loop_Actor_Walk_To_XYZ(kActorSadik, -961.0f, 0.0f, -778.0f, 0, 0, 0, 0);
-		Actor_Face_Heading(kActorSadik, 150, 0);
+		Loop_Actor_Walk_To_XYZ(kActorSadik, -961.0f, 0.0f, -778.0f, 0, false, false, 0);
+		Actor_Face_Heading(kActorSadik, 150, false);
 		return true;
 
 	case 417:
-		Actor_Face_Actor(kActorSadik, kActorMcCoy, 1);
-		Actor_Says(kActorSadik, 320, 3);
-		Loop_Actor_Walk_To_XYZ(kActorSadik, -857.0f, 0.0f, -703.0f, 0, 0, 1, 0);
-		Actor_Says(kActorMcCoy, 2330, 3);
-		Actor_Says(kActorSadik, 330, 3);
-		Actor_Says(kActorMcCoy, 2335, 3);
-		Actor_Says(kActorSadik, 340, 3);
+		Actor_Face_Actor(kActorSadik, kActorMcCoy, true);
+		Actor_Says(kActorSadik, 320, kAnimationModeTalk);
+		Loop_Actor_Walk_To_XYZ(kActorSadik, -857.0f, 0.0f, -703.0f, 0, false, true, 0);
+		Actor_Says(kActorMcCoy, 2330, kAnimationModeTalk);
+		Actor_Says(kActorSadik, 330, kAnimationModeTalk);
+		Actor_Says(kActorMcCoy, 2335, kAnimationModeTalk);
+		Actor_Says(kActorSadik, 340, kAnimationModeTalk);
 		Actor_Set_Goal_Number(kActorSadik, 416);
 		return true;
 
@@ -553,7 +569,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 			*animation = 328;
 			_animationFrame = 0;
 			_animationState = 0;
-			Actor_Change_Animation_Mode(kActorSadik, 0);
+			Actor_Change_Animation_Mode(kActorSadik, kAnimationModeIdle);
 		}
 		break;
 
@@ -564,7 +580,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 			_animationState = 7;
 			*animation = 312;
-			Actor_Change_Animation_Mode(kActorSadik, 4);
+			Actor_Change_Animation_Mode(kActorSadik, kAnimationModeCombatIdle);
 		}
 		break;
 
@@ -575,7 +591,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 			_animationState = 7;
 			*animation = 312;
-			Actor_Change_Animation_Mode(kActorSadik, 4);
+			Actor_Change_Animation_Mode(kActorSadik, kAnimationModeCombatIdle);
 		}
 		break;
 
@@ -632,7 +648,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 			_animationState = 7;
 			*animation = 312;
-			Actor_Change_Animation_Mode(kActorSadik, 4);
+			Actor_Change_Animation_Mode(kActorSadik, kAnimationModeCombatIdle);
 		}
 		break;
 
@@ -695,7 +711,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 			*animation = 328;
 			_animationFrame = 0;
 			_animationState = 0;
-			Actor_Change_Animation_Mode(kActorSadik, 0);
+			Actor_Change_Animation_Mode(kActorSadik, kAnimationModeIdle);
 		}
 		break;
 
@@ -726,7 +742,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 			*animation = 328;
 			_animationFrame = 0;
 			_animationState = 0;
-			Actor_Change_Animation_Mode(kActorSadik, 0);
+			Actor_Change_Animation_Mode(kActorSadik, kAnimationModeIdle);
 		}
 		break;
 
@@ -737,7 +753,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 			*animation = 328;
 			_animationFrame = 0;
 			_animationState = 0;
-			Actor_Change_Animation_Mode(kActorSadik, 0);
+			Actor_Change_Animation_Mode(kActorSadik, kAnimationModeIdle);
 		}
 		break;
 
@@ -763,7 +779,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 				_var1 = 221;
 			}
 			if (_animationFrame == 6) {
-				Actor_Change_Animation_Mode(0, 21);
+				Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeHit);
 			}
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
@@ -771,7 +787,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 			_animationState = 0;
 
-			Actor_Change_Animation_Mode(kActorSadik, 0);
+			Actor_Change_Animation_Mode(kActorSadik, kAnimationModeIdle);
 			if (Actor_Query_Goal_Number(kActorSadik) == 105) {
 				Actor_Change_Animation_Mode(kActorSadik, 63);
 			}
@@ -783,10 +799,10 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 		_animationFrame++;
 		if (_animationFrame == 4) {
 			if (Actor_Query_Goal_Number(kActorSadik) == 105) {
-				Actor_Change_Animation_Mode(0, 48);
+				Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
 				_var1 = 222;
 			} else {
-				Actor_Change_Animation_Mode(0, 68);
+				Actor_Change_Animation_Mode(kActorMcCoy, 68);
 				_var1 = 223;
 			}
 		}
@@ -795,7 +811,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 			*animation = 328;
 			_animationFrame = 0;
 			_animationState = 0;
-			Actor_Change_Animation_Mode(kActorSadik, 0);
+			Actor_Change_Animation_Mode(kActorSadik, kAnimationModeIdle);
 			if (Actor_Query_Goal_Number(kActorSadik) == 105) {
 				AI_Movement_Track_Flush(kActorSadik);
 				AI_Movement_Track_Append(kActorSadik, 318, 0);
@@ -995,7 +1011,9 @@ bool AIScriptSadik::ChangeAnimationMode(int mode) {
 		break;
 
 	case 62:
-		if (Actor_Query_Goal_Number(kActorSadik) != 105 && Actor_Query_Goal_Number(kActorSadik) != 106) {
+		if (Actor_Query_Goal_Number(kActorSadik) != 105
+		 && Actor_Query_Goal_Number(kActorSadik) != 106
+		) {
 			_animationState = 31;
 			_animationFrame = 0;
 		} else {
@@ -1005,7 +1023,9 @@ bool AIScriptSadik::ChangeAnimationMode(int mode) {
 		break;
 
 	case 63:
-		if (Actor_Query_Goal_Number(kActorSadik) != 105 && Actor_Query_Goal_Number(kActorSadik) != 106) {
+		if (Actor_Query_Goal_Number(kActorSadik) != 105
+		 && Actor_Query_Goal_Number(kActorSadik) != 106
+		) {
 			_animationState = 30;
 			_animationFrame = 2;
 		} else {

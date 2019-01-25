@@ -145,7 +145,7 @@ bool AIScriptBulletBob::ShotAtAndHit() {
 		Actor_Set_Goal_Number(kActorBulletBob, 99);
 		_animationFrame = 0;
  		_animationState = 3;
-		Ambient_Sounds_Play_Speech_Sound(2, 9000, 100, 0, 0, 0);
+		Ambient_Sounds_Play_Speech_Sound(kActorGordo, 9000, 100, 0, 0, 0); // not a typo, it's really from Gordo
 		Actor_Face_Heading(kActorBulletBob, 281, false);
 	}
 

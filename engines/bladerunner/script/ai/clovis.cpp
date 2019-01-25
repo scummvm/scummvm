@@ -272,19 +272,19 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Face_Current_Camera(5, true);
 		Actor_Says(kActorClovis, 100, 17);
 		Delay(1000);
-		if (!Game_Flag_Query(48)) {
+		if (!Game_Flag_Query(kFlagSadikIsReplicant)) {
 			Actor_Clue_Acquire(kActorMcCoy, kClueStaggeredbyPunches, true, kActorSadik);
 		}
-		Game_Flag_Set(383);
-		Game_Flag_Reset(509);
+		Game_Flag_Set(kFlagNotUsed383);
+		Game_Flag_Reset(kFlagBB11SadikFight);
 		Global_Variable_Set(kVariableChapter, 3);
 		Actor_Set_Goal_Number(kActorClovis, 200);
 		Actor_Set_Goal_Number(kActorSadik, 200);
 		Actor_Clue_Acquire(kActorMcCoy, kClueAct2Ended, true, -1);
 		Player_Gains_Control();
 		Chapter_Enter(3, kSetCT08_CT51_UG12, kSceneCT08);
-		Game_Flag_Set(550);
-		Game_Flag_Set(679);
+		Game_Flag_Set(kFlagMcCoyTiedDown);
+		Game_Flag_Set(kFlagChapter3Intro);
 		return true;
 
 	case 300:

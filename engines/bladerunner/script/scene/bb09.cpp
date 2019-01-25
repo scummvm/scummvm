@@ -33,27 +33,30 @@ void SceneScriptBB09::InitializeScene() {
 		Game_Flag_Reset(kFlagBB08toBB09);
 		Setup_Scene_Information(107.45f, -9.14f, 166.0f, 244);
 	}
+
 	Scene_Exit_Add_2D_Exit(0, 224, 213, 286, 353, 1);
-	Scene_Exit_Add_2D_Exit(1, 75, 450, 480, 479, 2);
-	Ambient_Sounds_Add_Looping_Sound(54, 20, 100, 1);
-	Ambient_Sounds_Add_Looping_Sound(103, 40, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(105, 50, 55, 1);
-	Ambient_Sounds_Add_Sound(297, 5, 20, 20, 25, -100, -100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(298, 5, 20, 20, 25, -100, -100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(299, 5, 20, 20, 25, -100, -100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(443, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(444, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(445, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(446, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(303, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(304, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(305, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(306, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(307, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(308, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(309, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(310, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Actor_Set_Targetable(kActorSadik, true);
+	Scene_Exit_Add_2D_Exit(1,  75, 450, 480, 479, 2);
+
+	Ambient_Sounds_Add_Looping_Sound(54,  20, 100, 1);
+	Ambient_Sounds_Add_Looping_Sound(103, 40,   0, 1);
+	Ambient_Sounds_Add_Looping_Sound(105, 50,  55, 1);
+	Ambient_Sounds_Add_Sound(297, 5,  20, 20, 25, -100, -100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(298, 5,  20, 20, 25, -100, -100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(299, 5,  20, 20, 25, -100, -100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(443, 2, 180, 14, 16, -100,  100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(444, 2, 180, 14, 16, -100,  100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(445, 2, 180, 14, 16, -100,  100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(446, 2, 180, 14, 16, -100,  100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(303, 5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(304, 5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(305, 5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(306, 5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(307, 5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(308, 5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(309, 5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(310, 5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
+
+	Actor_Set_Targetable(kActorSadik, true); // Don't kill Sadik yet, game cannot continue, a bug?
 }
 
 void SceneScriptBB09::SceneLoaded() {
@@ -80,8 +83,8 @@ bool SceneScriptBB09::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptBB09::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 454.56f, -9.0f, 190.31f, 0, 1, false, 0)) {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 450.56f, -9.0f, 250.31f, 0, 0, false, 0);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 454.56f, -9.0f, 190.31f, 0, true, false, 0)) {
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 450.56f, -9.0f, 250.31f, 0, false, false, 0);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagBB09toBB10a);
@@ -90,8 +93,9 @@ bool SceneScriptBB09::ClickedOnExit(int exitId) {
 		}
 		return true;
 	}
+
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 71.0f, -9.0f, 136.0f, 72, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 71.0f, -9.0f, 136.0f, 72, true, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagBB09toBB08);

@@ -45,17 +45,26 @@ void AIScriptBryant::Initialize() {
 	World_Waypoint_Set(333, kSetBB12,       -34.0f,    0.0f,     33.0f);
 	World_Waypoint_Set(334, kSetBB05,         3.0f, -60.30f,   -144.0f);
 	World_Waypoint_Set(335, kSetBB12,       -50.0f,    0.0f,    212.0f);
+
 	Actor_Put_In_Set(kActorBryant, kSetBB05);
+
 	Actor_Set_Goal_Number(kActorBryant, 100);
 }
 
 bool AIScriptBryant::Update() {
-	if (Global_Variable_Query(kVariableChapter) == 2 && Actor_Query_Goal_Number(kActorBryant) <= 101 && Player_Query_Current_Scene() == kSceneBB05) {
+	if (Global_Variable_Query(kVariableChapter) == 2
+	 && Actor_Query_Goal_Number(kActorBryant) <= 101
+	 && Player_Query_Current_Scene() == kSceneBB05
+	) {
 		Actor_Set_Goal_Number(kActorBryant, 101);
 		return true;
 	}
-	if (Global_Variable_Query(kVariableChapter) == 3 && Player_Query_Current_Scene() == kSceneBB05 && !Game_Flag_Query(686)) {
-		Game_Flag_Set(686);
+
+	if ( Global_Variable_Query(kVariableChapter) == 3
+	 &&  Player_Query_Current_Scene() == kSceneBB05
+	 && !Game_Flag_Query(kFlagNotUsed686)
+	) {
+		Game_Flag_Set(kFlagNotUsed686);
 		return true;
 	}
 	return false;
@@ -250,7 +259,7 @@ bool AIScriptBryant::ChangeAnimationMode(int mode) {
 		_animationState = 1;
 		_animationFrame = 0;
 		break;
-	case 48:
+	case kAnimationModeDie:
 		_animationState = 2;
 		_animationFrame = 0;
 		Actor_Set_Goal_Number(kActorBryant, 0);

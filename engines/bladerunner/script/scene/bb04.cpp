@@ -26,10 +26,10 @@ namespace BladeRunner {
 
 void SceneScriptBB04::InitializeScene() {
 	if (Game_Flag_Query(kFlagBB03toBB04)) {
-		Setup_Scene_Information(-107.0f, -26.6f, 397.0f, 29);
+		Setup_Scene_Information(-107.0f,  -26.6f, 397.0f,  29);
 		Game_Flag_Reset(kFlagBB03toBB04);
 	} else {
-		Setup_Scene_Information(-15.0f, -25.17f, 45.0f, 691);
+		Setup_Scene_Information( -15.0f, -25.17f,  45.0f, 691);
 	}
 
 	Scene_Exit_Add_2D_Exit(0, 218, 102, 360, 254, 1);

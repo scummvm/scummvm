@@ -141,6 +141,7 @@ void SceneScriptBB02::SceneFrameAdvanced(int frame) {
 	if (frame == 1) {
 		Ambient_Sounds_Play_Sound(434, 40, -50, -50, 0);
 	}
+
 	if (frame == 124) {
 		Ambient_Sounds_Play_Sound(434, 40, -50, -50, 0);
 	}
@@ -151,10 +152,10 @@ void SceneScriptBB02::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptBB02::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagBB03toBB02)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 86.0f, -415.06f, 174.0f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 86.0f, -415.06f, 174.0f, 0, false, false, 0);
 		Game_Flag_Reset(kFlagBB03toBB02);
 	} else if (Game_Flag_Query(kFlagBB04toBB02)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 35.0f, -415.06f, -27.0f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 35.0f, -415.06f, -27.0f, 0, false, false, 0);
 		Player_Gains_Control();
 		Game_Flag_Reset(kFlagBB04toBB02);
 	}

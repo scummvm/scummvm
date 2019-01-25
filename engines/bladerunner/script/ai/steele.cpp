@@ -150,8 +150,9 @@ bool AIScriptSteele::Update() {
 			return true;
 		}
 
-		if (Actor_Query_Goal_Number(kActorSteele) != 271) {
+		if (Actor_Query_Goal_Number(kActorSteele) == 271) {
 			Actor_Set_Goal_Number(kActorSteele, 270);
+			return true;
 		}
 
 		break;

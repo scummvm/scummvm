@@ -40,8 +40,11 @@ void AIScriptSebastian::Initialize() {
 }
 
 bool AIScriptSebastian::Update() {
-	if (Actor_Query_Goal_Number(kActorSebastian) < 200 && Global_Variable_Query(kVariableChapter) == 3)
+	if (Actor_Query_Goal_Number(kActorSebastian) < 200
+	 && Global_Variable_Query(kVariableChapter) == 3
+	) {
 		Actor_Set_Goal_Number(kActorSebastian, 200);
+	}
 
 	return false;
 }

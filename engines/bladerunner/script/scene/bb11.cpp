@@ -26,18 +26,20 @@ namespace BladeRunner {
 
 void SceneScriptBB11::InitializeScene() {
 	Setup_Scene_Information(43.39f, -10.27f, -20.52f, 200);
-	if (!Game_Flag_Query(509)) {
+	if (!Game_Flag_Query(kFlagBB11SadikFight)) {
 		Scene_Exit_Add_2D_Exit(0, 280, 154, 388, 247, 2);
 	}
+
 	Ambient_Sounds_Add_Looping_Sound(101, 90, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(99, 45, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound( 99, 45, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(100, 76, 0, 1);
-	Ambient_Sounds_Add_Sound(68, 5, 180, 16, 25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(69, 5, 180, 16, 25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound( 68, 5, 180, 16,  25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound( 69, 5, 180, 16,  25, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(375, 5, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(376, 5, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(377, 5, 180, 50, 100, 0, 0, -101, -101, 0, 0);
-	if (Game_Flag_Query(509)) {
+
+	if (Game_Flag_Query(kFlagBB11SadikFight)) {
 		Preload(19);
 		Preload(220);
 		Preload(227);
@@ -56,7 +58,7 @@ void SceneScriptBB11::InitializeScene() {
 void SceneScriptBB11::SceneLoaded() {
 	Obstacle_Object("X2AIRCON01", true);
 	Unclickable_Object("X2AIRCON01");
-	if (Game_Flag_Query(509)) {
+	if (Game_Flag_Query(kFlagBB11SadikFight)) {
 		Unobstacle_Object("X2PIPES01", true);
 		Unobstacle_Object("X2PIPES02", true);
 		Unobstacle_Object("X2PIPES03", true);
@@ -99,8 +101,10 @@ bool SceneScriptBB11::ClickedOn2DRegion(int region) {
 }
 
 void SceneScriptBB11::SceneFrameAdvanced(int frame) {
-	if (Actor_Query_Goal_Number(kActorSadik) == 105 && !Game_Flag_Query(375)) {
-		Actor_Change_Animation_Mode(kActorMcCoy, 48);
+	if ( Actor_Query_Goal_Number(kActorSadik) == 105
+	 && !Game_Flag_Query(375)
+	) {
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
 		Game_Flag_Set(375);
 	} else {
 		if (frame == 1) {
@@ -113,7 +117,9 @@ void SceneScriptBB11::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptBB11::PlayerWalkedIn() {
-	if (Actor_Query_Goal_Number(kActorSadik) == 102 && Global_Variable_Query(kVariableChapter) == 2) {
+	if (Actor_Query_Goal_Number(kActorSadik) == 102
+	 && Global_Variable_Query(kVariableChapter) == 2
+	) {
 		Actor_Set_Invisible(kActorMcCoy, true);
 		Actor_Set_Goal_Number(kActorSadik, 103);
 		Music_Play(11, 61, 0, 1, -1, 0, 0);
