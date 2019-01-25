@@ -663,7 +663,10 @@ void SceneScriptRC01::PlayerWalkedIn() {
 void SceneScriptRC01::PlayerWalkedOut() {
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
-	if (!Game_Flag_Query(kFlagRC01toRC02) && !Game_Flag_Query(kFlagRC01toRC03) && Global_Variable_Query(kVariableChapter) > 0) {
+	if (!Game_Flag_Query(kFlagRC01toRC02)
+	 && !Game_Flag_Query(kFlagRC01toRC03)
+	 &&  Global_Variable_Query(kVariableChapter) == 1
+	) {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		Outtake_Play(kOuttakeAway2, true, -1);
