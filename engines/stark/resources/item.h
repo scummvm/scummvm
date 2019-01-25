@@ -33,6 +33,7 @@
 
 namespace Stark {
 
+class AnimHandler;
 class Movement;
 class Visual;
 
@@ -450,6 +451,8 @@ public:
 	/** Randomize an idle action animation */
 	Anim *getIdleActionAnim() const;
 
+	AnimHandler *getAnimHandler() const;
+
 protected:
 	void printData() override;
 
@@ -459,6 +462,8 @@ protected:
 
 	ResourceReference _reference;
 	ItemTemplate *_referencedItem;
+
+	AnimHandler *_animHandler;
 };
 
 /**

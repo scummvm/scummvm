@@ -42,6 +42,7 @@
 #include "engines/stark/services/settings.h"
 #include "engines/stark/services/stateprovider.h"
 
+#include "engines/stark/model/animhandler.h"
 #include "engines/stark/model/skeleton_anim.h"
 #include "engines/stark/visual/actor.h"
 #include "engines/stark/visual/prop.h"
@@ -506,22 +507,29 @@ void AnimSkeleton::applyToItem(Item *item) {
 		_currentTime = 0;
 	}
 
+	debugC(kDebugAnimation, "%s: add %s", item->getName().c_str(), getName().c_str());
+
 	ModelItem *modelItem = Object::cast<ModelItem>(item);
 
 	BonesMesh *mesh = modelItem->findBonesMesh();
 	TextureSet *texture = modelItem->findTextureSet(TextureSet::kTextureNormal);
 
+	AnimHandler *animHandler = modelItem->getAnimHandler();
+	animHandler->setModel(mesh->getModel());
+	animHandler->setAnim(_skeletonAnim);
+
 	_visual->setModel(mesh->getModel());
-	_visual->setAnimHandler(mesh->getAnimHandler());
+	_visual->setAnimHandler(animHandler);
 	_visual->setTexture(texture->getTexture());
 	_visual->setTextureFacial(nullptr);
-	_visual->setAnim(_skeletonAnim);
 	_visual->setTime(_currentTime);
 	_visual->setCastShadow(_castsShadow);
 }
 
 void AnimSkeleton::removeFromItem(Item *item) {
 	Anim::removeFromItem(item);
+
+	debugC(kDebugAnimation, "%s: remove %s", item->getName().c_str(), getName().c_str());
 
 	_actionItem = nullptr;
 }
@@ -595,6 +603,8 @@ void AnimSkeleton::onGameLoop() {
 	}
 }
 
+
+
 void AnimSkeleton::resetItem() {
 	if (_actionItem) {
 		if (_actionItem->getActionAnim() == this) {
@@ -602,12 +612,6 @@ void AnimSkeleton::resetItem() {
 		}
 		_actionItem = nullptr;
 	}
-}
-
-void AnimSkeleton::onExitLocation() {
-	Anim::onExitLocation();
-
-	_visual->resetBlending();
 }
 
 void AnimSkeleton::onPreDestroy() {

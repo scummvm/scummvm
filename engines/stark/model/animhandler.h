@@ -54,6 +54,7 @@ public:
 	void resetBlending();
 
 private:
+	void enactCandidate();
 	void startBlending();
 	void updateBlending(int32 deltaTime);
 	void stopBlending();
@@ -65,8 +66,9 @@ private:
 	SkeletonAnim *_anim;
 	int32 _animTime;
 
-	SkeletonAnim *_previousAnim;
-	int32 _previousAnimTime;
+	int32 _framesBeforeCandidateReady;
+	SkeletonAnim *_candidateAnim;
+	int32 _candidateAnimTime;
 
 	SkeletonAnim *_blendAnim;
 	int32 _blendAnimTime;

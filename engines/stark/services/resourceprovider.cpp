@@ -253,6 +253,7 @@ void ResourceProvider::performLocationChange() {
 		runLocationChangeScripts(current->getLocation(), Resources::Script::kCallModeEnterLocation);
 	}
 
+	current->getLocation()->resetAnimationBlending();
 	purgeOldLocations();
 
 	_locationChangeRequest = false;

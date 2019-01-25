@@ -61,9 +61,7 @@ public:
 	void setNewFace(char shape);
 
 	void setAnimHandler(AnimHandler *animHandler);
-	void setAnim(SkeletonAnim *anim);
 	void setTime(uint32 time);
-	void resetBlending();
 
 	void setCastShadow(bool cast) { _castsShadow = cast; }
 

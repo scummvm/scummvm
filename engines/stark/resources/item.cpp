@@ -24,6 +24,7 @@
 
 #include "engines/stark/formats/xrc.h"
 #include "engines/stark/gfx/renderentry.h"
+#include "engines/stark/model/animhandler.h"
 #include "engines/stark/movement/movement.h"
 #include "engines/stark/visual/actor.h"
 
@@ -904,6 +905,7 @@ Common::Array<Common::Point> ImageItem::listExitPositions() {
 }
 
 ModelItem::~ModelItem() {
+	delete _animHandler;
 }
 
 ModelItem::ModelItem(Object *parent, byte subType, uint16 index, const Common::String &name) :
@@ -911,7 +913,8 @@ ModelItem::ModelItem(Object *parent, byte subType, uint16 index, const Common::S
 		_meshIndex(-1),
 		_textureNormalIndex(-1),
 		_textureFaceIndex(-1),
-		_referencedItem(nullptr) {
+		_referencedItem(nullptr),
+		_animHandler(nullptr) {
 }
 
 void ModelItem::readData(Formats::XRCReadStream *stream) {
@@ -942,6 +945,8 @@ void ModelItem::onAllLoaded() {
 	if (_referencedItem) {
 		_referencedItem->setInstanciatedItem(this);
 	}
+
+	_animHandler = new AnimHandler();
 }
 
 void ModelItem::onEnterLocation() {
@@ -1089,11 +1094,11 @@ void ModelItem::printData() {
 }
 
 void ModelItem::resetAnimationBlending() {
-	Anim *anim = getAnim();
-	VisualActor *visual = anim->getVisual()->get<VisualActor>();
-	if (visual) {
-		visual->resetBlending();
-	}
+	_animHandler->resetBlending();
+}
+
+AnimHandler *ModelItem::getAnimHandler() const {
+	return _animHandler;
 }
 
 void ItemTemplate::onEnterLocation() {

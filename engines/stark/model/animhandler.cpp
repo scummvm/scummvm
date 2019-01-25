@@ -31,12 +31,12 @@ AnimHandler::AnimHandler() :
 		_model(nullptr),
 		_anim(nullptr),
 		_animTime(-1),
-		_previousAnim(nullptr),
-		_previousAnimTime(-1),
+		_framesBeforeCandidateReady(0),
+		_candidateAnim(nullptr),
+		_candidateAnimTime(-1),
 		_blendAnim(nullptr),
 		_blendAnimTime(-1),
-		_blendTimeRemaining(0)
-		{
+		_blendTimeRemaining(0) {
 
 }
 
@@ -44,23 +44,27 @@ AnimHandler::~AnimHandler() {
 }
 
 void AnimHandler::setAnim(SkeletonAnim *anim) {
-	if (_anim == anim) {
+	if (_candidateAnim == anim) {
 		return;
 	}
 
-	if (_previousAnim) {
-		if (_previousAnim != anim) {
-			// Start blending the new animation up with the previous one
-			startBlending();
-		} else {
-			// The previous animation is the same as the one last used for rendering
-			// Stop blending in case it was started by another anim change since the last frame
-			stopBlending();
-		}
+	if (_anim == anim) {
+		// If we already have the correct anim, clean any candidates
+		// that may have been set but not yet enacted as the active anim.
+		_candidateAnim = nullptr;
+		_candidateAnimTime = -1;
+		_framesBeforeCandidateReady = 0;
+		return;
 	}
 
-	_anim = anim;
-	_animTime = 0;
+	// Don't use new animations the first frame they are set.
+	// Scripts may change animation the very next frame,
+	// causing animations to blend with animations that
+	// were only visible for one frame, leading to animation
+	// jumps. Instead store them as candidates.
+	_framesBeforeCandidateReady = 2; // 2 because we are at the end of the frame
+	_candidateAnim = anim;
+	_candidateAnimTime = 0;
 }
 
 void AnimHandler::setModel(Model *model) {
@@ -98,14 +102,34 @@ void AnimHandler::setNode(uint32 time, BoneNode *bone, const BoneNode *parent) {
 }
 
 void AnimHandler::animate(uint32 time) {
+	if (!_anim && _candidateAnim) {
+		// This is the first time we animate this item.
+		enactCandidate();
+	}
+
+	if (_candidateAnim && _framesBeforeCandidateReady > 0) {
+
+		_candidateAnimTime = time;
+		_framesBeforeCandidateReady--;
+
+		// We need to animate here, because the model may have
+		// changed from under us.
+		const Common::Array<BoneNode *> &bones = _model->getBones();
+		setNode(_animTime, bones[0], nullptr);
+		return;
+	}
+
+	if (_candidateAnim && _framesBeforeCandidateReady <= 0) {
+		if (_anim) {
+			startBlending();
+		}
+		enactCandidate();
+	}
+
 	int32 deltaTime = time - _animTime;
 	if (deltaTime < 0 || time > _blendDuration / 2) {
 		deltaTime = 33;
 	}
-
-	// Store the last anim that was actually used for rendering
-	_previousAnim = _anim;
-	_previousAnimTime = time;
 
 	updateBlending(deltaTime);
 
@@ -121,10 +145,18 @@ void AnimHandler::animate(uint32 time) {
 	}
 }
 
+void AnimHandler::enactCandidate() {
+	_anim = _candidateAnim;
+	_animTime = _candidateAnimTime;
+	_candidateAnim = nullptr;
+	_candidateAnimTime = -1;
+	_framesBeforeCandidateReady = 0;
+}
+
 void AnimHandler::startBlending() {
 	_blendTimeRemaining = _blendDuration;
-	_blendAnim = _previousAnim;
-	_blendAnimTime = _previousAnimTime;
+	_blendAnim = _anim;
+	_blendAnimTime = _animTime;
 }
 
 void AnimHandler::updateBlending(int32 deltaTime) {
@@ -149,8 +181,9 @@ void AnimHandler::stopBlending() {
 
 void AnimHandler::resetBlending() {
 	stopBlending();
-	_previousAnim = nullptr;
-	_previousAnimTime = -1;
+	if (_candidateAnim) {
+		enactCandidate();
+	}
 }
 
 } // End of namespace Stark

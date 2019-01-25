@@ -161,7 +161,7 @@ public:
 	virtual bool isDone() const;
 
 protected:
-	virtual void printData() override;
+	void printData() override;
 
 	uint32 _activity;
 	uint32 _currentFrame;
@@ -175,7 +175,7 @@ protected:
 class AnimImages : public Anim {
 public:
 	AnimImages(Object *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~AnimImages();
+	~AnimImages() override;
 
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
@@ -202,7 +202,7 @@ protected:
 class AnimProp : public Anim {
 public:
 	AnimProp(Object *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~AnimProp();
+	~AnimProp() override;
 
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
@@ -230,7 +230,7 @@ protected:
 class AnimVideo : public Anim {
 public:
 	AnimVideo(Object *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~AnimVideo();
+	~AnimVideo() override;
 
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
@@ -243,9 +243,9 @@ public:
 	Visual *getVisual() override;
 	void playAsAction(ItemVisual *item) override;
 	void shouldResetItem(bool resetItem) override;
-	void resetItem();
+	void resetItem() override;
 	bool isAtTime(uint32 time) const override;
-	bool isDone() const { return _done || !isInUse(); }
+	bool isDone() const override { return _done || !isInUse(); }
 
 protected:
 	typedef Common::Array<Common::Point> PointArray;
@@ -283,14 +283,13 @@ protected:
 class AnimSkeleton : public Anim {
 public:
 	AnimSkeleton(Object *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~AnimSkeleton();
+	~AnimSkeleton() override;
 
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
 	void onPostRead() override;
 	void onAllLoaded() override;
 	void onGameLoop() override;
-	void onExitLocation() override;
 	void onPreDestroy() override;
 
 	// Anim API
@@ -299,11 +298,11 @@ public:
 	Visual *getVisual() override;
 	void playAsAction(ItemVisual *item) override;
 	bool isAtTime(uint32 time) const override;
-	bool isDone() const { return _done || !isInUse(); }
+	bool isDone() const override { return _done || !isInUse(); }
 	uint32 getMovementSpeed() const override;
 	uint32 getIdleActionFrequency() const override;
 	void shouldResetItem(bool resetItem) override;
-	void resetItem();
+	void resetItem() override;
 
 	/** Get the duration in milliseconds before the animation loops ends */
 	uint32 getRemainingTime() const;

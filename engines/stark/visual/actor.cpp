@@ -59,10 +59,6 @@ void VisualActor::setAnimHandler(AnimHandler *animHandler) {
 	_animHandler = animHandler;
 }
 
-void VisualActor::setAnim(SkeletonAnim *anim) {
-	_animHandler->setAnim(anim);
-}
-
 void VisualActor::setTexture(Gfx::TextureSet *texture) {
 	_textureSet = texture;
 }
@@ -135,12 +131,6 @@ bool VisualActor::intersectRay(const Math::Ray &ray, const Math::Vector3d &posit
 	localRay.transform(inverseModelMatrix);
 
 	return _model->intersectRay(localRay);
-}
-
-void VisualActor::resetBlending() {
-	if (_animHandler) {
-		_animHandler->resetBlending();
-	}
 }
 
 Common::Rect VisualActor::getBoundingRect(const Math::Vector3d &position3d, float direction) const {
