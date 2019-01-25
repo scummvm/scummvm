@@ -46,7 +46,7 @@ void AIScriptSadik::Initialize() {
 
 	Actor_Put_In_Set(kActorSadik, kSetFreeSlotA);
 	Actor_Set_At_Waypoint(kActorSadik, 33, 0);
-	Actor_Set_Goal_Number(kActorSadik, 100);
+	Actor_Set_Goal_Number(kActorSadik, kGoalSadikDefaut);
 }
 
 bool AIScriptSadik::Update() {
@@ -54,14 +54,14 @@ bool AIScriptSadik::Update() {
 	 &&  Player_Query_Current_Scene() == kSceneBB09
 	 && !Game_Flag_Query(kFlagBB09SadikRun)
 	) {
-		Actor_Set_Goal_Number(kActorSadik, 101);
+		Actor_Set_Goal_Number(kActorSadik, kGoalSadikRunFromBB09);
 		Actor_Set_Targetable(kActorSadik, true);
 		Game_Flag_Set(kFlagBB09SadikRun);
 		Game_Flag_Set(kFlagUnused406);
 		return true;
 	}
 
-	if (_var1) {
+	if (_var1 != 0) {
 		Sound_Play(_var1, 100, 0, 0, 50);
 		_var1 = 0;
 	}
@@ -108,16 +108,16 @@ void AIScriptSadik::TimerExpired(int timer) {
 
 void AIScriptSadik::CompletedMovementTrack() {
 	switch (Actor_Query_Goal_Number(kActorSadik)) {
-	case 101:
-		Actor_Set_Goal_Number(kActorSadik, 102);
+	case kGoalSadikRunFromBB09:
+		Actor_Set_Goal_Number(kActorSadik, kGoalSadikBB11Wait);
 		break;
 
-	case 104:
-		Actor_Set_Goal_Number(kActorSadik, 105);
+	case kGoalSadikBB11CatchMcCoy:
+		Actor_Set_Goal_Number(kActorSadik, kGoalSadikBB11KnockOutMcCoy);
 		break;
 
-	case 105:
-		Actor_Set_Goal_Number(kActorSadik, 106);
+	case kGoalSadikBB11KnockOutMcCoy:
+		Actor_Set_Goal_Number(kActorSadik, kGoalSadikBB11KickMcCoy);
 		break;
 
 	case 301:
@@ -231,13 +231,13 @@ int AIScriptSadik::GetFriendlinessModifierIfGetsClue(int otherActorId, int clueI
 
 bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	switch (newGoalNumber) {
-	case 100:
+	case kGoalSadikDefaut:
 		AI_Movement_Track_Flush(kActorSadik);
 		AI_Movement_Track_Append(kActorSadik, 33, 0);
 		AI_Movement_Track_Repeat(kActorSadik);
 		return true;
 
-	case 101:
+	case kGoalSadikRunFromBB09:
 		AI_Movement_Track_Flush(kActorSadik);
 		AI_Movement_Track_Append_Run(kActorSadik, 131, 0);
 		AI_Movement_Track_Append_Run(kActorSadik, 132, 0);
@@ -245,41 +245,41 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorSadik);
 		return true;
 
-	case 102:
+	case kGoalSadikBB11Wait:
 		AI_Movement_Track_Flush(kActorSadik);
 		AI_Movement_Track_Append(kActorSadik, 313, 0);
 		AI_Movement_Track_Repeat(kActorSadik);
 		Game_Flag_Set(kFlagBB11SadikFight);
 		return true;
 
-	case 103:
-		Actor_Set_Immunity_To_Obstacles(kActorSadik, 1);
+	case kGoalSadikBB11ThrowMcCoy:
+		Actor_Set_Immunity_To_Obstacles(kActorSadik, true);
 		Actor_Face_Heading(kActorSadik, kActorMcCoy, kActorMcCoy);
 		_animationState = 32;
 		_animationFrame = -1;
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
 		return true;
 
-	case 104:
-		Actor_Set_Goal_Number(kActorMcCoy, 100);
+	case kGoalSadikBB11CatchMcCoy:
+		Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyBB11GetUp);
 		AI_Movement_Track_Flush(kActorSadik);
 		AI_Movement_Track_Append(kActorSadik, 314, 0);
 		AI_Movement_Track_Append_Run(kActorSadik, 317, 0);
 		AI_Movement_Track_Repeat(kActorSadik);
 		return true;
 
-	case 105:
+	case kGoalSadikBB11KnockOutMcCoy:
 		Actor_Change_Animation_Mode(kActorSadik, 62);
 		return true;
 
-	case 106:
-		Actor_Face_Heading(kActorSadik, 100, 0);
+	case kGoalSadikBB11KickMcCoy:
+		Actor_Face_Heading(kActorSadik, 100, false);
 		Actor_Change_Animation_Mode(kActorSadik, 63);
-		Actor_Set_Goal_Number(kActorClovis, 101);
-		Actor_Set_Immunity_To_Obstacles(kActorSadik, 0);
+		Actor_Set_Goal_Number(kActorClovis, kGoalClovisBB11WalkToMcCoy);
+		Actor_Set_Immunity_To_Obstacles(kActorSadik, false);
 		return true;
 
-	case 107:
+	case kGoalSadikBB11TalkWithClovis:
 		_var1 = 0;
 		return false;
 
@@ -328,7 +328,7 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case 308:
-		if (Player_Query_Current_Scene() == 102) {
+		if (Player_Query_Current_Scene() == kSceneUG18) {
 			Actor_Force_Stop_Walking(kActorMcCoy);
 			Actor_Change_Animation_Mode(kActorSadik, kAnimationModeCombatAttack);
 			Sound_Play(12, 100, 0, 0, 50);
@@ -767,14 +767,14 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 			_animationState = 0;
 			*animation = 328;
-			Actor_Set_Goal_Number(kActorSadik, 104);
+			Actor_Set_Goal_Number(kActorSadik, kGoalSadikBB11CatchMcCoy);
 		}
 		break;
 
 	case 33:
 		*animation = 344;
 		_animationFrame++;
-		if (Actor_Query_Goal_Number(kActorSadik) == 105) {
+		if (Actor_Query_Goal_Number(kActorSadik) == kGoalSadikBB11KnockOutMcCoy) {
 			if (_animationFrame == 4) {
 				_var1 = 221;
 			}
@@ -788,7 +788,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 0;
 
 			Actor_Change_Animation_Mode(kActorSadik, kAnimationModeIdle);
-			if (Actor_Query_Goal_Number(kActorSadik) == 105) {
+			if (Actor_Query_Goal_Number(kActorSadik) == kGoalSadikBB11KnockOutMcCoy) {
 				Actor_Change_Animation_Mode(kActorSadik, 63);
 			}
 		}
@@ -798,7 +798,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 		*animation = 343;
 		_animationFrame++;
 		if (_animationFrame == 4) {
-			if (Actor_Query_Goal_Number(kActorSadik) == 105) {
+			if (Actor_Query_Goal_Number(kActorSadik) == kGoalSadikBB11KnockOutMcCoy) {
 				Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
 				_var1 = 222;
 			} else {
@@ -812,12 +812,12 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 			_animationState = 0;
 			Actor_Change_Animation_Mode(kActorSadik, kAnimationModeIdle);
-			if (Actor_Query_Goal_Number(kActorSadik) == 105) {
+			if (Actor_Query_Goal_Number(kActorSadik) == kGoalSadikBB11KnockOutMcCoy) {
 				AI_Movement_Track_Flush(kActorSadik);
 				AI_Movement_Track_Append(kActorSadik, 318, 0);
 				AI_Movement_Track_Repeat(kActorSadik);
 			} else {
-				if (Actor_Query_Goal_Number(kActorSadik) == 106) {
+				if (Actor_Query_Goal_Number(kActorSadik) == kGoalSadikBB11KickMcCoy) {
 					Actor_Change_Animation_Mode(kActorSadik, 63);
 				}
 			}
@@ -839,7 +839,7 @@ bool AIScriptSadik::ChangeAnimationMode(int mode) {
 	Actor_Set_Frame_Rate_FPS(kActorSadik, -2);
 
 	switch (mode) {
-	case 0:
+	case kAnimationModeIdle:
 		switch (_animationState) {
 		case 19:
 		case 20:
@@ -862,22 +862,22 @@ bool AIScriptSadik::ChangeAnimationMode(int mode) {
 		}
 		break;
 
-	case 1:
+	case kAnimationModeWalk:
 		_animationFrame = 0;
 		_animationState = 1;
 		break;
 
-	case 2:
+	case kAnimationModeRun:
 		_animationFrame = 0;
 		_animationState = 2;
 		break;
 
-	case 3:
+	case kAnimationModeTalk:
 		_animationState = 20;
 		_animationFrame = 0;
 		break;
 
-	case 4:
+	case kAnimationModeCombatIdle:
 		switch (_animationState) {
 		case 0:
 			_animationFrame = 0;
@@ -911,17 +911,17 @@ bool AIScriptSadik::ChangeAnimationMode(int mode) {
 	case 20:
 		return true;
 
-	case 6:
+	case kAnimationModeCombatAttack:
 		_animationFrame = 0;
 		_animationState = 18;
 		break;
 
-	case 7:
+	case kAnimationModeCombatWalk:
 		_animationFrame = 0;
 		_animationState = 3;
 		break;
 
-	case 8:
+	case kAnimationModeCombatRun:
 		_animationFrame = 0;
 		_animationState = 4;
 		break;
@@ -961,7 +961,7 @@ bool AIScriptSadik::ChangeAnimationMode(int mode) {
 		_animationFrame = 0;
 		break;
 
-	case 21:
+	case kAnimationModeHit:
 		switch (_animationState) {
 		case 7:
 		case 8:
@@ -991,7 +991,7 @@ bool AIScriptSadik::ChangeAnimationMode(int mode) {
 		_animationFrame = 0;
 		break;
 
-	case 22:
+	case kAnimationModeCombatHit:
 		if (Random_Query(0, 1)) {
 			_animationState = 12;
 		} else {
@@ -1005,14 +1005,14 @@ bool AIScriptSadik::ChangeAnimationMode(int mode) {
 		_animationFrame = 0;
 		break;
 
-	case 48:
+	case kAnimationModeDie:
 		_animationState = 14;
 		_animationFrame = 0;
 		break;
 
 	case 62:
-		if (Actor_Query_Goal_Number(kActorSadik) != 105
-		 && Actor_Query_Goal_Number(kActorSadik) != 106
+		if (Actor_Query_Goal_Number(kActorSadik) != kGoalSadikBB11KnockOutMcCoy
+		 && Actor_Query_Goal_Number(kActorSadik) != kGoalSadikBB11KickMcCoy
 		) {
 			_animationState = 31;
 			_animationFrame = 0;
@@ -1023,8 +1023,8 @@ bool AIScriptSadik::ChangeAnimationMode(int mode) {
 		break;
 
 	case 63:
-		if (Actor_Query_Goal_Number(kActorSadik) != 105
-		 && Actor_Query_Goal_Number(kActorSadik) != 106
+		if (Actor_Query_Goal_Number(kActorSadik) != kGoalSadikBB11KnockOutMcCoy
+		 && Actor_Query_Goal_Number(kActorSadik) != kGoalSadikBB11KickMcCoy
 		) {
 			_animationState = 30;
 			_animationFrame = 2;

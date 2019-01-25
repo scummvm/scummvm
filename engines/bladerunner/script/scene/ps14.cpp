@@ -79,7 +79,7 @@ bool SceneScriptPS14::ClickedOnExit(int exitId) {
 					Game_Flag_Set(666);
 					Actor_Set_Goal_Number(kActorMcCoy, 400);
 				} else {
-					Actor_Set_Goal_Number(kActorMcCoy, 500);
+					Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyArrested);
 				}
 			} else if (Global_Variable_Query(kVariableChapter) > 3) {
 				Actor_Says(kActorMcCoy, 8522, 12);

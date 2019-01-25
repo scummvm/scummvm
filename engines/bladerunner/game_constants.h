@@ -811,6 +811,7 @@ enum Flags {
 	kFlagNotUsed370 = 370, // is never checked
 
 	kFlagAR02DektoraBoughtScorpions = 374,
+	kFlagBB11SadikPunchedMcCoy = 375,
 
 	kFlagDirectorsCut = 378,
 	kFlagCT08toCT51 = 379, // is never checked
@@ -1460,7 +1461,12 @@ enum AffectionTowards {
 
 enum GoalMcCoy {
 	kGoalMcCoyDefault = 0,
-	kGoalMcCoyDodge = 1
+	kGoalMcCoyDodge = 1,
+	kGoalMcCoyBB11GetUp = 100,
+	kGoalMcCoyBB11PrepareToRunAway = 101,
+	kGoalMcCoyBB11RunAway = 102,
+	kGoalMcCoyBB11GetCaught = 103,
+	kGoalMcCoyArrested = 500
 };
 
 enum GoalSteele {
@@ -1511,6 +1517,15 @@ enum GoalGuzza {
 	kGoalGuzzaGoToOffice = 102
 };
 
+enum GoalClovis {
+	kGoalClovisDefault = 100,
+	kGoalClovisBB11WalkToMcCoy = 101,
+	kGoalClovisBB11StopSadik = 102,
+	kGoalClovisBB11TalkWithSadik = 103,
+	kGoalClovisBB11PrepareToTalkToMcCoy = 104, // bug? this is not triggered when player skips dialogue
+	kGoalClovisBB11TalkToMcCoy = 105 // ends Chapter 2
+};
+
 enum GoalIzo {
 	kGoalIzoDefault = 0,
 	kGoalIzoPrepareCamera = 1,
@@ -1531,6 +1546,17 @@ enum GoalIzo {
 	kGoalIzoDie = 199,
 
 	kGoalIzoDead = 599
+};
+
+enum GoalSadik {
+	kGoalSadikDefaut = 100,
+	kGoalSadikRunFromBB09 = 101,
+	kGoalSadikBB11Wait = 102,
+	kGoalSadikBB11ThrowMcCoy = 103,
+	kGoalSadikBB11CatchMcCoy = 104,
+	kGoalSadikBB11KnockOutMcCoy = 105,
+	kGoalSadikBB11KickMcCoy = 106,
+	kGoalSadikBB11TalkWithClovis = 107
 };
 
 enum GoalTransient {

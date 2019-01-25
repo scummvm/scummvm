@@ -46,34 +46,52 @@ void AIScriptClovis::Initialize() {
 	_var5 = 0;
 	_flag = 0;
 
-	Actor_Set_Goal_Number(kActorClovis, 100);
+	Actor_Set_Goal_Number(kActorClovis, kGoalClovisDefault);
 }
 
 bool AIScriptClovis::Update() {
-	if (Actor_Query_Goal_Number(kActorClovis) == 104) {
-		Actor_Set_Goal_Number(kActorClovis, 105);
+	if (Actor_Query_Goal_Number(kActorClovis) == kGoalClovisBB11PrepareToTalkToMcCoy) {
+		Actor_Set_Goal_Number(kActorClovis, kGoalClovisBB11TalkToMcCoy);
 		return true;
-	} else if (Global_Variable_Query(kVariableChapter) == 3 && Actor_Query_Goal_Number(kActorClovis) < 350) {
+	}
+
+	if (Global_Variable_Query(kVariableChapter) == 3
+	 && Actor_Query_Goal_Number(kActorClovis) < 350
+	) {
 		Actor_Set_Goal_Number(kActorClovis, 350);
 		return true;
-	} else if (Global_Variable_Query(kVariableChapter) == 4 && !Game_Flag_Query(542)) {
+	}
+
+	if ( Global_Variable_Query(kVariableChapter) == 4
+	 && !Game_Flag_Query(542)
+	) {
 		Game_Flag_Set(542);
 		Actor_Set_Goal_Number(kActorClovis, 400);
 		return true;
-	} else {
-		if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_Goal_Number(kActorClovis) < 500) {
-			Actor_Set_Goal_Number(kActorClovis, 500);
-		}
-		if (Actor_Query_Goal_Number(kActorClovis) == 511 && Game_Flag_Query(657)) {
-			Actor_Set_Goal_Number(kActorClovis, 512);
-		}
-		if (Game_Flag_Query(653) && !Game_Flag_Query(696) && Game_Flag_Query(697)) {
-			Actor_Set_Goal_Number(kActorClovis, 517);
-			Game_Flag_Set(696);
-			return true;
-		}
-		return false;
 	}
+
+	if (Global_Variable_Query(kVariableChapter) == 5
+	 && Actor_Query_Goal_Number(kActorClovis) < 500
+	) {
+		Actor_Set_Goal_Number(kActorClovis, 500);
+	}
+
+	if (Actor_Query_Goal_Number(kActorClovis) == 511
+	 && Game_Flag_Query(657)
+	) {
+		Actor_Set_Goal_Number(kActorClovis, 512);
+	}
+
+	if ( Game_Flag_Query(653)
+	 && !Game_Flag_Query(696)
+	 &&  Game_Flag_Query(697)
+	) {
+		Actor_Set_Goal_Number(kActorClovis, 517);
+		Game_Flag_Set(696);
+		return true;
+	}
+	return false;
+
 }
 
 void AIScriptClovis::TimerExpired(int timer) {
@@ -82,12 +100,12 @@ void AIScriptClovis::TimerExpired(int timer) {
 
 void AIScriptClovis::CompletedMovementTrack() {
 	switch (Actor_Query_Goal_Number(kActorClovis)) {
-	case 101:
-		Actor_Set_Goal_Number(kActorClovis, 103);
+	case kGoalClovisBB11WalkToMcCoy:
+		Actor_Set_Goal_Number(kActorClovis, kGoalClovisBB11StopSadik);
 		break;
 
-	case 102:
-		Actor_Set_Goal_Number(kActorClovis, 102);
+	case kGoalClovisBB11StopSadik:
+		Actor_Set_Goal_Number(kActorClovis, kGoalClovisBB11TalkWithSadik);
 		break;
 
 	case 401:
@@ -223,28 +241,28 @@ int AIScriptClovis::GetFriendlinessModifierIfGetsClue(int otherActorId, int clue
 
 bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	switch (newGoalNumber) {
-	case 100:
+	case kGoalClovisDefault:
 		AI_Movement_Track_Flush(kActorClovis);
 		AI_Movement_Track_Append(kActorClovis, 33, 0);
 		AI_Movement_Track_Repeat(kActorClovis);
 		return true;
 
-	case 101:
+	case kGoalClovisBB11WalkToMcCoy:
 		AI_Movement_Track_Flush(kActorClovis);
 		AI_Movement_Track_Append(kActorClovis, 319, 0);
 		AI_Movement_Track_Append(kActorClovis, 320, 0);
 		AI_Movement_Track_Repeat(kActorClovis);
 		return true;
 
-	case 102:
+	case kGoalClovisBB11StopSadik:
 		Actor_Start_Speech_Sample(kActorClovis, 0);
 		AI_Movement_Track_Flush(kActorClovis);
 		AI_Movement_Track_Append(kActorClovis, 321, 0);
 		AI_Movement_Track_Repeat(kActorClovis);
 		return true;
 
-	case 103:
-		Actor_Set_Goal_Number(kActorSadik, 107);
+	case kGoalClovisBB11TalkWithSadik:
+		Actor_Set_Goal_Number(kActorSadik, kGoalSadikBB11TalkWithClovis);
 		Actor_Says(kActorClovis, 10, 15);
 		Actor_Says(kActorSadik, 0, kAnimationModeTalk);
 		Actor_Face_Actor(kActorClovis, kActorSadik, true);
@@ -260,7 +278,7 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Change_Animation_Mode(kActorClovis, kAnimationModeSit);
 		return true;
 
-	case 105:
+	case kGoalClovisBB11TalkToMcCoy:
 		Actor_Says(kActorClovis, 60, 30);
 		Actor_Says(kActorSadik, 30, kAnimationModeTalk);
 		Actor_Says(kActorClovis, 70, 30);
@@ -544,7 +562,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 1:
-		if (!_var1) {
+		if (_var1 == 0) {
 			*animation = 228;
 		}
 		if (_var1 == 1) {
@@ -597,8 +615,8 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 2;
 			_animationFrame = 0;
 			*animation = 238;
-			if (Actor_Query_Goal_Number(kActorClovis) == 103) {
-				Actor_Set_Goal_Number(kActorClovis, 104);
+			if (Actor_Query_Goal_Number(kActorClovis) == kGoalClovisBB11TalkWithSadik) {
+				Actor_Set_Goal_Number(kActorClovis, kGoalClovisBB11PrepareToTalkToMcCoy);
 			}
 		}
 		break;

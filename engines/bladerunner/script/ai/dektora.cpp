@@ -269,7 +269,7 @@ bool AIScriptDektora::ShotAtAndHit() {
 		} else {
 			Actor_Change_Animation_Mode(kActorDektora, 48);
 			Delay(2000);
-			Actor_Set_Goal_Number(kActorMcCoy, 500);
+			Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyArrested);
 		}
 
 		return true;

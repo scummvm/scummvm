@@ -1203,7 +1203,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Start_Speech_Sample(kActorSteele, 1150);
 		Actor_Change_Animation_Mode(kActorSteele, 49);
 		Delay(5000);
-		Actor_Set_Goal_Number(kActorMcCoy, 500);
+		Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyArrested);
 		return true;
 
 	case 275:

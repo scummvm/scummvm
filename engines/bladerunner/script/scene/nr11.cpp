@@ -330,7 +330,7 @@ void SceneScriptNR11::PlayerWalkedIn() {
 				Actor_Set_Goal_Number(kActorSteele, 275);
 			}
 		} else {
-			Actor_Set_Goal_Number(kActorMcCoy, 500);
+			Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyArrested);
 		}
 	}
 	// return true;

@@ -101,11 +101,11 @@ bool SceneScriptBB11::ClickedOn2DRegion(int region) {
 }
 
 void SceneScriptBB11::SceneFrameAdvanced(int frame) {
-	if ( Actor_Query_Goal_Number(kActorSadik) == 105
-	 && !Game_Flag_Query(375)
+	if ( Actor_Query_Goal_Number(kActorSadik) == kGoalSadikBB11KnockOutMcCoy
+	 && !Game_Flag_Query(kFlagBB11SadikPunchedMcCoy)
 	) {
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
-		Game_Flag_Set(375);
+		Game_Flag_Set(kFlagBB11SadikPunchedMcCoy);
 	} else {
 		if (frame == 1) {
 			Sound_Play(74, 10, -100, 100, 50);
@@ -117,11 +117,11 @@ void SceneScriptBB11::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptBB11::PlayerWalkedIn() {
-	if (Actor_Query_Goal_Number(kActorSadik) == 102
+	if (Actor_Query_Goal_Number(kActorSadik) == kGoalSadikBB11Wait
 	 && Global_Variable_Query(kVariableChapter) == 2
 	) {
 		Actor_Set_Invisible(kActorMcCoy, true);
-		Actor_Set_Goal_Number(kActorSadik, 103);
+		Actor_Set_Goal_Number(kActorSadik, kGoalSadikBB11ThrowMcCoy);
 		Music_Play(11, 61, 0, 1, -1, 0, 0);
 		Player_Loses_Control();
 	}

@@ -249,7 +249,7 @@ bool AIScriptGordo::ShotAtAndHit() {
 		Actor_Voice_Over(2410, kActorVoiceOver);
 		Actor_Voice_Over(2420, kActorVoiceOver);
 		Game_Flag_Set(532);
-		Actor_Set_Goal_Number(kActorMcCoy, 500);
+		Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyArrested);
 	}
 	if (Actor_Query_Goal_Number(kActorGordo) == 250) {
 		Actor_Set_Goal_Number(kActorGordo, 254);
@@ -618,7 +618,7 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Game_Flag_Reset(603);
 		Actor_Set_Targetable(kActorSteele, false);
 		Delay(3000);
-		Actor_Set_Goal_Number(kActorMcCoy, 500);
+		Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyArrested);
 		break;
 	case 260:
 		Actor_Set_Targetable(kActorGordo, false);

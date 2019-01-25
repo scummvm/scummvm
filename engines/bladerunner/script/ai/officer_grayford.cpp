@@ -472,7 +472,7 @@ bool AIScriptOfficerGrayford::GoalChanged(int currentGoalNumber, int newGoalNumb
 		Actor_Face_Actor(kActorMcCoy, kActorOfficerGrayford, true);
 
 		if (Game_Flag_Query(kFlagDR04McCoyShotMoraji)) {
-			Actor_Set_Goal_Number(kActorMcCoy, 500);
+			Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyArrested);
 		} else {
 			Actor_Says(kActorMcCoy, 960, 15);
 			Actor_Says(kActorMcCoy, 965, 18);

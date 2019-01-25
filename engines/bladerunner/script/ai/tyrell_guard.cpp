@@ -119,7 +119,7 @@ bool AIScriptTyrellGuard::GoalChanged(int currentGoalNumber, int newGoalNumber) 
 		Ambient_Sounds_Play_Sound(590, 100, 0, 0, 0);
 		Delay(1000);
 		Actor_Force_Stop_Walking(kActorMcCoy);
-		Actor_Set_Goal_Number(kActorMcCoy, 500);
+		Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyArrested);
 		return true;
 	case 302:
 		AI_Countdown_Timer_Reset(kActorTyrellGuard, 0);
@@ -131,7 +131,7 @@ bool AIScriptTyrellGuard::GoalChanged(int currentGoalNumber, int newGoalNumber) 
 		Ambient_Sounds_Play_Sound(590, 100, 0, 0, 0);
 		Delay(1000);
 		Actor_Force_Stop_Walking(kActorMcCoy);
-		Actor_Set_Goal_Number(kActorMcCoy, 500);
+		Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyArrested);
 		return true;
 	case 304:
 		AI_Countdown_Timer_Reset(kActorTyrellGuard, 1);

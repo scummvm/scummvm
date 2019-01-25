@@ -141,7 +141,7 @@ void SceneScriptTB03::PlayerWalkedIn() {
 		Actor_Says(kActorOfficerGrayford, 260, -1);
 		Actor_Says(kActorMcCoy, 170, 14);
 		Delay(1000);
-		Actor_Set_Goal_Number(kActorMcCoy, 500);
+		Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyArrested);
 	}
 }
 
