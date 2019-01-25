@@ -453,6 +453,14 @@ Math::Vector3d Command::getObjectPosition(const ResourceReference &targetRef, in
 
 			break;
 		}
+		case Type::kPath: {
+			assert(target->getSubType() == Path::kPath3D);
+
+			Path3D *path = Object::cast<Path3D>(target);
+			position = path->getVertexPosition3D(0, floorFace);
+
+			break;
+		}
 		default:
 			warning("Unimplemented getObjectPosition target type %s", target->getType().getName());
 	}

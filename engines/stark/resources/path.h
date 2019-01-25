@@ -141,6 +141,9 @@ public:
 	float getSortKey() const override;
 	Math::Vector3d getEdgeDirection(uint edgeIndex) const override;
 
+	/** Get the full position in world coordinates of one of the vertices of the path */
+	Math::Vector3d getVertexPosition3D(uint vertexIndex, int32 *faceIndex);
+
 protected:
 	float getVertexWeight(uint vertexIndex) const override;
 	Math::Vector3d getVertexPosition(uint vertexIndex) const override;

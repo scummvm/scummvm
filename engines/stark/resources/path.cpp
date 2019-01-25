@@ -24,6 +24,11 @@
 
 #include "engines/stark/formats/xrc.h"
 
+#include "engines/stark/resources/floor.h"
+
+#include "engines/stark/services/global.h"
+#include "engines/stark/services/services.h"
+
 namespace Stark {
 namespace Resources {
 
@@ -193,6 +198,24 @@ Math::Vector3d Path3D::getEdgeDirection(uint edgeIndex) const {
 	Math::Vector3d direction = getVertexPosition(edgeIndex) - getVertexPosition(edgeIndex + 1);
 	direction.normalize();
 	return direction;
+}
+
+Math::Vector3d Path3D::getVertexPosition3D(uint vertexIndex, int32 *faceIndex) {
+	Math::Vector3d vertex = getVertexPosition(vertexIndex);
+
+	Floor *floor = StarkGlobal->getCurrent()->getFloor();
+	if (floor) {
+		int32 face = floor->findFaceContainingPoint(vertex);
+		if (face >= 0) {
+			floor->computePointHeightInFace(vertex, face);
+		}
+
+		if (faceIndex) {
+			*faceIndex = face;
+		}
+	}
+
+	return vertex;
 }
 
 } // End of namespace Resources
