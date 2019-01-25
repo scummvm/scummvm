@@ -25,6 +25,8 @@
 #include "common/debug.h"
 #include "common/random.h"
 
+#include "engines/stark/debug.h"
+
 #include "engines/stark/formats/xrc.h"
 
 #include "engines/stark/resources/anim.h"
@@ -69,6 +71,8 @@ void AnimScript::onGameLoop() {
 		// The script is disabled, do nothing
 		return;
 	}
+
+	int executedCommandCount = 0;
 
 	while (_msecsToNextUpdate <= (int32)StarkGlobal->getMillisecondsPerGameloop()) {
 		AnimScriptItem *item = _items[_nextItemIndex];
@@ -116,6 +120,12 @@ void AnimScript::onGameLoop() {
 		}
 		default:
 			error("Unknown anim script type %d", item->getOpcode());
+		}
+
+		executedCommandCount++;
+		if (executedCommandCount >= 10) {
+			debugC(kDebugAnimation, "Potential infinite loop in anim script %s", getName().c_str());
+			break;
 		}
 	}
 
