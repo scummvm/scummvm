@@ -48,7 +48,8 @@ Speech::Speech(Object *parent, byte subType, uint16 index, const Common::String 
 		_soundResource(nullptr),
 		_playTalkAnim(true),
 		_removeTalkAnimWhenComplete(true),
-		_lipSync(nullptr) {
+		_lipSync(nullptr),
+		_waitTimeRemaining(-1) {
 	_type = TYPE;
 }
 
@@ -107,7 +108,11 @@ int32 Speech::getCharacterId() {
 }
 
 bool Speech::isPlaying() {
-	return _soundResource && _soundResource->isPlaying();
+	if (_soundResource) {
+		return _soundResource->isPlaying();
+	} else {
+		return _waitTimeRemaining > 0;
+	}
 }
 
 void Speech::stop() {
@@ -115,6 +120,8 @@ void Speech::stop() {
 		_soundResource->stop();
 		_soundResource = nullptr;
 	}
+
+	_waitTimeRemaining = -1;
 
 	if (_lipSync) {
 		_lipSync->reset();
@@ -133,6 +140,16 @@ bool Speech::characterIsApril() const {
 	return _character == aprilCharacterIndex;
 }
 
+int32 Speech::getPauseAfterSpeechDuration() const {
+	if (_phrase.hasSuffix("...")) {
+		return 1400;
+	} else if (_phrase.hasSuffix("--")) {
+		return 0;
+	} else {
+		return 1000;
+	}
+}
+
 void Speech::readData(Formats::XRCReadStream *stream) {
 	Object::readData(stream);
 
@@ -143,11 +160,22 @@ void Speech::readData(Formats::XRCReadStream *stream) {
 void Speech::onGameLoop() {
 	Object::onGameLoop();
 
-	// TODO: Add delay between the end of the sound resource and the end of the speech
-
 	if (_soundResource && !_soundResource->isPlaying()) {
-		// The speech just stopped, reset our state
-		stop();
+		_soundResource->stop();
+		_soundResource = nullptr;
+		_waitTimeRemaining = getPauseAfterSpeechDuration();
+	}
+
+	if (_waitTimeRemaining >= 0) {
+		_waitTimeRemaining -= StarkGlobal->getMillisecondsPerGameloop();
+
+		if (StarkGlobal->isFastForward()) {
+			_waitTimeRemaining = -1;
+		}
+
+		if (_waitTimeRemaining <= 0) {
+			stop();
+		}
 	}
 }
 

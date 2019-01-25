@@ -87,8 +87,9 @@ protected:
 	void setCharacterTalkAnim();
 	void removeCharacterTalkAnim() const;
 	ItemVisual *getCharacterItem() const;
-
 	void stopOtherSpeechesFromSameCharacter();
+
+	int32 getPauseAfterSpeechDuration() const;
 
 	Common::String _phrase;
 	int32 _character;
@@ -97,6 +98,7 @@ protected:
 
 	Sound *_soundResource;
 	LipSync *_lipSync;
+	int32 _waitTimeRemaining;
 };
 
 } // End of namespace Resources
