@@ -192,9 +192,7 @@ void UserInterface::selectInventoryItem(int16 itemIndex) {
 }
 
 void UserInterface::requestFMVPlayback(const Common::String &name) {
-	changeScreen(Screen::kScreenFMV);
-
-	_fmvScreen->play(name);
+	_shouldPlayFmv = name;
 }
 
 void UserInterface::onFMVStopped() {
@@ -435,6 +433,12 @@ void UserInterface::doQueuedScreenChange() {
 	if (_shouldGoBackToPreviousScreen) {
 		backPrevScreen();
 		_shouldGoBackToPreviousScreen = false;
+	}
+
+	if (!_shouldPlayFmv.empty()) {
+		changeScreen(Screen::kScreenFMV);
+		_fmvScreen->play(_shouldPlayFmv);
+		_shouldPlayFmv.clear();
 	}
 }
 

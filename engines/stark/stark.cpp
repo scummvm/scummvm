@@ -159,12 +159,12 @@ void StarkEngine::mainLoop() {
 			break;
 		}
 
-		StarkUserInterface->doQueuedScreenChange();
-
 		if (StarkResourceProvider->hasLocationChangeRequest()) {
 			StarkGlobal->setNormalSpeed();
 			StarkResourceProvider->performLocationChange();
 		}
+
+		StarkUserInterface->doQueuedScreenChange();
 
 		updateDisplayScene();
 

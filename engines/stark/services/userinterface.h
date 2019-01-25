@@ -212,6 +212,7 @@ private:
 
 	// TODO: Generalize to all screen changes
 	bool _shouldGoBackToPreviousScreen;
+	Common::String _shouldPlayFmv;
 
 	Graphics::Surface *_gameWindowThumbnail;
 };

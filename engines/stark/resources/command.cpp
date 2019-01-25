@@ -965,8 +965,6 @@ Command *Command::opFullMotionVideoPlay(Script *script, const ResourceReference 
 	Location *location = current->getLocation();
 	location->resetAnimationBlending();
 
-	// TODO: Pause the engine while the video is playing
-
 	FMV *movie =  movieRef.resolve<FMV>();
 	movie->requestPlayback();
 
