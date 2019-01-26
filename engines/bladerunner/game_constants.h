@@ -1536,8 +1536,11 @@ enum GoalGordo {
 
 enum GoalGuzza {
 	kGoalGuzzaLeaveOffice = 100,
-	kGoalGuzzaGoToHawkersCircle = 101,
-	kGoalGuzzaGoToOffice = 102
+	kGoalGuzzaGoToHawkersCircle1 = 101,
+	kGoalGuzzaGoToOffice = 102,
+	kGoalGuzzaGoToHawkersCircle2 = 103,
+	kGoalGuzzaGoToFreeSlotB = 104,
+	kGoalGuzzaGoToFreeSlotG = 105
 };
 
 enum GoalClovis {
