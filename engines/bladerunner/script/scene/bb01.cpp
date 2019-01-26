@@ -24,6 +24,14 @@
 
 namespace BladeRunner {
 
+enum kBB01Loops {
+	kBB01LoopInshot            = 0,
+	kBB01LoopMainLoop          = 1,
+	kBB01LoopDoorAnim          = 3,
+	kBB01LoopOutshoot          = 4,
+	kBB01LoopMainLoopNoSpinner = 5
+};
+
 void SceneScriptBB01::InitializeScene() {
 	if (Game_Flag_Query(kFlagDR02toBB01)) {
 		Setup_Scene_Information(-253.0f, 9.0f,  715.0f, 266);
@@ -54,22 +62,22 @@ void SceneScriptBB01::InitializeScene() {
 	Ambient_Sounds_Add_Speech_Sound(60, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(60, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 
-	if (Game_Flag_Query(kFlagSpinnerAtBB01)
+	if ( Game_Flag_Query(kFlagSpinnerAtBB01)
 	 && !Game_Flag_Query(kFlagDR02toBB01)
 	 && !Game_Flag_Query(kFlagBB02toBB01)
 	) {
-		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
-		Scene_Loop_Set_Default(1);
+		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kBB01LoopInshot, false);
+		Scene_Loop_Set_Default(kBB01LoopMainLoop);
 	} else if (Game_Flag_Query(kFlagSpinnerAtBB01)
 	        && Game_Flag_Query(kFlagDR02toBB01)
 	) {
-		Scene_Loop_Set_Default(1);
+		Scene_Loop_Set_Default(kBB01LoopMainLoop);
 	} else if (Game_Flag_Query(kFlagSpinnerAtBB01)
 	        && Game_Flag_Query(kFlagBB02toBB01)
 	) {
-		Scene_Loop_Set_Default(1);
+		Scene_Loop_Set_Default(kBB01LoopMainLoop);
 	} else {
-		Scene_Loop_Set_Default(5);
+		Scene_Loop_Set_Default(kBB01LoopMainLoopNoSpinner);
 	}
 }
 
@@ -114,80 +122,80 @@ bool SceneScriptBB01::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 43.0f, 0.0f, 1062.0f, 0, false, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 43.0f, 0.0f, 1062.0f, 0, true, false, 0)) {
 			Game_Flag_Reset(kFlagMcCoyInChinaTown);
 			Game_Flag_Reset(kFlagMcCoyInRunciters);
 			Game_Flag_Reset(kFlagMcCoyInMcCoyApartment);
 			Game_Flag_Reset(kFlagMcCoyInPoliceStation);
 			Game_Flag_Reset(kFlagMcCoyInBradburyBuilding);
-			int spinnerDest = Spinner_Interface_Choose_Dest(3, false);
+			int spinnerDest = Spinner_Interface_Choose_Dest(kBB01LoopDoorAnim, false);
 			switch (spinnerDest) {
 			case kSpinnerDestinationPoliceStation:
 				Game_Flag_Set(kFlagMcCoyInPoliceStation);
 				Game_Flag_Reset(kFlagSpinnerAtBB01);
 				Game_Flag_Set(kFlagSpinnerAtPS01);
 				Set_Enter(kSetPS01, kScenePS01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kBB01LoopOutshoot, true);
 				break;
 			case kSpinnerDestinationMcCoysApartment:
 				Game_Flag_Set(kFlagMcCoyInMcCoyApartment);
 				Game_Flag_Reset(kFlagSpinnerAtBB01);
 				Game_Flag_Set(kFlagSpinnerAtMA01);
 				Set_Enter(kSetMA01, kSceneMA01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kBB01LoopOutshoot, true);
 				break;
 			case kSpinnerDestinationRuncitersAnimals:
 				Game_Flag_Set(kFlagMcCoyInRunciters);
 				Game_Flag_Reset(kFlagSpinnerAtBB01);
 				Game_Flag_Set(kFlagSpinnerAtRC01);
 				Set_Enter(kSetRC01, kSceneRC01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kBB01LoopOutshoot, true);
 				break;
 			case kSpinnerDestinationChinatown:
 				Game_Flag_Set(kFlagMcCoyInChinaTown);
 				Game_Flag_Reset(kFlagSpinnerAtBB01);
 				Game_Flag_Set(kFlagSpinnerAtCT01);
 				Set_Enter(kSetCT01_CT12, kSceneCT01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kBB01LoopOutshoot, true);
 				break;
 			case kSpinnerDestinationAnimoidRow:
 				Game_Flag_Set(kFlagMcCoyInAnimoidRow);
 				Game_Flag_Reset(kFlagSpinnerAtBB01);
 				Game_Flag_Set(kFlagSpinnerAtAR01);
 				Set_Enter(kSetAR01_AR02, kSceneAR01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kBB01LoopOutshoot, true);
 				break;
 			case kSpinnerDestinationTyrellBuilding:
 				Game_Flag_Set(kFlagMcCoyInTyrellBuilding);
 				Game_Flag_Reset(kFlagSpinnerAtBB01);
 				Game_Flag_Set(kFlagSpinnerAtTB02);
 				Set_Enter(kSetTB02_TB03, kSceneTB02);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kBB01LoopOutshoot, true);
 				break;
 			case kSpinnerDestinationDNARow:
 				Game_Flag_Set(kFlagMcCoyInDNARow);
 				Game_Flag_Reset(kFlagSpinnerAtBB01);
 				Game_Flag_Set(kFlagSpinnerAtDR01);
 				Set_Enter(kSetDR01_DR02_DR04, kSceneDR01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kBB01LoopOutshoot, true);
 				break;
 			case kSpinnerDestinationNightclubRow:
 				Game_Flag_Set(kFlagMcCoyInNightclubRow);
 				Game_Flag_Reset(kFlagSpinnerAtBB01);
 				Game_Flag_Set(kFlagSpinnerAtNR01);
 				Set_Enter(kSetNR01, kSceneNR01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kBB01LoopOutshoot, true);
 				break;
 			case kSpinnerDestinationHysteriaHall:
 				Game_Flag_Set(kFlagMcCoyInHysteriaHall);
 				Game_Flag_Reset(kFlagSpinnerAtBB01);
 				Game_Flag_Set(kFlagSpinnerAtHF01);
 				Set_Enter(kSetHF01, kSceneHF01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kBB01LoopOutshoot, true);
 				break;
 			default:
 				Game_Flag_Set(kFlagMcCoyInBradburyBuilding);
-				Scene_Loop_Start_Special(kSceneLoopModeOnce, 3, true);
+				Scene_Loop_Start_Special(kSceneLoopModeOnce, kBB01LoopDoorAnim, true);
 				break;
 			}
 		}
@@ -204,19 +212,23 @@ void SceneScriptBB01::SceneFrameAdvanced(int frame) {
 	if (frame == 193) {
 		Sound_Play(118, 40, 0, 0, 50);
 	}
+
 	if (frame == 241
 	 || frame == 363
 	) {
 		Sound_Play(116, 100, -50, -50, 50);
 	}
+
 	if (frame == 286
 	 || frame == 407
 	) {
 		Sound_Play(119, 100, -50, -50, 50);
 	}
+
 	if (frame == 433) {
 		Sound_Play(117, 40, -50, 80, 50);
 	}
+
 	if (frame == 120) {
 		Sound_Play(286, Random_Query(33, 33), 100, -100, 50);
 	}
