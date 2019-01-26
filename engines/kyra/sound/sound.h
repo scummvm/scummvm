@@ -67,15 +67,17 @@ struct SoundResourceInfo_TownsPC98V2 {
 };
 
 struct SoundResourceInfo_TownsEoB {
-	SoundResourceInfo_TownsEoB(const uint8 *pcmdata, uint dataSize, int pcmvolume) : pcmData(pcmdata), pcmDataSize(dataSize), pcmVolume(pcmvolume) {}
+	SoundResourceInfo_TownsEoB(const char *const *filelist, uint numfiles, const uint8 *pcmdata, uint pcmdataSize, int pcmvolume) : fileList(filelist), numFiles(numfiles), pcmData(pcmdata), pcmDataSize(pcmdataSize), pcmVolume(pcmvolume) {}
 	const uint8 *pcmData;
 	uint pcmDataSize;
 	int pcmVolume;
+	const char *const *fileList;
+	uint numFiles;
 };
 
 
 struct SoundResourceInfo_AmigaEoB {
-	SoundResourceInfo_AmigaEoB(const char *const *files, int numFiles, const char *const *sounds, int numSounds) : fileList(files), fileListSize(numFiles), soundList(sounds), soundListSize(numSounds) {}
+	SoundResourceInfo_AmigaEoB(const char *const *files, int numFiles, const char *const *soundmap, int numSounds) : fileList(files), fileListSize(numFiles), soundList(soundmap), soundListSize(numSounds) {}
 	const char *const *fileList;
 	uint fileListSize;
 	const char *const *soundList;

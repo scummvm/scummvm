@@ -39,7 +39,7 @@ SoundTowns_Darkmoon::SoundTowns_Darkmoon(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 	_pcmVol = 0;
 	_timer = 0;
 	_timerSwitch = 0;
-	memset(_pcmResource, 0, sizeof(_pcmResource));
+	memset(_resource, 0, sizeof(_resource));
 }
 	
 SoundTowns_Darkmoon::~SoundTowns_Darkmoon() {
@@ -85,29 +85,37 @@ void SoundTowns_Darkmoon::timerCallback(int timerId) {
 }
 
 void SoundTowns_Darkmoon::initAudioResourceInfo(int set, void *info) {
-	delete _pcmResource[set];
-	_pcmResource[set] = info ? new SoundResourceInfo_TownsEoB(*(SoundResourceInfo_TownsEoB*)info) : 0;
+	delete _resource[set];
+	_resource[set] = info ? new SoundResourceInfo_TownsEoB(*(SoundResourceInfo_TownsEoB*)info) : 0;
 }
 
 void SoundTowns_Darkmoon::selectAudioResourceSet(int set) {
 	delete[] _pcmData;
 
-	if (!_pcmResource[set] || !_pcmResource[kMusicIngame])
+	if (!_resource[set] || !_resource[kMusicIngame])
 		return;
-	
-	_pcmDataSize = _pcmResource[kMusicIngame]->pcmDataSize;
+
+	_fileList = _resource[set]->fileList;
+	_fileListLen = _resource[set]->numFiles;
+
+	_pcmDataSize = _resource[kMusicIngame]->pcmDataSize;
 	_pcmData = new uint8[_pcmDataSize];	
-	_pcmVol = _pcmResource[set]->pcmVolume;
-	memcpy(_pcmData, _pcmResource[kMusicIngame]->pcmData, _pcmDataSize);
+	_pcmVol = _resource[set]->pcmVolume;
+	memcpy(_pcmData, _resource[kMusicIngame]->pcmData, _pcmDataSize);
 
 	if (set == kMusicIngame)
 		return;
 
-	memcpy(_pcmData, _pcmResource[set]->pcmData, _pcmResource[set]->pcmDataSize);
+	memcpy(_pcmData, _resource[set]->pcmData, _resource[set]->pcmDataSize);
 }
 
 bool SoundTowns_Darkmoon::hasSoundFile(uint file) const {
 	return true;
+}
+
+void SoundTowns_Darkmoon::loadSoundFile(uint file) {
+	if (file < _fileListLen)
+		loadSoundFile(_fileList[file]);
 }
 
 void SoundTowns_Darkmoon::loadSoundFile(Common::String name) {

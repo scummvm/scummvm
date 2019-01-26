@@ -214,6 +214,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags)
 	_menuStringsRest4 = _menuStringsDefeat = _menuStringsTransfer = _menuStringsSpec = 0;
 	_menuStringsSpellNo = _menuYesNoStrings = _2431Strings = _katakanaLines = _katakanaSelectStrings = 0;
 	_errorSlotEmptyString = _errorSlotNoNameString = _menuOkString = 0;
+	_levelSoundFiles1 = _levelSoundFiles2 = 0;
 	_spellLevelsMage = _spellLevelsCleric = _numSpellsCleric = _numSpellsWisAdj = _numSpellsPal = _numSpellsMage = 0;
 	_mnNumWord = _numSpells = _mageSpellListSize = _spellLevelsMageSize = _spellLevelsClericSize = 0;
 	_inventorySlotsX = _slotValidationFlags = _encodeMonsterShpTable = 0;
@@ -435,7 +436,10 @@ Common::Error EoBCoreEngine::init() {
 	assert(_debugger);
 
 	if (_flags.platform == Common::kPlatformAmiga) {
-
+		if (_res->exists("EOBF6.FONT"))
+			_screen->loadFont(Screen::FID_6_FNT, "EOBF6.FONT");
+		if (_res->exists("EOBF8.FONT"))
+			_screen->loadFont(Screen::FID_8_FNT, "EOBF8.FONT");
 	} else {
 		_screen->loadFont(Screen::FID_6_FNT, "FONT6.FNT");
 		_screen->loadFont(Screen::FID_8_FNT, "FONT8.FNT");
@@ -555,7 +559,6 @@ Common::Error EoBCoreEngine::go() {
 		action = 0;
 
 		if (_gameToLoad != -1) {
-			_sound->selectAudioResourceSet(kMusicIngame);
 			if (loadGameState(_gameToLoad).getCode() != Common::kNoError)
 				error("Couldn't load game slot %d on startup", _gameToLoad);
 			startupLoad();
@@ -564,8 +567,6 @@ Common::Error EoBCoreEngine::go() {
 			_screen->showMouse();
 			action = mainMenu();
 		}
-
-		_sound->selectAudioResourceSet(kMusicIngame);
 
 		if (action == -1) {
 			// load game

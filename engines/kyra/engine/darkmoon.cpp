@@ -70,13 +70,19 @@ Common::Error DarkMoonEngine::init() {
 }
 
 void DarkMoonEngine::startupNew() {
+	_sound->selectAudioResourceSet(kMusicIngame);
 	_currentLevel = 4;
 	_currentSub = 0;
 	loadLevel(4, 0);
 	_currentBlock = 171;
 	_currentDirection = 2;
 	setHandItem(0);
+
 	EoBCoreEngine::startupNew();
+}
+
+void DarkMoonEngine::startupLoad() {
+	_sound->selectAudioResourceSet(kMusicIngame);
 }
 
 void DarkMoonEngine::drawNpcScene(int npcIndex) {

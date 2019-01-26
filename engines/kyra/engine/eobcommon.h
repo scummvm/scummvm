@@ -1175,6 +1175,9 @@ protected:
 	void snd_stopSound();
 	void snd_fadeOut();
 
+	const char *const *_levelSoundFiles1;
+	const char *const *_levelSoundFiles2;
+
 	// keymap
 	static const char *const kKeymapName;
 };

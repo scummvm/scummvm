@@ -1972,6 +1972,7 @@ void TransferPartyWiz::giveKhelbensCoin() {
 // Start functions
 
 bool EoBCoreEngine::startCharacterGeneration() {
+	_sound->selectAudioResourceSet(_flags.platform == Common::kPlatformAmiga ? kMusicIntro : kMusicIngame);
 	return CharacterGenerator(this, _screen).start(_characters, &_faceShapes);
 }
 

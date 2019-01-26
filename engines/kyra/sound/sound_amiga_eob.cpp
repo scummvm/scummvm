@@ -24,13 +24,14 @@
 #include "kyra/resource/resource.h"
 #include "kyra/sound/drivers/audiomaster2.h"
 
+#include "common/config-manager.h"
 #include "common/memstream.h"
 
 namespace Kyra {
 
-SoundAmiga_EoB::SoundAmiga_EoB(KyraEngine_v1 *vm, Audio::Mixer *mixer) : Sound(vm, mixer), _vm(vm), _driver(0), _currentResourceSet(0), _ready(false) {
+SoundAmiga_EoB::SoundAmiga_EoB(KyraEngine_v1 *vm, Audio::Mixer *mixer) : Sound(vm, mixer),
+	_vm(vm), _driver(0), _currentResourceSet(-1), _currentFile(-1), _levelSoundList1(0), _levelSoundList2(0), _ready(false) {
 	_fileBuffer = new uint8[64000];
-	_version2 = _vm->game() == GI_EOB2;
 	memset(_resInfo, 0, sizeof(_resInfo));
 }
 
@@ -50,6 +51,10 @@ bool SoundAmiga_EoB::init() {
 	if (!_driver->init())
 		return false;
 
+	int temp = 0;
+	_levelSoundList1 = _vm->staticres()->loadStrings(kEoB1BaseLevelSounds1, temp);
+	_levelSoundList2 = _vm->staticres()->loadStrings(kEoB1BaseLevelSounds2, temp);
+
 	_ready = true;
 	return true;
 }
@@ -60,6 +65,9 @@ void SoundAmiga_EoB::initAudioResourceInfo(int set, void *info) {
 }
 
 void SoundAmiga_EoB::selectAudioResourceSet(int set) {
+	if (set == _currentResourceSet || !_ready)
+		return;
+
 	_driver->flushAllResources();
 	if (!_resInfo[set])
 		return;
@@ -70,50 +78,22 @@ void SoundAmiga_EoB::selectAudioResourceSet(int set) {
 	_currentResourceSet = set;
 }
 
-bool SoundAmiga_EoB::hasSoundFile(uint file) const {
-	return false;
-}
-
 void SoundAmiga_EoB::loadSoundFile(uint file) {
-	/*
-	_sound->loadSoundFile("INTRO1.CPS");
-	_sound->loadSoundFile("INTRO2.CPS");
-	_sound->loadSoundFile("INTRO4.CPS");
-	_sound->loadSoundFile("INTRO5.CPS");
-	_sound->loadSoundFile("NEWINTRO1.CPS");
-	_sound->loadSoundFile("CHARGEN1.CPS");
+	if (_vm->gameFlags().platform != Common::kPlatformAmiga || _currentResourceSet != kMusicIngame || !_ready)
+		return;
 
-	_sound->loadSoundFile("SFX1.CPS");
-	_sound->loadSoundFile("SFX2.CPS");
-	_sound->loadSoundFile("SFX3.CPS");
-	_sound->loadSoundFile("SFX4.CPS");
+	unloadLevelSounds();
 
-	_sound->loadSoundFile("HUM1.CPS");
+	for (int i = 0; i < 2; ++i) {
+		if (_levelSoundList1[file * 2 + i][0])
+			loadSoundFile(Common::String::format("%s.CPS", _levelSoundList1[file * 2 + i]));
+		if (_levelSoundList2[file * 2 + i][0])
+			loadSoundFile(Common::String::format("%s.CPS", _levelSoundList2[file * 2 + i]));
+	}
 
-	_sound->loadSoundFile("SPIDERMOV1.CPS");
-	_sound->loadSoundFile("MOVE1.CPS");
-	_sound->loadSoundFile("MOVE21.CPS");
-	_sound->loadSoundFile("MOVE31.CPS");
-	_sound->loadSoundFile("BEASTATK1.CPS");
-	_sound->loadSoundFile("BLADE1.CPS");
-	_sound->loadSoundFile("MANTISMOV1.CPS");
-	_sound->loadSoundFile("FLAYERATK1.CPS");
-	_sound->loadSoundFile("LEECHMOV1.CPS");
-	_sound->loadSoundFile("SLOSHSUCK1.CPS");
-	_sound->loadSoundFile("SCREAM1.CPS");
-	_sound->loadSoundFile("RUSTATK1.CPS");
-	_sound->loadSoundFile("HOUNDATK1.CPS");
-	_sound->loadSoundFile("KUOTOAMOV1.CPS");
+	loadSoundFile(Common::String::format("LEVELSAM%d.CPS", file));
 
-	_sound->loadSoundFile("FINALE2.CPS");
-	_sound->loadSoundFile("FINALE1.CPS");
-	_sound->loadSoundFile("FINALE.CPS");
-
-	for (int i = 1; i < 12; ++i) {
-		char n[13];
-		sprintf(n, "LEVELSAM%d.CPS", i);
-		_sound->loadSoundFile(n);
-	}*/
+	_currentFile = file;
 }
 
 void SoundAmiga_EoB::loadSoundFile(Common::String file) {
@@ -155,157 +135,77 @@ void SoundAmiga_EoB::loadSoundFile(Common::String file) {
 }
 
 void SoundAmiga_EoB::playTrack(uint8 track) {
-	_driver->startSound("newintro1.smus");
-	//_driver->startSound("hum1.sam");
-	//_driver->startSound("hum");
-	//_driver->startSound("playswing");
-	//_driver->startSound("door");
-	//_driver->startSound("death");
-	//_driver->startSound("teleport");
-	//_driver->startSound("scream");
-	//_driver->startSound("magica");
-	//_driver->startSound("magicb");
+	Common::String newSound;
+	if (_vm->game() == GI_EOB1) {
+		if (_currentResourceSet == kMusicIntro) {
+			if (track == 1)
+				newSound = "newintro1.smus";
+			else if (track == 20)
+				newSound = "chargen1.smus";
+		}
+	} else if (_vm->game() == GI_EOB2) {
+		
+	}
 
-	//_driver->startSound("chargen1.smus");
-	//_driver->startSound("finale.smus");
+	if (!newSound.empty() && _ready) {
+		_driver->startSound(newSound);
+		_lastSound = newSound;
+	}
 }
 
 void SoundAmiga_EoB::haltTrack() {
-
+	if (!_lastSound.empty())
+		_driver->stopSound(_lastSound);
 }
 
 void SoundAmiga_EoB::playSoundEffect(uint8 track, uint8 volume) {
+	if (_currentResourceSet == -1 || !_ready)
+		return;
+
 	if (!_resInfo[_currentResourceSet]->soundList || track >= 120 || !_sfxEnabled)
 		return;
 
-	_driver->startSound(_resInfo[_currentResourceSet]->soundList[track]);
+	Common::String newSound = _resInfo[_currentResourceSet]->soundList[track];
 
-	static const char *const kEoB1SoundsAmiga[120] = {
-		0,
-		"button",
-		"L1M1A",
-		"door",
-		"door",
-		"slam",
-		"button",
-		"button",
-		"transmute",
-		"eat",
-		"magica",
-		"throw",
-		"plate",
-		"passage",
-		"unlock",
-		"teleport",
-		"undead",
-		"pit",
-		"itemland",
-		0,
-		0,
-		"playhit",
-		"death",
-		"text",
-		"electric",
-		"dart",
-		"dart",
-		"unlock",
-		"bonus",
-		"bump",
-		0,
-		"electric",
-		"playswing",
-		"hum",
-		"panel",
-		"explode",
-		"L10M2M",
-		"L10M2A",
-		"L4M1M",
-		"beastatk",
-		"L9M2M",
-		"L8M1A",
-		"L8M1M",
-		"L7M1A",
-		"L7M1M",
-		"L5M1A",
-		"L5M1M",
-		"flindatk",
-		"L3M2M",
-		"L4M1A",
-		"L8M2M",
-		"houndatk",
-		"scream",
-		"L6M1M",
-		"L3M1A",
-		"L3M1M",
-		"sloshsuck",
-		"L1M2M",
-		"flayeratk",
-		0,
-		"rustatk",
-		"L9M1M",
-		"L10M1A",
-		"L10M1M",
-		"blade",
-		"L7M2M",
-		"blade",
-		"L2M2M",
-		"L12M2A",
-		"L12M2M",
-		0,
-		"L11M1M",
-		"L11M1A",
-		"L2M1A",
-		"L2M1M",
-		"L1M1M",
-		"button",
-		0,
-		"drop",
-		"text",
-		"magicb",
-		"lock",
-		0,
-		0,
-		0,
-		"Missile",
-		0,
-		"burnhands",
-		"electric",
-		"fireball",
-		0,
-		"magica",
-		"magica",
-		"magica",
-		"magicb",
-		"magicb",
-		"acid",
-		"magicb",
-		"fireball",
-		"acid",
-		"magica",
-		"magicb",
-		"magicb",
-		"undead",
-		"magica",
-		"magica",
-		"magica",
-		"magicb",
-		"cause",
-		"magicb",
-		"magicb",
-		"magica",
-		"magicb",
-		"magica",
-		"magica",
-		"magica",
-		"magica",
-		"cause",
-		0,
-		"door"
-	};
+	if (!newSound.empty()) {
+		_driver->startSound(newSound);
+		_lastSound = newSound;
+	}
 }
 
 void SoundAmiga_EoB::beginFadeOut() {
+	haltTrack();
+}
 
+void SoundAmiga_EoB::updateVolumeSettings() {
+	if (!_driver || !_ready)
+		return;
+
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+
+	_driver->setMusicVolume((mute ? 0 : ConfMan.getInt("music_volume")));
+	_driver->setSoundEffectVolume((mute ? 0 : ConfMan.getInt("sfx_volume")));
+}
+
+void SoundAmiga_EoB::unloadLevelSounds() {
+	if (_currentFile != -1) {
+		_driver->flushResource(Common::String::format("L%dM1A1", _currentFile));
+		_driver->flushResource(Common::String::format("L%dM2A1", _currentFile));
+
+		for (int i = 1; i < 5; ++i) {
+			_driver->flushResource(Common::String::format("L%dM1M%d", _currentFile, i));
+			_driver->flushResource(Common::String::format("L%dM2M%d", _currentFile, i));
+		}
+
+		for (int i = 0; i < 2; ++i) {
+			if (_levelSoundList1[_currentFile * 2 + i][0])
+				_driver->flushResource(_levelSoundList1[_currentFile * 2 + i]);
+			if (_levelSoundList2[_currentFile * 2 + i][0])
+				_driver->flushResource(_levelSoundList2[_currentFile * 2 + i]);
+		}
+	}
 }
 
 } // End of namespace Kyra

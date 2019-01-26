@@ -3265,13 +3265,6 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, Palette
 		error("Unhandled bitmap compression %d", compType);
 	}
 
-	if (_isAmiga) {
-		if (!scumm_stricmp(ext, "MSC"))
-			Screen::convertAmigaMsc(dstData);
-		else
-			Screen::convertAmigaGfx(dstData, 320, 200);
-	}
-
 	if (skip)
 		srcData -= 4;
 
@@ -3732,7 +3725,7 @@ int AMIGAFont::getCharWidth(uint16 c) const {
 }
 
 void AMIGAFont::drawChar(uint16 c, byte *dst, int pitch, int) const {
-	if (c >= 255)
+	//if (c >= 255)
 		return;
 
 	if (_chars[c].yOffset == 255)

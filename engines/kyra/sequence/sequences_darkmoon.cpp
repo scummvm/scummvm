@@ -111,7 +111,7 @@ int DarkMoonEngine::mainMenu() {
 	_menuChoiceInit = 0;
 
 	_sound->selectAudioResourceSet(kMusicIntro);
-	_sound->loadSoundFile("INTRO");
+	_sound->loadSoundFile(0);
 
 	Screen::FontId of = _screen->_currentFont;
 	int op = 0;
@@ -542,7 +542,7 @@ void DarkMoonEngine::seq_playFinale() {
 
 	_screen->setCurPage(0);
 
-	_sound->loadSoundFile(_flags.platform == Common::kPlatformFMTowns ?  "FINALE" : "FINALE1");
+	_sound->loadSoundFile(0);
 	snd_stopSound();
 	sq.delay(3);
 
@@ -827,8 +827,7 @@ void DarkMoonEngine::seq_playFinale() {
 	snd_stopSound();
 	sq.delay(3);
 
-	if (_flags.platform != Common::kPlatformFMTowns)
-		_sound->loadSoundFile("FINALE2");
+	_sound->loadSoundFile(1);
 
 	sq.delay(18);
 	if (!skipFlag() && !shouldQuit())

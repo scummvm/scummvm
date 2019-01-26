@@ -28,6 +28,28 @@
 
 namespace Kyra {
 
+class EndianAwareStreamWrapper : public Common::SeekableReadStreamEndian {
+public:
+	EndianAwareStreamWrapper(Common::SeekableReadStream *stream, bool bigEndian, bool disposeAfterUse = true) : Common::SeekableReadStreamEndian(bigEndian), _stream(stream), _dispose(disposeAfterUse) {}
+	~EndianAwareStreamWrapper() { if (_dispose) delete _stream; }
+
+	// Common::Stream interface
+	bool err() const { return _stream->err(); }
+
+	// Common::ReadStream interface
+	bool eos() const { return _stream->eos(); }
+	uint32 read(void *dataPtr, uint32 dataSize) { return _stream->read(dataPtr, dataSize); }
+
+	// Common::SeekableReadStream interface
+	int32 pos() const { return _stream->pos(); }
+	int32 size() const { return _stream->size(); }
+	bool seek(int32 offset, int whence = SEEK_SET) { return _stream->seek(offset, whence); }
+	
+private:
+	Common::SeekableReadStream *_stream;
+	bool _dispose;
+};
+
 Resource::Resource(KyraEngine_v1 *vm) : _archiveCache(), _files(), _archiveFiles(), _protectedFiles(), _loaders(), _vm(vm) {
 	initializeLoaders();
 
@@ -314,6 +336,10 @@ bool Resource::loadFileToBuf(const char *file, void *buf, uint32 maxSize) {
 
 Common::SeekableReadStream *Resource::createReadStream(const Common::String &file) {
 	return _files.createReadStreamForMember(file);
+}
+
+Common::SeekableReadStreamEndian *Resource::createEndianAwareReadStream(const Common::String &file) {
+	return new EndianAwareStreamWrapper(_files.createReadStreamForMember(file), _vm->gameFlags().platform == Common::kPlatformAmiga);
 }
 
 Common::Archive *Resource::loadArchive(const Common::String &name, Common::ArchiveMemberPtr member) {

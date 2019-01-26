@@ -29,9 +29,9 @@
 namespace Kyra {
 
 void EoBCoreEngine::loadItemDefs() {
-	Common::SeekableReadStream *s = _res->createReadStream("item.dat");
+	Common::SeekableReadStreamEndian *s = _res->createEndianAwareReadStream("item.dat");
 	memset(_items, 0, sizeof(EoBItem) * 600);
-	_numItems = s->readUint16LE();
+	_numItems = s->readUint16();
 
 	for (int i = 0; i < 600; i++)
 		_items[i].block = -1;
@@ -43,29 +43,29 @@ void EoBCoreEngine::loadItemDefs() {
 		_items[i].icon = s->readSByte();
 		_items[i].type = s->readSByte();
 		_items[i].pos = s->readSByte();
-		_items[i].block = s->readSint16LE();
-		_items[i].next = s->readSint16LE();
-		_items[i].prev = s->readSint16LE();
+		_items[i].block = s->readSint16();
+		_items[i].next = s->readSint16();
+		_items[i].prev = s->readSint16();
 		_items[i].level = s->readSByte();
 		_items[i].value = s->readSByte();
 	}
 
-	_numItemNames = s->readUint16LE();
+	_numItemNames = s->readUint16();
 	for (int i = 0; i < _numItemNames; i++)
 		s->read(_itemNames[i], 35);
 
 	delete s;
 
-	s = _res->createReadStream("itemtype.dat");
-	uint16 numTypes = s->readUint16LE();
+	s = _res->createEndianAwareReadStream("itemtype.dat");
+	uint16 numTypes = s->readUint16();
 
 	delete[] _itemTypes;
 	_itemTypes = new EoBItemType[65];
 	memset(_itemTypes, 0, sizeof(EoBItemType) * 65);
 
 	for (int i = 0; i < numTypes; i++) {
-		_itemTypes[i].invFlags = s->readUint16LE();
-		_itemTypes[i].handFlags = s->readUint16LE();
+		_itemTypes[i].invFlags = s->readUint16();
+		_itemTypes[i].handFlags = s->readUint16();
 		_itemTypes[i].armorClass = s->readSByte();
 		_itemTypes[i].allowedClasses = s->readSByte();
 		_itemTypes[i].requiredHands = s->readSByte();
@@ -76,7 +76,7 @@ void EoBCoreEngine::loadItemDefs() {
 		_itemTypes[i].dmgNumPipsL = s->readSByte();
 		_itemTypes[i].dmgIncL = s->readSByte();
 		_itemTypes[i].unk1 = s->readByte();
-		_itemTypes[i].extraProperties = s->readUint16LE();
+		_itemTypes[i].extraProperties = s->readUint16();
 	}
 
 	delete s;

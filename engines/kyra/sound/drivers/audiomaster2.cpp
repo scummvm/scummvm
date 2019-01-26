@@ -830,7 +830,7 @@ void AudioMaster2ResourceManager::loadResourceFile(Common::SeekableReadStream *d
 		AudioMaster2IFFLoader loader(data, this);
 		Common::Functor1Mem<Common::IFFChunk&, bool, AudioMaster2IFFLoader> cb(&loader, &AudioMaster2IFFLoader::loadChunk);
 		loader.parse(cb);
-	} while (data->pos() < data->size());
+	} while (data->pos() + 8 < data->size());
 }
 
 void AudioMaster2ResourceManager::initResource(SoundResource *resource) {

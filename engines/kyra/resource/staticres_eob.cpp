@@ -269,7 +269,7 @@ const uint8 EoBCoreEngine::_clock2Timers[] = {
 const uint8 EoBCoreEngine::_numClock2Timers = ARRAYSIZE(EoBCoreEngine::_clock2Timers);
 
 void EoBCoreEngine::initStaticResource() {
-	int temp;
+	int temp, temp2;
 	_chargenStatStrings = _staticres->loadStrings(kEoBBaseChargenStatStrings, temp);
 	_chargenRaceSexStrings = _staticres->loadStrings(kEoBBaseChargenRaceSexStrings, temp);
 	_chargenClassStrings = _staticres->loadStrings(kEoBBaseChargenClassStrings, temp);
@@ -461,12 +461,51 @@ void EoBCoreEngine::initStaticResource() {
 	_coneOfColdDest4 = (const int8 *)_staticres->loadRawData(kEoBBaseConeOfColdDest4, temp);
 	_coneOfColdGfxTbl = _staticres->loadRawData(kEoBBaseConeOfColdGfxTbl, _coneOfColdGfxTblSize);
 
-	_staticres->loadStrings(kEoBBaseSoundMap, temp);
-	_staticres->loadStrings(kEoBBaseLevelSounds1, temp);
-	_staticres->loadStrings(kEoBBaseLevelSounds2, temp);
-	_staticres->loadStrings(kEoBBaseSoundFilesIntro, temp);
-	_staticres->loadStrings(kEoBBaseSoundFilesIngame, temp);
-	_staticres->loadStrings(kEoBBaseSoundFilesFinale, temp);
+	void *sndInfo_ingame = 0;
+	void *sndInfo_intro = 0;
+	void *sndInfo_finale = 0;
+
+	if (_flags.platform == Common::kPlatformAmiga) {
+		const char *const *files = _staticres->loadStrings(kEoBBaseSoundFilesIngame, temp);
+		const char *const *map = _staticres->loadStrings(kEoBBaseSoundMap, temp2);
+		SoundResourceInfo_AmigaEoB ingame(files, temp, map, temp2);
+		sndInfo_ingame = &ingame;
+		files = _staticres->loadStrings(kEoBBaseSoundFilesIntro, temp);
+		SoundResourceInfo_AmigaEoB intro(files, temp, 0, 0);
+		sndInfo_intro = &intro;
+		files = _staticres->loadStrings(kEoBBaseSoundFilesFinale, temp);
+		SoundResourceInfo_AmigaEoB finale(files, temp, 0, 0);
+		sndInfo_finale = &finale;
+	} else if (_flags.platform == Common::kPlatformFMTowns) {
+		const char *const *files = _staticres->loadStrings(kEoBBaseSoundFilesIngame, temp);
+		const uint8 *data = _staticres->loadRawData(kEoB2PcmSoundEffectsIngame, temp2);
+		SoundResourceInfo_TownsEoB ingame(files, temp, data, temp2, 127);
+		sndInfo_ingame = &ingame;
+		files = _staticres->loadStrings(kEoBBaseSoundFilesIntro, temp);
+		data = _staticres->loadRawData(kEoB2PcmSoundEffectsIntro, temp2);
+		SoundResourceInfo_TownsEoB intro(files, temp, data, temp2, 40);
+		sndInfo_intro = &intro;
+		files = _staticres->loadStrings(kEoBBaseSoundFilesFinale, temp);
+		data = _staticres->loadRawData(kEoB2PcmSoundEffectsFinale, temp2);
+		SoundResourceInfo_TownsEoB finale(files, temp, data, temp2, 40);
+		sndInfo_finale = &finale;
+	} else if (_flags.platform == Common::kPlatformPC98) {
+
+	} else {
+		const char *const *files = _staticres->loadStrings(kEoBBaseSoundFilesIngame, temp);
+		SoundResourceInfo_PC ingame(files, temp);
+		sndInfo_ingame = &ingame;
+		files = _staticres->loadStrings(kEoBBaseSoundFilesIntro, temp);
+		SoundResourceInfo_PC intro(files, temp);
+		sndInfo_intro = &intro;
+		files = _staticres->loadStrings(kEoBBaseSoundFilesFinale, temp);
+		SoundResourceInfo_PC finale(files, temp);
+		sndInfo_finale = &finale;
+	}
+	
+	_sound->initAudioResourceInfo(kMusicIngame, sndInfo_ingame);
+	_sound->initAudioResourceInfo(kMusicIntro, sndInfo_intro);
+	_sound->initAudioResourceInfo(kMusicFinale, sndInfo_finale);
 
 	// Hard code the following strings, since EOB I doesn't have them in the original.
 	// EOB I doesn't have load and save menus, because there is only one single
@@ -1106,6 +1145,9 @@ void EoBEngine::initStaticResource() {
 	for (int i = 0; i < 5; i++)
 		_cgaMappingLevel[i] = _staticres->loadRawData(kEoB1CgaMappingLevel0 + i, temp);
 
+	_levelSoundFiles1 = _staticres->loadStrings(kEoB1BaseLevelSounds1, temp);
+	_levelSoundFiles2 = _staticres->loadStrings(kEoB1BaseLevelSounds2, temp);
+
 	_turnUndeadString = _staticres->loadStrings(kEoB1TurnUndeadString, temp);
 
 	_npcShpData = _staticres->loadRawData(kEoB1NpcShpData, temp);
@@ -1294,17 +1336,6 @@ void DarkMoonEngine::initStaticResource() {
 	_ascii2SjisTables = _staticres->loadStrings(kEoB2Ascii2SjisTables, temp);
 	_ascii2SjisTables2 = _staticres->loadStrings(kEoB2Ascii2SjisTables2, temp);
 	_saveNamePatterns = _staticres->loadStrings(kEoB2SaveNamePatterns, temp);
-
-	const uint8 *data = _staticres->loadRawData(kEoB2PcmSoundEffectsIngame, temp);
-	SoundResourceInfo_TownsEoB ingame(data, temp, 127);
-	data = _staticres->loadRawData(kEoB2PcmSoundEffectsIntro, temp);
-	SoundResourceInfo_TownsEoB intro(data, temp, 40);
-	data = _staticres->loadRawData(kEoB2PcmSoundEffectsFinale, temp);
-	SoundResourceInfo_TownsEoB finale(data, temp, 40);
-
-	_sound->initAudioResourceInfo(kMusicIngame, &ingame);
-	_sound->initAudioResourceInfo(kMusicIntro, &intro);
-	_sound->initAudioResourceInfo(kMusicFinale, &finale);
 
 	_monsterAcHitChanceTable1 = _monsterAcHitChanceTbl1;
 	_monsterAcHitChanceTable2 = _monsterAcHitChanceTbl2;

@@ -66,7 +66,7 @@ private:
 
 	// Main loop
 	void startupNew();
-	void startupLoad() {}
+	void startupLoad();
 
 	// Intro/Outro
 	void seq_playIntro();

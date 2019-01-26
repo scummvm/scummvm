@@ -76,6 +76,8 @@ Common::Error EoBEngine::init() {
 }
 
 void EoBEngine::startupNew() {
+	_sound->selectAudioResourceSet(kMusicIngame);
+	_sound->loadSoundFile(0);
 	_currentLevel = 1;
 	_currentSub = 0;
 	loadLevel(1, 0);
@@ -87,7 +89,8 @@ void EoBEngine::startupNew() {
 }
 
 void EoBEngine::startupLoad() {
-	_sound->loadSoundFile("ADLIB");
+	_sound->selectAudioResourceSet(kMusicIngame);
+	_sound->loadSoundFile(0);
 }
 
 void EoBEngine::drawNpcScene(int npcIndex) {

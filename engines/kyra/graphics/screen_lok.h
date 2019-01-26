@@ -36,6 +36,8 @@ public:
 
 	bool init();
 
+	virtual void loadBitmap(const char *filename, int tempPage, int dstPage, Palette *pal, bool skip = false);
+
 	int getRectSize(int w, int h);
 
 	void setTextColorMap(const uint8 *cmap);

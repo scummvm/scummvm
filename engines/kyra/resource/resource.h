@@ -74,6 +74,7 @@ public:
 	uint32 getFileSize(const char *file);
 	uint8 *fileData(const char *file, uint32 *size);
 	Common::SeekableReadStream *createReadStream(const Common::String &file);
+	Common::SeekableReadStreamEndian *createEndianAwareReadStream(const Common::String &file);
 
 	bool loadFileToBuf(const char *file, void *buf, uint32 maxSize);
 protected:

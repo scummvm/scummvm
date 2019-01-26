@@ -532,7 +532,7 @@ public:
 	void rectClip(int &x, int &y, int w, int h);
 
 	// misc
-	void loadBitmap(const char *filename, int tempPage, int dstPage, Palette *pal, bool skip=false);
+	virtual void loadBitmap(const char *filename, int tempPage, int dstPage, Palette *pal, bool skip=false);
 
 	virtual bool loadPalette(const char *filename, Palette &pal);
 	bool loadPaletteTable(const char *filename, int firstPalette);

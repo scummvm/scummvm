@@ -219,6 +219,18 @@ void Screen_EoB::loadShapeSetBitmap(const char *file, int tempPage, int destPage
 	_curPage = 2;
 }
 
+void Screen_EoB::loadBitmap(const char *filename, int tempPage, int dstPage, Palette *pal, bool) {
+	Screen::loadBitmap(filename, tempPage, dstPage, pal);
+
+	if (_isAmiga) {
+		// Yay, this is where EOB1 Amiga hides the palette data
+		loadPalette(_pagePtrs[3] + 40000, *_palettes[0], 64);
+		_palettes[0]->fill(0, 1, 0);
+
+		Screen::convertAmigaGfx(getPagePtr(dstPage), 320, 200);
+	}
+}
+
 void Screen_EoB::loadEoBBitmap(const char *file, const uint8 *cgaMapping, int tempPage, int destPage, int convertToPage) {
 	const char *filePattern = _vm->gameFlags().platform == Common::kPlatformFMTowns ? "%s.SHP" : ((_vm->game() == GI_EOB1 && (_renderMode == Common::kRenderEGA || _renderMode == Common::kRenderCGA)) ? "%s.EGA" : "%s.CPS");
 	Common::String tmp = Common::String::format(filePattern, file);

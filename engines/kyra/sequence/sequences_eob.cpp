@@ -110,7 +110,7 @@ void EoBIntroPlayer::start() {
 
 	if (!_vm->shouldQuit() && !_vm->skipFlag()) {
 		_vm->snd_playSong(2);
-		_screen->loadBitmap((_vm->_configRenderMode == Common::kRenderCGA || _vm->_configRenderMode == Common::kRenderEGA) ? "TITLE-E.CMP" : "TITLE-V.CMP", 3, 5, 0);
+		_screen->loadBitmap(_vm->gameFlags().platform == Common::kPlatformAmiga ? "TITLE.CPS" : (_vm->_configRenderMode == Common::kRenderCGA || _vm->_configRenderMode == Common::kRenderEGA) ? "TITLE-E.CMP" : "TITLE-V.CMP", 3, 5, 0);
 		_screen->convertPage(5, 2, _vm->_cgaMappingDefault);
 		_screen->crossFadeRegion(0, 0, 0, 0, 320, 200, 2, 0);
 		_vm->delay(120 * _vm->_tickLength);
@@ -122,7 +122,7 @@ void EoBIntroPlayer::start() {
 		_screen->loadFileDataToPage(s, 5, s->size() - 768);
 		delete s;
 	} else {
-		_screen->loadBitmap("TEXT.CMP", 3, 5, 0);
+		_screen->loadBitmap(_vm->gameFlags().platform == Common::kPlatformAmiga ? "TEXT.CPS" : "TEXT.CMP", 3, 5, 0);
 	}
 	_screen->convertPage(5, 6, _vm->_cgaMappingAlt);
 
@@ -142,11 +142,16 @@ void EoBIntroPlayer::start() {
 void EoBIntroPlayer::openingCredits() {
 	loadAndSetPalette(_filesOpening[5]);
 
+	_vm->snd_playSong(1);
+
 	_screen->loadBitmap(_filesOpening[4], 5, 3, 0);
 	_screen->convertPage(3, 0, _vm->_cgaMappingAlt);
-	_screen->updateScreen();
 
-	_vm->snd_playSong(1);
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga) 
+		_screen->fadePalette(_screen->getPalette(0), 64);
+	else
+		_screen->updateScreen();
+
 	_vm->delay(_openingFrmDelay[0] * _vm->_tickLength);
 
 	for (int i = 0; i < 4 && !_vm->shouldQuit() && !_vm->skipFlag(); i++) {
@@ -829,7 +834,7 @@ void EoBIntroPlayer::tunnel() {
 }
 
 void EoBIntroPlayer::loadAndSetPalette(const char *filename) {
-	if (_vm->_configRenderMode == Common::kRenderCGA || _vm->_configRenderMode == Common::kRenderEGA)
+	if (_vm->_configRenderMode == Common::kRenderCGA || _vm->_configRenderMode == Common::kRenderEGA || _vm->gameFlags().platform == Common::kPlatformAmiga)
 		return;
 	_screen->loadPalette(filename, _screen->getPalette(0));
 	_screen->getPalette(0).fill(0, 1, 0);
@@ -983,7 +988,7 @@ int EoBEngine::mainMenu() {
 		case 0: {
 			if (_configRenderMode != Common::kRenderEGA)
 				_screen->loadPalette("EOBPAL.COL", _screen->getPalette(0));
-			_screen->loadEoBBitmap("INTRO", _cgaMappingDefault, 5, 3, 2);
+			_screen->loadEoBBitmap(_flags.platform == Common::kPlatformAmiga ? "TITLE" : "INTRO", _cgaMappingDefault, 5, 3, 2);
 			_screen->setScreenPalette(_screen->getPalette(0));
 			_screen->_curPage = 2;
 			of = _screen->setFont(Screen::FID_6_FNT);
@@ -1018,11 +1023,13 @@ int EoBEngine::mainMenu() {
 
 		case 4:
 			// intro
-			_sound->loadSoundFile("SOUND");
+			_sound->selectAudioResourceSet(kMusicIntro);
+			_sound->loadSoundFile(0);
 			_screen->hideMouse();
 			seq_playIntro();
 			_screen->showMouse();
-			_sound->loadSoundFile("ADLIB");
+			_sound->selectAudioResourceSet(kMusicIngame);
+			_sound->loadSoundFile(0);
 			menuChoice = 0;
 			break;
 		}

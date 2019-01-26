@@ -70,6 +70,19 @@ bool Screen_LoK::init() {
 	return true;
 }
 
+void Screen_LoK::loadBitmap(const char *filename, int tempPage, int dstPage, Palette *pal, bool skip) {
+	const char *ext = filename + strlen(filename) - 3;
+
+	Screen::loadBitmap(filename, tempPage, dstPage, pal, skip);
+
+	if (_isAmiga) {
+		if (!scumm_stricmp(ext, "MSC"))
+			Screen::convertAmigaMsc(getPagePtr(dstPage));
+		else
+			Screen::convertAmigaGfx(getPagePtr(dstPage), 320, 200);
+	}
+}
+
 void Screen_LoK::fadeSpecialPalette(int palIndex, int startIndex, int size, int fadeTime) {
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		return;

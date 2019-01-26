@@ -363,7 +363,7 @@ public:
 	virtual void initAudioResourceInfo(int set, void *info);
 	virtual void selectAudioResourceSet(int set);
 	virtual bool hasSoundFile(uint file) const;
-	virtual void loadSoundFile(uint file) {}
+	virtual void loadSoundFile(uint file);
 	virtual void loadSoundFile(Common::String name);
 
 	virtual void playTrack(uint8 track);
@@ -388,6 +388,9 @@ private:
 		int16 para2;
 	} _soundTable[120];
 
+	const char *const *_fileList;
+	uint _fileListLen;
+
 	uint8 _lastSfxChan;
 	uint8 _lastEnvChan;
 	uint8 *_pcmData;
@@ -397,7 +400,7 @@ private:
 	int _timer;
 	int _timerSwitch;
 
-	SoundResourceInfo_TownsEoB *_pcmResource[3];
+	SoundResourceInfo_TownsEoB *_resource[3];
 
 	TownsAudioInterface *_intf;
 };
@@ -413,23 +416,31 @@ public:
 	bool init();
 	void initAudioResourceInfo(int set, void *info);
 	void selectAudioResourceSet(int set);
-	bool hasSoundFile(uint file) const;
+	bool hasSoundFile(uint file) const { return false; }
 	void loadSoundFile(uint file);
 	void loadSoundFile(Common::String file);
 	void playTrack(uint8 track);
 	void haltTrack();
 	void playSoundEffect(uint8 track, uint8 volume = 0xFF);
 	void beginFadeOut();
+	void updateVolumeSettings();
 
 private:
+	void unloadLevelSounds();
+
 	uint8 *_fileBuffer;
 
 	KyraEngine_v1 *_vm;
 	AudioMaster2 *_driver;
 	SoundResourceInfo_AmigaEoB *_resInfo[3];
-	int _currentResourceSet;
+	Common::String _lastSound;
 
-	bool _version2;
+	int _currentResourceSet;
+	int _currentFile;
+
+	const char *const *_levelSoundList1;
+	const char *const *_levelSoundList2;
+
 	bool _ready;
 };
 
