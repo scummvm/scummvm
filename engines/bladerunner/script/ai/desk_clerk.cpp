@@ -25,8 +25,8 @@
 namespace BladeRunner {
 
 AIScriptDeskClerk::AIScriptDeskClerk(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_var1 = 0;
-	_var2 = 0;
+	_flag1 = false;
+	_flag2 = false;
 	_var3 = 75;
 }
 
@@ -36,29 +36,32 @@ void AIScriptDeskClerk::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_var1 = 0;
-	_var2 = 0;
+	_flag1 = false;
+	_flag2 = false;
 	_var3 = 75;
-	Actor_Set_Goal_Number(kActorDeskClerk, 0);
+	Actor_Set_Goal_Number(kActorDeskClerk, kGoalDeskClerkDefault);
 }
 
 bool AIScriptDeskClerk::Update() {
-	if (Actor_Query_Goal_Number(kActorDeskClerk) == 1
-			&& Player_Query_Current_Set() != kSetCT01_CT12
-			&& Player_Query_Current_Set() != kSetCT03_CT04
-			&& Player_Query_Current_Set() != kSetCT08_CT51_UG12
-			&& Player_Query_Current_Set() != kSetCT02
-			&& Player_Query_Current_Set() != kSetCT05
-			&& Player_Query_Current_Set() != kSetCT06
-			&& Player_Query_Current_Set() != kSetCT07
-			&& Player_Query_Current_Set() != kSetCT09
-			&& Player_Query_Current_Set() != kSetCT10
-			&& Player_Query_Current_Set() != kSetCT11) {
-		Actor_Set_Goal_Number(kActorDeskClerk, 2);
+	if (Actor_Query_Goal_Number(kActorDeskClerk) == kGoalDeskClerkKnockedOut
+	 && Player_Query_Current_Set() != kSetCT01_CT12
+	 && Player_Query_Current_Set() != kSetCT03_CT04
+	 && Player_Query_Current_Set() != kSetCT08_CT51_UG12
+	 && Player_Query_Current_Set() != kSetCT02
+	 && Player_Query_Current_Set() != kSetCT05
+	 && Player_Query_Current_Set() != kSetCT06
+	 && Player_Query_Current_Set() != kSetCT07
+	 && Player_Query_Current_Set() != kSetCT09
+	 && Player_Query_Current_Set() != kSetCT10
+	 && Player_Query_Current_Set() != kSetCT11
+	) {
+		Actor_Set_Goal_Number(kActorDeskClerk, kGoalDeskClerkRecovered);
 	}
 
-	if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_Goal_Number(kActorDeskClerk) < 400) {
-		Actor_Set_Goal_Number(kActorDeskClerk, 400);
+	if (Global_Variable_Query(kVariableChapter) == 5
+	 && Actor_Query_Goal_Number(kActorDeskClerk) < kGoalDeskClerkGone
+	) {
+		Actor_Set_Goal_Number(kActorDeskClerk, kGoalDeskClerkGone);
 	}
 
 	return false;
@@ -114,13 +117,13 @@ int AIScriptDeskClerk::GetFriendlinessModifierIfGetsClue(int otherActorId, int c
 
 bool AIScriptDeskClerk::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	switch (newGoalNumber) {
-	case 0:
-	case 2:
+	case kGoalDeskClerkDefault:
+	case kGoalDeskClerkRecovered:
 		Actor_Put_In_Set(kActorDeskClerk, kSetCT09);
 		Actor_Set_At_XYZ(kActorDeskClerk, 282.0f, 360.52f, 743.0f, 513);
 		break;
-	case 1:
-	case 400:
+	case kGoalDeskClerkKnockedOut:
+	case kGoalDeskClerkGone:
 		Actor_Put_In_Set(kActorDeskClerk, kSetFreeSlotH);
 		Actor_Set_At_Waypoint(kActorDeskClerk, 40, 0);
 		break;
@@ -129,61 +132,49 @@ bool AIScriptDeskClerk::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 }
 
 bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
-	int frameRes;
 
 	switch (_animationState) {
 	case 0:
-		if (_var1 > 1) {
-			frameRes = _animationFrame;
-		} else if (_var1) {
+		if (_flag1) {
 			*animation = 662;
 			_animationFrame++;
-
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(662)) {
 				_animationFrame = 0;
-				_var1 = 0;
+				_flag1 = false;
 				*animation = 661;
 				_var3 = Random_Query(50, 100);
 			}
-			frameRes = _animationFrame;
 		} else {
-			if (_var3)
+			if (_var3 != 0) {
 				--_var3;
+			}
 
 			*animation = 661;
 			_animationFrame++;
-
-			if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(661)) {
-				frameRes = _animationFrame;
-			} else {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(661)) {
 				_animationFrame = 0;
 
-				if (!_var3) {
+				if (_var3 == 0) {
 					*animation = 662;
-					_var1 = 1;
+					_flag1 = true;
 				}
-
-				frameRes = _animationFrame;
 			}
 		}
 		break;
 
 	case 1:
-		frameRes = _animationFrame;
 		*animation = 663;
 
-		if (!frameRes && _var2) {
+		if (_animationFrame == 0
+		 && _flag2
+		) {
 			*animation = 661;
 			_animationState = 0;
-			_var1 = 0;
+			_flag1 = false;
 		} else {
 			_animationFrame++;
-
-			if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(*animation)) {
-				frameRes = _animationFrame;
-			} else {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 				_animationFrame = 0;
-				frameRes = 0;
 			}
 		}
 		break;
@@ -191,12 +182,8 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 	case 2:
 		*animation = 664;
 		_animationFrame++;
-
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(664)) {
-			frameRes = _animationFrame;
-		} else {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(664)) {
 			_animationFrame = 0;
-			frameRes = 0;
 			_animationState = 1;
 			*animation = 663;
 		}
@@ -205,12 +192,8 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 	case 3:
 		*animation = 665;
 		_animationFrame++;
-
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(665)) {
-			frameRes = _animationFrame;
-		} else {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(665)) {
 			_animationFrame = 0;
-			frameRes = 0;
 			_animationState = 1;
 			*animation = 663;
 		}
@@ -219,12 +202,8 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 	case 4:
 		*animation = 666;
 		_animationFrame++;
-
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(666)) {
-			frameRes = _animationFrame;
-		} else {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(666)) {
 			_animationFrame = 0;
-			frameRes = 0;
 			_animationState = 1;
 			*animation = 663;
 		}
@@ -233,12 +212,8 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 	case 5:
 		*animation = 667;
 		_animationFrame++;
-
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(667)) {
-			frameRes = _animationFrame;
-		} else {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(667)) {
 			_animationFrame = 0;
-			frameRes = 0;
 			_animationState = 1;
 			*animation = 663;
 		}
@@ -247,31 +222,24 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 	case 6:
 		*animation = 668;
 		_animationFrame++;
-
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(668)) {
-			frameRes = _animationFrame;
-		} else {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(668)) {
 			_animationFrame = 0;
-			frameRes = 0;
 		}
 		break;
 
 	case 7:
 		*animation = 669;
 
-		if (!_animationFrame && _var2) {
+		if (_animationFrame == 0
+		 && _flag2
+		) {
 			Actor_Change_Animation_Mode(kActorDeskClerk, 72);
 			*animation = 668;
 			_animationState = 6;
-			frameRes = _animationFrame;
 		} else {
 			_animationFrame++;
-
-			if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(*animation)) {
-				frameRes = _animationFrame;
-			} else {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 				_animationFrame = 0;
-				frameRes = 0;
 			}
 		}
 		break;
@@ -279,33 +247,24 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 	case 8:
 		*animation = 670;
 		_animationFrame++;
-
-		if (_animationFrame <= Slice_Animation_Query_Number_Of_Frames(670) - 2) {
-			frameRes = _animationFrame;
-		} else {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(670) - 2) {
 			Ambient_Sounds_Play_Sound(206, 40, 30, 30, 99);
-			Actor_Set_Goal_Number(kActorDeskClerk, 1);
-			Actor_Change_Animation_Mode(kActorDeskClerk, 0);
+			Actor_Set_Goal_Number(kActorDeskClerk, kGoalDeskClerkKnockedOut);
+			Actor_Change_Animation_Mode(kActorDeskClerk, kAnimationModeIdle);
 			*animation = 661;
 			_animationFrame = 0;
-			frameRes = 0;
 			_animationState = 0;
 		}
 		break;
-
-	default:
-		frameRes = _animationFrame;
-		break;
 	}
 
-	*frame = frameRes;
-
+	*frame = _animationFrame;
 	return true;
 }
 
 bool AIScriptDeskClerk::ChangeAnimationMode(int mode) {
 	switch (mode) {
-	case 0:
+	case kAnimationModeIdle:
 		switch (_animationState) {
 		case 0:
 			_animationState = 8;
@@ -317,7 +276,7 @@ bool AIScriptDeskClerk::ChangeAnimationMode(int mode) {
 		case 3:
 		case 4:
 		case 5:
-			_var2 = 1;
+			_flag2 = true;
 			break;
 
 		case 6:
@@ -327,40 +286,40 @@ bool AIScriptDeskClerk::ChangeAnimationMode(int mode) {
 		default:
 			_animationState = 0;
 			_animationFrame = 0;
-			_var1 = 0;
+			_flag1 = false;
 			_var3 = Random_Query(70, 140);
 			break;
 		}
 		break;
 
-	case 3:
+	case kAnimationModeTalk:
 		_animationState = 1;
 		_animationFrame = 0;
-		_var2 = 0;
+		_flag2 = false;
 		break;
 
 	case 12:
 		_animationState = 2;
 		_animationFrame = 0;
-		_var2 = 0;
+		_flag2 = false;
 		break;
 
 	case 13:
 		_animationState = 3;
 		_animationFrame = 0;
-		_var2 = 0;
+		_flag2 = false;
 		break;
 
 	case 14:
 		_animationState = 4;
 		_animationFrame = 0;
-		_var2 = 0;
+		_flag2 = false;
 		break;
 
 	case 15:
 		_animationState = 5;
 		_animationFrame = 0;
-		_var2 = 0;
+		_flag2 = false;
 		break;
 
 	case 26:
@@ -371,7 +330,7 @@ bool AIScriptDeskClerk::ChangeAnimationMode(int mode) {
 	case 58:
 		_animationState = 7;
 		_animationFrame = 0;
-		_var2 = 0;
+		_flag2 = false;
 		break;
 
 	case 72:
@@ -379,9 +338,6 @@ bool AIScriptDeskClerk::ChangeAnimationMode(int mode) {
 			_animationState = 6;
 			_animationFrame = 0;
 		}
-		break;
-
-	default:
 		break;
 	}
 

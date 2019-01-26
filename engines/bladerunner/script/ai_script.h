@@ -299,8 +299,8 @@ DECLARE_SCRIPT(Baker)
 END_SCRIPT
 
 DECLARE_SCRIPT(DeskClerk)
-	int _var1;
-	int _var2;
+	bool _flag1;
+	bool _flag2;
 	int _var3;
 END_SCRIPT
 
@@ -445,12 +445,12 @@ DECLARE_SCRIPT(Newscaster)
 END_SCRIPT
 
 DECLARE_SCRIPT(Leon)
-	int var_45EDAC;
-	float var_45EDA0_z;
-	float var_45EDA4_y;
-	float var_45EDA8_x;
+	bool _flag;
+	float _mcCoyPositionX;
+	float _mcCoyPositionY;
+	float _mcCoyPositionZ;
 
-	float sub_446700(int actorId, float x, float y, float z);
+	float distanceTo(int actorId, float x, float y, float z);
 END_SCRIPT
 
 DECLARE_SCRIPT(MaleAnnouncer)

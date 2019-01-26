@@ -893,6 +893,9 @@ enum Flags {
 	kFlagTB06DogCollarTaken = 519,
 	kFlagTB06KitchenBoxTaken = 520,
 	kFlagCT11toDR01 = 531,
+	kFlagCT09Entered = 538,
+	kFlagCT09LeonInterrupted = 539,
+	kFlagCT09DeskClerkTalk = 540,
 	kFlagGordoTalk1 = 543,
 	kFlagGordoTalk2 = 544,
 	kFlagDR06MannequinHeadOpen = 548,
@@ -1065,8 +1068,8 @@ enum Scenes {
 	kSceneCT03 = 15, // Chinatown - Back alley - Restaurant
 	kSceneCT04 = 16, // Chinatown - Back alley - Dumpster
 	kSceneCT05 = 17, // Chinatown - Warehouse - Inside
-	kSceneCT06 = 18, // Chinatown - Passage from front
-	kSceneCT07 = 19, // Chinatown - Passage form back
+	kSceneCT06 = 18, // Chinatown - Passage - front
+	kSceneCT07 = 19, // Chinatown - Passage - back
 	kSceneCT08 = 20, // Chinatown - Yukon Hotel - Backroom
 	kSceneCT09 = 21, // Chinatown - Yukon Hotel - Lobby
 	kSceneCT10 = 22, // Chinatown - Yukon Hotel - Room
@@ -1607,6 +1610,13 @@ enum GoalOfficerLeary {
 	kGoalOfficerLearyRC01CrowdInterrogation = 2
 };
 
+enum GoalDeskClerk {
+	kGoalDeskClerkDefault = 0,
+	kGoalDeskClerkKnockedOut = 1,
+	kGoalDeskClerkRecovered = 2,
+	kGoalDeskClerkGone = 400
+};
+
 enum GoalMoraji {
 	kGoalMorajiDefault = 0,
 	kGoalMorajiShot = 5,
@@ -1620,6 +1630,18 @@ enum GoalMoraji {
 	kGoalMorajiDead = 23,
 	kGoalMorajiChooseFate = 30,
 	kGoalMorajiPerished = 99
+};
+
+enum GoalLeon {
+	kGoalLeonDefault = 0,
+	kGoalLeonHoldingDeskClerk = 1,
+	kGoalLeonReleaseDeskClerk = 2,
+	kGoalLeonPrepareTalkToMcCoy = 3,
+	kGoalLeonTalkToMcCoy = 4,
+	kGoalLeonApproachMcCoy = 5, // there is no way how to trigger this path in the game
+	kGoalLeonPunchMcCoy = 6, // there is no way how to trigger this path in the game
+	kGoalLeonLeave = 7,
+	kGoalLeonGone = 8
 };
 
 } // End of namespace BladeRunner
