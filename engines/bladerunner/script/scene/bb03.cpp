@@ -150,6 +150,7 @@ void SceneScriptBB03::PlayerWalkedIn() {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 164.0f, 60.16f, -164.0f, 0, false, false, 0);
 		Game_Flag_Reset(kFlagBB05toBB03);
 	}
+
 	if (Game_Flag_Query(kFlagBB04toBB03)) {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 176.0f, 60.16f, -64.0f, 0, false, false, 0);
 		Game_Flag_Reset(kFlagBB04toBB03);

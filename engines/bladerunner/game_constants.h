@@ -957,6 +957,7 @@ enum Variables {
 	kVariableDR06MannequinHeadOpened = 39,
 	kVariableMcCoyDrinks = 42, // is never checked
 	kVariableAffectionTowards = 45, // 0 none, 1 steele, 2 dektora, 3 lucy
+	kVariableGunPulledInFrontOfSebastian = 46,
 	kVariableDNAEvidences = 48,
 	kVariableReplicants = 51,
 	kVariableNextTvNews = 52

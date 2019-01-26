@@ -62,21 +62,21 @@ void AIScriptSebastian::ReceivedClue(int clueId, int fromActorId) {
 }
 
 void AIScriptSebastian::ClickedByPlayer() {
-	if (Actor_Query_Goal_Number(kActorSebastian) != 205)
-		return; //false;
+	if (Actor_Query_Goal_Number(kActorSebastian) == 205) {
+		AI_Movement_Track_Pause(kActorSebastian);
+		Actor_Face_Actor(kActorSebastian, kActorMcCoy, true);
+		Actor_Face_Actor(kActorMcCoy, kActorSebastian, true);
+		if (Actor_Clue_Query(kActorSebastian, kClueMcCoyIsABladeRunner)) {
+			Actor_Says(kActorMcCoy, 6985, 16);
+			Actor_Says(kActorSebastian, 610, 14);
+		} else {
+			dialogue();
+		}
 
-	AI_Movement_Track_Pause(56);
-	Actor_Face_Actor(kActorSebastian, kActorMcCoy, 1);
-	Actor_Face_Actor(kActorMcCoy, kActorSebastian, 1);
-	if (Actor_Clue_Query(kActorSebastian, 214)) {
-		Actor_Says(kActorMcCoy, 6985, 16);
-		Actor_Says(kActorSebastian, 610, 14);
-	} else {
-		dialogue();
+		AI_Movement_Track_Unpause(kActorSebastian);
+		return; //true;
 	}
-
-	AI_Movement_Track_Unpause(56);
-	return; //true;
+	return; //false;
 }
 
 void AIScriptSebastian::EnteredScene(int sceneId) {
@@ -92,29 +92,30 @@ void AIScriptSebastian::OtherAgentExitedThisScene(int otherActorId) {
 }
 
 void AIScriptSebastian::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
-	if (otherActorId || !combatMode)
-		return; //false;
+	if (otherActorId == kActorMcCoy
+	 && combatMode
+	) {
+		Global_Variable_Increment(kVariableGunPulledInFrontOfSebastian, 1);
+		Actor_Modify_Friendliness_To_Other(kActorSebastian, kActorMcCoy, -5);
+		AI_Movement_Track_Pause(kActorSebastian);
+		Actor_Face_Actor(kActorSebastian, kActorMcCoy, true);
 
-	Global_Variable_Increment(46, 1);
-	Actor_Modify_Friendliness_To_Other(kActorSebastian, kActorMcCoy, -5);
-	AI_Movement_Track_Pause(56);
-	Actor_Face_Actor(kActorSebastian, kActorMcCoy, 1);
+		if (Global_Variable_Query(kVariableGunPulledInFrontOfSebastian) == 1) {
+			Actor_Says(kActorSebastian, 680, 12);
+			Actor_Face_Actor(kActorMcCoy, kActorSebastian, true);
+			Actor_Says_With_Pause(kActorMcCoy, 7265, 0.0, kAnimationModeCombatIdle);
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatIdle);
+			Delay(500);
+			Actor_Says(kActorSebastian, 690, 16);
+		} else {
+			Actor_Says(kActorSebastian, 700, 15);
+			Actor_Says_With_Pause(kActorMcCoy, 7270, 0.0, kAnimationModeCombatIdle);
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatIdle);
+		}
+		AI_Movement_Track_Unpause(kActorSebastian);
 
-	if (Global_Variable_Query(46) == 1) {
-		Actor_Says(kActorSebastian, 680, 12);
-		Actor_Face_Actor(kActorMcCoy, kActorSebastian, 1);
-		Actor_Says_With_Pause(kActorMcCoy, 7265, 0.0, 4);
-		Actor_Change_Animation_Mode(kActorMcCoy, 4);
-		Delay(500);
-		Actor_Says(kActorSebastian, 690, 16);
-	} else {
-		Actor_Says(kActorSebastian, 700, 15);
-		Actor_Says_With_Pause(kActorMcCoy, 7270, 0.0, 4);
-		Actor_Change_Animation_Mode(kActorMcCoy, 4);
+		return; //true;
 	}
-	AI_Movement_Track_Unpause(56);
-
-	return; //true;
 }
 
 void AIScriptSebastian::ShotAtAndMissed() {
@@ -273,7 +274,7 @@ bool AIScriptSebastian::UpdateAnimation(int *animation, int *frame) {
 
 bool AIScriptSebastian::ChangeAnimationMode(int mode) {
 	switch (mode) {
-	case 0:
+	case kAnimationModeIdle:
 		if (_animationState > 11) {
 			_animationState = 0;
 			_animationFrame = 0;
@@ -281,59 +282,68 @@ bool AIScriptSebastian::ChangeAnimationMode(int mode) {
 			_flag = true;
 		}
 		break;
-	case 1:
+
+	case kAnimationModeWalk:
 		_animationState = 1;
 		_animationFrame = 0;
 		break;
-	case 3:
+
+	case kAnimationModeTalk:
 		_animationState = 4;
 		_animationFrame = 0;
 		_flag = 0;
 		break;
+
 	case 12:
 		_animationState = 5;
 		_animationFrame = 0;
 		_flag = 0;
 		break;
+
 	case 13:
 		_animationState = 6;
 		_animationFrame = 0;
 		_flag = 0;
 		break;
+
 	case 14:
 		_animationState = 7;
 		_animationFrame = 0;
 		_flag = 0;
 		break;
+
 	case 15:
 		_animationState = 8;
 		_animationFrame = 0;
 		_flag = 0;
 		break;
+
 	case 16:
 		_animationState = 9;
 		_animationFrame = 0;
 		_flag = 0;
 		break;
+
 	case 17:
 		_animationState = 10;
 		_animationFrame = 0;
 		_flag = 0;
 		break;
+
 	case 18:
 		_animationState = 11;
 		_animationFrame = 0;
 		_flag = 0;
 		break;
+
 	case 20:
 		_animationState = 2;
 		_animationFrame = 0;
 		break;
-	case 48:
+
+	case kAnimationModeDie:
 		_animationState = 3;
 		_animationFrame = 0;
-		break;
-	default:
 		break;
 	}
 
@@ -366,54 +376,57 @@ void AIScriptSebastian::dialogue() {
 	Dialogue_Menu_Clear_List();
 
 	if (Actor_Query_Friendliness_To_Other(kActorSebastian, kActorMcCoy) >= 45) {
-		DM_Add_To_List_Never_Repeat_Once_Selected(930, 5, 5, 5);
-		DM_Add_To_List_Never_Repeat_Once_Selected(940, -1, 5, 6);
-		DM_Add_To_List_Never_Repeat_Once_Selected(950, 5, 5, 5);
+		DM_Add_To_List_Never_Repeat_Once_Selected(930, 5, 5, 5); // MORAJI AND CHEW
+		DM_Add_To_List_Never_Repeat_Once_Selected(940, -1, 5, 6); // EISENDULLER
+		DM_Add_To_List_Never_Repeat_Once_Selected(950, 5, 5, 5); // TYRELL
 	}
 
 	if (Actor_Clue_Query(kActorMcCoy, kClueAnsweringMachineMessage)) {
-		DM_Add_To_List_Never_Repeat_Once_Selected(960, 3, -1, 5);
+		DM_Add_To_List_Never_Repeat_Once_Selected(960, 3, -1, 5); // TWINS
 	}
 
-	if (Actor_Clue_Query(kActorMcCoy, kClueAnsweringMachineMessage) && Actor_Clue_Query(kActorMcCoy, kClueEnvelope)) {
-		DM_Add_To_List_Never_Repeat_Once_Selected(970, -1, 4, -1);
+	if (Actor_Clue_Query(kActorMcCoy, kClueAnsweringMachineMessage)
+	 && Actor_Clue_Query(kActorMcCoy, kClueEnvelope)
+	) {
+		DM_Add_To_List_Never_Repeat_Once_Selected(970, -1, 4, -1); // RUNCITER
 	}
 
-	DM_Add_To_List_Never_Repeat_Once_Selected(980, -1, -1, 7);
-	DM_Add_To_List_Never_Repeat_Once_Selected(990, 7, 3, -1);
+	DM_Add_To_List_Never_Repeat_Once_Selected(980, -1, -1, 7); // ROBBERS
+	DM_Add_To_List_Never_Repeat_Once_Selected(990, 7, 3, -1); // NEXUS-6
 
 	if (Dialogue_Menu_Query_List_Size()) {
-		Dialogue_Menu_Add_DONE_To_List(1000);
+		Dialogue_Menu_Add_DONE_To_List(1000); // DONE
 		Dialogue_Menu_Appear(320, 240);
+		int answer = Dialogue_Menu_Query_Input();
 		Dialogue_Menu_Disappear();
 
-		switch (Dialogue_Menu_Query_Input()) {
-		case 930:
+		switch (answer) {
+		case 930: // MORAJI AND CHEW
 			Actor_Says(kActorMcCoy, 7075, 13);
 			Actor_Says(kActorSebastian, 290, 12);
 			Actor_Says(kActorSebastian, 300, 13);
 			break;
 
-		case 940:
+		case 940: // EISENDULLER
 			Actor_Says(kActorMcCoy, 7080, 15);
 			Actor_Says(kActorSebastian, 310, 13);
 			Actor_Says(kActorSebastian, 320, 16);
 			Actor_Says(kActorSebastian, 340, 12);
 			Actor_Says(kActorMcCoy, 7120, 14);
-			Actor_Says(kActorSebastian, 350, 3);
+			Actor_Says(kActorSebastian, 350, kAnimationModeTalk);
 			Actor_Says(kActorMcCoy, 7125, 13);
 			Actor_Says(kActorSebastian, 360, 17);
-			Actor_Says_With_Pause(kActorMcCoy, 7130, 1.0, 3);
+			Actor_Says_With_Pause(kActorMcCoy, 7130, 1.0, kAnimationModeTalk);
 			Actor_Says(kActorMcCoy, 7135, 18);
 			break;
 
-		case 950:
+		case 950: // TYRELL
 			Actor_Says(kActorMcCoy, 7085, 15);
 			Actor_Says_With_Pause(kActorSebastian, 370, 0.30f, 13);
 			Actor_Says_With_Pause(kActorSebastian, 380, 0.70f, 17);
 			Actor_Says(kActorSebastian, 390, 14);
 			if (Actor_Clue_Query(kActorMcCoy, kClueChessTable)) {
-				Actor_Says(kActorMcCoy, 7140, 3);
+				Actor_Says(kActorMcCoy, 7140, kAnimationModeTalk);
 				Actor_Says(kActorSebastian, 400, 12);
 				Actor_Says(kActorMcCoy, 7145, 16);
 				Actor_Says(kActorSebastian, 410, 13);
@@ -423,7 +436,7 @@ void AIScriptSebastian::dialogue() {
 			}
 			break;
 
-		case 960:
+		case 960: // TWINS
 			Actor_Says(kActorMcCoy, 7090, 17);
 			Actor_Says(kActorSebastian, 440, 14);
 			Actor_Says(kActorSebastian, 450, 13);
@@ -437,7 +450,7 @@ void AIScriptSebastian::dialogue() {
 			setMcCoyIsABladeRunner();
 			break;
 
-		case 970:
+		case 970: // RUNCITER
 			Actor_Says(kActorMcCoy, 7095, 13);
 			Actor_Says(kActorSebastian, 500, 15);
 			Actor_Says(kActorMcCoy, 7170, 17);
@@ -450,14 +463,14 @@ void AIScriptSebastian::dialogue() {
 			setMcCoyIsABladeRunner();
 			break;
 
-		case 980:
+		case 980: // ROBBERS
 			Actor_Says(kActorMcCoy, 7100, 12);
 			Actor_Says(kActorSebastian, 540, 16);
 			Actor_Says(kActorMcCoy, 7195, 18);
 			Actor_Says(kActorSebastian, 720, 12);
 			break;
 
-		case 990:
+		case 990: // NEXUS-6
 			Actor_Says(kActorMcCoy, 7105, 18);
 			setMcCoyIsABladeRunner();
 			break;
@@ -475,7 +488,7 @@ void AIScriptSebastian::dialogue() {
 }
 
 void AIScriptSebastian::setMcCoyIsABladeRunner() {
-	Actor_Clue_Acquire(kActorSebastian, kClueMcCoyIsABladeRunner, true, 0);
+	Actor_Clue_Acquire(kActorSebastian, kClueMcCoyIsABladeRunner, true, kActorMcCoy);
 	Actor_Modify_Friendliness_To_Other(kActorSebastian, kActorMcCoy, -5);
 	Actor_Says(kActorSebastian, 560, 15);
 	Actor_Says(kActorMcCoy, 7200, 14);
