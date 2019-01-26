@@ -892,6 +892,7 @@ enum Flags {
 	kFlagCT07ZubenAttack = 516,
 	kFlagTB06DogCollarTaken = 519,
 	kFlagTB06KitchenBoxTaken = 520,
+	kFlagCT10Entered = 525,
 	kFlagCT11toDR01 = 531,
 	kFlagCT09Entered = 538,
 	kFlagCT09LeonInterrupted = 539,
@@ -904,6 +905,7 @@ enum Flags {
 	kFlagKIAPrivacyAddonIntro = 599,
 	kFlagTB07toTB02 = 608,
 	kFlagTB07RachaelTalk = 612,
+	kFlagCT11DogWrapperTaken = 645,
 	kFlagMA04McCoySleeping = 647,
 	kFlagMA04PhoneMessageFromClovis = 649,
 	kFlagMA04PhoneMessageFromLucy = 650,
@@ -934,6 +936,7 @@ enum Flags {
 	kFlagCT02McCoyFell = 719,
 	kFlagCT02McCoyCombatReady = 720,
 	kFlagZubenBountyPaid = 723,
+	kFlagCT11DogWrapperAvailable = 725,
 	kFlagAR02Entered = 726,
 	kFlagPS04WeaponsOrderForm = 727
 };
@@ -1370,6 +1373,7 @@ enum GameItems {
 	kItemChair = 109,
 	kItemWeaponsCrate = 110,
 	kItemWeaponsOrderForm = 111,
+	kItemDogWrapper = 115,
 	kItemTyrellSalesPamphlet = 119,
 	kItemMoonbusPhoto = 120,
 	kItemGreenPawnLock = 121,
