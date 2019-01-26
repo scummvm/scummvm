@@ -35,9 +35,10 @@ SAVED_ASFLAGS=$ASFLAGS
 SAVED_CPPFLAGS=$CPPFLAGS
 SAVED_CXX=$CXX
 SAVED_CXXFLAGS=$CXXFLAGS
+SAVED_DWP=$DWP
 SAVED_LD=$LD
 SAVED_LDFLAGS=$LDFLAGS
-SAVED_PKG_CONFIG_LIBDIR=$PKG_CONFIG_LIBDIR
+SAVED_PKG_CONFIG_LIBDIR=${PKG_CONFIG_LIBDIR:-unset}
 SAVED_RANLIB=$RANLIB
 SAVED_SDL_CONFIG=$SDL_CONFIG
 SAVED_STRIP=$STRIP
@@ -151,6 +152,7 @@ _sndio=no
 _timidity=no
 _zlib=auto
 _mpeg2=auto
+_a52=no
 _sparkle=auto
 _osxdockplugin=auto
 _jpeg=auto
@@ -169,6 +171,7 @@ _iconv=auto
 _taskbar=auto
 _updates=no
 _libunity=auto
+_dialogs=auto
 # Default option behavior yes/no
 _debug_build=auto
 _release_build=auto
@@ -182,8 +185,10 @@ _build_hq_scalers=no
 _enable_prof=no
 _global_constructors=no
 _no_undefined_var_template=no
+_no_pragma_pack=no
 _bink=yes
 _cloud=no
+_pandoc=no
 # Default vkeybd/keymapper/eventrec options
 _vkeybd=no
 _keymapper=no
@@ -208,6 +213,7 @@ _ranlib=ranlib
 _strip=strip
 _ar="ar cru"
 _as="as"
+_dwp=dwp
 _windres=windres
 _stagingpath="staging"
 _win32path="C:/residualvm"
@@ -226,6 +232,10 @@ _nasmpath="$PATH"
 NASMFLAGS=""
 NASM=""
 _tainted_build=no
+PANDOC=""
+_pandocpath="$PATH"
+_pandocoutput="README"
+_pandocformat="plain"
 # The following variables are automatically detected, and should not
 # be modified otherwise. Consider them read-only.
 _posix=no
@@ -301,7 +311,7 @@ cc_check_no_clean() {
 }
 
 cc_check_clean() {
-	rm -rf $TMPC $TMPO $TMPO.o $TMPO.dSYM $TMPO$HOSTEXEEXT "$@"
+	rm -rf $TMPC $TMPO $TMPO.o $TMPO.dwo $TMPO.dSYM $TMPO$HOSTEXEEXT "$@"
 }
 
 cc_check() {
@@ -972,6 +982,7 @@ Optional Features:
   --disable-translation    don't build support for translated messages
   --disable-taskbar        don't build support for taskbar and launcher integration
   --disable-cloud          don't build cloud support
+  --disable-system-dialogs don't build support for system dialogs
   --enable-vkeybd          build virtual keyboard support
   --enable-keymapper       build key mapper support
   --enable-updates         build support for updates
@@ -1004,6 +1015,8 @@ Optional Libraries:
 
   --with-mpeg2-prefix=DIR  prefix where libmpeg2 is installed (optional)
   --enable-mpeg2           enable mpeg2 codec for cutscenes [autodetect]
+  --with-a52-prefix=DIR    Prefix where liba52 is installed (optional)
+  --enable-a52             enable a52 codec for MPEG decoder [autodetect]
 
   --with-opengl-prefix=DIR prefix where OpenGL (ES) is installed (optional)
   --disable-opengl         disable OpenGL (ES) support [autodetect]
@@ -1013,7 +1026,7 @@ Optional Libraries:
   --with-glew-prefix=DIR   prefix where GLEW is installed (optional)
   --disable-glew           disable GLEW support [autodetect]
 
-  --with-jpeg-prefix=DIR   prefix where libjpeg is installed (optional)
+  --with-jpeg-prefix=DIR   Prefix where libjpeg is installed (optional)
   --disable-jpeg           disable JPEG decoder [autodetect]
 
   --with-png-prefix=DIR    prefix where libpng is installed (optional)
@@ -1050,6 +1063,9 @@ Optional Libraries:
   --with-nasm-prefix=DIR   prefix where nasm executable is installed (optional)
   --disable-nasm           disable assembly language optimizations [autodetect]
 
+  --with-pandoc-output=FILE  filename to convert README.md to (optional)
+  --with-pandoc-format=FORMAT   pandoc format to use during the conversion (optional)
+
   --with-readline-prefix=DIR   prefix where readline is installed (optional)
   --disable-readline       disable readline support in text console [autodetect]
 
@@ -1073,6 +1089,7 @@ Some influential environment variables:
                      headers in a nonstandard directory <include dir>
   CXX                C++ compiler command
   CXXFLAGS           C++ compiler flags
+  DWP                DWARF packing utility command
   LD                 linker command
   LDFLAGS            linker flags, e.g. -L<lib dir> if you have libraries in a
                      nonstandard directory <lib dir>
@@ -1099,7 +1116,7 @@ cat >> $TMPLOG <<EOF
 Invocation command line was:
 $0 $@
 Saved environment variables:
-AR="$SAVED_AR" AS="$SAVED_AS" ASFLAGS="$SAVED_ASFLAGS" CPPFLAGS="$SAVED_CPPFLAGS" CXX="$SAVED_CXX" CXXFLAGS="$SAVED_CXXFLAGS" LD="$SAVED_LD" LDFLAGS="$SAVED_LDFLAGS" PKG_CONFIG_LIBDIR="$SAVED_PKG_CONFIG_LIBDIR" RANLIB="$SAVED_RANLIB" SDL_CONFIG="$SAVED_SDL_CONFIG" STRIP="$SAVED_STRIP" WINDRES="$SAVED_WINDRES" WINDRESFLAGS="$SAVED_WINDRESFLAGS"
+AR="$SAVED_AR" AS="$SAVED_AS" ASFLAGS="$SAVED_ASFLAGS" CPPFLAGS="$SAVED_CPPFLAGS" CXX="$SAVED_CXX" CXXFLAGS="$SAVED_CXXFLAGS" DWP="$SAVED_DWP" LD="$SAVED_LD" LDFLAGS="$SAVED_LDFLAGS" PKG_CONFIG_LIBDIR="$SAVED_PKG_CONFIG_LIBDIR" RANLIB="$SAVED_RANLIB" SDL_CONFIG="$SAVED_SDL_CONFIG" STRIP="$SAVED_STRIP" WINDRES="$SAVED_WINDRES" WINDRESFLAGS="$SAVED_WINDRESFLAGS"
 EOF
 
 
@@ -1140,6 +1157,8 @@ for ac_option in $@; do
 	--disable-nasm)           _nasm=no        ;;
 	--enable-mpeg2)           _mpeg2=yes      ;;
 	--disable-mpeg2)          _mpeg2=no       ;;
+	--enable-a52)             _a52=yes        ;;
+	--disable-a52)            _a52=no         ;;
 	--disable-jpeg)           _jpeg=no        ;;
 	--enable-jpeg)            _jpeg=yes       ;;
 	--disable-png)            _png=no         ;;
@@ -1158,6 +1177,8 @@ for ac_option in $@; do
 	--disable-iconv)          _iconv=no       ;;
 	--enable-taskbar)         _taskbar=yes    ;;
 	--disable-taskbar)        _taskbar=no     ;;
+	--enable-system-dialogs)  _dialogs=yes    ;;
+	--disable-system-dialogs) _dialogs=no     ;;
 	--enable-sdlnet)          _sdlnet=yes     ;;
 	--disable-sdlnet)         _sdlnet=no      ;;
 	--enable-libcurl)         _libcurl=yes     ;;
@@ -1201,6 +1222,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		MPEG2_CFLAGS="-I$arg/include"
 		MPEG2_LIBS="-L$arg/lib"
+		;;
+	--with-a52-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		A52_CFLAGS="-I$arg/include"
+		A52_LIBS="-L$arg/lib"
 		;;
 	--with-alsa-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -1323,6 +1349,7 @@ for ac_option in $@; do
 	--enable-release)
 		_release_build=yes
 		_optimizations=yes
+		_updates=yes
 		;;
 	--disable-release)
 		_release_build=no
@@ -1352,6 +1379,16 @@ for ac_option in $@; do
 	--with-nasm-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		_nasmpath="$arg:$arg/bin"
+		;;
+	--with-pandoc-output=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		_pandocoutput="$arg"
+		_pandoc=yes
+		;;
+	--with-pandoc-format=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		_pandocformat="$arg"
+		_pandoc=yes
 		;;
 	--with-staticlib-prefix=*)
 		_staticlibpath=`echo $ac_option | cut -d '=' -f 2`
@@ -1471,6 +1508,7 @@ androidsdl-x86_64)
 arm-*riscos)
 	_host_os=riscos
 	_host_cpu=arm
+	_host_alias=$_host
 	datarootdir='/\<ScummVM\$$Dir\>'
 	datadir='${datarootdir}/data'
 	docdir='${datarootdir}/docs'
@@ -1576,6 +1614,7 @@ openpandora)
 ppc-amigaos)
 	_host_os=amigaos
 	_host_cpu=powerpc
+	_host_alias=$_host
 	;;
 ps2)
 	_host_os=ps2
@@ -1675,12 +1714,9 @@ else
 	_strip=$_host_alias-strip
 	_ar="$_host_alias-ar cru"
 	_as="$_host_alias-as"
+	_dwp=$_host_alias-dwp
 	_windres=$_host_alias-windres
 fi
-
-#
-# Determine extra build flags for debug and/or release builds
-#
 
 case $_host in
 caanoo | gp2x | gp2xwiz | openpandora | ps2 | psp2)
@@ -1695,26 +1731,6 @@ caanoo | gp2x | gp2xwiz | openpandora | ps2 | psp2)
 	fi
 	;;
 esac
-
-if test "$_debug_build" != no; then
-	# debug mode not explicitly disabled -> compile with debug information
-	case $_host_os in
-	amigaos*)
-		# AmigaOS debugger uses plain stabs, with no gdb extensions.
-		append_var CXXFLAGS "-gstabs"
-	;;
-	*)
-		# Use the system default format for debug info.
-		append_var CXXFLAGS "-g"
-	esac
-fi
-
-if test "$_release_build" = yes; then
-	# Add a define, which indicates we are doing
-	# an build for a release version.
-	append_var DEFINES "-DRELEASE_BUILD"
-fi
-
 
 #
 # Determine extension used for executables
@@ -1752,6 +1768,12 @@ android)
 3ds | ds | gamecube | wii)
 	if test -z "$DEVKITPRO"; then
 		echo "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to devkitPRO>"
+		exit 1
+	fi
+	;;
+dreamcast)
+	if test -z "$RONINDIR"; then
+		echo "Please set RONINDIR in your environment. export RONINDIR=<path to libronin>"
 		exit 1
 	fi
 	;;
@@ -1898,6 +1920,10 @@ if test -n "$AS"; then
 	_as=$AS
 fi
 
+if test -n "$DWP"; then
+	_dwp=$DWP
+fi
+
 if test -n "$WINDRES"; then
 	_windres=$WINDRES
 fi
@@ -2042,7 +2068,7 @@ if test "$have_gcc" = yes ; then
 			case $_host_os in
 			# newlib-based system include files suppress non-C89 function
 			# declarations under __STRICT_ANSI__
-			3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | ps3 | psp2 | tizen | wii | wince )
+			3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | mint* | n64 | psp | ps2 | ps3 | psp2 | tizen | wii | wince )
 				;;
 			*)
 				append_var CXXFLAGS "-ansi"
@@ -2073,12 +2099,50 @@ if test "$_use_cxx11" = "yes" ; then
 fi
 echo $_use_cxx11
 
+#
+# Determine extra build flags for debug and/or release builds
+#
+if test "$_debug_build" != no; then
+	# debug mode not explicitly disabled -> compile with debug information
+	echo_n "Checking best debug mode... "
+
+	debug_mode=-g
+	test "$_host_os" = amigaos && debug_mode=-gstabs
+	append_var CXXFLAGS "$debug_mode"
+	echo_n -- "$debug_mode"
+
+	echo "int main() { return 0; }" > $TMPC
+	if `which $_dwp >/dev/null 2>&1` && cc_check_no_clean $debug_mode -gsplit-dwarf && `$_dwp -e $TMPO -o /dev/null >/dev/null 2>&1`; then
+		append_var CXXFLAGS "-gsplit-dwarf"
+		add_line_to_config_mk "SPLIT_DWARF = 1"
+		echo_n -- " + split DWARF"
+		if cc_check_no_clean $debug_mode -gsplit-dwarf -fuse-ld=gold -Wl,--gdb-index; then
+			append_var LDFLAGS "-fuse-ld=gold"
+			append_var LDFLAGS "-Wl,--gdb-index"
+			echo_n -- " + Gold"
+		fi
+	fi
+
+	if cc_check_no_clean $debug_mode -fvar-tracking-assignments; then
+		append_var CXXFLAGS "-fvar-tracking-assignments"
+		echo_n -- " + var tracking"
+	fi
+	cc_check_clean
+	echo ""
+fi
+
+if test "$_release_build" = yes; then
+	# Add a define, which indicates we are doing
+	# an build for a release version.
+	append_var DEFINES "-DRELEASE_BUILD"
+fi
+
 # By default, we add -pedantic to the CXXFLAGS to catch some potentially
 # non-portable constructs, like use of GNU extensions.
 # However, some platforms use GNU extensions in system header files, so
 # for these we must not use -pedantic.
 case $_host_os in
-android | androidsdl | gamecube | psp | tizen | wii | webos)
+3ds | android | androidsdl | gamecube | ps2 | psp | tizen | wii | webos)
 	;;
 *)
 	# ICC does not support pedantic, while GCC and clang do.
@@ -2382,6 +2446,7 @@ case $_host_os in
 		else
 			append_var LDFLAGS "-Wl,--no-gc-sections"
 		fi
+		append_var LDFLAGS "-L$DEVKITPRO/libctru/lib"
 		append_var LDFLAGS "-L$DEVKITPRO/portlibs/3ds/lib"
 		append_var LIBS "-lcitro3d -lctru"
 		;;
@@ -2395,6 +2460,7 @@ case $_host_os in
 		append_var CXXFLAGS "-Wno-format"
 		add_line_to_config_mk 'AMIGAOS = 1'
 		_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
+		_nuked_opl=no
 		;;
 	android)
 		case $_host in
@@ -2705,9 +2771,12 @@ case $_host_os in
 		append_var LIBS "-lmingw32 -lwinmm -lgdi32"
 		append_var OBJS "residualvmwinres.o"
 		add_line_to_config_mk 'WIN32 = 1'
+		_port_mk="backends/platform/sdl/win32/win32.mk"
 		;;
 	mint*)
 		append_var DEFINES "-DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		append_var DEFINES "-D_GNU_SOURCE"
+		append_var DEFINES "-D_ISOC11_SOURCE"
 		;;
 	msys)
 		echo ERROR: Using the MSYS shell in msys mode is not supported. Please use the MSYS shell in mingw mode instead.
@@ -2725,6 +2794,7 @@ case $_host_os in
 		append_var DEFINES "-DDISABLE_SID"
 		append_var DEFINES "-DREDUCE_MEMORY_USAGE"
 		add_line_to_config_mk 'N64 = 1'
+		_nuked_opl=no
 		;;
 	ps2)
 		append_var CXXFLAGS "-G2"
@@ -2916,11 +2986,6 @@ if test -n "$_host"; then
 		arm-*riscos)
 			_opengl_mode=none
 			_build_hq_scalers=no
-			# toolchain binaries prefixed by host
-			_ranlib=$_host-ranlib
-			_strip=$_host-strip
-			_ar="$_host-ar cru"
-			_as="$_host-as"
 			;;
 		bfin*)
 			;;
@@ -2953,6 +3018,7 @@ if test -n "$_host"; then
 			append_var CXXFLAGS "-mips32"
 			_backend="dingux"
 			_mt32emu=no
+			_nuked_opl=no
 			_optimization_level=-O3
 			# Disable alsa midi to get the port build on OpenDingux toolchain
 			_alsa=no
@@ -3011,13 +3077,11 @@ if test -n "$_host"; then
 			append_var CXXFLAGS "-fdelete-null-pointer-checks"
 			_backend="dc"
 			_build_scalers=no
+			# These two are needed due to shortcomings of the
+			# detection systems.  Do not remove until auto-
+			# detection works correctly.
 			_mad=yes
 			_zlib=yes
-			if test -z "$RONINDIR"; then
-				add_line_to_config_mk "ronindir := /usr/local/ronin"
-			else
-				add_line_to_config_mk "ronindir := $RONINDIR"
-			fi
 			_port_mk="backends/platform/dc/dreamcast.mk"
 			;;
 		ds)
@@ -3034,6 +3098,7 @@ if test -n "$_host"; then
 			_backend="ds"
 			_build_scalers=no
 			_mt32emu=no
+			_nuked_opl=no
 			_port_mk="backends/platform/ds/ds.mk"
 			;;
 		gamecube)
@@ -3109,15 +3174,12 @@ if test -n "$_host"; then
 		ios7)
 			append_var DEFINES "-DIPHONE"
 			_backend="ios7"
-			_build_scalers=no
 			_seq_midi=no
 			_timidity=no
 			;;
 		m68k-atari-mint)
-			append_var DEFINES "-DSYSTEM_NOT_SUPPORTING_D_TYPE"
-			_ranlib=m68k-atari-mint-ranlib
-			_ar="m68k-atari-mint-ar cru"
 			_seq_midi=no
+			_timidity=no
 			;;
 		maemo)
 			_optimization_level=-Os
@@ -3237,13 +3299,6 @@ if test -n "$_host"; then
 			LDFLAGS=`echo $LDFLAGS | sed 's/-use-dynld//'`
 			append_var LDFLAGS "-static"
 
-			# toolchain binaries prefixed by host
-			_ranlib=$_host-ranlib
-			_strip=$_host-strip
-			_ar="$_host-ar cru"
-			_as="$_host-as"
-			_windres=$_host-windres
-
 			_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
 			;;
 		ps2)
@@ -3257,12 +3312,13 @@ if test -n "$_host"; then
 			_backend="ps2"
 			_build_scalers=no
 			_mt32emu=no
+			_nuked_opl=no
 			# HACK to enable mad & zlib (they are not properly detected due to linker issues).
 			# This trick doesn't work for tremor right now, as the PS2 port the resulting library
 			# libtremor, while our code later on expects it to be called libvorbisidec.
 			# TODO: Enable tremor, e.g. by adding  -ltremor or by renaming the lib.
 			# Disable this for older SDK as this breaks the build otherwise...
-			if test -z "$PS2SDK_OLD"; then
+			if test -z "$PS2SDK_OLD" && test "$_tremor" = auto; then
 				_tremor=yes
 			fi
 			_mad=yes
@@ -3386,16 +3442,18 @@ case $_backend in
 		;;
 	dc)
 		append_var INCLUDES '-I$(srcdir)/backends/platform/dc'
-		append_var INCLUDES '-isystem $(ronindir)/include'
+		append_var INCLUDES "-isystem $RONINDIR/include"
 		append_var LDFLAGS "-Wl,-Ttext,0x8c010000"
 		append_var LDFLAGS "-nostartfiles"
-		append_var LDFLAGS '$(ronindir)/lib/crt0.o'
-		append_var LDFLAGS '-L$(ronindir)/lib'
+		append_var LDFLAGS "-L$RONINDIR/lib"
+		append_var LDFLAGS "$RONINDIR/lib/crt0.o"
 		# Enable serial debugging output only when --enable-debug is passed
 		if test "$_release_build" = yes -o "$_debug_build" != yes; then
 			append_var LIBS "-lronin-noserial -lm"
+			append_var LDFLAGS "-lronin-noserial -lm"
 		else
 			append_var LIBS "-lronin -lm"
+			append_var LDFLAGS "-lronin -lm"
 		fi
 		;;
 	dingux)
@@ -3465,6 +3523,10 @@ case $_backend in
 		fi
 		append_var LDFLAGS "-L$PS2SDK/ee/lib"
 		append_var LDFLAGS "-L$PS2SDK/ports/lib"
+		if test -d "$PS2DEV/isjpcm"; then
+			append_var INCLUDES "-I$PS2DEV/isjpcm/include"
+			append_var LDFLAGS "-L$PS2DEV/isjpcm/lib"
+		fi
 		append_var LIBS "-lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm"
 		append_var LIBS "-lm -lc -lfileXio -lkernel -lstdc++"
 		;;
@@ -3474,6 +3536,7 @@ case $_backend in
 		append_var DEFINES "-DDISABLE_DOSBOX_OPL"
 		append_var LIBS "-lpng"
 		append_var LIBS "-Wl,-Map,mapfile.txt"
+		_nuked_opl=no
 		;;
 	psp2)
 		append_var LIBS "-lvitashaders -lSDL2 -lvita2d_fbo -lSceCommonDialog_stub"
@@ -4208,7 +4271,7 @@ echo "$_png"
 # Check for Theora Decoder
 #
 echocheck "libtheoradec >= 1.0"
-if test "$_vorbis" = no ; then
+if test "$_vorbis" = no && test "$_tremor" = no ; then
 	echo "skipping. no vorbis"
 	_theoradec=notsupported
 fi
@@ -4216,7 +4279,6 @@ if test "$_theoradec" = auto ; then
 	_theoradec=no
 	cat > $TMPC << EOF
 #include <theora/theoradec.h>
-#include <vorbis/codec.h>
 int main(void) { th_ycbcr_buffer yuv; th_decode_ycbcr_out(NULL, yuv);  }
 EOF
 	cc_check $THEORADEC_CFLAGS $THEORADEC_LIBS -ltheoradec && _theoradec=yes
@@ -4362,10 +4424,48 @@ define_in_config_if_yes "$_mpeg2" 'USE_MPEG2'
 echo "$_mpeg2"
 
 #
+# Check for liba52
+#
+echocheck "liba52"
+if test "$_a52" = auto ; then
+	_a52=no
+	cat > $TMPC << EOF
+typedef signed $type_1_byte int8_t;
+typedef signed $type_2_byte int16_t;
+typedef signed $type_4_byte int32_t;
+
+typedef unsigned $type_1_byte uint8_t;
+typedef unsigned $type_2_byte uint16_t;
+typedef unsigned $type_4_byte uint32_t;
+
+extern "C" {
+#include <a52dec/a52.h>
+}
+
+int main(void) {
+	a52_state_t *state = a52_init(0);
+	a52_free(state);
+	return 0;
+}
+EOF
+
+	if test -n "$_host"; then
+		# don't execute while cross compiling
+		cc_check $A52_CFLAGS $A52_LIBS -la52 && _a52=yes
+	else
+		cc_check_no_clean $A52_CFLAGS $A52_LIBS -la52 && $TMPO$HOSTEXEEXT && _a52=yes
+		cc_check_clean
+	fi
+fi
+if test "$_a52" = yes ; then
+	INCLUDES="$INCLUDES $A52_FLAGS"
+	LIBS="$LIBS $A52_LIBS -la52"
+fi
+define_in_config_if_yes "$_a52" 'USE_A52'
+echo "$_a52"
+
+#
 # Check for Sparkle if updates support is enabled
-#
-#
-# Check is NSDockTilePlugIn protocol is supported
 #
 case $_host_os in
 	darwin*)
@@ -5123,6 +5223,32 @@ fi
 define_in_config_if_yes $_nasm 'USE_NASM'
 
 #
+# Check for pandoc
+#
+if test "$_pandoc" = yes ; then
+  echocheck "pandoc"
+
+  IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=$SEPARATOR
+
+  for path_dir in $_pandocpath; do
+    if test -x "$path_dir/pandoc$NATIVEEXEEXT" ; then
+      PANDOC="$path_dir/pandoc$NATIVEEXEEXT"
+      break
+    fi
+  done
+
+	IFS="$ac_save_ifs"
+
+  if ! test "$PANDOC" ; then
+    _pandoc = no
+  fi
+
+	echo $_pandoc
+fi
+
+define_in_config_if_yes $_pandoc 'USE_PANDOC'
+
+#
 # Enable vkeybd / keymapper / event recorder
 #
 define_in_config_if_yes $_vkeybd 'ENABLE_VKEYBD'
@@ -5154,7 +5280,7 @@ else
 int main(void) { setlocale(LC_ALL, ""); return 0; }
 EOF
 		_detectlang=no
-		cc_check $LDFLAGS $CXXFLAGS && _detectlang=yes
+		cc_check && _detectlang=yes
 	fi
 
 	define_in_config_h_if_yes $_detectlang 'USE_DETECTLANG'
@@ -5194,6 +5320,31 @@ else
 	esac
 fi
 define_in_config_if_yes $_taskbar 'USE_TASKBAR'
+
+#
+# Check whether to build system dialogs support
+#
+echo_n "Building system dialogs support... "
+if test "$_dialogs" = "no"; then
+	echo "no"
+else
+	case $_host_os in
+	mingw*)
+		append_var LIBS "-lole32 -luuid"
+		echo "win32"
+		_dialogs=yes
+		;;
+	darwin*)
+		echo "osx"
+		_dialogs=yes
+		;;
+	*)
+		echo "no"
+		_dialogs=no
+		;;
+	esac
+fi
+define_in_config_if_yes $_dialogs 'USE_SYSDIALOGS'
 
 #
 # Check whether to build Bink video support
@@ -5332,6 +5483,7 @@ fi
 case $_backend in
 	3ds)
 		if test "$_freetype2" = yes -a "$_png" = yes; then
+			append_var LIBS "-lbz2"
 			append_var LIBS "-lpng"
 		fi
 		if test "$_tremor" = yes -o "$_flac" = yes; then
@@ -5555,6 +5707,7 @@ STRIP := $_strip
 AR := $_ar
 AS := $_as
 ASFLAGS := $ASFLAGS
+DWP := $_dwp
 WINDRES := $_windres
 WINDRESFLAGS := $WINDRESFLAGS
 STAGINGPATH=$_stagingpath
@@ -5574,6 +5727,9 @@ EXEPRE := $HOSTEXEPRE
 EXEEXT := $HOSTEXEEXT
 NASM := $NASM
 NASMFLAGS := $NASMFLAGS
+PANDOC := $PANDOC
+PANDOCOUTPUT := $_pandocoutput
+PANDOCFORMAT := $_pandocformat
 ZLIB_LIBS := $ZLIB_LIBS
 ZLIB_CFLAGS := $ZLIB_CFLAGS
 
@@ -5604,6 +5760,7 @@ SAVED_ASFLAGS           := $SAVED_ASFLAGS
 SAVED_CPPFLAGS          := $SAVED_CPPFLAGS
 SAVED_CXX               := $SAVED_CXX
 SAVED_CXXFLAGS          := $SAVED_CXXFLAGS
+SAVED_DWP               := $SAVED_DWP
 SAVED_LD                := $SAVED_LD
 SAVED_LDFLAGS           := $SAVED_LDFLAGS
 SAVED_PKG_CONFIG_LIBDIR := $SAVED_PKG_CONFIG_LIBDIR

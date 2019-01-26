@@ -45,7 +45,9 @@ const CMakeProvider::Library *CMakeProvider::getLibraryFromFeature(const char *f
 		{ "mpeg2",     kSDLVersionAny, "FindMPEG2",    "MPEG2",    "MPEG2_INCLUDE_DIRS",    "MPEG2_mpeg2_LIBRARY", 0            },
 		{ "flac",      kSDLVersionAny, 0,              0,          0,                       0,                     "FLAC"       },
 		{ "mad",       kSDLVersionAny, 0,              0,          0,                       0,                     "mad"        },
-		{ "vorbis",    kSDLVersionAny, 0,              0,          0,                       0,                     "vorbisfile vorbis ogg" },
+		{ "ogg",       kSDLVersionAny, 0,              0,          0,                       0,                     "ogg"        },
+		{ "vorbis",    kSDLVersionAny, 0,              0,          0,                       0,                     "vorbisfile vorbis" },
+		{ "tremor",    kSDLVersionAny, 0,              0,          0,                       0,                     "vorbisidec" },
 		{ "theora",    kSDLVersionAny, 0,              0,          0,                       0,                     "theoradec"  },
 		{ "fluidsynth",kSDLVersionAny, 0,              0,          0,                       0,                     "fluidsynth" },
 		{ "faad",      kSDLVersionAny, 0,              0,          0,                       0,                     "faad"       },
@@ -83,7 +85,7 @@ void CMakeProvider::createWorkspace(const BuildSetup &setup) {
 	workspace << "# Generate options for the engines\n";
 	writeEngineOptions(workspace);
 
-	workspace << "include_directories(${" << setup.projectDescription << "_SOURCE_DIR} ${" << setup.projectDescription << "_SOURCE_DIR}/engines "
+	workspace << "include_directories(${" << setup.projectDescription << "_SOURCE_DIR}/" <<  setup.filePrefix << " ${" << setup.projectDescription << "_SOURCE_DIR}/" <<  setup.filePrefix << "/engines "
 			"$ENV{"<<LIBS_DEFINE<<"}/include .)\n\n";
 
 	workspace << "# Libraries and features\n\n";

@@ -314,6 +314,11 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
+	// HACK: Vorbis and Tremor can not be enabled simultaneously
+	if (getFeatureBuildState("tremor", setup.features)) {
+		setFeatureBuildState("vorbis", setup.features, false);
+	}
+
 	// Print status
 	cout << "Enabled engines:\n\n";
 	for (EngineDescList::const_iterator i = setup.engines.begin(); i != setup.engines.end(); ++i) {
@@ -705,7 +710,7 @@ void displayHelp(const char *exe) {
 	        "                           The default is \"12\", thus \"Visual Studio 2013\"\n"
 	        " --build-events           Run custom build events as part of the build\n"
 	        "                          (default: false)\n"
-	        " --installer              Create NSIS installer after the build (implies --build-events)\n"
+	        " --installer              Create installer after the build (implies --build-events)\n"
 	        "                          (default: false)\n"
 	        " --tools                  Create project files for the devtools\n"
 	        "                          (ignores --build-events and --installer, as well as engine settings)\n"
@@ -1025,11 +1030,13 @@ TokenList tokenize(const std::string &input, char separator) {
 namespace {
 const Feature s_features[] = {
 	// Libraries
-	{      "libz",        "USE_ZLIB", "zlib",             true, "zlib (compression) support" },
-	{       "mad",         "USE_MAD", "libmad",           true, "libmad (MP3) support" },
-	{    "vorbis",      "USE_VORBIS", "libvorbisfile_static libvorbis_static libogg_static", false, "Ogg Vorbis support" }, // ResidualVM change
+	{      "libz",        "USE_ZLIB", "zlib",             true,  "zlib (compression) support" },
+	{       "mad",         "USE_MAD", "libmad",           true,  "libmad (MP3) support" },
+	{       "ogg",         "USE_OGG", "libogg_static",    false, "Ogg support" }, // ResidualVM change
+	{    "vorbis",      "USE_VORBIS", "libvorbisfile_static libvorbis_static", false, "Vorbis support" }, // ResidualVM change
+	{    "tremor",      "USE_TREMOR", "libtremor", false, "Tremor support" },
 	{      "flac",        "USE_FLAC", "libFLAC_static win_utf8_io_static",   false, "FLAC support" }, // ResidualVM change
-	{       "png",         "USE_PNG", "libpng",           false, "libpng support" },
+	{       "png",         "USE_PNG", "libpng16",         false, "libpng support" },
 	{      "faad",        "USE_FAAD", "libfaad",          false, "AAC support" },
 	{     "mpeg2",       "USE_MPEG2", "libmpeg2",         true, "MPEG-2 support" }, // ResidualVM change
 	{    "theora",   "USE_THEORADEC", "libtheora_static", false, "Theora decoding support" }, // ResidualVM change
@@ -1105,6 +1112,15 @@ bool setFeatureBuildState(const std::string &name, FeatureList &features, bool e
 	if (i != features.end()) {
 		i->enable = enable;
 		return true;
+	} else {
+		return false;
+	}
+}
+
+bool getFeatureBuildState(const std::string &name, FeatureList &features) {
+	FeatureList::iterator i = std::find(features.begin(), features.end(), name);
+	if (i != features.end()) {
+		return i->enable;
 	} else {
 		return false;
 	}

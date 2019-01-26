@@ -8,6 +8,13 @@
 
 all: $(EXECUTABLE) plugins
 
+ifdef SPLIT_DWARF
+all: $(EXECUTABLE).dwp
+endif
+
+ifdef USE_PANDOC
+all: readme
+endif
 
 ######################################################################
 # Module settings
@@ -68,10 +75,12 @@ QUIET_CC      = @echo '   ' C '      ' $@;
 QUIET_CXX     = @echo '   ' C++ '    ' $@;
 QUIET_AS      = @echo '   ' AS '     ' $@;
 QUIET_NASM    = @echo '   ' NASM '   ' $@;
+QUIET_PANDOC  = @echo '   ' PANDOC ' ' $@;
 QUIET_AR      = @echo '   ' AR '     ' $@;
 QUIET_RANLIB  = @echo '   ' RANLIB ' ' $@;
 QUIET_PLUGIN  = @echo '   ' PLUGIN ' ' $@;
 QUIET_LINK    = @echo '   ' LINK '   ' $@;
+QUIET_DWP     = @echo '   ' DWP '    ' $@;
 QUIET_WINDRES = @echo '   ' WINDRES '' $@;
 QUIET         = @
 endif
@@ -82,12 +91,21 @@ endif
 $(EXECUTABLE): $(OBJS)
 	$(QUIET_LINK)$(LD) $(LDFLAGS) $(PRE_OBJS_FLAGS) $+ $(POST_OBJS_FLAGS) $(LIBS) -o $@
 
+ifdef SPLIT_DWARF
+$(EXECUTABLE).dwp: $(EXECUTABLE)
+	$(QUIET_DWP)$(DWP) -e $(EXECUTABLE)
+endif
+
 distclean: clean clean-devtools
 	$(RM) config.h config.mk config.log engines/engines.mk engines/plugins_table.h
 
 clean:
 	$(RM_REC) $(DEPDIRS)
 	$(RM) $(OBJS) $(EXECUTABLE)
+ifdef SPLIT_DWARF
+	$(RM) $(OBJS:.o=.dwo)
+	$(RM) $(EXECUTABLE).dwp
+endif
 
 
 #
@@ -214,6 +232,12 @@ DISTNAME := residualvm-$(DISTVERSION)
 DISTDIR := dist
 VERFILE := $(DISTDIR)/$(DISTNAME)/base/internal_version.h
 
+ifdef USE_PANDOC
+# Convert README.md to plain text for any platform that might require it
+readme: README.md
+	$(QUIET_PANDOC)$(PANDOC) -f gfm -t $(PANDOCFORMAT) -o $(PANDOCOUTPUT) README.md
+endif
+
 # TODO git via $(GITROOT)
 $(VERFILE): $(srcdir)/base/internal_version.h
 	@$(RM_REC) $(DISTDIR)
@@ -244,6 +268,9 @@ dist-src: \
 
 # Common files
 DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING COPYING.BSD COPYING.LGPL COPYING.FREEFONT COPYING.ISC COPYING.LUA COPYING.MIT COPYING.TINYGL COPYRIGHT KNOWN_BUGS NEWS README.md)
+ifdef USE_PANDOC
+DIST_FILES_DOCS+=$(PANDOCOUTPUT)
+endif
 
 # Themes files
 DIST_FILES_THEMES=modern.zip

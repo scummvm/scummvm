@@ -37,6 +37,7 @@ class UnknownGameDialog : public Dialog {
 public:
 	UnknownGameDialog(const DetectionResults &detectionResults);
 
+	void handleMouseWheel(int x, int y, int direction);
 private:
 	void rebuild();
 

@@ -28,6 +28,7 @@
 #include "common/events.h"
 #include "common/hashmap.h"
 #include "common/memstream.h"
+#include "common/ptr.h"
 #include "common/rect.h"
 #include "common/savefile.h"
 #include "common/str-array.h"

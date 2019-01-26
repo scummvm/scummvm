@@ -187,6 +187,7 @@ EditGameDialog::EditGameDialog(const String &domain)
 	//
 	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? _("Graphics") : _("GFX"));
 	ScrollContainerWidget *graphicsContainer = new ScrollContainerWidget(tab, "GameOptions_Graphics.Container", kGraphicsTabContainerReflowCmd);
+	graphicsContainer->setBackgroundType(ThemeEngine::kDialogBackgroundNone);
 	graphicsContainer->setTarget(this);
 
 	if (g_system->getOverlayWidth() > 320)

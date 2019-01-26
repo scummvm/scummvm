@@ -75,3 +75,6 @@ Source: README.txt; DestDir: {app}; Flags: ignoreversion isreadme
 Source: README-SDL.txt; DestDir: {app}; Flags: ignoreversion
 Source: residualvm.exe; DestDir: {app}; Flags: ignoreversion
 Source: SDL2.dll; DestDir: {app}; Flags: replacesameversion
+; Source: SDL2_net.dll; DestDir: {app}; Flags: replacesameversion
+; Source: WinSparkle.dll; DestDir: {app}; Flags: replacesameversion
+

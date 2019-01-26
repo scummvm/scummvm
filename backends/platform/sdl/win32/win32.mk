@@ -1,0 +1,42 @@
+#
+# Windows specific
+#
+
+residualvmwinres.o: $(srcdir)/icons/residualvm.ico $(DIST_FILES_THEMES) $(DIST_FILES_NETWORKING) $(DIST_FILES_ENGINEDATA) $(srcdir)/dists/residualvm.rc
+	$(QUIET_WINDRES)$(WINDRES) -DHAVE_CONFIG_H $(WINDRESFLAGS) $(DEFINES) -I. -I$(srcdir) $(srcdir)/dists/residualvm.rc residualvmwinres.o
+
+# Special target to create a win32 snapshot binary (for Inno Setup)
+win32dist: all
+	mkdir -p $(WIN32PATH)
+	mkdir -p $(WIN32PATH)/doc
+	$(STRIP) $(EXECUTABLE) -o $(WIN32PATH)/$(EXECUTABLE)
+	cp $(srcdir)/AUTHORS $(WIN32PATH)/AUTHORS.txt
+	cp $(srcdir)/COPYING $(WIN32PATH)/COPYING.txt
+	cp $(srcdir)/COPYING.BSD $(WIN32PATH)/COPYING.BSD.txt
+	cp $(srcdir)/COPYING.LGPL $(WIN32PATH)/COPYING.LGPL.txt
+	cp $(srcdir)/COPYING.FREEFONT $(WIN32PATH)/COPYING.FREEFONT.txt
+	cp $(srcdir)/COPYING.ISC $(WIN32PATH)/COPYING.ISC.txt
+	cp $(srcdir)/COPYING.LUA $(WIN32PATH)/COPYING.LUA.txt
+	cp $(srcdir)/COPYING.MIT $(WIN32PATH)/COPYING.MIT.txt
+	cp $(srcdir)/COPYING.TINYGL $(WIN32PATH)/COPYING.TINYGL.txt
+	cp $(srcdir)/COPYRIGHT $(WIN32PATH)/COPYRIGHT.txt
+	cp $(srcdir)/NEWS $(WIN32PATH)/NEWS.txt
+	cp $(srcdir)/doc/QuickStart $(WIN32PATH)/doc/QuickStart.txt
+	cp $(srcdir)/README.md $(WIN32PATH)/README.txt
+	cp $(WIN32SDLDOCPATH)/README-SDL.txt $(WIN32PATH)/README-SDL.txt
+	cp $(WIN32SDLPATH)/SDL2.dll $(WIN32PATH)
+	cp $(srcdir)/dists/win32/ResidualVM.iss $(WIN32PATH)
+ifdef USE_SDL_NET
+	cp $(WIN32SDLPATH)/SDL2_net.dll $(WIN32PATH)
+	sed -e '/SDL2_net\.dll/ s/^;//' -i $(WIN32PATH)/ResidualVM.iss
+endif
+ifdef USE_SPARKLE
+	cp $(WIN32SPARKLEPATH)/WinSparkle.dll $(WIN32PATH)
+	sed -e '/WinSparkle\.dll/ s/^;//' -i $(WIN32PATH)/ResidualVM.iss
+endif
+	unix2dos $(WIN32PATH)/*.txt
+	unix2dos $(WIN32PATH)/doc/*.txt
+
+.PHONY: win32dist
+
+include $(srcdir)/ports.mk

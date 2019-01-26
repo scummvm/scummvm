@@ -99,14 +99,14 @@ static char *parseCharacterClass(const char *code, bool *isNegated) {
 // This function is modelled after sscanf, and supports a subset of its features. See sscanf documentation
 // for information about the syntax it accepts.
 static void parse(const char *line, const char *fmt, int field_count, va_list va) {
-	char *str = strdup(line);
+	char *str = scumm_strdup(line);
 	const int len = strlen(str);
 	for (int i = 0; i < len; ++i) {
 		if (str[i] == '\t')
 			str[i] = ' ';
 	}
 
-	char *format = strdup(fmt);
+	char *format = scumm_strdup(fmt);
 	const int formatlen = strlen(format);
 	for (int i = 0; i < formatlen; ++i) {
 		if (format[i] == '\t')

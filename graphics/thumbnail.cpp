@@ -149,6 +149,7 @@ bool skipThumbnail(Common::SeekableReadStream &in) {
 
 bool loadThumbnail(Common::SeekableReadStream &in, Graphics::Surface *&thumbnail, bool skipThumbnail) {
 	if (skipThumbnail) {
+		thumbnail = nullptr;
 		return Graphics::skipThumbnail(in);
 	}
 

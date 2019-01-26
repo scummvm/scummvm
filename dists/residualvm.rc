@@ -4,6 +4,8 @@
 #include "config.h"
 #endif
 
+#include "base/internal_version.h"
+
 #define FILE 256
 #define IDI_ICON  1001
 #define IDI_COUNT 1002
@@ -69,8 +71,8 @@ shaders/stark_shadow.vertex      FILE    "engines/stark/shaders/stark_shadow.ver
 #endif
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION     0,4,0,0
- PRODUCTVERSION  0,4,0,0
+ FILEVERSION     SCUMMVM_VER_MAJOR,SCUMMVM_VER_MINOR,SCUMMVM_VER_PATCH,0
+ PRODUCTVERSION  SCUMMVM_VER_MAJOR,SCUMMVM_VER_MINOR,SCUMMVM_VER_PATCH,0
  FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
 #ifdef _DEBUG
  FILEFLAGS       VS_FF_DEBUG
@@ -87,13 +89,13 @@ BEGIN
         BEGIN
             VALUE "Comments", "\0"
             VALUE "CompanyName", "residualvm.org\0"
-            VALUE "FileDescription", "http://www.residualvm.org/\0"
-            VALUE "FileVersion", "0.4.0git\0"
+            VALUE "FileDescription", "ResidualVM: A free 3D game interpreter\0"
+            VALUE "FileVersion", SCUMMVM_VERSION "\0"
             VALUE "InternalName", "residualvm\0"
             VALUE "LegalCopyright", "Copyrights information are in AUTHORS file\0"
             VALUE "OriginalFilename", "residualvm.exe\0"
             VALUE "ProductName", "ResidualVM\0"
-            VALUE "ProductVersion", "0.4.0git\0"
+            VALUE "ProductVersion", SCUMMVM_VERSION "\0"
         END
     END
 

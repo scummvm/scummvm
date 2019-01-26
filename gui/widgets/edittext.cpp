@@ -64,7 +64,6 @@ void EditTextWidget::reflowLayout() {
 	EditableWidget::reflowLayout();
 }
 
-
 void EditTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (!isEnabled())
 		return;
@@ -139,6 +138,7 @@ void EditTextWidget::endEditMode() {
 void EditTextWidget::abortEditMode() {
 	setEditString(_backupString);
 	sendCommand(_cmd, 0);
+
 	releaseFocus();
 }
 

@@ -368,9 +368,22 @@ public:
 		addDirtyRect(area);
 		return _innerSurface.getSubArea(area);
 	}
+
+	/**
+	 * Convert the data to another pixel format.
+	 *
+	 * This works in-place. This means it will not create an additional buffer
+	 * for the conversion process. The value of 'pixels' might change though
+	 * (that means it might realloc the pixel data).
+	 *
+	 * @param dstFormat The desired format
+	 * @param palette   The palette (in RGB888), if the source format has a Bpp of 1
+	 */
+	void convertToInPlace(const PixelFormat &dstFormat, const byte *palette = 0) {
+		_innerSurface.convertToInPlace(dstFormat, palette);
+	}
 };
 
 } // End of namespace Graphics
-
 
 #endif

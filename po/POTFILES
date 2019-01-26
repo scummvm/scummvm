@@ -2,7 +2,6 @@
 
 gui/about.cpp
 gui/browser.cpp
-gui/browser_osx.mm
 gui/chooser.cpp
 gui/downloaddialog.cpp
 gui/editgamedialog.cpp
@@ -26,7 +25,6 @@ gui/ThemeEngine.cpp
 gui/unknown-game-dialog.cpp
 gui/updates-dialog.cpp
 gui/widget.cpp
-gui/fluidsynth-dialog.cpp
 
 base/main.cpp
 
@@ -42,11 +40,13 @@ engines/game.cpp
 audio/adlib.cpp
 audio/fmopl.cpp
 audio/mididrv.cpp
-audio/musicplugin.cpp
-audio/null.h
 audio/null.cpp
+audio/null.h
+audio/softsynth/cms.cpp
 
 backends/cloud/storage.cpp
+backends/dialogs/macosx/macosx-dialogs.mm
+backends/dialogs/win32/win32-dialogs.cpp
 backends/events/default/default-events.cpp
 backends/graphics/surfacesdl/surfacesdl-graphics.cpp
 backends/keymapper/remap-dialog.cpp

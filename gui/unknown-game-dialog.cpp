@@ -81,6 +81,10 @@ UnknownGameDialog::UnknownGameDialog(const DetectionResults &detectionResults) :
 	rebuild();
 }
 
+void UnknownGameDialog::handleMouseWheel(int x, int y, int direction) {
+	_textContainer->handleMouseWheel(x, y, direction);
+}
+
 void UnknownGameDialog::reflowLayout() {
 	rebuild();
 	Dialog::reflowLayout();

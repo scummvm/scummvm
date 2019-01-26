@@ -508,6 +508,7 @@ void OptionsDialog::apply() {
 
 			if ((int32)_renderModePopUp->getSelectedTag() >= 0)
 				ConfMan.set("render_mode", Common::getRenderModeCode((Common::RenderMode)_renderModePopUp->getSelectedTag()), _domain);
+
 			isSet = false;
 			if ((int32)_stretchPopUp->getSelectedTag() >= 0) {
 				const OSystem::GraphicsMode *sm = g_system->getSupportedStretchModes();
@@ -541,6 +542,7 @@ void OptionsDialog::apply() {
 			ConfMan.removeKey("aspect_ratio", _domain);
 #if 0 // ResidualVM specific
 			ConfMan.removeKey("gfx_mode", _domain);
+			ConfMan.removeKey("stretch_mode", _domain);
 			ConfMan.removeKey("render_mode", _domain);
 #endif
 			ConfMan.removeKey("renderer", _domain); // ResidualVM specific
@@ -900,8 +902,8 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 #ifndef GUI_ENABLE_KEYSDIALOG
 #ifndef GUI_ONLY_FULLSCREEN
 	_fullscreenCheckbox->setEnabled(enabled);
-	if (_guioptions.contains(GUIO_NOASPECT))
 #endif // !GUI_ONLY_FULLSCREEN
+	if (_guioptions.contains(GUIO_NOASPECT))
 		_aspectCheckbox->setEnabled(false);
 	else
 		_aspectCheckbox->setEnabled(enabled);
@@ -1522,6 +1524,8 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	_autosavePeriodPopUp = 0;
 	_guiLanguagePopUpDesc = 0;
 	_guiLanguagePopUp = 0;
+	_guiLanguageUseGameLanguageCheckbox = nullptr;
+	_useSystemDialogsCheckbox = 0;
 #ifdef USE_UPDATES
 	_updatesPopUpDesc = 0;
 	_updatesPopUp = 0;
@@ -1578,6 +1582,7 @@ void GlobalOptionsDialog::build() {
 	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? _("Graphics") : _("GFX"));
 	ScrollContainerWidget *graphicsContainer = new ScrollContainerWidget(tab, "GlobalOptions_Graphics.Container", kGraphicsTabContainerReflowCmd);
 	graphicsContainer->setTarget(this);
+	graphicsContainer->setBackgroundType(ThemeEngine::kDialogBackgroundNone);
 	addGraphicControls(graphicsContainer, "GlobalOptions_Graphics_Container.");
 
 	//
@@ -1642,7 +1647,7 @@ void GlobalOptionsDialog::build() {
 	else
 		_pathsTabId = tab->addTab(_c("Paths", "lowres"));
 
-#if !( defined(__DC__) || defined(__GP32__) )
+#if !defined(__DC__)
 	// These two buttons have to be extra wide, or the text will be
 	// truncated in the small version of the GUI.
 
@@ -1746,7 +1751,27 @@ void GlobalOptionsDialog::build() {
 		_guiLanguagePopUp->setSelectedTag(Common::kTranslationBuiltinId);
 #endif // USE_DETECTLANG
 
+	_guiLanguageUseGameLanguageCheckbox = new CheckboxWidget(tab, "GlobalOptions_Misc.GuiLanguageUseGameLanguage",
+			_("Switch the GUI language to the game language"),
+			_("When starting a game, change the GUI language to the game language."
+			"That way, if a game uses the ResidualVM save and load dialogs, they are "
+			"in the same language as the game.")
+	);
+
+	if (ConfMan.hasKey("gui_use_game_language")) {
+		_guiLanguageUseGameLanguageCheckbox->setState(ConfMan.getBool("gui_use_game_language", _domain));
+	}
+
 #endif // USE_TRANSLATION
+
+	if (g_system->hasFeature(OSystem::kFeatureSystemBrowserDialog)) {
+		_useSystemDialogsCheckbox = new CheckboxWidget(tab, "GlobalOptions_Misc.UseSystemDialogs",
+			_("Use native system file browser"),
+			_("Use the native system file browser instead of the ResidualVM one to select a file or directory.")
+		);
+
+		_useSystemDialogsCheckbox->setState(ConfMan.getBool("gui_browser_native", _domain));
+	}
 
 #ifdef USE_UPDATES
 	_updatesPopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.UpdatesPopupDesc", _("Update check:"), _("How often to check ResidualVM updates"));
@@ -1775,6 +1800,7 @@ void GlobalOptionsDialog::build() {
 
 	ScrollContainerWidget *container = new ScrollContainerWidget(tab, "GlobalOptions_Cloud.Container", kCloudTabContainerReflowCmd);
 	container->setTarget(this);
+	container->setBackgroundType(ThemeEngine::kDialogBackgroundNone);
 
 	_storagePopUpDesc = new StaticTextWidget(container, "GlobalOptions_Cloud_Container.StoragePopupDesc", _("Storage:"), _("Active cloud storage"));
 	_storagePopUp = new PopUpWidget(container, "GlobalOptions_Cloud_Container.StoragePopup");
@@ -1843,7 +1869,7 @@ void GlobalOptionsDialog::build() {
 
 	OptionsDialog::build();
 
-#if !( defined(__DC__) || defined(__GP32__) )
+#if !defined(__DC__)
 	// Set _savePath to the current save path
 	Common::String savePath(ConfMan.get("savepath", _domain));
 	Common::String themePath(ConfMan.get("themepath", _domain));
@@ -2015,7 +2041,14 @@ void GlobalOptionsDialog::apply() {
 		newCharset = TransMan.getCurrentCharset();
 		isRebuildNeeded = true;
 	}
+
+	bool guiUseGameLanguage = _guiLanguageUseGameLanguageCheckbox->getState();
+	ConfMan.setBool("gui_use_game_language", guiUseGameLanguage, _domain);
 #endif
+
+	if (_useSystemDialogsCheckbox) {
+		ConfMan.setBool("gui_browser_native", _useSystemDialogsCheckbox->getState(), _domain);
+	}
 
 	GUI::ThemeEngine::GraphicsMode gfxMode = (GUI::ThemeEngine::GraphicsMode)_rendererPopUp->getSelectedTag();
 	Common::String oldGfxConfig = ConfMan.get("gui_renderer");

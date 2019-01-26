@@ -212,6 +212,15 @@ StringList getFeatureLibraries(const FeatureList &features);
 bool setFeatureBuildState(const std::string &name, FeatureList &features, bool enable);
 
 /**
+ * Gets the state of a given feature.
+ *
+ * @param name Name of the feature.
+ * @param features List of features to operate on.
+ * @return "true", when the feature is enabled, "false" otherwise.
+ */
+bool getFeatureBuildState(const std::string &name, FeatureList &features);
+
+/**
  * Structure to describe a build setup.
  *
  * This includes various information about which engines to
@@ -236,7 +245,7 @@ struct BuildSetup {
 	bool devTools;         ///< Generate project files for the tools
 	bool tests;            ///< Generate project files for the tests
 	bool runBuildEvents;   ///< Run build events as part of the build (generate revision number and copy engine/theme data & needed files to the build folder
-	bool createInstaller;  ///< Create NSIS installer after the build
+	bool createInstaller;  ///< Create installer after the build
 	bool useSDL2;          ///< Whether to use SDL2 or not.
 
 	BuildSetup() {

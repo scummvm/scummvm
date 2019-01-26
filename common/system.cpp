@@ -29,6 +29,7 @@
 #include "common/str.h"
 #include "common/taskbar.h"
 #include "common/updates.h"
+#include "common/dialogs.h"
 #include "common/textconsole.h"
 
 #include "backends/audiocd/default/default-audiocd.h"
@@ -48,7 +49,11 @@ OSystem::OSystem() {
 #if defined(USE_UPDATES)
 	_updateManager = nullptr;
 #endif
+#if defined(USE_SYSDIALOGS)
+	_dialogManager = nullptr;
+#endif
 	_fsFactory = nullptr;
+	_backendInitialized = false;
 }
 
 OSystem::~OSystem() {
@@ -69,6 +74,11 @@ OSystem::~OSystem() {
 #if defined(USE_UPDATES)
 	delete _updateManager;
 	_updateManager = nullptr;
+#endif
+
+#if defined(USE_SYSDIALOGS)
+	delete _dialogManager;
+	_dialogManager = nullptr;
 #endif
 
 	delete _savefileManager;
@@ -98,6 +108,14 @@ void OSystem::initBackend() {
 	// set it.
 // 	if (!_fsFactory)
 // 		error("Backend failed to instantiate fs factory");
+
+	_backendInitialized = true;
+}
+
+void OSystem::destroy() {
+	_backendInitialized = false;
+	Common::String::releaseMemoryPoolMutex();
+	delete this;
 }
 
 bool OSystem::setGraphicsMode(const char *name) {

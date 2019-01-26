@@ -913,8 +913,8 @@ TransparentSurface *TransparentSurface::scaleT(uint16 newWidth, uint16 newHeight
 		*/
 		int spixelw = (srcW - 1);
 		int spixelh = (srcH - 1);
-		int sx = (int) (65536.0f * (float) spixelw / (float) (dstW - 1));
-		int sy = (int) (65536.0f * (float) spixelh / (float) (dstH - 1));
+		int sx = (int)(65536.0f * (float) spixelw / (float) (dstW - 1));
+		int sy = (int)(65536.0f * (float) spixelh / (float) (dstH - 1));
 
 		/* Maximum scaled source size */
 		int ssx = (srcW << 16) - 1;

@@ -28,40 +28,42 @@ namespace Common {
 class SineTable {
 public:
 	/**
-	 * Construct a sine table with the specified bit precision
+	 * Construct a sine table given the number of points
 	 *
-	 * @param bitPrecision Precision of the table, which must be in range [4, 16]
+	 * @param nPoints Number of distinct radian points, which must be in range [16,65536] and be divisible by 4
 	 */
-	SineTable(int bitPrecision);
+	SineTable(int nPoints);
 	~SineTable();
 
 	/**
 	 * Get pointer to table
 	 *
-	 * This table contains 2^bitPrecision/2 entries.
+	 * This table contains nPoints/2 entries.
 	 * Prefer to use at()
 	 * The layout of this table is as follows:
-	 * - Entries 0 up to (excluding) 2^bitPrecision/4:
+	 * - Entries 0 up to (excluding) nPoints/4:
 	 *           sin(0) till (excluding) sin(1/2*pi)
-	 * - Entries 2^bitPrecision/4 up to 2^bitPrecision/2:
+	 * - Entries 2_nPoints/4 up to nPoints/2:
 	 *           sin(pi) till (excluding) sin(3/2*pi)
 	 */
-	const float *getTable() { return _table; }
+	const float *getTable() { return _tableEOS; }
 
 	/**
-	 * Returns sin(2*pi * index / 2^bitPrecision )
-	 * Index must be in range [0,2^bitPrecision-1]
+	 * Returns sin(2*pi * index / nPoints )
+	 * Index must be in range [0, nPoints - 1]
+	 * Faster than atLegacy
 	 */
 	float at(int index) const;
 
 	/**
-	 * Get bit precision
+	 * Returns sin(2*pi * index / nPoints )
+	 * Index must be in range [0, nPoints - 1]
 	 */
-	int getBitPrecision() { return _bitPrecision; }
+	float atLegacy(int index) const;	
 
 private:
+	float *_tableEOS;
 	float *_table;
-	int _bitPrecision;
 	double _radResolution; // Smallest radian increment
 	int _refSize; // _nPoints / 4
 	int _nPoints; // range of operator[]

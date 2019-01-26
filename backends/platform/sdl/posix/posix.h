@@ -42,6 +42,8 @@ public:
 
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
 
+	Common::String getScreenshotsPath() override;
+
 protected:
 	/**
 	 * Base string for creating the default path and filename for the
@@ -63,6 +65,8 @@ protected:
 	virtual Common::String getDefaultConfigFileName();
 
 	virtual Common::WriteStream *createLogFile();
+
+	Common::String getXdgUserDir(const char *name);
 
 	virtual AudioCDManager *createAudioCDManager();
 

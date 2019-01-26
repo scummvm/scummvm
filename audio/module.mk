@@ -40,6 +40,11 @@ MODULE_OBJS += \
 	alsa_opl.o
 endif
 
+ifdef USE_A52
+MODULE_OBJS += \
+	decoders/ac3.o
+endif
+
 ifndef USE_ARM_SOUND_ASM
 MODULE_OBJS += \
 	rate.o

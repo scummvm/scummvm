@@ -148,6 +148,21 @@ struct DetectedGame {
 	 */
 	GameSupportLevel gameSupportLevel;
 
+	/**
+	 * A list of extra keys to write to the configuration file
+	 */
+	Common::StringMap _extraConfigEntries;
+
+	/**
+	 * Allows adding of extra entries to be saved as part of the detection entry
+	 * in the configuration file.
+	 * @remarks		Any entry added using this should not be relied on being present
+	 *				in the configuration file, since starting games directly from the
+	 *				command line bypasses the game detection code
+	 */
+	void addExtraEntry(const Common::String &key, const Common::String &value) {
+		_extraConfigEntries[key] = value;
+	}
 private:
 	/**
 	 * Update the description string by appending (EXTRA/PLATFORM/LANG) to it.

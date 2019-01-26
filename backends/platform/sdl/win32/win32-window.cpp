@@ -29,20 +29,15 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#undef ARRAYSIZE // winnt.h defines ARRAYSIZE, but we want our own one...
 
 void SdlWindow_Win32::setupIcon() {
 	HMODULE handle = GetModuleHandle(NULL);
 	HICON   ico    = LoadIcon(handle, MAKEINTRESOURCE(1001 /* IDI_ICON */));
 	if (ico) {
-		SDL_SysWMinfo wminfo;
-		if (getSDLWMInformation(&wminfo)) {
+		HWND hwnd = getHwnd();
+		if (hwnd) {
 			// Replace the handle to the icon associated with the window class by our custom icon
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-			SetClassLongPtr(wminfo.info.win.window, GCLP_HICON, (ULONG_PTR)ico);
-#else
-			SetClassLongPtr(wminfo.window, GCLP_HICON, (ULONG_PTR)ico);
-#endif
+			SetClassLongPtr(hwnd, GCLP_HICON, (ULONG_PTR)ico);
 
 			// Since there wasn't any default icon, we can't use the return value from SetClassLong
 			// to check for errors (it would be 0 in both cases: error or no previous value for the
@@ -54,6 +49,18 @@ void SdlWindow_Win32::setupIcon() {
 
 	// If no icon has been set, fallback to default path
 	SdlWindow::setupIcon();
+}
+
+HWND SdlWindow_Win32::getHwnd() {
+	SDL_SysWMinfo wminfo;
+	if (getSDLWMInformation(&wminfo)) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		return wminfo.info.win.window;
+#else
+		return wminfo.window;
+#endif
+	}
+	return NULL;
 }
 
 #endif

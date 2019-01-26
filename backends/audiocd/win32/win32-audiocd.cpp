@@ -46,7 +46,6 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#undef ARRAYSIZE // winnt.h defines ARRAYSIZE, but we want our own one...
 
 #include "backends/audiocd/win32/win32-audiocd.h"
 
@@ -149,14 +148,14 @@ public:
 	Win32AudioCDManager();
 	~Win32AudioCDManager();
 
-	virtual bool open();
-	virtual void close();
-	virtual bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate = false,
-		Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
+	bool open() override;
+	void close() override;
+	bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate,
+			Audio::Mixer::SoundType soundType) override;
 
 protected:
-	virtual bool openCD(int drive);
-	virtual bool openCD(const Common::String &drive);
+	bool openCD(int drive) override;
+	bool openCD(const Common::String &drive) override;
 
 private:
 	bool loadTOC();

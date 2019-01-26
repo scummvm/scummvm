@@ -426,12 +426,12 @@ void OSystem_SDL::launcherInitSize(uint w, uint h) {
 // End of ResidualVM specific code
 
 void OSystem_SDL::quit() {
-	delete this;
+	destroy();
 	exit(0);
 }
 
 void OSystem_SDL::fatalError() {
-	delete this;
+	destroy();
 	exit(1);
 }
 

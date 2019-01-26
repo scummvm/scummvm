@@ -264,10 +264,16 @@ void SaveLoadChooserDialog::handleTickle() {
 
 void SaveLoadChooserDialog::reflowLayout() {
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
-	addChooserButtons();
-
 	const SaveLoadChooserType currentType = getType();
 	const SaveLoadChooserType requestedType = getRequestedSaveLoadDialog(*_metaEngine);
+
+	addChooserButtons();
+	if (currentType == kSaveLoadDialogList) {
+		_listButton->setEnabled(false);
+	}
+	if (currentType == kSaveLoadDialogGrid) {
+		_gridButton->setEnabled(false);
+	}
 
 	// Change the dialog type if there is any need for it.
 	if (requestedType != currentType) {

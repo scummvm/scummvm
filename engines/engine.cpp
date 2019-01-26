@@ -26,8 +26,6 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <direct.h>
-// winnt.h defines ARRAYSIZE, but we want our own one...
-#undef ARRAYSIZE
 #endif
 
 #include "engines/engine.h"
@@ -210,6 +208,9 @@ void initCommonGFX() {
 
 		if (gameDomain->contains("filtering"))
 			g_system->setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering"));
+
+		if (gameDomain->contains("stretch_mode"))
+			g_system->setStretchMode(ConfMan.get("stretch_mode").c_str());
 	}
 }
 
@@ -397,6 +398,17 @@ void GUIErrorMessage(const Common::String &msg) {
 	} else {
 		error("%s", msg.c_str());
 	}
+}
+
+void GUIErrorMessageFormat(const char *fmt, ...) {
+	Common::String msg;
+
+	va_list va;
+	va_start(va, fmt);
+	msg = Common::String::vformat(fmt, va);
+	va_end(va);
+
+	GUIErrorMessage(msg);
 }
 
 void Engine::checkCD() {

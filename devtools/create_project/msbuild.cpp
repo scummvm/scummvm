@@ -190,8 +190,8 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 		project << "\t</ItemGroup>\n";
 	}
 
-	// Visual Studio 2015 automatically imports natvis files that are part of the project
-	if (name == PROJECT_NAME && _version == 14) {
+	// Visual Studio 2015 and up automatically import natvis files that are part of the project
+	if (name == PROJECT_NAME && _version >= 14) {
 		project << "\t<ItemGroup>\n";
 		project << "\t\t<None Include=\"" << setup.srcDir << "/devtools/create_project/scripts/residualvm.natvis\" />\n";
 		project << "\t</ItemGroup>\n";
@@ -339,7 +339,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 			// Copy data files to the build folder
 			project << "\t\t<PostBuildEvent>\n"
 					   "\t\t\t<Message>Copy data files to the build folder</Message>\n"
-					   "\t\t\t<Command>" << getPostBuildEvent(isWin32, setup.createInstaller) << "</Command>\n"
+					   "\t\t\t<Command>" << getPostBuildEvent(isWin32, setup) << "</Command>\n"
 					   "\t\t</PostBuildEvent>\n";
 		} else if (setup.tests) {
 			project << "\t\t<PreBuildEvent>\n"
@@ -380,7 +380,7 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	              "\t\t<ClCompile>\n"
 	              "\t\t\t<DisableLanguageExtensions>true</DisableLanguageExtensions>\n"
 	              "\t\t\t<DisableSpecificWarnings>" << warnings << ";%(DisableSpecificWarnings)</DisableSpecificWarnings>\n"
-	              "\t\t\t<AdditionalIncludeDirectories>.;" << prefix << ";" << prefix << "\\engines;" << (setup.tests ? prefix + "\\test\\cxxtest;" : "") << "$(TargetDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
+	              "\t\t\t<AdditionalIncludeDirectories>.;" << prefix << ";" << prefix << "\\engines;" << (setup.tests ? prefix + "\\test\\cxxtest;" : "") << "%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
 	              "\t\t\t<PreprocessorDefinitions>" << definesList << "%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
 	              "\t\t\t<ExceptionHandling>" << ((setup.devTools || setup.tests) ? "Sync" : "") << "</ExceptionHandling>\n";
 
@@ -393,6 +393,7 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	properties << "\t\t\t<WarningLevel>Level4</WarningLevel>\n"
 	              "\t\t\t<TreatWarningAsError>false</TreatWarningAsError>\n"
 	              "\t\t\t<CompileAs>Default</CompileAs>\n"
+	              "\t\t\t<MultiProcessorCompilation>true</MultiProcessorCompilation>\n"
 	              "\t\t</ClCompile>\n"
 	              "\t\t<Link>\n"
 	              "\t\t\t<IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>\n"
@@ -403,7 +404,8 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 
 	properties << "\t\t</Link>\n"
 	              "\t\t<ResourceCompile>\n"
-	              "\t\t\t<AdditionalIncludeDirectories>" << prefix << ";%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
+	              "\t\t\t<AdditionalIncludeDirectories>.;" << prefix << ";%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
+	              "\t\t\t<PreprocessorDefinitions>" << definesList << "%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
 	              "\t\t</ResourceCompile>\n"
 	              "\t</ItemDefinitionGroup>\n"
 	              "</Project>\n";
@@ -450,7 +452,6 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, b
 	} else {
 		properties << "\t\t\t<Optimization>Disabled</Optimization>\n"
 		              "\t\t\t<PreprocessorDefinitions>WIN32;" << (configuration == "LLVM" ? "_CRT_SECURE_NO_WARNINGS;" : "") << "%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
-		              "\t\t\t<MinimalRebuild>true</MinimalRebuild>\n"
 		              "\t\t\t<BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>\n"
 		              "\t\t\t<RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>\n"
 		              "\t\t\t<FunctionLevelLinking>true</FunctionLevelLinking>\n"

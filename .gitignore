@@ -3,6 +3,8 @@
 .*.swp
 .*.swo
 *.o
+*.dwo
+residualvm.dwp
 lib*.a
 .deps
 
