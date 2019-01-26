@@ -78,7 +78,7 @@ void SceneScriptDR02::SceneLoaded() {
 	Clickable_Object("U2 EYE");
 	Clickable_Object("U2 E");
 	Clickable_Object("MMNEWSP01");
-	Clickable_Object("MMNEWSP01");
+	Clickable_Object("MMNEWSP02");
 	Clickable_Object("MMNEWSP04");
 	Clickable_Object("MMNEWSP05");
 	Clickable_Object("MMNEWSP07");
@@ -94,7 +94,7 @@ void SceneScriptDR02::SceneLoaded() {
 	Unclickable_Object("MMNEWSP01");
 	Unclickable_Object("MMNEWSP02");
 	Unclickable_Object("MMNEWSP04");
-	Unclickable_Object("MMNEWSP06");
+	Unclickable_Object("MMNEWSP05");
 	Unclickable_Object("MMNEWSP07");
 	Unclickable_Object("PARKMETR02");
 	Unclickable_Object("TRANSFORMER 01");
