@@ -201,7 +201,7 @@ bool SceneScriptAR01::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -358.0, 0.0, -149.0, 0, true, false, 0)) {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -477.0, 0.0, -149.0, 0, false, false, 0);
 			Game_Flag_Set(kFlagAR01toHC01);
-			Game_Flag_Set(464);
+			Game_Flag_Set(kFlagHC01GuzzaPrepare);
 			Game_Flag_Reset(kFlagMcCoyInAnimoidRow);
 			Game_Flag_Set(kFlagMcCoyInHawkersCircle);
 			Set_Enter(kSetHC01_HC02_HC03_HC04, kSceneHC01);

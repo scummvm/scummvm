@@ -197,13 +197,13 @@ void SceneScriptHC03::SceneFrameAdvanced(int frame) {
 		Sound_Play(281, Random_Query(33, 50), 50, 50, 50);
 	}
 
-	if (!Game_Flag_Query(521)
+	if (!Game_Flag_Query(kFlagHC03TrapDoorOpened)
 	 &&  frame == 66
 	) {
 		Ambient_Sounds_Play_Sound(328, 90, 0, -40, 99);
 		Sound_Play(201, Random_Query(47, 47), 0, -40, 50);
 		Scene_Exit_Add_2D_Exit(1, 400, 275, 515, 375, 2);
-		Game_Flag_Set(521);
+		Game_Flag_Set(kFlagHC03TrapDoorOpened);
 	}
 }
 

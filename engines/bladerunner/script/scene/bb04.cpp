@@ -88,7 +88,7 @@ bool SceneScriptBB04::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagBB04toBB02);
-			Game_Flag_Set(493);
+			Game_Flag_Set(kFlagBB02ElevatorDown);
 			Set_Enter(kSetBB02_BB04_BB06_BB51, kSceneBB02);
 		}
 		return true;

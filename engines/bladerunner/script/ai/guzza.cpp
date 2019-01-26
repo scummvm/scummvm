@@ -53,10 +53,10 @@ bool AIScriptGuzza::Update() {
 		}
 
 		if ( Actor_Query_Goal_Number(kActorGuzza) != kGoalGuzzaGoToHawkersCircle
-		 && !Game_Flag_Query(463)
-		 &&  Game_Flag_Query(464)
+		 && !Game_Flag_Query(kFlagHC01GuzzaWalk)
+		 &&  Game_Flag_Query(kFlagHC01GuzzaPrepare)
 		) {
-			Game_Flag_Set(463);
+			Game_Flag_Set(kFlagHC01GuzzaWalk);
 			Actor_Set_Goal_Number(kActorGuzza, 103);
 			return true;
 		}
