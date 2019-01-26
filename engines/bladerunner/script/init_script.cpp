@@ -79,30 +79,43 @@ void InitScript::Init_Game_Flags() {
 	if (Random_Query(1, 2) == 1) {
 		Game_Flag_Set(kFlagIzoIsReplicant);
 	}
+
 	if (Random_Query(1, 2) == 1) {
 		Game_Flag_Set(kFlagGordoIsReplicant);
 	}
+
 	if (Random_Query(1, 2) == 1) {
 		Game_Flag_Set(kFlagLucyIsReplicant);
 	}
+
 	if (Random_Query(1, 2) == 1) {
 		Game_Flag_Set(kFlagDektoraIsReplicant);
 	}
+
 	if (Random_Query(1, 2) == 1) {
 		Game_Flag_Set(kFlagSadikIsReplicant);
 	}
+
 	if (Random_Query(1, 2) == 1) {
 		Game_Flag_Set(560);
 	}
-	if (!Game_Flag_Query(kFlagGordoIsReplicant) && !Game_Flag_Query(kFlagLucyIsReplicant) && !Game_Flag_Query(kFlagDektoraIsReplicant)) {
+
+	if (!Game_Flag_Query(kFlagGordoIsReplicant)
+	 && !Game_Flag_Query(kFlagLucyIsReplicant)
+	 && !Game_Flag_Query(kFlagDektoraIsReplicant)
+	) {
 		Game_Flag_Set(kFlagDektoraIsReplicant);
 	}
 
 	if (Game_Flag_Query(kFlagDektoraIsReplicant)) {
 		Global_Variable_Set(40, 1);
-	} else if (Game_Flag_Query(kFlagGordoIsReplicant) && !Game_Flag_Query(kFlagLucyIsReplicant)) {
+	} else if ( Game_Flag_Query(kFlagGordoIsReplicant)
+	        && !Game_Flag_Query(kFlagLucyIsReplicant)
+	) {
 		Global_Variable_Set(40, 2);
-	} else if (!Game_Flag_Query(kFlagGordoIsReplicant) && Game_Flag_Query(kFlagLucyIsReplicant)) {
+	} else if (!Game_Flag_Query(kFlagGordoIsReplicant)
+	        &&  Game_Flag_Query(kFlagLucyIsReplicant)
+	) {
 		Global_Variable_Set(40, 3);
 	} else if (Random_Query(1, 2) == 1) {
 		Global_Variable_Set(40, 2);

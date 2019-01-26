@@ -25,14 +25,16 @@
 namespace BladeRunner {
 
 void SceneScriptHF03::InitializeScene() {
-	if (Game_Flag_Query(527)) {
-		Setup_Scene_Information(479.0f, 47.76f, -496.0f, 600);
+	if (Game_Flag_Query(kFlagHF02toHF03)) {
+		Setup_Scene_Information( 479.0f, 47.76f,  -496.0f, 600);
 	} else {
 		Setup_Scene_Information(185.62f, 47.76f, -867.42f, 300);
 	}
-	Scene_Exit_Add_2D_Exit(0, 0, 0, 30, 479, 3);
-	Scene_Exit_Add_2D_Exit(1, 589, 0, 639, 479, 1);
+
+	Scene_Exit_Add_2D_Exit(0,   0,   0,  30, 479, 3);
+	Scene_Exit_Add_2D_Exit(1, 589,   0, 639, 479, 1);
 	Scene_Exit_Add_2D_Exit(2, 323, 110, 380, 166, 0);
+
 	Ambient_Sounds_Add_Looping_Sound(340, 50, 0, 1);
 	Ambient_Sounds_Add_Sound(182, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(184, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
@@ -61,18 +63,20 @@ bool SceneScriptHF03::ClickedOn3DObject(const char *objectName, bool a2) {
 	return false;
 }
 
-void SceneScriptHF03::sub_401C80() {
+void SceneScriptHF03::dialogueWithLucy() {
 	Dialogue_Menu_Clear_List();
-	DM_Add_To_List_Never_Repeat_Once_Selected(840, -1, 3, 8);
-	DM_Add_To_List_Never_Repeat_Once_Selected(850, 6, 5, 2);
-	DM_Add_To_List_Never_Repeat_Once_Selected(860, 8, -1, -1);
-	DM_Add_To_List_Never_Repeat_Once_Selected(870, 2, 8, 6);
-	Dialogue_Menu_Add_DONE_To_List(880);
+	DM_Add_To_List_Never_Repeat_Once_Selected(840, -1, 3, 8); // VOIGT-KAMPFF
+	DM_Add_To_List_Never_Repeat_Once_Selected(850, 6, 5, 2); // FATHER
+	DM_Add_To_List_Never_Repeat_Once_Selected(860, 8, -1, -1); // CRYSTAL
+	DM_Add_To_List_Never_Repeat_Once_Selected(870, 2, 8, 6); // RUNCITER
+	Dialogue_Menu_Add_DONE_To_List(880); // DONE
+
 	Dialogue_Menu_Appear(320, 240);
 	int answer = Dialogue_Menu_Query_Input();
 	Dialogue_Menu_Disappear();
+
 	switch (answer) {
-	case 840:
+	case 840: // VOIGT-KAMPFF
 		Actor_Says(kActorMcCoy, 1630, 15);
 		if (Global_Variable_Query(40) == 3) {
 			Actor_Set_Goal_Number(kActorLucy, 214);
@@ -83,12 +87,14 @@ void SceneScriptHF03::sub_401C80() {
 			Game_Flag_Set(593);
 		}
 		break;
-	case 850:
+
+	case 850: // FATHER
 		Actor_Says(kActorMcCoy, 1635, 15);
 		Actor_Says(kActorLucy, 200, 13);
 		Actor_Modify_Friendliness_To_Other(kActorLucy, kActorMcCoy, 3);
 		break;
-	case 860:
+
+	case 860: // CRYSTAL
 		Actor_Says(kActorMcCoy, 1640, 12);
 		if (Global_Variable_Query(40) == 3) {
 			Actor_Set_Goal_Number(kActorLucy, 214);
@@ -129,7 +135,8 @@ void SceneScriptHF03::sub_401C80() {
 			}
 		}
 		break;
-	case 870:
+
+	case 870: // RUNCITER
 		Actor_Says(kActorMcCoy, 1645, 18);
 		Actor_Says(kActorLucy, 240, 14);
 		Actor_Says(kActorLucy, 250, 12);
@@ -144,18 +151,24 @@ void SceneScriptHF03::sub_401C80() {
 		Actor_Says(kActorLucy, 310, 13);
 		Actor_Clue_Acquire(kActorMcCoy, kClueLucyInterview, false, kActorLucy);
 		break;
-	case 880:
+
+	case 880: // DONE
 		Actor_Says(kActorMcCoy, 1650, 14);
 		break;
 	}
 }
 
 bool SceneScriptHF03::ClickedOnActor(int actorId) {
-	if (actorId == kActorLucy && Actor_Query_Goal_Number(kActorLucy) == 205) {
-		if (Game_Flag_Query(kFlagLucyIsReplicant) ? !Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 377, 0, 1, false) : !Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 378, 0, 1, false)) {
+	if (actorId == kActorLucy
+	 && Actor_Query_Goal_Number(kActorLucy) == 205
+	 ) {
+		if (Game_Flag_Query(kFlagLucyIsReplicant)
+		 ? !Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 377, 0, true, false)
+		 : !Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 378, 0, true, false)
+		) {
 			Actor_Face_Actor(kActorMcCoy, kActorLucy, true);
-			if (!Game_Flag_Query(613)) {
-				Game_Flag_Set(613);
+			if (!Game_Flag_Query(kFlagHF03LucyTalk)) {
+				Game_Flag_Set(kFlagHF03LucyTalk);
 				if (Game_Flag_Query(kFlagLucyIsReplicant)) {
 					Actor_Says(kActorMcCoy, 1605, 15);
 					Actor_Says(kActorLucy, 100, 12);
@@ -178,7 +191,8 @@ bool SceneScriptHF03::ClickedOnActor(int actorId) {
 					Actor_Says(kActorLucy, 190, 15);
 				}
 			}
-			sub_401C80();
+
+			dialogueWithLucy();
 		}
 	}
 	return false;
@@ -190,22 +204,24 @@ bool SceneScriptHF03::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptHF03::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 179.0f, 46.76f, -824.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 179.0f, 46.76f, -824.0f, 0, true, false, 0)) {
 			Game_Flag_Set(kFlagHF03toHF01);
 			Set_Enter(kSetHF01, kSceneHF01);
 		}
 		return true;
 	}
+
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 479.0f, 47.76f, -524.0f, 0, 1, false, 0)) {
-			Game_Flag_Set(528);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 479.0f, 47.76f, -524.0f, 0, true, false, 0)) {
+			Game_Flag_Set(kFlagHF03toHF02);
 			Set_Enter(kSetHF02, kSceneHF02);
 		}
 		return true;
 	}
+
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 942.0f, 47.76f, -847.0f, 0, 1, false, 0)) {
-			Game_Flag_Set(566);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 942.0f, 47.76f, -847.0f, 0, true, false, 0)) {
+			Game_Flag_Set(kFlagHF03toHF04);
 			Set_Enter(kSetHF04, kSceneHF04);
 		}
 		return true;
@@ -224,13 +240,14 @@ void SceneScriptHF03::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptHF03::PlayerWalkedIn() {
-	if (Game_Flag_Query(527)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 479.0f, 47.76f, -524.0f, 0, 0, false, 0);
-		Game_Flag_Reset(527);
+	if (Game_Flag_Query(kFlagHF02toHF03)) {
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 479.0f, 47.76f, -524.0f, 0, false, false, 0);
+		Game_Flag_Reset(kFlagHF02toHF03);
 	} else {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 179.0f, 47.76f, -824.0f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 179.0f, 47.76f, -824.0f, 0, false, false, 0);
 		Game_Flag_Reset(kFlagHF01toHF03);
 	}
+
 	if (Actor_Query_Goal_Number(kActorLucy) == 250) {
 		Actor_Set_Goal_Number(kActorLucy, 212);
 		Actor_Says(kActorSteele, 210, 13);

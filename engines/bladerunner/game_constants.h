@@ -901,6 +901,8 @@ enum Flags {
 	kFlagTB06KitchenBoxTaken = 520,
 	kFlagHC03TrapDoorOpened = 521,
 	kFlagCT10Entered = 525,
+	kFlagHF02toHF03 = 527,
+	kFlagHF03toHF02 = 528,
 	kFlagCT11toDR01 = 531,
 	kFlagCT09Entered = 538,
 	kFlagCT09LeonInterrupted = 539,
@@ -910,9 +912,12 @@ enum Flags {
 	kFlagDR06MannequinHeadOpen = 548,
 	kFlagMcCoyTiedDown = 550,
 	kFlagDR01toCT11 = 558,
+	kFlagHF03toHF04 = 566, // is never checked
+	kFlagHF04toHF03 = 567,
 	kFlagKIAPrivacyAddonIntro = 599,
 	kFlagTB07toTB02 = 608,
 	kFlagTB07RachaelTalk = 612,
+	kFlagHF03LucyTalk = 613,
 	kFlagTB07TyrellMeeting = 625,
 	kFlagCT11DogWrapperTaken = 645,
 	kFlagMA04McCoySleeping = 647,
@@ -1096,10 +1101,10 @@ enum Scenes {
 	kSceneHC01 = 31, // Hawker's Circle - Green pawn - Outside
 	kSceneHC02 = 32, // Hawker's Circle - China bar
 	kSceneHC03 = 33, // Hawker's Circle - Green pawn - Inside
-	kSceneHF01 = 34, // Hysteria Hall - Iutside
-	kSceneHF02 = 35,
-	kSceneHF03 = 36,
-	kSceneHF04 = 37,
+	kSceneHF01 = 34, // Hysteria Hall - Outside
+	kSceneHF02 = 35, // Hysteria Hall - Hall of Mirrors - Outside
+	kSceneHF03 = 36, // Hysteria Hall - Arcade
+	kSceneHF04 = 37, // Hysteria Hall - Hall of Mirrors - Inside
 	kSceneHF05 = 38,
 	kSceneHF06 = 39,
 	kSceneHF07 = 40,

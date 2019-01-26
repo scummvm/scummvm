@@ -26,16 +26,19 @@ namespace BladeRunner {
 
 void SceneScriptHF04::InitializeScene() {
 	Setup_Scene_Information(-33.85f, -0.31f, 395.0f, 0);
-	Game_Flag_Reset(566);
+	Game_Flag_Reset(kFlagHF03toHF04);
+
 	Scene_Exit_Add_2D_Exit(0, 602, 104, 639, 177, 1);
-	Ambient_Sounds_Add_Looping_Sound(70, 35, 0, 1);
+
+	Ambient_Sounds_Add_Looping_Sound( 70, 35, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(109, 40, 0, 1);
-	Ambient_Sounds_Add_Sound(72, 6, 70, 14, 20, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(73, 3, 70, 14, 20, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(74, 5, 70, 14, 20, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound( 72, 6, 70, 14, 20, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound( 73, 3, 70, 14, 20, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound( 74, 5, 70, 14, 20, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(303, 5, 70, 33, 50, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(304, 5, 70, 33, 50, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(305, 5, 70, 33, 50, -100, 100, -101, -101, 0, 0);
+
 	if (Game_Flag_Query(584)) {
 		Scene_Loop_Set_Default(3);
 	} else {
@@ -82,10 +85,10 @@ bool SceneScriptHF04::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptHF04::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1132.27f, -0.31f, -113.46f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1132.27f, -0.31f, -113.46f, 0, true, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(567);
+			Game_Flag_Set(kFlagHF04toHF03);
 			Set_Enter(kSetHF02, kSceneHF02);
 		}
 		return true;
@@ -101,12 +104,17 @@ void SceneScriptHF04::SceneFrameAdvanced(int frame) {
 	if (frame == 62) {
 		Sound_Play(359, Random_Query(43, 43), 0, 0, 50);
 	}
+
 	if (frame == 154) {
 		Sound_Play(360, Random_Query(43, 43), 0, 0, 50);
 	}
-	if (frame == 179 && Actor_Query_Goal_Number(kActorLucy) == 235) {
+
+	if (frame == 179
+	 && Actor_Query_Goal_Number(kActorLucy) == 235
+	) {
 		Actor_Set_Goal_Number(kActorLucy, 236);
 	}
+
 	if (Game_Flag_Query(585)) {
 		Game_Flag_Reset(585);
 		Scene_Loop_Set_Default(3);
@@ -114,13 +122,14 @@ void SceneScriptHF04::SceneFrameAdvanced(int frame) {
 		//return true;
 		return;
 	}
+
 	if (Game_Flag_Query(586)) {
 		Game_Flag_Reset(586);
 		Scene_Loop_Set_Default(0);
 		Scene_Loop_Start_Special(kSceneLoopModeOnce, 5, true);
-		//return true;
-		return;
+		return; // true;
 	}
+
 	if (frame == 89) {
 		Game_Flag_Set(584);
 		Obstacle_Object("HIDE_WALL_A", false);
@@ -128,9 +137,9 @@ void SceneScriptHF04::SceneFrameAdvanced(int frame) {
 		Unobstacle_Object("PIVOT_WALL#1", false);
 		Unobstacle_Object("PIVOT_WALL#02", false);
 		Unobstacle_Object("PIVOT_WALL#03", true);
-		//return true;
-		return;
+		return; // true;
 	}
+
 	if (frame == 180) {
 		Unobstacle_Object("HIDE_WALL_A", false);
 		Unobstacle_Object("HIDE_WALL_B", false);
@@ -141,8 +150,7 @@ void SceneScriptHF04::SceneFrameAdvanced(int frame) {
 		if (Actor_Query_Goal_Number(kActorLucy) == 234) {
 			Actor_Set_Goal_Number(kActorLucy, 235);
 		}
-		//return true;
-		return;
+		return; // true;
 	}
 	//return false;
 }
@@ -151,11 +159,13 @@ void SceneScriptHF04::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptHF04::PlayerWalkedIn() {
-	if (Actor_Query_Goal_Number(kActorLucy) == 230 || Actor_Query_Goal_Number(kActorLucy) == 233) {
+	if (Actor_Query_Goal_Number(kActorLucy) == 230
+	 || Actor_Query_Goal_Number(kActorLucy) == 233
+	) {
 		Player_Set_Combat_Mode(true);
 		Music_Play(1, 60, 0, 2, -1, 0, 0);
 	}
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -45.0f, -0.31f, 307.0f, 0, 0, true, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -45.0f, -0.31f, 307.0f, 0, false, true, 0);
 	Delay(2500);
 }
 
