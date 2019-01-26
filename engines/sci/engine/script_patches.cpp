@@ -952,14 +952,14 @@ static const uint16 hoyle5PatchSpinLoop[] = {
 // This is the same issue as with LSL6 hires.
 static const uint16 hoyle5SetScaleSignature[] = {
 	SIG_MAGICDWORD,
-	0x38, SIG_SELECTOR16(setScale), // pushi $14b (setScale)
+	0x38, SIG_SELECTOR16(setScale), // pushi setScale ($14b)
 	0x38, SIG_UINT16(0x05),         // pushi 5
-	0x51, 0x2c,                     // class 2c (Scaler)
+	0x51, 0x2c,                     // class Scaler
 	SIG_END
 };
 
 static const uint16 hoyle5PatchSetScale[] = {
-	0x38, PATCH_SELECTOR16(setScaler), // pushi $14f (setScaler)
+	0x38, PATCH_SELECTOR16(setScaler), // pushi setScaler ($14f)
 	PATCH_END
 };
 
