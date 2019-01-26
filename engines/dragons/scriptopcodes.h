@@ -45,7 +45,7 @@ struct ScriptOpCall {
 };
 
 // Convenience macros
-#define ARG_SKIP(x) opCall.skip(x);
+#define ARG_SKIP(x) scriptOpCall.skip(x);
 #define ARG_BYTE(name) byte name = scriptOpCall.readByte(); debug(5, "ARG_BYTE(" #name " = %d)", name);
 #define ARG_INT8(name) int8 name = scriptOpCall.readByte(); debug(5, "ARG_INT8(" #name " = %d)", name);
 #define ARG_INT16(name) int16 name = scriptOpCall.readSint16(); debug(5, "ARG_INT16(" #name " = %d)", name);
@@ -53,14 +53,17 @@ struct ScriptOpCall {
 
 typedef Common::Functor1<ScriptOpCall&, void> ScriptOpcode;
 
+class DragonFLG;
+
 class ScriptOpcodes {
 public:
-	ScriptOpcodes(DragonsEngine *vm);
+	ScriptOpcodes(DragonsEngine *vm, DragonFLG *dragonFLG);
 	~ScriptOpcodes();
 	void runScript(ScriptOpCall &scriptOpCall);
 	void execOpcode(ScriptOpCall &scriptOpCall);
 protected:
 	DragonsEngine *_vm;
+	DragonFLG *_dragonFLG;
 	ScriptOpcode *_opcodes[DRAGONS_NUM_SCRIPT_OPCODES];
 	Common::String _opcodeNames[DRAGONS_NUM_SCRIPT_OPCODES];
 	int16 _data_80071f5c;
@@ -73,10 +76,24 @@ protected:
 
 	// Opcodes
 	void opUnk1(ScriptOpCall &scriptOpCall);
+	void opExecuteScript(ScriptOpCall &scriptOpCall); //op 4
+
+	void opUnk7(ScriptOpCall &scriptOpCall);
+
+	void opUnkA(ScriptOpCall &scriptOpCall);
+
+	void opUnkF(ScriptOpCall &scriptOpCall);
 
 	void opUnk13PropertiesRelated(ScriptOpCall &scriptOpCall);
 	void opPlayMusic(ScriptOpCall &scriptOpCall);
 
+	bool checkPropertyFlag(ScriptOpCall &scriptOpCall);
+	void opCode_UnkA_setsProperty(ScriptOpCall &scriptOpCall);
+	void opCode_Unk7(ScriptOpCall &scriptOpCall);
+
+	// misc
+	uint16 getINIField(uint32 iniIndex, uint16 fieldOffset);
+	void setINIField(uint32 iniIndex, uint16 fieldOffset, uint16 value);
 };
 
 } // End of namespace Dragons

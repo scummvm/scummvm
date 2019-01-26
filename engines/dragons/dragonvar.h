@@ -19,64 +19,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#ifndef SCUMMVM_DRAGONINI_H
-#define SCUMMVM_DRAGONINI_H
+#ifndef SCUMMVM_DRAGONVAR_H
+#define SCUMMVM_DRAGONVAR_H
 
 #include "common/system.h"
-#include "bigfile.h"
 
 namespace Dragons {
 
-class Actor;
+class BigfileArchive;
 
-enum IniFlags {
-	INI_FLAG_1 = 1,
-	INI_FLAG_2 = 2,
-	INI_FLAG_4 = 4,
-	INI_FLAG_8 = 8,
-	INI_FLAG_10 = 10,
-	INI_FLAG_20 = 20,
-	INI_FLAG_40 = 40,
-	INI_FLAG_80 = 80
-};
-
-
-struct DragonINI
-	{
-		int16 iptIndex_maybe;
-		int16 field_2;
-		uint16 actorResourceId;
-		uint16 frameIndexId_maybe;
-		int16 field_8;
-		Actor *actor;
-		uint16 sceneId;
-		int16 field_e;
-		int16 field_10;
-		int16 field_12;
-		uint16 field_14;
-		int16 x;
-		int16 y;
-		uint16 field_1a_flags_maybe;
-		int16 field_1c;
-		int16 field_1e;
-		uint16 field_20_actor_field_14;
-	};
-
-class DragonINIResource {
+class DragonVAR {
 private:
-	DragonINI *_dragonINI;
-	uint16 _count;
-	DragonINI *_flickerINI;
+	byte *_data;
 public:
-	DragonINIResource(BigfileArchive *bigfileArchive);
-	uint16 totalRecords() { return _count; }
-	DragonINI *getRecord(uint16 index);
-	void setFlickerRecord(DragonINI *dragonINI);
-	DragonINI *getFlickerRecord() {
-		return _flickerINI;
-	}
+	virtual ~DragonVAR();
+
+	DragonVAR(BigfileArchive *bigfileArchive);
+	uint16 getVar(uint16 offset);
+	void setVar(uint16 offset, uint16 value);
 };
 
 } // End of namespace Dragons
 
-#endif //SCUMMVM_DRAGONINI_H
+#endif //SCUMMVM_DRAGONVAR_H

@@ -153,10 +153,7 @@ void Scene::loadScene(uint32 sceneId, uint32 cameraPointId) {
 		ScriptOpCall scriptOpCall;
 		scriptOpCall._code = obd + 4;
 		scriptOpCall._codeEnd = scriptOpCall._code + READ_LE_UINT32(obd);
-		_currentSceneId = -1;
 		_scriptOpcodes->runScript(scriptOpCall);
-		_currentSceneId = (uint16)(sceneId & 0x7fff);
-
 	}
 
 }
@@ -211,6 +208,10 @@ bool Scene::contains(DragonINI *ini) {
 byte *Scene::getPalette() {
 	assert(_stage);
 	return _stage->getPalette();
+}
+
+uint16 Scene::getSceneId() {
+	return (uint16)_currentSceneId;
 }
 
 } // End of namespace Dragons

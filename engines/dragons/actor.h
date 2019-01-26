@@ -119,6 +119,8 @@ public:
 	void resetSequenceIP();
 	byte *getSeqIpAtOffset(uint32 offset);
 	void loadFrame(uint16 frameOffset);
+	void reset_maybe();
+
 };
 
 } // End of namespace Dragons
