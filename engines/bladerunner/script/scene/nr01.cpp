@@ -331,7 +331,7 @@ void SceneScriptNR01::PlayerWalkedIn() {
 				Actor_Says(kActorSteele, 1440, 13);
 				Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorSteele, 48, false, true);
 				Actor_Says(kActorMcCoy, 3145, 13);
-				if (Global_Variable_Query(40) != 3) {
+				if (Global_Variable_Query(kVariableBehavior) != 3) {
 					Actor_Says(kActorSteele, 1450, 12);
 					Actor_Says(kActorSteele, 1460, 13);
 				}
@@ -360,14 +360,14 @@ void SceneScriptNR01::PlayerWalkedIn() {
 					Actor_Says(kActorSteele, 1430, 12);
 					Actor_Set_Goal_Number(kActorSteele, 285);
 				} else {
-					int v0 = Global_Variable_Query(40) - 1;
-					if (!v0) {
+					int v0 = Global_Variable_Query(kVariableBehavior);
+					if (v0 == 1) {
 						Actor_Says(kActorSteele, 1510, 15);
 						Actor_Says(kActorSteele, 1520, 14);
 						Actor_Says(kActorSteele, 1530, 13);
 						Actor_Says(kActorMcCoy, 3170, 13);
 						Actor_Set_Goal_Number(kActorSteele, 231);
-					} else if (v0 == 1) {
+					} else if (v0 == 2) {
 						Actor_Says(kActorSteele, 1590, 15);
 						Actor_Says(kActorMcCoy, 3195, 14);
 						Actor_Says(kActorSteele, 1600, 16);
@@ -377,7 +377,7 @@ void SceneScriptNR01::PlayerWalkedIn() {
 						Actor_Says(kActorSteele, 1630, 14);
 						Actor_Says(kActorMcCoy, 3205, 12);
 						Actor_Set_Goal_Number(kActorSteele, 232);
-					} else if (v0 == 2) {
+					} else if (v0 == 3) {
 						Actor_Says(kActorSteele, 1540, 15);
 						Actor_Says(kActorMcCoy, 3175, 13);
 						Actor_Says(kActorSteele, 1550, 13);

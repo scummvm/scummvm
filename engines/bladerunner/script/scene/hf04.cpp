@@ -24,6 +24,13 @@
 
 namespace BladeRunner {
 
+enum kHF04Loops {
+	kHF04LoopMain            = 0,
+	kHF04LoopDoorsClosing    = 2,
+	kHF04LoopMainDoorsClosed = 3,
+	kHF04LoopDoorsOpening    = 5
+};
+
 void SceneScriptHF04::InitializeScene() {
 	Setup_Scene_Information(-33.85f, -0.31f, 395.0f, 0);
 	Game_Flag_Reset(kFlagHF03toHF04);
@@ -39,15 +46,15 @@ void SceneScriptHF04::InitializeScene() {
 	Ambient_Sounds_Add_Sound(304, 5, 70, 33, 50, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(305, 5, 70, 33, 50, -100, 100, -101, -101, 0, 0);
 
-	if (Game_Flag_Query(584)) {
-		Scene_Loop_Set_Default(3);
+	if (Game_Flag_Query(kFlagHF04DoorsClosed)) {
+		Scene_Loop_Set_Default(kHF04LoopMainDoorsClosed);
 	} else {
-		Scene_Loop_Set_Default(0);
+		Scene_Loop_Set_Default(kHF04LoopMain);
 	}
 }
 
 void SceneScriptHF04::SceneLoaded() {
-	if (Game_Flag_Query(584)) {
+	if (Game_Flag_Query(kFlagHF04DoorsClosed)) {
 		Unobstacle_Object("PIVOT_WALL#1", true);
 		Unobstacle_Object("PIVOT_WALL#02", true);
 		Unobstacle_Object("PIVOT_WALL#03", true);
@@ -55,14 +62,15 @@ void SceneScriptHF04::SceneLoaded() {
 		Unobstacle_Object("HIDE_WALL_A", true);
 		Unobstacle_Object("HIDE_WALL_B", true);
 	}
-	if (Actor_Query_Goal_Number(kActorLucy) == 213) {
+
+	if (Actor_Query_Goal_Number(kActorLucy) == kGoalLucyRunToHF042) {
 		if (Actor_Clue_Query(kActorLucy, kClueMcCoyHelpedLucy)
-		 && Global_Variable_Query(40) != 3
+		 && Global_Variable_Query(kVariableBehavior) != 3
 		) {
-			Game_Flag_Set(593);
+			Game_Flag_Set(kFlagLucyRanAway);
 		} else {
-			Actor_Set_Goal_Number(kActorLucy, 230);
-			Game_Flag_Reset(584);
+			Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF04Start);
+			Game_Flag_Reset(kFlagHF04DoorsClosed);
 		}
 	}
 }
@@ -110,28 +118,28 @@ void SceneScriptHF04::SceneFrameAdvanced(int frame) {
 	}
 
 	if (frame == 179
-	 && Actor_Query_Goal_Number(kActorLucy) == 235
+	 && Actor_Query_Goal_Number(kActorLucy) == kGoalLucyHF04WaitForMcCoy1
 	) {
-		Actor_Set_Goal_Number(kActorLucy, 236);
+		Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF04Run3);
 	}
 
-	if (Game_Flag_Query(585)) {
-		Game_Flag_Reset(585);
-		Scene_Loop_Set_Default(3);
-		Scene_Loop_Start_Special(kSceneLoopModeOnce, 2, true);
+	if (Game_Flag_Query(kFlagHF04CloseDoors)) {
+		Game_Flag_Reset(kFlagHF04CloseDoors);
+		Scene_Loop_Set_Default(kHF04LoopMainDoorsClosed);
+		Scene_Loop_Start_Special(kSceneLoopModeOnce, kHF04LoopDoorsClosing, true);
 		//return true;
 		return;
 	}
 
-	if (Game_Flag_Query(586)) {
-		Game_Flag_Reset(586);
-		Scene_Loop_Set_Default(0);
-		Scene_Loop_Start_Special(kSceneLoopModeOnce, 5, true);
+	if (Game_Flag_Query(kFlagHF04OpenDoors)) {
+		Game_Flag_Reset(kFlagHF04OpenDoors);
+		Scene_Loop_Set_Default(kHF04LoopMain);
+		Scene_Loop_Start_Special(kSceneLoopModeOnce, kHF04LoopDoorsOpening, true);
 		return; // true;
 	}
 
 	if (frame == 89) {
-		Game_Flag_Set(584);
+		Game_Flag_Set(kFlagHF04DoorsClosed);
 		Obstacle_Object("HIDE_WALL_A", false);
 		Obstacle_Object("HIDE_WALL_B", false);
 		Unobstacle_Object("PIVOT_WALL#1", false);
@@ -146,9 +154,9 @@ void SceneScriptHF04::SceneFrameAdvanced(int frame) {
 		Obstacle_Object("PIVOT_WALL#1", false);
 		Obstacle_Object("PIVOT_WALL#02", false);
 		Obstacle_Object("PIVOT_WALL#03", true);
-		Game_Flag_Reset(584);
-		if (Actor_Query_Goal_Number(kActorLucy) == 234) {
-			Actor_Set_Goal_Number(kActorLucy, 235);
+		Game_Flag_Reset(kFlagHF04DoorsClosed);
+		if (Actor_Query_Goal_Number(kActorLucy) == kGoalLucyHF04Run2) {
+			Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF04WaitForMcCoy1);
 		}
 		return; // true;
 	}
@@ -159,8 +167,8 @@ void SceneScriptHF04::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptHF04::PlayerWalkedIn() {
-	if (Actor_Query_Goal_Number(kActorLucy) == 230
-	 || Actor_Query_Goal_Number(kActorLucy) == 233
+	if (Actor_Query_Goal_Number(kActorLucy) == kGoalLucyHF04Start
+	 || Actor_Query_Goal_Number(kActorLucy) == kGoalLucyHF04Run1
 	) {
 		Player_Set_Combat_Mode(true);
 		Music_Play(1, 60, 0, 2, -1, 0, 0);

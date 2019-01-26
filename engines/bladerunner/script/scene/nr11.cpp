@@ -180,7 +180,7 @@ bool SceneScriptNR11::ClickedOn3DObject(const char *objectName, bool combatMode)
 					Actor_Says(kActorDektora, 1090, 17);
 					Music_Stop(4);
 					Actor_Set_Goal_Number(kActorDektora, 260);
-					if (Global_Variable_Query(40) == 1) {
+					if (Global_Variable_Query(kVariableBehavior) == 1) {
 						Actor_Set_Goal_Number(kActorSteele, 236);
 					}
 					Game_Flag_Set(591);

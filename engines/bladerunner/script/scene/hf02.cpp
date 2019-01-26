@@ -59,7 +59,7 @@ void SceneScriptHF02::SceneLoaded() {
 	Obstacle_Object("BARD_NEON", true);
 	Unclickable_Object("BARD_NEON");
 	if (Actor_Query_Goal_Number(kActorSteele) == 234) {
-		if (Game_Flag_Query(593)) {
+		if (Game_Flag_Query(kFlagLucyRanAway)) {
 			Actor_Set_Goal_Number(kActorSteele, 243);
 		} else {
 			Actor_Set_Goal_Number(kActorSteele, 240);
@@ -132,7 +132,7 @@ void SceneScriptHF02::PlayerWalkedIn() {
 	}
 
 	if (Actor_Query_Goal_Number(kActorSteele) == 243) {
-		if (Actor_Query_Goal_Number(kActorLucy) == 599) {
+		if (Actor_Query_Goal_Number(kActorLucy) == kGoalLucyDead) {
 			Actor_Set_Goal_Number(kActorSteele, 244);
 		} else {
 			Actor_Set_Goal_Number(kActorSteele, 245);

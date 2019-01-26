@@ -108,19 +108,19 @@ void InitScript::Init_Game_Flags() {
 	}
 
 	if (Game_Flag_Query(kFlagDektoraIsReplicant)) {
-		Global_Variable_Set(40, 1);
+		Global_Variable_Set(kVariableBehavior, 1);
 	} else if ( Game_Flag_Query(kFlagGordoIsReplicant)
 	        && !Game_Flag_Query(kFlagLucyIsReplicant)
 	) {
-		Global_Variable_Set(40, 2);
+		Global_Variable_Set(kVariableBehavior, 2);
 	} else if (!Game_Flag_Query(kFlagGordoIsReplicant)
 	        &&  Game_Flag_Query(kFlagLucyIsReplicant)
 	) {
-		Global_Variable_Set(40, 3);
+		Global_Variable_Set(kVariableBehavior, 3);
 	} else if (Random_Query(1, 2) == 1) {
-		Global_Variable_Set(40, 2);
+		Global_Variable_Set(kVariableBehavior, 2);
 	} else {
-		Global_Variable_Set(40, 3);
+		Global_Variable_Set(kVariableBehavior, 3);
 	}
 
 	Game_Flag_Set(kFlagMcCoyInRunciters);

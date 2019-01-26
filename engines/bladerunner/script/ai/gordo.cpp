@@ -176,7 +176,7 @@ void AIScriptGordo::CompletedMovementTrack() {
 	}
 	if (Actor_Query_Goal_Number(kActorGordo) == 222) {
 		if (Game_Flag_Query(kFlagGordoIsReplicant)) {
-			if (Global_Variable_Query(40) == 2) {
+			if (Global_Variable_Query(kVariableBehavior) == 2) {
 				Actor_Set_Goal_Number(kActorGordo, 250);
 			} else {
 				Actor_Set_Goal_Number(kActorGordo, 230);
@@ -431,8 +431,8 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorGordo);
 		break;
 	case 200:
-		if (Global_Variable_Query(40) == 2) {
-			if (Game_Flag_Query(593)
+		if (Global_Variable_Query(kVariableBehavior) == 2) {
+			if (Game_Flag_Query(kFlagLucyRanAway)
 			 && Game_Flag_Query(591)
 			 && Player_Query_Current_Scene() != kSceneNR02
 			) {
@@ -513,7 +513,7 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Says(kActorGordo, 850, 12);
 			Actor_Says(kActorGordo, 860, 15);
 			Actor_Says(0, 3910, 16);
-			if (Global_Variable_Query(40) == 2) {
+			if (Global_Variable_Query(kVariableBehavior) == 2) {
 				Actor_Says(kActorGordo, 870, 16);
 				Sound_Play(576, 50, 0, 0, 50);
 				Sound_Play(319, 50, 0, 0, 50);

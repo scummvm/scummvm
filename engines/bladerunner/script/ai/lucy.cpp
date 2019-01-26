@@ -36,57 +36,74 @@ void AIScriptLucy::Initialize() {
 
 	_flag = 0;
 
-	Actor_Set_Goal_Number(kActorLucy, 0);
+	Actor_Set_Goal_Number(kActorLucy, kGoalLucyDefault);
 }
 
 bool AIScriptLucy::Update() {
 	float x, y, z;
 
-	if (Global_Variable_Query(kVariableChapter) == 3 && Actor_Query_Goal_Number(kActorLucy) < 200) {
-		Actor_Set_Goal_Number(kActorLucy, 200);
+	if (Global_Variable_Query(kVariableChapter) == 3
+	 && Actor_Query_Goal_Number(kActorLucy) < kGoalLucyMoveAround
+	) {
+		Actor_Set_Goal_Number(kActorLucy, kGoalLucyMoveAround);
 	}
-	if (Actor_Query_Goal_Number(kActorLucy) == 230 && Player_Query_Current_Scene() == 37) {
-		Actor_Set_Goal_Number(kActorLucy, 233);
+
+	if (Actor_Query_Goal_Number(kActorLucy) == kGoalLucyHF04Start
+	 && Player_Query_Current_Scene() == kSceneHF04
+	) {
+		Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF04Run1);
 	}
-	if (Global_Variable_Query(kVariableChapter) == 4 && Actor_Query_Goal_Number(kActorLucy) < 300) {
+
+	if (Global_Variable_Query(kVariableChapter) == 4
+	 && Actor_Query_Goal_Number(kActorLucy) < 300
+	) {
 		Actor_Set_Goal_Number(kActorLucy, 300);
 	}
+
 	if (Global_Variable_Query(kVariableChapter) == 4
-			&& Actor_Query_Goal_Number(kActorLucy) == 599
-			&& Actor_Query_Which_Set_In(kActorLucy) != 99) {
+	 && Actor_Query_Goal_Number(kActorLucy) == kGoalLucyDead
+	 && Actor_Query_Which_Set_In(kActorLucy) != 99
+	) {
 		if (Actor_Query_Which_Set_In(kActorLucy) != Player_Query_Current_Set()) {
 			Actor_Put_In_Set(kActorLucy, kSetFreeSlotI);
 			Actor_Set_At_Waypoint(kActorLucy, 41, 0);
 		}
 	}
-	if (Game_Flag_Query(616) && Actor_Query_Goal_Number(kActorLucy) == 201) {
+
+	if (Game_Flag_Query(616)
+	 && Actor_Query_Goal_Number(kActorLucy) == kGoalLucyWillReturnToHF03
+	) {
 		Actor_Put_In_Set(kActorLucy, kSetHF03);
 		Actor_Set_At_Waypoint(kActorLucy, 371, 156);
-		Actor_Set_Goal_Number(kActorLucy, 250);
+		Actor_Set_Goal_Number(kActorLucy, kGoalLucyReturnToHF03);
 	}
-	if (Actor_Query_Goal_Number(kActorLucy) > 229
-			&& Actor_Query_Goal_Number(kActorLucy) < 239
-			&& Actor_Query_Goal_Number(kActorLucy) != 232
-			&& Player_Query_Current_Scene() == 37
-			&& Actor_Query_Which_Set_In(kActorLucy) == 40
-			&& !Game_Flag_Query(701)
-			&& Actor_Query_Inch_Distance_From_Actor(kActorLucy, kActorMcCoy) < 84
-			&& !Player_Query_Combat_Mode()
-			&& Actor_Query_Friendliness_To_Other(kActorLucy, kActorMcCoy) > 40) {
-		Actor_Set_Goal_Number(kActorLucy, 232);
+
+	if ( Actor_Query_Goal_Number(kActorLucy) > 229
+	 &&  Actor_Query_Goal_Number(kActorLucy) < 239
+	 &&  Actor_Query_Goal_Number(kActorLucy) != kGoalLucyHF04TalkToMcCoy
+	 &&  Player_Query_Current_Scene() == kSceneHF04
+	 &&  Actor_Query_Which_Set_In(kActorLucy) == kSetHF04
+	 && !Game_Flag_Query(701)
+	 &&  Actor_Query_Inch_Distance_From_Actor(kActorLucy, kActorMcCoy) < 84
+	 && !Player_Query_Combat_Mode()
+	 &&  Actor_Query_Friendliness_To_Other(kActorLucy, kActorMcCoy) > 40
+	) {
+		Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF04TalkToMcCoy); // how can this be triggered?
 	}
-	if (Actor_Query_Goal_Number(kActorLucy) == 235) {
+
+	if (Actor_Query_Goal_Number(kActorLucy) == kGoalLucyHF04WaitForMcCoy1) {
 		Actor_Query_XYZ(kActorMcCoy, &x, &y, &z);
-		if (z > -875.0f) {
-			Game_Flag_Set(586);
-			Actor_Set_Goal_Number(kActorLucy, 236);
+		if (z < -875.0f) {
+			Game_Flag_Set(kFlagHF04OpenDoors);
+			Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF04Run3);
 		}
 	}
-	if (Actor_Query_Goal_Number(kActorLucy) == 237) {
+
+	if (Actor_Query_Goal_Number(kActorLucy) == kGoalLucyHF04WaitForMcCoy2) {
 		Actor_Query_XYZ(kActorMcCoy, &x, &y, &z);
 		if (x > 350.0f) {
-			Game_Flag_Set(585);
-			Actor_Set_Goal_Number(kActorLucy, 238);
+			Game_Flag_Set(kFlagHF04CloseDoors);
+			Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF04Run4);
 		}
 	}
 
@@ -95,86 +112,93 @@ bool AIScriptLucy::Update() {
 
 void AIScriptLucy::TimerExpired(int timer) {
 	AI_Countdown_Timer_Reset(kActorLucy, 0);
-	if (!timer && Actor_Query_Goal_Number(kActorLucy) == 205) {
-		if (Player_Query_Current_Scene() == 36) {
+	if (timer == 0
+	 && Actor_Query_Goal_Number(kActorLucy) == kGoalLucyGoToHF03
+	) {
+		if (Player_Query_Current_Scene() == kSceneHF03) {
 			AI_Countdown_Timer_Start(kActorLucy, 0, 20);
 		} else {
-			Actor_Set_Goal_Number(kActorLucy, 200);
+			Actor_Set_Goal_Number(kActorLucy, kGoalLucyMoveAround);
 		}
 	}
 }
 
 void AIScriptLucy::CompletedMovementTrack() {
 	switch (Actor_Query_Goal_Number(kActorLucy)) {
-	case 205:
-		if (!Game_Flag_Query(616) || Global_Variable_Query(40) != 3) {
-			AI_Countdown_Timer_Reset(kActorLucy, 0);
-			AI_Countdown_Timer_Start(kActorLucy, 0, 30);
-			return; //false;
+	case kGoalLucyGoToHF03:
+		if (Game_Flag_Query(616)
+		 && Global_Variable_Query(kVariableBehavior) == 3
+		) {
+			Actor_Set_Goal_Number(kActorLucy, kGoalLucyReturnToHF03);
+			return; //true;
 		}
-		Actor_Set_Goal_Number(kActorLucy, 250);
-		return; //true;
-
-	case 210:
-		Actor_Set_Goal_Number(kActorLucy, 211);
+		AI_Countdown_Timer_Reset(kActorLucy, 0);
+		AI_Countdown_Timer_Start(kActorLucy, 0, 30);
 		break;
 
-	case 211:
-		Game_Flag_Set(593);
-		Actor_Set_Goal_Number(kActorLucy, 299);
+	case kGoalLucyRunOutPhase1:
+		Actor_Set_Goal_Number(kActorLucy, kGoalLucyRunOutPhase2);
 		break;
 
-	case 212:
-		Actor_Set_Goal_Number(kActorLucy, 213);
+	case kGoalLucyRunOutPhase2:
+		Game_Flag_Set(kFlagLucyRanAway);
+		Actor_Set_Goal_Number(kActorLucy, kGoalLucyGoneChapter3);
 		break;
 
-	case 213:
-		if (Actor_Clue_Query(kActorLucy, 219) && Global_Variable_Query(40) != 3) {
-			Game_Flag_Set(593);
+	case kGoalLucyRunToHF041:
+		Actor_Set_Goal_Number(kActorLucy, kGoalLucyRunToHF042);
+		break;
+
+	case kGoalLucyRunToHF042:
+		if (Actor_Clue_Query(kActorLucy, kClueMcCoyHelpedLucy)
+		 && Global_Variable_Query(kVariableBehavior) != 3
+		) {
+			Game_Flag_Set(kFlagLucyRanAway);
 		} else {
-			Actor_Set_Goal_Number(kActorLucy, 230);
-			Game_Flag_Reset(584);
+			Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF04Start);
+			Game_Flag_Reset(kFlagHF04DoorsClosed);
 		}
 		break;
 
-	case 214:
-		Actor_Set_Goal_Number(kActorLucy, 215);
+	case kGoalLucyRunAwayWithHelp1:
+		Actor_Set_Goal_Number(kActorLucy, kGoalLucyRunAwayWithHelp2);
 		break;
 
-	case 215:
-		Actor_Set_Goal_Number(kActorLucy, 201);
+	case kGoalLucyRunAwayWithHelp2:
+		Actor_Set_Goal_Number(kActorLucy, kGoalLucyWillReturnToHF03);
 		break;
 
-	case 220:
-	case 225:
-		Actor_Set_Goal_Number(kActorLucy, 200);
+	case kGoalLucyGoToFreeSlotGAG:
+	case kGoalLucyGoToFreeSlotGAHJ:
+		Actor_Set_Goal_Number(kActorLucy, kGoalLucyMoveAround);
 		break;
 
-	case 233:
-		Game_Flag_Set(585);
-		Actor_Set_Goal_Number(kActorLucy, 234);
+	case kGoalLucyHF04Run1:
+		Game_Flag_Set(kFlagHF04CloseDoors);
+		Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF04Run2);
 		break;
 
-	case 234:
-		Actor_Set_Goal_Number(kActorLucy, 235);
+	case kGoalLucyHF04Run2:
+		Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF04WaitForMcCoy1);
 		break;
 
-	case 236:
-		Actor_Set_Goal_Number(kActorLucy, 237);
+	case kGoalLucyHF04Run3:
+		Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF04WaitForMcCoy2);
 		break;
 
-	case 238:
-		Game_Flag_Set(593);
+	case kGoalLucyHF04Run4:
+		Game_Flag_Set(kFlagLucyRanAway);
 		Actor_Put_In_Set(kActorLucy, kSetFreeSlotA);
 		Actor_Set_At_Waypoint(kActorLucy, 33, 0);
 		Actor_Set_Health(kActorLucy, 30, 30);
-		if (Global_Variable_Query(40) == 3) {
+
+		if (Global_Variable_Query(kVariableBehavior) == 3) {
 			Actor_Set_Goal_Number(kActorSteele, 240);
 		}
 		break;
 
-	case 239:
-		Game_Flag_Set(593);
+	case kGoalLucyHF04WalkAway:
+		Game_Flag_Set(kFlagLucyRanAway);
 		break;
 
 	default:
@@ -188,9 +212,9 @@ void AIScriptLucy::ReceivedClue(int clueId, int fromActorId) {
 }
 
 void AIScriptLucy::ClickedByPlayer() {
-	if (Actor_Query_Goal_Number(kActorLucy) == 599) {
-		Actor_Face_Actor(kActorMcCoy, kActorLucy, 1);
-		Actor_Says(kActorMcCoy, 8630, 3);
+	if (Actor_Query_Goal_Number(kActorLucy) == kGoalLucyDead) {
+		Actor_Face_Actor(kActorMcCoy, kActorLucy, true);
+		Actor_Says(kActorMcCoy, 8630, kAnimationModeTalk);
 	}
 }
 
@@ -224,15 +248,24 @@ void AIScriptLucy::Retired(int byActorId) {
 	if (byActorId == kActorMcCoy) {
 		Actor_Modify_Friendliness_To_Other(kActorClovis, kActorMcCoy, -6);
 	}
-	if ((byActorId == kActorSteele || byActorId == kActorMcCoy)
-			&& Actor_Query_In_Set(kActorSteele, kSetHF06)
-			&& Actor_Query_In_Set(kActorMcCoy, kSetHF06)) {
+
+	if ((byActorId == kActorSteele
+	  || byActorId == kActorMcCoy
+	 )
+	 && Actor_Query_In_Set(kActorSteele, kSetHF06)
+	 && Actor_Query_In_Set(kActorMcCoy, kSetHF06)
+	) {
 		Non_Player_Actor_Combat_Mode_On(kActorSteele, kActorCombatStateUncover, true, kActorMcCoy, 15, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 25, 300, false);
 	}
-	if (Query_Difficulty_Level() && byActorId == kActorMcCoy && Game_Flag_Query(46)) {
-		Global_Variable_Increment(2, 200);
+
+	if (Query_Difficulty_Level() != 0
+	 && byActorId == kActorMcCoy
+	 && Game_Flag_Query(kFlagLucyIsReplicant)
+	) {
+		Global_Variable_Increment(kVariableChinyen, 200);
 	}
-	Actor_Set_Goal_Number(kActorLucy, 599);
+
+	Actor_Set_Goal_Number(kActorLucy, kGoalLucyDead);
 }
 
 int AIScriptLucy::GetFriendlinessModifierIfGetsClue(int otherActorId, int clueId) {
@@ -240,94 +273,95 @@ int AIScriptLucy::GetFriendlinessModifierIfGetsClue(int otherActorId, int clueId
 }
 
 bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
-	if (!newGoalNumber) {
+	if (newGoalNumber == kGoalLucyDefault) {
 		Actor_Put_In_Set(kActorLucy, kSetFreeSlotA);
 		return false;
 	}
 
 	switch (newGoalNumber) {
-	case 200:
-		if (Global_Variable_Query(40) == 3) {
-			if (Game_Flag_Query(591) && Game_Flag_Query(592) && Player_Query_Current_Scene() != 36) {
-				Actor_Set_Goal_Number(kActorLucy, 205);
+	case kGoalLucyMoveAround:
+		if (Global_Variable_Query(kVariableBehavior) == 3) {
+			if (Game_Flag_Query(591)
+			 && Game_Flag_Query(592)
+			 && Player_Query_Current_Scene() != kSceneHF03
+			) {
+				Actor_Set_Goal_Number(kActorLucy, kGoalLucyGoToHF03);
 			} else {
-				if (Random_Query(1, 2) - 1) {
-					Actor_Set_Goal_Number(kActorLucy, 225);
+				if (Random_Query(0, 1) == 1) {
+					Actor_Set_Goal_Number(kActorLucy, kGoalLucyGoToFreeSlotGAHJ);
 				} else {
-					Actor_Set_Goal_Number(kActorLucy, 220);
+					Actor_Set_Goal_Number(kActorLucy, kGoalLucyGoToFreeSlotGAG);
 				}
 			}
 		} else {
-			int rnd = Random_Query(1, 4) - 1;
+			int rnd = Random_Query(0, 3);
 
-			if (rnd) {
-				if (rnd == 1) {
-					Actor_Set_Goal_Number(kActorLucy, 225);
-				} else if (Player_Query_Current_Scene() == 36) {
-					Actor_Set_Goal_Number(kActorLucy, 220);
-				} else {
-					Actor_Set_Goal_Number(kActorLucy, 205);
-				}
+			if (rnd == 0) {
+				Actor_Set_Goal_Number(kActorLucy, kGoalLucyGoToFreeSlotGAG);
+			} else if (rnd == 1) {
+				Actor_Set_Goal_Number(kActorLucy, kGoalLucyGoToFreeSlotGAHJ);
+			} else if (Player_Query_Current_Scene() == kSceneHF03) {
+				Actor_Set_Goal_Number(kActorLucy, kGoalLucyGoToFreeSlotGAG);
 			} else {
-				Actor_Set_Goal_Number(kActorLucy, 220);
+				Actor_Set_Goal_Number(kActorLucy, kGoalLucyGoToHF03);
 			}
 		}
 		break;
 
-	case 205:
+	case kGoalLucyGoToHF03:
 		AI_Movement_Track_Flush(kActorLucy);
 		AI_Movement_Track_Append_With_Facing(kActorLucy, 371, 0, 156);
 		AI_Movement_Track_Repeat(kActorLucy);
 		break;
 
-	case 210:
-		Actor_Set_Immunity_To_Obstacles(kActorLucy, 1);
+	case kGoalLucyRunOutPhase1:
+		Actor_Set_Immunity_To_Obstacles(kActorLucy, true);
 		AI_Movement_Track_Flush(kActorLucy);
 		AI_Movement_Track_Append_Run(kActorLucy, 377, 0);
 		AI_Movement_Track_Repeat(kActorLucy);
 		break;
 
-	case 211:
-		Actor_Set_Immunity_To_Obstacles(kActorLucy, 0);
+	case kGoalLucyRunOutPhase2:
+		Actor_Set_Immunity_To_Obstacles(kActorLucy, false);
 		AI_Movement_Track_Flush(kActorLucy);
 		AI_Movement_Track_Append_Run(kActorLucy, 372, 0);
 		AI_Movement_Track_Append(kActorLucy, 33, 0);
 		AI_Movement_Track_Repeat(kActorLucy);
 		break;
 
-	case 212:
-		Actor_Set_Immunity_To_Obstacles(kActorLucy, 1);
+	case kGoalLucyRunToHF041:
+		Actor_Set_Immunity_To_Obstacles(kActorLucy, true);
 		AI_Movement_Track_Flush(kActorLucy);
 		AI_Movement_Track_Append_Run(kActorLucy, 378, 0);
 		AI_Movement_Track_Repeat(kActorLucy);
 		break;
 
-	case 213:
-		Actor_Set_Immunity_To_Obstacles(kActorLucy, 0);
+	case kGoalLucyRunToHF042:
+		Actor_Set_Immunity_To_Obstacles(kActorLucy, false);
 		AI_Movement_Track_Flush(kActorLucy);
 		AI_Movement_Track_Append_Run(kActorLucy, 373, 0);
 		AI_Movement_Track_Append(kActorLucy, 33, 0);
 		AI_Movement_Track_Repeat(kActorLucy);
 		break;
 
-	case 214:
+	case kGoalLucyRunAwayWithHelp1:
 		Actor_Says(kActorLucy, 320, 16);
 		Actor_Set_Goal_Number(kActorHolloway, 242);
-		Actor_Set_Immunity_To_Obstacles(6, 1);
+		Actor_Set_Immunity_To_Obstacles(kActorLucy, true);
 		AI_Movement_Track_Flush(kActorLucy);
 		AI_Movement_Track_Append(kActorLucy, 378, 0);
 		AI_Movement_Track_Repeat(kActorLucy);
 		break;
 
-	case 215:
-		Actor_Set_Immunity_To_Obstacles(kActorLucy, 0);
+	case kGoalLucyRunAwayWithHelp2:
+		Actor_Set_Immunity_To_Obstacles(kActorLucy, false);
 		AI_Movement_Track_Flush(kActorLucy);
 		AI_Movement_Track_Append_Run(kActorLucy, 373, 0);
 		AI_Movement_Track_Append(kActorLucy, 33, 30);
 		AI_Movement_Track_Repeat(kActorLucy);
 		break;
 
-	case 220:
+	case kGoalLucyGoToFreeSlotGAG:
 		AI_Movement_Track_Flush(kActorLucy);
 		AI_Movement_Track_Append(kActorLucy, 39, Random_Query(5, 10));
 		AI_Movement_Track_Append(kActorLucy, 33, Random_Query(5, 10));
@@ -335,7 +369,7 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorLucy);
 		break;
 
-	case 225:
+	case kGoalLucyGoToFreeSlotGAHJ:
 		AI_Movement_Track_Flush(kActorLucy);
 		AI_Movement_Track_Append(kActorLucy, 39, Random_Query(5, 15));
 		AI_Movement_Track_Append(kActorLucy, 33, Random_Query(10, 30));
@@ -344,26 +378,26 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorLucy);
 		break;
 
-	case 230:
+	case kGoalLucyHF04Start:
 		AI_Movement_Track_Flush(kActorLucy);
 		Actor_Put_In_Set(kActorLucy, kSetHF04);
 		Actor_Set_At_Waypoint(kActorLucy, 518, 0);
-		Actor_Set_Targetable(kActorLucy, 1);
+		Actor_Set_Targetable(kActorLucy, true);
 		Actor_Set_Health(kActorLucy, 5, 5);
 		break;
 
-	case 232:
+	case kGoalLucyHF04TalkToMcCoy:
 		Player_Loses_Control();
 		Actor_Says(kActorMcCoy, 1700, 16);
 		AI_Movement_Track_Flush(kActorLucy);
-		Actor_Face_Actor(kActorLucy, 0, 1);
-		Actor_Face_Actor(kActorMcCoy, kActorLucy, 1);
+		Actor_Face_Actor(kActorLucy, kActorMcCoy, true);
+		Actor_Face_Actor(kActorMcCoy, kActorLucy, true);
 		Actor_Says(kActorLucy, 350, 13);
 		Actor_Says(kActorMcCoy, 1705, 13);
 		Actor_Says(kActorLucy, 360, 13);
 		Actor_Says(kActorMcCoy, 1710, 13);
 
-		if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy) {
+		if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy) { // how to trigger this?
 			Actor_Says(kActorLucy, 940, 13);
 			Actor_Says(kActorMcCoy, 6780, 12);
 			Actor_Says(kActorLucy, 950, 12);
@@ -390,40 +424,42 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Says(kActorLucy, 1050, 12);
 		}
 		Actor_Says(kActorLucy, 370, 14);
-		Actor_Set_Goal_Number(kActorLucy, 239);
-		if (Global_Variable_Query(40) == 3) {
+		Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF04WalkAway);
+
+		if (Global_Variable_Query(kVariableBehavior) == 3) {
 			Actor_Set_Goal_Number(kActorSteele, 243);
-			Game_Flag_Set(593);
+			Game_Flag_Set(kFlagLucyRanAway);
 		}
+
 		Player_Gains_Control();
 		break;
 
-	case 233:
+	case kGoalLucyHF04Run1:
 		AI_Movement_Track_Flush(kActorLucy);
 		AI_Movement_Track_Append_Run(kActorLucy, 519, 0);
 		AI_Movement_Track_Repeat(kActorLucy);
 		Actor_Set_Health(kActorLucy, 5, 5);
 		break;
 
-	case 234:
+	case kGoalLucyHF04Run2:
 		AI_Movement_Track_Flush(kActorLucy);
 		AI_Movement_Track_Append_Run(kActorLucy, 520, 0);
 		AI_Movement_Track_Repeat(kActorLucy);
 		break;
 
-	case 236:
+	case kGoalLucyHF04Run3:
 		AI_Movement_Track_Flush(kActorLucy);
 		AI_Movement_Track_Append_Run(kActorLucy, 521, 0);
 		AI_Movement_Track_Repeat(kActorLucy);
 		break;
 
-	case 238:
+	case kGoalLucyHF04Run4:
 		AI_Movement_Track_Flush(kActorLucy);
 		AI_Movement_Track_Append_Run(kActorLucy, 522, 0);
 		AI_Movement_Track_Repeat(kActorLucy);
 		break;
 
-	case 239:
+	case kGoalLucyHF04WalkAway:
 		AI_Movement_Track_Flush(kActorLucy);
 		AI_Movement_Track_Append_Run(kActorLucy, 523, 0);
 		AI_Movement_Track_Append(kActorLucy, 33, 0);
@@ -432,17 +468,17 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Set_Health(kActorLucy, 30, 30);
 		break;
 
-	case 240:
-		if (Global_Variable_Query(40) == 3) {
-			Actor_Set_Goal_Number(kActorLucy, 599);
+	case 240: // not used anywhere
+		if (Global_Variable_Query(kVariableBehavior) == 3) {
+			Actor_Set_Goal_Number(kActorLucy, kGoalLucyDead);
 			Actor_Set_Goal_Number(kActorSteele, 240);
 		} else {
-			Actor_Set_Goal_Number(kActorLucy, 299);
-			Game_Flag_Set(593);
+			Actor_Set_Goal_Number(kActorLucy, kGoalLucyGoneChapter3);
+			Game_Flag_Set(kFlagLucyRanAway);
 		}
 		break;
 
-	case 250:
+	case kGoalLucyReturnToHF03:
 		AI_Movement_Track_Flush(kActorLucy);
 		AI_Movement_Track_Append(kActorLucy, 372, 0);
 		AI_Movement_Track_Append_With_Facing(kActorLucy, 371, 0, 156);
@@ -463,7 +499,7 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		break;
 
 	case 311:
-		voightKempTest();
+		voightKampffTest();
 		break;
 
 	case 312:
@@ -473,8 +509,8 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorLucy);
 		break;
 
-	case 599:
-		Game_Flag_Set(593);
+	case kGoalLucyDead:
+		Game_Flag_Set(kFlagLucyRanAway);
 		break;
 	}
 
@@ -787,27 +823,29 @@ bool AIScriptLucy::ReachedMovementTrackWaypoint(int waypointId) {
 }
 
 void AIScriptLucy::FledCombat() {
-	if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_Goal_Number(kActorLucy) == 450) {
+	if (Global_Variable_Query(kVariableChapter) == 5
+	 && Actor_Query_Goal_Number(kActorLucy) == 450
+	) {
 		Actor_Put_In_Set(kActorLucy, kSetFreeSlotG);
 		Actor_Set_At_Waypoint(kActorLucy, 39, 0);
-		Actor_Set_Goal_Number(kActorLucy, 599);
+		Actor_Set_Goal_Number(kActorLucy, kGoalLucyDead);
 	}
 
 	return; //true;
 }
 
-void AIScriptLucy::voightKempTest() {
+void AIScriptLucy::voightKampffTest() {
 	Player_Loses_Control();
-	Actor_Face_Actor(kActorMcCoy, kActorLucy, 1);
+	Actor_Face_Actor(kActorMcCoy, kActorLucy, true);
 	Actor_Says(kActorMcCoy, 6815, 11);
-	Actor_Face_Actor(kActorLucy, kActorMcCoy, 1);
+	Actor_Face_Actor(kActorLucy, kActorMcCoy, true);
 	Actor_Says(kActorLucy, 1060, 16);
 	Actor_Says(kActorLucy, 1070, 17);
 	Delay(1000);
 	Actor_Says(kActorLucy, 1080, 14);
 	Actor_Says(kActorMcCoy, 6820, 16);
 	Actor_Says(kActorLucy, 1090, 13);
-	if (!Game_Flag_Query(378)) {
+	if (!Game_Flag_Query(kFlagDirectorsCut)) {
 		Actor_Says(kActorMcCoy, 6825, 13);
 	}
 	Actor_Says(kActorMcCoy, 6830, 12);
@@ -825,7 +863,9 @@ void AIScriptLucy::voightKempTest() {
 	Actor_Says(kActorLucy, 1130, 14);
 	Music_Stop(2);
 	Player_Gains_Control();
-	Voight_Kampff_Activate(6, 40);
+
+	Voight_Kampff_Activate(kActorLucy, 40);
+
 	Player_Loses_Control();
 	if (Actor_Clue_Query(kActorMcCoy, 271)) {
 		Actor_Says(kActorMcCoy, 6865, 13);

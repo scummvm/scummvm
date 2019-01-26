@@ -78,13 +78,13 @@ void SceneScriptHF03::dialogueWithLucy() {
 	switch (answer) {
 	case 840: // VOIGT-KAMPFF
 		Actor_Says(kActorMcCoy, 1630, 15);
-		if (Global_Variable_Query(40) == 3) {
-			Actor_Set_Goal_Number(kActorLucy, 214);
+		if (Global_Variable_Query(kVariableBehavior) == 3) {
+			Actor_Set_Goal_Number(kActorLucy, kGoalLucyRunAwayWithHelp1);
 		} else if (Game_Flag_Query(kFlagLucyIsReplicant)) {
-			Actor_Set_Goal_Number(kActorLucy, 212);
+			Actor_Set_Goal_Number(kActorLucy, kGoalLucyRunToHF041);
 		} else {
-			Actor_Set_Goal_Number(kActorLucy, 210);
-			Game_Flag_Set(593);
+			Actor_Set_Goal_Number(kActorLucy, kGoalLucyRunOutPhase1);
+			Game_Flag_Set(kFlagLucyRanAway);
 		}
 		break;
 
@@ -96,8 +96,8 @@ void SceneScriptHF03::dialogueWithLucy() {
 
 	case 860: // CRYSTAL
 		Actor_Says(kActorMcCoy, 1640, 12);
-		if (Global_Variable_Query(40) == 3) {
-			Actor_Set_Goal_Number(kActorLucy, 214);
+		if (Global_Variable_Query(kVariableBehavior) == 3) {
+			Actor_Set_Goal_Number(kActorLucy, kGoalLucyRunAwayWithHelp1);
 		} else {
 			Actor_Says(kActorLucy, 210, 13);
 			Actor_Says(kActorMcCoy, 1655, 15);
@@ -128,10 +128,11 @@ void SceneScriptHF03::dialogueWithLucy() {
 			Actor_Says(kActorMcCoy, 1660, 15);
 			Actor_Says(kActorLucy, 230, 14);
 			Actor_Clue_Acquire(kActorLucy, kClueMcCoyHelpedLucy, true, kActorMcCoy);
+
 			if (Game_Flag_Query(kFlagLucyIsReplicant)) {
-				Actor_Set_Goal_Number(kActorLucy, 212);
+				Actor_Set_Goal_Number(kActorLucy, kGoalLucyRunToHF041);
 			} else {
-				Actor_Set_Goal_Number(kActorLucy, 210);
+				Actor_Set_Goal_Number(kActorLucy, kGoalLucyRunOutPhase1);
 			}
 		}
 		break;
@@ -160,7 +161,7 @@ void SceneScriptHF03::dialogueWithLucy() {
 
 bool SceneScriptHF03::ClickedOnActor(int actorId) {
 	if (actorId == kActorLucy
-	 && Actor_Query_Goal_Number(kActorLucy) == 205
+	 && Actor_Query_Goal_Number(kActorLucy) == kGoalLucyGoToHF03
 	 ) {
 		if (Game_Flag_Query(kFlagLucyIsReplicant)
 		 ? !Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 377, 0, true, false)
@@ -248,8 +249,8 @@ void SceneScriptHF03::PlayerWalkedIn() {
 		Game_Flag_Reset(kFlagHF01toHF03);
 	}
 
-	if (Actor_Query_Goal_Number(kActorLucy) == 250) {
-		Actor_Set_Goal_Number(kActorLucy, 212);
+	if (Actor_Query_Goal_Number(kActorLucy) == kGoalLucyReturnToHF03) {
+		Actor_Set_Goal_Number(kActorLucy, kGoalLucyRunToHF041);
 		Actor_Says(kActorSteele, 210, 13);
 		Actor_Face_Actor(kActorMcCoy, kActorSteele, true);
 		Actor_Says(kActorMcCoy, 1680, 15);

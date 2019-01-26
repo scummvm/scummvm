@@ -174,7 +174,7 @@ END_SCRIPT
 DECLARE_SCRIPT(Lucy)
 	bool _flag;
 
-	void voightKempTest();
+	void voightKampffTest();
 	void checkCombat();
 END_SCRIPT
 

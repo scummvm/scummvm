@@ -914,6 +914,10 @@ enum Flags {
 	kFlagDR01toCT11 = 558,
 	kFlagHF03toHF04 = 566, // is never checked
 	kFlagHF04toHF03 = 567,
+	kFlagHF04DoorsClosed = 584,
+	kFlagHF04CloseDoors = 585,
+	kFlagHF04OpenDoors = 586,
+	kFlagLucyRanAway = 593,
 	kFlagKIAPrivacyAddonIntro = 599,
 	kFlagTB07toTB02 = 608,
 	kFlagTB07RachaelTalk = 612,
@@ -975,6 +979,7 @@ enum Variables {
 	kVariableWalkLoopActor = 37,
 	kVariableWalkLoopRun = 38,
 	kVariableDR06MannequinHeadOpened = 39,
+	kVariableBehavior = 40, // 1 dektora is replicant, 2 - ?, 3 - get caught by Baker
 	kVariableMcCoyDrinks = 42, // is never checked
 	kVariableAffectionTowards = 45, // 0 none, 1 steele, 2 dektora, 3 lucy
 	kVariableGunPulledInFrontOfSebastian = 46,
@@ -1102,9 +1107,9 @@ enum Scenes {
 	kSceneHC02 = 32, // Hawker's Circle - China bar
 	kSceneHC03 = 33, // Hawker's Circle - Green pawn - Inside
 	kSceneHF01 = 34, // Hysteria Hall - Outside
-	kSceneHF02 = 35, // Hysteria Hall - Hall of Mirrors - Outside
+	kSceneHF02 = 35, // Hysteria Hall - Hall of Mirrors - Exit
 	kSceneHF03 = 36, // Hysteria Hall - Arcade
-	kSceneHF04 = 37, // Hysteria Hall - Hall of Mirrors - Inside
+	kSceneHF04 = 37, // Hysteria Hall - Hall of Mirrors
 	kSceneHF05 = 38,
 	kSceneHF06 = 39,
 	kSceneHF07 = 40,
@@ -1560,6 +1565,33 @@ enum GoalClovis {
 	kGoalClovisBB11TalkWithSadik = 103,
 	kGoalClovisBB11PrepareToTalkToMcCoy = 104, // bug? this is not triggered when player skips dialogue
 	kGoalClovisBB11TalkToMcCoy = 105 // ends Chapter 2
+};
+
+enum GoalLucy {
+	kGoalLucyDefault = 0,
+	kGoalLucyMoveAround = 200,
+	kGoalLucyWillReturnToHF03 = 201,
+	kGoalLucyGoToHF03 = 205,
+	kGoalLucyRunOutPhase1 = 210,
+	kGoalLucyRunOutPhase2 = 211,
+	kGoalLucyRunToHF041 = 212,
+	kGoalLucyRunToHF042 = 213,
+	kGoalLucyRunAwayWithHelp1 = 214,
+	kGoalLucyRunAwayWithHelp2 = 215,
+	kGoalLucyGoToFreeSlotGAG = 220,
+	kGoalLucyGoToFreeSlotGAHJ = 225,
+	kGoalLucyHF04Start = 230,
+	kGoalLucyHF04TalkToMcCoy = 232,
+	kGoalLucyHF04Run1 = 233,
+	kGoalLucyHF04Run2 = 234,
+	kGoalLucyHF04WaitForMcCoy1 = 235,
+	kGoalLucyHF04Run3 = 236,
+	kGoalLucyHF04WaitForMcCoy2 = 237,
+	kGoalLucyHF04Run4 = 238,
+	kGoalLucyHF04WalkAway = 239,
+	kGoalLucyReturnToHF03 = 250,
+	kGoalLucyGoneChapter3 = 299,
+	kGoalLucyDead = 599
 };
 
 enum GoalIzo {
