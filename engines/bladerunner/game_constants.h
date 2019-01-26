@@ -843,6 +843,7 @@ enum Flags {
 	kFlagUnused406 = 406, // is never checked
 	kFlagUnused407 = 407, // is never checked
 
+	kFlagMA01GaffApproachMcCoy = 409,
 	kFlagBB06AndroidDestroyed = 410,
 
 	kFlagUG09toCT12 = 432,
@@ -866,6 +867,7 @@ enum Flags {
 	kFlagBB10Shelf3Available = 468,
 	kFlagBB10Shelf4Available = 469,
 	kFlagBB10Shelf5Available = 470,
+	kFlagGaffChapter2Started = 471,
 	kFlagUG10GateOpen = 474,
 	kFlagMcCoyAtPS03 = 478, // has no use
 	kFlagMcCoyInHawkersCircle = 479,
@@ -1634,6 +1636,19 @@ enum GoalMoraji {
 	kGoalMorajiDead = 23,
 	kGoalMorajiChooseFate = 30,
 	kGoalMorajiPerished = 99
+};
+
+enum GoalGaff {
+	kGoalGaffDefault = 0,
+	kGoalGaffCT12WaitForMcCoy = 1,
+	kGoalGaffCT12GoToSpinner = 2,
+	kGoalGaffMA01ApproachMcCoy = 3,
+	kGoalGaffMA01Leave = 4,
+	kGoalGaffCT12Leave = 5,
+	kGoalGaffCT12FlyAway = 10,
+	kGoalGaffStartWalkingAround = 100,
+	kGoalGaffWalkAround = 101,
+	kGoalGaffRepeatWalkingAround = 102
 };
 
 enum GoalLeon {

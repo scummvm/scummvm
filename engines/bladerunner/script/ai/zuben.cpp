@@ -178,7 +178,7 @@ void AIScriptZuben::CompletedMovementTrack() {
 			Game_Flag_Set(kFlagZubenSpared);
 			Game_Flag_Set(kFlagCT01ZubenGone);
 			Actor_Set_Goal_Number(kActorZuben, kGoalZubenSpared);
-			Actor_Set_Goal_Number(kActorGaff, 1);
+			Actor_Set_Goal_Number(kActorGaff, kGoalGaffCT12WaitForMcCoy);
 			Set_Enter(kSetCT06, kSceneCT06);
 		}
 		if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenMA01AttackMcCoy) {
@@ -366,11 +366,11 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Game_Flag_Set(kFlagCT01ZubenGone);
 		if (Actor_Query_In_Set(kActorZuben, kSetCT07)) {
 			Game_Flag_Set(kFlagCT07toCT06);
-			Actor_Set_Goal_Number(kActorGaff, 1);
+			Actor_Set_Goal_Number(kActorGaff, kGoalGaffCT12WaitForMcCoy);
 			Set_Enter(kSetCT06, kSceneCT06);
 		} else if (Actor_Query_In_Set(kActorZuben, kSetMA01)) {
 			Player_Set_Combat_Mode(false);
-			Actor_Set_Goal_Number(kActorGaff, 3);
+			Actor_Set_Goal_Number(kActorGaff, kGoalGaffMA01ApproachMcCoy);
 		}
 		Actor_Set_Goal_Number(kActorZuben, kGoalZubenDead);
 		return false;

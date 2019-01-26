@@ -25,32 +25,35 @@
 namespace BladeRunner {
 
 void SceneScriptCT05::InitializeScene() {
-	if (Game_Flag_Query(90)) {
-		Game_Flag_Reset(90);
+	if (Game_Flag_Query(kFlagCT12toCT05)) {
+		Game_Flag_Reset(kFlagCT12toCT05);
 		Setup_Scene_Information(-128.42f, -109.91f, 112.83f, 516);
 	} else if (Game_Flag_Query(kFlagCT06toCT05)) {
-		Setup_Scene_Information(192.35f, 43.09f, 128.97f, 768);
+		Setup_Scene_Information( 192.35f,   43.09f, 128.97f, 768);
 	} else {
-		Setup_Scene_Information(-375.0f, -109.91f, 750.0f, 600);
+		Setup_Scene_Information( -375.0f, -109.91f,  750.0f, 600);
 	}
+
 	if (Game_Flag_Query(kFlagCT05WarehouseOpen)) {
 		Scene_Exit_Add_2D_Exit(0, 228, 205, 293, 300, 0);
 	}
 	Scene_Exit_Add_2D_Exit(1, 320, 458, 639, 479, 2);
 	Scene_Exit_Add_2D_Exit(2, 380, 110, 542, 300, 0);
+
 	Ambient_Sounds_Add_Looping_Sound(106, 15, -100, 1);
 	Ambient_Sounds_Add_Looping_Sound(107, 15,  100, 1);
 	Ambient_Sounds_Add_Looping_Sound( 56, 13, -100, 1);
-	Ambient_Sounds_Add_Sound( 90, 5, 20, 8, 10, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound( 91, 5, 20, 8, 10, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound( 90, 5, 20,  8, 10, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound( 91, 5, 20,  8, 10, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(205, 5, 30, 18, 30, -100, 100, -101, -101, 0, 0);
+
 	if (Game_Flag_Query(kFlagCT05WarehouseOpen)) {
 		Scene_Loop_Set_Default(2);
 	} else {
 		Scene_Loop_Set_Default(0);
 	}
-	if (Actor_Query_Goal_Number(kActorGaff) == 1) {
-		Overlay_Play("ct05over", 0, 1, 0, 0);
+	if (Actor_Query_Goal_Number(kActorGaff) == kGoalGaffCT12WaitForMcCoy) {
+		Overlay_Play("ct05over", 0, true, false, 0);
 	}
 }
 
@@ -139,25 +142,27 @@ bool SceneScriptCT05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -128.42f, -109.91f, 112.83f, 0, true, false, 0)) {
 			Game_Flag_Set(kFlagCT05toCT12);
-			if (Actor_Query_Goal_Number(kActorGaff) == 1) {
+			if (Actor_Query_Goal_Number(kActorGaff) == kGoalGaffCT12WaitForMcCoy) {
 				Overlay_Remove("ct05over");
 			}
 			Set_Enter(kSetCT01_CT12, kSceneCT12);
 		}
 		return true;
 	}
+
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -308.18f, -109.91f, 674.77f, 0, true, false, 0)) {
 			Game_Flag_Set(kFlagCT05toCT04);
-			if (Actor_Query_Goal_Number(kActorGaff) == 1) {
+			if (Actor_Query_Goal_Number(kActorGaff) == kGoalGaffCT12WaitForMcCoy) {
 				Overlay_Remove("ct05over");
-				Actor_Set_Goal_Number(kActorGaff, 5);
-				Game_Flag_Set(409);
+				Actor_Set_Goal_Number(kActorGaff, kGoalGaffCT12Leave);
+				Game_Flag_Set(kFlagMA01GaffApproachMcCoy);
 			}
 			Set_Enter(kSetCT03_CT04, kSceneCT04);
 		}
 		return true;
 	}
+
 	if (exitId == 2) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 71.99f, -109.91f, 288.79f, 0, true, false, 0)) {
 			Footstep_Sound_Override_On(2);
@@ -167,7 +172,7 @@ bool SceneScriptCT05::ClickedOnExit(int exitId) {
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 5, true, kAnimationModeIdle);
 			Footstep_Sound_Override_Off();
 			Game_Flag_Set(kFlagCT05toCT06);
-			if (Actor_Query_Goal_Number(kActorGaff) == 1) {
+			if (Actor_Query_Goal_Number(kActorGaff) == kGoalGaffCT12WaitForMcCoy) {
 				Overlay_Remove("ct05over");
 			}
 			Set_Enter(kSetCT06, kSceneCT06);
@@ -182,7 +187,10 @@ bool SceneScriptCT05::ClickedOn2DRegion(int region) {
 }
 
 void SceneScriptCT05::SceneFrameAdvanced(int frame) {
-	if (frame == 7 || frame == 15 || frame == 29) {
+	if (frame == 7
+	 || frame == 15
+	 || frame == 29
+	) {
 		switch (Random_Query(0, 4)) {
 		case 4:
 			Sound_Play(40, Random_Query(25, 50), -70, -70, 50);
