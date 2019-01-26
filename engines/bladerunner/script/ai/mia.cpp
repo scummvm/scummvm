@@ -41,8 +41,11 @@ void AIScriptMia::Initialize() {
 }
 
 bool AIScriptMia::Update() {
-	if (Global_Variable_Query(kVariableChapter) == 4 && Actor_Query_Goal_Number(kActorMia) != 300)
+	if (Global_Variable_Query(kVariableChapter) == 4
+	 && Actor_Query_Goal_Number(kActorMia) != 300
+	) {
 		Actor_Set_Goal_Number(kActorMia, 300);
+	}
 
 	return false;
 }
@@ -163,9 +166,6 @@ bool AIScriptMia::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 2;
 		}
 		break;
-
-	default:
-		break;
 	}
 
 	*frame = _animationFrame;
@@ -176,28 +176,34 @@ bool AIScriptMia::UpdateAnimation(int *animation, int *frame) {
 bool AIScriptMia::ChangeAnimationMode(int mode) {
 	switch (mode) {
 	case kAnimationModeIdle:
-		if (_animationState >= 2 && _animationState <= 4) {
+		if (_animationState >= 2
+		 && _animationState <= 4
+		) {
 			_flag1 = false;
 		} else {
 			_animationFrame = 0;
 			_animationState = 0;
 		}
 		break;
+
 	case kAnimationModeTalk:
 		_animationFrame = 0;
 		_flag1 = false;
 		_animationState = 2;
 		break;
+
 	case 12:
 		_animationFrame = 0;
 		_flag1 = false;
 		_animationState = 3;
 		break;
+
 	case 13:
 		_animationFrame = 0;
 		_flag1 = false;
 		_animationState = 4;
 		break;
+
 	case 23:
 		_animationFrame = 0;
 		_animationState = 1;

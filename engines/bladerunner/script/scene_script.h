@@ -197,9 +197,9 @@ DECLARE_SCRIPT(HC04)
 END_SCRIPT
 
 DECLARE_SCRIPT(HF01)
-	void sub_4026B4();
-	void sub_4032DC();
-	void sub_403484();
+	void dialogueWithMiaAndMurray();
+	void talkWithDektora();
+	void talkWithLucy();
 END_SCRIPT
 
 DECLARE_SCRIPT(HF02)

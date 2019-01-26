@@ -41,21 +41,26 @@ void AIScriptMurray::Initialize() {
 }
 
 bool AIScriptMurray::Update() {
-	if (Global_Variable_Query(kVariableChapter) == 4 && Actor_Query_Goal_Number(kActorMurray) != 300)
+	if (Global_Variable_Query(kVariableChapter) == 4
+	 && Actor_Query_Goal_Number(kActorMurray) != 300
+	) {
 		Actor_Set_Goal_Number(kActorMurray, 300);
-
-	if (Player_Query_Current_Set() == kSetHF01) {
-		if (!Actor_Query_In_Set(kActorMcCoy, kSetHF01)
-				|| !Actor_Query_In_Set(kActorMurray, kSetHF01)
-				|| Actor_Query_Inch_Distance_From_Actor(kActorMcCoy, kActorMurray) >= 48
-				|| Game_Flag_Query(377)) {
-			return false;
-		}
-
-		Actor_Set_Goal_Number(kActorMurray, 1);
 	}
 
-	return true;
+	if (Player_Query_Current_Set() != kSetHF01) {
+		return true;
+	}
+
+	if ( Actor_Query_In_Set(kActorMcCoy, kSetHF01)
+	 &&  Actor_Query_In_Set(kActorMurray, kSetHF01)
+	 &&  Actor_Query_Inch_Distance_From_Actor(kActorMcCoy, kActorMurray) < 48
+	 && !Game_Flag_Query(kFlagHF01MurrayMiaIntro)
+	) {
+		Actor_Set_Goal_Number(kActorMurray, 1);
+		return true;
+	}
+
+	return false;
 }
 
 void AIScriptMurray::TimerExpired(int timer) {
@@ -196,7 +201,7 @@ bool AIScriptMurray::UpdateAnimation(int *animation, int *frame) {
 
 bool AIScriptMurray::ChangeAnimationMode(int mode) {
 	switch (mode) {
-	case 0:
+	case kAnimationModeIdle:
 		if (_animationState > 0 && _animationState <= 5) {
 			_flag = true;
 		} else {
@@ -205,7 +210,7 @@ bool AIScriptMurray::ChangeAnimationMode(int mode) {
 		}
 		break;
 
-	case 3:
+	case kAnimationModeTalk:
 		_animationState = 1;
 		_animationFrame = 0;
 		_flag = false;
@@ -233,9 +238,6 @@ bool AIScriptMurray::ChangeAnimationMode(int mode) {
 		_animationState = 5;
 		_animationFrame = 0;
 		_flag = false;
-		break;
-
-	default:
 		break;
 	}
 

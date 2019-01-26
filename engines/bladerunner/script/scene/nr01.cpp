@@ -300,6 +300,7 @@ void SceneScriptNR01::PlayerWalkedIn() {
 		ADQ_Add(kActorSteele, 1040, 3);
 		ADQ_Add(kActorGordo, 120, 82);
 	}
+
 	if (Game_Flag_Query(604)) {
 		if (Game_Flag_Query(622)) {
 			ADQ_Add(kActorHanoi, 150, 3);
@@ -310,12 +311,14 @@ void SceneScriptNR01::PlayerWalkedIn() {
 		//return true;
 		return;
 	}
+
 	if (Game_Flag_Query(632)) {
 		Delay(3500);
 		Set_Enter(kSetNR11, kSceneNR11);
 		//return true;
 		return;
 	}
+
 	if (Game_Flag_Query(534)) {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -380.0f, 31.73f, -841.0f, 0, false, false, 0);
 		Game_Flag_Reset(534);
@@ -406,6 +409,7 @@ void SceneScriptNR01::PlayerWalkedIn() {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 48.0f, 23.88f, -189.0f, 0, 0, false, 0);
 		}
 	}
+
 	if (Game_Flag_Query(652)) {
 		Game_Flag_Reset(652);
 		Actor_Voice_Over(950, kActorVoiceOver);
@@ -413,6 +417,7 @@ void SceneScriptNR01::PlayerWalkedIn() {
 		Actor_Voice_Over(970, kActorVoiceOver);
 		Actor_Voice_Over(980, kActorVoiceOver);
 	}
+
 	if (Actor_Query_Goal_Number(kActorGordo) == 240) {
 		Scene_Exits_Disable();
 		Actor_Set_Goal_Number(kActorGordo, 241);

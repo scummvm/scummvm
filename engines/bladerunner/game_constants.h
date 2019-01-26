@@ -809,14 +809,18 @@ enum Flags {
 	kFlagAR02StungByScorpion = 367,
 
 	kFlagNotUsed370 = 370, // is never checked
+	// 371 is never used
+	// 372 is never used
 
 	kFlagAR02DektoraBoughtScorpions = 374,
 	kFlagBB11SadikPunchedMcCoy = 375,
-
+	// 376 is never used
+	kFlagHF01MurrayMiaIntro = 377,
 	kFlagDirectorsCut = 378,
 	kFlagCT08toCT51 = 379, // is never checked
 	kFlagCT51toCT08 = 380,
-
+	// 381 is never used
+	kFlagHF01MurrayMiaTalk = 382,
 	kFlagNotUsed383 = 383,
 	kFlagHC01toHC02 = 384,
 	kFlagHC02toHC01 = 385,
@@ -842,7 +846,7 @@ enum Flags {
 	kFlagHC02HawkersBarkeepBraceletTalk = 405,
 	kFlagUnused406 = 406, // is never checked
 	kFlagUnused407 = 407, // is never checked
-
+	// 408 is never used
 	kFlagMA01GaffApproachMcCoy = 409,
 	kFlagBB06AndroidDestroyed = 410,
 
@@ -850,7 +854,6 @@ enum Flags {
 	kFlagCT12ToUG09 = 433,
 	kFlagGenericWalkerWaiting = 443,
 	kFlagIzoShot = 444,
-
 	kFlagUG02WeaponsChecked = 449,
 	kFlagTB02ElevatorToTB05 = 450,
 	kFlagTB05Entered = 451,
@@ -1093,7 +1096,7 @@ enum Scenes {
 	kSceneHC01 = 31, // Hawker's Circle - Green pawn - Outside
 	kSceneHC02 = 32, // Hawker's Circle - China bar
 	kSceneHC03 = 33, // Hawker's Circle - Green pawn - Inside
-	kSceneHF01 = 34,
+	kSceneHF01 = 34, // Hysteria Hall - Iutside
 	kSceneHF02 = 35,
 	kSceneHF03 = 36,
 	kSceneHF04 = 37,
