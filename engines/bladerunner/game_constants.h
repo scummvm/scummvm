@@ -622,9 +622,9 @@ enum Flags {
 	kFlagMcCoyInAnimoidRow = 180,
 	kFlagMcCoyInNightclubRow = 181,
 	kFlagMcCoyInRunciters = 182,
-
-
-
+	kFlagSteeleInRunciters = 183,
+	kFlagSteeleInChinaTown = 184,
+	kFlagSteeleInPoliceStation = 185,
 	kFlagRC01PoliceDone = 186,
 	kFlagRC02TalkedToRunciter = 187,
 	// 188 is never used
@@ -961,7 +961,6 @@ enum Variables {
 	kVariableGenericWalkerAModel = 32,
 	kVariableGenericWalkerBModel = 33,
 	kVariableGenericWalkerCModel = 34,
-
 	kVariableBB10ShelvesAvailable = 36,
 	kVariableWalkLoopActor = 37,
 	kVariableWalkLoopRun = 38,
@@ -1484,6 +1483,17 @@ enum GoalMcCoy {
 
 enum GoalSteele {
 	kGoalSteeleDefault = 0,
+	kGoalSteeleGoToRC01 = 1,
+	kGoalSteeleGoToRC02 = 2,
+	kGoalSteeleGoToFreeSlotC1 = 3,
+	kGoalSteeleGoToFreeSlotG1 = 4,
+	kGoalSteeleGoToCT01 = 5,
+	kGoalSteeleGoToFreeSlotC2 = 6,
+	kGoalSteeleGoToFreeSlotG2 = 7,
+	kGoalSteeleGoToPoliceShootingRange = 8,
+	kGoalSteeleGoToPS02 = 9,
+	kGoalSteeleGoToFreeSlotG3 = 10,
+	kGoalSteeleInterviewGrigorian = 11,
 	kGoalSteeleApprehendIzo = 100,
 	kGoalSteeleGoToTB02 = 110,
 	kGoalSteeleLeaveTB02 = 111,

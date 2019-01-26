@@ -26,18 +26,20 @@ namespace BladeRunner {
 
 void SceneScriptKP03::InitializeScene() {
 	if (Game_Flag_Query(420)) {
-		Setup_Scene_Information(1.0f, -36.55f, 111.0f, 200);
+		Setup_Scene_Information(   1.0f, -36.55f, 111.0f, 200);
 	} else {
-		Setup_Scene_Information(-321.0f, -36.55f, 26.0f, 350);
+		Setup_Scene_Information(-321.0f, -36.55f,  26.0f, 350);
 	}
-	Scene_Exit_Add_2D_Exit(0, 0, 0, 30, 479, 3);
+	Scene_Exit_Add_2D_Exit(0,   0,   0,  30, 479, 3);
 	Scene_Exit_Add_2D_Exit(1, 287, 104, 367, 255, 0);
+
 	Ambient_Sounds_Add_Looping_Sound(381, 100, 1, 1);
-	Ambient_Sounds_Add_Sound(68, 60, 180, 16, 25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(69, 60, 180, 16, 25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound( 68, 60, 180, 16,  25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound( 69, 60, 180, 16,  25, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(375, 60, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(376, 50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(377, 50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+
 	if (Game_Flag_Query(422)) {
 		Scene_Loop_Set_Default(5);
 	} else if (Game_Flag_Query(484)) {
@@ -46,7 +48,18 @@ void SceneScriptKP03::InitializeScene() {
 		Scene_Loop_Set_Default(2);
 		Game_Flag_Set(421);
 	}
-	if ((Actor_Query_Goal_Number(kActorSteele) != 599 && !Game_Flag_Query(422) && !Game_Flag_Query(484)) && ((Game_Flag_Query(653) && Game_Flag_Query(420)) || (!Game_Flag_Query(653) && Game_Flag_Query(417)))) {
+	if (( Actor_Query_Goal_Number(kActorSteele) != 599
+	  && !Game_Flag_Query(422)
+	  && !Game_Flag_Query(484)
+	 )
+	 && ((Game_Flag_Query(653)
+	   && Game_Flag_Query(420)
+	  )
+	  || (!Game_Flag_Query(653)
+	   &&  Game_Flag_Query(417)
+	  )
+	 )
+	) {
 		Actor_Put_In_Set(kActorSteele, kSetKP03);
 		Actor_Set_At_XYZ(kActorSteele, -300.0f, -36.55f, 26.0f, 350);
 	}
@@ -104,7 +117,9 @@ bool SceneScriptKP03::ClickedOn3DObject(const char *objectName, bool combatMode)
 }
 
 bool SceneScriptKP03::ClickedOnActor(int actorId) {
-	if (actorId == kActorSteele && Actor_Query_Goal_Number(kActorSteele) == 411) {
+	if (actorId == kActorSteele
+	 && Actor_Query_Goal_Number(kActorSteele) == 411
+	) {
 		Actor_Face_Object(kActorSteele, "BRACK MID", true);
 		sub_401E54();
 	}
