@@ -2491,3 +2491,15 @@ static const byte kEoB2DscBlockIndexDOS[72] = {
 
 static const ByteProvider kEoB2DscBlockIndexDOSProvider = { ARRAYSIZE(kEoB2DscBlockIndexDOS), kEoB2DscBlockIndexDOS };
 
+static const char *const kEoB2SoundFilesIntroDOS[1] = {
+	"INTRO"
+};
+
+static const StringListProvider kEoB2SoundFilesIntroDOSProvider = { ARRAYSIZE(kEoB2SoundFilesIntroDOS), kEoB2SoundFilesIntroDOS };
+
+static const char *const kEoB2SoundFilesFinaleDOS[2] = {
+	"FINALE1",
+	"FINALE2"
+};
+
+static const StringListProvider kEoB2SoundFilesFinaleDOSProvider = { ARRAYSIZE(kEoB2SoundFilesFinaleDOS), kEoB2SoundFilesFinaleDOS };

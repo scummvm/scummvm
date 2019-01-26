@@ -101,6 +101,9 @@ const Game eob1Games[] = {
 	{ kEoB1, kPlatformDOS, kNoSpecial, DE_DEU },
 	{ kEoB1, kPlatformDOS, kNoSpecial, IT_ITA },
 
+	{ kEoB1, kPlatformAmiga, kNoSpecial, EN_ANY },
+	{ kEoB1, kPlatformAmiga, kNoSpecial, DE_DEU },
+
 	//{ kEoB1, kPlatformPC98, kNoSpecial, JA_JPN },
 
 	GAME_DUMMY_ENTRY
@@ -109,6 +112,9 @@ const Game eob1Games[] = {
 const Game eob2Games[] = {
 	{ kEoB2, kPlatformDOS, kNoSpecial, EN_ANY },
 	{ kEoB2, kPlatformDOS, kNoSpecial, DE_DEU },
+
+	//{ kEoB2, kPlatformAmiga, kNoSpecial, EN_ANY },
+	//{ kEoB2, kPlatformAmiga, kNoSpecial, DE_DEU },
 
 	//{ kEoB2, kPlatformPC98, kNoSpecial, JA_JPN },
 
@@ -1414,6 +1420,295 @@ const int eob1FloppyNeed[] = {
 	kEoBBaseMonsterDistAttStrings,
 	kEoBBaseEncodeMonsterDefs,
 	kEoBBaseNpcPresets,
+
+	kEoBBaseSoundFilesIntro,
+	kEoBBaseSoundFilesIngame,
+	kEoBBaseSoundFilesFinale,
+
+	-1
+};
+
+const int eob1AmigaNeed[] = {
+	kEoBBaseChargenStrings1,
+	kEoBBaseChargenStrings2,
+	kEoBBaseChargenStartLevels,
+	kEoBBaseChargenStatStrings,
+	kEoBBaseChargenRaceSexStrings,
+	kEoBBaseChargenClassStrings,
+	kEoBBaseChargenAlignmentStrings,
+	kEoBBaseChargenEnterGameStrings,
+	kEoBBaseChargenClassMinStats,
+	kEoBBaseChargenRaceMinStats,
+	kEoBBaseChargenRaceMaxStats,
+
+	kEoBBaseSaveThrowTable1,
+	kEoBBaseSaveThrowTable2,
+	kEoBBaseSaveThrowTable3,
+	kEoBBaseSaveThrowTable4,
+	kEoBBaseSaveThrwLvlIndex,
+	kEoBBaseSaveThrwModDiv,
+	kEoBBaseSaveThrwModExt,
+
+	kEoB1MainMenuStrings,
+	kEoB1BonusStrings,
+
+	kEoB1IntroFilesOpening,
+	kEoB1IntroFilesTower,
+	kEoB1IntroFilesOrb,
+	kEoB1IntroFilesWdEntry,
+	kEoB1IntroFilesKing,
+	kEoB1IntroFilesHands,
+	kEoB1IntroFilesWdExit,
+	kEoB1IntroFilesTunnel,
+	kEoB1IntroOpeningFrmDelay,
+	kEoB1IntroWdEncodeX,
+	kEoB1IntroWdEncodeY,
+	kEoB1IntroWdEncodeWH,
+	kEoB1IntroWdDsX,
+	kEoB1IntroWdDsY,
+	kEoB1IntroTvlX1,
+	kEoB1IntroTvlY1,
+	kEoB1IntroTvlX2,
+	kEoB1IntroTvlY2,
+	kEoB1IntroTvlW,
+	kEoB1IntroTvlH,
+	kEoB1IntroOrbFadePal,
+
+	kEoB1FinaleCouncilAnim1,
+	kEoB1FinaleCouncilAnim2,
+	kEoB1FinaleCouncilAnim3,
+	kEoB1FinaleCouncilAnim4,
+	kEoB1FinaleEyesAnim,
+	kEoB1FinaleHandsAnim,
+	kEoB1FinaleTextDuration,
+
+	kEoB1DoorShapeDefs,
+	kEoB1DoorSwitchShapeDefs,
+	kEoB1DoorSwitchCoords,
+	kEoB1MonsterProperties,
+	kEoB1EnemyMageSpellList,
+	kEoB1EnemyMageSfx,
+	kEoB1BeholderSpellList,
+	kEoB1BeholderSfx,
+	kEoB1TurnUndeadString,
+
+	kEoB1NpcShpData,
+	kEoB1NpcSubShpIndex1,
+	kEoB1NpcSubShpIndex2,
+	kEoB1NpcSubShpY,
+	kEoB1Npc0Strings,
+	kEoB1Npc11Strings,
+	kEoB1Npc12Strings,
+	kEoB1Npc21Strings,
+	kEoB1Npc22Strings,
+	kEoB1Npc31Strings,
+	kEoB1Npc32Strings,
+	kEoB1Npc4Strings,
+	kEoB1Npc5Strings,
+	kEoB1Npc6Strings,
+	kEoB1Npc7Strings,
+
+	kEoBBasePryDoorStrings,
+	kEoBBaseWarningStrings,
+
+	kEoBBaseItemSuffixStringsRings,
+	kEoBBaseItemSuffixStringsPotions,
+	kEoBBaseItemSuffixStringsWands,
+
+	kEoBBaseRipItemStrings,
+	kEoBBaseCursedString,
+	kEoBBaseEnchantedString,
+	kEoBBaseMagicObjectStrings,
+	kEoBBaseMagicObjectString5,
+	kEoBBasePatternSuffix,
+	kEoBBasePatternGrFix1,
+	kEoBBasePatternGrFix2,
+	kEoBBaseValidateArmorString,
+	kEoBBaseValidateNoDropString,
+	kEoBBasePotionStrings,
+	kEoBBaseWandStrings,
+	kEoBBaseItemMisuseStrings,
+
+	kEoBBaseTakenStrings,
+	kEoBBasePotionEffectStrings,
+
+	kEoBBaseYesNoStrings,
+	kRpgCommonMoreStrings,
+	kEoBBaseNpcMaxStrings,
+	kEoBBaseNpcJoinStrings,
+	kEoBBaseCancelStrings,
+
+	kEoBBaseMenuStringsMain,
+	kEoBBaseMenuStringsSaveLoad,
+	kEoBBaseMenuStringsOnOff,
+	kEoBBaseMenuStringsSpells,
+	kEoBBaseMenuStringsRest,
+	kEoBBaseMenuStringsDrop,
+	kEoBBaseMenuStringsExit,
+	kEoBBaseMenuStringsStarve,
+	kEoBBaseMenuStringsScribe,
+	kEoBBaseMenuStringsDrop2,
+	kEoBBaseMenuStringsHead,
+	kEoBBaseMenuStringsPoison,
+	kEoBBaseMenuStringsMgc,
+	kEoBBaseMenuStringsPrefs,
+	kEoBBaseMenuStringsRest2,
+	kEoBBaseMenuStringsRest4,
+	kEoBBaseMenuStringsDefeat,
+	kEoBBaseMenuYesNoStrings,
+
+	kEoBBaseSpellLevelsMage,
+	kEoBBaseSpellLevelsCleric,
+	kEoBBaseNumSpellsCleric,
+	kEoBBaseNumSpellsWisAdj,
+	kEoBBaseNumSpellsPal,
+	kEoBBaseNumSpellsMage,
+
+	kEoBBaseCharGuiStringsHp,
+	kEoBBaseCharGuiStringsWp1,
+	kEoBBaseCharGuiStringsWr,
+	kEoBBaseCharGuiStringsSt1,
+	kEoBBaseCharGuiStringsIn,
+
+	kEoBBaseCharStatusStrings7,
+	kEoBBaseCharStatusStrings81,
+	kEoBBaseCharStatusStrings9,
+	kEoBBaseCharStatusStrings131,
+
+	kEoBBaseLevelGainStrings,
+	kEoBBaseExperienceTable0,
+	kEoBBaseExperienceTable1,
+	kEoBBaseExperienceTable2,
+	kEoBBaseExperienceTable3,
+	kEoBBaseExperienceTable4,
+
+	kEoBBaseBookNumbers,
+	kEoBBaseMageSpellsList,
+	kEoBBaseClericSpellsList,
+	kEoBBaseSpellNames,
+	kEoBBaseMagicStrings1,
+	kEoBBaseMagicStrings2,
+	kEoBBaseMagicStrings3,
+	kEoBBaseMagicStrings4,
+	kEoBBaseMagicStrings6,
+	kEoBBaseMagicStrings7,
+	kEoBBaseMagicStrings8,
+	kEoBBaseMagicStrings9,
+
+	kEoBBaseExpObjectTblIndex,
+	kEoBBaseExpObjectShpStart,
+	kEoBBaseExpObjectTbl1,
+	kEoBBaseExpObjectTbl2,
+	kEoBBaseExpObjectTbl3,
+	kEoBBaseExpObjectY,
+
+	kEoBBaseSparkDefSteps,
+	kEoBBaseSparkDefSubSteps,
+	kEoBBaseSparkDefShift,
+	kEoBBaseSparkDefAdd,
+	kEoBBaseSparkDefX,
+	kEoBBaseSparkDefY,
+	kEoBBaseSparkOfFlags1,
+	kEoBBaseSparkOfFlags2,
+	kEoBBaseSparkOfShift,
+	kEoBBaseSparkOfX,
+	kEoBBaseSparkOfY,
+
+	kEoBBaseSpellProperties,
+	kEoBBaseMagicFlightProps,
+	kEoBBaseTurnUndeadEffect,
+	kEoBBaseBurningHandsDest,
+	kEoBBaseConeOfColdDest1,
+	kEoBBaseConeOfColdDest2,
+	kEoBBaseConeOfColdDest3,
+	kEoBBaseConeOfColdDest4,
+	kEoBBaseConeOfColdGfxTbl,
+
+	kRpgCommonDscDoorShapeIndex,
+	kEoBBaseWllFlagPreset,
+	kEoBBaseDscShapeCoords,
+	kRpgCommonDscDoorScaleOffs,
+	kEoBBaseDscDoorScaleMult1,
+	kEoBBaseDscDoorScaleMult2,
+	kEoBBaseDscDoorScaleMult3,
+	kEoBBaseDscDoorScaleMult4,
+	kEoBBaseDscDoorScaleMult5,
+	kEoBBaseDscDoorScaleMult6,
+	kEoBBaseDscDoorXE,
+	kEoBBaseDscDoorY1,
+	kEoBBaseDscDoorY3,
+	kEoBBaseDscDoorY4,
+	kEoBBaseDscDoorY5,
+	kEoBBaseDscDoorY6,
+	kEoBBaseDscDoorY7,
+	kEoBBaseDscDoorCoordsExt,
+	kRpgCommonDscDoorFrameY1,
+	kRpgCommonDscDoorFrameY2,
+	kRpgCommonDscDoorFrameIndex1,
+	kRpgCommonDscDoorFrameIndex2,
+
+	kEoBBaseDscItemPosIndex,
+	kEoBBaseDscItemShpX,
+	kEoBBaseDscItemScaleIndex,
+	kEoBBaseDscItemTileIndex,
+	kEoBBaseDscItemShapeMap,
+	kEoBBaseDscTelptrShpCoords,
+
+	kEoBBasePortalSeqData,
+	kEoBBaseManDef,
+	kEoBBaseManWord,
+	kEoBBaseManPrompt,
+
+	kEoBBaseDscMonsterFrmOffsTbl1,
+	kEoBBaseDscMonsterFrmOffsTbl2,
+
+	kEoBBaseInvSlotX,
+	kEoBBaseInvSlotY,
+	kEoBBaseSlotValidationFlags,
+
+	kEoBBaseProjectileWeaponTypes,
+	kEoBBaseWandTypes,
+
+	kEoBBaseDrawObjPosIndex,
+	kEoBBaseFlightObjFlipIndex,
+	kEoBBaseFlightObjShpMap,
+	kEoBBaseFlightObjSclIndex,
+
+	kRpgCommonDscShapeIndex,
+	kRpgCommonDscX,
+	kRpgCommonDscTileIndex,
+	kRpgCommonDscDimData1,
+	kRpgCommonDscDimData2,
+	kRpgCommonDscBlockMap,
+	kRpgCommonDscDimMap,
+	kRpgCommonDscBlockIndex,
+
+	kEoBBaseClassModifierFlags,
+
+	kEoBBaseMonsterStepTable01,
+	kEoBBaseMonsterStepTable2,
+	kEoBBaseMonsterStepTable3,
+	kEoBBaseMonsterCloseAttPosTable1,
+	kEoBBaseMonsterCloseAttPosTable21,
+	kEoBBaseMonsterCloseAttChkTable1,
+	kEoBBaseMonsterCloseAttChkTable2,
+	kEoBBaseMonsterCloseAttDstTable1,
+	kEoBBaseMonsterCloseAttDstTable2,
+
+	kEoBBaseMonsterProximityTable,
+	kEoBBaseFindBlockMonstersTable,
+	kEoBBaseMonsterDirChangeTable,
+	kEoBBaseMonsterDistAttStrings,
+	kEoBBaseEncodeMonsterDefs,
+	kEoBBaseNpcPresets,
+
+	kEoBBaseSoundMap,
+	kEoB1LevelSoundFiles1,
+	kEoB1LevelSoundFiles2,
+	kEoBBaseSoundFilesIntro,
+	kEoBBaseSoundFilesIngame,
+	kEoBBaseSoundFilesFinale,
+
 	-1
 };
 
@@ -1588,6 +1883,7 @@ const int eob1PC98Need[] = {
 	kEoBBaseMagicStrings6,
 	kEoBBaseMagicStrings7,
 	kEoBBaseMagicStrings8,
+	//kEoBBaseMagicStrings9,
 
 	kEoBBaseExpObjectTblIndex,
 	kEoBBaseExpObjectShpStart,
@@ -2020,6 +2316,9 @@ const int eob2FloppyNeed[] = {
 	kRpgCommonDscDimMap,
 	kRpgCommonDscBlockIndex,
 
+	kEoBBaseSoundFilesIntro,
+	kEoBBaseSoundFilesFinale,
+
 	-1
 };
 
@@ -2343,6 +2642,9 @@ const int eob2PC98Need[] = {
 	kRpgCommonDscBlockMap,
 	kRpgCommonDscDimMap,
 	kRpgCommonDscBlockIndex,
+
+	kEoBBaseSoundFilesIntro,
+	kEoBBaseSoundFilesFinale,
 
 	-1
 }; 
@@ -2901,6 +3203,9 @@ const int eob2FMTownsNeed[] = {
 	kEoB2Ascii2SjisTables,
 	kEoB2Ascii2SjisTables2,
 	kEoB2SaveNamePatterns,
+
+	kEoBBaseSoundFilesIntro,
+	kEoBBaseSoundFilesFinale,
 	kEoB2PcmSoundEffectsIngame,
 	kEoB2PcmSoundEffectsIntro,
 	kEoB2PcmSoundEffectsFinale,
@@ -2954,13 +3259,12 @@ const GameNeed gameNeedTable[] = {
 	{ kLoL, kPlatformDOS, kTalkieVersion, lolCDNeed },
 
 	{ kEoB1, kPlatformDOS, kNoSpecial, eob1FloppyNeed },
-
+	{ kEoB1, kPlatformAmiga, kNoSpecial, eob1AmigaNeed },
 	//{ kEoB1, kPlatformPC98, kNoSpecial, eob1PC98Need },
 
 	{ kEoB2, kPlatformDOS, kNoSpecial, eob2FloppyNeed },
-
+	//{ kEoB2, kPlatformAmiga, kNoSpecial, eob2AmigaNeed },
 	//{ kEoB2, kPlatformPC98, kNoSpecial, eob2PC98Need },
-
 	{ kEoB2, kPlatformFMTowns, kNoSpecial, eob2FMTownsNeed },
 
 	{ -1, -1, -1, 0 }

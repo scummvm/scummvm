@@ -1096,6 +1096,7 @@ protected:
 	const char *const *_magicStrings6;
 	const char *const *_magicStrings7;
 	const char *const *_magicStrings8;
+	const char *const *_magicStrings9;
 
 	uint8 *_spellAnimBuffer;
 

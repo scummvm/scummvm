@@ -87,7 +87,6 @@ void KyraRpgEngine::setLevelShapesDim(int index, int16 &x1, int16 &x2, int dim) 
 		x1 += (_sceneXoffset >> 3);
 		x2 += (_sceneXoffset >> 3);
 
-
 		_lvlShapeTop[index] = y1;
 		_lvlShapeBottom[index] = y2;
 		_lvlShapeLeftRight[index << 1] = x1;

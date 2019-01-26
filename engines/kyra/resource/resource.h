@@ -455,6 +455,7 @@ enum KyraResources {
 	kEoBBaseMagicStrings6,
 	kEoBBaseMagicStrings7,
 	kEoBBaseMagicStrings8,
+	kEoBBaseMagicStrings9,
 
 	kEoBBaseExpObjectTlMode,
 	kEoBBaseExpObjectTblIndex,
@@ -486,6 +487,13 @@ enum KyraResources {
 	kEoBBaseConeOfColdDest4,
 	kEoBBaseConeOfColdGfxTbl,
 
+	kEoBBaseSoundMap,
+	kEoBBaseSoundFilesIntro,
+	kEoBBaseSoundFilesIngame,
+	kEoBBaseSoundFilesFinale,
+
+	kEoB1BaseLevelSounds1,
+	kEoB1BaseLevelSounds2,
 	kEoB1MainMenuStrings,
 	kEoB1BonusStrings,
 
@@ -509,6 +517,15 @@ enum KyraResources {
 	kEoB1IntroTvlY2,
 	kEoB1IntroTvlW,
 	kEoB1IntroTvlH,
+	kEoB1IntroOrbFadePal,
+
+	kEoB1FinaleCouncilAnim1,
+	kEoB1FinaleCouncilAnim2,
+	kEoB1FinaleCouncilAnim3,
+	kEoB1FinaleCouncilAnim4,
+	kEoB1FinaleEyesAnim,
+	kEoB1FinaleHandsAnim,
+	kEoB1FinaleTextDuration,
 
 	kEoB1DoorShapeDefs,
 	kEoB1DoorSwitchShapeDefs,

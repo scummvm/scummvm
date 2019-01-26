@@ -196,7 +196,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags)
 	_abortStrings = _saveLoadStrings = _mnWord = _mnPrompt = _bookNumbers = 0;
 	_mageSpellList = _clericSpellList = _spellNames = _magicStrings1 = 0;
 	_magicStrings2 = _magicStrings3 = _magicStrings4 = _magicStrings6 = 0;
-	_magicStrings7 = _magicStrings8 = _saveNamePatterns = 0; 
+	_magicStrings7 = _magicStrings8 = _magicStrings9 = _saveNamePatterns = 0;
 	_spellAnimBuffer = 0;
 	_sparkEffectDefSteps = _sparkEffectDefSubSteps = _sparkEffectDefShift = 0;
 	_sparkEffectDefAdd = _sparkEffectDefX = _sparkEffectDefY = _sparkEffectOfShift = 0;
@@ -432,8 +432,12 @@ Common::Error EoBCoreEngine::init() {
 	_debugger = new Debugger_EoB(this);
 	assert(_debugger);
 
-	_screen->loadFont(Screen::FID_6_FNT, "FONT6.FNT");
-	_screen->loadFont(Screen::FID_8_FNT, "FONT8.FNT");
+	if (_flags.platform == Common::kPlatformAmiga) {
+
+	} else {
+		_screen->loadFont(Screen::FID_6_FNT, "FONT6.FNT");
+		_screen->loadFont(Screen::FID_8_FNT, "FONT8.FNT");
+	}
 
 	Common::Error err = KyraRpgEngine::init();
 	if (err.getCode() != Common::kNoError)

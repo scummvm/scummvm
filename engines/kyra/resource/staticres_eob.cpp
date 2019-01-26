@@ -432,6 +432,7 @@ void EoBCoreEngine::initStaticResource() {
 	_magicStrings6 = _staticres->loadStrings(kEoBBaseMagicStrings6, temp);
 	_magicStrings7 = _staticres->loadStrings(kEoBBaseMagicStrings7, temp);
 	_magicStrings8 = _staticres->loadStrings(kEoBBaseMagicStrings8, temp);
+	_magicStrings9 = _staticres->loadStrings(kEoBBaseMagicStrings9, temp);
 
 	_expObjectTlMode = _staticres->loadRawData(kEoBBaseExpObjectTlMode, temp);
 	_expObjectTblIndex = _staticres->loadRawData(kEoBBaseExpObjectTblIndex, temp);
@@ -459,6 +460,13 @@ void EoBCoreEngine::initStaticResource() {
 	_coneOfColdDest3 = (const int8 *)_staticres->loadRawData(kEoBBaseConeOfColdDest3, temp);
 	_coneOfColdDest4 = (const int8 *)_staticres->loadRawData(kEoBBaseConeOfColdDest4, temp);
 	_coneOfColdGfxTbl = _staticres->loadRawData(kEoBBaseConeOfColdGfxTbl, _coneOfColdGfxTblSize);
+
+	_staticres->loadStrings(kEoBBaseSoundMap, temp);
+	_staticres->loadStrings(kEoBBaseLevelSounds1, temp);
+	_staticres->loadStrings(kEoBBaseLevelSounds2, temp);
+	_staticres->loadStrings(kEoBBaseSoundFilesIntro, temp);
+	_staticres->loadStrings(kEoBBaseSoundFilesIngame, temp);
+	_staticres->loadStrings(kEoBBaseSoundFilesFinale, temp);
 
 	// Hard code the following strings, since EOB I doesn't have them in the original.
 	// EOB I doesn't have load and save menus, because there is only one single
@@ -1129,11 +1137,9 @@ void EoBEngine::initStaticResource() {
 		p->dmgDc[2].base = (int8)*ps++;
 		ps++;
 		p->capsFlags = *ps++;
-		p->typeFlags = READ_LE_UINT16(ps);
-		ps += 2;
-		ps++;
-		ps++;
-		p->experience = READ_LE_UINT16(ps);
+		p->typeFlags = (_flags.platform == Common::kPlatformAmiga) ? READ_BE_UINT32(++ps) : READ_LE_UINT32(ps);
+		ps += 4;
+		p->experience = (_flags.platform == Common::kPlatformAmiga) ? READ_BE_UINT16(ps) : READ_LE_UINT16(ps);
 		ps += 2;
 		p->u30 = *ps++;
 		p->sound1 = (int8)*ps++;
@@ -1226,6 +1232,8 @@ void EoBEngine::initSpells() {
 
 	for (int i = 0; i < _numSpells; i++) {
 		EoBSpell *s = &_spells[i];
+		if (_flags.platform == Common::kPlatformAmiga)
+			src++;
 		src += 4;
 		s->flags = flagTable[i].typeFlag;
 		s->damageFlags = flagTable[i].damageFlag;

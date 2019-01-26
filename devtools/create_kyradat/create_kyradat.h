@@ -382,6 +382,7 @@ enum kExtractID {
 	kEoBBaseMagicStrings6,
 	kEoBBaseMagicStrings7,
 	kEoBBaseMagicStrings8,
+	kEoBBaseMagicStrings9,
 
 	kEoBBaseExpObjectTlMode,
 	kEoBBaseExpObjectTblIndex,
@@ -413,6 +414,13 @@ enum kExtractID {
 	kEoBBaseConeOfColdDest4,
 	kEoBBaseConeOfColdGfxTbl,
 
+	kEoBBaseSoundMap,
+	kEoBBaseSoundFilesIntro,
+	kEoBBaseSoundFilesIngame,
+	kEoBBaseSoundFilesFinale,
+
+	kEoB1LevelSoundFiles1,
+	kEoB1LevelSoundFiles2,
 	kEoB1MainMenuStrings,
 	kEoB1BonusStrings,
 
@@ -436,6 +444,15 @@ enum kExtractID {
 	kEoB1IntroTvlY2,
 	kEoB1IntroTvlW,
 	kEoB1IntroTvlH,
+	kEoB1IntroOrbFadePal,
+
+	kEoB1FinaleCouncilAnim1,
+	kEoB1FinaleCouncilAnim2,
+	kEoB1FinaleCouncilAnim3,
+	kEoB1FinaleCouncilAnim4,
+	kEoB1FinaleEyesAnim,
+	kEoB1FinaleHandsAnim,
+	kEoB1FinaleTextDuration,
 
 	kEoB1DoorShapeDefs,
 	kEoB1DoorSwitchShapeDefs,

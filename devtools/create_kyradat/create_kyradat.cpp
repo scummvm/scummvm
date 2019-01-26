@@ -45,7 +45,7 @@
 
 
 enum {
-	kKyraDatVersion = 92
+	kKyraDatVersion = 93
 };
 
 const ExtractFilename extractFilenames[] = {
@@ -379,6 +379,7 @@ const ExtractFilename extractFilenames[] = {
 	{ kEoBBaseMagicStrings6, kStringList, true },
 	{ kEoBBaseMagicStrings7, kStringList, true },
 	{ kEoBBaseMagicStrings8, kStringList, true },
+	{ kEoBBaseMagicStrings9, kStringList, true },
 
 	{ kEoBBaseExpObjectTlMode, kRawData, false },
 	{ kEoBBaseExpObjectTblIndex, kRawData, false },
@@ -409,7 +410,14 @@ const ExtractFilename extractFilenames[] = {
 	{ kEoBBaseConeOfColdDest4, kRawData, false },
 	{ kEoBBaseConeOfColdGfxTbl, kRawData, false },
 
+	{ kEoBBaseSoundMap, kStringList, false },
+	{ kEoBBaseSoundFilesIntro, kStringList, false },
+	{ kEoBBaseSoundFilesIngame, kStringList, false },
+	{ kEoBBaseSoundFilesFinale, kStringList, false },
+
 	// EYE OF THE BEHOLDER I
+	{ kEoB1LevelSoundFiles1, kStringList, false },
+	{ kEoB1LevelSoundFiles2, kStringList, false },
 	{ kEoB1MainMenuStrings, kStringList, true },
 	{ kEoB1BonusStrings, kStringList, true },
 
@@ -433,7 +441,14 @@ const ExtractFilename extractFilenames[] = {
 	{ kEoB1IntroTvlY2, kRawData, false },
 	{ kEoB1IntroTvlW, kRawData, false },
 	{ kEoB1IntroTvlH, kRawData, false },
-
+	{ kEoB1IntroOrbFadePal, kRawData, false },
+	{ kEoB1FinaleCouncilAnim1, kRawData, false },
+	{ kEoB1FinaleCouncilAnim2, kRawData, false },
+	{ kEoB1FinaleCouncilAnim3, kRawData, false },
+	{ kEoB1FinaleCouncilAnim4, kRawData, false },
+	{ kEoB1FinaleEyesAnim, kRawData, false },
+	{ kEoB1FinaleHandsAnim, kRawDataBe16, false },
+	{ kEoB1FinaleTextDuration, kRawData, false },
 	{ kEoB1DoorShapeDefs, kRawData, false },
 	{ kEoB1DoorSwitchShapeDefs, kRawData, false },
 	{ kEoB1DoorSwitchCoords, kRawData, false },
