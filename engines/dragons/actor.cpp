@@ -163,4 +163,9 @@ byte *Actor::getSeqIpAtOffset(uint32 offset) {
 	return _actorResource->getSequenceDataAtOffset(offset);
 }
 
+void Actor::reset_maybe() {
+	flags = 0;
+	//TODO actor_find_by_resourceId_and_remove_resource_from_mem_maybe(resourceID);
+}
+
 } // End of namespace Dragons

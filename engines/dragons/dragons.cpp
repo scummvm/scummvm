@@ -27,9 +27,11 @@
 #include "actorresource.h"
 #include "background.h"
 #include "bigfile.h"
+#include "dragonflg.h"
 #include "dragonini.h"
 #include "dragonobd.h"
 #include "dragonrms.h"
+#include "dragonvar.h"
 #include "dragons.h"
 #include "scene.h"
 #include "screen.h"
@@ -55,7 +57,7 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	_flags = 0;
 	_unkFlags1 = 0;
 	_sequenceOpcodes = new SequenceOpcodes(this);
-	_scriptOpcodes = new ScriptOpcodes(this);
+	_scriptOpcodes = NULL;
 	_engine = this;
 	_cursorPosition = Common::Point();
 }
@@ -81,11 +83,14 @@ void DragonsEngine::updateEvents() {
 Common::Error DragonsEngine::run() {
 	_screen = new Screen();
 	_bigfileArchive = new BigfileArchive("bigfile.dat", Common::Language::EN_ANY);
+	_dragonFLG = new DragonFLG(_bigfileArchive);
 	_dragonOBD = new DragonOBD(_bigfileArchive);
 	_dragonRMS = new DragonRMS(_bigfileArchive, _dragonOBD);
+	_dragonVAR = new DragonVAR(_bigfileArchive);
 	_dragonINIResource = new DragonINIResource(_bigfileArchive);
 	ActorResourceLoader *actorResourceLoader = new ActorResourceLoader(_bigfileArchive);
 	_actorManager = new ActorManager(actorResourceLoader);
+	_scriptOpcodes = new ScriptOpcodes(this, _dragonFLG);
 	_scene = new Scene(this, _screen, _scriptOpcodes, _bigfileArchive, _actorManager, _dragonRMS, _dragonINIResource);
 	_flags = 0x1046;
 
@@ -118,7 +123,9 @@ Common::Error DragonsEngine::run() {
 	delete _scene;
 	delete _actorManager;
 	delete _backgroundResourceLoader;
+	delete _dragonFLG;
 	delete _dragonRMS;
+	delete _dragonVAR;
 	delete _bigfileArchive;
 	delete _screen;
 
@@ -300,6 +307,22 @@ byte *DragonsEngine::getBackgroundPalette() {
 
 bool DragonsEngine::isFlagSet(uint32 flag) {
 	return (bool)(_flags & flag);
+}
+
+DragonINI *DragonsEngine::getINI(uint32 index) {
+	return _dragonINIResource->getRecord(index);
+}
+
+uint16 DragonsEngine::getVar(uint16 offset) {
+	return _dragonVAR->getVar(offset);
+}
+
+uint16 DragonsEngine::getCurrentSceneId() {
+	return _scene->getSceneId();
+}
+
+void DragonsEngine::setVar(uint16 offset, uint16 value) {
+	return _dragonVAR->setVar(offset, value);
 }
 
 } // End of namespace Dragons

@@ -80,24 +80,30 @@ enum UnkFlags {
 
 class BigfileArchive;
 class BackgroundResourceLoader;
+class DragonFLG;
 class DragonOBD;
 class DragonRMS;
+class DragonVAR;
 class DragonINIResource;
 class Scene;
 class Screen;
 class ActorManager;
 class SequenceOpcodes;
 class ScriptOpcodes;
+struct DragonINI;
 
 class DragonsEngine : public Engine {
+public:
+	DragonOBD *_dragonOBD;
+	ActorManager *_actorManager;
 private:
 	Screen *_screen;
 	BigfileArchive *_bigfileArchive;
-	DragonOBD *_dragonOBD;
+	DragonFLG *_dragonFLG;
 	DragonRMS *_dragonRMS;
+	DragonVAR *_dragonVAR;
 	DragonINIResource *_dragonINIResource;
 	BackgroundResourceLoader *_backgroundResourceLoader;
-	ActorManager *_actorManager;
 	Scene *_scene;
 	SequenceOpcodes *_sequenceOpcodes;
 	ScriptOpcodes *_scriptOpcodes;
@@ -126,6 +132,10 @@ public:
 	void clearUnkFlags(uint32 flags);
 
 	byte *getBackgroundPalette();
+	DragonINI *getINI(uint32 index);
+	uint16 getVar(uint16 offset);
+	void setVar(uint16 offset, uint16 value);
+	uint16 getCurrentSceneId();
 
 private:
 	void gameLoop();

@@ -6,9 +6,11 @@ MODULE_OBJS := \
     background.o \
     bigfile.o \
 	detection.o \
+    dragonflg.o \
     dragonini.o \
     dragonobd.o \
     dragonrms.o \
+    dragonvar.o \
 	dragons.o \
 	scene.o \
 	screen.o \

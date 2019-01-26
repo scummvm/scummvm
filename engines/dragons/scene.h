@@ -61,6 +61,7 @@ public:
 	void draw();
 	bool contains(DragonINI *ini);
 	byte *getPalette();
+	uint16 getSceneId();
 };
 
 } // End of namespace Dragons

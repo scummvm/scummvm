@@ -19,64 +19,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#ifndef SCUMMVM_DRAGONINI_H
-#define SCUMMVM_DRAGONINI_H
-
-#include "common/system.h"
+#include "dragonvar.h"
 #include "bigfile.h"
 
 namespace Dragons {
 
-class Actor;
+DragonVAR::DragonVAR(BigfileArchive *bigfileArchive) {
+	uint32 size;
+	_data = bigfileArchive->load("dragon.var", size);
+	assert(size == 30);
+}
 
-enum IniFlags {
-	INI_FLAG_1 = 1,
-	INI_FLAG_2 = 2,
-	INI_FLAG_4 = 4,
-	INI_FLAG_8 = 8,
-	INI_FLAG_10 = 10,
-	INI_FLAG_20 = 20,
-	INI_FLAG_40 = 40,
-	INI_FLAG_80 = 80
-};
-
-
-struct DragonINI
-	{
-		int16 iptIndex_maybe;
-		int16 field_2;
-		uint16 actorResourceId;
-		uint16 frameIndexId_maybe;
-		int16 field_8;
-		Actor *actor;
-		uint16 sceneId;
-		int16 field_e;
-		int16 field_10;
-		int16 field_12;
-		uint16 field_14;
-		int16 x;
-		int16 y;
-		uint16 field_1a_flags_maybe;
-		int16 field_1c;
-		int16 field_1e;
-		uint16 field_20_actor_field_14;
-	};
-
-class DragonINIResource {
-private:
-	DragonINI *_dragonINI;
-	uint16 _count;
-	DragonINI *_flickerINI;
-public:
-	DragonINIResource(BigfileArchive *bigfileArchive);
-	uint16 totalRecords() { return _count; }
-	DragonINI *getRecord(uint16 index);
-	void setFlickerRecord(DragonINI *dragonINI);
-	DragonINI *getFlickerRecord() {
-		return _flickerINI;
+DragonVAR::~DragonVAR() {
+	if (_data) {
+		delete _data;
 	}
-};
+}
+
+uint16 DragonVAR::getVar(uint16 offset) {
+	assert(_data);
+	assert(offset < 15);
+	return READ_LE_UINT16(_data + offset * 2);
+}
+
+void DragonVAR::setVar(uint16 offset, uint16 value) {
+	assert(_data);
+	assert(offset < 15);
+	WRITE_LE_INT16(_data + offset * 2, value);
+}
 
 } // End of namespace Dragons
-
-#endif //SCUMMVM_DRAGONINI_H
