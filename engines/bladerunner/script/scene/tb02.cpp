@@ -279,8 +279,8 @@ void SceneScriptTB02::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptTB02::PlayerWalkedIn() {
-	if (Game_Flag_Query(625)) {
-		Game_Flag_Reset(625);
+	if (Game_Flag_Query(kFlagTB07TyrellMeeting)) {
+		Game_Flag_Reset(kFlagTB07TyrellMeeting);
 		if (Global_Variable_Query(kVariableChapter) == 2
 		 || Global_Variable_Query(kVariableChapter) == 3
 		) {

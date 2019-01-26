@@ -27,12 +27,15 @@ namespace BladeRunner {
 void SceneScriptPS02::InitializeScene() {
 	Player_Loses_Control();
 	Setup_Scene_Information(-13.31f, -40.28f, -48.12f, 30);
+
 	Scene_Exit_Add_2D_Exit(0, 0, 0, 240, 479, 3);
+
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(0);
 	Ambient_Sounds_Add_Looping_Sound(386, 20, 1, 1);
 	Ambient_Sounds_Add_Looping_Sound(210, 20, 1, 1);
 	Ambient_Sounds_Add_Sound(0, 3, 20, 12, 16, 0, 0, -101, -101, 0, 0);
-	Scene_Loop_Start_Special(0, 0, 0);
+
+	Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
 	Scene_Loop_Set_Default(1);
 }
 
@@ -48,7 +51,9 @@ bool SceneScriptPS02::MouseClick(int x, int y) {
 }
 
 bool SceneScriptPS02::ClickedOn3DObject(const char *objectName, bool a2) {
-	if (Object_Query_Click("E.DOOR01", objectName) || Object_Query_Click("E.D00R02", objectName)) {
+	if (Object_Query_Click("E.DOOR01", objectName)
+	 || Object_Query_Click("E.D00R02", objectName)
+	) {
 		if (Game_Flag_Query(kFlagPS02toPS01)) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -5.0f, -40.0f, -15.0f, 0, true, false, 0)) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
@@ -109,6 +114,7 @@ void SceneScriptPS02::SceneFrameAdvanced(int frame) {
 	if (frame == 1) {
 		Ambient_Sounds_Play_Sound(208, 45, 0, 0, 0);
 	}
+
 	if (frame == 91) {
 		Ambient_Sounds_Play_Sound(209, 45, 0, 0, 0);
 	}
@@ -119,7 +125,7 @@ void SceneScriptPS02::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptPS02::PlayerWalkedIn() {
-	Game_Flag_Reset(718);
+	Game_Flag_Reset(kflagPS01toPS02);
 	Actor_Face_XYZ(kActorMcCoy, 0.0f, 0.0f, 450.0f, true);
 	Player_Gains_Control();
 	activateElevator();
@@ -155,22 +161,20 @@ void SceneScriptPS02::DialogueQueueFlushed(int a1) {
 void SceneScriptPS02::activateElevator() {
 	Scene_Exits_Disable();
 	switch (Elevator_Activate(kElevatorPS)) {
-	case 7:
-		Game_Flag_Set(kFlagPS02toPS09);
-		break;
-	case 6:
-		Game_Flag_Set(kFlagPS02toPS03);
-		break;
-	case 5:
-		Game_Flag_Set(kFlagPS02toPS05);
+	case 3:
+		Game_Flag_Set(kFlagPS02toPS07);
 		break;
 	case 4:
 		Game_Flag_Set(kFlagPS02toPS01);
 		break;
-	case 3:
-		Game_Flag_Set(kFlagPS02toPS07);
+	case 5:
+		Game_Flag_Set(kFlagPS02toPS05);
 		break;
-	default:
+	case 6:
+		Game_Flag_Set(kFlagPS02toPS03);
+		break;
+	case 7:
+		Game_Flag_Set(kFlagPS02toPS09);
 		break;
 	}
 	Scene_Exits_Enable();

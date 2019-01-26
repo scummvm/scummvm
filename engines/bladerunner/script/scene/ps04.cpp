@@ -171,7 +171,7 @@ void SceneScriptPS04::dialogueWithGuzza() {
 		Actor_Says(kActorGuzza, 450, 34);
 		Actor_Says(kActorGuzza, 460, 33);
 		Actor_Says(kActorMcCoy, 4040, 17);
-		Game_Flag_Set(625);
+		Game_Flag_Set(kFlagTB07TyrellMeeting);
 		break;
 
 	case 120: // MONEY
