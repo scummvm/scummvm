@@ -20,12 +20,12 @@
  *
  */
 
-#include "kyra/kyra_lok.h"
-#include "kyra/lol.h"
-#include "kyra/kyra_hof.h"
-#include "kyra/kyra_mr.h"
-#include "kyra/eob.h"
-#include "kyra/darkmoon.h"
+#include "kyra/engine/kyra_lok.h"
+#include "kyra/engine/lol.h"
+#include "kyra/engine/kyra_hof.h"
+#include "kyra/engine/kyra_mr.h"
+#include "kyra/engine/eob.h"
+#include "kyra/engine/darkmoon.h"
 
 #include "common/config-manager.h"
 #include "common/system.h"

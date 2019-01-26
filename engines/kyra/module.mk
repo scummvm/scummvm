@@ -1,104 +1,104 @@
 MODULE := engines/kyra
 
 MODULE_OBJS := \
-	animator_lok.o \
-	animator_v2.o \
-	animator_hof.o \
-	animator_mr.o \
-	animator_tim.o \
-	debugger.o \
 	detection.o \
-	gui.o \
-	gui_v1.o \
-	gui_lok.o \
-	gui_v2.o \
-	gui_hof.o \
-	gui_mr.o \
-	items_lok.o \
-	items_v2.o \
-	items_hof.o \
-	items_mr.o \
-	kyra_v1.o \
-	kyra_lok.o \
-	kyra_v2.o \
-	kyra_hof.o \
-	kyra_mr.o \
-	resource.o \
-	resource_intern.o \
-	saveload.o \
-	saveload_lok.o \
-	saveload_hof.o \
-	saveload_mr.o \
-	scene_v1.o \
-	scene_lok.o \
-	scene_v2.o \
-	scene_hof.o \
-	scene_mr.o \
-	screen.o \
-	screen_lok.o \
-	screen_v2.o \
-	screen_hof.o \
-	screen_mr.o \
-	script_v1.o \
-	script_lok.o \
-	script_v2.o \
-	script_hof.o \
-	script_mr.o \
-	script.o \
-	script_tim.o \
-	seqplayer.o \
-	sequences_lok.o \
-	sequences_v2.o \
-	sequences_hof.o \
-	sequences_mr.o \
-	sound_adlib.o \
-	sound_amiga.o \
-	sound_digital.o \
-	sound_midi.o \
-	sound_pcspk.o \
-	sound_towns.o \
-	sound.o \
-	sound_lok.o \
-	sprites.o \
-	staticres.o \
-	text.o \
-	text_lok.o \
-	text_hof.o \
-	text_mr.o \
-	timer.o \
-	timer_lok.o \
-	timer_hof.o \
-	timer_mr.o \
-	util.o \
-	vqa.o \
-	wsamovie.o
+	engine/items_lok.o \
+	engine/items_v2.o \
+	engine/items_hof.o \
+	engine/items_mr.o \
+	engine/kyra_v1.o \
+	engine/kyra_lok.o \
+	engine/kyra_v2.o \
+	engine/kyra_hof.o \
+	engine/kyra_mr.o \
+	engine/scene_v1.o \
+	engine/scene_lok.o \
+	engine/scene_v2.o \
+	engine/scene_hof.o \
+	engine/scene_mr.o \
+	engine/sprites.o \
+	engine/timer.o \
+	engine/timer_lok.o \
+	engine/timer_hof.o \
+	engine/timer_mr.o \
+	engine/util.o \
+	graphics/animator_lok.o \
+	graphics/animator_v2.o \
+	graphics/animator_hof.o \
+	graphics/animator_mr.o \
+	graphics/animator_tim.o \
+	graphics/screen.o \
+	graphics/screen_lok.o \
+	graphics/screen_v2.o \
+	graphics/screen_hof.o \
+	graphics/screen_mr.o \
+	graphics/vqa.o \
+	graphics/wsamovie.o \
+	gui/debugger.o \
+	gui/gui.o \
+	gui/gui_v1.o \
+	gui/gui_lok.o \
+	gui/gui_v2.o \
+	gui/gui_hof.o \
+	gui/gui_mr.o \
+	gui/saveload.o \
+	gui/saveload_lok.o \
+	gui/saveload_hof.o \
+	gui/saveload_mr.o \
+	resource/resource.o \
+	resource/resource_intern.o \
+	resource/staticres.o \
+	script/script_v1.o \
+	script/script_lok.o \
+	script/script_v2.o \
+	script/script_hof.o \
+	script/script_mr.o \
+	script/script.o \
+	script/script_tim.o \
+	sequence/seqplayer.o \
+	sequence/sequences_lok.o \
+	sequence/sequences_v2.o \
+	sequence/sequences_hof.o \
+	sequence/sequences_mr.o \
+	sound/sound_adlib.o \
+	sound/sound_amiga.o \
+	sound/sound_digital.o \
+	sound/sound_midi.o \
+	sound/sound_pcspk.o \
+	sound/sound_towns.o \
+	sound/sound.o \
+	sound/sound_lok.o \
+	text/text.o \
+	text/text_lok.o \
+	text/text_hof.o \
+	text/text_mr.o
 
 KYRARPG_COMMON_OBJ = \
-	gui_rpg.o \
-	kyra_rpg.o \
-	saveload_rpg.o \
-	scene_rpg.o \
-	sprites_rpg.o \
-	staticres_rpg.o \
-	text_rpg.o \
-	timer_rpg.o
+	engine/kyra_rpg.o \
+	engine/scene_rpg.o \
+	engine/sprites_rpg.o \
+	engine/timer_rpg.o \
+	gui/gui_rpg.o \
+	gui/saveload_rpg.o \
+	resource/staticres_rpg.o \
+	text/text_rpg.o
 
 ifdef ENABLE_LOL
 MODULE_OBJS += \
 	$(KYRARPG_COMMON_OBJ) \
-	gui_lol.o \
-	items_lol.o \
-	lol.o \
-	saveload_lol.o \
-	scene_lol.o \
-	screen_lol.o \
-	script_lol.o \
-	sequences_lol.o \
-	sound_lol.o \
-	sprites_lol.o \
-	staticres_lol.o \
-	text_lol.o \
-	timer_lol.o
+	engine/items_lol.o \
+	engine/lol.o \
+	engine/scene_lol.o \
+	engine/sprites_lol.o \
+	engine/timer_lol.o \
+	graphics/screen_lol.o \
+	gui/gui_lol.o \
+	gui/saveload_lol.o \
+	resource/staticres_lol.o \
+	script/script_lol.o \
+	sequence/sequences_lol.o \
+	sound/sound_lol.o \
+	text/text_lol.o
 endif
 
 ifdef ENABLE_EOB
@@ -107,23 +107,23 @@ MODULE_OBJS += \
 	$(KYRARPG_COMMON_OBJ)
 endif
 MODULE_OBJS += \
-	chargen.o \
-	eobcommon.o \
-	eob.o \
-	darkmoon.o \
-	gui_eob.o \
-	items_eob.o \
-	magic_eob.o \
-	saveload_eob.o \
-	scene_eob.o \
-	screen_eob.o \
-	script_eob.o \
-	sequences_eob.o \
-	sequences_darkmoon.o \
-	sound_towns_darkmoon.o \
-	sprites_eob.o \
-	staticres_eob.o \
-	timer_eob.o
+	engine/chargen.o \
+	engine/eobcommon.o \
+	engine/eob.o \
+	engine/darkmoon.o \
+	engine/items_eob.o \
+	engine/magic_eob.o \
+	engine/scene_eob.o \
+	engine/sprites_eob.o \
+	engine/timer_eob.o \
+	graphics/screen_eob.o \
+	gui/gui_eob.o \
+	gui/saveload_eob.o \
+	resource/staticres_eob.o \
+	script/script_eob.o \
+	sequence/sequences_eob.o \
+	sequence/sequences_darkmoon.o \
+	sound/sound_towns_darkmoon.o
 endif
 
 # This module can be built as a plugin

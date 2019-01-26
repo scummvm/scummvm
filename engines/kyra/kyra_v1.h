@@ -34,8 +34,8 @@
 
 #include "audio/mixer.h"
 
-#include "kyra/script.h"
-#include "kyra/item.h"
+#include "kyra/script/script.h"
+#include "kyra/engine/item.h"
 
 namespace Common {
 class OutSaveFile;
