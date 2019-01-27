@@ -31,6 +31,7 @@ MODULE_OBJS := \
 	alan2/parse.o \
 	alan2/rules.o \
 	alan2/saveload.o \
+	frotz/bitmap_font.o \
 	frotz/config.o \
 	frotz/detection.o \
 	frotz/frotz.o \
