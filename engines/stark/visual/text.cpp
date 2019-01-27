@@ -43,6 +43,7 @@ VisualText::VisualText(Gfx::Driver *gfx) :
 		_texture(nullptr),
 		_color(0),
 		_backgroundColor(0),
+		_align(Graphics::kTextAlignLeft),
 		_targetWidth(600),
 		_targetHeight(600),
 		_fontCustomIndex(-1),
@@ -81,6 +82,13 @@ void VisualText::setBackgroundColor(uint32 color) {
 	if (color != _backgroundColor) {
 		freeTexture();
 		_backgroundColor = color;
+	}
+}
+
+void VisualText::setAlign(Graphics::TextAlign align) {
+	if (align != _align) {
+		freeTexture();
+		_align = align;
 	}
 }
 
@@ -135,7 +143,7 @@ void VisualText::createTexture() {
 
 	// Render the lines to the surface
 	for (uint i = 0; i < lines.size(); i++) {
-		font->drawString(&surface, lines[i], 0, scaledLineHeight * i, scaledRect.width(), _color);
+		font->drawString(&surface, lines[i], 0, scaledLineHeight * i, scaledRect.width(), _color, _align);
 	}
 
 	// Create a texture from the surface
@@ -160,7 +168,6 @@ void VisualText::render(const Common::Point &position) {
 
 void VisualText::resetTexture() {
 	freeTexture();
-	createTexture();
 }
 
 bool VisualText::isBlank() {

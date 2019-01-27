@@ -28,6 +28,7 @@
 #include "engines/stark/services/fontprovider.h"
 
 #include "common/rect.h"
+#include "graphics/font.h"
 
 namespace Stark {
 
@@ -52,6 +53,7 @@ public:
 	void setText(const Common::String &text);
 	void setColor(uint32 color);
 	void setBackgroundColor(uint32 color);
+	void setAlign(Graphics::TextAlign align);
 	void setTargetWidth(uint32 width);
 	void setTargetHeight(uint32 height);
 	void setFont(FontProvider::FontType type, int32 customFontIndex = -1);
@@ -76,6 +78,7 @@ private:
 	Common::String _text;
 	uint32 _color;
 	uint32 _backgroundColor;
+	Graphics::TextAlign _align;
 	uint32 _targetWidth;
 	uint32 _targetHeight;
 	Common::Rect _originalRect;

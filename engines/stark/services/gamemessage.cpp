@@ -33,6 +33,7 @@ GameMessage::GameMessage() :
 		_texts() {
 	Common::File tmp;
 	if (!tmp.open("language.ini")) {
+		warning("Unable to open 'language.ini'");
 		return;
 	}
 

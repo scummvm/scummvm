@@ -52,12 +52,7 @@ public:
 
 	/** Acquire a message text by a given key */
 	Common::String getTextByKey(TextKey key) {
-		/** Currently using texts from the language.ini is disabled
-		 * since the ResidualVM's dialog does not support non-Latin 
-		 * characters
-		 * 
-		 * if (_texts.contains(key)) return _texts[key];
-		 */
+		if (_texts.contains(key)) return _texts[key];
 
 		return getDefaultText(key);
 	}

@@ -155,14 +155,25 @@ void SaveMenuScreen::open() {
 
 void SaveMenuScreen::onWidgetSelected(SaveDataWidget *widget) {
 	if (widget->hasSave()) {
+		_slotToSaveAfterConfirm = widget;
+
 		Common::String format = StarkGameMessage->getTextByKey(GameMessage::kOverwriteSave);
 		Common::String prompt = Common::String::format(format.c_str(), widget->getName().c_str());
 
-		if (!StarkUserInterface->confirm(prompt)) {
-			return;
-		}
+		StarkUserInterface->confirm(prompt, this, &SaveMenuScreen::saveConfirmSlot);
+	} else {
+		saveGameToSlot(widget);
 	}
+}
 
+void SaveMenuScreen::saveConfirmSlot() {
+	assert(_slotToSaveAfterConfirm);
+
+	saveGameToSlot(_slotToSaveAfterConfirm);
+	_slotToSaveAfterConfirm = nullptr;
+}
+
+void SaveMenuScreen::saveGameToSlot(SaveDataWidget *widget) {
 	checkError(g_engine->saveGameState(widget->getSlot(), StarkGameChapter->getCurrentChapterTitle()));
 
 	// Freeze the screen for a while to let the user notice the change
@@ -182,9 +193,19 @@ void LoadMenuScreen::open() {
 }
 
 void LoadMenuScreen::onWidgetSelected(SaveDataWidget *widget) {
-	if (!StarkGlobal->getCurrent() || StarkUserInterface->confirm(GameMessage::kEndAndLoad)) {
+	if (!StarkGlobal->getCurrent()) {
 		checkError(g_engine->loadGameState(widget->getSlot()));
+	} else {
+		_slotToLoadAfterConfirm = widget->getSlot();
+		StarkUserInterface->confirm(GameMessage::kEndAndLoad, this, &LoadMenuScreen::loadConfirmSlot);
 	}
+}
+
+void LoadMenuScreen::loadConfirmSlot() {
+	assert(_slotToLoadAfterConfirm >= 0);
+
+	checkError(g_engine->loadGameState(_slotToLoadAfterConfirm));
+	_slotToLoadAfterConfirm = -1;
 }
 
 SaveDataWidget::SaveDataWidget(int slot, Gfx::Driver *gfx, SaveLoadMenuScreen *screen) :

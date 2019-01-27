@@ -143,9 +143,8 @@ void TopMenu::onClick(const Common::Point &pos) {
 	}
 
 	if (_exitButton->containsPoint(pos)) {
-		if (StarkUserInterface->confirm(GameMessage::kQuitGamePrompt)) {
-			StarkUserInterface->requestQuitToMainMenu();
-		}
+		StarkUserInterface->confirm(GameMessage::kQuitGamePrompt, StarkUserInterface,
+		                            &UserInterface::requestQuitToMainMenu);
 	}
 
 	if (_inventoryButton->containsPoint(pos)) {

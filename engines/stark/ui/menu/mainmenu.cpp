@@ -50,79 +50,79 @@ void MainMenuScreen::open() {
 			"BGImage",
 			nullptr,
 			nullptr));
-	
+
 	_widgets.push_back(new StaticLocationWidget(
 			"NewGame",
 			CLICK_HANDLER(MainMenuScreen, newGameHandler),
 			MOVE_HANDLER(MainMenuScreen, helpTextHandler<kNewGame>)));
 	_widgets.back()->setupSounds(0, 1);
-	
+
 	_widgets.push_back(new StaticLocationWidget(
 			"Continue",
 			CLICK_HANDLER(MainMenuScreen, loadHandler),
 			MOVE_HANDLER(MainMenuScreen, helpTextHandler<kContinue>)));
 	_widgets.back()->setupSounds(0, 1);
-	
+
 	_widgets.push_back(new StaticLocationWidget(
 			"Options",
 			CLICK_HANDLER(MainMenuScreen, settingsHandler),
 			MOVE_HANDLER(MainMenuScreen, helpTextHandler<kOption>)));
 	_widgets.back()->setupSounds(0, 1);
-	
+
 	_widgets.push_back(new StaticLocationWidget(
 			"Box",
 			CLICK_HANDLER(MainMenuScreen, boxHandler),
 			MOVE_HANDLER(MainMenuScreen, helpTextHandler<kBox>)));
 	_widgets.back()->setupSounds(0, 1);
-	
+
 	_widgets.push_back(new StaticLocationWidget(
 			"Quit",
 			CLICK_HANDLER(MainMenuScreen, quitHandler),
 			MOVE_HANDLER(MainMenuScreen, helpTextHandler<kQuit>)));
 	_widgets.back()->setupSounds(0, 1);
-	
+
 	_widgets.push_back(new StaticLocationWidget(
 			"OptionHelp",
 			nullptr,
 			nullptr));
 	_widgets.back()->setVisible(false);
-	
+
 	_widgets.push_back(new StaticLocationWidget(
 			"BeginHelp",
 			nullptr,
 			nullptr));
 	_widgets.back()->setVisible(false);
-	
+
 	_widgets.push_back(new StaticLocationWidget(
 			"ContinueHelp",
 			nullptr,
 			nullptr));
 	_widgets.back()->setVisible(false);
-	
+
 	_widgets.push_back(new StaticLocationWidget(
 			"BoxHelp",
 			nullptr,
 			nullptr));
 	_widgets.back()->setVisible(false);
-	
+
 	_widgets.push_back(new StaticLocationWidget(
 			"QuitHelp",
 			nullptr,
 			nullptr));
 	_widgets.back()->setVisible(false);
-	
+
 	_widgets.push_back(new StaticLocationWidget(
 			"Credits",
 			CLICK_HANDLER(MainMenuScreen, creditsHandler),
 			MOVE_HANDLER(MainMenuScreen, helpTextHandler<kCredits>)));
 	_widgets.back()->setupSounds(0, 1);
-	
+
 	_widgets.push_back(new StaticLocationWidget(
 			"CreditHelp",
 			nullptr,
 			nullptr));
 	_widgets.back()->setVisible(false);
-	
+
 	_widgets.push_back(new VersionInfoText());
 }
 
@@ -184,10 +184,8 @@ void MainMenuScreen::boxHandler() {
 }
 
 void MainMenuScreen::quitHandler() {
-	if (StarkUserInterface->confirm(GameMessage::kQuitPrompt)) {
-		waitForSoundsToComplete();
-		StarkUserInterface->notifyShouldExit();
-	}
+	StarkUserInterface->confirm(GameMessage::kQuitGamePrompt, StarkUserInterface,
+	                            &UserInterface::notifyShouldExit);
 }
 
 VersionInfoText::VersionInfoText() :

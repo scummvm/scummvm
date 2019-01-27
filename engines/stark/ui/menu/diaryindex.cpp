@@ -124,9 +124,8 @@ void DiaryIndexScreen::backHandler() {
 }
 
 void DiaryIndexScreen::quitHandler() {
-	if (StarkUserInterface->confirm(GameMessage::kQuitGamePrompt)) {
-		StarkUserInterface->requestQuitToMainMenu();
-	}
+	StarkUserInterface->confirm(GameMessage::kQuitGamePrompt, StarkUserInterface,
+	                            &UserInterface::requestQuitToMainMenu);
 }
 
 void DiaryIndexScreen::loadHandler() {

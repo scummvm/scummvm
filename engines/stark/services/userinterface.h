@@ -47,6 +47,7 @@ namespace Gfx {
 class Driver;
 }
 
+class DialogBox;
 class DiaryIndexScreen;
 class GameScreen;
 class MainMenuScreen;
@@ -163,10 +164,18 @@ public:
 	/** Get the currently stored game screen thumbnail, returns nullptr if there is not thumbnail stored */
 	const Graphics::Surface *getGameWindowThumbnail() const;
 
-	/** Display a message dialog, return true when the left button is pressed, and false for the right button */
-	bool confirm(const Common::String &msg, const Common::String &leftBtnMsg, const Common::String &rightBtnMsg);
-	bool confirm(const Common::String &msg);
-	bool confirm(GameMessage::TextKey key);
+	/**
+	 * Display a confirmation dialog
+	 *
+	 * Close the dialog when the cancel button is pressed,
+	 * call a callback when the confirm button is pressed.
+	 */
+	template<class T>
+	void confirm(const Common::String &message, T *instance, void (T::*confirmCallBack)());
+	template<class T>
+	void confirm(GameMessage::TextKey key, T *instance, void (T::*confirmCallBack)());
+	void confirm(const Common::String &message, Common::Functor0<void> *confirmCallBack);
+	void confirm(GameMessage::TextKey key, Common::Functor0<void> *confirmCallBack);
 
 	/** Directly open or close a screen */
 	void toggleScreen(Screen::Name screenName);
@@ -200,8 +209,10 @@ private:
 	Screen *_currentScreen;
 	Common::Stack<Screen::Name> _prevScreenNameStack;
 
-	Gfx::Driver *_gfx;
+	DialogBox *_modalDialog;
 	Cursor *_cursor;
+
+	Gfx::Driver *_gfx;
 	bool _exitGame;
 	bool _quitToMainMenu;
 
@@ -216,6 +227,16 @@ private:
 
 	Graphics::Surface *_gameWindowThumbnail;
 };
+
+template<class T>
+void UserInterface::confirm(GameMessage::TextKey key, T *instance, void (T::*confirmCallBack)()) {
+	confirm(key, new Common::Functor0Mem<void, T>(instance, confirmCallBack));
+}
+
+template<class T>
+void UserInterface::confirm(const Common::String &message, T *instance, void (T::*confirmCallBack)()) {
+	confirm(message, new Common::Functor0Mem<void, T>(instance, confirmCallBack));
+}
 
 } // End of namespace Stark
 

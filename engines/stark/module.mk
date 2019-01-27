@@ -88,6 +88,7 @@ MODULE_OBJS := \
 	tools/command.o \
 	tools/decompiler.o \
 	ui/cursor.o \
+	ui/dialogbox.o \
 	ui/menu/diaryindex.o \
 	ui/menu/locationscreen.o \
 	ui/menu/mainmenu.o \
