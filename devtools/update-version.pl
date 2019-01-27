@@ -38,6 +38,7 @@ my @subs_files = qw(
 	dists/macosx/dockplugin/Info.plist
 	dists/irix/residualvm.spec
 	dists/android/AndroidManifest.xml
+	dists/riscos/!Boot,feb
 	);
 
 my %subs = (

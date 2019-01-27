@@ -1,0 +1,8 @@
+Set ResidualVM$Dir <Obey$Dir>
+IconSprites <ResidualVM$Dir>.!Sprites
+
+Set ResidualVM$Title "ResidualVM"
+Set ResidualVM$Description "Interpreter for several 3D games"
+Set ResidualVM$Publisher "ResidualVM Developers"
+Set ResidualVM$Web "http://www.residualvm.org/"
+Set ResidualVM$Version "0.4.0git"
