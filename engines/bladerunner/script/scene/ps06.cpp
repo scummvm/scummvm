@@ -26,10 +26,11 @@ namespace BladeRunner {
 
 void SceneScriptPS06::InitializeScene() {
 	Setup_Scene_Information(11257.26f, 707.3f, -4778.31f, 120);
-	Scene_Exit_Add_2D_Exit(0, 610, 0, 639, 479, 1);
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(0);
-	Ambient_Sounds_Add_Looping_Sound(388, 50, 1, 1);
 
+	Scene_Exit_Add_2D_Exit(0, 610, 0, 639, 479, 1);
+
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(false);
+	Ambient_Sounds_Add_Looping_Sound(388, 50, 1, 1);
 }
 
 void SceneScriptPS06::SceneLoaded() {
@@ -49,20 +50,15 @@ bool SceneScriptPS06::ClickedOn3DObject(const char *objectName, bool a2) {
 		ESPER_Flag_To_Activate();
 		return true;
 	}
-	if (Object_Query_Click("E.SCREEN03", objectName) || Object_Query_Click("E.MONITOR3", objectName)) {
+	if (Object_Query_Click("E.SCREEN03", objectName)
+	 || Object_Query_Click("E.MONITOR3", objectName)
+	) {
 		Actor_Says(kActorAnsweringMachine, 330, 3);
-		if (!Actor_Clue_Query(kActorMcCoy, kClueCar) || Actor_Clue_Query(kActorMcCoy, kClueCarRegistration1) || Actor_Clue_Query(kActorMcCoy, kClueCarRegistration2) || Actor_Clue_Query(kActorMcCoy, kClueCarRegistration3)) {
-			Actor_Clues_Transfer_New_To_Mainframe(kActorMcCoy);
-			Ambient_Sounds_Play_Sound(587, 50, 0, 0, 99);
-			Delay(2000);
-			Actor_Says(kActorAnsweringMachine, 340, 3);
-			Actor_Clues_Transfer_New_From_Mainframe(kActorMcCoy);
-			Ambient_Sounds_Play_Sound(587, 50, 0, 0, 99);
-			Delay(2000);
-			Ambient_Sounds_Play_Sound(588, 80, 0, 0, 99);
-			Actor_Says(kActorAnsweringMachine, 350, 3);
-			return true;
-		} else {
+		if (Actor_Clue_Query(kActorMcCoy, kClueCar)
+		 && !Actor_Clue_Query(kActorMcCoy, kClueCarRegistration1)
+		 && !Actor_Clue_Query(kActorMcCoy, kClueCarRegistration2)
+		 && !Actor_Clue_Query(kActorMcCoy, kClueCarRegistration3)
+		) {
 			Delay(2000);
 			Actor_Voice_Over(3780, kActorVoiceOver);
 			Actor_Voice_Over(3790, kActorVoiceOver);
@@ -87,6 +83,17 @@ bool SceneScriptPS06::ClickedOn3DObject(const char *objectName, bool a2) {
 			}
 			Actor_Clues_Transfer_New_To_Mainframe(kActorMcCoy);
 			Actor_Clues_Transfer_New_From_Mainframe(kActorMcCoy);
+			return true;
+		} else {
+			Actor_Clues_Transfer_New_To_Mainframe(kActorMcCoy);
+			Ambient_Sounds_Play_Sound(587, 50, 0, 0, 99);
+			Delay(2000);
+			Actor_Says(kActorAnsweringMachine, 340,  kAnimationModeTalk);
+			Actor_Clues_Transfer_New_From_Mainframe(kActorMcCoy);
+			Ambient_Sounds_Play_Sound(587, 50, 0, 0, 99);
+			Delay(2000);
+			Ambient_Sounds_Play_Sound(588, 80, 0, 0, 99);
+			Actor_Says(kActorAnsweringMachine, 350, kAnimationModeTalk);
 			return true;
 		}
 	}
