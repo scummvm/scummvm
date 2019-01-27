@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 void SceneScriptUG06::InitializeScene() {
-	if (Game_Flag_Query(680)) {
+	if (Game_Flag_Query(kFlagChapter4Intro)) {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		Outtake_Play(kOuttakeMovieC1, false, -1);
@@ -34,7 +34,7 @@ void SceneScriptUG06::InitializeScene() {
 		} else {
 			Outtake_Play(kOuttakeMovieC2, false, -1);
 		}
-		Game_Flag_Reset(680);
+		Game_Flag_Reset(kFlagChapter4Intro);
 	}
 
 	if (Game_Flag_Query(kFlagUG04toUG06)) {

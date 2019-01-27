@@ -33,7 +33,7 @@ enum kHF01Loops {
 };
 
 void SceneScriptHF01::InitializeScene() {
-	if (Game_Flag_Query(617)) {
+	if (Game_Flag_Query(kFlagSpinnerMissing)) {
 		Setup_Scene_Information(243.94f, 8.0f, -341.9f, 342);
 	} else if (Game_Flag_Query(kFlagHF05toHF01)) {
 		Setup_Scene_Information(-202.0f, 0.0f, -619.0f, 407);
@@ -359,9 +359,9 @@ void SceneScriptHF01::PlayerWalkedIn() {
 		}
 	}
 
-	if (Game_Flag_Query(617)) {
+	if (Game_Flag_Query(kFlagSpinnerMissing)) {
 		Actor_Set_Goal_Number(kActorSteele, 280);
-		Game_Flag_Reset(617);
+		Game_Flag_Reset(kFlagSpinnerMissing);
 		//return true;
 		return;
 	}

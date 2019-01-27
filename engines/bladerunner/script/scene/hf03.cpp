@@ -259,7 +259,7 @@ void SceneScriptHF03::PlayerWalkedIn() {
 		Actor_Says(kActorSteele, 230, 16);
 		Actor_Says(kActorMcCoy, 1690, 12);
 		Actor_Says(kActorSteele, 240, 13);
-		Actor_Set_Goal_Number(kActorSteele, 234);
+		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleHF03McCoyChasingLucy);
 	}
 }
 

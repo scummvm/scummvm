@@ -58,11 +58,11 @@ void SceneScriptHF02::InitializeScene() {
 void SceneScriptHF02::SceneLoaded() {
 	Obstacle_Object("BARD_NEON", true);
 	Unclickable_Object("BARD_NEON");
-	if (Actor_Query_Goal_Number(kActorSteele) == 234) {
+	if (Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleHF03McCoyChasingLucy) {
 		if (Game_Flag_Query(kFlagLucyRanAway)) {
-			Actor_Set_Goal_Number(kActorSteele, 243);
+			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleHF02LucyRanAway);
 		} else {
-			Actor_Set_Goal_Number(kActorSteele, 240);
+			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleHF02ConfrontLucy);
 		}
 	}
 }
@@ -119,8 +119,8 @@ void SceneScriptHF02::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptHF02::PlayerWalkedIn() {
-	if (Actor_Query_Goal_Number(kActorSteele) == 240) {
-		Actor_Set_Goal_Number(kActorSteele, 241);
+	if (Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleHF02ConfrontLucy) {
+		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleHF02ShootLucy);
 	}
 
 	if (Game_Flag_Query(kFlagHF03toHF02)) {
@@ -131,11 +131,11 @@ void SceneScriptHF02::PlayerWalkedIn() {
 		Game_Flag_Reset(kFlagHF01toHF02);
 	}
 
-	if (Actor_Query_Goal_Number(kActorSteele) == 243) {
+	if (Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleHF02LucyRanAway) {
 		if (Actor_Query_Goal_Number(kActorLucy) == kGoalLucyDead) {
-			Actor_Set_Goal_Number(kActorSteele, 244);
+			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleHF02LucyShotByMcCoy);
 		} else {
-			Actor_Set_Goal_Number(kActorSteele, 245);
+			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleHF02LucyLostByMcCoy);
 		}
 	}
 }

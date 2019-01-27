@@ -922,6 +922,8 @@ enum Flags {
 	kFlagTB07toTB02 = 608,
 	kFlagTB07RachaelTalk = 612,
 	kFlagHF03LucyTalk = 613,
+	kFlagMcCoyCapturedByBaker = 616,
+	kFlagSpinnerMissing = 617,
 	kFlagTB07TyrellMeeting = 625,
 	kFlagCT11DogWrapperTaken = 645,
 	kFlagMA04McCoySleeping = 647,
@@ -934,6 +936,7 @@ enum Flags {
 	kFlagPS14toMA07 = 673,
 	kFlagChapter2Intro = 678,
 	kFlagChapter3Intro = 679,
+	kFlagChapter4Intro = 680,
 	kFlagNotUsed686 = 686,
 	kFlagPS05TV0 = 688,
 	kFlagPS05TV1 = 689,
@@ -979,7 +982,7 @@ enum Variables {
 	kVariableWalkLoopActor = 37,
 	kVariableWalkLoopRun = 38,
 	kVariableDR06MannequinHeadOpened = 39,
-	kVariableBehavior = 40, // 1 dektora is replicant, 2 - ?, 3 - get caught by Baker
+	kVariableBehavior = 40, // 1 dektora is replicant, 2 - ?, 3 - get caught by Holloway & Baker at HF03
 	kVariableMcCoyDrinks = 42, // is never checked
 	kVariableAffectionTowards = 45, // 0 none, 1 steele, 2 dektora, 3 lucy
 	kVariableGunPulledInFrontOfSebastian = 46,
@@ -1108,7 +1111,7 @@ enum Scenes {
 	kSceneHC03 = 33, // Hawker's Circle - Green pawn - Inside
 	kSceneHF01 = 34, // Hysteria Hall - Outside
 	kSceneHF02 = 35, // Hysteria Hall - Hall of Mirrors - Exit
-	kSceneHF03 = 36, // Hysteria Hall - Arcade
+	kSceneHF03 = 36, // Hysteria Hall - Hysteria Arcade
 	kSceneHF04 = 37, // Hysteria Hall - Hall of Mirrors
 	kSceneHF05 = 38,
 	kSceneHF06 = 39,
@@ -1497,6 +1500,7 @@ enum GoalMcCoy {
 };
 
 enum GoalSteele {
+	// chapter 1
 	kGoalSteeleDefault = 0,
 	kGoalSteeleGoToRC01 = 1,
 	kGoalSteeleGoToRC02 = 2,
@@ -1509,6 +1513,7 @@ enum GoalSteele {
 	kGoalSteeleGoToPS02 = 9,
 	kGoalSteeleGoToFreeSlotG3 = 10,
 	kGoalSteeleInterviewGrigorian = 11,
+	// chapter 2
 	kGoalSteeleApprehendIzo = 100,
 	kGoalSteeleGoToTB02 = 110,
 	kGoalSteeleLeaveTB02 = 111,
@@ -1518,7 +1523,20 @@ enum GoalSteele {
 	kGoalSteeleArrestIzo = 121,
 	kGoalSteeleIzoBlockedByMcCoy = 125,
 	kGoalSteeleLeaveRC03 = 130,
-	kGoalSteeleWalkAroundRestart = 190
+	kGoalSteeleWalkAroundRestart = 190,
+	// chapter 3
+	kGoalSteeleHF03ApproachLucy = 233,
+	kGoalSteeleHF03McCoyChasingLucy = 234,
+	kGoalSteeleHF02ConfrontLucy = 240,
+	kGoalSteeleHF02ShootLucy = 241,
+	kGoalSteeleHF02LucyShotBySteele = 242,
+	kGoalSteeleHF02LucyRanAway = 243,
+	kGoalSteeleHF02LucyShotByMcCoy = 244,
+	kGoalSteeleHF02LucyLostByMcCoy = 245,
+	kGoalSteeleGoToMcCoysSpinner = 246,
+	kGoalSteeleTalkAboutMissingSpinner = 280,
+	kGoalSteeleNR01StartChapter4 = 290,
+	kGoalSteeleHF01StartChapter4 = 291
 };
 
 enum GoalDektora {

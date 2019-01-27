@@ -174,7 +174,7 @@ bool AIScriptHolloway::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Change_Animation_Mode(kActorDektora, kAnimationModeIdle);
 		}
 		Player_Gains_Control();
-		Game_Flag_Set(616);
+		Game_Flag_Set(kFlagMcCoyCapturedByBaker);
 		Scene_Exits_Enable();
 		Actor_Set_Goal_Number(kActorSteele, 230);
 		Actor_Put_In_Set(kActorHolloway, kSetFreeSlotI);

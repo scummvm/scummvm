@@ -70,7 +70,7 @@ bool AIScriptLucy::Update() {
 		}
 	}
 
-	if (Game_Flag_Query(616)
+	if (Game_Flag_Query(kFlagMcCoyCapturedByBaker)
 	 && Actor_Query_Goal_Number(kActorLucy) == kGoalLucyWillReturnToHF03
 	) {
 		Actor_Put_In_Set(kActorLucy, kSetHF03);
@@ -126,7 +126,7 @@ void AIScriptLucy::TimerExpired(int timer) {
 void AIScriptLucy::CompletedMovementTrack() {
 	switch (Actor_Query_Goal_Number(kActorLucy)) {
 	case kGoalLucyGoToHF03:
-		if (Game_Flag_Query(616)
+		if (Game_Flag_Query(kFlagMcCoyCapturedByBaker)
 		 && Global_Variable_Query(kVariableBehavior) == 3
 		) {
 			Actor_Set_Goal_Number(kActorLucy, kGoalLucyReturnToHF03);
@@ -193,7 +193,7 @@ void AIScriptLucy::CompletedMovementTrack() {
 		Actor_Set_Health(kActorLucy, 30, 30);
 
 		if (Global_Variable_Query(kVariableBehavior) == 3) {
-			Actor_Set_Goal_Number(kActorSteele, 240);
+			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleHF02ConfrontLucy);
 		}
 		break;
 
@@ -427,7 +427,7 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF04WalkAway);
 
 		if (Global_Variable_Query(kVariableBehavior) == 3) {
-			Actor_Set_Goal_Number(kActorSteele, 243);
+			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleHF02LucyRanAway);
 			Game_Flag_Set(kFlagLucyRanAway);
 		}
 
@@ -471,7 +471,7 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case 240: // not used anywhere
 		if (Global_Variable_Query(kVariableBehavior) == 3) {
 			Actor_Set_Goal_Number(kActorLucy, kGoalLucyDead);
-			Actor_Set_Goal_Number(kActorSteele, 240);
+			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleHF02ConfrontLucy);
 		} else {
 			Actor_Set_Goal_Number(kActorLucy, kGoalLucyGoneChapter3);
 			Game_Flag_Set(kFlagLucyRanAway);

@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 void SceneScriptNR01::InitializeScene() {
-	if (Game_Flag_Query(617)) {
+	if (Game_Flag_Query(kFlagSpinnerMissing)) {
 		Setup_Scene_Information(-153.86f, 23.88f, -570.21f, 402);
 	} else if (Game_Flag_Query(632)) {
 		Setup_Scene_Information( -416.0f, 31.93f,  -841.0f, 200);
@@ -276,9 +276,9 @@ void SceneScriptNR01::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptNR01::PlayerWalkedIn() {
-	if (Game_Flag_Query(617)) {
+	if (Game_Flag_Query(kFlagSpinnerMissing)) {
 		Actor_Set_Goal_Number(kActorSteele, 280);
-		Game_Flag_Reset(617);
+		Game_Flag_Reset(kFlagSpinnerMissing);
 		//return true;
 		return;
 	}
@@ -386,7 +386,7 @@ void SceneScriptNR01::PlayerWalkedIn() {
 						Actor_Says(kActorSteele, 1570, 12);
 						Actor_Says(kActorSteele, 1580, 14);
 						Actor_Says(kActorMcCoy, 3190, 12);
-						Actor_Set_Goal_Number(kActorSteele, 233);
+						Actor_Set_Goal_Number(kActorSteele, kGoalSteeleHF03ApproachLucy);
 					}
 				}
 			}
