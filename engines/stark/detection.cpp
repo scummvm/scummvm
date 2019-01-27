@@ -230,7 +230,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::SE_SWE,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_DEMO | ADGF_UNSTABLE,
 		GUIO_NONE
 	},
 
