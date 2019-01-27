@@ -381,7 +381,7 @@ END_SCRIPT
 // PS08 does not exits
 
 DECLARE_SCRIPT(PS09)
-	void dialogueWithGregorian();
+	void dialogueWithGrigorian();
 END_SCRIPT
 
 DECLARE_SCRIPT(PS10)

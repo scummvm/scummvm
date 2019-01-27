@@ -97,19 +97,19 @@ bool SceneScriptPS09::ClickedOnActor(int actorId) {
 				return true;
 			}
 
-			if ((!Game_Flag_Query(kFlagPS09GrigorianDialogue)
-			  &&  Game_Flag_Query(kFlagPS09GrigorianTalk1)
-			  &&  Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA)
+			if (!Game_Flag_Query(kFlagPS09GrigorianDialogue)
+			 &&  Game_Flag_Query(kFlagPS09GrigorianTalk1)
+			 &&  (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA)
+			  || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1)
+			  || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2)
+			  || Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)
 			 )
-			 || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1)
-			 || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2)
-			 || Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)
 			) {
 				Game_Flag_Set(kFlagPS09GrigorianDialogue);
 				Actor_Says(kActorMcCoy, 4240, 13);
 				Actor_Says(kActorGrigorian, 550, 15);
 				Actor_Says(kActorGrigorian, 480, 16);
-				dialogueWithGregorian();
+				dialogueWithGrigorian();
 				return true;
 			}
 
@@ -127,7 +127,7 @@ bool SceneScriptPS09::ClickedOnActor(int actorId) {
 			  || Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)
 			 )
 			) {
-				dialogueWithGregorian();
+				dialogueWithGrigorian();
 				return true;
 			}
 
@@ -242,7 +242,15 @@ bool SceneScriptPS09::ClickedOn2DRegion(int region) {
 }
 
 void SceneScriptPS09::SceneFrameAdvanced(int frame) {
-	if (frame == 1 || frame == 15 || frame == 20 || frame == 31 || frame == 33 || frame == 35 || frame == 52 || frame == 54) {
+	if (frame == 1
+	 || frame == 15
+	 || frame == 20
+	 || frame == 31
+	 || frame == 33
+	 || frame == 35
+	 || frame == 52
+	 || frame == 54
+	) {
 		Sound_Play(97, Random_Query(50, 33), 10, 10, 50);
 	}
 	//return true;
@@ -279,7 +287,7 @@ void SceneScriptPS09::PlayerWalkedOut() {
 void SceneScriptPS09::DialogueQueueFlushed(int a1) {
 }
 
-void SceneScriptPS09::dialogueWithGregorian() {
+void SceneScriptPS09::dialogueWithGrigorian() {
 	Dialogue_Menu_Clear_List();
 	if (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA)
 	 || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1)
@@ -289,7 +297,7 @@ void SceneScriptPS09::dialogueWithGregorian() {
 		DM_Add_To_List_Never_Repeat_Once_Selected(180, -1, 5, 5); // CARS
 		DM_Add_To_List_Never_Repeat_Once_Selected(200, -1, 3, 6); // VOIGT-KAMPFF
 	}
-	if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)
+	if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote) // bug? there is no way how to obtain this clue
 	 && (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA)
 	  || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1)
 	  || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2)
