@@ -360,7 +360,7 @@ void SceneScriptHF01::PlayerWalkedIn() {
 	}
 
 	if (Game_Flag_Query(kFlagSpinnerMissing)) {
-		Actor_Set_Goal_Number(kActorSteele, 280);
+		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleTalkAboutMissingSpinner);
 		Game_Flag_Reset(kFlagSpinnerMissing);
 		//return true;
 		return;

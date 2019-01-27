@@ -138,10 +138,10 @@ DECLARE_SCRIPT(Gordo)
 	int _state;
 
 	void McCoyTalkWithGordo();
-	void sub_4103B8();
-	void dialogueWithGordo2();
-	void dialogueWithGordo1();
-	void sub_41117C();
+	void talkToMcCoyAtNR02();
+	void dialogue2();
+	void dialogue1();
+	void unknown();
 END_SCRIPT
 
 DECLARE_SCRIPT(Dektora)

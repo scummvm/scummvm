@@ -906,11 +906,17 @@ enum Flags {
 	kFlagHF05toHF06 = 529, // is never checked
 	kFlagHF06toHF05 = 530,
 	kFlagCT11toDR01 = 531,
+	kFlagNR01toNR02 = 532,
+	kFlagNR02toNR01 = 533,
+	kFlagNR03toNR01 = 534,
+	kFlagNR01toNR03 = 535,
+
 	kFlagCT09Entered = 538,
 	kFlagCT09LeonInterrupted = 539,
 	kFlagCT09DeskClerkTalk = 540,
 	kFlagGordoTalk1 = 543,
 	kFlagGordoTalk2 = 544,
+	kFlagNotUsed545 = 545, // is never set
 	kFlagDR06MannequinHeadOpen = 548,
 	kFlagMcCoyTiedDown = 550,
 	kFlagDR01toCT11 = 558,
@@ -992,6 +998,7 @@ enum Variables {
 	kVariableAffectionTowards = 45, // 0 none, 1 steele, 2 dektora, 3 lucy
 	kVariableGunPulledInFrontOfSebastian = 46,
 	kVariableDNAEvidences = 48,
+	kVariableNR02Music = 50,
 	kVariableReplicants = 51,
 	kVariableNextTvNews = 52
 };
@@ -1134,8 +1141,8 @@ enum Scenes {
 	kSceneMA05 = 51, // McCoy's Apartment - Balcony
 	kSceneMA06 = 52, // McCoy's Apartment - Elevator
 	kSceneMA07 = 53, // McCoy's Apartment - Ground floor
-	kSceneNR01 = 54,
-	kSceneNR02 = 55,
+	kSceneNR01 = 54, // Nightclub Row - Outside
+	kSceneNR02 = 55, // Nightclub Row - Taffy Lewis'
 	kSceneNR03 = 56,
 	kSceneNR04 = 57,
 	kSceneNR05 = 58,
@@ -1570,7 +1577,12 @@ enum GoalGordo {
 	kGoalGordoGoToDNARow = 101,
 	kGoalGordoGoToChinaTown = 102,
 	kGoalGordoGoToFreeSlotHAGJ = 103,
-	kGoalGordoGoToFreeSlotAH = 104
+	kGoalGordoGoToFreeSlotAH = 104,
+	// chapter 3
+	kGoalGordoStartChapter3 = 200,
+	kGoalGordoWaitAtNR02 = 201,
+	kGoalGordoTalkToMcCoyAtNR02 = 215
+
 };
 
 enum GoalGuzza {

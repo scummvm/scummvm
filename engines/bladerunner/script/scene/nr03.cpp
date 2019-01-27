@@ -132,11 +132,12 @@ bool SceneScriptNR03::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 410.0f, -70.19f, -715.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(534);
+			Game_Flag_Set(kFlagNR03toNR01);
 			Set_Enter(kSetNR01, kSceneNR01);
 		}
 		return true;
 	}
+
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -161.0f, -70.19f, -1139.0f, 0, 1, false, 0)) {
 			if (Actor_Query_Which_Set_In(kActorHanoi) == 55) {
@@ -164,6 +165,7 @@ bool SceneScriptNR03::ClickedOnExit(int exitId) {
 
 		return true;
 	}
+
 	if (exitId == 2) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -151.0f, -70.19f, -476.0f, 12, 1, false, 0)) {
 			if (Actor_Query_Goal_Number(kActorHanoi) == 213 || Actor_Query_Which_Set_In(kActorHanoi) != 55) {
@@ -261,14 +263,14 @@ void SceneScriptNR03::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 void SceneScriptNR03::PlayerWalkedIn() {
 	Player_Set_Combat_Mode(false);
 	if (Game_Flag_Query(573)) {
-		if (Game_Flag_Query(535) ) {
+		if (Game_Flag_Query(kFlagNR01toNR03) ) {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 302.0f, -70.19f, -715.0f, 0, 0, false, 0);
-			Game_Flag_Reset(535);
+			Game_Flag_Reset(kFlagNR01toNR03);
 		}
 	} else {
 		Game_Flag_Set(573);
 		Async_Actor_Walk_To_XYZ(kActorMcCoy, 206.0f, -70.19f, -643.0f, 0, false);
-		Game_Flag_Reset(535);
+		Game_Flag_Reset(kFlagNR01toNR03);
 		Actor_Voice_Over(1490, kActorVoiceOver);
 		Actor_Voice_Over(1510, kActorVoiceOver);
 		Actor_Voice_Over(1520, kActorVoiceOver);

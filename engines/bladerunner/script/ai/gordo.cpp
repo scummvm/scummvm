@@ -72,8 +72,8 @@ bool AIScriptGordo::Update() {
 	}
 
 	if (Global_Variable_Query(kVariableChapter) == 3) {
-		if (Actor_Query_Goal_Number(kActorGordo) < 200) {
-			Actor_Set_Goal_Number(kActorGordo, 200);
+		if (Actor_Query_Goal_Number(kActorGordo) < kGoalGordoStartChapter3) {
+			Actor_Set_Goal_Number(kActorGordo, kGoalGordoStartChapter3);
 		}
 		if (Actor_Query_Goal_Number(kActorGordo) == 254) {
 			Actor_Set_Goal_Number(kActorGordo, 255);
@@ -151,8 +151,8 @@ void AIScriptGordo::CompletedMovementTrack() {
 		return;// true;
 	}
 
-	if (Actor_Query_Goal_Number(kActorGordo) > 100
-	 && Actor_Query_Goal_Number(kActorGordo) < 200
+	if (Actor_Query_Goal_Number(kActorGordo) > kGoalGordoWalkAround
+	 && Actor_Query_Goal_Number(kActorGordo) < kGoalGordoStartChapter3
 	) {
 		Actor_Set_Goal_Number(kActorGordo, kGoalGordoWalkAround);
 		return;// true;
@@ -170,10 +170,12 @@ void AIScriptGordo::CompletedMovementTrack() {
 		}
 		Actor_Set_Goal_Number(kActorGordo, 205);
 	}
+
 	if (Actor_Query_Goal_Number(kActorGordo) == 220) {
 		Game_Flag_Set(594);
 		Actor_Set_Goal_Number(kActorGordo, 221);
 	}
+
 	if (Actor_Query_Goal_Number(kActorGordo) == 222) {
 		if (Game_Flag_Query(kFlagGordoIsReplicant)) {
 			if (Global_Variable_Query(kVariableBehavior) == 2) {
@@ -186,9 +188,11 @@ void AIScriptGordo::CompletedMovementTrack() {
 		}
 		Scene_Exits_Enable();
 	}
+
 	if (Actor_Query_Goal_Number(kActorGordo) == 225) {
-		Actor_Set_Goal_Number(kActorGordo, 200);
+		Actor_Set_Goal_Number(kActorGordo, kGoalGordoStartChapter3);
 	}
+
 	if (Actor_Query_Goal_Number(kActorGordo) == 243) {
 		Music_Stop(2);
 		Actor_Set_Goal_Number(kActorGordo, 280);
@@ -248,7 +252,7 @@ bool AIScriptGordo::ShotAtAndHit() {
 		Delay(1500);
 		Actor_Voice_Over(2410, kActorVoiceOver);
 		Actor_Voice_Over(2420, kActorVoiceOver);
-		Game_Flag_Set(532);
+		Game_Flag_Set(kFlagNR01toNR02);
 		Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyArrested);
 	}
 	if (Actor_Query_Goal_Number(kActorGordo) == 250) {
@@ -303,34 +307,42 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	int rnd;
 
 	switch (newGoalNumber) {
+
+	// chapter 1
+
 	case kGoalGordoDefault:
 		Actor_Put_In_Set(kActorGordo, kSetCT01_CT12);
 		Actor_Set_At_XYZ(kActorGordo, -308.44f, -12.5f, 442.78f, 256);
 		Actor_Change_Animation_Mode(kActorGordo, 53);
 		break;
+
 	case kGoalGordoWalkThroughCT05:
 		AI_Movement_Track_Flush(kActorGordo);
 		AI_Movement_Track_Append(kActorGordo, 119, 0);
 		AI_Movement_Track_Append(kActorGordo, 118, 0);
 		AI_Movement_Track_Repeat(kActorGordo);
 		break;
+
 	case kGoalGordoLeaveCT05:
 		AI_Movement_Track_Flush(kActorGordo);
 		AI_Movement_Track_Append(kActorGordo, 119, 0);
 		AI_Movement_Track_Append(kActorGordo, 33, 1);
 		AI_Movement_Track_Repeat(kActorGordo);
 		break;
+
 	case kGoalGordoGetUpCT01:
 		Game_Flag_Set(kFlagCT01GordoTalk);
 		Actor_Set_Goal_Number(kActorGordo, 99);
 		Actor_Change_Animation_Mode(kActorGordo, 29);
 		break;
+
 	case kGoalGordoWalkOutFromCT01:
 		AI_Movement_Track_Flush(kActorGordo);
 		AI_Movement_Track_Append(kActorGordo, 43, 0);
 		AI_Movement_Track_Append(kActorGordo, 33, 1);
 		AI_Movement_Track_Repeat(kActorGordo);
 		break;
+
 	case kGoalGordoBidFarewellToHowieLee:
 		Actor_Face_Actor(kActorGordo, kActorHowieLee, true);
 		Actor_Says(kActorGordo, 0, 13);
@@ -338,6 +350,7 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Set_Goal_Number(kActorGordo, kGoalGordoWalkOutFromCT01);
 		Player_Gains_Control();
 		break;
+
 	case kGoalGordoWalkToHowieLee:
 		Player_Loses_Control();
 		Actor_Set_Immunity_To_Obstacles(kActorGordo, true);
@@ -345,12 +358,15 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Append(kActorGordo, 100, 0);
 		AI_Movement_Track_Repeat(kActorGordo);
 		break;
+
+	// chapter 2
+
 	case kGoalGordoWalkAround:
 		AI_Movement_Track_Flush(kActorGordo);
 		_animationState = 0;
 		_animationFrame = 0;
 		_animationStateNext = 0;
-		sub_41117C();
+		unknown();
 		rnd = Random_Query(1, 4);
 		if (Actor_Clue_Query(kActorMcCoy, kClueGordoInterview1)
 		 || Actor_Clue_Query(kActorMcCoy, kClueGordoInterview2)
@@ -373,6 +389,7 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			break;
 		}
 		break;
+
 	case kGoalGordoGoToDNARow:
 		AI_Movement_Track_Flush(kActorGordo);
 		if (Random_Query(1, 2) == 1) {
@@ -397,6 +414,7 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		}
 		AI_Movement_Track_Repeat(kActorGordo);
 		break;
+
 	case kGoalGordoGoToChinaTown:
 		if (Random_Query(1, 3) == 1) {
 			AI_Movement_Track_Append(kActorGordo, 54, 1);
@@ -410,6 +428,7 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Append(kActorGordo, 40, 15);
 		AI_Movement_Track_Repeat(kActorGordo);
 		break;
+
 	case kGoalGordoGoToFreeSlotHAGJ:
 		AI_Movement_Track_Flush(kActorGordo);
 		AI_Movement_Track_Append(kActorGordo, 40, Random_Query(15, 45));
@@ -422,6 +441,7 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Append(kActorGordo, 42, Random_Query(10, 20));
 		AI_Movement_Track_Repeat(kActorGordo);
 		break;
+
 	case kGoalGordoGoToFreeSlotAH:
 		AI_Movement_Track_Flush(kActorGordo);
 		AI_Movement_Track_Append(kActorGordo, 33, Random_Query(15, 45));
@@ -430,21 +450,24 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		}
 		AI_Movement_Track_Repeat(kActorGordo);
 		break;
-	case 200:
+
+	// chapter 3
+
+	case kGoalGordoStartChapter3:
 		if (Global_Variable_Query(kVariableBehavior) == 2) {
 			if (Game_Flag_Query(kFlagLucyRanAway)
 			 && Game_Flag_Query(591)
 			 && Player_Query_Current_Scene() != kSceneNR02
 			) {
-				Actor_Set_Goal_Number(kActorGordo, 201);
+				Actor_Set_Goal_Number(kActorGordo, kGoalGordoWaitAtNR02);
 			} else {
 				Actor_Set_Goal_Number(kActorGordo, 225);
 			}
 		} else {
-			Actor_Set_Goal_Number(kActorGordo, 201);
+			Actor_Set_Goal_Number(kActorGordo, kGoalGordoWaitAtNR02);
 		}
 		break;
-	case 201:
+	case kGoalGordoWaitAtNR02:
 		AI_Movement_Track_Flush(kActorGordo);
 		Actor_Put_In_Set(kActorGordo, kSetNR02);
 		Actor_Set_At_XYZ(kActorGordo, 148.12f, -24.0f, 456.04f, 506);
@@ -542,9 +565,11 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Set_Goal_Number(kActorGordo, 220);
 		}
 		break;
-	case 215:
-		sub_4103B8();
+
+	case kGoalGordoTalkToMcCoyAtNR02:
+		talkToMcCoyAtNR02();
 		break;
+
 	case 220:
 		Actor_Set_Targetable(kActorGordo, true);
 		Scene_Exits_Disable();
@@ -553,15 +578,18 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorGordo);
 		Music_Play(1, 50, 0, 2, -1, 0, 0);
 		break;
+
 	case 221:
 		Actor_Set_At_XYZ(kActorGordo, -90.91f, -24.0f, -14.71f, 708);
 		Actor_Change_Animation_Mode(kActorGordo, 26);
 		break;
+
 	case 222:
 		AI_Movement_Track_Flush(kActorGordo);
 		AI_Movement_Track_Append_Run(kActorGordo, 367, 0);
 		AI_Movement_Track_Repeat(kActorGordo);
 		break;
+
 	case 225:
 		AI_Movement_Track_Flush(kActorGordo);
 		AI_Movement_Track_Append(kActorGordo, 39, 10);
@@ -569,18 +597,22 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Append(kActorGordo, 39, 10);
 		AI_Movement_Track_Repeat(kActorGordo);
 		break;
+
 	case 230:
 		Actor_Put_In_Set(kActorGordo, kSetNR01);
 		Actor_Set_At_XYZ(kActorGordo, -194.24f, 23.88f, -851.98f, 343);
 		break;
+
 	case 240:
 		Actor_Put_In_Set(kActorGordo, kSetNR01);
 		Actor_Set_At_XYZ(kActorGordo, -194.24f, 23.88f, -851.98f, 343);
 		break;
+
 	case 241:
 		ADQ_Add(kActorGordo, 170, 18);
 		AI_Countdown_Timer_Start(kActorGordo, 0, 10);
 		break;
+
 	case 242:
 		Actor_Face_Actor(kActorGordo, kActorMcCoy, true);
 		Actor_Says(kActorGordo, 180, 13);
@@ -593,8 +625,9 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Says(kActorMcCoy, 3080, 15);
 		Actor_Says(kActorGordo, 200, 15);
 		Actor_Says(kActorMcCoy, 3085, 15);
-		dialogueWithGordo2();
+		dialogue2();
 		break;
+
 	case 243:
 		AI_Movement_Track_Flush(kActorGordo);
 		AI_Movement_Track_Append_Run(kActorGordo, 369, 0);
@@ -602,15 +635,18 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Append(kActorGordo, 33, 0);
 		AI_Movement_Track_Repeat(kActorGordo);
 		break;
+
 	case 250:
 		Actor_Put_In_Set(kActorGordo, kSetNR01);
 		Actor_Set_At_XYZ(kActorGordo, -194.24f, 23.88f, -851.98f, 343);
 		Actor_Change_Animation_Mode(kActorGordo, 80);
 		Actor_Set_Goal_Number(kActorSteele, 250);
 		break;
+
 	case 251:
 		Actor_Change_Animation_Mode(kActorGordo, 83);
 		break;
+
 	case 255:
 		ADQ_Flush();
 		Actor_Change_Animation_Mode(kActorGordo, 83);
@@ -620,15 +656,18 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Delay(3000);
 		Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyArrested);
 		break;
+
 	case 260:
 		Actor_Set_Targetable(kActorGordo, false);
 		break;
+
 	case 280:
 		Scene_Exits_Enable();
 		Game_Flag_Set(592);
 		Actor_Put_In_Set(kActorGordo, kSetFreeSlotA);
 		Actor_Set_At_Waypoint(kActorGordo, 33, 0);
 		break;
+
 	case 299:
 		Music_Stop(2);
 		AI_Countdown_Timer_Reset(kActorGordo, 0);
@@ -637,11 +676,12 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		if (Game_Flag_Query(kFlagGordoIsReplicant)) {
 			Actor_Change_Animation_Mode(kActorGordo, 84);
 		} else {
-			Actor_Change_Animation_Mode(kActorGordo, 48);
+			Actor_Change_Animation_Mode(kActorGordo, kAnimationModeDie);
 		}
 		Actor_Set_Goal_Number(kActorGordo, 599);
-		Actor_Retired_Here(kActorGordo, 36, 18, 1, -1);
+		Actor_Retired_Here(kActorGordo, 36, 18, true, -1);
 		break;
+
 	case 400:
 		AI_Movement_Track_Flush(kActorGordo);
 		Actor_Put_In_Set(kActorGordo, kSetFreeSlotA);
@@ -719,6 +759,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			break;
 		}
 		break;
+
 	case 1:
 		switch (_state) {
 		case 0:
@@ -754,6 +795,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			break;
 		}
 		break;
+
 	case 2:
 		*animation = 114;
 		if (Random_Query(0, 1)) {
@@ -763,6 +805,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case 3:
 		*animation = 115;
 		_animationFrame++;
@@ -774,6 +817,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			Actor_Set_Goal_Number(kActorGordo, kGoalGordoWalkToHowieLee);
 		}
 		break;
+
 	case 4:
 		*animation = 120;
 		if (_animationFrame == 0 && var_45B078) {
@@ -786,6 +830,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			}
 		}
 		break;
+
 	case 5:
 		*animation = 121;
 		_animationFrame++;
@@ -795,6 +840,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 4;
 		}
 		break;
+
 	case 6:
 		*animation = 122;
 		_animationFrame++;
@@ -804,6 +850,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 4;
 		}
 		break;
+
 	case 7:
 		*animation = 123;
 		_animationFrame++;
@@ -813,6 +860,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 4;
 		}
 		break;
+
 	case 8:
 		*animation = 124;
 		_animationFrame++;
@@ -822,6 +870,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 4;
 		}
 		break;
+
 	case 9:
 		*animation = 125;
 		_animationFrame++;
@@ -831,6 +880,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 4;
 		}
 		break;
+
 	case 10:
 		*animation = 126;
 		_animationFrame++;
@@ -840,6 +890,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 4;
 		}
 		break;
+
 	case 11:
 		*animation = 127;
 		_animationFrame++;
@@ -849,6 +900,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 4;
 		}
 		break;
+
 	case 12:
 		*animation = 127;
 		_animationFrame++;
@@ -858,6 +910,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 4;
 		}
 		break;
+
 	case 13:
 		*animation = 114;
 		_animationFrame++;
@@ -865,6 +918,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case 14:
 		*animation = 103;
 		_animationFrame++;
@@ -874,6 +928,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 16;
 		}
 		break;
+
 	case 15:
 		*animation = 104;
 		_animationFrame++;
@@ -883,6 +938,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 0;
 		}
 		break;
+
 	case 16:
 		*animation = 93;
 		_animationFrame++;
@@ -890,8 +946,10 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case 17:
 		break;
+
 	case 18:
 		*animation = 105;
 		_animationFrame++;
@@ -908,6 +966,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			Actor_Change_Animation_Mode(kActorGordo, kAnimationModeCombatIdle);
 		}
 		break;
+
 	case 19:
 		*animation = 111;
 		_animationFrame++;
@@ -918,6 +977,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			Actor_Change_Animation_Mode(kActorGordo, kAnimationModeIdle);
 		}
 		break;
+
 	case 20:
 		*animation = 112;
 		_animationFrame++;
@@ -928,6 +988,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			Actor_Change_Animation_Mode(kActorGordo, kAnimationModeIdle);
 		}
 		break;
+
 	case 21:
 		*animation = 96;
 		_animationFrame++;
@@ -938,6 +999,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			Actor_Change_Animation_Mode(kActorGordo, kAnimationModeCombatIdle);
 		}
 		break;
+
 	case 22:
 		*animation = 97;
 		_animationFrame++;
@@ -948,18 +1010,21 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			Actor_Change_Animation_Mode(kActorGordo, kAnimationModeCombatIdle);
 		}
 		break;
+
 	case 23:
 		*animation = 113;
 		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(113) - 1) {
 			_animationFrame++;
 		}
 		break;
+
 	case 24:
 		*animation = 100;
 		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(100) - 1) {
 			++_animationFrame;
 		}
 		break;
+
 	case 25:
 		*animation = 107;
 		_animationFrame++;
@@ -967,6 +1032,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case 26:
 		*animation = 108;
 		_animationFrame++;
@@ -974,6 +1040,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case 27:
 		*animation = 98;
 		_animationFrame++;
@@ -981,6 +1048,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case 28:
 		*animation = 99;
 		_animationFrame++;
@@ -988,6 +1056,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case 29:
 		*animation = 109;
 		_animationFrame++;
@@ -995,6 +1064,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case 30:
 		*animation = 110;
 		_animationFrame++;
@@ -1002,6 +1072,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case 31:
 		*animation = 101;
 		_animationFrame++;
@@ -1009,6 +1080,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case 32:
 		*animation = 102;
 		_animationFrame++;
@@ -1016,6 +1088,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case 33:
 		*animation = 106;
 		_animationFrame++;
@@ -1030,6 +1103,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			}
 		}
 		break;
+
 	case 34:
 		*animation = 119;
 		_animationFrame++;
@@ -1049,6 +1123,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			Actor_Change_Animation_Mode(kActorGordo, kAnimationModeIdle);
 		}
 		break;
+
 	case 35:
 		*animation = 128;
 		_animationFrame++;
@@ -1056,6 +1131,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case 36:
 		if (_animationFrame == 0 && var_45B078) {
 			Actor_Change_Animation_Mode(kActorGordo, 80);
@@ -1069,6 +1145,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			}
 		}
 		break;
+
 	case 37:
 		if (_animationFrame == 0 && var_45B078) {
 			Actor_Change_Animation_Mode(kActorGordo, 80);
@@ -1082,6 +1159,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			}
 		}
 		break;
+
 	case 38:
 		*animation = 131;
 		_animationFrame++;
@@ -1099,6 +1177,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			Actor_Set_Goal_Number(kActorGordo, 243);
 		}
 		break;
+
 	case 39:
 		*animation = 132;
 		_animationFrame++;
@@ -1139,14 +1218,17 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 			break;
 		}
 		break;
+
 	case kAnimationModeWalk:
 		_animationState = 25;
 		_animationFrame = 0;
 		break;
+
 	case kAnimationModeRun:
 		_animationState = 26;
 		_animationFrame = 0;
 		break;
+
 	case kAnimationModeTalk:
 		if (_animationState) {
 			_animationState = 4;
@@ -1158,6 +1240,7 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 		}
 		var_45B078 = 0;
 		break;
+
 	case kAnimationModeCombatIdle:
 		switch (_animationState) {
 		case 14:
@@ -1181,18 +1264,22 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 			break;
 		}
 		break;
+
 	case kAnimationModeCombatAttack:
 		_animationState = 18;
 		_animationFrame = 0;
 		break;
+
 	case kAnimationModeCombatWalk:
 		_animationState = 27;
 		_animationFrame = 0;
 		break;
+
 	case kAnimationModeCombatRun:
 		_animationState = 28;
 		_animationFrame = 0;
 		break;
+
 	case 12:
 		if (_animationState) {
 			_animationState = 5;
@@ -1204,6 +1291,7 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 		}
 		var_45B078 = 0;
 		break;
+
 	case 13:
 		if (_animationState) {
 			_animationState = 6;
@@ -1215,6 +1303,7 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 		}
 		var_45B078 = 0;
 		break;
+
 	case 14:
 		if (_animationState) {
 			_animationState = 7;
@@ -1226,6 +1315,7 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 		}
 		var_45B078 = 0;
 		break;
+
 	case 15:
 		if (_animationState) {
 			_animationState = 8;
@@ -1237,6 +1327,7 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 		}
 		var_45B078 = 0;
 		break;
+
 	case 16:
 		if (_animationState) {
 			_animationState = 9;
@@ -1248,6 +1339,7 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 		}
 		var_45B078 = 0;
 		break;
+
 	case 17:
 		if (_animationState) {
 			_animationState = 10;
@@ -1259,6 +1351,7 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 		}
 		var_45B078 = 0;
 		break;
+
 	case 18:
 		if (_animationState) {
 			_animationState = 11;
@@ -1270,6 +1363,7 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 		}
 		var_45B078 = 0;
 		break;
+
 	case 19:
 		if (_animationState) {
 			_animationState = 12;
@@ -1281,6 +1375,7 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 		}
 		var_45B078 = 0;
 		break;
+
 	case 21:
 		switch (_animationState) {
 		case 14:
@@ -1309,6 +1404,7 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 			break;
 		}
 		break;
+
 	case 22:
 		if (Random_Query(0, 1)) {
 			_animationState = 21;
@@ -1317,38 +1413,47 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 		}
 		_animationFrame = 0;
 		break;
+
 	case 23:
 		_animationState = 34;
 		_animationFrame = 0;
 		break;
+
 	case 26:
 		_animationState = 33;
 		_animationFrame = 0;
 		break;
+
 	case 29:
 		_animationState = 3;
 		_animationFrame = 0;
 		break;
+
 	case 30:
 		_animationState = 13;
 		_animationFrame = 0;
 		break;
+
 	case 44:
 		_animationState = 29;
 		_animationFrame = 0;
 		break;
+
 	case 45:
 		_animationState = 30;
 		_animationFrame = 0;
 		break;
+
 	case 46:
 		_animationState = 31;
 		_animationFrame = 0;
 		break;
+
 	case 47:
 		_animationState = 32;
 		_animationFrame = 0;
 		break;
+
 	case 48:
 		switch (_animationState) {
 		case 14:
@@ -1368,32 +1473,39 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 			break;
 		}
 		break;
+
 	case 49:
 		_animationState = 24;
 		_animationFrame = 0;
 		break;
+
 	case 53:
 		_animationState = 2;
 		_animationFrame = 0;
 		break;
+
 	case 80:
 		_animationState = 35;
 		_animationFrame = 0;
 		break;
+
 	case 81:
 		_animationState = 36;
 		_animationFrame = 0;
 		var_45B078 = 0;
 		break;
+
 	case 82:
 		_animationState = 37;
 		_animationFrame = 0;
 		var_45B078 = 0;
 		break;
+
 	case 83:
 		_animationState = 38;
 		_animationFrame = 0;
 		break;
+
 	case 84:
 		_animationState = 39;
 		_animationFrame = 0;
@@ -1509,7 +1621,7 @@ void AIScriptGordo::McCoyTalkWithGordo() {
 	return Player_Gains_Control();
 }
 
-void AIScriptGordo::sub_4103B8() {
+void AIScriptGordo::talkToMcCoyAtNR02() {
 	Player_Loses_Control();
 	Actor_Face_Heading(kActorMcCoy, 308, false);
 	Actor_Says(kActorMcCoy, 3210, kAnimationModeTalk);
@@ -1525,14 +1637,14 @@ void AIScriptGordo::sub_4103B8() {
 	Actor_Says(kActorGordo, 350, 13);
 	Actor_Says(kActorMcCoy, 3225, 18);
 	Player_Gains_Control();
-	dialogueWithGordo1();
+	dialogue1();
 	Player_Loses_Control();
 	Game_Flag_Set(561);
 	Actor_Face_Heading(kActorGordo, 506, false);
 	Actor_Change_Animation_Mode(kActorGordo, 23);
 }
 
-void AIScriptGordo::dialogueWithGordo2() {
+void AIScriptGordo::dialogue2() {
 	Music_Stop(5);
 	Dialogue_Menu_Clear_List();
 	DM_Add_To_List_Never_Repeat_Once_Selected(820, -1, 5, 7);
@@ -1580,29 +1692,29 @@ void AIScriptGordo::dialogueWithGordo2() {
 	}
 }
 
-void AIScriptGordo::dialogueWithGordo1() {
+void AIScriptGordo::dialogue1() {
 	Dialogue_Menu_Clear_List();
-	DM_Add_To_List_Never_Repeat_Once_Selected(760, 2, 5, 6);
-	DM_Add_To_List_Never_Repeat_Once_Selected(770, 6, 3, 1);
+	DM_Add_To_List_Never_Repeat_Once_Selected(760, 2, 5, 6); // ZUBEN
+	DM_Add_To_List_Never_Repeat_Once_Selected(770, 6, 3, 1); // JOB
 	if (Actor_Clue_Query(kActorMcCoy, kClueDektorasDressingRoom)
 	 || Actor_Clue_Query(kActorMcCoy, kClueWomanInAnimoidRow)
 	) {
-		DM_Add_To_List_Never_Repeat_Once_Selected(780, 5, 5, 5);
+		DM_Add_To_List_Never_Repeat_Once_Selected(780, 5, 5, 5); // BLOND WOMAN
 	}
 	if (Actor_Clue_Query(kActorMcCoy, kClueLucy)) {
-		DM_Add_To_List_Never_Repeat_Once_Selected(790, 5, 5, 5);
+		DM_Add_To_List_Never_Repeat_Once_Selected(790, 5, 5, 5); // LUCY
 	}
 	if (Actor_Clue_Query(kActorMcCoy, kClueStolenCheese)) {
-		DM_Add_To_List_Never_Repeat_Once_Selected(800, -1, 4, 8);
+		DM_Add_To_List_Never_Repeat_Once_Selected(800, -1, 4, 8); // CHEESE
 	}
-	Dialogue_Menu_Add_DONE_To_List(810);
+	Dialogue_Menu_Add_DONE_To_List(810); // DONE
 
 	Dialogue_Menu_Appear(320, 240);
 	int answer = Dialogue_Menu_Query_Input();
 	Dialogue_Menu_Disappear();
 
 	switch (answer) {
-	case 760:
+	case 760: // ZUBEN
 		Actor_Says(kActorMcCoy, 3230, kAnimationModeTalk);
 		Actor_Says(kActorGordo, 360, 16);
 		Actor_Says(kActorMcCoy, 3260, 15);
@@ -1615,7 +1727,8 @@ void AIScriptGordo::dialogueWithGordo1() {
 			Actor_Modify_Friendliness_To_Other(kActorGordo, kActorMcCoy, -3);
 		}
 		break;
-	case 770:
+
+	case 770: // JOB
 		Actor_Says(kActorMcCoy, 3235, kAnimationModeTalk);
 		Actor_Says(kActorGordo, 410, 12);
 		Actor_Says(kActorMcCoy, 3270, 15);
@@ -1630,7 +1743,8 @@ void AIScriptGordo::dialogueWithGordo1() {
 		}
 		Actor_Says(kActorGordo, 460, 15);
 		break;
-	case 780:
+
+	case 780: // BLOND WOMAN
 		Actor_Says(kActorMcCoy, 3240, kAnimationModeTalk);
 		Actor_Says(kActorGordo, 470, 17);
 		Actor_Says(kActorMcCoy, 3285, 16);
@@ -1643,7 +1757,8 @@ void AIScriptGordo::dialogueWithGordo1() {
 		Actor_Says(kActorGordo, 520, 12);
 		Actor_Modify_Friendliness_To_Other(kActorGordo, kActorMcCoy, -4);
 		break;
-	case 790:
+
+	case 790: // LUCY
 		Actor_Says(kActorMcCoy, 3245, kAnimationModeTalk);
 		Actor_Says(kActorGordo, 470, 17);
 		Actor_Says(kActorMcCoy, 3285, 16);
@@ -1656,7 +1771,8 @@ void AIScriptGordo::dialogueWithGordo1() {
 		Actor_Says(kActorGordo, 520, 12);
 		Actor_Modify_Friendliness_To_Other(kActorGordo, kActorMcCoy, -1);
 		break;
-	case 800:
+
+	case 800: // CHEESE
 		Actor_Says(kActorMcCoy, 3250, kAnimationModeTalk);
 		Actor_Says(kActorGordo, 530, 18);
 		Actor_Says(kActorMcCoy, 3300, 15);
@@ -1669,13 +1785,14 @@ void AIScriptGordo::dialogueWithGordo1() {
 		Actor_Says(kActorGordo, 570, 14);
 		Actor_Clue_Acquire(kActorMcCoy, kClueGordoConfession, false, kActorGordo);
 		break;
-	case 810:
+
+	case 810: // DONE
 		Actor_Says(kActorMcCoy, 3255, kAnimationModeTalk);
 		break;
 	}
 }
 
-void AIScriptGordo::sub_41117C() {
+void AIScriptGordo::unknown() {
 	// this has no real use as _animationState is always 0
 	switch (_animationState) {
 	case 0:

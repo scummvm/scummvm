@@ -941,7 +941,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case 232:
-		Game_Flag_Set(532);
+		Game_Flag_Set(kFlagNR01toNR02);
 		Set_Enter(kSetNR02, kSceneNR02);
 		return true;
 
