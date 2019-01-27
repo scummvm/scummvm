@@ -517,7 +517,7 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 				Actor_Says(kActorGordo, 870, 16);
 				Sound_Play(576, 50, 0, 0, 50);
 				Sound_Play(319, 50, 0, 0, 50);
-				Actor_Set_Goal_Number(33, 241);
+				Actor_Set_Goal_Number(kActorHolloway, kGoalHollowayGoToNR02);
 				Actor_Says(kActorGordo, 880, 17);
 				Actor_Set_Goal_Number(kActorGordo, 211);
 				Player_Loses_Control();

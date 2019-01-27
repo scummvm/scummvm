@@ -71,7 +71,7 @@ void SceneScriptNR01::InitializeScene() {
 	Ambient_Sounds_Add_Sound(377, 10, 80, 33, 33,    0,   0, -101, -101, 0, 0);
 
 	if (Game_Flag_Query(643)
-	 && Actor_Query_Goal_Number(kActorSteele) == 230
+	 && Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleNR01WaitForMcCoy
 	) {
 		Game_Flag_Reset(kFlagSpinnerAtNR01);
 		Game_Flag_Reset(kFlagSpinnerAtHF01);
@@ -326,7 +326,7 @@ void SceneScriptNR01::PlayerWalkedIn() {
 		if (Game_Flag_Query(kFlagUG06toNR01)) {
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 3, true, kAnimationModeIdle);
 			Game_Flag_Reset(kFlagUG06toNR01);
-			if (Actor_Query_Goal_Number(kActorSteele) == 230) {
+			if (Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleNR01WaitForMcCoy) {
 				Actor_Face_Actor(kActorSteele, kActorMcCoy, true);
 				Actor_Says(kActorSteele, 1440, 13);
 				Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorSteele, 48, false, true);

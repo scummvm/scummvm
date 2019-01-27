@@ -46,7 +46,7 @@ void AIScriptHanoi::Initialize() {
 }
 
 bool AIScriptHanoi::Update() {
-	if (Actor_Query_Goal_Number(kActorHolloway) == 240) {
+	if (Actor_Query_Goal_Number(kActorHolloway) == kGoalHollowayGoToNR07) {
 		AI_Countdown_Timer_Reset(kActorHanoi, 0);
 	}
 	if (Global_Variable_Query(kVariableChapter) == 3 && Actor_Query_Goal_Number(kActorHanoi) < 200) {

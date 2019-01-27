@@ -70,7 +70,7 @@ bool AIScriptLucy::Update() {
 		}
 	}
 
-	if (Game_Flag_Query(kFlagMcCoyCapturedByBaker)
+	if (Game_Flag_Query(kFlagMcCoyCapturedByHolloway)
 	 && Actor_Query_Goal_Number(kActorLucy) == kGoalLucyWillReturnToHF03
 	) {
 		Actor_Put_In_Set(kActorLucy, kSetHF03);
@@ -126,7 +126,7 @@ void AIScriptLucy::TimerExpired(int timer) {
 void AIScriptLucy::CompletedMovementTrack() {
 	switch (Actor_Query_Goal_Number(kActorLucy)) {
 	case kGoalLucyGoToHF03:
-		if (Game_Flag_Query(kFlagMcCoyCapturedByBaker)
+		if (Game_Flag_Query(kFlagMcCoyCapturedByHolloway)
 		 && Global_Variable_Query(kVariableBehavior) == 3
 		) {
 			Actor_Set_Goal_Number(kActorLucy, kGoalLucyReturnToHF03);
@@ -346,7 +346,7 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case kGoalLucyRunAwayWithHelp1:
 		Actor_Says(kActorLucy, 320, 16);
-		Actor_Set_Goal_Number(kActorHolloway, 242);
+		Actor_Set_Goal_Number(kActorHolloway, kGoalHollowayGoToHF03);
 		Actor_Set_Immunity_To_Obstacles(kActorLucy, true);
 		AI_Movement_Track_Flush(kActorLucy);
 		AI_Movement_Track_Append(kActorLucy, 378, 0);

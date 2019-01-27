@@ -209,7 +209,7 @@ void SceneScriptNR07::sub_401A10() {
 	Actor_Voice_Over(1710, kActorVoiceOver);
 	Actor_Voice_Over(1720, kActorVoiceOver);
 	Actor_Voice_Over(1730, kActorVoiceOver);
-	Actor_Set_Goal_Number(kActorHolloway, 240);
+	Actor_Set_Goal_Number(kActorHolloway, kGoalHollowayGoToNR07);
 }
 
 void SceneScriptNR07::sub_401C60() {

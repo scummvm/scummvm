@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 AIScriptHolloway::AIScriptHolloway(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_flag = 0;
+	_flag = false;
 }
 
 void AIScriptHolloway::Initialize() {
@@ -34,32 +34,35 @@ void AIScriptHolloway::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_flag = 0;
+	_flag = false;
 
-	Actor_Set_Goal_Number(kActorHolloway, 0);
+	Actor_Set_Goal_Number(kActorHolloway, kGoalHollowayDefault);
 }
 
 bool AIScriptHolloway::Update() {
-	if (Actor_Query_Goal_Number(kActorHolloway) == 256)
-		Actor_Set_Goal_Number(kActorHolloway, 257);
+	if (Actor_Query_Goal_Number(kActorHolloway) == kGoalHollowayPrepareCaptureMcCoy) {
+		Actor_Set_Goal_Number(kActorHolloway, kGoalHollowayCaptureMcCoy);
+	}
 
 	return false;
 }
 
 void AIScriptHolloway::TimerExpired(int timer) {
-	if (!timer) {
+	if (timer == 0) {
 		AI_Countdown_Timer_Reset(kActorHolloway, 0);
 		if (Global_Variable_Query(kVariableBehavior) == 1) {
 			Player_Gains_Control();
 		}
-		Actor_Set_Goal_Number(kActorHolloway, 251);
+		Actor_Set_Goal_Number(kActorHolloway, kGoalHollowayTalkToMcCoy);
 	}
 }
 
 void AIScriptHolloway::CompletedMovementTrack() {
-	if (Actor_Query_Goal_Number(kActorHolloway) < 245 && Actor_Query_Goal_Number(kActorHolloway) > 239) {
-		Loop_Actor_Walk_To_Actor(kActorHolloway, 0, 24, 0, 0);
-		Actor_Set_Goal_Number(kActorHolloway, 250);
+	if (Actor_Query_Goal_Number(kActorHolloway) < 245
+	 && Actor_Query_Goal_Number(kActorHolloway) > 239
+	) {
+		Loop_Actor_Walk_To_Actor(kActorHolloway, kActorMcCoy, 24, false, false);
+		Actor_Set_Goal_Number(kActorHolloway, kGoalHollowayApproachMcCoy);
 	}
 }
 
@@ -84,9 +87,11 @@ void AIScriptHolloway::OtherAgentExitedThisScene(int otherActorId) {
 }
 
 void AIScriptHolloway::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
-	if (otherActorId == kActorMcCoy && Actor_Query_Goal_Number(kActorHolloway) == 250) {
+	if (otherActorId == kActorMcCoy
+	 && Actor_Query_Goal_Number(kActorHolloway) == kGoalHollowayApproachMcCoy
+	) {
 		AI_Countdown_Timer_Reset(kActorHolloway, 0);
-		Actor_Set_Goal_Number(kActorHolloway, 255);
+		Actor_Set_Goal_Number(kActorHolloway, kGoalHollowayKnockOutMcCoy);
 	}
 }
 
@@ -108,7 +113,7 @@ int AIScriptHolloway::GetFriendlinessModifierIfGetsClue(int otherActorId, int cl
 
 bool AIScriptHolloway::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	switch (newGoalNumber) {
-	case 240:
+	case kGoalHollowayGoToNR07:
 		Actor_Put_In_Set(kActorHolloway, kSetNR07);
 		Actor_Set_At_XYZ(kActorHolloway, -102.0f, -73.5f, -233.0f, 0);
 		Player_Loses_Control();
@@ -117,7 +122,7 @@ bool AIScriptHolloway::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorHolloway);
 		break;
 
-	case 241:
+	case kGoalHollowayGoToNR02:
 		Player_Loses_Control();
 		AI_Movement_Track_Flush(kActorHolloway);
 		AI_Movement_Track_Append(kActorHolloway, 375, 0);
@@ -125,64 +130,67 @@ bool AIScriptHolloway::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorHolloway);
 		break;
 
-	case 242:
+	case kGoalHollowayGoToHF03:
 		Player_Loses_Control();
 		AI_Movement_Track_Flush(kActorHolloway);
 		AI_Movement_Track_Append(kActorHolloway, 372, 0);
 		AI_Movement_Track_Repeat(kActorHolloway);
 		break;
 
-	case 250:
+	case kGoalHollowayApproachMcCoy:
 		Scene_Exits_Disable();
-		Actor_Says(kActorHolloway, 20, 3);
-		Actor_Face_Actor(kActorHolloway, 0, 1);
-		if (Player_Query_Combat_Mode() == 1) {
-			Actor_Set_Goal_Number(kActorHolloway, 255);
+		Actor_Says(kActorHolloway, 20, kAnimationModeTalk);
+		Actor_Face_Actor(kActorHolloway, kActorMcCoy, true);
+		if (Player_Query_Combat_Mode()) {
+			Actor_Set_Goal_Number(kActorHolloway, kGoalHollowayKnockOutMcCoy);
 		} else {
-			Actor_Says(kActorHolloway, 30, 3);
-			Actor_Face_Actor(kActorMcCoy, kActorHolloway, 1);
+			Actor_Says(kActorHolloway, 30, kAnimationModeTalk);
+			Actor_Face_Actor(kActorMcCoy, kActorHolloway, true);
 			AI_Countdown_Timer_Reset(kActorHolloway, 0);
 			AI_Countdown_Timer_Start(kActorHolloway, 0, 1);
 		}
 		break;
 
-	case 251:
-		Actor_Face_Actor(kActorMcCoy, kActorHolloway, 1);
+	case kGoalHollowayTalkToMcCoy:
+		Actor_Face_Actor(kActorMcCoy, kActorHolloway, true);
 		Actor_Says(kActorMcCoy, 6130, 15);
-		Actor_Says(kActorHolloway, 40, 3);
+		Actor_Says(kActorHolloway, 40, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 6135, 13);
-		Actor_Says(kActorHolloway, 50, 3);
+		Actor_Says(kActorHolloway, 50, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 6140, 16);
-		Actor_Says(kActorHolloway, 60, 3);
+		Actor_Says(kActorHolloway, 60, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 6145, 12);
-		Actor_Says(kActorHolloway, 70, 3);
-		Actor_Set_Goal_Number(kActorHolloway, 255);
+		Actor_Says(kActorHolloway, 70, kAnimationModeTalk);
+		Actor_Set_Goal_Number(kActorHolloway, kGoalHollowayKnockOutMcCoy);
 		break;
 
-	case 255:
+	case kGoalHollowayKnockOutMcCoy:
 		Player_Loses_Control();
-		Actor_Change_Animation_Mode(kActorHolloway, 6);
+		Actor_Change_Animation_Mode(kActorHolloway, kAnimationModeCombatAttack);
 		break;
 
-	case 257:
+	case kGoalHollowayCaptureMcCoy:
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		Player_Gains_Control();
+
 		Outtake_Play(kOuttakeInterrogation, 0, 1);
+
 		if (Global_Variable_Query(kVariableBehavior) == 1) {
 			Actor_Set_Goal_Number(kActorDektora, 245);
 			Actor_Change_Animation_Mode(kActorDektora, kAnimationModeIdle);
 		}
 		Player_Gains_Control();
-		Game_Flag_Set(kFlagMcCoyCapturedByBaker);
+		Game_Flag_Set(kFlagMcCoyCapturedByHolloway);
 		Scene_Exits_Enable();
-		Actor_Set_Goal_Number(kActorSteele, 230);
+		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleNR01WaitForMcCoy);
 		Actor_Put_In_Set(kActorHolloway, kSetFreeSlotI);
 		Actor_Set_At_Waypoint(kActorHolloway, 41, 0);
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
 		if (Global_Variable_Query(kVariableBehavior) != 1) {
 			Player_Gains_Control();
 		}
+
 		Game_Flag_Set(kFlagUG03toUG04);
 		Set_Enter(kSetUG04, kSceneUG04);
 		break;
@@ -199,7 +207,7 @@ bool AIScriptHolloway::UpdateAnimation(int *animation, int *frame) {
 	case 0:
 		*animation = 717;
 		_animationFrame++;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(717) - 1) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(717)) {
 			_animationFrame = 0;
 		}
 		break;
@@ -207,29 +215,34 @@ bool AIScriptHolloway::UpdateAnimation(int *animation, int *frame) {
 	case 1:
 		*animation = 719;
 		_animationFrame++;
+
 		if (_animationFrame == 9) {
 			Ambient_Sounds_Play_Sound(222, 90, 99, 0, 0);
 		}
+
 		if (_animationFrame == 10) {
-			Actor_Change_Animation_Mode(kActorMcCoy, 48);
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
 		}
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(719) - 1) {
-			Actor_Change_Animation_Mode(kActorHolloway, 0);
+
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(719)) {
+			Actor_Change_Animation_Mode(kActorHolloway, kAnimationModeIdle);
 			_animationFrame = 0;
 			_animationState = 0;
 			*animation = 717;
-			Actor_Set_Goal_Number(kActorHolloway, 256);
+			Actor_Set_Goal_Number(kActorHolloway, kGoalHollowayPrepareCaptureMcCoy);
 		}
 		break;
 
 	case 2:
-		if (!_animationFrame && _flag) {
+		if (_animationFrame == 0
+		 && _flag
+		) {
 			*animation = 717;
 			_animationState = 0;
 		} else {
 			*animation = 720;
 			_animationFrame++;
-			if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(720) - 1) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(720)) {
 				_animationFrame = 0;
 			}
 		}
@@ -238,7 +251,7 @@ bool AIScriptHolloway::UpdateAnimation(int *animation, int *frame) {
 	case 3:
 		*animation = 721;
 		_animationFrame++;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(721) - 1) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(721)) {
 			_animationFrame = 0;
 			_animationState = 2;
 			*animation = 720;
@@ -248,7 +261,7 @@ bool AIScriptHolloway::UpdateAnimation(int *animation, int *frame) {
 	case 4:
 		*animation = 721;
 		_animationFrame++;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(721) - 1) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(721)) {
 			_animationFrame = 0;
 			_animationState = 2;
 			*animation = 720;
@@ -258,7 +271,7 @@ bool AIScriptHolloway::UpdateAnimation(int *animation, int *frame) {
 	case 5:
 		*animation = 721;
 		_animationFrame++;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(721) - 1) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(721)) {
 			_animationFrame = 0;
 			_animationState = 2;
 			*animation = 720;
@@ -268,7 +281,7 @@ bool AIScriptHolloway::UpdateAnimation(int *animation, int *frame) {
 	case 6:
 		*animation = 721;
 		_animationFrame++;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(721) - 1) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(721)) {
 			_animationFrame = 0;
 			_animationState = 2;
 			*animation = 720;
@@ -278,7 +291,7 @@ bool AIScriptHolloway::UpdateAnimation(int *animation, int *frame) {
 	case 7:
 		*animation = 716;
 		_animationFrame++;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(716) - 1) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(716)) {
 			_animationFrame = 0;
 		}
 		break;
@@ -293,27 +306,27 @@ bool AIScriptHolloway::UpdateAnimation(int *animation, int *frame) {
 
 bool AIScriptHolloway::ChangeAnimationMode(int mode) {
 	switch (mode) {
-	case 0:
+	case kAnimationModeIdle:
 		if (_animationState > 6) {
 			_animationState = 0;
 			_animationFrame = 0;
 		} else {
-			_flag = 1;
+			_flag = true;
 		}
 		break;
 
-	case 1:
+	case kAnimationModeWalk:
 		_animationState = 7;
 		_animationFrame = 0;
 		break;
 
-	case 3:
+	case kAnimationModeTalk:
 		_animationState = 2;
 		_animationFrame = 0;
-		_flag = 0;
+		_flag = false;
 		break;
 
-	case 6:
+	case kAnimationModeCombatAttack:
 		_animationState = 1;
 		_animationFrame = 0;
 		break;
@@ -321,25 +334,25 @@ bool AIScriptHolloway::ChangeAnimationMode(int mode) {
 	case 12:
 		_animationState = 3;
 		_animationFrame = 0;
-		_flag = 0;
+		_flag = false;
 		break;
 
 	case 13:
 		_animationState = 4;
 		_animationFrame = 0;
-		_flag = 0;
+		_flag = false;
 		break;
 
 	case 14:
 		_animationState = 5;
 		_animationFrame = 0;
-		_flag = 0;
+		_flag = false;
 		break;
 
 	case 15:
 		_animationState = 6;
 		_animationFrame = 0;
-		_flag = 0;
+		_flag = false;
 		break;
 
 	default:

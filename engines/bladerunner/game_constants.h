@@ -922,7 +922,7 @@ enum Flags {
 	kFlagTB07toTB02 = 608,
 	kFlagTB07RachaelTalk = 612,
 	kFlagHF03LucyTalk = 613,
-	kFlagMcCoyCapturedByBaker = 616,
+	kFlagMcCoyCapturedByHolloway = 616,
 	kFlagSpinnerMissing = 617,
 	kFlagTB07TyrellMeeting = 625,
 	kFlagCT11DogWrapperTaken = 645,
@@ -1525,6 +1525,7 @@ enum GoalSteele {
 	kGoalSteeleLeaveRC03 = 130,
 	kGoalSteeleWalkAroundRestart = 190,
 	// chapter 3
+	kGoalSteeleNR01WaitForMcCoy = 230,
 	kGoalSteeleHF03ApproachLucy = 233,
 	kGoalSteeleHF03McCoyChasingLucy = 234,
 	kGoalSteeleHF02ConfrontLucy = 240,
@@ -1630,7 +1631,6 @@ enum GoalIzo {
 	kGoalIzoGoToHC03 = 155,
 	kGoalIzoDieHidden = 198,
 	kGoalIzoDie = 199,
-
 	kGoalIzoDead = 599
 };
 
@@ -1697,6 +1697,18 @@ enum GoalDeskClerk {
 	kGoalDeskClerkKnockedOut = 1,
 	kGoalDeskClerkRecovered = 2,
 	kGoalDeskClerkGone = 400
+};
+
+enum GoalHolloway {
+	kGoalHollowayDefault = 0,
+	kGoalHollowayGoToNR07 = 240,
+	kGoalHollowayGoToNR02 = 241,
+	kGoalHollowayGoToHF03 = 242,
+	kGoalHollowayApproachMcCoy = 250,
+	kGoalHollowayTalkToMcCoy = 251,
+	kGoalHollowayKnockOutMcCoy = 255,
+	kGoalHollowayPrepareCaptureMcCoy = 256,
+	kGoalHollowayCaptureMcCoy = 257
 };
 
 enum GoalMoraji {
