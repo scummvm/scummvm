@@ -30,7 +30,9 @@ void SceneScriptPS09::InitializeScene() {
 	} else {
 		Setup_Scene_Information(-559.0f, 0.0f, -85.06f, 250);
 	}
+
 	Scene_Exit_Add_2D_Exit(0, 0, 0, 30, 479, 3);
+
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(0);
 	Ambient_Sounds_Add_Looping_Sound(138, 50, 0, 0);
 	Ambient_Sounds_Add_Looping_Sound(137, 30, 0, 0);
@@ -38,6 +40,7 @@ void SceneScriptPS09::InitializeScene() {
 	Ambient_Sounds_Add_Sound(125, 15, 60, 7, 10, 100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(126, 25, 60, 7, 10, 100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(127, 25, 60, 7, 10, 100, 100, -101, -101, 0, 0);
+
 	if (!Game_Flag_Query(kFlagGrigorianArrested)) {
 		Actor_Put_In_Set(kActorGrigorian, kSetPS09);
 		Actor_Set_At_XYZ(kActorGrigorian, -417.88f, 0.0f, -200.74f, 512);
@@ -100,9 +103,9 @@ bool SceneScriptPS09::ClickedOnActor(int actorId) {
 			if (!Game_Flag_Query(kFlagPS09GrigorianDialogue)
 			 &&  Game_Flag_Query(kFlagPS09GrigorianTalk1)
 			 &&  (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA)
-			  || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1)
-			  || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2)
-			  || Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)
+			  ||  Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1)
+			  ||  Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2)
+			  ||  Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)
 			 )
 			) {
 				Game_Flag_Set(kFlagPS09GrigorianDialogue);

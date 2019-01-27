@@ -903,6 +903,8 @@ enum Flags {
 	kFlagCT10Entered = 525,
 	kFlagHF02toHF03 = 527,
 	kFlagHF03toHF02 = 528,
+	kFlagHF05toHF06 = 529, // is never checked
+	kFlagHF06toHF05 = 530,
 	kFlagCT11toDR01 = 531,
 	kFlagCT09Entered = 538,
 	kFlagCT09LeonInterrupted = 539,
@@ -912,6 +914,8 @@ enum Flags {
 	kFlagDR06MannequinHeadOpen = 548,
 	kFlagMcCoyTiedDown = 550,
 	kFlagDR01toCT11 = 558,
+	kFlagHF05CrazyLegsTalk1 = 562,
+	kFlagHF05CrazyLegsTalk2 = 563,
 	kFlagHF03toHF04 = 566, // is never checked
 	kFlagHF04toHF03 = 567,
 	kFlagHF04DoorsClosed = 584,
@@ -1113,7 +1117,7 @@ enum Scenes {
 	kSceneHF02 = 35, // Hysteria Hall - Hall of Mirrors - Exit
 	kSceneHF03 = 36, // Hysteria Hall - Hysteria Arcade
 	kSceneHF04 = 37, // Hysteria Hall - Hall of Mirrors
-	kSceneHF05 = 38,
+	kSceneHF05 = 38, // Hysteria Hall - Crazy Legs Larry Autos
 	kSceneHF06 = 39,
 	kSceneHF07 = 40,
 	kSceneKP01 = 41,
@@ -1144,9 +1148,9 @@ enum Scenes {
 	kScenePS02 = 66, // Police Station - Elevator
 	kScenePS03 = 67, // Police Station - Ground floor
 	kScenePS04 = 68, // Police Station - Guzza's Office
-	kScenePS05 = 69,
-	kScenePS06 = 70,
-	kScenePS07 = 71,
+	kScenePS05 = 69, // Police Station - Mainframe & Shoting range hallway
+	kScenePS06 = 70, // Police Station - ESPER room
+	kScenePS07 = 71, // Police Station - Labratory
 	kScenePS09 = 72, // Police Station - Lockup
 	kScenePS10 = 73, // Police Station - Shooting range 1
 	kScenePS11 = 74, // Police Station - Shooting range 2

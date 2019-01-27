@@ -213,22 +213,22 @@ DECLARE_SCRIPT(HF04)
 END_SCRIPT
 
 DECLARE_SCRIPT(HF05)
-	void sub_402370();
-	void sub_402970();
-	void sub_402AE4();
-	void sub_403738();
+	void talkWithCrazyLegs1();
+	void talkWithCrazyLegs2();
+	void dialogueWithCrazylegs1();
+	void dialogueWithCrazylegs2();
 	void sub_403A34(int actorId);
 	void sub_403F0C();
 	void sub_40410C();
 	void sub_4042E4();
-	void sub_404474();
+	void addAmbientSounds();
 	int getAffectionTowardsActor();
 	int sub_4048C0();
 END_SCRIPT
 
 DECLARE_SCRIPT(HF06)
 	void sub_401EF4();
-	void sub_4023E0();
+	void addAmbientSounds();
 END_SCRIPT
 
 DECLARE_SCRIPT(HF07)
