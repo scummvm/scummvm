@@ -1812,7 +1812,7 @@ void VKScript::askBulletBob(int questionId) {
 	case 7465:
 		VK_Subject_Reacts(15, 5, 3, -5);
 		VK_Play_Speech_Line(kActorBulletBob, 1200, 0.5f);
-		if (Actor_Query_Friendliness_To_Other(14, 0) <= 40) {
+		if (Actor_Query_Friendliness_To_Other(kActorBulletBob, kActorMcCoy) <= 40) {
 			VK_Eye_Animates(2);
 			VK_Play_Speech_Line(kActorBulletBob, 1210, 0.5f);
 			VK_Eye_Animates(1);

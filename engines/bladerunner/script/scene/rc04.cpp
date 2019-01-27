@@ -27,7 +27,9 @@ namespace BladeRunner {
 void SceneScriptRC04::InitializeScene() {
 	Setup_Scene_Information(45.0f, 0.15f, 68.0f, 1018);
 	Game_Flag_Reset(kFlagRC03toRC04);
+
 	Scene_Exit_Add_2D_Exit(0, 225, 47, 359, 248, 0);
+
 	if (!Game_Flag_Query(kFlagRC04McCoyShotBob)) {
 		Actor_Put_In_Set(kActorBulletBob, kSetRC04);
 		Actor_Set_At_XYZ(kActorBulletBob, -60.0f, -11.0f, 62.0f, 12);
@@ -35,6 +37,7 @@ void SceneScriptRC04::InitializeScene() {
 	if (Game_Flag_Query(kFlagRC04McCoyShotBob)) {
 		Actor_Change_Animation_Mode(kActorBulletBob, 88);
 	}
+
 	Ambient_Sounds_Add_Looping_Sound(381, 100, 1, 1);
 	Ambient_Sounds_Add_Sound(82, 5, 30, 10, 20, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(83, 5, 30, 10, 20, -100, 100, -101, -101, 0, 0);

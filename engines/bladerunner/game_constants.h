@@ -1159,8 +1159,8 @@ enum Scenes {
 	kScenePS14 = 77, // Police Station - Outside
 	kSceneRC01 = 78, // Runciter - Outside
 	kSceneRC02 = 79, // Runciter - Inside
-	kSceneRC03 = 80, // Bullet Bob's runner surplus - Outside
-	kSceneRC04 = 81, // Bullet Bob's runner surplus - Inside
+	kSceneRC03 = 80, // Bullet Bob's Runner Surplus - Outside
+	kSceneRC04 = 81, // Bullet Bob's Runner Surplus - Inside
 	kSceneTB02 = 82, // Tyrell Building - Reception
 	kSceneTB03 = 83,
 	kSceneTB05 = 84, // Tyrell Building - Grav Test Lab - Iutside

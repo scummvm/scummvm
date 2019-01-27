@@ -244,7 +244,7 @@ void SceneScriptAR02::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptAR02::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagRC03toAR02)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -465.0f, 0.0f, -799.0f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -465.0f, 0.0f, -799.0f, 0, false, false, 0);
 		Game_Flag_Reset(kFlagRC03toAR02);
 	}
 	Game_Flag_Set(kFlagAR02Entered);

@@ -29,10 +29,12 @@ void SceneScriptHC02::InitializeScene() {
 	if (Game_Flag_Query(kFlagHC04toHC02)) {
 		Setup_Scene_Information(-88.0f, 0.14f, -463.0f, 540);
 	} else {
-		Setup_Scene_Information(-57.0f, 0.14f, 83.0f, 746);
+		Setup_Scene_Information(-57.0f, 0.14f,   83.0f, 746);
 	}
+
 	Scene_Exit_Add_2D_Exit(0, 589, 255, 639, 479, 1);
-	Scene_Exit_Add_2D_Exit(1, 505, 0, 639, 170, 0);
+	Scene_Exit_Add_2D_Exit(1, 505,   0, 639, 170, 0);
+
 	Ambient_Sounds_Add_Looping_Sound(103, 50, 50, 0);
 	Ambient_Sounds_Add_Looping_Sound(280, 50, 50, 0);
 	Ambient_Sounds_Add_Sound(252, 3, 60, 33, 33,  -60,   0, -101, -101, 0, 0);
@@ -64,8 +66,9 @@ void SceneScriptHC02::InitializeScene() {
 	Ambient_Sounds_Add_Sound(249, 3, 30, 14, 14,   30, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(238, 3, 50, 20, 20, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(240, 3, 50, 25, 25, -100, 100, -101, -101, 0, 0);
+
 	if (Game_Flag_Query(kFlagHC01toHC02)) {
-		Scene_Loop_Start_Special(0, 0, 0);
+		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
 		Scene_Loop_Set_Default(1);
 		Game_Flag_Reset(kFlagHC01toHC02);
 	} else {
@@ -179,6 +182,7 @@ bool SceneScriptHC02::ClickedOnExit(int exitId) {
 		}
 		return true;
 	}
+
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -76.0f, 0.14f, -339.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
@@ -200,10 +204,19 @@ void SceneScriptHC02::SceneFrameAdvanced(int frame) {
 	if (frame == 70) {
 		Sound_Play(73, 11, 50, -90, 50);
 	}
+
 	if (frame == 58) {
 		Sound_Play(73, 11, 50, -90, 50);
 	}
-	if (frame == 69 || frame == 77 || frame == 86 || frame == 95 || frame == 104 || frame == 113 || frame == 119) {
+
+	if (frame == 69
+	 || frame == 77
+	 || frame == 86
+	 || frame == 95
+	 || frame == 104
+	 || frame == 113
+	 || frame == 119
+	) {
 		Sound_Play(60, Random_Query(6, 7), -20, 20, 50);
 	}
 }

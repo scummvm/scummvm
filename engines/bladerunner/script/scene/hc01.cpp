@@ -27,17 +27,19 @@ namespace BladeRunner {
 void SceneScriptHC01::InitializeScene() {
 	Music_Play(0, 31, 0, 2, -1, 1, 2);
 	if (Game_Flag_Query(kFlagHC02toHC01)) {
-		Setup_Scene_Information(64.0f, 0.14f, 83.0f, 266);
+		Setup_Scene_Information( 64.0f, 0.14f,  83.0f, 266);
 	} else if (Game_Flag_Query(kFlagHC03toHC01)) {
-		Setup_Scene_Information(607.0f, 0.14f, 9.0f, 530);
+		Setup_Scene_Information(607.0f, 0.14f,   9.0f, 530);
 	} else {
 		Setup_Scene_Information(780.0f, 0.14f, 153.0f, 815);
 	}
+
 	Scene_Exit_Add_2D_Exit(0, 0, 460, 639, 479, 2);
 	if (Game_Flag_Query(kFlagHC03Available)) {
 		Scene_Exit_Add_2D_Exit(1, 394, 229, 485, 371, 1);
 	}
 	Scene_Exit_Add_2D_Exit(2, 117, 0, 286, 319, 0);
+
 	Ambient_Sounds_Add_Looping_Sound(103, 50, 50, 0);
 	Ambient_Sounds_Add_Looping_Sound(241, 50, 50, 0);
 	Ambient_Sounds_Add_Sound(242, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
@@ -156,6 +158,7 @@ bool SceneScriptHC01::ClickedOnExit(int exitId) {
 		}
 		return true;
 	}
+
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 607.0f, 0.14f, 9.0f, 0, true, false, 0)) {
 			Game_Flag_Set(kFlagHC01toHC03);
@@ -163,6 +166,7 @@ bool SceneScriptHC01::ClickedOnExit(int exitId) {
 		}
 		return true;
 	}
+
 	if (exitId == 2) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 105.0f, 0.14f, 103.0f, 0, true, false, 0)) {
 			Game_Flag_Set(kFlagHC01toHC02);
@@ -180,21 +184,30 @@ bool SceneScriptHC01::ClickedOn2DRegion(int region) {
 
 void SceneScriptHC01::SceneFrameAdvanced(int frame) {
 	Set_Fade_Color(1.0f, 1.0f, 1.0f);
-	if (frame >= 61 && frame < 65) {
+	if (frame >= 61
+	 && frame < 65
+	) {
 		Set_Fade_Density((frame - 61) / 4.0f);
-	} else if (frame >= 65 && frame < 93) {
+	} else if (frame >= 65
+	        && frame < 93
+	) {
 		Set_Fade_Density(1.0f);
-	} else if (frame >= 93 && frame < 106) {
+	} else if (frame >= 93
+	        && frame < 106
+	) {
 		Set_Fade_Density((105 - frame) / 13.0f);
 	} else {
 		Set_Fade_Density(0.0f);
 	}
+
 	if (frame == 61) {
 		Ambient_Sounds_Play_Sound(312, 90, 0, 0, 0);
 	}
+
 	if (frame == 65) {
 		Ambient_Sounds_Play_Sound(315, 50, 0, 100, 0);
 	}
+
 	if (frame == 80) {
 		Ambient_Sounds_Play_Sound(316, 40, 100, 100, 0);
 		Item_Add_To_World(kItemGreenPawnLock, 931, kSetHC01_HC02_HC03_HC04, 582.0f, 27.0f, -41.0f, 0, 8, 8, true, true, false, true);
@@ -209,9 +222,11 @@ void SceneScriptHC01::PlayerWalkedIn() {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 105.0f, 0.14f, 103.0f, 0, false, false, 0);
 		Game_Flag_Reset(kFlagHC02toHC01);
 	}
+
 	if (Game_Flag_Query(kFlagHC03toHC01)) {
 		Game_Flag_Reset(kFlagHC03toHC01);
 	}
+
 	if (Game_Flag_Query(kFlagAR01toHC01)) {
 		Game_Flag_Reset(kFlagAR01toHC01);
 	}
@@ -304,7 +319,7 @@ void SceneScriptHC01::dialogueWithIzo() {
 				Actor_Modify_Friendliness_To_Other(kActorIzo, kActorMcCoy, -2);
 			}
 		}
-		if (answer == 1010 // INSECT JEWELRY 
+		if (answer == 1010 // INSECT JEWELRY
 		 || answer == 1020 // DRAGONFLY JEWERLY
 		) {
 			Actor_Says_With_Pause(kActorMcCoy, 1120, 0.9f, 17);

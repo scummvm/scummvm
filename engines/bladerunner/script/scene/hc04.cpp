@@ -32,10 +32,13 @@ void SceneScriptHC04::InitializeScene() {
 		Setup_Scene_Information(-88.0f, 0.14f, -463.0f, 1013);
 	}
 	Music_Play(4, 14, -90, 1, -1, 1, 2);
+
 	Actor_Put_In_Set(kActorIsabella, kSetHC01_HC02_HC03_HC04);
 	Actor_Set_At_XYZ(kActorIsabella, -210.0f, 0.0f, -445.0f, 250);
+
 	Scene_Exit_Add_2D_Exit(0, 539,  51, 639, 309, 0);
 	Scene_Exit_Add_2D_Exit(1,   0, 456, 639, 479, 2);
+
 	Ambient_Sounds_Add_Looping_Sound(103, 50, 50, 0);
 	Ambient_Sounds_Add_Looping_Sound(329, 16, 16, 0);
 	Ambient_Sounds_Add_Looping_Sound(330, 40, 40, 0);
@@ -59,8 +62,9 @@ void SceneScriptHC04::InitializeScene() {
 	Ambient_Sounds_Add_Sound(260, 3, 60, 16, 16, -100, -100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(261, 3, 60, 16, 16, -100, -100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(262, 3, 60, 16, 16, -100, -100, -101, -101, 0, 0);
+
 	if (Game_Flag_Query(kFlagHC02toHC04)) {
-		Scene_Loop_Start_Special(0, 0, 0);
+		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
 		Scene_Loop_Set_Default(1);
 		Game_Flag_Reset(kFlagHC02toHC04);
 	} else {
@@ -117,6 +121,7 @@ bool SceneScriptHC04::ClickedOnExit(int exitId) {
 		}
 		return true;
 	}
+
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -72.0f, 0.14f, -399.0f, 0, true, false, 0)) {
 			Game_Flag_Set(kFlagHC04toHC02);

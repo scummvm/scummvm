@@ -24,6 +24,8 @@
 
 namespace BladeRunner {
 
+// Bug in the game, item 77 (android control box) is showing up here...
+
 void SceneScriptBB04::InitializeScene() {
 	if (Game_Flag_Query(kFlagBB03toBB04)) {
 		Setup_Scene_Information(-107.0f,  -26.6f, 397.0f,  29);
