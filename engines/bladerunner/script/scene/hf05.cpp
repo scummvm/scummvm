@@ -372,7 +372,7 @@ void SceneScriptHF05::talkWithCrazyLegs2() {
 
 void SceneScriptHF05::dialogueWithCrazylegs1() {
 	Dialogue_Menu_Clear_List();
-	if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote) // bug? there is no way how to obtain this clue
+	if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote) // cut feature? there is no way how to obtain this clue
 	 && Global_Variable_Query(kVariableChapter) == 3
 	) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1180, 3, 6, 7); // ADVERTISEMENT
@@ -388,8 +388,8 @@ void SceneScriptHF05::dialogueWithCrazylegs1() {
 	) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1210, 4, 6, 2); // LUCY'S PHOTO
 	}
-	if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansResources)
-	 || (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)
+	if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansResources) // cut feature? there is no way how to obtain this clue
+	 || (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote) // cut feature? there is no way how to obtain this clue either
 	  && Global_Variable_Query(kVariableChapter) == 3
 	 )
 	) {
@@ -518,7 +518,7 @@ void SceneScriptHF05::dialogueWithCrazylegs1() {
 	}
 }
 
-void SceneScriptHF05::dialogueWithCrazylegs2() {
+void SceneScriptHF05::dialogueWithCrazylegs2() { // cut feature? it is impossible to trigger this dialog
 	Dialogue_Menu_Clear_List();
 	DM_Add_To_List_Never_Repeat_Once_Selected(1250, -1, -1, 10); // ARREST
 	DM_Add_To_List_Never_Repeat_Once_Selected(1260, 10,  5, -1); // WARNING
@@ -543,7 +543,7 @@ void SceneScriptHF05::dialogueWithCrazylegs2() {
 		Actor_Put_In_Set(kActorCrazylegs, kSetPS09);
 		Actor_Set_At_XYZ(kActorCrazylegs, -315.15f, 0.0f, 241.06f, 583);
 		Actor_Set_Goal_Number(kActorCrazylegs, 699);
-		Game_Flag_Set(652);
+		Game_Flag_Set(kFlagCrazylegsArrestedTalk);
 		if (Game_Flag_Query(kFlagSpinnerAtNR01)) {
 			Set_Enter(kSetNR01, kSceneNR01);
 		} else {

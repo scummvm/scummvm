@@ -933,6 +933,7 @@ enum Flags {
 	kFlagMA04McCoySleeping = 647,
 	kFlagMA04PhoneMessageFromClovis = 649,
 	kFlagMA04PhoneMessageFromLucy = 650,
+	kFlagCrazylegsArrestedTalk = 652,
 	kFlagUG02RagiationGooglesTaken = 656,
 	kFlagDNARowAvailableTalk = 660,
 	kFlagTB07ShadeDown = 661, // is never set

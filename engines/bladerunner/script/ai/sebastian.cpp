@@ -425,7 +425,7 @@ void AIScriptSebastian::dialogue() {
 			Actor_Says_With_Pause(kActorSebastian, 370, 0.30f, 13);
 			Actor_Says_With_Pause(kActorSebastian, 380, 0.70f, 17);
 			Actor_Says(kActorSebastian, 390, 14);
-			if (Actor_Clue_Query(kActorMcCoy, kClueChessTable)) {
+			if (Actor_Clue_Query(kActorMcCoy, kClueChessTable)) { // cut feature? it is impossible to obtain this clue
 				Actor_Says(kActorMcCoy, 7140, kAnimationModeTalk);
 				Actor_Says(kActorSebastian, 400, 12);
 				Actor_Says(kActorMcCoy, 7145, 16);

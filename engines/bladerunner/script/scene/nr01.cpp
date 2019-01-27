@@ -410,8 +410,8 @@ void SceneScriptNR01::PlayerWalkedIn() {
 		}
 	}
 
-	if (Game_Flag_Query(652)) {
-		Game_Flag_Reset(652);
+	if (Game_Flag_Query(kFlagCrazylegsArrestedTalk)) {
+		Game_Flag_Reset(kFlagCrazylegsArrestedTalk);
 		Actor_Voice_Over(950, kActorVoiceOver);
 		Actor_Voice_Over(960, kActorVoiceOver);
 		Actor_Voice_Over(970, kActorVoiceOver);

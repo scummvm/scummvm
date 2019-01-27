@@ -397,7 +397,7 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Says(kActorLucy, 360, 13);
 		Actor_Says(kActorMcCoy, 1710, 13);
 
-		if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy) { // how to trigger this?
+		if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy) { // cut feature? if this is set lucy will not run into hf04
 			Actor_Says(kActorLucy, 940, 13);
 			Actor_Says(kActorMcCoy, 6780, 12);
 			Actor_Says(kActorLucy, 950, 12);

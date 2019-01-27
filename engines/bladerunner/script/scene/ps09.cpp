@@ -54,7 +54,7 @@ void SceneScriptPS09::InitializeScene() {
 		Actor_Put_In_Set(kActorIzo, kSetPS09);
 		Actor_Set_At_XYZ(kActorIzo, -476.0f, 0.2f, -225.0f, 518);
 	}
-	if (Game_Flag_Query(kFlagCrazylegsArrested)) {
+	if (Game_Flag_Query(kFlagCrazylegsArrested)) { // cut feature? it is impossible to arrest crazylegs
 		Actor_Put_In_Set(kActorCrazylegs, kSetPS09);
 		Actor_Set_At_XYZ(kActorCrazylegs, -290.0f, 0.33f, -235.0f, 207);
 	}
@@ -300,7 +300,7 @@ void SceneScriptPS09::dialogueWithGrigorian() {
 		DM_Add_To_List_Never_Repeat_Once_Selected(180, -1, 5, 5); // CARS
 		DM_Add_To_List_Never_Repeat_Once_Selected(200, -1, 3, 6); // VOIGT-KAMPFF
 	}
-	if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote) // bug? there is no way how to obtain this clue
+	if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote) // cut feature? it is impossible to obtain this clue
 	 && (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA)
 	  || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1)
 	  || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2)
