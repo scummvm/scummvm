@@ -1009,13 +1009,13 @@ void Actor::modifyMaxHP(signed int change) {
 }
 
 
-void Actor::combatModeOn(int initialState, bool rangedAttack, int enemyId, int waypointType, int animationModeCombatIdle, int animationModeCombatWalk, int animationModeCombatRun, int fleeRatio, int coverRatio, int actionRatio, int damage, int range, bool unstoppable) {
+void Actor::combatModeOn(int initialState, bool rangedAttack, int enemyId, int waypointType, int animationModeCombatIdle, int animationModeCombatWalk, int animationModeCombatRun, int fleeRatio, int coverRatio, int attackRatio, int damage, int range, bool unstoppable) {
 	_animationModeCombatIdle = animationModeCombatIdle;
 	_animationModeCombatWalk = animationModeCombatWalk;
 	_animationModeCombatRun = animationModeCombatRun;
 	_inCombat = true;
 	if (_id != kActorMcCoy) {
-		_combatInfo->combatOn(_id, initialState, rangedAttack, enemyId, waypointType, fleeRatio, coverRatio, actionRatio, damage, range, unstoppable);
+		_combatInfo->combatOn(_id, initialState, rangedAttack, enemyId, waypointType, fleeRatio, coverRatio, attackRatio, damage, range, unstoppable);
 	}
 	stopWalking(false);
 	changeAnimationMode(_animationModeCombatIdle, false);

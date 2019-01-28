@@ -266,9 +266,9 @@ void ScriptBase::Actor_Combat_AI_Hit_Attempt(int actorId) {
 	}
 }
 
-void ScriptBase::Non_Player_Actor_Combat_Mode_On(int actorId, int initialState, bool rangedAttack, int enemyId, int waypointType, int animationModeCombatIdle, int animationModeCombatWalk, int animationModeCombatRun, int fleeRatio, int coverRatio, int actionRatio, int damage, int range, bool unstoppable) {
-	debugC(kDebugScript, "Non_Player_Actor_Combat_Mode_On(%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", actorId, initialState, rangedAttack, enemyId, waypointType, animationModeCombatIdle, animationModeCombatWalk, animationModeCombatRun, fleeRatio, coverRatio, actionRatio, damage, range, unstoppable);
-	_vm->_actors[actorId]->combatModeOn(initialState, rangedAttack, enemyId, waypointType, animationModeCombatIdle, animationModeCombatWalk, animationModeCombatRun, fleeRatio, coverRatio, actionRatio, damage, range, unstoppable);
+void ScriptBase::Non_Player_Actor_Combat_Mode_On(int actorId, int initialState, bool rangedAttack, int enemyId, int waypointType, int animationModeCombatIdle, int animationModeCombatWalk, int animationModeCombatRun, int fleeRatio, int coverRatio, int attackRatio, int damage, int range, bool unstoppable) {
+	debugC(kDebugScript, "Non_Player_Actor_Combat_Mode_On(%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", actorId, initialState, rangedAttack, enemyId, waypointType, animationModeCombatIdle, animationModeCombatWalk, animationModeCombatRun, fleeRatio, coverRatio, attackRatio, damage, range, unstoppable);
+	_vm->_actors[actorId]->combatModeOn(initialState, rangedAttack, enemyId, waypointType, animationModeCombatIdle, animationModeCombatWalk, animationModeCombatRun, fleeRatio, coverRatio, attackRatio, damage, range, unstoppable);
 }
 
 void ScriptBase::Non_Player_Actor_Combat_Mode_Off(int actorId) {

@@ -50,7 +50,7 @@ void ActorCombat::setup() {
 	reset();
 }
 
-void ActorCombat::combatOn(int actorId, int initialState, bool rangedAttackFlag, int enemyId, int waypointType, int fleeRatio, int coverRatio, int actionRatio, int damage, int range, bool unstoppable) {
+void ActorCombat::combatOn(int actorId, int initialState, bool rangedAttackFlag, int enemyId, int waypointType, int fleeRatio, int coverRatio, int attackRatio, int damage, int range, bool unstoppable) {
 	_actorId = actorId;
 	_state = initialState;
 	_rangedAttack = rangedAttackFlag;
@@ -59,10 +59,10 @@ void ActorCombat::combatOn(int actorId, int initialState, bool rangedAttackFlag,
 	_damage = damage;
 	_fleeRatioConst = fleeRatio;
 	_coverRatioConst = coverRatio;
-	_actionRatioConst = actionRatio;
+	_attackRatioConst = attackRatio;
 	_fleeRatio = fleeRatio;
 	_coverRatio = coverRatio;
-	_actionRatio = actionRatio;
+	_attackRatio = attackRatio;
 	_active = true;
 	if (_rangedAttack) {
 		_range = range;
@@ -133,10 +133,10 @@ void ActorCombat::tick() {
 	_actorPosition = actor->getXYZ();
 	_enemyPosition = enemy->getXYZ();
 
-	if (_actionRatioConst >= 0) {
-		_actionRatio = _actionRatioConst;
+	if (_attackRatioConst >= 0) {
+		_attackRatio = _attackRatioConst;
 	} else {
-		_actionRatio = calculateActionRatio();
+		_attackRatio = calculateAttackRatio();
 	}
 
 	if (_vm->_combat->findCoverWaypoint(_waypointType, _actorId, _enemyId) != -1) {
@@ -158,8 +158,8 @@ void ActorCombat::tick() {
 	float dist = actor->distanceFromActor(_enemyId);
 	int oldState = _state;
 
-	if (_actionRatio < _fleeRatio || _actionRatio < _coverRatio) {
-		if (_coverRatio >= _fleeRatio && _coverRatio >= _actionRatio) {
+	if (_attackRatio < _fleeRatio || _attackRatio < _coverRatio) {
+		if (_coverRatio >= _fleeRatio && _coverRatio >= _attackRatio) {
 			_state = kActorCombatStateCover;
 		} else {
 			_state = kActorCombatStateFlee;
@@ -236,20 +236,20 @@ void ActorCombat::hitAttempt() {
 		return;
 	}
 
-	int aggressiveness = 0;
+	int attackCoefficient = 0;
 	if (_rangedAttack) {
-		aggressiveness = _rangedAttack == 1 ? getaggressivenessRangedAttack() : 0;
+		attackCoefficient = _rangedAttack ? getCoefficientRangedAttack() : 0;
 	} else {
-		aggressiveness = getaggressivenessCloseAttack();
+		attackCoefficient = getCoefficientCloseAttack();
 	}
 
-	if (aggressiveness == 0) {
+	if (attackCoefficient == 0) {
 		return;
 	}
 
 	int random = _vm->_rnd.getRandomNumberRng(1, 100);
 
-	if (random <= aggressiveness) {
+	if (random <= attackCoefficient) {
 		if (enemy->isWalking()) {
 			enemy->stopWalking(true);
 		}
@@ -263,9 +263,9 @@ void ActorCombat::hitAttempt() {
 
 		int damage = 0;
 		if (_rangedAttack) {
-			damage = getDamageRangedAttack(random, aggressiveness);
+			damage = getDamageRangedAttack(random, attackCoefficient);
 		} else {
-			damage = getDamageCloseAttack(random, aggressiveness);
+			damage = getDamageCloseAttack(random, attackCoefficient);
 		}
 
 		int enemyHp = MAX(enemy->getCurrentHP() - damage, 0);
@@ -274,9 +274,9 @@ void ActorCombat::hitAttempt() {
 		if (enemyHp <= 0) {
 			if (!enemy->isRetired()) {
 				if (enemy->inCombat()) {
-					enemy->changeAnimationMode(49, false);
+					enemy->changeAnimationMode(kAnimationModeCombatDie, false);
 				} else {
-					enemy->changeAnimationMode(48, false);
+					enemy->changeAnimationMode(kAnimationModeDie, false);
 				}
 				sentenceId = 9020;
 			}
@@ -301,10 +301,10 @@ void ActorCombat::save(SaveFileWriteStream &f) {
 	f.writeInt(_damage);
 	f.writeInt(_fleeRatio);
 	f.writeInt(_coverRatio);
-	f.writeInt(_actionRatio);
+	f.writeInt(_attackRatio);
 	f.writeInt(_fleeRatioConst);
 	f.writeInt(_coverRatioConst);
-	f.writeInt(_actionRatioConst);
+	f.writeInt(_attackRatioConst);
 	f.writeInt(_range);
 	f.writeInt(_unstoppable);
 	f.writeInt(_actorHp);
@@ -325,10 +325,10 @@ void ActorCombat::load(SaveFileReadStream &f) {
 	_damage = f.readInt();
 	_fleeRatio = f.readInt();
 	_coverRatio = f.readInt();
-	_actionRatio = f.readInt();
+	_attackRatio = f.readInt();
 	_fleeRatioConst = f.readInt();
 	_coverRatioConst = f.readInt();
-	_actionRatioConst = f.readInt();
+	_attackRatioConst = f.readInt();
 	_range = f.readInt();
 	_unstoppable = f.readInt();
 	_actorHp = f.readInt();
@@ -349,13 +349,13 @@ void ActorCombat::reset() {
 	_damage              = 0;
 	_fleeRatio           = -1;
 	_coverRatio          = -1;
-	_actionRatio         = -1;
+	_attackRatio         = -1;
 	_fleeRatioConst      = -1;
 	_coverRatioConst     = -1;
-	_actionRatioConst    = -1;
+	_attackRatioConst    = -1;
 	_actorHp             = 0;
 	_range               = 300;
-	_unstoppable             = false;
+	_unstoppable         = false;
 	_actorPosition       = Vector3(0.0f, 0.0f, 0.0f);
 	_enemyPosition       = Vector3(0.0f, 0.0f, 0.0f);
 	_coversWaypointCount = 0;
@@ -515,7 +515,7 @@ void ActorCombat::faceEnemy() {
 	_vm->_actors[_actorId]->setFacing(angle_1024(_actorPosition.x, _actorPosition.z, _enemyPosition.x, _enemyPosition.z), false);
 }
 
-int ActorCombat::getaggressivenessCloseAttack() const{
+int ActorCombat::getCoefficientCloseAttack() const{
 	Actor *actor = _vm->_actors[_actorId];
 	Actor *enemy = _vm->_actors[_enemyId];
 
@@ -545,7 +545,7 @@ int ActorCombat::getaggressivenessCloseAttack() const{
 	return aggressiveness + (abs(angle - 128) / 3.7f);
 }
 
-int ActorCombat::getaggressivenessRangedAttack() const {
+int ActorCombat::getCoefficientRangedAttack() const {
 	Actor *actor = _vm->_actors[_actorId];
 	Actor *enemy = _vm->_actors[_enemyId];
 
@@ -588,7 +588,7 @@ int ActorCombat::getDamageRangedAttack(int min, int max) const {
 	return ((MIN(max - min, 30) * 100.0f / 60.0f) + 50) * _damage / 100;
 }
 
-int ActorCombat::calculateActionRatio() const {
+int ActorCombat::calculateAttackRatio() const {
 	Actor *actor = _vm->_actors[_actorId];
 	Actor *enemy = _vm->_actors[_enemyId];
 
@@ -597,7 +597,7 @@ int ActorCombat::calculateActionRatio() const {
 	int enemyHpFactor        = 100 - enemy->getCurrentHP();
 	int combatFactor         = enemy->inCombat() ? 0 : 100;
 	int angleFactor          = (100 * abs(enemy->angleTo(_actorPosition))) / 512;
-	int distanceFactor       = 2 * (50 - MAX(actor->distanceFromActor(_enemyId) / 12.0f, 50.0f));
+	int distanceFactor       = 2 * (50 - MIN(actor->distanceFromActor(_enemyId) / 12.0f, 50.0f));
 
 	if (_rangedAttack) {
 		return
@@ -629,7 +629,7 @@ int ActorCombat::calculateCoverRatio() const {
 	int actorHpFactor        = 100 - actor->getCurrentHP();
 	int enemyHpFactor        = enemy->getCurrentHP();
 	int aggressivenessFactor = 100 - actor->getCombatAggressiveness();
-	int distanceFactor       = 2 * MAX(actor->distanceFromActor(_enemyId) / 12.0f, 50.0f);
+	int distanceFactor       = 2 * MIN(actor->distanceFromActor(_enemyId) / 12.0f, 50.0f);
 
 	if (_rangedAttack) {
 		return

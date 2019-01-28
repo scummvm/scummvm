@@ -43,10 +43,10 @@ class ActorCombat {
 	int _damage;
 	int _fleeRatio;
 	int _coverRatio;
-	int _actionRatio;
+	int _attackRatio;
 	int _fleeRatioConst;
 	int _coverRatioConst;
-	int _actionRatioConst;
+	int _attackRatioConst;
 	int _actorHp;
 	int _range;
 	bool _unstoppable;
@@ -62,7 +62,7 @@ public:
 
 	void setup();
 
-	void combatOn(int actorId, int initialState, bool rangedAttack, int enemyId, int waypointType, int fleeRatio, int coverRatio, int actionRatio, int damage, int range, bool unstoppable);
+	void combatOn(int actorId, int initialState, bool rangedAttack, int enemyId, int waypointType, int fleeRatio, int coverRatio, int attackRatio, int damage, int range, bool unstoppable);
 	void combatOff();
 
 	void tick();
@@ -86,13 +86,13 @@ private:
 
 	void faceEnemy();
 
-	int getaggressivenessCloseAttack() const;
-	int getaggressivenessRangedAttack() const;
+	int getCoefficientCloseAttack() const;
+	int getCoefficientRangedAttack() const;
 
 	int getDamageCloseAttack(int min, int max) const;
 	int getDamageRangedAttack(int min, int max) const;
 
-	int calculateActionRatio() const;
+	int calculateAttackRatio() const;
 	int calculateCoverRatio() const;
 	int calculateFleeRatio() const;
 

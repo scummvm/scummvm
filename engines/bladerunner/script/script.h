@@ -80,7 +80,7 @@ protected:
 	void Actor_Set_Flag_Damage_Anim_If_Moving(int actorId, bool value);
 	bool Actor_Query_Flag_Damage_Anim_If_Moving(int actorId);
 	void Actor_Combat_AI_Hit_Attempt(int actorId);
-	void Non_Player_Actor_Combat_Mode_On(int actorId, int initialState, bool rangedAttack, int enemyId, int waypointType, int animationModeCombatIdle, int animationModeCombatWalk, int animationModeCombatRun, int fleeRatio, int coverRatio, int actionRatio, int damage, int range, bool unstoppable);
+	void Non_Player_Actor_Combat_Mode_On(int actorId, int initialState, bool rangedAttack, int enemyId, int waypointType, int animationModeCombatIdle, int animationModeCombatWalk, int animationModeCombatRun, int fleeRatio, int coverRatio, int attackRatio, int damage, int range, bool unstoppable);
 	void Non_Player_Actor_Combat_Mode_Off(int actorId);
 	void Actor_Set_Health(int actorId, int hp, int maxHp);
 	void Actor_Set_Targetable(int actorId, bool targetable);

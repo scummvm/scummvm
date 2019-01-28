@@ -229,7 +229,7 @@ public:
 
 	void retire(bool isRetired, int width, int height, int retiredByActorId);
 
-	void combatModeOn(int initialState, bool rangedAttack, int enemyId, int waypointType, int animationModeCombatIdle, int animationModeCombatWalk, int animationModeCombatRun, int fleeRatio, int coverRatio, int actionRatio, int damage, int range, bool unstoppable);
+	void combatModeOn(int initialState, bool rangedAttack, int enemyId, int waypointType, int animationModeCombatIdle, int animationModeCombatWalk, int animationModeCombatRun, int fleeRatio, int coverRatio, int attackRatio, int damage, int range, bool unstoppable);
 	void combatModeOff();
 
 	void setGoal(int goalNumber);
