@@ -43,6 +43,7 @@ enum IniFlags {
 
 struct DragonINI
 	{
+		uint16 id;
 		int16 iptIndex_maybe;
 		int16 field_2;
 		uint16 actorResourceId;
@@ -75,6 +76,11 @@ public:
 	DragonINI *getFlickerRecord() {
 		return _flickerINI;
 	}
+	bool isFlicker(uint16 index);
+	bool isFlicker(DragonINI *ini) {
+		return isFlicker(ini->id);
+	}
+
 };
 
 } // End of namespace Dragons

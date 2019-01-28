@@ -36,12 +36,13 @@ DragonINIResource::DragonINIResource(BigfileArchive *bigfileArchive) {
 	_dragonINI = new DragonINI[_count];
 
 	for(int i=0; i < _count; i++) {
+		_dragonINI[i].id = (uint16)i;
 		_dragonINI[i].iptIndex_maybe = readStream->readSint16LE();
 		_dragonINI[i].field_2 = readStream->readSint16LE();
 		_dragonINI[i].actorResourceId = readStream->readSint16LE();
 		_dragonINI[i].frameIndexId_maybe = readStream->readSint16LE();
 		_dragonINI[i].field_8 = readStream->readSint16LE();
-		readStream->readUint16LE(); // actorId
+		assert(readStream->readUint16LE() == 0); // actorId
 		_dragonINI[i].actor = NULL;
 		_dragonINI[i].sceneId = readStream->readUint16LE();
 		_dragonINI[i].field_e = readStream->readSint16LE();
@@ -68,5 +69,10 @@ DragonINI *DragonINIResource::getRecord(uint16 index) {
 void DragonINIResource::setFlickerRecord(DragonINI *dragonINI) {
 	_flickerINI = dragonINI;
 }
+
+bool DragonINIResource::isFlicker(uint16 index) {
+	return _flickerINI && _flickerINI->id == index;
+}
+
 
 } // End of namespace Dragons

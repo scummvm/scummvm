@@ -14,8 +14,9 @@ MODULE_OBJS := \
 	dragons.o \
 	scene.o \
 	screen.o \
-	scriptopcodes.o
-	sequenceopcodes.o
+	scriptopcodes.o \
+	sequenceopcodes.o \
+	specialopcodes.o
 
 MODULE_DIRS += \
 	engines/dragons

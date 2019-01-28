@@ -54,6 +54,7 @@ struct ScriptOpCall {
 typedef Common::Functor1<ScriptOpCall&, void> ScriptOpcode;
 
 class DragonFLG;
+class SpecialOpcodes;
 
 class ScriptOpcodes {
 public:
@@ -64,6 +65,7 @@ public:
 protected:
 	DragonsEngine *_vm;
 	DragonFLG *_dragonFLG;
+	SpecialOpcodes *_specialOpCodes;
 	ScriptOpcode *_opcodes[DRAGONS_NUM_SCRIPT_OPCODES];
 	Common::String _opcodeNames[DRAGONS_NUM_SCRIPT_OPCODES];
 	int16 _data_80071f5c;
@@ -81,6 +83,7 @@ protected:
 	void opUnk7(ScriptOpCall &scriptOpCall);
 
 	void opUnkA(ScriptOpCall &scriptOpCall);
+	void opRunSpecialOpCode(ScriptOpCall &scriptOpCall); //op B
 
 	void opUnkF(ScriptOpCall &scriptOpCall);
 

@@ -168,4 +168,9 @@ void Actor::reset_maybe() {
 	//TODO actor_find_by_resourceId_and_remove_resource_from_mem_maybe(resourceID);
 }
 
+void Actor::pathfinding_maybe(int16 x, int16 y, int16 unk) {
+	//TODO implement me.
+	error("Implement pathfinding_maybe()");
+}
+
 } // End of namespace Dragons
