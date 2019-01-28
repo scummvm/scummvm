@@ -218,7 +218,7 @@ void DialogBox::onKeyPress(const Common::KeyState &keyState) {
 
 Graphics::Surface *DialogBox::loadBackground() {
 	Common::PEResources executable;
-	if (!executable.loadFromEXE("game.exe")) {
+	if (!executable.loadFromEXE("game.exe") && !executable.loadFromEXE("game.dll")) {
 		warning("Unable to load 'game.exe' to read the modal dialog background image");
 		return nullptr;
 	}

@@ -26,6 +26,10 @@
 #include "common/hash-str.h"
 #include "common/ptr.h"
 
+namespace Common {
+class INIFile;
+}
+
 namespace Graphics {
 class Font;
 }
@@ -67,14 +71,14 @@ private:
 		uint32 _originalHeight;
 		uint32 _scaledHeight;
 
-		uint32 _charset;
 		Common::SharedPtr<Graphics::Font> _font;
 
-		FontHolder() : _originalHeight(0), _scaledHeight(0), _charset(0) {}
-		FontHolder(FontProvider *fontProvider, const Common::String &name, uint32 height, uint32 charset = 0);
+		FontHolder() : _originalHeight(0), _scaledHeight(0) {}
+		FontHolder(FontProvider *fontProvider, const Common::String &name, uint32 height);
 
 	};
 
+	void readFontEntry(const Common::INIFile *gui, FontHolder &holder, const char *nameKey, const char *sizeKey);
 	FontHolder *getFontHolder(FontType type, int32 customFontIndex);
 
 	FontHolder _smallFont;

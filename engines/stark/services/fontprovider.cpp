@@ -26,6 +26,7 @@
 #include "engines/stark/gfx/driver.h"
 
 #include "common/archive.h"
+#include "common/ini-file.h"
 
 #include "graphics/font.h"
 #include "graphics/fontman.h"
@@ -44,29 +45,68 @@ void FontProvider::initFonts() {
 	_ttfFileMap["Garamond"] = "Gara.ttf";
 	_ttfFileMap["Florentine Script"] = "flornt.TTF";
 	_ttfFileMap["Folkard"] = "folkard.ttf";
+	_ttfFileMap["Folkard\231"] = "folkard.ttf";
 	_ttfFileMap["Arial"] = "ARIAL.TTF";
 	_ttfFileMap["Bradley Hand ITC"] = "bradhitc.ttf";
 	_ttfFileMap["Slurry"] = "SLURRY.TTF";
+	_ttfFileMap["President Cyr"] = "President Cyr Regular.Ttf";
+	_ttfFileMap["VictorianCyr"] = "Victorian Cyr.ttf";
+	_ttfFileMap["Zapf Chance Italic"] = "Zapf Chance Italic.Ttf";
+	_ttfFileMap["Arial_tlj"] = "arial_tlj.ttf";
 
-	// TODO: Read from gui.ini
-	_smallFont = FontHolder(this, "Garamond", 12);
-	_bigFont = FontHolder(this, "Florentine Script", 19);
+	// Load the font settings from gui.ini when possible
+	Common::INIFile gui;
+	if (gui.loadFromFile("gui.ini")) {
+		readFontEntry(&gui, _smallFont,        "smallfont", "smallheight");
+		readFontEntry(&gui, _bigFont,          "bigfont",   "bigheight");
+		readFontEntry(&gui, _customFonts[0],   "font0",     "fontsize0");
+		readFontEntry(&gui, _customFonts[1],   "font1",     "fontsize1");
+		readFontEntry(&gui, _customFonts[2],   "font2",     "fontsize2");
+		readFontEntry(&gui, _customFonts[3],   "font3",     "fontsize3");
+		readFontEntry(&gui, _customFonts[4],   "font4",     "fontsize4");
+		readFontEntry(&gui, _customFonts[5],   "font5",     "fontsize5");
+		readFontEntry(&gui, _customFonts[6],   "font6",     "fontsize6");
+		readFontEntry(&gui, _customFonts[7],   "font7",     "fontsize7");
+	} else {
+		warning("Unable to open 'gui.ini' to read the font settings");
+	}
 
-	_customFonts[0] = FontHolder(this, "Folkard", 20);
-	_customFonts[1] = FontHolder(this, "Folkard", 12);
-	_customFonts[2] = FontHolder(this, "Arial", 14);
-	_customFonts[3] = FontHolder(this, "Bradley Hand ITC", 16);
-	_customFonts[4] = FontHolder(this, "Bradley Hand ITC", 20);
-	_customFonts[5] = FontHolder(this, "Bradley Hand ITC", 16);
-	_customFonts[6] = FontHolder(this, "Bradley Hand ITC", 15);
-	_customFonts[7] = FontHolder(this, "Florentine Script", 13);
+	// Default fonts
+	if (!_smallFont._font)      _smallFont      = FontHolder(this, "Garamond", 12);
+	if (!_bigFont._font)        _bigFont        = FontHolder(this, "Florentine Script", 19);
+	if (!_customFonts[0]._font) _customFonts[0] = FontHolder(this, "Folkard", 20);
+	if (!_customFonts[1]._font) _customFonts[1] = FontHolder(this, "Folkard", 12);
+	if (!_customFonts[2]._font) _customFonts[2] = FontHolder(this, "Arial", 14);
+	if (!_customFonts[3]._font) _customFonts[3] = FontHolder(this, "Bradley Hand ITC", 16);
+	if (!_customFonts[4]._font) _customFonts[4] = FontHolder(this, "Bradley Hand ITC", 20);
+	if (!_customFonts[5]._font) _customFonts[5] = FontHolder(this, "Bradley Hand ITC", 16);
+	if (!_customFonts[6]._font) _customFonts[6] = FontHolder(this, "Bradley Hand ITC", 15);
+	if (!_customFonts[7]._font) _customFonts[7] = FontHolder(this, "Florentine Script", 13);
 }
 
-FontProvider::FontHolder::FontHolder(FontProvider *fontProvider, const Common::String &name, uint32 height, uint32 charset) {
+void FontProvider::readFontEntry(const Common::INIFile *gui, FontHolder &holder, const char *nameKey, const char *sizeKey) {
+	Common::String section = "TEXT95";
+	if (gui->hasSection("Western")) {
+		section = "Western";
+	}
+
+	Common::String name, sizeStr;
+	bool gotName = gui->getKey(nameKey, section, name);
+	bool gotSize = gui->getKey(sizeKey, section, sizeStr);
+
+	long size = strtol(sizeStr.c_str(), nullptr, 10);
+
+	if (gotName && gotSize && size > 0) {
+		holder = FontHolder(this, name, size);
+	} else {
+		warning("Unable to read font entry '%s' from 'gui.ini'", nameKey);
+	}
+}
+
+FontProvider::FontHolder::FontHolder(FontProvider *fontProvider, const Common::String &name, uint32 height) {
 	_name = name;
 	_originalHeight = height;
 	_scaledHeight = StarkGfx->scaleHeightOriginalToCurrent(_originalHeight);
-	_charset = charset;
 
 	// Fetch the font file name
 	Common::String ttfFileName = "fonts/" + fontProvider->_ttfFileMap[_name];
