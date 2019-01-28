@@ -556,8 +556,9 @@ double AIScriptSteele::comp_distance(int actorId, float a5, float a6, int a1, fl
 }
 
 bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
-	if (currentGoalNumber == kGoalSteeleDead)
+	if (currentGoalNumber == kGoalSteeleDead) {
 		return false;
+	}
 
 	switch (newGoalNumber) {
 	// Chapter 1
@@ -1398,7 +1399,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case 421:
-		Game_Flag_Reset(482);
+		Game_Flag_Reset(kFlagSteeleSmoking);
 		Delay(2000);
 		Actor_Face_Actor(kActorSteele, kActorMcCoy, 1);
 		Actor_Says(kActorSteele, 360, -1);
@@ -1462,31 +1463,34 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
-		if (_var1 <= 3) {
-			if (_var1) {
-				if (_var1 == 1) {
-					Game_Flag_Set(482);
+		switch (_var1) {
+		case 0:
+			*animation = 74;
+			_animationFrame++;
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(74)) {
+				_animationFrame = 0;
+				if (Game_Flag_Query(kFlagSteeleSmoking)) {
 					_animationState = 41;
 					_var1 = 1;
 					_var2 = 0;
-				} else if (_var1 == 3) {
-					*animation = 88;
-					_animationFrame++;
-					if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(88) - 1)
-						_animationFrame = 0;
-				}
-			} else {
-				*animation = 74;
-				_animationFrame++;
-				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(74)) {
-					_animationFrame = 0;
-					if (Game_Flag_Query(482)) {
-						_animationState = 41;
-						_var1 = 1;
-						_var2 = 0;
-					}
 				}
 			}
+			break;
+
+		case 1:
+			Game_Flag_Set(kFlagSteeleSmoking);
+			_animationState = 41;
+			_var1 = 1;
+			_var2 = 0;
+			break;
+
+		case 3:
+			*animation = 88;
+			_animationFrame++;
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(88)) {
+				_animationFrame = 0;
+			}
+			break;
 		}
 		break;
 
@@ -1499,21 +1503,23 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 	case 2:
 		*animation = 67;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(67))
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
+		}
 		break;
 
 	case 3:
 		*animation = 68;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(68))
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
+		}
 		break;
 
 	case 4:
 		*animation = 59;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(59)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
 		break;
@@ -1521,7 +1527,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 	case 5:
 		*animation = 60;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(60)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
 		break;
@@ -1529,7 +1535,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 	case 6:
 		*animation = 69;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(69)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
 		break;
@@ -1537,7 +1543,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 	case 7:
 		*animation = 70;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(70)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
 		break;
@@ -1545,7 +1551,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 	case 8:
 		*animation = 62;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(62)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
 		break;
@@ -1553,7 +1559,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 	case 9:
 		*animation = 63;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(63)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
 		break;
@@ -1561,7 +1567,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 	case 10:
 		*animation = 83;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(83)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			Actor_Change_Animation_Mode(kActorSteele, kAnimationModeIdle);
 			*animation = 74;
 			_animationFrame = 0;
@@ -1575,7 +1581,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 	case 11:
 		*animation = 84;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(84)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
 		break;
@@ -1583,7 +1589,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 	case 12:
 		*animation = 85;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(85)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
 		break;
@@ -1591,7 +1597,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 	case 13:
 		*animation = 86;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(86)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 0;
 		}
@@ -1599,14 +1605,16 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 
 	case 14:
 		*animation = 77;
-		if (!_animationFrame && _flag) {
+		if (_animationFrame == 0
+		 && _flag
+		) {
 			*animation = 74;
 			_animationFrame = 0;
 			_animationState = 0;
 			_flag = 0;
 		} else {
 			_animationFrame++;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(77) - 1) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 				_animationFrame = 0;
 			}
 		}
@@ -1615,7 +1623,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 	case 15:
 		*animation = 78;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(78) - 1) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 			_animationFrame = 0;
 			_animationState = 14;
 			*animation = 77;
@@ -1625,7 +1633,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 	case 16:
 		*animation = 79;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(79) - 1) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 			_animationFrame = 0;
 			_animationState = 14;
 			*animation = 77;
@@ -1635,7 +1643,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 	case 17:
 		*animation = 80;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(80) - 1) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 			_animationFrame = 0;
 			_animationState = 14;
 			*animation = 77;
@@ -1645,7 +1653,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 	case 18:
 		*animation = 81;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(81) - 1) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 			_animationFrame = 0;
 			_animationState = 14;
 			*animation = 77;
@@ -1655,7 +1663,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 	case 19:
 		*animation = 81;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(81) - 1) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 			_animationFrame = 0;
 			_animationState = 14;
 			*animation = 77;
@@ -1664,7 +1672,9 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 
 	case 20:
 		*animation = 82;
-		if (!_animationFrame && _flag) {
+		if (_animationFrame == 0
+		 && _flag
+		) {
 			_animationFrame = 0;
 			_animationState = 23;
 			*animation = 66;
@@ -1672,7 +1682,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 			_flag = 0;
 		} else {
 			_animationFrame++;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(82) - 1) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 				_animationFrame = 0;
 			}
 		}
@@ -1681,7 +1691,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 	case 21:
 		*animation = 82;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(82) - 1) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 			_animationFrame = 0;
 			_animationState = 20;
 			*animation = 82;
@@ -1691,7 +1701,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 	case 22:
 		*animation = 82;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(82) - 1) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 			_animationFrame = 0;
 			_animationState = 20;
 			*animation = 82;
@@ -1701,7 +1711,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 	case 23:
 		*animation = 54;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(54) - 1) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 			_animationFrame = 0;
 		}
 		break;
@@ -1709,7 +1719,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 	case 24:
 		*animation = 65;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(65) - 1) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 			*animation = 74;
 			_animationFrame = 0;
 			_animationState = 0;
@@ -1719,7 +1729,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 	case 25:
 		*animation = 64;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(64) - 1) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 			_animationFrame = 0;
 			_animationState = 23;
 			*animation = 54;
@@ -1739,10 +1749,11 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 			Sound_Play_Speech_Line(1, snd, 75, 0, 99);
 		}
 
-		if (_animationFrame == 4)
+		if (_animationFrame == 4) {
 			Actor_Combat_AI_Hit_Attempt(1);
+		}
 
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(66) - 1) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 			_animationFrame = 0;
 			_animationState = 23;
 			*animation = 54;
@@ -1759,7 +1770,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 	case 27:
 		*animation = 55;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(55) - 1) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 			_animationFrame = 0;
 			_animationState = 23;
 			*animation = 54;
@@ -1770,7 +1781,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 	case 28:
 		*animation = 56;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(56) - 1) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 			_animationFrame = 0;
 			_animationState = 23;
 			*animation = 54;
@@ -1781,7 +1792,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 	case 29:
 		*animation = 57;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(57) - 1) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 			_animationFrame = 0;
 			_animationState = 23;
 			*animation = 54;
@@ -1792,7 +1803,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 	case 30:
 		*animation = 58;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(58) - 1) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 			_animationFrame = 0;
 			_animationState = 23;
 			*animation = 54;
@@ -1803,7 +1814,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 	case 31:
 		*animation = 71;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(71) - 1) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 			*animation = 74;
 			_animationFrame = 0;
 			_animationState = 0;
@@ -1814,7 +1825,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 	case 32:
 		*animation = 72;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(72) - 1) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 			*animation = 74;
 			_animationFrame = 0;
 			_animationState = 0;
@@ -1824,32 +1835,34 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 
 	case 33:
 		*animation = 61;
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(61) - 1)
+		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(*animation) - 1)
 			_animationFrame++;
 		break;
 
 	case 34:
 		*animation = 73;
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(73) - 1)
+		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(*animation) - 1)
 			_animationFrame++;
 		break;
 
 	case 35:
 		*animation = 61;
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(61) - 1)
+		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(*animation) - 1)
 			_animationFrame++;
 		break;
 
 	case 36:
 		*animation = 88;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(88) - 1) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 37:
-		if (!_animationFrame && _flag) {
+		if (_animationFrame == 0
+		 && _flag
+		) {
 			_animationFrame = 0;
 			_animationState = 0;
 			_var1 = 3;
@@ -1858,7 +1871,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 		} else {
 			*animation = 89;
 			_animationFrame++;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(89) - 1) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 				_animationFrame = 0;
 			}
 		}
@@ -1879,7 +1892,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 	case 39:
 		*animation = 92;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(92) - 1) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 			_animationFrame = 0;
 			_animationState = 36;
 			*animation = 88;
@@ -1889,7 +1902,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 	case 40:
 		*animation = 91;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(91) - 1) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 			*animation = 74;
 			_animationFrame = 0;
 			_animationState = 0;
@@ -1898,54 +1911,56 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 41:
-		if (_var1 > 3) {
-			break;
-		}
-		if (_var1) {
-			if (_var1 == 1) {
-				*animation = 75;
-				if (_var2) {
-					_var2--;
-				} else {
-					if (++_animationFrame >= 6) {
-						if (_animationFrame <= 9) {
-							_var2 = Random_Query(1, 3);
-							break;
-						}
-					}
-					if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(75)) {
-						_animationFrame = 0;
-						if (Game_Flag_Query(482) == 1) {
-							_var1 = 0;
-						} else {
-							_var1 = 3;
-						}
-					}
-				}
-			} else if (_var1 == 3) {
-				*animation = 76;
-				_animationFrame++;
-				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(76) - 1) {
-					_animationState = 0;
-					_animationFrame = 0;
-					_var1 = 0;
-					Game_Flag_Reset(482);
-				}
-			}
-		} else {
+		switch (_var1) {
+		case 0:
 			*animation = 74;
 			_animationFrame++;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(74)) {
 				_animationFrame = 0;
-				if (Game_Flag_Query(482) == 1) {
-					if (Random_Query(1, 3) == 1) {
-						_var1 = 1;
-					}
-				} else {
+				if (!Game_Flag_Query(kFlagSteeleSmoking)) {
 					_var1 = 3;
+				} else if (Random_Query(1, 3) == 1) {
+					_var1 = 1;
 				}
 			}
+			break;
+
+		case 1:
+			*animation = 75;
+			if (_var2 != 0) {
+				_var2--;
+			} else {
+				_animationFrame++;
+				if (_animationFrame >= 6
+				 && _animationFrame <= 9
+				) {
+					_var2 = Random_Query(1, 3);
+					break;
+				}
+
+				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+					_animationFrame = 0;
+					if (Game_Flag_Query(kFlagSteeleSmoking)) {
+						_var1 = 0;
+					} else {
+						_var1 = 3;
+					}
+				}
+			}
+			break;
+
+		case 3:
+			*animation = 76;
+			_animationFrame++;
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
+				_animationState = 0;
+				_animationFrame = 0;
+				_var1 = 0;
+				Game_Flag_Reset(kFlagSteeleSmoking);
+			}
+			break;
 		}
+
 		break;
 
 	default:
@@ -1966,6 +1981,7 @@ bool AIScriptSteele::ChangeAnimationMode(int mode) {
 		} else {
 			_var1 = 0;
 		}
+
 		switch (_animationState) {
 		case 0:
 		case 24:
@@ -2000,7 +2016,7 @@ bool AIScriptSteele::ChangeAnimationMode(int mode) {
 			break;
 		default:
 			_animationFrame = 0;
-			if (Game_Flag_Query(482) == 1) {
+			if (Game_Flag_Query(kFlagSteeleSmoking)) {
 				_animationState = 41;
 				_var1 = 1;
 			} else {
@@ -2191,7 +2207,7 @@ bool AIScriptSteele::ChangeAnimationMode(int mode) {
 		break;
 
 	case 43:
-		Game_Flag_Set(482);
+		Game_Flag_Set(kFlagSteeleSmoking);
 		_animationState = 41;
 		_animationFrame = 0;
 		_var2 = 0;

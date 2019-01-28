@@ -876,6 +876,9 @@ enum Flags {
 	kFlagUG10GateOpen = 474,
 	kFlagMcCoyAtPS03 = 478, // has no use
 	kFlagMcCoyInHawkersCircle = 479,
+	// 480 is never used
+	// 481 is never used
+	kFlagSteeleSmoking = 482,
 	kFlagTB06Introduction = 483,
 	kFlagTB06Photographer = 485,
 	kFlagDNARowAvailable = 486,
