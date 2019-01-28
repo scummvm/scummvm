@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-12-19 07:31+0100\n"
-"PO-Revision-Date: 2019-01-09 20:49+0000\n"
+"PO-Revision-Date: 2019-01-29 12:03+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -1238,7 +1238,7 @@ msgid ""
 "file or directory."
 msgstr ""
 "Verwende zur Auswahl einer Datei oder eines Verzeichnisses den "
-"betriebsystemeigenen Dateimanager anstelle der ScummVM-eigenen Auswahlmenüs"
+"betriebsystemeigenen Dateimanager anstelle der ScummVM-eigenen Auswahlmenüs."
 
 #: gui/options.cpp:1718 gui/updates-dialog.cpp:86
 msgid "Update check:"
@@ -3200,7 +3200,7 @@ msgstr "Licht geht aus in "
 
 #: engines/glk/scott/scott.cpp:130
 msgid " turns. "
-msgstr ""
+msgstr " dreht. "
 
 #: engines/glk/scott/scott.cpp:133
 msgid "Your light is growing dim. "
@@ -3299,12 +3299,11 @@ msgstr "Das Spiel ist nun vorbei.\n"
 
 #: engines/glk/scott/scott.cpp:810
 msgid "You have stored "
-msgstr ""
+msgstr "Du hast aufgenommen "
 
 #: engines/glk/scott/scott.cpp:812
-#, fuzzy
 msgid "I've stored "
-msgstr "Laden"
+msgstr "Ich habe aufgenommen "
 
 #: engines/glk/scott/scott.cpp:814
 msgid " treasures.  On a scale of 0 to 100, that rates "
@@ -3328,7 +3327,7 @@ msgstr "Nichts"
 
 #: engines/glk/scott/scott.cpp:973
 msgid "Give me a direction too."
-msgstr ""
+msgstr "Gib mir auch eine Richtung."
 
 #: engines/glk/scott/scott.cpp:982
 msgid "Dangerous to move in the dark! "
