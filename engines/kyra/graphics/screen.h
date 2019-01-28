@@ -570,7 +570,11 @@ public:
 	static void convertAmigaGfx(uint8 *data, int w, int h, int depth = 5, bool wsa = false, int bytesPerPlane = -1);
 	static void convertAmigaMsc(uint8 *data);
 
-	// RPG specific, this does not belong here
+	// This seems to be a variant of shuffleScreen (which is used in LoK). At the time of coding (and long after that) the
+	// fact that this is a double implementation went unnoticed. My - admittedly limited - efforts to get rid of one of these
+	// implementations were unsatisfactory, though. Each method seems to be optimized to produce accurate results for its
+	// specifc purpose (LoK for shuffleScreen, EoB/LoL for crossFadeRegion). Merging these methods has no priority, since we
+	// can well afford the 20 lines of extra code.
 	void crossFadeRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage);
 
 	uint16 *get16bitPalette() { return _16bitPalette; }
