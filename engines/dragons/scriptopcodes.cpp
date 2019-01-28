@@ -25,6 +25,7 @@
 #include "dragons/dragonini.h"
 #include "dragons/dragonobd.h"
 #include "dragons/scriptopcodes.h"
+#include "dragons/specialopcodes.h"
 #include "dragons/actor.h"
 #include "scriptopcodes.h"
 
@@ -56,11 +57,13 @@ uint32 ScriptOpCall::readUint32() {
 
 ScriptOpcodes::ScriptOpcodes(DragonsEngine *vm, DragonFLG *dragonFLG)
 	: _vm(vm), _dragonFLG(dragonFLG), _data_80071f5c(0) {
+	_specialOpCodes = new SpecialOpcodes(_vm);
 	initOpcodes();
 }
 
 ScriptOpcodes::~ScriptOpcodes() {
 	freeOpcodes();
+	delete _specialOpCodes;
 }
 
 void ScriptOpcodes::execOpcode(ScriptOpCall &scriptOpCall) {
@@ -88,6 +91,7 @@ void ScriptOpcodes::initOpcodes() {
 	OPCODE(7,  opUnk7);
 
 	OPCODE(10, opUnkA);
+	OPCODE(11, opRunSpecialOpCode);
 
 	OPCODE(15, opUnkF);
 
@@ -309,8 +313,79 @@ void ScriptOpcodes::opUnkA(ScriptOpCall &scriptOpCall) {
 	}
 }
 
+void ScriptOpcodes::opRunSpecialOpCode(ScriptOpCall &scriptOpCall) {
+	ARG_SKIP(2);
+	ARG_INT16(specialOpCode);
+
+	if (scriptOpCall._field8 != 0) {
+		return;
+	}
+
+	if (specialOpCode >= 140) {
+		error("Invalid Special OpCode %d", specialOpCode);
+	}
+
+	debug("Special opCode %X", specialOpCode);
+	_specialOpCodes->run(specialOpCode);
+}
+
 void ScriptOpcodes::opUnkF(ScriptOpCall &scriptOpCall) {
-	scriptOpCall._result = 1;
+	ARG_INT16(field0);
+	ARG_INT16(field2);
+	ARG_INT16(field4);
+	ARG_INT16(field6);
+	ARG_INT16(field8);
+	ARG_INT16(fieldA);
+
+	if (scriptOpCall._field8 != 0) {
+		return;
+	}
+
+	int32 s3 = 0;
+	DragonINI *ini = _vm->getINI(field2 - 1);
+
+	if (field6 & 0x8000) {
+		s3 = 0 > (field6 ^ 0xffff) ? 1 : 0;
+	}
+
+	if (field4 != -1) {
+		if (field6 != -1) {
+			if (!(field0 & 0x8000)) {
+				assert(ini->actor);
+				ini->actor->flags |= Dragons::ACTOR_FLAG_800;
+				ini->actor->updateSequence(field6 & 0x7fff);
+			}
+			ini->actor->field_7c = field4 & 0x8000 ? (field4 & 0x7fff) << 0x10 : (field4 & 0x7fff) << 7;
+
+			if (_vm->_dragonINIResource->isFlicker(ini)) {
+
+			}
+			bool isFlicker = _vm->_dragonINIResource->isFlicker(ini);
+			ini->actor->pathfinding_maybe(field8, fieldA, isFlicker ? 0 : 1);
+
+			if(s3 == 0) {
+				while (ini->actor->flags & Dragons::ACTOR_FLAG_10) {
+					//TODO
+					//wait a game tick
+					error("Wait a game tick here");
+				}
+			}
+			ini->x = field8;
+			ini->y = fieldA;
+			ini->actor->flags &= ~Dragons::ACTOR_FLAG_800;
+		}
+	} else {
+		assert(ini->actor);
+		ini->x = field8;
+		ini->actor->x_pos = field8;
+		ini->y = fieldA;
+		ini->actor->y_pos = fieldA;
+
+		if (field4 != field6) {
+			ini->actor->field_7c = field4;
+		}
+		ini->actor->updateSequence(field6 & 0x7fff);
+	}
 }
 
 void ScriptOpcodes::opCode_UnkA_setsProperty(ScriptOpCall &scriptOpCall) {
@@ -380,9 +455,11 @@ void ScriptOpcodes::opCode_UnkA_setsProperty(ScriptOpCall &scriptOpCall) {
 			if (s1 == -1) {
 				if (ini->iptIndex_maybe != -1) {
 					// TODO ipt_img_file_related_3(ini->iptIndex_maybe);
+					error("TODO ipt_img_file_related_3(ini->iptIndex_maybe);");
 				}
 			} else {
 				// TODO ipt_img_file_related_2(s1);
+				error("TODO ipt_img_file_related_2(s1);");
 			}
 		}
 	}
@@ -401,6 +478,7 @@ void ScriptOpcodes::opCode_UnkA_setsProperty(ScriptOpCall &scriptOpCall) {
 				} else {
 					if (fieldB == 3) {
 						//TODO s2 = sub_80023830(s1);
+						error("TODO s2 = sub_80023830(s1);");
 					}
 				}
 			}
@@ -481,9 +559,11 @@ void ScriptOpcodes::opCode_Unk7(ScriptOpCall &scriptOpCall) {
 		} else {
 			if (ini->sceneId == currentScene && ini->iptIndex_maybe != -1) {
 				//TODO ipt_img_file_related_3(ini->iptIndex_maybe);
+				error("//TODO ipt_img_file_related_3(ini->iptIndex_maybe);");
 			}
 			if (sceneId == currentScene && ini->iptIndex_maybe != -1) {
 				// TODO ipt_img_file_related_2(ini->iptIndex_maybe);
+				error("// TODO ipt_img_file_related_2(ini->iptIndex_maybe);");
 			}
 		}
 
@@ -497,6 +577,7 @@ void ScriptOpcodes::opCode_Unk7(ScriptOpCall &scriptOpCall) {
 	}
 	ini->sceneId = sceneId;
 }
+
 
 
 } // End of namespace Dragons

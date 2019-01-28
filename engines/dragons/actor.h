@@ -103,7 +103,7 @@ public:
 	uint16 field_76;
 	uint16 field_78;
 	uint16 field_7a;
-	uint32 field_7c;
+	int32 field_7c;
 	uint16 field_80;
 	uint16 frame_vram_x;
 	uint16 frame_vram_y;
@@ -120,6 +120,7 @@ public:
 	byte *getSeqIpAtOffset(uint32 offset);
 	void loadFrame(uint16 frameOffset);
 	void reset_maybe();
+	void pathfinding_maybe(int16 x, int16 y, int16 unk);
 
 };
 

@@ -64,7 +64,8 @@ enum Flags {
 	ENGINE_FLAG_80 = 0x80,
 
 	ENGINE_FLAG_80000 =   0x80000,
-	ENGINE_FLAG_100000 = 0x100000
+	ENGINE_FLAG_100000 = 0x100000,
+	ENGINE_FLAG_80000000 = 80000000
 };
 
 enum UnkFlags {
@@ -96,13 +97,13 @@ class DragonsEngine : public Engine {
 public:
 	DragonOBD *_dragonOBD;
 	ActorManager *_actorManager;
+	DragonINIResource *_dragonINIResource;
 private:
 	Screen *_screen;
 	BigfileArchive *_bigfileArchive;
 	DragonFLG *_dragonFLG;
 	DragonRMS *_dragonRMS;
 	DragonVAR *_dragonVAR;
-	DragonINIResource *_dragonINIResource;
 	BackgroundResourceLoader *_backgroundResourceLoader;
 	Scene *_scene;
 	SequenceOpcodes *_sequenceOpcodes;
@@ -111,6 +112,9 @@ private:
 	uint32 _flags;
 	uint32 _unkFlags1;
 	Common::Point _cursorPosition;
+	uint16 _sceneId1;
+	uint32 _counter;
+	uint32 bit_flags_8006fbd8;
 
 public:
 	DragonsEngine(OSystem *syst);

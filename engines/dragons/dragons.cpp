@@ -103,6 +103,8 @@ Common::Error DragonsEngine::run() {
 	cursor->updateSequence(0);
 	cursor->flags |= (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_80 | Dragons::ACTOR_FLAG_100 | Dragons::ACTOR_FLAG_200);
 
+	_dragonINIResource->getFlickerRecord()->actor = cursor; //TODO is this correct?
+
 	Actor *inventory = _actorManager->loadActor(1, 1); //Load inventory
 	inventory->x_pos = 2;
 	inventory->y_pos = 0;
@@ -112,7 +114,8 @@ Common::Error DragonsEngine::run() {
 	inventory->updateSequence(0);
 	inventory->flags |= (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_80 | Dragons::ACTOR_FLAG_100 | Dragons::ACTOR_FLAG_200);
 
-
+	_dragonINIResource->getFlickerRecord()->sceneId = 0x12; //TODO
+	_sceneId1 = 0x12;
 	_scene->loadScene(0x12, 0x1e);
 
 	_scene->draw();
@@ -134,9 +137,42 @@ Common::Error DragonsEngine::run() {
 }
 
 void DragonsEngine::gameLoop() {
+	_counter = 0;
+	bit_flags_8006fbd8 = 0;
 	while (!shouldQuit()) {
 		updateHandler();
 		updateEvents();
+
+		if (getCurrentSceneId() != 2) {
+			_sceneId1 = getCurrentSceneId();
+		}
+
+		_counter++;
+		DragonINI *flickerIni = _dragonINIResource->getFlickerRecord();
+		if (_counter >= 1200 && flickerIni->actor->resourceID == 0xe) { // 0xe == flicker.act
+			Actor *actor = flickerIni->actor;
+			actor->_sequenceID2 = 2;
+			flickerIni->field_20_actor_field_14 = 2;
+
+			actor->updateSequence(getINI(0xc2)->sceneId == 1 ? 0x30 : 2);
+			_counter = 0;
+			setFlags(Dragons::ENGINE_FLAG_80000000);
+		}
+
+		if (_flags & Dragons::ENGINE_FLAG_80000000) {
+			if (flickerIni->actor->flags & Dragons::ACTOR_FLAG_4) {
+				_counter = 0;
+				clearFlags(Dragons::ENGINE_FLAG_80000000);
+			}
+		}
+
+		if (bit_flags_8006fbd8 == 0) {
+			setFlags(Dragons::ENGINE_FLAG_8);
+		}
+
+		if (flickerIni->sceneId == getCurrentSceneId()) {
+			debug("get here");
+		}
 		_scene->draw();
 		_screen->updateScreen();
 		wait();
@@ -246,7 +282,7 @@ void DragonsEngine::wait() {
 
 void DragonsEngine::updateActorSequences() {
 	if (!(_flags & Dragons::ENGINE_FLAG_4)) {
-//TODO 		return;
+		return;
 	}
 
 	//TODO ResetRCnt(0xf2000001);
