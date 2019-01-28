@@ -50,7 +50,7 @@ void AIScriptClovis::Initialize() {
 }
 
 bool AIScriptClovis::Update() {
-	if (Actor_Query_Goal_Number(kActorClovis) == kGoalClovisBB11PrepareToTalkToMcCoy) {
+	if (Actor_Query_Goal_Number(kActorClovis) == kGoalClovisBB11PrepareTalkToMcCoy) {
 		Actor_Set_Goal_Number(kActorClovis, kGoalClovisBB11TalkToMcCoy);
 		return true;
 	}
@@ -449,7 +449,7 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case 517:
 		if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_In_Set(kActorLucy, kSetKP07)) {
-			Actor_Set_Goal_Number(kActorLucy, 599);
+			Actor_Set_Goal_Number(kActorLucy, kGoalLucyDead);
 			Global_Variable_Decrement(kVariableReplicants, 1);
 		}
 		if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_In_Set(kActorLuther, kSetKP07)) {
@@ -616,7 +616,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 			*animation = 238;
 			if (Actor_Query_Goal_Number(kActorClovis) == kGoalClovisBB11TalkWithSadik) {
-				Actor_Set_Goal_Number(kActorClovis, kGoalClovisBB11PrepareToTalkToMcCoy);
+				Actor_Set_Goal_Number(kActorClovis, kGoalClovisBB11PrepareTalkToMcCoy);
 			}
 		}
 		break;

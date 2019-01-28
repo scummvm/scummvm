@@ -29,35 +29,48 @@ void SceneScriptKP07::InitializeScene() {
 	Game_Flag_Reset(578);
 	Scene_Exit_Add_2D_Exit(0, 315, 185, 381, 285, 0);
 	if (Game_Flag_Query(653)) {
-		if (Game_Flag_Query(kFlagDektoraIsReplicant) && Actor_Query_Goal_Number(kActorDektora) < 599) {
+		if (Game_Flag_Query(kFlagDektoraIsReplicant)
+		 && Actor_Query_Goal_Number(kActorDektora) < 599
+		) {
 			Actor_Set_Targetable(kActorDektora, true);
 			Global_Variable_Increment(kVariableReplicants, 1);
 			Actor_Put_In_Set(kActorDektora, kSetKP07);
 			Actor_Set_At_XYZ(kActorDektora, -52.0f, -41.52f, -5.0f, 289);
 		}
+
 		if (Actor_Query_Goal_Number(kActorZuben) < kGoalZubenDead) {
 			Global_Variable_Increment(kVariableReplicants, 1);
 			Actor_Set_Targetable(kActorZuben, true);
 			Actor_Put_In_Set(kActorZuben, kSetKP07);
 			Actor_Set_At_XYZ(kActorZuben, -26.0f, -41.52f, -135.0f, 0);
 		}
-		if (Game_Flag_Query(kFlagIzoIsReplicant) && Actor_Query_Goal_Number(kActorIzo) < 599) {
+
+		if (Game_Flag_Query(kFlagIzoIsReplicant)
+		 && Actor_Query_Goal_Number(kActorIzo) < 599
+		) {
 			Global_Variable_Increment(kVariableReplicants, 1);
 			Actor_Set_Targetable(kActorIzo, true);
 			Actor_Put_In_Set(kActorIzo, kSetKP07);
 			Actor_Set_At_XYZ(kActorIzo, -38.0f, -41.52f, -175.0f, 500);
 		}
-		if (Game_Flag_Query(kFlagGordoIsReplicant) && Actor_Query_Goal_Number(kActorGordo) < 599) {
+
+		if (Game_Flag_Query(kFlagGordoIsReplicant)
+		 && Actor_Query_Goal_Number(kActorGordo) < kGoalGordoDead
+		) {
 			Global_Variable_Increment(kVariableReplicants, 1);
 			Actor_Set_Targetable(kActorGordo, true);
 			Actor_Put_In_Set(kActorGordo, kSetKP07);
 			Actor_Set_At_XYZ(kActorGordo, 61.0f, -41.52f, -3.0f, 921);
 		}
-		if (Game_Flag_Query(kFlagLucyIsReplicant) && Actor_Query_Goal_Number(kActorLucy) < 599) {
+
+		if (Game_Flag_Query(kFlagLucyIsReplicant)
+		 && Actor_Query_Goal_Number(kActorLucy) < kGoalLucyDead
+		) {
 			Global_Variable_Increment(kVariableReplicants, 1);
 			Actor_Put_In_Set(kActorLucy, kSetKP07);
 			Actor_Set_At_XYZ(kActorLucy, 78.0f, -41.52f, -119.0f, 659);
 		}
+
 		if (Actor_Query_Goal_Number(kActorLuther) < 599) {
 			Global_Variable_Increment(kVariableReplicants, 1);
 			Actor_Put_In_Set(kActorLuther, kSetKP07);

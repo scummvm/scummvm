@@ -910,7 +910,6 @@ enum Flags {
 	kFlagNR02toNR01 = 533,
 	kFlagNR03toNR01 = 534,
 	kFlagNR01toNR03 = 535,
-
 	kFlagCT09Entered = 538,
 	kFlagCT09LeonInterrupted = 539,
 	kFlagCT09DeskClerkTalk = 540,
@@ -920,6 +919,7 @@ enum Flags {
 	kFlagDR06MannequinHeadOpen = 548,
 	kFlagMcCoyTiedDown = 550,
 	kFlagDR01toCT11 = 558,
+	kFlagNR02GordoLeaveLighter = 561,
 	kFlagHF05CrazyLegsTalk1 = 562,
 	kFlagHF05CrazyLegsTalk2 = 563,
 	kFlagHF03toHF04 = 566, // is never checked
@@ -927,15 +927,20 @@ enum Flags {
 	kFlagHF04DoorsClosed = 584,
 	kFlagHF04CloseDoors = 585,
 	kFlagHF04OpenDoors = 586,
+	kFlagGordoRanWay = 592,
 	kFlagLucyRanAway = 593,
+	kFlagNR02GordoJumpDown = 594,
 	kFlagKIAPrivacyAddonIntro = 599,
+	kFlagSteeleAimingAtGordo = 603,
 	kFlagTB07toTB02 = 608,
 	kFlagTB07RachaelTalk = 612,
 	kFlagHF03LucyTalk = 613,
 	kFlagMcCoyCapturedByHolloway = 616,
 	kFlagSpinnerMissing = 617,
 	kFlagTB07TyrellMeeting = 625,
+	kFlagSteeleKnowsBulletBobIsDead = 643,
 	kFlagCT11DogWrapperTaken = 645,
+	kFlagSteeleDead = 646, // is never checked
 	kFlagMA04McCoySleeping = 647,
 	kFlagMA04PhoneMessageFromClovis = 649,
 	kFlagMA04PhoneMessageFromLucy = 650,
@@ -956,7 +961,7 @@ enum Flags {
 	kFlagPS05TV4 = 692,
 	kFlagUG03DeadHomeless = 693,
 	kFlagUG14DeadHomeless = 694,
-	kFlagRC04Locked = 702,
+	kFlagBulletBobDead = 702,
 	kFlagTB06PhotographTalk1 = 707,
 	kFlagUG02AmmoTaken = 708,
 	kFlagRC51Discovered = 709,
@@ -993,7 +998,8 @@ enum Variables {
 	kVariableWalkLoopActor = 37,
 	kVariableWalkLoopRun = 38,
 	kVariableDR06MannequinHeadOpened = 39,
-	kVariableBehavior = 40, // 1 dektora is replicant, 2 - ?, 3 - get caught by Holloway & Baker at HF03
+	kVariableHollowayArrest = 40, // 1 dektora, 2 gordo, 3 lucy
+	kVariableGordosJoke = 41,
 	kVariableMcCoyDrinks = 42, // is never checked
 	kVariableAffectionTowards = 45, // 0 none, 1 steele, 2 dektora, 3 lucy
 	kVariableGunPulledInFrontOfSebastian = 46,
@@ -1058,9 +1064,10 @@ enum AnimationModes {
 	kAnimationModeCombatAttack = 6,
 	kAnimationModeCombatWalk = 7,
 	kAnimationModeCombatRun = 8,
-	// 12 - 17 various talk modes
+	// 12 - 19 various talk modes
 	kAnimationModeHit = 21,
 	kAnimationModeCombatHit = 22,
+	// 23 - give / take away
 	kAnimationModeSpinnerGetIn = 41,
 	kAnimationModeSpinnerGetOut = 42,
 	// 43 - taking photo/using cellphone
@@ -1394,6 +1401,8 @@ enum GameItems {
 	kItemDogCollar = 84,
 	kItemRagDoll = 85,
 	kItemRadiationGoogles = 88,
+	kItemGordosLighter1 = 89,
+	kItemGordosLighter2 = 90,
 	kItemToyDog = 98,
 	kItemShellCasingA = 100,
 	kItemShellCasingB = 101,
@@ -1537,8 +1546,11 @@ enum GoalSteele {
 	kGoalSteeleLeaveRC03 = 130,
 	kGoalSteeleWalkAroundRestart = 190,
 	// chapter 3
+	kGoalSteeleStartChapter3 = 205,
 	kGoalSteeleNR01WaitForMcCoy = 230,
-	kGoalSteeleHF03ApproachLucy = 233,
+	kGoalSteeleNR01GoToNR08 = 231,
+	kGoalSteeleNR01GoToNR02 = 232,
+	kGoalSteeleNR01GoToHF03 = 233,
 	kGoalSteeleHF03McCoyChasingLucy = 234,
 	kGoalSteeleHF02ConfrontLucy = 240,
 	kGoalSteeleHF02ShootLucy = 241,
@@ -1547,9 +1559,22 @@ enum GoalSteele {
 	kGoalSteeleHF02LucyShotByMcCoy = 244,
 	kGoalSteeleHF02LucyLostByMcCoy = 245,
 	kGoalSteeleGoToMcCoysSpinner = 246,
+	kGoalSteeleNR01ConfrontGordo = 250,
+	kGoalSteeleNR01TalkToGordo = 251,
+	kGoalSteeleNR01ShootGordo = 252,
+	kGoalSteeleNR01ShootMcCoy = 255,
+	kGoalSteeleNR01McCoyShotGordo = 258,
+	kGoalSteeleNR01McCoyShotGun = 260,
+	kGoalSteeleNR01PrepareTalkAboutShotGun = 261,
+	kGoalSteeleNR01TalkAboutShotGun = 262,
+	kGoalSteeleNR01ShotByMcCoy = 270,
+	kGoalSteeleNR01PrepareShotByMcCoy = 271,
 	kGoalSteeleTalkAboutMissingSpinner = 280,
+	kGoalSteeleImmediatelyStartChapter4 = 285,
 	kGoalSteeleNR01StartChapter4 = 290,
-	kGoalSteeleHF01StartChapter4 = 291
+	kGoalSteeleHF01StartChapter4 = 291,
+
+	kGoalSteeleDead = 599
 };
 
 enum GoalDektora {
@@ -1563,15 +1588,15 @@ enum GoalDektora {
 enum GoalGordo {
 	// chapter 1
 	kGoalGordoDefault = 0,
-	kGoalGordoLeaveCT01 = 1,
-	kGoalGordoLeftCT01 = 2,
-	kGoalGordoWalkThroughCT05 = 3,
-	kGoalGordoLeaveCT05 = 4,
-	kGoalGordoLeftCT05 = 5,
-	kGoalGordoGetUpCT01 = 90,
-	kGoalGordoWalkOutFromCT01 = 91,
-	kGoalGordoBidFarewellToHowieLee = 92,
-	kGoalGordoWalkToHowieLee = 93,
+	kGoalGordoCT01Leave = 1,
+	kGoalGordoCT01Left = 2,
+	kGoalGordoCT05WalkThrough = 3,
+	kGoalGordoCT05Leave = 4,
+	kGoalGordoCT05Left = 5,
+	kGoalGordoCT01StandUp = 90,
+	kGoalGordoCT01WalkAway = 91,
+	kGoalGordoCT01BidFarewellToHowieLee = 92,
+	kGoalGordoCT01WalkToHowieLee = 93,
 	// chapter 2
 	kGoalGordoWalkAround = 100,
 	kGoalGordoGoToDNARow = 101,
@@ -1580,9 +1605,35 @@ enum GoalGordo {
 	kGoalGordoGoToFreeSlotAH = 104,
 	// chapter 3
 	kGoalGordoStartChapter3 = 200,
-	kGoalGordoWaitAtNR02 = 201,
-	kGoalGordoTalkToMcCoyAtNR02 = 215
+	kGoalGordoNR02WaitAtBar = 201,
+	kGoalGordoNR02GoToPodium = 202,
+	kGoalGordoNR02WaitForMcCoy = 204,
+	kGoalGordoNR02NextAct = 205,
+	kGoalGordoNR02TellJoke1 = 206,
+	kGoalGordoNR02TellJoke2 = 207,
+	kGoalGordoNR02TellJoke3 = 208,
+	kGoalGordoNR02TalkAboutMcCoy = 210,
+	kGoalGordoNR02WaitAtPodium = 211,
+	kGoalGordoNR02TalkToMcCoy = 215,
+	kGoalGordoNR02RunAway1 = 220,
+	kGoalGordoNR02RunAway2 = 221,
+	kGoalGordoNR02RunAway3 = 222,
+	kGoalGordoGoToFreeSlotGAG = 225,
+	kGoalGordoNR01WaitAndAttack = 230,
+	kGoalGordoNR01Attack = 231,
+	kGoalGordoNR01WaitAndGiveUp = 240,
+	kGoalGordoNR01GiveUp = 241,
+	kGoalGordoNR01TalkToMcCoy = 242,
+	kGoalGordoNR01RunAway = 243,
+	kGoalGordoNR01WaitAndTakeHostage = 250,
+	kGoalGordoNR01ReleaseHostage = 251,
+	kGoalGordoNR01HostageShot = 254,
+	kGoalGordoNR01HostageDie = 255,
+	kGoalGordoNR01Arrested = 260,
+	kGoalGordoNR01RanAway = 280,
+	kGoalGordoNR01Die = 299,
 
+	kGoalGordoDead = 599
 };
 
 enum GoalGuzza {
@@ -1599,7 +1650,7 @@ enum GoalClovis {
 	kGoalClovisBB11WalkToMcCoy = 101,
 	kGoalClovisBB11StopSadik = 102,
 	kGoalClovisBB11TalkWithSadik = 103,
-	kGoalClovisBB11PrepareToTalkToMcCoy = 104, // bug? this is not triggered when player skips dialogue
+	kGoalClovisBB11PrepareTalkToMcCoy = 104, // bug? this is not triggered when player skips dialogue
 	kGoalClovisBB11TalkToMcCoy = 105 // ends Chapter 2
 };
 

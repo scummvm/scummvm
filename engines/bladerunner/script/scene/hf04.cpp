@@ -65,7 +65,7 @@ void SceneScriptHF04::SceneLoaded() {
 
 	if (Actor_Query_Goal_Number(kActorLucy) == kGoalLucyRunToHF042) {
 		if (Actor_Clue_Query(kActorLucy, kClueMcCoyHelpedLucy)
-		 && Global_Variable_Query(kVariableBehavior) != 3
+		 && Global_Variable_Query(kVariableHollowayArrest) != 3
 		) {
 			Game_Flag_Set(kFlagLucyRanAway);
 		} else {

@@ -425,9 +425,6 @@ bool AIScriptBulletBob::UpdateAnimation(int *animation, int *frame) {
 		*animation = 510;
 		_animationFrame = Slice_Animation_Query_Number_Of_Frames(510) - 1;
 		break;
-
-	default:
-		break;
 	}
 	*frame = _animationFrame;
 

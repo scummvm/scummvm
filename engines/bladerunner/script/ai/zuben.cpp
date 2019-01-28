@@ -103,7 +103,7 @@ bool AIScriptZuben::Update() {
 		Game_Flag_Set(kFlagCT05WarehouseOpen);
 		Actor_Set_Targetable(kActorZuben, true);
 		if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoDefault) {
-			Actor_Set_Goal_Number(kActorGordo, kGoalGordoLeaveCT01);
+			Actor_Set_Goal_Number(kActorGordo, kGoalGordoCT01Leave);
 		}
 		return true;
 	}
@@ -1175,7 +1175,7 @@ void AIScriptZuben::FledCombat() {
 void AIScriptZuben::dialogue() {
 	Dialogue_Menu_Clear_List();
 	DM_Add_To_List_Never_Repeat_Once_Selected(1490, 5, 5, -1);
-	if (Actor_Query_Goal_Number(kActorLucy) != 599) {
+	if (Actor_Query_Goal_Number(kActorLucy) != kGoalLucyDead) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1500, 5, 5, 5);
 	}
 	DM_Add_To_List_Never_Repeat_Once_Selected(1510, -1, 5, 5);

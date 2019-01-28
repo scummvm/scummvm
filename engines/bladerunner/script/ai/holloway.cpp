@@ -50,7 +50,7 @@ bool AIScriptHolloway::Update() {
 void AIScriptHolloway::TimerExpired(int timer) {
 	if (timer == 0) {
 		AI_Countdown_Timer_Reset(kActorHolloway, 0);
-		if (Global_Variable_Query(kVariableBehavior) == 1) {
+		if (Global_Variable_Query(kVariableHollowayArrest) == 1) {
 			Player_Gains_Control();
 		}
 		Actor_Set_Goal_Number(kActorHolloway, kGoalHollowayTalkToMcCoy);
@@ -176,7 +176,7 @@ bool AIScriptHolloway::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 		Outtake_Play(kOuttakeInterrogation, 0, 1);
 
-		if (Global_Variable_Query(kVariableBehavior) == 1) {
+		if (Global_Variable_Query(kVariableHollowayArrest) == 1) {
 			Actor_Set_Goal_Number(kActorDektora, 245);
 			Actor_Change_Animation_Mode(kActorDektora, kAnimationModeIdle);
 		}
@@ -187,7 +187,7 @@ bool AIScriptHolloway::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Put_In_Set(kActorHolloway, kSetFreeSlotI);
 		Actor_Set_At_Waypoint(kActorHolloway, 41, 0);
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
-		if (Global_Variable_Query(kVariableBehavior) != 1) {
+		if (Global_Variable_Query(kVariableHollowayArrest) != 1) {
 			Player_Gains_Control();
 		}
 

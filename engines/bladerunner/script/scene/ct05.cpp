@@ -233,10 +233,10 @@ void SceneScriptCT05::PlayerWalkedIn() {
 		Loop_Actor_Travel_Stairs(kActorMcCoy, 10, false, kAnimationModeIdle);
 		Game_Flag_Reset(kFlagCT06toCT05);
 		Footstep_Sound_Override_Off();
-		if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoLeftCT01
+		if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoCT01Left
 		 && Game_Flag_Query(kFlagCT06ZubenPhoto)
 		) {
-			Actor_Set_Goal_Number(kActorGordo, kGoalGordoWalkThroughCT05);
+			Actor_Set_Goal_Number(kActorGordo, kGoalGordoCT05WalkThrough);
 		}
 	}
 }

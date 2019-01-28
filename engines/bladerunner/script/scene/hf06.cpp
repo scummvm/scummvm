@@ -77,7 +77,7 @@ bool SceneScriptHF06::ClickedOn3DObject(const char *objectName, bool a2) {
 				Actor_Says(kActorDektora, 210, 12);
 				Actor_Says(kActorMcCoy, 2125, 12);
 			} else if (Actor_Query_In_Set(kActorLucy, kSetHF06)
-			        && Actor_Query_Goal_Number(kActorLucy) != 599
+			        && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyDead
 			) {
 				Actor_Face_Actor(kActorLucy, kActorMcCoy, true);
 				Actor_Says(kActorLucy, 490, 18);
@@ -111,7 +111,7 @@ bool SceneScriptHF06::ClickedOn3DObject(const char *objectName, bool a2) {
 
 bool SceneScriptHF06::ClickedOnActor(int actorId) {
 	if (actorId == kActorLucy
-	 && Actor_Query_Goal_Number(kActorLucy) != 599
+	 && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyDead
 	) {
 		Actor_Face_Actor(kActorLucy, kActorMcCoy, true);
 		Actor_Face_Actor(kActorMcCoy, kActorLucy, true);
@@ -175,7 +175,7 @@ void SceneScriptHF06::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 		) {
 			otherActorId = kActorDektora;
 		} else if (Actor_Query_In_Set(kActorLucy, kSetHF06)
-		        && Actor_Query_Goal_Number(kActorLucy) == 599
+		        && Actor_Query_Goal_Number(kActorLucy) == kGoalLucyDead
 		) {
 			otherActorId = kActorLucy;
 		}
@@ -211,7 +211,7 @@ void SceneScriptHF06::PlayerWalkedIn() {
 	if (Game_Flag_Query(662)) {
 		int actorId = -1;
 		if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy
-		 && Actor_Query_Goal_Number(kActorLucy) != 599
+		 && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyDead
 		) {
 			actorId = kActorLucy;
 		} else if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsDektora

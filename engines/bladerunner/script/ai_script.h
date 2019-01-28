@@ -137,7 +137,7 @@ DECLARE_SCRIPT(Gordo)
 	int _frameMax;
 	int _state;
 
-	void McCoyTalkWithGordo();
+	void talkToMcCoyInCity();
 	void talkToMcCoyAtNR02();
 	void dialogue2();
 	void dialogue1();

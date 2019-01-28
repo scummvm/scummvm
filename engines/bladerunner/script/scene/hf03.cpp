@@ -78,7 +78,7 @@ void SceneScriptHF03::dialogueWithLucy() {
 	switch (answer) {
 	case 840: // VOIGT-KAMPFF
 		Actor_Says(kActorMcCoy, 1630, 15);
-		if (Global_Variable_Query(kVariableBehavior) == 3) {
+		if (Global_Variable_Query(kVariableHollowayArrest) == 3) {
 			Actor_Set_Goal_Number(kActorLucy, kGoalLucyRunAwayWithHelp1);
 		} else if (Game_Flag_Query(kFlagLucyIsReplicant)) {
 			Actor_Set_Goal_Number(kActorLucy, kGoalLucyRunToHF041);
@@ -96,7 +96,7 @@ void SceneScriptHF03::dialogueWithLucy() {
 
 	case 860: // CRYSTAL
 		Actor_Says(kActorMcCoy, 1640, 12);
-		if (Global_Variable_Query(kVariableBehavior) == 3) {
+		if (Global_Variable_Query(kVariableHollowayArrest) == 3) {
 			Actor_Set_Goal_Number(kActorLucy, kGoalLucyRunAwayWithHelp1);
 		} else {
 			Actor_Says(kActorLucy, 210, 13);

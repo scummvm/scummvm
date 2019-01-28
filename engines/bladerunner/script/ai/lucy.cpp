@@ -127,7 +127,7 @@ void AIScriptLucy::CompletedMovementTrack() {
 	switch (Actor_Query_Goal_Number(kActorLucy)) {
 	case kGoalLucyGoToHF03:
 		if (Game_Flag_Query(kFlagMcCoyCapturedByHolloway)
-		 && Global_Variable_Query(kVariableBehavior) == 3
+		 && Global_Variable_Query(kVariableHollowayArrest) == 3
 		) {
 			Actor_Set_Goal_Number(kActorLucy, kGoalLucyReturnToHF03);
 			return; //true;
@@ -151,7 +151,7 @@ void AIScriptLucy::CompletedMovementTrack() {
 
 	case kGoalLucyRunToHF042:
 		if (Actor_Clue_Query(kActorLucy, kClueMcCoyHelpedLucy)
-		 && Global_Variable_Query(kVariableBehavior) != 3
+		 && Global_Variable_Query(kVariableHollowayArrest) != 3
 		) {
 			Game_Flag_Set(kFlagLucyRanAway);
 		} else {
@@ -192,7 +192,7 @@ void AIScriptLucy::CompletedMovementTrack() {
 		Actor_Set_At_Waypoint(kActorLucy, 33, 0);
 		Actor_Set_Health(kActorLucy, 30, 30);
 
-		if (Global_Variable_Query(kVariableBehavior) == 3) {
+		if (Global_Variable_Query(kVariableHollowayArrest) == 3) {
 			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleHF02ConfrontLucy);
 		}
 		break;
@@ -280,9 +280,9 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	switch (newGoalNumber) {
 	case kGoalLucyMoveAround:
-		if (Global_Variable_Query(kVariableBehavior) == 3) {
+		if (Global_Variable_Query(kVariableHollowayArrest) == 3) {
 			if (Game_Flag_Query(591)
-			 && Game_Flag_Query(592)
+			 && Game_Flag_Query(kFlagGordoRanWay)
 			 && Player_Query_Current_Scene() != kSceneHF03
 			) {
 				Actor_Set_Goal_Number(kActorLucy, kGoalLucyGoToHF03);
@@ -426,7 +426,7 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Says(kActorLucy, 370, 14);
 		Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF04WalkAway);
 
-		if (Global_Variable_Query(kVariableBehavior) == 3) {
+		if (Global_Variable_Query(kVariableHollowayArrest) == 3) {
 			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleHF02LucyRanAway);
 			Game_Flag_Set(kFlagLucyRanAway);
 		}
@@ -469,7 +469,7 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		break;
 
 	case 240: // not used anywhere
-		if (Global_Variable_Query(kVariableBehavior) == 3) {
+		if (Global_Variable_Query(kVariableHollowayArrest) == 3) {
 			Actor_Set_Goal_Number(kActorLucy, kGoalLucyDead);
 			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleHF02ConfrontLucy);
 		} else {

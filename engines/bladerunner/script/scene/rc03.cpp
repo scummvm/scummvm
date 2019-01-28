@@ -143,7 +143,7 @@ bool SceneScriptRC03::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 298.0f, -4.0f, 405.0f, 0, true, false, 0)) {
 			if (Game_Flag_Query(kFlagRC04McCoyShotBob)) {
-				Game_Flag_Set(kFlagRC04Locked);
+				Game_Flag_Set(kFlagBulletBobDead);
 			}
 			Game_Flag_Set(kFlagRC03toRC01);
 			Set_Enter(kSetRC01, kSceneRC01);
@@ -154,7 +154,7 @@ bool SceneScriptRC03::ClickedOnExit(int exitId) {
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -469.0f, -4.0f, 279.0f, 0, true, false, 0)) {
 			if (Game_Flag_Query(kFlagRC04McCoyShotBob)) {
-				Game_Flag_Set(kFlagRC04Locked);
+				Game_Flag_Set(kFlagBulletBobDead);
 			}
 			Game_Flag_Set(kFlagRC03toAR02);
 			Game_Flag_Reset(kFlagMcCoyInRunciters);
@@ -169,7 +169,7 @@ bool SceneScriptRC03::ClickedOnExit(int exitId) {
 			Game_Flag_Reset(kFlagMcCoyInRunciters);
 			Game_Flag_Set(kFlagMcCoyInUnderground);
 			if (Game_Flag_Query(kFlagRC04McCoyShotBob)) {
-				Game_Flag_Set(kFlagRC04Locked);
+				Game_Flag_Set(kFlagBulletBobDead);
 			}
 			Set_Enter(kSetUG01, kSceneUG01);
 			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraStartWalkingAround);
@@ -182,7 +182,7 @@ bool SceneScriptRC03::ClickedOnExit(int exitId) {
 			Game_Flag_Reset(kFlagMcCoyInRunciters);
 			Game_Flag_Set(kFlagMcCoyInHawkersCircle);
 			if (Game_Flag_Query(kFlagRC04McCoyShotBob)) {
-				Game_Flag_Set(kFlagRC04Locked);
+				Game_Flag_Set(kFlagBulletBobDead);
 			}
 			Set_Enter(kSetHC01_HC02_HC03_HC04, kSceneHC04);
 			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraStartWalkingAround);
@@ -193,7 +193,7 @@ bool SceneScriptRC03::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -22.0f, 1.0f, -63.0f, 0, true, false, 0)) {
 			if (Global_Variable_Query(kVariableChapter) == 3
 			 || Global_Variable_Query(kVariableChapter) == 5
-			 || Game_Flag_Query(kFlagRC04Locked)
+			 || Game_Flag_Query(kFlagBulletBobDead)
 			) {
 				Actor_Says(kActorMcCoy, 8522, 14);
 			} else {

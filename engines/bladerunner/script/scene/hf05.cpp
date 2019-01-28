@@ -384,7 +384,7 @@ void SceneScriptHF05::dialogueWithCrazylegs1() {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1200, 5, 5, 3); // WOMAN'S PHOTO
 	}
 	if (Actor_Clue_Query(kActorMcCoy, kClueLucy)
-	 && Actor_Query_Goal_Number(kActorLucy) != 599
+	 && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyDead
 	) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1210, 4, 6, 2); // LUCY'S PHOTO
 	}
@@ -565,7 +565,7 @@ int SceneScriptHF05::getAffectionTowardsActor() {
 		return kActorDektora;
 	}
 	if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy
-	 && Actor_Query_Goal_Number(kActorLucy) != 599
+	 && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyDead
 	) {
 		return kActorLucy;
 	}
@@ -750,7 +750,7 @@ int SceneScriptHF05::sub_4048C0() {
 	}
 
 	if (Actor_Query_In_Set(kActorLucy, kSetHF05)
-	 && Actor_Query_Goal_Number(kActorLucy) != 599
+	 && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyDead
 	) {
 		return kActorLucy;
 	}

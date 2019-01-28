@@ -105,29 +105,29 @@ bool SceneScriptNR02::ClickedOn3DObject(const char *objectName, bool a2) {
 
 bool SceneScriptNR02::ClickedOnActor(int actorId) {
 	if (actorId == kActorGordo
-	 && Actor_Query_Goal_Number(kActorGordo) == kGoalGordoWaitAtNR02
+	 && Actor_Query_Goal_Number(kActorGordo) == kGoalGordoNR02WaitAtBar
 	) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 67.37f, -24.0f, 389.32f, 0, true, false, 0)) {
-			Actor_Set_Goal_Number(kActorGordo, kGoalGordoTalkToMcCoyAtNR02);
+			Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR02TalkToMcCoy);
 		}
 	}
 	return false;
 }
 
 bool SceneScriptNR02::ClickedOnItem(int itemId, bool a2) {
-	if (itemId == 89
-	 || itemId == 90
+	if (itemId == kItemGordosLighter1
+	 || itemId == kItemGordosLighter2
 	) {
 		if(!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 109.38f, -24.0f, 420.5f, 0, true, false, 0)) {
 			Actor_Face_Heading(kActorMcCoy, 423, false);
-			if (itemId == 89) {
-				Item_Remove_From_World(89);
+			if (itemId == kItemGordosLighter1) {
+				Item_Remove_From_World(kItemGordosLighter1);
 				Item_Pickup_Spin_Effect(953, 214, 380);
 				Actor_Clue_Acquire(kActorMcCoy, kClueGordosLighter1, true, -1);
 			}
 
-			if (itemId == 90) {
-				Item_Remove_From_World(90);
+			if (itemId == kItemGordosLighter2) {
+				Item_Remove_From_World(kItemGordosLighter2);
 				Item_Pickup_Spin_Effect(954, 214, 380);
 				Actor_Clue_Acquire(kActorMcCoy, kClueGordosLighter2, true, -1);
 			}
@@ -139,8 +139,8 @@ bool SceneScriptNR02::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptNR02::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -283.0f, -24.0f, 326.0f, 0, true, false, 0)) {
-			if (Actor_Query_Goal_Number(kActorGordo) < 230
-			 || Actor_Query_Goal_Number(kActorGordo) > 250
+			if (Actor_Query_Goal_Number(kActorGordo) < kGoalGordoNR01WaitAndAttack
+			 || Actor_Query_Goal_Number(kActorGordo) > kGoalGordoNR01WaitAndTakeHostage
 			) {
 				Music_Stop(2);
 			}
@@ -159,9 +159,10 @@ bool SceneScriptNR02::ClickedOn2DRegion(int region) {
 }
 
 void SceneScriptNR02::SceneFrameAdvanced(int frame) {
+	// Gordo not running away
 	if (!Music_Is_Playing()
-	 && (Actor_Query_Goal_Number(kActorGordo) < 210
-	  || Actor_Query_Goal_Number(kActorGordo) > 222
+	 && (Actor_Query_Goal_Number(kActorGordo) < kGoalGordoNR02TalkAboutMcCoy
+	  || Actor_Query_Goal_Number(kActorGordo) > kGoalGordoNR02RunAway3
 	 )
 	) {
 		playNextMusic();
@@ -173,16 +174,16 @@ void SceneScriptNR02::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptNR02::PlayerWalkedIn() {
-	if (Actor_Query_Goal_Number(kActorGordo) == 211) {
-		Actor_Set_Goal_Number(kActorGordo, 220);
+	if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoNR02WaitAtPodium) {
+		Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR02RunAway1);
 	}
 
-	if (Actor_Query_Goal_Number(kActorGordo) == 204) {
-		Actor_Set_Goal_Number(kActorGordo, 205);
+	if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoNR02WaitForMcCoy) {
+		Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR02NextAct);
 	}
 
-	if (Actor_Query_Goal_Number(kActorGordo) == 206) {
-		Actor_Set_Goal_Number(kActorGordo, 205);
+	if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoNR02TellJoke1) {
+		Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR02NextAct);
 	}
 
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -203.0f, -24.0f, 334.0f, 0, false, false, 0);
@@ -191,47 +192,51 @@ void SceneScriptNR02::PlayerWalkedIn() {
 
 void SceneScriptNR02::PlayerWalkedOut() {
 	Music_Stop(2);
-	if (Actor_Query_Goal_Number(kActorGordo) < 210
-	 && Actor_Query_Goal_Number(kActorGordo) >= 205
+
+	// Gordo on the podium
+	if (Actor_Query_Goal_Number(kActorGordo) < kGoalGordoNR02TalkAboutMcCoy
+	 && Actor_Query_Goal_Number(kActorGordo) >= kGoalGordoNR02NextAct
 	) {
-		Actor_Set_Goal_Number(kActorGordo, 204);
+		Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR02WaitForMcCoy);
 	}
 }
 
 void SceneScriptNR02::DialogueQueueFlushed(int a1) {
 	if (Player_Query_Current_Scene() == kSceneNR02
-	 && Actor_Query_Goal_Number(kActorGordo) == 206
+	 && Actor_Query_Goal_Number(kActorGordo) == kGoalGordoNR02TellJoke1
 	) {
 		Sound_Play(575, 50, 0, 0, 50);
 		Sound_Play(321, 50, 0, 0, 50);
 	}
 
 	if (Player_Query_Current_Scene() == kSceneNR02
-	 && Actor_Query_Goal_Number(kActorGordo) == 207
+	 && Actor_Query_Goal_Number(kActorGordo) == kGoalGordoNR02TellJoke2
 	) {
 		Sound_Play(576, 50, 0, 0, 50);
 		Sound_Play(323, 50, 0, 0, 50);
 	}
 
 	if (Player_Query_Current_Scene() == kSceneNR02
-	 && Actor_Query_Goal_Number(kActorGordo) == 208
+	 && Actor_Query_Goal_Number(kActorGordo) == kGoalGordoNR02TellJoke3
 	) {
 		Sound_Play(579, 50, 0, 0, 50);
 		Sound_Play(324, 50, 0, 0, 50);
 	}
 
+	// Gordo on the podium
 	if (Player_Query_Current_Scene() == kSceneNR02
-	 && Actor_Query_Goal_Number(kActorGordo) > 205
-	 && Actor_Query_Goal_Number(kActorGordo) < 210
+	 && Actor_Query_Goal_Number(kActorGordo) > kGoalGordoNR02NextAct
+	 && Actor_Query_Goal_Number(kActorGordo) < kGoalGordoNR02TalkAboutMcCoy
 	) {
-		Actor_Set_Goal_Number(kActorGordo, 205);
+		Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR02NextAct);
 		return; // true;
 	}
 
-	if (Actor_Query_Goal_Number(kActorGordo) > 205
-	 && Actor_Query_Goal_Number(kActorGordo) < 210
+	// Gordo on the podium, but McCoy is outside
+	if (Actor_Query_Goal_Number(kActorGordo) > kGoalGordoNR02NextAct
+	 && Actor_Query_Goal_Number(kActorGordo) < kGoalGordoNR02TalkAboutMcCoy
 	) {
-		Actor_Set_Goal_Number(kActorGordo, 204);
+		Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR02WaitForMcCoy);
 		return; // true;
 	}
 	//return false;

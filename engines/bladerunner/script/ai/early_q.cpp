@@ -282,7 +282,7 @@ bool AIScriptEarlyQ::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Put_In_Set(kActorEarlyQ, kSetFreeSlotH);
 		Actor_Set_At_Waypoint(kActorEarlyQ, 40, 0);
 		if (Game_Flag_Query(47) == 1
-		 && Game_Flag_Query(592)
+		 && Game_Flag_Query(kFlagGordoRanWay)
 		 && Game_Flag_Query(kFlagLucyRanAway)
 		) {
 			Actor_Set_Goal_Number(kActorEarlyQ, 220);

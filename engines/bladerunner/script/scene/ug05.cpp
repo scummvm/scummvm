@@ -232,7 +232,7 @@ int SceneScriptUG05::getAffectionTowardsActor() {
 		return kActorDektora;
 	}
 	if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy
-	 && Actor_Query_Goal_Number(kActorLucy) != 599
+	 && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyDead
 	) {
 		return kActorLucy;
 	}

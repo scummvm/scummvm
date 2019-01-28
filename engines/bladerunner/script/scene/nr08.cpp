@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 void SceneScriptNR08::InitializeScene() {
-	if (Actor_Query_Goal_Number(kActorSteele) == 231) {
+	if (Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleNR01GoToNR08) {
 		Setup_Scene_Information(-1174.1f, 0.32f, 303.9f, 435);
 	} else if (Game_Flag_Query(546)) {
 		Scene_Loop_Start_Special(0, 0, 0);
@@ -182,7 +182,7 @@ void SceneScriptNR08::PlayerWalkedIn() {
 		Loop_Actor_Travel_Stairs(kActorDektora, 8, 1, kAnimationModeIdle);
 		Actor_Set_Goal_Number(kActorDektora, 246);
 	}
-	if (Actor_Query_Goal_Number(kActorSteele) == 231) {
+	if (Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleNR01GoToNR08) {
 		Actor_Says(kActorSteele, 1640, 12);
 		if (!Game_Flag_Query(kFlagDirectorsCut)) {
 			Actor_Says(kActorMcCoy, 3790, 13);

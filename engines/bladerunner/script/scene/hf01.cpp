@@ -344,7 +344,7 @@ void SceneScriptHF01::PlayerWalkedIn() {
 	) {
 		if (Actor_Clue_Query(kActorMcCoy, kCluePhoneCallLucy1)
 		 && Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy
-		 && Actor_Query_Goal_Number(kActorLucy) != 599
+		 && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyDead
 		) {
 			Actor_Put_In_Set(kActorLucy, kSetHF01);
 			Actor_Set_At_XYZ(kActorLucy, -5.0f, 8.0f, -622.0f, 419);
@@ -421,7 +421,7 @@ void SceneScriptHF01::PlayerWalkedOut() {
 	if (Actor_Query_Goal_Number(kActorLucy) == 450) {
 		Actor_Put_In_Set(kActorLucy, kSetFreeSlotG);
 		Actor_Set_At_Waypoint(kActorLucy, 39, 0);
-		Actor_Set_Goal_Number(kActorLucy, 599);
+		Actor_Set_Goal_Number(kActorLucy, kGoalLucyDead);
 	}
 
 	if (Actor_Query_Goal_Number(kActorDektora) == 450) {
