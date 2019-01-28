@@ -40,6 +40,9 @@ typedef Common::Point Point;
 struct Rect : public Common::Rect {
 public:
 	static Rect fromXYWH(int x, int y, int w, int h) {
+		if (w <= 0 || h <= 0)
+			return Rect(x, y, x, y);
+
 		return Rect(x, y, x + w, y + h);
 	}
 
