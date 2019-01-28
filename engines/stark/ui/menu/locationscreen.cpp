@@ -229,7 +229,7 @@ void StaticLocationWidget::setupSounds(int16 enterSound, int16 clickSound) {
 	}
 }
 
-void StaticLocationWidget::setTextColor(uint32 textColor) {
+void StaticLocationWidget::setTextColor(const Color &textColor) {
 	if (!_renderEntry) return;
 
 	VisualText *text = _renderEntry->getText();

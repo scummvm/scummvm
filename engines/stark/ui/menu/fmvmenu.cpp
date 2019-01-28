@@ -33,6 +33,9 @@
 
 namespace Stark {
 
+const Color FMVWidget::_textColorHovered = Color(0x1E, 0x1E, 0x96);
+const Color FMVWidget::_textColorDefault = Color(0x00, 0x00, 0x00);
+
 // Hard-coded parameters in case cannot retrieve the format rectangle
 Common::Point FMVMenuScreen::_formatRectPos(202, 61);
 int FMVMenuScreen::_fontHeight(16);

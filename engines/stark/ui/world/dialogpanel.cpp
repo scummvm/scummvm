@@ -40,6 +40,9 @@
 
 namespace Stark {
 
+const Color DialogPanel::_aprilColor = Color(0xFF, 0xC0, 0x00);
+const Color DialogPanel::_otherColor = Color(0xFF, 0x40, 0x40);
+
 DialogPanel::DialogPanel(Gfx::Driver *gfx, Cursor *cursor) :
 		Window(gfx, cursor),
 		_subtitleVisual(nullptr),
@@ -165,7 +168,7 @@ void DialogPanel::onRender() {
 void DialogPanel::updateSubtitleVisual() {
 	clearSubtitleVisual();
 
-	uint32 color = _otherColor;
+	Color color = _otherColor;
 	if (_currentSpeech->characterIsApril())
 		color = _aprilColor;
 

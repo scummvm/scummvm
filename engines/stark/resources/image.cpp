@@ -261,7 +261,7 @@ void ImageStill::printData() {
 
 ImageText::ImageText(Object *parent, byte subType, uint16 index, const Common::String &name) :
 		Image(parent, subType, index, name),
-		_color(0),
+		_color(Color(0, 0, 0)),
 		_font(0) {
 }
 
@@ -273,7 +273,10 @@ void ImageText::readData(Formats::XRCReadStream *stream) {
 
 	_size = stream->readPoint();
 	_text = stream->readString();
-	_color = stream->readUint32LE();
+	_color.r = stream->readByte();
+	_color.g = stream->readByte();
+	_color.b = stream->readByte();
+	_color.a = stream->readByte() | 0xFF;
 	_font = stream->readUint32LE();
 }
 
@@ -299,7 +302,7 @@ void ImageText::initVisual() {
 	} else {
 		VisualText *text = new VisualText(StarkGfx);
 		text->setText(_text);
-		text->setColor(_color | 0xFF000000);
+		text->setColor(_color);
 		text->setTargetWidth(_size.x);
 		text->setTargetHeight(_size.y);
 		text->setFont(FontProvider::kCustomFont, _font);
@@ -312,7 +315,7 @@ void ImageText::printData() {
 
 	debug("size: x %d, y %d", _size.x, _size.y);
 	debug("text: %s", _text.c_str());
-	debug("color: %d", _color);
+	debug("color: (%d, %d, %d, %d)", _color.r, _color.g, _color.b, _color.a);
 	debug("font: %d", _font);
 }
 

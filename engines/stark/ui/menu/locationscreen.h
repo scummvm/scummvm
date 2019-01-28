@@ -25,6 +25,7 @@
 
 #include "engines/stark/ui/screen.h"
 #include "engines/stark/ui/window.h"
+#include "engines/stark/visual/text.h"
 
 namespace Stark {
 
@@ -121,7 +122,7 @@ public:
 	 *
 	 * Only applies for widget referring to a RenderEntry for a text visual
 	 */
-	void setTextColor(uint32 textColor);
+	void setTextColor(const Color &textColor);
 
 	/** Widgets must be visible to be rendered and interactive */
 	bool isVisible() const;

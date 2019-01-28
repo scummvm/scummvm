@@ -36,6 +36,12 @@
 
 namespace Stark {
 
+const Color ChapterTitleText::_color = Color(0x68, 0x05, 0x04);
+const Color DialogTitleWidget::_textColorHovered = Color(0x1E, 0x1E, 0x96);
+const Color DialogTitleWidget::_textColorDefault = Color(0x00, 0x00, 0x00);
+const Color DialogLineText::_textColorApril = Color(0x68, 0x05, 0x04);
+const Color DialogLineText::_textColorNormal = Color(0x1E, 0x1E, 0x96);
+
 DialogScreen::DialogScreen(Gfx::Driver *gfx, Cursor *cursor) :
 		StaticLocationScreen(gfx, cursor, "DiaryLog", Screen::kScreenDialog),
 		_startTitleIndex(0), _nextTitleIndex(0),
@@ -332,7 +338,7 @@ DialogLineText::DialogLineText(Gfx::Driver *gfx, uint logIndex, uint lineIndex, 
 	Common::String name = StarkGlobal->getCharacterName(logLine.characterId);
 	name.toUppercase();
 
-	uint color = logLine.characterId == StarkGlobal->getApril()->getCharacterIndex() ? _textColorApril : _textColorNormal;
+	Color color = logLine.characterId == StarkGlobal->getApril()->getCharacterIndex() ? _textColorApril : _textColorNormal;
 
 	_nameText.setText(name);
 	_nameText.setColor(color);

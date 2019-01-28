@@ -101,7 +101,7 @@ public:
 	void onScreenChanged() { _text.resetTexture(); }
 
 private:
-	static const uint32 _color = 0xFF040568;
+	static const Color _color;
 
 	Common::Point _pos;
 	VisualText _text;
@@ -129,8 +129,8 @@ public:
 	}
 
 private:
-	static const uint32 _textColorApril = 0xFF040568;
-	static const uint32 _textColorNormal = 0xFF961E1E;
+	static const Color _textColorApril;
+	static const Color _textColorNormal;
 
 	Common::Point _namePos, _linePos;
 	VisualText _nameText, _lineText;
@@ -160,8 +160,8 @@ public:
 	void onScreenChanged() override;
 
 private:
-	static const uint32 _textColorHovered = 0xFF961E1E;
-	static const uint32 _textColorDefault = 0xFF000000;
+	static const Color _textColorHovered;
+	static const Color _textColorDefault;
 
 	uint _logIndex, _chapter;
 	int _width, _height;

@@ -38,6 +38,23 @@ class SurfaceRenderer;
 class Texture;
 }
 
+struct Color {
+	uint8 r;
+	uint8 g;
+	uint8 b;
+	uint8 a;
+
+	Color(uint8 red, uint8 green, uint8 blue, uint8 alpha = 0xFF) :
+			r(red), g(green), b(blue), a(alpha) {}
+
+	bool operator==(const Color &color) const {
+		return r == color.r &&
+		       g == color.g &&
+		       b == color.b &&
+		       a == color.a;
+	}
+};
+
 /**
  * Text renderer
  */
@@ -51,8 +68,8 @@ public:
 	Common::Rect getRect();
 
 	void setText(const Common::String &text);
-	void setColor(uint32 color);
-	void setBackgroundColor(uint32 color);
+	void setColor(const Color &color);
+	void setBackgroundColor(const Color &color);
 	void setAlign(Graphics::TextAlign align);
 	void setTargetWidth(uint32 width);
 	void setTargetHeight(uint32 height);
@@ -76,8 +93,8 @@ private:
 	Gfx::Texture *_texture;
 
 	Common::String _text;
-	uint32 _color;
-	uint32 _backgroundColor;
+	Color _color;
+	Color _backgroundColor;
 	Graphics::TextAlign _align;
 	uint32 _targetWidth;
 	uint32 _targetHeight;

@@ -92,13 +92,13 @@ public:
 
 	void onClick();
 
-	void setTextColor(uint32 color) { _title.setColor(color); }
+	void setTextColor(const Color &color) { _title.setColor(color); }
 
 	void onScreenChanged() { _title.resetTexture(); }
 
 private:
-	static const uint32 _textColorHovered = 0xFF961E1E;
-	static const uint32 _textColorDefault = 0xFF000000;
+	static const Color _textColorHovered;
+	static const Color _textColorDefault;
 
 	const Common::String &_filename;
 	VisualText _title;

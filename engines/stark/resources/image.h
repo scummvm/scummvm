@@ -27,6 +27,7 @@
 #include "common/str.h"
 
 #include "engines/stark/resources/object.h"
+#include "engines/stark/visual/text.h"
 
 namespace Stark {
 
@@ -135,7 +136,7 @@ protected:
 
 	Common::Point _size;
 	Common::String _text;
-	uint32 _color;
+	Color _color;
 	uint32 _font;
 };
 

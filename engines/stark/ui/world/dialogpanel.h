@@ -25,6 +25,8 @@
 
 #include "engines/stark/ui/window.h"
 
+#include "engines/stark/visual/text.h"
+
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/str-array.h"
@@ -34,7 +36,6 @@
 namespace Stark {
 
 class VisualImageXMG;
-class VisualText;
 class ClickText;
 
 namespace Resources {
@@ -104,8 +105,8 @@ private:
 	Common::Array<ClickText*> _options;
 	bool _acceptIdleMousePos;
 
-	static const uint32 _aprilColor = 0xFF00C0FF;
-	static const uint32 _otherColor = 0xFF4040FF;
+	static const Color _aprilColor;
+	static const Color _otherColor;
 	static const uint32 _optionsTop = 4;
 	static const uint32 _optionsLeft = 30;
 	static const uint32 _optionsHeight = 80;

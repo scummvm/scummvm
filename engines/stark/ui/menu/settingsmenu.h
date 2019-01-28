@@ -106,8 +106,8 @@ private:
 	void backHandler();
 
 private:
-	static const uint32 _textColorHovered = 0xFF961E1E;
-	static const uint32 _textColorDefault = 0xFF000000;
+	static const Color _textColorHovered;
+	static const Color _textColorDefault;
 
 	TestSoundManager _soundManager;
 };
@@ -156,7 +156,7 @@ public:
 	void onMouseUp() override;
 
 private:
-	static const uint32 _textColorBgHovered = 0xFFFFFFFF;
+	static const Color _textColorBgHovered;
 	static const int _maxVolume = 256;
 
 	VisualImageXMG *_sliderImage;

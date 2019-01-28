@@ -42,8 +42,8 @@ VisualText::VisualText(Gfx::Driver *gfx) :
 		Visual(TYPE),
 		_gfx(gfx),
 		_texture(nullptr),
-		_color(0),
-		_backgroundColor(0),
+		_color(Color(0, 0, 0)),
+		_backgroundColor(Color(0, 0, 0, 0)),
 		_align(Graphics::kTextAlignLeft),
 		_targetWidth(600),
 		_targetHeight(600),
@@ -72,18 +72,22 @@ void VisualText::setText(const Common::String &text) {
 	}
 }
 
-void VisualText::setColor(uint32 color) {
-	if (_color != color) {
-		freeTexture();
-		_color = color;
+void VisualText::setColor(const Color &color) {
+	if (_color == color) {
+		return;
 	}
+
+	freeTexture();
+	_color = color;
 }
 
-void VisualText::setBackgroundColor(uint32 color) {
-	if (color != _backgroundColor) {
-		freeTexture();
-		_backgroundColor = color;
+void VisualText::setBackgroundColor(const Color &color) {
+	if (color == _backgroundColor) {
+		return;
 	}
+
+	freeTexture();
+	_backgroundColor = color;
 }
 
 void VisualText::setAlign(Graphics::TextAlign align) {
@@ -143,11 +147,19 @@ void VisualText::createTexture() {
 	// Create a surface to render to
 	Graphics::Surface surface;
 	surface.create(scaledRect.width(), scaledRect.height(), Gfx::Driver::getRGBAPixelFormat());
-	surface.fillRect(scaledRect, _backgroundColor);
+
+	uint32 color = surface.format.ARGBToColor(
+			_color.a, _color.r, _color.g, _color.b
+	);
+	uint32 bgColor = surface.format.ARGBToColor(
+			_backgroundColor.a, _backgroundColor.r, _backgroundColor.g, _backgroundColor.b
+	);
+
+	surface.fillRect(scaledRect, bgColor);
 
 	// Render the lines to the surface
 	for (uint i = 0; i < lines.size(); i++) {
-		font->drawString(&surface, lines[i], 0, scaledLineHeight * i, scaledRect.width(), _color, _align);
+		font->drawString(&surface, lines[i], 0, scaledLineHeight * i, scaledRect.width(), color, _align);
 	}
 
 	// Create a texture from the surface

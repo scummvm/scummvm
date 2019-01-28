@@ -71,8 +71,6 @@ protected:
 	};
 
 private:
-	static const uint32 _textColorBlack = 0xFF000000;
-
 	// Start from zero
 	static const int _maxPage = 10;
 
@@ -160,8 +158,8 @@ public:
 	bool hasSave() { return _hasSave; }
 
 private:
-	static const uint32 _outlineColor = 0xFF961E1E;
-	static const uint32 _textColor = 0xFF3D485C;
+	static const Color _outlineColor;
+	static const Color _textColor;
 
 	int _slot;
 	SaveLoadMenuScreen *_screen;

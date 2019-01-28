@@ -37,6 +37,9 @@
 
 namespace Stark {
 
+const Color DiaryIndexScreen::_textColorHovered = Color(0x1E, 0x1E, 0x96);
+const Color DiaryIndexScreen::_textColorDefault = Color(0x00, 0x00, 0x00);
+
 DiaryIndexScreen::DiaryIndexScreen(Gfx::Driver *gfx, Cursor *cursor) :
 		StaticLocationScreen(gfx, cursor, "DiaryIndexLocation", Screen::kScreenDiaryIndex) {
 }
@@ -106,7 +109,7 @@ void DiaryIndexScreen::open() {
 
 void DiaryIndexScreen::widgetTextColorHandler(StaticLocationWidget &widget, const Common::Point &mousePos) {
 	if (widget.isVisible()) {
-		uint32 textColor = widget.isMouseInside(mousePos) ? _textColorHovered : _textColorDefault;
+		Color textColor = widget.isMouseInside(mousePos) ? _textColorHovered : _textColorDefault;
 		widget.setTextColor(textColor);
 	}
 }

@@ -23,6 +23,8 @@
 #ifndef STARK_UI_CLICK_TEXT_H
 #define STARK_UI_CLICK_TEXT_H
 
+#include "engines/stark/visual/text.h"
+
 #include "common/scummsys.h"
 #include "common/rect.h"
 #include "common/str.h"
@@ -33,7 +35,7 @@ class VisualText;
 
 class ClickText {
 public:
-	ClickText(const Common::String &text, uint32 color);
+	ClickText(const Common::String &text, const Color &color);
 	~ClickText();
 
 	void setPosition(const Common::Point &pos) { _position = pos; }
@@ -51,7 +53,7 @@ private:
 	Common::Point _position;
 	Common::String _text;
 	Common::Rect _bbox;
-	uint32 _color;
+	Color _color;
 };
 
 } // End of namespace Stark

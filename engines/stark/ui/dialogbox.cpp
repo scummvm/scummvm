@@ -44,7 +44,7 @@ static const uint dialogHorizontalMargin = 10;
 static const uint dialogVerticalMargin   = 20;
 static const uint buttonHorizontalMargin = 25;
 static const uint buttonVerticalMargin   = 5;
-static const uint textColor = 0xFFFFFFFF;
+static const Color textColor = Color(0xFF, 0xFF, 0xFF);
 
 DialogBox::DialogBox(Gfx::Driver *gfx, Cursor *cursor) :
 		Window(gfx, cursor),

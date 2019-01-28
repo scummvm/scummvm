@@ -46,6 +46,9 @@
 
 namespace Stark {
 
+const Color SaveDataWidget::_outlineColor = Color(0x1E, 0x1E, 0x96);
+const Color SaveDataWidget::_textColor    = Color(0x5C, 0x48, 0x3D);
+
 SaveLoadMenuScreen::SaveLoadMenuScreen(Gfx::Driver *gfx, Cursor *cursor, Screen::Name screenName) :
 		StaticLocationScreen(gfx, cursor, "LoadSaveLocation", screenName) {
 }
@@ -90,7 +93,7 @@ void SaveLoadMenuScreen::open() {
 			CLICK_HANDLER(SaveLoadMenuScreen, prevPageHandler),
 			nullptr));
 	_widgets.back()->setupSounds(0, 1);
-	_widgets.back()->setTextColor(_textColorBlack);
+	_widgets.back()->setTextColor(Color(0, 0, 0));
 	_widgets.back()->setVisible(_page > 0);
 	
 	_widgets.push_back(new StaticLocationWidget(
@@ -98,7 +101,7 @@ void SaveLoadMenuScreen::open() {
 			CLICK_HANDLER(SaveLoadMenuScreen, nextPageHandler),
 			nullptr));
 	_widgets.back()->setupSounds(0, 1);
-	_widgets.back()->setTextColor(_textColorBlack);
+	_widgets.back()->setTextColor(Color(0, 0, 0));
 	_widgets.back()->setVisible(_page < 10);
 
 	loadSaveData(_page);
@@ -231,13 +234,18 @@ SaveDataWidget::SaveDataWidget(int slot, Gfx::Driver *gfx, SaveLoadMenuScreen *s
 	_textTime.setColor(_textColor);
 	_textTime.setFont(FontProvider::kCustomFont, 3);
 
+	Graphics::PixelFormat pixelFormat = Gfx::Driver::getRGBAPixelFormat();
+	uint32 outlineColor = pixelFormat.ARGBToColor(
+			_outlineColor.a, _outlineColor.r, _outlineColor.g, _outlineColor.b
+	);
+
 	// Create the outline texture
 	Graphics::Surface lineSurface;
-	lineSurface.create(_thumbWidth, _thumbHeight, Gfx::Driver::getRGBAPixelFormat());
-	lineSurface.drawThickLine(0, 0, _thumbWidth - 1, 0, 2, 2, _outlineColor);
-	lineSurface.drawThickLine(0, 0, 0, _thumbHeight - 1, 2, 2, _outlineColor);
-	lineSurface.drawThickLine(_thumbWidth - 2, 0, _thumbWidth - 2, _thumbHeight - 2, 2, 2, _outlineColor);
-	lineSurface.drawThickLine(0, _thumbHeight - 2, _thumbWidth - 2, _thumbHeight - 2, 2, 2, _outlineColor);
+	lineSurface.create(_thumbWidth, _thumbHeight, pixelFormat);
+	lineSurface.drawThickLine(0, 0, _thumbWidth - 1, 0, 2, 2, outlineColor);
+	lineSurface.drawThickLine(0, 0, 0, _thumbHeight - 1, 2, 2, outlineColor);
+	lineSurface.drawThickLine(_thumbWidth - 2, 0, _thumbWidth - 2, _thumbHeight - 2, 2, 2, outlineColor);
+	lineSurface.drawThickLine(0, _thumbHeight - 2, _thumbWidth - 2, _thumbHeight - 2, 2, 2, outlineColor);
 
 	_outline->update(&lineSurface);
 	lineSurface.free();
