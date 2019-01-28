@@ -32,6 +32,16 @@ namespace Frotz {
  * Derived screen class that adds in the Infocom character graphics font
  */
 class FrotzScreen : public Glk::Screen {
+private:
+	/**
+	 * Handles loading fonts for V6 games
+	 */
+	void loadVersion6Fonts(Common::Archive *archive);
+
+	/**
+	 * Handles loading the character graphics and runic fonts
+	 */
+	void loadExtraFonts(Common::Archive *archive);
 protected:
 	/**
 	 * Load the fonts

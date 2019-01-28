@@ -25,10 +25,8 @@
 namespace Glk {
 namespace Frotz {
 
-/*--------------------------------------------------------------------------*/
-
 BitmapFont::BitmapFont(const Graphics::Surface &src, const Common::Point &size,
-		uint srcWidth, uint srcHeight, unsigned char startingChar) :
+		uint srcWidth, uint srcHeight, unsigned char startingChar, bool isFixedWidth) :
 		_startingChar(startingChar), _size(size) {
 	assert(src.format.bytesPerPixel == 1);
 	assert((src.w % srcWidth) == 0);
@@ -42,9 +40,12 @@ BitmapFont::BitmapFont(const Graphics::Surface &src, const Common::Point &size,
 	int charsPerRow = src.w / srcWidth;
 	for (uint idx = 0; idx < _chars.size(); ++idx) {
 		r.moveTo((idx % charsPerRow) * srcWidth, (idx / charsPerRow) * srcHeight);
+		int srcCharWidth = isFixedWidth ? r.width() : getSourceCharacterWidth(idx, src, r);
+		int destCharWidth = (size.x * srcCharWidth + (srcWidth - 1)) / srcWidth;
+		Common::Rect charBounds(r.left, r.top, r.left + srcCharWidth, r.bottom);
 
-		_chars[idx].create(size.x, size.y, src.format);
-		_chars[idx].transBlitFrom(src, r, Common::Rect(0, 0, size.x, size.y));
+		_chars[idx].create(destCharWidth, size.y, src.format);
+		_chars[idx].transBlitFrom(src, charBounds, Common::Rect(0, 0, _chars[idx].w, _chars[idx].h));
 	}
 }
 
@@ -58,6 +59,29 @@ void BitmapFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint
 				dst->hLine(x + xCtr, y + yCtr, x + xCtr, color);
 		}
 	}
+}
+
+int BitmapFont::getSourceCharacterWidth(uint charIndex, const Graphics::Surface &src,
+		const Common::Rect &charBounds) {
+	if (charIndex == 0)
+		// The space character is treated as half the width of bounding area
+		return charBounds.width() / 2;
+
+	// Scan through the rows to find the right most pixel, getting the width from that
+	int maxWidth = 0, rowX;
+	for (int y = charBounds.top; y < charBounds.bottom; ++y) {
+		rowX = 0;
+		const byte *srcP = (const byte *)src.getBasePtr(charBounds.left, y);
+
+		for (int x = 0; x < charBounds.width(); ++x, ++srcP) {
+			if (!*srcP)
+				rowX = x;
+		}
+
+		maxWidth = MAX(maxWidth, MIN(rowX + 2, (int)charBounds.width()));
+	}
+
+	return maxWidth;
 }
 
 } // End of namespace Frotz

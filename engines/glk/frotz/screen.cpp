@@ -43,17 +43,67 @@ void FrotzScreen::loadFonts(Common::Archive *archive) {
 	byte version = g_vm->_gameFile.readByte();
 
 	if (version == 6) {
-		// For graphical games, ignore any font configurations and force their size
-		g_conf->_monoInfo._size = g_conf->_propInfo._size = 7;
-		g_conf->_monoInfo._aspect = g_conf->_propInfo._aspect = 1.0;
-		g_vm->_defaultForeground = 0;
-		g_vm->_defaultBackground = 0xffffff;
+		loadVersion6Fonts(archive);
+	} else {
+		// Load the basic fonts
+		Screen::loadFonts(archive);
 	}
 
-	// Load the basic fonts
-	Screen::loadFonts(archive);
+	// Add character graphics and runic fonts
+	loadExtraFonts(archive);
+}
 
-	// Add character graphics font
+void FrotzScreen::loadVersion6Fonts(Common::Archive *archive) {
+	// Set the basic font properties
+	MonoFontInfo &mi = g_conf->_monoInfo;
+	PropFontInfo &pi = g_conf->_propInfo;
+	mi._size = pi._size = 7;
+	mi._aspect = pi._aspect = 1.0;
+	pi._quotes = false;
+	pi._dashes = false;
+	pi._spaces = false;
+	pi._morePrompt = "[MORE]";
+	pi._lineSeparation = 0;
+
+	g_vm->_defaultForeground = 0;
+	g_vm->_defaultBackground = 0xffffff;
+
+	_fonts.resize(8);
+
+	// Load up the 8x8 Infocom font
+	Image::BitmapDecoder decoder;
+	Common::File f;
+	if (!f.open("infocom6x8.bmp", *archive))
+		error("Could not load font");
+
+	Common::Point fontSize(6, 8);
+	decoder.loadStream(f);
+	f.close();
+
+	// Add normal fonts
+	_fonts[MONOR] = new FixedWidthBitmapFont(*decoder.getSurface(), fontSize, 6, 8);
+	_fonts[MONOB] = new FixedWidthBitmapFont(*decoder.getSurface(), fontSize, 6, 8);
+	_fonts[PROPR] = new VariableWidthBitmapFont(*decoder.getSurface(), fontSize, 6, 8);
+	_fonts[PROPB] = new VariableWidthBitmapFont(*decoder.getSurface(), fontSize, 6, 8);
+
+	// Create a new version of the font with every character unlined for the emphasized fonts
+	const Graphics::Surface &norm = *decoder.getSurface();
+	Graphics::ManagedSurface emph(norm.w, norm.h);
+	emph.blitFrom(norm);
+
+	for (int y = 8 - 2; y < emph.h; y += 8) {
+		byte *lineP = (byte *)emph.getBasePtr(0, y);
+		Common::fill(lineP, lineP + emph.w, 0);
+	}
+
+	// Add them to the font list
+	_fonts[MONOI] = new FixedWidthBitmapFont(emph, fontSize, 6, 8);
+	_fonts[MONOZ] = new FixedWidthBitmapFont(emph, fontSize, 6, 8);
+	_fonts[PROPI] = new VariableWidthBitmapFont(emph, fontSize, 6, 8);
+	_fonts[PROPZ] = new VariableWidthBitmapFont(emph, fontSize, 6, 8);
+}
+
+void FrotzScreen::loadExtraFonts(Common::Archive *archive) {
 	Image::BitmapDecoder decoder;
 	Common::File f;
 	if (!f.open("infocom_graphics.bmp", *archive))
@@ -61,7 +111,7 @@ void FrotzScreen::loadFonts(Common::Archive *archive) {
 
 	Common::Point fontSize(_fonts[0]->getMaxCharWidth(), _fonts[0]->getFontHeight());
 	decoder.loadStream(f);
-	_fonts.push_back(new BitmapFont(*decoder.getSurface(), fontSize));
+	_fonts.push_back(new FixedWidthBitmapFont(*decoder.getSurface(), fontSize));
 	f.close();
 
 	// Add Runic font. It provides cleaner versions of the runic characters in the

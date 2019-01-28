@@ -1544,7 +1544,8 @@ void TextBufferWindow::scrollOneLine(bool forced) {
 	_lines[0]._rPic = nullptr;
 	_lines[0]._lHyper = 0;
 	_lines[0]._rHyper = 0;
-	memset(_chars, ' ', TBLINELEN * 4);
+	
+	Common::fill(_chars, _chars + TBLINELEN, ' ');
 	memset(_attrs, 0, TBLINELEN * sizeof(Attributes));
 
 	_numChars = 0;

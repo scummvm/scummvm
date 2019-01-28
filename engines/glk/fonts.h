@@ -71,6 +71,7 @@ struct PropFontInfo : public MonoFontInfo {
 	int _quotes;
 	int _dashes;
 	int _spaces;
+	int _lineSeparation;
 
 	/**
 	 * Constructor

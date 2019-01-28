@@ -50,11 +50,11 @@ void Screen::initialize() {
 		Common::Rect r1 = f->getBoundingBox('o');
 		Common::Rect r2 = f->getBoundingBox('y');
 		double baseLine = (double)r1.bottom;
-		double leading = (double)((idx == 0) ? r2.bottom : r2.bottom + 2);
+		double leading = (double)((idx == 0) ? r2.bottom : r2.bottom + g_conf->_propInfo._lineSeparation);
 
 		i->_leading = static_cast<int>(MAX((double)i->_leading, leading));
 		i->_baseLine = static_cast<int>(MAX((double)i->_baseLine, baseLine));
-		i->_cellW = _fonts[0]->getStringWidth("0");
+		i->_cellW = _fonts[0]->getMaxCharWidth();
 		i->_cellH = i->_leading;
 	}
 }
@@ -87,7 +87,8 @@ bool Screen::loadFonts() {
 	f.read(buffer, 3);
 	buffer[3] = '\0';
 
-	if (Common::String(buffer) != "1.1") {
+	double version = atof(buffer);
+	if (version < 1.2) {
 		delete archive;
 		return false;
 	}

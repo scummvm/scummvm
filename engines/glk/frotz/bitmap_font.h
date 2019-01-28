@@ -32,20 +32,27 @@ namespace Glk {
 namespace Frotz {
 
 /**
- * Implements a fixed width font stored as a grid on a passed surface
+ * Implements a font stored as a grid on a passed surface
  */
 class BitmapFont : public Graphics::Font {
 private:
 	Common::Array<Graphics::ManagedSurface> _chars;
 	size_t _startingChar;
 	Common::Point _size;
-public:
+protected:
+	/**
+	 * Calculate a character width 
+	 */
+	int getSourceCharacterWidth(uint charIndex, const Graphics::Surface &src,
+		const Common::Rect &charBounds);
+
 	/**
 	 * Constructor
 	 */
 	BitmapFont(const Graphics::Surface &src, const Common::Point &size,
-		uint srcWidth = 8, uint srcHeight = 8, unsigned char startingChar = ' ');
+		uint srcWidth, uint srcHeight, unsigned char startingChar, bool isFixedWidth);
 
+public:
 	/**
 	 * Get the font height
 	 */
@@ -59,12 +66,39 @@ public:
 	/**
 	 * Get the width of the given character
 	 */
-	virtual int getCharWidth(uint32 chr) const override { return _size.x; }
+	virtual int getCharWidth(uint32 chr) const override { return _chars[chr - _startingChar].w; }
 
 	/**
 	 * Draw a character
 	 */
 	virtual void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
+};
+
+/**
+ * Subclass for fixed width fonts
+ */
+class FixedWidthBitmapFont : public BitmapFont {
+public:
+	/**
+	 * Constructor
+	 */
+	FixedWidthBitmapFont(const Graphics::Surface &src, const Common::Point &size,
+		uint srcWidth = 8, uint srcHeight = 8, unsigned char startingChar = ' ') :
+		BitmapFont(src, size, srcWidth, srcHeight, startingChar, true) {}
+};
+
+
+/**
+ * Subclass for fixed width fonts
+ */
+class VariableWidthBitmapFont : public BitmapFont {
+public:
+	/**
+	 * Constructor
+	 */
+	VariableWidthBitmapFont(const Graphics::Surface &src, const Common::Point &size,
+		uint srcWidth = 8, uint srcHeight = 8, unsigned char startingChar = ' ') :
+		BitmapFont(src, size, srcWidth, srcHeight, startingChar, false) {}
 };
 
 } // End of namespace Frotz

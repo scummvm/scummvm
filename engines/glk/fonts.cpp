@@ -37,7 +37,7 @@ FontInfo::FontInfo() : _size(0), _aspect(0), _cellW(0), _cellH(0), _leading(0), 
 
 /*--------------------------------------------------------------------------*/
 
-PropFontInfo::PropFontInfo() : _justify(0), _quotes(0), _dashes(0), _spaces(0), _caretShape(0) {
+PropFontInfo::PropFontInfo() : _justify(0), _quotes(0), _dashes(0), _spaces(0), _caretShape(0), _lineSeparation(2) {
 	Common::fill(&_caretColor[0], &_caretColor[3], 0);
 	Common::fill(&_caretSave[0], &_caretSave[3], 0);
 }
