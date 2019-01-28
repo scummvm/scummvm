@@ -54,6 +54,7 @@ void Windows::setup(bool isVersion6) {
 			winmethod_Arbitrary | winmethod_Fixed, 0, wintype_TextBuffer, 0);
 		_upper = g_vm->glk_window_open(g_vm->glk_window_get_root(),
 			winmethod_Arbitrary | winmethod_Fixed, 0, wintype_TextGrid, 0);
+
 	} else {
 		_lower = g_vm->glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
 		_upper = g_vm->glk_window_open(_lower, winmethod_Above | winmethod_Fixed, 0, wintype_TextGrid, 0);

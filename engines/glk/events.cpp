@@ -68,7 +68,7 @@ void Events::initializeCursors() {
 	const Graphics::PixelFormat format = g_system->getScreenFormat();
 	const int WHITE = format.RGBToColor(0xff, 0xff, 0xff);
 	const int BLACK = 0;
-	const int TRANSPARENT = format.RGBToColor(0x80, 0x80, 0x80);
+	const int TRANSPARENT = format.RGBToColor(TRANSPARENT_RGB, TRANSPARENT_RGB, TRANSPARENT_RGB);
 
 	// Setup arrow cursor
 	Surface &arr = _cursors[CURSOR_ARROW];
@@ -384,7 +384,7 @@ void Events::setCursor(CursorId cursorId) {
 				CursorMan.showMouse(true);
 
 			const Surface &s = _cursors[cursorId];
-			const int TRANSPARENT = s.format.RGBToColor(0x80, 0x80, 0x80);
+			const int TRANSPARENT = s.format.RGBToColor(TRANSPARENT_RGB, TRANSPARENT_RGB, TRANSPARENT_RGB);
 
 			CursorMan.replaceCursor(s.getPixels(), s.w, s.h, s._hotspot.x, s._hotspot.y, TRANSPARENT, true, &s.format);
 		}

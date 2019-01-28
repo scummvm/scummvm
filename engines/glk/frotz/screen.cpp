@@ -66,7 +66,8 @@ void FrotzScreen::loadVersion6Fonts(Common::Archive *archive) {
 	pi._lineSeparation = 0;
 
 	g_vm->_defaultForeground = 0;
-	g_vm->_defaultBackground = 0xffffff;
+	g_vm->_defaultBackground = TRANSPARENT_RGB | (TRANSPARENT_RGB << 8) | (TRANSPARENT_RGB << 16);
+	g_conf->_tMarginX = 3;
 
 	_fonts.resize(8);
 

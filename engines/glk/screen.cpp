@@ -65,8 +65,10 @@ void Screen::fill(const byte *rgb) {
 }
 
 void Screen::fillRect(const Rect &box, const byte *rgb) {
-	uint color = format.RGBToColor(rgb[0], rgb[1], rgb[2]);
-	Graphics::Screen::fillRect(box, color);
+	if (rgb[0] != TRANSPARENT_RGB || rgb[1] != TRANSPARENT_RGB || rgb[2] != TRANSPARENT_RGB) {
+		uint color = format.RGBToColor(rgb[0], rgb[1], rgb[2]);
+		Graphics::Screen::fillRect(box, color);
+	}
 }
 
 bool Screen::loadFonts() {
