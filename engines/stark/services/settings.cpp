@@ -35,7 +35,8 @@ namespace Stark {
 
 Settings::Settings(Audio::Mixer *mixer, const ADGameDescription *gd) :
 		_mixer(mixer),
-		_isDemo(gd->flags & ADGF_DEMO) {
+		_isDemo(gd->flags & ADGF_DEMO),
+		_language(gd->language) {
 	// Initialize keys
 	_boolKey[kHighModel] = "enable_high_resolution_models";
 	_boolKey[kSubtitle] = "subtitles";
@@ -95,6 +96,17 @@ bool Settings::shouldPreMultiplyReplacementPNGs() const {
 
 Gfx::Texture::SamplingFilter Settings::getImageSamplingFilter() const {
 	return ConfMan.getBool("use_linear_filtering") ? Gfx::Texture::kLinear : Gfx::Texture::kNearest;
+}
+
+Common::CodePage Settings::getTextCodePage() const {
+	switch (_language) {
+	case Common::PL_POL:
+		return Common::kWindows1250;
+	case Common::RU_RUS:
+		return Common::kWindows1251;
+	default:
+		return Common::kWindows1252;
+	}
 }
 
 } // End of namespace Stark

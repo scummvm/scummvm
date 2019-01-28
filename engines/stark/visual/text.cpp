@@ -32,6 +32,7 @@
 #include "engines/stark/gfx/texture.h"
 #include "engines/stark/scene.h"
 #include "engines/stark/services/services.h"
+#include "engines/stark/services/settings.h"
 
 #include "common/util.h"
 
@@ -115,6 +116,9 @@ void VisualText::setFont(FontProvider::FontType type, int32 customFontIndex) {
 }
 
 void VisualText::createTexture() {
+	Common::CodePage codePage = StarkSettings->getTextCodePage();
+	Common::U32String unicodeText = Common::convertToU32String(_text.c_str(), codePage);
+
 	// Get the font and required metrics
 	const Graphics::Font *font = StarkFontProvider->getScaledFont(_fontType, _fontCustomIndex);
 	uint scaledLineHeight = StarkFontProvider->getScaledFontHeight(_fontType, _fontCustomIndex);
@@ -123,8 +127,8 @@ void VisualText::createTexture() {
 
 	// Word wrap the text and compute the scaled and original resolution bounding boxes
 	Common::Rect scaledRect;
-	Common::Array<Common::String> lines;
-	scaledRect.right = scaledRect.left + font->wordWrapText(_text, maxScaledLineWidth, lines);
+	Common::Array<Common::U32String> lines;
+	scaledRect.right = scaledRect.left + font->wordWrapText(unicodeText, maxScaledLineWidth, lines);
 	scaledRect.bottom = scaledRect.top + scaledLineHeight * lines.size();
 	
 	if (!isBlank()) {

@@ -24,6 +24,8 @@
 #define STARK_SERVICES_SETTINGS_H
 
 #include "common/config-manager.h"
+#include "common/language.h"
+#include "common/ustr.h"
 
 #include "engines/stark/gfx/texture.h"
 #include "engines/stark/services/services.h"
@@ -112,10 +114,14 @@ public:
 	/** Should linear filtering be used when sampling the background image textures? */
 	Gfx::Texture::SamplingFilter getImageSamplingFilter() const;
 
+	/** The codepage text is encoded in or this version of the game */
+	Common::CodePage getTextCodePage() const;
+
 private:
 	Audio::Mixer *_mixer;
 	bool _hasLowRes;
 	const bool _isDemo;
+	const Common::Language _language;
 
 	const char *_boolKey[6];
 	const char *_intKey[4];
