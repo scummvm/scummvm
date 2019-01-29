@@ -45,10 +45,22 @@ TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen *scr) : _vm(e
 
 	_textDimData = new TextDimData[_screen->screenDimTableCount()];
 
+	for (int i = 0; i < 256; ++i)
+		_colorMap[i] = i;
+
+	if (_vm->game() != GI_LOL) {
+		_colorMap[15] = _vm->guiSettings()->colors.menuTxtColWhite;
+		_colorMap[6] = _vm->guiSettings()->colors.menuTxtColLightRed;
+		_colorMap[8] = _vm->guiSettings()->colors.menuTxtColDarkRed;
+		_colorMap[9] = _vm->guiSettings()->colors.menuTxtColLightBlue;
+		_colorMap[2] = _vm->guiSettings()->colors.menuTxtColBlue;
+		_colorMap[12] = _vm->guiSettings()->colors.menuTxtColBlack;
+	}
+
 	for (int i = 0; i < _screen->screenDimTableCount(); i++) {
 		const ScreenDim *d = _screen->getScreenDim(i);
-		_textDimData[i].color1 = d->unk8;
-		_textDimData[i].color2 = d->unkA;
+		_textDimData[i].color1 = _colorMap[d->unk8];
+		_textDimData[i].color2 = _colorMap[d->unkA];
 		_textDimData[i].line = d->unkC;
 		_textDimData[i].column = d->unkE;
 	}
@@ -554,8 +566,8 @@ void TextDisplayer_rpg::printMessage(const char *str, int textColor, ...) {
 int TextDisplayer_rpg::clearDim(int dim) {
 	int res = _screen->curDimIndex();
 	_screen->setScreenDim(dim);
-	_textDimData[dim].color1 = _screen->_curDim->unk8;
-	_textDimData[dim].color2 = _vm->game() == GI_LOL ? _screen->_curDim->unkA : _vm->guiSettings()->colors.fill;
+	_textDimData[dim].color1 = _colorMap[_screen->_curDim->unk8];
+	_textDimData[dim].color2 = (_vm->game() == GI_LOL || _vm->gameFlags().platform == Common::kPlatformAmiga) ? _colorMap[_screen->_curDim->unkA] : _vm->guiSettings()->colors.fill;
 	clearCurDim();
 	return res;
 }

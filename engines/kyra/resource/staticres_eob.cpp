@@ -801,6 +801,12 @@ void EoBCoreEngine::initMenus() {
 		_menuDefs[2].numButtons = 4;
 		_menuDefs[2].firstButtonStrId = 44;
 	}
+
+	if (_flags.platform == Common::kPlatformAmiga) {
+		// assign Amiga text colors
+		_menuDefs[0].titleCol = _menuDefs[1].titleCol = _menuDefs[2].titleCol = _menuDefs[4].titleCol = _menuDefs[6].titleCol = guiSettings()->colors.menuTxtColLightBlue;
+		_menuDefs[3].titleCol = _menuDefs[5].titleCol = guiSettings()->colors.menuTxtColWhite;
+	}
 }
 
 
@@ -1287,12 +1293,17 @@ void EoBEngine::initSpells() {
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsVGA = {
 	{ 9, 15, 95, 9, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
-	{ 135, 130, 132, 133, 133, 17, 23, 20, 184, 177, 180, 184, 177, 180 }
+	{ 135, 130, 132, 180, 133, 17, 23, 20, 184, 177, 180, 184, 177, 180, 15, 6, 8, 9, 2, 12 }
 };
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsEGA = {
 	{ 9, 15, 95, 9, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
-	{ 13, 9, 2, 133, 2, 6, 13, 8, 13, 15, 14, 13, 15, 14 }
+	{ 13, 9, 2, 14, 2, 6, 13, 8, 13, 15, 14, 13, 15, 14, 15, 6, 8, 9, 2, 12 }
+};
+
+const KyraRpgGUISettings EoBEngine::_guiSettingsAmiga = {
+	{ 28, 31, 95, 9, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
+	{ 18, 17, 10, 17, 11, 24, 22, 25, 18, 9, 10, 18, 9, 10, 31, 24, 25, 28, 29, 19 }
 };
 
 const uint8 EoBEngine::_egaDefaultPalette[] = {
@@ -1393,12 +1404,12 @@ void DarkMoonEngine::initSpells() {
 
 const KyraRpgGUISettings DarkMoonEngine::_guiSettingsFMTowns = {
 	{ 9, 15, 95, 11, 7, { 221, 76 }, { 187, 162 }, { 95, 95 } },
-	{ 186, 181, 183, 133, 184, 17, 23, 20, 186, 181, 183, 182, 177, 180 }
+	{ 186, 181, 183, 183, 184, 17, 23, 20, 186, 181, 183, 182, 177, 180, 15, 6, 8, 9, 2, 12 }
 };
 
 const KyraRpgGUISettings DarkMoonEngine::_guiSettingsDOS = {
 	{ 9, 15, 95, 9, 7, { 221, 76 }, { 189, 162 }, { 95, 95 } },
-	{ 186, 181, 183, 133, 184, 17, 23, 20, 186, 181, 183, 182, 177, 180 }
+	{ 186, 181, 183, 183, 184, 17, 23, 20, 186, 181, 183, 182, 177, 180, 15, 6, 8, 9, 2, 12 }
 };
 
 const uint8 DarkMoonEngine::_egaDefaultPalette[] = {

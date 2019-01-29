@@ -154,6 +154,7 @@ private:
 	static const EoBRect16 _highlightFrames[];
 	static const uint8 _highlightColorTableVGA[];
 	static const uint8 _highlightColorTableEGA[];
+	static const uint8 _highlightColorTableAmiga[];
 
 	// FM-Towns specific
 	int checkKatakanaSelection();

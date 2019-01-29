@@ -53,7 +53,8 @@ public:
 
 	void allowPageBreak(bool mode) { _allowPageBreak = mode; }
 	void setWaitButtonMode(int mode) { _waitButtonMode = mode; }
-	int lineCount() { return _lineCount; }
+	int lineCount() const { return _lineCount; }
+	const uint8 *colorMap() const { return _colorMap; }
 
 protected:
 	virtual KyraRpgEngine *vm() { return _vm; }
@@ -106,6 +107,8 @@ private:
 
 	char *_table1;
 	char *_table2;
+
+	uint8 _colorMap[256];
 };
 
 } // End of namespace Kyra

@@ -1041,25 +1041,42 @@ int EoBEngine::mainMenu() {
 	while (menuChoice >= 0 && !shouldQuit()) {
 		switch (menuChoice) {
 		case 0: {
-			if (_configRenderMode != Common::kRenderEGA)
-				_screen->loadPalette("EOBPAL.COL", _screen->getPalette(0));
-			_screen->loadEoBBitmap(_flags.platform == Common::kPlatformAmiga ? "TITLE" : "INTRO", _cgaMappingDefault, 5, 3, 2);
-			_screen->setScreenPalette(_screen->getPalette(0));
+			if (_flags.platform == Common::kPlatformAmiga) {
+				_screen->fadeToBlack(10);
+				_screen->loadEoBBitmap("TITLE", 0, 5, 3, 1);
+				_screen->fadeFromBlack(10);
+			} else {
+				if (_configRenderMode != Common::kRenderEGA)
+					_screen->loadPalette("EOBPAL.COL", _screen->getPalette(0));
+				_screen->loadEoBBitmap("INTRO", _cgaMappingDefault, 5, 3, 2);
+				_screen->setScreenPalette(_screen->getPalette(0));
+			}
+
 			_screen->_curPage = 2;
 			of = _screen->setFont(Screen::FID_6_FNT);
 			Common::String versionString(Common::String::format("ScummVM %s", gScummVMVersion));
 			_screen->printText(versionString.c_str(), 280 - versionString.size() * 6, 153, _screen->getPagePixel(2, 0, 0), 0);
 			_screen->setFont(of);
 			_screen->fillRect(0, 159, 319, 199, _screen->getPagePixel(2, 0, 0));
-			gui_drawBox(77, 165, 173, 29, 14, 13, 12);
-			gui_drawBox(76, 164, 175, 31, 14, 13, -1);
+
+			if (_flags.platform == Common::kPlatformAmiga) {
+				gui_drawBox(75, 165, 177, 29, 22, 28, -1);
+				gui_drawBox(74, 164, 179, 31, 22, 28, -1);
+			} else {
+				gui_drawBox(77, 165, 173, 29, 14, 13, 12);
+				gui_drawBox(76, 164, 175, 31, 14, 13, -1);
+			}
+
 			_screen->_curPage = 0;
 			_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
 			_screen->updateScreen();
+
 			_allowImport = true;
 			menuChoice = mainMenuLoop();
 			_allowImport = false;
-			} break;
+			}
+
+			break;
 
 		case 1:
 			// load game in progress
@@ -1081,10 +1098,13 @@ int EoBEngine::mainMenu() {
 			_sound->selectAudioResourceSet(kMusicIntro);
 			_sound->loadSoundFile(0);
 			_screen->hideMouse();
+
 			seq_playIntro();
+
 			_screen->showMouse();
 			_sound->selectAudioResourceSet(kMusicIngame);
 			_sound->loadSoundFile(0);
+
 			menuChoice = 0;
 			break;
 		}

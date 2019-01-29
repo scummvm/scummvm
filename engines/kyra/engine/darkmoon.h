@@ -120,7 +120,7 @@ private:
 	int charSelectDialogue();
 	void characterLevelGain(int charIndex);
 
-	const KyraRpgGUISettings *guiSettings();
+	const KyraRpgGUISettings *guiSettings() const;
 
 	const char *const *_hornStrings;
 	const uint8 *_hornSounds;

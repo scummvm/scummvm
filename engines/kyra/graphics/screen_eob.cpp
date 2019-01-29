@@ -120,7 +120,8 @@ void Screen_EoB::setClearScreenDim(int dim) {
 }
 
 void Screen_EoB::clearCurDim() {
-	fillRect(_curDim->sx << 3, _curDim->sy, ((_curDim->sx + _curDim->w) << 3) - 1, (_curDim->sy + _curDim->h) - 1, _curDim->unkA);
+	static const uint8 amigaColorMap[16] = { 0x00, 0x06, 0x1d, 0x1b, 0x1a, 0x17, 0x18, 0x0e, 0x19, 0x1c, 0x1c, 0x1e, 0x13, 0x0a, 0x11, 0x1f };
+	fillRect(_curDim->sx << 3, _curDim->sy, ((_curDim->sx + _curDim->w) << 3) - 1, (_curDim->sy + _curDim->h) - 1, _isAmiga ? amigaColorMap[_curDim->unkA] : _curDim->unkA);
 }
 
 void Screen_EoB::setMouseCursor(int x, int y, const byte *shape) {

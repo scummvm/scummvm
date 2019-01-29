@@ -779,7 +779,7 @@ const int8 LoLEngine::_mapCoords[12][4] = {
 
 const KyraRpgGUISettings LoLEngine::_guiSettings = {
 	{ 144, 254, 74, 9, 80, { 0, 0 }, { 0, 0 }, { 0, 0 } },
-	{ 136, 251, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+	{ 136, 251, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
 const MistOfDoomAnimData LoLEngine::_mistAnimData[] = {

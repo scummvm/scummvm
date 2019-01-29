@@ -83,12 +83,12 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index) {
 	static const uint16 charPortraitPosY[] = { 2, 54, 106 };
 
 	EoBCharacter *c = &_characters[index];
-	int txtCol1 = 12;
-	int txtCol2 = 15;
+	int txtCol1 = guiSettings()->colors.menuTxtColBlack;
+	int txtCol2 = guiSettings()->colors.menuTxtColWhite;
 
 	if ((_flags.gameID == GI_EOB1 && c->flags & 6) || (_flags.gameID == GI_EOB2 && c->flags & 0x0E)) {
-		txtCol1 = 8;
-		txtCol2 = 6;
+		txtCol1 = guiSettings()->colors.menuTxtColDarkRed;
+		txtCol2 = guiSettings()->colors.menuTxtColLightRed;
 	}
 
 	if (_currentControlMode == 0) {
@@ -101,7 +101,7 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index) {
 		int cp = _screen->setCurPage(2);
 
 		if (index == _exchangeCharacterId)
-			_screen->printText(_characterGuiStringsSt[0], x2 + 2, y2 + 2, 8, guiSettings()->colors.fill);
+			_screen->printText(_characterGuiStringsSt[0], x2 + 2, y2 + 2, guiSettings()->colors.menuTxtColDarkRed, guiSettings()->colors.fill);
 		else
 			_screen->printText(c->name, x2 + 2, y2 + (_flags.platform == Common::kPlatformFMTowns ? 1 : 2), txtCol1, guiSettings()->colors.fill);
 
@@ -116,7 +116,7 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index) {
 		if (c->damageTaken > 0) {
 			_screen->drawShape(2, _redSplatShape, x2 + 13, y2 + 30, 0);
 			Common::String tmpStr = Common::String::format("%d", c->damageTaken);
-			_screen->printText(tmpStr.c_str(), x2 + 34 - tmpStr.size() * 3, y2 + 42, (_configRenderMode == Common::kRenderCGA) ? 12 : 15, 0);
+			_screen->printText(tmpStr.c_str(), x2 + 34 - tmpStr.size() * 3, y2 + 42, (_configRenderMode == Common::kRenderCGA) ? 12 : guiSettings()->colors.menuTxtColWhite, 0);
 		}
 
 		_screen->setCurPage(cp);
@@ -130,23 +130,23 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index) {
 		_screen->copyRegion(176, 0, 0, 0, 144, 168, 2, 2, Screen::CR_NO_P_CHECK);
 		_screen->_curPage = 2;
 		gui_drawFaceShape(index);
-		_screen->printShadedText(c->name, 219, 6, txtCol2, guiSettings()->colors.fill);
+		_screen->printShadedText(c->name, 219, 6, txtCol2, 0, guiSettings()->colors.menuTxtColBlack);
 		gui_drawHitpoints(index);
 		gui_drawFoodStatusGraph(index);
 
 		if (_currentControlMode == 1) {
 			if (c->hitPointsCur == -10)
-				_screen->printShadedText(_characterGuiStringsSt[1], 247, 158, 6, guiSettings()->colors.extraFill);
+				_screen->printShadedText(_characterGuiStringsSt[1], 247, 158, guiSettings()->colors.menuTxtColLightRed, guiSettings()->colors.sfill, guiSettings()->colors.menuTxtColBlack);
 			else if (c->hitPointsCur < 1)
-				_screen->printShadedText(_characterGuiStringsSt[2], 226, 158, 6, guiSettings()->colors.extraFill);
+				_screen->printShadedText(_characterGuiStringsSt[2], 226, 158, guiSettings()->colors.menuTxtColLightRed, guiSettings()->colors.sfill, guiSettings()->colors.menuTxtColBlack);
 			else if (c->effectFlags & (_flags.gameID == GI_EOB1 ? 0x80 : 0x2000))
-				_screen->printShadedText(_characterGuiStringsSt[3], 220, 158, 6, guiSettings()->colors.extraFill);
+				_screen->printShadedText(_characterGuiStringsSt[3], 220, 158, guiSettings()->colors.menuTxtColLightRed, guiSettings()->colors.sfill, guiSettings()->colors.menuTxtColBlack);
 			else if (c->flags & 2)
-				_screen->printShadedText(_characterGuiStringsSt[4], 235, 158, 6, guiSettings()->colors.extraFill);
+				_screen->printShadedText(_characterGuiStringsSt[4], 235, 158, guiSettings()->colors.menuTxtColLightRed, guiSettings()->colors.sfill, guiSettings()->colors.menuTxtColBlack);
 			else if (c->flags & 4)
-				_screen->printShadedText(_characterGuiStringsSt[5], 232, 158, 6, guiSettings()->colors.extraFill);
+				_screen->printShadedText(_characterGuiStringsSt[5], 232, 158, guiSettings()->colors.menuTxtColLightRed, guiSettings()->colors.sfill, guiSettings()->colors.menuTxtColBlack);
 			else if (c->flags & 8)
-				_screen->printShadedText(_characterGuiStringsSt[6], 232, 158, 6, guiSettings()->colors.extraFill);
+				_screen->printShadedText(_characterGuiStringsSt[6], 232, 158, guiSettings()->colors.menuTxtColLightRed, guiSettings()->colors.sfill, guiSettings()->colors.menuTxtColBlack);
 
 			for (int i = 0; i < 27; i++)
 				gui_drawInventoryItem(i, 0, 2);
@@ -159,38 +159,38 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index) {
 			static const uint16 cm2Y2[] = { 165, 165, 147 };
 
 			for (int i = 0; i < 3; i++)
-				_screen->fillRect(cm2X1[i], cm2Y1[i], cm2X2[i], cm2Y2[i], guiSettings()->colors.extraFill);
+				_screen->fillRect(cm2X1[i], cm2Y1[i], cm2X2[i], cm2Y2[i], guiSettings()->colors.sfill);
 
-			_screen->printShadedText(_characterGuiStringsIn[0], 183, 42, 15, guiSettings()->colors.extraFill);
-			_screen->printText(_chargenClassStrings[c->cClass], 183, 55, 12, guiSettings()->colors.extraFill);
-			_screen->printText(_chargenAlignmentStrings[c->alignment], 183, 62, 12, guiSettings()->colors.extraFill);
-			_screen->printText(_chargenRaceSexStrings[c->raceSex], 183, 69, 12, guiSettings()->colors.extraFill);
+			_screen->printShadedText(_characterGuiStringsIn[0], 183, 42, guiSettings()->colors.menuTxtColWhite, guiSettings()->colors.sfill, guiSettings()->colors.menuTxtColBlack);
+			_screen->printText(_chargenClassStrings[c->cClass], 183, 55, guiSettings()->colors.menuTxtColBlack, guiSettings()->colors.sfill);
+			_screen->printText(_chargenAlignmentStrings[c->alignment], 183, 62, guiSettings()->colors.menuTxtColBlack, guiSettings()->colors.sfill);
+			_screen->printText(_chargenRaceSexStrings[c->raceSex], 183, 69, guiSettings()->colors.menuTxtColBlack, guiSettings()->colors.sfill);
 
 			for (int i = 0; i < 6; i++)
-				_screen->printText(_chargenStatStrings[6 + i], 183, 82 + i * 7, 12, guiSettings()->colors.extraFill);
+				_screen->printText(_chargenStatStrings[6 + i], 183, 82 + i * 7, guiSettings()->colors.menuTxtColBlack, guiSettings()->colors.sfill);
 
-			_screen->printText(_characterGuiStringsIn[1], 183, 124, 12, guiSettings()->colors.extraFill);
-			_screen->printText(_characterGuiStringsIn[2], 239, 138, 12, guiSettings()->colors.extraFill);
-			_screen->printText(_characterGuiStringsIn[3], 278, 138, 12, guiSettings()->colors.extraFill);
+			_screen->printText(_characterGuiStringsIn[1], 183, 124, guiSettings()->colors.menuTxtColBlack, guiSettings()->colors.sfill);
+			_screen->printText(_characterGuiStringsIn[2], 239, 138, guiSettings()->colors.menuTxtColBlack, guiSettings()->colors.sfill);
+			_screen->printText(_characterGuiStringsIn[3], 278, 138, guiSettings()->colors.menuTxtColBlack, guiSettings()->colors.sfill);
 
-			_screen->printText(getCharStrength(c->strengthCur, c->strengthExtCur).c_str(), 275, 82, 15, guiSettings()->colors.extraFill);
-			_screen->printText(Common::String::format("%d", c->intelligenceCur).c_str(), 275, 89, 15, guiSettings()->colors.extraFill);
-			_screen->printText(Common::String::format("%d", c->wisdomCur).c_str(), 275, 96, 15, guiSettings()->colors.extraFill);
-			_screen->printText(Common::String::format("%d", c->dexterityCur).c_str(), 275, 103, 15, guiSettings()->colors.extraFill);
-			_screen->printText(Common::String::format("%d", c->constitutionCur).c_str(), 275, 110, 15, guiSettings()->colors.extraFill);
-			_screen->printText(Common::String::format("%d", c->charismaCur).c_str(), 275, 117, 15, guiSettings()->colors.extraFill);
-			_screen->printText(Common::String::format("%d", c->armorClass).c_str(), 275, 124, 15, guiSettings()->colors.extraFill);
+			_screen->printText(getCharStrength(c->strengthCur, c->strengthExtCur).c_str(), 275, 82, guiSettings()->colors.menuTxtColWhite, guiSettings()->colors.sfill);
+			_screen->printText(Common::String::format("%d", c->intelligenceCur).c_str(), 275, 89, guiSettings()->colors.menuTxtColWhite, guiSettings()->colors.sfill);
+			_screen->printText(Common::String::format("%d", c->wisdomCur).c_str(), 275, 96, guiSettings()->colors.menuTxtColWhite, guiSettings()->colors.sfill);
+			_screen->printText(Common::String::format("%d", c->dexterityCur).c_str(), 275, 103, guiSettings()->colors.menuTxtColWhite, guiSettings()->colors.sfill);
+			_screen->printText(Common::String::format("%d", c->constitutionCur).c_str(), 275, 110, guiSettings()->colors.menuTxtColWhite, guiSettings()->colors.sfill);
+			_screen->printText(Common::String::format("%d", c->charismaCur).c_str(), 275, 117, guiSettings()->colors.menuTxtColWhite, guiSettings()->colors.sfill);
+			_screen->printText(Common::String::format("%d", c->armorClass).c_str(), 275, 124, guiSettings()->colors.menuTxtColWhite, guiSettings()->colors.sfill);
 
 			for (int i = 0; i < 3; i++) {
 				int t = getCharacterClassType(c->cClass, i);
 				if (t == -1)
 					continue;
 
-				_screen->printText(_chargenClassStrings[t + 15], 180, 145 + 7 * i, 12, guiSettings()->colors.extraFill);
+				_screen->printText(_chargenClassStrings[t + 15], 180, 145 + 7 * i, guiSettings()->colors.menuTxtColBlack, guiSettings()->colors.sfill);
 				Common::String tmpStr = Common::String::format("%d", c->experience[i]);
-				_screen->printText(tmpStr.c_str(), 251 - tmpStr.size() * 3, 145 + 7 * i, 15, guiSettings()->colors.extraFill);
+				_screen->printText(tmpStr.c_str(), 251 - tmpStr.size() * 3, 145 + 7 * i, guiSettings()->colors.menuTxtColWhite, guiSettings()->colors.sfill);
 				tmpStr = Common::String::format("%d", c->level[i]);
-				_screen->printText(tmpStr.c_str(), 286 - tmpStr.size() * 3, 145 + 7 * i, 15, guiSettings()->colors.extraFill);
+				_screen->printText(tmpStr.c_str(), 286 - tmpStr.size() * 3, 145 + 7 * i, guiSettings()->colors.menuTxtColWhite, guiSettings()->colors.sfill);
 			}
 		}
 
@@ -323,7 +323,7 @@ void EoBCoreEngine::gui_drawWeaponSlotStatus(int x, int y, int status) {
 		break;
 	}
 
-	int textColor = (_configRenderMode == Common::kRenderCGA) ? 2 : 15;
+	int textColor = (_configRenderMode == Common::kRenderCGA) ? 2 : guiSettings()->colors.menuTxtColWhite;
 
 	if (!tmpStr2.empty()) {
 		_screen->printText(tmpStr.c_str(), x + (16 - tmpStr.size() * 3), y + 2, textColor, 0);
@@ -342,7 +342,9 @@ void EoBCoreEngine::gui_drawHitpoints(int index) {
 
 	static const uint8 xCoords[] = { 23, 95 };
 	static const uint8 yCoords[] = { 46, 98, 150 };
-	static const uint8 barColor[] = { 3, 5, 8 };
+	static const uint8 barColorDefault[] = { 3, 5, 8 };
+	static const uint8 barColorAmiga[] = { 27, 7, 25 };
+	const uint8 *barColor = (_flags.platform == Common::kPlatformAmiga) ? barColorAmiga : barColorDefault;
 
 	int x = xCoords[index & 1];
 	int y = yCoords[index >> 1];
@@ -369,7 +371,7 @@ void EoBCoreEngine::gui_drawHitpoints(int index) {
 			col = 2;
 
 		if (!_currentControlMode)
-			_screen->printText(_characterGuiStringsHp[0], x - 13, y - 1, 12, 0);
+			_screen->printText(_characterGuiStringsHp[0], x - 13, y - 1, guiSettings()->colors.menuTxtColBlack, 0);
 
 
 		gui_drawHorizontalBarGraph(x, y, w, h, bgCur, bgMax, barColor[col], guiSettings()->colors.barGraph);
@@ -382,7 +384,7 @@ void EoBCoreEngine::gui_drawHitpoints(int index) {
 			y -= 1;
 		}
 
-		_screen->printText(tmpString.c_str(), x, y, 12, guiSettings()->colors.fill);
+		_screen->printText(tmpString.c_str(), x, y, guiSettings()->colors.menuTxtColBlack, guiSettings()->colors.fill);
 	}
 }
 
@@ -400,7 +402,11 @@ void EoBCoreEngine::gui_drawFoodStatusGraph(int index) {
 	if (index != _updateCharNum)
 		return;
 
-	uint8 col = c->food < 20 ? 8 : (c->food < 33 ? 5 : 3);
+	static const uint8 barColorDefault[] = { 3, 5, 8 };
+	static const uint8 barColorAmiga[] = { 27, 7, 25 };
+	const uint8 *barColor = (_flags.platform == Common::kPlatformAmiga) ? barColorAmiga : barColorDefault;
+
+	uint8 col = c->food < 20 ? barColor[2] : (c->food < 33 ? barColor[1] : barColor[0]);
 	gui_drawHorizontalBarGraph(250, 25, 51, 5, c->food, 100, col, guiSettings()->colors.barGraph);
 }
 
@@ -475,19 +481,22 @@ void EoBCoreEngine::gui_drawCharPortraitStatusFrame(int index) {
 	}
 }
 
-void EoBCoreEngine::gui_drawInventoryItem(int slot, int special, int pageNum) {
+void EoBCoreEngine::gui_drawInventoryItem(int slot, int redraw, int pageNum) {
 	int x = _inventorySlotsX[slot];
 	int y = _inventorySlotsY[slot];
 
 	int item = _characters[_updateCharNum].inventory[slot];
 	int cp = _screen->setCurPage(pageNum);
 
-	if (special) {
+	if (redraw) {
 		int wh = (slot == 25 || slot == 26) ? 10 : 18;
 
 		uint8 col1 = guiSettings()->colors.frame1;
 		uint8 col2 = guiSettings()->colors.frame2;
-		if (_configRenderMode == Common::kRenderCGA) {
+		if (_flags.platform == Common::kPlatformAmiga) {
+			col1 = guiSettings()->colors.inactiveTabFrame1;
+			col2 = guiSettings()->colors.inactiveTabFrame2;
+		} else if (_configRenderMode == Common::kRenderCGA) {
 			col1 = 1;
 			col2 = 3;
 		}
@@ -495,11 +504,11 @@ void EoBCoreEngine::gui_drawInventoryItem(int slot, int special, int pageNum) {
 		gui_drawBox(x - 1, y - 1, wh, wh, col1, col2, slot == 16 ? -1 : guiSettings()->colors.fill);
 
 		if (slot == 16) {
-			_screen->fillRect(227, 65, 238, 69, 12);
+			_screen->fillRect(227, 65, 238, 69, guiSettings()->colors.menuTxtColBlack);
 			int cnt = countQueuedItems(_characters[_updateCharNum].inventory[slot], -1, -1, 1, 1);
 			x = cnt >= 10 ? 227 : 233;
 			Common::String str = Common::String::format("%d", cnt);
-			_screen->printText(str.c_str(), x, 65, 15, 0);
+			_screen->printText(str.c_str(), x, 65, guiSettings()->colors.menuTxtColWhite, 0);
 		}
 	}
 
@@ -557,20 +566,20 @@ void EoBCoreEngine::gui_drawSpellbook() {
 			col3 = guiSettings()->colors.inactiveTabFill;
 
 			if (i == _openBookSpellLevel) {
-				col1 =  guiSettings()->colors.frame1;
-				col2 =  guiSettings()->colors.frame2;
-				col3 =  guiSettings()->colors.fill;
+				col1 = guiSettings()->colors.frame1;
+				col2 = _flags.platform == Common::kPlatformAmiga ? 31 : guiSettings()->colors.frame2;
+				col3 = _flags.platform == Common::kPlatformAmiga ? guiSettings()->colors.frame2 : guiSettings()->colors.fill;
 			}
 		}
 
 		if (_flags.gameID == GI_EOB1) {
 			gui_drawBox(i * 21 + 71, 122, 21, 9, col1, col2, col3);
-			_screen->printText(_magicStrings7[i], i * 21 + 73, 123, 12, 0);
+			_screen->printText(_magicStrings7[i], i * 21 + 73, 123, guiSettings()->colors.menuTxtColBlack, 0);
 		} else {
 			_screen->set16bitShadingLevel(4);
 			gui_drawBox(i * 18 + 68, 121, 18, 9, col1, col2, col3);
 			_screen->set16bitShadingLevel(0);
-			_screen->printText(Common::String::format("%d", i + 1).c_str(), i * 18 + 75, 123, 12, 0);
+			_screen->printText(Common::String::format("%d", i + 1).c_str(), i * 18 + 75, 123, guiSettings()->colors.menuTxtColBlack, 0);
 		}
 	}
 
@@ -587,8 +596,8 @@ void EoBCoreEngine::gui_drawSpellbook() {
 		gui_drawSpellbookScrollArrow(165, 169, 1);
 	}
 
-	int textCol1 = (_configRenderMode == Common::kRenderCGA) ? 3 : 15;
-	int textCol2 = 8;
+	int textCol1 = (_configRenderMode == Common::kRenderCGA) ? 3 : guiSettings()->colors.menuTxtColWhite;
+	int textCol2 = guiSettings()->colors.menuTxtColDarkRed;
 	int textXa = 74;
 	int textXs = 71;
 	int textY = 170;
@@ -597,7 +606,7 @@ void EoBCoreEngine::gui_drawSpellbook() {
 	int col5 = 12;
 
 	if (_flags.gameID == GI_EOB1) {
-		textCol2 = (_configRenderMode == Common::kRenderCGA) ? 12 : 11;
+		textCol2 = (_configRenderMode == Common::kRenderCGA) ? 12 : (_flags.platform == Common::kPlatformAmiga ? 16 : 11);
 		textXa = textXs = 73;
 		textY = 168;
 		col4 = col3;
@@ -1414,7 +1423,13 @@ GUI_EoB::GUI_EoB(EoBCoreEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
 
 	_charSelectRedraw = false;
 
-	_highLightColorTable = (_vm->game() == GI_EOB1 && (_vm->_configRenderMode == Common::kRenderCGA || _vm->_configRenderMode == Common::kRenderEGA)) ? _highlightColorTableEGA : _highlightColorTableVGA;
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		_highLightColorTable = _highlightColorTableAmiga;
+	else if (_vm->game() == GI_EOB1 && (_vm->_configRenderMode == Common::kRenderCGA || _vm->_configRenderMode == Common::kRenderEGA))
+		_highLightColorTable = _highlightColorTableEGA;
+	else
+		_highLightColorTable = _highlightColorTableVGA;
+
 	_updateBoxIndex = -1;
 	_highLightBoxTimer = 0;
 	_updateBoxColorIndex = 0;
@@ -1938,9 +1953,9 @@ void GUI_EoB::simpleMenu_setup(int sd, int maxItem, const char *const *strings, 
 	for (int i = 0; i < _menuNumItems; i++) {
 		int item = simpleMenu_getMenuItem(i, menuItemsMask, itemOffset);
 		int ty = y + i * (lineSpacing + _screen->getFontHeight());
-		_screen->printShadedText(strings[item], x, ty, (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : dm->unkA, 0);
+		_screen->printShadedText(strings[item], x, ty, (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : _vm->guiSettings()->colors.menuTxtColWhite, 0, _vm->guiSettings()->colors.menuTxtColBlack);
 		if (item == v)
-			_screen->printText(strings[item], x, ty, dm->unkC, 0);
+			_screen->printText(strings[item], x, ty, _vm->guiSettings()->colors.menuTxtColLightRed, 0);
 	}
 
 	_screen->updateScreen();
@@ -1991,14 +2006,14 @@ int GUI_EoB::simpleMenu_process(int sd, const char *const *strings, void *b, int
 	}
 
 	if (newItem != currentItem) {
-		_screen->printText(strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, itemOffset)], x, y + currentItem * lineH, (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : dm->unkA, 0);
-		_screen->printText(strings[simpleMenu_getMenuItem(newItem,  menuItemsMask, itemOffset)], x, y + newItem * lineH , dm->unkC, 0);
+		_screen->printText(strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, itemOffset)], x, y + currentItem * lineH, (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : _vm->guiSettings()->colors.menuTxtColWhite, 0);
+		_screen->printText(strings[simpleMenu_getMenuItem(newItem,  menuItemsMask, itemOffset)], x, y + newItem * lineH , _vm->guiSettings()->colors.menuTxtColLightRed, 0);
 		_screen->updateScreen();
 	}
 
 	if (result != -1) {
 		result = simpleMenu_getMenuItem(result, menuItemsMask, itemOffset);
-		simpleMenu_flashSelection(strings[result], x, y + newItem * lineH, dm->unkA, dm->unkC, 0);
+		simpleMenu_flashSelection(strings[result], x, y + newItem * lineH, _vm->guiSettings()->colors.menuTxtColWhite, _vm->guiSettings()->colors.menuTxtColLightRed, 0);
 	}
 
 	_menuCur = newItem;
@@ -2292,10 +2307,10 @@ bool GUI_EoB::runLoadMenu(int x, int y) {
 			runLoop = result = false;
 		} else if (slot >= 0) {
 			if (_saveSlotIdTemp[slot] == -1) {
-				messageDialogue(11, 65, 6);
+				messageDialogue(11, 65, _vm->guiSettings()->colors.menuTxtColLightRed);
 			} else {
 				if (_vm->loadGameState(_saveSlotIdTemp[slot]).getCode() != Common::kNoError)
-					messageDialogue(11, 16, 6);
+					messageDialogue(11, 16, _vm->guiSettings()->colors.menuTxtColLightRed);
 				runLoop = false;
 				result = true;
 			}
@@ -2355,7 +2370,7 @@ bool GUI_EoB::confirmDialogue2(int dim, int id, int deflt) {
 
 		if (newHighlight != lastHighlight) {
 			for (int i = 0; i < 2; i++)
-				_screen->printShadedText(_vm->_menuYesNoStrings[i], x[i] + 16 - (_screen->getTextWidth(_vm->_menuYesNoStrings[i]) / 2) + 1, y + 3, i == newHighlight ? 6 : 15, 0);
+				_screen->printShadedText(_vm->_menuYesNoStrings[i], x[i] + 16 - (_screen->getTextWidth(_vm->_menuYesNoStrings[i]) / 2) + 1, y + 3, i == newHighlight ? _vm->guiSettings()->colors.menuTxtColLightRed : _vm->guiSettings()->colors.menuTxtColWhite, 0, _vm->guiSettings()->colors.menuTxtColBlack);
 			_screen->updateScreen();
 			lastHighlight = newHighlight;
 		}
@@ -2387,7 +2402,7 @@ void GUI_EoB::messageDialogue(int dim, int id, int buttonTextCol) {
 	int bw = _screen->getTextWidth(_vm->_menuOkString) + 7;
 
 	drawMenuButtonBox(bx, by, bw, 14, false, false);
-	_screen->printShadedText(_vm->_menuOkString, bx + 4, by + 3, buttonTextCol, 0);
+	_screen->printShadedText(_vm->_menuOkString, bx + 4, by + 3, buttonTextCol, 0, _vm->guiSettings()->colors.menuTxtColBlack);
 	_screen->updateScreen();
 
 	for (bool runLoop = true; runLoop && !_vm->shouldQuit();) {
@@ -2418,7 +2433,7 @@ void GUI_EoB::messageDialogue2(int dim, int id, int buttonTextCol) {
 	_screen->_curPage = 2;
 	_screen->setClearScreenDim(dim);
 	drawMenuButtonBox(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, false, false);
-	_screen->printShadedText(getMenuString(id), (_screen->_curDim->sx << 3) + 5, _screen->_curDim->sy + 5, 15, 0);
+	_screen->printShadedText(getMenuString(id), (_screen->_curDim->sx << 3) + 5, _screen->_curDim->sy + 5, _vm->guiSettings()->colors.menuTxtColWhite, 0, _vm->guiSettings()->colors.menuTxtColBlack);
 	_screen->_curPage = 0;
 	_screen->copyRegion(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, 2, 0, Screen::CR_NO_P_CHECK);
 
@@ -2426,7 +2441,7 @@ void GUI_EoB::messageDialogue2(int dim, int id, int buttonTextCol) {
 	int y = _screen->_curDim->sy + _screen->_curDim->h - 21;
 	int w = _screen->getTextWidth(_vm->_menuOkString) + 8;
 	drawMenuButtonBox(x, y, w, 14, false, false);
-	_screen->printShadedText(_vm->_menuOkString, x + 4, y + 3, buttonTextCol, 0);
+	_screen->printShadedText(_vm->_menuOkString, x + 4, y + 3, buttonTextCol, 0, _vm->guiSettings()->colors.menuTxtColBlack);
 	_screen->updateScreen();
 
 	for (bool runLoop = true; runLoop && !_vm->shouldQuit();) {
@@ -2447,7 +2462,7 @@ void GUI_EoB::messageDialogue2(int dim, int id, int buttonTextCol) {
 	_screen->updateScreen();
 	_vm->_system->delayMillis(80);
 	drawMenuButtonBox(x, y, w, 14, false, false);
-	_screen->printShadedText(_vm->_menuOkString, x + 4, y + 3, buttonTextCol, 0);
+	_screen->printShadedText(_vm->_menuOkString, x + 4, y + 3, buttonTextCol, 0, _vm->guiSettings()->colors.menuTxtColBlack);
 	_screen->updateScreen();
 
 }
@@ -2504,7 +2519,7 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 	_screen->copyRegion((x - 1) << 3, y, 0, 191, (destMaxLen + 2) << 3, 9, 0, 2, Screen::CR_NO_P_CHECK);
 	if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
 		_screen->copyRegion(0, 0, 160, 0, 160, 128, 2, 2, Screen::CR_NO_P_CHECK);
-	_screen->printShadedText(dest, x << 3, y, textColor1, textColor2);
+	_screen->printShadedText(dest, x << 3, y, textColor1, textColor2, _vm->guiSettings()->colors.menuTxtColBlack);
 
 	uint32 next = _vm->_system->getMillis() + 2 * _vm->_tickLength;
 	sufx[0] = (pos < len) ? dest[pos] : 32;
@@ -2523,7 +2538,7 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 			if (next <= _vm->_system->getMillis()) {
 				if (cursorState) {
 					_screen->copyRegion((pos + 1) << 3, 191, (x + pos) << 3, y, 8, 9, 2, 0, Screen::CR_NO_P_CHECK);
-					_screen->printShadedText(sufx, (x + pos) << 3, y, textColor1, textColor2);
+					_screen->printShadedText(sufx, (x + pos) << 3, y, textColor1, textColor2, _vm->guiSettings()->colors.menuTxtColBlack);
 				} else {
 					_screen->fillRect((x + pos) << 3, y, ((x + pos) << 3) + 7, y + 7, cursorColor);
 					_screen->printText(sufx, (x + pos) << 3, y, textColor1, cursorColor);
@@ -2638,7 +2653,7 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 		}
 
 		_screen->copyRegion(0, 191, (x - 1) << 3, y, (destMaxLen + 2) << 3, 9, 2, 0, Screen::CR_NO_P_CHECK);
-		_screen->printShadedText(dest, x << 3, y, textColor1, textColor2);
+		_screen->printShadedText(dest, x << 3, y, textColor1, textColor2, _vm->guiSettings()->colors.menuTxtColBlack);
 		
 		if (_vm->_flags.platform == Common::kPlatformFMTowns) {
 			if (pos < len) {
@@ -2655,7 +2670,7 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 		if (cursorState)
 			_screen->printText(sufx, (x + pos) << 3, y, textColor1, cursorColor);
 		else
-			_screen->printShadedText(sufx, (x + pos) << 3, y, textColor1, textColor2);
+			_screen->printShadedText(sufx, (x + pos) << 3, y, textColor1, textColor2, _vm->guiSettings()->colors.menuTxtColBlack);
 		_screen->updateScreen();
 
 	} while (_keyPressed.keycode != Common::KEYCODE_RETURN && _keyPressed.keycode != Common::KEYCODE_ESCAPE && !_vm->shouldQuit());
@@ -2689,7 +2704,7 @@ int GUI_EoB::checkKatakanaSelection() {
 
 			if (_csjis[0] != '\x81' || _csjis[1] != '\x40') {
 				highlight = lineOffs << 8 | column;
-				_screen->printShadedText(_csjis, x & ~7, y & ~15, 6, 0);
+				_screen->printShadedText(_csjis, x & ~7, y & ~15, _vm->guiSettings()->colors.menuTxtColLightRed, 0, _vm->guiSettings()->colors.menuTxtColBlack);
 			}
 
 			x = 288; y = 168;
@@ -2702,7 +2717,7 @@ int GUI_EoB::checkKatakanaSelection() {
 				continue;
 
 			highlight = 0x400 | i;
-			_screen->printShadedText(_vm->_katakanaSelectStrings[i], kanaSelXCrds[i], 176, 6, 0);
+			_screen->printShadedText(_vm->_katakanaSelectStrings[i], kanaSelXCrds[i], 176, _vm->guiSettings()->colors.menuTxtColLightRed, 0, _vm->guiSettings()->colors.menuTxtColBlack);
 			i = 3;
 		}
 	}
@@ -2718,13 +2733,13 @@ int GUI_EoB::checkKatakanaSelection() {
 
 	if (_menuCur != -1) {
 		if (_menuCur & 0x400) {
-			_screen->printShadedText(_vm->_katakanaSelectStrings[_menuCur & 3], kanaSelXCrds[_menuCur & 3], 176, 15, 0);
+			_screen->printShadedText(_vm->_katakanaSelectStrings[_menuCur & 3], kanaSelXCrds[_menuCur & 3], 176, _vm->guiSettings()->colors.menuTxtColWhite, 0, _vm->guiSettings()->colors.menuTxtColBlack);
 		} else {
 			char osjis[3];
 			osjis[0] = _vm->_katakanaLines[_currentKanaPage * 4 + (_menuCur >> 8)][_menuCur & 0xFF];
 			osjis[1] = _vm->_katakanaLines[_currentKanaPage * 4 + (_menuCur >> 8)][(_menuCur & 0xFF) + 1];
 			osjis[2] = 0;
-			_screen->printShadedText(osjis, 152 + ((_menuCur & 0xFF) << 2), 112 + ((_menuCur >> 4) & ~0x0F), 15, 0);
+			_screen->printShadedText(osjis, 152 + ((_menuCur & 0xFF) << 2), 112 + ((_menuCur >> 4) & ~0x0F), _vm->guiSettings()->colors.menuTxtColWhite, 0, _vm->guiSettings()->colors.menuTxtColBlack);
 		}
 	}
 
@@ -2762,11 +2777,11 @@ void GUI_EoB::printKatakanaOptions(int page) {
 	_currentKanaPage = page;
 	_screen->copyRegion(160, 44, 144, 108, 160, 84, 2, 0, Screen::CR_NO_P_CHECK);
 	for (int i = 0; i < 4; i++)
-		_screen->printShadedText(_vm->_katakanaLines[page * 4 + i], 152, (i << 4) + 112, 15, 0);
+		_screen->printShadedText(_vm->_katakanaLines[page * 4 + i], 152, (i << 4) + 112, _vm->guiSettings()->colors.menuTxtColWhite, 0, _vm->guiSettings()->colors.menuTxtColBlack);
 
 	static uint16 kanaSelCrds[] = { 224, 272, 186 };
 	for (int i = 0; i < 3; i++)
-		_screen->printShadedText(_vm->_katakanaSelectStrings[i], kanaSelCrds[i], 176, 15, 0);
+		_screen->printShadedText(_vm->_katakanaSelectStrings[i], kanaSelCrds[i], 176, _vm->guiSettings()->colors.menuTxtColWhite, 0, _vm->guiSettings()->colors.menuTxtColBlack);
 }
 
 void GUI_EoB::transferWaitBox() {
@@ -2833,7 +2848,7 @@ bool GUI_EoB::transferFileMenu(Common::String &targetName, Common::String &selec
 			break;
 
 		if (_saveSlotIdTemp[slot] == -1)
-			messageDialogue(11, 65, 6);
+			messageDialogue(11, 65, _vm->guiSettings()->colors.menuTxtColLightRed);
 		else {
 			_screen->modifyScreenDim(11, xo, yo, dm->w, dm->h);
 			selection = _vm->getSavegameFilename(targetName, _saveSlotIdTemp[slot]);
@@ -2904,7 +2919,7 @@ bool GUI_EoB::runSaveMenu(int x, int y) {
 					of = _vm->screen()->setFont(Screen::FID_6_FNT);
 					y++;
 				} else {
-					in = getTextInput(_saveSlotStringsTemp[slot], x + 1, fy, 19, 2, 0, 8);
+					in = getTextInput(_saveSlotStringsTemp[slot], x + 1, fy, 19, _vm->guiSettings()->colors.menuTxtColBlue, 0, _vm->guiSettings()->colors.menuTxtColDarkRed);
 				}
 				if (in == -1) {
 					useSlot = false;
@@ -2912,7 +2927,7 @@ bool GUI_EoB::runSaveMenu(int x, int y) {
 				}
 
 				if (!strlen(_saveSlotStringsTemp[slot])) {
-					messageDialogue(11, 54, 6);
+					messageDialogue(11, 54, _vm->guiSettings()->colors.menuTxtColLightRed);
 					in = -1;
 				}
 			}
@@ -2922,7 +2937,7 @@ bool GUI_EoB::runSaveMenu(int x, int y) {
 			}
 
 			_screen->fillRect(fx - 2, fy, fx + 160, fy + 8, _vm->guiSettings()->colors.fill);
-			_screen->printShadedText(_saveSlotStringsTemp[slot], (x + 1) << 3, fy, 15, 0);
+			_screen->printShadedText(_saveSlotStringsTemp[slot], (x + 1) << 3, fy, _vm->guiSettings()->colors.menuTxtColWhite, 0, _vm->guiSettings()->colors.menuTxtColBlack);
 			_screen->set16bitShadingLevel(0);
 			_screen->setFont(of);
 			_screen->updateScreen();
@@ -2935,7 +2950,7 @@ bool GUI_EoB::runSaveMenu(int x, int y) {
 			if (err.getCode() == Common::kNoError)
 				result = true;
 			else
-				messageDialogue(11, 15, 6);
+				messageDialogue(11, 15, _vm->guiSettings()->colors.menuTxtColLightRed);
 
 			runLoop = false;
 		}
@@ -2947,14 +2962,14 @@ bool GUI_EoB::runSaveMenu(int x, int y) {
 
 int GUI_EoB::selectSaveSlotDialogue(int x, int y, int id) {
 	_saveSlotX = _saveSlotY = 0;
-	int col1 = (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : 15;
+	int col1 = (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : _vm->guiSettings()->colors.menuTxtColWhite;
 	_screen->setCurPage(2);
 
 	_savegameOffset = 0;
 
 	drawMenuButtonBox(0, 0, 176, 144, false, false);
 	const char *title = (id < 2) ? _vm->_saveLoadStrings[2 + id] : _vm->_transferStringsScummVM[id - 1];
-	_screen->printShadedText(title, 52, 5, col1, 0);
+	_screen->printShadedText(title, 52, 5, col1, 0, _vm->guiSettings()->colors.menuTxtColBlack);
 
 	_screen->copyRegion(0, 0, x, y, 176, 144, 2, 0, Screen::CR_NO_P_CHECK);
 	_screen->setCurPage(0);
@@ -3033,11 +3048,11 @@ int GUI_EoB::selectSaveSlotDialogue(int x, int y, int id) {
 
 		if (lastHighlight != newHighlight) {
 			drawSaveSlotButton(lastHighlight, 0, col1);
-			drawSaveSlotButton(newHighlight, 0, 6);
+			drawSaveSlotButton(newHighlight, 0, _vm->guiSettings()->colors.menuTxtColLightRed);
 
 			// Display highlighted slot index in the bottom left corner to avoid people getting lost with the 990 save slots
 			_screen->setFont(Screen::FID_6_FNT);
-			int sli = (newHighlight == 6) ?  _savegameOffset : (_savegameOffset + newHighlight);
+			int sli = (newHighlight == 6) ? _savegameOffset : (_savegameOffset + newHighlight);
 			_screen->set16bitShadingLevel(4);
 			_screen->printText(Common::String::format("%03d/989", sli).c_str(), _saveSlotX + 5, _saveSlotY + 135, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
 			_screen->set16bitShadingLevel(0);
@@ -3048,10 +3063,10 @@ int GUI_EoB::selectSaveSlotDialogue(int x, int y, int id) {
 		}
 	}
 
-	drawSaveSlotButton(newHighlight, 2, 6);
+	drawSaveSlotButton(newHighlight, 2, _vm->guiSettings()->colors.menuTxtColLightRed);
 	_screen->updateScreen();
 	_vm->_system->delayMillis(80);
-	drawSaveSlotButton(newHighlight, 1, 6);
+	drawSaveSlotButton(newHighlight, 1, _vm->guiSettings()->colors.menuTxtColLightRed);
 	_screen->updateScreen();
 
 	return newHighlight;
@@ -3200,7 +3215,7 @@ void GUI_EoB::runMemorizePrayMenu(int charIndex, int spellType) {
 		if (updateDesc) {
 			updateDesc = false;
 			_screen->set16bitShadingLevel(4);
-			_screen->printShadedText(Common::String::format(_vm->_menuStringsMgc[1], np[lastHighLightButton] - numAssignedSpellsPerBookPage[lastHighLightButton], np[lastHighLightButton]).c_str(), 8, 38, 9, _vm->guiSettings()->colors.fill);
+			_screen->printShadedText(Common::String::format(_vm->_menuStringsMgc[1], np[lastHighLightButton] - numAssignedSpellsPerBookPage[lastHighLightButton], np[lastHighLightButton]).c_str(), 8, 38, 9, _vm->guiSettings()->colors.fill, _vm->guiSettings()->colors.menuTxtColBlack);
 			_screen->set16bitShadingLevel(0);
 		}
 
@@ -3393,7 +3408,7 @@ void GUI_EoB::scribeScrollDialogue() {
 						buttonList = initMenu(6);
 
 						for (int i = 0; i < s; i++)
-							_screen->printShadedText(_vm->_mageSpellList[menuItems[i]], 8, 9 * i + 50, 15, 0);
+							_screen->printShadedText(_vm->_mageSpellList[menuItems[i]], 8, 9 * i + 50, _vm->guiSettings()->colors.menuTxtColWhite, 0, _vm->guiSettings()->colors.menuTxtColBlack);
 
 						redraw = false;
 						lastHighLight = -1;
@@ -3402,9 +3417,9 @@ void GUI_EoB::scribeScrollDialogue() {
 
 					if (lastHighLight != newHighLight) {
 						if (lastHighLight >= 0)
-							_screen->printText(_vm->_mageSpellList[menuItems[lastHighLight]], 8, 9 * lastHighLight + 50, 15, 0);
+							_screen->printText(_vm->_mageSpellList[menuItems[lastHighLight]], 8, 9 * lastHighLight + 50, _vm->guiSettings()->colors.menuTxtColWhite, 0);
 						lastHighLight = newHighLight;
-						_screen->printText(_vm->_mageSpellList[menuItems[lastHighLight]], 8, 9 * lastHighLight + 50, 6, 0);
+						_screen->printText(_vm->_mageSpellList[menuItems[lastHighLight]], 8, 9 * lastHighLight + 50, _vm->guiSettings()->colors.menuTxtColLightRed, 0);
 						_screen->updateScreen();
 					}
 
@@ -3746,7 +3761,7 @@ bool GUI_EoB::confirmDialogue(int id) {
 
 	Button *buttonList = initMenu(5);
 
-	_screen->printShadedText(getMenuString(id), (_screen->_curDim->sx + 1) << 3, _screen->_curDim->sy + 4, 15, 0);
+	_screen->printShadedText(getMenuString(id), (_screen->_curDim->sx + 1) << 3, _screen->_curDim->sy + 4, _vm->guiSettings()->colors.menuTxtColWhite, 0, _vm->guiSettings()->colors.menuTxtColBlack);
 
 	int newHighlight = 0;
 	int lastHighlight = -1;
@@ -3968,7 +3983,7 @@ void GUI_EoB::displayTextBox(int id) {
 	const ScreenDim *dm = _screen->getScreenDim(11);
 
 	drawMenuButtonBox(dm->sx << 3, dm->sy, dm->w << 3, dm->h, false, false);
-	_screen->printShadedText(getMenuString(id), (dm->sx << 3) + 5, dm->sy + 5, 15, 0);
+	_screen->printShadedText(getMenuString(id), (dm->sx << 3) + 5, dm->sy + 5, _vm->guiSettings()->colors.menuTxtColWhite, 0, _vm->guiSettings()->colors.menuTxtColBlack);
 	_screen->copyRegion(dm->sx << 3, dm->sy, dm->sx << 3, dm->sy, dm->w << 3, dm->h, 2, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
 
@@ -3997,7 +4012,7 @@ Button *GUI_EoB::initMenu(int id) {
 		drawMenuButtonBox(dm->sx << 3, dm->sy, dm->w << 3, dm->h, false, false);
 	}
 
-	_screen->printShadedText(getMenuString(m->titleStrId), 5, 5, m->titleCol, 0);
+	_screen->printShadedText(getMenuString(m->titleStrId), 5, 5, m->titleCol, 0, _vm->guiSettings()->colors.menuTxtColBlack);
 
 	Button *buttons = 0;
 	for (int i = 0; i < m->numButtons; i++) {
@@ -4054,12 +4069,12 @@ void GUI_EoB::drawMenuButton(Button *b, bool clicked, bool highlight, bool noFil
 			yOffs = (b->height - 7) >> 1;
 		}
 
-		int col1 = (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : 15;
+		int col1 = (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : _vm->guiSettings()->colors.menuTxtColWhite;
 
 		if (noFill || clicked)
-			_screen->printText(s, b->x + xOffs, b->y + yOffs, highlight ? 6 : col1, 0);
+			_screen->printText(s, b->x + xOffs, b->y + yOffs, highlight ? _vm->guiSettings()->colors.menuTxtColLightRed : col1, 0);
 		else
-			_screen->printShadedText(s, b->x + xOffs, b->y + yOffs, highlight ? 6 : col1, 0);
+			_screen->printShadedText(s, b->x + xOffs, b->y + yOffs, highlight ? _vm->guiSettings()->colors.menuTxtColLightRed : col1, 0, _vm->guiSettings()->colors.menuTxtColBlack);
 	}
 }
 
@@ -4088,7 +4103,7 @@ void GUI_EoB::drawTextBox(int dim, int id) {
 	_screen->setCurPage(2);
 
 	drawMenuButtonBox(0, 0, dm->w << 3, dm->h, false, false);
-	_screen->printShadedText(getMenuString(id), 5, 5, 15, 0);
+	_screen->printShadedText(getMenuString(id), 5, 5, _vm->guiSettings()->colors.menuTxtColWhite, 0, _vm->guiSettings()->colors.menuTxtColBlack);
 
 	_screen->setCurPage(0);
 	_screen->copyRegion(0, 0, dm->sx << 3, dm->sy, dm->w << 3, dm->h, 2, 0, Screen::CR_NO_P_CHECK);
@@ -4122,7 +4137,7 @@ void GUI_EoB::drawSaveSlotButton(int slot, int redrawBox, int textCol) {
 		y++;
 	}
 
-	_screen->printShadedText(slotString, x + 4, y + 3, textCol, 0);
+	_screen->printShadedText(slotString, x + 4, y + 3, textCol, 0, _vm->guiSettings()->colors.menuTxtColBlack);
 	_vm->screen()->setFont(fnt);
 }
 
@@ -4131,7 +4146,7 @@ void GUI_EoB::memorizePrayMenuPrintString(int spellId, int bookPageIndex, int sp
 		return;
 
 	int y = bookPageIndex * 9 + 50;
-	int col1 = (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : 15;
+	int col1 = (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : _vm->guiSettings()->colors.menuTxtColWhite;
 	_screen->set16bitShadingLevel(4);
 
 	if (spellId) {
@@ -4146,9 +4161,9 @@ void GUI_EoB::memorizePrayMenuPrintString(int spellId, int bookPageIndex, int sp
 		}
 
 		if (noFill)
-			_screen->printText(s.c_str(), 8, y, highLight ? 6 : col1, 0);
+			_screen->printText(s.c_str(), 8, y, highLight ? _vm->guiSettings()->colors.menuTxtColLightRed : col1, 0);
 		else
-			_screen->printShadedText(s.c_str(), 8, y, highLight ? 6 : col1, _vm->guiSettings()->colors.fill);
+			_screen->printShadedText(s.c_str(), 8, y, highLight ? _vm->guiSettings()->colors.menuTxtColLightRed : col1, _vm->guiSettings()->colors.fill, _vm->guiSettings()->colors.menuTxtColBlack);
 	} else {
 		_screen->fillRect(6, y, 168, y + 8,  _vm->guiSettings()->colors.fill);
 	}
@@ -4293,13 +4308,13 @@ void GUI_EoB::restParty_updateRestTime(int hours, bool init) {
 		_vm->_txt->clearCurDim();
 		drawMenuButtonBox(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, false, false);
 		_screen->copyRegion(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, 0, 2, Screen::CR_NO_P_CHECK);
-		_screen->printShadedText(getMenuString(42), (_screen->_curDim->sx + 1) << 3, _screen->_curDim->sy + 5, 9, 0);
+		_screen->printShadedText(getMenuString(42), (_screen->_curDim->sx + 1) << 3, _screen->_curDim->sy + 5, 9, 0, _vm->guiSettings()->colors.menuTxtColBlack);
 	}
 
 	_screen->setCurPage(0);
 	_screen->set16bitShadingLevel(4);
 	_screen->fillRect((_screen->_curDim->sx + 1) << 3, _screen->_curDim->sy + 20, ((_screen->_curDim->sx + 19) << 3) + 1, _screen->_curDim->sy + 29, _vm->guiSettings()->colors.fill);
-	_screen->printShadedText(Common::String::format(_vm->_menuStringsRest2[3], hours).c_str(), (_screen->_curDim->sx + 1) << 3, _screen->_curDim->sy + 20, 15, _vm->guiSettings()->colors.fill);
+	_screen->printShadedText(Common::String::format(_vm->_menuStringsRest2[3], hours).c_str(), (_screen->_curDim->sx + 1) << 3, _screen->_curDim->sy + 20, _vm->guiSettings()->colors.menuTxtColWhite, _vm->guiSettings()->colors.fill, _vm->guiSettings()->colors.menuTxtColBlack);
 	_screen->set16bitShadingLevel(0);
 	_screen->updateScreen();
 	_vm->delay(160);
@@ -4333,6 +4348,8 @@ const EoBRect16 GUI_EoB::_highlightFrames[] = {
 const uint8 GUI_EoB::_highlightColorTableVGA[] = { 0x0F, 0xB0, 0xB2, 0xB4, 0xB6, 0xB8, 0xBA, 0xBC, 0x0C, 0xBC, 0xBA, 0xB8, 0xB6, 0xB4, 0xB2, 0xB0, 0x00 };
 
 const uint8 GUI_EoB::_highlightColorTableEGA[] = { 0x0C, 0x0D, 0x0E, 0x0F, 0x0E, 0x0D, 0x00 };
+
+const uint8 GUI_EoB::_highlightColorTableAmiga[] = { 0x13, 0x0B, 0x12, 0x0A, 0x11, 0x09, 0x11, 0x0A, 0x12, 0x0B, 0x00 };
 
 } // End of namespace Kyra
 

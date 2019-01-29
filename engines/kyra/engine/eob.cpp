@@ -567,8 +567,13 @@ void EoBEngine::healParty() {
 	}
 }
 
-const KyraRpgGUISettings *EoBEngine::guiSettings() {
-	return (_configRenderMode == Common::kRenderCGA || _configRenderMode == Common::kRenderEGA) ? &_guiSettingsEGA : &_guiSettingsVGA;
+const KyraRpgGUISettings *EoBEngine::guiSettings() const {
+	if (_flags.platform == Common::kPlatformAmiga)
+		return &_guiSettingsAmiga;
+	else if (_configRenderMode == Common::kRenderCGA || _configRenderMode == Common::kRenderEGA)
+		return &_guiSettingsEGA;
+	else
+		return &_guiSettingsVGA;
 }
 
 } // End of namespace Kyra

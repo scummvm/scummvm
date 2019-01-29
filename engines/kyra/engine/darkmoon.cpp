@@ -395,8 +395,8 @@ void DarkMoonEngine::restParty_npc() {
 	gui_drawBox(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, guiSettings()->colors.frame1, guiSettings()->colors.frame2, -1);
 	gui_drawBox((_screen->_curDim->sx << 3) + 1, _screen->_curDim->sy + 1, (_screen->_curDim->w << 3) - 2, _screen->_curDim->h - 2, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
 	_screen->set16bitShadingLevel(0);
-	_gui->messageDialogue2(11, 63, 6);
-	_gui->messageDialogue2(11, 64, 6);
+	_gui->messageDialogue2(11, 63, guiSettings()->colors.menuTxtColLightRed);
+	_gui->messageDialogue2(11, 64, guiSettings()->colors.menuTxtColLightRed);
 }
 
 bool DarkMoonEngine::restParty_extraAbortCondition() {
@@ -490,7 +490,7 @@ void DarkMoonEngine::characterLevelGain(int charIndex) {
 	}
 }
 
-const KyraRpgGUISettings *DarkMoonEngine::guiSettings() {
+const KyraRpgGUISettings *DarkMoonEngine::guiSettings() const {
 	return (_flags.platform == Common::kPlatformFMTowns) ? &_guiSettingsFMTowns : &_guiSettingsDOS;
 }
 

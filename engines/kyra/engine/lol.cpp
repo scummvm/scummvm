@@ -1977,7 +1977,7 @@ void LoLEngine::delay(uint32 millis, bool doUpdate, bool) {
 	}
 }
 
-const KyraRpgGUISettings *LoLEngine::guiSettings() {
+const KyraRpgGUISettings *LoLEngine::guiSettings() const {
 	return &_guiSettings;
 }
 

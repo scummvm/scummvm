@@ -33,18 +33,17 @@
 #include "common/config-manager.h"
 #include "common/translation.h"
 
+#include "gui/error.h"
+
 #include "backends/keymapper/keymapper.h"
 
 namespace Kyra {
 
 const char *const EoBCoreEngine::kKeymapName = "eob";
 
-EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags)
-	: KyraRpgEngine(system, flags), _numLargeItemShapes(flags.gameID == GI_EOB1 ? 14 : 11),
-	  _numSmallItemShapes(flags.gameID == GI_EOB1 ? 23 : 26),
-	  _numThrownItemShapes(flags.gameID == GI_EOB1 ? 12 : 9),
-	  _numItemIconShapes(flags.gameID == GI_EOB1 ? 89 : 112),
-	  _teleporterWallId(flags.gameID == GI_EOB1 ? 52 : 44) {
+EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgEngine(system, flags), _numLargeItemShapes(flags.gameID == GI_EOB1 ? 14 : 11),
+	_numSmallItemShapes(flags.gameID == GI_EOB1 ? 23 : 26),	_numThrownItemShapes(flags.gameID == GI_EOB1 ? 12 : 9),
+	_numItemIconShapes(flags.gameID == GI_EOB1 ? 89 : 112),	_teleporterWallId(flags.gameID == GI_EOB1 ? 52 : 44) {
 
 	_screen = 0;
 	_gui = 0;
@@ -436,10 +435,27 @@ Common::Error EoBCoreEngine::init() {
 	assert(_debugger);
 
 	if (_flags.platform == Common::kPlatformAmiga) {
+		bool showErrorDlg = false;
 		if (_res->exists("EOBF6.FONT"))
 			_screen->loadFont(Screen::FID_6_FNT, "EOBF6.FONT");
+		else if (_res->exists("FONTS/EOBF6.FONT"))
+			_screen->loadFont(Screen::FID_6_FNT, "FONTS/EOBF6.FONT");
+		else
+			showErrorDlg = true;
+
 		if (_res->exists("EOBF8.FONT"))
 			_screen->loadFont(Screen::FID_8_FNT, "EOBF8.FONT");
+		else if (_res->exists("FONTS/EOBF8.FONT"))
+			_screen->loadFont(Screen::FID_8_FNT, "FONTS/EOBF8.FONT");
+		else
+			showErrorDlg = true;
+
+		if (showErrorDlg) {
+			::GUI::displayErrorDialog("This AMIGA version requires the following font files:\n\nEOBF6.FONT\nEOBF6/6\nEOBF8.FONT\nEOBF8/8\n\n"
+				"If you used the orginal installer for the installation these files\nshould be located in the AmigaDOS system 'Fonts/' folder.\n"
+				"Please copy them into the EOB game data directory.\n");
+			error("Failed to load font files.");
+		}
 	} else {
 		_screen->loadFont(Screen::FID_6_FNT, "FONT6.FNT");
 		_screen->loadFont(Screen::FID_8_FNT, "FONT8.FNT");
@@ -1863,11 +1879,11 @@ bool EoBCoreEngine::checkPassword() {
 		const uint8 *shp = (_mnDef[c << 2] < _numLargeItemShapes) ? _largeItemShapes[_mnDef[c << 2]] : (_mnDef[c << 2] < 15 ? 0 : _smallItemShapes[_mnDef[c << 2] - 15]);
 		assert(shp);
 		_screen->drawShape(0, shp, 100, 2, 13);
-		_screen->printShadedText(Common::String::format(_mnPrompt[0], _mnDef[(c << 2) + 1], _mnDef[(c << 2) + 2]).c_str(), (_screen->_curDim->sx + 1) << 3, _screen->_curDim->sy, _screen->_curDim->unk8, guiSettings()->colors.fill);
+		_screen->printShadedText(Common::String::format(_mnPrompt[0], _mnDef[(c << 2) + 1], _mnDef[(c << 2) + 2]).c_str(), (_screen->_curDim->sx + 1) << 3, _screen->_curDim->sy, guiSettings()->colors.menuTxtColWhite, guiSettings()->colors.fill, guiSettings()->colors.menuTxtColBlack);
 		memset(answ, 0, 20);
 		gui_drawBox(76, 100, 133, 14, guiSettings()->colors.frame2, guiSettings()->colors.frame1, -1);
 		gui_drawBox(77, 101, 131, 12, guiSettings()->colors.frame2, guiSettings()->colors.frame1, -1);
-		if (_gui->getTextInput(answ, 10, 103, 15, _screen->_curDim->unk8, guiSettings()->colors.fill, 8) < 0)
+		if (_gui->getTextInput(answ, 10, 103, 15, guiSettings()->colors.menuTxtColWhite, guiSettings()->colors.fill, guiSettings()->colors.menuTxtColDarkRed) < 0)
 			i = 3;
 		if (!scumm_stricmp(_mnWord[c], answ))
 			break;

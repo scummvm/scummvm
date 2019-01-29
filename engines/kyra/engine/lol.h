@@ -1151,7 +1151,7 @@ private:
 	// misc
 	void delay(uint32 millis, bool doUpdate = false, bool isMainLoop = false);
 
-	const KyraRpgGUISettings *guiSettings();
+	const KyraRpgGUISettings *guiSettings() const;
 
 	uint8 _compassBroken;
 	uint8 _drainMagic;

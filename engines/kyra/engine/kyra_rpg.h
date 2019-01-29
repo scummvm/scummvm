@@ -97,7 +97,7 @@ struct KyraRpgGUISettings {
 		uint8 frame2;
 		int fill;
 
-		uint8 unused;
+		uint8 sfill;
 		uint8 barGraph;
 
 		uint8 warningFrame1;
@@ -111,6 +111,13 @@ struct KyraRpgGUISettings {
 		uint8 inactiveTabFrame1;
 		uint8 inactiveTabFrame2;
 		int inactiveTabFill;
+
+		uint8 menuTxtColWhite;
+		uint8 menuTxtColLightRed;
+		uint8 menuTxtColDarkRed;
+		uint8 menuTxtColLightBlue;
+		uint8 menuTxtColBlue;
+		uint8 menuTxtColBlack;
 	} colors;
 };
 
@@ -291,7 +298,7 @@ protected:
 
 	bool clickedShape(int shapeIndex);
 
-	virtual const KyraRpgGUISettings *guiSettings() = 0;
+	virtual const KyraRpgGUISettings *guiSettings() const = 0;
 
 	int _clickedShapeXOffs;
 	int _clickedShapeYOffs;

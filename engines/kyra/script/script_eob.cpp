@@ -514,6 +514,7 @@ int EoBInfProcessor::oeob_moveInventoryItemToBlock(int8 *data) {
 }
 
 int EoBInfProcessor::oeob_printMessage_v1(int8 *data) {
+	static const uint8 amigaColorMap[16] = { 0x00, 0x06, 0x1d, 0x1b, 0x1a, 0x17, 0x18, 0x0e, 0x19, 0x1c, 0x1c, 0x1e, 0x13, 0x0a, 0x11, 0x1f };
 	static const char colorConfig[] = "\x6\x21\x2\x21";
 	char col[5];
 	int8 *pos = data;
@@ -524,11 +525,19 @@ int EoBInfProcessor::oeob_printMessage_v1(int8 *data) {
 
 	col[1] = *pos++;
 	col[3] = *pos++;
+
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+		assert(col[1] < 16);
+		assert(col[3] < 16);
+		col[1] = amigaColorMap[col[1]];
+		col[3] = amigaColorMap[col[3]];
+	}
+
 	_vm->txt()->printMessage(col);
 	_vm->txt()->printMessage(str);
 
-	col[1] = _screen->_curDim->unk8;
-	col[3] = _screen->_curDim->unkA;
+	col[1] = _vm->txt()->colorMap()[_screen->_curDim->unk8];
+	col[3] = _vm->txt()->colorMap()[_screen->_curDim->unkA];
 	_vm->txt()->printMessage(col);
 	_vm->txt()->printMessage("\r");
 
@@ -1495,7 +1504,7 @@ int EoBInfProcessor::oeob_sequence(int8 *data) {
 		break;
 
 	case -1:
-		if (_vm->gameFlags().platform == Common::kPlatformDOS)
+		if (_vm->gameFlags().platform == Common::kPlatformDOS || _vm->gameFlags().platform == Common::kPlatformAmiga)
 			_vm->_runFlag = _vm->checkPassword();
 		break;
 

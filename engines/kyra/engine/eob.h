@@ -111,10 +111,11 @@ private:
 	int resurrectionSelectDialogue();
 	void healParty();
 
-	const KyraRpgGUISettings *guiSettings();
+	const KyraRpgGUISettings *guiSettings() const;
 
 	static const KyraRpgGUISettings _guiSettingsVGA;
 	static const KyraRpgGUISettings _guiSettingsEGA;
+	static const KyraRpgGUISettings _guiSettingsAmiga;
 	static const uint8 _egaDefaultPalette[];
 };
 

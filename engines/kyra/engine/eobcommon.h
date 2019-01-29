@@ -682,7 +682,7 @@ protected:
 	void gui_drawFoodStatusGraph(int index);
 	void gui_drawHorizontalBarGraph(int x, int y, int w, int h, int32 curVal, int32 maxVal, int col1, int col2);
 	void gui_drawCharPortraitStatusFrame(int index);
-	void gui_drawInventoryItem(int slot, int special, int pageNum);
+	void gui_drawInventoryItem(int slot, int redraw, int pageNum);
 	void gui_drawCompass(bool force);
 	void gui_drawDialogueBox();
 	void gui_drawSpellbook();
