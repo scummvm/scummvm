@@ -273,7 +273,7 @@ bool AIScriptGordo::ShotAtAndHit() {
 void AIScriptGordo::Retired(int byActorId) {
 	if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoNR01Attack) {
 		Player_Loses_Control();
-		Game_Flag_Set(kFlagGordoRanWay);
+		Game_Flag_Set(kFlagGordoRanAway);
 		Actor_Set_Goal_Number(kActorGordo, kGoalGordoDead);
 		Delay(2000);
 		Player_Set_Combat_Mode(false);
@@ -680,7 +680,7 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case kGoalGordoNR01RanAway:
 		Scene_Exits_Enable();
-		Game_Flag_Set(kFlagGordoRanWay);
+		Game_Flag_Set(kFlagGordoRanAway);
 		Actor_Put_In_Set(kActorGordo, kSetFreeSlotA);
 		Actor_Set_At_Waypoint(kActorGordo, 33, 0);
 		break;
@@ -1116,7 +1116,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			Actor_Change_Animation_Mode(kActorGordo, kAnimationModeCombatIdle);
 			if (Game_Flag_Query(kFlagNR02GordoJumpDown)) {
 				Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR02RunAway3);
-				Game_Flag_Set(kFlagGordoRanWay);
+				Game_Flag_Set(kFlagGordoRanAway);
 			}
 		}
 		break;
@@ -1683,7 +1683,7 @@ void AIScriptGordo::dialogue2() {
 		Game_Flag_Reset(kFlagSpinnerAtNR01);
 		Game_Flag_Reset(kFlagSpinnerAtHF01);
 		Game_Flag_Set(kFlagSpinnerAtPS01);
-		Game_Flag_Set(kFlagGordoRanWay);
+		Game_Flag_Set(kFlagGordoRanAway);
 		Scene_Exits_Enable();
 		Game_Flag_Reset(kFlagMcCoyInNightclubRow);
 		Game_Flag_Set(kFlagMcCoyInPoliceStation);
@@ -1703,7 +1703,7 @@ void AIScriptGordo::dialogue2() {
 			Delay(1000);
 			Actor_Says(kActorGordo, 570, 13);
 		}
-		Game_Flag_Set(kFlagGordoRanWay);
+		Game_Flag_Set(kFlagGordoRanAway);
 		Scene_Exits_Enable();
 		Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR01RunAway);
 	}

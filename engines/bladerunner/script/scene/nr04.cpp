@@ -26,11 +26,15 @@ namespace BladeRunner {
 
 void SceneScriptNR04::InitializeScene() {
 	Music_Adjust(30, 80, 2);
+
 	Setup_Scene_Information(53.0f, 0.0f, -110.0f, 569);
+
 	Scene_Exit_Add_2D_Exit(0, 498, 126, 560, 238, 0);
-	Scene_2D_Region_Add(0, 0, 259, 61, 479);
-	Scene_2D_Region_Add(1, 62, 327, 92, 479);
+
+	Scene_2D_Region_Add(0,  0, 259,  61, 479);
+	Scene_2D_Region_Add(1, 62, 327,  92, 479);
 	Scene_2D_Region_Add(2, 93, 343, 239, 479);
+
 	Ambient_Sounds_Add_Looping_Sound(408, 16, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(384, 16, 0, 1);
 	Ambient_Sounds_Add_Sound(259, 3, 60, 9, 9, -100, 100, -101, -101, 0, 0);
@@ -46,6 +50,7 @@ void SceneScriptNR04::InitializeScene() {
 	Ambient_Sounds_Add_Sound(191, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(192, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(195, 5, 70, 8, 8, -100, 100, -101, -101, 0, 0);
+
 	Scene_Loop_Set_Default(0);
 }
 
@@ -62,9 +67,12 @@ void SceneScriptNR04::SceneLoaded() {
 }
 
 bool SceneScriptNR04::MouseClick(int x, int y) {
-	if (Actor_Query_Animation_Mode(kActorMcCoy) == 85 || Actor_Query_Animation_Mode(kActorMcCoy) == 29) {
+	if (Actor_Query_Animation_Mode(kActorMcCoy) == 85
+	 || Actor_Query_Animation_Mode(kActorMcCoy) == 29
+	) {
 		return true;
 	}
+
 	if (Actor_Query_Animation_Mode(kActorMcCoy) == 53) {
 		Actor_Change_Animation_Mode(kActorMcCoy, 29);
 		return true;
@@ -73,8 +81,13 @@ bool SceneScriptNR04::MouseClick(int x, int y) {
 }
 
 bool SceneScriptNR04::ClickedOn3DObject(const char *objectName, bool a2) {
-	if (Object_Query_Click("B.TV01", objectName) || Object_Query_Click("B.TV02", objectName) || Object_Query_Click("B.TV03", objectName) || Object_Query_Click("B.TV05", objectName) || Object_Query_Click("DESK", objectName)) {
-		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 546, 0, 1, false)) {
+	if (Object_Query_Click("B.TV01", objectName)
+	 || Object_Query_Click("B.TV02", objectName)
+	 || Object_Query_Click("B.TV03", objectName)
+	 || Object_Query_Click("B.TV05", objectName)
+	 || Object_Query_Click("DESK", objectName)
+	) {
+		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 546, 0, true, false)) {
 			if (!Object_Query_Click("DESK", objectName)) {
 				Actor_Face_Object(kActorMcCoy, "B.TV01", true);
 				Actor_Voice_Over(1530, kActorVoiceOver);
@@ -86,7 +99,7 @@ bool SceneScriptNR04::ClickedOn3DObject(const char *objectName, bool a2) {
 					Actor_Voice_Over(1600, kActorVoiceOver);
 					Actor_Voice_Over(1610, kActorVoiceOver);
 				} else if (Actor_Clue_Query(kActorMcCoy, kClueCollectionReceipt)) {
-					Actor_Says(kActorMcCoy, 8580, 3);
+					Actor_Says(kActorMcCoy, 8580, kAnimationModeTalk);
 				} else {
 					Actor_Clue_Acquire(kActorMcCoy, kClueCollectionReceipt, false, -1);
 					Item_Pickup_Spin_Effect(961, 247, 141);
@@ -98,9 +111,10 @@ bool SceneScriptNR04::ClickedOn3DObject(const char *objectName, bool a2) {
 
 			}
 		}
-	} else if (Object_Query_Click("TORUS01", objectName)
-		&& !Loop_Actor_Walk_To_XYZ(kActorMcCoy, 18.56f, 0.0f, 38.86f, 0, 1, false, 0)
-		&& !Game_Flag_Query(605)) {
+	} else if ( Object_Query_Click("TORUS01", objectName)
+	        && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, 18.56f, 0.0f, 38.86f, 0, true, false, 0)
+	        && !Game_Flag_Query(605)
+	) {
 		Unclickable_Object("TORUS01");
 		Scene_Exits_Disable();
 		Player_Loses_Control();
@@ -116,7 +130,9 @@ bool SceneScriptNR04::ClickedOn3DObject(const char *objectName, bool a2) {
 }
 
 bool SceneScriptNR04::ClickedOnActor(int actorId) {
-	if (actorId == kActorEarlyQ && Game_Flag_Query(606)) {
+	if (actorId == kActorEarlyQ
+	 && Game_Flag_Query(606)
+	) {
 		Actor_Voice_Over(1640, kActorVoiceOver);
 		Actor_Voice_Over(1650, kActorVoiceOver);
 		Actor_Voice_Over(1660, kActorVoiceOver);
@@ -136,7 +152,7 @@ bool SceneScriptNR04::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 45.0f, 0.0f, -106.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(437);
+			Game_Flag_Set(kFlatNR04toNR03);
 			Set_Enter(kSetNR03, kSceneNR03);
 		}
 		return true;
@@ -145,7 +161,11 @@ bool SceneScriptNR04::ClickedOnExit(int exitId) {
 }
 
 bool SceneScriptNR04::ClickedOn2DRegion(int region) {
-	if ((region == 0 || region == 1 || region == 2) && Actor_Query_Which_Set_In(kActorEarlyQ) != 12 && Actor_Query_Animation_Mode(kActorMcCoy) != 53 && !Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 445, 0, 1, false)) {
+	if ((region == 0 || region == 1 || region == 2)
+	 && Actor_Query_Which_Set_In(kActorEarlyQ) != 12
+	 && Actor_Query_Animation_Mode(kActorMcCoy) != 53
+	 && !Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 445, 0, true, false)
+	) {
 		Actor_Face_Heading(kActorMcCoy, 49, false);
 		Actor_Change_Animation_Mode(kActorMcCoy, 85);
 		Delay(2500);

@@ -1124,7 +1124,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Says(kActorMcCoy, 3065, 18);
 		Actor_Says(kActorSteele, 1280, 13);
 		Actor_Says(kActorSteele, 1290, 13);
-		Game_Flag_Set(kFlagGordoRanWay);
+		Game_Flag_Set(kFlagGordoRanAway);
 		Player_Gains_Control();
 		if (Game_Flag_Query(kFlagSpinnerAtHF01)) {
 			Actor_Put_In_Set(kActorSteele, kSetHF01);
@@ -1152,7 +1152,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case kGoalSteeleNR01McCoyShotGordo:
 		Game_Flag_Reset(kFlagSteeleAimingAtGordo);
 		ADQ_Flush();
-		Game_Flag_Set(kFlagGordoRanWay);
+		Game_Flag_Set(kFlagGordoRanAway);
 		Actor_Set_Targetable(kActorSteele, false);
 		Delay(1000);
 		Player_Set_Combat_Mode(false);
@@ -1186,7 +1186,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		_animationFrame = 0;
 		Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR01ReleaseHostage);
 		Game_Flag_Reset(kFlagSteeleAimingAtGordo);
-		Game_Flag_Set(kFlagGordoRanWay);
+		Game_Flag_Set(kFlagGordoRanAway);
 		Actor_Set_Targetable(kActorSteele, false);
 		Player_Loses_Control();
 		return true;

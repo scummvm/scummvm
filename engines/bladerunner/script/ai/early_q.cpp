@@ -44,64 +44,80 @@ void AIScriptEarlyQ::Initialize() {
 }
 
 bool AIScriptEarlyQ::Update() {
-	if (Global_Variable_Query(kVariableChapter) != 1 || Game_Flag_Query(490)) {
-		if (Global_Variable_Query(kVariableChapter) != 2 || Game_Flag_Query(491)) {
-			if (Global_Variable_Query(kVariableChapter) != 3 || Game_Flag_Query(564)) {
-				return false;
-			} else {
-				Game_Flag_Set(564);
-				Actor_Put_In_Set(kActorEarlyQ, kSetFreeSlotH);
-				Actor_Set_At_Waypoint(kActorEarlyQ, 40, 0);
-				Actor_Set_Goal_Number(kActorEarlyQ, 200);
-			}
-		} else {
-			Game_Flag_Set(491);
-			Actor_Put_In_Set(kActorEarlyQ, kSetFreeSlotH);
-			Actor_Set_At_Waypoint(kActorEarlyQ, 40, 0);
-			Actor_Set_Goal_Number(kActorEarlyQ, 100);
-		}
-	} else {
-		Game_Flag_Set(490);
+	if ( Global_Variable_Query(kVariableChapter) == 1
+	 && !Game_Flag_Query(kFlagEarlyQStartedChapter1)
+	) {
+		Game_Flag_Set(kFlagEarlyQStartedChapter1);
 		Actor_Put_In_Set(kActorEarlyQ, kSetFreeSlotH);
 		Actor_Set_At_Waypoint(kActorEarlyQ, 40, 0);
 		Actor_Set_Goal_Number(kActorEarlyQ, 0);
+		return true;
 	}
 
-	return true;
+	if ( Global_Variable_Query(kVariableChapter) == 2
+	 && !Game_Flag_Query(kFlagEarlyQStartedChapter2)
+	) {
+		Game_Flag_Set(kFlagEarlyQStartedChapter2);
+		Actor_Put_In_Set(kActorEarlyQ, kSetFreeSlotH);
+		Actor_Set_At_Waypoint(kActorEarlyQ, 40, 0);
+		Actor_Set_Goal_Number(kActorEarlyQ, 100);
+		return true;
+	}
+
+	if ( Global_Variable_Query(kVariableChapter) == 3
+	 && !Game_Flag_Query(kFlagEarlyQStartedChapter3)
+	) {
+		Game_Flag_Set(kFlagEarlyQStartedChapter3);
+		Actor_Put_In_Set(kActorEarlyQ, kSetFreeSlotH);
+		Actor_Set_At_Waypoint(kActorEarlyQ, 40, 0);
+		Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQStartWalkingAround);
+		return true;
+	}
+
+	return false;
 }
 
 void AIScriptEarlyQ::TimerExpired(int timer) {
-	if (Actor_Query_Goal_Number(kActorEarlyQ) == 221 && !timer) {
+	if (timer == 0
+	 && Actor_Query_Goal_Number(kActorEarlyQ) == 221
+	) {
 		if (Player_Query_Current_Scene() == 58) {
 			AI_Countdown_Timer_Reset(kActorEarlyQ, 0);
 			Actor_Set_Goal_Number(kActorEarlyQ, 222);
 		} else {
-			Actor_Set_Goal_Number(kActorEarlyQ, 220);
+			Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQGoToNR05);
 		}
+		return; //true;
 	}
-	if (Actor_Query_Goal_Number(kActorEarlyQ) != 205 || timer) {
-		if (Actor_Query_Goal_Number(kActorEarlyQ) == 211 && timer == 1) {
-			AI_Countdown_Timer_Reset(kActorEarlyQ, 1);
-			Player_Loses_Control();
-			Actor_Change_Animation_Mode(kActorEarlyQ, 29);
-			Delay(2500);
-			Actor_Face_Actor(kActorEarlyQ, kActorMcCoy, 1);
-			Actor_Change_Animation_Mode(kActorEarlyQ, 6);
-			Delay(100);
-			_vm->_aiScripts->callChangeAnimationMode(kActorMcCoy, 22);
-			Delay(250);
-			_vm->_aiScripts->callChangeAnimationMode(kActorMcCoy, 48);
-			Actor_Retired_Here(kActorMcCoy, 12, 12, 1, -1);
-		} else {
-			return; //false;
-		}
-	} else {
+
+	if (timer == 0
+	 && Actor_Query_Goal_Number(kActorEarlyQ) == 205
+	) {
 		Player_Loses_Control();
 		AI_Countdown_Timer_Reset(kActorEarlyQ, 0);
 		Actor_Set_Goal_Number(kActorEarlyQ, 215);
+		return; //true;
 	}
 
-	return; //true;
+	if (timer == 1
+	 && Actor_Query_Goal_Number(kActorEarlyQ) == 211
+	) {
+		AI_Countdown_Timer_Reset(kActorEarlyQ, 1);
+		Player_Loses_Control();
+		Actor_Change_Animation_Mode(kActorEarlyQ, 29);
+		Delay(2500);
+		Actor_Face_Actor(kActorEarlyQ, kActorMcCoy, 1);
+		Actor_Change_Animation_Mode(kActorEarlyQ, 6);
+		Delay(100);
+		_vm->_aiScripts->callChangeAnimationMode(kActorMcCoy, kAnimationModeCombatHit);
+		Delay(250);
+		_vm->_aiScripts->callChangeAnimationMode(kActorMcCoy, kAnimationModeDie);
+		Actor_Retired_Here(kActorMcCoy, 12, 12, true, -1);
+
+		return; //true;
+	}
+
+	return; //false;
 }
 
 void AIScriptEarlyQ::CompletedMovementTrack() {
@@ -150,8 +166,8 @@ void AIScriptEarlyQ::CompletedMovementTrack() {
 		Actor_Set_Goal_Number(kActorEarlyQ, 223);
 		return; //false;
 
-	case 230:
-		Actor_Set_Goal_Number(kActorEarlyQ, 200);
+	case kGoalEarlyQGoToNR04:
+		Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQStartWalkingAround);
 		return; //false;
 
 	default:
@@ -182,43 +198,52 @@ void AIScriptEarlyQ::OtherAgentExitedThisScene(int otherActorId) {
 }
 
 void AIScriptEarlyQ::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
-	if (Game_Flag_Query(569) != 1 || otherActorId || combatMode != 1 || Game_Flag_Query(609)) {
-		if (Actor_Query_Goal_Number(kActorEarlyQ) != 211 || otherActorId || combatMode) {
-			return; //false;
-		} else {
-			if (Game_Flag_Query(565) == 1) {
-				Game_Flag_Reset(565);
-			}
-			AI_Countdown_Timer_Reset(kActorEarlyQ, 1);
-			Actor_Set_Goal_Number(kActorEarlyQ, 213);
-		}
-	} else {
+	if ( Game_Flag_Query(569)
+	 &&  otherActorId == kActorMcCoy
+	 &&  combatMode
+	 && !Game_Flag_Query(609)
+	) {
 		if (!Game_Flag_Query(565)) {
 			Game_Flag_Set(565);
 		}
 		Game_Flag_Set(609);
 		AI_Countdown_Timer_Reset(kActorEarlyQ, 0);
 		Actor_Set_Goal_Number(kActorEarlyQ, 206);
+		return; // true;
 	}
 
-	return; //true;
+	if ( Actor_Query_Goal_Number(kActorEarlyQ) == 211
+	 &&  otherActorId == kActorMcCoy
+	 && !combatMode
+	) {
+		if (Game_Flag_Query(565) == 1) {
+			Game_Flag_Reset(565);
+		}
+		AI_Countdown_Timer_Reset(kActorEarlyQ, 1);
+		Actor_Set_Goal_Number(kActorEarlyQ, 213);
+		return; //true;
+	}
+
+	return; //false;
 }
 
 void AIScriptEarlyQ::ShotAtAndMissed() {
-	if (Actor_Query_Goal_Number(kActorEarlyQ) != 211)
-		return; //false;
-
-	Actor_Set_Goal_Number(kActorEarlyQ, 216);
-	return; //true;
+	if (Actor_Query_Goal_Number(kActorEarlyQ) == 211) {
+		Actor_Set_Goal_Number(kActorEarlyQ, 216);
+		//return true;
+	}
+	// return false;
 }
 
 bool AIScriptEarlyQ::ShotAtAndHit() {
-	if (Actor_Query_Goal_Number(kActorEarlyQ) < 201 || Actor_Query_Goal_Number(kActorEarlyQ) > 217)
-		return 0;
+	if (Actor_Query_Goal_Number(kActorEarlyQ) >= 201
+	 && Actor_Query_Goal_Number(kActorEarlyQ) <= 217
+	) {
+		Actor_Set_Goal_Number(kActorEarlyQ, 216);
+		return true;
+	}
 
-	Actor_Set_Goal_Number(kActorEarlyQ, 216);
-
-	return true;
+	return false;
 }
 
 void AIScriptEarlyQ::Retired(int byActorId) {
@@ -277,19 +302,19 @@ bool AIScriptEarlyQ::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorEarlyQ);
 		break;
 
-	case 200:
+	case kGoalEarlyQStartWalkingAround:
 		AI_Movement_Track_Flush(kActorEarlyQ);
 		Actor_Put_In_Set(kActorEarlyQ, kSetFreeSlotH);
 		Actor_Set_At_Waypoint(kActorEarlyQ, 40, 0);
-		if (Game_Flag_Query(47) == 1
-		 && Game_Flag_Query(kFlagGordoRanWay)
+		if (Game_Flag_Query(kFlagDektoraIsReplicant)
+		 && Game_Flag_Query(kFlagGordoRanAway)
 		 && Game_Flag_Query(kFlagLucyRanAway)
 		) {
-			Actor_Set_Goal_Number(kActorEarlyQ, 220);
-		} else if (Game_Flag_Query(47)) {
-			Actor_Set_Goal_Number(kActorEarlyQ, 230);
+			Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQGoToNR05);
+		} else if (Game_Flag_Query(kFlagDektoraIsReplicant)) {
+			Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQGoToNR04);
 		} else {
-			Actor_Set_Goal_Number(kActorEarlyQ, 220);
+			Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQGoToNR05);
 		}
 		break;
 
@@ -397,9 +422,9 @@ bool AIScriptEarlyQ::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorEarlyQ);
 		break;
 
-	case 220:
+	case kGoalEarlyQGoToNR05:
 		if (Player_Query_Current_Set() == kSetNR05_NR08) {
-			Actor_Set_Goal_Number(kActorEarlyQ, 230);
+			Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQGoToNR04);
 		} else {
 			Actor_Put_In_Set(kActorEarlyQ, kSetNR05_NR08);
 			Actor_Set_At_XYZ(kActorEarlyQ, -671.56f, 0.0f, -287.02f, 849);
@@ -425,7 +450,7 @@ bool AIScriptEarlyQ::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Set_Goal_Number(kActorEarlyQ, 224);
 			Actor_Set_Goal_Number(kActorHanoi, 230);
 		} else {
-			Actor_Set_Goal_Number(kActorEarlyQ, 220);
+			Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQGoToNR05);
 		}
 		break;
 
@@ -438,7 +463,7 @@ bool AIScriptEarlyQ::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Countdown_Timer_Reset(kActorEarlyQ, 0);
 		break;
 
-	case 230:
+	case kGoalEarlyQGoToNR04:
 		AI_Movement_Track_Flush(kActorEarlyQ);
 		if (Random_Query(1, 3) > 1) {
 			AI_Movement_Track_Append(kActorEarlyQ, 322, Random_Query(15, 30));
@@ -820,7 +845,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 
 bool AIScriptEarlyQ::ChangeAnimationMode(int mode) {
 	switch (mode) {
-	case 0:
+	case kAnimationModeIdle:
 		switch (_animationState) {
 		case 1:
 			Actor_Change_Animation_Mode(kActorEarlyQ, 73);
@@ -864,30 +889,35 @@ bool AIScriptEarlyQ::ChangeAnimationMode(int mode) {
 		}
 		break;
 
-	case 1:
+	case kAnimationModeWalk:
 		_animationState = 5;
 		_animationFrame = 0;
 		break;
 
-	case 3:
+	case kAnimationModeTalk:
 		_animationState = 20;
 		_animationFrame = 0;
 		_flag = 0;
 		break;
 
-	case 4:
-		if ((unsigned int)(_animationState - 12) > 3 || (_animationState != 12 && _animationState != 13 && _animationState != 15)) {
+	case kAnimationModeCombatIdle:
+		if ((unsigned int)(_animationState - 12) > 3
+		 || (_animationState != 12
+		  && _animationState != 13
+		  && _animationState != 15
+		 )
+		) {
 			_animationState = 13;
 			_animationFrame = 0;
 		}
 		break;
 
-	case 6:
+	case kAnimationModeCombatAttack:
 		_animationState = 15;
 		_animationFrame = 0;
 		break;
 
-	case 7:
+	case kAnimationModeCombatWalk:
 		_animationState = 6;
 		_animationFrame = 0;
 		break;
@@ -940,8 +970,13 @@ bool AIScriptEarlyQ::ChangeAnimationMode(int mode) {
 		_flag = 0;
 		break;
 
-	case 21:
-		if ((unsigned int)(_animationState - 12) > 3 || (_animationState != 12 && _animationState != 13 && _animationState != 15)) {
+	case kAnimationModeHit:
+		if ((unsigned int)(_animationState - 12) > 3
+		 || (_animationState != 12
+		  && _animationState != 13
+		  && _animationState != 15
+		 )
+		) {
 			if (Random_Query(0, 1)) {
 				_animationState = 16;
 			} else {
@@ -974,7 +1009,7 @@ bool AIScriptEarlyQ::ChangeAnimationMode(int mode) {
 		_flag = 0;
 		break;
 
-	case 48:
+	case kAnimationModeDie:
 		_animationState = 4;
 		_animationFrame = 0;
 		break;

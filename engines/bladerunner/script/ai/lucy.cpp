@@ -282,7 +282,7 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case kGoalLucyMoveAround:
 		if (Global_Variable_Query(kVariableHollowayArrest) == 3) {
 			if (Game_Flag_Query(591)
-			 && Game_Flag_Query(kFlagGordoRanWay)
+			 && Game_Flag_Query(kFlagGordoRanAway)
 			 && Player_Query_Current_Scene() != kSceneHF03
 			) {
 				Actor_Set_Goal_Number(kActorLucy, kGoalLucyGoToHF03);

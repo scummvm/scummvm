@@ -290,7 +290,7 @@ END_SCRIPT
 
 DECLARE_SCRIPT(Hanoi)
 	int _var1;
-	int _var2;
+	bool _flag1;
 	int _var3;
 	int _var4;
 END_SCRIPT

@@ -27,7 +27,7 @@ namespace BladeRunner {
 void SceneScriptNR08::InitializeScene() {
 	if (Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleNR01GoToNR08) {
 		Setup_Scene_Information(-1174.1f, 0.32f, 303.9f, 435);
-	} else if (Game_Flag_Query(546)) {
+	} else if (Game_Flag_Query(kFlagNR05toNR08)) {
 		Scene_Loop_Start_Special(0, 0, 0);
 		Scene_Loop_Set_Default(1);
 		Setup_Scene_Information(-1102.88f, 0.0f, 107.43f, 0);
@@ -96,7 +96,7 @@ bool SceneScriptNR08::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptNR08::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1102.88f, 0.0f, 107.43f, 0, 1, false, 0)) {
-			Game_Flag_Set(547);
+			Game_Flag_Set(kFlagNR08toNR05);
 			Set_Enter(kSetNR05_NR08, kSceneNR05);
 		}
 		return true;
@@ -177,11 +177,13 @@ void SceneScriptNR08::PlayerWalkedIn() {
 		Ambient_Sounds_Play_Sound(566, 27, 0, 99, 0);
 		Outtake_Play(kOuttakeDektora, true, -1);
 	}
+
 	if (Actor_Query_Goal_Number(kActorDektora) == 245) {
 		Actor_Face_Heading(kActorDektora, 790, false);
 		Loop_Actor_Travel_Stairs(kActorDektora, 8, 1, kAnimationModeIdle);
 		Actor_Set_Goal_Number(kActorDektora, 246);
 	}
+
 	if (Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleNR01GoToNR08) {
 		Actor_Says(kActorSteele, 1640, 12);
 		if (!Game_Flag_Query(kFlagDirectorsCut)) {
@@ -194,22 +196,20 @@ void SceneScriptNR08::PlayerWalkedIn() {
 		Actor_Says(kActorSteele, 1680, 14);
 		Actor_Says(kActorSteele, 1690, 15);
 		Actor_Set_Goal_Number(kActorSteele, 235);
-		//return true;
-		return;
-	} else {
-		if (Game_Flag_Query(546)) {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1090.88f, 0.0f, 147.43f, 0, 1, false, 0);
-			Game_Flag_Reset(546);
-		}
-		//return false;
-		return;
+		return; // true;
 	}
+
+	if (Game_Flag_Query(kFlagNR05toNR08)) {
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1090.88f, 0.0f, 147.43f, 0, true, false, 0);
+		Game_Flag_Reset(kFlagNR05toNR08);
+	}
+	//return false;
 }
 
 void SceneScriptNR08::PlayerWalkedOut() {
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
-	if (!Game_Flag_Query(547)) {
+	if (!Game_Flag_Query(kFlagNR08toNR05)) {
 		Music_Stop(2);
 	}
 }

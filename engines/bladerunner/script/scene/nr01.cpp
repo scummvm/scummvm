@@ -319,12 +319,12 @@ void SceneScriptNR01::PlayerWalkedIn() {
 		ADQ_Add(kActorGordo, 120, 82);
 	}
 
-	if (Game_Flag_Query(604)) {
+	if (Game_Flag_Query(kFlagNR03McCoyThrownOut)) {
 		if (Game_Flag_Query(622)) {
 			ADQ_Add(kActorHanoi, 150, kAnimationModeTalk);
 			Game_Flag_Reset(622);
 		}
-		Game_Flag_Reset(604);
+		Game_Flag_Reset(kFlagNR03McCoyThrownOut);
 		Player_Gains_Control();
 		//return true;
 		return;

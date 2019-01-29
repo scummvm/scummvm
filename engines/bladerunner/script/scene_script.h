@@ -302,8 +302,8 @@ DECLARE_SCRIPT(NR02)
 END_SCRIPT
 
 DECLARE_SCRIPT(NR03)
-	void sub_40259C(int frame);
-	void sub_402994();
+	void rotateActorOnTable(int frame);
+	void playNextMusic();
 END_SCRIPT
 
 DECLARE_SCRIPT(NR04)
@@ -314,10 +314,10 @@ END_SCRIPT
 
 DECLARE_SCRIPT(NR05)
 	void rotateActorOnTable(int frame);
-	void sub_4020B4();
-	void sub_4022DC();
+	void talkToBartender();
+	void talkToEarlyQ();
 	void rotateActorOnGround(int actorId);
-	void sub_402B9C();
+	void playNextMusic();
 END_SCRIPT
 
 DECLARE_SCRIPT(NR06)

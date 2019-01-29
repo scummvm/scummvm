@@ -852,6 +852,8 @@ enum Flags {
 
 	kFlagUG09toCT12 = 432,
 	kFlagCT12ToUG09 = 433,
+	kFlatNR04toNR03 = 437,
+	kFlatNR03toNR04 = 438,
 	kFlagGenericWalkerWaiting = 443,
 	kFlagIzoShot = 444,
 	kFlagUG02WeaponsChecked = 449,
@@ -884,6 +886,8 @@ enum Flags {
 	kFlagDNARowAvailable = 486,
 	kFlagKIAPrivacyAddon = 487,
 	kFlagDektoraChapter2Started = 489,
+	kFlagEarlyQStartedChapter1 = 490,
+	kFlagEarlyQStartedChapter2 = 491,
 	kFlagCT04HomelessTrashFinish = 492,
 	kFlagBB02ElevatorDown = 493,
 	kFlagBB02Entered = 494,
@@ -913,29 +917,40 @@ enum Flags {
 	kFlagNR02toNR01 = 533,
 	kFlagNR03toNR01 = 534,
 	kFlagNR01toNR03 = 535,
+	kFlagNR03toNR05 = 536,
+	kFlagNR05toNR03 = 537,
 	kFlagCT09Entered = 538,
 	kFlagCT09LeonInterrupted = 539,
 	kFlagCT09DeskClerkTalk = 540,
 	kFlagGordoTalk1 = 543,
 	kFlagGordoTalk2 = 544,
 	kFlagNotUsed545 = 545, // is never set
+	kFlagNR05toNR08 = 546,
+	kFlagNR08toNR05 = 547,
 	kFlagDR06MannequinHeadOpen = 548,
 	kFlagMcCoyTiedDown = 550,
 	kFlagDR01toCT11 = 558,
 	kFlagNR02GordoLeaveLighter = 561,
 	kFlagHF05CrazyLegsTalk1 = 562,
 	kFlagHF05CrazyLegsTalk2 = 563,
+	kFlagEarlyQStartedChapter3 = 564,
 	kFlagHF03toHF04 = 566, // is never checked
 	kFlagHF04toHF03 = 567,
+	kFlagNR03Entered = 573,
 	kFlagHF04DoorsClosed = 584,
 	kFlagHF04CloseDoors = 585,
 	kFlagHF04OpenDoors = 586,
-	kFlagGordoRanWay = 592,
+	kFlagNR05BartenderTalk1 = 588,
+	kFlagNR05BartenderTalk2 = 589,
+	kFlagNR05EarlyQTalk = 590,
+	kFlagGordoRanAway = 592,
 	kFlagLucyRanAway = 593,
 	kFlagNR02GordoJumpDown = 594,
 	kFlagKIAPrivacyAddonIntro = 599,
 	kFlagSteeleAimingAtGordo = 603,
+	kFlagNR03McCoyThrownOut = 604,
 	kFlagTB07toTB02 = 608,
+	kFlagNR03HanoiTalk = 611,
 	kFlagTB07RachaelTalk = 612,
 	kFlagHF03LucyTalk = 613,
 	kFlagMcCoyCapturedByHolloway = 616,
@@ -1004,12 +1019,16 @@ enum Variables {
 	kVariableHollowayArrest = 40, // 1 dektora, 2 gordo, 3 lucy
 	kVariableGordosJoke = 41,
 	kVariableMcCoyDrinks = 42, // is never checked
+	kVariableHanoiNR05Warnings = 43,
+	kVariableHanoiNR04Warnings = 44,
 	kVariableAffectionTowards = 45, // 0 none, 1 steele, 2 dektora, 3 lucy
 	kVariableGunPulledInFrontOfSebastian = 46,
 	kVariableDNAEvidences = 48,
 	kVariableNR02Music = 50,
 	kVariableReplicants = 51,
-	kVariableNextTvNews = 52
+	kVariableNextTvNews = 52,
+	kVariableNR03Music = 53,
+	kVariableNR05Music = 54
 };
 
 enum Outtakes {
@@ -1153,9 +1172,9 @@ enum Scenes {
 	kSceneMA07 = 53, // McCoy's Apartment - Ground floor
 	kSceneNR01 = 54, // Nightclub Row - Outside
 	kSceneNR02 = 55, // Nightclub Row - Taffy Lewis'
-	kSceneNR03 = 56,
-	kSceneNR04 = 57,
-	kSceneNR05 = 58,
+	kSceneNR03 = 56, // Nightclub Row - Early Q's - Main area
+	kSceneNR04 = 57, // Nightclub Row - Early Q's - Office
+	kSceneNR05 = 58, // Nightclub Row - Early Q's - VIP area
 	kSceneNR06 = 59,
 	kSceneNR07 = 60,
 	kSceneNR08 = 61,
@@ -1520,6 +1539,7 @@ enum GoalMcCoy {
 	kGoalMcCoyBB11PrepareToRunAway = 101,
 	kGoalMcCoyBB11RunAway = 102,
 	kGoalMcCoyBB11GetCaught = 103,
+	kGoalMcCoyNR03ThrownOut = 210,
 	kGoalMcCoyArrested = 500
 };
 
@@ -1645,7 +1665,8 @@ enum GoalGuzza {
 	kGoalGuzzaGoToOffice = 102,
 	kGoalGuzzaGoToHawkersCircle2 = 103,
 	kGoalGuzzaGoToFreeSlotB = 104,
-	kGoalGuzzaGoToFreeSlotG = 105
+	kGoalGuzzaGoToFreeSlotG = 105,
+	kGoalGuzzaSitAtNR03 = 201
 };
 
 enum GoalClovis {
@@ -1737,6 +1758,13 @@ enum GoalRunciter {
 	kGoalRunciterDead = 599
 };
 
+enum GoalEarlyQ {
+	// cut feature? goals 0 - 200 has no use as EarlyQ is walking around NR which is not accessible
+	kGoalEarlyQStartWalkingAround = 200,
+	kGoalEarlyQGoToNR05 = 220,
+	kGoalEarlyQGoToNR04 = 230
+};
+
 enum GoalZuben {
 	kGoalZubenDefault = 0,
 	kGoalZubenCT01WalkToCT02 = 1,
@@ -1761,6 +1789,16 @@ enum GoalOfficerLeary {
 	kGoalOfficerLearyDefault = 0,
 	kGoalOfficerLearyRC01WalkToCrowd = 1,
 	kGoalOfficerLearyRC01CrowdInterrogation = 2
+};
+
+enum GoalHanoi {
+	kGoalHanoiDefault = 200,
+	kGoalHanoiNR03GoToDefaultPosition = 210,
+	kGoalHanoiNR03GoToSwivelTable = 211,
+	kGoalHanoiNR03GoToOfficeDoor = 212,
+	kGoalHanoiNR03GoToDancer = 213,
+	kGoalHanoiNR03StartGuarding = 215,
+	kGoalHanoiNR03ThrowOutMcCoy = 220
 };
 
 enum GoalDeskClerk {

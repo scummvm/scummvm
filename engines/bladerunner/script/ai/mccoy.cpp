@@ -327,38 +327,23 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Face_Actor(kActorMcCoy, kActorSadik, true);
 		return true;
 
-	case 231:
-		Player_Set_Combat_Mode(false);
-		Preload(18);
-		Set_Enter(kSetNR10, kSceneNR10);
+
+	case 200:
 		Player_Loses_Control();
-		Actor_Force_Stop_Walking(kActorMcCoy);
-		Actor_Put_In_Set(kActorMcCoy, kSetNR10);
-		Actor_Set_At_XYZ(kActorMcCoy, 14.0f, 110.84f, -300.0f, 926);
-		Actor_Change_Animation_Mode(kActorMcCoy, 48);
-		_animationState = 27;
-		_animationFrame = 0;
-		flt_462714 = 2.84f;
-		flt_462710 = 110.84f;
-		off_45A100 = -6.0f;
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
 		return true;
 
-	case 230:
-		dword_45A0FC = Actor_Query_Goal_Number(kActorSteele) == 215;
-		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAttack);
-		return true;
-
-	case 220:
-		Actor_Change_Animation_Mode(kActorMcCoy, 75);
-		return true;
-
-	case 212:
-		Global_Variable_Set(47, 0);
-		Player_Set_Combat_Mode_Access(false);
-		Player_Gains_Control();
-		Scene_Exits_Disable();
-		_animationState = 68;
-		_animationFrame = Slice_Animation_Query_Number_Of_Frames(18) - 1;
+	case kGoalMcCoyNR03ThrownOut:
+		Actor_Put_In_Set(kActorMcCoy, kSetNR01);
+		Actor_Set_At_XYZ(kActorMcCoy, -204.0f, 24.0f, -817.0f, 256);
+		Actor_Set_Invisible(kActorMcCoy, false);
+		if (Game_Flag_Query(627)) {
+			Actor_Set_Goal_Number(kActorMcCoy, 212);
+		} else {
+			_animationState = 53;
+			_animationFrame = Slice_Animation_Query_Number_Of_Frames(18) - 1;
+			Actor_Set_Invisible(kActorMcCoy, false);
+		}
 		return true;
 
 	case 211:
@@ -375,22 +360,38 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Player_Gains_Control();
 		return true;
 
-	case 210:
-		Actor_Put_In_Set(kActorMcCoy, kSetNR01);
-		Actor_Set_At_XYZ(kActorMcCoy, -204.0, 24.0, -817.0, 256);
-		Actor_Set_Invisible(kActorMcCoy, false);
-		if (Game_Flag_Query(627)) {
-			Actor_Set_Goal_Number(kActorMcCoy, 212);
-		} else {
-			_animationState = 53;
-			_animationFrame = Slice_Animation_Query_Number_Of_Frames(18) - 1;
-			Actor_Set_Invisible(kActorMcCoy, false);
-		}
+	case 212:
+		Global_Variable_Set(47, 0);
+		Player_Set_Combat_Mode_Access(false);
+		Player_Gains_Control();
+		Scene_Exits_Disable();
+		_animationState = 68;
+		_animationFrame = Slice_Animation_Query_Number_Of_Frames(18) - 1;
 		return true;
 
-	case 200:
+	case 220:
+		Actor_Change_Animation_Mode(kActorMcCoy, 75);
+		return true;
+
+	case 230:
+		dword_45A0FC = Actor_Query_Goal_Number(kActorSteele) == 215;
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAttack);
+		return true;
+
+	case 231:
+		Player_Set_Combat_Mode(false);
+		Preload(18);
+		Set_Enter(kSetNR10, kSceneNR10);
 		Player_Loses_Control();
-		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
+		Actor_Force_Stop_Walking(kActorMcCoy);
+		Actor_Put_In_Set(kActorMcCoy, kSetNR10);
+		Actor_Set_At_XYZ(kActorMcCoy, 14.0f, 110.84f, -300.0f, 926);
+		Actor_Change_Animation_Mode(kActorMcCoy, 48);
+		_animationState = 27;
+		_animationFrame = 0;
+		flt_462714 = 2.84f;
+		flt_462710 = 110.84f;
+		off_45A100 = -6.0f;
 		return true;
 
 	case 301:
