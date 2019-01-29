@@ -80,6 +80,7 @@ private:
 	void processEvents();
 	void onScreenChanged() const;
 	void addModsToSearchPath() const;
+	static void checkRecommendedDatafiles();
 
 	Gfx::FrameLimiter *_frameLimiter;
 	Console *_console;
