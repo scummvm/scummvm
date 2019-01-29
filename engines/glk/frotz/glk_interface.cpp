@@ -382,15 +382,13 @@ void GlkInterface::split_window(zword lines) {
 	if (h_version < V4)
 		lines++;
 
-	if (!lines || lines > curr_status_ht) {
+	if ((!lines || lines > curr_status_ht) && h_version != 6) {
 		uint height;
 
 		glk_window_get_size(_wp._upper, nullptr, &height);
 		if (lines != height)
-			glk_window_set_arrangement(
-				glk_window_get_parent(_wp._upper),
-				winmethod_Above | winmethod_Fixed,
-				lines, nullptr);
+			glk_window_set_arrangement(glk_window_get_parent(_wp._upper),
+				winmethod_Above | winmethod_Fixed, lines, nullptr);
 		curr_status_ht = lines;
 	}
 	mach_status_ht = lines;

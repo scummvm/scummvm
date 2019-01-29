@@ -879,7 +879,7 @@ void Processor::z_print_obj() {
 }
 
 void Processor::z_print_paddr() {
-	decode_text (HIGH_STRING, zargs[0]);
+	decode_text(HIGH_STRING, zargs[0]);
 }
 
 void Processor::z_print_ret() {
