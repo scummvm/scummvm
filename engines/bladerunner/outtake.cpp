@@ -63,8 +63,6 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 	Common::String resNameNoVQASuffix = resName;
 	resName = resName + ".VQA";
 
-	_vm->_mixer->stopAll();
-
 	VQAPlayer vqaPlayer(_vm, &_surfaceVideo, resName); // in original game _surfaceFront is used here, but for proper subtitles rendering we need separate surface
 	vqaPlayer.open();
 
