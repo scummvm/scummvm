@@ -82,6 +82,7 @@ enum UnkFlags {
 class BigfileArchive;
 class BackgroundResourceLoader;
 class DragonFLG;
+class DragonIMG;
 class DragonOBD;
 class DragonRMS;
 class DragonVAR;
@@ -96,6 +97,7 @@ struct DragonINI;
 class DragonsEngine : public Engine {
 public:
 	DragonOBD *_dragonOBD;
+	DragonIMG *_dragonIMG;
 	ActorManager *_actorManager;
 	DragonINIResource *_dragonINIResource;
 private:
@@ -146,6 +148,7 @@ private:
 	void updateHandler();
 	uint32 calulateTimeLeft();
 	void wait();
+	uint16 getIniFromImg();
 };
 
 DragonsEngine *getEngine();
