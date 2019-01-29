@@ -1827,7 +1827,7 @@ enum GoalHanoi {
 	kGoalHanoiNR03ThrowOutMcCoy = 220,
 	kGoalHanoiNR08WatchShow = 230,
 	kGoalHanoiNR08Leave = 235,
-	kGoalHanoiNR08Left = 236,
+	kGoalHanoiNR08Left = 236
 };
 
 enum GoalDeskClerk {
