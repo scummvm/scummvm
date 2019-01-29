@@ -1200,7 +1200,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 		_animationFrame++;
 		if (_animationFrame == 6) {
 			Actor_Set_Goal_Number(kActorTaffyPatron, 250);
-			Actor_Change_Animation_Mode(kActorGordo, 49);
+			Actor_Change_Animation_Mode(kActorGordo, kAnimationModeCombatDie);
 			*animation = 100;
 			_animationFrame = 0;
 			_animationState = 24;
@@ -1484,7 +1484,7 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 			_animationState = 24;
 			_animationFrame = 0;
 			break;
-		case 15:
+		default:
 			_animationState = 23;
 			_animationFrame = 0;
 			break;
