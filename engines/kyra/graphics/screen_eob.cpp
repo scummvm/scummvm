@@ -224,7 +224,7 @@ void Screen_EoB::loadBitmap(const char *filename, int tempPage, int dstPage, Pal
 
 	if (_isAmiga) {
 		// Yay, this is where EOB1 Amiga hides the palette data
-		loadPalette(_pagePtrs[3] + 40000, *_palettes[0], 64);
+		loadPalette(_pagePtrs[dstPage] + 40000, *_palettes[0], 64);
 		_palettes[0]->fill(0, 1, 0);
 
 		Screen::convertAmigaGfx(getPagePtr(dstPage), 320, 200);
