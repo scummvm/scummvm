@@ -28,6 +28,7 @@
 #include "background.h"
 #include "bigfile.h"
 #include "dragonflg.h"
+#include "dragonimg.h"
 #include "dragonini.h"
 #include "dragonobd.h"
 #include "dragonrms.h"
@@ -84,6 +85,7 @@ Common::Error DragonsEngine::run() {
 	_screen = new Screen();
 	_bigfileArchive = new BigfileArchive("bigfile.dat", Common::Language::EN_ANY);
 	_dragonFLG = new DragonFLG(_bigfileArchive);
+	_dragonIMG = new DragonIMG(_bigfileArchive);
 	_dragonOBD = new DragonOBD(_bigfileArchive);
 	_dragonRMS = new DragonRMS(_bigfileArchive, _dragonOBD);
 	_dragonVAR = new DragonVAR(_bigfileArchive);
@@ -127,6 +129,7 @@ Common::Error DragonsEngine::run() {
 	delete _actorManager;
 	delete _backgroundResourceLoader;
 	delete _dragonFLG;
+	delete _dragonIMG;
 	delete _dragonRMS;
 	delete _dragonVAR;
 	delete _bigfileArchive;
@@ -171,7 +174,10 @@ void DragonsEngine::gameLoop() {
 		}
 
 		if (flickerIni->sceneId == getCurrentSceneId()) {
-			debug("get here");
+			uint16 id = getIniFromImg();
+			if (id != 0) {
+				error("todo 0x80026cb0 run script");
+			}
 		}
 		_scene->draw();
 		_screen->updateScreen();
@@ -359,6 +365,30 @@ uint16 DragonsEngine::getCurrentSceneId() {
 
 void DragonsEngine::setVar(uint16 offset, uint16 value) {
 	return _dragonVAR->setVar(offset, value);
+}
+
+uint16 DragonsEngine::getIniFromImg() {
+	DragonINI *flicker = _dragonINIResource->getFlickerRecord();
+
+	int16 x = flicker->actor->x_pos / 32;
+	int16 y = flicker->actor->y_pos / 8;
+
+	uint16 currentSceneId = _scene->getSceneId();
+
+	for(uint16 i = 0; i < _dragonINIResource->totalRecords(); i++) {
+		DragonINI *ini = getINI(i);
+		if (ini->sceneId == currentSceneId && ini->field_1a_flags_maybe == 0) {
+			IMG *img = _dragonIMG->getIMG(ini->field_2);
+			if (x >= img->field_0 &&
+			img->field_0 + img->field_4 >= x &&
+			y >= img->field_2 &&
+			img->field_6 + img->field_2 >= y) {
+				return i + 1;
+			}
+		}
+
+	}
+	return 0;
 }
 
 } // End of namespace Dragons

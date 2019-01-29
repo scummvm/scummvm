@@ -7,6 +7,7 @@ MODULE_OBJS := \
     bigfile.o \
 	detection.o \
     dragonflg.o \
+    dragonimg.o \
     dragonini.o \
     dragonobd.o \
     dragonrms.o \
