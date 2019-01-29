@@ -51,9 +51,7 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, co
 	memset(_fonts, 0, sizeof(_fonts));
 
 	memset(_pagePtrs, 0, sizeof(_pagePtrs));
-	// In VGA mode the odd and even page pointers point to the same buffers.
-	for (int i = 0; i < SCREEN_PAGE_NUM; i++)
-		_pageMapping[i] = i & ~1;
+	memset(_pageMapping, 0, sizeof(_pageMapping));
 
 	_renderMode = Common::kRenderDefault;
 	_sjisMixedFontMode = false;
@@ -121,6 +119,9 @@ bool Screen::init() {
 			_renderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
 	}
 
+	// In VGA mode the odd and even page pointers point to the same buffers.
+	for (int i = 0; i < SCREEN_PAGE_NUM; i++)
+		_pageMapping[i] = i & ~1;
 	// CGA and EGA modes use additional pages to do the CGA/EGA specific graphics conversions.
 	if (_vm->game() == GI_EOB1 && (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderEGA)) {
 		for (int i = 0; i < 8; i++)
