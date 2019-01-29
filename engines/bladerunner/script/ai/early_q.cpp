@@ -70,7 +70,7 @@ bool AIScriptEarlyQ::Update() {
 		Game_Flag_Set(kFlagEarlyQStartedChapter3);
 		Actor_Put_In_Set(kActorEarlyQ, kSetFreeSlotH);
 		Actor_Set_At_Waypoint(kActorEarlyQ, 40, 0);
-		Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQStartWalkingAround);
+		Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQWalkAround);
 		return true;
 	}
 
@@ -79,13 +79,13 @@ bool AIScriptEarlyQ::Update() {
 
 void AIScriptEarlyQ::TimerExpired(int timer) {
 	if (timer == 0
-	 && Actor_Query_Goal_Number(kActorEarlyQ) == 221
+	 && Actor_Query_Goal_Number(kActorEarlyQ) == kGoalEarlyQNR05WillLeave
 	) {
-		if (Player_Query_Current_Scene() == 58) {
+		if (Player_Query_Current_Scene() == kSceneNR05) {
 			AI_Countdown_Timer_Reset(kActorEarlyQ, 0);
-			Actor_Set_Goal_Number(kActorEarlyQ, 222);
+			Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR05Leave);
 		} else {
-			Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQGoToNR05);
+			Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR05Wait);
 		}
 		return; //true;
 	}
@@ -162,12 +162,12 @@ void AIScriptEarlyQ::CompletedMovementTrack() {
 		Actor_Set_Goal_Number(kActorEarlyQ, 204);
 		break;
 
-	case 222:
-		Actor_Set_Goal_Number(kActorEarlyQ, 223);
+	case kGoalEarlyQNR05Leave:
+		Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR05AnnouceDektora);
 		return; //false;
 
-	case kGoalEarlyQGoToNR04:
-		Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQStartWalkingAround);
+	case kGoalEarlyQNR04Wait:
+		Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQWalkAround);
 		return; //false;
 
 	default:
@@ -302,7 +302,7 @@ bool AIScriptEarlyQ::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorEarlyQ);
 		break;
 
-	case kGoalEarlyQStartWalkingAround:
+	case kGoalEarlyQWalkAround:
 		AI_Movement_Track_Flush(kActorEarlyQ);
 		Actor_Put_In_Set(kActorEarlyQ, kSetFreeSlotH);
 		Actor_Set_At_Waypoint(kActorEarlyQ, 40, 0);
@@ -310,11 +310,11 @@ bool AIScriptEarlyQ::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		 && Game_Flag_Query(kFlagGordoRanAway)
 		 && Game_Flag_Query(kFlagLucyRanAway)
 		) {
-			Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQGoToNR05);
+			Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR05Wait);
 		} else if (Game_Flag_Query(kFlagDektoraIsReplicant)) {
-			Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQGoToNR04);
+			Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR04Wait);
 		} else {
-			Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQGoToNR05);
+			Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR05Wait);
 		}
 		break;
 
@@ -390,7 +390,7 @@ bool AIScriptEarlyQ::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Scene_Exits_Enable();
 		Player_Gains_Control();
 		Game_Flag_Set(627);
-		Actor_Set_Goal_Number(kActorHanoi, 220);
+		Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiNR03ThrowOutMcCoy);
 		break;
 
 	case 215:
@@ -422,40 +422,40 @@ bool AIScriptEarlyQ::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorEarlyQ);
 		break;
 
-	case kGoalEarlyQGoToNR05:
+	case kGoalEarlyQNR05Wait:
 		if (Player_Query_Current_Set() == kSetNR05_NR08) {
-			Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQGoToNR04);
+			Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR04Wait);
 		} else {
 			Actor_Put_In_Set(kActorEarlyQ, kSetNR05_NR08);
 			Actor_Set_At_XYZ(kActorEarlyQ, -671.56f, 0.0f, -287.02f, 849);
 		}
 		break;
 
-	case 221:
+	case kGoalEarlyQNR05WillLeave:
 		AI_Countdown_Timer_Reset(kActorEarlyQ, 0);
 		AI_Countdown_Timer_Start(kActorEarlyQ, 0, 20);
 		break;
 
-	case 222:
+	case kGoalEarlyQNR05Leave:
 		AI_Movement_Track_Flush(kActorEarlyQ);
 		AI_Movement_Track_Append(kActorEarlyQ, 429, 0);
 		AI_Movement_Track_Repeat(kActorEarlyQ);
 		break;
 
-	case 223:
-		if (Player_Query_Current_Scene() == 58) {
-			Actor_Says(kActorEarlyQ, 670, 3);
-			Actor_Says(kActorEarlyQ, 690, 3);
+	case kGoalEarlyQNR05AnnouceDektora:
+		if (Player_Query_Current_Scene() == kSceneNR05) {
+			Actor_Says(kActorEarlyQ, 670, kAnimationModeTalk);
+			Actor_Says(kActorEarlyQ, 690, kAnimationModeTalk);
 			Actor_Set_Goal_Number(kActorDektora, 210);
-			Actor_Set_Goal_Number(kActorEarlyQ, 224);
-			Actor_Set_Goal_Number(kActorHanoi, 230);
+			Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR05UnlockNR08);
+			Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiNR08WatchShow);
 		} else {
-			Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQGoToNR05);
+			Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR05Wait);
 		}
 		break;
 
-	case 224:
-		Game_Flag_Set(620);
+	case kGoalEarlyQNR05UnlockNR08:
+		Game_Flag_Set(kFlagNR08Available);
 		break;
 
 	case 229:
@@ -463,7 +463,7 @@ bool AIScriptEarlyQ::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Countdown_Timer_Reset(kActorEarlyQ, 0);
 		break;
 
-	case kGoalEarlyQGoToNR04:
+	case kGoalEarlyQNR04Wait:
 		AI_Movement_Track_Flush(kActorEarlyQ);
 		if (Random_Query(1, 3) > 1) {
 			AI_Movement_Track_Append(kActorEarlyQ, 322, Random_Query(15, 30));

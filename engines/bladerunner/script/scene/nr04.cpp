@@ -152,7 +152,7 @@ bool SceneScriptNR04::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 45.0f, 0.0f, -106.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(kFlatNR04toNR03);
+			Game_Flag_Set(kFlagNR04toNR03);
 			Set_Enter(kSetNR03, kSceneNR03);
 		}
 		return true;

@@ -243,7 +243,7 @@ void SceneScriptNR02::DialogueQueueFlushed(int a1) {
 }
 
 void SceneScriptNR02::playNextMusic() {
-	int track = Global_Variable_Query(kVariableNR02Music);
+	int track = Global_Variable_Query(kVariableTaffyLewisMusic);
 	if (track == 0) {
 		Music_Play(8, 41, 0, 2, -1, 0, 0);
 	} else if (track == 1) {
@@ -255,7 +255,7 @@ void SceneScriptNR02::playNextMusic() {
 	if (track > 2) {
 		track = 0;
 	}
-	Global_Variable_Set(kVariableNR02Music, track);
+	Global_Variable_Set(kVariableTaffyLewisMusic, track);
 }
 
 } // End of namespace BladeRunner

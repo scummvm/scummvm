@@ -204,7 +204,7 @@ void AIScriptDektora::ClickedByPlayer() {
 	}
 
 	if (Actor_Query_Goal_Number(kActorDektora) == 210) {
-		Game_Flag_Set(622);
+		Game_Flag_Set(kFlagNR08TouchedDektora);
 		AI_Movement_Track_Flush(kActorHanoi);
 		Actor_Force_Stop_Walking(kActorMcCoy);
 		Player_Loses_Control();
@@ -521,7 +521,7 @@ bool AIScriptDektora::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		break;
 
 	case 290:
-		Game_Flag_Set(591);
+		Game_Flag_Set(kFlagDektoraRanAway);
 		break;
 
 	case 299:

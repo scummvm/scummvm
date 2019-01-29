@@ -466,7 +466,7 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case kGoalGordoStartChapter3:
 		if (Global_Variable_Query(kVariableHollowayArrest) == 2) {
 			if (Game_Flag_Query(kFlagLucyRanAway)
-			 && Game_Flag_Query(591)
+			 && Game_Flag_Query(kFlagDektoraRanAway)
 			 && Player_Query_Current_Scene() != kSceneNR02
 			) {
 				Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR02WaitAtBar);

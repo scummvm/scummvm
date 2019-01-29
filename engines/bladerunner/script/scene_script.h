@@ -321,28 +321,28 @@ DECLARE_SCRIPT(NR05)
 END_SCRIPT
 
 DECLARE_SCRIPT(NR06)
-	void sub_401BAC();
+	void playNextMusic();
 END_SCRIPT
 
 DECLARE_SCRIPT(NR07)
-	void sub_4018D4();
-	void sub_401A10();
-	void sub_401C60();
-	void sub_401EF4();
-	void sub_4020F0();
-	void sub_402284();
-	void sub_402510();
-	void sub_402614();
-	void sub_402738();
-	void sub_4028FC();
+	void dektoraRunAway();
+	void callHolloway();
+	void clickedOnVase();
+	void talkAboutBelt1();
+	void talkAboutBelt2();
+	void talkAboutVoightKampff();
+	void talkAboutSteele();
+	void talkAboutMoonbus();
+	void talkAboutBlackSedan();
+	void talkAboutScorpions();
 END_SCRIPT
 
 DECLARE_SCRIPT(NR08)
-	void sub_4021B4();
+	void playNextMusic();
 END_SCRIPT
 
 DECLARE_SCRIPT(NR09)
-	void sub_40172C();
+	void playNextMusic();
 END_SCRIPT
 
 DECLARE_SCRIPT(NR10)
@@ -350,7 +350,7 @@ END_SCRIPT
 
 DECLARE_SCRIPT(NR11)
 	void sub_4027D0(int actorId, signed int frame);
-	void sub_4028EC();
+	void untargetEverything();
 END_SCRIPT
 
 DECLARE_SCRIPT(PS01)

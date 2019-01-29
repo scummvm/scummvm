@@ -43,7 +43,7 @@ void SceneScriptNR05::InitializeScene() {
 	}
 
 	Scene_Exit_Add_2D_Exit(0, 459, 147, 639, 290, 1);
-	if (Game_Flag_Query(620)) {
+	if (Game_Flag_Query(kFlagNR08Available)) {
 		Scene_Exit_Add_2D_Exit(1, 0, 0, 30, 479, 3);
 	}
 
@@ -107,11 +107,11 @@ bool SceneScriptNR05::ClickedOnActor(int actorId) {
 	}
 
 	if (actorId == kActorEarlyQ) {
-		Actor_Set_Goal_Number(kActorEarlyQ, 229);
+		Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR05TalkingToMcCoy);
 		if (!Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorEarlyQ, 36, true, false)) {
 			talkToEarlyQ();
 		}
-		Actor_Set_Goal_Number(kActorEarlyQ, 221);
+		Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR05WillLeave);
 		return true;
 	}
 
@@ -167,8 +167,8 @@ void SceneScriptNR05::SceneFrameAdvanced(int frame) {
 	rotateActorOnGround(kActorHysteriaPatron2);
 	rotateActorOnGround(kActorMcCoy);
 
-	if (Actor_Query_Goal_Number(kActorEarlyQ) == 224) {
-		Actor_Set_Goal_Number(kActorEarlyQ, 225);
+	if (Actor_Query_Goal_Number(kActorEarlyQ) == kGoalEarlyQNR05UnlockNR08) {
+		Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR05UnlockedNR08);
 		if (Player_Query_Current_Scene() == kSceneNR05) {
 			Scene_Exit_Add_2D_Exit(1, 0, 0, 30, 479, 3);
 		}
@@ -262,9 +262,10 @@ void SceneScriptNR05::talkToBartender() {
 }
 
 void SceneScriptNR05::talkToEarlyQ() {
-	if (Actor_Query_Goal_Number(kActorEarlyQ) == 220) {
-		Actor_Set_Goal_Number(kActorEarlyQ, 221);
+	if (Actor_Query_Goal_Number(kActorEarlyQ) == kGoalEarlyQNR05Wait) {
+		Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR05WillLeave);
 	}
+
 	Actor_Face_Actor(kActorMcCoy, kActorEarlyQ, true);
 	Actor_Face_Actor(kActorEarlyQ, kActorMcCoy, true);
 
@@ -340,7 +341,7 @@ void SceneScriptNR05::talkToEarlyQ() {
 	case 910: // BLOND WOMAN
 		Actor_Says(kActorMcCoy, 3515, 14);
 		Actor_Modify_Friendliness_To_Other(kActorEarlyQ, kActorMcCoy, -1);
-		if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)) {
+		if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)) { // cut content? this clue is unobtanium
 			Actor_Says(kActorEarlyQ, 580, 12);
 			Actor_Says(kActorMcCoy, 3560, 13);
 			Actor_Says(kActorEarlyQ, 590, 16);
@@ -387,7 +388,7 @@ void SceneScriptNR05::playNextMusic() {
 	if (Music_Is_Playing()) {
 		Music_Adjust(51, 0, 2);
 	} else {
-		int track = Global_Variable_Query(kVariableNR05Music);
+		int track = Global_Variable_Query(kVariableEarlyQBackMusic);
 		if (track == 0) {
 			Music_Play(16, 61, -80, 2, -1, 0, 0);
 		} else if (track == 1) {
@@ -399,7 +400,7 @@ void SceneScriptNR05::playNextMusic() {
 		if (track > 2) {
 			track = 0;
 		}
-		Global_Variable_Set(kVariableNR05Music, track);
+		Global_Variable_Set(kVariableEarlyQBackMusic, track);
 	}
 }
 

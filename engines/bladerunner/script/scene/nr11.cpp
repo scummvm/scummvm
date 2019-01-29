@@ -26,18 +26,22 @@ namespace BladeRunner {
 
 void SceneScriptNR11::InitializeScene() {
 	Setup_Scene_Information(100.0f, 1.75f, -4.0f, 0);
+
 	Scene_Exit_Add_2D_Exit(0, 450, 305, 565, 345, 2);
+
 	if (!Game_Flag_Query(640)) {
 		Ambient_Sounds_Adjust_Looping_Sound(452, 22, 0, 1);
 	}
+
 	Ambient_Sounds_Add_Looping_Sound(205, 22, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(71, 33, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound( 71, 33, 0, 1);
 	Ambient_Sounds_Add_Sound(303, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(304, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(305, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(306, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(307, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(308, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
+
 	if (Game_Flag_Query(632)) {
 		Scene_Loop_Set_Default(3);
 		Ambient_Sounds_Add_Looping_Sound(381, 83, 0, 1);
@@ -46,7 +50,7 @@ void SceneScriptNR11::InitializeScene() {
 		Ambient_Sounds_Add_Looping_Sound(381, 83, 0, 1);
 	} else {
 		Scene_Loop_Set_Default(0);
-		Overlay_Play("NR11OVER", 0, 1, 0, 0);
+		Overlay_Play("NR11OVER", 0, true, false, 0);
 	}
 }
 
@@ -111,11 +115,26 @@ bool SceneScriptNR11::MouseClick(int x, int y) {
 
 bool SceneScriptNR11::ClickedOn3DObject(const char *objectName, bool combatMode) {
 
-	if (Object_Query_Click("CLOTHING02", objectName) || Object_Query_Click("BOX27", objectName) || Object_Query_Click("BOX39", objectName) || Object_Query_Click("BOX44", objectName) || Object_Query_Click("DRESS", objectName) || Object_Query_Click("COATRACK", objectName) || Object_Query_Click("COLUMN3 DETS", objectName) || Object_Query_Click("COLUMN PIPE01", objectName) || Object_Query_Click("RECTANGLE02", objectName) || Object_Query_Click("COLUMN04", objectName) || Object_Query_Click("COATRACK01", objectName) || Object_Query_Click("SHIRT", objectName) || Object_Query_Click("SKIRT 02", objectName) || Object_Query_Click("CLOTHING B 03", objectName) || Object_Query_Click("BUST BUST", objectName)) {
+	if (Object_Query_Click("CLOTHING02", objectName)
+	 || Object_Query_Click("BOX27", objectName)
+	 || Object_Query_Click("BOX39", objectName)
+	 || Object_Query_Click("BOX44", objectName)
+	 || Object_Query_Click("DRESS", objectName)
+	 || Object_Query_Click("COATRACK", objectName)
+	 || Object_Query_Click("COLUMN3 DETS", objectName)
+	 || Object_Query_Click("COLUMN PIPE01", objectName)
+	 || Object_Query_Click("RECTANGLE02", objectName)
+	 || Object_Query_Click("COLUMN04", objectName)
+	 || Object_Query_Click("COATRACK01", objectName)
+	 || Object_Query_Click("SHIRT", objectName)
+	 || Object_Query_Click("SKIRT 02", objectName)
+	 || Object_Query_Click("CLOTHING B 03", objectName)
+	 || Object_Query_Click("BUST BUST", objectName)
+	) {
 		if (combatMode) {
 			Actor_Set_Goal_Number(kActorSteele, 211);
 			Scene_Exits_Disable();
-			sub_4028EC();
+			untargetEverything();
 			Player_Loses_Control();
 			if (!Player_Query_Combat_Mode()) {
 				Player_Set_Combat_Mode(true);
@@ -126,7 +145,7 @@ bool SceneScriptNR11::ClickedOn3DObject(const char *objectName, bool combatMode)
 		} else if (Actor_Query_Goal_Number(kActorDektora) == 250) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 24.0f, 0.33f, 0.0f, 0, 1, false, 0)) {
 				Actor_Face_XYZ(kActorMcCoy, -180.0f, 0.0f, -170.0f, true);
-				sub_4028EC();
+				untargetEverything();
 				Actor_Set_Goal_Number(kActorSteele, 211);
 				if (Actor_Query_Friendliness_To_Other(kActorDektora, kActorMcCoy) < 30) {
 					Actor_Set_At_XYZ(kActorDektora, 0.5f, 0.33f, -162.0f, 0);
@@ -183,7 +202,7 @@ bool SceneScriptNR11::ClickedOn3DObject(const char *objectName, bool combatMode)
 					if (Global_Variable_Query(kVariableHollowayArrest) == 1) {
 						Actor_Set_Goal_Number(kActorSteele, 236);
 					}
-					Game_Flag_Set(591);
+					Game_Flag_Set(kFlagDektoraRanAway);
 				}
 			} else {
 				if (Random_Query(1, 2) == 1) {
@@ -208,8 +227,8 @@ bool SceneScriptNR11::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptNR11::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 100.0f, 1.75f, -8.0f, 0, 1, false, 0)) {
-			Game_Flag_Set(477);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 100.0f, 1.75f, -8.0f, 0, true, false, 0)) {
+			Game_Flag_Set(kFlagNR11toNR10);
 			Set_Enter(kSetNR10, kSceneNR10);
 			return true;
 		}
@@ -225,37 +244,47 @@ void SceneScriptNR11::SceneFrameAdvanced(int frame) {
 	if (frame == 62) {
 		Ambient_Sounds_Play_Sound(449, 40, 100, 100, 10);
 	}
+
 	if (frame == 67) {
 		Ambient_Sounds_Play_Sound(449, 30, 90, 90, 10);
 	}
+
 	if (frame == 74) {
 		Ambient_Sounds_Play_Sound(450, 50, 83, 83, 10);
 	}
+
 	if (frame == 80) {
 		Ambient_Sounds_Play_Sound(449, 60, 65, 65, 10);
 	}
+
 	if (frame == 92) {
 		Ambient_Sounds_Play_Sound(450, 30, 50, 50, 10);
 	}
+
 	if (frame == 97) {
 		Ambient_Sounds_Play_Sound(449, 50, -40, -40, 10);
 	}
+
 	if (frame == 103) {
 		Ambient_Sounds_Play_Sound(450, 40, -27, -27, 10);
 	}
+
 	if (frame == 109) {
 		Ambient_Sounds_Play_Sound(449, 60, -20, -20, 10);
 	}
+
 	if (frame == 62) {
 		Ambient_Sounds_Play_Sound(122, 80, 100, 100, 15);
 	}
+
 	if (Game_Flag_Query(659)) {
 		Game_Flag_Reset(659);
 		Overlay_Remove("NR11OVER");
 		Overlay_Play("NR11OVER", 1, 0, 1, 0);
 	}
+
 	if (Game_Flag_Query(635)) {
-		sub_4028EC();
+		untargetEverything();
 		Player_Loses_Control();
 		if (!Player_Query_Combat_Mode()) {
 			Player_Set_Combat_Mode(true);
@@ -363,7 +392,7 @@ void SceneScriptNR11::sub_4027D0(int actorId, signed int frame) {
 	Actor_Face_XYZ(actorId, x, y, z, true);
 }
 
-void SceneScriptNR11::sub_4028EC() {
+void SceneScriptNR11::untargetEverything() {
 	Un_Combat_Target_Object("CLOTHING02");
 	Un_Combat_Target_Object("BOX27");
 	Un_Combat_Target_Object("BOX39");

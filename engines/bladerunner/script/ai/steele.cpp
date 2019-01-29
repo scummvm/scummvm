@@ -902,7 +902,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Says(kActorSteele, 1800, 17);
 			Actor_Says(kActorMcCoy, 3835, 18);
 			Actor_Says(kActorSteele, 1810, 16);
-			Game_Flag_Set(591);
+			Game_Flag_Set(kFlagDektoraRanAway);
 			Actor_Set_Goal_Number(kActorDektora, 599);
 			Actor_Set_Goal_Number(kActorSteele, 275);
 			break;
@@ -915,7 +915,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Says(kActorSteele, 1770, 14);
 			Actor_Says(kActorSteele, 1780, 15);
 			Actor_Says(kActorMcCoy, 3825, 14);
-			Game_Flag_Set(591);
+			Game_Flag_Set(kFlagDektoraRanAway);
 			Actor_Set_Goal_Number(kActorDektora, 599);
 			Actor_Set_Goal_Number(kActorSteele, 275);
 		}

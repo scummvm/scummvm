@@ -852,8 +852,12 @@ enum Flags {
 
 	kFlagUG09toCT12 = 432,
 	kFlagCT12ToUG09 = 433,
-	kFlatNR04toNR03 = 437,
-	kFlatNR03toNR04 = 438,
+	kFlagNR04toNR03 = 437,
+	kFlagNR03toNR04 = 438,
+	kFlagNR06toNR08 = 439,
+	kFlagNR08toNR06 = 440, // is never checked
+	kFlagNR06toNR07 = 441,
+	kFlagNR07toNR06 = 442,
 	kFlagGenericWalkerWaiting = 443,
 	kFlagIzoShot = 444,
 	kFlagUG02WeaponsChecked = 449,
@@ -875,7 +879,12 @@ enum Flags {
 	kFlagBB10Shelf4Available = 469,
 	kFlagBB10Shelf5Available = 470,
 	kFlagGaffChapter2Started = 471,
+	// 472 is never used
+	// 473 is never used
 	kFlagUG10GateOpen = 474,
+	kFlagNR09toNR10 = 475,
+	kFlagNR10toNR09 = 476,
+	kFlagNR11toNR10 = 477, // is never checked
 	kFlagMcCoyAtPS03 = 478, // has no use
 	kFlagMcCoyInHawkersCircle = 479,
 	// 480 is never used
@@ -900,7 +909,9 @@ enum Flags {
 	kFlagDR03ChewTalkExplosion = 505,
 	kFlagBB08toBB12 = 506,
 	kFlagBB12toBB08 = 507, // is never checked
+	kFlagNR07Entered = 508,
 	kFlagBB11SadikFight = 509,
+	kFlagNotUsed510 = 510, // is never set
 	kFlagDR05ExplodedEntered = 511,
 	kFlagDR05ViewExplosion = 515,
 	kFlagCT07ZubenAttack = 516,
@@ -943,6 +954,7 @@ enum Flags {
 	kFlagNR05BartenderTalk1 = 588,
 	kFlagNR05BartenderTalk2 = 589,
 	kFlagNR05EarlyQTalk = 590,
+	kFlagDektoraRanAway = 591,
 	kFlagGordoRanAway = 592,
 	kFlagLucyRanAway = 593,
 	kFlagNR02GordoJumpDown = 594,
@@ -953,9 +965,15 @@ enum Flags {
 	kFlagNR03HanoiTalk = 611,
 	kFlagTB07RachaelTalk = 612,
 	kFlagHF03LucyTalk = 613,
+	kFlagNR08toNR09 = 614,
+	kFlagNR09toNR08 = 615,
 	kFlagMcCoyCapturedByHolloway = 616,
 	kFlagSpinnerMissing = 617,
+	kFlagNR08Available = 620,
+	kFlagNR08TouchedDektora = 622,
 	kFlagTB07TyrellMeeting = 625,
+	kFlagNR07McCoyIsCop = 638,
+	kFlagNR10toNR11 = 641, // is never checked
 	kFlagSteeleKnowsBulletBobIsDead = 643,
 	kFlagCT11DogWrapperTaken = 645,
 	kFlagSteeleDead = 646, // is never checked
@@ -994,7 +1012,8 @@ enum Flags {
 	kFlagZubenBountyPaid = 723,
 	kFlagCT11DogWrapperAvailable = 725,
 	kFlagAR02Entered = 726,
-	kFlagPS04WeaponsOrderForm = 727
+	kFlagPS04WeaponsOrderForm = 727,
+	kFlagNR08DektoraShow = 729
 };
 
 enum Variables {
@@ -1024,11 +1043,11 @@ enum Variables {
 	kVariableAffectionTowards = 45, // 0 none, 1 steele, 2 dektora, 3 lucy
 	kVariableGunPulledInFrontOfSebastian = 46,
 	kVariableDNAEvidences = 48,
-	kVariableNR02Music = 50,
+	kVariableTaffyLewisMusic = 50,
 	kVariableReplicants = 51,
 	kVariableNextTvNews = 52,
-	kVariableNR03Music = 53,
-	kVariableNR05Music = 54
+	kVariableEarlyQFrontMusic = 53,
+	kVariableEarlyQBackMusic = 54
 };
 
 enum Outtakes {
@@ -1175,11 +1194,11 @@ enum Scenes {
 	kSceneNR03 = 56, // Nightclub Row - Early Q's - Main area
 	kSceneNR04 = 57, // Nightclub Row - Early Q's - Office
 	kSceneNR05 = 58, // Nightclub Row - Early Q's - VIP area
-	kSceneNR06 = 59,
-	kSceneNR07 = 60,
-	kSceneNR08 = 61,
-	kSceneNR09 = 62,
-	kSceneNR10 = 63,
+	kSceneNR06 = 59, // Nightclub Row - Early Q's - Empty dressing room
+	kSceneNR07 = 60, // Nightclub Row - Early Q's - Dektora's dressing room
+	kSceneNR08 = 61, // Nightclub Row - Early Q's - Stage
+	kSceneNR09 = 62, // Nightclub Row - Early Q's - Upstairs
+	kSceneNR10 = 63, // Nightclub Row - Early Q's - Projector room
 	kSceneNR11 = 64,
 	kScenePS01 = 65, // Police Station - Roof
 	kScenePS02 = 66, // Police Station - Elevator
@@ -1760,9 +1779,15 @@ enum GoalRunciter {
 
 enum GoalEarlyQ {
 	// cut feature? goals 0 - 200 has no use as EarlyQ is walking around NR which is not accessible
-	kGoalEarlyQStartWalkingAround = 200,
-	kGoalEarlyQGoToNR05 = 220,
-	kGoalEarlyQGoToNR04 = 230
+	kGoalEarlyQWalkAround = 200,
+	kGoalEarlyQNR05Wait = 220,
+	kGoalEarlyQNR05WillLeave = 221,
+	kGoalEarlyQNR05Leave = 222,
+	kGoalEarlyQNR05AnnouceDektora = 223,
+	kGoalEarlyQNR05UnlockNR08 = 224,
+	kGoalEarlyQNR05UnlockedNR08 = 225,
+	kGoalEarlyQNR05TalkingToMcCoy = 229,
+	kGoalEarlyQNR04Wait = 230
 };
 
 enum GoalZuben {
@@ -1793,12 +1818,16 @@ enum GoalOfficerLeary {
 
 enum GoalHanoi {
 	kGoalHanoiDefault = 200,
+	kGoalHanoiResetTimer = 201,
 	kGoalHanoiNR03GoToDefaultPosition = 210,
 	kGoalHanoiNR03GoToSwivelTable = 211,
 	kGoalHanoiNR03GoToOfficeDoor = 212,
 	kGoalHanoiNR03GoToDancer = 213,
 	kGoalHanoiNR03StartGuarding = 215,
-	kGoalHanoiNR03ThrowOutMcCoy = 220
+	kGoalHanoiNR03ThrowOutMcCoy = 220,
+	kGoalHanoiNR08WatchShow = 230,
+	kGoalHanoiNR08Leave = 235,
+	kGoalHanoiNR08Left = 236,
 };
 
 enum GoalDeskClerk {

@@ -32,9 +32,9 @@ enum kNR03Loops {
 void SceneScriptNR03::InitializeScene() {
 	if (Game_Flag_Query(kFlagNR05toNR03)) {
 		Setup_Scene_Information(-301.98f, -70.19f, -348.58f,   0);
-	} else if (Game_Flag_Query(kFlatNR04toNR03)) {
+	} else if (Game_Flag_Query(kFlagNR04toNR03)) {
 		Setup_Scene_Information( -161.0f, -70.19f, -1139.0f, 500);
-		Game_Flag_Reset(kFlatNR04toNR03);
+		Game_Flag_Reset(kFlagNR04toNR03);
 	} else {
 		Setup_Scene_Information(  410.0f, -70.19f,  -715.0f, 690);
 	}
@@ -172,7 +172,7 @@ bool SceneScriptNR03::ClickedOnExit(int exitId) {
 			} else {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
-				Game_Flag_Set(kFlatNR03toNR04);
+				Game_Flag_Set(kFlagNR03toNR04);
 				Set_Enter(kSetNR04, kSceneNR04);
 			}
 		}
@@ -299,7 +299,7 @@ void SceneScriptNR03::PlayerWalkedIn() {
 }
 
 void SceneScriptNR03::PlayerWalkedOut() {
-	if (!Game_Flag_Query(kFlatNR03toNR04)) {
+	if (!Game_Flag_Query(kFlagNR03toNR04)) {
 		Music_Stop(2);
 	}
 	if (Game_Flag_Query(kFlagNR03toNR05)) {
@@ -356,7 +356,7 @@ void SceneScriptNR03::playNextMusic() {
 	if (Music_Is_Playing()) {
 		Music_Adjust(51, 0, 2);
 	} else {
-		int track = Global_Variable_Query(kVariableNR03Music);
+		int track = Global_Variable_Query(kVariableEarlyQFrontMusic);
 		if (track == 0) {
 			Music_Play(14, 51, 0, 2, -1, 0, 0);
 		} else if (track == 1) {
@@ -368,7 +368,7 @@ void SceneScriptNR03::playNextMusic() {
 		if (track > 2) {
 			track = 0;
 		}
-		Global_Variable_Set(kVariableNR03Music, track);
+		Global_Variable_Set(kVariableEarlyQFrontMusic, track);
 	}
 }
 

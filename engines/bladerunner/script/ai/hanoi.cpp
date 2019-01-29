@@ -57,16 +57,16 @@ bool AIScriptHanoi::Update() {
 	}
 
 	if (Player_Query_Current_Scene() != kSceneNR03
-	 && Actor_Query_Goal_Number(kActorHanoi) == 236
+	 && Actor_Query_Goal_Number(kActorHanoi) == kGoalHanoiNR08Left
 	) {
 		Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiNR03GoToDefaultPosition);
 	}
 
 	if (Player_Query_Current_Scene() == kSceneNR03
 	 && Actor_Query_Goal_Number(kActorHanoi) != kGoalHanoiNR03StartGuarding
-	 && Actor_Query_Goal_Number(kActorHanoi) != 230
-	 && Actor_Query_Goal_Number(kActorHanoi) != 235
-	 && Actor_Query_Goal_Number(kActorHanoi) != 236
+	 && Actor_Query_Goal_Number(kActorHanoi) != kGoalHanoiNR08WatchShow
+	 && Actor_Query_Goal_Number(kActorHanoi) != kGoalHanoiNR08Leave
+	 && Actor_Query_Goal_Number(kActorHanoi) != kGoalHanoiNR08Left
 	) {
 		// McCoy close to table swivel
 		if (Actor_Query_Inch_Distance_From_Waypoint(kActorMcCoy, 364) < 420) {
@@ -135,8 +135,8 @@ void AIScriptHanoi::CompletedMovementTrack() {
 		Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiNR03GoToDefaultPosition);
 		break;
 
-	case 235:
-		Actor_Set_Goal_Number(kActorHanoi, 236);
+	case kGoalHanoiNR08Leave:
+		Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiNR08Left);
 		break;
 
 	case 240:
@@ -155,13 +155,13 @@ void AIScriptHanoi::ReceivedClue(int clueId, int fromActorId) {
 }
 
 void AIScriptHanoi::ClickedByPlayer() {
-	if (Actor_Query_Goal_Number(kActorHanoi) == 230
-	 || Actor_Query_Goal_Number(kActorHanoi) == 235
+	if (Actor_Query_Goal_Number(kActorHanoi) == kGoalHanoiNR08WatchShow
+	 || Actor_Query_Goal_Number(kActorHanoi) == kGoalHanoiNR08Leave
 	) {
 		Actor_Face_Actor(kActorMcCoy, kActorHanoi, true);
 		Actor_Says(kActorMcCoy, 8915, 11);
 
-		if (Actor_Query_Goal_Number(kActorHanoi) == 230) {
+		if (Actor_Query_Goal_Number(kActorHanoi) == kGoalHanoiNR08WatchShow) {
 			Actor_Says(kActorHanoi, 210, kAnimationModeTalk);
 		}
 	}
@@ -302,20 +302,20 @@ bool AIScriptHanoi::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Set_Enter(kSetNR01, kSceneNR01);
 		break;
 
-	case 230:
+	case kGoalHanoiNR08WatchShow:
 		AI_Movement_Track_Flush(kActorHanoi);
 		Actor_Put_In_Set(kActorHanoi, kSetNR05_NR08);
 		Actor_Set_At_XYZ(kActorHanoi, -1387.51f, 0.32f, 288.16f, 292);
 		break;
 
-	case 235:
+	case kGoalHanoiNR08Leave:
 		AI_Movement_Track_Flush(kActorHanoi);
 		AI_Movement_Track_Append(kActorHanoi, 439, 0);
 		AI_Movement_Track_Append(kActorHanoi, 39, 45);
 		AI_Movement_Track_Repeat(kActorHanoi);
 		break;
 
-	case 236:
+	case kGoalHanoiNR08Left:
 		break;
 
 	case 240:

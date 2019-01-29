@@ -320,9 +320,9 @@ void SceneScriptNR01::PlayerWalkedIn() {
 	}
 
 	if (Game_Flag_Query(kFlagNR03McCoyThrownOut)) {
-		if (Game_Flag_Query(622)) {
+		if (Game_Flag_Query(kFlagNR08TouchedDektora)) {
 			ADQ_Add(kActorHanoi, 150, kAnimationModeTalk);
-			Game_Flag_Reset(622);
+			Game_Flag_Reset(kFlagNR08TouchedDektora);
 		}
 		Game_Flag_Reset(kFlagNR03McCoyThrownOut);
 		Player_Gains_Control();
