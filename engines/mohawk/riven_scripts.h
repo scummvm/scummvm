@@ -75,7 +75,7 @@ enum RivenCommandType {
 	kRivenCommandDisableMovie        = 28,
 	kRivenCommandDisableAllMovies    = 29,
 	kRivenCommandEnableMovie         = 31,
-	kRivenCommandlayMovieBlocking    = 32,
+	kRivenCommandPlayMovieBlocking   = 32,
 	kRivenCommandPlayMovie           = 33,
 	kRivenCommandStopMovie           = 34,
 	kRivenCommandUnk36               = 36,
