@@ -257,7 +257,7 @@ void FSDirectory::cacheDirectoryRecursive(FSNode node, int depth, const String& 
 		return;
 
 	FSList list;
-	node.getChildren(list, FSNode::kListAll, true);
+	node.getChildren(list, FSNode::kListAll);
 
 	FSList::iterator it = list.begin();
 	for ( ; it != list.end(); ++it) {
