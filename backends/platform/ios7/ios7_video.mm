@@ -887,15 +887,12 @@ uint getSizeNextPOT(uint size) {
 - (void)deviceOrientationChanged:(UIDeviceOrientation)orientation {
 	[self addEvent:InternalEvent(kInputOrientationChanged, orientation, 0)];
 
-	if (!iOS7_isBigDevice()) {
-		// iPad software keyboard has a close button so don't bother controlling iPads.
-		BOOL isLandscape = (self.bounds.size.width > self.bounds.size.height);
-		if (isLandscape) {
-			[_keyboardView hideKeyboard];
-		} else {
-			[_keyboardView showKeyboard];
-		}
-	}
+  BOOL isLandscape = (self.bounds.size.width > self.bounds.size.height);
+  if (isLandscape) {
+    [_keyboardView hideKeyboard];
+  } else {
+    [_keyboardView showKeyboard];
+  }
 }
 
 - (UITouch *)secondTouchOtherTouchThan:(UITouch *)touch in:(NSSet *)set {
