@@ -4749,6 +4749,33 @@ static const uint16 laurabow1PatchAtticStairsLockupFix[] = {
 	PATCH_END
 };
 
+// Laura can get stuck at the top of the left stairs in room 47 and lockup the
+//  game. This also occurs in the original. There is a 30x2 control area at the
+//  top of the stairs in which Room47:handleEvent prevents input. This assumes
+//  that ego can't be interrupted when walking through the area, but there is a
+//  notch in the left wall that ego can collide with, leaving ego stuck with
+//  input disabled. The right wall doesn't have a notch.
+//
+// We fix this by allowing input at the top of the stairs. Up and down movements
+//  are allowed when on the staircase's control area ($0200) and we extend that
+//  to include the top of the stairs ($0800).
+//
+// Applies to: DOS, Amiga, Atari ST
+// Responsible method: Room47:handleEvent
+// Fixes bug #10879
+static const uint16 laurabow1SignatureLeftStairsLockupFix[] = {
+	SIG_MAGICDWORD,
+	0x34, SIG_UINT16(0x0200),           // ldi 0200 [ left stairs ]
+	0x1a,                               // eq? [ is ego entirely on the stairs? ]
+	SIG_END
+};
+
+static const uint16 laurabow1PatchLeftStairsLockupFix[] = {
+	0x34, PATCH_UINT16(0x0a00),         // ldi 0a00 [ left stairs | top of left stairs ]
+	0x12,                               // and [ is ego touching the stairs or the top? ]
+	PATCH_END
+};
+
 //          script, description,                                signature                                             patch
 static const SciScriptPatcherEntry laurabow1Signatures[] = {
 	{  true,     4, "easter egg view fix",                      1, laurabow1SignatureEasterEggViewFix,                laurabow1PatchEasterEggViewFix },
@@ -4757,6 +4784,7 @@ static const SciScriptPatcherEntry laurabow1Signatures[] = {
 	{  true,    37, "allowing input, after oiling arm",         1, laurabow1SignatureArmorOilingArmFix,               laurabow1PatchArmorOilingArmFix },
 	{  true,    44, "lillian bed fix",                          1, laurabow1SignatureLillianBedFix,                   laurabow1PatchLillianBedFix },
 	{  true,    47, "attic stairs lockup fix",                  1, laurabow1SignatureAtticStairsLockupFix,            laurabow1PatchAtticStairsLockupFix },
+	{  true,    47, "left stairs lockup fix",                   3, laurabow1SignatureLeftStairsLockupFix,             laurabow1PatchLeftStairsLockupFix },
 	{  true,    58, "chapel candles persistence",               1, laurabow1SignatureChapelCandlesPersistence,        laurabow1PatchChapelCandlesPersistence },
 	{  true,   236, "tell Lilly about Gertie blocking fix 1/2", 1, laurabow1SignatureTellLillyAboutGerieBlockingFix1, laurabow1PatchTellLillyAboutGertieBlockingFix1 },
 	{  true,   236, "tell Lilly about Gertie blocking fix 2/2", 1, laurabow1SignatureTellLillyAboutGerieBlockingFix2, laurabow1PatchTellLillyAboutGertieBlockingFix2 },
