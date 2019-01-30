@@ -165,7 +165,7 @@ bool SceneScriptNR03::ClickedOnExit(int exitId) {
 					Actor_Says(kActorHanoi, 210, 15);
 					AI_Movement_Track_Unpause(kActorHanoi);
 				} else if (warnings == 2) {
-					Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiNR03ThrowOutMcCoy);
+					Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiThrowOutMcCoy);
 				}
 				// game bug? after reentering this does nothing as variable is never reset or checked for > 2
 				Global_Variable_Increment(kVariableHanoiNR04Warnings, 1);
@@ -204,7 +204,7 @@ bool SceneScriptNR03::ClickedOnExit(int exitId) {
 					Actor_Says(kActorHanoi, 210, 12);
 					AI_Movement_Track_Unpause(kActorHanoi);
 				} else if (warnings == 2) {
-					Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiNR03ThrowOutMcCoy);
+					Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiThrowOutMcCoy);
 				}
 				// game bug? after reentering this does nothing as variable is never reset or checked for > 2
 				Global_Variable_Increment(kVariableHanoiNR05Warnings, 1);
@@ -267,7 +267,7 @@ void SceneScriptNR03::SceneFrameAdvanced(int frame) {
 		if (Actor_Query_Goal_Number(kActorGuzza) == kGoalGuzzaSitAtNR03) {
 			Actor_Set_Goal_Number(kActorGuzza, 200);
 		} else if (!Game_Flag_Query(kFlagNR03toNR05)) {
-			Actor_Set_Goal_Number(kActorMcCoy, 200);
+			Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyNRxxSitAtTable);
 			Player_Gains_Control();
 		}
 	}
@@ -293,7 +293,7 @@ void SceneScriptNR03::PlayerWalkedIn() {
 	}
 
 	if (Player_Query_Combat_Mode()) {
-		Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiNR03ThrowOutMcCoy);
+		Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiThrowOutMcCoy);
 	}
 	//return false;
 }

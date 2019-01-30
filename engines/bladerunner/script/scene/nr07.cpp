@@ -54,7 +54,7 @@ bool SceneScriptNR07::ClickedOn3DObject(const char *objectName, bool a2) {
 
 bool SceneScriptNR07::ClickedOnActor(int actorId) {
 	if (actorId == kActorDektora) {
-		if (Actor_Query_Goal_Number(kActorHolloway) < kGoalHollowayGoToNR07) { // Holloway is not yet comming
+		if (Actor_Query_Goal_Number(kActorHolloway) >= kGoalHollowayGoToNR07) { // Holloway is not yet comming
 			return true;
 		}
 

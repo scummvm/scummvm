@@ -307,9 +307,9 @@ DECLARE_SCRIPT(NR03)
 END_SCRIPT
 
 DECLARE_SCRIPT(NR04)
-	void sub_401DB0();
-	void sub_402860(int frame);
-	void sub_402960();
+	void dialogueWithEarlyQ();
+	void druggedEffect(int frame);
+	void playNextMusic();
 END_SCRIPT
 
 DECLARE_SCRIPT(NR05)

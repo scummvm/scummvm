@@ -102,8 +102,8 @@ DECLARE_SCRIPT(McCoy)
 	int dword_45A0E4;
 	float off_45A0EC;
 	int dword_45A0E8;
-	int dword_45A0F0;
-	int dword_45A0F4;
+	int _animationStateNextSpecial;
+	int _animationNextSpecial;
 	int dword_45A0F8;
 	int dword_45A0FC;
 	float off_45A100;

@@ -105,8 +105,8 @@ void AIScriptHanoi::TimerExpired(int timer) {
 			return; //true;
 		}
 
-		if (Actor_Query_Goal_Number(kActorHanoi) != kGoalHanoiNR03ThrowOutMcCoy) {
-			Actor_Set_Goal_Number(kActorHanoi, 202);
+		if (Actor_Query_Goal_Number(kActorHanoi) != kGoalHanoiThrowOutMcCoy) {
+			Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiNR07TalkToMcCoy);
 			return; //true;
 		}
 	}
@@ -115,20 +115,20 @@ void AIScriptHanoi::TimerExpired(int timer) {
 
 void AIScriptHanoi::CompletedMovementTrack() {
 	switch (Actor_Query_Goal_Number(kActorHanoi)) {
-	case 202:
+	case kGoalHanoiNR07TalkToMcCoy:
 		Actor_Says(kActorHanoi, 130, 3);
 		Actor_Says(kActorDektora, 540, 30);
-		Actor_Set_Goal_Number(kActorHanoi, 203);
+		Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiNR07GrabMcCoy);
 		break;
 
-	case 203:
+	case kGoalHanoiNR07GrabMcCoy:
 		Actor_Face_Actor(kActorHanoi, kActorMcCoy, true);
 		Actor_Face_Actor(kActorMcCoy, kActorHanoi, true);
 		Actor_Change_Animation_Mode(kActorHanoi, 23);
 		Actor_Set_Invisible(kActorMcCoy, true);
 		Actor_Says(kActorMcCoy, 3595, kAnimationModeTalk);
 		Actor_Says(kActorHanoi, 140, kAnimationModeTalk);
-		Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiNR03ThrowOutMcCoy);
+		Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiThrowOutMcCoy);
 		break;
 
 	case kGoalHanoiNR03GoToDancer:
@@ -139,8 +139,8 @@ void AIScriptHanoi::CompletedMovementTrack() {
 		Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiNR08Left);
 		break;
 
-	case 240:
-		Actor_Set_Goal_Number(kActorHanoi, 241);
+	case kGoalHanoiNR04Enter:
+		Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiNR04ShootMcCoy);
 		break;
 
 	default:
@@ -184,9 +184,9 @@ void AIScriptHanoi::OtherAgentEnteredCombatMode(int otherActorId, int combatMode
 	 && otherActorId == kActorMcCoy
 	 && combatMode
 	) {
-		Player_Set_Combat_Mode(kActorMcCoy);
+		Player_Set_Combat_Mode(false);
 		Player_Loses_Control();
-		Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiNR03ThrowOutMcCoy);
+		Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiThrowOutMcCoy);
 		return; //true;
 	}
 	return; //false;
@@ -222,11 +222,11 @@ bool AIScriptHanoi::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Countdown_Timer_Start(kActorHanoi, 0, 45);
 		break;
 
-	case 201:
+	case kGoalHanoiResetTimer:
 		AI_Countdown_Timer_Reset(kActorHanoi, 0);
 		break;
 
-	case 202:
+	case kGoalHanoiNR07TalkToMcCoy:
 		if (Actor_Query_Which_Set_In(kActorMcCoy) == kSetNR07
 		 && Actor_Query_In_Set(kActorDektora, kSetNR07)
 		) {
@@ -242,7 +242,7 @@ bool AIScriptHanoi::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		}
 		break;
 
-	case 203:
+	case kGoalHanoiNR07GrabMcCoy:
 		if (Actor_Query_Which_Set_In(kActorMcCoy) != kSetNR07) {
 			return false;
 		}
@@ -252,7 +252,7 @@ bool AIScriptHanoi::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		break;
 
 	case 204:
-		Actor_Says(kActorHanoi, 210, 3);
+		Actor_Says(kActorHanoi, 210, kAnimationModeTalk);
 		Actor_Change_Animation_Mode(kActorHanoi, 23);
 		break;
 
@@ -287,7 +287,7 @@ bool AIScriptHanoi::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Countdown_Timer_Start(kActorHanoi, 0, 6);
 		break;
 
-	case kGoalHanoiNR03ThrowOutMcCoy:
+	case kGoalHanoiThrowOutMcCoy:
 		Game_Flag_Set(kFlagNR03McCoyThrownOut);
 		AI_Countdown_Timer_Reset(kActorHanoi, 0);
 		Player_Loses_Control();
@@ -318,7 +318,7 @@ bool AIScriptHanoi::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case kGoalHanoiNR08Left:
 		break;
 
-	case 240:
+	case kGoalHanoiNR04Enter:
 		Actor_Put_In_Set(kActorHanoi, kSetNR04);
 		Actor_Set_At_XYZ(kActorHanoi, -47.0f, 0.0f, 334.0f, 535);
 		AI_Movement_Track_Flush(kActorHanoi);
@@ -326,10 +326,10 @@ bool AIScriptHanoi::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorHanoi);
 		break;
 
-	case 241:
-		Actor_Face_Actor(kActorHanoi, kActorMcCoy, 1);
-		Actor_Change_Animation_Mode(kActorHanoi, 6);
-		Actor_Retired_Here(kActorMcCoy, 12, 12, 1, -1);
+	case kGoalHanoiNR04ShootMcCoy:
+		Actor_Face_Actor(kActorHanoi, kActorMcCoy, true);
+		Actor_Change_Animation_Mode(kActorHanoi, kAnimationModeCombatAttack);
+		Actor_Retired_Here(kActorMcCoy, 12, 12, true, -1);
 		break;
 
 	case 9999:
@@ -474,7 +474,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 0;
 			_animationFrame = 0;
 			*animation = 648;
-			Actor_Set_Goal_Number(kActorMcCoy, 210);
+			Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyNR01ThrownOut);
 			Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiNR03GoToDefaultPosition);
 		}
 		break;
@@ -503,7 +503,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 8;
 			_animationFrame = 0;
 			*animation = 642;
-			Actor_Set_Goal_Number(kActorHanoi, 241);
+			Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiNR04ShootMcCoy);
 		}
 		break;
 
@@ -521,7 +521,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 
 		if (_animationFrame == 5) {
 			Actor_Force_Stop_Walking(kActorMcCoy);
-			Actor_Change_Animation_Mode(kActorMcCoy, 48);
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
 		}
 
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {

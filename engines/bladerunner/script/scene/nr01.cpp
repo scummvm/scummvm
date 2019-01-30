@@ -105,7 +105,7 @@ void SceneScriptNR01::SceneLoaded() {
 }
 
 bool SceneScriptNR01::MouseClick(int x, int y) {
-	if (Actor_Query_Goal_Number(kActorMcCoy) == 212) {
+	if (Actor_Query_Goal_Number(kActorMcCoy) == kGoalMcCoyNR01LayDrugged) {
 		Global_Variable_Increment(47, 4);
 		return true;
 	}

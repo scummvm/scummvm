@@ -945,8 +945,10 @@ enum Flags {
 	kFlagHF05CrazyLegsTalk1 = 562,
 	kFlagHF05CrazyLegsTalk2 = 563,
 	kFlagEarlyQStartedChapter3 = 564,
+	kFlagNotUsed565 = 565, // has no use
 	kFlagHF03toHF04 = 566, // is never checked
 	kFlagHF04toHF03 = 567,
+	kFlagNR04EarlyQWalkedIn = 569,
 	kFlagNR03Entered = 573,
 	kFlagHF04DoorsClosed = 584,
 	kFlagHF04CloseDoors = 585,
@@ -961,7 +963,10 @@ enum Flags {
 	kFlagKIAPrivacyAddonIntro = 599,
 	kFlagSteeleAimingAtGordo = 603,
 	kFlagNR03McCoyThrownOut = 604,
+	kFlagNR04DiscFound = 605,
+	kFlagNR04EarlyQStungByScorpions = 606,
 	kFlagTB07toTB02 = 608,
+	kFlagNR04McCoyAimedAtEarlyQ = 609,
 	kFlagNR03HanoiTalk = 611,
 	kFlagTB07RachaelTalk = 612,
 	kFlagHF03LucyTalk = 613,
@@ -972,6 +977,7 @@ enum Flags {
 	kFlagNR08Available = 620,
 	kFlagNR08TouchedDektora = 622,
 	kFlagTB07TyrellMeeting = 625,
+	kFlagNR01McCoyIsDrugged = 627,
 	kFlagNR07McCoyIsCop = 638,
 	kFlagNR10toNR11 = 641, // is never checked
 	kFlagSteeleKnowsBulletBobIsDead = 643,
@@ -1173,9 +1179,9 @@ enum Scenes {
 	kSceneHF02 = 35, // Hysteria Hall - Hall of Mirrors - Exit
 	kSceneHF03 = 36, // Hysteria Hall - Hysteria Arcade
 	kSceneHF04 = 37, // Hysteria Hall - Hall of Mirrors
-	kSceneHF05 = 38, // Hysteria Hall - Crazy Legs Larry Autos
-	kSceneHF06 = 39,
-	kSceneHF07 = 40,
+	kSceneHF05 = 38, // Hysteria Hall - Crazy Legs Larry Autos - Inside
+	kSceneHF06 = 39, // Hysteria Hall - Crazy Legs Larry Autos - Root
+	kSceneHF07 = 40, // Hysteria Hall - Crazy Legs Larry Autos - Underground
 	kSceneKP01 = 41,
 	kSceneKP02 = 42,
 	kSceneKP03 = 43,
@@ -1558,7 +1564,13 @@ enum GoalMcCoy {
 	kGoalMcCoyBB11PrepareToRunAway = 101,
 	kGoalMcCoyBB11RunAway = 102,
 	kGoalMcCoyBB11GetCaught = 103,
-	kGoalMcCoyNR03ThrownOut = 210,
+	kGoalMcCoyNRxxSitAtTable = 200,
+	kGoalMcCoyNRxxStandUp = 201,
+	kGoalMcCoyNR01ThrownOut = 210,
+	kGoalMcCoyNR01GetUp = 211,
+	kGoalMcCoyNR01LayDrugged = 212,
+	kGoalMcCoyNR04Drink = 220,
+	kGoalMcCoyNR04PassOut = 221,
 	kGoalMcCoyArrested = 500
 };
 
@@ -1780,6 +1792,24 @@ enum GoalRunciter {
 enum GoalEarlyQ {
 	// cut feature? goals 0 - 200 has no use as EarlyQ is walking around NR which is not accessible
 	kGoalEarlyQWalkAround = 200,
+
+	kGoalEarlyQNR04Enter = 201,
+	kGoalEarlyQNR04Talk1 = 202,
+	kGoalEarlyQNR04GoToBar = 203,
+	kGoalEarlyQNR04PourDrink = 204,
+	kGoalEarlyQNR04GoToMcCoy = 205,
+	kGoalEarlyQNR04McCoyPulledGun = 206,
+	kGoalEarlyQNR04SitDown = 207,
+	kGoalEarlyQNR04ScorpionsCheck = 208,
+	kGoalEarlyQNR04Talk2 = 209,
+	kGoalEarlyQNR04StungByScorpions = 210,
+	kGoalEarlyQNR04WaitForPulledGun = 211,
+	kGoalEarlyQNR04TakeDisk = 212,
+	kGoalEarlyQNR04Talk3 = 213,
+	kGoalEarlyQNR04AskForDisk = 214,
+	kGoalEarlyQNR04HandDrink = 215,
+	kGoalEarlyQNR04GetShot = 216,
+	kGoalEarlyQNR04Leave = 217,
 	kGoalEarlyQNR05Wait = 220,
 	kGoalEarlyQNR05WillLeave = 221,
 	kGoalEarlyQNR05Leave = 222,
@@ -1819,15 +1849,19 @@ enum GoalOfficerLeary {
 enum GoalHanoi {
 	kGoalHanoiDefault = 200,
 	kGoalHanoiResetTimer = 201,
+	kGoalHanoiNR07TalkToMcCoy = 202,
+	kGoalHanoiNR07GrabMcCoy = 203,
 	kGoalHanoiNR03GoToDefaultPosition = 210,
 	kGoalHanoiNR03GoToSwivelTable = 211,
 	kGoalHanoiNR03GoToOfficeDoor = 212,
 	kGoalHanoiNR03GoToDancer = 213,
 	kGoalHanoiNR03StartGuarding = 215,
-	kGoalHanoiNR03ThrowOutMcCoy = 220,
+	kGoalHanoiThrowOutMcCoy = 220,
 	kGoalHanoiNR08WatchShow = 230,
 	kGoalHanoiNR08Leave = 235,
-	kGoalHanoiNR08Left = 236
+	kGoalHanoiNR08Left = 236,
+	kGoalHanoiNR04Enter = 240,
+	kGoalHanoiNR04ShootMcCoy = 241
 };
 
 enum GoalDeskClerk {

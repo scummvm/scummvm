@@ -208,7 +208,7 @@ void AIScriptDektora::ClickedByPlayer() {
 		AI_Movement_Track_Flush(kActorHanoi);
 		Actor_Force_Stop_Walking(kActorMcCoy);
 		Player_Loses_Control();
-		Actor_Set_Goal_Number(kActorHanoi, 220);
+		Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiThrowOutMcCoy);
 
 		return; //true;
 	}
@@ -422,7 +422,7 @@ bool AIScriptDektora::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		break;
 
 	case 211:
-		if (Player_Query_Current_Scene() == 61) {
+		if (Player_Query_Current_Scene() == kSceneNR08) {
 			Game_Flag_Set(651);
 		} else {
 			Game_Flag_Set(636);
@@ -431,8 +431,8 @@ bool AIScriptDektora::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Change_Animation_Mode(kActorDektora, 0);
 			Actor_Set_Goal_Number(kActorDektora, 200);
 		}
-		if (Player_Query_Current_Scene() == 61) {
-			Actor_Set_Goal_Number(kActorHanoi, 235);
+		if (Player_Query_Current_Scene() == kSceneNR08) {
+			Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiNR08Leave);
 		} else {
 			Game_Flag_Reset(651);
 		}

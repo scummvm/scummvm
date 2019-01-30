@@ -181,7 +181,7 @@ void SceneScriptNR05::SceneFrameAdvanced(int frame) {
 		if ( frame == 134
 		 && !Game_Flag_Query(kFlagNR05toNR03)
 		) {
-			Actor_Set_Goal_Number(kActorMcCoy, 200);
+			Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyNRxxSitAtTable);
 		}
 		//return true;
 	}
