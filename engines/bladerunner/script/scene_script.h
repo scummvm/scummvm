@@ -349,7 +349,7 @@ DECLARE_SCRIPT(NR10)
 END_SCRIPT
 
 DECLARE_SCRIPT(NR11)
-	void sub_4027D0(int actorId, signed int frame);
+	void actorSweepArea(int actorId, signed int frame);
 	void untargetEverything();
 END_SCRIPT
 

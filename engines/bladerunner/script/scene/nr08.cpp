@@ -24,14 +24,20 @@
 
 namespace BladeRunner {
 
+enum kNR08Loops {
+	kNR08LoopPanFromNR05 = 0,
+	kNR08LoopMainLoop = 1,
+	kNR08LoopFadeLoop = 3
+};
+
 void SceneScriptNR08::InitializeScene() {
 	if (Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleNR01GoToNR08) {
 		Setup_Scene_Information(-1174.1f, 0.32f, 303.9f, 435);
 	} else if (Game_Flag_Query(kFlagNR05toNR08)) {
-		Scene_Loop_Start_Special(0, 0, 0);
-		Scene_Loop_Set_Default(1);
+		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kNR08LoopPanFromNR05, false);
+		Scene_Loop_Set_Default(kNR08LoopMainLoop);
 		Setup_Scene_Information(-1102.88f, 0.0f, 107.43f, 0);
-		if (Actor_Query_Goal_Number(kActorDektora) == 210) {
+		if (Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR08Dance) {
 			Music_Stop(1);
 		}
 	} else if (Game_Flag_Query(kFlagNR06toNR08)) {
@@ -43,7 +49,7 @@ void SceneScriptNR08::InitializeScene() {
 	}
 
 	Scene_Exit_Add_2D_Exit(0, 610, 0, 639, 479, 1);
-	if (Actor_Query_Goal_Number(kActorDektora) != 210) {
+	if (Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraNR08Dance) {
 		Scene_Exit_Add_2D_Exit(1,   0, 309,  30, 398, 3);
 		Scene_Exit_Add_2D_Exit(2, 520, 330, 556, 386, 0);
 	}
@@ -69,13 +75,13 @@ void SceneScriptNR08::InitializeScene() {
 	Ambient_Sounds_Add_Sound(192, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(195, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
 
-	Scene_Loop_Set_Default(1);
+	Scene_Loop_Set_Default(kNR08LoopMainLoop);
 }
 
 void SceneScriptNR08::SceneLoaded() {
 	Obstacle_Object("BOX283", true);
 	Unobstacle_Object("BOX283", true);
-	if (Actor_Query_Goal_Number(kActorDektora) == 210) {
+	if (Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR08Dance) {
 		Actor_Change_Animation_Mode(kActorDektora, 79);
 	}
 }
@@ -160,18 +166,20 @@ void SceneScriptNR08::SceneFrameAdvanced(int frame) {
 		Set_Fade_Density(0.0f);
 	}
 
-	if (Game_Flag_Query(651) && !Game_Flag_Query(636)) {
-		Game_Flag_Set(636);
+	if ( Game_Flag_Query(kFlagNR08McCoyWatchingShow)
+	 && !Game_Flag_Query(kFlagNR08Faded)
+	) {
+		Game_Flag_Set(kFlagNR08Faded);
 		Scene_Exits_Disable();
-		Scene_Loop_Set_Default(1);
-		Scene_Loop_Start_Special(kSceneLoopModeOnce, 3, true);
+		Scene_Loop_Set_Default(kNR08LoopMainLoop);
+		Scene_Loop_Start_Special(kSceneLoopModeOnce, kNR08LoopFadeLoop, true);
 	}
 
 	if (frame == 95) {
 		Actor_Put_In_Set(kActorDektora, kSetFreeSlotA);
 		Actor_Set_At_Waypoint(kActorDektora, 33, 0);
 		Actor_Change_Animation_Mode(kActorDektora, kAnimationModeIdle);
-		Actor_Set_Goal_Number(kActorDektora, 200);
+		Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR07Sit);
 		Scene_Exit_Add_2D_Exit(1,   0, 309,  30, 398, 3);
 		Scene_Exit_Add_2D_Exit(2, 520, 330, 556, 386, 0);
 	}
@@ -186,7 +194,7 @@ void SceneScriptNR08::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptNR08::PlayerWalkedIn() {
-	if (Actor_Query_Goal_Number(kActorDektora) == 210
+	if ( Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR08Dance
 	 && !Game_Flag_Query(kFlagNR08DektoraShow)
 	) {
 		Game_Flag_Set(kFlagNR08DektoraShow);
@@ -196,10 +204,10 @@ void SceneScriptNR08::PlayerWalkedIn() {
 		Music_Adjust(51, 0, 2);
 	}
 
-	if (Actor_Query_Goal_Number(kActorDektora) == 245) {
+	if (Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR08ReadyToRun) {
 		Actor_Face_Heading(kActorDektora, 790, false);
-		Loop_Actor_Travel_Stairs(kActorDektora, 8, 1, kAnimationModeIdle);
-		Actor_Set_Goal_Number(kActorDektora, 246);
+		Loop_Actor_Travel_Stairs(kActorDektora, 8, true, kAnimationModeIdle);
+		Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR08GoToNR10);
 	}
 
 	if (Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleNR01GoToNR08) {
@@ -238,7 +246,7 @@ void SceneScriptNR08::DialogueQueueFlushed(int a1) {
 void SceneScriptNR08::playNextMusic() {
 	if (Music_Is_Playing()) {
 		Music_Adjust(51, 0, 2);
-	} else if (Actor_Query_Goal_Number(kActorDektora) == 210) {
+	} else if (Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR08Dance) {
 		Music_Play(6, 61, 0, 1, -1, 0, 0);
 	} else {
 		int track = Global_Variable_Query(kVariableEarlyQBackMusic);

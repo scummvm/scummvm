@@ -177,9 +177,10 @@ bool AIScriptHolloway::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Outtake_Play(kOuttakeInterrogation, 0, 1);
 
 		if (Global_Variable_Query(kVariableHollowayArrest) == 1) {
-			Actor_Set_Goal_Number(kActorDektora, 245);
+			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR08ReadyToRun);
 			Actor_Change_Animation_Mode(kActorDektora, kAnimationModeIdle);
 		}
+
 		Player_Gains_Control();
 		Game_Flag_Set(kFlagMcCoyCapturedByHolloway);
 		Scene_Exits_Enable();

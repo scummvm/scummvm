@@ -351,7 +351,7 @@ void SceneScriptHF01::PlayerWalkedIn() {
 			Actor_Set_Targetable(kActorLucy, true);
 		} else if (Actor_Clue_Query(kActorMcCoy, kCluePhoneCallDektora1)
 		        && Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsDektora
-		        && Actor_Query_Goal_Number(kActorDektora) != 599
+		        && Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraDead
 		) {
 			Actor_Put_In_Set(kActorDektora, kSetHF01);
 			Actor_Set_At_XYZ(kActorDektora, -5.0f, 8.0f, -622.0f, 419);
@@ -409,14 +409,14 @@ void SceneScriptHF01::PlayerWalkedOut() {
 	if (!Game_Flag_Query(kFlagHF01toHF05)
 	 && !Game_Flag_Query(kFlagHF01toHF02)
 	 && !Game_Flag_Query(kFlagHF01toHF03)
-	 && !Game_Flag_Query(722)
+	 && !Game_Flag_Query(kFlagChapter4Starting)
 	) {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		Outtake_Play(kOuttakeInside2, true, -1);
 		Outtake_Play(kOuttakeTowards3, true, -1);
 	}
-	Game_Flag_Reset(722);
+	Game_Flag_Reset(kFlagChapter4Starting);
 
 	if (Actor_Query_Goal_Number(kActorLucy) == 450) {
 		Actor_Put_In_Set(kActorLucy, kSetFreeSlotG);
@@ -427,7 +427,7 @@ void SceneScriptHF01::PlayerWalkedOut() {
 	if (Actor_Query_Goal_Number(kActorDektora) == 450) {
 		Actor_Put_In_Set(kActorDektora, kSetFreeSlotG);
 		Actor_Set_At_Waypoint(kActorDektora, 39, 0);
-		Actor_Set_Goal_Number(kActorDektora, 599);
+		Actor_Set_Goal_Number(kActorDektora, kGoalDektoraDead);
 	}
 }
 

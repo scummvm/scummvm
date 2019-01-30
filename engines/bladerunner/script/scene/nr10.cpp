@@ -22,6 +22,8 @@
 
 #include "bladerunner/script/scene_script.h"
 
+#include "common/debug.h"
+
 namespace BladeRunner {
 
 void SceneScriptNR10::InitializeScene() {
@@ -34,10 +36,10 @@ void SceneScriptNR10::InitializeScene() {
 	}
 
 	Scene_Exit_Add_2D_Exit(0, 144, 163, 194, 318, 3);
-	Scene_Exit_Add_2D_Exit(1, 475, 95, 568, 230, 0);
+	Scene_Exit_Add_2D_Exit(1, 475,  95, 568, 230, 0);
 
 	Ambient_Sounds_Add_Looping_Sound(205, 22, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(71, 33, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound( 71, 33, 0, 1);
 	Ambient_Sounds_Add_Sound(303, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(304, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(305, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
@@ -45,7 +47,7 @@ void SceneScriptNR10::InitializeScene() {
 	Ambient_Sounds_Add_Sound(307, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(308, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
 
-	if (Game_Flag_Query(640)) {
+	if (Game_Flag_Query(kFlagNR10CameraDestroyed)) {
 		Scene_Loop_Set_Default(0);
 	} else {
 		Ambient_Sounds_Adjust_Looping_Sound(452, 31, 0, 1);
@@ -61,17 +63,17 @@ void SceneScriptNR10::SceneLoaded() {
 }
 
 bool SceneScriptNR10::MouseClick(int x, int y) {
-	return Game_Flag_Query(642);
+	return Game_Flag_Query(kFlagNR10McCoyBlinded);
 }
 
 bool SceneScriptNR10::ClickedOn3DObject(const char *objectName, bool combatMode) {
 	if (Object_Query_Click("BOX18", objectName)
 	 && combatMode
-	 && Game_Flag_Query(642)
+	 && Game_Flag_Query(kFlagNR10McCoyBlinded)
 	) {
-		Actor_Set_Goal_Number(kActorDektora, 250);
-		Game_Flag_Set(640);
-		Game_Flag_Reset(642);
+		Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR11Hiding);
+		Game_Flag_Set(kFlagNR10CameraDestroyed);
+		Game_Flag_Reset(kFlagNR10McCoyBlinded);
 		Actor_Set_Invisible(kActorMcCoy, false);
 		Actor_Set_Invisible(kActorDektora, false);
 		Ambient_Sounds_Remove_Looping_Sound(452, true);
@@ -119,8 +121,10 @@ bool SceneScriptNR10::ClickedOn2DRegion(int region) {
 }
 
 void SceneScriptNR10::SceneFrameAdvanced(int frame) {
+	debug("%i", frame);
+
 	if (frame == 122) {
-		Game_Flag_Set(642);
+		Game_Flag_Set(kFlagNR10McCoyBlinded);
 		Actor_Set_Invisible(kActorMcCoy, true);
 		Actor_Set_Invisible(kActorDektora, true);
 		Combat_Target_Object("BOX18");
@@ -129,12 +133,12 @@ void SceneScriptNR10::SceneFrameAdvanced(int frame) {
 	}
 
 	if (frame == 61
-	 && Game_Flag_Query(642)
+	 && Game_Flag_Query(kFlagNR10McCoyBlinded)
 	) {
-		Game_Flag_Reset(642);
+		Game_Flag_Reset(kFlagNR10McCoyBlinded);
 		Player_Set_Combat_Mode(false);
 		Actor_Set_Invisible(kActorMcCoy, false);
-		Actor_Set_Goal_Number(kActorDektora, 247);
+		Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR10AttackMcCoy);
 		//return true;
 		return;
 	}
@@ -145,7 +149,7 @@ void SceneScriptNR10::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptNR10::PlayerWalkedIn() {
-	if (Actor_Query_Goal_Number(kActorDektora) == 246) {
+	if (Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR08GoToNR10) {
 		Player_Set_Combat_Mode(true);
 		//return true;
 		return;

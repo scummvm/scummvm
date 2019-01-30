@@ -26,13 +26,13 @@ namespace BladeRunner {
 
 void SceneScriptNR09::InitializeScene() {
 	if (Game_Flag_Query(kFlagNR10toNR09)) {
-		if (!Game_Flag_Query(640)) {
+		if (!Game_Flag_Query(kFlagNR10CameraDestroyed)) {
 			Ambient_Sounds_Adjust_Looping_Sound(452, 22, 100, 2);
 		}
 		Game_Flag_Reset(kFlagNR10toNR09);
 		Setup_Scene_Information(-556.07f, 0.35f, 399.04f, 440);
 	} else {
-		if (!Game_Flag_Query(640)) {
+		if (!Game_Flag_Query(kFlagNR10CameraDestroyed)) {
 			Ambient_Sounds_Add_Looping_Sound(452, 22, 100, 1);
 		}
 		Setup_Scene_Information(-704.07f, 0.35f, 663.04f,   0);

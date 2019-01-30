@@ -30,7 +30,7 @@ void SceneScriptKP07::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0, 315, 185, 381, 285, 0);
 	if (Game_Flag_Query(653)) {
 		if (Game_Flag_Query(kFlagDektoraIsReplicant)
-		 && Actor_Query_Goal_Number(kActorDektora) < 599
+		 && Actor_Query_Goal_Number(kActorDektora) < kGoalDektoraDead
 		) {
 			Actor_Set_Targetable(kActorDektora, true);
 			Global_Variable_Increment(kVariableReplicants, 1);

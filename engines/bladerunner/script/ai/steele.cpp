@@ -903,7 +903,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Says(kActorMcCoy, 3835, 18);
 			Actor_Says(kActorSteele, 1810, 16);
 			Game_Flag_Set(kFlagDektoraRanAway);
-			Actor_Set_Goal_Number(kActorDektora, 599);
+			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraDead);
 			Actor_Set_Goal_Number(kActorSteele, 275);
 			break;
 		case 274:
@@ -916,13 +916,13 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Says(kActorSteele, 1780, 15);
 			Actor_Says(kActorMcCoy, 3825, 14);
 			Game_Flag_Set(kFlagDektoraRanAway);
-			Actor_Set_Goal_Number(kActorDektora, 599);
+			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraDead);
 			Actor_Set_Goal_Number(kActorSteele, 275);
 		}
 		return true;
 
 	case 215:
-		Game_Flag_Set(635);
+		Game_Flag_Set(kFlagNR11SteeleShoot);
 		Actor_Change_Animation_Mode(kActorSteele, kAnimationModeCombatAttack);
 		Scene_Exits_Disable();
 		return true;
@@ -937,7 +937,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Flush(kActorSteele);
 		Actor_Put_In_Set(kActorSteele, kSetNR05_NR08);
 		Actor_Set_At_XYZ(kActorSteele, -1034.09f, 0.32f, 224.77f, 440);
-		Game_Flag_Set(722);
+		Game_Flag_Set(kFlagChapter4Starting);
 		Set_Enter(kSetNR05_NR08, kSceneNR08);
 		return true;
 
@@ -1298,7 +1298,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case kGoalSteeleHF01StartChapter4:
-		Game_Flag_Set(722);
+		Game_Flag_Set(kFlagChapter4Starting);
 		Global_Variable_Set(kVariableChapter, 4);
 		Scene_Exits_Enable();
 		Game_Flag_Set(523);

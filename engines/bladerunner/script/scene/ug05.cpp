@@ -227,7 +227,7 @@ void SceneScriptUG05::DialogueQueueFlushed(int a1) {
 
 int SceneScriptUG05::getAffectionTowardsActor() {
 	if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsDektora
-	 && Actor_Query_Goal_Number(kActorDektora) != 599
+	 && Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraDead
 	) {
 		return kActorDektora;
 	}

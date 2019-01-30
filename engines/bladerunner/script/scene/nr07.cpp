@@ -198,9 +198,9 @@ void SceneScriptNR07::dektoraRunAway() {
 	Loop_Actor_Walk_To_XYZ(kActorDektora, -102.0f, -73.5f, -233.0f, 0, false, true, 0);
 
 	if (Game_Flag_Query(kFlagDektoraIsReplicant)) {
-		Actor_Set_Goal_Number(kActorDektora, 245);
+		Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR08ReadyToRun);
 	} else {
-		Actor_Set_Goal_Number(kActorDektora, 295);
+		Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR07RanAway);
 		Game_Flag_Set(kFlagDektoraRanAway);
 		Actor_Put_In_Set(kActorDektora, kSetFreeSlotA);
 		Actor_Set_At_Waypoint(kActorDektora, 33, 0);

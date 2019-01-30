@@ -560,7 +560,7 @@ void SceneScriptHF05::dialogueWithCrazylegs2() { // cut feature? it is impossibl
 
 int SceneScriptHF05::getAffectionTowardsActor() {
 	if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsDektora
-	 && Actor_Query_Goal_Number(kActorDektora) != 599
+	 && Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraDead
 	) {
 		return kActorDektora;
 	}
@@ -744,7 +744,7 @@ void SceneScriptHF05::addAmbientSounds() {
 
 int SceneScriptHF05::sub_4048C0() {
 	if (Actor_Query_In_Set(kActorDektora, kSetHF05)
-	 && Actor_Query_Goal_Number(kActorDektora) != 599
+	 && Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraDead
 	) {
 		return kActorDektora;
 	}

@@ -34,7 +34,7 @@ enum kNR01Loops {
 void SceneScriptNR01::InitializeScene() {
 	if (Game_Flag_Query(kFlagSpinnerMissing)) {
 		Setup_Scene_Information(-153.86f, 23.88f, -570.21f, 402);
-	} else if (Game_Flag_Query(632)) {
+	} else if (Game_Flag_Query(kFlagNR01DektoraFall)) {
 		Setup_Scene_Information( -416.0f, 31.93f,  -841.0f, 200);
 		Actor_Set_Invisible(kActorMcCoy, true);
 		Preload(167);
@@ -330,7 +330,7 @@ void SceneScriptNR01::PlayerWalkedIn() {
 		return;
 	}
 
-	if (Game_Flag_Query(632)) {
+	if (Game_Flag_Query(kFlagNR01DektoraFall)) {
 		Delay(3500);
 		Set_Enter(kSetNR11, kSceneNR11);
 		//return true;
@@ -451,15 +451,15 @@ void SceneScriptNR01::PlayerWalkedOut() {
 	if (!Game_Flag_Query(kFlagNR01toUG06)
 	 && !Game_Flag_Query(kFlagNR01toNR02)
 	 && !Game_Flag_Query(kFlagNR01toNR03)
-	 && !Game_Flag_Query(632)
-	 && !Game_Flag_Query(722)
+	 && !Game_Flag_Query(kFlagNR01DektoraFall)
+	 && !Game_Flag_Query(kFlagChapter4Starting)
 	) {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		Outtake_Play(kOuttakeAway1, true, -1);
 		Outtake_Play(kOuttakeInside2, true, -1);
 	}
-	Game_Flag_Reset(722);
+	Game_Flag_Reset(kFlagChapter4Starting);
 }
 
 void SceneScriptNR01::DialogueQueueFlushed(int a1) {

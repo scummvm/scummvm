@@ -136,20 +136,20 @@ void AIScriptLucy::CompletedMovementTrack() {
 		AI_Countdown_Timer_Start(kActorLucy, 0, 30);
 		break;
 
-	case kGoalLucyRunOutPhase1:
-		Actor_Set_Goal_Number(kActorLucy, kGoalLucyRunOutPhase2);
+	case kGoalLucyHF03RunOutPhase1:
+		Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF03RunOutPhase2);
 		break;
 
-	case kGoalLucyRunOutPhase2:
+	case kGoalLucyHF03RunOutPhase2:
 		Game_Flag_Set(kFlagLucyRanAway);
-		Actor_Set_Goal_Number(kActorLucy, kGoalLucyGoneChapter3);
+		Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF03RanAway);
 		break;
 
-	case kGoalLucyRunToHF041:
-		Actor_Set_Goal_Number(kActorLucy, kGoalLucyRunToHF042);
+	case kGoalLucyHF03RunToHF041:
+		Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF03RunToHF042);
 		break;
 
-	case kGoalLucyRunToHF042:
+	case kGoalLucyHF03RunToHF042:
 		if (Actor_Clue_Query(kActorLucy, kClueMcCoyHelpedLucy)
 		 && Global_Variable_Query(kVariableHollowayArrest) != 3
 		) {
@@ -160,11 +160,11 @@ void AIScriptLucy::CompletedMovementTrack() {
 		}
 		break;
 
-	case kGoalLucyRunAwayWithHelp1:
-		Actor_Set_Goal_Number(kActorLucy, kGoalLucyRunAwayWithHelp2);
+	case kGoalLucyHF03RunAwayWithHelp1:
+		Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF03RunAwayWithHelp2);
 		break;
 
-	case kGoalLucyRunAwayWithHelp2:
+	case kGoalLucyHF03RunAwayWithHelp2:
 		Actor_Set_Goal_Number(kActorLucy, kGoalLucyWillReturnToHF03);
 		break;
 
@@ -314,14 +314,14 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorLucy);
 		break;
 
-	case kGoalLucyRunOutPhase1:
+	case kGoalLucyHF03RunOutPhase1:
 		Actor_Set_Immunity_To_Obstacles(kActorLucy, true);
 		AI_Movement_Track_Flush(kActorLucy);
 		AI_Movement_Track_Append_Run(kActorLucy, 377, 0);
 		AI_Movement_Track_Repeat(kActorLucy);
 		break;
 
-	case kGoalLucyRunOutPhase2:
+	case kGoalLucyHF03RunOutPhase2:
 		Actor_Set_Immunity_To_Obstacles(kActorLucy, false);
 		AI_Movement_Track_Flush(kActorLucy);
 		AI_Movement_Track_Append_Run(kActorLucy, 372, 0);
@@ -329,14 +329,14 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorLucy);
 		break;
 
-	case kGoalLucyRunToHF041:
+	case kGoalLucyHF03RunToHF041:
 		Actor_Set_Immunity_To_Obstacles(kActorLucy, true);
 		AI_Movement_Track_Flush(kActorLucy);
 		AI_Movement_Track_Append_Run(kActorLucy, 378, 0);
 		AI_Movement_Track_Repeat(kActorLucy);
 		break;
 
-	case kGoalLucyRunToHF042:
+	case kGoalLucyHF03RunToHF042:
 		Actor_Set_Immunity_To_Obstacles(kActorLucy, false);
 		AI_Movement_Track_Flush(kActorLucy);
 		AI_Movement_Track_Append_Run(kActorLucy, 373, 0);
@@ -344,7 +344,7 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorLucy);
 		break;
 
-	case kGoalLucyRunAwayWithHelp1:
+	case kGoalLucyHF03RunAwayWithHelp1:
 		Actor_Says(kActorLucy, 320, 16);
 		Actor_Set_Goal_Number(kActorHolloway, kGoalHollowayGoToHF03);
 		Actor_Set_Immunity_To_Obstacles(kActorLucy, true);
@@ -353,7 +353,7 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorLucy);
 		break;
 
-	case kGoalLucyRunAwayWithHelp2:
+	case kGoalLucyHF03RunAwayWithHelp2:
 		Actor_Set_Immunity_To_Obstacles(kActorLucy, false);
 		AI_Movement_Track_Flush(kActorLucy);
 		AI_Movement_Track_Append_Run(kActorLucy, 373, 0);
@@ -473,7 +473,7 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Set_Goal_Number(kActorLucy, kGoalLucyDead);
 			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleHF02ConfrontLucy);
 		} else {
-			Actor_Set_Goal_Number(kActorLucy, kGoalLucyGoneChapter3);
+			Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF03RanAway);
 			Game_Flag_Set(kFlagLucyRanAway);
 		}
 		break;

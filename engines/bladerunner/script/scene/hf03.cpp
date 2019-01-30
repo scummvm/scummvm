@@ -79,11 +79,11 @@ void SceneScriptHF03::dialogueWithLucy() {
 	case 840: // VOIGT-KAMPFF
 		Actor_Says(kActorMcCoy, 1630, 15);
 		if (Global_Variable_Query(kVariableHollowayArrest) == 3) {
-			Actor_Set_Goal_Number(kActorLucy, kGoalLucyRunAwayWithHelp1);
+			Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF03RunAwayWithHelp1);
 		} else if (Game_Flag_Query(kFlagLucyIsReplicant)) {
-			Actor_Set_Goal_Number(kActorLucy, kGoalLucyRunToHF041);
+			Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF03RunToHF041);
 		} else {
-			Actor_Set_Goal_Number(kActorLucy, kGoalLucyRunOutPhase1);
+			Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF03RunOutPhase1);
 			Game_Flag_Set(kFlagLucyRanAway);
 		}
 		break;
@@ -97,7 +97,7 @@ void SceneScriptHF03::dialogueWithLucy() {
 	case 860: // CRYSTAL
 		Actor_Says(kActorMcCoy, 1640, 12);
 		if (Global_Variable_Query(kVariableHollowayArrest) == 3) {
-			Actor_Set_Goal_Number(kActorLucy, kGoalLucyRunAwayWithHelp1);
+			Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF03RunAwayWithHelp1);
 		} else {
 			Actor_Says(kActorLucy, 210, 13);
 			Actor_Says(kActorMcCoy, 1655, 15);
@@ -130,9 +130,9 @@ void SceneScriptHF03::dialogueWithLucy() {
 			Actor_Clue_Acquire(kActorLucy, kClueMcCoyHelpedLucy, true, kActorMcCoy);
 
 			if (Game_Flag_Query(kFlagLucyIsReplicant)) {
-				Actor_Set_Goal_Number(kActorLucy, kGoalLucyRunToHF041);
+				Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF03RunToHF041);
 			} else {
-				Actor_Set_Goal_Number(kActorLucy, kGoalLucyRunOutPhase1);
+				Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF03RunOutPhase1);
 			}
 		}
 		break;
@@ -250,7 +250,7 @@ void SceneScriptHF03::PlayerWalkedIn() {
 	}
 
 	if (Actor_Query_Goal_Number(kActorLucy) == kGoalLucyReturnToHF03) {
-		Actor_Set_Goal_Number(kActorLucy, kGoalLucyRunToHF041);
+		Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF03RunToHF041);
 		Actor_Says(kActorSteele, 210, 13);
 		Actor_Face_Actor(kActorMcCoy, kActorSteele, true);
 		Actor_Says(kActorMcCoy, 1680, 15);

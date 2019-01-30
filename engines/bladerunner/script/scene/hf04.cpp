@@ -63,7 +63,7 @@ void SceneScriptHF04::SceneLoaded() {
 		Unobstacle_Object("HIDE_WALL_B", true);
 	}
 
-	if (Actor_Query_Goal_Number(kActorLucy) == kGoalLucyRunToHF042) {
+	if (Actor_Query_Goal_Number(kActorLucy) == kGoalLucyHF03RunToHF042) {
 		if (Actor_Clue_Query(kActorLucy, kClueMcCoyHelpedLucy)
 		 && Global_Variable_Query(kVariableHollowayArrest) != 3
 		) {

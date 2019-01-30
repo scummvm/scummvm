@@ -949,7 +949,13 @@ enum Flags {
 	kFlagHF03toHF04 = 566, // is never checked
 	kFlagHF04toHF03 = 567,
 	kFlagNR04EarlyQWalkedIn = 569,
+	// 570 is never used
+	// 571 is never used
+	// 572 is never used
 	kFlagNR03Entered = 573,
+	// 580 is never used
+	// 581 is never used
+	// 583 is never used
 	kFlagHF04DoorsClosed = 584,
 	kFlagHF04CloseDoors = 585,
 	kFlagHF04OpenDoors = 586,
@@ -961,6 +967,7 @@ enum Flags {
 	kFlagLucyRanAway = 593,
 	kFlagNR02GordoJumpDown = 594,
 	kFlagKIAPrivacyAddonIntro = 599,
+	// 602 is never used
 	kFlagSteeleAimingAtGordo = 603,
 	kFlagNR03McCoyThrownOut = 604,
 	kFlagNR04DiscFound = 605,
@@ -974,20 +981,33 @@ enum Flags {
 	kFlagNR09toNR08 = 615,
 	kFlagMcCoyCapturedByHolloway = 616,
 	kFlagSpinnerMissing = 617,
+	// 618 is never used
+	// 619 is never used
 	kFlagNR08Available = 620,
+	// 621 is never used
 	kFlagNR08TouchedDektora = 622,
 	kFlagTB07TyrellMeeting = 625,
 	kFlagNR01McCoyIsDrugged = 627,
+	kFlagNR01DektoraFall = 632,
+	kFlagNR11BurnedUp = 634,
+	kFlagNR11SteeleShoot = 635,
+	kFlagNR08Faded = 636,
+	// 637 is never used
 	kFlagNR07McCoyIsCop = 638,
+	// 639 is never used
+	kFlagNR10CameraDestroyed = 640,
 	kFlagNR10toNR11 = 641, // is never checked
+	kFlagNR10McCoyBlinded = 642,
 	kFlagSteeleKnowsBulletBobIsDead = 643,
 	kFlagCT11DogWrapperTaken = 645,
 	kFlagSteeleDead = 646, // is never checked
 	kFlagMA04McCoySleeping = 647,
 	kFlagMA04PhoneMessageFromClovis = 649,
 	kFlagMA04PhoneMessageFromLucy = 650,
+	kFlagNR08McCoyWatchingShow = 651,
 	kFlagCrazylegsArrestedTalk = 652,
 	kFlagUG02RagiationGooglesTaken = 656,
+	kFlagNR11BreakWindow = 659,
 	kFlagDNARowAvailableTalk = 660,
 	kFlagTB07ShadeDown = 661, // is never set
 	kFlagMA07toPS14 = 672,
@@ -1015,6 +1035,7 @@ enum Flags {
 	kflagPS01toPS02 = 718,
 	kFlagCT02McCoyFell = 719,
 	kFlagCT02McCoyCombatReady = 720,
+	kFlagChapter4Starting = 722,
 	kFlagZubenBountyPaid = 723,
 	kFlagCT11DogWrapperAvailable = 725,
 	kFlagAR02Entered = 726,
@@ -1205,7 +1226,7 @@ enum Scenes {
 	kSceneNR08 = 61, // Nightclub Row - Early Q's - Stage
 	kSceneNR09 = 62, // Nightclub Row - Early Q's - Upstairs
 	kSceneNR10 = 63, // Nightclub Row - Early Q's - Projector room
-	kSceneNR11 = 64,
+	kSceneNR11 = 64, // Nightclub Row - Early Q's - Loft
 	kScenePS01 = 65, // Police Station - Roof
 	kScenePS02 = 66, // Police Station - Elevator
 	kScenePS03 = 67, // Police Station - Ground floor
@@ -1249,7 +1270,7 @@ enum Scenes {
 	kSceneCT51 = 105, // Chinatown - Yukon Hotel - Backroom - back
 	kSceneHC04 = 106, // Hawker's Circle - Kingston kitchen
 	kSceneRC51 = 107, // Runciter - Lucy's desk
-	kSceneTB07 = 108,
+	kSceneTB07 = 108, // Tyrell Building - Tyrell's office
 	kScenePS15 = 119, // Police Station - Armory
 	kSceneBB12 = 120  // Bradbury Building - Monkey room
 };
@@ -1633,10 +1654,32 @@ enum GoalSteele {
 
 enum GoalDektora {
 	kGoalDektoraDefault = 0,
+	// chapter 1
 	kGoalDektoraStartWalkingAround = 100,
 	kGoalDektoraWalkAroundAsReplicant = 101,
 	kGoalDektoraWalkAroundAsHuman = 102,
-	kGoalDektoraStopWalkingAround = 103
+	kGoalDektoraStopWalkingAround = 103,
+	// chapter 2
+	kGoalDektoraStartChapter3 = 199,
+	kGoalDektoraNR07Sit = 200,
+	kGoalDektoraNR08Dance = 210,
+	kGoalDektoraNR08Leave = 211,
+	kGoalDektoraNR08ReadyToRun = 245,
+	kGoalDektoraNR08GoToNR10 = 246,
+	kGoalDektoraNR10AttackMcCoy = 247,
+	kGoalDektoraNR11Hiding = 250,
+	kGoalDektoraNR11WalkAway = 260,
+	kGoalDektoraNR11PrepareBurning = 269,
+	kGoalDektoraNR11Burning = 270,
+	kGoalDektoraNR11BurningGoToMcCoy = 271,
+	kGoalDektoraNR11BurningGoToWindow = 272,
+	kGoalDektoraNR11PrepareFallThroughWindow = 273,
+	kGoalDektoraNR11FallThroughWindow = 274,
+	kGoalDektoraNR11BurningFallToNR10 = 279,
+	kGoalDektoraNR11RanAway = 290,
+	kGoalDektoraNR07RanAway = 295,
+
+	kGoalDektoraDead = 599
 };
 
 enum GoalGordo {
@@ -1714,12 +1757,12 @@ enum GoalLucy {
 	kGoalLucyMoveAround = 200,
 	kGoalLucyWillReturnToHF03 = 201,
 	kGoalLucyGoToHF03 = 205,
-	kGoalLucyRunOutPhase1 = 210,
-	kGoalLucyRunOutPhase2 = 211,
-	kGoalLucyRunToHF041 = 212,
-	kGoalLucyRunToHF042 = 213,
-	kGoalLucyRunAwayWithHelp1 = 214,
-	kGoalLucyRunAwayWithHelp2 = 215,
+	kGoalLucyHF03RunOutPhase1 = 210,
+	kGoalLucyHF03RunOutPhase2 = 211,
+	kGoalLucyHF03RunToHF041 = 212,
+	kGoalLucyHF03RunToHF042 = 213,
+	kGoalLucyHF03RunAwayWithHelp1 = 214,
+	kGoalLucyHF03RunAwayWithHelp2 = 215,
 	kGoalLucyGoToFreeSlotGAG = 220,
 	kGoalLucyGoToFreeSlotGAHJ = 225,
 	kGoalLucyHF04Start = 230,
@@ -1732,7 +1775,7 @@ enum GoalLucy {
 	kGoalLucyHF04Run4 = 238,
 	kGoalLucyHF04WalkAway = 239,
 	kGoalLucyReturnToHF03 = 250,
-	kGoalLucyGoneChapter3 = 299,
+	kGoalLucyHF03RanAway = 299,
 	kGoalLucyDead = 599
 };
 

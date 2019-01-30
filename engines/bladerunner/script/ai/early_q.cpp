@@ -446,7 +446,7 @@ bool AIScriptEarlyQ::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		if (Player_Query_Current_Scene() == kSceneNR05) {
 			Actor_Says(kActorEarlyQ, 670, kAnimationModeTalk);
 			Actor_Says(kActorEarlyQ, 690, kAnimationModeTalk);
-			Actor_Set_Goal_Number(kActorDektora, 210);
+			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR08Dance);
 			Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR05UnlockNR08);
 			Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiNR08WatchShow);
 		} else {

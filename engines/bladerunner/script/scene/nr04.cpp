@@ -60,7 +60,7 @@ void SceneScriptNR04::SceneLoaded() {
 	Clickable_Object("B.TV03");
 	Clickable_Object("B.TV05");
 	Clickable_Object("DESK");
-	if (!Game_Flag_Query(605)) {
+	if (!Game_Flag_Query(kFlagNR04DiscFound)) {
 		Clickable_Object("TORUS01");
 	}
 	Clickable_Object("BOX12");
