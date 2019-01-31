@@ -548,9 +548,47 @@ static const uint16 ecoquest1PatchStayAndHelp[] = {
 	PATCH_END
 };
 
-//          script, description,                                      signature                      patch
+// Giving the oily shell to Superfluous when he's out of the mask runs the
+//  wrong animation and skips messages in the CD version. Sierra modified
+//  getInOilyShell for the CD version by adding a new state to the beginning
+//  but forgot to increment the state numbers passed to self:changeState to
+//  their new values, causing the script to change to the wrong states.
+//
+// We fix this by incrementing the state numbers passed to self:changeState.
+//
+// Applies to: PC CD
+// Responsible method: getInOilyShell:changeState
+// Fixes bug #10881
+static const uint16 ecoquest1SignatureGiveOilyShell[] = {
+	0x30, SIG_UINT16(0x000a),       // bnt 000a
+	0x38, SIG_UINT16(0x0090),       // pushi changeState [ hard coded for CD ]
+	0x78,                           // push1
+	0x7a,                           // push2 [ state 2 ]
+	0x54, SIG_MAGICDWORD, 0x06,     // self 06
+	0x32, SIG_UINT16(0x0195),       // jmp 0195
+	SIG_ADDTOOFFSET(+209),
+	0x39, 0x08,                     // pushi 08 [ state 8 ]
+	SIG_ADDTOOFFSET(+16),
+	0x39, 0x0b,                     // pushi 0b [ state 11 ]
+	SIG_END
+};
+
+static const uint16 ecoquest1PatchGiveOilyShell[] = {
+	0x31, 0x0b,                     // bnt 0b
+	0x38, PATCH_UINT16(0x0090),     // pushi changeState [ hard coded for CD ]
+	0x78,                           // push1
+	0x39, 0x03,                     // pushi 03 [ state 3 ]
+	PATCH_ADDTOOFFSET(+214),
+	0x39, 0x09,                     // pushi 09 [ state 9 ]
+	PATCH_ADDTOOFFSET(+16),
+	0x39, 0x0c,                     // pushi 0c [ state 12 ]
+	PATCH_END
+};
+
+//          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry ecoquest1Signatures[] = {
-	{  true,   660, "CD: bad messagebox and freeze",               1, ecoquest1SignatureStayAndHelp, ecoquest1PatchStayAndHelp },
+	{  true,   160, "CD: give superfluous oily shell",             1, ecoquest1SignatureGiveOilyShell,  ecoquest1PatchGiveOilyShell },
+	{  true,   660, "CD: bad messagebox and freeze",               1, ecoquest1SignatureStayAndHelp,    ecoquest1PatchStayAndHelp },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
