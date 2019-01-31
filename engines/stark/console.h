@@ -28,6 +28,7 @@
 namespace Stark {
 
 namespace Resources {
+class Anim;
 class Object;
 class Script;
 }
@@ -53,11 +54,15 @@ private:
 	bool Cmd_ListLocations(int argc, const char** argv);
 	bool Cmd_ListScripts(int argc, const char** argv);
 	bool Cmd_EnableScript(int argc, const char** argv);
+	bool Cmd_ListAnimations(int argc, const char **argv);
+	bool Cmd_ForceAnimation(int argc, const char **argv);
 	bool Cmd_Location(int argc, const char **argv);
 	bool Cmd_Chapter(int argc, const char **argv);
 	bool Cmd_ChangeLocation(int argc, const char **argv);
 	bool Cmd_ChangeChapter(int argc, const char **argv);
 	bool Cmd_ChangeKnowledge(int argc, const char **argv);
+
+	Common::Array<Resources::Anim *> listAllLocationAnimations() const;
 
 	Common::Array<Resources::Script *> listAllLocationScripts() const;
 	void decompileScriptChildren(Stark::Resources::Object *level);

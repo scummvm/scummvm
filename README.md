@@ -442,6 +442,8 @@ Command               | Description
 `enableInventoryItem` | Enable a specific inventory item
 `enableScript`        | Enable or disable script
 `forceScript`         | Force the execution of a script
+`forceAnimation`      | Force an animation to play
+`listAnimations`      | List all the animations in the current level
 `listInventoryItems`  | List all inventory items in the game
 `listLocations`       | List all the locations in the game
 `listScripts`         | List all the scripts in current level

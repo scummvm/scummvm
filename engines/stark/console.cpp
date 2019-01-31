@@ -24,6 +24,7 @@
 
 #include "engines/stark/formats/xarc.h"
 #include "engines/stark/resources/object.h"
+#include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/location.h"
 #include "engines/stark/resources/knowledge.h"
@@ -61,6 +62,8 @@ Console::Console() :
 	registerCmd("forceScript",          WRAP_METHOD(Console, Cmd_ForceScript));
 	registerCmd("decompileScript",      WRAP_METHOD(Console, Cmd_DecompileScript));
 	registerCmd("testDecompiler",       WRAP_METHOD(Console, Cmd_TestDecompiler));
+	registerCmd("listAnimations",       WRAP_METHOD(Console, Cmd_ListAnimations));
+	registerCmd("forceAnimation",       WRAP_METHOD(Console, Cmd_ForceAnimation));
 	registerCmd("listInventoryItems",   WRAP_METHOD(Console, Cmd_ListInventoryItems));
 	registerCmd("listLocations",        WRAP_METHOD(Console, Cmd_ListLocations));
 	registerCmd("location",             WRAP_METHOD(Console, Cmd_Location));
@@ -453,6 +456,71 @@ void Console::decompileScriptChildren(Resources::Object *level) {
 
 		delete decompiler;
 	}
+}
+
+Common::Array<Resources::Anim *> Console::listAllLocationAnimations() const {
+	Common::Array<Resources::Anim *> animations;
+
+	Resources::Level *level = StarkGlobal->getCurrent()->getLevel();
+	Resources::Location *location = StarkGlobal->getCurrent()->getLocation();
+	animations.push_back(level->listChildrenRecursive<Resources::Anim>());
+	animations.push_back(location->listChildrenRecursive<Resources::Anim>());
+
+	return animations;
+}
+
+bool Console::Cmd_ListAnimations(int argc, const char **argv) {
+	Current *current = StarkGlobal->getCurrent();
+	if (!current) {
+		debugPrintf("This command is only available in game.\n");
+		return true;
+	}
+
+	Common::Array<Resources::Anim *> animations = listAllLocationAnimations();
+
+	for (uint i = 0; i < animations.size(); i++) {
+		Resources::Anim *anim = animations[i];
+		Resources::Item *item = anim->findParent<Resources::Item>();
+
+		debugPrintf("%d: %s - %s - in use: %d\n", i, item->getName().c_str(), anim->getName().c_str(), anim->isInUse());
+	}
+
+	return true;
+}
+
+bool Console::Cmd_ForceAnimation(int argc, const char **argv) {
+	Current *current = StarkGlobal->getCurrent();
+	if (!current) {
+		debugPrintf("This command is only available in game.\n");
+		return true;
+	}
+
+	if (argc < 2) {
+		debugPrintf("Force the execution of an animation. Use listAnimations to get an id\n");
+		debugPrintf("Usage :\n");
+		debugPrintf("forceAnimation [id]\n");
+		return true;
+	}
+
+	uint index = atoi(argv[1]);
+
+	Common::Array<Resources::Anim *> animations = listAllLocationAnimations();
+	if (index >= animations.size() ) {
+		debugPrintf("Invalid animation %d\n", index);
+		return true;
+	}
+
+	Resources::Anim *anim = animations[index];
+	Resources::Item *item = anim->findParent<Resources::Item>();
+	Resources::ItemVisual *sceneItem = item->getSceneInstance();
+
+	if (!sceneItem->isEnabled()) {
+		sceneItem->setEnabled(true);
+	}
+
+	sceneItem->playActionAnim(anim);
+
+	return false;
 }
 
 bool Console::Cmd_DumpLocation(int argc, const char **argv) {
