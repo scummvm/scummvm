@@ -59,8 +59,8 @@ Actor::Actor(BladeRunnerEngine *vm, int actorId) {
 
 	_friendlinessToOther.resize(_vm->_gameInfo->getActorCount());
 
-	_inWalkLoop                       = false;
-	_damageAnimIfMoving               = false;
+	_mustReachWalkDestination = false;
+	_damageAnimIfMoving       = false;
 
 	setup(actorId);
 }
@@ -367,19 +367,19 @@ void Actor::setAtWaypoint(int waypointId, int angle, int moving, bool retired) {
 	setAtXYZ(waypointPosition, angle, true, moving, retired);
 }
 
-bool Actor::loopWalk(const Vector3 &destination, int destinationOffset, bool interruptible, bool runFlag, const Vector3 &start, float targetWidth, float targetSize, bool a8, bool *isRunningFlag, bool async) {
+bool Actor::loopWalk(const Vector3 &destination, int proximity, bool interruptible, bool runFlag, const Vector3 &start, float targetWidth, float targetSize, bool mustReach, bool *isRunningFlag, bool async) {
 	*isRunningFlag = false;
 
-	if (destinationOffset > 0) {
+	if (proximity > 0) {
 		float dist = distance(_position, destination);
-		if (dist - targetSize <= destinationOffset) {
+		if (dist - targetSize <= proximity) {
 			return false;
 		}
 	}
 
-	if (a8 && !async && _id != kActorMcCoy && destinationOffset <= 24) {
+	if (mustReach && !async && _id != kActorMcCoy && proximity <= 24) {
 		if (distance(_vm->_playerActor->_position, destination) <= 24.0f) {
-			_vm->_playerActor->walkToNearestPoint(destination, 48.0f);
+			_vm->_playerActor->stepAway(destination, 48.0f);
 		}
 	}
 
@@ -389,18 +389,18 @@ bool Actor::loopWalk(const Vector3 &destination, int destinationOffset, bool int
 
 	Vector3 destinationX(destination);
 
-	if (destinationOffset > 0) {
-		walkFindU2(&destinationX, targetWidth, destinationOffset, targetSize, _position, destination);
+	if (proximity > 0) {
+		findNearestPosition(&destinationX, targetWidth, proximity, targetSize, _position, destination);
 	}
 
-	bool walking = walkTo(runFlag, destinationX, a8);
+	bool walking = walkTo(runFlag, destinationX, mustReach);
 
 	if (async) {
 		return false;
 	}
 
-	if (!walking && destinationOffset > 0) {
-		walking = walkTo(runFlag, destination, a8);
+	if (!walking && proximity > 0) {
+		walking = walkTo(runFlag, destination, mustReach);
 	}
 
 	if (!walking) {
@@ -419,8 +419,8 @@ bool Actor::loopWalk(const Vector3 &destination, int destinationOffset, bool int
 		_vm->playerLosesControl();
 	}
 
-	if (a8) {
-		_inWalkLoop = true;
+	if (mustReach) {
+		_mustReachWalkDestination = true;
 	}
 
 	bool wasInterrupted = false;
@@ -434,44 +434,48 @@ bool Actor::loopWalk(const Vector3 &destination, int destinationOffset, bool int
 			wasInterrupted = true;
 		}
 	}
-	if (a8) {
-		_inWalkLoop = false;
+
+	if (mustReach) {
+		_mustReachWalkDestination = false;
 	}
+
 	if (interruptible) {
 		_vm->_isWalkingInterruptible = false;
 	} else {
 		_vm->playerGainsControl();
 	}
-	if (!wasInterrupted && destinationOffset == 0 && !_vm->_playerActorIdle) {
+
+	if (!wasInterrupted && proximity == 0 && !_vm->_playerActorIdle) {
 		setAtXYZ(destination, _facing, true, false, false);
 	}
+
 	if (_id != kActorMcCoy) {
 		_vm->_mouse->enable();
 	}
+
 	return wasInterrupted;
 }
 
-bool Actor::walkTo(bool runFlag, const Vector3 &destination, bool a3) {
+bool Actor::walkTo(bool runFlag, const Vector3 &destination, bool mustReach) {
 	bool arrived;
-
-	return _walkInfo->setup(_id, runFlag, _position, destination, a3, &arrived);
+	return _walkInfo->setup(_id, runFlag, _position, destination, mustReach, &arrived);
 }
 
-bool Actor::loopWalkToActor(int otherActorId, int destinationOffset, int interruptible, bool runFlag, bool a5, bool *isRunningFlag) {
-	return loopWalk(_vm->_actors[otherActorId]->_position, destinationOffset, interruptible, runFlag, _position, 24.0f, 24.0f, a5, isRunningFlag, false);
+bool Actor::loopWalkToActor(int otherActorId, int proximity, int interruptible, bool runFlag, bool mustReach, bool *isRunningFlag) {
+	return loopWalk(_vm->_actors[otherActorId]->_position, proximity, interruptible, runFlag, _position, 24.0f, 24.0f, mustReach, isRunningFlag, false);
 }
 
-bool Actor::loopWalkToItem(int itemId, int destinationOffset, int interruptible, bool runFlag, bool a5, bool *isRunningFlag) {
+bool Actor::loopWalkToItem(int itemId, int proximity, int interruptible, bool runFlag, bool mustReach, bool *isRunningFlag) {
 	float x, y, z;
 	int width, height;
 	_vm->_items->getXYZ(itemId, &x, &y, &z);
 	_vm->_items->getWidthHeight(itemId, &width, &height);
 	Vector3 itemPosition(x, y, z);
 
-	return loopWalk(itemPosition, destinationOffset, interruptible, runFlag, _position, width, 24.0f, a5, isRunningFlag, false);
+	return loopWalk(itemPosition, proximity, interruptible, runFlag, _position, width, 24.0f, mustReach, isRunningFlag, false);
 }
 
-bool Actor::loopWalkToSceneObject(const Common::String &objectName, int destinationOffset, bool interruptible, bool runFlag, bool a5, bool *isRunningFlag) {
+bool Actor::loopWalkToSceneObject(const Common::String &objectName, int proximity, bool interruptible, bool runFlag, bool mustReach, bool *isRunningFlag) {
 	int sceneObject = _vm->_scene->_set->findObject(objectName);
 	if (sceneObject < 0) {
 		return true;
@@ -513,29 +517,29 @@ bool Actor::loopWalkToSceneObject(const Common::String &objectName, int destinat
 	float y = _vm->_scene->_set->getAltitudeAtXZ(closestX, closestZ, &inWalkbox);
 	Vector3 destination(closestX, y, closestZ);
 
-	return loopWalk(destination, destinationOffset, interruptible, runFlag, _position, 0.0f, 24.0f, a5, isRunningFlag, false);
+	return loopWalk(destination, proximity, interruptible, runFlag, _position, 0.0f, 24.0f, mustReach, isRunningFlag, false);
 }
 
-bool Actor::loopWalkToWaypoint(int waypointId, int destinationOffset, int interruptible, bool runFlag, bool a5, bool *isRunningFlag) {
+bool Actor::loopWalkToWaypoint(int waypointId, int proximity, int interruptible, bool runFlag, bool mustReach, bool *isRunningFlag) {
 	Vector3 waypointPosition;
 	_vm->_waypoints->getXYZ(waypointId, &waypointPosition.x, &waypointPosition.y, &waypointPosition.z);
-	return loopWalk(waypointPosition, destinationOffset, interruptible, runFlag, _position, 0.0f, 24.0f, a5, isRunningFlag, false);
+	return loopWalk(waypointPosition, proximity, interruptible, runFlag, _position, 0.0f, 24.0f, mustReach, isRunningFlag, false);
 }
 
-bool Actor::loopWalkToXYZ(const Vector3 &destination, int destinationOffset, bool interruptible, bool runFlag, bool a5, bool *isRunningFlag) {
-	return loopWalk(destination, destinationOffset, interruptible, runFlag, _position, 0.0f, 24.0f, a5, isRunningFlag, false);
+bool Actor::loopWalkToXYZ(const Vector3 &destination, int proximity, bool interruptible, bool runFlag, bool mustReach, bool *isRunningFlag) {
+	return loopWalk(destination, proximity, interruptible, runFlag, _position, 0.0f, 24.0f, mustReach, isRunningFlag, false);
 }
 
-bool Actor::asyncWalkToWaypoint(int waypointId, int destinationOffset, bool runFlag, bool a5) {
+bool Actor::asyncWalkToWaypoint(int waypointId, int proximity, bool runFlag, bool mustReach) {
 	bool running;
 	Vector3 waypointPosition;
 	_vm->_waypoints->getXYZ(waypointId, &waypointPosition.x, &waypointPosition.y, &waypointPosition.z);
-	return loopWalk(waypointPosition, destinationOffset, false, runFlag, _position, 0.0f, 24.0f, a5, &running, true);
+	return loopWalk(waypointPosition, proximity, false, runFlag, _position, 0.0f, 24.0f, mustReach, &running, true);
 }
 
-void Actor::asyncWalkToXYZ(const Vector3 &destination, int destinationOffset, bool runFlag, int a6) {
+void Actor::asyncWalkToXYZ(const Vector3 &destination, int proximity, bool runFlag, bool mustReach) {
 	bool running;
-	loopWalk(destination, destinationOffset, false, runFlag, _position, 0.0f, 24.0f, a6, &running, true);
+	loopWalk(destination, proximity, false, runFlag, _position, 0.0f, 24.0f, mustReach, &running, true);
 }
 
 void Actor::run() {
@@ -589,13 +593,13 @@ bool Actor::tick(bool forceDraw, Common::Rect *screenRect) {
 
 			_targetFacing = -1;
 
-			bool walked = _walkInfo->tick(_id, -positionChange.y, false);
+			bool walkInterrupted = _walkInfo->tick(_id, -positionChange.y, _mustReachWalkDestination);
 
 			Vector3 pos;
 			int facing;
 			_walkInfo->getCurrentPosition(_id, &pos, &facing);
 			setAtXYZ(pos, facing, false, _isMoving, false);
-			if (walked) {
+			if (walkInterrupted) {
 				_vm->_actors[_id]->changeAnimationMode(kAnimationModeIdle);
 
 				movementTrackWaypointReached();
@@ -1197,76 +1201,78 @@ int Actor::findTargetUnderMouse(BladeRunnerEngine *vm, int mouseX, int mouseY) {
 	return -1;
 }
 
-bool Actor::walkFindU1(const Vector3 &startPosition, const Vector3 &targetPosition, float size, Vector3 *newDestination) {
-	newDestination->x = 0.0f;
-	newDestination->y = 0.0f;
-	newDestination->z = 0.0f;
-	int facing = angle_1024(targetPosition, startPosition);
-	int facing1 = 0;
+bool Actor::findEmptyPositionAround(const Vector3 &startPosition, const Vector3 &targetPosition, float size, Vector3 *emptyPosition) {
+	emptyPosition->x = 0.0f;
+	emptyPosition->y = 0.0f;
+	emptyPosition->z = 0.0f;
 
-	int facing2 = facing;
-	int facing3 = 0;
+	int facingLeft = angle_1024(targetPosition, startPosition);
+	int facingRight = facingLeft;
+
+	int facingLeftCounter = 0;
+	int facingRightCounter = 0;
+
 	while (true) {
-		float rotatedX = targetPosition.x + size * _vm->_sinTable1024->at(facing);
-		float rotatedZ = targetPosition.z - size * _vm->_cosTable1024->at(facing);
+		float rotatedX = targetPosition.x + size * _vm->_sinTable1024->at(facingLeft);
+		float rotatedZ = targetPosition.z - size * _vm->_cosTable1024->at(facingLeft);
 
-		if (!_walkInfo->isXYZEmpty(rotatedX, targetPosition.y, rotatedZ, _id)) {
+		if (!_walkInfo->isXYZOccupied(rotatedX, targetPosition.y, rotatedZ, _id)) {
 			if (_vm->_scene->_set->findWalkbox(rotatedX, rotatedZ) >= 0) {
-				newDestination->x = rotatedX;
-				newDestination->y = targetPosition.y;
-				newDestination->z = rotatedZ;
+				emptyPosition->x = rotatedX;
+				emptyPosition->y = targetPosition.y;
+				emptyPosition->z = rotatedZ;
 				return true;
 			}
-		} else {
-			facing += 20;
-			if (facing > 1024) {
-				facing -= 1024;
+		} else { // looks like a bug as it might not find anything when there is no walkbox at this angle
+			facingLeft += 20;
+			if (facingLeft > 1024) {
+				facingLeft -= 1024;
 			}
-			facing3 += 20;
+			facingLeftCounter += 20;
 		}
 
-		rotatedX = size * _vm->_sinTable1024->at(facing2) + targetPosition.x;
-		rotatedZ = size * _vm->_cosTable1024->at(facing2) + targetPosition.z;
+		rotatedX = size * _vm->_sinTable1024->at(facingRight) + targetPosition.x;
+		rotatedZ = size * _vm->_cosTable1024->at(facingRight) + targetPosition.z;
 
-		if (!_walkInfo->isXYZEmpty(rotatedX, targetPosition.y, rotatedZ, _id)) {
+		if (!_walkInfo->isXYZOccupied(rotatedX, targetPosition.y, rotatedZ, _id)) {
 			if (_vm->_scene->_set->findWalkbox(rotatedX, rotatedZ) >= 0) {
-				newDestination->x = rotatedX;
-				newDestination->y = targetPosition.y;
-				newDestination->z = rotatedZ;
+				emptyPosition->x = rotatedX;
+				emptyPosition->y = targetPosition.y;
+				emptyPosition->z = rotatedZ;
 				return true;
 			}
-		} else {
-			facing2 -= 20;
-			if (facing2 < 0) {
-				facing2 += 1024;
+		} else { // looks like a bug as it might not find anything when there is no walkbox at this angle
+			facingRight -= 20;
+			if (facingRight < 0) {
+				facingRight += 1024;
 			}
-			facing1 += 20;
+			facingRightCounter += 20;
 		}
 
-		if (facing3 > 1024 && facing1 > 1024) {
+		if (facingLeftCounter > 1024 && facingRightCounter > 1024) {
 			return false;
 		}
 	}
 }
 
-bool Actor::walkFindU2(Vector3 *newDestination, float targetWidth, int destinationOffset, float targetSize, const Vector3 &startPosition, const Vector3 &targetPosition) {
-	newDestination->x = 0.0f;
-	newDestination->y = 0.0f;
-	newDestination->z = 0.0f;
-	float size = destinationOffset + targetSize * 0.5f + targetWidth * 0.5f;
+bool Actor::findNearestPosition(Vector3 *nearestPosition, float targetWidth, int proximity, float targetSize, const Vector3 &startPosition, const Vector3 &targetPosition) {
+	nearestPosition->x = 0.0f;
+	nearestPosition->y = 0.0f;
+	nearestPosition->z = 0.0f;
+	float size = proximity + targetSize * 0.5f + targetWidth * 0.5f;
 	float distance = (startPosition - targetPosition).length() - targetWidth * 0.5f - targetSize * 0.5f;
 	if (size < distance) {
-		return walkFindU1(startPosition, targetPosition, size, newDestination);
+		return findEmptyPositionAround(startPosition, targetPosition, size, nearestPosition);
 	} else {
-		*newDestination = targetPosition;
+		*nearestPosition = targetPosition;
 		return true;
 	}
 }
 
-bool Actor::walkToNearestPoint(const Vector3 &destination, float distance) {
+bool Actor::stepAway(const Vector3 &destination, float distance) {
 	Vector3 out;
 	bool running;
-	if (_walkInfo->findNearestEmptyPosition(_id, destination, distance, out)) {
+	if (_walkInfo->findEmptyPositionAround(_id, destination, distance, out)) {
 		loopWalk(out, 0, false, false, _position, 0.0f, 24.0f, false, &running, false);
 		return true;
 	}

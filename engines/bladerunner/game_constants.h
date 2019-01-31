@@ -1790,7 +1790,7 @@ enum GoalClovis {
 	kGoalClovisBB11WalkToMcCoy = 101,
 	kGoalClovisBB11StopSadik = 102,
 	kGoalClovisBB11TalkWithSadik = 103,
-	kGoalClovisBB11PrepareTalkToMcCoy = 104, // bug? this is not triggered when player skips dialogue
+	kGoalClovisBB11PrepareTalkToMcCoy = 104, // bug? this is not triggered when player skips dialogue too fast
 	kGoalClovisBB11TalkToMcCoy = 105 // ends Chapter 2
 };
 

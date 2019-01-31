@@ -475,8 +475,8 @@ int ScriptBase::Actor_Query_Animation_Mode(int actorId) {
 	return _vm->_actors[actorId]->getAnimationMode();
 }
 
-bool ScriptBase::Loop_Actor_Walk_To_Actor(int actorId, int otherActorId, int distance, bool interruptible, bool run) {
-	debugC(kDebugScript, "Loop_Actor_Walk_To_Actor(%d, %d, %d, %d, %d)", actorId, otherActorId, distance, interruptible, run);
+bool ScriptBase::Loop_Actor_Walk_To_Actor(int actorId, int otherActorId, int proximity, bool interruptible, bool run) {
+	debugC(kDebugScript, "Loop_Actor_Walk_To_Actor(%d, %d, %d, %d, %d)", actorId, otherActorId, proximity, interruptible, run);
 	_vm->gameWaitForActive();
 
 	if (_vm->_runningActorId == actorId) {
@@ -486,7 +486,7 @@ bool ScriptBase::Loop_Actor_Walk_To_Actor(int actorId, int otherActorId, int dis
 	_vm->_playerActorIdle = false;
 
 	bool isRunning;
-	bool result = _vm->_actors[actorId]->loopWalkToActor(otherActorId, distance, interruptible, run, true, &isRunning);
+	bool result = _vm->_actors[actorId]->loopWalkToActor(otherActorId, proximity, interruptible, run, true, &isRunning);
 
 	if (_vm->_playerActorIdle) {
 		result = true;
@@ -500,8 +500,8 @@ bool ScriptBase::Loop_Actor_Walk_To_Actor(int actorId, int otherActorId, int dis
 	return result;
 }
 
-bool ScriptBase::Loop_Actor_Walk_To_Item(int actorId, int itemId, int destinationOffset, bool interruptible, bool run) {
-	debugC(kDebugScript, "Loop_Actor_Walk_To_Item(%d, %d, %d, %d, %d)", actorId, itemId, destinationOffset, interruptible, run);
+bool ScriptBase::Loop_Actor_Walk_To_Item(int actorId, int itemId, int proximity, bool interruptible, bool run) {
+	debugC(kDebugScript, "Loop_Actor_Walk_To_Item(%d, %d, %d, %d, %d)", actorId, itemId, proximity, interruptible, run);
 	_vm->gameWaitForActive();
 
 	if (_vm->_runningActorId == actorId) {
@@ -511,7 +511,7 @@ bool ScriptBase::Loop_Actor_Walk_To_Item(int actorId, int itemId, int destinatio
 	_vm->_playerActorIdle = false;
 
 	bool isRunning;
-	bool result = _vm->_actors[actorId]->loopWalkToItem(itemId, destinationOffset, interruptible, run, true, &isRunning);
+	bool result = _vm->_actors[actorId]->loopWalkToItem(itemId, proximity, interruptible, run, true, &isRunning);
 
 	if (_vm->_playerActorIdle) {
 		result = true;
@@ -525,8 +525,8 @@ bool ScriptBase::Loop_Actor_Walk_To_Item(int actorId, int itemId, int destinatio
 	return result;
 }
 
-bool ScriptBase::Loop_Actor_Walk_To_Scene_Object(int actorId, const char *objectName, int destinationOffset, bool interruptible, bool run) {
-	debugC(kDebugScript, "Loop_Actor_Walk_To_Scene_Object(%d, %s, %d, %d, %d)", actorId, objectName, destinationOffset, interruptible, run);
+bool ScriptBase::Loop_Actor_Walk_To_Scene_Object(int actorId, const char *objectName, int proximity, bool interruptible, bool run) {
+	debugC(kDebugScript, "Loop_Actor_Walk_To_Scene_Object(%d, %s, %d, %d, %d)", actorId, objectName, proximity, interruptible, run);
 	_vm->gameWaitForActive();
 
 	if (_vm->_runningActorId == actorId) {
@@ -536,7 +536,7 @@ bool ScriptBase::Loop_Actor_Walk_To_Scene_Object(int actorId, const char *object
 	_vm->_playerActorIdle = false;
 
 	bool isRunning;
-	bool result = _vm->_actors[actorId]->loopWalkToSceneObject(objectName, destinationOffset, interruptible, run, true, &isRunning);
+	bool result = _vm->_actors[actorId]->loopWalkToSceneObject(objectName, proximity, interruptible, run, true, &isRunning);
 
 	if (_vm->_playerActorIdle) {
 		result = true;
@@ -550,8 +550,8 @@ bool ScriptBase::Loop_Actor_Walk_To_Scene_Object(int actorId, const char *object
 	return result;
 }
 
-bool ScriptBase::Loop_Actor_Walk_To_Waypoint(int actorId, int waypointId, int destinationOffset, bool interruptible, bool run) {
-	debugC(kDebugScript, "Loop_Actor_Walk_To_Waypoint(%d, %d, %d, %d, %d)", actorId, waypointId, destinationOffset, interruptible, run);
+bool ScriptBase::Loop_Actor_Walk_To_Waypoint(int actorId, int waypointId, int proximity, bool interruptible, bool run) {
+	debugC(kDebugScript, "Loop_Actor_Walk_To_Waypoint(%d, %d, %d, %d, %d)", actorId, waypointId, proximity, interruptible, run);
 	_vm->gameWaitForActive();
 
 	if (_vm->_runningActorId == actorId) {
@@ -561,7 +561,7 @@ bool ScriptBase::Loop_Actor_Walk_To_Waypoint(int actorId, int waypointId, int de
 	_vm->_playerActorIdle = false;
 
 	bool isRunning;
-	bool result = _vm->_actors[actorId]->loopWalkToWaypoint(waypointId, destinationOffset, interruptible, run, true, &isRunning);
+	bool result = _vm->_actors[actorId]->loopWalkToWaypoint(waypointId, proximity, interruptible, run, true, &isRunning);
 
 	if (_vm->_playerActorIdle) {
 		result = true;
@@ -575,8 +575,8 @@ bool ScriptBase::Loop_Actor_Walk_To_Waypoint(int actorId, int waypointId, int de
 	return result;
 }
 
-bool ScriptBase::Loop_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int destinationOffset, bool interruptible, bool run, int a7) {
-	debugC(kDebugScript, "Loop_Actor_Walk_To_XYZ(%d, %f, %f, %f, %d, %d, %d, %d)", actorId, x, y, z, destinationOffset, interruptible, run, a7);
+bool ScriptBase::Loop_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int proximity, bool interruptible, bool run, bool a7) {
+	debugC(kDebugScript, "Loop_Actor_Walk_To_XYZ(%d, %f, %f, %f, %d, %d, %d, %d)", actorId, x, y, z, proximity, interruptible, run, a7);
 	_vm->gameWaitForActive();
 
 	if (_vm->_runningActorId == actorId) {
@@ -589,7 +589,7 @@ bool ScriptBase::Loop_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, 
 	_vm->_playerActorIdle = false;
 
 	bool isRunning;
-	bool result = _vm->_actors[actorId]->loopWalkToXYZ(Vector3(x, y, z), destinationOffset, interruptible, run, true, &isRunning);
+	bool result = _vm->_actors[actorId]->loopWalkToXYZ(Vector3(x, y, z), proximity, interruptible, run, true, &isRunning);
 
 	if (_vm->_playerActorIdle) {
 		result = true;
@@ -603,26 +603,26 @@ bool ScriptBase::Loop_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, 
 	return result;
 }
 
-void ScriptBase::Async_Actor_Walk_To_Waypoint(int actorId, int waypointId, int destinationOffset, bool run) {
-	debugC(kDebugScript, "Async_Actor_Walk_To_Waypoint(%d, %d, %d, %d)", actorId, waypointId, destinationOffset, run);
+void ScriptBase::Async_Actor_Walk_To_Waypoint(int actorId, int waypointId, int proximity, bool run) {
+	debugC(kDebugScript, "Async_Actor_Walk_To_Waypoint(%d, %d, %d, %d)", actorId, waypointId, proximity, run);
 	_vm->gameWaitForActive();
 
 	if (_vm->_runningActorId == actorId) {
 		run = true;
 	}
 
-	_vm->_actors[actorId]->asyncWalkToWaypoint(waypointId, destinationOffset, run, true);
+	_vm->_actors[actorId]->asyncWalkToWaypoint(waypointId, proximity, run, true);
 }
 
-void ScriptBase::Async_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int destinationOffset, bool run) {
-	debugC(kDebugScript, "Async_Actor_Walk_To_XYZ(%d, %f, %f, %f, %d, %d)", actorId, x, y, z, destinationOffset, run);
+void ScriptBase::Async_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int proximity, bool run) {
+	debugC(kDebugScript, "Async_Actor_Walk_To_XYZ(%d, %f, %f, %f, %d, %d)", actorId, x, y, z, proximity, run);
 	_vm->gameWaitForActive();
 
 	if (_vm->_runningActorId == actorId) {
 		run = true;
 	}
 
-	_vm->_actors[actorId]->asyncWalkToXYZ(Vector3(x, y, z), destinationOffset, run, true);
+	_vm->_actors[actorId]->asyncWalkToXYZ(Vector3(x, y, z), proximity, run, true);
 }
 
 void ScriptBase::Actor_Force_Stop_Walking(int actorId) {

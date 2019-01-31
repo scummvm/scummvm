@@ -77,7 +77,7 @@ private:
 	bool _isTarget;
 	bool _isInvisible;
 	bool _isImmuneToObstacles;
-	bool _inWalkLoop;
+	bool _mustReachWalkDestination;
 	bool _isRetired;
 	bool _inCombat;
 	bool _isMoving;
@@ -148,15 +148,15 @@ public:
 	void movementTrackUnpause();
 	void movementTrackWaypointReached();
 
-	bool loopWalk(const Vector3 &destination, int destinationOffset, bool interruptible, bool runFlag, const Vector3 &start, float a6, float a7, bool a8, bool *isRunningFlag, bool async);
-	bool walkTo(bool runFlag, const Vector3 &destination, bool a3);
-	bool loopWalkToActor(int otherActorId, int destinationOffset, int interruptible, bool runFlag, bool a5, bool *isRunningFlag);
-	bool loopWalkToItem(int itemId, int destinationOffset, int interruptible, bool runFlag, bool a5, bool *isRunningFlag);
-	bool loopWalkToSceneObject(const Common::String &objectName, int destinationOffset, bool interruptible, bool runFlag, bool a5, bool *isRunningFlag);
-	bool loopWalkToWaypoint(int waypointId, int destinationOffset, int interruptible, bool runFlag, bool a5, bool *isRunningFlag);
-	bool loopWalkToXYZ(const Vector3 &destination, int destinationOffset, bool interruptible, bool runFlag, bool a5, bool *isRunningFlag);
-	bool asyncWalkToWaypoint(int waypointId, int destinationOffset, bool runFlag, bool a5);
-	void asyncWalkToXYZ(const Vector3 &destination, int destinationOffset, bool runFlag, int a6);
+	bool loopWalk(const Vector3 &destination, int proximity, bool interruptible, bool runFlag, const Vector3 &start, float targetWidth, float targetSize, bool mustReach, bool *isRunningFlag, bool async);
+	bool walkTo(bool runFlag, const Vector3 &destination, bool mustReach);
+	bool loopWalkToActor(int otherActorId, int proximity, int interruptible, bool runFlag, bool mustReach, bool *isRunningFlag);
+	bool loopWalkToItem(int itemId, int proximity, int interruptible, bool runFlag, bool mustReach, bool *isRunningFlag);
+	bool loopWalkToSceneObject(const Common::String &objectName, int proximity, bool interruptible, bool runFlag, bool mustReach, bool *isRunningFlag);
+	bool loopWalkToWaypoint(int waypointId, int proximity, int interruptible, bool runFlag, bool mustReach, bool *isRunningFlag);
+	bool loopWalkToXYZ(const Vector3 &destination, int proximity, bool interruptible, bool runFlag, bool mustReach, bool *isRunningFlag);
+	bool asyncWalkToWaypoint(int waypointId, int proximity, bool runFlag, bool mustReach);
+	void asyncWalkToXYZ(const Vector3 &destination, int proximity, bool runFlag, bool mustReach);
 	void run();
 
 	bool tick(bool forceUpdate, Common::Rect *screenRect);
@@ -178,7 +178,7 @@ public:
 	bool isMoving() const { return _isMoving; }
 	void setMoving(bool value) { _isMoving = value; }
 
-	bool inWalkLoop() const { return _inWalkLoop; }
+	bool mustReachWalkDestination() const { return _mustReachWalkDestination; }
 	bool isWalking() const;
 	bool isRunning() const;
 	void stopWalking(bool value);
@@ -264,9 +264,9 @@ private:
 	void setBoundingBox(const Vector3 &position, bool retired);
 	float distanceFromView(View *view) const;
 
-	bool walkFindU1(const Vector3 &startPosition, const Vector3 &targetPosition, float a3, Vector3 *newDestination);
-	bool walkFindU2(Vector3 *newDestination, float targetWidth, int destinationOffset, float targetSize, const Vector3 &startPosition, const Vector3 &targetPosition);
-	bool walkToNearestPoint(const Vector3 &destination, float distance);
+	bool findEmptyPositionAround(const Vector3 &startPosition, const Vector3 &targetPosition, float size, Vector3 *emptyPosition);
+	bool findNearestPosition(Vector3 *nearestPosition, float targetWidth, int proximity, float targetSize, const Vector3 &startPosition, const Vector3 &targetPosition);
+	bool stepAway(const Vector3 &destination, float distance);
 	//bool walkFindU3(int actorId, Vector3 from, int distance, Vector3 *out);
 };
 

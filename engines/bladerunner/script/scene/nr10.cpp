@@ -22,8 +22,6 @@
 
 #include "bladerunner/script/scene_script.h"
 
-#include "common/debug.h"
-
 namespace BladeRunner {
 
 void SceneScriptNR10::InitializeScene() {
@@ -121,8 +119,6 @@ bool SceneScriptNR10::ClickedOn2DRegion(int region) {
 }
 
 void SceneScriptNR10::SceneFrameAdvanced(int frame) {
-	debug("%i", frame);
-
 	if (frame == 122) {
 		Game_Flag_Set(kFlagNR10McCoyBlinded);
 		Actor_Set_Invisible(kActorMcCoy, true);

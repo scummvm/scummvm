@@ -75,7 +75,7 @@ void Combat::deactivate() {
 }
 
 void Combat::change() {
-	if (!_vm->_playerActor->inWalkLoop() && _enabled) {
+	if (!_vm->_playerActor->mustReachWalkDestination() && _enabled) {
 		if (_active) {
 			deactivate();
 		} else {

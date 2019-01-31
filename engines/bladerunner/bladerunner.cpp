@@ -1287,7 +1287,7 @@ void BladeRunnerEngine::handleMouseAction(int x, int y, bool mainButton, bool bu
 			handleMouseClick3DObject(sceneObjectId - kSceneObjectOffsetObjects, buttonDown, isClickable, isTarget);
 		}
 	} else if (buttonDown) {
-		if (_playerActor->inWalkLoop()) {
+		if (_playerActor->mustReachWalkDestination()) {
 			if (!_isWalkingInterruptible) {
 				return;
 			}
@@ -1579,7 +1579,7 @@ void BladeRunnerEngine::handleMouseClickActor(int actorId, bool mainButton, bool
 				if (!_combat->isActive()) {
 					_kia->openLastOpened();
 				}
-			} else if (!_playerActor->inWalkLoop()) {
+			} else if (!_playerActor->mustReachWalkDestination()) {
 				_combat->change();
 			}
 			return;
