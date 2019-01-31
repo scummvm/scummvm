@@ -459,6 +459,27 @@ bool BinkDecoder::BinkAudioTrack::seek(const Audio::Timestamp &time) {
 	return true;
 }
 
+// ResidualVM-specific function
+bool BinkDecoder::BinkVideoTrack::rewind() {
+	if (!VideoTrack::rewind()) {
+		return false;
+	}
+
+	_curFrame = -1;
+
+	// Re-initialize the video with solid black
+	memset(_curPlanes[0],   0, _yBlockWidth  * 8 * _yBlockHeight  * 8);
+	memset(_curPlanes[1],   0, _uvBlockWidth * 8 * _uvBlockHeight * 8);
+	memset(_curPlanes[2],   0, _uvBlockWidth * 8 * _uvBlockHeight * 8);
+	memset(_curPlanes[3], 255, _yBlockWidth  * 8 * _yBlockHeight  * 8);
+	memset(_oldPlanes[0],   0, _yBlockWidth  * 8 * _yBlockHeight  * 8);
+	memset(_oldPlanes[1],   0, _uvBlockWidth * 8 * _uvBlockHeight * 8);
+	memset(_oldPlanes[2],   0, _uvBlockWidth * 8 * _uvBlockHeight * 8);
+	memset(_oldPlanes[3], 255, _yBlockWidth  * 8 * _yBlockHeight  * 8);
+
+	return true;
+}
+
 void BinkDecoder::BinkVideoTrack::decodePacket(VideoFrame &frame) {
 	assert(frame.bits);
 

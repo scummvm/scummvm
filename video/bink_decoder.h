@@ -160,6 +160,7 @@ private:
 // ResidualVM-specific:
 		bool isSeekable() const { return true; }
 		bool seek(const Audio::Timestamp &time) { return true; }
+		bool rewind() override;
 		void setCurFrame(uint32 frame) { _curFrame = frame; }
 // End of ResidualVM-specific
 
