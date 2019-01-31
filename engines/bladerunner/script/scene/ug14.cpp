@@ -81,10 +81,9 @@ bool SceneScriptUG14::ClickedOnExit(int exitId) {
 	float x, y, z;
 	Actor_Query_XYZ(kActorMcCoy, &x, &y, &z);
 	bool v1 = y > 57.0f;
-	if (exitId > 2) {
-		return false;
-	}
-	if (!exitId) {
+
+
+	if (!exitId == 0) {
 		if (v1) {
 			if (Loop_Actor_Walk_To_XYZ(kActorMcCoy, 141.47f, 128.92f, -150.16f, 0, true, false, 0)) {
 				return false;
@@ -94,6 +93,7 @@ bool SceneScriptUG14::ClickedOnExit(int exitId) {
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 13, false, kAnimationModeIdle);
 			Footstep_Sound_Override_Off();
 		}
+
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -278.0f, 12.97f, -152.0f, 0, true, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -102,6 +102,7 @@ bool SceneScriptUG14::ClickedOnExit(int exitId) {
 		}
 		return true;
 	}
+
 	if (exitId == 1) {
 		if (!v1) {
 			if (Loop_Actor_Walk_To_XYZ(kActorMcCoy, -14.53f, 12.12f, -150.16f, 0, true, false, 0)) {
@@ -112,6 +113,7 @@ bool SceneScriptUG14::ClickedOnExit(int exitId) {
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 13, true, kAnimationModeIdle);
 			Footstep_Sound_Override_Off();
 		}
+
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -50.0f, 129.0f, -814.0f, 0, true, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -173,11 +175,12 @@ void SceneScriptUG14::PlayerWalkedIn() {
 		Actor_Face_Heading(kActorMcCoy, 807, false);
 		Game_Flag_Reset(kFlagUG10toUG14);
 	}
+
 	if ( Global_Variable_Query(kVariableChapter) == 4
 	 &&  Game_Flag_Query(kFlagCT04HomelessBodyThrownAway)
 	 && !Game_Flag_Query(kFlagUG14DeadHomeless)
 	) {
-		Overlay_Play("UG14OVER", 0, 0, 1, 0);
+		Overlay_Play("UG14OVER", 0, false, true, 0);
 		Delay(1000);
 		Actor_Face_Heading(kActorMcCoy, 609, false);
 		Delay(3000);

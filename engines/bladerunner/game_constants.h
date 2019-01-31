@@ -849,9 +849,22 @@ enum Flags {
 	// 408 is never used
 	kFlagMA01GaffApproachMcCoy = 409,
 	kFlagBB06AndroidDestroyed = 410,
+	kFlagKP02toUG12 = 411,
+	kFlagUG12toKP02 = 412, // is never checked
+
+	kFlagUG07toUG10 = 423,
+	kFlagUG10toUG07 = 424, // is never checked
+	kFlagUG07toUG08 = 425, // is never checked
+	kFlagUG08toUG07 = 426,
+	kFlagUG07toUG09 = 427, // is never checked
+	kFlagUG09ToUG07 = 428,
+	kFlagUG08toUG13 = 429,
+	kFlagUG13toUG08 = 430,
 
 	kFlagUG09toCT12 = 432,
 	kFlagCT12ToUG09 = 433,
+	kFlagUG13toUG18 = 434, // is never checked
+	kFlagUG18toUG13 = 435,
 	kFlagNR04toNR03 = 437,
 	kFlagNR03toNR04 = 438,
 	kFlagNR06toNR08 = 439,
@@ -860,6 +873,8 @@ enum Flags {
 	kFlagNR07toNR06 = 442,
 	kFlagGenericWalkerWaiting = 443,
 	kFlagIzoShot = 444,
+	kFlagTB03toUG17 = 447,
+	kFlagUG17toTB03 = 448,
 	kFlagUG02WeaponsChecked = 449,
 	kFlagTB02ElevatorToTB05 = 450,
 	kFlagTB05Entered = 451,
@@ -939,7 +954,10 @@ enum Flags {
 	kFlagNR05toNR08 = 546,
 	kFlagNR08toNR05 = 547,
 	kFlagDR06MannequinHeadOpen = 548,
+	kFlagTB03Entered = 549,
 	kFlagMcCoyTiedDown = 550,
+	kFlagUG16toDR06 = 551, // is never checked
+	kFlagDR06toUG16 = 552,
 	kFlagDR01toCT11 = 558,
 	kFlagNR02GordoLeaveLighter = 561,
 	kFlagHF05CrazyLegsTalk1 = 562,
@@ -1011,6 +1029,7 @@ enum Flags {
 	kFlagNR11BreakWindow = 659,
 	kFlagDNARowAvailableTalk = 660,
 	kFlagTB07ShadeDown = 661, // is never set
+	kFlagUG19Available = 665,
 	kFlagMA07toPS14 = 672,
 	kFlagPS14toMA07 = 673,
 	kFlagChapter2Intro = 678,

@@ -29,7 +29,7 @@ void SceneScriptKP02::InitializeScene() {
 		Setup_Scene_Information(-884.0f, -615.49f, 3065.0f, 20);
 	} else {
 		Setup_Scene_Information(-1040.0f, -615.49f, 2903.0f, 339);
-		Game_Flag_Reset(412);
+		Game_Flag_Reset(kFlagUG12toKP02);
 	}
 	Scene_Exit_Add_2D_Exit(1, 0, 0, 30, 479, 3);
 	Ambient_Sounds_Add_Looping_Sound(464, 34, 1, 1);
@@ -83,12 +83,12 @@ bool SceneScriptKP02::ClickedOnExit(int exitId) {
 				Actor_Set_Goal_Number(kActorFreeSlotA, 400);
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
-				Game_Flag_Set(411);
+				Game_Flag_Set(kFlagKP02toUG12);
 				Set_Enter(kSetUG12, kSceneUG12);
 			} else {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
-				Game_Flag_Set(411);
+				Game_Flag_Set(kFlagKP02toUG12);
 				Set_Enter(kSetUG12, kSceneUG12);
 			}
 		}

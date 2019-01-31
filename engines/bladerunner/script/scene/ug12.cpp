@@ -25,9 +25,9 @@
 namespace BladeRunner {
 
 void SceneScriptUG12::InitializeScene() {
-	if (Game_Flag_Query(411)) {
+	if (Game_Flag_Query(kFlagKP02toUG12)) {
 		Setup_Scene_Information(207.0f, -126.21f, -364.0f, 561);
-		Game_Flag_Reset(411);
+		Game_Flag_Reset(kFlagKP02toUG12);
 	} else {
 		Setup_Scene_Information(375.0f, -126.21f,  180.0f, 730);
 		Game_Flag_Reset(kFlagUG14toUG12);
@@ -91,11 +91,12 @@ bool SceneScriptUG12::ClickedOnExit(int exitId) {
 		}
 		return true;
 	}
+
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 207.0f, -126.21f, -364.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(412);
+			Game_Flag_Set(kFlagUG12toKP02);
 			Set_Enter(kSetKP02, kSceneKP02);
 		}
 		return true;

@@ -204,7 +204,7 @@ bool SceneScriptDR06::ClickedOnExit(int exitId) {
 	}
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -707.57f, 136.6f, -1132.64f, 0, true, false, 0)) {
-			Game_Flag_Set(552);
+			Game_Flag_Set(kFlagDR06toUG16);
 			Set_Enter(kSetUG16, kSceneUG16);
 		}
 		return true;
@@ -227,7 +227,7 @@ void SceneScriptDR06::PlayerWalkedIn() {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -729.57f, 136.6f, -1016.0f, 0, false, false, 0);
 	}
 	Game_Flag_Reset(kFlagDR04toDR06);
-	Game_Flag_Reset(551);
+	Game_Flag_Reset(kFlagUG16toDR06);
 }
 
 void SceneScriptDR06::PlayerWalkedOut() {

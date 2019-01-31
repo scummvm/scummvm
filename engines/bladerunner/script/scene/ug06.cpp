@@ -132,11 +132,13 @@ void SceneScriptUG06::PlayerWalkedIn() {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 23.0f, 0.0f, 273.0f, 0, false, false, 0);
 		Game_Flag_Reset(kFlagUG04toUG06);
 	}
+
 	if (Game_Flag_Query(kFlagNR01toUG06)) {
 		Loop_Actor_Travel_Stairs(kActorMcCoy, 17, false, kAnimationModeIdle);
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 66.0f, 0.0f, -36.91f, 0, false, false, 0);
 		Game_Flag_Reset(kFlagNR01toUG06);
 	}
+
 	if ( Global_Variable_Query(kVariableChapter) == 4
 	 && !Game_Flag_Query(524)
 	) {

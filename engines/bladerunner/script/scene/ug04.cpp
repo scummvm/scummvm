@@ -59,7 +59,7 @@ void SceneScriptUG04::InitializeScene() {
 	Ambient_Sounds_Add_Sound(304, 5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(305, 5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
 
-	Scene_Loop_Start_Special(0, 0, 0);
+	Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
 	Scene_Loop_Set_Default(1);
 }
 
@@ -95,6 +95,7 @@ bool SceneScriptUG04::ClickedOnExit(int exitId) {
 		}
 		return true;
 	}
+
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 0.0f, -1.74f, -2400.0f, 0, true, false, 0)) {
 			Game_Flag_Set(kFlagUG04toUG05);
@@ -102,6 +103,7 @@ bool SceneScriptUG04::ClickedOnExit(int exitId) {
 		}
 		return true;
 	}
+
 	if (exitId == 2) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 164.0f, 11.87f, -1013.0f, 0, true, false, 0)) {
 			Game_Flag_Set(kFlagUG04toUG06);

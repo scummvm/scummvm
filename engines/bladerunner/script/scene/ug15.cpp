@@ -130,7 +130,9 @@ bool SceneScriptUG15::ClickedOnExit(int exitId) {
 
 	if (exitId == 2) {
 		int v1 = Actor_Query_Goal_Number(kActorFreeSlotA);
-		if (v1 >= 300 && v1 <= 303) {
+		if (v1 >= 300
+		 && v1 <= 303
+		) {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -137.61f, 48.07f, 147.12f, 0, 1, false, 0);
 		} else if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 18.0f, 52.28f, 46.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
@@ -162,7 +164,7 @@ void SceneScriptUG15::SceneFrameAdvanced(int frame) {
 		float x, y, z;
 		Actor_Query_XYZ(kActorMcCoy, &x, &y, &z);
 		if (-160.0f <= x
-		 && z < 220.0f
+		 &&  220.0f > z
 		) {
 			Actor_Set_Goal_Number(kActorFreeSlotA, 301);
 		}
@@ -170,11 +172,14 @@ void SceneScriptUG15::SceneFrameAdvanced(int frame) {
 	if (frame == 61) {
 		Ambient_Sounds_Play_Sound(583, 80, 0, 0, 99);
 	}
-	if (Game_Flag_Query(677) && !Game_Flag_Query(682)) {
+
+	if ( Game_Flag_Query(677)
+	 && !Game_Flag_Query(682)
+	) {
 		float x, y, z;
 		Actor_Query_XYZ(kActorMcCoy, &x, &y, &z);
-		if (-180.0f <= x
-		 && z < 220.0f
+		if ( -180.0f <= x
+		 &&   220.0f > z
 		 && !Game_Flag_Query(724)
 		) {
 			Game_Flag_Set(724);
@@ -183,6 +188,7 @@ void SceneScriptUG15::SceneFrameAdvanced(int frame) {
 			Scene_Loop_Start_Special(kSceneLoopModeOnce, 2, true);
 			Actor_Set_Goal_Number(kActorMcCoy, 390);
 			Actor_Query_XYZ(kActorFreeSlotA, &x, &y, &z);
+
 			if (-200.0f < x
 			 &&  -62.0f > x
 			) {

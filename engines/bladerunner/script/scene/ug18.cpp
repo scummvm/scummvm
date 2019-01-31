@@ -26,36 +26,43 @@ namespace BladeRunner {
 
 void SceneScriptUG18::InitializeScene() {
 	Setup_Scene_Information(-684.71f, 0.0f, 171.59f, 0);
-	Game_Flag_Reset(434);
+	Game_Flag_Reset(kFlagUG13toUG18);
+
 	Scene_Exit_Add_2D_Exit(0, 0, 158, 100, 340, 3);
+
 	Ambient_Sounds_Add_Looping_Sound(105, 71, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(95, 45, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound( 95, 45, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(332, 76, 0, 1);
-	Ambient_Sounds_Add_Sound(291, 2, 20, 25, 33, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(292, 2, 20, 25, 33, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(293, 2, 20, 25, 33, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(294, 2, 20, 25, 33, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(402, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(368, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(369, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(397, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(398, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(295, 2, 20, 25, 25, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(303, 5, 50, 47, 57, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(304, 5, 50, 47, 57, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(305, 5, 50, 47, 57, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(1, 5, 50, 47, 57, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(57, 5, 50, 17, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(58, 5, 50, 17, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(306, 5, 50, 27, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(307, 5, 50, 27, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(308, 5, 50, 27, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(196, 5, 50, 27, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(197, 5, 50, 27, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(198, 5, 50, 27, 37, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(199, 5, 50, 27, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(291, 2,  20, 25, 33, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(292, 2,  20, 25, 33, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(293, 2,  20, 25, 33, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(294, 2,  20, 25, 33, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(402, 2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(368, 2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(369, 2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(397, 2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(398, 2, 120, 11, 12, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(295, 2,  20, 25, 25, -100, 100, -100,  100, 0, 0);
+	Ambient_Sounds_Add_Sound(303, 5,  50, 47, 57, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(304, 5,  50, 47, 57, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(305, 5,  50, 47, 57, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(  1, 5,  50, 47, 57, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound( 57, 5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound( 58, 5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(306, 5,  50, 27, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(307, 5,  50, 27, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(308, 5,  50, 27, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(196, 5,  50, 27, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(197, 5,  50, 27, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(198, 5,  50, 27, 37, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(199, 5,  50, 27, 37, -100, 100, -101, -101, 0, 0);
+
 	Scene_Loop_Set_Default(4);
-	if (Game_Flag_Query(670) && !Game_Flag_Query(671) && Global_Variable_Query(kVariableChapter) == 4) {
+
+	if ( Game_Flag_Query(670)
+	 && !Game_Flag_Query(671)
+	 &&  Global_Variable_Query(kVariableChapter) == 4
+	) {
 		Actor_Set_Goal_Number(kActorGuzza, 300);
 		Actor_Set_Goal_Number(kActorClovis, 300);
 		Actor_Set_Goal_Number(kActorSadik, 300);
@@ -69,15 +76,19 @@ void SceneScriptUG18::SceneLoaded() {
 	Unobstacle_Object("OBSTACLE1", true);
 	Clickable_Object("MACHINE_01");
 	Unclickable_Object("MACHINE_01");
+
 	if (Game_Flag_Query(671)) {
 		Actor_Put_In_Set(kActorGuzza, kSetFreeSlotI);
 		Actor_Set_At_Waypoint(kActorGuzza, 41, 0);
-		if (Actor_Query_Which_Set_In(kActorSadik) == 89) {
+		if (Actor_Query_Which_Set_In(kActorSadik) == kSetUG18) {
 			Actor_Put_In_Set(kActorSadik, kSetFreeSlotA);
 			Actor_Set_At_Waypoint(kActorSadik, 33, 0);
 		}
 	}
-	if (Game_Flag_Query(670) && !Game_Flag_Query(671) && Global_Variable_Query(kVariableChapter) == 4) {
+	if ( Game_Flag_Query(670)
+	 && !Game_Flag_Query(671)
+	 &&  Global_Variable_Query(kVariableChapter) == 4
+	) {
 		Item_Add_To_World(91, 987, 89, -55.21f, 0.0f, -302.17f, 0, 12, 12, false, true, false, true);
 	}
 }
@@ -98,7 +109,7 @@ bool SceneScriptUG18::ClickedOnItem(int itemId, bool combatMode) {
 	if (itemId == 91) {
 		if (combatMode) {
 			Item_Remove_From_World(91);
-		} else if (!Loop_Actor_Walk_To_Item(kActorMcCoy, 91, 12, 1, false)) {
+		} else if (!Loop_Actor_Walk_To_Item(kActorMcCoy, 91, 12, true, false)) {
 			Item_Pickup_Spin_Effect(987, 368, 243);
 			Item_Remove_From_World(itemId);
 			Game_Flag_Set(703);
@@ -110,10 +121,10 @@ bool SceneScriptUG18::ClickedOnItem(int itemId, bool combatMode) {
 
 bool SceneScriptUG18::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -684.71f, 0.0f, 171.59f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -684.71f, 0.0f, 171.59f, 0, true, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(435);
+			Game_Flag_Set(kFlagUG18toUG13);
 			Set_Enter(kSetUG13, kSceneUG13);
 		}
 		return true;
@@ -150,9 +161,14 @@ void SceneScriptUG18::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 			Scene_Exits_Enable();
 			Actor_Set_Goal_Number(kActorGuzza, 306);
 		}
-	} else if (actorId == kActorSadik) {
+		return;
+	}
+
+	if (actorId == kActorSadik) {
 		if (newGoal == 302) {
-			if (Actor_Query_Friendliness_To_Other(kActorClovis, kActorMcCoy) > 55 && Game_Flag_Query(607)) {
+			if (Actor_Query_Friendliness_To_Other(kActorClovis, kActorMcCoy) > 55
+			 && Game_Flag_Query(607)
+			) {
 				sub_403588();
 			} else {
 				Actor_Set_Goal_Number(kActorSadik, 307);
@@ -168,14 +184,18 @@ void SceneScriptUG18::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 			Actor_Force_Stop_Walking(kActorMcCoy);
 			Actor_Change_Animation_Mode(kActorMcCoy, 48);
 			Player_Loses_Control();
-			Actor_Retired_Here(kActorMcCoy, 6, 6, 1, kActorSadik);
+			Actor_Retired_Here(kActorMcCoy, 6, 6, true, kActorSadik);
 		}
 	}
 }
 
 void SceneScriptUG18::PlayerWalkedIn() {
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -488.71f, 0.0f, 123.59f, 0, 0, false, 0);
-	if (Game_Flag_Query(670) && !Game_Flag_Query(671) && Actor_Query_Is_In_Current_Set(kActorGuzza)) {
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -488.71f, 0.0f, 123.59f, 0, false, false, 0);
+
+	if ( Game_Flag_Query(670)
+	 && !Game_Flag_Query(671)
+	 &&  Actor_Query_Is_In_Current_Set(kActorGuzza)
+	) {
 		Scene_Exits_Disable();
 		sub_402734();
 		sub_403278();
@@ -270,12 +290,12 @@ void SceneScriptUG18::sub_402734() {
 	Actor_Says(kActorGuzza, 790, 3);
 	Actor_Says(kActorMcCoy, 5865, 12);
 	Actor_Says(kActorGuzza, 800, 3);
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -357.13f, 0.0f, -44.47f, 0, 0, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -357.13f, 0.0f, -44.47f, 0, false, false, 0);
 	Actor_Face_Actor(kActorMcCoy, kActorGuzza, true);
 	Actor_Says(kActorMcCoy, 5870, 14);
 	Actor_Face_Actor(kActorGuzza, kActorMcCoy, true);
 	Actor_Start_Speech_Sample(kActorGuzza, 810);
-	Loop_Actor_Walk_To_XYZ(kActorGuzza, -57.21f, 0.0f, -334.17f, 0, 0, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorGuzza, -57.21f, 0.0f, -334.17f, 0, false, false, 0);
 	Actor_Says(kActorMcCoy, 5875, 13);
 	Actor_Says(kActorGuzza, 830, 3);
 	Actor_Says(kActorGuzza, 840, 12);
@@ -285,7 +305,7 @@ void SceneScriptUG18::sub_402734() {
 	Actor_Says(kActorMcCoy, 5885, 9);
 	Actor_Says(kActorMcCoy, 5890, 13);
 	Actor_Says(kActorGuzza, 870, 15);
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -205.13f, 0.0f, -184.47f, 0, 0, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -205.13f, 0.0f, -184.47f, 0, false, false, 0);
 	Actor_Face_Actor(kActorMcCoy, kActorGuzza, true);
 	Actor_Says(kActorMcCoy, 5900, 15);
 	Actor_Says(kActorGuzza, 880, 13);
@@ -294,7 +314,7 @@ void SceneScriptUG18::sub_402734() {
 	Actor_Says(kActorMcCoy, 5915, 13);
 	Actor_Says(kActorGuzza, 890, 16);
 	Actor_Says(kActorMcCoy, 5920, 14);
-	Loop_Actor_Walk_To_XYZ(kActorGuzza, -57.21f, 0.0f, -334.17f, 0, 0, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorGuzza, -57.21f, 0.0f, -334.17f, 0, false, false, 0);
 	Actor_Face_Actor(kActorGuzza, kActorMcCoy, true);
 	Actor_Says(kActorGuzza, 900, 15);
 	Actor_Says(kActorGuzza, 910, 12);
@@ -308,7 +328,7 @@ void SceneScriptUG18::sub_402734() {
 	if (Game_Flag_Query(607)) {
 		Actor_Modify_Friendliness_To_Other(kActorClovis, kActorMcCoy, 3);
 		Actor_Modify_Friendliness_To_Other(kActorSadik, kActorMcCoy, 5);
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -117.13f, 0.0f, -284.47f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -117.13f, 0.0f, -284.47f, 0, false, false, 0);
 		Actor_Face_Actor(kActorMcCoy, kActorGuzza, true);
 		Actor_Says(kActorMcCoy, 5960, 9);
 		Actor_Says(kActorMcCoy, 5965, 14);
@@ -342,7 +362,7 @@ void SceneScriptUG18::sub_402DE8() {
 }
 
 void SceneScriptUG18::sub_402F8C() {
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -117.13f, 0.0f, -284.47f, 0, 0, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -117.13f, 0.0f, -284.47f, 0, false, false, 0);
 	Actor_Face_Actor(kActorMcCoy, kActorGuzza, true);
 	Actor_Says(kActorMcCoy, 5945, 12);
 	Actor_Says(kActorGuzza, 1040, 15);
@@ -359,7 +379,7 @@ void SceneScriptUG18::sub_402F8C() {
 void SceneScriptUG18::sub_403114() {
 	Actor_Modify_Friendliness_To_Other(kActorClovis, kActorMcCoy, 20);
 	Actor_Modify_Friendliness_To_Other(kActorSadik, kActorMcCoy, 10);
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -117.13f, 0.0f, -284.47f, 0, 0, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -117.13f, 0.0f, -284.47f, 0, false, false, 0);
 	Actor_Face_Actor(kActorMcCoy, kActorGuzza, true);
 	Actor_Says(kActorMcCoy, 5950, 16);
 	Actor_Says(kActorMcCoy, 5955, 14);
@@ -374,7 +394,7 @@ void SceneScriptUG18::sub_403278() {
 	ADQ_Flush();
 	Actor_Start_Speech_Sample(kActorClovis, 590);
 	Delay(500);
-	Loop_Actor_Walk_To_XYZ(kActorGuzza, 126.79f, 0.0f, -362.17f, 0, 0, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorGuzza, 126.79f, 0.0f, -362.17f, 0, false, false, 0);
 	Actor_Face_Heading(kActorGuzza, 729, false);
 	Actor_Set_Goal_Number(kActorGuzza, 301);
 	ADQ_Add(kActorSadik, 350, 13);

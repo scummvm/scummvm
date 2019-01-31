@@ -25,9 +25,9 @@
 namespace BladeRunner {
 
 void SceneScriptUG17::InitializeScene() {
-	if (Game_Flag_Query(447)) {
+	if (Game_Flag_Query(kFlagTB03toUG17)) {
 		Setup_Scene_Information(1013.0f, 67.96f, -1892.0f, 525);
-		Game_Flag_Reset(447);
+		Game_Flag_Reset(kFlagTB03toUG17);
 	} else {
 		Setup_Scene_Information(1000.0f, 67.96f, -1539.0f, 0);
 	}
@@ -67,7 +67,7 @@ bool SceneScriptUG17::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptUG17::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1000.0f, 67.96f, -1539.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1000.0f, 67.96f, -1539.0f, 0, true, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagUG17toUG15);
@@ -75,16 +75,17 @@ bool SceneScriptUG17::ClickedOnExit(int exitId) {
 		}
 		return true;
 	}
+
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1013.0f, 67.96f, -1892.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1013.0f, 67.96f, -1892.0f, 0, true, false, 0)) {
 			Actor_Face_Heading(kActorMcCoy, 89, false);
 			if (Global_Variable_Query(kVariableChapter) == 5) {
 				Actor_Says(kActorMcCoy, 8522, 14);
 			} else {
-				Loop_Actor_Travel_Ladder(kActorMcCoy, 10, 1, 0);
+				Loop_Actor_Travel_Ladder(kActorMcCoy, 10, true, kAnimationModeIdle);
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
-				Game_Flag_Set(448);
+				Game_Flag_Set(kFlagUG17toTB03);
 				Set_Enter(kSetTB02_TB03, kSceneTB03);
 			}
 		}

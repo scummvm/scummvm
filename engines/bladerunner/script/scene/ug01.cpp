@@ -79,7 +79,7 @@ bool SceneScriptUG01::MouseClick(int x, int y) {
 
 bool SceneScriptUG01::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("PIPES_FG_LFT", objectName)) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -9.0f, -50.13f, -148.0f, 0, 1, false, 0)
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -9.0f, -50.13f, -148.0f, 0, true, false, 0)
 		 && !Game_Flag_Query(kFlagUG01SteamOff)
 		) {
 			Actor_Says(kActorMcCoy, 8525, 13);
@@ -137,7 +137,9 @@ bool SceneScriptUG01::ClickedOn2DRegion(int region) {
 }
 
 void SceneScriptUG01::SceneFrameAdvanced(int frame) {
-	if (frame >= 61 && frame <= 120) {
+	if (frame >= 61
+	 && frame <= 120
+	) {
 		float density = (120 - frame) / 29500.0f; // why is this so big?
 		Set_Fog_Density("BoxFog01", density);
 		Set_Fog_Density("BoxFog02", density);
@@ -157,14 +159,14 @@ void SceneScriptUG01::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptUG01::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagUG02toUG01)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -55.0f, -50.13f, -288.0f, 12, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -55.0f, -50.13f, -288.0f, 12, false, false, 0);
 		Game_Flag_Reset(kFlagUG02toUG01);
 	}
 
 	if (Game_Flag_Query(kFlagRC03toUG01)) {
 		Actor_Set_At_XYZ(kActorMcCoy, -70.0f, 93.87f, -500.0f, 768);
 		Loop_Actor_Travel_Ladder(kActorMcCoy, 12, 0, 0);
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -58.0f, -50.13f, -488.0f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -58.0f, -50.13f, -488.0f, 0, false, false, 0);
 		Game_Flag_Reset(kFlagRC03toUG01);
 	}
 

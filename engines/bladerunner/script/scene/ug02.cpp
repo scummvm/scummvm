@@ -28,7 +28,7 @@ void SceneScriptUG02::InitializeScene() {
 	if (Game_Flag_Query(kFlagHC03toUG02)) {
 		Setup_Scene_Information(-313.0f, 155.73f, -128.0f, 556);
 	} else {
-		Setup_Scene_Information(-95.0f, 74.78f, -503.0f, 556);
+		Setup_Scene_Information( -95.0f,  74.78f, -503.0f, 556);
 	}
 	Scene_Exit_Add_2D_Exit(0, 529, 130, 607, 277, 0);
 	Scene_Exit_Add_2D_Exit(1, 305,  36, 335, 192, 0);
@@ -190,7 +190,7 @@ bool SceneScriptUG02::ClickedOnExit(int exitId) {
 		}
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -304.75f, 155.75f, -171.0f, 0, false, false, 0);
 		Actor_Face_Heading(kActorMcCoy, 14, false);
-		Loop_Actor_Travel_Ladder(kActorMcCoy, 9, true, 0);
+		Loop_Actor_Travel_Ladder(kActorMcCoy, 9, true, kAnimationModeIdle);
 		Game_Flag_Set(kFlagUG02toHC03);
 		Game_Flag_Reset(kFlagMcCoyInUnderground);
 		Game_Flag_Set(kFlagMcCoyInHawkersCircle);

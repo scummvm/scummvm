@@ -27,8 +27,8 @@ namespace BladeRunner {
 void SceneScriptUG10::InitializeScene() {
 	if (Game_Flag_Query(kFlagUG03toUG10)) {
 		Setup_Scene_Information(  -92.0f, 81.33f, -652.0f, 520);
-	} else if (Game_Flag_Query(423)) {
-		Game_Flag_Reset(423);
+	} else if (Game_Flag_Query(kFlagUG07toUG10)) {
+		Game_Flag_Reset(kFlagUG07toUG10);
 		Setup_Scene_Information(-385.12f,  1.15f,  57.44f, 400);
 	} else if (Game_Flag_Query(kFlagUG14toUG10)) {
 		Setup_Scene_Information(    2.5f,  1.15f,  405.0f, 200);
@@ -147,8 +147,8 @@ bool SceneScriptUG10::ClickedOnExit(int exitId) {
 		) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -385.0f, 1.15f, 57.44f, 0, true, false, 0)) {
 				Actor_Face_Heading(kActorMcCoy, 1001, false);
-				Loop_Actor_Travel_Ladder(kActorMcCoy, 1, 1, 0);
-				Game_Flag_Set(424);
+				Loop_Actor_Travel_Ladder(kActorMcCoy, 1, true, kAnimationModeIdle);
+				Game_Flag_Set(kFlagUG10toUG07);
 				Set_Enter(kSetUG07, kSceneUG07);
 				return true;
 			}

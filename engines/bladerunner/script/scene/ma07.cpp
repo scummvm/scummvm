@@ -28,7 +28,7 @@ void SceneScriptMA07::InitializeScene() {
 	if (Game_Flag_Query(kFlagUG19toMA07)) {
 		Setup_Scene_Information(  6.75f, -172.43f, 356.0f, 997);
 		Game_Flag_Reset(kFlagUG19toMA07);
-		Game_Flag_Set(665);
+		Game_Flag_Set(kFlagUG19Available);
 	} else if (Game_Flag_Query(kFlagPS14toMA07)) {
 		Setup_Scene_Information(-312.0f,  -162.8f, 180.0f,   0);
 	} else {
@@ -46,7 +46,7 @@ void SceneScriptMA07::InitializeScene() {
 	if (Global_Variable_Query(kVariableChapter) > 1) {
 		Scene_Exit_Add_2D_Exit(1, 0, 200, 50, 479, 3);
 	}
-	if (Game_Flag_Query(665)) {
+	if (Game_Flag_Query(kFlagUG19Available)) {
 		Scene_Exit_Add_2D_Exit(2, 176, 386, 230, 426, 2);
 	}
 	Scene_Exit_Add_2D_Exit(0, 270, 216, 382, 306, 0);
