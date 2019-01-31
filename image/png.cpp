@@ -39,7 +39,11 @@
 
 namespace Image {
 
-PNGDecoder::PNGDecoder() : _outputSurface(0), _palette(0), _paletteColorCount(0), _skipSignature(false) {
+PNGDecoder::PNGDecoder() :
+        _outputSurface(0),
+        _palette(0),
+        _paletteColorCount(0),
+        _skipSignature(false) {
 }
 
 PNGDecoder::~PNGDecoder() {
@@ -54,6 +58,14 @@ void PNGDecoder::destroy() {
 	}
 	delete[] _palette;
 	_palette = NULL;
+}
+
+Graphics::PixelFormat PNGDecoder::getByteOrderRgbaPixelFormat() const {
+#ifdef SCUMM_BIG_ENDIAN
+	return Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+#else
+	return Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+#endif
 }
 
 #ifdef USE_PNG
@@ -166,13 +178,11 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 		_outputSurface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 		png_set_packing(pngPtr);
 	} else {
-		bool isAlpha = (colorType & PNG_COLOR_MASK_ALPHA);
 		if (png_get_valid(pngPtr, infoPtr, PNG_INFO_tRNS)) {
-			isAlpha = true;
 			png_set_expand(pngPtr);
 		}
-		_outputSurface->create(width, height, Graphics::PixelFormat(4,
-		                       8, 8, 8, isAlpha ? 8 : 0, 24, 16, 8, 0));
+
+		_outputSurface->create(width, height, getByteOrderRgbaPixelFormat());
 		if (!_outputSurface->getPixels()) {
 			error("Could not allocate memory for output image.");
 		}
@@ -184,17 +194,8 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 			colorType == PNG_COLOR_TYPE_GRAY_ALPHA)
 			png_set_gray_to_rgb(pngPtr);
 
-		// PNGs are Big-Endian:
-#ifdef SCUMM_LITTLE_ENDIAN
-		png_set_bgr(pngPtr);
-		png_set_swap_alpha(pngPtr);
-		if (colorType != PNG_COLOR_TYPE_RGB_ALPHA)
-			png_set_filler(pngPtr, 0xff, PNG_FILLER_BEFORE);
-#else
 		if (colorType != PNG_COLOR_TYPE_RGB_ALPHA)
 			png_set_filler(pngPtr, 0xff, PNG_FILLER_AFTER);
-#endif
-
 	}
 
 	// After the transformations have been registered, the image data is read again.
