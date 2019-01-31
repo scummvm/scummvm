@@ -735,6 +735,7 @@ void Script::sfSwapActors(SCRIPTFUNC_PARAMS) {
 	ActorData *actor2 = _vm->_actor->getActor(actorId2);
 
 	SWAP(actor1->_location, actor2->_location);
+	SWAP(actor1->_lastZone, actor2->_lastZone);
 
 	if (actor1->_flags & kProtagonist) {
 		actor1->_flags &= ~kProtagonist;
