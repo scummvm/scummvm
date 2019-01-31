@@ -1498,7 +1498,7 @@ void ScriptBase::Un_Combat_Target_Object(const char *objectName) {
 	int objectId = _vm->_scene->findObject(objectName);
 	if (objectId == -1)
 		return;
-	_vm->_scene->objectSetIsTarget(objectId, true, !_vm->_sceneIsLoading);
+	_vm->_scene->objectSetIsTarget(objectId, false, !_vm->_sceneIsLoading);
 }
 
 void ScriptBase::Set_Fade_Color(float r, float g, float b) {
