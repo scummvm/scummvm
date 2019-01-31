@@ -449,7 +449,7 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case 517:
 		if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_In_Set(kActorLucy, kSetKP07)) {
-			Actor_Set_Goal_Number(kActorLucy, kGoalLucyDead);
+			Actor_Set_Goal_Number(kActorLucy, kGoalLucyGone);
 			Global_Variable_Decrement(kVariableReplicants, 1);
 		}
 		if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_In_Set(kActorLuther, kSetKP07)) {

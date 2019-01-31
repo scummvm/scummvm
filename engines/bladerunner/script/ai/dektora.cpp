@@ -192,7 +192,7 @@ void AIScriptDektora::ReceivedClue(int clueId, int fromActorId) {
 }
 
 void AIScriptDektora::ClickedByPlayer() {
-	if (Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraDead) {
+	if (Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraGone) {
 		Actor_Face_Actor(0, kActorDektora, true);
 		Actor_Says(kActorMcCoy, 8630, 12);
 
@@ -266,7 +266,7 @@ bool AIScriptDektora::ShotAtAndHit() {
 			Actor_Change_Animation_Mode(kActorDektora, kAnimationModeDie);
 			Actor_Start_Speech_Sample(kActorDektora, 980);
 			Delay(2000);
-			Actor_Set_Goal_Number(kActorSteele, 212);
+			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleNR11Enter);
 		} else {
 			Actor_Change_Animation_Mode(kActorDektora, kAnimationModeDie);
 			Delay(2000);
@@ -295,7 +295,7 @@ void AIScriptDektora::Retired(int byActorId) {
 
 	if (Actor_Query_In_Set(kActorDektora, kSetKP07)) {
 		Global_Variable_Decrement(kVariableReplicants, 1);
-		Actor_Set_Goal_Number(kActorDektora, kGoalDektoraDead);
+		Actor_Set_Goal_Number(kActorDektora, kGoalDektoraGone);
 
 		if (Global_Variable_Query(kVariableReplicants) == 0) {
 			Player_Loses_Control();
@@ -313,7 +313,7 @@ void AIScriptDektora::Retired(int byActorId) {
 	}
 
 	if (Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraNR11FallThroughWindow) {
-		Actor_Set_Goal_Number(kActorDektora, kGoalDektoraDead);
+		Actor_Set_Goal_Number(kActorDektora, kGoalDektoraGone);
 	}
 	return; //false;
 
@@ -476,15 +476,15 @@ bool AIScriptDektora::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case kGoalDektoraNR11PrepareBurning:
 	case kGoalDektoraNR11BurningGoToMcCoy:
-	case kGoalDektoraDead:
+	case kGoalDektoraGone:
 		break; // return true
 
 	case kGoalDektoraNR11Burning:
-		Game_Flag_Set(633);
+		Game_Flag_Set(kFlagNR11DektoraBurning);
 		Actor_Set_Targetable(kActorDektora, true);
-		Loop_Actor_Walk_To_XYZ(kActorDektora, -135.0f, 0.33f, -267.0f, 0, 0, 0, 0);
+		Loop_Actor_Walk_To_XYZ(kActorDektora, -135.0f, 0.33f, -267.0f, 0, false, false, 0);
 		Actor_Face_Actor(kActorMcCoy, kActorDektora, true);
-		if (Actor_Query_Goal_Number(kActorSteele) == 216) {
+		if (Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleNR11StopShooting) {
 			Actor_Face_Actor(kActorSteele, kActorDektora, true);
 			Actor_Change_Animation_Mode(kActorSteele, kAnimationModeCombatAttack);
 			Delay(250);
@@ -517,7 +517,7 @@ bool AIScriptDektora::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Force_Stop_Walking(kActorDektora);
 		Actor_Put_In_Set(kActorDektora, kSetNR10);
 		Actor_Set_At_XYZ(kActorDektora, 14.0f, 2.84f, -300.0f, 926);
-		Actor_Set_Goal_Number(kActorMcCoy, 231);
+		Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyNR10Fall);
 		_animationState = 36;
 		_animationFrame = 0;
 		break;
@@ -529,7 +529,7 @@ bool AIScriptDektora::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case 299:
 		Actor_Put_In_Set(kActorDektora, kSetFreeSlotI);
 		Actor_Set_At_Waypoint(kActorDektora, 41, 0);
-		Actor_Set_Goal_Number(kActorDektora, kGoalDektoraDead);
+		Actor_Set_Goal_Number(kActorDektora, kGoalDektoraGone);
 		break;
 
 	case 300:
@@ -1080,7 +1080,7 @@ bool AIScriptDektora::UpdateAnimation(int *animation, int *frame) {
 bool AIScriptDektora::ChangeAnimationMode(int mode) {
 	switch (mode) {
 	case kAnimationModeIdle:
-		if (Game_Flag_Query(633)) {
+		if (Game_Flag_Query(kFlagNR11DektoraBurning)) {
 			_animationState = 32;
 			_animationFrame = 0;
 			break;
@@ -1132,11 +1132,11 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 		break;
 
 	case kAnimationModeWalk:
-		if (!Game_Flag_Query(633)) {
-			_animationFrame = 0;
-			_animationState = 21;
-		} else {
+		if (Game_Flag_Query(kFlagNR11DektoraBurning)) {
 			_animationState = 33;
+			_animationFrame = 0;
+		} else {
+			_animationState = 21;
 			_animationFrame = 0;
 		}
 		break;
@@ -1192,11 +1192,11 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 		break;
 
 	case kAnimationModeCombatWalk:
-		if (!Game_Flag_Query(633)) {
-			_animationFrame = 0;
-			_animationState = 21;
-		} else {
+		if (Game_Flag_Query(kFlagNR11DektoraBurning)) {
 			_animationState = 33;
+			_animationFrame = 0;
+		} else {
+			_animationState = 21;
 			_animationFrame = 0;
 		}
 		break;
@@ -1267,7 +1267,7 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 		break;
 
 	case 21:
-		if (Game_Flag_Query(633)) {
+		if (Game_Flag_Query(kFlagNR11DektoraBurning)) {
 			_animationState = 34;
 			_animationFrame = 0;
 			break;

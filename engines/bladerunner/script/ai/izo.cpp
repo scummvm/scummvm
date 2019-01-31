@@ -60,7 +60,7 @@ bool AIScriptIzo::Update() {
 	}
 
 	if (Global_Variable_Query(kVariableChapter) == 1
-	 && Actor_Query_Goal_Number(kActorIzo) == kGoalIzoDead
+	 && Actor_Query_Goal_Number(kActorIzo) == kGoalIzoGone
 	 && Actor_Query_Which_Set_In(kActorIzo) == kSetRC03
 	) {
 		Actor_Put_In_Set(kActorIzo, kSetFreeSlotI);
@@ -74,7 +74,7 @@ bool AIScriptIzo::Update() {
 	}
 
 	if (Global_Variable_Query(kVariableChapter) == 4
-	 && Actor_Query_Goal_Number(kActorIzo) < kGoalIzoDead
+	 && Actor_Query_Goal_Number(kActorIzo) < kGoalIzoGone
 	 && Actor_Query_Goal_Number(kActorIzo) < 300
 	 && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoGotArrested
 	) {
@@ -239,7 +239,7 @@ void AIScriptIzo::Retired(int byActorId) {
 	}
 
 	Global_Variable_Decrement(kVariableReplicants, 1);
-	Actor_Set_Goal_Number(kActorIzo, kGoalIzoDead);
+	Actor_Set_Goal_Number(kActorIzo, kGoalIzoGone);
 
 	if (Global_Variable_Query(kVariableReplicants) == 0) {
 		Player_Loses_Control();
@@ -434,7 +434,7 @@ bool AIScriptIzo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case 999:
-		Actor_Set_Goal_Number(kActorIzo, kGoalIzoDead);
+		Actor_Set_Goal_Number(kActorIzo, kGoalIzoGone);
 		return true;
 
 	case 9999:

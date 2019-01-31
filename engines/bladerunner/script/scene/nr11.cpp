@@ -139,7 +139,7 @@ bool SceneScriptNR11::ClickedOn3DObject(const char *objectName, bool combatMode)
 	 || Object_Query_Click("BUST BUST", objectName)
 	) {
 		if (combatMode) {
-			Actor_Set_Goal_Number(kActorSteele, 211);
+			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleNR11StopWaiting);
 			Scene_Exits_Disable();
 			untargetEverything();
 			Player_Loses_Control();
@@ -153,7 +153,7 @@ bool SceneScriptNR11::ClickedOn3DObject(const char *objectName, bool combatMode)
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 24.0f, 0.33f, 0.0f, 0, true, false, 0)) {
 				Actor_Face_XYZ(kActorMcCoy, -180.0f, 0.0f, -170.0f, true);
 				untargetEverything();
-				Actor_Set_Goal_Number(kActorSteele, 211);
+				Actor_Set_Goal_Number(kActorSteele, kGoalSteeleNR11StopWaiting);
 				if (Actor_Query_Friendliness_To_Other(kActorDektora, kActorMcCoy) < 30) {
 					Actor_Set_At_XYZ(kActorDektora, 0.5f, 0.33f, -162.0f, 0);
 					Loop_Actor_Walk_To_XYZ(kActorDektora, -24.0f, 0.33f, -35.4f, 0, false, true, 0);
@@ -209,7 +209,7 @@ bool SceneScriptNR11::ClickedOn3DObject(const char *objectName, bool combatMode)
 					Music_Stop(4);
 					Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR11WalkAway);
 					if (Global_Variable_Query(kVariableHollowayArrest) == 1) {
-						Actor_Set_Goal_Number(kActorSteele, 236);
+						Actor_Set_Goal_Number(kActorSteele, kGoalSteeleNR10Wait);
 					}
 					Game_Flag_Set(kFlagDektoraRanAway);
 				}
@@ -310,14 +310,14 @@ void SceneScriptNR11::SceneFrameAdvanced(int frame) {
 			return;
 		}
 		actorSweepArea(kActorMcCoy, frame);
-		if (Actor_Query_Goal_Number(kActorSteele) == 215) {
+		if (Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleNR11Shoot) {
 			actorSweepArea(kActorSteele, frame);
 		}
 		if (frame == 120) {
 			Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyDefault);
 			Player_Gains_Control();
-			if (Actor_Query_Goal_Number(kActorSteele) == 215) {
-				Actor_Set_Goal_Number(kActorSteele, 216);
+			if (Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleNR11Shoot) {
+				Actor_Set_Goal_Number(kActorSteele, kGoalSteeleNR11StopShooting);
 			}
 			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR11PrepareBurning);
 		}
@@ -332,7 +332,7 @@ void SceneScriptNR11::PlayerWalkedIn() {
 	if (Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR11Hiding) {
 		Player_Set_Combat_Mode(true);
 		if (Game_Flag_Query(kFlagDektoraIsReplicant)) {
-			Actor_Set_Goal_Number(kActorSteele, 210);
+			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleNR11StartWaiting);
 		}
 	}
 
@@ -345,14 +345,14 @@ void SceneScriptNR11::PlayerWalkedIn() {
 		Player_Set_Combat_Mode(false);
 		Player_Gains_Control();
 		if (Game_Flag_Query(kFlagDektoraIsReplicant)) {
-			if (Actor_Query_Goal_Number(kActorSteele) == 211) {
+			if (Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleNR11StopWaiting) {
 				Actor_Set_At_XYZ(kActorMcCoy, -37.41f, 0.33f, -86.0f, 26);
 				Delay(500);
 				Actor_Face_Current_Camera(kActorMcCoy, true);
 				Delay(750);
 				Actor_Says(kActorMcCoy, 5290, 12);
 				Delay(1000);
-				Actor_Set_Goal_Number(kActorSteele, 212);
+				Actor_Set_Goal_Number(kActorSteele, kGoalSteeleNR11Enter);
 				Actor_Face_Actor(kActorMcCoy, kActorSteele, true);
 			} else {
 				Actor_Set_At_XYZ(kActorMcCoy, -15.53f, 0.33f, 73.49f, 954);
@@ -365,10 +365,10 @@ void SceneScriptNR11::PlayerWalkedIn() {
 				Actor_Says(kActorMcCoy, 3810, 16);
 				Actor_Says_With_Pause(kActorSteele, 1730, 0.2f, 14);
 				Actor_Says(kActorSteele, 1740, 15);
-				Actor_Set_Goal_Number(kActorDektora, kGoalDektoraDead);
+				Actor_Set_Goal_Number(kActorDektora, kGoalDektoraGone);
 				Actor_Put_In_Set(kActorDektora, kSetFreeSlotI);
 				Actor_Set_At_Waypoint(kActorDektora, 41, 0);
-				Actor_Set_Goal_Number(kActorSteele, 275);
+				Actor_Set_Goal_Number(kActorSteele, kGoalSteeleNRxxGoToSpinner);
 			}
 		} else {
 			Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyArrested);

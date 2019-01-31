@@ -46,7 +46,7 @@ void AIScriptZuben::Initialize() {
 }
 
 bool AIScriptZuben::Update() {
-	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenDead
+	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenGone
 	 && Actor_Query_Which_Set_In(kActorZuben) != kSetFreeSlotI
 	 && Actor_Query_Which_Set_In(kActorZuben) != Player_Query_Current_Set()
 	) {
@@ -174,7 +174,7 @@ void AIScriptZuben::CompletedMovementTrack() {
 			Music_Stop(2);
 			Sound_Play(574, 40, 100, 100, 50);
 			Delay(2000);
-			Game_Flag_Set(144);
+			Game_Flag_Set(kFlagCT07toCT06);
 			Game_Flag_Set(kFlagZubenSpared);
 			Game_Flag_Set(kFlagCT01ZubenGone);
 			Actor_Set_Goal_Number(kActorZuben, kGoalZubenSpared);
@@ -203,7 +203,7 @@ void AIScriptZuben::ReceivedClue(int clueId, int fromActorId) {
 }
 
 void AIScriptZuben::ClickedByPlayer() {
-	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenDead) {
+	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenGone) {
 		if (Player_Query_Current_Scene() == kSceneCT06) {
 			// return true;
 			return;
@@ -289,7 +289,7 @@ void AIScriptZuben::Retired(int byActorId) {
 		return;
 	}
 	Global_Variable_Decrement(kVariableReplicants, 1);
-	Actor_Set_Goal_Number(kActorZuben, kGoalZubenDead);
+	Actor_Set_Goal_Number(kActorZuben, kGoalZubenGone);
 	if (Global_Variable_Query(kVariableReplicants) == 0) {
 		Player_Loses_Control();
 		Delay(2000);
@@ -372,7 +372,7 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Player_Set_Combat_Mode(false);
 			Actor_Set_Goal_Number(kActorGaff, kGoalGaffMA01ApproachMcCoy);
 		}
-		Actor_Set_Goal_Number(kActorZuben, kGoalZubenDead);
+		Actor_Set_Goal_Number(kActorZuben, kGoalZubenGone);
 		return false;
 
 	case kGoalZubenCT02PushPot:
@@ -1175,7 +1175,7 @@ void AIScriptZuben::FledCombat() {
 void AIScriptZuben::dialogue() {
 	Dialogue_Menu_Clear_List();
 	DM_Add_To_List_Never_Repeat_Once_Selected(1490, 5, 5, -1);
-	if (Actor_Query_Goal_Number(kActorLucy) != kGoalLucyDead) {
+	if (Actor_Query_Goal_Number(kActorLucy) != kGoalLucyGone) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1500, 5, 5, 5);
 	}
 	DM_Add_To_List_Never_Repeat_Once_Selected(1510, -1, 5, 5);

@@ -155,7 +155,7 @@ void SceneScriptNR10::PlayerWalkedIn() {
 		return;
 	}
 
-	if (Actor_Query_Goal_Number(kActorSteele) == 236) {
+	if (Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleNR10Wait) {
 		Actor_Face_Actor(kActorSteele, kActorMcCoy, true);
 		Actor_Says(kActorSteele, 150, 13);
 		Actor_Face_Actor(kActorMcCoy, kActorSteele, true);
@@ -165,7 +165,7 @@ void SceneScriptNR10::PlayerWalkedIn() {
 		Actor_Says(kActorSteele, 1160, 16);
 		Delay(1000);
 		Actor_Says(kActorSteele, 1290, 14);
-		Actor_Set_Goal_Number(kActorSteele, 275);
+		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleNRxxGoToSpinner);
 	}
 	//		return false;
 }

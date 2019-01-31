@@ -85,7 +85,7 @@ bool AIScriptGordo::Update() {
 		 && Actor_Query_Goal_Number(kActorGordo) != kGoalGordoNR01Arrested
 		) {
 			Actor_Set_Goal_Number(kActorGordo, 300);
-		} else if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoDead) {
+		} else if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoGone) {
 			Actor_Put_In_Set(kActorGordo, kSetFreeSlotI);
 			Actor_Set_At_Waypoint(kActorGordo, 41, 0);
 		}
@@ -215,7 +215,7 @@ void AIScriptGordo::ClickedByPlayer() {
 		Actor_Says(kActorMcCoy, 8600, 11);
 		Actor_Face_Actor(kActorGordo, kActorMcCoy, true);
 		Actor_Says(kActorGordo, 1390, 16);
-	} else if (goal == kGoalGordoDead) {
+	} else if (goal == kGoalGordoGone) {
 		Actor_Face_Actor(kActorMcCoy, kActorGordo, true);
 		Actor_Says(kActorMcCoy, 8665, 14);
 	}
@@ -274,7 +274,7 @@ void AIScriptGordo::Retired(int byActorId) {
 	if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoNR01Attack) {
 		Player_Loses_Control();
 		Game_Flag_Set(kFlagGordoRanAway);
-		Actor_Set_Goal_Number(kActorGordo, kGoalGordoDead);
+		Actor_Set_Goal_Number(kActorGordo, kGoalGordoGone);
 		Delay(2000);
 		Player_Set_Combat_Mode(false);
 		Actor_Voice_Over(1410, kActorVoiceOver);
@@ -289,7 +289,7 @@ void AIScriptGordo::Retired(int byActorId) {
 
 	if (Actor_Query_In_Set(kActorGordo, kSetKP07)) {
 		Global_Variable_Decrement(kVariableReplicants, 1);
-		Actor_Set_Goal_Number(kActorGordo, kGoalGordoDead);
+		Actor_Set_Goal_Number(kActorGordo, kGoalGordoGone);
 		if (Global_Variable_Query(kVariableReplicants) == 0) {
 			Player_Loses_Control();
 			Delay(2000);
@@ -305,7 +305,7 @@ void AIScriptGordo::Retired(int byActorId) {
 		}
 	}
 
-	Actor_Set_Goal_Number(kActorGordo, kGoalGordoDead);
+	Actor_Set_Goal_Number(kActorGordo, kGoalGordoGone);
 	//return false;
 }
 
@@ -695,7 +695,7 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		} else {
 			Actor_Change_Animation_Mode(kActorGordo, kAnimationModeDie);
 		}
-		Actor_Set_Goal_Number(kActorGordo, kGoalGordoDead);
+		Actor_Set_Goal_Number(kActorGordo, kGoalGordoGone);
 		Actor_Retired_Here(kActorGordo, 36, 18, true, -1);
 		break;
 

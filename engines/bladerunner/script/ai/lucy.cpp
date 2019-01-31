@@ -61,7 +61,7 @@ bool AIScriptLucy::Update() {
 	}
 
 	if (Global_Variable_Query(kVariableChapter) == 4
-	 && Actor_Query_Goal_Number(kActorLucy) == kGoalLucyDead
+	 && Actor_Query_Goal_Number(kActorLucy) == kGoalLucyGone
 	 && Actor_Query_Which_Set_In(kActorLucy) != 99
 	) {
 		if (Actor_Query_Which_Set_In(kActorLucy) != Player_Query_Current_Set()) {
@@ -212,7 +212,7 @@ void AIScriptLucy::ReceivedClue(int clueId, int fromActorId) {
 }
 
 void AIScriptLucy::ClickedByPlayer() {
-	if (Actor_Query_Goal_Number(kActorLucy) == kGoalLucyDead) {
+	if (Actor_Query_Goal_Number(kActorLucy) == kGoalLucyGone) {
 		Actor_Face_Actor(kActorMcCoy, kActorLucy, true);
 		Actor_Says(kActorMcCoy, 8630, kAnimationModeTalk);
 	}
@@ -265,7 +265,7 @@ void AIScriptLucy::Retired(int byActorId) {
 		Global_Variable_Increment(kVariableChinyen, 200);
 	}
 
-	Actor_Set_Goal_Number(kActorLucy, kGoalLucyDead);
+	Actor_Set_Goal_Number(kActorLucy, kGoalLucyGone);
 }
 
 int AIScriptLucy::GetFriendlinessModifierIfGetsClue(int otherActorId, int clueId) {
@@ -470,7 +470,7 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case 240: // not used anywhere
 		if (Global_Variable_Query(kVariableHollowayArrest) == 3) {
-			Actor_Set_Goal_Number(kActorLucy, kGoalLucyDead);
+			Actor_Set_Goal_Number(kActorLucy, kGoalLucyGone);
 			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleHF02ConfrontLucy);
 		} else {
 			Actor_Set_Goal_Number(kActorLucy, kGoalLucyHF03RanAway);
@@ -509,7 +509,7 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorLucy);
 		break;
 
-	case kGoalLucyDead:
+	case kGoalLucyGone:
 		Game_Flag_Set(kFlagLucyRanAway);
 		break;
 	}
@@ -828,7 +828,7 @@ void AIScriptLucy::FledCombat() {
 	) {
 		Actor_Put_In_Set(kActorLucy, kSetFreeSlotG);
 		Actor_Set_At_Waypoint(kActorLucy, 39, 0);
-		Actor_Set_Goal_Number(kActorLucy, kGoalLucyDead);
+		Actor_Set_Goal_Number(kActorLucy, kGoalLucyGone);
 	}
 
 	return; //true;

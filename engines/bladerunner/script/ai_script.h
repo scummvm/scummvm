@@ -105,12 +105,12 @@ DECLARE_SCRIPT(McCoy)
 	int _animationStateNextSpecial;
 	int _animationNextSpecial;
 	int dword_45A0F8;
-	int dword_45A0FC;
-	float off_45A100;
-	float flt_462710;
-	float flt_462714;
+	bool _NR10SteeleShooting;
+	float _fallSpeed;
+	float _fallHeightCurrent;
+	float _fallHeightTarget;
 
-	void sub_4053E0();
+	void fallDown();
 	void sub_4054F0();
 	void sub_405660();
 	void sub_405800();

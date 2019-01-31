@@ -564,7 +564,7 @@ void SceneScriptMA04::sleep() {
 		Player_Loses_Control();
 		Game_Flag_Set(kFlagMA04McCoySleeping);
 		if ((Game_Flag_Query(kFlagZubenRetired) || Game_Flag_Query(kFlagZubenSpared)) && Global_Variable_Query(kVariableChapter) == 1) {
-			if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenDead) {
+			if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenGone) {
 				Actor_Put_In_Set(kActorZuben, kSetFreeSlotA);
 				Actor_Set_At_Waypoint(kActorZuben, 33, 0);
 			}

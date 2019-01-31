@@ -132,7 +132,7 @@ void SceneScriptHF02::PlayerWalkedIn() {
 	}
 
 	if (Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleHF02LucyRanAway) {
-		if (Actor_Query_Goal_Number(kActorLucy) == kGoalLucyDead) {
+		if (Actor_Query_Goal_Number(kActorLucy) == kGoalLucyGone) {
 			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleHF02LucyShotByMcCoy);
 		} else {
 			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleHF02LucyLostByMcCoy);

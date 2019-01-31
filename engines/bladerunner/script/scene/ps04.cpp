@@ -186,7 +186,7 @@ void SceneScriptPS04::dialogueWithGuzza() {
 		Actor_Says(kActorMcCoy, 4065, 18);
 		Actor_Says(kActorGuzza, 560, 34);
 		if (Query_Difficulty_Level() != 0) {
-			Global_Variable_Increment(2, 100);
+			Global_Variable_Increment(kVariableChinyen, 100);
 		}
 		break;
 

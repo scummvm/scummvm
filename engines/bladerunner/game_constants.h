@@ -989,6 +989,7 @@ enum Flags {
 	kFlagTB07TyrellMeeting = 625,
 	kFlagNR01McCoyIsDrugged = 627,
 	kFlagNR01DektoraFall = 632,
+	kFlagNR11DektoraBurning = 633,
 	kFlagNR11BurnedUp = 634,
 	kFlagNR11SteeleShoot = 635,
 	kFlagNR08Faded = 636,
@@ -1046,18 +1047,26 @@ enum Flags {
 enum Variables {
 	kVariableChapter = 1,
 	kVariableChinyen = 2,
+	// variables 3 - 8 are not used
 	kVariablePoliceMazeScore = 9,
 	kVariablePoliceMazePS10TargetCounter = 10,
 	kVariablePoliceMazePS11TargetCounter = 11,
 	kVariablePoliceMazePS12TargetCounter = 12,
 	kVariablePoliceMazePS13TargetCounter = 13,
 	kVariableMcCoyEvidenceMissed = 14,
+	// variable 15 has no use
+	// variables 16 - 18 are not used
 	kVariableIzoShot = 19, // has no use
+	// variables 20 - 23 are not used
 	kVariableBobShot = 24, // has no use
 	kVariableGeneralDollShot = 25, // has no use
+	// variables 26 - 28 are not used
+
+	// variables 30 - 31 are not used
 	kVariableGenericWalkerAModel = 32,
 	kVariableGenericWalkerBModel = 33,
 	kVariableGenericWalkerCModel = 34,
+
 	kVariableBB10ShelvesAvailable = 36,
 	kVariableWalkLoopActor = 37,
 	kVariableWalkLoopRun = 38,
@@ -1069,7 +1078,9 @@ enum Variables {
 	kVariableHanoiNR04Warnings = 44,
 	kVariableAffectionTowards = 45, // 0 none, 1 steele, 2 dektora, 3 lucy
 	kVariableGunPulledInFrontOfSebastian = 46,
+	kVariableNR01GetUpCounter = 47,
 	kVariableDNAEvidences = 48,
+
 	kVariableTaffyLewisMusic = 50,
 	kVariableReplicants = 51,
 	kVariableNextTvNews = 52,
@@ -1592,6 +1603,8 @@ enum GoalMcCoy {
 	kGoalMcCoyNR01LayDrugged = 212,
 	kGoalMcCoyNR04Drink = 220,
 	kGoalMcCoyNR04PassOut = 221,
+
+	kGoalMcCoyNR10Fall = 231,
 	kGoalMcCoyArrested = 500
 };
 
@@ -1622,18 +1635,27 @@ enum GoalSteele {
 	kGoalSteeleWalkAroundRestart = 190,
 	// chapter 3
 	kGoalSteeleStartChapter3 = 205,
+	kGoalSteeleNR11StartWaiting = 210,
+	kGoalSteeleNR11StopWaiting = 211,
+	kGoalSteeleNR11Enter = 212,
+	kGoalSteeleNR11Entered = 213,
+	kGoalSteeleNR11Decide = 214,
+	kGoalSteeleNR11Shoot = 215,
+	kGoalSteeleNR11StopShooting = 216,
 	kGoalSteeleNR01WaitForMcCoy = 230,
 	kGoalSteeleNR01GoToNR08 = 231,
 	kGoalSteeleNR01GoToNR02 = 232,
 	kGoalSteeleNR01GoToHF03 = 233,
 	kGoalSteeleHF03McCoyChasingLucy = 234,
+	kGoalSteeleNR08WalkOut = 235,
+	kGoalSteeleNR10Wait = 236,
 	kGoalSteeleHF02ConfrontLucy = 240,
 	kGoalSteeleHF02ShootLucy = 241,
 	kGoalSteeleHF02LucyShotBySteele = 242,
 	kGoalSteeleHF02LucyRanAway = 243,
 	kGoalSteeleHF02LucyShotByMcCoy = 244,
 	kGoalSteeleHF02LucyLostByMcCoy = 245,
-	kGoalSteeleGoToMcCoysSpinner = 246,
+	kGoalSteeleHFxxGoToSpinner = 246,
 	kGoalSteeleNR01ConfrontGordo = 250,
 	kGoalSteeleNR01TalkToGordo = 251,
 	kGoalSteeleNR01ShootGordo = 252,
@@ -1644,12 +1666,13 @@ enum GoalSteele {
 	kGoalSteeleNR01TalkAboutShotGun = 262,
 	kGoalSteeleNR01ShotByMcCoy = 270,
 	kGoalSteeleNR01PrepareShotByMcCoy = 271,
+	kGoalSteeleNRxxGoToSpinner = 275,
 	kGoalSteeleTalkAboutMissingSpinner = 280,
 	kGoalSteeleImmediatelyStartChapter4 = 285,
 	kGoalSteeleNR01StartChapter4 = 290,
 	kGoalSteeleHF01StartChapter4 = 291,
 
-	kGoalSteeleDead = 599
+	kGoalSteeleGone = 599
 };
 
 enum GoalDektora {
@@ -1679,7 +1702,7 @@ enum GoalDektora {
 	kGoalDektoraNR11RanAway = 290,
 	kGoalDektoraNR07RanAway = 295,
 
-	kGoalDektoraDead = 599
+	kGoalDektoraGone = 599
 };
 
 enum GoalGordo {
@@ -1730,7 +1753,7 @@ enum GoalGordo {
 	kGoalGordoNR01RanAway = 280,
 	kGoalGordoNR01Die = 299,
 
-	kGoalGordoDead = 599
+	kGoalGordoGone = 599
 };
 
 enum GoalGuzza {
@@ -1776,7 +1799,7 @@ enum GoalLucy {
 	kGoalLucyHF04WalkAway = 239,
 	kGoalLucyReturnToHF03 = 250,
 	kGoalLucyHF03RanAway = 299,
-	kGoalLucyDead = 599
+	kGoalLucyGone = 599
 };
 
 enum GoalIzo {
@@ -1797,7 +1820,7 @@ enum GoalIzo {
 	kGoalIzoGoToHC03 = 155,
 	kGoalIzoDieHidden = 198,
 	kGoalIzoDie = 199,
-	kGoalIzoDead = 599
+	kGoalIzoGone = 599
 };
 
 enum GoalSadik {
@@ -1880,7 +1903,7 @@ enum GoalZuben {
 	kGoalZubenCT02PotDodgeCheck = 14,
 	kGoalZubenFled = 20,
 	kGoalZubenMA01AttackMcCoy = 21,
-	kGoalZubenDead = 599
+	kGoalZubenGone = 599
 };
 
 enum GoalOfficerLeary {

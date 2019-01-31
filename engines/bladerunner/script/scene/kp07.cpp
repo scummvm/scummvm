@@ -30,7 +30,7 @@ void SceneScriptKP07::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0, 315, 185, 381, 285, 0);
 	if (Game_Flag_Query(653)) {
 		if (Game_Flag_Query(kFlagDektoraIsReplicant)
-		 && Actor_Query_Goal_Number(kActorDektora) < kGoalDektoraDead
+		 && Actor_Query_Goal_Number(kActorDektora) < kGoalDektoraGone
 		) {
 			Actor_Set_Targetable(kActorDektora, true);
 			Global_Variable_Increment(kVariableReplicants, 1);
@@ -38,7 +38,7 @@ void SceneScriptKP07::InitializeScene() {
 			Actor_Set_At_XYZ(kActorDektora, -52.0f, -41.52f, -5.0f, 289);
 		}
 
-		if (Actor_Query_Goal_Number(kActorZuben) < kGoalZubenDead) {
+		if (Actor_Query_Goal_Number(kActorZuben) < kGoalZubenGone) {
 			Global_Variable_Increment(kVariableReplicants, 1);
 			Actor_Set_Targetable(kActorZuben, true);
 			Actor_Put_In_Set(kActorZuben, kSetKP07);
@@ -55,7 +55,7 @@ void SceneScriptKP07::InitializeScene() {
 		}
 
 		if (Game_Flag_Query(kFlagGordoIsReplicant)
-		 && Actor_Query_Goal_Number(kActorGordo) < kGoalGordoDead
+		 && Actor_Query_Goal_Number(kActorGordo) < kGoalGordoGone
 		) {
 			Global_Variable_Increment(kVariableReplicants, 1);
 			Actor_Set_Targetable(kActorGordo, true);
@@ -64,7 +64,7 @@ void SceneScriptKP07::InitializeScene() {
 		}
 
 		if (Game_Flag_Query(kFlagLucyIsReplicant)
-		 && Actor_Query_Goal_Number(kActorLucy) < kGoalLucyDead
+		 && Actor_Query_Goal_Number(kActorLucy) < kGoalLucyGone
 		) {
 			Global_Variable_Increment(kVariableReplicants, 1);
 			Actor_Put_In_Set(kActorLucy, kSetKP07);

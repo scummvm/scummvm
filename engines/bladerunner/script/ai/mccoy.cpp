@@ -34,10 +34,10 @@ AIScriptMcCoy::AIScriptMcCoy(BladeRunnerEngine *vm) : AIScriptBase(vm) {
 	_animationStateNextSpecial = 0;
 	_animationNextSpecial = 0;
 	dword_45A0F8 = 0;
-	dword_45A0FC = 0;
-	off_45A100 = 0.0f;
-	flt_462710 = 0.0f;
-	flt_462714 = 0.0f;
+	_NR10SteeleShooting = false;
+	_fallSpeed = 0.0f;
+	_fallHeightCurrent = 0.0f;
+	_fallHeightTarget = 0.0f;
 }
 
 void AIScriptMcCoy::Initialize() {
@@ -52,8 +52,8 @@ void AIScriptMcCoy::Initialize() {
 	_animationStateNextSpecial = 3;
 	_animationNextSpecial = 20;
 	dword_45A0F8 = -1;
-	dword_45A0FC = 0;
-	off_45A100 = 0;
+	_NR10SteeleShooting = false;
+	_fallSpeed = 0;
 	Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyDefault);
 }
 
@@ -93,10 +93,10 @@ bool AIScriptMcCoy::Update() {
 		return true;
 
 	case kGoalMcCoyNR01LayDrugged:
-		if (Global_Variable_Query(47) >= 13) {
-			Global_Variable_Set(47, 500);
-		} if (Global_Variable_Query(47) > 0) {
-			Global_Variable_Decrement(47, 1);
+		if (Global_Variable_Query(kVariableNR01GetUpCounter) >= 13) {
+			Global_Variable_Set(kVariableNR01GetUpCounter, 500);
+		} if (Global_Variable_Query(kVariableNR01GetUpCounter) > 0) {
+			Global_Variable_Decrement(kVariableNR01GetUpCounter, 1);
 		}
 		break;
 
@@ -105,17 +105,17 @@ bool AIScriptMcCoy::Update() {
 		Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR04TakeDisk);
 		return true;
 
+	case kGoalMcCoyNR10Fall:
+		fallDown();
+		break;
+
 	case 309:
-		sub_4053E0();
+		fallDown();
 		break;
 
 	case 391:
 		Actor_Retired_Here(kActorMcCoy, 12, 48, 1, -1);
 		Actor_Set_Goal_Number(kActorMcCoy, 599);
-		break;
-
-	case 231:
-		sub_4053E0();
 		break;
 	}
 	return false;
@@ -270,10 +270,10 @@ bool AIScriptMcCoy::ShotAtAndHit() {
 void AIScriptMcCoy::Retired(int byActorId) {
 	if (byActorId == kActorSteele && Actor_Query_In_Set(kActorSteele, kSetHF06)) {
 		if (Actor_Query_In_Set(kActorDektora, kSetHF06)
-		 && Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraDead) {
+		 && Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraGone) {
 			Non_Player_Actor_Combat_Mode_On(kActorSteele, kActorCombatStateUncover, true, kActorDektora, 15, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 25, 300, false);
 		} else if (Actor_Query_In_Set(kActorLucy, kSetHF06)
-		        && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyDead
+		        && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyGone
 		) {
 			Non_Player_Actor_Combat_Mode_On(kActorSteele, kActorCombatStateUncover, true, kActorLucy, 15, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 25, 300, false);
 		}
@@ -282,7 +282,7 @@ void AIScriptMcCoy::Retired(int byActorId) {
 	if (Actor_Query_In_Set(kActorMcCoy, kSetHF05)
 	 && Actor_Query_In_Set(kActorOfficerLeary, kSetHF05)
 	 && Actor_Query_In_Set(kActorDektora, kSetHF05)
-	 && Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraDead
+	 && Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraGone
 	) {
 		Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateUncover, true, kActorDektora, 4, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 25, 300, false);
 	}
@@ -290,7 +290,7 @@ void AIScriptMcCoy::Retired(int byActorId) {
 	if (Actor_Query_In_Set(kActorMcCoy, kSetHF05)
 	 && Actor_Query_In_Set(kActorOfficerGrayford, kSetHF05)
 	 && Actor_Query_In_Set(kActorDektora, kSetHF05)
-	 && Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraDead
+	 && Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraGone
 	) {
 		Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, kActorCombatStateUncover, true, kActorDektora, 4, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 25, 300, false);
 	}
@@ -298,7 +298,7 @@ void AIScriptMcCoy::Retired(int byActorId) {
 	if (Actor_Query_In_Set(kActorMcCoy, kSetHF05)
 	 && Actor_Query_In_Set(kActorOfficerLeary, kSetHF05)
 	 && Actor_Query_In_Set(kActorLucy, kSetHF05)
-	 && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyDead
+	 && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyGone
 	) {
 		Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateUncover, true, kActorLucy, 4, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 25, 300, false);
 	}
@@ -306,7 +306,7 @@ void AIScriptMcCoy::Retired(int byActorId) {
 	if (Actor_Query_In_Set(kActorMcCoy, kSetHF05)
 	 && Actor_Query_In_Set(kActorOfficerGrayford, kSetHF05)
 	 && Actor_Query_In_Set(kActorLucy, kSetHF05)
-	 && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyDead
+	 && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyGone
 	) {
 		Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, kActorCombatStateUncover, true, kActorLucy, 4, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 25, 300, false);
 	}
@@ -379,7 +379,7 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case kGoalMcCoyNR01LayDrugged:
-		Global_Variable_Set(47, 0);
+		Global_Variable_Set(kVariableNR01GetUpCounter, 0);
 		Player_Set_Combat_Mode_Access(false);
 		Player_Gains_Control();
 		Scene_Exits_Disable();
@@ -392,11 +392,11 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case 230:
-		dword_45A0FC = Actor_Query_Goal_Number(kActorSteele) == 215;
+		_NR10SteeleShooting = Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleNR11Shoot;
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAttack);
 		return true;
 
-	case 231:
+	case kGoalMcCoyNR10Fall:
 		Player_Set_Combat_Mode(false);
 		Preload(18);
 		Set_Enter(kSetNR10, kSceneNR10);
@@ -404,12 +404,12 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Force_Stop_Walking(kActorMcCoy);
 		Actor_Put_In_Set(kActorMcCoy, kSetNR10);
 		Actor_Set_At_XYZ(kActorMcCoy, 14.0f, 110.84f, -300.0f, 926);
-		Actor_Change_Animation_Mode(kActorMcCoy, 48);
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
 		_animationState = 27;
 		_animationFrame = 0;
-		flt_462714 = 2.84f;
-		flt_462710 = 110.84f;
-		off_45A100 = -6.0f;
+		_fallHeightTarget = 2.84f;
+		_fallHeightCurrent = 110.84f;
+		_fallSpeed = -6.0f;
 		return true;
 
 	case 301:
@@ -468,9 +468,9 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case 390:
 		Actor_Force_Stop_Walking(kActorMcCoy);
 		Player_Loses_Control();
-		flt_462710 = 48.07f;
-		off_45A100 = -4.0f;
-		flt_462714 = -20.0f;
+		_fallHeightCurrent = 48.07f;
+		_fallSpeed = -4.0f;
+		_fallHeightTarget = -20.0f;
 		if (_animationState != 27 && _animationState != 50) {
 			_animationState = 50;
 			_animationFrame = Slice_Animation_Query_Number_Of_Frames(18) - 1;
@@ -567,7 +567,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 	case 68:
 		*animation = 18;
-		v7 = Slice_Animation_Query_Number_Of_Frames(*animation) - 1 - Global_Variable_Query(47);
+		v7 = Slice_Animation_Query_Number_Of_Frames(*animation) - 1 - Global_Variable_Query(kVariableNR01GetUpCounter);
 		if (_animationFrame < v7) {
 			_animationFrame++;
 		} else if (_animationFrame > v7) {
@@ -1069,7 +1069,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		_animationFrame++;
 		if (_animationFrame == 1
 		 && Actor_Query_Goal_Number(kActorMcCoy) == 230
-		 && dword_45A0FC == 1
+		 && _NR10SteeleShooting
 		) {
 			dword_45A0F8 = 27;
 		}
@@ -1080,7 +1080,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 			if (Actor_Query_Goal_Number(kActorMcCoy) == 230) {
 				_animationFrame = 0;
 				_animationState = 21;
-				dword_45A0FC = 1;
+				_NR10SteeleShooting = true;
 				*animation = 12;
 			}
 		}
@@ -1776,18 +1776,18 @@ bool AIScriptMcCoy::ReachedMovementTrackWaypoint(int waypointId) {
 
 void AIScriptMcCoy::FledCombat() {}
 
-void AIScriptMcCoy::sub_4053E0() {
+void AIScriptMcCoy::fallDown() {
 	float x, y, z;
 	Actor_Query_XYZ(kActorMcCoy, &x, &y, &z);
-	flt_462710 = flt_462710 + off_45A100;
-	if (flt_462714 < flt_462710) {
-		off_45A100 = off_45A100 - 0.2f;
+	_fallHeightCurrent = _fallHeightCurrent + _fallSpeed;
+	if (_fallHeightTarget < _fallHeightCurrent) {
+		_fallSpeed = _fallSpeed - 0.2f;
 	} else {
-		flt_462710 = flt_462714;
+		_fallHeightCurrent = _fallHeightTarget;
 		Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyDefault);
 		Actor_Retired_Here(kActorMcCoy, 12, 48, true, -1);
 	}
-	return Actor_Set_At_XYZ(kActorMcCoy, x, flt_462710, z, Actor_Query_Facing_1024(kActorMcCoy));
+	return Actor_Set_At_XYZ(kActorMcCoy, x, _fallHeightCurrent, z, Actor_Query_Facing_1024(kActorMcCoy));
 }
 
 void AIScriptMcCoy::sub_4054F0() {

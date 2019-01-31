@@ -384,7 +384,7 @@ void SceneScriptHF05::dialogueWithCrazylegs1() {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1200, 5, 5, 3); // WOMAN'S PHOTO
 	}
 	if (Actor_Clue_Query(kActorMcCoy, kClueLucy)
-	 && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyDead
+	 && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyGone
 	) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1210, 4, 6, 2); // LUCY'S PHOTO
 	}
@@ -560,12 +560,12 @@ void SceneScriptHF05::dialogueWithCrazylegs2() { // cut feature? it is impossibl
 
 int SceneScriptHF05::getAffectionTowardsActor() {
 	if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsDektora
-	 && Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraDead
+	 && Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraGone
 	) {
 		return kActorDektora;
 	}
 	if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy
-	 && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyDead
+	 && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyGone
 	) {
 		return kActorLucy;
 	}
@@ -744,13 +744,13 @@ void SceneScriptHF05::addAmbientSounds() {
 
 int SceneScriptHF05::sub_4048C0() {
 	if (Actor_Query_In_Set(kActorDektora, kSetHF05)
-	 && Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraDead
+	 && Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraGone
 	) {
 		return kActorDektora;
 	}
 
 	if (Actor_Query_In_Set(kActorLucy, kSetHF05)
-	 && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyDead
+	 && Actor_Query_Goal_Number(kActorLucy) != kGoalLucyGone
 	) {
 		return kActorLucy;
 	}

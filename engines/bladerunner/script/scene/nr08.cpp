@@ -221,7 +221,7 @@ void SceneScriptNR08::PlayerWalkedIn() {
 		Actor_Says(kActorSteele, 1670, 13);
 		Actor_Says(kActorSteele, 1680, 14);
 		Actor_Says(kActorSteele, 1690, 15);
-		Actor_Set_Goal_Number(kActorSteele, 235);
+		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleNR08WalkOut);
 		return; // true;
 	}
 
