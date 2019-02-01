@@ -62,15 +62,11 @@ public:
 	/** Go to a script item. Cancel any delay so that it is shown immediately. */
 	void goToScriptItem(AnimScriptItem *item);
 
-	/**
-	 * Compute the duration in milliseconds of an animation script portion.
-	 *
-	 * Said portion goes from the specified starting point to the end of the script
-	 */
-	uint32 getDurationStartingWithItem(AnimScriptItem *startItem);
-
 	/** Is the current script item later in the script when compared to the specified one? */
 	bool hasReached(AnimScriptItem *item);
+
+	/** Has the script completed playing the last script item at least once since started? */
+	bool isDone() const;
 
 protected:
 	void goToNextItem();
@@ -81,6 +77,7 @@ protected:
 
 	int32 _nextItemIndex;
 	int32 _msecsToNextUpdate;
+	bool _done;
 };
 
 /**

@@ -661,7 +661,6 @@ Command *Command::opPlayAnimation(Script *script, const ResourceReference &animR
 	sceneItem->playActionAnim(anim);
 
 	if (suspend) {
-		assert(anim->getSubType() == Anim::kAnimSkeleton || anim->getSubType() == Anim::kAnimVideo);
 		anim->shouldResetItem(false); // The script system will take care of that when resuming
 		script->suspend(anim);
 		return this; // Stay on the same command while suspended
@@ -791,8 +790,7 @@ Command *Command::opPlayAnimScriptItem(Script *script, const ResourceReference &
 	animScript->goToScriptItem(animScriptItem);
 
 	if (suspend) {
-		uint32 duration = animScript->getDurationStartingWithItem(animScriptItem);
-		script->pause(duration);
+		script->suspend(anim);
 		return this; // Stay on the same command while suspended
 	} else {
 		return nextCommand();

@@ -237,7 +237,7 @@ public:
 
 	/** Find a child matching the template parameter type */
 	template<class T>
-	T *findChild(bool mustBeUnique = true);
+	T *findChild(bool mustBeUnique = true) const;
 
 	/** Find a child matching the template parameter type and the specified subtype */
 	template<class T>
@@ -368,7 +368,7 @@ template<>
 Common::Array<Object *> Object::listChildren<Object>(int subType) const;
 
 template<class T>
-T *Object::findChild(bool mustBeUnique) {
+T *Object::findChild(bool mustBeUnique) const {
 	return findChildWithSubtype<T>(-1, mustBeUnique);
 }
 

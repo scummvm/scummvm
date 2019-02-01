@@ -125,8 +125,8 @@ void Anim::resetItem() {
 }
 
 bool Anim::isDone() const {
-	warning("Anim::isDone is not implemented");
-	return false;
+	AnimScript *animScript = findChild<AnimScript>();
+	return animScript->isDone();
 }
 
 uint32 Anim::getMovementSpeed() const {
