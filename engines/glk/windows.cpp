@@ -602,9 +602,13 @@ void Window::requestLineEventUni(uint32 *buf, uint maxlen, uint initlen) {
 
 void Window::redraw() {
 	if (Windows::_forceRedraw) {
-		uint color = Windows::_overrideBgSet ? g_conf->_windowColor : _bgColor;
-		int y0 = _yAdj ? _bbox.top - _yAdj : _bbox.top;
-		g_vm->_screen->fillRect(Rect(_bbox.left, y0, _bbox.right, _bbox.bottom), color);
+		PairWindow *parent = dynamic_cast<PairWindow *>(_parent);
+
+		if (!parent || parent->_dir != winmethod_Arbitrary) {
+			uint color = Windows::_overrideBgSet ? g_conf->_windowColor : _bgColor;
+			int y0 = _yAdj ? _bbox.top - _yAdj : _bbox.top;
+			g_vm->_screen->fillRect(Rect(_bbox.left, y0, _bbox.right, _bbox.bottom), color);
+		}
 	}
 }
 

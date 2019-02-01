@@ -66,8 +66,13 @@ void FrotzScreen::loadVersion6Fonts(Common::Archive *archive) {
 	pi._lineSeparation = 0;
 
 	g_vm->_defaultForeground = 0;
-	g_vm->_defaultBackground = g_system->getScreenFormat().RGBToColor(0xff, 0xff, 0xff);
+	g_vm->_defaultBackground = zcolor_Transparent;
 	g_conf->_tMarginX = 3;
+
+	for (uint idx = 0; idx < style_NUMSTYLES; ++idx) {
+		g_conf->_tStyles[idx].bg = g_conf->_tStylesDefault[idx].bg = zcolor_Transparent;
+		g_conf->_gStyles[idx].bg = g_conf->_gStylesDefault[idx].bg = zcolor_Transparent;
+	}
 
 	_fonts.resize(8);
 
