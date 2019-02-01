@@ -290,8 +290,8 @@ void Processor::z_set_true_colour() {
 	garglk_set_zcolors(zfore, zback);
 #endif /* GARGLK */
 
-	curr_fg = zfore;
-	curr_bg = zback;
+	curr_fg = (uint)zfore;
+	curr_bg = (uint)zback;
 }
 
 static const int zcolor_map[] = {

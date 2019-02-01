@@ -59,8 +59,7 @@ public:
 	int curx;
 	int fixforced;
 
-	int curr_fg;
-	int curr_bg;
+	uint curr_fg, curr_bg;
 	int curr_font;
 	int prev_font;
 	int temp_font;
