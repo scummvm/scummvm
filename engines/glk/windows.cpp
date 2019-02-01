@@ -40,14 +40,14 @@ bool Windows::_overrideBgSet;
 bool Windows::_forceRedraw;
 bool Windows::_claimSelect;
 bool Windows::_moreFocus;
-int Windows::_overrideFgVal;
-int Windows::_overrideBgVal;
-int Windows::_zcolor_fg;
-int Windows::_zcolor_bg;
-byte Windows::_zcolor_LightGrey[3];
-byte Windows::_zcolor_Foreground[3];
-byte Windows::_zcolor_Background[3];
-byte Windows::_zcolor_Bright[3];
+uint Windows::_overrideFgVal;
+uint Windows::_overrideBgVal;
+uint Windows::_zcolor_fg;
+uint Windows::_zcolor_bg;
+uint Windows::_zcolor_LightGrey;
+uint Windows::_zcolor_Foreground;
+uint Windows::_zcolor_Background;
+uint Windows::_zcolor_Bright;
 
 /*--------------------------------------------------------------------------*/
 
@@ -64,10 +64,9 @@ Windows::Windows(Graphics::Screen *screen) : _screen(screen), _windowList(nullpt
 	_zcolor_fg = _zcolor_bg = 0;
 	_drawSelect = false;
 
-	_zcolor_LightGrey[0] = _zcolor_LightGrey[1] = _zcolor_LightGrey[2] = 181;
-	_zcolor_Foreground[0] = _zcolor_Foreground[1] = _zcolor_Foreground[2] = 0;
-	_zcolor_Background[0] = _zcolor_Background[1] = _zcolor_Background[2] = 0;
-	_zcolor_Bright[0] = _zcolor_Bright[1] = _zcolor_Bright[2] = 0;
+	_zcolor_LightGrey = g_system->getScreenFormat().RGBToColor(181, 181, 181);
+	_zcolor_Foreground = _zcolor_Background = 0;
+	_zcolor_Bright = 0;
 }
 
 Windows::~Windows() {
@@ -437,11 +436,16 @@ void Windows::repaint(const Rect &box) {
 	g_vm->_events->redraw();
 }
 
-byte *Windows::rgbShift(byte *rgb) {
-	_zcolor_Bright[0] = (rgb[0] + 0x30) < 0xff ? (rgb[0] + 0x30) : 0xff;
-	_zcolor_Bright[1] = (rgb[1] + 0x30) < 0xff ? (rgb[1] + 0x30) : 0xff;
-	_zcolor_Bright[2] = (rgb[2] + 0x30) < 0xff ? (rgb[2] + 0x30) : 0xff;
+uint Windows::rgbShift(uint color) {
+	uint8 r, g, b;
+	Graphics::PixelFormat pf = g_system->getScreenFormat();
+	pf.colorToRGB(color, r, g, b);
 
+	r = ((uint)r + 0x30) < 0xff ? ((uint)r + 0x30) : 0xff;
+	g = ((uint)g + 0x30) < 0xff ? ((uint)g + 0x30) : 0xff;
+	b = ((uint)b + 0x30) < 0xff ? ((uint)b + 0x30) : 0xff;
+
+	_zcolor_Bright = pf.RGBToColor(r, g, b);
 	return _zcolor_Bright;
 }
 
@@ -510,8 +514,8 @@ Window::Window(Windows *windows, uint rock) : _windows(windows), _rock(rock),
 	_attr.bgcolor = 0;
 	_attr.hyper = 0;
 
-	Common::copy(&g_conf->_windowColor[0], &g_conf->_windowColor[3], &_bgColor[0]);
-	Common::copy(&g_conf->_propInfo._moreColor[0], &g_conf->_propInfo._moreColor[3], _fgColor);
+	_bgColor = g_conf->_windowColor;
+	_fgColor = g_conf->_propInfo._moreColor;
 	_dispRock.num = 0;
 
 	Streams &streams = *g_vm->_streams;
@@ -598,7 +602,7 @@ void Window::requestLineEventUni(uint32 *buf, uint maxlen, uint initlen) {
 
 void Window::redraw() {
 	if (Windows::_forceRedraw) {
-		unsigned char *color = Windows::_overrideBgSet ? g_conf->_windowColor : _bgColor;
+		uint color = Windows::_overrideBgSet ? g_conf->_windowColor : _bgColor;
 		int y0 = _yAdj ? _bbox.top - _yAdj : _bbox.top;
 		g_vm->_screen->fillRect(Rect(_bbox.left, y0, _bbox.right, _bbox.bottom), color);
 	}
@@ -720,6 +724,14 @@ BlankWindow::BlankWindow(Windows *windows, uint rock) : Window(windows, rock) {
 
 /*--------------------------------------------------------------------------*/
 
+WindowStyle::WindowStyle(const WindowStyleStatic &src) : font(src.font), reverse(src.reverse) {
+	Graphics::PixelFormat pf = g_system->getScreenFormat();
+	fg = pf.RGBToColor(src.fg[0], src.fg[1], src.fg[2]);
+	bg = pf.RGBToColor(src.bg[0], src.bg[1], src.bg[1]);
+}
+
+/*--------------------------------------------------------------------------*/
+
 void Attributes::clear() {
 	fgset = 0;
 	bgset = 0;
@@ -730,7 +742,7 @@ void Attributes::clear() {
 	style = 0;
 }
 
-const byte *Attributes::attrBg(const WindowStyle *styles) {
+uint Attributes::attrBg(const WindowStyle *styles) {
 	int revset = reverse || (styles[style].reverse && !Windows::_overrideReverse);
 
 	int zfset = fgset ? fgset : Windows::_overrideFgSet;
@@ -740,16 +752,12 @@ const byte *Attributes::attrBg(const WindowStyle *styles) {
 	int zback = bgset ? bgcolor : Windows::_overrideBgVal;
 
 	if (zfset && zfore != Windows::_zcolor_fg) {
-		Windows::_zcolor_Foreground[0] = (zfore >> 16) & 0xff;
-		Windows::_zcolor_Foreground[1] = (zfore >> 8) & 0xff;
-		Windows::_zcolor_Foreground[2] = (zfore) & 0xff;
+		Windows::_zcolor_Foreground = zfore;
 		Windows::_zcolor_fg = zfore;
 	}
 
 	if (zbset && zback != Windows::_zcolor_bg) {
-		Windows::_zcolor_Background[0] = (zback >> 16) & 0xff;
-		Windows::_zcolor_Background[1] = (zback >> 8) & 0xff;
-		Windows::_zcolor_Background[2] = (zback) & 0xff;
+		Windows::_zcolor_Background = zback;
 		Windows::_zcolor_bg = zback;
 	}
 
@@ -764,14 +772,14 @@ const byte *Attributes::attrBg(const WindowStyle *styles) {
 				return Windows::rgbShift(Windows::_zcolor_Foreground);
 			else
 				return Windows::_zcolor_Foreground;
-		else if (zbset && !memcmp(styles[style].fg, Windows::_zcolor_Background, 3))
+		else if (zbset && styles[style].fg == Windows::_zcolor_Background)
 			return Windows::_zcolor_LightGrey;
 		else
 			return styles[style].fg;
 	}
 }
 
-const byte *Attributes::attrFg(const WindowStyle *styles) {
+uint Attributes::attrFg(const WindowStyle *styles) {
 	int revset = reverse || (styles[style].reverse && !Windows::_overrideReverse);
 
 	int zfset = fgset ? fgset : Windows::_overrideFgSet;
@@ -781,16 +789,12 @@ const byte *Attributes::attrFg(const WindowStyle *styles) {
 	int zback = bgset ? bgcolor : Windows::_overrideBgVal;
 
 	if (zfset && zfore != Windows::_zcolor_fg) {
-		Windows::_zcolor_Foreground[0] = (zfore >> 16) & 0xff;
-		Windows::_zcolor_Foreground[1] = (zfore >> 8) & 0xff;
-		Windows::_zcolor_Foreground[2] = (zfore) & 0xff;
+		Windows::_zcolor_Foreground = zfore;
 		Windows::_zcolor_fg = zfore;
 	}
 
 	if (zbset && zback != Windows::_zcolor_bg) {
-		Windows::_zcolor_Background[0] = (zback >> 16) & 0xff;
-		Windows::_zcolor_Background[1] = (zback >> 8) & 0xff;
-		Windows::_zcolor_Background[2] = (zback) & 0xff;
+		Windows::_zcolor_Background = zback;
 		Windows::_zcolor_bg = zback;
 	}
 
@@ -800,7 +804,7 @@ const byte *Attributes::attrFg(const WindowStyle *styles) {
 				return Windows::rgbShift(Windows::_zcolor_Foreground);
 			else
 				return Windows::_zcolor_Foreground;
-		else if (zbset && !memcmp(styles[style].fg, Windows::_zcolor_Background, 3))
+		else if (zbset && styles[style].fg == Windows::_zcolor_Background)
 			return Windows::_zcolor_LightGrey;
 		else
 			return styles[style].fg;

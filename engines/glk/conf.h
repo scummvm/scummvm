@@ -42,7 +42,7 @@ private:
 	/**
 	 * Get a color
 	 */
-	void get(const Common::String &key, byte *color, const byte *defaultColor = nullptr);
+	void get(const Common::String &key, uint &color, const byte *defaultColor);
 
 	/**
 	 * Get a font name into a font Id
@@ -67,7 +67,7 @@ private:
 	/**
 	 * Parse a color
 	 */
-	void parseColor(const Common::String &str, byte *color);
+	uint parseColor(const Common::String &str);
 public:
 	MonoFontInfo _monoInfo;
 	PropFontInfo _propInfo;
@@ -79,11 +79,11 @@ public:
 	int _wBorderX, _wBorderY;
 	int _tMarginX, _tMarginY;
 	double _gamma;
-	byte _borderColor[3], _borderSave[3];
-	byte _windowColor[3], _windowSave[3];
+	uint _borderColor, _borderSave;
+	uint _windowColor, _windowSave;
 	int _lcd;
 	int _scrollWidth;
-	byte _scrollBg[3], _scrollFg[3];
+	uint _scrollBg, _scrollFg;
 	bool _graphics;
 	bool _sound;
 	bool _speak;

@@ -59,16 +59,13 @@ void Screen::initialize() {
 	}
 }
 
-void Screen::fill(const byte *rgb) {
-	uint color = format.RGBToColor(rgb[0], rgb[1], rgb[2]);
+void Screen::fill(uint color) {
 	clear(color);
 }
 
-void Screen::fillRect(const Rect &box, const byte *rgb) {
-	if (rgb[0] != TRANSPARENT_RGB || rgb[1] != TRANSPARENT_RGB || rgb[2] != TRANSPARENT_RGB) {
-		uint color = format.RGBToColor(rgb[0], rgb[1], rgb[2]);
+void Screen::fillRect(const Rect &box, uint color) {
+	if (color != zcolor_Transparent)
 		Graphics::Screen::fillRect(box, color);
-	}
 }
 
 bool Screen::loadFonts() {
@@ -145,22 +142,20 @@ FACES Screen::getFontId(const Common::String &name) {
 	return MONOR;
 }
 
-int Screen::drawString(const Point &pos, int fontIdx, const byte *rgb, const Common::String &text, int spw) {
+int Screen::drawString(const Point &pos, int fontIdx, uint color, const Common::String &text, int spw) {
 	int baseLine = (fontIdx >= PROPR) ? g_conf->_propInfo._baseLine : g_conf->_monoInfo._baseLine;
 	Point pt(pos.x / GLI_SUBPIX, pos.y - baseLine);
 	const Graphics::Font *font = _fonts[fontIdx];
-	const uint32 color = format.RGBToColor(rgb[0], rgb[1], rgb[2]);
 	font->drawString(this, text, pt.x, pt.y, w - pt.x, color);
 
 	pt.x += font->getStringWidth(text);
 	return MIN((int)pt.x, (int)w) * GLI_SUBPIX;
 }
 
-int Screen::drawStringUni(const Point &pos, int fontIdx, const byte *rgb, const Common::U32String &text, int spw) {
+int Screen::drawStringUni(const Point &pos, int fontIdx, uint color, const Common::U32String &text, int spw) {
 	int baseLine = (fontIdx >= PROPR) ? g_conf->_propInfo._baseLine : g_conf->_monoInfo._baseLine;
 	Point pt(pos.x / GLI_SUBPIX, pos.y - baseLine);
 	const Graphics::Font *font = _fonts[fontIdx];
-	const uint32 color = format.RGBToColor(rgb[0], rgb[1], rgb[2]);
 	font->drawString(this, text, pt.x, pt.y, w - pt.x, color);
 
 	pt.x += font->getStringWidth(text);

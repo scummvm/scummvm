@@ -137,15 +137,15 @@ public:
 	static bool _forceRedraw;
 	static bool _claimSelect;
 	static bool _moreFocus;
-	static int _overrideFgVal;
-	static int _overrideBgVal;
-	static int _zcolor_fg, _zcolor_bg;
-	static byte _zcolor_LightGrey[3];
-	static byte _zcolor_Foreground[3];
-	static byte _zcolor_Background[3];
-	static byte _zcolor_Bright[3];
+	static uint _overrideFgVal;
+	static uint _overrideBgVal;
+	static uint _zcolor_fg, _zcolor_bg;
+	static uint _zcolor_LightGrey;
+	static uint _zcolor_Foreground;
+	static uint _zcolor_Background;
+	static uint _zcolor_Bright;
 
-	static byte *rgbShift(byte *rgb);
+	static uint rgbShift(uint color);
 public:
 	/**
 	 * Constructor
@@ -240,13 +240,33 @@ public:
 };
 
 /**
- * Window styles
+ * Used for the static definition of default styles
  */
-struct WindowStyle {
+struct WindowStyleStatic {
 	FACES font;
 	byte bg[3];
 	byte fg[3];
 	bool reverse;
+};
+
+/**
+ * Window styles
+ */
+struct WindowStyle {
+	FACES font;
+	uint bg;
+	uint fg;
+	bool reverse;
+
+	/**
+	 * Constructor
+	 */
+	WindowStyle() : font(MONOR), fg(0), bg(0), reverse(false) {}
+
+	/**
+	 * Constructor
+	 */
+	WindowStyle(const WindowStyleStatic &src);
 
 	/**
 	 * Equality comparison
@@ -345,12 +365,12 @@ struct Attributes {
 	/**
 	 * Return the background color for the current font style
 	 */
-	const byte *attrBg(const WindowStyle *styles);
+	uint attrBg(const WindowStyle *styles);
 
 	/**
 	 * Return the foreground color for the current font style
 	 */
-	const byte *attrFg(const WindowStyle *styles);
+	uint attrFg(const WindowStyle *styles);
 
 	/**
 	 * Get the font for the current font style
@@ -392,8 +412,7 @@ public:
 	uint _termCt;
 
 	Attributes _attr;
-	byte _bgColor[3];
-	byte _fgColor[3];
+	uint _bgColor, _fgColor;
 
 	gidispatch_rock_t _dispRock;
 public:

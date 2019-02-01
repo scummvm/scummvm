@@ -33,7 +33,7 @@ const byte BLUE[3] = { 0x00, 0x00, 0x60 };
 const byte SCROLL_BG[3] = { 0xb0, 0xb0, 0xb0 };
 const byte SCROLL_FG[3] = { 0x80, 0x80, 0x80 };
 
-WindowStyle T_STYLES[style_NUMSTYLES] = {
+WindowStyleStatic T_STYLES[style_NUMSTYLES] = {
 	{ PROPR, { 0xff, 0xff, 0xff }, { 0x00, 0x00, 0x00 }, 0 }, ///< Normal
 	{ PROPI, { 0xff, 0xff, 0xff }, { 0x00, 0x00, 0x00 }, 0 }, ///< Emphasized
 	{ MONOR, { 0xff, 0xff, 0xff }, { 0x00, 0x00, 0x00 }, 0 }, ///< Preformatted
@@ -47,7 +47,7 @@ WindowStyle T_STYLES[style_NUMSTYLES] = {
 	{ MONOR, { 0xff, 0xff, 0xff }, { 0x00, 0x00, 0x00 }, 0 }  ///< User2
 };
 
-WindowStyle G_STYLES[style_NUMSTYLES] = {
+WindowStyleStatic G_STYLES[style_NUMSTYLES] = {
 	{ MONOR, { 0xff, 0xff, 0xff }, { 0x60, 0x60, 0x60 }, 0 }, ///< Normal
 	{ MONOI, { 0xff, 0xff, 0xff }, { 0x60, 0x60, 0x60 }, 0 }, ///< Emphasized
 	{ MONOR, { 0xff, 0xff, 0xff }, { 0x60, 0x60, 0x60 }, 0 }, ///< Preformatted
@@ -69,8 +69,8 @@ Conf::Conf(InterpreterType interpType) {
 	_imageH = g_system->getHeight();
 
 	get("moreprompt", _propInfo._morePrompt, "\207 more \207");
-	get("morecolor", _propInfo._moreColor);
-	get("morecolor", _propInfo._moreSave);
+	get("morecolor", _propInfo._moreColor, nullptr);
+	get("morecolor", _propInfo._moreSave, nullptr);
 	get("morefont", _propInfo._moreFont, PROPB);
 	get("morealign", _propInfo._moreAlign);
 	get("monoaspect", _monoInfo._aspect, 1.0);
@@ -113,16 +113,16 @@ Conf::Conf(InterpreterType interpType) {
 	get("gamma", _gamma, 1.0);
 
 	get("linkcolor", _propInfo._linkColor, BLUE);
-	Common::copy(&_propInfo._linkColor[0], &_propInfo._linkSave[3], &_monoInfo._linkColor[0]);
-	Common::copy(&_propInfo._linkColor[0], &_propInfo._linkSave[3], &_propInfo._linkSave[0]);
+	_monoInfo._linkColor = _propInfo._linkColor;
+	_propInfo._linkSave = _propInfo._linkColor;
 
-	get("bordercolor", _borderColor);
-	get("bordercolor", _borderSave);
+	get("bordercolor", _borderColor, nullptr);
+	get("bordercolor", _borderSave, nullptr);
 	get("windowcolor", _windowColor, WHITE);
 	get("windowcolor", _windowSave, WHITE);
 	get("lcd", _lcd, 1);
-	get("caretcolor", _propInfo._caretColor);
-	get("caretcolor", _propInfo._caretSave);
+	get("caretcolor", _propInfo._caretColor, nullptr);
+	get("caretcolor", _propInfo._caretSave, nullptr);
 	get("caretshape", _propInfo._caretShape, 2);
 
 	_propInfo._linkStyle = _monoInfo._linkStyle = ConfMan.hasKey("linkstyle")
@@ -165,11 +165,11 @@ Conf::Conf(InterpreterType interpType) {
 			char *bg = strtok(nullptr, "\r\n\t ");
 
 			if (tg == 0) {
-				parseColor(fg, _tStyles[style].fg);
-				parseColor(bg, _tStyles[style].bg);
+				_tStyles[style].fg = parseColor(fg);
+				_tStyles[style].bg = parseColor(bg);
 			} else {
-				parseColor(fg, _gStyles[style].fg);
-				parseColor(bg, _gStyles[style].bg);
+				_gStyles[style].fg = parseColor(fg);
+				_gStyles[style].bg = parseColor(bg);
 			}
 		}
 	}
@@ -201,13 +201,13 @@ void Conf::get(const Common::String &key, Common::String &field, const char *def
 	field.trim();
 }
 
-void Conf::get(const Common::String &key, byte *color, const byte *defaultColor) {
+void Conf::get(const Common::String &key, uint &color, const byte *defaultColor) {
 	if (ConfMan.hasKey(key)) {
-		parseColor(ConfMan.get(key), color);
+		color = parseColor(ConfMan.get(key));
 	} else if (defaultColor) {
-		Common::copy(defaultColor, defaultColor + 3, color);
+		color = g_system->getScreenFormat().RGBToColor(defaultColor[0], defaultColor[1], defaultColor[2]);
 	} else {
-		Common::fill(color, color + 3, 0);
+		color = 0;
 	}
 }
 
@@ -227,8 +227,9 @@ void Conf::get(const Common::String &key, double &field, double defaultVal) {
 	field = ConfMan.hasKey(key) ?  atof(ConfMan.get(key).c_str()) : defaultVal;
 }
 
-void Conf::parseColor(const Common::String &str, byte *color) {
+uint Conf::parseColor(const Common::String &str) {
 	char r[3], g[3], b[3];
+	uint rv, gv, bv;
 
 	if (str.size() == 6) {
 		r[0] = str[0];
@@ -241,10 +242,13 @@ void Conf::parseColor(const Common::String &str, byte *color) {
 		b[1] = str[5];
 		b[2] = 0;
 
-		color[0] = strtol(r, nullptr, 16);
-		color[1] = strtol(g, nullptr, 16);
-		color[2] = strtol(b, nullptr, 16);
+		rv = strtol(r, nullptr, 16);
+		gv = strtol(g, nullptr, 16);
+		bv = strtol(b, nullptr, 16);
+		return g_system->getScreenFormat().RGBToColor(rv, gv, bv);
 	}
+
+	return 0;
 }
 
 } // End of namespace Glk

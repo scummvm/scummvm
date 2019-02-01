@@ -236,13 +236,7 @@ void WindowStream::setZColors(uint fg, uint bg) {
 	if (!_writable || !g_conf->_styleHint)
 		return;
 
-	byte fore[3], back[3];
-	fore[0] = (fg >> 16) & 0xff;
-	fore[1] = (fg >> 8) & 0xff;
-	fore[2] = (fg) & 0xff;
-	back[0] = (bg >> 16) & 0xff;
-	back[1] = (bg >> 8) & 0xff;
-	back[2] = (bg) & 0xff;
+	uint fore = fg, back = bg;
 
 	if (fg != zcolor_Transparent && fg != zcolor_Cursor) {
 		PropFontInfo *info = &g_conf->_propInfo;
@@ -253,18 +247,18 @@ void WindowStream::setZColors(uint fg, uint bg) {
 			Windows::_overrideFgSet = false;
 			Windows::_overrideFgVal = 0;
 
-			Common::copy(info->_moreSave, info->_moreSave + 3, info->_moreColor);
-			Common::copy(info->_caretSave, info->_caretSave + 3, info->_caretColor);
-			Common::copy(info->_linkSave, info->_linkSave + 3, info->_linkColor);
+			info->_moreColor = info->_moreSave;
+			info->_caretColor = info->_caretSave;
+			info->_linkColor = info->_linkSave;
 		} else if (fg != zcolor_Current) {
 			_window->_attr.fgset = 1;
 			_window->_attr.fgcolor = fg;
 			Windows::_overrideFgSet = true;
 			Windows::_overrideFgVal = fg;
 
-			Common::copy(fore, fore + 3, info->_moreColor);
-			Common::copy(fore, fore + 3, info->_caretColor);
-			Common::copy(fore, fore + 3, info->_linkColor);
+			info->_moreColor = fore;
+			info->_caretColor = fore;
+			info->_linkColor = fore;
 		}
 	}
 
@@ -275,16 +269,16 @@ void WindowStream::setZColors(uint fg, uint bg) {
 			Windows::_overrideBgSet = false;
 			Windows::_overrideBgVal = 0;
 
-			Common::copy(g_conf->_windowSave, g_conf->_windowSave + 3, g_conf->_windowColor);
-			Common::copy(g_conf->_borderSave, g_conf->_borderSave + 3, g_conf->_borderColor);
+			g_conf->_windowColor = g_conf->_windowSave;
+			g_conf->_borderColor = g_conf->_borderSave;
 		} else if (bg != zcolor_Current) {
 			_window->_attr.bgset = 1;
 			_window->_attr.bgcolor = bg;
 			Windows::_overrideBgSet = true;
 			Windows::_overrideBgVal = bg;
 
-			Common::copy(back, back + 3, g_conf->_windowColor);
-			Common::copy(back, back + 3, g_conf->_borderColor);
+			g_conf->_windowColor = back;
+			g_conf->_borderColor = back;
 		}
 	}
 

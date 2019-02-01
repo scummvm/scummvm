@@ -28,26 +28,21 @@
 namespace Glk {
 
 FontInfo::FontInfo() : _size(0), _aspect(0), _cellW(0), _cellH(0), _leading(0), _baseLine(0),
-		_linkStyle(0), _moreFont(PROPB), _moreAlign(0), _caps(0) {
-	Common::fill(&_linkColor[0], &_linkColor[3], 0);
-	Common::fill(&_linkSave[0], &_linkSave[3], 0);
-	Common::fill(&_moreColor[0], &_moreColor[3], 0);
-	Common::fill(&_moreSave[0], &_moreSave[3], 0);
+		_linkStyle(0), _moreFont(PROPB), _moreAlign(0), _caps(0), _linkColor(0), _linkSave(0),
+		_moreColor(0), _moreSave(0) {
 }
 
 /*--------------------------------------------------------------------------*/
 
-PropFontInfo::PropFontInfo() : _justify(0), _quotes(0), _dashes(0), _spaces(0), _caretShape(0), _lineSeparation(2) {
-	Common::fill(&_caretColor[0], &_caretColor[3], 0);
-	Common::fill(&_caretSave[0], &_caretSave[3], 0);
+PropFontInfo::PropFontInfo() : _justify(0), _quotes(0), _dashes(0), _spaces(0), _caretShape(0),
+		_lineSeparation(2), _caretColor(0), _caretSave(0) {
 }
 
 /*--------------------------------------------------------------------------*/
 
 void PropFontInfo::drawCaret(const Point &pos) {
-	const byte *rgb = _caretColor;
+	uint color = _caretColor;
 	Graphics::Screen &s = *g_vm->_screen;
-	uint color = s.format.RGBToColor(rgb[0], rgb[1], rgb[2]);
 	int x = pos.x / GLI_SUBPIX, y = pos.y;
 
 	switch (_caretShape) {

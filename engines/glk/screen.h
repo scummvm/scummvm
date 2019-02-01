@@ -83,34 +83,34 @@ public:
 	void initialize();
 
 	/**
-	 * Fills the screen with a given rgb color
+	 * Fills the screen with a given color
 	 */
-	void fill(const byte *rgb);
+	void fill(uint color);
 
 	/**
-	 * Fill a given area of the screen with an rgb color
+	 * Fill a given area of the screen with a given color
 	 */
-	void fillRect(const Rect &box, const byte *rgb);
+	void fillRect(const Rect &box, uint color);
 
 	/**
 	 * Draws a string using the specified font at the given co-ordinates
 	 * @param pos       Position for the bottom-left corner the text will be drawn with
 	 * @param fontIdx   Which font to use
-	 * @param rgb       RGB tuplet specifying the text color
+	 * @param color     Text color
 	 * @param text      The text to draw
 	 * @param spw       ??
 	 */
-	int drawString(const Point &pos, int fontIdx, const byte *rgb, const Common::String &text, int spw = 0);
+	int drawString(const Point &pos, int fontIdx, uint color, const Common::String &text, int spw = 0);
 
 	/**
 	 * Draws a unicode string using the specified font at the given co-ordinates
 	 * @param pos       Position for the bottom-left corner the text will be drawn with
 	 * @param fontIdx   Which font to use
-	 * @param rgb       RGB tuplet specifying the text color
+	 * @param color     Text color
 	 * @param text      The text to draw
 	 * @param spw       ??
 	 */
-	int drawStringUni(const Point &pos, int fontIdx, const byte *rgb, const Common::U32String &text, int spw = 0);
+	int drawStringUni(const Point &pos, int fontIdx, uint color, const Common::U32String &text, int spw = 0);
 
 	/**
 	 * Get the width in pixels of a string

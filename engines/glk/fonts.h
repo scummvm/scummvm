@@ -41,8 +41,8 @@ struct FontInfo {
 	int _cellW, _cellH;
 	int _leading;
 	int _baseLine;
-	byte _linkColor[3], _linkSave[3];
-	byte _moreColor[3], _moreSave[3];
+	uint _linkColor, _linkSave;
+	uint _moreColor, _moreSave;
 	int _linkStyle;
 	FACES _moreFont;
 	int _moreAlign;
@@ -65,7 +65,7 @@ struct MonoFontInfo : public FontInfo {
  * Font info for proportional (variable size) fonts
  */
 struct PropFontInfo : public MonoFontInfo {
-	byte _caretColor[3], _caretSave[3];
+	uint _caretColor, _caretSave;
 	int _caretShape;
 	int _justify;
 	int _quotes;

@@ -30,7 +30,7 @@ namespace Glk {
 GraphicsWindow::GraphicsWindow(Windows *windows, uint rock) : Window(windows, rock),
 	_w(0), _h(0), _dirty(false), _surface(nullptr) {
 	_type = wintype_Graphics;
-	Common::copy(&_bgColor[0], &_bgColor[3], _bgnd);
+	_bgColor = _bgnd;
 }
 
 GraphicsWindow::~GraphicsWindow() {
@@ -62,9 +62,10 @@ void GraphicsWindow::rearrange(const Rect &box) {
 	if (newhgt < bothhgt)
 		bothhgt = newhgt;
 
+	// Create it
 	Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
 	newSurface = new Graphics::ManagedSurface(newwid, newhgt, pixelFormat);
-	newSurface->clear(pixelFormat.RGBToColor(_bgnd[0], _bgnd[1], _bgnd[2]));
+	newSurface->clear(_bgnd);
 
 	// If the new surface is equal or bigger than the old one, copy it over
 	if (_surface && bothwid && bothhgt)
@@ -147,18 +148,13 @@ void GraphicsWindow::eraseRect(bool whole, const Rect &box) {
 	// zero out hyperlinks for these coordinates
 	g_vm->_selection->putHyperlink(0, hx0, hy0, hx1, hy1);
 
-	_surface->fillRect(Rect(x0, y0, x1, y1), _surface->format.RGBToColor(_bgnd[0], _bgnd[1], _bgnd[2]));
+	_surface->fillRect(Rect(x0, y0, x1, y1), _bgnd);
 	touch();
 }
 
 void GraphicsWindow::fillRect(uint color, const Rect &box) {
-	unsigned char col[3];
 	int x0 = box.left, y0 = box.top, x1 = box.right, y1 = box.bottom;
 	int hx0, hx1, hy0, hy1;
-
-	col[0] = (color >> 16) & 0xff;
-	col[1] = (color >> 8) & 0xff;
-	col[2] = (color >> 0) & 0xff;
 
 	if (x0 < 0) x0 = 0;
 	if (y0 < 0) y0 = 0;
@@ -177,7 +173,7 @@ void GraphicsWindow::fillRect(uint color, const Rect &box) {
 	// zero out hyperlinks for these coordinates
 	g_vm->_selection->putHyperlink(0, hx0, hy0, hx1, hy1);
 
-	_surface->fillRect(Rect(x0, y0, x1, y1), MKTAG(col[0], col[1], col[2], 0));
+	_surface->fillRect(Rect(x0, y0, x1, y1), color);
 	touch();
 }
 
@@ -241,9 +237,7 @@ void GraphicsWindow::getSize(uint *width, uint *height) const {
 }
 
 void GraphicsWindow::setBackgroundColor(uint color) {
-	_bgnd[0] = (color >> 16) & 0xff;
-	_bgnd[1] = (color >> 8) & 0xff;
-	_bgnd[2] = (color >> 0) & 0xff;
+	_bgnd = color;
 }
 
 void GraphicsWindow::click(const Point &newPos) {

@@ -572,7 +572,7 @@ void TextGridWindow::redraw() {
 	int i, a, b, k, o;
 	uint link;
 	int font;
-	const byte *fgcolor, *bgcolor;
+	uint fgcolor, bgcolor;
 	Screen &screen = *g_vm->_screen;
 
 	Window::redraw();

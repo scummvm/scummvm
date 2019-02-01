@@ -37,7 +37,7 @@ private:
 
 	void drawPicture(Picture *src, int x0, int y0, int width, int height, uint linkval);
 public:
-	unsigned char _bgnd[3];
+	uint _bgnd;
 	bool _dirty;
 	uint _w, _h;
 	Graphics::ManagedSurface *_surface;

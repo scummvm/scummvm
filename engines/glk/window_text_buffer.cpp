@@ -382,7 +382,7 @@ void TextBufferWindow::putCharUni(uint32 ch) {
 	int saved;
 	int i;
 	int linelen;
-	byte *color;
+	uint color;
 
 	gli_tts_speak(&ch, 1);
 
@@ -788,7 +788,7 @@ void TextBufferWindow::redraw() {
 	int a, b;
 	uint link;
 	int font;
-	const byte *color;
+	uint color;
 	int i;
 	int hx0, hx1, hy0, hy1;
 	int selrow, selchar, sx0, sx1, selleft, selright;
