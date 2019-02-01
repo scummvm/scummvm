@@ -91,7 +91,7 @@ bool AIScriptOfficerLeary::Update() {
 		return false;
 	}
 
-	if ( Game_Flag_Query(623)
+	if ( Game_Flag_Query(kFlagUG07Empty)
 	 && !Game_Flag_Query(664)
 	) {
 		Game_Flag_Set(664);

@@ -152,7 +152,7 @@ bool SceneScriptDR06::ClickedOn3DObject(const char *objectName, bool a2) {
 			}
 
 			if (!Game_Flag_Query(kFlagDR06MannequinHeadOpen)) {
-				Overlay_Play("DR06ovr2", 0, 1, 0, 0);
+				Overlay_Play("DR06ovr2", 0, true, false, 0);
 				Game_Flag_Set(kFlagDR06MannequinHeadOpen);
 				Sound_Play(160, 100, 0, 0, 50);
 				if (!Actor_Clue_Query(kActorMcCoy, kClueEnvelope)) {
@@ -202,6 +202,7 @@ bool SceneScriptDR06::ClickedOnExit(int exitId) {
 		}
 		return true;
 	}
+
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -707.57f, 136.6f, -1132.64f, 0, true, false, 0)) {
 			Game_Flag_Set(kFlagDR06toUG16);

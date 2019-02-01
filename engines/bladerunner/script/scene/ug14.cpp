@@ -83,7 +83,7 @@ bool SceneScriptUG14::ClickedOnExit(int exitId) {
 	bool v1 = y > 57.0f;
 
 
-	if (!exitId == 0) {
+	if (exitId == 0) {
 		if (v1) {
 			if (Loop_Actor_Walk_To_XYZ(kActorMcCoy, 141.47f, 128.92f, -150.16f, 0, true, false, 0)) {
 				return false;
@@ -133,6 +133,7 @@ bool SceneScriptUG14::ClickedOnExit(int exitId) {
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 13, true, kAnimationModeIdle);
 			Footstep_Sound_Override_Off();
 		}
+
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 157.0f, 128.92f, -108.01f, 0, true, false, 0)) {
 			Footstep_Sound_Override_On(3);
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 6, true, kAnimationModeIdle);

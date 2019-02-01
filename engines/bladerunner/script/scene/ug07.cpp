@@ -35,7 +35,7 @@ void SceneScriptUG07::InitializeScene() {
 		Game_Flag_Reset(kFlagUG10toUG07);
 	}
 
-	if (Game_Flag_Query(623)) {
+	if (Game_Flag_Query(kFlagUG07Empty)) {
 		Scene_Exit_Add_2D_Exit(0,   0, 192,  51, 334, 0);
 		Scene_Exit_Add_2D_Exit(1, 226, 224, 314, 396, 1);
 	}
@@ -176,7 +176,7 @@ void SceneScriptUG07::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptUG07::PlayerWalkedIn() {
 	if ( Global_Variable_Query(kVariableChapter) == 4
-	 && !Game_Flag_Query(623)
+	 && !Game_Flag_Query(kFlagUG07Empty)
 	) {
 		Actor_Set_Goal_Number(kActorOfficerLeary, 307);
 		Actor_Set_Goal_Number(kActorOfficerGrayford, 307);

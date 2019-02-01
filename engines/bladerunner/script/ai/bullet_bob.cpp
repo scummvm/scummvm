@@ -79,7 +79,7 @@ bool AIScriptBulletBob::Update() {
 		Actor_Face_Heading(kActorBulletBob, 208, false);
 		_animationFrame = 0;
 		_animationState = 2;
-		Actor_Set_Goal_Number(kActorBulletBob, kGoalBulletBobShotMcCoy);
+		Actor_Set_Goal_Number(kActorBulletBob, kGoalBulletBobWillShotMcCoy);
 		Game_Flag_Set(kFlagRC04BobShootMcCoy);
 		return true;
 	}
@@ -142,7 +142,7 @@ bool AIScriptBulletBob::ShotAtAndHit() {
 	Global_Variable_Increment(kVariableBobShot, 1);
 	if (Global_Variable_Query(kVariableBobShot) > 0) {
 		Actor_Set_Targetable(kActorBulletBob, false);
-		Actor_Set_Goal_Number(kActorBulletBob, 99);
+		Actor_Set_Goal_Number(kActorBulletBob, kGoalBulletBobGone);
 		_animationFrame = 0;
  		_animationState = 3;
 		Ambient_Sounds_Play_Speech_Sound(kActorGordo, 9000, 100, 0, 0, 0); // not a typo, it's really from Gordo
@@ -178,7 +178,7 @@ bool AIScriptBulletBob::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 	}
 
-	if (newGoalNumber == kGoalBulletBobDead
+	if ( newGoalNumber == kGoalBulletBobDead
 	 && !Actor_Clue_Query(kActorMcCoy, kClueVKBobGorskyReplicant)
 	) {
 		Delay(2000);
@@ -189,11 +189,11 @@ bool AIScriptBulletBob::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 	}
 
-	if (newGoalNumber == 6) {
+	if (newGoalNumber == kGoalBulletBobShotMcCoy) {
 		Scene_Exits_Disable();
 		Actor_Force_Stop_Walking(kActorMcCoy);
 		Ambient_Sounds_Play_Speech_Sound(kActorMcCoy, 9900, 100, 0, 0, 0);
-		Actor_Change_Animation_Mode(kActorMcCoy, 48);
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
 		Actor_Retired_Here(kActorMcCoy, 6, 6, 1, -1);
 		Scene_Exits_Enable();
 		return true;
@@ -268,7 +268,7 @@ bool AIScriptBulletBob::UpdateAnimation(int *animation, int *frame) {
 		}
 		if (_animationFrame == 5) {
 			Sound_Play(493, 90, 0, 0, 50);
-			Actor_Set_Goal_Number(kActorBulletBob, 6);
+			Actor_Set_Goal_Number(kActorBulletBob, kGoalBulletBobShotMcCoy);
 		}
 		break;
 

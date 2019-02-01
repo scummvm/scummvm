@@ -24,6 +24,13 @@
 
 namespace BladeRunner {
 
+enum kUG08Loops {
+	kUG08LoopElevatorComingUp  = 0,
+	kUG08LoopMainLoopElevator  = 1,
+	kUG08LoopElevatorGoingDown = 3,
+	kUG08LoopMainNoElevator    = 4
+};
+
 void SceneScriptUG08::InitializeScene() {
 	if (Game_Flag_Query(kFlagUG13toUG08)) {
 		Setup_Scene_Information(-124.0f, 93.18f,   71.0f, 745);
@@ -50,18 +57,18 @@ void SceneScriptUG08::InitializeScene() {
 	Ambient_Sounds_Add_Sound(304, 5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(305, 5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
 
-	if (!Game_Flag_Query(610)) {
-		Game_Flag_Set(431);
-		Game_Flag_Set(610);
+	if (!Game_Flag_Query(kFlagUG08Entered)) {
+		Game_Flag_Set(kFlagUB08ElevatorUp);
+		Game_Flag_Set(kFlagUG08Entered);
 	}
 
 	if (Game_Flag_Query(kFlagUG13toUG08)) {
-		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
-		Scene_Loop_Set_Default(1);
-	} else if (Game_Flag_Query(431)) {
-		Scene_Loop_Set_Default(1);
+		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kUG08LoopElevatorComingUp, false);
+		Scene_Loop_Set_Default(kUG08LoopMainLoopElevator);
+	} else if (Game_Flag_Query(kFlagUB08ElevatorUp)) {
+		Scene_Loop_Set_Default(kUG08LoopMainLoopElevator);
 	} else {
-		Scene_Loop_Set_Default(4);
+		Scene_Loop_Set_Default(kUG08LoopMainNoElevator);
 	}
 }
 
@@ -108,9 +115,9 @@ bool SceneScriptUG08::ClickedOnExit(int exitId) {
 			Player_Loses_Control();
 			Actor_Set_Invisible(kActorMcCoy, true);
 			Game_Flag_Set(kFlagUG08toUG13);
-			Game_Flag_Reset(431);
+			Game_Flag_Reset(kFlagUB08ElevatorUp);
 			Set_Enter(kSetUG13, kSceneUG13);
-			Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 3, false);
+			Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kUG08LoopElevatorGoingDown, false);
 			return false;
 		}
 	}

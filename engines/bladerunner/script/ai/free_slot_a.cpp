@@ -51,9 +51,15 @@ void AIScriptFreeSlotA::Initialize() {
 bool AIScriptFreeSlotA::Update() {
 	switch (Global_Variable_Query(kVariableChapter)) {
 	case 4:
-		if (Actor_Query_Which_Set_In(kActorMcCoy) == kSceneUG02 && Actor_Query_Which_Set_In(kActorFreeSlotA) == kSceneUG02) {
+		if (Actor_Query_Which_Set_In(kActorMcCoy) == kSceneUG02
+		 && Actor_Query_Which_Set_In(kActorFreeSlotA) == kSceneUG02
+		) {
 			int goal = Actor_Query_Goal_Number(kActorFreeSlotA);
-			if ((goal == 302 || goal == 303) && Actor_Query_Inch_Distance_From_Actor(kActorFreeSlotA, kActorMcCoy) <= 48) {
+			if ((goal == 302
+			  || goal == 303
+			 )
+			 && Actor_Query_Inch_Distance_From_Actor(kActorFreeSlotA, kActorMcCoy) <= 48
+			) {
 				Actor_Set_Goal_Number(kActorFreeSlotA, 304);
 			} else if (goal == 309) {
 				float x, y, z;
@@ -72,7 +78,8 @@ bool AIScriptFreeSlotA::Update() {
 			switch (Actor_Query_Goal_Number(kActorFreeSlotA)) {
 			case 306:
 				if (Actor_Query_Which_Set_In(kActorFreeSlotA) == Player_Query_Current_Set()
-						&& Actor_Query_Inch_Distance_From_Actor(kActorFreeSlotA, kActorMcCoy) <= 48) {
+				 && Actor_Query_Inch_Distance_From_Actor(kActorFreeSlotA, kActorMcCoy) <= 48
+				) {
 					Actor_Set_Goal_Number(kActorFreeSlotA, 308);
 				}
 				break;

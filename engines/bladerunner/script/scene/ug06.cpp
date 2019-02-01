@@ -140,7 +140,7 @@ void SceneScriptUG06::PlayerWalkedIn() {
 	}
 
 	if ( Global_Variable_Query(kVariableChapter) == 4
-	 && !Game_Flag_Query(524)
+	 && !Game_Flag_Query(kFlagUG06Chapter4Started)
 	) {
 		Player_Loses_Control();
 		Actor_Voice_Over(2620, kActorVoiceOver);
@@ -153,7 +153,7 @@ void SceneScriptUG06::PlayerWalkedIn() {
 		Actor_Voice_Over(2690, kActorVoiceOver);
 		Actor_Voice_Over(2700, kActorVoiceOver);
 		Player_Gains_Control();
-		Game_Flag_Set(524);
+		Game_Flag_Set(kFlagUG06Chapter4Started);
 		Autosave_Game(2);
 	}
 	//return false;

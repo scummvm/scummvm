@@ -457,7 +457,7 @@ void SceneScriptRC04::PlayerWalkedIn() {
 	) {
 		Actor_Says(kActorDispatcher, 40, 3);
 		Actor_Says(kActorBulletBob, 890, 37);
-		Actor_Set_Goal_Number(kActorBulletBob, 2);
+		Actor_Set_Goal_Number(kActorBulletBob, kGoalBulletBobShootMcCoy);
 	}
 
 	Game_Flag_Set(kFlagRC04Entered);

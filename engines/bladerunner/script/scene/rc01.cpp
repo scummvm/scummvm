@@ -405,7 +405,7 @@ void SceneScriptRC01::walkToCenter() {
 bool SceneScriptRC01::ClickedOnExit(int exitId) {
 	if (exitId == kRC01ExitRC02) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -174.77f, 5.55f, 25.95f, 12, true, false, 0)) {
-			if (Game_Flag_Query(705)) {
+			if (Game_Flag_Query(kFlagRC02RunciterTalkWithGun)) {
 				Actor_Says(kActorMcCoy, 8522, 14);
 			} else {
 				switch (Global_Variable_Query(kVariableChapter)) {

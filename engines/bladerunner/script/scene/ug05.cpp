@@ -123,13 +123,15 @@ bool SceneScriptUG05::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptUG05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (Game_Flag_Query(663) && !Game_Flag_Query(368)) {
+		if ( Game_Flag_Query(663)
+		 && !Game_Flag_Query(368)
+		) {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -356.35f, 132.77f, -1092.36f, 0, false, false, 0);
 			Game_Flag_Set(kFlagUG06toHF07);
 			Set_Enter(kSetHF07, kSceneHF07);
 		} else if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -156.72f, 3.03f, -1118.17f, 0, true, false, 0)) {
 			Actor_Face_Heading(kActorMcCoy, 760, false);
-			Loop_Actor_Travel_Stairs(kActorMcCoy, 3, 1, kAnimationModeIdle);
+			Loop_Actor_Travel_Stairs(kActorMcCoy, 3, true, kAnimationModeIdle);
 			Game_Flag_Set(kFlagUG06toHF07);
 			Set_Enter(kSetHF07, kSceneHF07);
 		}

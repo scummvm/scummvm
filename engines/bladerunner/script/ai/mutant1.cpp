@@ -295,7 +295,7 @@ bool AIScriptMutant1::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			break;
 
 		case 8:
-			if (Game_Flag_Query(623) == 1) {
+			if (Game_Flag_Query(kFlagUG07Empty)) {
 				AI_Movement_Track_Append(kActorMutant1, 418, 0);
 				AI_Movement_Track_Append(kActorMutant1, 417, 0);
 				AI_Movement_Track_Append(kActorMutant1, 539, 0);

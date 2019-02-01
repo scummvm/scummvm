@@ -131,12 +131,15 @@ void SceneScriptMA07::PlayerWalkedIn() {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -268.0f, -162.8f, 188.0f, 0, false, false, 0);
 		Game_Flag_Reset(kFlagPS14toMA07);
 	}
+
 	if (Actor_Query_Goal_Number(kActorRachael) == 300) {
 		Actor_Set_Goal_Number(kActorRachael, 305);
 	}
+
 	if (Game_Flag_Query(kFlagMA06toMA07)) {
 		Game_Flag_Reset(kFlagMA06toMA07);
 	}
+
 	if (!Game_Flag_Query(648)
 	 &&  Game_Flag_Query(671)
 	 &&  Global_Variable_Query(kVariableChapter) == 4
@@ -144,6 +147,7 @@ void SceneScriptMA07::PlayerWalkedIn() {
 		Scene_Exits_Disable();
 		Actor_Set_Goal_Number(kActorGaff, 300);
 	}
+
 	if (Game_Flag_Query(666)) {
 		Actor_Voice_Over(1360, kActorVoiceOver);
 		Actor_Voice_Over(1370, kActorVoiceOver);

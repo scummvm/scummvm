@@ -160,7 +160,7 @@ void SceneScriptRC02::dialogueWithRunciter() {
 		Actor_Says(kActorRunciter, 130, 19);
 		Actor_Says(kActorMcCoy, 4605, 13);
 		Actor_Says(kActorRunciter, 140, 16);
-		Game_Flag_Set(kFlagRC02TalkedToRunciter);
+		Game_Flag_Set(kFlagRC02RunciterTalk1);
 		break;
 
 	case 10: // LUCY
@@ -223,18 +223,12 @@ bool SceneScriptRC02::ClickedOnActor(int actorId) {
 				} else {
 					Actor_Says(kActorMcCoy, 8720, 17);
 				}
-			} else if (Game_Flag_Query(705)
-					|| Game_Flag_Query(706)
+				return true;
+			}
+
+			if (!Game_Flag_Query(kFlagRC02RunciterTalkWithGun)
+			 && !Game_Flag_Query(kFlagRC02RunciterTalk2)
 			) {
-				Actor_Says(kActorMcCoy, 4805, 11);
-				Actor_Face_Actor(kActorRunciter, kActorMcCoy, true);
-				if (Game_Flag_Query(706)) {
-					Actor_Says(kActorRunciter, 720, 15);
-				} else {
-					Actor_Says(kActorRunciter, 730, 14);
-				}
-				Actor_Face_Heading(kActorRunciter, 1007, false);
-			} else {
 				Actor_Says(kActorMcCoy, 4690, 11);
 				Actor_Says(kActorMcCoy, 4695, 13);
 				Actor_Face_Actor(kActorRunciter, kActorMcCoy, true);
@@ -251,14 +245,25 @@ bool SceneScriptRC02::ClickedOnActor(int actorId) {
 					Actor_Says(kActorRunciter, 430, 16);
 					Actor_Face_Heading(kActorRunciter, 1007, false);
 				}
-				Game_Flag_Set(706);
+				Game_Flag_Set(kFlagRC02RunciterTalk2);
+				return true;
 			}
+
+			Actor_Says(kActorMcCoy, 4805, 11);
+			Actor_Face_Actor(kActorRunciter, kActorMcCoy, true);
+			if (Game_Flag_Query(kFlagRC02RunciterTalk2)) {
+				Actor_Says(kActorRunciter, 720, 15);
+			} else {
+				Actor_Says(kActorRunciter, 730, 14);
+			}
+			Actor_Face_Heading(kActorRunciter, 1007, false);
 			return true;
 		}
 
 		AI_Movement_Track_Pause(kActorRunciter);
 		Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorRunciter, 48, true, false);
 		Actor_Face_Actor(kActorMcCoy, kActorRunciter, true);
+
 		if (!Game_Flag_Query(kFlagRC02RunciterInterview)) {
 			Actor_Says(kActorMcCoy, 4560, 13);
 			Actor_Face_Actor(kActorRunciter, kActorMcCoy, true);
@@ -274,7 +279,7 @@ bool SceneScriptRC02::ClickedOnActor(int actorId) {
 			return true;
 		}
 
-		if (Game_Flag_Query(kFlagRC02TalkedToRunciter)) {
+		if (Game_Flag_Query(kFlagRC02RunciterTalk1)) {
 			if (Player_Query_Agenda() == kPlayerAgendaPolite) {
 				Game_Flag_Reset(kFlagNotUsed0);
 				dialogueWithRunciter();
@@ -302,7 +307,7 @@ bool SceneScriptRC02::ClickedOnActor(int actorId) {
 				Actor_Says(kActorRunciter, 240, 16);
 				Actor_Says(kActorMcCoy, 4640, 17);
 			}
-			Game_Flag_Reset(kFlagRC02TalkedToRunciter);
+			Game_Flag_Reset(kFlagRC02RunciterTalk1);
 			AI_Movement_Track_Unpause(kActorRunciter);
 			return true;
 		}
@@ -346,6 +351,7 @@ bool SceneScriptRC02::ClickedOnExit(int exitId) {
 		}
 		return true;
 	}
+
 	if (exitId == kRC02ExitRC51) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -20.2f, -1238.73f, 108152.73f, 0, true, false, 0)) {
 			Async_Actor_Walk_To_XYZ(kActorMcCoy, -8.87f, -1238.89f, 108076.27f, 0, false);
@@ -382,12 +388,12 @@ void SceneScriptRC02::PlayerWalkedIn() {
 			Game_Flag_Set(kFlagRC02Entered);
 		}
 		if (Actor_Query_Which_Set_In(kActorRunciter) == kSetRC02_RC51
-		 && Actor_Query_Goal_Number(kActorRunciter) < kGoalRunciterAtShop
+		 && Actor_Query_Goal_Number(kActorRunciter) < kGoalRunciterRC02Wait
 		) {
-			Actor_Set_Goal_Number(kActorRunciter, kGoalRunciterWalkAroundRC02);
+			Actor_Set_Goal_Number(kActorRunciter, kGoalRunciterRC02WalkAround);
 		}
-		if ( Actor_Query_Goal_Number(kActorRunciter) == kGoalRunciterAtShop
-		 && !Game_Flag_Query(704)
+		if ( Actor_Query_Goal_Number(kActorRunciter) == kGoalRunciterRC02Wait
+		 && !Game_Flag_Query(kFlagRC02EnteredChapter4)
 		) {
 			Actor_Face_Actor(kActorRunciter, kActorMcCoy, true);
 			Actor_Says(kActorRunciter, 370, 12);
@@ -399,7 +405,7 @@ void SceneScriptRC02::PlayerWalkedIn() {
 			Actor_Face_Heading(kActorRunciter, 1007, false);
 			Actor_Says(kActorRunciter, 400, 13);
 			Actor_Says(kActorRunciter, 410, 12);
-			Game_Flag_Set(704);
+			Game_Flag_Set(kFlagRC02EnteredChapter4);
 		}
 	} else {
 		Player_Loses_Control();

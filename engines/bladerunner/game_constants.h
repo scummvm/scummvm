@@ -626,7 +626,7 @@ enum Flags {
 	kFlagSteeleInChinaTown = 184,
 	kFlagSteeleInPoliceStation = 185,
 	kFlagRC01PoliceDone = 186,
-	kFlagRC02TalkedToRunciter = 187,
+	kFlagRC02RunciterTalk1 = 187,
 	// 188 is never used
 	// 189 is never used
 	kFlagRC02ShellCasingsTaken = 190,
@@ -860,7 +860,7 @@ enum Flags {
 	kFlagUG09ToUG07 = 428,
 	kFlagUG08toUG13 = 429,
 	kFlagUG13toUG08 = 430,
-
+	kFlagUB08ElevatorUp = 431,
 	kFlagUG09toCT12 = 432,
 	kFlagCT12ToUG09 = 433,
 	kFlagUG13toUG18 = 434, // is never checked
@@ -933,6 +933,7 @@ enum Flags {
 	kFlagTB06DogCollarTaken = 519,
 	kFlagTB06KitchenBoxTaken = 520,
 	kFlagHC03TrapDoorOpened = 521,
+	kFlagUG06Chapter4Started = 524,
 	kFlagCT10Entered = 525,
 	kFlagHF02toHF03 = 527,
 	kFlagHF03toHF02 = 528,
@@ -958,6 +959,7 @@ enum Flags {
 	kFlagMcCoyTiedDown = 550,
 	kFlagUG16toDR06 = 551, // is never checked
 	kFlagDR06toUG16 = 552,
+	kFlagUG13Entered = 553,
 	kFlagDR01toCT11 = 558,
 	kFlagNR02GordoLeaveLighter = 561,
 	kFlagHF05CrazyLegsTalk1 = 562,
@@ -992,6 +994,7 @@ enum Flags {
 	kFlagNR04EarlyQStungByScorpions = 606,
 	kFlagTB07toTB02 = 608,
 	kFlagNR04McCoyAimedAtEarlyQ = 609,
+	kFlagUG08Entered = 610,
 	kFlagNR03HanoiTalk = 611,
 	kFlagTB07RachaelTalk = 612,
 	kFlagHF03LucyTalk = 613,
@@ -1004,6 +1007,7 @@ enum Flags {
 	kFlagNR08Available = 620,
 	// 621 is never used
 	kFlagNR08TouchedDektora = 622,
+	kFlagUG07Empty = 623,
 	kFlagTB07TyrellMeeting = 625,
 	kFlagNR01McCoyIsDrugged = 627,
 	kFlagNR01DektoraFall = 632,
@@ -1025,6 +1029,7 @@ enum Flags {
 	kFlagMA04PhoneMessageFromLucy = 650,
 	kFlagNR08McCoyWatchingShow = 651,
 	kFlagCrazylegsArrestedTalk = 652,
+	kFlagMA02RajifTalk = 655,
 	kFlagUG02RagiationGooglesTaken = 656,
 	kFlagNR11BreakWindow = 659,
 	kFlagDNARowAvailableTalk = 660,
@@ -1044,6 +1049,9 @@ enum Flags {
 	kFlagUG03DeadHomeless = 693,
 	kFlagUG14DeadHomeless = 694,
 	kFlagBulletBobDead = 702,
+	kFlagRC02EnteredChapter4 = 704,
+	kFlagRC02RunciterTalkWithGun = 705,
+	kFlagRC02RunciterTalk2 = 706,
 	kFlagTB06PhotographTalk1 = 707,
 	kFlagUG02AmmoTaken = 708,
 	kFlagRC51Discovered = 709,
@@ -1275,27 +1283,27 @@ enum Scenes {
 	kSceneRC03 = 80, // Bullet Bob's Runner Surplus - Outside
 	kSceneRC04 = 81, // Bullet Bob's Runner Surplus - Inside
 	kSceneTB02 = 82, // Tyrell Building - Reception
-	kSceneTB03 = 83,
+	kSceneTB03 = 83, // Tyrell Building - Reception back
 	kSceneTB05 = 84, // Tyrell Building - Grav Test Lab - Iutside
 	kSceneTB06 = 85, // Tyrell Building - Grav Test Lab - Inside
-	kSceneUG01 = 86, // Underground - Under Bullet Bob entrance
-	kSceneUG02 = 87, // Underground - Under Green pawn
-	kSceneUG03 = 88,
-	kSceneUG04 = 89,
-	kSceneUG05 = 90,
-	kSceneUG06 = 91,
-	kSceneUG07 = 92,
-	kSceneUG08 = 93,
-	kSceneUG09 = 94,
-	kSceneUG10 = 95, // Undergound - Bridge
-	kSceneUG12 = 96,
-	kSceneUG13 = 97,
+	kSceneUG01 = 86, // Underground - Under RC03
+	kSceneUG02 = 87, // Underground - Under HC03
+	kSceneUG03 = 88, // Underground - Chair
+	kSceneUG04 = 89, // Underground - Rails with crash - start
+	kSceneUG05 = 90, // Underground - Under HF07 - Rails with cars
+	kSceneUG06 = 91, // Underground - Under NR01 - Metro entrance
+	kSceneUG07 = 92, // Underground - Pipe
+	kSceneUG08 = 93, // Underground - Elevator
+	kSceneUG09 = 94, // Underground - Behind CT12
+	kSceneUG10 = 95, // Underground - Moving bridge
+	kSceneUG12 = 96, // Underground - Gate
+	kSceneUG13 = 97, // Underground - Homeless' living room
 	kSceneUG14 = 98,
 	kSceneUG15 = 99,
-	kSceneUG16 = 100,
-	kSceneUG17 = 101,
-	kSceneUG18 = 102,
-	kSceneUG19 = 103,
+	kSceneUG16 = 100, // Underground - Under DR06
+	kSceneUG17 = 101, // Underground - Under TB03
+	kSceneUG18 = 102, // Underground - Pit
+	kSceneUG19 = 103, // Underground - Under MA07
 	kSceneBB51 = 104, // Bradbury Building - Billiard room - Back
 	kSceneCT51 = 105, // Chinatown - Yukon Hotel - Backroom - back
 	kSceneHC04 = 106, // Hawker's Circle - Kingston kitchen
@@ -1305,8 +1313,7 @@ enum Scenes {
 	kSceneBB12 = 120  // Bradbury Building - Monkey room
 };
 
-enum Sets
-{
+enum Sets {
 	kSetAR01_AR02 = 0,
 	kSetBB02_BB04_BB06_BB51 = 1,
 	kSetBB06_BB07 = 2, //BB06
@@ -1862,15 +1869,17 @@ enum GoalBulletBob {
 	kGoalBulletBobDefault = 0,
 	kGoalBulletBobWarningMcCoy = 1,
 	kGoalBulletBobShootMcCoy = 2,
-	kGoalBulletBobShotMcCoy = 3, // has no use
-	kGoalBulletBobDead = 4
+	kGoalBulletBobWillShotMcCoy = 3, // has no use
+	kGoalBulletBobDead = 4,
+	kGoalBulletBobShotMcCoy = 6,
+	kGoalBulletBobGone = 99
 };
 
 enum GoalRunciter {
 	kGoalRunciterDefault = 0,
-	kGoalRunciterWalkAroundRC02 = 1,
+	kGoalRunciterRC02WalkAround = 1,
 	kGoalRunciterGoToFreeSlotGH = 2,
-	kGoalRunciterAtShop = 300,
+	kGoalRunciterRC02Wait = 300,
 	kGoalRunciterDead = 599
 };
 

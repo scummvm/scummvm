@@ -37,7 +37,9 @@ void AIScriptRajif::Initialize() {
 }
 
 bool AIScriptRajif::Update() {
-	if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_Goal_Number(kActorRajif) < 400)
+	if (Global_Variable_Query(kVariableChapter) == 5
+	 && Actor_Query_Goal_Number(kActorRajif) < 400
+	)
 		Actor_Set_Goal_Number(kActorRajif, 599);
 
 	return false;
@@ -98,6 +100,7 @@ bool AIScriptRajif::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Change_Animation_Mode(kActorRajif, 0);
 		return true;
 	}
+
 	if (newGoalNumber == 599) {
 		Actor_Put_In_Set(kActorRajif, kSetFreeSlotI);
 		Actor_Set_At_Waypoint(kActorRajif, 41, 0);

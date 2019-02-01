@@ -136,7 +136,7 @@ void SceneScriptUG09::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptUG09::PlayerWalkedIn() {
 	if (Global_Variable_Query(kVariableChapter) == 4
-	 && Game_Flag_Query(623)
+	 && Game_Flag_Query(kFlagUG07Empty)
 	) {
 		Game_Flag_Set(630);
 	}

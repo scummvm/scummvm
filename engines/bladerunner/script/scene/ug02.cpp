@@ -30,8 +30,10 @@ void SceneScriptUG02::InitializeScene() {
 	} else {
 		Setup_Scene_Information( -95.0f,  74.78f, -503.0f, 556);
 	}
+
 	Scene_Exit_Add_2D_Exit(0, 529, 130, 607, 277, 0);
 	Scene_Exit_Add_2D_Exit(1, 305,  36, 335, 192, 0);
+
 	Ambient_Sounds_Add_Looping_Sound(332, 43, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(333, 43, 0, 1);
 	Ambient_Sounds_Add_Sound(303, 5, 50, 17, 37, 100, 100, -101, -101, 0, 0);

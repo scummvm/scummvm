@@ -261,7 +261,7 @@ DECLARE_SCRIPT(MA01)
 END_SCRIPT
 
 DECLARE_SCRIPT(MA02)
-	void dialogueWithRajif();
+	void talkWithRajif();
 	bool isPhoneRinging();
 	void selectNextTvNews();
 END_SCRIPT
@@ -483,13 +483,11 @@ DECLARE_SCRIPT(UG12)
 END_SCRIPT
 
 DECLARE_SCRIPT(UG13)
-	void sub_40223C();
 	void sub_4023D8();
 	void sub_4025E0();
-	void sub_402960();
 	int sub_402AD0();
-	void sub_402AD4();
-	void sub_402E24();
+	void dialogueWithHomeless1();
+	void dialogueWithHomeless2();
 END_SCRIPT
 
 DECLARE_SCRIPT(UG14)

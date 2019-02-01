@@ -47,6 +47,7 @@ void SceneScriptHF05::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(2, 589,   0, 639, 479, 1);
 
 	Ambient_Sounds_Add_Looping_Sound(103, 40, 1, 1);
+
 	if (Game_Flag_Query(369)) {
 		Scene_Loop_Set_Default(kHF05LoopMainLoopHole);
 		addAmbientSounds();

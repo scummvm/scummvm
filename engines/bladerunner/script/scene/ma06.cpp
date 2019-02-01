@@ -33,10 +33,13 @@ enum kMA06Loops {
 
 void SceneScriptMA06::InitializeScene() {
 	Setup_Scene_Information(40.0f, 1.0f, -20.0f, 400);
+
 	Ambient_Sounds_Add_Looping_Sound(210, 50, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(408, 33, 0, 1);
+
 	Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kMA06LoopDoorOpen, false);
 	Scene_Loop_Set_Default(kMA06LoopMain);
+
 	Sound_Play(209, 100, 50, 50, 100);
 }
 
@@ -81,10 +84,12 @@ void SceneScriptMA06::PlayerWalkedIn() {
 	Actor_Face_Object(kActorMcCoy, "panel", true);
 	Delay(500);
 	activateElevator();
+
 	if (isElevatorOnDifferentFloor()) {
 		Sound_Play(114, 25, 0, 0, 50);
 		Delay(4000);
 	}
+
 	Game_Flag_Reset(kFlagMA01toMA06);
 	Game_Flag_Reset(kFlagMA02toMA06);
 	Game_Flag_Reset(kFlagMA07toMA06);
@@ -96,6 +101,7 @@ void SceneScriptMA06::PlayerWalkedIn() {
 	} else {
 		Set_Enter(kSetMA07, kSceneMA07);
 	}
+
 	Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kMA06LoopDoorClose, true);
 	Sound_Play(208, 100, 50, 50, 50);
 	//return true;
@@ -130,11 +136,14 @@ void SceneScriptMA06::activateElevator() {
 		if (Game_Flag_Query(kFlagMA06toMA07)) {
 			break;
 		}
-		Actor_Says(kActorAnsweringMachine, 80, 3);
+
+		Actor_Says(kActorAnsweringMachine, 80, kAnimationModeTalk);
 		Player_Gains_Control();
 		int floor = Elevator_Activate(kElevatorMA);
 		Player_Loses_Control();
+
 		Scene_Loop_Start_Special(kSceneLoopModeOnce, kMA06LoopMain, true);
+
 		if (floor > 1) {
 			Game_Flag_Set(kFlagMA06toMA07);
 		} else if (floor == 1) {
@@ -147,12 +156,14 @@ void SceneScriptMA06::activateElevator() {
 			}
 		} else { // floor == 0
 			Actor_Says(kActorMcCoy, 2940, 18);
-			if (Global_Variable_Query(kVariableChapter) == 4 && Game_Flag_Query(655)) {
+			if (Global_Variable_Query(kVariableChapter) == 4
+			 && Game_Flag_Query(kFlagMA02RajifTalk)
+			) {
 				Sound_Play(412, 100, 0, 0, 50);
 				Delay(500);
-				Actor_Says(kActorAnsweringMachine, 610, 3);
+				Actor_Says(kActorAnsweringMachine, 610, kAnimationModeTalk);
 				Delay(500);
-				Actor_Says(kActorMcCoy, 8527, 3);
+				Actor_Says(kActorMcCoy, 8527, kAnimationModeTalk);
 			} else {
 				Game_Flag_Set(kFlagMA06ToMA02);
 				Actor_Says(kActorAnsweringMachine, 90, 3);
