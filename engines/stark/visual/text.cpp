@@ -47,8 +47,8 @@ VisualText::VisualText(Gfx::Driver *gfx) :
 		_align(Graphics::kTextAlignLeft),
 		_targetWidth(600),
 		_targetHeight(600),
-		_fontCustomIndex(-1),
-		_fontType(FontProvider::kBigFont) {
+		_fontType(FontProvider::kBigFont),
+		_fontCustomIndex(-1) {
 	_surfaceRenderer = _gfx->createSurfaceRenderer();
 	_surfaceRenderer->setNoScalingOverride(true);
 }
@@ -129,24 +129,31 @@ void VisualText::createTexture() {
 	uint originalLineHeight = StarkFontProvider->getOriginalFontHeight(_fontType, _fontCustomIndex);
 	uint maxScaledLineWidth = StarkGfx->scaleWidthOriginalToCurrent(_targetWidth);
 
-	// Word wrap the text and compute the scaled and original resolution bounding boxes
-	Common::Rect scaledRect;
+	// Word wrap the text
 	Common::Array<Common::U32String> lines;
-	scaledRect.right = scaledRect.left + font->wordWrapText(unicodeText, maxScaledLineWidth, lines);
-	scaledRect.bottom = scaledRect.top + scaledLineHeight * lines.size();
-	
+	font->wordWrapText(unicodeText, maxScaledLineWidth, lines);
+
+	// Use the actual font bounding box to prevent text from being cut off
+	Common::Rect scaledRect = font->getBoundingBox(lines[0]);
+	for (uint i = 1; i < lines.size(); i++) {
+		scaledRect.extend(font->getBoundingBox(lines[i], 0, scaledLineHeight * i));
+	}
+
+	// Make sure lines have approximately consistent height regardless of the characters they use
+	scaledRect.bottom = MAX<int16>(scaledRect.bottom, scaledLineHeight * lines.size());
+
 	if (!isBlank()) {
-		_originalRect.right = _originalRect.left + StarkGfx->scaleWidthCurrentToOriginal(scaledRect.width());
-		_originalRect.bottom = _originalRect.top + originalLineHeight * lines.size();
+		_originalRect.right = StarkGfx->scaleWidthCurrentToOriginal(scaledRect.right);
+		_originalRect.bottom = originalLineHeight * lines.size();
 	} else {
 		// For Empty text, preserve the original width and height for being used as clicking area
-		_originalRect.right = _originalRect.left + _targetWidth;
-		_originalRect.bottom = _originalRect.top + _targetHeight;
+		_originalRect.right = _targetWidth;
+		_originalRect.bottom = _targetHeight;
 	}
 
 	// Create a surface to render to
 	Graphics::Surface surface;
-	surface.create(scaledRect.width(), scaledRect.height(), Gfx::Driver::getRGBAPixelFormat());
+	surface.create(scaledRect.right, scaledRect.bottom, Gfx::Driver::getRGBAPixelFormat());
 
 	uint32 color = surface.format.ARGBToColor(
 			_color.a, _color.r, _color.g, _color.b
@@ -155,11 +162,11 @@ void VisualText::createTexture() {
 			_backgroundColor.a, _backgroundColor.r, _backgroundColor.g, _backgroundColor.b
 	);
 
-	surface.fillRect(scaledRect, bgColor);
+	surface.fillRect(Common::Rect(surface.w, surface.h), bgColor);
 
 	// Render the lines to the surface
 	for (uint i = 0; i < lines.size(); i++) {
-		font->drawString(&surface, lines[i], 0, scaledLineHeight * i, scaledRect.width(), color, _align);
+		font->drawString(&surface, lines[i], 0, scaledLineHeight * i, surface.w, color, _align);
 	}
 
 	// Create a texture from the surface
