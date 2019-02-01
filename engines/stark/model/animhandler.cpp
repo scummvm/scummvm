@@ -107,6 +107,12 @@ void AnimHandler::animate(uint32 time) {
 		enactCandidate();
 	}
 
+	if (_candidateAnim && _anim && _anim->getBoneCount() != _model->getBones().size()) {
+		// We changed to an incompatible model
+		enactCandidate();
+		assert(_anim->getBoneCount() == _model->getBones().size());
+	}
+
 	if (_candidateAnim && _framesBeforeCandidateReady > 0) {
 
 		_candidateAnimTime = time;

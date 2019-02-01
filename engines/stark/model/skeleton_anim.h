@@ -50,6 +50,9 @@ public:
 	 */
 	uint32 getLength() const { return _time; }
 
+	/** The number of bones a skeleton must have to play this animation */
+	uint32 getBoneCount() const { return _boneAnims.size(); }
+
 private:
 	struct AnimKey {
 		uint32 _time;
