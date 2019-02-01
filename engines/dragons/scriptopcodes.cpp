@@ -20,6 +20,7 @@
  *
  */
 
+#include "dragons/actorresource.h"
 #include "dragons/dragons.h"
 #include "dragons/dragonflg.h"
 #include "dragons/dragonini.h"
@@ -87,8 +88,10 @@ void ScriptOpcodes::initOpcodes() {
 	// OPCODE(1, opUnk1);
 
 	OPCODE(4,  opExecuteScript);
+	OPCODE(5,  opActorSetSequenceID2);
 
 	OPCODE(7,  opUnk7);
+	OPCODE(8,  opActorLoadSequence);
 
 	OPCODE(10, opUnkA);
 	OPCODE(11, opRunSpecialOpCode);
@@ -192,6 +195,18 @@ void ScriptOpcodes::opExecuteScript(ScriptOpCall &scriptOpCall) {
 	executeScriptLoop(newScriptOpCall);
 }
 
+void ScriptOpcodes::opActorSetSequenceID2(ScriptOpCall &scriptOpCall) {
+	ARG_SKIP(2);
+	ARG_INT16(iniIndex);
+	ARG_SKIP(2);
+	ARG_INT16(sequenceId);
+
+	if (scriptOpCall._field8 == 0) {
+		_vm->getINI(iniIndex - 1)->actor->_sequenceID2 = sequenceId;
+	}
+}
+
+
 void ScriptOpcodes::opUnk7(ScriptOpCall &scriptOpCall) {
 	if (scriptOpCall._field8 == 0) {
 		opCode_Unk7(scriptOpCall);
@@ -201,6 +216,34 @@ void ScriptOpcodes::opUnk7(ScriptOpCall &scriptOpCall) {
 
 }
 
+void ScriptOpcodes::opActorLoadSequence(ScriptOpCall &scriptOpCall) {
+	ARG_INT16(field0);
+	ARG_INT16(field2);
+	ARG_INT16(sequenceId);
+
+	if (scriptOpCall._field8 != 0) {
+		return;
+	}
+
+	DragonINI *ini = _vm->getINI(field2 - 1);
+
+	bool isFlicker = _vm->_dragonINIResource->isFlicker(field2 - 1);
+	if (isFlicker) {
+		ini->actor->flags |= Dragons::ACTOR_FLAG_2000;
+	}
+
+	assert(ini->actor->_actorResource);
+	assert(ini->actor->_actorResource->_id == ini->actorResourceId); // TODO need to rework selecting resourceId for an actor.
+	ini->actor->updateSequence(sequenceId);
+
+	if (field0 & 0x8000) {
+		error("wait here.");
+	}
+
+	if (isFlicker) {
+		ini->actor->flags &= ~Dragons::ACTOR_FLAG_2000;
+	}
+}
 
 void ScriptOpcodes::opPlayMusic(ScriptOpCall &scriptOpCall) {
 	byte *code = scriptOpCall._code;
@@ -214,7 +257,7 @@ void ScriptOpcodes::opUnk13PropertiesRelated(ScriptOpCall &scriptOpCall) {
 	if (checkPropertyFlag(scriptOpCall)) {
 		scriptOpCall._code += 4;
 	} else {
-		scriptOpCall._code += 4 + READ_LE_INT16(scriptOpCall._code);
+		scriptOpCall._code += 4 + READ_LE_UINT16(scriptOpCall._code);
 	}
 }
 
@@ -496,10 +539,13 @@ uint16 ScriptOpcodes::getINIField(uint32 iniIndex, uint16 fieldOffset) {
 	DragonINI *ini = _vm->getINI(iniIndex);
 
 	switch (fieldOffset) {
+		case 0 : return ini->iptIndex_maybe;
+		case 0xC  : return ini->sceneId;
+		case 0x12  : return ini->field_12;
 		case 0x14 : return ini->field_14;
 		case 0x1A : return ini->field_1a_flags_maybe;
 		case 0x20 : return ini->field_20_actor_field_14;
-		default: error("Invalid fieldOffset %d", fieldOffset);
+		default: error("getINIField() Invalid fieldOffset 0x%X", fieldOffset);
 	}
 }
 
@@ -507,11 +553,22 @@ void ScriptOpcodes::setINIField(uint32 iniIndex, uint16 fieldOffset, uint16 valu
 	DragonINI *ini = _vm->getINI(iniIndex);
 
 	switch (fieldOffset) {
+		case 0 : ini->iptIndex_maybe = value; break;
+		case 0xc  : ini->sceneId = value; break;
+		case 0x12 : ini->field_12 = value; break;
 		case 0x14 : ini->field_14 = value; break;
 		case 0x1A : ini->field_1a_flags_maybe = value; break;
 		case 0x20 : ini->field_20_actor_field_14 = value; break;
-		default: error("Invalid fieldOffset %X", fieldOffset);
+		default: error("setINIField() Invalid fieldOffset 0x%X", fieldOffset);
 	}
+
+}
+
+void ScriptOpcodes::opUnk14(ScriptOpCall &scriptOpCall) {
+
+}
+
+void ScriptOpcodes::opUnk15(ScriptOpCall &scriptOpCall) {
 
 }
 
@@ -577,7 +634,5 @@ void ScriptOpcodes::opCode_Unk7(ScriptOpCall &scriptOpCall) {
 	}
 	ini->sceneId = sceneId;
 }
-
-
 
 } // End of namespace Dragons

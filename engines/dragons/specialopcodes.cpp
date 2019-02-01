@@ -64,6 +64,9 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(3, spcClearEngineFlag10);
 	OPCODE(9, spcUnk9);
 	OPCODE(20, spcClearEngineFlag8);
+
+	OPCODE(0x54, spcSetEngineFlag0x4000000);
+	OPCODE(0x55, spcSetCursorSequenceIdToZero);
 }
 
 #undef OPCODE
@@ -92,6 +95,14 @@ void SpecialOpcodes::spcUnk9() {
 
 void SpecialOpcodes::spcClearEngineFlag8() {
 	_vm->clearFlags(Dragons::ENGINE_FLAG_8);
+}
+
+void SpecialOpcodes::spcSetEngineFlag0x4000000() {
+	_vm->setFlags(Dragons::ENGINE_FLAG_4000000);
+}
+
+void SpecialOpcodes::spcSetCursorSequenceIdToZero() {
+	_vm->_cursorSequenceID = 0;
 }
 
 

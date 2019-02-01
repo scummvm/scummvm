@@ -39,6 +39,8 @@ class ScriptOpcodes;
 struct DragonINI;
 
 class Scene {
+public:
+	Common::Point _camera;
 private:
 	DragonsEngine *_vm;
 	Screen *_screen;
@@ -51,7 +53,6 @@ private:
 	ScriptOpcodes *_scriptOpcodes;
 
 	int16 _currentSceneId;
-	Common::Point _camera;
 
 public:
 	Scene(DragonsEngine *vm, Screen *screen, ScriptOpcodes *scriptOpcodes, BigfileArchive *bigfileArchive, ActorManager *actorManager, DragonRMS *_dragonRMS, DragonINIResource *_dragonINIResource);

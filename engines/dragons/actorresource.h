@@ -49,8 +49,9 @@ public:
 };
 
 class ActorResource {
-private:
+public:
 	uint32 _id;
+private:
 	byte *_data;
 	int32 _fileSize;
 	ActorFrame *_frames;

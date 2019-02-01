@@ -63,9 +63,10 @@ enum Flags {
 	ENGINE_FLAG_40 = 0x40,
 	ENGINE_FLAG_80 = 0x80,
 
-	ENGINE_FLAG_80000 =   0x80000,
-	ENGINE_FLAG_100000 = 0x100000,
-	ENGINE_FLAG_80000000 = 80000000
+	ENGINE_FLAG_80000    =    0x80000,
+	ENGINE_FLAG_100000   =   0x100000,
+	ENGINE_FLAG_4000000  =  0x4000000,
+	ENGINE_FLAG_80000000 = 0x80000000
 };
 
 enum UnkFlags {
@@ -100,6 +101,7 @@ public:
 	DragonIMG *_dragonIMG;
 	ActorManager *_actorManager;
 	DragonINIResource *_dragonINIResource;
+	uint16 _cursorSequenceID;
 private:
 	Screen *_screen;
 	BigfileArchive *_bigfileArchive;
@@ -117,6 +119,9 @@ private:
 	uint16 _sceneId1;
 	uint32 _counter;
 	uint32 bit_flags_8006fbd8;
+
+	//unk
+	uint32 inventorySequenceId;
 
 public:
 	DragonsEngine(OSystem *syst);
@@ -149,6 +154,7 @@ private:
 	uint32 calulateTimeLeft();
 	void wait();
 	uint16 getIniFromImg();
+	uint16 updateINIUnderCursor();
 };
 
 DragonsEngine *getEngine();

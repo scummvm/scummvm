@@ -61,6 +61,7 @@ SequenceOpcodes::~SequenceOpcodes() {
 }
 
 void SequenceOpcodes::execOpcode(Actor *control, OpCall &opCall) {
+	assert(opCall._op < DRAGONS_NUM_SEQ_OPCODES);
 	if (!_opcodes[opCall._op])
 		error("SequenceOpcodes::execOpcode() Unimplemented opcode %d", opCall._op);
 	debug(3, "execSequenceOpcode(%d) %s", opCall._op, _opcodeNames[opCall._op].c_str());
@@ -133,7 +134,7 @@ void SequenceOpcodes::opJmp(Actor *actor, OpCall &opCall) {
 
 	if (!(actor->flags & Dragons::ACTOR_FLAG_1000)) {
 		byte *newOffset = actor->getSeqIpAtOffset((uint32)newIp);
-		opCall._deltaOfs = (int32)(newOffset - opCall._code);
+		opCall._deltaOfs = (int32)(newOffset - actor->_seqCodeIp); //opCall._code);
 		debug(3, "opJump delta: %d", opCall._deltaOfs);
 	} else {
 		updateReturn(opCall, 1);

@@ -55,6 +55,9 @@ protected:
 
 	void spcClearEngineFlag8(); // 0x14
 
+	void spcSetEngineFlag0x4000000(); // 0x54
+	void spcSetCursorSequenceIdToZero(); // 0x55
+
 };
 
 } // End of namespace Dragons

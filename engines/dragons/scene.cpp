@@ -172,13 +172,20 @@ void Scene::draw() {
 
 		for (uint16 i = 0; i < DRAGONS_ENGINE_NUM_ACTORS; i++) {
 			Actor *actor = _actorManager->getActor(i);
-			if (actor &&
-				actor->flags & Dragons::ACTOR_FLAG_40 &&
-				actor->surface) {
+			if (actor->x_pos == -100 && actor->y_pos == 100) {
+				actor->priorityLayer = 0;
+				continue;
+			}
+
+			if (actor->flags & Dragons::ACTOR_FLAG_40 &&
+				!(actor->flags & Dragons::ACTOR_FLAG_400) &&
+				actor->surface &&
+				actor->frame->width != 0 &&
+				actor->frame->height != 0
+				) {
 				Graphics::Surface *s = actor->surface;
-				//TODO fix for scenes that are larger than a screen.
-				int x = actor->x_pos - actor->frame->xOffset;
-				int y = actor->y_pos - actor->frame->yOffset;
+				int x = actor->x_pos - actor->frame->xOffset - _camera.x;
+				int y = actor->y_pos - actor->frame->yOffset - _camera.y;
 				//int x = ini->x;// - actor->frame_vram_x;
 				//int y = ini->y;// - actor->frame_vram_y;
 				if (actor->priorityLayer == priority) { //} && x + s->w < 320 && y + s->h < 200) {
