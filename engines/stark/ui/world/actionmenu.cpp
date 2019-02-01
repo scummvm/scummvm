@@ -91,7 +91,7 @@ void ActionMenu::open(Resources::ItemVisual *item, const Common::Point &itemRela
 	_itemRelativePos = itemRelativePos;
 	_item = item;
 	_fromInventory = item->getSubType() == Resources::Item::kItemInventory;
-	_itemDescription->setText(StarkGameInterface->getItemTitle(item));
+	_itemDescription->setText(StarkGameInterface->getItemTitleAt(item, itemRelativePos));
 
 	_cursor->setMouseHint("");
 
