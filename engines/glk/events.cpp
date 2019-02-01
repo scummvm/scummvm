@@ -31,6 +31,8 @@
 
 namespace Glk {
 
+#define TRANSPARENT_RGB 0x80
+
 const byte ARROW[] = {
 	// byte 1: number of skipped pixels
 	// byte 2: number of plotted pixels

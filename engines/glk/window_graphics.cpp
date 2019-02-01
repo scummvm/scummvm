@@ -30,7 +30,7 @@ namespace Glk {
 GraphicsWindow::GraphicsWindow(Windows *windows, uint rock) : Window(windows, rock),
 	_w(0), _h(0), _dirty(false), _surface(nullptr) {
 	_type = wintype_Graphics;
-	_bgColor = _bgnd;
+	_bgnd = _bgColor;
 }
 
 GraphicsWindow::~GraphicsWindow() {

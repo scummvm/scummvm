@@ -33,7 +33,6 @@
 namespace Glk {
 
 #define FONTS_TOTAL 8
-#define TRANSPARENT_RGB 0x7f
 
 enum CaretShape {
 	SMALL_DOT = 0, FAT_DOT = 1, THIN_LINE = 2, FAT_LINE = 3, BLOCK = 4
