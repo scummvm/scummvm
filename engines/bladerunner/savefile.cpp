@@ -31,6 +31,9 @@
 
 #include "graphics/thumbnail.h"
 
+
+
+#include "common/debug.h"
 namespace BladeRunner {
 
 SaveStateList SaveFileManager::list(const Common::String &target) {
@@ -41,6 +44,7 @@ SaveStateList SaveFileManager::list(const Common::String &target) {
 	for (Common::StringArray::const_iterator fileName = files.begin(); fileName != files.end(); ++fileName) {
 		Common::InSaveFile *saveFile = saveFileMan->openForLoading(*fileName);
 		if (saveFile == nullptr || saveFile->err()) {
+			delete saveFile;
 			continue;
 		}
 
@@ -49,6 +53,8 @@ SaveStateList SaveFileManager::list(const Common::String &target) {
 
 		int slotNum = atoi(fileName->c_str() + fileName->size() - 3);
 		saveList.push_back(SaveStateDescriptor(slotNum, header._name));
+
+		delete saveFile;
 	}
 
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
