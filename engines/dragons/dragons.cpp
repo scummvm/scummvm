@@ -61,6 +61,7 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	_scriptOpcodes = NULL;
 	_engine = this;
 	_cursorPosition = Common::Point();
+	_cursorSequenceID = 0;
 }
 
 DragonsEngine::~DragonsEngine() {
@@ -96,13 +97,14 @@ Common::Error DragonsEngine::run() {
 	_scene = new Scene(this, _screen, _scriptOpcodes, _bigfileArchive, _actorManager, _dragonRMS, _dragonINIResource);
 	_flags = 0x1046;
 
+	_cursorSequenceID = 0;
 	Actor *cursor = _actorManager->loadActor(0, 0); //Load cursor
 	cursor->x_pos = _cursorPosition.x = 160;
 	cursor->y_pos = _cursorPosition.y = 100;
 	cursor->priorityLayer = 6;
 	cursor->flags = 0;
 	cursor->field_e = 0x100;
-	cursor->updateSequence(0);
+	cursor->updateSequence(_cursorSequenceID);
 	cursor->flags |= (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_80 | Dragons::ACTOR_FLAG_100 | Dragons::ACTOR_FLAG_200);
 
 	_dragonINIResource->getFlickerRecord()->actor = cursor; //TODO is this correct?
@@ -115,10 +117,12 @@ Common::Error DragonsEngine::run() {
 	inventory->field_e = 0x100;
 	inventory->updateSequence(0);
 	inventory->flags |= (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_80 | Dragons::ACTOR_FLAG_100 | Dragons::ACTOR_FLAG_200);
+	inventorySequenceId = 0;
 
-	_dragonINIResource->getFlickerRecord()->sceneId = 0x12; //TODO
-	_sceneId1 = 0x12;
-	_scene->loadScene(0x12, 0x1e);
+	uint16 sceneId = 0x12;
+	_dragonINIResource->getFlickerRecord()->sceneId = sceneId; //TODO
+	_sceneId1 = sceneId;
+	_scene->loadScene(sceneId, 0x1e);
 
 	_scene->draw();
 	_screen->updateScreen();
@@ -388,6 +392,22 @@ uint16 DragonsEngine::getIniFromImg() {
 		}
 
 	}
+	return 0;
+}
+
+uint16 DragonsEngine::updateINIUnderCursor() {
+	int32 x = (_cursorPosition.x + _scene->_camera.x) / 32;
+	int32 y = (_cursorPosition.y + _scene->_camera.y) / 8;
+
+	if (_flags & Dragons::ENGINE_FLAG_10) {
+
+		if (inventorySequenceId == 0 || inventorySequenceId == 2) {
+//TODO
+		} else {
+
+		}
+	}
+
 	return 0;
 }
 

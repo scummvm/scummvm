@@ -79,8 +79,10 @@ protected:
 	// Opcodes
 	void opUnk1(ScriptOpCall &scriptOpCall);
 	void opExecuteScript(ScriptOpCall &scriptOpCall); //op 4
+	void opActorSetSequenceID2(ScriptOpCall &scriptOpCall); //op 5
 
 	void opUnk7(ScriptOpCall &scriptOpCall);
+	void opActorLoadSequence(ScriptOpCall &scriptOpCall);
 
 	void opUnkA(ScriptOpCall &scriptOpCall);
 	void opRunSpecialOpCode(ScriptOpCall &scriptOpCall); //op B
@@ -88,6 +90,8 @@ protected:
 	void opUnkF(ScriptOpCall &scriptOpCall);
 
 	void opUnk13PropertiesRelated(ScriptOpCall &scriptOpCall);
+	void opUnk14(ScriptOpCall &scriptOpCall);
+	void opUnk15(ScriptOpCall &scriptOpCall);
 	void opPlayMusic(ScriptOpCall &scriptOpCall);
 
 	bool checkPropertyFlag(ScriptOpCall &scriptOpCall);
