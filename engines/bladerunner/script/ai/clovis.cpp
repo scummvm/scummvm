@@ -305,16 +305,16 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Game_Flag_Set(kFlagChapter3Intro);
 		return true;
 
-	case 300:
+	case kGoalClovisUG18Wait:
 		Actor_Put_In_Set(kActorClovis, kSetUG18);
 		Actor_Set_At_XYZ(kActorClovis, -52.26f, 0.0f, 611.02f, 900);
 		Actor_Change_Animation_Mode(kActorClovis, kAnimationModeIdle);
 		return true;
 
-	case 301:
-	case 302:
+	case kGoalClovisUG18SadikWillShootGuzza:
+	case kGoalClovisUG18SadikIsShootingGuzza:
 	case 303:
-	case 310:
+	case kGoalClovisUG18Leave:
 		return true;
 
 	case 350:

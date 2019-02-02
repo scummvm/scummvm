@@ -1002,7 +1002,7 @@ enum Flags {
 	kFlagNR03McCoyThrownOut = 604,
 	kFlagNR04DiscFound = 605,
 	kFlagNR04EarlyQStungByScorpions = 606,
-
+	kFlagMcCoyRetiredHuman = 607,
 	kFlagTB07toTB02 = 608,
 	kFlagNR04McCoyAimedAtEarlyQ = 609,
 	kFlagUG08Entered = 610,
@@ -1048,6 +1048,7 @@ enum Flags {
 	kFlagTB07ShadeDown = 661, // is never set
 	kFlagUG19Available = 665,
 	kFlagCallWithGuzza = 670,
+	kFlagUG18GuzzaScene = 671,
 	kFlagMA07toPS14 = 672,
 	kFlagPS14toMA07 = 673,
 	kFlagUG15RatShot = 676,
@@ -1066,6 +1067,7 @@ enum Flags {
 	kFlagUG14DeadHomeless = 694,
 	kFlagUG15LanceLuthorTrade = 698,
 	kFlagBulletBobDead = 702,
+	kFlagUG18BriefcaseTaken = 703,
 	kFlagRC02EnteredChapter4 = 704,
 	kFlagRC02RunciterTalkWithGun = 705,
 	kFlagRC02RunciterTalk2 = 706,
@@ -1530,7 +1532,7 @@ enum GameItems {
 	kItemRadiationGoogles = 88,
 	kItemGordosLighter1 = 89,
 	kItemGordosLighter2 = 90,
-
+	kItemBriefcase = 91,
 	// 92 is never used
 	// 93 is never used
 	// 94 is never used
@@ -1829,7 +1831,17 @@ enum GoalGuzza {
 	kGoalGuzzaGoToHawkersCircle2 = 103,
 	kGoalGuzzaGoToFreeSlotB = 104,
 	kGoalGuzzaGoToFreeSlotG = 105,
-	kGoalGuzzaSitAtNR03 = 201
+	kGoalGuzzaSitAtNR03 = 201,
+	kGoalGuzzaUG18Wait = 300,
+	kGoalGuzzaUG18Target = 301,
+	kGoalGuzzaUG18WillGetShotBySadik = 302,
+	kGoalGuzzaUG18HitByMcCoy = 303,
+	kGoalGuzzaUG18MissedByMcCoy = 304,
+	kGoalGuzzaUG18ShotByMcCoy = 305,
+	kGoalGuzzaUG18ShootMcCoy = 306,
+	kGoalGuzzaUG18FallDown = 307,
+	kGoalGuzzaUG18ShotBySadik = 390,
+	kGoalGuzzaGone = 599
 };
 
 enum GoalClovis {
@@ -1838,7 +1850,12 @@ enum GoalClovis {
 	kGoalClovisBB11StopSadik = 102,
 	kGoalClovisBB11TalkWithSadik = 103,
 	kGoalClovisBB11PrepareTalkToMcCoy = 104, // bug? this is not triggered when player skips dialogue too fast
-	kGoalClovisBB11TalkToMcCoy = 105 // ends Chapter 2
+	kGoalClovisBB11TalkToMcCoy = 105, // ends Chapter 2
+	kGoalClovisUG18Wait = 300,
+	kGoalClovisUG18SadikWillShootGuzza = 301,
+	kGoalClovisUG18SadikIsShootingGuzza = 302,
+	kGoalClovisUG18GuzzaDied = 303,
+	kGoalClovisUG18Leave = 310
 };
 
 enum GoalLucy {
@@ -1897,7 +1914,15 @@ enum GoalSadik {
 	kGoalSadikBB11CatchMcCoy = 104,
 	kGoalSadikBB11KnockOutMcCoy = 105,
 	kGoalSadikBB11KickMcCoy = 106,
-	kGoalSadikBB11TalkWithClovis = 107
+	kGoalSadikBB11TalkWithClovis = 107,
+	kGoalSadikUG18Wait = 300,
+	kGoalSadikUG18Move = 301,
+	kGoalSadikUG18Decide = 302,
+	// 303, 304 and 305 are never set or used
+	kGoalSadikUG18WillShootMcCoy = 306,
+	kGoalSadikUG18PrepareShootMcCoy = 307,
+	kGoalSadikUG18ShootMcCoy = 308,
+	kGoalSadikUG18Leave = 310
 };
 
 enum GoalLuther {

@@ -116,8 +116,8 @@ bool SceneScriptUG07::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 2) {
-		if (!Game_Flag_Query(607)
-		 &&  Game_Flag_Query(671)
+		if (!Game_Flag_Query(kFlagMcCoyRetiredHuman)
+		 &&  Game_Flag_Query(kFlagUG18GuzzaScene)
 		 &&  Global_Variable_Query(kVariableChapter) == 4
 		 && !Game_Flag_Query(598)
 		) {

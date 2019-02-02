@@ -76,7 +76,7 @@ bool SceneScriptMA07::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 104.0f, -162.0f, 56.0f, 12, true, false, 0)) {
 			if (Global_Variable_Query(kVariableChapter) == 4
-			 && Game_Flag_Query(671)
+			 && Game_Flag_Query(kFlagUG18GuzzaScene)
 			) {
 				Actor_Set_Goal_Number(kActorMcCoy, 400);
 			} else {
@@ -141,7 +141,7 @@ void SceneScriptMA07::PlayerWalkedIn() {
 	}
 
 	if (!Game_Flag_Query(648)
-	 &&  Game_Flag_Query(671)
+	 &&  Game_Flag_Query(kFlagUG18GuzzaScene)
 	 &&  Global_Variable_Query(kVariableChapter) == 4
 	) {
 		Scene_Exits_Disable();

@@ -111,7 +111,7 @@ void AIScriptGuzza::ClickedByPlayer() {
 			Actor_Says(kActorMcCoy, 3970, 13);
 			Actor_Says(kActorGuzza, 780, -1);
 		}
-		//TODO: test this, seems like a bug in game
+		//TODO: test this, looks like a bug in game
 		if (Random_Query(1, 4) == 1) {
 			AI_Movement_Track_Pause(4);
 			Actor_Says(kActorMcCoy, 4005, 15);
@@ -148,23 +148,23 @@ void AIScriptGuzza::OtherAgentEnteredCombatMode(int otherActorId, int combatMode
 }
 
 void AIScriptGuzza::ShotAtAndMissed() {
-	if (Actor_Query_Goal_Number(kActorGuzza) == 301) {
+	if (Actor_Query_Goal_Number(kActorGuzza) == kGoalGuzzaUG18Target) {
 		Actor_Change_Animation_Mode(kActorGuzza, kAnimationModeCombatHit);
-		Actor_Set_Goal_Number(kActorGuzza, 304);
+		Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaUG18MissedByMcCoy);
 	}
 	// return false;
 }
 
 bool AIScriptGuzza::ShotAtAndHit() {
-	if (Actor_Query_Goal_Number(kActorGuzza) == 301) {
+	if (Actor_Query_Goal_Number(kActorGuzza) == kGoalGuzzaUG18Target) {
 		Actor_Change_Animation_Mode(kActorGuzza, kAnimationModeCombatHit);
-		Actor_Set_Goal_Number(kActorGuzza, 303);
+		Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaUG18HitByMcCoy);
 	}
 	return false;
 }
 
 void AIScriptGuzza::Retired(int byActorId) {
-	Actor_Set_Goal_Number(kActorGuzza, 599);
+	Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaGone);
 	// return false;
 }
 
@@ -218,34 +218,34 @@ bool AIScriptGuzza::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorGuzza);
 		return true;
 
-	case 201:
-		Actor_Change_Animation_Mode(kActorGuzza, 53);
+	case kGoalGuzzaSitAtNR03:
+		Actor_Change_Animation_Mode(kActorGuzza, kAnimationModeSit);
 		_animationState = 1;
 		_animationFrame = 0;
 		Actor_Put_In_Set(kActorGuzza, kSetNR03);
 		Actor_Set_At_XYZ(kActorGuzza, -229.0f, -70.19f, -469.0f, 400);
 		return true;
 
-	case 300:
+	case kGoalGuzzaUG18Wait:
 		Actor_Put_In_Set(kActorGuzza, kSetUG18);
 		Actor_Set_At_XYZ(kActorGuzza, 10.79f, 0.0f, -354.17f, 400);
 		Actor_Change_Animation_Mode(kActorGuzza, kAnimationModeIdle);
 		return true;
 
-	case 301:
+	case kGoalGuzzaUG18Target:
 		Actor_Set_Targetable(kActorGuzza, true);
 		return true;
 
-	case 302:
-	case 303:
-	case 304:
+	case kGoalGuzzaUG18WillGetShotBySadik:
+	case kGoalGuzzaUG18HitByMcCoy:
+	case kGoalGuzzaUG18MissedByMcCoy:
 		Actor_Set_Targetable(kActorGuzza, false);
 		return true;
 
-	case 305:
-	case 306:
-	case 307:
-	case 390:
+	case kGoalGuzzaUG18ShotByMcCoy:
+	case kGoalGuzzaUG18ShootMcCoy:
+	case kGoalGuzzaUG18FallDown:
+	case kGoalGuzzaUG18ShotBySadik:
 		return true;
 	}
 	return false;
@@ -568,7 +568,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 			*animation = 172;
 			_animationState = 24;
 			_flag = false;
-			Actor_Change_Animation_Mode(kActorGuzza, 4);
+			Actor_Change_Animation_Mode(kActorGuzza, kAnimationModeCombatIdle);
 			_state = 0;
 			_counter = 0;
 			_frameDelta = 1;
@@ -877,12 +877,12 @@ bool AIScriptGuzza::ChangeAnimationMode(int mode) {
 		}
 		_animationFrame = 0;
 		break;
-	
+
 	case 23:
 		_animationState = 32;
 		_animationFrame = 0;
 		break;
-	
+
 	case 30:
 		if (_animationState == 1) {
 			_animationState = 3;
@@ -894,6 +894,7 @@ bool AIScriptGuzza::ChangeAnimationMode(int mode) {
 			_flag = false;
 		}
 		break;
+
 	case 31:
 		if (_animationState == 1) {
 			_animationState = 3;
@@ -905,6 +906,7 @@ bool AIScriptGuzza::ChangeAnimationMode(int mode) {
 			_flag = false;
 		}
 		break;
+
 	case 32:
 		if (_animationState == 1) {
 			_animationState = 3;
@@ -916,6 +918,7 @@ bool AIScriptGuzza::ChangeAnimationMode(int mode) {
 			_flag = false;
 		}
 		break;
+
 	case 33:
 		if (_animationState == 1) {
 			_animationState = 3;
@@ -927,6 +930,7 @@ bool AIScriptGuzza::ChangeAnimationMode(int mode) {
 			_flag = false;
 		}
 		break;
+
 	case 34:
 		if (_animationState == 1) {
 			_animationState = 3;
@@ -938,32 +942,39 @@ bool AIScriptGuzza::ChangeAnimationMode(int mode) {
 			_flag = false;
 		}
 		break;
+
 	case kAnimationModeWalkUp:
 		_animationState = 9;
 		_animationFrame = 0;
 		break;
+
 	case kAnimationModeWalkDown:
 		_animationState = 10;
 		_animationFrame = 0;
 		break;
+
 	case 48:
 		_animationState = 28;
 		_animationFrame = 0;
 		break;
+
 	case 53:
 		_animationState = 1;
 		_animationFrame = 0;
 		break;
+
 	case 58:
 		_animationState = 22;
 		_animationFrame = 0;
 		_flag = false;
 		break;
+
 	case 59:
 		_animationState = 23;
 		_animationFrame = 0;
 		_flag = false;
 		break;
+
 	case 61:
 		_animationState = 33;
 		_animationFrame = 0;

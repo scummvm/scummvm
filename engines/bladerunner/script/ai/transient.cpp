@@ -172,7 +172,7 @@ void AIScriptTransient::Retired(int byActorId) {
 	Actor_Set_Goal_Number(kActorTransient, 599);
 
 	if (Global_Variable_Query(kVariableChapter) == 4) {
-		Game_Flag_Set(607);
+		Game_Flag_Set(kFlagMcCoyRetiredHuman);
 	}
 }
 

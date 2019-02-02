@@ -264,7 +264,7 @@ bool AIScriptOfficerLeary::ShotAtAndHit() {
 
 void AIScriptOfficerLeary::Retired(int byActorId) {
 	Actor_Set_Goal_Number(kActorOfficerLeary, 599);
-	Game_Flag_Set(607);
+	Game_Flag_Set(kFlagMcCoyRetiredHuman);
 }
 
 int AIScriptOfficerLeary::GetFriendlinessModifierIfGetsClue(int otherActorId, int clueId) {

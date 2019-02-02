@@ -90,8 +90,9 @@ void AIScriptSadik::TimerExpired(int timer) {
 	if (timer == 0) {
 		AI_Countdown_Timer_Reset(kActorSadik, 0);
 
+		// goals 303, 304 and 305 are never set,  cut out part of game?
 		switch (Actor_Query_Goal_Number(kActorSadik)) {
-		case 302:
+		case kGoalSadikUG18Decide:
 			Actor_Set_Goal_Number(kActorSadik, 305);
 			break;
 
@@ -99,8 +100,8 @@ void AIScriptSadik::TimerExpired(int timer) {
 			Actor_Set_Goal_Number(kActorSadik, 305);
 			break;
 
-		case 307:
-			Actor_Set_Goal_Number(kActorSadik, 308);
+		case kGoalSadikUG18PrepareShootMcCoy:
+			Actor_Set_Goal_Number(kActorSadik, kGoalSadikUG18ShootMcCoy);
 			break;
 		}
 	}
@@ -120,8 +121,8 @@ void AIScriptSadik::CompletedMovementTrack() {
 		Actor_Set_Goal_Number(kActorSadik, kGoalSadikBB11KickMcCoy);
 		break;
 
-	case 301:
-		Actor_Set_Goal_Number(kActorSadik, 302);
+	case kGoalSadikUG18Move:
+		Actor_Set_Goal_Number(kActorSadik, kGoalSadikUG18Decide);
 		break;
 
 	default:
@@ -171,8 +172,7 @@ void AIScriptSadik::ShotAtAndMissed() {
 }
 
 bool AIScriptSadik::ShotAtAndHit() {
-
-	if (Actor_Query_Goal_Number(kActorSadik) == 301) {
+	if (Actor_Query_Goal_Number(kActorSadik) == kGoalSadikUG18Move) {
 		if (Game_Flag_Query(kFlagSadikIsReplicant)) {
 			Actor_Set_Health(kActorSadik, 60, 60);
 		} else {
@@ -289,13 +289,13 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Set_Goal_Number(kActorMcCoy, 199);
 		return true;
 
-	case 300:
+	case kGoalSadikUG18Wait:
 		Actor_Put_In_Set(kActorSadik, kSetUG18);
 		Actor_Set_At_XYZ(kActorSadik, 111.89f, 0.0f, 408.42f, 0);
 		Actor_Change_Animation_Mode(kActorSadik, 4);
 		return true;
 
-	case 301:
+	case kGoalSadikUG18Move:
 		Actor_Set_Targetable(kActorSadik, true);
 		World_Waypoint_Set(436, 89, -356.11f, 0.0f, 652.42f);
 		AI_Movement_Track_Flush(kActorSadik);
@@ -303,10 +303,11 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorSadik);
 		return true;
 
-	case 302:
+	case kGoalSadikUG18Decide:
 		Actor_Set_Targetable(kActorSadik, false);
 		return true;
 
+	// goals 303, 304 and 305 are never set,  cut out part of game?
 	case 303:
 		AI_Countdown_Timer_Reset(kActorSadik, 0);
 		AI_Countdown_Timer_Start(kActorSadik, 0, 5);
@@ -318,16 +319,16 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case 305:
-	case 306:
-	case 310:
+	case kGoalSadikUG18WillShootMcCoy:
+	case kGoalSadikUG18Leave:
 		return true;
 
-	case 307:
+	case kGoalSadikUG18PrepareShootMcCoy:
 		Sound_Play(12, 100, 0, 0, 50);
 		AI_Countdown_Timer_Start(kActorSadik, 0, 2);
 		return true;
 
-	case 308:
+	case kGoalSadikUG18ShootMcCoy:
 		if (Player_Query_Current_Scene() == kSceneUG18) {
 			Actor_Force_Stop_Walking(kActorMcCoy);
 			Actor_Change_Animation_Mode(kActorSadik, kAnimationModeCombatAttack);

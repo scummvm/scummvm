@@ -128,8 +128,8 @@ bool SceneScriptCT12::ClickedOnActor(int actorId) {
 
 	if (actorId == kActorOfficerGrayford
 	 && Global_Variable_Query(kVariableChapter) == 4
-	 && Game_Flag_Query(671)
-	 && Game_Flag_Query(703)
+	 && Game_Flag_Query(kFlagUG18GuzzaScene)
+	 && Game_Flag_Query(kFlagUG18BriefcaseTaken)
 	) {
 		Actor_Face_Actor(kActorOfficerGrayford, kActorMcCoy, true);
 		Actor_Face_Actor(kActorMcCoy, kActorOfficerGrayford, true);

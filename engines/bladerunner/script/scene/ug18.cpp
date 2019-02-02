@@ -60,12 +60,12 @@ void SceneScriptUG18::InitializeScene() {
 	Scene_Loop_Set_Default(4);
 
 	if ( Game_Flag_Query(kFlagCallWithGuzza)
-	 && !Game_Flag_Query(671)
+	 && !Game_Flag_Query(kFlagUG18GuzzaScene)
 	 &&  Global_Variable_Query(kVariableChapter) == 4
 	) {
-		Actor_Set_Goal_Number(kActorGuzza, 300);
-		Actor_Set_Goal_Number(kActorClovis, 300);
-		Actor_Set_Goal_Number(kActorSadik, 300);
+		Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaUG18Wait);
+		Actor_Set_Goal_Number(kActorClovis, kGoalClovisUG18Wait);
+		Actor_Set_Goal_Number(kActorSadik, kGoalSadikUG18Wait);
 	}
 }
 
@@ -77,7 +77,7 @@ void SceneScriptUG18::SceneLoaded() {
 	Clickable_Object("MACHINE_01");
 	Unclickable_Object("MACHINE_01");
 
-	if (Game_Flag_Query(671)) {
+	if (Game_Flag_Query(kFlagUG18GuzzaScene)) {
 		Actor_Put_In_Set(kActorGuzza, kSetFreeSlotI);
 		Actor_Set_At_Waypoint(kActorGuzza, 41, 0);
 		if (Actor_Query_Which_Set_In(kActorSadik) == kSetUG18) {
@@ -85,11 +85,12 @@ void SceneScriptUG18::SceneLoaded() {
 			Actor_Set_At_Waypoint(kActorSadik, 33, 0);
 		}
 	}
+
 	if ( Game_Flag_Query(kFlagCallWithGuzza)
-	 && !Game_Flag_Query(671)
+	 && !Game_Flag_Query(kFlagUG18GuzzaScene)
 	 &&  Global_Variable_Query(kVariableChapter) == 4
 	) {
-		Item_Add_To_World(91, 987, 89, -55.21f, 0.0f, -302.17f, 0, 12, 12, false, true, false, true);
+		Item_Add_To_World(kItemBriefcase, 987, kSetUG18, -55.21f, 0.0f, -302.17f, 0, 12, 12, false, true, false, true);
 	}
 }
 
@@ -106,13 +107,13 @@ bool SceneScriptUG18::ClickedOnActor(int actorId) {
 }
 
 bool SceneScriptUG18::ClickedOnItem(int itemId, bool combatMode) {
-	if (itemId == 91) {
+	if (itemId == kItemBriefcase) {
 		if (combatMode) {
-			Item_Remove_From_World(91);
-		} else if (!Loop_Actor_Walk_To_Item(kActorMcCoy, 91, 12, true, false)) {
+			Item_Remove_From_World(kItemBriefcase);
+		} else if (!Loop_Actor_Walk_To_Item(kActorMcCoy, kItemBriefcase, 12, true, false)) {
 			Item_Pickup_Spin_Effect(987, 368, 243);
 			Item_Remove_From_World(itemId);
-			Game_Flag_Set(703);
+			Game_Flag_Set(kFlagUG18BriefcaseTaken);
 			Actor_Clue_Acquire(kActorMcCoy, kClueBriefcase, true, kActorGuzza);
 		}
 	}
@@ -141,8 +142,9 @@ void SceneScriptUG18::SceneFrameAdvanced(int frame) {
 
 void SceneScriptUG18::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
 	if (actorId == kActorGuzza) {
-		if (newGoal == 303) {
-			Game_Flag_Set(607);
+		switch (newGoal) {
+		case kGoalGuzzaUG18HitByMcCoy:
+			Game_Flag_Set(kFlagMcCoyRetiredHuman);
 			ADQ_Flush();
 			Actor_Modify_Friendliness_To_Other(kActorClovis, kActorMcCoy, 7);
 			Actor_Modify_Friendliness_To_Other(kActorSadik, kActorMcCoy, 10);
@@ -150,8 +152,10 @@ void SceneScriptUG18::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 			Actor_Face_Actor(kActorGuzza, kActorMcCoy, true);
 			ADQ_Add(kActorGuzza, 1220, 58);
 			Scene_Exits_Enable();
-			Actor_Set_Goal_Number(kActorGuzza, 305);
-		} else if (newGoal == 304) {
+			Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaUG18ShotByMcCoy);
+			break;
+
+		case kGoalGuzzaUG18MissedByMcCoy:
 			ADQ_Flush();
 			Actor_Modify_Friendliness_To_Other(kActorClovis, kActorMcCoy, 7);
 			Actor_Modify_Friendliness_To_Other(kActorSadik, kActorMcCoy, 10);
@@ -159,32 +163,48 @@ void SceneScriptUG18::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 			Actor_Face_Actor(kActorGuzza, kActorMcCoy, true);
 			ADQ_Add(kActorGuzza, 1220, 58);
 			Scene_Exits_Enable();
-			Actor_Set_Goal_Number(kActorGuzza, 306);
+			Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaUG18ShootMcCoy);
+			break;
 		}
 		return;
 	}
 
 	if (actorId == kActorSadik) {
-		if (newGoal == 302) {
+		switch (newGoal) {
+		case kGoalSadikUG18Decide:
 			if (Actor_Query_Friendliness_To_Other(kActorClovis, kActorMcCoy) > 55
-			 && Game_Flag_Query(607)
+			 && Game_Flag_Query(kFlagMcCoyRetiredHuman)
 			) {
-				sub_403588();
+				Actor_Says(kActorClovis, 660, 13);
+				Actor_Says(kActorMcCoy, 5995, 13);
+				Actor_Says(kActorClovis, 670, 13);
+				Actor_Says(kActorMcCoy, 6000, 13);
+				Actor_Says_With_Pause(kActorClovis, 680, 2.0f, 13);
+				Actor_Says(kActorClovis, 690, 13);
+				Actor_Says(kActorClovis, 700, 13);
+				Actor_Set_Goal_Number(kActorSadik, kGoalSadikUG18Leave);
+				Actor_Set_Goal_Number(kActorClovis, kGoalClovisUG18Leave);
 			} else {
-				Actor_Set_Goal_Number(kActorSadik, 307);
-				Actor_Set_Goal_Number(kActorClovis, 310);
+				Actor_Set_Goal_Number(kActorSadik, kGoalSadikUG18PrepareShootMcCoy);
+				Actor_Set_Goal_Number(kActorClovis, kGoalClovisUG18Leave);
 			}
-		} else if (newGoal == 304) {
+			break;
+
+		// goals 303, 304 and 305 are never set, cut out part of game?
+		case 304:
 			Actor_Modify_Friendliness_To_Other(kActorClovis, kActorMcCoy, -3);
 			ADQ_Add(kActorSadik, 380, -1);
-			Actor_Set_Goal_Number(kActorSadik, 306);
-		} else if (newGoal == 305) {
-			Actor_Change_Animation_Mode(kActorSadik, 6);
+			Actor_Set_Goal_Number(kActorSadik, kGoalSadikUG18WillShootMcCoy);
+			break;
+
+		case 305:
+			Actor_Change_Animation_Mode(kActorSadik, kAnimationModeCombatAttack);
 			Sound_Play(12, 100, 0, 0, 50);
 			Actor_Force_Stop_Walking(kActorMcCoy);
-			Actor_Change_Animation_Mode(kActorMcCoy, 48);
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
 			Player_Loses_Control();
 			Actor_Retired_Here(kActorMcCoy, 6, 6, true, kActorSadik);
+			break;
 		}
 	}
 }
@@ -193,13 +213,13 @@ void SceneScriptUG18::PlayerWalkedIn() {
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -488.71f, 0.0f, 123.59f, 0, false, false, 0);
 
 	if ( Game_Flag_Query(kFlagCallWithGuzza)
-	 && !Game_Flag_Query(671)
+	 && !Game_Flag_Query(kFlagUG18GuzzaScene)
 	 &&  Actor_Query_Is_In_Current_Set(kActorGuzza)
 	) {
 		Scene_Exits_Disable();
-		sub_402734();
-		sub_403278();
-		Game_Flag_Set(671);
+		talkWithGuzza();
+		talkWithClovis();
+		Game_Flag_Set(kFlagUG18GuzzaScene);
 	}
 }
 
@@ -207,32 +227,35 @@ void SceneScriptUG18::PlayerWalkedOut() {
 }
 
 void SceneScriptUG18::DialogueQueueFlushed(int a1) {
-	int v0 = Actor_Query_Goal_Number(kActorGuzza);
-	if (v0 == 301) {
-		Actor_Set_Goal_Number(kActorGuzza, 302);
-		Actor_Change_Animation_Mode(kActorSadik, 6);
+	switch (Actor_Query_Goal_Number(kActorGuzza)) {
+	case kGoalGuzzaUG18Target:
+		Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaUG18WillGetShotBySadik);
+		Actor_Change_Animation_Mode(kActorSadik, kAnimationModeCombatAttack);
 		Sound_Play(14, 100, 0, 0, 50);
-		Actor_Change_Animation_Mode(kActorGuzza, 22);
+		Actor_Change_Animation_Mode(kActorGuzza, kAnimationModeCombatHit);
 		ADQ_Add(kActorClovis, 630, 13);
-		Actor_Set_Goal_Number(kActorClovis, 301);
-	} else if (v0 == 305) {
-		Actor_Change_Animation_Mode(kActorMcCoy, 6);
+		Actor_Set_Goal_Number(kActorClovis, kGoalClovisUG18SadikWillShootGuzza);
+		break;
+
+	case kGoalGuzzaUG18ShotByMcCoy:
+		// Bug in the game, shot animation is not reset so McCoy looks still while he is shooting
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAttack);
 		Sound_Play(13, 100, 0, 0, 50);
-		Actor_Change_Animation_Mode(kActorGuzza, 22);
+		Actor_Change_Animation_Mode(kActorGuzza, kAnimationModeCombatHit);
 		Delay(900);
-		Actor_Change_Animation_Mode(kActorMcCoy, 6);
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAttack);
 		Sound_Play(14, 100, 0, 0, 50);
-		Actor_Change_Animation_Mode(kActorGuzza, 22);
+		Actor_Change_Animation_Mode(kActorGuzza, kAnimationModeCombatHit);
 		Delay(1100);
-		Actor_Change_Animation_Mode(kActorMcCoy, 6);
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAttack);
 		Sound_Play(12, 100, 0, 0, 50);
-		Actor_Change_Animation_Mode(kActorGuzza, 22);
+		Actor_Change_Animation_Mode(kActorGuzza, kAnimationModeCombatHit);
 		Delay(900);
-		Actor_Change_Animation_Mode(kActorMcCoy, 6);
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAttack);
 		Sound_Play(14, 100, 0, 0, 50);
 		Actor_Change_Animation_Mode(kActorGuzza, 61);
-		Overlay_Play("UG18over", 1, 0, 1, 0);
-		Actor_Set_Goal_Number(kActorGuzza, 307);
+		Overlay_Play("UG18over", 1, false, true, 0);
+		Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaUG18FallDown);
 		Player_Gains_Control();
 		ADQ_Add_Pause(2000);
 		ADQ_Add(kActorSadik, 360, -1);
@@ -240,48 +263,57 @@ void SceneScriptUG18::DialogueQueueFlushed(int a1) {
 		ADQ_Add(kActorClovis, 650, 14);
 		ADQ_Add(kActorSadik, 370, 14);
 		ADQ_Add(kActorClovis, 1320, 14);
-		Actor_Set_Goal_Number(kActorClovis, 303);
-	} else if (v0 == 306) {
-		Actor_Change_Animation_Mode(kActorGuzza, 6);
+		Actor_Set_Goal_Number(kActorClovis, kGoalClovisUG18GuzzaDied);
+		break;
+
+	case kGoalGuzzaUG18ShootMcCoy:
+		Actor_Change_Animation_Mode(kActorGuzza, kAnimationModeCombatAttack);
 		Sound_Play(13, 100, 0, 0, 50);
 		Actor_Force_Stop_Walking(kActorMcCoy);
-		Actor_Change_Animation_Mode(kActorMcCoy, 48);
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
 		Player_Loses_Control();
-		Actor_Retired_Here(kActorMcCoy, 6, 6, 1, kActorGuzza);
-		Actor_Set_Goal_Number(kActorGuzza, 307);
+		Actor_Retired_Here(kActorMcCoy, 6, 6, true, kActorGuzza);
+		Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaUG18FallDown);
+		break;
 	}
 
-	int v1 = Actor_Query_Goal_Number(kActorClovis);
-	if (v1 == 301) {
-		Actor_Change_Animation_Mode(kActorSadik, 6);
+	switch (Actor_Query_Goal_Number(kActorClovis)) {
+	case kGoalClovisUG18SadikWillShootGuzza:
+		Actor_Change_Animation_Mode(kActorSadik, kAnimationModeCombatAttack);
 		Sound_Play(14, 100, 0, 0, 50);
-		Actor_Change_Animation_Mode(kActorGuzza, 22);
+		Actor_Change_Animation_Mode(kActorGuzza, kAnimationModeCombatHit);
 		ADQ_Add(kActorClovis, 640, 13);
 		ADQ_Add(kActorGuzza, 1210, 13);
-		Actor_Set_Goal_Number(kActorClovis, 302);
-	} else if (v1 == 302) {
-		Actor_Change_Animation_Mode(kActorSadik, 6);
+		Actor_Set_Goal_Number(kActorClovis, kGoalClovisUG18SadikIsShootingGuzza);
+		break;
+
+	case kGoalClovisUG18SadikIsShootingGuzza:
+		Actor_Change_Animation_Mode(kActorSadik, kAnimationModeCombatAttack);
 		Sound_Play(14, 100, 0, 0, 50);
 		Actor_Change_Animation_Mode(kActorGuzza, 61);
 		ADQ_Add_Pause(2000);
 		ADQ_Add(kActorClovis, 650, 14);
 		ADQ_Add(kActorSadik, 370, 14);
 		ADQ_Add(kActorClovis, 1320, 14);
-		Actor_Set_Goal_Number(kActorGuzza, 390);
-		Actor_Retired_Here(kActorGuzza, 72, 32, 1, kActorSadik);
-		Actor_Set_Goal_Number(kActorClovis, 303);
+		Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaUG18ShotBySadik);
+		Actor_Retired_Here(kActorGuzza, 72, 32, true, kActorSadik);
+		Actor_Set_Goal_Number(kActorClovis, kGoalClovisUG18GuzzaDied);
 		Scene_Exits_Enable();
-	} else if (v1 == 303) {
-		Actor_Set_Goal_Number(kActorSadik, 301);
+		break;
+
+	case kGoalClovisUG18GuzzaDied:
+		Actor_Set_Goal_Number(kActorSadik, kGoalSadikUG18Move);
+		break;
 	}
-	if (Actor_Query_Goal_Number(kActorSadik) == 306) {
-		Actor_Change_Animation_Mode(kActorSadik, 48);
-		Actor_Set_Goal_Number(kActorSadik, 307);
-		Actor_Set_Goal_Number(kActorClovis, 310);
+
+	if (Actor_Query_Goal_Number(kActorSadik) == kGoalSadikUG18WillShootMcCoy) {
+		Actor_Change_Animation_Mode(kActorSadik, kAnimationModeDie);
+		Actor_Set_Goal_Number(kActorSadik, kGoalSadikUG18PrepareShootMcCoy);
+		Actor_Set_Goal_Number(kActorClovis, kGoalClovisUG18Leave);
 	}
 }
 
-void SceneScriptUG18::sub_402734() {
+void SceneScriptUG18::talkWithGuzza() {
 	Actor_Face_Actor(kActorMcCoy, kActorGuzza, true);
 	Actor_Says(kActorMcCoy, 5860, 9);
 	Delay(500);
@@ -325,7 +357,7 @@ void SceneScriptUG18::sub_402734() {
 	Actor_Says(kActorGuzza, 950, 14);
 	Actor_Says(kActorGuzza, 960, 13);
 	Actor_Says(kActorGuzza, 970, 3);
-	if (Game_Flag_Query(607)) {
+	if (Game_Flag_Query(kFlagMcCoyRetiredHuman)) {
 		Actor_Modify_Friendliness_To_Other(kActorClovis, kActorMcCoy, 3);
 		Actor_Modify_Friendliness_To_Other(kActorSadik, kActorMcCoy, 5);
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -117.13f, 0.0f, -284.47f, 0, false, false, 0);
@@ -337,66 +369,50 @@ void SceneScriptUG18::sub_402734() {
 		Actor_Says(kActorMcCoy, 5970, 14);
 		Actor_Says(kActorGuzza, 1000, 3);
 		Actor_Says(kActorMcCoy, 5975, 15);
-	} else {
-		sub_402DE8();
-	}
-}
-
-void SceneScriptUG18::sub_402DE8() {
-	if (Player_Query_Agenda() != kPlayerAgendaPolite) {
-		if (Global_Variable_Query(kVariableAffectionTowards) > 1
-		 || Player_Query_Agenda() == kPlayerAgendaSurly
-		) {
-			sub_403114();
-		} else {
-			sub_402F8C();
-		}
-	} else {
+	} else if (Player_Query_Agenda() == kPlayerAgendaPolite) {
 		Actor_Modify_Friendliness_To_Other(kActorClovis, kActorMcCoy, -1);
 		Actor_Modify_Friendliness_To_Other(kActorSadik, kActorMcCoy, -1);
 		Actor_Says(kActorMcCoy, 5935, 14);
 		Actor_Says(kActorMcCoy, 5940, 18);
 		Actor_Says(kActorGuzza, 1020, 13);
 		Actor_Says(kActorGuzza, 1030, 14);
+	} else if (Global_Variable_Query(kVariableAffectionTowards) > 1
+			|| Player_Query_Agenda() == kPlayerAgendaSurly
+	) {
+		Actor_Modify_Friendliness_To_Other(kActorClovis, kActorMcCoy, 20);
+		Actor_Modify_Friendliness_To_Other(kActorSadik, kActorMcCoy, 10);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -117.13f, 0.0f, -284.47f, 0, false, false, 0);
+		Actor_Face_Actor(kActorMcCoy, kActorGuzza, true);
+		Actor_Says(kActorMcCoy, 5950, 16);
+		Actor_Says(kActorMcCoy, 5955, 14);
+		Actor_Says(kActorGuzza, 1110, 13);
+		Actor_Says(kActorGuzza, 1120, 15);
+		Actor_Says(kActorMcCoy, 5990, 3);
+		Actor_Says(kActorGuzza, 1130, 15);
+		Actor_Says(kActorGuzza, 1140, 16);
+	} else {
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -117.13f, 0.0f, -284.47f, 0, false, false, 0);
+		Actor_Face_Actor(kActorMcCoy, kActorGuzza, true);
+		Actor_Says(kActorMcCoy, 5945, 12);
+		Actor_Says(kActorGuzza, 1040, 15);
+		Actor_Says(kActorMcCoy, 5980, 15);
+		Actor_Says(kActorGuzza, 1050, 12);
+		Actor_Says(kActorGuzza, 1060, 13);
+		Actor_Says(kActorGuzza, 1070, 14);
+		Actor_Says(kActorMcCoy, 5985, 18);
+		Actor_Says(kActorGuzza, 1080, 3);
+		Actor_Says(kActorGuzza, 1090, 14);
+		Actor_Says(kActorGuzza, 1100, 13);
 	}
 }
 
-void SceneScriptUG18::sub_402F8C() {
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -117.13f, 0.0f, -284.47f, 0, false, false, 0);
-	Actor_Face_Actor(kActorMcCoy, kActorGuzza, true);
-	Actor_Says(kActorMcCoy, 5945, 12);
-	Actor_Says(kActorGuzza, 1040, 15);
-	Actor_Says(kActorMcCoy, 5980, 15);
-	Actor_Says(kActorGuzza, 1050, 12);
-	Actor_Says(kActorGuzza, 1060, 13);
-	Actor_Says(kActorGuzza, 1070, 14);
-	Actor_Says(kActorMcCoy, 5985, 18);
-	Actor_Says(kActorGuzza, 1080, 3);
-	Actor_Says(kActorGuzza, 1090, 14);
-	Actor_Says(kActorGuzza, 1100, 13);
-}
-
-void SceneScriptUG18::sub_403114() {
-	Actor_Modify_Friendliness_To_Other(kActorClovis, kActorMcCoy, 20);
-	Actor_Modify_Friendliness_To_Other(kActorSadik, kActorMcCoy, 10);
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -117.13f, 0.0f, -284.47f, 0, false, false, 0);
-	Actor_Face_Actor(kActorMcCoy, kActorGuzza, true);
-	Actor_Says(kActorMcCoy, 5950, 16);
-	Actor_Says(kActorMcCoy, 5955, 14);
-	Actor_Says(kActorGuzza, 1110, 13);
-	Actor_Says(kActorGuzza, 1120, 15);
-	Actor_Says(kActorMcCoy, 5990, 3);
-	Actor_Says(kActorGuzza, 1130, 15);
-	Actor_Says(kActorGuzza, 1140, 16);
-}
-
-void SceneScriptUG18::sub_403278() {
+void SceneScriptUG18::talkWithClovis() {
 	ADQ_Flush();
 	Actor_Start_Speech_Sample(kActorClovis, 590);
 	Delay(500);
 	Loop_Actor_Walk_To_XYZ(kActorGuzza, 126.79f, 0.0f, -362.17f, 0, false, false, 0);
 	Actor_Face_Heading(kActorGuzza, 729, false);
-	Actor_Set_Goal_Number(kActorGuzza, 301);
+	Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaUG18Target);
 	ADQ_Add(kActorSadik, 350, 13);
 	ADQ_Add_Pause(1500);
 	ADQ_Add(kActorGuzza, 1150, 58);
@@ -410,18 +426,6 @@ void SceneScriptUG18::sub_403278() {
 	ADQ_Add(kActorGuzza, 1190, 60);
 	ADQ_Add(kActorClovis, 620, 13);
 	ADQ_Add(kActorGuzza, 1200, 59);
-}
-
-void SceneScriptUG18::sub_403588() {
-	Actor_Says(kActorClovis, 660, 13);
-	Actor_Says(kActorMcCoy, 5995, 13);
-	Actor_Says(kActorClovis, 670, 13);
-	Actor_Says(kActorMcCoy, 6000, 13);
-	Actor_Says_With_Pause(kActorClovis, 680, 2.0f, 13);
-	Actor_Says(kActorClovis, 690, 13);
-	Actor_Says(kActorClovis, 700, 13);
-	Actor_Set_Goal_Number(kActorSadik, 310);
-	Actor_Set_Goal_Number(kActorClovis, 310);
 }
 
 } // End of namespace BladeRunner

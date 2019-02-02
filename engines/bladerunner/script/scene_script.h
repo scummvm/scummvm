@@ -504,12 +504,8 @@ DECLARE_SCRIPT(UG17)
 END_SCRIPT
 
 DECLARE_SCRIPT(UG18)
-	void sub_402734();
-	void sub_402DE8();
-	void sub_402F8C();
-	void sub_403114();
-	void sub_403278();
-	void sub_403588();
+	void talkWithGuzza();
+	void talkWithClovis();
 END_SCRIPT
 
 DECLARE_SCRIPT(UG19)

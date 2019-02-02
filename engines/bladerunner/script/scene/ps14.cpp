@@ -74,7 +74,7 @@ bool SceneScriptPS14::ClickedOnExit(int exitId) {
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 3, true, kAnimationModeIdle);
 
 			if (Global_Variable_Query(kVariableChapter) == 4
-			 && Game_Flag_Query(671)
+			 && Game_Flag_Query(kFlagUG18GuzzaScene)
 			) {
 				if (Actor_Clue_Query(kActorMcCoy, kClueBriefcase)) {
 					Game_Flag_Set(666);
