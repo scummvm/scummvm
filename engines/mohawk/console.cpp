@@ -374,23 +374,24 @@ bool MystConsole::Cmd_QuickTest(int argc, const char **argv) {
 #ifdef ENABLE_RIVEN
 
 RivenConsole::RivenConsole(MohawkEngine_Riven *vm) : GUI::Debugger(), _vm(vm) {
-	registerCmd("changeCard",		WRAP_METHOD(RivenConsole, Cmd_ChangeCard));
-	registerCmd("curCard",		WRAP_METHOD(RivenConsole, Cmd_CurCard));
-	registerCmd("dumpCard",		WRAP_METHOD(RivenConsole, Cmd_DumpCard));
-	registerCmd("var",			WRAP_METHOD(RivenConsole, Cmd_Var));
-	registerCmd("playSound",		WRAP_METHOD(RivenConsole, Cmd_PlaySound));
+	registerCmd("changeCard",     WRAP_METHOD(RivenConsole, Cmd_ChangeCard));
+	registerCmd("curCard",        WRAP_METHOD(RivenConsole, Cmd_CurCard));
+	registerCmd("dumpCard",       WRAP_METHOD(RivenConsole, Cmd_DumpCard));
+	registerCmd("var",            WRAP_METHOD(RivenConsole, Cmd_Var));
+	registerCmd("playSound",      WRAP_METHOD(RivenConsole, Cmd_PlaySound));
 	registerCmd("playSLST",       WRAP_METHOD(RivenConsole, Cmd_PlaySLST));
-	registerCmd("stopSound",		WRAP_METHOD(RivenConsole, Cmd_StopSound));
-	registerCmd("curStack",		WRAP_METHOD(RivenConsole, Cmd_CurStack));
-	registerCmd("dumpStack",		WRAP_METHOD(RivenConsole, Cmd_DumpStack));
-	registerCmd("changeStack",	WRAP_METHOD(RivenConsole, Cmd_ChangeStack));
-	registerCmd("hotspots",		WRAP_METHOD(RivenConsole, Cmd_Hotspots));
-	registerCmd("zipMode",		WRAP_METHOD(RivenConsole, Cmd_ZipMode));
+	registerCmd("stopSound",      WRAP_METHOD(RivenConsole, Cmd_StopSound));
+	registerCmd("curStack",       WRAP_METHOD(RivenConsole, Cmd_CurStack));
+	registerCmd("dumpStack",      WRAP_METHOD(RivenConsole, Cmd_DumpStack));
+	registerCmd("changeStack",    WRAP_METHOD(RivenConsole, Cmd_ChangeStack));
+	registerCmd("hotspots",       WRAP_METHOD(RivenConsole, Cmd_Hotspots));
+	registerCmd("zipMode",        WRAP_METHOD(RivenConsole, Cmd_ZipMode));
 	registerCmd("dumpScript",     WRAP_METHOD(RivenConsole, Cmd_DumpScript));
 	registerCmd("listZipCards",   WRAP_METHOD(RivenConsole, Cmd_ListZipCards));
-	registerCmd("getRMAP",		WRAP_METHOD(RivenConsole, Cmd_GetRMAP));
+	registerCmd("getRMAP",        WRAP_METHOD(RivenConsole, Cmd_GetRMAP));
 	registerCmd("combos",         WRAP_METHOD(RivenConsole, Cmd_Combos));
 	registerCmd("sliderState",    WRAP_METHOD(RivenConsole, Cmd_SliderState));
+	registerCmd("quickTest",      WRAP_METHOD(RivenConsole, Cmd_QuickTest));
 	registerVar("show_hotspots",  &_vm->_showHotspots);
 }
 
@@ -684,6 +685,65 @@ bool RivenConsole::Cmd_SliderState(int argc, const char **argv) {
 		domeSpit->setDomeSliderState((uint32)atoi(argv[1]));
 
 	debugPrintf("Dome Slider State = %08x\n", domeSpit->getDomeSliderState());
+	return true;
+}
+
+bool RivenConsole::Cmd_QuickTest(int argc, const char **argv) {
+	_vm->pauseEngine(false);
+
+	// Go through all the stacks, all the cards and click random stuff
+	for (uint16 stackId = kStackFirst; stackId <= kStackLast; stackId++) {
+
+		debug("Loading stack %s", RivenStacks::getName(stackId));
+		_vm->changeToStack(stackId);
+
+		Common::Array<uint16> cardIds = _vm->getResourceIDList(ID_CARD);
+		for (uint16 i = 0; i < cardIds.size(); i++) {
+			if (_vm->shouldQuit()) break;
+
+			uint16 cardId = cardIds[i];
+			if (stackId == kStackTspit && cardId == 366) continue; // Cut card with invalid links
+			if (stackId == kStackTspit && cardId == 412) continue; // Cut card with invalid links
+			if (stackId == kStackTspit && cardId == 486) continue; // Cut card with invalid links
+			if (stackId == kStackBspit && cardId == 465) continue; // Cut card with invalid links
+			if (stackId == kStackJspit && cardId == 737) continue; // Cut card with invalid links
+
+			debug("Loading card %d", cardId);
+			RivenScriptPtr script = _vm->_scriptMan->createScriptFromData(1,
+			                            kRivenCommandChangeCard, 1, cardId);
+			_vm->_scriptMan->runScript(script, true);
+
+			_vm->_gfx->setTransitionMode(kRivenTransitionModeDisabled);
+
+			while (_vm->_scriptMan->hasQueuedScripts()) {
+				_vm->doFrame();
+			}
+
+			// Click on a random hotspot
+			Common::Array<RivenHotspot *> hotspots = _vm->getCard()->getHotspots();
+			if (!hotspots.empty() && _vm->getStack()->getId() != kStackAspit) {
+				uint hotspotIndex = _vm->_rnd->getRandomNumberRng(0, hotspots.size() - 1);
+				RivenHotspot *hotspot = hotspots[hotspotIndex];
+				if (hotspot->isEnabled()) {
+					Common::Rect hotspotRect = hotspot->getRect();
+					Common::Point hotspotPoint((hotspotRect.left + hotspotRect.right) / 2, (hotspotRect.top + hotspotRect.bottom) / 2);
+					_vm->getStack()->onMouseDown(hotspotPoint);
+					_vm->getStack()->onMouseUp(hotspotPoint);
+				}
+
+				while (_vm->_scriptMan->hasQueuedScripts()) {
+					_vm->doFrame();
+				}
+			}
+
+			if (_vm->getStack()->getId() != stackId) {
+				// Clicking may have linked us to another age
+				_vm->changeToStack(stackId);
+			}
+		}
+	}
+
+	_vm->pauseEngine(true);
 	return true;
 }
 

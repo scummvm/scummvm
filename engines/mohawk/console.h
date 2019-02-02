@@ -89,6 +89,7 @@ private:
 	bool Cmd_GetRMAP(int argc, const char **argv);
 	bool Cmd_Combos(int argc, const char **argv);
 	bool Cmd_SliderState(int argc, const char **argv);
+	bool Cmd_QuickTest(int argc, const char **argv);
 };
 
 #endif

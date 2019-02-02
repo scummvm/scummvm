@@ -157,7 +157,13 @@ void GSpit::xgpincontrols(const ArgumentArray &args) {
 	}
 
 	// Now check to see if this section of the island exists
-	uint32 islandIndex = _vm->_vars["glkbtns"] - 1;
+	uint32 islandIndex = _vm->_vars["glkbtns"];
+	if (islandIndex == 0) {
+		// No island selected. Probably we jumped to the card.
+		warning("xgpincontrols called without an island selected.");
+		return;
+	}
+
 	uint16 imagePos = mousePos.x + mousePos.y;
 
 	static const uint16 islandImages[5][11] = {
@@ -172,7 +178,7 @@ void GSpit::xgpincontrols(const ArgumentArray &args) {
 	uint32 imageCount = _vm->_vars["gimagemax"];
 	uint32 image = 0;
 	for (; image < imageCount; image++)
-		if (islandImages[islandIndex][image] == imagePos)
+		if (islandImages[islandIndex - 1][image] == imagePos)
 			break;
 
 	// If we past it, we don't have a valid map coordinate

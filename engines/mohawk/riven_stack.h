@@ -30,7 +30,6 @@
 #include "common/str-array.h"
 
 #include "mohawk/riven_graphics.h"
-#include "mohawk/riven_stack.h"
 
 namespace Mohawk {
 

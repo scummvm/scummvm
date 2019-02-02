@@ -153,6 +153,7 @@ public:
 	uint32 &getStackVar(uint32 index);
 
 	// Miscellaneous
+	Common::Array<uint16> getResourceIDList(uint32 type) const;
 	Common::SeekableReadStream *getExtrasResource(uint32 tag, uint16 id);
 	bool _activatedPLST;
 	bool _activatedSLST;

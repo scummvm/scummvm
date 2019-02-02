@@ -636,6 +636,17 @@ Common::SeekableReadStream *MohawkEngine_Riven::getExtrasResource(uint32 tag, ui
 	return _extrasFile->getResource(tag, id);
 }
 
+Common::Array<uint16> MohawkEngine_Riven::getResourceIDList(uint32 type) const {
+	Common::Array<uint16> ids;
+
+	for (uint i = 0; i < _mhk.size(); i++) {
+		ids.push_back(_mhk[i]->getResourceIDList(type));
+	}
+
+	return ids;
+}
+
+
 void MohawkEngine_Riven::delay(uint32 ms) {
 	uint32 startTime = _system->getMillis();
 
