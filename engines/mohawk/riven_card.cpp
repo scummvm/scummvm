@@ -917,10 +917,12 @@ void RivenCard::leave() {
 
 	if (_pressedHotspot) {
 		script += _pressedHotspot->getScript(kMouseUpScript);
+		_pressedHotspot = nullptr;
 	}
 
 	if (_hoveredHotspot) {
 		script += _hoveredHotspot->getScript(kMouseLeaveScript);
+		_hoveredHotspot = nullptr;
 	}
 
 	script += getScript(kCardLeaveScript);
