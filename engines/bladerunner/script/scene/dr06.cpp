@@ -33,7 +33,7 @@ void SceneScriptDR06::InitializeScene() {
 
 	Scene_Exit_Add_2D_Exit(0, 601, 11, 639, 479, 1);
 	if (Global_Variable_Query(kVariableChapter) > 3
-	 && Game_Flag_Query(715)
+	 && Game_Flag_Query(kFlagDR06UnlockedToUG16)
 	) {
 		Scene_Exit_Add_2D_Exit(1, 0, 272, 46, 477, 2);
 	}

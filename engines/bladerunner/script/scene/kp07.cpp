@@ -71,7 +71,7 @@ void SceneScriptKP07::InitializeScene() {
 			Actor_Set_At_XYZ(kActorLucy, 78.0f, -41.52f, -119.0f, 659);
 		}
 
-		if (Actor_Query_Goal_Number(kActorLuther) < 599) {
+		if (Actor_Query_Goal_Number(kActorLuther) < kGoalLutherGone) {
 			Global_Variable_Increment(kVariableReplicants, 1);
 			Actor_Put_In_Set(kActorLuther, kSetKP07);
 			Actor_Set_At_XYZ(kActorLuther, -47.0f, 0.0f, 151.0f, 531);

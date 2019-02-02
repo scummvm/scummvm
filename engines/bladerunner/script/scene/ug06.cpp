@@ -29,7 +29,7 @@ void SceneScriptUG06::InitializeScene() {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		Outtake_Play(kOuttakeMovieC1, false, -1);
-		if (Game_Flag_Query(560)) {
+		if (Game_Flag_Query(kFlagLutherLanceIsReplicant)) {
 			Outtake_Play(kOuttakeMovieC3, false, -1);
 		} else {
 			Outtake_Play(kOuttakeMovieC2, false, -1);

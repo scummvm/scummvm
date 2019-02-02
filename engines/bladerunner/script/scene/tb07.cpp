@@ -49,7 +49,7 @@ void SceneScriptTB07::InitializeScene() {
 	if ( Global_Variable_Query(kVariableChapter) == 4
 	 && !Actor_Clue_Query(kActorMcCoy, kClueDNATyrell)
 	) {
-		Item_Add_To_World(83, 941, kSetTB07, 9.7f, 48.7f, -174.22f, 0, 12, 12, false, true, false, true);
+		Item_Add_To_World(kItemDNATyrell, 941, kSetTB07, 9.7f, 48.7f, -174.22f, 0, 12, 12, false, true, false, true);
 	}
 	if (Game_Flag_Query(kFlagTB07ShadeDown)) {
 		Scene_Loop_Set_Default(kTB07LoopMainShadeDown);
@@ -78,7 +78,7 @@ bool SceneScriptTB07::ClickedOnActor(int actorId) {
 bool SceneScriptTB07::ClickedOnItem(int itemId, bool a2) {
 	if (!Loop_Actor_Walk_To_Item(kActorMcCoy, itemId, 36, true, false)) {
 		Actor_Face_Item(kActorMcCoy, itemId, true);
-		if (itemId == 83) {
+		if (itemId == kItemDNATyrell) {
 			Item_Pickup_Spin_Effect(941, 331, 296);
 			Actor_Clue_Acquire(kActorMcCoy, kClueDNATyrell, false, -1);
 		}

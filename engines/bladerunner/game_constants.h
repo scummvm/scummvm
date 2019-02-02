@@ -960,7 +960,10 @@ enum Flags {
 	kFlagUG16toDR06 = 551, // is never checked
 	kFlagDR06toUG16 = 552,
 	kFlagUG13Entered = 553,
+	kFlagUG16LutherLanceTalk1 = 556,
+	kFlagNotUsed557, // is never checked
 	kFlagDR01toCT11 = 558,
+	kFlagLutherLanceIsReplicant = 560,
 	kFlagNR02GordoLeaveLighter = 561,
 	kFlagHF05CrazyLegsTalk1 = 562,
 	kFlagHF05CrazyLegsTalk2 = 563,
@@ -968,6 +971,7 @@ enum Flags {
 	kFlagNotUsed565 = 565, // has no use
 	kFlagHF03toHF04 = 566, // is never checked
 	kFlagHF04toHF03 = 567,
+	kFlagUG16ComputerOff = 568,
 	kFlagNR04EarlyQWalkedIn = 569,
 	// 570 is never used
 	// 571 is never used
@@ -979,6 +983,7 @@ enum Flags {
 	kFlagHF04DoorsClosed = 584,
 	kFlagHF04CloseDoors = 585,
 	kFlagHF04OpenDoors = 586,
+	kFlagUG15LutherLanceStartedDying = 587,
 	kFlagNR05BartenderTalk1 = 588,
 	kFlagNR05BartenderTalk2 = 589,
 	kFlagNR05EarlyQTalk = 590,
@@ -986,12 +991,18 @@ enum Flags {
 	kFlagGordoRanAway = 592,
 	kFlagLucyRanAway = 593,
 	kFlagNR02GordoJumpDown = 594,
+	kFlagLutherLanceAreDead = 595,
+	kFlagUG16PulledGun = 596,
+	kFlagUG16FolderFound = 597,
 	kFlagKIAPrivacyAddonIntro = 599,
+	kFlagUG16LutherLanceTalkReplicants1 = 600,
+	kFlagUG16LutherLanceTalkReplicants2 = 601,
 	// 602 is never used
 	kFlagSteeleAimingAtGordo = 603,
 	kFlagNR03McCoyThrownOut = 604,
 	kFlagNR04DiscFound = 605,
 	kFlagNR04EarlyQStungByScorpions = 606,
+
 	kFlagTB07toTB02 = 608,
 	kFlagNR04McCoyAimedAtEarlyQ = 609,
 	kFlagUG08Entered = 610,
@@ -1053,6 +1064,7 @@ enum Flags {
 	kFlagPS05TV4 = 692,
 	kFlagUG03DeadHomeless = 693,
 	kFlagUG14DeadHomeless = 694,
+	kFlagUG15LanceLuthorTrade = 698,
 	kFlagBulletBobDead = 702,
 	kFlagRC02EnteredChapter4 = 704,
 	kFlagRC02RunciterTalkWithGun = 705,
@@ -1064,6 +1076,7 @@ enum Flags {
 	kFlagMA04WatchedTV = 711,
 	kFlagMcCoyShotAtZuben = 712,
 	kFlagDR04McCoyShotMoraji = 713,
+	kFlagDR06UnlockedToUG16 = 715,
 	kFlagRC04BobTalk3 = 717,
 	kflagPS01toPS02 = 718,
 	kFlagCT02McCoyFell = 719,
@@ -1094,7 +1107,7 @@ enum Variables {
 	kVariableBobShot = 24, // has no use
 	kVariableGeneralDollShot = 25, // has no use
 	// variables 26 - 28 are not used
-
+	kVariableLutherLanceShot = 29,
 	// variables 30 - 31 are not used
 	kVariableGenericWalkerAModel = 32,
 	kVariableGenericWalkerBModel = 33,
@@ -1509,12 +1522,23 @@ enum GameItems {
 	kItemCandy = 79,
 	kItemCheese = 81,
 	kItemChopstickWrapper = 82,
+	kItemDNATyrell = 83,
 	kItemDogCollar = 84,
 	kItemRagDoll = 85,
+	// 86 is never used
+	// 87 is never used
 	kItemRadiationGoogles = 88,
 	kItemGordosLighter1 = 89,
 	kItemGordosLighter2 = 90,
+
+	// 92 is never used
+	// 93 is never used
+	// 94 is never used
+	// 95 is never used
+	// 96 is never used
+	// 97 is never used
 	kItemToyDog = 98,
+	// 99 is never used
 	kItemShellCasingA = 100,
 	kItemShellCasingB = 101,
 	kItemShellCasingC = 102,
@@ -1527,7 +1551,13 @@ enum GameItems {
 	kItemChair = 109,
 	kItemWeaponsCrate = 110,
 	kItemWeaponsOrderForm = 111,
+	// 112 is never used
+	// 113 is never used
+	// 114 is never used
 	kItemDogWrapper = 115,
+	// 116 is never used
+	// 117 is never used
+
 	kItemTyrellSalesPamphlet = 119,
 	kItemMoonbusPhoto = 120,
 	kItemGreenPawnLock = 121,
@@ -1870,6 +1900,20 @@ enum GoalSadik {
 	kGoalSadikBB11TalkWithClovis = 107
 };
 
+enum GoalLuther {
+	kGoalLutherDefault = 400,
+	kGoalLutherMoveAround = 401,
+	kGoalLutherMoveAroundRestart = 402,
+	kGoalLutherStop = 403,
+	kGoalLutherShot = 494,
+	kGoalLutherDyingStarted = 495,
+	kGoalLutherDyingWait = 496,
+	kGoalLutherDyingCheck = 497,
+	kGoalLutherDie = 498,
+	kGoalLutherDead = 499,
+	kGoalLutherGone = 599
+};
+
 enum GoalTransient {
 	kGoalTransientDefault = 0,
 	kGoalTransientCT04Leave = 2
@@ -1893,10 +1937,17 @@ enum GoalRunciter {
 	kGoalRunciterDead = 599
 };
 
+enum GoalTyrellGuard {
+	kGoalTyrellGuardSleeping = 300,
+	kGoalTyrellGuardWakeUpAndArrestMcCoy = 301,
+	kGoalTyrellGuardWakeUp = 302,
+	kGoalTyrellGuardArrestMcCoy = 303,
+	kGoalTyrellGuardWait = 304
+};
+
 enum GoalEarlyQ {
 	// cut feature? goals 0 - 200 has no use as EarlyQ is walking around NR which is not accessible
 	kGoalEarlyQWalkAround = 200,
-
 	kGoalEarlyQNR04Enter = 201,
 	kGoalEarlyQNR04Talk1 = 202,
 	kGoalEarlyQNR04GoToBar = 203,

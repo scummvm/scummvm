@@ -62,11 +62,11 @@ void SceneScriptTB03::InitializeScene() {
 	Actor_Set_At_XYZ(kActorTyrellGuard, -38.53f, 2.93f, 1475.97f, 673);
 	if (Global_Variable_Query(kVariableChapter) == 4) {
 		int goal = Actor_Query_Goal_Number(kActorTyrellGuard);
-		if (goal == 304) {
-			Actor_Change_Animation_Mode(kActorTyrellGuard, 0);
+		if (goal == kGoalTyrellGuardWait) {
+			Actor_Change_Animation_Mode(kActorTyrellGuard, kAnimationModeIdle);
 			Actor_Set_Goal_Number(kActorOfficerGrayford, 399);
-		} else if (goal != 302) {
-			Actor_Set_Goal_Number(kActorTyrellGuard, 300);
+		} else if (goal != kGoalTyrellGuardWakeUp) {
+			Actor_Set_Goal_Number(kActorTyrellGuard, kGoalTyrellGuardSleeping);
 		}
 	}
 
@@ -107,8 +107,8 @@ bool SceneScriptTB03::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptTB03::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -260.0f, 0.15f, 2014.0f, 0, 1, false, 0)) {
-			Actor_Set_Goal_Number(kActorTyrellGuard, 304);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -260.0f, 0.15f, 2014.0f, 0, true, false, 0)) {
+			Actor_Set_Goal_Number(kActorTyrellGuard, kGoalTyrellGuardWait);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagTB03toUG17);
@@ -118,7 +118,7 @@ bool SceneScriptTB03::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -152.0f, 0.0f, 1774.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -152.0f, 0.0f, 1774.0f, 0, true, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagTB03toTB02);
@@ -141,7 +141,7 @@ void SceneScriptTB03::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptTB03::PlayerWalkedIn() {
-	if (Actor_Query_Goal_Number(kActorTyrellGuard) == 304) {
+	if (Actor_Query_Goal_Number(kActorTyrellGuard) == kGoalTyrellGuardWait) {
 		Player_Set_Combat_Mode(false);
 		Actor_Says(kActorOfficerGrayford, 260, -1);
 		Actor_Says(kActorMcCoy, 170, 14);

@@ -97,7 +97,7 @@ void InitScript::Init_Game_Flags() {
 	}
 
 	if (Random_Query(1, 2) == 1) {
-		Game_Flag_Set(560);
+		Game_Flag_Set(kFlagLutherLanceIsReplicant);
 	}
 
 	if (!Game_Flag_Query(kFlagGordoIsReplicant)

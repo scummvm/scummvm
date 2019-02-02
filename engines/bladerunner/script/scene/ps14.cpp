@@ -69,9 +69,10 @@ bool SceneScriptPS14::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptPS14::ClickedOnExit(int exitId) {
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -2101.0f, 508.14f, -1361.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -2101.0f, 508.14f, -1361.0f, 0, true, false, 0)) {
 			Actor_Face_Heading(kActorMcCoy, 819, false);
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 3, true, kAnimationModeIdle);
+
 			if (Global_Variable_Query(kVariableChapter) == 4
 			 && Game_Flag_Query(671)
 			) {
