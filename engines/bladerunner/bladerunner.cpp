@@ -982,18 +982,25 @@ void BladeRunnerEngine::actorsUpdate() {
 	int actorCount = (int)_gameInfo->getActorCount();
 	int setId = _scene->getSetId();
 
-	if (setId != kSetUG18 || _gameVars[kVariableChapter] != 4 || !_gameFlags->query(670) || !_aiScripts->isInsideScript()) {
-		for (int i = 0; i < actorCount; i++) {
-			Actor *actor = _actors[i];
-			if (actor->getSetId() == setId || i == _actorUpdateCounter) {
-				_aiScripts->update(i);
-				actor->timersUpdate();
-			}
+	// what a "nice" last minute fix...
+	if ( setId == kSetUG18
+	 && _gameVars[kVariableChapter] == 4
+	 && _gameFlags->query(kFlagCallWithGuzza)
+	 && _aiScripts->isInsideScript()
+	) {
+		return;
+	}
+
+	for (int i = 0; i < actorCount; i++) {
+		Actor *actor = _actors[i];
+		if (actor->getSetId() == setId || i == _actorUpdateCounter) {
+			_aiScripts->update(i);
+			actor->timersUpdate();
 		}
-		++_actorUpdateCounter;
-		if (_actorUpdateCounter >= actorCount) {
-			_actorUpdateCounter = 0;
-		}
+	}
+	++_actorUpdateCounter;
+	if (_actorUpdateCounter >= actorCount) {
+		_actorUpdateCounter = 0;
 	}
 }
 

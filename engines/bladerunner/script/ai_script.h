@@ -104,18 +104,17 @@ DECLARE_SCRIPT(McCoy)
 	int dword_45A0E8;
 	int _animationStateNextSpecial;
 	int _animationNextSpecial;
-	int dword_45A0F8;
+	int _nextSoundId;
 	bool _NR10SteeleShooting;
 	float _fallSpeed;
 	float _fallHeightCurrent;
 	float _fallHeightTarget;
 
 	void fallDown();
-	void sub_4054F0();
+	void UG15fall();
 	void sub_405660();
 	void sub_405800();
 	void dodge();
-	void sub_405920();
 	void sub_405940(float a1);
 	void sub_4059D0(float a1);
 END_SCRIPT
@@ -459,12 +458,12 @@ END_SCRIPT
 DECLARE_SCRIPT(FreeSlotA)
 	int _var1;
 	int _var2;
-	float _var3;
-	float _var4;
-	float _var5;
+	float _fallSpeed;
+	float _fallHeightCurrent;
+	float _fallHeightTarget;
 
 	void calcHit();
-	void processGoal306();
+	void goToRandomUGxx();
 END_SCRIPT
 
 DECLARE_SCRIPT(FreeSlotB)

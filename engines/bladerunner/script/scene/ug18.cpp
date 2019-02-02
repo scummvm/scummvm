@@ -59,7 +59,7 @@ void SceneScriptUG18::InitializeScene() {
 
 	Scene_Loop_Set_Default(4);
 
-	if ( Game_Flag_Query(670)
+	if ( Game_Flag_Query(kFlagCallWithGuzza)
 	 && !Game_Flag_Query(671)
 	 &&  Global_Variable_Query(kVariableChapter) == 4
 	) {
@@ -85,7 +85,7 @@ void SceneScriptUG18::SceneLoaded() {
 			Actor_Set_At_Waypoint(kActorSadik, 33, 0);
 		}
 	}
-	if ( Game_Flag_Query(670)
+	if ( Game_Flag_Query(kFlagCallWithGuzza)
 	 && !Game_Flag_Query(671)
 	 &&  Global_Variable_Query(kVariableChapter) == 4
 	) {
@@ -192,7 +192,7 @@ void SceneScriptUG18::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 void SceneScriptUG18::PlayerWalkedIn() {
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -488.71f, 0.0f, 123.59f, 0, false, false, 0);
 
-	if ( Game_Flag_Query(670)
+	if ( Game_Flag_Query(kFlagCallWithGuzza)
 	 && !Game_Flag_Query(671)
 	 &&  Actor_Query_Is_In_Current_Set(kActorGuzza)
 	) {

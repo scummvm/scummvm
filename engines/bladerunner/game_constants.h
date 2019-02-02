@@ -90,7 +90,7 @@ enum Actors {
 	kActorNewscaster = 61,
 	kActorLeon = 62,
 	kActorMaleAnnouncer = 63,
-	kActorFreeSlotA = 64,
+	kActorFreeSlotA = 64, // Rat
 	kActorFreeSlotB = 65,
 	kActorMaggie = 66,
 	kActorGenwalkerA = 67,
@@ -1010,6 +1010,7 @@ enum Flags {
 	kFlagUG07Empty = 623,
 	kFlagTB07TyrellMeeting = 625,
 	kFlagNR01McCoyIsDrugged = 627,
+	kFlagRatWalkingAround = 631,
 	kFlagNR01DektoraFall = 632,
 	kFlagNR11DektoraBurning = 633,
 	kFlagNR11BurnedUp = 634,
@@ -1035,11 +1036,15 @@ enum Flags {
 	kFlagDNARowAvailableTalk = 660,
 	kFlagTB07ShadeDown = 661, // is never set
 	kFlagUG19Available = 665,
+	kFlagCallWithGuzza = 670,
 	kFlagMA07toPS14 = 672,
 	kFlagPS14toMA07 = 673,
+	kFlagUG15RatShot = 676,
+	kFlagUG15BridgeWillBreak = 677,
 	kFlagChapter2Intro = 678,
 	kFlagChapter3Intro = 679,
 	kFlagChapter4Intro = 680,
+	kFlagUG15BridgeBroken = 682,
 	kFlagNotUsed686 = 686,
 	kFlagPS05TV0 = 688,
 	kFlagPS05TV1 = 689,
@@ -1065,6 +1070,7 @@ enum Flags {
 	kFlagCT02McCoyCombatReady = 720,
 	kFlagChapter4Starting = 722,
 	kFlagZubenBountyPaid = 723,
+	kFlagUG15BridgeBreaks = 724,
 	kFlagCT11DogWrapperAvailable = 725,
 	kFlagAR02Entered = 726,
 	kFlagPS04WeaponsOrderForm = 727,
@@ -1106,8 +1112,8 @@ enum Variables {
 	kVariableAffectionTowards = 45, // 0 none, 1 steele, 2 dektora, 3 lucy
 	kVariableGunPulledInFrontOfSebastian = 46,
 	kVariableNR01GetUpCounter = 47,
-	kVariableDNAEvidences = 48,
-
+	kVariableDNAEvidence = 48,
+	kVariableCorruptedGuzzaEvidence = 49,
 	kVariableTaffyLewisMusic = 50,
 	kVariableReplicants = 51,
 	kVariableNextTvNews = 52,
@@ -1629,9 +1635,13 @@ enum GoalMcCoy {
 	kGoalMcCoyNR01LayDrugged = 212,
 	kGoalMcCoyNR04Drink = 220,
 	kGoalMcCoyNR04PassOut = 221,
-
+	kGoalMcCoyNR11Shoot = 230,
 	kGoalMcCoyNR10Fall = 231,
-	kGoalMcCoyArrested = 500
+	kGoalMcCoyCallWithGuzza = 350,
+	kGoalMcCoyUG15Fall = 390,
+	kGoalMcCoyUG15Die = 391,
+	kGoalMcCoyArrested = 500,
+	kGoalMcCoyGone = 599
 };
 
 enum GoalSteele {
@@ -2015,6 +2025,21 @@ enum GoalLeon {
 	kGoalLeonPunchMcCoy = 6, // there is no way how to trigger this path in the game
 	kGoalLeonLeave = 7,
 	kGoalLeonGone = 8
+};
+
+enum GoalFreeSlotA { // Rat
+	kGoalFreeSlotAUG15Wait = 300,
+	kGoalFreeSlotAUG15WalkOut = 301,
+	kGoalFreeSlotAUG15RunToOtherSide = 302,
+	kGoalFreeSlotAUG15RunBack = 303,
+	kGoalFreeSlotAUG15Attack = 304,
+	kGoalFreeSlotAWalkAround = 306,
+	kGoalFreeSlotAWalkAroundRestart = 307,
+	kGoalFreeSlotAAttackMcCoy = 308,
+	kGoalFreeSlotAUG15Die = 305,
+	kGoalFreeSlotAUG15Fall = 309,
+	kGoalFreeSlotAUG15Prepare = 310,
+	kGoalFreeSlotAGone = 599
 };
 
 } // End of namespace BladeRunner

@@ -654,7 +654,7 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 	case kClueDNALutherLance:
 	case kClueDNAMarcus:
 		{
-			int dnaEvidences = Global_Variable_Query(kVariableDNAEvidences);
+			int dnaEvidences = Global_Variable_Query(kVariableDNAEvidence);
 			if (dnaEvidences == 1) {
 				KIA_Play_Slice_Model(988);
 			} else if (dnaEvidences == 2) {

@@ -269,7 +269,7 @@ void SceneScriptUG05::sub_402218() {
 
 	if (affectionTowardsActor == kActorLucy) {
 		if (Game_Flag_Query(kFlagLucyIsReplicant)) {
-			if (Global_Variable_Query(kVariableDNAEvidences) > 3) {
+			if (Global_Variable_Query(kVariableDNAEvidence) > 3) {
 				Outtake_Play(kOuttakeEnd1B, false, -1);
 			} else {
 				Outtake_Play(kOuttakeEnd1C, false, -1);
@@ -279,7 +279,7 @@ void SceneScriptUG05::sub_402218() {
 		}
 	} else if (affectionTowardsActor == kActorDektora) {
 		if (Game_Flag_Query(kFlagDektoraIsReplicant)) {
-			if (Global_Variable_Query(kVariableDNAEvidences) > 3) {
+			if (Global_Variable_Query(kVariableDNAEvidence) > 3) {
 				Outtake_Play(kOuttakeEnd1E, false, -1);
 			} else {
 				Outtake_Play(kOuttakeEnd1F, false, -1);

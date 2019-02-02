@@ -117,10 +117,10 @@ bool SceneScriptDR06::ClickedOn3DObject(const char *objectName, bool a2) {
 			Actor_Face_Heading(kActorMcCoy, 329, false);
 			if ( Actor_Clue_Query(kActorMcCoy, kClueFolder)
 			 &&  Actor_Clue_Query(kActorMcCoy, kClueGuzzaFramedMcCoy)
-			 && !Game_Flag_Query(670)
+			 && !Game_Flag_Query(kFlagCallWithGuzza)
 			) {
-				Actor_Set_Goal_Number(kActorMcCoy, 350);
-				Game_Flag_Set(670);
+				Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyCallWithGuzza);
+				Game_Flag_Set(kFlagCallWithGuzza);
 			} else if (!Game_Flag_Query(kFlagDR06VidphoneChecked)) {
 				Actor_Voice_Over(770, kActorVoiceOver);
 				Actor_Voice_Over(780, kActorVoiceOver);

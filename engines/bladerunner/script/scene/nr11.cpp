@@ -146,7 +146,7 @@ bool SceneScriptNR11::ClickedOn3DObject(const char *objectName, bool combatMode)
 			if (!Player_Query_Combat_Mode()) {
 				Player_Set_Combat_Mode(true);
 			}
-			Actor_Set_Goal_Number(kActorMcCoy, 230);
+			Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyNR11Shoot);
 			Scene_Loop_Set_Default(kNR11LoopMainLoopFires);
 			Scene_Loop_Start_Special(kSceneLoopModeOnce, kNR11LoopGunshots, true);
 		} else if (Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR11Hiding) {
@@ -162,7 +162,7 @@ bool SceneScriptNR11::ClickedOn3DObject(const char *objectName, bool combatMode)
 					Delay(500);
 					Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
 					Delay(2000);
-					Actor_Set_Goal_Number(kActorMcCoy, 231);
+					Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyNR10Fall);
 				} else {
 					Actor_Says(kActorMcCoy, 3840, 18);
 					Delay(1000);
@@ -298,7 +298,7 @@ void SceneScriptNR11::SceneFrameAdvanced(int frame) {
 		if (!Player_Query_Combat_Mode()) {
 			Player_Set_Combat_Mode(true);
 		}
-		Actor_Set_Goal_Number(kActorMcCoy, 230);
+		Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyNR11Shoot);
 		Scene_Loop_Set_Default(kNR11LoopMainLoopFires);
 		Scene_Loop_Start_Special(kSceneLoopModeOnce, kNR11LoopGunshots, true);
 		Game_Flag_Reset(kFlagNR11SteeleShoot);

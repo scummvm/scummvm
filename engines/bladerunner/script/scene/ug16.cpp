@@ -135,7 +135,7 @@ bool SceneScriptUG16::ClickedOn3DObject(const char *objectName, bool a2) {
 
 bool SceneScriptUG16::ClickedOnActor(int actorId) {
 	if (Actor_Query_Goal_Number(kActorLuther) < 490) {
-		sub_401D78();
+		dialogueWithLuther();
 		return true;
 	}
 	return false;
@@ -234,7 +234,7 @@ void SceneScriptUG16::PlayerWalkedOut() {
 void SceneScriptUG16::DialogueQueueFlushed(int a1) {
 }
 
-void SceneScriptUG16::sub_401D78() {
+void SceneScriptUG16::dialogueWithLuther() {
 	Dialogue_Menu_Clear_List();
 	DM_Add_To_List_Never_Repeat_Once_Selected(1400, 5, 6, 2);
 	DM_Add_To_List_Never_Repeat_Once_Selected(1410, 5, 4, 8);
@@ -245,7 +245,7 @@ void SceneScriptUG16::sub_401D78() {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1430, 6, 4, 5);
 		DM_Add_To_List_Never_Repeat_Once_Selected(1440, 6, 4, 5);
 	}
-	if ( Global_Variable_Query(49) > 1
+	if ( Global_Variable_Query(kVariableCorruptedGuzzaEvidence) > 1
 	 && !Actor_Clue_Query(kActorMcCoy, kClueFolder)
 	 ) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1450, 6, 4, 5);

@@ -81,10 +81,10 @@ bool SceneScriptNR02::ClickedOn3DObject(const char *objectName, bool a2) {
 			Actor_Face_Heading(kActorMcCoy, 13, false);
 			if ( Actor_Clue_Query(kActorMcCoy, kClueFolder)
 			 &&  Actor_Clue_Query(kActorMcCoy, kClueGuzzaFramedMcCoy)
-			 && !Game_Flag_Query(670)
+			 && !Game_Flag_Query(kFlagCallWithGuzza)
 			) {
-				Actor_Set_Goal_Number(kActorMcCoy, 350);
-				Game_Flag_Set(670);
+				Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyCallWithGuzza);
+				Game_Flag_Set(kFlagCallWithGuzza);
 			} else {
 				Sound_Play(123, 50, 0, 0, 50);
 				Delay(1000);
