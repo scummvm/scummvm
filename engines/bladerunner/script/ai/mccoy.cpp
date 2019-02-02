@@ -413,17 +413,17 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		_fallSpeed = -6.0f;
 		return true;
 
-	case 301:
+	case kGoalMcCoyUG07Caught:
 		_animationState = 62;
 		_animationFrame = 0;
 		return true;
 
-	case 302:
+	case kGoalMcCoyUG07BrokenFinger:
 		_animationState = 64;
 		_animationFrame = 0;
 		return true;
 
-	case 303:
+	case kGoalMcCoyUG07Released:
 		_animationState = 65;
 		_animationFrame = 0;
 		return true;
@@ -482,7 +482,7 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case 400:
 		Actor_Set_Health(kActorMcCoy, 50, 50);
-		Game_Flag_Set(373);
+		Game_Flag_Set(kFlagKP02Available);
 		affectionTowards = Global_Variable_Query(kVariableAffectionTowards);
 		if (affectionTowards == kAffectionTowardsSteele) {
 			Actor_Modify_Friendliness_To_Other(kActorSteele, kActorMcCoy, 3);
@@ -493,32 +493,38 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Modify_Friendliness_To_Other(kActorSteele, kActorMcCoy, -5);
 			Actor_Modify_Friendliness_To_Other(kActorClovis, kActorMcCoy, 5);
 		}
-		if (Game_Flag_Query(666)) {
+
+		if (Game_Flag_Query(kFlagMcCoyFreedOfAccusations)) {
 			Actor_Modify_Friendliness_To_Other(kActorSteele, kActorMcCoy, 3);
 		}
+
 		if (Actor_Query_Friendliness_To_Other(kActorSteele, kActorMcCoy) < Actor_Query_Friendliness_To_Other(kActorClovis, kActorMcCoy)) {
-			Game_Flag_Set(653);
+			Game_Flag_Set(kFlagMcCoyIsNotHelpingReplicants);
 		}
+
 		affectionTowards = Global_Variable_Query(kVariableAffectionTowards);
 		if (affectionTowards == kAffectionTowardsSteele) {
-			if (Game_Flag_Query(653)) {
+			if (Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)) {
 				Global_Variable_Set(kVariableAffectionTowards, kAffectionTowardsNone);
 			}
 		} else if (affectionTowards == kAffectionTowardsDektora
 		        || affectionTowards == kAffectionTowardsLucy
 		) {
-			if (!Game_Flag_Query(653)) {
+			if (!Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)) {
 				Global_Variable_Set(kVariableAffectionTowards, kAffectionTowardsNone);
 			}
 		}
-		if (!Game_Flag_Query(653)) {
+
+		if (!Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)) {
 			Game_Flag_Set(kFlagMaggieIsHurt);
 		}
+
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		Global_Variable_Set(kVariableChapter, 5);
 		Outtake_Play(kOuttakeMovieD, false, -1);
-		if (Game_Flag_Query(666)) {
+
+		if (Game_Flag_Query(kFlagMcCoyFreedOfAccusations)) {
 			Chapter_Enter(5, kSetMA07, kSceneMA07);
 		} else {
 			Game_Flag_Set(kFlagMA06ToMA02);
@@ -1804,7 +1810,7 @@ void AIScriptMcCoy::UG15fall() {
 		 && -210.0f < x
 		 &&  -70.0f > x
 		) {
-			Game_Flag_Set(kFlagUG15BridgeBroken); 
+			Game_Flag_Set(kFlagUG15BridgeBroken);
 			Scene_Loop_Set_Default(3); // kUG15LoopMainLoopBridgeBroken
 			Scene_Loop_Start_Special(kSceneLoopModeOnce, 2, true); // kUG15LoopBridgeBreaks
 			Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyUG15Fall);

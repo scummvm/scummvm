@@ -46,36 +46,69 @@ void AIScriptOfficerGrayford::Initialize() {
 }
 
 bool AIScriptOfficerGrayford::Update() {
-	if (Global_Variable_Query(kVariableChapter) == 4 && Actor_Query_Goal_Number(kActorOfficerGrayford) < 300) {
+	if (Global_Variable_Query(kVariableChapter) == 4
+	 && Actor_Query_Goal_Number(kActorOfficerGrayford) < 300) {
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
 		Actor_Set_Goal_Number(kActorOfficerGrayford, 300);
-	} else if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_Goal_Number(kActorOfficerGrayford) < 400) {
+		return false;
+	}
+
+	if (Global_Variable_Query(kVariableChapter) == 5
+	 && Actor_Query_Goal_Number(kActorOfficerGrayford) < 400
+	) {
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
 		Actor_Set_Goal_Number(kActorOfficerGrayford, 400);
-	} else if (!Game_Flag_Query(kFlagMcCoyInDNARow)
-			&& Actor_Query_Goal_Number(kActorOfficerGrayford) > 102
-			&& Actor_Query_Goal_Number(kActorOfficerGrayford) < 110) {
+		return false;
+	}
+
+	if (!Game_Flag_Query(kFlagMcCoyInDNARow)
+	 &&  Actor_Query_Goal_Number(kActorOfficerGrayford) > 102
+	 &&  Actor_Query_Goal_Number(kActorOfficerGrayford) < 110
+	) {
 		Actor_Set_Goal_Number(kActorOfficerGrayford, 110);
-	} else if (Actor_Query_Goal_Number(kActorOfficerGrayford) == 0) {
+		return false;
+	}
+
+	if (Actor_Query_Goal_Number(kActorOfficerGrayford) == 0) {
 		Actor_Set_Goal_Number(kActorOfficerGrayford, 1);
-	} else 	if (Actor_Query_Goal_Number(kActorOfficerGrayford) == 10) {
+		return false;
+	}
+
+	if (Actor_Query_Goal_Number(kActorOfficerGrayford) == 10) {
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
 		Actor_Set_Goal_Number(kActorOfficerGrayford, 0);
-	} else if (Actor_Query_Goal_Number(kActorOfficerGrayford) == 102) {
+		return false;
+	}
+
+	if (Actor_Query_Goal_Number(kActorOfficerGrayford) == 102) {
 		Actor_Set_Goal_Number(kActorOfficerGrayford, 103);
-	} else if (Game_Flag_Query(629)) {
+		return false;
+	}
+
+	if (Game_Flag_Query(kFlagUnpaseGenWalkers)) {
 		AI_Movement_Track_Unpause(kActorGenwalkerA);
 		AI_Movement_Track_Unpause(kActorGenwalkerB);
 		AI_Movement_Track_Unpause(kActorGenwalkerC);
-	} else if (Actor_Query_Goal_Number(kActorOfficerGrayford) == 310
-				&& Actor_Query_Which_Set_In(kActorOfficerGrayford) != Player_Query_Current_Set()) {
+		return false;
+	}
+
+	if (Actor_Query_Goal_Number(kActorOfficerGrayford) == 310
+	 && Actor_Query_Which_Set_In(kActorOfficerGrayford) != Player_Query_Current_Set()
+	) {
 		Non_Player_Actor_Combat_Mode_Off(kActorOfficerGrayford);
 		Actor_Set_Goal_Number(kActorOfficerGrayford, 305);
-	} else if (Actor_Query_Goal_Number(kActorOfficerGrayford) == 599
-				&& Actor_Query_Which_Set_In(kActorOfficerGrayford) != Player_Query_Current_Set()) {
+		return false;
+	}
+
+	if (Actor_Query_Goal_Number(kActorOfficerGrayford) == 599
+	 && Actor_Query_Which_Set_In(kActorOfficerGrayford) != Player_Query_Current_Set()
+	) {
 		Actor_Set_Health(kActorOfficerGrayford, 50, 50);
 		Actor_Set_Goal_Number(kActorOfficerGrayford, 305);
-	} else if (Actor_Query_Goal_Number(kActorOfficerGrayford) == 305) {
+		return false;
+	}
+
+	if (Actor_Query_Goal_Number(kActorOfficerGrayford) == 305) {
 		switch (Actor_Query_Which_Set_In(kActorOfficerGrayford)) {
 		case kSetRC03:
 			if (Actor_Query_Which_Set_In(kActorOfficerGrayford) == Player_Query_Current_Set()) {
@@ -164,6 +197,7 @@ bool AIScriptOfficerGrayford::Update() {
 			break;
 
 		}
+		return false;
 	}
 	return false;
 }
@@ -534,7 +568,9 @@ bool AIScriptOfficerGrayford::GoalChanged(int currentGoalNumber, int newGoalNumb
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
 		AI_Countdown_Timer_Reset(kActorOfficerGrayford, 2);
 
-		if (_animationState == 35 || _animationState == 34) {
+		if (_animationState == 35
+		 || _animationState == 34
+		) {
 			_animationState = 37;
 			_animationFrame = 0;
 		}

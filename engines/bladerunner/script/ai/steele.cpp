@@ -165,7 +165,7 @@ bool AIScriptSteele::Update() {
 		break;
 
 	case 5:
-		if (Game_Flag_Query(653)
+		if (Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)
 		 && Actor_Query_Goal_Number(kActorSteele) < 400
 		) {
 			Actor_Set_Goal_Number(kActorSteele, 400);
@@ -1363,7 +1363,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Set_At_XYZ(kActorSteele, -48.83f, -36.55f, 69.98f, 280);
 		Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorSteele, 36, false, true);
 		Actor_Face_Actor(kActorMcCoy, kActorSteele, true);
-		if (Game_Flag_Query(653) == 1) {
+		if (Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants) == 1) {
 			Actor_Says(kActorSteele, 400, 3);
 			Actor_Says(kActorMcCoy, 2165, 14);
 			Actor_Says(kActorSteele, 410, 3);

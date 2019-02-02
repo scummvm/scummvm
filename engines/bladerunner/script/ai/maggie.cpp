@@ -142,7 +142,7 @@ void AIScriptMaggie::ReceivedClue(int clueId, int fromActorId) {
 }
 
 void AIScriptMaggie::ClickedByPlayer() {
-	if (!Game_Flag_Query(653) && Global_Variable_Query(kVariableChapter) == 5) {
+	if (!Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants) && Global_Variable_Query(kVariableChapter) == 5) {
 		if (Actor_Query_Goal_Number(kActorMaggie) == 413) {
 			Actor_Set_Targetable(kActorMaggie, true);
 			AI_Movement_Track_Flush(kActorMaggie);

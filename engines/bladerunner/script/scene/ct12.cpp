@@ -126,6 +126,7 @@ bool SceneScriptCT12::ClickedOnActor(int actorId) {
 		Actor_Says(kActorMcCoy, 8910, 16);
 	}
 
+	// cut off feature? grayford never visit CT12 as goal 308 is never triggered
 	if (actorId == kActorOfficerGrayford
 	 && Global_Variable_Query(kVariableChapter) == 4
 	 && Game_Flag_Query(kFlagUG18GuzzaScene)
@@ -147,9 +148,9 @@ bool SceneScriptCT12::ClickedOnActor(int actorId) {
 		Actor_Says(kActorOfficerGrayford, 90, kAnimationModeTalk);
 		Actor_Says(kActorOfficerGrayford, 100, kAnimationModeTalk);
 		Actor_Says(kActorOfficerGrayford, 110, kAnimationModeTalk);
-		Game_Flag_Set(629);
-		Game_Flag_Set(666);
-		Actor_Set_Goal_Number(kActorMcCoy, 400);
+		Game_Flag_Set(kFlagUnpaseGenWalkers);
+		Game_Flag_Set(kFlagMcCoyFreedOfAccusations);
+		Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyStartChapter5);
 	}
 	return false;
 }
@@ -201,7 +202,7 @@ bool SceneScriptCT12::ClickedOnExit(int exitId) {
 	if (exitId == 4) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -292.0f, -6.5f, 990.0f, 0, true, false, 0)) {
 			if (Global_Variable_Query(kVariableChapter) == 4) {
-				Game_Flag_Set(629);
+				Game_Flag_Set(kFlagUnpaseGenWalkers);
 			}
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);

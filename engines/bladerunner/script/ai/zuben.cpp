@@ -161,7 +161,7 @@ void AIScriptZuben::CompletedMovementTrack() {
 		AI_Countdown_Timer_Reset(kActorZuben, 0);
 		Game_Flag_Reset(kFlagCT02McCoyFell);
 		Game_Flag_Set(kFlagCT02McCoyCombatReady);
-		Game_Flag_Set(721); // not used anywhere
+		Game_Flag_Set(kFlagNotUsed721);
 		Music_Stop(2);
 		Actor_Set_Goal_Number(kActorZuben, kGoalZubenFled);
 		Set_Enter(kSetCT02, kSceneCT02);
@@ -298,7 +298,7 @@ void AIScriptZuben::Retired(int byActorId) {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		Game_Flag_Set(579);
-		Game_Flag_Reset(653);
+		Game_Flag_Reset(kFlagMcCoyIsNotHelpingReplicants);
 		Set_Enter(kSetKP05_KP06, kSceneKP06);
 		// return true;
 		return;

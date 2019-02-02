@@ -102,7 +102,7 @@ bool SceneScriptUG13::ClickedOn3DObject(const char *objectName, bool a2) {
 				Scene_Loop_Set_Default(1);
 				Scene_Loop_Start_Special(kSceneLoopModeOnce, 0, false);
 				Game_Flag_Reset(kFlagUB08ElevatorUp);
-				Game_Flag_Set(436);
+				Game_Flag_Set(kFlagUG13CallElevator);
 				return true;
 			} else {
 				Scene_Loop_Set_Default(4);
@@ -125,9 +125,9 @@ bool SceneScriptUG13::ClickedOnActor(int actorId) {
 			if (Actor_Query_Goal_Number(kActorTransient) != 6
 			 && Actor_Query_Goal_Number(kActorTransient) != 599
 			) {
-				if (!Game_Flag_Query(554)) {
+				if (!Game_Flag_Query(kFlagUG13HomelessTalk1)) {
 					Actor_Face_Actor(kActorMcCoy, kActorTransient, true);
-					Game_Flag_Set(554);
+					Game_Flag_Set(kFlagUG13HomelessTalk1);
 					Actor_Says(kActorMcCoy, 5560, 13);
 					Actor_Says_With_Pause(kActorMcCoy, 5565, 3.0f, 18);
 					Actor_Says(kActorTransient, 70, 31);
@@ -204,17 +204,16 @@ bool SceneScriptUG13::ClickedOnExit(int exitId) {
 			Footstep_Sound_Override_On(3);
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 11, true, kAnimationModeIdle);
 			Footstep_Sound_Override_Off();
-			if (!sub_402AD0()) {
-				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -477.0f, 141.9f, -870.0f, 0, false, false, 0);
-				Game_Flag_Set(kFlagUG13toUG18);
-				Set_Enter(kSetUG18, kSceneUG18);
-				return true;
-			}
-			Actor_Face_Heading(kActorMcCoy, 325, false);
-			Loop_Actor_Travel_Stairs(kActorMcCoy, 11, true, kAnimationModeIdle);
-		} else {
-			return true;
+			// This is path in unreachable in the orginal game
+			// if (false) {
+			// 	Actor_Face_Heading(kActorMcCoy, 325, false);
+			// 	Loop_Actor_Travel_Stairs(kActorMcCoy, 11, true, kAnimationModeIdle);
+			// }
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -477.0f, 141.9f, -870.0f, 0, false, false, 0);
+			Game_Flag_Set(kFlagUG13toUG18);
+			Set_Enter(kSetUG18, kSceneUG18);
 		}
+		return true;
 	}
 
 	return false;
@@ -229,12 +228,12 @@ void SceneScriptUG13::SceneFrameAdvanced(int frame) {
 		Ambient_Sounds_Play_Sound(372, 90, 0, 0, 100);
 	}
 
-	if (Game_Flag_Query(436)
+	if (Game_Flag_Query(kFlagUG13CallElevator)
 	 && frame > 29
 	 && frame < 91
 	) {
 		Scene_Exit_Add_2D_Exit(0, 394, 205, 464, 281, 0);
-		Game_Flag_Reset(436);
+		Game_Flag_Reset(kFlagUG13CallElevator);
 		//return true;
 		return;
 	}
@@ -307,27 +306,7 @@ void SceneScriptUG13::PlayerWalkedOut() {
 void SceneScriptUG13::DialogueQueueFlushed(int a1) {
 }
 
-void SceneScriptUG13::sub_4023D8() {
-	Actor_Face_Actor(kActorMcCoy, kActorTransient, true);
-	Actor_Clue_Acquire(kActorMcCoy, kClueHomelessManInterview1, false, kActorTransient);
-	Actor_Modify_Friendliness_To_Other(kActorTransient, kActorMcCoy, -5);
-	Actor_Says(kActorMcCoy, 5575, 16);
-	Actor_Says(kActorTransient, 120, 31);
-	Actor_Says(kActorMcCoy, 5610, 15);
-	Actor_Says(kActorTransient, 140, 32);
-	Actor_Says(kActorMcCoy, 5615, 18);
-	Actor_Says(kActorTransient, 160, 33);
-	Actor_Says(kActorMcCoy, 5620, 9);
-	Actor_Says(kActorTransient, 170, 30);
-	Actor_Says(kActorMcCoy, 5625, 12);
-	Actor_Says(kActorTransient, 180, 32);
-	Actor_Says(kActorMcCoy, 5630, 18);
-	Actor_Says(kActorTransient, 190, 32);
-	Actor_Says(kActorMcCoy, 5635, 15);
-	Actor_Says(kActorTransient, 200, 31);
-}
-
-void SceneScriptUG13::sub_4025E0() {
+void SceneScriptUG13::talkAboutGuzza() {
 	Actor_Clue_Acquire(kActorMcCoy, kClueHomelessManInterview2, false, kActorTransient);
 	Actor_Modify_Friendliness_To_Other(kActorTransient, kActorMcCoy, -10);
 	Actor_Says(kActorTransient, 220, 30);
@@ -338,10 +317,6 @@ void SceneScriptUG13::sub_4025E0() {
 	Actor_Says(kActorTransient, 250, 33);
 	Actor_Says(kActorMcCoy, 5650, 14);
 	Actor_Says(kActorTransient, 260, 32);
-}
-
-int SceneScriptUG13::sub_402AD0() {
-	return 0;
 }
 
 void SceneScriptUG13::dialogueWithHomeless1() {
@@ -362,12 +337,28 @@ void SceneScriptUG13::dialogueWithHomeless1() {
 
 	switch (answer) {
 	case 1320: // OTHERS
-		sub_4023D8();
+		Actor_Face_Actor(kActorMcCoy, kActorTransient, true);
+		Actor_Clue_Acquire(kActorMcCoy, kClueHomelessManInterview1, false, kActorTransient);
+		Actor_Modify_Friendliness_To_Other(kActorTransient, kActorMcCoy, -5);
+		Actor_Says(kActorMcCoy, 5575, 16);
+		Actor_Says(kActorTransient, 120, 31);
+		Actor_Says(kActorMcCoy, 5610, 15);
+		Actor_Says(kActorTransient, 140, 32);
+		Actor_Says(kActorMcCoy, 5615, 18);
+		Actor_Says(kActorTransient, 160, 33);
+		Actor_Says(kActorMcCoy, 5620, 9);
+		Actor_Says(kActorTransient, 170, 30);
+		Actor_Says(kActorMcCoy, 5625, 12);
+		Actor_Says(kActorTransient, 180, 32);
+		Actor_Says(kActorMcCoy, 5630, 18);
+		Actor_Says(kActorTransient, 190, 32);
+		Actor_Says(kActorMcCoy, 5635, 15);
+		Actor_Says(kActorTransient, 200, 31);
 		break;
 
 	case 1330: // FAT MAN
 		Actor_Says(kActorMcCoy, 5585, 16);
-		sub_4025E0();
+		talkAboutGuzza();
 		break;
 
 	case 1340: // SEWERS
@@ -413,7 +404,8 @@ void SceneScriptUG13::dialogueWithHomeless2() {
 	int answer = Dialogue_Menu_Query_Input();
 	Dialogue_Menu_Disappear();
 
-	if (answer == 1370) { // DIRECTIONS
+	switch (answer) {
+	case 1370: // DIRECTIONS
 		Actor_Says(kActorMcCoy, 5665, 16);
 		Actor_Says(kActorTransient, 300, 32);
 		Actor_Says(kActorMcCoy, 5680, 19);
@@ -422,7 +414,9 @@ void SceneScriptUG13::dialogueWithHomeless2() {
 		Actor_Start_Speech_Sample(kActorTransient, 110);
 		Actor_Set_Goal_Number(kActorTransient, 395);
 		Actor_Says(kActorMcCoy, 5685, 18);
-	} else if (answer == 1380) { // FAT MAN
+		break;
+
+	case 1380: // FAT MAN
 		if (Actor_Clue_Query(kActorMcCoy, kClueHomelessManInterview2)) {
 			Actor_Says(kActorMcCoy, 5670, 9);
 			Actor_Says(kActorTransient, 340, 31);
@@ -435,12 +429,15 @@ void SceneScriptUG13::dialogueWithHomeless2() {
 			Actor_Clue_Acquire(kActorMcCoy, kClueHomelessManKid, false, kActorTransient);
 		} else {
 			Actor_Says(kActorMcCoy, 5700, 15);
-			sub_4025E0();
+			talkAboutGuzza();
 		}
-	} else if (answer == 1390) { // REPLICANTS
+		break;
+
+	case 1390: // REPLICANTS
 		Actor_Says(kActorMcCoy, 5675, 9);
 		Actor_Says(kActorTransient, 370, 32);
 		Actor_Says(kActorMcCoy, 5705, 10);
+		break;
 	}
 }
 

@@ -53,7 +53,7 @@ void SceneScriptKP05::SceneLoaded() {
 	Unobstacle_Object("OBSTACLEBOX20", true);
 	Clickable_Object("BRIDGE02");
 	Unclickable_Object("BRIDGE02");
-	if (!Actor_Clue_Query(kActorMcCoy, kCluePowerSource) && Game_Flag_Query(653)) {
+	if (!Actor_Clue_Query(kActorMcCoy, kCluePowerSource) && Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)) {
 		Item_Add_To_World(118, 960, 9, -1095.0f, 0.0f, 770.0f, 256, 24, 24, false, true, false, true);
 	}
 }

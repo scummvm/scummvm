@@ -294,7 +294,7 @@ void SceneScriptHF06::sub_401EF4() {
 	Actor_Says(kActorSteele, 340, 58);
 	Actor_Says(kActorSteele, 350, 58);
 	Actor_Change_Animation_Mode(kActorSteele, kAnimationModeCombatIdle);
-	Game_Flag_Set(644);
+	Game_Flag_Set(kFlagNotUsed644);
 	Actor_Set_Goal_Number(kActorSteele, 402);
 	Actor_Face_Actor(kActorSteele, actorId, true);
 	Actor_Change_Animation_Mode(kActorSteele, kAnimationModeCombatAttack);

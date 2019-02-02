@@ -158,7 +158,7 @@ bool SceneScriptHF01::ClickedOnActor(int actorId) {
 			 )
 			 && !Game_Flag_Query(kFlagCrazylegsArrested)
 			 &&  Actor_Query_Goal_Number(kActorCrazylegs) != 2
-			 &&  Game_Flag_Query(653)
+			 &&  Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)
 			 && !Game_Flag_Query(662)
 			) {
 				Game_Flag_Set(662);

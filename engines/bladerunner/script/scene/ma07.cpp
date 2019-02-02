@@ -78,7 +78,7 @@ bool SceneScriptMA07::ClickedOnExit(int exitId) {
 			if (Global_Variable_Query(kVariableChapter) == 4
 			 && Game_Flag_Query(kFlagUG18GuzzaScene)
 			) {
-				Actor_Set_Goal_Number(kActorMcCoy, 400);
+				Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyStartChapter5);
 			} else {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -148,14 +148,14 @@ void SceneScriptMA07::PlayerWalkedIn() {
 		Actor_Set_Goal_Number(kActorGaff, 300);
 	}
 
-	if (Game_Flag_Query(666)) {
+	if (Game_Flag_Query(kFlagMcCoyFreedOfAccusations)) {
 		Actor_Voice_Over(1360, kActorVoiceOver);
 		Actor_Voice_Over(1370, kActorVoiceOver);
 		Actor_Voice_Over(1380, kActorVoiceOver);
 		Actor_Voice_Over(1390, kActorVoiceOver);
 		Actor_Voice_Over(1400, kActorVoiceOver);
 		Delay(1000);
-		Game_Flag_Reset(666);
+		Game_Flag_Reset(kFlagMcCoyFreedOfAccusations);
 		Game_Flag_Set(kFlagMA06ToMA02);
 		Set_Enter(kSetMA02_MA04, kSceneMA02);
 	}

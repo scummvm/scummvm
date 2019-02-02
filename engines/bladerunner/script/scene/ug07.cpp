@@ -119,33 +119,33 @@ bool SceneScriptUG07::ClickedOnExit(int exitId) {
 		if (!Game_Flag_Query(kFlagMcCoyRetiredHuman)
 		 &&  Game_Flag_Query(kFlagUG18GuzzaScene)
 		 &&  Global_Variable_Query(kVariableChapter) == 4
-		 && !Game_Flag_Query(598)
+		 && !Game_Flag_Query(kFlagUG07ClovisCaughtMcCoy)
 		) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 49.0f, -12.21f, -130.0f, 0, true, false, 0)) {
-				Game_Flag_Set(598);
+				Game_Flag_Set(kFlagUG07ClovisCaughtMcCoy);
 				Actor_Put_In_Set(kActorClovis, kSetUG07);
 				Actor_Set_At_XYZ(kActorClovis, 118.02f, -12.21f, -154.0f, 768);
 				Player_Set_Combat_Mode(true);
 				Actor_Face_Actor(kActorMcCoy, kActorClovis, true);
 				Loop_Actor_Walk_To_XYZ(kActorClovis, 98.02f, -12.21f, -154.0f, 0, false, false, 0);
 				Actor_Face_Actor(kActorClovis, kActorMcCoy, true);
-				Actor_Set_Goal_Number(kActorMcCoy, 301);
+				Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyUG07Caught);
 				Actor_Face_Heading(kActorMcCoy, 0, true);
 				Delay(1500);
 				Actor_Says_With_Pause(kActorClovis, 550, 1.0f, 3);
 				if (Actor_Clue_Query(kActorClovis, kClueMcCoyRetiredDektora)) {
 					Actor_Says(kActorClovis, 560, 3);
-					Actor_Set_Goal_Number(kActorMcCoy, 302);
+					Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyUG07BrokenFinger);
 					Sound_Play(561, 100, 0, 0, 50);
 					Delay(2000);
 				}
 				if (Actor_Clue_Query(kActorClovis, kClueMcCoyRetiredLucy)) {
 					Actor_Says(kActorClovis, 570, 3);
-					Actor_Set_Goal_Number(kActorMcCoy, 302);
+					Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyUG07BrokenFinger);
 					Sound_Play(561, 100, 0, 0, 50);
 					Delay(2000);
 				}
-				Actor_Set_Goal_Number(kActorMcCoy, 303);
+				Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyUG07Released);
 				Delay(1000);
 				Actor_Set_Goal_Number(kActorClovis, 401);
 			}

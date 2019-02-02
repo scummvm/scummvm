@@ -86,8 +86,8 @@ bool AIScriptOfficerLeary::Update() {
 		return false;
 	}
 
-	if (Game_Flag_Query(629)) {
-		Game_Flag_Reset(629);
+	if (Game_Flag_Query(kFlagUnpaseGenWalkers)) {
+		Game_Flag_Reset(kFlagUnpaseGenWalkers);
 		return false;
 	}
 

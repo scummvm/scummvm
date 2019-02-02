@@ -34,7 +34,7 @@ void SceneScriptUG12::InitializeScene() {
 	}
 
 	Scene_Exit_Add_2D_Exit(0, 538, 222, 615, 346, 1);
-	if (Game_Flag_Query(373)) {
+	if (Game_Flag_Query(kFlagKP02Available)) {
 		Scene_Exit_Add_2D_Exit(1, 334, 176, 426, 266, 0);
 	}
 
@@ -53,7 +53,7 @@ void SceneScriptUG12::InitializeScene() {
 	Ambient_Sounds_Add_Sound(304, 5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(305, 5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
 
-	if (Game_Flag_Query(373)) {
+	if (Game_Flag_Query(kFlagKP02Available)) {
 		Scene_Loop_Set_Default(2);
 	} else {
 		Scene_Loop_Set_Default(0);

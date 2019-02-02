@@ -483,9 +483,7 @@ DECLARE_SCRIPT(UG12)
 END_SCRIPT
 
 DECLARE_SCRIPT(UG13)
-	void sub_4023D8();
-	void sub_4025E0();
-	int sub_402AD0();
+	void talkAboutGuzza();
 	void dialogueWithHomeless1();
 	void dialogueWithHomeless2();
 END_SCRIPT

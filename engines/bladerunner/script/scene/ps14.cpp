@@ -77,8 +77,8 @@ bool SceneScriptPS14::ClickedOnExit(int exitId) {
 			 && Game_Flag_Query(kFlagUG18GuzzaScene)
 			) {
 				if (Actor_Clue_Query(kActorMcCoy, kClueBriefcase)) {
-					Game_Flag_Set(666);
-					Actor_Set_Goal_Number(kActorMcCoy, 400);
+					Game_Flag_Set(kFlagMcCoyFreedOfAccusations);
+					Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyStartChapter5);
 				} else {
 					Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyArrested);
 				}

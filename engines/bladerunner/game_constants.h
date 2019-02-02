@@ -811,7 +811,7 @@ enum Flags {
 	kFlagNotUsed370 = 370, // is never checked
 	// 371 is never used
 	// 372 is never used
-
+	kFlagKP02Available = 373,
 	kFlagAR02DektoraBoughtScorpions = 374,
 	kFlagBB11SadikPunchedMcCoy = 375,
 	// 376 is never used
@@ -865,6 +865,7 @@ enum Flags {
 	kFlagCT12ToUG09 = 433,
 	kFlagUG13toUG18 = 434, // is never checked
 	kFlagUG18toUG13 = 435,
+	kFlagUG13CallElevator = 436,
 	kFlagNR04toNR03 = 437,
 	kFlagNR03toNR04 = 438,
 	kFlagNR06toNR08 = 439,
@@ -873,15 +874,21 @@ enum Flags {
 	kFlagNR07toNR06 = 442,
 	kFlagGenericWalkerWaiting = 443,
 	kFlagIzoShot = 444,
+	// 445 is never used
+	// 446 is never used
 	kFlagTB03toUG17 = 447,
 	kFlagUG17toTB03 = 448,
 	kFlagUG02WeaponsChecked = 449,
 	kFlagTB02ElevatorToTB05 = 450,
 	kFlagTB05Entered = 451,
+	// 452 is never used
 	kFlagTB02GuardTalk1 = 453,
+	// 454 is never used
 	kFlagTB02GuardTalk2 = 455,
 	kFlagTB02SteeleTalk = 456,
 	kFlagTB02SteeleEnter = 457,
+	// 458 is never used
+	// 459 is never used
 	kFlagSteeleWalkingAround = 460,
 	kFlagMaggieIsHurt = 461,
 	kFlagPS04GuzzaLeft = 462,
@@ -906,9 +913,11 @@ enum Flags {
 	// 481 is never used
 	kFlagSteeleSmoking = 482,
 	kFlagTB06Introduction = 483,
+
 	kFlagTB06Photographer = 485,
 	kFlagDNARowAvailable = 486,
 	kFlagKIAPrivacyAddon = 487,
+	// 488 is never used
 	kFlagDektoraChapter2Started = 489,
 	kFlagEarlyQStartedChapter1 = 490,
 	kFlagEarlyQStartedChapter2 = 491,
@@ -920,6 +929,10 @@ enum Flags {
 	kFlagBB12Entered = 497,
 	kFlagUG02FromUG01 = 498,
 	kFlagUG02Interactive = 499,
+	// 500 is never used
+	// 501 is never used
+	// 502 is never used
+	// 503 is never used
 	kFlagAR02DektoraWillBuyScorpions = 504,
 	kFlagDR03ChewTalkExplosion = 505,
 	kFlagBB08toBB12 = 506,
@@ -928,13 +941,20 @@ enum Flags {
 	kFlagBB11SadikFight = 509,
 	kFlagNotUsed510 = 510, // is never set
 	kFlagDR05ExplodedEntered = 511,
+	// 512 is never used
+	// 513 is never used
+	// 514 is never used
 	kFlagDR05ViewExplosion = 515,
 	kFlagCT07ZubenAttack = 516,
+	// 517 is never used
+	// 518 is never used
 	kFlagTB06DogCollarTaken = 519,
 	kFlagTB06KitchenBoxTaken = 520,
 	kFlagHC03TrapDoorOpened = 521,
+
 	kFlagUG06Chapter4Started = 524,
 	kFlagCT10Entered = 525,
+	// 526 is never used
 	kFlagHF02toHF03 = 527,
 	kFlagHF03toHF02 = 528,
 	kFlagHF05toHF06 = 529, // is never checked
@@ -949,6 +969,8 @@ enum Flags {
 	kFlagCT09Entered = 538,
 	kFlagCT09LeonInterrupted = 539,
 	kFlagCT09DeskClerkTalk = 540,
+	// 541 is never used
+	kFlagClovisChapter4Started = 542,
 	kFlagGordoTalk1 = 543,
 	kFlagGordoTalk2 = 544,
 	kFlagNotUsed545 = 545, // is never set
@@ -960,9 +982,12 @@ enum Flags {
 	kFlagUG16toDR06 = 551, // is never checked
 	kFlagDR06toUG16 = 552,
 	kFlagUG13Entered = 553,
+	kFlagUG13HomelessTalk1 = 554,
+	// 555 is never used
 	kFlagUG16LutherLanceTalk1 = 556,
 	kFlagNotUsed557, // is never checked
 	kFlagDR01toCT11 = 558,
+
 	kFlagLutherLanceIsReplicant = 560,
 	kFlagNR02GordoLeaveLighter = 561,
 	kFlagHF05CrazyLegsTalk1 = 562,
@@ -994,6 +1019,7 @@ enum Flags {
 	kFlagLutherLanceAreDead = 595,
 	kFlagUG16PulledGun = 596,
 	kFlagUG16FolderFound = 597,
+	kFlagUG07ClovisCaughtMcCoy = 598,
 	kFlagKIAPrivacyAddonIntro = 599,
 	kFlagUG16LutherLanceTalkReplicants1 = 600,
 	kFlagUG16LutherLanceTalkReplicants2 = 601,
@@ -1019,8 +1045,13 @@ enum Flags {
 	// 621 is never used
 	kFlagNR08TouchedDektora = 622,
 	kFlagUG07Empty = 623,
+	// 624 is never used
 	kFlagTB07TyrellMeeting = 625,
+	// 626 is never used
 	kFlagNR01McCoyIsDrugged = 627,
+	// 628 is never used
+	kFlagUnpaseGenWalkers = 629,
+
 	kFlagRatWalkingAround = 631,
 	kFlagNR01DektoraFall = 632,
 	kFlagNR11DektoraBurning = 633,
@@ -1034,30 +1065,45 @@ enum Flags {
 	kFlagNR10toNR11 = 641, // is never checked
 	kFlagNR10McCoyBlinded = 642,
 	kFlagSteeleKnowsBulletBobIsDead = 643,
+	kFlagNotUsed644 = 644, // is never checked
 	kFlagCT11DogWrapperTaken = 645,
 	kFlagSteeleDead = 646, // is never checked
 	kFlagMA04McCoySleeping = 647,
+
 	kFlagMA04PhoneMessageFromClovis = 649,
 	kFlagMA04PhoneMessageFromLucy = 650,
 	kFlagNR08McCoyWatchingShow = 651,
 	kFlagCrazylegsArrestedTalk = 652,
+	kFlagMcCoyIsNotHelpingReplicants = 653,
+
 	kFlagMA02RajifTalk = 655,
 	kFlagUG02RagiationGooglesTaken = 656,
+
 	kFlagNR11BreakWindow = 659,
 	kFlagDNARowAvailableTalk = 660,
 	kFlagTB07ShadeDown = 661, // is never set
+
 	kFlagUG19Available = 665,
+	kFlagMcCoyFreedOfAccusations = 666,
+	// 667 is never used
+	// 668 is never used
+	// 669 is never used
 	kFlagCallWithGuzza = 670,
 	kFlagUG18GuzzaScene = 671,
 	kFlagMA07toPS14 = 672,
 	kFlagPS14toMA07 = 673,
+
+	// 675 is never used
 	kFlagUG15RatShot = 676,
 	kFlagUG15BridgeWillBreak = 677,
 	kFlagChapter2Intro = 678,
 	kFlagChapter3Intro = 679,
 	kFlagChapter4Intro = 680,
+	// 681 is never used
 	kFlagUG15BridgeBroken = 682,
+
 	kFlagNotUsed686 = 686,
+	// 687 is never used
 	kFlagPS05TV0 = 688,
 	kFlagPS05TV1 = 689,
 	kFlagPS05TV2 = 690,
@@ -1065,7 +1111,12 @@ enum Flags {
 	kFlagPS05TV4 = 692,
 	kFlagUG03DeadHomeless = 693,
 	kFlagUG14DeadHomeless = 694,
+	// 695 is never used
+
 	kFlagUG15LanceLuthorTrade = 698,
+
+	// 700 is never used
+
 	kFlagBulletBobDead = 702,
 	kFlagUG18BriefcaseTaken = 703,
 	kFlagRC02EnteredChapter4 = 704,
@@ -1078,17 +1129,21 @@ enum Flags {
 	kFlagMA04WatchedTV = 711,
 	kFlagMcCoyShotAtZuben = 712,
 	kFlagDR04McCoyShotMoraji = 713,
+
 	kFlagDR06UnlockedToUG16 = 715,
+
 	kFlagRC04BobTalk3 = 717,
 	kflagPS01toPS02 = 718,
 	kFlagCT02McCoyFell = 719,
 	kFlagCT02McCoyCombatReady = 720,
+	kFlagNotUsed721 = 721,
 	kFlagChapter4Starting = 722,
 	kFlagZubenBountyPaid = 723,
 	kFlagUG15BridgeBreaks = 724,
 	kFlagCT11DogWrapperAvailable = 725,
 	kFlagAR02Entered = 726,
 	kFlagPS04WeaponsOrderForm = 727,
+	// 728 is never used
 	kFlagNR08DektoraShow = 729
 };
 
@@ -1669,9 +1724,13 @@ enum GoalMcCoy {
 	kGoalMcCoyNR04PassOut = 221,
 	kGoalMcCoyNR11Shoot = 230,
 	kGoalMcCoyNR10Fall = 231,
+	kGoalMcCoyUG07Caught = 301,
+	kGoalMcCoyUG07BrokenFinger = 302,
+	kGoalMcCoyUG07Released = 303,
 	kGoalMcCoyCallWithGuzza = 350,
 	kGoalMcCoyUG15Fall = 390,
 	kGoalMcCoyUG15Die = 391,
+	kGoalMcCoyStartChapter5 = 400,
 	kGoalMcCoyArrested = 500,
 	kGoalMcCoyGone = 599
 };
@@ -1855,7 +1914,10 @@ enum GoalClovis {
 	kGoalClovisUG18SadikWillShootGuzza = 301,
 	kGoalClovisUG18SadikIsShootingGuzza = 302,
 	kGoalClovisUG18GuzzaDied = 303,
-	kGoalClovisUG18Leave = 310
+	kGoalClovisUG18Leave = 310,
+	kGoalClovisStartChapter4 = 400,
+	kGoalClovisUG07ChaseMcCoy = 401,
+	kGoalClovisUG07KillMcCoy = 402
 };
 
 enum GoalLucy {

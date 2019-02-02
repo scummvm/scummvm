@@ -52,10 +52,10 @@ void SceneScriptKP03::InitializeScene() {
 	  && !Game_Flag_Query(422)
 	  && !Game_Flag_Query(484)
 	 )
-	 && ((Game_Flag_Query(653)
+	 && ((Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)
 	   && Game_Flag_Query(420)
 	  )
-	  || (!Game_Flag_Query(653)
+	  || (!Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)
 	   &&  Game_Flag_Query(417)
 	  )
 	 )
@@ -183,7 +183,7 @@ void SceneScriptKP03::SceneFrameAdvanced(int frame) {
 		}
 		if (!Game_Flag_Query(422)) { //todo ? same condition as before
 			Actor_Query_XYZ(kActorSteele, &x, &y, &z);
-			if (Game_Flag_Query(653) && Actor_Query_Which_Set_In(kActorSteele) == 46) {
+			if (Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants) && Actor_Query_Which_Set_In(kActorSteele) == 46) {
 				if ((Game_Flag_Query(417) && -130.0f > x) || (Game_Flag_Query(420) && -130.0f < x)) {
 					v1 = 1;
 				}
@@ -224,7 +224,7 @@ void SceneScriptKP03::PlayerWalkedIn() {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1.0f, -36.55f, 87.0f, 0, 0, false, 0);
 	}
 	if (Actor_Query_Is_In_Current_Set(kActorSteele) && Actor_Query_Goal_Number(kActorSteele) != 419) {
-		if (Game_Flag_Query(653)) {
+		if (Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)) {
 			if (Game_Flag_Query(420)) {
 				Actor_Set_Goal_Number(kActorSteele, 410);
 			}

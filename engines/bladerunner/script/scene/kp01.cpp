@@ -32,7 +32,7 @@ void SceneScriptKP01::InitializeScene() {
 	} else {
 		Setup_Scene_Information(239.0f, -12.2f, -146.0f, 820);
 		Game_Flag_Reset(413);
-		if (!Game_Flag_Query(674) && !Game_Flag_Query(653)) {
+		if (!Game_Flag_Query(674) && !Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)) {
 			Game_Flag_Set(674);
 			Actor_Set_Goal_Number(kActorSteele, 420);
 		}
@@ -152,7 +152,7 @@ void SceneScriptKP01::PlayerWalkedIn() {
 		Game_Flag_Reset(418);
 	} else {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 211.0f, -12.2f, -146.0f, 0, 0, false, 0);
-		if (!Game_Flag_Query(653)
+		if (!Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)
 			&& !Game_Flag_Query(714)
 			&& Actor_Query_Goal_Number(kActorSteele) == 420
 			&& Actor_Query_Goal_Number(kActorSteele) != 599) {
