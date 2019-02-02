@@ -25,25 +25,29 @@
 namespace BladeRunner {
 
 void SceneScriptKP02::InitializeScene() {
-	if (Game_Flag_Query(414)) {
-		Setup_Scene_Information(-884.0f, -615.49f, 3065.0f, 20);
+	if (Game_Flag_Query(kFlagKP01toKP02)) {
+		Setup_Scene_Information( -884.0f, -615.49f, 3065.0f,  20);
 	} else {
 		Setup_Scene_Information(-1040.0f, -615.49f, 2903.0f, 339);
 		Game_Flag_Reset(kFlagUG12toKP02);
 	}
+
+	// exit 0 is missing the game, no way back
 	Scene_Exit_Add_2D_Exit(1, 0, 0, 30, 479, 3);
+
 	Ambient_Sounds_Add_Looping_Sound(464, 34, 1, 1);
 	Ambient_Sounds_Add_Looping_Sound(383, 27, 1, 1);
 	Ambient_Sounds_Add_Looping_Sound(384, 90, 1, 1);
-	Ambient_Sounds_Add_Sound(440, 2, 100, 25, 33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(441, 2, 100, 25, 33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(442, 2, 100, 25, 33, -100, 100, -101, -101, 0, 0);
+
+	Ambient_Sounds_Add_Sound(440, 2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(441, 2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(442, 2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(375, 5, 180, 50, 100, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(376, 5, 180, 50, 100, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(377, 5, 180, 50, 100, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(443, 2, 100, 25, 33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(444, 2, 100, 25, 33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(445, 2, 100, 25, 33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(443, 2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(444, 2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(445, 2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
 }
 
 void SceneScriptKP02::SceneLoaded() {
@@ -76,7 +80,9 @@ bool SceneScriptKP02::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptKP02::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1040.0f, -615.49f, 2903.0f, 0, 1, false, 0)) {
-			if (Actor_Query_Goal_Number(kActorFreeSlotB) == 406 || Actor_Query_Goal_Number(kActorFreeSlotA) == 406) {
+			if (Actor_Query_Goal_Number(kActorFreeSlotB) == 406
+			 || Actor_Query_Goal_Number(kActorFreeSlotA) == 406
+			) {
 				Non_Player_Actor_Combat_Mode_Off(kActorFreeSlotB);
 				Non_Player_Actor_Combat_Mode_Off(kActorFreeSlotA);
 				Actor_Set_Goal_Number(kActorFreeSlotB, 400);
@@ -94,21 +100,24 @@ bool SceneScriptKP02::ClickedOnExit(int exitId) {
 		}
 		return true;
 	}
+
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -884.0f, -615.49f, 3065.0f, 0, 1, false, 0)) {
-			if (Actor_Query_Goal_Number(kActorFreeSlotB) == 406 || Actor_Query_Goal_Number(kActorFreeSlotA) == 406) {
+			if (Actor_Query_Goal_Number(kActorFreeSlotB) == 406
+			 || Actor_Query_Goal_Number(kActorFreeSlotA) == 406
+			) {
 				Non_Player_Actor_Combat_Mode_Off(kActorFreeSlotB);
 				Non_Player_Actor_Combat_Mode_Off(kActorFreeSlotA);
 				Actor_Set_Goal_Number(kActorFreeSlotB, 400);
 				Actor_Set_Goal_Number(kActorFreeSlotA, 400);
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
-				Game_Flag_Set(413);
+				Game_Flag_Set(kFlagKP02toKP01);
 				Set_Enter(kSetKP01, kSceneKP01);
 			} else {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
-				Game_Flag_Set(413);
+				Game_Flag_Set(kFlagKP02toKP01);
 				Set_Enter(kSetKP01, kSceneKP01);
 			}
 		}
@@ -128,10 +137,11 @@ void SceneScriptKP02::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptKP02::PlayerWalkedIn() {
-	if (Game_Flag_Query(414)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -884.0f, -615.49f, 3035.0f, 0, 0, false, 0);
-		Game_Flag_Reset(414);
+	if (Game_Flag_Query(kFlagKP01toKP02)) {
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -884.0f, -615.49f, 3035.0f, 0, false, false, 0);
+		Game_Flag_Reset(kFlagKP01toKP02);
 	}
+
 	if (Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)
 	 && Actor_Query_Goal_Number(kActorSteele) != 599
 	) {

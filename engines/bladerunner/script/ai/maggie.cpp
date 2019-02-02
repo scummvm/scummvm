@@ -68,15 +68,22 @@ void AIScriptMaggie::Initialize() {
 
 bool AIScriptMaggie::Update() {
 	int goal = Actor_Query_Goal_Number(kActorMaggie);
-	if (Actor_Query_Which_Set_In(kActorMaggie) == kSetMA02_MA04 && Global_Variable_Query(kVariableChapter) == 4) {
+
+	if (Actor_Query_Which_Set_In(kActorMaggie) == kSetMA02_MA04
+	 && Global_Variable_Query(kVariableChapter) == 4
+	) {
 		Actor_Put_In_Set(kActorMaggie, kSetFreeSlotG);
 		Actor_Set_At_Waypoint(kActorMaggie, 39, 0);
 	}
+
 	if (goal == 414) {
 		Actor_Set_Goal_Number(kActorMaggie, 415);
-	} else if (goal == 413 && Actor_Query_Inch_Distance_From_Actor(kActorMcCoy, kActorMaggie) < 60) {
+	} else if (goal == 413
+	        && Actor_Query_Inch_Distance_From_Actor(kActorMcCoy, kActorMaggie) < 60
+	) {
 		Actor_Set_Goal_Number(kActorMaggie, 415);
 	}
+
 	if (Global_Variable_Query(kVariableChapter) == 5) {
 		if (Actor_Query_Goal_Number(kActorMaggie) < 400) {
 			Actor_Set_Goal_Number(kActorMaggie, 400);
@@ -142,7 +149,9 @@ void AIScriptMaggie::ReceivedClue(int clueId, int fromActorId) {
 }
 
 void AIScriptMaggie::ClickedByPlayer() {
-	if (!Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants) && Global_Variable_Query(kVariableChapter) == 5) {
+	if (!Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)
+	 &&  Global_Variable_Query(kVariableChapter) == 5
+	) {
 		if (Actor_Query_Goal_Number(kActorMaggie) == 413) {
 			Actor_Set_Targetable(kActorMaggie, true);
 			AI_Movement_Track_Flush(kActorMaggie);
@@ -151,6 +160,7 @@ void AIScriptMaggie::ClickedByPlayer() {
 		}
 		return; // true
 	}
+
 	if (_animationState == kMaggieStateDead) {
 		return; // false
 	}
@@ -187,14 +197,17 @@ void AIScriptMaggie::ClickedByPlayer() {
 		AI_Countdown_Timer_Start(kActorMaggie, 0, Random_Query(3, 9));
 		return; // true
 	}
+
 	if (goal == 10) {
 		Actor_Change_Animation_Mode(kActorMaggie, kAnimationModeIdle);
 		return; // true
 	}
+
 	if (goal == 11) {
 		Actor_Change_Animation_Mode(kActorMaggie, 54);
 		return; // true
 	}
+
 	Actor_Set_Goal_Number(kActorMaggie, 8);
 	return; // true
 }
@@ -206,7 +219,10 @@ void AIScriptMaggie::OtherAgentEnteredThisScene(int otherActorId) {
 }
 
 void AIScriptMaggie::OtherAgentExitedThisScene(int otherActorId) {
-	if (otherActorId == kActorMcCoy && Actor_Query_Which_Set_In(kActorMaggie) == kSetMA02_MA04 && Global_Variable_Query(kVariableChapter) < 4) {
+	if (otherActorId == kActorMcCoy
+	 && Actor_Query_Which_Set_In(kActorMaggie) == kSetMA02_MA04
+	 && Global_Variable_Query(kVariableChapter) < 4
+	) {
 		AI_Movement_Track_Flush(kActorMaggie);
 		Actor_Set_Goal_Number(kActorMaggie, 0);
 	}
@@ -236,6 +252,7 @@ bool AIScriptMaggie::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	if (currentGoalNumber == 599) {
 		return true;
 	}
+
 	switch (newGoalNumber) {
 	case 11:
 		Actor_Change_Animation_Mode(kActorMaggie, 55);
@@ -335,7 +352,7 @@ bool AIScriptMaggie::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Face_Actor(kActorMaggie, kActorMcCoy, true);
 		Actor_Change_Animation_Mode(kActorMaggie, 56);
 		Actor_Face_Actor(kActorMcCoy, kActorMaggie, true);
-		Actor_Says(kActorMcCoy, 2225, 3);
+		Actor_Says(kActorMcCoy, 2225, kAnimationModeTalk);
 		Actor_Set_Goal_Number(kActorMaggie, 413);
 		break;
 	case 411:

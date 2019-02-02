@@ -26,8 +26,11 @@ namespace BladeRunner {
 
 void SceneScriptKP07::InitializeScene() {
 	Setup_Scene_Information(-12.0f, -41.58f, 72.0f, 0);
-	Game_Flag_Reset(578);
+
+	Game_Flag_Reset(kFlagKP06toKP07);
+
 	Scene_Exit_Add_2D_Exit(0, 315, 185, 381, 285, 0);
+
 	if (Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)) {
 		if (Game_Flag_Query(kFlagDektoraIsReplicant)
 		 && Actor_Query_Goal_Number(kActorDektora) < kGoalDektoraGone
@@ -77,9 +80,11 @@ void SceneScriptKP07::InitializeScene() {
 			Actor_Set_At_XYZ(kActorLuther, -47.0f, 0.0f, 151.0f, 531);
 		}
 	}
-	Ambient_Sounds_Add_Looping_Sound(585, 7, 1, 1);
+
+	Ambient_Sounds_Add_Looping_Sound(585,  7, 1, 1);
 	Ambient_Sounds_Add_Looping_Sound(586, 52, 1, 1);
 	Ambient_Sounds_Add_Looping_Sound(109, 38, 1, 1);
+
 	if (Game_Flag_Query(582)) {
 		Scene_Loop_Set_Default(2);
 	} else {
@@ -131,10 +136,10 @@ bool SceneScriptKP07::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptKP07::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, -41.58f, 72.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, -41.58f, 72.0f, 0, true, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(579);
+			Game_Flag_Set(kFlagKP07toKP06);
 			Set_Enter(kSetKP05_KP06, kSceneKP06);
 		}
 		return true;

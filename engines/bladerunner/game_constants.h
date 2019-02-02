@@ -851,6 +851,14 @@ enum Flags {
 	kFlagBB06AndroidDestroyed = 410,
 	kFlagKP02toUG12 = 411,
 	kFlagUG12toKP02 = 412, // is never checked
+	kFlagKP02toKP01 = 413, // is never checked
+	kFlagKP01toKP02 = 414,
+	kFlagKP01toKP04 = 415, // is never checked
+	kFlagKP04toKP01 = 416,
+	kFlagKP01toKP03 = 417,
+	kFlagKP03toKP01 = 418,
+	kFlagKP03toKP05 = 419,
+	kFlagKP05toKP03 = 420,
 
 	kFlagUG07toUG10 = 423,
 	kFlagUG10toUG07 = 424, // is never checked
@@ -1002,6 +1010,12 @@ enum Flags {
 	// 571 is never used
 	// 572 is never used
 	kFlagNR03Entered = 573,
+	kFlagKP04toKP05 = 574,
+	kFlagKP05toKP04 = 575,
+	kFlagKP05toKP06 = 576,
+	kFlagKP06toKP05 = 577, // has no use
+	kFlagKP06toKP07 = 578,
+	kFlagKP07toKP06 = 579,
 	// 580 is never used
 	// 581 is never used
 	// 583 is never used
@@ -1092,7 +1106,7 @@ enum Flags {
 	kFlagUG18GuzzaScene = 671,
 	kFlagMA07toPS14 = 672,
 	kFlagPS14toMA07 = 673,
-
+	kFlagKP01Entered = 674,
 	// 675 is never used
 	kFlagUG15RatShot = 676,
 	kFlagUG15BridgeWillBreak = 677,
@@ -1317,11 +1331,11 @@ enum Scenes {
 	kSceneHF05 = 38, // Hysteria Hall - Crazy Legs Larry Autos - Inside
 	kSceneHF06 = 39, // Hysteria Hall - Crazy Legs Larry Autos - Root
 	kSceneHF07 = 40, // Hysteria Hall - Crazy Legs Larry Autos - Underground
-	kSceneKP01 = 41,
-	kSceneKP02 = 42,
-	kSceneKP03 = 43,
+	kSceneKP01 = 41, // Kipple - Rubble
+	kSceneKP02 = 42, // Kipple - Entry / Gate
+	kSceneKP03 = 43, // Kipple - Bomb
 	kSceneKP04 = 44,
-	kSceneKP05 = 45,
+	kSceneKP05 = 45, // Kipple - Moonbus - Far
 	kSceneKP06 = 46,
 	kSceneKP07 = 47, // Kipple - Moonbus - Inside
 	kSceneMA01 = 48, // McCoy's Apartment - Roof
@@ -1798,6 +1812,10 @@ enum GoalSteele {
 	kGoalSteeleImmediatelyStartChapter4 = 285,
 	kGoalSteeleNR01StartChapter4 = 290,
 	kGoalSteeleHF01StartChapter4 = 291,
+	// chapter 5
+	kGoalSteeleKP01Wait = 420,
+	kGoalSteeleKP01TalkToMcCoy = 421,
+	kGoalSteeleKP01Leave = 422,
 
 	kGoalSteeleGone = 599
 };

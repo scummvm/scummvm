@@ -309,15 +309,7 @@ void AIScriptSteele::CompletedMovementTrack() {
 		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleHF02LucyShotBySteele);
 		break;
 
-	case 423:
-	case 424:
-	case 425:
-	case 426:
-	case 427:
-	case 428:
-	case 429:
-	case 430:
-	case 431:
+	case 422:
 		Actor_Set_Goal_Number(kActorSteele, 423);
 		break;
 
@@ -337,7 +329,7 @@ void AIScriptSteele::CompletedMovementTrack() {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -731.0f, 8.26f, -657.0f, 0, false, false, 0);
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
-		Game_Flag_Set(578);
+		Game_Flag_Set(kFlagKP06toKP07);
 		Set_Enter(kSetKP07, kSceneKP07);
 		break;
 
@@ -1393,16 +1385,16 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Retired_Here(kActorSteele, 60, 12, true, -1);
 		return true;
 
-	case 420:
+	case kGoalSteeleKP01Wait:
 		Actor_Put_In_Set(kActorSteele, kSetKP01);
 		Actor_Set_At_XYZ(kActorSteele, 20.0f, -12.2f, -97.0f, 907);
 		Actor_Change_Animation_Mode(kActorSteele, 43);
 		return true;
 
-	case 421:
+	case kGoalSteeleKP01TalkToMcCoy:
 		Game_Flag_Reset(kFlagSteeleSmoking);
 		Delay(2000);
-		Actor_Face_Actor(kActorSteele, kActorMcCoy, 1);
+		Actor_Face_Actor(kActorSteele, kActorMcCoy, true);
 		Actor_Says(kActorSteele, 360, -1);
 		Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorSteele, 48, false, false);
 		Actor_Says(kActorMcCoy, 2150, 14);
