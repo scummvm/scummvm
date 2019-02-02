@@ -121,6 +121,8 @@ public:
 	void loadFrame(uint16 frameOffset);
 	void reset_maybe();
 	void pathfinding_maybe(int16 x, int16 y, int16 unk);
+	void waitUntilFlag8IsSet();
+	void waitUntilFlag8And4AreSet();
 
 };
 

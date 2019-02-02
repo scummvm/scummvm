@@ -122,6 +122,8 @@ private:
 
 	//unk
 	uint32 inventorySequenceId;
+	uint16 inventoryIsShowingMaybe;
+	uint16 run_func_ptr_unk_countdown_timer;
 
 public:
 	DragonsEngine(OSystem *syst);
@@ -148,6 +150,8 @@ public:
 	void setVar(uint16 offset, uint16 value);
 	uint16 getCurrentSceneId();
 
+	void waitForFrames(uint16 numFrames);
+
 private:
 	void gameLoop();
 	void updateHandler();
@@ -155,6 +159,8 @@ private:
 	void wait();
 	uint16 getIniFromImg();
 	uint16 updateINIUnderCursor();
+	void runINIScripts();
+	void engineFlag0x20UpdateFunction();
 };
 
 DragonsEngine *getEngine();

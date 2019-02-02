@@ -62,6 +62,7 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	_engine = this;
 	_cursorPosition = Common::Point();
 	_cursorSequenceID = 0;
+	run_func_ptr_unk_countdown_timer = 0;
 }
 
 DragonsEngine::~DragonsEngine() {
@@ -82,6 +83,7 @@ void DragonsEngine::updateEvents() {
 		}
 	}
 }
+
 Common::Error DragonsEngine::run() {
 	_screen = new Screen();
 	_bigfileArchive = new BigfileArchive("bigfile.dat", Common::Language::EN_ANY);
@@ -96,6 +98,8 @@ Common::Error DragonsEngine::run() {
 	_scriptOpcodes = new ScriptOpcodes(this, _dragonFLG);
 	_scene = new Scene(this, _screen, _scriptOpcodes, _bigfileArchive, _actorManager, _dragonRMS, _dragonINIResource);
 	_flags = 0x1046;
+	_flags &= 0x1c07040;
+	_flags |= 0x26;
 
 	_cursorSequenceID = 0;
 	Actor *cursor = _actorManager->loadActor(0, 0); //Load cursor
@@ -105,9 +109,11 @@ Common::Error DragonsEngine::run() {
 	cursor->flags = 0;
 	cursor->field_e = 0x100;
 	cursor->updateSequence(_cursorSequenceID);
-	cursor->flags |= (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_80 | Dragons::ACTOR_FLAG_100 | Dragons::ACTOR_FLAG_200);
+	cursor->flags |= (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_80 | Dragons::ACTOR_FLAG_100 |
+					  Dragons::ACTOR_FLAG_200);
 
 	_dragonINIResource->getFlickerRecord()->actor = cursor; //TODO is this correct?
+	_dragonINIResource->getFlickerRecord()->field_1a_flags_maybe |= Dragons::INI_FLAG_1;
 
 	Actor *inventory = _actorManager->loadActor(1, 1); //Load inventory
 	inventory->x_pos = 2;
@@ -116,8 +122,10 @@ Common::Error DragonsEngine::run() {
 	inventory->flags = 0;
 	inventory->field_e = 0x100;
 	inventory->updateSequence(0);
-	inventory->flags |= (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_80 | Dragons::ACTOR_FLAG_100 | Dragons::ACTOR_FLAG_200);
+	inventory->flags |= (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_80 | Dragons::ACTOR_FLAG_100 |
+						 Dragons::ACTOR_FLAG_200);
 	inventorySequenceId = 0;
+	inventoryIsShowingMaybe = 0;
 
 	uint16 sceneId = 0x12;
 	_dragonINIResource->getFlickerRecord()->sceneId = sceneId; //TODO
@@ -183,6 +191,9 @@ void DragonsEngine::gameLoop() {
 				error("todo 0x80026cb0 run script");
 			}
 		}
+
+		runINIScripts();
+
 		_scene->draw();
 		_screen->updateScreen();
 		wait();
@@ -232,6 +243,10 @@ void DragonsEngine::updateHandler() {
 			}
 		}
 	}
+
+	if (_flags & Dragons::ENGINE_FLAG_20) {
+		engineFlag0x20UpdateFunction();
+	}
 }
 
 const char *DragonsEngine::getSavegameFilename(int num) {
@@ -247,7 +262,8 @@ Common::String DragonsEngine::getSavegameFilename(const Common::String &target, 
 
 #define DRAGONS_SAVEGAME_VERSION 0
 
-kReadSaveHeaderError DragonsEngine::readSaveHeader(Common::SeekableReadStream *in, SaveHeader &header, bool skipThumbnail) {
+kReadSaveHeaderError
+DragonsEngine::readSaveHeader(Common::SeekableReadStream *in, SaveHeader &header, bool skipThumbnail) {
 
 	header.version = in->readUint32LE();
 	if (header.version > DRAGONS_SAVEGAME_VERSION)
@@ -256,7 +272,7 @@ kReadSaveHeaderError DragonsEngine::readSaveHeader(Common::SeekableReadStream *i
 	byte descriptionLen = in->readByte();
 	header.description = "";
 	while (descriptionLen--) {
-		header.description += (char)in->readByte();
+		header.description += (char) in->readByte();
 	}
 
 	if (!Graphics::loadThumbnail(*in, header.thumbnail, skipThumbnail)) {
@@ -277,13 +293,13 @@ uint32 DragonsEngine::calulateTimeLeft() {
 
 	now = _system->getMillis();
 
-	if ( _nextUpdatetime <= now ) {
+	if (_nextUpdatetime <= now) {
 		_nextUpdatetime = now + DRAGONS_TICK_INTERVAL;
-		return(0);
+		return (0);
 	}
 	uint32 delay = _nextUpdatetime - now;
 	_nextUpdatetime += DRAGONS_TICK_INTERVAL;
-	return(delay);
+	return (delay);
 }
 
 void DragonsEngine::wait() {
@@ -297,19 +313,19 @@ void DragonsEngine::updateActorSequences() {
 
 	//TODO ResetRCnt(0xf2000001);
 
-	int16 actorId = _flags & Dragons::ENGINE_FLAG_80 ? (int16)64 : (int16)23;
+	int16 actorId = _flags & Dragons::ENGINE_FLAG_80 ? (int16) 64 : (int16) 23;
 
 	while (actorId > 0) {
 		actorId--;
-		Actor *actor = _actorManager->getActor((uint16)actorId);
+		Actor *actor = _actorManager->getActor((uint16) actorId);
 		if (actorId < 2 && _flags & Dragons::ENGINE_FLAG_40) {
 			continue;
 		}
 
 		if (actor->flags & Dragons::ACTOR_FLAG_40 &&
-				!(actor->flags & Dragons::ACTOR_FLAG_4) &&
-				!(actor->flags & Dragons::ACTOR_FLAG_400) &&
-				(actor->sequenceTimer == 0 || actor->flags & Dragons::ACTOR_FLAG_1)) {
+			!(actor->flags & Dragons::ACTOR_FLAG_4) &&
+			!(actor->flags & Dragons::ACTOR_FLAG_400) &&
+			(actor->sequenceTimer == 0 || actor->flags & Dragons::ACTOR_FLAG_1)) {
 			debug("Actor[%d] execute sequenceOp", actorId);
 
 			if (actor->flags & Dragons::ACTOR_FLAG_1) {
@@ -352,7 +368,7 @@ byte *DragonsEngine::getBackgroundPalette() {
 }
 
 bool DragonsEngine::isFlagSet(uint32 flag) {
-	return (bool)(_flags & flag);
+	return (bool) (_flags & flag);
 }
 
 DragonINI *DragonsEngine::getINI(uint32 index) {
@@ -379,14 +395,14 @@ uint16 DragonsEngine::getIniFromImg() {
 
 	uint16 currentSceneId = _scene->getSceneId();
 
-	for(uint16 i = 0; i < _dragonINIResource->totalRecords(); i++) {
+	for (uint16 i = 0; i < _dragonINIResource->totalRecords(); i++) {
 		DragonINI *ini = getINI(i);
 		if (ini->sceneId == currentSceneId && ini->field_1a_flags_maybe == 0) {
 			IMG *img = _dragonIMG->getIMG(ini->field_2);
 			if (x >= img->field_0 &&
-			img->field_0 + img->field_4 >= x &&
-			y >= img->field_2 &&
-			img->field_6 + img->field_2 >= y) {
+				img->field_0 + img->field_4 >= x &&
+				y >= img->field_2 &&
+				img->field_6 + img->field_2 >= y) {
 				return i + 1;
 			}
 		}
@@ -409,6 +425,57 @@ uint16 DragonsEngine::updateINIUnderCursor() {
 	}
 
 	return 0;
+}
+
+void DragonsEngine::runINIScripts() {
+	for (uint16 i = 0; i < _dragonINIResource->totalRecords(); i++) {
+		DragonINI *ini = getINI(i);
+		if (ini->field_1a_flags_maybe & Dragons::INI_FLAG_10) {
+			ini->field_1a_flags_maybe &= ~Dragons::INI_FLAG_10;
+			byte *data = _dragonOBD->getFromOpt(i);
+			ScriptOpCall scriptOpCall;
+			scriptOpCall._code = data + 8;
+			scriptOpCall._codeEnd = scriptOpCall._code + READ_LE_UINT32(data);
+			uint32 currentFlags = _flags;
+			clearFlags(Dragons::ENGINE_FLAG_8);
+			_scriptOpcodes->runScript3(scriptOpCall);
+			_flags = currentFlags;
+		}
+	}
+}
+
+void DragonsEngine::engineFlag0x20UpdateFunction() {
+	if (_flags & Dragons::ENGINE_FLAG_20) {
+		if ((_flags & (Dragons::ENGINE_FLAG_80000000 | Dragons::ENGINE_FLAG_8)) == 8) {
+			error("updateCursor();"); //TODO updateCursor();
+		}
+		//TODO
+		uint16 currentSceneId = _scene->getSceneId();
+
+		if (inventoryIsShowingMaybe == 0) {
+			for (uint16 i = 0; i < _dragonINIResource->totalRecords(); i++) {
+				DragonINI *ini = getINI(i);
+				if (ini->field_10 >= 0 && ini->sceneId == currentSceneId) {
+					ini->field_10--;
+					if (ini->field_10 < 0) {
+						ini->field_1a_flags_maybe |= Dragons::INI_FLAG_10;
+					}
+				}
+			}
+		}
+	} else {
+		run_func_ptr_unk_countdown_timer = 1;
+	}
+}
+
+void DragonsEngine::waitForFrames(uint16 numFrames) {
+	for (uint16 i = 0; i < numFrames; i++) {
+		wait();
+		updateHandler();
+
+		_scene->draw();
+		_screen->updateScreen();
+	}
 }
 
 } // End of namespace Dragons

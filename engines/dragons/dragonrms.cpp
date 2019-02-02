@@ -60,6 +60,9 @@ byte *DragonRMS::getObdData(uint32 sceneId) {
 byte *DragonRMS::getObdDataField10(uint32 sceneId) {
 	return _dragonOBD->getObdAtOffset(getRMS(sceneId)->_field10ObdOffset);
 }
+byte *DragonRMS::getObdDataFieldC(uint32 sceneId) {
+	return _dragonOBD->getObdAtOffset(getRMS(sceneId)->_fieldC);
+}
 
 RMS *DragonRMS::getRMS(uint32 sceneId) {
 	sceneId &= 0x7fff;

@@ -32,11 +32,14 @@ class DragonOBD {
 private:
 	byte *_data;
 	uint32_t _dataSize;
+	Common::SeekableReadStream *optReadStream;
+
 public:
 	virtual ~DragonOBD();
 
 	DragonOBD(BigfileArchive *bigfileArchive);
 	byte *getObdAtOffset(uint32 offset);
+	byte *getFromOpt(uint32 index);
 };
 
 } // End of namespace Dragons

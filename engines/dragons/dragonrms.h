@@ -50,6 +50,7 @@ public:
 	char *getSceneName(uint32 sceneId);
 	byte *getObdData(uint32 sceneId);
 	byte *getObdDataField10(uint32 sceneId);
+	byte *getObdDataFieldC(uint32 sceneId);
 
 private:
 	RMS *getRMS(uint32 sceneId);
