@@ -749,11 +749,11 @@ void Attributes::clear() {
 uint Attributes::attrBg(const WindowStyle *styles) {
 	int revset = reverse || (styles[style].reverse && !Windows::_overrideReverse);
 
-	int zfset = fgset ? fgset : Windows::_overrideFgSet;
-	int zbset = bgset ? bgset : Windows::_overrideBgSet;
+	bool zfset = fgset ? fgset : Windows::_overrideFgSet;
+	bool zbset = bgset ? bgset : Windows::_overrideBgSet;
 
-	int zfore = fgset ? fgcolor : Windows::_overrideFgVal;
-	int zback = bgset ? bgcolor : Windows::_overrideBgVal;
+	uint zfore = fgset ? fgcolor : Windows::_overrideFgVal;
+	uint zback = bgset ? bgcolor : Windows::_overrideBgVal;
 
 	if (zfset && zfore != Windows::_zcolor_fg) {
 		Windows::_zcolor_Foreground = zfore;
@@ -786,11 +786,11 @@ uint Attributes::attrBg(const WindowStyle *styles) {
 uint Attributes::attrFg(const WindowStyle *styles) {
 	int revset = reverse || (styles[style].reverse && !Windows::_overrideReverse);
 
-	int zfset = fgset ? fgset : Windows::_overrideFgSet;
-	int zbset = bgset ? bgset : Windows::_overrideBgSet;
+	bool zfset = fgset ? fgset : Windows::_overrideFgSet;
+	bool zbset = bgset ? bgset : Windows::_overrideBgSet;
 
-	int zfore = fgset ? fgcolor : Windows::_overrideFgVal;
-	int zback = bgset ? bgcolor : Windows::_overrideBgVal;
+	uint zfore = fgset ? fgcolor : Windows::_overrideFgVal;
+	uint zback = bgset ? bgcolor : Windows::_overrideBgVal;
 
 	if (zfset && zfore != Windows::_zcolor_fg) {
 		Windows::_zcolor_Foreground = zfore;
