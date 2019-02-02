@@ -19,12 +19,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+#include "common/memstream.h"
 #include "dragonobd.h"
 #include "bigfile.h"
 
 namespace Dragons {
 
 DragonOBD::DragonOBD(BigfileArchive *bigfileArchive) {
+	uint32 size;
+	byte *optData = bigfileArchive->load("dragon.opt", size);
+	optReadStream = new Common::MemoryReadStream(optData, size, DisposeAfterUse::NO);
+
 	_data = bigfileArchive->load("dragon.obd", _dataSize);
 }
 
@@ -38,6 +43,12 @@ DragonOBD::~DragonOBD() {
 	if (_data) {
 		delete _data;
 	}
+	delete optReadStream;
+}
+
+byte *DragonOBD::getFromOpt(uint32 index) {
+	optReadStream->seek(index * 8);
+	return getObdAtOffset(optReadStream->readUint32LE());
 }
 
 } // End of namespace Dragons

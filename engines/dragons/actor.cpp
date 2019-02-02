@@ -157,6 +157,8 @@ void Actor::loadFrame(uint16 frameOffset) {
 
 	debug(3, "ActorId: %d load frame header: (%d,%d) palette: %X", _actorID, frame->width, frame->height, paletteId);
 
+	flags |= Dragons::ACTOR_FLAG_8; //TODO check if this is the right spot. engine sets it at 0x800185b0
+
 }
 
 byte *Actor::getSeqIpAtOffset(uint32 offset) {
@@ -171,6 +173,28 @@ void Actor::reset_maybe() {
 void Actor::pathfinding_maybe(int16 x, int16 y, int16 unk) {
 	//TODO implement me.
 	error("Implement pathfinding_maybe()");
+}
+
+void Actor::waitUntilFlag8IsSet() {
+	if (flags & Dragons::ACTOR_FLAG_8) {
+		return;
+	}
+
+	while(!(flags & Dragons::ACTOR_FLAG_8)) {
+		getEngine()->waitForFrames(1);
+	}
+}
+
+void Actor::waitUntilFlag8And4AreSet() {
+	waitUntilFlag8IsSet();
+
+	if (flags & Dragons::ACTOR_FLAG_4) {
+		return;
+	}
+
+	while(!(flags & Dragons::ACTOR_FLAG_4)) {
+		getEngine()->waitForFrames(1);
+	}
 }
 
 } // End of namespace Dragons

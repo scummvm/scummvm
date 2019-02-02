@@ -29,7 +29,7 @@
 
 namespace Dragons {
 
-#define DRAGONS_NUM_SCRIPT_OPCODES 0x22
+#define DRAGONS_NUM_SCRIPT_OPCODES 0x23
 class DragonsEngine;
 
 struct ScriptOpCall {
@@ -61,6 +61,7 @@ public:
 	ScriptOpcodes(DragonsEngine *vm, DragonFLG *dragonFLG);
 	~ScriptOpcodes();
 	void runScript(ScriptOpCall &scriptOpCall);
+	void runScript3(ScriptOpCall &scriptOpCall);
 	void execOpcode(ScriptOpCall &scriptOpCall);
 protected:
 	DragonsEngine *_vm;
@@ -86,6 +87,8 @@ protected:
 
 	void opUnkA(ScriptOpCall &scriptOpCall);
 	void opRunSpecialOpCode(ScriptOpCall &scriptOpCall); //op B
+
+	void opDelay(ScriptOpCall &scriptOpCall); //op D
 
 	void opUnkF(ScriptOpCall &scriptOpCall);
 

@@ -35,8 +35,21 @@ Scene::Scene(DragonsEngine *vm, Screen *screen, ScriptOpcodes *scriptOpcodes, Bi
 		: _vm(vm), _screen(screen), _scriptOpcodes(scriptOpcodes), _stage(0), _bigfileArchive(bigfileArchive), _actorManager(actorManager), _dragonRMS(dragonRMS), _dragonINIResource(dragonINIResource) {
 	_backgroundLoader = new BackgroundResourceLoader(_bigfileArchive, _dragonRMS);
 }
-
 void Scene::loadScene(uint32 sceneId, uint32 cameraPointId) {
+	// TODO
+	loadSceneData(sceneId, cameraPointId);
+	//TODO
+	if (!(sceneId & 0x8000)) {
+		byte *obd = _dragonRMS->getObdDataFieldC(sceneId);
+		ScriptOpCall scriptOpCall;
+		scriptOpCall._code = obd + 4;
+		scriptOpCall._codeEnd = scriptOpCall._code + READ_LE_UINT32(obd);
+		_currentSceneId = -1;
+		_scriptOpcodes->runScript(scriptOpCall);
+	}
+}
+
+void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 	_vm->setUnkFlags(Dragons::ENGINE_UNK1_FLAG_2 | Dragons::ENGINE_UNK1_FLAG_8);
 
 	for(int i=0;i < _dragonINIResource->totalRecords(); i++) {

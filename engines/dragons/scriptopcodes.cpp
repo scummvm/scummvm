@@ -96,6 +96,8 @@ void ScriptOpcodes::initOpcodes() {
 	OPCODE(10, opUnkA);
 	OPCODE(11, opRunSpecialOpCode);
 
+	OPCODE(0xD, opDelay);
+
 	OPCODE(15, opUnkF);
 
 	OPCODE(19, opUnk13PropertiesRelated);
@@ -123,6 +125,14 @@ void ScriptOpcodes::runScript(ScriptOpCall &scriptOpCall) {
 	executeScriptLoop(scriptOpCall);
 }
 
+
+void ScriptOpcodes::runScript3(ScriptOpCall &scriptOpCall) {
+	scriptOpCall._field8 = 3;
+	scriptOpCall._result = 0;
+	_data_80071f5c = 0;
+	executeScriptLoop(scriptOpCall);
+}
+
 void ScriptOpcodes::executeScriptLoop(ScriptOpCall &scriptOpCall) {
 
 	if (scriptOpCall._code >= scriptOpCall._codeEnd || scriptOpCall._result & 1) {
@@ -140,7 +150,7 @@ void ScriptOpcodes::executeScriptLoop(ScriptOpCall &scriptOpCall) {
 //		}
 	}
 
-	uint16 opcode = READ_LE_INT16(scriptOpCall._code);
+	uint16 opcode = READ_LE_UINT16(scriptOpCall._code) & 0x7fff;
 
 	scriptOpCall._op = (byte) opcode;
 	if (opcode < DRAGONS_NUM_SCRIPT_OPCODES) {
@@ -160,7 +170,7 @@ void ScriptOpcodes::executeScriptLoop(ScriptOpCall &scriptOpCall) {
 //		}
 		}
 
-		uint16 opcode = READ_LE_INT16(scriptOpCall._code);
+		opcode = READ_LE_UINT16(scriptOpCall._code) & 0x7fff;
 
 		if (opcode >= DRAGONS_NUM_SCRIPT_OPCODES) {
 			return; //TODO should continue here.
@@ -237,7 +247,7 @@ void ScriptOpcodes::opActorLoadSequence(ScriptOpCall &scriptOpCall) {
 	ini->actor->updateSequence(sequenceId);
 
 	if (field0 & 0x8000) {
-		error("wait here.");
+		ini->actor->waitUntilFlag8And4AreSet();
 	}
 
 	if (isFlicker) {
@@ -370,6 +380,17 @@ void ScriptOpcodes::opRunSpecialOpCode(ScriptOpCall &scriptOpCall) {
 
 	debug("Special opCode %X", specialOpCode);
 	_specialOpCodes->run(specialOpCode);
+}
+
+void ScriptOpcodes::opDelay(ScriptOpCall &scriptOpCall) {
+	ARG_SKIP(2);
+	ARG_INT16(delay);
+
+	if (scriptOpCall._field8 != 0) {
+		return;
+	}
+
+	_vm->waitForFrames((uint16)delay);
 }
 
 void ScriptOpcodes::opUnkF(ScriptOpCall &scriptOpCall) {

@@ -63,6 +63,9 @@ public:
 	bool contains(DragonINI *ini);
 	byte *getPalette();
 	uint16 getSceneId();
+private:
+	void loadSceneData(uint32 sceneId, uint32 cameraPointId);
+
 };
 
 } // End of namespace Dragons
