@@ -172,7 +172,9 @@ void Actor::reset_maybe() {
 
 void Actor::pathfinding_maybe(int16 x, int16 y, int16 unk) {
 	//TODO implement me.
-	error("Implement pathfinding_maybe()");
+	 error("Implement pathfinding_maybe()");
+//	x_pos = x;
+//	y_pos = y;
 }
 
 void Actor::waitUntilFlag8IsSet() {

@@ -478,4 +478,8 @@ void DragonsEngine::waitForFrames(uint16 numFrames) {
 	}
 }
 
+void DragonsEngine::playSound(uint16 soundId) {
+	debug(3, "TODO: play sound %d", soundId);
+}
+
 } // End of namespace Dragons

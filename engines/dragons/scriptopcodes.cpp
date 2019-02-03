@@ -93,16 +93,19 @@ void ScriptOpcodes::initOpcodes() {
 	OPCODE(7,  opUnk7);
 	OPCODE(8,  opActorLoadSequence);
 
-	OPCODE(10, opUnkA);
-	OPCODE(11, opRunSpecialOpCode);
-
+	OPCODE(0xA, opUnkA);
+	OPCODE(0xB, opRunSpecialOpCode);
+	OPCODE(0xC, opUnkCSoundRelatedMaybe);
 	OPCODE(0xD, opDelay);
+	OPCODE(0xE, opUnkE);
+	OPCODE(0xF, opUnkF);
 
-	OPCODE(15, opUnkF);
+	OPCODE(0x11, opUnk11FlickerTalk);
 
-	OPCODE(19, opUnk13PropertiesRelated);
-	OPCODE(31, opPlayMusic);
+	OPCODE(0x13, opUnk13PropertiesRelated);
+	OPCODE(0x1F, opPlayMusic);
 
+	OPCODE(0x22, opCodeActorTalk);
 }
 
 #undef OPCODE
@@ -382,6 +385,15 @@ void ScriptOpcodes::opRunSpecialOpCode(ScriptOpCall &scriptOpCall) {
 	_specialOpCodes->run(specialOpCode);
 }
 
+void ScriptOpcodes::opUnkCSoundRelatedMaybe(ScriptOpCall &scriptOpCall) {
+	ARG_SKIP(2);
+	ARG_INT16(soundId);
+
+	if (scriptOpCall._field8 == 0) {
+		_vm->playSound((uint16)soundId);
+	}
+}
+
 void ScriptOpcodes::opDelay(ScriptOpCall &scriptOpCall) {
 	ARG_SKIP(2);
 	ARG_INT16(delay);
@@ -391,6 +403,31 @@ void ScriptOpcodes::opDelay(ScriptOpCall &scriptOpCall) {
 	}
 
 	_vm->waitForFrames((uint16)delay);
+}
+
+void ScriptOpcodes::opUnkE(ScriptOpCall &scriptOpCall) {
+	ARG_INT16(field0);
+	ARG_INT16(field2);
+	ARG_INT16(field4);
+	ARG_INT16(field6);
+	ARG_INT16(field8);
+
+	if (scriptOpCall._field8 != 0) {
+		return;
+	}
+
+	int32 s3 = 0;
+	DragonINI *ini = _vm->getINI(field2 - 1);
+
+	if (field6 & 0x8000) {
+		s3 = 0 > (field6 ^ 0xffff) ? 1 : 0;
+	}
+
+	if (field4 != -1) {
+
+	} else {
+
+	}
 }
 
 void ScriptOpcodes::opUnkF(ScriptOpCall &scriptOpCall) {
@@ -429,9 +466,7 @@ void ScriptOpcodes::opUnkF(ScriptOpCall &scriptOpCall) {
 
 			if(s3 == 0) {
 				while (ini->actor->flags & Dragons::ACTOR_FLAG_10) {
-					//TODO
-					//wait a game tick
-					error("Wait a game tick here");
+					_vm->waitForFrames(1);
 				}
 			}
 			ini->x = field8;
@@ -450,6 +485,24 @@ void ScriptOpcodes::opUnkF(ScriptOpCall &scriptOpCall) {
 		}
 		ini->actor->updateSequence(field6 & 0x7fff);
 	}
+}
+
+void ScriptOpcodes::opUnk11FlickerTalk(ScriptOpCall &scriptOpCall) {
+	ARG_SKIP(8);
+	// TODO implement me!
+}
+
+void ScriptOpcodes::opCodeActorTalk(ScriptOpCall &scriptOpCall) {
+	ARG_SKIP(2);
+	ARG_INT16(field2);
+	ARG_SKIP(6);
+	ARG_UINT32(fieldA);
+
+	if (scriptOpCall._field8 != 0) {
+		return;
+	}
+
+	//TODO implement actor talk.
 }
 
 void ScriptOpcodes::opCode_UnkA_setsProperty(ScriptOpCall &scriptOpCall) {
@@ -561,9 +614,12 @@ uint16 ScriptOpcodes::getINIField(uint32 iniIndex, uint16 fieldOffset) {
 
 	switch (fieldOffset) {
 		case 0 : return ini->iptIndex_maybe;
+		case 6 : return ini->sequenceId;
 		case 0xC  : return ini->sceneId;
 		case 0x12  : return ini->field_12;
 		case 0x14 : return ini->field_14;
+		case 0x16 : return ini->x;
+		case 0x18 : return ini->y;
 		case 0x1A : return ini->field_1a_flags_maybe;
 		case 0x20 : return ini->field_20_actor_field_14;
 		default: error("getINIField() Invalid fieldOffset 0x%X", fieldOffset);
@@ -575,9 +631,12 @@ void ScriptOpcodes::setINIField(uint32 iniIndex, uint16 fieldOffset, uint16 valu
 
 	switch (fieldOffset) {
 		case 0 : ini->iptIndex_maybe = value; break;
+		case 6 : ini->sequenceId = value; break;
 		case 0xc  : ini->sceneId = value; break;
 		case 0x12 : ini->field_12 = value; break;
 		case 0x14 : ini->field_14 = value; break;
+		case 0x16 : ini->x = value; break;
+		case 0x18 : ini->y = value; break;
 		case 0x1A : ini->field_1a_flags_maybe = value; break;
 		case 0x20 : ini->field_20_actor_field_14 = value; break;
 		default: error("setINIField() Invalid fieldOffset 0x%X", fieldOffset);
@@ -608,7 +667,7 @@ void ScriptOpcodes::opCode_Unk7(ScriptOpCall &scriptOpCall) {
 				ini->actor->reset_maybe();
 			}
 			if (sceneId == currentScene) {
-				ini->actor = _vm->_actorManager->loadActor(ini->actorResourceId, ini->frameIndexId_maybe, ini->x, ini->y, 0);
+				ini->actor = _vm->_actorManager->loadActor(ini->actorResourceId, ini->sequenceId, ini->x, ini->y, 0);
 				ini->actor->_sequenceID2 = ini->field_20_actor_field_14;
 				if (ini->field_1a_flags_maybe & 2) {
 					ini->actor->flags |= Dragons::ACTOR_FLAG_80;

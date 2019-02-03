@@ -62,8 +62,12 @@ void SpecialOpcodes::initOpcodes() {
 	// Register opcodes
 	// OPCODE(1, opUnk1);
 	OPCODE(3, spcClearEngineFlag10);
+	OPCODE(4, spcSetEngineFlag10);
+
 	OPCODE(9, spcUnk9);
-	OPCODE(20, spcClearEngineFlag8);
+	OPCODE(0xa, spcUnkA);
+	OPCODE(0x14, spcClearEngineFlag8);
+	OPCODE(0x15, spcSetEngineFlag8);
 
 	OPCODE(0x54, spcSetEngineFlag0x4000000);
 	OPCODE(0x55, spcSetCursorSequenceIdToZero);
@@ -83,18 +87,35 @@ void SpecialOpcodes::spcClearEngineFlag10() {
 	_vm->clearFlags(Dragons::ENGINE_FLAG_10);
 }
 
+void SpecialOpcodes::spcSetEngineFlag10() {
+	_vm->setFlags(Dragons::ENGINE_FLAG_10);
+}
+
 void SpecialOpcodes::spcUnk9() {
 	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
 	assert(flicker);
-	flicker->field_1a_flags_maybe |= 0x20;
+	flicker->field_1a_flags_maybe |= Dragons::INI_FLAG_20;
 	assert(flicker->actor);
 	flicker->actor->flags |= Dragons::ACTOR_FLAG_100;
 	flicker->actor->priorityLayer = 0;
-	_vm->getINI(1)->field_1a_flags_maybe |= 0x20;
+	_vm->getINI(1)->field_1a_flags_maybe |= Dragons::INI_FLAG_20;
 }
+
+
+void SpecialOpcodes::spcUnkA() {
+	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
+	flicker->field_1a_flags_maybe &= ~Dragons::INI_FLAG_20;
+	flicker->actor->flags &= ~Dragons::ACTOR_FLAG_100;
+	_vm->getINI(1)->field_1a_flags_maybe &= ~Dragons::INI_FLAG_20;
+}
+
 
 void SpecialOpcodes::spcClearEngineFlag8() {
 	_vm->clearFlags(Dragons::ENGINE_FLAG_8);
+}
+
+void SpecialOpcodes::spcSetEngineFlag8() {
+	_vm->setFlags(Dragons::ENGINE_FLAG_8);
 }
 
 void SpecialOpcodes::spcSetEngineFlag0x4000000() {
@@ -104,6 +125,5 @@ void SpecialOpcodes::spcSetEngineFlag0x4000000() {
 void SpecialOpcodes::spcSetCursorSequenceIdToZero() {
 	_vm->_cursorSequenceID = 0;
 }
-
 
 } // End of namespace Dragons

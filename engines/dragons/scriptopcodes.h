@@ -87,10 +87,12 @@ protected:
 
 	void opUnkA(ScriptOpCall &scriptOpCall);
 	void opRunSpecialOpCode(ScriptOpCall &scriptOpCall); //op B
-
+	void opUnkCSoundRelatedMaybe(ScriptOpCall &scriptOpCall);
 	void opDelay(ScriptOpCall &scriptOpCall); //op D
-
+	void opUnkE(ScriptOpCall &scriptOpCall);
 	void opUnkF(ScriptOpCall &scriptOpCall);
+
+	void opUnk11FlickerTalk(ScriptOpCall &scriptOpCall);
 
 	void opUnk13PropertiesRelated(ScriptOpCall &scriptOpCall);
 	void opUnk14(ScriptOpCall &scriptOpCall);
@@ -100,6 +102,8 @@ protected:
 	bool checkPropertyFlag(ScriptOpCall &scriptOpCall);
 	void opCode_UnkA_setsProperty(ScriptOpCall &scriptOpCall);
 	void opCode_Unk7(ScriptOpCall &scriptOpCall);
+
+	void opCodeActorTalk(ScriptOpCall &scriptOpCall); // 0x22
 
 	// misc
 	uint16 getINIField(uint32 iniIndex, uint16 fieldOffset);

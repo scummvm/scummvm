@@ -152,6 +152,8 @@ public:
 
 	void waitForFrames(uint16 numFrames);
 
+	void playSound(uint16 soundId);
+
 private:
 	void gameLoop();
 	void updateHandler();

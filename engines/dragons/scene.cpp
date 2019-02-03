@@ -107,11 +107,11 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 	for(int i=0;i < _dragonINIResource->totalRecords(); i++) {
 		DragonINI *ini = _dragonINIResource->getRecord(i);
 		if (ini->sceneId == sceneId && (ini->field_1a_flags_maybe & 1)) {
-			Actor *actor = _actorManager->loadActor(ini->actorResourceId, ini->frameIndexId_maybe, ini->x, ini->y, 0);
+			Actor *actor = _actorManager->loadActor(ini->actorResourceId, ini->sequenceId, ini->x, ini->y, 0);
 
 			if (actor) {
 				ini->actor = actor;
-				if (ini->frameIndexId_maybe & 0x1000) {
+				if (ini->sequenceId & 0x1000) {
 					actor->frame_flags |= 0x10;
 				} else {
 					if (ini->field_1a_flags_maybe & 0x2000) {
