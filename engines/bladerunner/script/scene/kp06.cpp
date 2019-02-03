@@ -119,7 +119,7 @@ bool SceneScriptKP06::ClickedOnExit(int exitId) {
 				} else if (Actor_Query_Goal_Number(kActorSteele) == 433) {
 					Actor_Set_Goal_Number(kActorSteele, 499);
 				} else {
-					Actor_Set_Goal_Number(kActorGaff, 499);
+					Actor_Set_Goal_Number(kActorGaff, kGoalGaffGone);
 				}
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -187,7 +187,7 @@ void SceneScriptKP06::PlayerWalkedIn() {
 			//return true;
 			return;
 		} else {
-			Actor_Set_Goal_Number(kActorGaff, 499);
+			Actor_Set_Goal_Number(kActorGaff, kGoalGaffGone);
 			Actor_Face_Actor(kActorGaff, kActorMcCoy, true);
 			Actor_Says(kActorGaff, 220, 13);
 			Actor_Face_Actor(kActorMcCoy, kActorGaff, true);

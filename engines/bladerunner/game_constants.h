@@ -1084,13 +1084,13 @@ enum Flags {
 	kFlagCT11DogWrapperTaken = 645,
 	kFlagSteeleDead = 646, // is never checked
 	kFlagMA04McCoySleeping = 647,
-
+	kFlagMA07GaffTalk = 648,
 	kFlagMA04PhoneMessageFromClovis = 649,
 	kFlagMA04PhoneMessageFromLucy = 650,
 	kFlagNR08McCoyWatchingShow = 651,
 	kFlagCrazylegsArrestedTalk = 652,
 	kFlagMcCoyIsHelpingReplicants = 653,
-
+	kFlagMA02Chapter5Started = 654,
 	kFlagMA02RajifTalk = 655,
 	kFlagUG02RagiationGooglesTaken = 656,
 
@@ -1335,9 +1335,9 @@ enum Scenes {
 	kSceneKP01 = 41, // Kipple - Rubble
 	kSceneKP02 = 42, // Kipple - Entry / Gate
 	kSceneKP03 = 43, // Kipple - Bomb
-	kSceneKP04 = 44,
+	kSceneKP04 = 44, // Kipple - Huge pillar
 	kSceneKP05 = 45, // Kipple - Moonbus - Far
-	kSceneKP06 = 46,
+	kSceneKP06 = 46, // Kipple - Moonbus - Near
 	kSceneKP07 = 47, // Kipple - Moonbus - Inside
 	kSceneMA01 = 48, // McCoy's Apartment - Roof
 	kSceneMA02 = 49, // McCoy's Apartment - Living room
@@ -1389,8 +1389,8 @@ enum Scenes {
 	kSceneUG10 = 95, // Underground - Moving bridge
 	kSceneUG12 = 96, // Underground - Gate
 	kSceneUG13 = 97, // Underground - Homeless' living room
-	kSceneUG14 = 98,
-	kSceneUG15 = 99,
+	kSceneUG14 = 98, // Underground - Crossroad
+	kSceneUG15 = 99, // Underground - Bridge with rat
 	kSceneUG16 = 100, // Underground - Under DR06
 	kSceneUG17 = 101, // Underground - Under TB03
 	kSceneUG18 = 102, // Underground - Pit
@@ -2176,7 +2176,13 @@ enum GoalGaff {
 	kGoalGaffCT12FlyAway = 10,
 	kGoalGaffStartWalkingAround = 100,
 	kGoalGaffWalkAround = 101,
-	kGoalGaffRepeatWalkingAround = 102
+	kGoalGaffRepeatWalkingAround = 102,
+	kGoalGaffStartChapter4 = 299,
+	kGoalGaffMA07Wait = 300,
+	kGoalGaffMA07TalkToMcCoy = 301,
+	kGoalGaffMA07Left = 302,
+	kGoalGaffMA07ShootMcCoy = 303, // cannot be triggered
+	kGoalGaffGone = 499
 };
 
 enum GoalLeon {

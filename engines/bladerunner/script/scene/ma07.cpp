@@ -121,7 +121,9 @@ void SceneScriptMA07::SceneFrameAdvanced(int frame) {
 }
 
 void SceneScriptMA07::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
-	if (actorId == kActorGaff && newGoal == 302) {
+	if (actorId == kActorGaff
+	 && newGoal == kGoalGaffMA07Left
+	) {
 		Scene_Exits_Enable();
 	}
 }
@@ -140,12 +142,12 @@ void SceneScriptMA07::PlayerWalkedIn() {
 		Game_Flag_Reset(kFlagMA06toMA07);
 	}
 
-	if (!Game_Flag_Query(648)
+	if (!Game_Flag_Query(kFlagMA07GaffTalk)
 	 &&  Game_Flag_Query(kFlagUG18GuzzaScene)
 	 &&  Global_Variable_Query(kVariableChapter) == 4
 	) {
 		Scene_Exits_Disable();
-		Actor_Set_Goal_Number(kActorGaff, 300);
+		Actor_Set_Goal_Number(kActorGaff, kGoalGaffMA07Wait);
 	}
 
 	if (Game_Flag_Query(kFlagMcCoyFreedOfAccusations)) {

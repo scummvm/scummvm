@@ -51,31 +51,7 @@ void SceneScriptRC01::InitializeScene() {
 	//TODO: not part of game, remove
 	Game_Flag_Set(kFlagIntroPlayed); // force skip intro
 	Game_Flag_Set(kFlagRC02toRC01); // no landing
-	// Game_Flag_Set(kFlagRC01PoliceDone);
-	// Game_Flag_Set(kFlagKIAPrivacyAddon);
-	// Game_Flag_Set(kFlagZubenRetired);
-	// Game_Flag_Set(kFlagSpinnerAtMA01);
-	// Set_Enter(kSetMA02_MA04, kSceneMA04);
-
-	Spinner_Set_Selectable_Destination_Flag(0, true);
-	Spinner_Set_Selectable_Destination_Flag(1, true);
-	Spinner_Set_Selectable_Destination_Flag(2, true);
-	Spinner_Set_Selectable_Destination_Flag(3, true);
-	Spinner_Set_Selectable_Destination_Flag(4, true);
-	Spinner_Set_Selectable_Destination_Flag(5, true);
-	Spinner_Set_Selectable_Destination_Flag(6, true);
-	Spinner_Set_Selectable_Destination_Flag(7, true);
-	Spinner_Set_Selectable_Destination_Flag(8, true);
-	Spinner_Set_Selectable_Destination_Flag(9, true);
-
-	// ESPER_Flag_To_Activate();
-	// Voight_Kampff_Activate(kActorLucy, 50);
-
-	// Global_Variable_Set(kVariableChapter, 2);
-	// Chapter_Enter(2, kSetRC03, kSceneRC03);
-
 	// Set_Enter(kSetPS10_PS11_PS12_PS13, 73);
-
 #endif
 
 	if (!Game_Flag_Query(kFlagIntroPlayed)) {

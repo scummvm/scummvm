@@ -47,9 +47,9 @@ bool AIScriptGaff::Update() {
 	}
 
 	if (Global_Variable_Query(kVariableChapter) == 4
-	 && Actor_Query_Goal_Number(kActorGaff) < 299
+	 && Actor_Query_Goal_Number(kActorGaff) < kGoalGaffStartChapter4
 	) {
-		Actor_Set_Goal_Number(kActorGaff, 299);
+		Actor_Set_Goal_Number(kActorGaff, kGoalGaffStartChapter4);
 	}
 
 	return false;
@@ -59,7 +59,7 @@ bool AIScriptGaff::Update() {
 void AIScriptGaff::TimerExpired(int timer) {
 	if (timer == 0) {
 		AI_Countdown_Timer_Reset(kActorGaff, 0);
-		Actor_Set_Goal_Number(kActorGaff, 301);
+		Actor_Set_Goal_Number(kActorGaff, kGoalGaffMA07TalkToMcCoy);
 	}
 	//return false;
 }
@@ -164,14 +164,15 @@ void AIScriptGaff::OtherAgentExitedThisScene(int otherActorId) {
 }
 
 void AIScriptGaff::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
+	// It is impossible to triger this as player has no control at this moment
 	if (otherActorId == kActorMcCoy
 	 && combatMode == 1
 	 && Global_Variable_Query(kVariableChapter) == 4
 	 && Actor_Query_In_Set(kActorMcCoy, kSetMA07)
-	 && Actor_Query_Goal_Number(kActorGaff) == 300
+	 && Actor_Query_Goal_Number(kActorGaff) == kGoalGaffMA07Wait
 	) {
 		AI_Countdown_Timer_Reset(kActorGaff, 0);
-		Actor_Set_Goal_Number(kActorGaff, 303);
+		Actor_Set_Goal_Number(kActorGaff, kGoalGaffMA07ShootMcCoy);
 	}
 	// return false;
 }
@@ -274,15 +275,15 @@ bool AIScriptGaff::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Set_At_Waypoint(kActorGaff, 35, 0);
 		return true;
 
-	case 300:
+	case kGoalGaffMA07Wait:
 		Player_Loses_Control();
 		Actor_Put_In_Set(kActorGaff, kSetMA07);
 		Actor_Set_At_XYZ(kActorGaff, -102.54f, -172.43f, 463.18f, 1015);
-		Actor_Set_Goal_Number(kActorGaff, 301);
+		Actor_Set_Goal_Number(kActorGaff, kGoalGaffMA07TalkToMcCoy);
 		return true;
 
-	case 301:
-		Game_Flag_Set(648);
+	case kGoalGaffMA07TalkToMcCoy:
+		Game_Flag_Set(kFlagMA07GaffTalk);
 		Actor_Face_Actor(kActorGaff, kActorMcCoy, true);
 		Actor_Says(kActorGaff, 110, 12);
 		Actor_Face_Actor(kActorMcCoy, kActorGaff, true);
@@ -306,21 +307,21 @@ bool AIScriptGaff::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Delay(4000);
 		Player_Gains_Control();
 		Actor_Start_Speech_Sample(kActorGaff, 210);
-		Actor_Set_Goal_Number(kActorGaff, 302);
+		Actor_Set_Goal_Number(kActorGaff, kGoalGaffMA07Left);
 		return true;
 
-	case 302:
+	case kGoalGaffMA07Left:
 		return true;
 
-	case 303:
+	case kGoalGaffMA07ShootMcCoy:
 		Actor_Face_Actor(kActorGaff, kActorMcCoy, true);
 		Actor_Change_Animation_Mode(kActorGaff, kAnimationModeCombatAttack);
 		Sound_Play(27, 100, 0, 0, 50);
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
-		Actor_Retired_Here(kActorMcCoy, 12, 12, 1, -1);
+		Actor_Retired_Here(kActorMcCoy, 12, 12, true, -1);
 		return true;
 
-	case 499:
+	case kGoalGaffGone:
 		AI_Movement_Track_Flush(kActorGaff);
 		Actor_Put_In_Set(kActorGaff, kSetKP05_KP06);
 		Actor_Set_At_XYZ(kActorGaff, -782.15f, 8.26f, -263.64f, 52);
@@ -334,7 +335,7 @@ bool AIScriptGaff::UpdateAnimation(int *animation, int *frame) {
 	case 0:
 		*animation = 794;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(794)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
 		break;
@@ -342,7 +343,7 @@ bool AIScriptGaff::UpdateAnimation(int *animation, int *frame) {
 	case 1:
 		*animation = 788;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(788)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
 		break;
@@ -350,7 +351,7 @@ bool AIScriptGaff::UpdateAnimation(int *animation, int *frame) {
 	case 2:
 		*animation = 798;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(798)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
 		break;
@@ -358,7 +359,7 @@ bool AIScriptGaff::UpdateAnimation(int *animation, int *frame) {
 	case 3:
 		*animation = 799;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(799)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationState = 2;
 			_animationFrame = 0;
 			*animation = 798;
@@ -368,7 +369,7 @@ bool AIScriptGaff::UpdateAnimation(int *animation, int *frame) {
 	case 4:
 		*animation = 800;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(800)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationState = 2;
 			_animationFrame = 0;
 			*animation = 798;
@@ -378,7 +379,7 @@ bool AIScriptGaff::UpdateAnimation(int *animation, int *frame) {
 	case 5:
 		*animation = 801;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(801)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationState = 2;
 			_animationFrame = 0;
 			*animation = 798;
@@ -388,7 +389,7 @@ bool AIScriptGaff::UpdateAnimation(int *animation, int *frame) {
 	case 6:
 		*animation = 800;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(800)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationState = 2;
 			_animationFrame = 0;
 			*animation = 798;
@@ -398,7 +399,7 @@ bool AIScriptGaff::UpdateAnimation(int *animation, int *frame) {
 	case 7:
 		*animation = 801;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(801)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationState = 2;
 			_animationFrame = 0;
 			*animation = 798;
@@ -408,7 +409,7 @@ bool AIScriptGaff::UpdateAnimation(int *animation, int *frame) {
 	case 8:
 		*animation = 802;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(35)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(35) - 1) { // Bug in the game?
 			Actor_Set_Invisible(kActorGaff, true);
 			*animation = 794;
 			_animationFrame = 0;

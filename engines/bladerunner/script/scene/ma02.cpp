@@ -186,7 +186,7 @@ void SceneScriptMA02::PlayerWalkedIn() {
 	}
 
 	if ( Global_Variable_Query(kVariableChapter) == 5
-	 && !Game_Flag_Query(654)
+	 && !Game_Flag_Query(kFlagMA02Chapter5Started)
 	) {
 		if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
 			Actor_Says(kActorMcCoy, 2390, kAnimationModeIdle);
@@ -194,7 +194,7 @@ void SceneScriptMA02::PlayerWalkedIn() {
 		} else {
 			Actor_Says(kActorMcCoy, 2385,  kAnimationModeTalk);
 		}
-		Game_Flag_Set(654);
+		Game_Flag_Set(kFlagMA02Chapter5Started);
 		Autosave_Game(3);
 	}
 

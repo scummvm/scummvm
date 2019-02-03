@@ -166,7 +166,7 @@ void SceneScriptKP01::PlayerWalkedIn() {
 	if (!Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
 	 && !Game_Flag_Query(714)
 	 &&  Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleKP01Wait
-	 &&  Actor_Query_Goal_Number(kActorSteele) != 599
+	 &&  Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleGone
 	) {
 		Player_Loses_Control();
 		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleKP01TalkToMcCoy);
