@@ -208,7 +208,7 @@ void ESPER::handleMouseDown(int x, int y, bool mainButton) {
 }
 
 void ESPER::tick() {
-	if (!_vm->_gameIsRunning) {
+	if (!_vm->_windowIsActive) {
 		return;
 	}
 

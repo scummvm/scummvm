@@ -34,14 +34,14 @@
 #include "bladerunner/mouse.h"
 #include "bladerunner/music.h"
 #include "bladerunner/scene.h"
-#include "bladerunner/shape.h"
 #include "bladerunner/script/vk_script.h"
+#include "bladerunner/shape.h"
 #include "bladerunner/slice_renderer.h"
+#include "bladerunner/subtitles.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/time.h"
 #include "bladerunner/ui/ui_image_picker.h"
 #include "bladerunner/vqa_player.h"
-#include "bladerunner/subtitles.h"
 
 #include "common/str.h"
 #include "common/keyboard.h"
@@ -128,7 +128,7 @@ void VK::open(int actorId, int calibrationRatio) {
 
 	_script = new VKScript(_vm);
 
-	//TODO: time->lock()
+	_vm->_time->pause();
 
 	init();
 }
@@ -184,7 +184,7 @@ void VK::close() {
 	_vm->_music->setVolume(_volumeMusic);
 	_vm->_ambientSounds->setVolume(_volumeAmbient);
 
-	// TODO: time->unlock();
+	_vm->_time->resume();
 	_vm->_scene->resume();
 }
 
@@ -472,7 +472,7 @@ void VK::init() {
 }
 
 void VK::draw() {
-	if (!_isOpen || !_vm->_gameIsRunning) {
+	if (!_isOpen || !_vm->_windowIsActive) {
 		return;
 	}
 
@@ -895,7 +895,7 @@ void VK::askQuestion(int intensity) {
 
 	for (int i = 0; i < (int)_questions[intensity].size(); ++i) {
 		if (_questions[intensity][i].isPresent && !_questions[intensity][i].wasAsked) {
-			// TODO: related questions are not used in game
+			// cut content? related questions are not used in game
 			// int relatedQuestion = -1;
 			// if (_questions[intensity][i].relatedSentenceId >= 0) {
 			// 	relatedQuestion = vk::findQuestionById(this, questions, relatedQuestionId);

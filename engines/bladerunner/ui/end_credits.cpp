@@ -105,7 +105,7 @@ void EndCredits::show() {
 		//soundSystem::tick(SoundSystem);
 		_vm->handleEvents();
 
-		if (!_vm->_gameIsRunning) {
+		if (!_vm->_windowIsActive) {
 			timeLast = _vm->getTotalPlayTime(); // Original game is using system timer
 
 			continue;

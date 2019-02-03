@@ -95,7 +95,7 @@ void Scores::close() {
 
 	_vm->closeArchive("MODE.MIX");
 
-	// TODO: Unfreeze game time
+	_vm->_time->resume();
 	_vm->_scene->resume();
 }
 
@@ -129,7 +129,7 @@ int Scores::handleMouseDown(int x, int y) {
 }
 
 void Scores::tick() {
-	if (!_vm->_gameIsRunning) {
+	if (!_vm->_windowIsActive) {
 		return;
 	}
 

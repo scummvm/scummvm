@@ -340,7 +340,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	_lights = new Lights(this);
 
-	// TODO: outtake player - but this is done bit differently
+	// outtake player was initialized here in the original game - but this is done bit differently
 
 	_policeMaze = new PoliceMaze(this);
 
@@ -382,11 +382,6 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	if (!r) {
 		return false;
 	}
-
-
-	// TODO: Create datetime - not used
-
-	// TODO: Create graphics surfaces 1-4
 
 	// TODO: Allocate audio cache
 
@@ -434,7 +429,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	_ambientSounds = new AmbientSounds(this);
 
-	// TODO: Read BLADE.INI
+	// BLADE.INI was read here, but it was replaced by ScummVM configuration
 
 	_chapters = new Chapters(this);
 	if (!_chapters)
@@ -546,14 +541,13 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	_crimesDatabase = new CrimesDatabase(this, "CLUES", _gameInfo->getClueCount());
 
-	// TODO: Scene
 	_scene = new Scene(this);
 
 	// Load INIT.DLL
 	InitScript initScript(this);
 	initScript.SCRIPT_Initialize_Game();
 
-	// TODO: Load AI-ACT1.DLL
+	// Load AI-ACT1.DLL
 	_aiScripts = new AIScripts(this, actorCount);
 
 	initChapterAndScene();
@@ -594,7 +588,7 @@ void BladeRunnerEngine::initChapterAndScene() {
 void BladeRunnerEngine::shutdown() {
 	_mixer->stopAll();
 
-	// TODO: Write BLADE.INI
+	// BLADE.INI as updated here
 
 	delete _vk;
 	_vk = nullptr;
@@ -721,10 +715,6 @@ void BladeRunnerEngine::shutdown() {
 	delete _waypoints;
 	_waypoints = nullptr;
 
-	// TODO: Delete Cover waypoints
-
-	// TODO: Delete Flee waypoints
-
 	delete _scores;
 	_scores = nullptr;
 
@@ -742,8 +732,6 @@ void BladeRunnerEngine::shutdown() {
 
 	delete _suspectsDatabase;
 	_suspectsDatabase = nullptr;
-
-	// TODO: Delete datetime - not used
 
 	int actorCount = (int)_gameInfo->getActorCount();
 	for (int i = 0; i != actorCount; ++i) {
@@ -846,136 +834,141 @@ void BladeRunnerEngine::gameLoop() {
 void BladeRunnerEngine::gameTick() {
 	handleEvents();
 
-	if (_gameIsRunning && _windowIsActive) {
-		if (!_kia->isOpen() && !_sceneScript->isInsideScript() && !_aiScripts->isInsideScript()) {
-			_settings->openNewScene();
-		}
+	if (!_gameIsRunning || !_windowIsActive) {
+		return;
+	}
 
-		// TODO: Autosave
+	if (!_kia->isOpen() && !_sceneScript->isInsideScript() && !_aiScripts->isInsideScript()) {
+		_settings->openNewScene();
+	}
 
-		//probably not needed, this version of tick is just loading data from buffer
-		//_audioMixer->tick();
+	// TODO: Autosave
 
-		if (_kia->isOpen()) {
-			_kia->tick();
-			return;
-		}
+	//probably not needed, this version of tick is just loading data from buffer
+	//_audioMixer->tick();
 
-		if (_spinner->isOpen()) {
-			_spinner->tick();
-			_ambientSounds->tick();
-			return;
-		}
+	if (_kia->isOpen()) {
+		_kia->tick();
+		return;
+	}
 
-		if (_esper->isOpen()) {
-			_esper->tick();
-			return;
-		}
-
-		if (_vk->isOpen()) {
-			_vk->tick();
-			_ambientSounds->tick();
-			return;
-		}
-
-		if (_elevator->isOpen()) {
-			_elevator->tick();
-			_ambientSounds->tick();
-			return;
-		}
-
-		if (_scores->isOpen()) {
-			_scores->tick();
-			_ambientSounds->tick();
-			return;
-		}
-
-		_actorDialogueQueue->tick();
-		if (_scene->didPlayerWalkIn()) {
-			_sceneScript->playerWalkedIn();
-		}
-		bool inDialogueMenu = _dialogueMenu->isVisible();
-		if  (!inDialogueMenu) {
-			for (int i = 0; i < (int)_gameInfo->getActorCount(); ++i) {
-				_actors[i]->tickCombat();
-			}
-		}
-
-		_policeMaze->tick();
-
-		// TODO: Gun range announcements
-		_zbuffer->clean();
-
+	if (_spinner->isOpen()) {
+		_spinner->tick();
 		_ambientSounds->tick();
+		return;
+	}
 
-		bool backgroundChanged = false;
-		int frame = _scene->advanceFrame();
-		if (frame >= 0) {
-			_sceneScript->sceneFrameAdvanced(frame);
-			backgroundChanged = true;
-		}
-		blit(_surfaceBack, _surfaceFront);
+	if (_esper->isOpen()) {
+		_esper->tick();
+		return;
+	}
 
-		_overlays->tick();
+	if (_vk->isOpen()) {
+		_vk->tick();
+		_ambientSounds->tick();
+		return;
+	}
 
-		if (!inDialogueMenu) {
-			actorsUpdate();
-		}
+	if (_elevator->isOpen()) {
+		_elevator->tick();
+		_ambientSounds->tick();
+		return;
+	}
 
-		if (_settings->getNewScene() == -1 || _sceneScript->isInsideScript() || _aiScripts->isInsideScript()) {
-			_sliceRenderer->setView(_view);
+	if (_scores->isOpen()) {
+		_scores->tick();
+		_ambientSounds->tick();
+		return;
+	}
 
-			// Tick and draw all actors in current set
-			int setId = _scene->getSetId();
-			for (int i = 0, end = _gameInfo->getActorCount(); i != end; ++i) {
-				if (_actors[i]->getSetId() == setId) {
-					Common::Rect screenRect;
-					if (_actors[i]->tick(backgroundChanged, &screenRect)) {
-						_zbuffer->mark(screenRect);
-					}
-				}
-			}
+	_actorDialogueQueue->tick();
+	if (_scene->didPlayerWalkIn()) {
+		_sceneScript->playerWalkedIn();
+	}
 
-			_items->tick();
-
-			_itemPickup->tick();
-			_itemPickup->draw();
-
-			Common::Point p = getMousePos();
-
-			if (_dialogueMenu->isVisible()) {
-				_dialogueMenu->tick(p.x, p.y);
-				_dialogueMenu->draw(_surfaceFront);
-			}
-
-			if (_debugger->_viewZBuffer) {
-				_surfaceFront.copyRectToSurface(_zbuffer->getData(), 1280, 0, 0, 640, 480);
-			}
-
-			_mouse->tick(p.x, p.y);
-			_mouse->draw(_surfaceFront, p.x, p.y);
-
-			// TODO: Process AUD
-
-			if (_walkSoundId >= 0) {
-				_audioPlayer->playAud(_gameInfo->getSfxTrack(_walkSoundId), _walkSoundVolume, _walkSoundBalance, _walkSoundBalance, 50, 0);
-				_walkSoundId = -1;
-			}
-
-			if (_debugger->_isDebuggerOverlay) {
-				_debugger->drawDebuggerOverlay();
-			}
-
-			if (_debugger->_viewObstacles) {
-				_obstacles->draw();
-			}
-
-			_subtitles->tick(_surfaceFront);
-
-			blitToScreen(_surfaceFront);
-			_system->delayMillis(10);
+	bool inDialogueMenu = _dialogueMenu->isVisible();
+	if  (!inDialogueMenu) {
+		for (int i = 0; i < (int)_gameInfo->getActorCount(); ++i) {
+			_actors[i]->tickCombat();
 		}
 	}
+
+	_policeMaze->tick();
+
+	// TODO: Gun range announcements
+	_zbuffer->clean();
+
+	_ambientSounds->tick();
+
+	bool backgroundChanged = false;
+	int frame = _scene->advanceFrame();
+	if (frame >= 0) {
+		_sceneScript->sceneFrameAdvanced(frame);
+		backgroundChanged = true;
+	}
+	blit(_surfaceBack, _surfaceFront);
+
+	_overlays->tick();
+
+	if (!inDialogueMenu) {
+		actorsUpdate();
+	}
+
+	if (_settings->getNewScene() != -1 && !_sceneScript->isInsideScript() && !_aiScripts->isInsideScript()) {
+		return;
+	}
+
+	_sliceRenderer->setView(_view);
+
+	// Tick and draw all actors in current set
+	int setId = _scene->getSetId();
+	for (int i = 0, end = _gameInfo->getActorCount(); i != end; ++i) {
+		if (_actors[i]->getSetId() == setId) {
+			Common::Rect screenRect;
+			if (_actors[i]->tick(backgroundChanged, &screenRect)) {
+				_zbuffer->mark(screenRect);
+			}
+		}
+	}
+
+	_items->tick();
+
+	_itemPickup->tick();
+	_itemPickup->draw();
+
+	Common::Point p = getMousePos();
+
+	if (_dialogueMenu->isVisible()) {
+		_dialogueMenu->tick(p.x, p.y);
+		_dialogueMenu->draw(_surfaceFront);
+	}
+
+	if (_debugger->_viewZBuffer) {
+		_surfaceFront.copyRectToSurface(_zbuffer->getData(), 1280, 0, 0, 640, 480);
+	}
+
+	_mouse->tick(p.x, p.y);
+	_mouse->draw(_surfaceFront, p.x, p.y);
+
+	// TODO: Process AUD
+
+	if (_walkSoundId >= 0) {
+		_audioPlayer->playAud(_gameInfo->getSfxTrack(_walkSoundId), _walkSoundVolume, _walkSoundBalance, _walkSoundBalance, 50, 0);
+		_walkSoundId = -1;
+	}
+
+	if (_debugger->_isDebuggerOverlay) {
+		_debugger->drawDebuggerOverlay();
+	}
+
+	if (_debugger->_viewObstacles) {
+		_obstacles->draw();
+	}
+
+	_subtitles->tick(_surfaceFront);
+
+	blitToScreen(_surfaceFront);
+	_system->delayMillis(10);
 }
 
 void BladeRunnerEngine::actorsUpdate() {

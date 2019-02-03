@@ -72,6 +72,10 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 	while (!_vm->_vqaStopIsRequested && !_vm->shouldQuit()) {
 		_vm->handleEvents();
 
+		if (!_vm->_windowIsActive) {
+			continue;
+		}
+
 		int frame = vqaPlayer.update();
 		blit(_surfaceVideo, _vm->_surfaceFront); // This helps to make subtitles disappear properly, if the video is rendered in separate surface and then pushed to the front surface
 		if (frame == -3) { // end of video

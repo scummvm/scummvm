@@ -1275,7 +1275,7 @@ enum AnimationModes {
 	kAnimationModeDie = 48,
 	kAnimationModeCombatDie = 49,
 	kAnimationModeFeeding = 52,
-	kAnimationModeSit = 53, // TODO: check
+	kAnimationModeSit = 53,
 	kAnimationModeClimbUp = 64,
 	kAnimationModeClimbDown = 65,
 	kAnimationModeCombatClimbUp = 66,

@@ -204,7 +204,7 @@ int Elevator::handleMouseDown(int x, int y) {
 }
 
 void Elevator::tick() {
-	if (!_vm->_gameIsRunning) {
+	if (!_vm->_windowIsActive) {
 		return;
 	}
 
@@ -283,8 +283,6 @@ void Elevator::buttonFocus(int buttonId) {
 void Elevator::setupDescription(int actorId, int sentenceId) {
 	_actorId = actorId;
 	_sentenceId = sentenceId;
-
-	// TODO: Use proper timer
 	_timeSpeakDescription = _vm->_time->current() + 600;
 }
 
