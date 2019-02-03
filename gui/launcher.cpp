@@ -553,15 +553,15 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 	// could be contained in the specified directory.
 	DetectionResults detectionResults = EngineMan.detectGames(files);
 
-	if (detectionResults.foundUnknownGames()) {
+	Common::Array<DetectedGame> candidates = detectionResults.listRecognizedGames();
+
+	if (candidates.size() == 0 && detectionResults.foundUnknownGames()) {
 		Common::String report = detectionResults.generateUnknownGameReport(false, 80);
 		g_system->logMessage(LogMessageType::kInfo, report.c_str());
 
 		UnknownGameDialog dialog(detectionResults);
 		dialog.runModal();
 	}
-
-	Common::Array<DetectedGame> candidates = detectionResults.listRecognizedGames();
 
 	int idx;
 	if (candidates.empty()) {
