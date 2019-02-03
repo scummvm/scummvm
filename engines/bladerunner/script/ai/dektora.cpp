@@ -305,7 +305,7 @@ void AIScriptDektora::Retired(int byActorId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagKP07toKP06);
-			Game_Flag_Reset(kFlagMcCoyIsNotHelpingReplicants);
+			Game_Flag_Reset(kFlagMcCoyIsHelpingReplicants);
 			Set_Enter(kSetKP05_KP06, kSceneKP06);
 
 			return; //true;

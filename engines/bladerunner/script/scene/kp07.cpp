@@ -31,7 +31,7 @@ void SceneScriptKP07::InitializeScene() {
 
 	Scene_Exit_Add_2D_Exit(0, 315, 185, 381, 285, 0);
 
-	if (Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)) {
+	if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
 		if (Game_Flag_Query(kFlagDektoraIsReplicant)
 		 && Actor_Query_Goal_Number(kActorDektora) < kGoalDektoraGone
 		) {
@@ -93,12 +93,12 @@ void SceneScriptKP07::InitializeScene() {
 }
 
 void SceneScriptKP07::SceneLoaded() {
-	if (!Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)) {
+	if (!Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
 		Music_Play(19, 25, 0, 0, -1, 1, 0);
 	}
 	Obstacle_Object("BUNK_TRAY01", true);
 	Unobstacle_Object("BUNK_TRAY01", true);
-	if (Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)) {
+	if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
 		Player_Set_Combat_Mode(false);
 		Scene_Exits_Disable();
 	}
@@ -117,7 +117,7 @@ bool SceneScriptKP07::ClickedOnActor(int actorId) {
 		if (Game_Flag_Query(697) || actorId != kActorClovis || Actor_Query_Goal_Number(kActorClovis) == 599 || Actor_Query_Goal_Number(kActorClovis) == 515) {
 			return false;
 		}
-		if (Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)) {
+		if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
 			Actor_Set_Goal_Number(kActorClovis, 516);
 		} else {
 			Music_Play(20, 31, 0, 0, -1, 1, 0);
@@ -160,7 +160,7 @@ void SceneScriptKP07::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 void SceneScriptKP07::PlayerWalkedIn() {
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 9.0f, -41.88f, -81.0f, 0, 0, false, 0);
 	if (!Game_Flag_Query(658)) {
-		if (Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)) {
+		if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
 			Actor_Face_Actor(kActorMcCoy, kActorClovis, true);
 			Actor_Says(kActorClovis, 1240, 3);
 			Actor_Says(kActorMcCoy, 8500, 3);

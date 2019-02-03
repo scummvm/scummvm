@@ -859,7 +859,8 @@ enum Flags {
 	kFlagKP03toKP01 = 418,
 	kFlagKP03toKP05 = 419,
 	kFlagKP05toKP03 = 420,
-
+	kFlagKP03BombActive = 421,
+	kFlagKP03BombExploded = 422,
 	kFlagUG07toUG10 = 423,
 	kFlagUG10toUG07 = 424, // is never checked
 	kFlagUG07toUG08 = 425, // is never checked
@@ -898,7 +899,7 @@ enum Flags {
 	// 458 is never used
 	// 459 is never used
 	kFlagSteeleWalkingAround = 460,
-	kFlagMaggieIsHurt = 461,
+	kFlagMaggieHasBomb = 461,
 	kFlagPS04GuzzaLeft = 462,
 	kFlagHC01GuzzaWalk = 463,
 	kFlagHC01GuzzaPrepare= 464,
@@ -921,7 +922,7 @@ enum Flags {
 	// 481 is never used
 	kFlagSteeleSmoking = 482,
 	kFlagTB06Introduction = 483,
-
+	kFlagKP03BombDisarmed = 484,
 	kFlagTB06Photographer = 485,
 	kFlagDNARowAvailable = 486,
 	kFlagKIAPrivacyAddon = 487,
@@ -1088,7 +1089,7 @@ enum Flags {
 	kFlagMA04PhoneMessageFromLucy = 650,
 	kFlagNR08McCoyWatchingShow = 651,
 	kFlagCrazylegsArrestedTalk = 652,
-	kFlagMcCoyIsNotHelpingReplicants = 653,
+	kFlagMcCoyIsHelpingReplicants = 653,
 
 	kFlagMA02RajifTalk = 655,
 	kFlagUG02RagiationGooglesTaken = 656,
@@ -1813,9 +1814,16 @@ enum GoalSteele {
 	kGoalSteeleNR01StartChapter4 = 290,
 	kGoalSteeleHF01StartChapter4 = 291,
 	// chapter 5
+	// kGoalSteeleKP03WillShootMcCoy = 410,
+	kGoalSteeleKP03Walk = 411,
+	kGoalSteeleKP03Exploded = 415,
+	kGoalSteeleKP03Dying = 416,
+	kGoalSteeleKP03ShootMcCoy = 418,
+	kGoalSteeleKP03Dead = 419,
 	kGoalSteeleKP01Wait = 420,
 	kGoalSteeleKP01TalkToMcCoy = 421,
 	kGoalSteeleKP01Leave = 422,
+	kGoalSteeleKP01Left = 423,
 
 	kGoalSteeleGone = 599
 };

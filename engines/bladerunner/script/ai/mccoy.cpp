@@ -499,24 +499,24 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		}
 
 		if (Actor_Query_Friendliness_To_Other(kActorSteele, kActorMcCoy) < Actor_Query_Friendliness_To_Other(kActorClovis, kActorMcCoy)) {
-			Game_Flag_Set(kFlagMcCoyIsNotHelpingReplicants);
+			Game_Flag_Set(kFlagMcCoyIsHelpingReplicants);
 		}
 
 		affectionTowards = Global_Variable_Query(kVariableAffectionTowards);
 		if (affectionTowards == kAffectionTowardsSteele) {
-			if (Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)) {
+			if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
 				Global_Variable_Set(kVariableAffectionTowards, kAffectionTowardsNone);
 			}
 		} else if (affectionTowards == kAffectionTowardsDektora
 		        || affectionTowards == kAffectionTowardsLucy
 		) {
-			if (!Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)) {
+			if (!Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
 				Global_Variable_Set(kVariableAffectionTowards, kAffectionTowardsNone);
 			}
 		}
 
-		if (!Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)) {
-			Game_Flag_Set(kFlagMaggieIsHurt);
+		if (!Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
+			Game_Flag_Set(kFlagMaggieHasBomb);
 		}
 
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);

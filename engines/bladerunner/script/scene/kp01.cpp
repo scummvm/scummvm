@@ -33,7 +33,7 @@ void SceneScriptKP01::InitializeScene() {
 		Setup_Scene_Information( 239.0f, -12.2f, -146.0f, 820);
 		Game_Flag_Reset(kFlagKP02toKP01);
 		if (!Game_Flag_Query(kFlagKP01Entered)
-		 && !Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)
+		 && !Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
 		) {
 			Game_Flag_Set(kFlagKP01Entered);
 			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleKP01Wait);
@@ -124,19 +124,19 @@ void SceneScriptKP01::SceneFrameAdvanced(int frame) {
 
 void SceneScriptKP01::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
 	if (actorId == kActorSteele) {
-		if (newGoal == 422) {
+		if (newGoal == kGoalSteeleKP01Leave) {
 			if (Game_Flag_Query(kFlagDirectorsCut)) {
 				Delay(500);
 				Actor_Change_Animation_Mode(kActorMcCoy, 75);
 				Delay(4500);
 				Actor_Face_Current_Camera(kActorMcCoy, true);
-				Actor_Says(kActorMcCoy, 510, 3);
+				Actor_Says(kActorMcCoy, 510, kAnimationModeTalk);
 			} else {
 				Delay(3000);
 			}
 			Async_Actor_Walk_To_XYZ(kActorMcCoy, 76.56f, -12.2f, -405.48f, 0, false);
 			//return true;
-		} else if (newGoal == 423) {
+		} else if (newGoal == kGoalSteeleKP01Left) {
 			Player_Gains_Control();
 			Actor_Force_Stop_Walking(kActorMcCoy);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
@@ -163,7 +163,7 @@ void SceneScriptKP01::PlayerWalkedIn() {
 	}
 
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 211.0f, -12.2f, -146.0f, 0, false, false, 0);
-	if (!Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)
+	if (!Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
 	 && !Game_Flag_Query(714)
 	 &&  Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleKP01Wait
 	 &&  Actor_Query_Goal_Number(kActorSteele) != 599

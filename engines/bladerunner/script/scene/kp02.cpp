@@ -142,7 +142,7 @@ void SceneScriptKP02::PlayerWalkedIn() {
 		Game_Flag_Reset(kFlagKP01toKP02);
 	}
 
-	if (Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)
+	if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
 	 && Actor_Query_Goal_Number(kActorSteele) != 599
 	) {
 		Actor_Set_Goal_Number(kActorSteele, 450);

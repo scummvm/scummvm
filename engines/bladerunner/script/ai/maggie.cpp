@@ -37,9 +37,9 @@ enum kMaggieStates {
 	kMaggieStateGoingToSleep = 8,
 	kMaggieStateSleeping     = 9,
 	kMaggieStateWakingUp     = 10,
-	kMaggieStateHurtIdle     = 11,
-	kMaggieStateHurtWalk     = 12,
-	kMaggieStateHurtJumping  = 13,
+	kMaggieStateBombIdle     = 11,
+	kMaggieStateBombWalk     = 12,
+	kMaggieStateBombJumping  = 13,
 	kMaggieStateExploding    = 14,
 	kMaggieStateDeadExploded = 15,
 	kMaggieStateDead         = 16
@@ -149,7 +149,7 @@ void AIScriptMaggie::ReceivedClue(int clueId, int fromActorId) {
 }
 
 void AIScriptMaggie::ClickedByPlayer() {
-	if (!Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)
+	if (!Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
 	 &&  Global_Variable_Query(kVariableChapter) == 5
 	) {
 		if (Actor_Query_Goal_Number(kActorMaggie) == 413) {
@@ -357,7 +357,7 @@ bool AIScriptMaggie::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		break;
 	case 411:
 		AI_Movement_Track_Flush(kActorMaggie);
-		Game_Flag_Set(kFlagMaggieIsHurt);
+		Game_Flag_Set(kFlagMaggieHasBomb);
 		Actor_Put_In_Set(kActorMaggie, kSetKP05_KP06);
 		Actor_Set_At_XYZ(kActorMaggie, -672.0, 0.0, -428.0, 653);
 		Actor_Change_Animation_Mode(kActorMaggie, kAnimationModeIdle);
@@ -390,24 +390,24 @@ bool AIScriptMaggie::UpdateAnimation(int *animation, int *frame) {
 			Actor_Set_At_Waypoint(kActorMaggie, 41, 0);
 		}
 		break;
-	case kMaggieStateHurtJumping:
+	case kMaggieStateBombJumping:
 		*animation = 873;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(873)) {
-			_animationState = kMaggieStateHurtIdle;
+			_animationState = kMaggieStateBombIdle;
 			_animationFrame = 0;
 			*animation = 875;
 			Actor_Set_Goal_Number(kActorMaggie, 414);
 		}
 		break;
-	case kMaggieStateHurtWalk:
+	case kMaggieStateBombWalk:
 		*animation = 872;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(872)) {
 			_animationFrame = 0;
 		}
 		break;
-	case kMaggieStateHurtIdle:
+	case kMaggieStateBombIdle:
 		*animation = 875;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(875)) {
@@ -540,8 +540,8 @@ bool AIScriptMaggie::UpdateAnimation(int *animation, int *frame) {
 
 bool AIScriptMaggie::ChangeAnimationMode(int mode) {
 	if (mode == kAnimationModeWalk) {
-		if (Game_Flag_Query(kFlagMaggieIsHurt)) {
-			_animationState = kMaggieStateHurtWalk;
+		if (Game_Flag_Query(kFlagMaggieHasBomb)) {
+			_animationState = kMaggieStateBombWalk;
 			_animationFrame = 0;
 		} else {
 			_animationState = kMaggieStateWalking;
@@ -550,8 +550,8 @@ bool AIScriptMaggie::ChangeAnimationMode(int mode) {
 		return true;
 	}
 	if (mode == kAnimationModeIdle) {
-		if (Game_Flag_Query(kFlagMaggieIsHurt)) {
-			_animationState = kMaggieStateHurtIdle;
+		if (Game_Flag_Query(kFlagMaggieHasBomb)) {
+			_animationState = kMaggieStateBombIdle;
 			_animationFrame = kMaggieStateIdle;
 		} else {
 			switch (_animationState) {
@@ -620,8 +620,8 @@ bool AIScriptMaggie::ChangeAnimationMode(int mode) {
 		}
 		break;
 	case kAnimationModeFeeding:
-		if (Game_Flag_Query(kFlagMaggieIsHurt)) {
-			_animationState = kMaggieStateHurtJumping;
+		if (Game_Flag_Query(kFlagMaggieHasBomb)) {
+			_animationState = kMaggieStateBombJumping;
 			_animationFrame = 0;
 		} else {
 			_animationState = kMaggieStateJumping;

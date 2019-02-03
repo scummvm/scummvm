@@ -112,7 +112,7 @@ bool SceneScriptKP06::ClickedOnExit(int exitId) {
 	if (exitId == 1) {
 		if (Actor_Clue_Query(kActorSadik, kCluePowerSource) || Actor_Query_Goal_Number(kActorSadik) != 416) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -731.0f, 8.26f, -657.0f, 0, 1, false, 0)) {
-				if (Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)) {
+				if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
 					if (!Game_Flag_Query(714)) {
 						Player_Set_Combat_Mode(false);
 					}
@@ -155,7 +155,7 @@ void SceneScriptKP06::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptKP06::PlayerWalkedIn() {
-	if (!Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)
+	if (!Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
 	 && Game_Flag_Query(kFlagKP07toKP06)
 	) {
 		Game_Flag_Reset(kFlagKP07toKP06);

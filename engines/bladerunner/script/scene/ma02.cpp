@@ -44,7 +44,7 @@ void SceneScriptMA02::InitializeScene() {
 
 	if (Global_Variable_Query(kVariableChapter) >= 4
 	 && Global_Variable_Query(kVariableChapter) == 5
-	 && Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)
+	 && Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
 	) {
 		Actor_Set_Goal_Number(kActorMaggie, 599);
 		Actor_Change_Animation_Mode(kActorMaggie, 88);
@@ -68,7 +68,7 @@ void SceneScriptMA02::InitializeScene() {
 	}
 
 	if ( Global_Variable_Query(kVariableChapter) == 5
-	 &&  Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)
+	 &&  Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
 	 && !Actor_Clue_Query(kActorMcCoy, kClueCrystalsCigarette)
 	) {
 		Overlay_Play("MA02OVER", 0, 1, 0, 0);
@@ -98,7 +98,7 @@ bool SceneScriptMA02::ClickedOn3DObject(const char *objectName, bool a2) {
 			Actor_Face_Object(kActorMcCoy, "BAR-MAIN", true);
 			if (Global_Variable_Query(kVariableChapter) < 4) {
 				Actor_Set_Goal_Number(kActorMaggie, 3);
-			} else if (Global_Variable_Query(kVariableChapter) == 5 && Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants) && !Actor_Clue_Query(kActorMcCoy, kClueCrystalsCigarette)) {
+			} else if (Global_Variable_Query(kVariableChapter) == 5 && Game_Flag_Query(kFlagMcCoyIsHelpingReplicants) && !Actor_Clue_Query(kActorMcCoy, kClueCrystalsCigarette)) {
 				Overlay_Remove("MA02OVER");
 				Item_Pickup_Spin_Effect(985, 480, 240);
 				Actor_Voice_Over(1150, kActorVoiceOver);
@@ -188,7 +188,7 @@ void SceneScriptMA02::PlayerWalkedIn() {
 	if ( Global_Variable_Query(kVariableChapter) == 5
 	 && !Game_Flag_Query(654)
 	) {
-		if (Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)) {
+		if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
 			Actor_Says(kActorMcCoy, 2390, kAnimationModeIdle);
 			Music_Play(2, 25, 0, 3, -1, 0, 0);
 		} else {

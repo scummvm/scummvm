@@ -214,7 +214,7 @@ void AIScriptSadik::Retired(int byActorId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagKP07toKP06);
-			Game_Flag_Reset(kFlagMcCoyIsNotHelpingReplicants);
+			Game_Flag_Reset(kFlagMcCoyIsHelpingReplicants);
 			Set_Enter(kSetKP05_KP06, kSceneKP06);
 			return; //true;
 		}
@@ -347,7 +347,7 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case 410:
-		if (Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants) == 1) {
+		if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants) == 1) {
 			Actor_Set_Goal_Number(kActorSadik, 414);
 		} else {
 			Actor_Set_Goal_Number(kActorSadik, 411);
@@ -430,7 +430,7 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case 418:
-		Game_Flag_Reset(kFlagMcCoyIsNotHelpingReplicants);
+		Game_Flag_Reset(kFlagMcCoyIsHelpingReplicants);
 		Actor_Set_Goal_Number(kActorClovis, 518);
 		Non_Player_Actor_Combat_Mode_On(kActorSadik, kActorCombatStateIdle, true, kActorMcCoy, 9, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, -1, -1, 15, 300, false);
 		return true;

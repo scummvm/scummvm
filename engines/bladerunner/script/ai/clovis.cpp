@@ -82,7 +82,7 @@ bool AIScriptClovis::Update() {
 		Actor_Set_Goal_Number(kActorClovis, 512);
 	}
 
-	if ( Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)
+	if ( Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
 	 && !Game_Flag_Query(696)
 	 &&  Game_Flag_Query(697)
 	) {
@@ -149,7 +149,7 @@ void AIScriptClovis::OtherAgentExitedThisScene(int otherActorId) {
 }
 
 void AIScriptClovis::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
-	if (Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants) && Actor_Query_In_Set(kActorMcCoy, kSetKP07)) {
+	if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants) && Actor_Query_In_Set(kActorMcCoy, kSetKP07)) {
 		Game_Flag_Set(697);
 		Game_Flag_Set(714);
 		// return true;
@@ -182,7 +182,7 @@ bool AIScriptClovis::ShotAtAndHit() {
 }
 
 void AIScriptClovis::Retired(int byActorId) {
-	if (Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)) {
+	if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
 		if (Actor_Query_In_Set(kActorClovis, kSetKP07)) {
 			Global_Variable_Decrement(kVariableReplicants, 1);
 			Actor_Set_Goal_Number(kActorClovis, 599);
@@ -195,7 +195,7 @@ void AIScriptClovis::Retired(int byActorId) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Game_Flag_Set(kFlagKP07toKP06);
-				Game_Flag_Reset(kFlagMcCoyIsNotHelpingReplicants);
+				Game_Flag_Reset(kFlagMcCoyIsHelpingReplicants);
 				Set_Enter(kSetKP05_KP06, kSceneKP06);
 			}
 		}
@@ -356,7 +356,7 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case 510:
-		if (Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)) {
+		if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
 			Actor_Set_Goal_Number(kActorClovis, 513);
 		} else {
 			Actor_Set_Goal_Number(kActorClovis, 511);
@@ -383,7 +383,7 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case 513:
 		Actor_Put_In_Set(kActorClovis, kSetKP07);
 		Actor_Set_Targetable(kActorClovis, true);
-		if (Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)) {
+		if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
 			Global_Variable_Set(kVariableReplicants, 0);
 			Global_Variable_Increment(kVariableReplicants, 1);
 			Actor_Set_At_XYZ(kActorClovis, 45.0f, -41.52f, -85.0f, 750);

@@ -175,7 +175,7 @@ bool SceneScriptMA04::ClickedOn2DRegion(int region) {
 				Sound_Play(123, 100, 0, 0, 50);
 				Overlay_Remove("MA04OVER");
 				Delay(500);
-				if (Game_Flag_Query(kFlagMcCoyIsNotHelpingReplicants)) {
+				if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
 					if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsDektora) {
 						phoneCallWithDektora();
 					} else if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy) {
