@@ -291,7 +291,7 @@ void SceneScriptKP03::DialogueQueueFlushed(int a1) {
 void SceneScriptKP03::saveSteele() {
 	Player_Loses_Control();
 	Actor_Says(kActorMcCoy, 2180, 14);
-	Actor_Set_Goal_Number(kActorSteele, 412);
+	Actor_Set_Goal_Number(kActorSteele, kGoalSteeleKP03StopWalking);
 	Actor_Says(kActorSteele, 480, 60);
 	Actor_Face_Object(kActorMcCoy, "BRACK MID", true);
 	Actor_Says(kActorMcCoy, 2185, 14);
@@ -306,11 +306,11 @@ void SceneScriptKP03::saveSteele() {
 	Game_Flag_Reset(kFlagKP03BombActive);
 	Scene_Loop_Set_Default(kKP03MainLoopBombNoWire);
 	Scene_Loop_Start_Special(kSceneLoopModeOnce, kKP03MainLoopBombNoWire, false);
-	Actor_Set_Goal_Number(kActorSteele, 413);
+	Actor_Set_Goal_Number(kActorSteele, kGoalSteeleKP03Leave);
 	Actor_Says(kActorMcCoy, 2195, 14);
 	Ambient_Sounds_Play_Sound(151, 40, -60, -60, 0);
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1.0f, -36.55f, 111.0f, 0, false, false, 0);
-	Actor_Set_Goal_Number(kActorSteele, 430);
+	Actor_Set_Goal_Number(kActorSteele, kGoalSteeleKP05Enter);
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 	Game_Flag_Reset(kFlagKP01toKP03);

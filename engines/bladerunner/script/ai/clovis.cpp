@@ -149,7 +149,9 @@ void AIScriptClovis::OtherAgentExitedThisScene(int otherActorId) {
 }
 
 void AIScriptClovis::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
-	if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants) && Actor_Query_In_Set(kActorMcCoy, kSetKP07)) {
+	if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
+	 && Actor_Query_In_Set(kActorMcCoy, kSetKP07)
+	) {
 		Game_Flag_Set(697);
 		Game_Flag_Set(714);
 		// return true;

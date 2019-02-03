@@ -1813,9 +1813,14 @@ enum GoalSteele {
 	kGoalSteeleImmediatelyStartChapter4 = 285,
 	kGoalSteeleNR01StartChapter4 = 290,
 	kGoalSteeleHF01StartChapter4 = 291,
+	// chapter 4
+	kGoalSteeleStartChapter4 = 300,
 	// chapter 5
+	kGoalSteeleStartChapter5 = 400,
 	// kGoalSteeleKP03WillShootMcCoy = 410,
 	kGoalSteeleKP03Walk = 411,
+	kGoalSteeleKP03StopWalking = 412,
+	kGoalSteeleKP03Leave = 413,
 	kGoalSteeleKP03Exploded = 415,
 	kGoalSteeleKP03Dying = 416,
 	kGoalSteeleKP03ShootMcCoy = 418,
@@ -1824,7 +1829,11 @@ enum GoalSteele {
 	kGoalSteeleKP01TalkToMcCoy = 421,
 	kGoalSteeleKP01Leave = 422,
 	kGoalSteeleKP01Left = 423,
-
+	kGoalSteeleKP05Enter = 430,
+	kGoalSteeleKP05Leave = 431,
+	kGoalSteeleKP06Enter = 432,
+	kGoalSteeleKP06Leave = 433,
+	kGoalSteeleWaitingForEnd = 499,
 	kGoalSteeleGone = 599
 };
 

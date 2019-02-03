@@ -327,7 +327,7 @@ bool AIScriptMaggie::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Says(kActorMcCoy, 2235, 12);
 			if (Actor_Query_Is_In_Current_Set(kActorSteele)) {
 				Actor_Says(kActorSteele, 1530, 58);
-				Actor_Set_Goal_Number(kActorSteele, 431);
+				Actor_Set_Goal_Number(kActorSteele, kGoalSteeleKP05Leave);
 			}
 			Delay(2000);
 			Actor_Says(kActorMcCoy, 2390, 13);

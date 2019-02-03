@@ -158,17 +158,17 @@ bool AIScriptSteele::Update() {
 		break;
 
 	case 4:
-		if (Actor_Query_Goal_Number(kActorSteele) < 300) {
-			Actor_Set_Goal_Number(kActorSteele, 300);
+		if (Actor_Query_Goal_Number(kActorSteele) < kGoalSteeleStartChapter4) {
+			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleStartChapter4);
 		}
 
 		break;
 
 	case 5:
 		if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
-		 && Actor_Query_Goal_Number(kActorSteele) < 400
+		 && Actor_Query_Goal_Number(kActorSteele) < kGoalSteeleStartChapter5
 		) {
-			Actor_Set_Goal_Number(kActorSteele, 400);
+			Actor_Set_Goal_Number(kActorSteele, kGoalSteeleStartChapter5);
 			return true;
 		}
 
@@ -313,7 +313,7 @@ void AIScriptSteele::CompletedMovementTrack() {
 		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleKP01Left);
 		break;
 
-	case 432:
+	case kGoalSteeleKP06Enter:
 		Player_Set_Combat_Mode(kActorMcCoy);
 		Actor_Face_Actor(kActorMcCoy, kActorSteele, true);
 		Actor_Says(kActorMcCoy, 2265, 11);
@@ -324,16 +324,13 @@ void AIScriptSteele::CompletedMovementTrack() {
 		Actor_Says(kActorMcCoy, 2280, 15);
 		Actor_Says(kActorSteele, 660, 60);
 		Actor_Says(kActorSteele, 670, 59);
-		Actor_Set_Goal_Number(kActorSteele, 433);
+		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleKP06Leave);
 		Player_Set_Combat_Mode(kActorSteele);
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -731.0f, 8.26f, -657.0f, 0, false, false, 0);
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		Game_Flag_Set(kFlagKP06toKP07);
 		Set_Enter(kSetKP07, kSceneKP07);
-		break;
-
-	default:
 		break;
 	}
 	return; //true;
@@ -1297,7 +1294,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Chapter_Enter(4, kSetUG06, kSceneUG06);
 		return true;
 
-	case 300:
+	case kGoalSteeleStartChapter4:
 		if (Query_Score(kActorMcCoy) > Query_Score(kActorSteele) && Query_Score(kActorMcCoy) < 75) {
 			Set_Score(kActorSteele, Random_Query(2, 5) + Query_Score(kActorMcCoy));
 		}
@@ -1312,7 +1309,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Set_At_Waypoint(kActorSteele, 35, 0);
 		return true;
 
-	case 400:
+	case kGoalSteeleStartChapter5:
 	case 401:
 	case kGoalSteeleKP01Left:
 		return true;
@@ -1335,11 +1332,11 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Async_Actor_Walk_To_XYZ(kActorSteele, -109.0f, -36.55f, 26.0f, 0, false);
 		return true;
 
-	case 412:
+	case kGoalSteeleKP03StopWalking:
 		Actor_Force_Stop_Walking(kActorSteele);
 		return true;
 
-	case 413:
+	case kGoalSteeleKP03Leave:
 		Async_Actor_Walk_To_XYZ(kActorSteele, 1.0, -36.55f, 111.0f, 0, false);
 		return true;
 
@@ -1410,26 +1407,26 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorSteele);
 		return true;
 
-	case 430:
+	case kGoalSteeleKP05Enter:
 		Actor_Put_In_Set(kActorSteele, kSetKP05_KP06);
 		Actor_Set_At_XYZ(kActorSteele, -1110.0f, 0.0f, 952.0f, 155);
-		Actor_Change_Animation_Mode(kActorSteele, 4);
+		Actor_Change_Animation_Mode(kActorSteele, kAnimationModeCombatIdle);
 		return true;
 
-	case 431:
+	case kGoalSteeleKP05Leave:
 		AI_Movement_Track_Flush(kActorSteele);
 		AI_Movement_Track_Append_Run(kActorSteele, 541, 0);
 		AI_Movement_Track_Repeat(kActorSteele);
 		return true;
 
-	case 432:
+	case kGoalSteeleKP06Enter:
 		Actor_Set_At_Waypoint(kActorSteele, 542, 0);
 		AI_Movement_Track_Flush(kActorSteele);
 		AI_Movement_Track_Append_Run(kActorSteele, 543, 0);
 		AI_Movement_Track_Repeat(kActorSteele);
 		return true;
 
-	case 433:
+	case kGoalSteeleKP06Leave:
 		AI_Movement_Track_Flush(kActorSteele);
 		AI_Movement_Track_Append_Run(kActorSteele, 542, 0);
 		AI_Movement_Track_Repeat(kActorSteele);

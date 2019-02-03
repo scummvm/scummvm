@@ -75,12 +75,14 @@ bool SceneScriptKP06::ClickedOn3DObject(const char *objectName, bool a2) {
 }
 
 bool SceneScriptKP06::ClickedOnActor(int actorId) {
-	if (actorId == kActorSadik && !Game_Flag_Query(714)) {
+	if ( actorId == kActorSadik
+	 && !Game_Flag_Query(714)
+	) {
 		if (Actor_Clue_Query(kActorSadik, kCluePowerSource)) {
 			Actor_Face_Actor(kActorMcCoy, kActorSadik, true);
 			Actor_Says(kActorMcCoy, 8610, 15);
 			Actor_Says(kActorSadik, 290, kAnimationModeTalk);
-		} else if (Actor_Clue_Query(kActorMcCoy, kCluePowerSource) ) {
+		} else if (Actor_Clue_Query(kActorMcCoy, kCluePowerSource)) {
 			Actor_Says(kActorSadik, 280, kAnimationModeTalk);
 			Actor_Says(kActorSadik, 290, kAnimationModeTalk);
 			Actor_Clue_Acquire(kActorSadik, kCluePowerSource, true, kActorMcCoy);
@@ -110,14 +112,16 @@ bool SceneScriptKP06::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (Actor_Clue_Query(kActorSadik, kCluePowerSource) || Actor_Query_Goal_Number(kActorSadik) != 416) {
+		if (Actor_Clue_Query(kActorSadik, kCluePowerSource)
+		 || Actor_Query_Goal_Number(kActorSadik) != 416
+		) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -731.0f, 8.26f, -657.0f, 0, 1, false, 0)) {
 				if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
 					if (!Game_Flag_Query(714)) {
 						Player_Set_Combat_Mode(false);
 					}
-				} else if (Actor_Query_Goal_Number(kActorSteele) == 433) {
-					Actor_Set_Goal_Number(kActorSteele, 499);
+				} else if (Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleKP06Leave) {
+					Actor_Set_Goal_Number(kActorSteele, kGoalSteeleWaitingForEnd);
 				} else {
 					Actor_Set_Goal_Number(kActorGaff, kGoalGaffGone);
 				}
@@ -156,11 +160,12 @@ void SceneScriptKP06::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptKP06::PlayerWalkedIn() {
 	if (!Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
-	 && Game_Flag_Query(kFlagKP07toKP06)
+	 &&  Game_Flag_Query(kFlagKP07toKP06)
 	) {
 		Game_Flag_Reset(kFlagKP07toKP06);
 
-		if (Actor_Query_Goal_Number(kActorSteele) == 499) {
+		// Ending - leave with Steele
+		if (Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleWaitingForEnd) {
 			Actor_Face_Actor(kActorSteele, kActorMcCoy, true);
 			Actor_Says(kActorSteele, 2530, 13);
 			Actor_Face_Actor(kActorMcCoy, kActorSteele, true);
@@ -184,9 +189,7 @@ void SceneScriptKP06::PlayerWalkedIn() {
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Outtake_Play(kOuttakeEnd6, false, -1);
 			Game_Over();
-			//return true;
-			return;
-		} else {
+		} else { // Ending - talk with Gaff and leaving alone
 			Actor_Set_Goal_Number(kActorGaff, kGoalGaffGone);
 			Actor_Face_Actor(kActorGaff, kActorMcCoy, true);
 			Actor_Says(kActorGaff, 220, 13);
@@ -215,28 +218,26 @@ void SceneScriptKP06::PlayerWalkedIn() {
 			Delay(3000);
 			Outtake_Play(kOuttakeEnd7, false, -1);
 			Game_Over();
-			//return true;
-			return;
 		}
-	} else {
-		if (Actor_Query_Goal_Number(kActorSadik) == 414) {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -809.0f, 8.26f, -619.0f, 0, 0, false, 0);
-			Actor_Face_Actor(kActorMcCoy, kActorSadik, true);
-			Actor_Set_Goal_Number(kActorSadik, 415);
-		}
-		if (Actor_Query_Goal_Number(kActorSteele) == 431) {
-			Actor_Set_Goal_Number(kActorSteele, 432);
-		}
-		//return false;
-		return;
+		return; // true;
+	}
+
+	if (Actor_Query_Goal_Number(kActorSadik) == 414) {
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -809.0f, 8.26f, -619.0f, 0, 0, false, 0);
+		Actor_Face_Actor(kActorMcCoy, kActorSadik, true);
+		Actor_Set_Goal_Number(kActorSadik, 415);
+	}
+
+	if (Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleKP05Leave) {
+		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleKP06Enter);
 	}
 }
 
 void SceneScriptKP06::PlayerWalkedOut() {
 	if (Game_Flag_Query(kFlagKP06toKP07)
-	 && Actor_Query_Goal_Number(kActorSteele) == 433
+	 && Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleKP06Leave
 	) {
-		Actor_Set_Goal_Number(kActorSteele, 499);
+		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleWaitingForEnd);
 	}
 }
 
