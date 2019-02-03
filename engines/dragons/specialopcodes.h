@@ -50,10 +50,13 @@ protected:
 
 	// Opcodes
 	void spcClearEngineFlag10(); // 3
+	void spcSetEngineFlag10();   // 4
 
 	void spcUnk9();
+	void spcUnkA();
 
 	void spcClearEngineFlag8(); // 0x14
+	void spcSetEngineFlag8(); // 0x15
 
 	void spcSetEngineFlag0x4000000(); // 0x54
 	void spcSetCursorSequenceIdToZero(); // 0x55

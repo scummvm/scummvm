@@ -40,7 +40,7 @@ DragonINIResource::DragonINIResource(BigfileArchive *bigfileArchive) {
 		_dragonINI[i].iptIndex_maybe = readStream->readSint16LE();
 		_dragonINI[i].field_2 = readStream->readSint16LE();
 		_dragonINI[i].actorResourceId = readStream->readSint16LE();
-		_dragonINI[i].frameIndexId_maybe = readStream->readSint16LE();
+		_dragonINI[i].sequenceId = readStream->readSint16LE();
 		_dragonINI[i].field_8 = readStream->readSint16LE();
 		assert(readStream->readUint16LE() == 0); // actorId
 		_dragonINI[i].actor = NULL;
