@@ -155,6 +155,7 @@ struct Object : public Common::Serializable {
 	uint8  _numFrames;
 	/**
 	 * Low 8 bits of the 16-bit starting room frame (FS register).
+	 * This is in the room frame space.
 	 *
 	 * @see _roomFrameMSB
 	 */
@@ -168,7 +169,7 @@ struct Object : public Common::Serializable {
 	/**
 	 * Current animation frame (CA register).
 	 *
-	 * @note Absolute index to the frame space. Numbered from 1.
+	 * @note Index in the shared object frame space. Numbered from 1.
 	 */
 	uint8  _currentFrame;
 	/** X coordinate of the object rectangle (XX register). */
@@ -183,6 +184,7 @@ struct Object : public Common::Serializable {
 	uint16 _WX;
 	/**
 	 * High 8 bits of the 16-bit starting room frame (WY register).
+	 * This is in the room frame space.
 	 *
 	 * @see _roomFrameLSB
 	 */

@@ -37,14 +37,14 @@ public:
 
 class PlayAnimationCommand : public SeqCommand {
 public:
-	PlayAnimationCommand(uint8 fromFrame, uint8 toFrame) : _fromFrame(fromFrame), _toFrame(toFrame) {}
+	PlayAnimationCommand(int fromFrame, int toFrame) : _fromFrame(fromFrame), _toFrame(toFrame) {}
 	const Common::String &getName() const;
 
 	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const override;
 private:
-	uint8 _fromFrame;
-	uint8 _toFrame;
+	int _fromFrame;
+	int _toFrame;
 };
 
 }

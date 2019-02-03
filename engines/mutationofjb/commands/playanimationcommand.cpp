@@ -40,8 +40,8 @@ bool PlayAnimationCommandParser::parse(const Common::String &line, ScriptParseCo
 	if (line.size() < 11 || (!line.hasPrefix("FLB ") && !line.hasPrefix("FLX ")))
 		return false;
 
-	const uint8 fromFrame = (uint8) atoi(line.c_str() + 4);
-	const uint8 toFrame = (uint8) atoi(line.c_str() + 8);
+	const int fromFrame = atoi(line.c_str() + 4);
+	const int toFrame = atoi(line.c_str() + 8);
 
 	command = new PlayAnimationCommand(fromFrame, toFrame);
 	return true;

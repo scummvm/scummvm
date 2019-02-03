@@ -181,7 +181,7 @@ void Room::drawStatic(Static *const stat) {
 	drawFrames(frame, frame, staticArea, 0xC0); // Hardcoded threshold.
 }
 
-void Room::drawFrames(uint8 fromFrame, uint8 toFrame, const Common::Rect &area, uint8 threshold) {
+void Room::drawFrames(int fromFrame, int toFrame, const Common::Rect &area, uint8 threshold) {
 	GameData &gameData = _game->getGameData();
 
 	Scene *const scene = gameData.getCurrentScene();

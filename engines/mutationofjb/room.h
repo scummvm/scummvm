@@ -64,7 +64,7 @@ public:
 	 * @param stat Static.
 	 */
 	void drawStatic(Static *stat);
-	void drawFrames(uint8 fromFrame, uint8 toFrame, const Common::Rect &area = Common::Rect(), uint8 threshold = 0xFF);
+	void drawFrames(int fromFrame, int toFrame, const Common::Rect &area = Common::Rect(), uint8 threshold = 0xFF);
 	void initialDraw();
 	void redraw(bool useBackgroundBuffer = true);
 private:

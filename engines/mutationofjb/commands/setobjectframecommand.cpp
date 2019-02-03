@@ -40,7 +40,7 @@ bool SetObjectFrameCommandParser::parse(const Common::String &line, ScriptParseC
 		return false;
 
 	const uint8 objectId = (uint8) atoi(line.c_str() + 8);
-	const uint8 frame = (uint8) atoi(line.c_str() + 11);
+	const unsigned int frame = atoi(line.c_str() + 11);
 
 	command = new SetObjectFrameCommand(objectId, frame);
 	return true;
