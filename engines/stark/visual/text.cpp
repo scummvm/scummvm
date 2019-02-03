@@ -134,9 +134,12 @@ void VisualText::createTexture() {
 	font->wordWrapText(unicodeText, maxScaledLineWidth, lines);
 
 	// Use the actual font bounding box to prevent text from being cut off
-	Common::Rect scaledRect = font->getBoundingBox(lines[0]);
-	for (uint i = 1; i < lines.size(); i++) {
-		scaledRect.extend(font->getBoundingBox(lines[i], 0, scaledLineHeight * i));
+	Common::Rect scaledRect;
+	if (!lines.empty()) {
+		scaledRect = font->getBoundingBox(lines[0]);
+		for (uint i = 1; i < lines.size(); i++) {
+			scaledRect.extend(font->getBoundingBox(lines[i], 0, scaledLineHeight * i));
+		}
 	}
 
 	// Make sure lines have approximately consistent height regardless of the characters they use
