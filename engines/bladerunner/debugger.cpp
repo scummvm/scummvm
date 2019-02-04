@@ -84,6 +84,7 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 	registerCmd("var", WRAP_METHOD(Debugger, cmdVariable));
 	registerCmd("clue", WRAP_METHOD(Debugger, cmdClue));
 	registerCmd("timer", WRAP_METHOD(Debugger, cmdTimer));
+	registerCmd("friend", WRAP_METHOD(Debugger, cmdFriend));
 	registerCmd("load", WRAP_METHOD(Debugger, cmdLoad));
 	registerCmd("save", WRAP_METHOD(Debugger, cmdSave));
 }
@@ -619,6 +620,47 @@ bool Debugger::cmdTimer(int argc, const char **argv) {
 	for (int i = 0; i < 7; ++i) {
 		debugPrintf("actorTimer(%i, %i) = %i ms\n", actorId, i, actor->timerLeft(i));
 	}
+
+	return true;
+}
+
+bool Debugger::cmdFriend(int argc, const char **argv) {
+	if (argc != 3 && argc != 4) {
+		debugPrintf("Get or changes friendliness for an actor towards another actor.\n");
+		debugPrintf("Usage: %s <actorId> <otherActorId> [<value>]\n", argv[0]);
+		return true;
+	}
+
+	int actorId = atoi(argv[1]);
+
+	Actor *actor = nullptr;
+	if (actorId >= 0 && actorId < (int)_vm->_gameInfo->getActorCount()) {
+		actor = _vm->_actors[actorId];
+	}
+
+	if (actor == nullptr) {
+		debugPrintf("Unknown actor %i\n", actorId);
+		return true;
+	}
+
+	int otherActorId = atoi(argv[2]);
+
+	if (otherActorId < 0 && otherActorId >= (int)_vm->_gameInfo->getActorCount()) {
+		debugPrintf("Unknown actor %i\n", otherActorId);
+	}
+
+	if (argc == 4) {
+		int value = atoi(argv[3]);
+
+		if (value < 0 || value > 100) {
+			debugPrintf("Value must be [0..100]");
+			return true;
+		}
+
+		actor->setFriendlinessToOther(otherActorId, value);
+	}
+
+	debugPrintf("actorFriendliness(%i, %i) = %i\n", actorId, otherActorId, actor->getFriendlinessToOther(otherActorId));
 
 	return true;
 }

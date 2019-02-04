@@ -70,6 +70,7 @@ public:
 	bool cmdVariable(int argc, const char **argv);
 	bool cmdClue(int argc, const char **argv);
 	bool cmdTimer(int argc, const char **argv);
+	bool cmdFriend(int argc, const char **argv);
 	bool cmdLoad(int argc, const char **argv);
 	bool cmdSave(int argc, const char **argv);
 
