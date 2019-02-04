@@ -3487,7 +3487,7 @@ static const SciScriptPatcherEntry lighthouseSignatures[] = {
 // The procedure expects a letter arg and returns no value, so the first call
 // takes its letter and feeds an undefined value to the second call. Thus the
 // kStrCat() within the procedure reads a random pointer and crashes.
-// 
+//
 // We patch all of the 5 doubled local calls (one for each letter typed from
 // "R", "O", "B", "I", "N") to be the same as the English version.
 // Applies to at least: German floppy
