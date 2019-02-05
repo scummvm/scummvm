@@ -36,6 +36,8 @@
 #include "graphics/palette.h"
 #include "graphics/sjis.h"
 
+#include "gui/error.h"
+
 namespace Kyra {
 
 Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, _screenDimTable, _screenDimTableCount), _cursorColorKey16Bit(0x8000) {
@@ -204,11 +206,11 @@ void Screen_EoB::loadFileDataToPage(Common::SeekableReadStream *s, int pageNum, 
 	s->read(_pagePtrs[pageNum], size);
 }
 
-void Screen_EoB::printShadedText(const char *string, int x, int y, int col1, int col2) {
+void Screen_EoB::printShadedText(const char *string, int x, int y, int col1, int col2, int shadowCol) {
 	if (_vm->gameFlags().platform != Common::kPlatformFMTowns) {
-		printText(string, x - 1, y, 12, col2);
-		printText(string, x, y + 1, 12, 0);
-		printText(string, x - 1, y + 1, 12, 0);
+		printText(string, x - 1, y, shadowCol, col2);
+		printText(string, x, y + 1, shadowCol, 0);
+		printText(string, x - 1, y + 1, shadowCol, 0);
 	} else if (col2) {
 		fillRect(x, y, x + getTextWidth(string) - 1, y + getFontHeight() - 1, col2);
 	}
@@ -220,14 +222,20 @@ void Screen_EoB::loadShapeSetBitmap(const char *file, int tempPage, int destPage
 	_curPage = 2;
 }
 
-void Screen_EoB::loadBitmap(const char *filename, int tempPage, int dstPage, Palette *pal, bool) {
+void Screen_EoB::loadBitmap(const char *filename, int tempPage, int dstPage, Palette *pal, bool skip) {
 	Screen::loadBitmap(filename, tempPage, dstPage, pal);
 
-	if (_isAmiga) {
-		// Yay, this is where EOB1 Amiga hides the palette data
-		loadPalette(_pagePtrs[dstPage] + 40000, *_palettes[0], 64);
-		_palettes[0]->fill(0, 1, 0);
+	Common::SeekableReadStream *str = _vm->resource()->createReadStream(filename);
+	str->skip(4);
+	uint32 imgSize = str->readUint32LE();
+	delete str;
 
+	if (_isAmiga && !skip) {
+		if ((dstPage == 3 || dstPage == 4) && imgSize == 40064) {
+			// Yay, this is where EOB1 Amiga hides the palette data
+			loadPalette(_pagePtrs[dstPage] + 40000, *_palettes[0], 64);
+			_palettes[0]->fill(0, 1, 0);
+		}
 		Screen::convertAmigaGfx(getPagePtr(dstPage), 320, 200);
 	}
 }
@@ -1920,6 +1928,223 @@ void OldDOSFont::unload() {
 	_data = 0;
 	_width = _height = _numGlyphs = 0;
 	_bitmapOffsets = 0;
+}
+
+AmigaDOSFont::AmigaDOSFont(Resource *res) : _res(res), _width(0), _height(0), _first(0), _last(0), _content(0), _numElements(0), _selectedElement(0), _maxPathLen(256) {
+	assert(_res);
+}
+
+bool AmigaDOSFont::load(Common::SeekableReadStream &file) {
+	unload();
+
+	uint16 id = file.readUint16BE();
+	// We only support type 0x0f00, since this is the only type used for EOB 
+	if (id != 0x0f00)
+		return false;
+
+	_numElements = file.readUint16BE();
+	_content = new FontContent[_numElements];
+	char *cfile = new char[_maxPathLen];
+
+	for (int i = 0; i < _numElements; ++i) {
+		file.read(cfile, _maxPathLen);
+		_content[i].height = file.readUint16BE();;
+		_content[i].style = file.readByte();
+		_content[i].flags = file.readByte();
+		_content[i].contentFile = cfile;
+
+		for (int ii = 0; ii < i; ++ii) {
+			if (_content[ii].contentFile == _content[i].contentFile && _content[ii].data.get())
+				_content[i].data = _content[ii].data;
+		}
+
+		if (!_content[i].data.get()) {
+			TextFont *contentData = loadContentFile(cfile);
+			if (contentData) {
+				_content[i].data = Common::SharedPtr<TextFont>(contentData);
+			} else {
+				unload();
+				return false;
+			}
+		}
+
+		if (!(_content[i].flags & 0x40) && (_content[i].height != _content[i].data->height)) {
+			warning("Amiga DOS Font construction / scaling not implemented.");
+		}
+	}
+	
+	delete[] cfile;
+
+	selectMode(0);
+
+	return true;
+}
+
+int AmigaDOSFont::getCharWidth(uint16 c) const {
+	if (c < _first || c > _last)
+		return 0;
+	c -= _first;
+
+	int width = _content[_selectedElement].data->spacing ? _content[_selectedElement].data->spacing[c] : _content[_selectedElement].data->width;
+
+	/*if (_content[_selectedElement].data->kerning)
+		width += _content[_selectedElement].data->kerning[c];*/
+
+	return width;
+}
+
+void AmigaDOSFont::drawChar(uint16 c, byte *dst, int pitch, int) const {
+	if (c < _first || c > _last || !dst)
+		return;
+
+	static const uint16 table[] = {
+		0x8000, 0xc000, 0xe000, 0xf000, 0xf800, 0xfc00, 0xfe00, 0xff00,
+		0xff80, 0xffc0, 0xffe0, 0xfff0, 0xfff8, 0xfffc, 0xfffe, 0xffff
+	};
+
+	c -= _first;
+
+	int w = _content[_selectedElement].data->spacing ? _content[_selectedElement].data->spacing[c] : _content[_selectedElement].data->width;
+	int xbits = _content[_selectedElement].data->location[c * 2 + 1];
+	int h = _content[_selectedElement].data->height;
+	
+	uint16 bitPos = _content[_selectedElement].data->location[c * 2] & 0x0F;
+	uint16 mod = _content[_selectedElement].data->modulo;
+	const uint8 *data = _content[_selectedElement].data->bitmap + ((_content[_selectedElement].data->location[c * 2] >> 3) & ~1);
+	uint32 xbt_mask = xbits ? table[(xbits - 1) & 0x0F] << 16 : 0;
+
+	for (int y = 0; y < h; ++y) {
+		uint32 mask = 0x80000000;
+		uint32 bits = (READ_BE_UINT32(data) << bitPos) & xbt_mask;
+		data += mod;
+		
+		for (int x = 0; x < w; ++x) {
+			if (bits & mask) {
+				if (_colorMap[1])
+					*dst = _colorMap[1];
+			} else {
+				if (_colorMap[0])
+					*dst = _colorMap[0];
+			}
+			mask >>= 1;
+			dst++;
+		}
+		dst += (pitch - w);
+	}
+}
+
+void AmigaDOSFont::unload() {
+	delete[] _content;
+}
+
+AmigaDOSFont::TextFont *AmigaDOSFont::loadContentFile(const Common::String fileName) {
+	Common::SeekableReadStreamEndian *str = _res->createEndianAwareReadStream(fileName);
+
+	if (!str && fileName.contains('/')) {
+		// These content files are usually located in sub directories (i. e. the eobf8.font
+		// has a sub dir named 'eobf8' with a file '8' in it). In case someone put the content
+		// files directly in the game directory we still try to open it.
+		Common::String fileNameAlt = fileName;
+		while (fileNameAlt.firstChar() != '/')
+			fileNameAlt.deleteChar(0);
+		fileNameAlt.deleteChar(0);
+
+		str = _res->createEndianAwareReadStream(fileNameAlt);
+
+		if (!str) {
+			// Someone might even have copied the floppy disks to the game directory with the
+			// full sub directory structure. So we also try that...
+			fileNameAlt = "fonts/";
+			fileNameAlt += fileName;
+
+			str = _res->createEndianAwareReadStream(fileNameAlt);
+		}
+
+		if (!str) {
+			::GUI::displayErrorDialog("This AMIGA version requires the following font files:\n\nEOBF6.FONT\nEOBF6/6\nEOBF8.FONT\nEOBF8/8\n\n"
+				"If you used the orginal installer for the installation these files\nshould be located in the AmigaDOS system 'Fonts/' folder.\n"
+				"Please copy them into the EOB game data directory.\n");
+			error("Failed to load font files.");
+		}
+	}
+
+	uint32 hunkId = str->readUint32();
+	// Except for some sanity checks we skip all of the Amiga hunk file magic
+	if (hunkId != 0x03f3)
+		return 0;
+	str->seek(20, SEEK_CUR);
+
+	uint32 hunkType = str->readUint32();
+	if (hunkType != 0x3E9)
+		return 0;
+	uint32 dataSize = str->readUint32() * 4;
+	int32 hunkStartPos = str->pos();
+
+	str->seek(34, SEEK_CUR);
+	TextFont *fnt = new TextFont();
+	int32 fntStartPos = str->pos();
+	str->seek(44, SEEK_CUR);
+	fnt->height = str->readUint16();
+	str->seek(2, SEEK_CUR);
+	fnt->width = str->readUint16();
+	fnt->baseLine = str->readUint16();
+	str->seek(4, SEEK_CUR);
+	fnt->firstChar = str->readByte();
+	fnt->lastChar = str->readByte();
+
+	str->seek(18, SEEK_CUR);
+	int32 curPos = str->pos();
+	uint32 bufferSize = dataSize - (curPos - fntStartPos);
+	uint8 *buffer = new uint8[bufferSize];
+	str->read(buffer, bufferSize);
+
+	str->seek(curPos - 18, SEEK_SET);
+	uint32 offset = str->readUint32();
+	fnt->bitmap = offset ? buffer + offset - (curPos - hunkStartPos) : 0;
+	fnt->modulo = str->readUint16();
+
+	offset = str->readUint32();
+	uint16 *loc = (uint16*) (offset ? buffer + offset - (curPos - hunkStartPos) : 0);
+	for (int i = 0; i <= (fnt->lastChar - fnt->firstChar) * 2 + 1; ++i)
+		loc[i] = READ_BE_UINT16(&loc[i]);
+	fnt->location = loc;
+
+	offset = str->readUint32();
+	int16 *idat = offset ? (int16*)(buffer + offset - (curPos - hunkStartPos)) : 0;
+	if (idat) {
+		for (int i = 0; i <= (fnt->lastChar - fnt->firstChar) * 2 + 1; ++i)
+			idat[i] = (int16)READ_BE_UINT16(&idat[i]);
+	}
+	fnt->spacing = idat;
+
+	offset = str->readUint32();
+	// This warning will only show up if someone tries to use this code elsewhere. It cannot happen with EOB fonts.
+	if (offset)
+		warning("Trying to load an AmigaDOS font with kerning data. This is not implemented. Font Rendering will not be accurate.");
+	idat = offset ? (int16*)(buffer + offset - (curPos - hunkStartPos)) : 0;
+	if (idat) {
+		for (int i = 0; i <= (fnt->lastChar - fnt->firstChar) * 2 + 1; ++i)
+			idat[i] = (int16)READ_BE_UINT16(&idat[i]);
+	}
+	fnt->kerning = idat;	
+
+	fnt->data = buffer;
+
+	delete str;
+
+	return fnt;
+}
+
+void AmigaDOSFont::selectMode(int mode) {
+	if (mode < 0 || mode > _numElements - 1)
+		return;
+
+	_selectedElement = mode;
+
+	_width = _content[mode].data->width;
+	_height = _content[mode].data->height;
+	_first = _content[mode].data->firstChar;
+	_last = _content[mode].data->lastChar;
 }
 
 SJISFontLarge::SJISFontLarge(Graphics::FontSJIS *font) : SJISFont(font, 0, false, false, false, 0) {

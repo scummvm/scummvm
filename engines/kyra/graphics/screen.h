@@ -30,6 +30,7 @@
 #include "common/rect.h"
 #include "common/rendermode.h"
 #include "common/stream.h"
+#include "common/ptr.h"
 
 class OSystem;
 
@@ -179,10 +180,77 @@ private:
 	static uint16 *_cgaDitheringTable;
 	static int _numRef;
 };
+
+/**
+ * Implementation of the Font interface for native AmigaDOS system fonts (normally to be loaded via diskfont.library)
+ */
+class Resource;
+class AmigaDOSFont : public Font {
+public:
+	AmigaDOSFont(Resource *res);
+	~AmigaDOSFont() { unload(); }
+
+	bool load(Common::SeekableReadStream &file);
+	int getHeight() const { return _height; }
+	int getWidth() const { return _width; }
+	int getCharWidth(uint16 c) const;
+	void setColorMap(const uint8 *src) { _colorMap = src;  }
+	void drawChar(uint16 c, byte *dst, int pitch, int) const;
+
+private:
+	void unload();
+
+	struct TextFont {
+		TextFont() : data(0), bitmap(0), location(0), spacing(0), kerning(0), height(0), width(0), baseLine(0), firstChar(0), lastChar(0), modulo(0) {}
+		~TextFont() {
+			delete[] data;
+		}
+
+		uint16 height;
+		uint16 width;
+		uint16 baseLine;
+		uint8 firstChar;
+		uint8 lastChar;		
+		uint16 modulo;
+		const uint8 *data;
+		const uint8 *bitmap;
+		const uint16 *location;
+		const int16 *spacing;
+		const int16 *kerning;
+	};
+
+	TextFont *loadContentFile(const Common::String fileName);
+	void selectMode(int mode);
+
+	struct FontContent {
+		FontContent() : height(0), style(0), flags(0) {}
+		~FontContent() {
+			data.reset();
+		}
+
+		Common::String contentFile;
+		Common::SharedPtr<TextFont> data;
+		uint16 height;
+		uint8 style;
+		uint8 flags;
+	};
+
+	int _width, _height;
+	uint8 _first, _last;
+	FontContent *_content;
+	uint16 _numElements;
+	uint16 _selectedElement;
+
+	const uint8 *_colorMap;
+
+	const uint16 _maxPathLen;
+
+	Resource *_res;
+};
 #endif // ENABLE_EOB
 
 /**
- * Implementation of the Font interface for AMIGA fonts.
+ * Implementation of the Font interface for Kyra 1 style (non-native AmigaDOS) AMIGA fonts.
  */
 class AMIGAFont : public Font {
 public:

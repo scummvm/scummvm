@@ -45,7 +45,7 @@ public:
 
 	void loadFileDataToPage(Common::SeekableReadStream *s, int pageNum, uint32 size);
 
-	void printShadedText(const char *string, int x, int y, int col1, int col2);
+	void printShadedText(const char *string, int x, int y, int col1, int col2, int shadowCol);
 
 	virtual void loadBitmap(const char *filename, int tempPage, int dstPage, Palette *pal, bool skip = false);
 	void loadEoBBitmap(const char *file, const uint8 *cgaMapping, int tempPage, int destPage, int convertToPage);

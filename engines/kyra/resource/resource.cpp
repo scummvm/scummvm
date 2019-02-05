@@ -339,7 +339,8 @@ Common::SeekableReadStream *Resource::createReadStream(const Common::String &fil
 }
 
 Common::SeekableReadStreamEndian *Resource::createEndianAwareReadStream(const Common::String &file) {
-	return new EndianAwareStreamWrapper(_files.createReadStreamForMember(file), _vm->gameFlags().platform == Common::kPlatformAmiga);
+	Common::SeekableReadStream *stream = _files.createReadStreamForMember(file);
+	return stream ? new EndianAwareStreamWrapper(stream, _vm->gameFlags().platform == Common::kPlatformAmiga) : 0;
 }
 
 Common::Archive *Resource::loadArchive(const Common::String &name, Common::ArchiveMemberPtr member) {
