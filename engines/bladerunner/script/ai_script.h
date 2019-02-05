@@ -480,8 +480,8 @@ DECLARE_SCRIPT(Maggie)
 	int var_45F404;
 	int var_45F408;
 
-	int sub_44B260();
-	float sub_44B200(int actorId, float x, float y, float z);
+	int randomWaypointMA02();
+	float distanceToActor(int actorId, float x, float y, float z);
 END_SCRIPT
 
 DECLARE_SCRIPT(GenericWalkerA)

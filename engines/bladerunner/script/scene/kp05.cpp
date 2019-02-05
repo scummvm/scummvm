@@ -142,8 +142,8 @@ void SceneScriptKP05::PlayerWalkedIn() {
 		Game_Flag_Query(kFlagKP03toKP05); // bug in game?
 	}
 
-	if (Actor_Query_Goal_Number(kActorMaggie) == 411) {
-		Actor_Set_Goal_Number(kActorMaggie, 412);
+	if (Actor_Query_Goal_Number(kActorMaggie) == kGoalMaggieKP05Wait) {
+		Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieKP05McCoyEntred);
 	}
 
 	if (Actor_Query_Goal_Number(kActorSteele) == 450) {

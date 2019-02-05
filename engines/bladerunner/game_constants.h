@@ -2221,6 +2221,22 @@ enum GoalFreeSlotA { // Rat
 	kGoalFreeSlotAGone = 599
 };
 
+enum GoalMaggie {
+	kGoalMaggieMA02Default = 0,
+	kGoalMaggieMA02WalkToEntrance = 1,
+	kGoalMaggieMA02GetFed = 3,
+	kGoalMaggieMA02WalkToMcCoy = 7,
+	kGoalMaggieMA02Wait = 8,
+	kGoalMaggieMA02SitDown = 10, // not used
+	kGoalMaggieMA02Sleep = 11, // not used
+	kGoalMaggieKP05Wait = 411,
+	kGoalMaggieKP05McCoyEntred = 412,
+	kGoalMaggieKP05WalkToMcCoy = 413,
+	kGoalMaggieKP05WillExplode = 414,
+	kGoalMaggieKP05Explode = 415,
+	kGoalMaggieDead = 599
+};
+
 } // End of namespace BladeRunner
 
 #endif

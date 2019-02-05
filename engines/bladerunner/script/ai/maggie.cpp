@@ -63,7 +63,7 @@ void AIScriptMaggie::Initialize() {
 	var_45F400 = 0;
 	var_45F404 = 0;
 	var_45F408 = 0;
-	Actor_Set_Goal_Number(kActorMaggie, 0);
+	Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieMA02Default);
 }
 
 bool AIScriptMaggie::Update() {
@@ -76,12 +76,12 @@ bool AIScriptMaggie::Update() {
 		Actor_Set_At_Waypoint(kActorMaggie, 39, 0);
 	}
 
-	if (goal == 414) {
-		Actor_Set_Goal_Number(kActorMaggie, 415);
-	} else if (goal == 413
+	if (goal == kGoalMaggieKP05WillExplode) {
+		Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieKP05Explode);
+	} else if (goal == kGoalMaggieKP05WalkToMcCoy
 	        && Actor_Query_Inch_Distance_From_Actor(kActorMcCoy, kActorMaggie) < 60
 	) {
-		Actor_Set_Goal_Number(kActorMaggie, 415);
+		Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieKP05Explode);
 	}
 
 	if (Global_Variable_Query(kVariableChapter) == 5) {
@@ -94,25 +94,25 @@ bool AIScriptMaggie::Update() {
 }
 
 void AIScriptMaggie::TimerExpired(int timer) {
-	if (timer != 0) {
-		return;
-	}
-	int goal = Actor_Query_Goal_Number(kActorMaggie);
-	if (goal == 8) {
-		AI_Countdown_Timer_Reset(kActorMaggie, 0);
-		if (Random_Query(0, 4)) {
-			AI_Movement_Track_Flush(kActorMaggie);
-			AI_Movement_Track_Append(kActorMaggie, sub_44B260(), 0);
-			AI_Movement_Track_Repeat(kActorMaggie);
-		} else {
-			Actor_Change_Animation_Mode(kActorMaggie, 54);
+	if (timer == 0) {
+		int goal = Actor_Query_Goal_Number(kActorMaggie);
+		if (goal == kGoalMaggieMA02Wait) {
+			AI_Countdown_Timer_Reset(kActorMaggie, 0);
+			if (Random_Query(0, 4)) {
+				AI_Movement_Track_Flush(kActorMaggie);
+				AI_Movement_Track_Append(kActorMaggie, randomWaypointMA02(), 0);
+				AI_Movement_Track_Repeat(kActorMaggie);
+			} else {
+				Actor_Change_Animation_Mode(kActorMaggie, 54);
+			}
+			return; //true
 		}
-		return; //true
-	}
-	if (goal == 10) {
-		AI_Countdown_Timer_Reset(kActorMaggie, 0);
-		Actor_Change_Animation_Mode(kActorMaggie, 55);
-		return; //true
+
+		if (goal == kGoalMaggieMA02SitDown) {
+			AI_Countdown_Timer_Reset(kActorMaggie, 0);
+			Actor_Change_Animation_Mode(kActorMaggie, 55);
+			return; //true
+		}
 	}
 	return; //false
 }
@@ -120,28 +120,30 @@ void AIScriptMaggie::TimerExpired(int timer) {
 void AIScriptMaggie::CompletedMovementTrack() {
 	int goal = Actor_Query_Goal_Number(kActorMaggie);
 	if (goal == 0 || goal > 9) {
-		if (goal == 413) {
-			Actor_Set_Goal_Number(kActorMaggie, 414);
+		if (goal == kGoalMaggieKP05WalkToMcCoy) {
+			Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieKP05WillExplode);
 			return; //true
 		}
 	} else {
-		if (goal == 1) {
-			Actor_Set_Goal_Number(kActorMaggie, 7);
+		if (goal == kGoalMaggieMA02WalkToEntrance) {
+			Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieMA02WalkToMcCoy);
 			return; //true
 		}
-		if (goal == 8) {
+
+		if (goal == kGoalMaggieMA02Wait) {
 			Actor_Face_Actor(kActorMaggie, kActorMcCoy, true);
 			AI_Countdown_Timer_Reset(kActorMaggie, 0);
 			AI_Countdown_Timer_Start(kActorMaggie, 0, Random_Query(1, 5));
 			return; //true
 		}
+
 		if (goal == 9) {
 			Actor_Face_Actor(kActorMaggie, kActorMcCoy, true);
 			Actor_Change_Animation_Mode(kActorMaggie, 54);
 			return; //true
 		}
 	}
-	Actor_Set_Goal_Number(kActorMaggie, 8);
+	Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieMA02Wait);
 	return; //true
 }
 
@@ -152,7 +154,7 @@ void AIScriptMaggie::ClickedByPlayer() {
 	if (!Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
 	 &&  Global_Variable_Query(kVariableChapter) == 5
 	) {
-		if (Actor_Query_Goal_Number(kActorMaggie) == 413) {
+		if (Actor_Query_Goal_Number(kActorMaggie) == kGoalMaggieKP05WalkToMcCoy) {
 			Actor_Set_Targetable(kActorMaggie, true);
 			AI_Movement_Track_Flush(kActorMaggie);
 			Actor_Face_Actor(kActorMcCoy, kActorMaggie, true);
@@ -165,14 +167,13 @@ void AIScriptMaggie::ClickedByPlayer() {
 		return; // false
 	}
 
-	float mccoy_x, mccoy_y, mccoy_z;
-
 	Actor_Face_Actor(kActorMcCoy, kActorMaggie, true);
+
+	float mccoy_x, mccoy_y, mccoy_z;
 	Actor_Query_XYZ(kActorMcCoy, &mccoy_x, &mccoy_y, &mccoy_z);
-	float distance = sub_44B200(kActorMaggie, mccoy_x, mccoy_y, mccoy_z);
-	if (distance > 60.0f) {
+	if (distanceToActor(kActorMaggie, mccoy_x, mccoy_y, mccoy_z) > 60.0f) {
 		Actor_Says(0, 2430, 18);
-		Actor_Set_Goal_Number(kActorMaggie, 7);
+		Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieMA02WalkToMcCoy);
 		return; // true
 	}
 
@@ -185,7 +186,7 @@ void AIScriptMaggie::ClickedByPlayer() {
 	}
 
 	int goal = Actor_Query_Goal_Number(kActorMaggie);
-	if (goal == 8) {
+	if (goal == kGoalMaggieMA02Wait) {
 		if (Random_Query(0, 1)) {
 			Actor_Face_Actor(kActorMaggie, kActorMcCoy, true);
 			Actor_Change_Animation_Mode(kActorMaggie, 57);
@@ -208,7 +209,7 @@ void AIScriptMaggie::ClickedByPlayer() {
 		return; // true
 	}
 
-	Actor_Set_Goal_Number(kActorMaggie, 8);
+	Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieMA02Wait);
 	return; // true
 }
 
@@ -224,7 +225,7 @@ void AIScriptMaggie::OtherAgentExitedThisScene(int otherActorId) {
 	 && Global_Variable_Query(kVariableChapter) < 4
 	) {
 		AI_Movement_Track_Flush(kActorMaggie);
-		Actor_Set_Goal_Number(kActorMaggie, 0);
+		Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieMA02Default);
 	}
 }
 
@@ -236,7 +237,7 @@ void AIScriptMaggie::ShotAtAndMissed() {
 
 bool AIScriptMaggie::ShotAtAndHit() {
 	AI_Movement_Track_Flush(kActorMaggie);
-	Actor_Set_Goal_Number(kActorMaggie, 414);
+	Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieKP05WillExplode);
 	Actor_Set_Targetable(kActorMaggie, false);
 	return false;
 }
@@ -249,23 +250,49 @@ int AIScriptMaggie::GetFriendlinessModifierIfGetsClue(int otherActorId, int clue
 }
 
 bool AIScriptMaggie::GoalChanged(int currentGoalNumber, int newGoalNumber) {
-	if (currentGoalNumber == 599) {
+	if (currentGoalNumber == kGoalMaggieDead) {
 		return true;
 	}
 
 	switch (newGoalNumber) {
-	case 11:
-		Actor_Change_Animation_Mode(kActorMaggie, 55);
-		_animationState = kMaggieStateSleeping;
-		_animationFrame = 0;
+	case kGoalMaggieMA02Default:
+		Actor_Put_In_Set(kActorMaggie, kSetMA02_MA04);
+		Actor_Set_At_Waypoint(kActorMaggie, 265, 780);
 		return true;
-	case 10:
-		Actor_Change_Animation_Mode(kActorMaggie, 54);
-		_animationState = kMaggieStateLayingIdle;
-		_animationFrame = 0;
+
+	case kGoalMaggieMA02WalkToEntrance:
+		Actor_Put_In_Set(kActorMaggie, kSetMA02_MA04);
+		Actor_Set_At_Waypoint(kActorMaggie, randomWaypointMA02(), 512);
+		AI_Movement_Track_Flush(kActorMaggie);
+		AI_Movement_Track_Append(kActorMaggie, 264, 0);
+		AI_Movement_Track_Repeat(kActorMaggie);
+		return true;
+
+	case kGoalMaggieMA02GetFed:
+		Player_Loses_Control();
+		AI_Movement_Track_Flush(kActorMaggie);
+		Loop_Actor_Walk_To_Actor(kActorMaggie, kActorMcCoy, 48, false, false);
+		Actor_Face_Actor(kActorMcCoy, kActorMaggie, true);
+		Actor_Face_Actor(kActorMaggie, kActorMcCoy, false);
+		Actor_Says(kActorMcCoy, 2400, kAnimationModeFeeding);
+		Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieMA02Wait);
+		Player_Gains_Control();
+		return true;
+
+	case kGoalMaggieMA02WalkToMcCoy:
 		AI_Countdown_Timer_Reset(kActorMaggie, 0);
-		AI_Countdown_Timer_Start(kActorMaggie, 0, Random_Query(2, 9));
+		AI_Movement_Track_Flush(kActorMaggie);
+		Loop_Actor_Walk_To_Actor(kActorMaggie, kActorMcCoy, 30, false, false);
+		Actor_Face_Actor(kActorMaggie, kActorMcCoy, true);
+		Actor_Change_Animation_Mode(kActorMaggie, 56);
+		Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieMA02Wait);
 		return true;
+
+	case kGoalMaggieMA02Wait:
+		AI_Countdown_Timer_Reset(kActorMaggie, 0);
+		AI_Countdown_Timer_Start(kActorMaggie, 0, Random_Query(3, 9));
+		return true;
+
 	case 9:
 		if (Random_Query(0, 2) <= 0) {
 			Actor_Face_Actor(kActorMaggie, kActorMcCoy, false);
@@ -273,53 +300,66 @@ bool AIScriptMaggie::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		} else {
 			AI_Movement_Track_Flush(kActorMaggie);
 			if (Actor_Query_Which_Set_In(kActorMaggie) == kSetMA02_MA04) {
-				AI_Movement_Track_Append(kActorMaggie, sub_44B260(), 486);
+				AI_Movement_Track_Append(kActorMaggie, randomWaypointMA02(), 486);
 			}
 			AI_Movement_Track_Repeat(kActorMaggie);
 		}
 		return true;
-	case 8:
+
+	case kGoalMaggieMA02SitDown:
+		Actor_Change_Animation_Mode(kActorMaggie, 54);
+		_animationState = kMaggieStateLayingIdle;
+		_animationFrame = 0;
 		AI_Countdown_Timer_Reset(kActorMaggie, 0);
-		AI_Countdown_Timer_Start(kActorMaggie, 0, Random_Query(3, 9));
+		AI_Countdown_Timer_Start(kActorMaggie, 0, Random_Query(2, 9));
 		return true;
-	case 7:
-		AI_Countdown_Timer_Reset(kActorMaggie, 0);
+
+	case kGoalMaggieMA02Sleep:
+		Actor_Change_Animation_Mode(kActorMaggie, 55);
+		_animationState = kMaggieStateSleeping;
+		_animationFrame = 0;
+		return true;
+
+	case 400:
+		Actor_Set_Goal_Number(kActorMaggie, 410);
+		break;
+
+	case kGoalMaggieKP05Wait:
 		AI_Movement_Track_Flush(kActorMaggie);
-		Loop_Actor_Walk_To_Actor(kActorMaggie, kActorMcCoy, 30, false, false);
+		Game_Flag_Set(kFlagMaggieHasBomb);
+		Actor_Put_In_Set(kActorMaggie, kSetKP05_KP06);
+		Actor_Set_At_XYZ(kActorMaggie, -672.0, 0.0, -428.0, 653);
+		Actor_Change_Animation_Mode(kActorMaggie, kAnimationModeIdle);
+		break;
+
+	case kGoalMaggieKP05McCoyEntred:
+		Scene_Exits_Disable();
+		Loop_Actor_Walk_To_XYZ(kActorMaggie, -734.0, 0.0, -432.0, 0, false, false, 0);
 		Actor_Face_Actor(kActorMaggie, kActorMcCoy, true);
 		Actor_Change_Animation_Mode(kActorMaggie, 56);
-		Actor_Set_Goal_Number(kActorMaggie, 8);
-		return true;
-	case 3:
-		Player_Loses_Control();
-		AI_Movement_Track_Flush(kActorMaggie);
-		Loop_Actor_Walk_To_Actor(kActorMaggie, kActorMcCoy, 48, false, false);
 		Actor_Face_Actor(kActorMcCoy, kActorMaggie, true);
-		Actor_Face_Actor(kActorMaggie, kActorMcCoy, false);
-		Actor_Says(kActorMcCoy, 2400, kAnimationModeFeeding);
-		Actor_Set_Goal_Number(kActorMaggie, 8);
-		Player_Gains_Control();
-		return true;
-	case 1:
-		Actor_Put_In_Set(kActorMaggie, kSetMA02_MA04);
-		Actor_Set_At_Waypoint(kActorMaggie, sub_44B260(), 512);
+		Actor_Says(kActorMcCoy, 2225, kAnimationModeTalk);
+		Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieKP05WalkToMcCoy);
+		break;
+
+	case kGoalMaggieKP05WalkToMcCoy:
+		if (Actor_Query_Is_In_Current_Set(kActorSteele)) {
+			Actor_Says(kActorSteele, 3270, 59);
+		}
 		AI_Movement_Track_Flush(kActorMaggie);
-		AI_Movement_Track_Append(kActorMaggie, 264, 0);
+		AI_Movement_Track_Append(kActorMaggie, 540, 0);
 		AI_Movement_Track_Repeat(kActorMaggie);
-		return true;
-	case 0:
-		Actor_Put_In_Set(kActorMaggie, kSetMA02_MA04);
-		Actor_Set_At_Waypoint(kActorMaggie, 265, 780);
-		return true;
-	case 415:
+		break;
+
+	case kGoalMaggieKP05Explode:
 		AI_Movement_Track_Flush(kActorMaggie);
 		Actor_Face_Actor(kActorMcCoy, kActorMaggie, true);
 		Sound_Play(494, 50, 0, 0, 100);
-		Actor_Set_Goal_Number(kActorMaggie, 599);
+		Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieDead);
 		Actor_Change_Animation_Mode(kActorMaggie, 51);
 		if (Actor_Query_Inch_Distance_From_Actor(kActorMcCoy, kActorMaggie) < 144) {
 			Player_Loses_Control();
-			Actor_Change_Animation_Mode(kActorMcCoy, 48);
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
 			Actor_Retired_Here(kActorMcCoy, 6, 6, 1, -1);
 		} else {
 			Delay(3000);
@@ -338,33 +378,7 @@ bool AIScriptMaggie::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			}
 		}
 		break;
-	case 413:
-		if (Actor_Query_Is_In_Current_Set(kActorSteele)) {
-			Actor_Says(kActorSteele, 3270, 59);
-		}
-		AI_Movement_Track_Flush(kActorMaggie);
-		AI_Movement_Track_Append(kActorMaggie, 540, 0);
-		AI_Movement_Track_Repeat(kActorMaggie);
-		break;
-	case 412:
-		Scene_Exits_Disable();
-		Loop_Actor_Walk_To_XYZ(kActorMaggie, -734.0, 0.0, -432.0, 0, false, false, 0);
-		Actor_Face_Actor(kActorMaggie, kActorMcCoy, true);
-		Actor_Change_Animation_Mode(kActorMaggie, 56);
-		Actor_Face_Actor(kActorMcCoy, kActorMaggie, true);
-		Actor_Says(kActorMcCoy, 2225, kAnimationModeTalk);
-		Actor_Set_Goal_Number(kActorMaggie, 413);
-		break;
-	case 411:
-		AI_Movement_Track_Flush(kActorMaggie);
-		Game_Flag_Set(kFlagMaggieHasBomb);
-		Actor_Put_In_Set(kActorMaggie, kSetKP05_KP06);
-		Actor_Set_At_XYZ(kActorMaggie, -672.0, 0.0, -428.0, 653);
-		Actor_Change_Animation_Mode(kActorMaggie, kAnimationModeIdle);
-		break;
-	case 400:
-		Actor_Set_Goal_Number(kActorMaggie, 410);
-		break;
+
 	}
 	return false;
 }
@@ -376,10 +390,12 @@ bool AIScriptMaggie::UpdateAnimation(int *animation, int *frame) {
 		*animation = 871;
 		_animationFrame = 0;
 		break;
+
 	case kMaggieStateDeadExploded:
 		*animation = 874;
 		_animationFrame = Slice_Animation_Query_Number_Of_Frames(874) - 1;
 		break;
+
 	case kMaggieStateExploding:
 		*animation = 874;
 		_animationFrame++;
@@ -390,6 +406,7 @@ bool AIScriptMaggie::UpdateAnimation(int *animation, int *frame) {
 			Actor_Set_At_Waypoint(kActorMaggie, 41, 0);
 		}
 		break;
+
 	case kMaggieStateBombJumping:
 		*animation = 873;
 		_animationFrame++;
@@ -397,9 +414,10 @@ bool AIScriptMaggie::UpdateAnimation(int *animation, int *frame) {
 			_animationState = kMaggieStateBombIdle;
 			_animationFrame = 0;
 			*animation = 875;
-			Actor_Set_Goal_Number(kActorMaggie, 414);
+			Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieKP05WillExplode);
 		}
 		break;
+
 	case kMaggieStateBombWalk:
 		*animation = 872;
 		_animationFrame++;
@@ -407,6 +425,7 @@ bool AIScriptMaggie::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case kMaggieStateBombIdle:
 		*animation = 875;
 		_animationFrame++;
@@ -414,6 +433,7 @@ bool AIScriptMaggie::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case kMaggieStateWakingUp:
 		*animation = 876;
 		_animationFrame--;
@@ -423,30 +443,33 @@ bool AIScriptMaggie::UpdateAnimation(int *animation, int *frame) {
 		_animationState = kMaggieStateLayingIdle;
 		_animationFrame = 0;
 		*animation = 867;
-		goal = Actor_Query_Goal_Number(66);
-		if (goal == 3) {
+		goal = Actor_Query_Goal_Number(kActorMaggie);
+		if (goal == kGoalMaggieMA02GetFed) {
 			_animationState = kMaggieStateStandingUp;
 			_animationFrame = 0;
 			*animation = 868;
-		} else if (goal == 7) {
-			Actor_Set_Goal_Number(kActorMaggie, 10);
-			Actor_Set_Goal_Number(kActorMaggie, 7);
+		} else if (goal == kGoalMaggieMA02WalkToMcCoy) {
+			Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieMA02SitDown);
+			Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieMA02WalkToMcCoy);
 		} else {
-			Actor_Set_Goal_Number(kActorMaggie, 10);
+			Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieMA02SitDown);
 		}
 		break;
+
 	case kMaggieStateSleeping:
 		*animation = 876;
 		_animationFrame = Slice_Animation_Query_Number_Of_Frames(876) - 1;
 		break;
+
 	case kMaggieStateGoingToSleep:
 		*animation = 876;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(876) - 1) {
 			_animationState = kMaggieStateSleeping;
-			Actor_Set_Goal_Number(kActorMaggie, 11);
+			Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieMA02Sleep);
 		}
 		break;
+
 	case kMaggieStateStandingUp:
 		*animation = 868;
 		_animationFrame++;
@@ -454,14 +477,15 @@ bool AIScriptMaggie::UpdateAnimation(int *animation, int *frame) {
 			*animation = 864;
 			_animationState = kMaggieStateIdle;
 			_animationFrame = 0;
-			if (Actor_Query_Goal_Number(kActorMaggie) == 10) {
-				Actor_Set_Goal_Number(kActorMaggie, 8);
-			} else if (Actor_Query_Goal_Number(kActorMaggie) == 7) {
-				Actor_Set_Goal_Number(kActorMaggie, 12);
-				Actor_Set_Goal_Number(kActorMaggie, 7);
+			if (Actor_Query_Goal_Number(kActorMaggie) == kGoalMaggieMA02SitDown) {
+				Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieMA02Wait);
+			} else if (Actor_Query_Goal_Number(kActorMaggie) == kGoalMaggieMA02WalkToMcCoy) {
+				Actor_Set_Goal_Number(kActorMaggie, 12); // this is never used
+				Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieMA02WalkToMcCoy);
 			}
 		}
 		break;
+
 	case kMaggieStateLayingIdle:
 		*animation = 867;
 		_animationFrame++;
@@ -469,6 +493,7 @@ bool AIScriptMaggie::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case kMaggieStateLayingDown:
 		*animation = 866;
 		_animationFrame++;
@@ -477,10 +502,11 @@ bool AIScriptMaggie::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 			*animation = 867;
 			if (Actor_Query_Goal_Number(kActorMaggie) == 9) {
-				Actor_Set_Goal_Number(kActorMaggie, 10);
+				Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieMA02SitDown);
 			}
 		}
 		break;
+
 	case kMaggieStateHappyB:
 		*animation = 865;
 		_animationFrame++;
@@ -493,6 +519,7 @@ bool AIScriptMaggie::UpdateAnimation(int *animation, int *frame) {
 			}
 		}
 		break;
+
 	case kMaggieStateHappyA:
 		*animation = 870;
 		if (_animationFrame == 1) {
@@ -509,6 +536,7 @@ bool AIScriptMaggie::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case kMaggieStateJumping:
 		*animation = 869;
 		_animationFrame++;
@@ -519,6 +547,7 @@ bool AIScriptMaggie::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case kMaggieStateWalking:
 		*animation = 863;
 		_animationFrame++;
@@ -526,6 +555,7 @@ bool AIScriptMaggie::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case kMaggieStateIdle:
 		*animation = 864;
 		_animationFrame++;
@@ -581,31 +611,22 @@ bool AIScriptMaggie::ChangeAnimationMode(int mode) {
 	}
 
 	switch (mode) {
-	case 88:
-		_animationState = kMaggieStateDead;
+	case 51:
+		_animationState = kMaggieStateExploding;
 		_animationFrame = 0;
+		Sound_Play(272, 50, 0, 0, 50);
 		break;
-	case 57:
-		if (_animationState != kMaggieStateHappyB) {
+
+	case kAnimationModeFeeding:
+		if (Game_Flag_Query(kFlagMaggieHasBomb)) {
+			_animationState = kMaggieStateBombJumping;
 			_animationFrame = 0;
-			_animationState = kMaggieStateHappyB;
-		}
-		var_45F3F8 = Random_Query(2, 6);
-		Sound_Play(276, 50, 0, 0, 50);
-		break;
-	case 56:
-		if (_animationState != 3) {
-			_animationFrame = 0;
-			_animationState = kMaggieStateHappyA;
-		}
-		var_45F3FC = Random_Query(2, 6);
-		break;
-	case 55:
-		if (_animationState == kMaggieStateLayingIdle) {
-			_animationState = kMaggieStateGoingToSleep;
+		} else {
+			_animationState = kMaggieStateJumping;
 			_animationFrame = 0;
 		}
 		break;
+
 	case 54:
 		if (_animationState <= kMaggieStateSleeping) {
 			if (_animationState > 0) {
@@ -619,20 +640,36 @@ bool AIScriptMaggie::ChangeAnimationMode(int mode) {
 			}
 		}
 		break;
-	case kAnimationModeFeeding:
-		if (Game_Flag_Query(kFlagMaggieHasBomb)) {
-			_animationState = kMaggieStateBombJumping;
-			_animationFrame = 0;
-		} else {
-			_animationState = kMaggieStateJumping;
+
+	case 55:
+		if (_animationState == kMaggieStateLayingIdle) {
+			_animationState = kMaggieStateGoingToSleep;
 			_animationFrame = 0;
 		}
 		break;
-	case 51:
-		_animationState = kMaggieStateExploding;
-		_animationFrame = 0;
-		Sound_Play(272, 50, 0, 0, 50);
+
+	case 56:
+		if (_animationState != 3) {
+			_animationFrame = 0;
+			_animationState = kMaggieStateHappyA;
+		}
+		var_45F3FC = Random_Query(2, 6);
 		break;
+
+	case 57:
+		if (_animationState != kMaggieStateHappyB) {
+			_animationFrame = 0;
+			_animationState = kMaggieStateHappyB;
+		}
+		var_45F3F8 = Random_Query(2, 6);
+		Sound_Play(276, 50, 0, 0, 50);
+		break;
+
+	case 88:
+		_animationState = kMaggieStateDead;
+		_animationFrame = 0;
+		break;
+
 	}
 	return true;
 }
@@ -658,21 +695,23 @@ bool AIScriptMaggie::ReachedMovementTrackWaypoint(int waypointId) {
 void AIScriptMaggie::FledCombat() {
 }
 
-int AIScriptMaggie::sub_44B260() {
-	int random = Random_Query(0, 3);
-	if (random == 0) {
+int AIScriptMaggie::randomWaypointMA02() {
+	switch (Random_Query(0, 3)) {
+	case 0:
 		return 264;
-	}
-	if (random == 1) {
+
+	case 1:
 		return 265;
-	}
-	if (random == 2) {
+
+	case 2:
 		return 266;
+
+	default:
+		return 267;
 	}
-	return 267;
 }
 
-float AIScriptMaggie::sub_44B200(int actorId, float x, float y, float z) {
+float AIScriptMaggie::distanceToActor(int actorId, float x, float y, float z) {
 	float actorX, actorY, actorZ;
 	Actor_Query_XYZ(actorId, &actorX, &actorY, &actorZ);
 	return sqrt(static_cast<float>((z - actorZ) * (z - actorZ) + (y - actorY) * (y - actorY) + (x - actorX) * (x - actorX)));

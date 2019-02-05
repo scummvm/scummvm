@@ -358,7 +358,7 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Put_In_Set(kActorSadik, kSetKP05_KP06);
 		Actor_Set_At_XYZ(kActorSadik, -1134.0f, 0.0f, 73.45f, 398);
 		Actor_Set_Goal_Number(kActorClovis, 513);
-		Actor_Set_Goal_Number(kActorMaggie, 411);
+		Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieKP05Wait);
 		return true;
 
 	case 412:

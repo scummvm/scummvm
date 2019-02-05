@@ -46,7 +46,7 @@ void SceneScriptMA02::InitializeScene() {
 	 && Global_Variable_Query(kVariableChapter) == 5
 	 && Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
 	) {
-		Actor_Set_Goal_Number(kActorMaggie, 599);
+		Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieDead);
 		Actor_Change_Animation_Mode(kActorMaggie, 88);
 		Actor_Put_In_Set(kActorMaggie, kSetMA02_MA04);
 		Actor_Set_At_XYZ(kActorMaggie, -35.51f, -144.12f, 428.0f, 0);
@@ -93,12 +93,16 @@ bool SceneScriptMA02::ClickedOn3DObject(const char *objectName, bool a2) {
 		ESPER_Flag_To_Activate();
 		return true;
 	}
+
 	if (Object_Query_Click("BAR-MAIN", objectName)) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -29.0f, -140.4f, 298.0f, 36, true, false, 0)) {
 			Actor_Face_Object(kActorMcCoy, "BAR-MAIN", true);
 			if (Global_Variable_Query(kVariableChapter) < 4) {
-				Actor_Set_Goal_Number(kActorMaggie, 3);
-			} else if (Global_Variable_Query(kVariableChapter) == 5 && Game_Flag_Query(kFlagMcCoyIsHelpingReplicants) && !Actor_Clue_Query(kActorMcCoy, kClueCrystalsCigarette)) {
+				Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieMA02GetFed);
+			} else if ( Global_Variable_Query(kVariableChapter) == 5
+			        &&  Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
+			        && !Actor_Clue_Query(kActorMcCoy, kClueCrystalsCigarette)
+			) {
 				Overlay_Remove("MA02OVER");
 				Item_Pickup_Spin_Effect(985, 480, 240);
 				Actor_Voice_Over(1150, kActorVoiceOver);
@@ -119,7 +123,7 @@ bool SceneScriptMA02::ClickedOn3DObject(const char *objectName, bool a2) {
 
 bool SceneScriptMA02::ClickedOnActor(int actorId) {
 	if (actorId == kActorMaggie
-	 && Actor_Query_Goal_Number(kActorMaggie) == 599
+	 && Actor_Query_Goal_Number(kActorMaggie) == kGoalMaggieDead
 	) {
 		if (!Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorMaggie, 30, true, false)) {
 			Actor_Face_Actor(kActorMcCoy, kActorMaggie, true);
@@ -202,7 +206,8 @@ void SceneScriptMA02::PlayerWalkedIn() {
 	 && !Game_Flag_Query(kFlagMA04ToMA02)
 	 &&  Actor_Query_Goal_Number(kActorMaggie) != 2
 	) {
-		Actor_Set_Goal_Number(kActorMaggie, 1);
+		Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieMA02WalkToEntrance);
+
 		if (!Game_Flag_Query(kFlagMA02MaggieIntroduced)) {
 			Game_Flag_Set(kFlagMA02MaggieIntroduced);
 			Actor_Face_Actor(kActorMcCoy, kActorMaggie, true);
