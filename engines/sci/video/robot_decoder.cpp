@@ -1169,6 +1169,12 @@ bool RobotDecoder::readPartialAudioRecordAndSubmit(const int startFrame, const i
 
 uint16 RobotDecoder::getFrameSize(Common::Rect &outRect) const {
 	assert(_plane != nullptr);
+
+	if (_screenItemList.size() == 0) {
+		outRect.clip(0, 0);
+		return _numFramesTotal;
+	}
+
 	outRect = _screenItemList[0]->getNowSeenRect(*_plane);
 	for (RobotScreenItemList::size_type i = 1; i < _screenItemList.size(); ++i) {
 		ScreenItem &screenItem = *_screenItemList[i];
