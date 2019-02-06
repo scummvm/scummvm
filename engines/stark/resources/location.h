@@ -114,6 +114,9 @@ public:
 	/** Register an item as a character to the location */
 	void registerCharacterItem(int32 character, ItemVisual *item);
 
+	/** Get the list of characters present in the location */
+	Common::Array<ItemVisual *> listCharacters() const;
+
 	/** Reset animation blending for all the items in the location */
 	void resetAnimationBlending();
 
@@ -168,7 +171,8 @@ private:
 
 	uint getScrollStep();
 
-	Common::HashMap<int32, ItemVisual *> _characterItemMap;
+	typedef Common::HashMap<int32, ItemVisual *> CharacterMap;
+	CharacterMap _characterItemMap;
 
 	int32 _rumbleDurationRemaining;
 

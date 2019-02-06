@@ -35,6 +35,8 @@
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/location.h"
 
+#include "math/vector2d.h"
+
 namespace Stark {
 
 Walk::Walk(Resources::FloorPositionedItem *item) :
@@ -42,7 +44,9 @@ Walk::Walk(Resources::FloorPositionedItem *item) :
 		_item3D(item),
 		_running(false),
 		_reachedDestination(false),
-		_turnDirection(kTurnNone) {
+		_turnDirection(kTurnNone),
+		_collisionWaitTimeout(-1),
+		_collisionWaitCount(0) {
 	_path = new StringPullingPath();
 }
 
@@ -108,6 +112,19 @@ void Walk::updatePath() const {
 }
 
 void Walk::onGameLoop() {
+	Resources::ItemVisual *interactiveItem = StarkGlobal->getCurrent()->getInteractive();
+
+	if (_item != interactiveItem) {
+		// NPCs have a simple collision handling strategy.
+		// They stop when they collide with other items,
+		// and wait for their path to be clear.
+		doWalkCollisionSimple();
+	} else {
+		doWalk(); // TODO: Advanced collision handling
+	}
+}
+
+void Walk::doWalk() {
 	if (!_path->hasSteps()) {
 		// There is no path to the destination
 		stop();
@@ -157,6 +174,9 @@ void Walk::onGameLoop() {
 		rot.transformVector(&direction);
 	}
 
+	_previousPosition = currentPosition;
+	_newPosition = newPosition;
+
 	// Some scripts expect the character position to be the exact destination
 	if (newPosition == _destination) {
 		_reachedDestination = true;
@@ -173,7 +193,7 @@ void Walk::onGameLoop() {
 
 	// Update the item's properties
 	_item3D->setPosition3D(newPosition);
-	if (direction.getMagnitude() != 0.0) {
+	if (direction.getMagnitude() != 0.f) {
 		_item3D->setDirection(computeAngleBetweenVectorsXYPlane(direction, Math::Vector3d(1.0, 0.0, 0.0)));
 	}
 	if (newFloorFaceIndex >= 0) {
@@ -185,13 +205,79 @@ void Walk::onGameLoop() {
 	changeItemAnim();
 }
 
+bool Walk::isPointNearPath(const Math::Vector3d &point3d, const Math::Vector3d &pathStart3d, const Math::Vector3d &pathEnd3d) {
+	Math::Vector2d point     = Math::Vector2d(point3d.x(), point3d.y());
+	Math::Vector2d pathStart = Math::Vector2d(pathStart3d.x(), pathStart3d.y());
+	Math::Vector2d pathEnd   = Math::Vector2d(pathEnd3d.x(), pathEnd3d.y());
+
+	// Project the point onto the path
+	Math::Vector2d pointToStart = point - pathStart;
+	Math::Vector2d path = pathEnd - pathStart;
+	float dot = pointToStart.dotProduct(path);
+	float len = path.getSquareMagnitude();
+
+	float t = dot / len;
+
+	Math::Vector2d projection;
+	if (0.f <= t && t < 1.f) {
+		projection = path * t + pathStart;
+	} else {
+		projection = pathEnd;
+	}
+
+	// Check if the projection is near the actual point
+	return point.getDistanceTo(projection) <= (15.f + 15.f);
+}
+
+void Walk::doWalkCollisionSimple() {
+	if (_collisionWaitTimeout > 0) {
+		_collisionWaitTimeout -= StarkGlobal->getMillisecondsPerGameloop();
+		return;
+	} else {
+		_collisionWaitTimeout = -1;
+	}
+
+	Resources::Location *location = StarkGlobal->getCurrent()->getLocation();
+	Common::Array<Resources::ItemVisual *> characters = location->listCharacters();
+
+	// Check if any of the other characters is in our way
+	for (uint i = 0; i < characters.size(); i++) {
+		Resources::FloorPositionedItem *otherItem = dynamic_cast<Resources::FloorPositionedItem *>(characters[i]);
+		if (!otherItem || !otherItem->isEnabled() || otherItem == _item) continue;
+
+		Math::Vector3d otherPosition = otherItem->getPosition3D();
+
+		if (isPointNearPath(otherPosition, _previousPosition, _newPosition)) {
+			if (_previousPosition.getDistanceTo(otherPosition) <= 15.f * 3.f) {
+				if (_collisionWaitCount >= 10) {
+					doWalk();
+					return;
+				}
+
+				// A collision is detected. Remove the walk animation, and wait a bit.
+				if (_item->getAnimActivity() != Resources::Anim::kActorActivityIdle) {
+					_item->setAnimActivity(Resources::Anim::kActorActivityIdle);
+				}
+
+				_collisionWaitCount++;
+				_collisionWaitTimeout = 500; // ms
+				return;
+			}
+		}
+	}
+
+	// The path is clear, walk normally
+	_collisionWaitCount = 0;
+	doWalk();
+}
+
 float Walk::getAngularSpeed() const {
 	return _defaultTurnAngleSpeed * StarkGlobal->getMillisecondsPerGameloop();
 }
 
 float Walk::computeDistancePerGameLoop() const {
 	Resources::Anim *anim = _item->getAnim();
-	float distancePerGameloop = anim->getMovementSpeed() * StarkGlobal->getMillisecondsPerGameloop() / 1000.0;
+	float distancePerGameloop = anim->getMovementSpeed() * StarkGlobal->getMillisecondsPerGameloop() / 1000.f;
 
 	return distancePerGameloop;
 }
@@ -218,6 +304,7 @@ void Walk::changeItemAnim() {
 }
 
 void Walk::changeDestination(const Math::Vector3d &destination) {
+	_collisionWaitTimeout = -1;
 	setDestination(destination);
 	updatePath();
 }

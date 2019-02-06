@@ -419,6 +419,17 @@ void Location::registerCharacterItem(int32 character, ItemVisual *item) {
 	}
 }
 
+Common::Array<ItemVisual *> Location::listCharacters() const {
+	Common::Array<ItemVisual *> characters;
+
+	CharacterMap::const_iterator it;
+	for (it = _characterItemMap.begin(); it != _characterItemMap.end(); it++) {
+		characters.push_back(it->_value);
+	}
+
+	return characters;
+}
+
 void Location::printData() {
 }
 

@@ -60,11 +60,16 @@ public:
 	void setRunning();
 
 private:
+	void doWalk();
+	void doWalkCollisionSimple();
+
 	float computeDistancePerGameLoop() const;
 	float getAngularSpeed() const;
 
 	void changeItemAnim();
 	void updatePath() const;
+
+	static bool isPointNearPath(const Math::Vector3d &point3d, const Math::Vector3d &pathStart3d, const Math::Vector3d &pathEnd3d);
 
 	Resources::FloorPositionedItem *_item3D;
 	StringPullingPath *_path;
@@ -74,6 +79,11 @@ private:
 	bool _running;
 	bool _reachedDestination;
 	TurnDirection _turnDirection;
+
+	int32 _collisionWaitTimeout;
+	int32 _collisionWaitCount;
+	Math::Vector3d _previousPosition;
+	Math::Vector3d _newPosition;
 };
 
 } // End of namespace Stark
