@@ -59,7 +59,7 @@ void SceneScriptKP05::SceneLoaded() {
 	if (!Actor_Clue_Query(kActorMcCoy, kCluePowerSource)
 	 &&  Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
 	) {
-		Item_Add_To_World(118, 960, 9, -1095.0f, 0.0f, 770.0f, 256, 24, 24, false, true, false, true);
+		Item_Add_To_World(kItemPowerSource, 960, kSetKP05_KP06, -1095.0f, 0.0f, 770.0f, 256, 24, 24, false, true, false, true);
 	}
 }
 
@@ -76,11 +76,11 @@ bool SceneScriptKP05::ClickedOnActor(int actorId) {
 }
 
 bool SceneScriptKP05::ClickedOnItem(int itemId, bool a2) {
-	if (itemId == 118) {
+	if (itemId == kItemPowerSource) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1058.0f, 0.0f, 852.0f, 0, true, false, 0)) {
-			Actor_Face_Item(kActorMcCoy, 118, true);
+			Actor_Face_Item(kActorMcCoy, kItemPowerSource, true);
 			Actor_Clue_Acquire(kActorMcCoy, kCluePowerSource, true, -1);
-			Item_Remove_From_World(118);
+			Item_Remove_From_World(kItemPowerSource);
 			Item_Pickup_Spin_Effect(960, 58, 321);
 		}
 	}

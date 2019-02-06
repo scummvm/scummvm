@@ -76,7 +76,7 @@ bool SceneScriptKP06::ClickedOn3DObject(const char *objectName, bool a2) {
 
 bool SceneScriptKP06::ClickedOnActor(int actorId) {
 	if ( actorId == kActorSadik
-	 && !Game_Flag_Query(714)
+	 && !Game_Flag_Query(kFlagMcCoyAttackedReplicants)
 	) {
 		if (Actor_Clue_Query(kActorSadik, kCluePowerSource)) {
 			Actor_Face_Actor(kActorMcCoy, kActorSadik, true);
@@ -115,9 +115,9 @@ bool SceneScriptKP06::ClickedOnExit(int exitId) {
 		if (Actor_Clue_Query(kActorSadik, kCluePowerSource)
 		 || Actor_Query_Goal_Number(kActorSadik) != 416
 		) {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -731.0f, 8.26f, -657.0f, 0, 1, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -731.0f, 8.26f, -657.0f, 0, true, false, 0)) {
 				if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
-					if (!Game_Flag_Query(714)) {
+					if (!Game_Flag_Query(kFlagMcCoyAttackedReplicants)) {
 						Player_Set_Combat_Mode(false);
 					}
 				} else if (Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleKP06Leave) {
@@ -130,11 +130,11 @@ bool SceneScriptKP06::ClickedOnExit(int exitId) {
 				Game_Flag_Set(kFlagKP06toKP07);
 				Set_Enter(kSetKP07, kSceneKP07);
 			}
-		} else if (Actor_Clue_Query(kActorMcCoy, kCluePowerSource) ) {
-			Actor_Says(kActorSadik, 280, 3);
-			Actor_Says(kActorSadik, 290, 3);
+		} else if (Actor_Clue_Query(kActorMcCoy, kCluePowerSource)) {
+			Actor_Says(kActorSadik, 280, kAnimationModeTalk);
+			Actor_Says(kActorSadik, 290, kAnimationModeTalk);
 			Actor_Clue_Acquire(kActorSadik, kCluePowerSource, true, kActorMcCoy);
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -731.0f, 8.26f, -657.0f, 0, 0, true, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -731.0f, 8.26f, -657.0f, 0, false, true, 0);
 			Player_Set_Combat_Mode(false);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -196,7 +196,7 @@ void SceneScriptKP06::PlayerWalkedIn() {
 			Actor_Face_Actor(kActorMcCoy, kActorGaff, true);
 			Actor_Says(kActorMcCoy, 6245, 11);
 			Actor_Says(kActorGaff, 230, 14);
-			if (Game_Flag_Query(714)) {
+			if (Game_Flag_Query(kFlagMcCoyAttackedReplicants)) {
 				Actor_Says(kActorMcCoy, 6250, 15);
 				Actor_Says(kActorGaff, 240, 13);
 				Delay(1000);

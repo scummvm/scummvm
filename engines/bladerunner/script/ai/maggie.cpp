@@ -373,8 +373,8 @@ bool AIScriptMaggie::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Says(kActorMcCoy, 2390, 13);
 			if (Actor_Query_Goal_Number(kActorSadik) == 411) {
 				Actor_Set_Goal_Number(kActorSadik, 412);
-			} else {
-				Actor_Set_Goal_Number(kActorClovis, 512);
+			} else { // there is no way how Maggie can explode and Sadik's goal is not 411
+				Actor_Set_Goal_Number(kActorClovis, kGoalClovisKP06TalkToMcCoy);
 			}
 		}
 		break;

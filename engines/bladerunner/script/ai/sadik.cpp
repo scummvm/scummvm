@@ -79,7 +79,7 @@ bool AIScriptSadik::Update() {
 	}
 
 	if (Actor_Query_Goal_Number(kActorSadik) == 411) {
-		if (Game_Flag_Query(657)) {
+		if (Game_Flag_Query(kFlagNotUsed657)) {
 			Actor_Set_Goal_Number(kActorSadik, 412);
 		}
 	}
@@ -163,7 +163,7 @@ void AIScriptSadik::ShotAtAndMissed() {
 	if (Actor_Query_Goal_Number(kActorSadik) == 414
 	 || Actor_Query_Goal_Number(kActorSadik) == 416
 	) {
-		Game_Flag_Set(714);
+		Game_Flag_Set(kFlagMcCoyAttackedReplicants);
 		if (Actor_Query_Which_Set_In(kActorSadik) != kSetKP07) {
 			Actor_Set_Goal_Number(kActorSadik, 418);
 			Scene_Exits_Disable();
@@ -184,7 +184,7 @@ bool AIScriptSadik::ShotAtAndHit() {
 	if (Actor_Query_Goal_Number(kActorSadik) == 414
 	 || Actor_Query_Goal_Number(kActorSadik) == 416
 	) {
-		Game_Flag_Set(714);
+		Game_Flag_Set(kFlagMcCoyAttackedReplicants);
 		if (Actor_Query_Which_Set_In(kActorSadik) != kSetKP07) {
 			Actor_Set_Goal_Number(kActorSadik, 418);
 			Scene_Exits_Disable();
@@ -357,7 +357,7 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case 411:
 		Actor_Put_In_Set(kActorSadik, kSetKP05_KP06);
 		Actor_Set_At_XYZ(kActorSadik, -1134.0f, 0.0f, 73.45f, 398);
-		Actor_Set_Goal_Number(kActorClovis, 513);
+		Actor_Set_Goal_Number(kActorClovis, kGoalClovisKP07Wait);
 		Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieKP05Wait);
 		return true;
 
@@ -431,7 +431,7 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case 418:
 		Game_Flag_Reset(kFlagMcCoyIsHelpingReplicants);
-		Actor_Set_Goal_Number(kActorClovis, 518);
+		Actor_Set_Goal_Number(kActorClovis, kGoalClovisKP07LayDown);
 		Non_Player_Actor_Combat_Mode_On(kActorSadik, kActorCombatStateIdle, true, kActorMcCoy, 9, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, -1, -1, 15, 300, false);
 		return true;
 

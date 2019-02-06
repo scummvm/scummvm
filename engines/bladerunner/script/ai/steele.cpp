@@ -1279,7 +1279,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Global_Variable_Set(kVariableChapter, 4);
 		Scene_Exits_Enable();
 		Actor_Set_Health(kActorMcCoy, 50, 50);
-		Game_Flag_Set(523);
+		Game_Flag_Set(kFlagMutantsActive);
 		Game_Flag_Set(kFlagNR01toUG06);
 		Game_Flag_Set(kFlagChapter4Intro);
 		Chapter_Enter(4, kSetUG06, kSceneUG06);
@@ -1289,7 +1289,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Game_Flag_Set(kFlagChapter4Starting);
 		Global_Variable_Set(kVariableChapter, 4);
 		Scene_Exits_Enable();
-		Game_Flag_Set(523);
+		Game_Flag_Set(kFlagMutantsActive);
 		Game_Flag_Set(kFlagChapter4Intro);
 		Chapter_Enter(4, kSetUG06, kSceneUG06);
 		return true;

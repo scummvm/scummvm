@@ -56,21 +56,25 @@ bool AIScriptMutant1::Update() {
 
 	switch (Actor_Query_Goal_Number(kActorMutant1)) {
 	case 400:
-		if (!Game_Flag_Query(523) && Game_Flag_Query(524) == 1) {
+		if (!Game_Flag_Query(kFlagMutantsActive)
+		 &&  Game_Flag_Query(kFlagUG06Chapter4Started)
+		) {
 			Actor_Set_Goal_Number(kActorMutant1, 401);
 			Actor_Set_Goal_Number(kActorMutant2, 401);
 			Actor_Set_Goal_Number(kActorMutant3, 401);
 			Actor_Set_Targetable(kActorMutant1, 1);
 			Actor_Set_Targetable(kActorMutant2, 1);
 			Actor_Set_Targetable(kActorMutant3, 1);
-			Game_Flag_Set(523);
+			Game_Flag_Set(kFlagMutantsActive);
 		}
 		break;
 
 	case 401:
 		if (Actor_Query_Which_Set_In(kActorMutant1) == Player_Query_Current_Set()
-				&& (Actor_Query_Friendliness_To_Other(kActorMutant1, kActorMcCoy) < 30
-				|| Actor_Query_Combat_Aggressiveness(70) >= 60)) {
+		 && (Actor_Query_Friendliness_To_Other(kActorMutant1, kActorMcCoy) < 30
+		  || Actor_Query_Combat_Aggressiveness(kActorMutant1) >= 60
+		 )
+		) {
 			Actor_Set_Goal_Number(kActorMutant1, 410);
 		}
 		break;

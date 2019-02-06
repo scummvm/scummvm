@@ -85,7 +85,7 @@ void SceneScriptKP07::InitializeScene() {
 	Ambient_Sounds_Add_Looping_Sound(586, 52, 1, 1);
 	Ambient_Sounds_Add_Looping_Sound(109, 38, 1, 1);
 
-	if (Game_Flag_Query(582)) {
+	if (Game_Flag_Query(kFlagKP07BusActive)) {
 		Scene_Loop_Set_Default(2);
 	} else {
 		Scene_Loop_Set_Default(0);
@@ -114,20 +114,25 @@ bool SceneScriptKP07::ClickedOn3DObject(const char *objectName, bool a2) {
 
 bool SceneScriptKP07::ClickedOnActor(int actorId) {
 	if (actorId == kActorClovis) {
-		if (Game_Flag_Query(697) || actorId != kActorClovis || Actor_Query_Goal_Number(kActorClovis) == 599 || Actor_Query_Goal_Number(kActorClovis) == 515) {
-			return false;
-		}
-		if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
-			Actor_Set_Goal_Number(kActorClovis, 516);
-		} else {
-			Music_Play(20, 31, 0, 0, -1, 1, 0);
-			Actor_Set_Goal_Number(kActorClovis, 514);
+		if (!Game_Flag_Query(kFlagKP07McCoyPulledGun)
+		 &&  Actor_Query_Goal_Number(kActorClovis) != kGoalClovisGone
+		 &&  Actor_Query_Goal_Number(kActorClovis) != kGoalClovisKP07SayFinalWords
+		) {
+			if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
+				Actor_Set_Goal_Number(kActorClovis, kGoalClovisKP07FlyAway);
+			} else {
+				Music_Play(20, 31, 0, 0, -1, 1, 0);
+				Actor_Set_Goal_Number(kActorClovis, kGoalClovisKP07TalkToMcCoy);
+			}
+			return true;
 		}
 	} else {
 		Actor_Face_Actor(kActorMcCoy, actorId, true);
 		Actor_Says(kActorMcCoy, 8590, 14);
+		return true;
 	}
-	return true;
+
+	return false;
 }
 
 bool SceneScriptKP07::ClickedOnItem(int itemId, bool a2) {
@@ -159,7 +164,7 @@ void SceneScriptKP07::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptKP07::PlayerWalkedIn() {
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 9.0f, -41.88f, -81.0f, 0, 0, false, 0);
-	if (!Game_Flag_Query(658)) {
+	if (!Game_Flag_Query(kFlagKP07Entered)) {
 		if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
 			Actor_Face_Actor(kActorMcCoy, kActorClovis, true);
 			Actor_Says(kActorClovis, 1240, 3);
@@ -176,7 +181,7 @@ void SceneScriptKP07::PlayerWalkedIn() {
 			Actor_Says(kActorClovis, 160, 3);
 			Actor_Retired_Here(kActorClovis, 72, 60, 0, -1);
 		}
-		Game_Flag_Set(658);
+		Game_Flag_Set(kFlagKP07Entered);
 	}
 }
 
@@ -185,11 +190,11 @@ void SceneScriptKP07::PlayerWalkedOut() {
 }
 
 void SceneScriptKP07::DialogueQueueFlushed(int a1) {
-	if (Actor_Query_Goal_Number(kActorClovis) == 515) {
+	if (Actor_Query_Goal_Number(kActorClovis) == kGoalClovisKP07SayFinalWords) {
 		Actor_Set_Targetable(kActorClovis, false);
-		Actor_Change_Animation_Mode(kActorClovis, 21);
-		Actor_Retired_Here(kActorClovis, 12, 48, 1, -1);
-		Actor_Set_Goal_Number(kActorClovis, 599);
+		Actor_Change_Animation_Mode(kActorClovis, kAnimationModeHit);
+		Actor_Retired_Here(kActorClovis, 12, 48, true, -1);
+		Actor_Set_Goal_Number(kActorClovis, kGoalClovisGone);
 	}
 }
 

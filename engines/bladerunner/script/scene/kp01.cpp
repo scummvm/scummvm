@@ -164,7 +164,7 @@ void SceneScriptKP01::PlayerWalkedIn() {
 
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 211.0f, -12.2f, -146.0f, 0, false, false, 0);
 	if (!Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
-	 && !Game_Flag_Query(714)
+	 && !Game_Flag_Query(kFlagMcCoyAttackedReplicants)
 	 &&  Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleKP01Wait
 	 &&  Actor_Query_Goal_Number(kActorSteele) != kGoalSteeleGone
 	) {

@@ -960,7 +960,7 @@ enum Flags {
 	kFlagTB06DogCollarTaken = 519,
 	kFlagTB06KitchenBoxTaken = 520,
 	kFlagHC03TrapDoorOpened = 521,
-
+	kFlagMutantsActive = 523,
 	kFlagUG06Chapter4Started = 524,
 	kFlagCT10Entered = 525,
 	// 526 is never used
@@ -1019,6 +1019,7 @@ enum Flags {
 	kFlagKP07toKP06 = 579,
 	// 580 is never used
 	// 581 is never used
+	kFlagKP07BusActive = 582, // is never set
 	// 583 is never used
 	kFlagHF04DoorsClosed = 584,
 	kFlagHF04CloseDoors = 585,
@@ -1093,7 +1094,8 @@ enum Flags {
 	kFlagMA02Chapter5Started = 654,
 	kFlagMA02RajifTalk = 655,
 	kFlagUG02RagiationGooglesTaken = 656,
-
+	kFlagNotUsed657 = 657, // is never set
+	kFlagKP07Entered = 658,
 	kFlagNR11BreakWindow = 659,
 	kFlagDNARowAvailableTalk = 660,
 	kFlagTB07ShadeDown = 661, // is never set
@@ -1116,7 +1118,7 @@ enum Flags {
 	kFlagChapter4Intro = 680,
 	// 681 is never used
 	kFlagUG15BridgeBroken = 682,
-
+	kFlagClovisLyingDown = 685,
 	kFlagNotUsed686 = 686,
 	// 687 is never used
 	kFlagPS05TV0 = 688,
@@ -1127,7 +1129,8 @@ enum Flags {
 	kFlagUG03DeadHomeless = 693,
 	kFlagUG14DeadHomeless = 694,
 	// 695 is never used
-
+	kFlagKP07ReplicantsAttackMcCoy = 696,
+	kFlagKP07McCoyPulledGun = 697,
 	kFlagUG15LanceLuthorTrade = 698,
 
 	// 700 is never used
@@ -1144,7 +1147,7 @@ enum Flags {
 	kFlagMA04WatchedTV = 711,
 	kFlagMcCoyShotAtZuben = 712,
 	kFlagDR04McCoyShotMoraji = 713,
-
+	kFlagMcCoyAttackedReplicants = 714,
 	kFlagDR06UnlockedToUG16 = 715,
 
 	kFlagRC04BobTalk3 = 717,
@@ -1629,7 +1632,7 @@ enum GameItems {
 	kItemDogWrapper = 115,
 	// 116 is never used
 	// 117 is never used
-
+	kItemPowerSource = 118,
 	kItemTyrellSalesPamphlet = 119,
 	kItemMoonbusPhoto = 120,
 	kItemGreenPawnLock = 121,
@@ -1945,14 +1948,28 @@ enum GoalClovis {
 	kGoalClovisBB11TalkWithSadik = 103,
 	kGoalClovisBB11PrepareTalkToMcCoy = 104, // bug? this is not triggered when player skips dialogue too fast
 	kGoalClovisBB11TalkToMcCoy = 105, // ends Chapter 2
+	// chapter 4
 	kGoalClovisUG18Wait = 300,
 	kGoalClovisUG18SadikWillShootGuzza = 301,
 	kGoalClovisUG18SadikIsShootingGuzza = 302,
 	kGoalClovisUG18GuzzaDied = 303,
 	kGoalClovisUG18Leave = 310,
+	kGoalClovisStartChapter3 = 350,
 	kGoalClovisStartChapter4 = 400,
 	kGoalClovisUG07ChaseMcCoy = 401,
-	kGoalClovisUG07KillMcCoy = 402
+	kGoalClovisUG07KillMcCoy = 402,
+	// chapter 5
+	kGoalClovisStartChapter5 = 500,
+	kGoalClovisDecide = 510,
+	kGoalClovisKP06Wait = 511, // this immediately reset to kGoalClovisKP07Wait by Sadik at start of chapter 5
+	kGoalClovisKP06TalkToMcCoy = 512, // never triggered
+	kGoalClovisKP07Wait = 513,
+	kGoalClovisKP07TalkToMcCoy = 514,
+	kGoalClovisKP07SayFinalWords = 515,
+	kGoalClovisKP07FlyAway = 516, // and game over
+	kGoalClovisKP07ReplicantsAttackMcCoy = 517,
+	kGoalClovisKP07LayDown = 518,
+	kGoalClovisGone = 599
 };
 
 enum GoalLucy {
