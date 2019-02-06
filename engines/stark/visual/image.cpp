@@ -82,6 +82,11 @@ bool VisualImageXMG::loadPNG(Common::SeekableReadStream *stream) {
 		return false;
 	}
 
+	if (pngDecoder.getPalette()) {
+		warning("Indexed colors PNG images are not supported");
+		return false;
+	}
+
 	if (StarkSettings->shouldPreMultiplyReplacementPNGs()) {
 		// We can do alpha pre-multiplication when loading for
 		// convenience when testing modded graphics.
