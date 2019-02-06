@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-12-19 07:31+0100\n"
+"POT-Creation-Date: 2019-02-06 20:18+0100\n"
 "PO-Revision-Date: 2018-12-17 23:07+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -692,7 +692,7 @@ msgstr "Filtre :"
 
 #: gui/launcher.cpp:201 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
 #: engines/mohawk/dialogs.cpp:162 engines/mohawk/myst.cpp:942
-#: engines/mohawk/riven.cpp:662 engines/pegasus/pegasus.cpp:355
+#: engines/mohawk/riven.cpp:673 engines/pegasus/pegasus.cpp:355
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load game:"
 msgstr "Charger le jeu :"
@@ -701,7 +701,7 @@ msgstr "Charger le jeu :"
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 #: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:162
-#: engines/mohawk/myst.cpp:942 engines/mohawk/riven.cpp:662
+#: engines/mohawk/myst.cpp:942 engines/mohawk/riven.cpp:673
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
 #: engines/scumm/dialogs.cpp:185 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:748
@@ -1920,10 +1920,10 @@ msgstr "Retour au ~L~anceur"
 #: engines/cge2/events.cpp:64 engines/cine/various.cpp:348
 #: engines/cruise/menu.cpp:212 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
-#: engines/glk/streams.cpp:1485 engines/gnap/menu.cpp:464
+#: engines/glk/streams.cpp:1481 engines/gnap/menu.cpp:464
 #: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
 #: engines/mohawk/dialogs.cpp:163 engines/mohawk/myst.cpp:954
-#: engines/mohawk/riven.cpp:674 engines/neverhood/menumodule.cpp:880
+#: engines/mohawk/riven.cpp:685 engines/neverhood/menumodule.cpp:880
 #: engines/pegasus/pegasus.cpp:379 engines/sci/engine/guest_additions.cpp:675
 #: engines/sci/engine/kfile.cpp:1054 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:42
@@ -1942,10 +1942,10 @@ msgstr "Sauvegarde :"
 #: engines/cge/events.cpp:72 engines/cge2/events.cpp:64
 #: engines/cine/various.cpp:348 engines/cruise/menu.cpp:212
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
-#: engines/dreamweb/saveload.cpp:262 engines/glk/streams.cpp:1485
+#: engines/dreamweb/saveload.cpp:262 engines/glk/streams.cpp:1481
 #: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
 #: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:163
-#: engines/mohawk/myst.cpp:954 engines/mohawk/riven.cpp:674
+#: engines/mohawk/myst.cpp:954 engines/mohawk/riven.cpp:685
 #: engines/neverhood/menumodule.cpp:880 engines/parallaction/saveload.cpp:209
 #: engines/pegasus/pegasus.cpp:379 engines/sci/engine/guest_additions.cpp:676
 #: engines/sci/engine/kfile.cpp:1054 engines/scumm/dialogs.cpp:184
@@ -2965,7 +2965,7 @@ msgstr "Recherche des mises à jour..."
 #: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:966
 #: engines/hugo/hugo.cpp:437 engines/lure/lure.cpp:64
 #: engines/mortevielle/mortevielle.cpp:306 engines/sky/compact.cpp:131
-#: engines/supernova/supernova.cpp:175 engines/teenagent/resources.cpp:97
+#: engines/supernova/supernova.cpp:178 engines/teenagent/resources.cpp:97
 #: engines/tony/tony.cpp:198 engines/toon/toon.cpp:4926
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
@@ -2973,7 +2973,7 @@ msgstr "Le fichier de données '%s' n'a pu être trouvé."
 
 #: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:980
 #: engines/hugo/hugo.cpp:448 engines/lure/lure.cpp:73
-#: engines/mortevielle/mortevielle.cpp:314 engines/supernova/supernova.cpp:184
+#: engines/mortevielle/mortevielle.cpp:314 engines/supernova/supernova.cpp:187
 #: engines/tony/tony.cpp:210 engines/toon/toon.cpp:4938
 #, c-format
 msgid "The '%s' engine data file is corrupt."
@@ -3073,7 +3073,7 @@ msgstr ""
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:75
 #: engines/cine/various.cpp:359 engines/dm/dm.cpp:276
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
-#: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1494
+#: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1490
 #: engines/gnap/menu.cpp:473 engines/hugo/file.cpp:400
 #: engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:893
@@ -3089,7 +3089,7 @@ msgstr "Charger le jeu :"
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:75
 #: engines/cine/various.cpp:359 engines/dm/dm.cpp:276
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:396
-#: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1494
+#: engines/dreamweb/saveload.cpp:170 engines/glk/streams.cpp:1490
 #: engines/gnap/menu.cpp:473 engines/hugo/file.cpp:400
 #: engines/mads/nebular/dialogs_nebular.cpp:377
 #: engines/neverhood/menumodule.cpp:893
@@ -3388,23 +3388,23 @@ msgstr "Vous n'avez pas le pouvoir de faire ça.\n"
 msgid "It's beyond my power to do that.\n"
 msgstr "Je n'ai pas le pouvoir de faire ça.\n"
 
-#: engines/glk/frotz/detection.cpp:154
+#: engines/glk/frotz/detection.cpp:166
 msgid "Unnamed savegame"
 msgstr "Sauvegarde sans nom"
 
-#: engines/glk/glulxe/glulxe.cpp:55
+#: engines/glk/glulxe/glulxe.cpp:53
 msgid "This is too short to be a valid Glulx file."
 msgstr "C'est trop court pour être un fichier Glulx valide."
 
-#: engines/glk/glulxe/glulxe.cpp:60
+#: engines/glk/glulxe/glulxe.cpp:58
 msgid "This is not a valid Glulx file."
 msgstr "Ce n'est pas un fichier Glulx valide."
 
-#: engines/glk/glulxe/glulxe.cpp:67
+#: engines/glk/glulxe/glulxe.cpp:65
 msgid "This Glulx file is too old a version to execute."
 msgstr "Ce fichier Glulx est une version trop ancienne pour être exécutée."
 
-#: engines/glk/glulxe/glulxe.cpp:71
+#: engines/glk/glulxe/glulxe.cpp:69
 msgid "This Glulx file is too new a version to execute."
 msgstr "Ce fichier Glulx est une version trop récente pour être exécutée."
 
@@ -3500,69 +3500,78 @@ msgstr "Barres HP"
 msgid "Enable hit point bar graphs"
 msgstr "Activer les barres de santé (Hit Point)"
 
-#: engines/kyra/eobcommon.cpp:342 engines/kyra/lol.cpp:481
+#. I18N: L/R stands for Left/Right
+#: engines/kyra/detection.cpp:138
+msgid "Fight Button L/R Swap"
+msgstr ""
+
+#: engines/kyra/detection.cpp:139
+msgid "Left button to attack, right button to pick up items"
+msgstr ""
+
+#: engines/kyra/eobcommon.cpp:343 engines/kyra/lol.cpp:481
 msgid "Move Forward"
 msgstr "Avancer"
 
-#: engines/kyra/eobcommon.cpp:343 engines/kyra/lol.cpp:482
+#: engines/kyra/eobcommon.cpp:344 engines/kyra/lol.cpp:482
 msgid "Move Back"
 msgstr "Reculer"
 
-#: engines/kyra/eobcommon.cpp:344
+#: engines/kyra/eobcommon.cpp:345
 msgid "Move Left"
 msgstr "Aller vers la Gauche"
 
-#: engines/kyra/eobcommon.cpp:345
+#: engines/kyra/eobcommon.cpp:346
 msgid "Move Right"
 msgstr "Aller vers la Droite"
 
-#: engines/kyra/eobcommon.cpp:346 engines/kyra/lol.cpp:485
+#: engines/kyra/eobcommon.cpp:347 engines/kyra/lol.cpp:485
 #: engines/pegasus/pegasus.cpp:2514
 msgid "Turn Left"
 msgstr "Tourner vers la Gauche"
 
-#: engines/kyra/eobcommon.cpp:347 engines/kyra/lol.cpp:486
+#: engines/kyra/eobcommon.cpp:348 engines/kyra/lol.cpp:486
 #: engines/pegasus/pegasus.cpp:2515
 msgid "Turn Right"
 msgstr "Tourner vers la Droite"
 
-#: engines/kyra/eobcommon.cpp:348
+#: engines/kyra/eobcommon.cpp:349
 msgid "Open/Close Inventory"
 msgstr "Ouvrir/fermer l'inventaire"
 
-#: engines/kyra/eobcommon.cpp:349
+#: engines/kyra/eobcommon.cpp:350
 msgid "Switch Inventory/Character screen"
 msgstr "Inventaire/Écran de personnage"
 
-#: engines/kyra/eobcommon.cpp:350
+#: engines/kyra/eobcommon.cpp:351
 msgid "Camp"
 msgstr "Campement"
 
-#: engines/kyra/eobcommon.cpp:351
+#: engines/kyra/eobcommon.cpp:352
 msgid "Cast Spell"
 msgstr "Lancer un Sort"
 
-#: engines/kyra/eobcommon.cpp:354
+#: engines/kyra/eobcommon.cpp:355
 msgid "Spell Level 1"
 msgstr "Sort Niveau 1"
 
-#: engines/kyra/eobcommon.cpp:355
+#: engines/kyra/eobcommon.cpp:356
 msgid "Spell Level 2"
 msgstr "Sort Niveau 2"
 
-#: engines/kyra/eobcommon.cpp:356
+#: engines/kyra/eobcommon.cpp:357
 msgid "Spell Level 3"
 msgstr "Sort Niveau 3"
 
-#: engines/kyra/eobcommon.cpp:357
+#: engines/kyra/eobcommon.cpp:358
 msgid "Spell Level 4"
 msgstr "Sort Niveau 4"
 
-#: engines/kyra/eobcommon.cpp:358
+#: engines/kyra/eobcommon.cpp:359
 msgid "Spell Level 5"
 msgstr "Sort Niveau 5"
 
-#: engines/kyra/eobcommon.cpp:367
+#: engines/kyra/eobcommon.cpp:368
 msgid "Spell Level 6"
 msgstr "Sort Niveau 6"
 
@@ -4960,7 +4969,7 @@ msgstr "Intro disquette"
 msgid "Use the floppy version's intro (CD version only)"
 msgstr "Utiliser l'intro de la version disquette (version CD uniquement)"
 
-#: engines/supernova/supernova.cpp:191
+#: engines/supernova/supernova.cpp:194
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
@@ -4968,7 +4977,7 @@ msgstr ""
 "La bonne version du fichier de données '%s' n'a pu être trouvée. Version "
 "attendue : %d ; version trouvée : %d."
 
-#: engines/supernova/supernova.cpp:217
+#: engines/supernova/supernova.cpp:220
 #, c-format
 msgid "Unable to locate the text for %s language in '%s' engine data file."
 msgstr ""
