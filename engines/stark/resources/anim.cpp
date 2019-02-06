@@ -117,11 +117,11 @@ bool Anim::isAtTime(uint32 time) const {
 }
 
 void Anim::shouldResetItem(bool resetItem) {
-	warning("Anim::shouldResetItem is not implemented");
+	// Script animations don't keep track of the item
 }
 
 void Anim::resetItem() {
-	warning("Anim::resetItem is not implemented");
+	// Script animations don't keep track of the item
 }
 
 bool Anim::isDone() const {
