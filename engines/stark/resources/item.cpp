@@ -135,7 +135,7 @@ void Item::setMovement(Movement *movement) {
 	}
 
 	if (_movement && !_movement->hasEnded()) {
-		_movement->stop();
+		_movement->stop(true);
 	}
 
 	delete _movement;

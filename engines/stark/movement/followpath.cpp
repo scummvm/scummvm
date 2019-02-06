@@ -55,8 +55,8 @@ void FollowPath::start() {
 	changeItemAnim();
 }
 
-void FollowPath::stop() {
-	Movement::stop();
+void FollowPath::stop(bool force) {
+	Movement::stop(force);
 
 	changeItemAnim();
 	_item->setEnabled(_previouslyEnabled);

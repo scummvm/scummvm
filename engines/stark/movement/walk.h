@@ -25,6 +25,8 @@
 
 #include "engines/stark/movement/movement.h"
 
+#include "common/array.h"
+
 namespace Stark {
 
 class StringPullingPath;
@@ -44,7 +46,7 @@ public:
 
 	// Movement API
 	void start() override;
-	void stop() override;
+	void stop(bool force = false) override;
 	void onGameLoop() override;
 	bool hasReachedDestination() const override;
 	uint32 getType() const override;
@@ -52,6 +54,7 @@ public:
 
 	/** Set the destination */
 	void setDestination(const Math::Vector3d &destination);
+	void setDestinationWithoutHeight(Math::Vector3d destination);
 
 	/** Change the destination and recompute the path */
 	void changeDestination(const Math::Vector3d &destination);
@@ -62,6 +65,7 @@ public:
 private:
 	void doWalk();
 	void doWalkCollisionSimple();
+	void doWalkCollisionAvoid();
 
 	float computeDistancePerGameLoop() const;
 	float getAngularSpeed() const;
@@ -69,12 +73,18 @@ private:
 	void changeItemAnim();
 	void updatePath() const;
 
+	void queueDestinationToAvoidItem(Resources::FloorPositionedItem *item, const Math::Vector3d &destination);
+	bool isItemAlreadyAvoided(Resources::FloorPositionedItem *item) const;
+
 	static bool isPointNearPath(const Math::Vector3d &point3d, const Math::Vector3d &pathStart3d, const Math::Vector3d &pathEnd3d);
 
 	Resources::FloorPositionedItem *_item3D;
 	StringPullingPath *_path;
 
 	Math::Vector3d _destination;
+	Common::Array<Math::Vector3d> _destinations;
+
+	Common::Array<Resources::ItemVisual *> _avoidedItems;
 
 	bool _running;
 	bool _reachedDestination;
@@ -83,7 +93,7 @@ private:
 	int32 _collisionWaitTimeout;
 	int32 _collisionWaitCount;
 	Math::Vector3d _previousPosition;
-	Math::Vector3d _newPosition;
+	Math::Vector3d _currentTarget;
 };
 
 } // End of namespace Stark

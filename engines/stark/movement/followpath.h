@@ -45,7 +45,7 @@ public:
 	// Movement API
 	void start() override;
 	void onGameLoop() override;
-	void stop() override;
+	void stop(bool force = false) override;
 	uint32 getType() const override;
 	void saveLoad(ResourceSerializer *serializer) override;
 

@@ -56,8 +56,8 @@ void FollowPathLight::start() {
 	_light->setPosition(newPosition);
 }
 
-void FollowPathLight::stop() {
-	Movement::stop();
+void FollowPathLight::stop(bool force) {
+	Movement::stop(force);
 
 	_item->setEnabled(_previouslyEnabled);
 }

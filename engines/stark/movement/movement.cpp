@@ -61,7 +61,7 @@ void Movement::start() {
 	_ended = false;
 }
 
-void Movement::stop() {
+void Movement::stop(bool force) {
 	_ended = true;
 }
 

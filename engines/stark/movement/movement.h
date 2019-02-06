@@ -62,7 +62,7 @@ public:
 	/**
 	 * Stop / abort the movement
 	 */
-	virtual void stop();
+	virtual void stop(bool force = false);
 
 	/**
 	 * Called once per game loop
