@@ -105,9 +105,39 @@ struct JoystickState {
 	byte axis;
 	/** The new axis position for EVENT_JOYAXIS_MOTION events */
 	int16 position;
-	/** The button index for EVENT_JOYBUTTON_DOWN/UP events */
+	/**
+	 * The button index for EVENT_JOYBUTTON_DOWN/UP events
+	 *
+	 * Some of the button indices match well-known game controller
+	 * buttons. See JoystickButton.
+	 */
 	byte button;
 };
+
+/**
+ *  The list named buttons available from a joystick
+ */
+enum JoystickButton {
+	JOYSTICK_BUTTON_A,
+	JOYSTICK_BUTTON_B,
+	JOYSTICK_BUTTON_X,
+	JOYSTICK_BUTTON_Y,
+	JOYSTICK_BUTTON_BACK,
+	JOYSTICK_BUTTON_GUIDE,
+	JOYSTICK_BUTTON_START,
+	JOYSTICK_BUTTON_LEFT_STICK,
+	JOYSTICK_BUTTON_RIGHT_STICK,
+	JOYSTICK_BUTTON_LEFT_SHOULDER,
+	JOYSTICK_BUTTON_RIGHT_SHOULDER,
+	JOYSTICK_BUTTON_DPAD_UP,
+	JOYSTICK_BUTTON_DPAD_DOWN,
+	JOYSTICK_BUTTON_DPAD_LEFT,
+	JOYSTICK_BUTTON_DPAD_RIGHT,
+	// Left and right trigger button events are generated in place of the axis events for now
+	JOYSTICK_BUTTON_LEFT_TRIGGER,
+	JOYSTICK_BUTTON_RIGHT_TRIGGER
+};
+
 /* END of ResidualVM-specific code */
 
 typedef uint32 CustomEventType;
