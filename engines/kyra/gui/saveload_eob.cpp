@@ -1031,7 +1031,7 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 	Common::OutSaveFile *out = new Common::OutSaveFile(nf.createWriteStream());
 
 	if (_flags.gameID == GI_EOB2) {
-		static const char tempStr[31] = "SCUMMVM EXPORT     ";
+		static const char tempStr[31] = "SCUMMVM EXPORT\0";
 		out->write(tempStr, (_flags.platform == Common::kPlatformFMTowns) ? 30 : 20);
 	}
 
