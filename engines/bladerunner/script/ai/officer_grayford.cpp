@@ -85,7 +85,7 @@ bool AIScriptOfficerGrayford::Update() {
 		return false;
 	}
 
-	if (Game_Flag_Query(kFlagUnpaseGenWalkers)) {
+	if (Game_Flag_Query(kFlagUnpauseGenWalkers)) {
 		AI_Movement_Track_Unpause(kActorGenwalkerA);
 		AI_Movement_Track_Unpause(kActorGenwalkerB);
 		AI_Movement_Track_Unpause(kActorGenwalkerC);

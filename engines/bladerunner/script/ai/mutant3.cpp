@@ -46,22 +46,18 @@ void AIScriptMutant3::Initialize() {
 bool AIScriptMutant3::Update() {
 	if (Global_Variable_Query(kVariableChapter) == 4) {
 		switch (Actor_Query_Goal_Number(kActorMutant3)) {
-		case 599:
-			if (Actor_Query_Which_Set_In(kActorMutant3) != Player_Query_Current_Set()) {
-				Actor_Set_Goal_Number(kActorMutant3, 403);
-			}
-			break;
-
 		case 401:
 			if (Actor_Query_Which_Set_In(kActorMutant3) == Player_Query_Current_Set()
-					&& (Actor_Query_Friendliness_To_Other(kActorMutant3, kActorMcCoy) < 40
-					|| Actor_Query_Combat_Aggressiveness(kActorMutant3) >= 60)) {
+			 && (Actor_Query_Friendliness_To_Other(kActorMutant3, kActorMcCoy) < 40
+			  || Actor_Query_Combat_Aggressiveness(kActorMutant3) >= 60
+			 )
+			) {
 				Actor_Set_Goal_Number(kActorMutant3, 410);
 			}
 			break;
 
 		case 404:
-			if (!Game_Flag_Query(630)) {
+			if (!Game_Flag_Query(kFlagMutantsPaused)) {
 				Actor_Set_Goal_Number(kActorMutant3, 401);
 			}
 			break;
@@ -72,12 +68,22 @@ bool AIScriptMutant3::Update() {
 				Actor_Set_Goal_Number(kActorMutant3, 403);
 			}
 			break;
+
+		case 599:
+			if (Actor_Query_Which_Set_In(kActorMutant3) != Player_Query_Current_Set()) {
+				Actor_Set_Goal_Number(kActorMutant3, 403);
+			}
+			break;
 		}
 
-		if (Game_Flag_Query(630) == 1 && Actor_Query_Goal_Number(kActorMutant3) != 599) {
+		if (Game_Flag_Query(kFlagMutantsPaused)
+		 && Actor_Query_Goal_Number(kActorMutant3) != 599
+		) {
 			Actor_Set_Goal_Number(kActorMutant3, 404);
 		}
-	} else if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_Goal_Number(kActorMutant3) != 590) {
+	} else if (Global_Variable_Query(kVariableChapter) == 5
+	        && Actor_Query_Goal_Number(kActorMutant3) != 590
+	) {
 		if (Actor_Query_Which_Set_In(kActorMutant3) != Player_Query_Current_Set()) {
 			Actor_Set_Goal_Number(kActorMutant3, 590);
 		}
@@ -122,15 +128,20 @@ void AIScriptMutant3::OtherAgentExitedThisScene(int otherActorId) {
 }
 
 void AIScriptMutant3::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
-	if (Actor_Query_Which_Set_In(kActorMutant3) == Player_Query_Current_Set() && Actor_Query_Goal_Number(kActorMutant3) != 599) {
-		if (otherActorId != kActorMcCoy) {
-			if (otherActorId > 72 || (otherActorId != kActorFreeSlotA && otherActorId != kActorMutant1 && otherActorId != kActorMutant2)) {
-				Actor_Modify_Combat_Aggressiveness(kActorMutant3, -10);
+	if (Actor_Query_Which_Set_In(kActorMutant3) == Player_Query_Current_Set()
+	 && Actor_Query_Goal_Number(kActorMutant3) != 599
+	) {
+		if (otherActorId == kActorMcCoy) {
+			if (combatMode) {
+				Actor_Modify_Combat_Aggressiveness(kActorMutant3, 10);
 			} else {
-				Actor_Modify_Combat_Aggressiveness(kActorMutant3, 5);
+				Actor_Modify_Combat_Aggressiveness(kActorMutant3, -10);
 			}
-		} else if (combatMode) {
-			Actor_Modify_Combat_Aggressiveness(kActorMutant3, 10);
+		} else if (otherActorId == kActorFreeSlotA
+		        || otherActorId == kActorMutant1
+		        || otherActorId == kActorMutant2
+		) {
+			Actor_Modify_Combat_Aggressiveness(kActorMutant3, 5);
 		} else {
 			Actor_Modify_Combat_Aggressiveness(kActorMutant3, -10);
 		}
@@ -182,7 +193,7 @@ bool AIScriptMutant3::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		break;
 
 	case 401:
-		Actor_Set_Targetable(kActorMutant3, 1);
+		Actor_Set_Targetable(kActorMutant3, true);
 		AI_Movement_Track_Flush(kActorMutant3);
 		AI_Movement_Track_Append(kActorMutant3, 39, 0);
 
@@ -303,7 +314,7 @@ bool AIScriptMutant3::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		break;
 
 	case 403:
-		Actor_Set_Targetable(kActorMutant3, 0);
+		Actor_Set_Targetable(kActorMutant3, false);
 		Actor_Set_Goal_Number(kActorMutant3, 401);
 		break;
 

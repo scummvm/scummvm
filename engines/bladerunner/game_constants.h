@@ -1066,8 +1066,8 @@ enum Flags {
 	// 626 is never used
 	kFlagNR01McCoyIsDrugged = 627,
 	// 628 is never used
-	kFlagUnpaseGenWalkers = 629,
-
+	kFlagUnpauseGenWalkers = 629,
+	kFlagMutantsPaused = 630,
 	kFlagRatWalkingAround = 631,
 	kFlagNR01DektoraFall = 632,
 	kFlagNR11DektoraBurning = 633,

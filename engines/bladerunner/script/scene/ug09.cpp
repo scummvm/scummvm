@@ -138,15 +138,13 @@ void SceneScriptUG09::PlayerWalkedIn() {
 	if (Global_Variable_Query(kVariableChapter) == 4
 	 && Game_Flag_Query(kFlagUG07Empty)
 	) {
-		Game_Flag_Set(630);
+		Game_Flag_Set(kFlagMutantsPaused);
 	}
 }
 
 void SceneScriptUG09::PlayerWalkedOut() {
-	if (Global_Variable_Query(kVariableChapter) == 4
-	 && Global_Variable_Query(kVariableChapter) != 5
-	) {
-		Game_Flag_Reset(630);
+	if (Global_Variable_Query(kVariableChapter) == 4) {
+		Game_Flag_Reset(kFlagMutantsPaused);
 	}
 
 	if (Game_Flag_Query(kFlagUG09toCT12)) {
