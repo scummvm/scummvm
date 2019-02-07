@@ -81,6 +81,7 @@ private:
 	void onScreenChanged() const;
 	void addModsToSearchPath() const;
 	static void checkRecommendedDatafiles();
+	void tryAutoSaving();
 
 	Gfx::FrameLimiter *_frameLimiter;
 	Console *_console;
@@ -90,6 +91,8 @@ private:
 	// Double click handling
 	static const uint _doubleClickDelay = 500; // ms
 	uint _lastClickTime;
+
+	uint32 _lastAutoSaveTime;
 };
 
 } // End of namespace Stark

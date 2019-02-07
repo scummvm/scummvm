@@ -60,10 +60,11 @@ namespace Stark {
 
 StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		Engine(syst),
-		_gameDescription(gameDesc),
 		_frameLimiter(nullptr),
 		_console(nullptr),
-		_lastClickTime(0) {
+		_gameDescription(gameDesc),
+		_lastClickTime(0),
+		_lastAutoSaveTime(0) {
 	// Add the available debug channels
 	DebugMan.addDebugChannel(kDebugArchive, "Archive", "Debug the archive loading");
 	DebugMan.addDebugChannel(kDebugXMG, "XMG", "Debug the loading of XMG images");
@@ -102,6 +103,7 @@ StarkEngine::~StarkEngine() {
 Common::Error StarkEngine::run() {
 	_console = new Console();
 	_frameLimiter = new Gfx::FrameLimiter(_system, ConfMan.getInt("engine_speed"));
+	_lastAutoSaveTime = _system->getMillis();
 
 	// Get the screen prepared
 	Gfx::Driver *gfx = Gfx::Driver::create();
@@ -161,6 +163,10 @@ void StarkEngine::mainLoop() {
 		if (StarkUserInterface->shouldExit()) {
 			quitGame();
 			break;
+		}
+
+		if (shouldPerformAutoSave(_lastAutoSaveTime)) {
+			tryAutoSaving();
 		}
 
 		if (StarkResourceProvider->hasLocationChangeRequest()) {
@@ -411,7 +417,7 @@ Common::Error StarkEngine::loadGameState(int slot) {
 bool StarkEngine::canSaveGameStateCurrently() {
 	// Disallow saving when there is no level loaded or when a script is running
 	// or when the save & load menu is currently displayed
-	return StarkGlobal->getLevel() && StarkUserInterface->isInteractive() && !StarkUserInterface->isInSaveLoadMenuScreen();
+	return StarkGlobal->getLevel() && StarkGlobal->getCurrent() && StarkUserInterface->isInteractive() && !StarkUserInterface->isInSaveLoadMenuScreen();
 }
 
 Common::Error StarkEngine::saveGameState(int slot, const Common::String &desc) {
@@ -457,6 +463,29 @@ Common::Error StarkEngine::saveGameState(int slot, const Common::String &desc) {
 
 Common::String StarkEngine::formatSaveName(const char *target, int slot) {
 	return Common::String::format("%s-%03d.tlj", target, slot);
+}
+
+void StarkEngine::tryAutoSaving() {
+	if (!canSaveGameStateCurrently()) {
+		return; // Can't save right now, try again on the next frame
+	}
+
+	_lastAutoSaveTime = _system->getMillis();
+
+	// Get a thumbnail of the game screen if we don't have one already
+	bool reuseThumbnail = StarkUserInterface->getGameWindowThumbnail() != nullptr;
+	if (!reuseThumbnail) {
+		StarkUserInterface->saveGameScreenThumbnail();
+	}
+
+	Common::Error result = saveGameState(0, "Autosave");
+	if (result.getCode() != Common::kNoError) {
+		warning("Unable to autosave: %s.", result.getDesc().c_str());
+	}
+
+	if (!reuseThumbnail) {
+		StarkUserInterface->freeGameScreenThumbnail();
+	}
 }
 
 void StarkEngine::pauseEngineIntern(bool pause) {
