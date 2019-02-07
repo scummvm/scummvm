@@ -88,8 +88,6 @@ bool Set::open(const Common::String &name) {
 		_objects[i].unknown1 = 0;
 		_objects[i].isTarget = 0;
 		s->skip(4);
-
-		// debug("OBJECT: %s [%d%d%d%d]", _objects[i]._name, _objects[i]._isObstacle, _objects[i]._isClickable, _objects[i]._isHotMouse, _objects[i]._isTarget);
 	}
 
 	_walkboxCount = s->readUint32LE();
@@ -112,8 +110,6 @@ bool Set::open(const Common::String &name) {
 
 			_walkboxes[i].vertices[j] = Vector3(x, _walkboxes[i].altitude, z);
 		}
-
-		// debug("WALKBOX: %s", _walkboxes[i]._name);
 	}
 
 	_vm->_lights->reset();
@@ -220,7 +216,7 @@ int Set::findObject(const Common::String &objectName) const {
 		}
 	}
 
-	debug("Set::findObject didn't find \"%s\"", objectName.c_str());
+	warning("Set::findObject didn't find \"%s\"", objectName.c_str());
 
 	return -1;
 }

@@ -46,13 +46,13 @@ Shape::~Shape() {
 bool Shape::open(const Common::String &container, int index) {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->getResourceStream(container));
 	if (!stream) {
-		debug("Shape::open failed to open '%s'", container.c_str());
+		warning("Shape::open failed to open '%s'", container.c_str());
 		return false;
 	}
 
 	uint32 count = stream->readUint32LE();
 	if (index < 0 || (uint32)index >= count) {
-		debug("Shape::open invalid index %d (count %u)", index, count);
+		warning("Shape::open invalid index %d (count %u)", index, count);
 		return false;
 	}
 
@@ -63,7 +63,7 @@ bool Shape::open(const Common::String &container, int index) {
 		size   = stream->readUint32LE();
 
 		if (size != width * height * 2) {
-			debug("Shape::open size mismatch (w %d, h %d, sz %d)", width, height, size);
+			warning("Shape::open size mismatch (w %d, h %d, sz %d)", width, height, size);
 			return false;
 		}
 
@@ -82,7 +82,7 @@ bool Shape::open(const Common::String &container, int index) {
 	_data   = new byte[size];
 
 	if (stream->read(_data, size) != size) {
-		debug("Shape::open error reading shape %d (w %d, h %d, sz %d)", index, width, height, size);
+		warning("Shape::open error reading shape %d (w %d, h %d, sz %d)", index, width, height, size);
 		return false;
 	}
 
@@ -90,23 +90,14 @@ bool Shape::open(const Common::String &container, int index) {
 }
 
 void Shape::draw(Graphics::Surface &surface, int x, int y) const {
-	// debug("x=%d, y=%d", x, y);
-	// debug("w=%d, h=%d", _width, _height);
-
 	int src_x = CLIP(-x, 0, _width);
 	int src_y = CLIP(-y, 0, _height);
-
-	// debug("src_x=%d, src_y=%d", src_x, src_y);
 
 	int dst_x = CLIP<int>(x, 0, surface.w);
 	int dst_y = CLIP<int>(y, 0, surface.h);
 
-	// debug("dst_x=%d, dst_y=%d", dst_x, dst_y);
-
 	int rect_w = MIN(CLIP(_width + x, 0, _width), surface.w - x);
 	int rect_h = MIN(CLIP(_height + y, 0, _height), surface.h - y);
-
-	// debug("rect_w=%d, rect_h=%d", rect_w, rect_h);
 
 	if (rect_w == 0 || rect_h == 0) {
 		return;

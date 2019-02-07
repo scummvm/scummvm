@@ -52,20 +52,12 @@ void GameFlags::setFlagCount(int count) {
 }
 
 void GameFlags::set(int flag) {
-#if BLADERUNNER_DEBUG_CONSOLE
-	debug("GameFlags::set(%d)", flag);
-#endif
-
 	assert(flag >= 0 && flag <= _flagCount);
 
 	_flags[flag / 32] |= (1 << (flag % 32));
 }
 
 void GameFlags::reset(int flag) {
-#if BLADERUNNER_DEBUG_CONSOLE
-	debug("GameFlags::reset(%d)", flag);
-#endif
-
 	assert(flag >= 0 && flag <= _flagCount);
 
 	_flags[flag / 32] &= ~(1 << (flag % 32));

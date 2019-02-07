@@ -278,8 +278,6 @@ int AudioPlayer::playAud(const Common::String &name, int volume, int panFrom, in
 		actualVolume = _sfxVolume * volume / 100;
 	}
 
-	// debug("PlayStream: %s", name.c_str());
-
 	int channel = _vm->_audioMixer->play(
 		Audio::Mixer::kPlainSoundType,
 		audioStream,

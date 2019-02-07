@@ -40,7 +40,7 @@ Image::~Image() {
 bool Image::open(const Common::String &name) {
 	Common::SeekableReadStream *stream = _vm->getResourceStream(name);
 	if (!stream) {
-		debug("Image::open failed to open '%s'\n", name.c_str());
+		warning("Image::open failed to open '%s'\n", name.c_str());
 		return false;
 	}
 
@@ -61,7 +61,7 @@ bool Image::open(const Common::String &name) {
 	assert(data);
 
 	if (strcmp(tag, "LZO") == 0) {
-		debug("LZO");
+		warning("LZO image decompression is not implemented");
 	} else if (strcmp(tag, "LCW") == 0) {
 		decompress_lcw(buf, bufSize, (uint8 *)data, dataSize);
 	}

@@ -246,7 +246,7 @@ void ESPER::tick() {
 }
 
 void ESPER::resume() {
-	//TODO
+	// TODO
 }
 
 void ESPER::addPhoto(const char *name, int photoId, int shapeId) {
@@ -524,14 +524,11 @@ void ESPER::activate(bool withOpening) {
 void ESPER::setStateMain(EsperMainStates state) {
 	if (_isOpen) {
 		_stateMain = state;
-		debug("ESPER main state: %d", _stateMain);
-
 	}
 }
 
 void ESPER::setStatePhoto(EsperPhotoStates state) {
 	_statePhoto = state;
-	debug("ESPER photo state: %d", _statePhoto);
 }
 
 void ESPER::wait(int timeout) {

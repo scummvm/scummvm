@@ -364,12 +364,12 @@ bool ActorWalk::addNearActors(int skipActorId) {
 	bool added = false;
 	int setId = _vm->_scene->getSetId();
 	for (int i = 0; i < (int)_vm->_gameInfo->getActorCount(); i++) {
-		// TODO: remove null check after implemetantion of all actors
-		if (_vm->_actors[i] != nullptr
-			&& _vm->_actors[skipActorId] != nullptr
-			&& _vm->_actors[i]->getSetId() == setId
-			&& i != skipActorId) {
+		assert(_vm->_actors[i] != nullptr);
 
+		if (_vm->_actors[skipActorId] != nullptr
+		 && _vm->_actors[i]->getSetId() == setId
+		 && i != skipActorId
+		) {
 			if (_nearActors.contains(i)) {
 				_nearActors.setVal(i, false);
 			} else if (_vm->_actors[skipActorId]->distanceFromActor(i) <= 48.0f) {
@@ -385,8 +385,9 @@ void ActorWalk::obstaclesAddNearActors(int actorId) const {
 	Vector3 position = _vm->_actors[actorId]->getPosition();
 	for (Common::HashMap<int, bool>::const_iterator it = _nearActors.begin(); it != _nearActors.end(); ++it) {
 		Actor *otherActor = _vm->_actors[it->_key];
-		// TODO: remove null check after implemetantion of all actors
-		if (otherActor == nullptr || otherActor->isRetired()) {
+		assert(otherActor != nullptr);
+
+		if ( otherActor->isRetired()) {
 			continue;
 		}
 		Vector3 otherPosition = otherActor->getPosition();

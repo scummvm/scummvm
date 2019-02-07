@@ -44,19 +44,6 @@ bool Chapters::enterChapter(int chapter) {
 	if (!_vm->openArchive(Common::String::format("OUTTAKE%d.MIX", id)))
 		return false;
 
-#if BLADERUNNER_DEBUG_GAME
-	_vm->openArchive("OUTTAKE1.MIX");
-	_vm->openArchive("OUTTAKE2.MIX");
-	_vm->openArchive("OUTTAKE3.MIX");
-	_vm->openArchive("OUTTAKE4.MIX");
-	_vm->openArchive("VQA1.MIX");
-	_vm->openArchive("VQA2.MIX");
-	_vm->openArchive("VQA3.MIX");
-	_vm->openArchive("1.TLK");
-	_vm->openArchive("2.TLK");
-	_vm->openArchive("3.TLK");
-#endif
-
 	_chapter = chapter;
 	_hasOpenResources = true;
 	return true;

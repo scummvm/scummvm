@@ -35,9 +35,8 @@
 
 #include "graphics/surface.h"
 
-//TODO: remove these when game is playable
+//TODO: change this to debugflag
 #define BLADERUNNER_DEBUG_CONSOLE 0
-#define BLADERUNNER_DEBUG_GAME 0
 
 namespace Common {
 struct Event;
@@ -105,11 +104,7 @@ class ZBuffer;
 
 class BladeRunnerEngine : public Engine {
 public:
-#if BLADERUNNER_DEBUG_GAME
-	static const int kArchiveCount = 100;
-#else
 	static const int kArchiveCount = 11; // +1 to original value (10) to accommodate for SUBTITLES.MIX resource
-#endif
 	static const int kActorCount = 100;
 	static const int kActorVoiceOver = kActorCount - 1;
 

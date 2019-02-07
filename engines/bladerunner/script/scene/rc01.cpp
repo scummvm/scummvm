@@ -47,13 +47,6 @@ enum kRC01Regions {
 };
 
 void SceneScriptRC01::InitializeScene() {
-#if BLADERUNNER_DEBUG_GAME
-	//TODO: not part of game, remove
-	Game_Flag_Set(kFlagIntroPlayed); // force skip intro
-	Game_Flag_Set(kFlagRC02toRC01); // no landing
-	// Set_Enter(kSetPS10_PS11_PS12_PS13, 73);
-#endif
-
 	if (!Game_Flag_Query(kFlagIntroPlayed)) {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);

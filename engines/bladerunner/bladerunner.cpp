@@ -294,13 +294,7 @@ Common::Error BladeRunnerEngine::run() {
 		return Common::Error(Common::kUnknownError, "Failed to initialize resources");
 	}
 
-
-
-#if BLADERUNNER_DEBUG_GAME
-	{
-#else
 	if (warnUserAboutUnsupportedGame()) {
-#endif
 		if (hasSavegames) {
 			_kia->_forceOpen = true;
 			_kia->open(kKIASectionLoad);
@@ -1299,8 +1293,6 @@ void BladeRunnerEngine::handleMouseAction(int x, int y, bool mainButton, bool bu
 }
 
 void BladeRunnerEngine::handleMouseClickExit(int exitId, int x, int y, bool buttonDown) {
-	debug("clicked on exit %d %d %d", exitId, x, y);
-
 	if (_isWalkingInterruptible && exitId != _walkingToExitId) {
 		_isWalkingInterruptible = false;
 		_interruptWalking = true;
@@ -1333,8 +1325,6 @@ void BladeRunnerEngine::handleMouseClickExit(int exitId, int x, int y, bool butt
 }
 
 void BladeRunnerEngine::handleMouseClickRegion(int regionId, int x, int y, bool buttonDown) {
-	debug("clicked on region %d %d %d", regionId, x, y);
-
 	if (_isWalkingInterruptible && regionId != _walkingToRegionId) {
 		_isWalkingInterruptible = false;
 		_interruptWalking = true;
@@ -1368,7 +1358,6 @@ void BladeRunnerEngine::handleMouseClickRegion(int regionId, int x, int y, bool 
 
 void BladeRunnerEngine::handleMouseClick3DObject(int objectId, bool buttonDown, bool isClickable, bool isTarget) {
 	const Common::String &objectName = _scene->objectGetName(objectId);
-	debug("Clicked on object %s", objectName.c_str());
 
 	if (_isWalkingInterruptible && objectId != _walkingToObjectId) {
 		_isWalkingInterruptible = false;
@@ -1423,8 +1412,6 @@ void BladeRunnerEngine::handleMouseClick3DObject(int objectId, bool buttonDown, 
 }
 
 void BladeRunnerEngine::handleMouseClickEmpty(int x, int y, Vector3 &scenePosition, bool buttonDown) {
-	debug("Clicked on nothing %f, %f, %f", scenePosition.x, scenePosition.y, scenePosition.z);
-
 	if (_isWalkingInterruptible) {
 		_isWalkingInterruptible = false;
 		_interruptWalking = true;
@@ -1503,8 +1490,6 @@ void BladeRunnerEngine::handleMouseClickEmpty(int x, int y, Vector3 &scenePositi
 }
 
 void BladeRunnerEngine::handleMouseClickItem(int itemId, bool buttonDown) {
-	debug("Clicked on item %d", itemId);
-
 	if (_isWalkingInterruptible && itemId != _walkingToItemId) {
 		_isWalkingInterruptible = false;
 		_interruptWalking = true;
@@ -1559,8 +1544,6 @@ void BladeRunnerEngine::handleMouseClickItem(int itemId, bool buttonDown) {
 }
 
 void BladeRunnerEngine::handleMouseClickActor(int actorId, bool mainButton, bool buttonDown, Vector3 &scenePosition, int x, int y) {
-	debug("Clicked on actor %d", actorId);
-
 	if (_isWalkingInterruptible && actorId != _walkingToActorId) {
 		_isWalkingInterruptible = false;
 		_interruptWalking = true;
@@ -1699,7 +1682,7 @@ bool BladeRunnerEngine::closeArchive(const Common::String &name) {
 		}
 	}
 
-	debug("closeArchive: Archive %s not open.", name.c_str());
+	warning("closeArchive: Archive %s not open.", name.c_str());
 	return false;
 }
 
@@ -1733,10 +1716,8 @@ Common::SeekableReadStream *BladeRunnerEngine::getResourceStream(const Common::S
 			continue;
 		}
 
-		if (false) {
-			debug("getResource: Searching archive %s for %s.", _archives[i].getName().c_str(), name.c_str());
-		}
-
+		// debug("getResource: Searching archive %s for %s.", _archives[i].getName().c_str(), name.c_str());
+		
 		Common::SeekableReadStream *stream = _archives[i].createReadStreamForMember(name);
 		if (stream) {
 			return stream;
@@ -1755,7 +1736,6 @@ void BladeRunnerEngine::playerLosesControl() {
 	if (++_playerLosesControlCounter == 1) {
 		_mouse->disable();
 	}
-	// debug("Player Lost Control (%d)", _playerLosesControlCounter);
 }
 
 void BladeRunnerEngine::playerGainsControl() {
@@ -1765,8 +1745,6 @@ void BladeRunnerEngine::playerGainsControl() {
 
 	if (_playerLosesControlCounter > 0)
 		--_playerLosesControlCounter;
-
-	// debug("Player Gained Control (%d)", _playerLosesControlCounter);
 
 	if (_playerLosesControlCounter == 0) {
 		_mouse->enable();

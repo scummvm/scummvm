@@ -70,7 +70,7 @@ void ActorClues::acquire(int clueId, bool flag2, int fromActorId) {
 	_clues[clueIndex].flags = (_clues[clueIndex].flags & ~0x02) | ((flag2 << 1) & 0x02);
 	_clues[clueIndex].fromActorId = fromActorId;
 
-	debug("Actor acquired clue: \"%s\" from %d", _vm->_crimesDatabase->getClueText(clueId), fromActorId);
+	// debug("Actor acquired clue: \"%s\" from %d", _vm->_crimesDatabase->getClueText(clueId), fromActorId);
 }
 
 void ActorClues::lose(int clueId) {
@@ -83,11 +83,7 @@ bool ActorClues::isAcquired(int clueId) const {
 	if (clueIndex == -1) {
 		return false;
 	}
-// #if BLADERUNNER_DEBUG_GAME
-// 	return true;
-// #else
 	return _clues[clueIndex].flags & 0x01;
-// #endif
 }
 
 int ActorClues::getWeight(int clueId) const {
@@ -335,8 +331,6 @@ int ActorClues::findClueIndex(int clueId) const {
 void ActorClues::add(int actorId, int clueId, int weight, bool acquired, bool unknownFlag, int fromActorId) {
 	assert(_count < _maxCount);
 
-	//debug("Actor %d added clue: \"%s\" from %d", actorId, _vm->_crimesDatabase->getClueText(clueId), fromActorId);
-
 	_clues[_count].clueId = clueId;
 	_clues[_count].weight = weight;
 
@@ -353,9 +347,9 @@ bool ActorClues::exists(int clueId) const {
 }
 
 void ActorClues::remove(int index) {
-	if (_vm->_crimesDatabase) {
-		debug("Actor removed clue: \"%s\"", _vm->_crimesDatabase->getClueText(_clues[index].clueId));
-	}
+	// if (_vm->_crimesDatabase) {
+	// 	debug("Actor removed clue: \"%s\"", _vm->_crimesDatabase->getClueText(_clues[index].clueId));
+	// }
 
 	_clues[index].clueId      = -1;
 	_clues[index].weight      = 0;

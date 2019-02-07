@@ -76,7 +76,6 @@ bool DialogueMenu::show() {
 }
 
 bool DialogueMenu::showAt(int x, int y) {
-	debug("DialogueMenu::showAt %d %d %d", _isVisible, x, y);
 	if (_isVisible) {
 		return false;
 	}
@@ -253,7 +252,7 @@ int DialogueMenu::queryInput() {
 		}
 	}
 
-	debug("DM Query Input: %d %s", answer, _items[_selectedItemIndex].text.c_str());
+	// debug("DM Query Input: %d %s", answer, _items[_selectedItemIndex].text.c_str());
 
 	return answer;
 }
@@ -382,7 +381,6 @@ void DialogueMenu::calculatePosition(int unusedX, int unusedY) {
 	_screenY = CLIP(_screenY, 0, 480 - h);
 
 	_fadeInItemIndex = 0;
-	debug("calculatePosition: %d %d %d %d %d", _screenX, _screenY, _centerX, _centerY, _maxItemWidth);
 }
 
 void DialogueMenu::mouseUp() {
@@ -454,7 +452,6 @@ void DialogueMenu::load(SaveFileReadStream &f) {
 			_neverRepeatValues[_neverRepeatListSize] = answer[i];
 			_neverRepeatWasSelected[_neverRepeatListSize] = value;
 			++_neverRepeatListSize;
-			debug("- %i, %i",  answer[i], value);
 		}
 	}
 #else

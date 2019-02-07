@@ -48,7 +48,7 @@ bool Font::open(const Common::String &fileName, int screenWidth, int screenHeigh
 
 	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->getResourceStream(fileName));
 	if (!stream) {
-		debug("Font::open failed to open '%s'", fileName.c_str());
+		warning("Font::open failed to open '%s'", fileName.c_str());
 		return false;
 	}
 
@@ -58,7 +58,7 @@ bool Font::open(const Common::String &fileName, int screenWidth, int screenHeigh
 	_dataSize = stream->readUint32LE();
 	_data = new uint16[_dataSize];
 	if (!_data) {
-		debug("Font::open failed to allocate font buffer");
+		warning("Font::open failed to allocate font buffer");
 		return false;
 	}
 

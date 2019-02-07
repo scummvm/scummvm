@@ -81,7 +81,6 @@ int Regions::getRegionAtXY(int x, int y) const {
 
 		// Common::Rect::contains is exclusive of right and bottom but
 		// Blade Runner wants inclusive, so we adjust the edges.
-		// TODO: Roll our own rect class?
 		Common::Rect r = _regions[i].rectangle;
 		r.right++;
 		r.bottom++;

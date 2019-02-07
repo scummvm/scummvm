@@ -206,15 +206,6 @@ bool VQADecoder::loadStream(Common::SeekableReadStream *s) {
 	_videoTrack = new VQAVideoTrack(this);
 	_audioTrack = new VQAAudioTrack(this);
 
-#if BLADERUNNER_DEBUG_CONSOLE
-	for (int i = 0; i != _loopInfo.loopCount; ++i) {
-		debug("LOOP %2d: %4d %4d %s", i,
-			_loopInfo.loops[i].begin,
-			_loopInfo.loops[i].end,
-			_loopInfo.loops[i].name.c_str());
-	}
-#endif
-
 	return true;
 }
 
@@ -319,31 +310,30 @@ bool VQADecoder::readVQHD(Common::SeekableReadStream *s, uint32 size) {
 	_header.maxCBFZSize = s->readUint32LE();
 	_header.unk5        = s->readUint32LE();
 
-	// if (_header.unk3 || _header.unk4 != 4 || _header.unk5 || _header.flags != 0x0014)
-	if (false) {
-		debug("_header.version      %d", _header.version);
-		debug("_header.flags        %04x", _header.flags);
-		debug("_header.numFrames    %d", _header.numFrames);
-		debug("_header.width        %d", _header.width);
-		debug("_header.height       %d", _header.height);
-		debug("_header.blockW       %d", _header.blockW);
-		debug("_header.blockH       %d", _header.blockH);
-		debug("_header.frameRate    %d", _header.frameRate);
-		debug("_header.cbParts      %d", _header.cbParts);
-		debug("_header.colors       %d", _header.colors);
-		debug("_header.maxBlocks    %d", _header.maxBlocks);
-		debug("_header.offsetX      %d", _header.offsetX);
-		debug("_header.offsetY      %d", _header.offsetY);
-		debug("_header.maxVPTRSize  %d", _header.maxVPTRSize);
-		debug("_header.freq         %d", _header.freq);
-		debug("_header.channels     %d", _header.channels);
-		debug("_header.bits         %d", _header.bits);
-		debug("_header.unk3         %d", _header.unk3);
-		debug("_header.unk4         %d", _header.unk4);
-		debug("_header.maxCBFZSize  %d", _header.maxCBFZSize);
-		debug("_header.unk5         %d", _header.unk5);
-		debug("\n");
-	}
+	// if (_header.unk3 || _header.unk4 != 4 || _header.unk5 || _header.flags != 0x0014) {
+	// 	debug("_header.version      %d", _header.version);
+	// 	debug("_header.flags        %04x", _header.flags);
+	// 	debug("_header.numFrames    %d", _header.numFrames);
+	// 	debug("_header.width        %d", _header.width);
+	// 	debug("_header.height       %d", _header.height);
+	// 	debug("_header.blockW       %d", _header.blockW);
+	// 	debug("_header.blockH       %d", _header.blockH);
+	// 	debug("_header.frameRate    %d", _header.frameRate);
+	// 	debug("_header.cbParts      %d", _header.cbParts);
+	// 	debug("_header.colors       %d", _header.colors);
+	// 	debug("_header.maxBlocks    %d", _header.maxBlocks);
+	// 	debug("_header.offsetX      %d", _header.offsetX);
+	// 	debug("_header.offsetY      %d", _header.offsetY);
+	// 	debug("_header.maxVPTRSize  %d", _header.maxVPTRSize);
+	// 	debug("_header.freq         %d", _header.freq);
+	// 	debug("_header.channels     %d", _header.channels);
+	// 	debug("_header.bits         %d", _header.bits);
+	// 	debug("_header.unk3         %d", _header.unk3);
+	// 	debug("_header.unk4         %d", _header.unk4);
+	// 	debug("_header.maxCBFZSize  %d", _header.maxCBFZSize);
+	// 	debug("_header.unk5         %d", _header.unk5);
+	// 	debug("\n");
+	// }
 
 	assert(_header.version == 2);
 	if (_header.channels != 0) {
@@ -374,7 +364,7 @@ bool VQADecoder::VQAVideoTrack::readVQFR(Common::SeekableReadStream *s, uint32 s
 		}
 
 		if (!rc) {
-			debug("VQFR: error handling chunk %s", strTag(chd.id));
+			warning("VQFR: error handling chunk %s", strTag(chd.id));
 			return false;
 		}
 	}
@@ -507,14 +497,14 @@ bool VQADecoder::readFINF(Common::SeekableReadStream *s, uint32 size) {
 	for (uint32 i = 0; i != _header.numFrames; ++i)
 		_frameInfo[i] = s->readUint32LE();
 
-	if (false) {
-		uint32 last = 0;
-		for (uint32 i = 0; i != _header.numFrames; ++i) {
-			uint32 diff = _frameInfo[i] - last;
-			debug("_frameInfo[%4d] = 0x%08x   - %08x", i, _frameInfo[i], diff);
-			last = _frameInfo[i];
-		}
-	}
+	// if (false) {
+	// 	uint32 last = 0;
+	// 	for (uint32 i = 0; i != _header.numFrames; ++i) {
+	// 		uint32 diff = _frameInfo[i] - last;
+	// 		debug("_frameInfo[%4d] = 0x%08x   - %08x", i, _frameInfo[i], diff);
+	// 		last = _frameInfo[i];
+	// 	}
+	// }
 
 	return true;
 }
@@ -724,7 +714,7 @@ bool VQADecoder::VQAVideoTrack::readCBFZ(Common::SeekableReadStream *s, uint32 s
 
 bool VQADecoder::VQAVideoTrack::readZBUF(Common::SeekableReadStream *s, uint32 size) {
 	if (size > _maxZBUFChunkSize) {
-		debug("VQA ERROR: ZBUF chunk size: %08x > %08x", size, _maxZBUFChunkSize);
+		warning("VQA ERROR: ZBUF chunk size: %08x > %08x", size, _maxZBUFChunkSize);
 		s->skip(roundup(size));
 		return false;
 	}
