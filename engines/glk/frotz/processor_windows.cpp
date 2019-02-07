@@ -79,7 +79,7 @@ void Processor::z_draw_picture() {
 			os_picture_data(mapper[i].pic2, &height2, &width2);
 
 			if (_storyId == ARTHUR && pic == 54)
-			delta = h_screen_width / 160;
+				delta = h_screen_width / 160;
 
 			os_draw_picture(mapper[i].pic1, Point(x + delta, y + height1));
 			os_draw_picture(mapper[i].pic2, Point(x + width1 - width2 - delta, y + height1));

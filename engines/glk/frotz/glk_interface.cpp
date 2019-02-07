@@ -106,6 +106,7 @@ void GlkInterface::initialize() {
 		_wp._lower = glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
 	glk_window_get_size(_wp._lower, &width, &height);
 	glk_window_close(_wp._lower, nullptr);
+	_wp._lower = nullptr;
 
 	gos_channel = nullptr;
 
@@ -289,12 +290,14 @@ bool GlkInterface::os_picture_data(int picture, uint *height, uint *width) {
 		*height = _pics->size();
 		return true;
 	} else {
-		bool result = glk_image_get_info(picture, width, height);
+		uint fullWidth, fullHeight;
+		bool result = glk_image_get_info(picture, &fullWidth, &fullHeight);
 
-		int cellW = g_conf->_monoInfo._cellW;
-		int cellH = g_conf->_monoInfo._cellH;
-		*width = (*width + cellW - 1) / cellW;
-		*height = (*height + cellH - 1) / cellH;
+		int x_scale = g_system->getWidth();
+		int y_scale = g_system->getHeight();
+
+		*width = roundDiv(fullWidth * h_screen_cols, x_scale);
+		*height = roundDiv(fullHeight * h_screen_rows, y_scale);
 
 		return result;
 	}
@@ -392,8 +395,7 @@ void GlkInterface::split_window(zword lines) {
 		curr_status_ht = lines;
 	}
 	mach_status_ht = lines;
-	if (cury > lines)
-	{
+	if (cury > lines) {
 		glk_window_move_cursor(_wp._upper, 0, 0);
 		curx = cury = 1;
 	}
@@ -609,6 +611,15 @@ zchar GlkInterface::os_read_line(int max, zchar *buf, int timeout, int width, in
 	}
 
 	return ZC_RETURN;
+}
+
+uint GlkInterface::roundDiv(uint x, uint y) {
+	uint quotient = x / y;
+	uint dblremain = (x % y) << 1;
+
+	if ((dblremain > y) || ((dblremain == y) && (quotient & 1)))
+		quotient++;
+	return quotient;
 }
 
 } // End of namespace Frotz

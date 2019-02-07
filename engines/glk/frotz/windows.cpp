@@ -50,14 +50,15 @@ void Windows::setup(bool isVersion6) {
 		_background = g_vm->glk_window_open(0, 0, 0, wintype_Graphics, 0);
 		_background->setBackgroundColor(0xffffff);
 
+		MonoFontInfo &fi = g_vm->_conf->_monoInfo;
 		_lower = g_vm->glk_window_open(g_vm->glk_window_get_root(),
 			winmethod_Arbitrary | winmethod_Fixed, 0, wintype_TextBuffer, 0);
 		_upper = g_vm->glk_window_open(g_vm->glk_window_get_root(),
 			winmethod_Arbitrary | winmethod_Fixed, 0, wintype_TextGrid, 0);
-		_upper.setPosition(Point(0, 0));
-		_upper.setSize(Point(320, 8));
-		_lower.setPosition(Point(0, 8));
-		_lower.setSize(Point(320, 200 - 8));
+		_upper.setPosition(Point(1, 1));
+		_upper.setSize(Point(g_system->getWidth() / fi._cellW, 1));
+		_lower.setPosition(Point(1, 2));
+		_lower.setSize(Point(g_system->getWidth() / fi._cellW, g_system->getHeight() / fi._cellH - 1));
 
 	} else {
 		_lower = g_vm->glk_window_open(0, 0, 0, wintype_TextBuffer, 0);

@@ -109,6 +109,11 @@ private:
 	 * Add any Sound subfolder or sound zip file for access
 	 */
 	void addSound();
+
+	/**
+	 * Do a rounding division, rounding to even if fraction part is 1/2.
+	 */
+	uint roundDiv(uint x, uint y);
 protected:
 	/**
 	 * Return the length of the character in screen units.
