@@ -807,7 +807,8 @@ enum Flags {
 	kFlagBB12toBB07 = 365,
 	kFlagAR02InsectDealerTalk = 366,
 	kFlagAR02StungByScorpion = 367,
-
+	kFlagHF07Hole = 368,
+	kFlagHF05Hole = 369,
 	kFlagNotUsed370 = 370, // is never checked
 	// 371 is never used
 	// 372 is never used
@@ -960,6 +961,7 @@ enum Flags {
 	kFlagTB06DogCollarTaken = 519,
 	kFlagTB06KitchenBoxTaken = 520,
 	kFlagHC03TrapDoorOpened = 521,
+	kFlagUG05TalkAboutTunnel = 522,
 	kFlagMutantsActive = 523,
 	kFlagUG06Chapter4Started = 524,
 	kFlagCT10Entered = 525,
@@ -996,7 +998,7 @@ enum Flags {
 	kFlagUG16LutherLanceTalk1 = 556,
 	kFlagNotUsed557, // is never checked
 	kFlagDR01toCT11 = 558,
-
+	kFlagHF06SteelInterruption = 559,
 	kFlagLutherLanceIsReplicant = 560,
 	kFlagNR02GordoLeaveLighter = 561,
 	kFlagHF05CrazyLegsTalk1 = 562,
@@ -1099,7 +1101,9 @@ enum Flags {
 	kFlagNR11BreakWindow = 659,
 	kFlagDNARowAvailableTalk = 660,
 	kFlagTB07ShadeDown = 661, // is never set
-
+	kFlagHF01TalkToLovedOne = 662,
+	kFlagHF05PoliceArrived = 663,
+	kFlagUG07PoliceLeave = 664,
 	kFlagUG19Available = 665,
 	kFlagMcCoyFreedOfAccusations = 666,
 	// 667 is never used
@@ -1118,6 +1122,8 @@ enum Flags {
 	kFlagChapter4Intro = 680,
 	// 681 is never used
 	kFlagUG15BridgeBroken = 682,
+	kFlagUG05TalkToPolice = 683,
+	kFlagHF05PoliceAttacked = 684,
 	kFlagClovisLyingDown = 685,
 	kFlagNotUsed686 = 686,
 	// 687 is never used
@@ -1132,9 +1138,9 @@ enum Flags {
 	kFlagKP07ReplicantsAttackMcCoy = 696,
 	kFlagKP07McCoyPulledGun = 697,
 	kFlagUG15LanceLuthorTrade = 698,
-
+	kFlagTalkToZuben = 699,
 	// 700 is never used
-
+	kFlagMcCoyAttackedLucy = 701,
 	kFlagBulletBobDead = 702,
 	kFlagUG18BriefcaseTaken = 703,
 	kFlagRC02EnteredChapter4 = 704,
@@ -1149,7 +1155,7 @@ enum Flags {
 	kFlagDR04McCoyShotMoraji = 713,
 	kFlagMcCoyAttackedReplicants = 714,
 	kFlagDR06UnlockedToUG16 = 715,
-
+	kFlagUG13HomelessLayingdown = 716,
 	kFlagRC04BobTalk3 = 717,
 	kflagPS01toPS02 = 718,
 	kFlagCT02McCoyFell = 719,
@@ -1187,7 +1193,7 @@ enum Variables {
 	kVariableGenericWalkerAModel = 32,
 	kVariableGenericWalkerBModel = 33,
 	kVariableGenericWalkerCModel = 34,
-
+	kVariableGenericWalkerConfig = 35, // has no use
 	kVariableBB10ShelvesAvailable = 36,
 	kVariableWalkLoopActor = 37,
 	kVariableWalkLoopRun = 38,
@@ -1356,7 +1362,7 @@ enum Scenes {
 	kSceneNR06 = 59, // Nightclub Row - Early Q's - Empty dressing room
 	kSceneNR07 = 60, // Nightclub Row - Early Q's - Dektora's dressing room
 	kSceneNR08 = 61, // Nightclub Row - Early Q's - Stage
-	kSceneNR09 = 62, // Nightclub Row - Early Q's - Upstairs
+	kSceneNR09 = 62, // Nightclub Row - Early Q's - Balcony
 	kSceneNR10 = 63, // Nightclub Row - Early Q's - Projector room
 	kSceneNR11 = 64, // Nightclub Row - Early Q's - Loft
 	kScenePS01 = 65, // Police Station - Roof
@@ -1820,6 +1826,7 @@ enum GoalSteele {
 	kGoalSteeleStartChapter4 = 300,
 	// chapter 5
 	kGoalSteeleStartChapter5 = 400,
+	kGoalSteeleHF06Attack = 402, // has no use
 	// kGoalSteeleKP03WillShootMcCoy = 410,
 	kGoalSteeleKP03Walk = 411,
 	kGoalSteeleKP03StopWalking = 412,
@@ -1974,6 +1981,7 @@ enum GoalClovis {
 
 enum GoalLucy {
 	kGoalLucyDefault = 0,
+	// chapter 3
 	kGoalLucyMoveAround = 200,
 	kGoalLucyWillReturnToHF03 = 201,
 	kGoalLucyGoToHF03 = 205,
@@ -1996,6 +2004,12 @@ enum GoalLucy {
 	kGoalLucyHF04WalkAway = 239,
 	kGoalLucyReturnToHF03 = 250,
 	kGoalLucyHF03RanAway = 299,
+	// chapter 4
+	kGoalLucyStartChapter4 = 300,
+	kGoalLucyUG01Wait =	310,
+	kGoalLucyUG01VoightKampff = 311,
+	kGoalLucyUG01RunAway = 312,
+
 	kGoalLucyGone = 599
 };
 

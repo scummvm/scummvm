@@ -48,10 +48,10 @@ void SceneScriptHF05::InitializeScene() {
 
 	Ambient_Sounds_Add_Looping_Sound(103, 40, 1, 1);
 
-	if (Game_Flag_Query(369)) {
+	if (Game_Flag_Query(kFlagHF05Hole)) {
 		Scene_Loop_Set_Default(kHF05LoopMainLoopHole);
 		addAmbientSounds();
-	} else if (Game_Flag_Query(559)) {
+	} else if (Game_Flag_Query(kFlagHF06SteelInterruption)) {
 		Scene_Loop_Set_Default(kHF05LoopMainLoopSpinner);
 		addAmbientSounds();
 	} else {
@@ -63,7 +63,7 @@ void SceneScriptHF05::SceneLoaded() {
 	Obstacle_Object("MAINBASE", true);
 	Unobstacle_Object("BTIRES02", true);
 	Unobstacle_Object("LFTIRE02", true);
-	if (Game_Flag_Query(369)) {
+	if (Game_Flag_Query(kFlagHF05Hole)) {
 		Unobstacle_Object("MONTE CARLO DRY", true);
 	} else {
 		Unobstacle_Object("OBSTACLE_HOLE", true);
@@ -88,8 +88,8 @@ bool SceneScriptHF05::ClickedOn3DObject(const char *objectName, bool a2) {
 				return true;
 			}
 
-			if (!Game_Flag_Query(662)
-			 ||  Game_Flag_Query(369)
+			if (!Game_Flag_Query(kFlagHF01TalkToLovedOne)
+			 ||  Game_Flag_Query(kFlagHF05Hole)
 			) {
 				Actor_Change_Animation_Mode(kActorMcCoy, 23);
 				Sound_Play(412, 100, 0, 0, 50);
@@ -98,15 +98,15 @@ bool SceneScriptHF05::ClickedOn3DObject(const char *objectName, bool a2) {
 
 			Player_Loses_Control();
 			Actor_Set_Goal_Number(kActorOfficerLeary, 425);
-			Game_Flag_Set(369);
-			Game_Flag_Set(368);
+			Game_Flag_Set(kFlagHF05Hole);
+			Game_Flag_Set(kFlagHF07Hole);
 			Obstacle_Object("OBSTACLE_HOLE", true);
 			Unobstacle_Object("MONTE CARLO DRY", true);
 
-			if (sub_4048C0() != kActorMcCoy) {
-				Loop_Actor_Walk_To_XYZ(sub_4048C0(), 181.54f, 40.63f, 388.09f, 0, false, true, 0);
-				Actor_Face_Actor(kActorMcCoy, sub_4048C0(), true);
-				Actor_Face_Actor(sub_4048C0(), kActorMcCoy, true);
+			if (getCompanionActor() != kActorMcCoy) {
+				Loop_Actor_Walk_To_XYZ(getCompanionActor(), 181.54f, 40.63f, 388.09f, 0, false, true, 0);
+				Actor_Face_Actor(kActorMcCoy, getCompanionActor(), true);
+				Actor_Face_Actor(getCompanionActor(), kActorMcCoy, true);
 				Actor_Says(kActorMcCoy, 1785, kAnimationModeTalk);
 				Actor_Says(kActorMcCoy, 1790, kAnimationModeTalk);
 			}
@@ -116,8 +116,18 @@ bool SceneScriptHF05::ClickedOn3DObject(const char *objectName, bool a2) {
 			Scene_Loop_Set_Default(kHF05LoopMainLoopHole);
 			Scene_Loop_Start_Special(kSceneLoopModeOnce, kHF05LoopArmAnimation, true);
 
-			if (sub_4048C0() != kActorMcCoy) {
-				if (sub_4048C0() == kActorDektora) {
+
+			if (getCompanionActor() == kActorMcCoy) {
+				ADQ_Flush();
+				ADQ_Add(kActorVoiceOver, 940, -1);
+				Ambient_Sounds_Play_Sound(147, 50, 99, 0, 0);
+				Delay(1500);
+				Loop_Actor_Walk_To_XYZ(kActorMcCoy, 181.54f, 40.63f, 388.09f, 0, false, true, 0);
+				Actor_Face_Heading(kActorMcCoy, 0, false);
+				Actor_Change_Animation_Mode(kActorMcCoy, 23);
+				Actor_Clue_Lose(kActorMcCoy, kClueBomb);
+			} else {
+				if (getCompanionActor() == kActorDektora) {
 					Actor_Face_Heading(kActorDektora, 0, false);
 					Ambient_Sounds_Play_Sound(147, 50, 99, 0, 0);
 					Delay(3000);
@@ -130,17 +140,8 @@ bool SceneScriptHF05::ClickedOn3DObject(const char *objectName, bool a2) {
 					Actor_Face_Heading(kActorLucy, 0, false);
 					Actor_Change_Animation_Mode(kActorLucy, 13);
 				}
-				Actor_Face_Actor(kActorMcCoy, sub_4048C0(), true);
+				Actor_Face_Actor(kActorMcCoy, getCompanionActor(), true);
 				Actor_Says(kActorMcCoy, 1805, kAnimationModeTalk);
-			} else {
-				ADQ_Flush();
-				ADQ_Add(kActorVoiceOver, 940, -1);
-				Ambient_Sounds_Play_Sound(147, 50, 99, 0, 0);
-				Delay(1500);
-				Loop_Actor_Walk_To_XYZ(kActorMcCoy, 181.54f, 40.63f, 388.09f, 0, false, true, 0);
-				Actor_Face_Heading(kActorMcCoy, 0, false);
-				Actor_Change_Animation_Mode(kActorMcCoy, 23);
-				Actor_Clue_Lose(kActorMcCoy, kClueBomb);
 			}
 			Player_Gains_Control();
 		}
@@ -167,7 +168,7 @@ bool SceneScriptHF05::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptHF05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 483.0f, 40.63f, -189.0f, 0, true, false, 0)) {
-			if (!Game_Flag_Query(684)) {
+			if (!Game_Flag_Query(kFlagHF05PoliceAttacked)) {
 				Game_Flag_Set(kFlagHF05toHF01);
 				Set_Enter(kSetHF01, kSceneHF01);
 			}
@@ -177,10 +178,10 @@ bool SceneScriptHF05::ClickedOnExit(int exitId) {
 
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 330.0f, 40.63f, -85.0f, 0, true, false, 0)) {
-			if (!Game_Flag_Query(684)) {
+			if (!Game_Flag_Query(kFlagHF05PoliceAttacked)) {
 				int affectionTowardsActor = getAffectionTowardsActor();
-				if (Game_Flag_Query(663)
-				 && Game_Flag_Query(368)
+				if (Game_Flag_Query(kFlagHF05PoliceArrived)
+				 && Game_Flag_Query(kFlagHF07Hole)
 				 && affectionTowardsActor != -1
 				) {
 					Actor_Face_Actor(kActorMcCoy, affectionTowardsActor, true);
@@ -195,7 +196,7 @@ bool SceneScriptHF05::ClickedOnExit(int exitId) {
 
 	if (exitId == 2) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 277.0f, 40.63f, 410.0f, 0, true, false, 0)) {
-			if (!Game_Flag_Query(684)) {
+			if (!Game_Flag_Query(kFlagHF05PoliceAttacked)) {
 				Game_Flag_Set(kFlagHF05toHF06);
 				Set_Enter(kSetHF06, kSceneHF06);
 			}
@@ -271,16 +272,16 @@ void SceneScriptHF05::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 	if (actorId == kActorOfficerLeary
 	 && newGoal == 430
 	) {
-		Game_Flag_Set(684);
-		sub_4042E4();
+		Game_Flag_Set(kFlagHF05PoliceAttacked);
+		policeAttack();
 	}
 	//return false;
 }
 
 void SceneScriptHF05::PlayerWalkedIn() {
-	if (Game_Flag_Query(662)) {
+	if (Game_Flag_Query(kFlagHF01TalkToLovedOne)) {
 		int affectionTowardsActor = getAffectionTowardsActor();
-		if (Game_Flag_Query(662)
+		if (Game_Flag_Query(kFlagHF01TalkToLovedOne)
 		 && affectionTowardsActor != -1
 		) {
 			Actor_Put_In_Set(affectionTowardsActor, kSetHF05);
@@ -297,27 +298,27 @@ void SceneScriptHF05::PlayerWalkedIn() {
 			}
 		}
 
-		if (Game_Flag_Query(684)) {
-			sub_4042E4();
+		if (Game_Flag_Query(kFlagHF05PoliceAttacked)) {
+			policeAttack();
 		} else if (Actor_Clue_Query(kActorMcCoy, kClueSpinnerKeys)
-		        || Game_Flag_Query(559)
+		        || Game_Flag_Query(kFlagHF06SteelInterruption)
 		) {
-			if ( Game_Flag_Query(559)
-			 && !Game_Flag_Query(663)
+			if ( Game_Flag_Query(kFlagHF06SteelInterruption)
+			 && !Game_Flag_Query(kFlagHF05PoliceArrived)
 			) {
-				Game_Flag_Set(663);
+				Game_Flag_Set(kFlagHF05PoliceArrived);
 				Music_Play(1, 40, 0, 2, -1, 0, 0);
 				Actor_Says(kActorOfficerGrayford, 200, kAnimationModeTalk);
 				Actor_Says(kActorOfficerGrayford, 210, kAnimationModeTalk);
 				Actor_Set_Goal_Number(kActorOfficerLeary, 420);
-				if (sub_4048C0() == 3) {
-					sub_403F0C();
-				} else if (sub_4048C0() == 6) {
-					sub_40410C();
+				if (getCompanionActor() ==  kActorDektora) {
+					talkWithDektora();
+				} else if (getCompanionActor() == kActorLucy) {
+					talkWithLucy();
 				}
 			}
 		} else {
-			sub_403A34(affectionTowardsActor);
+			talkWithCrazylegs3(affectionTowardsActor);
 		}
 	} else if (Game_Flag_Query(kFlagHF01toHF05)) {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 399.0f, 40.63f, -85.0f, 0, false, false, 0);
@@ -573,7 +574,7 @@ int SceneScriptHF05::getAffectionTowardsActor() {
 	return -1;
 }
 
-void SceneScriptHF05::sub_4042E4() {
+void SceneScriptHF05::policeAttack() {
 	Actor_Force_Stop_Walking(kActorMcCoy);
 	Actor_Put_In_Set(kActorOfficerLeary, kSetHF05);
 	Actor_Set_At_XYZ(kActorOfficerLeary, 430.4f, 40.63f, -258.18f, 300);
@@ -586,7 +587,7 @@ void SceneScriptHF05::sub_4042E4() {
 	Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, kActorCombatStateUncover, true, kActorMcCoy, 4, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 100, 300, true);
 }
 
-void SceneScriptHF05::sub_403F0C() {
+void SceneScriptHF05::talkWithDektora() {
 	Actor_Face_Actor(kActorMcCoy, kActorDektora, true);
 	Actor_Face_Actor(kActorDektora, kActorMcCoy, true);
 	Actor_Says(kActorDektora, 2660, 12);
@@ -605,7 +606,7 @@ void SceneScriptHF05::sub_403F0C() {
 	Actor_Says_With_Pause(kActorMcCoy, 1780, 1.0f, 18);
 }
 
-void SceneScriptHF05::sub_40410C() {
+void SceneScriptHF05::talkWithLucy() {
 	Actor_Face_Actor(kActorMcCoy, kActorLucy, true);
 	Actor_Face_Actor(kActorLucy, kActorMcCoy, true);
 	Actor_Says(kActorLucy, 400, 16);
@@ -623,7 +624,7 @@ void SceneScriptHF05::sub_40410C() {
 	Actor_Says_With_Pause(kActorMcCoy, 1780, 1.0f, 18);
 }
 
-void SceneScriptHF05::sub_403A34(int affectionTowardsActor) {
+void SceneScriptHF05::talkWithCrazylegs3(int affectionTowardsActor) {
 	if (affectionTowardsActor != -1
 	 && Actor_Query_In_Set(kActorCrazylegs, kSetHF05)
 	) {
@@ -743,7 +744,7 @@ void SceneScriptHF05::addAmbientSounds() {
 	Ambient_Sounds_Add_Speech_Sound(38, 280, 5, 70, 7, 10, -50, 50, -101, -101, 1, 1);
 }
 
-int SceneScriptHF05::sub_4048C0() {
+int SceneScriptHF05::getCompanionActor() {
 	if (Actor_Query_In_Set(kActorDektora, kSetHF05)
 	 && Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraGone
 	) {
@@ -755,6 +756,7 @@ int SceneScriptHF05::sub_4048C0() {
 	) {
 		return kActorLucy;
 	}
+
 	return kActorMcCoy;
 }
 

@@ -217,17 +217,17 @@ DECLARE_SCRIPT(HF05)
 	void talkWithCrazyLegs2();
 	void dialogueWithCrazylegs1();
 	void dialogueWithCrazylegs2();
-	void sub_403A34(int actorId);
-	void sub_403F0C();
-	void sub_40410C();
-	void sub_4042E4();
+	void talkWithCrazylegs3(int actorId);
+	void talkWithDektora();
+	void talkWithLucy();
+	void policeAttack();
 	void addAmbientSounds();
 	int getAffectionTowardsActor();
-	int sub_4048C0();
+	int getCompanionActor();
 END_SCRIPT
 
 DECLARE_SCRIPT(HF06)
-	void sub_401EF4();
+	void steelInterruption();
 	void addAmbientSounds();
 END_SCRIPT
 
@@ -459,7 +459,7 @@ END_SCRIPT
 
 DECLARE_SCRIPT(UG05)
 	int getAffectionTowardsActor();
-	void sub_402218();
+	void endGame();
 END_SCRIPT
 
 DECLARE_SCRIPT(UG06)

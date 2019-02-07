@@ -92,9 +92,9 @@ bool AIScriptOfficerLeary::Update() {
 	}
 
 	if ( Game_Flag_Query(kFlagUG07Empty)
-	 && !Game_Flag_Query(664)
+	 && !Game_Flag_Query(kFlagUG07PoliceLeave)
 	) {
-		Game_Flag_Set(664);
+		Game_Flag_Set(kFlagUG07PoliceLeave);
 		Actor_Set_Goal_Number(kActorOfficerLeary, 305);
 		return false;
 	}
@@ -203,7 +203,7 @@ void AIScriptOfficerLeary::TimerExpired(int timer) {
 			Actor_Set_Goal_Number(kActorOfficerLeary, 430);
 			Actor_Set_Goal_Number(kActorOfficerGrayford, 430);
 		} else {
-			Game_Flag_Set(684);
+			Game_Flag_Set(kFlagHF05PoliceAttacked);
 		}
 	} else if (timer == 2) {
 		AI_Countdown_Timer_Reset(kActorOfficerLeary, 2);

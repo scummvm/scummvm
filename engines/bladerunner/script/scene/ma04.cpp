@@ -365,17 +365,19 @@ void SceneScriptMA04::phoneCallWithDektora() {
 	Actor_Says(kActorMcCoy, 2495, 0);
 	Actor_Says(kActorDektora, 340, 3);
 	Actor_Says(kActorDektora, 350, 3);
-	if (Game_Flag_Query(kFlagCrazylegsArrested) || Actor_Query_Goal_Number(kActorCrazylegs) == 2) {
-		answer = 1170;
+	if (Game_Flag_Query(kFlagCrazylegsArrested)
+	 || Actor_Query_Goal_Number(kActorCrazylegs) == 2
+	) {
+		answer = 1170; // CLOVIS
 	} else {
 		Dialogue_Menu_Clear_List();
-		DM_Add_To_List_Never_Repeat_Once_Selected(1160, 1, 1, 2);
-		DM_Add_To_List_Never_Repeat_Once_Selected(1170, 2, 1, 1);
+		DM_Add_To_List_Never_Repeat_Once_Selected(1160, 1, 1, 2); // OK
+		DM_Add_To_List_Never_Repeat_Once_Selected(1170, 2, 1, 1); // CLOVIS
 		Dialogue_Menu_Appear(320, 240);
 		answer = Dialogue_Menu_Query_Input();
 		Dialogue_Menu_Disappear();
 	}
-	if (answer == 1160) {
+	if (answer == 1160) { // OK
 		Actor_Says(kActorMcCoy, 2500, 19);
 		Actor_Says(kActorDektora, 360, 3);
 		Actor_Says(kActorMcCoy, 2510, 0);
@@ -418,7 +420,9 @@ void SceneScriptMA04::phoneCallWithLucy() {
 	Actor_Says(kActorLucy, 570, 3);
 	Actor_Says(kActorMcCoy, 2560, 17);
 	Actor_Says(kActorLucy, 580, 3);
-	if (Game_Flag_Query(kFlagCrazylegsArrested) || Actor_Query_Goal_Number(kActorCrazylegs) == 2) {
+	if (Game_Flag_Query(kFlagCrazylegsArrested)
+	 || Actor_Query_Goal_Number(kActorCrazylegs) == 2
+	) {
 		Actor_Says(kActorLucy, 630, 3);
 		Actor_Says_With_Pause(kActorMcCoy, 2575, 0.0f, 15);
 		if (!Game_Flag_Query(kFlagDirectorsCut)) {

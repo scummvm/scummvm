@@ -55,9 +55,9 @@ bool AIScriptLucy::Update() {
 	}
 
 	if (Global_Variable_Query(kVariableChapter) == 4
-	 && Actor_Query_Goal_Number(kActorLucy) < 300
+	 && Actor_Query_Goal_Number(kActorLucy) < kGoalLucyStartChapter4
 	) {
-		Actor_Set_Goal_Number(kActorLucy, 300);
+		Actor_Set_Goal_Number(kActorLucy, kGoalLucyStartChapter4);
 	}
 
 	if (Global_Variable_Query(kVariableChapter) == 4
@@ -83,7 +83,7 @@ bool AIScriptLucy::Update() {
 	 &&  Actor_Query_Goal_Number(kActorLucy) != kGoalLucyHF04TalkToMcCoy
 	 &&  Player_Query_Current_Scene() == kSceneHF04
 	 &&  Actor_Query_Which_Set_In(kActorLucy) == kSetHF04
-	 && !Game_Flag_Query(701)
+	 && !Game_Flag_Query(kFlagMcCoyAttackedLucy)
 	 &&  Actor_Query_Inch_Distance_From_Actor(kActorLucy, kActorMcCoy) < 84
 	 && !Player_Query_Combat_Mode()
 	 &&  Actor_Query_Friendliness_To_Other(kActorLucy, kActorMcCoy) > 40
@@ -485,24 +485,24 @@ bool AIScriptLucy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorLucy);
 		break;
 
-	case 300:
+	case kGoalLucyStartChapter4:
 		Actor_Put_In_Set(kActorLucy, kSetFreeSlotA);
 		Actor_Set_At_Waypoint(kActorLucy, 33, 0);
 		if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy) {
-			Actor_Set_Goal_Number(kActorLucy, 310);
+			Actor_Set_Goal_Number(kActorLucy, kGoalLucyUG01Wait);
 		}
 		break;
 
-	case 310:
+	case kGoalLucyUG01Wait:
 		Actor_Put_In_Set(kActorLucy, kSetUG01);
 		Actor_Set_At_Waypoint(kActorLucy, 544, 651);
 		break;
 
-	case 311:
+	case kGoalLucyUG01VoightKampff:
 		voightKampffTest();
 		break;
 
-	case 312:
+	case kGoalLucyUG01RunAway:
 		AI_Movement_Track_Flush(kActorLucy);
 		AI_Movement_Track_Append_Run(kActorLucy, 545, 0);
 		AI_Movement_Track_Append(kActorLucy, 33, 0);
@@ -867,7 +867,7 @@ void AIScriptLucy::voightKampffTest() {
 	Voight_Kampff_Activate(kActorLucy, 40);
 
 	Player_Loses_Control();
-	if (Actor_Clue_Query(kActorMcCoy, 271)) {
+	if (Actor_Clue_Query(kActorMcCoy, kClueVKLucyReplicant)) {
 		Actor_Says(kActorMcCoy, 6865, 13);
 		Actor_Says(kActorLucy, 1140, 14);
 		Actor_Says(kActorMcCoy, 6865, 14);
@@ -894,11 +894,12 @@ void AIScriptLucy::voightKampffTest() {
 	Actor_Says(kActorMcCoy, 6910, 13);
 	Delay(2000);
 	Player_Gains_Control();
-	Actor_Set_Goal_Number(kActorLucy, 312);
+	Actor_Set_Goal_Number(kActorLucy, kGoalLucyUG01RunAway);
 }
 
 void AIScriptLucy::checkCombat() {
-	Game_Flag_Set(701);
+	Game_Flag_Set(kFlagMcCoyAttackedLucy);
+
 	if (Actor_Query_In_Set(kActorLucy, kSetHF01)
 	 && Global_Variable_Query(kVariableChapter) == 5
 	 && Actor_Query_Goal_Number(kActorLucy) != 450

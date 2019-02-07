@@ -320,7 +320,7 @@ void AIScriptGenericWalkerC::movingUpdate() {
 }
 
 bool AIScriptGenericWalkerC::prepareWalker() {
-	if (Game_Flag_Query(kFlagGenericWalkerWaiting) || Global_Variable_Query(35) < 2 || !preparePath()) {
+	if (Game_Flag_Query(kFlagGenericWalkerWaiting) || Global_Variable_Query(kVariableGenericWalkerConfig) < 2 || !preparePath()) {
 		return false;
 	}
 

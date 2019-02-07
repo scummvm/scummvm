@@ -40,7 +40,7 @@ void SceneScriptHF07::InitializeScene() {
 	Ambient_Sounds_Add_Sound(304, 5, 40, 20, 33, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(305, 5, 40, 20, 33, -100, 100, -101, -101, 0, 0);
 
-	if (Game_Flag_Query(368)) {
+	if (Game_Flag_Query(kFlagHF07Hole)) {
 		Scene_Loop_Set_Default(2);
 	} else {
 		Scene_Loop_Set_Default(0);
@@ -79,7 +79,7 @@ bool SceneScriptHF07::ClickedOnExit(int exitId) {
 
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 318.0f, 71.43f, -102.0f, 0, true, false, 0)) {
 			Game_Flag_Set(kFlagHF07toHF05);
-			if (!Game_Flag_Query(662)) {
+			if (!Game_Flag_Query(kFlagHF01TalkToLovedOne)) {
 				Actor_Face_Heading(kActorMcCoy, 0, false);
 				Footstep_Sound_Override_On(3);
 				Loop_Actor_Travel_Stairs(kActorMcCoy, 30, true, kAnimationModeIdle);
@@ -121,9 +121,9 @@ void SceneScriptHF07::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptHF07::PlayerWalkedIn() {
-	if (Game_Flag_Query(662)) {
+	if (Game_Flag_Query(kFlagHF01TalkToLovedOne)) {
 		int actorId = getAffectionTowardsActor();
-		if (Game_Flag_Query(662)
+		if (Game_Flag_Query(kFlagHF01TalkToLovedOne)
 		 && actorId != -1
 		) {
 			Actor_Put_In_Set(actorId, kSetHF07);

@@ -211,14 +211,14 @@ void AIScriptZuben::ClickedByPlayer() {
 		Actor_Face_Actor(kActorMcCoy, kActorZuben, true);
 		Actor_Says(kActorMcCoy, 8529, 13);
 	}
-	if (Global_Variable_Query(kVariableChapter) > 1 && Global_Variable_Query(kVariableChapter) < 5) {
+
+	if (Global_Variable_Query(kVariableChapter) > 1
+	 && Global_Variable_Query(kVariableChapter) < 5
+	) {
 		if (Actor_Query_Friendliness_To_Other(kActorZuben, kActorMcCoy) <= 20) {
 			Actor_Face_Actor(kActorMcCoy, kActorZuben, true);
 			Actor_Says(kActorMcCoy, 8910, 11);
-		} else if (Game_Flag_Query(699)) {
-			Actor_Face_Actor(kActorMcCoy, kActorZuben, true);
-			Actor_Says(kActorMcCoy, 8910, 11);
-		} else {
+		} else if (!Game_Flag_Query(kFlagTalkToZuben)) {
 			AI_Movement_Track_Pause(kActorZuben);
 			Actor_Face_Actor(kActorZuben, kActorMcCoy, true);
 			Actor_Says(kActorZuben, 140, 14);
@@ -227,8 +227,11 @@ void AIScriptZuben::ClickedByPlayer() {
 			Actor_Says(kActorZuben, 150, 15);
 			Actor_Says(kActorMcCoy, 7285, 12);
 			dialogue();
-			Game_Flag_Set(699);
+			Game_Flag_Set(kFlagTalkToZuben);
 			AI_Movement_Track_Unpause(kActorZuben);
+		} else {
+			Actor_Face_Actor(kActorMcCoy, kActorZuben, true);
+			Actor_Says(kActorMcCoy, 8910, 11);
 		}
 		// return true;
 	}

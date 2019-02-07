@@ -170,7 +170,7 @@ void SceneScriptUG01::PlayerWalkedIn() {
 		Game_Flag_Reset(kFlagRC03toUG01);
 	}
 
-	if (Actor_Query_Goal_Number(kActorLucy) == 310) {
+	if (Actor_Query_Goal_Number(kActorLucy) == kGoalLucyUG01Wait) {
 		Music_Play(21, 35, 0, 3, -1, 0, 0);
 		Actor_Set_Goal_Number(kActorLucy, 311);
 	}

@@ -58,7 +58,7 @@ void InitScript::Init_Globals() {
 	for (int i = 0; i != 55; ++i)
 		Global_Variable_Set(i, 0);
 
-	Global_Variable_Set(35, 2);
+	Global_Variable_Set(kVariableGenericWalkerConfig, 2);
 	Global_Variable_Set(kVariableChapter, 1);
 	Global_Variable_Set(kVariableChinyen, 100);
 

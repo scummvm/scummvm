@@ -319,7 +319,7 @@ void AIScriptGenericWalkerB::movingUpdate() {
 }
 
 bool AIScriptGenericWalkerB::prepareWalker() {
-	if (Game_Flag_Query(kFlagGenericWalkerWaiting) || Global_Variable_Query(35) < 0 || !preparePath()) {
+	if (Game_Flag_Query(kFlagGenericWalkerWaiting) || Global_Variable_Query(kVariableGenericWalkerConfig) < 0 || !preparePath()) {
 		return false;
 	}
 

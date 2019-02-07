@@ -148,7 +148,7 @@ void AIScriptTransient::ShotAtAndMissed() {
 
 bool AIScriptTransient::ShotAtAndHit() {
 	Actor_Set_Frame_Rate_FPS(kActorTransient, 8);
-	if (Game_Flag_Query(716)) {
+	if (Game_Flag_Query(kFlagUG13HomelessLayingdown)) {
 		_animationState = 11;
 	} else {
 		_animationState = 14;
@@ -203,7 +203,7 @@ bool AIScriptTransient::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Set_At_XYZ(kActorTransient, -310.0, 55.0, -350.0, 400);
 		Actor_Change_Animation_Mode(kActorTransient, 53);
 		Actor_Set_Targetable(kActorTransient, true);
-		Game_Flag_Set(716);
+		Game_Flag_Set(kFlagUG13HomelessLayingdown);
 		return true;
 	case 391:
 		Actor_Change_Animation_Mode(kActorTransient, 53);
@@ -461,7 +461,7 @@ bool AIScriptTransient::ChangeAnimationMode(int mode) {
 		_animationFrame = 0;
 		break;
 	case 21:
-		if (Game_Flag_Query(716)) {
+		if (Game_Flag_Query(kFlagUG13HomelessLayingdown)) {
 			_animationState = 11;
 		} else {
 			_animationState = 14;

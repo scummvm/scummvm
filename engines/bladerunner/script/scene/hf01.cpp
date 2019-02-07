@@ -46,7 +46,7 @@ void SceneScriptHF01::InitializeScene() {
 	}
 
 	Scene_Exit_Add_2D_Exit(0, 81, 226, 169, 321, 0);
-	if (!Game_Flag_Query(663)) {
+	if (!Game_Flag_Query(kFlagHF05PoliceArrived)) {
 		Scene_Exit_Add_2D_Exit(1, 304, 239, 492, 339, 0);
 		Scene_Exit_Add_2D_Exit(2, 560, 231, 639, 360, 0);
 		if (Game_Flag_Query(kFlagSpinnerAtHF01)) {
@@ -80,7 +80,7 @@ void SceneScriptHF01::InitializeScene() {
 			Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kHF01LoopInshot, false);
 		}
 		Scene_Loop_Set_Default(kHF01LoopMainLoopSpinner);
-	} else if (Game_Flag_Query(663)) {
+	} else if (Game_Flag_Query(kFlagHF05PoliceArrived)) {
 		Scene_Loop_Set_Default(kHF01LoopMainLoopSpinner);
 	} else {
 		Scene_Loop_Set_Default(kHF01LoopMainLoopNoSpinner);
@@ -159,9 +159,9 @@ bool SceneScriptHF01::ClickedOnActor(int actorId) {
 			 && !Game_Flag_Query(kFlagCrazylegsArrested)
 			 &&  Actor_Query_Goal_Number(kActorCrazylegs) != 2
 			 &&  Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
-			 && !Game_Flag_Query(662)
+			 && !Game_Flag_Query(kFlagHF01TalkToLovedOne)
 			) {
-				Game_Flag_Set(662);
+				Game_Flag_Set(kFlagHF01TalkToLovedOne);
 				Actor_Face_Actor(kActorMcCoy, affectionTowardsActor, true);
 				Actor_Face_Actor(affectionTowardsActor, kActorMcCoy, true);
 				if (affectionTowardsActor == kActorDektora) {
@@ -328,7 +328,7 @@ void SceneScriptHF01::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptHF01::PlayerWalkedIn() {
-	if (Game_Flag_Query(663)) {
+	if (Game_Flag_Query(kFlagHF05PoliceArrived)) {
 		ADQ_Flush();
 		ADQ_Add(kActorOfficerGrayford, 280, kAnimationModeTalk);
 		Actor_Put_In_Set(kActorOfficerLeary, kSetHF01);
@@ -340,7 +340,7 @@ void SceneScriptHF01::PlayerWalkedIn() {
 	}
 
 	if (!Game_Flag_Query(kFlagCrazylegsArrested)
-	 && Actor_Query_Goal_Number(kActorCrazylegs) != 2
+	 &&  Actor_Query_Goal_Number(kActorCrazylegs) != 2
 	) {
 		if (Actor_Clue_Query(kActorMcCoy, kCluePhoneCallLucy1)
 		 && Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy
