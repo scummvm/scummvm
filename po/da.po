@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-02-06 20:18+0100\n"
-"PO-Revision-Date: 2018-12-22 09:14+0000\n"
+"PO-Revision-Date: 2019-02-08 23:19+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/da/>\n"
@@ -2417,7 +2417,7 @@ msgstr "~V~enstrehåndstilstand"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:64
 msgid "~I~ndy fight controls"
-msgstr "~I~ndy kamp styring"
+msgstr "~I~ndy kampstyringer"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:65
 msgid "Show mouse cursor"
@@ -3471,11 +3471,11 @@ msgstr "Aktivér træfpoint (HP) søjlediagrammer"
 #. I18N: L/R stands for Left/Right
 #: engines/kyra/detection.cpp:138
 msgid "Fight Button L/R Swap"
-msgstr ""
+msgstr "Byt om på H/V kampknap"
 
 #: engines/kyra/detection.cpp:139
 msgid "Left button to attack, right button to pick up items"
-msgstr ""
+msgstr "Venstre knap angriber, højre knap samler ting op"
 
 #: engines/kyra/eobcommon.cpp:343 engines/kyra/lol.cpp:481
 msgid "Move Forward"
@@ -4704,11 +4704,11 @@ msgstr "Skift inventar/IQ-point-visning"
 
 #: engines/scumm/help.cpp:293
 msgid "Toggle Keyboard/Mouse Fighting (*)"
-msgstr "Skift tastatur/musekamp (*)"
+msgstr "Skift kamp med tastatur/mus (*)"
 
 #: engines/scumm/help.cpp:295
 msgid "* Keyboard Fighting is always on,"
-msgstr "* Tastatur Kamp er altid slået til,"
+msgstr "* Kamp med tastatur er altid slået til,"
 
 #: engines/scumm/help.cpp:296
 msgid "  so despite the in-game message this"
@@ -4716,11 +4716,11 @@ msgstr "  så på trods af in-game beskeden, så"
 
 #: engines/scumm/help.cpp:297
 msgid "  actually toggles Mouse Fighting Off/On"
-msgstr "  skifter det faktisk musekamp fra/til"
+msgstr "  skifter kamp med mus fra/til"
 
 #: engines/scumm/help.cpp:304
 msgid "Fighting controls (numpad):"
-msgstr "Kampstyringer (numtast):"
+msgstr "Kampstyringer (numerisk tastatur):"
 
 #: engines/scumm/help.cpp:305 engines/scumm/help.cpp:306
 #: engines/scumm/help.cpp:307
@@ -4773,7 +4773,7 @@ msgstr "henholdsvis 9, 6 og 3."
 
 #: engines/scumm/help.cpp:328
 msgid "Biplane controls (numpad):"
-msgstr "Flystyringer (numtast):"
+msgstr "Flystyringer (numerisk tastatur):"
 
 #: engines/scumm/help.cpp:329
 msgid "Fly to upper left"
