@@ -1151,9 +1151,6 @@ void EoBEngine::initStaticResource() {
 	for (int i = 0; i < 5; i++)
 		_cgaMappingLevel[i] = _staticres->loadRawData(kEoB1CgaMappingLevel0 + i, temp);
 
-	_levelSoundFiles1 = _staticres->loadStrings(kEoB1BaseLevelSounds1, temp);
-	_levelSoundFiles2 = _staticres->loadStrings(kEoB1BaseLevelSounds2, temp);
-
 	_turnUndeadString = _staticres->loadStrings(kEoB1TurnUndeadString, temp);
 
 	_npcShpData = _staticres->loadRawData(kEoB1NpcShpData, temp);

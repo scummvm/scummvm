@@ -213,7 +213,6 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_menuStringsRest4 = _menuStringsDefeat = _menuStringsTransfer = _menuStringsSpec = 0;
 	_menuStringsSpellNo = _menuYesNoStrings = _2431Strings = _katakanaLines = _katakanaSelectStrings = 0;
 	_errorSlotEmptyString = _errorSlotNoNameString = _menuOkString = 0;
-	_levelSoundFiles1 = _levelSoundFiles2 = 0;
 	_spellLevelsMage = _spellLevelsCleric = _numSpellsCleric = _numSpellsWisAdj = _numSpellsPal = _numSpellsMage = 0;
 	_mnNumWord = _numSpells = _mageSpellListSize = _spellLevelsMageSize = _spellLevelsClericSize = 0;
 	_inventorySlotsX = _slotValidationFlags = _encodeMonsterShpTable = 0;

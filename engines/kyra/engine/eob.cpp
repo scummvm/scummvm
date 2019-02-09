@@ -374,9 +374,9 @@ void EoBEngine::loadDoorShapes(int doorType1, int shapeId1, int doorType2, int s
 	if (doorType1 != 0xFF) {
 		for (int i = 0; i < 3; i++) {
 			const uint8 *enc = &_doorShapeEncodeDefs[(doorType1 * 3 + i) << 2];
-			_doorShapes[shapeId1 + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, (_flags.gameID == GI_EOB1) ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
+			_doorShapes[shapeId1 + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, (_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformDOS) ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
 			enc = &_doorSwitchShapeEncodeDefs[(doorType1 * 3 + i) << 2];
-			_doorSwitches[shapeId1 + i].shp = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, (_flags.gameID == GI_EOB1) ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
+			_doorSwitches[shapeId1 + i].shp = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, (_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformDOS) ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
 			_doorSwitches[shapeId1 + i].x = _doorSwitchCoords[doorType1 * 6 + i * 2];
 			_doorSwitches[shapeId1 + i].y = _doorSwitchCoords[doorType1 * 6 + i * 2 + 1];
 		}
@@ -385,9 +385,9 @@ void EoBEngine::loadDoorShapes(int doorType1, int shapeId1, int doorType2, int s
 	if (doorType2 != 0xFF) {
 		for (int i = 0; i < 3; i++) {
 			const uint8 *enc = &_doorShapeEncodeDefs[(doorType2 * 3 + i) << 2];
-			_doorShapes[shapeId2 + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, (_flags.gameID == GI_EOB1) ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
+			_doorShapes[shapeId2 + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, (_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformDOS) ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
 			enc = &_doorSwitchShapeEncodeDefs[(doorType2 * 3 + i) << 2];
-			_doorSwitches[shapeId2 + i].shp = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, (_flags.gameID == GI_EOB1) ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
+			_doorSwitches[shapeId2 + i].shp = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, (_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformDOS) ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
 			_doorSwitches[shapeId2 + i].x = _doorSwitchCoords[doorType2 * 6 + i * 2];
 			_doorSwitches[shapeId2 + i].y = _doorSwitchCoords[doorType2 * 6 + i * 2 + 1];
 		}

@@ -64,7 +64,7 @@ void EoBCoreEngine::gui_drawPlayField(bool refresh) {
 }
 
 void EoBCoreEngine::gui_restorePlayField() {
-	loadVcnData(0, (_flags.gameID == GI_EOB1) ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
+	loadVcnData(0, (_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformDOS) ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
 	_screen->_curPage = 0;
 	gui_drawPlayField(true);
 	gui_drawAllCharPortraitsWithStats();
