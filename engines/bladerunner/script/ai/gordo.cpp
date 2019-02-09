@@ -253,8 +253,8 @@ bool AIScriptGordo::ShotAtAndHit() {
 
 	// Shot as a human
 	if (Actor_Query_Goal_Number(kActorGordo) > 239
-	 && Actor_Query_Goal_Number(kActorGordo) < 245)
-	 {
+	 && Actor_Query_Goal_Number(kActorGordo) < 245
+	) {
 		Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR01Die);
 		Delay(1500);
 		Actor_Voice_Over(2410, kActorVoiceOver);
@@ -1217,21 +1217,28 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 		switch (_animationState) {
 		case 0:
 			break;
-		case 1:
-		case 3:
-		case 38:
-		case 39:
+		case 2:
+		case 13:
+			Actor_Change_Animation_Mode(kActorGordo, kAnimationModeSit);
+			break;
+		case 4:
+		case 5:
+		case 6:
+		case 7:
+		case 8:
+		case 9:
+		case 10:
+		case 11:
+		case 12:
+		case 36:
+		case 37:
+			var_45B078 = 1;
+			break;
+		default:
 			_animationState = 0;
 			_animationFrame = 0;
 			_state = 0;
 			_counterTarget = 0;
-			break;
-		case 2:
-		case 13:
-			Actor_Change_Animation_Mode(kActorGordo, 53);
-			break;
-		default:
-			var_45B078 = 1;
 			break;
 		}
 		break;
@@ -1496,7 +1503,7 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 		_animationFrame = 0;
 		break;
 
-	case 53:
+	case kAnimationModeSit:
 		_animationState = 2;
 		_animationFrame = 0;
 		break;

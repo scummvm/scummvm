@@ -38,7 +38,7 @@ enum Actors {
 	kActorCrazylegs = 9,
 	kActorLuther = 10,
 	kActorGrigorian = 11,
-	kActorTransient = 12,
+	kActorTransient = 12, // Homeless
 	kActorLance = 13,
 	kActorBulletBob = 14,
 	kActorRunciter = 15,
