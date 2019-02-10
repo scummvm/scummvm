@@ -28,7 +28,6 @@
 #include "bladerunner/audio_player.h"
 #include "bladerunner/bladerunner.h"
 
-#include "common/debug.h"
 #include "common/str.h"
 
 namespace BladeRunner {
@@ -55,10 +54,22 @@ AudioSpeech::AudioSpeech(BladeRunnerEngine *vm) {
 }
 
 AudioSpeech::~AudioSpeech() {
+	stopSpeech();
+	while (isPlaying()) {
+		// wait for the mixer to finish
+	}
+
 	delete[] _data;
 }
 
 bool AudioSpeech::playSpeech(const Common::String &name, int pan) {
+	if (isPlaying()) {
+		stopSpeech();
+	}
+
+	// Audio cache is not usable as hash function is producing collision for speech lines.
+	// It was not used in the original game either
+
 	Common::ScopedPtr<Common::SeekableReadStream> r(_vm->getResourceStream(name));
 
 	if (!r) {

@@ -35,43 +35,6 @@ namespace BladeRunner {
 class BladeRunnerEngine;
 class AudioCache;
 
-/*
- * This is a poor imitation of Bladerunner's resource cache
- */
-class AudioCache {
-	struct cacheItem {
-		int32   hash;
-		int     refs;
-		uint    lastAccess;
-		byte   *data;
-		uint32  size;
-	};
-
-	Common::Mutex            _mutex;
-	Common::Array<cacheItem> _cacheItems;
-
-	uint32 _totalSize;
-	uint32 _maxSize;
-	uint32 _accessCounter;
-
-public:
-	AudioCache() :
-		_totalSize(0),
-		_maxSize(2457600),
-		_accessCounter(0) {
-	}
-	~AudioCache();
-
-	bool  canAllocate(uint32 size) const;
-	bool  dropOldest();
-	byte *findByHash(int32 hash);
-	void  storeByHash(int32 hash, Common::SeekableReadStream *stream);
-
-	void  incRef(int32 hash);
-	void  decRef(int32 hash);
-};
-
-
 enum AudioPlayerFlags {
 	kAudioPlayerLoop = 1,
 	kAudioPlayerOverrideVolume = 2
@@ -84,7 +47,6 @@ class AudioPlayer {
 		bool                isActive;
 		int                 channel;
 		int                 priority;
-		int32               hash;
 		int                 volume;
 		int                 pan;
 		Audio::AudioStream *stream;
@@ -93,7 +55,6 @@ class AudioPlayer {
 	BladeRunnerEngine *_vm;
 
 	Common::Mutex _mutex;
-	AudioCache   *_cache;
 	Track         _tracks[kTracks];
 	int           _sfxVolume;
 

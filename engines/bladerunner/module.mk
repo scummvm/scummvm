@@ -10,6 +10,7 @@ MODULE_OBJS = \
 	ambient_sounds.o \
 	archive.o \
 	aud_stream.o \
+	audio_cache.o \
 	audio_mixer.o \
 	audio_player.o \
 	audio_speech.o \

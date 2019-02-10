@@ -22,7 +22,7 @@
 
 #include "bladerunner/aud_stream.h"
 
-#include "bladerunner/audio_player.h"
+#include "bladerunner/audio_cache.h"
 
 #include "common/util.h"
 
@@ -36,12 +36,12 @@ AudStream::AudStream(byte *data, int overrideFrequency) {
 	init(data);
 }
 
-AudStream::AudStream(AudioCache *cache, int32 hash) {
+AudStream::AudStream(AudioCache *cache, int32 hash, int overrideFrequency) {
 	assert(cache != nullptr);
 
 	_cache = cache;
 	_hash  = hash;
-	_overrideFrequency = -1;
+	_overrideFrequency = overrideFrequency;
 
 	_cache->incRef(_hash);
 
@@ -128,7 +128,7 @@ bool AudStream::rewind() {
 }
 
 int AudStream::getLength() const {
-	int bytesPerSecond = _frequency;
+	int bytesPerSecond = _overrideFrequency > 0 ? _overrideFrequency : _frequency;
 	if (_flags & 1) { // 16 bit
 		bytesPerSecond *= 2;
 	}

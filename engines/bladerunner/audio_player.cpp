@@ -24,6 +24,7 @@
 
 #include "bladerunner/archive.h"
 #include "bladerunner/aud_stream.h"
+#include "bladerunner/audio_cache.h"
 #include "bladerunner/audio_mixer.h"
 #include "bladerunner/bladerunner.h"
 
@@ -37,99 +38,10 @@ namespace Common {
 
 namespace BladeRunner {
 
-AudioCache::~AudioCache() {
-	for (uint i = 0; i != _cacheItems.size(); ++i) {
-		free(_cacheItems[i].data);
-	}
-}
-
-bool AudioCache::canAllocate(uint32 size) const {
-	Common::StackLock lock(_mutex);
-
-	return _maxSize - _totalSize >= size;
-}
-
-bool AudioCache::dropOldest() {
-	Common::StackLock lock(_mutex);
-
-	if (_cacheItems.size() == 0)
-		return false;
-
-	uint oldest = 0;
-	for (uint i = 1; i != _cacheItems.size(); ++i) {
-		if (_cacheItems[i].refs == 0 && _cacheItems[i].lastAccess < _cacheItems[oldest].lastAccess)
-			oldest = i;
-	}
-
-	free(_cacheItems[oldest].data);
-	_totalSize -= _cacheItems[oldest].size;
-	_cacheItems.remove_at(oldest);
-	return true;
-}
-
-byte *AudioCache::findByHash(int32 hash) {
-	Common::StackLock lock(_mutex);
-
-	for (uint i = 0; i != _cacheItems.size(); ++i) {
-		if (_cacheItems[i].hash == hash) {
-			_cacheItems[i].lastAccess = _accessCounter++;
-			return _cacheItems[i].data;
-		}
-	}
-
-	return nullptr;
-}
-
-void AudioCache::storeByHash(int32 hash, Common::SeekableReadStream *stream) {
-	Common::StackLock lock(_mutex);
-
-	uint32 size = stream->size();
-	byte *data = (byte *)malloc(size);
-	stream->read(data, size);
-
-	cacheItem item = {
-		hash,
-		0,
-		_accessCounter++,
-		data,
-		size
-	};
-
-	_cacheItems.push_back(item);
-	_totalSize += size;
-}
-
-void AudioCache::incRef(int32 hash) {
-	Common::StackLock lock(_mutex);
-
-	for (uint i = 0; i != _cacheItems.size(); ++i) {
-		if (_cacheItems[i].hash == hash) {
-			_cacheItems[i].refs++;
-			return;
-		}
-	}
-	assert(false && "AudioCache::incRef: hash not found");
-}
-
-void AudioCache::decRef(int32 hash) {
-	Common::StackLock lock(_mutex);
-
-	for (uint i = 0; i != _cacheItems.size(); ++i) {
-		if (_cacheItems[i].hash == hash) {
-			assert(_cacheItems[i].refs > 0);
-			_cacheItems[i].refs--;
-			return;
-		}
-	}
-	assert(false && "AudioCache::decRef: hash not found");
-}
-
 AudioPlayer::AudioPlayer(BladeRunnerEngine *vm) {
 	_vm = vm;
-	_cache = new AudioCache();
 
 	for (int i = 0; i != 6; ++i) {
-		_tracks[i].hash = 0;
 		_tracks[i].priority = 0;
 		_tracks[i].isActive = false;
 		_tracks[i].channel = -1;
@@ -141,12 +53,11 @@ AudioPlayer::AudioPlayer(BladeRunnerEngine *vm) {
 
 AudioPlayer::~AudioPlayer() {
 	stopAll();
-	delete _cache;
 }
 
 void AudioPlayer::stopAll() {
 	for (int i = 0; i != kTracks; ++i) {
-		stop(i, false);
+		stop(i, true);
 	}
 	for (int i = 0; i != kTracks; ++i) {
 		while (isActive(i)) {
@@ -254,24 +165,24 @@ int AudioPlayer::playAud(const Common::String &name, int volume, int panFrom, in
 
 	/* Load audio resource and store in cache. Playback will happen directly from there. */
 	int32 hash = MIXArchive::getHash(name);
-	if (!_cache->findByHash(hash)) {
+	if (!_vm->_audioCache->findByHash(hash)) {
 		Common::SeekableReadStream *r = _vm->getResourceStream(name);
 		if (!r) {
 			return -1;
 		}
 
 		int32 size = r->size();
-		while (!_cache->canAllocate(size)) {
-			if (!_cache->dropOldest()) {
+		while (!_vm->_audioCache->canAllocate(size)) {
+			if (!_vm->_audioCache->dropOldest()) {
 				delete r;
 				return -1;
 			}
 		}
-		_cache->storeByHash(hash, r);
+		_vm->_audioCache->storeByHash(hash, r);
 		delete r;
 	}
 
-	AudStream *audioStream = new AudStream(_cache, hash);
+	AudStream *audioStream = new AudStream(_vm->_audioCache, hash);
 
 	int actualVolume = volume;
 	if (!(flags & kAudioPlayerOverrideVolume)) {
@@ -290,7 +201,6 @@ int AudioPlayer::playAud(const Common::String &name, int volume, int panFrom, in
 
 	if (channel == -1) {
 		delete audioStream;
-		_cache->decRef(hash);
 		return -1;
 	}
 
@@ -301,7 +211,6 @@ int AudioPlayer::playAud(const Common::String &name, int volume, int panFrom, in
 	_tracks[track].isActive = true;
 	_tracks[track].channel  = channel;
 	_tracks[track].priority = priority;
-	_tracks[track].hash     = hash;
 	_tracks[track].volume   = actualVolume;
 	_tracks[track].stream   = audioStream;
 

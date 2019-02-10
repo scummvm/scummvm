@@ -45,7 +45,7 @@ Music::Music(BladeRunnerEngine *vm) {
 }
 
 Music::~Music() {
-	stop(1);
+	stop(0);
 	while (isPlaying()) {
 		// wait for the mixer to finish
 	}

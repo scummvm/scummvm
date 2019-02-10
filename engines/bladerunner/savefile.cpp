@@ -31,9 +31,6 @@
 
 #include "graphics/thumbnail.h"
 
-
-
-#include "common/debug.h"
 namespace BladeRunner {
 
 SaveStateList SaveFileManager::list(const Common::String &target) {

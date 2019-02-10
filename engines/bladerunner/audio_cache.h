@@ -20,48 +20,49 @@
  *
  */
 
-#ifndef BLADERUNNER_AUD_STREAM_H
-#define BLADERUNNER_AUD_STREAM_H
+#ifndef BLADERUNNER_AUDIO_CACHE_H
+#define BLADERUNNER_AUDIO_CACHE_H
 
-#include "bladerunner/adpcm_decoder.h"
-
-#include "audio/audiostream.h"
-#include "common/endian.h"
-#include "common/types.h"
+#include "common/array.h"
+#include "common/mutex.h"
 
 namespace BladeRunner {
 
+class BladeRunnerEngine;
 class AudioCache;
 
-class AudStream : public Audio::RewindableAudioStream {
-	byte       *_data;
-	byte       *_p;
-	byte       *_end;
-	AudioCache *_cache;
-	int32       _hash;
-	uint16      _deafBlockRemain;
-	uint16      _frequency;
-	uint32      _size;
-	uint32      _sizeDecompressed;
-	byte        _flags;
-	byte        _compressionType;
-	int         _overrideFrequency;
+/*
+ * This is a poor imitation of Bladerunner's resource cache
+ */
+class AudioCache {
+	struct cacheItem {
+		int32   hash;
+		int     refs;
+		uint    lastAccess;
+		byte   *data;
+		uint32  size;
+	};
 
-	ADPCMWestwoodDecoder _decoder;
+	BladeRunnerEngine *_vm;
 
-	void init(byte *data);
+	Common::Mutex            _mutex;
+	Common::Array<cacheItem> _cacheItems;
+
+	uint32 _totalSize;
+	uint32 _maxSize;
+	uint32 _accessCounter;
 
 public:
-	AudStream(byte *data, int overrideFrequency = -1);
-	AudStream(AudioCache *cache, int32 hash, int overrideFrequency = -1);
-	~AudStream();
+	AudioCache(BladeRunnerEngine *vm);
+	~AudioCache();
 
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const { return false; }
-	int getRate() const { return _overrideFrequency > 0 ? _overrideFrequency : _frequency; };
-	bool endOfData() const { return _p == _end; }
-	bool rewind();
-	int getLength() const;
+	bool  canAllocate(uint32 size) const;
+	bool  dropOldest();
+	byte *findByHash(int32 hash);
+	void  storeByHash(int32 hash, Common::SeekableReadStream *stream);
+
+	void  incRef(int32 hash);
+	void  decRef(int32 hash);
 };
 
 } // End of namespace BladeRunner

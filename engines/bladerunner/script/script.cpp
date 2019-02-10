@@ -335,9 +335,11 @@ void ScriptBase::Actor_Says_With_Pause(int actorId, int sentenceId, float pause,
 			Sound_Play(Random_Query(319, 327), 40, 0, 0, 50);
 		}
 	}
-	if(pause > 0.0f && !_vm->_speechSkipped) {
+
+	if (pause > 0.0f && !_vm->_speechSkipped) {
 		Delay(pause * 1000);
 	}
+
 	Player_Gains_Control();
 }
 

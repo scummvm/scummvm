@@ -25,6 +25,7 @@
 #include "bladerunner/actor.h"
 #include "bladerunner/actor_dialogue_queue.h"
 #include "bladerunner/ambient_sounds.h"
+#include "bladerunner/audio_cache.h"
 #include "bladerunner/audio_mixer.h"
 #include "bladerunner/audio_player.h"
 #include "bladerunner/audio_speech.h"
@@ -156,7 +157,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_lights                  = nullptr;
 	_obstacles               = nullptr;
 	_sceneScript             = nullptr;
-	_time                = nullptr;
+	_time                    = nullptr;
 	_gameInfo                = nullptr;
 	_waypoints               = nullptr;
 	_gameVars                = nullptr;
@@ -164,6 +165,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_sceneObjects            = nullptr;
 	_gameFlags               = nullptr;
 	_items                   = nullptr;
+	_audioCache              = nullptr;
 	_audioMixer              = nullptr;
 	_audioPlayer             = nullptr;
 	_music                   = nullptr;
@@ -379,7 +381,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 		return false;
 	}
 
-	// TODO: Allocate audio cache
+	_audioCache = new AudioCache(this);
 
 	if (hasSavegames) {
 		if (!loadSplash()) {
@@ -663,6 +665,9 @@ void BladeRunnerEngine::shutdown() {
 
 	delete _audioMixer;
 	_audioMixer = nullptr;
+
+	delete _audioCache;
+	_audioCache = nullptr;
 
 	if (isArchiveOpen("MUSIC.MIX")) {
 		closeArchive("MUSIC.MIX");

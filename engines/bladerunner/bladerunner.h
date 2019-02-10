@@ -60,6 +60,7 @@ class ActorDialogueQueue;
 class ScreenEffects;
 class AIScripts;
 class AmbientSounds;
+class AudioCache;
 class AudioMixer;
 class AudioPlayer;
 class AudioSpeech;
@@ -118,6 +119,7 @@ public:
 	ScreenEffects      *_screenEffects;
 	AIScripts          *_aiScripts;
 	AmbientSounds      *_ambientSounds;
+	AudioCache         *_audioCache;
 	AudioMixer         *_audioMixer;
 	AudioPlayer        *_audioPlayer;
 	AudioSpeech        *_audioSpeech;
@@ -276,7 +278,6 @@ public:
 	void syncSoundSettings();
 	bool isSubtitlesEnabled();
 	void setSubtitlesEnabled(bool newVal);
-
 
 	Common::SeekableReadStream *getResourceStream(const Common::String &name);
 
