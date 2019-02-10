@@ -29,7 +29,7 @@ namespace Glk {
 namespace Frotz {
 
 Mem::Mem() : story_fp(nullptr), story_size(0), first_undo(nullptr), last_undo(nullptr),
-		curr_undo(nullptr), undo_mem(nullptr), zmp(nullptr), prev_zmp(nullptr),
+		curr_undo(nullptr), undo_mem(nullptr), zmp(nullptr), pcp(nullptr), prev_zmp(nullptr),
 		undo_diff(nullptr), undo_count(0), reserve_mem(0) {
 }
 

@@ -1734,7 +1734,10 @@ public:
 	/**
 	 * Return the current program execution offset
 	 */
-	uint getPC() const { return pcp - zmp; }
+	uint getPC() const {
+		assert(pcp);
+		return pcp - zmp;
+	}
 
 	/**
 	 * Set the program execution offset

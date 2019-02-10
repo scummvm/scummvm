@@ -36,13 +36,15 @@ namespace Frotz {
 #define SET_BYTE(addr,v)   zmp[addr] = v
 #define LOW_BYTE(addr,v)   v = zmp[addr]
 
+typedef uint offset_t;
+
 /**
  * Stores undo information
  */
 struct undo_struct {
 	undo_struct *next;
 	undo_struct *prev;
-	long pc;
+	offset_t pc;
 	long diff_size;
 	zword frame_count;
 	zword stack_size;
@@ -150,6 +152,10 @@ public:
 	 * Constructor
 	 */
 	Mem();
+
+	/**
+	 * Destructor
+	 */
 	virtual ~Mem() {}
 
 	/**

@@ -53,7 +53,7 @@ bool Quetzal::read_long(Common::ReadStream *f, uint *result) {
 bool Quetzal::save(Common::WriteStream *svf, Processor *proc, const Common::String &desc) {
 	Processor &p = *proc;
 	uint ifzslen = 0, cmemlen = 0, stkslen = 0, descLen = 0;
-	uint pc;
+	offset_t pc;
 	zword i, j, n;
 	zword nvars, nargs, nstk;
 	zbyte var;
@@ -214,7 +214,7 @@ bool Quetzal::save(Common::WriteStream *svf, Processor *proc, const Common::Stri
 int Quetzal::restore(Common::SeekableReadStream *svf, Processor *proc) {
 	Processor &p = *proc;
 	uint ifzslen, currlen, tmpl;
-	uint pc;
+	offset_t pc;
 	zword i, tmpw;
 	int fatal = 0;	// Set to -1 when errors must be fatal.
 	zbyte skip, progress = GOT_NONE;

@@ -167,7 +167,7 @@ void Processor::runtimeError(ErrorCode errNum) {
 
 	if ((_err_report_mode == ERR_REPORT_ALWAYS)
 		|| (_err_report_mode == ERR_REPORT_ONCE && wasfirst)) {
-		long pc;
+		offset_t pc;
 		GET_PC(pc);
 		print_string("Warning: ");
 		print_string(ERR_MESSAGES[errNum - 1]);

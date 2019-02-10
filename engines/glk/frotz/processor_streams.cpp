@@ -535,9 +535,10 @@ void Processor::z_restart() {
 	_frameCount = 0;
 
 	if (h_version != V6 && h_version != V9) {
-		long pc = (long)h_start_pc;
+		offset_t pc = (offset_t)h_start_pc;
 		SET_PC(pc);
 	} else {
+		SET_PC(0);
 		call(h_start_pc, 0, nullptr, 0);
 	}
 
