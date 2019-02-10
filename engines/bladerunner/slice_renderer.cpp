@@ -375,7 +375,7 @@ void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 pos
 	assert(_setEffects);
 	//assert(_view);
 
-	setupFrameInWorld(animationId, animationFrame, position, facing);
+	setupFrameInWorld(animationId, animationFrame, position, facing, scale);
 
 	assert(_sliceFramePtr);
 

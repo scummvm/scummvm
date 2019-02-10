@@ -59,7 +59,6 @@ AudioSpeech::~AudioSpeech() {
 }
 
 bool AudioSpeech::playSpeech(const Common::String &name, int pan) {
-	// debug("AudioSpeech::playSpeech(\"%s\")", name);
 	Common::ScopedPtr<Common::SeekableReadStream> r(_vm->getResourceStream(name));
 
 	if (!r) {
@@ -82,9 +81,7 @@ bool AudioSpeech::playSpeech(const Common::String &name, int pan) {
 		return false;
 	}
 
-	AudStream *audioStream = new AudStream(_data);
-
-	// TODO: shorty mode - set rate of sound to 33khz
+	AudStream *audioStream = new AudStream(_data, _vm->_shortyMode ? 33000 : -1);
 
 	_channel = _vm->_audioMixer->play(
 		Audio::Mixer::kSpeechSoundType,

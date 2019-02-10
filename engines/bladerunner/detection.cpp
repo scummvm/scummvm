@@ -50,7 +50,15 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			false
 		}
 	},
-
+	{
+		GAMEOPTION_SHORTY,
+		{
+			_s("Shorty mode"),
+			_s("Game will shrink the actors and make their voices high pitched"),
+			"shorty",
+			false
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 

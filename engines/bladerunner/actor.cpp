@@ -727,7 +727,9 @@ bool Actor::draw(Common::Rect *screenRect) {
 	float drawAngle = M_PI - _facing * (M_PI / 512.0f);
 	float drawScale = _scale;
 
-	// TODO: Handle SHORTY mode
+	if (_vm->_shortyMode) {
+		drawScale = 0.7f;
+	}
 
 	_vm->_sliceRenderer->drawInWorld(_animationId, _animationFrame, drawPosition, drawAngle, drawScale, _vm->_surfaceFront, _vm->_zbuffer->getData());
 	_vm->_sliceRenderer->getScreenRectangle(screenRect, _animationId, _animationFrame, drawPosition, drawAngle, drawScale);

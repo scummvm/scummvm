@@ -28,9 +28,10 @@
 
 namespace BladeRunner {
 
-AudStream::AudStream(byte *data) {
+AudStream::AudStream(byte *data, int overrideFrequency) {
 	_hash  = 0;
 	_cache = nullptr;
+	_overrideFrequency = overrideFrequency;
 
 	init(data);
 }
@@ -40,6 +41,7 @@ AudStream::AudStream(AudioCache *cache, int32 hash) {
 
 	_cache = cache;
 	_hash  = hash;
+	_overrideFrequency = -1;
 
 	_cache->incRef(_hash);
 

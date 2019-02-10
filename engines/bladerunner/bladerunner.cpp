@@ -414,6 +414,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	_subtitlesEnabled = ConfMan.getBool("subtitles");
 
 	_sitcomMode = ConfMan.getBool("sitcom");
+	_shortyMode = ConfMan.getBool("shorty");
 
 	_items = new Items(this);
 
