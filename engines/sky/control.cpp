@@ -488,7 +488,7 @@ void Control::doControlPanel() {
 		_text->drawToScreen(WITH_MASK);
 		_system->updateScreen();
 		_mouseClicked = false;
-		delay(50);
+		delay(20);
 		if (!_controlPanel)
 			return;
 		if (_keyPressed.keycode == Common::KEYCODE_ESCAPE) { // escape pressed
@@ -635,7 +635,7 @@ bool Control::getYesNo(char *text) {
 			_skyMouse->spriteMouse(mouseType, 0, 0);
 		}
 		_system->updateScreen();
-		delay(50);
+		delay(20);
 		if (!_controlPanel) {
 			free(dlgTextDat);
 			delete dlgText;
@@ -672,7 +672,7 @@ uint16 Control::doMusicSlide() {
 	int ofsY = _slide2->_y - mouse.y;
 	uint8 volume;
 	while (_mouseClicked) {
-		delay(50);
+		delay(20);
 		if (!_controlPanel)
 			return 0;
 		mouse = _system->getEventManager()->getMousePos();
@@ -703,7 +703,7 @@ uint16 Control::doSpeedSlide() {
 	speedDelay *= SPEED_MULTIPLY;
 	speedDelay += 2;
 	while (_mouseClicked) {
-		delay(50);
+		delay(20);
 		if (!_controlPanel)
 			return SPEED_CHANGED;
 		mouse = _system->getEventManager()->getMousePos();
@@ -896,7 +896,7 @@ uint16 Control::saveRestorePanel(bool allowSave) {
 		_text->drawToScreen(WITH_MASK);
 		_system->updateScreen();
 		_mouseClicked = false;
-		delay(50);
+		delay(20);
 		if (!_controlPanel)
 			return clickRes;
 		if (_keyPressed.keycode == Common::KEYCODE_ESCAPE) { // escape pressed
