@@ -136,7 +136,7 @@ void DINGUXSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFor
 }
 
 void DINGUXSdlGraphicsManager::drawMouse() {
-	if (!_cursorVisible || !_mouseSurface) {
+	if (!_cursorVisible || !_mouseSurface || !_mouseCurState.w || !_mouseCurState.h) {
 		_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
 		return;
 	}
@@ -144,13 +144,15 @@ void DINGUXSdlGraphicsManager::drawMouse() {
 	SDL_Rect dst;
 	int scale;
 	int hotX, hotY;
+	
+	const Common::Point virtualCursor = convertWindowToVirtual(_cursorX, _cursorY);
 
 	if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
-		dst.x = _cursorX / 2;
-		dst.y = _cursorY / 2;
+		dst.x = virtualCursor.x / 2;
+		dst.y = virtualCursor.y / 2;
 	} else {
-		dst.x = _cursorX;
-		dst.y = _cursorY;
+		dst.x = virtualCursor.x;
+		dst.y = virtualCursor.y;
 	}
 
 	if (!_overlayVisible) {
@@ -178,9 +180,7 @@ void DINGUXSdlGraphicsManager::drawMouse() {
 	// We draw the pre-scaled cursor image, so now we need to adjust for
 	// scaling, shake position and aspect ratio correction manually.
 
-	if (!_overlayVisible) {
-		dst.y += _currentShakePos;
-	}
+	dst.y += _currentShakePos;
 
 	if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 		dst.y = real2Aspect(dst.y);
@@ -193,11 +193,12 @@ void DINGUXSdlGraphicsManager::drawMouse() {
 	// Note that SDL_BlitSurface() and addDirtyRect() will both perform any
 	// clipping necessary
 
-	if (SDL_BlitSurface(_mouseSurface, NULL, _hwScreen, &dst) != 0)
+	if (SDL_BlitSurface(_mouseSurface, nullptr, _hwScreen, &dst) != 0)
 		error("SDL_BlitSurface failed: %s", SDL_GetError());
 
 	// The screen will be updated using real surface coordinates, i.e.
 	// they will not be scaled or aspect-ratio corrected.
+
 	addDirtyRect(dst.x, dst.y, dst.w, dst.h, true);
 }
 
@@ -231,8 +232,9 @@ void DINGUXSdlGraphicsManager::internUpdateScreen() {
 #endif
 
 	// If the shake position changed, fill the dirty area with blackness
-	if (_currentShakePos != _newShakePos) {
-		SDL_Rect blackrect = {0, 0, _videoMode.screenWidth * _videoMode.scaleFactor, _newShakePos * _videoMode.scaleFactor};
+	if (_currentShakePos != _newShakePos ||
+		(_cursorNeedsRedraw && _mouseBackup.y <= _currentShakePos)) {
+		SDL_Rect blackrect = {0, 0, (Uint16)(_videoMode.screenWidth * _videoMode.scaleFactor), (Uint16)(_newShakePos * _videoMode.scaleFactor)};
 
 		if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
