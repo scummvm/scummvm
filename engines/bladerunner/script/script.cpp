@@ -1546,8 +1546,6 @@ bool ScriptBase::Game_Over() {
 void ScriptBase::Autosave_Game(int textId) {
 	debugC(kDebugScript, "Autosave_Game(%d)", textId);
 	_vm->_gameAutoSave = textId;
-	// TODO
-	warning("Autosave not yet implemented");
 }
 
 void ScriptBase::I_Sez(const char *str) {

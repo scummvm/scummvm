@@ -366,7 +366,9 @@ void KIASectionSave::save() {
 		slot = _saveList[_selectedLineId].getSaveSlot();
 	} else {
 		// Find first available save slot
+		int maxSlot = -1;
 		for (int i = 0; i < (int)_saveList.size(); ++i) {
+			maxSlot = MAX(maxSlot, _saveList[i].getSaveSlot());
 			if (_saveList[i].getSaveSlot() != i) {
 				slot = i;
 				break;
@@ -374,7 +376,7 @@ void KIASectionSave::save() {
 		}
 
 		if (slot == -1) {
-			slot = _saveList.size();
+			slot = maxSlot + 1;
 		}
 	}
 

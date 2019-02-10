@@ -286,7 +286,7 @@ public:
 	bool saveGame(Common::WriteStream &stream, const Graphics::Surface &thumbnail);
 	bool loadGame(Common::SeekableReadStream &stream);
 	void newGame(int difficulty);
-	void autoSaveGame();
+	void autoSaveGame(int textId, bool endgame);
 
 	void ISez(const Common::String &str);
 

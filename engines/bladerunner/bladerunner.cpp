@@ -109,7 +109,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_playerDead      = false;
 	_speechSkipped   = false;
 	_gameOver        = false;
-	_gameAutoSave    = 0;
+	_gameAutoSave    = -1;
 	_gameIsLoading   = false;
 	_sceneIsLoading  = false;
 
@@ -309,7 +309,7 @@ Common::Error BladeRunnerEngine::run() {
 		_mouse->disable();
 
 		if (_gameOver) {
-			// autoSaveGame(4, 1); // TODO
+			autoSaveGame(4, true);
 			_endCredits->show();
 		}
 	}
@@ -836,7 +836,10 @@ void BladeRunnerEngine::gameTick() {
 		_settings->openNewScene();
 	}
 
-	// TODO: Autosave
+	if (_gameAutoSave >= 0) {
+		autoSaveGame(_gameAutoSave, false);
+		_gameAutoSave = -1;
+	}
 
 	//probably not needed, this version of tick is just loading data from buffer
 	//_audioMixer->tick();
@@ -1931,6 +1934,56 @@ void BladeRunnerEngine::newGame(int difficulty) {
 	initChapterAndScene();
 
 	_settings->setStartingGame();
+}
+
+void BladeRunnerEngine::autoSaveGame(int textId, bool endgame) {
+	TextResource textAutoSave(this);
+	if (!textAutoSave.open("AUTOSAVE")) {
+		return;
+	}
+
+	SaveStateList saveList = BladeRunner::SaveFileManager::list(getTargetName());
+
+	// Find first available save slot
+	int slot = -1;
+	int maxSlot = -1;
+	for (int i = 0; i < (int)saveList.size(); ++i) {
+		maxSlot = MAX(maxSlot, saveList[i].getSaveSlot());
+		if (saveList[i].getSaveSlot() != i) {
+			slot = i;
+			break;
+		}
+	}
+
+	if (slot == -1) {
+		slot = maxSlot + 1;
+	}
+
+	Common::OutSaveFile *saveFile = BladeRunner::SaveFileManager::openForSaving(getTargetName(), slot);
+	if (saveFile == nullptr || saveFile->err()) {
+		delete saveFile;
+	}
+
+	BladeRunner::SaveFileHeader header;
+	if (endgame) {
+		header._name = "END_GAME_STATE";
+	} else {
+		header._name = textAutoSave.getText(textId);
+	}
+
+	BladeRunner::SaveFileManager::writeHeader(*saveFile, header);
+
+	Graphics::Surface thumbnail = generateThumbnail();
+
+	_time->pause();
+	saveGame(*saveFile, thumbnail);
+	_time->resume();
+
+	saveFile->finalize();
+
+	thumbnail.free();
+
+	delete saveFile;
 }
 
 void BladeRunnerEngine::ISez(const Common::String &str) {
