@@ -585,10 +585,34 @@ static const uint16 ecoquest1PatchGiveOilyShell[] = {
 	PATCH_END
 };
 
+// Reading the prophecy scroll in the CD version breaks messages in at least
+//  rooms 100 and 120. scrollScript:init overwrites the global that holds the
+//  noun for the room's message tuples. This global was added in the CD version
+//  and is set by most rooms during initialization. This pattern was mistakenly
+//  applied to scrollScript which isn't a room and doesn't depend on the global.
+//
+// We fix this by skipping the problematic code which overwrites the global.
+//
+// Applies to: PC CD
+// Responsible method: scrollScript:init
+// Fixes bug #10883
+static const uint16 ecoquest1SignatureProphecyScroll[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x01,                     // ldi 01
+	0xa1, 0xfa,                     // sag fa [ global250 = 1 ]
+	SIG_END
+};
+
+static const uint16 ecoquest1PatchProphecyScroll[] = {
+	0x33, 0x02,                     // jmp 02 [ don't set global250 ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry ecoquest1Signatures[] = {
 	{  true,   160, "CD: give superfluous oily shell",             1, ecoquest1SignatureGiveOilyShell,  ecoquest1PatchGiveOilyShell },
 	{  true,   660, "CD: bad messagebox and freeze",               1, ecoquest1SignatureStayAndHelp,    ecoquest1PatchStayAndHelp },
+	{  true,   816, "CD: prophecy scroll",                         1, ecoquest1SignatureProphecyScroll, ecoquest1PatchProphecyScroll },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
