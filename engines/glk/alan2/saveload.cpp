@@ -30,7 +30,7 @@ namespace Glk {
 namespace Alan2 {
 
 void SaveLoad::save() {
-	int i;
+	uint i;
 	Common::SaveFileManager *saveFileMan = _vm->getSaveFileManager();
 	Common::OutSaveFile *saveFile = nullptr;
 	Common::String str;
@@ -102,7 +102,7 @@ void SaveLoad::save() {
 
 	// Save the event queue
 	_events[*_eventTop].time = 0;        // Mark the top
-	for (i = 0; i < *_eventTop + 1; i++)
+	for (i = 0; i < (uint)*_eventTop + 1; i++)
 		saveFile->write(&_events[i], sizeof(_events[0]));
 
 	// Save scores
@@ -113,7 +113,7 @@ void SaveLoad::save() {
 }
 
 void SaveLoad::restore() {
-	int i, tmp;
+	uint i;
 	Common::SaveFileManager *saveFileMan = _vm->getSaveFileManager();
 	Common::InSaveFile *saveFile = nullptr;
 	Common::String str;

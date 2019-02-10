@@ -42,7 +42,7 @@ bool Execute::exitto(int to, int from) {
 		return false; // No exits
 
 	for (ExtElem *ext = (ExtElem *)addrTo(_locs[from - LOCMIN].exts); !endOfTable(ext); ext++)
-		if (ext->next == to)
+		if ((int)ext->next == to)
 			return true;
 
 	return false;
@@ -51,7 +51,7 @@ bool Execute::exitto(int to, int from) {
 int Execute::count(int cnt) {
 	int j = 0;
 
-	for (int i = OBJMIN; i <= OBJMAX; i++)
+	for (uint i = OBJMIN; i <= OBJMAX; i++)
 		if (in(i, cnt))
 			j++;	// Then it's in this container also
 
@@ -61,7 +61,7 @@ int Execute::count(int cnt) {
 int Execute::sumAttributes(Aword atr, Aword cnt) {
 	int sum = 0;
 
-	for (int i = OBJMIN; i <= OBJMAX; i++) {
+	for (uint i = OBJMIN; i <= OBJMAX; i++) {
 		if (_objs[i - OBJMIN].loc == cnt) {	// Then it's in this container
 			if (_objs[i - OBJMIN].cont != 0)	// This is also a container!
 				sum = sum + sumAttributes(atr, i);
@@ -92,7 +92,7 @@ bool Execute::checkContainerLimit(Aword cnt, Aword obj) {
 	if (_cnts[props - CNTMIN].lims != 0) { /* Any limits at all? */
 		for (lim = (LimElem *)addrTo(_cnts[props - CNTMIN].lims); !endOfTable(lim); lim++) {
 			if (lim->atr == 0) {
-				if (count(cnt) >= lim->val) {
+				if (count(cnt) >= (int)lim->val) {
 					_vm->_interpreter->interpret(lim->stms);
 					return true;		// Limit check failed
 				}
@@ -113,12 +113,12 @@ bool Execute::checkContainerLimit(Aword cnt, Aword obj) {
 void Execute::print(Aword fpos, Aword len) {
 	char str[2 * WIDTH];			// String buffer
 	int outlen = 0;					// Current output length
-	int ch;
+	int ch = 0;
 	int i;
-	long savfp;						// Temporary saved text file position
+	long savfp = 0;					// Temporary saved text file position
 	bool printFlag = false;			// Printing already?
 	bool savedPrintFlag = printFlag;
-	DecodeInfo *info;                   // Saved decoding info
+	DecodeInfo *info = nullptr;		// Saved decoding info
 
 
 	if (len == 0)
@@ -138,10 +138,10 @@ void Execute::print(Aword fpos, Aword len) {
 		if (_vm->header->pack)
 			_vm->_decode->startDecoding();
 
-		for (outlen = 0; outlen != len; outlen = outlen + strlen(str)) {
+		for (outlen = 0; outlen != (int)len; outlen = outlen + strlen(str)) {
 			// Fill the buffer from the beginning
 			for (i = 0; i <= WIDTH || (i > WIDTH && ch != ' '); i++) {
-				if (outlen + i == len)  // No more characters?
+				if (outlen + i == (int)len)  // No more characters?
 					break;
 				if (_vm->header->pack)
 					ch = _vm->_decode->decodeChar();
@@ -246,7 +246,7 @@ bool Execute::confirm(MsgKind msgno) {
 
 void Execute::quit() {
 	char buf[80];
-	char choices[10];
+//	char choices[10];
 
 	_vm->paragraph();
 	
@@ -310,7 +310,7 @@ void Execute::cancl(Aword evt) {
 	int i;
 
 	for (i = etop - 1; i >= 0; i--) {
-		if (eventq[i].event == evt) {
+		if (eventq[i].event == (int)evt) {
 			while (i < etop - 1) {
 				eventq[i].event = eventq[i + 1].event;
 				eventq[i].time = eventq[i + 1].time;
@@ -417,11 +417,11 @@ void Execute::incr(Aword id, Aword atr, Aword step) {
 
 void Execute::decr(Aword id, Aword atr, Aword step) {
 	if (isObj(id))
-		incObject(id, atr, -step);
+		incObject(id, atr, -(int)step);
 	else if (isLoc(id))
-		incLocation(id, atr, -step);
+		incLocation(id, atr, -(int)step);
 	else if (isAct(id))
-		incract(id, atr, -step);
+		incract(id, atr, -(int)step);
 	else
 		error("Can't DECR item (%ld).", (unsigned long)id);
 }
@@ -473,7 +473,7 @@ Aword Execute::where(Aword id) {
 
 Aint Execute::agrmax(Aword atr, Aword whr) {
 	Aword i;
-	Aint max = 0;
+	uint max = 0;
 
 	for (i = OBJMIN; i <= OBJMAX; i++) {
 		if (isLoc(whr)) {
@@ -488,7 +488,7 @@ Aint Execute::agrmax(Aword atr, Aword whr) {
 
 Aint Execute::agrsum(Aword atr, Aword whr) {
 	Aword i;
-	Aint sum = 0;
+	uint sum = 0;
 
 	for (i = OBJMIN; i <= OBJMAX; i++) {
 		if (isLoc(whr)) {
@@ -563,7 +563,7 @@ void Execute::locact(Aword act, Aword whr) {
 		_vm->cur.act = prevact;
 	}
 
-	if (_vm->cur.act != act)
+	if (_vm->cur.act != (int)act)
 		_vm->cur.loc = prevloc;
 }
 
@@ -582,13 +582,13 @@ Abool Execute::objhere(Aword obj) {
 		if (isObj(_objs[obj - OBJMIN].loc) || isAct(_objs[obj - OBJMIN].loc))
 			return(isHere(_objs[obj - OBJMIN].loc));
 		else // If the container wasn't anywhere, assume where HERO is!
-			return(where(HERO) == _vm->cur.loc);
+			return((int)where(HERO) == _vm->cur.loc);
 	} else
-		return(_objs[obj - OBJMIN].loc == _vm->cur.loc);
+		return((int)_objs[obj - OBJMIN].loc == _vm->cur.loc);
 }
 
 Aword Execute::acthere(Aword act) {
-	return _acts[act - ACTMIN].loc == _vm->cur.loc;
+	return (int)_acts[act - ACTMIN].loc == _vm->cur.loc;
 }
 
 Abool Execute::isHere(Aword id) {
@@ -705,7 +705,7 @@ void Execute::dscract(Aword act) {
 }
 
 void Execute::describe(Aword id) {
-	for (int i = 0; i < _describeStack.size(); i++) {
+	for (uint i = 0; i < _describeStack.size(); i++) {
 		_describeStack.push(id);
 
 		if (isObj(id))
@@ -730,9 +730,9 @@ void Execute::use(Aword act, Aword scr) {
 }
 
 void Execute::list(Aword cnt) {
-	int i;
+	uint i;
 	Aword props;
-	Aword prevobj;
+	Aword prevobj = 0;
 	bool found = false;
 	bool multiple = false;
 
@@ -800,29 +800,26 @@ void Execute::list(Aword cnt) {
 }
 
 void Execute::empty(Aword cnt, Aword whr) {
-	for (int i = OBJMIN; i <= OBJMAX; i++)
+	for (uint i = OBJMIN; i <= OBJMAX; i++)
 		if (in(i, cnt))
 			locate(i, whr);
 }
 
 void Execute::dscrobjs() {
-	int i;
-	int prevobj;
+	uint i;
+	int prevobj = 0;
 	bool found = false;
 	bool multiple = false;
 
 	// First describe everything here with its own description
 	for (i = OBJMIN; i <= OBJMAX; i++) {
-		if (_objs[i - OBJMIN].loc == _vm->cur.loc &&
-			_objs[i - OBJMIN].describe &&
-			_objs[i - OBJMIN].dscr1)
+		if ((int)_objs[i - OBJMIN].loc == _vm->cur.loc && _objs[i - OBJMIN].describe && _objs[i - OBJMIN].dscr1)
 			describe(i);
 	}
 
 	// Then list everything else here
 	for (i = OBJMIN; i <= OBJMAX; i++) {
-		if (_objs[i - OBJMIN].loc == _vm->cur.loc &&
-			_objs[i - OBJMIN].describe) {
+		if ((int)_objs[i - OBJMIN].loc == _vm->cur.loc && _objs[i - OBJMIN].describe) {
 			if (!found) {
 				_vm->printMessage(M_SEEOBJ1);
 				sayarticle(i);
@@ -860,18 +857,18 @@ void Execute::dscrobjs() {
 
 
 void Execute::dscracts() {
-	for (int i = HERO+1; i <= ACTMAX; i++)
-		if (_acts[i-ACTMIN].loc == _vm->cur.loc &&
+	for (uint i = HERO+1; i <= ACTMAX; i++)
+		if ((int)_acts[i-ACTMIN].loc == _vm->cur.loc &&
 			_acts[i-ACTMIN].describe)
 			describe(i);
 
 	// Set describe flag for all actors
-	for (int i = HERO; i <= ACTMAX; i++)
+	for (uint i = HERO; i <= ACTMAX; i++)
 		_acts[i-ACTMIN].describe = true;
 }
 
 void Execute::look() {
-	int i;
+	uint i;
 	_vm->looking = true;
 
 	// Set describe flag for all objects and actors

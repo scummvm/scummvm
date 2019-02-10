@@ -138,8 +138,8 @@ private:
 	 */
 	bool possible();
 	
-	void tryMatch(ParamElem mlst[]);
-	void match(ParamElem *mlst);
+	void tryMatch(ParamElem mlstArr[]);
+	void match(ParamElem *mlstArr);
 	
 	/**
 	 * Execute all activities commanded. Handles possible multiple actions

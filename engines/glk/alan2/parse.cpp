@@ -162,7 +162,7 @@ void Parser::agetline() {
 }
 
 void Parser::scan() {
-	int i;
+	uint i;
 	int w;
 	char *str;
 
@@ -258,9 +258,9 @@ Abool Parser::objhere(Aword obj) {
 		if (isObj(objs[obj - OBJMIN].loc) || isAct(objs[obj - OBJMIN].loc))
 			return isHere(objs[obj - OBJMIN].loc);
 		else // If the container wasn't anywhere, assume where HERO is!
-			return where(HERO) == _vm->cur.loc;
+			return (int)where(HERO) == _vm->cur.loc;
 	} else
-		return(objs[obj - OBJMIN].loc == _vm->cur.loc);
+		return((int)objs[obj - OBJMIN].loc == _vm->cur.loc);
 }
 
 
@@ -268,7 +268,7 @@ Abool Parser::isHere(Aword id) {
 	if (isObj(id))
 		return objhere(id);
 	else if (isAct(id))
-		return acts[id - ACTMIN].loc == _vm->cur.loc;
+		return (int)acts[id - ACTMIN].loc == _vm->cur.loc;
 	else
 		error("Can't HERE item (%ld).", (unsigned long)id);
 }
@@ -276,21 +276,21 @@ Abool Parser::isHere(Aword id) {
 // ----------------------------------------------------------------------------
 
 void Parser::buildall(ParamElem list[]) {
-	int o, i = 0;
+	uint o, i = 0;
 	bool found = false;
   
 	for (o = OBJMIN; o <= OBJMAX; o++) {
 		if (isHere(o)) {
 			found = true;
 			list[i].code = o;
-			list[i++].firstWord = EOF;
+			list[i++].firstWord = (Aword)EOF;
 		}
 	}
 
 	if (!found)
 		_vm->printError(M_WHAT_ALL);
 	else
-		list[i].code = EOF;
+		list[i].code = (Aword)EOF;
 }
 
 void Parser::listCopy(ParamElem a[], ParamElem b[]) {
@@ -299,7 +299,7 @@ void Parser::listCopy(ParamElem a[], ParamElem b[]) {
 	for (i = 0; b[i].code != EOF; i++)
 		a[i] = b[i];
 
-	a[i].code = EOF;
+	a[i].code = (Aword)EOF;
 }
 
 bool Parser::listContains(ParamElem l[], Aword e) {
@@ -317,7 +317,7 @@ void Parser::listIntersection(ParamElem a[], ParamElem b[]) {
 		if (listContains(b, a[i].code))
 			a[last++] = a[i];
 
-	a[last].code = EOF;
+	a[last].code = (Aword)EOF;
 }
 
 void Parser::listCopyFromDictionary(ParamElem p[], Aword r[]) {
@@ -325,10 +325,10 @@ void Parser::listCopyFromDictionary(ParamElem p[], Aword r[]) {
 
 	for (i = 0; r[i] != EOF; i++) {
 		p[i].code = r[i];
-		p[i].firstWord = EOF;
+		p[i].firstWord = (Aword)EOF;
 	}
 
-	p[i].code = EOF;
+	p[i].code = (Aword)EOF;
 }
 
 int Parser::listLength(ParamElem a[]) {
@@ -347,7 +347,7 @@ void Parser::listCompact(ParamElem a[]) {
 		if (a[j].code != 0)
 			a[i++] = a[j];
 
-	a[i].code = EOF;
+	a[i].code = (Aword)EOF;
 }
 
 void Parser::listMerge(ParamElem a[], ParamElem b[]) {
@@ -358,7 +358,7 @@ void Parser::listMerge(ParamElem a[], ParamElem b[]) {
 	for (i = 0; b[i].code != EOF; i++) {
 		if (!listContains(a, b[i].code)) {
 			a[last++] = b[i];
-			a[last].code = EOF;
+			a[last].code = (Aword)EOF;
 		}
 	}
 }
@@ -387,12 +387,12 @@ void Parser::unambig(ParamElem plst[]) {
 	if (isLiteral(wrds[wrdidx])) {
 		// Transform the word into a reference to the literal value
 		plst[0].code = wrds[wrdidx++] - dictsize + LITMIN;
-		plst[0].firstWord = EOF;	// No words used!
-		plst[1].code = EOF;
+		plst[0].firstWord = (Aword)EOF;	// No words used!
+		plst[1].code = (Aword)EOF;
 		return;
 	}
 
-	plst[0].code = EOF;		// Make empty
+	plst[0].code = (Aword)EOF;		// Make empty
 
 	if (isIt(wrds[wrdidx])) {
 		wrdidx++;
@@ -405,14 +405,14 @@ void Parser::unambig(ParamElem plst[]) {
 
 		if (!isHere(pparams[i].code)) {
 			params[0].code = pparams[i].code;
-			params[0].firstWord = EOF;
-			params[1].code = EOF;
+			params[0].firstWord = (Aword)EOF;
+			params[1].code = (Aword)EOF;
 			_vm->printError(M_NO_SUCH);
 		}
 
 		plst[0] = pparams[i];
-		plst[0].firstWord = EOF;	// No words used!
-		plst[1].code = EOF;
+		plst[0].firstWord = (Aword)EOF;	// No words used!
+		plst[1].code = (Aword)EOF;
 		return;
 	}
 
@@ -478,7 +478,7 @@ void Parser::unambig(ParamElem plst[]) {
 		params[0].code = 0;		/* Just make it anything != EOF */
 		params[0].firstWord = firstWord; /* Remember words for errors below */
 		params[0].lastWord = lastWord;
-		params[1].code = EOF;	/* But be sure to terminate */
+		params[1].code = (Aword)EOF;	/* But be sure to terminate */
 
 		if (listLength(plst) > 1)
 			_vm->printError(M_WHICH_ONE);
@@ -499,7 +499,7 @@ void Parser::simple(ParamElem olst[]) {
 	if (tlst == NULL)
 		tlst = new ParamElem[MAXENTITY + 1];
 
-	tlst[0].code = EOF;
+	tlst[0].code = (Aword)EOF;
 
 	for (;;) {
 		if (isThem(wrds[wrdidx])) {
@@ -515,7 +515,7 @@ void Parser::simple(ParamElem olst[]) {
 				_vm->printError(M_WHAT_THEM);
 
 			listCopy(olst, pmlst);
-			olst[0].firstWord = EOF;	// No words used
+			olst[0].firstWord = (Aword)EOF;	// No words used
 			wrdidx++;
 		} else {
 			unambig(olst);		// Look for unambigous noun phrase
@@ -607,7 +607,7 @@ void Parser::resolve(ParamElem plst[]) {
 		if (plst[i].code < LITMIN) { // Literals are always 'here'
 			if (!isHere(plst[i].code)) {
 				params[0] = plst[i];	// Copy error param as first one for message
-				params[1].code = EOF;	// But be sure to terminate
+				params[1].code = (Aword)EOF;	// But be sure to terminate
 				_vm->printError(M_NO_SUCH);
 			}
 		}
@@ -657,7 +657,7 @@ AltElem *Parser::findalt(Aword vrbsadr, Aword param) {
 		return NULL;
 
 	for (vrb = (VrbElem *)addrTo(vrbsadr); !endOfTable(vrb); vrb++) {
-		if (vrb->code == _vm->cur.vrb) {
+		if ((int)vrb->code == _vm->cur.vrb) {
 			for (alt = (AltElem *)addrTo(vrb->alts); !endOfTable(alt); alt++)
 				if (alt->param == param || alt->param == 0)
 					return alt;
@@ -727,7 +727,7 @@ bool Parser::possible() {
 		return true;
 }
 
-void Parser::tryMatch(ParamElem mlst[]) {
+void Parser::tryMatch(ParamElem mlstArr[]) {
 	ElmElem *elms;		// Pointer to element list
 	StxElem *stx;			// Pointer to syntax list
 	ClaElem *cla;			// Pointer to class definitions
@@ -742,7 +742,7 @@ void Parser::tryMatch(ParamElem mlst[]) {
 	}
 
 	for (stx = stxs; !endOfTable(stx); stx++)
-		if (stx->code == vrbcode)
+		if ((int)stx->code == vrbcode)
 			break;
 
 	if (endOfTable(stx))
@@ -795,13 +795,13 @@ void Parser::tryMatch(ParamElem mlst[]) {
 						// Mark this as the multiple position in which to insert
 						// actual parameter values later
 						params[paramidx++].code = 0;
-						listCopy(mlst, tlst);
+						listCopy(mlstArr, tlst);
 						anyPlural = true;
 					}
 				} else
 					params[paramidx++] = tlst[0];
 				
-				params[paramidx].code = EOF;
+				params[paramidx].code = (Aword)EOF;
 			}
 
 			elms = (ElmElem *) addrTo(elms->next);
@@ -818,8 +818,8 @@ void Parser::tryMatch(ParamElem mlst[]) {
 	for (cla = (ClaElem *) addrTo(elms->next); !endOfTable(cla); cla++) {
 		if (params[cla->code - 1].code == 0) {
 			// This was a multiple parameter, so check all and remove failing
-			for (i = 0; mlst[i].code != EOF; i++) {
-				params[cla->code-1] = mlst[i];
+			for (i = 0; mlstArr[i].code != EOF; i++) {
+				params[cla->code-1] = mlstArr[i];
 				if (!claCheck(cla)) {
 					// Multiple could be both an explicit list of params and an ALL
 					if (allLength == 0) {
@@ -832,7 +832,7 @@ void Parser::tryMatch(ParamElem mlst[]) {
 						_vm->paragraph();
 					}
 
-					mlst[i].code = 0;	  // In any case remove it from the list
+					mlstArr[i].code = 0;	  // In any case remove it from the list
 				}
 			}
 
@@ -852,9 +852,9 @@ void Parser::tryMatch(ParamElem mlst[]) {
 		if (!checked[p]) {
 			if (params[p].code == 0) {
 				// This was a multiple parameter, check all and remove failing
-				for (i = 0; mlst[i].code != EOF; i++) {
-					if (mlst[i].code != 0 && !isObj(mlst[i].code)) // Skip any empty slots
-						mlst[i].code = 0;
+				for (i = 0; mlstArr[i].code != EOF; i++) {
+					if (mlstArr[i].code != 0 && !isObj(mlstArr[i].code)) // Skip any empty slots
+						mlstArr[i].code = 0;
 				}
 			} else if (!isObj(params[p].code))
 				_vm->printError(M_CANT0);
@@ -869,35 +869,35 @@ void Parser::tryMatch(ParamElem mlst[]) {
 		for (p = 0; params[p].code != 0; p++); // Find multiple marker
 
 		for (i = 0; i < allLength; i++) {
-			if (mlst[i].code != 0) {	// Already empty?
-				params[p] = mlst[i];
+			if (mlstArr[i].code != 0) {	// Already empty?
+				params[p] = mlstArr[i];
 
 				if (!possible())
-					mlst[i].code = 0;	// Remove this from list
+					mlstArr[i].code = 0;	// Remove this from list
 			}
 		}
 
 		params[p].code = 0;		// Restore multiple marker
-		listCompact(mlst);
+		listCompact(mlstArr);
 
-		if (listLength(mlst) == 0) {
-			params[0].code = EOF;
+		if (listLength(mlstArr) == 0) {
+			params[0].code = (Aword)EOF;
 			_vm->printError(M_WHAT_ALL);
 		}
 	} else if (anyPlural) {
-		listCompact(mlst);
+		listCompact(mlstArr);
 
 		// If there where multiple parameters but non left, exit without a
 		// word, assuming we have already said enough
-		if (listLength(mlst) == 0)
+		if (listLength(mlstArr) == 0)
 			_vm->printError(MSGMAX);
 	}
 
 	plural = anyPlural;		// Remember that we found plural objects
 }
 
-void Parser::match(ParamElem *mlst) {
-	tryMatch(mlst);			// try to understand what the user said
+void Parser::match(ParamElem *mlstArr) {
+	tryMatch(mlstArr);			// try to understand what the user said
 
 	if (wrds[wrdidx] != EOF && !isConj(wrds[wrdidx]))
 		_vm->printError(M_WHAT);
@@ -933,10 +933,10 @@ void Parser::action(ParamElem plst[]) {
 void Parser::parse() {
 	if (mlst == NULL) {		// Allocate large enough paramlists
 		mlst = new ParamElem[MAXENTITY + 1];
-		mlst[0].code = EOF;
+		mlst[0].code = (Aword)EOF;
 		pmlst = new ParamElem[MAXENTITY + 1];
 		params = new ParamElem[MAXENTITY + 1];
-		params[0].code = EOF;
+		params[0].code = (Aword)EOF;
 		pparams = new ParamElem[MAXENTITY + 1];
 	}
 
@@ -949,9 +949,9 @@ void Parser::parse() {
 	allLength = 0;
 	paramidx = 0;
 	listCopy(pparams, params);
-	params[0].code = EOF;
+	params[0].code = (Aword)EOF;
 	listCopy(pmlst, mlst);
-	mlst[0].code = EOF;
+	mlst[0].code = (Aword)EOF;
 
 	if (isVerb(wrds[wrdidx])) {
 		vrbwrd = wrds[wrdidx];
@@ -960,8 +960,8 @@ void Parser::parse() {
 		match(mlst);
 		action(mlst);		// mlst contains possible multiple params
 	} else {
-		params[0].code = EOF;
-		pmlst[0].code = EOF;
+		params[0].code = (Aword)EOF;
+		pmlst[0].code = (Aword)EOF;
 		nonverb();
 	}
 }

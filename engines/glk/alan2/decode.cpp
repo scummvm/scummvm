@@ -60,7 +60,7 @@ void Decode::startDecoding() {
 
 int Decode::decodeChar() {
 	const long range = (long)(_high - _low) + 1;
-	const int f = (((long)(_value - _low) + 1) * _freq[0] - 1) / range;
+	const uint f = (((long)(_value - _low) + 1) * _freq[0] - 1) / range;
 	int symbol;
 
 	// Find the symbol
