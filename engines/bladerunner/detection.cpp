@@ -29,6 +29,7 @@
 #include "common/system.h"
 #include "common/savefile.h"
 #include "common/serializer.h"
+#include "common/translation.h"
 
 #include "engines/advancedDetector.h"
 
@@ -37,6 +38,20 @@ namespace BladeRunner {
 static const PlainGameDescriptor bladeRunnerGames[] = {
 	{"bladerunner", "Blade Runner"},
 	{0, 0}
+};
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_SITCOM,
+		{
+			_s("Sitcom mode"),
+			_s("Game will add laughter after actor's line or narration"),
+			"sitcom",
+			false
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
 } // End of namespace BladeRunner
@@ -59,7 +74,8 @@ BladeRunnerMetaEngine::BladeRunnerMetaEngine()
 	: AdvancedMetaEngine(
 		BladeRunner::gameDescriptions,
 		sizeof(BladeRunner::gameDescriptions[0]),
-		BladeRunner::bladeRunnerGames) {}
+		BladeRunner::bladeRunnerGames,
+		BladeRunner::optionsList) {}
 
 
 const char *BladeRunnerMetaEngine::getName() const {

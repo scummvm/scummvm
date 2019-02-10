@@ -99,9 +99,11 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_windowIsActive = true;
 	_gameIsRunning  = true;
 
-	_vqaIsPlaying = false;
+	_vqaIsPlaying       = false;
 	_vqaStopIsRequested = false;
+
 	_subtitlesEnabled = false;
+	_sitcomMode       = true;
 
 	_playerLosesControlCounter = 0;
 
@@ -410,6 +412,8 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	ConfMan.registerDefault("subtitles", "true");
 	// get value from the ScummVM configuration manager
 	_subtitlesEnabled = ConfMan.getBool("subtitles");
+
+	_sitcomMode = ConfMan.getBool("sitcom");
 
 	_items = new Items(this);
 
@@ -1720,7 +1724,7 @@ Common::SeekableReadStream *BladeRunnerEngine::getResourceStream(const Common::S
 		}
 
 		// debug("getResource: Searching archive %s for %s.", _archives[i].getName().c_str(), name.c_str());
-		
+
 		Common::SeekableReadStream *stream = _archives[i].createReadStreamForMember(name);
 		if (stream) {
 			return stream;

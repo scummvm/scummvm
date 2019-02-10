@@ -329,16 +329,12 @@ void ScriptBase::Actor_Says_With_Pause(int actorId, int sentenceId, float pause,
 		actor->changeAnimationMode(kAnimationModeIdle, false);
 	}
 
-	//TODO: sitcom
-	//if (_vm->isSitcom)
-	//{
-	//	int rnd = _vm->random(1, 100);
-	//	if (rnd <= actor::get_unknown3(actor))
-	//	{
-	//		int soundId = _vm->random(319, 327);
-	//		_vm->_audioPlayer->play(soundId, 40, 0, 0, 50);
-	//	}
-	//}
+	if (_vm->_sitcomMode) {
+		int rnd = Random_Query(1, 100);
+		if (rnd <= actor->getSitcomRatio()) {
+			Sound_Play(Random_Query(319, 327), 40, 0, 0, 50);
+		}
+	}
 	if(pause > 0.0f && !_vm->_speechSkipped) {
 		Delay(pause * 1000);
 	}

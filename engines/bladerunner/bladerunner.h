@@ -194,6 +194,7 @@ public:
 	bool _vqaIsPlaying;
 	bool _vqaStopIsRequested;
 	bool _subtitlesEnabled; // tracks the state of whether subtitles are enabled or disabled from ScummVM GUI option or KIA checkbox (the states are synched)
+	bool _sitcomMode;
 
 	int _walkSoundId;
 	int _walkSoundVolume;

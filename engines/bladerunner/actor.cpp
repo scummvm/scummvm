@@ -140,6 +140,39 @@ void Actor::setup(int actorId) {
 	_movementTrack->flush();
 
 	_actorSpeed = Vector3();
+
+	switch (_id) {
+		case kActorMcCoy:
+			_sitcomRatio = 50;
+			break;
+
+		case kActorGordo:
+			_sitcomRatio = 0;
+			break;
+
+		case kActorGuzza:
+		case kActorChew:
+		case kActorVoiceOver:
+			_sitcomRatio = 75;
+			break;
+
+		case kActorCrazylegs:
+		case kActorBulletBob:
+		case kActorRunciter:
+		case kActorZuben:
+		case kActorLeon:
+			_sitcomRatio = 90;
+			break;
+
+		case kActorGrigorian:
+		case kActorMoraji:
+			_sitcomRatio = 100;
+			break;
+
+		default:
+			_sitcomRatio = 33;
+			break;
+	}
 }
 
 void Actor::changeAnimationMode(int animationMode, bool force) {
@@ -967,6 +1000,10 @@ void Actor::setFlagDamageAnimIfMoving(bool value) {
 
 bool Actor::getFlagDamageAnimIfMoving() const {
 	return _damageAnimIfMoving;
+}
+
+int Actor::getSitcomRatio() const {
+	return _sitcomRatio;
 }
 
 void Actor::retire(bool retired, int width, int height, int retiredByActorId) {

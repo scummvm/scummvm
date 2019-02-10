@@ -115,6 +115,8 @@ private:
 
 	Vector3 _actorSpeed;
 
+	int _sitcomRatio;
+
 public:
 	Actor(BladeRunnerEngine *_vm, int actorId);
 	~Actor();
@@ -226,6 +228,8 @@ public:
 
 	void setFlagDamageAnimIfMoving(bool value);
 	bool getFlagDamageAnimIfMoving() const;
+
+	int getSitcomRatio() const;
 
 	void retire(bool isRetired, int width, int height, int retiredByActorId);
 
