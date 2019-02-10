@@ -35,7 +35,7 @@ namespace BladeRunner {
 Music::Music(BladeRunnerEngine *vm) {
 	_vm = vm;
 	_channel = -1;
-	_musicVolume = 65;
+	_musicVolume = BLADERUNNER_ORIGINAL_SETTINGS ? 65 : 100;
 	_isPlaying = false;
 	_isPaused = false;
 	_current.loop = false;

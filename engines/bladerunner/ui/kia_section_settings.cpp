@@ -40,6 +40,7 @@
 #include "bladerunner/ui/ui_image_picker.h"
 #include "bladerunner/ui/ui_slider.h"
 
+#include "audio/mixer.h"
 #include "common/keyboard.h"
 
 namespace BladeRunner {
@@ -50,20 +51,30 @@ KIASectionSettings::KIASectionSettings(BladeRunnerEngine *vm)
 	: KIASectionBase(vm) {
 
 	_uiContainer          = new UIContainer(_vm);
+
+#if BLADERUNNER_ORIGINAL_SETTINGS
 	_musicVolume          = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 160, 460, 170), 101, 0);
-	_soundEffectVolume    = new UISlider(_vm, sliderCallback, this, Common::Rect( 180, 185, 460, 195), 101, 0);
+	_soundEffectVolume    = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 185, 460, 195), 101, 0);
 	_ambientSoundVolume   = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 210, 460, 220), 101, 0);
 	_speechVolume         = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 235, 460, 245), 101, 0);
 	_gammaCorrection      = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 260, 460, 270), 101, 0);
+#else
+	_musicVolume          = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 160, 460, 170), _vm->_mixer->kMaxMixerVolume, 0);
+	_soundEffectVolume    = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 185, 460, 195), _vm->_mixer->kMaxMixerVolume, 0);
+	_speechVolume         = new UISlider(_vm, sliderCallback, this, Common::Rect(180, 210, 460, 220), _vm->_mixer->kMaxMixerVolume, 0);
+#endif
+
 	_directorsCut         = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(180, 364, 270, 374), 0, false);
 	_subtitlesEnable      = new UICheckBox(_vm, checkBoxCallback, this, Common::Rect(311, 364, 380, 374), 0, false); // moved further to the right to avoid overlap with 'Designer's Cut' in some language versions (ESP)
 	_playerAgendaSelector = new UIImagePicker(_vm, 5);
 
 	_uiContainer->add(_musicVolume);
 	_uiContainer->add(_soundEffectVolume);
-	_uiContainer->add(_ambientSoundVolume);
 	_uiContainer->add(_speechVolume);
+#if BLADERUNNER_ORIGINAL_SETTINGS
+	_uiContainer->add(_ambientSoundVolume);
 	_uiContainer->add(_gammaCorrection);
+#endif
 	_uiContainer->add(_directorsCut);
 	_uiContainer->add(_subtitlesEnable);
 
@@ -74,9 +85,11 @@ KIASectionSettings::~KIASectionSettings() {
 	delete _uiContainer;
 	delete _musicVolume;
 	delete _soundEffectVolume;
-	delete _ambientSoundVolume;
 	delete _speechVolume;
+#if BLADERUNNER_ORIGINAL_SETTINGS
+	delete _ambientSoundVolume;
 	delete _gammaCorrection;
+#endif
 	delete _directorsCut;
 	delete _subtitlesEnable;
 	delete _playerAgendaSelector;
@@ -102,11 +115,18 @@ void KIASectionSettings::close() {
 }
 
 void KIASectionSettings::draw(Graphics::Surface &surface) {
+#if BLADERUNNER_ORIGINAL_SETTINGS
 	_musicVolume->setValue(_vm->_music->getVolume());
 	_soundEffectVolume->setValue(_vm->_audioPlayer->getVolume());
 	_ambientSoundVolume->setValue(_vm->_ambientSounds->getVolume());
 	_speechVolume->setValue(_vm->_audioSpeech->getVolume());
 	_gammaCorrection->setValue(100.0f);
+#else
+	_musicVolume->setValue(_vm->_mixer->getVolumeForSoundType(_vm->_mixer->kMusicSoundType));
+	_soundEffectVolume->setValue(_vm->_mixer->getVolumeForSoundType(_vm->_mixer->kSFXSoundType));
+	_speechVolume->setValue(_vm->_mixer->getVolumeForSoundType(_vm->_mixer->kSpeechSoundType));
+#endif
+
 	_directorsCut->setChecked(_vm->_gameFlags->query(kFlagDirectorsCut));
 
 	_subtitlesEnable->setChecked(_vm->isSubtitlesEnabled());
@@ -114,14 +134,16 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 	const char *textConversationChoices = _vm->_textOptions->getText(0);
 	const char *textMusic = _vm->_textOptions->getText(2);
 	const char *textSoundEffects = _vm->_textOptions->getText(3);
-	const char *textAmbientSound = _vm->_textOptions->getText(4);
 	const char *textSpeech = _vm->_textOptions->getText(5);
-	const char *textGammaCorrection = _vm->_textOptions->getText(7);
 	const char *textSoft = _vm->_textOptions->getText(10);
 	const char *textLoud = _vm->_textOptions->getText(11);
+	const char *textDesignersCut = _vm->_textOptions->getText(18);
+#if BLADERUNNER_ORIGINAL_SETTINGS
+	const char *textAmbientSound = _vm->_textOptions->getText(4);
+	const char *textGammaCorrection = _vm->_textOptions->getText(7);
 	const char *textDark = _vm->_textOptions->getText(14);
 	const char *textLight = _vm->_textOptions->getText(15);
-	const char *textDesignersCut = _vm->_textOptions->getText(18);
+#endif
 
 	// Allow this to be loading as an extra text item in the resource for text options
 	const char *subtitlesTranslation = "Subtitles";
@@ -149,11 +171,13 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 	int posConversationChoices = 320 - _vm->_mainFont->getTextWidth(textConversationChoices) / 2;
 	int posMusic = 320 - _vm->_mainFont->getTextWidth(textMusic) / 2;
 	int posSoundEffects = 320 - _vm->_mainFont->getTextWidth(textSoundEffects) / 2;
-	int posAmbientSound = 320 - _vm->_mainFont->getTextWidth(textAmbientSound) / 2;
 	int posSpeech = 320 - _vm->_mainFont->getTextWidth(textSpeech) / 2;
-	int posGammaCorrection = 320 - _vm->_mainFont->getTextWidth(textGammaCorrection) / 2;
 	int posSoft = 178 - _vm->_mainFont->getTextWidth(textSoft);
+#if BLADERUNNER_ORIGINAL_SETTINGS
+	int posAmbientSound = 320 - _vm->_mainFont->getTextWidth(textAmbientSound) / 2;
+	int posGammaCorrection = 320 - _vm->_mainFont->getTextWidth(textGammaCorrection) / 2;
 	int posDark = 178 - _vm->_mainFont->getTextWidth(textDark);
+#endif
 
 	_uiContainer->draw(surface);
 	_playerAgendaSelector->draw(surface);
@@ -168,6 +192,7 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 	_vm->_mainFont->drawColor(textSoft, surface, posSoft, 186, 0x6EEE);
 	_vm->_mainFont->drawColor(textLoud, surface, 462, 186, 0x6EEE);
 
+#if BLADERUNNER_ORIGINAL_SETTINGS
 	_vm->_mainFont->drawColor(textAmbientSound, surface, posAmbientSound, 200, 0x7751);
 	_vm->_mainFont->drawColor(textSoft, surface, posSoft, 211, 0x6EEE);
 	_vm->_mainFont->drawColor(textLoud, surface, 462, 211, 0x6EEE);
@@ -179,6 +204,11 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 	_vm->_mainFont->drawColor(textGammaCorrection, surface, posGammaCorrection, 250, 0x7751);
 	_vm->_mainFont->drawColor(textDark, surface, posDark, 261, 0x6EEE);
 	_vm->_mainFont->drawColor(textLight, surface, 462, 261, 0x6EEE);
+#else
+	_vm->_mainFont->drawColor(textSpeech, surface, posSpeech, 200, 0x7751);
+	_vm->_mainFont->drawColor(textSoft, surface, posSoft, 211, 0x6EEE);
+	_vm->_mainFont->drawColor(textLoud, surface, 462, 211, 0x6EEE);
+#endif
 
 	_vm->_mainFont->drawColor(textDesignersCut, surface, 192, 365, 0x7751);
 	_vm->_mainFont->drawColor(textSubtitles, surface, 323, 365, 0x7751); // moved further to the right to avoid overlap with 'Designer's Cut' in some language versions (ESP)
@@ -225,6 +255,7 @@ void KIASectionSettings::handleMouseUp(bool mainButton) {
 void KIASectionSettings::sliderCallback(void *callbackData, void *source) {
 	KIASectionSettings *self = (KIASectionSettings *)callbackData;
 
+#if BLADERUNNER_ORIGINAL_SETTINGS
 	if (source == self->_musicVolume) {
 		self->_vm->_music->setVolume(self->_musicVolume->_value);
 		self->_vm->_music->playSample();
@@ -246,6 +277,21 @@ void KIASectionSettings::sliderCallback(void *callbackData, void *source) {
 		// Palette_copy(Palette);
 		// kia::resume(KIA);
 	}
+#else
+	if (source == self->_musicVolume) {
+		self->_vm->_mixer->setVolumeForSoundType(self->_vm->_mixer->kMusicSoundType, self->_musicVolume->_value);
+		self->_vm->_music->playSample();
+		ConfMan.setInt("music_volume", self->_musicVolume->_value);
+	} else if (source == self->_soundEffectVolume) {
+		self->_vm->_mixer->setVolumeForSoundType(self->_vm->_mixer->kSFXSoundType, self->_soundEffectVolume->_value);
+		self->_vm->_audioPlayer->playSample();
+		ConfMan.setInt("sfx_volume", self->_soundEffectVolume->_value);
+	} else if (source == self->_speechVolume) {
+		self->_vm->_mixer->setVolumeForSoundType(self->_vm->_mixer->kSpeechSoundType, self->_speechVolume->_value);
+		self->_vm->_audioSpeech->playSample();
+		ConfMan.setInt("speech_volume", self->_speechVolume->_value);
+	}
+#endif
 }
 
 void KIASectionSettings::checkBoxCallback(void *callbackData, void *source) {

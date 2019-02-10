@@ -28,6 +28,7 @@
 #include "common/str.h"
 
 #include "audio/audiostream.h"
+#include "audio/mixer.h"
 
 namespace BladeRunner {
 
@@ -100,7 +101,7 @@ public:
 	AudioPlayer(BladeRunnerEngine *vm);
 	~AudioPlayer();
 
-	int playAud(const Common::String &name, int volume, int panStart, int panEnd, int priority, byte flags = 0);
+	int playAud(const Common::String &name, int volume, int panStart, int panEnd, int priority, byte flags = 0, Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType);
 	bool isActive(int track) const;
 	void stop(int track, bool immediately);
 	void stopAll();

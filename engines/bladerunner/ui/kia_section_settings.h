@@ -25,6 +25,8 @@
 
 #include "bladerunner/ui/kia_section_base.h"
 
+#include "common/config-manager.h"
+
 namespace BladeRunner {
 
 class BladeRunnerEngine;
@@ -39,9 +41,11 @@ class KIASectionSettings : public KIASectionBase {
 	UIContainer   *_uiContainer;
 	UISlider      *_musicVolume;
 	UISlider      *_soundEffectVolume;
-	UISlider      *_ambientSoundVolume;
 	UISlider      *_speechVolume;
+#if BLADERUNNER_ORIGINAL_SETTINGS
+	UISlider      *_ambientSoundVolume;
 	UISlider      *_gammaCorrection;
+#endif
 	UICheckBox    *_directorsCut;
 	UICheckBox    *_subtitlesEnable;
 	UIImagePicker *_playerAgendaSelector;

@@ -1235,7 +1235,7 @@ void OptionsDialog::addMT32Controls(GuiObject *boss, const Common::String &prefi
 	if (!_domain.equals(Common::ConfigManager::kApplicationDomain)) {
 		_mt32DevicePopUpDesc->setEnabled(false);
 		_mt32DevicePopUp->setEnabled(false);
-	}
+	} 
 
 	_enableMT32Settings = true;
 }

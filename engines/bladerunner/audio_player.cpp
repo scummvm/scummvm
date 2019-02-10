@@ -136,7 +136,7 @@ AudioPlayer::AudioPlayer(BladeRunnerEngine *vm) {
 		_tracks[i].stream = nullptr;
 	}
 
-	_sfxVolume = 65;
+	_sfxVolume =BLADERUNNER_ORIGINAL_SETTINGS ? 65 : 100;
 }
 
 AudioPlayer::~AudioPlayer() {
@@ -221,7 +221,7 @@ void AudioPlayer::mixerChannelEnded(int channel, void *data) {
 	audioPlayer->remove(channel);
 }
 
-int AudioPlayer::playAud(const Common::String &name, int volume, int panFrom, int panTo, int priority, byte flags) {
+int AudioPlayer::playAud(const Common::String &name, int volume, int panFrom, int panTo, int priority, byte flags, Audio::Mixer::SoundType type) {
 	/* Find first available track or, alternatively, the lowest priority playing track */
 	int track = -1;
 	int lowestPriority = 1000000;
@@ -279,7 +279,7 @@ int AudioPlayer::playAud(const Common::String &name, int volume, int panFrom, in
 	}
 
 	int channel = _vm->_audioMixer->play(
-		Audio::Mixer::kPlainSoundType,
+		type,
 		audioStream,
 		priority,
 		flags & kAudioPlayerLoop,

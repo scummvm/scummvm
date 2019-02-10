@@ -48,7 +48,7 @@ void AudioSpeech::mixerChannelEnded(int channel, void *data) {
 
 AudioSpeech::AudioSpeech(BladeRunnerEngine *vm) {
 	_vm = vm;
-	_speechVolume = 50;
+	_speechVolume = BLADERUNNER_ORIGINAL_SETTINGS ? 50 : 100;
 	_isActive = false;
 	_data = new byte[kBufferSize];
 	_channel = -1;
@@ -118,7 +118,7 @@ bool AudioSpeech::isPlaying() const {
 bool AudioSpeech::playSpeechLine(int actorId, int sentenceId, int volume, int a4, int priority) {
 	int balance = _vm->_actors[actorId]->soundBalance();
 	Common::String name = Common::String::format("%02d-%04d%s.AUD", actorId, sentenceId, _vm->_languageCode.c_str());
-	return _vm->_audioPlayer->playAud(name, _speechVolume * volume / 100, balance, balance, priority, kAudioPlayerOverrideVolume);
+	return _vm->_audioPlayer->playAud(name, _speechVolume * volume / 100, balance, balance, priority, kAudioPlayerOverrideVolume, Audio::Mixer::kSpeechSoundType);
 }
 
 void AudioSpeech::setVolume(int volume) {
