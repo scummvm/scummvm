@@ -121,6 +121,8 @@ static const char *const selectorNameTable[] = {
 	"ignoreActors", // Laura Bow 1 Colonel's Bequest
 	"at",           // Longbow, QFG4
 	"owner",        // Longbow
+	"delete",       // EcoQuest 1
+	"signal",       // EcoQuest 1, GK1
 #ifdef ENABLE_SCI32
 	"newWith",      // SCI2 array script
 	"scrollSelections", // GK2
@@ -133,7 +135,6 @@ static const char *const selectorNameTable[] = {
 	"get",          // Torin, GK1
 	"newRoom",      // GK1
 	"normalize",    // GK1
-	"signal",       // GK1
 	"set",          // Torin
 	"clear",        // Torin
 	"masterVolume", // SCI2 master volume reset
@@ -209,7 +210,9 @@ enum ScriptPatcherSelectors {
 	SELECTOR_setLoop,
 	SELECTOR_ignoreActors,
 	SELECTOR_at,
-	SELECTOR_owner
+	SELECTOR_owner,
+	SELECTOR_delete,
+	SELECTOR_signal
 #ifdef ENABLE_SCI32
 	,
 	SELECTOR_newWith,
@@ -223,7 +226,6 @@ enum ScriptPatcherSelectors {
 	SELECTOR_get,
 	SELECTOR_newRoom,
 	SELECTOR_normalize,
-	SELECTOR_signal,
 	SELECTOR_set,
 	SELECTOR_clear,
 	SELECTOR_masterVolume,
@@ -608,11 +610,71 @@ static const uint16 ecoquest1PatchProphecyScroll[] = {
 	PATCH_END
 };
 
-//          script, description,                                      signature                         patch
+// The temple has a complex script bug in the CD version which can crash the
+//  interpreter when solving the mosaic puzzle after loading a game that was
+//  saved during the puzzle. The bug causes invalid memory access which locks up
+//  Sierra's interpreter and can cause ours to fail an assertion.
+//
+// Room 140 has three insets and a conch shell in the middle. This room's script
+//  was significantly changed in the CD version and transition animations were
+//  added. Due to these changes the shell no longer renders beneath the insets
+//  and so Sierra added code to hide the shell while they're displayed.
+//  Unfortunately this code is incorrect and leaves the game in a state that's
+//  unsafe to save. The shell is removed from the cast when showing an inset and
+//  then shell:init is called when hiding. This leaves shell:underBits pointing
+//  to hunk memory while temporarily not a member of the cast. Hunk memory isn't
+//  persisted in saved games but underBits' values are. SCI games handle this in
+//  Game:replay by clearing the underBits of cast members when restoring. Saving
+//  while the puzzle is displayed causes shell:underBits' stale hunk value to
+//  survive restoring. Solving the puzzle adds the shell back to the cast via
+//  init followed by a call to kAnimate that accesses the potentially stale
+//  shell:underBits. If the hunk segment id upon restoring in ScummVM is the
+//  same as when saved then this out of bounds access will fail an assertion.
+//
+// We fix this by fully disposing the shell when showing an inset so that its
+//  resources are cleaned up and it's safe to save the game. In order to do this
+//  without changing the animation effect we set shell's disposal flag and then
+//  immediately call shell:delete. This is equivalent to shell:dispose but
+//  prevents hiding the shell before the transition animation takes place.
+//
+// Applies to: PC CD
+// Responsible methods: MosaicWall:doVerb, localproc_2ab6 in script 140
+// Fixes bug #10884
+static const uint16 ecoquest1SignatureMosaicPuzzleFix[] = {
+	0x36,                           // push     [ conchShell:owner ]
+	0x34, SIG_UINT16(0x008c),       // ldi 008c [ room number ]
+	0x1a,                           // eq?      [ is conchShell owned by room 140? ]
+	0x30, SIG_UINT16(0x000b),       // bnt 000b [ no shell to hide ]
+	SIG_MAGICDWORD,
+	0x39, SIG_SELECTOR8(delete),    // pushi delete
+	0x78,                           // push1
+	0x72, SIG_UINT16(0x056a),       // lofsa shell
+	0x36,                           // push
+	0x81, 0x05,                     // lag 05
+	0x4a, 0x06,                     // send 06 [ cast delete: shell ]
+	SIG_END
+};
+
+static const uint16 ecoquest1PatchMosaicPuzzleFix[] = {
+	0x89, 0x0b,                     // lsg 0b [ current room number, saves 2 bytes ]
+	0x1a,                           // eq?    [ is conchShell owned by room 140? ]
+	0x31, 0x0e,                     // bnt 0e [ no shell to hide, save a byte ]
+	0x39, PATCH_SELECTOR8(signal),  // pushi signal
+	0x78,                           // push1
+	0x38, PATCH_UINT16(0xc014),     // pushi c014 [ kSignalDisposeMe | shell:signal ]
+	0x39, PATCH_SELECTOR8(delete),  // pushi delete
+	0x76,                           // push0
+	0x72, PATCH_UINT16(0x056a),     // lofsa shell
+	0x4a, 0x0a,                     // send 0a [ shell signal: c014, delete ]
+	PATCH_END
+};
+
+//          script, description,                                      signature                          patch
 static const SciScriptPatcherEntry ecoquest1Signatures[] = {
-	{  true,   160, "CD: give superfluous oily shell",             1, ecoquest1SignatureGiveOilyShell,  ecoquest1PatchGiveOilyShell },
-	{  true,   660, "CD: bad messagebox and freeze",               1, ecoquest1SignatureStayAndHelp,    ecoquest1PatchStayAndHelp },
-	{  true,   816, "CD: prophecy scroll",                         1, ecoquest1SignatureProphecyScroll, ecoquest1PatchProphecyScroll },
+	{  true,   140, "CD: mosaic puzzle fix",                       2, ecoquest1SignatureMosaicPuzzleFix, ecoquest1PatchMosaicPuzzleFix },
+	{  true,   160, "CD: give superfluous oily shell",             1, ecoquest1SignatureGiveOilyShell,   ecoquest1PatchGiveOilyShell },
+	{  true,   660, "CD: bad messagebox and freeze",               1, ecoquest1SignatureStayAndHelp,     ecoquest1PatchStayAndHelp },
+	{  true,   816, "CD: prophecy scroll",                         1, ecoquest1SignatureProphecyScroll,  ecoquest1PatchProphecyScroll },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
