@@ -243,24 +243,24 @@ void VK::playSpeechLine(int actorId, int sentenceId, float duration) {
 	actor->speechPlay(sentenceId, true);
 
 	while (_vm->_gameIsRunning) {
-		// ActorSpeaking = 1;
-		_vm->_speechSkipped = false;
+		_vm->_actorIsSpeaking = true;
+		_vm->_actorSpeakStopIsRequested = false;
 		_vm->gameTick();
-		// ActorSpeaking = 0;
-		if (_vm->_speechSkipped || !actor->isSpeeching()) {
+		_vm->_actorIsSpeaking = false;
+		if (_vm->_actorSpeakStopIsRequested || !actor->isSpeeching()) {
 			actor->speechStop();
 			break;
 		}
 	}
 
-	if (duration > 0.0f && !_vm->_speechSkipped) {
+	if (duration > 0.0f && !_vm->_actorSpeakStopIsRequested) {
 		int timeEnd = duration * 1000.0f + _vm->_time->current();
 		while ((timeEnd > _vm->_time->current()) && _vm->_gameIsRunning) {
 			_vm->gameTick();
 		}
 	}
 
-	_vm->_speechSkipped = false;
+	_vm->_actorSpeakStopIsRequested = false;
 
 	_vm->_mouse->enable();
 }

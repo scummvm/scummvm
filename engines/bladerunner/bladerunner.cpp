@@ -103,14 +103,18 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_vqaIsPlaying       = false;
 	_vqaStopIsRequested = false;
 
+	_actorIsSpeaking           = false;
+	_actorSpeakStopIsRequested = false;
+
 	_subtitlesEnabled = false;
-	_sitcomMode       = true;
+	_sitcomMode       = false;
+	_shortyMode       = false;
 
 	_playerLosesControlCounter = 0;
 
 	_playerActorIdle = false;
 	_playerDead      = false;
-	_speechSkipped   = false;
+
 	_gameOver        = false;
 	_gameAutoSave    = -1;
 	_gameIsLoading   = false;
@@ -401,11 +405,8 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	_gameVars = new int[_gameInfo->getGlobalVarCount()]();
 
-	// TODO: Init Actor AI Update counter
-
 	// Seed rand
 
-	// TODO: Sine and cosine lookup tables for intervals of 1.0, 4.0, and 12.0
 	_cosTable1024 = new Common::CosineTable(1024); // 10-bits = 1024 points for 2*PI;
 	_sinTable1024 = new Common::SineTable(1024);
 
@@ -468,8 +469,6 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	_playerActor->setFPS(15);
 	_playerActor->timerStart(6, 200);
-
-	// TODO: Set actor ids (redundant?)
 
 	_policeMaze = new PoliceMaze(this);
 
@@ -563,7 +562,6 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 }
 
 void BladeRunnerEngine::initChapterAndScene() {
-	// TODO: Init actors...
 	for (int i = 0, end = _gameInfo->getActorCount(); i != end; ++i) {
 		_aiScripts->initialize(i);
 	}
@@ -611,8 +609,8 @@ void BladeRunnerEngine::shutdown() {
 	}
 	_shapes.clear();
 
-	// TODO: Shutdown Scene
 	delete _scene;
+	_scene = nullptr;
 
 	if (_chapters) {
 		if (_chapters->hasOpenResources())
@@ -693,7 +691,7 @@ void BladeRunnerEngine::shutdown() {
 		_mainFont = nullptr;
 	}
 
-	if(isArchiveOpen("SUBTITLES.MIX")) {
+	if (isArchiveOpen("SUBTITLES.MIX")) {
 		closeArchive("SUBTITLES.MIX");
 	}
 	if (_subtitles) {
@@ -756,7 +754,6 @@ void BladeRunnerEngine::shutdown() {
 	delete _gameInfo;
 	_gameInfo = nullptr;
 
-	// TODO: Delete graphics surfaces here
 	_surface4.free();
 	_surfaceBack.free();
 	_surfaceFront.free();
@@ -764,8 +761,6 @@ void BladeRunnerEngine::shutdown() {
 	if (isArchiveOpen("STARTUP.MIX")) {
 		closeArchive("STARTUP.MIX");
 	}
-
-	// TODO: Delete MIXArchives here
 
 	delete _time;
 	_time = nullptr;
@@ -908,7 +903,6 @@ void BladeRunnerEngine::gameTick() {
 
 	_policeMaze->tick();
 
-	// TODO: Gun range announcements
 	_zbuffer->clean();
 
 	_ambientSounds->tick();
@@ -962,8 +956,6 @@ void BladeRunnerEngine::gameTick() {
 
 	_mouse->tick(p.x, p.y);
 	_mouse->draw(_surfaceFront, p.x, p.y);
-
-	// TODO: Process AUD
 
 	if (_walkSoundId >= 0) {
 		_audioPlayer->playAud(_gameInfo->getSfxTrack(_walkSoundId), _walkSoundVolume, _walkSoundBalance, _walkSoundBalance, 50, 0);
@@ -1066,8 +1058,11 @@ void BladeRunnerEngine::handleEvents() {
 }
 
 void BladeRunnerEngine::handleKeyUp(Common::Event &event) {
-	if (event.kbd.keycode == Common::KEYCODE_RETURN) {
-		_speechSkipped = true;
+	if (_actorIsSpeaking && event.kbd.keycode == Common::KEYCODE_RETURN) {
+		_actorSpeakStopIsRequested = true;
+		_actorIsSpeaking = false;
+
+		return;
 	}
 
 	if (_vqaIsPlaying) {
@@ -1077,8 +1072,7 @@ void BladeRunnerEngine::handleKeyUp(Common::Event &event) {
 		return;
 	}
 
-	// TODO:
-	if (!playerHasControl() /*|| ActorInWalkingLoop*/) {
+	if (!playerHasControl() || _isWalkingInterruptible) {
 		return;
 	}
 
@@ -1133,8 +1127,7 @@ void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
 		return;
 	}
 
-	//TODO:
-	if (!playerHasControl() /* || ActorWalkingLoop || ActorSpeaking || VqaIsPlaying */) {
+	if (!playerHasControl() || _isWalkingInterruptible || _actorIsSpeaking || _vqaIsPlaying) {
 		return;
 	}
 

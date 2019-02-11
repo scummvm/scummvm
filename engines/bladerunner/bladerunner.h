@@ -188,7 +188,8 @@ public:
 	bool _interruptWalking;
 	bool _playerActorIdle;
 	bool _playerDead;
-	bool _speechSkipped;
+	bool _actorIsSpeaking;
+	bool _actorSpeakStopIsRequested;
 	bool _gameOver;
 	int  _gameAutoSave;
 	bool _gameIsLoading;

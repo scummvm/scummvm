@@ -318,9 +318,11 @@ void ScriptBase::Actor_Says_With_Pause(int actorId, int sentenceId, float pause,
 	}
 	Player_Loses_Control();
 	while (_vm->_gameIsRunning) {
-		_vm->_speechSkipped = false;
+		_vm->_actorIsSpeaking = true;
+		_vm->_actorSpeakStopIsRequested = false;
 		_vm->gameTick();
-		if (_vm->_speechSkipped || !actor->isSpeeching()) {
+		_vm->_actorIsSpeaking = false;
+		if (_vm->_actorSpeakStopIsRequested || !actor->isSpeeching()) {
 			actor->speechStop();
 			break;
 		}
@@ -336,7 +338,7 @@ void ScriptBase::Actor_Says_With_Pause(int actorId, int sentenceId, float pause,
 		}
 	}
 
-	if (pause > 0.0f && !_vm->_speechSkipped) {
+	if (pause > 0.0f && !_vm->_actorSpeakStopIsRequested) {
 		Delay(pause * 1000);
 	}
 
@@ -355,10 +357,12 @@ void ScriptBase::Actor_Voice_Over(int sentenceId, int actorId) {
 
 	actor->speechPlay(sentenceId, true);
 	Player_Loses_Control();
-	while(_vm->_gameIsRunning) {
-		_vm->_speechSkipped = false;
+	while (_vm->_gameIsRunning) {
+		_vm->_actorIsSpeaking = true;
+		_vm->_actorSpeakStopIsRequested = false;
 		_vm->gameTick();
-		if(_vm->_speechSkipped || !actor->isSpeeching()) {
+		_vm->_actorIsSpeaking = false;
+		if (_vm->_actorSpeakStopIsRequested || !actor->isSpeeching()) {
 			actor->speechStop();
 			break;
 		}
