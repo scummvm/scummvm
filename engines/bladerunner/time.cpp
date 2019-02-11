@@ -25,20 +25,25 @@
 #include "bladerunner/bladerunner.h"
 
 #include "common/timer.h"
+#include "common/system.h"
 
 namespace BladeRunner {
 
 Time::Time(BladeRunnerEngine *vm) {
 	_vm = vm;
 
-	_start = _vm->getTotalPlayTime();
+	_start = currentSystem();
 	_pauseCount = 0;
 	_offset = 0;
 	_pauseStart = 0;
 }
 
+int Time::currentSystem() {
+	return _vm->getTotalPlayTime();
+}
+
 int Time::current() {
-	int time = _vm->getTotalPlayTime() - _offset;
+	int time = currentSystem() - _offset;
 	return time - _start;
 }
 

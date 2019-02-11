@@ -26,6 +26,7 @@
 #include "bladerunner/font.h"
 #include "bladerunner/game_constants.h"
 #include "bladerunner/text_resource.h"
+#include "bladerunner/time.h"
 #include "bladerunner/ui/kia.h"
 
 namespace BladeRunner {
@@ -45,7 +46,7 @@ void KIASectionDiagnostic::open() {
 	}
 	_vm->_kia->playActorDialogue(kActorRunciter, 140);
 	_offset = 0;
-	_timeLast = _vm->getTotalPlayTime();
+	_timeLast = _vm->_time->currentSystem();
 }
 
 void KIASectionDiagnostic::close() {
@@ -53,7 +54,7 @@ void KIASectionDiagnostic::close() {
 }
 
 void KIASectionDiagnostic::draw(Graphics::Surface &surface) {
-	int timeNow = _vm->getTotalPlayTime();
+	int timeNow = _vm->_time->currentSystem();
 
 	for (int i = 0; i < _text->getCount(); ++i) {
 		int y = kLineHeight * i + 366 - _offset;

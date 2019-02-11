@@ -236,8 +236,9 @@ public:
 	Common::Error loadGameState(int slot) override;
 	bool canSaveGameStateCurrently() override;
 	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	void pauseEngineIntern(bool pause) override;
 
-	Common::Error run();
+	Common::Error run() override;
 
 	bool startup(bool hasSavegames = false);
 	void initChapterAndScene();

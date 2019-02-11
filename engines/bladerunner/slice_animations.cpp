@@ -23,6 +23,7 @@
 #include "bladerunner/slice_animations.h"
 
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/time.h"
 
 #include "common/debug.h"
 #include "common/file.h"
@@ -182,7 +183,7 @@ void *SliceAnimations::getFramePtr(uint32 animation, uint32 frame) {
 	if (!_pages[page]._data)
 		error("Unable to locate page %d for animation %d frame %d", page, animation, frame);
 
-	_pages[page]._lastAccess = _vm->_system->getMillis();
+	_pages[page]._lastAccess = _vm->_time->currentSystem();
 
 	return (byte *)_pages[page]._data + pageOffset;
 }

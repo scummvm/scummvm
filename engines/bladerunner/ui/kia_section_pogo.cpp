@@ -27,6 +27,7 @@
 #include "bladerunner/font.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/text_resource.h"
+#include "bladerunner/time.h"
 
 namespace BladeRunner {
 
@@ -225,14 +226,14 @@ void KIASectionPogo::open() {
 		_lineOffsets[i] = 0;
 	}
 
-	_timeLast = _vm->getTotalPlayTime();
+	_timeLast = _vm->_time->currentSystem();
 
 	_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(319), 100, 0, 0, 50, 0);
 }
 
 void KIASectionPogo::draw(Graphics::Surface &surface) {
 	// Timing fixed for 60Hz by ScummVM team
-	int timeNow = _vm->getTotalPlayTime();
+	int timeNow = _vm->_time->currentSystem();
 	bool updateTimeout = false;
 	if (timeNow - _timeLast > 1000 / 60) {
 		updateTimeout = true;

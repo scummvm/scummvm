@@ -73,14 +73,14 @@ KIA::KIA(BladeRunnerEngine *vm) {
 	_currentSectionId = kKIASectionNone;
 	_lastSectionIdKIA = kKIASectionCrimes;
 	_lastSectionIdOptions = kKIASectionSettings;
-	_playerVqaTimeLast = _vm->getTotalPlayTime();
+	_playerVqaTimeLast = _vm->_time->currentSystem();
 	_playerVqaFrame = 0;
 	_playerVisualizerState = 0;
 	_playerPhotographId = -1;
 	_playerPhotograph = nullptr;
 	_playerSliceModelId = -1;
 	_playerSliceModelAngle = 0.0f;
-	_timeLast = _vm->getTotalPlayTime();
+	_timeLast = _vm->_time->currentSystem();
 	_playerActorDialogueQueuePosition = 0;
 	_playerActorDialogueQueueSize = 0;
 	_playerActorDialogueState = 0;
@@ -223,7 +223,7 @@ void KIA::tick() {
 		return;
 	}
 
-	int timeNow = _vm->getTotalPlayTime();
+	int timeNow = _vm->_time->currentSystem();
 	int timeDiff = timeNow - _timeLast;
 
 	if (_playerActorDialogueQueueSize == _playerActorDialogueQueuePosition) {
@@ -650,8 +650,8 @@ void KIA::init() {
 
 	playerReset();
 	_playerVqaFrame = 0;
-	_playerVqaTimeLast = _vm->getTotalPlayTime();
-	_timeLast = _vm->getTotalPlayTime();
+	_playerVqaTimeLast = _vm->_time->currentSystem();
+	_timeLast = _vm->_time->currentSystem();
 
 	if (_vm->_gameFlags->query(kFlagKIAPrivacyAddon) && !_vm->_gameFlags->query(kFlagKIAPrivacyAddonIntro)) {
 		_vm->_gameFlags->set(kFlagKIAPrivacyAddonIntro);

@@ -42,6 +42,7 @@
 #include "bladerunner/set.h"
 #include "bladerunner/set_effects.h"
 #include "bladerunner/text_resource.h"
+#include "bladerunner/time.h"
 #include "bladerunner/vector.h"
 #include "bladerunner/view.h"
 #include "bladerunner/vqa_decoder.h"
@@ -706,7 +707,9 @@ bool Debugger::cmdSave(int argc, const char **argv) {
 
 	Graphics::Surface thumbnail = _vm->generateThumbnail();
 
+	_vm->_time->pause();
 	_vm->saveGame(*saveFile, thumbnail);
+	_vm->_time->resume();
 
 	saveFile->finalize();
 
@@ -714,7 +717,7 @@ bool Debugger::cmdSave(int argc, const char **argv) {
 
 	delete saveFile;
 
-	return true;
+	return false;
 }
 
 void Debugger::drawDebuggerOverlay() {

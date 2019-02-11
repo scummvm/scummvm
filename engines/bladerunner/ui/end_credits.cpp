@@ -33,6 +33,7 @@
 #include "bladerunner/mouse.h"
 #include "bladerunner/music.h"
 #include "bladerunner/text_resource.h"
+#include "bladerunner/time.h"
 #include "bladerunner/ui/end_credits.h"
 
 namespace BladeRunner {
@@ -95,7 +96,7 @@ void EndCredits::show() {
 	_vm->_vqaStopIsRequested = false;
 
 	double position = 0.0;
-	uint32 timeLast = _vm->getTotalPlayTime(); // Original game is using system timer
+	uint32 timeLast = _vm->_time->currentSystem();
 
 	while (!_vm->_vqaStopIsRequested && !_vm->shouldQuit()) {
 		if (position >= textPositions[textCount - 1]) {
@@ -106,12 +107,12 @@ void EndCredits::show() {
 		_vm->handleEvents();
 
 		if (!_vm->_windowIsActive) {
-			timeLast = _vm->getTotalPlayTime(); // Original game is using system timer
+			timeLast = _vm->_time->currentSystem();
 
 			continue;
 		}
 
-		uint32 timeNow = _vm->getTotalPlayTime(); // Original game is using system timer
+		uint32 timeNow = _vm->_time->currentSystem();
 		position += (double)(timeNow - timeLast) * 0.05f;
 		timeLast = timeNow;
 

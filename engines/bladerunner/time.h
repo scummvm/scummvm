@@ -38,6 +38,7 @@ class Time {
 public:
 	Time(BladeRunnerEngine *vm);
 
+	int  currentSystem();
 	int  current();
 	int  pause();
 	int  getPauseStart();

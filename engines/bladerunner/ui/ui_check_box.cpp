@@ -25,6 +25,7 @@
 #include "bladerunner/audio_player.h"
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/game_info.h"
+#include "bladerunner/time.h"
 #include "bladerunner/ui/kia.h"
 #include "bladerunner/ui/kia_shapes.h"
 
@@ -47,7 +48,7 @@ UICheckBox::UICheckBox(BladeRunnerEngine *vm, UIComponentCallback *valueChangedC
 		_frame = 0;
 	}
 
-	_timeLast = _vm->getTotalPlayTime(); // Original game is using system timer
+	_timeLast = _vm->_time->currentSystem();
 	_rect = rect;
 	_isChecked = isChecked;
 }
@@ -56,7 +57,7 @@ UICheckBox::UICheckBox(BladeRunnerEngine *vm, UIComponentCallback *valueChangedC
 void UICheckBox::draw(Graphics::Surface &surface) {
 	int shapeId;
 	if (_rect.right > _rect.left && _rect.bottom > _rect.top) {
-		uint timeNow = _vm->getTotalPlayTime(); // Original game is using system timer
+		uint timeNow = _vm->_time->currentSystem();
 		if (timeNow - _timeLast > 67) {
 			int frameDelta = (timeNow - _timeLast) / 67u;
 			_timeLast = timeNow;

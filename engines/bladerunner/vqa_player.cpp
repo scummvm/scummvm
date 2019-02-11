@@ -23,6 +23,7 @@
 #include "bladerunner/vqa_player.h"
 
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/time.h"
 
 #include "audio/decoders/raw.h"
 
@@ -72,7 +73,7 @@ void VQAPlayer::close() {
 }
 
 int VQAPlayer::update(bool forceDraw, bool advanceFrame, bool useTime, Graphics::Surface *customSurface) {
-	uint32 now = 60 * _vm->_system->getMillis();
+	uint32 now = 60 * _vm->_time->currentSystem();
 	int result = -1;
 
 	if (_frameNext < 0) {
@@ -216,7 +217,7 @@ bool VQAPlayer::setBeginAndEndFrame(int begin, int end, int repeatsCount, int lo
 
 bool VQAPlayer::seekToFrame(int frame) {
 	_frameNext = frame;
-	_frameNextTime = 60 * _vm->_system->getMillis();
+	_frameNextTime = 60 * _vm->_time->currentSystem();
 	return true;
 }
 

@@ -274,7 +274,9 @@ Common::Error BladeRunnerEngine::saveGameState(int slot, const Common::String &d
 
 	BladeRunner::SaveFileManager::writeHeader(*saveFile, header);
 
+	_time->pause();
 	saveGame(*saveFile, thumbnail);
+	_time->resume();
 
 	saveFile->finalize();
 
@@ -283,6 +285,10 @@ Common::Error BladeRunnerEngine::saveGameState(int slot, const Common::String &d
 	delete saveFile;
 
 	return Common::kNoError;
+}
+
+void BladeRunnerEngine::pauseEngineIntern(bool pause) {
+	_mixer->pauseAll(pause);
 }
 
 Common::Error BladeRunnerEngine::run() {
@@ -1113,7 +1119,7 @@ void BladeRunnerEngine::handleKeyUp(Common::Event &event) {
 			_kia->open(kKIASectionSettings);
 			break;
 		case Common::KEYCODE_SPACE:
-			// TODO: combat::switchCombatMode(&Combat);
+			_combat->change();
 			break;
 		default:
 			break;
@@ -1122,16 +1128,8 @@ void BladeRunnerEngine::handleKeyUp(Common::Event &event) {
 
 void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
 	if ((event.kbd.keycode == Common::KEYCODE_d) && (event.kbd.flags & Common::KBD_CTRL)) {
-		_time->pause();
 		getDebugger()->attach();
 		getDebugger()->onFrame();
-
-		_time->resume();
-
-		if (!_kia->isOpen() && !_spinner->isOpen() && !_elevator->isOpen() && !_esper->isOpen() && !_dialogueMenu->isOpen() && !_scores->isOpen()) {
-			_scene->resume();
-		}
-
 		return;
 	}
 
@@ -1968,32 +1966,12 @@ void BladeRunnerEngine::autoSaveGame(int textId, bool endgame) {
 	if (slot == -1) {
 		slot = maxSlot + 1;
 	}
-
-	Common::OutSaveFile *saveFile = BladeRunner::SaveFileManager::openForSaving(getTargetName(), slot);
-	if (saveFile == nullptr || saveFile->err()) {
-		delete saveFile;
-	}
-
-	BladeRunner::SaveFileHeader header;
 	if (endgame) {
-		header._name = "END_GAME_STATE";
+		saveGameState(slot, "END_GAME_STATE");
 	} else {
-		header._name = textAutoSave.getText(textId);
+		saveGameState(slot,  textAutoSave.getText(textId));
 	}
 
-	BladeRunner::SaveFileManager::writeHeader(*saveFile, header);
-
-	Graphics::Surface thumbnail = generateThumbnail();
-
-	_time->pause();
-	saveGame(*saveFile, thumbnail);
-	_time->resume();
-
-	saveFile->finalize();
-
-	thumbnail.free();
-
-	delete saveFile;
 }
 
 void BladeRunnerEngine::ISez(const Common::String &str) {

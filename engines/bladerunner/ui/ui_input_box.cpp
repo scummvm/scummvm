@@ -24,6 +24,7 @@
 
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/font.h"
+#include "bladerunner/time.h"
 
 #include "common/keyboard.h"
 
@@ -43,7 +44,7 @@ UIInputBox::UIInputBox(BladeRunnerEngine *vm, UIComponentCallback *valueChangedC
 	setText(text);
 
 	_cursorIsVisible = false;
-	_timeLast = _vm->getTotalPlayTime(); // Original game is using system timer
+	_timeLast = _vm->_time->currentSystem();
 }
 
 void UIInputBox::draw(Graphics::Surface &surface) {
@@ -60,8 +61,8 @@ void UIInputBox::draw(Graphics::Surface &surface) {
 		surface.vLine(textHalfWidth + rectHalfWidth + 2, _rect.top, _rect.bottom - 1, 0x7FDD); // 11111 11110 11101
 	}
 
-	if (_vm->getTotalPlayTime() - _timeLast > 500) { // Original game is using system timer
-		_timeLast = _vm->getTotalPlayTime();
+	if (_vm->_time->currentSystem() - _timeLast > 500) {
+		_timeLast = _vm->_time->currentSystem();
 		_cursorIsVisible = !_cursorIsVisible;
 	}
 }
