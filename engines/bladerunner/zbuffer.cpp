@@ -24,6 +24,8 @@
 
 #include "bladerunner/decompress_lzo.h"
 
+#include "common/debug.h"
+
 namespace BladeRunner {
 
 void ZBufferDirtyRects::reset() {
@@ -70,13 +72,18 @@ bool ZBufferDirtyRects::popRect(Common::Rect *rect) {
 }
 
 ZBuffer::ZBuffer() {
-	reset();
+	_zbuf1 = nullptr;
+	_zbuf2 = nullptr;
+	_dirtyRects = new ZBufferDirtyRects();
+	_width = 0;
+	_height = 0;
+	enable();
 }
 
 ZBuffer::~ZBuffer() {
-	delete _dirtyRects;
-	delete[] _zbuf1;
 	delete[] _zbuf2;
+	delete[] _zbuf1;
+	delete _dirtyRects;
 }
 
 void ZBuffer::init(int width, int height) {
@@ -85,8 +92,6 @@ void ZBuffer::init(int width, int height) {
 
 	_zbuf1 = new uint16[width * height];
 	_zbuf2 = new uint16[width * height];
-
-	_dirtyRects = new ZBufferDirtyRects();
 }
 
 static int decodePartialZBuffer(const uint8 *src, uint16 *curZBUF, uint32 srcLen) {
@@ -167,20 +172,11 @@ uint16 ZBuffer::getZValue(int x, int y) const {
 	assert(x >= 0 && x < _width);
 	assert(y >= 0 && y < _height);
 
-	if (!_zbuf2) {
+	if (_zbuf2 == nullptr) {
 		return 0;
 	}
 
 	return _zbuf2[y * _width + x];
-}
-
-void ZBuffer::reset() {
-	_zbuf1 = nullptr;
-	_zbuf2 = nullptr;
-	_dirtyRects = nullptr;
-	_width = 0;
-	_height = 0;
-	enable();
 }
 
 void ZBuffer::blit(Common::Rect rect) {

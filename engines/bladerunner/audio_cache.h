@@ -28,9 +28,6 @@
 
 namespace BladeRunner {
 
-class BladeRunnerEngine;
-class AudioCache;
-
 /*
  * This is a poor imitation of Bladerunner's resource cache
  */
@@ -43,8 +40,6 @@ class AudioCache {
 		uint32  size;
 	};
 
-	BladeRunnerEngine *_vm;
-
 	Common::Mutex            _mutex;
 	Common::Array<cacheItem> _cacheItems;
 
@@ -53,7 +48,7 @@ class AudioCache {
 	uint32 _accessCounter;
 
 public:
-	AudioCache(BladeRunnerEngine *vm);
+	AudioCache();
 	~AudioCache();
 
 	bool  canAllocate(uint32 size) const;

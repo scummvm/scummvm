@@ -31,7 +31,6 @@ Lights::Lights(BladeRunnerEngine *vm) {
 	_ambientLightColor.g = 0.0;
 	_ambientLightColor.b = 0.0;
 
-	_lights.clear();
 	_frame = 0;
 }
 
@@ -83,8 +82,9 @@ void Lights::removeAnimated() {
 
 void Lights::readVqa(Common::ReadStream *stream) {
 	removeAnimated();
-	if (stream->eos())
+	if (stream->eos()) {
 		return;
+	}
 
 	int frameCount = stream->readUint32LE();
 	int count = stream->readUint32LE();

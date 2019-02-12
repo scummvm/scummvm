@@ -173,7 +173,6 @@ public:
 
 	Graphics::Surface  _surfaceFront;
 	Graphics::Surface  _surfaceBack;
-	Graphics::Surface  _surface4;
 
 	ZBuffer           *_zbuffer;
 

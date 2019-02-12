@@ -47,6 +47,9 @@ Fog::Fog() {
 }
 
 Fog::~Fog() {
+	if (_animationData != nullptr) {
+		delete[] _animationData;
+	}
 }
 
 int Fog::readCommon(Common::ReadStream *stream) {
@@ -63,6 +66,10 @@ int Fog::readCommon(Common::ReadStream *stream) {
 
 void Fog::readAnimationData(Common::ReadStream *stream, int size) {
 	_animatedParameters = stream->readUint32LE();
+
+	if (_animationData != nullptr) {
+		delete[] _animationData;
+	}
 
 	int floatCount = size / 4;
 	_animationData = new float[floatCount];

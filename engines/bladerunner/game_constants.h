@@ -1270,10 +1270,19 @@ enum AnimationModes {
 	kAnimationModeCombatAttack = 6,
 	kAnimationModeCombatWalk = 7,
 	kAnimationModeCombatRun = 8,
-	// 12 - 19 various talk modes
+	// 9 - 19 various talk modes
+	kAnimationModeDodge = 20,
 	kAnimationModeHit = 21,
 	kAnimationModeCombatHit = 22,
-	// 23 - give / take away
+	// 23 give / take away
+	// 24 - 25 not used
+	// 26 ???
+	// 27 - 28 not used
+	// 29 stand up
+	// 30 - 37 not used
+	// 38 ???
+	// 39 not used
+	// 40 mccoy throws body
 	kAnimationModeSpinnerGetIn = 41,
 	kAnimationModeSpinnerGetOut = 42,
 	// 43 - taking photo/using cellphone
@@ -1283,12 +1292,42 @@ enum AnimationModes {
 	kAnimationModeCombatWalkDown = 47,
 	kAnimationModeDie = 48,
 	kAnimationModeCombatDie = 49,
+	// 50 luther, tyrellguard ???
+	// 51 steele, maggie ???
 	kAnimationModeFeeding = 52,
-	kAnimationModeSit = 53,
+	kAnimationModeSit = 53, // more like sitting than sitting down
+	// 54 clovis, maggie ???
+	// 55 transient, tyrellguard, maggie
+	// 56 maggie ???
+	// 57 maggie ???
+	// 58 - 60 not used
+	// 61 guzza ???
+	// 62 sadik ???
+	// 63 sadik ???
 	kAnimationModeClimbUp = 64,
 	kAnimationModeClimbDown = 65,
 	kAnimationModeCombatClimbUp = 66,
 	kAnimationModeCombatClimbDown = 67
+	// 68 mccoy getting kicked
+	// 69 not used
+	// 70 dektora ???
+	// 71 dektora ???
+	// 72 desk clerk, leon ???
+	// 73 earlyq ???
+	// 74 earlyq ???
+	// 75 mccoy drinking ???
+	// 76 earlyq ???
+	// 77 not used
+	// 78 hanoi ???
+	// 79 dektora ???
+	// 80 gordo ???
+	// 81 - 82 not used
+	// 83 gordo ???
+	// 84 gordo ???
+	// 85 mccoy, earlyq - sitdown
+	// 86 - 87 not used
+	// 88 ???
+	// 89 homeless ???
 };
 
 enum SceneLoopMode {

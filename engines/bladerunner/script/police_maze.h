@@ -92,7 +92,6 @@ public:
 	~PoliceMaze();
 
 	void tick();
-	void reset();
 	void clear(bool isLoadingGame);
 	void setPauseState(bool state);
 	void activate();

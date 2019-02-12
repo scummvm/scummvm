@@ -35,6 +35,7 @@ SceneScript::~SceneScript() {
 
 bool SceneScript::open(const Common::String &name) {
 	delete _currentScript;
+	_currentScript = nullptr;
 
 	if (name == "AR01") { _currentScript = new SceneScriptAR01(_vm); return true; }
 	if (name == "AR02") { _currentScript = new SceneScriptAR02(_vm); return true; }

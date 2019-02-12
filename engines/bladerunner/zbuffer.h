@@ -69,7 +69,6 @@ public:
 	uint16 getZValue(int x, int y) const;
 
 private:
-	void reset();
 	void blit(Common::Rect rect);
 
 public:

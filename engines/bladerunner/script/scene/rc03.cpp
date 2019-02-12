@@ -258,7 +258,7 @@ void SceneScriptRC03::PlayerWalkedIn() {
 			if (Game_Flag_Query(kFlagIzoIsReplicant) ) {
 				Actor_Set_Goal_Number(kActorSteele, kGoalSteeleApprehendIzo);
 			}
-			Actor_Change_Animation_Mode(kActorMcCoy, 20);
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDodge);
 			Loop_Actor_Walk_To_XYZ(kActorIzo, 180.0f, -4.0f, 184.0f, 0, false, false, 0);
 			Actor_Change_Animation_Mode(kActorIzo, 6);
 			if (!Game_Flag_Query(kFlagIzoIsReplicant)) {

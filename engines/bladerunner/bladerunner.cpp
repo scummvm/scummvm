@@ -350,8 +350,6 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	// outtake player was initialized here in the original game - but this is done bit differently
 
-	_policeMaze = new PoliceMaze(this);
-
 	_obstacles = new Obstacles(this);
 
 	_sceneScript = new SceneScript(this);
@@ -360,23 +358,19 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	// This is the original startup in the game
 
-	bool r;
-
 	_surfaceFront.create(640, 480, createRGB555());
 	_surfaceBack.create(640, 480, createRGB555());
-	_surface4.create(640, 480, createRGB555());
 
 	_time = new Time(this);
 
 	// Try to load the SUBTITLES.MIX first, before Startup.MIX
 	// allows overriding any identically named resources (such as the original font files and as a bonus also the TRE files for the UI and dialogue menu)
 	_subtitles = new Subtitles(this);
-	r = openArchive("SUBTITLES.MIX");
+	bool r = openArchive("SUBTITLES.MIX");
 	if (!r) {
 		_subtitles->setSubtitlesSystemInactive(true); // no subtitles support
 	}
 	_subtitles->init();
-
 
 	r = openArchive("STARTUP.MIX");
 	if (!r)
@@ -390,8 +384,6 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	if (!r) {
 		return false;
 	}
-
-	_audioCache = new AudioCache(this);
 
 	if (hasSavegames) {
 		if (!loadSplash()) {
@@ -426,6 +418,8 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	_shortyMode = ConfMan.getBool("shorty");
 
 	_items = new Items(this);
+
+	_audioCache = new AudioCache();
 
 	_audioMixer = new AudioMixer(this);
 
@@ -462,7 +456,6 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	assert(actorCount < kActorCount);
 	for (int i = 0; i != actorCount; ++i) {
 		_actors[i] = new Actor(this, i);
-		_actors[i]->setup(i);
 	}
 	_actors[kActorVoiceOver] = new Actor(this, kActorVoiceOver);
 	_playerActor = _actors[_gameInfo->getPlayerId()];
@@ -529,7 +522,6 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	_vk = new VK(this);
 
 	_mouse = new Mouse(this);
-	// _mouse->setCursorPosition(320, 240);
 	_mouse->setCursor(0);
 
 	_sliceAnimations = new SliceAnimations(this);
@@ -595,29 +587,11 @@ void BladeRunnerEngine::shutdown() {
 
 	// BLADE.INI as updated here
 
-	delete _vk;
-	_vk = nullptr;
-
-	delete _esper;
-	_esper = nullptr;
-
-	delete _mouse;
-	_mouse = nullptr;
-
-	for (uint i = 0; i != _shapes.size(); ++i) {
-		delete _shapes[i];
-	}
-	_shapes.clear();
+	delete _aiScripts;
+	_aiScripts = nullptr;
 
 	delete _scene;
 	_scene = nullptr;
-
-	if (_chapters) {
-		if (_chapters->hasOpenResources())
-			_chapters->closeResources();
-		delete _chapters;
-		_chapters = nullptr;
-	}
 
 	delete _crimesDatabase;
 	_crimesDatabase = nullptr;
@@ -628,35 +602,105 @@ void BladeRunnerEngine::shutdown() {
 	delete _sliceAnimations;
 	_sliceAnimations = nullptr;
 
-	delete _textActorNames;
-	_textActorNames = nullptr;
+	delete _mouse;
+	_mouse = nullptr;
 
-	delete _textCrimes;
-	_textCrimes = nullptr;
+	delete _vk;
+	_vk = nullptr;
 
-	delete _textClueTypes;
-	_textClueTypes = nullptr;
+	delete _esper;
+	_esper = nullptr;
 
-	delete _textKIA;
-	_textKIA = nullptr;
+	/// todo
+	for (uint i = 0; i != _shapes.size(); ++i) {
+		delete _shapes[i];
+	}
+	_shapes.clear();
 
-	delete _textSpinnerDestinations;
-	_textSpinnerDestinations = nullptr;
+	if (_mainFont) {
+		_mainFont->close();
+		delete _mainFont;
+		_mainFont = nullptr;
+	}
 
-	delete _textVK;
-	_textVK = nullptr;
+	delete _scores;
+	_scores = nullptr;
 
-	delete _textOptions;
-	_textOptions = nullptr;
+	delete _elevator;
+	_elevator = nullptr;
+
+	delete _spinner;
+	_spinner = nullptr;
+
+	delete _kia;
+	_kia = nullptr;
+
+	delete _suspectsDatabase;
+	_suspectsDatabase = nullptr;
 
 	delete _dialogueMenu;
 	_dialogueMenu = nullptr;
 
-	delete _ambientSounds;
-	_ambientSounds = nullptr;
+	delete _textOptions;
+	_textOptions = nullptr;
+
+	delete _textVK;
+	_textVK = nullptr;
+
+	delete _textSpinnerDestinations;
+	_textSpinnerDestinations = nullptr;
+
+	delete _textKIA;
+	_textKIA = nullptr;
+
+	delete _textClueTypes;
+	_textClueTypes = nullptr;
+
+	delete _textCrimes;
+	_textCrimes = nullptr;
+
+	delete _textActorNames;
+	_textActorNames = nullptr;
+
+	delete _policeMaze;
+	_policeMaze = nullptr;
+
+	_playerActor = nullptr;
+	delete _actors[kActorVoiceOver];
+	_actors[kActorVoiceOver] = nullptr;
+	int actorCount = (int)_gameInfo->getActorCount();
+	for (int i = 0; i < actorCount; ++i) {
+		delete _actors[i];
+		_actors[i] = nullptr;
+	}
+
+	delete _zbuffer;
+	_zbuffer = nullptr;
 
 	delete _overlays;
 	_overlays = nullptr;
+
+	if (isArchiveOpen("SPCHSFX.TLK")) {
+		closeArchive("SPCHSFX.TLK");
+	}
+
+	if (isArchiveOpen("SFX.MIX")) {
+		closeArchive("SFX.MIX");
+	}
+
+	if (isArchiveOpen("MUSIC.MIX")) {
+		closeArchive("MUSIC.MIX");
+	}
+
+	if (_chapters) {
+		if (_chapters->hasOpenResources())
+			_chapters->closeResources();
+		delete _chapters;
+		_chapters = nullptr;
+	}
+
+	delete _ambientSounds;
+	_ambientSounds = nullptr;
 
 	delete _audioSpeech;
 	_audioSpeech = nullptr;
@@ -673,22 +717,37 @@ void BladeRunnerEngine::shutdown() {
 	delete _audioCache;
 	_audioCache = nullptr;
 
-	if (isArchiveOpen("MUSIC.MIX")) {
-		closeArchive("MUSIC.MIX");
-	}
+	delete _items;
+	_items = nullptr;
 
-	if (isArchiveOpen("SFX.MIX")) {
-		closeArchive("SFX.MIX");
-	}
+	delete _gameFlags;
+	_gameFlags = nullptr;
 
-	if (isArchiveOpen("SPCHSFX.TLK")) {
-		closeArchive("SPCHSFX.TLK");
-	}
+	delete _sceneObjects;
+	_sceneObjects = nullptr;
 
-	if (_mainFont) {
-		_mainFont->close();
-		delete _mainFont;
-		_mainFont = nullptr;
+	delete _view;
+	_view = nullptr;
+
+	delete _sinTable1024;
+	_sinTable1024 = nullptr;
+	delete _cosTable1024;
+	_cosTable1024 = nullptr;
+
+	delete[] _gameVars;
+	_gameVars = nullptr;
+
+	delete _combat;
+	_combat = nullptr;
+
+	delete _waypoints;
+	_waypoints = nullptr;
+
+	delete _gameInfo;
+	_gameInfo = nullptr;
+
+	if (isArchiveOpen("STARTUP.MIX")) {
+		closeArchive("STARTUP.MIX");
 	}
 
 	if (isArchiveOpen("SUBTITLES.MIX")) {
@@ -699,106 +758,40 @@ void BladeRunnerEngine::shutdown() {
 		_subtitles = nullptr;
 	}
 
-	delete _items;
-	_items = nullptr;
-
-	delete _gameFlags;
-	_gameFlags = nullptr;
-
-	delete _view;
-	_view = nullptr;
-
-	delete _sceneObjects;
-	_sceneObjects = nullptr;
-
-	delete _cosTable1024;
-	delete _sinTable1024;
-
-	delete _aiScripts;
-	_aiScripts = nullptr;
-
-	delete[] _gameVars;
-	_gameVars = nullptr;
-
-	delete _waypoints;
-	_waypoints = nullptr;
-
-	delete _scores;
-	_scores = nullptr;
-
-	delete _endCredits;
-	_endCredits = nullptr;
-
-	delete _elevator;
-	_elevator = nullptr;
-
-	delete _spinner;
-	_spinner = nullptr;
-
-	delete _kia;
-	_kia = nullptr;
-
-	delete _suspectsDatabase;
-	_suspectsDatabase = nullptr;
-
-	int actorCount = (int)_gameInfo->getActorCount();
-	for (int i = 0; i != actorCount; ++i) {
-		delete _actors[i];
-		_actors[i] = nullptr;
-	}
-	delete _actors[kActorVoiceOver];
-	_actors[kActorVoiceOver] = nullptr;
-
-	_playerActor = nullptr;
-
-	delete _gameInfo;
-	_gameInfo = nullptr;
-
-	_surface4.free();
-	_surfaceBack.free();
-	_surfaceFront.free();
-
-	if (isArchiveOpen("STARTUP.MIX")) {
-		closeArchive("STARTUP.MIX");
-	}
-
 	delete _time;
 	_time = nullptr;
+
+	_surfaceBack.free();
+	_surfaceFront.free();
 
 	// These are static objects in original game
 
 	delete _debugger;
 	_debugger = nullptr;
 
-	delete _zbuffer;
-	_zbuffer = nullptr;
-
-	delete _itemPickup;
-	_itemPickup = nullptr;
-
-	delete _policeMaze;
-	_policeMaze = nullptr;
+	delete _sceneScript;
+	_sceneScript = nullptr;
 
 	delete _obstacles;
 	_obstacles = nullptr;
 
-	delete _actorDialogueQueue;
-	_actorDialogueQueue = nullptr;
-
-	delete _combat;
-	_combat = nullptr;
-
-	delete _screenEffects;
-	_screenEffects = nullptr;
-
 	delete _lights;
 	_lights = nullptr;
+
+	delete _itemPickup;
+	_itemPickup = nullptr;
 
 	delete _settings;
 	_settings = nullptr;
 
-	delete _sceneScript;
-	_sceneScript = nullptr;
+	delete _actorDialogueQueue;
+	_actorDialogueQueue = nullptr;
+
+	delete _endCredits;
+	_endCredits = nullptr;
+
+	delete _screenEffects;
+	_screenEffects = nullptr;
 }
 
 bool BladeRunnerEngine::loadSplash() {

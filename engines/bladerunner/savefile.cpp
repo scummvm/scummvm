@@ -127,7 +127,7 @@ bool SaveFileManager::readHeader(Common::SeekableReadStream &in, SaveFileHeader 
 
 		s.skip(4); //skip size;
 
-		void *thumbnailData = new byte[kThumbnailSize]; // freed by ScummVM's smartptr
+		void *thumbnailData = malloc(kThumbnailSize); // freed by ScummVM's smartptr
 		s.read(thumbnailData, kThumbnailSize);
 
 		// TODO: cleanup - remove magic constants

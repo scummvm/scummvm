@@ -1593,7 +1593,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		}
 		break;
 
-	case 20:
+	case kAnimationModeDodge:
 		dodge();
 		break;
 

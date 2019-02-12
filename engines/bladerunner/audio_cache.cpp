@@ -22,12 +22,11 @@
 
 #include "bladerunner/audio_cache.h"
 
-#include "bladerunner/bladerunner.h"
+#include "common/stream.h"
 
 namespace BladeRunner {
 
-AudioCache::AudioCache(BladeRunnerEngine *vm) :
-	_vm(vm),
+AudioCache::AudioCache() :
 	_totalSize(0),
 	_maxSize(2457600),
 	_accessCounter(0) {}

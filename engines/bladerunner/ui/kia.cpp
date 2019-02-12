@@ -110,6 +110,10 @@ KIA::KIA(BladeRunnerEngine *vm) {
 }
 
 KIA::~KIA() {
+	if (isOpen()) {
+		unload();
+	}
+
 	_thumbnail.free();
 	delete _crimesSection;
 	delete _suspectsSection;
@@ -150,7 +154,7 @@ void KIA::open(KIASections sectionId) {
 		return;
 	}
 
-	if (!sectionId) {
+	if (sectionId == kKIASectionNone) {
 		unload();
 		return;
 	}

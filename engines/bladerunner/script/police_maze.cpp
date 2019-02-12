@@ -34,7 +34,12 @@
 namespace BladeRunner {
 
 PoliceMaze::PoliceMaze(BladeRunnerEngine *vm) : ScriptBase(vm) {
-	reset();
+	_isPaused = false;
+	_isActive = false;
+	_isEnding = false;
+
+	_pm_var1 = 0;
+	_pm_var2 = 0;
 
 	for (int i = 0; i < kNumMazeTracks; i++) {
 		_tracks[i] = new PoliceMazeTargetTrack(vm);
@@ -44,22 +49,8 @@ PoliceMaze::PoliceMaze(BladeRunnerEngine *vm) : ScriptBase(vm) {
 PoliceMaze::~PoliceMaze() {
 	for (int i = 0; i < kNumMazeTracks; i++) {
 		delete _tracks[i];
+		_tracks[i] = nullptr;
 	}
-
-	reset();
-}
-
-void PoliceMaze::reset() {
-	_isPaused = false;
-	_isActive = false;
-	_isEnding = false;
-
-	for (int i = 0; i < kNumMazeTracks; i++) {
-		_tracks[i] = 0;
-	}
-
-	_pm_var1 = 0;
-	_pm_var2 = 0;
 }
 
 void PoliceMaze::clear(bool isLoadingGame) {
