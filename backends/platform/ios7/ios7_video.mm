@@ -413,6 +413,7 @@ uint getSizeNextPOT(uint size) {
 #endif
 
 	_keyboardView = nil;
+	_keyboardVisible = NO;
 	_screenTexture = 0;
 	_overlayTexture = 0;
 	_mouseCursorTexture = 0;
@@ -725,7 +726,7 @@ uint getSizeNextPOT(uint size) {
 		[_keyboardView setInputDelegate:self];
 		[self addSubview:[_keyboardView inputView]];
 		[self addSubview: _keyboardView];
-		[_keyboardView showKeyboard];
+		[self showKeyboard];
 	}
 
 	glBindRenderbuffer(GL_RENDERBUFFER, _viewRenderbuffer); printOpenGLError();
@@ -907,10 +908,24 @@ uint getSizeNextPOT(uint size) {
 
   BOOL isLandscape = (self.bounds.size.width > self.bounds.size.height);
   if (isLandscape) {
-    [_keyboardView hideKeyboard];
+    [self hideKeyboard];
   } else {
-    [_keyboardView showKeyboard];
+    [self showKeyboard];
   }
+}
+
+- (void)showKeyboard {
+	[_keyboardView showKeyboard];
+	_keyboardVisible = YES;
+}
+
+- (void)hideKeyboard {
+	[_keyboardView hideKeyboard];
+	_keyboardVisible = NO;
+}
+
+- (BOOL)isKeyboardShown {
+	return _keyboardVisible;
 }
 
 - (UITouch *)secondTouchOtherTouchThan:(UITouch *)touch in:(NSSet *)set {

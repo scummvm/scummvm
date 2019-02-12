@@ -583,3 +583,23 @@ void OSystem_iOS7::updateMouseTexture() {
 		[[iOS7AppDelegate iPhoneView] updateMouseCursor];
 	});
 }
+
+void OSystem_iOS7::setShowKeyboard(bool show) {
+	if (show) {
+		execute_on_main_thread(^ {
+			[[iOS7AppDelegate iPhoneView] showKeyboard];
+		});
+	} else {
+		// Do not hide the keyboard in portrait mode as it is shown automatically and not
+		// just when asked with the kFeatureVirtualKeyboard.
+		if (_screenOrientation == kScreenOrientationLandscape || _screenOrientation == kScreenOrientationFlippedLandscape) {
+			execute_on_main_thread(^ {
+				[[iOS7AppDelegate iPhoneView] hideKeyboard];
+			});
+		}
+	}
+}
+
+bool OSystem_iOS7::isKeyboardShown() const {
+	return [[iOS7AppDelegate iPhoneView] isKeyboardShown];
+}

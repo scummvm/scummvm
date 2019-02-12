@@ -209,6 +209,8 @@ public:
 protected:
 	void initVideoContext();
 	void updateOutputSurface();
+	void setShowKeyboard(bool);
+	bool isKeyboardShown() const;
 
 	void internUpdateScreen();
 	void dirtyFullScreen();
