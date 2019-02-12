@@ -38,7 +38,7 @@ namespace Formats {
 class XMGDecoder {
 public:
 	static Graphics::Surface *decode(Common::ReadStream *stream);
-	static void readSize(Common::ReadStream *stream, uint32 &width, uint32 &height);
+	static void readSize(Common::ReadStream *stream, uint &width, uint &height);
 
 private:
 	explicit XMGDecoder(Common::ReadStream *stream);
