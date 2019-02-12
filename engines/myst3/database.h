@@ -222,6 +222,10 @@ public:
 	 */
 	Common::String getSoundName(uint32 id);
 
+	/** Get the sound variable id range */
+	uint32 getSoundIdMin() const { return _soundIdMin; }
+	uint32 getSoundIdMax() const { return _soundIdMax; }
+
 	/**
 	 * Retrieve an ambient cue from its id
 	 */
@@ -251,6 +255,8 @@ private:
 
 	Common::Array<Opcode> _nodeInitScript;
 
+	uint32 _soundIdMin;
+	uint32 _soundIdMax;
 	Common::HashMap<uint32, Common::String> _soundNames;
 	Common::HashMap<uint16, AmbientCue> _ambientCues;
 	Common::HashMap<uint32, int16> _roomZipBitIndex;

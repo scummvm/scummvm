@@ -104,6 +104,19 @@ void Sound::stopMusic(uint32 fadeDelay) {
 	}
 }
 
+void Sound::resetSoundVars() {
+	uint32 minId = _vm->_db->getSoundIdMin();
+	uint32 maxId = _vm->_db->getSoundIdMax();
+
+	if (minId == 0 || maxId == 0) {
+		return;
+	}
+
+	for (uint32 id = minId; id <= maxId; id++) {
+		_vm->_state->setVar(id, 0);
+	}
+}
+
 void Sound::playCue(uint32 id, uint32 volume, uint16 heading, uint16 attenuation) {
 	SoundChannel *channel = _channels[13];
 	channel->play(id, volume, heading, attenuation, false, kCue);

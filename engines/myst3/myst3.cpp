@@ -1582,7 +1582,7 @@ Common::Error Myst3Engine::loadGameState(Common::String fileName, TransitionType
 	_state->setMenuSavedAge(0);
 	_state->setMenuSavedRoom(0);
 	_state->setMenuSavedNode(0);
-
+	_sound->resetSoundVars();
 	_sound->stopMusic(15);
 	_state->setSoundScriptsSuspended(0);
 	_sound->playEffect(696, 60);

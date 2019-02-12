@@ -133,7 +133,8 @@ public:
 	void computeVolumeBalance(int32 volume, int32 heading, uint attenuation, int32 *mixerVolume, int32 *balance);
 
 	void setupNextSound(SoundNextCommand command, int16 controlVar, int16 startSoundId, int16 soundCount,
-			int32 soundMinDelay, int32 soundMaxDelay, int32 controlSoundId = 0, int32 controlSoundMaxPosition = 0);
+	                    int32 soundMinDelay, int32 soundMaxDelay, int32 controlSoundId = 0, int32 controlSoundMaxPosition = 0);
+	void resetSoundVars();
 private:
 	static const uint kNumChannels = 14;
 

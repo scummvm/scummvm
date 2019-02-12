@@ -455,7 +455,9 @@ const AgeData Database::_ages[] = {
 Database::Database(const Common::Platform platform, const Common::Language language, const uint32 localizationType) :
 		_platform(platform),
 		_language(language),
-		_localizationType(localizationType) {
+		_localizationType(localizationType),
+		_soundIdMin(0),
+		_soundIdMax(0) {
 
 	_datFile = SearchMan.createReadStreamForMember("myst3.dat");
 	if (!_datFile) {
@@ -809,6 +811,14 @@ void Database::readSoundNames(Common::SeekableReadStream *stream, bool load) {
 
 		if (load) {
 			_soundNames[id] = Common::String(soundName);
+
+			if (_soundIdMin == 0 || id < _soundIdMin) {
+				_soundIdMin = id;
+			}
+
+			if (_soundIdMax == 0 || id > _soundIdMax) {
+				_soundIdMax = id;
+			}
 		}
 	}
 }
