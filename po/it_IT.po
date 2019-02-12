@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-02-06 20:18+0100\n"
-"PO-Revision-Date: 2019-01-21 03:20+0000\n"
+"PO-Revision-Date: 2019-02-13 11:42+0000\n"
 "Last-Translator: Paolo Bossi <pbossi86@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -3493,11 +3493,12 @@ msgstr "Attiva le barre di energia (Hit Points)"
 #. I18N: L/R stands for Left/Right
 #: engines/kyra/detection.cpp:138
 msgid "Fight Button L/R Swap"
-msgstr ""
+msgstr "Scambio pulsante Sinistro/Destro per il combattimento"
 
 #: engines/kyra/detection.cpp:139
 msgid "Left button to attack, right button to pick up items"
 msgstr ""
+"Pulsante sinistro per attaccare, pulsante destro per raccogliere gli oggetti"
 
 #: engines/kyra/eobcommon.cpp:343 engines/kyra/lol.cpp:481
 msgid "Move Forward"
