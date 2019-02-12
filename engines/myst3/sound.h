@@ -70,6 +70,7 @@ public:
 	uint32 _age;
 	uint32 _ambientFadeOutDelay;
 
+	uint _fadeLastTick;
 	int32 _fadeDuration; // In frames (@30 fps)
 	int32 _fadePosition;
 

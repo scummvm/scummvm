@@ -383,6 +383,7 @@ SoundChannel::SoundChannel(Myst3Engine *vm) :
 		_volume(0),
 		_heading(0),
 		_headingAngle(0),
+		_fadeLastTick(0),
 		_fadeDuration(0),
 		_fadeTargetVolume(0),
 		_fadeSourceVolume(0),
@@ -440,6 +441,7 @@ void SoundChannel::play(uint32 id, uint32 volume, uint16 heading, uint16 attenua
 	_id = id;
 	_age = 0;
 	_playing = true;
+	_stopWhenSilent = false;
 	_vm->_state->setVar(id, 1);
 }
 
@@ -565,6 +567,7 @@ void SoundChannel::fade(uint32 targetVolume, int32 targetHeading, int32 targetAt
 	_hasFadeArray = false;
 	_fadeDuration = fadeDelay;
 	_fadePosition = 0;
+	_fadeLastTick = 0;
 
 	_fadeSourceVolume = _volume;
 	_fadeTargetVolume = targetVolume;
@@ -597,46 +600,50 @@ void SoundChannel::age(uint32 maxAge) {
 }
 
 void SoundChannel::updateFading() {
-	if (_fading) {
-		_fadePosition++;
+	uint tick = _vm->_state->getTickCount();
+	if (tick == _fadeLastTick) {
+		return; // We already updated fading this tick
+	}
 
-		if (_fadePosition <= _fadeDuration) {
-			// Fading in progress, compute the new channel parameters
-			_volume = _fadeSourceVolume + _fadePosition * (_fadeTargetVolume - _fadeSourceVolume) / _fadeDuration;
-			_heading = _fadeSourceHeading + _fadePosition * (_fadeTargetHeading - _fadeSourceHeading) / _fadeDuration;
-			_headingAngle = _fadeSourceAttenuation + _fadePosition * (_fadeTargetAttenuation - _fadeSourceAttenuation) / _fadeDuration;
+	_fadeLastTick = tick;
+	_fadePosition++;
+
+	if (_fadePosition <= _fadeDuration) {
+		// Fading in progress, compute the new channel parameters
+		_volume = _fadeSourceVolume + _fadePosition * (_fadeTargetVolume - _fadeSourceVolume) / _fadeDuration;
+		_heading = _fadeSourceHeading + _fadePosition * (_fadeTargetHeading - _fadeSourceHeading) / _fadeDuration;
+		_headingAngle = _fadeSourceAttenuation + _fadePosition * (_fadeTargetAttenuation - _fadeSourceAttenuation) / _fadeDuration;
+	} else {
+		if (!_hasFadeArray) {
+			// The fading is complete
+			_fading = false;
 		} else {
-			if (!_hasFadeArray) {
-				// The fading is complete
-				_fading = false;
-			} else {
-				// This step of the fade array is complete, find the next one
-				do {
-					_fadeArrayPosition++;
-				} while (_fadeArrayPosition < 4 && !_fadeDurations[_fadeArrayPosition]);
+			// This step of the fade array is complete, find the next one
+			do {
+				_fadeArrayPosition++;
+			} while (_fadeArrayPosition < 4 && !_fadeDurations[_fadeArrayPosition]);
 
-				if (_fadeArrayPosition < 4) {
-					// Setup the new fading step
-					_fadePosition = 0;
-					_fadeDuration = _fadeDurations[_fadeArrayPosition];
+			if (_fadeArrayPosition < 4) {
+				// Setup the new fading step
+				_fadePosition = 0;
+				_fadeDuration = _fadeDurations[_fadeArrayPosition];
 
-					_fadeSourceVolume = _volume;
-					_fadeTargetVolume = _fadeVolumes[_fadeArrayPosition];
+				_fadeSourceVolume = _volume;
+				_fadeTargetVolume = _fadeVolumes[_fadeArrayPosition];
 
-					if (!_fadeTargetVolume) {
-						_stopWhenSilent = true;
-					}
-				} else {
-					// No more steps
-					_hasFadeArray = false;
-					_fading = false;
+				if (!_fadeTargetVolume) {
 					_stopWhenSilent = true;
-					_volume = 0;
 				}
+			} else {
+				// No more steps
+				_hasFadeArray = false;
+				_fading = false;
+				_stopWhenSilent = true;
+				_volume = 0;
 			}
 		}
-		setVolume3D(_volume, _heading, _headingAngle);
 	}
+	setVolume3D(_volume, _heading, _headingAngle);
 }
 
 uint32 SoundChannel::playedFrames() {
