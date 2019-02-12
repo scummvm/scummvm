@@ -164,7 +164,6 @@ void Parser::agetline() {
 void Parser::scan() {
 	uint i;
 	int w;
-	char *str;
 
 	agetline();
 	wrds[0] = 0;
@@ -204,7 +203,7 @@ void Parser::scan() {
 			Common::String tmp = token;
 			tmp.deleteChar(0);
 			tmp.deleteLastChar();
-			strcpy(str, tmp.c_str());
+			char *str = scumm_strdup(tmp.c_str());
 
 			litValues[litCount++].value = (Aptr) str;
 		} else if (token[0] == ',') {
