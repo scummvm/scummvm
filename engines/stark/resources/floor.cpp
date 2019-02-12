@@ -64,8 +64,12 @@ void Floor::computePointHeightInFace(Math::Vector3d &point, uint32 faceIndex) co
 int32 Floor::findFaceHitByRay(const Math::Ray &ray, Math::Vector3d &intersection) const {
 	for (uint32 i = 0; i < _faces.size(); i++) {
 		// TODO: Check the ray's intersection with an AABB first if this ends up being slow
-		if (_faces[i]->isEnabled() && _faces[i]->intersectRay(ray, intersection)) {
-			return i;
+		if (_faces[i]->intersectRay(ray, intersection)) {
+			if (_faces[i]->isEnabled()) {
+				return i;
+			} else {
+				return -1; // Disabled faces block the ray
+			}
 		}
 	}
 
