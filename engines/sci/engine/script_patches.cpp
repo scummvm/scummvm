@@ -122,6 +122,7 @@ static const char *const selectorNameTable[] = {
 	"at",           // Longbow, QFG4
 	"owner",        // Longbow
 	"delete",       // EcoQuest 1
+	"size",         // EcoQuest 1
 	"signal",       // EcoQuest 1, GK1
 #ifdef ENABLE_SCI32
 	"newWith",      // SCI2 array script
@@ -212,6 +213,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_at,
 	SELECTOR_owner,
 	SELECTOR_delete,
+	SELECTOR_size,
 	SELECTOR_signal
 #ifdef ENABLE_SCI32
 	,
@@ -669,10 +671,55 @@ static const uint16 ecoquest1PatchMosaicPuzzleFix[] = {
 	PATCH_END
 };
 
+// The column puzzle in room 160 can be put in a state that can't be completed.
+//  This is a bug in the original that affects all versions.
+//
+// The puzzle consists of nine columns that must be rotated to their correct
+//  positions in the correct order. As each column is solved it is locked. When
+//  leaving the room the puzzle state is saved to globals but this state is
+//  insufficient to recreate the puzzle. The game saves column positions but not
+//  lock states. Instead it infers lock states from positions when restoring but
+//  this is inaccurate because columns can be put in their correct positions out
+//  of order. If the player leaves the room while all columns are in their
+//  correct positions but before the puzzle is solved then all columns will be
+//  locked when returning and the game can't be completed.
+//
+// The proper solution would be to save and restore lock states but it would be
+//  impractical to patch in that functionality while retaining save game
+//  compatibility. Instead we patch the loop that reinitializes lock states to
+//  skip the last column so that it's always unlocked and the player can't get
+//  stuck. This code only runs when the puzzle isn't solved and should never
+//  have been able to lock the last column.
+//
+// Applies to: All Floppy and CD versions
+// Responsible method: Local procedure 5 in script 160
+// Fixes bug #10885
+static const uint16 ecoquest1SignatureColumnPuzzleFix[] = {
+	0x39, SIG_SELECTOR8(size),      // pushi size
+	0x76,                           // push0
+	0x72, SIG_ADDTOOFFSET(+2),      // lofsa columnList [ columns in solution order ]
+	0x4a, 0x04,                     // send 04 [ columnList:size ]
+	0x22,                           // lt? [ temp0 < columnList:size (9) ]
+	0x30, SIG_ADDTOOFFSET(+2),      // bnt [ end of method ]
+	0x39, SIG_MAGICDWORD,           // pushi cel
+	      SIG_SELECTOR8(cel),
+	0x76,                           // push0
+	0x39, SIG_SELECTOR8(at),        // pushi at
+	SIG_END
+};
+
+static const uint16 ecoquest1PatchColumnPuzzleFix[] = {
+	0x34, PATCH_UINT16(0x0008),     // ldi 0008 [ only initialize 8 of 9 columns ]
+	0x32, PATCH_UINT16(0x0002),     // jmp 0002
+	PATCH_END
+};
+
+
 //          script, description,                                      signature                          patch
 static const SciScriptPatcherEntry ecoquest1Signatures[] = {
 	{  true,   140, "CD: mosaic puzzle fix",                       2, ecoquest1SignatureMosaicPuzzleFix, ecoquest1PatchMosaicPuzzleFix },
 	{  true,   160, "CD: give superfluous oily shell",             1, ecoquest1SignatureGiveOilyShell,   ecoquest1PatchGiveOilyShell },
+	{  true,   160, "CD/Floppy: column puzzle fix",                1, ecoquest1SignatureColumnPuzzleFix, ecoquest1PatchColumnPuzzleFix },
 	{  true,   660, "CD: bad messagebox and freeze",               1, ecoquest1SignatureStayAndHelp,     ecoquest1PatchStayAndHelp },
 	{  true,   816, "CD: prophecy scroll",                         1, ecoquest1SignatureProphecyScroll,  ecoquest1PatchProphecyScroll },
 	SCI_SIGNATUREENTRY_TERMINATOR
