@@ -274,7 +274,7 @@ void Processor::z_print_table() {
 #define zG(i) ((((i >>  5) & 0x1F) << 3) | (((i >>  5) & 0x1F) >> 2))
 #define zR(i) ((((i      ) & 0x1F) << 3) | (((i      ) & 0x1F) >> 2))
 
-#define zRGB(i) (zR(i) << 16 | zG(i) << 8 | zB(i))
+#define zRGB(i) _screen->format.RGBToColor(zR(i), zG(i), zB(i))
 
 void Processor::z_set_true_colour() {
 	int zfore = zargs[0];
