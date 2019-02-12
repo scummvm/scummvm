@@ -112,6 +112,9 @@ protected:
 	Math::Rect2d computeGameRect(bool renderToFrameBuffer, uint gameWidth, uint gameHeight,
 	                             uint screenWidth, uint screenHeight);
 
+	// ResVmSdlGraphicsManager API
+	bool saveScreenshot(const Common::String &file) const override;
+
 	int _antialiasing;
 	bool _vsync;
 

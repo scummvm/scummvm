@@ -27,9 +27,11 @@
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 #include "backends/events/sdl/sdl-events.h"
 #include "common/config-manager.h"
+#include "common/file.h"
 #include "engines/engine.h"
 #include "graphics/pixelbuffer.h"
 #include "graphics/surface.h"
+#include "image/png.h"
 
 SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window, const Capabilities &capabilities)
 	:
@@ -467,5 +469,58 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 	}
 }
 #endif // SDL_VERSION_ATLEAST(2, 0, 0)
+
+bool SurfaceSdlGraphicsManager::saveScreenshot(const Common::String &file) const {
+	// Based on the implementation from ScummVM
+	bool success;
+	SDL_Surface *screen = nullptr;
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	int width, height;
+	SDL_GetRendererOutputSize(_renderer, &width, &height);
+
+	screen = SDL_CreateRGBSurface(SDL_SWSURFACE,
+								  width,
+								  height,
+								  24,
+#ifdef SCUMM_LITTLE_ENDIAN
+								  0x0000FF, 0x00FF00, 0xFF0000,
+#else
+								  0xFF0000, 0x00FF00, 0x0000FF,
+#endif // SCUMM_LITTLE_ENDIAN
+								  0);
+
+	SDL_RenderReadPixels(_renderer, nullptr, SDL_PIXELFORMAT_RGB24, screen->pixels, screen->pitch);
+#else
+	screen = _screen;
+#endif // SDL_VERSION_ATLEAST(2, 0, 0)
+
+#ifdef USE_PNG
+	Common::DumpFile out;
+	if (!out.open(file)) {
+		success = false;
+	} else {
+		if (SDL_LockSurface(screen) < 0) {
+			warning("Could not lock the screen surface");
+			success = false;
+		}
+
+		Graphics::PixelFormat format(3, 8, 8, 8, 0, 16, 8, 0, 0);
+		Graphics::Surface data;
+		data.init(width, height, screen->pitch, screen->pixels, format);
+		success = Image::writePNG(out, data);
+
+		SDL_UnlockSurface(screen);
+	}
+#else
+	success = SDL_SaveBMP(screen, file.c_str()) == 0;
+#endif
+
+	if (screen && screen != _screen) {
+		SDL_FreeSurface(screen);
+	}
+
+	return success;
+}
 
 #endif

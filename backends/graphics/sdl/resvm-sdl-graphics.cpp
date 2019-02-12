@@ -24,9 +24,11 @@
 
 #include "backends/platform/sdl/sdl-sys.h"
 #include "backends/events/sdl/sdl-events.h"
+#include "backends/platform/sdl/sdl.h"
 
 #include "common/config-manager.h"
 #include "common/textconsole.h"
+#include "common/file.h"
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 		{0, 0, 0}
@@ -239,6 +241,10 @@ bool ResVmSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 	//ResidualVM specific:
 	switch ((int)event.type) {
 		case Common::EVENT_KEYDOWN:
+			if (event.kbd.hasFlags(Common::KBD_ALT) && event.kbd.keycode == Common::KEYCODE_s) {
+				saveScreenshot();
+				return true;
+			}
 			break;
 		case Common::EVENT_KEYUP:
 			break;
@@ -259,4 +265,42 @@ bool ResVmSdlGraphicsManager::notifyMousePosition(Common::Point mouse) {
 	// ResidualVM: not use that:
 	//setMousePos(mouse.x, mouse.y);
 	return true;
+}
+
+void ResVmSdlGraphicsManager::saveScreenshot() {
+	OSystem_SDL *g_systemSdl = dynamic_cast<OSystem_SDL*>(g_system);
+
+	if (g_systemSdl) {
+		Common::String filename;
+		Common::String path = g_systemSdl->getScreenshotsPath();
+
+		// Find unused filename
+		int n = 0;
+		while (true) {
+#ifdef USE_PNG
+			filename = Common::String::format("residualvm%05d.png", n);
+#else
+			filename = Common::String::format("residualvm%05d.bmp", n);
+#endif
+			SDL_RWops *file = SDL_RWFromFile((path + filename).c_str(), "r");
+			if (!file) {
+				break;
+			}
+			SDL_RWclose(file);
+
+			++n;
+		}
+
+		if (saveScreenshot(path + filename)) {
+			if (path.empty())
+				debug("Saved screenshot '%s' in current directory", filename.c_str());
+			else
+				debug("Saved screenshot '%s' in directory '%s'", filename.c_str(), path.c_str());
+		} else {
+			if (path.empty())
+				warning("Could not save screenshot in current directory");
+			else
+				warning("Could not save screenshot in directory '%s'", path.c_str());
+		}
+	}
 }

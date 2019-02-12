@@ -84,6 +84,7 @@ public:
 	virtual void suggestSideTextures(Graphics::Surface *left, Graphics::Surface *right); // ResidualVM specific method
 	virtual void initSizeHint(const Graphics::ModeList &modes) override;
 	virtual int getScreenChangeID() const override;
+	virtual void saveScreenshot() override; // ResidualVM specific method
 
 	virtual void beginGFXTransaction() override;
 	virtual OSystem::TransactionError endGFXTransaction() override;

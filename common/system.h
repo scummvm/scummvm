@@ -1041,6 +1041,13 @@ public:
 	 */
 	virtual void clearFocusRectangle() {}
 
+	/**
+	 * !!! ResidualVM specific method !!!
+	 * Instruct the backend to capture a screenshot of the current screen.
+	 *
+	 * The backend can persist it the way it considers appropriate.
+	 */
+	virtual void saveScreenshot() {}
 	//@}
 
 

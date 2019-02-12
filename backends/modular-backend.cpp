@@ -266,6 +266,10 @@ void ModularBackend::setCursorPalette(const byte *colors, uint start, uint num) 
 	_graphicsManager->setCursorPalette(colors, start, num);
 }
 
+void ModularBackend::saveScreenshot() {
+    _graphicsManager->saveScreenshot();
+}
+
 OSystem::MutexRef ModularBackend::createMutex() {
 	assert(_mutexManager);
 	return _mutexManager->createMutex();

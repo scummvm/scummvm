@@ -91,6 +91,9 @@ protected:
 	void drawOverlay();
 	void drawSideTextures();
 	void closeOverlay();
+
+	// ResVmSdlGraphicsManager API
+	virtual bool saveScreenshot(const Common::String &file) const override;
 };
 
 #endif

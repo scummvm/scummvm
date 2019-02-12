@@ -99,6 +99,7 @@ public:
 	virtual void unlockScreen() override;
 	virtual void fillScreen(uint32 col) override;
 	virtual void setShakePos(int shakeOffset) override;
+	void saveScreenshot() override;
 
 	// GraphicsManager API - Focus Rectangle
 	virtual void setFocusRectangle(const Common::Rect& rect) override;
@@ -145,6 +146,9 @@ protected:
 
 	/** Obtain the user configured fullscreen resolution, or default to the desktop resolution */
 	Common::Rect getPreferredFullscreenResolution();
+
+	/** Save a screenshot to the specified file */
+	virtual bool saveScreenshot(const Common::String &file) const  = 0;
 };
 
 #endif
