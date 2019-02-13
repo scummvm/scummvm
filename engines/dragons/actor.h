@@ -100,8 +100,8 @@ public:
 	uint32 field_30;
 	uint16 field_34[32];
 	uint16 field_74;
-	uint16 field_76;
-	uint16 field_78;
+	int16 field_76;
+	int16 field_78;
 	uint16 field_7a;
 	int32 field_7c;
 	uint16 field_80;
@@ -120,10 +120,15 @@ public:
 	byte *getSeqIpAtOffset(uint32 offset);
 	void loadFrame(uint16 frameOffset);
 	void reset_maybe();
-	void pathfinding_maybe(int16 x, int16 y, int16 unk);
+	bool pathfinding_maybe(int16 target_x, int16 target_y, int16 isNotFlicker);
 	void waitUntilFlag8IsSet();
 	void waitUntilFlag8And4AreSet();
 
+	void clearFlag(uint32 flag);
+	void setFlag(uint32 flag);
+private:
+	void pathfindingCleanup();
+	uint16 pathfindingUnk(int16 actor_x, int16 actor_y, int16 target_x, int16 target_y, int16 unkType);
 };
 
 } // End of namespace Dragons

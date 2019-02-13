@@ -66,8 +66,8 @@ bool Background::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	_palette[0] = 0x80; //FIXME update palette
 	_palette[1] = 0x80;
 
-	_points1 = loadPoints(stream);
-	_points2 = loadPoints(stream);
+	_points1 = loadPoints(stream); // 0x200
+	_points2 = loadPoints(stream); // 0x280
 	stream.seek(0x305);
 	uint8 tileindexOffset = stream.readByte();
 	stream.seek(0x308);
