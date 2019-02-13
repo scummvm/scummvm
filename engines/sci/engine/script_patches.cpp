@@ -1029,12 +1029,43 @@ static const uint16 freddypharkasPatchMacInventory[] = {
 	PATCH_END
 };
 
+// WORKAROUND
+// FPFP Mac has an easter egg with a script bug that accidentally works in
+//  Sierra's interpreter. Clicking Talk on a small part of the mine in room 270
+//  triggers it. The script macThing plays macSound and waits for it to finish,
+//  but macSound:loop is set to -1, indicating that it should loop forever.
+//  ScummVM loops the sound and so macThing never advances to the next state and
+//  the user never regains control. Sierra's interpreter cues the script after
+//  the first play and doesn't loop the sound, despite macSound:loop.
+//
+// We work around this by setting macSound:loop correctly on the heap so that it
+//  only plays once and macThing proceeds.
+//
+// Applies to: Mac Floppy
+// Responsible method: Heap in script 270
+// Fixes bug #7065
+static const uint16 freddypharkasSignatureMacEasterEgg[] = {
+	SIG_MAGICDWORD,                 // macSound
+	SIG_UINT16(0x0b89),             // number = 2953
+	SIG_UINT16(0x007f),             // vol = 127
+	SIG_UINT16(0x0000),             // priority = 0
+	SIG_UINT16(0xffff),             // loop = -1 [ loop sound forever ]
+	SIG_END
+};
+
+static const uint16 freddypharkasPatchMacEasterEgg[] = {
+	PATCH_ADDTOOFFSET(+6),
+	PATCH_UINT16(0x0001),           // loop = 1 [ play sound once ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                            patch
 static const SciScriptPatcherEntry freddypharkasSignatures[] = {
 	{  true,     0, "CD: score early disposal",                    1, freddypharkasSignatureScoreDisposal, freddypharkasPatchScoreDisposal },
 	{  true,    15, "Mac: broken inventory",                       1, freddypharkasSignatureMacInventory,  freddypharkasPatchMacInventory },
 	{  true,   110, "intro scaling workaround",                    2, freddypharkasSignatureIntroScaling,  freddypharkasPatchIntroScaling },
 	{  true,   235, "CD: canister pickup hang",                    3, freddypharkasSignatureCanisterHang,  freddypharkasPatchCanisterHang },
+	{  true,   270, "Mac: easter egg hang",                        1, freddypharkasSignatureMacEasterEgg,  freddypharkasPatchMacEasterEgg },
 	{  true,   320, "ladder event issue",                          2, freddypharkasSignatureLadderEvent,   freddypharkasPatchLadderEvent },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
