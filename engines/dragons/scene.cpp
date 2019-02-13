@@ -234,4 +234,16 @@ uint16 Scene::getSceneId() {
 	return (uint16)_currentSceneId;
 }
 
+Common::Point Scene::getPoint(uint32 pointIndex) {
+	return _stage->getPoint2(pointIndex);
+}
+
+uint16 Scene::getStageWidth() {
+	return _stage->getWidth();
+}
+
+uint16 Scene::getStageHeight() {
+	return _stage->getHeight();
+}
+
 } // End of namespace Dragons

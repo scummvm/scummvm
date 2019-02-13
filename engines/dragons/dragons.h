@@ -102,6 +102,7 @@ public:
 	ActorManager *_actorManager;
 	DragonINIResource *_dragonINIResource;
 	uint16 _cursorSequenceID;
+	Scene *_scene;
 private:
 	Screen *_screen;
 	BigfileArchive *_bigfileArchive;
@@ -109,7 +110,6 @@ private:
 	DragonRMS *_dragonRMS;
 	DragonVAR *_dragonVAR;
 	BackgroundResourceLoader *_backgroundResourceLoader;
-	Scene *_scene;
 	SequenceOpcodes *_sequenceOpcodes;
 	ScriptOpcodes *_scriptOpcodes;
 	uint32 _nextUpdatetime;

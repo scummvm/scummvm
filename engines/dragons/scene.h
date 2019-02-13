@@ -63,6 +63,9 @@ public:
 	bool contains(DragonINI *ini);
 	byte *getPalette();
 	uint16 getSceneId();
+	Common::Point getPoint(uint32 pointIndex);
+	uint16 getStageWidth();
+	uint16 getStageHeight();
 private:
 	void loadSceneData(uint32 sceneId, uint32 cameraPointId);
 

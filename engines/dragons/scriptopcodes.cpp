@@ -25,6 +25,7 @@
 #include "dragons/dragonflg.h"
 #include "dragons/dragonini.h"
 #include "dragons/dragonobd.h"
+#include "dragons/scene.h"
 #include "dragons/scriptopcodes.h"
 #include "dragons/specialopcodes.h"
 #include "dragons/actor.h"
@@ -422,11 +423,40 @@ void ScriptOpcodes::opUnkE(ScriptOpCall &scriptOpCall) {
 	if (field6 & 0x8000) {
 		s3 = 0 > (field6 ^ 0xffff) ? 1 : 0;
 	}
+	Common::Point point = _vm->_scene->getPoint(field8);
 
 	if (field4 != -1) {
+		if (field6 != -1) {
+			if (!(field0 & 0x8000)) {
+				assert(ini->actor);
+				ini->actor->flags |= Dragons::ACTOR_FLAG_800;
+				ini->actor->updateSequence(field6 & 0x7fff);
+			}
+			ini->actor->field_7c = field4 & 0x8000 ? (field4 & 0x7fff) << 0x10 : (field4 & 0x7fff) << 7;
+		}
+
+		bool isFlicker = _vm->_dragonINIResource->isFlicker(ini);
+		ini->actor->pathfinding_maybe(point.x, point.y, isFlicker ? 0 : 1);
+
+		if(s3 == 0) {
+			while (ini->actor->flags & Dragons::ACTOR_FLAG_10) {
+				_vm->waitForFrames(1);
+			}
+		}
+		ini->x = point.x;
+		ini->y = point.y;
+		ini->actor->flags &= ~Dragons::ACTOR_FLAG_800;
 
 	} else {
+		ini->x = point.x;
+		ini->actor->x_pos = point.x;
+		ini->y = point.y;
+		ini->actor->y_pos = point.y;
 
+		if (field4 != field6) {
+			ini->actor->field_7c = field4;
+			ini->actor->updateSequence(field6 & 0x7fff);
+		}
 	}
 }
 
@@ -457,22 +487,19 @@ void ScriptOpcodes::opUnkF(ScriptOpCall &scriptOpCall) {
 				ini->actor->updateSequence(field6 & 0x7fff);
 			}
 			ini->actor->field_7c = field4 & 0x8000 ? (field4 & 0x7fff) << 0x10 : (field4 & 0x7fff) << 7;
-
-			if (_vm->_dragonINIResource->isFlicker(ini)) {
-
-			}
-			bool isFlicker = _vm->_dragonINIResource->isFlicker(ini);
-			ini->actor->pathfinding_maybe(field8, fieldA, isFlicker ? 0 : 1);
-
-			if(s3 == 0) {
-				while (ini->actor->flags & Dragons::ACTOR_FLAG_10) {
-					_vm->waitForFrames(1);
-				}
-			}
-			ini->x = field8;
-			ini->y = fieldA;
-			ini->actor->flags &= ~Dragons::ACTOR_FLAG_800;
 		}
+		bool isFlicker = _vm->_dragonINIResource->isFlicker(ini);
+		ini->actor->pathfinding_maybe(field8, fieldA, isFlicker ? 0 : 1);
+
+		if(s3 == 0) {
+			while (ini->actor->flags & Dragons::ACTOR_FLAG_10) {
+				_vm->waitForFrames(1);
+			}
+		}
+		ini->x = field8;
+		ini->y = fieldA;
+		ini->actor->flags &= ~Dragons::ACTOR_FLAG_800;
+
 	} else {
 		assert(ini->actor);
 		ini->x = field8;

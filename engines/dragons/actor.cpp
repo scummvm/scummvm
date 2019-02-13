@@ -23,6 +23,7 @@
 #include "dragons.h"
 #include "actorresource.h"
 #include "actor.h"
+#include "scene.h"
 
 namespace Dragons {
 
@@ -170,11 +171,152 @@ void Actor::reset_maybe() {
 	//TODO actor_find_by_resourceId_and_remove_resource_from_mem_maybe(resourceID);
 }
 
-void Actor::pathfinding_maybe(int16 x, int16 y, int16 unk) {
+static const int32 pathfinderXYOffsetTbl[32] =
+		{
+				0x00000100,
+				0x000000fb,
+				0x000000ec,
+				0x000000d4,
+
+				0x000000b5,
+				0x0000008e,
+				0x00000061,
+				0x00000031,
+
+				-0x00000000,
+				-0x31,
+				-0x61,
+				-0x8e,
+
+				-0xb5,
+				-0xd4,
+				-0xec,
+				-0xfb,
+
+				-0xff,
+				-0xfb,
+				-0xec,
+				-0xd4,
+
+				-0xb5,
+				-0x8e,
+				-0x61,
+				-0x31,
+
+				0x00000000,
+				0x00000031,
+				0x00000061,
+				0x0000008e,
+
+				0x000000b5,
+				0x000000d4,
+				0x000000ec,
+				0x000000fb
+		};
+
+
+bool Actor::pathfinding_maybe(int16 target_x, int16 target_y, int16 unkTypeMaybe) {
+	uint8 pathfinderData[32];
+
 	//TODO implement me.
-	 error("Implement pathfinding_maybe()");
-//	x_pos = x;
-//	y_pos = y;
+//	 error("Implement pathfinding_maybe()");
+	int16 priority = 0;
+	int16 var_90_1 = 0;
+	bool isFlag0x10Set = flags & Dragons::ACTOR_FLAG_10;
+	flags &= ~Dragons::ENGINE_FLAG_10;
+
+	if (x_pos == target_x && y_pos == target_y) {
+		if (isFlag0x10Set) {
+			pathfindingCleanup();
+		}
+		return true;
+	}
+
+	if (unkTypeMaybe < 2) {
+		priority = getEngine()->_scene->getPriorityAtPosition(Common::Point(target_x_pos, target_y_pos));
+		if (priority < 0) {
+			priority = 1;
+		}
+
+		if ((unkTypeMaybe != 0 || priority - 1 < 8) && (unkTypeMaybe != 1 || priority - 1 < 16)) {
+			var_90_1 = (unkTypeMaybe ^ 2) < 1 ? 1 : 0;
+		} else {
+			var_90_1 = 1;
+		}
+	}
+	int32 x_related_idx=1;
+	for(; x_related_idx < 320; x_related_idx++) {
+
+		int32 v0_18 = 0;
+		for (int32 s3_1 = 0;s3_1 < 0x20; s3_1++) {
+			int32 v0_19 = s3_1 + 8;
+			if (v0_19 <  0) {
+				v0_19 = s3_1 - 8;
+			}
+			int16 y_offset = (x_related_idx * pathfinderXYOffsetTbl[v0_19 & 0x1f]) / 16;
+			int16 x_offset = (x_related_idx * pathfinderXYOffsetTbl[s3_1 & 0x1f]) / 16;
+			if (target_x + x_offset >= 0 &&
+				 target_y + y_offset >= 0) {
+				priority = getEngine()->_scene->getPriorityAtPosition(Common::Point(target_x + x_offset, target_y + y_offset));
+
+				if ((unkTypeMaybe == 0 && priority - 1 < 8) || (unkTypeMaybe == 1 && priority -1 < 0x10)) {
+					target_x += x_offset;
+					target_y += y_offset;
+					x_related_idx = -1;
+					break;
+				}
+			}
+		}
+		if (x_related_idx == -1) {
+			break;
+		}
+	}
+
+	if (x_related_idx == 320) {
+		if (isFlag0x10Set) {
+			pathfindingCleanup();
+		}
+		return false;
+	}
+
+	if (x_pos == target_x && y_pos == target_y) {
+		if (isFlag0x10Set) {
+			pathfindingCleanup();
+		}
+		return true;
+	}
+
+	int16 var_c8_1 = 0;
+
+	int16 var_c0_1_target_x = target_x;
+	int16 var_b8_1_target_y = target_y;
+
+	memset(pathfinderData, 0, 32);
+
+	field_76 = target_x;
+	field_78 = target_y;
+
+	pathfindingUnk(x_pos, y_pos, target_x, target_y, unkTypeMaybe);
+
+	//FIXME
+	x_pos = target_x;
+	y_pos = target_y;
+
+	return false;
+}
+
+void Actor::pathfindingCleanup() {
+	clearFlag(Dragons::ACTOR_FLAG_10);
+	field_74 = 0;
+	target_x_pos = x_pos;
+	target_y_pos = y_pos;
+	field_76 = -1;
+	field_78 = -1;
+	setFlag(Dragons::ACTOR_FLAG_4);
+
+	if (flags & Dragons::ACTOR_FLAG_200) {
+		clearFlag(Dragons::ACTOR_FLAG_800);
+	}
 }
 
 void Actor::waitUntilFlag8IsSet() {
@@ -197,6 +339,84 @@ void Actor::waitUntilFlag8And4AreSet() {
 	while(!(flags & Dragons::ACTOR_FLAG_4)) {
 		getEngine()->waitForFrames(1);
 	}
+}
+
+void Actor::clearFlag(uint32 flag) {
+	flags &= ~flag;
+}
+
+void Actor::setFlag(uint32 flag) {
+	flags |= flag;
+}
+
+uint16 Actor::pathfindingUnk(int16 actor_x, int16 actor_y, int16 target_x, int16 target_y, int16 unkType) {
+	if (unkType == 2) {
+		return 1;
+	}
+	uint16 width = getEngine()->_scene->getStageWidth();
+	uint16 height = getEngine()->_scene->getStageHeight();
+
+	if (unkType & 0x8000
+	|| actor_x < 0
+	|| width - 1 < actor_x
+	|| actor_y < 0
+	|| height - 1 < actor_y
+	|| target_x < 0
+	|| width - 1 < target_x
+	|| target_y < 0
+	|| height - 1 < target_y) {
+		return 0;
+	}
+
+	int32 x_increment = 0;
+	int32 y_increment = 0;
+	if (target_y == actor_y && target_x == target_y) {
+		return 1;
+	}
+
+	if (target_y != actor_y && target_x == actor_x) {
+		y_increment = target_y - actor_y > 0 ? 1 : -1;
+	} else {
+		if (target_y == actor_y) {
+			if (target_x == actor_x) {
+				x_increment = 0;
+				y_increment = target_y - actor_y > 0 ? 1 : -1;
+			} else {
+				x_increment = target_x - actor_x > 0 ? 1 : -1;
+				y_increment = 0;
+			}
+		} else {
+			if (ABS(target_y - actor_y) < ABS(target_x - actor_x)) {
+				x_increment = target_x - actor_x > 0 ? 1 : -1;
+				y_increment = ((target_y - actor_y) << 0x10) / (target_x - actor_x);
+				if ((target_y - actor_y > 0 && y_increment < 0) || (target_y - actor_y < 0 && y_increment > 0)) {
+					y_increment = -y_increment;
+				}
+			} else {
+				y_increment = target_y - actor_y > 0 ? 1 : -1;
+				x_increment = ((target_x - actor_x) << 0x10) / (target_y - actor_y);
+				if ((target_x - actor_x > 0 && x_increment < 0) || (target_x - actor_x < 0 && x_increment > 0)) {
+					x_increment = -x_increment;
+				}
+			}
+		}
+	}
+
+	// 0x80034d28
+	int16 x = actor_x;
+	int16 y = actor_y;
+	for(;;) {
+		if (x+1 == target_x && y+1 == target_y) {
+			return 1;
+		}
+		int16 priority = getEngine()->_scene->getPriorityAtPosition(Common::Point(x, y));
+		if ( priority < 0) {
+			priority = 1;
+		}
+		// 0x80034d70
+		break; //TODO FIX ME
+	}
+	return 0;
 }
 
 } // End of namespace Dragons
