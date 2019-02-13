@@ -146,6 +146,7 @@ Arrow keys      | Movement
 `Alt` + `x`     | Quit (in-game)
 `Ctrl` + `c`    | Force quit (from command line)
 `Alt` + `Enter` | Switch between windowed mode and fullscreen
+`Alt` + `s`     | Save a screenshot
 
 ### 3.4. Joystick/gamepad support ###
 
@@ -212,6 +213,7 @@ Key           | Binding
 `Ctrl` + `F5` | ResidualVM menu
 `Ctrl` + `c`  | Force quit (from command line)
 `Ctrl` + `q`  | Quit (in-game)
+`Alt`  + `s`  | Save a screenshot
 
 
 ## 5. Running The Longest Journey
@@ -226,6 +228,7 @@ need:
   * The `static` directory.
   * The `fonts` directory (not critical, but recommended – see below).
   * `x.xarc` and all the `INI` files.
+  * `game.exe` (not critical, but recommended for a styled message dialog)
 
 The 2-CD and DVD versions have some of the data files packed in installer
 archives. The archives need to be unpacked before they can be used.
@@ -258,6 +261,7 @@ Key             | Binding
 `F5`            | April's Diary (initially disabled)
 `F6`            | Video replay
 `F7`            | Game settings
+`F8`            | Save a screenshot
 `F9`            | Toggle subtitles on and off
 `F10`           | Quit game and return to to main menu
 `A`             | Cycle back through inventory cursor items
@@ -277,6 +281,7 @@ Key             | Binding
 `Ctrl` + `q`    | Quit (in-game)
 `Alt` + `x`     | Quit
 `Alt` + `q`     | Quit
+`Alt` + `s`     | Save a screenshot
 
 
 ## 6. Configuration
@@ -297,7 +302,25 @@ Linux                | `~/.config/residualvm/residualvm.ini`
 macOS/OS X           | `~/Library/Preferences/ResidualVM Preferences`
 Others               | `residualvm.ini` in the current directory
 
-### 6.2. Interesting settings for GrimE games ###
+### 6.2. Location of saved screenshots ###
+
+By default, screenshots will be saved to:
+
+Operating System    | Location
+------------------- | -----------------------------------------------------------------
+Windows             | `\Users\username\My Pictures\ResidualVM Screenshots`
+macOS X             | On the Desktop
+Other unices        | In the XDG Pictures user directory, e.g. `~/Pictures/ResidualVM Screenshots`
+Any other OS        | In the current directory
+
+Alternatively, you can specify the directory where the screenshots will be saved in the configuration file. To do so, add a screenshotpath value under the [residualvm] section:
+
+```
+[residualvm]
+screenshotpath=/path/to/screenshots/
+```
+
+### 6.3. Interesting settings for GrimE games ###
 
 The following settings are currently available in the config file, however
 some of them might not work with your current build and some of them might
