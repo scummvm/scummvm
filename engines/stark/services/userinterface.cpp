@@ -489,7 +489,7 @@ void UserInterface::handleKeyPress(const Common::KeyState &keyState) {
 	} else if (keyState.keycode == Common::KEYCODE_F7) {
 		toggleScreen(Screen::kScreenSettingsMenu);
 	} else if (keyState.keycode == Common::KEYCODE_F8) {
-		warning("TODO: Implement the screenshot saving to local game directory");
+		g_system->saveScreenshot();
 	} else if (keyState.keycode == Common::KEYCODE_F9) {
 		if (isInGameScreen()) {
 			_shouldToggleSubtitle = !_shouldToggleSubtitle;
