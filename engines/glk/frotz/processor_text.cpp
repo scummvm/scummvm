@@ -570,7 +570,7 @@ void Processor::handleAbbreviations() {
 
 	// Check for standard abbreviations
 	if (word == "g")
-		word == "again";
+		word = "again";
 	else if (word == "o")
 		word = "oops";
 	else if (word == "x")
