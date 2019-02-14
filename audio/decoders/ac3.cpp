@@ -66,7 +66,7 @@ private:
 	double _audioGain;
 };
 
-AC3Stream::AC3Stream(double decibel = 0.0) : _a52State(0), _frameSize(0), _inBufPtr(0), _flags(0), _sampleRate(0) {
+AC3Stream::AC3Stream(double decibel) : _a52State(0), _frameSize(0), _inBufPtr(0), _flags(0), _sampleRate(0) {
 	_audioGain = pow(2, decibel / 6);
 }
 
