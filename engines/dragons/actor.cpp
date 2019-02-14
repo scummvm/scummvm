@@ -388,13 +388,13 @@ uint16 Actor::pathfindingUnk(int16 actor_x, int16 actor_y, int16 target_x, int16
 		} else {
 			if (ABS(target_y - actor_y) < ABS(target_x - actor_x)) {
 				x_increment = target_x - actor_x > 0 ? 1 : -1;
-				y_increment = ((target_y - actor_y) << 0x10) / (target_x - actor_x);
+				y_increment = ((target_y - actor_y) /*<< 0x10*/) / (target_x - actor_x);
 				if ((target_y - actor_y > 0 && y_increment < 0) || (target_y - actor_y < 0 && y_increment > 0)) {
 					y_increment = -y_increment;
 				}
 			} else {
 				y_increment = target_y - actor_y > 0 ? 1 : -1;
-				x_increment = ((target_x - actor_x) << 0x10) / (target_y - actor_y);
+				x_increment = ((target_x - actor_x) /*<< 0x10*/) / (target_y - actor_y);
 				if ((target_x - actor_x > 0 && x_increment < 0) || (target_x - actor_x < 0 && x_increment > 0)) {
 					x_increment = -x_increment;
 				}
@@ -413,10 +413,18 @@ uint16 Actor::pathfindingUnk(int16 actor_x, int16 actor_y, int16 target_x, int16
 		if ( priority < 0) {
 			priority = 1;
 		}
-		// 0x80034d70
-		break; //TODO FIX ME
+		if (!(unkType & 0x7fff) && (priority == 0 || priority >= 9)) {
+			return 0;
+		}
+
+		if ((unkType & 0x7fff) == 1) {
+			if (priority == 0 || priority >= 0x11) {
+				return 0;
+			}
+		}
+		x += x_increment;
+		y += y_increment;
 	}
-	return 0;
 }
 
 } // End of namespace Dragons
