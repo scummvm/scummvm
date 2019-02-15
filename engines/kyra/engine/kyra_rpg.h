@@ -198,8 +198,38 @@ protected:
 	bool hasWall(int index);
 	void assignVisibleBlocks(int block, int direction);
 	bool checkSceneUpdateNeed(int block);
-	void drawVcnBlocks();
 	uint16 calcNewBlockPosition(uint16 curBlock, uint16 direction);
+
+	void drawVcnBlocks();
+	void vcnDraw_fw_4bit(uint8 *&dst, const uint8 *&src);
+	void vcnDraw_bw_4bit(uint8 *&dst, const uint8 *&src);
+	void vcnDraw_fw_trans_4bit(uint8 *&dst, const uint8 *&src);
+	void vcnDraw_bw_trans_4bit(uint8 *&dst, const uint8 *&src);
+	void vcnDraw_fw_hiCol(uint8 *&dst, const uint8 *&src);
+	void vcnDraw_bw_hiCol(uint8 *&dst, const uint8 *&src);
+	void vcnDraw_fw_trans_hiCol(uint8 *&dst, const uint8 *&src);
+	void vcnDraw_bw_trans_hiCol(uint8 *&dst, const uint8 *&src);
+	void vcnDraw_fw_Amiga(uint8 *&dst, const uint8 *&src);
+	void vcnDraw_bw_Amiga(uint8 *&dst, const uint8 *&src);
+	void vcnDraw_fw_trans_Amiga(uint8 *&dst, const uint8 *&src);
+	void vcnDraw_bw_trans_Amiga(uint8 *&dst, const uint8 *&src);
+
+	typedef Common::Functor2Mem<uint8 *&, const uint8 *&, void, KyraRpgEngine> VcnDrawProc;
+	struct VcnLineDrawingMethods {
+		VcnLineDrawingMethods(VcnDrawProc *fw, VcnDrawProc *bw, VcnDrawProc *fw_t, VcnDrawProc *bw_t) : forward(fw), backwards(bw), forward_trans(fw_t), backwards_trans(bw_t) {}
+		~VcnLineDrawingMethods() {
+			delete forward;
+			delete backwards;
+			delete forward_trans;
+			delete backwards_trans;
+		}
+
+		VcnDrawProc *forward;
+		VcnDrawProc *backwards;
+		VcnDrawProc *forward_trans;
+		VcnDrawProc *backwards_trans;
+	};
+	VcnLineDrawingMethods *_vcnDrawLine;
 
 	virtual int clickedDoorSwitch(uint16 block, uint16 direction) = 0;
 	int clickedWallShape(uint16 block, uint16 direction);
@@ -232,13 +262,18 @@ protected:
 	uint8 *_vcnBlocks;
 	uint8 *_vcfBlocks;
 	uint8 *_vcnTransitionMask;
+	uint8 *_vcnMaskTbl;
 	uint8 *_vcnShift;
+	uint8 _vcnShiftVal;
 	uint8 *_vcnColTable;
+	uint8 _vcnSrcBitsPerPixel;
 	uint8 _vcnBpp;
 	uint16 *_blockDrawingBuffer;
 	uint8 *_sceneWindowBuffer;
 	uint8 _blockBrightness;
 	uint8 _wllVcnOffset;
+	uint8 _wllVcnOffset2;
+	uint8 _wllVcnRmdOffset;
 
 	uint8 **_doorShapes;
 

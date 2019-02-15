@@ -43,12 +43,16 @@ KyraRpgEngine::KyraRpgEngine(OSystem *system, const GameFlags &flags) : KyraEngi
 
 	_vcnBlocks = 0;
 	_vcfBlocks = 0;
-	_vcnTransitionMask = 0;
+	_vcnTransitionMask = _vcnMaskTbl = 0;
 	_vcnShift = 0;
 	_vcnColTable = 0;
+	_vcnShiftVal = 0;
 	_vcnBpp = flags.useHiColorMode ? 2 : 1;
+	_vcnSrcBitsPerPixel = (flags.platform == Common::kPlatformAmiga) ? 5 : (_vcnBpp == 2 ? 8 : 4);
+	_vcnDrawLine = 0;
+
 	_vmpPtr = 0;
-	_blockBrightness = _wllVcnOffset = 0;
+	_blockBrightness = _wllVcnOffset = _wllVcnOffset2 = _wllVcnRmdOffset = 0;
 	_blockDrawingBuffer = 0;
 	_sceneWindowBuffer = 0;
 	_monsterShapes = _monsterPalettes = 0;
@@ -135,6 +139,7 @@ KyraRpgEngine::~KyraRpgEngine() {
 	delete[] _vcnShift;
 	delete[] _blockDrawingBuffer;
 	delete[] _sceneWindowBuffer;
+	delete _vcnDrawLine;
 
 	delete[] _lvlShapeTop;
 	delete[] _lvlShapeBottom;
@@ -183,6 +188,16 @@ Common::Error KyraRpgEngine::init() {
 	_vcnColTable = new uint8[128];
 	for (int i = 0; i < 128; i++)
 		_vcnColTable[i] = i & 0x0F;
+
+	if (_vcnBpp == 2)
+		_vcnDrawLine = new VcnLineDrawingMethods(new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_hiCol), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_hiCol),
+			new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_trans_hiCol), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_trans_hiCol));
+	else if (_flags.platform == Common::kPlatformAmiga)
+		_vcnDrawLine = new VcnLineDrawingMethods(new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_Amiga), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_Amiga),
+			new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_trans_Amiga), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_trans_Amiga));
+	else
+		_vcnDrawLine = new VcnLineDrawingMethods(new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_4bit), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_4bit),
+			new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_fw_trans_4bit), new VcnDrawProc(this, &KyraRpgEngine::vcnDraw_bw_trans_4bit));
 
 	_doorShapes = new uint8*[6];
 	memset(_doorShapes, 0, 6 * sizeof(uint8 *));

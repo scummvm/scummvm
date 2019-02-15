@@ -30,7 +30,6 @@
 
 #include "common/system.h"
 
-
 namespace Kyra {
 
 void EoBCoreEngine::loadLevel(int level, int sub) {
@@ -298,14 +297,15 @@ void EoBCoreEngine::addLevelItems() {
 	}
 }
 
-void EoBCoreEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
+void EoBCoreEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {	
 	if (file)
 		strcpy(_lastBlockDataFile, file);
 
+	delete[] _vcnBlocks;
+	uint32 vcnSize = 0;
+
 	if (_flags.platform == Common::kPlatformFMTowns) {
-		uint32 size;
-		delete[] _vcnBlocks;
-		_vcnBlocks = _res->fileData(Common::String::format("%s.VCC", _lastBlockDataFile).c_str(), &size);
+		_vcnBlocks = _res->fileData(Common::String::format("%s.VCC", _lastBlockDataFile).c_str(), &vcnSize);
 		return;
 	}
 
@@ -314,22 +314,24 @@ void EoBCoreEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
 
 	if (_flags.platform == Common::kPlatformAmiga) {
 		Common::SeekableReadStream *in = _res->createReadStream(fn);
-		uint16 size = in->readUint16LE() << 5;
-		in->seek(0, SEEK_SET);
-		_screen->loadFileDataToPage(in, 3, size + 34);
+		vcnSize = in->readUint16LE() * (_vcnSrcBitsPerPixel << 3);
+		_vcnBlocks = new uint8[vcnSize];
+		_screen->getPalette(0).loadAmigaPalette(*in, 1, 5);
+		in->seek(22, SEEK_CUR);
+		in->read(_vcnBlocks, vcnSize);
 		delete in;
-	} else {
-		_screen->loadBitmap(fn.c_str(), 3, 3, 0, true);
+		return;
 	}
 
+	_screen->loadBitmap(fn.c_str(), 3, 3, 0, true);
+
 	const uint8 *pos = _screen->getCPagePtr(3);
-	uint16 vcnSize = READ_LE_UINT16(pos) << 5;
+	vcnSize = READ_LE_UINT16(pos) * (_vcnSrcBitsPerPixel << 3);
 	pos += 2;
 
 	const uint8 *colMap = pos;
 	pos += 32;
 
-	delete[] _vcnBlocks;
 	_vcnBlocks = new uint8[vcnSize];
 
 	if (_configRenderMode == Common::kRenderCGA) {
@@ -355,6 +357,7 @@ void EoBCoreEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
 	} else {
 		if (!(_flags.gameID == GI_EOB1 && _configRenderMode == Common::kRenderEGA))
 			memcpy(_vcnColTable, colMap, 32);
+		
 		memcpy(_vcnBlocks, pos, vcnSize);
 	}
 }
