@@ -810,7 +810,7 @@ bool Obstacles::findFarthestAvailablePathVertex(Vector2 *path, int pathSize, Vec
 	next->z = path[farthestPathIndex].y;
 
 	bool walkboxFound;
-	float walkboxAltitude = _vm->_scene->_set->getAltitudeAtXZ(next->x, next->y, &walkboxFound);
+	float walkboxAltitude = _vm->_scene->_set->getAltitudeAtXZ(next->x, next->z, &walkboxFound);
 
 	if (walkboxFound) {
 		next->y = walkboxAltitude;
