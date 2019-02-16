@@ -1066,6 +1066,7 @@ void GfxOpenGLS::drawSprite(const Sprite *sprite) {
 	extraMatrix.transpose();
 	_spriteProgram->setUniform("extraMatrix", extraMatrix);
 	_spriteProgram->setUniform("textured", GL_TRUE);
+	_spriteProgram->setUniform("swapRandB", _selectedTexture->_colorFormat == BM_BGRA || _selectedTexture->_colorFormat == BM_BGR888);
 	_spriteProgram->setUniform("isBillboard", GL_TRUE);
 	_spriteProgram->setUniform("lightsEnabled", false);
 	if (g_grim->getGameType() == GType_GRIM) {
