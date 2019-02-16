@@ -574,9 +574,9 @@ Common::Error EoBCoreEngine::go() {
 		action = 0;
 
 		if (_gameToLoad != -1) {
+			startupLoad();
 			if (loadGameState(_gameToLoad).getCode() != Common::kNoError)
 				error("Couldn't load game slot %d on startup", _gameToLoad);
-			startupLoad();
 			_gameToLoad = -1;
 		} else {
 			_screen->showMouse();
@@ -585,9 +585,10 @@ Common::Error EoBCoreEngine::go() {
 
 		if (action == -1) {
 			// load game
+			startupLoad();
 			repeatLoop = _gui->runLoadMenu(72, 14);
-			if (repeatLoop && !shouldQuit())
-				startupLoad();
+			//if (!repeatLoop && !shouldQuit())
+				
 		} else if (action == -2) {
 			// new game
 			repeatLoop = startCharacterGeneration();
