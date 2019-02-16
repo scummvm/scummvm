@@ -346,6 +346,16 @@ protected:
 	 */
 	void screen_word(const zchar *s);
 
+	/**
+	 * Erase the entire screen to background colour.
+	 */
+	void erase_screen(zword win);
+
+	/**
+	 * Erase a window to background colour.
+	 */
+	void erase_window(zword win);
+
 	/**@}*/
 
 	/**

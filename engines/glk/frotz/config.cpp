@@ -145,7 +145,12 @@ void Header::loadHeader(Common::SeekableReadStream &f) {
 
 /*--------------------------------------------------------------------------*/
 
-UserOptions::UserOptions() : _undo_slots(MAX_UNDO_SLOTS), _sound(true), _quetzal(true) {
+UserOptions::UserOptions() : _undo_slots(MAX_UNDO_SLOTS), _sound(true), _quetzal(true), _color_enabled(false),
+	_err_report_mode(ERR_REPORT_ONCE), _ignore_errors(false), _expand_abbreviations(false), _tandyBit(false),
+	_piracy(false), _script_cols(0), _left_margin(0), _right_margin(0) {
+}
+
+void UserOptions::initialize(uint hVersion) {
 	_err_report_mode = getConfigInt("err_report_mode", ERR_REPORT_ONCE, ERR_REPORT_FATAL);
 	_ignore_errors = getConfigBool("ignore_errors");
 	_expand_abbreviations = getConfigBool("expand_abbreviations");
@@ -161,8 +166,11 @@ UserOptions::UserOptions() : _undo_slots(MAX_UNDO_SLOTS), _sound(true), _quetzal
 	_object_locating = getConfigBool("object_locating");
 	_object_movement = getConfigBool("object_movement");
 
-	_defaultForeground = getConfigInt("foreground", 0xffffff, 0xffffff);
-	_defaultBackground = getConfigInt("background", 0x000080, 0xffffff);
+	int defaultFg = hVersion == V6 ? 0 : 0xffffff;
+	int defaultBg = hVersion == V6 ? 0xffffff : 0;
+
+	_defaultForeground = getConfigInt("foreground", defaultFg, 0xffffff);
+	_defaultBackground = getConfigInt("background", defaultBg, 0xffffff);
 }
 
 bool UserOptions::isInfocom() const {

@@ -127,6 +127,11 @@ const zword &Window::getProperty(WindowProperty propType) {
 
 void Window::setProperty(WindowProperty propType, zword value) {
 	switch (propType) {
+	case TRUE_FG_COLOR:
+	case TRUE_BG_COLOR:
+		_properties[propType] = value;
+		break;
+
 	default:
 		warning("Setting window property %d not yet supported", (int)propType);
 	}

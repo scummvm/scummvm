@@ -66,7 +66,7 @@ void FrotzScreen::loadVersion6Fonts(Common::Archive *archive) {
 	pi._lineSeparation = 0;
 
 	g_vm->_defaultForeground = 0;
-	g_vm->_defaultBackground = zcolor_Transparent;
+	g_vm->_defaultBackground = (int)zcolor_Transparent;
 	g_conf->_tMarginX = 3;
 
 	for (uint idx = 0; idx < style_NUMSTYLES; ++idx) {

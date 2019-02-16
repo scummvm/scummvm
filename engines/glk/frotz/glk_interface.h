@@ -30,6 +30,12 @@
 namespace Glk {
 namespace Frotz {
 
+#define zB(i) ((((i >> 10) & 0x1F) << 3) | (((i >> 10) & 0x1F) >> 2))
+#define zG(i) ((((i >>  5) & 0x1F) << 3) | (((i >>  5) & 0x1F) >> 2))
+#define zR(i) ((((i      ) & 0x1F) << 3) | (((i      ) & 0x1F) >> 2))
+#define zRGB(i) _screen->format.RGBToColor(zR(i), zG(i), zB(i))
+#define zcolor_NUMCOLORS    (13)
+
 enum SoundEffect {
 	EFFECT_PREPARE     = 1,
 	EFFECT_PLAY        = 2,
@@ -50,16 +56,18 @@ class Pics;
  * and sound effect handling
  */
 class GlkInterface : public GlkAPI, public virtual UserOptions, public virtual Mem {
+private:
+	bool _reverseVideo;
 public:
 	Pics *_pics;
 	zchar statusline[256];
+	int zcolors[zcolor_NUMCOLORS];
 	int oldstyle;
 	int curstyle;
 	int cury;
 	int curx;
 	int fixforced;
 
-	uint curr_fg, curr_bg;
 	int curr_font;
 	int prev_font;
 	int temp_font;
@@ -183,6 +191,12 @@ protected:
 	void os_draw_picture(int picture, const Common::Rect &r);
 
 	/**
+	 * Return the colour of the pixel below the cursor. This is used by V6 games to print
+	 * text on top of pictures. The coulor need not be in the standard set of Z-machine colours.
+	 */
+	int os_peek_color();
+
+	/**
 	 * Call the IO interface to play a sample.
 	 */
 	void start_sample(int number, int volume, int repeats, zword eos);
@@ -238,6 +252,11 @@ protected:
 	 * Waits for the user to type an input line
 	 */
 	zchar os_read_line(int max, zchar *buf, int timeout, int width, int continued);
+
+	/**
+	 * Set whether reverse video mode is active
+	 */
+	void os_set_reverse_video(bool flag);
 public:
 	/**
 	 * Constructor

@@ -189,6 +189,36 @@ void Processor::screen_word(const zchar *s) {
 	}
 }
 
+void Processor::erase_screen(zword win) {
+	int curr_fg = _wp[1][TRUE_FG_COLOR];
+	int curr_bg = _wp[1][TRUE_BG_COLOR];
+
+	if (win == -1) {
+		if (_wp._upper) {
+			glk_set_window(_wp._upper);
+#ifdef GARGLK
+			garglk_set_zcolors(curr_fg, curr_bg);
+#endif /* GARGLK */
+			glk_window_clear(_wp._upper);
+		}
+
+		glk_window_clear(_wp._lower);
+		split_window(0);
+		glk_set_window(_wp._lower);
+		gos_curwin = _wp._lower;
+	}
+}
+
+void Processor::erase_window(zword win) {
+	if (h_version == V6 && win != cwin && h_interpreter_number != INTERP_AMIGA)
+		garglk_set_zcolors(_wp[win][TRUE_FG_COLOR], _wp[win][TRUE_BG_COLOR]);
+
+	glk_window_clear(_wp[win]);
+
+	if (h_version == V6 && win != cwin && h_interpreter_number != INTERP_AMIGA)
+		garglk_set_zcolors(_wp[cwin][TRUE_FG_COLOR], _wp[cwin][TRUE_BG_COLOR]);
+}
+
 void Processor::z_buffer_mode() {
 	// No implementation
 }
@@ -208,34 +238,14 @@ void Processor::z_erase_line() {
 }
 
 void Processor::z_erase_window() {
-	short w = zargs[0];
-	if (w == -2) {
-		if (_wp._upper) {
-			glk_set_window(_wp._upper);
-#ifdef GARGLK
-			garglk_set_zcolors(curr_fg, curr_bg);
-#endif /* GARGLK */
-			glk_window_clear(_wp._upper);
-			glk_set_window(gos_curwin);
-		}
-		glk_window_clear(_wp._lower);
-	}
-	if (w == -1) {
-		if (_wp._upper) {
-			glk_set_window(_wp._upper);
-#ifdef GARGLK
-			garglk_set_zcolors(curr_fg, curr_bg);
-#endif /* GARGLK */
-			glk_window_clear(_wp._upper);
-		}
-		glk_window_clear(_wp._lower);
-		split_window(0);
-		glk_set_window(_wp._lower);
-		gos_curwin = _wp._lower;
-	}
+	short w = (short)zargs[0];
+	
+	flush_buffer();
 
-	if (w >= 0 && _wp[w])
-		glk_window_clear(_wp[w]);
+	if (w == -1 || w == -2)
+		erase_screen(w);
+	else
+		erase_window(winarg0());
 }
 
 void Processor::z_get_cursor() {
@@ -270,12 +280,6 @@ void Processor::z_print_table() {
 	}
 }
 
-#define zB(i) ((((i >> 10) & 0x1F) << 3) | (((i >> 10) & 0x1F) >> 2))
-#define zG(i) ((((i >>  5) & 0x1F) << 3) | (((i >>  5) & 0x1F) >> 2))
-#define zR(i) ((((i      ) & 0x1F) << 3) | (((i      ) & 0x1F) >> 2))
-
-#define zRGB(i) _screen->format.RGBToColor(zR(i), zG(i), zB(i))
-
 void Processor::z_set_true_colour() {
 	int zfore = zargs[0];
 	int zback = zargs[1];
@@ -289,63 +293,61 @@ void Processor::z_set_true_colour() {
 #ifdef GARGLK
 	garglk_set_zcolors(zfore, zback);
 #endif /* GARGLK */
-
-	curr_fg = (uint)zfore;
-	curr_bg = (uint)zback;
 }
 
-static const int zcolor_map[] = {
-	-2,						///<  0 = current
-	-1,						///<  1 = default
-	0x0000,					///<  2 = black
-	0x001D,					///<  3 = red
-	0x0340,					///<  4 = green
-	0x03BD,					///<  5 = yellow
-	0x59A0,					///<  6 = blue
-	0x7C1F,					///<  7 = magenta
-	0x77A0,					///<  8 = cyan
-	0x7FFF,					///<  9 = white
-	0x5AD6,					///< 10 = light grey
-	0x4631,					///< 11 = medium grey
-	0x2D6B,					///< 12 = dark grey
-};
-
-#define zcolor_NUMCOLORS    (13)
-
 void Processor::z_set_colour() {
-	int zfore = zargs[0];
-	int zback = zargs[1];
+	int fg = zargs[0];
+	int bg = zargs[1];
+	zword win = (h_version == V6) ? winarg2() : 0;
 
-	switch (zfore) {
-	case -1:
-	case 0:
-	case 1:
-		zfore = zcolor_map[zfore];
-		break;
+	flush_buffer();
 
-	default:
-		if (zfore < zcolor_NUMCOLORS)
-			zfore = zRGB(zcolor_map[zfore]);
-		break;
+	if ((short)fg == -1)
+		// Get color at cursor
+		fg = os_peek_color();
+	if ((short)bg == -1)
+		// Get color at cursor
+		bg = os_peek_color();
+
+	if (fg == 0)
+		// keep current colour
+		fg = _wp[win][TRUE_FG_COLOR];
+	if (bg == 0)
+		bg = _wp[win][TRUE_BG_COLOR];
+
+	if (fg == 1)
+		fg = h_default_foreground;
+	if (bg == 1)
+		bg = h_default_background;
+
+	if (fg < zcolor_NUMCOLORS)
+		fg = zcolors[fg];
+	if (bg < zcolor_NUMCOLORS)
+		bg = zcolors[bg];
+
+	if (h_version == V6 && h_interpreter_number == INTERP_AMIGA) {
+		// Changing colours of window 0 affects the entire screen
+		if (win == 0) {
+			for (int i = 1; i < 8; ++i) {
+				int bg2 = _wp[i][TRUE_BG_COLOR];
+				int fg2 = _wp[i][TRUE_FG_COLOR];
+
+				if (bg2 < 16)
+					bg2 = (bg2 == _wp[0][TRUE_BG_COLOR]) ? fg : bg;
+				if (fg2 < 16)
+					fg2 = (fg2 == _wp[0][TRUE_FG_COLOR]) ? fg : bg;
+
+				_wp[i][TRUE_FG_COLOR] = fg2;
+				_wp[i][TRUE_BG_COLOR] = bg2;
+			}
+		}
 	}
 
-	switch (zback) {
-	case -1:
-	case 0:
-	case 1:
-		zback = zcolor_map[zback];
-		break;
+	_wp[win][TRUE_FG_COLOR] = fg;
+	_wp[win][TRUE_BG_COLOR] = bg;
 
-	default:
-		if (zback < zcolor_NUMCOLORS)
-			zback = zRGB(zcolor_map[zback]);
-		break;
-	}
-
-	garglk_set_zcolors(zfore, zback);
-
-	curr_fg = zfore;
-	curr_bg = zback;
+	if (win == cwin || h_version != V6)
+		garglk_set_zcolors(fg, bg);
 }
 
 void Processor::z_set_font() {
@@ -432,9 +434,7 @@ void Processor::z_set_text_style() {
 		return;
 
 	if (style & REVERSE_STYLE) {
-#ifdef GARGLK
-		garglk_set_reversevideo(true);
-#endif /* GARGLK */
+		os_set_reverse_video(true);
 	}
 
 	if (style & FIXED_WIDTH_STYLE) {
@@ -460,9 +460,7 @@ void Processor::z_set_text_style() {
 	}
 
 	if (curstyle == 0) {
-#ifdef GARGLK
-		garglk_set_reversevideo(false);
-#endif /* GARGLK */
+		os_set_reverse_video(false);
 	}
 }
 
@@ -524,9 +522,7 @@ void Processor::z_show_status() {
 	glk_set_window(_wp._upper);
 	gos_curwin = _wp._upper;
 
-#ifdef GARGLK
-	garglk_set_reversevideo(true);
-#endif /* GARGLK */
+	os_set_reverse_video(true);
 
 	curx = cury = 1;
 	glk_window_move_cursor(_wp._upper, 0, 0);

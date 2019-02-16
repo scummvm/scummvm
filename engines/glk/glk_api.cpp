@@ -1199,4 +1199,14 @@ void GlkAPI::garglk_set_reversevideo_stream(strid_t str, uint reverse) {
 	}
 }
 
+void GlkAPI::garglk_window_get_cursor(winid_t win, uint *xpos, uint *ypos) {
+	Point pos = win->getCursor();
+	*xpos = pos.x;
+	*ypos = pos.y;
+}
+
+void GlkAPI::garglk_window_get_cursor_current(uint *xpos, uint *ypos) {
+	garglk_window_get_cursor(_windows->getFocusWindow(), xpos, ypos);
+}
+
 } // End of namespace Glk

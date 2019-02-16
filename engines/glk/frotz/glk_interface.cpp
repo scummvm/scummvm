@@ -33,13 +33,14 @@ namespace Frotz {
 
 GlkInterface::GlkInterface(OSystem *syst, const GlkGameDescription &gameDesc) :
 		GlkAPI(syst, gameDesc),
-		_pics(nullptr), oldstyle(0), curstyle(0), cury(1), curx(1), fixforced(0),
-		curr_fg(zcolor_Current), curr_bg(zcolor_Current), curr_font(1), prev_font(1), temp_font(0),
+		_pics(nullptr), oldstyle(0), curstyle(0), cury(1), curx(1), curr_font(1), prev_font(1), temp_font(0),
 		curr_status_ht(0), mach_status_ht(0), gos_status(nullptr), gos_curwin(nullptr), gos_linepending(0),
 		gos_linebuf(nullptr), gos_linewin(nullptr), gos_channel(nullptr), cwin(0), mwin(0), mouse_x(0), mouse_y(0),
-		menu_selected(0), enable_wrapping(false), enable_scripting(false), enable_scrolling(false),
-		enable_buffering(false), next_sample(0), next_volume(0), _soundLocked(false), _soundPlaying(false) {
+		fixforced(0), menu_selected(0), enable_wrapping(false), enable_scripting(false), enable_scrolling(false),
+		enable_buffering(false), next_sample(0), next_volume(0), _soundLocked(false), _soundPlaying(false),
+		_reverseVideo(false) {
 	Common::fill(&statusline[0], &statusline[256], '\0');
+	Common::fill(&zcolors[0], &zcolors[zcolor_NUMCOLORS], 0);
 }
 
 GlkInterface::~GlkInterface() {
@@ -48,6 +49,29 @@ GlkInterface::~GlkInterface() {
 
 void GlkInterface::initialize() {
 	uint width, height;
+
+	/* Setup options */
+	UserOptions::initialize(h_version);
+
+	/* Setup colors array */
+	const int COLOR_MAP[zcolor_NUMCOLORS - 2] = {
+		0x0000,					///<  2 = black
+		0x001D,					///<  3 = red
+		0x0340,					///<  4 = green
+		0x03BD,					///<  5 = yellow
+		0x59A0,					///<  6 = blue
+		0x7C1F,					///<  7 = magenta
+		0x77A0,					///<  8 = cyan
+		0x7FFF,					///<  9 = white
+		0x5AD6,					///< 10 = light grey
+		0x4631,					///< 11 = medium grey
+		0x2D6B,					///< 12 = dark grey
+	};
+
+	zcolors[0] = -2;		// Current
+	zcolors[1] = -1;		// Default
+	for (int i = 2; i < zcolor_NUMCOLORS; ++i)
+		zcolors[i] = zRGB(COLOR_MAP[i - 2]);
 
 	/*
 	 * Init glk stuff
@@ -134,11 +158,27 @@ void GlkInterface::initialize() {
 	h_interpreter_number = h_version == 6 ? INTERP_MSDOS : INTERP_AMIGA;
 	h_interpreter_version = 'F';
 
-	// Set these per spec 8.3.2.
-	h_default_foreground = WHITE_COLOUR;
-	h_default_background = BLACK_COLOUR;
-	if (h_flags & COLOUR_FLAG)
-		h_flags &= ~COLOUR_FLAG;
+	// Set up the foreground & background
+	_color_enabled = ((h_version >= 5) && (h_flags & COLOUR_FLAG))
+			|| (_defaultForeground != -1) || (_defaultBackground != -1);
+
+	if (_color_enabled) {
+		h_config |= CONFIG_COLOUR;
+		h_flags |= COLOUR_FLAG;		// FIXME: beyond zork handling?
+
+		assert(_defaultForeground != -1 && _defaultBackground != -1);
+		h_default_foreground = BLACK_COLOUR;
+		h_default_background = WHITE_COLOUR;
+		zcolors[h_default_foreground] = _defaultForeground;
+		zcolors[h_default_background] = _defaultBackground;
+	} else {
+		// Set these per spec 8.3.2.
+		h_default_foreground = WHITE_COLOUR;
+		h_default_background = BLACK_COLOUR;
+
+		if (h_flags & COLOUR_FLAG)
+			h_flags &= ~COLOUR_FLAG;
+	}
 
 	/*
 	 * Open the windows
@@ -147,6 +187,11 @@ void GlkInterface::initialize() {
 		showBeyondZorkTitle();
 
 	_wp.setup(h_version == 6);
+	for (uint i = 0; i < _wp.size(); ++i) {
+		_wp[i][TRUE_FG_COLOR] = zcolors[h_default_foreground];
+		_wp[i][TRUE_BG_COLOR] = zcolors[h_default_background];
+	}
+	
 	cwin = 0;
 	gos_curwin = _wp._lower;
 
@@ -366,9 +411,7 @@ void GlkInterface::erase_window(zword w) {
 	if (w == 0)
 		glk_window_clear(_wp._lower);
 	else if (_wp._upper) {
-#ifdef GARGLK
-		garglk_set_reversevideo_stream(glk_window_get_stream(_wp._upper), true);
-#endif /* GARGLK */
+		//os_set_reverse_video(glk_window_get_stream(_wp._upper), true);
 		
 		memset(statusline, ' ', sizeof statusline);
 		glk_window_clear(_wp._upper);
@@ -512,6 +555,31 @@ void GlkInterface::os_draw_picture(int picture, const Common::Rect &r) {
 		r.width() * cell.x, r.height() * cell.y);
 }
 
+int GlkInterface::os_peek_color() {
+	if (_color_enabled) {
+		return _defaultBackground;
+	} else {
+		return (_reverseVideo) ? h_default_foreground : h_default_background;
+	}
+/*
+ if (u_setup.color_enabled) {
+#ifdef COLOR_SUPPORT
+	short fg, bg;
+	pair_content(PAIR_NUMBER(inch() & A_COLOR), &fg, &bg);
+	switch(bg) {
+		  case COLOR_BLACK: return BLACK_COLOUR;
+		  case COLOR_RED: return RED_COLOUR;
+		  case COLOR_GREEN: return GREEN_COLOUR;
+		  case COLOR_YELLOW: return YELLOW_COLOUR;
+		  case COLOR_BLUE: return BLUE_COLOUR;
+		  case COLOR_MAGENTA: return MAGENTA_COLOUR;
+		  case COLOR_CYAN: return CYAN_COLOUR;
+		  case COLOR_WHITE: return WHITE_COLOUR;
+	}
+	return 0;
+#endif /* COLOR_SUPPORT */
+}
+
 zchar GlkInterface::os_read_key(int timeout, bool show_cursor) {
 	event_t ev;
 	winid_t win = gos_curwin ? gos_curwin : _wp._lower;
@@ -620,6 +688,13 @@ uint GlkInterface::roundDiv(uint x, uint y) {
 	if ((dblremain > y) || ((dblremain == y) && (quotient & 1)))
 		quotient++;
 	return quotient;
+}
+
+void GlkInterface::os_set_reverse_video(bool flag) {
+#ifdef GARGLK
+	_reverseVideo = flag;
+	garglk_set_reversevideo(flag);
+#endif
 }
 
 } // End of namespace Frotz

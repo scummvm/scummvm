@@ -280,6 +280,9 @@ public:
 	void garglk_set_zcolors_stream(strid_t str, uint fg, uint bg);
 	void garglk_set_reversevideo(uint reverse);
 	void garglk_set_reversevideo_stream(strid_t str, uint reverse);
+
+	void garglk_window_get_cursor(winid_t win, uint *xpos, uint *ypos);
+	void garglk_window_get_cursor_current(uint *xpos, uint *ypos);
 };
 
 } // End of namespace Glk
