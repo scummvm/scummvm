@@ -168,9 +168,12 @@ void UserOptions::initialize(uint hVersion) {
 
 	int defaultFg = hVersion == V6 ? 0 : 0xffffff;
 	int defaultBg = hVersion == V6 ? 0xffffff : 0;
+	defaultFg = getConfigInt("foreground", defaultFg, 0xffffff);
+	defaultBg = getConfigInt("background", defaultBg, 0xffffff);
 
-	_defaultForeground = getConfigInt("foreground", defaultFg, 0xffffff);
-	_defaultBackground = getConfigInt("background", defaultBg, 0xffffff);
+	Graphics::PixelFormat format = g_system->getScreenFormat();
+	_defaultForeground = format.RGBToColor(defaultFg & 0xff, (defaultFg >> 8) & 0xff, (defaultFg >> 16) & 0xff);
+	_defaultBackground = format.RGBToColor(defaultBg & 0xff, (defaultBg >> 8) & 0xff, (defaultBg >> 16) & 0xff);
 }
 
 bool UserOptions::isInfocom() const {
