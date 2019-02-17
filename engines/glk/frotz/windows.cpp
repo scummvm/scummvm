@@ -130,6 +130,8 @@ void Window::setProperty(WindowProperty propType, zword value) {
 	case TRUE_FG_COLOR:
 	case TRUE_BG_COLOR:
 		_properties[propType] = value;
+		if (_win && _win->_stream)
+			_win->_stream->setZColors(_properties[TRUE_FG_COLOR], _properties[TRUE_BG_COLOR]);
 		break;
 
 	default:

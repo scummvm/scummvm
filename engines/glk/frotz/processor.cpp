@@ -265,6 +265,7 @@ void Processor::interpret() {
 			// 0OP opcodes
 			(*this.*op0_opcodes[opcode - 0xb0])();
 
+
 		} else {
 			// VAR opcodes
 			zbyte specifier1;
