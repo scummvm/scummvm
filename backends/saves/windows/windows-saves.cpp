@@ -66,7 +66,7 @@ WindowsSaveFileManager::WindowsSaveFileManager() {
 		ConfMan.registerDefault("savepath", defaultSavepath);
 
 	} else {
-			if (!Common::File::exists(DEFAULT_CONFIG_FILE)) {
+		if (!Common::File::exists(DEFAULT_CONFIG_FILE)) {
 			warning("Unable to access application data directory");
 		}
 	}

@@ -212,7 +212,7 @@ Common::String OSystem_Win32::getScreenshotsPath() {
 	// assume that we are running in portable mode and create
 	// the screenshotsPath there
 	if (Common::File::exists(DEFAULT_CONFIG_FILE)) {
-	screenshotsPath = "Screenshots\\";
+		screenshotsPath = "Screenshots\\";
 	}
 
 	// If the directory already exists (as it should in most cases),
@@ -265,7 +265,7 @@ Common::String OSystem_Win32::getDefaultConfigFileName() {
 		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
 	}
 
-	if (Common::File::exists(DEFAULT_CONFIG_FILE)){
+	if (Common::File::exists(DEFAULT_CONFIG_FILE)) {
 		strcpy(configFile, DEFAULT_CONFIG_FILE);
 	}
 	return configFile;
