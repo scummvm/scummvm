@@ -262,7 +262,7 @@ void WindowStream::setZColors(uint fg, uint bg) {
 		}
 	}
 
-	if (bg != zcolor_Transparent && bg != zcolor_Cursor) {
+	if (/*bg != zcolor_Transparent &&*/ bg != zcolor_Cursor) {
 		if (bg == zcolor_Default) {
 			_window->_attr.bgset = 0;
 			_window->_attr.bgcolor = 0;

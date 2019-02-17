@@ -296,18 +296,20 @@ void Processor::z_set_true_colour() {
 }
 
 void Processor::z_set_colour() {
-	int fg = zargs[0];
-	int bg = zargs[1];
+	int fg = (short)zargs[0];
+	int bg = (short)zargs[1];
 	zword win = (h_version == V6) ? winarg2() : 0;
+
+	if (win == 1 && h_version == V6)
+		bg = zcolor_Transparent;
 
 	flush_buffer();
 
-	if ((short)fg == -1)
+	if (fg == -1)
 		// Get color at cursor
 		fg = os_peek_color();
-	if ((short)bg == -1)
-		// Get color at cursor
-		bg = os_peek_color();
+	if (bg == -1)
+		bg = zcolor_Transparent;
 
 	if (fg == 0)
 		// keep current colour
@@ -320,9 +322,9 @@ void Processor::z_set_colour() {
 	if (bg == 1)
 		bg = h_default_background;
 
-	if (fg < zcolor_NUMCOLORS)
+	if (fg >= 0 && fg < zcolor_NUMCOLORS)
 		fg = zcolors[fg];
-	if (bg < zcolor_NUMCOLORS)
+	if (bg >= 0 && bg < zcolor_NUMCOLORS)
 		bg = zcolors[bg];
 
 	if (h_version == V6 && h_interpreter_number == INTERP_AMIGA) {
@@ -333,9 +335,9 @@ void Processor::z_set_colour() {
 				int fg2 = _wp[i][TRUE_FG_COLOR];
 
 				if (bg2 < 16)
-					bg2 = (bg2 == _wp[0][TRUE_BG_COLOR]) ? fg : bg;
+					bg2 = (bg2 == (int)_wp[0][TRUE_BG_COLOR]) ? fg : bg;
 				if (fg2 < 16)
-					fg2 = (fg2 == _wp[0][TRUE_FG_COLOR]) ? fg : bg;
+					fg2 = (fg2 == (int)_wp[0][TRUE_FG_COLOR]) ? fg : bg;
 
 				_wp[i][TRUE_FG_COLOR] = fg2;
 				_wp[i][TRUE_BG_COLOR] = bg2;

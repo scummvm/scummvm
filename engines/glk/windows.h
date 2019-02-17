@@ -321,9 +321,9 @@ struct Attributes {
 	unsigned reverse : 1;
 	unsigned         : 1;
 	unsigned style   : 4;
-	unsigned fgcolor : 24;
-	unsigned bgcolor : 24;
-	unsigned hyper   : 32;
+	uint fgcolor;
+	uint bgcolor;
+	uint hyper;
 
 	/**
 	 * Constructor

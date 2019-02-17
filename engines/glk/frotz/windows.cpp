@@ -118,14 +118,14 @@ void Window::setPosition(const Point &newPos) {
 		_win->setPosition(Point((newPos.x - 1) * g_conf->_monoInfo._cellW, (newPos.y - 1) * g_conf->_monoInfo._cellH));
 }
 
-const zword &Window::getProperty(WindowProperty propType) {
+const uint &Window::getProperty(WindowProperty propType) {
 	if (_win)
 		update();
 
 	return _properties[propType];
 }
 
-void Window::setProperty(WindowProperty propType, zword value) {
+void Window::setProperty(WindowProperty propType, uint value) {
 	switch (propType) {
 	case TRUE_FG_COLOR:
 	case TRUE_BG_COLOR:

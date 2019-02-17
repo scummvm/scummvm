@@ -200,10 +200,10 @@ enum giDisp {
 };
 
 enum zcolor {
-	zcolor_Transparent = (uint)-4,
-	zcolor_Cursor      = (uint)-3,
-	zcolor_Current     = (uint)-2,
-	zcolor_Default     = (uint)-1
+	zcolor_Transparent = 0x7FFFFFFCU,
+	zcolor_Cursor      = 0x7FFFFFFDU,
+	zcolor_Current     = 0x7FFFFFFEU,
+	zcolor_Default     = 0x7FFFFFFFU
 };
 
 #ifdef GLK_MODULE_IMAGE

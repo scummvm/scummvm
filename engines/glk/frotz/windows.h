@@ -63,14 +63,14 @@ class Window {
 		/**
 		 * Get
 		 */
-		operator zword() const {
+		operator uint() const {
 			return _owner->getProperty(_prop);
 		}
 
 		/**
 		 * Set
 		 */
-		PropertyAccessor &operator=(zword val) {
+		PropertyAccessor &operator=(uint val) {
 			_owner->setProperty(_prop, val);
 			return *this;
 		}
@@ -78,17 +78,17 @@ class Window {
 private:
 	Windows *_windows;
 	winid_t _win;
-	zword _properties[TRUE_BG_COLOR + 1];
+	uint _properties[TRUE_BG_COLOR + 1];
 private:
 	/**
 	 * Get a property value
 	 */
-	const zword &getProperty(WindowProperty propType);
+	const uint &getProperty(WindowProperty propType);
 
 	/**
 	 * Set a property value
 	 */
-	void setProperty(WindowProperty propType, zword value);
+	void setProperty(WindowProperty propType, uint value);
 
 	/**
 	 * Called when trying to reposition or resize windows. Does special handling for the lower window

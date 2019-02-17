@@ -139,6 +139,11 @@ void PairWindow::rearrange(const Rect &box) {
 }
 
 void PairWindow::redraw() {
+	// When the windows can be in arbitrary positions, some of them may be transparent, so we always
+	// need to force a full screen redraw in such cases
+	if (_dir == winmethod_Arbitrary)
+		Windows::_forceRedraw = true;
+
 	Window::redraw();
 
 	for (int ctr = 0, idx = (_backward ? (int)_children.size() - 1 : 0); ctr < (int)_children.size();
