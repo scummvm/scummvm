@@ -61,7 +61,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_drawSceneTimer = 0;
 
 	_largeItemShapes = _smallItemShapes = _thrownItemShapes = _spellShapes = _firebeamShapes = 0;
-	_itemIconShapes = _wallOfForceShapes = _teleporterShapes = _sparkShapes = _compassShapes = 0;
+	_itemIconShapes = _amigaBlueItemIconShapes = _wallOfForceShapes = _teleporterShapes = _sparkShapes = _compassShapes = 0;
 	_redSplatShape = _greenSplatShape = _deadCharShape = _disabledCharGrid = 0;
 	_blackBoxSmallGrid = _weaponSlotGrid = _blackBoxWideGrid = _lightningColumnShape = 0;
 
@@ -780,6 +780,15 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 		_screen->loadShapeSetBitmap("ITEMICN", 5, 3);
 		for (int i = 0; i < _numItemIconShapes; i++)
 			_itemIconShapes[i] = _screen->encodeShape((i % 0x14) << 1, (i / 0x14) << 4, 2, 0x10, false, _cgaMappingIcons);
+		
+		if (_flags.platform == Common::kPlatformAmiga && _flags.gameID == GI_EOB1) {
+			_amigaBlueItemIconShapes = new const uint8*[_numItemIconShapes];
+			for (int i = 0; i < _numItemIconShapes; i++) {
+				int bx = (i % 0x14) << 1;
+				int by = (i / 0x14) << 4;
+				_amigaBlueItemIconShapes[i] = _screen->getPagePixel(2, (bx << 3) + 8, by + 88) ? _screen->encodeShape(bx, by + 80, 2, 0x10, false, 0) : _screen->encodeShape(bx, by, 2, 0x10, false, 0);
+			}
+		}
 	}
 
 	_teleporterShapes = new const uint8*[6];
@@ -872,6 +881,13 @@ void EoBCoreEngine::releaseItemsAndDecorationsShapes() {
 			}
 		}
 
+		if (_amigaBlueItemIconShapes) {
+			for (int i = 0; i < _numItemIconShapes; i++) {
+				if (_amigaBlueItemIconShapes[i])
+					delete[] _amigaBlueItemIconShapes[i];
+			}
+		}
+
 		if (_sparkShapes) {
 			for (int i = 0; i < 3; i++) {
 				if (_sparkShapes[i])
@@ -922,6 +938,7 @@ void EoBCoreEngine::releaseItemsAndDecorationsShapes() {
 	delete[] _thrownItemShapes;
 	delete[] _spellShapes;
 	delete[] _itemIconShapes;
+	delete[] _amigaBlueItemIconShapes;
 	delete[] _sparkShapes;
 	delete[] _wallOfForceShapes;
 	delete[] _teleporterShapes;
@@ -946,8 +963,12 @@ void EoBCoreEngine::setHandItem(Item itemIndex) {
 	const uint8 *shp = _itemIconShapes[icon];
 	const uint8 *ovl = 0;
 
-	if (icon && (_items[_itemInHand].flags & 0x80) && (_partyEffectFlags & 2))
-		ovl = _flags.gameID == GI_EOB1 ? ((_configRenderMode == Common::kRenderCGA) ? _itemsOverlayCGA : &_itemsOverlay[icon << 4]) : _screen->generateShapeOverlay(shp, _lightBlueFadingTable);
+	if (icon && (_items[_itemInHand].flags & 0x80) && (_partyEffectFlags & 2)) {
+		if (_amigaBlueItemIconShapes)
+			shp = _amigaBlueItemIconShapes[icon];
+		else
+			ovl = _flags.gameID == GI_EOB1 ? ((_configRenderMode == Common::kRenderCGA) ? _itemsOverlayCGA : &_itemsOverlay[icon << 4]) : _screen->generateShapeOverlay(shp, _lightBlueFadingTable);
+	}
 
 	int mouseOffs = itemIndex ? 8 : 0;
 	_screen->setMouseCursor(mouseOffs, mouseOffs, shp, ovl);

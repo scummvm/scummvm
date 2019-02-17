@@ -463,17 +463,21 @@ void EoBCoreEngine::drawItemIconShape(int pageNum, Item itemId, int x, int y) {
 	int icn = _items[itemId].icon;
 	bool applyBluePal = ((_partyEffectFlags & 2) && (_items[itemId].flags & 0x80)) ? true : false;
 	const uint8 *ovl = 0;
+	const uint8 *shp = _itemIconShapes[icn];
 
 	if (applyBluePal) {
 		if (_flags.gameID == GI_EOB1) {
-			ovl = (_configRenderMode == Common::kRenderCGA) ? _itemsOverlayCGA : &_itemsOverlay[icn << 4];
+			if (_amigaBlueItemIconShapes)
+				shp = _amigaBlueItemIconShapes[icn];
+			else
+				ovl = (_configRenderMode == Common::kRenderCGA) ? _itemsOverlayCGA : &_itemsOverlay[icn << 4];
 		} else {
 			_screen->setFadeTable(_lightBlueFadingTable);
 			_screen->setShapeFadingLevel(1);
 		}
 	}
 
-	_screen->drawShape(pageNum, _itemIconShapes[icn], x, y, 0, ovl ? 2 : 0, ovl);
+	_screen->drawShape(pageNum, shp, x, y, 0, ovl ? 2 : 0, ovl);
 
 	if (applyBluePal) {
 		_screen->setFadeTable(_greyFadingTable);
