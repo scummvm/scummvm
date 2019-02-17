@@ -32,15 +32,25 @@
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"
+#include "common/file.h"
 #include "backends/saves/windows/windows-saves.h"
 #include "backends/platform/sdl/win32/win32_wrapper.h"
+
+#define DEFAULT_CONFIG_FILE "scummvm.ini"
 
 WindowsSaveFileManager::WindowsSaveFileManager() {
 	char defaultSavepath[MAXPATHLEN];
 
+	// If a scummvm.ini file is present in the current directory
+	// store the savegames here
+	if (Common::File::exists(DEFAULT_CONFIG_FILE)) {
+		strcpy(defaultSavepath, "Saved games");
+		CreateDirectory(defaultSavepath, NULL);
+		ConfMan.registerDefault("savepath", defaultSavepath);
+	}
 
 	// Use the Application Data directory of the user profile.
-	if (SHGetFolderPathFunc(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, defaultSavepath) == S_OK) {
+	if (!Common::File::exists(DEFAULT_CONFIG_FILE) && (SHGetFolderPathFunc(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, defaultSavepath) == S_OK)) {
 		strcat(defaultSavepath, "\\ScummVM");
 		if (!CreateDirectory(defaultSavepath, NULL)) {
 			if (GetLastError() != ERROR_ALREADY_EXISTS)
@@ -54,9 +64,11 @@ WindowsSaveFileManager::WindowsSaveFileManager() {
 		}
 
 		ConfMan.registerDefault("savepath", defaultSavepath);
+
 	} else {
-		warning("Unable to access application data directory");
+			if (!Common::File::exists(DEFAULT_CONFIG_FILE)) {
+			warning("Unable to access application data directory");
+		}
 	}
 }
-
 #endif

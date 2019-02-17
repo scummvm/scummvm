@@ -38,6 +38,7 @@
 #include "common/config-manager.h"
 #include "common/error.h"
 #include "common/textconsole.h"
+#include "common/file.h"
 
 #include "backends/audiocd/win32/win32-audiocd.h"
 #include "backends/platform/sdl/win32/win32.h"
@@ -205,8 +206,14 @@ Common::String OSystem_Win32::getScreenshotsPath() {
 		warning("Unable to access My Pictures directory");
 		return Common::String();
 	}
-
 	screenshotsPath = Common::String(picturesPath) + "\\ScummVM Screenshots\\";
+	
+	// If a scummvm.ini is present in the current directory,
+	// assume that we are running in portable mode and create
+	// the screenshotsPath there
+	if (Common::File::exists(DEFAULT_CONFIG_FILE)) {
+	screenshotsPath = "Screenshots\\";
+	}
 
 	// If the directory already exists (as it should in most cases),
 	// we don't want to fail, but we need to stop on other errors (such as ERROR_PATH_NOT_FOUND)
@@ -258,6 +265,9 @@ Common::String OSystem_Win32::getDefaultConfigFileName() {
 		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
 	}
 
+	if (Common::File::exists(DEFAULT_CONFIG_FILE)){
+		strcpy(configFile, DEFAULT_CONFIG_FILE);
+	}
 	return configFile;
 }
 
@@ -275,6 +285,10 @@ Common::WriteStream *OSystem_Win32::createLogFile() {
 		strcat(logFile, "\\Logs");
 		CreateDirectory(logFile, NULL);
 		strcat(logFile, "\\scummvm.log");
+
+		if (Common::File::exists(DEFAULT_CONFIG_FILE)) {
+			strcpy(logFile, "scummvm.log");
+		}
 
 		Common::FSNode file(logFile);
 		Common::WriteStream *stream = file.createWriteStream();
