@@ -93,8 +93,8 @@ void EoBCoreEngine::loadLevel(int level, int sub) {
 
 	loadVcnData(gfxFile.c_str(), (_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformDOS) ? _cgaMappingLevel[_cgaLevelMappingIndex[level - 1]] : 0);
 	_screen->loadEoBBitmap("INVENT", _cgaMappingInv, 5, 3, 2);
-	if (_flags.platform == Common::kPlatformAmiga)
-		_screen->setScreenPalette(_screen->getPalette(0));
+	//if (_flags.platform == Common::kPlatformAmiga)
+	//	_screen->setScreenPalette(_screen->getPalette(0));
 
 	delayUntil(end);
 	snd_stopSound();

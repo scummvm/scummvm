@@ -357,7 +357,7 @@ void CharacterGenerator::checkForCompleteParty() {
 	_screen->copyRegion(0, 0, 160, 0, 160, 128, 2, 2, Screen::CR_NO_P_CHECK);
 	int cp = _screen->setCurPage(2);
 	int x = (_vm->gameFlags().platform == Common::kPlatformFMTowns) ? 184 : 168;
-	_screen->printShadedText(_chargenStrings1[8], x, 16, _vm->guiSettings()->colors.menuTxtColWhite, 0, _vm->guiSettings()->colors.menuTxtColBlack);
+	_screen->printShadedText(_chargenStrings1[8], x, 16, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 	_screen->setCurPage(cp);
 	_screen->copyRegion(160, 0, 144, 64, 160, 128, 2, 0, Screen::CR_NO_P_CHECK);
 
@@ -369,7 +369,7 @@ void CharacterGenerator::checkForCompleteParty() {
 
 	if (numChars == 4) {
 		_screen->setCurPage(2);
-		_screen->printShadedText(_chargenStrings1[0], x, 61, _vm->guiSettings()->colors.menuTxtColWhite, 0, _vm->guiSettings()->colors.menuTxtColBlack);
+		_screen->printShadedText(_chargenStrings1[0], x, 61, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 		_screen->setCurPage(0);
 		_screen->copyRegion(168, 61, 152, 125, 136, 40, 2, 0, Screen::CR_NO_P_CHECK);
 		toggleSpecialButton(15, 0, 0);
@@ -450,7 +450,7 @@ int CharacterGenerator::viewDeleteCharacter() {
 				if (_characters[_activeBox].name[0]) {
 					processSpecialButton(16);
 					_characters[_activeBox].name[0] = 0;
-					processNameInput(_activeBox, _vm->guiSettings()->colors.menuTxtColBlack);
+					processNameInput(_activeBox, _vm->guiSettings()->colors.guiColorBlack);
 					processFaceMenuSelection(_activeBox + 50);
 				}
 			} else {
@@ -511,10 +511,10 @@ void CharacterGenerator::createPartyMember() {
 		for (_characters[_activeBox].name[0] = 0; _characters[_activeBox].name[0] == 0 && !_vm->shouldQuit();) {
 			processFaceMenuSelection(_chargenMinStats[6]);
 			printStats(_activeBox, 0);
-			_screen->printShadedText(_chargenStrings2[11], 149, 100, _vm->guiSettings()->colors.menuTxtColLightBlue, 0, _vm->guiSettings()->colors.menuTxtColBlack);
+			_screen->printShadedText(_chargenStrings2[11], 149, 100, _vm->guiSettings()->colors.guiColorLightBlue, 0, _vm->guiSettings()->colors.guiColorBlack);
 			if (!_vm->shouldQuit()) {
-				_vm->_gui->getTextInput(_characters[_activeBox].name, 24, 100, 10, _vm->guiSettings()->colors.menuTxtColWhite, 0, _vm->guiSettings()->colors.menuTxtColDarkRed);
-				processNameInput(_activeBox, _vm->guiSettings()->colors.menuTxtColBlue);
+				_vm->_gui->getTextInput(_characters[_activeBox].name, 24, 100, 10, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorDarkRed);
+				processNameInput(_activeBox, _vm->guiSettings()->colors.guiColorBlue);
 			}
 		}
 	}
@@ -523,7 +523,7 @@ void CharacterGenerator::createPartyMember() {
 int CharacterGenerator::raceSexMenu() {
 	_screen->drawBox(_chargenBoxX[_activeBox], _chargenBoxY[_activeBox], _chargenBoxX[_activeBox] + 32, _chargenBoxY[_activeBox] + 33, 12);
 	_screen->copyRegion(0, 0, 144, 64, 160, 128, 2, 0, Screen::CR_NO_P_CHECK);
-	_screen->printShadedText(_chargenStrings2[8], 147, 67, _vm->guiSettings()->colors.menuTxtColLightBlue, 0, _vm->guiSettings()->colors.menuTxtColBlack);
+	_screen->printShadedText(_chargenStrings2[8], 147, 67, _vm->guiSettings()->colors.guiColorLightBlue, 0, _vm->guiSettings()->colors.guiColorBlack);
 	_vm->removeInputTop();
 
 	_vm->_gui->simpleMenu_setup(1, 0, _chargenRaceSexStrings, -1, 0, 0);
@@ -550,7 +550,7 @@ int CharacterGenerator::classMenu(int raceSex) {
 	updateMagicShapes();
 
 	_screen->copyRegion(0, 0, 144, 64, 160, 128, 2, 0, Screen::CR_NO_P_CHECK);
-	_screen->printShadedText(_chargenStrings2[9], 147, 67, _vm->guiSettings()->colors.menuTxtColLightBlue, 0, _vm->guiSettings()->colors.menuTxtColBlack);
+	_screen->printShadedText(_chargenStrings2[9], 147, 67, _vm->guiSettings()->colors.guiColorLightBlue, 0, _vm->guiSettings()->colors.guiColorBlack);
 
 	toggleSpecialButton(5, 0, 0);
 
@@ -598,7 +598,7 @@ int CharacterGenerator::alignmentMenu(int cClass) {
 	updateMagicShapes();
 
 	_screen->copyRegion(0, 0, 144, 64, 160, 128, 2, 0, Screen::CR_NO_P_CHECK);
-	_screen->printShadedText(_chargenStrings2[10], 147, 67, _vm->guiSettings()->colors.menuTxtColLightBlue, 0, _vm->guiSettings()->colors.menuTxtColBlack);
+	_screen->printShadedText(_chargenStrings2[10], 147, 67, _vm->guiSettings()->colors.guiColorLightBlue, 0, _vm->guiSettings()->colors.guiColorBlack);
 
 	toggleSpecialButton(5, 0, 0);
 
@@ -923,24 +923,24 @@ void CharacterGenerator::printStats(int index, int mode) {
 	if (mode != 4)
 		_screen->drawShape(2, c->faceShape, 224, 2, 0);
 
-	_screen->printShadedText(c->name, 160 + ((160 - _screen->getTextWidth(c->name)) / 2), 35, _vm->guiSettings()->colors.menuTxtColWhite, 0, _vm->guiSettings()->colors.menuTxtColBlack);
-	_screen->printShadedText(_chargenRaceSexStrings[c->raceSex], 160 + ((20 - strlen(_chargenRaceSexStrings[c->raceSex])) << 2), 45, _vm->guiSettings()->colors.menuTxtColWhite, 0, _vm->guiSettings()->colors.menuTxtColBlack);
-	_screen->printShadedText(_chargenClassStrings[c->cClass], 160 + ((20 - strlen(_chargenClassStrings[c->cClass])) << 2), 54, _vm->guiSettings()->colors.menuTxtColWhite, 0, _vm->guiSettings()->colors.menuTxtColBlack);
+	_screen->printShadedText(c->name, 160 + ((160 - _screen->getTextWidth(c->name)) / 2), 35, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+	_screen->printShadedText(_chargenRaceSexStrings[c->raceSex], 160 + ((20 - strlen(_chargenRaceSexStrings[c->raceSex])) << 2), 45, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+	_screen->printShadedText(_chargenClassStrings[c->cClass], 160 + ((20 - strlen(_chargenClassStrings[c->cClass])) << 2), 54, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 
 	for (int i = 0; i < 6; i++)
-		_screen->printShadedText(_chargenStatStrings[i], 163, (i + 8) << 3, _vm->guiSettings()->colors.menuTxtColWhite, 0, _vm->guiSettings()->colors.menuTxtColBlack);
+		_screen->printShadedText(_chargenStatStrings[i], 163, (i + 8) << 3, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 
-	_screen->printShadedText(_chargenStrings1[2], 248, 64, _vm->guiSettings()->colors.menuTxtColWhite, 0, _vm->guiSettings()->colors.menuTxtColBlack);
+	_screen->printShadedText(_chargenStrings1[2], 248, 64, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 
 	Common::String str = Common::String::format(_chargenStrings1[3], _vm->getCharStrength(c->strengthCur, c->strengthExtCur).c_str(), c->intelligenceCur, c->wisdomCur, c->dexterityCur, c->constitutionCur, c->charismaCur);
-	_screen->printShadedText(str.c_str(), 192, 64, _vm->guiSettings()->colors.menuTxtColWhite, 0, _vm->guiSettings()->colors.menuTxtColBlack);
+	_screen->printShadedText(str.c_str(), 192, 64, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 
 	str = Common::String::format(_chargenStrings1[4], c->armorClass, c->hitPointsMax);
-	_screen->printShadedText(str.c_str(), 280, 64, _vm->guiSettings()->colors.menuTxtColWhite, 0, _vm->guiSettings()->colors.menuTxtColBlack);
+	_screen->printShadedText(str.c_str(), 280, 64, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 
 	const char *lvlStr = c->level[2] ? _chargenStrings1[7] : (c->level[1] ? _chargenStrings1[6] : _chargenStrings1[5]);
 	str = Common::String::format(lvlStr, c->level[0], c->level[1], c->level[2]);
-	_screen->printShadedText(str.c_str(), 280, 80, _vm->guiSettings()->colors.menuTxtColWhite, 0, _vm->guiSettings()->colors.menuTxtColBlack);
+	_screen->printShadedText(str.c_str(), 280, 80, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 
 	switch (mode) {
 	case 1:
@@ -975,7 +975,7 @@ void CharacterGenerator::printStats(int index, int mode) {
 
 void CharacterGenerator::processNameInput(int index, int textColor) {
 	Screen::FontId of = _screen->setFont(Screen::FID_6_FNT);
-	_screen->fillRect(_chargenNameFieldX[index], _chargenNameFieldY[index], _chargenNameFieldX[index] + 59, _chargenNameFieldY[index] + 5, _vm->guiSettings()->colors.menuTxtColBlack);
+	_screen->fillRect(_chargenNameFieldX[index], _chargenNameFieldY[index], _chargenNameFieldX[index] + 59, _chargenNameFieldY[index] + 5, _vm->guiSettings()->colors.guiColorBlack);
 	int xOffs = (60 - _screen->getTextWidth(_characters[index].name)) >> 1;
 	_screen->printText(_characters[index].name, _chargenNameFieldX[index] + xOffs, _chargenNameFieldY[index], textColor, 0);
 	_screen->updateScreen();
@@ -1010,7 +1010,7 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 	Common::String statStr = index ? Common::String::format("%d", *s1) : _vm->getCharStrength(*s1, *s2);
 
 	_screen->copyRegion(b->x - 112, b->y - 64, b->x + 32, b->y, 40, b->height, 2, 0, Screen::CR_NO_P_CHECK);
-	_screen->printShadedText(statStr.c_str(), b->x + 32, b->y, _vm->guiSettings()->colors.menuTxtColLightRed, 0, _vm->guiSettings()->colors.menuTxtColBlack);
+	_screen->printShadedText(statStr.c_str(), b->x + 32, b->y, _vm->guiSettings()->colors.guiColorLightRed, 0, _vm->guiSettings()->colors.guiColorBlack);
 	_screen->updateScreen();
 
 	EoBCharacter *c = &_characters[_activeBox];
@@ -1089,7 +1089,7 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 		statStr = index ? Common::String::format("%d", *s1) : _vm->getCharStrength(*s1, *s2);
 
 		_screen->copyRegion(b->x - 112, b->y - 64, b->x + 32, b->y, 40, b->height, 2, 0, Screen::CR_NO_P_CHECK);
-		_screen->printShadedText(statStr.c_str(), b->x + 32, b->y, _vm->guiSettings()->colors.menuTxtColLightRed, 0, _vm->guiSettings()->colors.menuTxtColBlack);
+		_screen->printShadedText(statStr.c_str(), b->x + 32, b->y, _vm->guiSettings()->colors.guiColorLightRed, 0, _vm->guiSettings()->colors.guiColorBlack);
 		_screen->updateScreen();
 
 		if (index == 4) {
@@ -1101,7 +1101,7 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 			if (c->hitPointsCur != oldVal) {
 				statStr = Common::String::format("%d", c->hitPointsCur);
 				_screen->copyRegion(120, 72, 264, 136, 40, 8, 2, 0, Screen::CR_NO_P_CHECK);
-				_screen->printShadedText(statStr.c_str(), 264, 136, _vm->guiSettings()->colors.menuTxtColWhite, 0, _vm->guiSettings()->colors.menuTxtColBlack);
+				_screen->printShadedText(statStr.c_str(), 264, 136, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 				_screen->updateScreen();
 			}
 
@@ -1112,14 +1112,14 @@ int CharacterGenerator::modifyStat(int index, int8 *stat1, int8 *stat2) {
 			if (c->armorClass != oldVal) {
 				statStr = Common::String::format("%d", c->armorClass);
 				_screen->copyRegion(120, 64, 264, 128, 40, 8, 2, 0, Screen::CR_NO_P_CHECK);
-				_screen->printShadedText(statStr.c_str(), 264, 128, _vm->guiSettings()->colors.menuTxtColWhite, 0, _vm->guiSettings()->colors.menuTxtColBlack);
+				_screen->printShadedText(statStr.c_str(), 264, 128, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 				_screen->updateScreen();
 			}
 		}
 
 		if (loop == false) {
 			statStr = index ? Common::String::format("%d", *s1) : _vm->getCharStrength(*s1, *s2);
-			_screen->printText(statStr.c_str(), b->x + 32, b->y, _vm->guiSettings()->colors.menuTxtColWhite, 0);
+			_screen->printText(statStr.c_str(), b->x + 32, b->y, _vm->guiSettings()->colors.guiColorWhite, 0);
 			_screen->updateScreen();
 		}
 	}
@@ -1172,7 +1172,7 @@ int CharacterGenerator::getMinHp(int cclass, int constitution, int level1, int l
 void CharacterGenerator::finish() {
 	_screen->copyRegion(0, 0, 160, 0, 160, 128, 2, 2, Screen::CR_NO_P_CHECK);
 	int cp = _screen->setCurPage(2);
-	_screen->printShadedText(_chargenEnterGameStrings[0], (_vm->gameFlags().platform == Common::kPlatformFMTowns) ? 184 : 168, 32, _vm->guiSettings()->colors.menuTxtColWhite, 0, _vm->guiSettings()->colors.menuTxtColBlack);
+	_screen->printShadedText(_chargenEnterGameStrings[0], (_vm->gameFlags().platform == Common::kPlatformFMTowns) ? 184 : 168, 32, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 	_screen->setCurPage(cp);
 	_screen->copyRegion(160, 0, 144, 64, 160, 128, 2, 0, Screen::CR_NO_P_CHECK);
 	_screen->updateScreen();
@@ -1631,8 +1631,8 @@ int TransferPartyWiz::selectCharactersMenu() {
 	_screen->clearCurPage();
 
 	_vm->gui_drawBox(0, 0, 320, 163, _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
-	_screen->printText(_strings2[0], 5, 3, _vm->guiSettings()->colors.menuTxtColWhite, 0);
-	_screen->printText(_strings2[1], 5, 10, _vm->guiSettings()->colors.menuTxtColWhite, 0);
+	_screen->printText(_strings2[0], 5, 3, _vm->guiSettings()->colors.guiColorWhite, 0);
+	_screen->printText(_strings2[1], 5, 10, _vm->guiSettings()->colors.guiColorWhite, 0);
 
 	for (int i = 0; i < 6; i++)
 		drawCharPortraitWithStats(i, 0);
@@ -1640,8 +1640,8 @@ int TransferPartyWiz::selectCharactersMenu() {
 	_vm->gui_drawBox(4, 148, 43, 12, _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
 	_vm->gui_drawBox(272, 148, 43, 12, _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
 
-	_screen->printShadedText(_labels[0], 9, 151, _vm->guiSettings()->colors.menuTxtColWhite, 0, _vm->guiSettings()->colors.menuTxtColBlack);
-	_screen->printShadedText(_labels[1], 288, 151, _vm->guiSettings()->colors.menuTxtColWhite, 0, _vm->guiSettings()->colors.menuTxtColBlack);
+	_screen->printShadedText(_labels[0], 9, 151, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+	_screen->printShadedText(_labels[1], 288, 151, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
 
 	_screen->setCurPage(0);
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
@@ -1720,7 +1720,7 @@ int TransferPartyWiz::selectCharactersMenu() {
 		if (count == 4 || _vm->shouldQuit())
 			loop = false;
 		else
-			_vm->_gui->messageDialogue(16, count < 4 ? 69 : 70, _vm->guiSettings()->colors.menuTxtColLightRed);
+			_vm->_gui->messageDialogue(16, count < 4 ? 69 : 70, _vm->guiSettings()->colors.guiColorLightRed);
 
 		_screen->updateScreen();
 	}
@@ -1729,7 +1729,7 @@ int TransferPartyWiz::selectCharactersMenu() {
 	if (_vm->shouldQuit())
 		return 0;
 	else
-		_vm->_gui->messageDialogue(16, 71, _vm->guiSettings()->colors.menuTxtColLightRed);
+		_vm->_gui->messageDialogue(16, 71, _vm->guiSettings()->colors.guiColorLightRed);
 
 	return selection;
 }
@@ -1747,17 +1747,17 @@ void TransferPartyWiz::drawCharPortraitWithStats(int charIndex, bool enabled) {
 
 	_screen->drawShape(_screen->_curPage, c->faceShape, x + 4, y + 25, 0);
 
-	int color1 = _vm->guiSettings()->colors.menuTxtColWhite;
-	int color2 = _vm->guiSettings()->colors.menuTxtColBlack;
+	int color1 = _vm->guiSettings()->colors.guiColorWhite;
+	int color2 = _vm->guiSettings()->colors.guiColorBlack;
 
 	if (enabled) {
-		color1 = _vm->guiSettings()->colors.menuTxtColLightRed;
-		color2 = _vm->guiSettings()->colors.menuTxtColWhite;
+		color1 = _vm->guiSettings()->colors.guiColorLightRed;
+		color2 = _vm->guiSettings()->colors.guiColorWhite;
 	} else {
 		_screen->drawShape(_screen->_curPage, _vm->_disabledCharGrid, x + 4, y + 25, 0);
 	}
 
-	_screen->printShadedText(c->name, x + 44, y + 27, color1, 0, _vm->guiSettings()->colors.menuTxtColBlack);
+	_screen->printShadedText(c->name, x + 44, y + 27, color1, 0, _vm->guiSettings()->colors.guiColorBlack);
 	_screen->printText(_vm->_chargenRaceSexStrings[c->raceSex], x + 43, y + 36, color2, 0);
 	_screen->printText(_vm->_chargenClassStrings[c->cClass], x + 43, y + 43, color2, 0);
 
@@ -1770,7 +1770,7 @@ void TransferPartyWiz::drawCharPortraitWithStats(int charIndex, bool enabled) {
 void TransferPartyWiz::updateHighlight(int index) {
 	static const int16 xPos[] = { 9, 288 };
 	if (_highlight > 5 && _highlight != index)
-		_screen->printText(_labels[_highlight - 6], xPos[_highlight - 6], 151, _vm->guiSettings()->colors.menuTxtColWhite, 0);
+		_screen->printText(_labels[_highlight - 6], xPos[_highlight - 6], 151, _vm->guiSettings()->colors.guiColorWhite, 0);
 
 	if (index < 6) {
 		_vm->_gui->updateBoxFrameHighLight(14 + index);
@@ -1784,7 +1784,7 @@ void TransferPartyWiz::updateHighlight(int index) {
 	if (_highlight < 6)
 		_vm->_gui->updateBoxFrameHighLight(-1);
 
-	_screen->printText(_labels[index - 6], xPos[index - 6], 151, _vm->guiSettings()->colors.menuTxtColLightRed, 0);
+	_screen->printText(_labels[index - 6], xPos[index - 6], 151, _vm->guiSettings()->colors.guiColorLightRed, 0);
 	_screen->updateScreen();
 	_highlight = index;
 }

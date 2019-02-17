@@ -60,7 +60,7 @@ public:
 
 	// Button based menus (camp menu, load menu)
 	void runCampMenu();
-	bool runLoadMenu(int x, int y);
+	bool runLoadMenu(int x, int y, bool fromMainMenu = false);
 
 	bool confirmDialogue2(int dim, int id, int deflt);
 	void messageDialogue(int dim, int id, int buttonTextCol);

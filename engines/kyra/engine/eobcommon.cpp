@@ -539,7 +539,7 @@ Common::Error EoBCoreEngine::init() {
 
 	_monsterFlashOverlay = new uint8[16];
 	_monsterStoneOverlay = new uint8[16];
-	memset(_monsterFlashOverlay, (_configRenderMode == Common::kRenderCGA) ? 0xFF : 0x0F, 16 * sizeof(uint8));
+	memset(_monsterFlashOverlay, (_configRenderMode == Common::kRenderCGA) ? 0xFF : guiSettings()->colors.guiColorWhite, 16 * sizeof(uint8));
 	memset(_monsterStoneOverlay, 0x0D, 16 * sizeof(uint8));
 	_monsterFlashOverlay[0] = _monsterStoneOverlay[0] = 0;
 
@@ -586,8 +586,7 @@ Common::Error EoBCoreEngine::go() {
 		if (action == -1) {
 			// load game
 			startupLoad();
-			repeatLoop = _gui->runLoadMenu(72, 14);
-			//if (!repeatLoop && !shouldQuit())
+			repeatLoop = _gui->runLoadMenu(72, 14, true);
 				
 		} else if (action == -2) {
 			// new game
@@ -1900,11 +1899,11 @@ bool EoBCoreEngine::checkPassword() {
 		const uint8 *shp = (_mnDef[c << 2] < _numLargeItemShapes) ? _largeItemShapes[_mnDef[c << 2]] : (_mnDef[c << 2] < 15 ? 0 : _smallItemShapes[_mnDef[c << 2] - 15]);
 		assert(shp);
 		_screen->drawShape(0, shp, 100, 2, 13);
-		_screen->printShadedText(Common::String::format(_mnPrompt[0], _mnDef[(c << 2) + 1], _mnDef[(c << 2) + 2]).c_str(), (_screen->_curDim->sx + 1) << 3, _screen->_curDim->sy, guiSettings()->colors.menuTxtColWhite, guiSettings()->colors.fill, guiSettings()->colors.menuTxtColBlack);
+		_screen->printShadedText(Common::String::format(_mnPrompt[0], _mnDef[(c << 2) + 1], _mnDef[(c << 2) + 2]).c_str(), (_screen->_curDim->sx + 1) << 3, _screen->_curDim->sy, guiSettings()->colors.guiColorWhite, guiSettings()->colors.fill, guiSettings()->colors.guiColorBlack);
 		memset(answ, 0, 20);
 		gui_drawBox(76, 100, 133, 14, guiSettings()->colors.frame2, guiSettings()->colors.frame1, -1);
 		gui_drawBox(77, 101, 131, 12, guiSettings()->colors.frame2, guiSettings()->colors.frame1, -1);
-		if (_gui->getTextInput(answ, 10, 103, 15, guiSettings()->colors.menuTxtColWhite, guiSettings()->colors.fill, guiSettings()->colors.menuTxtColDarkRed) < 0)
+		if (_gui->getTextInput(answ, 10, 103, 15, guiSettings()->colors.guiColorWhite, guiSettings()->colors.fill, guiSettings()->colors.guiColorDarkRed) < 0)
 			i = 3;
 		if (!scumm_stricmp(_mnWord[c], answ))
 			break;

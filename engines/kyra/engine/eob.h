@@ -112,11 +112,14 @@ private:
 	void healParty();
 
 	const KyraRpgGUISettings *guiSettings() const;
+	void useMainMenuGUISettings(bool toggle) { _useMainMenuGUISettings = toggle; }
 
 	static const KyraRpgGUISettings _guiSettingsVGA;
 	static const KyraRpgGUISettings _guiSettingsEGA;
 	static const KyraRpgGUISettings _guiSettingsAmiga;
+	static const KyraRpgGUISettings _guiSettingsAmigaMainMenu;
 	static const uint8 _egaDefaultPalette[];
+	bool _useMainMenuGUISettings;
 };
 
 } // End of namespace Kyra

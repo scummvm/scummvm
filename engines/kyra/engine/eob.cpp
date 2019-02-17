@@ -42,6 +42,7 @@ EoBEngine::EoBEngine(OSystem *system, const GameFlags &flags)
 	_dscDoorY4 = _dscDoorY5 = _dscDoorY6 = _dscDoorY7 = _doorShapeEncodeDefs = 0;
 	_doorSwitchShapeEncodeDefs = _doorSwitchCoords = 0;
 	_dscDoorCoordsExt = 0;
+	_useMainMenuGUISettings = false;
 }
 
 EoBEngine::~EoBEngine() {
@@ -569,7 +570,7 @@ void EoBEngine::healParty() {
 
 const KyraRpgGUISettings *EoBEngine::guiSettings() const {
 	if (_flags.platform == Common::kPlatformAmiga)
-		return &_guiSettingsAmiga;
+		return _useMainMenuGUISettings ? &_guiSettingsAmigaMainMenu : &_guiSettingsAmiga;
 	else if (_configRenderMode == Common::kRenderCGA || _configRenderMode == Common::kRenderEGA)
 		return &_guiSettingsEGA;
 	else

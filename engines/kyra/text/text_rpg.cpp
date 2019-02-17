@@ -49,12 +49,12 @@ TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen *scr) : _vm(e
 		_colorMap[i] = i;
 
 	if (_vm->game() != GI_LOL) {
-		_colorMap[15] = _vm->guiSettings()->colors.menuTxtColWhite;
-		_colorMap[6] = _vm->guiSettings()->colors.menuTxtColLightRed;
-		_colorMap[8] = _vm->guiSettings()->colors.menuTxtColDarkRed;
-		_colorMap[9] = _vm->guiSettings()->colors.menuTxtColLightBlue;
-		_colorMap[2] = _vm->guiSettings()->colors.menuTxtColBlue;
-		_colorMap[12] = _vm->guiSettings()->colors.menuTxtColBlack;
+		_colorMap[15] = _vm->guiSettings()->colors.guiColorWhite;
+		_colorMap[6] = _vm->guiSettings()->colors.guiColorLightRed;
+		_colorMap[8] = _vm->guiSettings()->colors.guiColorDarkRed;
+		_colorMap[9] = _vm->guiSettings()->colors.guiColorLightBlue;
+		_colorMap[2] = _vm->guiSettings()->colors.guiColorBlue;
+		_colorMap[12] = _vm->guiSettings()->colors.guiColorBlack;
 	}
 
 	for (int i = 0; i < _screen->screenDimTableCount(); i++) {

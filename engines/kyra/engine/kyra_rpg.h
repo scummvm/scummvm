@@ -112,12 +112,15 @@ struct KyraRpgGUISettings {
 		uint8 inactiveTabFrame2;
 		int inactiveTabFill;
 
-		uint8 menuTxtColWhite;
-		uint8 menuTxtColLightRed;
-		uint8 menuTxtColDarkRed;
-		uint8 menuTxtColLightBlue;
-		uint8 menuTxtColBlue;
-		uint8 menuTxtColBlack;
+		uint8 guiColorWhite;
+		uint8 guiColorLightRed;
+		uint8 guiColorDarkRed;
+		uint8 guiColorLightBlue;
+		uint8 guiColorBlue;
+		uint8 guiColorYellow;
+		uint8 guiColorLightGreen;
+		uint8 guiColorDarkGreen;
+		uint8 guiColorBlack;
 	} colors;
 };
 
@@ -335,6 +338,7 @@ protected:
 	bool clickedShape(int shapeIndex);
 
 	virtual const KyraRpgGUISettings *guiSettings() const = 0;
+	virtual void useMainMenuGUISettings(bool toggle) {};
 
 	int _clickedShapeXOffs;
 	int _clickedShapeYOffs;
