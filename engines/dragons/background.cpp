@@ -57,7 +57,7 @@ int16 PriorityLayer::getPriority(Common::Point pos) {
 	const int16 tx = pos.x / TILE_WIDTH, sx = pos.x % TILE_WIDTH;
 	const int16 ty = pos.y / TILE_HEIGHT, sy = pos.y % TILE_HEIGHT;
 	uint16 mapIndex = READ_LE_UINT16(_map + 2 * (tx + ty * _mapWidth));
-	return _values[mapIndex * 32 * 8 + sx + sy * 32] + 1;
+	return _values[mapIndex * TILE_WIDTH * TILE_HEIGHT + sx + sy * TILE_WIDTH] + 1;
 
 }
 
@@ -165,7 +165,7 @@ int16 Background::getPriorityAtPoint(Common::Point pos) {
 		return -1;
 	}
 	int16 priority = _priorityLayer->getPriority(pos);
-	return priority < 0x10 ? priority : 0;
+	return priority < 0x11 ? priority : 0;
 }
 
 BackgroundResourceLoader::BackgroundResourceLoader(BigfileArchive *bigFileArchive, DragonRMS *dragonRMS) : _bigFileArchive(
