@@ -374,28 +374,31 @@ uint16 Actor::pathfindingUnk(int16 actor_x, int16 actor_y, int16 target_x, int16
 		return 1;
 	}
 
+	int16 diffX = target_x - actor_x;
+	int16 diffY = target_y - actor_y;
+
 	if (target_y != actor_y && target_x == actor_x) {
-		y_increment = target_y - actor_y > 0 ? 1 : -1;
+		y_increment = diffY > 0 ? 1 : -1;
 	} else {
 		if (target_y == actor_y) {
 			if (target_x == actor_x) {
 				x_increment = 0;
-				y_increment = target_y - actor_y > 0 ? 1 : -1;
+				y_increment = diffY > 0 ? 1 : -1;
 			} else {
-				x_increment = target_x - actor_x > 0 ? 1 : -1;
+				x_increment = diffX > 0 ? 1 : -1;
 				y_increment = 0;
 			}
 		} else {
-			if (ABS(target_y - actor_y) < ABS(target_x - actor_x)) {
-				x_increment = target_x - actor_x > 0 ? 1 : -1;
-				y_increment = ((target_y - actor_y) /*<< 0x10*/) / (target_x - actor_x);
-				if ((target_y - actor_y > 0 && y_increment < 0) || (target_y - actor_y < 0 && y_increment > 0)) {
+			if (ABS(diffY) < ABS(diffX)) {
+				x_increment = diffX > 0 ? 1 : -1;
+				y_increment = ((diffY) /*<< 0x10*/) / (diffX);
+				if ((diffY > 0 && y_increment < 0) || (diffY < 0 && y_increment > 0)) {
 					y_increment = -y_increment;
 				}
 			} else {
-				y_increment = target_y - actor_y > 0 ? 1 : -1;
-				x_increment = ((target_x - actor_x) /*<< 0x10*/) / (target_y - actor_y);
-				if ((target_x - actor_x > 0 && x_increment < 0) || (target_x - actor_x < 0 && x_increment > 0)) {
+				y_increment = diffY > 0 ? 1 : -1;
+				x_increment = ((diffX) /*<< 0x10*/) / (diffY);
+				if ((diffX > 0 && x_increment < 0) || (diffX < 0 && x_increment > 0)) {
 					x_increment = -x_increment;
 				}
 			}
