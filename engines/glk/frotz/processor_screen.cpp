@@ -213,7 +213,8 @@ void Processor::erase_window(zword win) {
 	if (h_version == V6 && win != cwin && h_interpreter_number != INTERP_AMIGA)
 		garglk_set_zcolors(_wp[win][TRUE_FG_COLOR], _wp[win][TRUE_BG_COLOR]);
 
-	glk_window_clear(_wp[win]);
+	if (_wp[win])
+		glk_window_clear(_wp[win]);
 
 	if (h_version == V6 && win != cwin && h_interpreter_number != INTERP_AMIGA)
 		garglk_set_zcolors(_wp[cwin][TRUE_FG_COLOR], _wp[cwin][TRUE_BG_COLOR]);
