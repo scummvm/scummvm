@@ -124,6 +124,7 @@ static const char *const selectorNameTable[] = {
 	"delete",       // EcoQuest 1
 	"size",         // EcoQuest 1
 	"signal",       // EcoQuest 1, GK1
+	"obstacles",    // EcoQuest 1, QFG4
 #ifdef ENABLE_SCI32
 	"newWith",      // SCI2 array script
 	"scrollSelections", // GK2
@@ -165,7 +166,6 @@ static const char *const selectorNameTable[] = {
 	"cue",          // QFG4
 	"heading",      // QFG4
 	"moveSpeed",    // QFG4
-	"obstacles",    // QFG4
 	"sayMessage",   // QFG4
 	"setLooper",    // QFG4
 	"setSpeed",     // QFG4
@@ -216,7 +216,8 @@ enum ScriptPatcherSelectors {
 	SELECTOR_owner,
 	SELECTOR_delete,
 	SELECTOR_size,
-	SELECTOR_signal
+	SELECTOR_signal,
+	SELECTOR_obstacles
 #ifdef ENABLE_SCI32
 	,
 	SELECTOR_newWith,
@@ -259,7 +260,6 @@ enum ScriptPatcherSelectors {
 	SELECTOR_cue,
 	SELECTOR_heading,
 	SELECTOR_moveSpeed,
-	SELECTOR_obstacles,
 	SELECTOR_sayMessage,
 	SELECTOR_setLooper,
 	SELECTOR_setSpeed,
@@ -718,14 +718,89 @@ static const uint16 ecoquest1PatchColumnPuzzleFix[] = {
 	PATCH_END
 };
 
+// The ocean cliffs that border rooms 320 and 321 aren't displayed in the CD
+//  version. Instead they are drawn above the visible area and on more screens
+//  than they should. This also occurs in the original.
+//
+// Cliff views 325 and 326 have y displacements greater than 127 in the floppy
+//  versions. In the CD version these offsets were changed to zero. Sierra
+//  attempted to compensate for this by adding rows of empty pixels to the views
+//  but it appears that someone mistook the unsigned offsets for negative values
+//  and added the wrong number of rows to the wrong side of the views, causing
+//  the cliffs to be drawn 256 pixels higher than normal.
+//
+// The ocean scripts were changed to use different techniques for adding and
+//  removing the cliffs but this introduced more errors. Room 321 reinitializes
+//  the cliffs instead of disposing them, causing them to be redrawn on the
+//  wrong screens, and room 320 disposes the eastern cliffs instead of western.
+//
+// We fix the cliffs by adjusting their positions by 256 and disposing of them
+//  in room 321. We leave room 320's incorrect cliff disposal in place since
+//  both are automatically disposed of when that room's pic changes.
+//
+// Applies to: PC CD
+// Responsible methods: Heap in scripts 320 and 321, toEast:changeState, toWest:changeState
+// Fixes bug #10893
+static const uint16 ecoquest1SignatureSouthCliffsPosition[] = {
+	SIG_MAGICDWORD,
+	SIG_UINT16(0x0095),             // easternCliffs:x = 149
+	SIG_UINT16(0x0033),             // easternCliffs:y = 51
+	SIG_ADDTOOFFSET(+88),
+	SIG_UINT16(0x0004),             // westernCliffs:x = 4
+	SIG_UINT16(0x0014),             // westernCliffs:y = 20
+	SIG_END
+};
 
-//          script, description,                                      signature                          patch
+static const uint16 ecoquest1PatchSouthCliffsPosition[] = {
+	PATCH_ADDTOOFFSET(+2),
+	PATCH_UINT16(0x0133),           // easternCliffs:y = 307
+	PATCH_ADDTOOFFSET(+90),
+	PATCH_UINT16(0x0114),           // westernCliffs:y = 276
+	PATCH_END
+};
+
+static const uint16 ecoquest1SignatureNorthCliffsPosition[] = {
+	SIG_MAGICDWORD,
+	SIG_UINT16(0x00eb),             // easternCliffs:x = 236
+	SIG_UINT16(0x0038),             // easternCliffs:y = 56
+	SIG_ADDTOOFFSET(+88),
+	SIG_UINT16(0x0000),             // westernCliffs:x = 0
+	SIG_UINT16(0x0032),             // westernCliffs:y = 50
+	SIG_END
+};
+
+static const uint16 ecoquest1PatchNorthCliffsPosition[] = {
+	PATCH_ADDTOOFFSET(+2),
+	PATCH_UINT16(0x0138),           // easternCliffs:y = 312
+	PATCH_ADDTOOFFSET(+90),
+	PATCH_UINT16(0x0132),           // westernCliffs:y = 306
+	PATCH_END
+};
+
+static const uint16 ecoquest1SignatureNorthCliffsDisposal[] = {
+	0x39, SIG_SELECTOR8(init),          // pushi init
+	0x76,                               // push0
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa easternCliffs or westernCliffs
+	0x4a, SIG_MAGICDWORD, 0x04,         // send 04 [ cliffs init: ]
+	0x38, SIG_SELECTOR16(obstacles),    // pushi obstacles
+	SIG_END
+};
+
+static const uint16 ecoquest1PatchNorthCliffsDisposal[] = {
+	0x39, PATCH_SELECTOR8(dispose),     // pushi dispose
+	PATCH_END
+};
+
+//          script, description,                                      signature                               patch
 static const SciScriptPatcherEntry ecoquest1Signatures[] = {
-	{  true,   140, "CD: mosaic puzzle fix",                       2, ecoquest1SignatureMosaicPuzzleFix, ecoquest1PatchMosaicPuzzleFix },
-	{  true,   160, "CD: give superfluous oily shell",             1, ecoquest1SignatureGiveOilyShell,   ecoquest1PatchGiveOilyShell },
-	{  true,   160, "CD/Floppy: column puzzle fix",                1, ecoquest1SignatureColumnPuzzleFix, ecoquest1PatchColumnPuzzleFix },
-	{  true,   660, "CD: bad messagebox and freeze",               1, ecoquest1SignatureStayAndHelp,     ecoquest1PatchStayAndHelp },
-	{  true,   816, "CD: prophecy scroll",                         1, ecoquest1SignatureProphecyScroll,  ecoquest1PatchProphecyScroll },
+	{  true,   140, "CD: mosaic puzzle fix",                       2, ecoquest1SignatureMosaicPuzzleFix,      ecoquest1PatchMosaicPuzzleFix },
+	{  true,   160, "CD: give superfluous oily shell",             1, ecoquest1SignatureGiveOilyShell,        ecoquest1PatchGiveOilyShell },
+	{  true,   160, "CD/Floppy: column puzzle fix",                1, ecoquest1SignatureColumnPuzzleFix,      ecoquest1PatchColumnPuzzleFix },
+	{  true,   320, "CD: south cliffs position",                   1, ecoquest1SignatureSouthCliffsPosition,  ecoquest1PatchSouthCliffsPosition },
+	{  true,   321, "CD: north cliffs position",                   1, ecoquest1SignatureNorthCliffsPosition,  ecoquest1PatchNorthCliffsPosition },
+	{  true,   321, "CD: north cliffs disposal",                   2, ecoquest1SignatureNorthCliffsDisposal,  ecoquest1PatchNorthCliffsDisposal },
+	{  true,   660, "CD: bad messagebox and freeze",               1, ecoquest1SignatureStayAndHelp,          ecoquest1PatchStayAndHelp },
+	{  true,   816, "CD: prophecy scroll",                         1, ecoquest1SignatureProphecyScroll,       ecoquest1PatchProphecyScroll },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
