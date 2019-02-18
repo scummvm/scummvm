@@ -147,7 +147,7 @@ void Header::loadHeader(Common::SeekableReadStream &f) {
 
 UserOptions::UserOptions() : _undo_slots(MAX_UNDO_SLOTS), _sound(true), _quetzal(true), _color_enabled(false),
 	_err_report_mode(ERR_REPORT_ONCE), _ignore_errors(false), _expand_abbreviations(false), _tandyBit(false),
-	_piracy(false), _script_cols(0), _left_margin(0), _right_margin(0) {
+	_piracy(false), _script_cols(0), _left_margin(0), _right_margin(0), _defaultBackground(0), _defaultForeground(0) {
 }
 
 void UserOptions::initialize(uint hVersion) {

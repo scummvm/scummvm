@@ -193,7 +193,7 @@ void Processor::erase_screen(zword win) {
 	int curr_fg = _wp[1][TRUE_FG_COLOR];
 	int curr_bg = _wp[1][TRUE_BG_COLOR];
 
-	if (win == -1) {
+	if ((short)win == -1) {
 		if (_wp._upper) {
 			glk_set_window(_wp._upper);
 #ifdef GARGLK
