@@ -449,6 +449,7 @@ void GlkInterface::split_window(zword lines) {
 	if (h_version == V6) {
 		glk_window_clear(_wp._upper);
 		glk_window_clear(_wp._lower);
+		_wp._background->fillRect(_defaultBackground, Rect(g_system->getWidth(), g_system->getHeight()));
 	}
 }
 
