@@ -446,6 +446,10 @@ void GlkInterface::split_window(zword lines) {
 
 	if (h_version == V3)
 		glk_window_clear(_wp._upper);
+	if (h_version == V6) {
+		glk_window_clear(_wp._upper);
+		glk_window_clear(_wp._lower);
+	}
 }
 
 void GlkInterface::restart_screen() {
