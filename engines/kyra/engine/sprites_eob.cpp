@@ -1235,32 +1235,32 @@ void EoBCoreEngine::updateMonsterFollowPath(EoBMonsterInPlay *m, int turnSteps) 
 }
 
 void EoBCoreEngine::updateMonstersStraying(EoBMonsterInPlay *m, int a) {
-	if (m->f_9 >= 0) {
-		if (m->f_9 == 0)
+	if (m->stray >= 0) {
+		if (m->stray == 0)
 			updateMonsterFollowPath(m, -a);
 
 		int8 d = (m->dir + a) & 3;
 		uint16 bl = calcNewBlockPosition(m->block, d);
 		uint8 flg = _wllWallFlags[_levelBlockProperties[bl].walls[_dscBlockMap[d]]] & 4;
 
-		if (m->f_9 == 0) {
+		if (m->stray == 0) {
 			if (!flg)
-				m->f_9 = -1;
+				m->stray = -1;
 			return;
 		}
 
 		if (flg) {
 			walkMonsterNextStep(m, -1, d);
-			m->f_9 = -1;
+			m->stray = -1;
 			return;
 		}
 	}
 
 	if (walkMonsterNextStep(m, calcNewBlockPosition(m->block, m->dir), -1)) {
-		m->f_9 = 1;
+		m->stray = 1;
 	} else {
 		walkMonsterNextStep(m, -1, (m->dir - a) & 3);
-		m->f_9 = 0;
+		m->stray = 0;
 	}
 }
 

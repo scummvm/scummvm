@@ -231,7 +231,7 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 			m->animStep = in.readByte();
 			m->shpIndex = in.readByte();
 			m->mode = in.readSByte();
-			m->f_9 = in.readSByte();
+			m->stray = in.readSByte();
 			m->curAttackFrame = in.readSByte();
 			m->spellStatusLeft = in.readSByte();
 			m->hitPointsMax = in.readSint16BE();
@@ -477,7 +477,7 @@ Common::Error EoBCoreEngine::saveGameStateIntern(int slot, const char *saveName,
 			out->writeByte(m->animStep);
 			out->writeByte(m->shpIndex);
 			out->writeSByte(m->mode);
-			out->writeSByte(m->f_9);
+			out->writeSByte(m->stray);
 			out->writeSByte(m->curAttackFrame);
 			out->writeSByte(m->spellStatusLeft);
 			out->writeSint16BE(m->hitPointsMax);
@@ -833,7 +833,7 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 			m->animStep = in.readByte();
 			m->shpIndex = in.readByte();
 			m->mode = in.readSByte();
-			m->f_9 = in.readSByte();
+			m->stray = in.readSByte();
 			m->curAttackFrame = in.readSByte();
 			m->spellStatusLeft = in.readSByte();
 			m->hitPointsMax = in.readSint16();
@@ -1192,7 +1192,7 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 			out->writeByte(m->animStep);
 			out->writeByte(m->shpIndex);
 			out->writeSByte(m->mode);
-			out->writeSByte(m->f_9);
+			out->writeSByte(m->stray);
 			out->writeSByte(m->curAttackFrame);
 			out->writeSByte(m->spellStatusLeft);
 			out->writeSint16LE(m->hitPointsMax);

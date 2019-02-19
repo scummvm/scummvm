@@ -196,7 +196,7 @@ struct EoBMonsterInPlay {
 	uint8 animStep;
 	uint8 shpIndex;
 	int8 mode;
-	int8 f_9;
+	int8 stray;
 	int8 curAttackFrame;
 	int8 spellStatusLeft;
 	int16 hitPointsMax;
