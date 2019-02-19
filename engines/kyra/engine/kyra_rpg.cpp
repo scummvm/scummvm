@@ -204,7 +204,7 @@ Common::Error KyraRpgEngine::init() {
 
 	initStaticResource();
 
-	_envSfxDistThreshold = (_flags.gameID == GI_EOB2 || _sound->getSfxType() == Sound::kAdLib || _sound->getSfxType() == Sound::kPCSpkr) ? 15 : 3;
+	_envSfxDistThreshold = ((_flags.gameID == GI_EOB2 && _sound->getSfxType() == Sound::kTowns) || _sound->getSfxType() == Sound::kAdLib || _sound->getSfxType() == Sound::kPCSpkr) ? 15 : (_sound->getSfxType() == Sound::kAmiga ? 4 : 3);
 
 	_dialogueButtonLabelColor1 = guiSettings()->buttons.labelColor1;
 	_dialogueButtonLabelColor2 = guiSettings()->buttons.labelColor2;
@@ -367,7 +367,13 @@ bool KyraRpgEngine::snd_processEnvironmentalSoundEffect(int soundId, int block) 
 	}
 
 	_environmentSfx = soundId;
-	_environmentSfxVol = (_flags.gameID == GI_EOB2 && _flags.platform == Common::kPlatformFMTowns) ? (dist ? (16 - dist) * 8 - 1 : 127) : ((15 - ((block || (_flags.gameID == GI_LOL && dist < 2)) ? dist : 0)) << 4);
+
+	if (_flags.gameID == GI_EOB2 && _flags.platform == Common::kPlatformFMTowns)
+		_environmentSfxVol = dist ? (16 - dist) * 8 - 1 : 127;
+	else if (_flags.platform == Common::kPlatformAmiga)
+		_environmentSfxVol = dist ? (soundId != 13 ? dist : (dist >= 4) ? 4 : dist) : 1;
+	else
+		_environmentSfxVol = (15 - ((block || (_flags.gameID == GI_LOL && dist < 2)) ? dist : 0)) << 4;
 
 	return true;
 }

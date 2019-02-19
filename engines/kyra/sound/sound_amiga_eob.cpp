@@ -139,9 +139,9 @@ void SoundAmiga_EoB::playTrack(uint8 track) {
 	if (_vm->game() == GI_EOB1) {
 		if (_currentResourceSet == kMusicIntro) {
 			if (track == 1)
-				newSound = "newintro1.smus";
+				newSound = "NEWINTRO1.SMUS";
 			else if (track == 20)
-				newSound = "chargen1.smus";
+				newSound = "CHARGEN1.SMUS";
 		}
 	} else if (_vm->game() == GI_EOB2) {
 		
@@ -168,7 +168,20 @@ void SoundAmiga_EoB::playSoundEffect(uint8 track, uint8 volume) {
 	Common::String newSound = _resInfo[_currentResourceSet]->soundList[track];
 
 	if (!newSound.empty()) {
-		_driver->startSound(newSound);
+		if (volume == 255) {
+			if (_driver->startSound(newSound + "1.SAM")) {
+				_lastSound = newSound + "1.SAM";
+				return;
+			} else {
+				volume = 1;
+			}
+		}
+
+		if (volume > 0 && volume < 5) {
+			newSound = Common::String::format("%s%d", newSound.c_str(), volume);		
+			_driver->startSound(newSound);
+		}
+
 		_lastSound = newSound;
 	}
 }
