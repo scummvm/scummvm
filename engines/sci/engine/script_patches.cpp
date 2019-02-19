@@ -5448,6 +5448,54 @@ static const uint16 laurabow2PatchFixBackRubEastEntranceLockup[] = {
 	PATCH_END
 };
 
+// The act 4 back rub scene in Yvette's (room 550) doesn't draw the typewriter,
+//  desk lamp, and wastebasket when returning from Laura's close-up. These views
+//  are added to the room pic and so they are disposed of when the pic changes.
+//  This also occurs in Sierra's interpreter.
+//
+// We fix this by removing the addToPic call from these views so that they are
+//  members of the cast like the other views in the room and survive pic change.
+//
+// Applies to: All Floppy and CD versions
+// Responsible method: rm550:init/<noname110>
+// Fixes bug #10894
+static const uint16 laurabow2SignatureFixDisappearingDeskItems[] = {
+	SIG_MAGICDWORD,
+	0x39, 0x64,                         // pushi 64
+	0x39, 0x7e,                         // pushi 7e
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi addToPic
+	0x76,                               // push0
+	SIG_ADDTOOFFSET(+3),
+	0x4a, 0x20,                         // send 20 [ typewriter ... addToPic: ]
+	SIG_ADDTOOFFSET(+26),
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi addToPic
+	0x76,                               // push0
+	SIG_ADDTOOFFSET(+3),
+	0x4a, 0x18,                         // send 18 [ deskLamp ... addToPic: ]
+	SIG_ADDTOOFFSET(+27),
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi addToPic
+	0x76,                               // push0
+	SIG_ADDTOOFFSET(+17),
+	0x4a, 0x16,                         // send 16 [ wasteBasket ... addToPic: ... ]
+	SIG_END
+};
+
+static const uint16 laurabow2PatchFixDisappearingDeskItems[] = {
+	PATCH_ADDTOOFFSET(+4),
+	0x32, PATCH_UINT16(0x0001),         // jmp 0001
+	PATCH_ADDTOOFFSET(+4),
+	0x4a, 0x1c,                         // send 1c [ init typewriter without addToPic ]
+	PATCH_ADDTOOFFSET(+26),
+	0x32, PATCH_UINT16(0x0001),         // jmp 0001
+	PATCH_ADDTOOFFSET(+4),
+	0x4a, 0x14,                         // send 14 [ init deskLamp without addToPic ]
+	PATCH_ADDTOOFFSET(+27),
+	0x32, PATCH_UINT16(0x0001),         // jmp 0001
+	PATCH_ADDTOOFFSET(+18),
+	0x4a, 0x12,                         // send 12 [ init wasteBasket without addToPic ]
+	PATCH_END
+};
+
 // LB2 Floppy 1.0 doesn't initialize act 4 correctly when triggered by finding
 //  the dagger, causing the act 4 scene in Yvette's (room 550) to lockup.
 //
@@ -5812,6 +5860,7 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   460, "CD/Floppy: fix crate room east door lockup",     1, laurabow2SignatureFixCrateRoomEastDoorLockup,   laurabow2PatchFixCrateRoomEastDoorLockup },
 	{  true,  2660, "CD/Floppy: fix elevator lockup",                 1, laurabow2SignatureFixElevatorLockup,            laurabow2PatchFixElevatorLockup },
 	{  true,   550, "CD/Floppy: fix back rub east entrance lockup",   1, laurabow2SignatureFixBackRubEastEntranceLockup, laurabow2PatchFixBackRubEastEntranceLockup },
+	{  true,   550, "CD/Floppy: fix disappearing desk items",         1, laurabow2SignatureFixDisappearingDeskItems,     laurabow2PatchFixDisappearingDeskItems },
 	{  true,    26, "Floppy: fix act 4 initialization",               1, laurabow2SignatureFixAct4Initialization,        laurabow2PatchFixAct4Initialization },
 	{  true,   550, "Floppy: missing desk lamp message",              1, laurabow2SignatureMissingDeskLampMessage,       laurabow2PatchMissingDeskLampMessage },
 	{  true,   440, "CD/Floppy: handle armor room events",            1, laurabow2SignatureHandleArmorRoomEvents,        laurabow2PatchHandleArmorRoomEvents },
