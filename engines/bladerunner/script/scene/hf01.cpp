@@ -248,14 +248,14 @@ bool SceneScriptHF01::ClickedOnExit(int exitId) {
 				Set_Enter(kSetCT01_CT12, kSceneCT01);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kHF01LoopOutshoot, true);
 				break;
-			case kSpinnerDestinationAnimoidRow:
+			case kSpinnerDestinationTyrellBuilding:
 				Game_Flag_Set(kFlagMcCoyInTyrellBuilding);
 				Game_Flag_Reset(kFlagSpinnerAtHF01);
 				Game_Flag_Set(kFlagSpinnerAtTB02);
 				Set_Enter(kSetTB02_TB03, kSceneTB02);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kHF01LoopOutshoot, true);
 				break;
-			case kSpinnerDestinationTyrellBuilding:
+			case kSpinnerDestinationAnimoidRow:
 				Game_Flag_Set(kFlagMcCoyInAnimoidRow);
 				Game_Flag_Reset(kFlagSpinnerAtHF01);
 				Game_Flag_Set(kFlagSpinnerAtAR01);
