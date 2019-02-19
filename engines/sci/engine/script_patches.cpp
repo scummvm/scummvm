@@ -5525,49 +5525,37 @@ static const uint16 laurabow2PatchMissingDeskLampMessage[] = {
 	PATCH_END
 };
 
-// LB2 Floppy 1.0 doesn't handle events for the inset of the corpse in the armor in room 440,
-//  preventing its messages from being displayed.
+// The armor exhibit rooms (440 and 448) have event handlers that fail to handle
+//  all events, preventing messages from being displayed.
 //
-// The inset has messages that respond to look, do, and the magnifying glass, but rm440:<noname133>,
-//  which is really handleEvent, never passes events to it. Sierra fixed this in later floppy and
-//  cd versions by adding a condition to rm440:handleEvent that first tests if the room has an inset
-//  and calls its handleEvent if so.
+// Both armor rooms implement handleEvent to handle joystick events in certain
+//  situations, but they only pass move events on to super:handleEvent, blocking
+//  all other event types. Clicking on either room does nothing even though both
+//  have messages to respond with. This also prevents messages when clicking on
+//  Pippin Carter's armor inset. Sierra fixed the armor problem after the first
+//  floppy release by adding code to detect and handle the inset's events,
+//  instead of handling all events, leaving the room messages broken.
 //
-// We fix this by patching rm440:handleEvent to call super:handleEvent if the room has an inset.
-//  This is equivalent to Sierra's fix but can be done within the existing space as there is already
-//  code to call super:handleEvent on Move events. This patch just extends that condition to also
-//  include if an inset exists. This works because Rm:handleEvent contains the same inset handling
-//  code that Sierra added to rm440:handleEvent.
+// We fix this by handling verb events in both rooms. This fixes room messages
+//  in all versions and fixes armor inset messages in English floppy 1.0.
 //
-// This fix is for floppy 1.0 but the signature also matches later floppy versions. That's okay,
-//  it's compatible with their fix. Making the signature only match 1.0 would add almost 100 bytes
-//  as the closest difference is at the start of the method and the patch is at the end.
-//
-// Applies to: English floppy 1.000
-// Responsible method: rm440:<noname133>, which is really handleEvent
-// Fixes bug: #10709
-static const uint16 laurabow2SignatureHandleArmorInsetEvents[] = {
+// Applies to: All Floppy and CD versions
+// Responsible methods: rm440:handleEvent/<noname133>, rm448:handleEvent/<noname133>
+// Fixes bugs #10709, #10895
+static const uint16 laurabow2SignatureHandleArmorRoomEvents[] = {
+	0x87, 0x01,                         // lap 01
+	0x4a, 0x04,                         // send 04 [ event type? ]
 	SIG_MAGICDWORD,
-	0x31, 0x0b,                         // bnt 0b [ event type isn't Move ]
-	0x38, SIG_UINT16(0x0085),           // pushi 0085 [ <noname113> aka handleEvent ]
-	0x78,                               // push1
-	0x8f, 0x01,                         // lsp param[1]
-	0x57, 0x7a, 0x06,                   // super LBRoom[7a], 6 [ handle event ]
-	0x33, 0x03,                         // jmp 3
-	0x35, 0x00,                         // ldi 0 [ event not handled ]
-	0x48,                               // ret
-	0x48,                               // ret
+	0x36,                               // push
+	0x34, SIG_UINT16(0x1000),           // ldi 1000 [ move event ]
+	0x12,                               // and
+	0x31,                               // bnt [ don't handle event ]
 	SIG_END
 };
 
-static const uint16 laurabow2PatchHandleArmorInsetEvents[] = {
-	0x2f, 0x04,                         // bt 4 [ event type is Move ]
-	0x63, 0x3a,                         // pToa <noname365> aka inset
-	0x31, 0x09,                         // bnt 9 [ room has no inset, event not handled ]
-	0x38, PATCH_UINT16(0x0085),         // pushi 0085 [ <noname113> aka handleEvents ]
-	0x78,                               // push1
-	0x8f, 0x01,                         // lsp param[1]
-	0x57, 0x7a, 0x06,                   // super LBRoom[7a], 6 [ handle event ]
+static const uint16 laurabow2PatchHandleArmorRoomEvents[] = {
+	PATCH_ADDTOOFFSET(+5),
+	0x34, PATCH_UINT16(0x5000),         // ldi 5000 [ move event | verb event ]
 	PATCH_END
 };
 
@@ -5826,7 +5814,8 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   550, "CD/Floppy: fix back rub east entrance lockup",   1, laurabow2SignatureFixBackRubEastEntranceLockup, laurabow2PatchFixBackRubEastEntranceLockup },
 	{  true,    26, "Floppy: fix act 4 initialization",               1, laurabow2SignatureFixAct4Initialization,        laurabow2PatchFixAct4Initialization },
 	{  true,   550, "Floppy: missing desk lamp message",              1, laurabow2SignatureMissingDeskLampMessage,       laurabow2PatchMissingDeskLampMessage },
-	{  true,   440, "Floppy: handle armor inset events",              1, laurabow2SignatureHandleArmorInsetEvents,       laurabow2PatchHandleArmorInsetEvents },
+	{  true,   440, "CD/Floppy: handle armor room events",            1, laurabow2SignatureHandleArmorRoomEvents,        laurabow2PatchHandleArmorRoomEvents },
+	{  true,   448, "CD/Floppy: handle armor hall room events",       1, laurabow2SignatureHandleArmorRoomEvents,        laurabow2PatchHandleArmorRoomEvents },
 	{  true,   600, "Floppy: fix bugs with meat",                     1, laurabow2FloppySignatureFixBugsWithMeat,        laurabow2FloppyPatchFixBugsWithMeat },
 	{  true,   600, "CD: fix bugs with meat",                         1, laurabow2CDSignatureFixBugsWithMeat,            laurabow2CDPatchFixBugsWithMeat },
 	{  true,   480, "CD: fix act 5 finale music",                     1, laurabow2CDSignatureFixAct5FinaleMusic,         laurabow2CDPatchFixAct5FinaleMusic },
