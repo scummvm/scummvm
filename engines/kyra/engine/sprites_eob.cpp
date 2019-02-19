@@ -833,7 +833,7 @@ int EoBCoreEngine::getNextMonsterDirection(int curBlock, int destBlock) {
 
 	int r = 0;
 
-	int s1 = f - d;
+	int s1 = (_flags.platform == Common::kPlatformAmiga) ? (d - f) : (f - d);
 	int d1 = ABS(s1);
 	s1 <<= 1;
 	int s2 = c - e;
