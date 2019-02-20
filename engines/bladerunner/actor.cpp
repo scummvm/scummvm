@@ -1057,7 +1057,7 @@ void Actor::combatModeOn(int initialState, bool rangedAttack, int enemyId, int w
 	_animationModeCombatWalk = animationModeCombatWalk;
 	_animationModeCombatRun = animationModeCombatRun;
 	_inCombat = true;
-	if (_id != kActorMcCoy) {
+	if (_id != kActorMcCoy && enemyId != -1) {
 		_combatInfo->combatOn(_id, initialState, rangedAttack, enemyId, waypointType, fleeRatio, coverRatio, attackRatio, damage, range, unstoppable);
 	}
 	stopWalking(false);

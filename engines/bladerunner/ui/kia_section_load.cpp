@@ -42,6 +42,14 @@ KIASectionLoad::KIASectionLoad(BladeRunnerEngine *vm) : KIASectionBase(vm) {
 	_uiContainer = new UIContainer(_vm);
 	_scrollBox   = new UIScrollBox(_vm, scrollBoxCallback, this, 1025, 0, true, Common::Rect(155, 158, 461, 346), Common::Rect(506, 160, 506, 350));
 	_uiContainer->add(_scrollBox);
+
+	_timeLast = 0;
+	_timeLeft = 0;
+
+	_hoveredLineId = -1;
+	_newGameEasyLineId = -1;
+	_newGameMediumLineId = -1;
+	_newGameHardLineId = -1;
 }
 
 KIASectionLoad::~KIASectionLoad() {

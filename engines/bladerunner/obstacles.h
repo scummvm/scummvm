@@ -57,7 +57,7 @@ class Obstacles {
 		Vector2    vertices[kPolygonVertexCount];
 		VertexType vertexType[kPolygonVertexCount];
 
-		Polygon() : isPresent(false), verticeCount(0)
+		Polygon() : isPresent(false), verticeCount(0), vertexType()
 		{}
 	};
 

@@ -54,6 +54,11 @@ KIASectionSave::KIASectionSave(BladeRunnerEngine *vm) : KIASectionBase(vm) {
 
 	_buttons = new UIImagePicker(_vm, 3);
 
+	_timeLast = 0;
+	_timeLeft = 0;
+
+	_state = kStateNormal;
+
 	_mouseX = 0;
 	_mouseY = 0;
 
@@ -384,6 +389,8 @@ void KIASectionSave::save() {
 	Common::OutSaveFile *saveFile = BladeRunner::SaveFileManager::openForSaving(_vm->getTargetName(), slot);
 	if (saveFile == nullptr || saveFile->err()) {
 		delete saveFile;
+		error("Can not open savegame file for writing");
+		return;
 	}
 
 	BladeRunner::SaveFileHeader header;

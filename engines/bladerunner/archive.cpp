@@ -34,13 +34,13 @@ MIXArchive::MIXArchive() {
 
 MIXArchive::~MIXArchive() {
 	if (_fd.isOpen()) {
-		debug("~MIXArchive: fd not closed: %s", _fd.getName());
+		warning("~MIXArchive: File not closed: %s", _fd.getName());
 	}
 }
 
 bool MIXArchive::open(const Common::String &filename) {
 	if (!_fd.open(filename)) {
-		debug("MIXArchive::open(): Could not open %s", filename.c_str());
+		warning("MIXArchive::open(): Can not open %s", filename.c_str());
 		return false;
 	}
 

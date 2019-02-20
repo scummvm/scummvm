@@ -165,6 +165,8 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_gameInfo                = nullptr;
 	_waypoints               = nullptr;
 	_gameVars                = nullptr;
+	_cosTable1024            = nullptr;
+	_sinTable1024            = nullptr;
 	_view                    = nullptr;
 	_sceneObjects            = nullptr;
 	_gameFlags               = nullptr;
@@ -1906,8 +1908,6 @@ void BladeRunnerEngine::newGame(int difficulty) {
 	}
 
 	_gameFlags->clear();
-
-	_gameInfo->getGlobalVarCount();
 
 	for (uint i = 0; i < _gameInfo->getGlobalVarCount(); ++i) {
 		_gameVars[i] = 0;

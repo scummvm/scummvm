@@ -159,7 +159,7 @@ bool DialogueMenu::addToListNeverRepeatOnceSelected(int answer, int priorityPoli
 
 bool DialogueMenu::removeFromList(int answer) {
 	int index = getAnswerIndex(answer);
-	if (index != -1) {
+	if (index < 0) {
 		return false;
 	}
 	if (index < _listSize - 1) {

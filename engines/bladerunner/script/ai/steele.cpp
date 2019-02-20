@@ -1963,7 +1963,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 
 bool AIScriptSteele::ChangeAnimationMode(int mode) {
 	switch (mode) {
-	case kGoalSteeleDefault:
+	case kAnimationModeIdle:
 		if (Game_Flag_Query(kFlagSteeleAimingAtGordo)) {
 			_var1 = 3;
 		} else {

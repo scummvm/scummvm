@@ -192,7 +192,7 @@ void AIScriptIzo::OtherAgentExitedThisScene(int otherActorId) {
 
 void AIScriptIzo::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
 	if (Actor_Query_Goal_Number(kActorIzo) == kGoalIzoRC03Walk) {
-		Game_Flag_Query(kFlagIzoIsReplicant);
+		Game_Flag_Query(kFlagIzoIsReplicant); // bug in the game?
 	}
 	return; //false;
 }

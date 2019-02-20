@@ -27,7 +27,9 @@ namespace BladeRunner {
 SceneScript::SceneScript(BladeRunnerEngine *vm)
 	: _vm(vm)
 	, _inScriptCounter(0)
-	, _currentScript(nullptr) {}
+	, _currentScript(nullptr)
+	, _mouseX(0)
+	, _mouseY(0) {}
 
 SceneScript::~SceneScript() {
 	delete _currentScript;

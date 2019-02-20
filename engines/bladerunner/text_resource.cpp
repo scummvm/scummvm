@@ -49,6 +49,7 @@ bool TextResource::open(const Common::String &name) {
 	Common::String resName = Common::String::format("%s.TR%s", name.c_str(), _vm->_languageCode.c_str());
 	Common::ScopedPtr<Common::SeekableReadStream> s(_vm->getResourceStream(resName));
 	if (!s) {
+		warning("TextResource::open(): Can not open %s", resName.c_str());
 		return false;
 	}
 
