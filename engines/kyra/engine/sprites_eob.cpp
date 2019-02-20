@@ -453,7 +453,12 @@ void EoBCoreEngine::drawBlockItems(int index) {
 			}
 
 			if (scaleSteps >= 0) {
-				const uint8 *shp = _screen->scaleShape(_dscItemShapeMap[itm->icon] < _numLargeItemShapes ? _largeItemShapes[_dscItemShapeMap[itm->icon]] : (_dscItemShapeMap[itm->icon] < 15 ? 0 : _smallItemShapes[_dscItemShapeMap[itm->icon] - 15]), scaleSteps);
+				const uint8 *shp = 0;
+				if (_flags.gameID == GI_EOB2 || scaleSteps == 0)
+					shp = _screen->scaleShape(_dscItemShapeMap[itm->icon] < _numLargeItemShapes ? _largeItemShapes[_dscItemShapeMap[itm->icon]] : (_dscItemShapeMap[itm->icon] < 15 ? 0 : _smallItemShapes[_dscItemShapeMap[itm->icon] - 15]), scaleSteps);
+				else
+					shp = _dscItemShapeMap[itm->icon] < _numLargeItemShapes ? _largeItemShapesScl[scaleSteps - 1][_dscItemShapeMap[itm->icon]] : (_dscItemShapeMap[itm->icon] < 15 ? 0 : _smallItemShapesScl[scaleSteps - 1][_dscItemShapeMap[itm->icon] - 15]);
+
 				x = x + (itemPosFin[o & 7] << 1) - ((shp[2] << 3) >> 1);
 				y -= shp[1];
 
@@ -658,16 +663,25 @@ void EoBCoreEngine::drawFlyingObjects(int index) {
 			int dirOffs = (fo->direction == _currentDirection) ? 0 : ((fo->direction == (_currentDirection ^ 2)) ? 1 : -1);
 
 			if (dirOffs == -1 || _flightObjShpMap[shpIx] == -1) {
-				shp = shpIx < _numLargeItemShapes ? _largeItemShapes[shpIx] : (shpIx < 15 ? 0 : _smallItemShapes[shpIx - 15]);
+				if (_flags.gameID == GI_EOB2 || sclValue == 0)
+					shp = shpIx < _numLargeItemShapes ? _largeItemShapes[shpIx] : (shpIx < 15 ? 0 : _smallItemShapes[shpIx - 15]);
+				else
+					shp = shpIx < _numLargeItemShapes ? _largeItemShapesScl[sclValue - 1][shpIx] : (shpIx < 15 ? 0 : _smallItemShapesScl[sclValue - 1][shpIx - 15]);
 				flipped = fo->direction == ((_currentDirection + 1) & 3) ? 1 : 0;
 			} else {
-				shp = (_flightObjShpMap[shpIx] + dirOffs) < _numThrownItemShapes ? _thrownItemShapes[_flightObjShpMap[shpIx] + dirOffs] : _spellShapes[_flightObjShpMap[shpIx - _numThrownItemShapes] + dirOffs];
+				if (_flags.gameID == GI_EOB2 || sclValue == 0)
+					shp = (_flightObjShpMap[shpIx] + dirOffs) < _numThrownItemShapes ? _thrownItemShapes[_flightObjShpMap[shpIx] + dirOffs] : _spellShapes[_flightObjShpMap[shpIx - _numThrownItemShapes] + dirOffs];
+				else
+					shp = (_flightObjShpMap[shpIx] + dirOffs) < _numThrownItemShapes ? _thrownItemShapesScl[sclValue - 1][_flightObjShpMap[shpIx] + dirOffs] : 0;
 				flipped = _flightObjFlipIndex[(fo->direction << 2) + (fo->curPos & 3)];
 			}
 
 		} else {
 			noFade = true;
-			shp = (fo->objectType < _numThrownItemShapes) ? _thrownItemShapes[fo->objectType] : _spellShapes[fo->objectType - _numThrownItemShapes];
+			if (_flags.gameID == GI_EOB2 || sclValue == 0)
+				shp = (fo->objectType < _numThrownItemShapes) ? _thrownItemShapes[fo->objectType] : _spellShapes[fo->objectType - _numThrownItemShapes];
+			else
+				shp = (fo->objectType < _numThrownItemShapes) ? _thrownItemShapesScl[sclValue - 1][fo->objectType] : 0;
 			flipped = _flightObjFlipIndex[(fo->direction << 2) + (fo->curPos & 3)];
 
 			if (fo->flags & 0x40) {
@@ -678,7 +692,8 @@ void EoBCoreEngine::drawFlyingObjects(int index) {
 
 		assert(shp);
 
-		shp = _screen->scaleShape(shp, sclValue);
+		if (_flags.gameID == GI_EOB2 || sclValue == 0)
+			shp = _screen->scaleShape(shp, sclValue);
 
 		if (noFade) {
 			_screen->setShapeFadingLevel(0);

@@ -65,6 +65,10 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_redSplatShape = _greenSplatShape = _deadCharShape = _disabledCharGrid = 0;
 	_blackBoxSmallGrid = _weaponSlotGrid = _blackBoxWideGrid = _lightningColumnShape = 0;
 
+	memset(_largeItemShapesScl, 0, sizeof(_largeItemShapesScl));
+	memset(_smallItemShapesScl, 0, sizeof(_smallItemShapesScl));
+	memset(_thrownItemShapesScl, 0, sizeof(_thrownItemShapesScl));
+
 	_monsterAcHitChanceTable1 = _monsterAcHitChanceTable2 = 0;
 	
 	_monsterDustStrings = 0;
@@ -733,6 +737,14 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 		_screen->loadShapeSetBitmap("ITEML1", 5, 3);
 		for (int i = 0; i < _numLargeItemShapes; i++)
 			_largeItemShapes[i] = _screen->encodeShape((i / div) << 3, (i % div) * mul, 8, 24, false, _cgaMappingItemsL);
+
+		if (_flags.gameID == GI_EOB1) {
+			for (int c = 0; c < 3; ++c) {
+				_largeItemShapesScl[c] = new const uint8*[_numLargeItemShapes];
+				for (int i = 0; i < _numLargeItemShapes; i++)
+					_largeItemShapesScl[c][i] = _screen->encodeShape((i / div) << 3, (i % div) * mul + 24 + (c << 4), 6 - 2 * c, 16 - ((c >> 1) << 3), false, _cgaMappingItemsL);
+			}
+		}
 	}
 
 	_smallItemShapes = new const uint8*[_numSmallItemShapes];
@@ -743,11 +755,21 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 		_screen->loadShapeSetBitmap("ITEMS1", 5, 3);
 		for (int i = 0; i < _numSmallItemShapes; i++)
 			_smallItemShapes[i] = _screen->encodeShape((i / div) << 2, (i % div) * mul, 4, 24, false, _cgaMappingItemsS);
+
+		if (_flags.gameID == GI_EOB1) {
+			for (int c = 0; c < 3; ++c) {
+				_smallItemShapesScl[c] = new const uint8*[_numSmallItemShapes];
+				for (int i = 0; i < _numSmallItemShapes; i++)
+					_smallItemShapesScl[c][i] = _screen->encodeShape((i / div) << 2, (i % div) * mul + 24 + (c << 4), 3 - c, 16 - ((c >> 1) << 3), false, _cgaMappingItemsS);
+			}
+		}
 	}
 
 	_thrownItemShapes = new const uint8*[_numThrownItemShapes];
-	_spellShapes = new const uint8*[4];
+	if (_flags.gameID == GI_EOB2)
+		_spellShapes = new const uint8*[4];
 	_firebeamShapes = new const uint8*[3];
+
 	if (_flags.platform == Common::kPlatformFMTowns && _flags.gameID == GI_EOB2) {
 		for (int i = 0; i < _numThrownItemShapes; i++)
 			_thrownItemShapes[i] = _staticres->loadRawData(kEoB2ThrownShapeData00 + i, size);
@@ -761,8 +783,17 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 		_screen->loadShapeSetBitmap("THROWN", 5, 3);
 		for (int i = 0; i < _numThrownItemShapes; i++)
 			_thrownItemShapes[i] = _screen->encodeShape((i / div) << 2, (i % div) * mul, 4, 24, false, _cgaMappingThrown);
-		for (int i = 0; i < 4; i++)
-			_spellShapes[i] = _screen->encodeShape(8, i << 5, 6, 32, false, _cgaMappingThrown);
+
+		if (_flags.gameID == GI_EOB1) {
+			for (int c = 0; c < 3; ++c) {
+				_thrownItemShapesScl[c] = new const uint8*[_numThrownItemShapes];
+				for (int i = 0; i < _numThrownItemShapes; i++)
+					_thrownItemShapesScl[c][i] = _screen->encodeShape((i / div) << 2, (i % div) * mul + 24 + (c << 4), 3 - c, 16 - ((c >> 1) << 3), false, _cgaMappingThrown);
+			}
+		} else {
+			for (int i = 0; i < 4; i++)
+				_spellShapes[i] = _screen->encodeShape(8, i << 5, 6, 32, false, _cgaMappingThrown);
+		}
 
 		_firebeamShapes[0] = _screen->encodeShape(16, 0, 4, 24, false, _cgaMappingThrown);
 		_firebeamShapes[1] = _screen->encodeShape(16, 24, 4, 24, false, _cgaMappingThrown);
@@ -943,6 +974,33 @@ void EoBCoreEngine::releaseItemsAndDecorationsShapes() {
 	delete[] _teleporterShapes;
 	delete[] _compassShapes;
 	delete[] _firebeamShapes;
+
+	for (int i = 0; i < 3; ++i) {
+		if (_largeItemShapesScl[i]) {
+			for (int ii = 0; ii < _numLargeItemShapes; ++ii) {
+				if (_largeItemShapesScl[i][ii])
+					delete[] _largeItemShapesScl[i][ii];
+			}
+		}
+
+		if (_smallItemShapesScl[i]) {
+			for (int ii = 0; ii < _numSmallItemShapes; ++ii) {
+				if (_smallItemShapesScl[i][ii])
+					delete[] _smallItemShapesScl[i][ii];
+			}
+		}
+
+		if (_thrownItemShapesScl[i]) {
+			for (int ii = 0; ii < _numThrownItemShapes; ++ii) {
+				if (_thrownItemShapesScl[i][ii])
+					delete[] _thrownItemShapesScl[i][ii];
+			}
+		}
+
+		delete[] _largeItemShapesScl[i];
+		delete[] _smallItemShapesScl[i];
+		delete[] _thrownItemShapesScl[i];
+	}
 }
 
 void EoBCoreEngine::setHandItem(Item itemIndex) {

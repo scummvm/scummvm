@@ -189,7 +189,7 @@ Common::String EoBCoreEngine::initLevelData(int sub) {
 			_screen->createFadeTable16bit(src, (uint16*)_greyFadingTable, 0, 85);
 			_screen->setScreenPalette(_screen->getPalette(0));
 		} else if (_flags.platform == Common::kPlatformAmiga) {
-
+			// Amiga versions don't have shape shading
 		} else if (_configRenderMode != Common::kRenderCGA) {
 			Palette backupPal(256);
 			backupPal.copy(_screen->getPalette(0), 224, 32, 224);

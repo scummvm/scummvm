@@ -283,6 +283,9 @@ protected:
 	const uint8 **_largeItemShapes;
 	const uint8 **_smallItemShapes;
 	const uint8 **_thrownItemShapes;
+	const uint8 **_largeItemShapesScl[3];
+	const uint8 **_smallItemShapesScl[3];
+	const uint8 **_thrownItemShapesScl[3];
 	const int _numLargeItemShapes;
 	const int _numSmallItemShapes;
 	const int _numThrownItemShapes;

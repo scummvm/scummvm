@@ -1534,7 +1534,7 @@ void Screen_EoB::drawShapeSetPixel(uint8 *dst, uint8 col) {
 	if (_bytesPerPixel == 2) {
 		*(uint16*)dst = _16bitPalette[(_dsShapeFadingLevel << 8) + col];
 		return;
-	} else if ((_renderMode != Common::kRenderCGA && _renderMode != Common::kRenderEGA) || _useHiResEGADithering) {
+	} else if ((!_isAmiga && _renderMode != Common::kRenderCGA && _renderMode != Common::kRenderEGA) || _useHiResEGADithering) {
 		if (_dsBackgroundFading) {
 			if (_dsShapeFadingLevel) {
 				col = *dst;
@@ -1545,6 +1545,7 @@ void Screen_EoB::drawShapeSetPixel(uint8 *dst, uint8 col) {
 		}
 
 		if (_dsShapeFadingLevel) {
+			assert(_dsShapeFadingTable);
 			uint8 cnt = _dsShapeFadingLevel;
 			while (cnt--)
 				col = _dsShapeFadingTable[col];
