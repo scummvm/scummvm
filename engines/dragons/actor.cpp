@@ -237,47 +237,46 @@ bool Actor::pathfinding_maybe(int16 target_x, int16 target_y, int16 unkTypeMaybe
 		if (priority < 0) {
 			priority = 1;
 		}
-
-		if ((unkTypeMaybe != 0 || priority - 1 < 8) && (unkTypeMaybe != 1 || priority - 1 < 16)) {
-			var_90_1 = (unkTypeMaybe ^ 2) < 1 ? 1 : 0;
-		} else {
-			var_90_1 = 1;
-		}
 	}
-	int32 x_related_idx=1;
-	for(; x_related_idx < 320; x_related_idx++) {
+	if ((unkTypeMaybe != 0 || priority - 1 < 8) && (unkTypeMaybe != 1 || priority - 1 < 16)) {
+		var_90_1 = (unkTypeMaybe ^ 2) < 1 ? 1 : 0;
 
-		int32 v0_18 = 0;
-		for (int32 s3_1 = 0;s3_1 < 0x20; s3_1++) {
-			int32 v0_19 = s3_1 + 8;
-			if (v0_19 <  0) {
-				v0_19 = s3_1 - 8;
-			}
-			int16 y_offset = (x_related_idx * pathfinderXYOffsetTbl[v0_19 & 0x1f]) / 16;
-			int16 x_offset = (x_related_idx * pathfinderXYOffsetTbl[s3_1 & 0x1f]) / 16;
-			if (target_x + x_offset >= 0 &&
-				 target_y + y_offset >= 0) {
-				priority = getEngine()->_scene->getPriorityAtPosition(Common::Point(target_x + x_offset, target_y + y_offset));
+		int32 x_related_idx=1;
+		for(; x_related_idx < 320; x_related_idx++) {
 
-				if ((unkTypeMaybe == 0 && priority - 1 < 8) || (unkTypeMaybe == 1 && priority -1 < 0x10)) {
-					//TODO FIXME
-//					target_x += x_offset;
-//					target_y += y_offset;
-					x_related_idx = -1;
-					break;
+			int32 v0_18 = 0;
+			for (int32 s3_1 = 0;s3_1 < 0x20; s3_1++) {
+				int32 v0_19 = s3_1 + 8;
+				if (v0_19 <  0) {
+					v0_19 = s3_1 - 8;
+				}
+				int16 y_offset = (x_related_idx * pathfinderXYOffsetTbl[v0_19 & 0x1f]) / 16;
+				int16 x_offset = (x_related_idx * pathfinderXYOffsetTbl[s3_1 & 0x1f]) / 16;
+				if (target_x + x_offset >= 0 &&
+					target_y + y_offset >= 0) {
+					priority = getEngine()->_scene->getPriorityAtPosition(Common::Point(target_x + x_offset, target_y + y_offset));
+
+					if ((unkTypeMaybe == 0 && priority - 1 < 8) || (unkTypeMaybe == 1 && priority -1 < 0x10)) {
+						target_x += x_offset;
+						target_y += y_offset;
+						x_related_idx = -1;
+						break;
+					}
 				}
 			}
+			if (x_related_idx == -1) {
+				break;
+			}
 		}
-		if (x_related_idx == -1) {
-			break;
-		}
-	}
 
-	if (x_related_idx == 320) {
-		if (isFlag0x10Set) {
-			pathfindingCleanup();
+		if (x_related_idx == 320) {
+			if (isFlag0x10Set) {
+				pathfindingCleanup();
+			}
+			return false;
 		}
-		return false;
+	} else {
+		var_90_1 = 1;
 	}
 
 	if (x_pos == target_x && y_pos == target_y) {
