@@ -5286,27 +5286,24 @@ static const uint16 laurabow2PatchRememberWiredEastDoor[] = {
 // algorithm
 // It's possible to walk through the closed door in room 448 and enter the crate
 //  room before act 5 due to differences in our pathfinding algorithm from Sierra's.
-//  Ego is able to stand one pixel farther than Sierra's algorithm allowed and
-//  reach the control area behind the door which triggers the room change.
-//  We work around this by expanding the closed door's polygon points by one
-//  pixel to prevent ego from being able to reach the control area.
+//  This edge case appears to be due to one of the door's points being one pixel
+//  within the room's walkable boundary, allowing ego to walk through this edge
+//  from certain positions. We work around this by moving the door's point by
+//  two pixels so that it's outside the room's walkable boundary.
 //
 // Applies to: All Floppy and CD versions
 // Responsible method: transomDoor:createPoly
 // Fixes bug: #9952
 static const uint16 laurabow2SignatureFixArmorHallDoorPathfinding[] = {
 	SIG_MAGICDWORD,
-	0x39, 0x6c,                         // pushi 6c [ x = 108 ]
-	0x39, 0x78,                         // pushi 78 [ y = 120 ]
-	0x39, 0x58,                         // pushi 58 [ x =  88 ]
-	0x38, SIG_UINT16(0x0083),           // pushi 83 [ y = 131 ]
+	0x39, 0x50,                         // pushi 50 [ x =  80 ]
+	0x39, 0x7d,                         // pushi 7d [ y = 125 ]
 	SIG_END
 };
 
 static const uint16 laurabow2PatchFixArmorHallDoorPathfinding[] = {
-	0x39, 0x6d,                         // pushi 6d [ x = 109 ]
-	PATCH_ADDTOOFFSET(+4),
-	0x38, PATCH_UINT16(0x0084),         // pushi 84 [ y = 132 ]
+	PATCH_ADDTOOFFSET(+2),
+	0x39, 0x7f,                         // pushi 7f [ y = 127 ]
 	PATCH_END
 };
 
