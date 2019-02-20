@@ -39,8 +39,7 @@ Screen::~Screen() {
 }
 
 void Screen::initialize() {
-	if (!loadFonts())
-		error("Could not load fonts.dat");
+	loadFonts();
 
 	for (int idx = 0; idx < 2; ++idx) {
 		FontInfo *i = (idx == 0) ? &g_conf->_monoInfo : &g_conf->_propInfo;
@@ -68,17 +67,17 @@ void Screen::fillRect(const Rect &box, uint color) {
 		Graphics::Screen::fillRect(box, color);
 }
 
-bool Screen::loadFonts() {
+void Screen::loadFonts() {
 	Common::Archive *archive = nullptr;
 
 	if (!Common::File::exists(FONTS_FILENAME) || (archive = Common::makeZipArchive(FONTS_FILENAME)) == nullptr)
-		return false;
+		error("Could not locate %s", FONTS_FILENAME);
 
 	// Open the version.txt file within it to validate the version
 	Common::File f;
 	if (!f.open("version.txt", *archive)) {
 		delete archive;
-		return false;
+		error("Could not get version of fonts data. Possibly malformed");
 	}
 
 	// Validate the version
@@ -89,13 +88,12 @@ bool Screen::loadFonts() {
 	double version = atof(buffer);
 	if (version < 1.2) {
 		delete archive;
-		return false;
+		error("Out of date fonts. Expected at least %f, but got version %f", 1.2, version);
 	}
 
 	loadFonts(archive);
 
 	delete archive;
-	return true;
 }
 
 void Screen::loadFonts(Common::Archive *archive) {

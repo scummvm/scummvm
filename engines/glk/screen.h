@@ -46,7 +46,7 @@ private:
 	/**
 	 * Open the fonts archive and load all the fonts
 	 */
-	bool loadFonts();
+	void loadFonts();
 
 	/**
 	 * Load a single font
