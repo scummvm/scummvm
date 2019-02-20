@@ -44,7 +44,6 @@ void Scene::loadScene(uint32 sceneId, uint32 cameraPointId) {
 		ScriptOpCall scriptOpCall;
 		scriptOpCall._code = obd + 4;
 		scriptOpCall._codeEnd = scriptOpCall._code + READ_LE_UINT32(obd);
-		_currentSceneId = -1;
 		_scriptOpcodes->runScript(scriptOpCall);
 	}
 }

@@ -599,11 +599,11 @@ void ScriptOpcodes::opCode_UnkA_setsProperty(ScriptOpCall &scriptOpCall) {
 			if (s1 == -1) {
 				if (ini->iptIndex_maybe != -1) {
 					// TODO ipt_img_file_related_3(ini->iptIndex_maybe);
-					error("TODO ipt_img_file_related_3(ini->iptIndex_maybe);");
+					//error("TODO ipt_img_file_related_3(ini->iptIndex_maybe);");
 				}
 			} else {
 				// TODO ipt_img_file_related_2(s1);
-				error("TODO ipt_img_file_related_2(s1);");
+				//error("TODO ipt_img_file_related_2(s1);");
 			}
 		}
 	}
