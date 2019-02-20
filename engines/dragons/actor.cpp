@@ -217,7 +217,7 @@ static const int32 pathfinderXYOffsetTbl[32] =
 
 bool Actor::pathfinding_maybe(int16 target_x, int16 target_y, int16 unkTypeMaybe) {
 	uint8 pathfinderData[32];
-
+	debug(1, "pathfinding. (%X,%X) -> (%X,%X)", x_pos, y_pos, target_x, target_y);
 	//TODO implement me.
 //	 error("Implement pathfinding_maybe()");
 	int16 priority = 0;
@@ -351,6 +351,8 @@ void Actor::setFlag(uint32 flag) {
 }
 
 uint16 Actor::pathfindingUnk(int16 actor_x, int16 actor_y, int16 target_x, int16 target_y, int16 unkType) {
+	debug(1, "pathfindingUnk. (%X,%X) -> (%X,%X) %d", x_pos, y_pos, target_x, target_y, unkType);
+
 	if (unkType == 2) {
 		return 1;
 	}
