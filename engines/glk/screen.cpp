@@ -81,14 +81,19 @@ void Screen::loadFonts() {
 	}
 
 	// Validate the version
-	char buffer[4];
-	f.read(buffer, 3);
-	buffer[3] = '\0';
+	char buffer[5];
+	f.read(buffer, 4);
+	buffer[4] = '\0';
 
-	double version = atof(buffer);
-	if (version < 1.2) {
+	int major = 0, minor = 0;
+	if (buffer[1] == '.') {
+		major = buffer[0] - '0';
+		minor = atoi(&buffer[2]);
+	}
+
+	if (major < 1 || minor < 2) {
 		delete archive;
-		error("Out of date fonts. Expected at least %f, but got version %f", 1.2, version);
+		error("Out of date fonts. Expected at least %s, but got version %d.%d", "1.2", major, minor);
 	}
 
 	loadFonts(archive);
