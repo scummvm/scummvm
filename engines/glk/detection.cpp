@@ -107,16 +107,19 @@ Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) cons
 
 	// Create the correct engine
 	*engine = nullptr;
-	if ((*engine = create<Glk::Alan2::Alan2MetaEngine, Glk::Alan2::Alan2>(syst, gameDesc)) != nullptr) {}
-	else if ((*engine = create<Glk::Frotz::FrotzMetaEngine, Glk::Frotz::Frotz>(syst, gameDesc)) != nullptr) {}
-	else if ((*engine = create<Glk::Glulxe::GlulxeMetaEngine, Glk::Glulxe::Glulxe>(syst, gameDesc)) != nullptr) {}
+	if ((*engine = create<Glk::Frotz::FrotzMetaEngine, Glk::Frotz::Frotz>(syst, gameDesc)) != nullptr) {}
 	else if ((*engine = create<Glk::Scott::ScottMetaEngine, Glk::Scott::Scott>(syst, gameDesc)) != nullptr) {}
+#ifndef RELEASE_BUILD
+	else if ((*engine = create<Glk::Alan2::Alan2MetaEngine, Glk::Alan2::Alan2>(syst, gameDesc)) != nullptr) {}
+	else if ((*engine = create<Glk::Glulxe::GlulxeMetaEngine, Glk::Glulxe::Glulxe>(syst, gameDesc)) != nullptr) {}
 	else if ((td = Glk::TADS::TADSMetaEngine::findGame(gameDesc._gameId.c_str()))._description) {
 		if (td._options & Glk::TADS::OPTION_TADS3)
 			*engine = new Glk::TADS::TADS3::TADS3(syst, gameDesc);
 		else
 			*engine = new Glk::TADS::TADS2::TADS2(syst, gameDesc);
-	} else {
+	} 
+#endif	
+	else {
 		return Common::kNoGameDataFoundError;
 	}
 
@@ -147,31 +150,34 @@ Common::String GlkMetaEngine::findFileByGameId(const Common::String &gameId) con
 
 PlainGameList GlkMetaEngine::getSupportedGames() const {
 	PlainGameList list;
-	Glk::Alan2::Alan2MetaEngine::getSupportedGames(list);
 	Glk::Frotz::FrotzMetaEngine::getSupportedGames(list);
-	Glk::Glulxe::GlulxeMetaEngine::getSupportedGames(list);
 	Glk::Scott::ScottMetaEngine::getSupportedGames(list);
+#ifndef RELEASE_BUILD
+	Glk::Alan2::Alan2MetaEngine::getSupportedGames(list);
+	Glk::Glulxe::GlulxeMetaEngine::getSupportedGames(list);
 	Glk::TADS::TADSMetaEngine::getSupportedGames(list);
+#endif
 
 	return list;
 }
 
 PlainGameDescriptor GlkMetaEngine::findGame(const char *gameId) const {
-	Glk::GameDescriptor gd = Glk::Alan2::Alan2MetaEngine::findGame(gameId);
-	if (gd._description) return gd;
-
-	gd = Glk::Frotz::FrotzMetaEngine::findGame(gameId);
-	if (gd._description) return gd;
-
-	gd = Glk::Glulxe::GlulxeMetaEngine::findGame(gameId);
+	Glk::GameDescriptor gd = Glk::Frotz::FrotzMetaEngine::findGame(gameId);
 	if (gd._description) return gd;
 
 	gd = Glk::Scott::ScottMetaEngine::findGame(gameId);
 	if (gd._description) return gd;
 
-	gd = Glk::TADS::TADSMetaEngine::findGame(gameId);
+#ifndef RELEASE_BUILD
+	gd = Glk::Alan2::Alan2MetaEngine::findGame(gameId);
 	if (gd._description) return gd;
 
+	gd = Glk::Glulxe::GlulxeMetaEngine::findGame(gameId);
+	if (gd._description) return gd;
+
+	gd = Glk::TADS::TADSMetaEngine::findGame(gameId);
+	if (gd._description) return gd;
+#endif
 	return PlainGameDescriptor();
 }
 
@@ -180,22 +186,28 @@ DetectedGames GlkMetaEngine::detectGames(const Common::FSList &fslist) const {
 	detectClashes();
 
 	DetectedGames detectedGames;
-	Glk::Alan2::Alan2MetaEngine::detectGames(fslist, detectedGames);
 	Glk::Frotz::FrotzMetaEngine::detectGames(fslist, detectedGames);
-	Glk::Glulxe::GlulxeMetaEngine::detectGames(fslist, detectedGames);
 	Glk::Scott::ScottMetaEngine::detectGames(fslist, detectedGames);
+
+#ifndef RELEASE_BUILD
+	Glk::Alan2::Alan2MetaEngine::detectGames(fslist, detectedGames);
+	Glk::Glulxe::GlulxeMetaEngine::detectGames(fslist, detectedGames);
 	Glk::TADS::TADSMetaEngine::detectGames(fslist, detectedGames);
+#endif
 
 	return detectedGames;
 }
 
 void GlkMetaEngine::detectClashes() const {
 	Common::StringMap map;
-	Glk::Alan2::Alan2MetaEngine::detectClashes(map);
 	Glk::Frotz::FrotzMetaEngine::detectClashes(map);
-	Glk::Glulxe::GlulxeMetaEngine::detectClashes(map);
 	Glk::Scott::ScottMetaEngine::detectClashes(map);
+
+#ifndef RELEASE_BUILD
+	Glk::Alan2::Alan2MetaEngine::detectClashes(map);
+	Glk::Glulxe::GlulxeMetaEngine::detectClashes(map);
 	Glk::TADS::TADSMetaEngine::detectClashes(map);
+#endif
 }
 
 SaveStateList GlkMetaEngine::listSaves(const char *target) const {
