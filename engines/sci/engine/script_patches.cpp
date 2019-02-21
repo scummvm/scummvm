@@ -3997,6 +3997,29 @@ static const uint16 longbowPatchAmigaPubFix[] = {
 	PATCH_END
 };
 
+// WORKAROUND: Script needed, because of differences in our pathfinding
+// algorithm
+// When the guards kick Robin out of archery room 320 the game locks up due to
+//  pathfinding algorithm differences. Ours sends ego in the wrong direction,
+//  colliding with a guard, and preventing the script from continuing.
+//
+// Applies to: English PC Floppy, German PC Floppy, English Amiga Floppy
+// Responsible method: takeHimOut:changeState(1)
+// Fixes bug: #10896
+static const uint16 longbowSignatureArcherPathfinding[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x00c8),       // pushi 00c8 [ y = 200 ]
+	0x7c,                           // pushSelf
+	0x81, 0x00,                     // lag 00
+	0x4a, 0x0c,                     // send 0c [ ego setMotion: PolyPath (ego x?) 200 self ]
+	SIG_END
+};
+
+static const uint16 longbowPatchArcherPathfinding[] = {
+	0x38, PATCH_UINT16(0x00c4),     // pushi 00c4 [ y = 196 ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                          patch
 static const SciScriptPatcherEntry longbowSignatures[] = {
 	{  true,   150, "day 5/6 camp sunset fix",                     2, longbowSignatureCampSunsetFix,     longbowPatchCampSunsetFix },
@@ -4005,6 +4028,7 @@ static const SciScriptPatcherEntry longbowSignatures[] = {
 	{  true,   225, "arithmetic berry bush fix",                   1, longbowSignatureBerryBushFix,      longbowPatchBerryBushFix },
 	{  true,   250, "day 5/6 rescue flag fix",                     1, longbowSignatureRescueFlagFix,     longbowPatchRescueFlagFix },
 	{  true,   260, "day 5/6 town map sunset fix",                 1, longbowSignatureTownMapSunsetFix,  longbowPatchTownMapSunsetFix },
+	{  true,   320, "day 8 archer pathfinding workaround",         1, longbowSignatureArcherPathfinding, longbowPatchArcherPathfinding },
 	{  true,   350, "day 9 cobbler hut fix",                      10, longbowSignatureCobblerHut,        longbowPatchCobblerHut },
 	{  true,   530, "amiga pub fix",                               1, longbowSignatureAmigaPubFix,       longbowPatchAmigaPubFix },
 	SCI_SIGNATUREENTRY_TERMINATOR
