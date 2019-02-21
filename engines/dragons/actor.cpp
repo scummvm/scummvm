@@ -222,6 +222,8 @@ bool Actor::pathfinding_maybe(int16 target_x, int16 target_y, int16 unkTypeMaybe
 //	 error("Implement pathfinding_maybe()");
 	int16 priority = 0;
 	int16 var_90_1 = 0;
+	int16 var88 = 0;
+
 	bool isFlag0x10Set = flags & Dragons::ACTOR_FLAG_10;
 	flags &= ~Dragons::ENGINE_FLAG_10;
 
@@ -296,8 +298,27 @@ bool Actor::pathfinding_maybe(int16 target_x, int16 target_y, int16 unkTypeMaybe
 	field_76 = target_x;
 	field_78 = target_y;
 
-	pathfindingUnk(x_pos, y_pos, target_x, target_y, unkTypeMaybe);
+	if(!pathfindingUnk(x_pos, y_pos, target_x, target_y, unkTypeMaybe)) {
+		// TODO 0x8003398c
+	}
 
+	if (var88 == 0) { //0x80033af0
+		int16 i=0;
+		for (;i < 0x20;i++) {
+			Common::Point point = getEngine()->_scene->getPoint(i);
+			if (point.x != -1) {
+				//TODO 0x80033b2c
+			}
+		}
+
+		if (i == 0x20) {
+			//TODO 0x80033b80
+		}
+
+		if (var88 == 0) {
+			//TODO 0x80033e48
+		}
+	}
 	//FIXME
 	x_pos = target_x;
 	y_pos = target_y;
