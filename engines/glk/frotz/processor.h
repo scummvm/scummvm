@@ -95,6 +95,10 @@ private:
 	bool istream_replay;
 	bool message;
 	Common::FixedStack<Redirect, MAX_NESTING> _redirect;
+
+	int _quotes;
+	int _dashes;
+	int _spaces;
 protected:
 	/**
 	 * \defgroup General support methods
