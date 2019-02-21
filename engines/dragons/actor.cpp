@@ -303,11 +303,13 @@ bool Actor::pathfinding_maybe(int16 target_x, int16 target_y, int16 unkTypeMaybe
 	}
 
 	if (var88 == 0) { //0x80033af0
-		int16 i=0;
-		for (;i < 0x20;i++) {
+		int16 i;
+		for (i = 0; i < 0x20; i++) {
 			Common::Point point = getEngine()->_scene->getPoint(i);
 			if (point.x != -1) {
-				//TODO 0x80033b2c
+				if (pathfindingUnk(x_pos, x_pos, point.x, point.y, unkTypeMaybe)) {
+					break;
+				}
 			}
 		}
 
@@ -317,8 +319,32 @@ bool Actor::pathfinding_maybe(int16 target_x, int16 target_y, int16 unkTypeMaybe
 
 		if (var88 == 0) {
 			//TODO 0x80033e48
+			for (i = 0; i < 0x20; i++) {
+				Common::Point point = getEngine()->_scene->getPoint(i);
+				if (point.x != -1) {
+					if (pathfindingUnk(x_pos, x_pos, point.x, point.y, unkTypeMaybe)) {
+						break;
+					}
+				}
+			}
+
+			if (i == 0x20) {
+				//TODO 0x80033ed0
+			}
 		}
 	}
+
+	if (pathfindingUnk(x_pos, x_pos, var_c0_1_target_x, var_b8_1_target_y, unkTypeMaybe)) {
+		//0x8003437c
+		if (var_90_1 == 0 /*TODO other expressions here */) {
+			//0x80034568
+		} else {
+
+		}
+	} else {
+		//TODO 0x800341f0
+	}
+
 	//FIXME
 	x_pos = target_x;
 	y_pos = target_y;
