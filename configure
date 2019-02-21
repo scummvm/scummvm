@@ -5651,6 +5651,7 @@ vpath %.mm \$(srcdir)
 vpath %.asm \$(srcdir)
 vpath %.s \$(srcdir)
 vpath %.S \$(srcdir)
+vpath %.rc \$(srcdir)
 include \$(srcdir)/Makefile
 EOF
 
