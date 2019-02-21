@@ -59,9 +59,9 @@ void FrotzScreen::loadVersion6Fonts(Common::Archive *archive) {
 	PropFontInfo &pi = g_conf->_propInfo;
 	mi._size = pi._size = 7;
 	mi._aspect = pi._aspect = 1.0;
-	pi._quotes = false;
-	pi._dashes = false;
-	pi._spaces = false;
+	pi._quotes = 0;
+	pi._dashes = 0;
+	pi._spaces = 0;
 	pi._morePrompt = "[MORE]";
 	pi._lineSeparation = 0;
 
