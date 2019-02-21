@@ -22,6 +22,7 @@
 
 #include "glk/frotz/processor.h"
 #include "glk/frotz/frotz.h"
+#include "glk/conf.h"
 #include "glk/events.h"
 
 namespace Glk {
@@ -381,6 +382,20 @@ void Processor::z_set_font() {
 	default:           // unavailable
 		store(0);
 		break;
+	}
+
+	PropFontInfo &pi = g_conf->_propInfo;
+	if (curr_font == GRAPHICS_FONT) {
+		_quotes = pi._quotes;
+		_dashes = pi._dashes;
+		_spaces = pi._spaces;
+		pi._quotes = 0;
+		pi._dashes = 0;
+		pi._spaces = 0;
+	} else {
+		pi._quotes = _quotes;
+		pi._dashes = _dashes;
+		pi._spaces = _spaces;
 	}
 }
 
