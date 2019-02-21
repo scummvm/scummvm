@@ -167,13 +167,13 @@ void UserOptions::initialize(uint hVersion) {
 	_object_movement = getConfigBool("object_movement");
 
 	int defaultFg = hVersion == V6 ? 0 : 0xffffff;
-	int defaultBg = hVersion == V6 ? 0xffffff : 0;
+	int defaultBg = hVersion == V6 ? 0xffffff : 0x80;
 	defaultFg = getConfigInt("foreground", defaultFg, 0xffffff);
 	defaultBg = getConfigInt("background", defaultBg, 0xffffff);
 
 	Graphics::PixelFormat format = g_system->getScreenFormat();
-	_defaultForeground = format.RGBToColor(defaultFg & 0xff, (defaultFg >> 8) & 0xff, (defaultFg >> 16) & 0xff);
-	_defaultBackground = format.RGBToColor(defaultBg & 0xff, (defaultBg >> 8) & 0xff, (defaultBg >> 16) & 0xff);
+	_defaultForeground = format.RGBToColor((defaultFg >> 16) & 0xff, (defaultFg >> 8) & 0xff, defaultFg & 0xff);
+	_defaultBackground = format.RGBToColor((defaultBg >> 16) & 0xff, (defaultBg >> 8) & 0xff, defaultBg & 0xff);
 }
 
 bool UserOptions::isInfocom() const {
