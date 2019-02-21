@@ -28,6 +28,10 @@
 #include "common/str.h"
 #include "backends/plugins/elf/version.h"
 
+#define INCLUDED_FROM_BASE_PLUGINS_H
+#include "base/internal_plugins.h"
+#undef INCLUDED_FROM_BASE_PLUGINS_H
+
 
 /**
  * @page pagePlugins An overview of the ScummVM plugin system
@@ -72,19 +76,6 @@ extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
 
 
 // Plugin linking
-
-#define STATIC_PLUGIN 1
-#define DYNAMIC_PLUGIN 2
-
-#define PLUGIN_ENABLED_STATIC(ID) \
-	(ENABLE_##ID && !PLUGIN_ENABLED_DYNAMIC(ID))
-
-#ifdef DYNAMIC_MODULES
-	#define PLUGIN_ENABLED_DYNAMIC(ID) \
-		(ENABLE_##ID && (ENABLE_##ID == DYNAMIC_PLUGIN))
-#else
-	#define PLUGIN_ENABLED_DYNAMIC(ID) 0
-#endif
 
 // see comments in backends/plugins/elf/elf-provider.cpp
 #if defined(USE_ELF_LOADER) && defined(ELF_LOADER_CXA_ATEXIT)
