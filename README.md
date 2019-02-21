@@ -2898,7 +2898,7 @@ debug messages (see
       - Mac OS X Crosscompiling:
       
           - Please refer to:
-            <httpe://wiki.scummvm.org/index.php/Compiling_ScummVM/Mac_OS_X_Crosscompiling>
+            <https://wiki.scummvm.org/index.php/Compiling_ScummVM/Mac_OS_X_Crosscompiling>
 
   - Maemo:
     
