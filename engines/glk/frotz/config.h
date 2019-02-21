@@ -148,8 +148,8 @@ struct UserOptions {
 	int _undo_slots;
 	int _script_cols;
 	int _err_report_mode;
-	int _defaultForeground;
-	int _defaultBackground;
+	uint _defaultForeground;
+	uint _defaultBackground;
 	bool _color_enabled;
 
 	/**

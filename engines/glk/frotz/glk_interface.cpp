@@ -160,13 +160,12 @@ void GlkInterface::initialize() {
 
 	// Set up the foreground & background
 	_color_enabled = ((h_version >= 5) && (h_flags & COLOUR_FLAG))
-			|| (_defaultForeground != -1) || (_defaultBackground != -1);
+			|| (_defaultForeground != zcolor_Transparent) || (_defaultBackground != zcolor_Transparent);
 
 	if (_color_enabled) {
 		h_config |= CONFIG_COLOUR;
 		h_flags |= COLOUR_FLAG;		// FIXME: beyond zork handling?
 
-		assert(_defaultForeground != -1 && _defaultBackground != -1);
 		h_default_foreground = BLACK_COLOUR;
 		h_default_background = WHITE_COLOUR;
 		zcolors[h_default_foreground] = _defaultForeground;
