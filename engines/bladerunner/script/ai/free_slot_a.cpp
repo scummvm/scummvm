@@ -202,13 +202,14 @@ void AIScriptFreeSlotA::OtherAgentEnteredCombatMode(int otherActorId, int combat
 }
 
 void AIScriptFreeSlotA::ShotAtAndMissed() {
-	if (Actor_Query_In_Set(kActorFreeSlotA, kSetUG15))
-		calcHit();
+	if (Actor_Query_In_Set(kActorFreeSlotA, kSetUG15)) {
+		checkIfOnBridge();
+	}
 }
 
 bool AIScriptFreeSlotA::ShotAtAndHit() {
 	if (Actor_Query_In_Set(kActorFreeSlotA, kSetUG15)) {
-		calcHit();
+		checkIfOnBridge();
 		Actor_Set_Goal_Number(kActorFreeSlotA, kGoalFreeSlotAUG15Die);
 		return true;
 	}
@@ -539,14 +540,11 @@ void AIScriptFreeSlotA::FledCombat() {
 	// return false;
 }
 
-void AIScriptFreeSlotA::calcHit() {
+void AIScriptFreeSlotA::checkIfOnBridge() {
 	float x, y, z;
-
 	Actor_Query_XYZ(kActorFreeSlotA, &x, &y, &z);
-
-	if (x >= -30.0f
-	 && x < -150.0f
-	) {
+	// bug? this should probably check if McCoy is close enough because bridge will break long after rat died and player tries to walk through
+	if (-150.0 <= x && x < -30.0f) {
 		Game_Flag_Set(kFlagUG15BridgeWillBreak);
 	}
 }

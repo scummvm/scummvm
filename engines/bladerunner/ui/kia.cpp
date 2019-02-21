@@ -524,13 +524,12 @@ void KIA::handleKeyDown(const Common::KeyState &kbd) {
 
 void KIA::playerReset() {
 	if (_playerActorDialogueQueueSize != _playerActorDialogueQueuePosition) {
-		if (_playerActorDialogueQueueSize != _playerActorDialogueQueuePosition) {
-			int actorId = _playerActorDialogueQueue[_playerActorDialogueQueuePosition].actorId;
-			if (_vm->_actors[actorId]->isSpeeching()) {
-				_vm->_actors[actorId]->speechStop();
-			}
+		int actorId = _playerActorDialogueQueue[_playerActorDialogueQueuePosition].actorId;
+		if (_vm->_actors[actorId]->isSpeeching()) {
+			_vm->_actors[actorId]->speechStop();
 		}
 	}
+
 	_playerActorDialogueQueueSize = _playerActorDialogueQueuePosition;
 	_playerSliceModelId = -1;
 	if (_playerPhotographId != -1) {

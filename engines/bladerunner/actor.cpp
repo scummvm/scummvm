@@ -285,7 +285,6 @@ void Actor::timerUpdate(int timerId) {
 
 void Actor::movementTrackNext(bool omitAiScript) {
 	bool hasNextMovement;
-	int waypointSetId;
 	bool running;
 	int angle;
 	int delay;
@@ -302,7 +301,7 @@ void Actor::movementTrackNext(bool omitAiScript) {
 		if (angle == -1) {
 			angle = 0;
 		}
-		waypointSetId = _vm->_waypoints->getSetId(waypointId);
+		int waypointSetId = _vm->_waypoints->getSetId(waypointId);
 		_vm->_waypoints->getXYZ(waypointId, &waypointPosition.x, &waypointPosition.y, &waypointPosition.z);
 		if (_setId == waypointSetId && waypointSetId == _vm->_actors[0]->_setId) {
 			stopWalking(false);
@@ -545,8 +544,8 @@ bool Actor::loopWalkToSceneObject(const Common::String &objectName, int proximit
 	if (d < closestDistance) {
 		closestX = x0;
 		closestZ = z1;
-		closestDistance = d;
 	}
+
 	bool inWalkbox;
 	float y = _vm->_scene->_set->getAltitudeAtXZ(closestX, closestZ, &inWalkbox);
 	Vector3 destination(closestX, y, closestZ);

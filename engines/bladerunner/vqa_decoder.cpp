@@ -166,7 +166,6 @@ bool VQADecoder::loadStream(Common::SeekableReadStream *s) {
 
 	IFFChunkHeader chd;
 	uint32 type;
-	bool rc;
 
 	readIFFChunkHeader(s, &chd);
 	if (chd.id != kFORM || !chd.size)
@@ -181,7 +180,7 @@ bool VQADecoder::loadStream(Common::SeekableReadStream *s) {
 		if (!readIFFChunkHeader(_s, &chd))
 			return false;
 
-		rc = false;
+		bool rc = false;
 		switch (chd.id) {
 		case kCINF: rc = readCINF(s, chd.size); break;
 		case kCLIP: rc = readCLIP(s, chd.size); break;
@@ -238,14 +237,13 @@ void VQADecoder::readPacket(uint readFlags) {
 	IFFChunkHeader chd;
 
 	if (remain(_s) < 8) {
-		warning("VQADecoder::readPacket: remain: %d", remain(_s));
+		warning("VQADecoder::readPacket(): remain: %d", remain(_s));
 		assert(remain(_s) < 8);
 	}
 
 	do {
 		if (!readIFFChunkHeader(_s, &chd)) {
-			error("VQADecoder::readPacket: Error reading chunk header");
-			return;
+			error("VQADecoder::readPacket(): Error reading chunk header");
 		}
 
 		bool rc = false;
@@ -266,7 +264,7 @@ void VQADecoder::readPacket(uint readFlags) {
 		}
 
 		if (!rc) {
-			warning("VQADecoder::readPacket: Error handling chunk %s", strTag(chd.id));
+			warning("VQADecoder::readPacket(): Error handling chunk %s", strTag(chd.id));
 			return;
 		}
 	} while (chd.id != kVQFR);
@@ -274,7 +272,7 @@ void VQADecoder::readPacket(uint readFlags) {
 
 void VQADecoder::readFrame(int frame, uint readFlags) {
 	if (frame < 0 || frame >= numFrames()) {
-		error("VQADecoder::readFrame: frame %d out of bounds, frame count is %d", frame, numFrames());
+		error("VQADecoder::readFrame(): frame %d out of bounds, frame count is %d", frame, numFrames());
 	}
 
 	uint32 frameOffset = 2 * (_frameInfo[frame] & 0x0FFFFFFF);
@@ -364,7 +362,7 @@ bool VQADecoder::VQAVideoTrack::readVQFR(Common::SeekableReadStream *s, uint32 s
 		}
 
 		if (!rc) {
-			warning("VQFR: error handling chunk %s", strTag(chd.id));
+			error("VQADecoder::VQAVideoTrack::readVQFR(): error handling chunk %s", strTag(chd.id));
 			return false;
 		}
 	}

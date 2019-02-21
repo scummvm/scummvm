@@ -389,7 +389,7 @@ void KIASectionSave::save() {
 	Common::OutSaveFile *saveFile = BladeRunner::SaveFileManager::openForSaving(_vm->getTargetName(), slot);
 	if (saveFile == nullptr || saveFile->err()) {
 		delete saveFile;
-		error("Can not open savegame file for writing");
+		warning("KIASectionSave::save(): Can not open savegame file for writing");
 		return;
 	}
 

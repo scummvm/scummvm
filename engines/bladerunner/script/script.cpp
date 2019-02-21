@@ -96,8 +96,6 @@ bool ScriptBase::Region_Check(int left, int top, int right, int down) {
 		&& _vm->_sceneScript->_mouseY >= top
 		&& _vm->_sceneScript->_mouseX <= right
 		&& _vm->_sceneScript->_mouseY <= down;
-
-	return false;
 }
 
 bool ScriptBase::Object_Query_Click(const char *objectName1, const char *objectName2) {

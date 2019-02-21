@@ -56,7 +56,6 @@ bool GameInfo::open(const Common::String &name) {
 		return false;
 	}
 
-	uint32 unk;
 	_actorCount           = s->readUint32LE();   /* 00 */
 	_playerId             = s->readUint32LE();   /* 01 */
 	_flagCount            = s->readUint32LE();   /* 02 */
@@ -64,9 +63,9 @@ bool GameInfo::open(const Common::String &name) {
 	_globalVarCount       = s->readUint32LE();   /* 04 */
 	_sceneNamesCount      = s->readUint32LE();   /* 05 */
 	_initialSceneId       = s->readUint32LE();   /* 06 */
-	unk                   = s->readUint32LE();   /* 07 */
+	                        s->skip(4);          /* 07 */
 	_initialSetId         = s->readUint32LE();   /* 08 */
-	unk                   = s->readUint32LE();   /* 09 */
+	                        s->skip(4);          /* 09 */
 	_waypointCount        = s->readUint32LE();   /* 10 */
 	_sfxTrackCount        = s->readUint32LE();   /* 11 */
 	_musicTrackCount      = s->readUint32LE();   /* 12 */
@@ -75,8 +74,6 @@ bool GameInfo::open(const Common::String &name) {
 	_suspectCount         = s->readUint32LE();   /* 15 */
 	_coverWaypointCount   = s->readUint32LE();   /* 16 */
 	_fleeWaypointCount    = s->readUint32LE();   /* 17 */
-
-	(void)unk;
 
 	char buf[9];
 

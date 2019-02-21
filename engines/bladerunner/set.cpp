@@ -94,8 +94,6 @@ bool Set::open(const Common::String &name) {
 	assert(_walkboxCount <= 95);
 
 	for (int i = 0; i < _walkboxCount; ++i) {
-		float x, z;
-
 		s->read(buf, sizeof(buf));
 		_walkboxes[i].name = buf;
 
@@ -105,8 +103,8 @@ bool Set::open(const Common::String &name) {
 		assert(_walkboxes[i].vertexCount <= 8);
 
 		for (int j = 0; j < _walkboxes[i].vertexCount; ++j) {
-			x = s->readFloatLE();
-			z = s->readFloatLE();
+			float x = s->readFloatLE();
+			float z = s->readFloatLE();
 
 			_walkboxes[i].vertices[j] = Vector3(x, _walkboxes[i].altitude, z);
 		}

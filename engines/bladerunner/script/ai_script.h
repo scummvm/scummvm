@@ -462,7 +462,7 @@ DECLARE_SCRIPT(FreeSlotA)
 	float _fallHeightCurrent;
 	float _fallHeightTarget;
 
-	void calcHit();
+	void checkIfOnBridge();
 	void goToRandomUGxx();
 END_SCRIPT
 

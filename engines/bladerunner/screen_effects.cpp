@@ -50,7 +50,7 @@ void ScreenEffects::readVqa(Common::SeekableReadStream *stream) {
 	entryCount = MIN(entryCount, 7);
 	_entries.resize(entryCount);
 
-	for (Common::Array<Entry>::iterator entry = _entries.begin(); entry != _entries.end(); entry++) {
+	for (Common::Array<Entry>::iterator entry = _entries.begin(); entry != _entries.end(); ++entry) {
 		stream->read(&entry->palette, sizeof(Color256) * 16);
 
 		entry->x      = stream->readUint16LE();
@@ -123,7 +123,7 @@ void ScreenEffects::readVqa(Common::SeekableReadStream *stream) {
 
 void ScreenEffects::getColor(Color256 *outColor, uint16 x, uint16 y, uint16 z) const {
 	Color256 color = { 0, 0, 0 };
-	for (Common::Array<const Entry>::iterator entry = _entries.begin(); entry != _entries.end(); entry++) {
+	for (Common::Array<const Entry>::iterator entry = _entries.begin(); entry != _entries.end(); ++entry) {
 		uint16 x1 = (x / 2) - entry->x;
 		uint16 y1 = (y / 2) - entry->y;
 		if (x1 < entry->width && y1 < entry->height && z > entry->z) {

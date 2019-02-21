@@ -55,8 +55,9 @@ UICheckBox::UICheckBox(BladeRunnerEngine *vm, UIComponentCallback *valueChangedC
 
 
 void UICheckBox::draw(Graphics::Surface &surface) {
-	int shapeId;
 	if (_rect.right > _rect.left && _rect.bottom > _rect.top) {
+		int shapeId;
+
 		uint timeNow = _vm->_time->currentSystem();
 		if (timeNow - _timeLast > 67) {
 			int frameDelta = (timeNow - _timeLast) / 67u;

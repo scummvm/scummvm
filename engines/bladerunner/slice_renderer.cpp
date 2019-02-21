@@ -298,7 +298,7 @@ struct SliceLineIterator {
 	           float startScreenX, float startScreenY, float startScreenZ,
 	           float endSlice,     float startSlice,
 	           Matrix3x2 m);
-	float line();
+	float line() const;
 	void advance();
 };
 
@@ -340,7 +340,7 @@ void SliceLineIterator::setup(
 	_sliceMatrix = mScale * (mTranslate * m);
 }
 
-float SliceLineIterator::line() {
+float SliceLineIterator::line() const {
 	float var_0 = 0.0f;
 
 	if (_currentZ != 0.0f)

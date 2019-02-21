@@ -76,8 +76,8 @@ void AudioPlayer::adjustVolume(int track, int volume, int delay, bool overrideVo
 		actualVolume = actualVolume * _sfxVolume / 100;
 	}
 
-	_tracks[track].volume = volume;
-	_vm->_audioMixer->adjustVolume(_tracks[track].channel, volume, 60 * delay);
+	_tracks[track].volume = actualVolume;
+	_vm->_audioMixer->adjustVolume(_tracks[track].channel, actualVolume, 60 * delay);
 }
 
 void AudioPlayer::adjustPan(int track, int pan, int delay) {

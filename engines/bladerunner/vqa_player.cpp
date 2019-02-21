@@ -114,9 +114,8 @@ int VQAPlayer::update(bool forceDraw, bool advanceFrame, bool useTime, Graphics:
 		_decoder.readFrame(_frameNext, kVQAReadVideo);
 		_decoder.decodeVideoFrame(customSurface != nullptr ? customSurface : _surface, _frameNext);
 
-		int audioPreloadFrames = 14;
-
 		if (_hasAudio) {
+			int audioPreloadFrames = 14;
 			if (!_audioStarted) {
 				for (int i = 0; i < audioPreloadFrames; i++) {
 					if (_frameNext + i < _frameEnd) {

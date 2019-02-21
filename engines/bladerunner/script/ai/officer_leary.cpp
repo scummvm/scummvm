@@ -539,9 +539,6 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 }
 
 bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
-	int v57;
-	int a1;
-
 	switch (_animationState) {
 	case 32:
 		*animation = 603;
@@ -872,10 +869,8 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 				*animation = 591;
 			}
 			if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(*animation) / 2) {
-				a1 = *animation;
 				_animationFrame += 3;
-				v57 = _animationFrame;
-				if (v57 > Slice_Animation_Query_Number_Of_Frames(a1) - 1) {
+				if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 					_animationFrame = 0;
 					_animationState = _animationStateNext;
 					*animation = _animationNext;

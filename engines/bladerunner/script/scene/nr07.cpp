@@ -241,7 +241,7 @@ void SceneScriptNR07::clickedOnVase() {
 			int friendliness = Actor_Query_Friendliness_To_Other(kActorDektora, kActorMcCoy);
 			if (friendliness > 50) {
 				Actor_Modify_Friendliness_To_Other(kActorDektora, kActorMcCoy, 2);
-			} else if (friendliness <= 50) {
+			} else {
 				Actor_Modify_Friendliness_To_Other(kActorDektora, kActorMcCoy, -2);
 			}
 			Actor_Says(kActorMcCoy, 3600, 19);

@@ -27,37 +27,37 @@
 namespace BladeRunner {
 
 void UIContainer::draw(Graphics::Surface &surface) {
-	for (Common::Array<UIComponent*>::iterator component = _components.begin(); component != _components.end(); component++) {
+	for (Common::Array<UIComponent*>::iterator component = _components.begin(); component != _components.end(); ++component) {
 		(*component)->draw(surface);
 	}
 }
 
 void UIContainer::handleMouseMove(int mouseX, int mouseY) {
-	for (Common::Array<UIComponent*>::iterator component = _components.begin(); component != _components.end(); component++) {
+	for (Common::Array<UIComponent*>::iterator component = _components.begin(); component != _components.end(); ++component) {
 		(*component)->handleMouseMove(mouseX, mouseY);
 	}
 }
 
 void UIContainer::handleMouseDown(bool alternateButton) {
-	for (Common::Array<UIComponent*>::iterator component = _components.begin(); component != _components.end(); component++) {
+	for (Common::Array<UIComponent*>::iterator component = _components.begin(); component != _components.end(); ++component) {
 		(*component)->handleMouseDown(alternateButton);
 	}
 }
 
 void UIContainer::handleMouseUp(bool alternateButton) {
-	for (Common::Array<UIComponent*>::iterator component = _components.begin(); component != _components.end(); component++) {
+	for (Common::Array<UIComponent*>::iterator component = _components.begin(); component != _components.end(); ++component) {
 		(*component)->handleMouseUp(alternateButton);
 	}
 }
 
 void UIContainer::handleKeyUp(const Common::KeyState &kbd) {
-	for (Common::Array<UIComponent*>::iterator component = _components.begin(); component != _components.end(); component++) {
+	for (Common::Array<UIComponent*>::iterator component = _components.begin(); component != _components.end(); ++component) {
 		(*component)->handleKeyUp(kbd);
 	}
 }
 
 void UIContainer::handleKeyDown(const Common::KeyState &kbd) {
-	for (Common::Array<UIComponent*>::iterator component = _components.begin(); component != _components.end(); component++) {
+	for (Common::Array<UIComponent*>::iterator component = _components.begin(); component != _components.end(); ++component) {
 		(*component)->handleKeyDown(kbd);
 	}
 }
