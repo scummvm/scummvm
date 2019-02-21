@@ -4,6 +4,7 @@
 #include "config.h"
 #endif
 
+#include "base/internal_plugins.h" // for PLUGIN_ENABLED_STATIC
 #include "base/internal_version.h"
 
 #define FILE 256
@@ -28,58 +29,58 @@ wwwroot.zip            FILE    "dists/networking/wwwroot.zip"
 fonts.dat              FILE    "dists/engine-data/fonts.dat"
 #endif
 
-#if ENABLE_ACCESS   == STATIC_PLUGIN
+#if PLUGIN_ENABLED_STATIC(ACCESS)
 access.dat           FILE    "dists/engine-data/access.dat"
 #endif
-#if ENABLE_CRYO       == STATIC_PLUGIN
+#if PLUGIN_ENABLED_STATIC(CRYO)
 cryo.dat               FILE    "dists/engine-data/cryo.dat"
 #endif
-#if ENABLE_DRASCULA   == STATIC_PLUGIN
+#if PLUGIN_ENABLED_STATIC(DRASCULA)
 drascula.dat           FILE    "dists/engine-data/drascula.dat"
 #endif
-#if ENABLE_HUGO       == STATIC_PLUGIN
+#if PLUGIN_ENABLED_STATIC(HUGO)
 hugo.dat               FILE    "dists/engine-data/hugo.dat"
 #endif
-#if ENABLE_KYRA       == STATIC_PLUGIN
+#if PLUGIN_ENABLED_STATIC(KYRA)
 kyra.dat               FILE    "dists/engine-data/kyra.dat"
 #endif
-#if ENABLE_LURE       == STATIC_PLUGIN
+#if PLUGIN_ENABLED_STATIC(LURE)
 lure.dat               FILE    "dists/engine-data/lure.dat"
 #endif
-#if ENABLE_MORTEVIELLE == STATIC_PLUGIN
+#if PLUGIN_ENABLED_STATIC(MORTEVIELLE)
 mort.dat               FILE    "dists/engine-data/mort.dat"
 #endif
-#if ENABLE_NEVERHOOD  == STATIC_PLUGIN
+#if PLUGIN_ENABLED_STATIC(NEVERHOOD)
 neverhood.dat          FILE    "dists/engine-data/neverhood.dat"
 #endif
-#if ENABLE_QUEEN      == STATIC_PLUGIN
+#if PLUGIN_ENABLED_STATIC(QUEEN)
 queen.tbl              FILE    "dists/engine-data/queen.tbl"
 #endif
-#if ENABLE_SKY        == STATIC_PLUGIN
+#if PLUGIN_ENABLED_STATIC(SKY)
 sky.cpt                FILE    "dists/engine-data/sky.cpt"
 #endif
-#if ENABLE_SUPERNOVA  == STATIC_PLUGIN
+#if PLUGIN_ENABLED_STATIC(SUPERNOVA)
 supernova.dat          FILE    "dists/engine-data/supernova.dat"
 #endif
-#if ENABLE_TEENAGENT  == STATIC_PLUGIN
+#if PLUGIN_ENABLED_STATIC(TEENAGENT)
 teenagent.dat          FILE    "dists/engine-data/teenagent.dat"
 #endif
-#if ENABLE_TITANIC    == STATIC_PLUGIN
+#if PLUGIN_ENABLED_STATIC(TITANIC)
 titanic.dat            FILE    "dists/engine-data/titanic.dat"
 #endif
-#if ENABLE_TONY       == STATIC_PLUGIN
+#if PLUGIN_ENABLED_STATIC(TONY)
 tony.dat               FILE    "dists/engine-data/tony.dat"
 #endif
-#if ENABLE_TOON       == STATIC_PLUGIN
+#if PLUGIN_ENABLED_STATIC(TOON)
 toon.dat               FILE    "dists/engine-data/toon.dat"
 #endif
-#if ENABLE_WINTERMUTE == STATIC_PLUGIN
+#if PLUGIN_ENABLED_STATIC(WINTERMUTE)
 wintermute.zip         FILE    "dists/engine-data/wintermute.zip"
 #endif
-#if ENABLE_XEEN == STATIC_PLUGIN
+#if PLUGIN_ENABLED_STATIC(XEEN)
 xeen.ccs         FILE    "dists/engine-data/xeen.ccs"
 #endif
-#if ENABLE_AGI        == STATIC_PLUGIN
+#if PLUGIN_ENABLED_STATIC(AGI)
 pred.dic               FILE    "dists/pred.dic"
 #endif
 
