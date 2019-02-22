@@ -93,8 +93,8 @@ void EoBCoreEngine::loadLevel(int level, int sub) {
 
 	loadVcnData(gfxFile.c_str(), (_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformDOS) ? _cgaMappingLevel[_cgaLevelMappingIndex[level - 1]] : 0);
 	_screen->loadEoBBitmap("INVENT", _cgaMappingInv, 5, 3, 2);
-	//if (_flags.platform == Common::kPlatformAmiga)
-	//	_screen->setScreenPalette(_screen->getPalette(0));
+	if (_flags.platform == Common::kPlatformAmiga)
+		_screen->getPalette(0).copy(_screen->getPalette(1), 1, 5, 1);
 
 	delayUntil(end);
 	snd_stopSound();
@@ -316,7 +316,7 @@ void EoBCoreEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
 		Common::SeekableReadStream *in = _res->createReadStream(fn);
 		vcnSize = in->readUint16LE() * (_vcnSrcBitsPerPixel << 3);
 		_vcnBlocks = new uint8[vcnSize];
-		_screen->getPalette(0).loadAmigaPalette(*in, 1, 5);
+		_screen->getPalette(1).loadAmigaPalette(*in, 1, 5);
 		in->seek(22, SEEK_CUR);
 		in->read(_vcnBlocks, vcnSize);
 		delete in;

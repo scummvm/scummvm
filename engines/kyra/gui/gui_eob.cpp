@@ -61,6 +61,8 @@ void EoBCoreEngine::gui_drawPlayField(bool refresh) {
 		_screen->updateScreen();
 
 	_screen->loadEoBBitmap("INVENT", _cgaMappingInv, 5, 3, 2);
+	if (_flags.platform == Common::kPlatformAmiga)
+		_screen->getPalette(0).copy(_screen->getPalette(1), 1, 5, 1);
 }
 
 void EoBCoreEngine::gui_restorePlayField() {
