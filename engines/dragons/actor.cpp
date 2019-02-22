@@ -290,8 +290,8 @@ bool Actor::pathfinding_maybe(int16 target_x, int16 target_y, int16 unkTypeMaybe
 
 	int16 var_c8_1 = 0;
 
-	int16 var_c0_1_target_x = target_x;
-	int16 var_b8_1_target_y = target_y;
+	int16 newTargetX = target_x;
+	int16 newTargetY = target_y;
 
 	memset(pathfinderData, 0, 32);
 
@@ -334,15 +334,37 @@ bool Actor::pathfinding_maybe(int16 target_x, int16 target_y, int16 unkTypeMaybe
 		}
 	}
 
-	if (pathfindingUnk(x_pos, x_pos, var_c0_1_target_x, var_b8_1_target_y, unkTypeMaybe)) {
+	if (pathfindingUnk(x_pos, x_pos, newTargetX, newTargetY, unkTypeMaybe)) {
 		//0x8003437c
-		if (var_90_1 == 0 /*TODO other expressions here */) {
-			//0x80034568
-		} else {
+		int16 origDistance = abs(target_x - x_pos) * abs(target_x - x_pos) + abs(target_y - y_pos) * abs(target_y - y_pos);
+		int16 newTargetDiffDistance = abs(newTargetX - target_x) * abs(newTargetX - target_x) + abs(newTargetY - target_y) * abs(newTargetY - target_y);
 
+		if (var_90_1 == 0
+		|| origDistance >= 625
+		|| ((target_x != x_pos || target_y != y_pos) && origDistance >= newTargetDiffDistance)) {
+			//0x80034568
+			debug(1, "0x80034568");
+			field_74 = var_c8_1 - 1;
+
+			if (var_c8_1 == 0) {
+				target_x = newTargetX;
+				target_y = newTargetY;
+				field_76 = -1;
+				field_78 = -1;
+			} else {
+				uint16 pointId = field_34[field_74];
+				Common::Point point = getEngine()->_scene->getPoint(pointId);
+				target_x = point.x;
+				target_y = point.y;
+			}
+			//TODO continue here
+		} else {
+			//0x80034470
+			debug(1, "0x80034470");
 		}
 	} else {
 		//TODO 0x800341f0
+		debug(1, "0x800341f0");
 	}
 
 	//FIXME
