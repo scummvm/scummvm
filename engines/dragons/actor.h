@@ -99,7 +99,7 @@ public:
 	uint32 field_2c;
 	uint32 field_30;
 	uint16 field_34[32];
-	uint16 field_74;
+	int16 field_74;
 	int16 field_76;
 	int16 field_78;
 	uint16 field_7a;
