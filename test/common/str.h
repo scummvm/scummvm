@@ -335,6 +335,10 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT(Common::matchString("monkey.s01",  "monkey.s##"));
 		TS_ASSERT(!Common::matchString("monkey.s01", "monkey.###"));
 
+		TS_ASSERT(Common::matchString("monkey.s0#", "monkey.s0\\#"));
+		TS_ASSERT(!Common::matchString("monkey.s0#", "monkey.s0#"));
+		TS_ASSERT(!Common::matchString("monkey.s01", "monkey.s0\\#"));
+
 		TS_ASSERT(!Common::String("").matchString("*_"));
 		TS_ASSERT(Common::String("a").matchString("a***"));
 	}
