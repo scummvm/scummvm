@@ -139,7 +139,7 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index) {
 				_screen->printShadedText(_characterGuiStringsSt[1], 247, 158, guiSettings()->colors.menuTxtColLightRed, guiSettings()->colors.sfill, guiSettings()->colors.menuTxtColBlack);
 			else if (c->hitPointsCur < 1)
 				_screen->printShadedText(_characterGuiStringsSt[2], 226, 158, guiSettings()->colors.menuTxtColLightRed, guiSettings()->colors.sfill, guiSettings()->colors.menuTxtColBlack);
-			else if (c->effectFlags & (_flags.gameID == GI_EOB1 ? 0x80 : 0x2000))
+			else if (c->effectFlags & 0x2000)
 				_screen->printShadedText(_characterGuiStringsSt[3], 220, 158, guiSettings()->colors.menuTxtColLightRed, guiSettings()->colors.sfill, guiSettings()->colors.menuTxtColBlack);
 			else if (c->flags & 2)
 				_screen->printShadedText(_characterGuiStringsSt[4], 235, 158, guiSettings()->colors.menuTxtColLightRed, guiSettings()->colors.sfill, guiSettings()->colors.menuTxtColBlack);
