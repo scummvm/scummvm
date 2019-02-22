@@ -997,7 +997,10 @@ bool EoBCoreEngine::spellCallback_end_iceStorm(void *obj) {
 }
 
 void EoBCoreEngine::spellCallback_start_stoneSkin() {
-	_characters[_activeSpellCharId].effectsRemainder[1] = (getMageLevel(_openBookChar) >> 1) + rollDice(1, 4);
+	if (_magicStrings9[0] && _characters[_activeSpellCharId].effectsRemainder[1])
+		_txt->printMessage(_magicStrings9[0], -1, _characters[_activeSpellCharId].name);
+	else
+		_characters[_activeSpellCharId].effectsRemainder[1] = (getMageLevel(_openBookChar) >> 1) + rollDice(1, 4);
 }
 
 void EoBCoreEngine::spellCallback_start_removeCurse() {
