@@ -38,6 +38,7 @@
 //TODO: change this to debugflag
 #define BLADERUNNER_DEBUG_CONSOLE 0
 #define BLADERUNNER_ORIGINAL_SETTINGS 0
+#define BLADERUNNER_ORIGINAL_BUGS 0
 
 namespace Common {
 struct Event;

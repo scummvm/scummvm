@@ -199,11 +199,11 @@ bool SceneScriptCT01::ClickedOnActor(int actorId) {
 			Actor_Says(kActorGordo, 20, 30);
 			Game_Flag_Set(kFlagCT01GordoTalk);
 			Actor_Clue_Acquire(kActorGordo, kClueMcCoysDescription, true, kActorMcCoy);
-			#if BLADE_RUNNER_ORIGINAL_BUGS
+#if BLADERUNNER_ORIGINAL_BUGS
 			Actor_Clue_Acquire(kActorMcCoy, kClueMcCoyIsABladeRunner, true, kActorMcCoy);
-			#else
+#else
 			Actor_Clue_Acquire(kActorGordo, kClueMcCoyIsABladeRunner, true, kActorMcCoy);
-			#endif // BLADE_RUNNER_ORIGINAL_BUGS
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Actor_Modify_Friendliness_To_Other(kActorGordo, kActorMcCoy, -1);
 		} else {
 			if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoDefault) {
