@@ -120,14 +120,26 @@ bool SceneScriptDR04::ClickedOnActor(int actorId) {
 				Actor_Says(kActorMoraji, 50, kAnimationModeTalk);
 				Actor_Clue_Acquire(kActorMcCoy, kClueMorajiInterview, true, kActorMoraji);
 				Actor_Set_Goal_Number(kActorMoraji, kGoalMorajiDie);
-				Actor_Set_Goal_Number(kActorOfficerGrayford, 101);
+				Actor_Set_Goal_Number(kActorOfficerGrayford, 101); // Grayford arrives at scene of Moraji corpse
 				return true;
 			}
 		}
 
 		if (Actor_Query_Goal_Number(kActorMoraji) == kGoalMorajiDead) {
 			if (!Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorMoraji, 36, true, false)) {
+				#if BLADERUNNER_ORIGINAL_BUGS
 				Actor_Set_Goal_Number(kActorOfficerGrayford, 106);
+				#else
+				// bugfix: original code would result in this conversation repeating multiple times if:
+				// Officer Grayford is at 103 goal (asking "What do you know about this?"...
+				// and the player skips the conversation fast.
+				// So ask about a sheet (goal 106) for Moraji only when Grayford starts patrolling (104, 105 goals)
+				if (Actor_Query_Goal_Number(kActorOfficerGrayford)
+						&& ( Actor_Query_Goal_Number(kActorOfficerGrayford) == 104
+							|| Actor_Query_Goal_Number(kActorOfficerGrayford) == 105 ) ) {
+					Actor_Set_Goal_Number(kActorOfficerGrayford, 106); // This goal reverts to the previous one after finishing up
+				}
+				#endif // BLADERUNNER_ORIGINAL_BUGS#else [new code]
 				return true;
 			}
 		}
