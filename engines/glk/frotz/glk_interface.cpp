@@ -68,8 +68,8 @@ void GlkInterface::initialize() {
 		0x2D6B,					///< 12 = dark grey
 	};
 
-	zcolors[0] = -2;		// Current
-	zcolors[1] = -1;		// Default
+	zcolors[0] = zcolor_Current;		// Current
+	zcolors[1] = zcolor_Default;		// Default
 	for (int i = 2; i < zcolor_NUMCOLORS; ++i)
 		zcolors[i] = zRGB(COLOR_MAP[i - 2]);
 
