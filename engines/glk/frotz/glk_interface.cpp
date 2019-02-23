@@ -51,7 +51,7 @@ void GlkInterface::initialize() {
 	uint width, height;
 
 	/* Setup options */
-	UserOptions::initialize(h_version);
+	UserOptions::initialize(h_version, _storyId);
 
 	/* Setup colors array */
 	const int COLOR_MAP[zcolor_NUMCOLORS - 2] = {
@@ -158,23 +158,26 @@ void GlkInterface::initialize() {
 	h_interpreter_number = h_version == 6 ? INTERP_MSDOS : INTERP_AMIGA;
 	h_interpreter_version = 'F';
 
+	// Set these per spec 8.3.2.
+	h_default_foreground = WHITE_COLOUR;
+	h_default_background = BLACK_COLOUR;
+
 	// Set up the foreground & background
 	_color_enabled = ((h_version >= 5) && (h_flags & COLOUR_FLAG))
-			|| (_defaultForeground != zcolor_Transparent) || (_defaultBackground != zcolor_Transparent);
+		|| (_defaultForeground != zcolor_Transparent) || (_defaultBackground != zcolor_Transparent);
 
 	if (_color_enabled) {
 		h_config |= CONFIG_COLOUR;
 		h_flags |= COLOUR_FLAG;		// FIXME: beyond zork handling?
 
-		h_default_foreground = BLACK_COLOUR;
-		h_default_background = WHITE_COLOUR;
+		if (h_version == 6) {
+			h_default_foreground = BLACK_COLOUR;
+			h_default_background = WHITE_COLOUR;
+		}
+
 		zcolors[h_default_foreground] = _defaultForeground;
 		zcolors[h_default_background] = _defaultBackground;
 	} else {
-		// Set these per spec 8.3.2.
-		h_default_foreground = WHITE_COLOUR;
-		h_default_background = BLACK_COLOUR;
-
 		if (h_flags & COLOUR_FLAG)
 			h_flags &= ~COLOUR_FLAG;
 	}

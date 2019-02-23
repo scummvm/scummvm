@@ -150,7 +150,7 @@ UserOptions::UserOptions() : _undo_slots(MAX_UNDO_SLOTS), _sound(true), _quetzal
 	_piracy(false), _script_cols(0), _left_margin(0), _right_margin(0), _defaultBackground(0), _defaultForeground(0) {
 }
 
-void UserOptions::initialize(uint hVersion) {
+void UserOptions::initialize(uint hVersion, uint storyId) {
 	_err_report_mode = getConfigInt("err_report_mode", ERR_REPORT_ONCE, ERR_REPORT_FATAL);
 	_ignore_errors = getConfigBool("ignore_errors");
 	_expand_abbreviations = getConfigBool("expand_abbreviations");
@@ -168,6 +168,9 @@ void UserOptions::initialize(uint hVersion) {
 
 	int defaultFg = hVersion == V6 ? 0 : 0xffffff;
 	int defaultBg = hVersion == V6 ? 0xffffff : 0x80;
+	if (storyId == BEYOND_ZORK)
+		defaultBg = 0;
+
 	defaultFg = getConfigInt("foreground", defaultFg, 0xffffff);
 	defaultBg = getConfigInt("background", defaultBg, 0xffffff);
 
