@@ -4827,7 +4827,7 @@ if test "$_libunity" = yes ; then
 		LIBUNITY_CFLAGS="$LIBUNITY_CFLAGS `pkg-config --cflags 'unity > 3.8.1' 2>> "$TMPLOG"`"
 	fi
 	append_var LIBS "$LIBUNITY_LIBS"
-	append_var INCLUDES "$LIBUNITY_CFLAGS"
+	append_var CXXFLAGS "$LIBUNITY_CFLAGS"
 fi
 define_in_config_h_if_yes "$_libunity" 'USE_UNITY'
 fi
@@ -4901,7 +4901,7 @@ EOF
 
 		if test "$_freetype2" = "yes"; then
 			append_var LIBS "$FREETYPE2_LIBS"
-			append_var INCLUDES "$FREETYPE2_CFLAGS"
+			append_var CXXFLAGS "$FREETYPE2_CFLAGS"
 		fi
 	fi
 
