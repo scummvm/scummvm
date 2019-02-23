@@ -61,7 +61,7 @@ private:
 public:
 	Pics *_pics;
 	zchar statusline[256];
-	int zcolors[zcolor_NUMCOLORS];
+	uint zcolors[zcolor_NUMCOLORS];
 	int oldstyle;
 	int curstyle;
 	int cury;
