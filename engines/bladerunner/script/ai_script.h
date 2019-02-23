@@ -248,11 +248,11 @@ DECLARE_SCRIPT(EarlyQ)
 END_SCRIPT
 
 DECLARE_SCRIPT(Zuben)
-	int _var_45D258;
-	int _var_45D25C;
-	int _animationFrameTarget2;
-	int _animationFrameDelta;
-	int _animationFrameTarget1;
+	int _animationLoopCounter;
+	int _animationLoopLength;
+	int _animationLoopFrameMin;
+	int _animationLoopDirection;
+	int _animationLoopFrameMax;
 
 	void dialogue();
 END_SCRIPT

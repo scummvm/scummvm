@@ -25,21 +25,21 @@
 namespace BladeRunner {
 
 AIScriptZuben::AIScriptZuben(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_var_45D258 = 0;
-	_var_45D25C = 0;
-	_animationFrameTarget2 = 0;
-	_animationFrameDelta = 0;
-	_animationFrameTarget1 = 0;
+	_animationLoopCounter = 0;
+	_animationLoopLength = 0;
+	_animationLoopFrameMin = 0;
+	_animationLoopDirection = 0;
+	_animationLoopFrameMax = 0;
 }
 
 void AIScriptZuben::Initialize() {
 	_animationState = 0;
 	_animationFrame = 0;
-	_var_45D258 = 0;
-	_var_45D25C = 30;
-	_animationFrameTarget2 = 0;
-	_animationFrameDelta = 1;
-	_animationFrameTarget1 = 2;
+	_animationLoopCounter = 0;
+	_animationLoopLength = 30;
+	_animationLoopFrameMin = 0;
+	_animationLoopDirection = 1;
+	_animationLoopFrameMax = 2;
 	Actor_Put_In_Set(kActorZuben, kSetCT01_CT12);
 	Actor_Set_At_XYZ(kActorZuben, -165.01f, -6.5f, 413.12f, 103);
 	Actor_Set_Goal_Number(kActorZuben, kGoalZubenDefault);
@@ -637,46 +637,50 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 	case 0:
 		if (Actor_Query_Goal_Number(kActorZuben) != kGoalZubenDefault) {
 			*animation = 408;
-			if (_var_45D258 < _var_45D25C) {
-				_animationFrame += _animationFrameDelta;
-				if (_animationFrame > _animationFrameTarget1) {
-					_animationFrame = _animationFrameTarget1;
-					_animationFrameDelta = -1;
-				} else if (_animationFrame < _animationFrameTarget2) {
-					_animationFrame = _animationFrameTarget2;
-					_animationFrameDelta = 1;
+			if (_animationLoopCounter < _animationLoopLength) {
+				_animationFrame += _animationLoopDirection;
+				if (_animationFrame > _animationLoopFrameMax) {
+					_animationFrame = _animationLoopFrameMax;
+					_animationLoopDirection = -1;
+				} else if (_animationFrame < _animationLoopFrameMin) {
+					_animationFrame = _animationLoopFrameMin;
+					_animationLoopDirection = 1;
 				}
-				_var_45D258++;
+				_animationLoopCounter++;
 			} else {
-				_animationFrame += _animationFrameDelta;
-				_var_45D25C = 0;
+				_animationFrame += _animationLoopDirection;
+				_animationLoopLength = 0;
+
 				if (_animationFrame == 13 && Random_Query(0, 1)) {
-					_animationFrameDelta = -1;
-					_var_45D258 = 0;
-					_animationFrameTarget2 = 8;
-					_animationFrameTarget1 = 13;
-					_var_45D25C = Random_Query(0, 30);
+					_animationLoopDirection = -1;
+					_animationLoopCounter = 0;
+					_animationLoopFrameMin = 8;
+					_animationLoopFrameMax = 13;
+					_animationLoopLength = Random_Query(0, 30);
 				}
+
 				if (_animationFrame == 23) {
 					if (Random_Query(0, 1)) {
-						_animationFrameDelta = -1;
-						_var_45D258 = 0;
-						_animationFrameTarget2 = 20;
-						_animationFrameTarget1 = 23;
-						_var_45D25C = Random_Query(0, 30);
+						_animationLoopDirection = -1;
+						_animationLoopCounter = 0;
+						_animationLoopFrameMin = 20;
+						_animationLoopFrameMax = 23;
+						_animationLoopLength = Random_Query(0, 30);
 					}
 				}
-				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(408)) {
+
+				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 					_animationFrame = 0;
 					if (Random_Query(0, 1)) {
-						_var_45D258 = 0;
-						_animationFrameTarget2 = 0;
-						_animationFrameTarget1 = 2;
-						_var_45D25C = Random_Query(0, 45);
+						_animationLoopCounter = 0;
+						_animationLoopFrameMin = 0;
+						_animationLoopFrameMax = 2;
+						_animationLoopLength = Random_Query(0, 45);
 					}
 				}
+
 				if (_animationFrame < 0) {
-					_animationFrame = Slice_Animation_Query_Number_Of_Frames(408) - 1;
+					_animationFrame = Slice_Animation_Query_Number_Of_Frames(*animation) - 1;
 				}
 			}
 		} else {
@@ -688,38 +692,43 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 			*frame = _animationFrame;
 		}
 		break;
+
 	case 1:
 		*animation = 399;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(399)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case 2:
 		*animation = 391;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(391)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case 3:
 		*animation = 400;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(400)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case 4:
 		*animation = 392;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(392)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case 5:
 		*animation = 396;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(396)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT02PotDodgeCheck) {
 				_animationState = 8;
@@ -728,21 +737,24 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 			}
 		}
 		break;
+
 	case 6:
 		*animation = 397;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(397)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 0;
 		}
 		break;
+
 	case 7:
 		*animation = 388;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(388)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case 8:
 		*animation = 398;
 		_animationFrame++;
@@ -755,10 +767,12 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 			}
 			Sound_Play_Speech_Line(kActorZuben, sentenceId, 75, 0, 99);
 		}
+
 		if (_animationFrame == 11) {
 			Actor_Combat_AI_Hit_Attempt(kActorZuben);
 		}
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(398)) {
+
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT02PotDodgeCheck) {
 				Actor_Set_Goal_Number(kActorZuben, kGoalZubenCT02RunToDoor);
 				_animationFrame = 0;
@@ -771,10 +785,11 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 			}
 		}
 		break;
+
 	case 9:
 		*animation = 403;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(403)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			if (Actor_Query_Goal_Number(kActorZuben) == 99) {
 				_animationFrame = 0;
 				_animationState = 13;
@@ -788,10 +803,11 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 			}
 		}
 		break;
+
 	case 10:
 		*animation = 404;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(404)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			if (Actor_Query_Goal_Number(kActorZuben) == 99) {
 				_animationFrame = 0;
 				_animationState = 13;
@@ -805,10 +821,11 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 			}
 		}
 		break;
+
 	case 11:
 		*animation = 389;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(389)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			if (Actor_Query_Goal_Number(kActorZuben) == 99) {
 				_animationFrame = 0;
 				_animationState = 14;
@@ -822,10 +839,11 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 			}
 		}
 		break;
+
 	case 12:
 		*animation = 390;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(390)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			if (Actor_Query_Goal_Number(kActorZuben) == 99) {
 				_animationFrame = 0;
 				_animationState = 14;
@@ -839,6 +857,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 			}
 		}
 		break;
+
 	case 13:
 		*animation = 405;
 		_animationFrame++;
@@ -852,6 +871,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 			Actor_Set_Targetable(kActorZuben, false);
 		}
 		break;
+
 	case 14:
 		*animation = 393;
 		_animationFrame++;
@@ -862,102 +882,114 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 			Actor_Set_Goal_Number(kActorZuben, kGoalZubenDie);
 			_animationState = 16;
 			_animationFrame = Slice_Animation_Query_Number_Of_Frames(*animation) - 1;
-			Actor_Set_Targetable(kActorZuben, 0);
+			Actor_Set_Targetable(kActorZuben, false);
 		}
 		break;
+
 	case 15:
 		*animation = 405;
-		_animationFrame = Slice_Animation_Query_Number_Of_Frames(405) - 1;
+		_animationFrame = Slice_Animation_Query_Number_Of_Frames(*animation) - 1;
 		Scene_Exits_Enable();
 		break;
+
 	case 16:
 		*animation = 393;
-		_animationFrame = Slice_Animation_Query_Number_Of_Frames(393) - 1;
+		_animationFrame = Slice_Animation_Query_Number_Of_Frames(*animation) - 1;
 		break;
+
 	case 17:
 		*animation = 409;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(409)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case 18:
 		*animation = 410;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(410)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 17;
 			*animation = 409;
 		}
 		break;
+
 	case 19:
 		*animation = 411;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(411)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 17;
 			*animation = 409;
 		}
 		break;
+
 	case 20:
 		*animation = 412;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(412)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 17;
 			*animation = 409;
 		}
 		break;
+
 	case 21:
 		*animation = 413;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(413)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 17;
 			*animation = 409;
 		}
 		break;
+
 	case 22:
 		*animation = 414;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(414)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 17;
 			*animation = 409;
 		}
 		break;
+
 	case 23:
 		*animation = 415;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(415)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 17;
 			*animation = 409;
 		}
 		break;
+
 	case 24:
 		*animation = 416;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(416)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 17;
 			*animation = 409;
 		}
 		break;
+
 	case 25:
 		*animation = 417;
 		 _animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(417)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 17;
 			*animation = 409;
 		}
 		break;
+
 	case 26:
 		Actor_Set_Frame_Rate_FPS(kActorZuben, -1);
 		*animation = 419;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(419)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			// Time for McCoy to react and avoid tipping pot
 			Actor_Set_Frame_Rate_FPS(kActorZuben, -2);
 			_animationState = 0;
@@ -965,6 +997,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 			Actor_Set_Goal_Number(kActorZuben, kGoalZubenCT02PotDodgeCheck);
 		}
 		break;
+
 	case 27:  // Opening the door
 		Actor_Set_Frame_Rate_FPS(kActorZuben, -1);
 		*animation = 420;
@@ -975,26 +1008,28 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 		if (_animationFrame == 6) {
 			Sound_Play(201, 40, 0, 0, 50);
 		}
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(420)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			Actor_Set_Frame_Rate_FPS(kActorZuben, -2);
 			_animationState = 0;
 			_animationFrame = 0;
 			Actor_Set_Goal_Number(kActorZuben, kGoalZubenCT02RunToFreeSlotG);
 		}
 		break;
+
 	case 28:
 		*animation = 421;
 		_animationFrame++;
 		if (_animationFrame == 1) {
 			Sound_Play(206, 80, 0, 0, 50);
 		}
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(421)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;
 			_animationState = 5;
 			*animation = 396;
 			Actor_Set_Goal_Number(kActorZuben, kGoalZubenCT06AttackMcCoy);
 		}
 		break;
+
 	default:
 		*animation = 399;
 		break;
