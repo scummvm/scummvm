@@ -189,32 +189,39 @@ bool SceneScriptCT01::ClickedOnActor(int actorId) {
 
 	if (actorId == kActorGordo) {
 		if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoDefault) {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -338.1f, -6.5f, 419.65f, 6, true, false, 0)) {
-				Actor_Face_Actor(kActorMcCoy, kActorGordo, true);
-				if (!Game_Flag_Query(kFlagCT01GordoTalk)) {
-					Actor_Says(kActorMcCoy, 335, 18);
-					Actor_Says(kActorGordo, 20, 30);
-					Game_Flag_Set(kFlagCT01GordoTalk);
-					Actor_Clue_Acquire(kActorGordo, kClueMcCoysDescription, true, kActorMcCoy);
-					Actor_Clue_Acquire(kActorMcCoy, kClueMcCoyIsABladeRunner, true, kActorMcCoy);
-					Actor_Modify_Friendliness_To_Other(kActorGordo, kActorMcCoy, -1);
-				} else if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoDefault) {
-					Actor_Says(kActorMcCoy, 340, 13);
-					Actor_Says(kActorMcCoy, 345, 11);
-					Actor_Says(kActorGordo, 30, 30);
-					Actor_Says(kActorMcCoy, 350, 13);
-					Actor_Says(kActorGordo, 40, 30);
-					Actor_Modify_Friendliness_To_Other(kActorGordo, kActorMcCoy, -5);
-					Player_Loses_Control();
-				} else {
-					Actor_Says(kActorMcCoy, 365, 14);
-				}
-				if (Actor_Query_Is_In_Current_Set(kActorZuben)) {
-					Actor_Modify_Friendliness_To_Other(kActorZuben, kActorMcCoy, -2);
-				}
-				return true;
+			if (Loop_Actor_Walk_To_XYZ(kActorMcCoy, -338.1f, -6.5f, 419.65f, 6, true, false, 0)) {
+				return false;
 			}
 		}
+		Actor_Face_Actor(kActorMcCoy, kActorGordo, true);
+		if (!Game_Flag_Query(kFlagCT01GordoTalk)) {
+			Actor_Says(kActorMcCoy, 335, 18);
+			Actor_Says(kActorGordo, 20, 30);
+			Game_Flag_Set(kFlagCT01GordoTalk);
+			Actor_Clue_Acquire(kActorGordo, kClueMcCoysDescription, true, kActorMcCoy);
+			#if BLADE_RUNNER_ORIGINAL_BUGS
+			Actor_Clue_Acquire(kActorMcCoy, kClueMcCoyIsABladeRunner, true, kActorMcCoy);
+			#else
+			Actor_Clue_Acquire(kActorGordo, kClueMcCoyIsABladeRunner, true, kActorMcCoy);
+			#endif // BLADE_RUNNER_ORIGINAL_BUGS
+			Actor_Modify_Friendliness_To_Other(kActorGordo, kActorMcCoy, -1);
+		} else {
+			if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoDefault) {
+				Actor_Says(kActorMcCoy, 340, 13);
+				Actor_Says(kActorMcCoy, 345, 11);
+				Actor_Says(kActorGordo, 30, 30);
+				Actor_Says(kActorMcCoy, 350, 13);
+				Actor_Says(kActorGordo, 40, 30);
+				Actor_Modify_Friendliness_To_Other(kActorGordo, kActorMcCoy, -5);
+				Player_Loses_Control();
+			} else {
+				Actor_Says(kActorMcCoy, 365, 14);
+			}
+		}
+		if (Actor_Query_Is_In_Current_Set(kActorZuben)) {
+			Actor_Modify_Friendliness_To_Other(kActorZuben, kActorMcCoy, -2);
+		}
+		return true;
 	}
 
 	return false;
