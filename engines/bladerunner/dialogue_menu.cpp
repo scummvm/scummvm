@@ -142,7 +142,7 @@ bool DialogueMenu::addToListNeverRepeatOnceSelected(int answer, int priorityPoli
 		}
 	}
 
-	if (foundIndex > 0 && _neverRepeatWasSelected[foundIndex]) {
+	if (foundIndex >= 0 && _neverRepeatWasSelected[foundIndex]) {
 		return true;
 	}
 
@@ -181,14 +181,14 @@ int DialogueMenu::queryInput() {
 	int answer = -1;
 	if (_listSize == 1) {
 		_selectedItemIndex = 0;
-		answer = _items[0].answerValue;
+		answer = _items[_selectedItemIndex].answerValue;
 	} else if (_listSize == 2) {
 		if (_items[0].isDone) {
 			_selectedItemIndex = 1;
-			answer = _items[0].answerValue;
+			answer = _items[_selectedItemIndex].answerValue;
 		} else if (_items[1].isDone) {
 			_selectedItemIndex = 0;
-			answer = _items[1].answerValue;
+			answer = _items[_selectedItemIndex].answerValue;
 		}
 	}
 
