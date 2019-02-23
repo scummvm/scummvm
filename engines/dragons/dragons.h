@@ -157,6 +157,7 @@ public:
 private:
 	void gameLoop();
 	void updateHandler();
+	void updatePathfindingActors();
 	uint32 calulateTimeLeft();
 	void wait();
 	uint16 getIniFromImg();

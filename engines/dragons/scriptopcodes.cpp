@@ -432,7 +432,7 @@ void ScriptOpcodes::opUnkE(ScriptOpCall &scriptOpCall) {
 				ini->actor->flags |= Dragons::ACTOR_FLAG_800;
 				ini->actor->updateSequence(field6 & 0x7fff);
 			}
-			ini->actor->field_7c = field4 & 0x8000 ? (field4 & 0x7fff) << 0x10 : (field4 & 0x7fff) << 7;
+			ini->actor->field_7c = field4 & 0x8000 ? (field4 & 0x7fff) << 7 : field4 << 0x10;
 		}
 
 		bool isFlicker = _vm->_dragonINIResource->isFlicker(ini);
@@ -486,7 +486,7 @@ void ScriptOpcodes::opUnkF(ScriptOpCall &scriptOpCall) {
 				ini->actor->flags |= Dragons::ACTOR_FLAG_800;
 				ini->actor->updateSequence(field6 & 0x7fff);
 			}
-			ini->actor->field_7c = field4 & 0x8000 ? (field4 & 0x7fff) << 0x10 : (field4 & 0x7fff) << 7;
+			ini->actor->field_7c = field4 & 0x8000 ? (field4 & 0x7fff) << 7 : field4 << 0x10;
 		}
 		bool isFlicker = _vm->_dragonINIResource->isFlicker(ini);
 		ini->actor->pathfinding_maybe(field8, fieldA, isFlicker ? 0 : 1);
