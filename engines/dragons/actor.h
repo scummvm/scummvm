@@ -37,7 +37,7 @@ enum ActorFlags {
 	ACTOR_FLAG_2 = 2,
 	ACTOR_FLAG_4 = 4,
 	ACTOR_FLAG_8 = 8,
-	ACTOR_FLAG_10 = 0x10,
+	ACTOR_FLAG_10 = 0x10, //actor is walking a path
 	ACTOR_FLAG_20 = 0x20,
 	ACTOR_FLAG_40 = 0x40,
 	ACTOR_FLAG_80 = 0x80,
@@ -94,12 +94,12 @@ public:
 	int16 y_pos;
 	int16 target_x_pos;
 	int16 target_y_pos;
-	uint32 field_24;
-	uint32 field_28;
-	uint32 field_2c;
-	uint32 field_30;
-	uint16 field_34[32];
-	int16 field_74;
+	int32 field_24_x;
+	int32 field_28_y;
+	int32 field_2c;
+	int32 field_30;
+	uint16 walkPointsTbl[32];
+	int16 walkPointsIndex;
 	int16 field_76;
 	int16 field_78;
 	uint16 field_7a;
@@ -121,14 +121,19 @@ public:
 	void loadFrame(uint16 frameOffset);
 	void reset_maybe();
 	bool pathfinding_maybe(int16 target_x, int16 target_y, int16 isNotFlicker);
+	void walkPath();
 	void waitUntilFlag8IsSet();
 	void waitUntilFlag8And4AreSet();
 
 	void clearFlag(uint32 flag);
 	void setFlag(uint32 flag);
+	bool isFlagSet(uint32 flag);
+	bool isFlagClear(uint32 flag) { return !isFlagSet(flag); }
+
 private:
 	void pathfindingCleanup();
 	uint16 pathfindingUnk(int16 actor_x, int16 actor_y, int16 target_x, int16 target_y, int16 unkType);
+	int16 pathfindingUpdateTarget(int16 newTargetX, int16 newTargetY);
 };
 
 } // End of namespace Dragons

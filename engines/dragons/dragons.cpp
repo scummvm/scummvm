@@ -247,6 +247,8 @@ void DragonsEngine::updateHandler() {
 	if (_flags & Dragons::ENGINE_FLAG_20) {
 		engineFlag0x20UpdateFunction();
 	}
+
+	updatePathfindingActors(); //TODO find exact location for this logic.
 }
 
 const char *DragonsEngine::getSavegameFilename(int num) {
@@ -475,11 +477,19 @@ void DragonsEngine::waitForFrames(uint16 numFrames) {
 
 		_scene->draw();
 		_screen->updateScreen();
+		updateEvents();
 	}
 }
 
 void DragonsEngine::playSound(uint16 soundId) {
 	debug(3, "TODO: play sound %d", soundId);
+}
+
+void DragonsEngine::updatePathfindingActors() {
+	for (uint16 i = 0; i < 0x17; i++) {
+		Actor *actor = _actorManager->getActor(i);
+		actor->walkPath();
+	}
 }
 
 } // End of namespace Dragons

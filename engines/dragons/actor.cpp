@@ -21,6 +21,7 @@
  */
 #include <common/debug.h>
 #include "dragons.h"
+#include "dragonini.h"
 #include "actorresource.h"
 #include "actor.h"
 #include "scene.h"
@@ -344,7 +345,7 @@ bool Actor::pathfinding_maybe(int16 target_x, int16 target_y, int16 unkTypeMaybe
 		|| ((target_x != x_pos || target_y != y_pos) && origDistance >= newTargetDiffDistance)) {
 			//0x80034568
 			debug(1, "0x80034568");
-			field_74 = var_c8_1 - 1;
+			walkPointsIndex = var_c8_1 - 1;
 
 			if (var_c8_1 == 0) {
 				target_x = newTargetX;
@@ -352,12 +353,20 @@ bool Actor::pathfinding_maybe(int16 target_x, int16 target_y, int16 unkTypeMaybe
 				field_76 = -1;
 				field_78 = -1;
 			} else {
-				uint16 pointId = field_34[field_74];
+				uint16 pointId = walkPointsTbl[walkPointsIndex];
 				Common::Point point = getEngine()->_scene->getPoint(pointId);
 				target_x = point.x;
 				target_y = point.y;
 			}
-			//TODO continue here
+			int16 newSeqId = pathfindingUpdateTarget(target_x, target_y);
+			if (newSeqId != -1 && !(flags & ACTOR_FLAG_800)) {
+				_sequenceID2 = newSeqId;
+			}
+			if (_sequenceID != _sequenceID2 + 8 && !(flags & ACTOR_FLAG_800)) {
+				updateSequence(_sequenceID2 + 8);
+			}
+			setFlag(ACTOR_FLAG_10);
+			return true;
 		} else {
 			//0x80034470
 			debug(1, "0x80034470");
@@ -367,16 +376,12 @@ bool Actor::pathfinding_maybe(int16 target_x, int16 target_y, int16 unkTypeMaybe
 		debug(1, "0x800341f0");
 	}
 
-	//FIXME
-	x_pos = target_x;
-	y_pos = target_y;
-
 	return false;
 }
 
 void Actor::pathfindingCleanup() {
 	clearFlag(Dragons::ACTOR_FLAG_10);
-	field_74 = 0;
+	walkPointsIndex = 0;
 	target_x_pos = x_pos;
 	target_y_pos = y_pos;
 	field_76 = -1;
@@ -416,6 +421,10 @@ void Actor::clearFlag(uint32 flag) {
 
 void Actor::setFlag(uint32 flag) {
 	flags |= flag;
+}
+
+bool Actor::isFlagSet(uint32 flag) {
+	return (flags & flag) == flag;
 }
 
 uint16 Actor::pathfindingUnk(int16 actor_x, int16 actor_y, int16 target_x, int16 target_y, int16 unkType) {
@@ -500,5 +509,103 @@ uint16 Actor::pathfindingUnk(int16 actor_x, int16 actor_y, int16 target_x, int16
 		y += y_increment;
 	}
 }
+
+	int16 Actor::pathfindingUpdateTarget(int16 newTargetX, int16 newTargetY) {
+		field_24_x = x_pos << 0x10;
+		field_28_y = y_pos << 0x10;
+
+		int16 diffX = newTargetX - x_pos;
+		int16 diffY = newTargetY - y_pos;
+		int16 absDiffX = abs(diffX);
+		int16 absDiffY = abs(diffY) * 2;
+
+		int16 t2 = 0;
+		int16 newSequenceId = -1;
+
+		if (diffX == 0) {
+			if (diffY == 0) {
+				return -1;
+			}
+			field_2c = 0;
+			field_30 = 0x10000;
+		} else {
+			if (diffY == 0) {
+				field_2c = 0x10000;
+				field_30 = 0;
+			} else {
+				if (absDiffX >= absDiffY) {
+					field_2c = 0x10000;
+					field_30 = (absDiffY << 0x10) / absDiffX;
+				} else {
+					field_2c = (absDiffX << 0x10) / absDiffY;
+					field_30 = 0x10000;
+				}
+			}
+		}
+		field_30 = ((field_30 >> 5) * field_7c) >> 0xb;
+		field_2c = ((field_2c >> 5) * field_7c) >> 0xb;
+
+		if (diffX < 0) {
+			field_2c = -field_2c;
+			t2 = 2;
+		}
+
+		if (diffY < 0) {
+			field_30 = -field_30;
+			t2++;
+		}
+
+		switch (t2) {
+			case 0 :
+				newSequenceId = absDiffX < (absDiffY * 2) ? 2 : 0;
+				break;
+			case 1 :
+				error("TODO t2 == 1 0x80035138");
+			case 2 :
+				newSequenceId = absDiffX < (absDiffY * 2) ? 2 : 4;
+				break;
+			case 3 :
+				newSequenceId = absDiffX < (absDiffY * 2) ? 6 : 4;
+				break;
+			default :
+				break;
+		}
+
+		field_30 = field_30 / 2;
+
+		if (getEngine()->_dragonINIResource->isFlicker(_actorID)) {
+			// TODO 0x8003523c
+			error("FIXME 0x8003523c");
+		}
+
+		target_x_pos = newTargetX;
+		target_y_pos = newTargetY;
+
+		return newSequenceId;
+	}
+
+	void Actor::walkPath() {
+		if (isFlagClear(Dragons::ACTOR_FLAG_400) && isFlagSet(Dragons::ACTOR_FLAG_40) && isFlagSet(Dragons::ACTOR_FLAG_10)) {
+			field_24_x += (((field_e * field_2c) / 256) * 5) / 4;
+			field_28_y += (((field_e * field_30) / 256) * 5) / 4;
+
+			if ( (field_2c >= 0 && target_x_pos < (field_24_x >> 0x10))
+			|| (field_2c < 0 && (field_24_x >> 0x10) < target_x_pos)) {
+				field_24_x = target_x_pos << 0x10;
+			}
+
+			if ( (field_30 >= 0 && target_y_pos < (field_28_y >> 0x10))
+				 || (field_30 < 0 && (field_28_y >> 0x10) < target_y_pos)) {
+				field_28_y = target_y_pos << 0x10;
+			}
+
+			x_pos = field_24_x >> 0x10;
+			y_pos = field_28_y >> 0x10;
+
+			if (x_pos == target_x_pos && y_pos == target_y_pos) { //TODO temp logic
+				clearFlag(ACTOR_FLAG_10);
+			}
+		}
+	}
 
 } // End of namespace Dragons

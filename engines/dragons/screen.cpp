@@ -104,12 +104,12 @@ Common::Rect Screen::clipRectToScreen(int destX, int destY, const Common::Rect r
 
 	if (destX < 0) {
 		w += destX;
-		x += destX;
+		x += -destX;
 	}
 
 	if (destY < 0) {
 		h += destY;
-		y += destY;
+		y += -destY;
 	}
 
 	if (w > 0 && destX + w >= 320) {
