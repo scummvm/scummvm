@@ -108,6 +108,7 @@ void Actor::setup(int actorId) {
 		_timersLeft[i] = 0;
 		_timersLast[i] = _vm->_time->current();
 	}
+	_timersLeft[4] = _timer4RemainDefault; // This was in original code. We need to init this timer in oder to kick off periodic updates for acquireCluesByRelations
 
 	_honesty              = 50;
 	_intelligence         = 50;
@@ -1449,6 +1450,12 @@ void Actor::load(SaveFileReadStream &f) {
 
 	for (int i = 0; i < 7; ++i) {
 		_timersLeft[i] = f.readInt();
+	}
+	// Bugfix: Special initialization case for timer 4 when it's value is restored as 0
+	// This should be harmless, but will remedy any broken save-games where the timer 4 was saved as 0.
+//	//
+	if (_timersLeft[4] == 0) {
+		_timersLeft[4] = _timer4RemainDefault;
 	}
 
 	uint32 now = _vm->_time->getPauseStart();
