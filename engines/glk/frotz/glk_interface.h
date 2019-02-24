@@ -64,8 +64,6 @@ public:
 	uint zcolors[zcolor_NUMCOLORS];
 	int oldstyle;
 	int curstyle;
-	int cury;
-	int curx;
 	int fixforced;
 
 	int curr_font;

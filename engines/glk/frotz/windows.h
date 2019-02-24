@@ -140,6 +140,11 @@ public:
 	 * Set the position of a window
 	 */
 	void setPosition(const Point &newPos);
+
+	/**
+	 * Set the cursor position
+	 */
+	void setCursor(const Point &newPos);
 };
 
 /**

@@ -104,8 +104,7 @@ void Processor::screen_char(zchar c) {
 	if (gos_linepending && (gos_curwin == gos_linewin)) {
 		gos_cancel_pending_line();
 		if (gos_curwin == _wp._upper) {
-			curx = 1;
-			cury ++;
+			_wp._upper.setCursor(Point(1, _wp._upper[Y_CURSOR] + 1));
 		}
 		if (c == '\n')
 			return;
@@ -127,9 +126,10 @@ void Processor::screen_char(zchar c) {
 	if (_wp._upper && gos_curwin == _wp._upper) {
 		if (c == '\n' || c == ZC_RETURN) {
 			glk_put_char('\n');
-			curx = 1;
-			cury ++;
+			_wp._upper.setCursor(Point(1, _wp._upper[Y_CURSOR] + 1));
 		} else {
+			int curx = _wp._upper[X_CURSOR], cury = _wp._upper[Y_CURSOR];
+
 			if (cury == 1) {
 				if (curx <= (int)((sizeof statusline / sizeof(zchar)) - 1)) {
 					statusline[curx - 1] = c;
@@ -232,10 +232,14 @@ void Processor::z_buffer_screen() {
 void Processor::z_erase_line() {
 	int i;
 
+	flush_buffer();
+
 	if (_wp._upper && gos_curwin == _wp._upper) {
+		int curx = _wp[cwin][X_CURSOR], cury = _wp[cwin][Y_CURSOR];
+
 		for (i = 0; i < h_screen_cols + 1 - curx; i++)
 			glk_put_char(' ');
-		glk_window_move_cursor(gos_curwin, curx - 1, cury - 1);
+		_wp._upper.setCursor(Point(curx, cury));
 	}
 }
 
@@ -251,12 +255,26 @@ void Processor::z_erase_window() {
 }
 
 void Processor::z_get_cursor() {
-	storew((zword)(zargs[0] + 0), cury);
-	storew((zword)(zargs[0] + 2), curx);
+	zword y, x;
+
+	flush_buffer();
+
+	x = _wp[cwin][X_CURSOR];
+	y = _wp[cwin][Y_CURSOR];
+
+	if (h_version != V6) {
+		// convert to grid positions
+		y = (y - 1) / h_font_height + 1;
+		x = (x - 1) / h_font_width + 1;
+	}
+
+	storew((zword)(zargs[0] + 0), y);
+	storew((zword)(zargs[0] + 2), x);
 }
 
 void Processor::z_print_table() {
 	zword addr = zargs[0];
+	int curx = _wp[cwin][X_CURSOR], cury = _wp[cwin][Y_CURSOR];
 	zword xs = curx;
 	int i, j;
 	zbyte c;
@@ -269,7 +287,7 @@ void Processor::z_print_table() {
 
 	// Write text in width x height rectangle
 	for (i = 0; i < zargs[2]; i++, curx = xs, cury++) {
-		glk_window_move_cursor(_wp[cwin], xs - 1, cury - 1);
+		_wp[cwin].setCursor(Point(xs, cury));
 
 		for (j = 0; j < zargs[1]; j++) {
 			LOW_BYTE(addr, c);
@@ -401,37 +419,18 @@ void Processor::z_set_font() {
 
 void Processor::z_set_cursor() {
 	int x = (int16)zargs[1], y = (int16)zargs[0];
-	assert(_wp._upper);
+	int win = (h_version == V6) ? winarg2() : cwin;
+
+	if (zargc < 3)
+		zargs[2] = -3;
 
 	flush_buffer();
+	_wp[win].setCursor(Point(x, y));
 
-	if (y < 0) {
-		// Cursor on/off
-		if (y == -2)
-			g_vm->_events->showMouseCursor(true);
-		else if (y == -1)
-			g_vm->_events->showMouseCursor(false);
-		return;
-	}
-
-	if (!x || !y) {
-		winid_t win = _wp._upper;
-		Point cursorPos = win->getCursor();
-		if (!x)
-			x = cursorPos.x;
-		if (!y)
-			y = cursorPos.y;
-	}
-
-	curx = x;
-	cury = y;
-
-	if (cury > mach_status_ht) {
-		mach_status_ht = cury;
+	if (gos_curwin == _wp._upper && _wp[win][Y_CURSOR] > (uint)mach_status_ht) {
+		mach_status_ht = _wp[win][Y_CURSOR];
 		reset_status_ht();
 	}
-
-	glk_window_move_cursor(_wp._upper, curx - 1, cury - 1);
 }
 
 void Processor::z_set_text_style() {
@@ -504,8 +503,8 @@ void Processor::z_set_window() {
 }
 
 void Processor::pad_status_line(int column) {
-	int spaces;
-	spaces = (h_screen_cols + 1 - curx) - column;
+	int curx = _wp._upper[X_CURSOR];
+	int spaces = (h_screen_cols + 1 - curx) - column;
 	while (spaces-- > 0)
 		print_char(' ');
 }
@@ -541,9 +540,7 @@ void Processor::z_show_status() {
 	gos_curwin = _wp._upper;
 
 	os_set_reverse_video(true);
-
-	curx = cury = 1;
-	glk_window_move_cursor(_wp._upper, 0, 0);
+	_wp._upper.setCursor(Point(1, 1));
 
 	// If the screen width is below 55 characters then we have to use
 	// the brief status line format

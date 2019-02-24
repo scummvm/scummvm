@@ -118,6 +118,31 @@ void Window::setPosition(const Point &newPos) {
 		_win->setPosition(Point((newPos.x - 1) * g_conf->_monoInfo._cellW, (newPos.y - 1) * g_conf->_monoInfo._cellH));
 }
 
+void Window::setCursor(const Point &newPos) {
+	int x = newPos.x, y = newPos.y;
+
+	if (y < 0) {
+		// Cursor on/off
+		if (y == -2)
+			g_vm->_events->showMouseCursor(true);
+		else if (y == -1)
+			g_vm->_events->showMouseCursor(false);
+		return;
+	}
+
+	if (!x || !y) {
+		update();
+
+		if (!x)
+			x = _properties[X_CURSOR];
+		if (!y)
+			y = _properties[Y_CURSOR];
+	}
+
+	g_vm->glk_window_move_cursor(_win, x - 1, y - 1);
+}
+
+
 const uint &Window::getProperty(WindowProperty propType) {
 	if (_win)
 		update();

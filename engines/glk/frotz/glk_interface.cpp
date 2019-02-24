@@ -33,7 +33,7 @@ namespace Frotz {
 
 GlkInterface::GlkInterface(OSystem *syst, const GlkGameDescription &gameDesc) :
 		GlkAPI(syst, gameDesc),
-		_pics(nullptr), oldstyle(0), curstyle(0), cury(1), curx(1), curr_font(1), prev_font(1), temp_font(0),
+		_pics(nullptr), oldstyle(0), curstyle(0), curr_font(1), prev_font(1), temp_font(0),
 		curr_status_ht(0), mach_status_ht(0), gos_status(nullptr), gos_curwin(nullptr), gos_linepending(0),
 		gos_linebuf(nullptr), gos_linewin(nullptr), gos_channel(nullptr), cwin(0), mwin(0), mouse_x(0), mouse_y(0),
 		fixforced(0), menu_selected(0), enable_wrapping(false), enable_scripting(false), enable_scrolling(false),
@@ -380,10 +380,10 @@ void GlkInterface::gos_update_width() {
 		glk_window_get_size(_wp._upper, &width, nullptr);
 		h_screen_cols = width;
 		SET_BYTE(H_SCREEN_COLS, width);
-		if ((uint)curx > width) {
-			glk_window_move_cursor(_wp._upper, 0, cury - 1);
-			curx = 1;
-		}
+
+		uint curx = _wp._upper[X_CURSOR];
+		if (curx > width)
+			_wp._upper.setCursor(Point(1, _wp._upper[Y_CURSOR]));
 	}
 }
 
@@ -440,10 +440,10 @@ void GlkInterface::split_window(zword lines) {
 		curr_status_ht = lines;
 	}
 	mach_status_ht = lines;
-	if (cury > lines) {
-		glk_window_move_cursor(_wp._upper, 0, 0);
-		curx = cury = 1;
-	}
+
+	int curY = _wp._upper[Y_CURSOR];
+	if (curY > lines)
+		_wp._upper.setCursor(Point(1, 1));
 	gos_update_width();
 
 	if (h_version == V3)
@@ -521,9 +521,10 @@ void GlkInterface::smartstatusline() {
 	memcpy(buf + 1 + scoreofs, c, scorelen * sizeof(zchar));
 	memcpy(buf + 1, a, roomlen * sizeof(zchar));
 
-	glk_window_move_cursor(_wp._upper, 0, 0);
+	Point cursPos(_wp._upper[X_CURSOR], _wp._upper[Y_CURSOR]);
+	_wp._upper.setCursor(Point(1, 1));
 	glk_put_buffer_uni(buf, h_screen_cols);
-	glk_window_move_cursor(_wp._upper, cury - 1, curx - 1);
+	_wp._upper.setCursor(cursPos);
 }
 
 void GlkInterface::gos_cancel_pending_line() {
