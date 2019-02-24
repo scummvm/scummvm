@@ -113,7 +113,17 @@ bool DialogueMenu::addToList(int answer, bool done, int priorityPolite, int prio
 		return false;
 	}
 
+#if BLADERUNNER_ORIGINAL_BUGS
+// Original uses incorrect spelling for entry id 1020: DRAGONFLY JEWERLY
 	const Common::String &text = _textResource->getText(answer);
+#else
+// fix spelling or entry id 1020 to DRAGONFLY JEWELRY in English version
+	const char *answerTextCP = _textResource->getText(answer);
+	if (_vm->_languageCode == "E" && answer == 1020) {
+		answerTextCP = "DRAGONFLY JEWELRY";
+	}
+	const Common::String &text = answerTextCP;
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	if (text.empty() || text.size() >= 50) {
 		return false;
 	}
