@@ -49,9 +49,46 @@ class Subtitles {
 	static const int kMaxNumOfSubtitlesLines = 3;
 	static const int kMaxWidthPerLineToAutoSplitThresholdPx = 610;
 	static const int kMaxTextResourceEntries = 1 + 25; // Support in-game subs (1) and all possible VQAs (25) with spoken dialogue or translatable text!
-	static const Common::String SUBTITLES_FILENAME_PREFIXES[kMaxTextResourceEntries];
-	static const Common::String SUBTITLES_FONT_FILENAME_EXTERNAL;
 
+	// 'static const' declaration for SUBTITLES_FILENAME_PREFIXES (and init in cpp) causes warning:
+	// "declaration requires a global destructor [-Wglobal-constructors]"
+	// So, we declare it as a plain member should be fine, since we only use one instance of Subtitles anyway.
+	/*
+	* All supported TRE entries that can be in the SUBTITLES.MIX files need to:
+	* 1. Have the language code appended (after an underscore delimiter '_').
+	* 2. Have the suffix extension ".TRx"; the last letter in extension "TR*" should also be the language code
+	*
+	* Important Note: If/When adding new Text Resources here --> Update kMaxTextResourceEntries
+	* and also check if method getIdxForSubsTreName() needs updating.
+	*/
+	const char *SUBTITLES_FILENAME_PREFIXES[kMaxTextResourceEntries]{
+		"INGQUO",           // 0 // (in-game subtitles, not VQA subtitles)
+		"WSTLGO",           // 1 // all game (language) versions have the English ('E') version of WSTLGO
+		"BRLOGO",           // 2 // all game (language) versions have the English ('E') version of BRLOGO
+		"INTRO",            // 3
+		"MW_A",             // 4
+		"MW_B01",           // 5
+		"MW_B02",           // 6
+		"MW_B03",           // 7
+		"MW_B04",           // 8
+		"MW_B05",           // 9
+		"INTRGT",           // 10
+		"MW_C01",           // 11
+		"MW_C02",           // 12
+		"MW_C03",           // 13
+		"MW_D",             // 14
+		"END04A",           // 15
+		"END04B",           // 16
+		"END04C",           // 17
+		"END06",            // 18
+		"END01A",           // 19
+		"END01B",           // 20
+		"END01C",           // 21
+		"END01D",           // 22
+		"END01E",           // 23
+		"END01F",           // 24
+		"END03"             // 25
+	};
 
 	BladeRunnerEngine *_vm;
 
