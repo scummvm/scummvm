@@ -87,7 +87,7 @@ public:
 	int16 field_e;
 	uint16 sequenceTimer;
 	uint16 _sequenceID;
-	uint16 _sequenceID2;
+	int16 _sequenceID2;
 	int16 priorityLayer;
 	uint16 flags;
 	int16 x_pos;

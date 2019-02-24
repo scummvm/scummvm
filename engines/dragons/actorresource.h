@@ -39,6 +39,10 @@ struct ActorFrame {
 	uint16 field_c;
 };
 
+enum FrameFlags {
+	FRAME_FLAG_FLIP_X = 0x800
+};
+
 class ActorResourceLoader {
 private:
 	BigfileArchive *_bigFileArchive;
