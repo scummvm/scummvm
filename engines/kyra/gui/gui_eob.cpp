@@ -2536,6 +2536,7 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 	_menuCur = -1;
 	printKatakanaOptions(0);
 
+	int bytesPerChar = (_vm->_flags.lang == Common::JA_JPN) ? 2 : 1;
 	int in = 0;
 
 	do {
@@ -2586,9 +2587,9 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 		if (_keyPressed.keycode == Common::KEYCODE_BACKSPACE) {
 			if (pos > 0 && pos < len ) {
 				for (int i = pos; i < len; i++) {
-					if (dest[i * 2] & 0x80) {
-						dest[(i - 1) * 2] = dest[i * 2];
-						dest[(i - 1) * 2 + 1] = dest[i * 2 + 1];
+					if (bytesPerChar == 2 && dest[i * bytesPerChar] & 0x80) {
+						dest[(i - 1) * bytesPerChar] = dest[i * bytesPerChar];
+						dest[(i - 1) * bytesPerChar + 1] = dest[i * bytesPerChar + 1];
 					} else {
 						dest[i - 1] = dest[i];
 					}
@@ -2596,8 +2597,8 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 			}
 
 			if (pos > 0) {
-				if (dest[(len - 1) * 2] & 0x80)
-					dest[--len * 2] = 0;
+				if (bytesPerChar == 2 && dest[(len - 1) * bytesPerChar] & 0x80)
+					dest[--len * bytesPerChar] = 0;
 				else
 					dest[--len] = 0;
 				pos--;
@@ -2618,19 +2619,19 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 
 				if (pos < len) {
 					for (int i = destMaxLen - 2; i >= pos; i--) {
-						if (in == 0x89) {
-							dest[(i + 1) * 2] = dest[i * 2];
-							dest[(i + 1) * 2 + 1] = dest[i * 2 + 1];
+						if (bytesPerChar == 2 && in == 0x89) {
+							dest[(i + 1) * bytesPerChar] = dest[i * bytesPerChar];
+							dest[(i + 1) * bytesPerChar + 1] = dest[i * bytesPerChar + 1];
 						} else {
 							dest[i + 1] = dest[i];
 						}
 					}
 
-					if (in == 0x89) {
-						dest[pos * 2] = _csjis[0];
-						dest[pos++ * 2 + 1] = _csjis[1];
+					if (bytesPerChar == 2 && in == 0x89) {
+						dest[pos * bytesPerChar] = _csjis[0];
+						dest[pos++ * bytesPerChar + 1] = _csjis[1];
 						if (len == destMaxLen)
-							dest[len * 2] = 0;
+							dest[len * bytesPerChar] = 0;
 					} else {
 						dest[pos++] = in;
 						if (len == destMaxLen)
@@ -2642,10 +2643,10 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 						len--;
 					}
 
-					if (in == 0x89) {
-						dest[pos * 2] = _csjis[0];
-						dest[pos * 2 + 1] = _csjis[1];
-						dest[++pos * 2] = 0;
+					if (bytesPerChar == 2 && in == 0x89) {
+						dest[pos * bytesPerChar] = _csjis[0];
+						dest[pos * bytesPerChar + 1] = _csjis[1];
+						dest[++pos * bytesPerChar] = 0;
 					} else {
 						dest[pos++] = in;
 						dest[pos] = 0;
@@ -2665,8 +2666,8 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 		
 		if (_vm->_flags.platform == Common::kPlatformFMTowns) {
 			if (pos < len) {
-				sufx[0] = dest[pos * 2];
-				sufx[1] = dest[pos * 2 + 1];
+				sufx[0] = dest[pos * bytesPerChar];
+				sufx[1] = dest[pos * bytesPerChar + 1];
 			} else {
 				sufx[0] = 32;
 				sufx[1] = 0;

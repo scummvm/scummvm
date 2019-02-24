@@ -1755,7 +1755,7 @@ bool OldDOSFont::load(Common::SeekableReadStream &file) {
 
 	_width = _data[0x103];
 	_height = _data[0x102];
-	_numGlyphs = 255;
+	_numGlyphs = (READ_LE_UINT16(_data + 2) / 2) - 2;
 
 	_bitmapOffsets = (uint16 *)(_data + 2);
 
@@ -1766,8 +1766,10 @@ bool OldDOSFont::load(Common::SeekableReadStream &file) {
 }
 
 int OldDOSFont::getCharWidth(uint16 c) const {
-	if (c >= _numGlyphs)
-		return 0;
+	// Since these fonts have a fixed character width we always give a return value
+	// even if there is no glyph for the specified character (which can't normally
+	// happen anyway - you'd have to do something like importing a Japanese save file
+	// into the English version).
 	return _width;
 }
 
@@ -1821,6 +1823,9 @@ void OldDOSFont::drawChar(uint16 c, byte *dst, int pitch, int bpp) const {
 			break;
 		}
 	}
+
+	if (c >= _numGlyphs)
+		return;
 
 	pitch *= bpp;
 	const uint8 *src = &_data[_bitmapOffsets[c]];
