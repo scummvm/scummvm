@@ -127,7 +127,7 @@ Common::Error StarTrekEngine::run() {
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT, &format);
 	initializeEventsAndMouse();
 
-	bool shouldPlayIntro = false;
+	bool shouldPlayIntro = true;
 	bool loadedSave = false;
 
 	if (ConfMan.hasKey("save_slot")) {
