@@ -38,6 +38,12 @@ Scene::Scene(DragonsEngine *vm, Screen *screen, ScriptOpcodes *scriptOpcodes, Bi
 void Scene::loadScene(uint32 sceneId, uint32 cameraPointId) {
 	// TODO
 	loadSceneData(sceneId, cameraPointId);
+
+	if (sceneId != 4) {
+		Actor *cursor = _actorManager->getActor(0);
+		//TODO update cursor.
+
+	}
 	//TODO
 	if (!(sceneId & 0x8000)) {
 		byte *obd = _dragonRMS->getObdDataFieldC(sceneId);
@@ -46,6 +52,8 @@ void Scene::loadScene(uint32 sceneId, uint32 cameraPointId) {
 		scriptOpCall._codeEnd = scriptOpCall._code + READ_LE_UINT32(obd);
 		_scriptOpcodes->runScript(scriptOpCall);
 	}
+	DragonINI *ini = _dragonINIResource->getRecord(0xc4);
+	ini->field_12 = 0;
 }
 
 void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
@@ -204,7 +212,7 @@ void Scene::draw() {
 					debug(4, "Actor %d %s (%d, %d) w:%d h:%d Priority: %d", actor->_actorID, actor->_actorResource->getFilename(), x,
 						  y,
 						  s->w, s->h, actor->priorityLayer);
-					_screen->copyRectToSurface(*s, x, y, Common::Rect(s->w, s->h));
+					_screen->copyRectToSurface(*s, x, y, Common::Rect(s->w, s->h), (bool)(actor->frame->flags & Dragons::FRAME_FLAG_FLIP_X));
 				} else {
 					debug(4, "Actor (not displayed) %d %s (%d, %d) Priority: %d", actor->_actorID,
 						  actor->_actorResource->getFilename(),

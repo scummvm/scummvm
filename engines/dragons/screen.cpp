@@ -44,10 +44,10 @@ Screen::~Screen() {
 }
 
 void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY) {
-	copyRectToSurface(srcSurface.getBasePtr(0, 0), srcSurface.pitch, destX, destY, srcSurface.w, srcSurface.h);
+	copyRectToSurface(srcSurface.getBasePtr(0, 0), srcSurface.pitch, destX, destY, srcSurface.w, srcSurface.h, false);
 }
 
-void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect srcRect) {
+void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect srcRect, bool flipX) {
 	Common::Rect clipRect = clipRectToScreen( destX,  destY, srcRect);
 	if (clipRect.width() == 0 || clipRect.height() == 0) {
 		return;
@@ -60,10 +60,10 @@ void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, i
 		destY = 0;
 	}
 
-	copyRectToSurface(srcSurface.getBasePtr(clipRect.left, clipRect.top), srcSurface.pitch, destX, destY, clipRect.width(), clipRect.height());
+	copyRectToSurface(srcSurface.getBasePtr(clipRect.left, clipRect.top), srcSurface.pitch, destX, destY, clipRect.width(), clipRect.height(), flipX);
 }
 
-void Screen::copyRectToSurface(const void *buffer, int srcPitch, int destX, int destY, int width, int height) {
+void Screen::copyRectToSurface(const void *buffer, int srcPitch, int destX, int destY, int width, int height, bool flipX) {
 	assert(buffer);
 
 	assert(destX >= 0 && destX < _backSurface->w);
@@ -76,10 +76,11 @@ void Screen::copyRectToSurface(const void *buffer, int srcPitch, int destX, int 
 	byte *dst = (byte *)_backSurface->getBasePtr(destX, destY);
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {
-			if ((src[j * 2 + 1] & 0x80) == 0) {
+			uint32 srcIdx = flipX ? width - j - 1 : j;
+			if ((src[srcIdx * 2 + 1] & 0x80) == 0) {
 				// only copy opaque pixels
-				dst[j * 2] = src[j * 2];
-				dst[j * 2 + 1] = src[j * 2 + 1];
+				dst[j * 2] = src[srcIdx * 2];
+				dst[j * 2 + 1] = src[srcIdx * 2 + 1];
 			}
 		}
 		src += srcPitch;

@@ -602,8 +602,37 @@ uint16 Actor::pathfindingUnk(int16 actor_x, int16 actor_y, int16 target_x, int16
 			x_pos = field_24_x >> 0x10;
 			y_pos = field_28_y >> 0x10;
 
-			if (x_pos == target_x_pos && y_pos == target_y_pos) { //TODO temp logic
-				clearFlag(ACTOR_FLAG_10);
+			if (x_pos == target_x_pos && y_pos == target_y_pos) {
+				if (walkPointsIndex <= 0) {
+					if (field_76 < 0) {
+						clearFlag(ACTOR_FLAG_10);
+						if (isFlagClear(ACTOR_FLAG_200)) {
+							clearFlag(ACTOR_FLAG_800);
+						}
+						setFlag(ACTOR_FLAG_4);
+						clearFlag(ACTOR_FLAG_1);
+						return;
+					} else {
+						target_x_pos = field_76;
+						target_y_pos = field_78;
+						field_76 = -1;
+						field_78 = -1;
+					}
+				} else {
+					walkPointsIndex--;
+					Common::Point point = getEngine()->_scene->getPoint(walkPointsTbl[walkPointsIndex]);
+					target_x_pos = point.x;
+					target_y_pos = point.y;
+				}
+				// 0x8001bcc8
+				if(pathfindingUpdateTarget(target_x_pos, target_y_pos) == -1) {
+					_sequenceID2 = -1;
+				} else {
+					if (_sequenceID != _sequenceID2 + 8 && !(flags & ACTOR_FLAG_800)) {
+						updateSequence(_sequenceID2 + 8);
+					}
+				}
+				setFlag(ACTOR_FLAG_10);
 			}
 		}
 	}

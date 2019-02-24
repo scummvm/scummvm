@@ -201,6 +201,8 @@ void DragonsEngine::gameLoop() {
 }
 
 void DragonsEngine::updateHandler() {
+	//TODO logic here
+
 	updateActorSequences();
 
 	//TODO logic here
@@ -244,11 +246,24 @@ void DragonsEngine::updateHandler() {
 		}
 	}
 
-	if (_flags & Dragons::ENGINE_FLAG_20) {
+	if (isFlagSet(ENGINE_FLAG_4)) {
+		updatePathfindingActors();
+	}
+
+	// TODO 0x8001bed0
+
+	// 0x8001c294
+	if (!(_unkFlags1 & ENGINE_UNK1_FLAG_8)) {
+		//TODO ReadPad();
+	}
+
+	if (isFlagSet(ENGINE_FLAG_20)) {
 		engineFlag0x20UpdateFunction();
 	}
 
-	updatePathfindingActors(); //TODO find exact location for this logic.
+	//TODO vsync update function
+
+	// TODO data_8006a3a0 logic. @ 0x8001c2f4
 }
 
 const char *DragonsEngine::getSavegameFilename(int num) {
