@@ -132,11 +132,13 @@ int VQAPlayer::update(bool forceDraw, bool advanceFrame, bool useTime, Graphics:
 			}
 		}
 		if (useTime) {
-			if (_frameNextTime == 0) {
+			_frameNextTime += 60000 / 15;
+
+			// In some cases (as overlay paused by kia or game window is moved) new time might be still in the past.
+			// This can cause rapid playback of video where every refresh renders different frame of the video.
+			// Can be avoided by setting next time to the future.
+			if (_frameNextTime < now) {
 				_frameNextTime = now + 60000 / 15;
-			}
-			else {
-				_frameNextTime += 60000 / 15;
 			}
 		}
 		_frameNext++;
