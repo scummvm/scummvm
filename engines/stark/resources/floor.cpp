@@ -79,7 +79,9 @@ int32 Floor::findFaceHitByRay(const Math::Ray &ray, Math::Vector3d &intersection
 int32 Floor::findFaceClosestToRay(const Math::Ray &ray, Math::Vector3d &center) const {
 	float minDistance = FLT_MAX;
 	int32 minFace = -1;
-	for (uint32 i = 0; i < _faces.size(); i++) {
+
+	// For some reason, face 0 is not being considered
+	for (uint32 i = 1; i < _faces.size(); i++) {
 		if (_faces[i]->isEnabled() && _faces[i]->hasVertices()) {
 			float distance = _faces[i]->distanceToRay(ray);
 			if (distance < minDistance) {
