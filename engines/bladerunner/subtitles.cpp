@@ -63,6 +63,33 @@ namespace BladeRunner {
 Subtitles::Subtitles(BladeRunnerEngine *vm) {
 	_vm = vm;
 	_subtitlesSystemInactive = false;
+	//
+	SUBTITLES_FILENAME_PREFIXES[0] =	"INGQUO";           // 0 // (in-game subtitles, not VQA subtitles)
+	SUBTITLES_FILENAME_PREFIXES[1] =	"WSTLGO";           // 1 // all game (language) versions have the English ('E') version of WSTLGO
+	SUBTITLES_FILENAME_PREFIXES[2] =	"BRLOGO";           // 2 // all game (language) versions have the English ('E') version of BRLOGO
+	SUBTITLES_FILENAME_PREFIXES[3] =	"INTRO";            // 3
+	SUBTITLES_FILENAME_PREFIXES[4] =	"MW_A";             // 4
+	SUBTITLES_FILENAME_PREFIXES[5] =	"MW_B01";           // 5
+	SUBTITLES_FILENAME_PREFIXES[6] =	"MW_B02";           // 6
+	SUBTITLES_FILENAME_PREFIXES[7] =	"MW_B03";           // 7
+	SUBTITLES_FILENAME_PREFIXES[8] =	"MW_B04";           // 8
+	SUBTITLES_FILENAME_PREFIXES[9] =	"MW_B05";           // 9
+	SUBTITLES_FILENAME_PREFIXES[10] =	"INTRGT";           // 10
+	SUBTITLES_FILENAME_PREFIXES[11] =	"MW_C01";           // 11
+	SUBTITLES_FILENAME_PREFIXES[12] =	"MW_C02";           // 12
+	SUBTITLES_FILENAME_PREFIXES[13] =	"MW_C03";           // 13
+	SUBTITLES_FILENAME_PREFIXES[14] =	"MW_D";             // 14
+	SUBTITLES_FILENAME_PREFIXES[15] =	"END04A";           // 15
+	SUBTITLES_FILENAME_PREFIXES[16] =	"END04B";           // 16
+	SUBTITLES_FILENAME_PREFIXES[17] =	"END04C";           // 17
+	SUBTITLES_FILENAME_PREFIXES[18] =	"END06";            // 18
+	SUBTITLES_FILENAME_PREFIXES[19] =	"END01A";           // 19
+	SUBTITLES_FILENAME_PREFIXES[20] =	"END01B";           // 20
+	SUBTITLES_FILENAME_PREFIXES[21] =	"END01C";           // 21
+	SUBTITLES_FILENAME_PREFIXES[22] =	"END01D";           // 22
+	SUBTITLES_FILENAME_PREFIXES[23] =	"END01E";           // 23
+	SUBTITLES_FILENAME_PREFIXES[24] =	"END01F";           // 24
+	SUBTITLES_FILENAME_PREFIXES[25] =	"END03";            // 25
 	// Initializing and reseting Subtitles
 	for (int i = 0; i < kMaxTextResourceEntries; i++) {
 		_vqaSubsTextResourceEntries[i] = nullptr;

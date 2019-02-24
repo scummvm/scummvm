@@ -61,34 +61,7 @@ class Subtitles {
 	* Important Note: If/When adding new Text Resources here --> Update kMaxTextResourceEntries
 	* and also check if method getIdxForSubsTreName() needs updating.
 	*/
-	const char *SUBTITLES_FILENAME_PREFIXES[kMaxTextResourceEntries]{
-		"INGQUO",           // 0 // (in-game subtitles, not VQA subtitles)
-		"WSTLGO",           // 1 // all game (language) versions have the English ('E') version of WSTLGO
-		"BRLOGO",           // 2 // all game (language) versions have the English ('E') version of BRLOGO
-		"INTRO",            // 3
-		"MW_A",             // 4
-		"MW_B01",           // 5
-		"MW_B02",           // 6
-		"MW_B03",           // 7
-		"MW_B04",           // 8
-		"MW_B05",           // 9
-		"INTRGT",           // 10
-		"MW_C01",           // 11
-		"MW_C02",           // 12
-		"MW_C03",           // 13
-		"MW_D",             // 14
-		"END04A",           // 15
-		"END04B",           // 16
-		"END04C",           // 17
-		"END06",            // 18
-		"END01A",           // 19
-		"END01B",           // 20
-		"END01C",           // 21
-		"END01D",           // 22
-		"END01E",           // 23
-		"END01F",           // 24
-		"END03"             // 25
-	};
+	const char *SUBTITLES_FILENAME_PREFIXES[kMaxTextResourceEntries];
 
 	BladeRunnerEngine *_vm;
 
