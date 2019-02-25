@@ -644,21 +644,29 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 	if (!fs)
 		return desc;
 
-	Common::SeekableSubReadStreamEndian in(fs, 0, fs->size(), _flags.platform == Common::kPlatformAmiga, DisposeAfterUse::YES);
-
+	Common::SeekableSubReadStream test(fs, 0, fs->size(), DisposeAfterUse::NO);
+	
 	// detect source platform
 	Common::Platform sourcePlatform = Common::kPlatformDOS;
-	in.seek(32);
-	uint16 testSJIS = in.readByte();
-	in.seek(53);
-	int8 testStr = in.readSByte();
-	in.seek(66);
-	int8 testChr = in.readSByte();
-	in.seek(0);
+	test.seek(32);
+	uint16 testSJIS = test.readByte();
+	test.seek(53);
+	int8 testStr = test.readSByte();
+	test.seek(66);
+	int8 testChr = test.readSByte();
+	test.seek(_flags.gameID == GI_EOB1 ? 48 : 50);
+	uint32 exp = test.readUint32LE();
+	test.seek(0);
+		
 	if (testStr >= 0 && testStr <= 25 && testChr >= 0 && testChr <= 25) {
 		if (testSJIS >= 0xE0 || (testSJIS > 0x80 && testSJIS < 0xA0))
 			sourcePlatform = Common::kPlatformFMTowns;
 	}
+	
+	if (sourcePlatform == Common::kPlatformDOS && exp & 0xFF000000)
+		sourcePlatform = Common::kPlatformAmiga;
+
+	Common::SeekableSubReadStreamEndian in(fs, 0, fs->size(), sourcePlatform == Common::kPlatformAmiga, DisposeAfterUse::YES);
 
 	if (_flags.gameID == GI_EOB1) {
 		// Nothing to read here for EOB 1. Original EOB 1 has
@@ -693,6 +701,12 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 		c->charismaMax = in.readSByte();
 		c->hitPointsCur = (_flags.gameID == GI_EOB1) ? in.readSByte() : in.readSint16();
 		c->hitPointsMax = (_flags.gameID == GI_EOB1) ? in.readSByte() : in.readSint16();
+		if (_flags.gameID == GI_EOB1) {
+			if (c->hitPointsCur < -10)
+				c->hitPointsCur = c->hitPointsCur & 0xFF;
+			if (c->hitPointsMax < -10)
+				c->hitPointsMax = c->hitPointsMax & 0xFF;
+		}
 		c->armorClass = in.readSByte();
 		c->disabledSlots = in.readByte();
 		c->raceSex = in.readByte();
@@ -701,22 +715,36 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 		c->portrait = in.readSByte();
 		c->food = in.readByte();
 		in.read(c->level, 3);
+		if (sourcePlatform == Common::kPlatformAmiga)
+			in.skip(1);
 		for (int ii = 0; ii < 3; ii++)
 			c->experience[ii] = in.readUint32();
 		in.skip(4);
 		delete[] c->faceShape;
 		c->faceShape = 0;
-		in.read(c->mageSpells, (_flags.gameID == GI_EOB1) ? 30 : 80);
-		in.read(c->clericSpells, (_flags.gameID == GI_EOB1) ? 30 : 80);
+
+		if (_flags.gameID == GI_EOB1) {
+			for (int ii = 0; ii < 5; ++ii)
+				in.read(c->mageSpells + ii * 10, 6);
+			for (int ii = 0; ii < 5; ++ii)
+				in.read(c->clericSpells + ii * 10, 6);
+		} else {
+			in.read(c->mageSpells, 80);
+			in.read(c->clericSpells, 80);
+		}
+
 		c->mageSpellsAvailableFlags = in.readUint32();
+
 		for (int ii = 0; ii < 27; ii++)
 			c->inventory[ii] = in.readSint16();
+
 		uint32 ct = _system->getMillis();
 		for (int ii = 0; ii < 10; ii++) {
 			c->timers[ii] = in.readUint32() * _tickLength;
 			if (c->timers[ii])
 				c->timers[ii] += ct;
 		}
+
 		in.read(c->events, 10);
 		in.read(c->effectsRemainder, 4);
 		c->effectFlags = in.readUint32();
@@ -751,6 +779,8 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 	
 	_inf->loadState(in, true);
 
+	loadItemDefs();
+
 	int numItems = (_flags.gameID == GI_EOB1) ? 500 : 600;
 	for (int i = 0; i < numItems; i++) {
 		EoBItem *t = &_items[i];
@@ -772,7 +802,7 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 	uint32 nextPart = in.pos();
 	uint8 *cmpData = new uint8[1200];
 
-	for (int i = 0; i < numParts; i++) {
+	for (int i = 0; i < numParts + 1; i++) {
 		in.seek(nextPart);
 		nextPart += partSize;
 
@@ -878,10 +908,6 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 	restoreBlockTempData(_currentLevel);
 
 	in.skip(3);
-
-	delete[] _itemTypes;
-	_itemTypes = new EoBItemType[65];
-	memset(_itemTypes, 0, sizeof(EoBItemType) * 65);
 
 	for (int i = 51; i < 57; i++) {
 		EoBItemType *t = &_itemTypes[i];
@@ -1062,13 +1088,18 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 		out->writeSByte(c->constitutionMax);
 		out->writeSByte(c->charismaCur);
 		out->writeSByte(c->charismaMax);
+
 		if (_flags.gameID == GI_EOB1) {
 			out->writeSByte(c->hitPointsCur);
 			out->writeSByte(c->hitPointsMax);
+		} else if (_flags.platform == Common::kPlatformAmiga) {
+			out->writeSint16BE(c->hitPointsCur);
+			out->writeSint16BE(c->hitPointsMax);
 		} else {
 			out->writeSint16LE(c->hitPointsCur);
 			out->writeSint16LE(c->hitPointsMax);
 		}
+
 		out->writeSByte(c->armorClass);
 		out->writeByte(c->disabledSlots);
 		out->writeByte(c->raceSex);
@@ -1077,17 +1108,44 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 		out->writeSByte(c->portrait);
 		out->writeByte(c->food);
 		out->write(c->level, 3);
-		for (int ii = 0; ii < 3; ii++)
-			out->writeUint32LE(c->experience[ii]);
+
+		if (_flags.platform == Common::kPlatformAmiga) {
+			out->writeByte(0);
+			for (int ii = 0; ii < 3; ii++)
+				out->writeUint32BE(c->experience[ii]);
+		} else {
+			for (int ii = 0; ii < 3; ii++)
+				out->writeUint32LE(c->experience[ii]);
+		}
+
 		out->writeUint32LE(0);
-		out->write(c->mageSpells, (_flags.gameID == GI_EOB1) ? 30 : 80);
-		out->write(c->clericSpells, (_flags.gameID == GI_EOB1) ? 30 : 80);
-		out->writeUint32LE(c->mageSpellsAvailableFlags);
-		for (int ii = 0; ii < 27; ii++)
-			out->writeSint16LE(c->inventory[ii]);
-		uint32 ct = _system->getMillis();
-		for (int ii = 0; ii < 10; ii++)
-			out->writeUint32LE((c->timers[ii] && c->timers[ii] > ct) ? (c->timers[ii] - ct) / _tickLength : 0);
+
+		if (_flags.gameID == GI_EOB1) {
+			for (int ii = 0; ii < 5; ++ii)
+				out->write(c->mageSpells + ii * 10, 6);
+			for (int ii = 0; ii < 5; ++ii)
+				out->write(c->clericSpells + ii * 10, 6);
+		} else {
+			out->write(c->mageSpells, 80);
+			out->write(c->clericSpells, 80);
+		}
+
+		if (_flags.platform == Common::kPlatformAmiga) {
+			out->writeUint32BE(c->mageSpellsAvailableFlags);
+			for (int ii = 0; ii < 27; ii++)
+				out->writeSint16BE(c->inventory[ii]);
+			uint32 ct = _system->getMillis();
+			for (int ii = 0; ii < 10; ii++)
+				out->writeUint32BE((c->timers[ii] && c->timers[ii] > ct) ? (c->timers[ii] - ct) / _tickLength : 0);
+		} else {
+			out->writeUint32LE(c->mageSpellsAvailableFlags);
+			for (int ii = 0; ii < 27; ii++)
+				out->writeSint16LE(c->inventory[ii]);
+			uint32 ct = _system->getMillis();
+			for (int ii = 0; ii < 10; ii++)
+				out->writeUint32LE((c->timers[ii] && c->timers[ii] > ct) ? (c->timers[ii] - ct) / _tickLength : 0);
+		}
+
 		out->write(c->events, 10);
 		out->write(c->effectsRemainder, 4);
 
@@ -1096,34 +1154,61 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 			// This doesn't matter much here, since these flags only apply to the temporary spell effects (things like prayer, haste, etc.) anyway.
 			warning("EoBCoreEngine::saveAsOriginalFile(): Character effect flags lost while exporting original EOB1 save file");
 			out->writeUint32LE(0);
+		} else if (_flags.platform == Common::kPlatformAmiga) {
+			out->writeUint32BE(c->effectFlags);
 		} else {
 			out->writeUint32LE(c->effectFlags);
 		}
+
 		out->writeByte(c->damageTaken);
 		out->write(c->slotStatus, 5);
 		for (int ii = 0; ii < 6; ii++)
 			out->writeByte(0);
 	}
 
-	out->writeUint16LE(_currentLevel);
-	if (_flags.gameID == GI_EOB2)
-		out->writeSint16LE(_currentSub);
-	out->writeUint16LE(_currentBlock);
-	out->writeUint16LE(_currentDirection);
-	out->writeSint16LE(_itemInHand);
-	if (_flags.gameID == GI_EOB1) {
-		out->writeUint16LE(_hasTempDataFlags);
-		out->writeUint16LE(0);
-		if (_partyEffectFlags)
-			// Spell effect flags are completely different in original EOB I. We only use EOB II style flags in ScummVM.
-			// This doesn't matter much here, since these flags only apply to the temporary spell effects (things like prayer, haste, etc.) anyway.
-			warning("EoBCoreEngine::saveAsOriginalFile(): Party effect flags lost while exporting original EOB1 save file");
+	if (_flags.platform == Common::kPlatformAmiga) {
+		out->writeUint16BE(_currentLevel);
+		if (_flags.gameID == GI_EOB2)
+			out->writeSint16BE(_currentSub);
+		out->writeUint16BE(_currentBlock);
+		out->writeUint16BE(_currentDirection);
+		out->writeSint16BE(_itemInHand);
+
+		if (_flags.gameID == GI_EOB1) {
+			out->writeUint16BE(_hasTempDataFlags);
+			out->writeUint16BE(0);
+			if (_partyEffectFlags)
+				// Spell effect flags are completely different in original EOB I. We only use EOB II style flags in ScummVM.
+				// This doesn't matter much here, since these flags only apply to the temporary spell effects (things like prayer, haste, etc.) anyway.
+				warning("EoBCoreEngine::saveAsOriginalFile(): Party effect flags lost while exporting original EOB1 save file");
+		} else {
+			out->writeUint32BE(_hasTempDataFlags);
+			out->writeUint32BE(_partyEffectFlags);
+		}
 	} else {
-		out->writeUint32LE(_hasTempDataFlags);
-		out->writeUint32LE(_partyEffectFlags);
+		out->writeUint16LE(_currentLevel);
+		if (_flags.gameID == GI_EOB2)
+			out->writeSint16LE(_currentSub);
+		out->writeUint16LE(_currentBlock);
+		out->writeUint16LE(_currentDirection);
+		out->writeSint16LE(_itemInHand);
+
+		if (_flags.gameID == GI_EOB1) {
+			out->writeUint16LE(_hasTempDataFlags);
+			out->writeUint16LE(0);
+			if (_partyEffectFlags)
+				// Spell effect flags are completely different in original EOB I. We only use EOB II style flags in ScummVM.
+				// This doesn't matter much here, since these flags only apply to the temporary spell effects (things like prayer, haste, etc.) anyway.
+				warning("EoBCoreEngine::saveAsOriginalFile(): Party effect flags lost while exporting original EOB1 save file");
+		} else {
+			out->writeUint32LE(_hasTempDataFlags);
+			out->writeUint32LE(_partyEffectFlags);
+		}
 	}
+
 	if (_flags.gameID == GI_EOB2)
 		out->writeByte(0);
+	
 	_inf->saveState(out, true);
 
 	int numItems = (_flags.gameID == GI_EOB1) ? 500 : 600;
@@ -1135,9 +1220,17 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 		out->writeSByte(t->icon);
 		out->writeSByte(t->type);
 		out->writeSByte(t->pos);
-		out->writeSint16LE(t->block);
-		out->writeSint16LE(t->next);
-		out->writeSint16LE(t->prev);
+
+		if (_flags.platform == Common::kPlatformAmiga) {
+			out->writeSint16BE(t->block);
+			out->writeSint16BE(t->next);
+			out->writeSint16BE(t->prev);
+		} else {
+			out->writeSint16LE(t->block);
+			out->writeSint16LE(t->next);
+			out->writeSint16LE(t->prev);
+		}
+
 		out->writeByte(t->level);
 		out->writeSByte(t->value);
 	}
@@ -1158,8 +1251,10 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 			continue;
 		}
 
+		Common::String curBlockFile = _curBlockFile;
 		_curBlockFile = getBlockFileName(i + 1, 0);
 		const uint8 *p = getBlockFileData();
+		_curBlockFile = curBlockFile;
 		uint16 len = READ_LE_UINT16(p + 4);
 		p += 6;
 
@@ -1186,7 +1281,10 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 			EoBMonsterInPlay *m = &((EoBMonsterInPlay*)l->monsters)[ii];
 			out->writeByte(m->type);
 			out->writeByte(m->unit);
-			out->writeUint16LE(m->block);
+			if (_flags.platform == Common::kPlatformAmiga)
+				out->writeUint16BE(m->block);
+			else
+				out->writeUint16LE(m->block);
 			out->writeByte(m->pos);
 			out->writeSByte(m->dir);
 			out->writeByte(m->animStep);
@@ -1195,11 +1293,21 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 			out->writeSByte(m->stray);
 			out->writeSByte(m->curAttackFrame);
 			out->writeSByte(m->spellStatusLeft);
-			out->writeSint16LE(m->hitPointsMax);
-			out->writeSint16LE(m->hitPointsCur);
-			out->writeUint16LE(m->dest);
-			out->writeUint16LE(m->randItem);
-			out->writeUint16LE(m->fixedItem);
+
+			if (_flags.platform == Common::kPlatformAmiga) {
+				out->writeSint16BE(m->hitPointsMax);
+				out->writeSint16BE(m->hitPointsCur);
+				out->writeUint16BE(m->dest);
+				out->writeUint16BE(m->randItem);
+				out->writeUint16BE(m->fixedItem);
+			} else {
+				out->writeSint16LE(m->hitPointsMax);
+				out->writeSint16LE(m->hitPointsCur);
+				out->writeUint16LE(m->dest);
+				out->writeUint16LE(m->randItem);
+				out->writeUint16LE(m->fixedItem);
+			}
+
 			out->writeByte(m->flags);
 			out->writeByte(m->idleAnimState);
 
@@ -1225,8 +1333,13 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 
 		for (int ii = 0; ii < 5; ii++) {
 			WallOfForce *w= &((WallOfForce*)l->wallsOfForce)[ii];
-			out->writeUint16LE(w->block);
-			out->writeUint32LE(w->duration / _tickLength);
+			if (_flags.platform == Common::kPlatformAmiga) {
+				out->writeUint16BE(w->block);
+				out->writeUint32BE(w->duration / _tickLength);
+			} else {
+				out->writeUint16LE(w->block);
+				out->writeUint32LE(w->duration / _tickLength);
+			}
 		}
 	}
 
@@ -1239,8 +1352,14 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 
 	for (int i = 51; i < 57; i++) {
 		EoBItemType *t = &_itemTypes[i];
-		out->writeUint16LE(t->invFlags);
-		out->writeUint16LE(t->handFlags);
+		if (_flags.platform == Common::kPlatformAmiga) {
+			out->writeUint16BE(t->invFlags);
+			out->writeUint16BE(t->handFlags);
+		} else {
+			out->writeUint16LE(t->invFlags);
+			out->writeUint16LE(t->handFlags);
+		}
+
 		out->writeSByte(t->armorClass);
 		out->writeSByte(t->allowedClasses);
 		out->writeSByte(t->requiredHands);
@@ -1251,7 +1370,11 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 		out->writeSByte(t->dmgNumPipsL);
 		out->writeSByte(t->dmgIncL);
 		out->writeByte(t->unk1);
-		out->writeUint16LE(t->extraProperties);
+
+		if (_flags.platform == Common::kPlatformAmiga)
+			out->writeUint16BE(t->extraProperties);
+		else
+			out->writeUint16LE(t->extraProperties);
 	}
 
 	out->finalize();

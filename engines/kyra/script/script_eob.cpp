@@ -228,13 +228,17 @@ void EoBInfProcessor::saveState(Common::OutSaveFile *out, bool origFile) {
 		out->writeByte(_preventRest);
 	int numFlags = (_vm->game() == GI_EOB1 && origFile) ? 12 : 18;
 	for (int i = 0; i < numFlags; i++) {
-		if (origFile)
+		if (origFile && _vm->gameFlags().platform != Common::kPlatformAmiga)
 			out->writeUint32LE(_flagTable[i]);
 		else
 			out->writeUint32BE(_flagTable[i]);
 	}
-	if (_vm->game() == GI_EOB1 && origFile)
-		out->writeUint32LE(_flagTable[17]);
+	if (_vm->game() == GI_EOB1 && origFile) {
+		if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+			out->writeUint32BE(_flagTable[17]);
+		else
+			out->writeUint32LE(_flagTable[17]);
+	}
 }
 
 void EoBInfProcessor::reset() {
