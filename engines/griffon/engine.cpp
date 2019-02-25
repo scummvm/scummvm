@@ -1192,7 +1192,7 @@ void GriffonEngine::game_configmenu() {
 
 	ticks1 = ticks;
 	do {
-		videobuffer->fillRect(Common::Rect(0, 0, videobuffer->w, videobuffer->h), 0);
+		_videobuffer->fillRect(Common::Rect(0, 0, _videobuffer->w, _videobuffer->h), 0);
 
 		rcDest.left = 256 + 256 * cos(3.141592 / 180 * clouddeg * 40);
 		rcDest.top = 192 + 192 * sin(3.141592 / 180 * clouddeg * 40);
@@ -1200,7 +1200,7 @@ void GriffonEngine::game_configmenu() {
 		rcDest.setHeight(240);
 
 		cloudimg->setAlpha(128, true);
-		cloudimg->blit(*videobuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
+		cloudimg->blit(*_videobuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
 		cloudimg->setAlpha(64, true);
 
 		rcDest.left = 256;
@@ -1209,10 +1209,10 @@ void GriffonEngine::game_configmenu() {
 		rcDest.setHeight(240);
 
 		cloudimg->setAlpha(128, true);
-		cloudimg->blit(*videobuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
+		cloudimg->blit(*_videobuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
 		cloudimg->setAlpha(64, true);
 
-		videobuffer->copyRectToSurface(configwindow->getPixels(), configwindow->pitch, 0, 0, configwindow->w, configwindow->h);
+		_videobuffer->copyRectToSurface(configwindow->getPixels(), configwindow->pitch, 0, 0, configwindow->w, configwindow->h);
 
 		int sy = SY;
 
@@ -1290,8 +1290,8 @@ void GriffonEngine::game_configmenu() {
 			if (i > 18)
 				cl = 0;
 
-			sys_print(videobuffer, vr[i], 156 - 8 * strlen(vr[i]), sy + i * 8, 0);
-			sys_print(videobuffer, vl[i], 164, sy + i * 8, cl);
+			sys_print(_videobuffer, vr[i], 156 - 8 * strlen(vr[i]), sy + i * 8, 0);
+			sys_print(_videobuffer, vl[i], 164, sy + i * 8, cl);
 		}
 
 		curselt = cursel;
@@ -1313,7 +1313,7 @@ void GriffonEngine::game_configmenu() {
 		rc.left = 148 + 3 * cos(3.14159 * 2 * itemyloc / 16.0);
 		rc.top = sy + 8 * curselt - 4;
 
-		itemimg[15]->blit(*videobuffer, rc.left, rc.top);
+		itemimg[15]->blit(*_videobuffer, rc.left, rc.top);
 
 		float yy = 255.0;
 		if (ticks < ticks1 + 1000) {
@@ -1324,8 +1324,8 @@ void GriffonEngine::game_configmenu() {
 				yy = 255.0;
 		}
 
-		videobuffer->setAlpha((int)yy);
-		g_system->copyRectToScreen(videobuffer->getPixels(), videobuffer->pitch, 0, 0, videobuffer->w, videobuffer->h);
+		_videobuffer->setAlpha((int)yy);
+		g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
 		g_system->updateScreen();
 
 		g_system->getEventManager()->pollEvent(event);
@@ -1422,28 +1422,28 @@ void GriffonEngine::game_configmenu() {
 					if (cursel == 0) {
 						fullscreen = config.fullscreen | config.hwaccel | config.hwsurface;
 
-						video = SDL_SetVideoMode(320, 240, config.scr_bpp, fullscreen);
-						if (video == 0) {
-							video = SDL_SetVideoMode(config.scr_width, config.scr_height, config.scr_bpp, fullscreen);
+						_video = SDL_SetVideoMode(320, 240, config.scr_bpp, fullscreen);
+						if (_video == 0) {
+							_video = SDL_SetVideoMode(config.scr_width, config.scr_height, config.scr_bpp, fullscreen);
 						} else {
 							config.scr_width = 320;
 							config.scr_height = 240;
 						}
 
-						SDL_UpdateRect(video, 0, 0, config.scr_width, config.scr_height);
+						SDL_UpdateRect(_video, 0, 0, config.scr_width, config.scr_height);
 					}
 					if (cursel == 1) {
 						fullscreen = config.fullscreen | config.hwaccel | config.hwsurface;
 
-						video = SDL_SetVideoMode(640, 480, config.scr_bpp, fullscreen);
-						if (video == 0) {
-							video = SDL_SetVideoMode(config.scr_width, config.scr_height, config.scr_bpp, fullscreen);
+						_video = SDL_SetVideoMode(640, 480, config.scr_bpp, fullscreen);
+						if (_video == 0) {
+							_video = SDL_SetVideoMode(config.scr_width, config.scr_height, config.scr_bpp, fullscreen);
 						} else {
 							config.scr_width = 640;
 							config.scr_height = 480;
 						}
 
-						SDL_UpdateRect(video, 0, 0, config.scr_width, config.scr_height);
+						SDL_UpdateRect(_video, 0, 0, config.scr_width, config.scr_height);
 					}
 					if (cursel == 2 || cursel == 3 || cursel == 4) {
 						fullscreen = config.fullscreen | config.hwaccel | config.hwsurface;
@@ -1453,40 +1453,40 @@ void GriffonEngine::game_configmenu() {
 							b = 24;
 						if (cursel == 4)
 							b = 32;
-						video = SDL_SetVideoMode(config.scr_width, config.scr_height, b, fullscreen);
-						if (video == 0) {
-							video = SDL_SetVideoMode(config.scr_width, config.scr_height, config.scr_bpp, fullscreen);
+						_video = SDL_SetVideoMode(config.scr_width, config.scr_height, b, fullscreen);
+						if (_video == 0) {
+							_video = SDL_SetVideoMode(config.scr_width, config.scr_height, config.scr_bpp, fullscreen);
 						} else {
 							config.scr_bpp = b;
 						}
 
-						SDL_UpdateRect(video, 0, 0, config.scr_width, config.scr_height);
+						SDL_UpdateRect(_video, 0, 0, config.scr_width, config.scr_height);
 					}
 					if (cursel == 5) {
 						ofullscreen = config.fullscreen | config.hwaccel | config.hwsurface;
 						fullscreen = SDL_FULLSCREEN | config.hwaccel | config.hwsurface;
 
-						video = SDL_SetVideoMode(config.scr_width, config.scr_height, config.scr_bpp, fullscreen);
-						if (video == 0) {
-							video = SDL_SetVideoMode(config.scr_width, config.scr_height, config.scr_bpp, ofullscreen);
+						_video = SDL_SetVideoMode(config.scr_width, config.scr_height, config.scr_bpp, fullscreen);
+						if (_video == 0) {
+							_video = SDL_SetVideoMode(config.scr_width, config.scr_height, config.scr_bpp, ofullscreen);
 						} else {
 							config.fullscreen = SDL_FULLSCREEN;
 						}
 
-						SDL_UpdateRect(video, 0, 0, config.scr_width, config.scr_height);
+						SDL_UpdateRect(_video, 0, 0, config.scr_width, config.scr_height);
 					}
 					if (cursel == 6) {
 						ofullscreen = config.fullscreen | config.hwaccel | config.hwsurface;
 						fullscreen = 0 | config.hwaccel | config.hwsurface;
 
-						video = SDL_SetVideoMode(config.scr_width, config.scr_height, config.scr_bpp, fullscreen);
-						if (video == 0) {
-							video = SDL_SetVideoMode(config.scr_width, config.scr_height, config.scr_bpp, ofullscreen);
+						_video = SDL_SetVideoMode(config.scr_width, config.scr_height, config.scr_bpp, fullscreen);
+						if (_video == 0) {
+							_video = SDL_SetVideoMode(config.scr_width, config.scr_height, config.scr_bpp, ofullscreen);
 						} else {
 							config.fullscreen = 0;
 						}
 
-						SDL_UpdateRect(video, 0, 0, config.scr_width, config.scr_height);
+						SDL_UpdateRect(_video, 0, 0, config.scr_width, config.scr_height);
 					}
 					if (cursel == 7 && config.music == 0) {
 						config.music = 1;
@@ -2051,7 +2051,7 @@ void GriffonEngine::game_drawanims(int Layer) {
 							rcDest.setWidth(16);
 							rcDest.setHeight(16);
 
-							tiles[curtilel]->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+							tiles[curtilel]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 						}
 
 						if (Layer == 1) {
@@ -2087,7 +2087,7 @@ void GriffonEngine::game_drawanims(int Layer) {
 									}
 
 									if (pass == 1)
-										tiles[curtilel]->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+										tiles[curtilel]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 								}
 							}
 						}
@@ -2104,16 +2104,16 @@ int hud_recalc(int a, int b, int c) {
 	return result > b ? b : result;
 }
 
-#define RGB(R, G, B) (videobuffer->format.RGBToColor((R), (G), (B)))
+#define RGB(R, G, B) (_videobuffer->format.RGBToColor((R), (G), (B)))
 
 void GriffonEngine::game_drawhud() {
 	char line[128];
 	//sprintf(line, "fps: %i, map: %i, exp: %i/%i", (int)fps, curmap, player.exp, player.nextlevel);
-	//sys_print(videobuffer, line, 0, 0, 0);
+	//sys_print(_videobuffer, line, 0, 0, 0);
 
 	long ccc;
 
-	game_fillrect(videobuffer2, 0, 0, 320, 240, 0);
+	game_fillrect(_videobuffer2, 0, 0, 320, 240, 0);
 
 	for (int i = 0; i < kMaxFloat; i++) {
 		if (floattext[i][0] > 0) {
@@ -2129,13 +2129,13 @@ void GriffonEngine::game_drawhud() {
 				c2 = 2;
 
 			if (fc != 0) {
-				sys_print(videobuffer, floatstri[i], (int)(floattext[i][1]) + 0, (int)(floattext[i][2]) - 1, c2);
-				sys_print(videobuffer, floatstri[i], (int)(floattext[i][1]) + 0, (int)(floattext[i][2]) + 1, c2);
-				sys_print(videobuffer, floatstri[i], (int)(floattext[i][1]) - 1, (int)(floattext[i][2]) + 0, c2);
-				sys_print(videobuffer, floatstri[i], (int)(floattext[i][1]) + 1, (int)(floattext[i][2]) + 0, c2);
+				sys_print(_videobuffer, floatstri[i], (int)(floattext[i][1]) + 0, (int)(floattext[i][2]) - 1, c2);
+				sys_print(_videobuffer, floatstri[i], (int)(floattext[i][1]) + 0, (int)(floattext[i][2]) + 1, c2);
+				sys_print(_videobuffer, floatstri[i], (int)(floattext[i][1]) - 1, (int)(floattext[i][2]) + 0, c2);
+				sys_print(_videobuffer, floatstri[i], (int)(floattext[i][1]) + 1, (int)(floattext[i][2]) + 0, c2);
 			}
 
-			sys_print(videobuffer, floatstri[i], (int)(floattext[i][1]), (int)(floattext[i][2]), c);
+			sys_print(_videobuffer, floatstri[i], (int)(floattext[i][1]), (int)(floattext[i][2]), c);
 		}
 
 		if (floaticon[i][0] > 0) {
@@ -2147,7 +2147,7 @@ void GriffonEngine::game_drawhud() {
 			rcDest.top = iy;
 
 			if (ico != 99)
-				itemimg[ico]->blit(*videobuffer, rcDest.left, rcDest.top);
+				itemimg[ico]->blit(*_videobuffer, rcDest.left, rcDest.top);
 			if (ico == 99) {
 				spellimg->setAlpha((int)(RND() * 96) + 96, true);
 
@@ -2159,7 +2159,7 @@ void GriffonEngine::game_drawhud() {
 				rcDest.left = ix;
 				rcDest.top = iy;
 
-				spellimg->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+				spellimg->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 
 				spellimg->setAlpha(255, true);
 			}
@@ -2180,10 +2180,10 @@ void GriffonEngine::game_drawhud() {
 				rcSrc.left = rcSrc.left + 17;
 
 				if (player.foundspell[i] == 1) {
-					itemimg[7 + i]->blit(*videobuffer, rcSrc.left, rcSrc.top);
+					itemimg[7 + i]->blit(*_videobuffer, rcSrc.left, rcSrc.top);
 
-					game_fillrect(videobuffer, rcSrc.left, sy + 16, 16, 4, RGB(0, 32, 32));
-					game_fillrect(videobuffer, rcSrc.left + 1, sy + 17,
+					game_fillrect(_videobuffer, rcSrc.left, sy + 16, 16, 4, RGB(0, 32, 32));
+					game_fillrect(_videobuffer, rcSrc.left + 1, sy + 17,
 					              hud_recalc(player.spellcharge[i], 14, 100), 2,
 					              player.spellcharge[i] == 100 ? RGB(255, 128, 32) : RGB(0, 224, 64));
 				}
@@ -2197,17 +2197,17 @@ void GriffonEngine::game_drawhud() {
 		rcDest.top = 0;
 		rcDest.right = 320;
 		rcDest.bottom = 240;
-		videobuffer2->fillRect(rcDest, 0);
-		videobuffer2->setAlpha((int)(player.itemselshade * 4)); // FIXME
-		videobuffer2->blit(*videobuffer);
+		_videobuffer2->fillRect(rcDest, 0);
+		_videobuffer2->setAlpha((int)(player.itemselshade * 4)); // FIXME
+		_videobuffer2->blit(*_videobuffer);
 
 		int sy = 202;
 		rcSrc.left = 46;
 		rcSrc.top = 46;
 
-		inventoryimg->setAlpha(160, true); // 128
-		inventoryimg->blit(*videobuffer, rcSrc.left, rcSrc.top);
-		inventoryimg->setAlpha(255, true);
+		_inventoryimg->setAlpha(160, true); // 128
+		_inventoryimg->blit(*_videobuffer, rcSrc.left, rcSrc.top);
+		_inventoryimg->setAlpha(255, true);
 
 		int sx = 54;
 		sy = 55;
@@ -2223,44 +2223,44 @@ void GriffonEngine::game_drawhud() {
 			amap = 3;
 		if (curmap > 5 && curmap < 42)
 			amap = 1;
-		mapimg[amap]->blit(*videobuffer, rcDest.left, rcDest.top);
+		mapimg[amap]->blit(*_videobuffer, rcDest.left, rcDest.top);
 
-		ccc = videobuffer->format.RGBToColor(128 + 127 * sin(3.141592 * 2 * itemyloc / 16), 0, 0);
+		ccc = _videobuffer->format.RGBToColor(128 + 127 * sin(3.141592 * 2 * itemyloc / 16), 0, 0);
 
 		for (int b = 0; b <= 6; b++) {
 			for (int a = 0; a <= 12; a++) {
 				if (invmap[amap][b][a] == curmap) {
-					game_fillrect(videobuffer, 46 + 9 + a * 9 + 2, 46 + 77 + b * 9 + 1, 6, 6, ccc);
+					game_fillrect(_videobuffer, 46 + 9 + a * 9 + 2, 46 + 77 + b * 9 + 1, 6, 6, ccc);
 				}
 			}
 		}
 
 		if (amap == 1) {
-			sys_print(videobuffer, "L1", 46 + 9, 46 + 77, 0);
-			sys_print(videobuffer, "L2", 46 + 9 + 7 * 9, 46 + 77, 0);
+			sys_print(_videobuffer, "L1", 46 + 9, 46 + 77, 0);
+			sys_print(_videobuffer, "L2", 46 + 9 + 7 * 9, 46 + 77, 0);
 		}
 
 		sprintf(line, "Health: %i/%i", player.hp, player.maxhp);
-		sys_print(videobuffer, line, sx, sy, player.hp <= player.maxhp * 0.25 ? (int)player.hpflash : 0);
+		sys_print(_videobuffer, line, sx, sy, player.hp <= player.maxhp * 0.25 ? (int)player.hpflash : 0);
 
 		sprintf(line, "Level : %i", player.level);
 		if (player.level == player.maxlevel)
 			strcpy(line, "Level : MAX");
-		sys_print(videobuffer, line, sx, sy + 8, 0);
+		sys_print(_videobuffer, line, sx, sy + 8, 0);
 
 		// experience
-		game_fillrect(videobuffer, sx + 64, sy + 16, 16, 4, RGB(0, 32, 32));
-		game_fillrect(videobuffer, sx + 65, sy + 17,
+		game_fillrect(_videobuffer, sx + 64, sy + 16, 16, 4, RGB(0, 32, 32));
+		game_fillrect(_videobuffer, sx + 65, sy + 17,
 		              hud_recalc(player.exp, 14, player.nextlevel), 2, RGB(0, 224, 64));
 
 		// attack strength
-		game_fillrect(videobuffer, sx + 1, sy + 16, 56, 6, RGB(0, 32, 32));
-		game_fillrect(videobuffer, sx + 1, sy + 17,
+		game_fillrect(_videobuffer, sx + 1, sy + 16, 56, 6, RGB(0, 32, 32));
+		game_fillrect(_videobuffer, sx + 1, sy + 17,
 		              hud_recalc(player.attackstrength, 54, 100), 2,
 		              player.attackstrength == 100 ? RGB(255, 128, 32) : RGB(0, 64, 224));
 
 		// spell strength
-		game_fillrect(videobuffer, sx + 1, sy + 19,
+		game_fillrect(_videobuffer, sx + 1, sy + 19,
 		              hud_recalc(player.spellstrength, 54, 100), 2,
 		              player.spellstrength == 100 ? RGB(224, 0, 0) : RGB(128, 0, 224));
 
@@ -2272,10 +2272,10 @@ void GriffonEngine::game_drawhud() {
 		int s = (ase - m * 60);
 
 		sprintf(line, "%02i:%02i:%02i", h, m, s);
-		sys_print(videobuffer, line, 46 + 38 - strlen(line) * 4, 46 + 49, 0);
+		sys_print(_videobuffer, line, 46 + 38 - strlen(line) * 4, 46 + 49, 0);
 
-		sys_print(videobuffer, "Use", 193, 55, 0);
-		sys_print(videobuffer, "Cast", 236, 55, 0);
+		sys_print(_videobuffer, "Use", 193, 55, 0);
+		sys_print(_videobuffer, "Cast", 236, 55, 0);
 
 		rcSrc.left = 128;
 		rcSrc.top = 91;
@@ -2283,19 +2283,19 @@ void GriffonEngine::game_drawhud() {
 		int ss = (player.sword - 1) * 3;
 		if (player.sword == 3)
 			ss = 18;
-		itemimg[ss]->blit(*videobuffer, rcSrc.left, rcSrc.top);
+		itemimg[ss]->blit(*_videobuffer, rcSrc.left, rcSrc.top);
 
 		rcSrc.left = rcSrc.left + 16;
 		ss = (player.shield - 1) * 3 + 1;
 		if (player.shield == 3)
 			ss = 19;
-		itemimg[ss]->blit(*videobuffer, rcSrc.left, rcSrc.top);
+		itemimg[ss]->blit(*_videobuffer, rcSrc.left, rcSrc.top);
 
 		rcSrc.left = rcSrc.left + 16;
 		ss = (player.armour - 1) * 3 + 2;
 		if (player.armour == 3)
 			ss = 20;
-		itemimg[ss]->blit(*videobuffer, rcSrc.left, rcSrc.top);
+		itemimg[ss]->blit(*_videobuffer, rcSrc.left, rcSrc.top);
 
 		for (int i = 0; i <= 4; i++) {
 			sx = 188;
@@ -2303,18 +2303,18 @@ void GriffonEngine::game_drawhud() {
 			rcSrc.left = sx;
 			rcSrc.top = sy;
 			if (i == 0)
-				itemimg[6]->blit(*videobuffer, rcSrc.left, rcSrc.top);
+				itemimg[6]->blit(*_videobuffer, rcSrc.left, rcSrc.top);
 			if (i == 1)
-				itemimg[12]->blit(*videobuffer, rcSrc.left, rcSrc.top);
+				itemimg[12]->blit(*_videobuffer, rcSrc.left, rcSrc.top);
 			if (i == 2)
-				itemimg[17]->blit(*videobuffer, rcSrc.left, rcSrc.top);
+				itemimg[17]->blit(*_videobuffer, rcSrc.left, rcSrc.top);
 			if (i == 3)
-				itemimg[16]->blit(*videobuffer, rcSrc.left, rcSrc.top);
+				itemimg[16]->blit(*_videobuffer, rcSrc.left, rcSrc.top);
 			if (i == 4)
-				itemimg[14]->blit(*videobuffer, rcSrc.left, rcSrc.top);
+				itemimg[14]->blit(*_videobuffer, rcSrc.left, rcSrc.top);
 
 			sprintf(line, "x%i", player.inventory[i]);
-			sys_print(videobuffer, line, sx + 17, sy + 7, 0);
+			sys_print(_videobuffer, line, sx + 17, sy + 7, 0);
 		}
 
 		// spells in menu
@@ -2325,10 +2325,10 @@ void GriffonEngine::game_drawhud() {
 				sy = rcSrc.top;
 
 				if (player.foundspell[i] == 1) {
-					itemimg[7 + i]->blit(*videobuffer, rcSrc.left, rcSrc.top);
+					itemimg[7 + i]->blit(*_videobuffer, rcSrc.left, rcSrc.top);
 
-					game_fillrect(videobuffer, rcSrc.left, sy + 16, 16, 4, RGB(0, 32, 32));
-					game_fillrect(videobuffer, rcSrc.left + 1, sy + 17,
+					game_fillrect(_videobuffer, rcSrc.left, sy + 16, 16, 4, RGB(0, 32, 32));
+					game_fillrect(_videobuffer, rcSrc.left + 1, sy + 17,
 					              hud_recalc(player.spellcharge[i], 14, 100), 2,
 					              player.spellcharge[i] == 100 ? RGB(255, 128, 32) : RGB(0, 224, 64));
 				}
@@ -2340,13 +2340,13 @@ void GriffonEngine::game_drawhud() {
 				if (curitem == 5 + i) {
 					rcDest.left = (float)(243 - 12 + 3 * sin(3.141592 * 2 * itemyloc / 16));
 					rcDest.top = 67 + 24 * i;
-					itemimg[15]->blit(*videobuffer, rcDest.left, rcDest.top);
+					itemimg[15]->blit(*_videobuffer, rcDest.left, rcDest.top);
 				}
 
 				if (curitem == i) {
 					rcDest.left = (float)(189 - 12 + 3 * sin(3.141592 * 2 * itemyloc / 16));
 					rcDest.top = 70 + 24 * i;
-					itemimg[15]->blit(*videobuffer, rcDest.left, rcDest.top);
+					itemimg[15]->blit(*_videobuffer, rcDest.left, rcDest.top);
 				}
 			}
 		}
@@ -2362,14 +2362,14 @@ void GriffonEngine::game_drawhud() {
 			rcDest.top = (float)(npcinfo[curenemy].y + 4 - 16 - sin(3.141592 / 8 * itemyloc));
 		}
 
-		itemimg[13]->blit(*videobuffer, rcDest.left, rcDest.top);
+		itemimg[13]->blit(*_videobuffer, rcDest.left, rcDest.top);
 	}
 }
 
 void GriffonEngine::game_drawnpcs(int mode) {
 	unsigned int ccc;
 
-	ccc = videobuffer->format.RGBToColor(255, 128, 32);
+	ccc = _videobuffer->format.RGBToColor(255, 128, 32);
 
 	int fst = firsty;
 	int lst = lasty;
@@ -2415,7 +2415,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 							rcDest.top += (int)(RND() * 3) - 1;
 						}
 
-						anims[sprite]->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+						anims[sprite]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 					} else {
 						int cframe = npcinfo[i].cattackframe;
 
@@ -2429,7 +2429,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 						rcDest.setWidth(24);
 						rcDest.setHeight(24);
 
-						animsa[sprite]->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+						animsa[sprite]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 					}
 
 				}
@@ -2446,7 +2446,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 						rcDest.left = npcinfo[i].bodysection[f].x - animset2[s].xofs;
 						rcDest.top = npcinfo[i].bodysection[f].y - animset2[s].yofs + 2;
 
-						anims[2]->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+						anims[2]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 					}
 
 				}
@@ -2467,7 +2467,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 						rcDest.left = npcinfo[i].bodysection[f].x - animset9[s].xofs;
 						rcDest.top = npcinfo[i].bodysection[f].y - animset9[s].yofs + 2;
 
-						anims[9]->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+						anims[9]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 					}
 
 				}
@@ -2486,7 +2486,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 						rcDest.left = npx - 2;
 						rcDest.top = npy - 24;
 
-						anims[3]->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+						anims[3]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 					} else {
 						rcSrc.left = 4 * 24;
 						rcSrc.top = 0;
@@ -2496,7 +2496,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 						rcDest.left = npx - 2;
 						rcDest.top = npy - 24;
 
-						anims[3]->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+						anims[3]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 					}
 
 				}
@@ -2514,7 +2514,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 						rcDest.left = npx - 2;
 						rcDest.top = npy - 24;
 
-						anims[4]->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+						anims[4]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 					} else {
 						rcSrc.left = 4 * 24;
 						rcSrc.top = 0;
@@ -2524,7 +2524,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 						rcDest.left = npx - 2;
 						rcDest.top = npy - 24;
 
-						anims[4]->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+						anims[4]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 					}
 				}
 
@@ -2545,7 +2545,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 							if (x > 255)
 								x = 255;
 							spellimg->setAlpha(x, true);
-							spellimg->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+							spellimg->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 							spellimg->setAlpha(255, true);
 
 							for (int f = 1; f <= 8; f++) {
@@ -2561,7 +2561,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 								if (x > 255)
 									x = 255;
 								spellimg->setAlpha(x, true);
-								spellimg->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+								spellimg->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 								spellimg->setAlpha(255, true);
 							}
 
@@ -2574,7 +2574,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 							rcDest.top = npcinfo[i].bodysection[10 * ff + 9].y - 21;
 
 							spellimg->setAlpha(192, true);
-							anims[5]->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+							anims[5]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 							spellimg->setAlpha(255, true);
 						}
 
@@ -2602,7 +2602,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 						rcDest.top = rcDest.top + (int)(RND() * 3) - 1;
 					}
 
-					anims[sprite]->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+					anims[sprite]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 				}
 
 				// wizard
@@ -2625,7 +2625,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 						rcDest.left = rcDest.left + (int)(RND() * 3) - 1;
 						rcDest.top = rcDest.top + (int)(RND() * 3) - 1;
 					}
-					anims[sprite]->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+					anims[sprite]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 					// } else {
 					//cframe = npcinfo[i].cattackframe;
 
@@ -2638,7 +2638,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 					//rcDest.top = npy;
 					//rcDest.setWidth(24);
 					//rcDest.setHeight(24);
-					// animsa(sprite)->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+					// animsa(sprite)->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 					// }
 				}
 
@@ -2662,7 +2662,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 						rcDest.left = rcDest.left + (int)(RND() * 3) - 1;
 						rcDest.top = rcDest.top + (int)(RND() * 3) - 1;
 					}
-					anims[sprite]->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+					anims[sprite]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 				}
 
 
@@ -2707,7 +2707,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 							rcDest.top = rcDest.top + (int)(RND() * 3) - 1;
 						}
 
-						anims[sprite]->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+						anims[sprite]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 					} else {
 						npcinfo[i].floating = npcinfo[i].floating + 0.25 * fpsr;
 						while (npcinfo[i].floating >= 16)
@@ -2725,7 +2725,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 						rcDest.setWidth(24);
 						rcDest.setHeight(24);
 
-						animsa[sprite]->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+						animsa[sprite]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 					}
 				}
 
@@ -2759,7 +2759,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 						rcDest.left = sx + 32 + (int)(RND() * 3) - 1;
 						rcDest.top = sy - (int)(RND() * 6);
 
-						spellimg->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+						spellimg->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 					}
 
 					for (int ii = 0; ii <= 8; ii++) {
@@ -2778,7 +2778,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 
 							spellimg->setAlpha(i2 / 3 * 224, true);
 
-							spellimg->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+							spellimg->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 
 							int xloc = rcDest.left;
 							int yloc = rcDest.top;
@@ -2804,7 +2804,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 
 							spellimg->setAlpha(i2 / 3 * 224, true);
 
-							spellimg->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+							spellimg->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 
 							xloc = rcDest.left;
 							yloc = rcDest.top;
@@ -2843,7 +2843,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 							rcDest.left = rcDest.top + (int)(RND() * 3) - 1;
 						}
 
-						anims[sprite]->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+						anims[sprite]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 					} else {
 						int cframe = (int)(npcinfo[i].cattackframe);
 
@@ -2855,7 +2855,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 						rcDest.left = sx;
 						rcDest.top = sy;
 
-						animsa[sprite]->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+						animsa[sprite]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 					}
 				}
 
@@ -2899,7 +2899,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 						rcDest.top = rcDest.top + (int)(RND() * 3) - 1;
 					}
 
-					anims[sprite]->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+					anims[sprite]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 				}
 
 				rcDest.left = npx + 4;
@@ -2907,7 +2907,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 				rcDest.setWidth(16);
 				rcDest.setHeight(4);
 
-				videobuffer->fillRect(rcDest, 0);
+				_videobuffer->fillRect(rcDest, 0);
 
 				rcDest.left = npx + 5;
 				rcDest.top = npy + 23;
@@ -2923,7 +2923,7 @@ void GriffonEngine::game_drawnpcs(int mode) {
 				rcDest.setHeight(2);
 
 
-				videobuffer->fillRect(rcDest, ccc);
+				_videobuffer->fillRect(rcDest, ccc);
 
 				int pass = 1;
 
@@ -2984,7 +2984,7 @@ void GriffonEngine::game_drawover(int modx, int mody) {
 					}
 
 					if (pass == 1)
-						tiles[curtilel]->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+						tiles[curtilel]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 				}
 			}
 		}
@@ -3009,7 +3009,7 @@ void GriffonEngine::game_drawplayer() {
 		rcDest.setWidth(24);
 		rcDest.setHeight(24);
 
-		anims[f]->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+		anims[f]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 	} else {
 		rcSrc.left = (int)(player.attackframe / 4) * 24;
 		rcSrc.top = player.walkdir * 24;
@@ -3021,19 +3021,19 @@ void GriffonEngine::game_drawplayer() {
 		rcDest.setWidth(24);
 		rcDest.setHeight(24);
 
-		animsa[f]->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+		animsa[f]->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 
 	}
 
-	ccc = videobuffer->format.RGBToColor(224, 224, 64);
+	ccc = _videobuffer->format.RGBToColor(224, 224, 64);
 
 	int pass = 0;
 	if (player.hp <= player.maxhp * 0.25)
 		pass = 1;
 
 	if (pass == 1) {
-		ccc = videobuffer->format.RGBToColor(255, 255, 255);
-		if ((int)(player.hpflash) == 1) ccc = videobuffer->format.RGBToColor(255, 0, 0);
+		ccc = _videobuffer->format.RGBToColor(255, 255, 255);
+		if ((int)(player.hpflash) == 1) ccc = _videobuffer->format.RGBToColor(255, 0, 0);
 	}
 
 	int sss = 6;
@@ -3046,7 +3046,7 @@ void GriffonEngine::game_drawplayer() {
 	rcDest.setWidth(16);
 	rcDest.setHeight(sss);
 
-	videobuffer->fillRect(rcDest, 0);
+	_videobuffer->fillRect(rcDest, 0);
 
 	rcDest.left = npx + 5;
 	rcDest.top = npy + 23;
@@ -3061,11 +3061,11 @@ void GriffonEngine::game_drawplayer() {
 	rcDest.setWidth(ww);
 	rcDest.setHeight(2);
 
-	videobuffer->fillRect(rcDest, ccc);
+	_videobuffer->fillRect(rcDest, ccc);
 
-	ccc = videobuffer->format.RGBToColor(0, 224, 64);
+	ccc = _videobuffer->format.RGBToColor(0, 224, 64);
 	if (player.attackstrength == 100)
-		ccc = videobuffer->format.RGBToColor(255, 128, 32);
+		ccc = _videobuffer->format.RGBToColor(255, 128, 32);
 
 	ww = 14 * player.attackstrength / 100;
 	if (ww > 14)
@@ -3079,23 +3079,23 @@ void GriffonEngine::game_drawplayer() {
 	rcDest.setWidth(ww);
 	rcDest.setHeight(2);
 
-	videobuffer->fillRect(rcDest, ccc);
+	_videobuffer->fillRect(rcDest, ccc);
 
-	ccc = videobuffer->format.RGBToColor(128, 0, 224);
+	ccc = _videobuffer->format.RGBToColor(128, 0, 224);
 	if (player.spellstrength == 100)
-		ccc = videobuffer->format.RGBToColor(224, 0, 0);
+		ccc = _videobuffer->format.RGBToColor(224, 0, 0);
 
 	rcDest.top = rcDest.top + 2;
 	rcDest.setWidth(ww2);
 	rcDest.setHeight(2);
 
-	videobuffer->fillRect(rcDest, ccc);
+	_videobuffer->fillRect(rcDest, ccc);
 }
 
 void GriffonEngine::game_drawview() {
 	Common::Rect rc;
 
-	videobuffer->copyRectToSurface(mapbg->getPixels(), mapbg->pitch, 0, 0, mapbg->w, mapbg->h);
+	_videobuffer->copyRectToSurface(mapbg->getPixels(), mapbg->pitch, 0, 0, mapbg->w, mapbg->h);
 
 	game_updspellsunder();
 
@@ -3122,12 +3122,12 @@ void GriffonEngine::game_drawview() {
 		rc.setWidth(320);
 		rc.setHeight(240);
 
-		cloudimg->blit(*videobuffer, 0, 0, Graphics::FLIP_NONE, &rc);
+		cloudimg->blit(*_videobuffer, 0, 0, Graphics::FLIP_NONE, &rc);
 	}
 
 	game_drawhud();
 
-	g_system->copyRectToScreen(videobuffer->getPixels(), videobuffer->pitch, 0, 0, videobuffer->w, videobuffer->h);
+	g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
 }
 
 void GriffonEngine::game_endofgame() {
@@ -3147,9 +3147,9 @@ void GriffonEngine::game_endofgame() {
 	ticks1 = ticks;
 	int ya = 0;
 
-	videobuffer2->fillRect(Common::Rect(0, 0, videobuffer2->w, videobuffer2->h), 0);
-	videobuffer3->fillRect(Common::Rect(0, 0, videobuffer3->w, videobuffer3->h), 0);
-	videobuffer2->copyRectToSurface(videobuffer->getPixels(), videobuffer->pitch, 0, 0, videobuffer->w, videobuffer->h);
+	_videobuffer2->fillRect(Common::Rect(0, 0, _videobuffer2->w, _videobuffer2->h), 0);
+	_videobuffer3->fillRect(Common::Rect(0, 0, _videobuffer3->w, _videobuffer3->h), 0);
+	_videobuffer2->copyRectToSurface(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
 
 	float ld = 0;
 	int ldstop = 0;
@@ -3175,13 +3175,13 @@ void GriffonEngine::game_endofgame() {
 			break;
 		}
 
-		videobuffer->fillRect(Common::Rect(0, 0, videobuffer->w, videobuffer->h), 0);
+		_videobuffer->fillRect(Common::Rect(0, 0, _videobuffer->w, _videobuffer->h), 0);
 
-		videobuffer->setAlpha(ya);
-		videobuffer3->copyRectToSurface(videobuffer2->getPixels(), videobuffer2->pitch, 0, 0, videobuffer2->w, videobuffer2->h);
-		videobuffer3->copyRectToSurface(videobuffer->getPixels(), videobuffer->pitch, 0, 0, videobuffer->w, videobuffer->h);
+		_videobuffer->setAlpha(ya);
+		_videobuffer3->copyRectToSurface(_videobuffer2->getPixels(), _videobuffer2->pitch, 0, 0, _videobuffer2->w, _videobuffer2->h);
+		_videobuffer3->copyRectToSurface(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
 
-		g_system->copyRectToScreen(videobuffer3->getPixels(), videobuffer3->pitch, 0, 0, videobuffer3->w, videobuffer3->h);
+		g_system->copyRectToScreen(_videobuffer3->getPixels(), _videobuffer3->pitch, 0, 0, _videobuffer3->w, _videobuffer3->h);
 		g_system->updateScreen();
 
 		g_system->getEventManager()->pollEvent(event);
@@ -3211,19 +3211,19 @@ void GriffonEngine::game_endofgame() {
 		rc.left = -xofs;
 		rc.top = 0;
 
-		titleimg->blit(*videobuffer, rc.left, rc.top);
+		_titleimg->blit(*_videobuffer, rc.left, rc.top);
 
 		rc.left = -xofs + 320;
 		rc.top = 0;
 
-		titleimg->blit(*videobuffer, rc.left, rc.top);
+		_titleimg->blit(*_videobuffer, rc.left, rc.top);
 
 		y = y - spd * fpsr;
 		for (int i = 0; i <= 26; i++) {
 			int yy = y + i * 10;
 			if (yy > -8 && yy < 240) {
 				int x = 160 - strlen(story2[i]) * 4;
-				sys_print(videobuffer, story2[i], x, yy, 4);
+				sys_print(_videobuffer, story2[i], x, yy, 4);
 			}
 
 			if (yy < 10 && i == 25)
@@ -3239,8 +3239,8 @@ void GriffonEngine::game_endofgame() {
 				ya = 255;
 		}
 
-		videobuffer->setAlpha(ya);
-		g_system->copyRectToScreen(videobuffer->getPixels(), videobuffer->pitch, 0, 0, videobuffer->w, videobuffer->h);
+		_videobuffer->setAlpha(ya);
+		g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
 		g_system->updateScreen();
 
 		g_system->getEventManager()->pollEvent(event);
@@ -3279,7 +3279,7 @@ void GriffonEngine::game_endofgame() {
 	ticks1 = ticks;
 	int y1 = 0;
 
-	videobuffer2->copyRectToSurface(videobuffer->getPixels(), videobuffer->pitch, 0, 0, videobuffer->w, videobuffer->h);
+	_videobuffer2->copyRectToSurface(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
 
 	do {
 		if (ticks < ticks1 + 1500) {
@@ -3292,13 +3292,13 @@ void GriffonEngine::game_endofgame() {
 				break;
 		}
 
-		videobuffer->fillRect(Common::Rect(0, 0, videobuffer->w, videobuffer->h), 0);
+		_videobuffer->fillRect(Common::Rect(0, 0, _videobuffer->w, _videobuffer->h), 0);
 
-		videobuffer->setAlpha(y1);
-		videobuffer2->blit(*videobuffer3);
-		videobuffer->blit(*videobuffer3);
+		_videobuffer->setAlpha(y1);
+		_videobuffer2->blit(*_videobuffer3);
+		_videobuffer->blit(*_videobuffer3);
 
-		g_system->copyRectToScreen(videobuffer3->getPixels(), videobuffer3->pitch, 0, 0, videobuffer3->w, videobuffer3->h);
+		g_system->copyRectToScreen(_videobuffer3->getPixels(), _videobuffer3->pitch, 0, 0, _videobuffer3->w, _videobuffer3->h);
 		g_system->updateScreen();
 
 		g_system->getEventManager()->pollEvent(event);
@@ -3325,7 +3325,7 @@ void GriffonEngine::game_endofgame() {
 	y1 = 0;
 	do {
 
-		videobuffer->copyRectToSurface(theendimg->getPixels(), theendimg->pitch, 0, 0, theendimg->w, theendimg->h);
+		_videobuffer->copyRectToSurface(_theendimg->getPixels(), _theendimg->pitch, 0, 0, _theendimg->w, _theendimg->h);
 
 		y1 = 255;
 		if (ticks < ticks1 + 1000) {
@@ -3336,8 +3336,8 @@ void GriffonEngine::game_endofgame() {
 				y1 = 255;
 		}
 
-		videobuffer->setAlpha(y1);
-		g_system->copyRectToScreen(videobuffer->getPixels(), videobuffer->pitch, 0, 0, videobuffer->w, videobuffer->h);
+		_videobuffer->setAlpha(y1);
+		g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
 		g_system->updateScreen();
 
 		g_system->getEventManager()->pollEvent(event);
@@ -3363,8 +3363,8 @@ void GriffonEngine::game_endofgame() {
 
 	} while (1);
 
-	videobuffer2->fillRect(Common::Rect(0, 0, videobuffer2->w, videobuffer2->h), 0);
-	videobuffer3->fillRect(Common::Rect(0, 0, videobuffer3->w, videobuffer3->h), 0);
+	_videobuffer2->fillRect(Common::Rect(0, 0, _videobuffer2->w, _videobuffer2->h), 0);
+	_videobuffer3->fillRect(Common::Rect(0, 0, _videobuffer3->w, _videobuffer3->h), 0);
 
 	game_theend();
 
@@ -3373,8 +3373,8 @@ void GriffonEngine::game_endofgame() {
 void GriffonEngine::game_eventtext(const char *stri) {
 	int x, fr, pauseticks, bticks;
 
-	videobuffer2->fillRect(Common::Rect(0, 0, videobuffer2->w, videobuffer2->h), 0);
-	videobuffer3->fillRect(Common::Rect(0, 0, videobuffer3->w, videobuffer3->h), 0);
+	_videobuffer2->fillRect(Common::Rect(0, 0, _videobuffer2->w, _videobuffer2->h), 0);
+	_videobuffer3->fillRect(Common::Rect(0, 0, _videobuffer3->w, _videobuffer3->h), 0);
 
 	x = 160 - 4 * strlen(stri);
 
@@ -3382,15 +3382,15 @@ void GriffonEngine::game_eventtext(const char *stri) {
 	pauseticks = ticks + 500;
 	bticks = ticks;
 
-	videobuffer->blit(*videobuffer3);
-	videobuffer->blit(*videobuffer2);
+	_videobuffer->blit(*_videobuffer3);
+	_videobuffer->blit(*_videobuffer2);
 
 	do {
 		g_system->getEventManager()->pollEvent(event);
 
 		if (event.type == Common::EVENT_KEYDOWN && pauseticks < ticks)
 			break;
-		videobuffer2->blit(*videobuffer);
+		_videobuffer2->blit(*_videobuffer);
 
 		fr = 192;
 
@@ -3401,11 +3401,11 @@ void GriffonEngine::game_eventtext(const char *stri) {
 
 		windowimg->setAlpha(fr, true);
 
-		windowimg->blit(*videobuffer);
+		windowimg->blit(*_videobuffer);
 		if (pauseticks < ticks)
-			sys_print(videobuffer, stri, x, 15, 0);
+			sys_print(_videobuffer, stri, x, 15, 0);
 
-		g_system->copyRectToScreen(videobuffer->getPixels(), videobuffer->pitch, 0, 0, videobuffer->w, videobuffer->h);
+		g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
 		g_system->updateScreen();
 
 		g_system->getEventManager()->pollEvent(event);
@@ -3427,7 +3427,7 @@ void GriffonEngine::game_eventtext(const char *stri) {
 		g_system->delayMillis(10);
 	} while (1);
 
-	videobuffer3->blit(*videobuffer);
+	_videobuffer3->blit(*_videobuffer);
 
 	itemticks = ticks + 210;
 }
@@ -4525,13 +4525,13 @@ void GriffonEngine::game_newgame() {
 	float ld = 0, add;
 	int ticks, cnt = 0;
 
-	videobuffer2->fillRect(Common::Rect(0, 0, videobuffer2->w, videobuffer2->h), 0);
-	videobuffer3->fillRect(Common::Rect(0, 0, videobuffer3->w, videobuffer3->h), 0);
+	_videobuffer2->fillRect(Common::Rect(0, 0, _videobuffer2->w, _videobuffer2->h), 0);
+	_videobuffer3->fillRect(Common::Rect(0, 0, _videobuffer3->w, _videobuffer3->h), 0);
 
 	ticks = g_system->getMillis();
 
-	videobuffer->blit(*videobuffer3);
-	videobuffer->blit(*videobuffer2);
+	_videobuffer->blit(*_videobuffer3);
+	_videobuffer->blit(*_videobuffer2);
 
 	fpsr = 0.0;
 	int y = 140;
@@ -4562,12 +4562,12 @@ void GriffonEngine::game_newgame() {
 		rc.left = -xofs;
 		rc.top = 0;
 
-		titleimg->blit(*videobuffer, rc.left, rc.top);
+		_titleimg->blit(*_videobuffer, rc.left, rc.top);
 
 		rc.left = -xofs + 320;
 		rc.top = 0;
 
-		titleimg->blit(*videobuffer, rc.left, rc.top);
+		_titleimg->blit(*_videobuffer, rc.left, rc.top);
 
 		if (++cnt >= 6) {
 			cnt = 0;
@@ -4580,14 +4580,14 @@ void GriffonEngine::game_newgame() {
 			yy = y + i * 10;
 			if (yy > -8 && yy < 240) {
 				x = 160 - strlen(story[i]) * 4;
-				sys_print(videobuffer, story[i], x, yy, 4);
+				sys_print(_videobuffer, story[i], x, yy, 4);
 			}
 
 			if (yy < 10 && i == 47)
 				goto __exit_do;
 		}
 
-		g_system->copyRectToScreen(videobuffer->getPixels(), videobuffer->pitch, 0, 0, videobuffer->w, videobuffer->h);
+		g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
 		g_system->updateScreen();
 
 		tickspassed = ticks;
@@ -4805,7 +4805,7 @@ void GriffonEngine::game_saveloadnew() {
 
 	clouddeg = 0;
 
-	videobuffer->setAlpha(255);
+	_videobuffer->setAlpha(255);
 	saveloadimg->setAlpha(192, true);
 
 	currow = 0;
@@ -4818,7 +4818,7 @@ void GriffonEngine::game_saveloadnew() {
 	tickpause = ticks + 150;
 
 	do {
-		videobuffer->fillRect(Common::Rect(0, 0, videobuffer->w, videobuffer->h), 0);
+		_videobuffer->fillRect(Common::Rect(0, 0, _videobuffer->w, _videobuffer->h), 0);
 
 		y = y + 1 * fpsr;
 
@@ -4828,7 +4828,7 @@ void GriffonEngine::game_saveloadnew() {
 		rcDest.setHeight(240);
 
 		cloudimg->setAlpha(128, true);
-		cloudimg->blit(*videobuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
+		cloudimg->blit(*_videobuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
 		cloudimg->setAlpha(64, true);
 
 		rcDest.left = 256;
@@ -4837,10 +4837,10 @@ void GriffonEngine::game_saveloadnew() {
 		rcDest.setHeight(240);
 
 		cloudimg->setAlpha(128, true);
-		cloudimg->blit(*videobuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
+		cloudimg->blit(*_videobuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
 		cloudimg->setAlpha(64, true);
 
-		saveloadimg->blit(*videobuffer);
+		saveloadimg->blit(*_videobuffer);
 
 		g_system->getEventManager()->pollEvent(event);
 
@@ -4989,21 +4989,21 @@ void GriffonEngine::game_saveloadnew() {
 				int s = (ase - m * 60);
 
 				sprintf(line, "Game Time: %02i:%02i:%02i", h, m, s);
-				sys_print(videobuffer, line, 160 - strlen(line) * 4, sy, 0);
+				sys_print(_videobuffer, line, 160 - strlen(line) * 4, sy, 0);
 
 				sx  = 12;
 				sy = sy + 11;
 				cc = 0;
 
 				sprintf(line, "Health: %i/%i", playera.hp, playera.maxhp);
-				sys_print(videobuffer, line, sx, sy, cc);
+				sys_print(_videobuffer, line, sx, sy, cc);
 
 				if (playera.level == 22)
 					strcpy(line, "Level: MAX");
 				else
 					sprintf(line, "Level: %i", playera.level);
 
-				sys_print(videobuffer, line, sx, sy + 11, 0);
+				sys_print(_videobuffer, line, sx, sy + 11, 0);
 
 				rcSrc.left = sx + 15 * 8 + 24;
 				rcSrc.top = sy + 1;
@@ -5011,19 +5011,19 @@ void GriffonEngine::game_saveloadnew() {
 				ss = (playera.sword - 1) * 3;
 				if (playera.sword == 3)
 					ss = 18;
-				itemimg[ss]->blit(*videobuffer, rcSrc.left, rcSrc.top);
+				itemimg[ss]->blit(*_videobuffer, rcSrc.left, rcSrc.top);
 
 				rcSrc.left = rcSrc.left + 16;
 				ss = (playera.shield - 1) * 3 + 1;
 				if (playera.shield == 3)
 					ss = 19;
-				itemimg[ss]->blit(*videobuffer, rcSrc.left, rcSrc.top);
+				itemimg[ss]->blit(*_videobuffer, rcSrc.left, rcSrc.top);
 
 				rcSrc.left = rcSrc.left + 16;
 				ss = (playera.armour - 1) * 3 + 2;
 				if (playera.armour == 3)
 					ss = 20;
-				itemimg[ss]->blit(*videobuffer, rcSrc.left, rcSrc.top);
+				itemimg[ss]->blit(*_videobuffer, rcSrc.left, rcSrc.top);
 
 				nx = rcSrc.left + 13 + 3 * 8;
 				rcSrc.left = nx - 17;
@@ -5032,12 +5032,12 @@ void GriffonEngine::game_saveloadnew() {
 					for (int i = 0; i < 5; i++) {
 						rcSrc.left = rcSrc.left + 17;
 						if (playera.foundspell[i] == 1)
-							itemimg[7 + i]->blit(*videobuffer, rcSrc.left, rcSrc.top);
+							itemimg[7 + i]->blit(*_videobuffer, rcSrc.left, rcSrc.top);
 					}
 				}
 			} else {
 				int sy = 57 + ff * 48;
-				sys_print(videobuffer, "Empty", 160 - 5 * 4, sy, 0);
+				sys_print(_videobuffer, "Empty", 160 - 5 * 4, sy, 0);
 			}
 		}
 		// ------------------------------------------
@@ -5061,7 +5061,7 @@ void GriffonEngine::game_saveloadnew() {
 			rcDest.top = (float)(53 + (currow - 1) * 48);
 		}
 
-		itemimg[15]->blit(*videobuffer, rcDest.left, rcDest.top);
+		itemimg[15]->blit(*_videobuffer, rcDest.left, rcDest.top);
 
 
 		if (lowerlock == 1) {
@@ -5072,7 +5072,7 @@ void GriffonEngine::game_saveloadnew() {
 				rcDest.left = 170;
 			rcDest.left = rcDest.left; // + 2 + 2 * sin(-3.14159 * 2 * itemyloc / 16)
 
-			itemimg[15]->blit(*videobuffer, rcDest.left, rcDest.top);
+			itemimg[15]->blit(*_videobuffer, rcDest.left, rcDest.top);
 		}
 
 		yy = 255;
@@ -5084,8 +5084,8 @@ void GriffonEngine::game_saveloadnew() {
 				yy = 255;
 		}
 
-		videobuffer->setAlpha((int)yy);
-		g_system->copyRectToScreen(videobuffer->getPixels(), videobuffer->pitch, 0, 0, videobuffer->w, videobuffer->h);
+		_videobuffer->setAlpha((int)yy);
+		g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
 		g_system->updateScreen();
 
 		g_system->getEventManager()->pollEvent(event);
@@ -5144,10 +5144,10 @@ void GriffonEngine::game_showlogos() {
 				y = 255.0;
 		}
 
-		videobuffer->fillRect(Common::Rect(0, 0, 320, 240), 0);
-		logosimg->blit(*videobuffer, 0, 0, Graphics::FLIP_NONE, nullptr, TS_ARGB((int)y, (int)y, (int)y, (int)y));
+		_videobuffer->fillRect(Common::Rect(0, 0, 320, 240), 0);
+		_logosimg->blit(*_videobuffer, 0, 0, Graphics::FLIP_NONE, nullptr, TS_ARGB((int)y, (int)y, (int)y, (int)y));
 
-		g_system->copyRectToScreen(videobuffer->getPixels(), videobuffer->pitch, 0, 0, videobuffer->w, videobuffer->h);
+		g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
 		g_system->updateScreen();
 
 		g_system->getEventManager()->pollEvent(event);
@@ -5183,10 +5183,10 @@ void GriffonEngine::game_swash() {
 	do {
 		y = y + 1 * fpsr;
 
-		videobuffer->setAlpha((int)y);
-		videobuffer->fillRect(Common::Rect(0, 0, videobuffer->w, videobuffer->h), 0);
+		_videobuffer->setAlpha((int)y);
+		_videobuffer->fillRect(Common::Rect(0, 0, _videobuffer->w, _videobuffer->h), 0);
 
-		g_system->copyRectToScreen(videobuffer->getPixels(), videobuffer->pitch, 0, 0, videobuffer->w, videobuffer->h);
+		g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
 		g_system->updateScreen();
 
 		g_system->getEventManager()->pollEvent(event);
@@ -5217,8 +5217,8 @@ void GriffonEngine::game_swash() {
 	do {
 		y = y + 1 * fpsr;
 
-		videobuffer->setAlpha((int)(y * 25));
-		mapbg->blit(*videobuffer);
+		_videobuffer->setAlpha((int)(y * 25));
+		mapbg->blit(*_videobuffer);
 
 		if (cloudson == 1) {
 			rcDest.left = (float)(256 + 256 * cos(3.141592 / 180 * clouddeg));
@@ -5226,10 +5226,10 @@ void GriffonEngine::game_swash() {
 			rcDest.setWidth(320);
 			rcDest.setHeight(240);
 
-			cloudimg->blit(*videobuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
+			cloudimg->blit(*_videobuffer, 0, 0, Graphics::FLIP_NONE, &rcDest);
 		}
 
-		g_system->copyRectToScreen(videobuffer->getPixels(), videobuffer->pitch, 0, 0, videobuffer->w, videobuffer->h);
+		g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
 		g_system->updateScreen();
 
 		g_system->getEventManager()->pollEvent(event);
@@ -5257,7 +5257,7 @@ void GriffonEngine::game_swash() {
 	} while (1);
 
 
-	videobuffer->setAlpha(255);
+	_videobuffer->setAlpha(255);
 }
 
 void GriffonEngine::game_theend() {
@@ -5267,9 +5267,9 @@ void GriffonEngine::game_theend() {
 	}
 
 	for (float y = 0; y < 100; y += fpsr) {
-		videobuffer->setAlpha((int)y);
-		videobuffer->fillRect(Common::Rect(0, 0, videobuffer->w, videobuffer->h), 0);
-		g_system->copyRectToScreen(videobuffer->getPixels(), videobuffer->pitch, 0, 0, videobuffer->w, videobuffer->h);
+		_videobuffer->setAlpha((int)y);
+		_videobuffer->fillRect(Common::Rect(0, 0, _videobuffer->w, _videobuffer->h), 0);
+		g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
 		g_system->updateScreen();
 
 		g_system->getEventManager()->pollEvent(event);
@@ -5303,13 +5303,13 @@ void GriffonEngine::game_title(int mode) {
 	rcSrc.setWidth(320);
 	rcSrc.setHeight(240);
 
-	videobuffer2->fillRect(rcSrc, 0);
-	videobuffer3->fillRect(rcSrc, 0);
+	_videobuffer2->fillRect(rcSrc, 0);
+	_videobuffer3->fillRect(rcSrc, 0);
 
 	ticks = g_system->getMillis();
 
-	videobuffer->blit(*videobuffer3);
-	videobuffer->blit(*videobuffer2);
+	_videobuffer->blit(*_videobuffer3);
+	_videobuffer->blit(*_videobuffer2);
 
 	cursel = 0;
 
@@ -5344,34 +5344,34 @@ void GriffonEngine::game_title(int mode) {
 		rc.left = -xofs;
 		rc.top = 0;
 
-		titleimg->blit(*videobuffer, rc.left, rc.top);
+		_titleimg->blit(*_videobuffer, rc.left, rc.top);
 
 		rc.left = -xofs + 320.0;
 		rc.top = 0;
 
-		titleimg->blit(*videobuffer, rc.left, rc.top);
+		_titleimg->blit(*_videobuffer, rc.left, rc.top);
 
 		rc.left = 0;
 		rc.top = 0;
 
-		titleimg2->blit(*videobuffer, rc.left, rc.top);
+		_titleimg2->blit(*_videobuffer, rc.left, rc.top);
 
 		y = 172;
 		x = 160 - 14 * 4;
 
-		sys_print(videobuffer, "new game/save/load", x, y, 4);
-		sys_print(videobuffer, "options", x, y + 16, 4);
-		sys_print(videobuffer, "quit game", x, y + 32, 4);
+		sys_print(_videobuffer, "new game/save/load", x, y, 4);
+		sys_print(_videobuffer, "options", x, y + 16, 4);
+		sys_print(_videobuffer, "quit game", x, y + 32, 4);
 
 		if (mode == 1)
-			sys_print(videobuffer, "return", x, y + 48, 4);
+			sys_print(_videobuffer, "return", x, y + 48, 4);
 		else
-			sys_print(videobuffer, "(c) 2005 by Daniel 'Syn9' Kennedy", 28, 224, 4);
+			sys_print(_videobuffer, "(c) 2005 by Daniel 'Syn9' Kennedy", 28, 224, 4);
 
 		rc.left = (float)(x - 16 - 4 * cos(3.14159 * 2 * itemyloc / 16));
 		rc.top = (float)(y - 4 + 16 * cursel);
 
-		itemimg[15]->blit(*videobuffer, rc.left, rc.top);
+		itemimg[15]->blit(*_videobuffer, rc.left, rc.top);
 
 		float yf = 255.0;
 		if (ticks < ticks1 + 1000) {
@@ -5382,8 +5382,8 @@ void GriffonEngine::game_title(int mode) {
 				yf = 255.0;
 		}
 
-		videobuffer->setAlpha((int)yf);
-		g_system->copyRectToScreen(videobuffer->getPixels(), videobuffer->pitch, 0, 0, videobuffer->w, videobuffer->h);
+		_videobuffer->setAlpha((int)yf);
+		g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
 		g_system->updateScreen();
 
 		tickspassed = ticks;
@@ -6774,7 +6774,7 @@ void GriffonEngine::game_updspells() {
 
 						if (xloc > -16 && xloc < 304 && yloc > -16 && yloc < 224) {
 							spellimg->setAlpha(alf, true);
-							spellimg->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+							spellimg->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 							spellimg->setAlpha(255, true);
 
 							if (spellinfo[i].damagewho == 0) {
@@ -6852,7 +6852,7 @@ void GriffonEngine::game_updspells() {
 				rcDest.left = xloc;
 				rcDest.top = yloc;
 
-				spellimg->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+				spellimg->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 
 				spellinfo[i].frame = spellinfo[i].frame - 0.2 * fpsr;
 				if (spellinfo[i].frame < 0)
@@ -6978,7 +6978,7 @@ void GriffonEngine::game_updspells() {
 						rcDest.top = yloc;
 
 						if (xloc > -16 && xloc < 304 && yloc > -16 && yloc < 224) {
-							spellimg->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+							spellimg->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 
 							if (scatter == 1) {
 								if (spellinfo[i].damagewho == 0) {
@@ -7058,7 +7058,7 @@ void GriffonEngine::game_updspells() {
 					f = 192 * (1 - (fra - 24) / 8);
 
 				spellimg->setAlpha(f, true);
-				spellimg->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+				spellimg->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 				spellimg->setAlpha(255, true);
 
 				spellinfo[i].frame = spellinfo[i].frame - 0.3 * fpsr;
@@ -7155,7 +7155,7 @@ void GriffonEngine::game_updspells() {
 						rcDest.left = xloc;
 						rcDest.top = yloc;
 
-						spellimg->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+						spellimg->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 					}
 
 					spellimg->setAlpha(255, true);
@@ -7190,7 +7190,7 @@ void GriffonEngine::game_updspells() {
 							rcDest.left = xloc;
 							rcDest.top = yloc;
 
-							spellimg->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+							spellimg->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 						}
 
 						if (xloc < -1 || yloc < -1 || xloc > 304 || yloc > 224)
@@ -7232,9 +7232,9 @@ void GriffonEngine::game_updspells() {
 			// lightning bomb
 			if (spellnum == 8) {
 
-				cl1 = videobuffer->format.RGBToColor(0, 32, 204);
-				cl2 = videobuffer->format.RGBToColor(142, 173, 191);
-				cl3 = videobuffer->format.RGBToColor(240, 240, 240);
+				cl1 = _videobuffer->format.RGBToColor(0, 32, 204);
+				cl2 = _videobuffer->format.RGBToColor(142, 173, 191);
+				cl3 = _videobuffer->format.RGBToColor(240, 240, 240);
 
 				float px = player.px + 12;
 				float py = player.py + 12;
@@ -7253,13 +7253,13 @@ void GriffonEngine::game_updspells() {
 						if (orn == 2)
 							y = y + 1;
 
-						sys_line(videobuffer, x, y - 1, x, y + 2, cl1);
-						sys_line(videobuffer, x, y, x, y + 1, cl3);
+						sys_line(_videobuffer, x, y - 1, x, y + 2, cl1);
+						sys_line(_videobuffer, x, y, x, y + 1, cl3);
 
 						if (rn == 0)
-							sys_line(videobuffer, x, y + 1, x, y + 1, cl2);
+							sys_line(_videobuffer, x, y + 1, x, y + 1, cl2);
 						if (rn == 2)
-							sys_line(videobuffer, x, y, x, y, cl2);
+							sys_line(_videobuffer, x, y, x, y, cl2);
 
 						orn = rn;
 
@@ -7311,13 +7311,13 @@ void GriffonEngine::game_updspells() {
 						if (orn == 2)
 							y = y + 1;
 
-						sys_line(videobuffer, x, y - 1, x, y + 2, cl1);
-						sys_line(videobuffer, x, y, x, y + 1, cl3);
+						sys_line(_videobuffer, x, y - 1, x, y + 2, cl1);
+						sys_line(_videobuffer, x, y, x, y + 1, cl3);
 
 						if (rn == 0)
-							sys_line(videobuffer, x, y + 1, x, y + 1, cl2);
+							sys_line(_videobuffer, x, y + 1, x, y + 1, cl2);
 						if (rn == 2)
-							sys_line(videobuffer, x, y, x, y, cl2);
+							sys_line(_videobuffer, x, y, x, y, cl2);
 
 						orn = rn;
 
@@ -7369,13 +7369,13 @@ void GriffonEngine::game_updspells() {
 						if (orn == 2)
 							x = x + 1;
 
-						sys_line(videobuffer, x - 1, y, x + 2, y, cl1);
-						sys_line(videobuffer, x, y, x + 1, y, cl3);
+						sys_line(_videobuffer, x - 1, y, x + 2, y, cl1);
+						sys_line(_videobuffer, x, y, x + 1, y, cl3);
 
 						if (rn == 0)
-							sys_line(videobuffer, x + 1, y, x + 1, y, cl2);
+							sys_line(_videobuffer, x + 1, y, x + 1, y, cl2);
 						if (rn == 2)
-							sys_line(videobuffer, x, y, x, y, cl2);
+							sys_line(_videobuffer, x, y, x, y, cl2);
 
 						orn = rn;
 
@@ -7426,13 +7426,13 @@ void GriffonEngine::game_updspells() {
 						if (orn == 2)
 							x = x + 1;
 
-						sys_line(videobuffer, x - 1, y, x + 2, y, cl1);
-						sys_line(videobuffer, x, y, x + 1, y, cl3);
+						sys_line(_videobuffer, x - 1, y, x + 2, y, cl1);
+						sys_line(_videobuffer, x, y, x + 1, y, cl3);
 
 						if (rn == 0)
-							sys_line(videobuffer, x + 1, y, x + 1, y, cl2);
+							sys_line(_videobuffer, x + 1, y, x + 1, y, cl2);
 						if (rn == 2)
-							sys_line(videobuffer, x, y, x, y, cl2);
+							sys_line(_videobuffer, x, y, x, y, cl2);
 
 						orn = rn;
 
@@ -7484,9 +7484,9 @@ void GriffonEngine::game_updspells() {
 			// wizard 1 lightning
 			if (spellnum == 9) {
 
-				cl1 = videobuffer->format.RGBToColor(0, 32, 204);
-				cl2 = videobuffer->format.RGBToColor(142, 173, 191);
-				cl3 = videobuffer->format.RGBToColor(240, 240, 240);
+				cl1 = _videobuffer->format.RGBToColor(0, 32, 204);
+				cl2 = _videobuffer->format.RGBToColor(142, 173, 191);
+				cl3 = _videobuffer->format.RGBToColor(240, 240, 240);
 
 				int px = spellinfo[i].enemyx + 12;
 				int py = spellinfo[i].enemyy + 24;
@@ -7505,13 +7505,13 @@ void GriffonEngine::game_updspells() {
 						if (orn == 2)
 							x = x + 1;
 
-						sys_line(videobuffer, x - 1, y, x + 2, y, cl1);
-						sys_line(videobuffer, x, y, x + 1, y, cl3);
+						sys_line(_videobuffer, x - 1, y, x + 2, y, cl1);
+						sys_line(_videobuffer, x, y, x + 1, y, cl3);
 
 						if (rn == 0)
-							sys_line(videobuffer, x + 1, y, x + 1, y, cl2);
+							sys_line(_videobuffer, x + 1, y, x + 1, y, cl2);
 						if (rn == 2)
-							sys_line(videobuffer, x, y, x, y, cl2);
+							sys_line(_videobuffer, x, y, x, y, cl2);
 
 						orn = rn;
 
@@ -7582,7 +7582,7 @@ void GriffonEngine::game_updspellsunder() {
 					f = 160 * (1 - (fra - 24) / 8);
 
 				spellimg->setAlpha(f, true);
-				spellimg->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+				spellimg->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 				spellimg->setAlpha(255, true);
 
 				spellinfo[i].frame = spellinfo[i].frame - 0.2 * fpsr;
@@ -7684,7 +7684,7 @@ void GriffonEngine::game_updspellsunder() {
 							rcDest.top = (int)yloc;
 
 							if (xloc > -1 && xloc < 304 && yloc > -1 && yloc < 224) {
-								spellimg->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+								spellimg->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 
 								int sx = (xloc / 2 + 4);
 								int sy = (yloc / 2 + 8);
@@ -7812,7 +7812,7 @@ void GriffonEngine::game_updspellsunder() {
 					rcDest.top = yloc;
 
 					if (xloc > -16 && xloc < 320 && yloc > -16 && yloc < 240) {
-						spellimg->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+						spellimg->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 
 						if (spellinfo[i].damagewho == 1) {
 							float xdif = (xloc + 8) - (player.px + 12);
@@ -7855,14 +7855,14 @@ void GriffonEngine::sys_initialize() {
 	for (int i = 0; i < kMaxFloat; i++)
 		floatstri[i] = (char *)malloc(64); // 64 bytes each string (should be enough)
 
-	video = new Graphics::TransparentSurface;
-	video->create(320, 240, g_system->getScreenFormat());
-	videobuffer = new Graphics::TransparentSurface;
-	videobuffer->create(320, 240, g_system->getScreenFormat());
-	videobuffer2 = new Graphics::TransparentSurface;
-	videobuffer2->create(320, 240, g_system->getScreenFormat());
-	videobuffer3 = new Graphics::TransparentSurface;
-	videobuffer3->create(320, 240, g_system->getScreenFormat());
+	_video = new Graphics::TransparentSurface;
+	_video->create(320, 240, g_system->getScreenFormat());
+	_videobuffer = new Graphics::TransparentSurface;
+	_videobuffer->create(320, 240, g_system->getScreenFormat());
+	_videobuffer2 = new Graphics::TransparentSurface;
+	_videobuffer2->create(320, 240, g_system->getScreenFormat());
+	_videobuffer3 = new Graphics::TransparentSurface;
+	_videobuffer3->create(320, 240, g_system->getScreenFormat());
 	mapbg = new Graphics::TransparentSurface;
 	mapbg->create(320, 240, g_system->getScreenFormat());
 	clipbg = new Graphics::TransparentSurface;
@@ -7884,14 +7884,14 @@ void GriffonEngine::sys_initialize() {
 	saveloadimg = IMG_Load("art/saveloadnew.bmp", true);
 	saveloadimg->setAlpha(160, true);
 
-	titleimg = IMG_Load("art/titleb.bmp");
-	titleimg2 = IMG_Load("art/titlea.bmp", true);
-	//titleimg2->setAlpha(204, true);
+	_titleimg = IMG_Load("art/titleb.bmp");
+	_titleimg2 = IMG_Load("art/titlea.bmp", true);
+	//_titleimg2->setAlpha(204, true);
 
-	inventoryimg = IMG_Load("art/inventory.bmp", true);
+	_inventoryimg = IMG_Load("art/inventory.bmp", true);
 
-	logosimg = IMG_Load("art/logos.bmp");
-	theendimg = IMG_Load("art/theend.bmp");
+	_logosimg = IMG_Load("art/logos.bmp");
+	_theendimg = IMG_Load("art/theend.bmp");
 
 
 	sys_LoadTiles();
@@ -8162,12 +8162,12 @@ void GriffonEngine::sys_print(Graphics::TransparentSurface *buffer, const char *
 void GriffonEngine::sys_progress(int w, int wm) {
 	long ccc;
 
-	ccc = videobuffer->format.RGBToColor(0, 255, 0);
+	ccc = _videobuffer->format.RGBToColor(0, 255, 0);
 
 	rcDest.setWidth(w * 74 / wm);
-	videobuffer->fillRect(rcDest, ccc);
+	_videobuffer->fillRect(rcDest, ccc);
 
-	g_system->copyRectToScreen(videobuffer->getPixels(), videobuffer->pitch, 0, 0, videobuffer->w, videobuffer->h);
+	g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
 	g_system->updateScreen();
 
 	g_system->getEventManager()->pollEvent(event);
@@ -8185,7 +8185,7 @@ void GriffonEngine::sys_setupAudio() {
 	//atexit(Mix_CloseAudio);
 
 	const char *stri = "Loading...";
-	sys_print(videobuffer, stri, 160 - 4 * strlen(stri), 116, 0);
+	sys_print(_videobuffer, stri, 160 - 4 * strlen(stri), 116, 0);
 
 	loadimg = IMG_Load("art/load.bmp", true);
 
@@ -8198,9 +8198,9 @@ void GriffonEngine::sys_setupAudio() {
 	rcDest.top = 116 + 12;
 
 	loadimg->setAlpha(160, true); // 128
-	loadimg->blit(*videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
+	loadimg->blit(*_videobuffer, rcDest.left, rcDest.top, Graphics::FLIP_NONE, &rcSrc);
 
-	g_system->copyRectToScreen(videobuffer->getPixels(), videobuffer->pitch, 0, 0, videobuffer->w, videobuffer->h);
+	g_system->copyRectToScreen(_videobuffer->getPixels(), _videobuffer->pitch, 0, 0, _videobuffer->w, _videobuffer->h);
 	g_system->updateScreen();
 
 	rcDest.left = 160 - 44 + 7;
