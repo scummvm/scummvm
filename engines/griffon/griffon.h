@@ -300,11 +300,11 @@ private:
 	int state_save(int slotnum);
 
 private:
-	Graphics::TransparentSurface *video, *videobuffer, *videobuffer2, *videobuffer3;
+	Graphics::TransparentSurface *_video, *_videobuffer, *_videobuffer2, *_videobuffer3;
 
 	// system
-	Graphics::TransparentSurface *titleimg, *titleimg2, *inventoryimg;
-	Graphics::TransparentSurface *logosimg, *theendimg;
+	Graphics::TransparentSurface *_titleimg, *_titleimg2, *_inventoryimg;
+	Graphics::TransparentSurface *_logosimg, *_theendimg;
 	Common::Event event;
 
 	Graphics::TransparentSurface *mapbg, *clipbg, *clipbg2;
