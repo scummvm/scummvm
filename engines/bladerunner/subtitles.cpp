@@ -55,14 +55,14 @@ namespace BladeRunner {
  * DONE - OK - CHECK what happens in VQA when no corresponding TRE subs file?
  */
 
-const Common::String Subtitles::SUBTITLES_FONT_FILENAME_EXTERNAL = "SUBTLS_E.FON";
+const char *Subtitles::SUBTITLES_FONT_FILENAME_EXTERNAL = "SUBTLS_E.FON";
 
 /*
 * All entries need to have the language code appended (after a '_').
 * And all entries should get the suffix extension ".TRx"; the last letter in extension "TR*" should also be the language code
 * If/When adding new Text Resources here --> Update kMaxTextResourceEntries and also update method getIdxForSubsTreName()
 */
-const Common::String Subtitles::SUBTITLES_FILENAME_PREFIXES[kMaxTextResourceEntries] = {
+const char *Subtitles::SUBTITLES_FILENAME_PREFIXES[kMaxTextResourceEntries] = {
 	"INGQUO",           // 0 // (in-game subtitles, not VQA subtitles)
 	"WSTLGO",           // 1 // all game (language) versions have the English ('E') version of WSTLGO
 	"BRLOGO",           // 2 // all game (language) versions have the English ('E') version of BRLOGO
@@ -137,11 +137,11 @@ void Subtitles::init(void) {
 	for (int i = 0; i < kMaxTextResourceEntries; i++) {
 		_vqaSubsTextResourceEntries[i] = new TextResource(_vm);
 		Common::String tmpConstructedFileName = "";
-		if (SUBTITLES_FILENAME_PREFIXES[i] == "WSTLGO" || SUBTITLES_FILENAME_PREFIXES[i] == "BRLOGO") {
-			tmpConstructedFileName = SUBTITLES_FILENAME_PREFIXES[i] + "_E"; // Only English versions of these exist
+		if (!strcmp(SUBTITLES_FILENAME_PREFIXES[i], "WSTLGO") || !strcmp(SUBTITLES_FILENAME_PREFIXES[i], "BRLOGO")) {
+			tmpConstructedFileName = Common::String(SUBTITLES_FILENAME_PREFIXES[i]) + "_E"; // Only English versions of these exist
 		}
 		else {
-			tmpConstructedFileName = SUBTITLES_FILENAME_PREFIXES[i] + "_" + _vm->_languageCode;
+			tmpConstructedFileName = Common::String(SUBTITLES_FILENAME_PREFIXES[i]) + "_" + _vm->_languageCode;
 		}
 
 		if ( _vqaSubsTextResourceEntries[i]->open(tmpConstructedFileName)) {
@@ -184,11 +184,11 @@ void Subtitles::setSubtitlesSystemInactive(bool flag) {
 int Subtitles::getIdxForSubsTreName(const Common::String &treName) const {
 	Common::String tmpConstructedFileName = "";
 	for (int i = 0; i < kMaxTextResourceEntries; ++i) {
-		if (SUBTITLES_FILENAME_PREFIXES[i] == "WSTLGO" || SUBTITLES_FILENAME_PREFIXES[i] == "BRLOGO") {
-			tmpConstructedFileName = SUBTITLES_FILENAME_PREFIXES[i] + "_E"; // Only English versions of these exist
+		if (!strcmp(SUBTITLES_FILENAME_PREFIXES[i], "WSTLGO") || !strcmp(SUBTITLES_FILENAME_PREFIXES[i], "BRLOGO")) {
+			tmpConstructedFileName = Common::String(SUBTITLES_FILENAME_PREFIXES[i]) + "_E"; // Only English versions of these exist
 		}
 		else {
-			tmpConstructedFileName = SUBTITLES_FILENAME_PREFIXES[i] + "_" + _vm->_languageCode;
+			tmpConstructedFileName = Common::String(SUBTITLES_FILENAME_PREFIXES[i]) + "_" + _vm->_languageCode;
 		}
 		if (tmpConstructedFileName == treName) {
 			return i;
@@ -546,4 +546,3 @@ void Subtitles::reset() {
 }
 
 } // End of namespace BladeRunner
-

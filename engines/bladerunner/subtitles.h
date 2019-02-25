@@ -49,8 +49,8 @@ class Subtitles {
 	static const int kMaxNumOfSubtitlesLines = 3;
 	static const int kMaxWidthPerLineToAutoSplitThresholdPx = 610;
 	static const int kMaxTextResourceEntries = 1 + 25; // Support in-game subs (1) and all possible VQAs (25) with spoken dialogue or translatable text!
-	static const Common::String SUBTITLES_FILENAME_PREFIXES[kMaxTextResourceEntries];
-	static const Common::String SUBTITLES_FONT_FILENAME_EXTERNAL;
+	static const char *SUBTITLES_FILENAME_PREFIXES[kMaxTextResourceEntries];
+	static const char *SUBTITLES_FONT_FILENAME_EXTERNAL;
 
 
 	BladeRunnerEngine *_vm;
