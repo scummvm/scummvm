@@ -38,7 +38,6 @@
 #include "griffon/config.h"
 #include "griffon/console.h"
 
-#include "common/events.h"
 #include "common/file.h"
 #include "common/system.h"
 
@@ -96,7 +95,6 @@ namespace Griffon {
 */
 
 // stubs
-typedef int Mix_Chunk;
 void Mix_Volume(int channel, int volume) {}
 int Mix_PlayChannel(int par1, Mix_Chunk *chunk, int par3) { return 0; }
 void Mix_Pause(int channel) {}
@@ -105,130 +103,6 @@ void Mix_Resume(int channel) {}
 Mix_Chunk *Mix_LoadWAV(const char *name) { return NULL; }
 bool Mix_Playing(int channel) { return true; }
 
-
-// system
-Graphics::TransparentSurface *video, *videobuffer, *videobuffer2, *videobuffer3;
-Graphics::TransparentSurface *titleimg, *titleimg2, *inventoryimg;
-Graphics::TransparentSurface *logosimg, *theendimg;
-Common::Event event;
-
-Graphics::TransparentSurface *mapbg, *clipbg, *clipbg2;
-unsigned int clipsurround[4][4];
-int fullscreen;
-
-float animspd;
-int rampdata[40][24];
-
-int curmap;
-Graphics::TransparentSurface *fontchr[224][5]; // 256 - 32
-Graphics::TransparentSurface *itemimg[21], *windowimg;
-Graphics::TransparentSurface *spellimg;
-
-int itemselon, curitem, itemticks;
-float itemyloc;
-int selenemyon, curenemy, forcepause;
-int roomlock; // set to disable any room jumps while in the room
-int scriptflag[100][10], saveslot;  // script, flag
-
-// timer related - move to local later
-int ticks, tickspassed, nextticks;
-float fp, fps, fpsr;
-int secsingame, secstart;
-
-extern const char *story[48];
-Graphics::TransparentSurface *mapimg[4];
-extern int invmap[4][7][13];
-extern const char *story2[27];
-
-Common::Rect rcSrc, rcDest;
-
-// -----------special case
-int dontdrawover;   // used in map24 so that the candles dont draw over the boss, default set to 0
-
-// saveload info
-Graphics::TransparentSurface *saveloadimg;
-
-
-// post info
-float postinfo[21][3];
-int nposts;
-
-// cloud info
-Graphics::TransparentSurface *cloudimg;
-float clouddeg = 0;
-int cloudson;
-
-// spell info
-SPELLTYPE spellinfo[kMaxSpell];
-
-// player info
-int movingup, movingdown, movingleft, movingright;
-PLAYERTYPE player;
-int attacking;
-PLAYERTYPE playera;
-int asecstart;
-
-// tile info
-Graphics::TransparentSurface *tiles[4];
-int tileinfo[3][40][24][3]; // maplayer, x, y, tiledata (tile, tilelayer)
-
-extern int elementmap[15][20];
-
-
-// animation info
-Graphics::TransparentSurface *anims[100];
-// id number 0&1 = players
-Graphics::TransparentSurface *animsa[100];
-// attack anims
-float playerattackofs[4][16][3];
-// [dir] [frame] [x,y ofs, completed(0/1)]
-
-float floattext[kMaxFloat][4]; // [id] [framesleft, x, y, col]
-char *floatstri[kMaxFloat];
-float  floaticon[kMaxFloat][4]; // [id] [framesleft, x, y, ico]
-
-// special for animset2
-ANIMSET2TYPE animset2[7], animset9[7];
-
-// object info
-float objectframe[256][2];
-int lastobj;
-// frame!, curframe
-int objectinfo[33][6];
-// nframes,xtiles,ytiles,speed,type,script, update?
-int objecttile[33][9][3][3][2];
-// [objnum] [frame] [x] [y] [tile/layer]
-int objmap[21][15];
-
-int objmapf[1000][21][15];
-// [mapnum] x, y  set to 1 to make this objmap spot stay at -1
-
-// trigger info
-int triggers[10000][9];
-// [map#][index], [var]
-// map#,x,y
-int triggerloc[320][240], ntriggers;
-
-// npc info
-NPCTYPE npcinfo[kMaxNPC];
-int lastnpc;
-
-// music info
-Mix_Chunk *mgardens, *mgardens2, *mgardens3, *mgardens4, *mboss, *mmenu, *mendofgame;
-int menabled = 1, musicchannel = -1, menuchannel = -1;
-int pgardens, pboss, ptown, pacademy, pcitadel;
-int loopseta = 0;
-
-Mix_Chunk *sfx[21];
-
-// room locks
-int roomlocks[201], saidlocked, canusekey, locktype, roomtounlock, saidjammed;
-// set to 1 for normal key, set to 2 for master, set to 0 if unlocked
-
-// ysort
-int ysort[2401], lasty, firsty;
-
-int pmenu;
 
 void GriffonEngine::griffon_main() {
 	sys_initialize();

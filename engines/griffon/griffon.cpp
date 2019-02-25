@@ -44,6 +44,14 @@ GriffonEngine::GriffonEngine(OSystem *syst) : Engine(syst) {
 	_console = nullptr;
 
 	_shouldQuit = false;
+
+	menabled = 1;
+	musicchannel = -1;
+	menuchannel = -1;
+
+	loopseta = 0;
+
+	clouddeg = 0.0f;
 }
 
 GriffonEngine::~GriffonEngine() {
