@@ -49,19 +49,9 @@ class Subtitles {
 	static const int kMaxNumOfSubtitlesLines = 3;
 	static const int kMaxWidthPerLineToAutoSplitThresholdPx = 610;
 	static const int kMaxTextResourceEntries = 1 + 25; // Support in-game subs (1) and all possible VQAs (25) with spoken dialogue or translatable text!
+	static const Common::String SUBTITLES_FILENAME_PREFIXES[kMaxTextResourceEntries];
+	static const Common::String SUBTITLES_FONT_FILENAME_EXTERNAL;
 
-	// 'static const' declaration for SUBTITLES_FILENAME_PREFIXES (and init in cpp) causes warning:
-	// "declaration requires a global destructor [-Wglobal-constructors]"
-	// So, we declare it as a plain member should be fine, since we only use one instance of Subtitles anyway.
-	/*
-	* All supported TRE entries that can be in the SUBTITLES.MIX files need to:
-	* 1. Have the language code appended (after an underscore delimiter '_').
-	* 2. Have the suffix extension ".TRx"; the last letter in extension "TR*" should also be the language code
-	*
-	* Important Note: If/When adding new Text Resources here --> Update kMaxTextResourceEntries
-	* and also check if method getIdxForSubsTreName() needs updating.
-	*/
-	const char *SUBTITLES_FILENAME_PREFIXES[kMaxTextResourceEntries];
 
 	BladeRunnerEngine *_vm;
 
