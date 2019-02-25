@@ -44,7 +44,7 @@ Screen::~Screen() {
 }
 
 void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY) {
-	copyRectToSurface(srcSurface.getBasePtr(0, 0), srcSurface.pitch, destX, destY, srcSurface.w, srcSurface.h, false);
+	copyRectToSurface(srcSurface.getBasePtr(0, 0), srcSurface.pitch, srcSurface.w, 0, destX, destY, srcSurface.w, srcSurface.h, false);
 }
 
 void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect srcRect, bool flipX) {
@@ -60,10 +60,10 @@ void Screen::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, i
 		destY = 0;
 	}
 
-	copyRectToSurface(srcSurface.getBasePtr(clipRect.left, clipRect.top), srcSurface.pitch, destX, destY, clipRect.width(), clipRect.height(), flipX);
+	copyRectToSurface(srcSurface.getBasePtr(clipRect.left, clipRect.top), srcSurface.pitch, srcSurface.w, clipRect.left, destX, destY, clipRect.width(), clipRect.height(), flipX);
 }
 
-void Screen::copyRectToSurface(const void *buffer, int srcPitch, int destX, int destY, int width, int height, bool flipX) {
+void Screen::copyRectToSurface(const void *buffer, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX) {
 	assert(buffer);
 
 	assert(destX >= 0 && destX < _backSurface->w);
@@ -76,7 +76,7 @@ void Screen::copyRectToSurface(const void *buffer, int srcPitch, int destX, int 
 	byte *dst = (byte *)_backSurface->getBasePtr(destX, destY);
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {
-			uint32 srcIdx = flipX ? width - j - 1 : j;
+			int32 srcIdx = flipX ? srcWidth - (srcXOffset * 2) - j - 1 : j;
 			if ((src[srcIdx * 2 + 1] & 0x80) == 0) {
 				// only copy opaque pixels
 				dst[j * 2] = src[srcIdx * 2];

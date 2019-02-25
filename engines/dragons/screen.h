@@ -39,9 +39,9 @@ public:
 	Graphics::PixelFormat getPixelFormat() { return _pixelFormat; }
 	void copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY);
 	void copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, Common::Rect srcRect, bool flipX = false);
-	void copyRectToSurface(const void *buffer, int srcPitch, int destX, int destY, int width, int height, bool flipX);
 	void updateScreen();
 private:
+	void copyRectToSurface(const void *buffer, int srcPitch, int srcWidth, int srcXOffset, int destX, int destY, int width, int height, bool flipX);
 	Common::Rect clipRectToScreen(int destX, int destY, const Common::Rect rect);
 };
 
