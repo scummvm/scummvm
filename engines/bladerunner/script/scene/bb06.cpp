@@ -63,17 +63,36 @@ void SceneScriptBB06::InitializeScene() {
 		Game_Flag_Reset(kFlagBB51toBB06b);
 	} else {
 		Scene_Loop_Set_Default(1);
+#if BLADERUNNER_ORIGINAL_BUGS // Sebastian's Doll Fix
+#else
+		// bugfix: case of not transitioning from BB51: chess/ egg boiler sub-space
+		if (Game_Flag_Query(kFlagBB06AndroidDestroyed)) {
+			Overlay_Play("BB06OVER", 1, false, false, 0);
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 
+#if BLADERUNNER_ORIGINAL_BUGS // Sebastian's Doll Fix
 	if (Game_Flag_Query(kFlagBB06AndroidDestroyed)) {
-		Overlay_Play("BB06OVER", 1, true, false, 0); // TODO: check, it's is playing while the background is still panning so it looks pretty weird
+		Overlay_Play("BB06OVER", 1, true, false, 0); // Original bug: it is playing while the background is still panning so it looks pretty weird
 	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 void SceneScriptBB06::SceneLoaded() {
 	Obstacle_Object("V2CHESSTBL01", true);
 	Clickable_Object("BOX31");
-	Item_Add_To_World(kItemBB06ControlBox, 931, kSetBB02_BB04_BB06_BB51, -127.0f, 68.42f, 57.0f, 0, 8, 8, true, true, false, true);
+#if BLADERUNNER_ORIGINAL_BUGS // Sebastian's Doll Fix
+	// This Item_Add_To_World call is only ok for the transition from BB51 to BB06,
+	// otherwise the doll item is not placed in the current set
+	Item_Add_To_World(kItemBB06ControlBox, 931, kSetBB06_BB07, -127.0f, 68.42f, 57.0f, 0, 8, 8, true, true, false, true);
+#else
+	// Add doll item based on which SET version of the "room" we are in
+	Item_Add_To_World(kItemBB06ControlBox, 931, Player_Query_Current_Set(), -117.24f, 46.41f, 76.66f, 256, 28, 16, true, true, false, true);
+	if (Game_Flag_Query(kFlagBB06AndroidDestroyed)) {
+		Item_Flag_As_Non_Target(kItemBB06ControlBox);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 bool SceneScriptBB06::MouseClick(int x, int y) {
@@ -101,12 +120,24 @@ bool SceneScriptBB06::ClickedOnActor(int actorId) {
 
 bool SceneScriptBB06::ClickedOnItem(int itemId, bool a2) {
 	if (itemId == kItemBB06ControlBox) {
+#if BLADERUNNER_ORIGINAL_BUGS // Sebastian's Doll Fix
 		if (Player_Query_Combat_Mode()) {
 			Overlay_Play("BB06OVER", 1, true, true, 0);
 			Game_Flag_Set(kFlagBB06AndroidDestroyed);
 			Item_Remove_From_World(kItemBB06ControlBox);
 			return true;
 		}
+#else
+		if (Player_Query_Combat_Mode()) {
+			Overlay_Play("BB06OVER", 0, false, true, 0); // explosion - don't loop
+			Game_Flag_Set(kFlagBB06AndroidDestroyed);
+			// flag item kItemBB06ControlBox as non-combat-target
+			Item_Flag_As_Non_Target(kItemBB06ControlBox);
+			return true;
+		} else {
+			ClickedOn3DObject("BOX31", false); // clone behavior of box31
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 	return false;
 }
@@ -152,6 +183,15 @@ void SceneScriptBB06::SceneFrameAdvanced(int frame) {
 	if (frame == 34) {
 		Ambient_Sounds_Play_Sound(447, 40, -50, -50, 10);
 	}
+#if BLADERUNNER_ORIGINAL_BUGS // Sebastian's Doll Fix
+#else
+	// last frame of transition is 15, try 13 for better transition - minimize weird effect
+	if (frame == 13) { // executed once during transition FROM bb51 (chess sub space)
+		if (Game_Flag_Query(kFlagBB06AndroidDestroyed)) {
+			Overlay_Play("BB06OVER", 1, false, false, 0);
+		}
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	if (frame == 16) {
 		Ambient_Sounds_Play_Sound(448, 20, -50, -50, 10);
 	}
@@ -177,6 +217,12 @@ void SceneScriptBB06::PlayerWalkedIn() {
 }
 
 void SceneScriptBB06::PlayerWalkedOut() {
+#if BLADERUNNER_ORIGINAL_BUGS // Sebastian's Doll Fix
+#else
+	// this might be redundant -- the item is not visible in BB07 even if it was drawn in BB06
+	Item_Remove_From_World(kItemBB06ControlBox); // this removes the item from the set so it won't exist in the next scene
+												// mainly to remove it completely from BB07
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 void SceneScriptBB06::DialogueQueueFlushed(int a1) {

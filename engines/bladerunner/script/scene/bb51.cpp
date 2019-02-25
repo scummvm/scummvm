@@ -47,6 +47,14 @@ void SceneScriptBB51::InitializeScene() {
 
 	Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
 	Scene_Loop_Set_Default(1);
+
+#if BLADERUNNER_ORIGINAL_BUGS // Sebastian's Doll Fix
+#else
+	if (Game_Flag_Query(kFlagBB06AndroidDestroyed)) {
+		Overlay_Play("BB06OVER", 1, false, false, 0);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 }
 
 void SceneScriptBB51::SceneLoaded() {
@@ -111,6 +119,16 @@ bool SceneScriptBB51::ClickedOn2DRegion(int region) {
 }
 
 void SceneScriptBB51::SceneFrameAdvanced(int frame) {
+#if BLADERUNNER_ORIGINAL_BUGS // Sebastian's Doll Fix
+#else
+	// Scene Transition loop frames range from 0 to 14
+	// keep destroyedDoll overlay for 2-3 frames - to minimize weird effect
+	if (frame == 2) { // executed once during transition to BB51 (chess sub space)
+		if (Game_Flag_Query(kFlagBB06AndroidDestroyed)) {
+			Overlay_Remove("BB06OVER");
+		}
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 void SceneScriptBB51::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
