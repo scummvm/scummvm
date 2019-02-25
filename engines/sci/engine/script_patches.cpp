@@ -791,11 +791,45 @@ static const uint16 ecoquest1PatchNorthCliffsDisposal[] = {
 	PATCH_END
 };
 
+// The Spanish version of EcoQuest accidentally shipped with temporary test code
+//  that breaks the game when entering Olympia's apartment. (room 226)
+//
+// A message box's position was localized in the Spanish version. This message
+//  occurs after saving Olympia by pumping bleach out of the window. To test
+//  this change, a developer added code to forcibly run the usePump script upon
+//  entering the room, but then forgot to remove it. This breaks the puzzle and
+//  locks up the game upon re-entering the room.
+//
+// We fix this by disabling the test code that should not have been shipped.
+//
+// Applies to: Spanish PC Floppy
+// Responsible method: rm226:init
+// Fixes bug #10900
+static const uint16 ecoquest1SignatureBleachPumpTest[] = {
+	SIG_MAGICDWORD,
+	0x78,                               // push1
+	0x39, 0x35,                         // pushi 35
+	0x46, SIG_UINT16(0x0333),           // calle proc819_3 [ set recycled-bleach flag ]
+	      SIG_UINT16(0x0003), 0x02,
+	0x38, SIG_SELECTOR16(setScript),    // pushi setScript
+	0x78,                               // push1
+	0x72, SIG_UINT16(0x0a44),           // lofsa usePump
+	0x36,                               // push
+	0x54, 0x06,                         // self 06 [ self setScript: usePump ]
+	SIG_END
+};
+
+static const uint16 ecoquest1PatchBleachPumpTest[] = {
+	0x32, PATCH_UINT16(0x0010),         // jmp 0010 [ skip test code ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                               patch
 static const SciScriptPatcherEntry ecoquest1Signatures[] = {
 	{  true,   140, "CD: mosaic puzzle fix",                       2, ecoquest1SignatureMosaicPuzzleFix,      ecoquest1PatchMosaicPuzzleFix },
 	{  true,   160, "CD: give superfluous oily shell",             1, ecoquest1SignatureGiveOilyShell,        ecoquest1PatchGiveOilyShell },
 	{  true,   160, "CD/Floppy: column puzzle fix",                1, ecoquest1SignatureColumnPuzzleFix,      ecoquest1PatchColumnPuzzleFix },
+	{  true,   226, "Spanish: disable bleach pump test",           1, ecoquest1SignatureBleachPumpTest,       ecoquest1PatchBleachPumpTest },
 	{  true,   320, "CD: south cliffs position",                   1, ecoquest1SignatureSouthCliffsPosition,  ecoquest1PatchSouthCliffsPosition },
 	{  true,   321, "CD: north cliffs position",                   1, ecoquest1SignatureNorthCliffsPosition,  ecoquest1PatchNorthCliffsPosition },
 	{  true,   321, "CD: north cliffs disposal",                   2, ecoquest1SignatureNorthCliffsDisposal,  ecoquest1PatchNorthCliffsDisposal },
