@@ -219,8 +219,6 @@ static const int32 pathfinderXYOffsetTbl[32] =
 bool Actor::pathfinding_maybe(int16 target_x, int16 target_y, int16 unkTypeMaybe) {
 	uint8 pathfinderData[32];
 	debug(1, "pathfinding. (%X,%X) -> (%X,%X)", x_pos, y_pos, target_x, target_y);
-	//TODO implement me.
-//	 error("Implement pathfinding_maybe()");
 	int16 priority = 0;
 	int16 var_90_1 = 0;
 	int16 var88 = 0;
@@ -293,6 +291,8 @@ bool Actor::pathfinding_maybe(int16 target_x, int16 target_y, int16 unkTypeMaybe
 
 	int16 newTargetX = target_x;
 	int16 newTargetY = target_y;
+	int16 newX = x_pos;
+	int16 newY = y_pos;
 
 	memset(pathfinderData, 0, 32);
 
@@ -300,7 +300,39 @@ bool Actor::pathfinding_maybe(int16 target_x, int16 target_y, int16 unkTypeMaybe
 	field_78 = target_y;
 
 	if(!pathfindingUnk(x_pos, y_pos, target_x, target_y, unkTypeMaybe)) {
-		// TODO 0x8003398c
+		//  0x8003398c
+		int16 xOffset = -1;
+		//TODO convert to for loops
+		do {
+			int16 yOffset = -1;
+			do {
+				int16 targetXOffset = -1;
+				do {
+					int16 targetYOffset = -1;
+					do {
+						if(pathfindingUnk(newX + xOffset, newY + yOffset, newTargetX + targetXOffset, newTargetY + targetYOffset, unkTypeMaybe | 0x8000)) {
+							targetXOffset = 2;
+							newX += xOffset;
+							newY += yOffset;
+							newTargetX += targetXOffset;
+							newTargetY += targetYOffset;
+							var_90_1 = 0;
+							var88 = 1;
+							x_pos += xOffset;
+							y_pos += yOffset;
+							xOffset = 2;
+							yOffset = 2;
+							targetYOffset = 3;
+						} else {
+							targetYOffset++;
+						}
+					} while(targetYOffset < 2);
+					targetXOffset++;
+				} while(targetXOffset < 2);
+				yOffset++;
+			} while(yOffset < 2);
+			xOffset++;
+		} while(xOffset < 2);
 	}
 
 	if (var88 == 0) { //0x80033af0
