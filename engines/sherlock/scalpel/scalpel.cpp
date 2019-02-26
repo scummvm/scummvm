@@ -762,7 +762,7 @@ bool ScalpelEngine::showCityCutscene3DO() {
 		if (finished) {
 			ImageFile3DO titleImage_Copyright("title1c.cel", kImageFile3DOType_Cel);
 
-			screen.SHtransBlitFrom(titleImage_Copyright[0]._frame, Common::Point(20, 190));
+			screen.SHtransBlitFrom(titleImage_Copyright[0]._frame, Common::Point(40, 380));
 			finished = _events->delay(3500, true);
 		}
 	}
