@@ -3506,14 +3506,15 @@ bool GUI_EoB::restParty() {
 
 	drawMenuButtonBox(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, false, false);
 
-	int nonPoisoned = 0;
+	bool poisoned = false;
 	for (int i = 0; i < 6; i++) {
 		if (!_vm->testCharacter(i, 1))
 			continue;
-		nonPoisoned |= _vm->testCharacter(i, 0x10);
+		if (!_vm->testCharacter(i, 0x10))
+			poisoned = true;
 	}
 
-	if (!nonPoisoned) {
+	if (poisoned) {
 		if (!confirmDialogue(59))
 			return false;
 	}
