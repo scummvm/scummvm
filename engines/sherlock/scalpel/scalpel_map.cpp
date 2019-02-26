@@ -56,7 +56,7 @@ const byte *MapPaths::getPath(int srcLocation, int destLocation) {
 
 /*----------------------------------------------------------------*/
 
-ScalpelMap::ScalpelMap(SherlockEngine *vm): Map(vm), _topLine(g_system->getWidth(), 12) {
+ScalpelMap::ScalpelMap(SherlockEngine *vm): Map(vm), _topLine(g_system->getWidth(), 12, g_system->getScreenFormat()) {
 	_mapCursors = nullptr;
 	_shapes = nullptr;
 	_iconShapes = nullptr;
@@ -332,7 +332,7 @@ void ScalpelMap::setupSprites() {
 	_cursorIndex = 0;
 	events.setCursor((*_mapCursors)[_cursorIndex]._frame);
 
-	_iconSave.create((*_shapes)[4]._width, (*_shapes)[4]._height);
+	_iconSave.create((*_shapes)[4]._width, (*_shapes)[4]._height, g_system->getScreenFormat());
 	Person &p = people[HOLMES];
 	p._description = " ";
 	p._type = CHARACTER;
