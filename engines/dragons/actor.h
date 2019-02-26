@@ -134,6 +134,8 @@ private:
 	void pathfindingCleanup();
 	uint16 pathfindingUnk(int16 actor_x, int16 actor_y, int16 target_x, int16 target_y, int16 unkType);
 	int16 pathfindingUpdateTarget(int16 newTargetX, int16 newTargetY);
+	int16 pathfindingFindClosestPoint(int16 actor_x, int16 actor_y, int16 target_x, int16 target_y, int16 unkType,
+									  uint8 *pointsInUseTbl);
 };
 
 } // End of namespace Dragons

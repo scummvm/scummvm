@@ -287,7 +287,7 @@ bool Actor::pathfinding_maybe(int16 target_x, int16 target_y, int16 unkTypeMaybe
 		return true;
 	}
 
-	int16 var_c8_1 = 0;
+	int16 numWalkPoints = 0;
 
 	int16 newTargetX = target_x;
 	int16 newTargetY = target_y;
@@ -347,7 +347,7 @@ bool Actor::pathfinding_maybe(int16 target_x, int16 target_y, int16 unkTypeMaybe
 		}
 
 		if (i == 0x20) {
-			//TODO 0x80033b80
+			// 0x80033b80
 			int16 tempX = newX;
 			int16 tempY = newY;
 			for(int j = 0; j < 0x20; j++) {
@@ -451,7 +451,30 @@ bool Actor::pathfinding_maybe(int16 target_x, int16 target_y, int16 unkTypeMaybe
 		}
 	}
 
-	if (pathfindingUnk(x_pos, x_pos, newTargetX, newTargetY, unkTypeMaybe)) {
+	for (; !pathfindingUnk(newX, newY, newTargetX, newTargetY, unkTypeMaybe); ) {
+		int16 pointId = pathfindingFindClosestPoint(newX, newY, newTargetX, newTargetX, unkTypeMaybe, pathfinderData);
+		if (pointId == -1) {
+			if (isFlag0x10Set) {
+				pathfindingCleanup();
+			}
+			return false;
+		}
+		pathfinderData[pointId] = 1;
+		Common::Point point = getEngine()->_scene->getPoint(pointId);
+		if (numWalkPoints < 2) {
+			if (numWalkPoints > 0 && pathfindingUnk(point.x, point.y, newTargetX, newTargetY, unkTypeMaybe)) {
+				numWalkPoints--;
+			}
+		} else {
+			Common::Point targetPoint = getEngine()->_scene->getPoint(walkPointsTbl[numWalkPoints - 2]);
+			if (pathfindingUnk(point.x, point.y, targetPoint.x, targetPoint.y, unkTypeMaybe)) {
+				numWalkPoints--;
+			}
+		}
+		walkPointsTbl[numWalkPoints] = (uint16)pointId;
+		numWalkPoints++;
+	}
+
 		//0x8003437c
 		int16 origDistance = abs(target_x - x_pos) * abs(target_x - x_pos) + abs(target_y - y_pos) * abs(target_y - y_pos);
 		int16 newTargetDiffDistance = abs(newTargetX - target_x) * abs(newTargetX - target_x) + abs(newTargetY - target_y) * abs(newTargetY - target_y);
@@ -461,18 +484,18 @@ bool Actor::pathfinding_maybe(int16 target_x, int16 target_y, int16 unkTypeMaybe
 		|| ((target_x != x_pos || target_y != y_pos) && origDistance >= newTargetDiffDistance)) {
 			//0x80034568
 			debug(1, "0x80034568");
-			walkPointsIndex = var_c8_1 - 1;
+			walkPointsIndex = numWalkPoints - 1;
 
-			if (var_c8_1 == 0) {
-				target_x = newTargetX;
-				target_y = newTargetY;
+			if (numWalkPoints == 0) {
+				target_x_pos = newTargetX;
+				target_y_pos = newTargetY;
 				field_76 = -1;
 				field_78 = -1;
 			} else {
 				uint16 pointId = walkPointsTbl[walkPointsIndex];
 				Common::Point point = getEngine()->_scene->getPoint(pointId);
-				target_x = point.x;
-				target_y = point.y;
+				target_x_pos = point.x;
+				target_y_pos = point.y;
 			}
 			int16 newSeqId = pathfindingUpdateTarget(target_x, target_y);
 			if (newSeqId != -1 && !(flags & ACTOR_FLAG_800)) {
@@ -487,10 +510,7 @@ bool Actor::pathfinding_maybe(int16 target_x, int16 target_y, int16 unkTypeMaybe
 			//0x80034470
 			debug(1, "0x80034470");
 		}
-	} else {
-		//TODO 0x800341f0
-		debug(1, "0x800341f0");
-	}
+
 
 	return false;
 }
@@ -751,6 +771,26 @@ uint16 Actor::pathfindingUnk(int16 actor_x, int16 actor_y, int16 target_x, int16
 				setFlag(ACTOR_FLAG_10);
 			}
 		}
+	}
+
+	int16 Actor::pathfindingFindClosestPoint(int16 actor_x, int16 actor_y, int16 target_x, int16 target_y,
+											 int16 unkType, uint8 *pointsInUseTbl) {
+		int16 pointId = -1;
+		uint32 minDist = 0xffffffff;
+
+		for (int i = 0; i < 0x22; i++) {
+			Common::Point point = getEngine()->_scene->getPoint(i);
+			if (point.x != -1 && pointsInUseTbl[i] == 0) {
+				if (pathfindingUnk(point.x, point.y, target_x, target_y, unkType)) {
+					uint32 dist = abs(point.x - actor_x) * abs(point.x - actor_x) + abs(point.y - actor_y) * abs(point.y - actor_y);
+					if ( dist < minDist) {
+						minDist = dist;
+						pointId = i;
+					}
+				}
+			}
+		}
+		return pointId;
 	}
 
 } // End of namespace Dragons
