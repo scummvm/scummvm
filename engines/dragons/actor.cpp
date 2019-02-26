@@ -348,10 +348,59 @@ bool Actor::pathfinding_maybe(int16 target_x, int16 target_y, int16 unkTypeMaybe
 
 		if (i == 0x20) {
 			//TODO 0x80033b80
+			int16 tempX = newX;
+			int16 tempY = newY;
+			for(int j = 0; j < 0x20; j++) {
+				Common::Point point = getEngine()->_scene->getPoint(i);
+				if (point.x == -1) {
+					continue;
+				}
+				if (pathfindingUnk(newX + 1, tempY, point.x, point.y, unkTypeMaybe)) {
+					newX++;
+					x_pos++;
+					break;
+				} else if (pathfindingUnk(newX - 1, tempY, point.x, point.y, unkTypeMaybe)) {
+					newX--;
+					x_pos--;
+					break;
+				} else if (pathfindingUnk(tempX, newY + 1, point.x, point.y, unkTypeMaybe)) {
+					newY++;
+					y_pos++;
+					break;
+				} else if (pathfindingUnk(tempX, newY - 1, point.x, point.y, unkTypeMaybe)) {
+					newY--;
+					y_pos--;
+					break;
+				} else if (pathfindingUnk(newX + 1, newY + 1, point.x, point.y, unkTypeMaybe)) {
+					newX++;
+					x_pos++;
+					newY++;
+					y_pos++;
+					break;
+				} else if (pathfindingUnk(newX - 1, newY + 1, point.x, point.y, unkTypeMaybe)) {
+					newX--;
+					x_pos--;
+					newY++;
+					y_pos++;
+					break;
+				} else if (pathfindingUnk(newX + 1, newY - 1, point.x, point.y, unkTypeMaybe)) {
+					newX++;
+					x_pos++;
+					newY--;
+					y_pos--;
+					break;
+				} else if (pathfindingUnk(newX - 1, newY - 1, point.x, point.y, unkTypeMaybe)) {
+					newX--;
+					x_pos--;
+					newY--;
+					y_pos--;
+					break;
+				}
+			}
 		}
 
 		if (var88 == 0) {
-			//TODO 0x80033e48
+			// 0x80033e48
 			for (i = 0; i < 0x20; i++) {
 				Common::Point point = getEngine()->_scene->getPoint(i);
 				if (point.x != -1) {
@@ -362,7 +411,42 @@ bool Actor::pathfinding_maybe(int16 target_x, int16 target_y, int16 unkTypeMaybe
 			}
 
 			if (i == 0x20) {
-				//TODO 0x80033ed0
+				// 0x80033ed0
+				for(int j = 0; j < 0x20; j++) {
+					Common::Point point = getEngine()->_scene->getPoint(i);
+					if (point.x == -1) {
+						continue;
+					}
+					if (pathfindingUnk(target_x + 1, target_y, point.x, point.y, unkTypeMaybe)) {
+						target_x++;
+						break;
+					} else if (pathfindingUnk(target_x - 1, target_y, point.x, point.y, unkTypeMaybe)) {
+						target_x--;
+						break;
+					} else if (pathfindingUnk(target_x, target_y + 1, point.x, point.y, unkTypeMaybe)) {
+						target_y++;
+						break;
+					} else if (pathfindingUnk(target_x, target_y - 1, point.x, point.y, unkTypeMaybe)) {
+						target_y--;
+						break;
+					} else if (pathfindingUnk(target_x + 1, target_y + 1, point.x, point.y, unkTypeMaybe)) {
+						target_x++;
+						target_y++;
+						break;
+					} else if (pathfindingUnk(target_x - 1, target_y + 1, point.x, point.y, unkTypeMaybe)) {
+						target_x--;
+						target_y++;
+						break;
+					} else if (pathfindingUnk(target_x + 1, target_y - 1, point.x, point.y, unkTypeMaybe)) {
+						target_x++;
+						target_y--;
+						break;
+					} else if (pathfindingUnk(target_x - 1, target_y - 1, point.x, point.y, unkTypeMaybe)) {
+						target_x--;
+						target_y--;
+						break;
+					}
+				}
 			}
 		}
 	}
