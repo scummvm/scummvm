@@ -137,18 +137,27 @@ void EoBCoreEngine::gui_drawCharPortraitWithStats(int index) {
 		gui_drawFoodStatusGraph(index);
 
 		if (_currentControlMode == 1) {
+			Screen::FontId cf = _screen->setFont(Screen::FID_6_FNT);
+			int statusTxtY = 158;
+			if (_flags.platform == Common::kPlatformFMTowns) {
+				statusTxtY = 157;
+				_screen->setFont(Screen::FID_8_FNT);
+			}
+
 			if (c->hitPointsCur == -10)
-				_screen->printShadedText(_characterGuiStringsSt[1], 247, 158, guiSettings()->colors.guiColorLightRed, guiSettings()->colors.sfill, guiSettings()->colors.guiColorBlack);
+				_screen->printShadedText(_characterGuiStringsSt[1], 247, statusTxtY, guiSettings()->colors.guiColorLightRed, 0, guiSettings()->colors.guiColorBlack);
 			else if (c->hitPointsCur < 1)
-				_screen->printShadedText(_characterGuiStringsSt[2], 226, 158, guiSettings()->colors.guiColorLightRed, guiSettings()->colors.sfill, guiSettings()->colors.guiColorBlack);
+				_screen->printShadedText(_characterGuiStringsSt[2], 226, statusTxtY, guiSettings()->colors.guiColorLightRed, 0, guiSettings()->colors.guiColorBlack);
 			else if (c->effectFlags & 0x2000)
-				_screen->printShadedText(_characterGuiStringsSt[3], 220, 158, guiSettings()->colors.guiColorLightRed, guiSettings()->colors.sfill, guiSettings()->colors.guiColorBlack);
+				_screen->printShadedText(_characterGuiStringsSt[3], 220, statusTxtY, guiSettings()->colors.guiColorLightRed, 0, guiSettings()->colors.guiColorBlack);
 			else if (c->flags & 2)
-				_screen->printShadedText(_characterGuiStringsSt[4], 235, 158, guiSettings()->colors.guiColorLightRed, guiSettings()->colors.sfill, guiSettings()->colors.guiColorBlack);
+				_screen->printShadedText(_characterGuiStringsSt[4], 235, statusTxtY, guiSettings()->colors.guiColorLightRed, 0, guiSettings()->colors.guiColorBlack);
 			else if (c->flags & 4)
-				_screen->printShadedText(_characterGuiStringsSt[5], 232, 158, guiSettings()->colors.guiColorLightRed, guiSettings()->colors.sfill, guiSettings()->colors.guiColorBlack);
+				_screen->printShadedText(_characterGuiStringsSt[5], 232, statusTxtY, guiSettings()->colors.guiColorLightRed, 0, guiSettings()->colors.guiColorBlack);
 			else if (c->flags & 8)
-				_screen->printShadedText(_characterGuiStringsSt[6], 232, 158, guiSettings()->colors.guiColorLightRed, guiSettings()->colors.sfill, guiSettings()->colors.guiColorBlack);
+				_screen->printShadedText(_characterGuiStringsSt[6], 232, statusTxtY, guiSettings()->colors.guiColorLightRed, 0, guiSettings()->colors.guiColorBlack);
+
+			_screen->setFont(cf);
 
 			for (int i = 0; i < 27; i++)
 				gui_drawInventoryItem(i, 0, 2);
