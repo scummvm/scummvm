@@ -2004,7 +2004,7 @@ void EoBCoreEngine::useSlotWeapon(int charIndex, int slotIndex, Item item) {
 	int tp = item ? _items[item].type : 0;
 
 	if (c->effectFlags & 0x40)
-		removeCharacterEffect(10, charIndex, 1); // remove invisibility effect
+		removeCharacterEffect(_flags.gameID == GI_EOB1 ? 8 : 10, charIndex, 1); // remove invisibility effect
 
 	int ep = _itemTypes[tp].extraProperties & 0x7F;
 	int8 inflict = 0;
