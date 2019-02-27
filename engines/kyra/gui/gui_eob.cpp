@@ -241,8 +241,8 @@ void EoBCoreEngine::gui_drawFaceShape(int index) {
 	}
 
 	if (_flags.gameID == GI_EOB1) {
-		if (c->effectFlags & 4) {
-			_screen->fillRect(x, y, x + 31, y + 31, 12);
+		if (c->effectFlags & 0x40) {
+			_screen->fillRect(x, y, x + 31, y + 31, guiSettings()->colors.guiColorBlack);
 			return;
 		}
 	} else {
