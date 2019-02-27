@@ -113,46 +113,47 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 
 	for(int i=0;i < _dragonINIResource->totalRecords(); i++) {
 		DragonINI *ini = _dragonINIResource->getRecord(i);
-		if (ini->sceneId == sceneId && (ini->field_1a_flags_maybe & 1)) {
-			Actor *actor = _actorManager->loadActor(ini->actorResourceId, ini->sequenceId, ini->x, ini->y, 0);
+		if (ini->sceneId == sceneId) {
+			if (ini->field_1a_flags_maybe & 1) {
+				Actor *actor = _actorManager->loadActor(ini->actorResourceId, ini->sequenceId, ini->x, ini->y, 0);
 
-			if (actor) {
-				ini->actor = actor;
-				if (ini->sequenceId & 0x1000) {
-					actor->frame_flags |= 0x10;
-				} else {
-					if (ini->field_1a_flags_maybe & 0x2000) {
-						actor->frame_flags |= 0x20;
+				if (actor) {
+					ini->actor = actor;
+					if (ini->sequenceId & 0x1000) {
+						actor->frame_flags |= 0x10;
 					} else {
-						actor->frame_flags &= 0xffef;
+						if (ini->field_1a_flags_maybe & 0x2000) {
+							actor->frame_flags |= 0x20;
+						} else {
+							actor->frame_flags &= 0xffef;
+						}
 					}
-				}
 
-				actor->_sequenceID2 = ini->field_20_actor_field_14;
+					actor->_sequenceID2 = ini->field_20_actor_field_14;
 
-				if (ini->field_1a_flags_maybe & 2) {
-					actor->flags |= Dragons::ACTOR_FLAG_80;
-				} else {
-					actor->flags &= 0xfeff;
-				}
+					if (ini->field_1a_flags_maybe & 2) {
+						actor->flags |= Dragons::ACTOR_FLAG_80;
+					} else {
+						actor->flags &= 0xfeff;
+					}
 
-				if (ini->field_1a_flags_maybe & 0x20) {
-					actor->flags |= Dragons::ACTOR_FLAG_100;
-				} else {
-					actor->flags &= 0xfeff;
-				}
+					if (ini->field_1a_flags_maybe & 0x20) {
+						actor->flags |= Dragons::ACTOR_FLAG_100;
+					} else {
+						actor->flags &= 0xfeff;
+					}
 
-				if (ini->field_1a_flags_maybe & 4) {
-					actor->flags |= Dragons::ACTOR_FLAG_8000;
-				} else {
-					actor->flags &= 0x7fff;
-				}
+					if (ini->field_1a_flags_maybe & 4) {
+						actor->flags |= Dragons::ACTOR_FLAG_8000;
+					} else {
+						actor->flags &= 0x7fff;
+					}
 
-				if (ini->field_1a_flags_maybe & 0x100) {
-					actor->flags |= Dragons::ACTOR_FLAG_4000;
-				} else {
-					actor->flags &= 0xbfff;
-				}
+					if (ini->field_1a_flags_maybe & 0x100) {
+						actor->flags |= Dragons::ACTOR_FLAG_4000;
+					} else {
+						actor->flags &= 0xbfff;
+					}
 //
 //				Graphics::Surface *s = actor->getCurrentFrame();
 //				int x = ini->x - actor->frame_vram_x;
@@ -161,9 +162,14 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 //					debug("Actor %d, %d %d (%d, %d)", actor->_actorID, ini->actorResourceId, ini->field_1a_flags_maybe, ini->x, ini->y);
 //					_stage->getFgLayer()->copyRectToSurface(*s, x, y, Common::Rect(s->w, s->h));
 //				}
+				}
+				// _stage->getFgLayer()->drawLine(ini->x, ini->y, ini->x + 8, ini->y + 8, 0x7c00);
+				//break;
+			} else {
+				if (ini->iptIndex_maybe != -1) {
+					error("ipt_img_file_related_2()");
+				}
 			}
-			// _stage->getFgLayer()->drawLine(ini->x, ini->y, ini->x + 8, ini->y + 8, 0x7c00);
-			//break;
 		}
 		_currentSceneId = (uint16)(sceneId & 0x7fff);
 	}

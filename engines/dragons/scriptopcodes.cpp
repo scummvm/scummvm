@@ -603,7 +603,7 @@ void ScriptOpcodes::opCode_UnkA_setsProperty(ScriptOpCall &scriptOpCall) {
 				}
 			} else {
 				// TODO ipt_img_file_related_2(s1);
-				//error("TODO ipt_img_file_related_2(s1);");
+				error("TODO ipt_img_file_related_2(s1);");
 			}
 		}
 	}
