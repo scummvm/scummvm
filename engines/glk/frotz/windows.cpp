@@ -89,8 +89,8 @@ void Window::update() {
 	_properties[Y_SIZE] = _win->_bbox.height() / g_conf->_monoInfo._cellH;
 
 	Point pt = _win->getCursor();
-	_properties[X_CURSOR] = pt.x / g_conf->_monoInfo._cellW + 1;
-	_properties[Y_CURSOR] = pt.y / g_conf->_monoInfo._cellH + 1;
+	_properties[X_CURSOR] = (g_vm->h_version != V6) ? pt.x + 1 : pt.x / g_conf->_monoInfo._cellW + 1;
+	_properties[Y_CURSOR] = (g_vm->h_version != V6) ? pt.y + 1 : pt.y / g_conf->_monoInfo._cellH + 1;
 
 	TextBufferWindow *win = dynamic_cast<TextBufferWindow *>(_win);
 	_properties[LEFT_MARGIN] = (win ? win->_ladjw : 0) / g_conf->_monoInfo._cellW;
