@@ -508,7 +508,25 @@ bool Actor::pathfinding_maybe(int16 target_x, int16 target_y, int16 unkTypeMaybe
 			return true;
 		} else {
 			//0x80034470
-			debug(1, "0x80034470");
+			int16 diffX = target_x - newX;
+			int16 diffY = newY - target_y;
+			int16 newSeqId = 0;
+			if (diffX == 0) {
+				newSeqId = diffY <= 0 ? 2 : 6;
+			} else {
+				int16 div = diffY / diffX;
+				if (div == 0) {
+					newSeqId = diffX < 1 ? 4 : 0;
+				} else if (div <= 0) {
+					newSeqId = diffX <= 0 ? 5 : 1;
+				} else {
+					newSeqId = diffX <= 0 ? 3 : 7;
+				}
+			}
+			_sequenceID2 = newSeqId;
+			if (isFlag0x10Set) {
+				pathfindingCleanup();
+			}
 		}
 
 
