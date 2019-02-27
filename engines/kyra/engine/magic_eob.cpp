@@ -385,6 +385,9 @@ void EoBCoreEngine::sparkEffectDefensive(int charIndex) {
 		first = 0;
 		last = 5;
 	}
+	
+	if (_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformAmiga)
+		snd_playSoundEffect(104);
 
 	for (int i = 0; i < 8; i++) {
 		for (int ii = first; ii <= last; ii++) {
@@ -1282,7 +1285,6 @@ void EoBCoreEngine::spellCallback_start_turnUndead() {
 
 	if (hit) {
 		turnUndeadAutoHit();
-		snd_playSoundEffect(95);
 		updateAllMonsterShapes();
 	}
 

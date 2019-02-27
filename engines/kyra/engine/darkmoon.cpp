@@ -358,6 +358,10 @@ void DarkMoonEngine::drawDoorIntern(int type, int, int x, int y, int w, int wall
 		drawBlockObject(0, 2, _doorSwitches[shapeIndex].shp, _doorSwitches[shapeIndex].x + w, _doorSwitches[shapeIndex].y, 5);
 }
 
+void DarkMoonEngine::turnUndeadAutoHit() {
+	snd_playSoundEffect(95);
+}
+
 void DarkMoonEngine::restParty_npc() {
 	int insalId = -1;
 	int numChar = 0;

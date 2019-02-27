@@ -104,6 +104,9 @@ private:
 
 	const uint8 *_dscDoorType5Offs;
 
+	// Magic
+	void turnUndeadAutoHit();
+
 	// Fight
 	static const uint8 _monsterAcHitChanceTbl1[];
 	static const uint8 _monsterAcHitChanceTbl2[];

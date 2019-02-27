@@ -509,6 +509,7 @@ void EoBEngine::turnUndeadAuto() {
 
 void EoBEngine::turnUndeadAutoHit() {
 	_txt->printMessage(_turnUndeadString[0], -1, _characters[_openBookChar].name);
+	snd_playSoundEffect(_flags.platform == Common::kPlatformAmiga ? 16 : 95);
 	sparkEffectOffensive();
 }
 

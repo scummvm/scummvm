@@ -942,7 +942,7 @@ protected:
 	void useWand(int charIndex, int weaponSlot);
 
 	virtual void turnUndeadAuto() {}
-	virtual void turnUndeadAutoHit() {}
+	virtual void turnUndeadAutoHit() = 0;
 
 	void castSpell(int spell, int weaponSlot);
 	void removeCharacterEffect(int spell, int charIndex, int showWarning);
