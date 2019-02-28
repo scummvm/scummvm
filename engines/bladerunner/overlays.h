@@ -38,6 +38,8 @@ class SaveFileWriteStream;
 class VQAPlayer;
 
 class Overlays {
+	friend class Debugger;
+
 	static const int kOverlayVideos = 5;
 
 	struct Video {

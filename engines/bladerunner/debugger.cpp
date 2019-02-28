@@ -49,6 +49,8 @@
 #include "bladerunner/vqa_player.h"
 #include "bladerunner/waypoints.h"
 #include "bladerunner/zbuffer.h"
+#include "bladerunner/overlays.h"
+
 
 #include "common/debug.h"
 #include "common/str.h"
@@ -88,6 +90,7 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 	registerCmd("friend", WRAP_METHOD(Debugger, cmdFriend));
 	registerCmd("load", WRAP_METHOD(Debugger, cmdLoad));
 	registerCmd("save", WRAP_METHOD(Debugger, cmdSave));
+	registerCmd("overlay", WRAP_METHOD(Debugger, cmdOverlay));
 }
 
 Debugger::~Debugger() {
@@ -718,6 +721,83 @@ bool Debugger::cmdSave(int argc, const char **argv) {
 	delete saveFile;
 
 	return false;
+}
+
+/**
+* This will currently only work with any of the
+* overlay videos that the game has loaded for the scene
+* at the time of running the command.
+*/
+bool Debugger::cmdOverlay(int argc, const char **argv) {
+	bool invalidSyntax = false;
+
+	if (argc != 1 && argc != 2 && argc != 3 && argc != 5) {
+		invalidSyntax = true;
+	}
+
+	if (argc == 1) {
+		debugPrintf("name animationId startFrame endFrame\n");
+		for (int i = 0; i < _vm->_overlays->kOverlayVideos; ++i) {
+			if (_vm->_overlays->_videos[i].loaded) {
+				VQADecoder::LoopInfo &loopInfo =_vm->_overlays->_videos[i].vqaPlayer->_decoder._loopInfo;
+				for (int j = 0; j < loopInfo.loopCount; ++j) {
+					debugPrintf("%s %2d %4d %4d\n", _vm->_overlays->_videos[i].name.c_str(), j, loopInfo.loops[j].begin, loopInfo.loops[j].end);
+				}
+			}
+		}
+		return true;
+	}
+
+	if (argc == 2) {
+		Common::String argName = argv[1];
+		if (argName == "reset") {
+			_vm->_overlays->removeAll();
+		} else {
+			debugPrintf("Invalid command usage\n");
+			invalidSyntax = true;
+		}
+	}
+
+	if (argc == 3 || argc == 5) {
+		Common::String overlayName = argv[1];
+		int overlayAnimationId = atoi(argv[2]);
+		bool loopForever = false;
+		bool startNowDontEnqueue = false;
+
+		if (argc == 5 && atoi(argv[3]) != 0) {
+			loopForever = true;
+		}
+		if (argc == 5 && atoi(argv[4]) != 0) {
+			startNowDontEnqueue = true;
+		}
+
+		if (overlayAnimationId < 0 || overlayAnimationId >  _vm->_overlays->kOverlayVideos) {
+			debugPrintf("Animation id value must be [0..%d]\n",  (_vm->_overlays->kOverlayVideos - 1) );
+			return true;
+		}
+
+		for (int i = 0; i < _vm->_overlays->kOverlayVideos; ++i) {
+			if (overlayName == _vm->_overlays->_videos[i].name) {
+				// check if already loaded
+				if (overlayAnimationId >= _vm->_overlays->_videos[i].vqaPlayer->_decoder._loopInfo.loopCount) {
+					debugPrintf("Invalid loop id: %d for overlay animation: %s\n",  overlayAnimationId, overlayName.c_str());
+				}
+				else if( _vm->_overlays->play(overlayName, overlayAnimationId, loopForever, startNowDontEnqueue, 0) == -1 ) {
+					debugPrintf("Could not play loop id: %d for overlay animation: %s\n", overlayAnimationId, overlayName.c_str());
+				}
+				return true;
+			}
+		}
+		// given animation name is not loaded in scene (or does not exist)
+		debugPrintf("Overlay: %s is not loaded in the scene\n", overlayName.c_str());
+		invalidSyntax = true;
+	}
+
+	if (invalidSyntax) {
+		debugPrintf("List or play loaded overlay animations. Values for loopForever and startNow are boolean.\n");
+		debugPrintf("Usage: %s [[<name> <animationId> [<loopForever> <startNow>]] | reset ]\n", argv[0]);
+	}
+	return true;
 }
 
 void Debugger::drawDebuggerOverlay() {
