@@ -812,6 +812,12 @@ void FloorPositionedImageItem::readData(Formats::XRCReadStream *stream) {
 
 	setFloorFaceIndex(stream->readSint32LE());
 	_position = stream->readPoint();
+
+	// WORKAROUND: For the shelves having an incorrect position in the game datafiles
+	Location *location = findParent<Location>();
+	if (_name == "Shelves" && location && location->getName() == "April's Room") {
+		_position = Common::Point(543, 77);
+	}
 }
 
 Gfx::RenderEntry *FloorPositionedImageItem::getRenderEntry(const Common::Point &positionOffset) {
