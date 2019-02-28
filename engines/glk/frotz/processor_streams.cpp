@@ -189,8 +189,8 @@ continue_input:
 
 	// Handle timeouts
 	if (key == ZC_TIME_OUT)
-	if (direct_call(routine) == 0)
-		goto continue_input;
+		if (direct_call(routine) == 0)
+			goto continue_input;
 
 	// Copy input line to transscript file or to the screen
 	if (ostream_script && enable_scripting && !no_scripting)
