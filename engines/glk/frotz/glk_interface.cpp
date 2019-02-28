@@ -230,9 +230,6 @@ void GlkInterface::initialize() {
 	 * Miscellaneous
 	 */
 
-	// Set the screen colors
-	garglk_set_zcolors(_defaultForeground, _defaultBackground);
-
 	// Add any sound folder or zip
 	addSound();
 
@@ -407,12 +404,13 @@ void GlkInterface::reset_status_ht() {
 
 void GlkInterface::erase_window(zword w) {
 	if (w == 0)
-		glk_window_clear(_wp._lower);
+		_wp._lower.clear();
+
 	else if (_wp._upper) {
 		//os_set_reverse_video(glk_window_get_stream(_wp._upper), true);
 		
 		memset(statusline, ' ', sizeof statusline);
-		glk_window_clear(_wp._upper);
+		_wp._upper.clear();
 		reset_status_ht();
 		curr_status_ht = 0;
 	}
@@ -443,10 +441,10 @@ void GlkInterface::split_window(zword lines) {
 	gos_update_width();
 
 	if (h_version == V3)
-		glk_window_clear(_wp._upper);
+		_wp._upper.clear();
 	if (h_version == V6) {
-		glk_window_clear(_wp._upper);
-		glk_window_clear(_wp._lower);
+		_wp._upper.clear();
+		_wp._lower.clear();
 		_wp._background->fillRect(_defaultBackground, Rect(g_system->getWidth(), g_system->getHeight()));
 	}
 }

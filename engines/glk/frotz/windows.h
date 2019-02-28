@@ -108,10 +108,7 @@ public:
 	/**
 	 * Assignment operator
 	 */
-	Window &operator=(winid_t win) {
-		_win = win;
-		return *this;
-	}
+	Window &operator=(winid_t win);
 
 	/**
 	 * Cast operator for getting a Glk window
@@ -145,6 +142,11 @@ public:
 	 * Set the cursor position
 	 */
 	void setCursor(const Point &newPos);
+
+	/**
+	 * Clear the window
+	 */
+	void clear();
 };
 
 /**

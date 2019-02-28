@@ -105,6 +105,17 @@ void Window::update() {
 	_properties[FONT_SIZE] = g_conf->_monoInfo._size;
 }
 
+Window &Window::operator=(winid_t win) {
+	_win = win;
+
+	// Set the screen colors
+	if (win)
+		win->_stream->setZColors(g_vm->_defaultForeground, g_vm->_defaultBackground);
+
+	return *this;
+}
+
+
 void Window::setSize(const Point &newSize) {
 	checkRepositionLower();
 
@@ -149,6 +160,10 @@ void Window::setCursor(const Point &newPos) {
 	g_vm->glk_window_move_cursor(_win, x - 1, y - 1);
 }
 
+void Window::clear() {
+	if (_win)
+		g_vm->glk_window_clear(_win);
+}
 
 const uint &Window::getProperty(WindowProperty propType) {
 	if (_win)

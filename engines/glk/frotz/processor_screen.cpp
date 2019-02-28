@@ -200,10 +200,10 @@ void Processor::erase_screen(zword win) {
 #ifdef GARGLK
 			garglk_set_zcolors(curr_fg, curr_bg);
 #endif /* GARGLK */
-			glk_window_clear(_wp._upper);
+			_wp._upper.clear();
 		}
 
-		glk_window_clear(_wp._lower);
+		_wp._lower.clear();
 		split_window(0);
 		_wp.setWindow(0);
 	}
