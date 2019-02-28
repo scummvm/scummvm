@@ -29,7 +29,7 @@
 namespace Glk {
 namespace Frotz {
 
-Windows::Windows() : _lower(_windows[0]), _upper(_windows[1]), _background(nullptr) {
+Windows::Windows() : _lower(_windows[0]), _upper(_windows[1]), _background(nullptr), _cwin(0) {
 	for (size_t idx = 0; idx < 8; ++idx)
 		_windows[idx]._windows = this;
 }
@@ -68,6 +68,13 @@ void Windows::setup(bool isVersion6) {
 	_lower.update();
 	_upper.update();
 	g_vm->glk_set_window(_lower);
+}
+
+void Windows::setWindow(int win) {
+	_cwin = win;
+
+	if (_windows[_cwin]._win)
+		g_vm->glk_set_window(_windows[_cwin]._win);
 }
 
 /*--------------------------------------------------------------------------*/

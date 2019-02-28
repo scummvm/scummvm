@@ -157,6 +157,7 @@ public:
 	winid_t _background;
 	Window &_lower;
 	Window &_upper;
+	int _cwin;
 public:
 	/**
 	 * Constructor
@@ -177,6 +178,19 @@ public:
 	 * Setup the screen
 	 */
 	void setup(bool isVersion6);
+
+	/**
+	 * Set current window
+	 */
+	void setWindow(int win);
+
+	/**
+	 * Get the current window pointer
+	 */
+	winid_t currWin() const {
+		assert(_windows[_cwin]._win);
+		return _windows[_cwin]._win;
+	}
 };
 
 } // End of namespace Frotz

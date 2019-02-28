@@ -34,11 +34,10 @@ namespace Frotz {
 GlkInterface::GlkInterface(OSystem *syst, const GlkGameDescription &gameDesc) :
 		GlkAPI(syst, gameDesc),
 		_pics(nullptr), oldstyle(0), curstyle(0), curr_font(1), prev_font(1), temp_font(0),
-		curr_status_ht(0), mach_status_ht(0), gos_status(nullptr), gos_curwin(nullptr), gos_linepending(0),
-		gos_linebuf(nullptr), gos_linewin(nullptr), gos_channel(nullptr), cwin(0), mwin(0), mouse_x(0), mouse_y(0),
-		fixforced(0), menu_selected(0), enable_wrapping(false), enable_scripting(false), enable_scrolling(false),
-		enable_buffering(false), next_sample(0), next_volume(0), _soundLocked(false), _soundPlaying(false),
-		_reverseVideo(false) {
+		curr_status_ht(0), mach_status_ht(0), gos_status(nullptr), gos_linepending(0), gos_linebuf(nullptr),
+		gos_linewin(nullptr), gos_channel(nullptr), mwin(0), mouse_x(0), mouse_y(0), fixforced(0), menu_selected(0),
+		enable_wrapping(false), enable_scripting(false), enable_scrolling(false), enable_buffering(false),
+		next_sample(0), next_volume(0), _soundLocked(false), _soundPlaying(false), _reverseVideo(false) {
 	Common::fill(&statusline[0], &statusline[256], '\0');
 	Common::fill(&zcolors[0], &zcolors[zcolor_NUMCOLORS], 0);
 }
@@ -194,9 +193,6 @@ void GlkInterface::initialize() {
 		_wp[i][TRUE_BG_COLOR] = zcolors[h_default_background];
 	}
 	
-	cwin = 0;
-	gos_curwin = _wp._lower;
-
 	/*
 	 * Icky magic bit setting
 	 */
@@ -390,7 +386,7 @@ void GlkInterface::gos_update_width() {
 void GlkInterface::gos_update_height() {
 	uint height_upper;
 	uint height_lower;
-	if (gos_curwin) {
+	if (_wp.currWin()) {
 		glk_window_get_size(_wp._upper, nullptr, &height_upper);
 		glk_window_get_size(_wp._lower, nullptr, &height_lower);
 		h_screen_rows = height_upper + height_lower + 1;
@@ -547,7 +543,7 @@ void GlkInterface::showBeyondZorkTitle() {
 }
 
 void GlkInterface::os_draw_picture(int picture, const Common::Point &pos) {
-	if (cwin == 0) {
+	if (_wp._cwin == 0) {
 		// Picture embedded within the lower text area
 		glk_image_draw(_wp._lower, picture, imagealign_MarginLeft, 0);
 	} else {
@@ -590,7 +586,7 @@ int GlkInterface::os_peek_color() {
 
 zchar GlkInterface::os_read_key(int timeout, bool show_cursor) {
 	event_t ev;
-	winid_t win = gos_curwin ? gos_curwin : _wp._lower;
+	winid_t win = _wp.currWin() ? _wp.currWin() : _wp._lower;
 
 	if (gos_linepending)
 		gos_cancel_pending_line();
@@ -638,7 +634,7 @@ zchar GlkInterface::os_read_key(int timeout, bool show_cursor) {
 
 zchar GlkInterface::os_read_line(int max, zchar *buf, int timeout, int width, int continued) {
 	event_t ev;
-	winid_t win = gos_curwin ? gos_curwin : _wp._lower;
+	winid_t win = _wp.currWin() ? _wp.currWin() : _wp._lower;
 
 	if (!continued && gos_linepending)
 		gos_cancel_pending_line();

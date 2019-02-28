@@ -48,7 +48,7 @@ void Processor::z_draw_picture() {
 
 	flush_buffer();
 
-	Window &win = _wp[cwin];
+	Window &win = _wp[_wp._cwin];
 	if (!x || !y) {
 
 		// use cursor column if x-coordinate is 0
@@ -281,7 +281,7 @@ void Processor::z_picture_table() {
 
 zword Processor::winarg0() {
 	if (h_version == V6 && (short)zargs[0] == -3)
-		return cwin;
+		return _wp._cwin;
 
 	if (zargs[0] >= ((h_version == V6) ? 8 : 2))
 		runtimeError(ERR_ILL_WIN);
@@ -291,7 +291,7 @@ zword Processor::winarg0() {
 
 zword Processor::winarg2() {
 	if (zargc < 3 || (short)zargs[2] == -3)
-		return cwin;
+		return _wp._cwin;
 
 	if (zargs[2] >= 8)
 		runtimeError(ERR_ILL_WIN);

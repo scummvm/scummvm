@@ -75,14 +75,12 @@ public:
 
 	Windows _wp;
 	winid_t gos_status;
-	winid_t gos_curwin;
 	int gos_linepending;
 	zchar *gos_linebuf;
 	winid_t gos_linewin;
 	schanid_t gos_channel;
 
-	// Current window and mouse data
-	int cwin;
+	// Mouse data
 	int mwin;
 	int mouse_y;
 	int mouse_x;
