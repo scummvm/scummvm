@@ -370,7 +370,7 @@ void TextGridWindow::cancelLineEvent(Event *ev) {
 	_lineRequestUni = false;
 
 	if (_lineTerminators) {
-		free(_lineTerminators);
+		delete[] _lineTerminators;
 		_lineTerminators = nullptr;
 	}
 
@@ -443,7 +443,7 @@ void TextGridWindow::acceptLine(uint32 keycode) {
 		if (val2 == keycode_Return)
 			val2 = 0;
 		g_vm->_events->store(evtype_LineInput, this, _inLen, val2);
-		free(_lineTerminators);
+		delete[] _lineTerminators;
 		_lineTerminators = nullptr;
 	} else {
 		g_vm->_events->store(evtype_LineInput, this, _inLen, 0);

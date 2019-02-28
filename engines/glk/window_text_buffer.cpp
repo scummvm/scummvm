@@ -1446,7 +1446,7 @@ void TextBufferWindow::acceptLine(uint32 keycode) {
 			_echoLineInput = false;
 
 		g_vm->_events->store(evtype_LineInput, this, len, keycode);
-		free(_lineTerminators);
+		delete[] _lineTerminators;
 		_lineTerminators = nullptr;
 	} else {
 		g_vm->_events->store(evtype_LineInput, this, len, 0);
