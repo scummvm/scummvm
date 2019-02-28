@@ -170,7 +170,7 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 		}
 	}
 
-	_set->addObjectsToScene(_vm->_sceneObjects, _sceneId);
+	_set->addObjectsToScene(_vm->_sceneObjects);
 	_vm->_items->addToSet(setId);
 	_vm->_sceneObjects->updateObstacles();
 	// TODO: add all items to scene
