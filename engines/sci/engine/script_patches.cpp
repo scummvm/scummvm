@@ -616,6 +616,30 @@ static const uint16 ecoquest1PatchProphecyScroll[] = {
 	PATCH_END
 };
 
+// The empty apartments have several broken messages in the CD version due to
+//  not setting the global that holds the current room's noun, so we set it.
+//
+// Applies to: PC CD
+// Responsible method: rm220:init
+// Fixes bug #10903
+static const uint16 ecoquest1SignatureEmptyApartmentMessages[] = {
+    SIG_MAGICDWORD,
+    0x54, 0x0c,                     // self 0c [ self setRegions: 51, addObstacle: ... ]
+    0x39, SIG_SELECTOR8(init),      // pushi init
+    0x76,                           // push0
+    0x59, 0x01,                     // &rest 01 [ unused by ApartmentRoom:init ]
+    0x57, 0x96, 0x04,               // super ApartmentRoom 04 [ super init: &rest ]
+    SIG_END
+};
+
+static const uint16 ecoquest1PatchEmptyApartmentMessages[] = {
+    0x35, 0x01,                     // ldi 01 [ the room's noun ]
+    PATCH_ADDTOOFFSET(+3),
+    0xa1, 0xfa,                     // sag fa [ global250 = 1 ]
+    0x57, 0x96, 0x10,               // super ApartmentRoom 10 [ combine self and super ]
+    PATCH_END
+};
+
 // The temple has a complex script bug in the CD version which can crash the
 //  interpreter when solving the mosaic puzzle after loading a game that was
 //  saved during the puzzle. The bug causes invalid memory access which locks up
@@ -824,17 +848,18 @@ static const uint16 ecoquest1PatchBleachPumpTest[] = {
 	PATCH_END
 };
 
-//          script, description,                                      signature                               patch
+//          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry ecoquest1Signatures[] = {
-	{  true,   140, "CD: mosaic puzzle fix",                       2, ecoquest1SignatureMosaicPuzzleFix,      ecoquest1PatchMosaicPuzzleFix },
-	{  true,   160, "CD: give superfluous oily shell",             1, ecoquest1SignatureGiveOilyShell,        ecoquest1PatchGiveOilyShell },
-	{  true,   160, "CD/Floppy: column puzzle fix",                1, ecoquest1SignatureColumnPuzzleFix,      ecoquest1PatchColumnPuzzleFix },
-	{  true,   226, "Spanish: disable bleach pump test",           1, ecoquest1SignatureBleachPumpTest,       ecoquest1PatchBleachPumpTest },
-	{  true,   320, "CD: south cliffs position",                   1, ecoquest1SignatureSouthCliffsPosition,  ecoquest1PatchSouthCliffsPosition },
-	{  true,   321, "CD: north cliffs position",                   1, ecoquest1SignatureNorthCliffsPosition,  ecoquest1PatchNorthCliffsPosition },
-	{  true,   321, "CD: north cliffs disposal",                   2, ecoquest1SignatureNorthCliffsDisposal,  ecoquest1PatchNorthCliffsDisposal },
-	{  true,   660, "CD: bad messagebox and freeze",               1, ecoquest1SignatureStayAndHelp,          ecoquest1PatchStayAndHelp },
-	{  true,   816, "CD: prophecy scroll",                         1, ecoquest1SignatureProphecyScroll,       ecoquest1PatchProphecyScroll },
+	{  true,   140, "CD: mosaic puzzle fix",                       2, ecoquest1SignatureMosaicPuzzleFix,        ecoquest1PatchMosaicPuzzleFix },
+	{  true,   160, "CD: give superfluous oily shell",             1, ecoquest1SignatureGiveOilyShell,          ecoquest1PatchGiveOilyShell },
+	{  true,   160, "CD/Floppy: column puzzle fix",                1, ecoquest1SignatureColumnPuzzleFix,        ecoquest1PatchColumnPuzzleFix },
+	{  true,   220, "CD: empty apartment messages",                1, ecoquest1SignatureEmptyApartmentMessages, ecoquest1PatchEmptyApartmentMessages },
+	{  true,   226, "Spanish: disable bleach pump test",           1, ecoquest1SignatureBleachPumpTest,         ecoquest1PatchBleachPumpTest },
+	{  true,   320, "CD: south cliffs position",                   1, ecoquest1SignatureSouthCliffsPosition,    ecoquest1PatchSouthCliffsPosition },
+	{  true,   321, "CD: north cliffs position",                   1, ecoquest1SignatureNorthCliffsPosition,    ecoquest1PatchNorthCliffsPosition },
+	{  true,   321, "CD: north cliffs disposal",                   2, ecoquest1SignatureNorthCliffsDisposal,    ecoquest1PatchNorthCliffsDisposal },
+	{  true,   660, "CD: bad messagebox and freeze",               1, ecoquest1SignatureStayAndHelp,            ecoquest1PatchStayAndHelp },
+	{  true,   816, "CD: prophecy scroll",                         1, ecoquest1SignatureProphecyScroll,         ecoquest1PatchProphecyScroll },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
