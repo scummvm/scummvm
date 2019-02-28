@@ -149,13 +149,7 @@ Common::SeekableReadStream *Pics::createReadStreamForMember(const Common::String
 				error("Reading failed");
 
 			if (e._dataSize) {
-				if (e._paletteOffset) {
-					// Read in the image's palette
-					assert(e._paletteOffset);
-					f.seek(e._paletteOffset);
-					_palette->resize(f.readByte() * 3);
-					f.read(&(*_palette)[0], _palette->size());					
-				}
+				loadPalette(f, e, *_palette);
 
 				f.seek(e._dataOffset);
 				Common::SeekableReadStream *src = f.readStream(e._dataSize);
@@ -174,6 +168,21 @@ Common::SeekableReadStream *Pics::createReadStreamForMember(const Common::String
 	}
 
 	return nullptr;
+}
+
+void Pics::loadPalette(Common::File &f, const Entry &e, Common::Array<byte> &palette) const {
+	if (e._paletteOffset) {
+		// Read in the image's palette
+		assert(e._paletteOffset);
+		f.seek(e._paletteOffset);
+		_palette->resize(f.readByte() * 3);
+		f.read(&(*_palette)[0], _palette->size());
+	}
+
+	if (e._flags & 1) {
+		byte *entry = &palette[(e._flags >> 12) * 3];
+		Common::fill(entry, entry + 3, 0);
+	}
 }
 
 } // End of namespace Frotz
