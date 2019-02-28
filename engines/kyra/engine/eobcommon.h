@@ -338,6 +338,8 @@ protected:
 
 	// timers
 	void setupTimers();
+	virtual void enableSysTimer(int sysTimer);
+	virtual void disableSysTimer(int sysTimer);
 	void setCharEventTimer(int charIndex, uint32 countdown, int evnt, int updateExistingTimer);
 	void deleteCharEventTimer(int charIndex, int evnt);
 	void setupCharacterTimers();
@@ -357,7 +359,8 @@ protected:
 	static const uint8 _clock2Timers[];
 	static const uint8 _numClock2Timers;
 
-	int32 _restPartyElapsedTime;
+	uint32 _disableElapsedTime;
+	uint32 _restPartyElapsedTime;
 
 	// Mouse
 	void setHandItem(Item itemIndex);

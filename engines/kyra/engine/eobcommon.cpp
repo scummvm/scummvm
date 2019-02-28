@@ -154,7 +154,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_spells = 0;
 	_spellAnimBuffer = 0;
 	_clericSpellOffset = 0;
-	_restPartyElapsedTime = 0;
+	_restPartyElapsedTime = _disableElapsedTime = 0;
 	_allowSkip = false;
 	_allowImport = false;
 

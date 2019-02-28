@@ -150,8 +150,8 @@ protected:
 
 	// timers
 	virtual void setupTimers() = 0;
-	void enableSysTimer(int sysTimer);
-	void disableSysTimer(int sysTimer);
+	virtual void enableSysTimer(int sysTimer);
+	virtual void disableSysTimer(int sysTimer);
 	void enableTimer(int id);
 	virtual uint8 getClock2Timer(int index) = 0;
 	virtual uint8 getNumClock2Timers() = 0;

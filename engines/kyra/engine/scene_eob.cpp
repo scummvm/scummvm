@@ -35,8 +35,11 @@ namespace Kyra {
 void EoBCoreEngine::loadLevel(int level, int sub) {
 	_currentLevel = level;
 	_currentSub = sub;
+
 	if (!_loading)
 		setHandItem(-1);
+
+	disableSysTimer(2);
 	uint32 end = _system->getMillis() + 500;
 
 	readLevelFileData(level);

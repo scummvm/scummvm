@@ -55,6 +55,48 @@ void EoBCoreEngine::setupTimers() {
 	_timer->resetNextRun();
 }
 
+void EoBCoreEngine::enableSysTimer(int sysTimer) {
+	if (sysTimer != 2)
+		return;
+
+	KyraRpgEngine::enableSysTimer(sysTimer);
+
+	_disableElapsedTime = _system->getMillis() - _disableElapsedTime;
+
+	for (int i = 0; i < 6; i++) {
+		EoBCharacter *c = &_characters[i];
+		for (int ii = 0; ii < 10; ii++) {
+			if (c->timers[ii])
+				c->timers[ii] += _disableElapsedTime;
+		}
+	}
+
+	setupCharacterTimers();
+
+	if (_scriptTimersMode & 1) {
+		for (int i = 0; i < _scriptTimersCount; i++) {
+			if (_scriptTimers[i].next)
+				_scriptTimers[i].next += _disableElapsedTime;
+		}
+	}
+
+	for (int i = 0; i < 5; i++) {
+		if (_wallsOfForce[i].block)
+			_wallsOfForce[i].duration += _disableElapsedTime;
+	}
+
+	_disableElapsedTime = 0;
+}
+
+void EoBCoreEngine::disableSysTimer(int sysTimer) {
+	if (sysTimer != 2)
+		return;
+
+	KyraRpgEngine::disableSysTimer(sysTimer);
+
+	_disableElapsedTime = _system->getMillis();
+}
+
 void EoBCoreEngine::setCharEventTimer(int charIndex, uint32 countdown, int evnt, int updateExistingTimer) {
 	uint32 ntime = _system->getMillis() + countdown * _tickLength;
 	uint8 timerId = 0x30 | (charIndex & 0x0F);
@@ -130,7 +172,7 @@ void EoBCoreEngine::setupCharacterTimers() {
 			_timer->disable(0x30 | i);
 		else {
 			enableTimer(0x30 | i);
-			_timer->setCountdown(0x30 | i, (nextTimer - ctime) / _tickLength);
+			_timer->setCountdown(0x30 | i, nextTimer >= ctime ? (nextTimer - ctime) / _tickLength : 1);
 		}
 	}
 	_timer->resetNextRun();
@@ -143,10 +185,15 @@ void EoBCoreEngine::advanceTimers(uint32 millis) {
 		for (int ii = 0; ii < 10; ii++) {
 			if (c->timers[ii] > ct) {
 				uint32 chrt = c->timers[ii] - ct;
-				c->timers[ii] = chrt > millis ? ct + chrt - millis : ct;
-			}
+                c->timers[ii] = chrt > millis ? ct + chrt - millis : 1;
+			} else if (c->timers[ii]) {
+                c->timers[ii] = 1;
+            }
 		}
 	}
+
+	if (_disableElapsedTime)
+		_disableElapsedTime += (ct - _disableElapsedTime);
 
 	setupCharacterTimers();
 
@@ -154,16 +201,22 @@ void EoBCoreEngine::advanceTimers(uint32 millis) {
 		for (int i = 0; i < _scriptTimersCount; i++) {
 			if (_scriptTimers[i].next > ct) {
 				uint32 chrt = _scriptTimers[i].next - ct;
-				_scriptTimers[i].next = chrt > millis ? ct + chrt - millis : ct;
-			}
+				_scriptTimers[i].next = chrt > millis ? ct + chrt - millis : 1;
+			} else if (_scriptTimers[i].next) {
+                _scriptTimers[i].next = 1;
+            }
 		}
 	}
 
 	for (int i = 0; i < 5; i++) {
+		if (!_wallsOfForce[i].block)
+			continue;
 		if (_wallsOfForce[i].duration > ct) {
 			uint32 chrt = _wallsOfForce[i].duration - ct;
-			_wallsOfForce[i].duration = chrt > millis ? ct + chrt - millis : ct;
-		}
+			_wallsOfForce[i].duration = chrt > millis ? ct + chrt - millis : 1;
+		} else {
+            _wallsOfForce[i].duration = 1;
+        }
 	}
 }
 
