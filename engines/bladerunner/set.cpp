@@ -127,8 +127,9 @@ bool Set::open(const Common::String &name) {
 	return true;
 }
 
-void Set::addObjectsToScene(SceneObjects *sceneObjects) const {
+void Set::addObjectsToScene(SceneObjects *sceneObjects, int sceneId) const {
 	for (int i = 0; i < _objectCount; i++) {
+		overrideSceneObjectInfo(sceneId, i); // For bugfixes with respect to clickable/targetable box positioning/bounding box
 		sceneObjects->addObject(i + kSceneObjectOffsetObjects, _objects[i].bbox, _objects[i].isClickable, _objects[i].isObstacle, _objects[i].unknown1, _objects[i].isTarget);
 	}
 }
@@ -394,6 +395,19 @@ void Set::load(SaveFileReadStream &f) {
 	}
 
 	_footstepSoundOverride = f.readInt();
+}
+
+/**
+* Used for bugfixes mainly with respect to bad box positioning / bounding box fixes
+* TODO If we have many such cases, perhaps we could use a lookup table
+*		using sceneId, objectId (or name) as keys
+*/
+void Set::overrideSceneObjectInfo(int sceneId, int objectId) const { // For bugfixes with respect to clickable/targetable box positioning/bounding box
+	if (sceneId == kSceneBB06) { /// Sebastian's room with doll
+		if (_objects[objectId].name == "BOX31") { // dollhouse box in BB06
+			_objects[objectId].bbox.setXYZ(-161.47f, 30.0f, 53.75f, -110.53f, 69.81f, 90.90f);
+		}
+	}
 }
 
 } // End of namespace BladeRunner

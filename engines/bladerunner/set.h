@@ -78,7 +78,7 @@ public:
 
 	bool open(const Common::String &name);
 
-	void addObjectsToScene(SceneObjects *sceneObjects) const;
+	void addObjectsToScene(SceneObjects *sceneObjects, int sceneId) const;
 	uint32 getObjectCount() const { return _objectCount; }
 
 	float getAltitudeAtXZ(float x, float z, bool *inWalkbox) const;
@@ -107,6 +107,7 @@ public:
 
 private:
 	static bool isXZInWalkbox(float x, float z, const Walkbox &walkbox);
+	void overrideSceneObjectInfo(int sceneId, int objectId) const;
 };
 
 } // End of namespace BladeRunner

@@ -87,10 +87,8 @@ void SceneScriptBB06::SceneLoaded() {
 	// otherwise the doll item is not placed in the current set
 	Item_Add_To_World(kItemBB06ControlBox, 931, kSetBB06_BB07, -127.0f, 68.42f, 57.0f, 0, 8, 8, true, true, false, true);
 #else
-	// Add doll item based on which SET version of the "room" we are in
-	Item_Add_To_World(kItemBB06ControlBox, 931, Player_Query_Current_Set(), -117.24f, 46.41f, 76.66f, 256, 28, 16, true, true, false, true);
-	if (Game_Flag_Query(kFlagBB06AndroidDestroyed)) {
-		Item_Flag_As_Non_Target(kItemBB06ControlBox);
+	if (!Game_Flag_Query(kFlagBB06AndroidDestroyed)) {
+		Combat_Target_Object("BOX31"); //
 	}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 }
@@ -101,6 +99,7 @@ bool SceneScriptBB06::MouseClick(int x, int y) {
 
 bool SceneScriptBB06::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("BOX31", objectName)) {
+#if BLADERUNNER_ORIGINAL_BUGS // Sebastian's Doll Fix
 		if (!Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "BOX31", 24, true, false)) {
 			Actor_Face_Object(kActorMcCoy, "BOX31", true);
 			if (Game_Flag_Query(kFlagBB06AndroidDestroyed)) {
@@ -110,6 +109,24 @@ bool SceneScriptBB06::ClickedOn3DObject(const char *objectName, bool a2) {
 				Actor_Voice_Over(50, kActorVoiceOver);
 			}
 		}
+#else
+		if (Player_Query_Combat_Mode()) {
+			Overlay_Play("BB06OVER", 0, false, true, 0); // explosion - don't loop
+			Game_Flag_Set(kFlagBB06AndroidDestroyed);
+			Un_Combat_Target_Object("BOX31");
+			return true;
+		} else {
+			if (!Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "BOX31", 24, true, false)) {
+				Actor_Face_Object(kActorMcCoy, "BOX31", true);
+				if (Game_Flag_Query(kFlagBB06AndroidDestroyed)) {
+					Actor_Voice_Over(60, kActorVoiceOver);
+					Actor_Voice_Over(70, kActorVoiceOver);
+				} else {
+					Actor_Voice_Over(50, kActorVoiceOver);
+				}
+			}
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 	return false;
 }
@@ -119,26 +136,16 @@ bool SceneScriptBB06::ClickedOnActor(int actorId) {
 }
 
 bool SceneScriptBB06::ClickedOnItem(int itemId, bool a2) {
-	if (itemId == kItemBB06ControlBox) {
 #if BLADERUNNER_ORIGINAL_BUGS // Sebastian's Doll Fix
+	if (itemId == kItemBB06ControlBox) {
 		if (Player_Query_Combat_Mode()) {
 			Overlay_Play("BB06OVER", 1, true, true, 0);
 			Game_Flag_Set(kFlagBB06AndroidDestroyed);
 			Item_Remove_From_World(kItemBB06ControlBox);
 			return true;
 		}
-#else
-		if (Player_Query_Combat_Mode()) {
-			Overlay_Play("BB06OVER", 0, false, true, 0); // explosion - don't loop
-			Game_Flag_Set(kFlagBB06AndroidDestroyed);
-			// flag item kItemBB06ControlBox as non-combat-target
-			Item_Flag_As_Non_Target(kItemBB06ControlBox);
-			return true;
-		} else {
-			ClickedOn3DObject("BOX31", false); // clone behavior of box31
-		}
-#endif // BLADERUNNER_ORIGINAL_BUGS
 	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	return false;
 }
 
@@ -217,12 +224,6 @@ void SceneScriptBB06::PlayerWalkedIn() {
 }
 
 void SceneScriptBB06::PlayerWalkedOut() {
-#if BLADERUNNER_ORIGINAL_BUGS // Sebastian's Doll Fix
-#else
-	// this might be redundant -- the item is not visible in BB07 even if it was drawn in BB06
-	Item_Remove_From_World(kItemBB06ControlBox); // this removes the item from the set so it won't exist in the next scene
-												// mainly to remove it completely from BB07
-#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 void SceneScriptBB06::DialogueQueueFlushed(int a1) {
