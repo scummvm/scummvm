@@ -7534,6 +7534,35 @@ static const uint16 qfg1vgaPatchFunnyRoomFix[] = {
 	PATCH_END
 };
 
+// In Yorick's room, room 96, walking in certain spots in front of the rightmost
+//  door locks up the game. This also occurs in Sierra's interpreter.
+//
+// rm96:doit runs the script goTo2 when ego enters a rect in front of the door.
+//  This rect is low enough that ego can collide with the door's boundary
+//  obstacle on the right and prevent goTo2 from restoring control to the user.
+//
+// We fix this by raising the bottom of the door rect. Sierra fixed this bug in
+//  the Mac version by rewriting the door code, switching to control areas, and
+//  tweaking the sizes and locations of all the relevant objects.
+//
+// Applies to: PC Floppy
+// Responsible method: rm96:doit
+// Fixes bug #6410
+static const uint16 qfg1vgaSignatureYorickDoorTwoRect[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x0135),               // pushi 0135 [ x = 309 ]
+	0x39, 0x64,                             // pushi 64   [ y = 100 ]
+	0x38, SIG_UINT16(0x013f),               // pushi 013f [ x = 319 ]
+	0x39, 0x70,                             // pushi 70   [ y = 112 ]
+	SIG_END
+};
+
+static const uint16 qfg1vgaPatchYorickDoorTwoRect[] = {
+	PATCH_ADDTOOFFSET(+8),
+	0x39, 0x6d,                             // pushi 6d [ y = 109 ]
+	PATCH_END
+};
+
 // The player is able to buy (and also steal) potions in the healer's hut
 //  Strangely Sierra delays the actual buy/get potion code for 60 ticks
 //  Why they did that is unknown. The code is triggered anyway only after
@@ -7835,6 +7864,7 @@ static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 	{  true,    77, "white stag dagger throw animation glitch",    1, qfg1vgaSignatureWhiteStagDagger,     qfg1vgaPatchWhiteStagDagger },
 	{  true,    78, "mac: enable antwerp controls",                1, qfg1vgaSignatureMacAntwerpControls,  qfg1vgaPatchMacAntwerpControls },
 	{  true,    96, "funny room script bug fixed",                 1, qfg1vgaSignatureFunnyRoomFix,        qfg1vgaPatchFunnyRoomFix },
+	{  true,    96, "yorick door #2 lockup fixed",                 1, qfg1vgaSignatureYorickDoorTwoRect,   qfg1vgaPatchYorickDoorTwoRect },
 	{  true,   210, "cheetaur description fixed",                  1, qfg1vgaSignatureCheetaurDescription, qfg1vgaPatchCheetaurDescription },
 	{  true,   215, "fight event issue",                           1, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
 	{  true,   216, "weapon master event issue",                   1, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
