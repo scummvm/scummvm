@@ -883,15 +883,8 @@ bool WINCESdlGraphicsManager::loadGFXMode() {
 		InitScalers(555);
 	else
 		InitScalers(565);
-	_overlayFormat.bytesPerPixel = _hwscreen->format->BytesPerPixel;
-	_overlayFormat.rLoss = _hwscreen->format->Rloss;
-	_overlayFormat.gLoss = _hwscreen->format->Gloss;
-	_overlayFormat.bLoss = _hwscreen->format->Bloss;
-	_overlayFormat.aLoss = _hwscreen->format->Aloss;
-	_overlayFormat.rShift = _hwscreen->format->Rshift;
-	_overlayFormat.gShift = _hwscreen->format->Gshift;
-	_overlayFormat.bShift = _hwscreen->format->Bshift;
-	_overlayFormat.aShift = _hwscreen->format->Ashift;
+
+	_overlayFormat = convertSDLPixelFormat(_hwscreen->format);
 
 	// Need some extra bytes around when using 2xSaI
 	_tmpscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth + 3, _videoMode.screenHeight + 3, 16, _hwscreen->format->Rmask, _hwscreen->format->Gmask, _hwscreen->format->Bmask, _hwscreen->format->Amask);
