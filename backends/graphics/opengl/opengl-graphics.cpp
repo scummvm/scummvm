@@ -46,6 +46,8 @@
 
 #ifdef USE_PNG
 #include "image/png.h"
+#else
+#include "image/bmp.h"
 #endif
 
 namespace OpenGL {
@@ -1212,41 +1214,13 @@ bool OpenGLGraphicsManager::saveScreenshot(const Common::String &filename) const
 	pixels.resize(lineSize * height);
 	GL_CALL(glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, &pixels.front()));
 
-#ifdef USE_PNG
 	const Graphics::PixelFormat format(3, 8, 8, 8, 0, 16, 8, 0, 0);
 	Graphics::Surface data;
 	data.init(width, height, lineSize, &pixels.front(), format);
+#ifdef USE_PNG
 	return Image::writePNG(out, data, true);
 #else
-	// BMP stores as BGR. Since we can't assume that GL_BGR is supported we
-	// will swap the components from the RGB we read to BGR on our own.
-	for (uint y = height; y-- > 0;) {
-		uint8 *line = &pixels.front() + y * lineSize;
-
-		for (uint x = width; x > 0; --x, line += 3) {
-			SWAP(line[0], line[2]);
-		}
-	}
-
-	out.writeByte('B');
-	out.writeByte('M');
-	out.writeUint32LE(height * lineSize + 54);
-	out.writeUint32LE(0);
-	out.writeUint32LE(54);
-	out.writeUint32LE(40);
-	out.writeUint32LE(width);
-	out.writeUint32LE(height);
-	out.writeUint16LE(1);
-	out.writeUint16LE(24);
-	out.writeUint32LE(0);
-	out.writeUint32LE(0);
-	out.writeUint32LE(0);
-	out.writeUint32LE(0);
-	out.writeUint32LE(0);
-	out.writeUint32LE(0);
-	out.write(&pixels.front(), pixels.size());
-
-	return true;
+	return Image::writeBMP(out, data, true);
 #endif
 }
 
