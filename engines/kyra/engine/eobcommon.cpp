@@ -687,11 +687,11 @@ void EoBCoreEngine::runLoop() {
 		if (_sceneUpdateRequired)
 			drawScene(1);
 
-		if (_envAudioTimer >= _system->getMillis() || (_flags.gameID == GI_EOB1 && (_currentLevel == 0 || _currentLevel > 3)))
-			continue;
+		if (_envAudioTimer < _system->getMillis() && !(_flags.gameID == GI_EOB1 && (_flags.platform == Common::kPlatformAmiga || _currentLevel == 0 || _currentLevel > 3))) {
+			_envAudioTimer = _system->getMillis() + (rollDice(1, 10, 3) * 18 * _tickLength);
+			snd_processEnvironmentalSoundEffect(_flags.gameID == GI_EOB1 ? 30 : (rollDice(1, 2, -1) ? 27 : 28), _currentBlock + rollDice(1, 12, -1));
+		}
 
-		_envAudioTimer = _system->getMillis() + (rollDice(1, 10, 3) * 18 * _tickLength);
-		snd_processEnvironmentalSoundEffect(_flags.gameID == GI_EOB1 ? 30 : (rollDice(1, 2, -1) ? 27 : 28), _currentBlock + rollDice(1, 12, -1));
 		updateEnvironmentalSfx(0);
 		turnUndeadAuto();
 	}
@@ -1503,7 +1503,7 @@ void EoBCoreEngine::increasePartyExperience(int16 points) {
 void EoBCoreEngine::increaseCharacterExperience(int charIndex, int32 points) {
 	int cl = _characters[charIndex].cClass;
 	points /= _numLevelsPerClass[cl];
-
+	
 	for (int i = 0; i < 3; i++) {
 		if (getCharacterClassType(cl, i) == -1)
 			continue;
