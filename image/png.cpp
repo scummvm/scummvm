@@ -244,8 +244,13 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 
 bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const bool bottomUp) {
 #ifdef USE_PNG
-	const Graphics::PixelFormat requiredFormat_3byte(3, 8, 8, 8, 0, 16, 8, 0, 0);
+#ifdef SCUMM_LITTLE_ENDIAN
+	const Graphics::PixelFormat requiredFormat_3byte(3, 8, 8, 8, 0, 0, 8, 16, 0);
 	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 0, 8, 16, 24);
+#else
+	const Graphics::PixelFormat requiredFormat_3byte(3, 8, 8, 8, 0, 16, 8, 0, 0);
+	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 24, 16, 8, 0);
+#endif
 
 	if (input.format.bytesPerPixel == 3) {
 		if (input.format != requiredFormat_3byte) {

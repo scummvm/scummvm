@@ -1476,7 +1476,11 @@ bool SurfaceSdlGraphicsManager::saveScreenshot(const char *filename) {
 		return false;
 	}
 
+#ifdef SCUMM_LITTLE_ENDIAN
+	const Graphics::PixelFormat format(3, 8, 8, 8, 0, 0, 8, 16, 0);
+#else
 	const Graphics::PixelFormat format(3, 8, 8, 8, 0, 16, 8, 0, 0);
+#endif
 	Graphics::Surface data;
 	data.init(rgbScreen->w, rgbScreen->h, rgbScreen->pitch, rgbScreen->pixels, format);
 	const bool success = Image::writePNG(out, data);

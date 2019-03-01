@@ -133,7 +133,11 @@ bool BitmapDecoder::loadStream(Common::SeekableReadStream &stream) {
 }
 
 bool writeBMP(Common::WriteStream &out, const Graphics::Surface &input, const bool bottomUp) {
+#ifdef SCUMM_LITTLE_ENDIAN
+	const Graphics::PixelFormat requiredFormat_3byte(3, 8, 8, 8, 0, 16, 8, 0, 0);
+#else
 	const Graphics::PixelFormat requiredFormat_3byte(3, 8, 8, 8, 0, 0, 8, 16, 0);
+#endif
 
 	Graphics::Surface *tmp = NULL;
 	const Graphics::Surface *surface;

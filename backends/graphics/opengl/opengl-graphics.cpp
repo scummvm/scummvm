@@ -1214,7 +1214,11 @@ bool OpenGLGraphicsManager::saveScreenshot(const Common::String &filename) const
 	pixels.resize(lineSize * height);
 	GL_CALL(glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, &pixels.front()));
 
+#ifdef SCUMM_LITTLE_ENDIAN
+	const Graphics::PixelFormat format(3, 8, 8, 8, 0, 0, 8, 16, 0);
+#else
 	const Graphics::PixelFormat format(3, 8, 8, 8, 0, 16, 8, 0, 0);
+#endif
 	Graphics::Surface data;
 	data.init(width, height, lineSize, &pixels.front(), format);
 #ifdef USE_PNG
