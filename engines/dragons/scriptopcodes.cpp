@@ -599,11 +599,12 @@ void ScriptOpcodes::opCode_UnkA_setsProperty(ScriptOpCall &scriptOpCall) {
 			if (s1 == -1) {
 				if (ini->iptIndex_maybe != -1) {
 					// TODO ipt_img_file_related_3(ini->iptIndex_maybe);
-					//error("TODO ipt_img_file_related_3(ini->iptIndex_maybe);");
+					error("TODO ipt_img_file_related_3(ini->iptIndex_maybe);");
 				}
 			} else {
 				// TODO ipt_img_file_related_2(s1);
-				error("TODO ipt_img_file_related_2(s1);");
+				_vm->_scene->loadImageOverlay(s1);
+				//error("TODO ipt_img_file_related_2(s1);");
 			}
 		}
 	}
@@ -726,8 +727,7 @@ void ScriptOpcodes::opCode_Unk7(ScriptOpCall &scriptOpCall) {
 				error("//TODO ipt_img_file_related_3(ini->iptIndex_maybe);");
 			}
 			if (sceneId == currentScene && ini->iptIndex_maybe != -1) {
-				// TODO ipt_img_file_related_2(ini->iptIndex_maybe);
-				error("// TODO ipt_img_file_related_2(ini->iptIndex_maybe);");
+				_vm->_scene->loadImageOverlay(ini->iptIndex_maybe);
 			}
 		}
 

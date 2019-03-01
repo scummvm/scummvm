@@ -66,6 +66,7 @@ public:
 	Common::Point getPoint(uint32 pointIndex);
 	uint16 getStageWidth();
 	uint16 getStageHeight();
+	void loadImageOverlay(uint16 iptId);
 private:
 	void loadSceneData(uint32 sceneId, uint32 cameraPointId);
 

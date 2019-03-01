@@ -30,13 +30,6 @@ namespace Dragons {
 #define TILE_HEIGHT 8
 #define TILE_SIZE (TILE_WIDTH * TILE_HEIGHT * 2)
 
-struct TileMap {
-	uint16 w;
-	uint16 h;
-	uint32 size;
-	byte *map;
-	uint8 tileIndexOffset;
-};
 
 void Dragons::PriorityLayer::load(TileMap &tileMap, byte *tiles) {
 	_width = tileMap.w * TILE_WIDTH;
@@ -61,7 +54,22 @@ int16 PriorityLayer::getPriority(Common::Point pos) {
 
 }
 
-bool Background::load(byte *dataStart, Common::SeekableReadStream &stream) {
+Background::Background() : _priorityLayer(0), _points1(0), _points2(0), _data(0) {
+	_layer[0] = NULL;
+	_layer[1] = NULL;
+	_layer[2] = NULL;
+}
+
+Background::~Background() {
+	if(_data) {
+		delete _data;
+	}
+}
+
+bool Background::load(byte *dataStart, uint32 size) {
+	Common::MemoryReadStream stream(dataStart, size, DisposeAfterUse::NO);
+	_data = dataStart;
+
 	stream.read(_palette, 512);
 	_palette[0] = 0x80; //FIXME update palette
 	_palette[1] = 0x80;
@@ -73,36 +81,41 @@ bool Background::load(byte *dataStart, Common::SeekableReadStream &stream) {
 	stream.seek(0x308);
 
 	uint32 tilemapOffset = 0x324;
-	TileMap tileMap[4];
 	for(int i=0;i< 3;i++) {
-		tileMap[i].w = stream.readUint16LE();
-		tileMap[i].h = stream.readUint16LE();
-		tileMap[i].size = stream.readUint32LE();
-		tileMap[i].map = dataStart + tilemapOffset;
-		tileMap[i].tileIndexOffset = tileindexOffset;
-		debug("Tilemap (%d,%d) map: %X", tileMap[i].w, tileMap[i].h, tilemapOffset);
+		_tileMap[i].w = stream.readUint16LE();
+		_tileMap[i].h = stream.readUint16LE();
+		_tileMap[i].size = stream.readUint32LE();
+		_tileMap[i].map = dataStart + tilemapOffset;
+		_tileMap[i].tileIndexOffset = tileindexOffset;
+		debug("Tilemap (%d,%d) map: %X", _tileMap[i].w, _tileMap[i].h, tilemapOffset);
 
-		tilemapOffset += tileMap[i].size;
+		tilemapOffset += _tileMap[i].size;
 	}
 
 	uint32 finalSize = stream.readUint32LE();
 
-	tileMap[3].w = tileMap[0].w;
-	tileMap[3].h = tileMap[0].h;
-	tileMap[3].size = tileMap[0].size;
-	tileMap[3].map = dataStart + tilemapOffset;
-	tileMap[3].tileIndexOffset = tileindexOffset;
+	TileMap priorityTilemap;
+
+	priorityTilemap.w = _tileMap[0].w;
+	priorityTilemap.h = _tileMap[0].h;
+	priorityTilemap.size = _tileMap[0].size;
+	priorityTilemap.map = dataStart + tilemapOffset;
+	priorityTilemap.tileIndexOffset = tileindexOffset;
 
 	uint32 tilesOffset = tilemapOffset + finalSize;
 
+	_tileDataOffset = _data + tilesOffset;
+
 	_priorityLayer = new PriorityLayer();
-	_priorityLayer->load(tileMap[3], dataStart + tilesOffset);
+	_priorityLayer->load(priorityTilemap, _tileDataOffset);
 
 	debug("Tiles: %X", tilesOffset);
-	debug("tileIndexOffset: %d", tileMap[0].tileIndexOffset);
-	_bgLayer = loadGfxLayer(tileMap[0], dataStart + tilesOffset);
-	_mgLayer = loadGfxLayer(tileMap[1], dataStart + tilesOffset);
-	_fgLayer = loadGfxLayer(tileMap[2], dataStart + tilesOffset);
+	debug("tileIndexOffset: %d", _tileMap[0].tileIndexOffset);
+
+	for(int i = 0; i < 3; i++) {
+		_layer[i] = loadGfxLayer(_tileMap[i], _tileDataOffset);
+	}
+
 	return false;
 }
 
@@ -151,21 +164,34 @@ Common::Point Background::getPoint2(uint32 pointIndex) {
 }
 
 uint16 Background::getWidth() {
-	assert (_bgLayer);
-	return _bgLayer->w;
+	assert (_layer[0]);
+	return _layer[0]->w;
 }
 
 uint16 Background::getHeight() {
-	assert (_bgLayer);
-	return _bgLayer->h;
+	assert (_layer[0]);
+	return _layer[0]->h;
 }
 
 int16 Background::getPriorityAtPoint(Common::Point pos) {
-	if (pos.x < 0 || pos.x >= _bgLayer->w || pos.y < 0 || pos.y >= _bgLayer->h) {
+	if (pos.x < 0 || pos.x >= getWidth() || pos.y < 0 || pos.y >= getHeight()) {
 		return -1;
 	}
 	int16 priority = _priorityLayer->getPriority(pos);
 	return priority < 0x11 ? priority : 0;
+}
+
+void Background::overlayImage(uint16 layerNum, byte *data, int16 x, int16 y, int16 w, int16 h) {
+	for(int i = 0; i < h; i++ ) {
+		for(int j = 0; j < w; j++ ) {
+			int16 idx = READ_LE_UINT16(data) + _tileMap[layerNum].tileIndexOffset;
+			drawTileToSurface(_layer[layerNum],
+					_tileDataOffset + idx * 0x100,
+					(j + x) * TILE_WIDTH,
+					(i + y) * TILE_HEIGHT);
+			data += 2;
+		}
+	}
 }
 
 BackgroundResourceLoader::BackgroundResourceLoader(BigfileArchive *bigFileArchive, DragonRMS *dragonRMS) : _bigFileArchive(
@@ -177,9 +203,8 @@ Background *BackgroundResourceLoader::load(uint32 sceneId) {
 	debug("Loading %s", filename);
 	uint32 size;
 	byte *scrData = _bigFileArchive->load(filename, size);
-	Common::SeekableReadStream *readStream = new Common::MemoryReadStream(scrData, size, DisposeAfterUse::YES);
 	Background *bg = new Background();
-	bg->load(scrData, *readStream);
+	bg->load(scrData, size);
 	return bg;
 }
 

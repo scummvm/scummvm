@@ -24,6 +24,7 @@
 #include "actor.h"
 #include "background.h"
 #include "dragonini.h"
+#include "dragonimg.h"
 #include "screen.h"
 #include "actorresource.h"
 #include "scriptopcodes.h"
@@ -167,7 +168,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 				//break;
 			} else {
 				if (ini->iptIndex_maybe != -1) {
-					error("ipt_img_file_related_2()");
+					loadImageOverlay(ini->iptIndex_maybe);
 				}
 			}
 		}
@@ -257,6 +258,11 @@ uint16 Scene::getStageWidth() {
 
 uint16 Scene::getStageHeight() {
 	return _stage->getHeight();
+}
+
+void Scene::loadImageOverlay(uint16 iptId) {
+	IMG *img =_vm->_dragonIMG->getIMG(iptId);
+	_stage->overlayImage(2, img->data, img->field_0, img->field_2, img->field_4, img->field_6);
 }
 
 } // End of namespace Dragons
