@@ -137,7 +137,7 @@ void AIScriptSadik::ReceivedClue(int clueId, int fromActorId) {
 }
 
 void AIScriptSadik::ClickedByPlayer() {
-	if (Actor_Query_Goal_Number(kActorSadik) == 599) {
+	if (Actor_Query_Goal_Number(kActorSadik) == kGoalSadikGone) {
 		Actor_Face_Actor(kActorMcCoy, kActorSadik, true);
 		Actor_Says(kActorMcCoy, 8580, 16);
 	}
@@ -161,7 +161,7 @@ void AIScriptSadik::OtherAgentEnteredCombatMode(int otherActorId, int combatMode
 
 void AIScriptSadik::ShotAtAndMissed() {
 	if (Actor_Query_Goal_Number(kActorSadik) == 414
-	 || Actor_Query_Goal_Number(kActorSadik) == 416
+	 || Actor_Query_Goal_Number(kActorSadik) == kGoalSadikUG18NeedsReactorCoreFromMcCoy
 	) {
 		Game_Flag_Set(kFlagMcCoyAttackedReplicants);
 		if (Actor_Query_Which_Set_In(kActorSadik) != kSetKP07) {
@@ -172,7 +172,12 @@ void AIScriptSadik::ShotAtAndMissed() {
 }
 
 bool AIScriptSadik::ShotAtAndHit() {
-	if (Actor_Query_Goal_Number(kActorSadik) == kGoalSadikUG18Move) {
+#if BLADERUNNER_ORIGINAL_BUGS // Sadik killed in BB09 dead end bug fix
+#else
+	if (Actor_Query_Goal_Number(kActorSadik) == kGoalSadikRunFromBB09) {
+		// Like Izo's ShotAtAndHit() and the code below for kGoalSadikUG18Move
+		// this will keep resetting Sadik's health to avoid killing him
+		// Still, this is lowering Sadik's health from 80 (when Replicant) and 50 (when Human)
 		if (Game_Flag_Query(kFlagSadikIsReplicant)) {
 			Actor_Set_Health(kActorSadik, 60, 60);
 		} else {
@@ -180,9 +185,35 @@ bool AIScriptSadik::ShotAtAndHit() {
 		}
 		return true;
 	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+	if (Actor_Query_Goal_Number(kActorSadik) == kGoalSadikUG18Move) {
+		// this lowers Sadik's original health but makes it impossible to kill him here (UG18)
+		if (Game_Flag_Query(kFlagSadikIsReplicant)) {
+#if BLADERUNNER_ORIGINAL_BUGS // Sadik killed in BB09 dead end bug fix
+			Actor_Set_Health(kActorSadik, 60, 60);
+#else
+			if (Actor_Query_Current_HP(kActorSadik) == 60) { // shot also at Bradburry, so lower his health further
+				Actor_Set_Health(kActorSadik, 50, 50);
+			} else {
+				Actor_Set_Health(kActorSadik, 60, 60);
+			}
+#endif
+		} else {
+#if BLADERUNNER_ORIGINAL_BUGS // Sadik killed in BB09 dead end bug fix
+			Actor_Set_Health(kActorSadik, 40, 40);
+#else
+			if (Actor_Query_Current_HP(kActorSadik) == 40) { // shot also at Bradburry, so lower his health further
+				Actor_Set_Health(kActorSadik, 30, 30);
+			} else {
+				Actor_Set_Health(kActorSadik, 40, 40);
+			}
+#endif
+		}
+		return true;
+	}
 
 	if (Actor_Query_Goal_Number(kActorSadik) == 414
-	 || Actor_Query_Goal_Number(kActorSadik) == 416
+	 || Actor_Query_Goal_Number(kActorSadik) == kGoalSadikUG18NeedsReactorCoreFromMcCoy
 	) {
 		Game_Flag_Set(kFlagMcCoyAttackedReplicants);
 		if (Actor_Query_Which_Set_In(kActorSadik) != kSetKP07) {
@@ -203,8 +234,8 @@ void AIScriptSadik::Retired(int byActorId) {
 	}
 
 	if (Actor_Query_In_Set(kActorSadik, kSetKP07)) {
-		Global_Variable_Decrement(kVariableReplicants, 1);
-		Actor_Set_Goal_Number(kActorSadik, 599);
+		Global_Variable_Decrement(kVariableReplicants, 1); // can't Sadik still be human (Rep-sympathiser here? A bug?
+		Actor_Set_Goal_Number(kActorSadik, kGoalSadikGone);
 
 		if (Global_Variable_Query(kVariableReplicants) == 0) {
 			Player_Loses_Control();
@@ -220,7 +251,7 @@ void AIScriptSadik::Retired(int byActorId) {
 		}
 	}
 
-	Actor_Set_Goal_Number(kActorSadik, 599);
+	Actor_Set_Goal_Number(kActorSadik, kGoalSadikGone);
 
 	return; //false;
 }
@@ -410,10 +441,10 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Says(kActorSadik, 240, kAnimationModeTalk);
 		Actor_Says(kActorSadik, 250, kAnimationModeTalk);
 		Actor_Says(kActorSadik, 260, kAnimationModeTalk);
-		Actor_Set_Goal_Number(kActorSadik, 416);
+		Actor_Set_Goal_Number(kActorSadik, kGoalSadikUG18NeedsReactorCoreFromMcCoy);
 		return true;
 
-	case 416:
+	case kGoalSadikUG18NeedsReactorCoreFromMcCoy:
 		Loop_Actor_Walk_To_XYZ(kActorSadik, -961.0f, 0.0f, -778.0f, 0, false, false, 0);
 		Actor_Face_Heading(kActorSadik, 150, false);
 		return true;
@@ -426,7 +457,7 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Says(kActorSadik, 330, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 2335, kAnimationModeTalk);
 		Actor_Says(kActorSadik, 340, kAnimationModeTalk);
-		Actor_Set_Goal_Number(kActorSadik, 416);
+		Actor_Set_Goal_Number(kActorSadik, kGoalSadikUG18NeedsReactorCoreFromMcCoy);
 		return true;
 
 	case 418:

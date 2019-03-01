@@ -579,6 +579,10 @@ void SceneScriptMA04::sleep() {
 				if (!Game_Flag_Query(kFlagZubenBountyPaid)) {
 					Global_Variable_Increment(kVariableChinyen, 200);
 				}
+#if BLADERUNNER_ORIGINAL_BUGS // ensure valid kFlagZubenBountyPaid flag state
+#else
+				Game_Flag_Set(kFlagZubenBountyPaid); // not a proper bug, but was missing from original code, so the flag would remain in non-consistent state in this case
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			}
 		} else {
 			Set_Enter(kSetMA02_MA04, kSceneMA04);

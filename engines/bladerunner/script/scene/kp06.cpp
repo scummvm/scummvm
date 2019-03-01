@@ -113,7 +113,7 @@ bool SceneScriptKP06::ClickedOnExit(int exitId) {
 
 	if (exitId == 1) {
 		if (Actor_Clue_Query(kActorSadik, kCluePowerSource)
-		 || Actor_Query_Goal_Number(kActorSadik) != 416
+		 || Actor_Query_Goal_Number(kActorSadik) != kGoalSadikUG18NeedsReactorCoreFromMcCoy
 		) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -731.0f, 8.26f, -657.0f, 0, true, false, 0)) {
 				if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {

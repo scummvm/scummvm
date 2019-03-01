@@ -2089,7 +2089,9 @@ enum GoalSadik {
 	kGoalSadikUG18WillShootMcCoy = 306,
 	kGoalSadikUG18PrepareShootMcCoy = 307,
 	kGoalSadikUG18ShootMcCoy = 308,
-	kGoalSadikUG18Leave = 310
+	kGoalSadikUG18Leave = 310,
+	kGoalSadikUG18NeedsReactorCoreFromMcCoy = 416,
+	kGoalSadikGone = 599
 };
 
 enum GoalLuther {
