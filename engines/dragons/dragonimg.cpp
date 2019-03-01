@@ -32,8 +32,8 @@ DragonIMG::DragonIMG(BigfileArchive *bigfileArchive) {
 
 	_count = fileSize / 4;
 
-	byte *imgData = bigfileArchive->load("dragon.img", fileSize);
-	Common::SeekableReadStream *imgReadStream = new Common::MemoryReadStream(imgData, fileSize, DisposeAfterUse::YES);
+	_imgData = bigfileArchive->load("dragon.img", fileSize);
+	Common::SeekableReadStream *imgReadStream = new Common::MemoryReadStream(_imgData, fileSize, DisposeAfterUse::NO);
 
 
 	_imgObjects = new IMG[_count];
@@ -48,7 +48,15 @@ DragonIMG::DragonIMG(BigfileArchive *bigfileArchive) {
 		_imgObjects[i].field_a = imgReadStream->readUint16LE();
 		_imgObjects[i].field_c = imgReadStream->readUint16LE();
 		_imgObjects[i].field_e = imgReadStream->readUint16LE();
+		_imgObjects[i].data = _imgData + imgReadStream->pos();
 	}
+
+	delete iptReadStream;
+	delete imgReadStream;
+}
+
+DragonIMG::~DragonIMG() {
+	delete _imgData;
 }
 
 IMG *DragonIMG::getIMG(uint32 iptId) {
@@ -57,6 +65,5 @@ IMG *DragonIMG::getIMG(uint32 iptId) {
 	assert(iptId < _count);
 	return &_imgObjects[iptId];
 }
-
 
 } // End of namespace Dragons

@@ -31,8 +31,6 @@ namespace Dragons {
 class PriorityLayer;
 class Background;
 
-struct TileMap;
-
 class BackgroundResourceLoader {
 private:
 	BigfileArchive *_bigFileArchive;
@@ -42,26 +40,39 @@ public:
 	Background *load(uint32 sceneId);
 };
 
+struct TileMap {
+	uint16 w;
+	uint16 h;
+	uint32 size;
+	byte *map;
+	uint8 tileIndexOffset;
+};
+
 class Background {
 private:
+	byte *_data;
+	byte *_tileDataOffset;
+	TileMap _tileMap[4];
 	PriorityLayer *_priorityLayer;
 	byte _palette[512];
-	Graphics::Surface *_bgLayer;
-	Graphics::Surface *_mgLayer;
-	Graphics::Surface *_fgLayer;
+	Graphics::Surface *_layer[3];
 	Common::Point *_points1;
 	Common::Point *_points2;
 public:
-	Background() : _priorityLayer(0), _points1(0), _points2(0), _bgLayer(0), _fgLayer(0) {}
-	bool load(byte *dataStart, Common::SeekableReadStream &stream);
+	Background();
+	~Background();
+
+	bool load(byte *dataStart, uint32 size);
 	uint16 getWidth();
 	uint16 getHeight();
-	Graphics::Surface *getBgLayer() { return _bgLayer; }
-	Graphics::Surface *getMgLayer() { return _mgLayer; }
-	Graphics::Surface *getFgLayer() { return _fgLayer; }
+	Graphics::Surface *getBgLayer() { return _layer[0]; }
+	Graphics::Surface *getMgLayer() { return _layer[1]; }
+	Graphics::Surface *getFgLayer() { return _layer[2]; }
 	int16 getPriorityAtPoint(Common::Point pos);
 	Common::Point getPoint2(uint32 pointIndex);
 	byte *getPalette() { return _palette; }
+
+	void overlayImage(uint16 layerNum, byte *data, int16 x, int16 y, int16 w, int16 h);
 
 private:
 	Common::Point *loadPoints(Common::SeekableReadStream &stream);

@@ -35,6 +35,7 @@ struct IMG {
 	uint16 field_a;
 	uint16 field_c;
 	uint16 field_e;
+	byte *data;
 };
 
 class BigfileArchive;
@@ -43,8 +44,10 @@ class DragonIMG {
 private:
 	int16 _count;
 	IMG *_imgObjects;
+	byte *_imgData;
 public:
 	DragonIMG(BigfileArchive *bigfileArchive);
+	~DragonIMG();
 	IMG *getIMG(uint32 iptId);
 };
 
