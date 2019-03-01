@@ -886,7 +886,15 @@ bool EoBCoreEngine::spellCallback_end_melfsAcidArrow(void *obj) {
 }
 
 void EoBCoreEngine::spellCallback_start_dispelMagic() {
-	for (int i = 0; i < 6; i++) {
+	int first = 0;
+	int last = 5;
+
+	if (_flags.gameID == GI_EOB1) {
+		_txt->printMessage(_magicStrings8[0], -1, _characters[_activeSpellCharId].name);
+		first = last = _activeSpellCharId;
+	}
+
+	for (int i = first; i <= last; i++) {
 		if (testCharacter(i, 1))
 			removeAllCharacterEffects(i);
 	}
