@@ -1032,6 +1032,10 @@ void EoBCoreEngine::spellCallback_start_coneOfCold() {
 	_screen->setGfxParameters(0, 0, _screen->getPagePixel(2, 0, 0));
 	drawSceneShapes(7);
 	_screen->setCurPage(0);
+
+	if (_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformAmiga)
+		snd_playSoundEffect(98);
+
 	disableSysTimer(2);
 	_screen->drawVortex(150, 50, 10, 1, 100, _coneOfColdGfxTbl, _coneOfColdGfxTblSize);
 	enableSysTimer(2);
