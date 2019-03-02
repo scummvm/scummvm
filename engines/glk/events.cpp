@@ -222,28 +222,29 @@ void Events::handleKeyDown(const Common::KeyState &ks) {
 	Windows &windows = *g_vm->_windows;
 
 	if (ks.flags & Common::KBD_CTRL) {
-		if (ks.keycode == Common::KEYCODE_a)
-			windows.inputHandleKey(keycode_Home);
-		else if (ks.keycode == Common::KEYCODE_c)
-			clipboard.clipboardSend(CLIPBOARD);
-		else if (ks.keycode == Common::KEYCODE_e)
-			windows.inputHandleKey(keycode_End);
-		else if (ks.keycode == Common::KEYCODE_u)
-			windows.inputHandleKey(keycode_Escape);
-		else if (ks.keycode == Common::KEYCODE_v)
-			clipboard.clipboardReceive(CLIPBOARD);
-		else if (ks.keycode == Common::KEYCODE_x)
-			clipboard.clipboardSend(CLIPBOARD);
-		else if (ks.keycode == Common::KEYCODE_LEFT || ks.keycode == Common::KEYCODE_KP4)
-			windows.inputHandleKey(keycode_SkipWordLeft);
-		else if (ks.keycode == Common::KEYCODE_RIGHT || ks.keycode == Common::KEYCODE_KP6)
-			windows.inputHandleKey(keycode_SkipWordRight);
+		do {
+			if (ks.keycode == Common::KEYCODE_a)
+				windows.inputHandleKey(keycode_Home);
+			else if (ks.keycode == Common::KEYCODE_c)
+				clipboard.clipboardSend(CLIPBOARD);
+			else if (ks.keycode == Common::KEYCODE_e)
+				windows.inputHandleKey(keycode_End);
+			else if (ks.keycode == Common::KEYCODE_u)
+				windows.inputHandleKey(keycode_Escape);
+			else if (ks.keycode == Common::KEYCODE_v)
+				clipboard.clipboardReceive(CLIPBOARD);
+			else if (ks.keycode == Common::KEYCODE_x)
+				clipboard.clipboardSend(CLIPBOARD);
+			else if (ks.keycode == Common::KEYCODE_LEFT || ks.keycode == Common::KEYCODE_KP4)
+				windows.inputHandleKey(keycode_SkipWordLeft);
+			else if (ks.keycode == Common::KEYCODE_RIGHT || ks.keycode == Common::KEYCODE_KP6)
+				windows.inputHandleKey(keycode_SkipWordRight);
+			else
+				break;
 
-		return;
+			return;
+		} while (false);
 	}
-
-	if (ks.flags & Common::KBD_ALT)
-		return;
 
 	switch (ks.keycode) {
 	case Common::KEYCODE_RETURN:
@@ -322,8 +323,7 @@ void Events::handleKeyDown(const Common::KeyState &ks) {
 		windows.inputHandleKey(keycode_Func12);
 		break;
 	default:
-		windows.inputHandleKey(ks.ascii);
-		break;
+		windows.inputHandleKey(ks.keycode);
 		break;
 	}
 }
