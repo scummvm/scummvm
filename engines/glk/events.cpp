@@ -371,7 +371,9 @@ bool Events::isModifierKey(const Common::KeyCode &keycode) const {
 	return keycode == Common::KEYCODE_LCTRL || keycode == Common::KEYCODE_LALT
 		|| keycode == Common::KEYCODE_RCTRL || keycode == Common::KEYCODE_RALT
 		|| keycode == Common::KEYCODE_LSHIFT || keycode == Common::KEYCODE_RSHIFT
-		|| keycode == Common::KEYCODE_LSUPER || keycode == Common::KEYCODE_RSUPER;
+		|| keycode == Common::KEYCODE_LSUPER || keycode == Common::KEYCODE_RSUPER
+		|| keycode == Common::KEYCODE_CAPSLOCK || keycode == Common::KEYCODE_NUMLOCK
+		|| keycode == Common::KEYCODE_SCROLLOCK;
 }
 
 void Events::waitForPress() {
