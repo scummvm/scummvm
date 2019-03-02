@@ -185,8 +185,10 @@ void Events::pollEvents() {
 
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
-			setCursor(CURSOR_NONE);
-			handleKeyDown(event.kbd);
+			if (!isModifierKey(event.kbd.keycode)) {
+				setCursor(CURSOR_NONE);
+				handleKeyDown(event.kbd);
+			}
 			return;
 
 		case Common::EVENT_LBUTTONDOWN:
@@ -365,6 +367,13 @@ void Events::handleButtonUp(bool isLeft, const Point &pos) {
 	}
 }
 
+bool Events::isModifierKey(const Common::KeyCode &keycode) const {
+	return keycode == Common::KEYCODE_LCTRL || keycode == Common::KEYCODE_LALT
+		|| keycode == Common::KEYCODE_RCTRL || keycode == Common::KEYCODE_RALT
+		|| keycode == Common::KEYCODE_LSHIFT || keycode == Common::KEYCODE_RSHIFT
+		|| keycode == Common::KEYCODE_LSUPER || keycode == Common::KEYCODE_RSUPER;
+}
+
 void Events::waitForPress() {
 	Common::Event e;
 
@@ -372,9 +381,8 @@ void Events::waitForPress() {
 		g_system->getEventManager()->pollEvent(e);
 		g_system->delayMillis(10);
 		checkForNextFrameCounter();
-	} while (!g_vm->shouldQuit() && e.type != Common::EVENT_KEYDOWN &&
-	         e.type != Common::EVENT_LBUTTONDOWN && e.type != Common::EVENT_RBUTTONDOWN &&
-	         e.type != Common::EVENT_MBUTTONDOWN);
+	} while (!g_vm->shouldQuit() && (e.type != Common::EVENT_KEYDOWN || isModifierKey(e.kbd.keycode))
+		&& e.type != Common::EVENT_LBUTTONDOWN && e.type != Common::EVENT_RBUTTONDOWN && e.type != Common::EVENT_MBUTTONDOWN);
 }
 
 void Events::setCursor(CursorId cursorId) {

@@ -220,6 +220,11 @@ private:
 	 * Handle mouse up events
 	 */
 	void handleButtonUp(bool isLeft, const Point &pos);
+
+	/**
+	 * Returns true if the passed keycode is for the Ctrl or Alt keys
+	 */
+	bool isModifierKey(const Common::KeyCode &keycode) const;
 public:
 	bool _forceClick;
 public:
