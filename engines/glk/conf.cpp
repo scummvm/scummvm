@@ -124,9 +124,6 @@ Conf::Conf(InterpreterType interpType) {
 	get("caretcolor", _propInfo._caretColor, nullptr);
 	get("caretcolor", _propInfo._caretSave, nullptr);
 	get("caretshape", _propInfo._caretShape, 2);
-	_monoInfo._caretColor = _propInfo._caretColor;
-	_monoInfo._caretSave = _propInfo._caretSave;
-	_monoInfo._caretShape = _propInfo._caretShape;
 
 	_propInfo._linkStyle = _monoInfo._linkStyle = ConfMan.hasKey("linkstyle")
 		&& !strToInt(ConfMan.get("linkstyle").c_str()) ? 0 : 1;

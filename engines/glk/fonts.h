@@ -36,6 +36,10 @@ enum STYLES { FONTR, FONTB, FONTI, FONTZ };
  * Font configuration info
  */
 struct FontInfo {
+public:
+	static uint _caretColor, _caretSave;
+	static int _caretShape;
+public:
 	double _size;
 	double _aspect;
 	int _cellW, _cellH;
@@ -48,8 +52,6 @@ struct FontInfo {
 	int _moreAlign;
 	Common::String _morePrompt;
 	int _caps;
-	uint _caretColor, _caretSave;
-	int _caretShape;
 
 	/**
 	 * Constructor

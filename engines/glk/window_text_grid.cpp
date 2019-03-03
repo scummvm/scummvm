@@ -624,6 +624,13 @@ void TextGridWindow::redraw() {
 			w += _bbox.right - (x + w);
 			screen.fillRect(Rect::fromXYWH(x, y, w, _font._leading), bgcolor);
 
+			// Draw the caret if necessary
+			if (_windows->getFocusWindow() == this && i == _curY &&
+					(_lineRequest || _lineRequestUni || _charRequest || _charRequestUni)) {
+				_font.drawCaret(Point((x0 + _curX * _font._cellW) * GLI_SUBPIX, y + _font._baseLine));
+			}
+
+			// Write out the text
 			for (k = a, o = x; k < b; k++, o += _font._cellW) {
 				screen.drawStringUni(Point(o * GLI_SUBPIX, y + _font._baseLine), font,
 									 fgcolor, Common::U32String(&ln->_chars[k], 1));

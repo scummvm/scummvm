@@ -27,9 +27,17 @@
 
 namespace Glk {
 
+uint FontInfo::_caretColor;
+uint FontInfo::_caretSave;
+int FontInfo::_caretShape;
+
+
 FontInfo::FontInfo() : _size(0), _aspect(0), _cellW(0), _cellH(0), _leading(0), _baseLine(0),
 		_linkStyle(0), _moreFont(PROPB), _moreAlign(0), _caps(0), _linkColor(0), _linkSave(0),
-		_moreColor(0), _moreSave(0), _caretShape(0), _caretColor(0), _caretSave(0) {
+		_moreColor(0), _moreSave(0) {
+	_caretShape = 0;
+	_caretColor = 0;
+	_caretSave = 0;
 }
 
 void FontInfo::drawCaret(const Point &pos) {
