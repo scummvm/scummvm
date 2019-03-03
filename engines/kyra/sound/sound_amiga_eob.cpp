@@ -120,7 +120,7 @@ void SoundAmiga_EoB::loadSoundFile(Common::String file) {
 		assert(readSize == outSize);
 		memcpy(buf, _fileBuffer, outSize);
 	} else if (cmp == 3) {			
-		Screen::decodeFrame3(_fileBuffer, buf, outSize);
+		Screen::decodeFrame3(_fileBuffer, buf, outSize, true);
 	} else if (cmp == 4) {
 		Screen::decodeFrame4(_fileBuffer, buf, outSize);
 	} else {
@@ -142,6 +142,8 @@ void SoundAmiga_EoB::playTrack(uint8 track) {
 				newSound = "NEWINTRO1.SMUS";
 			else if (track == 20)
 				newSound = "CHARGEN1.SMUS";
+		} else if (_currentResourceSet == kMusicFinale) {
+			newSound = "FINALE.SMUS";
 		}
 	} else if (_vm->game() == GI_EOB2) {
 		

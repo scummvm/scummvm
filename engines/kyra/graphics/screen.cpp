@@ -2364,12 +2364,12 @@ uint16 Screen::decodeEGAGetCode(const uint8 *&pos, uint8 &nib) {
 	return res;
 }
 
-void Screen::decodeFrame3(const uint8 *src, uint8 *dst, uint32 size) {
+void Screen::decodeFrame3(const uint8 *src, uint8 *dst, uint32 size, bool isAmiga) {
 	const uint8 *dstEnd = dst + size;
 	while (dst < dstEnd) {
 		int8 code = *src++;
 		if (code == 0) {
-			uint16 sz = READ_BE_UINT16(src);
+			uint16 sz = isAmiga ? READ_LE_UINT16(src) : READ_BE_UINT16(src);
 			src += 2;
 			memset(dst, *src++, sz);
 			dst += sz;
@@ -3258,7 +3258,7 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, Palette
 		Screen::decodeFrame1(srcPtr, dstData, imgSize);
 		break;
 	case 3:
-		Screen::decodeFrame3(srcPtr, dstData, imgSize);
+		Screen::decodeFrame3(srcPtr, dstData, imgSize, _isAmiga);
 		break;
 	case 4:
 		Screen::decodeFrame4(srcPtr, dstData, imgSize);
