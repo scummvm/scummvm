@@ -301,10 +301,14 @@ TTconcept *TTconcept::findBy20(int val) {
 }
 
 bool TTconcept::isWordId(int id) const {
+	if (this == nullptr)
+		return false;
 	return _wordP && _wordP->_id == id;
 }
 
 int TTconcept::getWordId() const {
+	if (this == nullptr)
+		return 0;
 	return _wordP ? _wordP->_id : 0;
 }
 

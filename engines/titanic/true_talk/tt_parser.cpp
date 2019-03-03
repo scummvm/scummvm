@@ -801,7 +801,7 @@ int TTparser::considerRequests(TTword *word) {
 			if (!_sentenceConcept->_concept0P) {
 				flag = filterConcepts(5, 0);
 			} else if (_sentenceConcept->_concept0P->compareTo("?") &&
-						_sentenceConcept->_concept1P->isWordId(113) &&
+						(_sentenceConcept->_concept1P && _sentenceConcept->_concept1P->isWordId(113)) &&
 						word->_wordClass == WC_THING) {
 				TTconcept *oldConcept = _sentenceConcept->_concept0P;
 				_sentenceConcept->_concept0P = nullptr;

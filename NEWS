@@ -64,6 +64,7 @@ For a more comprehensive changelog of the latest experimental code, see:
     - Fixed parser not getting properly reset across sentences in a conversation.
     - Fixed endless busy cursor on Titania closeup when brain slots are incorrectly inserted.
 	- Fixed loading saves in front of Barbot could cause him to go into an infinite animation loop.
+	- Fixed crash asking Parrot who sabotaged the ship
 
  Tucker:
    - Fixed multiple graphic issues in Bud Tucker in Double Trouble.
