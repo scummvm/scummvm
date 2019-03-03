@@ -653,6 +653,9 @@ void TextBufferWindow::requestLineEvent(char *buf, uint maxlen, uint initlen) {
 
 	if (g_vm->gli_register_arr)
 		_inArrayRock = (*g_vm->gli_register_arr)(buf, maxlen, "&+#!Cn");
+
+	// Switch focus to the new window
+	_windows->inputGuessFocus();
 }
 
 void TextBufferWindow::requestLineEventUni(uint32 *buf, uint maxlen, uint initlen) {
@@ -707,6 +710,23 @@ void TextBufferWindow::requestLineEventUni(uint32 *buf, uint maxlen, uint initle
 
 	if (g_vm->gli_register_arr)
 		_inArrayRock = (*g_vm->gli_register_arr)(buf, maxlen, "&+#!Iu");
+
+	// Switch focus to the new window
+	_windows->inputGuessFocus();
+}
+
+void TextBufferWindow::requestCharEvent() {
+	_charRequest = true;
+
+	// Switch focus to the new window
+	_windows->inputGuessFocus();
+}
+
+void TextBufferWindow::requestCharEventUni() {
+	_charRequestUni = true;
+
+	// Switch focus to the new window
+	_windows->inputGuessFocus();
 }
 
 void TextBufferWindow::cancelLineEvent(Event *ev) {

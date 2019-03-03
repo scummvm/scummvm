@@ -220,13 +220,9 @@ public:
 
 	virtual void getSize(uint *width, uint *height) const override;
 
-	virtual void requestCharEvent() override {
-		_charRequest = true;
-	}
+	virtual void requestCharEvent() override;
 
-	virtual void requestCharEventUni() override {
-		_charRequestUni = true;
-	}
+	virtual void requestCharEventUni() override;
 
 	virtual void setEchoLineEvent(uint val) override {
 		_echoLineInput = val != 0;

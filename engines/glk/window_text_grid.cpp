@@ -265,6 +265,9 @@ void TextGridWindow::requestLineEvent(char *buf, uint maxlen, uint initlen) {
 
 	if (g_vm->gli_register_arr)
 		_inArrayRock = (*g_vm->gli_register_arr)(buf, maxlen, "&+#!Cn");
+
+	// Switch focus to the new window
+	_windows->inputGuessFocus();
 }
 
 void TextGridWindow::requestLineEventUni(uint32 *buf, uint maxlen, uint initlen) {
@@ -317,6 +320,23 @@ void TextGridWindow::requestLineEventUni(uint32 *buf, uint maxlen, uint initlen)
 
 	if (g_vm->gli_register_arr)
 		_inArrayRock = (*g_vm->gli_register_arr)(buf, maxlen, "&+#!Iu");
+
+	// Switch focus to the new window
+	_windows->inputGuessFocus();
+}
+
+void TextGridWindow::requestCharEvent() {
+	_charRequest = true;
+
+	// Switch focus to the new window
+	_windows->inputGuessFocus();
+}
+
+void TextGridWindow::requestCharEventUni() {
+	_charRequestUni = true;
+
+	// Switch focus to the new window
+	_windows->inputGuessFocus();
 }
 
 void TextGridWindow::cancelLineEvent(Event *ev) {

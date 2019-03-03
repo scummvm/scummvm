@@ -171,9 +171,9 @@ public:
 
 	virtual void getSize(uint *width, uint *height) const override;
 
-	virtual void requestCharEvent() override {
-		_charRequest = true;
-	}
+	virtual void requestCharEvent() override;
+
+	virtual void requestCharEventUni() override;
 
 	/**
 	 * Prepare for inputing a line
@@ -195,10 +195,6 @@ public:
 	 */
 	virtual void cancelMouseEvent() override {
 		_mouseRequest = false;
-	}
-
-	virtual void requestCharEventUni() override {
-		_charRequestUni = true;
 	}
 
 	virtual void requestMouseEvent() override {
