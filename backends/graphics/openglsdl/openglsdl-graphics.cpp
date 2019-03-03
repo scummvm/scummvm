@@ -461,6 +461,10 @@ void OpenGLSdlGraphicsManager::handleResizeImpl(const int width, const int heigh
 	SdlGraphicsManager::handleResizeImpl(width, height);
 }
 
+bool OpenGLSdlGraphicsManager::saveScreenshot(const Common::String &filename) const {
+	return OpenGLGraphicsManager::saveScreenshot(filename);
+}
+
 bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	// In case we request a fullscreen mode we will use the mode the user
 	// has chosen last time or the biggest mode available.
@@ -621,68 +625,13 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 	switch (event.type) {
 	case Common::EVENT_KEYUP:
-		return isHotkey(event);
+		if (isHotkey(event))
+			return true;
+
+		break;
 
 	case Common::EVENT_KEYDOWN:
-		if (event.kbd.hasFlags(Common::KBD_ALT)) {
-			if (   event.kbd.keycode == Common::KEYCODE_RETURN
-			    || event.kbd.keycode == (Common::KeyCode)SDLK_KP_ENTER) {
-				// Alt-Return and Alt-Enter toggle full screen mode
-				beginGFXTransaction();
-					setFeatureState(OSystem::kFeatureFullscreenMode, !getFeatureState(OSystem::kFeatureFullscreenMode));
-				endGFXTransaction();
-
-#ifdef USE_OSD
-				if (getFeatureState(OSystem::kFeatureFullscreenMode)) {
-					displayMessageOnOSD(_("Fullscreen mode"));
-				} else {
-					displayMessageOnOSD(_("Windowed mode"));
-				}
-#endif
-				return true;
-			}
-
-			// Alt-s creates a screenshot
-			if (event.kbd.keycode == Common::KEYCODE_s) {
-				Common::String filename;
-
-				Common::String screenshotsPath;
-				OSystem_SDL *sdl_g_system = dynamic_cast<OSystem_SDL*>(g_system);
-				if (sdl_g_system)
-					screenshotsPath = sdl_g_system->getScreenshotsPath();
-
-				for (int n = 0;; n++) {
-					SDL_RWops *file;
-
-#ifdef USE_PNG
-					filename = Common::String::format("scummvm%05d.png", n);
-#else
-					filename = Common::String::format("scummvm%05d.bmp", n);
-#endif
-
-					file = SDL_RWFromFile((screenshotsPath + filename).c_str(), "r");
-
-					if (!file)
-						break;
-					SDL_RWclose(file);
-				}
-
-				if (saveScreenshot(screenshotsPath + filename)) {
-					if (screenshotsPath.empty())
-						debug("Saved screenshot '%s' in current directory", filename.c_str());
-					else
-						debug("Saved screenshot '%s' in directory '%s'", filename.c_str(), screenshotsPath.c_str());
-				} else {
-					if (screenshotsPath.empty())
-						warning("Could not save screenshot in current directory");
-					else
-						warning("Could not save screenshot in directory '%s'", screenshotsPath.c_str());
-				}
-
-				return true;
-			}
-
-		} else if (event.kbd.hasFlags(Common::KBD_CTRL | Common::KBD_ALT)) {
+		if (event.kbd.hasFlags(Common::KBD_CTRL | Common::KBD_ALT)) {
 			if (   event.kbd.keycode == Common::KEYCODE_PLUS || event.kbd.keycode == Common::KEYCODE_MINUS
 			    || event.kbd.keycode == Common::KEYCODE_KP_PLUS || event.kbd.keycode == Common::KEYCODE_KP_MINUS) {
 				// Ctrl+Alt+Plus/Minus Increase/decrease the size
@@ -833,16 +782,14 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		// Fall through
 
 	default:
-		return false;
+		break;
 	}
+
+	return SdlGraphicsManager::notifyEvent(event);
 }
 
 bool OpenGLSdlGraphicsManager::isHotkey(const Common::Event &event) const {
-	if (event.kbd.hasFlags(Common::KBD_ALT)) {
-		return    event.kbd.keycode == Common::KEYCODE_RETURN
-		       || event.kbd.keycode == (Common::KeyCode)SDLK_KP_ENTER
-		       || event.kbd.keycode == Common::KEYCODE_s;
-	} else if (event.kbd.hasFlags(Common::KBD_CTRL | Common::KBD_ALT)) {
+	if (event.kbd.hasFlags(Common::KBD_CTRL | Common::KBD_ALT)) {
 		return    event.kbd.keycode == Common::KEYCODE_PLUS || event.kbd.keycode == Common::KEYCODE_MINUS
 		       || event.kbd.keycode == Common::KEYCODE_KP_PLUS || event.kbd.keycode == Common::KEYCODE_KP_MINUS
 		       || event.kbd.keycode == Common::KEYCODE_a
