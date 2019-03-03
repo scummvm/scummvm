@@ -102,8 +102,9 @@ void ScriptOpcodes::initOpcodes() {
 	OPCODE(0xF, opUnkF);
 
 	OPCODE(0x11, opUnk11FlickerTalk);
-
+	OPCODE(0x12, opUnk12LoadScene);
 	OPCODE(0x13, opUnk13PropertiesRelated);
+
 	OPCODE(0x1F, opPlayMusic);
 
 	OPCODE(0x22, opCodeActorTalk);
@@ -519,6 +520,29 @@ void ScriptOpcodes::opUnk11FlickerTalk(ScriptOpCall &scriptOpCall) {
 	// TODO implement me!
 }
 
+void ScriptOpcodes::opUnk12LoadScene(ScriptOpCall &scriptOpCall) {
+	ARG_SKIP(2);
+	ARG_INT16(field2);
+	ARG_INT16(field4);
+	ARG_INT16(field6);
+
+	if (scriptOpCall._field8 != 0) {
+		return;
+	}
+
+	//TODO fade_related_calls_with_1f();
+	// func_ptr_unk = 0;
+	// PauseCDMusic();
+
+	if (field2 != 0) {
+		// load scene here.
+		//TODO
+		error("0x8002efe4");
+	} else {
+		_vm->setFlags(Dragons::ENGINE_FLAG_100000);
+	}
+}
+
 void ScriptOpcodes::opCodeActorTalk(ScriptOpCall &scriptOpCall) {
 	ARG_SKIP(2);
 	ARG_INT16(field2);
@@ -598,13 +622,10 @@ void ScriptOpcodes::opCode_UnkA_setsProperty(ScriptOpCall &scriptOpCall) {
 		if (fieldA & 4 && field2 == 0 && !(ini->field_1a_flags_maybe & 1) && ini->sceneId == _vm->getCurrentSceneId()) {
 			if (s1 == -1) {
 				if (ini->iptIndex_maybe != -1) {
-					// TODO ipt_img_file_related_3(ini->iptIndex_maybe);
-					error("TODO ipt_img_file_related_3(ini->iptIndex_maybe);");
+					_vm->_scene->removeImageOverlay(ini->iptIndex_maybe);
 				}
 			} else {
-				// TODO ipt_img_file_related_2(s1);
 				_vm->_scene->loadImageOverlay(s1);
-				//error("TODO ipt_img_file_related_2(s1);");
 			}
 		}
 	}
@@ -723,8 +744,7 @@ void ScriptOpcodes::opCode_Unk7(ScriptOpCall &scriptOpCall) {
 			}
 		} else {
 			if (ini->sceneId == currentScene && ini->iptIndex_maybe != -1) {
-				//TODO ipt_img_file_related_3(ini->iptIndex_maybe);
-				error("//TODO ipt_img_file_related_3(ini->iptIndex_maybe);");
+				_vm->_scene->removeImageOverlay(ini->iptIndex_maybe);
 			}
 			if (sceneId == currentScene && ini->iptIndex_maybe != -1) {
 				_vm->_scene->loadImageOverlay(ini->iptIndex_maybe);
@@ -733,10 +753,12 @@ void ScriptOpcodes::opCode_Unk7(ScriptOpCall &scriptOpCall) {
 
 		if (ini->sceneId == 1) {
 			//TODO 0x8002d218
+			error("0x8002d218");
 		}
 
 		if (sceneId == 1) {
 			// TODO 0x8002d2f4
+			error("0x8002d2f4");
 		}
 	}
 	ini->sceneId = sceneId;

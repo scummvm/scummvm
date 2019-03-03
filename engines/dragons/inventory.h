@@ -19,38 +19,43 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#ifndef SCUMMVM_DRAGONIMG_H
-#define SCUMMVM_DRAGONIMG_H
+
+#ifndef SCUMMVM_INVENTORY_H
+#define SCUMMVM_INVENTORY_H
 
 #include "common/system.h"
 
 namespace Dragons {
 
-struct IMG {
-	uint16 x;
-	uint16 y;
-	uint16 w;
-	uint16 h;
-	uint16 layerNum;
-	uint16 field_a;
-	uint16 field_c;
-	uint16 field_e;
-	byte *data;
-};
+class Actor;
+class ActorManager;
 
-class BigfileArchive;
-
-class DragonIMG {
+class Inventory {
 private:
-	int16 _count;
-	IMG *_imgObjects;
-	byte *_imgData;
+	DragonsEngine *_vm;
+	int32 _sequenceId;
+	bool _isShowingMaybe;
+	int16 _screenPositionIndex;
+	Actor *_actor;
+
 public:
-	DragonIMG(BigfileArchive *bigfileArchive);
-	~DragonIMG();
-	IMG *getIMG(uint32 iptId);
+	Inventory(DragonsEngine *vm);
+
+	void init(ActorManager *actorManager);
+	void loadScene(uint32 sceneId);
+
+	int32 getSequenceId() {
+		return _sequenceId;
+	}
+
+	bool isVisible() {
+		return _isShowingMaybe;
+	}
+
+	void hide() { _isShowingMaybe = false; }
+	void show() { _isShowingMaybe = true; }
 };
 
 } // End of namespace Dragons
 
-#endif //SCUMMVM_DRAGONIMG_H
+#endif //SCUMMVM_INVENTORY_H

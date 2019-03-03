@@ -60,8 +60,13 @@ byte *DragonRMS::getObdData(uint32 sceneId) {
 byte *DragonRMS::getObdDataField10(uint32 sceneId) {
 	return _dragonOBD->getObdAtOffset(getRMS(sceneId)->_field10ObdOffset);
 }
+
 byte *DragonRMS::getObdDataFieldC(uint32 sceneId) {
 	return _dragonOBD->getObdAtOffset(getRMS(sceneId)->_fieldC);
+}
+
+int16 DragonRMS::getInventoryPosition(uint32 sceneId) {
+	return getRMS(sceneId)->_inventoryBagPosition;
 }
 
 RMS *DragonRMS::getRMS(uint32 sceneId) {
@@ -70,6 +75,5 @@ RMS *DragonRMS::getRMS(uint32 sceneId) {
 	assert(sceneId - 2 < _count);
 	return &_rmsObjects[sceneId - 2];
 }
-
 
 } // End of namespace Dragons
