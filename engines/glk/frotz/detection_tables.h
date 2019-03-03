@@ -45,7 +45,6 @@ struct FrotzGameDescription {
 const PlainGameDescriptor INFOCOM_GAME_LIST[] = {
 	// Infocom games
 	{ "amfv", "A Mind Forever Voyaging" },
-	{ "arthur", "Arthur: The Quest for Excalibur" },
 	{ "ballyhoo", "Ballyhoo" },
 	{ "beyondzork", "Beyond Zork" },
 	{ "borderzone", "Border Zone" },
@@ -58,14 +57,15 @@ const PlainGameDescriptor INFOCOM_GAME_LIST[] = {
 	{ "infidel", "Infidel" },
 	{ "journey", "Journey" },
 	{ "lgop", "Leather Goddesses of Phobos" },
+	{ "infocomsampler1", "Infocom Sampler 1" },
+	{ "infocomsampler2", "Infocom Sampler 2" },
 	{ "lurkinghorror", "The Lurking Horror" },
 	{ "minizork1", "Mini Zork I: The Great Underground Empire" },
 	{ "moonmist", "Moonmist" },
 	{ "nordbert", "Nord and Bert Couldn't Make Head or Tail of It" },
 	{ "planetfall", "Planetfall" },
 	{ "plunderedhearts", "Plundered Hearts" },
-	{ "infocomsampler1", "Infocom Sampler 1" },
-	{ "infocomsampler2", "Infocom Sampler 2" },
+	{ "questforexcalibur", "Arthur: The Quest for Excalibur" },
 	{ "seastalker", "Seastalker" },
 	{ "sherlockriddle", "Sherlock: The Riddle of the Crown Jewels" },
 	{ "shogun", "James Clavell's Shogun" },
@@ -867,7 +867,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "nissen", "Pa loftet sidder nissen" },
 
 	// French games
-	{ "basketball", "Champion de basket-ball" },
+	{ "championdebasketball", "Champion de basket-ball" },
 	{ "dreamlands", "Echappee Belle Dans Les Contrees du Reve" },
 	{ "espions", "Les espions ne meurent jamais" },
 	{ "filaments", "Filaments" },
@@ -1005,8 +1005,6 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	// Infocom Games - English
 	ENTRY0("amfv", "R77-850814", "b7ffaed0ca4a90450f92b34066133377", 262016),
 	ENTRY0("amfv", "R79-851122", "1e37dbcf7ccc9244dbfc3229796362f4", 262544),
-	ENTRY0("arthur", "R54-890606", "ced2c66d03a49de0e8190b468332f081", 271360),
-	ENTRY0("arthur", "R74-890714", "13d13f375f85a874c82a8ac7ad69dc41", 269200),
 	ENTRY0("ballyhoo", "R97-851218", "7944e832a7d7b34037c7b6791de43dbd", 128556),
 	ENTRY0("beyondzork", "R49-870917", "a5547795def620d0a75a064f9a37ab2d", 261900),
 	ENTRY0("beyondzork", "R51-870923", "73948f415596fa4d9afe442b2c19e61f", 261548),
@@ -1047,6 +1045,8 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 	ENTRY0("planetfall", "R29-840118", "9facd8b974e658520fb762af4c4789dc", 109052),
 	ENTRY0("planetfall", "R37-851003", "01844816673414c97d21dc003304989b",109398),
 	ENTRY0("planetfall", "R10-880531", "34c69f1d24418fd4d2de195a1d7546c4", 136560),
+	ENTRY0("questforexcalibur", "R54-890606", "ced2c66d03a49de0e8190b468332f081", 271360),
+	ENTRY0("questforexcalibur", "R74-890714", "13d13f375f85a874c82a8ac7ad69dc41", 269200),
 	ENTRY0("plunderedhearts", "R26-870730", "fe5b9eb91949d41838166364f1753b10", 128962),
 	ENTRY0("infocomsampler1", "R26-840731", "5483febc51abd55fb5e04c4c97a0b260", 112610),
 	ENTRY0("infocomsampler1", "R53-850407", "47b8b8394e25faec870a798145529688", 126708),
@@ -1925,7 +1925,7 @@ const FrotzGameDescription FROTZ_GAMES[] = {
 
 	// French games
 	ENTRY1("adv", "000531", "50027e3339900e1ca07f72e96396240e", 129536, Common::FR_FRA),
-	ENTRY1("basketball", "180904", "92b21e4bc9163727c3dd586056f26fd8", 64000, Common::FR_FRA),
+	ENTRY1("championdebasketball", "180904", "92b21e4bc9163727c3dd586056f26fd8", 64000, Common::FR_FRA),
 	ENTRY1("dreamlands", "050908", "79cecc22e3f020a3ccc23912122785d4", 79872, Common::FR_FRA),
 	ENTRY1("espions", "070417", "7e59a5199b12376697deb4694cfac744", 124416, Common::FR_FRA),
 	ENTRY1("filaments", "030301", "0aa6d27086b546f6bd4dea84717da6ff", 337920, Common::FR_FRA),
