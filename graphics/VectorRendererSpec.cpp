@@ -2353,7 +2353,6 @@ drawBevelSquareAlg(int x, int y, int w, int h, int bevel, PixelType top_color, P
 	ptr_left = (PixelType *)_activeSurface->getBasePtr(x, y);
 	i = h;
 	if (fill) {
-		assert((_bgColor & ~_alphaMask) == 0); // only support black
 		while (i--) {
 			darkenFill(ptr_left, ptr_left + w);
 			ptr_left += pitch;
@@ -2410,7 +2409,6 @@ drawBevelSquareAlgClip(int x, int y, int w, int h, int bevel, PixelType top_colo
 	ptr_x = x; ptr_y = y;
 	i = h;
 	if (fill) {
-		assert((_bgColor & ~_alphaMask) == 0); // only support black
 		while (i--) {
 			darkenFillClip(ptr_left, ptr_left + w, ptr_x, ptr_y);
 			ptr_left += pitch;
