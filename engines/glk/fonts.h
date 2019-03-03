@@ -48,11 +48,21 @@ struct FontInfo {
 	int _moreAlign;
 	Common::String _morePrompt;
 	int _caps;
+	uint _caretColor, _caretSave;
+	int _caretShape;
 
 	/**
 	 * Constructor
 	 */
 	FontInfo();
+
+
+	/**
+	 * Draws the text input caret at the given position
+	 * @remarks     The position specifies the caret's bottom-left corner,
+	 *      and the X position is in multiples of GLI_SUBPIX
+	 */
+	void drawCaret(const Point &pos);
 };
 
 /**
@@ -65,8 +75,6 @@ struct MonoFontInfo : public FontInfo {
  * Font info for proportional (variable size) fonts
  */
 struct PropFontInfo : public MonoFontInfo {
-	uint _caretColor, _caretSave;
-	int _caretShape;
 	int _justify;
 	int _quotes;
 	int _dashes;
@@ -77,13 +85,6 @@ struct PropFontInfo : public MonoFontInfo {
 	 * Constructor
 	 */
 	PropFontInfo();
-
-	/**
-	 * Draws the text input caret at the given position
-	 * @remarks     The position specifies the caret's bottom-left corner,
-	 *      and the X position is in multiples of GLI_SUBPIX
-	 */
-	void drawCaret(const Point &pos);
 };
 
 } // End of namespace Glk
