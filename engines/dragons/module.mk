@@ -13,6 +13,7 @@ MODULE_OBJS := \
     dragonrms.o \
     dragonvar.o \
 	dragons.o \
+	inventory.o \
 	scene.o \
 	screen.o \
 	scriptopcodes.o \
