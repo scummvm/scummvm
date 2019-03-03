@@ -73,6 +73,7 @@ public:
 	byte *getPalette() { return _palette; }
 
 	void overlayImage(uint16 layerNum, byte *data, int16 x, int16 y, int16 w, int16 h);
+	void restoreTiles(uint16 layerNum, int16 x, int16 y, int16 w, int16 h);
 
 private:
 	Common::Point *loadPoints(Common::SeekableReadStream &stream);

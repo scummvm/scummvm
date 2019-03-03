@@ -25,6 +25,7 @@
 #include "background.h"
 #include "dragonini.h"
 #include "dragonimg.h"
+#include "inventory.h"
 #include "screen.h"
 #include "actorresource.h"
 #include "scriptopcodes.h"
@@ -58,6 +59,8 @@ void Scene::loadScene(uint32 sceneId, uint32 cameraPointId) {
 }
 
 void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
+	bool isUnkFlag2Set = _vm->isUnkFlagSet(Dragons::ENGINE_UNK1_FLAG_2);
+
 	_vm->setUnkFlags(Dragons::ENGINE_UNK1_FLAG_2 | Dragons::ENGINE_UNK1_FLAG_8);
 
 	for(int i=0;i < _dragonINIResource->totalRecords(); i++) {
@@ -111,6 +114,15 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 	}
 
 	debug("Camera: (%d, %d)", _camera.x, _camera.y);
+
+	// 0x8002ff80
+	// TODO fade_related_calls_with_1f();
+	_vm->clearUnkFlags(Dragons::ENGINE_UNK1_FLAG_10);
+	_vm->setFlags(Dragons::ENGINE_FLAG_20);
+	// TODO reset vsync_updater_function
+	_vm->setFlags(Dragons::ENGINE_FLAG_200);
+	_actorManager->clearActorFlags(2);
+	// TODO 0x8002fff0
 
 	for(int i=0;i < _dragonINIResource->totalRecords(); i++) {
 		DragonINI *ini = _dragonINIResource->getRecord(i);
@@ -172,7 +184,54 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 				}
 			}
 		}
-		_currentSceneId = (uint16)(sceneId & 0x7fff);
+	}
+	_currentSceneId = (uint16)(sceneId & 0x7fff); //TODO is this the right spot for this?
+
+	// 0x80030458
+	DragonINI *ini = _vm->getINI(1);
+	if (ini->actor && _vm->_dragonINIResource->getFlickerRecord() && _vm->_dragonINIResource->getFlickerRecord()->sceneId == _currentSceneId) {
+		ini->actor->setFlag(Dragons::ACTOR_FLAG_100);
+		ini->actor->priorityLayer = 0;
+	}
+
+	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
+
+	if (flicker && flicker->sceneId != 0) {
+		flicker->field_20_actor_field_14 = _vm->data_800633fa;
+		if (flicker->actor) {
+			flicker->actor->_sequenceID2 = _vm->data_800633fa;
+			flicker->actor->setFlag(Dragons::ACTOR_FLAG_4);
+		}
+	}
+
+	// 0x800305bc
+	_vm->_inventory->loadScene(_currentSceneId);
+
+	// 0x8003070c
+	// TODO sub_80013b3c(); // palette related.
+
+	if (_vm->_inventory->isVisible()) {
+		_vm->_inventory->hide();
+	}
+
+	if (!_vm->isFlagSet(Dragons::ENGINE_FLAG_10000)) {
+		_vm->setFlags(Dragons::ENGINE_FLAG_10);
+	}
+
+	_vm->setFlags(Dragons::ENGINE_FLAG_1);
+	_vm->setFlags(Dragons::ENGINE_FLAG_200);
+	_vm->setFlags(Dragons::ENGINE_FLAG_4000000);
+
+	if (flicker && flicker->sceneId == _currentSceneId) {
+
+		flicker->actor->updateSequence((uint16)flicker->actor->_sequenceID2);
+	}
+
+	_vm->clearUnkFlags(Dragons::ENGINE_UNK1_FLAG_2);
+	_vm->clearUnkFlags(Dragons::ENGINE_UNK1_FLAG_8);
+
+	if (isUnkFlag2Set) {
+		_vm->setUnkFlags(Dragons::ENGINE_UNK1_FLAG_2);
 	}
 
 	if (!(sceneId & 0x8000)) {
@@ -262,7 +321,21 @@ uint16 Scene::getStageHeight() {
 
 void Scene::loadImageOverlay(uint16 iptId) {
 	IMG *img =_vm->_dragonIMG->getIMG(iptId);
-	_stage->overlayImage(2, img->data, img->field_0, img->field_2, img->field_4, img->field_6);
+	if (img->h != 0) {
+		if (img->field_e <= 2) {
+			_stage->overlayImage(img->layerNum - 1, img->data, img->x, img->y, img->w, img->h);
+		}
+
+		if (img->field_e == 2 || img->field_e == 0) {
+			// error("img->field_e == 2 || img->field_e == 0");
+			//TODO what does this do? Do we need it? 0x800177f8
+		}
+	}
+}
+
+void Scene::removeImageOverlay(uint16 iptId) {
+	IMG *img =_vm->_dragonIMG->getIMG(iptId);
+	_stage->restoreTiles(img->layerNum - 1, img->x, img->y, img->w, img->h);
 }
 
 } // End of namespace Dragons

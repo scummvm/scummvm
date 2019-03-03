@@ -34,6 +34,7 @@
 #include "dragonrms.h"
 #include "dragonvar.h"
 #include "dragons.h"
+#include "inventory.h"
 #include "scene.h"
 #include "screen.h"
 #include "sequenceopcodes.h"
@@ -63,6 +64,9 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	_cursorPosition = Common::Point();
 	_cursorSequenceID = 0;
 	run_func_ptr_unk_countdown_timer = 0;
+	data_8006a3a0_flag = 0;
+	data_800633fa = 0;
+	_inventory = new Inventory(this);
 }
 
 DragonsEngine::~DragonsEngine() {
@@ -115,17 +119,7 @@ Common::Error DragonsEngine::run() {
 	_dragonINIResource->getFlickerRecord()->actor = cursor; //TODO is this correct?
 	_dragonINIResource->getFlickerRecord()->field_1a_flags_maybe |= Dragons::INI_FLAG_1;
 
-	Actor *inventory = _actorManager->loadActor(1, 1); //Load inventory
-	inventory->x_pos = 2;
-	inventory->y_pos = 0;
-	inventory->priorityLayer = 6;
-	inventory->flags = 0;
-	inventory->field_e = 0x100;
-	inventory->updateSequence(0);
-	inventory->flags |= (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_80 | Dragons::ACTOR_FLAG_100 |
-						 Dragons::ACTOR_FLAG_200);
-	inventorySequenceId = 0;
-	inventoryIsShowingMaybe = 0;
+	_inventory->init(_actorManager);
 
 	uint16 sceneId = 0x12;
 	_dragonINIResource->getFlickerRecord()->sceneId = sceneId; //TODO
@@ -201,6 +195,7 @@ void DragonsEngine::gameLoop() {
 }
 
 void DragonsEngine::updateHandler() {
+	data_8006a3a0_flag |= 0x40;
 	//TODO logic here
 
 	updateActorSequences();
@@ -264,6 +259,8 @@ void DragonsEngine::updateHandler() {
 	//TODO vsync update function
 
 	// TODO data_8006a3a0 logic. @ 0x8001c2f4
+
+	data_8006a3a0_flag &= ~0x40;
 }
 
 const char *DragonsEngine::getSavegameFilename(int num) {
@@ -388,6 +385,10 @@ bool DragonsEngine::isFlagSet(uint32 flag) {
 	return (bool) (_flags & flag);
 }
 
+bool DragonsEngine::isUnkFlagSet(uint32 flag) {
+	return (bool) (_unkFlags1 & flag);
+}
+
 DragonINI *DragonsEngine::getINI(uint32 index) {
 	return _dragonINIResource->getRecord(index);
 }
@@ -416,10 +417,10 @@ uint16 DragonsEngine::getIniFromImg() {
 		DragonINI *ini = getINI(i);
 		if (ini->sceneId == currentSceneId && ini->field_1a_flags_maybe == 0) {
 			IMG *img = _dragonIMG->getIMG(ini->field_2);
-			if (x >= img->field_0 &&
-				img->field_0 + img->field_4 >= x &&
-				y >= img->field_2 &&
-				img->field_6 + img->field_2 >= y) {
+			if (x >= img->x &&
+				img->x + img->w >= x &&
+				y >= img->y &&
+				img->h + img->y >= y) {
 				return i + 1;
 			}
 		}
@@ -434,7 +435,7 @@ uint16 DragonsEngine::updateINIUnderCursor() {
 
 	if (_flags & Dragons::ENGINE_FLAG_10) {
 
-		if (inventorySequenceId == 0 || inventorySequenceId == 2) {
+		if (_inventory->getSequenceId() == 0 || _inventory->getSequenceId() == 2) {
 //TODO
 		} else {
 
@@ -469,7 +470,7 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 		//TODO
 		uint16 currentSceneId = _scene->getSceneId();
 
-		if (inventoryIsShowingMaybe == 0) {
+		if (!_inventory->isVisible()) {
 			for (uint16 i = 0; i < _dragonINIResource->totalRecords(); i++) {
 				DragonINI *ini = getINI(i);
 				if (ini->field_10 >= 0 && ini->sceneId == currentSceneId) {

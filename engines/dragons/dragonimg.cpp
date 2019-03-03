@@ -40,11 +40,11 @@ DragonIMG::DragonIMG(BigfileArchive *bigfileArchive) {
 
 	for(int i=0; i < _count; i++) {
 		imgReadStream->seek(iptReadStream->readUint32LE());
-		_imgObjects[i].field_0 = imgReadStream->readUint16LE();
-		_imgObjects[i].field_2 = imgReadStream->readUint16LE();
-		_imgObjects[i].field_4 = imgReadStream->readUint16LE();
-		_imgObjects[i].field_6 = imgReadStream->readUint16LE();
-		_imgObjects[i].field_8 = imgReadStream->readUint16LE();
+		_imgObjects[i].x = imgReadStream->readUint16LE();
+		_imgObjects[i].y = imgReadStream->readUint16LE();
+		_imgObjects[i].w = imgReadStream->readUint16LE();
+		_imgObjects[i].h = imgReadStream->readUint16LE();
+		_imgObjects[i].layerNum = imgReadStream->readUint16LE();
 		_imgObjects[i].field_a = imgReadStream->readUint16LE();
 		_imgObjects[i].field_c = imgReadStream->readUint16LE();
 		_imgObjects[i].field_e = imgReadStream->readUint16LE();

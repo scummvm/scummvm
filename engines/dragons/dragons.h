@@ -62,9 +62,13 @@ enum Flags {
 	ENGINE_FLAG_20 = 0x20,
 	ENGINE_FLAG_40 = 0x40,
 	ENGINE_FLAG_80 = 0x80,
+	ENGINE_FLAG_100 = 0x100,
+	ENGINE_FLAG_200 = 0x200,
 
+	ENGINE_FLAG_10000    =    0x10000,
 	ENGINE_FLAG_80000    =    0x80000,
 	ENGINE_FLAG_100000   =   0x100000,
+	ENGINE_FLAG_400000   =   0x400000,
 	ENGINE_FLAG_4000000  =  0x4000000,
 	ENGINE_FLAG_80000000 = 0x80000000
 };
@@ -88,6 +92,7 @@ class DragonOBD;
 class DragonRMS;
 class DragonVAR;
 class DragonINIResource;
+class Inventory;
 class Scene;
 class Screen;
 class ActorManager;
@@ -99,15 +104,17 @@ class DragonsEngine : public Engine {
 public:
 	DragonOBD *_dragonOBD;
 	DragonIMG *_dragonIMG;
+	DragonRMS *_dragonRMS;
 	ActorManager *_actorManager;
 	DragonINIResource *_dragonINIResource;
 	uint16 _cursorSequenceID;
 	Scene *_scene;
+	uint16 data_800633fa;
+	Inventory *_inventory;
 private:
 	Screen *_screen;
 	BigfileArchive *_bigfileArchive;
 	DragonFLG *_dragonFLG;
-	DragonRMS *_dragonRMS;
 	DragonVAR *_dragonVAR;
 	BackgroundResourceLoader *_backgroundResourceLoader;
 	SequenceOpcodes *_sequenceOpcodes;
@@ -119,10 +126,9 @@ private:
 	uint16 _sceneId1;
 	uint32 _counter;
 	uint32 bit_flags_8006fbd8;
-
+	uint16 data_8006a3a0_flag; // screen related flags?
 	//unk
-	uint32 inventorySequenceId;
-	uint16 inventoryIsShowingMaybe;
+
 	uint16 run_func_ptr_unk_countdown_timer;
 
 public:
@@ -140,6 +146,7 @@ public:
 	void setFlags(uint32 flags);
 	void clearFlags(uint32 flags);
 	bool isFlagSet(uint32 flag);
+	bool isUnkFlagSet(uint32 flag);
 
 	void setUnkFlags(uint32 flags);
 	void clearUnkFlags(uint32 flags);
