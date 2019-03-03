@@ -322,6 +322,7 @@ void GlkInterface::os_stop_sample(int a) {
 }
 
 void GlkInterface::os_beep(int volume) {
+	beep();
 }
 
 bool GlkInterface::os_picture_data(int picture, uint *height, uint *width) {

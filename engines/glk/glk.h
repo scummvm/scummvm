@@ -30,6 +30,7 @@
 #include "engines/engine.h"
 #include "glk/glk_types.h"
 #include "glk/streams.h"
+#include "glk/pc_speaker.h"
 
 namespace Glk {
 
@@ -77,6 +78,7 @@ protected:
 	Common::RandomSource _random;
 	int _loadSaveSlot;
 	Common::File _gameFile;
+	PCSpeaker *_pcSpeaker;
 
 	// Engine APIs
 	virtual Common::Error run();
@@ -213,6 +215,11 @@ public:
 	 * Save the game to the passed file
 	 */
 	virtual Common::Error saveGameData(strid_t file, const Common::String &desc) = 0;
+
+	/**
+	 * Generate a beep
+	 */
+	void beep();
 };
 
 extern GlkEngine *g_vm;

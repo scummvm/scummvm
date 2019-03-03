@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	fonts.o \
 	glk.o \
 	glk_api.o \
+	pc_speaker.o \
 	picture.o \
 	raw_decoder.o \
 	screen.o \

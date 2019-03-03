@@ -48,7 +48,7 @@ GlkEngine::GlkEngine(OSystem *syst, const GlkGameDescription &gameDesc) :
 		_clipboard(nullptr), _conf(nullptr), _events(nullptr), _pictures(nullptr),
 		_screen(nullptr), _selection(nullptr), _sounds(nullptr), _windows(nullptr),
 		_copySelect(false), _terminated(false), gli_unregister_obj(nullptr),
-		gli_register_arr(nullptr), gli_unregister_arr(nullptr) {
+		_pcSpeaker(nullptr), gli_register_arr(nullptr), gli_unregister_arr(nullptr) {
 	g_vm = this;
 }
 
@@ -57,6 +57,7 @@ GlkEngine::~GlkEngine() {
 	delete _clipboard;
 	delete _conf;
 	delete _events;
+	delete _pcSpeaker;
 	delete _pictures;
 	delete _screen;
 	delete _selection;
@@ -79,6 +80,7 @@ void GlkEngine::initialize() {
 	_screen->initialize();
 	_clipboard = new Clipboard();
 	_events = new Events();
+	_pcSpeaker = new PCSpeaker(_mixer);
 	_pictures = new Pictures();
 	_selection = new Selection();
 	_sounds = new Sounds();
@@ -197,6 +199,10 @@ Common::Error GlkEngine::saveGameState(int slot, const Common::String &desc) {
 
 	file->close();
 	return result;
+}
+
+void GlkEngine::beep() {
+	_pcSpeaker->speakerOn(50, 50);
 }
 
 } // End of namespace Glk
