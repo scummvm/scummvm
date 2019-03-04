@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-02-06 20:18+0100\n"
-"PO-Revision-Date: 2019-01-09 20:57+0000\n"
+"PO-Revision-Date: 2019-03-06 11:42+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -3517,11 +3517,11 @@ msgstr "Ενεργοποίηση ραβδογραμμάτων για hit points"
 #. I18N: L/R stands for Left/Right
 #: engines/kyra/detection.cpp:138
 msgid "Fight Button L/R Swap"
-msgstr ""
+msgstr "Εναλλαγή Κουμπιού Μάχης Α/Δ"
 
 #: engines/kyra/detection.cpp:139
 msgid "Left button to attack, right button to pick up items"
-msgstr ""
+msgstr "Αριστερό κουμπί για επίθεση, δεξί κουμπί για να πάρετε αντικείμενα"
 
 #: engines/kyra/eobcommon.cpp:343 engines/kyra/lol.cpp:481
 msgid "Move Forward"
