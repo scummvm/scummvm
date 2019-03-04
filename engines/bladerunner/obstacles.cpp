@@ -32,7 +32,7 @@
 
 #include "common/debug.h"
 
-#define DISABLE_PATHFINDING 1
+#define DISABLE_PATHFINDING 0
 
 #define WITHIN_TOLERANCE(a, b) (((a) - 0.009) < (b) && ((a) + 0.009) > (b))
 
