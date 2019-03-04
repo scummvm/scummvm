@@ -60,9 +60,9 @@ class SaveFileManager {
 private:
 	static const uint32 kTag = MKTAG('B', 'R', 'S', 'V');
 	static const uint32 kVersion = 1;
-	static const uint32 kNameLength = 32;
 
 public:
+	static const uint32 kNameLength = 32;
 	static const uint32 kThumbnailSize = 9600; // 80x60x16bpp
 
 	static SaveStateList list(const Common::String &target);
@@ -96,7 +96,7 @@ public:
 	void writeInt(int v);
 	void writeFloat(float v);
 	void writeBool(bool v);
-	void writeStringSz(const Common::String &s, int sz);
+	void writeStringSz(const Common::String &s, uint sz);
 	void writeVector2(const Vector2 &v);
 	void writeVector3(const Vector3 &v);
 	void writeRect(const Common::Rect &v);
@@ -119,7 +119,7 @@ public:
 	int readInt();
 	float readFloat();
 	bool readBool();
-	Common::String readStringSz(int sz);
+	Common::String readStringSz(uint sz);
 	Vector2 readVector2();
 	Vector3 readVector3();
 	Common::Rect readRect();

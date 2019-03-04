@@ -182,10 +182,12 @@ void SaveFileWriteStream::writeBool(bool v) {
 	writeUint32LE(v);
 }
 
-void SaveFileWriteStream::writeStringSz(const Common::String &s, int sz) {
-	assert(s.size() < (uint)sz);
-	write(s.begin(), s.size());
-	padBytes((uint)sz - s.size());
+void SaveFileWriteStream::writeStringSz(const Common::String &s, uint sz) {
+	uint32 sizeToWrite = MIN(sz, s.size());
+	write(s.begin(), sizeToWrite);
+	if (sizeToWrite < sz) {
+		padBytes(sz - sizeToWrite);
+	}
 }
 
 void SaveFileWriteStream::writeVector2(const Vector2 &v) {
@@ -238,10 +240,10 @@ bool SaveFileReadStream::readBool() {
 	return readUint32LE();
 }
 
-Common::String SaveFileReadStream::readStringSz(int sz) {
+Common::String SaveFileReadStream::readStringSz(uint sz) {
 	char *buf = new char[sz];
 	read(buf, sz);
-	Common::String result = buf;
+	Common::String result(buf, sz);
 	delete[] buf;
 	return result;
 }

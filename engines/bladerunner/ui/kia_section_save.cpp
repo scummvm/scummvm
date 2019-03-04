@@ -48,7 +48,7 @@ KIASectionSave::KIASectionSave(BladeRunnerEngine *vm) : KIASectionBase(vm) {
 	_scrollBox = new UIScrollBox(_vm, scrollBoxCallback, this, 1024, 0, true, Common::Rect(155, 158, 461, 346), Common::Rect(506, 160, 506, 350));
 	_uiContainer->add(_scrollBox);
 
-	_inputBox = new UIInputBox(_vm, inputBoxCallback, this, Common::Rect(155, 367, 461, 376), 41, "");
+	_inputBox = new UIInputBox(_vm, inputBoxCallback, this, Common::Rect(155, 367, 461, 376), SaveFileManager::kNameLength, ""); // original game had limit 41 characters
 	_uiContainer->add(_inputBox);
 	_inputBox->hide();
 
