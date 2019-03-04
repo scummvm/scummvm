@@ -1144,10 +1144,8 @@ void Actor::speechPlay(int sentenceId, bool voiceOver) {
 
 	int balance = 0;
 	if (!voiceOver && _id != BladeRunnerEngine::kActorVoiceOver) {
-		// Vector3 pos = _vm->_view->_frameViewMatrix * _position;
-		int screenX = 320; //, screenY = 0;
-		//TODO: transform to screen space using fov;
-		balance = 127 * (2 * screenX - 640) / 640;
+		Vector3 screenPosition = _vm->_view->calculateScreenPosition(_position);
+		balance = (127 * (2 * screenPosition.x - 640)) / 640;
 		balance = CLIP<int>(balance, -127, 127);
 	}
 
