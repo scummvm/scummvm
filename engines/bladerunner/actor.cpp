@@ -59,9 +59,6 @@ Actor::Actor(BladeRunnerEngine *vm, int actorId) {
 
 	_friendlinessToOther.resize(_vm->_gameInfo->getActorCount());
 
-	_mustReachWalkDestination = false;
-	_damageAnimIfMoving       = false;
-
 	setup(actorId);
 }
 
@@ -86,6 +83,7 @@ void Actor::setup(int actorId) {
 	_fps            = 15;
 	_frameMs       = 1000 / _fps;
 
+	_mustReachWalkDestination = false;	// Original's _inWalkLoop. Moved here from our constructor, since it's here in the original's init()
 	_isMoving            = false;
 	_isTarget            = false;
 	_inCombat            = false;
@@ -117,6 +115,9 @@ void Actor::setup(int actorId) {
 
 	_currentHP  = 50;
 	_maxHP      = 50;
+
+	_damageAnimIfMoving       = true;	// Set to true (like in original). And moved here from our constructor, since it's here in the original's init().
+
 	_goalNumber = -1;
 
 	_movementTrackPaused         = false;
