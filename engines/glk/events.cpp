@@ -323,7 +323,7 @@ void Events::handleKeyDown(const Common::KeyState &ks) {
 		windows.inputHandleKey(keycode_Func12);
 		break;
 	default:
-		windows.inputHandleKey(ks.keycode);
+		windows.inputHandleKey(ks.ascii);
 		break;
 	}
 }
