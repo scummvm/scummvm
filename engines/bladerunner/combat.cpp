@@ -165,7 +165,7 @@ void Combat::shoot(int actorId, Vector3 &to, int screenX) {
 		actor->setAtXYZ(actor->getXYZ(), actor->getFacing(), true, false, true);
 		_vm->_sceneObjects->setRetired(actorId + kSceneObjectOffsetActors, true);
 
-		sentenceId = 9020;
+		sentenceId = 9020; // Bug or intended? This sentence id (death rattle) won't be used in this case since combat mode is set to off above. Probably intended, in order to use the rattle in a case by case (?)
 	}
 
 	if (sentenceId >= 0 && actor->inCombat()) {

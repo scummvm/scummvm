@@ -1162,6 +1162,7 @@ bool AIScriptZuben::ChangeAnimationMode(int mode) {
 		break;
 	case kAnimationModeDie:
 		Actor_Set_Targetable(kActorZuben, false);
+		Sound_Play_Speech_Line(kActorZuben, 9020, 75, 0, 99); // add Zuben's death rattle here
 		switch (_animationState) {
 			case 2:
 			case 4:
