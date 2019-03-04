@@ -176,6 +176,7 @@ void SceneScriptPS04::dialogueWithGuzza() {
 
 	case 120: // MONEY
 		Actor_Says(kActorMcCoy, 4000, 18);
+#if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Clue_Acquire(kActorMcCoy, kClueGuzzasCash, true, kActorGuzza);
 		Actor_Says(kActorGuzza, 520, 33);
 		Actor_Says(kActorMcCoy, 4055, 13);
@@ -188,6 +189,30 @@ void SceneScriptPS04::dialogueWithGuzza() {
 		if (Query_Difficulty_Level() != 0) {
 			Global_Variable_Increment(kVariableChinyen, 100);
 		}
+#else
+		if (Global_Variable_Query(kVariableChinyen) < 300) { // basically if McCoy hasn't retired Zuben or drunk away his money at the bar
+			Actor_Clue_Acquire(kActorMcCoy, kClueGuzzasCash, true, kActorGuzza);
+			Actor_Says(kActorGuzza, 520, 33);
+			Actor_Says(kActorMcCoy, 4055, 13);
+			Actor_Says(kActorGuzza, 530, 31);
+			Actor_Says(kActorMcCoy, 4060, 13);
+			Actor_Says(kActorGuzza, 540, 31);
+			Actor_Says(kActorGuzza, 550, 32);
+			Actor_Says(kActorMcCoy, 4065, 18);
+			Actor_Says(kActorGuzza, 560, 34);
+			if (Query_Difficulty_Level() != 0) {
+				Global_Variable_Increment(kVariableChinyen, 100);
+			}
+		} else {	// Guzza denies the loan
+			Actor_Says(kActorGuzza, 470, 33);	// Hey, I'd love to be your own personal ATM but the department's strapped right now.
+			Actor_Says(kActorGuzza, 480, 31);
+			Actor_Says(kActorGuzza, 490, 31);
+			Actor_Says(kActorGuzza, 500, 32);
+			Actor_Says(kActorMcCoy, 4045, 16);
+			Actor_Says(kActorGuzza, 510, 31);
+			Actor_Says(kActorMcCoy, 4050, 18);
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		break;
 
 	case 130: // REPORT IN
@@ -206,8 +231,15 @@ void SceneScriptPS04::dialogueWithGuzza() {
 			Actor_Face_Actor(kActorMcCoy, kActorGuzza, true);
 			Actor_Says(kActorMcCoy, 3930, 13);
 			Actor_Face_Actor(kActorGuzza, kActorMcCoy, true);
-			Actor_Says(kActorGuzza, 180, 34);
-			Actor_Says(kActorMcCoy, 3935, 13);
+#if BLADERUNNER_ORIGINAL_BUGS
+			Actor_Says(kActorGuzza, 180, 34);	// But I'm proud of you McCoy. Why don't you take the rest of the day off?
+			Actor_Says(kActorMcCoy, 3935, 13);	// Thanks.
+#else
+			if (Global_Variable_Query(kVariableChapter) == 1) { // only play this dialogue (about day off) on day one. It doesn't fit in the next days
+				Actor_Says(kActorGuzza, 180, 34);	// But I'm proud of you McCoy. Why don't you take the rest of the day off?
+				Actor_Says(kActorMcCoy, 3935, 13);	// Thanks.
+			}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Actor_Says(kActorGuzza, 190, 30);
 			Actor_Says(kActorMcCoy, 3940, 16);
 			Actor_Says(kActorGuzza, 200, 31);
@@ -221,21 +253,40 @@ void SceneScriptPS04::dialogueWithGuzza() {
 			Actor_Says(kActorGuzza, 260, 33);
 			Actor_Says(kActorGuzza, 270, 32);
 			Game_Flag_Set(kFlagPS04GuzzaTalkZubenRetired);
+#if BLADERUNNER_ORIGINAL_BUGS
 			if (Query_Difficulty_Level() != 0) {
 				Global_Variable_Increment(kVariableChinyen, 200);
 			}
 			Game_Flag_Set(kFlagZubenBountyPaid);
+#else
+			if (!Game_Flag_Query(kFlagZubenBountyPaid)) { // get retirement money only if haven't been auto-paid at end of Day 1 (sleep trigger)
+				if (Query_Difficulty_Level() != 0) {
+					Global_Variable_Increment(kVariableChinyen, 200);
+				}
+				Game_Flag_Set(kFlagZubenBountyPaid); // not a proper bug, but was missing from original code, so the flag would remain in non-consistent state in this case
+			}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		} else if ( Game_Flag_Query(kFlagZubenSpared)
 		        && !Game_Flag_Query(kFlagPS04GuzzaTalkZubenEscaped)
 		) {
 			Actor_Says(kActorMcCoy, 3955, 13);
 			Actor_Says(kActorGuzza, 280, 30);
 			Actor_Says(kActorMcCoy, 3960, 18);
-			Actor_Says(kActorGuzza, 290, 32);
-			Actor_Says(kActorGuzza, 300, 31);
-			Actor_Says(kActorMcCoy, 3965, 13);
-			Actor_Says(kActorGuzza, 310, 33);
-			Actor_Says(kActorGuzza, 320, 34);
+#if BLADERUNNER_ORIGINAL_BUGS
+			Actor_Says(kActorGuzza, 290, 32);	// Don't push it kid. You look like you're beat anyway.
+			Actor_Says(kActorGuzza, 300, 31);	// Why don't you rest them dogs the rest of the day.
+			Actor_Says(kActorMcCoy, 3965, 13);	// I still got plenty energy.
+			Actor_Says(kActorGuzza, 310, 33);	// That's an order McCoy.
+			Actor_Says(kActorGuzza, 320, 34);	// I'm ordering you to relax.
+#else
+			if (Global_Variable_Query(kVariableChapter) == 1) { // only play this dialogue (about day off) on day one. It doesn't fit in the next days
+				Actor_Says(kActorGuzza, 290, 32);	// Don't push it kid. You look like you're beat anyway.
+				Actor_Says(kActorGuzza, 300, 31);	// Why don't you rest them dogs the rest of the day.
+				Actor_Says(kActorMcCoy, 3965, 13);	// I still got plenty energy.
+				Actor_Says(kActorGuzza, 310, 33);	// That's an order McCoy.
+				Actor_Says(kActorGuzza, 320, 34);	// I'm ordering you to relax.
+			}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Game_Flag_Set(kFlagPS04GuzzaTalkZubenEscaped);
 		} else if (
 		 (   Actor_Clue_Query(kActorMcCoy, kClueChopstickWrapper)

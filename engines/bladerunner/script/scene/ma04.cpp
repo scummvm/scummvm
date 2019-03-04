@@ -575,15 +575,22 @@ void SceneScriptMA04::sleep() {
 			Game_Flag_Set(kFlagChapter2Intro);
 			Global_Variable_Set(kVariableChapter, 2);
 			Chapter_Enter(2, kSetMA02_MA04, kSceneMA04);
+#if BLADERUNNER_ORIGINAL_BUGS
 			if (Query_Difficulty_Level() != 0) {
 				if (!Game_Flag_Query(kFlagZubenBountyPaid)) {
 					Global_Variable_Increment(kVariableChinyen, 200);
 				}
-#if BLADERUNNER_ORIGINAL_BUGS // ensure valid kFlagZubenBountyPaid flag state
-#else
-				Game_Flag_Set(kFlagZubenBountyPaid); // not a proper bug, but was missing from original code, so the flag would remain in non-consistent state in this case
-#endif // BLADERUNNER_ORIGINAL_BUGS
 			}
+#else // ensure valid kFlagZubenBountyPaid flag state
+			// NOTE If not for the "Report Im" to Guzza, it would be simpler to have McCoy get the money as soon as he retires Zuben
+			//		so that would be in a single place in the code
+			if (!Game_Flag_Query(kFlagZubenBountyPaid) && Game_Flag_Query(kFlagZubenRetired)) { // get retirement money at end of day 1 only if Zuben was retired.
+				if (Query_Difficulty_Level() != 0) {
+					Global_Variable_Increment(kVariableChinyen, 200);
+				}
+				Game_Flag_Set(kFlagZubenBountyPaid); // not a proper bug, but was missing from original code, so the flag would remain in non-consistent state in this case
+			}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		} else {
 			Set_Enter(kSetMA02_MA04, kSceneMA04);
 		}
