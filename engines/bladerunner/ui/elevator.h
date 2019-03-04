@@ -59,7 +59,6 @@ public:
 	void setupDescription(int actorId, int sentenceId);
 	void resetDescription();
 	void tickDescription();
-	void resume();
 
 private:
 	static void mouseInCallback(int, void *);

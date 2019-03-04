@@ -22,6 +22,7 @@
 
 #include "bladerunner/savefile.h"
 
+#include "bladerunner/bladerunner.h"
 #include "bladerunner/boundingbox.h"
 #include "bladerunner/vector.h"
 
@@ -130,8 +131,7 @@ bool SaveFileManager::readHeader(Common::SeekableReadStream &in, SaveFileHeader 
 		void *thumbnailData = malloc(kThumbnailSize); // freed by ScummVM's smartptr
 		s.read(thumbnailData, kThumbnailSize);
 
-		// TODO: cleanup - remove magic constants
-		header._thumbnail->init(80, 60, 160, thumbnailData, Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
+		header._thumbnail->init(80, 60, 160, thumbnailData, createRGB555());
 
 		s.seek(pos);
 	}

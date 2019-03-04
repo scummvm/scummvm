@@ -207,10 +207,6 @@ int DialogueMenu::queryInput() {
 		if (agenda == kPlayerAgendaUserChoice) {
 			_waitingForInput = true;
 			do {
-				// TODO: game resuming
-				// if (!_vm->_gameRunning)
-				// 	break;
-
 				while (!_vm->playerHasControl()) {
 					_vm->playerGainsControl();
 				}

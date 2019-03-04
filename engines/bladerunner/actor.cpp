@@ -1365,8 +1365,8 @@ void Actor::save(SaveFileWriteStream &f) {
 	f.writeInt(_retiredWidth);
 	f.writeInt(_retiredHeight);
 	f.writeInt(_damageAnimIfMoving);
-	f.writeInt(0); // TODO: _actorFieldU6
-	f.writeInt(0); // TODO: _actorFieldU7
+	f.writeInt(0);
+	f.writeInt(0);
 	f.writeFloat(_scale);
 
 	for (int i = 0; i < 7; ++i) {
@@ -1444,8 +1444,8 @@ void Actor::load(SaveFileReadStream &f) {
 	_retiredWidth = f.readInt();
 	_retiredHeight = f.readInt();
 	_damageAnimIfMoving = f.readInt();
-	f.skip(4); // TODO: _actorFieldU6
-	f.skip(4); // TODO: _actorFieldU7
+	f.skip(4);
+	f.skip(4);
 	_scale = f.readFloat();
 
 	for (int i = 0; i < 7; ++i) {
@@ -1453,7 +1453,6 @@ void Actor::load(SaveFileReadStream &f) {
 	}
 	// Bugfix: Special initialization case for timer 4 when it's value is restored as 0
 	// This should be harmless, but will remedy any broken save-games where the timer 4 was saved as 0.
-//	//
 	if (_timersLeft[4] == 0) {
 		_timersLeft[4] = _timer4RemainDefault;
 	}

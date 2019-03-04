@@ -118,14 +118,6 @@ private:
 	int findAvailableLoopingTrack() const;
 	int findLoopingTrackByHash(int32 hash) const;
 
-	// stopNonLoopingTrack
-	// stopLoopingTrack
-
-	// saveToSaveGame
-	// initFromSaveGame
-	// addSoundByName
-	// playVolumeAdjustSound
-
 	void addSoundByName(
 		const Common::String &name,
 		int timeMin, int timeMax,

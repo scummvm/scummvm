@@ -195,8 +195,6 @@ bool VQAPlayer::setBeginAndEndFrame(int begin, int end, int repeatsCount, int lo
 		loopSetMode = kLoopSetModeImmediate;
 	}
 
-	//TODO: there is code in original game which deals with changing loop at start of loop, is it nescesarry? loc_46EA04
-
 	_frameBegin = begin;
 
 	if (loopSetMode == kLoopSetModeJustStart) {

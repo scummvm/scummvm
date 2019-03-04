@@ -160,21 +160,20 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 		Actor *actor = _vm->_actors[i];
 		if (actor->getSetId() == setId) {
 			_vm->_sceneObjects->addActor(
-				   i + kSceneObjectOffsetActors,
-				   actor->getBoundingBox(),
-				   actor->getScreenRectangle(),
-				   true,
-				   false,
-				   actor->isTarget(),
-				   actor->isRetired());
+				i + kSceneObjectOffsetActors,
+				actor->getBoundingBox(),
+				actor->getScreenRectangle(),
+				true,
+				false,
+				actor->isTarget(),
+				actor->isRetired()
+			);
 		}
 	}
 
 	_set->addObjectsToScene(_vm->_sceneObjects);
 	_vm->_items->addToSet(setId);
 	_vm->_sceneObjects->updateObstacles();
-	// TODO: add all items to scene
-	// TODO: calculate walking obstacles??
 
 	if (_specialLoopMode != kSceneLoopModeLoseControl) {
 		_vm->_sceneScript->playerWalkedIn();

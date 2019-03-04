@@ -245,10 +245,6 @@ void ESPER::tick() {
 	}
 }
 
-void ESPER::resume() {
-	// TODO
-}
-
 void ESPER::addPhoto(const char *name, int photoId, int shapeId) {
 	int i = findEmptyPhoto();
 	if (i >= 0) {
@@ -303,9 +299,7 @@ void ESPER::mouseUpCallback(int buttonId, void *callbackData) {
 	if (buttonId < kPhotoCount) {
 		self->selectPhoto(buttonId);
 	} else if (self->_statePhoto != kEsperPhotoStateVideoZoomOut) {
-		if (buttonId == kPhotoCount + 1) {
-			// TODO: is it even used?
-		} else if (buttonId == kPhotoCount + 2) {
+		if (buttonId == kPhotoCount + 2) {
 			self->zoomOutStop();
 		} else if (buttonId == kPhotoCount + 3) {
 			self->goBack();
@@ -912,7 +906,6 @@ void ESPER::drawVideoZoomOut(Graphics::Surface &surface) {
 	if (timeNow > _timeZoomNext && _vqaLastFrame > 0) {
 		_timeZoomNext = timeNow + 300;
 		playSound(419, 25);
-		//TODO: implement frame loading after seek, then advanceFrame can be removed
 		_vqaPlayerPhoto->seekToFrame(_vqaLastFrame);
 		int nextFrame = _vqaPlayerPhoto->getFrameCount() / 4;
 		if (nextFrame <= 0) {

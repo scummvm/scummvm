@@ -892,7 +892,6 @@ void Debugger::drawLights() {
 		Light *light = _vm->_lights->_lights[i];
 		Matrix4x3 m = light->_matrix;
 		m = invertMatrix(m);
-		//todo do this properly
 		Vector3 posOrigin = m * Vector3(0.0f, 0.0f, 0.0f);
 		float t = posOrigin.y;
 		posOrigin.y = posOrigin.z;
@@ -927,7 +926,6 @@ void Debugger::drawFogs() {
 		// m = invertMatrix(m);
 		Matrix4x3 m = fog->_inverted;
 
-		//todo do this properly
 		Vector3 posOrigin = m * Vector3(0.0f, 0.0f, 0.0f);
 		float t = posOrigin.y;
 		posOrigin.y = posOrigin.z;

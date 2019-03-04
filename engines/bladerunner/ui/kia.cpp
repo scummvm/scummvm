@@ -315,7 +315,7 @@ void KIA::tick() {
 			_shapes->get(39)->draw(_vm->_surfaceFront, 583, 342);
 		}
 	}
-	//TODO: implement frame loading after seek, then advanceFrame can be removed
+
 	_playerVqaPlayer->seekToFrame(_playerVqaFrame);
 	_playerVqaPlayer->update(true, true);
 
@@ -370,7 +370,7 @@ void KIA::tick() {
 			_shapes->get(47)->draw(_vm->_surfaceFront, 182, 446);
 		}
 	}
-	_vm->_mainFont->drawColor("1.00", _vm->_surfaceFront, 438, 471, 0x1CE7); // TODO: 1.01 for DVD version
+	_vm->_mainFont->drawColor("1.00", _vm->_surfaceFront, 438, 471, 0x1CE7); // 1.01 is DVD version, but only cd handling routines were changed, no game logic
 	if (!_transitionId) {
 		_buttons->drawTooltip(_vm->_surfaceFront, mouse.x, mouse.y);
 	}

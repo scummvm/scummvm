@@ -613,7 +613,6 @@ void BladeRunnerEngine::shutdown() {
 	delete _esper;
 	_esper = nullptr;
 
-	/// todo
 	for (uint i = 0; i != _shapes.size(); ++i) {
 		delete _shapes[i];
 	}

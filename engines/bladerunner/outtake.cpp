@@ -95,8 +95,6 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 	_vm->_vqaStopIsRequested = false;
 	vqaPlayer.close();
 
-	// TODO: scene video is played fast after end of outtake - visible in tb07
-
 	_vm->playerGainsControl();
 
 	if (container > 0) {

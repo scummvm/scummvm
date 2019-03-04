@@ -313,8 +313,6 @@ void SceneObjects::setIsTarget(int sceneObjectId, bool isTarget) {
 }
 
 void SceneObjects::updateObstacles() {
-	// TODO remove comments after pathfinding is working properly
-	// debug("o.clear()");
 	_vm->_obstacles->clear();
 	for (int i = 0; i < _count; ++i) {
 		int index = _sceneObjectsSortedByDistance[i];
@@ -323,8 +321,6 @@ void SceneObjects::updateObstacles() {
 			float x0, y0, z0, x1, y1, z1;
 			sceneObject->boundingBox.getXYZ(&x0, &y0, &z0, &x1, &y1, &z1);
 			_vm->_obstacles->add(x0, z0, x1, z1);
-
-			// debug("o.add(%f, %f, %f, %f);", x0, z0, x1, z1);
 		}
 	}
 	_vm->_obstacles->backup();

@@ -358,7 +358,7 @@ void AmbientSounds::removeLoopingSoundByIndex(int index, int delay) {
 }
 
 void AmbientSounds::save(SaveFileWriteStream &f) {
-	f.writeBool(false); // TODO: _isDisabled
+	f.writeBool(false); // _isDisabled - not used
 
 	for (int i = 0; i != kNonLoopingSounds; ++i) {
 		// 73 bytes per non-looping sound
@@ -397,7 +397,7 @@ void AmbientSounds::load(SaveFileReadStream &f) {
 	removeAllLoopingSounds(0);
 	removeAllNonLoopingSounds(true);
 
-	f.skip(4); // TODO: _isDisabled
+	f.skip(4); // _isDisabled - not used
 
 	uint32 now = _vm->_time->getPauseStart();
 

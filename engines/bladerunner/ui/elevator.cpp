@@ -303,10 +303,6 @@ void Elevator::tickDescription() {
 	_sentenceId = -1;
 }
 
-void Elevator::resume() {
-	// TODO
-}
-
 void Elevator::mouseInCallback(int buttonId, void *self) {
 	((Elevator *)self)->buttonFocus(buttonId);
 }

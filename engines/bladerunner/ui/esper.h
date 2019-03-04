@@ -195,8 +195,6 @@ public:
 
 	void tick();
 
-	void resume();
-
 	void addPhoto(const char *name, int photoId, int shapeId);
 	void defineRegion(int regionId, Common::Rect inner, Common::Rect outer, Common::Rect selection, const char *name);
 
