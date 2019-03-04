@@ -132,6 +132,11 @@ void Music::stop(int delay) {
 		return;
 	}
 
+#if !BLADERUNNER_ORIGINAL_BUGS
+	// In original game, on queued music was not removed and it started playing after actor left the scene
+	_isNextPresent = false;
+#endif
+
 	_current.loop = false;
 	_vm->_audioMixer->stop(_channel, 60 * delay);
 }
