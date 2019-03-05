@@ -19,63 +19,57 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-
+#include "cursor.h"
 #include "actor.h"
 #include "dragons.h"
-#include "dragonrms.h"
+#include "dragonini.h"
 #include "inventory.h"
 
 namespace Dragons {
 
-static const Common::Point positionTable[4] = {
-		{2,0},
-		{0xce,0},
-		{2,0x9e},
-		{0xce,0x9e}
-};
-
-Inventory::Inventory(DragonsEngine *vm) : _vm(vm) {
-	_type = 0;
-	_sequenceId = 0;
-	_screenPositionIndex = 0;
+Cursor::Cursor(DragonsEngine *vm): _vm(vm), _actor(0), _x(0), _y(0) {
+	_sequenceID = 0;
 }
 
-void Inventory::init(ActorManager *actorManager) {
-	_actor = actorManager->loadActor(1, 1); //Load inventory
-	_actor->x_pos = 2;
-	_actor->y_pos = 0;
+void Cursor::init(ActorManager *actorManager, DragonINIResource *dragonINIResource) {
+	_sequenceID = 0;
+	_actor = actorManager->loadActor(0, 0); //Load cursor
+	_actor->x_pos = _x = 160;
+	_actor->y_pos = _y = 100;
 	_actor->priorityLayer = 6;
 	_actor->flags = 0;
 	_actor->field_e = 0x100;
-	_actor->updateSequence(0);
+	_actor->updateSequence(_sequenceID);
 	_actor->flags |= (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_80 | Dragons::ACTOR_FLAG_100 |
-						 Dragons::ACTOR_FLAG_200);
-	_sequenceId = 0;
-	_type = 0;
+					  Dragons::ACTOR_FLAG_200);
+
+	dragonINIResource->getFlickerRecord()->actor = _actor; //TODO is this correct?
+	dragonINIResource->getFlickerRecord()->field_1a_flags_maybe |= Dragons::INI_FLAG_1;
 }
 
-
-void Inventory::loadScene(uint32 sceneId) {
-	if (!_type) {
-		_sequenceId = _vm->isFlagSet(Dragons::ENGINE_FLAG_400000) ? 1 : 0;
+void Cursor::update() {
+	if (!_vm->isFlagSet(Dragons::ENGINE_FLAG_8) || _vm->isFlagSet(Dragons::ENGINE_FLAG_100)) {
+		return;
 	}
-	_screenPositionIndex = _vm->_dragonRMS->getInventoryPosition(sceneId);
+	// TODO update cursor from inputs here.
 
-	if (_sequenceId == 0 && _vm->getVar(7) == 1) {
-		_actor->updateSequence(5);
+	// 0x800280b8
+	if (_sequenceID == 0 && (_vm->_inventory->getType() == 1 || _vm->_inventory->getType() == 2)) {
+		_sequenceID = 1;
+	}
+
+	_actor->x_pos = _x;
+	_actor->y_pos = _y;
+
+	// 0x80028104
+}
+
+void Cursor::updateVisibility() {
+	if (_vm->isFlagSet(Dragons::ENGINE_FLAG_8) && !_vm->isUnkFlagSet(Dragons::ENGINE_UNK1_FLAG_10)) {
+		_actor->priorityLayer = 9;
 	} else {
-		_actor->updateSequence(_sequenceId);
+		_actor->priorityLayer = 0;
 	}
-
-	_actor->x_pos = positionTable[_screenPositionIndex].x;
-	if ((_sequenceId == 0 || _sequenceId == 2) && (_screenPositionIndex == 1 || _screenPositionIndex == 3)) {
-		_actor->x_pos += 0x32;
-	}
-	_actor->y_pos = positionTable[_screenPositionIndex].y;
-}
-
-void Inventory::updateVisibility() {
-	_actor->priorityLayer = _vm->isFlagSet(Dragons::ENGINE_FLAG_10) ? (int16)6 : (int16)0;
 }
 
 } // End of namespace Dragons

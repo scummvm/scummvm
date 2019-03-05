@@ -19,9 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-
-#ifndef DRAGONS_INVENTORY_H
-#define DRAGONS_INVENTORY_H
+#ifndef DRAGONS_CURSOR_H
+#define DRAGONS_CURSOR_H
 
 #include "common/system.h"
 
@@ -29,39 +28,24 @@ namespace Dragons {
 
 class Actor;
 class ActorManager;
+class DragonsEngine;
+class DragonINIResource;
 
-class Inventory {
+class Cursor {
 private:
 	DragonsEngine *_vm;
-	int32 _sequenceId;
-	int16 _screenPositionIndex;
+	int16 _x;
+	int16 _y;
 	Actor *_actor;
-	int16 _type;
+	int32 _sequenceID;
 
 public:
-	Inventory(DragonsEngine *vm);
-
-	void init(ActorManager *actorManager);
-	void loadScene(uint32 sceneId);
-
-	int32 getSequenceId() {
-		return _sequenceId;
-	}
-
-	int16 getType() { return _type; }
-
-	bool isVisible() {
-		return _type != 0;
-	}
-
-	void hide() { _type = 0; }
-	void show(int16 type) { _type = type; }
-
+	Cursor(DragonsEngine *vm);
+	void init(ActorManager *actorManager, DragonINIResource *dragonINIResource);
+	void update();
 	void updateVisibility();
-
-
 };
 
 } // End of namespace Dragons
 
-#endif //DRAGONS_INVENTORY_H
+#endif //DRAGONS_CURSOR_H
