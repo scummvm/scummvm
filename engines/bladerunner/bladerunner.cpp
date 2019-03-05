@@ -311,7 +311,10 @@ Common::Error BladeRunnerEngine::run() {
 	}
 
 	if (warnUserAboutUnsupportedGame()) {
-		if (hasSavegames) {
+
+		if (ConfMan.hasKey("save_slot")) {
+			loadGameState(ConfMan.getInt("save_slot"));
+		} else if (hasSavegames) {
 			_kia->_forceOpen = true;
 			_kia->open(kKIASectionLoad);
 		}
