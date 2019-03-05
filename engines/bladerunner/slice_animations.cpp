@@ -168,7 +168,28 @@ void *SliceAnimations::PageFile::loadPage(uint32 pageNumber) {
 }
 
 void *SliceAnimations::getFramePtr(uint32 animation, uint32 frame) {
-	assert(frame < _animations[animation].frameCount);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	// FIXME: Maybe there's a better way?
+	// Sanitize bad frame value
+	// For some actors (currently only happened with hawkers_barkeep) it is possible
+	// to SAVE a frame value (while saving a game)
+	// that in conjunction with other actor script vars not being re-initialized
+	// upon LOADING that game (for hawkers_barkeep this variable is "_var2")
+	// will lead to an invalid frame here and an assertion fault (now commented out).
+	// Example of faulty case:
+	// hawkers_barkeep was SAVED as:
+	// (animationState, animationFrame, animationStateNext, nextAnimation) = (0, 19, 0, 0)
+	// while his animationID was 705
+	// if _var1, _var2, _var3  == (0, 6, 1) when LOADING that save file,
+	// then animationFrame will remain 19, which is invalid for his 705 animation
+	// and the assert will produce a fault when trying to call drawInWorld for him.
+	if (frame >= _animations[animation].frameCount) {
+		debug("Bad frame: %u max: %u animation: %u", frame, _animations[animation].frameCount, animation);
+		frame = 0;
+	}
+//	assert(frame < _animations[animation].frameCount);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	uint32 frameOffset = _animations[animation].offset + frame * _animations[animation].frameSize;
 	uint32 page        = frameOffset / _pageSize;
