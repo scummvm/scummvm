@@ -204,6 +204,31 @@ public:
 	}
 
 	/**
+	 * Write the given 64-bit floating point value stored
+	 * in little endian(LSB first) order into the stream.
+	 */
+	FORCEINLINE void writeDoubleLE(double value) {
+		uint64 n;
+
+		memcpy(&n, &value, 8);
+
+		writeUint64LE(n);
+	}
+
+
+	/**
+	 * Write the given 64-bit floating point value stored
+	 * in big endian order into the stream.
+	 */
+	FORCEINLINE void writeDoubleBE(double value) {
+		uint64 n;
+
+		memcpy(&n, &value, 8);
+
+		writeUint64BE(n);
+	}
+
+	/**
 	 * Write the given string to the stream.
 	 * This writes str.size() characters, but no terminating zero byte.
 	 */
@@ -472,6 +497,39 @@ public:
 		memcpy(&f, &n, 4);
 
 		return f;
+	}
+
+
+	/**
+	 * Read a 64-bit floating point value stored in little endian (LSB first)
+	 * order from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occurred (for which client code can check by
+	 * calling err() and eos() ).
+	 */
+	FORCEINLINE double readDoubleLE() {
+		uint64 n = readUint64LE();
+		double d;
+
+		memcpy(&d, &n, 8);
+
+		return d;
+	}
+
+	/**
+	 * Read a 64-bit floating point value stored in big endian
+	 * order from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occurred (for which client code can check by
+	 * calling err() and eos() ).
+	 */
+	FORCEINLINE double readDoubleBE() {
+		uint64 n = readUint64BE();
+		double d;
+
+		memcpy(&d, &n, 8);
+
+		return d;
 	}
 
 	/**
