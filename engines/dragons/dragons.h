@@ -86,6 +86,7 @@ enum UnkFlags {
 
 class BigfileArchive;
 class BackgroundResourceLoader;
+class Cursor;
 class DragonFLG;
 class DragonIMG;
 class DragonOBD;
@@ -111,6 +112,7 @@ public:
 	Scene *_scene;
 	uint16 data_800633fa;
 	Inventory *_inventory;
+	Cursor *_cursor;
 private:
 	Screen *_screen;
 	BigfileArchive *_bigfileArchive;

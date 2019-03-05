@@ -27,6 +27,7 @@
 #include "actorresource.h"
 #include "background.h"
 #include "bigfile.h"
+#include "cursor.h"
 #include "dragonflg.h"
 #include "dragonimg.h"
 #include "dragonini.h"
@@ -67,6 +68,7 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	data_8006a3a0_flag = 0;
 	data_800633fa = 0;
 	_inventory = new Inventory(this);
+	_cursor = new Cursor(this);
 }
 
 DragonsEngine::~DragonsEngine() {
@@ -105,20 +107,7 @@ Common::Error DragonsEngine::run() {
 	_flags &= 0x1c07040;
 	_flags |= 0x26;
 
-	_cursorSequenceID = 0;
-	Actor *cursor = _actorManager->loadActor(0, 0); //Load cursor
-	cursor->x_pos = _cursorPosition.x = 160;
-	cursor->y_pos = _cursorPosition.y = 100;
-	cursor->priorityLayer = 6;
-	cursor->flags = 0;
-	cursor->field_e = 0x100;
-	cursor->updateSequence(_cursorSequenceID);
-	cursor->flags |= (Dragons::ACTOR_FLAG_40 | Dragons::ACTOR_FLAG_80 | Dragons::ACTOR_FLAG_100 |
-					  Dragons::ACTOR_FLAG_200);
-
-	_dragonINIResource->getFlickerRecord()->actor = cursor; //TODO is this correct?
-	_dragonINIResource->getFlickerRecord()->field_1a_flags_maybe |= Dragons::INI_FLAG_1;
-
+	_cursor->init(_actorManager, _dragonINIResource);
 	_inventory->init(_actorManager);
 
 	uint16 sceneId = 0x12;
@@ -199,6 +188,9 @@ void DragonsEngine::updateHandler() {
 	//TODO logic here
 
 	updateActorSequences();
+
+	_cursor->updateVisibility();
+	_inventory->updateVisibility();
 
 	//TODO logic here
 	for (uint16 i = 0; i < 0x17; i++) {
@@ -465,7 +457,7 @@ void DragonsEngine::runINIScripts() {
 void DragonsEngine::engineFlag0x20UpdateFunction() {
 	if (_flags & Dragons::ENGINE_FLAG_20) {
 		if ((_flags & (Dragons::ENGINE_FLAG_80000000 | Dragons::ENGINE_FLAG_8)) == 8) {
-			error("updateCursor();"); //TODO updateCursor();
+			_cursor->update();
 		}
 		//TODO
 		uint16 currentSceneId = _scene->getSceneId();
