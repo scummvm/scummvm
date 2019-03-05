@@ -163,6 +163,10 @@ public:
 
 	void playSound(uint16 soundId);
 
+	//TODO what are these functions really doing?
+	void call_fade_related_1f();
+	void fade_related(uint32 flags);
+
 private:
 	void gameLoop();
 	void updateHandler();

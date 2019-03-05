@@ -85,7 +85,8 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 	_vm->clearFlags(Dragons::ENGINE_FLAG_20);
 	_vm->setUnkFlags(Dragons::ENGINE_UNK1_FLAG_10);
 
-	// TODO 0x8002f7bc call_fade_related_1f()
+	_vm->call_fade_related_1f();
+	// TODO 0x8002f7c4
 
 	_stage = _backgroundLoader->load(sceneId);
 

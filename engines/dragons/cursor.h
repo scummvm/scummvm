@@ -44,6 +44,7 @@ public:
 	void init(ActorManager *actorManager, DragonINIResource *dragonINIResource);
 	void update();
 	void updateVisibility();
+	void updatePosition(int16 x, int16 y);
 };
 
 } // End of namespace Dragons

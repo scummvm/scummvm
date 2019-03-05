@@ -84,6 +84,9 @@ void DragonsEngine::updateEvents() {
 			case Common::EVENT_QUIT:
 				quitGame();
 				break;
+			case Common::EVENT_MOUSEMOVE:
+				_cursor->updatePosition(event.mouse.x, event.mouse.y);
+				break;
 			default:
 				break;
 		}
@@ -498,6 +501,20 @@ void DragonsEngine::updatePathfindingActors() {
 		Actor *actor = _actorManager->getActor(i);
 		actor->walkPath();
 	}
+}
+
+void DragonsEngine::fade_related(uint32 flags) {
+	if (!isFlagSet(ENGINE_FLAG_40)) {
+		return;
+	}
+	setUnkFlags(ENGINE_UNK1_FLAG_2);
+	clearFlags(ENGINE_FLAG_40);
+
+	//TODO 0x80015a1c
+}
+
+void DragonsEngine::call_fade_related_1f() {
+	fade_related(0x1f);
 }
 
 } // End of namespace Dragons
