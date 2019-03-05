@@ -126,8 +126,7 @@ bool Obstacles::linePolygonIntersection(LineSegment lineA, VertexType lineAType,
 			 || (lineAType == BOTTOM_LEFT  && lineBType == BOTTOM_RIGHT)
 			 || (lineAType == TOP_LEFT     && lineBType == BOTTOM_LEFT)
 			) {
-				if (!WITHIN_TOLERANCE(lineB.end.x, intersectionPoint->x)
-				 || !WITHIN_TOLERANCE(lineB.end.y, intersectionPoint->y)) {
+				if (!(WITHIN_TOLERANCE(lineB.end.x, intersectionPoint->x) && WITHIN_TOLERANCE(lineB.end.y, intersectionPoint->y))) {
 					if (newIntersectionPoint != *intersectionPoint) {
 						float newIntersectionDistance = getLength(lineA.start.x, lineA.start.y, newIntersectionPoint.x, newIntersectionPoint.y);
 						if (!hasIntersection || newIntersectionDistance < nearestIntersectionDistance) {
@@ -192,6 +191,7 @@ bool Obstacles::mergePolygons(Polygon &polyA, Polygon &polyB) {
 	bool flagAddVertexToVertexList = true;
 	bool flagDidFindIntersection = false;
 	int vertIndex = 0;
+	int lastIntersectionIndex = -1;
 
 	Polygon *startingPolygon = polyPrimary;
 	int flagDone = false;
@@ -227,8 +227,15 @@ bool Obstacles::mergePolygons(Polygon &polyA, Polygon &polyB) {
 			SWAP(polyPrimary, polySecondary);
 
 			flagDidMergePolygons = true;
+			lastIntersectionIndex = polySecondaryIntersectionIndex;
 		} else {
 			vertIndex = (vertIndex + 1) % polyPrimary->verticeCount;
+			// In some cases polygons will have only one intersection (touching corners) and because of that second SWAP never occure and algorithm will never stop.
+			// This can be avoided by stopping the algorithm after looping over whole polygon. Such polygons will not merge.
+			if (vertIndex == lastIntersectionIndex) {
+				flagDidMergePolygons = false;
+				break;
+			}
 			flagDidFindIntersection = false;
 		}
 		if (polyPrimary->vertices[vertIndex] == startingPolygon->vertices[0]) {
@@ -549,12 +556,10 @@ bool Obstacles::findPolygonVerticeByXZWithinTolerance(float x, float z, int *pol
 		}
 
 		for (int j = 0; j != _polygons[i].verticeCount; ++j) {
-			if (WITHIN_TOLERANCE(_polygons[i].vertices[j].x, x)) {
-				if (WITHIN_TOLERANCE(_polygons[i].vertices[j].y, z)) {
-					*polygonIndex = i;
-					*verticeIndex = j;
-					return true;
-				}
+			if (WITHIN_TOLERANCE(_polygons[i].vertices[j].x, x) && WITHIN_TOLERANCE(_polygons[i].vertices[j].y, z)) {
+				*polygonIndex = i;
+				*verticeIndex = j;
+				return true;
 			}
 		}
 	}
