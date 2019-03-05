@@ -5,6 +5,7 @@ MODULE_OBJS := \
     actorresource.o \
     background.o \
     bigfile.o \
+    cursor.o \
 	detection.o \
     dragonflg.o \
     dragonimg.o \

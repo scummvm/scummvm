@@ -72,4 +72,9 @@ void Cursor::updateVisibility() {
 	}
 }
 
+void Cursor::updatePosition(int16 x, int16 y) {
+	_x = x;
+	_y = y;
+}
+
 } // End of namespace Dragons
