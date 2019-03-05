@@ -922,7 +922,7 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "zazie", "Zazie, una lettura interattiva" },
 	{ "zenfactorspa", "ZenFactor Spa" },
 	{ "zombie", "Uno Zombie a Deadville" },
-	{ "Zorkita", "Zork I: Il Grande Impero Sotterraneo" },
+	{ "zorkita", "Zork I: Il Grande Impero Sotterraneo" },
 
 	// Slovenian games
 	{ "zenin", "Zenin na begu" },
@@ -934,8 +934,8 @@ const PlainGameDescriptor ZCODE_GAME_LIST[] = {
 	{ "amanda", "Amanda" },
 	{ "aque1", "Aquelarre" },
 	{ "casi", "Casi Muerto" },
-	{ "Celos", "Un Asunto de Celos" },
-	{ "Cerillera", "La Pequena Cerillera" },
+	{ "celos", "Un Asunto de Celos" },
+	{ "cerillera", "La Pequena Cerillera" },
 	{ "churro", "Churro patatero" },
 	{ "csa", "Cacahuetes" },
 	{ "cueva", "La Oscura Cueva" },
