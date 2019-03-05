@@ -52,7 +52,6 @@ private:
 
 	void loadAndSetPalette(const char *filename);
 	void copyBlurRegion(int x1, int y1, int x2, int y2, int w, int h, int step);
-	void boxMorphTransition(int targetDestX, int targetDestY, int targetFinalX, int targetFinalY, int targetSrcX, int targetSrcY, int targetFinalW, int targetFinalH, int originX1, int originY1, int originW, int originH);
 	void whirlTransition();
 
 	EoBEngine *_vm;
@@ -81,6 +80,40 @@ private:
 	
 	const uint8 _fillColor1;
 	const uint8 _fillColor2;
+};
+
+class EoBAmigaFinalePlayer {
+public:
+	EoBAmigaFinalePlayer(EoBEngine *vm, Screen_EoB *screen);
+	~EoBAmigaFinalePlayer();
+
+	void start();
+
+private:
+	void entry();
+	void delivery();
+	void inspection();
+	void surprise();
+	void congratulation();
+
+	void animateCouncil1(int numFrames, int skipFrame);
+	void animateCouncil2(int numFrames, int skipFrame, bool withSpeechAnim);
+	void playDialogue(int line, bool withAnim);
+
+	uint8 **_textShapes;
+	uint8 *_councilAnimData1;
+	uint8 *_councilAnimData2;
+	
+	const uint8 *_councilAnimData3;
+	const uint8 *_councilAnimData4;
+	const uint8 *_eyesAnimData;	
+	const int16 *_handsAnimData;
+	const uint8 *_textFrameDuration;
+
+	int _animCurFrame;
+
+	EoBEngine *_vm;
+	Screen_EoB *_screen;
 };
 
 EoBIntroPlayer::EoBIntroPlayer(EoBEngine *vm, Screen_EoB *screen) : _vm(vm), _screen(screen), 
@@ -536,7 +569,7 @@ void EoBIntroPlayer::hands() {
 	_screen->fillRect(0, 0, 191, 63, _fillColor2, 2);
 	_screen->drawShape(2, shp1, 0, 4, 0);
 	_screen->drawShape(2, shp2, 151, 4, 0);
-	boxMorphTransition(25, 8, 18, 4, 3, 0, 21, 8, 6, 0, 28, 23);
+	_vm->boxMorphTransition(25, 8, 18, 4, 3, 0, 21, 8, 6, 0, 28, 23);
 	_screen->copyRegion(0, 128, 0, 176, 320, 16, 6, 0, Screen::CR_NO_P_CHECK);
 
 	_screen->updateScreen();
@@ -568,7 +601,7 @@ void EoBIntroPlayer::hands() {
 	_screen->fillRect(0, 0, 135, 63, _fillColor2);
 	_screen->drawShape(2, shp1, 32, -80, 0);
 	_screen->drawShape(2, shp2, 40, -16, 0);
-	boxMorphTransition(18, 16, 10, 12, 0, 0, 17, 8, 17, 3, 25, 10);
+	_vm->boxMorphTransition(18, 16, 10, 12, 0, 0, 17, 8, 17, 3, 25, 10);
 	_vm->delay(15 * _vm->_tickLength);
 
 	for (int i = -80; i <= 0 && !_vm->shouldQuit() && !_vm->skipFlag(); i += 4) {
@@ -607,7 +640,7 @@ void EoBIntroPlayer::hands() {
 	_screen->fillRect(0, 0, 143, 95, _fillColor2);
 	_screen->drawShape(2, shp1, -56, -56, 0);
 	_screen->drawShape(2, shp2, 52, 49, 0);
-	boxMorphTransition(9, 6, 0, 0, 0, 0, 18, 12, 8, 11, 21, 10);
+	_vm->boxMorphTransition(9, 6, 0, 0, 0, 0, 18, 12, 8, 11, 21, 10);
 	_vm->delay(15 * _vm->_tickLength);
 	_vm->snd_playSoundEffect(11);
 
@@ -633,7 +666,7 @@ void EoBIntroPlayer::hands() {
 	_screen->setCurPage(2);
 	_screen->fillRect(0, 0, 87, 112, _fillColor2);
 	_screen->drawShape(2, shp2, 0, 90, 0);
-	boxMorphTransition(20, 13, 15, 6, 0, 0, 11, 14, 0, 0, 24, 16);
+	_vm->boxMorphTransition(20, 13, 15, 6, 0, 0, 11, 14, 0, 0, 24, 16);
 	_vm->delay(15 * _vm->_tickLength);
 
 	int dy = 90;
@@ -950,63 +983,6 @@ void EoBIntroPlayer::copyBlurRegion(int x1, int y1, int x2, int y2, int w, int h
 	}
 }
 
-void EoBIntroPlayer::boxMorphTransition(int targetDestX, int targetDestY, int targetFinalX, int targetFinalY, int targetSrcX, int targetSrcY, int targetFinalW, int targetFinalH, int originX1, int originY1, int originW, int originH) {
-	int originX2 = originX1 + originW;
-	int originY2 = originY1 + originH;
-	if (originY2 > 21)
-		originY2 = 21;
-
-	int w = 1;
-	int h = 1;
-	for (bool runloop = true; runloop && !_vm->shouldQuit() && !_vm->skipFlag();) {
-		uint32 end = _vm->_system->getMillis() + _vm->_tickLength;
-		_screen->copyRegion(targetSrcX << 3, targetSrcY << 3, targetDestX << 3, targetDestY << 3, w << 3, h << 3, 2, 0, Screen::CR_NO_P_CHECK);
-		if (originX1 < targetDestX)
-			_screen->copyRegion(312, 0, originX1 << 3, 0, 8, 176, 0, 0, Screen::CR_NO_P_CHECK);
-		if (originY1 < targetDestY)
-			_screen->copyRegion(0, 192, 0, originY1 << 3, 320, 8, 0, 0, Screen::CR_NO_P_CHECK);
-		if ((targetFinalX + targetFinalW) <= originX2)
-			_screen->copyRegion(312, 0, originX2 << 3, 0, 8, 176, 0, 0, Screen::CR_NO_P_CHECK);
-		if ((targetFinalY + targetFinalH) <= originY2)
-			_screen->copyRegion(0, 192, 0, originY2 << 3, 320, 8, 0, 0, Screen::CR_NO_P_CHECK);
-
-		if (!(targetDestX != targetFinalX || targetDestY != targetFinalY || w != targetFinalW || h != targetFinalH || originX1 < targetFinalX || originY1 < targetFinalY || (targetFinalX + targetFinalW) < originX2 || (targetFinalY + targetFinalH) < originY2))
-			runloop = false;
-
-		int v = targetFinalX - targetDestX;
-		v = (v < 0) ? -1 : ((v > 0) ? 1 : 0);
-		targetDestX += v;
-		v = targetFinalY - targetDestY;
-		v = (v < 0) ? -1 : ((v > 0) ? 1 : 0);
-		targetDestY += v;
-
-		if (w != targetFinalW)
-			w += 2;
-		if (w > targetFinalW)
-			w = targetFinalW;
-
-		if (h != targetFinalH)
-			h += 2;
-		if (h > targetFinalH)
-			h = targetFinalH;
-
-		if (++originX1 > targetFinalX)
-			originX1 = targetFinalX;
-
-		if (++originY1 > targetFinalY)
-			originY1 = targetFinalY;
-
-		if ((targetFinalX + targetFinalW) < originX2)
-			originX2--;
-
-		if ((targetFinalY + targetFinalH) < originY2)
-			originY2--;
-
-		_screen->updateScreen();
-		_vm->delayUntil(end);
-	}
-}
-
 void EoBIntroPlayer::whirlTransition() {
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
 		_screen->fadeToBlack(48);
@@ -1030,6 +1006,404 @@ void EoBIntroPlayer::whirlTransition() {
 				_vm->_system->delayMillis(e - c);
 		}
 	}
+}
+
+EoBAmigaFinalePlayer::EoBAmigaFinalePlayer(EoBEngine *vm, Screen_EoB *screen) : _vm(vm), _screen(screen) {
+	_animCurFrame = 0;
+	int size = 0;
+	_textShapes = new uint8*[10];
+	memset(_textShapes, 0, sizeof(uint8*) * 10);
+	_councilAnimData1 = new uint8[78];
+	memcpy(_councilAnimData1, _vm->staticres()->loadRawData(kEoB1FinaleCouncilAnim1, size), 78);
+	_councilAnimData2 = new uint8[78];
+	memcpy(_councilAnimData2, _vm->staticres()->loadRawData(kEoB1FinaleCouncilAnim2, size), 78);
+	_councilAnimData3 = _vm->staticres()->loadRawData(kEoB1FinaleCouncilAnim3, size);
+	_councilAnimData4 = _vm->staticres()->loadRawData(kEoB1FinaleCouncilAnim4, size);
+	_eyesAnimData = _vm->staticres()->loadRawData(kEoB1FinaleEyesAnim, size);
+	_handsAnimData = (const int16*)_vm->staticres()->loadRawDataBe16(kEoB1FinaleHandsAnim, size);
+	_textFrameDuration = _vm->staticres()->loadRawData(kEoB1FinaleTextDuration, size);;
+}
+
+EoBAmigaFinalePlayer::~EoBAmigaFinalePlayer() {
+	for (int i = 0; i < 10; ++i)
+		delete[] _textShapes[i];
+	delete[] _textShapes;
+	delete[] _councilAnimData1;
+	delete[] _councilAnimData2;
+}
+
+void EoBAmigaFinalePlayer::start() {
+	_screen->hideMouse();
+	uint32 tick = _vm->_system->getMillis() + 80 * _vm->_tickLength;
+
+	_screen->clearPage(0);
+	_screen->clearPage(2);
+	_screen->loadShapeSetBitmap("TEXT2", 5, 3);
+	for (int i = 0; i < 10; ++i)
+		_textShapes[i] = _screen->encodeShape(0, i << 4, 40, 15);
+	_screen->clearPage(2);
+
+	_screen->loadBitmap("COUNCILA.CPS", 2, 4, 0);
+	_screen->loadBitmap("COUNCILB.CPS", 2, 6, 0);
+
+	_vm->delayUntil(tick);
+	_vm->_eventList.clear();
+	_vm->_allowSkip = true;
+
+	_vm->sound()->playTrack(0);
+
+	entry();
+	delivery();
+	inspection();
+	surprise();
+	congratulation();
+
+	_screen->fadeToBlack();
+}
+
+void EoBAmigaFinalePlayer::entry() {
+	static uint8 textMode[] = { 1, 1, 0, 1, 1, 0 };
+	if (_vm->shouldQuit() || _vm->skipFlag())
+		return;
+
+	_screen->setScreenPalette(_screen->getPalette(0));
+	_screen->copyRegion(0, 0, 0, 0, 320, 72, 4, 2, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(0, 0, 0, 80, 320, 72, 2, 2, Screen::CR_NO_P_CHECK);
+
+	for (int i = 1; i < 21 && !_vm->skipFlag() && !_vm->shouldQuit(); ++i) {
+		_screen->copyRegion((20 - i) << 3, 80, (20 - i) << 3, 48, i << 4, 72, 2, 0, Screen::CR_NO_P_CHECK);
+		_screen->updateScreen();
+		_vm->delay(2 * _vm->_tickLength);
+	}
+
+	for (int i = 0; i < 15 && !_vm->skipFlag() && !_vm->shouldQuit(); ++i) {
+		animateCouncil1(2, -1);
+		_screen->updateScreen();
+		_vm->delay(4 * _vm->_tickLength);
+	}
+
+	for (int i = 0; i < 65 && !_vm->skipFlag() && !_vm->shouldQuit(); ++i) {
+		animateCouncil1(_vm->_rnd.getRandomNumberRng(1, 3), -1);
+		_screen->updateScreen();
+		_vm->delay(4 * _vm->_tickLength);
+
+		if (i == 45 || i == 47) {
+			animateCouncil1(99, -1);
+			_screen->updateScreen();
+		}
+
+		if (i % 16 == 0)
+			playDialogue(i >> 4, textMode[i >> 4]);
+	}
+}
+
+void EoBAmigaFinalePlayer::delivery() {
+	if (_vm->shouldQuit() || _vm->skipFlag())
+		return;
+
+	_screen->setCurPage(4);
+	uint8 *shp = _screen->encodeShape(0, 72, 3, 32, true);
+
+	for (int i = 0; i < 5 && !_vm->skipFlag() && !_vm->shouldQuit(); ++i) {
+		static const uint8 y[5] = { 152,  139,  131,  129,  127 };
+		_screen->copyRegion(120, 30, 120, 110, 56, 42, 2, 2, Screen::CR_NO_P_CHECK);
+		_screen->drawShape(2, shp, 153, y[i], 0);
+		_screen->copyRegion(120, 110, 120, 78, 56, 42, 2, 0, Screen::CR_NO_P_CHECK);
+		animateCouncil1(2, -1);
+		_screen->updateScreen();
+		_vm->delay(4 * _vm->_tickLength);
+	}
+
+	for (int i = 0; i < 6 && !_vm->skipFlag() && !_vm->shouldQuit(); ++i) {
+		_screen->copyRegion(120, 30, 120, 110, 64, 42, 2, 2, Screen::CR_NO_P_CHECK);
+		_screen->copyRegion((i * 5 + 3) << 3, 72, 144, 120, 48, 32, 4, 2, Screen::CR_NO_P_CHECK);
+		_screen->copyRegion(120, 110, 120, 78, 64, 42, 2, 0, Screen::CR_NO_P_CHECK);
+		animateCouncil1(2, -1);
+		_screen->updateScreen();
+		_vm->delay(4 * _vm->_tickLength);
+	}
+
+	for (int i = 0; i < 5 && !_vm->skipFlag() && !_vm->shouldQuit(); ++i) {
+		animateCouncil2(5, 2, false);
+		animateCouncil1(2, -1);
+		_screen->updateScreen();
+		_vm->delay(4 * _vm->_tickLength);
+	}
+
+	delete[] shp;
+}
+
+void EoBAmigaFinalePlayer::inspection() {
+	if (_vm->shouldQuit() || _vm->skipFlag())
+		return;
+
+	uint8 *shp[5];
+	memset(shp, 0, sizeof(shp));
+	
+	_screen->fillRect(0, 170, 319, 186, 31, 0);
+	_screen->clearPage(2);
+
+	_screen->setCurPage(6);
+	shp[0] = _screen->encodeShape(0, 0, 8, 40, true);
+	_screen->drawShape(2, shp[0], 96, 24, 0, 0);
+	_screen->drawShape(2, shp[0], 160, 24, 0, 1);
+	delete[] shp[0];
+
+	_screen->fillRect(0, 48, 9, 120, 31, 0);
+	_screen->fillRect(312, 48, 319, 120, 31, 0);
+
+	_vm->boxMorphTransition(18, 6, 12, 3, 12, 3, 16, 5, 1, 5, 39, 10, 31);
+
+	for (int i = 0; i < 5; ++i)
+		shp[i] = _screen->encodeShape((i << 2) + 8, 0, 4, 24, true);
+
+	_vm->delay(10 * _vm->_tickLength);
+
+	for (int i = 2; i < 81 && !_vm->skipFlag() && !_vm->shouldQuit(); ++i) {
+		_screen->copyRegion(192, 56, 96, 160 - i, 128, i, 6, 0, Screen::CR_NO_P_CHECK);
+		_screen->updateScreen();
+		_vm->delay(_vm->_tickLength);
+		if (i == 40)
+			playDialogue(5, false);
+	}
+
+	for (int i = 0; _eyesAnimData[i] != 0xFF && !_vm->skipFlag() && !_vm->shouldQuit(); ++i) {
+		if (_eyesAnimData[i] == 15 || _eyesAnimData[i] == 40) {
+			_vm->delay(_eyesAnimData[i] * _vm->_tickLength);
+			continue;
+		}
+
+		_screen->drawShape(2, shp[_eyesAnimData[i]], 112, 32, 0, 0);
+		_screen->drawShape(2, shp[_eyesAnimData[i]], 176, 32, 0, 1);
+		_screen->copyRegion(112, 32, 112, 32, 96, 24, 2, 0, Screen::CR_NO_P_CHECK);
+		_screen->updateScreen();
+
+		_vm->delay(_vm->_tickLength);	
+	}
+
+	for (int i = 0; i < 5; ++i)
+		delete[] shp[i];
+}
+
+void EoBAmigaFinalePlayer::surprise() {
+	if (_vm->shouldQuit() || _vm->skipFlag())
+		return;
+
+	_screen->copyRegion(0, 0, 0, 0, 320, 72, 4, 2, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(0, 0, 0, 80, 320, 72, 2, 2, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(224, 96, 144, 144, 40, 8, 4, 2, Screen::CR_NO_P_CHECK);
+
+	for (int i = 0; i < 4; ++i) {
+		const uint8 *crds = &_councilAnimData4[i * 6];
+		_screen->copyRegion(crds[0] << 3, crds[1], crds[4] << 3, crds[5], crds[2] << 3, crds[3], 4, 2, Screen::CR_NO_P_CHECK);
+	}
+
+	_vm->boxMorphTransition(0, 9, 0, 6, 0, 10, 40, 9, 12, 3, 16, 21, 31);
+
+	for (int i = 0; i < 15 && !_vm->skipFlag() && !_vm->shouldQuit(); ++i) {
+		animateCouncil1(4, 2);
+		animateCouncil2(6, -1, false);
+		_screen->updateScreen();
+		_vm->delay(4 * _vm->_tickLength);
+	}
+
+	animateCouncil2(98, 2, true);
+	_vm->delay(10 * _vm->_tickLength);
+	playDialogue(6, true);
+	_vm->delay(60 * _vm->_tickLength);
+
+	_screen->fadeToBlack(16);
+	_screen->clearPage(0);
+}
+
+void EoBAmigaFinalePlayer::congratulation() {
+	if (_vm->shouldQuit() || _vm->skipFlag())
+		return;
+
+	uint8 *shp[3];
+	memset(shp, 0, sizeof(shp));
+
+	_screen->setCurPage(6);
+	shp[0] = _screen->encodeShape(12, 24, 12, 64, true);
+	shp[1] = _screen->encodeShape(12, 88, 12, 72, true);
+	shp[2] = _screen->encodeShape(24, 136, 15, 64, true);
+	
+	_screen->clearPage(2);
+	_screen->fadeFromBlack(1);
+
+	playDialogue(7, false);
+
+	for (int i = 1; i < 13 && !_vm->skipFlag() && !_vm->shouldQuit(); ++i) {
+		_screen->copyRegion((12 - i) << 3, 40, (26 - i) << 3, 24, i << 3, 120, 6, 0, Screen::CR_NO_P_CHECK);
+		_screen->updateScreen();
+		_vm->delay(2 * _vm->_tickLength);
+	}
+
+	_vm->delay(75 * _vm->_tickLength);
+	_screen->fadeToBlack(32);
+	_screen->clearPage(0);
+	_screen->fadeFromBlack(1);
+
+	for (int i = 0; i < 10 && !_vm->skipFlag() && !_vm->shouldQuit(); i += 2) {
+		_screen->drawShape(2, shp[0], _handsAnimData[i], _handsAnimData[i + 1], 0);
+		_screen->copyRegion(0, 50, 0, 50, 320, 90, 2, 0, Screen::CR_NO_P_CHECK);
+		_screen->clearPage(2);
+		_screen->updateScreen();
+		_vm->delay(_vm->_tickLength);
+	}
+
+	playDialogue(8, false);
+	_screen->updateScreen();
+	_vm->delay(50 * _vm->_tickLength);
+
+	for (int i = 10; i < 18 && !_vm->skipFlag() && !_vm->shouldQuit(); i += 2) {
+		_screen->drawShape(2, shp[1], _handsAnimData[i], _handsAnimData[i + 1], 0);
+		_screen->drawShape(2, shp[0], _handsAnimData[8], _handsAnimData[9], 0);
+		_screen->copyRegion(0, 50, 0, 50, 320, 90, 2, 0, Screen::CR_NO_P_CHECK);
+		_screen->clearPage(2);
+		_screen->updateScreen();
+		_vm->delay(_vm->_tickLength);
+	}
+
+	for (int i = 18; i < 24 && !_vm->skipFlag() && !_vm->shouldQuit(); i += 2) {
+		_screen->drawShape(2, shp[2], _handsAnimData[i], _handsAnimData[i + 1], 0);
+		_screen->copyRegion(0, 50, 0, 50, 320, 90, 2, 0, Screen::CR_NO_P_CHECK);
+		_screen->clearPage(2);
+		_screen->updateScreen();
+		_vm->delay(2 * _vm->_tickLength);
+	}
+
+	for (int i = 0; i < 3 && !_vm->skipFlag() && !_vm->shouldQuit(); ++i) {
+		for (int ii = 0; ii < 12 && !_vm->skipFlag() && !_vm->shouldQuit(); ii += 4) {
+			_screen->drawShape(2, shp[2], 91, ii + 51, 0);
+			_screen->copyRegion(0, 50, 0, 50, 320, 90, 2, 0, Screen::CR_NO_P_CHECK);
+			_screen->clearPage(2);
+			_screen->updateScreen();
+			_vm->delay(25);
+		}
+		for (int ii = 12; ii > 0 && !_vm->skipFlag() && !_vm->shouldQuit(); ii -= 4) {
+			_screen->drawShape(2, shp[2], 91, ii + 51, 0);
+			_screen->copyRegion(0, 50, 0, 50, 320, 90, 2, 0, Screen::CR_NO_P_CHECK);
+			_screen->clearPage(2);
+			_screen->updateScreen();
+			_vm->delay(25);
+		}
+	}
+
+	for (int i = 0; i < 3; ++i)
+		delete[] shp[i];
+
+	_vm->delay(40 * _vm->_tickLength);
+	_screen->fadeToBlack(48);
+	_screen->clearPage(0);
+	playDialogue(9, false);
+	_screen->fadeFromBlack(48);
+
+	while (!_vm->skipFlag() && !_vm->shouldQuit()) {
+		_vm->updateInput();
+		_vm->delay(10);
+	}
+
+	_screen->fadeToBlack(48);
+}
+
+void EoBAmigaFinalePlayer::animateCouncil1(int numFrames, int skipFrame) {
+	int frame = 5;
+	int subFrame = 0;
+	int subFrameAlt = 2;
+	
+	if (numFrames == 99) {
+		subFrame = _animCurFrame ? 6 : 0;
+		_animCurFrame ^= 1;
+		const uint8 *crds = &_councilAnimData3[subFrame];
+		_screen->copyRegion(crds[0] << 3, crds[1], crds[4] << 3, crds[5], crds[2] << 3, crds[3], 4, 0, Screen::CR_NO_P_CHECK);
+
+	} else {
+		for (int i = 0; i < numFrames; ++i) {
+			if (i) {
+				frame = _vm->_rnd.getRandomNumberRng(0, 200);
+				frame = (frame <= 32) ? frame >> 3 : -1;
+				subFrameAlt = 1;
+			}
+
+			if (frame == -1 || frame == skipFrame)
+				continue;
+
+			if (subFrameAlt == _councilAnimData1[frame * 13 + 12]) {
+				_councilAnimData1[frame * 13 + 12] = 0;
+				subFrame = 6;
+			} else {
+				_councilAnimData1[frame * 13 + 12]++;
+				subFrame = 0;
+			}
+	
+			const uint8 *crds = &_councilAnimData1[frame * 13 + subFrame];
+			_screen->copyRegion(crds[0] << 3, crds[1], crds[4] << 3, crds[5], crds[2] << 3, crds[3], 4, 0, Screen::CR_NO_P_CHECK);
+		}
+	}
+}
+
+void EoBAmigaFinalePlayer::animateCouncil2(int numFrames, int skipFrame, bool withSpeechAnim) {
+	if (numFrames == 98) {
+		uint8 frames[6];
+		for (int i = 0; i < 6; ++i)
+			frames[i] = i;
+
+		for (int i = 0; i < 6; ++i)
+			SWAP(frames[i], frames[_vm->_rnd.getRandomNumberRng(0, 5)]);
+
+		for (int i = 0; i < 6 && !_vm->skipFlag() && !_vm->shouldQuit(); ++i) {
+			if (frames[i] == skipFrame)
+				continue;
+			
+			uint8 *crds = &_councilAnimData2[frames[i] * 13];
+			crds[12] = 0;
+			_screen->copyRegion(crds[0] << 3, crds[1], crds[4] << 3, crds[5], crds[2] << 3, crds[3], 4, 0, Screen::CR_NO_P_CHECK);
+			
+			if (withSpeechAnim)
+				animateCouncil1(2, -1);
+
+			_screen->updateScreen();
+			_vm->delay(3 * _vm->_tickLength);
+		}
+	} else {
+		for (int i = 0; i < numFrames; ++i) {
+			int frame = _vm->_rnd.getRandomNumberRng(0, 250);
+			frame = (frame <= 40) ? frame >> 3 : -1;
+
+			if (frame == -1 || frame == skipFrame)
+				continue;
+
+			const uint8 *crds = &_councilAnimData2[frame * 13 + _councilAnimData2[frame * 13 + 12] * 6];
+			_councilAnimData2[frame * 13 + 12] ^= 1;
+			_screen->copyRegion(crds[0] << 3, crds[1], crds[4] << 3, crds[5], crds[2] << 3, crds[3], 4, 0, Screen::CR_NO_P_CHECK);
+		}
+	}
+}
+
+void EoBAmigaFinalePlayer::playDialogue(int line, bool withAnim) {
+	static const uint8 crds[] = { 0x03, 0x68, 0x05, 0x68 };
+	_screen->fillRect(0, 170, 319, 186, 31, 0);
+
+	if (withAnim) {
+		_screen->drawShape(0, _textShapes[line], 0, 170);
+		const uint8 *len = &_textFrameDuration[line * 17];
+		int offs = 2;
+
+		for (int i = 0; len[i] != 0x7F && !_vm->skipFlag(); ++i) {
+			if (len[i] == 0x7E)
+				continue;
+			offs ^= 2;
+			_screen->copyRegion(crds[offs] << 3, crds[offs + 1], 152, 72, 16, 8, 4, 0, Screen::CR_NO_P_CHECK);
+			animateCouncil1(2, 2);
+			_screen->updateScreen();
+			_vm->delay(len[i] * _vm->_tickLength);
+		}
+		_screen->copyRegion(crds[2] << 3, crds[3], 152, 72, 16, 8, 4, 0, Screen::CR_NO_P_CHECK);
+
+	} else {
+		_screen->drawShape(0, _textShapes[line], 0, line == 9 ? 92 : 170);
+	}	
 }
 
 int EoBEngine::mainMenu() {
@@ -1169,6 +1543,9 @@ void EoBEngine::seq_playFinale() {
 
 	_txt->printDialogueText(Common::String::format(_finBonusStrings[2], password).c_str(), true);
 	_screen->fadeToBlack();
+
+	if (_flags.platform == Common::kPlatformAmiga)
+		EoBAmigaFinalePlayer(this, _screen).start();
 }
 
 void EoBEngine::seq_xdeath() {
@@ -1227,6 +1604,68 @@ void EoBEngine::seq_xdeath() {
 
 	gui_drawPlayField(false);
 	gui_drawAllCharPortraitsWithStats();
+}
+
+void EoBEngine::boxMorphTransition(int targetDestX, int targetDestY, int targetFinalX, int targetFinalY, int targetSrcX, int targetSrcY, int targetFinalW, int targetFinalH, int originX1, int originY1, int originW, int originH, int fillColor) {
+	int originX2 = originX1 + originW;
+	int originY2 = originY1 + originH;
+	if (originY2 > 21)
+		originY2 = 21;
+
+	if (fillColor != -1) {
+		_screen->fillRect(0, 170, 319, 186, fillColor, 0);
+		_screen->fillRect(0, 170, 319, 186, fillColor, 2);
+	}
+
+	int w = 1;
+	int h = 1;
+	for (bool runloop = true; runloop && !shouldQuit() && !skipFlag();) {
+		uint32 end = _system->getMillis() + _tickLength;
+		_screen->copyRegion(targetSrcX << 3, targetSrcY << 3, targetDestX << 3, targetDestY << 3, w << 3, h << 3, 2, 0, Screen::CR_NO_P_CHECK);
+		if (originX1 < targetDestX)
+			_screen->copyRegion(312, 0, originX1 << 3, 0, 8, 176, 0, 0, Screen::CR_NO_P_CHECK);
+		if (originY1 < targetDestY)
+			_screen->copyRegion(0, 192, 0, originY1 << 3, 320, 8, 0, 0, Screen::CR_NO_P_CHECK);
+		if ((targetFinalX + targetFinalW) <= originX2)
+			_screen->copyRegion(312, 0, originX2 << 3, 0, 8, 176, 0, 0, Screen::CR_NO_P_CHECK);
+		if ((targetFinalY + targetFinalH) <= originY2)
+			_screen->copyRegion(0, 192, 0, originY2 << 3, 320, 8, 0, 0, Screen::CR_NO_P_CHECK);
+
+		if (!(targetDestX != targetFinalX || targetDestY != targetFinalY || w != targetFinalW || h != targetFinalH || originX1 < targetFinalX || originY1 < targetFinalY || (targetFinalX + targetFinalW) < originX2 || (targetFinalY + targetFinalH) < originY2))
+			runloop = false;
+
+		int v = targetFinalX - targetDestX;
+		v = (v < 0) ? -1 : ((v > 0) ? 1 : 0);
+		targetDestX += v;
+		v = targetFinalY - targetDestY;
+		v = (v < 0) ? -1 : ((v > 0) ? 1 : 0);
+		targetDestY += v;
+
+		if (w != targetFinalW)
+			w += 2;
+		if (w > targetFinalW)
+			w = targetFinalW;
+
+		if (h != targetFinalH)
+			h += 2;
+		if (h > targetFinalH)
+			h = targetFinalH;
+
+		if (++originX1 > targetFinalX)
+			originX1 = targetFinalX;
+
+		if (++originY1 > targetFinalY)
+			originY1 = targetFinalY;
+
+		if ((targetFinalX + targetFinalW) < originX2)
+			originX2--;
+
+		if ((targetFinalY + targetFinalH) < originY2)
+			originY2--;
+
+		_screen->updateScreen();
+		delayUntil(end);
+	}
 }
 
 } // End of namespace Kyra
