@@ -11031,6 +11031,44 @@ static const uint16 sq4CdPatchGettingShotWhileGettingRope[] = {
 	PATCH_END
 };
 
+// Talking to the red shopper in the mall has a 5% chance of a funny message but
+//  this script is broken in the CD version. After the first time the wrong
+//  message tuple is attempted by the narrator as its modNum value is cleared.
+//  The message text is also accidentally repeated in a message box.
+//
+// We fix this by specifying the modNum when saying the message and removing
+//  the erroneous message box call.
+//
+// Applies to: English PC CD
+// Responsible method: shopper3:doVerb(2)
+// Fixes bug #10911
+static const uint16 sq4CdSignatureRedShopperMessageFix[] = {
+	0x38, SIG_SELECTOR16(say),          // pushi say
+	0x78,                               // push1
+	SIG_MAGICDWORD,
+	0x78,                               // push1
+	0x72, SIG_UINT16(0x057a),           // lofsa wierdNar
+	0x4a, 0x06,                         // send 06 [ wierdNar say: 1 ]
+	0x78,                               // push1
+	0x72, SIG_UINT16(0x0660),           // lofsa "Mr. Carlos sent me..."
+	0x36,                               // push
+	0x46, SIG_UINT16(0x0399),           // calle proc921_0 [ message box ]
+	      SIG_UINT16(0x0000), 0x02,
+	SIG_END
+};
+
+static const uint16 sq4CdPatchRedShopperMessageFix[] = {
+	0x38, PATCH_SELECTOR16(modNum),     // pushi modNum
+	0x38, PATCH_UINT16(0x0001),         // pushi 0001
+	0x38, PATCH_UINT16(0x02bc),         // pushi 02bc
+	0x38, PATCH_SELECTOR16(say),        // pushi say
+	0x39, 0x01,                         // pushi 01
+	0x39, 0x01,                         // pushi 01
+	0x72, PATCH_UINT16(0x057a),         // lofsa wierdNar
+	0x4a, 0x0c,                         // send 0c [ wierdNar modNum: 700 say: 1 ]
+	PATCH_END
+};
+
 // The scripts in SQ4CD support simultaneous playing of speech and subtitles,
 // but this was not available as an option. The following two patches enable
 // this functionality in the game's GUI options dialog.
@@ -11132,6 +11170,7 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,    45, "CD: walk in from below for room 45 fix",         1, sq4CdSignatureWalkInFromBelowRoom45,           sq4CdPatchWalkInFromBelowRoom45 },
 	{  true,   391, "CD: missing Audio for universal remote control", 1, sq4CdSignatureMissingAudioUniversalRemote,     sq4CdPatchMissingAudioUniversalRemote },
 	{  true,   396, "CD: get points for changing back clothes fix",   1, sq4CdSignatureGetPointsForChangingBackClothes, sq4CdPatchGetPointsForChangingBackClothes },
+	{  true,   700, "CD: red shopper message fix",                    1, sq4CdSignatureRedShopperMessageFix,            sq4CdPatchRedShopperMessageFix },
 	{  true,   701, "CD: getting shot, while getting rope",           1, sq4CdSignatureGettingShotWhileGettingRope,     sq4CdPatchGettingShotWhileGettingRope },
 	{  true,     0, "CD: Babble icon speech and subtitles fix",       1, sq4CdSignatureBabbleIcon,                      sq4CdPatchBabbleIcon },
 	{  true,   818, "CD: Speech and subtitles option",                1, sq4CdSignatureTextOptions,                     sq4CdPatchTextOptions },
