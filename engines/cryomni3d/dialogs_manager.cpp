@@ -257,6 +257,9 @@ bool DialogsManager::play(const Common::String &sequence, bool &slowStop) {
 	bool playerLabel = !strncmp(label, "JOU", 3);
 	bool didSomething = false;
 	bool finished = false;
+	/* Keep the gotoList outside the loop to avoid it being freed at the end of it and
+	 * having label possibly pointing on free memory */
+	Common::Array<DialogsManager::Goto> gotoList;
 	while (!finished) {
 		const char *actions;
 		if (playerLabel) {
@@ -284,7 +287,7 @@ bool DialogsManager::play(const Common::String &sequence, bool &slowStop) {
 			didSomething = true;
 			actions = nextLine(text);
 		}
-		Common::Array<DialogsManager::Goto> gotoList = executeAfterPlayAndBuildGotoList(actions);
+		gotoList = executeAfterPlayAndBuildGotoList(actions);
 		Common::StringArray questions;
 		bool endOfConversationFound = false;;
 		if (_ignoreNoEndOfConversation) {
