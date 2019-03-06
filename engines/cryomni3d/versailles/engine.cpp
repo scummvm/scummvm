@@ -1412,7 +1412,7 @@ void CryOmni3DEngine_Versailles::handleFixedImg(const FixedImgCallback &callback
 }
 
 unsigned int CryOmni3DEngine_Versailles::getFakeTransition(unsigned int actionId) const {
-	for (const FakeTransitionActionPlace *ft = kFakeTransitions; ft->actionId != nullptr; ft++) {
+	for (const FakeTransitionActionPlace *ft = kFakeTransitions; ft->actionId != 0; ft++) {
 		if (ft->actionId == actionId) {
 			return ft->placeId;
 		}
