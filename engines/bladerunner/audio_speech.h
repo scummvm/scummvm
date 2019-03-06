@@ -45,7 +45,7 @@ public:
 	AudioSpeech(BladeRunnerEngine *vm);
 	~AudioSpeech();
 
-	bool playSpeech(const Common::String &name, int balance = 0);
+	bool playSpeech(const Common::String &name, int pan = 0);
 	void stopSpeech();
 	bool isPlaying() const;
 

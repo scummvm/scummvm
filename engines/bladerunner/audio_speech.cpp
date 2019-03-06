@@ -124,9 +124,9 @@ bool AudioSpeech::isPlaying() const {
 }
 
 bool AudioSpeech::playSpeechLine(int actorId, int sentenceId, int volume, int a4, int priority) {
-	int balance = _vm->_actors[actorId]->soundBalance();
+	int pan = _vm->_actors[actorId]->soundPan();
 	Common::String name = Common::String::format("%02d-%04d%s.AUD", actorId, sentenceId, _vm->_languageCode.c_str());
-	return _vm->_audioPlayer->playAud(name, _speechVolume * volume / 100, balance, balance, priority, kAudioPlayerOverrideVolume, Audio::Mixer::kSpeechSoundType);
+	return _vm->_audioPlayer->playAud(name, _speechVolume * volume / 100, pan, pan, priority, kAudioPlayerOverrideVolume, Audio::Mixer::kSpeechSoundType);
 }
 
 void AudioSpeech::setVolume(int volume) {

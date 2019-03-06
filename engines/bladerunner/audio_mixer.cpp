@@ -171,7 +171,7 @@ void AudioMixer::tick() {
 				channel->volumeDelta = 0.0f;
 			}
 
-			_vm->_mixer->setChannelVolume(channel->handle, channel->volume * 255 / 100);
+			_vm->_mixer->setChannelVolume(channel->handle, (channel->volume * Audio::Mixer::kMaxChannelVolume) / 100); // map [0..100] to [0..kMaxChannelVolume]
 
 			if (channel->volume <= 0.0f) {
 				stop(i, 0);
@@ -185,7 +185,7 @@ void AudioMixer::tick() {
 				channel->panDelta = 0.0f;
 			}
 
-			_vm->_mixer->setChannelBalance(channel->handle, channel->pan * 127 / 100);
+			_vm->_mixer->setChannelBalance(channel->handle, (channel->pan * 127) / 100); // map [-100..100] to [-127..127]
 		}
 
 		if (!_vm->_mixer->isSoundHandleActive(channel->handle) || channel->stream->endOfStream()) {

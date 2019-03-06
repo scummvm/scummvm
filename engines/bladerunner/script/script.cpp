@@ -963,7 +963,7 @@ void ScriptBase::Sound_Left_Footstep_Walk(int actorId) {
 
 	_vm->_walkSoundId = _vm->_scene->_set->getWalkboxSoundWalkLeft(walkboxId);
 	_vm->_walkSoundVolume = _vm->_actors[actorId]->soundVolume();
-	_vm->_walkSoundBalance = _vm->_actors[actorId]->soundBalance();
+	_vm->_walkSoundPan = _vm->_actors[actorId]->soundPan();
 }
 
 void ScriptBase::Sound_Right_Footstep_Walk(int actorId) {
@@ -975,7 +975,7 @@ void ScriptBase::Sound_Right_Footstep_Walk(int actorId) {
 
 	_vm->_walkSoundId = _vm->_scene->_set->getWalkboxSoundWalkRight(walkboxId);
 	_vm->_walkSoundVolume = _vm->_actors[actorId]->soundVolume();
-	_vm->_walkSoundBalance = _vm->_actors[actorId]->soundBalance();
+	_vm->_walkSoundPan = _vm->_actors[actorId]->soundPan();
 }
 
 void ScriptBase::Sound_Left_Footstep_Run(int actorId) {
@@ -987,7 +987,7 @@ void ScriptBase::Sound_Left_Footstep_Run(int actorId) {
 
 	_vm->_walkSoundId = _vm->_scene->_set->getWalkboxSoundRunLeft(walkboxId);
 	_vm->_walkSoundVolume = _vm->_actors[actorId]->soundVolume();
-	_vm->_walkSoundBalance = _vm->_actors[actorId]->soundBalance();
+	_vm->_walkSoundPan = _vm->_actors[actorId]->soundPan();
 }
 
 void ScriptBase::Sound_Right_Footstep_Run(int actorId) {
@@ -999,7 +999,7 @@ void ScriptBase::Sound_Right_Footstep_Run(int actorId) {
 
 	_vm->_walkSoundId = _vm->_scene->_set->getWalkboxSoundRunRight(walkboxId);
 	_vm->_walkSoundVolume = _vm->_actors[actorId]->soundVolume();
-	_vm->_walkSoundBalance = _vm->_actors[actorId]->soundBalance();
+	_vm->_walkSoundPan = _vm->_actors[actorId]->soundPan();
 }
 
 // ScriptBase::Sound_Walk_Shuffle_Stop

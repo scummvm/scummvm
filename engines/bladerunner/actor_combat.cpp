@@ -287,7 +287,7 @@ void ActorCombat::hitAttempt() {
 			sentenceId += 900;
 		}
 
-		_vm->_audioSpeech->playSpeechLine(_enemyId, sentenceId, 75, enemy->soundBalance(), 99);
+		_vm->_audioSpeech->playSpeechLine(_enemyId, sentenceId, 75, enemy->soundPan(), 99);
 	}
 }
 

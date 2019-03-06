@@ -1142,17 +1142,16 @@ int Actor::getGoal() const {
 void Actor::speechPlay(int sentenceId, bool voiceOver) {
 	Common::String name = Common::String::format( "%02d-%04d%s.AUD", _id, sentenceId, _vm->_languageCode.c_str());
 
-	int balance = 0;
+	int pan = 0;
 	if (!voiceOver && _id != BladeRunnerEngine::kActorVoiceOver) {
 		Vector3 screenPosition = _vm->_view->calculateScreenPosition(_position);
-		balance = (127 * (2 * screenPosition.x - 640)) / 640;
-		balance = CLIP<int>(balance, -127, 127);
+		pan = (75 * (2 *  CLIP<int>(screenPosition.x, 0, 640) - 640)) / 640; // map [0..640] to [-75..75]
 	}
 
 	_vm->_subtitles->getInGameSubsText(_id, sentenceId);
 	_vm->_subtitles->show();
 
-	_vm->_audioSpeech->playSpeech(name, balance);
+	_vm->_audioSpeech->playSpeech(name, pan);
 }
 
 void Actor::speechStop() {
@@ -1215,12 +1214,12 @@ void Actor::acquireCluesByRelations() {
 
 int Actor::soundVolume() const {
 	float dist = distanceFromView(_vm->_view);
-	return 35.0f * CLIP(1.0f - (dist / 1200.0f), 0.0f, 1.0f);
+	return (35 * CLIP<int>(100 - (dist / 12), 0, 100)) / 100; // map [0..1200] to [35..0]
 }
 
-int Actor::soundBalance() const {
+int Actor::soundPan() const {
 	Vector3 screenPosition = _vm->_view->calculateScreenPosition(_position);
-	return 35.0f * (CLIP(screenPosition.x / 640.0f, 0.0f, 1.0f) * 2.0f - 1.0f);
+	return (35 * (2 * CLIP<int>(screenPosition.x, 0, 640) - 640)) / 640; // map [0..640] to [-35..35]
 }
 
 bool Actor::isObstacleBetween(const Vector3 &target) {

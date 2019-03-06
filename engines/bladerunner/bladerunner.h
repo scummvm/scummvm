@@ -202,7 +202,7 @@ public:
 
 	int _walkSoundId;
 	int _walkSoundVolume;
-	int _walkSoundBalance;
+	int _walkSoundPan;
 	int _runningActorId;
 
 	int _mouseClickTimeLast;

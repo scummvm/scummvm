@@ -255,7 +255,7 @@ public:
 	void acquireCluesByRelations();
 
 	int soundVolume() const;
-	int soundBalance() const;
+	int soundPan() const;
 
 	bool isObstacleBetween(const Vector3 &target);
 

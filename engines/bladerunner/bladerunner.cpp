@@ -126,7 +126,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 
 	_walkSoundId      = -1;
 	_walkSoundVolume  = 0;
-	_walkSoundBalance = 0;
+	_walkSoundPan     = 0;
 
 	_crimesDatabase = nullptr;
 
@@ -955,7 +955,7 @@ void BladeRunnerEngine::gameTick() {
 	_mouse->draw(_surfaceFront, p.x, p.y);
 
 	if (_walkSoundId >= 0) {
-		_audioPlayer->playAud(_gameInfo->getSfxTrack(_walkSoundId), _walkSoundVolume, _walkSoundBalance, _walkSoundBalance, 50, 0);
+		_audioPlayer->playAud(_gameInfo->getSfxTrack(_walkSoundId), _walkSoundVolume, _walkSoundPan, _walkSoundPan, 50, 0);
 		_walkSoundId = -1;
 	}
 
