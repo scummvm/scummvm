@@ -20,6 +20,11 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed playtime not being restored when loading a savegame.
    - Fixed a bug that leads to enormous memory consumption in scene 22.
 
+ Kyra:
+   - Added support for the Amiga version of Eye of the Beholder.
+   - Added support for the FM-Towns version of Eye of the Beholder II.
+   - Several bug fixes.
+
  MOHAWK:
    - Added a main menu for the 25th anniversary release of Myst ME.
    - Repurposed the landing menu as a main menu for the 25th anniversary
