@@ -165,6 +165,17 @@ void Window::clear() {
 		g_vm->glk_window_clear(_win);
 }
 
+void Window::updateColors() {
+	if (_win)
+		_win->_stream->setZColors(_properties[TRUE_FG_COLOR], _properties[TRUE_BG_COLOR]);
+}
+
+void Window::updateColors(uint fore, uint back) {
+	_properties[TRUE_FG_COLOR] = fore;
+	_properties[TRUE_BG_COLOR] = back;
+	updateColors();
+}
+
 const uint &Window::getProperty(WindowProperty propType) {
 	if (_win)
 		update();
@@ -177,8 +188,7 @@ void Window::setProperty(WindowProperty propType, uint value) {
 	case TRUE_FG_COLOR:
 	case TRUE_BG_COLOR:
 		_properties[propType] = value;
-		if (_win && _win->_stream)
-			_win->_stream->setZColors(_properties[TRUE_FG_COLOR], _properties[TRUE_BG_COLOR]);
+		updateColors();
 		break;
 
 	default:

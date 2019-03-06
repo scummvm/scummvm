@@ -191,15 +191,9 @@ void Processor::screen_word(const zchar *s) {
 }
 
 void Processor::erase_screen(zword win) {
-	int curr_fg = _wp[1][TRUE_FG_COLOR];
-	int curr_bg = _wp[1][TRUE_BG_COLOR];
-
 	if ((short)win == -1) {
 		if (_wp._upper) {
-			glk_set_window(_wp._upper);
-#ifdef GARGLK
-			garglk_set_zcolors(curr_fg, curr_bg);
-#endif /* GARGLK */
+			_wp._upper.updateColors();
 			_wp._upper.clear();
 		}
 
@@ -211,13 +205,12 @@ void Processor::erase_screen(zword win) {
 
 void Processor::erase_window(zword win) {
 	if (h_version == V6 && win != _wp._cwin && h_interpreter_number != INTERP_AMIGA)
-		garglk_set_zcolors(_wp[win][TRUE_FG_COLOR], _wp[win][TRUE_BG_COLOR]);
+		_wp[win].updateColors();
 
-	if (_wp[win])
-		glk_window_clear(_wp[win]);
-
+	_wp[win].clear();
+		
 	if (h_version == V6 && win != _wp._cwin && h_interpreter_number != INTERP_AMIGA)
-		garglk_set_zcolors(_wp[_wp._cwin][TRUE_FG_COLOR], _wp[_wp._cwin][TRUE_BG_COLOR]);
+		_wp[_wp._cwin].updateColors();
 }
 
 void Processor::z_buffer_mode() {
@@ -309,9 +302,7 @@ void Processor::z_set_true_colour() {
 	if (!(zback < 0))
 		zback = zRGB(zargs[1]);
 
-#ifdef GARGLK
-	garglk_set_zcolors(zfore, zback);
-#endif /* GARGLK */
+	_wp[_wp._cwin].updateColors(zfore, zback);
 }
 
 void Processor::z_set_colour() {

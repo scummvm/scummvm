@@ -119,6 +119,11 @@ public:
 	}
 
 	/**
+	 * Equality operator
+	 */
+	inline bool operator==(const Window &rhs) { return this == &rhs; }
+
+	/**
 	 * Cast operator for testing if the window has a proper Glk window attached to it
 	 */
 	operator bool() const { return _win != nullptr; }
@@ -147,6 +152,16 @@ public:
 	 * Clear the window
 	 */
 	void clear();
+
+	/**
+	 * Update colors for the window
+	 */
+	void updateColors();
+
+	/**
+	 * Update colors for the window
+	 */
+	void updateColors(uint fore, uint back);
 };
 
 /**
@@ -187,9 +202,16 @@ public:
 	void setWindow(int win);
 
 	/**
+	 * Get the current window
+	 */
+	Window &currWin() {
+		return _windows[_cwin];
+	}
+
+	/**
 	 * Get the current window pointer
 	 */
-	winid_t currWin() const {
+	winid_t glkWin() const {
 		assert(_windows[_cwin]._win);
 		return _windows[_cwin]._win;
 	}
