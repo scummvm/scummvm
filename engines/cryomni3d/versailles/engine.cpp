@@ -35,7 +35,7 @@
 
 #include "cryomni3d/versailles/engine.h"
 
-#define DEBUG_FAST_START 1
+//#define DEBUG_FAST_START 1
 
 namespace CryOmni3D {
 namespace Versailles {
