@@ -632,8 +632,10 @@ void EoBCoreEngine::readSettings() {
 	_configSounds = ConfMan.getBool("sfx_mute") ? 0 : 1;
 	_configMusic = _configSounds ? 1 : 0;
 
-	if (_sound)
+	if (_sound) {
+		_sound->enableMusic(_configSounds ? 1 : 0);
 		_sound->enableSFX(_configSounds);
+	}
 }
 
 void EoBCoreEngine::writeSettings() {

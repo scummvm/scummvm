@@ -66,8 +66,8 @@ public:
 	void flushResource(const Common::String &name);
 	void flushAllResources();
 
-	void setMusicVolume(int volume) {}
-	void setSoundEffectVolume(int volume) {}
+	void setMusicVolume(int volume);
+	void setSoundEffectVolume(int volume);
 
 private:
 	AudioMaster2Internal *_am2i;

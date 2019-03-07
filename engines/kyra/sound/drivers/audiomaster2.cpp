@@ -93,6 +93,9 @@ public:
 	void flushResource(const Common::String &name);
 	void flushAllResources();
 
+	void setMusicVolume(int volume);
+	void setSoundEffectVolume(int volume);
+
 	void interrupt();
 
 	void sync(SoundResource *res);
@@ -116,7 +119,7 @@ private:
 
 class SoundResource {
 protected:
-	SoundResource(AudioMaster2ResourceManager *res, int type) : _res(res), _type(type), _playing(false), _next(0), _refCnt(1) {}
+	SoundResource(AudioMaster2ResourceManager *res, int type) : _res(res), _type(type), _playing(false), _next(0), _flags(0), _masterVolume(64), _refCnt(1) {}
 	virtual ~SoundResource() {}
 public:
 	void loadName(Common::ReadStream *stream, uint32 size);
@@ -131,6 +134,7 @@ public:
 	uint8 getType() const;
 	bool getPlayStatus() const;
 	void setPlayStatus(bool playing);
+	void setMasterVolume(int volume);
 
 	virtual void interrupt(AudioMaster2IOManager *io);
 	virtual void setupMusicNote(AudioMaster2IOManager::IOUnit *unit, uint8 note, uint16 volume) {}
@@ -146,6 +150,7 @@ protected:
 	Common::String _name;
 	const uint8 _type;
 	uint8 _flags;
+	uint16 _masterVolume;
 	AudioMaster2ResourceManager *_res;
 
 private:
@@ -180,7 +185,7 @@ private:
 	uint16 _rate;
 	uint8 _numBlocks;
 	uint8 _format;
-	uint32 _volume;
+	uint32 _trackVolume;
 
 	const int8 *_data;
 	uint32 _dataSize;
@@ -221,7 +226,7 @@ private:
 
 class SoundResourceSMUS : public SoundResource {
 public:
-	SoundResourceSMUS(AudioMaster2ResourceManager *res) : SoundResource(res, 1), _tempo(0), _vol(0), _masterVolume(0x40), _playFlags(0) {}
+	SoundResourceSMUS(AudioMaster2ResourceManager *res) : SoundResource(res, 1), _tempo(0), _songVolume(0), _playFlags(0) {}
 private:
 	virtual ~SoundResourceSMUS();
 public:
@@ -264,8 +269,7 @@ private:
 	bool parse(AudioMaster2IOManager *io, Track *track);
 	
 	uint16 _tempo;
-	uint16 _masterVolume;
-	uint8 _vol;
+	uint8 _songVolume;
 
 	static const uint16 _durationTable[64];
 
@@ -276,7 +280,7 @@ private:
 
 class AudioMaster2ResourceManager {
 public:
-	AudioMaster2ResourceManager(AudioMaster2Internal *driver, Common::Mutex *mutex) : _driver(driver), _mutex(mutex), _chainPlaying(0), _chainInactive(0) {}
+	AudioMaster2ResourceManager(AudioMaster2Internal *driver, Common::Mutex *mutex);
 	~AudioMaster2ResourceManager();
 
 	void loadResourceFile(Common::SeekableReadStream *data);
@@ -288,6 +292,8 @@ public:
 
 	SoundResource *getResource(const Common::String &resName, SoundResource::Mode mode);
 
+	void setMasterVolume(int type, int volume);
+
 	void interrupt(AudioMaster2IOManager *io);
 	
 private:
@@ -297,6 +303,8 @@ private:
 
 	SoundResource *_chainPlaying;
 	SoundResource *_chainInactive;
+
+	uint16 _masterVolume[3];
 
 	AudioMaster2Internal *_driver;
 	Common::Mutex *_mutex;
@@ -440,6 +448,10 @@ void SoundResource::setPlayStatus(bool playing) {
 	_playing = playing;
 }
 
+void SoundResource::setMasterVolume(int volume) {
+	_masterVolume = volume >> 2;
+}
+
 void SoundResource::interrupt(AudioMaster2IOManager *io) {
 	setPlayStatus(false);
 	AudioMaster2IOManager::IOUnit *unit = io->requestFreeUnit();
@@ -447,7 +459,7 @@ void SoundResource::interrupt(AudioMaster2IOManager *io) {
 }
 
 SoundResource8SVX::SoundResource8SVX(AudioMaster2ResourceManager *res) : SoundResource(res, 4) {
-	_numSamplesOnce = _numSamplesRepeat = _numSamplesPerCycle = _volume = _dataSize = 0;
+	_numSamplesOnce = _numSamplesRepeat = _numSamplesPerCycle = _trackVolume = _dataSize = 0;
 	_rate = 0;
 	_numBlocks = _format = 0;
 	_data = 0;
@@ -471,7 +483,7 @@ void SoundResource8SVX::loadHeader(Common::ReadStream *stream, uint32 size) {
 	if (_format)
 		error("SoundResource8SVX:loadHeader(): Unsupported data format");
 
-	_volume = stream->readUint32BE();
+	_trackVolume = stream->readUint32BE();
 }
 
 void SoundResource8SVX::loadData(Common::ReadStream *stream, uint32 size) {
@@ -547,7 +559,7 @@ void SoundResource8SVX::setupSoundEffect(AudioMaster2IOManager::IOUnit *unit, ui
 	unit->_lenRepeat = nr;
 
 	unit->_endTick = _numSamplesRepeat ? 0xFFFFFFFF : (tempo * _numSamplesOnce * 60) / _rate + sync;
-	unit->_volumeSetting = unit->_outputVolume = (_volume >= 0xFFFF) ? _volume >> 2 : 0x4000;
+	unit->_volumeSetting = unit->_outputVolume = ((_trackVolume >= 0xFFFF ? _trackVolume >> 2 : 0x4000) * _masterVolume) / 64;
 	setupEnvelopes(unit);
 }
 
@@ -675,7 +687,7 @@ void SoundResourceSMUS::loadHeader(Common::ReadStream *stream, uint32 size) {
 		error("SoundResourceSMUS:loadHeader(): Invalid data chunk size");
 	
 	_tempo = stream->readUint16BE() / 68;
-	_vol = stream->readByte();
+	_songVolume = stream->readByte();
 }
 
 void SoundResourceSMUS::loadInstrument(Common::ReadStream *stream, uint32 size) {
@@ -736,7 +748,6 @@ uint16 SoundResourceSMUS::getTempo() const {
 void SoundResourceSMUS::setSync(uint32 sync) {
 	for (Common::Array<Track*>::iterator i = _tracks.begin(); i != _tracks.end(); ++i)
 		(*i)->_sync = sync;
-	_masterVolume = 0x40;
 }
 
 void SoundResourceSMUS::interrupt(AudioMaster2IOManager *io) {
@@ -821,6 +832,10 @@ const uint16 SoundResourceSMUS::_durationTable[64] = {
 	0x8700, 0x4380, 0x21c0, 0x10e0, 0x0870, 0x0438, 0x021c, 0x010e
 };
 
+AudioMaster2ResourceManager::AudioMaster2ResourceManager(AudioMaster2Internal *driver, Common::Mutex *mutex) : _driver(driver), _mutex(mutex), _chainPlaying(0), _chainInactive(0) {
+	memset(_masterVolume, 0, sizeof(_masterVolume));
+}
+
 AudioMaster2ResourceManager::~AudioMaster2ResourceManager() {
 	flush();
 }
@@ -831,6 +846,9 @@ void AudioMaster2ResourceManager::loadResourceFile(Common::SeekableReadStream *d
 		Common::Functor1Mem<Common::IFFChunk&, bool, AudioMaster2IFFLoader> cb(&loader, &AudioMaster2IFFLoader::loadChunk);
 		loader.parse(cb);
 	} while (data->pos() + 8 < data->size());
+
+	for (int i = 0; i < 3; ++i)
+		setMasterVolume(1 << i, _masterVolume[i]);
 }
 
 void AudioMaster2ResourceManager::initResource(SoundResource *resource) {
@@ -890,6 +908,23 @@ SoundResource *AudioMaster2ResourceManager::getResource(const Common::String &re
 	linkToChain(res, mode);
 
 	return res;
+}
+
+void AudioMaster2ResourceManager::setMasterVolume(int type, int volume) {
+	assert(type == 1 || type == 2 || type == 4);
+	Common::StackLock lock(*_mutex);
+
+	_masterVolume[type >> 1] = volume & 0xFFFF;
+
+	for (SoundResource *res = _chainPlaying; res; res = res->_next) {
+		if (res->getType() == type)
+			res->setMasterVolume(volume);
+	}
+
+	for (SoundResource *res = _chainInactive; res; res = res->_next) {
+		if (res->getType() == type)
+			res->setMasterVolume(volume);
+	}
 }
 
 void AudioMaster2ResourceManager::interrupt(AudioMaster2IOManager *io) {
@@ -1169,6 +1204,16 @@ void AudioMaster2Internal::flushAllResources() {
 		_res->flush();
 }
 
+void AudioMaster2Internal::setMusicVolume(int volume) {
+	if (_ready)
+		_res->setMasterVolume(1, volume);
+}
+
+void AudioMaster2Internal::setSoundEffectVolume(int volume) {
+	if (_ready)
+		_res->setMasterVolume(4, volume);
+}
+
 void AudioMaster2Internal::interrupt() {
 	if (!_ready)
 		return;
@@ -1385,6 +1430,14 @@ void AudioMaster2::flushResource(const Common::String &name) {
 
 void AudioMaster2::flushAllResources() {
 	_am2i->flushAllResources();
+}
+
+void AudioMaster2::setMusicVolume(int volume) {
+	_am2i->setMusicVolume(volume);
+}
+
+void AudioMaster2::setSoundEffectVolume(int volume) {
+	_am2i->setSoundEffectVolume(volume);
 }
 
 } // End of namespace Kyra

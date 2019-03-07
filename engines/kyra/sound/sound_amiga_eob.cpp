@@ -135,6 +135,9 @@ void SoundAmiga_EoB::loadSoundFile(Common::String file) {
 }
 
 void SoundAmiga_EoB::playTrack(uint8 track) {
+	if (!_musicEnabled)
+		return;
+
 	Common::String newSound;
 	if (_vm->game() == GI_EOB1) {
 		if (_currentResourceSet == kMusicIntro) {
