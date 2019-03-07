@@ -78,4 +78,8 @@ void Inventory::updateVisibility() {
 	_actor->priorityLayer = _vm->isFlagSet(Dragons::ENGINE_FLAG_10) ? (int16)6 : (int16)0;
 }
 
+Common::Point Inventory::getPosition() {
+	return positionTable[_screenPositionIndex];
+}
+
 } // End of namespace Dragons

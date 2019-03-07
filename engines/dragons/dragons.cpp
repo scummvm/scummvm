@@ -174,9 +174,19 @@ void DragonsEngine::gameLoop() {
 		if (flickerIni->sceneId == getCurrentSceneId()) {
 			uint16 id = getIniFromImg();
 			if (id != 0) {
-				error("todo 0x80026cb0 run script");
+				// 0x80026cac
+				error("todo 0x80026cac run script");
+			} else {
+				// 0x80026d34
+				// $s4_1 = 0;
 			}
+		} else {
+			// 0x80026d34
+			// $s4_1 = 0;
 		}
+
+		// 0x80026d38
+		_cursor->updateINIUnderCursor();
 
 		runINIScripts();
 
@@ -462,9 +472,11 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 		if ((_flags & (Dragons::ENGINE_FLAG_80000000 | Dragons::ENGINE_FLAG_8)) == 8) {
 			_cursor->update();
 		}
-		//TODO
+		//TODO 0x80027be4
+
 		uint16 currentSceneId = _scene->getSceneId();
 
+		// 0x80027db8
 		if (!_inventory->isVisible()) {
 			for (uint16 i = 0; i < _dragonINIResource->totalRecords(); i++) {
 				DragonINI *ini = getINI(i);
@@ -475,6 +487,10 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 					}
 				}
 			}
+		}
+
+		if (run_func_ptr_unk_countdown_timer != 0) {
+			run_func_ptr_unk_countdown_timer--;
 		}
 	} else {
 		run_func_ptr_unk_countdown_timer = 1;
