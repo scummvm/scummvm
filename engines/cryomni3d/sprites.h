@@ -33,7 +33,7 @@ class ReadStream;
 }
 
 namespace Graphics {
-class Surface;
+struct Surface;
 }
 
 namespace CryOmni3D {

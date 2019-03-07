@@ -40,7 +40,7 @@
 
 namespace Graphics {
 class ManagedSurface;
-class Surface;
+struct Surface;
 }
 
 namespace CryOmni3D {
