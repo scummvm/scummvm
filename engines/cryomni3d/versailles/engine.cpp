@@ -67,20 +67,20 @@ Common::Error CryOmni3DEngine_Versailles::run() {
 	CryOmni3DEngine::run();
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
-	SearchMan.addSubDirectoryMatching(gameDataDir, "datas_v/sc_trans", 1);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "datas_v/menu", 1);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "datas_v/basedoc/fonds", 1);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "datas_v/fonts", 1);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "datas_v/spr8col", 1);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "datas_v/spr8col/bmpok", 1);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "datas_v/wam", 1);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "datas_v/objets", 1);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "datas_v/gto", 1);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "datas_v/dial/flc_dial", 1);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "datas_v/dial/voix", 1);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "datas_v/textes", 1);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "datas_v/music", 1);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "datas_v/sound", 1);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "sc_trans", 1);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "menu", 1);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "basedoc/fonds", 1);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "fonts", 1);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "spr8col", 1);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "spr8col/bmpok", 1);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "wam", 1);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "objets", 1);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "gto", 1);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "dial/flc_dial", 1);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "dial/voix", 1);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "textes", 1);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "music", 1);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "sound", 1);
 
 	setupMessages();
 
@@ -582,13 +582,13 @@ void CryOmni3DEngine_Versailles::initNewLevel(int level) {
 		Common::SearchSet *levelFilesImgFix = new Common::SearchSet();
 
 		levelFilesAnimacti->addSubDirectoryMatching(gameDataDir, Common::String::format(
-		            "datas_v/animacti/level%d", level), 1);
+		            "animacti/level%d", level), 1);
 		levelFilesWarp->addSubDirectoryMatching(gameDataDir, Common::String::format(
-		        "datas_v/warp/level%d/cyclo", level), 1);
+		        "warp/level%d/cyclo", level), 1);
 		levelFilesWarp->addSubDirectoryMatching(gameDataDir, Common::String::format(
-		        "datas_v/warp/level%d/hnm", level), 1);
+		        "warp/level%d/hnm", level), 1);
 		levelFilesImgFix->addSubDirectoryMatching(gameDataDir, Common::String::format(
-		            "datas_v/img_fix/level%d", level), 1);
+		            "img_fix/level%d", level), 1);
 
 		SearchMan.add("__levelFiles_animacti", levelFilesAnimacti);
 		SearchMan.add("__levelFiles_warp", levelFilesWarp);
@@ -604,13 +604,13 @@ void CryOmni3DEngine_Versailles::initNewLevel(int level) {
 			Common::SearchSet *visitFilesImgFix = new Common::SearchSet();
 
 			visitFilesAnimacti->addSubDirectoryMatching(gameDataDir, Common::String::format(
-			            "datas_v/animacti/level%d", lvl), 1);
+			            "animacti/level%d", lvl), 1);
 			visitFilesWarp->addSubDirectoryMatching(gameDataDir, Common::String::format(
-			        "datas_v/warp/level%d/cyclo", lvl), 1);
+			        "warp/level%d/cyclo", lvl), 1);
 			visitFilesWarp->addSubDirectoryMatching(gameDataDir, Common::String::format(
-			        "datas_v/warp/level%d/hnm", lvl), 1);
+			        "warp/level%d/hnm", lvl), 1);
 			visitFilesImgFix->addSubDirectoryMatching(gameDataDir, Common::String::format(
-			            "datas_v/img_fix/level%d", lvl), 1);
+			            "img_fix/level%d", lvl), 1);
 
 			visitFiles->add(Common::String::format("__visitFiles_animacti_%d", lvl), visitFilesAnimacti);
 			visitFiles->add(Common::String::format("__visitFiles_warp_%d", lvl), visitFilesWarp);
