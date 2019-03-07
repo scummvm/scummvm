@@ -359,7 +359,7 @@ void Processor::z_set_colour() {
 	_wp[win][TRUE_BG_COLOR] = bg;
 
 	if (win == _wp._cwin || h_version != V6)
-		garglk_set_zcolors(fg, bg);
+		_wp.currWin().updateColors(fg, bg);
 }
 
 void Processor::z_set_font() {
@@ -440,35 +440,7 @@ void Processor::z_set_text_style() {
 	if (gos_linepending && _wp.currWin() == gos_linewin)
 		return;
 
-	if (style & REVERSE_STYLE) {
-		os_set_reverse_video(true);
-	}
-
-	if (style & FIXED_WIDTH_STYLE) {
-		if (curr_font == GRAPHICS_FONT)
-			glk_set_style(style_User1);			// character graphics
-		else if (style & BOLDFACE_STYLE && style & EMPHASIS_STYLE)
-			glk_set_style(style_BlockQuote);	// monoz
-		else if (style & EMPHASIS_STYLE)
-			glk_set_style(style_Alert);			// monoi
-		else if (style & BOLDFACE_STYLE)
-			glk_set_style(style_Subheader);		// monob
-		else
-			glk_set_style(style_Preformatted);	// monor
-	} else {
-		if (style & BOLDFACE_STYLE && style & EMPHASIS_STYLE)
-			glk_set_style(style_Note);			// propz
-		else if (style & EMPHASIS_STYLE)
-			glk_set_style(style_Emphasized);	// propi
-		else if (style & BOLDFACE_STYLE)
-			glk_set_style(style_Header);		// propb
-		else
-			glk_set_style(style_Normal);		// propr
-	}
-
-	if (curstyle == 0) {
-		os_set_reverse_video(false);
-	}
+	_wp[_wp._cwin].setStyle(style);
 }
 
 void Processor::z_set_window() {

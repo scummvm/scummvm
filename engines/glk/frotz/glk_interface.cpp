@@ -542,6 +542,7 @@ void GlkInterface::showBeyondZorkTitle() {
 }
 
 void GlkInterface::os_draw_picture(int picture, const Common::Point &pos) {
+	assert(pos.x != 0 && pos.y != 0);
 	if (_wp._cwin == 0) {
 		// Picture embedded within the lower text area
 		glk_image_draw(_wp._lower, picture, imagealign_MarginLeft, 0);

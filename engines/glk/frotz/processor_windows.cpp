@@ -59,8 +59,8 @@ void Processor::z_draw_picture() {
 			y = win[Y_CURSOR];
 	}
 
-	y += win[Y_POS] - 1;
 	x += win[X_POS] - 1;
+	y += win[Y_POS] - 1;
 
 	/* The following is necessary to make Amiga and Macintosh story
 	 * files work with MCGA graphics files.  Some screen-filling

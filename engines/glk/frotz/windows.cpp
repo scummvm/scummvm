@@ -30,8 +30,10 @@ namespace Glk {
 namespace Frotz {
 
 Windows::Windows() : _lower(_windows[0]), _upper(_windows[1]), _background(nullptr), _cwin(0) {
-	for (size_t idx = 0; idx < 8; ++idx)
+	for (size_t idx = 0; idx < 8; ++idx) {
 		_windows[idx]._windows = this;
+		_windows[idx]._index = idx;
+	}
 }
 
 size_t Windows::size() const {
@@ -49,7 +51,7 @@ void Windows::setup(bool isVersion6) {
 		// flexibility of wher we draw pictures, and the lower and upper areas sit on top of them
 		_background = g_vm->glk_window_open(0, 0, 0, wintype_Graphics, 0);
 		_background->setBackgroundColor(0xffffff);
-
+		/*
 		MonoFontInfo &fi = g_vm->_conf->_monoInfo;
 		_lower = g_vm->glk_window_open(g_vm->glk_window_get_root(),
 			winmethod_Arbitrary | winmethod_Fixed, 0, wintype_TextBuffer, 0);
@@ -59,15 +61,16 @@ void Windows::setup(bool isVersion6) {
 		_upper.setSize(Point(g_system->getWidth() / fi._cellW, 1));
 		_lower.setPosition(Point(1, 2));
 		_lower.setSize(Point(g_system->getWidth() / fi._cellW, g_system->getHeight() / fi._cellH - 1));
+		*/
 
 	} else {
 		_lower = g_vm->glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
 		_upper = g_vm->glk_window_open(_lower, winmethod_Above | winmethod_Fixed, 0, wintype_TextGrid, 0);
-	}
 
-	_lower.update();
-	_upper.update();
-	g_vm->glk_set_window(_lower);
+		_lower.update();
+		_upper.update();
+		g_vm->glk_set_window(_lower);
+	}
 }
 
 void Windows::setWindow(int win) {
@@ -174,6 +177,62 @@ void Window::updateColors(uint fore, uint back) {
 	_properties[TRUE_FG_COLOR] = fore;
 	_properties[TRUE_BG_COLOR] = back;
 	updateColors();
+}
+
+void Window::setStyle(uint style) {
+	/*
+	if (style & REVERSE_STYLE) {
+		os_set_reverse_video(true);
+	}*/
+
+	if (!_win)
+		createGlkWindow();
+
+	if (style & FIXED_WIDTH_STYLE) {
+		if (g_vm->curr_font == GRAPHICS_FONT)
+			_win->_stream->setStyle(style_User1);			// character graphics
+		else if (style & BOLDFACE_STYLE && style & EMPHASIS_STYLE)
+			_win->_stream->setStyle(style_BlockQuote);	// monoz
+		else if (style & EMPHASIS_STYLE)
+			_win->_stream->setStyle(style_Alert);			// monoi
+		else if (style & BOLDFACE_STYLE)
+			_win->_stream->setStyle(style_Subheader);		// monob
+		else
+			_win->_stream->setStyle(style_Preformatted);	// monor
+	} else {
+		if (style & BOLDFACE_STYLE && style & EMPHASIS_STYLE)
+			_win->_stream->setStyle(style_Note);			// propz
+		else if (style & EMPHASIS_STYLE)
+			_win->_stream->setStyle(style_Emphasized);	// propi
+		else if (style & BOLDFACE_STYLE)
+			_win->_stream->setStyle(style_Header);		// propb
+		else
+			_win->_stream->setStyle(style_Normal);		// propr
+	}
+
+	/*
+	if (curstyle == 0) {
+		os_set_reverse_video(false);
+	}
+	*/
+}
+
+void Window::createGlkWindow() {
+	// Create a new window	
+	if (_index == 1) {
+		// Text grid window
+		_win = g_vm->glk_window_open(g_vm->glk_window_get_root(),
+			winmethod_Arbitrary | winmethod_Fixed, 0, wintype_TextGrid, 0);
+	} else {
+		// text buffer window
+		_win = g_vm->glk_window_open(g_vm->glk_window_get_root(),
+			winmethod_Arbitrary | winmethod_Fixed, 0, wintype_TextBuffer, 0);
+	}
+
+	setSize(Point(_properties[X_SIZE], _properties[Y_SIZE]));
+	setPosition(Point(_properties[X_POS], _properties[Y_POS]));
+
+	g_vm->glk_set_window(_win);
 }
 
 const uint &Window::getProperty(WindowProperty propType) {

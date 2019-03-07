@@ -77,6 +77,7 @@ class Window {
 	};
 private:
 	Windows *_windows;
+	int _index;
 	winid_t _win;
 	uint _properties[TRUE_BG_COLOR + 1];
 private:
@@ -99,6 +100,11 @@ private:
 	 * Updates the local window properties based on an attached Glk window
 	 */
 	void update();
+
+	/**
+	 * Creates a new Glk window to attach to the window
+	 */
+	void createGlkWindow();
 public:
 	/**
 	 * Constructor
@@ -162,6 +168,11 @@ public:
 	 * Update colors for the window
 	 */
 	void updateColors(uint fore, uint back);
+
+	/**
+	 * Set the textstyle
+	 */
+	void setStyle(uint style);
 };
 
 /**
