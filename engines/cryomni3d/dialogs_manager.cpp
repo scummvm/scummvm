@@ -139,7 +139,7 @@ const char *DialogsManager::findSequence(const char *sequence) const {
 Common::String DialogsManager::findVideo(const char *data) const {
 	data = previousMatch(data, ".FLC");
 	if (data == nullptr) {
-		return nullptr;
+		return Common::String();
 	}
 
 	// Video name is without the extension
