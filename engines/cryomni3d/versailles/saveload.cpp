@@ -42,7 +42,7 @@ bool CryOmni3DEngine_Versailles::canVisit() const {
 	// Build a custom SearchSet
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	Common::SearchSet visitsSearchSet;
-	visitsSearchSet.addSubDirectoryMatching(gameDataDir, "datas_v/savegame/visite", 1);
+	visitsSearchSet.addSubDirectoryMatching(gameDataDir, "savegame/visite", 1);
 	return visitsSearchSet.hasFile("game0001.sav");
 }
 
@@ -66,7 +66,7 @@ void CryOmni3DEngine_Versailles::getSavesList(bool visit, Common::StringArray &s
 		// Add bootstrap visit
 		const Common::FSNode gameDataDir(ConfMan.get("path"));
 		Common::SearchSet visitsSearchSet;
-		visitsSearchSet.addSubDirectoryMatching(gameDataDir, "datas_v/savegame/visite", 1);
+		visitsSearchSet.addSubDirectoryMatching(gameDataDir, "savegame/visite", 1);
 		if (visitsSearchSet.hasFile("game0001.sav")) {
 			Common::File visitFile;
 			if (!visitFile.open("game0001.sav", visitsSearchSet)) {
@@ -203,7 +203,7 @@ bool CryOmni3DEngine_Versailles::loadGame(bool visit, unsigned int saveNum) {
 		// Load bootstrap visit
 		const Common::FSNode gameDataDir(ConfMan.get("path"));
 		Common::SearchSet visitsSearchSet;
-		visitsSearchSet.addSubDirectoryMatching(gameDataDir, "datas_v/savegame/visite", 1);
+		visitsSearchSet.addSubDirectoryMatching(gameDataDir, "savegame/visite", 1);
 		Common::File *visitFile = new Common::File();
 		if (!visitFile->open("game0001.sav", visitsSearchSet)) {
 			delete visitFile;
