@@ -29,7 +29,7 @@
 #include "engines/cryomni3d/objects.h"
 
 namespace Graphics {
-class Surface;
+struct Surface;
 }
 
 namespace CryOmni3D {

@@ -40,7 +40,7 @@
 class OSystem;
 
 namespace Common {
-class Point;
+struct Point;
 class SeekableReadStream;
 }
 

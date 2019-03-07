@@ -27,8 +27,8 @@
 #include "common/str.h"
 
 namespace Common {
-class Point;
-class Rect;
+struct Point;
+struct Rect;
 }
 
 namespace CryOmni3D {
