@@ -38,6 +38,7 @@ private:
 	int16 _y;
 	Actor *_actor;
 	int32 _sequenceID;
+	uint16 _iniUnderCursor;
 
 public:
 	Cursor(DragonsEngine *vm);
@@ -45,6 +46,7 @@ public:
 	void update();
 	void updateVisibility();
 	void updatePosition(int16 x, int16 y);
+	int16 updateINIUnderCursor();
 };
 
 } // End of namespace Dragons

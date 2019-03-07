@@ -24,6 +24,7 @@
 #include "dragons.h"
 #include "dragonini.h"
 #include "inventory.h"
+#include "scene.h"
 
 namespace Dragons {
 
@@ -45,6 +46,7 @@ void Cursor::init(ActorManager *actorManager, DragonINIResource *dragonINIResour
 
 	dragonINIResource->getFlickerRecord()->actor = _actor; //TODO is this correct?
 	dragonINIResource->getFlickerRecord()->field_1a_flags_maybe |= Dragons::INI_FLAG_1;
+	_iniUnderCursor = 0;
 }
 
 void Cursor::update() {
@@ -58,8 +60,8 @@ void Cursor::update() {
 		_sequenceID = 1;
 	}
 
-	_actor->x_pos = _x;
-	_actor->y_pos = _y;
+	_actor->x_pos = _x + _vm->_scene->_camera.x;
+	_actor->y_pos = _y + _vm->_scene->_camera.y;
 
 	// 0x80028104
 }
@@ -75,6 +77,39 @@ void Cursor::updateVisibility() {
 void Cursor::updatePosition(int16 x, int16 y) {
 	_x = x;
 	_y = y;
+}
+
+int16 Cursor::updateINIUnderCursor() {
+	if (_vm->isFlagSet(Dragons::ENGINE_FLAG_10)) {
+		int16 xOffset = 0;
+		if (_vm->_inventory->getSequenceId() == 0 || _vm->_inventory->getSequenceId() == 2) {
+			if (_vm->_inventory->getPositionIndex() == 1 || _vm->_inventory->getPositionIndex() == 3) {
+				xOffset = 0x32;
+			}
+		}
+		Common::Point inventoryPosition = _vm->_inventory->getPosition();
+		if (_x >= inventoryPosition.x + 0xa + xOffset
+			&& _x < inventoryPosition.x + 0x35 + xOffset
+			&& _y >= inventoryPosition.y + 0xa
+			&& _y < inventoryPosition.y + 0x25) {
+			_iniUnderCursor = 0x8001;
+			return _iniUnderCursor;
+		}
+
+		if (_x >= inventoryPosition.x + 0x36
+			&& _x < inventoryPosition.x + 0x5f
+			&& _y >= inventoryPosition.y + 0xa
+			&& _y < inventoryPosition.y + 0x25
+			&& _vm->_inventory->getPositionIndex() != 0
+			&& _vm->_inventory->getPositionIndex() != 2) {
+			_iniUnderCursor = 0x8002;
+			return _iniUnderCursor;
+		}
+	}
+
+	// TODO 0x80028940
+
+	return 0;
 }
 
 } // End of namespace Dragons

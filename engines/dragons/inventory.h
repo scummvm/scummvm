@@ -49,6 +49,8 @@ public:
 	}
 
 	int16 getType() { return _type; }
+	int16 getPositionIndex() { return _screenPositionIndex; }
+	Common::Point getPosition();
 
 	bool isVisible() {
 		return _type != 0;
