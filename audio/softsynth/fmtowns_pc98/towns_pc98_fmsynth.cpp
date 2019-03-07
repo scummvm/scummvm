@@ -1259,10 +1259,11 @@ uint8 TownsPC98_FmSynth::readReg(uint8 part, uint8 regAddress) {
 
 	if (!(regAddress & 0xF0) && _ssg)
 		return _ssg->readReg(regAddress & 0x0F);
-	else if ((regAddress & 0xF0) == 0x10 && _prc)
 #ifdef DISABLE_PC98_RHYTHM_CHANNEL
+	else if ((regAddress & 0xF0) == 0x10)
 		return 0;
 #else
+	else if ((regAddress & 0xF0) == 0x10 && _prc)
 		return _prc->readReg(regAddress & 0x0F);
 #endif
 
