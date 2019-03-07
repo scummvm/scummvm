@@ -81,6 +81,24 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	// Versailles 1685
+	// French Macintosh
+	// From criezy
+	{
+		{
+			"versailles",
+			"",
+			AD_ENTRY1s("Versailles", "f81935517b1bbb58acf70f25efa5c7f3", 375868),
+			Common::FR_FRA,
+			Common::kPlatformMacintosh,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_VERSAILLES,
+		0,
+		0,
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0, 0 }
 };
 
@@ -108,6 +126,7 @@ static const CryOmni3DGameDescription fallbackDescs[] = {
 static const ADFileBasedFallback fileBased[] = {
 	{ &fallbackDescs[0].desc,  { "VERSAILL.EXE", 0 } },
 	{ &fallbackDescs[0].desc,  { "VERSAILL.PGM", 0 } },
+	{ &fallbackDescs[0].desc,  { "Versailles", 0 } },
 	{ 0, { 0 } }
 };
 

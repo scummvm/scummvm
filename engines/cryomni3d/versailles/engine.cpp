@@ -221,17 +221,49 @@ Common::Error CryOmni3DEngine_Versailles::run() {
 
 void CryOmni3DEngine_Versailles::setupFonts() {
 	Common::Array<Common::String> fonts;
-	fonts.push_back("font01.CRF");
-	fonts.push_back("font02.CRF");
-	fonts.push_back("font03.CRF");
-	fonts.push_back("font04.CRF");
-	fonts.push_back("font05.CRF");
-	fonts.push_back("font06.CRF");
-	fonts.push_back("font07.CRF");
-	fonts.push_back("font08.CRF");
-	fonts.push_back("font09.CRF");
-	fonts.push_back("font10.CRF");
-	fonts.push_back("font11.CRF");
+
+	if (getPlatform() == Common::kPlatformMacintosh) {
+		// TODO: Disassemble MacOS executable to find which 11 fonts are used
+		fonts.push_back("MPW12.CRF");
+		fonts.push_back("MPW9.CRF");
+		fonts.push_back("arial11.CRF");
+		fonts.push_back("fruitL10.CRF");
+		fonts.push_back("fruitL11.CRF");
+		fonts.push_back("fruitL12.CRF");
+		fonts.push_back("fruitL13.CRF");
+		fonts.push_back("fruitL14.CRF");
+		fonts.push_back("fruitL16.CRF");
+		fonts.push_back("fruitL18.CRF");
+		fonts.push_back("fruitL9.CRF");
+		fonts.push_back("garamB18.CRF");
+		fonts.push_back("garamB20.CRF");
+		fonts.push_back("garamB22.CRF");
+		fonts.push_back("geneva10.CRF");
+		fonts.push_back("geneva12.CRF");
+		fonts.push_back("geneva13.CRF");
+		fonts.push_back("geneva14.CRF");
+		fonts.push_back("geneva15.CRF");
+		fonts.push_back("geneva9.CRF");
+		fonts.push_back("helvet11.CRF");
+		fonts.push_back("helvet12.CRF");
+		fonts.push_back("helvet13.CRF");
+		fonts.push_back("helvet14.CRF");
+		fonts.push_back("helvet16.CRF");
+		fonts.push_back("helvet24.CRF");
+		fonts.push_back("helvet9.CRF");
+	} else {
+		fonts.push_back("font01.CRF");
+		fonts.push_back("font02.CRF");
+		fonts.push_back("font03.CRF");
+		fonts.push_back("font04.CRF");
+		fonts.push_back("font05.CRF");
+		fonts.push_back("font06.CRF");
+		fonts.push_back("font07.CRF");
+		fonts.push_back("font08.CRF");
+		fonts.push_back("font09.CRF");
+		fonts.push_back("font10.CRF");
+		fonts.push_back("font11.CRF");
+	}
 
 	_fontManager.loadFonts(fonts);
 }
