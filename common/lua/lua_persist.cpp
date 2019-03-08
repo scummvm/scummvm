@@ -44,16 +44,16 @@
  */
 
 
-#include "sword25/util/lua_persistence.h"
+#include "lua_persistence.h"
 
-#include "sword25/util/double_serialization.h"
-#include "sword25/util/lua_persistence_util.h"
+#include "double_serialization.h"
+#include "lua_persistence_util.h"
 
 #include "common/stream.h"
 
-#include "lua/lobject.h"
-#include "lua/lstate.h"
-#include "lua/lgc.h"
+#include "lobject.h"
+#include "lstate.h"
+#include "lgc.h"
 
 
 namespace Lua {

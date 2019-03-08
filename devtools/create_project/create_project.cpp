@@ -1074,6 +1074,7 @@ const Feature s_features[] = {
 	{           "16bit",                 "USE_RGB_COLOR",  "", true,  "16bit color support" },
 	{         "highres",                   "USE_HIGHRES",  "", true,  "high resolution" },
 	{         "mt32emu",                   "USE_MT32EMU",  "", true,  "integrated MT-32 emulator" },
+	{             "lua",                       "USE_LUA",  "", true,  "lua" },
 	{            "nasm",                      "USE_NASM",  "", true,  "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
 	{          "opengl",                    "USE_OPENGL",  "", true,  "OpenGL support" },
 	{        "opengles",                      "USE_GLES",  "", true,  "forced OpenGL ES mode" },
