@@ -24,6 +24,8 @@
 #include "kyra/resource/resource.h"
 #include "kyra/sound/sound_intern.h"
 
+#include "common/memstream.h"
+
 
 namespace Kyra {
 
@@ -1390,18 +1392,19 @@ void DarkMoonEngine::initSpells() {
 	EoBCoreEngine::initSpells();
 
 	int temp;
-	const uint8 *src = _staticres->loadRawData(kEoBBaseSpellProperties, temp);
+	const uint8 *data = _staticres->loadRawData(kEoBBaseSpellProperties, temp);
+	Common::MemoryReadStreamEndian *src = new Common::MemoryReadStreamEndian(data, temp, _flags.platform == Common::kPlatformAmiga);
 
 	for (int i = 0; i < _numSpells; i++) {
 		EoBSpell *s = &_spells[i];
-		src += 8;
-		s->flags = READ_LE_UINT16(src);
-		src += 10;
-		s->sound = *src++;
-		s->effectFlags = READ_LE_UINT32(src);
-		src += 4;
-		s->damageFlags = READ_LE_UINT16(src);
-		src += 2;
+		src->skip(8);
+		s->flags = src->readUint16();
+		src->skip(8);
+		s->sound = src->readByte();
+		if (_flags.platform == Common::kPlatformAmiga)
+			src->skip(1);
+		s->effectFlags = src->readUint32();
+		s->damageFlags = src->readUint16();
 	}
 }
 

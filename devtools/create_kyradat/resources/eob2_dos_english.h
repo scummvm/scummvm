@@ -556,7 +556,7 @@ static const char *const kEoB2CharStatusStrings82DOSEnglish[1] = {
 static const StringListProvider kEoB2CharStatusStrings82DOSEnglishProvider = { ARRAYSIZE(kEoB2CharStatusStrings82DOSEnglish), kEoB2CharStatusStrings82DOSEnglish };
 
 static const char *const kEoB2CharStatusStrings9DOSEnglish[1] = {
-	"%s is no longer paralyzed!\r"
+	"\x06\x04""%s is no longer paralyzed!\r"
 };
 
 static const StringListProvider kEoB2CharStatusStrings9DOSEnglishProvider = { ARRAYSIZE(kEoB2CharStatusStrings9DOSEnglish), kEoB2CharStatusStrings9DOSEnglish };

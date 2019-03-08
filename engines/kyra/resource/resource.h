@@ -492,9 +492,9 @@ enum KyraResources {
 	kEoBBaseSoundFilesIntro,
 	kEoBBaseSoundFilesIngame,
 	kEoBBaseSoundFilesFinale,
+	kEoBBaseLevelSounds1,
+	kEoBBaseLevelSounds2,
 
-	kEoB1BaseLevelSounds1,
-	kEoB1BaseLevelSounds2,
 	kEoB1MainMenuStrings,
 	kEoB1BonusStrings,
 
@@ -632,6 +632,9 @@ enum KyraResources {
 	kEoB2IntroShapes01,
 	kEoB2IntroShapes04,
 	kEoB2IntroShapes07,
+	kEoB2IntroShapes13,
+	kEoB2IntroShapes14,
+	kEoB2IntroShapes15,
 
 	kEoB2FinaleStrings,
 	kEoB2CreditsData,
@@ -929,6 +932,12 @@ enum KyraResources {
 	kEoB2PcmSoundEffectsIngame,
 	kEoB2PcmSoundEffectsIntro,
 	kEoB2PcmSoundEffectsFinale,
+
+	kEoB2SoundMapExtra,
+	kEoB2SoundIndex1,
+	kEoB2SoundIndex2,
+	kEoB2SoundFilesIngame2,
+	kEoB2MonsterSoundPatchData,
 
 	kLoLIngamePakFiles,
 	kLoLCharacterDefs,

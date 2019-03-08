@@ -45,7 +45,7 @@
 
 
 enum {
-	kKyraDatVersion = 93
+	kKyraDatVersion = 94
 };
 
 const ExtractFilename extractFilenames[] = {
@@ -414,10 +414,10 @@ const ExtractFilename extractFilenames[] = {
 	{ kEoBBaseSoundFilesIntro, kStringList, false },
 	{ kEoBBaseSoundFilesIngame, kStringList, false },
 	{ kEoBBaseSoundFilesFinale, kStringList, false },
+	{ kEoBBaseLevelSoundFiles1, kStringList, false },
+	{ kEoBBaseLevelSoundFiles2, kStringList, false },
 
 	// EYE OF THE BEHOLDER I
-	{ kEoB1LevelSoundFiles1, kStringList, false },
-	{ kEoB1LevelSoundFiles2, kStringList, false },
 	{ kEoB1MainMenuStrings, kStringList, true },
 	{ kEoB1BonusStrings, kStringList, true },
 
@@ -552,6 +552,9 @@ const ExtractFilename extractFilenames[] = {
 	{ kEoB2IntroShapes01, kEoB2ShapeData, false },
 	{ kEoB2IntroShapes04, kEoB2ShapeData, false },
 	{ kEoB2IntroShapes07, kEoB2ShapeData, false },
+	{ kEoB2IntroShapes13, kEoB2ShapeData, false },
+	{ kEoB2IntroShapes14, kEoB2ShapeData, false },
+	{ kEoB2IntroShapes15, kEoB2ShapeData, false },
 	{ kEoB2IntroCpsDataStreet1, kRawData, false },
 	{ kEoB2IntroCpsDataStreet2, kRawData, false },
 	{ kEoB2IntroCpsDataDoorway1, kRawData, false },
@@ -866,6 +869,12 @@ const ExtractFilename extractFilenames[] = {
 	{ kEoB2PcmSoundEffectsIngame, kRawData, false },
 	{ kEoB2PcmSoundEffectsIntro, kRawData, false },
 	{ kEoB2PcmSoundEffectsFinale, kRawData, false },
+
+	{ kEoB2SoundMapExtra, kStringList, false },
+	{ kEoB2SoundIndex1, kRawData, false },
+	{ kEoB2SoundIndex2, kRawData, false },
+	{ kEoB2SoundFilesIngame2, kStringList, false },
+	{ kEoB2MonsterSoundPatchData, kRawData, false },
 
 	// LANDS OF LORE
 

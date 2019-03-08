@@ -52,8 +52,8 @@ bool SoundAmiga_EoB::init() {
 		return false;
 
 	int temp = 0;
-	_levelSoundList1 = _vm->staticres()->loadStrings(kEoB1BaseLevelSounds1, temp);
-	_levelSoundList2 = _vm->staticres()->loadStrings(kEoB1BaseLevelSounds2, temp);
+	_levelSoundList1 = _vm->staticres()->loadStrings(kEoBBaseLevelSounds1, temp);
+	_levelSoundList2 = _vm->staticres()->loadStrings(kEoBBaseLevelSounds2, temp);
 
 	_ready = true;
 	return true;

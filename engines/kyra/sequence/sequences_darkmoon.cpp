@@ -833,11 +833,11 @@ void DarkMoonEngine::seq_playFinale() {
 		snd_playSong(_flags.platform == Common::kPlatformFMTowns ? 16 : 1);
 
 	int temp = 0;
-	const uint8 *creditsData = (_flags.platform == Common::kPlatformFMTowns) ? _res->fileData("CREDITS.TXT", 0) : _staticres->loadRawData(kEoB2CreditsData, temp);
+	const uint8 *creditsData = (_flags.platform != Common::kPlatformDOS) ? _res->fileData("CREDITS.TXT", 0) : _staticres->loadRawData(kEoB2CreditsData, temp);
 	
 	seq_playCredits(&sq, creditsData, 18, 2, 6, 2);
 	
-	if (_flags.platform == Common::kPlatformFMTowns)
+	if (_flags.platform != Common::kPlatformDOS)
 		delete[] creditsData;
 
 	sq.delay(90);
