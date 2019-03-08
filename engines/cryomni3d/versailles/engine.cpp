@@ -1099,6 +1099,9 @@ int CryOmni3DEngine_Versailles::handleWarp() {
 			xDelta >>= -_omni3dSpeed;
 			yDelta >>= -_omni3dSpeed;
 		}
+		// This correction factor is to slow down movements for modern CPUs
+		xDelta /= 5;
+		yDelta /= 5;
 		leftButtonPressed = (getCurrentMouseButton() == 1);
 
 		Common::Point mouseRev = _omni3dMan.mapMouseCoords(mouse);
@@ -1148,9 +1151,6 @@ int CryOmni3DEngine_Versailles::handleWarp() {
 				// TODO: countdown
 				g_system->updateScreen();
 			}
-		}
-		if (!exit && !leftButtonPressed) {
-			g_system->delayMillis(50);
 		}
 	}
 	g_system->showMouse(false);
@@ -1225,15 +1225,17 @@ void CryOmni3DEngine_Versailles::animateWarpTransition(const Transition *transit
 		} else if (deltaAlpha < 0) {
 			deltaAlpha += 2.*M_PI;
 		}
+
+		// We devide by 5 to slow down movement for modern CPUs
 		int deltaAlphaI;
 		if (deltaAlpha < M_PI) {
-			deltaAlphaI = -(deltaAlpha * 512.);
+			deltaAlphaI = -(deltaAlpha * 512. / 5.);
 		} else {
-			deltaAlphaI = (2.*M_PI - deltaAlpha) * 512.;
+			deltaAlphaI = (2.*M_PI - deltaAlpha) * 512. / 5.;
 		}
 
 		double deltaBeta = -srcBeta - _omni3dMan.getBeta();
-		int deltaBetaI = -(deltaBeta * 512.);
+		int deltaBetaI = -(deltaBeta * 512. / 5.);
 
 		if (_omni3dSpeed > 0) {
 			deltaAlphaI <<= 2;
@@ -1258,10 +1260,6 @@ void CryOmni3DEngine_Versailles::animateWarpTransition(const Transition *transit
 
 		if (pollEvents() && checkKeysPressed(2, Common::KEYCODE_ESCAPE, Common::KEYCODE_SPACE)) {
 			exit = true;
-		}
-
-		if (!exit) {
-			g_system->delayMillis(50);
 		}
 	}
 }
