@@ -222,47 +222,49 @@ Common::Error CryOmni3DEngine_Versailles::run() {
 void CryOmni3DEngine_Versailles::setupFonts() {
 	Common::Array<Common::String> fonts;
 
+	// Explainations below are based on original binaries, debug is not used in this engine
 	if (getPlatform() == Common::kPlatformMacintosh) {
-		// TODO: Disassemble MacOS executable to find which 11 fonts are used
-		fonts.push_back("MPW12.CRF");
-		fonts.push_back("MPW9.CRF");
-		fonts.push_back("arial11.CRF");
-		fonts.push_back("fruitL10.CRF");
-		fonts.push_back("fruitL11.CRF");
-		fonts.push_back("fruitL12.CRF");
-		fonts.push_back("fruitL13.CRF");
-		fonts.push_back("fruitL14.CRF");
-		fonts.push_back("fruitL16.CRF");
-		fonts.push_back("fruitL18.CRF");
-		fonts.push_back("fruitL9.CRF");
-		fonts.push_back("garamB18.CRF");
-		fonts.push_back("garamB20.CRF");
-		fonts.push_back("garamB22.CRF");
-		fonts.push_back("geneva10.CRF");
-		fonts.push_back("geneva12.CRF");
-		fonts.push_back("geneva13.CRF");
-		fonts.push_back("geneva14.CRF");
-		fonts.push_back("geneva15.CRF");
-		fonts.push_back("geneva9.CRF");
-		fonts.push_back("helvet11.CRF");
-		fonts.push_back("helvet12.CRF");
-		fonts.push_back("helvet13.CRF");
-		fonts.push_back("helvet14.CRF");
-		fonts.push_back("helvet16.CRF");
-		fonts.push_back("helvet24.CRF");
-		fonts.push_back("helvet9.CRF");
+		fonts.push_back("garamB18.CRF"); // 0: Doc titles
+		fonts.push_back("garamB22.CRF"); // 1: Menu and T0 in credits
+		//fonts.push_back("geneva15.CRF");
+		fonts.push_back("geneva14.CRF"); // 3: T1 and T3 in credits
+		fonts.push_back("geneva13.CRF"); // 4: Menu title, options messages boxes buttons
+		fonts.push_back("geneva12.CRF"); // 5: T2 in credits, text in docs
+		fonts.push_back("geneva10.CRF"); // 6: objects description in toolbar, options messages boxes text, T4 in credits
+		fonts.push_back("geneva9.CRF");  // 7: T5 in credits, doc subtitle
+		//fonts.push_back("helvet24.CRF");
+		fonts.push_back("helvet16.CRF"); // 9: dialogs texts
+		//fonts.push_back("helvet14.CRF");
+		//fonts.push_back("helvet13.CRF");
+		//fonts.push_back("helvet12.CRF");
+		//fonts.push_back("helvet11.CRF");
+		//fonts.push_back("helvet9.CRF");
+		//fonts.push_back("fruitL9.CRF");
+		fonts.push_back("fruitL10.CRF"); // 16: debug doc
+		//fonts.push_back("fruitL11.CRF");
+		//fonts.push_back("fruitL12.CRF");
+		//fonts.push_back("fruitL13.CRF");
+		//fonts.push_back("fruitL14.CRF");
+		//fonts.push_back("fruitL16.CRF");
+		fonts.push_back("fruitL18.CRF"); // 22: Warp messages texts
+		//fonts.push_back("arial11.CRF");
+		fonts.push_back("MPW12.CRF");    // 24: debug
+		//fonts.push_back("MPW9.CRF");
+
+		// This file isn't even loaded by MacOS executable
+		//fonts.push_back("garamB20.CRF");
 	} else {
-		fonts.push_back("font01.CRF");
-		fonts.push_back("font02.CRF");
-		fonts.push_back("font03.CRF");
-		fonts.push_back("font04.CRF");
-		fonts.push_back("font05.CRF");
-		fonts.push_back("font06.CRF");
-		fonts.push_back("font07.CRF");
-		fonts.push_back("font08.CRF");
-		fonts.push_back("font09.CRF");
-		fonts.push_back("font10.CRF");
-		fonts.push_back("font11.CRF");
+		fonts.push_back("font01.CRF"); // 0: Doc titles
+		fonts.push_back("font02.CRF"); // 1: Menu and T0 in credits
+		fonts.push_back("font03.CRF"); // 2: T1 and T3 in credits
+		fonts.push_back("font04.CRF"); // 3: Menu title, options messages boxes buttons
+		fonts.push_back("font05.CRF"); // 4: T2 in credits, text in docs
+		fonts.push_back("font06.CRF"); // 5: objects description in toolbar, options messages boxes text, T4 in credits
+		fonts.push_back("font07.CRF"); // 6: T5 in credits, doc subtitle
+		fonts.push_back("font08.CRF"); // 7: dialogs texts
+		fonts.push_back("font09.CRF"); // 8: unused
+		fonts.push_back("font10.CRF"); // 9: Warp messages texts
+		fonts.push_back("font11.CRF"); // 10: debug
 	}
 
 	_fontManager.loadFonts(fonts);
