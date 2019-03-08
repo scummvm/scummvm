@@ -154,7 +154,7 @@ private:
 	void applyPatches(uint16 id);
 	void applyPropertiesPatchE2E(uint32 globalId);
 	void applyPropertiesPatch1518D(uint32 globalId);
-	void applyPropertiesPatch8EB7(uint32 globalId);
+	void applyPropertiesPatch8EB7(uint32 globalId, const Common::String &var, uint16 hotspotId);
 	void applyPropertiesPatch2E76(uint32 globalId);
 	void applyPropertiesPatch22118(uint32 globalId);
 	void setCurrentCardVariable();
