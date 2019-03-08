@@ -20,7 +20,7 @@
  *
  */
 
-#include "sword25/util/double_serialization.h"
+#include "common/lua/double_serialization.h"
 
 #include "common/scummsys.h"
 

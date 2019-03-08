@@ -50,7 +50,7 @@
 
 struct lua_State;
 
-#include "lua/lobject.h"
+#include "lobject.h"
 
 typedef TValue *StkId;
 

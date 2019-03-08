@@ -173,6 +173,7 @@ _use_cxx11=no
 _verbose_build=no
 _text_console=no
 _mt32emu=yes
+_lua=yes
 _build_scalers=yes
 _build_hq_scalers=yes
 _enable_prof=no
@@ -253,8 +254,7 @@ add_feature png "PNG" "_png"
 add_feature theoradec "libtheoradec" "_theoradec"
 add_feature vorbis "Vorbis file support" "_vorbis _tremor"
 add_feature zlib "zlib" "_zlib"
-
-
+add_feature lua "lua" "_lua"
 
 # Directories for installing ScummVM.
 # This list is closely based on what GNU autoconf does,
@@ -1027,6 +1027,7 @@ Optional Features:
   --enable-plugins         enable the support for dynamic plugins
   --default-dynamic        make plugins dynamic by default
   --disable-mt32emu        don't enable the integrated MT-32 emulator
+  --disable-lua            don't enable Lua support
   --disable-nuked-opl      don't build Nuked OPL driver
   --disable-16bit          don't enable 16bit color support
   --disable-highres        don't enable support for high resolution engines >320x240
@@ -1255,6 +1256,8 @@ for ac_option in $@; do
 	--default-dynamic)           _plugins_default=dynamic;;
 	--enable-mt32emu)            _mt32emu=yes            ;;
 	--disable-mt32emu)           _mt32emu=no             ;;
+	--enable-lua)                _lua=yes                ;;
+	--disable-lua)               _lua=no                 ;;
 	--enable-nuked-opl)          _nuked_opl=yes          ;;
 	--disable-nuked-opl)         _nuked_opl=no           ;;
 	--enable-translation)        _translation=yes        ;;
@@ -4108,6 +4111,11 @@ fi
 define_in_config_if_yes "$_mt32emu" 'USE_MT32EMU'
 
 #
+# Check whether Lua support is requested
+#
+define_in_config_if_yes "$_lua" 'USE_LUA'
+
+#
 # Check whether Nuked OPL emulator support is disabled
 #
 define_in_config_if_no "$_nuked_opl" 'DISABLE_NUKED_OPL'
@@ -5403,6 +5411,10 @@ fi
 
 if test "$_mt32emu" = yes ; then
 	echo_n ", MT-32 emulator"
+fi
+
+if test "$_lua" = yes ; then
+	echo_n ", Lua"
 fi
 
 if test "$_nuked_opl" = yes ; then

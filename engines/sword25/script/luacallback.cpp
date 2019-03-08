@@ -34,8 +34,8 @@
 #include "sword25/script/luacallback.h"
 #include "sword25/script/luabindhelper.h"
 
-#include "sword25/util/lua/lua.h"
-#include "sword25/util/lua/lauxlib.h"
+#include "common/lua/lua.h"
+#include "common/lua/lauxlib.h"
 
 const char *CALLBACKTABLE_NAME = "__CALLBACKS";
 

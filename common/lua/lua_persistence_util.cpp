@@ -67,14 +67,14 @@
  */
 
 
-#include "sword25/util/lua_persistence_util.h"
+#include "lua_persistence_util.h"
 
 #include "common/scummsys.h"
 
-#include "lua/lobject.h"
-#include "lua/lstate.h"
-#include "lua/lgc.h"
-#include "lua/lopcodes.h"
+#include "lobject.h"
+#include "lstate.h"
+#include "lgc.h"
+#include "lopcodes.h"
 
 
 namespace Lua {
