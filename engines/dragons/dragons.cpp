@@ -67,6 +67,7 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	run_func_ptr_unk_countdown_timer = 0;
 	data_8006a3a0_flag = 0;
 	data_800633fa = 0;
+	data_8006f3a8 = 0;
 	_inventory = new Inventory(this);
 	_cursor = new Cursor(this);
 }

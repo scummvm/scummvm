@@ -113,6 +113,7 @@ public:
 	uint16 data_800633fa;
 	Inventory *_inventory;
 	Cursor *_cursor;
+	uint16 data_8006f3a8;
 private:
 	Screen *_screen;
 	BigfileArchive *_bigfileArchive;
