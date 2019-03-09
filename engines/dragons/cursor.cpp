@@ -64,6 +64,16 @@ void Cursor::update() {
 	_actor->y_pos = _y + _vm->_scene->_camera.y;
 
 	// 0x80028104
+	if (_iniUnderCursor == 0
+	|| (!(_iniUnderCursor & 0x8000) && !(_vm->getINI(_iniUnderCursor - 1)->field_1a_flags_maybe & 0x80))
+	|| (_vm->_inventory->getType() != 1 && _vm->_inventory->getType() != 2)) {
+		//TODO 0x800281c4
+	} else {
+		// TODO 0x800281a4
+		if (_actor->_sequenceID != 0x84) {
+			_actor->updateSequence(0x84);
+		}
+	}
 }
 
 void Cursor::updateVisibility() {
