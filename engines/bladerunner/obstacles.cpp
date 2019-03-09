@@ -33,6 +33,7 @@
 #include "common/debug.h"
 
 #define DISABLE_PATHFINDING 0
+#define USE_PATHFINDING_EXPERIMENTAL_FIX_2 0 // Alternate Fix: Allows polygons merged on one point
 
 #define WITHIN_TOLERANCE(a, b) (((a) - 0.009) < (b) && ((a) + 0.009) > (b))
 
@@ -107,7 +108,7 @@ bool Obstacles::lineLineIntersection(LineSegment a, LineSegment b, Vector2 *inte
 	return false;
 }
 
-bool Obstacles::linePolygonIntersection(LineSegment lineA, VertexType lineAType, Polygon *polyB, Vector2 *intersectionPoint, int *intersectionIndex) {
+bool Obstacles::linePolygonIntersection(LineSegment lineA, VertexType lineAType, Polygon *polyB, Vector2 *intersectionPoint, int *intersectionIndex, int pathLengthSinceLastIntersection) {
 	bool hasIntersection = false;
 	float nearestIntersectionDistance = 0.0f;
 
@@ -126,15 +127,15 @@ bool Obstacles::linePolygonIntersection(LineSegment lineA, VertexType lineAType,
 			 || (lineAType == BOTTOM_LEFT  && lineBType == BOTTOM_RIGHT)
 			 || (lineAType == TOP_LEFT     && lineBType == BOTTOM_LEFT)
 			) {
-				if (!(WITHIN_TOLERANCE(lineB.end.x, intersectionPoint->x) && WITHIN_TOLERANCE(lineB.end.y, intersectionPoint->y))) {
-					if (newIntersectionPoint != *intersectionPoint) {
-						float newIntersectionDistance = getLength(lineA.start.x, lineA.start.y, newIntersectionPoint.x, newIntersectionPoint.y);
-						if (!hasIntersection || newIntersectionDistance < nearestIntersectionDistance) {
-							hasIntersection = true;
-							nearestIntersectionDistance = newIntersectionDistance;
-							*intersectionPoint = newIntersectionPoint;
-							*intersectionIndex = i;
-						}
+				if ( (pathLengthSinceLastIntersection > 2)
+					|| ( (!(WITHIN_TOLERANCE(lineB.end.x, intersectionPoint->x) && WITHIN_TOLERANCE(lineB.end.y, intersectionPoint->y)))
+					&& (newIntersectionPoint != *intersectionPoint) )) {
+					float newIntersectionDistance = getLength(lineA.start.x, lineA.start.y, newIntersectionPoint.x, newIntersectionPoint.y);
+					if (!hasIntersection || newIntersectionDistance < nearestIntersectionDistance) {
+						hasIntersection = true;
+						nearestIntersectionDistance = newIntersectionDistance;
+						*intersectionPoint = newIntersectionPoint;
+						*intersectionIndex = i;
 					}
 				}
 			}
@@ -191,6 +192,7 @@ bool Obstacles::mergePolygons(Polygon &polyA, Polygon &polyB) {
 	bool flagAddVertexToVertexList = true;
 	bool flagDidFindIntersection = false;
 	int vertIndex = 0;
+	int pathLengthSinceLastIntersection = 0; // Part of pathfinding fix 2. It's only updated when enabling that fix, otherwise it is always zero (0).
 
 	Polygon *startingPolygon = polyPrimary;
 	int flagDone = false;
@@ -204,12 +206,16 @@ bool Obstacles::mergePolygons(Polygon &polyA, Polygon &polyB) {
 		polyPrimaryType = polyPrimary->vertexType[vertIndex];
 
 		if (flagAddVertexToVertexList) {
-			// In some cases polygons will have only one intersection (touching corners) and because of that second SWAP never occure,
+#if USE_PATHFINDING_EXPERIMENTAL_FIX_2
+			assert(polyMerged.verticeCount < kPolygonVertexCount);
+#else
+			// In some cases polygons will have only one intersection (touching corners) and because of that second SWAP never occurs,
 			// algorithm will stop only when the merged polygon is full.
 			if (polyMerged.verticeCount >= kPolygonVertexCount) {
 				flagDidMergePolygons = false;
 				break;
 			}
+#endif
 			polyMerged.vertices[polyMerged.verticeCount] = polyLine.start;
 			polyMerged.vertexType[polyMerged.verticeCount] = polyPrimaryType;
 			polyMerged.verticeCount++;
@@ -218,7 +224,7 @@ bool Obstacles::mergePolygons(Polygon &polyA, Polygon &polyB) {
 		flagAddVertexToVertexList = true;
 		int polySecondaryIntersectionIndex = -1;
 
-		if (linePolygonIntersection(polyLine, polyPrimaryType, polySecondary, &intersectionPoint, &polySecondaryIntersectionIndex)) {
+		if (linePolygonIntersection(polyLine, polyPrimaryType, polySecondary, &intersectionPoint, &polySecondaryIntersectionIndex, pathLengthSinceLastIntersection)) {
 			if (WITHIN_TOLERANCE(intersectionPoint.x, polyLine.start.x) && WITHIN_TOLERANCE(intersectionPoint.y, polyLine.start.y)) {
 				flagAddVertexToVertexList = false;
 				polyMerged.verticeCount--; // TODO(madmoose): How would this work?
@@ -231,8 +237,14 @@ bool Obstacles::mergePolygons(Polygon &polyA, Polygon &polyB) {
 			SWAP(polyPrimary, polySecondary);
 
 			flagDidMergePolygons = true;
+#if USE_PATHFINDING_EXPERIMENTAL_FIX_2
+			pathLengthSinceLastIntersection = 0;
+#endif
 		} else {
 			vertIndex = (vertIndex + 1) % polyPrimary->verticeCount;
+#if USE_PATHFINDING_EXPERIMENTAL_FIX_2
+			pathLengthSinceLastIntersection++;
+#endif
 			flagDidFindIntersection = false;
 		}
 		if (polyPrimary->vertices[vertIndex] == startingPolygon->vertices[0]) {
@@ -543,11 +555,13 @@ bool Obstacles::findPolygonVerticeByXZ(int *polygonIndex, int *verticeIndex, int
 	return false;
 }
 
-bool Obstacles::findPolygonVerticeByXZWithinTolerance(float x, float z, int *polygonIndex, int *verticeIndex) const {
+bool Obstacles::findPolygonVerticeByXZWithinTolerance(float x, float z, int *polygonIndex, int *verticeIndex, int startSearchFromPolygonIdx) const {
 	*polygonIndex = -1;
 	*verticeIndex = -1;
 
-	for (int i = 0; i != kPolygonCount; ++i) {
+//	for (int i = 0; i != kPolygonCount; ++i) {
+	for (int countUp = 0, i = startSearchFromPolygonIdx; countUp != kPolygonCount; ++countUp, ++i) {
+		i = i  % kPolygonCount;	// we want to circle around to go through all polygons
 		if (!_polygons[i].isPresent || _polygons[i].verticeCount == 0) {
 			continue;
 		}
@@ -687,7 +701,7 @@ bool Obstacles::findFarthestAvailablePathVertex(Vector2 *path, int pathSize, Vec
 	int vertexTypeStartPrev = -1;
 	int polygonIndexStart = -1;
 	int vertexIndexStart = -1;
-	bool startOnPolygon = findPolygonVerticeByXZWithinTolerance(start.x, start.z, &polygonIndexStart, &vertexIndexStart);
+	bool startOnPolygon = findPolygonVerticeByXZWithinTolerance(start.x, start.z, &polygonIndexStart, &vertexIndexStart, 0);
 	if (startOnPolygon) {
 		int vertexIndexStartPrev = (vertexIndexStart - 1 + _polygons[polygonIndexStart].verticeCount) % _polygons[polygonIndexStart].verticeCount;
 
@@ -700,7 +714,7 @@ bool Obstacles::findFarthestAvailablePathVertex(Vector2 *path, int pathSize, Vec
 		bool foundVertexNeighbor = false;
 		int polygonIndexPath = -1;
 		int vertexIndexPath = -1;
-		bool pathVertexOnPolygon = findPolygonVerticeByXZWithinTolerance(path[pathVertexIdx].x, path[pathVertexIdx].y, &polygonIndexPath, &vertexIndexPath) == 1;
+		bool pathVertexOnPolygon = findPolygonVerticeByXZWithinTolerance(path[pathVertexIdx].x, path[pathVertexIdx].y, &polygonIndexPath, &vertexIndexPath, 0) == 1;
 
 		//start and current path vertices are on same polygon and are next to each other
 		if (pathVertexOnPolygon && polygonIndexStart == polygonIndexPath) {
@@ -748,8 +762,12 @@ bool Obstacles::findFarthestAvailablePathVertex(Vector2 *path, int pathSize, Vec
 
 				int polygonIndexIntersection = -1;
 				int vertexIndexIntersection = -1;
-				if (findPolygonVerticeByXZWithinTolerance(intersection.x, intersection.y, &polygonIndexIntersection, &vertexIndexIntersection)) {
-					// hntersection has to be vertex only on current polygon
+				if (findPolygonVerticeByXZWithinTolerance(intersection.x, intersection.y, &polygonIndexIntersection, &vertexIndexIntersection, currentPolygonIdx)) {
+					// Intersection has to be vertex only on current polygon
+					// Part of pathfinding fix 2 (dealing with merge on only one edge point)
+					//			but also speeds up process:
+					// 				we start (a cyclical) searching in Polygons array
+					//				beginning from the current polygon index
 					assert(polygonIndexIntersection == currentPolygonIdx);
 
 					if (verticesCanIntersect(vertexTypeStartPrev, vertexTypeStart, start.x, start.z, path[pathVertexIdx].x, path[pathVertexIdx].y)) {
