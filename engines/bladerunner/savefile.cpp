@@ -241,9 +241,10 @@ bool SaveFileReadStream::readBool() {
 }
 
 Common::String SaveFileReadStream::readStringSz(uint sz) {
-	char *buf = new char[sz];
+	char *buf = new char[sz + 1];
 	read(buf, sz);
-	Common::String result(buf, sz);
+	buf[sz] = 0;
+	Common::String result(buf);
 	delete[] buf;
 	return result;
 }

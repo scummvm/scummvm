@@ -49,6 +49,7 @@ class KIASectionLoad : public KIASectionBase {
 	SaveStateList _saveList;
 
 	int           _hoveredLineId;
+	int           _displayingLineId;
 	int           _newGameEasyLineId;
 	int           _newGameMediumLineId;
 	int           _newGameHardLineId;

@@ -64,6 +64,7 @@ class KIASectionSave : public KIASectionBase {
 	int           _mouseY;
 
 	int           _hoveredLineId;
+	int           _displayingLineId;
 	int           _selectedLineId;
 	int           _newSaveLineId;
 

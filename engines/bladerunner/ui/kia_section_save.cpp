@@ -62,8 +62,9 @@ KIASectionSave::KIASectionSave(BladeRunnerEngine *vm) : KIASectionBase(vm) {
 	_mouseX = 0;
 	_mouseY = 0;
 
-	_selectedLineId = -1;
 	_hoveredLineId = -1;
+	_displayingLineId = -1;
+	_selectedLineId = -1;
 	_newSaveLineId = -1;
 }
 
@@ -182,23 +183,25 @@ void KIASectionSave::draw(Graphics::Surface &surface){
 	int selectedLineId = _scrollBox->getSelectedLineData();
 
 	if (selectedLineId != _hoveredLineId) {
-		if (selectedLineId >= 0 && selectedLineId < (int)_saveList.size()) {
+		if (selectedLineId >= 0 && selectedLineId < (int)_saveList.size() && _displayingLineId != selectedLineId) {
 			if (_timeLeft == 0) {
 				SaveStateDescriptor desc = SaveFileManager::queryMetaInfos(_vm->getTargetName(), selectedLineId);
 				const Graphics::Surface *thumbnail = desc.getThumbnail();
 				if (thumbnail != nullptr) {
 					_vm->_kia->playImage(*thumbnail);
+					_displayingLineId = selectedLineId;
 				}
 			}
 		} else {
 			_vm->_kia->playerReset();
 			_timeLeft = 800;
+			_displayingLineId = -1;
 		}
 		_hoveredLineId = selectedLineId;
 	}
 
 	uint32 now = _vm->_time->currentSystem();
-	if (selectedLineId >= 0 && selectedLineId < (int)_saveList.size()) {
+	if (selectedLineId >= 0 && selectedLineId < (int)_saveList.size() && _displayingLineId != selectedLineId) {
 		if (_timeLeft) {
 			uint32 timeDiff = now - _timeLast;
 			if (timeDiff >= _timeLeft) {
@@ -206,6 +209,7 @@ void KIASectionSave::draw(Graphics::Surface &surface){
 				const Graphics::Surface *thumbnail = desc.getThumbnail();
 				if (thumbnail != nullptr) {
 					_vm->_kia->playImage(*thumbnail);
+					_displayingLineId = selectedLineId;
 				}
 			} else {
 				_timeLeft -= timeDiff;
