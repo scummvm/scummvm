@@ -191,11 +191,11 @@ void Actor::changeAnimationMode(int animationMode, bool force) {
 void Actor::setFPS(int fps) {
 	_fps = fps;
 
-	if (fps == 0) {
+	if (fps == 0) { // stop actor's animation
 		_frameMs = 0;
-	} else if (fps == -1) {
+	} else if (fps == -1) { // sync actor's animation with scene animation
 		_frameMs = -1000;
-	} else if (fps == -2) {
+	} else if (fps == -2) { // set FPS to default from the model
 		_fps = _vm->_sliceAnimations->getFPS(_animationId);
 		_frameMs = 1000 / _fps;
 	} else {
@@ -587,6 +587,8 @@ bool Actor::tick(bool forceDraw, Common::Rect *screenRect) {
 		timerUpdate(5);
 		timeLeft = timerLeft(5);
 		needsUpdate = timeLeft <= 0;
+	} else if (_fps == 0) {
+		needsUpdate = false;
 	} else if (forceDraw) {
 		needsUpdate = true;
 		timeLeft = 0;
