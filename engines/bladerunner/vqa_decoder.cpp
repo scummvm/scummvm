@@ -724,7 +724,7 @@ bool VQADecoder::VQAVideoTrack::readZBUF(Common::SeekableReadStream *s, uint32 s
 }
 
 void VQADecoder::VQAVideoTrack::decodeZBuffer(ZBuffer *zbuffer) {
-	if (_maxZBUFChunkSize == 0) {
+	if (_zbufChunkSize == 0) {
 		return;
 	}
 
