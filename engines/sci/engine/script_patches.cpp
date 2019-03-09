@@ -11069,6 +11069,39 @@ static const uint16 sq4CdPatchRedShopperMessageFix[] = {
 	PATCH_END
 };
 
+// When swimming in zero gravity in the mall, the game can lock up if the Sequel
+//  Police shoot while ego swims past the edge of the screen.
+//
+// When the Sequel Police shoot, the object "blast" animates near ego. blast is
+//  an obstacle that ego can collide with. If ego is shot at while going beyond
+//  the edge of the screen and blast is in the right position then stayInScript
+//  can lock up due to ego getting stuck on the invisible blast object and never
+//  reaching his destination.
+//
+// We fix this by setting blast's ignore-actors flag so that ego can't collide
+//  with it and get stuck. This does not affect whether or not ego gets shot.
+//
+// Applies to at least: English PC Floppy, English PC CD, probably all versions
+// Responsible method: Heap in scripts 405, 406, 410, and 411
+// Fixes bug #10912
+static const uint16 sq4SignatureZeroGravityBlast[] = {
+    SIG_MAGICDWORD,                     // blast
+    SIG_UINT16(0x0002),                 // yStep = 2
+    SIG_UINT16(0x001c),                 // view = 128
+    SIG_UINT16(0x0000),                 // loop = 0
+    SIG_UINT16(0x0000),                 // cel = 0
+    SIG_UINT16(0x0000),                 // priority = 0
+    SIG_UINT16(0x0000),                 // underBits = 0
+    SIG_UINT16(0x0000),                 // signal = 0
+    SIG_END
+};
+
+static const uint16 sq4PatchZeroGravityBlast[] = {
+    PATCH_ADDTOOFFSET(+12),
+    PATCH_UINT16(0x4000),               // signal = $4000 [ set ignore-actors flag ]
+    PATCH_END
+};
+
 // The scripts in SQ4CD support simultaneous playing of speech and subtitles,
 // but this was not available as an option. The following two patches enable
 // this functionality in the game's GUI options dialog.
@@ -11170,6 +11203,10 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,    45, "CD: walk in from below for room 45 fix",         1, sq4CdSignatureWalkInFromBelowRoom45,           sq4CdPatchWalkInFromBelowRoom45 },
 	{  true,   391, "CD: missing Audio for universal remote control", 1, sq4CdSignatureMissingAudioUniversalRemote,     sq4CdPatchMissingAudioUniversalRemote },
 	{  true,   396, "CD: get points for changing back clothes fix",   1, sq4CdSignatureGetPointsForChangingBackClothes, sq4CdPatchGetPointsForChangingBackClothes },
+	{  true,   405, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
+	{  true,   406, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
+	{  true,   410, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
+	{  true,   411, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
 	{  true,   700, "CD: red shopper message fix",                    1, sq4CdSignatureRedShopperMessageFix,            sq4CdPatchRedShopperMessageFix },
 	{  true,   701, "CD: getting shot, while getting rope",           1, sq4CdSignatureGettingShotWhileGettingRope,     sq4CdPatchGettingShotWhileGettingRope },
 	{  true,     0, "CD: Babble icon speech and subtitles fix",       1, sq4CdSignatureBabbleIcon,                      sq4CdPatchBabbleIcon },
