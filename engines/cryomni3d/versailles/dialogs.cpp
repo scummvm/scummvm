@@ -153,7 +153,7 @@ void CryOmni3DEngine_Versailles::postprocessDialog(const Common::String &sequenc
 			_inventory.removeByNameId(125);
 			_gameVariables[GameVariables::kStatePamphletReligion] = 3;
 			collectObject(125);
-			_inventory.setSelectedObject(nullptr);
+			_inventory.deselectObject();
 		}
 	}
 }
@@ -231,14 +231,14 @@ void CryOmni3DEngine_Versailles::dialogShowBontempsShowThird() {
 
 void CryOmni3DEngine_Versailles::dialogShowHuissierShowPamphlet() {
 	collectObject(101);
-	_inventory.setSelectedObject(nullptr);
+	_inventory.deselectObject();
 }
 
 void CryOmni3DEngine_Versailles::dialogShowMonseigneurSorts() {
 	_inventory.removeByNameId(105);
 	collectObject(106);
 	_gameVariables[GameVariables::kEsquissePainted] = 2;
-	_inventory.setSelectedObject(nullptr);
+	_inventory.deselectObject();
 	setGameTime(3, 2);
 	_dialogsMan["MONSEIGNEUR-ATTEND-ESQUISSES"] = 'N';
 }
@@ -270,7 +270,7 @@ void CryOmni3DEngine_Versailles::dialogShowCroissyLeave() {
 
 void CryOmni3DEngine_Versailles::dialogShowMaintenonGives() {
 	collectObject(125);
-	_inventory.setSelectedObject(nullptr);
+	_inventory.deselectObject();
 }
 
 void CryOmni3DEngine_Versailles::dialogShowLaChaizeGivesBack() {
@@ -287,13 +287,13 @@ void CryOmni3DEngine_Versailles::dialogShowLaChaizeGivesPamphlet() {
 
 void CryOmni3DEngine_Versailles::dialogShowBontempsGivesKey() {
 	collectObject(140);
-	_inventory.setSelectedObject(nullptr);
+	_inventory.deselectObject();
 }
 
 void CryOmni3DEngine_Versailles::dialogShowDuMaineLeaves() {
 	playInGameVideo("62S_DUC1");
 	_inventory.removeByNameId(144);
-	_inventory.setSelectedObject(nullptr);
+	_inventory.deselectObject();
 	setPlaceState(19, 1);
 }
 
@@ -306,7 +306,7 @@ void CryOmni3DEngine_Versailles::dialogShowEndOfGame() {
 
 void CryOmni3DEngine_Versailles::dialogShowLeBrunGives() {
 	collectObject(107);
-	_inventory.setSelectedObject(nullptr);
+	_inventory.deselectObject();
 }
 
 void CryOmni3DEngine_Versailles::dialogShowLeBrunLeave() {

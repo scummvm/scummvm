@@ -90,6 +90,7 @@ public:
 
 	Object *selectedObject() const { return _selectedObject; }
 	void setSelectedObject(Object *obj) { _selectedObject = obj; }
+	void deselectObject() { _selectedObject = nullptr; }
 
 private:
 	Object *_selectedObject;
