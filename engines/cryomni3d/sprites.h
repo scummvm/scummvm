@@ -52,6 +52,8 @@ public:
 
 	unsigned int getSpritesCount() const;
 
+	void replaceSpriteColor(unsigned int spriteId, byte currentColor, byte newColor);
+
 	const Graphics::Surface &getSurface(unsigned int spriteId) const;
 	const Graphics::Cursor &getCursor(unsigned int spriteId) const;
 

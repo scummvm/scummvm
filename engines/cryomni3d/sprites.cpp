@@ -146,6 +146,18 @@ void Sprites::replaceSprite(unsigned int oldSpriteId, unsigned int newSpriteId) 
 	_cursors[oldSpriteId]->refCnt++;
 }
 
+void Sprites::replaceSpriteColor(unsigned int spriteId, byte currentColor, byte newColor) {
+	MAP_ID(spriteId);
+
+	byte *data = _cursors[spriteId]->_data;
+	unsigned int size = _cursors[spriteId]->_width * _cursors[spriteId]->_height;
+	for (; size > 0; size--, data++) {
+		if (*data == currentColor) {
+			*data = newColor;
+		}
+	}
+}
+
 unsigned int Sprites::getSpritesCount() const {
 	if (_map) {
 		return _map->size();
