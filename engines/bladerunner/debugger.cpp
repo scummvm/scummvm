@@ -50,6 +50,7 @@
 #include "bladerunner/waypoints.h"
 #include "bladerunner/zbuffer.h"
 #include "bladerunner/overlays.h"
+#include "bladerunner/subtitles.h"
 
 
 #include "common/debug.h"
@@ -91,6 +92,7 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 	registerCmd("load", WRAP_METHOD(Debugger, cmdLoad));
 	registerCmd("save", WRAP_METHOD(Debugger, cmdSave));
 	registerCmd("overlay", WRAP_METHOD(Debugger, cmdOverlay));
+	registerCmd("subtitle", WRAP_METHOD(Debugger, cmdSubtitle));
 }
 
 Debugger::~Debugger() {
@@ -799,6 +801,36 @@ bool Debugger::cmdOverlay(int argc, const char **argv) {
 	}
 	return true;
 }
+
+/**
+*
+* Show an explicitly specified string as a subtitle
+*/
+bool Debugger::cmdSubtitle(int argc, const char **argv) {
+	bool invalidSyntax = false;
+
+	if (argc != 2) {
+		invalidSyntax = true;
+	} else {
+		Common::String subtitleText = argv[1];
+		if (subtitleText == "reset") {
+			_vm->_subtitles->setGameSubsText("", false);
+		} else {
+			debugPrintf("Showing text: %s\n", subtitleText.c_str());
+			_vm->_subtitles->setGameSubsText(subtitleText, true);
+			_vm->_subtitles->show();
+		}
+	}
+
+	if (invalidSyntax) {
+		debugPrintf("Show specified text as subtitle or clear the current subtitle (with the reset option).\n");
+		debugPrintf("Use double quotes to encapsulate the text.\n");
+		debugPrintf("Usage: %s (\"<text_to_display>\" | reset)\n", argv[0]);
+	}
+	return true;
+
+}
+
 
 void Debugger::drawDebuggerOverlay() {
 	if (_viewSceneObjects) drawSceneObjects();

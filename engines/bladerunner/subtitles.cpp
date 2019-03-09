@@ -22,25 +22,24 @@
 
 #include "bladerunner/subtitles.h"
 
-#include "bladerunner/bladerunner.h"
 #include "bladerunner/font.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/audio_speech.h"
-#include "common/debug.h"
+//#include "common/debug.h"
 
 namespace BladeRunner {
 
 /*
  * Optional support for subtitles
+ *
  * CHECK what happens in VQA where the audio plays separately (are the finales such VQAs ?)
- * TODO? Catch error for bad symbol in a quote (one that causes the font to crash) - this could happen with the corrupted internal font (TAHOMA18) -> font crash or bad font display / garbage character
- * TODO? Use another escape sequence to progressively display text in a line (like in SCUMM games) <-- this could be very useful with very long lines - might also need an extra manual time or ticks parameter to determine when during the display of the first segment we should switch to the second.
- * TODO? A more advanced subtitles system
- *          TODO: subtitles could be independent from sound playing (but should disappear when switching between UI screens)
+ * TODO? Use another escape sequence to progressively display text in a line (like in SCUMM games) <-- this could be very useful with very long lines
+ *			- might also need an extra manual time or ticks parameter to determine when during the display of the first segment we should switch to the second.
+ * TODO? A more advanced subtitles system:
+ *          TODO: subtitles could be independent from sound playing (but probably should disappear when switching between UI screens)
  *          TODO?: Support for queuing subtitles when more than one subtitle should play for a spoken dialogue (due to a very long quote)
  *          TODO?: Predefine a minimum time for a subtitle to appear, before it is interrupted by the next one. (might need queuing)
  *          TODO?: If the subtitle is the last one then extend its duration to another predefined delay.
- *          TODO?: A system to auto-split a dialogue after some max characters per both lines to a new dialogue set (delete previous 2 lines, start a new one(s) with the rest of the quote).
  *
  * DONE Removed support for internal font TAHOMA18 - this particular font is corrupted!
  * DONE Create and Support proper external FON for subtitles.
@@ -150,7 +149,7 @@ void Subtitles::init(void) {
 	}
 	// Done - Loading text resources
 	//
-	// Initializing/Loading Subtitles' Fonts
+	// Initializing/Loading Subtitles Fonts
 	_subsFont = new Font(_vm);
 	// Use TAHOMA18.FON (is corrupted in places)
 	// 10PT or TAHOMA24 or KIA6PT  have all caps glyphs (and also are too big or too small) so they are not appropriate.
@@ -168,7 +167,7 @@ void Subtitles::init(void) {
 	//  debug("Max height %d", _subsFont->getTextHeight(""));
 	if (_subsFontsLoaded) {
 		for (int i = 0; i < kMaxNumOfSubtitlesLines; ++i) {
-			_subtitleLineScreenY[i] = 479 - ((kMaxNumOfSubtitlesLines - i) * (_subsFont->getTextHeight("") + 1));
+			_subtitleLineScreenY[i] = 479 - kSubtitlesBottomYOffsetPx - ((kMaxNumOfSubtitlesLines - i) * (_subsFont->getTextHeight("") + 1));
 		}
 	}
 }
@@ -257,10 +256,11 @@ const char *Subtitles::getOuttakeSubsText(const Common::String &outtakesName, in
 * Explicitly set the active subtitle text to be displayed
 * Used for debug purposes mainly.
 */
-void Subtitles::setGameSubsText(Common::String dbgQuote) {
+void Subtitles::setGameSubsText(Common::String dbgQuote, bool forceShowWhenNoSpeech) {
 	if (_currentSubtitleTextFull != dbgQuote) {
 		_currentSubtitleTextFull = dbgQuote;
 		_subtitlesQuoteChanged = true;
+		_forceShowWhenNoSpeech = forceShowWhenNoSpeech; // overrides not showing subtitles when no one is speaking
 	}
 }
 
@@ -309,14 +309,16 @@ bool Subtitles::isVisible() const {
 * Tick method specific for outtakes (VQA videos)
 */
 void Subtitles::tickOuttakes(Graphics::Surface &s) {
+	if (_subtitlesSystemInactive || !_vm->isSubtitlesEnabled()) {
+		return;
+	}
+
 	if (_currentSubtitleTextFull.empty()) {
 		_vm->_subtitles->hide();
 	} else {
 		_vm->_subtitles->show();
 	}
-	if (_subtitlesSystemInactive || !_vm->isSubtitlesEnabled()) {
-		return;
-	}
+
 	if (!_isVisible) { // keep it as a separate if
 		return;
 	}
@@ -327,12 +329,14 @@ void Subtitles::tickOuttakes(Graphics::Surface &s) {
 * Tick method for in-game subtitles -- Not for outtake cutscenes (VQA videos)
 */
 void Subtitles::tick(Graphics::Surface &s) {
-	if (!_vm->_audioSpeech->isPlaying()) {
-		_vm->_subtitles->hide(); // TODO might need a better system. Don't call it always.
-	}
 	if (_subtitlesSystemInactive || !_vm->isSubtitlesEnabled()) {
 		return;
 	}
+
+	if (!_vm->_audioSpeech->isPlaying() && !_forceShowWhenNoSpeech && _isVisible) {
+		_vm->_subtitles->hide(); // TODO might need a better system. Don't call it always.
+	}
+
 	if (!_isVisible)  { // keep it as a separate if
 		return;
 	}
@@ -351,8 +355,20 @@ void Subtitles::draw(Graphics::Surface &s) {
 		_subtitlesQuoteChanged = false;
 	}
 
-	for (int i = 0; i < _currentSubtitleLines; ++i) {
-		_subsFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i], _subtitleLineScreenY[i]);
+	// multi-line quotes appear from top to bottom
+	// ie. _subtitleLineQuote[0] is the top-most line
+	// The default available lines for drawing are:
+	// 	(kMaxNumOfSubtitlesLines - kStartFromSubtitleLineFromTop)
+	// And by default we prefer drawing starting from line: kStartFromSubtitleLineFromTop.
+	// However, if we have to draw more lines than the default available
+	// we should then override the default starting line and start from further up instead
+	int startingLineFromTop = kStartFromSubtitleLineFromTop;
+	if (_currentSubtitleLines > kMaxNumOfSubtitlesLines - kStartFromSubtitleLineFromTop) {
+		startingLineFromTop = kMaxNumOfSubtitlesLines  - _currentSubtitleLines;
+	}
+
+	for (int i = 0, j = startingLineFromTop; i < _currentSubtitleLines; ++i, ++j) {
+		_subsFont->draw(_subtitleLineQuote[i], s, _subtitleLineScreenX[i], _subtitleLineScreenY[j]);
 	}
 }
 
@@ -376,8 +392,8 @@ void Subtitles::draw(Graphics::Surface &s) {
 * For the second case (auto-split), we don't account for the special case of a single word larger than max line length
 * (no spaces), as practically this won't ever happen.
 *
-* TODO; simplify this code
-* TODO: maybe calculate auto-split points based on quote pixel width and not character count
+* TODO: simplify this code
+* TODO: maybe calculate auto-split points taking into account on quote pixel width per character and not simply the character count
 * TODO: somehow merge with graphics/font.cpp -> wordWrapTextImpl ?
 */
 void Subtitles::calculatePosition() {
@@ -402,7 +418,10 @@ void Subtitles::calculatePosition() {
 
 	while (*textCharacters != 0) {
 		// check for new line explicit split case
-		if (_currentSubtitleLines < kMaxNumOfSubtitlesLines && *textCharacters == '\n' && tmpCharIndex != 0 && _subtitleLineSplitAtCharIndex[_currentSubtitleLines - 1] == 0) {
+		if (_currentSubtitleLines < kMaxNumOfSubtitlesLines
+			&& *textCharacters == '\n'
+			&& tmpCharIndex != 0
+			&& _subtitleLineSplitAtCharIndex[_currentSubtitleLines - 1] == 0) {
 			_subtitleLineSplitAtCharIndex[_currentSubtitleLines - 1] = tmpCharIndex;
 			_currentSubtitleLines += 1;
 		}
@@ -410,14 +429,14 @@ void Subtitles::calculatePosition() {
 		textCharacters += 1;
 	}
 	_subtitleLineSplitAtCharIndex[_currentSubtitleLines - 1] = tmpCharIndex;
-	if (_currentSubtitleLines > 1) { // This means that split on new line characters is possible
+	if (_currentSubtitleLines > 1) { // This means that splitting on new line characters is possible
 		//
-		int j = 0;																// j iterates over subtitle lines.
-		textCharacters = (const uint8 *)_currentSubtitleTextFull.c_str();		// reset pointer to the start of subtitle quote
-		for (int i = 0; i < origQuoteNumOfChars ; ++i) {						// i iterates over line characters
+		int j = 0;																// j iterates over the subtitle line segments
+		textCharacters = (const uint8 *)_currentSubtitleTextFull.c_str();		// reset pointer to the start of the subtitle quote
+		for (int i = 0; i < origQuoteNumOfChars ; ++i) {						// i iterates over characters in the quote
 			if (j < _currentSubtitleLines && i < _subtitleLineSplitAtCharIndex[j]) {
 				_subtitleLineQuote[j] += textCharacters[i];
-			} else { 															// i is at split point
+			} else { 															// i is now at a split point of the quote
 				_subtitleLineQuote[j] += '\0';
 				j += 1;															// start next line
 			}
@@ -432,9 +451,9 @@ void Subtitles::calculatePosition() {
 		}
 	} else {
 		// Here we initially have _currentSubtitleLines == 1
-		// Check quote for auto-splitting
+		// We check quote for auto-splitting
 		// Auto splitting requires space characters in the quote string (which should be ok for the typical cases)
-		if (wOrig > kMaxWidthPerLineToAutoSplitThresholdPx) { // kMaxWidthPerLineToAutoSplitThresholdPx is a practical chosen threshold for width for auto-splitting quotes purposes
+		if (wOrig > kMaxWidthPerLineToAutoSplitThresholdPx) { // kMaxWidthPerLineToAutoSplitThresholdPx is a practical chosen width threshold for auto-splitting quotes purposes
 			// Start by splitting in two lines. If the new parts are still too lengthy, re-try by splitting in three lines, etc.
 			for (int linesToSplitInto = 2; linesToSplitInto <= kMaxNumOfSubtitlesLines; ++linesToSplitInto) {
 				// find the first space after the middle
@@ -511,6 +530,7 @@ void Subtitles::calculatePosition() {
 */
 void Subtitles::clear() {
 	_isVisible = false;
+	_forceShowWhenNoSpeech = false;
 	_currentSubtitleTextFull = "";
 	for (int i = 0; i < kMaxNumOfSubtitlesLines; ++i) {
 		_subtitleLineQuote[i] = "";

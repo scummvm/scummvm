@@ -592,10 +592,6 @@ bool Actor::tick(bool forceDraw, Common::Rect *screenRect) {
 		timeLeft = 0;
 	}
 
-	if (!isSpeeching()) {
-		_vm->_subtitles->hide();
-	}
-
 	if (needsUpdate) {
 		int newAnimation = 0, newFrame = 0;
 		_vm->_aiScripts->updateAnimation(_id, &newAnimation, &newFrame);
