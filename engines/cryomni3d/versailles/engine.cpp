@@ -1286,7 +1286,7 @@ void CryOmni3DEngine_Versailles::animateCursor(const Object *obj) {
 		return;
 	}
 
-	g_system->showMouse(true);
+	bool cursorWasVisible = g_system->showMouse(true);
 
 	for (unsigned int i = 4; i > 0; i--) {
 		// Wait 100ms
@@ -1307,7 +1307,7 @@ void CryOmni3DEngine_Versailles::animateCursor(const Object *obj) {
 		g_system->updateScreen();
 	}
 
-	g_system->showMouse(false);
+	g_system->showMouse(cursorWasVisible);
 }
 
 void CryOmni3DEngine_Versailles::collectObject(unsigned int nameID, const ZonFixedImage *fimg,
@@ -1360,7 +1360,7 @@ void CryOmni3DEngine_Versailles::displayObject(const Common::String &imgName,
 	setMousePos(Common::Point(320, 240)); // Center of screen
 	setCursor(181);
 
-	g_system->showMouse(true);
+	bool cursorWasVisible = g_system->showMouse(true);
 
 	bool exitImg = false;
 	while (!g_engine->shouldQuit() && !exitImg) {
@@ -1374,7 +1374,7 @@ void CryOmni3DEngine_Versailles::displayObject(const Common::String &imgName,
 	waitMouseRelease();
 	clearKeys();
 
-	g_system->showMouse(false);
+	g_system->showMouse(cursorWasVisible);
 	setMousePos(Common::Point(320, 240)); // Center of screen
 }
 
