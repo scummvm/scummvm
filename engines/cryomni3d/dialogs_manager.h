@@ -61,6 +61,7 @@ public:
 
 	void registerSubtitlesSettings(const Common::String &videoName, const SubtitlesSettings &settings);
 
+	void setIgnoreNoEndOfConversation(bool ignore) { _ignoreNoEndOfConversation = ignore; }
 	bool play(const Common::String &sequence, bool &slowStop);
 
 protected:
