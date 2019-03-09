@@ -34,7 +34,7 @@ scummvm (1.8.0+dfsg-1) unstable; urgency=low
   [ Alexandre Detiste ]
   * Use HTTPS for Vcs URLs.
   * Standards-Version: 3.9.7.
-  * Watch "http://scummvm.org/downloads/" for releases.
+  * Watch "https://scummvm.org/downloads/" for releases.
 
   [ Dmitry Smirnov ]
   * Corrected icons installation path (Closes: #778687)
@@ -450,7 +450,7 @@ scummvm (0.7.0-2) unstable; urgency=low
       - Add an explicit build dependency on libz-dev.
 
   * debian/copyright:
-      - Change URLs from http://scummvm.sf.net/ to http://www.scummvm.org/.
+      - Change URLs from http://scummvm.sf.net/ to https://www.scummvm.org/.
 
  -- Tore Anderson <tore@debian.org>  Wed,  5 Jan 2005 23:22:08 +0100
 

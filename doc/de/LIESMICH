@@ -202,7 +202,7 @@ unterstützen Spielen durchsuchen.
 ---- --------
 Der einfachste Weg, um mit dem ScummVM-Team in Verbindung zu treten, ist,
 Fehlerberichte einzusenden (siehe Abschnitt 2.1) oder durch Verwendung des
-Forums unter der Adresse http://forums.scummvm.org .
+Forums unter der Adresse https://forums.scummvm.org .
 Sie können ebenso der Mailing-Liste scummvm-devel beitreten und an diese E-Mails
 versenden oder mit uns im IRC chatten (#scummvm unter irc.freenode.net). Bitte
 fordern Sie uns nicht dazu auf, ein nicht unterstütztes Spiel zu unterstützen.
@@ -591,7 +591,7 @@ ScummVM wird den Kopierschutz in folgenden Spielen überspringen:
 Für eine ausführliche Liste der benötigten Spieldateien für unterstützte Spiele,
 besuchen Sie:
 
-  http://wiki.scummvm.org/index.php/Datafiles
+  https://wiki.scummvm.org/index.php/Datafiles
 
 
 3.3) Hinweise zu Spielen auf mehreren CDs:
@@ -764,7 +764,7 @@ unten erwähnten umgewandelten Zwischensequenzen verwenden, aber dies
 funktioniert nicht bei allen Videos in Baphomets Fluch II. Weitere Informationen
 finden Sie hier:
 
-  http://wiki.scummvm.org/index.php/HOWTO-PlayStation_Videos
+  https://wiki.scummvm.org/index.php/HOWTO-PlayStation_Videos
 
 Einige Neuausgaben der Spiele, wie beispielsweise die PlayStation-Version, haben
 keine Smacker-Videos. Revolution Software hat uns freundlicherweise erlaubt, die
@@ -900,7 +900,7 @@ Um die Wiederveröffentlichung des Spiels für Mac OS X von Wyrmkeep laufen zu
 lassen, müssen Sie die Daten von der CD auf die Festplatte kopieren. Wenn Sie an
 einem PC arbeiten, lesen Sie hierfür:
 
-  http://wiki.scummvm.org/index.php/HOWTO-Mac_Games
+  https://wiki.scummvm.org/index.php/HOWTO-Mac_Games
 
 Obwohl hier in erster Linie über SCUMM-Spiele gesprochen wird, findet das
 Dienstprogramm „HFSExplorer“ Erwähnung, welches Sie benötigen, um die Dateien zu
@@ -1423,7 +1423,7 @@ ist weder erforderlich, noch wird es empfohlen.
 Für weitere Informationen dazu, wie Sie Macintosh-Spieldateien auf Ihre
 Festplatte kopieren können, lesen Sie:
 
-  http://wiki.scummvm.org/index.php/HOWTO-Mac_Games
+  https://wiki.scummvm.org/index.php/HOWTO-Mac_Games
 
 
 4.0) Unterstützte Plattformen:
@@ -1462,7 +1462,7 @@ Die Portierung von Dreamcast unterstützt weder The Curse of Monkey Island noch
 The Dig. Der Portierung von Nintendo DS fehlt Unterstützung für Vollgas, The Dig
 und The Curse of Monkey Island.
 Für weitere plattformabhängige Beschränkungen verweisen wir auf unser Wiki:
-  http://wiki.scummvm.org/index.php/Platforms
+  https://wiki.scummvm.org/index.php/Platforms
 
 In der Portierung von Macintosh wird die rechte Maustaste über den Cmd-Klick
 emuliert (d. h. Sie klicken die Maustaste, während Sie die
@@ -3024,7 +3024,7 @@ der Speicherort der Bildschirmfotos vom verwendeten Betriebssystem ab:
 Für eine aktuelle Übersicht dazu, wie man ScummVM für unterschiedliche
 Plattformen kompiliert, schauen Sie bitte in unserem Wiki nach, insbesondere auf
 dieser Seite:
-   http://wiki.scummvm.org/index.php/Compiling_ScummVM
+   https://wiki.scummvm.org/index.php/Compiling_ScummVM
 
 Wenn Sie für Windows, Linux oder Mac OS X kompilieren, benötigen Sie SDL-1.2.2
 oder höher (ältere Versionen funktionieren möglicherweise, haben aber keinen
@@ -3050,85 +3050,85 @@ Debug-Nachrichten zu durchsuchen
    Windows:
    * MinGW
       Weiterführende Informationen finden Sie unter:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/MinGW
+      https://wiki.scummvm.org/index.php/Compiling_ScummVM/MinGW
    * Visual Studio (MSVC)
       Weiterführende Informationen finden Sie unter:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Visual_Studio
+      https://wiki.scummvm.org/index.php/Compiling_ScummVM/Visual_Studio
 
    Linux:
    * GCC
       Weiterführende Informationen finden Sie unter:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/GCC
+      https://wiki.scummvm.org/index.php/Compiling_ScummVM/GCC
 
    AmigaOS4:
       Weiterführende Informationen finden Sie unter:
-      http://wiki.scummvm.org/index.php/AmigaOS4
+      https://wiki.scummvm.org/index.php/AmigaOS4
 
    Apple iPhone:
       Weiterführende Informationen finden Sie unter:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/iPhone
+      https://wiki.scummvm.org/index.php/Compiling_ScummVM/iPhone
 
    Atari/FreeMiNT:
       Weiterführende Informationen finden Sie unter:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Atari/FreeMiNT
+      https://wiki.scummvm.org/index.php/Compiling_ScummVM/Atari/FreeMiNT
 
    Bada/Tizen:
       Weiterführende Informationen finden Sie unter:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Bada/Tizen
+      https://wiki.scummvm.org/index.php/Compiling_ScummVM/Bada/Tizen
 
    BeOS/ZETA/Haiku:
       Weiterführende Informationen finden Sie unter:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/BeOS/ZETA/Haiku
+      https://wiki.scummvm.org/index.php/Compiling_ScummVM/BeOS/ZETA/Haiku
 
    Google Android:
       Weiterführende Informationen finden Sie unter:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Android
+      https://wiki.scummvm.org/index.php/Compiling_ScummVM/Android
 
    HP webOS:
       Weiterführende Informationen finden Sie unter:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/WebOS
+      https://wiki.scummvm.org/index.php/Compiling_ScummVM/WebOS
 
    Mac OS:
    * Mac OS X
       Weiterführende Informationen finden Sie unter:
-      http://wiki.scummvm.org/index.php/Mac_OS_X
+      https://wiki.scummvm.org/index.php/Mac_OS_X
     * Mac OS X 10.2.8
       Weiterführende Informationen finden Sie unter:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Mac_OS_X_10.2.8
+      https://wiki.scummvm.org/index.php/Compiling_ScummVM/Mac_OS_X_10.2.8
     * Mac OS X Crosscompiling
       Weiterführende Informationen finden Sie unter:
-http://wiki.scummvm.org/index.php/Compiling_ScummVM/Mac_OS_X_Crosscompiling
+https://wiki.scummvm.org/index.php/Compiling_ScummVM/Mac_OS_X_Crosscompiling
 
    Maemo:
       Weiterführende Informationen finden Sie unter:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Maemo
+      https://wiki.scummvm.org/index.php/Compiling_ScummVM/Maemo
 
    Nintendo Wii and Gamecube:
       Weiterführende Informationen finden Sie unter:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Wii
+      https://wiki.scummvm.org/index.php/Compiling_ScummVM/Wii
 
    RaspberryPi:
       Weiterführende Informationen finden Sie unter:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/RPI
+      https://wiki.scummvm.org/index.php/Compiling_ScummVM/RPI
 
    Sega Dreamcast:
       Weiterführende Informationen finden Sie unter:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Dreamcast
+      https://wiki.scummvm.org/index.php/Compiling_ScummVM/Dreamcast
 
    Sony Playstation:
    * Sony PlayStation 2
       Weiterführende Informationen finden Sie unter:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/PlayStation_2
+      https://wiki.scummvm.org/index.php/Compiling_ScummVM/PlayStation_2
    * Sony PlayStation 3
       Weiterführende Informationen finden Sie unter:
-      http://wiki.scummvm.org/index.php/PlayStation_3#Building_from_source
+      https://wiki.scummvm.org/index.php/PlayStation_3#Building_from_source
    * Sony PlayStation Portable
       Weiterführende Informationen finden Sie unter:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/PlayStation_Portable
+      https://wiki.scummvm.org/index.php/Compiling_ScummVM/PlayStation_Portable
 
    Symbian:
       Weiterführende Informationen finden Sie unter:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Symbian
+      https://wiki.scummvm.org/index.php/Compiling_ScummVM/Symbian
 
 
 11.0) Mitwirkende

@@ -12,10 +12,10 @@
         </Version>
         <WindowsSystemPerformanceRating minimum="1.0" recommended="2.0" />
         <Developers>
-            <Developer URI="http://www.scummvm.org">The ScummVM Team</Developer>
+            <Developer URI="https://www.scummvm.org">The ScummVM Team</Developer>
         </Developers>
         <Publishers>
-            <Publisher URI="http://www.scummvm.org">The ScummVM Team</Publisher>
+            <Publisher URI="https://www.scummvm.org">The ScummVM Team</Publisher>
         </Publishers>
         <GameExecutables>
             <GameExecutable path="scummvm.exe" />
@@ -35,7 +35,7 @@
                         <FileTask path="README.txt" arguments="" />
                     </Task>
                     <Task index="1" name="ScummVM Website">
-                        <URLTask Link="http://www.scummvm.org" />
+                        <URLTask Link="https://www.scummvm.org" />
                     </Task>
                 </Support>
             </GameTasks>

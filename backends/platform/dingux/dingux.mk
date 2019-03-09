@@ -75,7 +75,7 @@ gcw-opk: $(gcw0_bundle)
 	$(srcdir)/dists/gcw0/opk_make.sh -d $(gcw0_bundle) -o scummvm
 
 GeneralUser_GS_1.44-FluidSynth.zip:
-	curl -s http://www.scummvm.org/frs/extras/SoundFont/GeneralUser_GS_1.44-FluidSynth.zip -o GeneralUser_GS_1.44-FluidSynth.zip
+	curl -s https://www.scummvm.org/frs/extras/SoundFont/GeneralUser_GS_1.44-FluidSynth.zip -o GeneralUser_GS_1.44-FluidSynth.zip
 
 GeneralUser\ GS\ FluidSynth\ v1.44.sf2: GeneralUser_GS_1.44-FluidSynth.zip
 	unzip -n GeneralUser_GS_1.44-FluidSynth.zip

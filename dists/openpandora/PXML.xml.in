@@ -2,7 +2,7 @@
 <PXML xmlns="http://openpandora.org/namespaces/PXML" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="PXML_schema.xsd">
     <!-- This is the package, in our case ScummVM -->
     <package id="scummvm.djwillis.0001">
-        <author name="DJWillis" website="http://www.scummvm.org/"/>
+        <author name="DJWillis" website="https://www.scummvm.org/"/>
         <!-- version type can be alpha, beta or release, set to release in branch -->
         <version major="@VER_MAJOR@" minor="@VER_MINOR@" release="@VER_PATCH@" build="1" type="release"/>
         <!-- Both title and titles are needed -->
@@ -23,7 +23,7 @@
     <!-- This is the application, the ScummVM binary -->
     <application id="scummvm.djwillis.0001" appdata="scummvm">
         <exec command="./runscummvm.sh"/>
-        <author name="DJWillis" website="http://www.scummvm.org/"/>
+        <author name="DJWillis" website="https://www.scummvm.org/"/>
         <!-- version type can be alpha, beta or release, set to release in branch -->
         <version major="@VER_MAJOR@" minor="@VER_MINOR@" release="@VER_PATCH@" build="1" type="release"/>
         <!-- Both title and titles are needed -->
@@ -39,7 +39,7 @@
             </description>
         </descriptions>
         <licenses>
-            <license name="GPLv2" url="http://www.gnu.org/licenses/gpl-2.0.html" sourcecodeurl="http://www.scummvm.org"/>
+            <license name="GPLv2" url="http://www.gnu.org/licenses/gpl-2.0.html" sourcecodeurl="https://www.scummvm.org"/>
         </licenses>
         <icon src="icon/scummvm.png"/>
         <previewpics>

@@ -219,7 +219,7 @@ enum SciGameId {
 /**
  * SCI versions
  * For more information, check here:
- * http://wiki.scummvm.org/index.php/Sierra_Game_Versions#SCI_Games
+ * https://wiki.scummvm.org/index.php/Sierra_Game_Versions#SCI_Games
  */
 enum SciVersion {
 	SCI_VERSION_NONE,
