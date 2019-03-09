@@ -803,7 +803,7 @@ void CryOmni3DEngine_Versailles::setupLevelActionsMask() {
 		SET_MASK(9, 2, 52903, 0);
 		SET_MASK(9, 2, 22903, 0);
 		SET_MASK(9, 2, 52902, 0);
-		SET_MASK(9, 2, 22902, 1);
+		SET_MASK(9, 2, 22902, 0);
 	} else if (_currentLevel == 3) {
 		SET_MASK(13, 0, 13131, 0);
 		SET_MASK(13, 0, 23131, 0);
@@ -831,12 +831,95 @@ void CryOmni3DEngine_Versailles::setupLevelActionsMask() {
 		SET_MASK(22, 2, 23220, 0);
 		SET_MASK(22, 2, 33220, 0);
 	} else if (_currentLevel == 4) {
-		// TODO: finish the boring job
-		error("TODO:");
+		// 16, 0 is empty
+		SET_MASK(16, 1, 14161, 0);
+		SET_MASK(16, 1, 24161, 0);
+		SET_MASK(16, 2, 14161, 0);
+		SET_MASK(16, 2, 24161, 0);
+		// 17, 0 is empty
+		SET_MASK(17, 1, 34171, 0);
+		// 7, 0 is empty
+		SET_MASK(7, 1, 24081, 0);
+		SET_MASK(7, 1, 44071, 0);
+		// 8, 0 is empty
+		SET_MASK(8, 1, 24081, 0);
+		SET_MASK(9, 0, 54091, 0);
+		SET_MASK(9, 0, 14091, 0);
+		SET_MASK(9, 0, 24092, 0);
+		SET_MASK(9, 0, 24091, 0);
+		SET_MASK(9, 1, 14091, 54091);
+		SET_MASK(9, 2, 54091, 24091);
+		SET_MASK(10, 0, 14105, 0);
+		SET_MASK(10, 0, 24105, 0);
+		SET_MASK(10, 0, 24106, 0);
+		SET_MASK(10, 0, 24107, 0);
+		SET_MASK(10, 0, 54106, 0);
+		//SET_MASK(10, 0, 54106, 0);
+		SET_MASK(10, 1, 24106, 0);
+		SET_MASK(10, 1, 24107, 0);
+		SET_MASK(10, 1, 54106, 0);
+		//SET_MASK(10, 1, 54106, 0);
+		SET_MASK(10, 2, 14104, 24104);
 	} else if (_currentLevel == 5) {
-		error("TODO:");
+		SET_MASK(27, 0, 15270, 0);
+		SET_MASK(27, 0, 25270, 0);
+		SET_MASK(27, 1, 15270, 0);
+		SET_MASK(27, 1, 25270, 0);
+		SET_MASK(27, 1, 35270, 0);
+		SET_MASK(27, 2, 35270, 0);
+		SET_MASK(9, 0, 15090, 0);
+		SET_MASK(9, 0, 25090, 0);
+		// 9, 1 is empty
+		// 13, 0 is empty
+		SET_MASK(13, 1, 25130, 0);
+		SET_MASK(13, 1, 25131, 0);
+		SET_MASK(13, 1, 55130, 0);
+		SET_MASK(13, 1, 55131, 0);
+		SET_MASK(16, 0, 28, 0);
+		SET_MASK(16, 0, 35162, 0);
+		SET_MASK(16, 1, 28, 0);
+		SET_MASK(16, 1, 35162, 0);
+		SET_MASK(16, 1, 25160, 0);
+		SET_MASK(16, 1, 35161, 0);
+		SET_MASK(16, 2, 28, 0);
+		SET_MASK(16, 2, 35162, 0);
+		SET_MASK(16, 2, 25160, 0);
+		SET_MASK(16, 3, 35162, 28);
+		SET_MASK(16, 3, 25160, 0);
+		SET_MASK(16, 3, 35161, 0);
+		SET_MASK(16, 3, 35160, 0);
+		SET_MASK(16, 4, 35162, 28);
+		SET_MASK(16, 4, 25160, 0);
+		SET_MASK(16, 5, 25160, 0);
+		SET_MASK(16, 5, 35160, 0);
+		SET_MASK(16, 6, 35162, 28);
+		SET_MASK(16, 6, 25160, 0);
+		SET_MASK(16, 6, 35161, 0);
+		SET_MASK(16, 6, 35160, 0);
+		// 29, 0 is empty
+		SET_MASK(29, 1, 35290, 0);
+		SET_MASK(15, 0, 15090, 43154);
+		SET_MASK(15, 0, 25090, 0);
+		// 15, 1 is empty
+		SET_MASK(17, 0, 15090, 0);
+		SET_MASK(17, 0, 25090, 0);
+		// 17, 1 is empty
+		// 33, 0 is empty
+		SET_MASK(33, 1, 35330, 0);
 	} else if (_currentLevel == 6) {
-		error("TODO:");
+		//  1, 0 is empty
+		SET_MASK(1, 1, 36010, 0);
+		//  3, 0 is empty
+		SET_MASK(3, 1, 36030, 0);
+		SET_MASK(14, 0, 26140, 0);
+		SET_MASK(14, 0, 16140, 0);
+		//  14, 1 is empty
+		SET_MASK(19, 0, 36190, 0);
+		SET_MASK(19, 1, 16190, 0);
+		SET_MASK(19, 1, 26190, 0);
+		SET_MASK(19, 2, 36190, 0);
+		SET_MASK(19, 2, 16190, 0);
+		SET_MASK(19, 2, 26190, 0);
 	} else if (_currentLevel == 7) {
 		//  9, 0 is empty
 		SET_MASK(9, 1, 37090, 0);
