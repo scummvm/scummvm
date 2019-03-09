@@ -4,7 +4,7 @@ The official English, German, French, Italian and Spanish versions of the game s
 
 ## Building and installing a SUBTITLES.MIX file with a "make" command
 You need to follow these instructions:
-1. Download the online Excel transcript and save it as "englishTranscript.xls" into the "devtools\create_bladerunner\subtitles\sampleInput" folder.
+1. Download the online Excel transcript and save it as "englishTranscript.xlsx" into the "devtools\create_bladerunner\subtitles\sampleInput" folder.
 __The online Excel file is available here:__
 https://docs.google.com/spreadsheets/d/17ew0YyhSwqcqZg6bXrIgz0GkA62dhgViHN15lOu5Hj8/edit?usp=sharing
 2. Edit your font glyphs PNG file (or use the provided one in the sampleInput folder). This file should be stored as "subtitlesFont.png" into the "devtools\create_bladerunner\subtitles\sampleInput" folder.
@@ -14,11 +14,12 @@ https://docs.google.com/spreadsheets/d/17ew0YyhSwqcqZg6bXrIgz0GkA62dhgViHN15lOu5
 ```
 make devtools/create_bladerunner/subtitles
 ```
+5. You may need to install some required Python 2 libraries such as Pillow (or PIL), xlrd, xlwt and wave (which is part of the Python 2 Standard Library).
 6. Copy the output file "SUBTITLES.MIX", created in the ScummVM root folder, into your Blade Runner game directory.
 7. Launch the Blade Runner game using ScummVM.
  
 ## quotesSpreadsheetCreator (quoteSpreadsheetCreator.py)
-(requires python lib *xlwt*, *wave*)
+(requires python lib *xlwt* (tested with version 1.3.0), *wave* (included in the Python 2 Standard Library)
 A tool to gather all the speech audio filenames in an Excel file which will include a column with links to the audio file location on the PC. By Ctrl+MouseClick on that column's entries you should be able to listen to the corresponding wav file.
 The output Excel file *out.xls* should help with the transcription of all the spoken *in-game* quotes. It also provides extra quote information such as the corresponding actor ID and quote ID per quote.
 
@@ -48,16 +49,16 @@ The tool __requires__ a valid path to the actornames.txt file; this file is incl
 
 
 ## mixResourceCreator (mixResourceCreator.py)
-(requires python lib *xlrd*)
+(requires python lib *xlrd* (tested with version 1.2.0))
 A tool to process the aforementioned Excel file with the dialogue transcriptions and output text resource files (TRx) that will be packed along with the external font (see fontCreator tool) into a SUBTITLES.MIX file. Multiple TRx files will be created intermediately in order to fully support subtitles in the game. One TRx file includes all in-game spoken quotes and the rest of them correspond to any VQA video sequence that contain voice acting.
 Usage:
 ```
-python2.7 mixResourceCreator.py -x excelWithTranscriptSheets.xls [-ian pathToActorNamesTxt] [-cft pathToConfigureFontsTranslationTxt] [--trace]
+python2.7 mixResourceCreator.py -x excelWithTranscriptSheets.xlsx [-ian pathToActorNamesTxt] [-cft pathToConfigureFontsTranslationTxt] [--trace]
 ```
 The tool __requires__ a valid path to the actornames.txt file, which is included in the samples folder.
 
 Syntax Notes: 
-1. The "-x" switch is followed by the path to the input Excel file (xls) which should contain the transcript sheet(s).
+1. The "-x" switch is followed by the path to the input Excel file (xls or xlsx) which should contain the transcript sheet(s).
 2. The "-ian" optional switch is followed by the path to the actornames.txt file -- if this is omitted then the file is assumed to reside in the current working directory.
 3. The "-cft" optional switch is followed by the path to the text configuration file "configureFontsTranslation.txt" -- if this is omitted then the file is assumed to reside in the current working directory.
 4. The "-ld" optional switch is followed by a language description for the language of the game you are exporting Text Resources from. This switch is meaningful when you also use the "-xtre" switch to export Text Resource files.
@@ -84,7 +85,7 @@ The __text configuration file "configureFontsTranslation.txt"__ a __text file th
 	SUBTLS_E.FON, KIA6PT.FON, TAHOMA18.FON, TAHOMA24.FON and SYSTEM.FON (practically you won't be using the last one). 
 	
 ## fontCreator (fontCreator.py)
-(requires python Image library *PIL*)
+(requires python Image library *Pillow* (tested with version 5.4.1))
 A tool to support __both__ the exporting of fonts from the game (to PNG images) __and__ the creation of a font file (FON) in order to resolve various issues with the available fonts (included in the game's own resource files). These issues include alignment, kerning, corrupted format, limited charset and unsupported characters -- especially for languages with too many non-Latin symbols in their alphabet.
 This font tool's code is based off the Monkey Island Special Edition's Translator (https://github.com/ShadowNate/MISETranslator).
 Usage:

@@ -102,7 +102,7 @@ else:
 	structLibFound = True
 	
 try:
-	import Image 
+	from PIL import Image 
 except ImportError:
 	print "[Error] Image python library (PIL) is required to be installed!" 
 else:

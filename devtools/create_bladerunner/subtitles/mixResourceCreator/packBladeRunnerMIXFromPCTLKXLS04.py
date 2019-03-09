@@ -92,7 +92,7 @@ from xlrd import *
 from struct import *
 
 COMPANY_EMAIL = "classic.adventures.in.greek@gmail.com"
-APP_VERSION = "0.80"
+APP_VERSION = "0.90"
 APP_NAME = "packBladeRunnerMIXFromPCTLKXLS"
 APP_WRAPPER_NAME = "mixResourceCreator.py"
 APP_NAME_SPACED = "Blade Runner MIX Resource Creator"
@@ -277,7 +277,6 @@ def initOverrideEncoding(pathToConfigureFontsTranslationTxt):
 		print "[Error] Could not find proper Font Translation Configuration info in: %s" % (pathToConfigureFontsTranslationTxt)
 		sys.exit(1)	# terminate if override Failed (Blade Runner)
 	#
-	# TODO ASDF fix this!!!
 	#
 	if(len(gListOfFontNamesToOutOfOrderGlyphs) == 0):
 		tmpFontType = DEFAULT_SUBTITLES_FONT_NAME[:-4] # remove the .FON extensionFromTheName
@@ -537,18 +536,16 @@ def outputMIX():
 #
 #
 
-#def inputXLS(filename)
-	#TODO extra pass once the quotes have been updated for weird unicode characters
-	#TODO some ' quotes appear as \u2019 and others appear normally as '. what's that about?
-	#DONE manually I've replaced all weird \u2019 single quotes with '''
-	#the Spanish n is \xf1 -> we put it at ASCII value: \xA5 -- font index 0xA6 ?
-	#the Spanish i is \xed -> we put it at ASCII value: \xA2 -- font index 0xA3 ?
-	#pâté
+	# TODO some ' (single quote characters) appear as \u2019 and others appear normally as '. Probably due to Excel auto-converting them.
+	# DONE manually I've replaced all weird \u2019 single quotes with '''
+	# the Spanish n is \xf1 -> we put it at ASCII value: \xA5 -- font index 0xA6 ?
+	# the Spanish i is \xed -> we put it at ASCII value: \xA2 -- font index 0xA3 ?
+	# pâté
 	#	 a actual ASCII value is 0xE2 in codepage 1252 -- put it in ASCII value 0xA6 (165) -- font index 0xA7
 	#	 e actual ASCII value is 0xE9 in codepage 1252 -- put it in ASCII value 0xA7 (166) -- font index 0xA8
-	#TODO what are other characters are special?
-	#TODO transition to ASCII chars to store in TRE file?
-	#DONE manually I've replaced all one-char '...' with three dots
+	# TODO what are other characters are special?
+	# TODO transition to ASCII chars to store in TRE file?
+	# DONE manually I've replaced all one-char '...' with three dots
 	# TODO actors TRE has 0x49 entries, (73 names), but table of ids has 73 entries BUT the offset table (first offset is calced + 0x04, so from end of the first 4 count bytes) has 74 entries. The last entry indexes the end of file (!)
 	# TODO all strings are NULL terminated in the TRE file!
 
@@ -649,23 +646,42 @@ def translateQuoteToAsciiProper(cellObj, pSheetName):
 	return newQuoteReplaceSpecialsRetStr
 	#return newQuoteReplaceSpecialsEnStr
 
+# aux function to validate an int cell value
+def parseIntCellValue(cell_obj_value, row_idx, col_idx, xl_sheet_name, xl_sheet_nrows, xl_sheet_ncols):
+	retCandValue = 0
+	try:
+		retCandValue =	int(cell_obj_value)
+	except Exception as e:
+		print "\n[Error] Invalid cell value at row: %d, column: %d in sheet: %s (rows: %d, columns: %d)" %(row_idx+1, col_idx+1, xl_sheet_name, xl_sheet_nrows, xl_sheet_ncols)
+		print "\tPlease check for redundant empty rows or invalid cell values.\n"
+		sys.exit()
+	return retCandValue
 
-def inputXLS(filename):
+
+def inputXLS(pathtoInputExcelFilename):
 	global gNumOfSpokenQuotes
 	global gTableOfStringIds
 	global gTableOfStringOffsets
 	global gTableOfStringEntries
 	# Open the workbook
 	xl_workbook = None
+	
+	pathToExcelFilenameNoExt, excelFileExtension = os.path.splitext(pathtoInputExcelFilename)
+	# Check if no extension or invalid extension
+	if excelFileExtension is None \
+			and not (excelFileExtension.lower() == "xls" or excelFileExtension.lower() == "xlsx"):
+		print "[Error] Bad file extension found for the Excel input file %s. Supported extensions are '.xls' and 'xlsx'" % (excelFileExtension, pathtoInputExcelFilename)
+		sys.exit(1) # Terminate if the input Excel had unsupported extension (or none)
+
 	try:
-		xl_workbook = xlrd.open_workbook(filename, encoding_override="utf-8")
+		xl_workbook = xlrd.open_workbook(pathtoInputExcelFilename, encoding_override="utf-8")
 		if xl_workbook is not None:
-			print "[Info] Opened Excel input file: %s" % (filename)
+			print "[Info] Opened Excel input file: %s" % (pathtoInputExcelFilename)
 	except Exception as e:
-		print '[Debug] Could not open the Excel input file::'  + str(e)
+		print '[Error] Could not open the Excel input file: '  + str(e)
 
 	if xl_workbook is None:
-		print '[Info] Could not open the Excel input file: %s' % (filename)
+		print '[Error] Giving up. Could not open the specified Excel input file.'
 		sys.exit(1) # Terminate if the input Excel was not found
 	# List sheet names, and pull a sheet by name
 	#
@@ -755,7 +771,9 @@ def inputXLS(filename):
 							if len(twoTokensfirstColSplitAtDotXLS) == 2:
 								twoTokensfirstColSplitAtDashXLS = twoTokensfirstColSplitAtDotXLS[0].split('-', 1)
 								if len(twoTokensfirstColSplitAtDashXLS) == 2:
-									tmpQuoteID = int( twoTokensfirstColSplitAtDashXLS[0]) * 10000 + int(twoTokensfirstColSplitAtDashXLS[1])
+									tmpActorPart = parseIntCellValue(twoTokensfirstColSplitAtDashXLS[0], row_idx, col_idx, xl_sheet.name, xl_sheet.nrows, xl_sheet.ncols)
+									tmpSubQuotePart = parseIntCellValue(twoTokensfirstColSplitAtDashXLS[1], row_idx, col_idx, xl_sheet.name, xl_sheet.nrows, xl_sheet.ncols)
+									tmpQuoteID = tmpActorPart * 10000 + tmpSubQuotePart
 									#if gTraceModeEnabled:
 									#	print ('[Debug] Row_idx: %d. Tag: %s, QuoteId: [%d]' % (row_idx, twoTokensfirstColSplitAtDotXLS[0], tmpQuoteID))
 									gTableOfStringIds.append(tmpQuoteID)
@@ -789,16 +807,16 @@ def inputXLS(filename):
 					# FOR VQAs -- Iterate through columns starting from col 2. We need cols: 2, 9, 10
 					#
 					elif mode == 2:
-						if(col_idx == 2): # subtitle text
+						if (col_idx == 2): # subtitle text
 							newQuoteReplaceSpecialsAscii = translateQuoteToAsciiProper(cell_obj, xl_sheet.name)
 							#print ('[Debug] length: %d: %s' % (len(newQuoteReplaceSpecialsAscii), newQuoteReplaceSpecialsAscii))
 							#print ':'.join(x.encode('hex') for x in newQuoteReplaceSpecialsAscii)	# seems to work.  new chars are non-printable but exist in string
 							# don't append to gTableOfStringEntries yet
-						elif(col_idx == 9): # startFrame
+						elif (col_idx == 9): # startFrame
 							#print "[Debug] cell: %s" % (cell_obj.value)
-							tmpStartFrame =	 int(cell_obj.value)
-						elif(col_idx == 10): # endFrame
-							tmpEndFrame = int(cell_obj.value)
+							tmpStartFrame = parseIntCellValue(cell_obj.value, row_idx, col_idx, xl_sheet.name, xl_sheet.nrows, xl_sheet.ncols)
+						elif (col_idx == 10): # endFrame
+							tmpEndFrame = parseIntCellValue(cell_obj.value, row_idx, col_idx, xl_sheet.name, xl_sheet.nrows, xl_sheet.ncols)
 							tmpQuoteID = tmpStartFrame | (tmpEndFrame << 16) # top 16 bits are end frame (up to 65536 frames which is enough) and low 16 bits are startFrame
 
 							gTableOfStringIds.append(tmpQuoteID)
@@ -816,7 +834,7 @@ def inputXLS(filename):
 					elif mode == 3:
 					   #print ('[Debug] Column: [%s] cell_obj: [%s]' % (col_idx, cell_obj))
 						if(col_idx == 0):
-							tmpQuoteID = int(cell_obj.value)
+							tmpQuoteID = parseIntCellValue(cell_obj.value, row_idx, col_idx, xl_sheet.name, xl_sheet.nrows, xl_sheet.ncols)
 							gTableOfStringIds.append(tmpQuoteID)
 						elif(col_idx == 1) :
 							#if switchFlagShowQuote == True:
@@ -925,11 +943,11 @@ def main(argsCL):
 			print "Always keep backups!"
 			print "--------------------"
 			print "Preparatory steps:"
-			print "1. Copy the transcript Excel file (eg. BladeRunnerPCTLK.xls, latest version, downloaded from Google Sheets) in some folder on your PC."
+			print "1. Copy the transcript Excel file (eg. BladeRunnerPCTLK.xlsx, latest version, downloaded from Google Sheets) in some folder on your PC."
 			print "--------------------"
 			print "%s takes 1 mandatory argument:" % (APP_WRAPPER_NAME)
 			print "Valid syntax: "
-			print "%s -x path_to_BladeRunnerPCTLK_xls [-ian path_to_actornames_txt] [-cft path_to_configureFontsTranslation_txt] [-ld gameInputLanguageDescription] [--trace]" % (APP_WRAPPER_NAME)
+			print "%s -x path_to_BladeRunnerPCTLK_xlsx [-ian path_to_actornames_txt] [-cft path_to_configureFontsTranslation_txt] [-ld gameInputLanguageDescription] [--trace]" % (APP_WRAPPER_NAME)
 			print "-x is followed by the path to the excel file with the subtitle quotes."
 			print "-ian is followed by the path to actornames.txt, if it's not in the current working directory."
 			print "-cft is followed by the path to configureFontsTranslation.txt, if it's not in the current working directory."
@@ -1008,7 +1026,7 @@ def main(argsCL):
 	if invalidSyntax == True:
 		print "[Error] Invalid syntax\n Try: \n %s --help for more info \n %s --version for version info " % (APP_WRAPPER_NAME, APP_WRAPPER_NAME)
 		print "Valid syntax: "
-		print "%s -x path_to_BladeRunnerPCTLK_xls [-ian path_to_actornames_txt] [-cft path_to_configureFontsTranslation_txt] [-ld gameInputLanguageDescription] [--trace]" % (APP_WRAPPER_NAME)
+		print "%s -x path_to_BladeRunnerPCTLK_xlsx [-ian path_to_actornames_txt] [-cft path_to_configureFontsTranslation_txt] [-ld gameInputLanguageDescription] [--trace]" % (APP_WRAPPER_NAME)
 		print "\nDetected arguments:"
 		tmpi = 0
 		for tmpArg in argsCL:

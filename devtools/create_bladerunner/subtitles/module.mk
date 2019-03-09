@@ -10,6 +10,10 @@ BLADERUNNER_SUBTITLES_SAMPLE_INPUT_FOLDER := $(srcdir)/devtools/create_bladerunn
 INTERMEDIATE_RESOURCE_FILES_UI := "OPTIONS.TRE" "DLGMENU.TRE" "SCORERS.TRE" "VK.TRE" "CLUES.TRE" "CRIMES.TRE" "ACTORS.TRE" "HELP.TRE" "AUTOSAVE.TRE" "ERRORMSG.TRE" "SPINDEST.TRE" "KIA.TRE" "KIACRED.TRE" "CLUETYPE.TRE" "ENDCRED.TRE" "POGO.TRE"
 INTERMEDIATE_RESOURCE_FILES_SUBS := "INGQUO_E.TRE" "WSTLGO_E.TRE" "BRLOGO_E.TRE" "INTRO_E.TRE" "MW_A_E.TRE" "MW_B01_E.TRE" "MW_B02_E.TRE" "MW_B03_E.TRE" "MW_B04_E.TRE" "MW_B05_E.TRE" "INTRGT_E.TRE" "MW_D_E.TRE" "MW_C01_E.TRE" "MW_C02_E.TRE" "MW_C03_E.TRE" "END04A_E.TRE" "END04B_E.TRE" "END04C_E.TRE" "END06_E.TRE" "END01A_E.TRE" "END01B_E.TRE" "END01C_E.TRE" "END01D_E.TRE" "END01E_E.TRE" "END01F_E.TRE" "END03_E.TRE"
 INPUT_TRANSCRIPT_FILENAME := englishTranscript.xls
+ifeq (,$(wildcard $(INPUT_TRANSCRIPT_FILENAME)))
+	INPUT_TRANSCRIPT_FILENAME := englishTranscript.xlsx
+endif
+
 INPUT_TRANSCRIPT_AUX_CONF_FILENAME := configureFontsTranslation.txt
 INPUT_FONT_GLYPHS_PNG_FILENAME := subtitlesFont.png
 INPUT_FONT_GLYPHS_PNG_AUX_CONF_FILENAME := overrideEncodingSUBLTS.txt
@@ -43,7 +47,7 @@ $(TOOL_OUTPUT): $(FONT_OUTPUT) $(BLADERUNNER_SUBTITLES_SAMPLE_INPUT_FOLDER)/$(IN
 	$(info This process assumes that the folder: )
 	$(info $(BLADERUNNER_SUBTITLES_SAMPLE_INPUT_FOLDER))
 	$(info contains: )
-	$(info *. $(INPUT_TRANSCRIPT_FILENAME) - an XLS (Excel) input file with the transcript)
+	$(info *. $(INPUT_TRANSCRIPT_FILENAME) - an XLS(X) (Excel) input file with the transcript)
 	$(info *. $(INPUT_TRANSCRIPT_AUX_CONF_FILENAME) - a TXT (text) input file with configuration settings for the transcript processing)
 	$(info If successful, a $(TOOL_OUTPUT) file will be created in your working directory)
 	$(info Please, copy this $(TOOL_OUTPUT) into your Blade Runner game directory!)
