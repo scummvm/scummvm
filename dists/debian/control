@@ -27,7 +27,7 @@ Build-Depends: debhelper (>= 9), autotools-dev
 #    ,libsdl2-net-dev
 #    ,libcurl4-gnutls-dev
 Standards-Version: 3.9.8
-Homepage: http://www.scummvm.org
+Homepage: https://www.scummvm.org
 Vcs-Git: https://anonscm.debian.org/git/pkg-games/scummvm.git
 Vcs-Browser: https://anonscm.debian.org/cgit/pkg-games/scummvm.git
 
@@ -48,7 +48,7 @@ Description: engine for several graphical adventure games
  based on LucasArts' SCUMM (Script Creation Utility for Maniac Mansion)
  system.  SCUMM is used for many games, including Monkey Island,
  Day of the Tentacle, Sam and Max and more.  See the official compatibility
- list at <http://www.scummvm.org/compatibility.php> for a full list
+ list at <https://www.scummvm.org/compatibility/> for a full list
  of supported games.
  .
  The game data of four games compatible with ScummVM is included in Debian.
@@ -75,7 +75,7 @@ Description: engine for several graphical adventure games (data files)
  based on LucasArts' SCUMM (Script Creation Utility for Maniac Mansion)
  system.  SCUMM is used for many games, including Monkey Island,
  Day of the Tentacle, Sam and Max and more.  See the official compatibility
- list at <http://www.scummvm.org/compatibility.php> for a full list
+ list at <https://www.scummvm.org/compatibility/> for a full list
  of supported games.
  .
  The game data of four games compatible with ScummVM is included in Debian.

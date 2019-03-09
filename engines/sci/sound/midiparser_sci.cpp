@@ -720,7 +720,7 @@ bool MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 		break;
 	case 0xB:
 		// Reference for some events:
-		// http://wiki.scummvm.org/index.php/SCI/Specifications/Sound/SCI0_Resource_Format#Status_Reference
+		// https://wiki.scummvm.org/index.php/SCI/Specifications/Sound/SCI0_Resource_Format#Status_Reference
 		// Handle common special events
 		switch (info.basic.param1) {
 		case kSetReverb:

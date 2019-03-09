@@ -6,7 +6,7 @@ pgpmode=none,\
 repacksuffix=+dfsg,\
 repack,compression=xz,\
 dversionmangle=s/\+dfsg\d*//,\
-"  http://scummvm.org/downloads/ .*/scummvm-([0-9.]+)\.tar\.(?:xz|bz2|gz)
+"  https://scummvm.org/downloads/ .*/scummvm-([0-9.]+)\.tar\.(?:xz|bz2|gz)
 
 opts="\
 pgpmode=none,\

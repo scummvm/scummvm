@@ -887,7 +887,7 @@ public:
 	 * This method could be called very often by engines. Backends are hence
 	 * supposed to only perform any redrawing if it is necessary, and otherwise
 	 * return immediately. See
-	 * <http://wiki.scummvm.org/index.php/HOWTO-Backends#updateScreen.28.29_method>
+	 * <https://wiki.scummvm.org/index.php/HOWTO-Backends#updateScreen.28.29_method>
 	 */
 	virtual void updateScreen() = 0;
 

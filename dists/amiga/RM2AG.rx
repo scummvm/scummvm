@@ -103,7 +103,7 @@ END
 WRITELN(guide_write,'------------------------------------------------------------------------')
 WRITELN(guide_write,'Good Luck and Happy Adventuring!')
 WRITELN(guide_write,'The ScummVM team.')
-WRITELN(guide_write,'@{"http://www.scummvm.org/" System "URLOpen http://www.scummvm.org/"}')
+WRITELN(guide_write,'@{"https://www.scummvm.org/" System "URLOpen https://www.scummvm.org/"}')
 WRITELN(guide_write,'------------------------------------------------------------------------')
 
 /* Creating the sub links nodes */

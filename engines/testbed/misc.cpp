@@ -169,12 +169,12 @@ TestExitStatus MiscTests::testOpenUrl() {
 		return kTestSkipped;
 	}
 
-	if (!g_system->openUrl("http://scummvm.org/")) {
+	if (!g_system->openUrl("https://scummvm.org/")) {
 		Testsuite::logPrintf("Info! openUrl() says it couldn't open the url (probably not supported on this platform)\n");
 		return kTestFailed;
 	}
 
-	if (Testsuite::handleInteractiveInput("Was ScummVM able to open 'http://scummvm.org/' in your default browser?", "Yes", "No", kOptionRight)) {
+	if (Testsuite::handleInteractiveInput("Was ScummVM able to open 'https://scummvm.org/' in your default browser?", "Yes", "No", kOptionRight)) {
 		Testsuite::logDetailedPrintf("Error! openUrl() is not working!\n");
 		return kTestFailed;
 	}

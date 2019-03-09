@@ -3261,7 +3261,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// Censored versions (data files are currently unknown to us): UK, Australia, first English release in Germany
 
 	// for more information on this matter, see:
-	// http://wiki.scummvm.org/index.php/SCI/Phantasmagoria_2_Censorship
+	// https://wiki.scummvm.org/index.php/SCI/Phantasmagoria_2_Censorship
 
 	// Phantasmagoria 2 - English Windows (from jvprat) - US release
 	// Note: Fully uncensored
