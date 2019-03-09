@@ -74,6 +74,7 @@ public:
 	const Graphics::Surface *surface() const { return _imageSurface; }
 	void changeCallback(CallbackFunctor *callback) { delete _callback; _callback = callback; }
 	Common::Point getZoneCenter(unsigned int zoneId) const;
+	void disableZone(unsigned int zoneId) { _zones[zoneId].valid = false; }
 
 	ZonesMode _zonesMode;
 
