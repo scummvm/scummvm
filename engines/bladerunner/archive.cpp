@@ -38,6 +38,10 @@ MIXArchive::~MIXArchive() {
 	}
 }
 
+bool MIXArchive::exists(const Common::String &filename) {
+	return Common::File::exists(filename);
+}
+
 bool MIXArchive::open(const Common::String &filename) {
 	if (!_fd.open(filename)) {
 		warning("MIXArchive::open(): Can not open %s", filename.c_str());

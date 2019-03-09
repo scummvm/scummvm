@@ -35,6 +35,7 @@ public:
 	~MIXArchive();
 
 	static int32 getHash(const Common::String &name);
+	static bool exists(const Common::String &filename);
 
 	bool open(const Common::String &filename);
 	void close();

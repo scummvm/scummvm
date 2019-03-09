@@ -57,33 +57,34 @@ class Subtitles {
 
 	BladeRunnerEngine *_vm;
 
-	TextResource    *_vqaSubsTextResourceEntries[kMaxTextResourceEntries];
-	Font            *_subsFont;
+	TextResource *_vqaSubsTextResourceEntries[kMaxTextResourceEntries];
+	Font         *_subsFont;
 
-	bool				_isVisible;
-	bool				_forceShowWhenNoSpeech;
-	Common::String		_currentSubtitleTextFull;
-	Common::String		_subtitleLineQuote[kMaxNumOfSubtitlesLines];
-	int _subtitleLineScreenY[kMaxNumOfSubtitlesLines];
-	int _subtitleLineScreenX[kMaxNumOfSubtitlesLines];
-	int _subtitleLineSplitAtCharIndex[kMaxNumOfSubtitlesLines];
-	int _currentSubtitleLines;
-	bool _subtitlesQuoteChanged;
+	bool           _isVisible;
+	bool           _forceShowWhenNoSpeech;
+	Common::String _currentSubtitleTextFull;
+	Common::String _subtitleLineQuote[kMaxNumOfSubtitlesLines];
+	int            _subtitleLineScreenY[kMaxNumOfSubtitlesLines];
+	int            _subtitleLineScreenX[kMaxNumOfSubtitlesLines];
+	int            _subtitleLineSplitAtCharIndex[kMaxNumOfSubtitlesLines];
+	int            _currentSubtitleLines;
+	bool           _subtitlesQuoteChanged;
 
 	bool _gameSubsResourceEntriesFound[kMaxTextResourceEntries];	// false if a TRE file did not open successfully
 	bool _subsFontsLoaded;											// false if external fonts did not load
-	bool _subtitlesSystemInactive;									// true if the whole subtitles subsystem should be disabled (due to missing required resources)
+	bool _subtitlesSystemActive;									// true if the whole subtitles subsystem should be disabled (due to missing required resources)
 
 public:
 	Subtitles(BladeRunnerEngine *vm);
 	~Subtitles();
 
-	void init();
-	void setSubtitlesSystemInactive(bool flag);                     // disable subtitles system (possibly due to missing important resources like SUBTITLES.MIX file)
-	const char *getInGameSubsText(int actorId, int speech_id) ;     // get the text for actorId, quoteId (in-game subs)
-	const char *getOuttakeSubsText(const Common::String &outtakesName, int frame);  // get the text for this frame if any
+	bool isSystemActive() const { return _subtitlesSystemActive; }
 
-	void setGameSubsText(Common::String dbgQuote, bool force);                  // for debugging - explicit set subs text
+	void init();
+	const char *getInGameSubsText(int actorId, int speech_id);						// get the text for actorId, quoteId (in-game subs)
+	const char *getOuttakeSubsText(const Common::String &outtakesName, int frame);	// get the text for this frame if any
+
+	void setGameSubsText(Common::String dbgQuote, bool force);	// for debugging - explicit set subs text
 	bool show();
 	bool hide();
 	bool isVisible() const;

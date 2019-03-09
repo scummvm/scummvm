@@ -32,6 +32,7 @@
 #include "bladerunner/game_info.h"
 #include "bladerunner/music.h"
 #include "bladerunner/settings.h"
+#include "bladerunner/subtitles.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/ui/kia.h"
 #include "bladerunner/ui/kia_shapes.h"
@@ -76,7 +77,9 @@ KIASectionSettings::KIASectionSettings(BladeRunnerEngine *vm)
 	_uiContainer->add(_gammaCorrection);
 #endif
 	_uiContainer->add(_directorsCut);
-	_uiContainer->add(_subtitlesEnable);
+	if (_vm->_subtitles->isSystemActive()) {
+		_uiContainer->add(_subtitlesEnable);
+	}
 
 	_learyPos = 0;
 }
@@ -145,29 +148,6 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 	const char *textLight = _vm->_textOptions->getText(15);
 #endif
 
-	// Allow this to be loading as an extra text item in the resource for text options
-	const char *subtitlesTranslation = "Subtitles";
-	if (_vm->_languageCode == "E") {
-		subtitlesTranslation = "Subtitles"; // EN_ANY
-	}
-	else if (_vm->_languageCode == "G") {
-		subtitlesTranslation = "Untertitel"; // DE_DEU
-	}
-	else if (_vm->_languageCode == "F") {
-		subtitlesTranslation = "Sous-titres"; // FR_FRA
-	}
-	else if (_vm->_languageCode == "I") {
-		subtitlesTranslation = "Sottotitoli"; // IT_ITA
-	}
-	else if (_vm->_languageCode == "R") {
-		subtitlesTranslation = "Subtitry";  // RU_RUS
-	}
-	else if (_vm->_languageCode == "S") {
-		subtitlesTranslation = "Subtitulos"; // ES_ESP
-	}
-
-	const char *textSubtitles  = strcmp(_vm->_textOptions->getText(42), "") == 0? subtitlesTranslation : _vm->_textOptions->getText(42); // +1 to the max of original index of textOptions which is 41
-
 	int posConversationChoices = 320 - _vm->_mainFont->getTextWidth(textConversationChoices) / 2;
 	int posMusic = 320 - _vm->_mainFont->getTextWidth(textMusic) / 2;
 	int posSoundEffects = 320 - _vm->_mainFont->getTextWidth(textSoundEffects) / 2;
@@ -211,7 +191,33 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 #endif
 
 	_vm->_mainFont->drawColor(textDesignersCut, surface, 192, 365, 0x7751);
-	_vm->_mainFont->drawColor(textSubtitles, surface, 323, 365, 0x7751); // moved further to the right to avoid overlap with 'Designer's Cut' in some language versions (ESP)
+
+	if (_vm->_subtitles->isSystemActive()) {
+		// Allow this to be loading as an extra text item in the resource for text options
+		const char *subtitlesTranslation = "Subtitles";
+		if (_vm->_languageCode == "E") {
+			subtitlesTranslation = "Subtitles"; // EN_ANY
+		}
+		else if (_vm->_languageCode == "G") {
+			subtitlesTranslation = "Untertitel"; // DE_DEU
+		}
+		else if (_vm->_languageCode == "F") {
+			subtitlesTranslation = "Sous-titres"; // FR_FRA
+		}
+		else if (_vm->_languageCode == "I") {
+			subtitlesTranslation = "Sottotitoli"; // IT_ITA
+		}
+		else if (_vm->_languageCode == "R") {
+			subtitlesTranslation = "Subtitry";  // RU_RUS
+		}
+		else if (_vm->_languageCode == "S") {
+			subtitlesTranslation = "Subtitulos"; // ES_ESP
+		}
+
+		const char *textSubtitles  = strcmp(_vm->_textOptions->getText(42), "") == 0? subtitlesTranslation : _vm->_textOptions->getText(42); // +1 to the max of original index of textOptions which is 41
+
+		_vm->_mainFont->drawColor(textSubtitles, surface, 323, 365, 0x7751); // moved further to the right to avoid overlap with 'Designer's Cut' in some language versions (ESP)
+	}
 
 	_playerAgendaSelector->drawTooltip(surface, _mouseX, _mouseY);
 }

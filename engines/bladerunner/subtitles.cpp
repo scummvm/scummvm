@@ -95,7 +95,7 @@ const char *Subtitles::SUBTITLES_FILENAME_PREFIXES[kMaxTextResourceEntries] = {
 */
 Subtitles::Subtitles(BladeRunnerEngine *vm) {
 	_vm = vm;
-	_subtitlesSystemInactive = false;
+	_subtitlesSystemActive = false;
 	// Initializing and reseting Subtitles
 	for (int i = 0; i < kMaxTextResourceEntries; i++) {
 		_vqaSubsTextResourceEntries[i] = nullptr;
@@ -128,9 +128,7 @@ Subtitles::~Subtitles() {
 // Init is kept separated from constructor to allow not loading up resources if subtitles system is disabled
 //
 void Subtitles::init(void) {
-	if (_subtitlesSystemInactive) {
-		return;
-	}
+	_subtitlesSystemActive = true;
 	//
 	// Loading text resources
 	for (int i = 0; i < kMaxTextResourceEntries; i++) {
@@ -172,10 +170,6 @@ void Subtitles::init(void) {
 	}
 }
 
-void Subtitles::setSubtitlesSystemInactive(bool flag) {
-	_subtitlesSystemInactive = flag;
-}
-
 /**
 *
 * Returns the index of the specified Text Resource filename in the SUBTITLES_FILENAME_PREFIXES table
@@ -203,7 +197,7 @@ int Subtitles::getIdxForSubsTreName(const Common::String &treName) const {
 * Returns the dialogue quote, but also sets the private _currentSubtitleTextFull member
 */
 const char *Subtitles::getInGameSubsText(int actorId, int speech_id)  {
-	if (_subtitlesSystemInactive) {
+	if (!_subtitlesSystemActive) {
 		return "";
 	}
 
@@ -227,7 +221,7 @@ const char *Subtitles::getInGameSubsText(int actorId, int speech_id)  {
 * Returns the dialogue quote, but also sets the private _currentSubtitleTextFull member
 */
 const char *Subtitles::getOuttakeSubsText(const Common::String &outtakesName, int frame) {
-	if (_subtitlesSystemInactive) {
+	if (!_subtitlesSystemActive) {
 		return "";
 	}
 
@@ -269,7 +263,7 @@ void Subtitles::setGameSubsText(Common::String dbgQuote, bool forceShowWhenNoSpe
 * @return true if the member was set now, false if the member was already set
 */
 bool Subtitles::show() {
-	if (_subtitlesSystemInactive) {
+	if (!_subtitlesSystemActive) {
 		return false;
 	}
 
@@ -285,7 +279,7 @@ bool Subtitles::show() {
 * @return true if the member was cleared, false if it was already clear.
 */
 bool Subtitles::hide() {
-	if (_subtitlesSystemInactive) {
+	if (!_subtitlesSystemActive) {
 		return false;
 	}
 
@@ -302,14 +296,14 @@ bool Subtitles::hide() {
 * @return the value of the _isVisible member boolean var
 */
 bool Subtitles::isVisible() const {
-	return _subtitlesSystemInactive || _isVisible;
+	return !_subtitlesSystemActive || _isVisible;
 }
 
 /**
 * Tick method specific for outtakes (VQA videos)
 */
 void Subtitles::tickOuttakes(Graphics::Surface &s) {
-	if (_subtitlesSystemInactive || !_vm->isSubtitlesEnabled()) {
+	if (!_subtitlesSystemActive || !_vm->isSubtitlesEnabled()) {
 		return;
 	}
 
@@ -329,7 +323,7 @@ void Subtitles::tickOuttakes(Graphics::Surface &s) {
 * Tick method for in-game subtitles -- Not for outtake cutscenes (VQA videos)
 */
 void Subtitles::tick(Graphics::Surface &s) {
-	if (_subtitlesSystemInactive || !_vm->isSubtitlesEnabled()) {
+	if (!_subtitlesSystemActive || !_vm->isSubtitlesEnabled()) {
 		return;
 	}
 

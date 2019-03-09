@@ -371,13 +371,17 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	// Try to load the SUBTITLES.MIX first, before Startup.MIX
 	// allows overriding any identically named resources (such as the original font files and as a bonus also the TRE files for the UI and dialogue menu)
 	_subtitles = new Subtitles(this);
-	bool r = openArchive("SUBTITLES.MIX");
-	if (!r) {
-		_subtitles->setSubtitlesSystemInactive(true); // no subtitles support
-	}
-	_subtitles->init();
+	if (MIXArchive::exists("SUBTITLES.MIX")) {
+		bool r = openArchive("SUBTITLES.MIX");
+		if (!r)
+			return false;
 
-	r = openArchive("STARTUP.MIX");
+		_subtitles->init();
+	} else {
+		debug("Download SUBTITLES.MIX from ScummVM's website to enable subtitles");
+	}
+
+	bool r = openArchive("STARTUP.MIX");
 	if (!r)
 		return false;
 
