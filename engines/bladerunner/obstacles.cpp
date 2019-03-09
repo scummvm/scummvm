@@ -191,7 +191,6 @@ bool Obstacles::mergePolygons(Polygon &polyA, Polygon &polyB) {
 	bool flagAddVertexToVertexList = true;
 	bool flagDidFindIntersection = false;
 	int vertIndex = 0;
-	int lastIntersectionIndex = -1;
 
 	Polygon *startingPolygon = polyPrimary;
 	int flagDone = false;
@@ -205,7 +204,12 @@ bool Obstacles::mergePolygons(Polygon &polyA, Polygon &polyB) {
 		polyPrimaryType = polyPrimary->vertexType[vertIndex];
 
 		if (flagAddVertexToVertexList) {
-			assert(polyMerged.verticeCount < kPolygonVertexCount);
+			// In some cases polygons will have only one intersection (touching corners) and because of that second SWAP never occure,
+			// algorithm will stop only when the merged polygon is full.
+			if (polyMerged.verticeCount >= kPolygonVertexCount) {
+				flagDidMergePolygons = false;
+				break;
+			}
 			polyMerged.vertices[polyMerged.verticeCount] = polyLine.start;
 			polyMerged.vertexType[polyMerged.verticeCount] = polyPrimaryType;
 			polyMerged.verticeCount++;
@@ -227,15 +231,8 @@ bool Obstacles::mergePolygons(Polygon &polyA, Polygon &polyB) {
 			SWAP(polyPrimary, polySecondary);
 
 			flagDidMergePolygons = true;
-			lastIntersectionIndex = polySecondaryIntersectionIndex;
 		} else {
 			vertIndex = (vertIndex + 1) % polyPrimary->verticeCount;
-			// In some cases polygons will have only one intersection (touching corners) and because of that second SWAP never occure and algorithm will never stop.
-			// This can be avoided by stopping the algorithm after looping over whole polygon. Such polygons will not merge.
-			if (vertIndex == lastIntersectionIndex) {
-				flagDidMergePolygons = false;
-				break;
-			}
 			flagDidFindIntersection = false;
 		}
 		if (polyPrimary->vertices[vertIndex] == startingPolygon->vertices[0]) {
