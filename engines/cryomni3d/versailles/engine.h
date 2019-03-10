@@ -122,10 +122,10 @@ struct GameVariables {
 		kCollectePartition,
 		kCollectPamphletArchi,
 		kGotRevealedPaper, // OK
-		kCollectCle,                   // 10
-		kCollectCartonDessin,
-		kEsquissePainted,
-		kStateFauxCroquis,
+		kCollectKey, // OK             // 10
+		kCollectPortfolio, // OK
+		kSketchState, // OK
+		kFakeSketchChatState, // OK
 		kCollectNourriture,
 		kCollectPlume,
 		kStatePamphletReligion,
@@ -146,7 +146,7 @@ struct GameVariables {
 		kCoffreUnlocked,
 		//kUselessVar,
 		kCollectedPaperInTrunk = 33, // OK
-		kUsingPinceauColor,
+		kBrushColor, // OK
 		kUsedScissors, // OK
 		kUsedClefsCombles,
 		kHasPlayedLebrun, // OK
@@ -398,6 +398,8 @@ private:
 	template<unsigned int ID>
 	void genericPainting(ZonFixedImage *fimg);
 #define IMG_CB(name) void img_ ## name(ZonFixedImage *fimg)
+	IMG_CB(31101);
+	IMG_CB(31101b);
 	IMG_CB(31142);
 	IMG_CB(31142b);
 	IMG_CB(31142c);
@@ -406,6 +408,14 @@ private:
 	IMG_CB(31143b);
 	IMG_CB(31143c);
 	IMG_CB(31143d);
+	IMG_CB(32120);
+	IMG_CB(32120b);
+	IMG_CB(32120c);
+	IMG_CB(32201);
+	IMG_CB(32202);
+	IMG_CB(32203);
+	IMG_CB(32204);
+	IMG_CB(32204b);
 	IMG_CB(41202);
 	IMG_CB(41202b);
 	IMG_CB(41801);
@@ -425,6 +435,15 @@ private:
 	FILTER_EVENT(1, 3);
 	//FILTER_EVENT(1, 7); // Not used
 	FILTER_EVENT(1, 14);
+
+	FILTER_EVENT(2, 1);
+	FILTER_EVENT(2, 2);
+	FILTER_EVENT(2, 5);
+	INIT_PLACE(2, 9);
+	FILTER_EVENT(2, 9);
+	FILTER_EVENT(2, 11);
+	FILTER_EVENT(2, 12);
+	FILTER_EVENT(2, 14);
 #undef FILTER_EVENT
 #undef INIT_PLACE
 
