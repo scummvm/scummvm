@@ -306,6 +306,7 @@ static const int *getPoliceMazePS10TrackData9() {
 
 void SceneScriptPS10::InitializeScene() {
 	Police_Maze_Set_Pause_State(true);
+
 	if (Game_Flag_Query(kFlagPS11toPS10)) {
 		float x = World_Waypoint_Query_X(4);
 		float y = World_Waypoint_Query_Y(4);
@@ -314,7 +315,9 @@ void SceneScriptPS10::InitializeScene() {
 	} else {
 		Setup_Scene_Information(-87.08f, -9.23f, 941.9f, 0);
 	}
+
 	Scene_Exit_Add_2D_Exit(1, 0, 0, 20, 479, 3);
+
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(0);
 	Ambient_Sounds_Add_Looping_Sound(387, 50, 1, 1);
 	Ambient_Sounds_Add_Looping_Sound( 54, 50, 1, 1);
@@ -354,6 +357,7 @@ void SceneScriptPS10::SceneLoaded() {
 	Unclickable_Object("PARKMETR15");
 	Unclickable_Object("PARKMETR16");
 	Unobstacle_Object("E.SM.WIRE01", true);
+
 	if (!Query_System_Currently_Loading_Game()) {
 		Item_Add_To_World(kItemPS10Target1, 443, kSetPS10_PS11_PS12_PS13,  -240.0f, -80.74f, 145.0f, 989, 72, 36, true, false, false, true);
 		Item_Add_To_World(kItemPS10Target2, 443, kSetPS10_PS11_PS12_PS13,  -240.0f,  -8.74f, 145.0f, 740, 72, 36, true, false, false, true);
