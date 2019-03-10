@@ -360,7 +360,7 @@ IMG_CB(31142b) {
 			break;
 		}
 		if (fimg->_zoneUse) {
-			if (_gameVariables[GameVariables::kCollectScissors] || _inventory.inInventoryByNameId(94)) {
+			if (_gameVariables[GameVariables::kCollectScissors] || _inventory.inInventoryByNameID(94)) {
 				// Empty drawer
 				ZonFixedImage::CallbackFunctor *functor =
 				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
@@ -388,7 +388,7 @@ IMG_CB(31142c) {
 			break;
 		}
 		if (fimg->_zoneUse) {
-			if (!_inventory.inInventoryByNameId(94) && !_gameVariables[GameVariables::kCollectScissors]) {
+			if (!_inventory.inInventoryByNameID(94) && !_gameVariables[GameVariables::kCollectScissors]) {
 				collectObject(94, fimg);
 			}
 			_gameVariables[GameVariables::kCollectScissors] = 1;
@@ -446,7 +446,7 @@ IMG_CB(31143b) {
 			break;
 		}
 		if (fimg->_zoneUse) {
-			if (_inventory.inInventoryByNameId(96)) {
+			if (_inventory.inInventoryByNameID(96)) {
 				// Empty drawer
 				ZonFixedImage::CallbackFunctor *functor =
 				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
@@ -474,7 +474,7 @@ IMG_CB(31143c) {
 			break;
 		}
 		if (fimg->_zoneUse) {
-			if (!_inventory.inInventoryByNameId(96)) {
+			if (!_inventory.inInventoryByNameID(96)) {
 				collectObject(96, fimg);
 			}
 			// Display empty drawer
@@ -516,7 +516,7 @@ IMG_CB(41202) {
 		}
 		HANDLE_QUESTION(1);
 		if (fimg->_zoneUse) {
-			if (fimg->_currentZone == 2 && !_inventory.inInventoryByNameId(97)) {
+			if (fimg->_currentZone == 2 && !_inventory.inInventoryByNameID(97)) {
 				// Open the jar
 				ZonFixedImage::CallbackFunctor *functor =
 				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
@@ -549,7 +549,7 @@ IMG_CB(41202b) {
 			break;
 		}
 		if (fimg->_zoneUse) {
-			if (!_inventory.inInventoryByNameId(97)) {
+			if (!_inventory.inInventoryByNameID(97)) {
 				collectObject(97, fimg);
 			}
 			// Go back to jars closed
@@ -584,7 +584,7 @@ IMG_CB(41801) {
 				}
 			} else if (fimg->_usedObject && fimg->_usedObject->idOBJ() == 94) {
 				_gameVariables[GameVariables::kUsedScissors] = 1;
-				_inventory.removeByNameId(94);
+				_inventory.removeByNameID(94);
 				open = true;
 			}
 			if (open) {
@@ -633,7 +633,7 @@ IMG_CB(41801b) {
 			break;
 		}
 		if (fimg->_zoneUse) {
-			if (!_inventory.inInventoryByNameId(100)) {
+			if (!_inventory.inInventoryByNameID(100)) {
 				collectObject(100, fimg);
 			}
 			_gameVariables[GameVariables::kCollectedPaperInTrunk] = 1;
@@ -736,7 +736,7 @@ IMG_CB(41802) {
 				if (_nextPlaceId == -1u) {
 					_nextPlaceId = _currentPlaceId;
 				}
-				_inventory.removeByNameId(100);
+				_inventory.removeByNameID(100);
 				// Revealed paper
 				collectObject(98, fimg);
 				_gameVariables[GameVariables::kGotRevealedPaper] = 1;
@@ -783,7 +783,7 @@ IMG_CB(41802b) {
 				if (_nextPlaceId == -1u) {
 					_nextPlaceId = _currentPlaceId;
 				}
-				_inventory.removeByNameId(100);
+				_inventory.removeByNameID(100);
 				// Revealed paper
 				collectObject(98, fimg);
 				_gameVariables[GameVariables::kGotRevealedPaper] = 1;
@@ -828,7 +828,7 @@ IMG_CB(41802c) {
 				if (_nextPlaceId == -1u) {
 					_nextPlaceId = _currentPlaceId;
 				}
-				_inventory.removeByNameId(100);
+				_inventory.removeByNameID(100);
 				// Revealed paper
 				collectObject(98, fimg);
 				_gameVariables[GameVariables::kGotRevealedPaper] = 1;
@@ -863,7 +863,7 @@ IMG_CB(41802d) {
 				if (_nextPlaceId == -1u) {
 					_nextPlaceId = _currentPlaceId;
 				}
-				_inventory.removeByNameId(100);
+				_inventory.removeByNameID(100);
 				// Revealed paper
 				collectObject(98, fimg);
 				_gameVariables[GameVariables::kGotRevealedPaper] = 1;

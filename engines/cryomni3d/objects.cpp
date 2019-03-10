@@ -66,9 +66,9 @@ void Inventory::remove(unsigned int position) {
 	(*_changeCallback)(-1u);
 }
 
-void Inventory::removeByCursorId(unsigned int cursorId) {
+void Inventory::removeByIconID(unsigned int iconID) {
 	for (iterator it = begin(); it != end(); it++) {
-		if ((*it) && (*it)->idCA() == cursorId) {
+		if ((*it) && (*it)->idCA() == iconID) {
 			remove(it - begin());
 			return;
 		}
@@ -76,9 +76,9 @@ void Inventory::removeByCursorId(unsigned int cursorId) {
 	// Don't bail out
 }
 
-void Inventory::removeByNameId(unsigned int nameId) {
+void Inventory::removeByNameID(unsigned int nameID) {
 	for (iterator it = begin(); it != end(); it++) {
-		if ((*it) && (*it)->idOBJ() == nameId) {
+		if ((*it) && (*it)->idOBJ() == nameID) {
 			remove(it - begin());
 			return;
 		}
@@ -86,18 +86,18 @@ void Inventory::removeByNameId(unsigned int nameId) {
 	// Don't bail out
 }
 
-bool Inventory::inInventoryByCursorId(unsigned int cursorId) const {
+bool Inventory::inInventoryByIconID(unsigned int iconID) const {
 	for (const_iterator it = begin(); it != end(); it++) {
-		if ((*it) && (*it)->idCA() == cursorId) {
+		if ((*it) && (*it)->idCA() == iconID) {
 			return true;
 		}
 	}
 	return false;
 }
 
-bool Inventory::inInventoryByNameId(unsigned int nameId) const {
+bool Inventory::inInventoryByNameID(unsigned int nameID) const {
 	for (const_iterator it = begin(); it != end(); it++) {
-		if ((*it) && (*it)->idOBJ() == nameId) {
+		if ((*it) && (*it)->idOBJ() == nameID) {
 			return true;
 		}
 	}
