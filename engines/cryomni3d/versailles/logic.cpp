@@ -335,6 +335,50 @@ void CryOmni3DEngine_Versailles::genericPainting(ZonFixedImage *fimg) {
 // Specific fixed images callbacks
 #define IMG_CB(name) void CryOmni3DEngine_Versailles::img_ ## name(ZonFixedImage *fimg)
 
+IMG_CB(31101) {
+	fimg->load("21F_11.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneUse) {
+			if (fimg->_currentZone == 0) {
+				// Collect key and change image
+				collectObject(104, fimg);
+				_gameVariables[GameVariables::kCollectKey] = 1;
+				ZonFixedImage::CallbackFunctor *functor =
+				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+				            &CryOmni3DEngine_Versailles::img_31101b);
+				fimg->changeCallback(functor);
+				break;
+			} else if (fimg->_currentZone == 1 && !_inventory.inInventoryByNameID(103)) {
+				collectObject(103, fimg);
+			}
+		}
+	}
+}
+
+IMG_CB(31101b) {
+	fimg->load("21F_10.GIF");
+	if (_inventory.inInventoryByNameID(103)) {
+		fimg->disableZone(1);
+	}
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneUse && !_inventory.inInventoryByNameID(103)) {
+			collectObject(103, fimg);
+			// Original game resets callback with this one, this is useless
+			break;
+		}
+	}
+}
+
 IMG_CB(31142) {
 	fimg->load("10D2_4.GIF");
 	while (1) {
@@ -506,6 +550,140 @@ IMG_CB(31143d) {
 	}
 }
 
+IMG_CB(32120) {
+	if (currentGameTime() != 3) {
+		fimg->_exit = true;
+		return;
+	}
+
+	// Already painted
+	if (_gameVariables[GameVariables::kSketchState] == 3 ||
+	        _gameVariables[GameVariables::kSketchState] == 4) {
+		fimg->_exit = true;
+		return;
+	}
+
+	fimg->load("23I_10.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			_sprites.replaceSpriteColor(59, 254, 244);
+			_sprites.replaceSpriteColor(63, 254, 247);
+			break;
+		}
+		if (fimg->_zoneUse) {
+			if (fimg->_currentZone == 0 && !_inventory.inInventoryByIconID(38)) {
+				// Pick the brush
+				Object *obj = _objects.findObjectByIconID(38);
+				collectObject(obj, fimg);
+				// collectObject animates the cursor
+				// Make it selected
+				_inventory.setSelectedObject(obj);
+				setCursor(obj->idSA()); // 59 in original game
+				fimg->_zonesMode = ZonFixedImage::kZonesMode_Object;
+			}
+		} else if (fimg->_usedObject && fimg->_usedObject->idCA() == 38) {
+			// Brush used
+			if (fimg->_currentZone == 1) { // on gold paint
+				_inventory.removeByIconID(38);
+				Object *obj = _objects.findObjectByIconID(38);
+				obj->rename(111); // Brush has gold on it
+				setMainPaletteColor(254, 128, 128, 0);
+				_sprites.replaceSpriteColor(59, 244, 254);
+				_sprites.replaceSpriteColor(63, 247, 254);
+				// Collect only there once we set the color on the cursors
+				collectObject(obj, fimg);
+				_inventory.setSelectedObject(obj);
+				setCursor(obj->idSA()); // 59 in original game
+				fimg->_zonesMode = ZonFixedImage::kZonesMode_Object;
+				_gameVariables[GameVariables::kBrushColor] = 1;
+			} else if (fimg->_currentZone == 2) { // on red paint
+				_inventory.removeByIconID(38);
+				Object *obj = _objects.findObjectByIconID(38);
+				obj->rename(112); // Brush has red on it
+				setMainPaletteColor(254, 128, 0, 0);
+				_sprites.replaceSpriteColor(59, 244, 254);
+				_sprites.replaceSpriteColor(63, 247, 254);
+				// Collect only there once we set the color on the cursors
+				collectObject(obj, fimg);
+				_inventory.setSelectedObject(obj);
+				setCursor(obj->idSA()); // 59 in original game
+				fimg->_zonesMode = ZonFixedImage::kZonesMode_Object;
+				_gameVariables[GameVariables::kBrushColor] = 2;
+			} else if (fimg->_currentZone == 3) { // on sketch
+				if (fimg->_usedObject->idOBJ() == 111 &&
+				        _gameVariables[GameVariables::kBrushColor] == 1) {
+					// Gold brush used on sketch
+					_gameVariables[GameVariables::kSketchState] = 3;
+					playInGameVideo("23I_11");
+					// Force reload of the place
+					if (_nextPlaceId == -1u) {
+						_nextPlaceId = _currentPlaceId;
+					}
+					_inventory.removeByIconID(38);
+					ZonFixedImage::CallbackFunctor *functor =
+					    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+					            &CryOmni3DEngine_Versailles::img_32120b);
+					fimg->changeCallback(functor);
+					break;
+				} else if (fimg->_usedObject->idOBJ() == 112 &&
+				           _gameVariables[GameVariables::kBrushColor] == 2) {
+					// Red brush used on sketch
+					_gameVariables[GameVariables::kSketchState] = 4;
+					playInGameVideo("23I_12");
+					// Force reload of the place
+					if (_nextPlaceId == -1u) {
+						_nextPlaceId = _currentPlaceId;
+					}
+					_inventory.removeByIconID(38);
+					ZonFixedImage::CallbackFunctor *functor =
+					    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+					            &CryOmni3DEngine_Versailles::img_32120c);
+					fimg->changeCallback(functor);
+					break;
+				}
+			}
+		}
+	}
+}
+
+IMG_CB(32120b) {
+	fimg->load("23I_11.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneUse) {
+			fimg->_exit = true;
+			break;
+		}
+	}
+	_inventory.removeByNameID(107);
+	collectObject(107, fimg);
+
+	_sprites.replaceSpriteColor(59, 254, 244);
+	_sprites.replaceSpriteColor(63, 254, 247);
+
+	setGameTime(4, 2);
+}
+
+IMG_CB(32120c) {
+	fimg->load("23I_12.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneUse) {
+			fimg->_exit = true;
+			break;
+		}
+	}
+	_inventory.removeByNameID(107);
+	collectObject(109, fimg);
+
+	_sprites.replaceSpriteColor(59, 254, 244);
+	_sprites.replaceSpriteColor(63, 254, 247);
+
+	setGameTime(4, 2);
+}
+
 IMG_CB(41202) {
 	fimg->load("10E_20.GIF");
 	while (1) {
@@ -557,6 +735,85 @@ IMG_CB(41202b) {
 			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
 			            &CryOmni3DEngine_Versailles::img_41202);
 			fimg->changeCallback(functor);
+			break;
+		}
+	}
+}
+
+IMG_CB(32201) {
+	fimg->load("21E_41.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		// There is a check of use but only to change sound path
+		// That must be a leftover
+		/*
+		if (fimg->_zoneUse) {
+		}
+		*/
+	}
+}
+
+IMG_CB(32202) {
+	fimg->load("21E_42.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+	}
+}
+
+IMG_CB(32203) {
+	fimg->load("21E_43.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		// There is a check of use but only to change sound path
+		// That must be a leftover
+		/*
+		if (fimg->_zoneUse) {
+		}
+		*/
+	}
+}
+
+IMG_CB(32204) {
+	fimg->load("21E_44.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneUse && !_inventory.inInventoryByNameID(105)) {
+			// Collect portfolio
+			collectObject(105, fimg);
+			_gameVariables[GameVariables::kSketchState] = 1;
+			_gameVariables[GameVariables::kCollectPortfolio] = 1;
+
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_32204b);
+			fimg->changeCallback(functor);
+			break;
+		}
+	}
+}
+
+IMG_CB(32204b) {
+	fimg->load("21E_45.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
 			break;
 		}
 	}
@@ -1027,6 +1284,320 @@ FILTER_EVENT(1, 14) {
 
 	// Don't pass the event as we try to avoid implementing use
 	return false;
+}
+
+FILTER_EVENT(2, 1) {
+	if (*event == 22101 && _inventory.selectedObject()) {
+		_dialogsMan["{JOUEUR-MONTRE-UN-PAMPHLET}"] = 'N';
+		_dialogsMan["{JOUEUR-MONTRE-TOUT-AUTRE-OBJET}"] = 'N';
+		_dialogsMan["{JOUEUR-MONTRE-PAPIER-ECRIT-ENCRE-SYMPATHIQUE}"] = 'N';
+		unsigned int idOBJ = _inventory.selectedObject()->idOBJ();
+		if (idOBJ == 96  || idOBJ == 101 || idOBJ == 115 ||
+		        idOBJ == 125 || idOBJ == 127) {
+			_dialogsMan["{JOUEUR-MONTRE-UN-PAMPHLET}"] = 'Y';
+		} else if (idOBJ == 98) {
+			_dialogsMan["{JOUEUR-MONTRE-PAPIER-ECRIT-ENCRE-SYMPATHIQUE}"] = 'Y';
+		} else {
+			_dialogsMan["{JOUEUR-MONTRE-TOUT-AUTRE-OBJET}"] = 'Y';
+		}
+		_dialogsMan.play("21F_BON");
+
+		_forcePaletteUpdate = true;
+		// Force reload of the place
+		if (_nextPlaceId == -1u) {
+			_nextPlaceId = _currentPlaceId;
+		}
+
+		_dialogsMan["{JOUEUR-MONTRE-UN-PAMPHLET}"] = 'N';
+		_dialogsMan["{JOUEUR-MONTRE-TOUT-AUTRE-OBJET}"] = 'N';
+		_dialogsMan["{JOUEUR-MONTRE-PAPIER-ECRIT-ENCRE-SYMPATHIQUE}"] = 'N';
+
+		if (idOBJ == 98 && _dialogsMan["JOUEUR-CONFIE-MESSAGE-HUISSIER"] == 'Y') {
+			_inventory.removeByNameID(98);
+			_inventory.deselectObject();
+			setGameTime(2, 2);
+		}
+	} else if (*event == 31101) {
+		if (!_inventory.selectedObject() && currentGameTime() > 1) {
+			const char *video;
+			FixedImgCallback callback;
+
+			if (!_gameVariables[GameVariables::kCollectKey]) {
+				video = "21F_11";
+				callback = &CryOmni3DEngine_Versailles::img_31101;
+			} else {
+				video = "21F_10";
+				callback = &CryOmni3DEngine_Versailles::img_31101b;
+			}
+
+			playInGameVideo(video);
+
+			// Force reload of the place
+			if (_nextPlaceId == -1u) {
+				_nextPlaceId = _currentPlaceId;
+			}
+
+			handleFixedImg(callback);
+		}
+		// Don't pass the event as we try to avoid implementing use
+		return false;
+	} else if (*event >= 1 && *event <= 9999 && currentGameTime() == 2) {
+		setPlaceState(1, 1);
+	}
+	return true;
+}
+
+FILTER_EVENT(2, 2) {
+	if (*event < 32201 || *event > 32204) {
+		// Not handled here
+		return true;
+	}
+
+	const char *video = nullptr;
+	FixedImgCallback callback;
+
+	const Object *obj = _inventory.selectedObject();
+	bool deselectObj = false;
+
+	if (*event == 32201) {
+		if (!obj) {
+			// Opening left drawer
+			video = "21E_41";
+			callback = &CryOmni3DEngine_Versailles::img_32201;
+		} else {
+			return false;
+		}
+	} else if (*event == 32202) {
+		if (obj && obj->idOBJ() == 104) {
+			// Using key on left door
+			video = "21E_42";
+			callback = &CryOmni3DEngine_Versailles::img_32202;
+		} else {
+			// This door is locked
+			displayMessageBoxWarp(1);
+			return false;
+		}
+	} else if (*event == 32203) {
+		if (!obj) {
+			// Opening right drawer
+			video = "21E_43";
+			callback = &CryOmni3DEngine_Versailles::img_32203;
+		} else {
+			return false;
+		}
+	} else if (*event == 32204) {
+		if (obj && obj->idOBJ() == 104) {
+			// Using key on right door
+			if (_gameVariables[GameVariables::kCollectPortfolio]) {
+				video = "21E_45";
+				callback = &CryOmni3DEngine_Versailles::img_32204b;
+			} else {
+				video = "21E_44";
+				callback = &CryOmni3DEngine_Versailles::img_32204;
+			}
+			deselectObj = true;
+		} else {
+			// This door is locked
+			displayMessageBoxWarp(1);
+			return false;
+		}
+	}
+
+	assert(video != nullptr);
+	assert(callback != nullptr);
+
+	// Adjust viewpoint for video
+	unsigned int fakePlaceId = getFakeTransition(*event);
+	fakeTransition(fakePlaceId);
+
+	playInGameVideo(video);
+
+	// Force reload of the place
+	if (_nextPlaceId == -1u) {
+		_nextPlaceId = _currentPlaceId;
+	}
+
+	handleFixedImg(callback);
+
+	if (deselectObj) {
+		_inventory.deselectObject();
+	}
+
+	// Don't pass the event: it has been handled
+	return false;
+}
+
+FILTER_EVENT(2, 5) {
+	if (*event == 22501 && _inventory.selectedObject()) {
+		unsigned int idOBJ = _inventory.selectedObject()->idOBJ();
+		if (idOBJ == 96) {
+			if (!_inventory.inInventoryByNameID(101)) {
+				_dialogsMan["{JOUEUR-MONTRE-PAMPHLET-ARTS}"] = 'Y';
+			}
+		} else {
+			_dialogsMan["{JOUEUR-MONTRE-TOUT-AUTRE-CHOSE}"] = 'Y';
+			_dialogsMan["{JOUEUR-MONTRE-TOUT-AUTRE-OBJET}"] = 'Y';
+		}
+
+		_dialogsMan.play("21B1_HUI");
+
+		_forcePaletteUpdate = true;
+		// Force reload of the place
+		if (_nextPlaceId == -1u) {
+			_nextPlaceId = _currentPlaceId;
+		}
+
+		_dialogsMan["{JOUEUR-MONTRE-PAMPHLET-ARTS}"] = 'N';
+		_dialogsMan["{JOUEUR-MONTRE-TOUT-AUTRE-CHOSE}"] = 'N';
+		_dialogsMan["{JOUEUR-MONTRE-TOUT-AUTRE-OBJET}"] = 'N';
+
+		_inventory.deselectObject();
+	} else if (*event >= 1 && *event <= 9999 &&
+	           _inventory.inInventoryByNameID(96) && !_inventory.inInventoryByNameID(101)) {
+		// Give your clues at the bailiff
+		displayMessageBoxWarp(15);
+		return false;
+	}
+	return true;
+}
+
+INIT_PLACE(2, 9) {
+	// BUG: This dialog gets played twice when Monseigneur is waiting for the sketches and we speak to him
+	// The bug is in original version too
+	if (_gameVariables[GameVariables::kSketchState] == 1 && currentGameTime() == 2) {
+		// Sketches are not yet sorted
+		_dialogsMan["{JOUEUR-SE-DIRIGE-VERS-MONSEIGNEUR-AVEC-ESQUISSES}"] = 'Y';
+
+		_dialogsMan.play("22G_DAU");
+
+		_forcePaletteUpdate = true;
+		// Force reload of the place
+		if (_nextPlaceId == -1u) {
+			_nextPlaceId = _currentPlaceId;
+		}
+
+		// Change warp viewpoint
+		_omni3dMan.setAlpha(4.17);
+		_omni3dMan.setBeta(0.097);
+
+		_inventory.deselectObject();
+
+		_dialogsMan["{JOUEUR-SE-DIRIGE-VERS-MONSEIGNEUR-AVEC-ESQUISSES}"] = 'N';
+	}
+}
+
+FILTER_EVENT(2, 9) {
+	if (*event == 22902 && _inventory.selectedObject() &&
+	        _inventory.selectedObject()->idOBJ() == 105) {
+		_dialogsMan["{JOUEUR-DONNE-ESQUISSES}"] = 'Y';
+
+		_dialogsMan.setIgnoreNoEndOfConversation(true);
+		_dialogsMan.play("22G_DAU");
+		_dialogsMan.setIgnoreNoEndOfConversation(false);
+
+		_forcePaletteUpdate = true;
+		// Force reload of the place
+		if (_nextPlaceId == -1u) {
+			_nextPlaceId = _currentPlaceId;
+		}
+
+		_dialogsMan["{JOUEUR-DONNE-ESQUISSES}"] = 'N';
+
+		_inventory.deselectObject();
+	} else if (*event >= 1 && *event <= 9999 && currentGameTime() == 3 &&
+	           _placeStates[9].state != 2) {
+		setPlaceState(9, 2);
+	}
+	return true;
+}
+
+FILTER_EVENT(2, 11) {
+	if (*event == 22111 && _inventory.selectedObject()) {
+		bool gameOver = false;
+		unsigned int idOBJ = _inventory.selectedObject()->idOBJ();
+		if (idOBJ == 107) {
+			_dialogsMan["{JOUEUR-MONTRE-TITRE-FABLE-APPARU-SUR-ESQUISSE}"] = 'Y';
+		} else if (idOBJ == 109) {
+			_dialogsMan["{JOUEUR-MONTRE-ESQUISSE-DETRUITE}"] = 'Y';
+			gameOver = true;
+		}
+
+		_dialogsMan.play("24Z_BON");
+
+		_forcePaletteUpdate = true;
+		// Force reload of the place
+		if (_nextPlaceId == -1u) {
+			_nextPlaceId = _currentPlaceId;
+		}
+
+		_dialogsMan["{JOUEUR-MONTRE-TITRE-FABLE-APPARU-SUR-ESQUISSE}"] = 'N';
+		_dialogsMan["{JOUEUR-MONTRE-ESQUISSE-DETRUITE}"] = 'N';
+
+		_inventory.deselectObject();
+
+		if (gameOver) {
+			doGameOver();
+		}
+	}
+	return true;
+}
+
+FILTER_EVENT(2, 12) {
+	if (*event == 22121 && _inventory.selectedObject()) {
+		unsigned int idOBJ = _inventory.selectedObject()->idOBJ();
+		if (idOBJ == 105) {
+			_dialogsMan["{LE JOUEUR-PRESENTE-AUTRES-ESQUISSES-OU-ESQUISSE-NON-TRIEES}"] = 'Y';
+			_dialogsMan["{JOUEUR-A-MONTRE-ESQUISSES-NON-TRIEES-LEBRUN}"] = 'Y';
+		} else if (idOBJ == 106) {
+			_dialogsMan["{LE JOUEUR-PRESENTE-ESQUISSES-TRIEES}"] = 'Y';
+			_inventory.removeByNameID(106);
+		} else if (idOBJ == 107 && _gameVariables[GameVariables::kSketchState] == 2) {
+			if (_gameVariables[GameVariables::kFakeSketchChatState] == 0) {
+				_dialogsMan["{JOUEUR-PRESENTE-FAUX-CROQUIS}"] = 'Y';
+				_gameVariables[GameVariables::kFakeSketchChatState] = 1;
+			} else if (_gameVariables[GameVariables::kFakeSketchChatState] == 1) {
+				_dialogsMan["{JOUEUR-PRESENTE-FAUX-CROQUIS2}"] = 'Y';
+				_gameVariables[GameVariables::kFakeSketchChatState] = 2;
+			} else if (_gameVariables[GameVariables::kFakeSketchChatState] == 2) {
+				_dialogsMan["{JOUEUR-PRESENTE-FAUX-CROQUIS3}"] = 'Y';
+			}
+		} else if (idOBJ == 96) {
+			_dialogsMan["{JOUEUR-PRESENTE-PAMPHLET-SUR-LEBRUN}"] = 'Y';
+		} else {
+			_dialogsMan["{JOUEUR-PRESENTE-TOUT-AUTRE-PAMPHLET-OU-LETTRE}"] = 'Y';
+		}
+
+		_dialogsMan.play("23I_LEB");
+
+		_forcePaletteUpdate = true;
+		// Force reload of the place
+		if (_nextPlaceId == -1u) {
+			_nextPlaceId = _currentPlaceId;
+		}
+
+		_dialogsMan["{JOUEUR-PRESENTE-PAMPHLET-SUR-LEBRUN}"] = 'N';
+		_dialogsMan["{LE JOUEUR-PRESENTE-AUTRES-ESQUISSES-OU-ESQUISSE-NON-TRIEES}"] = 'N';
+		_dialogsMan["{LE JOUEUR-PRESENTE-ESQUISSES-TRIEES}"] = 'N';
+		_dialogsMan["{JOUEUR-PRESENTE-FAUX-CROQUIS}"] = 'N';
+		_dialogsMan["{JOUEUR-PRESENTE-FAUX-CROQUIS2}"] = 'N';
+		_dialogsMan["{JOUEUR-PRESENTE-FAUX-CROQUIS3}"] = 'N';
+		_dialogsMan["{JOUEUR-PRESENTE-TOUT-AUTRE-PAMPHLET-OU-LETTRE}"] = 'N';
+
+		_inventory.deselectObject();
+	} else if (*event == 32120) {
+		if (_inventory.selectedObject() &&
+		        _inventory.selectedObject()->idOBJ() == 107 &&
+		        _gameVariables[GameVariables::kSketchState] == 2) {
+			handleFixedImg(&CryOmni3DEngine_Versailles::img_32120);
+		}
+		// We handle use here
+		return false;
+	}
+	return true;
+}
+
+FILTER_EVENT(2, 14) {
+	return filterEventLevel1Place14(event);
 }
 
 #undef FILTER_EVENT

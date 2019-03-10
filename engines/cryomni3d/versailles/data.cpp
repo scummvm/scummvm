@@ -537,20 +537,20 @@ void CryOmni3DEngine_Versailles::initPlacesStates() {
 	} else if (_currentLevel == 2) {
 		_placeStates.resize(15);
 		// TODO: implement functions
-		SET_PLACE_STATE(1, nullptr, nullptr, "VS22");
-		SET_PLACE_STATE(2, nullptr, nullptr, "VS20");
+		SET_PLACE_STATE(1, nullptr, FILTER_EVENT(2, 1), "VS22");
+		SET_PLACE_STATE(2, nullptr, FILTER_EVENT(2, 2), "VS20");
 		SET_PLACE_STATE(3, nullptr, nullptr, "VS19");
 		SET_PLACE_STATE(4, nullptr, nullptr, "VS18");
-		SET_PLACE_STATE(5, nullptr, nullptr, nullptr);
+		SET_PLACE_STATE(5, nullptr, FILTER_EVENT(2, 5), nullptr);
 		SET_PLACE_STATE(6, nullptr, nullptr, "VS19");
 		SET_PLACE_STATE(7, nullptr, nullptr, nullptr);
 		SET_PLACE_STATE(8, nullptr, nullptr, nullptr);
-		SET_PLACE_STATE(9, nullptr, nullptr, "VS23");
+		SET_PLACE_STATE(9, INIT_PLACE(2, 9), FILTER_EVENT(2, 9), "VS23");
 		SET_PLACE_STATE(10, nullptr, nullptr, "VS31");
-		SET_PLACE_STATE(11, nullptr, nullptr, "VS31");
-		SET_PLACE_STATE(12, nullptr, nullptr, "VS24");
+		SET_PLACE_STATE(11, nullptr, FILTER_EVENT(2, 11), "VS31");
+		SET_PLACE_STATE(12, nullptr, FILTER_EVENT(2, 12), "VS24");
 		SET_PLACE_STATE(13, nullptr, nullptr, "VS31");
-		SET_PLACE_STATE(14, nullptr, nullptr, nullptr);
+		SET_PLACE_STATE(14, nullptr, FILTER_EVENT(2, 14), nullptr);
 	} else if (_currentLevel == 3) {
 		_placeStates.resize(25);
 		// TODO: implement functions
