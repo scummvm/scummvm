@@ -176,21 +176,13 @@ void SceneScriptPS04::dialogueWithGuzza() {
 
 	case 120: // MONEY
 		Actor_Says(kActorMcCoy, 4000, 18);
-#if BLADERUNNER_ORIGINAL_BUGS
-		Actor_Clue_Acquire(kActorMcCoy, kClueGuzzasCash, true, kActorGuzza);
-		Actor_Says(kActorGuzza, 520, 33);
-		Actor_Says(kActorMcCoy, 4055, 13);
-		Actor_Says(kActorGuzza, 530, 31);
-		Actor_Says(kActorMcCoy, 4060, 13);
-		Actor_Says(kActorGuzza, 540, 31);
-		Actor_Says(kActorGuzza, 550, 32);
-		Actor_Says(kActorMcCoy, 4065, 18);
-		Actor_Says(kActorGuzza, 560, 34);
-		if (Query_Difficulty_Level() != 0) {
-			Global_Variable_Increment(kVariableChinyen, 100);
-		}
-#else
-		if (Global_Variable_Query(kVariableChinyen) < 300) { // basically if McCoy hasn't retired Zuben or drunk away his money at the bar
+#if BLADERUNNER_RESTORED_CUT_CONTENT
+		// Using cut content we have two cases:
+		// 1. Guzza can accept the loan (as in ORIGINAL)
+		// 2. Guzza can refuse the loan (CUT)
+		// Basically, if McCoy hasn't retired Zuben or if he drunk away his money at the bar
+		// then he'll have a small amount of chinyen and Guzza should accept the loan
+		if (Global_Variable_Query(kVariableChinyen) <= 100) {
 			Actor_Clue_Acquire(kActorMcCoy, kClueGuzzasCash, true, kActorGuzza);
 			Actor_Says(kActorGuzza, 520, 33);
 			Actor_Says(kActorMcCoy, 4055, 13);
@@ -203,16 +195,30 @@ void SceneScriptPS04::dialogueWithGuzza() {
 			if (Query_Difficulty_Level() != 0) {
 				Global_Variable_Increment(kVariableChinyen, 100);
 			}
-		} else {	// Guzza denies the loan
+		} else {
+			// McCoy has plenty cash already - Guzza denies the loan
 			Actor_Says(kActorGuzza, 470, 33);	// Hey, I'd love to be your own personal ATM but the department's strapped right now.
 			Actor_Says(kActorGuzza, 480, 31);
 			Actor_Says(kActorGuzza, 490, 31);
 			Actor_Says(kActorGuzza, 500, 32);
 			Actor_Says(kActorMcCoy, 4045, 16);
-			Actor_Says(kActorGuzza, 510, 31);
+			Actor_Says(kActorGuzza, 510, 31);	// Hey, you track down a Rep, you get an advance.
 			Actor_Says(kActorMcCoy, 4050, 18);
 		}
-#endif // BLADERUNNER_ORIGINAL_BUGS
+#else
+		Actor_Clue_Acquire(kActorMcCoy, kClueGuzzasCash, true, kActorGuzza);
+		Actor_Says(kActorGuzza, 520, 33);
+		Actor_Says(kActorMcCoy, 4055, 13);
+		Actor_Says(kActorGuzza, 530, 31);
+		Actor_Says(kActorMcCoy, 4060, 13);
+		Actor_Says(kActorGuzza, 540, 31);
+		Actor_Says(kActorGuzza, 550, 32);
+		Actor_Says(kActorMcCoy, 4065, 18);
+		Actor_Says(kActorGuzza, 560, 34);
+		if (Query_Difficulty_Level() != 0) {
+			Global_Variable_Increment(kVariableChinyen, 100);
+		}
+#endif // BLADERUNNER_RESTORED_CUT_CONTENT
 		break;
 
 	case 130: // REPORT IN
