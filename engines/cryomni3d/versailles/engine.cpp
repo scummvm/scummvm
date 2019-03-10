@@ -339,6 +339,13 @@ void CryOmni3DEngine_Versailles::setupPalette(const byte *palette, uint start, u
 	}
 }
 
+void CryOmni3DEngine_Versailles::setMainPaletteColor(byte color, byte red, byte green, byte blue) {
+	_mainPalette[3 * color + 0] = red;
+	_mainPalette[3 * color + 1] = green;
+	_mainPalette[3 * color + 2] = blue;
+	setPalette(_mainPalette, 0, 256);
+}
+
 struct transparentScore {
 	unsigned int score;
 	byte redScaled;
