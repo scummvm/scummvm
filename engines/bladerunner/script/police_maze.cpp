@@ -440,7 +440,7 @@ bool PoliceMazeTargetTrack::tick() {
 				int trackId2 = _data[_dataIndex++];
 				int trackId3 = _data[_dataIndex++];
 #if BLADERUNNER_DEBUG_CONSOLE
-				debug("ItemId: %3i, Pause reset 1 of 3, TrackId1: %i, TrackId2: %i, TrackId3: %i", _itemId, trackId1, trackId2, trackId3);
+				debug("ItemId: %3i, Pause reset 1 of 3, OtherItemId1: %i, OtherItemId2: %i, OtherItemId3: %i", _itemId, trackId1, trackId2, trackId3);
 #endif
 				switch (Random_Query(1, 3)) {
 				case 1:
@@ -464,7 +464,7 @@ bool PoliceMazeTargetTrack::tick() {
 				int trackId1 = _data[_dataIndex++];
 				int trackId2 = _data[_dataIndex++];
 #if BLADERUNNER_DEBUG_CONSOLE
-				debug("ItemId: %3i, Pause reset 1 of 2, TrackId1: %i, TrackId2: %i", _itemId, trackId1, trackId2);
+				debug("ItemId: %3i, Pause reset 1 of 2, OtherItemId1: %i, OtherItemId2: %i", _itemId, trackId1, trackId2);
 #endif
 				if (Random_Query(1, 2) == 1) {
 					_vm->_policeMaze->_tracks[trackId1]->resetPaused();
@@ -478,7 +478,7 @@ bool PoliceMazeTargetTrack::tick() {
 			{
 				int trackId = _data[_dataIndex++];
 #if BLADERUNNER_DEBUG_CONSOLE
-				debug("ItemId: %3i, Pause set, TrackId: %i", _itemId, trackId);
+				debug("ItemId: %3i, Pause set, OtherItemId: %i", _itemId, trackId);
 #endif
 				_vm->_policeMaze->_tracks[trackId]->setPaused();
 				break;
@@ -488,7 +488,7 @@ bool PoliceMazeTargetTrack::tick() {
 			{
 				int trackId = _data[_dataIndex++];
 #if BLADERUNNER_DEBUG_CONSOLE
-				debug("ItemId: %3i, Pause reset, TrackId: %i", _itemId, trackId);
+				debug("ItemId: %3i, Pause reset, OtherItemId: %i", _itemId, trackId);
 #endif
 				_vm->_policeMaze->_tracks[trackId]->resetPaused();
 				break;

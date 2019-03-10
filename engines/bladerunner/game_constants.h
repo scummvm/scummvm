@@ -1717,32 +1717,32 @@ enum ActorCombatStates {
 };
 
 enum PoliceMazeTrackInstruction {
-	kPMTIActivate = -26,
-	kPMTILeave = -25,
-	kPMTIShoot = -24,
-	kPMTIEnemyReset = -23,
-	kPMTIEnemySet = -22,
-	kPMTIFlagReset = -21,
-	kPMTIFlagSet = -20,
-	kPMTIVariableDec = -19,
-	kPMTIVariableInc = -18,
-	kPMTIVariableReset = -17,
-	kPMTIVariableSet = -16,
-	kPMTITargetSet = -15,
-	kPMTIPausedReset1of3 = -14,
-	kPMTIPausedReset1of2 = -13,
-	kPMTIPausedSet = -12,
-	kPMTIPausedReset = -11,
-	kPMTIPlaySound = -10,
-	kPMTIObstacleReset = -9,
-	kPMTIObstacleSet = -8,
-	kPMTIWaitRandom = -7,
-	kPMTIRotate = -6,
-	kPMTIFacing = -5,
-	kPMTIRestart = -4,
-	kPMTIWait = -3,
-	kPMTIMove = -2,
-	kPMTIPosition = -1,
+	kPMTIActivate        = -26, // args: variableId, maxValue
+	kPMTILeave           = -25, // args: -
+	kPMTIShoot           = -24, // args: soundId, notUsed
+	kPMTIEnemyReset      = -23, // args: otherItemId
+	kPMTIEnemySet        = -22, // args: otherItemId
+	kPMTIFlagReset       = -21, // args: flagId
+	kPMTIFlagSet         = -20, // args: flagId
+	kPMTIVariableDec     = -19, // args: variableId
+	kPMTIVariableInc     = -18, // args: variableId, maxValue
+	kPMTIVariableReset   = -17, // args: variableId
+	kPMTIVariableSet     = -16, // args: variableId, value
+	kPMTITargetSet       = -15, // args: otherItemId, value
+	kPMTIPausedReset1of3 = -14, // args: otherItemId1, otherItemId2, otherItemId3
+	kPMTIPausedReset1of2 = -13, // args: otherItemId1, otherItemId2
+	kPMTIPausedSet       = -12, // args: otherItemId
+	kPMTIPausedReset     = -11, // args: otherItemId
+	kPMTIPlaySound       = -10, // args: soundId, volume
+	kPMTIObstacleReset   = -9,  // args: otherItemId
+	kPMTIObstacleSet     = -8,  // args: otherItemId
+	kPMTIWaitRandom      = -7,  // args: min, max
+	kPMTIRotate          = -6,  // args: target, delta
+	kPMTIFacing          = -5,  // args: angle
+	kPMTIRestart         = -4,  // args: -
+	kPMTIWait            = -3,  // args: time
+	kPMTIMove            = -2,  // args: target
+	kPMTIPosition        = -1,  // args: index
 	kPMTI26 = 0
 };
 
