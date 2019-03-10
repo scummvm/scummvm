@@ -2352,10 +2352,15 @@ drawBevelSquareAlg(int x, int y, int w, int h, int bevel, PixelType top_color, P
 	// Fill Background
 	ptr_left = (PixelType *)_activeSurface->getBasePtr(x, y);
 	i = h;
-	if (fill) {
-		assert((_bgColor & ~_alphaMask) == 0); // only support black
+	// Optimize rendering in case the background color is black
+	if ((_bgColor & ~_alphaMask) == 0) {
 		while (i--) {
 			darkenFill(ptr_left, ptr_left + w);
+			ptr_left += pitch;
+		}
+	} else {
+		while (i--) {
+			blendFill(ptr_left, ptr_left + w, _bgColor, 200);
 			ptr_left += pitch;
 		}
 	}
@@ -2409,12 +2414,17 @@ drawBevelSquareAlgClip(int x, int y, int w, int h, int bevel, PixelType top_colo
 	ptr_left = (PixelType *)_activeSurface->getBasePtr(x, y);
 	ptr_x = x; ptr_y = y;
 	i = h;
-	if (fill) {
-		assert((_bgColor & ~_alphaMask) == 0); // only support black
+	// Optimize rendering in case the background color is black
+	if ((_bgColor & ~_alphaMask) == 0) {
 		while (i--) {
 			darkenFillClip(ptr_left, ptr_left + w, ptr_x, ptr_y);
 			ptr_left += pitch;
 			++ptr_y;
+		}
+	} else {
+		while (i-- ) {
+			blendFillClip(ptr_left, ptr_left + w, ptr_x, ptr_y, _bgColor, 200);
+			ptr_left += pitch;
 		}
 	}
 
