@@ -506,9 +506,9 @@ Window::Window(Windows *windows, uint rock) : _windows(windows), _rock(rock),
 	_lineRequest(0), _lineRequestUni(0), _charRequest(0), _charRequestUni(0),
 	_mouseRequest(0), _hyperRequest(0), _moreRequest(0), _scrollRequest(0), _imageLoaded(0),
 	_echoLineInputBase(true), _lineTerminatorsBase(nullptr), _termCt(0), _echoStream(nullptr) {
-	_attr.fgset = 0;
-	_attr.bgset = 0;
-	_attr.reverse = 0;
+	_attr.fgset = false;
+	_attr.bgset = false;
+	_attr.reverse = false;
 	_attr.style = 0;
 	_attr.fgcolor = 0;
 	_attr.bgcolor = 0;
@@ -733,8 +733,8 @@ WindowStyle::WindowStyle(const WindowStyleStatic &src) : font(src.font), reverse
 /*--------------------------------------------------------------------------*/
 
 void Attributes::clear() {
-	fgset = 0;
-	bgset = 0;
+	fgset = false;
+	bgset = false;
 	fgcolor = 0;
 	bgcolor = 0;
 	reverse = false;

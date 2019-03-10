@@ -242,7 +242,7 @@ void WindowStream::setZColors(uint fg, uint bg) {
 		PropFontInfo *info = &g_conf->_propInfo;
 
 		if (fg == zcolor_Default) {
-			_window->_attr.fgset = 0;
+			_window->_attr.fgset = false;
 			_window->_attr.fgcolor = 0;
 			Windows::_overrideFgSet = false;
 			Windows::_overrideFgVal = 0;
@@ -251,7 +251,7 @@ void WindowStream::setZColors(uint fg, uint bg) {
 			info->_caretColor = info->_caretSave;
 			info->_linkColor = info->_linkSave;
 		} else if (fg != zcolor_Current) {
-			_window->_attr.fgset = 1;
+			_window->_attr.fgset = true;
 			_window->_attr.fgcolor = fg;
 			Windows::_overrideFgSet = true;
 			Windows::_overrideFgVal = fg;
@@ -264,7 +264,7 @@ void WindowStream::setZColors(uint fg, uint bg) {
 
 	if (/*bg != zcolor_Transparent &&*/ bg != zcolor_Cursor) {
 		if (bg == zcolor_Default) {
-			_window->_attr.bgset = 0;
+			_window->_attr.bgset = false;
 			_window->_attr.bgcolor = 0;
 			Windows::_overrideBgSet = false;
 			Windows::_overrideBgVal = 0;
@@ -272,7 +272,7 @@ void WindowStream::setZColors(uint fg, uint bg) {
 			g_conf->_windowColor = g_conf->_windowSave;
 			g_conf->_borderColor = g_conf->_borderSave;
 		} else if (bg != zcolor_Current) {
-			_window->_attr.bgset = 1;
+			_window->_attr.bgset = true;
 			_window->_attr.bgcolor = bg;
 			Windows::_overrideBgSet = true;
 			Windows::_overrideBgVal = bg;
