@@ -83,10 +83,10 @@ public:
 	void clear();
 	void add(Object *);
 	void remove(unsigned int position);
-	void removeByCursorId(unsigned int cursorId);
-	void removeByNameId(unsigned int nameId);
-	bool inInventoryByCursorId(unsigned int cursorId) const;
-	bool inInventoryByNameId(unsigned int nameId) const;
+	void removeByNameID(unsigned int nameID);
+	void removeByIconID(unsigned int iconID);
+	bool inInventoryByNameID(unsigned int nameID) const;
+	bool inInventoryByIconID(unsigned int iconID) const;
 
 	Object *selectedObject() const { return _selectedObject; }
 	void setSelectedObject(Object *obj) { _selectedObject = obj; }

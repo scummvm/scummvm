@@ -502,25 +502,25 @@ void CryOmni3DEngine_Versailles::playTransitionEndLevel(int level) {
 		break;
 	case 2:
 		video = "a3_vf.hns";
-		_inventory.removeByNameId(96);
-		_inventory.removeByNameId(104);
+		_inventory.removeByNameID(96);
+		_inventory.removeByNameID(104);
 		break;
 	case 3:
 		video = "a4_vf.hns";
 		break;
 	case 4:
 		video = "a5_vf.hns";
-		_inventory.removeByNameId(101);
-		_inventory.removeByNameId(127);
-		_inventory.removeByNameId(129);
-		_inventory.removeByNameId(130);
-		_inventory.removeByNameId(131);
-		_inventory.removeByNameId(132);
-		_inventory.removeByNameId(126);
+		_inventory.removeByNameID(101);
+		_inventory.removeByNameID(127);
+		_inventory.removeByNameID(129);
+		_inventory.removeByNameID(130);
+		_inventory.removeByNameID(131);
+		_inventory.removeByNameID(132);
+		_inventory.removeByNameID(126);
 		break;
 	case 5:
 		video = "a6_vf.hns";
-		_inventory.removeByNameId(115);
+		_inventory.removeByNameID(115);
 		break;
 	case 6:
 		video = "a7_vf.hns";
