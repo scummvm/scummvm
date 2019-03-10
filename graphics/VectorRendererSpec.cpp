@@ -2422,10 +2422,10 @@ drawBevelSquareAlgClip(int x, int y, int w, int h, int bevel, PixelType top_colo
 			++ptr_y;
 		}
 	} else {
-					while (i-- ) {
-						blendFillClip(ptr_left, ptr_left + w, ptr_x, ptr_y, _bgColor, 200);
-						ptr_left += pitch;
-					}
+		while (i-- ) {
+			blendFillClip(ptr_left, ptr_left + w, ptr_x, ptr_y, _bgColor, 200);
+			ptr_left += pitch;
+		}
 	}
 
 	x = MAX(x - bevel, 0);
