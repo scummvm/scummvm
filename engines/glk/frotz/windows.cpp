@@ -30,10 +30,6 @@ namespace Glk {
 namespace Frotz {
 
 Windows::Windows() : _lower(_windows[0]), _upper(_windows[1]), _background(nullptr), _cwin(0) {
-	for (size_t idx = 0; idx < 8; ++idx) {
-		_windows[idx]._windows = this;
-		_windows[idx]._index = idx;
-	}
 }
 
 size_t Windows::size() const {
@@ -71,6 +67,15 @@ void Windows::setup(bool isVersion6) {
 		_upper.update();
 		g_vm->glk_set_window(_lower);
 	}
+
+	MonoFontInfo &mi = g_vm->_conf->_monoInfo;
+	for (size_t idx = 0; idx < 8; ++idx) {
+		Window &w = _windows[idx];
+		w._windows = this;
+		w._index = idx;
+		w[FONT_NUMBER] = TEXT_FONT;
+		w[FONT_SIZE] = (mi._cellH << 8) | mi._cellW;
+	}
 }
 
 void Windows::setWindow(int win) {
@@ -87,7 +92,7 @@ Window::Window() : _windows(nullptr), _win(nullptr) {
 	_properties[Y_POS] = _properties[X_POS] = 1;
 	_properties[Y_CURSOR] = _properties[X_CURSOR] = 1;
 	_properties[FONT_NUMBER] = TEXT_FONT;
-	_properties[FONT_SIZE] = 12;
+	_properties[FONT_SIZE] = (8 << 8) | 8;
 }
 
 void Window::update() {
@@ -105,7 +110,7 @@ void Window::update() {
 	TextBufferWindow *win = dynamic_cast<TextBufferWindow *>(_win);
 	_properties[LEFT_MARGIN] = (win ? win->_ladjw : 0) / g_conf->_monoInfo._cellW;
 	_properties[RIGHT_MARGIN] = (win ? win->_radjw : 0) / g_conf->_monoInfo._cellW;
-	_properties[FONT_SIZE] = g_conf->_monoInfo._size;
+	_properties[FONT_SIZE] = (g_conf->_monoInfo._cellH << 8) | g_conf->_monoInfo._cellW;
 }
 
 Window &Window::operator=(winid_t win) {
@@ -251,7 +256,7 @@ void Window::setProperty(WindowProperty propType, uint value) {
 		break;
 
 	default:
-		warning("Setting window property %d not yet supported", (int)propType);
+		_properties[propType] = value;
 	}
 }
 
