@@ -25,7 +25,6 @@
 #if defined(SDL_BACKEND)
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 #include "backends/events/sdl/sdl-events.h"
-#include "backends/platform/sdl/sdl.h"
 #include "common/config-manager.h"
 #include "common/mutex.h"
 #include "common/textconsole.h"
@@ -1419,7 +1418,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 	_cursorNeedsRedraw = false;
 }
 
-bool SurfaceSdlGraphicsManager::saveScreenshot(const char *filename) {
+bool SurfaceSdlGraphicsManager::saveScreenshot(const Common::String &filename) const {
 	assert(_hwScreen != NULL);
 
 	Common::StackLock lock(_graphicsMutex);
@@ -1484,7 +1483,7 @@ bool SurfaceSdlGraphicsManager::saveScreenshot(const char *filename) {
 
 	return success;
 #else
-	return SDL_SaveBMP(_hwScreen, filename) == 0;
+	return SDL_SaveBMP(_hwScreen, filename.c_str()) == 0;
 #endif
 }
 
@@ -2672,69 +2671,9 @@ bool SurfaceSdlGraphicsManager::isScalerHotkey(const Common::Event &event) {
 	return false;
 }
 
-void SurfaceSdlGraphicsManager::toggleFullScreen() {
-	beginGFXTransaction();
-		setFullscreenMode(!_videoMode.fullscreen);
-	endGFXTransaction();
-#ifdef USE_OSD
-	if (_videoMode.fullscreen)
-		displayMessageOnOSD(_("Fullscreen mode"));
-	else
-		displayMessageOnOSD(_("Windowed mode"));
-#endif
-}
-
 bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 	switch ((int)event.type) {
 	case Common::EVENT_KEYDOWN:
-		// Alt-Return and Alt-Enter toggle full screen mode
-		if (event.kbd.hasFlags(Common::KBD_ALT) &&
-			(event.kbd.keycode == Common::KEYCODE_RETURN ||
-			event.kbd.keycode == (Common::KeyCode)SDLK_KP_ENTER)) {
-			toggleFullScreen();
-			return true;
-		}
-
-		// Alt-S: Create a screenshot
-		if (event.kbd.hasFlags(Common::KBD_ALT) && event.kbd.keycode == 's') {
-			Common::String filename;
-
-			Common::String screenshotsPath;
-			OSystem_SDL *sdl_g_system = dynamic_cast<OSystem_SDL*>(g_system);
-			if (sdl_g_system)
-				screenshotsPath = sdl_g_system->getScreenshotsPath();
-
-			for (int n = 0;; n++) {
-				SDL_RWops *file;
-
-#ifdef USE_PNG
-				filename = Common::String::format("scummvm%05d.png", n);
-#else
-				filename = Common::String::format("scummvm%05d.bmp", n);
-#endif
-
-				file = SDL_RWFromFile((screenshotsPath + filename).c_str(), "r");
-
-				if (!file)
-					break;
-				SDL_RWclose(file);
-			}
-
-			if (saveScreenshot((screenshotsPath + filename).c_str())) {
-				if (screenshotsPath.empty())
-					debug("Saved screenshot '%s' in current directory", filename.c_str());
-				else
-					debug("Saved screenshot '%s' in directory '%s'", filename.c_str(), screenshotsPath.c_str());
-			} else {
-				if (screenshotsPath.empty())
-					warning("Could not save screenshot in current directory");
-				else
-					warning("Could not save screenshot in directory '%s'", screenshotsPath.c_str());
-			}
-
-			return true;
-		}
-
 		// Ctrl-Alt-<key> will change the GFX mode
 		if (event.kbd.hasFlags(Common::KBD_CTRL|Common::KBD_ALT)) {
 			if (handleScalerHotkeys(event.kbd.keycode))
@@ -2744,13 +2683,16 @@ bool SurfaceSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		break;
 
 	case Common::EVENT_KEYUP:
-		return isScalerHotkey(event);
+		if (isScalerHotkey(event))
+			return true;
+
+		break;
 
 	default:
 		break;
 	}
 
-	return false;
+	return SdlGraphicsManager::notifyEvent(event);
 }
 
 void SurfaceSdlGraphicsManager::notifyVideoExpose() {
