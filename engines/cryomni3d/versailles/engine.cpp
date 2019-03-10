@@ -1326,9 +1326,8 @@ void CryOmni3DEngine_Versailles::animateCursor(const Object *obj) {
 	g_system->showMouse(cursorWasVisible);
 }
 
-void CryOmni3DEngine_Versailles::collectObject(unsigned int nameID, const ZonFixedImage *fimg,
+void CryOmni3DEngine_Versailles::collectObject(Object *obj, const ZonFixedImage *fimg,
         bool showObject) {
-	Object *obj = _objects.findObjectByNameID(nameID);
 	_inventory.add(obj);
 	Object::ViewCallback cb = obj->viewCallback();
 	if (showObject && cb) {

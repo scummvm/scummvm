@@ -306,8 +306,10 @@ private:
 	bool loadGame(bool visit, unsigned int saveNum);
 
 	void animateCursor(const Object *object);
-	void collectObject(unsigned int nameID, const ZonFixedImage *fimg = nullptr,
+	void collectObject(Object *object, const ZonFixedImage *fimg = nullptr,
 	                   bool showObject = true);
+	void collectObject(unsigned int nameID, const ZonFixedImage *fimg = nullptr,
+	                   bool showObject = true) { collectObject(_objects.findObjectByNameID(nameID), fimg, showObject); }
 	typedef void (CryOmni3DEngine_Versailles::*DisplayObjectHook)(Graphics::ManagedSurface &surface);
 	void displayObject(const Common::String &imgName, DisplayObjectHook hook = nullptr);
 
