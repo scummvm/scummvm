@@ -184,6 +184,9 @@ protected:
 	SDL_Surface *_hwScreen;
 	SdlEventSource *_eventSource;
 	SdlWindow *_window;
+
+private:
+	void toggleFullScreen();
 };
 
 #endif

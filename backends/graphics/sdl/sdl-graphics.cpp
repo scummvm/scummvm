@@ -314,15 +314,7 @@ bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		if (event.kbd.hasFlags(Common::KBD_ALT) &&
 			(event.kbd.keycode == Common::KEYCODE_RETURN ||
 			event.kbd.keycode == (Common::KeyCode)SDLK_KP_ENTER)) {
-			beginGFXTransaction();
-				setFeatureState(OSystem::kFeatureFullscreenMode, !getFeatureState(OSystem::kFeatureFullscreenMode));
-			endGFXTransaction();
-#ifdef USE_OSD
-			if (getFeatureState(OSystem::kFeatureFullscreenMode))
-				displayMessageOnOSD(_("Fullscreen mode"));
-			else
-				displayMessageOnOSD(_("Windowed mode"));
-#endif
+			toggleFullScreen();
 			return true;
 		}
 
@@ -348,4 +340,16 @@ bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
 	}
 
 	return false;
+}
+
+void SdlGraphicsManager::toggleFullScreen() {
+	beginGFXTransaction();
+	setFeatureState(OSystem::kFeatureFullscreenMode, !getFeatureState(OSystem::kFeatureFullscreenMode));
+	endGFXTransaction();
+#ifdef USE_OSD
+	if (getFeatureState(OSystem::kFeatureFullscreenMode))
+		displayMessageOnOSD(_("Fullscreen mode"));
+	else
+		displayMessageOnOSD(_("Windowed mode"));
+#endif
 }
