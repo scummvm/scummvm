@@ -311,6 +311,7 @@ private:
 	typedef void (CryOmni3DEngine_Versailles::*DisplayObjectHook)(Graphics::ManagedSurface &surface);
 	void displayObject(const Common::String &imgName, DisplayObjectHook hook = nullptr);
 
+	void setMainPaletteColor(byte color, byte red, byte green, byte blue);
 	void setupPalette(const byte *colors, uint start, uint num, bool commit);
 
 	bool showSubtitles() const;
