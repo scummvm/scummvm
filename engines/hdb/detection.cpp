@@ -21,9 +21,15 @@
  */
 
 #include "base/plugins.h"
+
 #include "engines/advancedDetector.h"
 
 #include "hdb.h"
+
+namespace HDB {
+const char *HDBGame::getGameId() const { return _gameDescription->gameId; }
+Common::Platform HDBGame::getPlatform() const { return _gameDescription->platform; }
+} // End of namespace HDB
 
 static const PlainGameDescriptor hdbGames[] = {
 	{"hdb", "Hyperspace Delivery Boy!"},
@@ -34,8 +40,8 @@ namespace HDB {
 static const ADGameDescription gameDescriptions[] = {
 	{
 		"hdb",
-		0,
-		AD_ENTRY1s("hyperdemo.mpc", "e331ccadb9b92d3e03f31a70b7814af1", 13816461),
+		"",
+		AD_ENTRY1s("hyperdemo.mpc", "d8743b3b8be56486bcfb1398b2f2aad4", 13816461),
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
 		ADGF_NO_FLAGS,
@@ -43,7 +49,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	AD_TABLE_END_MARKER
 };
-}
+} // End of namespace HDB
 
 class HDBMetaEngine : public AdvancedMetaEngine {
 public:
@@ -69,7 +75,7 @@ bool HDBMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool HDBMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc) {
-//		*engine = new HDBGame()
+		*engine = new HDB::HDBGame(syst, desc);
 	}
 
 	return desc != nullptr;
