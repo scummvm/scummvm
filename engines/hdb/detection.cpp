@@ -20,42 +20,43 @@
  *
  */
 
-#include "hdb/hdb.h"
+#include "base/plugins.h"
 #include "engines/advancedDetector.h"
 
+#include "hdb.h"
+
 static const PlainGameDescriptor hdbGames[] = {
-	{"hdb", "Hyperspace Delivery Boy"},
+	{"hdb", "Hyperspace Delivery Boy!"},
 	{0, 0}
 };
 
 namespace HDB {
-static const ADGameDescription gameDescription[] = {
+static const ADGameDescription gameDescriptions[] = {
 	{
 		"hdb",
-		//AD_ENTRY1s("GAME.BIN", 0, 41622),
-		//TODO: Come up with an actual GameFileDescription
+		0,
+		AD_ENTRY1s("hyperdemo.mpc", "e331ccadb9b92d3e03f31a70b7814af1", 13816461),
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
 		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NONE)
 	},
-
 	AD_TABLE_END_MARKER
 };
 }
 
 class HDBMetaEngine : public AdvancedMetaEngine {
 public:
-	HDBMetaEngine() : AdvancedMetaEngine() {
+	HDBMetaEngine() : AdvancedMetaEngine(HDB::gameDescriptions, sizeof(ADGameDescription), hdbGames) {
 		_singleId = "hdb";
 	}
 
 	virtual const char *getName() const {
-		return "Hyperspace Delivery Boy";
+		return "Hyperspace Delivery Boy!";
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "";
+		return "Hyperspace Delivery Boy! (c) 2001 Monkeystone Games";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
@@ -68,7 +69,7 @@ bool HDBMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool HDBMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	if (desc) {
-		*engine = new HDB::HDBGame(syst, desc);
+//		*engine = new HDBGame()
 	}
 
 	return desc != nullptr;
