@@ -33,8 +33,12 @@
 
 namespace Sci {
 
-Kernel::Kernel(ResourceManager *resMan, SegManager *segMan)
-	: _resMan(resMan), _segMan(segMan), _invalid("<invalid>") {
+Kernel::Kernel(ResourceManager *resMan, SegManager *segMan)	:
+	_resMan(resMan),
+	_segMan(segMan),
+	_invalid("<invalid>") {
+	loadSelectorNames();
+	mapSelectors();
 }
 
 Kernel::~Kernel() {
@@ -49,11 +53,6 @@ Kernel::~Kernel() {
 		}
 		delete[] it->signature;
 	}
-}
-
-void Kernel::init() {
-	loadSelectorNames();
-	mapSelectors();      // Map a few special selectors for later use
 }
 
 uint Kernel::getSelectorNamesSize() const {

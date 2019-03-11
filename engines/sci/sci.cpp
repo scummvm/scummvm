@@ -308,8 +308,6 @@ Common::Error SciEngine::run() {
 	}
 
 	_kernel = new Kernel(_resMan, segMan);
-	_kernel->init();
-
 	_features = new GameFeatures(segMan, _kernel);
 	_vocabulary = hasParser() ? new Vocabulary(_resMan, false) : NULL;
 
