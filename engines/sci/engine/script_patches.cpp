@@ -11033,6 +11033,27 @@ static const uint16 sq4CdPatchGettingShotWhileGettingRope[] = {
 	PATCH_END
 };
 
+// Talking in room 520 results in a missing message due to passing the wrong
+//  modNum to the narrator.
+//
+// Applies to: English PC CD
+// Responsible method: rm520:doVerb(2)
+// Fixes bug #10915
+static const uint16 sq4CdSignatureMazeTalkMessage[] = {
+	0x38, SIG_SELECTOR16(modNum),       // pushi modNum
+	SIG_MAGICDWORD,
+	0x78,                               // push1
+	0x38, SIG_UINT16(0x01fe),           // pushi 01fe [ incorrect modNum: 510 ]
+	0x38, SIG_SELECTOR16(say),          // pushi say
+	SIG_END,
+};
+
+static const uint16 sq4CdPatchMazeTalkMessage[] = {
+	PATCH_ADDTOOFFSET(+4),
+	0x38, PATCH_UINT16(0x01f4),         // pushi 01f4 [ correct modNum: 500 ]
+	PATCH_END
+};
+
 // Talking to the red shopper in the mall has a 5% chance of a funny message but
 //  this script is broken in the CD version. After the first time the wrong
 //  message tuple is attempted by the narrator as its modNum value is cleared.
@@ -11233,6 +11254,7 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,   406, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
 	{  true,   410, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
 	{  true,   411, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
+	{  true,   520, "CD: maze talk message fix",                      1, sq4CdSignatureMazeTalkMessage,                 sq4CdPatchMazeTalkMessage },
 	{  true,   700, "CD: red shopper message fix",                    1, sq4CdSignatureRedShopperMessageFix,            sq4CdPatchRedShopperMessageFix },
 	{  true,   701, "CD: getting shot, while getting rope",           1, sq4CdSignatureGettingShotWhileGettingRope,     sq4CdPatchGettingShotWhileGettingRope },
 	{  true,     0, "CD: Babble icon speech and subtitles fix",       1, sq4CdSignatureBabbleIcon,                      sq4CdPatchBabbleIcon },
