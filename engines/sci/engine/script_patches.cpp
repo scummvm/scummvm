@@ -11085,21 +11085,21 @@ static const uint16 sq4CdPatchRedShopperMessageFix[] = {
 // Responsible method: Heap in scripts 405, 406, 410, and 411
 // Fixes bug #10912
 static const uint16 sq4SignatureZeroGravityBlast[] = {
-    SIG_MAGICDWORD,                     // blast
-    SIG_UINT16(0x0002),                 // yStep = 2
-    SIG_UINT16(0x001c),                 // view = 128
-    SIG_UINT16(0x0000),                 // loop = 0
-    SIG_UINT16(0x0000),                 // cel = 0
-    SIG_UINT16(0x0000),                 // priority = 0
-    SIG_UINT16(0x0000),                 // underBits = 0
-    SIG_UINT16(0x0000),                 // signal = 0
-    SIG_END
+	SIG_MAGICDWORD,                     // blast
+	SIG_UINT16(0x0002),                 // yStep = 2
+	SIG_UINT16(0x001c),                 // view = 128
+	SIG_UINT16(0x0000),                 // loop = 0
+	SIG_UINT16(0x0000),                 // cel = 0
+	SIG_UINT16(0x0000),                 // priority = 0
+	SIG_UINT16(0x0000),                 // underBits = 0
+	SIG_UINT16(0x0000),                 // signal = 0
+	SIG_END
 };
 
 static const uint16 sq4PatchZeroGravityBlast[] = {
-    PATCH_ADDTOOFFSET(+12),
-    PATCH_UINT16(0x4000),               // signal = $4000 [ set ignore-actors flag ]
-    PATCH_END
+	PATCH_ADDTOOFFSET(+12),
+	PATCH_UINT16(0x4000),               // signal = $4000 [ set ignore-actors flag ]
+	PATCH_END
 };
 
 // The scripts in SQ4CD support simultaneous playing of speech and subtitles,
