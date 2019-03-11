@@ -309,7 +309,7 @@ void TlcGame::epInit() {
 	}
 
 	if (epaidbfile->eos()) {
-		error("TLC:EpInit: Error reading scores from 'REGIONS.RLE'");
+		error("TLC:EpInit: Error reading scores from 'EPAIDB.RLE'");
 	}
 
 	// Close file
@@ -605,7 +605,7 @@ void TlcGame::epResultQuestion() {
  * Processes the result of the questions for this episode.
  * _epScoreBin[   0]: Ignored. Used if this answer for a question has no influence. Reset with each new Exit Poll.
  * _epScoreBin[1..3]: Seems to be used to select alternative video for this episode. Reset with each new Exit Poll.
- * _epScoreBin[4..5]: Seems to be used over the whole game. (Values are kept over the episodes in the script variables.
+ * _epScoreBin[4..5]: Seems to be used over the whole game. (Values are kept over the episodes in the script variables.)
  */
 void TlcGame::epResultEpisode() {
 
@@ -662,6 +662,7 @@ void TlcGame::epResultEpisode() {
 	/* return values */
 	setScriptVar(0, 9);
 }
+
 
 void TlcGame::opFlags() {
 	int x;
@@ -758,6 +759,7 @@ void TlcGame::opTat() {
 	}
 }
 
+
 void TlcGame::tatInitRegs() {
 	int i;
 
@@ -770,39 +772,47 @@ void TlcGame::tatInitRegs() {
 	// memset(_tatUnkData0_14, 0, 15);
 }
 
-void TlcGame::tatLoadDB() {
+
+void TlcGame::tatLoadDBHeaders() {
 	Common::SeekableReadStream *tataidbfile = 0;
-	int i, d;
-	int episode;
-	uint32 questOffset;
-
-	for (i = 0; i < 0x10; i++) {
-		setScriptVar(0x4D + i, 0);
-	}
-
-	// Open epaidb.rle
-	tataidbfile = SearchMan.createReadStreamForMember("SYSTEM/TATAIDB.RLE");
-	if (!tataidbfile) {
-		error("TLC:TatLoadDB: Could not open 'SYSTEM/TATAIDB.RLE'");
-	}
+	int iEpisode, iBin;
 
 	// Load tat headers if not already done
 	if (_tatHeaders == NULL) {
-		_tatCount = tataidbfile->readUint32LE();
-		_tatHeaders = new TlcTatHeader[_tatCount];
+		// Open tataidb.rle
+		tataidbfile = SearchMan.createReadStreamForMember("SYSTEM/TATAIDB.RLE");
+		if (!tataidbfile) {
+			error("TLC:TatLoadDB: Could not open 'SYSTEM/TATAIDB.RLE'");
+		}
 
-		for (i = 0; i < _tatCount; i++) {
-			_tatHeaders[i].questionsNum = tataidbfile->readUint32LE();
-			_tatHeaders[i].questionsOffset = tataidbfile->readUint32LE();
-			for (d = 0; d < 16; d++) {
-				_tatHeaders[i].binDividends[d] = tataidbfile->readByte();
+		_tatEpisodes = tataidbfile->readUint32LE();
+		_tatHeaders = new TlcTatHeader[_tatEpisodes];
+
+		for (iEpisode = 0; iEpisode < _tatEpisodes; iEpisode++) {
+			_tatHeaders[iEpisode].questionsNum = tataidbfile->readUint32LE();
+			_tatHeaders[iEpisode].questionsOffset = tataidbfile->readUint32LE();
+			for (iBin = 0; iBin < 16; iBin++) {
+				_tatHeaders[iEpisode].binDividends[iBin] = tataidbfile->readByte();
 			}
 		}
+		if (tataidbfile->eos()) {
+			error("TLC:TatLoadDB: Error reading headers from 'TATAIDB.RLE'");
+		}
+	}
+}
+
+
+void TlcGame::tatLoadDB() {
+	Common::SeekableReadStream *tataidbfile = 0;
+	int episode;
+	uint32 questOffset;
+
+	for (int iBin = 0; iBin < 0x10; iBin++) {
+		setScriptVar(0x4D + iBin, 0);
 	}
 
-	if (tataidbfile->eos()) {
-		error("TLC:TatLoadDB: Error reading headers from 'TATAIDB.RLE'");
-	}
+	// Load TAT headers
+	tatLoadDBHeaders();
 
 	// Load questions for the requested episode
 	episode = _scriptVariables[0x47] - 0x31;    // -'1'
@@ -811,6 +821,12 @@ void TlcGame::tatLoadDB() {
 
 	delete[] _tatQuestions;
 	_tatQuestions = new TlcTatQuestions[_tatQuestCount];
+
+	// Open tataidb.rle and seek correct position
+	tataidbfile = SearchMan.createReadStreamForMember("SYSTEM/TATAIDB.RLE");
+	if (!tataidbfile) {
+		error("TLC:TatLoadDB: Could not open 'SYSTEM/TATAIDB.RLE'");
+	}
 	tataidbfile->seek(questOffset, SEEK_SET);
 
 	for (int iQuest = 0; iQuest < _tatQuestCount; iQuest++) {
@@ -1175,25 +1191,52 @@ void TlcGame::tatResultEpisode() {
 
 
 void TlcGame::tatGetProfile() {
-	uint16 scoreTable[16];
+	uint16 sumBinDivs[16];
+	float  binRatios[16];
 	int iBin, iEpisode;
 
 	for (iBin = 0; iBin < 16; iBin++) {
-		scoreTable[iBin] = 0;
+		sumBinDivs[iBin] = 0;
 	}
 
-	for (iEpisode = 0; iEpisode < 15; iEpisode++) {
+	// Load scoretable by summing all dividends for each episode
+	tatLoadDBHeaders();
+	for (iEpisode = 0; iEpisode < _tatEpisodes; iEpisode++) {
 		for (iBin = 0; iBin < 16; iBin++) {
-			scoreTable[iBin] += _tatCoeffs[iEpisode][iBin];
+			sumBinDivs[iBin] += _tatHeaders[iEpisode].binDividends[iBin];
 		}
 	}
 
-	for (iBin = 0; iBin <= 16; iBin++) {
-		getScriptVar16(0x5D + 2 * iBin);
+	// Calculate ratio of each bin
+	for (iBin = 0; iBin < 16; iBin++) {
+		binRatios[iBin] = (float)getScriptVar16(0x5D + 2 * iBin) / (float)sumBinDivs[iBin];
 	}
 
-	error("GROOVIE: Function (tatGetProfile) not implemented yet.");
+	// Select higher ratio of each pair (A=iBin and B=iBin+1) and 1 or 2 accoring to threshold
+	for (iBin = 0; iBin < 16; iBin += 2) {
+		if (binRatios[iBin] > binRatios[iBin + 1]) {
 
+			setScriptVar(0x4d + iBin, 'A' + iBin);
+			if (binRatios[iBin] > 0.5) {
+				setScriptVar(0x4e + iBin, '1');
+			} else {
+				setScriptVar(0x4e + iBin, '2');
+			}
+		} else {
+
+			setScriptVar(0x4d + iBin, 'B' + iBin);
+			if (binRatios[iBin + 1] > 0.5) {
+				setScriptVar(0x4e + iBin, '1');
+			} else {
+				setScriptVar(0x4e + iBin, '2');
+			}
+		}
+	}
+
+	// Adapt former set script variables (all -0x30)
+	for (iBin = 0; iBin < 16; iBin++) {
+		setScriptVar(0x4d + iBin, _scriptVariables[0x4d + iBin] - '0');
+	}
 }
 
 } // End of Namespace Groovie

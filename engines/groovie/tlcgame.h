@@ -178,16 +178,17 @@ private:
 	 */
 	void tatInitRegs();
 	void tatLoadDB();
+	void tatLoadDBHeaders();
 	void tatResultQuest();
 	void tatResultEpisode();
 	void tatGetProfile();
 
 	// Variables for TAT handling
-	int _tatCount;
+	int _tatEpisodes;
 	int _tatQuestCount;
 	TlcTatHeader *_tatHeaders;
 	TlcTatQuestions *_tatQuestions;
-	uint8 _tatCoeffs[15][16];
+	// uint8 _tatCoeffs[15][16];
 };
 
 } // End of Groovie namespace
