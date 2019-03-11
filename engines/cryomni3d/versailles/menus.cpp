@@ -724,7 +724,7 @@ unsigned int CryOmni3DEngine_Versailles::displayFilePicker(const Graphics::Surfa
 					selectedSaveName.deleteLastChar();
 					textCursorNextState = 0;
 					redraw = true;
-				} else if (key.ascii > 32 && key.ascii < 256 && selectedSaveName.size() < 20) {
+				} else if (key.ascii >= 32 && key.ascii < 256 && selectedSaveName.size() < 20) {
 					selectedSaveName += key.ascii;
 					textCursorNextState = 0;
 					redraw = true;
