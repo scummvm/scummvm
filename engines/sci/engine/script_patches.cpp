@@ -120,6 +120,7 @@ static const char *const selectorNameTable[] = {
 	"loop",         // Laura Bow 1 Colonel's Bequest, QFG4
 	"setLoop",      // Laura Bow 1 Colonel's Bequest, QFG4
 	"ignoreActors", // Laura Bow 1 Colonel's Bequest
+	"setVol",       // Laura Bow 2 CD
 	"at",           // Longbow, QFG4
 	"owner",        // Longbow
 	"delete",       // EcoQuest 1
@@ -215,6 +216,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_loop,
 	SELECTOR_setLoop,
 	SELECTOR_ignoreActors,
+	SELECTOR_setVol,
 	SELECTOR_at,
 	SELECTOR_owner,
 	SELECTOR_delete,
@@ -5901,6 +5903,62 @@ static const uint16 laurabow2PatchDisableSpeedTest[] = {
 	PATCH_END
 };
 
+// LB2CD reduces the music volume significantly during the introduction when
+//  characters talk while disembarking the ship in room 120. This is done so
+//  that their speech can be heard but it also occurs in text-only mode.
+//
+// Interestingly, this is the only script that manually reduces volume during
+//  speech, as it's a workaround for bugs in the Narrator and Talker scripts.
+//  They're supposed to automatically reduce music volume, but this scheme fails
+//  when multiple appear at once, which seems to only occur in the introduction.
+//
+// We patch the introduction to skip the volume reduction when in text-only mode
+//  so that the music doesn't abruptly go away and come back.
+//
+// Applies to: All CD versions
+// Responsible method: sDisembark:changeState
+// Fixes bug #10916
+static const uint16 laurabow2CDSignatureIntroVolumeChange[] = {
+	0x31, 0x2a,                         // bnt 2a [ state 3 ]
+	SIG_ADDTOOFFSET(+2),
+	0x31, 0x1f,                         // bnt 1f
+	SIG_ADDTOOFFSET(+28),
+	0x32, SIG_UINT16(0x00f7),           // jmp 00f7 [ end of method ]
+	0x35, 0x02,                         // ldi 02
+	0x65, 0x1a,                         // aTop cycles [ cycles = 2 ]
+	0x32, SIG_UINT16(0x00f0),           // jmp 00f0 [ end of method ]
+	0x3c,                               // dup
+	0x35, 0x03,                         // ldi 03
+	0x1a,                               // eq?
+	0x31, 0x25,                         // bnt 25 [ state 4 ]
+	0x38, SIG_SELECTOR16(setVol),       // pushi setVol
+	0x78,                               // push1
+	SIG_MAGICDWORD,
+	0x39, 0x28,                         // pushi 28
+	0x81, 0x66,                         // lag 66
+	0x4a, 0x06,                         // send 06 [ gameMusic1 setVol: 40 ]
+	SIG_END
+};
+
+static const uint16 laurabow2CDPatchIntroVolumeChange[] = {
+	0x31, 0x25,                         // bnt 25 [ state 3 ]
+	PATCH_ADDTOOFFSET(+2),
+	0x31, 0x1e,                         // bnt 1e
+	PATCH_ADDTOOFFSET(+28),
+	0x3a,                               // toss
+	0x48,                               // ret
+	0x7a,                               // push2
+	0x69, 0x1a,                         // sTop cycles [ cycles = 2 ]
+	0x3c,                               // dup
+	0x35, 0x03,                         // ldi 03
+	0x1a,                               // eq?
+	0x31, 0x2a,                         // bnt 2a [ state 4 ]
+	0x89, 0x5a,                         // lsg 5a [ message mode ]
+	0x1a,                               // eq?    [ is text-only mode? ]
+	0x2f, 0x0a,                         // bt 0a  [ skip volume reduction ]
+	PATCH_END
+};
+
 // Laura Bow 2 CD resets the audio mode to speech on init/restart
 //  We already sync the settings from ScummVM (see SciEngine::syncIngameAudioOptions())
 //  and this script code would make it impossible to see the intro using "dual" mode w/o using debugger command
@@ -6007,6 +6065,7 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   600, "CD: fix bugs with meat",                         1, laurabow2CDSignatureFixBugsWithMeat,            laurabow2CDPatchFixBugsWithMeat },
 	{  true,   480, "CD: fix act 5 finale music",                     1, laurabow2CDSignatureFixAct5FinaleMusic,         laurabow2CDPatchFixAct5FinaleMusic },
 	{  true,    28, "CD/Floppy: disable speed test",                  1, laurabow2SignatureDisableSpeedTest,             laurabow2PatchDisableSpeedTest },
+	{  true,   120, "CD: disable intro volume change in text mode",   1, laurabow2CDSignatureIntroVolumeChange,          laurabow2CDPatchIntroVolumeChange },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
 	{ false,   924, "CD: audio + text support 1",                     1, kq6laurabow2CDSignatureAudioTextSupport1,       kq6laurabow2CDPatchAudioTextSupport1 },
 	{ false,   924, "CD: audio + text support 2",                     1, kq6laurabow2CDSignatureAudioTextSupport2,       kq6laurabow2CDPatchAudioTextSupport2 },
