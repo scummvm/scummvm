@@ -127,6 +127,8 @@ Common::Error CryOmni3DEngine_Versailles::run() {
 	initGraphics(640, 480);
 	setMousePos(Common::Point(320, 200));
 
+	syncSoundSettings();
+
 	_isPlaying = false;
 	_isVisiting = false;
 
