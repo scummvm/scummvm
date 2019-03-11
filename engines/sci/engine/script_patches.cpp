@@ -116,6 +116,7 @@ static const char *const selectorNameTable[] = {
 	"has",          // King's Quest 6, GK1
 	"modeless",     // King's Quest 6 CD
 	"cycler",       // Space Quest 4 / system selector
+	"addToPic",     // Space Quest 4
 	"loop",         // Laura Bow 1 Colonel's Bequest, QFG4
 	"setLoop",      // Laura Bow 1 Colonel's Bequest, QFG4
 	"ignoreActors", // Laura Bow 1 Colonel's Bequest
@@ -210,6 +211,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_has,
 	SELECTOR_modeless,
 	SELECTOR_cycler,
+	SELECTOR_addToPic,
 	SELECTOR_loop,
 	SELECTOR_setLoop,
 	SELECTOR_ignoreActors,
@@ -11102,6 +11104,29 @@ static const uint16 sq4PatchZeroGravityBlast[] = {
 	PATCH_END
 };
 
+// The door to Sock's is immediately disposed of in the CD version, breaking its
+//  Look message and preventing it from being drawn when restoring a saved game.
+//  We remove the incorrect dispose call along with a redundant addToPic.
+//
+// Applies to: English PC CD
+// Responsible method: rm370:init
+// Fixes bug #10914
+static const uint16 sq4CdSignatureSocksDoor[] = {
+	0x38, SIG_SELECTOR16(addToPic),     // pushi addToPic
+	0x76,                               // push0
+	0x39, SIG_SELECTOR8(dispose),       // pushi dispose
+	0x76,                               // push0
+	SIG_MAGICDWORD,
+	0x72, SIG_UINT16(0x0176),           // lofsa door
+	0x4a, 0x08,                         // send 08 [ door addToPic: dispose: ]
+	SIG_END
+};
+
+static const uint16 sq4CdPatchSocksDoor[] = {
+	0x32, PATCH_UINT16(0x0009),         // jmp 0009
+	PATCH_END
+};
+
 // The scripts in SQ4CD support simultaneous playing of speech and subtitles,
 // but this was not available as an option. The following two patches enable
 // this functionality in the game's GUI options dialog.
@@ -11201,6 +11226,7 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,   298, "Floppy: endless flight",                         1, sq4FloppySignatureEndlessFlight,               sq4FloppyPatchEndlessFlight },
 	{  true,   700, "Floppy: throw stuff at sequel police bug",       1, sq4FloppySignatureThrowStuffAtSequelPoliceBug, sq4FloppyPatchThrowStuffAtSequelPoliceBug },
 	{  true,    45, "CD: walk in from below for room 45 fix",         1, sq4CdSignatureWalkInFromBelowRoom45,           sq4CdPatchWalkInFromBelowRoom45 },
+	{  true,   370, "CD: sock's door restore and message fix",        1, sq4CdSignatureSocksDoor,                       sq4CdPatchSocksDoor },
 	{  true,   391, "CD: missing Audio for universal remote control", 1, sq4CdSignatureMissingAudioUniversalRemote,     sq4CdPatchMissingAudioUniversalRemote },
 	{  true,   396, "CD: get points for changing back clothes fix",   1, sq4CdSignatureGetPointsForChangingBackClothes, sq4CdPatchGetPointsForChangingBackClothes },
 	{  true,   405, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
