@@ -119,8 +119,8 @@ void ZonFixedImage::loadZones(const Common::String &image) {
 	}
 	if (lastDotPos > -1) {
 		fname.erase(lastDotPos);
-		fname += ".zon";
 	}
+	fname += ".zon";
 
 	Common::File zonFile;
 	if (!zonFile.open(fname)) {

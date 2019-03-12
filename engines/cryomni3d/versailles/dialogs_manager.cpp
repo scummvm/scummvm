@@ -353,8 +353,8 @@ void Versailles_DialogsManager::loadFrame(const Common::String &video) {
 	}
 	if (lastDotPos > -1) {
 		videoFName.erase(lastDotPos);
-		videoFName += ".hnm";
 	}
+	videoFName += ".hnm";
 
 	Video::HNMDecoder *videoDecoder = new Video::HNMDecoder();
 
