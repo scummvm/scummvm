@@ -23,6 +23,7 @@
 #define DRAGONS_CURSOR_H
 
 #include "common/system.h"
+#include "scriptopcodes.h"
 
 namespace Dragons {
 
@@ -32,6 +33,8 @@ class DragonsEngine;
 class DragonINIResource;
 
 class Cursor {
+public:
+	int16 data_800728b0_cursor_seqID;
 private:
 	DragonsEngine *_vm;
 	int16 _x;
@@ -40,8 +43,9 @@ private:
 	int32 _sequenceID;
 	uint16 _iniUnderCursor;
 
-	int16 data_8007283c;
 	int16 data_either_5_or_0;
+	int16 data_8007283c;
+	int16 data_80072890;
 
 public:
 	Cursor(DragonsEngine *vm);
@@ -50,6 +54,8 @@ public:
 	void updateVisibility();
 	void updatePosition(int16 x, int16 y);
 	int16 updateINIUnderCursor();
+	int16 executeScript(ScriptOpCall &scriptOpCall, uint16 unkFlag);
+private:
 	int16 updateIniFromScene();
 };
 

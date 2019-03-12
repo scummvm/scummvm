@@ -24,8 +24,10 @@
 #include "dragons.h"
 #include "dragonimg.h"
 #include "dragonini.h"
+#include "dragonobd.h"
 #include "inventory.h"
 #include "scene.h"
+#include "scriptopcodes.h"
 
 namespace Dragons {
 
@@ -50,6 +52,7 @@ void Cursor::init(ActorManager *actorManager, DragonINIResource *dragonINIResour
 	_iniUnderCursor = 0;
 	data_8007283c = 0;
 	data_either_5_or_0 = 0;
+	data_800728b0_cursor_seqID = 0;
 }
 
 void Cursor::update() {
@@ -214,12 +217,84 @@ int16 Cursor::updateIniFromScene() {
 			if (cursorOverIni != 0) {
 				// 0x80028bf0
 				debug(1, "here OK!!!");
-				_iniUnderCursor = cursorOverIni;
+				// _iniUnderCursor = cursorOverIni;
+				data_80072890 = _iniUnderCursor;
+				data_800728b0_cursor_seqID = _sequenceID;
+				if (ini->field_1a_flags_maybe & 0x800) {
+					data_80072890 = cursorOverIni;
+					uint32 newSeqId = 1;
+					for(int idx=0; idx < 5; idx++) {
+						byte *obd = _vm->_dragonOBD->getFromOpt(cursorOverIni - 1); //_dragonRMS->getObdDataFieldC(sceneId);
+						ScriptOpCall scriptOpCall;
+						scriptOpCall._code = obd + 8;
+						scriptOpCall._codeEnd = scriptOpCall._code + READ_LE_UINT32(obd);
+
+//						uVar17 = uVar15;
+//						local_58 = dragon_Obd_Offset + *(int *)(uVar16 * 8 + dragon_Opt_Offset + -8) + 8;
+//						data_800728b0 = idx;
+//						local_54 = read_int32();
+//						local_54 = local_54 + local_58;
+//						uVar6 = ;
+						if (executeScript(scriptOpCall, 0)) {
+							newSeqId = idx;
+							break;
+						}
+					}
+
+					_sequenceID = newSeqId;
+					_iniUnderCursor = cursorOverIni;
+					data_80072890 = _iniUnderCursor;
+					data_800728b0_cursor_seqID = _sequenceID;
+					return _iniUnderCursor;
+				}
+				if (_sequenceID != 0) {
+					_iniUnderCursor = cursorOverIni;
+//					data_80072890 = uVar3; TODO
+//					data_800728b0 = uVar4;
+					return _iniUnderCursor;
+				}
+				byte *obd = _vm->_dragonOBD->getFromOpt(cursorOverIni - 1); //_dragonRMS->getObdDataFieldC(sceneId);
+				ScriptOpCall scriptOpCall;
+				scriptOpCall._code = obd + 8;
+				scriptOpCall._codeEnd = scriptOpCall._code + READ_LE_UINT32(obd);
+
+//				local_48 = dragon_Obd_Offset + *(int *)(uVar16 * 8 + dragon_Opt_Offset + -8) + 8;
+//				local_44 = read_int32();
+//				local_44 = local_44 + local_48;
+				if(executeScript(scriptOpCall, 0)) {
+					_iniUnderCursor = cursorOverIni;
+//					data_80072890 = uVar3; //TODO
+//					data_800728b0 = uVar4;
+					return _iniUnderCursor;
+				}
 			}
 		}
 	}
+	_iniUnderCursor = 0;
+//	data_80072890 = uVar3; TODO
+//	data_800728b0 = uVar4;
+	return 0;
+}
 
-			return 0;
+int16 Cursor::executeScript(ScriptOpCall &scriptOpCall, uint16 unkFlag) {
+	int16 temp = _vm->_scriptOpcodes->_data_800728c0;
+	scriptOpCall._field8 = 1;
+	scriptOpCall._result = 0;
+	_vm->_scriptOpcodes->_data_80071f5c = 0;
+	_vm->_scriptOpcodes->executeScriptLoop(scriptOpCall);
+
+	if (!(scriptOpCall._result & 1) && data_800728b0_cursor_seqID == 5 && unkFlag != 0) {
+		_vm->_scriptOpcodes->_data_800728c0 = -1;
+		scriptOpCall._field8 = 1;
+		scriptOpCall._result = 0;
+		_vm->_scriptOpcodes->_data_80071f5c = 0;
+		_vm->_scriptOpcodes->executeScriptLoop(scriptOpCall);
+		_vm->_scriptOpcodes->_data_800728c0 = temp;
+		if (scriptOpCall._result & 1) {
+			scriptOpCall._result |= 2;
+		}
+	}
+	return scriptOpCall._result & 3;
 }
 
 } // End of namespace Dragons
