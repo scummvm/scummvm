@@ -212,7 +212,8 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_debugger                = nullptr;
 	walkingReset();
 
-	_actorUpdateCounter = 0;
+	_actorUpdateCounter  = 0;
+	_actorUpdateTimeLast = 0;
 }
 
 BladeRunnerEngine::~BladeRunnerEngine() {
@@ -978,6 +979,16 @@ void BladeRunnerEngine::gameTick() {
 }
 
 void BladeRunnerEngine::actorsUpdate() {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	int timeNow = _time->current();
+	// Don't update actors more than 60 times per second
+	if (timeNow - _actorUpdateTimeLast < 1000 / 60) {
+		return;
+	}
+	_actorUpdateTimeLast = timeNow;
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 	int actorCount = (int)_gameInfo->getActorCount();
 	int setId = _scene->getSetId();
 

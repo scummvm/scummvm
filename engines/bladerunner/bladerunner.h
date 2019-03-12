@@ -226,6 +226,7 @@ public:
 	bool _isInsideScriptActor;
 
 	int _actorUpdateCounter;
+	int _actorUpdateTimeLast;
 
 private:
 	MIXArchive _archives[kArchiveCount];
