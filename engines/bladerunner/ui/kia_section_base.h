@@ -23,6 +23,8 @@
 #ifndef BLADERUNNER_KIA_SECTION_BASE_H
 #define BLADERUNNER_KIA_SECTION_BASE_H
 
+#include "common/scummsys.h" // for "override" keyword
+
 namespace Common {
 struct KeyState;
 }
