@@ -59,15 +59,15 @@ public:
 	KIASectionSettings(BladeRunnerEngine *vm);
 	~KIASectionSettings();
 
-	void open();
-	void close();
+	void open() override;
+	void close() override;
 
-	void draw(Graphics::Surface &surface);
+	void draw(Graphics::Surface &surface) override;
 
-	void handleKeyUp(const Common::KeyState &kbd);
-	void handleMouseMove(int mouseX, int mouseY);
-	void handleMouseDown(bool mainButton);
-	void handleMouseUp(bool mainButton);
+	void handleKeyUp(const Common::KeyState &kbd) override;
+	void handleMouseMove(int mouseX, int mouseY) override;
+	void handleMouseDown(bool mainButton) override;
+	void handleMouseUp(bool mainButton) override;
 
 private:
 	static void sliderCallback(void *callbackData, void *source);

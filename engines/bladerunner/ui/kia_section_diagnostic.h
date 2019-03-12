@@ -40,10 +40,10 @@ class KIASectionDiagnostic : public KIASectionBase {
 public:
 	KIASectionDiagnostic(BladeRunnerEngine *vm);
 
-	void open();
-	void close();
+	void open() override;
+	void close() override;
 
-	void draw(Graphics::Surface &surface);
+	void draw(Graphics::Surface &surface) override;
 };
 
 } // End of namespace BladeRunner

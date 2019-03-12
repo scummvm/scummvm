@@ -68,14 +68,15 @@ public:
 
 	void reset();
 
-	void open();
-	void close();
+	void open() override;
+	void close() override;
 
-	void draw(Graphics::Surface &surface);
+	void draw(Graphics::Surface &surface) override;
 
-	void handleMouseMove(int mouseX, int mouseY);
-	void handleMouseDown(bool mainButton);
-	void handleMouseUp(bool mainButton);
+	void handleMouseMove(int mouseX, int mouseY) override;
+	void handleMouseDown(bool mainButton) override;
+	void handleMouseUp(bool mainButton) override;
+	void handleMouseScroll(int direction) override;
 
 	void saveToLog();
 	void loadFromLog();

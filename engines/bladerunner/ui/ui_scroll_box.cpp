@@ -71,6 +71,7 @@ UIScrollBox::UIScrollBox(BladeRunnerEngine *vm, UIScrollBoxCallback *lineSelecte
 
 	_rect          = rect;
 	_scrollBarRect = scrollBarRect;
+	_scrollBarRect.right += 15; // right side was not used, but it's useful for determining if the control is selected
 
 	_lineCount    = 0;
 	_maxLineCount = maxLineCount;
@@ -89,6 +90,8 @@ UIScrollBox::UIScrollBox(BladeRunnerEngine *vm, UIScrollBoxCallback *lineSelecte
 		_lines[i]->flags = 0x00;
 		_lines[i]->checkboxFrame = 5;
 	}
+
+	_mouseOver = false;
 }
 
 UIScrollBox::~UIScrollBox() {
@@ -120,6 +123,8 @@ void UIScrollBox::show() {
 
 	_highlightFrame = 0;
 	_isVisible = true;
+
+	_mouseOver = false;
 }
 
 void UIScrollBox::hide() {
@@ -156,6 +161,8 @@ void UIScrollBox::handleMouseMove(int mouseX, int mouseY) {
 	if (!_isVisible) {
 		return;
 	}
+
+	_mouseOver = _rect.contains(mouseX, mouseY) || _scrollBarRect.contains(mouseX, mouseY);
 
 	if (_rect.contains(mouseX, mouseY)) {
 		int newHoveredLine = (mouseY - _rect.top) / 10 + _firstLineVisible;
@@ -310,6 +317,16 @@ void UIScrollBox::handleMouseUp(bool alternateButton) {
 			_scrollAreaUpState = 0;
 			_scrollAreaDownState = 0;
 			_scrollBarState = 0;
+		}
+	}
+}
+
+void UIScrollBox::handleMouseScroll(int direction) {
+	if (_mouseOver) {
+		if (direction > 0) {
+			scrollDown();
+		} else if (direction < 0) {
+			scrollUp();
 		}
 	}
 }

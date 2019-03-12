@@ -89,15 +89,18 @@ class UIScrollBox : public UIComponent {
 	int                   _maxLinesVisible;
 	int                   _firstLineVisible;
 
+	bool                  _mouseOver;
+
 public:
 	UIScrollBox(BladeRunnerEngine *vm, UIScrollBoxCallback *lineSelectedCallback, void *callbackData, int maxLineCount, int style, bool center, Common::Rect rect,Common::Rect scrollBarRect);
 	~UIScrollBox();
 
-	void draw(Graphics::Surface &surface);
+	void draw(Graphics::Surface &surface) override;
 
-	void handleMouseMove(int mouseX, int mouseY);
-	void handleMouseDown(bool alternateButton);
-	void handleMouseUp(bool alternateButton);
+	void handleMouseMove(int mouseX, int mouseY) override;
+	void handleMouseDown(bool alternateButton) override;
+	void handleMouseUp(bool alternateButton) override;
+	void handleMouseScroll(int direction) override;
 
 	void show();
 	void hide();

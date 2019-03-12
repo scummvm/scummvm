@@ -45,9 +45,9 @@ class KIASectionPogo : public KIASectionBase {
 public:
 	KIASectionPogo(BladeRunnerEngine *vm);
 
-	void open();
+	void open() override;
 
-	void draw(Graphics::Surface &surface);
+	void draw(Graphics::Surface &surface) override;
 };
 
 } // End of namespace BladeRunner

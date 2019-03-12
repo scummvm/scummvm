@@ -186,6 +186,10 @@ void KIASectionClues::handleMouseUp(bool mainButton) {
 	}
 }
 
+void KIASectionClues::handleMouseScroll(int direction) {
+	_uiContainer->handleMouseScroll(direction);
+}
+
 void KIASectionClues::saveToLog() {
 	_vm->_kia->_log->add(0, sizeof(bool) * _filterCount, _filters.data());
 }

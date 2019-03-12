@@ -1035,23 +1035,39 @@ void BladeRunnerEngine::handleEvents() {
 		case Common::EVENT_KEYUP:
 			handleKeyUp(event);
 			break;
+
 		case Common::EVENT_KEYDOWN:
 			handleKeyDown(event);
 			break;
+
 		case Common::EVENT_LBUTTONUP:
 			handleMouseAction(event.mouse.x, event.mouse.y, true, false);
 			break;
+
 		case Common::EVENT_RBUTTONUP:
 		case Common::EVENT_MBUTTONUP:
 			handleMouseAction(event.mouse.x, event.mouse.y, false, false);
 			break;
+
 		case Common::EVENT_LBUTTONDOWN:
 			handleMouseAction(event.mouse.x, event.mouse.y, true, true);
 			break;
+
 		case Common::EVENT_RBUTTONDOWN:
 		case Common::EVENT_MBUTTONDOWN:
 			handleMouseAction(event.mouse.x, event.mouse.y, false, true);
 			break;
+
+		// Added by ScummVM team
+		case Common::EVENT_WHEELUP:
+			handleMouseAction(event.mouse.x, event.mouse.y, false, false, -1);
+			break;
+
+		// Added by ScummVM team
+		case Common::EVENT_WHEELDOWN:
+			handleMouseAction(event.mouse.x, event.mouse.y, false, false, 1);
+			break;
+
 		default:
 			; // nothing to do
 		}
@@ -1185,7 +1201,7 @@ void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
 	}
 }
 
-void BladeRunnerEngine::handleMouseAction(int x, int y, bool mainButton, bool buttonDown) {
+void BladeRunnerEngine::handleMouseAction(int x, int y, bool mainButton, bool buttonDown, int scrollDirection /* = 0 */) {
 	x = CLIP(x, 0, 639);
 	y = CLIP(y, 0, 479);
 
@@ -1201,7 +1217,9 @@ void BladeRunnerEngine::handleMouseAction(int x, int y, bool mainButton, bool bu
 	}
 
 	if (_kia->isOpen()) {
-		if (buttonDown) {
+		if (scrollDirection != 0) {
+			_kia->handleMouseScroll(x, y, scrollDirection);
+		} else if (buttonDown) {
 			_kia->handleMouseDown(x, y, mainButton);
 		} else {
 			_kia->handleMouseUp(x, y, mainButton);

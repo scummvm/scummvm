@@ -55,6 +55,7 @@ public:
 	virtual void handleMouseMove(int mouseX, int mouseY) {}
 	virtual void handleMouseDown(bool mainButton) {}
 	virtual void handleMouseUp(bool mainButton) {}
+	virtual void handleMouseScroll(int direction) {} // Added by ScummVM team
 
 protected:
 	virtual void onButtonPressed(int buttonId) {}

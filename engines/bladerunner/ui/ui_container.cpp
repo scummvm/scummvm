@@ -50,6 +50,13 @@ void UIContainer::handleMouseUp(bool alternateButton) {
 	}
 }
 
+void UIContainer::handleMouseScroll(int direction) {
+	for (Common::Array<UIComponent*>::iterator component = _components.begin(); component != _components.end(); ++component) {
+		(*component)->handleMouseScroll(direction);
+	}
+}
+
+
 void UIContainer::handleKeyUp(const Common::KeyState &kbd) {
 	for (Common::Array<UIComponent*>::iterator component = _components.begin(); component != _components.end(); ++component) {
 		(*component)->handleKeyUp(kbd);

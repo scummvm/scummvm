@@ -262,7 +262,7 @@ public:
 	void handleEvents();
 	void handleKeyUp(Common::Event &event);
 	void handleKeyDown(Common::Event &event);
-	void handleMouseAction(int x, int y, bool mainButton, bool buttonDown);
+	void handleMouseAction(int x, int y, bool mainButton, bool buttonDown, int scrollDirection = 0);
 	void handleMouseClickExit(int exitId, int x, int y, bool buttonDown);
 	void handleMouseClickRegion(int regionId, int x, int y, bool buttonDown);
 	void handleMouseClickItem(int itemId, bool buttonDown);

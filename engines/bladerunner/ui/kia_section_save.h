@@ -82,6 +82,7 @@ public:
 	void handleMouseMove(int mouseX, int mouseY) override;
 	void handleMouseDown(bool mainButton) override;
 	void handleMouseUp(bool mainButton) override;
+	void handleMouseScroll(int direction) override;
 
 private:
 	static void scrollBoxCallback(void *callbackData, void *source, int lineData, int mouseButton);

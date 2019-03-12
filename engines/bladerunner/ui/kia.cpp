@@ -434,6 +434,15 @@ void KIA::handleMouseUp(int mouseX, int mouseY, bool mainButton) {
 	}
 }
 
+void KIA::handleMouseScroll(int mouseX, int mouseY, int direction) {
+	if (!isOpen()) {
+		return;
+	}
+	if (_currentSection) {
+		_currentSection->handleMouseScroll(direction);
+	}
+}
+
 void KIA::handleKeyUp(const Common::KeyState &kbd) {
 	if (!isOpen()) {
 		return;

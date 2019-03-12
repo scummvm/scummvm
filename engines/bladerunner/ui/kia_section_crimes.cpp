@@ -210,6 +210,10 @@ void KIASectionCrimes::handleMouseUp(bool mainButton) {
 	_uiContainer->handleMouseUp(!mainButton);
 }
 
+void KIASectionCrimes::handleMouseScroll(int direction) {
+	_uiContainer->handleMouseScroll(direction);
+}
+
 void KIASectionCrimes::saveToLog() {
 	int data[] = { _crimeSelected, _suspectSelected };
 	_vm->_kia->_log->add(2, sizeof(data), &data);

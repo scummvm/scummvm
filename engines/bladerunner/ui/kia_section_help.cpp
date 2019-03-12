@@ -89,4 +89,8 @@ void KIASectionHelp::handleMouseUp(bool mainButton) {
 	_uiContainer->handleMouseUp(!mainButton);
 }
 
+void KIASectionHelp::handleMouseScroll(int direction) {
+	_uiContainer->handleMouseScroll(direction);
+}
+
 } // End of namespace BladeRunner

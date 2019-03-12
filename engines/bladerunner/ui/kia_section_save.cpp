@@ -278,6 +278,13 @@ void KIASectionSave::handleMouseUp(bool mainButton) {
 	}
 }
 
+void KIASectionSave::handleMouseScroll(int direction) {
+	if (_state == kStateNormal) {
+		_uiContainer->handleMouseScroll(direction);
+	}
+}
+
+
 void KIASectionSave::scrollBoxCallback(void *callbackData, void *source, int lineData, int mouseButton) {
 	KIASectionSave *self = (KIASectionSave *)callbackData;
 

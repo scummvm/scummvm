@@ -246,6 +246,10 @@ void KIASectionSuspects::handleMouseUp(bool mainButton) {
 	_uiContainer->handleMouseUp(!mainButton);
 }
 
+void KIASectionSuspects::handleMouseScroll(int direction) {
+	_uiContainer->handleMouseScroll(direction);
+}
+
 void KIASectionSuspects::saveToLog() {
 	int data[] = {
 		_crimeSelected,

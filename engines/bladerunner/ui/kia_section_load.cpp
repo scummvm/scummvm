@@ -152,6 +152,10 @@ void KIASectionLoad::handleMouseUp(bool mainButton) {
 	_uiContainer->handleMouseUp(!mainButton);
 }
 
+void KIASectionLoad::handleMouseScroll(int direction) {
+	_uiContainer->handleMouseScroll(direction);
+}
+
 void KIASectionLoad::scrollBoxCallback(void *callbackData, void *source, int lineData, int mouseButton) {
 	KIASectionLoad *self = (KIASectionLoad *)callbackData;
 
