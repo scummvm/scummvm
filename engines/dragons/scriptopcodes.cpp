@@ -21,9 +21,11 @@
  */
 
 #include "dragons/actorresource.h"
+#include "dragons/cursor.h"
 #include "dragons/dragons.h"
 #include "dragons/dragonflg.h"
 #include "dragons/dragonini.h"
+#include "dragons/dragonimg.h"
 #include "dragons/dragonobd.h"
 #include "dragons/scene.h"
 #include "dragons/scriptopcodes.h"
@@ -61,6 +63,7 @@ ScriptOpcodes::ScriptOpcodes(DragonsEngine *vm, DragonFLG *dragonFLG)
 	: _vm(vm), _dragonFLG(dragonFLG), _data_80071f5c(0) {
 	_specialOpCodes = new SpecialOpcodes(_vm);
 	initOpcodes();
+	_data_800728c0 = 0;
 }
 
 ScriptOpcodes::~ScriptOpcodes() {
@@ -86,7 +89,7 @@ void ScriptOpcodes::initOpcodes() {
 		_opcodes[i] = 0;
 	}
 	// Register opcodes
-	// OPCODE(1, opUnk1);
+	OPCODE(1, opUnk1);
 
 	OPCODE(4,  opExecuteScript);
 	OPCODE(5,  opActorSetSequenceID2);
@@ -100,10 +103,13 @@ void ScriptOpcodes::initOpcodes() {
 	OPCODE(0xD, opDelay);
 	OPCODE(0xE, opUnkE);
 	OPCODE(0xF, opUnkF);
-
+	OPCODE(0x10, opUnk10);
 	OPCODE(0x11, opUnk11FlickerTalk);
 	OPCODE(0x12, opUnk12LoadScene);
 	OPCODE(0x13, opUnk13PropertiesRelated);
+
+	OPCODE(0x16, opUnk16);
+	OPCODE(0x17, opUnk17);
 
 	OPCODE(0x1F, opPlayMusic);
 
@@ -188,12 +194,18 @@ void ScriptOpcodes::executeScriptLoop(ScriptOpCall &scriptOpCall) {
 // Opcodes
 
 void ScriptOpcodes::opUnk1(ScriptOpCall &scriptOpCall) {
-//	ARG_INT16(framePointer);
-//	debug(3, "set frame pointer %X", framePointer);
-//	actor->loadFrame((uint16)framePointer);
-//	actor->flags |= Dragons::ACTOR_FLAG_2;
-//	actor->sequenceTimer = actor->field_c;
-//	updateReturn(scriptOpCall, 1);
+	ARG_SKIP(2);
+	ARG_INT16(field2);
+	ARG_INT16(field4);
+	ARG_INT16(field6);
+
+	if (field2 >> _vm->_cursor->data_800728b0_cursor_seqID & 1
+	&& (_vm->_cursor->data_800728b0_cursor_seqID < 5 || field4 == _data_800728c0)
+	&& scriptOpCall._field8 == 1) {
+		scriptOpCall._result |= 1;
+	} else {
+		scriptOpCall._code += (8 + field6);
+	}
 }
 
 void ScriptOpcodes::opExecuteScript(ScriptOpCall &scriptOpCall) {
@@ -446,7 +458,7 @@ void ScriptOpcodes::opUnkE(ScriptOpCall &scriptOpCall) {
 		}
 		ini->x = point.x;
 		ini->y = point.y;
-		ini->actor->flags &= ~Dragons::ACTOR_FLAG_800;
+		ini->actor->clearFlag(Dragons::ACTOR_FLAG_800);
 
 	} else {
 		ini->x = point.x;
@@ -513,6 +525,109 @@ void ScriptOpcodes::opUnkF(ScriptOpCall &scriptOpCall) {
 		}
 		ini->actor->updateSequence(field6 & 0x7fff);
 	}
+}
+
+void ScriptOpcodes::opUnk10(ScriptOpCall &scriptOpCall) {
+	ARG_INT16(field0);
+	ARG_INT16(field2);
+	ARG_INT16(field4);
+	ARG_INT16(field6);
+	ARG_INT16(field8);
+
+	//TODO these should be passed in as arguments and xparam should be set correctly.
+	int16 someXParam = 0;
+	int16 someYParam = _data_800728c0;
+	uint someBooleanFlag = 0;
+	if (scriptOpCall._field8 != 0) {
+		return;
+	}
+
+	bool bVar1 = false;
+	DragonINI *firstIni = _vm->getINI(field4 - 1);
+	DragonINI *secondIni = _vm->getINI(field2 - 1);
+//	secondIndexIntoINI = (uint)field2 - 1;
+//	firstIndexIntoINI = (uint)field4 - 1;
+	if ((field6 & 0x8000) != 0) {
+		bVar1 = (field6 != -1);
+	}
+	if (field8 == -1) {
+		if ((firstIni->field_1a_flags_maybe & 1) == 0) {
+			if ((int)firstIni->field_2 != -1) {
+				IMG *firstDragonImg1 = _vm->_dragonIMG->getIMG(firstIni->field_2);
+				int16 newXPos1 = firstDragonImg1->field_a + firstIni->field_1c;
+				secondIni->x = newXPos1;
+				secondIni->actor->x_pos = newXPos1;
+				int16 newYPos1 = firstDragonImg1->field_c + firstIni->field_1e;
+				secondIni->y = newYPos1;
+				secondIni->actor->y_pos = newYPos1;
+			}
+		}
+		else {
+			int16 newYPos2 = firstIni->actor->y_pos + firstIni->field_1e;
+			firstIni->y = newYPos2;
+			secondIni->actor->y_pos = newYPos2;
+			someXParam = firstIni->actor->x_pos + firstIni->field_1c;
+			secondIni->x = someXParam;
+			secondIni->actor->x_pos = someXParam;
+		}
+		if (field6 != -1) {
+			secondIni->actor->field_7c = -1;
+			secondIni->actor->updateSequence(field6 & 0x7fff);
+		}
+		secondIni->x = someXParam;
+		secondIni->y = someYParam;
+		return;
+	}
+	if ((field8 & 0x8000) == 0) {
+		someBooleanFlag = (uint)field8 << 0x10;
+	}
+	else {
+		someBooleanFlag = ((uint)field8 & 0x7fff) << 7;
+	}
+	if (field6 != -1) {
+		if (((int)(short)field0 & 0x8000) == 0) {
+			secondIni->actor->setFlag(ACTOR_FLAG_800);
+			secondIni->actor->updateSequence(field6 & 0x7fff);
+		}
+		secondIni->actor->field_7c =
+				someBooleanFlag;
+	}
+	int16 newXPosAgain = 0;
+	int16 newYPosAgain = 0;
+	someBooleanFlag = 1;
+	if ((firstIni->field_1a_flags_maybe & 1) == 0) {
+		if ((int)firstIni->field_2 == -1) {
+			return;
+		}
+		IMG *firstDragonImg2 = _vm->_dragonIMG->getIMG(firstIni->field_2);
+
+		newXPosAgain = firstDragonImg2->field_a + firstIni->field_1c;
+		newYPosAgain = firstDragonImg2->field_c + firstIni->field_1e;
+		if (_vm->_dragonINIResource->isFlicker(secondIni)) {
+			someBooleanFlag = 0;
+		}
+	}
+	else {
+		newXPosAgain = firstIni->actor->x_pos + firstIni->field_1c;
+		newYPosAgain = firstIni->actor->y_pos + firstIni->field_1e;
+		if (_vm->_dragonINIResource->isFlicker(secondIni)) {
+			someBooleanFlag = 0;
+		}
+	}
+	secondIni->actor->pathfinding_maybe(newXPosAgain, newYPosAgain, someBooleanFlag);
+	if (!bVar1) {
+		while (secondIni->actor->flags & Dragons::ACTOR_FLAG_10) {
+			_vm->waitForFrames(1);
+		}
+	}
+
+	secondIni->actor->_sequenceID2 = firstIni->field_e;
+
+	secondIni->x = newXPosAgain;
+	secondIni->y = newYPosAgain;
+	secondIni->actor->clearFlag(ACTOR_FLAG_800);
+	return;
+
 }
 
 void ScriptOpcodes::opUnk11FlickerTalk(ScriptOpCall &scriptOpCall) {
@@ -698,6 +813,27 @@ void ScriptOpcodes::opUnk14(ScriptOpCall &scriptOpCall) {
 }
 
 void ScriptOpcodes::opUnk15(ScriptOpCall &scriptOpCall) {
+
+}
+
+void ScriptOpcodes::opUnk16(ScriptOpCall &scriptOpCall) {
+	if (scriptOpCall._field8 == 4) {
+		scriptOpCall._result |= 1;
+	} else {
+		scriptOpCall._code += 4;
+	}
+}
+
+void ScriptOpcodes::opUnk17(ScriptOpCall &scriptOpCall) {
+	ARG_SKIP(2);
+	ARG_INT16(iniId);
+
+	DragonINI *ini = _vm->getINI(iniId - 1);
+	if (ini->field_1a_flags_maybe & 1) {
+		while (!(ini->actor->flags & Dragons::ACTOR_FLAG_4)) {
+			_vm->waitForFrames(1);
+		}
+	}
 
 }
 

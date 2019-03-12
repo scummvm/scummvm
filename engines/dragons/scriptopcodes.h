@@ -63,18 +63,19 @@ public:
 	void runScript(ScriptOpCall &scriptOpCall);
 	void runScript3(ScriptOpCall &scriptOpCall);
 	void execOpcode(ScriptOpCall &scriptOpCall);
+	void executeScriptLoop(ScriptOpCall &scriptOpCall);
+	int16 _data_80071f5c;
+	int16 _data_800728c0;
 protected:
 	DragonsEngine *_vm;
 	DragonFLG *_dragonFLG;
 	SpecialOpcodes *_specialOpCodes;
 	ScriptOpcode *_opcodes[DRAGONS_NUM_SCRIPT_OPCODES];
 	Common::String _opcodeNames[DRAGONS_NUM_SCRIPT_OPCODES];
-	int16 _data_80071f5c;
 
 	void initOpcodes();
 	void freeOpcodes();
 	void updateReturn(ScriptOpCall &scriptOpCall, uint16 size);
-	void executeScriptLoop(ScriptOpCall &scriptOpCall);
 
 
 	// Opcodes
@@ -91,12 +92,14 @@ protected:
 	void opDelay(ScriptOpCall &scriptOpCall); //op D
 	void opUnkE(ScriptOpCall &scriptOpCall);
 	void opUnkF(ScriptOpCall &scriptOpCall);
-
+	void opUnk10(ScriptOpCall &scriptOpCall);
 	void opUnk11FlickerTalk(ScriptOpCall &scriptOpCall);
 	void opUnk12LoadScene(ScriptOpCall &scriptOpCall);
 	void opUnk13PropertiesRelated(ScriptOpCall &scriptOpCall);
 	void opUnk14(ScriptOpCall &scriptOpCall);
 	void opUnk15(ScriptOpCall &scriptOpCall);
+	void opUnk16(ScriptOpCall &scriptOpCall);
+	void opUnk17(ScriptOpCall &scriptOpCall);
 	void opPlayMusic(ScriptOpCall &scriptOpCall);
 
 	bool checkPropertyFlag(ScriptOpCall &scriptOpCall);

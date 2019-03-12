@@ -108,6 +108,7 @@ public:
 	DragonRMS *_dragonRMS;
 	ActorManager *_actorManager;
 	DragonINIResource *_dragonINIResource;
+	ScriptOpcodes *_scriptOpcodes;
 	uint16 _cursorSequenceID;
 	Scene *_scene;
 	uint16 data_800633fa;
@@ -121,7 +122,6 @@ private:
 	DragonVAR *_dragonVAR;
 	BackgroundResourceLoader *_backgroundResourceLoader;
 	SequenceOpcodes *_sequenceOpcodes;
-	ScriptOpcodes *_scriptOpcodes;
 	uint32 _nextUpdatetime;
 	uint32 _flags;
 	uint32 _unkFlags1;
