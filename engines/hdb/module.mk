@@ -2,7 +2,8 @@ MODULE := engines/hdb
 
 MODULE_OBJS := \
 	detection.o \
-	hdb.o
+	hdb.o \
+	console.o
 
 MODULE_DIRS += \
 	engines/hdb
