@@ -234,7 +234,6 @@ public:
 	virtual unsigned int displayOptions() override;
 	virtual bool shouldAbort() override { return g_engine->shouldQuit() || _abortCommand != AbortNoAbort; }
 
-
 private:
 	void setupFonts();
 	void setupSprites();
