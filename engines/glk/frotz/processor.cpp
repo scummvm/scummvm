@@ -198,11 +198,6 @@ void Processor::initialize() {
 		op0_opcodes[9] = &Processor::z_catch;
 		op1_opcodes[15] = &Processor::z_call_n;
 	}
-
-	PropFontInfo &pi = g_conf->_propInfo;
-	_quotes = pi._quotes;
-	_dashes = pi._quotes;
-	_spaces = pi._spaces;
 }
 
 void Processor::load_operand(zbyte type) {

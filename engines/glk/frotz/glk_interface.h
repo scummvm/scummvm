@@ -62,13 +62,7 @@ public:
 	Pics *_pics;
 	zchar statusline[256];
 	uint zcolors[zcolor_NUMCOLORS];
-	int oldstyle;
-	int curstyle;
 	int fixforced;
-
-	int curr_font;
-	int prev_font;
-	int temp_font;
 
 	int curr_status_ht;
 	int mach_status_ht;

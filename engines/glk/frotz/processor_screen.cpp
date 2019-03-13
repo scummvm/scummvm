@@ -29,20 +29,22 @@ namespace Glk {
 namespace Frotz {
 
 void Processor::screen_mssg_on() {
-	if (_wp.currWin() == _wp._lower) {
-		oldstyle = curstyle;
+	Window &w = _wp.currWin();
+
+	if (w == _wp._lower) {
+		w._oldStyle = w._currStyle;
 		glk_set_style(style_Preformatted);
 		glk_put_string("\n    ");
 	}
 }
 
 void Processor::screen_mssg_off() {
-	if (_wp.currWin() == _wp._lower) {
+	Window &w = _wp.currWin();
+
+	if (w == _wp._lower) {
 		glk_put_char('\n');
-		zargs[0] = 0;
-		z_set_text_style();
-		zargs[0] = oldstyle;
-		z_set_text_style();
+		w.setStyle(0);
+		w.setStyle(w._oldStyle);
 	}
 }
 
@@ -101,7 +103,8 @@ uint32 Processor::zchar_to_unicode_rune(zchar c) {
 }
 
 void Processor::screen_char(zchar c) {
-	if (gos_linepending && (_wp.currWin() == gos_linewin)) {
+	Window &w = _wp.currWin();
+	if (gos_linepending && (w == gos_linewin)) {
 		gos_cancel_pending_line();
 		if (_wp.currWin() == _wp._upper) {
 			_wp._upper.setCursor(Point(1, _wp._upper[Y_CURSOR] + 1));
@@ -112,14 +115,12 @@ void Processor::screen_char(zchar c) {
 
 	// check fixed flag in header, game can change it at whim
 	int forcefix = ((h_flags & FIXED_FONT_FLAG) != 0);
-	int curfix = ((curstyle & FIXED_WIDTH_STYLE) != 0);
+	int curfix = ((w._currStyle & FIXED_WIDTH_STYLE) != 0);
 	if (forcefix && !curfix) {
-		zargs[0] = 0xf000;	// tickle tickle!
-		z_set_text_style();
+		w.setStyle();
 		fixforced = true;
 	} else if (!forcefix && fixforced) {
-		zargs[0] = 0xf000;	// tickle tickle!
-		z_set_text_style();
+		w.setStyle();
 		fixforced = false;
 	}
 
@@ -156,11 +157,11 @@ void Processor::screen_char(zchar c) {
 				curx++;
 			}
 		}
-	} else if (_wp.currWin() == _wp._lower) {
+	} else if (w == _wp._lower) {
 		if (c == ZC_RETURN)
 			glk_put_char('\n');
 		else {
-			if (curr_font == GRAPHICS_FONT) {
+			if (w._currFont == GRAPHICS_FONT) {
 				uint32 runic_char = zchar_to_unicode_rune(c);
 				if (runic_char != 0) {
 					glk_set_style(style_User2);
@@ -365,46 +366,7 @@ void Processor::z_set_colour() {
 void Processor::z_set_font() {
 	zword font = zargs[0];
 
-	switch (font) {
-	case PREVIOUS_FONT:
-		// previous font
-		temp_font = curr_font;
-		curr_font = prev_font;
-		prev_font = temp_font;
-		zargs[0] = 0xf000;	// tickle tickle!
-		z_set_text_style();
-		store(curr_font);
-		break;
-
-	case TEXT_FONT:
-	case GRAPHICS_FONT:
-	case FIXED_WIDTH_FONT:
-		prev_font = curr_font;
-		curr_font = font;
-		zargs[0] = 0xf000;	// tickle tickle!
-		z_set_text_style();
-		store(prev_font);
-		break;
-
-	case PICTURE_FONT: // picture font, undefined per 1.1
-	default:           // unavailable
-		store(0);
-		break;
-	}
-
-	PropFontInfo &pi = g_conf->_propInfo;
-	if (curr_font == GRAPHICS_FONT) {
-		_quotes = pi._quotes;
-		_dashes = pi._dashes;
-		_spaces = pi._spaces;
-		pi._quotes = 0;
-		pi._dashes = 0;
-		pi._spaces = 0;
-	} else {
-		pi._quotes = _quotes;
-		pi._dashes = _dashes;
-		pi._spaces = _spaces;
-	}
+	store(_wp.currWin().setFont(font));
 }
 
 void Processor::z_set_cursor() {
@@ -424,23 +386,7 @@ void Processor::z_set_cursor() {
 }
 
 void Processor::z_set_text_style() {
-	int style;
-
-	if (zargs[0] == 0)
-		curstyle = 0;
-	else if (zargs[0] != 0xf000)
-		// not tickle time
-		curstyle |= zargs[0];
-
-	if (h_flags & FIXED_FONT_FLAG || curr_font == FIXED_WIDTH_FONT || curr_font == GRAPHICS_FONT)
-		style = curstyle | FIXED_WIDTH_STYLE;
-	else
-		style = curstyle;
-
-	if (gos_linepending && _wp.currWin() == gos_linewin)
-		return;
-
-	_wp[_wp._cwin].setStyle(style);
+	_wp[_wp._cwin].setStyle(zargs[0]);
 }
 
 void Processor::z_set_window() {

@@ -105,6 +105,20 @@ private:
 	 * Creates a new Glk window to attach to the window
 	 */
 	void createGlkWindow();
+
+	/**
+	 * Updates the current font/style
+	 */
+	void updateStyle();
+public:
+	int _currFont;
+	int _prevFont;
+	int _tempFont;
+	int _currStyle;
+	int _oldStyle;
+	int _quotes;
+	int _dashes;
+	int _spaces;
 public:
 	/**
 	 * Constructor
@@ -170,9 +184,14 @@ public:
 	void updateColors(uint fore, uint back);
 
 	/**
+	 * Set the font
+	 */
+	uint setFont(uint font);
+
+	/**
 	 * Set the textstyle
 	 */
-	void setStyle(uint style);
+	void setStyle(int style = -1);
 };
 
 /**

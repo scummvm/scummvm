@@ -32,12 +32,11 @@ namespace Glk {
 namespace Frotz {
 
 GlkInterface::GlkInterface(OSystem *syst, const GlkGameDescription &gameDesc) :
-		GlkAPI(syst, gameDesc),
-		_pics(nullptr), oldstyle(0), curstyle(0), curr_font(1), prev_font(1), temp_font(0),
-		curr_status_ht(0), mach_status_ht(0), gos_status(nullptr), gos_linepending(0), gos_linebuf(nullptr),
-		gos_linewin(nullptr), gos_channel(nullptr), mwin(0), mouse_x(0), mouse_y(0), fixforced(0), menu_selected(0),
-		enable_wrapping(false), enable_scripting(false), enable_scrolling(false), enable_buffering(false),
-		next_sample(0), next_volume(0), _soundLocked(false), _soundPlaying(false), _reverseVideo(false) {
+		GlkAPI(syst, gameDesc), _pics(nullptr), curr_status_ht(0), mach_status_ht(0), gos_status(nullptr),
+		gos_linepending(0), gos_linebuf(nullptr), gos_linewin(nullptr), gos_channel(nullptr), mwin(0),
+		mouse_x(0), mouse_y(0), fixforced(0), menu_selected(0), enable_wrapping(false), enable_scripting(false),
+		enable_scrolling(false), enable_buffering(false), next_sample(0), next_volume(0), _soundLocked(false),
+		_soundPlaying(false), _reverseVideo(false) {
 	Common::fill(&statusline[0], &statusline[256], '\0');
 	Common::fill(&zcolors[0], &zcolors[zcolor_NUMCOLORS], 0);
 }

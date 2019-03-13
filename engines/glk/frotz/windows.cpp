@@ -75,6 +75,12 @@ void Windows::setup(bool isVersion6) {
 		w._index = idx;
 		w[FONT_NUMBER] = TEXT_FONT;
 		w[FONT_SIZE] = (mi._cellH << 8) | mi._cellW;
+
+
+		PropFontInfo &pi = g_conf->_propInfo;
+		w._quotes = pi._quotes;
+		w._dashes = pi._quotes;
+		w._spaces = pi._spaces;
 	}
 }
 
@@ -87,7 +93,8 @@ void Windows::setWindow(int win) {
 
 /*--------------------------------------------------------------------------*/
 
-Window::Window() : _windows(nullptr), _win(nullptr) {
+Window::Window() : _windows(nullptr), _win(nullptr), _quotes(0), _dashes(0), _spaces(0),
+		_currFont(TEXT_FONT), _prevFont(TEXT_FONT), _tempFont(TEXT_FONT), _currStyle(0), _oldStyle(0) {
 	Common::fill(_properties, _properties + TRUE_BG_COLOR + 1, 0);
 	_properties[Y_POS] = _properties[X_POS] = 1;
 	_properties[Y_CURSOR] = _properties[X_CURSOR] = 1;
@@ -184,7 +191,72 @@ void Window::updateColors(uint fore, uint back) {
 	updateColors();
 }
 
-void Window::setStyle(uint style) {
+uint Window::setFont(uint font) {
+	int result = 0;
+
+	switch (font) {
+	case PREVIOUS_FONT:
+		// previous font
+		_tempFont = _currFont;
+		_currFont = _prevFont;
+		_prevFont = _tempFont;
+		setStyle();
+		result = _currFont;
+		break;
+
+	case TEXT_FONT:
+	case GRAPHICS_FONT:
+	case FIXED_WIDTH_FONT:
+		_prevFont = _currFont;
+		_currFont = font;
+		setStyle();
+		result = _prevFont;
+		break;
+
+	case PICTURE_FONT: // picture font, undefined per 1.1
+	default:           // unavailable
+		result = 0;
+		break;
+	}
+
+	PropFontInfo &pi = g_conf->_propInfo;
+	if (_currFont == GRAPHICS_FONT) {
+		_quotes = pi._quotes;
+		_dashes = pi._dashes;
+		_spaces = pi._spaces;
+		pi._quotes = 0;
+		pi._dashes = 0;
+		pi._spaces = 0;
+	} else {
+		pi._quotes = _quotes;
+		pi._dashes = _dashes;
+		pi._spaces = _spaces;
+	}
+
+	return result;
+}
+
+void Window::setStyle(int style) {
+	if (style == 0)
+		_currStyle = 0;
+	else if (style != -1)
+		// not tickle time
+		_currStyle |= style;
+
+	if (g_vm->h_flags & FIXED_FONT_FLAG || _currFont == FIXED_WIDTH_FONT || _currFont == GRAPHICS_FONT)
+		style = _currStyle | FIXED_WIDTH_STYLE;
+	else
+		style = _currStyle;
+
+	if (g_vm->gos_linepending && _windows->currWin() == g_vm->gos_linewin)
+		return;
+
+	updateStyle();
+}
+
+void Window::updateStyle() {
+	uint style = _currStyle;
+
 	/*
 	if (style & REVERSE_STYLE) {
 		os_set_reverse_video(true);
@@ -194,7 +266,7 @@ void Window::setStyle(uint style) {
 		createGlkWindow();
 
 	if (style & FIXED_WIDTH_STYLE) {
-		if (g_vm->curr_font == GRAPHICS_FONT)
+		if (_currFont == GRAPHICS_FONT)
 			_win->_stream->setStyle(style_User1);			// character graphics
 		else if (style & BOLDFACE_STYLE && style & EMPHASIS_STYLE)
 			_win->_stream->setStyle(style_BlockQuote);	// monoz
@@ -216,7 +288,7 @@ void Window::setStyle(uint style) {
 	}
 
 	/*
-	if (curstyle == 0) {
+	if (_currStyle == 0) {
 		os_set_reverse_video(false);
 	}
 	*/
