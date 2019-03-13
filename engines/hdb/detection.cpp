@@ -44,7 +44,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("hyperdemo.mpc", "d8743b3b8be56486bcfb1398b2f2aad4", 13816461),
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
-		ADGF_NO_FLAGS,
+		ADGF_DEMO,
 		GUIO1(GUIO_NONE)
 	},
 	AD_TABLE_END_MARKER
