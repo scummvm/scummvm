@@ -11113,6 +11113,54 @@ static const uint16 sq4CdPatchMazeTalkMessage[] = {
 	PATCH_END
 };
 
+// Smelling the sidewalk in room 35 results in a missing message due to not
+//  passing the cond parameter to Sq4GlobalNarrator:say. We pass the parameter
+//  and make room by removing an unused parameter passed to theRoom:doVerb.
+//
+// Applies to: English PC CD
+// Responsible method: sidewalk1:doVerb(6)
+// Fixes bug #10917
+static const uint16 sq4CdSignatureSidewalkSmellMessage[] = {
+	0x31, 0x10,                         // bnt 10
+	SIG_ADDTOOFFSET(+9),
+	SIG_MAGICDWORD,
+	0x76,                               // push0
+	0x81, 0x59,                         // lag 59
+	0x4a, 0x0a,                         // send 0a [ Sq4GlobalNarrator modNum: 25 say: ]
+	0x33, 0x24,                         // jmp 24  [ end of method ]
+	0x3c,                               // dup
+	0x35, 0x09,                         // ldi 09 [ rope ]
+	0x1a,                               // eq?
+	0x31, 0x15,                         // bnt 15
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi doVerb
+	0x7a,                               // push2
+	0x8f, 0x01,                         // lsp 01 [ verb ]
+	0x8f, 0x02,                         // lsp 02 [ unused by theRoom:doVerb ]
+	SIG_ADDTOOFFSET(+9),
+	0x4a, 0x08,                         // send 08 [ theRoom doVerb: verb param2 ]
+	SIG_END
+};
+
+static const uint16 sq4CdPatchSidewalkSmellMessage[] = {
+	0x31, 0x12,                         // bnt 12
+	PATCH_ADDTOOFFSET(+9),
+	0x78,                               // push1
+	0x39, 0x0b,                         // push 0b
+	0x81, 0x59,                         // lag 59
+	0x4a, 0x0c,                         // send 0c [ Sq4GlobalNarrator modNum: 25 say: 11 ]
+	0x33, 0x22,                         // jmp 22  [ end of method ]
+	0x3c,                               // dup
+	0x35, 0x09,                         // ldi 09 [ rope ]
+	0x1a,                               // eq?
+	0x31, 0x13,                         // bnt 13
+	0x38, PATCH_GETORIGINALUINT16(+25), // pushi doVerb
+	0x78,                               // push1
+	0x8f, 0x01,                         // lsp 01 [ verb ]
+	PATCH_ADDTOOFFSET(+9),
+	0x4a, 0x06,                         // send 06 [ theRoom doVerb: verb ]
+	PATCH_END
+};
+
 // Talking to the red shopper in the mall has a 5% chance of a funny message but
 //  this script is broken in the CD version. After the first time the wrong
 //  message tuple is attempted by the narrator as its modNum value is cleared.
@@ -11305,6 +11353,7 @@ static const uint16 sq4CdPatchTextOptions[] = {
 static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,   298, "Floppy: endless flight",                         1, sq4FloppySignatureEndlessFlight,               sq4FloppyPatchEndlessFlight },
 	{  true,   700, "Floppy: throw stuff at sequel police bug",       1, sq4FloppySignatureThrowStuffAtSequelPoliceBug, sq4FloppyPatchThrowStuffAtSequelPoliceBug },
+	{  true,    35, "CD: sidewalk smell message fix",                 1, sq4CdSignatureSidewalkSmellMessage,            sq4CdPatchSidewalkSmellMessage },
 	{  true,    45, "CD: walk in from below for room 45 fix",         1, sq4CdSignatureWalkInFromBelowRoom45,           sq4CdPatchWalkInFromBelowRoom45 },
 	{  true,   370, "CD: sock's door restore and message fix",        1, sq4CdSignatureSocksDoor,                       sq4CdPatchSocksDoor },
 	{  true,   391, "CD: missing Audio for universal remote control", 1, sq4CdSignatureMissingAudioUniversalRemote,     sq4CdPatchMissingAudioUniversalRemote },
