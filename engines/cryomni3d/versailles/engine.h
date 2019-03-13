@@ -218,6 +218,13 @@ public:
 	CryOmni3DEngine_Versailles(OSystem *syst, const CryOmni3DGameDescription *gamedesc);
 	virtual ~CryOmni3DEngine_Versailles();
 
+	Common::String prepareFileName(const Common::String &baseName, const char *extension) const {
+		const char *const extensions[] = { extension, nullptr };
+		return prepareFileName(baseName, extensions);
+	}
+	virtual Common::String prepareFileName(const Common::String &baseName,
+	                                       const char *const *extensions) const override;
+
 	void setupPalette(const byte *colors, uint start, uint num) override { setupPalette(colors, start, num, true); }
 	void makeTranslucent(Graphics::Surface &dst, const Graphics::Surface &src) const override;
 

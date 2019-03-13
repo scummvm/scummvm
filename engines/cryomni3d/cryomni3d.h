@@ -124,6 +124,13 @@ public:
 	void setAutoRepeatClick(unsigned int millis);
 	DragStatus getDragStatus() { return _dragStatus; }
 
+	Common::String prepareFileName(const Common::String &baseName, const char *extension) const {
+		const char *const extensions[] = { extension, nullptr };
+		return prepareFileName(baseName, extensions);
+	}
+	virtual Common::String prepareFileName(const Common::String &baseName,
+	                                       const char *const *extensions) const;
+
 	virtual bool displayToolbar(const Graphics::Surface *original) = 0;
 	virtual bool hasPlaceDocumentation() = 0;
 	virtual bool displayPlaceDocumentation() = 0;

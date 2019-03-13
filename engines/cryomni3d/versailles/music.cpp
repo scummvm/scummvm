@@ -67,8 +67,7 @@ void CryOmni3DEngine_Versailles::musicUpdate() {
 	// New file, stop the old one first
 	musicStop();
 
-	Common::String musicFName = musicBName;
-	musicFName += ".wav";
+	Common::String musicFName(prepareFileName(musicBName, "wav"));
 
 	Common::File *musicFile = new Common::File();
 	if (!musicFile->open(musicFName)) {

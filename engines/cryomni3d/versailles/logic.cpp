@@ -1000,7 +1000,7 @@ IMG_CB(41802) {
 				setGameTime(3, 1);
 			} else if (objID == 96) {
 				// Pamphlet about arts
-				playInGameVideo("PAP_BRUL");
+				playInGameVideo("PAP-BRUL");
 				// Force reload of the place
 				if (_nextPlaceId == -1u) {
 					_nextPlaceId = _currentPlaceId;
@@ -1047,7 +1047,7 @@ IMG_CB(41802b) {
 				setGameTime(3, 1);
 			} else if (objID == 96) {
 				// Pamphlet about arts
-				playInGameVideo("PAP_BRUL");
+				playInGameVideo("PAP-BRUL");
 				// Force reload of the place
 				if (_nextPlaceId == -1u) {
 					_nextPlaceId = _currentPlaceId;
@@ -1092,7 +1092,7 @@ IMG_CB(41802c) {
 				setGameTime(3, 1);
 			} else if (objID == 96) {
 				// Pamphlet about arts
-				playInGameVideo("PAP_BRUL");
+				playInGameVideo("PAP-BRUL");
 				// Force reload of the place
 				if (_nextPlaceId == -1u) {
 					_nextPlaceId = _currentPlaceId;
@@ -1127,7 +1127,7 @@ IMG_CB(41802d) {
 				setGameTime(3, 1);
 			} else if (objID == 96) {
 				// Pamphlet about arts
-				playInGameVideo("PAP_BRUL");
+				playInGameVideo("PAP-BRUL");
 				// Force reload of the place
 				if (_nextPlaceId == -1u) {
 					_nextPlaceId = _currentPlaceId;

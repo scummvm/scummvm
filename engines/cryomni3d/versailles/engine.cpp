@@ -221,6 +221,20 @@ Common::Error CryOmni3DEngine_Versailles::run() {
 	return Common::kNoError;
 }
 
+Common::String CryOmni3DEngine_Versailles::prepareFileName(const Common::String &baseName,
+        const char *const *extensions) const {
+	Common::String baseName_(baseName);
+	if (getPlatform() != Common::kPlatformMacintosh) {
+		// Replace dashes by underscores for PC versions
+		char *p = baseName_.begin();
+		while ((p = strchr(p, '-')) != nullptr) {
+			*p = '_';
+			p++;
+		}
+	}
+	return CryOmni3DEngine::prepareFileName(baseName_, extensions);
+}
+
 void CryOmni3DEngine_Versailles::setupFonts() {
 	Common::Array<Common::String> fonts;
 

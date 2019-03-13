@@ -1442,7 +1442,7 @@ void Versailles_Documentation::drawRecordData(Graphics::ManagedSurface &surface,
 	} else {
 		background = _currentRecord;
 	}
-	background += ".HLZ";
+	background = _engine->prepareFileName(background, "hlz");
 	Common::File backgroundFl;
 	if (!backgroundFl.open(background)) {
 		background = displayMap ? "pas_fonP.hlz" : "pas_fond.hlz";

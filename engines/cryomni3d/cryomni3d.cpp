@@ -80,11 +80,9 @@ void CryOmni3DEngine::pauseEngineIntern(bool pause) {
 	*/
 }
 
-void CryOmni3DEngine::playHNM(const Common::String &filename, Audio::Mixer::SoundType soundType) {
-	Common::String fname(filename);
-
-	Video::VideoDecoder *videoDecoder = new Video::HNMDecoder();
-	videoDecoder->setSoundType(soundType);
+Common::String CryOmni3DEngine::prepareFileName(const Common::String &baseName,
+        const char *const *extensions) const {
+	Common::String fname(baseName);
 
 	int lastDotPos = fname.size() - 1;
 	for (; lastDotPos >= 0; --lastDotPos) {
@@ -92,17 +90,36 @@ void CryOmni3DEngine::playHNM(const Common::String &filename, Audio::Mixer::Soun
 			break;
 		}
 	}
-	if (lastDotPos > -1) {
-		fname.erase(lastDotPos);
-	} else {
-		lastDotPos = fname.size();
-	}
-	fname += ".hnm";
 
-	if (!Common::File::exists(fname)) {
-		fname.erase(lastDotPos);
-		fname += ".hns";
+	int extBegin;
+	if (lastDotPos > -1) {
+		extBegin = lastDotPos + 1;
+		fname.erase(extBegin);
+	} else {
+		fname += ".";
+		extBegin = fname.size();
 	}
+
+	while (*extensions != nullptr) {
+		fname += *extensions;
+		debug("Trying file %s", fname.c_str());
+		if (Common::File::exists(fname)) {
+			return fname;
+		}
+		fname.erase(extBegin);
+		extensions++;
+	}
+	fname.deleteLastChar();
+	warning("Failed to find file %s/%s", baseName.c_str(), fname.c_str());
+	return baseName;
+}
+
+void CryOmni3DEngine::playHNM(const Common::String &filename, Audio::Mixer::SoundType soundType) {
+	const char *const extensions[] = { "hns", "hnm", nullptr };
+	Common::String fname(prepareFileName(filename, extensions));
+
+	Video::VideoDecoder *videoDecoder = new Video::HNMDecoder();
+	videoDecoder->setSoundType(soundType);
 
 	if (!videoDecoder->loadFile(fname)) {
 		warning("Failed to open movie file %s/%s", filename.c_str(), fname.c_str());
@@ -143,22 +160,11 @@ void CryOmni3DEngine::playHNM(const Common::String &filename, Audio::Mixer::Soun
 }
 
 Image::ImageDecoder *CryOmni3DEngine::loadHLZ(const Common::String &filename) {
-	Common::String fname(filename);
+	Common::String fname(prepareFileName(filename, "hlz"));
 
 	Image::ImageDecoder *imageDecoder = new Image::HLZFileDecoder();
 
 	Common::File file;
-
-	int lastDotPos = fname.size() - 1;
-	for (; lastDotPos >= 0; --lastDotPos) {
-		if (fname[lastDotPos] == '.') {
-			break;
-		}
-	}
-	if (lastDotPos > -1) {
-		fname.erase(lastDotPos);
-	}
-	fname += ".hlz";
 
 	if (!file.open(fname)) {
 		warning("Failed to open hlz file %s/%s", filename.c_str(), fname.c_str());

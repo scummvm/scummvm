@@ -109,18 +109,7 @@ void ZonFixedImage::display() const {
 void ZonFixedImage::loadZones(const Common::String &image) {
 	_zones.clear();
 
-	Common::String fname(image);
-
-	int lastDotPos = fname.size() - 1;
-	for (; lastDotPos >= 0; --lastDotPos) {
-		if (fname[lastDotPos] == '.') {
-			break;
-		}
-	}
-	if (lastDotPos > -1) {
-		fname.erase(lastDotPos);
-	}
-	fname += ".zon";
+	Common::String fname(_engine.prepareFileName(image, "zon"));
 
 	Common::File zonFile;
 	if (!zonFile.open(fname)) {
