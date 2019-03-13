@@ -63,7 +63,8 @@ bool CryOmni3DEngine_Versailles::preprocessDialog(const Common::String &sequence
 	        sequence.hasPrefix("31O_SUIA") && _gameVariables[GameVariables::kWarnedIncomplete] == 0 &&
 	        _dialogsMan["CROISSY-ACCEPTE-TEXTE"] == 'Y' &&
 	        (!_inventory.inInventoryByNameID(121) || !_inventory.inInventoryByNameID(119) ||
-	         !_inventory.inInventoryByNameID(115) || _gameVariables[GameVariables::kGotMedaillesSolution] == 0)) {
+	         !_inventory.inInventoryByNameID(115) ||
+	         _gameVariables[GameVariables::kGotMedaillesSolution] == 0)) {
 		displayMessageBoxWarp(18);
 		_gameVariables[GameVariables::kWarnedIncomplete] = 1;
 		return 0;
