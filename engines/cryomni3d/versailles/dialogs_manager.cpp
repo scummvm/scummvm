@@ -88,16 +88,14 @@ void Versailles_DialogsManager::executeShow(const Common::String &show) {
 
 void Versailles_DialogsManager::playDialog(const Common::String &video, const Common::String &sound,
         const Common::String &text, const SubtitlesSettings &settings) {
-	Common::String videoFName(video);
-	Common::String soundFName(sound);
-
-	videoFName += ".hnm";
 	// Don't look for HNS file here
+	Common::String videoFName(_engine->prepareFileName(video, "hnm"));
+	Common::String soundFName(sound);
 
 	while (soundFName.size() < 8) {
 		soundFName += '_';
 	}
-	soundFName += ".wav";
+	soundFName = _engine->prepareFileName(soundFName, "wav");
 
 	Video::HNMDecoder *videoDecoder = new Video::HNMDecoder(true);
 
@@ -344,17 +342,7 @@ unsigned int Versailles_DialogsManager::askPlayerQuestions(const Common::String 
 }
 
 void Versailles_DialogsManager::loadFrame(const Common::String &video) {
-	Common::String videoFName(video);
-	int lastDotPos = videoFName.size() - 1;
-	for (; lastDotPos >= 0; --lastDotPos) {
-		if (videoFName[lastDotPos] == '.') {
-			break;
-		}
-	}
-	if (lastDotPos > -1) {
-		videoFName.erase(lastDotPos);
-	}
-	videoFName += ".hnm";
+	Common::String videoFName(_engine->prepareFileName(video, "hnm"));
 
 	Video::HNMDecoder *videoDecoder = new Video::HNMDecoder();
 
