@@ -24,12 +24,16 @@
 #define HDB_HDB_H
 
 #include "common/scummsys.h"
-#include "common/error.h"
-#include "common/random.h"
-#include "common/file.h"
 #include "common/array.h"
+#include "common/error.h"
+#include "common/file.h"
+#include "common/events.h"
+#include "common/str.h"
+
 #include "gui/debugger.h"
 #include "engines/engine.h"
+#include "engines/util.h"
+#include "console.h"
 
 struct ADGameDescription;
 
@@ -53,8 +57,34 @@ public:
 	Common::Platform getPlatform() const;
 
 private:
+	
+	Console *_console;
+	Common::File file;
 
-	Common::RandomSource _random;
+	struct {
+		byte signature[5]; // 4 Bytes + '\0'
+		uint32 dirOffset;
+		uint32 dirSize;
+
+		bool isValid() {
+			return (signature[0] == 'M') &&
+				(signature[1] == 'P') &&
+				(signature[2] == 'C') &&
+				(signature[3] == 'U') &&
+				(signature[4] == '\0');
+		}
+
+	} dataHeader;
+
+	struct DataFile {
+		byte fileName[65]; // 65 Bytes + '\0'
+		uint32 filePosition;
+		uint32 fileLength;
+		uint32 unknownField1;
+		uint32 unknownField2;
+	};
+
+	Common::Array<DataFile*> gameData;
 
 	void readMPC(const Common::String &fileName);
 };
