@@ -192,6 +192,11 @@ public:
 	 * Set the textstyle
 	 */
 	void setStyle(int style = -1);
+
+	/**
+	 * Set reverse video
+	 */
+	void setReverseVideo(bool reverse);
 };
 
 /**

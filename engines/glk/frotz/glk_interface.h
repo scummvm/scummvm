@@ -242,11 +242,6 @@ protected:
 	 * Waits for the user to type an input line
 	 */
 	zchar os_read_line(int max, zchar *buf, int timeout, int width, int continued);
-
-	/**
-	 * Set whether reverse video mode is active
-	 */
-	void os_set_reverse_video(bool flag);
 public:
 	/**
 	 * Constructor

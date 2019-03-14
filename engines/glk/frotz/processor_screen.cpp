@@ -437,7 +437,7 @@ void Processor::z_show_status() {
 	// Move to top of the status window, and print in reverse style.
 	_wp.setWindow(1);
 
-	os_set_reverse_video(true);
+	_wp._upper.setReverseVideo(true);
 	_wp._upper.setCursor(Point(1, 1));
 
 	// If the screen width is below 55 characters then we have to use

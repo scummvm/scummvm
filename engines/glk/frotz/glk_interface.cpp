@@ -693,12 +693,5 @@ uint GlkInterface::roundDiv(uint x, uint y) {
 	return quotient;
 }
 
-void GlkInterface::os_set_reverse_video(bool flag) {
-#ifdef GARGLK
-	_reverseVideo = flag;
-	garglk_set_reversevideo(flag);
-#endif
-}
-
 } // End of namespace Frotz
 } // End of namespace Glk

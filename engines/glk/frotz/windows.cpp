@@ -257,13 +257,11 @@ void Window::setStyle(int style) {
 void Window::updateStyle() {
 	uint style = _currStyle;
 
-	/*
-	if (style & REVERSE_STYLE) {
-		os_set_reverse_video(true);
-	}*/
-
 	if (!_win)
 		createGlkWindow();
+
+	if (style & REVERSE_STYLE)
+		setReverseVideo(true);
 
 	if (style & FIXED_WIDTH_STYLE) {
 		if (_currFont == GRAPHICS_FONT)
@@ -287,11 +285,12 @@ void Window::updateStyle() {
 			_win->_stream->setStyle(style_Normal);		// propr
 	}
 
-	/*
-	if (_currStyle == 0) {
-		os_set_reverse_video(false);
-	}
-	*/
+	if (_currStyle == 0)
+		setReverseVideo(false);
+}
+
+void Window::setReverseVideo(bool reverse) {
+	_win->_stream->setReverseVideo(reverse);
 }
 
 void Window::createGlkWindow() {
