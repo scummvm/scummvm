@@ -47,17 +47,6 @@ void Windows::setup(bool isVersion6) {
 		// flexibility of wher we draw pictures, and the lower and upper areas sit on top of them
 		_background = g_vm->glk_window_open(0, 0, 0, wintype_Graphics, 0);
 		_background->setBackgroundColor(0xffffff);
-		/*
-		MonoFontInfo &fi = g_vm->_conf->_monoInfo;
-		_lower = g_vm->glk_window_open(g_vm->glk_window_get_root(),
-			winmethod_Arbitrary | winmethod_Fixed, 0, wintype_TextBuffer, 0);
-		_upper = g_vm->glk_window_open(g_vm->glk_window_get_root(),
-			winmethod_Arbitrary | winmethod_Fixed, 0, wintype_TextGrid, 0);
-		_upper.setPosition(Point(1, 1));
-		_upper.setSize(Point(g_system->getWidth() / fi._cellW, 1));
-		_lower.setPosition(Point(1, 2));
-		_lower.setSize(Point(g_system->getWidth() / fi._cellW, g_system->getHeight() / fi._cellH - 1));
-		*/
 
 	} else {
 		_lower = g_vm->glk_window_open(0, 0, 0, wintype_TextBuffer, 0);
@@ -233,6 +222,7 @@ uint Window::setFont(uint font) {
 		pi._spaces = _spaces;
 	}
 
+	_properties[FONT_NUMBER] = font;
 	return result;
 }
 
@@ -274,6 +264,9 @@ void Window::updateStyle() {
 			_win->_stream->setStyle(style_Subheader);		// monob
 		else
 			_win->_stream->setStyle(style_Preformatted);	// monor
+
+		MonoFontInfo &fi = g_vm->_conf->_monoInfo;
+		_properties[FONT_SIZE] = (fi._cellH << 8) | fi._cellW;
 	} else {
 		if (style & BOLDFACE_STYLE && style & EMPHASIS_STYLE)
 			_win->_stream->setStyle(style_Note);			// propz
@@ -283,6 +276,9 @@ void Window::updateStyle() {
 			_win->_stream->setStyle(style_Header);		// propb
 		else
 			_win->_stream->setStyle(style_Normal);		// propr
+
+		PropFontInfo &fi = g_vm->_conf->_propInfo;
+		_properties[FONT_SIZE] = (fi._cellH << 8) | fi._cellW;
 	}
 
 	if (_currStyle == 0)
