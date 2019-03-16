@@ -108,6 +108,7 @@ void ScriptOpcodes::initOpcodes() {
 	OPCODE(0x12, opUnk12LoadScene);
 	OPCODE(0x13, opUnk13PropertiesRelated);
 	OPCODE(0x14, opUnk14PropertiesRelated);
+	OPCODE(0x15, opUnk15PropertiesRelated);
 
 	OPCODE(0x16, opUnk16);
 	OPCODE(0x17, opUnk17);
@@ -292,8 +293,7 @@ void ScriptOpcodes::opUnk13PropertiesRelated(ScriptOpCall &scriptOpCall) {
 void ScriptOpcodes::opUnk14PropertiesRelated(ScriptOpCall &scriptOpCall) {
 	if (checkPropertyFlag(scriptOpCall)) {
 		ScriptOpCall localScriptOpCall;
-		byte *codePtrOffset2 = scriptOpCall._code + 4;
-		localScriptOpCall._code = codePtrOffset2;
+		localScriptOpCall._code = scriptOpCall._code + 4;
 		localScriptOpCall._codeEnd = localScriptOpCall._code + READ_LE_UINT32(scriptOpCall._code);
 		localScriptOpCall._field8 = scriptOpCall._field8;
 		localScriptOpCall._result = 0;
@@ -312,6 +312,24 @@ void ScriptOpcodes::opUnk14PropertiesRelated(ScriptOpCall &scriptOpCall) {
 	} else {
 		scriptOpCall._code += 4 + READ_LE_UINT16(scriptOpCall._code);
 	}
+}
+
+void ScriptOpcodes::opUnk15PropertiesRelated(ScriptOpCall &scriptOpCall) {
+	while (true) {
+		if (checkPropertyFlag(scriptOpCall)) {
+			ScriptOpCall localScriptOpCall;
+			localScriptOpCall._code = scriptOpCall._code + 4;
+			localScriptOpCall._codeEnd = localScriptOpCall._code + READ_LE_UINT32(scriptOpCall._code);
+
+			runScript(localScriptOpCall);
+
+			scriptOpCall._code = (scriptOpCall._code - ((uint)*(scriptOpCall._code + 2) + 2));
+		} else {
+			break;
+		}
+	}
+
+	scriptOpCall._code += 4 + READ_LE_UINT16(scriptOpCall._code);
 }
 
 bool ScriptOpcodes::checkPropertyFlag(ScriptOpCall &scriptOpCall) {
@@ -836,10 +854,6 @@ void ScriptOpcodes::setINIField(uint32 iniIndex, uint16 fieldOffset, uint16 valu
 		case 0x20 : ini->field_20_actor_field_14 = value; break;
 		default: error("setINIField() Invalid fieldOffset 0x%X", fieldOffset);
 	}
-
-}
-
-void ScriptOpcodes::opUnk15(ScriptOpCall &scriptOpCall) {
 
 }
 
