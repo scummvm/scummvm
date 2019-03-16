@@ -70,6 +70,8 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	data_8006f3a8 = 0;
 	_inventory = new Inventory(this);
 	_cursor = new Cursor(this);
+
+	_rightMouseButtonUp = false;
 }
 
 DragonsEngine::~DragonsEngine() {
@@ -79,6 +81,7 @@ DragonsEngine::~DragonsEngine() {
 
 void DragonsEngine::updateEvents() {
 	Common::Event event;
+	_rightMouseButtonUp = false;
 	while (_eventMan->pollEvent(event)) {
 //		_input->processEvent(event);
 		switch (event.type) {
@@ -87,6 +90,9 @@ void DragonsEngine::updateEvents() {
 				break;
 			case Common::EVENT_MOUSEMOVE:
 				_cursor->updatePosition(event.mouse.x, event.mouse.y);
+				break;
+			case Common::EVENT_RBUTTONUP:
+				_rightMouseButtonUp = true;
 				break;
 			default:
 				break;
@@ -188,6 +194,10 @@ void DragonsEngine::gameLoop() {
 
 		// 0x80026d38
 		_cursor->updateINIUnderCursor();
+
+		if (_rightMouseButtonUp) {
+			_cursor->selectPreviousCursor();
+		}
 
 		runINIScripts();
 

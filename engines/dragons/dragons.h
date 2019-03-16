@@ -134,6 +134,9 @@ private:
 
 	uint16 run_func_ptr_unk_countdown_timer;
 
+	// input
+	bool _rightMouseButtonUp;
+
 public:
 	DragonsEngine(OSystem *syst);
 	~DragonsEngine();

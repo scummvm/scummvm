@@ -55,6 +55,8 @@ public:
 	void updatePosition(int16 x, int16 y);
 	int16 updateINIUnderCursor();
 	int16 executeScript(ScriptOpCall &scriptOpCall, uint16 unkFlag);
+	void selectPreviousCursor();
+	void selectNextCursor();
 private:
 	int16 updateIniFromScene();
 };
