@@ -96,7 +96,7 @@ protected:
 	void opUnk11FlickerTalk(ScriptOpCall &scriptOpCall);
 	void opUnk12LoadScene(ScriptOpCall &scriptOpCall);
 	void opUnk13PropertiesRelated(ScriptOpCall &scriptOpCall);
-	void opUnk14(ScriptOpCall &scriptOpCall);
+	void opUnk14PropertiesRelated(ScriptOpCall &scriptOpCall);
 	void opUnk15(ScriptOpCall &scriptOpCall);
 	void opUnk16(ScriptOpCall &scriptOpCall);
 	void opUnk17(ScriptOpCall &scriptOpCall);

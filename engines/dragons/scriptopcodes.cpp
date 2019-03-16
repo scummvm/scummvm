@@ -107,6 +107,7 @@ void ScriptOpcodes::initOpcodes() {
 	OPCODE(0x11, opUnk11FlickerTalk);
 	OPCODE(0x12, opUnk12LoadScene);
 	OPCODE(0x13, opUnk13PropertiesRelated);
+	OPCODE(0x14, opUnk14PropertiesRelated);
 
 	OPCODE(0x16, opUnk16);
 	OPCODE(0x17, opUnk17);
@@ -283,6 +284,31 @@ void ScriptOpcodes::opPlayMusic(ScriptOpCall &scriptOpCall) {
 void ScriptOpcodes::opUnk13PropertiesRelated(ScriptOpCall &scriptOpCall) {
 	if (checkPropertyFlag(scriptOpCall)) {
 		scriptOpCall._code += 4;
+	} else {
+		scriptOpCall._code += 4 + READ_LE_UINT16(scriptOpCall._code);
+	}
+}
+
+void ScriptOpcodes::opUnk14PropertiesRelated(ScriptOpCall &scriptOpCall) {
+	if (checkPropertyFlag(scriptOpCall)) {
+		ScriptOpCall localScriptOpCall;
+		byte *codePtrOffset2 = scriptOpCall._code + 4;
+		localScriptOpCall._code = codePtrOffset2;
+		localScriptOpCall._codeEnd = localScriptOpCall._code + READ_LE_UINT32(scriptOpCall._code);
+		localScriptOpCall._field8 = scriptOpCall._field8;
+		localScriptOpCall._result = 0;
+
+		executeScriptLoop(scriptOpCall);
+
+		if (scriptOpCall._field8 == 1) {
+			scriptOpCall._result = localScriptOpCall._result;
+			if ((localScriptOpCall._result & 1) != 0) {
+				scriptOpCall._code = localScriptOpCall._code;
+				return;
+			}
+		}
+
+		scriptOpCall._code = localScriptOpCall._code + READ_LE_UINT16(scriptOpCall._code);
 	} else {
 		scriptOpCall._code += 4 + READ_LE_UINT16(scriptOpCall._code);
 	}
@@ -631,8 +657,12 @@ void ScriptOpcodes::opUnk10(ScriptOpCall &scriptOpCall) {
 }
 
 void ScriptOpcodes::opUnk11FlickerTalk(ScriptOpCall &scriptOpCall) {
-	ARG_SKIP(8);
+	ARG_SKIP(2);
+	ARG_INT16(actorId)
+	ARG_UINT32(textIndex)
 	// TODO implement me!
+
+    debug("Main actor talk: 0x%04x and text 0x%04x", actorId, textIndex);
 }
 
 void ScriptOpcodes::opUnk12LoadScene(ScriptOpCall &scriptOpCall) {
@@ -660,15 +690,16 @@ void ScriptOpcodes::opUnk12LoadScene(ScriptOpCall &scriptOpCall) {
 
 void ScriptOpcodes::opCodeActorTalk(ScriptOpCall &scriptOpCall) {
 	ARG_SKIP(2);
-	ARG_INT16(field2);
+	ARG_INT16(actorId);
 	ARG_SKIP(6);
-	ARG_UINT32(fieldA);
+	ARG_UINT32(textIndex);
 
 	if (scriptOpCall._field8 != 0) {
 		return;
 	}
 
 	//TODO implement actor talk.
+	debug("Actor talk: 0x%04x and text 0x%04x", actorId, textIndex);
 }
 
 void ScriptOpcodes::opCode_UnkA_setsProperty(ScriptOpCall &scriptOpCall) {
@@ -805,10 +836,6 @@ void ScriptOpcodes::setINIField(uint32 iniIndex, uint16 fieldOffset, uint16 valu
 		case 0x20 : ini->field_20_actor_field_14 = value; break;
 		default: error("setINIField() Invalid fieldOffset 0x%X", fieldOffset);
 	}
-
-}
-
-void ScriptOpcodes::opUnk14(ScriptOpCall &scriptOpCall) {
 
 }
 
