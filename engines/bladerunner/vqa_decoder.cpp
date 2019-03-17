@@ -347,10 +347,12 @@ bool VQADecoder::readVQHD(Common::SeekableReadStream *s, uint32 size) {
 bool VQADecoder::VQAVideoTrack::readVQFR(Common::SeekableReadStream *s, uint32 size, uint readFlags) {
 	IFFChunkHeader chd;
 
-	while (size >= 8) {
+	signed int sizeLeft = size; // we have to use signed int to avoid underflow
+
+	while (sizeLeft >= 8) {
 		if (!readIFFChunkHeader(s, &chd))
 			return false;
-		size -= roundup(chd.size) + 8;
+		sizeLeft -= roundup(chd.size) + 8;
 
 		bool rc = false;
 		switch (chd.id) {
@@ -663,10 +665,12 @@ void VQADecoder::VQAVideoTrack::decodeVideoFrame(Graphics::Surface *surface, boo
 bool VQADecoder::VQAVideoTrack::readVQFL(Common::SeekableReadStream *s, uint32 size, uint readFlags) {
 	IFFChunkHeader chd;
 
-	while (size >= 8) {
+	signed int sizeLeft = size; // we have to use signed int to avoid underflow
+
+	while (sizeLeft >= 8) {
 		if (!readIFFChunkHeader(s, &chd))
 			return false;
-		size -= roundup(chd.size) + 8;
+		sizeLeft -= roundup(chd.size) + 8;
 
 		bool rc = false;
 		switch (chd.id) {
