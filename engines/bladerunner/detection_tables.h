@@ -86,6 +86,18 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO2(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY)
 	},
 
+	// BladeRunner (Russian - alternate version)
+	{
+		"bladerunner",
+		0,
+		AD_ENTRY1s("STARTUP.MIX", "bf42af841d9f4b643665013a348c81e0", 2483111),
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO2(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY)
+	},
+
+
 	// BladeRunner (Spanish)
 	{
 		"bladerunner",

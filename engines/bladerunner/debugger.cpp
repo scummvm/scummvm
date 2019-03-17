@@ -130,7 +130,7 @@ bool Debugger::cmdAnimation(int argc, const char **argv) {
 
 bool Debugger::cmdDraw(int argc, const char **argv) {
 	if (argc != 2) {
-		debugPrintf("Enables debug rendering of actors, screen effect, fogs, lights, scene objects, obstacles, regsions, ui elements, walk boxes, waypoints, zbuffer or disables debug rendering.\n");
+		debugPrintf("Enables debug rendering of actors, screen effect, fogs, lights, scene objects, obstacles, regions, ui elements, walk boxes, waypoints, zbuffer or disables debug rendering.\n");
 		debugPrintf("Usage: %s (act | eff | fog | lit | obj | obstacles | reg | ui | walk | way | zbuf | reset)\n", argv[0]);
 		return true;
 	}

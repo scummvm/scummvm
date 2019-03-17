@@ -116,7 +116,9 @@ public:
 	bool           _gameIsRunning;
 	bool           _windowIsActive;
 	int            _playerLosesControlCounter;
-	Common::String _languageCode;
+
+	Common::String   _languageCode;
+	Common::Language _language;
 
 	ActorDialogueQueue *_actorDialogueQueue;
 	ScreenEffects      *_screenEffects;

@@ -130,6 +130,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 
 	_crimesDatabase = nullptr;
 
+	_language = desc->language;
 	switch (desc->language) {
 	case Common::EN_ANY:
 		_languageCode = "E";
@@ -144,7 +145,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 		_languageCode = "I";
 		break;
 	case Common::RU_RUS:
-		_languageCode = "R";
+		_languageCode = "E"; // Russian version is built on top of English one
 		break;
 	case Common::ES_ESP:
 		_languageCode = "S";
