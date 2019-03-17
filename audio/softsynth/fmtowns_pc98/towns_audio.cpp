@@ -23,6 +23,7 @@
 #include "audio/softsynth/fmtowns_pc98/towns_audio.h"
 #include "audio/softsynth/fmtowns_pc98/towns_pc98_fmsynth.h"
 
+#include "common/debug.h"
 #include "common/endian.h"
 #include "common/util.h"
 #include "common/textconsole.h"
@@ -730,8 +731,8 @@ int TownsAudioInterfaceInternal::intf_loadSamples(va_list &args) {
 	if (size + dest > 65536)
 		// EOB II FM-TOWNS tries to load more than 65536 bytes of wave sounds for the outro sequence.
 		// This means that some sfx would not play. Since we don't really need the memory limit,
-		// I have commented out the error return and added a warning instead.
-		warning("FM-TOWNS AUDIO: exceeding wave memory size by %d bytes", size + dest - 65536);
+		// I have commented out the error return and added a debug message instead.
+		debugN(9, "FM-TOWNS AUDIO: exceeding wave memory size by %d bytes", size + dest - 65536);
 		// return 5;
 
 	int dwIndex = _numWaveTables - 1;
