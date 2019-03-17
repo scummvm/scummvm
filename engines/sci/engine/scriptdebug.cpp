@@ -218,7 +218,11 @@ reg_t disassemble(EngineState *s, reg_t pos, const Object *obj, bool printBWTag,
 					if (obj != nullptr) {
 						const Object *const super = obj->getClass(s->_segMan);
 						assert(super);
-						selectorName = kernel->getSelectorName(super->getVarSelector(param_value / 2)).c_str();
+						if (param_value / 2 < super->getVarCount()) {
+							selectorName = kernel->getSelectorName(super->getVarSelector(param_value / 2)).c_str();
+						} else {
+							selectorName = "<invalid>";
+						}
 					} else {
 						selectorName = "<unavailable>";
 					}
