@@ -112,6 +112,8 @@ bool SliceAnimations::openFrames(int fileNumber) {
 
 	_framesPageFile.close();
 
+	_framesPageFile._fileNumber = fileNumber;
+
 	if (fileNumber == 1 && _framesPageFile.open("CDFRAMES.DAT")) // For Chapter1 we try both CDFRAMES.DAT and CDFRAMES1.DAT
 		return true;
 
