@@ -25,6 +25,10 @@
 namespace BladeRunner {
 
 static int kPoliceMazePS12TargetCount = 20;
+int SceneScriptPS12::getPoliceMazePS12TargetCount() {
+	return kPoliceMazePS12TargetCount;
+}
+
 
 void SceneScriptPS12::InitializeScene() {
 	Police_Maze_Set_Pause_State(true);
@@ -555,23 +559,29 @@ void SceneScriptPS12::SceneLoaded() {
 	Unclickable_Object("PARKMETR16");
 
 	if (!Query_System_Currently_Loading_Game()) {
-		Item_Add_To_World(kItemPS12Target1,  449, kSetPS10_PS11_PS12_PS13,  -691.8f, -9.06f, 587.67f,  200, 72, 36, true, false, false, true);
-		Item_Add_To_World(kItemPS12Target2,  445, kSetPS10_PS11_PS12_PS13,  -679.6f, -45.4f, 721.05f,   67, 72, 36, true, false, false, true);
-		Item_Add_To_World(kItemPS12Target3,  447, kSetPS10_PS11_PS12_PS13, -414.04f, -8.98f, 711.91f,  480, 72, 36, true, false, false, true);
-		Item_Add_To_World(kItemPS12Target4,  443, kSetPS10_PS11_PS12_PS13,  -440.0f, -8.97f, 1137.0f, 1010, 72, 36, true, false, false, true);
-		Item_Add_To_World(kItemPS12Target5,  441, kSetPS10_PS11_PS12_PS13, -764.92f, -0.84f, 950.22f,  540, 72, 36, true, false, false, true);
-		Item_Add_To_World(kItemPS12Target6,  449, kSetPS10_PS11_PS12_PS13,  -696.0f,  -5.7f, 1185.0f,  469, 72, 36, true, false, false, true);
-		Item_Add_To_World(kItemPS12Target7,  449, kSetPS10_PS11_PS12_PS13,  -635.0f,  -5.7f, 1165.0f,  198, 72, 36, true, false, false, true);
-		Item_Add_To_World(kItemPS12Target8,  449, kSetPS10_PS11_PS12_PS13,  -620.0f, -8.63f, 1366.0f,  469, 72, 36, true, false, false, true);
-		Item_Add_To_World(kItemPS12Target9,  447, kSetPS10_PS11_PS12_PS13,  -584.0f, -79.4f,  775.0f, 1010, 72, 36, true, false, false, true);
-		Item_Add_To_World(kItemPS12Target10, 445, kSetPS10_PS11_PS12_PS13,  -578.0f, -79.4f,  810.0f,  990, 72, 36, true, false, false, true);
-		Item_Add_To_World(kItemPS12Target11, 443, kSetPS10_PS11_PS12_PS13,  -400.0f, -12.0f, 1110.0f,  513, 72, 36, true, false, false, true);
-		Item_Add_To_World(kItemPS12Target12, 449, kSetPS10_PS11_PS12_PS13, -414.04f, -8.98f, 711.91f,  480, 72, 36, true, false, false, true);
-		Item_Add_To_World(kItemPS12Target13, 447, kSetPS10_PS11_PS12_PS13,  -400.0f, -12.0f, 1110.0f,  513, 72, 36, true, false, false, true);
-		Item_Add_To_World(kItemPS12Target14, 449, kSetPS10_PS11_PS12_PS13,  -731.0f, 93.66f,  788.0f,  109, 72, 36, true, false, false, true);
-		Item_Add_To_World(kItemPS12Target15, 441, kSetPS10_PS11_PS12_PS13,  -580.0f, -80.0f,  925.0f,  540, 72, 36, true, false, false, true);
-		Item_Add_To_World(kItemPS12Target16, 441, kSetPS10_PS11_PS12_PS13,  -731.0f, 93.66f,  788.0f,  109, 72, 36, true, false, false, true);
-		Item_Add_To_World(kItemPS12Target17, 443, kSetPS10_PS11_PS12_PS13,  -580.0f, -80.0f,  925.0f,  540, 72, 36, true, false, false, true);
+		bool targetStateMZ = true;
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+// every maze target begins as NON-targetable
+		targetStateMZ = false;
+#endif // BLADERUNNER_ORIGINAL_BUGS
+		Item_Add_To_World(kItemPS12Target1,  449, kSetPS10_PS11_PS12_PS13,  -691.8f, -9.06f, 587.67f,  200, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS12Target2,  445, kSetPS10_PS11_PS12_PS13,  -679.6f, -45.4f, 721.05f,   67, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS12Target3,  447, kSetPS10_PS11_PS12_PS13, -414.04f, -8.98f, 711.91f,  480, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS12Target4,  443, kSetPS10_PS11_PS12_PS13,  -440.0f, -8.97f, 1137.0f, 1010, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS12Target5,  441, kSetPS10_PS11_PS12_PS13, -764.92f, -0.84f, 950.22f,  540, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS12Target6,  449, kSetPS10_PS11_PS12_PS13,  -696.0f,  -5.7f, 1185.0f,  469, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS12Target7,  449, kSetPS10_PS11_PS12_PS13,  -635.0f,  -5.7f, 1165.0f,  198, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS12Target8,  449, kSetPS10_PS11_PS12_PS13,  -620.0f, -8.63f, 1366.0f,  469, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS12Target9,  447, kSetPS10_PS11_PS12_PS13,  -584.0f, -79.4f,  775.0f, 1010, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS12Target10, 445, kSetPS10_PS11_PS12_PS13,  -578.0f, -79.4f,  810.0f,  990, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS12Target11, 443, kSetPS10_PS11_PS12_PS13,  -400.0f, -12.0f, 1110.0f,  513, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS12Target12, 449, kSetPS10_PS11_PS12_PS13, -414.04f, -8.98f, 711.91f,  480, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS12Target13, 447, kSetPS10_PS11_PS12_PS13,  -400.0f, -12.0f, 1110.0f,  513, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS12Target14, 449, kSetPS10_PS11_PS12_PS13,  -731.0f, 93.66f,  788.0f,  109, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS12Target15, 441, kSetPS10_PS11_PS12_PS13,  -580.0f, -80.0f,  925.0f,  540, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS12Target16, 441, kSetPS10_PS11_PS12_PS13,  -731.0f, 93.66f,  788.0f,  109, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS12Target17, 443, kSetPS10_PS11_PS12_PS13,  -580.0f, -80.0f,  925.0f,  540, 72, 36, targetStateMZ, false, false, true);
 	}
 	Police_Maze_Target_Track_Add(kItemPS12Target1,   -691.8f, -9.06f, 587.67f, -649.11f, -9.06f, 587.71f,  6, getPoliceMazePS12TrackData29(),  true);
 	Police_Maze_Target_Track_Add(kItemPS12Target2,   -679.6f, -45.4f, 721.05f,  -679.6f,  -1.4f, 721.05f,  6, getPoliceMazePS12TrackData30(),  true);
@@ -624,86 +634,46 @@ bool SceneScriptPS12::ClickedOnActor(int actorId) {
 bool SceneScriptPS12::ClickedOnItem(int itemId, bool a2) {
 	if (Player_Query_Combat_Mode()) {
 		switch (itemId) {
-		case kItemPS12Target3:
-			Sound_Play(4, 50, 0, 0, 50);
+		case kItemPS12Target3:              // fall through
+		case kItemPS12Target9:              // fall through
+		case kItemPS12Target13:             // fall through
+			Sound_Play(4, 50, 0, 0, 50);    // FEMHURT2
 			break;
-		case kItemPS12Target5:
-			Sound_Play(555, 50, 0, 0, 50);
-			break;
-		case kItemPS12Target9:
-			Sound_Play(4, 50, 0, 0, 50);
-			break;
-		case kItemPS12Target13:
-			Sound_Play(4, 50, 0, 0, 50);
-			break;
-		case kItemPS12Target15:
-			Sound_Play(555, 50, 0, 0, 50);
-			break;
-		case kItemPS12Target16:
-			Sound_Play(555, 50, 0, 0, 50);
+		case kItemPS12Target5:              // fall through
+		case kItemPS12Target15:             // fall through
+		case kItemPS12Target16:             // fall through
+			Sound_Play(555, 50, 0, 0, 50);  // MALEHURT
 			break;
 		default:
-			Sound_Play(2, 12, 0, 0, 50);
+			Sound_Play(2, 12, 0, 0, 50);    // SPINNY1
 			break;
 		}
 		Item_Spin_In_World(itemId);
-		Item_Flag_As_Non_Target(itemId);
-		if (itemId == kItemPS12Target1) {
-			Item_Flag_As_Non_Target(kItemPS12Target1);
-		}
-		if (itemId == kItemPS12Target2) {
-			Item_Flag_As_Non_Target(kItemPS12Target2);
-		}
-		if (itemId == kItemPS12Target3) {
-			Item_Flag_As_Non_Target(kItemPS12Target3);
-		}
-		if (itemId == kItemPS12Target4) {
-			Item_Flag_As_Non_Target(kItemPS12Target4);
-		}
-		if (itemId == kItemPS12Target5) {
-			Item_Flag_As_Non_Target(kItemPS12Target5);
-		}
-		if (itemId == kItemPS12Target6) {
+		switch (itemId) {
+		case kItemPS12Target6:              // fall-through
+		case kItemPS12Target7:              // fall-through
+		case kItemPS12Target8:
 			Item_Flag_As_Non_Target(kItemPS12Target6);
 			Item_Flag_As_Non_Target(kItemPS12Target7);
 			Item_Flag_As_Non_Target(kItemPS12Target8);
-		}
-		if (itemId == kItemPS12Target7) {
-			Item_Flag_As_Non_Target(kItemPS12Target6);
-			Item_Flag_As_Non_Target(kItemPS12Target7);
-			Item_Flag_As_Non_Target(kItemPS12Target8);
-		}
-		if (itemId == kItemPS12Target8) {
-			Item_Flag_As_Non_Target(kItemPS12Target6);
-			Item_Flag_As_Non_Target(kItemPS12Target7);
-			Item_Flag_As_Non_Target(kItemPS12Target8);
-		}
-		if (itemId == kItemPS12Target9) {
-			Item_Flag_As_Non_Target(kItemPS12Target9);
-		}
-		if (itemId == kItemPS12Target10) {
-			Item_Flag_As_Non_Target(kItemPS12Target10);
-		}
-		if (itemId == kItemPS12Target11) {
-			Item_Flag_As_Non_Target(kItemPS12Target11);
-		}
-		if (itemId == kItemPS12Target12) {
-			Item_Flag_As_Non_Target(kItemPS12Target12);
-		}
-		if (itemId == kItemPS12Target13) {
-			Item_Flag_As_Non_Target(kItemPS12Target13);
-		}
-		if (itemId == kItemPS12Target14) {
-			Item_Flag_As_Non_Target(kItemPS12Target14);
-		}
-		if (itemId == kItemPS12Target15) {
-			Item_Flag_As_Non_Target(kItemPS12Target15);
-		}
-		if (itemId == kItemPS12Target16) {
-			Item_Flag_As_Non_Target(kItemPS12Target16);
-		}
-		if (itemId == kItemPS12Target17) {
-			Item_Flag_As_Non_Target(kItemPS12Target17);
+			break;
+		case kItemPS12Target1:              // fall-through
+		case kItemPS12Target2:              // fall-through
+		case kItemPS12Target3:              // fall-through
+		case kItemPS12Target4:              // fall-through
+		case kItemPS12Target5:              // fall-through
+		case kItemPS12Target9:              // fall-through
+		case kItemPS12Target10:             // fall-through
+		case kItemPS12Target11:             // fall-through
+		case kItemPS12Target12:             // fall-through
+		case kItemPS12Target13:             // fall-through
+		case kItemPS12Target14:             // fall-through
+		case kItemPS12Target15:             // fall-through
+		case kItemPS12Target16:             // fall-through
+		case kItemPS12Target17:             // fall-through
+		default:
+			Item_Flag_As_Non_Target(itemId);
+			break;
 		}
 		return true;
 	}

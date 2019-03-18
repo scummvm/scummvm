@@ -30,6 +30,8 @@
 #include "bladerunner/script/police_maze.h"
 #include "bladerunner/script/scene_script.h"
 #include "bladerunner/time.h"
+#include "bladerunner/subtitles.h"           // TODO Remove if no longer need to display score and debug info on-screen
+
 
 namespace BladeRunner {
 
@@ -95,13 +97,70 @@ void PoliceMaze::tick() {
 		_tracks[i]->tick();
 	}
 
+//	int remainingActiveTargets = 0;            // TODO Un-comment this line while debugging the maze
+//	int targetIdsActive[kNumMazeTracks] = {0}; // TODO Un-comment this line while debugging the maze
+//	int j = 0;                                 // TODO Un-comment this line while debugging the maze
 	bool notFound = true;
 	for (int i = 0; i < kNumMazeTracks; i++) {
 		if (!_tracks[i]->isPaused()) {
 			notFound = false;
-			break;
+//			targetIdsActive[j++] = i;          // TODO Un-comment this line while debugging the maze
+//			remainingActiveTargets++;          // TODO Un-comment this line while debugging the maze
+			break;                             // TODO Comment-out this break while debugging the maze (debug messages on screen about all active targets)
 		}
 	}
+
+	Common::String scoreString;
+//	TODO un-comment this segment of updating activeTargetsString while debugging the maze
+//	Common::String activeTargetsString;
+//	for (int i = 0; i < kNumMazeTracks; ++i) {
+//		if (_vm->_items->isTarget(i)) {
+//			activeTargetsString += Common::String::format(" %d", (i+1));
+//		}
+//	}
+//	activeTargetsString += Common::String::format("] \n");
+//	for (int i = 0; i < remainingActiveTargets; ++i) {
+//		j = targetIdsActive[i];
+//		activeTargetsString += Common::String::format(" %d{%s:%s:%s:%s:%s}",
+//		                                               (j+1),
+//		                                               _tracks[j]->_isPaused?"P":"X",
+//		                                               _tracks[j]->_isWaiting?"W":"X",
+//		                                               _vm->_items->isSpinning(j)?"S":"X",
+//		                                               _vm->_items->isTarget(j)?"T":"X",
+//		                                               _vm->_items->isVisible(j)?"V":"X" );
+//	}
+//	int allTargetsNum = SceneScriptPS10::getPoliceMazePS10TargetCount()
+//						+ SceneScriptPS11::getPoliceMazePS11TargetCount()
+//						+ SceneScriptPS12::getPoliceMazePS12TargetCount()
+//						+ SceneScriptPS13::getPoliceMazePS13TargetCount();
+	int totalTargetsNumInScene = 0;
+	int currTargetsCounUpForRoom = 0;
+//	const int initActivatedTargetsPS10 = 4;
+//	const int initActivatedTargetsPS11 = 4;
+//	const int initActivatedTargetsPS12 = 5;
+//	const int initActivatedTargetsPS13 = 4;
+
+	int currMazeScore = Global_Variable_Query(kVariablePoliceMazeScore);
+	if (_vm->_scene->getSceneId() == kScenePS10) {
+		totalTargetsNumInScene = SceneScriptPS10::getPoliceMazePS10TargetCount();
+		currTargetsCounUpForRoom = Global_Variable_Query(kVariablePoliceMazePS10TargetCounter);
+	} else if (_vm->_scene->getSceneId() == kScenePS11) {
+		totalTargetsNumInScene = SceneScriptPS11::getPoliceMazePS11TargetCount();
+		currTargetsCounUpForRoom = Global_Variable_Query(kVariablePoliceMazePS11TargetCounter);
+	} else if (_vm->_scene->getSceneId() == kScenePS12) {
+		totalTargetsNumInScene = SceneScriptPS12::getPoliceMazePS12TargetCount();
+		currTargetsCounUpForRoom = Global_Variable_Query(kVariablePoliceMazePS12TargetCounter);
+	} else if (_vm->_scene->getSceneId() == kScenePS13) {
+		totalTargetsNumInScene = SceneScriptPS13::getPoliceMazePS13TargetCount();
+		currTargetsCounUpForRoom = Global_Variable_Query(kVariablePoliceMazePS13TargetCounter);
+	}
+//	scoreString = Common::String::format("Score: %02d (%02d), [%s]",
+//	                                      currMazeScore - (totalTargetsNumInScene - currTargetsCounUpForRoom),
+//	                                      totalTargetsNumInScene - currTargetsCounUpForRoom,
+//	                                      activeTargetsString.c_str());
+	scoreString = Common::String::format("Score: %02d", currMazeScore - (totalTargetsNumInScene - currTargetsCounUpForRoom));
+	_vm->_subtitles->setGameSubsText(scoreString, true);
+	_vm->_subtitles->show();
 
 	if (notFound && _isActive && !_isEnding) {
 		_isActive = false;
@@ -113,6 +172,7 @@ void PoliceMaze::tick() {
 			Actor_Voice_Over(310, kActorAnsweringMachine);
 		}
 	}
+
 }
 
 void PoliceMaze::save(SaveFileWriteStream &f) {
@@ -247,8 +307,9 @@ bool PoliceMazeTargetTrack::tick() {
 
 		_vm->_items->setFacing(_itemId, angle);
 
-		if (_isRotating)
-			return false;
+		if (_isRotating) {
+			return true;
+		}
 	}
 
 	bool advancePoint = false;

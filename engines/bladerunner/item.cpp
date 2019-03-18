@@ -52,7 +52,7 @@ Item::Item(BladeRunnerEngine *vm) {
 	_isSpinning = false;
 	_facingChange = 0;
 	_isVisible = true;
-	_isPoliceMazeEnemy = true;
+	_isPoliceMazeEnemy = false;
 	_screenRectangle.bottom = -1;
 	_screenRectangle.right = -1;
 	_screenRectangle.top = -1;

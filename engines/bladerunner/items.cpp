@@ -168,7 +168,7 @@ bool Items::isPoliceMazeEnemy(int itemId) const {
 	if (itemIndex == -1) {
 		return false;
 	}
-	return _items[itemIndex]->isTarget();
+	return _items[itemIndex]->isPoliceMazeEnemy();
 }
 
 void Items::setPoliceMazeEnemy(int itemId, bool val) {

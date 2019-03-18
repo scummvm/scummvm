@@ -386,18 +386,26 @@ END_SCRIPT
 
 DECLARE_SCRIPT(PS10)
 	void removeTargets();
+	public:
+	static int getPoliceMazePS10TargetCount();
 END_SCRIPT
 
 DECLARE_SCRIPT(PS11)
 	void removeTargets();
+	public:
+	static int getPoliceMazePS11TargetCount();
 END_SCRIPT
 
 DECLARE_SCRIPT(PS12)
 	void removeTargets();
+	public:
+	static int getPoliceMazePS12TargetCount();
 END_SCRIPT
 
 DECLARE_SCRIPT(PS13)
 	void removeTargets();
+	public:
+	static int getPoliceMazePS13TargetCount();
 END_SCRIPT
 
 DECLARE_SCRIPT(PS14)

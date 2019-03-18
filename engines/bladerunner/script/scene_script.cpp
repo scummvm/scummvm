@@ -21,6 +21,10 @@
  */
 
 #include "bladerunner/script/scene_script.h"
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+#include "bladerunner/items.h"
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 namespace BladeRunner {
 
@@ -214,6 +218,13 @@ bool SceneScript::clickedOnItem(int itemId, bool combatMode) {
 	if (_inScriptCounter > 0) {
 		return true;
 	}
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	if (combatMode
+	     && (!_vm->_items->isTarget(itemId) )) { // bugfix for overlapping items, "shooting" the wrong one (untargetable) because the correct one is near enough
+		return true;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	_inScriptCounter++;
 	bool result = _currentScript->ClickedOnItem(itemId, combatMode);
