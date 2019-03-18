@@ -646,18 +646,17 @@ reg_t kPaletteAnimate(EngineState *s, int argc, reg_t *argv) {
 	bool paletteChanged = false;
 
 	// Palette animation in non-VGA SCI1 games has been removed
-	if (g_sci->_gfxPalette16->getTotalColorCount() < 256)
-		return s->r_acc;
-
-	for (argNr = 0; argNr < argc; argNr += 3) {
-		uint16 fromColor = argv[argNr].toUint16();
-		uint16 toColor = argv[argNr + 1].toUint16();
-		int16 speed = argv[argNr + 2].toSint16();
-		if (g_sci->_gfxPalette16->kernelAnimate(fromColor, toColor, speed))
-			paletteChanged = true;
+	if (g_sci->_gfxPalette16->getTotalColorCount() == 256) {
+		for (argNr = 0; argNr < argc; argNr += 3) {
+			uint16 fromColor = argv[argNr].toUint16();
+			uint16 toColor = argv[argNr + 1].toUint16();
+			int16 speed = argv[argNr + 2].toSint16();
+			if (g_sci->_gfxPalette16->kernelAnimate(fromColor, toColor, speed))
+				paletteChanged = true;
+		}
+		if (paletteChanged)
+			g_sci->_gfxPalette16->kernelAnimateSet();
 	}
-	if (paletteChanged)
-		g_sci->_gfxPalette16->kernelAnimateSet();
 
 	// WORKAROUND: The game scripts in SQ4 floppy count the number of elapsed
 	// cycles in the intro from the number of successive kAnimate calls during
@@ -668,8 +667,10 @@ reg_t kPaletteAnimate(EngineState *s, int argc, reg_t *argv) {
 	// speed throttler gets called) between the different palette animation calls.
 	// Thus, we add a small delay between each animate call to make the whole
 	// palette animation effect slower and visible, and not have the logo screen
-	// get skipped because the scripts don't wait between animation steps. Fixes
-	// bug #3537232.
+	// get skipped because the scripts don't wait between animation steps. This
+	// workaround is applied to non-VGA versions as well because even though they
+	// don't use palette animation they still call this function and use it for
+	// timing. Fixes bugs #6057, #6193.
 	// The original workaround was for the intro SQ4 logo (room#1).
 	// This problem also happens in the time pod (room#531).
 	// This problem also happens in the ending cutscene time rip (room#21).

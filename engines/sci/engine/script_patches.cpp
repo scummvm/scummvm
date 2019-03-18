@@ -11092,6 +11092,30 @@ static const uint16 sq4CdPatchGettingShotWhileGettingRope[] = {
 	PATCH_END
 };
 
+// During the SQ4 introduction logo, EGA versions increase the number of calls
+//  to kPaletteAnimate by 40x. This was probably to achieve the same delay as
+//  VGA even though no palette animation occurred. This adjustment interferes
+//  with our kPaletteAnimate speed throttling for SQ4 scripts such as this, bug
+//  #6057. We remove the EGA delay, making all versions consistent, otherwise
+//  the logo is displayed for over 3 minutes instead of 5 seconds.
+//
+// Applies to: English PC EGA Floppy, Japanese PC-98
+// Responsible method: rmScript:changeState
+// Fixes bug #6193
+static const uint16 sq4SignatureEgaIntroDelay[] = {
+	SIG_MAGICDWORD,
+	0x89, 0x69,                         // lsg 69 [ system colors ]
+	0x35, 0x10,                         // ldi 10
+	0x1e,                               // gt?    [ system colors > 16 ]
+	0x30,                               // bnt    [ use EGA delay ]
+	SIG_END
+};
+
+static const uint16 sq4PatchEgaIntroDelay[] = {
+	0x33, 0x06,                         // jmp 06 [ don't use EGA delay ]
+	PATCH_END
+};
+
 // Talking in room 520 results in a missing message due to passing the wrong
 //  modNum to the narrator.
 //
@@ -11351,6 +11375,7 @@ static const uint16 sq4CdPatchTextOptions[] = {
 
 //          script, description,                                      signature                                      patch
 static const SciScriptPatcherEntry sq4Signatures[] = {
+	{  true,     1, "Floppy: EGA intro delay fix",                    2, sq4SignatureEgaIntroDelay,                     sq4PatchEgaIntroDelay },
 	{  true,   298, "Floppy: endless flight",                         1, sq4FloppySignatureEndlessFlight,               sq4FloppyPatchEndlessFlight },
 	{  true,   700, "Floppy: throw stuff at sequel police bug",       1, sq4FloppySignatureThrowStuffAtSequelPoliceBug, sq4FloppyPatchThrowStuffAtSequelPoliceBug },
 	{  true,    35, "CD: sidewalk smell message fix",                 1, sq4CdSignatureSidewalkSmellMessage,            sq4CdPatchSidewalkSmellMessage },
