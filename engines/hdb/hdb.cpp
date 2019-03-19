@@ -77,8 +77,7 @@ Common::Error HDBGame::run() {
 void HDBGame::readMPC(const Common::String &filename) {	
 	if (!file.open(filename)) {
 		error("readMPC(): Error reading MPC file");
-	}
-	else {
+	} else {
 		dataHeader.signature[0] = file.readByte();
 		dataHeader.signature[1] = file.readByte();
 		dataHeader.signature[2] = file.readByte();

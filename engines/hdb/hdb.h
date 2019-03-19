@@ -57,7 +57,6 @@ public:
 	Common::Platform getPlatform() const;
 
 private:
-	
 	Console *_console;
 	Common::File file;
 
@@ -67,11 +66,11 @@ private:
 		uint32 dirSize;
 
 		bool isValid() {
-			return (signature[0] == 'M') &&
-				(signature[1] == 'P') &&
-				(signature[2] == 'C') &&
-				(signature[3] == 'U') &&
-				(signature[4] == '\0');
+			return	(signature[0] == 'M') &&
+					(signature[1] == 'P') &&
+					(signature[2] == 'C') &&
+					(signature[3] == 'U') &&
+					(signature[4] == '\0');
 		}
 
 	} dataHeader;
