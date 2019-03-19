@@ -63,7 +63,7 @@ void SceneScriptPS13::InitializeScene() {
 	Ambient_Sounds_Add_Sound(308,  5, 100, 17, 27, -100, 100, -101, -101, 0, 0);
 }
 
-static const int *getPoliceMazePS13TrackData46() {
+static const int *getPoliceMazePS13TrackData46() { // - Starts activated
 	static int trackData[] = {
 		kPMTIActivate,        kVariablePoliceMazePS13TargetCounter, kPoliceMazePS13TargetCount,
 		kPMTIVariableInc,     kVariablePoliceMazePS13TargetCounter, kPoliceMazePS13TargetCount,
@@ -89,7 +89,7 @@ static const int *getPoliceMazePS13TrackData46() {
 	return trackData;
 }
 
-static const int *getPoliceMazePS13TrackData47() {
+static const int *getPoliceMazePS13TrackData47() { // - Starts activated
 	static int trackData[] = {
 		kPMTIActivate,        kVariablePoliceMazePS13TargetCounter, kPoliceMazePS13TargetCount,
 		kPMTIVariableInc,     kVariablePoliceMazePS13TargetCounter, kPoliceMazePS13TargetCount,
@@ -113,7 +113,7 @@ static const int *getPoliceMazePS13TrackData47() {
 	return trackData;
 }
 
-static const int *getPoliceMazePS13TrackData48() {
+static const int *getPoliceMazePS13TrackData48() { // - Starts activated
 	static int trackData[] = {
 		kPMTIActivate,        kVariablePoliceMazePS13TargetCounter, kPoliceMazePS13TargetCount,
 		kPMTIVariableInc,     kVariablePoliceMazePS13TargetCounter, kPoliceMazePS13TargetCount,
@@ -297,27 +297,27 @@ static const int *getPoliceMazePS13TrackData54() {
 
 static const int *getPoliceMazePS13TrackData55() {
 	static int trackData[] = {
-		kPMTIActivate,      kVariablePoliceMazePS13TargetCounter, kPoliceMazePS13TargetCount,
-		kPMTIVariableInc,   kVariablePoliceMazePS13TargetCounter, kPoliceMazePS13TargetCount,
-		kPMTIObstacleReset, kItemPS13Target10,
-		kPMTIObstacleReset, kItemPS13Target11,
-		kPMTIObstacleReset, kItemPS13Target12,
-		kPMTITargetSet,     kItemPS13Target10, 1,
-		kPMTITargetSet,     kItemPS13Target11, 1,
-		kPMTITargetSet,     kItemPS13Target12, 1,
-		kPMTIFacing,        327,
-		kPMTIPosition,      0,
-		kPMTIWaitRandom,    1000, 1000,
-		kPMTIPlaySound,     33, 33,
-		kPMTIEnemyReset,    kItemPS13Target10,
-		kPMTIObstacleSet,   kItemPS13Target10,
-		kPMTIMove,          14,
-		kPMTIWait,          1000,
-		kPMTIPausedReset,   kItemPS13Target11,
-		kPMTIObstacleReset, kItemPS13Target10,
-		kPMTIObstacleSet,   kItemPS13Target11,
-		kPMTIPausedSet,     kItemPS13Target10,
-		kPMTIPosition,      0,
+		kPMTIActivate,        kVariablePoliceMazePS13TargetCounter, kPoliceMazePS13TargetCount,
+		kPMTIVariableInc,     kVariablePoliceMazePS13TargetCounter, kPoliceMazePS13TargetCount,
+		kPMTIObstacleReset,   kItemPS13Target10,
+		kPMTIObstacleReset,   kItemPS13Target11,
+		kPMTIObstacleReset,   kItemPS13Target12,
+		kPMTITargetSet,       kItemPS13Target10, 1,
+		kPMTITargetSet,       kItemPS13Target11, 1,
+		kPMTITargetSet,       kItemPS13Target12, 1,
+		kPMTIFacing,          327,
+		kPMTIPosition,        0,
+		kPMTIWaitRandom,      1000, 1000,
+		kPMTIPlaySound,       33, 33,
+		kPMTIEnemyReset,      kItemPS13Target10,
+		kPMTIObstacleSet,     kItemPS13Target10,
+		kPMTIMove,            14,
+		kPMTIWait,            1000,
+		kPMTIPausedReset,     kItemPS13Target11,
+		kPMTIObstacleReset,   kItemPS13Target10,
+		kPMTIObstacleSet,     kItemPS13Target11,
+		kPMTIPausedSet,       kItemPS13Target10,
+		kPMTIPosition,        0,
 		kPMTIRestart
 	};
 	return trackData;
@@ -325,17 +325,17 @@ static const int *getPoliceMazePS13TrackData55() {
 
 static const int *getPoliceMazePS13TrackData56() {
 	static int trackData[] = {
-		kPMTIFacing,        327,
-		kPMTIPosition,      0,
-		kPMTIObstacleSet,   kItemPS13Target11,
-		kPMTIEnemyReset,    kItemPS13Target11,
-		kPMTIMove,          14,
-		kPMTIWait,          1000,
-		kPMTIPausedReset,   kItemPS13Target12,
-		kPMTIObstacleReset, kItemPS13Target11,
-		kPMTIObstacleSet,   kItemPS13Target12,
-		kPMTIPausedSet,     kItemPS13Target11,
-		kPMTIPosition,      0,
+		kPMTIFacing,          327,
+		kPMTIPosition,        0,
+		kPMTIObstacleSet,     kItemPS13Target11,
+		kPMTIEnemyReset,      kItemPS13Target11,
+		kPMTIMove,            14,
+		kPMTIWait,            1000,
+		kPMTIPausedReset,     kItemPS13Target12,
+		kPMTIObstacleReset,   kItemPS13Target11,
+		kPMTIObstacleSet,     kItemPS13Target12,
+		kPMTIPausedSet,       kItemPS13Target11,
+		kPMTIPosition,        0,
 		kPMTIRestart
 	};
 	return trackData;
@@ -363,33 +363,33 @@ static const int *getPoliceMazePS13TrackData57() {
 	return trackData;
 }
 
-static const int *getPoliceMazePS13TrackData58() {
+static const int *getPoliceMazePS13TrackData58() { // - Starts activated
 	static int trackData[] = {
-		kPMTIActivate,      kVariablePoliceMazePS13TargetCounter, kPoliceMazePS13TargetCount,
-		kPMTIVariableInc,   kVariablePoliceMazePS13TargetCounter, kPoliceMazePS13TargetCount,
-		kPMTIObstacleReset, kItemPS13Target13,
-		kPMTIFacing,        922,
-		kPMTIPosition,      0,
-		kPMTIWaitRandom,    3000, 3000,
-		kPMTIObstacleSet,   kItemPS13Target13,
-		kPMTIPlaySound,     33, 33,
-		kPMTITargetSet,     kItemPS13Target13, 1,
-		kPMTIEnemyReset,    kItemPS13Target13,
-		kPMTIMove,          9,
-		kPMTIWait,          200,
-		kPMTIMove,          0,
+		kPMTIActivate,        kVariablePoliceMazePS13TargetCounter, kPoliceMazePS13TargetCount,
+		kPMTIVariableInc,     kVariablePoliceMazePS13TargetCounter, kPoliceMazePS13TargetCount,
+		kPMTIObstacleReset,   kItemPS13Target13,
+		kPMTIFacing,          922,
+		kPMTIPosition,        0,
+		kPMTIWaitRandom,      3000, 3000,
+		kPMTIObstacleSet,     kItemPS13Target13,
+		kPMTIPlaySound,       33, 33,
+		kPMTITargetSet,       kItemPS13Target13, 1,
+		kPMTIEnemyReset,      kItemPS13Target13,
+		kPMTIMove,            9,
+		kPMTIWait,            200,
+		kPMTIMove,            0,
 		kPMTILeave,
-		kPMTITargetSet,     kItemPS13Target13, 1,
-		kPMTIEnemyReset,    kItemPS13Target13,
-		kPMTIWait,          200,
-		kPMTIMove,          9,
-		kPMTIWait,          200,
-		kPMTIMove,          0,
+		kPMTITargetSet,       kItemPS13Target13, 1,
+		kPMTIEnemyReset,      kItemPS13Target13,
+		kPMTIWait,            200,
+		kPMTIMove,            9,
+		kPMTIWait,            200,
+		kPMTIMove,            0,
 		kPMTILeave,
-		kPMTIObstacleReset, kItemPS13Target13,
-		kPMTIPausedReset,   kItemPS13Target4,
-		kPMTIPausedSet,     kItemPS13Target13,
-		kPMTIPosition,      0,
+		kPMTIObstacleReset,   kItemPS13Target13,
+		kPMTIPausedReset,     kItemPS13Target4,
+		kPMTIPausedSet,       kItemPS13Target13,
+		kPMTIPosition,        0,
 		kPMTIRestart
 	};
 	return trackData;
@@ -550,11 +550,23 @@ bool SceneScriptPS13::ClickedOnItem(int itemId, bool a2) {
 			Sound_Play(2, 12, 0, 0, 50);   // SPINNY1
 			break;
 		}
+#if BLADERUNNER_ORIGINAL_BUGS
 		Item_Spin_In_World(itemId);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		switch (itemId) {
 		case kItemPS13Target10:            // fall-through
 		case kItemPS13Target11:            // fall-through
 		case kItemPS13Target12:
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+			if (Item_Query_Visible(kItemPS13Target10)) { // without this check, the wrong target might get the spinning while the visible stays put
+				Item_Spin_In_World(kItemPS13Target10);
+			} else if (Item_Query_Visible(kItemPS13Target11)) {
+				Item_Spin_In_World(kItemPS13Target11);
+			} else {
+				Item_Spin_In_World(kItemPS13Target12);
+			}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Item_Flag_As_Non_Target(kItemPS13Target10);
 			Item_Flag_As_Non_Target(kItemPS13Target11);
 			Item_Flag_As_Non_Target(kItemPS13Target12);
@@ -572,6 +584,10 @@ bool SceneScriptPS13::ClickedOnItem(int itemId, bool a2) {
 		case kItemPS13Target14:            // fall-through
 		case kItemPS13Target15:            // fall-through
 		default:
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+			Item_Spin_In_World(itemId);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Item_Flag_As_Non_Target(itemId);
 			break;
 		}

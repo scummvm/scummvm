@@ -30,9 +30,59 @@
 #include "bladerunner/script/police_maze.h"
 #include "bladerunner/script/scene_script.h"
 #include "bladerunner/time.h"
-#include "bladerunner/subtitles.h"           // TODO Remove if no longer need to display score and debug info on-screen
+#include "bladerunner/subtitles.h"             // TODO Remove if no longer need to display score and debug info on-screen
 
-
+// ----------------------
+// Maze point system info
+// ----------------------
+// Maze score starts at zero (0) points at the first room and it can get a negative value later on.
+// Exiting each room deducts from maze score the number of targets that were not activated for that room
+// Each room has a max number of 20 targets that can be activated for it in total (kPoliceMazePS1xTargetCount).
+// Entering a room always auto-activates a set of predefined targets: 4 for PS10, PS11, PS12 and 5 for PS12
+//
+// - Leaving a room from the forward exit (moving properly through the maze)
+//   will mark the old room as complete. So, returning to an old room
+//   (which McCoy had exited from the *forward* exit) won't affect the score.
+//
+// - Leaving a room from the *backwards* exit (moving backwards through the maze)
+//   will NOT mark the room that McCoy just left as complete, if it was not already.
+//   So returning to a previous room (which McCoy had exited from the *backwards* exit)
+//   may still affect the score and combat may resume. However, upon re-entering that room,
+//   it will again activate the predefined set of targets for it and those will count
+//   additively to the total activated targets for that room. So, the room can be resumed at most
+//   four (PS12) or five (PS10, PS11, PS13) times until it becomes completed (reaches its max activated targets).
+//
+// Running quickly through the maze (not stopping to shoot targets) amounts to a negative score of:
+//      0 - (3 * (20 - 4)) - (20 - 5) = -63 points
+//
+// However, that is not the lowest score McCoy can get, since points are deducted when:
+//  a) shooting innocents
+//  b) shooting unrevealed enemies
+//  c) getting shot
+//
+// Combat Point System:
+//      + 1: gain a point when an enemy (revealed) is shot             (Item_Spin_In_World)
+//      - 1: lose a point when an innocent or unrevealed enemy is shot (Item_Spin_In_World)
+//      + 1: gain a point when an innocent escapes                     (kPMTILeave instruction)
+//      - 1: lose a point when an enemy shoots McCoy                   (kPMTIShoot)
+//
+// For the maximum score, all 4 * 20 = 80 targets have to get activated and handled properly.
+// Since McCoy always gains one (1) point per target (enemy or innocent) for that,
+// the maximum score *should be*: 80 points.
+// [TODO] First pass of fixes:  Normalize the original special targets.
+//                              Ensure the high score of 80 is achievable
+// [TODO] Second pass of fixes: Restore the original special (not bugged) targets.
+//                              Check achievable high score (should be higher than 80)
+// [TODO] However, there are some *special* target types:
+//      1.[TODO] Targets that will count as multiple targets without increasing
+//               the active target count more than once.
+//      2.[TODO] Targets that won't increase the active target count at all.
+//
+// So the maximum achievable score is greater than 80 points.
+// Taking all those targets into account (...)
+//      ([TODO] can they appear randomly more than once via kPMTIPausedReset1of2 or kPMTIPausedReset1of3?)
+//      ([TODO] is the highest score not a fixed number?)
+//
 namespace BladeRunner {
 
 PoliceMaze::PoliceMaze(BladeRunnerEngine *vm) : ScriptBase(vm) {

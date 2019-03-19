@@ -44,7 +44,7 @@ void SceneScriptPS11::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(1, 0,   0,  20, 479, 3);
 }
 
-static const int *getPoliceMazePS11TrackData9() {   // Enemy (kItemPS11Target1)
+static const int *getPoliceMazePS11TrackData9() {   // Enemy (kItemPS11Target1) - Starts activated
 	static int trackData[] = {
 		kPMTIActivate,        kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
 		kPMTIVariableInc,     kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
@@ -81,45 +81,45 @@ static const int *getPoliceMazePS11TrackData9() {   // Enemy (kItemPS11Target1)
 
 static const int *getPoliceMazePS11TrackData10() {  // Enemy (kItemPS11Target2, kItemPS11Target3)
 	static int trackData[] = {
-		kPMTIActivate,      kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
-		kPMTIVariableInc,   kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
+		kPMTIActivate,        kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
+		kPMTIVariableInc,     kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-		kPMTITargetSet,     kItemPS11Target2, 0,    // remove target-able here
-		kPMTITargetSet,     kItemPS11Target3, 0,    // remove target-able here
+		kPMTITargetSet,       kItemPS11Target2, 0,  // remove target-able here
+		kPMTITargetSet,       kItemPS11Target3, 0,  // remove target-able here
 #endif // BLADERUNNER_ORIGINAL_BUGS
-		kPMTIObstacleReset, kItemPS11Target2,
-		kPMTIObstacleReset, kItemPS11Target3,
-		kPMTITargetSet,     kItemPS11Target2, 1,
-		kPMTITargetSet,     kItemPS11Target3, 1,
-		kPMTIFacing,        860,
-		kPMTIPosition,      0,
-		kPMTIWaitRandom,    3000, 6000,
-		kPMTIEnemyReset,    kItemPS11Target2,
+		kPMTIObstacleReset,   kItemPS11Target2,
+		kPMTIObstacleReset,   kItemPS11Target3,
+		kPMTITargetSet,       kItemPS11Target2, 1,
+		kPMTITargetSet,       kItemPS11Target3, 1,
+		kPMTIFacing,          860,
+		kPMTIPosition,        0,
+		kPMTIWaitRandom,      3000, 6000,
+		kPMTIEnemyReset,      kItemPS11Target2,
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-		kPMTIEnemyReset,    kItemPS11Target3,       // both targets should clear their enemy flag here
+		kPMTIEnemyReset,      kItemPS11Target3,     // both targets should clear their enemy flag here
 #endif // BLADERUNNER_ORIGINAL_BUGS
-		kPMTIObstacleSet,   kItemPS11Target2,
-		kPMTIPlaySound,     33, 33,
-		kPMTIMove,          14,
-		kPMTIWait,          500,
-		kPMTIPausedReset,   kItemPS11Target3,
-		kPMTIObstacleReset, kItemPS11Target2,
+		kPMTIObstacleSet,     kItemPS11Target2,
+		kPMTIPlaySound,       33, 33,
+		kPMTIMove,            14,
+		kPMTIWait,            500,
+		kPMTIPausedReset,     kItemPS11Target3,
+		kPMTIObstacleReset,   kItemPS11Target2,
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-		kPMTITargetSet,     kItemPS11Target2, 0,    // remove target-able here - only for kItemPS11Target2 item
+		kPMTITargetSet,       kItemPS11Target2, 0,  // remove target-able here - only for kItemPS11Target2 item
 #endif // BLADERUNNER_ORIGINAL_BUGS
-		kPMTIObstacleSet,   kItemPS11Target3,
-		kPMTIPausedSet,     kItemPS11Target2,
-		kPMTIPosition,      0,
+		kPMTIObstacleSet,     kItemPS11Target3,
+		kPMTIPausedSet,       kItemPS11Target2,
+		kPMTIPosition,        0,
 		kPMTIRestart
 	};
 	return trackData;
 }
 
 // TODO - into look possible bug
-static const int *getPoliceMazePS11TrackData11() {  // Innocent (kItemPS11Target2, kItemPS11Target3)
+static const int *getPoliceMazePS11TrackData11() {  // Enemy (kItemPS11Target2, kItemPS11Target3)
 	static int trackData[] = {
 		kPMTIFacing,          860,
 		kPMTIPosition,        0,
@@ -150,48 +150,48 @@ static const int *getPoliceMazePS11TrackData11() {  // Innocent (kItemPS11Target
 
 static const int *getPoliceMazePS11TrackData12() {  // Innocent (kItemPS11Target4)
 	static int trackData[] = {
-		kPMTIActivate,      kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
-		kPMTIVariableInc,   kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
+		kPMTIActivate,        kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
+		kPMTIVariableInc,     kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-		kPMTITargetSet,     kItemPS11Target4, 0,    // remove target-able here
+		kPMTITargetSet,       kItemPS11Target4, 0,  // remove target-able here
 #endif // BLADERUNNER_ORIGINAL_BUGS
-		kPMTIObstacleReset, kItemPS11Target4,
-		kPMTIFacing,        725,
-		kPMTIPosition,      0,
-		kPMTIWait,          2000,
-		kPMTITargetSet,     kItemPS11Target4, 1,
-		kPMTIEnemyReset,    kItemPS11Target4,
-		kPMTIObstacleSet,   kItemPS11Target4,
-		kPMTIMove,          82,
+		kPMTIObstacleReset,   kItemPS11Target4,
+		kPMTIFacing,          725,
+		kPMTIPosition,        0,
+		kPMTIWait,            2000,
+		kPMTITargetSet,       kItemPS11Target4, 1,
+		kPMTIEnemyReset,      kItemPS11Target4,
+		kPMTIObstacleSet,     kItemPS11Target4,
+		kPMTIMove,            82,
 #if BLADERUNNER_ORIGINAL_BUGS
 		kPMTILeave,
 #endif // BLADERUNNER_ORIGINAL_BUGS
-		kPMTIWait,          1000,
-		kPMTIRotate,        570, 80,
-		kPMTIWait,          0,
-		kPMTIRotate,        462, 80,
-		kPMTIWait,          0,
-		kPMTIRotate,        213, 80,
-		kPMTIWait,          1000,
-		kPMTIMove,          0,
-		kPMTIRotate,        725, 80,
-		kPMTIMove,          99,
-		kPMTIObstacleReset, kItemPS11Target4,
+		kPMTIWait,            1000,
+		kPMTIRotate,          570, 80,
+		kPMTIWait,            0,
+		kPMTIRotate,          462, 80,
+		kPMTIWait,            0,
+		kPMTIRotate,          213, 80,
+		kPMTIWait,            1000,
+		kPMTIMove,            0,
+		kPMTIRotate,          725, 80,
+		kPMTIMove,            99,
+		kPMTIObstacleReset,   kItemPS11Target4,
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 		kPMTILeave,                                 // Do the leave instruction here, before becoming un-target-able
-		kPMTITargetSet,     kItemPS11Target4, 0,    // remove target-able here
+		kPMTITargetSet,       kItemPS11Target4, 0,  // remove target-able here
 #endif // BLADERUNNER_ORIGINAL_BUGS
-		kPMTIPausedReset,   kItemPS11Target16,
-		kPMTIPausedSet,     kItemPS11Target4,
-		kPMTIPosition,      0,
+		kPMTIPausedReset,     kItemPS11Target16,
+		kPMTIPausedSet,       kItemPS11Target4,
+		kPMTIPosition,        0,
 		kPMTIRestart
 	};
 	return trackData;
 }
 
-static const int *getPoliceMazePS11TrackData13() {  // Enemy (kItemPS11Target5)
+static const int *getPoliceMazePS11TrackData13() {  // Enemy (kItemPS11Target5)  - Starts activated
 	static int trackData[] = {
 		kPMTIActivate,        kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
 		kPMTIVariableInc,     kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
@@ -281,42 +281,42 @@ static const int *getPoliceMazePS11TrackData14() {  // Enemy (kItemPS11Target6)
 
 static const int *getPoliceMazePS11TrackData15() {  // Innocent (kItemPS11Target7, kItemPS11Target8)
 	static int trackData[] = {
-		kPMTIActivate,      kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
-		kPMTIVariableInc,   kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
+		kPMTIActivate,        kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
+		kPMTIVariableInc,     kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-		kPMTITargetSet,     kItemPS11Target7, 0,    // remove target-able here
-		kPMTITargetSet,     kItemPS11Target8, 0,    // remove target-able here
+		kPMTITargetSet,       kItemPS11Target7, 0,  // remove target-able here
+		kPMTITargetSet,       kItemPS11Target8, 0,  // remove target-able here
 #endif // BLADERUNNER_ORIGINAL_BUGS
-		kPMTIObstacleReset, kItemPS11Target7,
-		kPMTIObstacleReset, kItemPS11Target8,
-		kPMTITargetSet,     kItemPS11Target7, 1,
-		kPMTITargetSet,     kItemPS11Target8, 1,
-		kPMTIFacing,        860,
-		kPMTIPosition,      0,
-		kPMTIWaitRandom,    3000, 7000,
-		kPMTIObstacleSet,   kItemPS11Target7,
-		kPMTIPlaySound,     29, 33,                 // TARGUP1
-		kPMTIEnemyReset,    kItemPS11Target7,
+		kPMTIObstacleReset,   kItemPS11Target7,
+		kPMTIObstacleReset,   kItemPS11Target8,
+		kPMTITargetSet,       kItemPS11Target7, 1,
+		kPMTITargetSet,       kItemPS11Target8, 1,
+		kPMTIFacing,          860,
+		kPMTIPosition,        0,
+		kPMTIWaitRandom,      3000, 7000,
+		kPMTIObstacleSet,     kItemPS11Target7,
+		kPMTIPlaySound,       29, 33,               // TARGUP1
+		kPMTIEnemyReset,      kItemPS11Target7,
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-		kPMTIEnemyReset,    kItemPS11Target8,       // both targets should clear their enemy flag here
+		kPMTIEnemyReset,      kItemPS11Target8,     // both targets should clear their enemy flag here
 #endif // BLADERUNNER_ORIGINAL_BUGS
-		kPMTIMove,          14,
+		kPMTIMove,            14,
 
 #if BLADERUNNER_ORIGINAL_BUGS
 		kPMTILeave,                                 // TODO MAZE A bug? intended? - Why do a LEAVE here is its track is continued with kItemPS11Target8? (would result to re-credit another point with the later leave instruction for kItemPS11Target8)
 #endif // BLADERUNNER_ORIGINAL_BUGS
-		kPMTIWait,          1000,
-		kPMTIPausedReset,   kItemPS11Target8,
-		kPMTIObstacleReset, kItemPS11Target7,
+		kPMTIWait,            1000,
+		kPMTIPausedReset,     kItemPS11Target8,
+		kPMTIObstacleReset,   kItemPS11Target7,
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-		kPMTITargetSet,     kItemPS11Target7, 0,    // remove target-able here
+		kPMTITargetSet,       kItemPS11Target7, 0,  // remove target-able here
 #endif // BLADERUNNER_ORIGINAL_BUGS
-		kPMTIObstacleSet,   kItemPS11Target8,
-		kPMTIPausedSet,     kItemPS11Target7,
-		kPMTIPosition,      0,
+		kPMTIObstacleSet,     kItemPS11Target8,
+		kPMTIPausedSet,       kItemPS11Target7,
+		kPMTIPosition,        0,
 		kPMTIRestart
 	};
 	return trackData;
@@ -408,54 +408,54 @@ static const int *getPoliceMazePS11TrackData17() {  // Enemy (kItemPS11Target9)
 
 static const int *getPoliceMazePS11TrackData18() {  // Enemy (kItemPS11Target10, kItemPS11Target11)
 	static int trackData[] = {
-		kPMTIActivate,      kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
-		kPMTIVariableInc,   kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
+		kPMTIActivate,        kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
+		kPMTIVariableInc,     kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-		kPMTITargetSet,     kItemPS11Target10, 0,   // remove target-able here
-		kPMTITargetSet,     kItemPS11Target11, 0,   // remove target-able here
+		kPMTITargetSet,       kItemPS11Target10, 0, // remove target-able here
+		kPMTITargetSet,       kItemPS11Target11, 0, // remove target-able here
 #endif // BLADERUNNER_ORIGINAL_BUGS
-		kPMTIObstacleReset, kItemPS11Target10,
-		kPMTIObstacleReset, kItemPS11Target11,
-		kPMTIFacing,        900,
-		kPMTIPosition,      0,
-		kPMTITargetSet,     kItemPS11Target10, 1,
-		kPMTITargetSet,     kItemPS11Target11, 1,
-		kPMTIEnemyReset,    kItemPS11Target10,
+		kPMTIObstacleReset,   kItemPS11Target10,
+		kPMTIObstacleReset,   kItemPS11Target11,
+		kPMTIFacing,          900,
+		kPMTIPosition,        0,
+		kPMTITargetSet,       kItemPS11Target10, 1,
+		kPMTITargetSet,       kItemPS11Target11, 1,
+		kPMTIEnemyReset,      kItemPS11Target10,
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-		kPMTIEnemyReset,    kItemPS11Target11,      // both targets should clear their enemy flag here
+		kPMTIEnemyReset,      kItemPS11Target11,    // both targets should clear their enemy flag here
 #endif // BLADERUNNER_ORIGINAL_BUGS
-		kPMTIWaitRandom,    4000, 6000,
-		kPMTIObstacleSet,   kItemPS11Target10,
-		kPMTIMove,          5,
-		kPMTIPlaySound,     19, 33,                 // RICO3
+		kPMTIWaitRandom,      4000, 6000,
+		kPMTIObstacleSet,     kItemPS11Target10,
+		kPMTIMove,            5,
+		kPMTIPlaySound,       19, 33,               // RICO3
 #if BLADERUNNER_ORIGINAL_BUGS
-		kPMTIPlaySound,     3, 33,                  // FEMHURT1
+		kPMTIPlaySound,       3, 33,                // FEMHURT1
 #endif // BLADERUNNER_ORIGINAL_BUGS
-		kPMTIWait,          1000,
+		kPMTIWait,            1000,
 #if BLADERUNNER_ORIGINAL_BUGS
 		kPMTILeave,                                 // TODO MAZE A bug? intended?  this target track is not for an innocent target, why credit a point here while the target is not revealed?
 #endif // BLADERUNNER_ORIGINAL_BUGS
-		kPMTIRotate,        700, 80,
-		kPMTIEnemySet,      kItemPS11Target10,
+		kPMTIRotate,          700, 80,
+		kPMTIEnemySet,        kItemPS11Target10,
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-		kPMTIEnemySet,      kItemPS11Target11,      // both targets should set their enemy flag here
+		kPMTIEnemySet,        kItemPS11Target11,    // both targets should set their enemy flag here
 #endif // BLADERUNNER_ORIGINAL_BUGS
-		kPMTIWait,          0,
-		kPMTIRotate,        512, 200,
-		kPMTIWait,          1000,
-		kPMTIShoot,         12, 33,
-		kPMTIPausedReset,   kItemPS11Target11,
-		kPMTIObstacleReset, kItemPS11Target10,
+		kPMTIWait,            0,
+		kPMTIRotate,          512, 200,
+		kPMTIWait,            1000,
+		kPMTIShoot,           12, 33,
+		kPMTIPausedReset,     kItemPS11Target11,
+		kPMTIObstacleReset,   kItemPS11Target10,
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-		kPMTITargetSet,     kItemPS11Target10, 0,   // remove target-able here only for kItemPS11Target10
+		kPMTITargetSet,       kItemPS11Target10, 0, // remove target-able here only for kItemPS11Target10
 #endif // BLADERUNNER_ORIGINAL_BUGS
-		kPMTIObstacleSet,   kItemPS11Target11,
-		kPMTIPausedSet,     kItemPS11Target10,
-		kPMTIPosition,      0,
+		kPMTIObstacleSet,     kItemPS11Target11,
+		kPMTIPausedSet,       kItemPS11Target10,
+		kPMTIPosition,        0,
 		kPMTIRestart
 	};
 	return trackData;
@@ -491,7 +491,7 @@ static const int *getPoliceMazePS11TrackData19() {  // Enemy (kItemPS11Target10,
 	return trackData;
 }
 
-static const int *getPoliceMazePS11TrackData20() {  // Enemy (kItemPS11Target12)
+static const int *getPoliceMazePS11TrackData20() {  // Enemy (kItemPS11Target12) - Starts activated
 	static int trackData[] = {
 		kPMTIActivate,        kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
 		kPMTIVariableInc,     kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
@@ -592,7 +592,7 @@ static const int *getPoliceMazePS11TrackData22() {  // Enemy (kItemPS11Target14)
 	return trackData;
 }
 
-static const int *getPoliceMazePS11TrackData23() {  // Innocent (kItemPS11Target15)
+static const int *getPoliceMazePS11TrackData23() {  // Innocent (kItemPS11Target15) - Starts activated
 	static int trackData[] = {
 		kPMTIActivate,        kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
 		kPMTIVariableInc,     kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
@@ -768,13 +768,13 @@ bool SceneScriptPS11::ClickedOnItem(int itemId, bool combatMode) {
 
 #if BLADERUNNER_ORIGINAL_BUGS
 		Item_Spin_In_World(itemId);
-#endif
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		switch (itemId) {
 		case kItemPS11Target2:  // fall through
 		case kItemPS11Target3:
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-			if (Item_Query_Visible(kItemPS11Target2)) { // without this check, target2 seems to get the spinning while the visible target1 stays put
+			if (Item_Query_Visible(kItemPS11Target2)) { // without this check, the wrong target might get the spinning while the visible stays put
 				Item_Spin_In_World(kItemPS11Target2);
 			} else {
 				Item_Spin_In_World(kItemPS11Target3);
@@ -787,7 +787,7 @@ bool SceneScriptPS11::ClickedOnItem(int itemId, bool combatMode) {
 		case kItemPS11Target8:
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-			if (Item_Query_Visible(kItemPS11Target7)) { // without this check, target2 seems to get the spinning while the visible target1 stays put
+			if (Item_Query_Visible(kItemPS11Target7)) { // without this check, the wrong target might get the spinning while the visible stays put
 				Item_Spin_In_World(kItemPS11Target7);
 			} else {
 				Item_Spin_In_World(kItemPS11Target8);
@@ -800,7 +800,7 @@ bool SceneScriptPS11::ClickedOnItem(int itemId, bool combatMode) {
 		case kItemPS11Target11:
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-			if (Item_Query_Visible(kItemPS11Target10)) { // without this check, target2 seems to get the spinning while the visible target1 stays put
+			if (Item_Query_Visible(kItemPS11Target10)) { // without this check, the wrong target might get the spinning while the visible stays put
 				Item_Spin_In_World(kItemPS11Target10);
 			} else {
 				Item_Spin_In_World(kItemPS11Target11);
@@ -823,7 +823,7 @@ bool SceneScriptPS11::ClickedOnItem(int itemId, bool combatMode) {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 			Item_Spin_In_World(itemId);
-#endif
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Item_Flag_As_Non_Target(itemId);
 			break;
 		}
