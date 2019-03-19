@@ -430,6 +430,25 @@ void  OSystem_iOS7::handleEvent_keyPressed(Common::Event &event, int keyPressed)
 		keyPressed = Common::KEYCODE_RETURN;
 		ascii = Common::ASCII_RETURN;
 		break;
+	// IOS7 Keyboard lacks arrow keys which are used for some games so remap these to
+	// unused symbols i.e. ']' for Up, '\' for Down, '_' for Left and '|' for Right.
+	// This makes games such as SQ2 playable.
+	case 93:
+		keyPressed = Common::KEYCODE_UP;
+		ascii = Common::ASCII_F1; // HACK: Needed to get event to be used.
+		break;
+	case 92:
+		keyPressed = Common::KEYCODE_DOWN;
+		ascii = Common::ASCII_F1; // HACK: Needed to get event to be used.
+		break;
+	case 95:
+		keyPressed = Common::KEYCODE_LEFT;
+		ascii = Common::ASCII_F1; // HACK: Needed to get event to be used.
+		break;
+	case 124:
+		keyPressed = Common::KEYCODE_RIGHT;
+		ascii = Common::ASCII_F1; // HACK: Needed to get event to be used.
+		break;
 	}
 	event.type = Common::EVENT_KEYDOWN;
 	_queuedInputEvent.type = Common::EVENT_KEYUP;
