@@ -37,15 +37,15 @@ public:
 	int16 data_800728b0_cursor_seqID;
 	uint16 _iniUnderCursor;
 	int32 _sequenceID;
-private:
-	DragonsEngine *_vm;
+	int16 data_80072890;
 	int16 _x;
 	int16 _y;
+	int16 data_8007283c;
+private:
+	DragonsEngine *_vm;
 	Actor *_actor;
 
 	int16 data_either_5_or_0;
-	int16 data_8007283c;
-	int16 data_80072890;
 
 public:
 	Cursor(DragonsEngine *vm);

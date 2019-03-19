@@ -117,6 +117,9 @@ public:
 	Inventory *_inventory;
 	Cursor *_cursor;
 	uint16 data_8006f3a8;
+
+	uint16 unkArray_uint16[42];
+
 private:
 	Screen *_screen;
 	BigfileArchive *_bigfileArchive;
@@ -140,6 +143,7 @@ private:
 	// input
 	bool _leftMouseButtonUp;
 	bool _rightMouseButtonUp;
+	bool _iKeyUp;
 
 public:
 	DragonsEngine(OSystem *syst);
@@ -175,9 +179,11 @@ public:
 	void call_fade_related_1f();
 	void fade_related(uint32 flags);
 
+	uint16 ipt_img_file_related();
+
 private:
+	void gameLoopOld();
 	void gameLoop();
-	void game_loop();
 	void updateHandler();
 	void updatePathfindingActors();
 	uint32 calulateTimeLeft();
@@ -186,6 +192,19 @@ private:
 	uint16 updateINIUnderCursor();
 	void runINIScripts();
 	void engineFlag0x20UpdateFunction();
+
+	void works_with_obd_data_1();
+
+	bool isInputEnabled();
+	bool checkForInventoryButtonRelease();
+	bool checkForActionButtonRelease();
+
+	void FUN_8003130c();
+	void actor_related_80030e88();
+	void FUN_80038890();
+	void FUN_8002837c();
+	void FUN_80031480();
+	void FUN_80038994();
 };
 
 DragonsEngine *getEngine();

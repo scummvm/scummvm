@@ -31,6 +31,8 @@ class Actor;
 class ActorManager;
 
 class Inventory {
+public:
+	int16 _old_showing_value;
 private:
 	DragonsEngine *_vm;
 	int32 _sequenceId;
