@@ -49,6 +49,8 @@ public:
 	}
 
 	int16 getType() { return _type; }
+	void setType(int16 newType) { _type = newType; }
+
 	int16 getPositionIndex() { return _screenPositionIndex; }
 	Common::Point getPosition();
 

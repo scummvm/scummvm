@@ -62,15 +62,15 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	_sequenceOpcodes = new SequenceOpcodes(this);
 	_scriptOpcodes = NULL;
 	_engine = this;
-	_cursorPosition = Common::Point();
-	_cursorSequenceID = 0;
 	run_func_ptr_unk_countdown_timer = 0;
 	data_8006a3a0_flag = 0;
 	data_800633fa = 0;
 	data_8006f3a8 = 0;
+	_data_either_5_or_0 = 0;
 	_inventory = new Inventory(this);
 	_cursor = new Cursor(this);
 
+	_leftMouseButtonUp = false;
 	_rightMouseButtonUp = false;
 }
 
@@ -81,6 +81,7 @@ DragonsEngine::~DragonsEngine() {
 
 void DragonsEngine::updateEvents() {
 	Common::Event event;
+	_leftMouseButtonUp = false;
 	_rightMouseButtonUp = false;
 	while (_eventMan->pollEvent(event)) {
 //		_input->processEvent(event);
@@ -90,6 +91,9 @@ void DragonsEngine::updateEvents() {
 				break;
 			case Common::EVENT_MOUSEMOVE:
 				_cursor->updatePosition(event.mouse.x, event.mouse.y);
+				break;
+			case Common::EVENT_LBUTTONUP:
+				_leftMouseButtonUp = true;
 				break;
 			case Common::EVENT_RBUTTONUP:
 				_rightMouseButtonUp = true;
@@ -195,8 +199,13 @@ void DragonsEngine::gameLoop() {
 		// 0x80026d38
 		_cursor->updateINIUnderCursor();
 
-		if (_rightMouseButtonUp) {
+		if (_rightMouseButtonUp && !isFlagSet(ENGINE_FLAG_20000000) && !isFlagSet(ENGINE_FLAG_400)) {
 			_cursor->selectPreviousCursor();
+		}
+
+		// Action input
+		if (_leftMouseButtonUp && !isFlagSet(ENGINE_FLAG_20000000) && !isFlagSet(ENGINE_FLAG_400)) {
+			//TODO
 		}
 
 		runINIScripts();
@@ -206,6 +215,417 @@ void DragonsEngine::gameLoop() {
 		wait();
 	}
 }
+
+
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void DragonsEngine::game_loop()
+
+{
+	/**
+	bool bVar1;
+	DragonINI *pDVar2;
+	uint uVar3;
+	uint32_t uVar4;
+	uint actorId;
+	int iVar5;
+	ushort uVar6;
+	ushort uVar7;
+	uint actorId_00;
+	void *buffer;
+	uint16_t sequenceId;
+	DragonINI *pDVar8;
+	ushort *puVar9;
+	ScriptOpCall local_30;
+
+	_data_either_5_or_0 = 0;
+	bit_flags_8006fbd8 = 0;
+	_counter = 0;
+	setFlags(ENGINE_FLAG_8);
+	actorId = 0;
+
+	while(!shouldQuit()) {
+		LAB_80026a74:
+		wait();
+		pDVar2 = dragon_ini_pointer;
+		iVar5 = data_80063940_const_c3_maybe;
+		if ((uint)currentSceneId != _const_value_2) {
+			sceneId_1 = currentSceneId;
+		}
+		_counter++;
+		if (0x4af < _counter) {
+			pDVar8 = _dragonINIResource->getFlickerRecord(); //dragon_ini_pointer + (uint)dragon_ini_maybe_flicker_control;
+			if (pDVar8->actor->resourceID == 0xe) {
+				pDVar8->actor->_sequenceID2 = 2;
+				pDVar8->field_20_actor_field_14 = 2;
+				if (getINI(0xc2)->field_1e == 1) {
+					sequenceId = 0x30;
+				}
+				else {
+					sequenceId = 2;
+				}
+				pDVar8->actor->updateSequence(sequenceId);
+				_counter = 0;
+				setFlags(ENGINE_FLAG_80000000);
+			}
+		}
+		if (isFlagSet(ENGINE_FLAG_80000000)
+			&& _dragonINIResource->getFlickerRecord()->actor->isFlagSet(ACTOR_FLAG_4)) {
+			_counter = 0;
+			clearFlags(ENGINE_FLAG_80000000);
+		}
+		if (bit_flags_8006fbd8 == 0) {
+			setFlags(ENGINE_FLAG_8);
+		}
+		if (dragon_ini_pointer[(uint)dragon_ini_maybe_flicker_control].sceneId_maybe == currentSceneId) {
+			uVar3 = ipt_img_file_related();
+			actorId_00 = uVar3 & 0xffff;
+			if (actorId_00 == 0) goto LAB_80026d34;
+			if (actorId_00 != (actorId & 0xffff)) {
+				buffer = (void *)((int)dragon_Obd_Offset + dragon_Opt_Offset[actorId_00 - 1].obdOffset);
+				local_30.code = (void *)((int)buffer + 8);
+				uVar4 = read_int32(buffer);
+				local_30.codeEnd = (void *)(uVar4 + (int)local_30.code);
+				actorId = run_script_field8_eq_4(&local_30);
+				if ((actorId & 0xffff) != 0) {
+					local_30.codeEnd =
+							(void *)((uint)*(ushort *)((int)local_30.code + 2) +
+									 (int)(void *)((int)local_30.code + 4));
+					local_30.code = (void *)((int)local_30.code + 4);
+					run_script(&local_30);
+					_counter = 0;
+				}
+			}
+		}
+		else {
+			LAB_80026d34:
+			uVar3 = 0;
+		}
+		actorId = updateINIUnderCursor();
+		if (((actorId & 0xffff) == 0) ||
+			((dragon_ini_pointer[(uint)_cursor->_iniUnderCursor].actorId & 0x4000) != 0)) {
+			_data_either_5_or_0 = 0;
+		}
+		else {
+			_data_either_5_or_0 = 5;
+		}
+		actorId = CheckButtonMapPress_CycleDown(0);
+		if (((actorId & 0xffff) != 0) && ((engine_flags_maybe & 0x20000400) == 0)) {
+			uVar6 = _cursor->_sequenceID - 1;
+			if ((uVar6 == 0) && ((_inventory->getType() == 1 || (_inventory->getType() == 2)))) {
+				uVar6 = _cursor->_sequenceID - 2;
+			}
+			_cursor->_sequenceID = uVar6;
+			if ((_cursor->_sequenceID == 3) && (_inventory->getType() == 1)) {
+				_cursor->_sequenceID = 1;
+			}
+			if (_cursor->_sequenceID == 2) {
+				_cursor->_sequenceID = 1;
+			}
+			if (_cursor->_sequenceID == 0xffff) {
+				uVar6 = 5;
+				if (DAT_8006f3a8 == 0) {
+					uVar6 = 4;
+				}
+				LAB_80026fb0:
+				_cursor->_sequenceID = uVar6;
+			}
+			_counter = 0;
+			actorId = uVar3;
+			continue;
+		}
+		actorId = CheckButtonMapPress_CycleUp(0);
+		if (((actorId & 0xffff) != 0) && ((engine_flags_maybe & 0x20000400) == 0)) {
+			_cursor->_sequenceID = _cursor->_sequenceID + 1;
+			if (DAT_8006f3a8 == 0) {
+				bVar1 = _cursor->_sequenceID < 5;
+			}
+			else {
+				bVar1 = _cursor->_sequenceID < 6;
+			}
+			if (!bVar1) {
+				_cursor->_sequenceID = 0;
+			}
+			if ((_cursor->_sequenceID == 0) && ((_inventory->getType() == 1 || (_inventory->getType() == 2)))) {
+				_cursor->_sequenceID = 1;
+			}
+			if (_cursor->_sequenceID == 2) {
+				if (_inventory->getType() == 1) {
+					_cursor->_sequenceID = 4;
+				}
+				uVar6 = 3;
+				if (_cursor->_sequenceID == 2) goto LAB_80026fb0;
+			}
+			_counter = 0;
+			actorId = uVar3;
+			continue;
+		}
+		if (bit_flags_8006fbd8 == 3) {
+			bit_flags_8006fbd8 = 0;
+			if ((dragon_ini_pointer[(uint)dragon_ini_maybe_flicker_control].sceneId_maybe == currentSceneId)
+				&& (actorId = (uint)dragon_ini_pointer[(uint)dragon_ini_maybe_flicker_control].actorId,
+					actors[actorId].﻿_sequenceID2 != 0xffff)) {
+				uVar6 = DAT_800728c0;
+				if (_cursor->_sequenceID != 5) {
+					uVar6 = DAT_80072890;
+				}
+				actors[actorId].﻿_sequenceID2 = dragon_ini_pointer[(uint)uVar6 - 1].field_0x20;
+			}
+			works_with_obd_data_1();
+			if (((uint)currentSceneId == DAT_80063a70) && (dragon_ini_pointer[DAT_80063b0c].field_0x2 != 0))
+			{
+				engine_flags_maybe = engine_flags_maybe & 0xfffffff7;
+			}
+			else {
+				engine_flags_maybe = engine_flags_maybe | 8;
+			}
+			_counter = 0;
+			actorId = uVar3;
+			continue;
+		}
+		if (_inventory->getType() != 1) {
+			if (_inventory->getType() < 2) {
+				if (_inventory->getType() == 0) {
+					actorId = CheckButtonMapPress_InventoryBag(0);
+					if ((((actorId & 0xffff) != 0) && ((engine_flags_maybe & 0x20000400) == 0)) &&
+						((bit_flags_8006fbd8 & 3) != 1)) {
+						sequenceId = dragon_Var_Offset[dragon_var_index_const_7];
+						uVar7 = inventory_old_showing_value;
+						inventory_old_showing_value = _inventory->getType();
+						joined_r0x800271d0:
+						_inventory->setType(inventory_old_showing_value);
+						if (sequenceId == 1) {
+							LAB_800279f4:
+							inventory_old_showing_value = uVar7;
+							FUN_8003130c();
+							actorId = uVar3;
+						}
+						else {
+							_counter = 0;
+							_inventory->setType(1);
+							actor_related_80030e88();
+							joined_r0x80027a38:
+							if (DAT_8006f3a8 == 0) {
+								_cursor->_sequenceID = 1;
+								actorId = uVar3;
+							}
+							else {
+								_cursor->_sequenceID = 5;
+								actorId = uVar3;
+							}
+						}
+						goto LAB_80026a74;
+					}
+					actorId = CheckButtonMapPress_Action(0);
+					uVar6 = _inventory->getType();
+					if (((actorId & 0xffff) != 0) && ((engine_flags_maybe & 8) != 0)) {
+						_counter = 0;
+						if ((_cursor->_iniUnderCursor & 0x8000) != 0) {
+							if (_cursor->_iniUnderCursor == 0x8002) {
+								LAB_80027294:
+								uVar7 = 0;
+								if (DAT_8006f3a8 == 0) {
+									if ((bit_flags_8006fbd8 & 3) != 1) {
+										sequenceId = dragon_Var_Offset[dragon_var_index_const_7];
+										uVar7 = inventory_old_showing_value;
+										inventory_old_showing_value = _inventory->getType();
+										goto joined_r0x800271d0;
+									}
+								}
+								else {
+									actorId = 0;
+									do {
+										if (unkArray_uint16[actorId] == 0) break;
+										uVar7 = uVar7 + 1;
+										actorId = (uint)uVar7;
+									} while (uVar7 < 0x29);
+									if (uVar7 < 0x29) {
+										_cursor->_sequenceID = 1;
+										ContinueGame?();
+										uVar6 = DAT_8006f3a8;
+										DAT_8006f3a8 = 0;
+										_cursor->_iniUnderCursor = 0;
+										unkArray_uint16[(uint)uVar7] = uVar6;
+										actorId = uVar3;
+										goto LAB_80026a74;
+									}
+								}
+							}
+							else {
+								if (_cursor->_iniUnderCursor != 0x8001) goto LAB_80027ab4;
+								if (inventorySequenceId == 0) goto LAB_80027294;
+							}
+							if ((_cursor->_iniUnderCursor == 0x8001) && (inventorySequenceId == 1)) {
+								_inventory->setType(2);
+								inventory_old_showing_value = uVar6;
+								FUN_80038890();
+								actorId = uVar3;
+								goto LAB_80026a74;
+							}
+						}
+						LAB_80027ab4:
+						_counter = 0;
+						DAT_80072890 = _cursor->_iniUnderCursor;
+						if (_cursor->_sequenceID < 5) {
+							DATA_800728b0_cursor_seqID = _cursor->_sequenceID;
+							FUN_8002837c();
+							if (bit_flags_8006fbd8 != 0) {
+								engine_flags_maybe = engine_flags_maybe & 0xfffffff7;
+							}
+						}
+						else {
+							DATA_800728b0_cursor_seqID = _cursor->_sequenceID;
+							FUN_8002837c();
+							if (bit_flags_8006fbd8 != 0) {
+								engine_flags_maybe = engine_flags_maybe & 0xfffffff7;
+							}
+							DAT_800728c0 = DAT_80072890;
+							DAT_80072890 = DAT_8006f3a8;
+						}
+					}
+				}
+			}
+			else {
+				if (_inventory->getType() == 2) {
+					actorId = CheckButtonMapPress_InventoryBag(0);
+					uVar6 = _inventory->getType();
+					if (((actorId & 0xffff) != 0) && ((engine_flags_maybe & 0x20000400) == 0)) {
+						uVar7 = inventory_old_showing_value;
+						if (dragon_Var_Offset[dragon_var_index_const_7] == 1) goto LAB_800279f4;
+						_counter = 0;
+						_inventory->setType(1);
+						inventory_old_showing_value = uVar6;
+						actor_related_80030e88();
+						goto joined_r0x80027a38;
+					}
+					actorId = CheckButtonMapPress_Action(0);
+					if (((actorId & 0xffff) != 0) && ((engine_flags_maybe & 8) != 0)) goto LAB_80027ab4;
+				}
+			}
+			LAB_80027b58:
+			run_ini_scripts();
+			actorId = uVar3;
+			goto LAB_80026a74;
+		}
+		actorId = CheckButtonMapPress_InventoryBag(0);
+		if ((actorId & 0xffff) != 0) {
+			_counter = 0;
+			LAB_80027970:
+			FUN_80031480();
+			uVar6 = inventory_old_showing_value;
+			inventory_old_showing_value = _inventory->getType();
+			actorId = uVar3;
+			_inventory->setType(uVar6);
+			goto LAB_80026a74;
+		}
+		actorId = CheckButtonMapPress_Action(0);
+		uVar6 = _inventory->getType();
+		if (((actorId & 0xffff) != 0) && ((engine_flags_maybe & 8) != 0)) {
+			_counter = 0;
+			if ((_cursor->_iniUnderCursor & 0x8000) != 0) {
+				if (_cursor->_iniUnderCursor == 0x8001) {
+					FUN_80031480();
+					_inventory->setType(0);
+					if (inventory_old_showing_value == 2) {
+						FUN_80038994();
+					}
+				}
+				else {
+					if (_cursor->_iniUnderCursor != 0x8002) goto LAB_8002790c;
+					FUN_80031480();
+					_inventory->setType(2);
+					if (inventory_old_showing_value != 2) {
+						FUN_80038890();
+					}
+				}
+				inventory_old_showing_value = uVar6;
+				actorId = uVar3;
+				goto LAB_80026a74;
+			}
+			if (_cursor->_iniUnderCursor != 0) {
+				actorId_00 = 0;
+				if ((_cursor->_sequenceID != 4) && (_cursor->_sequenceID != 2)) {
+					DATA_800728b0_cursor_seqID = _cursor->_sequenceID;
+					DAT_80072890 = _cursor->_iniUnderCursor;
+					if (4 < _cursor->_sequenceID) {
+						DAT_80072890 = DAT_8006f3a8;
+						DAT_800728c0 = _cursor->_iniUnderCursor;
+					}
+					engine_flags_maybe = engine_flags_maybe & 0xfffffff7;
+					FUN_8002837c();
+					goto LAB_8002790c;
+				}
+				if (_cursor->_iniUnderCursor != unkArray_uint16[0]) {
+					actorId = 1;
+					do {
+						actorId_00 = actorId;
+						actorId = actorId_00 + 1;
+					} while (_cursor->_iniUnderCursor != unkArray_uint16[actorId_00 & 0xffff]);
+				}
+				puVar9 = unkArray_uint16 + (actorId_00 & 0xffff);
+				iVar5 = (actorId_00 & 0xffff) + 0x17;
+				*puVar9 = DAT_8006f3a8;
+				DAT_8007283c = actors[iVar5].﻿_sequenceID;
+				actors[iVar5].flags = actors[iVar5].flags & 0xffbf;
+				DAT_8006f3a8 = _cursor->_iniUnderCursor;
+				_cursor->_sequenceID = 5;
+				actorId = uVar3;
+				if (*puVar9 != 0) {
+					actorId = actorId_00 + 0x17 & 0xffff;
+					actors[actorId].flags = 0;
+					actors[actorId].﻿priorityLayer_maybe = 0;
+					actors[actorId].field_0xe = 0x100;
+					actor_update_sequenceID
+							(actorId,dragon_ini_pointer[(uint)*puVar9 - 1].field_1a_flags_maybe * 2 + 10);
+					actors[actorId].flags = actors[actorId].flags | 0x3c0;
+					actors[actorId].﻿priorityLayer_maybe = 6;
+					actorId = uVar3;
+				}
+				goto LAB_80026a74;
+			}
+			uVar6 = 0;
+			if (DAT_8006f3a8 == 0) goto LAB_80027b58;
+			actorId = 0;
+			do {
+				iVar5 = actorId + 0x17;
+				if (((((int)(short)actors[iVar5].x_pos + -0x10 <= (int)cursor_x_var) &&
+					  ((int)cursor_x_var < (int)(short)actors[iVar5].x_pos + 0x10)) &&
+					 ((int)(short)actors[iVar5].y_pos + -0xc <= (int)cursor_y_var)) &&
+					(actorId = (uint)uVar6, (int)cursor_y_var < (int)(short)actors[iVar5].y_pos + 0xc)) break;
+				uVar6 = uVar6 + 1;
+				actorId = (uint)uVar6;
+			} while (uVar6 < 0x29);
+			if (actorId != 0x29) {
+				actorId_00 = (uint)(ushort)(uVar6 + 0x17);
+				unkArray_uint16[actorId] = DAT_8006f3a8;
+				actors[actorId_00].flags = 0;
+				actors[actorId_00].﻿priorityLayer_maybe = 0;
+				actors[actorId_00].field_0xe = 0x100;
+				DAT_8006f3a8 = 0;
+				actor_update_sequenceID
+						(actorId_00,
+						 dragon_ini_pointer[(uint)unkArray_uint16[actorId] - 1].field_1a_flags_maybe * 2 +
+						 10);
+				uVar6 = _cursor->_sequenceID;
+				actors[actorId_00].flags = actors[actorId_00].flags | 0x3c0;
+				actors[actorId_00].﻿priorityLayer_maybe = 6;
+				if (uVar6 == 5) {
+					_cursor->_sequenceID = 4;
+				}
+			}
+		}
+		LAB_8002790c:
+		if ((DAT_8006f3a8 == 0) ||
+			(((ushort)(cursor_x_var - 10U) < 300 && ((ushort)(cursor_y_var - 10U) < 0xb4))))
+			goto LAB_80027b58;
+		_cursor->_sequenceID = 5;
+		delayFunction(2);
+		goto LAB_80027970;
+	}
+	 **/
+}
+
 
 void DragonsEngine::updateHandler() {
 	data_8006a3a0_flag |= 0x40;
