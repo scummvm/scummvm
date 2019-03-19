@@ -20,6 +20,7 @@
  *
  */
 
+#include "dragons/cursor.h"
 #include "dragons/dragons.h"
 #include "dragons/dragonflg.h"
 #include "dragons/dragonini.h"
@@ -123,7 +124,7 @@ void SpecialOpcodes::spcSetEngineFlag0x4000000() {
 }
 
 void SpecialOpcodes::spcSetCursorSequenceIdToZero() {
-	_vm->_cursorSequenceID = 0;
+	_vm->_cursor->_sequenceID = 0;
 }
 
 } // End of namespace Dragons

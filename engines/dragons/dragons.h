@@ -64,6 +64,7 @@ enum Flags {
 	ENGINE_FLAG_80 = 0x80,
 	ENGINE_FLAG_100 = 0x100,
 	ENGINE_FLAG_200 = 0x200,
+	ENGINE_FLAG_400 = 0x400,
 
 	ENGINE_FLAG_TEXT_ENABLED = 0x1000,
 	ENGINE_FLAG_10000    =    0x10000,
@@ -71,6 +72,7 @@ enum Flags {
 	ENGINE_FLAG_100000   =   0x100000,
 	ENGINE_FLAG_400000   =   0x400000,
 	ENGINE_FLAG_4000000  =  0x4000000,
+	ENGINE_FLAG_20000000 = 0x20000000,
 	ENGINE_FLAG_80000000 = 0x80000000
 };
 
@@ -110,7 +112,6 @@ public:
 	ActorManager *_actorManager;
 	DragonINIResource *_dragonINIResource;
 	ScriptOpcodes *_scriptOpcodes;
-	uint16 _cursorSequenceID;
 	Scene *_scene;
 	uint16 data_800633fa;
 	Inventory *_inventory;
@@ -131,11 +132,13 @@ private:
 	uint32 _counter;
 	uint32 bit_flags_8006fbd8;
 	uint16 data_8006a3a0_flag; // screen related flags?
+	int16 _data_either_5_or_0;
 	//unk
 
 	uint16 run_func_ptr_unk_countdown_timer;
 
 	// input
+	bool _leftMouseButtonUp;
 	bool _rightMouseButtonUp;
 
 public:
@@ -174,6 +177,7 @@ public:
 
 private:
 	void gameLoop();
+	void game_loop();
 	void updateHandler();
 	void updatePathfindingActors();
 	uint32 calulateTimeLeft();
