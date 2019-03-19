@@ -38,6 +38,7 @@ Inventory::Inventory(DragonsEngine *vm) : _vm(vm) {
 	_type = 0;
 	_sequenceId = 0;
 	_screenPositionIndex = 0;
+	_old_showing_value = 0;
 }
 
 void Inventory::init(ActorManager *actorManager) {
@@ -52,6 +53,7 @@ void Inventory::init(ActorManager *actorManager) {
 						 Dragons::ACTOR_FLAG_200);
 	_sequenceId = 0;
 	_type = 0;
+	_old_showing_value = 0;
 }
 
 
