@@ -13,7 +13,7 @@ all: $(EXECUTABLE).dwp
 endif
 
 ifdef USE_PANDOC
-all: readme
+all: README NEWS
 endif
 
 ######################################################################
@@ -236,9 +236,12 @@ DISTDIR := dist
 VERFILE := $(DISTDIR)/$(DISTNAME)/base/internal_version.h
 
 ifdef USE_PANDOC
-# Convert README.md to plain text for any platform that might require it
-readme: README.md
-	$(QUIET_PANDOC)$(PANDOC) -f gfm -t $(PANDOCFORMAT) -o $(PANDOCOUTPUT) README.md
+# Convert README.md and NEWS.md to plain text for any platform that might require it
+README: ${srcdir}/README.md
+	$(QUIET_PANDOC)$(PANDOC) -f gfm -t $(PANDOCFORMAT) -o $@ $<
+
+NEWS: ${srcdir}/NEWS.md
+	$(QUIET_PANDOC)$(PANDOC) -f gfm -t $(PANDOCFORMAT) -o $@ $<
 endif
 
 # TODO git via $(GITROOT)
@@ -270,9 +273,9 @@ dist-src: \
 	@#DEB-src?
 
 # Common files
-DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING COPYING.BSD COPYING.LGPL COPYING.FREEFONT COPYRIGHT NEWS README.md)
+DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING COPYING.BSD COPYING.LGPL COPYING.FREEFONT COPYRIGHT NEWS.md README.md)
 ifdef USE_PANDOC
-DIST_FILES_DOCS+=$(PANDOCOUTPUT)
+DIST_FILES_DOCS+=README NEWS
 endif
 
 DIST_FILES_DOCS_languages=cz da de es fr it no-nb se
