@@ -2040,8 +2040,8 @@ For a more comprehensive changelog of the latest experimental code, see:
      is currently no GUI for it.
    - The save directory now has a default rather than the current directory on
      some platforms:
-         Mac OS X:     $HOME/Documents/ScummVM Savegames/
-         Other unices: $HOME/.scummvm/
+        - Mac OS X:     $HOME/Documents/ScummVM Savegames/
+        - Other unices: $HOME/.scummvm/
    - Added a new about dialog with scrolling credits.
 
  SCUMM:
