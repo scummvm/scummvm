@@ -511,11 +511,12 @@ void EoBCoreEngine::initStaticResource() {
 	// EOB I doesn't have load and save menus, because there is only one single
 	// save slot. Instead of emulating this we provide a menu similiar to EOB II.
 
-	static const char *const saveLoadStrings[4][4] = {
+	static const char *const saveLoadStrings[5][4] = {
 		{   "Cancel",   "Empty Slot",		"Save Game",    "Load Game"     },
 		{   "Abbr.",    "Leerer Slot",		"Speichern",    "  Laden"       },
 		{	" < < ",	"Posizione Vuota",	"Salva",		"Carica"	    },
-		{   0,          0,					0,					0			}
+		{   0,          0,					0,					0			},
+		{	0,          0,					0,					0			}
 	};
 
 	static const char *const errorSlotEmptyString[5] = {

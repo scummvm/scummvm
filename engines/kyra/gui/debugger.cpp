@@ -642,7 +642,7 @@ bool Debugger_EoB::cmdPrintMap(int, const char **) {
 		if (s == 3 || s == 4)
 			c = '/';
 		else if (s == 2 || s == 8)
-			c = (uint8)'°';
+			c = 176;
 		else if (f & 8)
 			c = 216;
 		else if (f & 1)
@@ -661,7 +661,7 @@ bool Debugger_EoB::cmdPrintMap(int, const char **) {
 		
 		debugPrintf("%c", c);
 	}
-	debugPrintf("\n\nParty Position:   %c  Door:             %c  Stairs Up/Down: %c/%c  Plate:      %c   Hole: %c\nSwitch:           %c  Clickable Object: %c  Illusion Wall:  %c    Teleporter: %c\n\n", 'X', 216, 'U', 'D', 'O', 164, '/', '°', 15, 1);
+	debugPrintf("\n\nParty Position:   %c  Door:             %c  Stairs Up/Down: %c/%c  Plate:      %c   Hole: %c\nSwitch:           %c  Clickable Object: %c  Illusion Wall:  %c    Teleporter: %c\n\n", 'X', 216, 'U', 'D', 'O', 164, '/', 176, 15, 1);
 
 	return true;
 }
