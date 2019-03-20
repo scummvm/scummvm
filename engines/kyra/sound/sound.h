@@ -207,6 +207,7 @@ public:
 	 * playing a new track or sound effect.
 	 */
 	virtual void beginFadeOut() = 0;
+	virtual void beginFadeOut(int) { beginFadeOut(); }
 
 	/**
 	* Stops all audio playback when paused. Continues after end of pause.

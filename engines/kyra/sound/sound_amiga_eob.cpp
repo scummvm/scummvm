@@ -104,20 +104,25 @@ void SoundAmiga_EoB::loadSoundFile(Common::String file) {
 	if (!in)
 		return;
 
+	// This value can deviate up to 5 bytes from the real size in EOB II Amiga.
+	// The original simply tries to read 64000 bytes from the file (ignoring this
+	// value). We do the same.
+	// EOB I strangely always seems to have correct values. 
 	uint16 readSize = in->readUint16LE() - 10;
 	uint8 cmp = in->readByte();
 	in->seek(1, SEEK_CUR);
 	uint32 outSize = in->readUint32LE();
 	in->seek(2, SEEK_CUR);
 
-	if (in->read(_fileBuffer, readSize) != readSize)
-		error("SoundAmiga_EoB::loadSoundFile(): Failed to load sound file '%s'", file.c_str());
+	readSize = in->read(_fileBuffer, 64000);
 	delete in;
+
+	if (cmp == 0 && readSize < outSize)
+		outSize = readSize;
 
 	uint8 *buf = new uint8[outSize];
 
 	if (cmp == 0) {
-		assert(readSize == outSize);
 		memcpy(buf, _fileBuffer, outSize);
 	} else if (cmp == 3) {			
 		Screen::decodeFrame3(_fileBuffer, buf, outSize, true);
@@ -135,7 +140,7 @@ void SoundAmiga_EoB::loadSoundFile(Common::String file) {
 }
 
 void SoundAmiga_EoB::playTrack(uint8 track) {
-	if (!_musicEnabled)
+	if (!_musicEnabled || !_ready)
 		return;
 
 	Common::String newSound;
@@ -149,7 +154,17 @@ void SoundAmiga_EoB::playTrack(uint8 track) {
 			newSound = "FINALE.SMUS";
 		}
 	} else if (_vm->game() == GI_EOB2) {
-		
+		if (_currentResourceSet == kMusicIntro) {
+			if (track > 11 && track < 16) {
+				const char *const songs[] = { "INTRO1A.SMUS", "CHARGEN3.SMUS", "INTRO1B.SMUS", "INTRO1C.SMUS" };
+				newSound = songs[track - 12];
+			}
+		} else if (_currentResourceSet == kMusicFinale) {
+			if (track > 0 && track < 4) {
+				const char *const songs[] = { "FINALE1B.SMUS", "FINALE1C.SMUS", "FINALE1D.SMUS" };
+				newSound = songs[track - 1];
+			}
+		}
 	}
 
 	if (!newSound.empty() && _ready) {
@@ -161,11 +176,17 @@ void SoundAmiga_EoB::playTrack(uint8 track) {
 void SoundAmiga_EoB::haltTrack() {
 	if (!_lastSound.empty())
 		_driver->stopSound(_lastSound);
+	_lastSound.clear();
 }
 
 void SoundAmiga_EoB::playSoundEffect(uint8 track, uint8 volume) {
-	if (_currentResourceSet == -1 || !_ready)
+	if (_currentResourceSet == -1 || !_sfxEnabled || !_ready)
 		return;
+
+	if (_vm->game() == GI_EOB2 && _currentResourceSet == kMusicIntro && track == 14) {
+		_driver->startSound("TELEPORT.SAM");
+		return;
+	}
 
 	if (!_resInfo[_currentResourceSet]->soundList || track >= 120 || !_sfxEnabled)
 		return;
@@ -191,8 +212,10 @@ void SoundAmiga_EoB::playSoundEffect(uint8 track, uint8 volume) {
 	}
 }
 
-void SoundAmiga_EoB::beginFadeOut() {
-	haltTrack();
+void SoundAmiga_EoB::beginFadeOut(int delay) {
+	_driver->fadeOut(delay);	
+	while (_driver->isFading() && !_vm->shouldQuit())
+		_vm->delay(5);
 }
 
 void SoundAmiga_EoB::updateVolumeSettings() {
@@ -205,6 +228,10 @@ void SoundAmiga_EoB::updateVolumeSettings() {
 
 	_driver->setMusicVolume((mute ? 0 : ConfMan.getInt("music_volume")));
 	_driver->setSoundEffectVolume((mute ? 0 : ConfMan.getInt("sfx_volume")));
+}
+
+int SoundAmiga_EoB::checkTrigger() {
+	return _driver->getPlayDuration();
 }
 
 void SoundAmiga_EoB::unloadLevelSounds() {

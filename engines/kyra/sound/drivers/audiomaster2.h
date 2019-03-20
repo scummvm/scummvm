@@ -66,6 +66,11 @@ public:
 	void flushResource(const Common::String &name);
 	void flushAllResources();
 
+	void fadeOut(int delay);
+	bool isFading();
+
+	int getPlayDuration();
+
 	void setMusicVolume(int volume);
 	void setSoundEffectVolume(int volume);
 

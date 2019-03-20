@@ -39,8 +39,8 @@ public:
 	~AudioMaster2IOManager();
 
 	struct IOUnit {
-		IOUnit() : _next(0), _sampleData(0), _sampleDataRepeat(0), _lenOnce(0), _lenRepeat(0), _startTick(0), _endTick(0), _transposeData(0), _rate(0), _period(0), _transposePara(0), _transposeCounter(0),
-			_levelAdjustData(0), _volumeSetting(0), _outputVolume(0), _levelAdjustPara(0), _levelAdjustCounter(0), _flags(0) {}
+		IOUnit() : _next(0), _sampleData(0), _sampleDataRepeat(0), _lenOnce(0), _lenRepeat(0), _startTick(0), _endTick(0), _transposeData(0), _rate(0), _period(0), _transposePara(0), _transposeDuration(0),
+			_levelAdjustData(0), _volumeSetting(0), _outputVolume(0), _levelAdjustPara(0), _levelAdjustDuration(0), _fadeOutState(-1), _flags(0) {}
 
 		IOUnit *_next;
 		const int8 *_sampleData;
@@ -53,18 +53,22 @@ public:
 		uint16 _rate;
 		uint16 _period;
 		uint16 _transposePara;
-		uint8 _transposeCounter;
+		uint8 _transposeDuration;
 		const uint8 *_levelAdjustData;
 		uint16 _volumeSetting;
 		uint16 _outputVolume;
 		int16 _levelAdjustPara;
-		uint8 _levelAdjustCounter;
+		uint8 _levelAdjustDuration;
+		int16 _fadeOutState;
 		uint8 _flags;
 	};
 
 	void clearChain();
 	void deployChannels(IOUnit **dest);
 	IOUnit *requestFreeUnit();
+	
+	void fadeOut();
+	bool isFading();
 
 	uint32 _sync;
 	uint32 _tempo;
@@ -93,10 +97,16 @@ public:
 	void flushResource(const Common::String &name);
 	void flushAllResources();
 
+	void fadeOut(int delay);
+	bool isFading();
+
 	void setMusicVolume(int volume);
 	void setSoundEffectVolume(int volume);
 
 	void interrupt();
+
+	void resetCounter();
+	int getPlayDuration();
 
 	void sync(SoundResource *res);
 	void stopChannels();
@@ -105,10 +115,12 @@ private:
 	void updateDevice();
 
 	AudioMaster2IOManager::IOUnit *_channels[4];
-
 	AudioMaster2IOManager *_io;
 	AudioMaster2ResourceManager *_res;
 	Audio::Mixer *_mixer;
+
+	uint32 _durationCounter;
+	uint8 _fadeOutSteps;
 
 	static AudioMaster2Internal *_refInstance;
 	static int _refCount;
@@ -138,6 +150,7 @@ public:
 
 	virtual void interrupt(AudioMaster2IOManager *io);
 	virtual void setupMusicNote(AudioMaster2IOManager::IOUnit *unit, uint8 note, uint16 volume) {}
+	virtual void setupSoundEffect(AudioMaster2IOManager::IOUnit *unit, uint32 sync, uint32 tempo) {}
 
 	enum Mode {
 		kIdle = 0,
@@ -156,7 +169,6 @@ protected:
 private:
 	virtual void release() = 0;
 	virtual void setupEnvelopes(AudioMaster2IOManager::IOUnit *unit) {}
-	virtual void setupSoundEffect(AudioMaster2IOManager::IOUnit *unit, uint32 sync, uint32 tempo) {}
 
 	int _refCnt;
 	bool _playing;
@@ -204,6 +216,7 @@ public:
 	void loadVolumeData(Common::ReadStream *stream, uint32 size);
 
 	void setupMusicNote(AudioMaster2IOManager::IOUnit *unit, uint8 note, uint16 volume);
+	void setupSoundEffect(AudioMaster2IOManager::IOUnit *unit, uint32 sync, uint32 rate);
 
 	struct EnvelopeData {
 		EnvelopeData(const uint8 *data, uint32 size) : volume(0x40), _data(data), _dataSize(size) {}
@@ -217,11 +230,10 @@ private:
 	void release();
 
 	void setupEnvelopes(AudioMaster2IOManager::IOUnit *unit);
-	void setupSoundEffect(AudioMaster2IOManager::IOUnit *unit, uint32 sync, uint32 rate);
 
 	EnvelopeData *_transpose;
 	EnvelopeData *_levelAdjust;
-	SoundResource8SVX *_samplesResource;
+	SoundResource *_samplesResource;
 };
 
 class SoundResourceSMUS : public SoundResource {
@@ -288,6 +300,7 @@ public:
 	void initResource(SoundResource *resource);
 	void releaseResource(const Common::String &resName);
 
+	void stopChain();
 	void flush();
 
 	SoundResource *getResource(const Common::String &resName, SoundResource::Mode mode);
@@ -299,7 +312,6 @@ public:
 private:
 	SoundResource *retrieveFromChain(const Common::String &resName);
 	void linkToChain(SoundResource *resource, SoundResource::Mode mode);
-	void stopChain();
 
 	SoundResource *_chainPlaying;
 	SoundResource *_chainInactive;
@@ -413,13 +425,32 @@ AudioMaster2IOManager::IOUnit *AudioMaster2IOManager::requestFreeUnit() {
 	return 0;
 }
 
+void AudioMaster2IOManager::fadeOut() {
+	for (int i = 0; i < 8; ++i) {
+		if (_units[i]->_flags & 2)
+			_units[i]->_fadeOutState = 0;
+	}
+}
+
+bool AudioMaster2IOManager::isFading() {
+	for (int i = 0; i < 8; ++i) {
+		if (_units[i]->_flags & 2) {
+			if (_units[i]->_fadeOutState > -1)
+				return true;
+		} else {
+			_units[i]->_fadeOutState = -1;
+		}
+	}
+	return false;
+}
+
 void SoundResource::loadName(Common::ReadStream *stream, uint32 size) {
 	char *data = new char[size + 1];
 
 	stream->read(data, size);
 	data[size] = '\0';
 	_name = data;
-
+	
 	delete[] data;
 }
 
@@ -618,12 +649,13 @@ void SoundResourceINST::loadSamples(Common::ReadStream *stream, uint32 size) {
 	SoundResource *instr = _res->getResource(data, SoundResource::kIdle);
 	if (instr) {
 		int type = instr->getType();
-		if (type != 4)
+		if (type == 1)
 			error("SoundResourceINST::loadInstrument(): Unexpected resource type");
 		instr->open();
-		_samplesResource = (SoundResource8SVX*)instr;
+		_samplesResource = instr;
 	} else {
-		warning("SoundResourceINST::loadInstrument(): Samples resource '%s' not found for '%s'.", data, _name.c_str());
+		// This will come up quite often in EOB II. But never with intruments that are actually used. No need to bother the user with a warning here.
+		debugC(9, kDebugLevelSound, "SoundResourceINST::loadInstrument(): Samples resource '%s' not found for '%s'.", data, _name.c_str());
 	}
 
 	delete[] data;
@@ -650,7 +682,7 @@ void SoundResourceINST::setupEnvelopes(AudioMaster2IOManager::IOUnit *unit) {
 	assert(unit);
 	if (_transpose) {
 		unit->_transposeData = _transpose->_data;
-		unit->_transposeCounter = 0;
+		unit->_transposeDuration = 0;
 		unit->_transposePara = 0;
 	} else {
 		unit->_transposeData = 0;
@@ -658,7 +690,7 @@ void SoundResourceINST::setupEnvelopes(AudioMaster2IOManager::IOUnit *unit) {
 
 	if (_levelAdjust) {
 		unit->_levelAdjustData = _levelAdjust->_data;
-		unit->_levelAdjustCounter = 0;
+		unit->_levelAdjustDuration = 0;
 		unit->_levelAdjustPara = 0;
 	} else {
 		unit->_levelAdjustData = 0;
@@ -877,6 +909,18 @@ void AudioMaster2ResourceManager::releaseResource(const Common::String &resName)
 	res->close();
 }
 
+void AudioMaster2ResourceManager::stopChain() {
+	Common::StackLock lock(*_mutex);
+
+	SoundResource *cur = _chainPlaying;
+	while (cur) {
+		cur->setPlayStatus(false);
+		cur = cur->_next;
+	}
+
+	_driver->stopChannels();
+}
+
 void AudioMaster2ResourceManager::flush() {
 	stopChain();
 
@@ -904,6 +948,11 @@ SoundResource *AudioMaster2ResourceManager::getResource(const Common::String &re
 	SoundResource *res = retrieveFromChain(resName);
 	if (!res)
 		return 0;
+
+	if (mode == SoundResource::kIdle)
+		res->setPlayStatus(false);
+	else if (res->getType() == 1)
+		_driver->resetCounter();
 
 	linkToChain(res, mode);
 
@@ -1023,18 +1072,6 @@ void AudioMaster2ResourceManager::linkToChain(SoundResource *resource, SoundReso
 	}
 }
 
-void AudioMaster2ResourceManager::stopChain() {
-	Common::StackLock lock(*_mutex);
-
-	SoundResource *cur = _chainPlaying;
-	while (cur) {
-		cur->setPlayStatus(false);
-		cur = cur->_next;
-	}
-
-	_driver->stopChannels();
-}
-
 AudioMaster2IFFLoader::~AudioMaster2IFFLoader() {
 	initResource();
 }
@@ -1122,8 +1159,9 @@ void AudioMaster2IFFLoader::initResource() {
 AudioMaster2Internal *AudioMaster2Internal::_refInstance = 0;
 int AudioMaster2Internal::_refCount = 0;
 
-AudioMaster2Internal::AudioMaster2Internal(Audio::Mixer *mixer) : Paula(true, mixer->getOutputRate(), mixer->getOutputRate() / 50), _mixer(mixer), _res(0), _ready(false) {
+AudioMaster2Internal::AudioMaster2Internal(Audio::Mixer *mixer) : Paula(true, mixer->getOutputRate(), mixer->getOutputRate() / 50), _mixer(mixer), _res(0), _fadeOutSteps(0), _durationCounter(0), _ready(false) {
 	_channels[0] = _channels[1] = _channels[2] = _channels[3] = 0;
+	setAudioFilter(true);
 }
 
 AudioMaster2Internal::~AudioMaster2Internal() {
@@ -1204,6 +1242,18 @@ void AudioMaster2Internal::flushAllResources() {
 		_res->flush();
 }
 
+void AudioMaster2Internal::fadeOut(int delay) {
+	if (!_ready)
+		return;
+
+	_fadeOutSteps = delay >> 3;
+	_io->fadeOut();
+}
+
+bool AudioMaster2Internal::isFading() {
+	return _io->isFading();
+}
+
 void AudioMaster2Internal::setMusicVolume(int volume) {
 	if (_ready)
 		_res->setMasterVolume(1, volume);
@@ -1218,10 +1268,19 @@ void AudioMaster2Internal::interrupt() {
 	if (!_ready)
 		return;
 
+	_durationCounter++;
 	_io->_sync += _io->_tempo;
 	_res->interrupt(_io);
 	_io->deployChannels(_channels);
 	updateDevice();
+}
+
+void AudioMaster2Internal::resetCounter() {
+	_durationCounter = 0;
+}
+
+int AudioMaster2Internal::getPlayDuration() {
+	return _durationCounter;
 }
 
 void AudioMaster2Internal::sync(SoundResource *res) {
@@ -1273,7 +1332,7 @@ void AudioMaster2Internal::updateDevice() {
 			unit->_period += unit->_transposePara;
 			const uint8 *data = unit->_transposeData;
 			
-			if (unit->_transposeCounter-- <= 1) {
+			if (unit->_transposeDuration-- <= 1) {
 				for (bool loop = true; loop; ) {
 					uint8 para = *data++;
 
@@ -1301,7 +1360,7 @@ void AudioMaster2Internal::updateDevice() {
 						data -= ((para + 1) << 1);
 
 					} else {
-						unit->_transposeCounter = para;
+						unit->_transposeDuration = para;
 						unit->_transposePara = *data++;
 						unit->_transposeData = data;
 						loop = false;
@@ -1319,7 +1378,7 @@ void AudioMaster2Internal::updateDevice() {
 			unit->_outputVolume += unit->_levelAdjustPara;
 			const uint8 *data = unit->_levelAdjustData;
 
-			if (unit->_levelAdjustCounter-- <= 1) {
+			if (unit->_levelAdjustDuration-- <= 1) {
 				for (bool loop = true; loop; ) {
 					uint8 para = *data++;
 					if (para == 0xFF) {
@@ -1358,14 +1417,13 @@ void AudioMaster2Internal::updateDevice() {
 							continue;
 						}
 
-						unit->_levelAdjustCounter = para;
+						unit->_levelAdjustDuration = para;
 
 						if (para == 1) {
 							unit->_outputVolume = para2;
 							unit->_levelAdjustPara = 0;
 						} else {
 							int16 va = para2 - unit->_outputVolume;
-							va /= para;
 							unit->_levelAdjustPara =  va / para;
 						}
 
@@ -1396,6 +1454,17 @@ void AudioMaster2Internal::updateDevice() {
 			setChannelPeriod(i, unit->_period);
 			setChannelVolume(i, unit->_outputVolume >> 8);
 		}
+
+		if (unit->_fadeOutState > -1) {
+			setChannelVolume(i, ((unit->_outputVolume / _fadeOutSteps) * (_fadeOutSteps - unit->_fadeOutState)) >> 8);
+			if (++unit->_fadeOutState > _fadeOutSteps)
+				unit->_fadeOutState = -1;
+		}
+	}
+
+	if (_fadeOutSteps && !_io->isFading()) {
+		_fadeOutSteps = 0;
+		_res->stopChain();
 	}
 }
 
@@ -1430,6 +1499,18 @@ void AudioMaster2::flushResource(const Common::String &name) {
 
 void AudioMaster2::flushAllResources() {
 	_am2i->flushAllResources();
+}
+
+void AudioMaster2::fadeOut(int delay) {
+	_am2i->fadeOut(delay);
+}
+
+bool AudioMaster2::isFading() {
+	return _am2i->isFading();
+}
+
+int AudioMaster2::getPlayDuration() {
+	return _am2i->getPlayDuration();
 }
 
 void AudioMaster2::setMusicVolume(int volume) {

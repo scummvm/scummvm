@@ -422,8 +422,10 @@ public:
 	void playTrack(uint8 track);
 	void haltTrack();
 	void playSoundEffect(uint8 track, uint8 volume = 0xFF);
-	void beginFadeOut();
+	void beginFadeOut() { beginFadeOut(160); }
+	void beginFadeOut(int delay);
 	void updateVolumeSettings();
+	int checkTrigger();
 
 private:
 	void unloadLevelSounds();
