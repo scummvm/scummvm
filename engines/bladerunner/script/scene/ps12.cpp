@@ -101,7 +101,7 @@ static const int *getPoliceMazePS12TrackData30() { // Enemy (kItemPS12Target2) -
 		kPMTIObstacleReset,   kItemPS12Target2,
 		kPMTIPausedReset1of2, kItemPS12Target13, kItemPS12Target11,
 		kPMTIPausedSet,       kItemPS12Target2,
-		kPMTITargetSet,       kItemPS12Target2, 0, // remove target-able here (original code)
+		kPMTITargetSet,       kItemPS12Target2, 0, // removes target-able here (original code)
 		kPMTIRestart
 	};
 	return trackData;
@@ -220,7 +220,7 @@ static const int *getPoliceMazePS12TrackData33() { // Innocent (kItemPS12Target5
 	return trackData;
 }
 
-static const int *getPoliceMazePS12TrackData34() {  // Enemy (kItemPS12Target6, kItemPS12Target7, kItemPS12Target8)
+static const int *getPoliceMazePS12TrackData34() {  // Special (kItemPS12Target6, kItemPS12Target7, kItemPS12Target8) - Enemy x2
 	static int trackData[] = {
 		kPMTIActivate,        kVariablePoliceMazePS12TargetCounter, kPoliceMazePS12TargetCount,
 		kPMTIVariableInc,     kVariablePoliceMazePS12TargetCounter, kPoliceMazePS12TargetCount,
@@ -267,12 +267,12 @@ static const int *getPoliceMazePS12TrackData34() {  // Enemy (kItemPS12Target6, 
 		kPMTIPlaySound,       29, 33,
 		kPMTIWait,            500,
 #if BLADERUNNER_ORIGINAL_BUGS
-		kPMTITargetSet,       kItemPS12Target6, 1,  // TODO MAZE A bug? intended? Set as target again (multiple credits issue?)
-		kPMTITargetSet,       kItemPS12Target7, 1,  // TODO MAZE A bug? intended? Set as target again (multiple credits issue?)
-		kPMTITargetSet,       kItemPS12Target8, 1,  // TODO MAZE A bug? intended? Set as target again (multiple credits issue?)
-		kPMTIEnemySet,        kItemPS12Target6,     // TODO MAZE A bug? intended? Set as target again (multiple credits issue?)
-		kPMTIEnemySet,        kItemPS12Target7,     // TODO MAZE A bug? intended? Set as target again (multiple credits issue?)
-		kPMTIEnemySet,        kItemPS12Target8,     // TODO MAZE A bug? intended? Set as target again (multiple credits issue?)
+		kPMTITargetSet,       kItemPS12Target6, 1,  // TODO MAZE A bug? intended? Set as target again ("Second" Enemy)
+		kPMTITargetSet,       kItemPS12Target7, 1,  // TODO MAZE A bug? intended? Set as target again ("Second" Enemy)
+		kPMTITargetSet,       kItemPS12Target8, 1,  // TODO MAZE A bug? intended? Set as target again ("Second" Enemy)
+		kPMTIEnemySet,        kItemPS12Target6,     // TODO MAZE A bug? intended? Set as target again ("Second" Enemy)
+		kPMTIEnemySet,        kItemPS12Target7,     // TODO MAZE A bug? intended? Set as target again ("Second" Enemy)
+		kPMTIEnemySet,        kItemPS12Target8,     // TODO MAZE A bug? intended? Set as target again ("Second" Enemy)
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIRotate,          376, 80,
 		kPMTIWait,            0,
@@ -340,10 +340,10 @@ static const int *getPoliceMazePS12TrackData35() {  // Enemy (kItemPS12Target6, 
 
 static const int *getPoliceMazePS12TrackData36() {  // Enemy (kItemPS12Target6, kItemPS12Target7, kItemPS12Target8)
 	static int trackData[] = {
-		kPMTIObstacleSet,     kItemPS12Target8,
+		kPMTIObstacleSet,     kItemPS12Target8,     // [redundant after bug fix]
 		kPMTIFacing,          469,
 		kPMTIPosition,        0,
-		kPMTIObstacleSet,     kItemPS12Target8,
+		kPMTIObstacleSet,     kItemPS12Target8,     // redundant (original)
 		kPMTIMove,            9,
 		kPMTIPlaySound,       29, 33,
 		kPMTIWait,            1000,
@@ -431,13 +431,14 @@ static const int *getPoliceMazePS12TrackData38() {  // Enemy (kItemPS12Target10)
 	return trackData;
 }
 
-static const int *getPoliceMazePS12TrackData39() {  // Enemy (kItemPS12Target11)
+static const int *getPoliceMazePS12TrackData39() {  // Enemy (kItemPS12Target11) - Rotating reveal
 	static int trackData[] = {
 		kPMTIActivate,        kVariablePoliceMazePS12TargetCounter, kPoliceMazePS12TargetCount,
 		kPMTIVariableInc,     kVariablePoliceMazePS12TargetCounter, kPoliceMazePS12TargetCount,
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 		kPMTITargetSet,       kItemPS12Target11, 0, // remove target-able here
+		kPMTIEnemyReset,      kItemPS12Target11,
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleReset,   kItemPS12Target11,
 		kPMTIFacing,          513,
@@ -448,7 +449,7 @@ static const int *getPoliceMazePS12TrackData39() {  // Enemy (kItemPS12Target11)
 		kPMTITargetSet,       kItemPS12Target11, 1,
 		kPMTIMove,            5,
 		kPMTIWait,            1000,
-		kPMTIEnemySet,        kItemPS12Target11,
+		kPMTIEnemySet,        kItemPS12Target11,    // rotate - reveal
 		kPMTIRotate,          1010, 80,
 		kPMTIPlaySound,       29, 33,
 		kPMTIWait,            500,
@@ -467,13 +468,14 @@ static const int *getPoliceMazePS12TrackData39() {  // Enemy (kItemPS12Target11)
 	return trackData;
 }
 
-static const int *getPoliceMazePS12TrackData40() {  // Enemy (kItemPS12Target12) - Starts activated
+static const int *getPoliceMazePS12TrackData40() {  // Enemy (kItemPS12Target12) - Starts activated - Rotating reveal
 	static int trackData[] = {
 		kPMTIActivate,        kVariablePoliceMazePS12TargetCounter, kPoliceMazePS12TargetCount,
 		kPMTIVariableInc,     kVariablePoliceMazePS12TargetCounter, kPoliceMazePS12TargetCount,
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 		kPMTITargetSet,       kItemPS12Target12, 0, // remove target-able here
+		kPMTIEnemyReset,      kItemPS12Target12,
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleReset,   kItemPS12Target12,
 		kPMTIFacing,          480,
@@ -485,7 +487,7 @@ static const int *getPoliceMazePS12TrackData40() {  // Enemy (kItemPS12Target12)
 		kPMTIMove,            5,
 		kPMTIPlaySound,       29, 33,
 		kPMTIWait,            500,
-		kPMTIEnemySet,        kItemPS12Target12,
+		kPMTIEnemySet,        kItemPS12Target12,    // rotate - reveal
 		kPMTIRotate,          968, 80,
 		kPMTIPlaySound,       29, 33,
 		kPMTIWait,            1000,
@@ -641,13 +643,14 @@ static const int *getPoliceMazePS12TrackData44() {  // Innocent (kItemPS12Target
 	return trackData;
 }
 
-static const int *getPoliceMazePS12TrackData45() {  // Enemy (kItemPS12Target17)
+static const int *getPoliceMazePS12TrackData45() {  // Enemy (kItemPS12Target17) - Rotating reveal
 	static int trackData[] = {
 		kPMTIActivate,        kVariablePoliceMazePS12TargetCounter, kPoliceMazePS12TargetCount,
 		kPMTIVariableInc,     kVariablePoliceMazePS12TargetCounter, kPoliceMazePS12TargetCount,
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 		kPMTITargetSet,       kItemPS12Target17, 0, // remove target-able here
+		kPMTIEnemyReset,      kItemPS12Target17,
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleReset,   kItemPS12Target17,
 		kPMTIFacing,          540,
@@ -658,7 +661,7 @@ static const int *getPoliceMazePS12TrackData45() {  // Enemy (kItemPS12Target17)
 		kPMTITargetSet,       kItemPS12Target17, 1,
 		kPMTIMove,            9,
 		kPMTIWait,            1000,
-		kPMTIEnemySet,        kItemPS12Target17,
+		kPMTIEnemySet,        kItemPS12Target17,    // rotate - reveal
 		kPMTIRotate,          284, 80,
 		kPMTIWait,            0,
 		kPMTIRotate,          28, 80,

@@ -51,7 +51,6 @@ static const int *getPoliceMazePS11TrackData9() {   // Enemy (kItemPS11Target1) 
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 		kPMTITargetSet,       kItemPS11Target1, 0,  // remove target-able here
-		kPMTIEnemyReset,      kItemPS11Target1,
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleReset,   kItemPS11Target1,
 		kPMTIFacing,          50,
@@ -79,7 +78,7 @@ static const int *getPoliceMazePS11TrackData9() {   // Enemy (kItemPS11Target1) 
 	return trackData;
 }
 
-static const int *getPoliceMazePS11TrackData10() {  // Enemy (kItemPS11Target2, kItemPS11Target3)
+static const int *getPoliceMazePS11TrackData10() {  // Enemy (kItemPS11Target2, kItemPS11Target3) - Rotating reveal (as kItemPS11Target3)
 	static int trackData[] = {
 		kPMTIActivate,        kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
 		kPMTIVariableInc,     kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
@@ -126,7 +125,7 @@ static const int *getPoliceMazePS11TrackData11() {  // Enemy (kItemPS11Target2, 
 		kPMTIEnemyReset,      kItemPS11Target3,		// [redundant after bug fix] target 2-3 still is not revealed as enemy
 		kPMTIMove,            25,
 		kPMTIWait,            500,
-		kPMTIEnemySet,        kItemPS11Target3,		// no need to set target 2 as enemy too, since it's gone
+		kPMTIEnemySet,        kItemPS11Target3,		// rotate - reveal -- no need to set target 2 as enemy too, since it's gone
 		kPMTIPlaySound,       32, 33,
 		kPMTIRotate,          644, 80,
 		kPMTIWait,            0,
@@ -198,7 +197,6 @@ static const int *getPoliceMazePS11TrackData13() {  // Enemy (kItemPS11Target5) 
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 		kPMTITargetSet,       kItemPS11Target5, 0,  // remove target-able here
-		kPMTIEnemyReset,      kItemPS11Target5,
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleReset,   kItemPS11Target5,
 		kPMTIFacing,          340,
@@ -241,7 +239,7 @@ static const int *getPoliceMazePS11TrackData13() {  // Enemy (kItemPS11Target5) 
 	return trackData;
 }
 
-static const int *getPoliceMazePS11TrackData14() {  // Enemy (kItemPS11Target6)
+static const int *getPoliceMazePS11TrackData14() {  // Enemy (kItemPS11Target6) - Rotating reveal
 	static int trackData[] = {
 		kPMTIActivate,        kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
 		kPMTIVariableInc,     kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
@@ -259,10 +257,10 @@ static const int *getPoliceMazePS11TrackData14() {  // Enemy (kItemPS11Target6)
 		kPMTIPlaySound,       33, 33,
 		kPMTIMove,            5,
 		kPMTIWait,            500,
-		kPMTIEnemySet,        kItemPS11Target6,
+		kPMTIEnemySet,        kItemPS11Target6,     // rotate - reveal
 		kPMTIRotate,          644, 80,
 		kPMTIWait,            0,
-		kPMTIRotate,          388, 80,
+		kPMTIRotate,          388, 80,              // TODO fix orientation here
 		kPMTIWait,            1000,
 		kPMTIShoot,           27, 33,
 		kPMTIPlaySound,       34, 33,
@@ -285,8 +283,8 @@ static const int *getPoliceMazePS11TrackData15() {  // Innocent (kItemPS11Target
 		kPMTIVariableInc,     kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-		kPMTITargetSet,       kItemPS11Target7, 0,  // remove target-able here
-		kPMTITargetSet,       kItemPS11Target8, 0,  // remove target-able here
+		kPMTITargetSet,       kItemPS11Target7, 0,  // remove target-able here - redundant, but consistent with the original kPMTIObstacleReset (redundant) instructions that follow
+		kPMTITargetSet,       kItemPS11Target8, 0,  // remove target-able here - redundant, but consistent with the original kPMTIObstacleReset (redundant) instructions that follow
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleReset,   kItemPS11Target7,
 		kPMTIObstacleReset,   kItemPS11Target8,
@@ -327,7 +325,7 @@ static const int *getPoliceMazePS11TrackData16() {  // Innocent (kItemPS11Target
 		kPMTIFacing,          860,
 		kPMTIPosition,        0,
 		kPMTIObstacleSet,     kItemPS11Target8,
-		kPMTIEnemyReset,      kItemPS11Target8,
+		kPMTIEnemyReset,      kItemPS11Target8,     // [redundant after bug fix]
 		kPMTIMove,            25,
 		kPMTIWait,            500,
 		kPMTIPlaySound,       32, 33,
@@ -351,7 +349,7 @@ static const int *getPoliceMazePS11TrackData16() {  // Innocent (kItemPS11Target
 	return trackData;
 }
 
-static const int *getPoliceMazePS11TrackData17() {  // Enemy (kItemPS11Target9)
+static const int *getPoliceMazePS11TrackData17() {  // Special (kItemPS11Target9) - Enemy x3
 	static int trackData[] = {
 		kPMTIActivate,        kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
 		kPMTIVariableInc,     kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
@@ -359,7 +357,6 @@ static const int *getPoliceMazePS11TrackData17() {  // Enemy (kItemPS11Target9)
 #else
 		kPMTITargetSet,       kItemPS11Target9, 0,  // remove target-able here
 		kPMTIObstacleReset,   kItemPS11Target9,
-		kPMTIEnemyReset,      kItemPS11Target9,
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIFacing,          310,
 		kPMTIPosition,        0,
@@ -371,8 +368,8 @@ static const int *getPoliceMazePS11TrackData17() {  // Enemy (kItemPS11Target9)
 		kPMTIWaitRandom,      4000, 8000,
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-		kPMTIObstacleSet,     kItemPS11Target9,
-		kPMTITargetSet,       kItemPS11Target9, 1,
+		kPMTIObstacleSet,     kItemPS11Target9,     // make visible after the wait period, not before
+		kPMTITargetSet,       kItemPS11Target9, 1,  // set Target-able after the wait period, not before
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIPlaySound,       32, 33,
 		kPMTIMove,            10,
@@ -380,12 +377,12 @@ static const int *getPoliceMazePS11TrackData17() {  // Enemy (kItemPS11Target9)
 		kPMTIShoot,           27, 33,
 		kPMTIMove,            0,
 #if BLADERUNNER_ORIGINAL_BUGS
-		kPMTITargetSet,       kItemPS11Target9, 1,  // TODO MAZE A bug? intended? Reseting the target-able status would result in multiple credits same target
+		kPMTITargetSet,       kItemPS11Target9, 1,  // TODO MAZE A bug? intended? - "Second" enemy
 		kPMTIEnemySet,        kItemPS11Target9,
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIMove,            24,
 #if BLADERUNNER_ORIGINAL_BUGS
-		kPMTITargetSet,       kItemPS11Target9, 1,  // TODO MAZE A bug? intended? Reseting the target-able status would result in multiple credits same target
+		kPMTITargetSet,       kItemPS11Target9, 1,  // TODO MAZE A bug? intended? - "Third" enemy
 		kPMTIEnemySet,        kItemPS11Target9,
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIMove,            10,
@@ -406,7 +403,7 @@ static const int *getPoliceMazePS11TrackData17() {  // Enemy (kItemPS11Target9)
 	return trackData;
 }
 
-static const int *getPoliceMazePS11TrackData18() {  // Enemy (kItemPS11Target10, kItemPS11Target11)
+static const int *getPoliceMazePS11TrackData18() {  // Special (kItemPS11Target10, kItemPS11Target11) - Innocent x1???, then Enemy x2
 	static int trackData[] = {
 		kPMTIActivate,        kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
 		kPMTIVariableInc,     kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
@@ -425,20 +422,20 @@ static const int *getPoliceMazePS11TrackData18() {  // Enemy (kItemPS11Target10,
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 		kPMTIEnemyReset,      kItemPS11Target11,    // both targets should clear their enemy flag here
-#endif // BLADERUNNER_ORIGINAL_BUGS
+#endif
 		kPMTIWaitRandom,      4000, 6000,
 		kPMTIObstacleSet,     kItemPS11Target10,
 		kPMTIMove,            5,
-		kPMTIPlaySound,       19, 33,               // RICO3
+		kPMTIPlaySound,       19, 33,
 #if BLADERUNNER_ORIGINAL_BUGS
 		kPMTIPlaySound,       3, 33,                // FEMHURT1
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIWait,            1000,
 #if BLADERUNNER_ORIGINAL_BUGS
-		kPMTILeave,                                 // TODO MAZE A bug? intended?  this target track is not for an innocent target, why credit a point here while the target is not revealed?
+		kPMTILeave,                                 // TODO MAZE A bug? intended?  Is this target not revealed yet? Credit for "first" innocent (special)?
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIRotate,          700, 80,
-		kPMTIEnemySet,        kItemPS11Target10,
+		kPMTIEnemySet,        kItemPS11Target10,    // Now the target is an enemy. (special)
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 		kPMTIEnemySet,        kItemPS11Target11,    // both targets should set their enemy flag here
@@ -465,11 +462,11 @@ static const int *getPoliceMazePS11TrackData19() {  // Enemy (kItemPS11Target10,
 	static int trackData[] = {
 		kPMTIFacing,          512,
 		kPMTIPosition,        0,
-		kPMTIEnemySet,        kItemPS11Target11,
+		kPMTIEnemySet,        kItemPS11Target11,    // [redundant after bug fix]
 		kPMTIMove,            8,
 		kPMTIWait,            4000,
 #if BLADERUNNER_ORIGINAL_BUGS
-		kPMTITargetSet,       kItemPS11Target11, 1, // TODO MAZE A bug? intended?
+		kPMTITargetSet,       kItemPS11Target11, 1, // TODO MAZE A bug? intended? Now the target is reset as new enemy again (special)
 		kPMTIEnemySet,        kItemPS11Target11,
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIMove,            2,
