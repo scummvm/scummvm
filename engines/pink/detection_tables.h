@@ -257,6 +257,19 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Danish
+	// Version 1.0
+	// Contributed by sauravisus in Trac#10919
+	{
+		"pokus",
+		0,
+		AD_ENTRY1s("HPP.orb", "3428dda98c21c4b6cd798750016796ab", 513518023),
+		Common::DA_DAN,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NONE)
+	},
+
 	AD_TABLE_END_MARKER
 };
 
