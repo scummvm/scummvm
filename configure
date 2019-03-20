@@ -227,7 +227,6 @@ NASM=""
 _tainted_build=no
 PANDOC=""
 _pandocpath="$PATH"
-_pandocoutput="README"
 _pandocformat="plain"
 # The following variables are automatically detected, and should not
 # be modified otherwise. Consider them read-only.
@@ -1094,8 +1093,7 @@ Optional Libraries:
   --with-nasm-prefix=DIR   prefix where nasm executable is installed (optional)
   --disable-nasm           disable assembly language optimizations [autodetect]
 
-	--with-pandoc-output=FILE  filename to convert README.md to (optional)
-	--with-pandoc-format=FORMAT   pandoc format to use during the conversion (optional)
+  --with-pandoc-format=FORMAT   pandoc format to use during the conversion (optional)
 
   --with-readline-prefix=DIR   prefix where readline is installed (optional)
   --disable-readline       disable readline support in text console [autodetect]
@@ -1397,11 +1395,6 @@ for ac_option in $@; do
 	--with-nasm-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		_nasmpath="$arg:$arg/bin"
-		;;
-	--with-pandoc-output=*)
-		arg=`echo $ac_option | cut -d '=' -f 2`
-		_pandocoutput="$arg"
-		_pandoc=yes
 		;;
 	--with-pandoc-format=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -5091,22 +5084,22 @@ define_in_config_if_yes $_nasm 'USE_NASM'
 # Check for pandoc
 #
 if test "$_pandoc" = yes ; then
-  echocheck "pandoc"
+	echocheck "pandoc"
 
-  IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=$SEPARATOR
+	IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=$SEPARATOR
 
-  for path_dir in $_pandocpath; do
-    if test -x "$path_dir/pandoc$NATIVEEXEEXT" ; then
-      PANDOC="$path_dir/pandoc$NATIVEEXEEXT"
-      break
-    fi
-  done
+	for path_dir in $_pandocpath; do
+		if test -x "$path_dir/pandoc$NATIVEEXEEXT" ; then
+			PANDOC="$path_dir/pandoc$NATIVEEXEEXT"
+			break
+		fi
+	done
 
 	IFS="$ac_save_ifs"
 
-  if ! test "$PANDOC" ; then
-    _pandoc = no
-  fi
+	if ! test "$PANDOC" ; then
+		_pandoc = no
+	fi
 
 	echo $_pandoc
 fi
@@ -5590,7 +5583,6 @@ EXEEXT := $HOSTEXEEXT
 NASM := $NASM
 NASMFLAGS := $NASMFLAGS
 PANDOC := $PANDOC
-PANDOCOUTPUT := $_pandocoutput
 PANDOCFORMAT := $_pandocformat
 ZLIB_LIBS := $ZLIB_LIBS
 ZLIB_CFLAGS := $ZLIB_CFLAGS
