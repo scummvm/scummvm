@@ -142,8 +142,6 @@ private:
 	int32 *_oprLevelOut;
 	int32 *_oprDetune;
 
-	bool _regProtectionFlag;
-
 	typedef void (TownsPC98_FmSynth::*ChipTimerProc)();
 	void idleTimerCallback() {}
 

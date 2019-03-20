@@ -61,8 +61,6 @@ private:
 	const uint16 _port1, _port2, _port3, _port4;
 	uint8 _address[2];
 
-	uint16 _frequency;
-	
 	PC98AudioPluginDriver *_drv;
 	void *_drvOwner;
 	bool _ready;
@@ -77,8 +75,8 @@ PC98AudioCoreInternal::PC98AudioCoreInternal(Audio::Mixer *mixer, PC98AudioCore 
 	_musicVolume(Audio::Mixer::kMaxMixerVolume), _sfxVolume(Audio::Mixer::kMaxMixerVolume),
 	_port1(type == PC98AudioPluginDriver::kTypeTowns ? 0x4D8 : 0x188), _port2(type == PC98AudioPluginDriver::kTypeTowns ? 0x4DA : 0x18A),
 	_port3(type == PC98AudioPluginDriver::kTypeTowns ? 0x4DC : 0x18C), _port4(type == PC98AudioPluginDriver::kTypeTowns ? 0x4DE : 0x18E),
-	_frequency(0), _ready(false) {
-	_address[0] = _address[1] = 0xFF;
+	_ready(false) {
+		_address[0] = _address[1] = 0xFF;
 }
 
 PC98AudioCoreInternal::~PC98AudioCoreInternal() {
