@@ -116,7 +116,7 @@ struct GameVariables {
 		kUnlockPetitePorte,
 		kAlreadyCame31,
 		kDrawerStatus,
-		kCurrentTime,
+		kCurrentTime, // OK
 		kGotMedaillesSolution,
 		kDrawerFurnitureStatus,
 		kCollectePartition,
