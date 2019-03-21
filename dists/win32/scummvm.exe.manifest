@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
-    <assemblyIdentity type="win32" name="ScummVM" version="2.1.0.0" processorArchitecture="amd64"/>
+    <assemblyIdentity type="win32" name="ScummVM" version="2.1.0.0"/>
     <asmv3:application>
         <asmv3:windowsSettings>
             <dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
