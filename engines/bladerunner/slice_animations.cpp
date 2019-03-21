@@ -95,12 +95,15 @@ bool SliceAnimations::openCoreAnim() {
 }
 
 bool SliceAnimations::openFrames(int fileNumber) {
+
 	if (_framesPageFile._fileNumber == -1) { // Running for the first time, need to probe
 		// First, try HDFRAMES.DAT
 		if (_framesPageFile.open("HDFRAMES.DAT")) {
 			_framesPageFile._fileNumber = 0;
 
 			return true;
+		} else {
+			warning("SliceAnimations::openFrames: HDFRAMES.DAT resource not found. Falling back to using CDFRAMESx.DAT files instead...");
 		}
 	}
 
@@ -114,10 +117,14 @@ bool SliceAnimations::openFrames(int fileNumber) {
 
 	_framesPageFile._fileNumber = fileNumber;
 
-	if (fileNumber == 1 && _framesPageFile.open("CDFRAMES.DAT")) // For Chapter1 we try both CDFRAMES.DAT and CDFRAMES1.DAT
+	if (fileNumber == 1 && _framesPageFile.open("CDFRAMES.DAT")) {// For Chapter1 we try both CDFRAMES.DAT and CDFRAMES1.DAT
 		return true;
+	}
 
-	return _framesPageFile.open(Common::String::format("CDFRAMES%d.DAT", fileNumber));
+	if (_framesPageFile.open(Common::String::format("CDFRAMES%d.DAT", fileNumber))) {
+		return true;
+	}
+	return false;
 }
 
 bool SliceAnimations::PageFile::open(const Common::String &name) {

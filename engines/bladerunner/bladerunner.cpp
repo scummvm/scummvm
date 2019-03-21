@@ -83,6 +83,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/debug-channels.h"
+#include "gui/message.h"
 
 #include "engines/util.h"
 #include "engines/advancedDetector.h"
@@ -847,7 +848,12 @@ void BladeRunnerEngine::gameTick() {
 	}
 
 	if (!_kia->isOpen() && !_sceneScript->isInsideScript() && !_aiScripts->isInsideScript()) {
-		_settings->openNewScene();
+		if (!_settings->openNewScene()) {
+			Common::Error runtimeError = Common::Error(Common::kUnknownError, "A required game resource was not found");
+			GUI::MessageDialog dialog(runtimeError.getDesc());
+			dialog.runModal();
+			return;
+		}
 	}
 
 	if (_gameAutoSave >= 0) {
