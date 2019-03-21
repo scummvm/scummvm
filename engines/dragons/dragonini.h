@@ -46,7 +46,7 @@ struct DragonINI
 		uint16 id;
 		int16 iptIndex_maybe;
 		int16 field_2;
-		uint16 actorResourceId;
+		int16 actorResourceId;
 		uint16 sequenceId;
 		int16 field_8;
 		Actor *actor;
@@ -60,7 +60,7 @@ struct DragonINI
 		uint16 field_1a_flags_maybe;
 		int16 field_1c;
 		int16 field_1e;
-		uint16 field_20_actor_field_14;
+		int16 field_20_actor_field_14;
 	};
 
 class DragonINIResource {

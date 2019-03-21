@@ -329,8 +329,9 @@ void DragonsEngine::gameLoop()
 			LAB_80026d34:
 			uVar3 = 0;
 		}
+
 		if (_cursor->updateINIUnderCursor() == 0 ||
-			(getINI(_cursor->_iniUnderCursor)->actor && (getINI(_cursor->_iniUnderCursor)->actor->_actorID & 0x4000) != 0)) { //TODO check this. This logic looks a bit strange.
+			(!(_cursor->_iniUnderCursor & 0x8000) && (getINI(_cursor->_iniUnderCursor - 1)->field_1a_flags_maybe & 0x4000) != 0)) { //TODO check this. This logic looks a bit strange.
 			_data_either_5_or_0 = 0;
 		}
 		else {
@@ -998,8 +999,76 @@ void DragonsEngine::FUN_80038890() {
 	error("FUN_80038890"); //TODO
 }
 
-void DragonsEngine::FUN_8002837c() {
-	error("FUN_8002837c"); //TODO
+void DragonsEngine::FUN_8002837c()
+{
+	ushort targetX;
+	ushort targetY;
+	uint uVar7;
+	uint uVar8;
+	DragonINI *targetINI;
+	DragonINI *flickerINI;
+
+	flickerINI = _dragonINIResource->getFlickerRecord();
+	if (flickerINI->sceneId == getCurrentSceneId()) {
+		if (_cursor->data_80072890 != 0) {
+
+			if (!(READ_LE_UINT16(_dragonOBD->getFromOpt(_cursor->data_80072890 - 1) + 4) & 8)
+			&& (_inventory->getType() == 0) && !isFlagSet(ENGINE_FLAG_200000)) {
+				targetINI = getINI(_cursor->data_80072890 - 1);
+				if ((targetINI->field_1a_flags_maybe & 1) == 0) {
+					if (targetINI->actorResourceId == -1) {
+						return;
+					}
+					IMG *img = _dragonIMG->getIMG(targetINI->field_2);
+					targetX = img->field_a;
+					targetY = img->field_c;
+				}
+				else {
+					targetX = targetINI->actor->x_pos;
+					targetY = targetINI->actor->y_pos;
+				}
+				flickerINI->actor->field_7c = 0x10000;
+				if (flickerINI->field_20_actor_field_14 == -1) {
+					flickerINI->actor->setFlag(ACTOR_FLAG_800);
+				}
+				flickerINI->actor->pathfinding_maybe((int)(((uint)targetX + (uint)targetINI->field_1c) * 0x10000) >> 0x10,
+												  (int)(((uint)targetY + (uint)targetINI->field_1e) * 0x10000) >> 0x10,0);
+				bit_flags_8006fbd8 = 1;
+				return;
+			}
+			if (isFlagSet(ENGINE_FLAG_200000)) {
+				bit_flags_8006fbd8 = 3;
+				return;
+			}
+			flickerINI = _dragonINIResource->getFlickerRecord();
+			if (flickerINI != NULL && flickerINI->actor != NULL) {
+				flickerINI->actor->clearFlag(ACTOR_FLAG_10);
+				uVar8 = (uint)_cursor->data_80072890;
+				flickerINI->actor->setFlag(ACTOR_FLAG_4);
+				targetINI = getINI(_cursor->data_80072890 - 1);
+				flickerINI->field_20_actor_field_14 = targetINI->field_e;
+				flickerINI->actor->_sequenceID2 = targetINI->field_e;
+			}
+			bit_flags_8006fbd8 = 3;
+			return;
+		}
+		if (_inventory->getType() == 0 && !isFlagSet(ENGINE_FLAG_200000)) {
+			uVar7 = (uint)(ushort)_cursor->_x;
+			uVar8 = (uint)(ushort)_cursor->_y;
+			flickerINI->actor->field_7c = 0x10000;
+			flickerINI->actor->pathfinding_maybe(
+					(int)((uVar7 + (uint)_scene->_camera.x) * 0x10000) >> 0x10,
+					 (int)((uVar8 + (uint)_scene->_camera.y) * 0x10000) >> 0x10,0);
+		}
+	}
+	else {
+		if (_cursor->data_80072890 != 0) {
+			bit_flags_8006fbd8 = 3;
+			return;
+		}
+	}
+	bit_flags_8006fbd8 = 0;
+	return;
 }
 
 void DragonsEngine::FUN_80031480() {
