@@ -69,6 +69,7 @@ void Inventory::remove(unsigned int position) {
 void Inventory::removeByIconID(unsigned int iconID) {
 	for (iterator it = begin(); it != end(); it++) {
 		if ((*it) && (*it)->idCA() == iconID) {
+			deselectObject();
 			remove(it - begin());
 			return;
 		}
@@ -79,6 +80,7 @@ void Inventory::removeByIconID(unsigned int iconID) {
 void Inventory::removeByNameID(unsigned int nameID) {
 	for (iterator it = begin(); it != end(); it++) {
 		if ((*it) && (*it)->idOBJ() == nameID) {
+			deselectObject();
 			remove(it - begin());
 			return;
 		}

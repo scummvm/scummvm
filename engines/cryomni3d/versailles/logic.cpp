@@ -1314,7 +1314,6 @@ FILTER_EVENT(2, 1) {
 
 		if (idOBJ == 98 && _dialogsMan["JOUEUR-CONFIE-MESSAGE-HUISSIER"] == 'Y') {
 			_inventory.removeByNameID(98);
-			_inventory.deselectObject();
 			setGameTime(2, 2);
 		}
 	} else if (*event == 31101) {
