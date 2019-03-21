@@ -188,7 +188,8 @@ int16 Cursor::updateINIUnderCursor() {
 int16 Cursor::updateIniFromScene() {
 	int16 cursorTileX = _actor->x_pos / 32;
 	int16 cursorTileY = _actor->y_pos / 8;
-
+	int16 data_80072890_orig = data_80072890;
+	int16 data_800728b0_cursor_seqID_orig = data_800728b0_cursor_seqID;
 	for(int i=0;i <_vm->_dragonINIResource->totalRecords(); i++) {
 		DragonINI *ini = _vm->_dragonINIResource->getRecord(i);
 		if (ini->sceneId != _vm->_scene->getSceneId()) {
@@ -249,8 +250,8 @@ int16 Cursor::updateIniFromScene() {
 				}
 				if (_sequenceID != 0) {
 					_iniUnderCursor = cursorOverIni;
-//					data_80072890 = uVar3; TODO
-//					data_800728b0 = uVar4;
+					data_80072890 = data_80072890_orig;
+					data_800728b0_cursor_seqID = data_800728b0_cursor_seqID_orig;
 					return _iniUnderCursor;
 				}
 				byte *obd = _vm->_dragonOBD->getFromOpt(cursorOverIni - 1); //_dragonRMS->getObdDataFieldC(sceneId);
@@ -263,16 +264,16 @@ int16 Cursor::updateIniFromScene() {
 //				local_44 = local_44 + local_48;
 				if(executeScript(scriptOpCall, 0)) {
 					_iniUnderCursor = cursorOverIni;
-//					data_80072890 = uVar3; //TODO
-//					data_800728b0 = uVar4;
+					data_80072890 = data_80072890_orig;
+					data_800728b0_cursor_seqID = data_800728b0_cursor_seqID_orig;
 					return _iniUnderCursor;
 				}
 			}
 		}
 	}
 	_iniUnderCursor = 0;
-//	data_80072890 = uVar3; TODO
-//	data_800728b0 = uVar4;
+	data_80072890 = data_80072890_orig;
+	data_800728b0_cursor_seqID = data_800728b0_cursor_seqID_orig;
 	return 0;
 }
 
