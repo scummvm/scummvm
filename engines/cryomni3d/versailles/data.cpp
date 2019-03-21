@@ -536,7 +536,6 @@ void CryOmni3DEngine_Versailles::initPlacesStates() {
 		SET_PLACE_STATE(14, nullptr, FILTER_EVENT(1, 14), nullptr);
 	} else if (_currentLevel == 2) {
 		_placeStates.resize(15);
-		// TODO: implement functions
 		SET_PLACE_STATE(1, nullptr, FILTER_EVENT(2, 1), "VS22");
 		SET_PLACE_STATE(2, nullptr, FILTER_EVENT(2, 2), "VS20");
 		SET_PLACE_STATE(3, nullptr, nullptr, "VS19");

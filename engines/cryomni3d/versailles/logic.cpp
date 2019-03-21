@@ -684,62 +684,6 @@ IMG_CB(32120c) {
 	setGameTime(4, 2);
 }
 
-IMG_CB(41202) {
-	fimg->load("10E_20.GIF");
-	while (1) {
-		fimg->manage();
-		if (fimg->_exit || fimg->_zoneLow) {
-			fimg->_exit = true;
-			break;
-		}
-		HANDLE_QUESTION(1);
-		if (fimg->_zoneUse) {
-			if (fimg->_currentZone == 2 && !_inventory.inInventoryByNameID(97)) {
-				// Open the jar
-				ZonFixedImage::CallbackFunctor *functor =
-				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-				            &CryOmni3DEngine_Versailles::img_41202b);
-				fimg->changeCallback(functor);
-				break;
-			} else {
-				displayMessageBox(kFixedimageMsgBoxParameters, fimg->surface(), 11,
-				                  fimg->getZoneCenter(fimg->_currentZone),
-				                  Common::Functor0Mem<void, ZonFixedImage>(fimg, &ZonFixedImage::manage));
-			}
-		}
-	}
-}
-
-IMG_CB(41202b) {
-	fimg->load("10E_21.GIF");
-	while (1) {
-		fimg->manage();
-		if (fimg->_exit) {
-			break;
-		}
-		HANDLE_QUESTION(1);
-		if (fimg->_zoneLow) {
-			// Go back to jars closed
-			ZonFixedImage::CallbackFunctor *functor =
-			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_41202);
-			fimg->changeCallback(functor);
-			break;
-		}
-		if (fimg->_zoneUse) {
-			if (!_inventory.inInventoryByNameID(97)) {
-				collectObject(97, fimg);
-			}
-			// Go back to jars closed
-			ZonFixedImage::CallbackFunctor *functor =
-			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
-			            &CryOmni3DEngine_Versailles::img_41202);
-			fimg->changeCallback(functor);
-			break;
-		}
-	}
-}
-
 IMG_CB(32201) {
 	fimg->load("21E_41.GIF");
 	while (1) {
@@ -814,6 +758,62 @@ IMG_CB(32204b) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
 			fimg->_exit = true;
+			break;
+		}
+	}
+}
+
+IMG_CB(41202) {
+	fimg->load("10E_20.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		HANDLE_QUESTION(1);
+		if (fimg->_zoneUse) {
+			if (fimg->_currentZone == 2 && !_inventory.inInventoryByNameID(97)) {
+				// Open the jar
+				ZonFixedImage::CallbackFunctor *functor =
+				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+				            &CryOmni3DEngine_Versailles::img_41202b);
+				fimg->changeCallback(functor);
+				break;
+			} else {
+				displayMessageBox(kFixedimageMsgBoxParameters, fimg->surface(), 11,
+				                  fimg->getZoneCenter(fimg->_currentZone),
+				                  Common::Functor0Mem<void, ZonFixedImage>(fimg, &ZonFixedImage::manage));
+			}
+		}
+	}
+}
+
+IMG_CB(41202b) {
+	fimg->load("10E_21.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit) {
+			break;
+		}
+		HANDLE_QUESTION(1);
+		if (fimg->_zoneLow) {
+			// Go back to jars closed
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_41202);
+			fimg->changeCallback(functor);
+			break;
+		}
+		if (fimg->_zoneUse) {
+			if (!_inventory.inInventoryByNameID(97)) {
+				collectObject(97, fimg);
+			}
+			// Go back to jars closed
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_41202);
+			fimg->changeCallback(functor);
 			break;
 		}
 	}
@@ -999,7 +999,7 @@ IMG_CB(41802) {
 				_gameVariables[GameVariables::kGotRevealedPaper] = 1;
 				setGameTime(3, 1);
 			} else if (objID == 96) {
-				// Pamphlet about arts
+				// Lampoon about arts
 				playInGameVideo("PAP-BRUL");
 				// Force reload of the place
 				if (_nextPlaceId == -1u) {
@@ -1046,7 +1046,7 @@ IMG_CB(41802b) {
 				_gameVariables[GameVariables::kGotRevealedPaper] = 1;
 				setGameTime(3, 1);
 			} else if (objID == 96) {
-				// Pamphlet about arts
+				// Lampoon about arts
 				playInGameVideo("PAP-BRUL");
 				// Force reload of the place
 				if (_nextPlaceId == -1u) {
@@ -1091,7 +1091,7 @@ IMG_CB(41802c) {
 				_gameVariables[GameVariables::kGotRevealedPaper] = 1;
 				setGameTime(3, 1);
 			} else if (objID == 96) {
-				// Pamphlet about arts
+				// Lampoon about arts
 				playInGameVideo("PAP-BRUL");
 				// Force reload of the place
 				if (_nextPlaceId == -1u) {
@@ -1126,7 +1126,7 @@ IMG_CB(41802d) {
 				_gameVariables[GameVariables::kGotRevealedPaper] = 1;
 				setGameTime(3, 1);
 			} else if (objID == 96) {
-				// Pamphlet about arts
+				// Lampoon about arts
 				playInGameVideo("PAP-BRUL");
 				// Force reload of the place
 				if (_nextPlaceId == -1u) {
