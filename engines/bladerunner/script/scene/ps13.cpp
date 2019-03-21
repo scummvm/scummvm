@@ -108,7 +108,11 @@ static const int *getPoliceMazePS13TrackData47() {  // Enemy (kItemPS13Target2) 
 		kPMTIObstacleReset,   kItemPS13Target2,
 		kPMTIFacing,          823,
 		kPMTIPosition,        0,
+#if BLADERUNNER_ORIGINAL_BUGS
 		kPMTIWaitRandom,      5000, 5000,
+#else
+		kPMTIWaitRandom,      5000, 6000,
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleSet,     kItemPS13Target2,
 		kPMTIPlaySound,       33, 33,
 		kPMTITargetSet,       kItemPS13Target2, 1,
@@ -140,7 +144,11 @@ static const int *getPoliceMazePS13TrackData48() {  // Innocent (kItemPS13Target
 		kPMTIObstacleReset,   kItemPS13Target3,
 		kPMTIFacing,          823,
 		kPMTIPosition,        0,
+#if BLADERUNNER_ORIGINAL_BUGS
 		kPMTIWaitRandom,      2000, 2000,
+#else
+		kPMTIWaitRandom,      2000, 3000,
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleSet,     kItemPS13Target3,
 		kPMTIPlaySound,       33, 33,
 		kPMTITargetSet,       kItemPS13Target3, 1,
@@ -237,7 +245,11 @@ static const int *getPoliceMazePS13TrackData51() {  // Enemy (kItemPS13Target6)
 		kPMTIObstacleReset,   kItemPS13Target6,
 		kPMTIFacing,          823,
 		kPMTIPosition,        0,
+#if BLADERUNNER_ORIGINAL_BUGS
 		kPMTIWaitRandom,      2000, 2000,
+#else
+		kPMTIWaitRandom,      2000, 3000,
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleSet,     kItemPS13Target6,
 		kPMTIPlaySound,       33, 33,
 		kPMTITargetSet,       kItemPS13Target6, 1,
@@ -277,6 +289,7 @@ static const int *getPoliceMazePS13TrackData52() {  // Enemy (kItemPS13Target7) 
 		kPMTIEnemyReset,      kItemPS13Target7,
 		kPMTIMove,            9,
 		kPMTIWait,            500,
+		kPMTIPlaySound,       495, 33,             // ASDF REVEAL BELL
 		kPMTIEnemySet,        kItemPS13Target7,     // rotate - reveal
 		kPMTIRotate,          555, 80,
 		kPMTIWait,            0,
@@ -307,12 +320,17 @@ static const int *getPoliceMazePS13TrackData53() {  // Enemy (kItemPS13Target8) 
 		kPMTIObstacleReset,   kItemPS13Target8,
 		kPMTIFacing,          356,
 		kPMTIPosition,        0,
+#if BLADERUNNER_ORIGINAL_BUGS
 		kPMTIWaitRandom,      3000, 3000,
+#else
+		kPMTIWaitRandom,      3000, 4000,
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleSet,     kItemPS13Target8,
 		kPMTIPlaySound,       33, 33,
 		kPMTITargetSet,       kItemPS13Target8, 1,
 		kPMTIEnemyReset,      kItemPS13Target8,
 		kPMTIMove,            5,
+		kPMTIPlaySound,       495, 33,              // ASDF REVEAL BELL
 		kPMTIEnemySet,        kItemPS13Target8,     // rotate - reveal
 		kPMTIRotate,          868, 200,
 		kPMTIWait,            1000,
@@ -341,7 +359,11 @@ static const int *getPoliceMazePS13TrackData54() {  // Enemy (kItemPS13Target9) 
 		kPMTITargetSet,       kItemPS13Target9, 0,  // remove target-able here
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleReset,   kItemPS13Target9,
-		kPMTIFacing,          512,
+#if BLADERUNNER_ORIGINAL_BUGS
+		kPMTIFacing,          512,                  // fix starting orientation
+#else
+		kPMTIFacing,          250,                  // must have concealed weapon since starting as innocent
+#endif
 		kPMTIPosition,        0,
 		kPMTIWaitRandom,      10000, 20000,
 		kPMTIObstacleSet,     kItemPS13Target9,
@@ -350,6 +372,7 @@ static const int *getPoliceMazePS13TrackData54() {  // Enemy (kItemPS13Target9) 
 		kPMTIEnemyReset,      kItemPS13Target9,
 		kPMTIMove,            3,
 		kPMTIWait,            500,
+		kPMTIPlaySound,       495, 33,             // ASDF REVEAL BELL
 		kPMTIEnemySet,        kItemPS13Target9,     // rotate - reveal
 		kPMTIRotate,          768, 80,
 		kPMTIWait,            1000,
@@ -367,7 +390,7 @@ static const int *getPoliceMazePS13TrackData54() {  // Enemy (kItemPS13Target9) 
 	return trackData;
 }
 
-static const int *getPoliceMazePS13TrackData55() {  // Enemy (kItemPS13Target10, kItemPS13Target11, kItemPS13Target12) - Rotating reveal
+static const int *getPoliceMazePS13TrackData55() {  // Enemy linked series (kItemPS13Target10, kItemPS13Target11, kItemPS13Target12) - Rotating reveal
 	static int trackData[] = {
 		kPMTIActivate,        kVariablePoliceMazePS13TargetCounter, kPoliceMazePS13TargetCount,
 		kPMTIVariableInc,     kVariablePoliceMazePS13TargetCounter, kPoliceMazePS13TargetCount,
@@ -385,7 +408,11 @@ static const int *getPoliceMazePS13TrackData55() {  // Enemy (kItemPS13Target10,
 		kPMTITargetSet,       kItemPS13Target12, 1,
 		kPMTIFacing,          327,
 		kPMTIPosition,        0,
+#if BLADERUNNER_ORIGINAL_BUGS
 		kPMTIWaitRandom,      1000, 1000,
+#else
+		kPMTIWaitRandom,      1000, 2000,
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIPlaySound,       33, 33,
 		kPMTIEnemyReset,      kItemPS13Target10,
 #if BLADERUNNER_ORIGINAL_BUGS
@@ -410,7 +437,7 @@ static const int *getPoliceMazePS13TrackData55() {  // Enemy (kItemPS13Target10,
 	return trackData;
 }
 
-static const int *getPoliceMazePS13TrackData56() {  // Enemy (kItemPS13Target10, kItemPS13Target11, kItemPS13Target12) - Rotating reveal
+static const int *getPoliceMazePS13TrackData56() {  // Enemy linked series (kItemPS13Target10, kItemPS13Target11, kItemPS13Target12) - Rotating reveal
 	static int trackData[] = {
 		kPMTIFacing,          327,
 		kPMTIPosition,        0,
@@ -420,21 +447,27 @@ static const int *getPoliceMazePS13TrackData56() {  // Enemy (kItemPS13Target10,
 		kPMTIWait,            1000,
 		kPMTIPausedReset,     kItemPS13Target12,
 		kPMTIObstacleReset,   kItemPS13Target11,
-		kPMTIObstacleSet,     kItemPS13Target12,
-		kPMTIPausedSet,       kItemPS13Target11,
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 		kPMTITargetSet,       kItemPS13Target11, 0, // remove target-able here - only for kItemPS13Target11 item
 #endif // BLADERUNNER_ORIGINAL_BUGS
+		kPMTIObstacleSet,     kItemPS13Target12,
+		kPMTIPausedSet,       kItemPS13Target11,
 		kPMTIPosition,        0,
 		kPMTIRestart
 	};
 	return trackData;
 }
 
-static const int *getPoliceMazePS13TrackData57() {  // Enemy (kItemPS13Target10, kItemPS13Target11, kItemPS13Target12) - Rotating reveal
+static const int *getPoliceMazePS13TrackData57() {  // Enemy linked series (kItemPS13Target10, kItemPS13Target11, kItemPS13Target12) - Rotating reveal
 	static int trackData[] = {
+		kPMTIPlaySound,       495, 33,              // ASDF REVEAL BELL
 		kPMTIEnemySet,        kItemPS13Target12,    // rotate - reveal
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		kPMTIEnemySet,        kItemPS13Target10, // set all other targets in linked series as enemies here too for consistency
+		kPMTIEnemySet,        kItemPS13Target11, // set all other targets in linked series as enemies here too for consistency
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIFacing,          327,
 		kPMTIPosition,        0,
 		kPMTIObstacleSet,     kItemPS13Target12,    // redundant (original)
@@ -469,7 +502,11 @@ static const int *getPoliceMazePS13TrackData58() {  // Special (kItemPS13Target1
 		kPMTIObstacleReset,   kItemPS13Target13,
 		kPMTIFacing,          922,
 		kPMTIPosition,        0,
+#if BLADERUNNER_ORIGINAL_BUGS
 		kPMTIWaitRandom,      3000, 3000,
+#else
+		kPMTIWaitRandom,      3000, 4000,
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleSet,     kItemPS13Target13,
 		kPMTIPlaySound,       33, 33,
 		kPMTITargetSet,       kItemPS13Target13, 1,
@@ -511,13 +548,18 @@ static const int *getPoliceMazePS13TrackData62() {  // Enemy (kItemPS13Target14)
 		kPMTIObstacleReset,   kItemPS13Target14,
 		kPMTIFacing,          465,
 		kPMTIPosition,        0,
+#if BLADERUNNER_ORIGINAL_BUGS
 		kPMTIWaitRandom,      3000, 3000,
+#else
+		kPMTIWaitRandom,      3000, 4000,
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleSet,     kItemPS13Target14,
 		kPMTIPlaySound,       33, 33,
 		kPMTITargetSet,       kItemPS13Target14, 1,
 		kPMTIEnemyReset,      kItemPS13Target14,
 		kPMTIMove,            14,
 		kPMTIWait,            1000,
+		kPMTIPlaySound,       495, 33,             // ASDF REVEAL BELL
 		kPMTIEnemySet,        kItemPS13Target14,    // rotate - reveal
 		kPMTIRotate,          650, 80,
 		kPMTIWait,            0,
@@ -559,7 +601,8 @@ static const int *getPoliceMazePS13TrackData63() {  // Enemy (kItemPS13Target15)
 		kPMTIEnemyReset,      kItemPS13Target15,
 		kPMTIMove,            9,
 		kPMTIWait,            1000,
-		kPMTIEnemySet,        kItemPS13Target15,
+		kPMTIPlaySound,       495, 33,             // ASDF REVEAL BELL
+		kPMTIEnemySet,        kItemPS13Target15,    // rotate - reveal
 		kPMTIRotate,          710, 80,
 		kPMTIWait,            0,
 		kPMTIRotate,          960, 80,

@@ -99,9 +99,15 @@ static const int *getPoliceMazePS12TrackData30() { // Enemy (kItemPS12Target2) -
 		kPMTIPlaySound,       34, 33,
 		kPMTIMove,            0,
 		kPMTIObstacleReset,   kItemPS12Target2,
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		kPMTITargetSet,       kItemPS12Target2, 0, // remove target-able after making target invisible
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIPausedReset1of2, kItemPS12Target13, kItemPS12Target11,
 		kPMTIPausedSet,       kItemPS12Target2,
+#if BLADERUNNER_ORIGINAL_BUGS
 		kPMTITargetSet,       kItemPS12Target2, 0, // removes target-able here (original code)
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIRestart
 	};
 	return trackData;
@@ -295,13 +301,18 @@ static const int *getPoliceMazePS12TrackData34() {  // Special (kItemPS12Target6
 		kPMTIMove,            19,
 		kPMTIPlaySound,       29, 33,
 		kPMTIWait,            0,
-		kPMTIObstacleReset,   kItemPS12Target6,
 #if BLADERUNNER_ORIGINAL_BUGS
-#else
-		kPMTITargetSet,       kItemPS12Target6, 0,  // remove target-able here - only for this item
-#endif // BLADERUNNER_ORIGINAL_BUGS
+		kPMTIObstacleReset,   kItemPS12Target6,
 		kPMTIPausedReset,     kItemPS12Target7,
 		kPMTIPausedSet,       kItemPS12Target6,
+#else
+		// Prevent blinking at hand-off
+		kPMTIPausedReset,     kItemPS12Target7,
+		kPMTIObstacleReset,   kItemPS12Target6,
+		kPMTITargetSet,       kItemPS12Target6, 0,  // remove target-able here - only for this item
+		kPMTIObstacleSet,     kItemPS12Target7,
+		kPMTIPausedSet,       kItemPS12Target6,
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIPosition,        0,
 		kPMTIRestart
 	};
@@ -310,7 +321,7 @@ static const int *getPoliceMazePS12TrackData34() {  // Special (kItemPS12Target6
 
 static const int *getPoliceMazePS12TrackData35() {  // Enemy (kItemPS12Target6, kItemPS12Target7, kItemPS12Target8)
 	static int trackData[] = {
-		kPMTIObstacleSet,     kItemPS12Target7,
+		kPMTIObstacleSet,     kItemPS12Target7,  // [redundant after bug fix]
 		kPMTIFacing,          198,
 		kPMTIPosition,        0,
 		kPMTIRotate,          469, 80,
@@ -357,7 +368,9 @@ static const int *getPoliceMazePS12TrackData36() {  // Enemy (kItemPS12Target6, 
 		kPMTIPausedReset,     kItemPS12Target9,
 		kPMTIPausedSet,       kItemPS12Target8,
 		kPMTIFacing,          469,
+#if BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleSet,     kItemPS12Target8,
+#endif
 		kPMTIPosition,        0,
 		kPMTIRestart
 	};
@@ -437,18 +450,23 @@ static const int *getPoliceMazePS12TrackData39() {  // Enemy (kItemPS12Target11)
 		kPMTIVariableInc,     kVariablePoliceMazePS12TargetCounter, kPoliceMazePS12TargetCount,
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-		kPMTITargetSet,       kItemPS12Target11, 0, // remove target-able here
 		kPMTIEnemyReset,      kItemPS12Target11,
+		kPMTITargetSet,       kItemPS12Target11, 0, // remove target-able here
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleReset,   kItemPS12Target11,
 		kPMTIFacing,          513,
 		kPMTIPosition,        0,
+#if BLADERUNNER_ORIGINAL_BUGS
 		kPMTIWaitRandom,      5000, 5000,
+#else
+		kPMTIWaitRandom,      5000, 6000,
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleSet,     kItemPS12Target11,
 		kPMTIPlaySound,       33, 33,
 		kPMTITargetSet,       kItemPS12Target11, 1,
 		kPMTIMove,            5,
 		kPMTIWait,            1000,
+		kPMTIPlaySound,       495, 33,             // ASDF REVEAL BELL
 		kPMTIEnemySet,        kItemPS12Target11,    // rotate - reveal
 		kPMTIRotate,          1010, 80,
 		kPMTIPlaySound,       29, 33,
@@ -474,8 +492,8 @@ static const int *getPoliceMazePS12TrackData40() {  // Enemy (kItemPS12Target12)
 		kPMTIVariableInc,     kVariablePoliceMazePS12TargetCounter, kPoliceMazePS12TargetCount,
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-		kPMTITargetSet,       kItemPS12Target12, 0, // remove target-able here
 		kPMTIEnemyReset,      kItemPS12Target12,
+		kPMTITargetSet,       kItemPS12Target12, 0, // remove target-able here
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleReset,   kItemPS12Target12,
 		kPMTIFacing,          480,
@@ -487,6 +505,7 @@ static const int *getPoliceMazePS12TrackData40() {  // Enemy (kItemPS12Target12)
 		kPMTIMove,            5,
 		kPMTIPlaySound,       29, 33,
 		kPMTIWait,            500,
+		kPMTIPlaySound,       495, 33,             // ASDF REVEAL BELL
 		kPMTIEnemySet,        kItemPS12Target12,    // rotate - reveal
 		kPMTIRotate,          968, 80,
 		kPMTIPlaySound,       29, 33,
@@ -621,13 +640,21 @@ static const int *getPoliceMazePS12TrackData44() {  // Innocent (kItemPS12Target
 		kPMTIObstacleReset,   kItemPS12Target16,
 		kPMTIFacing,          109,
 		kPMTIPosition,        0,
+#if BLADERUNNER_ORIGINAL_BUGS
 		kPMTIWaitRandom,      5000, 5000,
+#else
+		kPMTIWaitRandom,      5000, 6000,
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleSet,     kItemPS12Target16,
 		kPMTIPlaySound,       29, 33,
 		kPMTITargetSet,       kItemPS12Target16, 1,
 		kPMTIEnemyReset,      kItemPS12Target16,
 		kPMTIMove,            5,
+#if BLADERUNNER_ORIGINAL_BUGS
 		kPMTIWaitRandom,      2000, 2000,
+#else
+		kPMTIWaitRandom,      2000, 3000,
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIPlaySound,       29, 33,
 		kPMTIMove,            0,
 		kPMTILeave,
@@ -649,8 +676,8 @@ static const int *getPoliceMazePS12TrackData45() {  // Enemy (kItemPS12Target17)
 		kPMTIVariableInc,     kVariablePoliceMazePS12TargetCounter, kPoliceMazePS12TargetCount,
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-		kPMTITargetSet,       kItemPS12Target17, 0, // remove target-able here
 		kPMTIEnemyReset,      kItemPS12Target17,
+		kPMTITargetSet,       kItemPS12Target17, 0, // remove target-able here
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleReset,   kItemPS12Target17,
 		kPMTIFacing,          540,
@@ -661,6 +688,7 @@ static const int *getPoliceMazePS12TrackData45() {  // Enemy (kItemPS12Target17)
 		kPMTITargetSet,       kItemPS12Target17, 1,
 		kPMTIMove,            9,
 		kPMTIWait,            1000,
+		kPMTIPlaySound,       495, 33,             // ASDF REVEAL BELL
 		kPMTIEnemySet,        kItemPS12Target17,    // rotate - reveal
 		kPMTIRotate,          284, 80,
 		kPMTIWait,            0,

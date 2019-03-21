@@ -55,7 +55,11 @@ static const int *getPoliceMazePS11TrackData9() {   // Enemy (kItemPS11Target1) 
 		kPMTIObstacleReset,   kItemPS11Target1,
 		kPMTIFacing,          50,
 		kPMTIPosition,        0,
+#if BLADERUNNER_ORIGINAL_BUGS
 		kPMTIWaitRandom,      5000, 5000,
+#else
+		kPMTIWaitRandom,      5000, 6000,
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleSet,     kItemPS11Target1,
 		kPMTIPlaySound,       31, 33,
 		kPMTITargetSet,       kItemPS11Target1, 1,
@@ -125,6 +129,7 @@ static const int *getPoliceMazePS11TrackData11() {  // Enemy (kItemPS11Target2, 
 		kPMTIEnemyReset,      kItemPS11Target3,		// [redundant after bug fix] target 2-3 still is not revealed as enemy
 		kPMTIMove,            25,
 		kPMTIWait,            500,
+		kPMTIPlaySound,       495, 33,             // ASDF REVEAL BELL
 		kPMTIEnemySet,        kItemPS11Target3,		// rotate - reveal -- no need to set target 2 as enemy too, since it's gone
 		kPMTIPlaySound,       32, 33,
 		kPMTIRotate,          644, 80,
@@ -257,10 +262,15 @@ static const int *getPoliceMazePS11TrackData14() {  // Enemy (kItemPS11Target6) 
 		kPMTIPlaySound,       33, 33,
 		kPMTIMove,            5,
 		kPMTIWait,            500,
+		kPMTIPlaySound,       495, 33,             // ASDF REVEAL BELL
 		kPMTIEnemySet,        kItemPS11Target6,     // rotate - reveal
 		kPMTIRotate,          644, 80,
 		kPMTIWait,            0,
-		kPMTIRotate,          388, 80,              // TODO fix orientation here
+#if BLADERUNNER_ORIGINAL_BUGS
+1		kPMTIRotate,          388, 80,              // TODO fix orientation here
+#else
+		kPMTIRotate,          280, 80,              // corrected orientation
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIWait,            1000,
 		kPMTIShoot,           27, 33,
 		kPMTIPlaySound,       34, 33,
@@ -373,7 +383,11 @@ static const int *getPoliceMazePS11TrackData17() {  // Special (kItemPS11Target9
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIPlaySound,       32, 33,
 		kPMTIMove,            10,
-		kPMTIWait,            0,
+#if BLADERUNNER_ORIGINAL_BUGS
+		kPMTIWait,            0,                    // this is too fast
+#else
+		kPMTIWait,            350,
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIShoot,           27, 33,
 		kPMTIMove,            0,
 #if BLADERUNNER_ORIGINAL_BUGS
@@ -386,7 +400,11 @@ static const int *getPoliceMazePS11TrackData17() {  // Special (kItemPS11Target9
 		kPMTIEnemySet,        kItemPS11Target9,
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIMove,            10,
-		kPMTIWait,            0,
+#if BLADERUNNER_ORIGINAL_BUGS
+		kPMTIWait,            0,                    // this is too fast
+#else
+		kPMTIWait,            350,
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIShoot,           27, 33,
 		kPMTIMove,            24,
 		kPMTIWait,            1000,
@@ -435,7 +453,8 @@ static const int *getPoliceMazePS11TrackData18() {  // Special (kItemPS11Target1
 		kPMTILeave,                                 // TODO MAZE A bug? intended?  Is this target not revealed yet? Credit for "first" innocent (special)?
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIRotate,          700, 80,
-		kPMTIEnemySet,        kItemPS11Target10,    // Now the target is an enemy. (special)
+		kPMTIPlaySound,       495, 33,             // ASDF REVEAL BELL
+		kPMTIEnemySet,        kItemPS11Target10,    // Now the target is an enemy. (special) Rotate reveal?
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 		kPMTIEnemySet,        kItemPS11Target11,    // both targets should set their enemy flag here
@@ -569,7 +588,11 @@ static const int *getPoliceMazePS11TrackData22() {  // Enemy (kItemPS11Target14)
 		kPMTIPosition,        0,
 		kPMTITargetSet,       kItemPS11Target14, 1,
 		kPMTIEnemySet,        kItemPS11Target14,
+#if BLADERUNNER_ORIGINAL_BUGS
 		kPMTIWaitRandom,      5000, 5000,
+#else
+		kPMTIWaitRandom,      5000, 6000,
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleSet,     kItemPS11Target14,
 		kPMTIMove,            7,
 		kPMTIPlaySound,       32, 33,
@@ -581,7 +604,7 @@ static const int *getPoliceMazePS11TrackData22() {  // Enemy (kItemPS11Target14)
 #else
 		kPMTITargetSet,       kItemPS11Target14, 0, // remove target-able here
 #endif // BLADERUNNER_ORIGINAL_BUGS
-		kPMTIPausedReset1of2, 23, kItemPS11Target9,
+		kPMTIPausedReset1of2, kItemPS11Target15, kItemPS11Target9,
 		kPMTIPausedSet,       kItemPS11Target14,
 		kPMTIPosition,        0,
 		kPMTIRestart

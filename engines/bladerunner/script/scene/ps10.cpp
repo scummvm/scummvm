@@ -29,7 +29,7 @@ int SceneScriptPS10::getPoliceMazePS10TargetCount() {
 	return kPoliceMazePS10TargetCount;
 }
 
-static const int *getPoliceMazePS10TrackData1() {  // Enemy (kItemPS10Target1, kItemPS10Target2) - Rotating reveal
+static const int *getPoliceMazePS10TrackData1() {  // Enemy linked series (kItemPS10Target1, kItemPS10Target2) - Rotating reveal
 	static int trackData[] = {
 		kPMTIActivate,        kVariablePoliceMazePS10TargetCounter, kPoliceMazePS10TargetCount,
 		kPMTIVariableInc,     kVariablePoliceMazePS10TargetCounter, kPoliceMazePS10TargetCount,
@@ -55,6 +55,7 @@ static const int *getPoliceMazePS10TrackData1() {  // Enemy (kItemPS10Target1, k
 		kPMTIMove,            14,
 		kPMTIWait,            1000,
 		kPMTIRotate,          740, 80,
+		kPMTIPlaySound,       495, 33,             // ASDF REVEAL BELL
 		kPMTIEnemySet,        kItemPS10Target1,    // rotate - reveal
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
@@ -80,7 +81,7 @@ static const int *getPoliceMazePS10TrackData1() {  // Enemy (kItemPS10Target1, k
 	return trackData;
 }
 
-static const int *getPoliceMazePS10TrackData2() {  // Enemy (kItemPS10Target1, kItemPS10Target2)
+static const int *getPoliceMazePS10TrackData2() {  // Enemy linked series (kItemPS10Target1, kItemPS10Target2)
 	static int trackData[] = {
 		kPMTIFacing,          740,
 		kPMTIPosition,        0,
@@ -91,6 +92,7 @@ static const int *getPoliceMazePS10TrackData2() {  // Enemy (kItemPS10Target1, k
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 		kPMTITargetSet,       kItemPS10Target2, 0, // remove target-able here - only for Target2 item
+		kPMTIPausedReset,     kItemPS10Target3,
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIPausedReset,     kItemPS10Target5,
 		kPMTIPausedSet,       kItemPS10Target2,
@@ -119,6 +121,7 @@ static const int *getPoliceMazePS10TrackData3() {  // Enemy (kItemPS10Target3) -
 		kPMTIEnemyReset,      kItemPS10Target3,
 		kPMTIMove,            5,
 		kPMTIWait,            1000,
+		kPMTIPlaySound,       495, 33,             // ASDF REVEAL BELL
 		kPMTIEnemySet,        kItemPS10Target3,    // rotate - reveal
 		kPMTIRotate,          233, 80,
 		kPMTIWait,            0,
@@ -230,6 +233,7 @@ static const int *getPoliceMazePS10TrackData6() {  // Enemy (kItemPS10Target6) -
 		kPMTIEnemyReset,      kItemPS10Target6,
 		kPMTIMove,            7,
 		kPMTIWait,            500,
+		kPMTIPlaySound,       495, 33,             // ASDF REVEAL BELL
 		kPMTIEnemySet,        kItemPS10Target6,    // rotate - reveal
 		kPMTIRotate,          750, 80,
 		kPMTIWait,            0,
@@ -304,10 +308,15 @@ static const int *getPoliceMazePS10TrackData8() {  // Enemy (kItemPS10Target8) -
 		kPMTIEnemyReset,      kItemPS10Target8,
 		kPMTIMove,            34,
 		kPMTIWait,            500,
+		kPMTIPlaySound,       495, 33,             // ASDF REVEAL BELL
 		kPMTIEnemySet,        kItemPS10Target8,    // rotate - reveal
 		kPMTIRotate,          491, 80,
 		kPMTIMove,            20,
-		kPMTIWait,            0,
+#if BLADERUNNER_ORIGINAL_BUGS
+		kPMTIWait,            0,                    // this is too fast
+#else
+		kPMTIWait,            250,
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIShoot,           27, 33,
 		kPMTIMove,            0,
 		kPMTIObstacleReset,   kItemPS10Target8,
@@ -326,6 +335,10 @@ static const int *getPoliceMazePS10TrackData9() {  // Special (kItemPS10Target9)
 	static int trackData[] = {
 		kPMTIActivate,        kVariablePoliceMazePS10TargetCounter, kPoliceMazePS10TargetCount,
 		kPMTIVariableInc,     kVariablePoliceMazePS10TargetCounter, kPoliceMazePS10TargetCount,
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		kPMTITargetSet,       kItemPS10Target9, 0, // remove target-able here
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleReset,   kItemPS10Target9,
 		kPMTIFacing,          738,
 		kPMTIPosition,        0,
@@ -375,6 +388,10 @@ static const int *getPoliceMazePS10TrackData9() {  // Special (kItemPS10Target9)
 		kPMTIPlaySound,       32, 33,
 		kPMTIMove,            0,
 		kPMTIObstacleReset,   kItemPS10Target9,
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		kPMTITargetSet,       kItemPS10Target9, 0, // remove target-able here
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIPausedSet,       kItemPS10Target9,
 		kPMTIRestart
 	};
