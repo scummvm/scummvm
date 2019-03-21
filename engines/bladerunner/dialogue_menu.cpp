@@ -119,7 +119,7 @@ bool DialogueMenu::addToList(int answer, bool done, int priorityPolite, int prio
 #else
 // fix spelling or entry id 1020 to DRAGONFLY JEWELRY in English version
 	const char *answerTextCP = _textResource->getText(answer);
-	if (_vm->_languageCode == "E" && answer == 1020 && strcmp(answerTextCP, "DRAGONFLY JEWERLY") == 0) {
+	if (_vm->_language == Common::EN_ANY && answer == 1020 && strcmp(answerTextCP, "DRAGONFLY JEWERLY") == 0) {
 		answerTextCP = "DRAGONFLY JEWELRY";
 	}
 	const Common::String &text = answerTextCP;
