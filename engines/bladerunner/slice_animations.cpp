@@ -204,14 +204,17 @@ void *SliceAnimations::getFramePtr(uint32 animation, uint32 frame) {
 	uint32 page        = frameOffset / _pageSize;
 	uint32 pageOffset  = frameOffset % _pageSize;
 
-	if (!_pages[page]._data)
-		_pages[page]._data = _coreAnimPageFile.loadPage(page);
+	if (_pages[page]._data == nullptr) {                          // if not cached already
+		_pages[page]._data = _coreAnimPageFile.loadPage(page);    // look in COREANIM first
 
-	if (!_pages[page]._data)
-		_pages[page]._data = _framesPageFile.loadPage(page);
+		if (_pages[page]._data == nullptr) {                      // if not in COREAMIM
+			_pages[page]._data = _framesPageFile.loadPage(page);  // Look in CDFRAMES or HDFRAMES loaded data
 
-	if (!_pages[page]._data)
-		error("Unable to locate page %d for animation %d frame %d", page, animation, frame);
+			if (_pages[page]._data == nullptr) {
+				error("Unable to locate page %d for animation %d frame %d", page, animation, frame);
+			}
+		}
+	}
 
 	_pages[page]._lastAccess = _vm->_time->currentSystem();
 
