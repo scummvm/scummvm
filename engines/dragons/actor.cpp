@@ -351,7 +351,7 @@ bool Actor::pathfinding_maybe(int16 target_x, int16 target_y, int16 unkTypeMaybe
 			int16 tempX = newX;
 			int16 tempY = newY;
 			for(int j = 0; j < 0x20; j++) {
-				Common::Point point = getEngine()->_scene->getPoint(i);
+				Common::Point point = getEngine()->_scene->getPoint(j);
 				if (point.x == -1) {
 					continue;
 				}
@@ -413,7 +413,7 @@ bool Actor::pathfinding_maybe(int16 target_x, int16 target_y, int16 unkTypeMaybe
 			if (i == 0x20) {
 				// 0x80033ed0
 				for(int j = 0; j < 0x20; j++) {
-					Common::Point point = getEngine()->_scene->getPoint(i);
+					Common::Point point = getEngine()->_scene->getPoint(j);
 					if (point.x == -1) {
 						continue;
 					}
@@ -791,12 +791,13 @@ uint16 Actor::pathfindingUnk(int16 actor_x, int16 actor_y, int16 target_x, int16
 		}
 	}
 
+	// 0x80034930
 	int16 Actor::pathfindingFindClosestPoint(int16 actor_x, int16 actor_y, int16 target_x, int16 target_y,
 											 int16 unkType, uint8 *pointsInUseTbl) {
 		int16 pointId = -1;
 		uint32 minDist = 0xffffffff;
 
-		for (int i = 0; i < 0x22; i++) {
+		for (int i = 0; i < 0x20; i++) {
 			Common::Point point = getEngine()->_scene->getPoint(i);
 			if (point.x != -1 && pointsInUseTbl[i] == 0) {
 				if (pathfindingUnk(point.x, point.y, target_x, target_y, unkType)) {

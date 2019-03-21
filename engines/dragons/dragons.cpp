@@ -1032,7 +1032,7 @@ void DragonsEngine::FUN_8002837c()
 					flickerINI->actor->setFlag(ACTOR_FLAG_800);
 				}
 				flickerINI->actor->pathfinding_maybe((int)(((uint)targetX + (uint)targetINI->field_1c) * 0x10000) >> 0x10,
-												  (int)(((uint)targetY + (uint)targetINI->field_1e) * 0x10000) >> 0x10,0);
+													(int)(((uint)targetY + (uint)targetINI->field_1e) * 0x10000) >> 0x10,0);
 				bit_flags_8006fbd8 = 1;
 				return;
 			}
@@ -1058,7 +1058,7 @@ void DragonsEngine::FUN_8002837c()
 			flickerINI->actor->field_7c = 0x10000;
 			flickerINI->actor->pathfinding_maybe(
 					(int)((uVar7 + (uint)_scene->_camera.x) * 0x10000) >> 0x10,
-					 (int)((uVar8 + (uint)_scene->_camera.y) * 0x10000) >> 0x10,0);
+					(int)((uVar8 + (uint)_scene->_camera.y) * 0x10000) >> 0x10,0);
 		}
 	}
 	else {
