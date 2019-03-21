@@ -294,7 +294,6 @@ void CryOmni3DEngine_Versailles::dialogShowBontempsGivesKey() {
 void CryOmni3DEngine_Versailles::dialogShowDuMaineLeaves() {
 	playInGameVideo("62S_DUC1");
 	_inventory.removeByNameID(144);
-	_inventory.deselectObject();
 	setPlaceState(19, 1);
 }
 
