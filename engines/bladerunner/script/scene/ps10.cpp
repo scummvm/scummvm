@@ -92,7 +92,6 @@ static const int *getPoliceMazePS10TrackData2() {  // Enemy linked series (kItem
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 		kPMTITargetSet,       kItemPS10Target2, 0, // remove target-able here - only for Target2 item
-		kPMTIPausedReset,     kItemPS10Target3,
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIPausedReset,     kItemPS10Target5,
 		kPMTIPausedSet,       kItemPS10Target2,
@@ -102,7 +101,6 @@ static const int *getPoliceMazePS10TrackData2() {  // Enemy linked series (kItem
 	return trackData;
 }
 
-// NOTE Track 3 is used only once as is; it's activated when entering the room
 static const int *getPoliceMazePS10TrackData3() {  // Enemy (kItemPS10Target3) - Starts activated - Rotating reveal
 	static int trackData[] = {
 		kPMTIActivate,        kVariablePoliceMazePS10TargetCounter, kPoliceMazePS10TargetCount,
@@ -138,7 +136,7 @@ static const int *getPoliceMazePS10TrackData3() {  // Enemy (kItemPS10Target3) -
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 		kPMTITargetSet,       kItemPS10Target3, 0, // remove target-able here
-		kPMTIPausedSet,       kItemPS10Target3,
+//		kPMTIPausedSet,       kItemPS10Target3,    // It is intentional (original) that kItemPS10Target3 does not get paused - This target loops on its own
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIRestart
 	};
@@ -315,7 +313,7 @@ static const int *getPoliceMazePS10TrackData8() {  // Enemy (kItemPS10Target8) -
 #if BLADERUNNER_ORIGINAL_BUGS
 		kPMTIWait,            0,                    // this is too fast
 #else
-		kPMTIWait,            250,
+		kPMTIWait,            100,
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIShoot,           27, 33,
 		kPMTIMove,            0,

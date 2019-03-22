@@ -255,7 +255,11 @@ static const int *getPoliceMazePS11TrackData14() {  // Enemy (kItemPS11Target6) 
 		kPMTIObstacleReset,   kItemPS11Target6,
 		kPMTITargetSet,       kItemPS11Target6, 1,
 		kPMTIEnemyReset,      kItemPS11Target6,
-		kPMTIFacing,          900,
+#if BLADERUNNER_ORIGINAL_BUGS
+		kPMTIFacing,          900,                  // orientation is wrong here - should conceal the gun entirely
+#else
+		kPMTIFacing,          750,              // corrected orientation
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIPosition,        0,
 		kPMTIWaitRandom,      3000, 6000,
 		kPMTIObstacleSet,     kItemPS11Target6,
@@ -267,9 +271,9 @@ static const int *getPoliceMazePS11TrackData14() {  // Enemy (kItemPS11Target6) 
 		kPMTIRotate,          644, 80,
 		kPMTIWait,            0,
 #if BLADERUNNER_ORIGINAL_BUGS
-1		kPMTIRotate,          388, 80,              // TODO fix orientation here
+1		kPMTIRotate,          388, 80,              // orientation is wrong here
 #else
-		kPMTIRotate,          280, 80,              // corrected orientation
+		kPMTIRotate,          260, 80,              // corrected orientation
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIWait,            1000,
 		kPMTIShoot,           27, 33,

@@ -377,7 +377,9 @@ static const int *getPoliceMazePS12TrackData36() {  // Enemy (kItemPS12Target6, 
 	return trackData;
 }
 
-static const int *getPoliceMazePS12TrackData37() {  // Innocent (kItemPS12Target9) - Starts activated
+// kItemPS12Target9 and kItemPS12Target10 go together (innocent and enemy who uses innocent as a human shield)
+// They count as one activated target, but they are credited separately (+1 for not shooting the innocent, +1 for shooting the enemy)
+static const int *getPoliceMazePS12TrackData37() {  // Special: Innocent (kItemPS12Target9) - Starts activated, goes together with enemy kItemPS12Target10 (not same target)
 	static int trackData[] = {
 		kPMTIActivate,        kVariablePoliceMazePS12TargetCounter, kPoliceMazePS12TargetCount,
 		kPMTIVariableInc,     kVariablePoliceMazePS12TargetCounter, kPoliceMazePS12TargetCount,
@@ -387,7 +389,7 @@ static const int *getPoliceMazePS12TrackData37() {  // Innocent (kItemPS12Target
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleReset,   kItemPS12Target9,
 		kPMTIWaitRandom,      3000, 6000,
-		kPMTIPausedReset,     kItemPS12Target10,    // TODO MAZE A bug? intended? Why is kItemPS12Target10 unpaused so early?
+		kPMTIPausedReset,     kItemPS12Target10,    // kItemPS12Target10 unpaused early since he is the enemy using kItemPS12Target9 as human shield
 		kPMTIFacing,          1010,
 		kPMTIPosition,        0,
 		kPMTIWait,            2000,
@@ -416,6 +418,8 @@ static const int *getPoliceMazePS12TrackData38() {  // Enemy (kItemPS12Target10)
 	static int trackData[] = {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
+		kPMTIActivate,        kVariablePoliceMazePS12TargetCounter, kPoliceMazePS12TargetCount, // TODO MAZE A bug? intended? Missing activate instruction
+		kPMTIVariableInc,     kVariablePoliceMazePS12TargetCounter, kPoliceMazePS12TargetCount, // TODO MAZE A bug? intended? Missing increase counter instruction
 		kPMTITargetSet,       kItemPS12Target10, 0, // remove target-able here
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleReset,   kItemPS12Target10,
@@ -560,10 +564,14 @@ static const int *getPoliceMazePS12TrackData41() {  // Innocent (kItemPS12Target
 	return trackData;
 }
 
+// kItemPS12Target14 does not count as an Active target in the original code
+// Supposedly he is "Special" in the sense that he acts as a potential bonus point since he appears from a place where an innocent (kItemPS12Target16) can appear
 static const int *getPoliceMazePS12TrackData42() {  // Enemy (kItemPS12Target14)
 	static int trackData[] = {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
+		kPMTIActivate,        kVariablePoliceMazePS12TargetCounter, kPoliceMazePS12TargetCount, // TODO MAZE A bug? intended? Missing activate instruction
+		kPMTIVariableInc,     kVariablePoliceMazePS12TargetCounter, kPoliceMazePS12TargetCount, // TODO MAZE A bug? intended? Missing increase counter instruction
 		kPMTITargetSet,       kItemPS12Target14, 0, // remove target-able here
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleReset,   kItemPS12Target14,
@@ -688,7 +696,7 @@ static const int *getPoliceMazePS12TrackData45() {  // Enemy (kItemPS12Target17)
 		kPMTITargetSet,       kItemPS12Target17, 1,
 		kPMTIMove,            9,
 		kPMTIWait,            1000,
-		kPMTIPlaySound,       495, 33,             // ASDF REVEAL BELL
+		kPMTIPlaySound,       495, 33,              // ASDF REVEAL BELL
 		kPMTIEnemySet,        kItemPS12Target17,    // rotate - reveal
 		kPMTIRotate,          284, 80,
 		kPMTIWait,            0,
