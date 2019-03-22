@@ -714,7 +714,8 @@ uint16 Actor::pathfindingUnk(int16 actor_x, int16 actor_y, int16 target_x, int16
 				newSequenceId = absDiffX < (absDiffY * 2) ? 2 : 0;
 				break;
 			case 1 :
-				error("TODO t2 == 1 0x80035138");
+				newSequenceId =  absDiffX < (absDiffY * 2) ? 0 : 6;
+				break;
 			case 2 :
 				newSequenceId = absDiffX < (absDiffY * 2) ? 2 : 4;
 				break;
@@ -728,8 +729,9 @@ uint16 Actor::pathfindingUnk(int16 actor_x, int16 actor_y, int16 target_x, int16
 		field_30 = field_30 / 2;
 
 		if (getEngine()->_dragonINIResource->isFlicker(_actorID)) {
-			// TODO 0x8003523c
-			error("FIXME 0x8003523c");
+			DragonINI *ini = getEngine()->_dragonINIResource->getFlickerRecord();
+			ini->actor->field_2c = (ini->actor->field_2c * 3 + ((ini->actor->field_2c * 3) >> 0x1f)) >> 1;
+			ini->actor->field_30 = (ini->actor->field_30 * 3 + ((ini->actor->field_30 * 3) >> 0x1f)) >> 1;
 		}
 
 		target_x_pos = newTargetX;
