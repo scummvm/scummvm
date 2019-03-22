@@ -225,6 +225,7 @@ int16 Cursor::updateIniFromScene() {
 					data_80072890 = cursorOverIni;
 					uint32 newSeqId = 1;
 					for(int idx=0; idx < 5; idx++) {
+						data_800728b0_cursor_seqID = idx;
 						byte *obd = _vm->_dragonOBD->getFromOpt(cursorOverIni - 1); //_dragonRMS->getObdDataFieldC(sceneId);
 						ScriptOpCall scriptOpCall;
 						scriptOpCall._code = obd + 8;
