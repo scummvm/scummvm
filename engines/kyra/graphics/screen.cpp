@@ -3349,11 +3349,13 @@ bool Screen::loadPaletteTable(const char *filename, int firstPalette) {
 void Screen::loadPalette(const byte *data, Palette &pal, int bytes) {
 	Common::MemoryReadStream stream(data, bytes, DisposeAfterUse::NO);
 
-	if (_isAmiga)
-		pal.loadAmigaPalette(stream, 0, stream.size() / Palette::kAmigaBytesPerColor);
-	else if (_vm->gameFlags().platform == Common::kPlatformPC98 && _use16ColorMode)
+	if (_isAmiga) {
+		// EOB II Amiga sometimes has multiple palettes here one after
+		// the other (64 bytes each). We only load the first one here.
+		pal.loadAmigaPalette(stream, 0, MIN(32, stream.size() / Palette::kAmigaBytesPerColor));
+	} else if (_vm->gameFlags().platform == Common::kPlatformPC98 && _use16ColorMode) {
 		pal.loadPC98Palette(stream, 0, stream.size() / Palette::kPC98BytesPerColor);
-	else if (_renderMode == Common::kRenderEGA) {
+	} else if (_renderMode == Common::kRenderEGA) {
 		// EOB II checks the number of palette bytes to distinguish between real EGA palettes
 		// and normal palettes (which are used to generate a color map).
 		if (stream.size() == 16)

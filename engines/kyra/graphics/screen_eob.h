@@ -70,7 +70,7 @@ public:
 	void drawExplosion(int scale, int radius, int numElements, int stepSize, int aspectRatio, const uint8 *colorTable, int colorTableSize);
 	void drawVortex(int numElements, int radius, int stepSize, int, int disorder, const uint8 *colorTable, int colorTableSize);
 
-	void fadeTextColor(Palette *pal, int color1, int fadeTextColor);
+	void fadeTextColor(Palette *pal, int color, int rate);
 	bool delayedFadePalStep(Palette *fadePal, Palette *destPal, int rate);
 
 	void setTextColorMap(const uint8 *cmap) {}

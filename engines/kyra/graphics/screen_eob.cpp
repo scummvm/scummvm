@@ -228,16 +228,25 @@ void Screen_EoB::loadBitmap(const char *filename, int tempPage, int dstPage, Pal
 	Common::SeekableReadStream *str = _vm->resource()->createReadStream(filename);
 	str->skip(4);
 	uint32 imgSize = str->readUint32LE();
-	delete str;
 
 	if (_isAmiga && !skip) {
-		if ((dstPage == 3 || dstPage == 4) && imgSize == 40064) {
+		if (_vm->game() == GI_EOB1 && (dstPage == 3 || dstPage == 4) && imgSize == 40064) {
 			// Yay, this is where EOB1 Amiga hides the palette data
 			loadPalette(_pagePtrs[dstPage] + 40000, *_palettes[0], 64);
 			_palettes[0]->fill(0, 1, 0);
+		} else if (_vm->game() == GI_EOB2) {
+			uint16 palSize = str->readUint16LE();
+			// EOB II Amiga CPS files may contain more than one palette (each one 64 bytes,
+			// one after the other). We load them all...
+			if (pal && palSize) {
+				for (int i = 1; i <= palSize >> 6; ++i)
+					_palettes[i]->loadAmigaPalette(*str, 0, 32);
+			}
 		}
 		Screen::convertAmigaGfx(getPagePtr(dstPage), 320, 200);
 	}
+
+	delete str;
 }
 
 void Screen_EoB::loadEoBBitmap(const char *file, const uint8 *cgaMapping, int tempPage, int destPage, int convertToPage) {
@@ -251,12 +260,24 @@ void Screen_EoB::loadEoBBitmap(const char *file, const uint8 *cgaMapping, int te
 			error("Screen_EoB::loadEoBBitmap(): Failed to load file '%s'", file);	
 		s->read(_shpBuffer, s->size());
 		decodeSHP(_shpBuffer, destPage);
+
 	} else if (s) {
 		// This additional check is necessary since some localized versions of EOB II seem to contain invalid (size zero) cps files
-		if (s->size())
-			loadBitmap(tmp.c_str(), tempPage, destPage, 0);
-		else
+		if (s->size() == 0) {			
 			loadAlternative = true;
+
+		// This check is due to EOB II Amiga German.That version simply checks
+		// for certain file names which aren't actual CPS files. The files contain
+		// raw data. I check the header size info to identify these.
+		} else if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+			// Tolerance for diffenrences up to 2 bytes is needed in some cases
+			if ((((s->readUint16LE()) + 5) & ~3) != (((s->size()) + 3) & ~3))
+				loadAlternative = true;
+		} 
+
+		if (!loadAlternative)
+			loadBitmap(tmp.c_str(), tempPage, destPage, 0);
+
 	} else {
 		loadAlternative = true;
 	}
@@ -267,11 +288,28 @@ void Screen_EoB::loadEoBBitmap(const char *file, const uint8 *cgaMapping, int te
 		if (_vm->game() == GI_EOB1) {
 			tmp.insertChar('1', tmp.size() - 4);
 			loadBitmap(tmp.c_str(), tempPage, destPage, 0);
-		} else {
-			tmp.setChar('X', 0);
+
+		} else if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
 			s = _vm->resource()->createReadStream(tmp);
 			if (!s)
 				error("Screen_EoB::loadEoBBitmap(): Failed to load file '%s'", file);
+
+			// See comment above. In addition to checking for certain file names which
+			// aren't real CPS files the EOB II Amiga German makes a specific check for CHARGEN.CPS
+			// which contains palette data at the beginning. For now I haven't come up
+			// with a way of avoiding this hack.
+			if (tmp.equals("CHARGEN.CPS"))
+				_palettes[0]->loadAmigaPalette(*s, 0, 32);
+
+			loadFileDataToPage(s, destPage, 40000);
+
+		} else {
+			tmp.setChar('X', 0);
+			s = _vm->resource()->createReadStream(tmp);
+
+			if (!s)
+				error("Screen_EoB::loadEoBBitmap(): Failed to load file '%s'", file);
+
 			s->seek(768);
 			loadFileDataToPage(s, destPage, 64000);
 			delete s;
@@ -1218,21 +1256,21 @@ void Screen_EoB::drawVortex(int numElements, int radius, int stepSize, int, int 
 	showMouse();
 }
 
-void Screen_EoB::fadeTextColor(Palette *pal, int color1, int rate) {
+void Screen_EoB::fadeTextColor(Palette *pal, int color, int rate) {
+	assert(rate);
 	uint8 *col = pal->getData();
 
 	for (bool loop = true; loop;) {
-		loop = true;
 		uint32 end = _system->getMillis() + _vm->tickLength();
 
 		loop = false;
 		for (int ii = 0; ii < 3; ii++) {
-			uint8 c = col[color1 * 3 + ii];
+			uint8 c = col[color * 3 + ii];
 			if (c > rate) {
-				col[color1 * 3 + ii] -= rate;
+				col[color * 3 + ii] -= rate;
 				loop = true;
 			} else if (c) {
-				col[color1 * 3 + ii] = 0;
+				col[color * 3 + ii] = 0;
 				loop = true;
 			}
 		}
@@ -1252,8 +1290,9 @@ bool Screen_EoB::delayedFadePalStep(Palette *fadePal, Palette *destPal, int rate
 
 	uint8 *s = fadePal->getData();
 	uint8 *d = destPal->getData();
+	int numBytes = (fadePal->getNumColors() - 1) * 3;
 
-	for (int i = 0; i < 765; i++) {
+	for (int i = 0; i < numBytes; i++) {
 		int fadeVal = *s++;
 		int dstCur = *d;
 		int diff = ABS(fadeVal - dstCur);

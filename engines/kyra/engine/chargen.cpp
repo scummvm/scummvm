@@ -637,7 +637,7 @@ int CharacterGenerator::getInput(Button *buttonList) {
 	if (_vm->game() == GI_EOB1 && _vm->sound()->checkTrigger()) {
 		_vm->sound()->resetTrigger();
 		_vm->snd_playSong(20);
-	} else if (_vm->game() == GI_EOB2 && !_vm->sound()->isPlaying()) {
+	} else if (_vm->game() == GI_EOB2 && _vm->gameFlags().platform != Common::kPlatformAmiga && !_vm->sound()->isPlaying()) {
 		// WORKAROUND for EOB II: The original implements the same sound trigger check as in EOB I.
 		// However, Westwood seems to have forgotten to set the trigger at the end of the AdLib song,
 		// so that the music will not loop. We simply check whether the sound driver is still playing.
