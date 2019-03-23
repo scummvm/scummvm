@@ -528,6 +528,13 @@ void LauncherDialog::handleKeyUp(Common::KeyState state) {
 	updateButtons();
 }
 
+void LauncherDialog::handleOtherEvent(Common::Event evt) {
+	Dialog::handleOtherEvent(evt);
+	if (evt.type == Common::EVENT_DROP_FILE) {
+		doGameDetection(evt.path);
+	}
+}
+
 bool LauncherDialog::doGameDetection(const Common::String &path) {
 	// Allow user to add a new game to the list.
 	// 2) try to auto detect which game is in the directory, if we cannot
