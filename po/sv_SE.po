@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-02-06 20:18+0100\n"
-"PO-Revision-Date: 2018-06-11 21:45+0000\n"
+"PO-Revision-Date: 2019-04-12 13:26+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 2.9\n"
+"X-Generator: Weblate 3.3\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
 "X-Language-name: Svenska\n"
 
@@ -797,24 +797,20 @@ msgid "Never"
 msgstr "Aldrig"
 
 #: gui/options.cpp:122
-#, fuzzy
 msgid "Every 5 mins"
-msgstr "var 5:e minut"
+msgstr "Var 5:e minut"
 
 #: gui/options.cpp:122
-#, fuzzy
 msgid "Every 10 mins"
-msgstr "var 10:e minut"
+msgstr "Var 10:e minut"
 
 #: gui/options.cpp:122
-#, fuzzy
 msgid "Every 15 mins"
-msgstr "var 15:e minut"
+msgstr "Var 15:e minut"
 
 #: gui/options.cpp:122
-#, fuzzy
 msgid "Every 30 mins"
-msgstr "var 30:e minut"
+msgstr "Var 30:e minut"
 
 #: gui/options.cpp:361 gui/options.cpp:691 gui/options.cpp:829
 #: gui/options.cpp:911 gui/options.cpp:1184
@@ -827,14 +823,12 @@ msgid "Failed to apply some of the graphic options changes:"
 msgstr "Kunde inte verkställa några av grafikinställningarna:"
 
 #: gui/options.cpp:564
-#, fuzzy
 msgid "the video mode could not be changed"
-msgstr "videoläget kunde inte ändras."
+msgstr "videoläget kunde inte ändras"
 
 #: gui/options.cpp:577
-#, fuzzy
 msgid "the stretch mode could not be changed"
-msgstr "videoläget kunde inte ändras."
+msgstr "skalningsläget kunde inte ändras"
 
 #: gui/options.cpp:583
 msgid "the aspect ratio setting could not be changed"
@@ -917,7 +911,7 @@ msgstr "Speciella gitterlägen stödda av vissa spel"
 
 #: gui/options.cpp:1079
 msgid "Stretch mode:"
-msgstr ""
+msgstr "Skalningsläge:"
 
 #: gui/options.cpp:1090 backends/graphics/openglsdl/openglsdl-graphics.cpp:637
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2687
@@ -941,12 +935,10 @@ msgid "Correct aspect ratio for 320x200 games"
 msgstr "Korrigera bildförhållandet för 320x200-spel"
 
 #: gui/options.cpp:1104
-#, fuzzy
 msgid "Preferred device:"
 msgstr "Föredragen enhet:"
 
 #: gui/options.cpp:1104
-#, fuzzy
 msgid "Music device:"
 msgstr "Musikenhet:"
 
@@ -959,13 +951,11 @@ msgid "Specifies output sound device or sound card emulator"
 msgstr "Bestämmer emulator för ljudenhet eller ljudkort"
 
 #: gui/options.cpp:1106
-#, fuzzy
 msgctxt "lowres"
 msgid "Preferred dev.:"
 msgstr "Föredr. enhet:"
 
 #: gui/options.cpp:1106
-#, fuzzy
 msgctxt "lowres"
 msgid "Music device:"
 msgstr "Musikenhet:"
@@ -979,7 +969,6 @@ msgid "AdLib is used for music in many games"
 msgstr "AdLib används för musik i många spel"
 
 #: gui/options.cpp:1147
-#, fuzzy
 msgid "GM device:"
 msgstr "GM-enhet:"
 
@@ -1047,7 +1036,6 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Äkta Roland MT-32 (ingen GM-emulation)"
 
 #: gui/options.cpp:1212
-#, fuzzy
 msgid "Roland GS device (enable MT-32 mappings)"
 msgstr "Roland GS-enhet (aktivera MT-32 mappings)"
 
@@ -1064,7 +1052,6 @@ msgid "Don't use Roland MT-32 music"
 msgstr "Använd inte Roland MT-32 musik"
 
 #: gui/options.cpp:1248
-#, fuzzy
 msgid "Text and speech:"
 msgstr "Undertext och tal:"
 
@@ -1085,7 +1072,6 @@ msgid "Subtitle speed:"
 msgstr "Texthastighet:"
 
 #: gui/options.cpp:1258
-#, fuzzy
 msgctxt "lowres"
 msgid "Text and speech:"
 msgstr "Undertext och tal:"
@@ -1122,7 +1108,6 @@ msgid "Music volume:"
 msgstr "Musikvolym:"
 
 #: gui/options.cpp:1291
-#, fuzzy
 msgid "Mute all"
 msgstr "Ljud av"
 
@@ -1193,7 +1178,6 @@ msgid "Theme:"
 msgstr "Tema:"
 
 #: gui/options.cpp:1641
-#, fuzzy
 msgid "GUI renderer:"
 msgstr "GUI-rendering:"
 
@@ -1211,7 +1195,6 @@ msgid "Keys"
 msgstr "Tangenter"
 
 #: gui/options.cpp:1670
-#, fuzzy
 msgid "GUI language:"
 msgstr "GUI-språk:"
 
@@ -1838,7 +1821,7 @@ msgstr "Okänt fel"
 #. I18N: Hercules is graphics card name
 #: common/rendermode.cpp:35
 msgid "Hercules Green"
-msgstr "Herkules grön"
+msgstr "Herkules-grön"
 
 #: common/rendermode.cpp:36
 msgid "Hercules Amber"
@@ -1995,9 +1978,8 @@ msgid "Could not switch to video mode: '"
 msgstr "Kunde inte byta till videoläget: '"
 
 #: engines/engine.cpp:334
-#, fuzzy
 msgid "Could not switch to stretch mode: '"
-msgstr "Kunde inte byta till videoläget: '"
+msgstr "Kunde inte byta till skalningsläget: '"
 
 #: engines/engine.cpp:343
 msgid "Could not apply aspect ratio setting."
@@ -2081,9 +2063,8 @@ msgid "Matched game IDs for the %s engine:"
 msgstr "Matchade spel-ID för motor %s:"
 
 #: audio/adlib.cpp:2290
-#, fuzzy
 msgid "AdLib emulator"
-msgstr "AdLib-emulator:"
+msgstr "AdLib-emulator"
 
 #: audio/fmopl.cpp:71
 msgid "MAME OPL emulator"
@@ -2147,7 +2128,6 @@ msgstr ""
 "information."
 
 #: audio/mods/paula.cpp:196
-#, fuzzy
 msgid "Amiga Audio emulator"
 msgstr "Amiga ljudemulator"
 
@@ -2156,12 +2136,10 @@ msgid "No music"
 msgstr "Ingen musik"
 
 #: audio/softsynth/appleiigs.cpp:33
-#, fuzzy
 msgid "Apple II GS emulator (NOT IMPLEMENTED)"
 msgstr "Apple II GS-emulator (INTE IMPLEMENTERAD)"
 
 #: audio/softsynth/cms.cpp:350
-#, fuzzy
 msgid "Creative Music System emulator"
 msgstr "Creative Music System-emulator"
 
@@ -2178,22 +2156,18 @@ msgid "Initializing MT-32 Emulator"
 msgstr "Initialiserar MT-32 emulator"
 
 #: audio/softsynth/mt32.cpp:437
-#, fuzzy
 msgid "MT-32 emulator"
 msgstr "MT-32 emulator"
 
 #: audio/softsynth/pcspk.cpp:139
-#, fuzzy
 msgid "PC Speaker emulator"
 msgstr "PC Speaker-emulator"
 
 #: audio/softsynth/pcspk.cpp:158
-#, fuzzy
 msgid "IBM PCjr emulator"
 msgstr "IBM PCjr-emulator"
 
 #: audio/softsynth/sid.cpp:1430
-#, fuzzy
 msgid "C64 Audio emulator"
 msgstr "C64 ljudemulator"
 
@@ -2584,9 +2558,8 @@ msgid "Help"
 msgstr ""
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:199
-#, fuzzy
 msgid "User Manual"
-msgstr "Avbrutit av användaren"
+msgstr "Användarhandbok"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:201
 msgid "General Information"
@@ -3197,9 +3170,8 @@ msgid "Light runs out in "
 msgstr ""
 
 #: engines/glk/scott/scott.cpp:130
-#, fuzzy
 msgid " turns. "
-msgstr "Sätt på"
+msgstr " drag. "
 
 #: engines/glk/scott/scott.cpp:133
 msgid "Your light is growing dim. "
@@ -3246,9 +3218,8 @@ msgid ""
 msgstr ""
 
 #: engines/glk/scott/scott.cpp:437
-#, fuzzy
 msgid "none"
-msgstr "<ingen>"
+msgstr "inga"
 
 #: engines/glk/scott/scott.cpp:446
 msgid ""
@@ -3289,9 +3260,8 @@ msgid "I am dead.\n"
 msgstr ""
 
 #: engines/glk/scott/scott.cpp:795
-#, fuzzy
 msgid "The game is now over.\n"
-msgstr "Spelet laddades EJ"
+msgstr "Spelet är nu slut.\n"
 
 #: engines/glk/scott/scott.cpp:810
 msgid "You have stored "
@@ -3754,9 +3724,8 @@ msgstr ""
 
 #: engines/mohawk/myst_stacks/menu.cpp:284
 #: engines/mohawk/riven_stacks/aspit.cpp:350
-#, fuzzy
 msgid "Load game"
-msgstr "Ladda spel:"
+msgstr "Ladda spel"
 
 #: engines/mohawk/myst_stacks/menu.cpp:300
 #: engines/mohawk/riven_stacks/aspit.cpp:371
@@ -3772,9 +3741,10 @@ msgstr "Ny sparning"
 
 #: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455
-#, fuzzy
 msgid "Are you sure you want to quit? All unsaved progress will be lost."
-msgstr "   Är du säker på att du vill avsluta?   "
+msgstr ""
+"Är du säker på att du vill avsluta? Alla osparade framsteg kommer gå "
+"förlorade."
 
 #: engines/mohawk/riven.cpp:158
 msgid ""
@@ -3975,9 +3945,8 @@ msgid "Use linear interpolation when upscaling videos, where possible"
 msgstr "Använd linjär interpolering för att förstora bilden, om möjligt"
 
 #: engines/sci/detection.cpp:438
-#, fuzzy
 msgid "Use high-quality \"LarryScale\" cel scaling"
-msgstr "Använd högkvalitativ bildförstoring"
+msgstr "Använd högkvalitativ \"LarryScale\"-bildförstoring"
 
 #: engines/sci/detection.cpp:439
 msgid "Use special cartoon scaler for drawing character sprites"
