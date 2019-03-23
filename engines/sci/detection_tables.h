@@ -5130,8 +5130,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// The Dating Pool - English DOSBox Interactive Demo
 	// Itch.IO 2019 release: more bug fixes and polish
 	{ "catdate", "Demo", {
-		{"resource.000", 0, "094b9d3c841fe60076f06cdef3fb1383", 1555069},
-		{"resource.map", 0, "ccaaf19dd3f8cedd99722569dc42f63f", 1393},
+		{"resource.000", 0, "094b9d3c841fe60076f06cdef3fb1383", 1555073},
+		{"resource.map", 0, "1f7b68ed422eadbf373cc8611bc56f94", 1393},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
 
