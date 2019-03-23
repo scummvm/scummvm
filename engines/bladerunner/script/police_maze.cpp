@@ -30,7 +30,7 @@
 #include "bladerunner/script/police_maze.h"
 #include "bladerunner/script/scene_script.h"
 #include "bladerunner/time.h"
-#include "bladerunner/subtitles.h"             // TODO Remove if no longer need to display score and debug info on-screen
+//#include "bladerunner/subtitles.h"             // Display score and debug info on-screen
 
 // ----------------------
 // Maze point system info
@@ -61,27 +61,24 @@
 //  c) getting shot
 //
 // Combat Point System:
-//      + 1: gain a point when an enemy (revealed) is shot             (Item_Spin_In_World)
-//      - 1: lose a point when an innocent or unrevealed enemy is shot (Item_Spin_In_World)
-//      + 1: gain a point when an innocent escapes                     (kPMTILeave instruction)
-//      - 1: lose a point when an enemy shoots McCoy                   (kPMTIShoot)
+//      + 1: gain a point when an enemy (revealed) is shot             (at Item_Spin_In_World)
+//      - 1: lose a point when an innocent or unrevealed enemy is shot (at Item_Spin_In_World)
+//      + 1: gain a point when an innocent escapes                     (at kPMTILeave instruction)
+//      - 1: lose a point when an enemy shoots McCoy                   (at kPMTIShoot)
 //
 // For the maximum score, all 4 * 20 = 80 targets have to get activated and handled properly.
 // Since McCoy always gains one (1) point per target (enemy or innocent) for that,
 // the maximum score *should be*: 80 points.
-// [TODO] First pass of fixes:  Normalize the original special targets.
-//                              Ensure the high score of 80 is achievable
-// [TODO] Second pass of fixes: Restore the original special (not bugged) targets.
-//                              Check achievable high score (should be higher than 80)
-// [TODO] However, there are some *special* target types:
-//      1.[TODO] Targets that will count as multiple targets without increasing
-//               the active target count more than once.
-//      2.[TODO] Targets that won't increase the active target count at all.
 //
-// So the maximum achievable score is greater than 80 points.
-// Taking all those targets into account (...)
-//      ([TODO] can they appear randomly more than once via kPMTIPausedReset1of2 or kPMTIPausedReset1of3?)
-//      ([TODO] is the highest score not a fixed number?)
+// However, there are some *special* target types:
+//      1. Targets that will count as multiple targets without increasing
+//         the active target count more than once.
+//      2. Targets that won't increase the active target count at all,
+//         and act as bonus points themselves. (eg. kItemPS12Target10, kItemPS12Target14)
+//
+// With the account of special targets the maximum achievable score will be greater than 80 points.
+// Since the special targets can appear randomly (by use of the kPMTIPausedReset1of2, kPMTIPausedReset1of3 instructions)
+// the highest score is not a predefined fixed number and will differ per run. It will always be above 80 points.
 //
 namespace BladeRunner {
 
@@ -147,70 +144,16 @@ void PoliceMaze::tick() {
 		_tracks[i]->tick();
 	}
 
-//	int remainingActiveTargets = 0;            // TODO Un-comment this line while debugging the maze
-//	int targetIdsActive[kNumMazeTracks] = {0}; // TODO Un-comment this line while debugging the maze
-//	int j = 0;                                 // TODO Un-comment this line while debugging the maze
 	bool notFound = true;
 	for (int i = 0; i < kNumMazeTracks; i++) {
 		if (!_tracks[i]->isPaused()) {
 			notFound = false;
-//			targetIdsActive[j++] = i;          // TODO Un-comment this line while debugging the maze
-//			remainingActiveTargets++;          // TODO Un-comment this line while debugging the maze
-			break;                             // TODO Comment-out this break while debugging the maze (debug messages on screen about all active targets)
+			break;
 		}
 	}
 
-	Common::String scoreString;
-//	TODO un-comment this segment of updating activeTargetsString while debugging the maze
-//	Common::String activeTargetsString;
-//	for (int i = 0; i < kNumMazeTracks; ++i) {
-//		if (_vm->_items->isTarget(i)) {
-//			activeTargetsString += Common::String::format(" %d", (i+1));
-//		}
-//	}
-//	activeTargetsString += Common::String::format("] \n");
-//	for (int i = 0; i < remainingActiveTargets; ++i) {
-//		j = targetIdsActive[i];
-//		activeTargetsString += Common::String::format(" %d{%s:%s:%s:%s:%s}",
-//		                                               (j+1),
-//		                                               _tracks[j]->_isPaused?"P":"X",
-//		                                               _tracks[j]->_isWaiting?"W":"X",
-//		                                               _vm->_items->isSpinning(j)?"S":"X",
-//		                                               _vm->_items->isTarget(j)?"T":"X",
-//		                                               _vm->_items->isVisible(j)?"V":"X" );
-//	}
-//	int allTargetsNum = SceneScriptPS10::getPoliceMazePS10TargetCount()
-//						+ SceneScriptPS11::getPoliceMazePS11TargetCount()
-//						+ SceneScriptPS12::getPoliceMazePS12TargetCount()
-//						+ SceneScriptPS13::getPoliceMazePS13TargetCount();
-	int totalTargetsNumInScene = 0;
-	int currTargetsCounUpForRoom = 0;
-//	const int initActivatedTargetsPS10 = 4;
-//	const int initActivatedTargetsPS11 = 4;
-//	const int initActivatedTargetsPS12 = 5;
-//	const int initActivatedTargetsPS13 = 4;
-
-	int currMazeScore = Global_Variable_Query(kVariablePoliceMazeScore);
-	if (_vm->_scene->getSceneId() == kScenePS10) {
-		totalTargetsNumInScene = SceneScriptPS10::getPoliceMazePS10TargetCount();
-		currTargetsCounUpForRoom = Global_Variable_Query(kVariablePoliceMazePS10TargetCounter);
-	} else if (_vm->_scene->getSceneId() == kScenePS11) {
-		totalTargetsNumInScene = SceneScriptPS11::getPoliceMazePS11TargetCount();
-		currTargetsCounUpForRoom = Global_Variable_Query(kVariablePoliceMazePS11TargetCounter);
-	} else if (_vm->_scene->getSceneId() == kScenePS12) {
-		totalTargetsNumInScene = SceneScriptPS12::getPoliceMazePS12TargetCount();
-		currTargetsCounUpForRoom = Global_Variable_Query(kVariablePoliceMazePS12TargetCounter);
-	} else if (_vm->_scene->getSceneId() == kScenePS13) {
-		totalTargetsNumInScene = SceneScriptPS13::getPoliceMazePS13TargetCount();
-		currTargetsCounUpForRoom = Global_Variable_Query(kVariablePoliceMazePS13TargetCounter);
-	}
-//	scoreString = Common::String::format("Score: %02d (%02d), [%s]",
-//	                                      currMazeScore - (totalTargetsNumInScene - currTargetsCounUpForRoom),
-//	                                      totalTargetsNumInScene - currTargetsCounUpForRoom,
-//	                                      activeTargetsString.c_str());
-	scoreString = Common::String::format("Score: %02d", currMazeScore - (totalTargetsNumInScene - currTargetsCounUpForRoom));
-	_vm->_subtitles->setGameSubsText(scoreString, true);
-	_vm->_subtitles->show();
+//	_vm->_subtitles->setGameSubsText(Common::String::format("Score: %02d", Global_Variable_Query(kVariablePoliceMazeScore)), true); // for debug purposes, show maze score
+//	_vm->_subtitles->show(); // for debug purposes, show maze score
 
 	if (notFound && _isActive && !_isEnding) {
 		_isActive = false;

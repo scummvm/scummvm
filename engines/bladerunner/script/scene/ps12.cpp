@@ -272,14 +272,12 @@ static const int *getPoliceMazePS12TrackData34() {  // Special (kItemPS12Target6
 		kPMTIRotate,          469, 80,
 		kPMTIPlaySound,       29, 33,
 		kPMTIWait,            500,
-#if BLADERUNNER_ORIGINAL_BUGS
-		kPMTITargetSet,       kItemPS12Target6, 1,  // TODO MAZE A bug? intended? Set as target again ("Second" Enemy)
-		kPMTITargetSet,       kItemPS12Target7, 1,  // TODO MAZE A bug? intended? Set as target again ("Second" Enemy)
-		kPMTITargetSet,       kItemPS12Target8, 1,  // TODO MAZE A bug? intended? Set as target again ("Second" Enemy)
-		kPMTIEnemySet,        kItemPS12Target6,     // TODO MAZE A bug? intended? Set as target again ("Second" Enemy)
-		kPMTIEnemySet,        kItemPS12Target7,     // TODO MAZE A bug? intended? Set as target again ("Second" Enemy)
-		kPMTIEnemySet,        kItemPS12Target8,     // TODO MAZE A bug? intended? Set as target again ("Second" Enemy)
-#endif // BLADERUNNER_ORIGINAL_BUGS
+		kPMTITargetSet,       kItemPS12Target6, 1,  // intended: special: "second" enemy (re-using the targets of the track)
+		kPMTITargetSet,       kItemPS12Target7, 1,  // intended: special: "second" enemy (re-using the targets of the track)
+		kPMTITargetSet,       kItemPS12Target8, 1,  // intended: special: "second" enemy (re-using the targets of the track)
+		kPMTIEnemySet,        kItemPS12Target6,     // intended: special: "second" enemy (re-using the targets of the track)
+		kPMTIEnemySet,        kItemPS12Target7,     // intended: special: "second" enemy (re-using the targets of the track)
+		kPMTIEnemySet,        kItemPS12Target8,     // intended: special: "second" enemy (re-using the targets of the track)
 		kPMTIRotate,          376, 80,
 		kPMTIWait,            0,
 		kPMTIRotate,          168, 80,
@@ -389,7 +387,7 @@ static const int *getPoliceMazePS12TrackData37() {  // Special: Innocent (kItemP
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleReset,   kItemPS12Target9,
 		kPMTIWaitRandom,      3000, 6000,
-		kPMTIPausedReset,     kItemPS12Target10,    // kItemPS12Target10 unpaused early since he is the enemy using kItemPS12Target9 as human shield
+		kPMTIPausedReset,     kItemPS12Target10,    // kItemPS12Target10 is unpaused early since he is the enemy using kItemPS12Target9 as human shield
 		kPMTIFacing,          1010,
 		kPMTIPosition,        0,
 		kPMTIWait,            2000,
@@ -414,12 +412,12 @@ static const int *getPoliceMazePS12TrackData37() {  // Special: Innocent (kItemP
 	return trackData;
 }
 
-static const int *getPoliceMazePS12TrackData38() {  // Enemy (kItemPS12Target10)
+static const int *getPoliceMazePS12TrackData38() {  // Enemy (kItemPS12Target10) - Special (bonus point)
 	static int trackData[] = {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-		kPMTIActivate,        kVariablePoliceMazePS12TargetCounter, kPoliceMazePS12TargetCount, // TODO MAZE A bug? intended? Missing activate instruction
-		kPMTIVariableInc,     kVariablePoliceMazePS12TargetCounter, kPoliceMazePS12TargetCount, // TODO MAZE A bug? intended? Missing increase counter instruction
+//		kPMTIActivate,        kVariablePoliceMazePS12TargetCounter, kPoliceMazePS12TargetCount, // intended: special: Original missing activate instruction
+//		kPMTIVariableInc,     kVariablePoliceMazePS12TargetCounter, kPoliceMazePS12TargetCount, // intended: special: Original missing increase counter instruction
 		kPMTITargetSet,       kItemPS12Target10, 0, // remove target-able here
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleReset,   kItemPS12Target10,
@@ -470,7 +468,6 @@ static const int *getPoliceMazePS12TrackData39() {  // Enemy (kItemPS12Target11)
 		kPMTITargetSet,       kItemPS12Target11, 1,
 		kPMTIMove,            5,
 		kPMTIWait,            1000,
-		kPMTIPlaySound,       495, 33,             // ASDF REVEAL BELL
 		kPMTIEnemySet,        kItemPS12Target11,    // rotate - reveal
 		kPMTIRotate,          1010, 80,
 		kPMTIPlaySound,       29, 33,
@@ -509,7 +506,6 @@ static const int *getPoliceMazePS12TrackData40() {  // Enemy (kItemPS12Target12)
 		kPMTIMove,            5,
 		kPMTIPlaySound,       29, 33,
 		kPMTIWait,            500,
-		kPMTIPlaySound,       495, 33,             // ASDF REVEAL BELL
 		kPMTIEnemySet,        kItemPS12Target12,    // rotate - reveal
 		kPMTIRotate,          968, 80,
 		kPMTIPlaySound,       29, 33,
@@ -566,12 +562,12 @@ static const int *getPoliceMazePS12TrackData41() {  // Innocent (kItemPS12Target
 
 // kItemPS12Target14 does not count as an Active target in the original code
 // Supposedly he is "Special" in the sense that he acts as a potential bonus point since he appears from a place where an innocent (kItemPS12Target16) can appear
-static const int *getPoliceMazePS12TrackData42() {  // Enemy (kItemPS12Target14)
+static const int *getPoliceMazePS12TrackData42() {  // Enemy (kItemPS12Target14) - Special (bonus point)
 	static int trackData[] = {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-		kPMTIActivate,        kVariablePoliceMazePS12TargetCounter, kPoliceMazePS12TargetCount, // TODO MAZE A bug? intended? Missing activate instruction
-		kPMTIVariableInc,     kVariablePoliceMazePS12TargetCounter, kPoliceMazePS12TargetCount, // TODO MAZE A bug? intended? Missing increase counter instruction
+//		kPMTIActivate,        kVariablePoliceMazePS12TargetCounter, kPoliceMazePS12TargetCount, // intended: special: Original missing activate instruction
+//		kPMTIVariableInc,     kVariablePoliceMazePS12TargetCounter, kPoliceMazePS12TargetCount, // intended: special: Original missing increase counter instruction
 		kPMTITargetSet,       kItemPS12Target14, 0, // remove target-able here
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleReset,   kItemPS12Target14,
@@ -696,7 +692,6 @@ static const int *getPoliceMazePS12TrackData45() {  // Enemy (kItemPS12Target17)
 		kPMTITargetSet,       kItemPS12Target17, 1,
 		kPMTIMove,            9,
 		kPMTIWait,            1000,
-		kPMTIPlaySound,       495, 33,              // ASDF REVEAL BELL
 		kPMTIEnemySet,        kItemPS12Target17,    // rotate - reveal
 		kPMTIRotate,          284, 80,
 		kPMTIWait,            0,
@@ -891,7 +886,8 @@ bool SceneScriptPS12::ClickedOnExit(int exitId) {
 			Player_Gains_Control();
 			Game_Flag_Set(kFlagPS12toPS13);
 			removeTargets();
-			Global_Variable_Decrement(kVariablePoliceMazeScore, kPoliceMazePS12TargetCount - Global_Variable_Query(kVariablePoliceMazePS12TargetCounter));
+//			Global_Variable_Decrement(kVariablePoliceMazeScore, kPoliceMazePS12TargetCount - Global_Variable_Query(kVariablePoliceMazePS12TargetCounter));
+			Police_Maze_Decrement_Score(kPoliceMazePS12TargetCount - Global_Variable_Query(kVariablePoliceMazePS12TargetCounter));
 			Global_Variable_Set(kVariablePoliceMazePS12TargetCounter, kPoliceMazePS12TargetCount);
 			Set_Enter(kSetPS10_PS11_PS12_PS13, kScenePS13);
 		}

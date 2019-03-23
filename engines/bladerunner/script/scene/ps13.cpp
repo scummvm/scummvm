@@ -289,7 +289,6 @@ static const int *getPoliceMazePS13TrackData52() {  // Enemy (kItemPS13Target7) 
 		kPMTIEnemyReset,      kItemPS13Target7,
 		kPMTIMove,            9,
 		kPMTIWait,            500,
-		kPMTIPlaySound,       495, 33,             // ASDF REVEAL BELL
 		kPMTIEnemySet,        kItemPS13Target7,     // rotate - reveal
 		kPMTIRotate,          555, 80,
 		kPMTIWait,            0,
@@ -330,7 +329,6 @@ static const int *getPoliceMazePS13TrackData53() {  // Enemy (kItemPS13Target8) 
 		kPMTITargetSet,       kItemPS13Target8, 1,
 		kPMTIEnemyReset,      kItemPS13Target8,
 		kPMTIMove,            5,
-		kPMTIPlaySound,       495, 33,              // ASDF REVEAL BELL
 		kPMTIEnemySet,        kItemPS13Target8,     // rotate - reveal
 		kPMTIRotate,          868, 200,
 		kPMTIWait,            1000,
@@ -372,7 +370,6 @@ static const int *getPoliceMazePS13TrackData54() {  // Enemy (kItemPS13Target9) 
 		kPMTIEnemyReset,      kItemPS13Target9,
 		kPMTIMove,            3,
 		kPMTIWait,            500,
-		kPMTIPlaySound,       495, 33,             // ASDF REVEAL BELL
 		kPMTIEnemySet,        kItemPS13Target9,     // rotate - reveal
 		kPMTIRotate,          768, 80,
 		kPMTIWait,            1000,
@@ -461,7 +458,6 @@ static const int *getPoliceMazePS13TrackData56() {  // Enemy linked series (kIte
 
 static const int *getPoliceMazePS13TrackData57() {  // Enemy linked series (kItemPS13Target10, kItemPS13Target11, kItemPS13Target12) - Rotating reveal
 	static int trackData[] = {
-		kPMTIPlaySound,       495, 33,              // ASDF REVEAL BELL
 		kPMTIEnemySet,        kItemPS13Target12,    // rotate - reveal
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
@@ -514,16 +510,14 @@ static const int *getPoliceMazePS13TrackData58() {  // Special (kItemPS13Target1
 		kPMTIMove,            9,
 		kPMTIWait,            200,
 		kPMTIMove,            0,
-#if BLADERUNNER_ORIGINAL_BUGS
-		kPMTILeave,                                 // TODO MAZE A bug? intended?  credit for "first" innocent
-		kPMTITargetSet,       kItemPS13Target13, 1,
-		kPMTIEnemyReset,      kItemPS13Target13,
-#endif // BLADERUNNER_ORIGINAL_BUGS
+		kPMTILeave,                                 // intended: special: credit for "first" innocent escaping
+		kPMTITargetSet,       kItemPS13Target13, 1, // intended: special: "second" innocent (re-using the target of the track)
+		kPMTIEnemyReset,      kItemPS13Target13,    // intended: special: "second" innocent (re-using the target of the track)
 		kPMTIWait,            200,
 		kPMTIMove,            9,
 		kPMTIWait,            200,
 		kPMTIMove,            0,
-		kPMTILeave,                                 // credit for "second" innocent
+		kPMTILeave,                                 // credit for "second" / final innocent
 		kPMTIObstacleReset,   kItemPS13Target13,
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
@@ -559,7 +553,6 @@ static const int *getPoliceMazePS13TrackData62() {  // Enemy (kItemPS13Target14)
 		kPMTIEnemyReset,      kItemPS13Target14,
 		kPMTIMove,            14,
 		kPMTIWait,            1000,
-		kPMTIPlaySound,       495, 33,             // ASDF REVEAL BELL
 		kPMTIEnemySet,        kItemPS13Target14,    // rotate - reveal
 		kPMTIRotate,          650, 80,
 		kPMTIWait,            0,
@@ -601,7 +594,6 @@ static const int *getPoliceMazePS13TrackData63() {  // Enemy (kItemPS13Target15)
 		kPMTIEnemyReset,      kItemPS13Target15,
 		kPMTIMove,            9,
 		kPMTIWait,            1000,
-		kPMTIPlaySound,       495, 33,             // ASDF REVEAL BELL
 		kPMTIEnemySet,        kItemPS13Target15,    // rotate - reveal
 		kPMTIRotate,          710, 80,
 		kPMTIWait,            0,
@@ -777,15 +769,17 @@ bool SceneScriptPS13::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			removeTargets();
-			Global_Variable_Decrement(kVariablePoliceMazeScore, kPoliceMazePS13TargetCount - Global_Variable_Query(kVariablePoliceMazePS13TargetCounter));
-			Set_Score(kActorMcCoy, Global_Variable_Query(kVariablePoliceMazeScore));
-//			Common::String scoreString = Common::String::format("Final: %03d", Global_Variable_Query(kVariablePoliceMazeScore));
-//			Set_Subtitle_Text_On_Screen(scoreString);
+//			Global_Variable_Decrement(kVariablePoliceMazeScore, kPoliceMazePS13TargetCount - Global_Variable_Query(kVariablePoliceMazePS13TargetCounter));
+			Police_Maze_Decrement_Score(kPoliceMazePS13TargetCount - Global_Variable_Query(kVariablePoliceMazePS13TargetCounter));
+			Set_Score(kActorMcCoy, Police_Maze_Query_Score());
+//			Common::String scoreString = Common::String::format("Final: %03d", Global_Variable_Query(kVariablePoliceMazeScore)); // Display final score as subtitles
+//			Set_Subtitle_Text_On_Screen(scoreString); // Display final score as subtitles
 			Global_Variable_Reset(kVariablePoliceMazePS10TargetCounter);
 			Global_Variable_Reset(kVariablePoliceMazePS11TargetCounter);
 			Global_Variable_Reset(kVariablePoliceMazePS12TargetCounter);
 			Global_Variable_Reset(kVariablePoliceMazePS13TargetCounter);
-			Global_Variable_Reset(kVariablePoliceMazeScore);
+//			Global_Variable_Reset(kVariablePoliceMazeScore);
+			Police_Maze_Zero_Score();
 			Set_Enter(kSetPS05, kScenePS05);
 		}
 		return true;

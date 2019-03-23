@@ -121,7 +121,6 @@ static const int *getPoliceMazePS11TrackData10() {  // Enemy (kItemPS11Target2, 
 	return trackData;
 }
 
-// TODO - into look possible bug
 static const int *getPoliceMazePS11TrackData11() {  // Enemy (kItemPS11Target2, kItemPS11Target3)
 	static int trackData[] = {
 		kPMTIFacing,          860,
@@ -129,7 +128,6 @@ static const int *getPoliceMazePS11TrackData11() {  // Enemy (kItemPS11Target2, 
 		kPMTIEnemyReset,      kItemPS11Target3,		// [redundant after bug fix] target 2-3 still is not revealed as enemy
 		kPMTIMove,            25,
 		kPMTIWait,            500,
-		kPMTIPlaySound,       495, 33,             // ASDF REVEAL BELL
 		kPMTIEnemySet,        kItemPS11Target3,		// rotate - reveal -- no need to set target 2 as enemy too, since it's gone
 		kPMTIPlaySound,       32, 33,
 		kPMTIRotate,          644, 80,
@@ -258,7 +256,7 @@ static const int *getPoliceMazePS11TrackData14() {  // Enemy (kItemPS11Target6) 
 #if BLADERUNNER_ORIGINAL_BUGS
 		kPMTIFacing,          900,                  // orientation is wrong here - should conceal the gun entirely
 #else
-		kPMTIFacing,          750,              // corrected orientation
+		kPMTIFacing,          750,                  // corrected orientation
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIPosition,        0,
 		kPMTIWaitRandom,      3000, 6000,
@@ -266,14 +264,13 @@ static const int *getPoliceMazePS11TrackData14() {  // Enemy (kItemPS11Target6) 
 		kPMTIPlaySound,       33, 33,
 		kPMTIMove,            5,
 		kPMTIWait,            500,
-		kPMTIPlaySound,       495, 33,             // ASDF REVEAL BELL
 		kPMTIEnemySet,        kItemPS11Target6,     // rotate - reveal
 		kPMTIRotate,          644, 80,
 		kPMTIWait,            0,
 #if BLADERUNNER_ORIGINAL_BUGS
 1		kPMTIRotate,          388, 80,              // orientation is wrong here
 #else
-		kPMTIRotate,          260, 80,              // corrected orientation
+		kPMTIRotate,          260, 80,              // corrected orientation - face towards McCoy
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIWait,            1000,
 		kPMTIShoot,           27, 33,
@@ -291,7 +288,7 @@ static const int *getPoliceMazePS11TrackData14() {  // Enemy (kItemPS11Target6) 
 	return trackData;
 }
 
-static const int *getPoliceMazePS11TrackData15() {  // Innocent (kItemPS11Target7, kItemPS11Target8)
+static const int *getPoliceMazePS11TrackData15() {  // Special (kItemPS11Target7, kItemPS11Target8) - Innocent x2
 	static int trackData[] = {
 		kPMTIActivate,        kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
 		kPMTIVariableInc,     kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
@@ -308,17 +305,14 @@ static const int *getPoliceMazePS11TrackData15() {  // Innocent (kItemPS11Target
 		kPMTIPosition,        0,
 		kPMTIWaitRandom,      3000, 7000,
 		kPMTIObstacleSet,     kItemPS11Target7,
-		kPMTIPlaySound,       29, 33,               // TARGUP1
+		kPMTIPlaySound,       29, 33,
 		kPMTIEnemyReset,      kItemPS11Target7,
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 		kPMTIEnemyReset,      kItemPS11Target8,     // both targets should clear their enemy flag here
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIMove,            14,
-
-#if BLADERUNNER_ORIGINAL_BUGS
-		kPMTILeave,                                 // TODO MAZE A bug? intended? - Why do a LEAVE here is its track is continued with kItemPS11Target8? (would result to re-credit another point with the later leave instruction for kItemPS11Target8)
-#endif // BLADERUNNER_ORIGINAL_BUGS
+		kPMTILeave,                                 // intended: special: credit for "first" innocent escaping
 		kPMTIWait,            1000,
 		kPMTIPausedReset,     kItemPS11Target8,
 		kPMTIObstacleReset,   kItemPS11Target7,
@@ -348,7 +342,7 @@ static const int *getPoliceMazePS11TrackData16() {  // Innocent (kItemPS11Target
 		kPMTIRotate,          388, 200,
 		kPMTIWait,            500,
 		kPMTIMove,            79,
-		kPMTILeave,
+		kPMTILeave,                                 // credit for "second" / final innocent
 		kPMTIObstacleReset,   kItemPS11Target8,
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
@@ -387,28 +381,16 @@ static const int *getPoliceMazePS11TrackData17() {  // Special (kItemPS11Target9
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIPlaySound,       32, 33,
 		kPMTIMove,            10,
-#if BLADERUNNER_ORIGINAL_BUGS
-		kPMTIWait,            0,                    // this is too fast
-#else
-		kPMTIWait,            350,
-#endif // BLADERUNNER_ORIGINAL_BUGS
+		kPMTIWait,            0,                    // this results in shooting too fast - TODO maybe introduce a small wait here (50 or 150)
 		kPMTIShoot,           27, 33,
 		kPMTIMove,            0,
-#if BLADERUNNER_ORIGINAL_BUGS
-		kPMTITargetSet,       kItemPS11Target9, 1,  // TODO MAZE A bug? intended? - "Second" enemy
-		kPMTIEnemySet,        kItemPS11Target9,
-#endif // BLADERUNNER_ORIGINAL_BUGS
+		kPMTITargetSet,       kItemPS11Target9, 1,  // intended: special: "second" enemy (re-using the target of the track)
+		kPMTIEnemySet,        kItemPS11Target9,     // intended: special: "second" enemy (re-using the target of the track)
 		kPMTIMove,            24,
-#if BLADERUNNER_ORIGINAL_BUGS
-		kPMTITargetSet,       kItemPS11Target9, 1,  // TODO MAZE A bug? intended? - "Third" enemy
-		kPMTIEnemySet,        kItemPS11Target9,
-#endif // BLADERUNNER_ORIGINAL_BUGS
+		kPMTITargetSet,       kItemPS11Target9, 1,  // intended: special: "third" enemy (re-using the target of the track)
+		kPMTIEnemySet,        kItemPS11Target9,     // intended: special: "third" enemy (re-using the target of the track)
 		kPMTIMove,            10,
-#if BLADERUNNER_ORIGINAL_BUGS
-		kPMTIWait,            0,                    // this is too fast
-#else
-		kPMTIWait,            350,
-#endif // BLADERUNNER_ORIGINAL_BUGS
+		kPMTIWait,            0,                    // this results in shooting too fast - TODO maybe introduce a small wait here (50 or 150)
 		kPMTIShoot,           27, 33,
 		kPMTIMove,            24,
 		kPMTIWait,            1000,
@@ -425,7 +407,7 @@ static const int *getPoliceMazePS11TrackData17() {  // Special (kItemPS11Target9
 	return trackData;
 }
 
-static const int *getPoliceMazePS11TrackData18() {  // Special (kItemPS11Target10, kItemPS11Target11) - Innocent x1???, then Enemy x2
+static const int *getPoliceMazePS11TrackData18() {  // Special (kItemPS11Target10, kItemPS11Target11) - Rotating reveal and Enemy x2
 	static int trackData[] = {
 		kPMTIActivate,        kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
 		kPMTIVariableInc,     kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount,
@@ -450,15 +432,14 @@ static const int *getPoliceMazePS11TrackData18() {  // Special (kItemPS11Target1
 		kPMTIMove,            5,
 		kPMTIPlaySound,       19, 33,
 #if BLADERUNNER_ORIGINAL_BUGS
-		kPMTIPlaySound,       3, 33,                // FEMHURT1
+		kPMTIPlaySound,       3, 33,                // FEMHURT1 - Wrong sound
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIWait,            1000,
 #if BLADERUNNER_ORIGINAL_BUGS
-		kPMTILeave,                                 // TODO MAZE A bug? intended?  Is this target not revealed yet? Credit for "first" innocent (special)?
+		kPMTILeave,                                 // bug: Leave does not fit here since the target does not actually "escape" (nor is innocent)
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIRotate,          700, 80,
-		kPMTIPlaySound,       495, 33,             // ASDF REVEAL BELL
-		kPMTIEnemySet,        kItemPS11Target10,    // Now the target is an enemy. (special) Rotate reveal?
+		kPMTIEnemySet,        kItemPS11Target10,    // Now the target is an enemy. (special) Rotate reveal
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 		kPMTIEnemySet,        kItemPS11Target11,    // both targets should set their enemy flag here
@@ -481,17 +462,15 @@ static const int *getPoliceMazePS11TrackData18() {  // Special (kItemPS11Target1
 	return trackData;
 }
 
-static const int *getPoliceMazePS11TrackData19() {  // Enemy (kItemPS11Target10, kItemPS11Target11)
+static const int *getPoliceMazePS11TrackData19() {  // Special (kItemPS11Target10, kItemPS11Target11) - becomes an Enemy again
 	static int trackData[] = {
 		kPMTIFacing,          512,
 		kPMTIPosition,        0,
 		kPMTIEnemySet,        kItemPS11Target11,    // [redundant after bug fix]
 		kPMTIMove,            8,
 		kPMTIWait,            4000,
-#if BLADERUNNER_ORIGINAL_BUGS
-		kPMTITargetSet,       kItemPS11Target11, 1, // TODO MAZE A bug? intended? Now the target is reset as new enemy again (special)
-		kPMTIEnemySet,        kItemPS11Target11,
-#endif // BLADERUNNER_ORIGINAL_BUGS
+		kPMTITargetSet,       kItemPS11Target11, 1, // intended: special: "second" enemy (re-using the target of the track)
+		kPMTIEnemySet,        kItemPS11Target11,    // intended: special: "second" enemy (re-using the target of the track)
 		kPMTIMove,            2,
 		kPMTIPlaySound,       32, 33,
 		kPMTIWait,            1000,
@@ -869,7 +848,8 @@ bool SceneScriptPS11::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 8, 12, true, false)) {
 			Game_Flag_Set(kFlagPS11toPS12);
 			removeTargets();
-			Global_Variable_Decrement(kVariablePoliceMazeScore, kPoliceMazePS11TargetCount - Global_Variable_Query(kVariablePoliceMazePS11TargetCounter));
+//			Global_Variable_Decrement(kVariablePoliceMazeScore, kPoliceMazePS11TargetCount - Global_Variable_Query(kVariablePoliceMazePS11TargetCounter));
+			Police_Maze_Decrement_Score(kPoliceMazePS11TargetCount - Global_Variable_Query(kVariablePoliceMazePS11TargetCounter));
 			Global_Variable_Set(kVariablePoliceMazePS11TargetCounter, kPoliceMazePS11TargetCount);
 			Set_Enter(kSetPS10_PS11_PS12_PS13, kScenePS12);
 		}
