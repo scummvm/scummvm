@@ -640,6 +640,12 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 
 	case SDL_JOYDEVICEREMOVED:
 		return handleJoystickRemoved(ev.jdevice);
+
+	case SDL_DROPFILE:
+		event.type = Common::EVENT_DROP_FILE;
+		event.path = Common::String(ev.drop.file);
+		SDL_free(ev.drop.file);
+		return true;
 #else
 	case SDL_VIDEOEXPOSE:
 		if (_graphicsManager)

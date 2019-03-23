@@ -51,6 +51,7 @@ public:
 
 	virtual void handleKeyDown(Common::KeyState state);
 	virtual void handleKeyUp(Common::KeyState state);
+	virtual void handleOtherEvent(Common::Event evt);
 	bool doGameDetection(const Common::String &path);
 protected:
 	EditTextWidget  *_searchWidget;
