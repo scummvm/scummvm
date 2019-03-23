@@ -117,6 +117,8 @@ static const char *const selectorNameTable[] = {
 	"modeless",     // King's Quest 6 CD
 	"cycler",       // Space Quest 4 / system selector
 	"addToPic",     // Space Quest 4
+	"stop",         // Space Quest 4
+	"canControl",   // Space Quest 4
 	"loop",         // Laura Bow 1 Colonel's Bequest, QFG4
 	"setLoop",      // Laura Bow 1 Colonel's Bequest, QFG4
 	"ignoreActors", // Laura Bow 1 Colonel's Bequest
@@ -213,6 +215,8 @@ enum ScriptPatcherSelectors {
 	SELECTOR_modeless,
 	SELECTOR_cycler,
 	SELECTOR_addToPic,
+	SELECTOR_stop,
+	SELECTOR_canControl,
 	SELECTOR_loop,
 	SELECTOR_setLoop,
 	SELECTOR_ignoreActors,
@@ -11256,6 +11260,145 @@ static const uint16 sq4PatchZeroGravityBlast[] = {
 	PATCH_END
 };
 
+// Cedric the owl from KQ5 appears in the CD version of Ms. Astro Chicken, but a
+//  bug in this easter egg makes it a much rarer occurrence than intended.
+//
+// Every 50 ticks there's a 1 in 21 chance of Cedric appearing if there's no
+//  rock on screen and he hasn't already been killed by colliding with the
+//  player or getting shot by the farmer. The problem is that unless Cedric
+//  appears before the farmer, which is very unlikely, then the farmer's first
+//  bullet will kill Cedric off-screen due to incorrect collision testing.
+//  buckShot:doit tests for collision by calling cedric:onMe, but Cedric isn't
+//  initialized until he first appears, and View:onMe always returns true no
+//  matter what coordinates are being tested if its rectangle isn't initialized.
+//
+// We fix this by initializing Cedric's actor-hidden signal flag on the heap.
+//  This prevents View:onMe from returning true before Cedric is initialized.
+//  The flag is later cleared by cedric:init when he is placed on screen.
+//
+// Applies to: English PC CD
+// Responsible method: Heap in script 290
+// Fixes bug #10920
+static const uint16 sq4CdSignatureCedricEasterEgg[] = {
+	SIG_MAGICDWORD,                     // cedric
+	SIG_UINT16(0x0110),                 // view = 272
+	SIG_UINT16(0x0000),                 // loop = 0
+	SIG_UINT16(0x0000),                 // cel = 0
+	SIG_UINT16(0x000d),                 // priority = 13
+	SIG_UINT16(0x0000),                 // underBits = 0
+	SIG_UINT16(0x0810),                 // signal = $0810
+	SIG_END
+};
+
+static const uint16 sq4CdPatchCedricEasterEgg[] = {
+	PATCH_ADDTOOFFSET(+10),
+	PATCH_UINT16(0x0890),               // signal = $0890 [ set actor-hidden flag ]
+	PATCH_END
+};
+
+// Colliding with Cedric in Ms. Astro Chicken after colliding with an obstacle
+//  locks up the game. cedric:doit doesn't check if the player has been hit
+//  before running killCedricScript. This interferes with the collision scripts'
+//  animations and prevents them from continuing.
+//
+// We fix this by not running killCedricScript if the player has been hit.
+//  Unfortunately there's no single property that can be tested as each
+//  collision script does things differently, so this is a two-part patch.
+//  First, ScrollActor:doChicken is patched to set User:canControl to 0, making
+//  it consistent with the other collision scripts. Second, cedric:doit is
+//  patched to test this value. To make room for this we replace testing
+//  killCedricScript with testing the flag that killCedricScript sets.
+//
+// Applies to: English PC CD
+// Responsible methods: ScrollActor:doChicken, cedric:doit
+// Fixes bug #10920
+static const uint16 sq4CdSignatureCedricLockup1[] = {
+	SIG_MAGICDWORD,
+	0x18,                               // not
+	0x30, SIG_UINT16(0x0049),           // bnt 0049 [ end of method ]
+	0x63, 0x84,                         // pToa deathLoop
+	0x30, SIG_UINT16(0x0044),           // bnt 0044 [ end of method ]
+	0x38, SIG_SELECTOR16(stop),         // pushi stop
+	0x76,                               // push0
+	0x81, 0x64,                         // lag 64
+	0x4a, 0x04,                         // send 04 [ longSong2 stop: ]
+	0x38, SIG_SELECTOR16(stop),         // pushi stop
+	0x76,                               // push0
+	0x72, SIG_UINT16(0x0108),           // lofsa eggSplatting
+	0x4a, 0x04,                         // send 04 [ eggSplatting stop: ]
+	0x39, SIG_SELECTOR8(number),        // pushi number
+	0x78,                               // push1
+	0x67, 0x86,                         // pTos deathMusic
+	0x39, SIG_SELECTOR8(loop),          // pushi loop
+	0x78,                               // push1
+	0x78,                               // push1 [ unnecessary, loop is initialized to 1 on heap ]
+	SIG_ADDTOOFFSET(+7),
+	0x4a, 0x12,                         // send 12 [ theSound number: deathMusic loop: 1 play: self ]
+	SIG_END
+};
+
+static const uint16 sq4CdPatchCedricLockup1[] = {
+	0x2f, 0x4b,                         // bt 4b [ end of method ]
+	0x63, 0x84,                         // pToa deathLoop
+	0x31, 0x47,                         // bnt 47 [ end of method ]
+	0x38, PATCH_SELECTOR16(stop),       // pushi stop
+	0x3c,                               // dup
+	0x76,                               // push0
+	0x81, 0x64,                         // lag 64
+	0x4a, 0x04,                         // send 04 [ longSong2 stop: ]
+	0x76,                               // push0
+	0x72, PATCH_UINT16(0x0108),         // lofsa eggSplatting
+	0x4a, 0x04,                         // send 04 [ eggSplatting stop: ]
+	0x39, PATCH_SELECTOR8(number),      // pushi number
+	0x78,                               // push1
+	0x67, 0x86,                         // pTos deathMusic
+	0x38, PATCH_SELECTOR16(canControl), // pushi canControl
+	0x78,                               // push1
+	0x76,                               // push0
+	0x81, 0x50,                         // lag 50
+	0x4a, 0x06,                         // send 06 [ User canControl: 0 ]
+	PATCH_ADDTOOFFSET(+7),
+	0x4a, 0x0c,                         // send 0c [ theSound number: deathMusic play: self ]
+	PATCH_END
+};
+
+static const uint16 sq4CdSignatureCedricLockup2[] = {
+	SIG_MAGICDWORD,
+	0x31, 0x17,                         // bnt 17 [ end of method ]
+	0x38, SIG_SELECTOR16(script),       // pushi script
+	0x76,                               // push0
+	0x51, 0x9c,                         // class astroChicken
+	0x4a, 0x04,                         // send 04 [ astroChicken script? ]
+	0x18,                               // not     [ acc = 1 if killCedricScript not running ]
+	0x31, 0x0c,                         // bnt 0c  [ end of method ]
+	0x38, SIG_SELECTOR16(setScript),    // pushi setScript
+	0x78,                               // push1
+	0x72, SIG_UINT16(0x0f7c),           // lofsa killCedricScript
+	0x36,                               // push
+	0x51, 0x9c,                         // class astroChicken
+	0x4a, 0x06,                         // send 06 [ astroChicken setScript: killCedricScript ]
+	0x48,                               // ret
+	0x48,                               // ret
+	SIG_END
+};
+
+static const uint16 sq4CdPatchCedricLockup2[] = {
+	0x31, 0x18,                         // bnt 18 [ end of method ]
+	0x38, PATCH_SELECTOR16(canControl), // pushi canControl
+	0x76,                               // push0
+	0x81, 0x50,                         // lag 50
+	0x4a, 0x04,                         // send 04 [ User canControl? ]
+	0x8b, 0x21,                         // lsl 21  [ local33 = 0 if cedric is alive, 1 if dead ]
+	0x22,                               // lt?     [ acc = 1 if cedric is alive and user has control ]
+	0x31, 0x0b,                         // bnt 0b  [ end of method ]
+	0x38, PATCH_SELECTOR16(setScript),  // pushi setScript
+	0x78,                               // push1
+	0x74, PATCH_UINT16(0x0f7c),         // lofss killCedricScript
+	0x51, 0x9c,                         // class astroChicken
+	0x4a, 0x06,                         // send 06 [ astroChicken setScript: killCedricScript ]
+	PATCH_END
+};
+
 // The door to Sock's is immediately disposed of in the CD version, breaking its
 //  Look message and preventing it from being drawn when restoring a saved game.
 //  We remove the incorrect dispose call along with a redundant addToPic.
@@ -11380,6 +11523,9 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,   700, "Floppy: throw stuff at sequel police bug",       1, sq4FloppySignatureThrowStuffAtSequelPoliceBug, sq4FloppyPatchThrowStuffAtSequelPoliceBug },
 	{  true,    35, "CD: sidewalk smell message fix",                 1, sq4CdSignatureSidewalkSmellMessage,            sq4CdPatchSidewalkSmellMessage },
 	{  true,    45, "CD: walk in from below for room 45 fix",         1, sq4CdSignatureWalkInFromBelowRoom45,           sq4CdPatchWalkInFromBelowRoom45 },
+	{  true,   290, "CD: cedric easter egg fix",                      1, sq4CdSignatureCedricEasterEgg,                 sq4CdPatchCedricEasterEgg },
+	{  true,   290, "CD: cedric lockup fix (1/2)",                    1, sq4CdSignatureCedricLockup1,                   sq4CdPatchCedricLockup1 },
+	{  true,   290, "CD: cedric lockup fix (2/2)",                    1, sq4CdSignatureCedricLockup2,                   sq4CdPatchCedricLockup2 },
 	{  true,   370, "CD: sock's door restore and message fix",        1, sq4CdSignatureSocksDoor,                       sq4CdPatchSocksDoor },
 	{  true,   391, "CD: missing Audio for universal remote control", 1, sq4CdSignatureMissingAudioUniversalRemote,     sq4CdPatchMissingAudioUniversalRemote },
 	{  true,   396, "CD: get points for changing back clothes fix",   1, sq4CdSignatureGetPointsForChangingBackClothes, sq4CdPatchGetPointsForChangingBackClothes },
