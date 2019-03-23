@@ -170,8 +170,10 @@ int SdlEventSource::mapKey(SDLKey sdlKey, SDLMod mod, Uint16 unicode) {
 	if (key >= Common::KEYCODE_F1 && key <= Common::KEYCODE_F9) {
 		return key - Common::KEYCODE_F1 + Common::ASCII_F1;
 	} else if (key >= Common::KEYCODE_KP0 && key <= Common::KEYCODE_KP9) {
-		if ((mod & KMOD_NUM) == 0)
-			return 0; // In case Num-Lock is NOT enabled, return 0 for ascii, so that directional keys on numpad work
+		#ifndef __amigaos4__ // Exclude AmigaOS4 due to it breaking the numpad fighting on said platform completely. This fixes bug #10558.
+			if ((mod & KMOD_NUM) == 0)
+				return 0; // In case Num-Lock is NOT enabled, return 0 for ascii, so that directional keys on numpad work
+		#endif
 		return key - Common::KEYCODE_KP0 + '0';
 	} else if (key >= Common::KEYCODE_UP && key <= Common::KEYCODE_PAGEDOWN) {
 		return key;
