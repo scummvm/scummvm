@@ -272,13 +272,13 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.animCommand(6, 18);
 	sq.animCommand(0);
 
-	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 229 : 1);
+	sq.waitForSongNotifier(1);
 
 	sq.animCommand(_configRenderMode == Common::kRenderEGA ? 12 : 11);
 	sq.animCommand(7, 6);
 	sq.animCommand(2, 6);
 
-	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 447 : 2);
+	sq.waitForSongNotifier(2);
 
 	sq.animCommand(_flags.platform == Common::kPlatformAmiga ? 37 : (_configRenderMode == Common::kRenderEGA ? 39 : 38));
 	sq.animCommand(3);
@@ -287,7 +287,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.animCommand(0, 6);
 	sq.animCommand(2);
 
-	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 670 : 3);
+	sq.waitForSongNotifier(3);
 
 	_screen->setClearScreenDim(17);
 	_screen->setCurPage(2);
@@ -318,7 +318,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.printText(3, textColor1);    // The message was urgent.
 
 	sq.loadScene(1, 2);
-	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 1380 : 4);
+	sq.waitForSongNotifier(4);
 
 	// intro scroll
 	if (!skipFlag() && !shouldQuit()) {
@@ -461,7 +461,7 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.fadeText();
 	sq.loadScene(9, 2);
 
-	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 3000 : 6);
+	sq.waitForSongNotifier(6);
 
 	sq.update(2);
 	sq.animCommand(34);
@@ -572,12 +572,12 @@ void DarkMoonEngine::seq_playIntro() {
 	sq.fadeText();
 	sq.animCommand(29);
 
-	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 4475 : 7);
+	sq.waitForSongNotifier(7);
 
 	sq.animCommand(30);
 	sq.animCommand(31);
 
-	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 4825 : 8, true);
+	sq.waitForSongNotifier(8, true);
 
 	if (_flags.platform == Common::kPlatformAmiga && !skipFlag() && !shouldQuit()) {
 		static const uint8 magicHandsCol[] = { 0x15, 0x1D, 0x3A, 0x32, 0x32, 0x3F };
@@ -653,7 +653,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.fadeText();
 	sq.animCommand(2);
 
-	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 475 : 1);
+	sq.waitForSongNotifier(1);
 
 	sq.printText(1, textColor1);            // Suddenly, your friend Khelben appears
 	sq.animCommand(4);
@@ -744,7 +744,7 @@ void DarkMoonEngine::seq_playFinale() {
 
 	sq.loadScene(4, 2);
 
-	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 2030 : 2);
+	sq.waitForSongNotifier(2);
 
 	_screen->clearCurPage();
 	sq.update(2);
@@ -757,7 +757,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.delay(90);
 	sq.fadeText();
 
-	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 2200 : 3);
+	sq.waitForSongNotifier(3);
 
 	if (!skipFlag() && !shouldQuit())
 		snd_playSoundEffect(7);
@@ -791,7 +791,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.delay(72);
 	sq.fadeText();
 
-	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 2752 : 4);
+	sq.waitForSongNotifier(4);
 
 	if (!skipFlag() && !shouldQuit())
 		snd_playSoundEffect(7);
@@ -835,7 +835,7 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.fadeText();
 	sq.loadScene(12, 2);
 	
-	sq.waitForSongNotifier(_flags.platform == Common::kPlatformFMTowns ? 3475 : 5);
+	sq.waitForSongNotifier(5);
 
 	if (!skipFlag() && !shouldQuit())
 		snd_playSoundEffect(6);
@@ -1121,11 +1121,19 @@ void DarkMoonEngine::seq_playCredits(DarkmoonSequenceHelper *sq, const uint8 *da
 
 DarkmoonSequenceHelper::DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *vm, Screen_EoB *screen, Mode mode) :
 	_system(system), _vm(vm), _screen(screen) {
-	
+
+	assert(mode == kIntro || mode == kFinale);
+
+	static const uint16 soundMarkersFMTowns[2][8] = {
+		{  229,  447,  670, 1380, 2037, 3000, 4475, 4825 },
+		{  475, 2030, 2200, 2752, 3475,    0,    0,    0 }
+	};
+
 	int size = 0;
 	_platformAnimOffset = 0;
 	_sndNextTrack = 1;
 	_sndNextTrackMarker = 0;
+	_sndMarkersFMTowns = soundMarkersFMTowns[mode];
 
 	if (mode == kIntro) {
 		_config = new Config(
@@ -1704,10 +1712,12 @@ void DarkmoonSequenceHelper::delay(uint32 ticks) {
 }
 
 void DarkmoonSequenceHelper::waitForSongNotifier(int index, bool introUpdateAnim) {
-	int seq = 0;
-
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+	if (_vm->gameFlags().platform == Common::kPlatformFMTowns)
+		index = _sndMarkersFMTowns[index - 1];
+	else if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		return;
+
+	int seq = 0;
 
 	while (_vm->sound()->checkTrigger() < index && !(_vm->skipFlag() || _vm->shouldQuit())) {
 		if (introUpdateAnim) {
