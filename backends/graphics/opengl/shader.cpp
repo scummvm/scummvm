@@ -80,6 +80,9 @@ const char *const g_lookUpFragmentShader =
 
 // Taken from: https://en.wikibooks.org/wiki/OpenGL_Programming/Modern_OpenGL_Tutorial_03#OpenGL_ES_2_portability
 const char *const g_precisionDefines =
+	#ifdef __amigaos4__
+	"#version 110\n"
+	#endif
 	"#ifdef GL_ES\n"
 	"\t#if defined(GL_FRAGMENT_PRECISION_HIGH) && GL_FRAGMENT_PRECISION_HIGH == 1\n"
 	"\t\tprecision highp float;\n"
