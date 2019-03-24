@@ -660,8 +660,7 @@ void DarkMoonEngine::seq_playFinale() {
 
 	sq.loadScene(7, 2);
 
-	if (_configRenderMode != Common::kRenderEGA)
-		sq.copyPalette(3, 0);
+	sq.copyPalette(3, 0);
 
 	sq.loadScene(4, 2);
 
@@ -1550,10 +1549,10 @@ const char *const DarkmoonSequenceHelper::_palFilesFinaleVGA[] = {
 };
 
 const char *const DarkmoonSequenceHelper::_palFilesFinaleEGA[] = {
-	"FINALE_0.PAL",
+	"FINALE_6.PAL",
 	"FINALE_0.PAL",
 	"FINALE_1.PAL",
-	"FINALE_2.PAL",
+	"FINALE_7.PAL",
 	"FINALE_3.PAL",
 	"FINALE_4.PAL",
 	"FINALE_5.PAL",
