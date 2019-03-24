@@ -11517,6 +11517,41 @@ static const uint16 sq4CdPatchBikerBarDoor[] = {
 	PATCH_END
 };
 
+// Clicking Do on the timepod in room 613 while a biker approaches always shows
+//  "Not now!" in a message box, even in speech mode. It seems that Sierra
+//  thought they didn't have audio for this message and created a text resource
+//  just for it, but it also appears in room 90 with audio, so we use that.
+//
+// Applies to: English PC CD
+// Responsible method: ship:doVerb(4)
+// Fixes bug #10922
+static const uint16 sq4CdSignatureBikerTimepodMessage[] = {
+	0x36,                               // push
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	0x31, 0x0d,                         // bnt 0d [ skip if ulence:egoBusy != 1 ]
+	0x7a,                               // push2
+	0x38, SIG_UINT16(0x0265),           // pushi 0265
+	0x76,                               // push0
+	SIG_MAGICDWORD,
+	0x46, SIG_UINT16(0x0330),           // calle proc816_1 04 [ message box ]
+	      SIG_UINT16(0x0001), 0x04,
+	SIG_END
+};
+
+static const uint16 sq4CdPatchBikerTimepodMessage[] = {
+	0x31, 0x11,                         // bnt 11 [ skip if ulence:egoBusy == 0 ]
+	0x38, PATCH_SELECTOR16(modNum),     // pushi modNum
+	0x78,                               // push1
+	0x39, 0x5a,                         // pushi 5a
+	0x38, PATCH_SELECTOR16(say),        // pushi say
+	0x78,                               // push1
+	0x7a,                               // push2
+	0x81, 0x59,                         // lag 59
+	0x4a, 0x0c,                         // send 0c [ Sq4GlobalNarrator modNum: 90 say: 2 ]
+	PATCH_END
+};
+
 // The door to Sock's is immediately disposed of in the CD version, breaking its
 //  Look message and preventing it from being drawn when restoring a saved game.
 //  We remove the incorrect dispose call along with a redundant addToPic.
@@ -11658,6 +11693,7 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,   612, "CD: biker hands-on fix",                         2, sq4CdSignatureBikerHandsOn,                    sq4CdPatchBikerHandsOn },
 	{  true,   613, "CD: biker hands-on fix",                         2, sq4CdSignatureBikerHandsOn,                    sq4CdPatchBikerHandsOn },
 	{  true,   614, "CD: biker hands-on fix",                         1, sq4CdSignatureBikerHandsOn,                    sq4CdPatchBikerHandsOn },
+	{  true,   613, "CD: biker timepod message fix",                  1, sq4CdSignatureBikerTimepodMessage,             sq4CdPatchBikerTimepodMessage },
 	{  true,   700, "CD: red shopper message fix",                    1, sq4CdSignatureRedShopperMessageFix,            sq4CdPatchRedShopperMessageFix },
 	{  true,   701, "CD: getting shot, while getting rope",           1, sq4CdSignatureGettingShotWhileGettingRope,     sq4CdPatchGettingShotWhileGettingRope },
 	{  true,   706, "CD: biker crouch verb fix",                      2, sq4CdSignatureBikerCrouchVerb,                 sq4CdPatchBikerCrouchVerb },
