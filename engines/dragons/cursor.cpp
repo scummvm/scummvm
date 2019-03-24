@@ -21,6 +21,7 @@
  */
 #include "cursor.h"
 #include "actor.h"
+#include "actorresource.h"
 #include "dragons.h"
 #include "dragonimg.h"
 #include "dragonini.h"
@@ -199,6 +200,14 @@ int16 Cursor::updateIniFromScene() {
 			// 0x80028a10
 			if (ini->field_1a_flags_maybe & 1) {
 				// 0x80028b18
+				if (ini->actor->isFlagSet(ACTOR_FLAG_40) && ini->actor->isFlagSet(ACTOR_FLAG_8)) {
+					int16 iniActorXPosition = ini->actor->x_pos - ini->actor->frame->xOffset;
+					int16 iniActorYPosition = ini->actor->y_pos - ini->actor->frame->yOffset;
+					if (_actor->x_pos >= iniActorXPosition && _actor->x_pos < iniActorXPosition + ini->actor->frame->width
+					&& _actor->y_pos >= iniActorYPosition && _actor->y_pos < iniActorYPosition + ini->actor->frame->height) {
+						cursorOverIni = i + 1;
+					}
+				}
 			} else {
 				// 0x80028a24
 				if (ini->field_2 != -1) {
@@ -310,7 +319,7 @@ void Cursor::selectPreviousCursor() {
 		_sequenceID = 1;
 	}
 	if (_sequenceID == 2) {
-		_sequenceID = 1;
+		_sequenceID = 0x10001;
 	}
 	if (_sequenceID == -1) {
 		_sequenceID = _vm->data_8006f3a8 == 0 ? 4 : 5;

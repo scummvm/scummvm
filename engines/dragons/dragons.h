@@ -181,6 +181,7 @@ public:
 	void fade_related(uint32 flags);
 
 	uint16 ipt_img_file_related();
+	void works_with_obd_data_1();
 
 private:
 	void gameLoopOld();
@@ -194,7 +195,6 @@ private:
 	void runINIScripts();
 	void engineFlag0x20UpdateFunction();
 
-	void works_with_obd_data_1();
 
 	bool isInputEnabled();
 	bool checkForInventoryButtonRelease();
@@ -206,6 +206,8 @@ private:
 	void FUN_8002837c();
 	void FUN_80031480();
 	void FUN_80038994();
+
+	void FUN_8002931c();
 };
 
 DragonsEngine *getEngine();

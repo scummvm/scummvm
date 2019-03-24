@@ -380,7 +380,7 @@ void DragonsEngine::gameLoop()
 				if (_cursor->_sequenceID != 5) {
 					uVar6 = _cursor->data_80072890;
 				}
-				flicker->actor->_sequenceID2 = getINI(uVar6 - 1)->field_20_actor_field_14;
+				flicker->actor->_sequenceID2 = getINI(uVar6 - 1)->field_e;
 			}
 
 			works_with_obd_data_1();
@@ -972,7 +972,74 @@ void DragonsEngine::call_fade_related_1f() {
 }
 
 void DragonsEngine::works_with_obd_data_1() {
-	error("works_with_obd_data_1");
+	uint uVar1;
+	ushort uVar2;
+	uint uVar4;
+	uint uVar5;
+	uint uVar6;
+	ScriptOpCall local_48;
+	ScriptOpCall local_38;
+	ScriptOpCall local_58;
+	byte * pvVar7;
+	byte * pvVar8;
+
+	uVar2 = _scriptOpcodes->_data_800728c0;
+	uVar1 = _flags;
+	local_58._code = NULL;
+	local_58._codeEnd = NULL;
+	local_58._result = 0;
+
+	uVar6 = 0;
+	_scriptOpcodes->_data_80071f5c = 0;
+
+	byte *obd = _dragonOBD->getFromOpt(_cursor->data_80072890 - 1);
+
+
+	local_48._code = pvVar7 = obd + 8;
+	local_48._codeEnd = pvVar8 = local_48._code + READ_LE_UINT32(obd);
+
+	uVar4 = _cursor->executeScript(local_48, 1);
+	if (_cursor->data_800728b0_cursor_seqID > 4) {
+		_scriptOpcodes->_data_80071f5c = 0;
+		_scriptOpcodes->_data_800728c0 = _cursor->data_80072890;
+
+		obd = _dragonOBD->getFromOpt(_scriptOpcodes->_data_800728c0 - 1);
+
+		local_38._code = obd + 8;
+		local_38._codeEnd = local_38._code + READ_LE_UINT32(obd);
+
+		uVar6 = _cursor->executeScript(local_38, 1);
+		_scriptOpcodes->_data_800728c0 = uVar2;
+	}
+	if ((uVar6 & 0xffff) != 0) {
+		local_58._code = local_38._code + 8;
+		local_58._codeEnd = local_58._code + READ_LE_UINT16(local_38._code + 6);
+	}
+	if (((uVar4 & 0xffff) != 0) && ((((uVar4 & 2) == 0 || ((uVar6 & 2) != 0)) || ((uVar6 & 0xffff) == 0)))) {
+		local_58._code = local_48._code + 8;
+		local_58._codeEnd = local_58._code + READ_LE_UINT16(local_48._code + 6);
+	}
+	uVar4 = uVar4 & 0xfffd;
+	if (local_58._code != NULL && local_58._codeEnd != NULL) {
+		clearFlags(ENGINE_FLAG_8);
+		_scriptOpcodes->runScript(local_58);
+	}
+	if ((local_58._result & 1U) == 0) {
+		if (_cursor->data_800728b0_cursor_seqID == 3) {
+			local_58._code = pvVar7;
+			local_58._codeEnd = pvVar8;
+			uVar5 = _scriptOpcodes->FUN_800297d8(local_58);
+			uVar4 = uVar4 | uVar5;
+		}
+		if (((uVar4 & 0xffff) == 0) && ((uVar6 & 0xfffd) == 0)) {
+			FUN_8002931c();
+		}
+	}
+	else {
+		_scriptOpcodes->_data_80071f5c--;
+	}
+	_flags |= uVar1 & ENGINE_FLAG_8;
+	return;
 }
 
 bool DragonsEngine::checkForInventoryButtonRelease() {
@@ -1077,6 +1144,10 @@ void DragonsEngine::FUN_80031480() {
 
 void DragonsEngine::FUN_80038994() {
 	error("FUN_80038994"); //TODO
+}
+
+void DragonsEngine::FUN_8002931c() {
+	error("FUN_8002931c"); //TODO
 }
 
 } // End of namespace Dragons

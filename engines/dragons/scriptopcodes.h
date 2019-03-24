@@ -64,6 +64,7 @@ public:
 	void runScript3(ScriptOpCall &scriptOpCall);
 	void execOpcode(ScriptOpCall &scriptOpCall);
 	void executeScriptLoop(ScriptOpCall &scriptOpCall);
+	int16 FUN_800297d8(ScriptOpCall &scriptOpCall);
 	int16 _data_80071f5c;
 	int16 _data_800728c0;
 protected:
@@ -82,7 +83,7 @@ protected:
 	void opUnk1(ScriptOpCall &scriptOpCall);
 	void opExecuteScript(ScriptOpCall &scriptOpCall); //op 4
 	void opActorSetSequenceID2(ScriptOpCall &scriptOpCall); //op 5
-
+	void opUnk6(ScriptOpCall &scriptOpCall);
 	void opUnk7(ScriptOpCall &scriptOpCall);
 	void opActorLoadSequence(ScriptOpCall &scriptOpCall);
 

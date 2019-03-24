@@ -93,7 +93,7 @@ void ScriptOpcodes::initOpcodes() {
 
 	OPCODE(4,  opExecuteScript);
 	OPCODE(5,  opActorSetSequenceID2);
-
+	OPCODE(6,  opUnk6);
 	OPCODE(7,  opUnk7);
 	OPCODE(8,  opActorLoadSequence);
 
@@ -193,6 +193,10 @@ void ScriptOpcodes::executeScriptLoop(ScriptOpCall &scriptOpCall) {
 	}
 }
 
+int16 ScriptOpcodes::FUN_800297d8(ScriptOpCall &scriptOpCall) {
+	error("FUN_800297d8"); //TODO
+}
+
 // Opcodes
 
 void ScriptOpcodes::opUnk1(ScriptOpCall &scriptOpCall) {
@@ -201,12 +205,13 @@ void ScriptOpcodes::opUnk1(ScriptOpCall &scriptOpCall) {
 	ARG_INT16(field4);
 	ARG_INT16(field6);
 
-	if (field2 >> _vm->_cursor->data_800728b0_cursor_seqID & 1
+	if ((field2 >> _vm->_cursor->data_800728b0_cursor_seqID) & 1
 	&& (_vm->_cursor->data_800728b0_cursor_seqID < 5 || field4 == _data_800728c0)
 	&& scriptOpCall._field8 == 1) {
+		scriptOpCall._code -= 8;
 		scriptOpCall._result |= 1;
 	} else {
-		scriptOpCall._code += (8 + field6);
+		scriptOpCall._code += field6;
 	}
 }
 
@@ -235,6 +240,45 @@ void ScriptOpcodes::opActorSetSequenceID2(ScriptOpCall &scriptOpCall) {
 	}
 }
 
+void ScriptOpcodes::opUnk6(ScriptOpCall &scriptOpCall) {
+	ARG_SKIP(2);
+	ARG_INT16(field2);
+	ARG_INT16(field4);
+	ARG_INT16(field6);
+
+	if (scriptOpCall._field8 != 0) {
+		return;
+	}
+
+	int16 uVar6 = _data_800728c0;
+	int16 uVar5 = _vm->_cursor->data_800728b0_cursor_seqID;
+	int16 uVar4 = _vm->_cursor->data_80072890;
+	int16 uVar3 = _vm->_cursor->_iniUnderCursor;
+	int32 uVar2 = _vm->_cursor->_sequenceID;
+	bool isEngineFlag8Set = _vm->isFlagSet(ENGINE_FLAG_8);
+	_vm->clearFlags(ENGINE_FLAG_8);
+//	DisableVSyncEvent();
+	_vm->_cursor->_iniUnderCursor = field4;
+	_vm->_cursor->_sequenceID = 0;
+
+	for(int16 i = field2 >> 1; i != 0; i = i >> 1) {
+		_vm->_cursor->_sequenceID++;
+	}
+
+	_data_800728c0 = field6;
+	_vm->_cursor->data_800728b0_cursor_seqID = _vm->_cursor->_sequenceID;
+	_vm->_cursor->data_80072890 = _vm->_cursor->_iniUnderCursor;
+//	EnableVSyncEvent();
+	_vm->works_with_obd_data_1();
+	if (isEngineFlag8Set) {
+		_vm->setFlags(ENGINE_FLAG_8);
+	}
+	_vm->_cursor->_sequenceID = uVar2;
+	_vm->_cursor->_iniUnderCursor = uVar3;
+	_vm->_cursor->data_80072890 = uVar4;
+	_vm->_cursor->data_800728b0_cursor_seqID = uVar5;
+	_data_800728c0 = uVar6;
+}
 
 void ScriptOpcodes::opUnk7(ScriptOpCall &scriptOpCall) {
 	if (scriptOpCall._field8 == 0) {
@@ -936,6 +980,35 @@ void ScriptOpcodes::opCode_Unk7(ScriptOpCall &scriptOpCall) {
 		if (sceneId == 1) {
 			// TODO 0x8002d2f4
 			error("0x8002d2f4");
+//			if (_vm->data_8006f3a8 != 0) {
+//				uVar5 = 0;
+//				if (_vm->unkArray_uint16[0] != 0) {
+//					uVar7 = 1;
+//					do {
+//						uVar5 = uVar7;
+//						uVar7 = uVar5 + 1;
+//					} while (_vm->unkArray_uint16[uVar5 & 0xffff] != 0);
+//				}
+//				_vm->unkArray_uint16[uVar5 & 0xffff] = _vm->data_8006f3a8;
+//				if (_vm->_inventory->getType() == 1) {
+//					uVar7 = uVar5 + 0x17 & 0xffff;
+//					actors[uVar7].flags = 0;
+//					actors[uVar7].priorityLayer_maybe = 0;
+//					actors[uVar7].field_0xe = 0x100;
+//					actor_update_sequenceID(uVar7,dragon_ini_pointer[(uint)_vm->unkArray_uint16[uVar5 & 0xffff] - 1].field_1a_flags_maybe * 2 + 10);
+//					actors[uVar7].flags = actors[uVar7].flags | 0x3c0;
+//					actors[uVar7].priorityLayer_maybe = 6;
+//				}
+//			}
+//			DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
+//			actors[0].x_pos = actors[(uint)dragon_ini_pointer[(uint)dragon_ini_maybe_flicker_control].actorId].x_pos - camera_x;
+//			DAT_800728b0 = 5;
+//			_vm->_cursor->_sequenceID = 5;
+//			actors[0].y_pos = actors[(uint)dragon_ini_pointer[(uint)dragon_ini_maybe_flicker_control].actorId].y_pos - (camera_y + 0x1e);
+//			DAT_8007283c = dragon_ini_pointer[uVar9 & 0xffff].field_0x8 * 2 + 10;
+//			_vm->data_8006f3a8 = uVar1;
+//			cursor_x_var = actors[0].x_pos;
+//			cursor_y_var = actors[0].y_pos;
 		}
 	}
 	ini->sceneId = sceneId;
