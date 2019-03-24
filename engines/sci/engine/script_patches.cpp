@@ -116,9 +116,11 @@ static const char *const selectorNameTable[] = {
 	"has",          // King's Quest 6, GK1
 	"modeless",     // King's Quest 6 CD
 	"cycler",       // Space Quest 4 / system selector
+	"setCel",       // Space Quest 4, Phant2, GK1
 	"addToPic",     // Space Quest 4
 	"stop",         // Space Quest 4
 	"canControl",   // Space Quest 4
+	"looper",       // Space Quest 4
 	"loop",         // Laura Bow 1 Colonel's Bequest, QFG4
 	"setLoop",      // Laura Bow 1 Colonel's Bequest, QFG4
 	"ignoreActors", // Laura Bow 1 Colonel's Bequest
@@ -147,7 +149,6 @@ static const char *const selectorNameTable[] = {
 	"data",         // Phant2, QFG4
 	"format",       // Phant2
 	"setSize",      // Phant2
-	"setCel",       // Phant2, GK1
 	"iconV",        // Phant2
 	"update",       // Phant2
 	"xOff",         // Phant2
@@ -214,9 +215,11 @@ enum ScriptPatcherSelectors {
 	SELECTOR_has,
 	SELECTOR_modeless,
 	SELECTOR_cycler,
+	SELECTOR_setCel,
 	SELECTOR_addToPic,
 	SELECTOR_stop,
 	SELECTOR_canControl,
+	SELECTOR_looper,
 	SELECTOR_loop,
 	SELECTOR_setLoop,
 	SELECTOR_ignoreActors,
@@ -246,7 +249,6 @@ enum ScriptPatcherSelectors {
 	SELECTOR_data,
 	SELECTOR_format,
 	SELECTOR_setSize,
-	SELECTOR_setCel,
 	SELECTOR_iconV,
 	SELECTOR_update,
 	SELECTOR_xOff,
@@ -11399,6 +11401,122 @@ static const uint16 sq4CdPatchCedricLockup2[] = {
 	PATCH_END
 };
 
+// Dodging a biker in Ulence Flats before they've reached their first checkpoint
+//  causes the player to prematurely regain control, allowing them to break the
+//  game by walking to another room before the dodge sequence completes. This is
+//  due to the biker scripts in each room having an unnecessary handsOn call, so
+//  we remove it. This does not reduce the time that the player has to react,
+//  the scripts theDodgeL and theDodgeR call handsOn when ego crouches.
+//
+// Biker bugs like this only occur in the CD version due to its slower bikes.
+//
+// Applies to: English PC CD
+// Responsible methods: runOverScript1-3:changeState, runOver:changeState,
+//                      runOver2:changeState, runOverScript:changeState
+// Fixes bug #9806
+static const uint16 sq4CdSignatureBikerHandsOn[] = {
+	0x38, SIG_UINT16(0x02bb),           // pushi status [ hard-coded for CD ]
+	0x78,                               // push1
+	SIG_MAGICDWORD,
+	0x39, 0x04,                         // pushi 04
+	0x51, 0x98,                         // class ulence
+	0x4a, 0x06,                         // send 06 [ ulence status: 4 ]
+	0x76,                               // push0
+	0x45, 0x03, 0x00,                   // callb proc0_3 [ handsOn ]
+	SIG_END
+};
+
+static const uint16 sq4CdPatchBikerHandsOn[] = {
+	PATCH_ADDTOOFFSET(+10),
+	0x33, 0x02,                         // jmp 02 [ skip handsOn ]
+	PATCH_END
+};
+
+// Clicking Look/Do/etc on an object in Ulence Flats while a biker approaches
+//  can bring ego out of crouch-mode and allow the player to break the game by
+//  walking to another room before the dodge sequence completes. This occurs if
+//  ego isn't facing the object. Ego's heading will be changed and ultimately
+//  stopGroop:doit will reset ego's view to walking.
+//
+// We fix this by clearing ego:looper when placing ego into crouch mode. This
+//  causes Actor:setHeading to instead use kDirLoop which respects the flag
+//  kSignalDoesntTurn. ego:looper is automatically restored after dodging.
+//
+// Applies to: English PC CD
+// Responsible methods: theDodgeR:changeState, theDodgeL:changeState
+// Fixes bug #9806
+static const uint16 sq4CdSignatureBikerCrouchVerb[] = {
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	0x31, 0x1a,                         // bnt 1a [ state 2 ]
+	0x76,                               // push0
+	SIG_MAGICDWORD,
+	0x45, 0x03, 0x00,                   // callb proc0_3 [ handsOn ]
+	0x7a,                               // push2 [ view ]
+	0x78,                               // push1
+	0x38, SIG_UINT16(0x027b),           // pushi 027b [ crouch ]
+	0x38, SIG_SELECTOR16(setLoop),      // pushi setLoop
+	0x78,                               // push1
+	SIG_ADDTOOFFSET(+1),                // push0 in theDodgeR, push1 in theDodgeL
+	0x38, SIG_SELECTOR16(setCel),       // pushi setCel
+	0x78,                               // push1
+	0x76,                               // push0
+	0x81, 0x00,                         // lag 00
+	0x4a, 0x12,                         // send 12 [ ego view: 635 setLoop: * setCel: 0 ]
+	0x32,                               // jmp [ end of method ]
+	SIG_END
+};
+
+static const uint16 sq4CdPatchBikerCrouchVerb[] = {
+	0x18,                               // not [ save a byte ]
+	0x1a,                               // eq?
+	0x31, 0x1b,                         // bnt 1b [ state 2 ]
+	0x76,                               // push0
+	0x39, PATCH_SELECTOR8(looper),      // pushi looper
+	0x78,                               // push1
+	0x76,                               // push0
+	PATCH_ADDTOOFFSET(+17),
+	0x4a, 0x18,                         // send 18 [ ego looper: 0 view: 635 setLoop: * setCel: 0 ]
+	0x45, 0x03, 0x00,                   // callb proc0_3 [ handsOn ]
+	PATCH_END
+};
+
+// Clicking Do on the Ulence Flats bar door in room 610 while a biker approaches
+//  causes ego to enter the bar before the dodge sequence completes, breaking
+//  the game. Sierra forgot to test ulence:egoBusy as they did when clicking on
+//  the timepod in room 613.
+//
+// We fix this by testing ulence:egoBusy before running enterBar in door:doVerb.
+//  Fortunately there is already an unnecessary script test we can overwrite.
+//  This script test was copied from rm610:doit where it is necessary.
+//
+// Applies to: English PC CD
+// Responsible method: door:doVerb(4)
+// Fixes bug #9806
+static const uint16 sq4CdSignatureBikerBarDoor[] = {
+	0x38, SIG_SELECTOR16(script),       // pushi script
+	0x76,                               // push0
+	0x81, 0x02,                         // lag 02
+	0x4a, 0x04,                         // send 04 [ rm610 script? ]
+	0x36,                               // push
+	0x72, SIG_UINT16(0x014a),           // lofsa enterBar
+	SIG_MAGICDWORD,
+	0x1a,                               // eq? [ rm610:script == enterBar ]
+	0x18,                               // not
+	0x30, SIG_UINT16(0x0019),           // bnt 0019 [ don't run enterBar ]
+	SIG_END
+};
+
+static const uint16 sq4CdPatchBikerBarDoor[] = {
+	0x38, PATCH_UINT16(0x02cc),         // pushi egoBusy [ hard-coded for CD ]
+	0x76,                               // push0
+	0x51, 0x98,                         // class ulence
+	0x4a, 0x04,                         // send 04 [ ulence egoBusy? ]
+	0x18,                               // not
+	0x32, PATCH_UINT16(0x0002),         // jmp 0002
+	PATCH_END
+};
+
 // The door to Sock's is immediately disposed of in the CD version, breaking its
 //  Look message and preventing it from being drawn when restoring a saved game.
 //  We remove the incorrect dispose call along with a redundant addToPic.
@@ -11534,8 +11652,15 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,   410, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
 	{  true,   411, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
 	{  true,   520, "CD: maze talk message fix",                      1, sq4CdSignatureMazeTalkMessage,                 sq4CdPatchMazeTalkMessage },
+	{  true,   610, "CD: biker bar door fix",                         1, sq4CdSignatureBikerBarDoor,                    sq4CdPatchBikerBarDoor },
+	{  true,   610, "CD: biker hands-on fix",                         3, sq4CdSignatureBikerHandsOn,                    sq4CdPatchBikerHandsOn },
+	{  true,   611, "CD: biker hands-on fix",                         1, sq4CdSignatureBikerHandsOn,                    sq4CdPatchBikerHandsOn },
+	{  true,   612, "CD: biker hands-on fix",                         2, sq4CdSignatureBikerHandsOn,                    sq4CdPatchBikerHandsOn },
+	{  true,   613, "CD: biker hands-on fix",                         2, sq4CdSignatureBikerHandsOn,                    sq4CdPatchBikerHandsOn },
+	{  true,   614, "CD: biker hands-on fix",                         1, sq4CdSignatureBikerHandsOn,                    sq4CdPatchBikerHandsOn },
 	{  true,   700, "CD: red shopper message fix",                    1, sq4CdSignatureRedShopperMessageFix,            sq4CdPatchRedShopperMessageFix },
 	{  true,   701, "CD: getting shot, while getting rope",           1, sq4CdSignatureGettingShotWhileGettingRope,     sq4CdPatchGettingShotWhileGettingRope },
+	{  true,   706, "CD: biker crouch verb fix",                      2, sq4CdSignatureBikerCrouchVerb,                 sq4CdPatchBikerCrouchVerb },
 	{  true,     0, "CD: Babble icon speech and subtitles fix",       1, sq4CdSignatureBabbleIcon,                      sq4CdPatchBabbleIcon },
 	{  true,   818, "CD: Speech and subtitles option",                1, sq4CdSignatureTextOptions,                     sq4CdPatchTextOptions },
 	{  true,   818, "CD: Speech and subtitles option button",         1, sq4CdSignatureTextOptionsButton,               sq4CdPatchTextOptionsButton },
