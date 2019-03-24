@@ -187,7 +187,7 @@ private:
 class Resource;
 class AmigaDOSFont : public Font {
 public:
-	AmigaDOSFont(Resource *res);
+	AmigaDOSFont(Resource *res, bool needsLocalizedFont = false);
 	~AmigaDOSFont() { unload(); }
 
 	bool load(Common::SeekableReadStream &file);
@@ -196,6 +196,8 @@ public:
 	int getCharWidth(uint16 c) const;
 	void setColorMap(const uint8 *src) { _colorMap = src;  }
 	void drawChar(uint16 c, byte *dst, int pitch, int) const;
+
+	static void errorDialog(int index);
 
 private:
 	void unload();
@@ -242,8 +244,10 @@ private:
 	uint16 _selectedElement;
 
 	const uint8 *_colorMap;
-
 	const uint16 _maxPathLen;
+	const bool _needsLocalizedFont;
+
+	static uint8 _errorDialogDisplayed;
 
 	Resource *_res;
 };

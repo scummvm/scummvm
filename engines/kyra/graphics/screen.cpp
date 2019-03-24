@@ -1365,7 +1365,7 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 			fnt = new AMIGAFont();
 #ifdef ENABLE_EOB
 		else if (_isAmiga)
-			fnt = new AmigaDOSFont(_vm->resource());
+			fnt = new AmigaDOSFont(_vm->resource(), _vm->game() == GI_EOB2 && _vm->gameFlags().lang == Common::DE_DEU);
 		else if (_vm->game() == GI_EOB1 || _vm->game() == GI_EOB2)
 			// We use normal VGA rendering in EOB II, since we do the complete EGA dithering in updateScreen().
 			fnt = new OldDOSFont(_useHiResEGADithering ? Common::kRenderVGA : _renderMode);

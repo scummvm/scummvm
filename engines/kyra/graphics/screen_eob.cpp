@@ -31,6 +31,7 @@
 #include "kyra/resource/resource.h"
 
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
@@ -1975,7 +1976,7 @@ void OldDOSFont::unload() {
 	_bitmapOffsets = 0;
 }
 
-AmigaDOSFont::AmigaDOSFont(Resource *res) : _res(res), _width(0), _height(0), _first(0), _last(0), _content(0), _numElements(0), _selectedElement(0), _maxPathLen(256) {
+AmigaDOSFont::AmigaDOSFont(Resource *res, bool needsLocalizedFont) : _res(res), _needsLocalizedFont(needsLocalizedFont), _width(0), _height(0), _first(0), _last(0), _content(0), _numElements(0), _selectedElement(0), _maxPathLen(256) {
 	assert(_res);
 }
 
@@ -2078,6 +2079,35 @@ void AmigaDOSFont::drawChar(uint16 c, byte *dst, int pitch, int) const {
 	}
 }
 
+uint8 AmigaDOSFont::_errorDialogDisplayed = 0;
+
+void AmigaDOSFont::errorDialog(int index) {
+	if (_errorDialogDisplayed & (1 << index))
+		return;
+	_errorDialogDisplayed |= (1 << index);
+
+	// I've made rather elaborate dialogs here, since the Amiga font file handling is quite prone to cause problems for users.
+	// This will hopefully prevent unnecessary forum posts and bug reports.
+	if (index == 0) {
+		::GUI::displayErrorDialog(_s(
+			"This AMIGA version requires the following font files:\n\nEOBF6.FONT\nEOBF6/6\nEOBF8.FONT\nEOBF8/8\n\n"
+			"If you used the orginal installer for the installation these files\nshould be located in the AmigaDOS system 'Fonts/' folder.\n"
+			"Please copy them into the EOB game data directory.\n"
+		));
+		
+		error("Failed to load font files.");
+	} else if (index == 1) {
+		::GUI::displayErrorDialog(_s(
+			"This AMIGA version requires the following font files:\n\nEOBF6.FONT\nEOBF6/6\nEOBF8.FONT\nEOBF8/8\n\n"
+			"This is a localized (non-English) version of EOB II which uses language specific characters\n"
+			"contained only in the specific font files that came with your game. You cannot use the font\n"
+			"files from the English version or from any EOB I game which seems to be what you are doing.\n\n"
+			"The game will continue, but the language specific characters will not be displayed.\n"
+			"Please copy the correct font files into your EOB II game data directory.\n\n"
+		));
+	}
+}
+
 void AmigaDOSFont::unload() {
 	delete[] _content;
 }
@@ -2105,12 +2135,8 @@ AmigaDOSFont::TextFont *AmigaDOSFont::loadContentFile(const Common::String fileN
 			str = _res->createEndianAwareReadStream(fileNameAlt);
 		}
 
-		if (!str) {
-			::GUI::displayErrorDialog("This AMIGA version requires the following font files:\n\nEOBF6.FONT\nEOBF6/6\nEOBF8.FONT\nEOBF8/8\n\n"
-				"If you used the orginal installer for the installation these files\nshould be located in the AmigaDOS system 'Fonts/' folder.\n"
-				"Please copy them into the EOB game data directory.\n");
-			error("Failed to load font files.");
-		}
+		if (!str)
+			errorDialog(0);
 	}
 
 	uint32 hunkId = str->readUint32();
@@ -2136,6 +2162,9 @@ AmigaDOSFont::TextFont *AmigaDOSFont::loadContentFile(const Common::String fileN
 	str->seek(4, SEEK_CUR);
 	fnt->firstChar = str->readByte();
 	fnt->lastChar = str->readByte();
+
+	if (_needsLocalizedFont && fnt->lastChar <= 127)
+		errorDialog(1);
 
 	str->seek(18, SEEK_CUR);
 	int32 curPos = str->pos();

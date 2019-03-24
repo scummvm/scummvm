@@ -438,27 +438,20 @@ Common::Error EoBCoreEngine::init() {
 	assert(_debugger);
 
 	if (_flags.platform == Common::kPlatformAmiga) {
-		bool showErrorDlg = false;
 		if (_res->exists("EOBF6.FONT"))
 			_screen->loadFont(Screen::FID_6_FNT, "EOBF6.FONT");
 		else if (_res->exists("FONTS/EOBF6.FONT"))
 			_screen->loadFont(Screen::FID_6_FNT, "FONTS/EOBF6.FONT");
 		else
-			showErrorDlg = true;
+			AmigaDOSFont::errorDialog(0);
 
 		if (_res->exists("EOBF8.FONT"))
 			_screen->loadFont(Screen::FID_8_FNT, "EOBF8.FONT");
 		else if (_res->exists("FONTS/EOBF8.FONT"))
 			_screen->loadFont(Screen::FID_8_FNT, "FONTS/EOBF8.FONT");
 		else
-			showErrorDlg = true;
+			AmigaDOSFont::errorDialog(0);
 
-		if (showErrorDlg) {
-			::GUI::displayErrorDialog("This AMIGA version requires the following font files:\n\nEOBF6.FONT\nEOBF6/6\nEOBF8.FONT\nEOBF8/8\n\n"
-				"If you used the orginal installer for the installation these files\nshould be located in the AmigaDOS system 'Fonts/' folder.\n"
-				"Please copy them into the EOB game data directory.\n");
-			error("Failed to load font files.");
-		}
 	} else {
 		_screen->loadFont(Screen::FID_6_FNT, "FONT6.FNT");
 		_screen->loadFont(Screen::FID_8_FNT, "FONT8.FNT");
