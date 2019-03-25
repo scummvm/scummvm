@@ -131,7 +131,7 @@ int DarkMoonEngine::mainMenu() {
 	while (menuChoice >= 0 && !shouldQuit()) {
 		switch (menuChoice) {
 		case 0: {
-			if (_flags.platform == Common::kPlatformFMTowns) {
+			if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformAmiga) {
 				_screen->loadPalette("MENU.PAL", _screen->getPalette(0));
 				_screen->setScreenPalette(_screen->getPalette(0));
 				_screen->loadEoBBitmap("MENU", 0, 3, 3, 2);
@@ -1341,8 +1341,8 @@ void DarkmoonSequenceHelper::loadScene(int index, int pageNum, bool ignorePalett
 		_screen->loadBitmap(_config->cpsFiles[index], pageNum | 1, pageNum | 1, ignorePalette ? 0 : _palettes[0]);
 
 	} else if (s && _vm->gameFlags().platform == Common::kPlatformAmiga) {
-		_screen->loadFileDataToPage(s, 5, 64000);
-		_screen->decodeLocalizedAmigaPage(5, pageNum, true);
+		delete s;
+		_screen->loadSpecialAmigaCPS(_config->cpsFiles[index], pageNum | 1, true);
 
 	} else {
 		if (!s) {

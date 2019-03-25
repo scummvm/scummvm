@@ -90,6 +90,9 @@ public:
 	void convertToHiColor(int page);
 	void shadeRect(int x1, int y1, int x2, int y2, int shadingLevel);
 
+	// Amiga specific
+	void loadSpecialAmigaCPS(const char *fileName, int destPage, bool isGraphics);
+
 private:
 	void updateDirtyRects();
 	void ditherRect(const uint8 *src, uint8 *dst, int dstPitch, int srcW, int srcH, int colorKey = -1);

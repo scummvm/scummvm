@@ -29,9 +29,11 @@
 
 #include "kyra/engine/eobcommon.h"
 #include "kyra/resource/resource.h"
+#include "kyra/engine/util.h"
 
 #include "common/system.h"
 #include "common/translation.h"
+#include "common/memstream.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
@@ -267,9 +269,10 @@ void Screen_EoB::loadEoBBitmap(const char *file, const uint8 *cgaMapping, int te
 		if (s->size() == 0) {			
 			loadAlternative = true;
 
-		// This check is due to EOB II Amiga German.That version simply checks
-		// for certain file names which aren't actual CPS files. The files contain
-		// raw data. I check the header size info to identify these.
+		// This check is due to EOB II Amiga German. That version simply checks
+		// for certain file names which aren't actual CPS files. These files use
+		// a diffenrent format and compression type. I check the header size
+		// info to identify these.
 		} else if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
 			// Tolerance for diffenrences up to 2 bytes is needed in some cases
 			if ((((s->readUint16LE()) + 5) & ~3) != (((s->size()) + 3) & ~3))
@@ -291,18 +294,7 @@ void Screen_EoB::loadEoBBitmap(const char *file, const uint8 *cgaMapping, int te
 			loadBitmap(tmp.c_str(), tempPage, destPage, 0);
 
 		} else if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
-			s = _vm->resource()->createReadStream(tmp);
-			if (!s)
-				error("Screen_EoB::loadEoBBitmap(): Failed to load file '%s'", file);
-
-			// See comment above. In addition to checking for certain file names which
-			// aren't real CPS files the EOB II Amiga German makes a specific check for CHARGEN.CPS
-			// which contains palette data at the beginning. For now I haven't come up
-			// with a way of avoiding this hack.
-			if (tmp.equals("CHARGEN.CPS"))
-				_palettes[0]->loadAmigaPalette(*s, 0, 32);
-
-			loadFileDataToPage(s, destPage, 40000);
+			loadSpecialAmigaCPS(tmp.c_str(), destPage, true);
 
 		} else {
 			tmp.setChar('X', 0);
@@ -1527,6 +1519,128 @@ void Screen_EoB::shadeRect(int x1, int y1, int x2, int y2, int shadingLevel) {
 	}
 
 	_16bitShadingLevel = l;
+}
+
+static uint32 _decodeFrameAmiga_x = 0;
+
+bool decodeFrameAmiga_readNextBit(const uint8 *&data, uint32 &code, uint32 &chk) {
+	_decodeFrameAmiga_x = code & 1;
+	code >>= 1;
+	if (code)
+		return _decodeFrameAmiga_x;
+
+	data -= 4;
+	code = READ_BE_UINT32(data);
+	chk ^= code;
+	_decodeFrameAmiga_x = code & 1;
+	code = (code >> 1) | (1 << 31);
+
+	return _decodeFrameAmiga_x;
+}
+
+uint32 decodeFrameAmiga_readBits(const uint8 *&data, uint32 &code, uint32 &chk, int count) {
+	uint32 res = 0;
+	while (count--) {
+		decodeFrameAmiga_readNextBit(data, code, chk);
+		uint32 bt1 = _decodeFrameAmiga_x;
+		_decodeFrameAmiga_x = res >> 31;
+		res = (res << 1) | bt1;
+	}
+	return res;
+}
+
+void Screen_EoB::loadSpecialAmigaCPS(const char *fileName, int destPage, bool isGraphics) {
+	uint32 fileSize = 0;
+	const uint8 *file = _vm->resource()->fileData(fileName, &fileSize);
+
+	if (!file)
+		error("Screen_EoB::loadSpecialAmigaCPS(): Failed to load file '%s'", file);
+
+	uint32 inSize = READ_BE_UINT32(file);
+	const uint8 *pos = file;
+
+	// Check whether the file starts with the actual compression header.
+	// If this is not the case, there should a palette before the header.
+	// Unlike normal CPS files these files never have more than one palette.
+	if (((inSize + 15) & ~3) != ((fileSize + 3) & ~3)) {
+		Common::MemoryReadStream in(pos, 64);
+		_palettes[0]->loadAmigaPalette(in, 0, 32);
+		pos += 64;
+	}
+
+	inSize = READ_BE_UINT32(pos);
+	uint32 outSize = READ_BE_UINT32(pos + 4);
+	uint32 chk = READ_BE_UINT32(pos + 8);
+
+	pos = pos + 8 + inSize;
+	uint8 *dstStart = _pagePtrs[destPage];
+	uint8 *dst = dstStart + outSize;
+
+	uint32 val = READ_BE_UINT32(pos);
+	_decodeFrameAmiga_x = 0;
+	chk ^= val;
+
+	while (dst > dstStart) {
+		int para = -1;
+		int para2 = 0;
+
+		if (decodeFrameAmiga_readNextBit(pos, val, chk)) {
+			uint32 code = decodeFrameAmiga_readBits(pos, val, chk, 2);
+
+			if (code == 3) {
+				para = para2 = 8;
+			} else {
+				int cnt = 0;
+				if (code < 2) {
+					cnt = 3 + code;
+					para2 = 9 + code;
+				} else {
+					cnt = decodeFrameAmiga_readBits(pos, val, chk, 8) + 1;
+					para2 = 12;
+				}
+					
+				code = decodeFrameAmiga_readBits(pos, val, chk, para2);
+				while (cnt--) {
+					dst--;
+					*dst = dst[code & 0xFFFF];
+				}
+			}
+		} else {
+			if (decodeFrameAmiga_readNextBit(pos, val, chk)) {
+				uint32 code = decodeFrameAmiga_readBits(pos, val, chk, 8);
+				dst--;
+				*dst = dst[code & 0xFFFF];
+				dst--;
+				*dst = dst[code & 0xFFFF];
+
+			} else {
+				para = 3;				
+			}
+		}
+
+		if (para > 0) {
+			uint32 code = decodeFrameAmiga_readBits(pos, val, chk, para);
+			uint32 cnt = (code & 0xFFFF) + para2 + 1;
+
+			while (cnt--) {
+				for (int i = 0; i < 8; ++i) {
+					decodeFrameAmiga_readNextBit(pos, val, chk);
+					uint32 bt1 = _decodeFrameAmiga_x;
+					_decodeFrameAmiga_x = code >> 31;
+					code = (code << 1) | bt1;
+				}
+				*(--dst) = code & 0xFF;
+			}
+		}
+	}
+
+	delete[] file;
+
+	if (chk)
+		error("Screen_EoB::loadSpecialAmigaCPS(): Checksum error");
+
+	if (isGraphics)
+		convertAmigaGfx(_pagePtrs[destPage], 320, 200);
 }
 
 void Screen_EoB::updateDirtyRects() {

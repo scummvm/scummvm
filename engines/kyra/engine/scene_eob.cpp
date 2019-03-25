@@ -132,7 +132,12 @@ void EoBCoreEngine::readLevelFileData(int level) {
 
 	if (s) {
 		s->seek(0);
-		_screen->loadFileDataToPage(s, 5, 15000);
+		if (s->readSint32BE() + 12 == s->size()) {
+			_screen->loadSpecialAmigaCPS(file.c_str(), 5, false);
+		} else {
+			s->seek(0);
+			_screen->loadFileDataToPage(s, 5, 15000);
+		}
 		delete s;
 	}
 }
