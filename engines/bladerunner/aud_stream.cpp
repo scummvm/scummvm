@@ -104,8 +104,7 @@ int AudStream::readBuffer(int16 *buffer, const int numSamples) {
 			assert(_end - _p >= _deafBlockRemain);
 
 			int bytesConsumed = MIN<int>(_deafBlockRemain, (numSamples - samplesRead) / 2);
-
-			_decoder.decode(_p, bytesConsumed, buffer + samplesRead);
+			_decoder.decode(_p, bytesConsumed, buffer + samplesRead, false);
 			_p += bytesConsumed;
 			_deafBlockRemain -= bytesConsumed;
 

@@ -950,7 +950,7 @@ Audio::SeekableAudioStream *VQADecoder::VQAAudioTrack::decodeAudioFrame() {
 	int16 *audioFrame = (int16 *)malloc(4 * 735);
 	memset(audioFrame, 0, 4 * 735);
 
-	_adpcmDecoder.decode(_compressedAudioFrame, 735, audioFrame);
+	_adpcmDecoder.decode(_compressedAudioFrame, 735, audioFrame, true);
 
 	uint flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
 
