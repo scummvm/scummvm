@@ -159,8 +159,13 @@ Common::String EoBCoreEngine::initLevelData(int sub) {
 		uint16 size = (_flags.platform == Common::kPlatformFMTowns) ? 2916 : s->readUint16();
 		delete[] _vmpPtr;
 		_vmpPtr = new uint16[size];
-		for (int i = 0; i < size; i++)
-			_vmpPtr[i] = s->readUint16();
+		if (_flags.gameID == GI_EOB1) {
+			for (int i = 0; i < size; i++)
+				_vmpPtr[i] = s->readUint16();
+		} else {
+			for (int i = 0; i < size; i++)
+				_vmpPtr[i] = s->readUint16LE();
+		}
 		delete s;
 
 		const char *paletteFilePattern = (_flags.gameID == GI_EOB2 && _configRenderMode == Common::kRenderEGA) ? "%s.EGA" : "%s.PAL";
@@ -315,7 +320,7 @@ void EoBCoreEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
 	const char *filePattern = ((_flags.gameID == GI_EOB1 && (_configRenderMode == Common::kRenderEGA || _configRenderMode == Common::kRenderCGA)) ? "%s.ECN" : "%s.VCN");
 	Common::String fn = Common::String::format(filePattern, _lastBlockDataFile);
 
-	if (_flags.platform == Common::kPlatformAmiga) {
+	if (_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformAmiga) {
 		Common::SeekableReadStream *in = _res->createReadStream(fn);
 		vcnSize = in->readUint16LE() * (_vcnSrcBitsPerPixel << 3);
 		_vcnBlocks = new uint8[vcnSize];
