@@ -36,6 +36,7 @@ namespace Dragons {
 Scene::Scene(DragonsEngine *vm, Screen *screen, ScriptOpcodes *scriptOpcodes, BigfileArchive *bigfileArchive, ActorManager *actorManager, DragonRMS *dragonRMS, DragonINIResource *dragonINIResource)
 		: _vm(vm), _screen(screen), _scriptOpcodes(scriptOpcodes), _stage(0), _bigfileArchive(bigfileArchive), _actorManager(actorManager), _dragonRMS(dragonRMS), _dragonINIResource(dragonINIResource) {
 	_backgroundLoader = new BackgroundResourceLoader(_bigfileArchive, _dragonRMS);
+	data_80063392 = 2;
 }
 void Scene::loadScene(uint32 sceneId, uint32 cameraPointId) {
 	// TODO
@@ -337,6 +338,10 @@ void Scene::loadImageOverlay(uint16 iptId) {
 void Scene::removeImageOverlay(uint16 iptId) {
 	IMG *img =_vm->_dragonIMG->getIMG(iptId);
 	_stage->restoreTiles(img->layerNum - 1, img->x, img->y, img->w, img->h);
+}
+
+void Scene::setSceneId(int16 newSceneId) {
+	_currentSceneId = newSceneId;
 }
 
 } // End of namespace Dragons

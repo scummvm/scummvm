@@ -27,6 +27,7 @@
 #include "dragons/dragonini.h"
 #include "dragons/dragonimg.h"
 #include "dragons/dragonobd.h"
+#include "dragons/inventory.h"
 #include "dragons/scene.h"
 #include "dragons/scriptopcodes.h"
 #include "dragons/specialopcodes.h"
@@ -114,6 +115,7 @@ void ScriptOpcodes::initOpcodes() {
 	OPCODE(0x17, opUnk17);
 
 	OPCODE(0x1F, opPlayMusic);
+	OPCODE(0x20, opUnk20);
 
 	OPCODE(0x22, opCodeActorTalk);
 }
@@ -374,6 +376,12 @@ void ScriptOpcodes::opUnk15PropertiesRelated(ScriptOpCall &scriptOpCall) {
 	}
 
 	scriptOpCall._code += 4 + READ_LE_UINT16(scriptOpCall._code);
+}
+
+void ScriptOpcodes::opUnk20(ScriptOpCall &scriptOpCall) {
+	ARG_INT16(field0);
+	ARG_INT16(field2);
+	//TODO do we need this? It looks like it is pre-loading scene data.
 }
 
 bool ScriptOpcodes::checkPropertyFlag(ScriptOpCall &scriptOpCall) {
@@ -729,8 +737,8 @@ void ScriptOpcodes::opUnk11FlickerTalk(ScriptOpCall &scriptOpCall) {
 
 void ScriptOpcodes::opUnk12LoadScene(ScriptOpCall &scriptOpCall) {
 	ARG_SKIP(2);
-	ARG_INT16(field2);
-	ARG_INT16(field4);
+	ARG_INT16(newSceneID);
+	ARG_INT16(cameraPointID);
 	ARG_INT16(field6);
 
 	if (scriptOpCall._field8 != 0) {
@@ -741,10 +749,14 @@ void ScriptOpcodes::opUnk12LoadScene(ScriptOpCall &scriptOpCall) {
 	// func_ptr_unk = 0;
 	// PauseCDMusic();
 
-	if (field2 != 0) {
+	if (newSceneID != 0) {
 		// load scene here.
 		//TODO
-		error("0x8002efe4");
+		_vm->_scene->data_80063392 = _vm->_scene->getSceneId();
+		_vm->_scene->setSceneId(newSceneID);
+		_vm->data_800633fa = field6;
+
+		_vm->_scene->loadScene(newSceneID, cameraPointID);
 	} else {
 		_vm->setFlags(Dragons::ENGINE_FLAG_100000);
 	}
@@ -978,37 +990,34 @@ void ScriptOpcodes::opCode_Unk7(ScriptOpCall &scriptOpCall) {
 		}
 
 		if (sceneId == 1) {
-			// TODO 0x8002d2f4
-			error("0x8002d2f4");
-//			if (_vm->data_8006f3a8 != 0) {
-//				uVar5 = 0;
-//				if (_vm->unkArray_uint16[0] != 0) {
-//					uVar7 = 1;
-//					do {
-//						uVar5 = uVar7;
-//						uVar7 = uVar5 + 1;
-//					} while (_vm->unkArray_uint16[uVar5 & 0xffff] != 0);
-//				}
-//				_vm->unkArray_uint16[uVar5 & 0xffff] = _vm->data_8006f3a8;
-//				if (_vm->_inventory->getType() == 1) {
-//					uVar7 = uVar5 + 0x17 & 0xffff;
-//					actors[uVar7].flags = 0;
-//					actors[uVar7].priorityLayer_maybe = 0;
-//					actors[uVar7].field_0xe = 0x100;
-//					actor_update_sequenceID(uVar7,dragon_ini_pointer[(uint)_vm->unkArray_uint16[uVar5 & 0xffff] - 1].field_1a_flags_maybe * 2 + 10);
-//					actors[uVar7].flags = actors[uVar7].flags | 0x3c0;
-//					actors[uVar7].priorityLayer_maybe = 6;
-//				}
-//			}
-//			DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
-//			actors[0].x_pos = actors[(uint)dragon_ini_pointer[(uint)dragon_ini_maybe_flicker_control].actorId].x_pos - camera_x;
-//			DAT_800728b0 = 5;
-//			_vm->_cursor->_sequenceID = 5;
-//			actors[0].y_pos = actors[(uint)dragon_ini_pointer[(uint)dragon_ini_maybe_flicker_control].actorId].y_pos - (camera_y + 0x1e);
-//			DAT_8007283c = dragon_ini_pointer[uVar9 & 0xffff].field_0x8 * 2 + 10;
-//			_vm->data_8006f3a8 = uVar1;
-//			cursor_x_var = actors[0].x_pos;
-//			cursor_y_var = actors[0].y_pos;
+			if (_vm->data_8006f3a8 != 0) {
+				uint16 freeSlot = 0;
+				for( ;_vm->unkArray_uint16[freeSlot] != 0; freeSlot++) {
+					if (_vm->unkArray_uint16[freeSlot] == 0) {
+						break;
+					}
+				}
+				_vm->unkArray_uint16[freeSlot] = _vm->data_8006f3a8;
+				if (_vm->_inventory->getType() == 1) {
+					Actor *actor = _vm->_actorManager->getActor(freeSlot + 0x17);
+					actor->flags = 0;
+					actor->priorityLayer = 0;
+					actor->field_e = 0x100;
+					actor->updateSequence((_vm->getINI(_vm->unkArray_uint16[freeSlot] - 1)->field_8 * 2 + 10) & 0xfffe);
+					actor->setFlag(ACTOR_FLAG_40);
+					actor->setFlag(ACTOR_FLAG_80);
+					actor->setFlag(ACTOR_FLAG_100);
+					actor->setFlag(ACTOR_FLAG_200);
+					actor->priorityLayer = 6;
+				}
+			}
+			DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
+			_vm->_cursor->updatePosition(flicker->actor->x_pos - _vm->_scene->_camera.x,
+					flicker->actor->y_pos - (_vm->_scene->_camera.y + 0x1e));
+			_vm->_cursor->data_800728b0_cursor_seqID = 5;
+			_vm->_cursor->_sequenceID = 5;
+			_vm->_cursor->data_8007283c = _vm->getINI(field2 - 1)->field_8 * 2 + 10;
+			_vm->data_8006f3a8 = field2;
 		}
 	}
 	ini->sceneId = sceneId;

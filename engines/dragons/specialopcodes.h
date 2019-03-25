@@ -55,6 +55,8 @@ protected:
 	void spcUnk9();
 	void spcUnkA();
 
+	void spcUnkC();
+
 	void spcClearEngineFlag8(); // 0x14
 	void spcSetEngineFlag8(); // 0x15
 
