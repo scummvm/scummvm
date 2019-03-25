@@ -102,6 +102,7 @@ protected:
 	void opUnk16(ScriptOpCall &scriptOpCall);
 	void opUnk17(ScriptOpCall &scriptOpCall);
 	void opPlayMusic(ScriptOpCall &scriptOpCall);
+	void opUnk20(ScriptOpCall &scriptOpCall);
 
 	bool checkPropertyFlag(ScriptOpCall &scriptOpCall);
 	void opCode_UnkA_setsProperty(ScriptOpCall &scriptOpCall);

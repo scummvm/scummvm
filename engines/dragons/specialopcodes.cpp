@@ -67,6 +67,9 @@ void SpecialOpcodes::initOpcodes() {
 
 	OPCODE(9, spcUnk9);
 	OPCODE(0xa, spcUnkA);
+
+	OPCODE(0xc, spcUnkC);
+
 	OPCODE(0x14, spcClearEngineFlag8);
 	OPCODE(0x15, spcSetEngineFlag8);
 
@@ -110,6 +113,9 @@ void SpecialOpcodes::spcUnkA() {
 	_vm->getINI(1)->field_1a_flags_maybe &= ~Dragons::INI_FLAG_20;
 }
 
+void SpecialOpcodes::spcUnkC() {
+	//TODO fade_related_calls_with_1f();
+}
 
 void SpecialOpcodes::spcClearEngineFlag8() {
 	_vm->clearFlags(Dragons::ENGINE_FLAG_8);

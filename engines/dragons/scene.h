@@ -41,6 +41,8 @@ struct DragonINI;
 class Scene {
 public:
 	Common::Point _camera;
+	int16 data_80063392;
+
 private:
 	DragonsEngine *_vm;
 	Screen *_screen;
@@ -63,6 +65,7 @@ public:
 	bool contains(DragonINI *ini);
 	byte *getPalette();
 	uint16 getSceneId();
+	void setSceneId(int16 newSceneId);
 	Common::Point getPoint(uint32 pointIndex);
 	uint16 getStageWidth();
 	uint16 getStageHeight();
