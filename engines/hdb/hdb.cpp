@@ -75,33 +75,28 @@ Common::Error HDBGame::run() {
 }
 
 void HDBGame::readMPC(const Common::String &filename) {	
-	if (!file.open(filename)) {
+	if (!_file.open(filename)) {
 		error("readMPC(): Error reading MPC file");
 	} else {
-		dataHeader.signature[0] = file.readByte();
-		dataHeader.signature[1] = file.readByte();
-		dataHeader.signature[2] = file.readByte();
-		dataHeader.signature[3] = file.readByte();
-		dataHeader.signature[4] = '\0';
+		_dataHeader.signature[0] = _file.readByte();
+		_dataHeader.signature[1] = _file.readByte();
+		_dataHeader.signature[2] = _file.readByte();
+		_dataHeader.signature[3] = _file.readByte();
+		_dataHeader.signature[4] = '\0';
 
-		if (dataHeader.isValid()) {
+		if (_dataHeader.isValid()) {
 			debug("Valid MPC file");
-			dataHeader.dirOffset = file.readUint32LE();
+			_dataHeader.dirOffset = _file.readUint32LE();
 
-			/*	FIXME: Temporary Hack
-				
-				The MPC archive format uses uint32 to store the dirOffset,
-				however, the File::seekg() function takes an int32 as the offset.
-				This does not cause a problem yet because the offset is 
-				within the range of 2^31. Extending this functionality to another 
-				game file with a larger offset may cause problems.
-			*/
+			// FIXME: The MPC archive format considers dirOffset to be a uint32.
+			// However, File::seekg() takes an int32 as the offset, hence this 
+			// would break if the dirOffset was larger than 2^31.
 
-			file.seek((int32)dataHeader.dirOffset, SEEK_SET);
+			_file.seek((int32)_dataHeader.dirOffset, SEEK_SET);
 
-			dataHeader.dirSize = file.readUint32LE();
+			_dataHeader.dirSize = _file.readUint32LE();
 			
-			for (uint32 fileIndex = 0; fileIndex < dataHeader.dirSize; fileIndex++) {
+			for (uint32 fileIndex = 0; fileIndex < _dataHeader.dirSize; fileIndex++) {
 				DataFile* dirEntry = new DataFile();
 				
 				for (int fileNameIndex = 0; fileNameIndex < 64; fileNameIndex++) {

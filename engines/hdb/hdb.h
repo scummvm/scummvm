@@ -58,7 +58,7 @@ public:
 
 private:
 	Console *_console;
-	Common::File file;
+	Common::File _file;
 
 	struct {
 		byte signature[5]; // 4 Bytes + '\0'
@@ -73,7 +73,7 @@ private:
 					(signature[4] == '\0');
 		}
 
-	} dataHeader;
+	} _dataHeader;
 
 	struct DataFile {
 		byte fileName[65]; // 65 Bytes + '\0'
@@ -83,7 +83,7 @@ private:
 		uint32 unknownField2;
 	};
 
-	Common::Array<DataFile*> gameData;
+	Common::Array<DataFile*> _gameData;
 
 	void readMPC(const Common::String &fileName);
 };
