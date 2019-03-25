@@ -503,8 +503,7 @@ reg_t kIconBar(EngineState *s, int argc, reg_t *argv) {
 
 	switch (argv[0].toUint16()) {
 	case 0: // InitIconBar
-		for (int i = 0; i < argv[1].toUint16(); i++)
-			g_sci->_gfxMacIconBar->addIcon(argv[i + 2]);
+		g_sci->_gfxMacIconBar->initIcons(argv[1].toUint16(), &argv[2]);
 		break;
 	case 1: // DisposeIconBar
 		warning("kIconBar(Dispose)");
