@@ -49,6 +49,23 @@ GfxMacIconBar::GfxMacIconBar() {
 }
 
 GfxMacIconBar::~GfxMacIconBar() {
+	freeIcons();
+}
+
+void GfxMacIconBar::initIcons(uint16 count, reg_t *objs) {
+	// free icons and reset state in case game is restarting
+	freeIcons();
+	_iconBarItems.clear();
+	_lastX = 0;
+	_inventoryIcon = 0;
+	_allDisabled = true;
+
+	for (uint16 i = 0; i < count; i++) {
+		addIcon(objs[i]);
+	}
+}
+
+void GfxMacIconBar::freeIcons() {
 	if (_inventoryIcon) {
 		_inventoryIcon->free();
 		delete _inventoryIcon;

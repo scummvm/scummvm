@@ -38,7 +38,7 @@ public:
 	GfxMacIconBar();
 	~GfxMacIconBar();
 
-	void addIcon(reg_t obj);
+	void initIcons(uint16 count, reg_t *objs);
 	void drawIcons();
 	void setIconEnabled(int16 index, bool enabled);
 	void setInventoryIcon(int16 icon);
@@ -63,6 +63,8 @@ private:
 	Graphics::Surface *createImage(uint32 iconIndex, bool isSelected);
 	void remapColors(Graphics::Surface *surf, const byte *palette);
 
+	void freeIcons();
+	void addIcon(reg_t obj);
 	void drawIcon(uint16 index, bool selected);
 	void drawSelectedImage(uint16 index);
 	bool isIconEnabled(uint16 index) const;
