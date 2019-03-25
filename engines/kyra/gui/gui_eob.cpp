@@ -368,7 +368,7 @@ void EoBCoreEngine::gui_drawHitpoints(int index) {
 		y = 16;
 		w = 51;
 		h = 5;
-		if (_flags.platform == Common::kPlatformAmiga)
+		if (_flags.platform == Common::kPlatformAmiga && _flags.gameID == GI_EOB1)
 			bgCol = guiSettings()->colors.sfill;
 	}
 
@@ -4327,7 +4327,7 @@ void GUI_EoB::restParty_updateRestTime(int hours, bool init) {
 		_vm->_txt->clearCurDim();
 		drawMenuButtonBox(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, false, false);
 		_screen->copyRegion(_screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->sx << 3, _screen->_curDim->sy, _screen->_curDim->w << 3, _screen->_curDim->h, 0, 2, Screen::CR_NO_P_CHECK);
-		_screen->printShadedText(getMenuString(42), (_screen->_curDim->sx + 1) << 3, _screen->_curDim->sy + 5, 9, 0, _vm->guiSettings()->colors.guiColorBlack);
+		_screen->printShadedText(getMenuString(42), (_screen->_curDim->sx + 1) << 3, _screen->_curDim->sy + 5, _vm->guiSettings()->colors.guiColorLightBlue, 0, _vm->guiSettings()->colors.guiColorBlack);
 	}
 
 	_screen->setCurPage(0);

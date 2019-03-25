@@ -132,6 +132,7 @@ private:
 
 	static const KyraRpgGUISettings _guiSettingsDOS;
 	static const KyraRpgGUISettings _guiSettingsFMTowns;
+	static const KyraRpgGUISettings _guiSettingsAmiga;
 	static const uint8 _egaDefaultPalette[];
 };
 

@@ -495,7 +495,12 @@ void DarkMoonEngine::characterLevelGain(int charIndex) {
 }
 
 const KyraRpgGUISettings *DarkMoonEngine::guiSettings() const {
-	return (_flags.platform == Common::kPlatformFMTowns) ? &_guiSettingsFMTowns : &_guiSettingsDOS;
+	if (_flags.platform == Common::kPlatformAmiga)
+		return &_guiSettingsAmiga;
+	else if (_flags.platform == Common::kPlatformFMTowns)
+		return &_guiSettingsFMTowns;
+	else
+		return &_guiSettingsDOS;
 }
 
 } // End of namespace Kyra
