@@ -127,9 +127,15 @@ void SceneScriptCT02::dialogueWithZuben() {
 		DM_Add_To_List_Never_Repeat_Once_Selected(280, 8, 5, 3); // LUCY
 	}
 	int evidenceCount = 0;
+#if BLADERUNNER_ORIGINAL_BUGS
 	if (Actor_Clue_Query(kActorMcCoy, kClueDoorForced2)) {
 		evidenceCount = 1;
 	}
+#else
+	if (Actor_Clue_Query(kActorMcCoy, kClueDoorForced2) || Actor_Clue_Query(kActorMcCoy, kClueDoorForced1)) {
+		++evidenceCount;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	if (Actor_Clue_Query(kActorMcCoy, kClueLabCorpses)) {
 		++evidenceCount;
 	}
@@ -142,9 +148,34 @@ void SceneScriptCT02::dialogueWithZuben() {
 	if (Actor_Clue_Query(kActorMcCoy, kClueHowieLeeInterview)) {
 		++evidenceCount;
 	}
+#if BLADERUNNER_ORIGINAL_BUGS
 	if (evidenceCount > 3) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(290, -1, 4, 8); // VOIGT-KAMPFF
 	}
+#else
+	// There is an original game's dead end state where:
+	// 1. McCoy misses the Lucy Photo (he never gets the photos from Runciter),
+	// 2. misses the kClueDoorForced2 and Leary takes off so the player can't get it any more
+	// 3. the player does not talk to kFlagMcCoyHasOfficersStatement at all, and Leary takes off, so Dino won't give the kClueLabCorpses
+	//
+	// An easy to reproduce scenario is, after the intro:
+	// - McCoy takes the Chrome plate. Does not talk with Leary at all, nor orders the canvassing
+	// - Then, McCoy talks to Runciter until Lucy's desk location is unlocked
+	// - McCoy takes the chopstick wrapper and leaves for Chinatown.
+	//
+	//
+	// Solution:
+	// -. Restore acquiring of kClueDoorForced1 if McCoy visits the rc01 after Leary takes off.
+	//    The clue was also acquired in the original, but McCoy did not note he got something
+	//    and it was not taken into account for the evidenceCount var.
+	//    This clue is now considered as an alternative to kClueDoorForced2
+	// -. Steele will acquire the officer's statement clue if McCoy did not and will upload it to the mainframe
+	// -. Make McCoy able to VK Zuben even in Polite mode
+	//
+	if (evidenceCount > 3) {
+		DM_Add_To_List_Never_Repeat_Once_Selected(290, 0, 4, 8); // VOIGT-KAMPFF
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Dialogue_Menu_Add_DONE_To_List(300); // DONE
 
 	Dialogue_Menu_Appear(320, 240);

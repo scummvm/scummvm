@@ -45,6 +45,11 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 	case kClueDoorForced2:
 		KIA_Play_Actor_Dialogue(kActorOfficerLeary, 0);
 		break;
+#if BLADERUNNER_RESTORED_CUT_CONTENT
+	case kClueDoorForced1:
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 1870);
+		break;
+#endif // BLADERUNNER_RESTORED_CUT_CONTENT
 	case kClueLimpingFootprints:
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 1970);
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 1980);

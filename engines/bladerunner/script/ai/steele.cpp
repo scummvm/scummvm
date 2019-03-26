@@ -390,6 +390,19 @@ void AIScriptSteele::ClickedByPlayer() {
 }
 
 void AIScriptSteele::EnteredScene(int sceneId) {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	if (Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleGoToRC01) {
+		if (!Actor_Clue_Query(kActorMcCoy, kClueOfficersStatement))
+		{
+//			// no random factor here, Steele will definitely get this clue in this case
+			Actor_Clue_Acquire(kActorSteele, kClueOfficersStatement, true, kActorOfficerLeary); // Steele will upload this to the mainframe when she heads to the Police Station
+			Global_Variable_Increment(kVariableMcCoyEvidenceMissed, 1); // unused? but consistent with missing the other clues
+			return;  //true;
+		}
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 	if (Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleGoToRC02) {
 		if (!Game_Flag_Query(kFlagRC51ChopstickWrapperTaken)
 		 &&  Random_Query(1, 3) == 1

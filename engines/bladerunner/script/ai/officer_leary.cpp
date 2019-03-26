@@ -64,6 +64,7 @@ bool AIScriptOfficerLeary::Update() {
 	 &&  Game_Flag_Query(kFlagRC51ChopstickWrapperTaken)
 	 &&  Game_Flag_Query(kFlagRC01ChromeDebrisTaken)
 	 &&  Player_Query_Current_Scene() != kSceneRC01
+	 &&  !Game_Flag_Query(kFlagRC01PoliceDone)          // otherwise this clause keeps repeating
 	 &&  Global_Variable_Query(kVariableChapter) < 3
 	) {
 		Game_Flag_Set(kFlagRC01PoliceDone);

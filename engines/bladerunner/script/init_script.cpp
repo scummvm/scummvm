@@ -138,7 +138,11 @@ struct ClueWeight {
 	int weight;
 };
 
+#if BLADERUNNER_ORIGINAL_BUGS
 static ClueWeight ClueWeightsForSteele[44] = {
+#else
+static ClueWeight ClueWeightsForSteele[45] = {
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	{kClueMcCoyRetiredZuben, 100},
 	{kClueMcCoyShotZubenInTheBack, 100},
 	{kClueMcCoyRetiredLucy, 100},
@@ -182,7 +186,11 @@ static ClueWeight ClueWeightsForSteele[44] = {
 	{kClueMcCoyKilledRunciter2, 55},
 	{kClueCandy, 30},
 	{kClueToyDog, 30},
-	{kClueDogCollar1, 30}
+	{kClueDogCollar1, 30},
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	{kClueOfficersStatement, 30}, // part of resolving Zuben dead end state
+#endif // BLADERUNNER_ORIGINAL_BUGS
 };
 
 static ClueWeight ClueWeightsForGordo[28] = {
@@ -2239,6 +2247,9 @@ void InitScript::Init_SDB() {
 	SDB_Add_Whereabouts_Clue(kSuspectClovis, kClueChewInterview);
 	SDB_Add_Replicant_Clue(kSuspectClovis, kClueOfficersStatement);
 	SDB_Add_Replicant_Clue(kSuspectClovis, kClueDoorForced2);
+#if BLADERUNNER_RESTORED_CUT_CONTENT
+	SDB_Add_Replicant_Clue(kSuspectClovis, kClueDoorForced1);
+#endif // BLADERUNNER_RESTORED_CUT_CONTENT
 	SDB_Add_Replicant_Clue(kSuspectClovis, kClueMorajiInterview);
 	SDB_Add_Replicant_Clue(kSuspectClovis, kClueZubenTalksAboutLucy1);
 	SDB_Add_Replicant_Clue(kSuspectClovis, kClueZubenTalksAboutLucy2);
@@ -2267,6 +2278,9 @@ void InitScript::Init_SDB() {
 	SDB_Add_Whereabouts_Clue(kSuspectZuben, kClueRuncitersViewB);
 	SDB_Add_Replicant_Clue(kSuspectZuben, kClueOfficersStatement);
 	SDB_Add_Replicant_Clue(kSuspectZuben, kClueDoorForced2);
+#if BLADERUNNER_RESTORED_CUT_CONTENT
+	SDB_Add_Replicant_Clue(kSuspectZuben, kClueDoorForced1);
+#endif // BLADERUNNER_RESTORED_CUT_CONTENT
 	SDB_Add_Replicant_Clue(kSuspectZuben, kClueHowieLeeInterview);
 	SDB_Add_Replicant_Clue(kSuspectZuben, kClueZubenRunsAway);
 	SDB_Add_Replicant_Clue(kSuspectZuben, kClueZuben);
@@ -2476,6 +2490,9 @@ void InitScript::Init_CDB() {
 
 	CDB_Set_Clue_Asset_Type(kClueOfficersStatement, kClueTypeAudioRecording);
 	CDB_Set_Clue_Asset_Type(kClueDoorForced2, kClueTypeAudioRecording);
+#if BLADERUNNER_RESTORED_CUT_CONTENT
+	CDB_Set_Clue_Asset_Type(kClueDoorForced1, kClueTypeAudioRecording);
+#endif // BLADERUNNER_RESTORED_CUT_CONTENT
 	CDB_Set_Clue_Asset_Type(kClueLimpingFootprints, kClueTypeAudioRecording);
 	CDB_Set_Clue_Asset_Type(kClueGracefulFootprints, kClueTypeAudioRecording);
 	CDB_Set_Clue_Asset_Type(kClueShellCasings, kClueTypeObject);
