@@ -247,7 +247,7 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 }
 
 void Scene::draw() {
-	Common::Rect rect(_camera.x, _camera.y, 320, 200);
+	Common::Rect rect(_camera.x, _camera.y, _camera.x + 320, _camera.y + 200);
 
 	for(uint16 priority = 1; priority < 16; priority++) {
 		if (priority == 1) {

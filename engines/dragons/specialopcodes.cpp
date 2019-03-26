@@ -26,6 +26,7 @@
 #include "dragons/dragonini.h"
 #include "dragons/dragonobd.h"
 #include "dragons/specialopcodes.h"
+#include "dragons/scene.h"
 #include "dragons/actor.h"
 #include "specialopcodes.h"
 
@@ -73,8 +74,14 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0x14, spcClearEngineFlag8);
 	OPCODE(0x15, spcSetEngineFlag8);
 
+	OPCODE(0x4e, spcUnk4e);
+	OPCODE(0x4f, spcUnk4f);
+
 	OPCODE(0x54, spcSetEngineFlag0x4000000);
 	OPCODE(0x55, spcSetCursorSequenceIdToZero);
+
+	OPCODE(0x5e, spcUnk5e);
+	OPCODE(0x5f, spcUnk5f);
 }
 
 #undef OPCODE
@@ -125,12 +132,64 @@ void SpecialOpcodes::spcSetEngineFlag8() {
 	_vm->setFlags(Dragons::ENGINE_FLAG_8);
 }
 
+
+void SpecialOpcodes::spcUnk4e() {
+	panCamera(1);
+}
+
+void SpecialOpcodes::spcUnk4f() {
+	panCamera(2);
+}
+
 void SpecialOpcodes::spcSetEngineFlag0x4000000() {
 	_vm->setFlags(Dragons::ENGINE_FLAG_4000000);
 }
 
 void SpecialOpcodes::spcSetCursorSequenceIdToZero() {
 	_vm->_cursor->_sequenceID = 0;
+}
+
+void SpecialOpcodes::spcUnk5e() {
+	panCamera(1);
+	_vm->_dragonINIResource->setFlickerRecord(_vm->getINI(0));
+}
+
+void SpecialOpcodes::spcUnk5f() {
+	_vm->getINI(0x2ab)->field_12 = 0;
+	panCamera(2);
+}
+
+// 0x80038c1c
+void SpecialOpcodes::panCamera(int16 mode) {
+	int iVar1;
+	int iVar2;
+
+	if (mode == 1) {
+		_vm->getINI(0x2ab)->field_12 = _vm->_scene->_camera.x;
+		_vm->_dragonINIResource->setFlickerRecord(NULL);
+		iVar2 = (int) _vm->_scene->_camera.x;
+		iVar1 = iVar2;
+		while (iVar1 <= (_vm->_scene->getStageWidth() - 320)) {
+			_vm->_scene->_camera.x = (short) iVar2;
+			_vm->waitForFrames(1);
+			iVar2 = iVar2 + 4;
+			iVar1 = iVar2 * 0x10000 >> 0x10;
+		}
+		_vm->_scene->_camera.x = _vm->_scene->getStageWidth() - 320;
+	}
+	if (mode == 2) {
+		iVar2 = (int) _vm->_scene->_camera.x;
+		iVar1 = iVar2;
+		while (-1 < iVar1) {
+			_vm->_scene->_camera.x = (short) iVar2;
+			_vm->waitForFrames(1);
+			iVar2 = iVar2 + -3;
+			iVar1 = iVar2 * 0x10000;
+		}
+		_vm->_scene->_camera.x = 0;
+		_vm->_dragonINIResource->setFlickerRecord(_vm->getINI(0));
+	}
+	return;
 }
 
 } // End of namespace Dragons
