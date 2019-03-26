@@ -687,6 +687,7 @@ protected:
 	bool _useHiResEGADithering;
 	bool _useHiColorScreen;
 	bool _isAmiga;
+	bool _useAmigaExtraColors;
 	Common::RenderMode _renderMode;
 	int _bytesPerPixel;
 	int _screenPageSize;

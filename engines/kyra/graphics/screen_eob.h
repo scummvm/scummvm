@@ -93,6 +93,12 @@ public:
 	// Amiga specific
 	void loadSpecialAmigaCPS(const char *fileName, int destPage, bool isGraphics);
 
+	// This is a simple way of emulating the Amiga copper list palette magic for more than 32 colors.
+	// I use colors 32 to 63 for these extra colors (which the Amiga copper sends to the color
+	// registers on the fly at vertical beam position 120).
+	void setupDualPalettesSplitScreen(Palette &top, Palette &bottom);
+	void disableDualPalettesSplitScreen();
+
 private:
 	void updateDirtyRects();
 	void ditherRect(const uint8 *src, uint8 *dst, int dstPitch, int srcW, int srcH, int colorKey = -1);
@@ -122,6 +128,7 @@ private:
 	uint8 *_dsTempPage;
 	uint8 *_shpBuffer;
 	uint8 *_convertHiColorBuffer;
+	bool _dualPaletteMode;
 
 	uint16 *_cgaDitheringTables[2];
 	const uint8 *_cgaMappingDefault;

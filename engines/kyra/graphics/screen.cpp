@@ -100,6 +100,8 @@ bool Screen::init() {
 	_useSJIS = false;
 	_use16ColorMode = _vm->gameFlags().use16ColorMode;
 	_isAmiga = (_vm->gameFlags().platform == Common::kPlatformAmiga);
+	// Amiga copper palette magic requires the use of more than 32 colors for some purposes.
+	_useAmigaExtraColors = (_isAmiga && _vm->game() == GI_EOB2);
 
 	// We only check the "render_mode" setting for both Eye of the Beholder
 	// games here, since all the other games do not support the render_mode
@@ -174,14 +176,18 @@ bool Screen::init() {
 	const int paletteCount = _isAmiga ? 13 : 4;
 	// We allow 256 color palettes in EGA mode, since original EOB II code does the same and requires it
 	const int numColors = _use16ColorMode ? 16 : (_isAmiga ? 32 : (_renderMode == Common::kRenderCGA ? 4 : 256));
+	const int numColorsInternal = _useAmigaExtraColors ? 64 : numColors;
 
 	_interfacePaletteEnabled = false;
 
-	_screenPalette = new Palette(numColors);
+	_screenPalette = new Palette(numColorsInternal);
 	assert(_screenPalette);
 
 	_palettes.resize(paletteCount);
-	for (int i = 0; i < paletteCount; ++i) {
+	_palettes[0] = new Palette(numColorsInternal);
+	assert(_palettes[0]);
+	
+	for (int i = 1; i < paletteCount; ++i) {
 		_palettes[i] = new Palette(numColors);
 		assert(_palettes[i]);
 	}
@@ -195,7 +201,7 @@ bool Screen::init() {
 		Screen::setScreenPalette(pal);
 	}
 
-	_internFadePalette = new Palette(numColors);
+	_internFadePalette = new Palette(numColorsInternal);
 	assert(_internFadePalette);
 
 	setScreenPalette(getPalette(0));

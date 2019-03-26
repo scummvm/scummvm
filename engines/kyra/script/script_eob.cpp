@@ -1319,6 +1319,9 @@ int EoBInfProcessor::oeob_loadNewLevelOrMonsters(int8 *data) {
 		_vm->gui_drawAllCharPortraitsWithStats();
 		_subroutineStackPos = 0;
 
+		if (_vm->_flags.gameID == GI_EOB2 && _vm->_flags.platform == Common::kPlatformAmiga)
+			_vm->gui_restorePlayField();
+
 	} else {
 		cmd = *pos++;
 		_vm->releaseMonsterShapes(cmd * 18, 18);

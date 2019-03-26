@@ -363,6 +363,7 @@ void EoBCoreEngine::drawBlockObject(int flipped, int page, const uint8 *shape, i
 	const ScreenDim *d = _screen->getScreenDim(sd);
 	if (_flags.gameID == GI_EOB1)
 		x &= ~1;
+	
 	_screen->drawShape(page, shape, x - (d->sx << 3), y - d->sy, sd, flipped | (ovl ? 2 : 0), ovl);
 }
 
@@ -373,7 +374,7 @@ void EoBCoreEngine::drawMonsterShape(const uint8 *shape, int x, int y, int flipp
 		ovl = _monsterFlashOverlay;
 	else if (_flags.gameID == GI_EOB2 && flags & 0x20)
 		ovl = _monsterStoneOverlay;
-	else if (palIndex != -1)
+	else if (palIndex != -1 && _flags.platform != Common::kPlatformAmiga)
 		ovl = _monsterPalettes[palIndex];
 
 	drawBlockObject(flipped, 2, shape, x, y, 5, ovl);

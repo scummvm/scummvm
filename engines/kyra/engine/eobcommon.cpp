@@ -1639,12 +1639,15 @@ void EoBCoreEngine::drawSequenceBitmap(const char *file, int destRect, int x1, i
 	static const uint8 frameH[] = { 96, 121 };
 
 	int page = ((flags & 2) || destRect) ? 0 : 6;
+	int amigaPalIndex = (x1 ? 1 : 0) + (y1 ? 2 : 0) + 1;
 
 	if (scumm_stricmp(_dialogueLastBitmap, file)) {
 		_screen->clearPage(2);
 		if (!destRect) {
 			if (!(flags & 1)) {
 				_screen->loadEoBBitmap("BORDER", 0, 3, 3, 2);
+				if (_flags.platform == Common::kPlatformAmiga)
+					_screen->copyRegion(0, 0, 0, 0, 320, 122, 2, 0, Screen::CR_NO_P_CHECK);
 				_screen->copyRegion(0, 0, 0, 0, 184, 121, 2, page, Screen::CR_NO_P_CHECK);
 			} else {
 				_screen->copyRegion(0, 0, 0, 0, 184, 121, 0, page, Screen::CR_NO_P_CHECK);
@@ -1658,13 +1661,25 @@ void EoBCoreEngine::drawSequenceBitmap(const char *file, int destRect, int x1, i
 		strcpy(_dialogueLastBitmap, file);
 	}
 
+	if (_flags.platform == Common::kPlatformAmiga) {
+		int cp = _screen->setCurPage(0);
+		if (!_dialogueFieldAmiga)
+			gui_drawDialogueBox();
+		_screen->drawClippedLine(0, 120, 319, 120, 9);
+		_screen->drawClippedLine(0, 121, 319, 121, guiSettings()->colors.fill);
+		_screen->setPagePixel(0, 319, 121, 9);
+		_screen->setCurPage(cp);
+		_screen->setupDualPalettesSplitScreen(_screen->getPalette(amigaPalIndex), _screen->getPalette(7));
+		_dialogueFieldAmiga = true;
+	}
+
 	if (flags & 2)
 		_screen->crossFadeRegion(x1 << 3, y1, frameX[destRect] << 3, frameY[destRect], frameW[destRect] << 3, frameH[destRect], 2, page);
 	else
 		_screen->copyRegion(x1 << 3, y1, frameX[destRect] << 3, frameY[destRect], frameW[destRect] << 3, frameH[destRect], 2, page, Screen::CR_NO_P_CHECK);
 
 	if (page == 6)
-		_screen->copyRegion(0, 0, 0, 0, 184, 121, 6, 0, Screen::CR_NO_P_CHECK);
+		_screen->copyRegion(0, 0, 0, 0, 184, (_flags.platform == Common::kPlatformAmiga) ? 110 : 121, 6, 0, Screen::CR_NO_P_CHECK);
 
 	_screen->updateScreen();
 }

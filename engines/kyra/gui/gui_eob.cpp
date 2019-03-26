@@ -61,8 +61,15 @@ void EoBCoreEngine::gui_drawPlayField(bool refresh) {
 		_screen->updateScreen();
 
 	_screen->loadEoBBitmap("INVENT", _cgaMappingInv, 5, 3, 2);
-	if (_flags.platform == Common::kPlatformAmiga)
-		_screen->getPalette(0).copy(_screen->getPalette(1), 1, 5, 1);
+
+	if (_flags.platform == Common::kPlatformAmiga) {
+		if (_flags.gameID == GI_EOB1) {
+			_screen->getPalette(0).copy(_screen->getPalette(1), 1, 5, 1);
+		} else {
+			_screen->setupDualPalettesSplitScreen(_screen->getPalette(6), _screen->getPalette(1));
+			_screen->getPalette(7).copy(_screen->getPalette(1), 0, 32);
+		}
+	}
 }
 
 void EoBCoreEngine::gui_restorePlayField() {
@@ -3233,7 +3240,7 @@ void GUI_EoB::runMemorizePrayMenu(int charIndex, int spellType) {
 		if (updateDesc) {
 			updateDesc = false;
 			_screen->set16bitShadingLevel(4);
-			_screen->printShadedText(Common::String::format(_vm->_menuStringsMgc[1], np[lastHighLightButton] - numAssignedSpellsPerBookPage[lastHighLightButton], np[lastHighLightButton]).c_str(), 8, 38, 9, _vm->guiSettings()->colors.fill, _vm->guiSettings()->colors.guiColorBlack);
+			_screen->printShadedText(Common::String::format(_vm->_menuStringsMgc[1], np[lastHighLightButton] - numAssignedSpellsPerBookPage[lastHighLightButton], np[lastHighLightButton]).c_str(), 8, 38, _vm->guiSettings()->colors.guiColorLightBlue, _vm->guiSettings()->colors.fill, _vm->guiSettings()->colors.guiColorBlack);
 			_screen->set16bitShadingLevel(0);
 		}
 

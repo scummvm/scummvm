@@ -62,7 +62,7 @@ Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, 
 	_egaDitheringTempPage = 0;
 	_cgaMappingDefault = 0;
 	_cgaDitheringTables[0] = _cgaDitheringTables[1] = 0;
-	_useHiResEGADithering = false;
+	_useHiResEGADithering = _dualPaletteMode = false;
 }
 
 Screen_EoB::~Screen_EoB() {
@@ -164,6 +164,13 @@ void Screen_EoB::setMouseCursor(int x, int y, const byte *shape, const uint8 *ov
 		scale2x(cursor, mouseW * scaleFactor, getCPagePtr(6), SCREEN_W, mouseW, mouseH);
 	else
 		copyRegionToBuffer(6, 0, 0, mouseW, mouseH, cursor);
+
+	// Mouse cursor post processing for EOB II Amiga	
+	if (_dualPaletteMode) {
+		int len = mouseW * mouseH;
+		while (--len > -1)
+			cursor[len] |= 0x20;
+	}
 
 	// Mouse cursor post processing for CGA mode. Unlike the original (which uses drawShape for the mouse cursor)
 	// the cursor manager cannot know whether a pixel value of 0 is supposed to be black or transparent. Thus, we
@@ -280,7 +287,7 @@ void Screen_EoB::loadEoBBitmap(const char *file, const uint8 *cgaMapping, int te
 		} 
 
 		if (!loadAlternative)
-			loadBitmap(tmp.c_str(), tempPage, destPage, 0);
+			loadBitmap(tmp.c_str(), tempPage, destPage, _vm->gameFlags().platform == Common::kPlatformAmiga ? _palettes[0] : 0);
 
 	} else {
 		loadAlternative = true;
@@ -1643,23 +1650,63 @@ void Screen_EoB::loadSpecialAmigaCPS(const char *fileName, int destPage, bool is
 		convertAmigaGfx(_pagePtrs[destPage], 320, 200);
 }
 
+void Screen_EoB::setupDualPalettesSplitScreen(Palette &top, Palette &bottom) {
+	// The original supports simultaneous fading of both palettes, but doesn't make any use of that
+	// feature. The fade rate is always set to 0. So I see no need to implement that.
+	_palettes[0]->copy(top, 0, 32, 0);
+	_palettes[0]->copy(bottom, 0, 32, 32);
+	setScreenPalette(*_palettes[0]);
+	_dualPaletteMode = _forceFullUpdate = true;
+}
+
+void Screen_EoB::disableDualPalettesSplitScreen() {
+	_dualPaletteMode = false;
+	_forceFullUpdate = true;
+}
+
 void Screen_EoB::updateDirtyRects() {
-	if (!_useHiResEGADithering) {
+	if (!_useHiResEGADithering && !_dualPaletteMode) {
 		Screen::updateDirtyRects();
 		return;
 	}
 
-	if (_forceFullUpdate) {
+	if (_dualPaletteMode && _forceFullUpdate) {
+		uint32 *pos = (uint32*)(_pagePtrs[0] + 120 * SCREEN_W);
+		uint16 h = 80 * (SCREEN_W >> 2);
+		while (h--)
+			*pos++ |= 0x20202020;		
+		_system->copyRectToScreen(getCPagePtr(0), SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);
+
+	} else if (_dualPaletteMode) {
+		Common::List<Common::Rect>::iterator it;
+		for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
+			if (it->bottom > 119) {
+				int16 startY = MAX<int16>(120, it->top);
+				int16 h = it->bottom - startY + 1;
+				int16 w = it->width();
+				uint8 *pos = _pagePtrs[0] + startY * SCREEN_W + it->left;
+				while (h--) {
+					for (int x = 0; x < w; ++x)
+						*pos++ |= 0x20;
+					pos += (SCREEN_W - w);
+				}
+			}
+			_system->copyRectToScreen(_pagePtrs[0] + it->top * SCREEN_W + it->left, SCREEN_W, it->left, it->top, it->width(), it->height());
+		}
+
+	} else if (_forceFullUpdate) {
 		ditherRect(getCPagePtr(0), _egaDitheringTempPage, SCREEN_W * 2, SCREEN_W, SCREEN_H);
 		_system->copyRectToScreen(_egaDitheringTempPage, SCREEN_W * 2, 0, 0, SCREEN_W * 2, SCREEN_H * 2);
+
 	} else {
-		const byte *page0 = getCPagePtr(0);
+		const uint8 *page0 = getCPagePtr(0);
 		Common::List<Common::Rect>::iterator it;
 		for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
 			ditherRect(page0 + it->top * SCREEN_W + it->left, _egaDitheringTempPage, SCREEN_W * 2, it->width(), it->height());
 			_system->copyRectToScreen(_egaDitheringTempPage, SCREEN_W * 2, it->left * 2, it->top * 2, it->width() * 2, it->height() * 2);
 		}
 	}
+
 	_forceFullUpdate = false;
 	_dirtyRects.clear();
 }

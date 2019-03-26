@@ -96,7 +96,7 @@ void EoBCoreEngine::loadLevel(int level, int sub) {
 
 	loadVcnData(gfxFile.c_str(), (_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformDOS) ? _cgaMappingLevel[_cgaLevelMappingIndex[level - 1]] : 0);
 	_screen->loadEoBBitmap("INVENT", _cgaMappingInv, 5, 3, 2);
-	if (_flags.platform == Common::kPlatformAmiga)
+	if (_flags.platform == Common::kPlatformAmiga && _flags.gameID == GI_EOB1)
 		_screen->getPalette(0).copy(_screen->getPalette(1), 1, 5, 1);
 
 	delayUntil(end);
@@ -190,8 +190,8 @@ Common::String EoBCoreEngine::initLevelData(int sub) {
 			_screen->enableShapeBackgroundFading(false);
 		}
 
-		if (_flags.platform != Common::kPlatformAmiga && (_flags.gameID == GI_EOB2 || _configRenderMode != Common::kRenderEGA))
-			_screen->loadPalette(tmpStr.c_str(), _screen->getPalette(0));
+		if (_flags.gameID == GI_EOB2 || (_flags.platform != Common::kPlatformAmiga && _configRenderMode != Common::kRenderCGA && _configRenderMode != Common::kRenderEGA))
+			_screen->loadPalette(tmpStr.c_str(), _screen->getPalette(_flags.platform == Common::kPlatformAmiga ? 6 : 0));
 
 		if (_flags.platform == Common::kPlatformFMTowns) {
 			uint16 *src = (uint16*)_screen->getPalette(0).getData();
@@ -368,7 +368,7 @@ void EoBCoreEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
 			}
 		}
 	} else {
-		if (!(_flags.gameID == GI_EOB1 && _configRenderMode == Common::kRenderEGA))
+		if (_flags.platform != Common::kPlatformAmiga && !(_flags.gameID == GI_EOB1 && _configRenderMode == Common::kRenderEGA))
 			memcpy(_vcnColTable, colMap, 32);
 		
 		memcpy(_vcnBlocks, pos, vcnSize);
@@ -546,7 +546,7 @@ void EoBCoreEngine::drawScene(int refresh) {
 
 	if (_sceneDrawPage2) {
 		if (refresh)
-			_screen->fillRect(0, 0, 176, 120, 12);
+			_screen->fillRect(0, 0, 176, 120, guiSettings()->colors.guiColorBlack);
 
 		if (!_loading)
 			_screen->setScreenPalette(_screen->getPalette(0));

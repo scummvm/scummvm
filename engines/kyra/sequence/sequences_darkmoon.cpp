@@ -160,6 +160,7 @@ int DarkMoonEngine::mainMenu() {
 			_screen->_curPage = op;
 			_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
 			_screen->shadeRect(78, 99, 249, 141, 4);
+			_screen->showMouse();
 			_screen->updateScreen();
 			_allowImport = true;
 			menuChoice = mainMenuLoop();
@@ -1201,6 +1202,7 @@ DarkmoonSequenceHelper::DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *
 	}
 
 	_screen->enableHiColorMode(false);
+	_screen->disableDualPalettesSplitScreen();
 	int numColors = 256;
 
 	if (_vm->_flags.platform == Common::kPlatformAmiga) {
@@ -1296,7 +1298,6 @@ DarkmoonSequenceHelper::~DarkmoonSequenceHelper() {
 	_screen->enableHiColorMode(true);
 	_screen->clearCurPage();
 	_screen->setFont(_prevFont);
-	_screen->showMouse();
 	_screen->updateScreen();
 
 	_system->delayMillis(150);

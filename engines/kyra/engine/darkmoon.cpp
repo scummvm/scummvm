@@ -153,6 +153,9 @@ void DarkMoonEngine::updateUsedCharacterHandItem(int charIndex, int slot) {
 }
 
 void DarkMoonEngine::generateMonsterPalettes(const char *file, int16 monsterIndex) {
+	if (_flags.platform == Common::kPlatformAmiga)
+		return;
+
 	int cp = _screen->setCurPage(2);
 	_screen->loadShapeSetBitmap(file, 3, 3);
 	uint8 tmpPal[16];
