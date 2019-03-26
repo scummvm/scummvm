@@ -50,6 +50,7 @@ private:
 	void init();
 	void initGameState();
 	void showRoom();
+	int goDirection(ScriptEnv &e, Direction dir) override;
 	Common::String formatVerbError(const Common::String &verb) const;
 	Common::String formatNounError(const Common::String &verb, const Common::String &noun) const;
 	void loadState(Common::ReadStream &stream);
@@ -61,8 +62,6 @@ private:
 	// Engine
 	bool canSaveGameStateCurrently();
 
-	template <Direction D>
-	int o_goDirection(ScriptEnv &e);
 	int o_fluteSound(ScriptEnv &e);
 
 	static const uint kRegions = 3;
@@ -94,80 +93,16 @@ void HiRes6Engine::gameLoop() {
 	}
 }
 
-typedef Common::Functor1Mem<ScriptEnv &, int, HiRes6Engine> OpcodeH6;
-#define SetOpcodeTable(x) table = &x;
-#define Opcode(x) table->push_back(new OpcodeH6(this, &HiRes6Engine::x))
-#define OpcodeUnImpl() table->push_back(new OpcodeH6(this, 0))
-
 void HiRes6Engine::setupOpcodeTables() {
-	Common::Array<const Opcode *> *table = 0;
+	AdlEngine_v5::setupOpcodeTables();
 
-	SetOpcodeTable(_condOpcodes);
-	// 0x00
-	OpcodeUnImpl();
-	Opcode(o2_isFirstTime);
-	Opcode(o2_isRandomGT);
-	Opcode(o4_isItemInRoom);
-	// 0x04
-	Opcode(o5_isNounNotInRoom);
-	Opcode(o1_isMovesGT);
-	Opcode(o1_isVarEQ);
-	Opcode(o2_isCarryingSomething);
-	// 0x08
-	Opcode(o4_isVarGT);
-	Opcode(o1_isCurPicEQ);
-	Opcode(o5_abortScript);
-
-	SetOpcodeTable(_actOpcodes);
-	// 0x00
-	OpcodeUnImpl();
-	Opcode(o1_varAdd);
-	Opcode(o1_varSub);
-	Opcode(o1_varSet);
-	// 0x04
-	Opcode(o1_listInv);
-	Opcode(o4_moveItem);
-	Opcode(o1_setRoom);
-	Opcode(o2_setCurPic);
-	// 0x08
-	Opcode(o2_setPic);
-	Opcode(o1_printMsg);
-	Opcode(o5_dummy);
-	Opcode(o5_setTextMode);
-	// 0x0c
-	Opcode(o4_moveAllItems);
-	Opcode(o1_quit);
-	Opcode(o5_dummy);
-	Opcode(o4_save);
-	// 0x10
-	Opcode(o4_restore);
-	Opcode(o1_restart);
-	Opcode(o5_setRegionRoom);
-	Opcode(o5_dummy);
-	// 0x14
-	Opcode(o1_resetPic);
-	Opcode(o_goDirection<IDI_DIR_NORTH>);
-	Opcode(o_goDirection<IDI_DIR_SOUTH>);
-	Opcode(o_goDirection<IDI_DIR_EAST>);
-	// 0x18
-	Opcode(o_goDirection<IDI_DIR_WEST>);
-	Opcode(o_goDirection<IDI_DIR_UP>);
-	Opcode(o_goDirection<IDI_DIR_DOWN>);
-	Opcode(o1_takeItem);
-	// 0x1c
-	Opcode(o1_dropItem);
-	Opcode(o5_setRoomPic);
-	Opcode(o_fluteSound);
-	OpcodeUnImpl();
-	// 0x20
-	Opcode(o2_initDisk);
+	_actOpcodes[0x1e] = opcode(&HiRes6Engine::o_fluteSound);
 }
 
-template <Direction D>
-int HiRes6Engine::o_goDirection(ScriptEnv &e) {
-	OP_DEBUG_0((Common::String("\tGO_") + dirStr(D) + "()").c_str());
+int HiRes6Engine::goDirection(ScriptEnv &e, Direction dir) {
+	OP_DEBUG_0((Common::String("\tGO_") + dirStr(dir) + "()").c_str());
 
-	byte room = getCurRoom().connections[D];
+	byte room = getCurRoom().connections[dir];
 
 	if (room == 0) {
 		// Don't penalize invalid directions at escapable Garthim encounter

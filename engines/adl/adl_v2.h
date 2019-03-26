@@ -64,21 +64,21 @@ protected:
 	void checkTextOverflow(char c);
 	void handleTextOverflow();
 
-	int o2_isFirstTime(ScriptEnv &e);
-	int o2_isRandomGT(ScriptEnv &e);
-	int o2_isNounNotInRoom(ScriptEnv &e);
-	int o2_isCarryingSomething(ScriptEnv &e);
+	virtual int o_isFirstTime(ScriptEnv &e);
+	virtual int o_isRandomGT(ScriptEnv &e);
+	virtual int o_isNounNotInRoom(ScriptEnv &e);
+	virtual int o_isCarryingSomething(ScriptEnv &e);
 
-	int o2_moveItem(ScriptEnv &e);
-	int o2_setCurPic(ScriptEnv &e);
-	int o2_setPic(ScriptEnv &e);
-	int o2_moveAllItems(ScriptEnv &e);
-	int o2_save(ScriptEnv &e);
-	int o2_restore(ScriptEnv &e);
-	int o2_placeItem(ScriptEnv &e);
-	int o2_tellTime(ScriptEnv &e);
-	int o2_setRoomFromVar(ScriptEnv &e);
-	int o2_initDisk(ScriptEnv &e);
+	virtual int o_moveItem(ScriptEnv &e) override;
+	virtual int o_setCurPic(ScriptEnv &e) override;
+	virtual int o_setPic(ScriptEnv &e) override;
+	virtual int o_moveAllItems(ScriptEnv &e);
+	virtual int o_save(ScriptEnv &e) override;
+	virtual int o_restore(ScriptEnv &e) override ;
+	virtual int o_placeItem(ScriptEnv &e) override;
+	virtual int o_tellTime(ScriptEnv &e);
+	virtual int o_setRoomFromVar(ScriptEnv &e);
+	virtual int o_initDisk(ScriptEnv &e);
 
 	struct {
 		Common::String time;
