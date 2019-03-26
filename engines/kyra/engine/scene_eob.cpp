@@ -263,7 +263,7 @@ Common::String EoBCoreEngine::initLevelData(int sub) {
 		} else {
 			if (*pos++ != 0xEC)
 				continue;
-			loadMonsterShapes((const char *)(pos + 2), pos[1] * 18, pos[15] ? true : false, *pos * 18);
+			loadMonsterShapes((const char *)(pos + 2), pos[1] * 18, pos[15] ? true : false, *pos * (_flags.platform == Common::kPlatformAmiga ? 6 : 18));
 			pos += 16;
 		}
 	}
