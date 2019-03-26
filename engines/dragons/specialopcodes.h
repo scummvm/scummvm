@@ -60,9 +60,16 @@ protected:
 	void spcClearEngineFlag8(); // 0x14
 	void spcSetEngineFlag8(); // 0x15
 
+	void spcUnk4e();
+	void spcUnk4f();
+
 	void spcSetEngineFlag0x4000000(); // 0x54
 	void spcSetCursorSequenceIdToZero(); // 0x55
+	void spcUnk5e();
+	void spcUnk5f();
 
+private:
+	void panCamera(int16 mode);
 };
 
 } // End of namespace Dragons
