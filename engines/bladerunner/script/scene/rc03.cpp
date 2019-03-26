@@ -82,7 +82,9 @@ void SceneScriptRC03::InitializeScene() {
 	if (Game_Flag_Query(kFlagHC04toRC03)
 	 && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoWaitingAtRC03
 	) {
-		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
+		if (Random_Query(1, 3) == 1) { // enhancement: don't always play this scene when exiting Hawker's Circle
+			Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
+		}
 	}
 	Scene_Loop_Set_Default(1);
 }
@@ -140,18 +142,26 @@ bool SceneScriptRC03::ClickedOnItem(int itemId, bool a2) {
 }
 
 bool SceneScriptRC03::ClickedOnExit(int exitId) {
-	if (exitId == 0) {
+	if (exitId == 0) { // To Runciter's shop
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 298.0f, -4.0f, 405.0f, 0, true, false, 0)) {
 			if (Game_Flag_Query(kFlagRC04McCoyShotBob)) {
 				Game_Flag_Set(kFlagBulletBobDead);
 			}
 			Game_Flag_Set(kFlagRC03toRC01);
 			Set_Enter(kSetRC01, kSceneRC01);
+#if BLADERUNNER_ORIGINAL_BUGS
 			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraStartWalkingAround);
+#else
+			// Restrict Dektora's "walking around" goal only in Chapter 2
+			// this is a bug fix for the case where Dektora's goal gets reset from kGoalDektoraGone in Chapter 4/5
+			if (Global_Variable_Query(kVariableChapter) == 2 ) {
+				Actor_Set_Goal_Number(kActorDektora, kGoalDektoraStartWalkingAround);
+			}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		}
 		return true;
 	}
-	if (exitId == 1) {
+	if (exitId == 1) { // to Animoid Row (Scorpion/Insect Lady)
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -469.0f, -4.0f, 279.0f, 0, true, false, 0)) {
 			if (Game_Flag_Query(kFlagRC04McCoyShotBob)) {
 				Game_Flag_Set(kFlagBulletBobDead);
@@ -163,7 +173,7 @@ bool SceneScriptRC03::ClickedOnExit(int exitId) {
 		}
 		return true;
 	}
-	if (exitId == 2) {
+	if (exitId == 2) { // to sewers
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 147.51f, -4.0f, 166.48f, 0, true, false, 0)) {
 			Game_Flag_Set(kFlagRC03toUG01);
 			Game_Flag_Reset(kFlagMcCoyInRunciters);
@@ -172,11 +182,19 @@ bool SceneScriptRC03::ClickedOnExit(int exitId) {
 				Game_Flag_Set(kFlagBulletBobDead);
 			}
 			Set_Enter(kSetUG01, kSceneUG01);
+#if BLADERUNNER_ORIGINAL_BUGS
 			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraStartWalkingAround);
+#else
+			// Restrict Dektora's "walking around" goal only in Chapter 2
+			// this is a bug fix for the case where Dektora's goal gets reset from kGoalDektoraGone in Chapter 4/5
+			if (Global_Variable_Query(kVariableChapter) == 2 ) {
+				Actor_Set_Goal_Number(kActorDektora, kGoalDektoraStartWalkingAround);
+			}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		}
 		return true;
 	}
-	if (exitId == 3) {
+	if (exitId == 3) { // to Hawker's Circle (Mama Izabella's Kingston Kitchen)
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -487.0f, 1.0f, 116.0f, 0, true, false, 0)) {
 			Game_Flag_Set(kFlagRC03toHC04);
 			Game_Flag_Reset(kFlagMcCoyInRunciters);
@@ -185,11 +203,19 @@ bool SceneScriptRC03::ClickedOnExit(int exitId) {
 				Game_Flag_Set(kFlagBulletBobDead);
 			}
 			Set_Enter(kSetHC01_HC02_HC03_HC04, kSceneHC04);
+#if BLADERUNNER_ORIGINAL_BUGS
 			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraStartWalkingAround);
+#else
+			// Restrict Dektora's "walking around" goal only in Chapter 2
+			// this is a bug fix for the case where Dektora's goal gets reset from kGoalDektoraGone in Chapter 4/5
+			if (Global_Variable_Query(kVariableChapter) == 2 ) {
+				Actor_Set_Goal_Number(kActorDektora, kGoalDektoraStartWalkingAround);
+			}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		}
 		return true;
 	}
-	if (exitId == 4) {
+	if (exitId == 4) { // To Bullet Bob's
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -22.0f, 1.0f, -63.0f, 0, true, false, 0)) {
 			if (Global_Variable_Query(kVariableChapter) == 3
 			 || Global_Variable_Query(kVariableChapter) == 5

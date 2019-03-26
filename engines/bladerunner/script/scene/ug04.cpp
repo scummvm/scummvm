@@ -59,7 +59,11 @@ void SceneScriptUG04::InitializeScene() {
 	Ambient_Sounds_Add_Sound(304, 5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(305, 5,  50, 17, 37, -100, 100, -101, -101, 0, 0);
 
-	Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
+	if ((Global_Variable_Query(kVariableChapter) == 3)
+		|| (Global_Variable_Query(kVariableChapter) > 3 && Random_Query(1, 5) == 1)
+	){ // enhancement: don't always play the passing train after chapter 3
+		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
+	}
 	Scene_Loop_Set_Default(1);
 }
 

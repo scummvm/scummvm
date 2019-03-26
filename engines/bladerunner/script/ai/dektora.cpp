@@ -194,14 +194,14 @@ void AIScriptDektora::ReceivedClue(int clueId, int fromActorId) {
 void AIScriptDektora::ClickedByPlayer() {
 	if (Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraGone) {
 		Actor_Face_Actor(0, kActorDektora, true);
-		Actor_Says(kActorMcCoy, 8630, 12);
+		Actor_Says(kActorMcCoy, 8630, 12);  // What a waste
 
 		return; //true;
 	}
 
 	if (Actor_Query_Goal_Number(kActorDektora) < kGoalDektoraStartChapter3) {
 		Actor_Face_Actor(kActorMcCoy, kActorDektora, true);
-		Actor_Says(kActorMcCoy, 8590, 13);
+		Actor_Says(kActorMcCoy, 8590, 13);  // Not the talkative type
 	}
 
 	if (Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR08Dance) {
