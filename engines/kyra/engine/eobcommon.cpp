@@ -1346,7 +1346,10 @@ void EoBCoreEngine::npcSequence(int npcIndex) {
 	drawNpcScene(npcIndex);
 
 	Common::SeekableReadStream *s = _res->createReadStream("TEXT.DAT");
-	_screen->loadFileDataToPage(s, 5, 32000);
+	if (s)
+		_screen->loadFileDataToPage(s, 5, 32000);
+	else
+		_screen->loadBitmap("TEXT.CPS", 5, 5, 0, true);
 	delete s;
 
 	gui_drawBox(0, 121, 320, 79, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
@@ -1594,7 +1597,10 @@ void EoBCoreEngine::initDialogueSequence() {
 		snd_stopSound();
 
 	Common::SeekableReadStream *s = _res->createReadStream("TEXT.DAT");
-	_screen->loadFileDataToPage(s, 5, 32000);
+	if (s)
+		_screen->loadFileDataToPage(s, 5, 32000);
+	else
+		_screen->loadBitmap("TEXT.CPS", 5, 5, 0, true);
 	_txt->setupField(9, 0);
 	delete s;
 }
@@ -1798,7 +1804,11 @@ void EoBCoreEngine::displayParchment(int id) {
 	if (id >= 0) {
 		// display text
 		Common::SeekableReadStream *s = _res->createReadStream("TEXT.DAT");
-		_screen->loadFileDataToPage(s, 5, 32000);
+		if (s)
+			_screen->loadFileDataToPage(s, 5, 32000);
+		else
+			_screen->loadBitmap("TEXT.CPS", 5, 5, 0, true);
+		delete s;
 		_screen->set16bitShadingLevel(4);
 		gui_drawBox(0, 0, 176, 175, guiSettings()->colors.frame1, guiSettings()->colors.frame2, guiSettings()->colors.fill);
 		_screen->set16bitShadingLevel(0);
