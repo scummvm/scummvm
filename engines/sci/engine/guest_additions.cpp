@@ -854,9 +854,9 @@ void GuestAdditions::syncMessageTypeFromScummVMUsingDefaultStrategy() const {
 		uint flagNumber = 400;
 		uint globalNumber = kGlobalVarQFG4Flags + (flagNumber / 16);
 		if (value & kMessageTypeSpeech) {
-			_state->variables[VAR_GLOBAL][globalNumber] |= 0x8000;
+			_state->variables[VAR_GLOBAL][globalNumber] |= (int16)0x8000;
 		} else {
-			_state->variables[VAR_GLOBAL][globalNumber] &= ~0x8000;
+			_state->variables[VAR_GLOBAL][globalNumber] &= (int16)~0x8000;
 		}
 	}
 }
