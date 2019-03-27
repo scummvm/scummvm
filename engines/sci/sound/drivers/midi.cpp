@@ -509,30 +509,53 @@ void MidiPlayer_Midi::initTrack(SciSpan<const byte> &header) {
 		// or MT32.DRV itself.
 		setReverb(_defaultReverb);
 
-	/* TODO: I have no idea what SCI_VERSION_0_EARLY games do here.
-	Therefore the extra code is restricted to SCI_VERSION_0_LATE for now.*/
-	if (_version == SCI_VERSION_0_EARLY)
-		return;
-
 	uint8 caps = header.getInt8At(0);
-	if (caps != 0 && caps != 2)
+	if (caps != 0 && (_version == SCI_VERSION_0_EARLY || caps != 2))
 		return;
 
-	uint8 readPos = 3;
-	byte msg[9];
+	uint8 readPos = 1;
 	uint8 flags = 0;
+	byte msg[9];
+	memset(msg, 0x10, 9);
 
-	for (int i = 1; i < 9; ++i) {
-		readPos++;
-		flags = header.getInt8At(readPos++);
-		msg[i - 1] = (flags & 1) ? i : 0x10;
+	if (_version == SCI_VERSION_0_EARLY) {
+		uint8 writePos = 0;
+		for (int i = 0; i < 16; ++i) {
+			flags = header.getInt8At(readPos++);
+			if (flags & 8) {
+				// If both flags 1 and 8 are set this will make the driver assign that channel to MT32 part 9.
+				// This suggests that any one channel could be the rhythm channel. I don't know whether this has any practical relevance.
+				// A channel not flagged with 8 can also be assigned to MT-32 part 9 if it just happens to be the last channel. This is how
+				// it is done in the tracks that I have seen so far. Flag 8 without flag 1 is the control channel (not handled in the driver).
+				if (flags & 1) {
+					if (i < 11) {
+						msg[8] = i;
+						writePos++;
+					}
+				} else {
+					debugC(9, kDebugLevelSound, "MidiPlayer_Midi::initTrack(): Control channel found: 0x%.02x", i);
+				}
+			} else if (i < 11 && (flags & 1)) {
+				assert(writePos < 9);
+				msg[writePos++] = i;
+			}
+		}
+
+	} else {
+		readPos = 3;
+		for (int i = 1; i < 9; ++i) {
+			readPos++;
+			flags = header.getInt8At(readPos++);
+			msg[i - 1] = (flags & 1) ? i : 0x10;
+		}
+
+		flags = header.getInt8At(readPos);
+		msg[8] = (flags & 0x80) ? 9 : 0x10;
 	}
 
-	flags = header.getInt8At(readPos);
-	msg[8] = (flags & 0x80) ? 9 : 0x10;
-
 	// assign channels
-	Sci::SciSpan<const byte> s(msg, 9);
+	debugC(5, kDebugLevelSound, "MidiPlayer_Midi::initTrack(): Channels assigned to MT-32 parts: 0x%.02x 0x%.02x 0x%.02x 0x%.02x 0x%.02x 0x%.02x 0x%.02x 0x%.02x 0x%.02x", msg[0], msg[1], msg[2], msg[3], msg[4], msg[5], msg[6], msg[7], msg[8]);
+ 	Sci::SciSpan<const byte> s(msg, 9);
 	sendMt32SysEx(0x10000D, s, false);
 }
 
