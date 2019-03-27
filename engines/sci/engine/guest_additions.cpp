@@ -919,6 +919,9 @@ void GuestAdditions::syncMessageTypeToScummVMUsingDefaultStrategy(const int inde
 
 		ConfMan.setBool("subtitles", value.toSint16() & kMessageTypeSubtitles);
 		ConfMan.setBool("speech_mute", !(value.toSint16() & kMessageTypeSpeech));
+
+		// need to update sound mixer volumes so that speech_mute will take effect
+		g_sci->updateSoundMixerVolumes();
 	}
 }
 
