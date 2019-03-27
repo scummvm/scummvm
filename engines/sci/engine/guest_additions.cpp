@@ -847,6 +847,18 @@ void GuestAdditions::syncMessageTypeFromScummVMUsingDefaultStrategy() const {
 		// is no equivalent option in the ScummVM GUI
 		_state->variables[VAR_GLOBAL][kGlobalVarGK1NarratorMode] = NULL_REG;
 	}
+
+	if (g_sci->getGameId() == GID_QFG4) {
+		// QFG4 uses a game flag to control the Audio button's state in the control panel.
+		//  This flag must be kept in sync with the standard global 90 speech bit.
+		uint flagNumber = 400;
+		uint globalNumber = kGlobalVarQFG4Flags + (flagNumber / 16);
+		if (value & kMessageTypeSpeech) {
+			_state->variables[VAR_GLOBAL][globalNumber] |= 0x8000;
+		} else {
+			_state->variables[VAR_GLOBAL][globalNumber] &= ~0x8000;
+		}
+	}
 }
 
 #ifdef ENABLE_SCI32
