@@ -41,7 +41,7 @@ namespace BladeRunner {
 AudioPlayer::AudioPlayer(BladeRunnerEngine *vm) {
 	_vm = vm;
 
-	for (int i = 0; i != 6; ++i) {
+	for (int i = 0; i != kTracks; ++i) {
 		_tracks[i].priority = 0;
 		_tracks[i].isActive = false;
 		_tracks[i].channel = -1;
@@ -138,8 +138,9 @@ int AudioPlayer::playAud(const Common::String &name, int volume, int panFrom, in
 	int lowestPriority = 1000000;
 	int lowestPriorityTrack = -1;
 
-	for (int i = 0; i != 6; ++i) {
+	for (int i = 0; i != kTracks; ++i) {
 		if (!isActive(i)) {
+			//debug ("Assigned track %i to %s", i, name.c_str());
 			track = i;
 			break;
 		}
@@ -154,12 +155,14 @@ int AudioPlayer::playAud(const Common::String &name, int volume, int panFrom, in
 	 * the new priority
 	 */
 	if (track == -1 && lowestPriority < priority) {
+		//debug ("Stop lowest priority  track (with lower prio: %d %d), for %s %d!", lowestPriorityTrack, lowestPriority, name.c_str(), priority);
 		stop(lowestPriorityTrack, true);
 		track = lowestPriorityTrack;
 	}
 
 	/* If there's still no available track, give up */
 	if (track == -1) {
+		//debug ("No available track for %s %d - giving up", name.c_str(), priority);
 		return -1;
 	}
 
@@ -168,6 +171,7 @@ int AudioPlayer::playAud(const Common::String &name, int volume, int panFrom, in
 	if (!_vm->_audioCache->findByHash(hash)) {
 		Common::SeekableReadStream *r = _vm->getResourceStream(name);
 		if (!r) {
+			//debug ("Could not get stream for %s %d - giving up", name.c_str(), priority);
 			return -1;
 		}
 
@@ -175,6 +179,7 @@ int AudioPlayer::playAud(const Common::String &name, int volume, int panFrom, in
 		while (!_vm->_audioCache->canAllocate(size)) {
 			if (!_vm->_audioCache->dropOldest()) {
 				delete r;
+				//debug ("No available mem in cache for %s %d - giving up", name.c_str(), priority);
 				return -1;
 			}
 		}
@@ -201,6 +206,7 @@ int AudioPlayer::playAud(const Common::String &name, int volume, int panFrom, in
 
 	if (channel == -1) {
 		delete audioStream;
+		//debug ("No available channel for %s %d - giving up", name.c_str(), priority);
 		return -1;
 	}
 

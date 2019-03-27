@@ -28,6 +28,7 @@
 #include "audio/mixer.h"
 
 #include "common/timer.h"
+//#include "common/debug.h"
 
 namespace BladeRunner {
 
@@ -64,8 +65,10 @@ int AudioMixer::play(Audio::Mixer::SoundType type, Audio::RewindableAudioStream 
 	}
 	if (channel == -1) {
 		if (priority < lowestPriority) {
+			//debug("No available audio channel found - giving up");
 			return -1;
 		}
+		//debug("Stopping lowest priority channel %d with lower prio %d!", lowestPriorityChannel, lowestPriority);
 		stop(lowestPriorityChannel, 0);
 		channel = lowestPriorityChannel;
 	}

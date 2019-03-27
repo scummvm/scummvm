@@ -41,7 +41,7 @@ enum AudioPlayerFlags {
 };
 
 class AudioPlayer {
-	static const int kTracks = 6;
+	static const int kTracks = 12; // original was 6
 
 	struct Track {
 		bool                isActive;

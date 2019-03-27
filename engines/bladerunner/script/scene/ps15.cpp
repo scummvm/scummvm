@@ -123,7 +123,12 @@ bool SceneScriptPS15::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -183.58f, -113.43f, 91.7f, 0, true, false, 0)) {
 			Actor_Says(kActorMcCoy, 4440, 18);
 			Actor_Says(kActorSergeantWalls, 150, 17);
-			Sound_Play(155, 90, 0, 0, 50);
+#if BLADERUNNER_ORIGINAL_BUGS
+			// Sometimes the scene transition code (or the Ambient_Sounds_Remove_All_Non_Looping_Sounds)
+			// would stop this from playing (rare occasions)
+			// Solution: moved into PS10 code
+			Sound_Play(155, 90, 0, 0, 50);  // LABBUZZ1.AUD
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Set_Enter(kSetPS10_PS11_PS12_PS13, kScenePS10);

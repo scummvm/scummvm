@@ -33,9 +33,9 @@ namespace BladeRunner {
 class BladeRunnerEngine;
 
 class AudioMixer {
-	static const int kChannels = 9;
-	static const int kUsableChannels = 8;
-	static const int kMusicChannel = 8;
+	static const int kChannels         = 15; // original was 9;
+	static const int kUsableChannels   = 14; // original was 8;
+	static const int kMusicChannel     = 14; // original was 8;
 	static const int kUpdatesPerSecond = 40;
 
 	struct Channel {

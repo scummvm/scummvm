@@ -416,6 +416,11 @@ void SceneScriptPS10::InitializeScene() {
 	Ambient_Sounds_Add_Sound(306,  5, 100, 17, 27, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(307,  5, 100, 17, 27, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(308,  5, 100, 17, 27, -100, 100, -101, -101, 0, 0);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	// Moved here from PS15
+	Sound_Play(155, 90, 0, 0, 50);  // LABBUZZ1.AUD
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 void SceneScriptPS10::SceneLoaded() {
