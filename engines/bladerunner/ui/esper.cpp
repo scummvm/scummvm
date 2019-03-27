@@ -128,7 +128,7 @@ void ESPER::close() {
 	delete _script;
 	_script = nullptr;
 
-	_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(425), 25, 0, 0, 50, 0);
+	_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(424), 25, 0, 0, 50, 0);
 
 	unloadPhotos();
 	_shapesPhotos.clear();
