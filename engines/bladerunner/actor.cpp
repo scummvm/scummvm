@@ -106,7 +106,7 @@ void Actor::setup(int actorId) {
 		_timersLeft[i] = 0;
 		_timersLast[i] = _vm->_time->current();
 	}
-	_timersLeft[4] = _timer4RemainDefault; // This was in original code. We need to init this timer in oder to kick off periodic updates for acquireCluesByRelations
+	_timersLeft[4] = _timer4RemainDefault; // This was in original code. We need to init this timer in order to kick off periodic updates for acquireCluesByRelations
 
 	_honesty              = 50;
 	_intelligence         = 50;

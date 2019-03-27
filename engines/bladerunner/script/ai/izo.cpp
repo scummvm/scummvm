@@ -59,7 +59,7 @@ bool AIScriptIzo::Update() {
 		return true;
 	}
 
-	if (Global_Variable_Query(kVariableChapter) == 1
+	if (Global_Variable_Query(kVariableChapter) == 3
 	 && Actor_Query_Goal_Number(kActorIzo) == kGoalIzoGone
 	 && Actor_Query_Which_Set_In(kActorIzo) == kSetRC03
 	) {
@@ -407,8 +407,15 @@ bool AIScriptIzo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Ambient_Sounds_Play_Speech_Sound(kActorIzo, 9000, 100, 0, 0, 0);
 		Actor_Change_Animation_Mode(kActorIzo, kAnimationModeDie);
 		Actor_Set_Goal_Number(kActorIzo, 999);
+#if BLADERUNNER_ORIGINAL_BUGS
 		Scene_Exits_Enable();
-		Actor_Retired_Here(kActorIzo, 36, 12, true, -1);
+#else
+		Actor_Set_Targetable(kActorIzo, false);
+		if (!Actor_Query_In_Set(kActorIzo, kSetKP07)) {
+			Scene_Exits_Enable();
+			Actor_Retired_Here(kActorIzo, 36, 12, true, -1);
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		return true;
 
 	case 200:

@@ -161,6 +161,16 @@ void AIScriptLuther::ShotAtAndMissed() {
 }
 
 bool AIScriptLuther::ShotAtAndHit() {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	if (Actor_Query_In_Set(kActorLuther, kSetKP07)) {
+		AI_Movement_Track_Flush(kActorLuther);
+		ChangeAnimationMode(kAnimationModeDie);
+		Actor_Retired_Here(kActorLuther, 6, 6, true, kActorMcCoy);
+		Actor_Set_Goal_Number(kActorLuther, kGoalLutherDie);
+		return false;
+	}
+#endif
 	if (Actor_Query_Which_Set_In(kActorLuther) == kSetUG16) {
 		Actor_Set_Health(kActorLuther, 50, 50);
 	}
@@ -225,7 +235,7 @@ bool AIScriptLuther::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Flush(kActorLuther);
 		break;
 
-	case 499:
+	case kGoalLutherDead:
 		Actor_Set_Goal_Number(kActorLuther, kGoalLutherGone);
 		break;
 	}

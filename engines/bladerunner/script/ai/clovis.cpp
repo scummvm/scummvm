@@ -459,7 +459,7 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		) {
 #if BLADERUNNER_ORIGINAL_BUGS
 			// Lucy's retirement on the moonbus should be handled in her ai script AIScriptLucy::Retired()
-			// like the others - even if she won't attack McCoy, she should be retired immediately (with this shot)
+			// like the others - even if she won't attack McCoy, she should be retired immediately (with one shot)
 			Actor_Set_Goal_Number(kActorLucy, kGoalLucyGone);
 			Global_Variable_Decrement(kVariableReplicantsSurvivorsAtMoobus, 1);
 #else
@@ -473,8 +473,8 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		 && Actor_Query_In_Set(kActorLuther, kSetKP07)
 		) {
 #if BLADERUNNER_ORIGINAL_BUGS
-			// Luther's retirement on the moonbus should be handled in her ai script AIScriptLucy::Retired()
-			// like the others - even if she won't attack McCoy, she should be retired immediately (with this shot)
+			// Luther's retirement on the moonbus should be handled in his ai script AIScriptLuther:Retired()
+			// like the others - even if he won't attack McCoy, he should be retired immediately (with one shot)
 			Actor_Set_Goal_Number(kActorLuther, kGoalLutherGone);
 			Global_Variable_Decrement(kVariableReplicantsSurvivorsAtMoobus, 1);
 #endif // BLADERUNNER_ORIGINAL_BUGS
