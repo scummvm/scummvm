@@ -36,13 +36,13 @@ void SceneScriptKP07::InitializeScene() {
 		 && Actor_Query_Goal_Number(kActorDektora) < kGoalDektoraGone
 		) {
 			Actor_Set_Targetable(kActorDektora, true);
-			Global_Variable_Increment(kVariableReplicants, 1);
+			Global_Variable_Increment(kVariableReplicantsSurvivorsAtMoobus, 1);
 			Actor_Put_In_Set(kActorDektora, kSetKP07);
 			Actor_Set_At_XYZ(kActorDektora, -52.0f, -41.52f, -5.0f, 289);
 		}
 
 		if (Actor_Query_Goal_Number(kActorZuben) < kGoalZubenGone) {
-			Global_Variable_Increment(kVariableReplicants, 1);
+			Global_Variable_Increment(kVariableReplicantsSurvivorsAtMoobus, 1);
 			Actor_Set_Targetable(kActorZuben, true);
 			Actor_Put_In_Set(kActorZuben, kSetKP07);
 			Actor_Set_At_XYZ(kActorZuben, -26.0f, -41.52f, -135.0f, 0);
@@ -51,7 +51,7 @@ void SceneScriptKP07::InitializeScene() {
 		if (Game_Flag_Query(kFlagIzoIsReplicant)
 		 && Actor_Query_Goal_Number(kActorIzo) < 599
 		) {
-			Global_Variable_Increment(kVariableReplicants, 1);
+			Global_Variable_Increment(kVariableReplicantsSurvivorsAtMoobus, 1);
 			Actor_Set_Targetable(kActorIzo, true);
 			Actor_Put_In_Set(kActorIzo, kSetKP07);
 			Actor_Set_At_XYZ(kActorIzo, -38.0f, -41.52f, -175.0f, 500);
@@ -60,7 +60,7 @@ void SceneScriptKP07::InitializeScene() {
 		if (Game_Flag_Query(kFlagGordoIsReplicant)
 		 && Actor_Query_Goal_Number(kActorGordo) < kGoalGordoGone
 		) {
-			Global_Variable_Increment(kVariableReplicants, 1);
+			Global_Variable_Increment(kVariableReplicantsSurvivorsAtMoobus, 1);
 			Actor_Set_Targetable(kActorGordo, true);
 			Actor_Put_In_Set(kActorGordo, kSetKP07);
 			Actor_Set_At_XYZ(kActorGordo, 61.0f, -41.52f, -3.0f, 921);
@@ -69,13 +69,13 @@ void SceneScriptKP07::InitializeScene() {
 		if (Game_Flag_Query(kFlagLucyIsReplicant)
 		 && Actor_Query_Goal_Number(kActorLucy) < kGoalLucyGone
 		) {
-			Global_Variable_Increment(kVariableReplicants, 1);
+			Global_Variable_Increment(kVariableReplicantsSurvivorsAtMoobus, 1);
 			Actor_Put_In_Set(kActorLucy, kSetKP07);
 			Actor_Set_At_XYZ(kActorLucy, 78.0f, -41.52f, -119.0f, 659);
 		}
 
 		if (Actor_Query_Goal_Number(kActorLuther) < kGoalLutherGone) {
-			Global_Variable_Increment(kVariableReplicants, 1);
+			Global_Variable_Increment(kVariableReplicantsSurvivorsAtMoobus, 1);
 			Actor_Put_In_Set(kActorLuther, kSetKP07);
 			Actor_Set_At_XYZ(kActorLuther, -47.0f, 0.0f, 151.0f, 531);
 		}
@@ -127,9 +127,17 @@ bool SceneScriptKP07::ClickedOnActor(int actorId) {
 			return true;
 		}
 	} else {
+#if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Face_Actor(kActorMcCoy, actorId, true);
 		Actor_Says(kActorMcCoy, 8590, 14);
 		return true;
+#else
+		if (!Player_Query_Combat_Mode()) {
+			Actor_Face_Actor(kActorMcCoy, actorId, true);
+			Actor_Says(kActorMcCoy, 8590, 14);
+			return true;
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 
 	return false;
@@ -172,7 +180,7 @@ void SceneScriptKP07::PlayerWalkedIn() {
 			Actor_Says(kActorClovis, 1250, 3);
 			if (Actor_Query_Goal_Number(kActorSadik) == kGoalSadikUG18NeedsReactorCoreFromMcCoy) {
 				Actor_Put_In_Set(kActorSadik, kSetKP07);
-				Global_Variable_Increment(kVariableReplicants, 1);
+				Global_Variable_Increment(kVariableReplicantsSurvivorsAtMoobus, 1);
 				Actor_Set_At_XYZ(kActorSadik, -12.0f, -41.58f, 72.0f, 0);
 				Actor_Face_Actor(kActorSadik, kActorClovis, true);
 			}

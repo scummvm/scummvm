@@ -188,10 +188,10 @@ bool AIScriptClovis::ShotAtAndHit() {
 void AIScriptClovis::Retired(int byActorId) {
 	if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
 		if (Actor_Query_In_Set(kActorClovis, kSetKP07)) {
-			Global_Variable_Decrement(kVariableReplicants, 1);
+			Global_Variable_Decrement(kVariableReplicantsSurvivorsAtMoobus, 1);
 			Actor_Set_Goal_Number(kActorClovis, kGoalClovisGone);
 
-			if (Global_Variable_Query(kVariableReplicants) == 0) {
+			if (Global_Variable_Query(kVariableReplicantsSurvivorsAtMoobus) == 0) {
 				Player_Loses_Control();
 				Delay(2000);
 				Player_Set_Combat_Mode(false);
@@ -201,9 +201,11 @@ void AIScriptClovis::Retired(int byActorId) {
 				Game_Flag_Set(kFlagKP07toKP06);
 				Game_Flag_Reset(kFlagMcCoyIsHelpingReplicants);
 				Set_Enter(kSetKP05_KP06, kSceneKP06);
+				return; //true;
 			}
 		}
 	}
+	return; //false;
 }
 
 int AIScriptClovis::GetFriendlinessModifierIfGetsClue(int otherActorId, int clueId) {
@@ -388,8 +390,8 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Put_In_Set(kActorClovis, kSetKP07);
 		Actor_Set_Targetable(kActorClovis, true);
 		if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
-			Global_Variable_Set(kVariableReplicants, 0);
-			Global_Variable_Increment(kVariableReplicants, 1);
+			Global_Variable_Set(kVariableReplicantsSurvivorsAtMoobus, 0);
+			Global_Variable_Increment(kVariableReplicantsSurvivorsAtMoobus, 1);
 			Actor_Set_At_XYZ(kActorClovis, 45.0f, -41.52f, -85.0f, 750);
 		} else {
 			Actor_Set_At_XYZ(kActorClovis, 84.85f, -50.56f, -68.87f, 800);
@@ -455,15 +457,27 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		if (Global_Variable_Query(kVariableChapter) == 5
 		 && Actor_Query_In_Set(kActorLucy, kSetKP07)
 		) {
+#if BLADERUNNER_ORIGINAL_BUGS
+			// Lucy's retirement on the moonbus should be handled in her ai script AIScriptLucy::Retired()
+			// like the others - even if she won't attack McCoy, she should be retired immediately (with this shot)
 			Actor_Set_Goal_Number(kActorLucy, kGoalLucyGone);
-			Global_Variable_Decrement(kVariableReplicants, 1);
+			Global_Variable_Decrement(kVariableReplicantsSurvivorsAtMoobus, 1);
+#else
+			// This is her code if she's attacked when escaping with McCoy
+			// will this work?
+			Non_Player_Actor_Combat_Mode_On(kActorLucy, kActorCombatStateIdle, false, kActorMcCoy, 4, kAnimationModeIdle, kAnimationModeWalk, kAnimationModeRun, -1, 0, 0, 10, 300, false);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		}
 
 		if (Global_Variable_Query(kVariableChapter) == 5
 		 && Actor_Query_In_Set(kActorLuther, kSetKP07)
 		) {
+#if BLADERUNNER_ORIGINAL_BUGS
+			// Luther's retirement on the moonbus should be handled in her ai script AIScriptLucy::Retired()
+			// like the others - even if she won't attack McCoy, she should be retired immediately (with this shot)
 			Actor_Set_Goal_Number(kActorLuther, kGoalLutherGone);
-			Global_Variable_Decrement(kVariableReplicants, 1);
+			Global_Variable_Decrement(kVariableReplicantsSurvivorsAtMoobus, 1);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		}
 
 		if (Global_Variable_Query(kVariableChapter) == 5

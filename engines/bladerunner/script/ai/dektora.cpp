@@ -294,10 +294,10 @@ void AIScriptDektora::Retired(int byActorId) {
 	}
 
 	if (Actor_Query_In_Set(kActorDektora, kSetKP07)) {
-		Global_Variable_Decrement(kVariableReplicants, 1);
+		Global_Variable_Decrement(kVariableReplicantsSurvivorsAtMoobus, 1);
 		Actor_Set_Goal_Number(kActorDektora, kGoalDektoraGone);
 
-		if (Global_Variable_Query(kVariableReplicants) == 0) {
+		if (Global_Variable_Query(kVariableReplicantsSurvivorsAtMoobus) == 0) {
 			Player_Loses_Control();
 			Delay(2000);
 			Player_Set_Combat_Mode(false);
@@ -307,7 +307,6 @@ void AIScriptDektora::Retired(int byActorId) {
 			Game_Flag_Set(kFlagKP07toKP06);
 			Game_Flag_Reset(kFlagMcCoyIsHelpingReplicants);
 			Set_Enter(kSetKP05_KP06, kSceneKP06);
-
 			return; //true;
 		}
 	}

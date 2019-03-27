@@ -1209,7 +1209,7 @@ enum Variables {
 	kVariableDNAEvidence = 48,
 	kVariableCorruptedGuzzaEvidence = 49,
 	kVariableTaffyLewisMusic = 50,
-	kVariableReplicants = 51,
+	kVariableReplicantsSurvivorsAtMoobus = 51,
 	kVariableNextTvNews = 52,
 	kVariableEarlyQFrontMusic = 53,
 	kVariableEarlyQBackMusic = 54
@@ -2186,6 +2186,7 @@ enum GoalZuben {
 	kGoalZubenCT02PotDodgeCheck = 14,
 	kGoalZubenFled = 20,
 	kGoalZubenMA01AttackMcCoy = 21,
+	kGoalZubenDiesInChapter1 = 99,
 	kGoalZubenGone = 599
 };
 
