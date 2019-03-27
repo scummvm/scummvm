@@ -839,6 +839,7 @@ void GuestAdditions::syncMessageTypeFromScummVMUsingDefaultStrategy() const {
 		_state->variables[VAR_GLOBAL][kGlobalVarMessageType] = make_reg(0, value);
 	}
 
+#ifdef ENABLE_SCI32
 	if (g_sci->getGameId() == GID_GK1 && value == kMessageTypeSubtitles) {
 		// The narrator speech needs to be forced off if speech has been
 		// disabled in ScummVM, but otherwise the narrator toggle should just
@@ -859,6 +860,7 @@ void GuestAdditions::syncMessageTypeFromScummVMUsingDefaultStrategy() const {
 			_state->variables[VAR_GLOBAL][globalNumber] &= (int16)~0x8000;
 		}
 	}
+#endif
 }
 
 #ifdef ENABLE_SCI32
