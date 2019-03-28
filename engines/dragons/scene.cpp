@@ -99,9 +99,10 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 		ScriptOpCall scriptOpCall;
 		scriptOpCall._code = obd + 4;
 		scriptOpCall._codeEnd = scriptOpCall._code + READ_LE_UINT32(obd);
+		uint16 oldSceneId = _currentSceneId;
 		_currentSceneId = -1;
 		_scriptOpcodes->runScript(scriptOpCall);
-		_currentSceneId = (uint16)(sceneId & 0x7fff);
+		_currentSceneId = oldSceneId;
 	}
 
 	_actorManager->clearActorFlags(2);
@@ -142,7 +143,12 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 
 	_camera = _stage->getPoint2(cameraPointId);
 
-
+	if (flicker && !(sceneId & 0x8000)) {
+		flicker->x = _camera.x;
+		flicker->y = _camera.y;
+		_vm->getINI(1)->x = _camera.x;
+		_vm->getINI(1)->y = _camera.y;
+	}
 
 	debug("Flicker: (%X, %X)", _camera.x, _camera.y);
 
@@ -238,7 +244,6 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 			}
 		}
 	}
-	_currentSceneId = (uint16)(sceneId & 0x7fff); //TODO is this the right spot for this?
 
 	// 0x80030458
 	DragonINI *ini = _vm->getINI(1);
