@@ -102,9 +102,10 @@ private:
 	void update();
 
 	/**
-	 * Creates a new Glk window to attach to the window
+	 * Creates a new Glk window to attach to the window if not already present, or recreates the window
+	 * if the font style has changed to/from fixed width
 	 */
-	void createGlkWindow();
+	void ensureGlkWindow();
 
 	/**
 	 * Updates the current font/style
@@ -191,7 +192,7 @@ public:
 	/**
 	 * Set the textstyle
 	 */
-	void setStyle(int style = -1);
+	void setStyle(uint style = 0xf000);
 
 	/**
 	 * Set reverse video
