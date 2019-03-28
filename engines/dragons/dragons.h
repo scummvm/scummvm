@@ -73,6 +73,7 @@ enum Flags {
 	ENGINE_FLAG_200000   =   0x200000,
 	ENGINE_FLAG_400000   =   0x400000,
 	ENGINE_FLAG_4000000  =  0x4000000,
+	ENGINE_FLAG_8000000  =  0x8000000,
 	ENGINE_FLAG_20000000 = 0x20000000,
 	ENGINE_FLAG_80000000 = 0x80000000
 };
@@ -86,6 +87,14 @@ enum UnkFlags {
 	ENGINE_UNK1_FLAG_20 = 0x20,
 	ENGINE_UNK1_FLAG_40 = 0x40,
 	ENGINE_UNK1_FLAG_80 = 0x80
+};
+
+struct opCode1AStruct {
+	int16 field0;
+	int16 field2;
+	int16 field4;
+	int16 field6;
+	int16 field8;
 };
 
 class BigfileArchive;
@@ -105,6 +114,7 @@ class SequenceOpcodes;
 class ScriptOpcodes;
 struct DragonINI;
 
+
 class DragonsEngine : public Engine {
 public:
 	DragonOBD *_dragonOBD;
@@ -120,6 +130,7 @@ public:
 	uint16 data_8006f3a8;
 
 	uint16 unkArray_uint16[42];
+	opCode1AStruct opCode1A_tbl[8];
 
 private:
 	Screen *_screen;
@@ -182,6 +193,8 @@ public:
 
 	uint16 ipt_img_file_related();
 	void works_with_obd_data_1();
+
+	void reset_screen_maybe();
 
 private:
 	void gameLoopOld();

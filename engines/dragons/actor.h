@@ -51,6 +51,11 @@ enum ActorFlags {
 	ACTOR_FLAG_8000 = 0x8000  //Seems turn off semi trans mode when selected.
 };
 
+enum ActorFrameFlags {
+	ACTOR_FRAME_FLAG_10 = 0x10,
+	ACTOR_FRAME_FLAG_20 = 0x20
+};
+
 class ActorManager {
 public:
 	typedef Common::Array<Actor> Actors;

@@ -64,7 +64,7 @@ public:
 	void show(int16 type) { _type = type; }
 
 	void updateVisibility();
-
+	void setActorFlag400();
 
 };
 

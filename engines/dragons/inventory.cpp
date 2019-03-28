@@ -84,4 +84,8 @@ Common::Point Inventory::getPosition() {
 	return positionTable[_screenPositionIndex];
 }
 
+void Inventory::setActorFlag400() {
+	_actor->setFlag(ACTOR_FLAG_400);
+}
+
 } // End of namespace Dragons

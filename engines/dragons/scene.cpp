@@ -23,6 +23,7 @@
 #include "dragons.h"
 #include "actor.h"
 #include "background.h"
+#include "cursor.h"
 #include "dragonini.h"
 #include "dragonimg.h"
 #include "inventory.h"
@@ -37,17 +38,40 @@ Scene::Scene(DragonsEngine *vm, Screen *screen, ScriptOpcodes *scriptOpcodes, Bi
 		: _vm(vm), _screen(screen), _scriptOpcodes(scriptOpcodes), _stage(0), _bigfileArchive(bigfileArchive), _actorManager(actorManager), _dragonRMS(dragonRMS), _dragonINIResource(dragonINIResource) {
 	_backgroundLoader = new BackgroundResourceLoader(_bigfileArchive, _dragonRMS);
 	data_80063392 = 2;
+	_data_800633ee = 0;
 }
 void Scene::loadScene(uint32 sceneId, uint32 cameraPointId) {
+	if (!_vm->isFlagSet(ENGINE_FLAG_40)) {
+		//TODO fade_related_calls_with_1f();
+	}
+	bool unkFlag2Set = _vm->isUnkFlagSet(ENGINE_UNK1_FLAG_2);
+	bool flag8set = _vm->isFlagSet(ENGINE_FLAG_8);
+	_vm->clearFlags(ENGINE_FLAG_8);
+	_vm->setUnkFlags(ENGINE_UNK1_FLAG_2);
+
+	for (int i = 0; i < 8; i++) {
+		_vm->opCode1A_tbl[i].field6 = 0;
+	}
+
 	// TODO
+	_vm->reset_screen_maybe();
+
 	loadSceneData(sceneId, cameraPointId);
 
-	if (sceneId != 4) {
-		Actor *cursor = _actorManager->getActor(0);
-		//TODO update cursor.
-
+	if (flag8set) {
+		_vm->setFlags(ENGINE_FLAG_8);
 	}
-	//TODO
+
+	if (!_vm->isFlagSet(ENGINE_FLAG_8000000) && sceneId != 4) {
+		_vm->_cursor->updateSequenceID((int16)_vm->_cursor->_sequenceID);
+	}
+	_vm->waitForFrames(2);
+	// TODO call_fade_related_1f();
+	if (!unkFlag2Set) {
+		_vm->clearUnkFlags(ENGINE_UNK1_FLAG_2);
+	}
+	_data_800633ee = 0;
+
 	if (!(sceneId & 0x8000)) {
 		byte *obd = _dragonRMS->getObdDataFieldC(sceneId);
 		ScriptOpCall scriptOpCall;
@@ -83,15 +107,42 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 	_actorManager->clearActorFlags(2);
 	//TODO sub_8003fadc(); might be fade related
 
+	_vm->_cursor->setActorFlag400();
+	_vm->_inventory->setActorFlag400();
+	_vm->clearFlags(ENGINE_FLAG_200);
+
+	resetActorFrameFlags();
+
+	// Loading animation logic would go here. 0x8002f538
+
 	_vm->clearFlags(Dragons::ENGINE_FLAG_20);
 	_vm->setUnkFlags(Dragons::ENGINE_UNK1_FLAG_10);
 
 	_vm->call_fade_related_1f();
 	// TODO 0x8002f7c4
 
+	_vm->_cursor->updatePosition(160, 100);
+
+	_vm->clearFlags(ENGINE_FLAG_100000);
+	_vm->clearFlags(ENGINE_FLAG_200000);
+
+	// TODO   UnkSoundFunc4(dragon_Rms_Offset[(uint)local_b0].sceneName);
+
+	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
+
+	if (flicker == NULL || flicker->sceneId == 0) {
+		_vm->getINI(1)->sceneId = 0;
+	} else {
+		_currentSceneId = (uint16)(sceneId & 0x7fff);
+		flicker->sceneId = _currentSceneId;
+		_vm->getINI(1)->sceneId = _currentSceneId;
+	}
+
 	_stage = _backgroundLoader->load(sceneId);
 
 	_camera = _stage->getPoint2(cameraPointId);
+
+
 
 	debug("Flicker: (%X, %X)", _camera.x, _camera.y);
 
@@ -196,7 +247,6 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 		ini->actor->priorityLayer = 0;
 	}
 
-	DragonINI *flicker = _vm->_dragonINIResource->getFlickerRecord();
 
 	if (flicker && flicker->sceneId != 0) {
 		flicker->field_20_actor_field_14 = _vm->data_800633fa;
@@ -342,6 +392,14 @@ void Scene::removeImageOverlay(uint16 iptId) {
 
 void Scene::setSceneId(int16 newSceneId) {
 	_currentSceneId = newSceneId;
+}
+
+void Scene::resetActorFrameFlags() {
+	for (int i = 0; i < 0x17; i++) {
+		Actor *actor = _vm->_actorManager->getActor(i);
+		actor->frame_flags &= ~ACTOR_FRAME_FLAG_10;
+		actor->frame_flags &= ~ACTOR_FRAME_FLAG_20;
+	}
 }
 
 } // End of namespace Dragons
