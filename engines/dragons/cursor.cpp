@@ -56,6 +56,7 @@ void Cursor::init(ActorManager *actorManager, DragonINIResource *dragonINIResour
 	data_800728b0_cursor_seqID = 0;
 }
 
+
 void Cursor::update() {
 	if (!_vm->isFlagSet(Dragons::ENGINE_FLAG_8) || _vm->isFlagSet(Dragons::ENGINE_FLAG_100)) {
 		return;
@@ -324,6 +325,16 @@ void Cursor::selectPreviousCursor() {
 	if (_sequenceID == -1) {
 		_sequenceID = _vm->data_8006f3a8 == 0 ? 4 : 5;
 	}
+}
+
+void Cursor::updateSequenceID(int16 sequenceID) {
+	_sequenceID = sequenceID;
+	_actor->updateSequence(_sequenceID);
+
+}
+
+void Cursor::setActorFlag400() {
+	_actor->setFlag(ACTOR_FLAG_400);
 }
 
 } // End of namespace Dragons

@@ -55,6 +55,7 @@ private:
 	ScriptOpcodes *_scriptOpcodes;
 
 	int16 _currentSceneId;
+	int16 _data_800633ee;
 
 public:
 	Scene(DragonsEngine *vm, Screen *screen, ScriptOpcodes *scriptOpcodes, BigfileArchive *bigfileArchive, ActorManager *actorManager, DragonRMS *_dragonRMS, DragonINIResource *_dragonINIResource);
@@ -73,7 +74,7 @@ public:
 	void removeImageOverlay(uint16 iptId);
 private:
 	void loadSceneData(uint32 sceneId, uint32 cameraPointId);
-
+	void resetActorFrameFlags();
 };
 
 } // End of namespace Dragons

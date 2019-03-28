@@ -73,6 +73,14 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	_leftMouseButtonUp = false;
 	_rightMouseButtonUp = false;
 	_iKeyUp = false;
+
+	for(int i = 0; i < 8; i++) {
+		opCode1A_tbl[i].field0 = 0;
+		opCode1A_tbl[i].field2 = 0;
+		opCode1A_tbl[i].field4 = 0;
+		opCode1A_tbl[i].field6 = 0;
+		opCode1A_tbl[i].field8 = 0;
+	}
 }
 
 DragonsEngine::~DragonsEngine() {
@@ -1148,6 +1156,11 @@ void DragonsEngine::FUN_80038994() {
 
 void DragonsEngine::FUN_8002931c() {
 	error("FUN_8002931c"); //TODO
+}
+
+void DragonsEngine::reset_screen_maybe() {
+	data_8006a3a0_flag &= ~0x10;
+	//TODO
 }
 
 } // End of namespace Dragons
