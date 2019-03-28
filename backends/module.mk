@@ -215,7 +215,8 @@ endif
 ifdef RISCOS
 MODULE_OBJS += \
 	fs/riscos/riscos-fs.o \
-	fs/riscos/riscos-fs-factory.o
+	fs/riscos/riscos-fs-factory.o \
+	platform/sdl/riscos/riscos-utils.o
 endif
 
 ifdef PLAYSTATION3

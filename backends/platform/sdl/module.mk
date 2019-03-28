@@ -35,6 +35,7 @@ endif
 ifdef RISCOS
 MODULE_OBJS += \
 	riscos/riscos-main.o \
+	riscos/riscos-utils.o \
 	riscos/riscos.o
 endif
 
