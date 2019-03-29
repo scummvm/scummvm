@@ -126,7 +126,7 @@ protected:
 };
 
 extern MidiPlayer *MidiPlayer_AdLib_create(SciVersion version);
-extern MidiPlayer *MidiPlayer_AmigaMac_create(SciVersion version);
+extern MidiPlayer *MidiPlayer_AmigaMac_create(SciVersion version, Common::Platform platform);
 extern MidiPlayer *MidiPlayer_PCJr_create(SciVersion version);
 extern MidiPlayer *MidiPlayer_PCSpeaker_create(SciVersion version);
 extern MidiPlayer *MidiPlayer_CMS_create(SciVersion version);
