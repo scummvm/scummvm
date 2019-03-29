@@ -49,6 +49,13 @@
 #include "bladerunner/vqa_player.h"
 #include "bladerunner/waypoints.h"
 #include "bladerunner/zbuffer.h"
+#include "bladerunner/chapters.h"
+#include "bladerunner/ui/kia.h"
+#include "bladerunner/ui/esper.h"
+#include "bladerunner/ui/spinner.h"
+#include "bladerunner/ui/elevator.h"
+#include "bladerunner/ui/vk.h"
+#include "bladerunner/ui/scores.h"
 #include "bladerunner/overlays.h"
 #include "bladerunner/subtitles.h"
 
@@ -725,51 +732,214 @@ bool Debugger::cmdSave(int argc, const char **argv) {
 	return false;
 }
 
+const struct OverlayAndScenesVQAsList {
+	int resourceId;
+	const char *name;
+	bool isOverlayVQA; // else it is a scene VQA
+} overlaysList[] = {
+	{ 1, "MA04OVR2", true }, { 1, "PS10", false },    { 1, "MA01", false },    { 1, "RC01", false },    { 1, "PS01", false },
+	{ 1, "CT01", false },    { 1, "PS11", false },    { 1, "RC51", false },    { 1, "MA02", false },    { 1, "RC02", false },
+	{ 1, "PS02", false },    { 1, "CT02", false },    { 1, "PS12", false },    { 1, "CT12", false },    { 1, "PS03", false },
+	{ 1, "CT03", false },    { 1, "PS13", false },    { 1, "MA04", false },    { 1, "PS04", false },    { 1, "CT04", false },
+	{ 1, "PS14", false },    { 1, "CT01SPNR", true }, { 1, "MA05", false },    { 1, "PS05", false },    { 1, "CT05", false },
+	{ 1, "PS15", false },    { 1, "MA06", false },    { 1, "PS06", false },    { 1, "CT06", false },    { 1, "MA02OVER", true },
+	{ 1, "CT02OVER", true }, { 1, "MA07", false },    { 1, "PS07", false },    { 1, "CT07", false },    { 1, "PS09", false },
+	{ 1, "MA04OVER", true }, { 1, "PS05OVER", true }, { 1, "CT05OVER", true },
+
+	{ 2, "BB10OVR1", true }, { 2, "BB10OVR2", true }, { 2, "BB10OVR3", true }, { 2, "BB10OVR4", true }, { 2, "BB10OVR5", true },
+	{ 2, "BB10_2", false },  { 2, "UG10_2", false },  { 2, "NR10_2", false },  { 2, "PS10_2", false },  { 2, "CT10_2", false },
+	{ 2, "MA01_2", false },  { 2, "BB01_2", false },  { 2, "HC01_2", false },  { 2, "RC01_2", false },  { 2, "HF01_2", false },
+	{ 2, "UG01_2", false },  { 2, "AR01_2", false },  { 2, "DR01_2", false },  { 2, "NR01_2", false },  { 2, "PS01_2", false },
+	{ 2, "CT01_2", false },  { 2, "BB11_2", false },  { 2, "NR11_2", false },  { 2, "PS11_2", false },  { 2, "CT11_2", false },
+	{ 2, "BB51_2", false },  { 2, "CT51_2", false },  { 2, "MA02_2", false },  { 2, "BB02_2", false },  { 2, "TB02_2", false },
+	{ 2, "HC02_2", false },  { 2, "HF02_2", false },  { 2, "UG02_2", false },  { 2, "AR02_2", false },  { 2, "DR02_2", false },
+	{ 2, "NR02_2", false },  { 2, "PS02_2", false },  { 2, "CT02_2", false },  { 2, "BB12_2", false },  { 2, "PS12_2", false },
+	{ 2, "CT12_2", false },  { 2, "MA04OVR2", true }, { 2, "BB03_2", false },  { 2, "HC03_2", false },  { 2, "RC03_2", false },
+	{ 2, "HF03_2", false },  { 2, "UG03_2", false },  { 2, "DR03_2", false },  { 2, "NR03_2", false },  { 2, "PS03_2", false },
+	{ 2, "CT03_2", false },  { 2, "PS13_2", false },  { 2, "MA04_2", false },  { 2, "BB04_2", false },  { 2, "HC04_2", false },
+	{ 2, "RC04_2", false },  { 2, "HF04_2", false },  { 2, "UG04_2", false },  { 2, "DR04_2", false },  { 2, "NR04_2", false },
+	{ 2, "PS04_2", false },  { 2, "CT04_2", false },  { 2, "PS14_2", false },  { 2, "DR06OVR2", true }, { 2, "MA05_2", false },
+	{ 2, "BB05_2", false },  { 2, "TB05_2", false },  { 2, "HF05_2", false },  { 2, "DR05_2", false },  { 2, "NR05_2", false },
+	{ 2, "PS05_2", false },  { 2, "CT05_2", false },  { 2, "PS15_2", false },  { 2, "MA06_2", false },  { 2, "BB06_2", false },
+	{ 2, "TB06_2", false },  { 2, "HF06_2", false },  { 2, "UG06_2", false },  { 2, "DR06_2", false },  { 2, "NR06_2", false },
+	{ 2, "PS06_2", false },  { 2, "CT06_2", false },  { 2, "MA07_2", false },  { 2, "BB07_2", false },  { 2, "TB07_2", false },
+	{ 2, "NR07_2", false },  { 2, "PS07_2", false },  { 2, "BB08_2", false },  { 2, "NR08_2", false },  { 2, "CT08_2", false },
+	{ 2, "BB09_2", false },  { 2, "NR09_2", false },  { 2, "PS09_2", false },  { 2, "CT09_2", false },  { 2, "NR11OVER", true },
+	{ 2, "CT01SPNR", true }, { 2, "MA02OVER", true }, { 2, "CT02OVER", true }, { 2, "BB12OVER", true }, { 2, "MA04OVER", true },
+	{ 2, "DR04OVER", true }, { 2, "NR04OVER", true }, { 2, "BB05OVER", true }, { 2, "DR05OVER", true }, { 2, "PS05OVER", true },
+	{ 2, "CT05OVER", true }, { 2, "BB06OVER", true }, { 2, "DR06OVER", true }, { 2, "BB07OVER", true }, { 2, "BB08OVER", true },
+
+	{ 3, "UG10_3", false },  { 3, "NR10_3", false },  { 3, "CT10_3", false },  { 3, "BB01_3", false },  { 3, "HC01_3", false },
+	{ 3, "RC01_3", false },  { 3, "HF01_3", false },  { 3, "UG01_3", false },  { 3, "KP01_3", false },  { 3, "AR01_3", false },
+	{ 3, "DR01_3", false },  { 3, "NR01_3", false },  { 3, "CT01_3", false },  { 3, "NR11_3", false },  { 3, "CT11_3", false },
+	{ 3, "BB51_3", false },  { 3, "RC51_3", false },  { 3, "CT51_3", false },  { 3, "MA02_3", false },  { 3, "BB02_3", false },
+	{ 3, "TB02_3", false },  { 3, "HC02_3", false },  { 3, "RC02_3", false },  { 3, "HF02_3", false },  { 3, "UG02_3", false },
+	{ 3, "KP02_3", false },  { 3, "AR02_3", false },  { 3, "DR02_3", false },  { 3, "NR02_3", false },  { 3, "CT02_3", false },
+	{ 3, "UG12_3", false },  { 3, "CT12_3", false },  { 3, "MA04OVR2", true }, { 3, "BB03_3", false },  { 3, "TB03_3", false },
+	{ 3, "HC03_3", false },  { 3, "RC03_3", false },  { 3, "HF03_3", false },  { 3, "UG03_3", false },  { 3, "KP03_3", false },
+	{ 3, "DR03_3", false },  { 3, "NR03_3", false },  { 3, "CT03_3", false },  { 3, "UG13_3", false },  { 3, "MA04_3", false },
+	{ 3, "BB04_3", false },  { 3, "HC04_3", false },  { 3, "RC04_3", false },  { 3, "HF04_3", false },  { 3, "UG04_3", false },
+	{ 3, "KP04_3", false },  { 3, "DR04_3", false },  { 3, "NR04_3", false },  { 3, "CT04_3", false },  { 3, "UG14_3", false },
+	{ 3, "PS14_3", false },  { 3, "DR06OVR2", true }, { 3, "MA05_3", false },  { 3, "HF05_3", false },  { 3, "UG05_3", false },
+	{ 3, "KP05_3", false },  { 3, "DR05_3", false },  { 3, "NR05_3", false },  { 3, "CT05_3", false },  { 3, "UG15_3", false },
+	{ 3, "MA06_3", false },  { 3, "HF06_3", false },  { 3, "UG06_3", false },  { 3, "KP06_3", false },  { 3, "DR06_3", false },
+	{ 3, "NR06_3", false },  { 3, "CT06_3", false },  { 3, "UG16_3", false },  { 3, "UG18OVR2", true }, { 3, "UG19OVR1", true },
+	{ 3, "MA07_3", false },  { 3, "TB07_3", false },  { 3, "HF07_3", false },  { 3, "UG07_3", false },  { 3, "KP07_3", false },
+	{ 3, "NR07_3", false },  { 3, "UG17_3", false },  { 3, "UG08_3", false },  { 3, "NR08_3", false },  { 3, "CT08_3", false },
+	{ 3, "UG18_3", false },  { 3, "UG09_3", false },  { 3, "NR09_3", false },  { 3, "PS09_3", false },  { 3, "CT09_3", false },
+	{ 3, "UG19_3", false },  { 3, "NR11OVER", true }, { 3, "CT01SPNR", true }, { 3, "MA02OVER", true }, { 3, "CT02OVER", true },
+	{ 3, "MA04OVER", true }, { 3, "DR04OVER", true }, { 3, "NR04OVER", true }, { 3, "UG14OVER", true }, { 3, "DR05OVER", true },
+	{ 3, "CT05OVER", true }, { 3, "UG15OVER", true }, { 3, "DR06OVER", true }, { 3, "UG17OVER", true }, { 3, "UG18OVER", true },
+
+	{ 6, "VKLUCY", true },   { 6, "VKRUNC", true },   { 6, "KIA_CLUE", false },{ 6, "KIA_INGM", false }, { 6, "KIA_CRIM", false },
+	{ 6, "KIA_SUSP", false },{ 6, "HC01ESP1", false },{ 6, "HC01ESP2", false },{ 6, "HC01ESP3", false }, { 6, "RC02ESP1", false },
+	{ 6, "HC02ESP2", false },{ 6, "RC02ESP2", false },{ 6, "HC02ESP3", false },{ 6, "RC02ESP3", false }, { 6, "HC02ESP4", false },
+	{ 6, "RC02ESP4", false },{ 6, "HC02ESP5", false },{ 6, "RC02ESP5", false },{ 6, "RC02ESP6", false }, { 6, "RC02ESP7", false },
+	{ 6, "TB06ESP1", false },{ 6, "KP06ESP1", false },{ 6, "NR06ESP1", false },{ 6, "TB06ESP2", false }, { 6, "KP06ESP2", false },
+	{ 6, "NR06ESP2", false },{ 6, "TB06ESP3", false },{ 6, "KP06ESP3", false },{ 6, "NR07ESP1", false }, { 6, "TB06ESP4", false },
+	{ 6, "KP06ESP4", false },{ 6, "NR07ESP2", false },{ 6, "SPINNER", false }, { 6, "KIAOVER", false },  { 6, "VK", false },
+	{ 6, "VKKASH", true },   { 6, "PS02ELEV", false },{ 6, "ESPER", false },   { 6, "VKDEKT", true },   { 6, "MA06ELEV", false },
+	{ 6, "VKBOB", true },    { 6, "SCORE", false },
+
+	{ 0, NULL, false }
+};
+
 /**
 * Will use overlay videos that the game has loaded for the scene
 * at the time of running the command
-* or otherwise will attempt to load the specified overlay to the scene.
+* or otherwise will attempt to load the specified overlay to the scene,
+* if it exists in the currently loaded (VQAx, MODE) MIX resources.
+* Use "overlay reset" to clear up all loaded overlays (and/or custom scene video)
+*
+* Note: Loading MODE.MIX here (and a VQA from it) may lead to buggy results,
+*       if the player then invokes and closes an actual game mode (KIA, ESPER, GPS etc).
+*       This is because the game itself will unload MODE.MIX when closing the game mode
+*       and that can lead to a assertion fault for a missing file handle.
+*       A viable solution would be to have MODE.MIX loaded all the time,
+*       but that is unnecessary since a developer could just uncomment a few lines below
+*       (look for "force-load MODE.MIX") and make use of it with caution, if needed.
 */
 bool Debugger::cmdOverlay(int argc, const char **argv) {
 	bool invalidSyntax = false;
+	bool modeMixOverlaysAvailableFlg = false;
+	int chapterIdOverlaysAvailableInt = -1;
+
+	if (_vm->_kia->isOpen()
+		|| _vm->_esper->isOpen()
+		|| _vm->_spinner->isOpen()
+		|| _vm->_elevator->isOpen()
+		|| _vm->_vk->isOpen()
+		|| _vm->_scores->isOpen()
+	) {
+		debugPrintf("Sorry, playing custom overlays in KIA, ESPER, Voigt-Kampff, Spinner GPS,\nScores or Elevator mode is not supported\n");
+		return true;
+	}
 
 	if (argc != 1 && argc != 2 && argc != 3 && argc != 5) {
 		invalidSyntax = true;
 	}
 
-	// Make sure all MIX with VQAs are loaded (including MODE.MIX)
-	if (!_vm->openArchive("MODE.MIX")) {
-		debugPrintf("Error: Could not load resource MODE.MIX\n");
+	if (_vm->_chapters->hasOpenResources()) {
+		chapterIdOverlaysAvailableInt = _vm->_chapters->currentResourceId();
 	}
-	if (!_vm->openArchive("VQA1.MIX")) {
-		debugPrintf("Error: Could not load resource VQA1.MIX\n");
+	if (chapterIdOverlaysAvailableInt == -1) {
+		debugPrintf("No available open resources to load VQAs from.\n Giving up.\n");
+		return true;
 	}
-	if (!_vm->openArchive("VQA2.MIX")) {
-		debugPrintf("Error: Could not load resource VQA2.MIX\n");
-	}
-	if (!_vm->openArchive("VQA3.MIX")) {
-		debugPrintf("Error: Could not load resource VQA3.MIX\n");
+
+	// Normally, don't force-load the MODE.MIX resource
+	if (!_vm->isArchiveOpen("MODE.MIX")) {
+//		if (_vm->openArchive("MODE.MIX") { // Note: This will force-load MODE.MIX. Use with caution!
+//			debugPrintf("Warning: MODE.MIX resources were force-loaded.\n Please, don't use game's menu modes (KIA, ESPER, Voigt-Kampff, Spinner GPS, Scores or Elevator) before executing an \"%s reset\" from the debugger!\n", argv[0]);
+//			modeMixOverlaysAvailableFlg = true;
+//		}
+	} else {
+		modeMixOverlaysAvailableFlg = true;
 	}
 
 	if (argc == 1) {
 		// print info for all overlays loaded for the scene
+		uint8 countOfLoadedOverlaysInScene = 0;
 		debugPrintf("name animationId startFrame endFrame\n");
+
 		for (int i = 0; i < _vm->_overlays->kOverlayVideos; ++i) {
 			if (_vm->_overlays->_videos[i].loaded) {
+				countOfLoadedOverlaysInScene++;
 				VQADecoder::LoopInfo &loopInfo =_vm->_overlays->_videos[i].vqaPlayer->_decoder._loopInfo;
 				for (int j = 0; j < loopInfo.loopCount; ++j) {
 					debugPrintf("%s %2d %4d %4d\n", _vm->_overlays->_videos[i].name.c_str(), j, loopInfo.loops[j].begin, loopInfo.loops[j].end);
 				}
 			}
 		}
+
+		if ( countOfLoadedOverlaysInScene > 0) {
+			debugPrintf("  ** %d overlays are loaded in scene **\n", countOfLoadedOverlaysInScene);
+		} else {
+			debugPrintf("  ** No overlays loaded in scene **\n");
+		}
+
 		return true;
 	}
 
 	if (argc == 2) {
-		// Check if we need to reset (remove) the overlays loaded for the scene
 		Common::String argName = argv[1];
+
 		if (argName == "reset") {
+		// Reset (remove) the overlays loaded for the scene
 			_vm->_overlays->removeAll();
+			// And return to original VQA for this scene
+			const Common::String origSceneName = _vm->_gameInfo->getSceneName(_vm->_scene->_sceneId);
+
+			Common::String origVqaName;
+			int currentResourceId = _vm->_chapters->currentResourceId();
+			if (currentResourceId == 1) {
+				origVqaName = Common::String::format("%s.VQA", origSceneName.c_str());
+			} else {
+				origVqaName = Common::String::format("%s_%d.VQA", origSceneName.c_str(), MIN(currentResourceId, 3));
+			}
+
+			if (_vm->_scene->_vqaPlayer != nullptr) {
+				delete _vm->_scene->_vqaPlayer;
+			}
+
+			_vm->_scene->_vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceBack, origVqaName);
+			if (!_vm->_scene->_vqaPlayer->open()) {
+				debugPrintf("Error: Could not open player while reseting\nto scene VQA named: %s!\n", (origVqaName + ".VQA").c_str());
+				return true;
+			}
+			_vm->_scene->startDefaultLoop();
+			_vm->_scene->advanceFrame();
+
+
+		} else if (argName == "avail") {
+		// List the available overlays in the loaded resources
+			const uint dispColCount = 5;
+			uint colCountIter = 0;
+			uint16 itemIter = 0;
+
+			debugPrintf("Available overlays in the loaded resources:\n");
+			for (itemIter = 0; overlaysList[itemIter].resourceId != 0; ++itemIter) {
+				if ( (overlaysList[itemIter].resourceId == chapterIdOverlaysAvailableInt)
+					|| ( modeMixOverlaysAvailableFlg && overlaysList[itemIter].resourceId == 6)
+				) {
+					debugPrintf("%s ", overlaysList[itemIter].name);
+					colCountIter = (colCountIter + 1) % dispColCount;
+					if ( colCountIter == 0) {
+						debugPrintf("\n");
+					}
+				}
+			}
+			// final new line if needed
+			if ( colCountIter % dispColCount != 0) {
+				debugPrintf("\n");
+			}
+			if (!modeMixOverlaysAvailableFlg) {
+				debugPrintf("Note: MODE.MIX resources are currently not loaded.\n");
+			}
+
+		} else if (argName.size() > 12) {
+			debugPrintf("The specified name is too long. It should be up to 12 characters.\n");
+			invalidSyntax = true;
 		} else {
 			debugPrintf("Invalid command usage\n");
 			invalidSyntax = true;
@@ -778,6 +948,8 @@ bool Debugger::cmdOverlay(int argc, const char **argv) {
 
 	if (argc == 3 || argc == 5) {
 		Common::String overlayName = argv[1];
+		overlayName.toUppercase();
+
 		int overlayAnimationId = atoi(argv[2]);
 		bool loopForever = false;
 		LoopSetModes startNowFlag = kLoopSetModeEnqueue;
@@ -794,33 +966,79 @@ bool Debugger::cmdOverlay(int argc, const char **argv) {
 			debugPrintf("Animation id value must be >= 0!\n");
 			return true;
 		}
-		//
-		// Attempt to load the overlay even if not already loaded for the scene (in _vm->_overlays->_videos)
-		int overlayVideoIdx = _vm->_overlays->play(overlayName, overlayAnimationId, loopForever, startNowFlag, 0);
-		if( overlayVideoIdx == -1 ) {
-			debugPrintf("Could not load the overlay animation: %s in this scene. Try reseting overlays first to free up slots!\n", overlayName.c_str());
-		} else {
-			debugPrintf("Loading overlay animation: %s...\n", overlayName.c_str());
-			VQADecoder::LoopInfo &loopInfo =_vm->_overlays->_videos[overlayVideoIdx].vqaPlayer->_decoder._loopInfo;
-			int overlayAnimationLoopCount = loopInfo.loopCount;
-			if (overlayAnimationLoopCount == 0) {
-				debugPrintf("Error: No valid loops were found for overlay animation named: %s!\n", overlayName.c_str());
-				_vm->_overlays->remove(overlayName.c_str());
-			} else if (overlayAnimationId >= overlayAnimationLoopCount) {
-				debugPrintf("Invalid loop id: %d for overlay animation: %s. Try from 0 to %d.\n",  overlayAnimationId, overlayName.c_str(), overlayAnimationLoopCount-1);
+
+		// Check if specified overlay name exists AND is available
+		uint16 itemIter = 0;
+		for (itemIter = 0; overlaysList[itemIter].resourceId != 0; ++itemIter) {
+			if ( (overlaysList[itemIter].resourceId == chapterIdOverlaysAvailableInt)
+				|| ( modeMixOverlaysAvailableFlg && overlaysList[itemIter].resourceId == 6)
+			) {
+				if (strcmp(overlaysList[itemIter].name, overlayName.c_str()) == 0){
+					break;
+				}
+			}
+		}
+		if (overlaysList[itemIter].resourceId == 0 ) {
+			debugPrintf("No available resource was found by that name!\nPerhaps it exists in another chapter.\n");
+			return true;
+		}
+
+		if (overlaysList[itemIter].isOverlayVQA) {
+			//
+			// Attempt to load the overlay in an empty slot
+			// even if it's not already loaded for the scene (in _vm->_overlays->_videos)
+			int overlayVideoIdx = _vm->_overlays->play(overlayName, overlayAnimationId, loopForever, startNowFlag, 0);
+			if( overlayVideoIdx == -1 ) {
+				debugPrintf("Could not load the overlay animation: %s in this scene. Try reseting overlays first to free up slots!\n", overlayName.c_str());
 			} else {
-				// print info about available loops too
-				debugPrintf("Animation: %s loaded. Running loop %d...\n", overlayName.c_str(), overlayAnimationId);
-				for (int j = 0; j < overlayAnimationLoopCount; ++j) {
-					debugPrintf("%s %2d %4d %4d\n", _vm->_overlays->_videos[overlayVideoIdx].name.c_str(), j, loopInfo.loops[j].begin, loopInfo.loops[j].end);
+				debugPrintf("Loading overlay animation: %s...\n", overlayName.c_str());
+
+				VQADecoder::LoopInfo &loopInfo =_vm->_overlays->_videos[overlayVideoIdx].vqaPlayer->_decoder._loopInfo;
+				int overlayAnimationLoopCount = loopInfo.loopCount;
+				if (overlayAnimationLoopCount == 0) {
+					debugPrintf("Error: No valid loops were found for overlay animation named: %s!\n", overlayName.c_str());
+					_vm->_overlays->remove(overlayName.c_str());
+				} else if (overlayAnimationId >= overlayAnimationLoopCount) {
+					debugPrintf("Invalid loop id: %d for overlay animation: %s. Try from 0 to %d.\n",  overlayAnimationId, overlayName.c_str(), overlayAnimationLoopCount-1);
+				} else {
+					// print info about available loops too
+					debugPrintf("Animation: %s loaded. Running loop %d...\n", overlayName.c_str(), overlayAnimationId);
+					for (int j = 0; j < overlayAnimationLoopCount; ++j) {
+						debugPrintf("%s %2d %4d %4d\n", _vm->_overlays->_videos[overlayVideoIdx].name.c_str(), j, loopInfo.loops[j].begin, loopInfo.loops[j].end);
+					}
+				}
+			}
+		} else {
+			if (_vm->_scene->_vqaPlayer != nullptr) {
+				delete _vm->_scene->_vqaPlayer;
+			}
+			_vm->_scene->_vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceBack, overlayName + ".VQA");
+			if (!_vm->_scene->_vqaPlayer->open()) {
+				debugPrintf("Error: Could not open player for scene VQA named: %s!\n", (overlayName + ".VQA").c_str());
+				return true;
+			}
+
+			VQADecoder::LoopInfo &loopInfo =_vm->_scene->_vqaPlayer->_decoder._loopInfo;
+			int sceneAnimationLoopCount = loopInfo.loopCount;
+			if (sceneAnimationLoopCount == 0) {
+				debugPrintf("Error: No valid loops were found for scene animation named: %s!\n", (overlayName + ".VQA").c_str());
+			} else if (overlayAnimationId >= sceneAnimationLoopCount) {
+				debugPrintf("Invalid loop id: %d for scene animation: %s. Try from 0 to %d.\n",  overlayAnimationId, overlayName.c_str(), sceneAnimationLoopCount-1);
+			} else {
+				// ignore the specified loopForever and startNow flags
+				// just do a kSceneLoopModeOnce, without immediate start
+				_vm->_scene->loopStartSpecial(kSceneLoopModeOnce, overlayAnimationId, false);
+				debugPrintf("Scene animation: %s loaded. Running loop %d...\n", overlayName.c_str(), overlayAnimationId);
+				for (int j = 0; j < sceneAnimationLoopCount; ++j) {
+					debugPrintf("%s %2d %4d %4d\n", overlayName.c_str(), j, loopInfo.loops[j].begin, loopInfo.loops[j].end);
 				}
 			}
 		}
 	}
 
 	if (invalidSyntax) {
-		debugPrintf("Load, list or play loaded overlay animations. Values for loopForever and startNow are boolean.\n");
-		debugPrintf("Usage: %s [[<name> <animationId> [<loopForever> <startNow>]] | reset ]\n", argv[0]);
+		debugPrintf("Load, list, play or reset (clear) loaded overlay animations.\nValues for loopForever and startNow are boolean.\n");
+		debugPrintf("Usage: %s [[<name> <animationId> [<loopForever> <startNow>]] | avail | reset ]\n", argv[0]);
 	}
 	return true;
 }
