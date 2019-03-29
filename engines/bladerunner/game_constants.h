@@ -1209,7 +1209,7 @@ enum Variables {
 	kVariableDNAEvidence = 48,
 	kVariableCorruptedGuzzaEvidence = 49,
 	kVariableTaffyLewisMusic = 50,
-	kVariableReplicantsSurvivorsAtMoobus = 51,
+	kVariableReplicantsSurvivorsAtMoonbus = 51,
 	kVariableNextTvNews = 52,
 	kVariableEarlyQFrontMusic = 53,
 	kVariableEarlyQBackMusic = 54

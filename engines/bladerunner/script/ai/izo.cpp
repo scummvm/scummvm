@@ -238,10 +238,10 @@ void AIScriptIzo::Retired(int byActorId) {
 		return; //false;
 	}
 
-	Global_Variable_Decrement(kVariableReplicantsSurvivorsAtMoobus, 1);
+	Global_Variable_Decrement(kVariableReplicantsSurvivorsAtMoonbus, 1);
 	Actor_Set_Goal_Number(kActorIzo, kGoalIzoGone);
 
-	if (Global_Variable_Query(kVariableReplicantsSurvivorsAtMoobus) == 0) {
+	if (Global_Variable_Query(kVariableReplicantsSurvivorsAtMoonbus) == 0) {
 		Player_Loses_Control();
 		Delay(2000);
 		Player_Set_Combat_Mode(false);

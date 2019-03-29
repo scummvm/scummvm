@@ -234,10 +234,10 @@ void AIScriptSadik::Retired(int byActorId) {
 	}
 
 	if (Actor_Query_In_Set(kActorSadik, kSetKP07)) {
-		Global_Variable_Decrement(kVariableReplicantsSurvivorsAtMoobus, 1); // can't Sadik still be human (Rep-sympathiser here? A bug?
+		Global_Variable_Decrement(kVariableReplicantsSurvivorsAtMoonbus, 1); // can't Sadik still be human (Rep-sympathiser here? A bug?
 		Actor_Set_Goal_Number(kActorSadik, kGoalSadikGone);
 
-		if (Global_Variable_Query(kVariableReplicantsSurvivorsAtMoobus) == 0) {
+		if (Global_Variable_Query(kVariableReplicantsSurvivorsAtMoonbus) == 0) {
 			Player_Loses_Control();
 			Delay(2000);
 			Player_Set_Combat_Mode(false);
