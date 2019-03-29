@@ -187,6 +187,7 @@ License: GPL-2+ and Expat
 
 Files: gui/themes/fonts/Free*.ttf
        gui/themes/scummmodern/Free*.ttf
+       gui/themes/scummremastered/Free*.ttf
 Copyright: 2002-2009 Free Software Foundation.
 License: GPL-3+
  This program is free software; you can redistribute it and/or modify

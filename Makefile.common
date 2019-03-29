@@ -286,7 +286,7 @@ DIST_FILES_DOCS_no-nb:=$(addprefix $(srcdir)/doc/no-nb/,HurtigStart)
 DIST_FILES_DOCS_se:=$(addprefix $(srcdir)/doc/se/,LasMig Snabbstart)
 
 # Themes files
-DIST_FILES_THEMES=scummmodern.zip scummclassic.zip
+DIST_FILES_THEMES=scummmodern.zip scummclassic.zip scummremastered.zip
 ifdef USE_TRANSLATION
 DIST_FILES_THEMES+=translations.dat
 endif
