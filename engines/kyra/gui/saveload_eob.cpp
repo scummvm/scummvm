@@ -654,8 +654,10 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 	int8 testStr = test.readSByte();
 	test.seek(66);
 	int8 testChr = test.readSByte();
-	test.seek(_flags.gameID == GI_EOB1 ? 48 : 50);
+	test.seek(_flags.gameID == GI_EOB1 ? 48 : 70);
 	uint32 exp = test.readUint32LE();
+	test.seek(_flags.gameID == GI_EOB1 ? 61 : 47);
+	bool padding = !test.readByte();
 	test.seek(0);
 		
 	if (testStr >= 0 && testStr <= 25 && testChr >= 0 && testChr <= 25) {
@@ -663,7 +665,7 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 			sourcePlatform = Common::kPlatformFMTowns;
 	}
 	
-	if (sourcePlatform == Common::kPlatformDOS && exp & 0xFF000000)
+	if (padding && sourcePlatform == Common::kPlatformDOS && exp & 0xFF000000)
 		sourcePlatform = Common::kPlatformAmiga;
 
 	Common::SeekableSubReadStreamEndian in(fs, 0, fs->size(), sourcePlatform == Common::kPlatformAmiga, DisposeAfterUse::YES);
@@ -699,6 +701,8 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 		c->constitutionMax = in.readSByte();
 		c->charismaCur = in.readSByte();
 		c->charismaMax = in.readSByte();
+		if (_flags.gameID == GI_EOB2 && sourcePlatform == Common::kPlatformAmiga)
+			in.skip(1);
 		c->hitPointsCur = (_flags.gameID == GI_EOB1) ? in.readSByte() : in.readSint16();
 		c->hitPointsMax = (_flags.gameID == GI_EOB1) ? in.readSByte() : in.readSint16();
 		if (_flags.gameID == GI_EOB1) {
@@ -715,7 +719,7 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 		c->portrait = in.readSByte();
 		c->food = in.readByte();
 		in.read(c->level, 3);
-		if (sourcePlatform == Common::kPlatformAmiga)
+		if (_flags.gameID == GI_EOB1 && sourcePlatform == Common::kPlatformAmiga)
 			in.skip(1);
 		for (int ii = 0; ii < 3; ii++)
 			c->experience[ii] = in.readUint32();
@@ -1093,6 +1097,7 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 			out->writeSByte(c->hitPointsCur);
 			out->writeSByte(c->hitPointsMax);
 		} else if (_flags.platform == Common::kPlatformAmiga) {
+			out->writeByte(0);
 			out->writeSint16BE(c->hitPointsCur);
 			out->writeSint16BE(c->hitPointsMax);
 		} else {
@@ -1110,7 +1115,8 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 		out->write(c->level, 3);
 
 		if (_flags.platform == Common::kPlatformAmiga) {
-			out->writeByte(0);
+			if (_flags.gameID == GI_EOB1)
+				out->writeByte(0);
 			for (int ii = 0; ii < 3; ii++)
 				out->writeUint32BE(c->experience[ii]);
 		} else {
