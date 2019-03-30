@@ -466,11 +466,10 @@ void EoBCoreEngine::drawItemIconShape(int pageNum, Item itemId, int x, int y) {
 	const uint8 *shp = _itemIconShapes[icn];
 
 	if (applyBluePal) {
-		if (_flags.gameID == GI_EOB1) {
-			if (_amigaBlueItemIconShapes)
-				shp = _amigaBlueItemIconShapes[icn];
-			else
-				ovl = (_configRenderMode == Common::kRenderCGA) ? _itemsOverlayCGA : &_itemsOverlay[icn << 4];
+		if (_amigaBlueItemIconShapes) {
+			shp = _amigaBlueItemIconShapes[icn];
+		} else if (_flags.gameID == GI_EOB1) {
+			ovl = (_configRenderMode == Common::kRenderCGA) ? _itemsOverlayCGA : &_itemsOverlay[icn << 4];
 		} else {
 			_screen->setFadeTable(_lightBlueFadingTable);
 			_screen->setShapeFadingLevel(1);

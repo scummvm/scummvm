@@ -806,12 +806,13 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 		for (int i = 0; i < _numItemIconShapes; i++)
 			_itemIconShapes[i] = _screen->encodeShape((i % 0x14) << 1, (i / 0x14) << 4, 2, 0x10, false, _cgaMappingIcons);
 		
-		if (_flags.platform == Common::kPlatformAmiga && _flags.gameID == GI_EOB1) {
+		if (_flags.platform == Common::kPlatformAmiga) {
+			const uint8 offsY = (_flags.gameID == GI_EOB1) ? 80 : 96;
 			_amigaBlueItemIconShapes = new const uint8*[_numItemIconShapes];
 			for (int i = 0; i < _numItemIconShapes; i++) {
 				int bx = (i % 0x14) << 1;
 				int by = (i / 0x14) << 4;
-				_amigaBlueItemIconShapes[i] = _screen->getPagePixel(2, (bx << 3) + 8, by + 88) ? _screen->encodeShape(bx, by + 80, 2, 0x10, false, 0) : _screen->encodeShape(bx, by, 2, 0x10, false, 0);
+				_amigaBlueItemIconShapes[i] = _screen->getPagePixel(2, (bx << 3) + 8, by + offsY + 8) ? _screen->encodeShape(bx, by + offsY, 2, 0x10, false, 0) : _screen->encodeShape(bx, by, 2, 0x10, false, 0);
 			}
 		}
 	}
