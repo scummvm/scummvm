@@ -75,9 +75,6 @@ bool MagneticMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames
 
 		DetectedGame gd;
 		if (!p->_gameId) {
-			if (filename.hasSuffixIgnoreCase(".blb"))
-				continue;
-
 			if (gDebugLevel > 0) {
 				// Print an entry suitable for putting into the detection_tables.h, using the
 				// name of the parent folder the game is in as the presumed game Id

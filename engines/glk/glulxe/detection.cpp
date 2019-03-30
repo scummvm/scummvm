@@ -22,6 +22,7 @@
 
 #include "glk/glulxe/detection.h"
 #include "glk/glulxe/detection_tables.h"
+#include "glk/blorb.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/md5.h"
@@ -46,7 +47,7 @@ GameDescriptor GlulxeMetaEngine::findGame(const char *gameId) {
 }
 
 bool GlulxeMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
-	const char *const EXTENSIONS[] = { ".ulx", ".blb", ".gblorb", nullptr };
+	const char *const EXTENSIONS[] = { ".ulx", nullptr };
 
 	// Loop through the files of the folder
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
@@ -54,11 +55,9 @@ bool GlulxeMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &
 		if (file->isDirectory())
 			continue;
 		Common::String filename = file->getName();
-		bool hasExt = false;
+		bool hasExt = false, isBlorb = false;
 		for (const char *const *ext = &EXTENSIONS[0]; *ext && !hasExt; ++ext)
 			hasExt = filename.hasSuffixIgnoreCase(*ext);
-		if (!hasExt)
-			continue;
 
 		// Open up the file and calculate the md5
 		Common::File gameFile;
@@ -66,7 +65,12 @@ bool GlulxeMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &
 			continue;
 		Common::String md5 = Common::computeStreamMD5AsString(gameFile, 5000);
 		size_t filesize = gameFile.size();
+		gameFile.seek(0);
+		isBlorb = Blorb::isBlorb(gameFile, ID_GLUL);
 		gameFile.close();
+
+		if (!hasExt && !isBlorb)
+			continue;
 
 		// Check for known games
 		const GlulxeGameDescription *p = GLULXE_GAMES;
@@ -75,9 +79,6 @@ bool GlulxeMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &
 
 		DetectedGame gd;
 		if (!p->_gameId) {
-			if (filename.hasSuffixIgnoreCase(".blb"))
-				continue;
-
 			if (gDebugLevel > 0) {
 				// Print an entry suitable for putting into the detection_tables.h, using the
 				// name of the parent folder the game is in as the presumed game Id
