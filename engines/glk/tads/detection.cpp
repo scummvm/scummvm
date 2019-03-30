@@ -22,6 +22,7 @@
 
 #include "glk/tads/detection.h"
 #include "glk/tads/detection_tables.h"
+#include "glk/blorb.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/md5.h"
@@ -58,13 +59,18 @@ GameDescriptor TADSMetaEngine::findGame(const char *gameId) {
 }
 
 bool TADSMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
+	const char *const EXTENSIONS[] = { ".gam", nullptr };
+
 	// Loop through the files of the folder
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		// Check for a recognised filename
-		Common::String filename = file->getName();
-		if (file->isDirectory() || !(filename.hasSuffixIgnoreCase(".gam")
-				|| filename.hasSuffixIgnoreCase(".blorb")))
+		if (file->isDirectory())
 			continue;
+
+		Common::String filename = file->getName();
+		bool hasExt = false, isBlorb = false;
+		for (const char *const *ext = &EXTENSIONS[0]; *ext && !hasExt; ++ext)
+			hasExt = filename.hasSuffixIgnoreCase(*ext);
 
 		// Open up the file and calculate the md5
 		Common::File gameFile;
@@ -72,7 +78,12 @@ bool TADSMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &ga
 			continue;
 		Common::String md5 = Common::computeStreamMD5AsString(gameFile, 5000);
 		size_t filesize = gameFile.size();
+		gameFile.seek(0);
+		isBlorb = Blorb::isBlorb(gameFile, ID_TAD2) || Blorb::isBlorb(gameFile, ID_TAD3);
 		gameFile.close();
+
+		if (!hasExt && !isBlorb)
+			continue;
 
 		// Check for known games
 		const TADSGameDescription *p = TADS_GAMES;
@@ -81,9 +92,6 @@ bool TADSMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &ga
 
 		DetectedGame gd;
 		if (!p->_gameId) {
-			if (!filename.hasSuffixIgnoreCase(".gam"))
-				continue;
-
 			if (gDebugLevel > 0) {
 				// Print an entry suitable for putting into the detection_tables.h, using the
 				Common::String fname = filename;

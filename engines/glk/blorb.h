@@ -42,6 +42,39 @@ struct ChunkEntry {
 	Common::String _filename;
 };
 
+enum {
+	ID_FORM = MKTAG('F', 'O', 'R', 'M'),
+	ID_IFRS = MKTAG('I', 'F', 'R', 'S'),
+	ID_RIdx = MKTAG('R', 'I', 'd', 'x'),
+
+	ID_Snd = MKTAG('S', 'n', 'd', ' '),
+	ID_Exec = MKTAG('E', 'x', 'e', 'c'),
+	ID_Pict = MKTAG('P', 'i', 'c', 't'),
+	ID_Data = MKTAG('D', 'a', 't', 'a'),
+
+	ID_Copyright = MKTAG('(', 'c', ')', ' '),
+	ID_AUTH = MKTAG('A', 'U', 'T', 'H'),
+	ID_ANNO = MKTAG('A', 'N', 'N', 'O'),
+
+	ID_ZCOD = MKTAG('Z', 'C', 'O', 'D'),
+	ID_GLUL = MKTAG('G', 'L', 'U', 'L'),
+	ID_TAD2 = MKTAG('T', 'A', 'D', '2'),
+	ID_TAD3 = MKTAG('T', 'A', 'D', '3'),
+	ID_HUGO = MKTAG('H', 'U', 'G', 'O'),
+	ID_SAAI = MKTAG('S', 'A', 'A', 'I'),
+
+	ID_JPEG = MKTAG('J', 'P', 'E', 'G'),
+	ID_PNG  = MKTAG('P', 'N', 'G', ' '),
+	ID_Rect = MKTAG('R', 'e', 'c', 't'),
+
+	ID_MIDI = MKTAG('M', 'I', 'D', 'I'),
+	ID_MP3 = MKTAG('M', 'P', '3', ' '),
+	ID_WAVE = MKTAG('W', 'A', 'V', 'E'),
+	ID_AIFF = MKTAG('A', 'I', 'F', 'F'),
+	ID_OGG = MKTAG('O', 'G', 'G', ' '),
+	ID_MOD = MKTAG('M', 'O', 'D', ' ')
+};
+
 /**
  * Blorb file manager
  */
@@ -95,9 +128,19 @@ public:
 	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
 
 	/**
+	 * Read the RIdx section from the stream.
+	 */
+	static bool readRIdx(Common::SeekableReadStream &stream, Common::Array<ChunkEntry> &chunks);
+
+	/**
+	 * Returns true if a given file is a Blorb file
+	 */
+	static bool isBlorb(Common::SeekableReadStream &stream, uint32 type = 0);
+
+	/**
 	 * Returns true if a given filename specifies a Blorb file
 	 */
-	static bool isBlorb(const Common::String &filename);
+	static bool isBlorb(const Common::String &filename, uint32 type = 0);
 };
 
 } // End of namespace Glk

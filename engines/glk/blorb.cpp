@@ -24,32 +24,6 @@
 
 namespace Glk {
 
-enum {
-	ID_FORM = MKTAG('F', 'O', 'R', 'M'),
-	ID_IFRS = MKTAG('I', 'F', 'R', 'S'),
-	ID_RIdx = MKTAG('R', 'I', 'd', 'x'),
-
-	ID_Snd = MKTAG('S', 'n', 'd', ' '),
-	ID_Exec = MKTAG('E', 'x', 'e', 'c'),
-	ID_Pict = MKTAG('P', 'i', 'c', 't'),
-	ID_Data = MKTAG('D', 'a', 't', 'a'),
-
-	ID_Copyright = MKTAG('(', 'c', ')', ' '),
-	ID_AUTH = MKTAG('A', 'U', 'T', 'H'),
-	ID_ANNO = MKTAG('A', 'N', 'N', 'O'),
-
-	ID_JPEG = MKTAG('J', 'P', 'E', 'G'),
-	ID_PNG  = MKTAG('P', 'N', 'G', ' '),
-	ID_Rect = MKTAG('R', 'e', 'c', 't'),
-
-	ID_MIDI = MKTAG('M', 'I', 'D', 'I'),
-	ID_MP3 = MKTAG('M', 'P', '3', ' '),
-	ID_WAVE = MKTAG('W', 'A', 'V', 'E'),
-	ID_AIFF = MKTAG('A', 'I', 'F', 'F'),
-	ID_OGG = MKTAG('O', 'G', 'G', ' '),
-	ID_MOD = MKTAG('M', 'O', 'D', ' ')
-};
-
 /*--------------------------------------------------------------------------*/
 
 Blorb::Blorb(const Common::String &filename, InterpreterType interpType) :
@@ -111,39 +85,18 @@ Common::ErrorCode Blorb::load() {
 	// First, chew through the file and index the chunks
 	Common::File f;
 	if ((!_filename.empty() && !f.open(_filename)) ||
-			(_filename.empty() && !f.open(_fileNode)) ||
-			f.size() < 12)
+			(_filename.empty() && !f.open(_fileNode)))
 		return Common::kReadingFailed;
 
-	if (f.readUint32BE() != ID_FORM)
-		return Common::kReadingFailed;
-	f.readUint32BE();
-	if (f.readUint32BE() != ID_IFRS)
-		return Common::kReadingFailed;
-	if (f.readUint32BE() != ID_RIdx)
+	if (!isBlorb(f))
 		return Common::kReadingFailed;
 
-	f.readUint32BE();
-	uint count = f.readUint32BE();
-
-	// First read in the resource index
-	for (uint idx = 0; idx < count; ++idx) {
-		ChunkEntry ce;
-		ce._type = f.readUint32BE();
-		ce._number = f.readUint32BE();
-		ce._offset = f.readUint32BE();
-
-		_chunks.push_back(ce);
-	}
+	if (!readRIdx(f, _chunks))
+		return Common::kReadingFailed;
 
 	// Further iterate through the resources
 	for (uint idx = 0; idx < _chunks.size(); ++idx) {
 		ChunkEntry &ce = _chunks[idx];
-		f.seek(ce._offset);
-		ce._offset += 8;
-
-		ce._id = f.readUint32BE();
-		ce._size = f.readUint32BE();
 
 		if (ce._type == ID_Pict) {
 			ce._filename = Common::String::format("pic%u", ce._number);
@@ -173,22 +126,21 @@ Common::ErrorCode Blorb::load() {
 			ce._filename = Common::String::format("data%u", ce._number);
 
 		} else if (ce._type == ID_Exec) {
-			char buffer[5];
-			WRITE_BE_UINT32(buffer, ce._id);
-			buffer[4] = '\0';
-			Common::String type(buffer);
-
 			if (
-				(_interpType == INTERPRETER_FROTZ && type == "ZCOD") ||
-				(_interpType == INTERPRETER_GLULXE && type == "GLUL") ||
-				(_interpType == INTERPRETER_TADS2 && type == "TAD2") ||
-				(_interpType == INTERPRETER_TADS3 && type == "TAD3") ||
-				(_interpType == INTERPRETER_HUGO && type == "HUGO") ||
-				(_interpType == INTERPRETER_SCOTT && type == "SAAI")
+				(_interpType == INTERPRETER_FROTZ && ce._id == ID_ZCOD) ||
+				(_interpType == INTERPRETER_GLULXE && ce._id == ID_GLUL) ||
+				(_interpType == INTERPRETER_TADS2 && ce._id == ID_TAD2) ||
+				(_interpType == INTERPRETER_TADS3 && ce._id == ID_TAD3) ||
+				(_interpType == INTERPRETER_HUGO && ce._id == ID_HUGO) ||
+				(_interpType == INTERPRETER_SCOTT && ce._id == ID_SAAI)
 			) {
 				// Game executable
 				ce._filename = "game";
 			} else {
+				char buffer[5];
+				WRITE_BE_UINT32(buffer, ce._id);
+				buffer[4] = '\0';
+				Common::String type(buffer);
 				ce._filename = type;
 			}
 		}
@@ -197,9 +149,68 @@ Common::ErrorCode Blorb::load() {
 	return Common::kNoError;
 }
 
-bool Blorb::isBlorb(const Common::String &filename) {
-	return filename.hasSuffixIgnoreCase(".blorb") || filename.hasSuffixIgnoreCase(".zblorb")
-		|| filename.hasSuffixIgnoreCase(".gblorb") || filename.hasSuffixIgnoreCase(".blb");
+bool Blorb::readRIdx(Common::SeekableReadStream &stream, Common::Array<ChunkEntry> &chunks) {
+	if (stream.readUint32BE() != ID_RIdx)
+		return false;
+
+	stream.readUint32BE();
+	uint count = stream.readUint32BE();
+
+	// First read in the resource index
+	for (uint idx = 0; idx < count; ++idx) {
+		ChunkEntry ce;
+		ce._type = stream.readUint32BE();
+		ce._number = stream.readUint32BE();
+		ce._offset = stream.readUint32BE();
+
+		chunks.push_back(ce);
+	}
+
+	// Further iterate through the resources
+	for (uint idx = 0; idx < chunks.size(); ++idx) {
+		ChunkEntry &ce = chunks[idx];
+		stream.seek(ce._offset);
+		ce._offset += 8;
+
+		ce._id = stream.readUint32BE();
+		ce._size = stream.readUint32BE();
+	}
+
+	return true;
+}
+
+bool Blorb::isBlorb(Common::SeekableReadStream &stream, uint32 type) {
+	if (stream.size() < 12)
+		return false;
+	if (stream.readUint32BE() != ID_FORM)
+		return false;
+	stream.readUint32BE();
+	if (stream.readUint32BE() != ID_IFRS)
+		return false;
+
+	if (type == 0)
+		return true;
+
+	Common::Array<ChunkEntry> chunks;
+	if (!readRIdx(stream, chunks))
+		return false;
+
+	// Further iterate through the resources
+	for (uint idx = 0; idx < chunks.size(); ++idx) {
+		ChunkEntry &ce = chunks[idx];
+		if (ce._type == ID_Exec && ce._id == type)
+			return true;
+	}
+
+	return false;
+}
+
+bool Blorb::isBlorb(const Common::String &filename, uint32 type) {
+	Common::File f;
+	if (!filename.empty() && !f.open(filename))
+		return false;
+
+	return isBlorb(f, type);
 }
 
 } // End of namespace Glk

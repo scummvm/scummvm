@@ -57,7 +57,7 @@ GameDescriptor FrotzMetaEngine::findGame(const char *gameId) {
 
 bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
 	const char *const EXTENSIONS[] = { ".z1", ".z2", ".z3", ".z4", ".z5", ".z6", ".z7", ".z8",
-		".zblorb", ".dat", ".zip", nullptr };
+		".dat", ".zip", nullptr };
 
 	// Loop through the files of the folder
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
@@ -65,11 +65,9 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 		if (file->isDirectory())
 			continue;
 		Common::String filename = file->getName();
-		bool hasExt = false;
+		bool hasExt = false, isBlorb = false;
 		for (const char *const *ext = &EXTENSIONS[0]; *ext && !hasExt; ++ext)
 			hasExt = filename.hasSuffixIgnoreCase(*ext);
-		if (!hasExt)
-			continue;
 
 		// Open up the file and calculate the md5, and get the serial
 		Common::File gameFile;
@@ -79,15 +77,19 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 		size_t filesize = gameFile.size();
 		char serial[9] = "";
 		bool emptyBlorb = false;
+		gameFile.seek(0);
+		isBlorb = Blorb::isBlorb(gameFile, ID_ZCOD);
 
-		if (!filename.hasSuffixIgnoreCase(".zblorb")) {
+		if (!isBlorb) {
+			if (!hasExt) {
+				gameFile.close();
+				continue;
+			}
 			gameFile.seek(18);
 			strcpy(&serial[0], "\"");
 			gameFile.read(&serial[1], 6);
 			strcpy(&serial[7], "\"");
-		}
-		gameFile.close();
-		if (filename.hasSuffixIgnoreCase(".zblorb")) {
+		} else {
 			Blorb b(*file, INTERPRETER_FROTZ);
 			Common::SeekableReadStream *f = b.createReadStreamForMember("game");
 			emptyBlorb = f == nullptr;
@@ -100,13 +102,14 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 				delete f;
 			}
 		}
+		gameFile.close();
 
 		// Check for known games. Note that there has been some variation in exact filesizes
 		// for Infocom games due to padding at the end of files. So we match on md5s for the
 		// first 5Kb, and only worry about filesize for more recent Blorb based Zcode games
 		const FrotzGameDescription *p = FROTZ_GAMES;
 		while (p->_gameId && p->_md5 && (md5 != p->_md5 ||
-				(filesize != p->_filesize && filename.hasSuffix(".zblorb"))))
+				(filesize != p->_filesize && isBlorb)))
 			++p;
 
 		DetectedGame gd;
