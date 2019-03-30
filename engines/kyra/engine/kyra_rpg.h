@@ -367,6 +367,7 @@ protected:
 	virtual TextDisplayer_rpg *txt() { return _txt; }
 
 	bool _dialogueField;
+	bool _dialogueFieldAmiga;
 
 	const char *_dialogueButtonString[9];
 	const uint16 *_dialogueButtonPosX;

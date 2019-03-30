@@ -1588,7 +1588,6 @@ void EoBCoreEngine::initDialogueSequence() {
 	_npcSequenceSub = -1;
 	_txt->setWaitButtonMode(0);
 	_dialogueField = true;
-
 	_dialogueLastBitmap[0] = 0;
 
 	_txt->resetPageBreakString();
@@ -1618,7 +1617,7 @@ void EoBCoreEngine::initDialogueSequence() {
 
 void EoBCoreEngine::restoreAfterDialogueSequence() {
 	_txt->allowPageBreak(false);
-	_dialogueField = false;
+	_dialogueField = _dialogueFieldAmiga = false;
 
 	_dialogueLastBitmap[0] = 0;
 
@@ -1850,9 +1849,13 @@ void EoBCoreEngine::displayParchment(int id) {
 
 	} else {
 		// display bitmap
-		id = -id - 1;
 		static const uint8 x[] = { 0, 20, 0 };
 		static const uint8 y[] = { 0, 0, 96 };
+		id = -id - 1;
+
+		if (_flags.platform == Common::kPlatformAmiga)
+			_txt->setupField(9, 0);
+
 		drawSequenceBitmap("MAP", 0, x[id], y[id], 0);
 
 		removeInputTop();

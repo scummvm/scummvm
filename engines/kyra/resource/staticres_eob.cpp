@@ -1419,7 +1419,7 @@ const KyraRpgGUISettings DarkMoonEngine::_guiSettingsDOS = {
 };
 
 const KyraRpgGUISettings DarkMoonEngine::_guiSettingsAmiga = {
-	{ 28, 31, 95, 9, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
+	{ 28, 31, 95, 9, 7, { 221, 76 }, { 189, 162 }, { 95, 95 } },
 	{ 18, 17, 10, 17, 11, 10, 12, 25, 18, 9, 10, 18, 9, 10, 31, 24, 25, 28, 29, 7, 26, 27, 19 }
 };
 
