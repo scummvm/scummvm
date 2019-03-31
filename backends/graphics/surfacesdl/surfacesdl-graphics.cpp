@@ -469,6 +469,14 @@ OSystem::TransactionError SurfaceSdlGraphicsManager::endGFXTransaction() {
 	return (OSystem::TransactionError)errors;
 }
 
+Graphics::PixelFormat SurfaceSdlGraphicsManager::convertSDLPixelFormat(SDL_PixelFormat *in) const {
+	return Graphics::PixelFormat(in->BytesPerPixel,
+		8 - in->Rloss, 8 - in->Gloss,
+		8 - in->Bloss, 8 - in->Aloss,
+		in->Rshift, in->Gshift,
+		in->Bshift, in->Ashift);
+}
+
 #ifdef USE_RGB_COLOR
 Common::List<Graphics::PixelFormat> SurfaceSdlGraphicsManager::getSupportedFormats() const {
 	assert(!_supportedFormats.empty());
@@ -491,14 +499,6 @@ static void maskToBitCount(Uint32 mask, uint8 &numBits, uint8 &shift) {
 	}
 }
 #endif
-
-Graphics::PixelFormat SurfaceSdlGraphicsManager::convertSDLPixelFormat(SDL_PixelFormat *in) const {
-	return Graphics::PixelFormat(in->BytesPerPixel,
-		8 - in->Rloss, 8 - in->Gloss,
-		8 - in->Bloss, 8 - in->Aloss,
-		in->Rshift, in->Gshift,
-		in->Bshift, in->Ashift);
-}
 
 void SurfaceSdlGraphicsManager::detectSupportedFormats() {
 	_supportedFormats.clear();
