@@ -234,7 +234,7 @@ bool Actor::pathfinding_maybe(int16 target_x, int16 target_y, int16 unkTypeMaybe
 	}
 
 	if (unkTypeMaybe < 2) {
-		priority = getEngine()->_scene->getPriorityAtPosition(Common::Point(target_x_pos, target_y_pos));
+		priority = getEngine()->_scene->getPriorityAtPosition(Common::Point(target_x, target_y));
 		if (priority < 0) {
 			priority = 1;
 		}
@@ -452,7 +452,7 @@ bool Actor::pathfinding_maybe(int16 target_x, int16 target_y, int16 unkTypeMaybe
 	}
 
 	for (; !pathfindingUnk(newX, newY, newTargetX, newTargetY, unkTypeMaybe); ) {
-		int16 pointId = pathfindingFindClosestPoint(newX, newY, newTargetX, newTargetX, unkTypeMaybe, pathfinderData);
+		int16 pointId = pathfindingFindClosestPoint(newX, newY, newTargetX, newTargetY, unkTypeMaybe, pathfinderData);
 		if (pointId == -1) {
 			if (isFlag0x10Set) {
 				pathfindingCleanup();
@@ -461,8 +461,10 @@ bool Actor::pathfinding_maybe(int16 target_x, int16 target_y, int16 unkTypeMaybe
 		}
 		pathfinderData[pointId] = 1;
 		Common::Point point = getEngine()->_scene->getPoint(pointId);
+		newTargetX = point.x;
+		newTargetY = point.y;
 		if (numWalkPoints < 2) {
-			if (numWalkPoints > 0 && pathfindingUnk(point.x, point.y, newTargetX, newTargetY, unkTypeMaybe)) {
+			if (numWalkPoints > 0 && pathfindingUnk(point.x, point.y, target_x, target_y, unkTypeMaybe)) {
 				numWalkPoints--;
 			}
 		} else {
