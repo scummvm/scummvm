@@ -37,6 +37,11 @@ DarkMoonEngine::DarkMoonEngine(OSystem *system, const GameFlags &flags) : EoBCor
 	_utilMenuStrings = _ascii2SjisTables = _ascii2SjisTables2 = 0;
 	_npcShpData = _dscDoorType5Offs = _hornSounds = 0;
 	_dreamSteps = 0;
+
+	_amigaSoundMapExtra = _amigaSoundFiles2 = 0;
+	_amigaSoundIndex1 = 0;
+	_amigaSoundIndex2 = 0;
+	_amigaCurSoundIndex = 0;
 }
 
 DarkMoonEngine::~DarkMoonEngine() {
@@ -413,6 +418,91 @@ bool DarkMoonEngine::restParty_extraAbortCondition() {
 	seq_nightmare();
 
 	return true;
+}
+
+void DarkMoonEngine::snd_loadAmigaSounds(int level, int sub) {
+	if (_flags.platform != Common::kPlatformAmiga)
+		return;
+
+	int fileNum = _amigaSoundIndex2[level];
+	if (fileNum != _amigaCurSoundFile) {
+		for (int i = 52; i < 68; ++i) {
+			if (_amigaSoundMap[i]) {
+				_sound->unloadSoundFile(_amigaSoundMap[i]);
+				_amigaSoundMap[i] = 0;
+			}
+		}
+
+		_sound->loadSoundFile(_amigaSoundFiles2[fileNum]);
+		_amigaCurSoundFile = fileNum;
+
+		int mapCnt = 0;
+		for (int i = 0; i < fileNum + 1; ) {
+			if (!_amigaSoundMapExtra[mapCnt++][0])
+				i++;
+		}
+
+		for (int i = 52; i < 68; ++i) {
+			if (!_amigaSoundMapExtra[mapCnt][0]) {
+				_amigaSoundMap[i] = 0;
+				break;
+			}
+			_amigaSoundMap[i] = _amigaSoundMapExtra[mapCnt++];
+		}
+	}
+
+	if (level == 10 || (level == 8 && sub))
+		return;
+
+	uint16 sndIndex = 0;
+
+	for (int i = 0; i != level; ) {
+		int8 val = _amigaSoundIndex1[sndIndex++];
+		if (val == -1)
+			i++;
+	}
+	
+	if (sub)
+		sndIndex += 4;
+
+	if (_amigaCurSoundIndex) {
+		for (int i = 0; i < 4; ++i) {
+			int8 valCur = _amigaSoundIndex1[_amigaCurSoundIndex + i];
+			int8 valNew = _amigaSoundIndex1[sndIndex + i];
+			if (valCur < 0)
+				continue;
+
+			if (i < 2) {
+				for (int ii = 1; ii < 5; ++ii)
+					_sound->unloadSoundFile(Common::String::format("%s%d", _amigaLevelSoundList2[valCur], ii));
+			} else {
+				if (valCur != valNew)
+					_sound->unloadSoundFile(Common::String::format("%s.SAM", _amigaLevelSoundList1[valCur]));
+				_sound->unloadSoundFile(Common::String::format("%s1", _amigaLevelSoundList2[valCur]));
+			}
+		}
+	}
+
+	for (int i = 0; i < 4; ++i) {
+		int8 valCur = _amigaCurSoundIndex ? _amigaSoundIndex1[_amigaCurSoundIndex + i] : -5;
+		int8 valNew = _amigaSoundIndex1[sndIndex + i];
+
+		if (valNew >= 0 && valNew != valCur) {
+			if (i < 2 && valCur >= 0 && _amigaCurSoundIndex)
+				_sound->unloadSoundFile(Common::String::format("%s.SAM", _amigaLevelSoundList1[_amigaSoundIndex1[_amigaCurSoundIndex]]));
+			_sound->loadSoundFile(Common::String::format("%s.CPS", _amigaLevelSoundList1[valNew]));
+			assert(_amigaLevelSoundList2[valNew]);
+			_amigaSoundMap[36 + i] = _amigaLevelSoundList2[valNew][0] ? _amigaLevelSoundList2[valNew] : 0;
+		} else if (valNew == -2) {
+			_amigaSoundMap[36 + i] = 0;
+		} else if (valNew == -3) {
+			_amigaSoundMap[36 + i] = _amigaSoundMap[35 + i];
+		}
+	}
+
+	_sound->loadSoundFile(Common::String::format(sub ? "LEVEL%da.SAM" : "LEVEL%d.SAM", level));
+
+	_amigaCurSoundIndex = sndIndex;
 }
 
 void DarkMoonEngine::useHorn(int charIndex, int weaponSlot) {

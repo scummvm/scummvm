@@ -161,6 +161,11 @@ public:
 	virtual void loadSoundFile(Common::String file) = 0;
 
 	/**
+	* Unload a specifc sound file that has been loaded before.
+	*/
+	virtual void unloadSoundFile(Common::String file) {}
+
+	/**
 	 * Load a sound file for playing sound
 	 * effects from.
 	 */

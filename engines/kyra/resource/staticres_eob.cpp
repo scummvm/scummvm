@@ -468,9 +468,18 @@ void EoBCoreEngine::initStaticResource() {
 	void *sndInfo_finale = 0;
 
 	if (_flags.platform == Common::kPlatformAmiga) {
-		const char *const *files = _staticres->loadStrings(kEoBBaseSoundFilesIngame, temp);
 		const char *const *map = _staticres->loadStrings(kEoBBaseSoundMap, temp2);
-		SoundResourceInfo_AmigaEoB ingame(files, temp, map, temp2);
+		_amigaSoundMap = new const char*[temp2];
+		for (int i = 0; i < temp2; ++i) {
+			assert(map[i]);
+			_amigaSoundMap[i] = map[i][0] ? map[i] : 0;
+		}
+
+		_amigaLevelSoundList1 = _staticres->loadStrings(kEoBBaseLevelSounds1, temp);
+		_amigaLevelSoundList2 = _staticres->loadStrings(kEoBBaseLevelSounds2, temp);
+
+		const char *const *files = _staticres->loadStrings(kEoBBaseSoundFilesIngame, temp);
+		SoundResourceInfo_AmigaEoB ingame(files, temp, _amigaSoundMap, temp2);
 		sndInfo_ingame = &ingame;
 		files = _staticres->loadStrings(kEoBBaseSoundFilesIntro, temp);
 		SoundResourceInfo_AmigaEoB intro(files, temp, 0, 0);
@@ -1355,6 +1364,11 @@ void DarkMoonEngine::initStaticResource() {
 
 	_monsterAcHitChanceTable1 = _monsterAcHitChanceTbl1;
 	_monsterAcHitChanceTable2 = _monsterAcHitChanceTbl2;
+
+	_amigaSoundMapExtra = _staticres->loadStrings(kEoB2SoundMapExtra, temp);
+	_amigaSoundFiles2 = _staticres->loadStrings(kEoB2SoundFilesIngame2, temp);
+	_amigaSoundIndex1 = (const int8*)_staticres->loadRawData(kEoB2SoundIndex1, temp);
+	_amigaSoundIndex2 = _staticres->loadRawData(kEoB2SoundIndex2, temp);
 
 	static const char *const errorSlotNoNameString[3] = {
 		" You must specify\r a name for your\r save game!",

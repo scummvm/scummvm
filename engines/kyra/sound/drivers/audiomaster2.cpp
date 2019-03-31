@@ -292,12 +292,13 @@ private:
 
 class AudioMaster2ResourceManager {
 public:
-	AudioMaster2ResourceManager(AudioMaster2Internal *driver, Common::Mutex *mutex);
+	AudioMaster2ResourceManager(AudioMaster2Internal *driver, Common::Mutex &mutex);
 	~AudioMaster2ResourceManager();
 
 	void loadResourceFile(Common::SeekableReadStream *data);
 
 	void initResource(SoundResource *resource);
+	void deinitResource(SoundResource *resource);
 	void releaseResource(const Common::String &resName);
 
 	void stopChain();
@@ -314,12 +315,12 @@ private:
 	void linkToChain(SoundResource *resource, SoundResource::Mode mode);
 
 	SoundResource *_chainPlaying;
-	SoundResource *_chainInactive;
+	SoundResource *_chainStorage;
 
 	uint16 _masterVolume[3];
 
 	AudioMaster2Internal *_driver;
-	Common::Mutex *_mutex;
+	Common::Mutex &_mutex;
 };
 
 class AudioMaster2IFFLoader : public Common::IFFParser {
@@ -456,11 +457,16 @@ void SoundResource::loadName(Common::ReadStream *stream, uint32 size) {
 
 void SoundResource::open() {
 	_refCnt++;
+	debugC(8, kDebugLevelSound, "SoundResource::open(): '%s', type '%s', new refCount: '%d'", _name.c_str(), (_type == 1) ? "SMUS" : (_type == 2 ? "INST" : "8SVX"), _refCnt);
 }
 
 void SoundResource::close() {
-	if (--_refCnt <= 0)
+	_refCnt--;
+	debugC(8, kDebugLevelSound, "SoundResource::close(): '%s', type '%s', new refCount: '%d' %s", _name.c_str(), (_type == 1) ? "SMUS" : (_type == 2 ? "INST" : "8SVX"), _refCnt, _refCnt <= 0 ? "--> RELEASED" : "");
+	if (_refCnt == 0) {
+		_res->deinitResource(this);
 		release();
+	}
 }
 
 const Common::String &SoundResource::getName() const {
@@ -656,6 +662,7 @@ void SoundResourceINST::loadSamples(Common::ReadStream *stream, uint32 size) {
 	} else {
 		// This will come up quite often in EOB II. But never with intruments that are actually used. No need to bother the user with a warning here.
 		debugC(9, kDebugLevelSound, "SoundResourceINST::loadInstrument(): Samples resource '%s' not found for '%s'.", data, _name.c_str());
+		_samplesResource = 0;
 	}
 
 	delete[] data;
@@ -760,11 +767,7 @@ void SoundResourceSMUS::prepare() {
 	_playFlags = 0;
 	for (Common::Array<Track*>::iterator trk = _tracks.begin(); trk != _tracks.end(); ++trk) {
 		(*trk)->_dataCur = (*trk)->_dataStart;
-
-		for (Common::Array<SoundResource*>::iterator instr = _instruments.begin(); instr != _instruments.end(); ++instr) {
-			(*trk)->setInstrument(*instr);
-			break;
-		}
+		(*trk)->setInstrument(*_instruments.begin());
 
 		if (!(*trk)->_instrument)
 			error("SoundResourceSMUS::prepare():: Unable to assign default instrument to track (resource files loaded in the wrong order?)");
@@ -864,7 +867,7 @@ const uint16 SoundResourceSMUS::_durationTable[64] = {
 	0x8700, 0x4380, 0x21c0, 0x10e0, 0x0870, 0x0438, 0x021c, 0x010e
 };
 
-AudioMaster2ResourceManager::AudioMaster2ResourceManager(AudioMaster2Internal *driver, Common::Mutex *mutex) : _driver(driver), _mutex(mutex), _chainPlaying(0), _chainInactive(0) {
+AudioMaster2ResourceManager::AudioMaster2ResourceManager(AudioMaster2Internal *driver, Common::Mutex &mutex) : _driver(driver), _mutex(mutex), _chainPlaying(0), _chainStorage(0) {
 	memset(_masterVolume, 0, sizeof(_masterVolume));
 }
 
@@ -898,6 +901,36 @@ void AudioMaster2ResourceManager::initResource(SoundResource *resource) {
 	linkToChain(res, SoundResource::kIdle);
 }
 
+void AudioMaster2ResourceManager::deinitResource(SoundResource *resource) {
+	Common::StackLock lock(_mutex);
+
+	SoundResource *prev = 0;
+	for (SoundResource *cur = _chainPlaying; cur; cur = cur->_next) {
+		if (cur == resource) {
+			if (prev)
+				prev->_next = cur->_next;
+			else
+				_chainPlaying = cur->_next;
+			cur->_next = 0;
+			return;
+		}
+		prev = cur;
+	}
+
+	prev = 0;
+	for (SoundResource *cur = _chainStorage; cur; cur = cur->_next) {
+		if (cur == resource) {
+			if (prev)
+				prev->_next = cur->_next;
+			else
+				_chainStorage = cur->_next;
+			cur->_next = 0;
+			return;
+		}
+		prev = cur;
+	}
+}
+
 void AudioMaster2ResourceManager::releaseResource(const Common::String &resName) {
 	stopChain();
 
@@ -910,7 +943,7 @@ void AudioMaster2ResourceManager::releaseResource(const Common::String &resName)
 }
 
 void AudioMaster2ResourceManager::stopChain() {
-	Common::StackLock lock(*_mutex);
+	Common::StackLock lock(_mutex);
 
 	SoundResource *cur = _chainPlaying;
 	while (cur) {
@@ -922,21 +955,19 @@ void AudioMaster2ResourceManager::stopChain() {
 }
 
 void AudioMaster2ResourceManager::flush() {
-	stopChain();
+	Common::StackLock lock(_mutex);
 
-	Common::StackLock lock(*_mutex);
+	stopChain();	
 
-	for (SoundResource *res = _chainPlaying; _chainPlaying; res = _chainPlaying) {
-		_chainPlaying = res->_next;
-		res->_next = 0;
-		res->setPlayStatus(false);
+	while (_chainPlaying) {
+		SoundResource *res = _chainPlaying;
+		deinitResource(res);
 		res->close();
 	}
 
-	for (SoundResource *res = _chainInactive; _chainInactive; res = _chainInactive) {
-		_chainInactive = res->_next;
-		res->_next = 0;
-		res->setPlayStatus(false);
+	while (_chainStorage) {
+		SoundResource *res = _chainStorage;
+		deinitResource(res);
 		res->close();
 	}
 }
@@ -961,7 +992,7 @@ SoundResource *AudioMaster2ResourceManager::getResource(const Common::String &re
 
 void AudioMaster2ResourceManager::setMasterVolume(int type, int volume) {
 	assert(type == 1 || type == 2 || type == 4);
-	Common::StackLock lock(*_mutex);
+	Common::StackLock lock(_mutex);
 
 	_masterVolume[type >> 1] = volume & 0xFFFF;
 
@@ -970,7 +1001,7 @@ void AudioMaster2ResourceManager::setMasterVolume(int type, int volume) {
 			res->setMasterVolume(volume);
 	}
 
-	for (SoundResource *res = _chainInactive; res; res = res->_next) {
+	for (SoundResource *res = _chainStorage; res; res = res->_next) {
 		if (res->getType() == type)
 			res->setMasterVolume(volume);
 	}
@@ -988,13 +1019,13 @@ void AudioMaster2ResourceManager::interrupt(AudioMaster2IOManager *io) {
 			cur = cur->_next;
 		} else if (prev) {
 			prev->_next = cur->_next;
-			cur->_next = _chainInactive;
-			_chainInactive = cur;
+			cur->_next = _chainStorage;
+			_chainStorage = cur;
 			cur = prev->_next;
 		} else {
 			_chainPlaying = cur->_next;
-			cur->_next = _chainInactive;
-			_chainInactive = cur;
+			cur->_next = _chainStorage;
+			_chainStorage = cur;
 			cur = _chainPlaying;
 		}
 	}
@@ -1012,10 +1043,10 @@ SoundResource *AudioMaster2ResourceManager::retrieveFromChain(const Common::Stri
 	const char *srchStr = resName.c_str();
 	uint32 srchDepth = strlen(srchStr);
 
+	Common::StackLock lock(_mutex);
+
 	SoundResource *cur = _chainPlaying;
 	SoundResource *prev = 0;
-
-	Common::StackLock lock(*_mutex);
 
 	while (cur) {
 		if (!scumm_strnicmp(cur->getName().c_str(), srchStr, srchDepth)) {
@@ -1030,7 +1061,7 @@ SoundResource *AudioMaster2ResourceManager::retrieveFromChain(const Common::Stri
 		cur = cur->_next;
 	}
 
-	cur = _chainInactive;
+	cur = _chainStorage;
 	prev = 0;
 
 	while (cur) {
@@ -1038,7 +1069,7 @@ SoundResource *AudioMaster2ResourceManager::retrieveFromChain(const Common::Stri
 			if (prev)
 				prev->_next = cur->_next;
 			else
-				_chainInactive = cur->_next;
+				_chainStorage = cur->_next;
 			cur->_next = 0;
 			return cur;
 		}
@@ -1051,12 +1082,12 @@ SoundResource *AudioMaster2ResourceManager::retrieveFromChain(const Common::Stri
 
 
 void AudioMaster2ResourceManager::linkToChain(SoundResource *resource, SoundResource::Mode mode) {
+	Common::StackLock lock(_mutex);
+
 	if (resource->getType() == 1) {
 		stopChain();
 		resource->prepare();
 	}
-
-	Common::StackLock lock(*_mutex);
 
 	if (mode == SoundResource::kRestart) {
 		resource->setPlayStatus(true);
@@ -1067,8 +1098,8 @@ void AudioMaster2ResourceManager::linkToChain(SoundResource *resource, SoundReso
 			_driver->sync(resource);
 
 	} else {
-		resource->_next = _chainInactive;
-		_chainInactive = resource;
+		resource->_next = _chainStorage;
+		_chainStorage = resource;
 	}
 }
 
@@ -1203,12 +1234,12 @@ bool AudioMaster2Internal::init() {
 		return true;
 
 	_io = new AudioMaster2IOManager();
-	_res = new AudioMaster2ResourceManager(this, &_mutex);
-
-	_mixer->playStream(Audio::Mixer::kPlainSoundType,
-		&_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_res = new AudioMaster2ResourceManager(this, _mutex);
 
 	startPaula();
+	
+	_mixer->playStream(Audio::Mixer::kPlainSoundType,
+		&_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
 	_ready = true;
 
@@ -1290,9 +1321,9 @@ void AudioMaster2Internal::sync(SoundResource *res) {
 	if (res->getType() != 1)
 		return;
 
-	SoundResourceSMUS *smus = static_cast<SoundResourceSMUS*>(res);
-
 	Common::StackLock lock(_mutex);
+
+	SoundResourceSMUS *smus = static_cast<SoundResourceSMUS*>(res);
 	_io->_tempo = smus->getTempo();
 	smus->setSync(_io->_sync);
 }

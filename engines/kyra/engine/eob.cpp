@@ -513,6 +513,39 @@ void EoBEngine::turnUndeadAutoHit() {
 	sparkEffectOffensive();
 }
 
+void EoBEngine::snd_loadAmigaSounds(int level, int) {
+	if (_flags.platform != Common::kPlatformAmiga || level == _amigaCurSoundFile)
+		return;
+
+	if (_amigaCurSoundFile != -1) {
+		_sound->unloadSoundFile(Common::String::format("L%dM1A1", _amigaCurSoundFile));
+		_sound->unloadSoundFile(Common::String::format("L%dM2A1", _amigaCurSoundFile));
+
+		for (int i = 1; i < 5; ++i) {
+			_sound->unloadSoundFile(Common::String::format("L%dM1M%d", _amigaCurSoundFile, i));
+			_sound->unloadSoundFile(Common::String::format("L%dM2M%d", _amigaCurSoundFile, i));
+		}
+
+		for (int i = 0; i < 2; ++i) {
+			if (_amigaLevelSoundList1[_amigaCurSoundFile * 2 + i][0])
+				_sound->unloadSoundFile(_amigaLevelSoundList1[_amigaCurSoundFile * 2 + i]);
+			if (_amigaLevelSoundList2[_amigaCurSoundFile * 2 + i][0])
+				_sound->unloadSoundFile(_amigaLevelSoundList2[_amigaCurSoundFile * 2 + i]);
+		}
+	}
+
+	for (int i = 0; i < 2; ++i) {
+		if (_amigaLevelSoundList1[level * 2 + i][0])
+			_sound->loadSoundFile(Common::String::format("%s.CPS", _amigaLevelSoundList1[level * 2 + i]));
+		if (_amigaLevelSoundList2[level * 2 + i][0])
+			_sound->loadSoundFile(Common::String::format("%s.CPS", _amigaLevelSoundList2[level * 2 + i]));
+	}
+
+	_sound->loadSoundFile(Common::String::format("LEVELSAM%d.CPS", level));
+
+	_amigaCurSoundFile = level;
+}
+
 bool EoBEngine::checkPartyStatusExtra() {
 	_screen->copyPage(0, 10);
 	int cd = _screen->curDimIndex();

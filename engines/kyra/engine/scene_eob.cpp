@@ -222,13 +222,15 @@ Common::String EoBCoreEngine::initLevelData(int sub) {
 		}
 	}
 
-	if (_flags.gameID == GI_EOB2) {
+	if (_flags.platform == Common::kPlatformAmiga) {
+		delay(3 * _tickLength);
+		snd_loadAmigaSounds(_currentLevel, sub);
+		if (_flags.gameID == GI_EOB2)
+			pos += 13;
+	} else if (_flags.gameID == GI_EOB2) {
 		delay(3 * _tickLength);
 		_sound->loadSoundFile((const char *)pos);
 		pos += 13;
-	} else if (_flags.platform == Common::kPlatformAmiga) {
-		delay(3 * _tickLength);
-		_sound->loadSoundFile(_currentLevel);
 	}
 
 	releaseDoorShapes();

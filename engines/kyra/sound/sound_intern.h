@@ -417,8 +417,9 @@ public:
 	void initAudioResourceInfo(int set, void *info);
 	void selectAudioResourceSet(int set);
 	bool hasSoundFile(uint file) const { return false; }
-	void loadSoundFile(uint file);
+	void loadSoundFile(uint) {}
 	void loadSoundFile(Common::String file);
+	void unloadSoundFile(Common::String file);
 	void playTrack(uint8 track);
 	void haltTrack();
 	void playSoundEffect(uint8 track, uint8 volume = 0xFF);
@@ -428,8 +429,6 @@ public:
 	int checkTrigger();
 
 private:
-	void unloadLevelSounds();
-
 	uint8 *_fileBuffer;
 
 	KyraEngine_v1 *_vm;
@@ -438,10 +437,6 @@ private:
 	Common::String _lastSound;
 
 	int _currentResourceSet;
-	int _currentFile;
-
-	const char *const *_levelSoundList1;
-	const char *const *_levelSoundList2;
 
 	bool _ready;
 };

@@ -115,6 +115,16 @@ private:
 	void restParty_npc();
 	bool restParty_extraAbortCondition();
 
+	// Sound
+	void snd_loadAmigaSounds(int level, int sub);
+
+	const char *const *_amigaSoundFiles2;
+	const char *const *_amigaSoundMapExtra;
+	const int8 *_amigaSoundIndex1;
+	const uint8 *_amigaSoundIndex2;
+
+	int _amigaCurSoundIndex;
+
 	// misc
 	void useHorn(int charIndex, int weaponSlot);
 	bool checkPartyStatusExtra();

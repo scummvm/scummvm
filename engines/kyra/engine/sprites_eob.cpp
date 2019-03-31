@@ -1038,7 +1038,10 @@ bool EoBCoreEngine::updateMonsterTryDistanceAttack(EoBMonsterInPlay *m) {
 			if (s < 20) {
 				monsterSpellCast(m, s);
 			} else if (s == 20) {
-				snd_processEnvironmentalSoundEffect(103, m->block);
+				if (_flags.platform == Common::kPlatformAmiga)
+					snd_processEnvironmentalSoundEffect(39, _currentBlock + 1);
+				else
+					snd_processEnvironmentalSoundEffect(103, m->block);
 				_txt->printMessage(_monsterSpecAttStrings[0]);
 				for (int i = 0; i < 6; i++)
 					statusAttack(i, 4, _monsterSpecAttStrings[1], 1, 5, 9, 1);

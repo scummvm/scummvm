@@ -221,6 +221,9 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_mnNumWord = _numSpells = _mageSpellListSize = _spellLevelsMageSize = _spellLevelsClericSize = 0;
 	_inventorySlotsX = _slotValidationFlags = _encodeMonsterShpTable = 0;
 	_cgaMappingDefault = _cgaMappingAlt = _cgaMappingInv = _cgaLevelMappingIndex = _cgaMappingItemsL = _cgaMappingItemsS = _cgaMappingThrown = _cgaMappingIcons = _cgaMappingDeco = 0;
+	_amigaLevelSoundList1 = _amigaLevelSoundList2 = 0;
+	_amigaSoundMap = 0;
+	_amigaCurSoundFile = -1;
 	memset(_cgaMappingLevel, 0, sizeof(_cgaMappingLevel));
 	memset(_expRequirementTables, 0, sizeof(_expRequirementTables));
 	memset(_saveThrowTables, 0, sizeof(_saveThrowTables));
@@ -321,6 +324,9 @@ EoBCoreEngine::~EoBCoreEngine() {
 
 	delete[] _menuDefs;
 	_menuDefs = 0;
+
+	delete[] _amigaSoundMap;
+	_amigaSoundMap = 0;
 
 	delete _inf;
 	_inf = 0;

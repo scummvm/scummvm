@@ -1180,6 +1180,13 @@ protected:
 	void snd_playSoundEffect(int id, int volume=0xFF);
 	void snd_stopSound();
 	void snd_fadeOut(int speed = 160);
+	virtual void snd_loadAmigaSounds(int level, int sub) = 0;
+
+	const char **_amigaSoundMap;
+	const char *const *_amigaLevelSoundList1;
+	const char *const *_amigaLevelSoundList2;
+
+	int _amigaCurSoundFile;
 
 	// keymap
 	static const char *const kKeymapName;
