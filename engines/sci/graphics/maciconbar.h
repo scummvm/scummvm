@@ -26,6 +26,7 @@
 #include "common/array.h"
 
 #include "sci/engine/vm.h"
+#include "sci/event.h"
 
 namespace Graphics {
 struct Surface;
@@ -42,7 +43,7 @@ public:
 	void drawIcons();
 	void setIconEnabled(int16 index, bool enabled);
 	void setInventoryIcon(int16 icon);
-	reg_t handleEvents();
+	bool handleEvents(SciEvent evt, reg_t &iconObj);
 
 private:
 	struct IconBarItem {

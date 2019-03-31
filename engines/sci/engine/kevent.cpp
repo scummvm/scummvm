@@ -49,13 +49,6 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
 	Common::Point mousePos;
 
-	// For Mac games with an icon bar, handle possible icon bar events first
-	if (g_sci->hasMacIconBar()) {
-		reg_t iconObj = g_sci->_gfxMacIconBar->handleEvents();
-		if (!iconObj.isNull())
-			invokeSelector(s, iconObj, SELECTOR(select), argc, argv, 0, NULL);
-	}
-
 	// If there's a simkey pending, and the game wants a keyboard event, use the
 	// simkey instead of a normal event
 	// TODO: This does not really work as expected for keyup events, since the
@@ -77,6 +70,21 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	curEvent = g_sci->getEventManager()->getSciEvent(mask);
+
+	// For Mac games with an icon bar, handle possible icon bar events first
+	if (g_sci->hasMacIconBar()) {
+		reg_t iconObj = NULL_REG;
+		if (g_sci->_gfxMacIconBar->handleEvents(curEvent, iconObj)) {
+			if (!iconObj.isNull()) {
+				invokeSelector(s, iconObj, SELECTOR(select), argc, argv, 0, NULL);
+			}
+
+			// The mouse press event was handled by the mac icon bar so change
+			// its type to none so that generic event processing can continue
+			// without the mouse press being handled twice
+			curEvent.type = kSciEventNone;
+		}
+	}
 
 	if (g_sci->_guestAdditions->kGetEventHook()) {
 		return NULL_REG;
