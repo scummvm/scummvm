@@ -213,4 +213,9 @@ bool Blorb::isBlorb(const Common::String &filename, uint32 type) {
 	return isBlorb(f, type);
 }
 
+bool Blorb::hasBlorbExt(const Common::String &filename) {
+	return filename.hasSuffixIgnoreCase(".blorb") || filename.hasSuffixIgnoreCase(".zblorb")
+		|| filename.hasSuffixIgnoreCase(".gblorb") || filename.hasSuffixIgnoreCase(".blb");
+}
+
 } // End of namespace Glk

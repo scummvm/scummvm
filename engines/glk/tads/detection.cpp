@@ -68,9 +68,11 @@ bool TADSMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &ga
 			continue;
 
 		Common::String filename = file->getName();
-		bool hasExt = false, isBlorb = false;
+		bool hasExt = Blorb::hasBlorbExt(filename), isBlorb = false;
 		for (const char *const *ext = &EXTENSIONS[0]; *ext && !hasExt; ++ext)
 			hasExt = filename.hasSuffixIgnoreCase(*ext);
+		if (!hasExt)
+			continue;
 
 		// Open up the file and calculate the md5
 		Common::File gameFile;
@@ -82,7 +84,7 @@ bool TADSMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &ga
 		isBlorb = Blorb::isBlorb(gameFile, ID_TAD2) || Blorb::isBlorb(gameFile, ID_TAD3);
 		gameFile.close();
 
-		if (!hasExt && !isBlorb)
+		if (!isBlorb && Blorb::hasBlorbExt(filename))
 			continue;
 
 		// Check for known games

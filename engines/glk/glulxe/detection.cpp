@@ -55,9 +55,11 @@ bool GlulxeMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &
 		if (file->isDirectory())
 			continue;
 		Common::String filename = file->getName();
-		bool hasExt = false, isBlorb = false;
+		bool hasExt = Blorb::hasBlorbExt(filename), isBlorb = false;
 		for (const char *const *ext = &EXTENSIONS[0]; *ext && !hasExt; ++ext)
 			hasExt = filename.hasSuffixIgnoreCase(*ext);
+		if (!hasExt)
+			continue;
 
 		// Open up the file and calculate the md5
 		Common::File gameFile;
@@ -69,7 +71,7 @@ bool GlulxeMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &
 		isBlorb = Blorb::isBlorb(gameFile, ID_GLUL);
 		gameFile.close();
 
-		if (!hasExt && !isBlorb)
+		if (!isBlorb && Blorb::hasBlorbExt(filename))
 			continue;
 
 		// Check for known games

@@ -65,9 +65,11 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 		if (file->isDirectory())
 			continue;
 		Common::String filename = file->getName();
-		bool hasExt = false, isBlorb = false;
+		bool hasExt = Blorb::hasBlorbExt(filename), isBlorb = false;
 		for (const char *const *ext = &EXTENSIONS[0]; *ext && !hasExt; ++ext)
 			hasExt = filename.hasSuffixIgnoreCase(*ext);
+		if (!hasExt)
+			continue;
 
 		// Open up the file and calculate the md5, and get the serial
 		Common::File gameFile;
@@ -81,7 +83,7 @@ bool FrotzMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 		isBlorb = Blorb::isBlorb(gameFile, ID_ZCOD);
 
 		if (!isBlorb) {
-			if (!hasExt) {
+			if (Blorb::hasBlorbExt(filename)) {
 				gameFile.close();
 				continue;
 			}
