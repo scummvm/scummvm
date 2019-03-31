@@ -890,11 +890,12 @@ void ESPER::drawVideoZooming(Graphics::Surface &surface) {
 	if (frame == _vqaPlayerPhoto->getFrameCount() - 1) {
 		_vqaLastFrame = frame;
 		setStatePhoto(kEsperPhotoStatePhotoSharpening);
-	}
-
-	if (flash) {
+	} else if (flash) {
+		// TODO? Temporary workaround for very noticeable blue tint in the first frame during zoom-out:
+		// Don't flash for the last frame of the photo (which is the starting frame when zooming out)
 		flashViewport();
 	}
+
 	copyImageBlur(&_surfaceViewport, Common::Rect(0, 0, 299, 263), &surface, _screen, _blur);
 	drawGrid(surface);
 }
@@ -913,7 +914,12 @@ void ESPER::drawVideoZoomOut(Graphics::Surface &surface) {
 		} else if (nextFrame > 4) {
 			nextFrame = 4;
 		}
-		flash = true;
+
+		if (_vqaLastFrame < _vqaPlayerPhoto->getFrameCount() - 1) {
+			// TODO? Temporary workaround for persistent blue tint in the last frame:
+			// Don't flash for the last frame of the photo (starting frame when zooming out)
+			flash = true;
+		}
 		advanceFrame = true;
 		_vqaLastFrame -= nextFrame;
 	}
