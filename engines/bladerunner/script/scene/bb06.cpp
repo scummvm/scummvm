@@ -67,7 +67,7 @@ void SceneScriptBB06::InitializeScene() {
 #else
 		// bugfix: case of not transitioning from BB51: chess/ egg boiler sub-space
 		if (Game_Flag_Query(kFlagBB06AndroidDestroyed)) {
-			Overlay_Play("BB06OVER", 1, false, false, 0);
+			Overlay_Play("BB06OVER", 1, true, true, 0);
 		}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 	}
@@ -111,8 +111,17 @@ bool SceneScriptBB06::ClickedOn3DObject(const char *objectName, bool a2) {
 		}
 #else
 		if (Player_Query_Combat_Mode()) {
-			Overlay_Play("BB06OVER", 0, false, true, 0); // explosion - don't loop
+			// Doll Explosion case:
+			// We need to use enqueued overlays for this.
+			// Note: Queuing only works on top of a video that is repeating itself.
+			// First we load the "exploding animation state" as a forever loop (even though it will only play once)
+			// Then we enqueue the final exploded state loop, also as a forever loop.
+			// This (along with some fixes in the Overlays class will ensure
+			// that the second overlay will play after the first has completed one loop
+			// and it will persist (across save games too).
 			Game_Flag_Set(kFlagBB06AndroidDestroyed);
+			Overlay_Play("BB06OVER", 0, true, true,  0);
+			Overlay_Play("BB06OVER", 1, true, false, 0);
 			Un_Combat_Target_Object("BOX31");
 			return true;
 		} else {
@@ -195,7 +204,7 @@ void SceneScriptBB06::SceneFrameAdvanced(int frame) {
 	// last frame of transition is 15, try 13 for better transition - minimize weird effect
 	if (frame == 13) { // executed once during transition FROM bb51 (chess sub space)
 		if (Game_Flag_Query(kFlagBB06AndroidDestroyed)) {
-			Overlay_Play("BB06OVER", 1, false, false, 0);
+			Overlay_Play("BB06OVER", 1, true, true, 0);
 		}
 	}
 #endif // BLADERUNNER_ORIGINAL_BUGS

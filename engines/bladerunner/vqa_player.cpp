@@ -57,10 +57,12 @@ bool VQAPlayer::open() {
 	_repeatsCountQueued = -1;
 
 	if (_loopInitial >= 0) {
+		// TODO? When does this happen? _loopInitial seems to be unused
 		setLoop(_loopInitial, _repeatsCountInitial, kLoopSetModeImmediate, nullptr, nullptr);
 	} else {
 		_frameNext = 0;
-		setBeginAndEndFrame(0, _frameEnd, 0, kLoopSetModeJustStart, nullptr, nullptr);
+		// TODO? Removed as redundant
+//		setBeginAndEndFrame(0, _frameEnd, 0, kLoopSetModeJustStart, nullptr, nullptr);
 	}
 
 	return true;
@@ -107,6 +109,8 @@ int VQAPlayer::update(bool forceDraw, bool advanceFrame, bool useTime, Graphics:
 		result = -1;
 	} else if (_frameNext > _frameEnd) {
 		result = -3;
+		// _repeatsCount == 0, so return here at the end of the video, to release the resource
+		return result;
 	} else if (useTime && (now < _frameNextTime)) {
 		result = -1;
 	} else if (advanceFrame) {
@@ -149,7 +153,9 @@ int VQAPlayer::update(bool forceDraw, bool advanceFrame, bool useTime, Graphics:
 		_decoder.decodeVideoFrame(customSurface != nullptr ? customSurface : _surface, _frame, true);
 		result = _frame;
 	}
-	return result;
+	return result; // Note: result here could be negative.
+	               // Negative valid value should only be -1, since there are various assertions
+	               // assert(frame >= -1) in overlay modes (elevator, scores, spinner)
 }
 
 void VQAPlayer::updateZBuffer(ZBuffer *zbuffer) {
@@ -187,11 +193,23 @@ bool VQAPlayer::setLoop(int loop, int repeatsCount, int loopSetMode, void (*call
 }
 
 bool VQAPlayer::setBeginAndEndFrame(int begin, int end, int repeatsCount, int loopSetMode, void (*callback)(void *, int, int), void *callbackData) {
+	if ( begin >= getFrameCount()
+	    || end >= getFrameCount()
+	    || begin >= end
+	    || loopSetMode < 0
+	    || loopSetMode >= 3
+	) {
+		warning("VQAPlayer::setBeginAndEndFrame - Invalid arguments for video");
+		return false; // VQA_DECODER_ERROR_BAD_INPUT case
+	}
+
 	if (repeatsCount < 0) {
 		repeatsCount = -1;
 	}
 
 	if (_repeatsCount == 0 && loopSetMode == kLoopSetModeEnqueue) {
+		// if the member var _repeatsCount is 0 (which means "don't repeat existing loop")
+		// then execute set the enqueued loop for immediate execution
 		loopSetMode = kLoopSetModeImmediate;
 	}
 
@@ -199,6 +217,7 @@ bool VQAPlayer::setBeginAndEndFrame(int begin, int end, int repeatsCount, int lo
 
 	if (loopSetMode == kLoopSetModeJustStart) {
 		_repeatsCount = repeatsCount;
+		_frameEnd = end;
 	} else if (loopSetMode == kLoopSetModeEnqueue) {
 		_repeatsCountQueued = repeatsCount;
 		_frameEndQueued = end;

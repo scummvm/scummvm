@@ -23,6 +23,7 @@
 #include "bladerunner/overlays.h"
 
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/game_constants.h"
 
 #include "bladerunner/archive.h"
 #include "bladerunner/savefile.h"
@@ -58,6 +59,10 @@ Overlays::~Overlays() {
 
 int Overlays::play(const Common::String &name, int loopId, bool loopForever, bool startNow, int a6) {
 	assert(name.size() <= 12);
+	if (loopId < 0) {
+		warning("Overlays::play - loop id can't be a negative number!");
+		return -1;
+	}
 
 	int32 hash = MIXArchive::getHash(name);
 	int index = findByHash(hash);
@@ -70,20 +75,38 @@ int Overlays::play(const Common::String &name, int loopId, bool loopForever, boo
 		_videos[index].name = name;
 		_videos[index].hash = hash;
 		_videos[index].loopId = loopId;
+		_videos[index].enqueuedLoopId = -1;
 		_videos[index].loopForever = loopForever;
 		_videos[index].vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceFront, Common::String::format("%s.VQA", name.c_str()));
 
+		if (!_videos[index].vqaPlayer) {
+			resetSingle(index);
+			return -1;
+		}
+		// TODO? Removed as redundant
 		// repeat forever
-		_videos[index].vqaPlayer->setBeginAndEndFrame(0, 0, -1, kLoopSetModeJustStart, nullptr, nullptr);
+		//_videos[index].vqaPlayer->setBeginAndEndFrame(0, 0, -1, kLoopSetModeJustStart, nullptr, nullptr);
 	}
 
-	_videos[index].vqaPlayer->open();
-	_videos[index].vqaPlayer->setLoop(
-		loopId,
-		loopForever ? -1 : 0,
-		startNow ? kLoopSetModeImmediate : kLoopSetModeEnqueue,
-		nullptr, nullptr);
+	bool skipNewVQAPlayerOpen = false;
+	if (_videos[index].vqaPlayer
+	    && !startNow
+	    && _videos[index].vqaPlayer->getFrameCount() > 0
+	) {
+		skipNewVQAPlayerOpen = true;
+		_videos[index].enqueuedLoopId = loopId;
+	}
 
+	if (skipNewVQAPlayerOpen || _videos[index].vqaPlayer->open()) {
+		_videos[index].vqaPlayer->setLoop(
+			loopId,
+			loopForever ? -1 : 0,
+			startNow ? kLoopSetModeImmediate : kLoopSetModeEnqueue,
+			nullptr, nullptr);
+	} else {
+		resetSingle(index);
+		return -1;
+	}
 	return index;
 }
 
@@ -179,7 +202,12 @@ void Overlays::save(SaveFileWriteStream &f) {
 		f.writeInt(0); // vqaPlayer pointer
 		f.writeStringSz(ov.name, 13);
 		f.writeSint32LE(ov.hash);
-		f.writeInt(ov.loopId);
+		if (ov.enqueuedLoopId != -1) {
+		// When there is an enqueued video, save that loop Id instead
+			f.writeInt(ov.enqueuedLoopId);
+		} else {
+			f.writeInt(ov.loopId);
+		}
 		f.writeBool(ov.loopForever);
 		f.writeInt(ov.frame);
 	}

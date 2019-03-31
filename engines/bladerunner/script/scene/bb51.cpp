@@ -51,7 +51,7 @@ void SceneScriptBB51::InitializeScene() {
 #if BLADERUNNER_ORIGINAL_BUGS // Sebastian's Doll Fix
 #else
 	if (Game_Flag_Query(kFlagBB06AndroidDestroyed)) {
-		Overlay_Play("BB06OVER", 1, false, false, 0);
+		Overlay_Play("BB06OVER", 1, true, true, 0);
 	}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 
