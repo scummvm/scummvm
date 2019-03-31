@@ -95,7 +95,7 @@ void CELauncherDialog::addGame() {
 			updateListing();
 			selectTarget(newTarget);
 		}
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 	} else
 		GUILauncherDialog::addGame();
 }

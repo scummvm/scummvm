@@ -24,6 +24,9 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
+#include <windows.h>
+
+#include "backends/platform/wince/missing/fopen.h"
 #include "backends/platform/wince/wince-sdl.h"
 
 #include "common/config-manager.h"
@@ -163,7 +166,6 @@ int handleException(EXCEPTION_POINTERS *exceptionPointers) {
 }
 #endif
 
-extern "C" char *getcwd(char *buf, int size);
 int SDL_main(int argc, char **argv) {
 	FILE *newfp = NULL;
 #ifdef __GNUC__
@@ -182,8 +184,8 @@ int SDL_main(int argc, char **argv) {
 	CEDevice::init();
 
 	/* Redirect standard input and standard output */
-	strcpy(stdout_fname, getcwd(NULL, MAX_PATH));
-	strcpy(stderr_fname, getcwd(NULL, MAX_PATH));
+	strcpy(stdout_fname, wce_getcwd(NULL, MAX_PATH));
+	strcpy(stderr_fname, wce_getcwd(NULL, MAX_PATH));
 	strcat(stdout_fname, STDOUT_FNAME);
 	strcat(stderr_fname, STDERR_FNAME);
 #ifndef __GNUC__
@@ -279,7 +281,7 @@ int console_main(int argc, char *argv[]) {
 	appname = bufp;
 
 	if (SDL_Init(SDL_INIT_NOPARACHUTE) < 0) {
-		error("WinMain() error: %d", SDL_GetError());
+		error("WinMain() error: %s", SDL_GetError());
 		return(FALSE);
 	}
 
@@ -461,7 +463,7 @@ bool OSystem_WINCE3::isOzone() {
 
 Common::String OSystem_WINCE3::getDefaultConfigFileName() {
 	char configFile[MAXPATHLEN];
-	strcpy(configFile, getcwd(NULL, MAX_PATH));
+	strcpy(configFile, wce_getcwd(NULL, MAX_PATH));
 	strcat(configFile, "\\");
 	strcat(configFile, DEFAULT_CONFIG_FILE);
 	return configFile;

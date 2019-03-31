@@ -36,8 +36,6 @@
 #include <stdio.h>
 #include "common/debug.h"
 
-char *strdup(const char *strSource);
-
 #ifdef __GNUC__
 #define EXT_C extern "C"
 #else
@@ -45,6 +43,10 @@ char *strdup(const char *strSource);
 #endif
 
 // common missing functions required by both gcc and evc
+
+#ifndef USE_ZLIB
+int errno = 0;
+#endif
 
 void *bsearch(const void *key, const void *base, size_t nmemb,
               size_t size, int (*compar)(const void *, const void *)) {
@@ -68,7 +70,7 @@ void *bsearch(const void *key, const void *base, size_t nmemb,
 
 static char cwd[MAX_PATH + 1] = "";
 
-EXT_C char *getcwd(char *buffer, int maxlen) {
+EXT_C char *wce_getcwd(char *buffer, int maxlen) {
 	TCHAR fileUnc[MAX_PATH + 1];
 	char *plast;
 
@@ -91,7 +93,7 @@ EXT_C char *getcwd(char *buffer, int maxlen) {
 #undef GetCurrentDirectory
 #endif
 EXT_C void GetCurrentDirectory(int len, char *buf) {
-	getcwd(buf, len);
+	wce_getcwd(buf, len);
 }
 
 /*
@@ -106,7 +108,7 @@ EXT_C FILE *wce_fopen(const char *fname, const char *fmode) {
 	if (!fname || fname[0] == '\0')
 		return NULL;
 	if (fname[0] != '\\' && fname[0] != '/') {
-		getcwd(fullname, MAX_PATH);
+		wce_getcwd(fullname, MAX_PATH);
 		strcat(fullname, "\\");
 		strcat(fullname, fname);
 		return fopen(fullname, fmode);
@@ -128,7 +130,7 @@ int _access(const char *path, int mode) {
 	char fullname[MAX_PATH + 1];
 
 	if (path[0] != '\\' && path[0] != '/') {
-		getcwd(fullname, MAX_PATH);
+		wce_getcwd(fullname, MAX_PATH);
 		strcat(fullname, "\\");
 		strcat(fullname, path);
 		MultiByteToWideChar(CP_ACP, 0, fullname, -1, fname, sizeof(fname) / sizeof(TCHAR));
@@ -179,20 +181,8 @@ int _access(const char *path, int mode) {
 	return -1;
 }
 
-// evc only functions follow
-#ifndef __GNUC__
-
-char *strdup(const char *strSource) {
-	char *buffer;
-	size_z len = strlen(strSource) + 1;
-	buffer = (char *)malloc(len);
-	if (buffer)
-		memcpy(buffer, strSource, len);
-	return buffer;
-}
-
 // gcc build only functions follow
-#else // defined(__GNUC__)
+#if defined(__GNUC__)
 
 #ifndef __MINGW32CE__
 int islower(int c) {
