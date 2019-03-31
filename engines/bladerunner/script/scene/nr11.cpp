@@ -169,7 +169,7 @@ bool SceneScriptNR11::ClickedOn3DObject(const char *objectName, bool combatMode)
 					if (Actor_Query_Friendliness_To_Other(kActorDektora, kActorMcCoy) > 59
 					 && Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsNone
 					) {
-						Music_Play(21, 35, 0, 3, -1, 0, 0);
+						Music_Play(kMusicLoveSong, 35, 0, 3, -1, 0, 0);
 					}
 					Loop_Actor_Walk_To_XYZ(kActorDektora, -135.0f, 0.33f, -267.0f, 0, false, false, 0);
 					Actor_Face_Actor(kActorDektora, kActorMcCoy, true);

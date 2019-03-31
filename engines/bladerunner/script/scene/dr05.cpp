@@ -117,7 +117,7 @@ bool SceneScriptDR05::ClickedOnItem(int itemId, bool a2) {
 		Item_Remove_From_World(kItemChain);
 		Game_Flag_Set(kFlagDR05ChainShot);
 		Actor_Set_Goal_Number(kActorMoraji, kGoalMorajiFreed);
-		Music_Play(18, 71, 0, 0, -1, 0, 2);
+		Music_Play(kMusicMoraji, 71, 0, 0, -1, 0, 2);
 		return true;
 	}
 	return false;

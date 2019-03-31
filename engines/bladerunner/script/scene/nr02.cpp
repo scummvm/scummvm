@@ -245,11 +245,11 @@ void SceneScriptNR02::DialogueQueueFlushed(int a1) {
 void SceneScriptNR02::playNextMusic() {
 	int track = Global_Variable_Query(kVariableTaffyLewisMusic);
 	if (track == 0) {
-		Music_Play(8, 41, 0, 2, -1, 0, 0);
+		Music_Play(kMusicTaffy2, 41, 0, 2, -1, 0, 0);
 	} else if (track == 1) {
-		Music_Play(9, 41, 0, 2, -1, 0, 0);
+		Music_Play(kMusicTaffy3, 41, 0, 2, -1, 0, 0);
 	} else if (track == 2) {
-		Music_Play(10, 41, 0, 2, -1, 0, 0);
+		Music_Play(kMusicTaffy4, 41, 0, 2, -1, 0, 0);
 	}
 	track++;
 	if (track > 2) {

@@ -122,7 +122,7 @@ void SceneScriptBB11::PlayerWalkedIn() {
 	) {
 		Actor_Set_Invisible(kActorMcCoy, true);
 		Actor_Set_Goal_Number(kActorSadik, kGoalSadikBB11ThrowMcCoy);
-		Music_Play(11, 61, 0, 1, -1, 0, 0);
+		Music_Play(kMusicBeating1, 61, 0, 1, -1, 0, 0);
 		Player_Loses_Control();
 	}
 }

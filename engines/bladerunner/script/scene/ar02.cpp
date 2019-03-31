@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 void SceneScriptAR02::InitializeScene() {
-	Music_Play(0, 22, 0, 2, -1, 1, 2);
+	Music_Play(kMusicBatl226M, 22, 0, 2, -1, 1, 2);
 	if (Game_Flag_Query(kFlagRC03toAR02)) {
 		Setup_Scene_Information(-560.0f, 0.0f, -799.0f, 333);
 	} else {

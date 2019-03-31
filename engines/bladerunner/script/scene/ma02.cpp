@@ -194,7 +194,7 @@ void SceneScriptMA02::PlayerWalkedIn() {
 	) {
 		if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
 			Actor_Says(kActorMcCoy, 2390, kAnimationModeIdle);
-			Music_Play(2, 25, 0, 3, -1, 0, 0);
+			Music_Play(kMusicBRBlues, 25, 0, 3, -1, 0, 0);
 		} else {
 			Actor_Says(kActorMcCoy, 2385,  kAnimationModeTalk);
 		}

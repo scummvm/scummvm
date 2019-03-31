@@ -238,7 +238,7 @@ void SceneScriptHF05::SceneFrameAdvanced(int frame) {
 
 	case 179:
 		Sound_Play(490, 90, 0, 0, 50);
-		Music_Play(1, 50, 0, 2, -1, 0, 0);
+		Music_Play(kMusicBatl226M, 50, 0, 2, -1, 0, 0);
 		break;
 
 	case 186:
@@ -307,7 +307,7 @@ void SceneScriptHF05::PlayerWalkedIn() {
 			 && !Game_Flag_Query(kFlagHF05PoliceArrived)
 			) {
 				Game_Flag_Set(kFlagHF05PoliceArrived);
-				Music_Play(1, 40, 0, 2, -1, 0, 0);
+				Music_Play(kMusicBatl226M, 40, 0, 2, -1, 0, 0);
 				Actor_Says(kActorOfficerGrayford, 200, kAnimationModeTalk);
 				Actor_Says(kActorOfficerGrayford, 210, kAnimationModeTalk);
 				Actor_Set_Goal_Number(kActorOfficerLeary, 420);

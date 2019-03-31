@@ -41,7 +41,7 @@ enum kAR01Exits {
 };
 
 void SceneScriptAR01::InitializeScene() {
-	Music_Play(0, 25, 0, 2, -1, 1, 2);
+	Music_Play(kMusicArabLoop, 25, 0, 2, -1, 1, 2);
 	if (Game_Flag_Query(kFlagHC01toAR01)) {
 		Setup_Scene_Information(-477.0f, 0.0f, -149.0f, 333);
 	} else if (Game_Flag_Query(kFlagAR02toAR01)) {

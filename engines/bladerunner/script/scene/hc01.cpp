@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 void SceneScriptHC01::InitializeScene() {
-	Music_Play(0, 31, 0, 2, -1, 1, 2);
+	Music_Play(kMusicArabLoop, 31, 0, 2, -1, 1, 2);
 	if (Game_Flag_Query(kFlagHC02toHC01)) {
 		Setup_Scene_Information( 64.0f, 0.14f,  83.0f, 266);
 	} else if (Game_Flag_Query(kFlagHC03toHC01)) {

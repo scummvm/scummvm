@@ -358,11 +358,11 @@ void SceneScriptNR03::playNextMusic() {
 	} else {
 		int track = Global_Variable_Query(kVariableEarlyQFrontMusic);
 		if (track == 0) {
-			Music_Play(14, 51, 0, 2, -1, 0, 0);
+			Music_Play(kMusicGothic2, 51, 0, 2, -1, 0, 0);
 		} else if (track == 1) {
-			Music_Play(13, 51, 0, 2, -1, 0, 0);
+			Music_Play(kMusicGothic1, 51, 0, 2, -1, 0, 0);
 		} else if (track == 2) {
-			Music_Play(5, 51, 0, 2, -1, 0, 0);
+			Music_Play(kMusicGothic3, 51, 0, 2, -1, 0, 0);
 		}
 		track++;
 		if (track > 2) {

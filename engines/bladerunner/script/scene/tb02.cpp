@@ -304,7 +304,7 @@ void SceneScriptTB02::PlayerWalkedIn() {
 		if (Actor_Query_Goal_Number(kActorTyrellGuard) == kGoalTyrellGuardSleeping) {
 			Actor_Set_Goal_Number(kActorTyrellGuard, kGoalTyrellGuardWakeUp);
 		}
-		Music_Play(1, 50, 0, 2, -1, 0, 0);
+		Music_Play(kMusicBatl226M, 50, 0, 2, -1, 0, 0);
 	} else {
 		Loop_Actor_Travel_Stairs(kActorMcCoy, 9, true, kAnimationModeIdle);
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -140.0f, 0.79f, 1470.0f, 0, false, false, 0);

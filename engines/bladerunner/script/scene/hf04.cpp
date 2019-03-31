@@ -171,7 +171,7 @@ void SceneScriptHF04::PlayerWalkedIn() {
 	 || Actor_Query_Goal_Number(kActorLucy) == kGoalLucyHF04Run1
 	) {
 		Player_Set_Combat_Mode(true);
-		Music_Play(1, 60, 0, 2, -1, 0, 0);
+		Music_Play(kMusicBatl226M, 60, 0, 2, -1, 0, 0);
 	}
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -45.0f, -0.31f, 307.0f, 0, false, true, 0);
 	Delay(2500);

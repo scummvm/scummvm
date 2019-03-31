@@ -595,7 +595,7 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Flush(kActorGordo);
 		AI_Movement_Track_Append_Run(kActorGordo, 366, 0);
 		AI_Movement_Track_Repeat(kActorGordo);
-		Music_Play(1, 50, 0, 2, -1, 0, 0);
+		Music_Play(kMusicBatl226M, 50, 0, 2, -1, 0, 0);
 		break;
 
 	case kGoalGordoNR02RunAway2:

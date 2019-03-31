@@ -131,11 +131,11 @@ void SceneScriptNR09::playNextMusic() {
 	} else {
 		int track = Global_Variable_Query(kVariableEarlyQBackMusic);
 		if (track == 0) {
-			Music_Play(16, 61, -80, 2, -1, 0, 0);
+			Music_Play(kMusicDkoDnce1, 61, -80, 2, -1, 0, 0);
 		} else if (track == 1) {
-			Music_Play(15, 41, -80, 2, -1, 0, 0);
+			Music_Play(kMusicStrip1, 41, -80, 2, -1, 0, 0);
 		} else if (track == 2) {
-			Music_Play(7, 41, -80, 2, -1, 0, 0);
+			Music_Play(kMusicArkDnce1, 41, -80, 2, -1, 0, 0);
 		}
 		track++;
 		if (track > 2) {

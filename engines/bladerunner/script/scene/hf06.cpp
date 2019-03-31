@@ -181,7 +181,7 @@ void SceneScriptHF06::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 		}
 
 		if (otherActorId != -1) {
-			Music_Play(21, 35, 0, 3, -1, 0, 0);
+			Music_Play(kMusicLoveSong, 35, 0, 3, -1, 0, 0);
 			Player_Set_Combat_Mode(false);
 			Delay(1000);
 			Actor_Voice_Over(990, kActorVoiceOver);

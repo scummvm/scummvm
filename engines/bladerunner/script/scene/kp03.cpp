@@ -236,7 +236,7 @@ void SceneScriptKP03::SceneFrameAdvanced(int frame) {
 
 			if (bombTriggeredByActor == kActorSteele) {
 				Actor_Set_Goal_Number(kActorSteele, kGoalSteeleKP03Exploded);
-				Music_Play(12, 25, 0, 1, -1, 0, 0);
+				Music_Play(kMusicCrysDie1, 25, 0, 1, -1, 0, 0);
 				if (Actor_Query_Inch_Distance_From_Actor(kActorMcCoy, kActorSteele) <= 120) {
 					bombTriggeredByActor = kActorMcCoy;
 				}

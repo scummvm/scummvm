@@ -171,7 +171,7 @@ void SceneScriptUG01::PlayerWalkedIn() {
 	}
 
 	if (Actor_Query_Goal_Number(kActorLucy) == kGoalLucyUG01Wait) {
-		Music_Play(21, 35, 0, 3, -1, 0, 0);
+		Music_Play(kMusicLoveSong, 35, 0, 3, -1, 0, 0);
 		Actor_Set_Goal_Number(kActorLucy, 311);
 	}
 	//return false;

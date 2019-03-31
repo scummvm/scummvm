@@ -26,6 +26,7 @@
 #include "audio/mixer.h"
 
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/game_constants.h"
 #include "bladerunner/ambient_sounds.h"
 #include "bladerunner/audio_speech.h"
 #include "bladerunner/font.h"
@@ -52,7 +53,7 @@ void EndCredits::show() {
 	_vm->_ambientSounds->removeAllLoopingSounds(4);
 	_vm->_audioSpeech->stopSpeech();
 
-	_vm->_music->play(_vm->_gameInfo->getMusicTrack(17), 100, 0, 2, -1, 0, 3);
+	_vm->_music->play(_vm->_gameInfo->getMusicTrack(kMusicCredits), 100, 0, 2, -1, 0, 3);
 
 	Font *fontBig = new Font(_vm);
 	fontBig->open("TAHOMA24.FON", 640, 480, -1, 0, 0);

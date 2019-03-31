@@ -31,7 +31,7 @@ void SceneScriptHC04::InitializeScene() {
 	} else {
 		Setup_Scene_Information(-88.0f, 0.14f, -463.0f, 1013);
 	}
-	Music_Play(4, 14, -90, 1, -1, 1, 2);
+	Music_Play(kMusicOneTime, 14, -90, 1, -1, 1, 2);
 
 	Actor_Put_In_Set(kActorIsabella, kSetHC01_HC02_HC03_HC04);
 	Actor_Set_At_XYZ(kActorIsabella, -210.0f, 0.0f, -445.0f, 250);

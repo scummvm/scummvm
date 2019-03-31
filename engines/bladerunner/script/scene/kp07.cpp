@@ -94,7 +94,7 @@ void SceneScriptKP07::InitializeScene() {
 
 void SceneScriptKP07::SceneLoaded() {
 	if (!Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
-		Music_Play(19, 25, 0, 0, -1, 1, 0);
+		Music_Play(kMusicClovDie1, 25, 0, 0, -1, 1, 0);
 	}
 	Obstacle_Object("BUNK_TRAY01", true);
 	Unobstacle_Object("BUNK_TRAY01", true);
@@ -121,7 +121,7 @@ bool SceneScriptKP07::ClickedOnActor(int actorId) {
 			if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
 				Actor_Set_Goal_Number(kActorClovis, kGoalClovisKP07FlyAway);
 			} else {
-				Music_Play(20, 31, 0, 0, -1, 1, 0);
+				Music_Play(kMusicClovDies, 31, 0, 0, -1, 1, 0);
 				Actor_Set_Goal_Number(kActorClovis, kGoalClovisKP07TalkToMcCoy);
 			}
 			return true;

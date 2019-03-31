@@ -42,7 +42,7 @@ enum kCT01Exits {
 };
 
 void SceneScriptCT01::InitializeScene() {
-	Music_Play(3, 28, 0, 2, -1, 1, 0);
+	Music_Play(kMusicKyoto, 28, 0, 2, -1, 1, 0);
 	Game_Flag_Reset(kFlagArrivedFromSpinner1);
 	if (Game_Flag_Query(kFlagCT02toCT01)) {
 		Game_Flag_Reset(kFlagCT02toCT01);

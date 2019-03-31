@@ -293,7 +293,7 @@ void SceneScriptCT02::SceneFrameAdvanced(int frame) {
 		Sound_Play(203, 60, -20, 40, 50);
 	}
 	if (frame == 61) {
-		Music_Play(1, 50, 0, 2, -1, 0, 0);
+		Music_Play(kMusicBatl226M, 50, 0, 2, -1, 0, 0);
 	}
 	if (frame == 81) {
 		Scene_Exit_Add_2D_Exit(kCT02ExitCT03, 332, 163, 404, 297, 0);

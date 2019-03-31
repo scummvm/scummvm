@@ -382,11 +382,11 @@ void SceneScriptNR04::druggedEffect(int frame) {
 void SceneScriptNR04::playNextMusic() {
 	int track = Global_Variable_Query(kVariableEarlyQFrontMusic);
 	if (track == 0) {
-		Music_Play(14, 11, 80, 2, -1, 0, 0);
+		Music_Play(kMusicGothic2, 11, 80, 2, -1, 0, 0);
 	} else if (track == 1) {
-		Music_Play(13, 11, 80, 2, -1, 0, 0);
+		Music_Play(kMusicGothic1, 11, 80, 2, -1, 0, 0);
 	} else if (track == 2) {
-		Music_Play(5, 11, 80, 2, -1, 0, 0);
+		Music_Play(kMusicGothic3, 11, 80, 2, -1, 0, 0);
 	}
 	track++;
 	if (track > 2) {

@@ -186,7 +186,7 @@ bool SceneScriptMA04::ClickedOn2DRegion(int region) {
 				} else {
 					phoneCallWithSteele();
 				}
-				Music_Play(2, 52, 0, 3, -1, 0, 0);
+				Music_Play(kMusicBRBlues, 52, 0, 3, -1, 0, 0);
 				return false;
 			}
 			if (Actor_Clue_Query(kActorClovis, kClueMcCoyRetiredZuben) && !Game_Flag_Query(kFlagMA04PhoneMessageFromClovis)) {
@@ -299,7 +299,7 @@ void SceneScriptMA04::PlayerWalkedIn() {
 		return;
 	}
 	if ((Game_Flag_Query(kFlagZubenRetired) || Game_Flag_Query(kFlagZubenSpared)) && !Game_Flag_Query(kFlagChapter1Ending)) {
-		Music_Play(2, 52, 0, 2, -1, 0, 0);
+		Music_Play(kMusicBRBlues, 52, 0, 2, -1, 0, 0);
 		Player_Loses_Control();
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 955.0f, 1677.0f, 0, true, false, 0);
 		if (isPhoneMessageWaiting() || isPhoneRinging()) {

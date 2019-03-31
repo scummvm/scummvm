@@ -2310,6 +2310,33 @@ enum GoalMaggie {
 	kGoalMaggieDead = 599
 };
 
+// Certain tracks are available at Frank Klepacki's website/portfolio for Blade Runner
+// Those are noted with their "official" name in a side-comment here, as they appear at the website
+// A few may not match the incremental number given in-game (eg kMusicGothic3 is "Gothic Club 2")
+enum MusicTracks {
+	kMusicArabLoop = 0,  // Animoid Row track     (Not available at Frank Klepacki's website/portfolio for Blade Runner)
+	kMusicBatl226M = 1,  // "Battle Theme"
+	kMusicBRBlues = 2,   // "Blade Runner Blues"
+	kMusicKyoto = 3,     // "Etsuko Theme"
+	kMusicOneTime = 4,   // "One More Time, Love" (Not available at Frank Klepacki's website/portfolio for Blade Runner)
+	kMusicGothic3 = 5,   // "Gothic Club 2"
+	kMusicArkdFly1 = 6,
+	kMusicArkDnce1 = 7,
+	kMusicTaffy2 = 8,    // "Taffy's Club 2"
+	kMusicTaffy3 = 9,
+	kMusicTaffy4 = 10,
+	kMusicBeating1 = 11,
+	kMusicCrysDie1 = 12,
+	kMusicGothic1 = 13,  // "Gothic Club"
+	kMusicGothic2 = 14,
+	kMusicStrip1 = 15,
+	kMusicDkoDnce1 = 16,
+	kMusicCredits = 17,  // "Blade Runner End Credits"
+	kMusicMoraji = 18,
+	kMusicClovDie1 = 19,
+	kMusicClovDies = 20,
+	kMusicLoveSong = 21  // "Love Theme" (Lucy, Dektora, Subway drive ending)
+};
 } // End of namespace BladeRunner
 
 #endif
