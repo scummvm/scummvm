@@ -54,9 +54,11 @@ bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 			continue;
 
 		Common::String filename = file->getName();
-		bool hasExt = false, isBlorb = false;
+		bool hasExt = Blorb::hasBlorbExt(filename), isBlorb = false;
 		for (const char *const *ext = &EXTENSIONS[0]; *ext && !hasExt; ++ext)
 			hasExt = filename.hasSuffixIgnoreCase(*ext);
+		if (!hasExt)
+			continue;
 
 		Common::File gameFile;
 		if (!gameFile.open(*file))
@@ -67,7 +69,7 @@ bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 		isBlorb = Blorb::isBlorb(gameFile, ID_SAAI);
 		gameFile.close();
 
-		if (!hasExt && !isBlorb)
+		if (!isBlorb && Blorb::hasBlorbExt(filename))
 			continue;
 
 		// Scan through the Scott game list for a match
