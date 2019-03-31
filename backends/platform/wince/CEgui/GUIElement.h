@@ -23,6 +23,8 @@
 #ifndef CEGUI_GUIELEMENT_H
 #define CEGUI_GUIELEMENT_H
 
+#include <windows.h>
+
 #include "common/scummsys.h"
 #include "common/system.h"
 

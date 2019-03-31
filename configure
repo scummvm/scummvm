@@ -3431,7 +3431,9 @@ if test -n "$_host"; then
 			;;
 		wince)
 			append_var LDFLAGS "-Wl,--stack,65536"
-			_tremolo=yes
+			if test "$_tremor" = auto; then
+				_tremolo=yes
+			fi
 			_backend="wince"
 			_detectlang=yes
 			_mt32emu=no
@@ -3618,6 +3620,7 @@ case $_backend in
 		append_var INCLUDES '-I$(srcdir)/backends/platform/wince'
 		append_var INCLUDES '-I$(srcdir)/backends/platform/wince/CEgui'
 		append_var INCLUDES '-I$(srcdir)/backends/platform/wince/CEkeys'
+		append_var INCLUDES '-I$(srcdir)/backends/platform/wince/missing'
 		append_var LIBS "-static -lSDL"
 		append_var DEFINES "-DSDL_BACKEND"
 		add_line_to_config_mk "SDL_BACKEND = 1"

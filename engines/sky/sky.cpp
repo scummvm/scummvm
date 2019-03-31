@@ -47,13 +47,6 @@
 
 #include "engines/util.h"
 
-
-#ifdef _WIN32_WCE
-
-extern bool toolbar_drawn;
-extern bool draw_keyboard;
-#endif
-
 /*
  At the beginning the reverse engineers were happy, and did rejoice at
  their task, for the engine before them did shineth and was full of
