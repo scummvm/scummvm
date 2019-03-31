@@ -96,6 +96,12 @@ void FontProvider::readFontEntry(const Common::INIFile *gui, FontHolder &holder,
 
 	long size = strtol(sizeStr.c_str(), nullptr, 10);
 
+	// WORKAROUND: In the GOG.com release the computer font (location 36 00)
+	// is too small, preventing the "White Cardinal" label from being clickable.
+	if (strcmp(nameKey, "font2") == 0 && name.equalsIgnoreCase("Arial") && size < 14) {
+		size = 14;
+	}
+
 	if (gotName && gotSize && size > 0) {
 		holder = FontHolder(this, name, size);
 	} else {
