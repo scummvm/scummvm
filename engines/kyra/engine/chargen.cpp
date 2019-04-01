@@ -1530,6 +1530,7 @@ TransferPartyWiz::TransferPartyWiz(EoBCoreEngine *vm, Screen_EoB *screen) : _vm(
 }
 
 TransferPartyWiz::~TransferPartyWiz() {
+	_vm->gui()->notifyUpdateSaveSlotsList();
 	delete[] _oldItems;
 }
 
