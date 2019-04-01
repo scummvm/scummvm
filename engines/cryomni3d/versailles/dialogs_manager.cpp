@@ -352,15 +352,15 @@ void Versailles_DialogsManager::loadFrame(const Common::String &video) {
 		return;
 	}
 
+	// Preload first frame to draw questions on it
+	const Graphics::Surface *firstFrame = videoDecoder->decodeNextFrame();
+	_lastImage.create(firstFrame->w, firstFrame->h, firstFrame->format);
+	_lastImage.blitFrom(*firstFrame);
+
 	if (videoDecoder->hasDirtyPalette()) {
 		const byte *palette = videoDecoder->getPalette();
 		_engine->setupPalette(palette, 0, 256);
 	}
-
-	// Preload first frame to draw subtitles from it
-	const Graphics::Surface *firstFrame = videoDecoder->decodeNextFrame();
-	_lastImage.create(firstFrame->w, firstFrame->h, firstFrame->format);
-	_lastImage.blitFrom(*firstFrame);
 }
 
 } // End of namespace Versailles
