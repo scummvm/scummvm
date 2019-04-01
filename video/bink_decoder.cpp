@@ -827,8 +827,8 @@ void BinkDecoder::BinkVideoTrack::blockScaledRun(DecodeContext &ctx) {
 }
 
 void BinkDecoder::BinkVideoTrack::blockScaledIntra(DecodeContext &ctx) {
-	int16 block[64];
-	memset(block, 0, 64 * sizeof(int16));
+	int32 block[64];
+	memset(block, 0, 64 * sizeof(int32));
 
 	block[0] = getBundleValue(kSourceIntraDC);
 
@@ -836,7 +836,7 @@ void BinkDecoder::BinkVideoTrack::blockScaledIntra(DecodeContext &ctx) {
 
 	IDCT(block);
 
-	int16 *src   = block;
+	int32 *src   = block;
 	byte  *dest1 = ctx.dest;
 	byte  *dest2 = ctx.dest + ctx.pitch;
 	for (int j = 0; j < 8; j++, dest1 += (ctx.pitch << 1) - 16, dest2 += (ctx.pitch << 1) - 16, src += 8) {
@@ -972,8 +972,8 @@ void BinkDecoder::BinkVideoTrack::blockResidue(DecodeContext &ctx) {
 }
 
 void BinkDecoder::BinkVideoTrack::blockIntra(DecodeContext &ctx) {
-	int16 block[64];
-	memset(block, 0, 64 * sizeof(int16));
+	int32 block[64];
+	memset(block, 0, 64 * sizeof(int32));
 
 	block[0] = getBundleValue(kSourceIntraDC);
 
@@ -993,8 +993,8 @@ void BinkDecoder::BinkVideoTrack::blockFill(DecodeContext &ctx) {
 void BinkDecoder::BinkVideoTrack::blockInter(DecodeContext &ctx) {
 	blockMotion(ctx);
 
-	int16 block[64];
-	memset(block, 0, 64 * sizeof(int16));
+	int32 block[64];
+	memset(block, 0, 64 * sizeof(int32));
 
 	block[0] = getBundleValue(kSourceInterDC);
 
@@ -1229,7 +1229,7 @@ void BinkDecoder::BinkVideoTrack::readDCS(VideoFrame &video, Bundle &bundle, int
 }
 
 /** Reads 8x8 block of DCT coefficients. */
-void BinkDecoder::BinkVideoTrack::readDCTCoeffs(VideoFrame &video, int16 *block, bool isIntra) {
+void BinkDecoder::BinkVideoTrack::readDCTCoeffs(VideoFrame &video, int32 *block, bool isIntra) {
 	int coefCount = 0;
 	int coefIdx[64];
 
@@ -1317,7 +1317,7 @@ void BinkDecoder::BinkVideoTrack::readDCTCoeffs(VideoFrame &video, int16 *block,
 	}
 
 	uint8 quantIdx = video.bits->getBits(4);
-	const uint32 *quant = isIntra ? binkIntraQuant[quantIdx] : binkInterQuant[quantIdx];
+	const int32 *quant = isIntra ? binkIntraQuant[quantIdx] : binkInterQuant[quantIdx];
 	block[0] = (block[0] * quant[0]) >> 11;
 
 	for (int i = 0; i < coefCount; i++) {
@@ -1456,7 +1456,7 @@ void BinkDecoder::BinkVideoTrack::readResidue(VideoFrame &video, int16 *block, i
 #define MUNGE_ROW(x) (((x) + 0x7F)>>8)
 #define IDCT_ROW(dest,src) IDCT_TRANSFORM(dest,0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7,MUNGE_ROW,src)
 
-static inline void IDCTCol(int16 *dest, const int16 *src) {
+static inline void IDCTCol(int32 *dest, const int32 *src) {
 	if ((src[8] | src[16] | src[24] | src[32] | src[40] | src[48] | src[56]) == 0) {
 		dest[ 0] =
 		dest[ 8] =
@@ -1471,9 +1471,9 @@ static inline void IDCTCol(int16 *dest, const int16 *src) {
 	}
 }
 
-void BinkDecoder::BinkVideoTrack::IDCT(int16 *block) {
+void BinkDecoder::BinkVideoTrack::IDCT(int32 *block) {
 	int i;
-	int16 temp[64];
+	int32 temp[64];
 
 	for (i = 0; i < 8; i++)
 		IDCTCol(&temp[i], &block[i]);
@@ -1482,7 +1482,7 @@ void BinkDecoder::BinkVideoTrack::IDCT(int16 *block) {
 	}
 }
 
-void BinkDecoder::BinkVideoTrack::IDCTAdd(DecodeContext &ctx, int16 *block) {
+void BinkDecoder::BinkVideoTrack::IDCTAdd(DecodeContext &ctx, int32 *block) {
 	int i, j;
 
 	IDCT(block);
@@ -1492,9 +1492,9 @@ void BinkDecoder::BinkVideoTrack::IDCTAdd(DecodeContext &ctx, int16 *block) {
 			 dest[j] += block[j];
 }
 
-void BinkDecoder::BinkVideoTrack::IDCTPut(DecodeContext &ctx, int16 *block) {
+void BinkDecoder::BinkVideoTrack::IDCTPut(DecodeContext &ctx, int32 *block) {
 	int i;
-	int16 temp[64];
+	int32 temp[64];
 	for (i = 0; i < 8; i++)
 		IDCTCol(&temp[i], &block[i]);
 	for (i = 0; i < 8; i++) {
