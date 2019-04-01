@@ -314,13 +314,13 @@ private:
 		void readPatterns    (VideoFrame &video, Bundle &bundle);
 		void readColors      (VideoFrame &video, Bundle &bundle);
 		void readDCS         (VideoFrame &video, Bundle &bundle, int startBits, bool hasSign);
-		void readDCTCoeffs   (VideoFrame &video, int16 *block, bool isIntra);
+		void readDCTCoeffs   (VideoFrame &video, int32 *block, bool isIntra);
 		void readResidue     (VideoFrame &video, int16 *block, int masksCount);
 
 		// Bink video IDCT
-		void IDCT(int16 *block);
-		void IDCTPut(DecodeContext &ctx, int16 *block);
-		void IDCTAdd(DecodeContext &ctx, int16 *block);
+		void IDCT(int32 *block);
+		void IDCTPut(DecodeContext &ctx, int32 *block);
+		void IDCTAdd(DecodeContext &ctx, int32 *block);
 	};
 
 	class BinkAudioTrack : public AudioTrack {
