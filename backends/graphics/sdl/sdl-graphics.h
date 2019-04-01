@@ -97,7 +97,7 @@ public:
 	 * @returns true if the mouse was in a valid position for the game and
 	 * should cause the event to be sent to the game.
 	 */
-	virtual bool notifyMousePosition(Common::Point mouse) = 0;
+	virtual bool notifyMousePosition(Common::Point &mouse) = 0;
 
 	/**
 	 * A (subset) of the graphic manager's state. This is used when switching

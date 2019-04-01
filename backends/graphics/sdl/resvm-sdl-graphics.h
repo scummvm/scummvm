@@ -66,7 +66,7 @@ public:
 	void activateManager() override;
 	void deactivateManager() override;
 	void notifyVideoExpose() override;
-	bool notifyMousePosition(Common::Point mouse) override;
+	bool notifyMousePosition(Common::Point &mouse) override;
 
 	// GraphicsManager API - Features
 	void setFeatureState(OSystem::Feature f, bool enable) override;
