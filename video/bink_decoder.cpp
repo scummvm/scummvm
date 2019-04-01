@@ -302,7 +302,7 @@ BinkDecoder::BinkVideoTrack::BinkVideoTrack(uint32 width, uint32 height, const G
 	_oldPlanes[2] = new byte[_uvBlockWidth * 8 * _uvBlockHeight * 8]; // V, 1/4 resolution
 	_oldPlanes[3] = new byte[_yBlockWidth  * 8 * _yBlockHeight  * 8]; // A
 
-	// Initialize the video with solid black
+	// Initialize the video with solid green
 	memset(_curPlanes[0],   0, _yBlockWidth  * 8 * _yBlockHeight  * 8);
 	memset(_curPlanes[1],   0, _uvBlockWidth * 8 * _uvBlockHeight * 8);
 	memset(_curPlanes[2],   0, _uvBlockWidth * 8 * _uvBlockHeight * 8);
