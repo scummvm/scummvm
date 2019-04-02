@@ -43,7 +43,7 @@ public:
 
 	void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL) override;
 	const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
-	bool setGraphicsMode(int mode) override;
+	int getGraphicsModeScale(int mode) const override;
 	void setGraphicsModeIntern() override;
 	void internUpdateScreen() override;
 	void showOverlay() override;
