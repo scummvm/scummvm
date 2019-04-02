@@ -172,11 +172,11 @@
 		/>
 
 		<text_color	id = 'color_normal_hover'
-				color = 'button_idle'
+				color = 'button_hover'
 		/>
 
 		<text_color	id = 'color_normal_disabled'
-				color = '96, 96, 96'
+				color = 'button_disabled'
 		/>
 
 		<text_color	id = 'color_alternative'
