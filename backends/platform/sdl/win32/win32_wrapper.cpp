@@ -29,6 +29,7 @@
 #include <shlobj.h>
 
 #include "common/scummsys.h"
+#include "common/translation.h"
 #include "backends/platform/sdl/win32/win32_wrapper.h"
 
 // VerSetConditionMask, VerifyVersionInfo and SHGetFolderPath didn't appear until Windows 2000,
@@ -80,28 +81,43 @@ bool confirmWindowsVersion(int majorVersion, int minorVersion) {
 	return VerifyVersionInfoFunc(&versionInfo, VER_MAJORVERSION | VER_MINORVERSION, conditionMask);
 }
 
-wchar_t *ansiToUnicode(const char *s) {
-	DWORD size = MultiByteToWideChar(0, 0, s, -1, NULL, 0);
+wchar_t *ansiToUnicode(const char *s, uint codePage) {
+	DWORD size = MultiByteToWideChar(codePage, 0, s, -1, NULL, 0);
 
 	if (size > 0) {
 		LPWSTR result = new WCHAR[size];
-		if (MultiByteToWideChar(0, 0, s, -1, result, size) != 0)
+		if (MultiByteToWideChar(codePage, 0, s, -1, result, size) != 0)
 			return result;
 	}
 
 	return NULL;
 }
 
-char *unicodeToAnsi(const wchar_t *s) {
-	DWORD size = WideCharToMultiByte(0, 0, s, -1, NULL, 0, 0, 0);
+char *unicodeToAnsi(const wchar_t *s, uint codePage) {
+	DWORD size = WideCharToMultiByte(codePage, 0, s, -1, NULL, 0, 0, 0);
 
 	if (size > 0) {
 		char *result = new char[size];
-		if (WideCharToMultiByte(0, 0, s, -1, result, size, 0, 0) != 0)
+		if (WideCharToMultiByte(codePage, 0, s, -1, result, size, 0, 0) != 0)
 			return result;
 	}
 
 	return NULL;
+}
+
+uint getCurrentCharset() {
+#ifdef USE_TRANSLATION
+	Common::String charset = TransMan.getCurrentCharset();
+	if (charset == "iso-8859-2")
+		return 28592;
+	if (charset == "iso-8859-5")
+		return 28595;
+	if (charset == "iso-8859-7")
+		return 28597;
+	if (charset == "iso-8859-8")
+		return 28598;
+#endif
+	return 28591;
 }
 
 }
