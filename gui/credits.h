@@ -93,6 +93,7 @@ static const char *credits[] = {
 "C1""Blade Runner",
 "C0""Thomas Fach-Pedersen",
 "C0""Peter Kohaut",
+"C0""Thanasis Antoniou",
 "",
 "C1""CGE",
 "A0""Arnaud Boutonne",
