@@ -121,6 +121,7 @@ static const char *const selectorNameTable[] = {
 	"stop",         // Space Quest 4
 	"canControl",   // Space Quest 4
 	"looper",       // Space Quest 4
+	"nMsgType",     // Space Quest 4
 	"loop",         // Laura Bow 1 Colonel's Bequest, QFG4
 	"setLoop",      // Laura Bow 1 Colonel's Bequest, QFG4
 	"ignoreActors", // Laura Bow 1 Colonel's Bequest
@@ -220,6 +221,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_stop,
 	SELECTOR_canControl,
 	SELECTOR_looper,
+	SELECTOR_nMsgType,
 	SELECTOR_loop,
 	SELECTOR_setLoop,
 	SELECTOR_ignoreActors,
@@ -11669,6 +11671,172 @@ static const uint16 sq4CdPatchTextOptions[] = {
 	PATCH_END
 };
 
+// Vohaul's scene on the PocketPal (room 545) is incompatible with our dual
+//  text+speech mode and reportedly has MIDI timing issues in text mode.
+//
+// This is an unusual scene in that it uses three empty MIDI songs to control
+//  its text delays, which is probably why Sierra didn't fully upgrade it to
+//  use a Narrator in the CD version. Instead the tVOHAUL Narrator is only used
+//  in speech mode without the formatting it would need to display text. In text
+//  mode the original floppy code handles that.
+//
+// We heavily patch this script to support text+speech mode and remove the MIDIs
+//  from the equation. The trick to using tVOHAUL in dual mode is to set its
+//  nMsgType to 2. This causes Sq4Narrator to change the game's message mode to
+//  speech while it says a message, preventing it from displaying text in a
+//  message box since it wasn't provided formatting. Our code needs to know the
+//  real message mode while tVOHAUL is speaking so we store that in the script's
+//  register for later use.
+//
+// The audio and text for Vohaul's messages aren't the same. The audio for the
+//  second message also contains the third, and the third has no audio resource
+//  at all. We work around this by setting a three second timer and displaying
+//  the third text while the audio is already playing.
+//
+// Applies to: English PC CD
+// Responsible method: vohaulScript:changeState
+// Fixes bug #10241
+static const uint16 sq4CdSignatureVohaulPocketPalTextSpeech[] = {
+	0x3c,                               // dup
+	0x35, 0x00,                         // ldi 00
+	0x1a,                               // eq?
+	0x31, 0x26,                         // bnt 26 [ state 1 ]
+	SIG_ADDTOOFFSET(+49),
+	0x1a,                               // eq? [ is speech mode? ]
+	0x31, 0x22,                         // bnt 22
+	SIG_ADDTOOFFSET(+13),
+	0x38, SIG_SELECTOR16(modNum),       // pushi modNum [ unnecessary when modNum is room number ]
+	0x78,                               // push1
+	0x38, SIG_UINT16(0x0221),           // pushi 0221
+	SIG_ADDTOOFFSET(11),
+	0x32, SIG_UINT16(0x00d1),           // jmp 00d1 [ end of method ]
+	0x38, SIG_SELECTOR16(setCycle),     // pushi setCycle
+	SIG_ADDTOOFFSET(+9),
+	0x38, SIG_SELECTOR16(setCycle),     // pushi setCycle
+	0x78,                               // push1
+	0x51, 0x59,                         // class RandCycle
+	0x36,                               // push
+	0x72, SIG_UINT16(0x0578),           // lofsa vohaulEyes
+	0x4a, 0x06,                         // send 06
+	0x39, 0x04,                         // pushi 04
+	SIG_MAGICDWORD,
+	0x76,                               // push0
+	0x72, SIG_UINT16(0x0740),           // lofsa "Take a good look, Roger:"
+	0x36,                               // push
+	0x38, SIG_UINT16(0x0353),           // pushi 0353
+	0x7c,                               // pushSelf
+	0x40, SIG_UINT16(0xf93e), 0x08,     // call localproc_0062 08 [ display text until midi 851 finishes ]
+	0x32, SIG_UINT16(0x00a7),           // jmp 00a7 [ end of method ]
+	SIG_ADDTOOFFSET(+10),
+	0x1a,                               // eq? [ is text mode? ]
+	SIG_ADDTOOFFSET(+52),
+	0x1a,                               // eq? [ is speech mode? ]
+	0x31, 0x0e,                         // bnt 0e
+	SIG_ADDTOOFFSET(+11),
+	0x32, SIG_UINT16(0x0057),           // jmp 0057 [ end of method ]
+	0x39, 0x04,                         // pushi 04
+	0x76,                               // push0
+	0x72, SIG_UINT16(0x0760),           // lofsa "Remember this poor wretched soul..."
+	0x36,                               // push
+	0x38, SIG_UINT16(0x0354),           // pushi 0354
+	0x7c,                               // pushSelf
+	0x40, SIG_UINT16(0xf8dc), 0x08,     // call localproc_0062 08 [ display text until midi 852 finishes ]
+	0x32, SIG_UINT16(0x0045),           // jmp 0045 [ end of method ]
+	SIG_ADDTOOFFSET(+6),
+	0x89, 0x5a,                         // lsg 5a
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?    [ is text mode? ]
+	0x31, 0x17,                         // bnt 17 [ skip text, set cycles = 1 ]
+	0x78,                               // push1
+	0x8b, 0x00,                         // lsl 00
+	0x45, 0x0c, 0x02,                   // call proc0_12 02 [ unnecessary, localproc_0062 calls this ]
+	0x39, 0x04,                         // pushi 04
+	0x76,                               // push0
+	0x72, SIG_UINT16(0x0784),           // lofsa "...for he is your SON!"
+	0x36,                               // push
+	0x38, SIG_UINT16(0x0355),           // pushi 0355
+	0x7c,                               // pushSelf
+	0x40, SIG_UINT16(0xf8b7), 0x08,     // call localproc_0062 08 [ display text until midi 853 finishes ]
+	0x33, 0x21,                         // jmp 21 [ end of method ]
+	0x35, 0x01,                         // ldi 01
+	0x65, 0x1a,                         // aTop cycles [ cycles = 1, speech completed or dismissed by user ]
+	0x33, 0x1b,                         // jmp 1b [ end of method ]
+	SIG_END
+};
+
+static const uint16 sq4CdPatchVohaulPocketPalTextSpeech[] = {
+	0x2f, 0x2a,                         // bt 26 [ state 1 ]
+	0x81, 0x5a,                         // lag 5a
+	0x65, 0x24,                         // aTop register [ register = message mode ]
+	PATCH_ADDTOOFFSET(+49),
+	0x12,                               // and [ is speech or dual mode? ]
+	0x31, 0x21,                         // bnt 21
+	PATCH_ADDTOOFFSET(+13),
+	0x38, PATCH_SELECTOR16(nMsgType),   // pushi nMsgType
+	0x78,                               // push1
+	0x38, PATCH_UINT16(0x0002),         // pushi 0002 [ speech ]
+	PATCH_ADDTOOFFSET(+11),
+	0x33, 0x1a,                         // jmp 1a
+	0x38, PATCH_SELECTOR16(setCycle),   // pushi setCycle
+	0x3c,                               // dup [ save 2 bytes ]
+	PATCH_ADDTOOFFSET(+9),
+	0x78,                               // push1
+	0x51, 0x59,                         // class RandCycle
+	0x36,                               // push
+	0x72, PATCH_UINT16(0x0578),         // lofsa vohaulEyes
+	0x4a, 0x06,                         // send 06
+	0x35, 0x02,                         // ldi 02
+	0x65, 0x1c,                         // aTop seconds [ 2 second delay in text mode ]
+	0x63, 0x24,                         // pToa register
+	0x78,                               // push1
+	0x12,                               // and    [ is text or dual mode? ]
+	0x31, 0x0b,                         // bnt 0b [ don't display text ]
+	0x39, 0x03,                         // pushi 03
+	0x76,                               // push0
+	0x74, PATCH_UINT16(0x0740),         // lofss "Take a good look, Roger:"
+	0x76,                               // push0
+	0x40, PATCH_UINT16(0xf93b), 0x06,   // call localproc_0062 06 [ display text without midi ]
+	PATCH_ADDTOOFFSET(+10),
+	0x12,                               // and [ is text or dual mode? ]
+	PATCH_ADDTOOFFSET(+52),
+	0x12,                               // and [ is speech or dual mode? ]
+	0x31, 0x0b,                         // bnt 0b
+	PATCH_ADDTOOFFSET(+11),
+	0x63, 0x24,                         // pToa register
+	0x78,                               // push1
+	0x12,                               // and    [ is text or dual mode? ]
+	0x31, 0x0f,                         // bnt 0f [ don't display text ]
+	0x39, 0x03,                         // pushi 03
+	0x76,                               // push0
+	0x74, PATCH_UINT16(0x0760),         // lofss "Remember this poor wretched soul..."
+	0x76,                               // push0
+	0x40, PATCH_UINT16(0xf8dd), 0x06,   // call localproc_0062 06 [ display text without midi ]
+	0x35, 0x03,                         // ldi 03
+	0x65, 0x1c,                         // aTop seconds [ 3 second delay in text or dual mode ]
+	PATCH_ADDTOOFFSET(+6),
+	0x63, 0x1c,                         // pToa seconds
+	0x2f, 0x1d,                         // bnt 1d [ speech dismissed by user, set cycles = 1 ]
+	0x63, 0x24,                         // pToa register
+	0x78,                               // push1
+	0x1a,                               // eq?    [ is text mode? ]
+	0x31, 0x04,                         // bnt 04 [ don't set text delay ]
+	0x35, 0x03,                         // ldi 03
+	0x65, 0x1c,                         // aTop seconds [ 3 second delay in text mode ]
+	0x63, 0x24,                         // pToa register
+	0x78,                               // push1
+	0x12,                               // and    [ is text or dual mode? ]
+	0x31, 0x0d,                         // bnt 0d [ skip text, set cycles = 1 ]
+	0x39, 0x03,                         // pushi 03
+	0x76,                               // push0
+	0x74, PATCH_UINT16(0x0784),         // lofss "...for he is your SON!"
+	0x76,                               // push0
+	0x40, PATCH_UINT16(0xf8b4), 0x06,   // call localproc_0062 06 [ display text without midi ]
+	0x33, 0x03,                         // jmp 03
+	0x78,                               // push1
+	0x69, 0x1a,                         // sTop cycles [ cycles = 1, speech completed ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                      patch
 static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,     1, "Floppy: EGA intro delay fix",                    2, sq4SignatureEgaIntroDelay,                     sq4PatchEgaIntroDelay },
@@ -11687,6 +11855,7 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,   410, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
 	{  true,   411, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
 	{  true,   520, "CD: maze talk message fix",                      1, sq4CdSignatureMazeTalkMessage,                 sq4CdPatchMazeTalkMessage },
+	{  true,   545, "CD: vohaul pocketpal text+speech fix",           1, sq4CdSignatureVohaulPocketPalTextSpeech,       sq4CdPatchVohaulPocketPalTextSpeech },
 	{  true,   610, "CD: biker bar door fix",                         1, sq4CdSignatureBikerBarDoor,                    sq4CdPatchBikerBarDoor },
 	{  true,   610, "CD: biker hands-on fix",                         3, sq4CdSignatureBikerHandsOn,                    sq4CdPatchBikerHandsOn },
 	{  true,   611, "CD: biker hands-on fix",                         1, sq4CdSignatureBikerHandsOn,                    sq4CdPatchBikerHandsOn },
