@@ -1423,12 +1423,12 @@ void ESPER::selectPhoto(int photoId) {
 		reset();
 	}
 
-	int photoSize = _surfacePhoto.w * _surfacePhoto.h * _surfacePhoto.format.bytesPerPixel;
+	uint photoSize = _surfacePhoto.w * _surfacePhoto.h * _surfacePhoto.format.bytesPerPixel;
 
 	s->skip(3); // not used, but there is compression type
 	uint width  = s->readUint32LE();
 	uint height = s->readUint32LE();
-	int photoCompressedSize = s->size() - s->pos();
+	uint photoCompressedSize = s->size() - s->pos();
 	uint8 *photoCompressed = (uint8 *)_surfacePhoto.getPixels() + photoSize - photoCompressedSize;
 	s->read(photoCompressed, photoCompressedSize);
 
