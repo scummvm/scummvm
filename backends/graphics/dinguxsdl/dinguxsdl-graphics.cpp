@@ -51,39 +51,20 @@ int DINGUXSdlGraphicsManager::getDefaultGraphicsMode() const {
 	return GFX_NORMAL;
 }
 
-bool DINGUXSdlGraphicsManager::setGraphicsMode(int mode) {
-	Common::StackLock lock(_graphicsMutex);
-
-	assert(_transactionMode == kTransactionActive);
-
-	if (_oldVideoMode.setup && _oldVideoMode.mode == mode)
-		return true;
-
-	int newScaleFactor = 1;
-
+int DINGUXSdlGraphicsManager::getGraphicsModeScale(int mode) const {
+	int scale;
 	switch (mode) {
 	case GFX_NORMAL:
-		newScaleFactor = 1;
-		break;
 #ifdef USE_SCALERS
 	case GFX_HALF:
-		newScaleFactor = 1;
-		break;
 #endif
+		scale = 1;
+		break;
 	default:
-		warning("unknown gfx mode %d", mode);
-		return false;
+		scale = -1;
 	}
 
-	if (_oldVideoMode.setup && _oldVideoMode.scaleFactor != newScaleFactor)
-		_transactionDetails.needHotswap = true;
-
-	_transactionDetails.needUpdatescreen = true;
-
-	_videoMode.mode = mode;
-	_videoMode.scaleFactor = newScaleFactor;
-
-	return true;
+	return scale;
 }
 
 void DINGUXSdlGraphicsManager::setGraphicsModeIntern() {
