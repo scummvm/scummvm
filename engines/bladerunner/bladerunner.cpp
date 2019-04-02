@@ -116,10 +116,11 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_playerActorIdle = false;
 	_playerDead      = false;
 
-	_gameOver        = false;
-	_gameAutoSave    = -1;
-	_gameIsLoading   = false;
-	_sceneIsLoading  = false;
+	_gameOver               = false;
+	_gameAutoSaveTextId     = -1;
+	_gameIsAutoSaving       = false;
+	_gameIsLoading          = false;
+	_sceneIsLoading         = false;
 
 	_runningActorId         = -1;
 	_isWalkingInterruptible = false;
@@ -282,7 +283,6 @@ Common::Error BladeRunnerEngine::saveGameState(int slot, const Common::String &d
 	header._name = desc;
 
 	BladeRunner::SaveFileManager::writeHeader(*saveFile, header);
-
 	_time->pause();
 	saveGame(*saveFile, thumbnail);
 	_time->resume();
@@ -331,6 +331,14 @@ Common::Error BladeRunnerEngine::run() {
 		_mouse->disable();
 
 		if (_gameOver) {
+			// In the original game this created a single "END_GAME_STATE.END"
+			// which had the a valid format of a save game but was never accessed
+			// from the loading screen. (Due to the .END extension)
+			// It was also a single file that was overwritten each time the player
+			// finished the game.
+			// Maybe its purpose was debugging (?) by renaming it to .SAV and also
+			// for the game to "know" if the player has already finished the game at least once (?)
+			// although that latter one seems not to be used for anything.
 			autoSaveGame(4, true);
 			_endCredits->show();
 		}
@@ -856,9 +864,9 @@ void BladeRunnerEngine::gameTick() {
 		}
 	}
 
-	if (_gameAutoSave >= 0) {
-		autoSaveGame(_gameAutoSave, false);
-		_gameAutoSave = -1;
+	if (_gameAutoSaveTextId >= 0) {
+		autoSaveGame(_gameAutoSaveTextId, false);
+		_gameAutoSaveTextId = -1;
 	}
 
 	//probably not needed, this version of tick is just loading data from buffer
@@ -1811,7 +1819,9 @@ void BladeRunnerEngine::playerDied() {
 }
 
 bool BladeRunnerEngine::saveGame(Common::WriteStream &stream, const Graphics::Surface &thumbnail) {
-	if (!playerHasControl() || _sceneScript->isInsideScript() || _aiScripts->isInsideScript()) {
+	if ( !_gameIsAutoSaving
+	     && ( !playerHasControl() || _sceneScript->isInsideScript() || _aiScripts->isInsideScript())
+	){
 		return false;
 	}
 
@@ -1977,6 +1987,7 @@ void BladeRunnerEngine::autoSaveGame(int textId, bool endgame) {
 	if (!textAutoSave.open("AUTOSAVE")) {
 		return;
 	}
+	_gameIsAutoSaving = true;
 
 	SaveStateList saveList = BladeRunner::SaveFileManager::list(getTargetName());
 
@@ -1999,7 +2010,7 @@ void BladeRunnerEngine::autoSaveGame(int textId, bool endgame) {
 	} else {
 		saveGameState(slot,  textAutoSave.getText(textId));
 	}
-
+	_gameIsAutoSaving = false;
 }
 
 void BladeRunnerEngine::ISez(const Common::String &str) {

@@ -194,7 +194,8 @@ public:
 	bool _actorIsSpeaking;
 	bool _actorSpeakStopIsRequested;
 	bool _gameOver;
-	int  _gameAutoSave;
+	int  _gameAutoSaveTextId;
+	bool _gameIsAutoSaving;
 	bool _gameIsLoading;
 	bool _sceneIsLoading;
 	bool _vqaIsPlaying;

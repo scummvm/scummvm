@@ -1560,7 +1560,7 @@ bool ScriptBase::Game_Over() {
 
 void ScriptBase::Autosave_Game(int textId) {
 	debugC(kDebugScript, "Autosave_Game(%d)", textId);
-	_vm->_gameAutoSave = textId;
+	_vm->_gameAutoSaveTextId = textId;
 }
 
 void ScriptBase::I_Sez(const char *str) {
