@@ -52,9 +52,9 @@ public:
 
 	static Common::HashMap<Common::String, uint32> loadTimestamps();
 	static void saveTimestamps(Common::HashMap<Common::String, uint32> &timestamps);
-	static Common::String concatWithSavesPath(Common::String name);
-
 #endif
+
+	static Common::String concatWithSavesPath(Common::String name);
 
 protected:
 	/**
