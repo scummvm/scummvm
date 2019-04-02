@@ -217,6 +217,14 @@ void SceneScriptKP06::PlayerWalkedIn() {
 			Actor_Says(kActorGaff, 310, -1);
 			Delay(3000);
 			Outtake_Play(kOuttakeEnd7, false, -1);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+			// match behavior of other ending outtakes
+			// but do it after the cutscene,
+			// since this particular cutscene has no sound
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Game_Over();
 		}
 		return; // true;
