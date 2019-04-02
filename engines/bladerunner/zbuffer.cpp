@@ -154,6 +154,13 @@ bool ZBuffer::decodeData(const uint8 *data, int size) {
 		resetUpdates();
 		size_t zbufOutSize;
 		decompress_lzo1x(data, size, (uint8 *)_zbuf1, &zbufOutSize);
+#ifdef SCUMM_BIG_ENDIAN
+		// As the compression is working with 8-bit data, on big-endian architectures we have to switch order of bytes in uncompressed data
+		uint8 *rawZbuf = (uint8 *)_zbuf1;
+		for (size_t i = 0; i < zbufOutSize - 1; i += 2) {
+			SWAP(rawZbuf[i], rawZbuf[i + 1]);
+		}
+#endif
 		memcpy(_zbuf2, _zbuf1, 2 * _width * _height);
 	} else {
 		clean();

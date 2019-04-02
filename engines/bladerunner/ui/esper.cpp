@@ -1433,6 +1433,13 @@ void ESPER::selectPhoto(int photoId) {
 	s->read(photoCompressed, photoCompressedSize);
 
 	decompress_lcw(photoCompressed, photoCompressedSize, (uint8 *)_surfacePhoto.getPixels(), photoSize);
+#ifdef SCUMM_BIG_ENDIAN
+	// As the compression is working with 8-bit data, on big-endian architectures we have to switch order of bytes in uncompressed data
+	uint8 *rawData = (uint8 *)_surfacePhoto.getPixels();
+	for (size_t i = 0; i < photoSize - 1; i += 2) {
+		SWAP(rawData[i], rawData[i + 1]);
+	}
+#endif
 
 	// apply palette
 	for (uint j = 0; j < width * height; ++j) {

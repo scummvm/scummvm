@@ -64,6 +64,13 @@ bool Image::open(const Common::String &name) {
 		warning("LZO image decompression is not implemented");
 	} else if (strcmp(tag, "LCW") == 0) {
 		decompress_lcw(buf, bufSize, (uint8 *)data, dataSize);
+#ifdef SCUMM_BIG_ENDIAN
+		// As the compression is working with 8-bit data, on big-endian architectures we have to switch order of bytes in uncompressed data
+		uint8 *rawData = (uint8 *)data;
+		for (size_t i = 0; i < dataSize - 1; i += 2) {
+			SWAP(rawData[i], rawData[i + 1]);
+		}
+#endif
 	}
 
 	const Graphics::PixelFormat pixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
