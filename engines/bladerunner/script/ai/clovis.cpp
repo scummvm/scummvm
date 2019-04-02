@@ -439,17 +439,17 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Says(kActorClovis, 1310, kAnimationModeTalk);
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
-		Outtake_Play(kOuttakeEnd4A, 0, -1);
+		Outtake_Play(kOuttakeEnd4A, false, -1);
 		if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy
 		 && Game_Flag_Query(kFlagLucyIsReplicant)
 		) {
-			Outtake_Play(kOuttakeEnd4B, 0, -1);
+			Outtake_Play(kOuttakeEnd4B, false, -1);
 		} else if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsDektora
 		       && Game_Flag_Query(kFlagDektoraIsReplicant)
 		) {
-			Outtake_Play(kOuttakeEnd4C, 0, -1);
+			Outtake_Play(kOuttakeEnd4C, false, -1);
 		}
-		Outtake_Play(kOuttakeEnd4D, 0, -1);
+		Outtake_Play(kOuttakeEnd4D, false, -1);
 		Game_Over();
 		return true;
 

@@ -989,7 +989,12 @@ void BladeRunnerEngine::gameTick() {
 
 	_subtitles->tick(_surfaceFront);
 
-	blitToScreen(_surfaceFront);
+	 // Without this condition the game may flash back to the game screen
+	 // between and ending outtake and the end credits.
+	if (!_gameOver) {
+		blitToScreen(_surfaceFront);
+	}
+
 	_system->delayMillis(10);
 }
 
