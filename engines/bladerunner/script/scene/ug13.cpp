@@ -30,8 +30,14 @@ void SceneScriptUG13::InitializeScene() {
 	} else if (Game_Flag_Query(kFlagUG15toUG13)) {
 		Setup_Scene_Information(  39.0f, 52.94f, -528.0f, 600);
 	} else {
+		// arrived from elevator (going down)
 		Setup_Scene_Information( -22.0f, 54.63f, -883.0f, 578);
+#if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Set_Invisible(kActorMcCoy, false);
+#else
+		// McCoy should not be visible starting this scene when he goes down with the elevator
+		Actor_Set_Invisible(kActorMcCoy, true);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 
 	if (!Game_Flag_Query(kFlagUB08ElevatorUp)) {
@@ -100,6 +106,12 @@ bool SceneScriptUG13::ClickedOn3DObject(const char *objectName, bool a2) {
 			Actor_Face_Object(kActorMcCoy, "BOLLARD", true);
 			if (Game_Flag_Query(kFlagUB08ElevatorUp)) {
 				Scene_Loop_Set_Default(1);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+				// start elevator sound, but wait a bit before starting the special loop
+				Ambient_Sounds_Play_Sound(372, 90, 0, 0, 100);
+				Delay(1500);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 				Scene_Loop_Start_Special(kSceneLoopModeOnce, 0, false);
 				Game_Flag_Reset(kFlagUB08ElevatorUp);
 				Game_Flag_Set(kFlagUG13CallElevator);
@@ -269,6 +281,7 @@ void SceneScriptUG13::PlayerWalkedIn() {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, 44.0f, -528.0f, 0, false, false, 0);
 		Game_Flag_Reset(kFlagUG15toUG13);
 	} else {
+		// arrived from elevator (going down)
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -60.0f, 55.24f, -816.0f, 0, false, false, 0);
 		Game_Flag_Reset(kFlagUG08toUG13);
 		Player_Gains_Control();
