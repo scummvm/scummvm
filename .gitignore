@@ -67,6 +67,11 @@ lib*.a
 
 /backends/platform/maemo/scummvm
 
+/backends/platform/symbian/mmp/*.mmp
+/backends/platform/symbian/*/ScummVM_*.mmp
+!/backends/platform/symbian/*/ScummVM_*_App.mmp
+/backends/platform/symbian/*/BLD.INF
+
 /backends/platform/wince/scummvm.exe*
 /backends/platform/wince/sound
 /backends/platform/wince/tools
@@ -223,6 +228,13 @@ dists/msvc*/**
 
 #Ignore bison debug output
 *.output
+
+#Ignore CMake build files
+CMakeFiles
+CMakeCache.txt
+cmake_install.cmake
+.ninja_*
+*.ninja
 
 #Ignore Xcode output/project files
 out/
