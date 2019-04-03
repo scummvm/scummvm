@@ -833,7 +833,10 @@ int PathfindingState::findNearPoint(const Common::Point &p, Polygon *polygon, Co
 		new_point.x = p1.x + u * (p2.x - p1.x);
 		new_point.y = p1.y + u * (p2.y - p1.y);
 
-		new_dist = p.sqrDist(new_point.toPoint());
+		//new_dist = p.sqrDist(new_point.toPoint());
+		int diffx = ABS(new_point.x - p.x);
+		int diffy = ABS(new_point.y - p.y);
+		new_dist = uint(diffx * diffx + diffy * diffy);
 
 		if (new_dist < dist) {
 			near_p = new_point;
