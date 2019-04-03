@@ -34,6 +34,8 @@ public:
 
 	virtual bool openUrl(const Common::String &url);
 
+	virtual void logMessage(LogMessageType::Type type, const char *message);
+
 protected:
 	/**
 	 * The path of the currently open log file, if any.
