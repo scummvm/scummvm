@@ -36,6 +36,10 @@
 #define URI_Dispatch 0x4e381
 #endif
 
+#ifndef Report_Text0
+#define Report_Text0 0x54c80
+#endif
+
 void OSystem_RISCOS::init() {
 	// Initialze File System Factory
 	_fsFactory = new RISCOSFilesystemFactory();
@@ -45,6 +49,8 @@ void OSystem_RISCOS::init() {
 }
 
 void OSystem_RISCOS::initBackend() {
+	ConfMan.registerDefault("enable_reporter", false);
+
 	// Create the savefile manager
 	if (_savefileManager == 0) {
 		Common::String savePath = "/<Choices$Write>/ScummVM/Saves";
@@ -74,6 +80,34 @@ bool OSystem_RISCOS::openUrl(const Common::String &url) {
 		return false;
 	}
 	return true;
+}
+
+void OSystem_RISCOS::logMessage(LogMessageType::Type type, const char *message) {
+	OSystem_SDL::logMessage(type, message);
+
+	// Log messages using !Reporter, available from http://www.avisoft.force9.co.uk/Reporter.htm
+	if (!ConfMan.getBool("enable_reporter"))
+		return;
+
+	char colour;
+	switch (type) {
+	case LogMessageType::kError:
+		colour = 'r';
+		break;
+	case LogMessageType::kWarning:
+		colour = 'o';
+		break;
+	case LogMessageType::kInfo:
+		colour = 'l';
+		break;
+	case LogMessageType::kDebug:
+	default:
+		colour = 'f';
+		break;
+	}
+
+	Common::String report = Common::String::format("\\%c %s", colour, message);
+	_swix(Report_Text0, _IN(0), report.c_str());
 }
 
 Common::String OSystem_RISCOS::getDefaultConfigFileName() {
