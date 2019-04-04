@@ -85,7 +85,7 @@ void CryOmni3DEngine_Versailles::setupMessages() {
 	SET_MESSAGE(10, "Il faudrait quelque chose pour atteindre la bombe.");
 	SET_MESSAGE(11, "Ce vase est vide.");
 	SET_MESSAGE(12, "Maintenant, vous pouvez y aller.");
-	SET_MESSAGE(13, "Vous niavez plus le temps de vous renseigner sur la Cour!");
+	SET_MESSAGE(13, "Vous n" "\xd5" "avez plus le temps de vous renseigner sur la Cour!");
 	SET_MESSAGE(14, "Il est trop tard pour regarder les tableaux!");
 	SET_MESSAGE(16, "Vous ne pouvez pas atteindre le papier.");
 	SET_MESSAGE(15, "Attendez ! Transmettez donc vos indices " "\x88" " l'huissier.");
@@ -191,7 +191,7 @@ void CryOmni3DEngine_Versailles::setupMessages() {
 	SET_MESSAGE(112, "pinceau Rouge");
 	SET_MESSAGE(113, "Fusain");
 	SET_MESSAGE(114, "Papier");
-	SET_MESSAGE(115, "Pamphlet sur liarchitecture");
+	SET_MESSAGE(115, "Pamphlet sur l" "\xd5" "architecture");
 	SET_MESSAGE(116, "Petite clef 2");
 	SET_MESSAGE(117, "Archer(inutile!)");
 	SET_MESSAGE(118, "Partition");
@@ -199,7 +199,7 @@ void CryOmni3DEngine_Versailles::setupMessages() {
 	SET_MESSAGE(120, "Autorisation");
 	SET_MESSAGE(121, "Reproduction des m" "\x8e" "dailles");
 	SET_MESSAGE(122, "Tiroir " "\x88" " m" "\x8e" "dailles");
-	SET_MESSAGE(123, "Clef de la petite porte diApollon");
+	SET_MESSAGE(123, "Clef de la petite porte d" "\xd5" "Apollon");
 	SET_MESSAGE(124, "Nourriture");
 	SET_MESSAGE(125, "Pamphlet sur la religion");
 	SET_MESSAGE(126, "Epigraphe");
