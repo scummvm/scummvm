@@ -275,6 +275,7 @@ public:
 
 	void gameWaitForActive();
 	void loopActorSpeaking();
+	void loopQueuedDialogueStillPlaying();
 
 	void outtakePlay(int id, bool no_localization, int container = -1);
 

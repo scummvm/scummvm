@@ -52,7 +52,7 @@ ActorDialogueQueue::~ActorDialogueQueue() {
 }
 
 void ActorDialogueQueue::add(int actorId, int sentenceId, int animationMode) {
-	if (actorId == 0 || actorId == BladeRunnerEngine::kActorVoiceOver) {
+	if (actorId == kActorMcCoy || actorId == kActorVoiceOver) {
 		animationMode = -1;
 	}
 	if (_entries.size() < kMaxEntries) {
@@ -103,6 +103,21 @@ void ActorDialogueQueue::flush(int a1, bool callScript) {
 	if (callScript) {
 		_vm->_sceneScript->dialogueQueueFlushed(a1);
 	}
+}
+
+/**
+* return true when queue is empty and object is flushed
+*/
+bool ActorDialogueQueue::isEmpty() {
+	return _entries.empty() \
+	        && !_isNotPause \
+	        && !_isPause \
+	        && _actorId == -1 \
+	        && _sentenceId == -1 \
+	        && _animationMode == -1 \
+	        && _animationModePrevious == -1 \
+	        && _delay == 0 \
+	        && _timeLast == 0;
 }
 
 void ActorDialogueQueue::tick() {

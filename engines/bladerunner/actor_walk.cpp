@@ -174,7 +174,7 @@ bool ActorWalk::tick(int actorId, float stepDistance, bool mustReachWalkDestinat
 		int r = nextOnPath(actorId, _current, _destination, next);
 		obstaclesRestore();
 		if (r == 0) {
-			stop(actorId, actorId == 0, kAnimationModeCombatIdle, kAnimationModeIdle);
+			stop(actorId, actorId == kActorMcCoy, kAnimationModeCombatIdle, kAnimationModeIdle);
 			return false;
 		}
 		if (r != -1) {

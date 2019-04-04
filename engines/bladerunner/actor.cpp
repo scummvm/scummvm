@@ -53,7 +53,7 @@ Actor::Actor(BladeRunnerEngine *vm, int actorId) {
 
 	_walkInfo      = new ActorWalk(vm);
 	_movementTrack = new MovementTrack();
-	_cluesLimit    = (actorId == 0 || actorId == 99) ? 4 : 2;
+	_cluesLimit    = (actorId == kActorMcCoy || actorId == kActorVoiceOver) ? 4 : 2;
 	_clues         = new ActorClues(vm, _cluesLimit);
 	_combatInfo    = new ActorCombat(vm);
 

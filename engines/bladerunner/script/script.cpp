@@ -1551,6 +1551,11 @@ void ScriptBase::ADQ_Add_Pause(int delay) {
 	_vm->_actorDialogueQueue->addPause(delay);
 }
 
+void ScriptBase::ADQ_Wait_For_All_Queued_Dialogue() {
+	debugC(kDebugScript, "ADQ_Wait_For_All_Queued_Dialogue()");
+	_vm->loopQueuedDialogueStillPlaying();
+}
+
 bool ScriptBase::Game_Over() {
 	debugC(kDebugScript, "Game_Over()");
 	_vm->_gameIsRunning = false;

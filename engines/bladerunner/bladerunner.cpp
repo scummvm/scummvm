@@ -1693,6 +1693,22 @@ void BladeRunnerEngine::loopActorSpeaking() {
 	playerGainsControl();
 }
 
+/**
+* To be used only for when there is a chance an ongoing dialogue in a dialogue queue
+* might be interrupted AND that is unwanted behavior (sometimes, it's intended that the dialogue
+* can be interrupted without necessarily being finished).
+*/
+void BladeRunnerEngine::loopQueuedDialogueStillPlaying() {
+	if (_actorDialogueQueue->isEmpty()) {
+		return;
+	}
+
+	do {
+		gameTick();
+	} while (_gameIsRunning && !_actorDialogueQueue->isEmpty());
+
+}
+
 void BladeRunnerEngine::outtakePlay(int id, bool noLocalization, int container) {
 	Common::String name = _gameInfo->getOuttake(id);
 

@@ -259,6 +259,7 @@ protected:
 	void ADQ_Flush();
 	void ADQ_Add(int actorId, int sentenceId, int animationMode);
 	void ADQ_Add_Pause(int delay);
+	void ADQ_Wait_For_All_Queued_Dialogue();
 	bool Game_Over();
 	void Autosave_Game(int textId);
 	void I_Sez(const char *str);

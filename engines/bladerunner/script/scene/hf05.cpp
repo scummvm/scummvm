@@ -690,6 +690,13 @@ void SceneScriptHF05::talkWithCrazyLegs1() {
 	Ambient_Sounds_Play_Sound(149, 99, 99, 0, 0);
 	Actor_Face_Actor(kActorCrazylegs, kActorMcCoy, true);
 	Actor_Face_Actor(kActorMcCoy, kActorCrazylegs, true);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	// There is a chance here that Crazylegs will "interrupt himself"
+	// and thus sometimes skip the last sentence of the above queued dialogue in chapter 3.
+	// So we explicitly wait for the queue to be emptied before proceeding to his next line
+	ADQ_Wait_For_All_Queued_Dialogue();
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Actor_Says(kActorCrazylegs, 170, kAnimationModeTalk);
 	Actor_Says(kActorCrazylegs, 180, 12);
 	Actor_Says(kActorCrazylegs, 190, 14);
