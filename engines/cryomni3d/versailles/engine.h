@@ -397,6 +397,12 @@ private:
 	//Objects
 	template<unsigned int ID>
 	void genericDisplayObject();
+	void obj_105();
+	void obj_106();
+	void obj_107();
+	void obj_118();
+	void obj_121();
+	void obj_125();
 
 	// Fixed image
 	template<unsigned int ID>

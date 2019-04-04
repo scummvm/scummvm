@@ -66,11 +66,12 @@ static const char *imagesObjects[] = {
 void CryOmni3DEngine_Versailles::setupObjects() {
 	_objects.reserve(51);
 #define SET_OBJECT(cursorId, nameId) _objects.push_back(Object(_sprites, cursorId, nameId))
-#define SET_OBJECT_CB(cursorId, nameId, cb) do { \
+#define SET_OBJECT_AND_CB(cursorId, nameId, cb) do { \
         _objects.push_back(Object(_sprites, cursorId, nameId)); \
         _objects.back().setViewCallback(new Common::Functor0Mem<void, CryOmni3DEngine_Versailles>(this, &CryOmni3DEngine_Versailles::cb)); \
     } while (false)
-#define SET_OBJECT_GENERIC_CB(cursorId, nameId, imageId) SET_OBJECT_CB(cursorId, nameId, genericDisplayObject<imageId>)
+#define SET_OBJECT_GENERIC_CB(cursorId, nameId, imageId) SET_OBJECT_AND_CB(cursorId, nameId, genericDisplayObject<imageId>)
+#define SET_OBJECT_CB(cursorId, nameId) SET_OBJECT_AND_CB(cursorId, nameId, obj_ ## nameId)
 	SET_OBJECT(161, 93);
 	SET_OBJECT(107, 94);
 	SET_OBJECT(69, 95);
@@ -83,9 +84,9 @@ void CryOmni3DEngine_Versailles::setupObjects() {
 	SET_OBJECT(191, 102);
 	SET_OBJECT(171, 103);
 	SET_OBJECT(47, 104);
-	SET_OBJECT(205, 105);
-	SET_OBJECT(214, 106);
-	SET_OBJECT(6, 107);
+	SET_OBJECT_CB(205, 105);
+	SET_OBJECT_CB(214, 106);
+	SET_OBJECT_CB(6, 107);
 	SET_OBJECT(58, 108);
 	SET_OBJECT_GENERIC_CB(5, 109, 8);
 	SET_OBJECT(38, 110);
@@ -94,14 +95,14 @@ void CryOmni3DEngine_Versailles::setupObjects() {
 	SET_OBJECT_GENERIC_CB(246, 115, 9);
 	SET_OBJECT(80, 116);
 	SET_OBJECT(180, 117);
-	SET_OBJECT(34, 118);
+	SET_OBJECT_CB(34, 118);
 	SET_OBJECT(173, 119);
 	SET_OBJECT(81, 120);
-	SET_OBJECT(156, 121);
+	SET_OBJECT_CB(156, 121);
 	SET_OBJECT(143, 122);
 	SET_OBJECT(101, 123);
 	SET_OBJECT(204, 124);
-	SET_OBJECT(10, 125);
+	SET_OBJECT(10, 125); // TODO:
 	SET_OBJECT(112, 126); // TODO: EPIL.gif
 	SET_OBJECT_GENERIC_CB(90, 127, 17);
 	SET_OBJECT(216, 128);
@@ -122,12 +123,60 @@ void CryOmni3DEngine_Versailles::setupObjects() {
 	SET_OBJECT(157, 143);
 	SET_OBJECT(168, 144);
 	SET_OBJECT(65, 145);
+#undef SET_OBJECT_CB
+#undef SET_OBJECT_GENERIC_CB
+#undef SET_OBJECT_AND_CB
 #undef SET_OBJECT
 }
 
 template<unsigned int ID>
 void CryOmni3DEngine_Versailles::genericDisplayObject() {
 	displayObject(imagesObjects[ID]);
+}
+
+void CryOmni3DEngine_Versailles::obj_105() {
+	displayObject(imagesObjects[3]);
+	displayObject(imagesObjects[4]);
+	displayObject(imagesObjects[5]);
+	displayObject(imagesObjects[6]);
+}
+
+void CryOmni3DEngine_Versailles::obj_106() {
+	displayObject(imagesObjects[6]);
+	displayObject(imagesObjects[3]);
+	displayObject(imagesObjects[4]);
+}
+
+void CryOmni3DEngine_Versailles::obj_107() {
+	if (_gameVariables[GameVariables::kSketchState] == 3) {
+		displayObject(imagesObjects[7]);
+	} else {
+		displayObject(imagesObjects[6]);
+	}
+}
+
+void CryOmni3DEngine_Versailles::obj_118() {
+	if (_gameVariables[GameVariables::kDecipherScore]) {
+		displayObject(imagesObjects[11]);
+	} else {
+		displayObject(imagesObjects[10]);
+	}
+}
+
+void CryOmni3DEngine_Versailles::obj_121() {
+	if (_gameVariables[GameVariables::kGotMedalsSolution]) {
+		displayObject(imagesObjects[13]);
+	} else {
+		displayObject(imagesObjects[12]);
+	}
+}
+
+void CryOmni3DEngine_Versailles::obj_125() {
+	if (_gameVariables[GameVariables::kStatePamphletReligion]) {
+		displayObject(imagesObjects[15]);
+	} else {
+		displayObject(imagesObjects[14]);
+	}
 }
 
 // This array contains images for all paintings it must be kept in sync with _paintingsTitles
