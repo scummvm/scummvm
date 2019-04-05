@@ -4523,7 +4523,7 @@ void GriffonEngine::game_main() {
 void GriffonEngine::game_newgame() {
 	float xofs = 0;
 	float ld = 0, add;
-	int ticks, cnt = 0;
+	int cnt = 0;
 
 	_videobuffer2->fillRect(Common::Rect(0, 0, _videobuffer2->w, _videobuffer2->h), 0);
 	_videobuffer3->fillRect(Common::Rect(0, 0, _videobuffer3->w, _videobuffer3->h), 0);
@@ -4801,7 +4801,7 @@ void GriffonEngine::game_saveloadnew() {
 	float y = 0.0;
 	int yy;
 	int currow, curcol, lowerlock;
-	int ticks, ticks1, tickpause;
+	int ticks1, tickpause;
 
 	clouddeg = 0;
 
@@ -5294,7 +5294,7 @@ void GriffonEngine::game_theend() {
 
 void GriffonEngine::game_title(int mode) {
 	float xofs = 0;
-	int ticks, ticks1, keypause;
+	int ticks1, keypause;
 	int cursel, ldstop;
 	int x, y;
 
