@@ -67,7 +67,7 @@ const PlainGameDescriptor SCOTT_GAME_LIST[] = {
 	{ "akyrz", "Mysterious Adventures 8: The Wizard of Akyrz" },
 	{ "perseus", "Mysterious Adventures 9: Perseus and Andromeda" },
 	{ "10indians", "Mysterious Adventures 10: Ten Little Indians" },
-	{ "waxworks", "Mysterious Adventures 11: Waxworks" },
+	{ "waxworks11", "Mysterious Adventures 11: Waxworks" },
 
 	// Other Games
 	{ "desert",            "Desert Adventure" },
@@ -130,7 +130,7 @@ const ScottGame SCOTT_GAMES[] = {
 	{ "645c089d6d66324472d939993793eb57", "akyrz", 16803 },
 	{ "2f5bb15b461fbdc000243acabd324c67", "perseus", 15080 },
 	{ "3bb85fd505b4d42bd1767c1a76347e2f", "10indians", 14215 },
-	{ "af134c32cc0d50329d6e7335639ded88", "waxworks", 16068 },
+	{ "af134c32cc0d50329d6e7335639ded88", "waxworks11", 16068 },
 	{ "028303fd062c39b59b28982cde75f085", "goldenbaton", 53374 },
 	{ "b2ff405412d92b06373d9a5efbb048d4", "timemachine", 54062 },
 	{ "f11f85802eff8aed9e212aef7f26ede1", "arrowofdeath1", 68150 },
@@ -141,7 +141,7 @@ const ScottGame SCOTT_GAMES[] = {
 	{ "3467e09eb247c474ae7e8a8d503968d0", "akyrz", 65008 },
 	{ "4d8389c0ea3425bd4d92492538f63b19", "perseus", 56914 },
 	{ "72e91da7590138b78d370a3cb1448f3c", "10indians", 64660 },
-	{ "4d4ee8aa1f24e1745ab1aa017590dcff", "waxworks", 54556 },
+	{ "4d4ee8aa1f24e1745ab1aa017590dcff", "waxworks11", 54556 },
 
 	// Other games
 	{ "c43e19228bae08eab74bc080e17bbe16", "desert", 12287 },
