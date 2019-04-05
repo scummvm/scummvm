@@ -115,7 +115,7 @@ void GriffonEngine::griffon_main() {
 }
 
 // element tile locations
-int elementmap[15][20] = {
+const int elementmap[15][20] = {
 	{  2, 2, 2, 2, -1, -1, -1, 2, 2, 2, 2, 2, 2, -1, -1, -1, -1, -1, -1, -1 },
 	{  2, -1, -1, -1, -1, -1, -1, 2, 2, 2, 2, 2, 2, -1, -1, -1, -1, -1, -1, -1 },
 	{  2, -1, 2, 2, -1, -1, -1, 2, 2, 2, 2, 2, 2, -1, -1, -1, -1, -1, -1, -1 },
@@ -215,7 +215,7 @@ const char *story2[27] = {
 };
 
 // map in inventory menu
-int invmap[4][7][13] = {
+const int invmap[4][7][13] = {
 	// map 0
 	{
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
