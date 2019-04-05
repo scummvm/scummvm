@@ -29,6 +29,7 @@
 #include "bladerunner/savefile.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/time.h"
+#include "bladerunner/game_constants.h"
 #include "bladerunner/ui/kia.h"
 #include "bladerunner/ui/kia_shapes.h"
 #include "bladerunner/ui/ui_container.h"
@@ -299,7 +300,7 @@ void KIASectionSave::scrollBoxCallback(void *callbackData, void *source, int lin
 			self->_inputBox->setText(self->_saveList[self->_selectedLineId].getDescription());
 		}
 
-		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(131), 40, 0, 0, 50, 0);
+		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(kSfxSPNBEEP3), 40, 0, 0, 50, 0);
 		self->_vm->_kia->resume();
 	}
 }
@@ -329,7 +330,7 @@ void KIASectionSave::onButtonPressed(int buttonId, void *callbackData) {
 		}
 	} else if (buttonId == 1) {
 		self->changeState(kStateNormal);
-		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(134), 90, -50, -50, 50, 0);
+		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(kSfxSPNBEEP6), 90, -50, -50, 50, 0);
 	} else if (buttonId == 2) {
 		if (self->_state == kStateOverwrite)
 		{
@@ -372,7 +373,7 @@ void KIASectionSave::changeState(State state) {
 			_vm->_kia->_shapes->get(131),
 			_vm->_textOptions->getText(39) // Yes
 		);
-		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(135), 90, 0, 0, 50, 0);
+		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxSPNBEEP7), 90, 0, 0, 50, 0);
 	}
 }
 
@@ -415,7 +416,7 @@ void KIASectionSave::save() {
 
 	delete saveFile;
 
-	_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(513), 90, 0, 0, 50, 0);
+	_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxELECBP1), 90, 0, 0, 50, 0);
 
 	_scheduledSwitch = true;
 }

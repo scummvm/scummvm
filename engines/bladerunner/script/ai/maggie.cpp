@@ -354,7 +354,7 @@ bool AIScriptMaggie::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case kGoalMaggieKP05Explode:
 		AI_Movement_Track_Flush(kActorMaggie);
 		Actor_Face_Actor(kActorMcCoy, kActorMaggie, true);
-		Sound_Play(494, 50, 0, 0, 100);
+		Sound_Play(kSfxDOGEXPL1, 50, 0, 0, 100);
 		Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieDead);
 		Actor_Change_Animation_Mode(kActorMaggie, 51);
 		if (Actor_Query_Inch_Distance_From_Actor(kActorMcCoy, kActorMaggie) < 144) {
@@ -523,7 +523,7 @@ bool AIScriptMaggie::UpdateAnimation(int *animation, int *frame) {
 	case kMaggieStateHappyA:
 		*animation = 870;
 		if (_animationFrame == 1) {
-			Sound_Play(Random_Query(263, 264), 50, 0, 0, 50);
+			Sound_Play(Random_Query(kSfxDOGBARK1, kSfxDOGBARK3), 50, 0, 0, 50);
 		}
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
@@ -614,7 +614,7 @@ bool AIScriptMaggie::ChangeAnimationMode(int mode) {
 	case 51:
 		_animationState = kMaggieStateExploding;
 		_animationFrame = 0;
-		Sound_Play(272, 50, 0, 0, 50);
+		Sound_Play(kSfxDOGHURT1, 50, 0, 0, 50);
 		break;
 
 	case kAnimationModeFeeding:
@@ -662,7 +662,7 @@ bool AIScriptMaggie::ChangeAnimationMode(int mode) {
 			_animationState = kMaggieStateHappyB;
 		}
 		var_45F3F8 = Random_Query(2, 6);
-		Sound_Play(276, 50, 0, 0, 50);
+		Sound_Play(kSfxDOGTAIL1, 50, 0, 0, 50);
 		break;
 
 	case 88:

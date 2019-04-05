@@ -90,7 +90,7 @@ bool AIScriptLuther::Update() {
 		Actor_Set_Targetable(kActorLuther, false);
 		Scene_Loop_Set_Default(5); // UG16MainLoopNoComputerLight
 		Scene_Loop_Start_Special(kSceneLoopModeOnce, 4, true); // UG16SparkLoop
-		Ambient_Sounds_Play_Sound(559, 50, 0, 0, 99);
+		Ambient_Sounds_Play_Sound(kSfxCOMPDWN4, 50, 0, 0, 99);
 		Ambient_Sounds_Remove_Looping_Sound(516, 1);
 		return false;
 	}
@@ -370,7 +370,7 @@ bool AIScriptLuther::UpdateAnimation(int *animation, int *frame) {
 	case 12:
 		*animation = 359;
 		if (_animationFrame == 12) {
-			Ambient_Sounds_Play_Sound(557, 59, 0, 0, 20);
+			Ambient_Sounds_Play_Sound(kSfxHEADHIT2, 59, 0, 0, 20);
 		}
 		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 			_animationFrame++;

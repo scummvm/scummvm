@@ -32,7 +32,7 @@ AIScriptMcCoy::AIScriptMcCoy(BladeRunnerEngine *vm) : AIScriptBase(vm) {
 	_animationLoopFrameMax = 0;
 	_animationStateNextSpecial = 0;
 	_animationNextSpecial = 0;
-	_nextSoundId = 0;
+	_nextSoundId = -1;
 	_NR10SteeleShooting = false;
 	_fallSpeed = 0.0f;
 	_fallHeightCurrent = 0.0f;
@@ -427,11 +427,11 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case kGoalMcCoyCallWithGuzza:
-		Sound_Play(123, 50, 0, 0, 50);
+		Sound_Play(kSfxSPNBEEP9, 50, 0, 0, 50);
 		Delay(1000);
-		Sound_Play(403, 30, 0, 0, 50);
+		Sound_Play(kSfxVIDFONE1, 30, 0, 0, 50);
 		Delay(1000);
-		Sound_Play(123, 50, 0, 0, 50);
+		Sound_Play(kSfxSPNBEEP9, 50, 0, 0, 50);
 		Actor_Says(kActorGuzza, 1380, 3);
 		Actor_Says(kActorMcCoy, 6610, 13);
 		Actor_Says(kActorGuzza, 1390, 3);
@@ -461,7 +461,7 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Says(kActorMcCoy, 6700, 17);
 		Actor_Says(kActorGuzza, 1480, 3);
 		Actor_Says(kActorMcCoy, 6705, 11);
-		Sound_Play(123, 50, 0, 0, 50);
+		Sound_Play(kSfxSPNBEEP9, 50, 0, 0, 50);
 		return true;
 
 	case kGoalMcCoyUG15Fall:
@@ -779,7 +779,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		 && Actor_Query_Goal_Number(kActorMcCoy) == kGoalMcCoyNR11Shoot
 		 && _NR10SteeleShooting
 		) {
-			_nextSoundId = 27;
+			_nextSoundId = kSfxSMCAL3;
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationState = 17;
@@ -1200,9 +1200,10 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		*animation = 47;
 		_animationFrame++;
 		if (_animationFrame == 6) {
-			Ambient_Sounds_Play_Sound(Random_Query(593, 595), 39, 0, 0, 99);
+			// Play one of kSfxCHARMTL7, kSfxCHARMTL8, kSfxCHARMTL9
+			Ambient_Sounds_Play_Sound(Random_Query(kSfxCHARMTL7, kSfxCHARMTL9), 39, 0, 0, 99);
 		}
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) { //why -1?
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) { //why -1? a bug?
 			_animationFrame = 0;
 		}
 		break;
@@ -1362,7 +1363,8 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 	case kAnimationModeIdle:
 		if (Game_Flag_Query(kFlagMcCoyTiedDown)) {
 			if (_animationFrame <= 6) {
-				Ambient_Sounds_Play_Sound(Random_Query(593, 595), 39, 0, 0, 99);
+				// Play one of kSfxCHARMTL7, kSfxCHARMTL8, kSfxCHARMTL9
+				Ambient_Sounds_Play_Sound(Random_Query(kSfxCHARMTL7, kSfxCHARMTL9), 39, 0, 0, 99);
 			}
 			_animationState = 57;
 			_animationFrame = 0;

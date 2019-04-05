@@ -57,10 +57,10 @@ void SceneScriptCT02::InitializeScene() {
 	Ambient_Sounds_Add_Sound(62, 10, 30, 7, 7, 100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(63, 10, 30, 8, 8, 100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(64, 10, 30, 7, 7, 100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Speech_Sound(60,  0, 10, 260, 17, 19, 100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 20, 10, 260, 17, 19, 100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 40, 10, 260, 17, 19, 100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 50, 10, 260, 17, 19, 100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 17, 19, 100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 17, 19, 100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 17, 19, 100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 17, 19, 100, 100, -101, -101, 1, 1);
 	if (Game_Flag_Query(kFlagCT02PotTipped)) {
 		Scene_Loop_Set_Default(kCT02LoopMainPotTipped);
 	} else {
@@ -281,16 +281,16 @@ bool SceneScriptCT02::ClickedOn2DRegion(int region) {
 
 void SceneScriptCT02::SceneFrameAdvanced(int frame) {
 	if (frame == 6 || frame == 12 || frame == 19 || frame == 25 || frame == 46 || frame == 59) {
-		Sound_Play(97, Random_Query(25, 33), -70, -70, 50);
+		Sound_Play(kSfxNEON7, Random_Query(25, 33), -70, -70, 50);
 	}
 	if (frame == 72) {
-		Sound_Play(200, 50, 0, 0, 50);
+		Sound_Play(kSfxBIGPOT4, 50, 0, 0, 50);
 	}
 	if (frame == 71) {
-		Sound_Play(204, 40, 0, 0, 50);
+		Sound_Play(kSfxBIGPOT3, 40, 0, 0, 50);
 	}
 	if (frame == 72) {
-		Sound_Play(203, 60, -20, 40, 50);
+		Sound_Play(kSfxPOTSPL5, 60, -20, 40, 50);
 	}
 	if (frame == 61) {
 		Music_Play(kMusicBatl226M, 50, 0, 2, -1, 0, 0);

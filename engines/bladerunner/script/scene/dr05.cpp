@@ -141,7 +141,7 @@ bool SceneScriptDR05::ClickedOn2DRegion(int region) {
 
 void SceneScriptDR05::SceneFrameAdvanced(int frame) {
 	if (frame == 49) {
-		Sound_Play(148, Random_Query(50, 50), 80, 80, 50);
+		Sound_Play(kSfxLABMISC3, Random_Query(50, 50), 80, 80, 50);
 	}
 
 	if (Game_Flag_Query(kFlagDR05BombWillExplode)) {

@@ -150,7 +150,7 @@ void SceneScriptNR08::SceneFrameAdvanced(int frame) {
 	) {
 		Set_Fade_Density((frame - 76) / 14.0f);
 		Music_Stop(3);
-		Ambient_Sounds_Play_Sound(566, 27, 0, 99, 0);
+		Ambient_Sounds_Play_Sound(kSfxDEKCLAP1, 27, 0, 99, 0);
 	} else if (frame >= 91
 	        && frame < 120
 	) {
@@ -198,7 +198,7 @@ void SceneScriptNR08::PlayerWalkedIn() {
 	 && !Game_Flag_Query(kFlagNR08DektoraShow)
 	) {
 		Game_Flag_Set(kFlagNR08DektoraShow);
-		Ambient_Sounds_Play_Sound(566, 27, 0, 99, 0);
+		Ambient_Sounds_Play_Sound(kSfxDEKCLAP1, 27, 0, 99, 0);
 		Music_Play(kMusicArkdFly1, 61, 0, 1, -1, 0, 0);
 		Outtake_Play(kOuttakeDektora, true, -1);
 	} else {

@@ -127,7 +127,7 @@ bool SceneScriptPS15::ClickedOnExit(int exitId) {
 			// Sometimes the scene transition code (or the Ambient_Sounds_Remove_All_Non_Looping_Sounds)
 			// would stop this from playing (rare occasions)
 			// Solution: moved into PS10 code
-			Sound_Play(155, 90, 0, 0, 50);  // LABBUZZ1.AUD
+			Sound_Play(kSfxLABBUZZ1, 90, 0, 0, 50);
 #endif // BLADERUNNER_ORIGINAL_BUGS
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);

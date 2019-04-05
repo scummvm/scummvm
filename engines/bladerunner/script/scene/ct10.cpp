@@ -68,7 +68,7 @@ void SceneScriptCT10::checkCabinet() {
 	if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 10.6f, 0.0f, -50.5f, 0, true, false, 0)) {
 		Player_Loses_Control();
 		Actor_Face_Heading(kActorMcCoy, 0, false);
-		Sound_Play(339, 100, 0, 0, 50);
+		Sound_Play(kSfxDRAWER1, 100, 0, 0, 50);
 		Delay(1000);
 		if (Actor_Clue_Query(kActorMcCoy, kClueHoldensBadge)) {
 			Actor_Voice_Over(3700, kActorVoiceOver);
@@ -87,7 +87,7 @@ bool SceneScriptCT10::ClickedOn3DObject(const char *objectName, bool a2) {
 			Actor_Face_Heading(kActorMcCoy, 850, false);
 			Actor_Change_Animation_Mode(kActorMcCoy, 38);
 			Delay(1000);
-			Sound_Play(338, 33, 0, 0, 50);
+			Sound_Play(kSfxCURTAIN1, 33, 0, 0, 50);
 			Delay(3000);
 			if (Actor_Clue_Query(kActorMcCoy, kClueStrangeScale1)) {
 				Actor_Voice_Over(3700, kActorVoiceOver);

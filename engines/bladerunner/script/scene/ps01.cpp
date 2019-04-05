@@ -192,33 +192,33 @@ void SceneScriptPS01::SceneFrameAdvanced(int frame) {
 	if (frame == 71
 	 || frame == 188
 	) {
-		Sound_Play(116, 100, 40, 0, 50);
+		Sound_Play(kSfxSPINOPN4, 100, 40, 0, 50);
 	}
 
 	if (frame == 108
 	 || frame == 228
 	) {
-		Sound_Play(119, 100, 40, 0, 50);
+		Sound_Play(kSfxSPINCLS1, 100, 40, 0, 50);
 	}
 
 	if (frame == 1) {
-		Sound_Play(118, 40, 0, 0, 50);
+		Sound_Play(kSfxCARDOWN3,  40, 0, 0, 50);
 	}
 
 	if (frame == 76) {
-		Sound_Play(121, 50, 0, 0, 50);
+		Sound_Play(kSfxSERVOD1,   50, 0, 0, 50);
 	}
 
 	if (frame == 192) {
-		Sound_Play(120, 50, 0, 0, 50);
+		Sound_Play(kSfxSERVOU1,   50, 0, 0, 50);
 	}
 
 	if (frame == 59) {
-		Sound_Play(122, 15, 0, 0, 50);
+		Sound_Play(kSfxMTLHIT1,   15, 0, 0, 50);
 	}
 
 	if (frame == 275) {
-		Sound_Play(117, 40, 0, 0, 50);
+		Sound_Play(kSfxCARUP3,    40, 0, 0, 50);
 	}
 
 	if (!Game_Flag_Query(kFlagArrivedFromSpinner2)) {

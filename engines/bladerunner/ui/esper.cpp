@@ -128,7 +128,7 @@ void ESPER::close() {
 	delete _script;
 	_script = nullptr;
 
-	_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(424), 25, 0, 0, 50, 0);
+	_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxBR035_7B), 25, 0, 0, 50, 0);
 
 	unloadPhotos();
 	_shapesPhotos.clear();
@@ -193,7 +193,7 @@ void ESPER::handleMouseDown(int x, int y, bool mainButton) {
 		if (_statePhoto != kEsperPhotoStateVideoZoomOut) {
 			if (_screen.contains(x, y)) {
 				_isMouseDown = true;
-				playSound(460, 100);
+				playSound(kSfxBRTARGET, 100);
 			}
 			if (_mouseOverScroll >= 0 && _mouseOverScroll <= 3 && !_isScrolling) {
 				scrollingStart(_mouseOverScroll);
@@ -270,7 +270,7 @@ void ESPER::addPhoto(const char *name, int photoId, int shapeId) {
 			_shapesPhotos[shapeId],
 			nullptr);
 	}
-	playSound(420, 25);
+	playSound(kSfxBR028_2A, 25);
 	wait(300);
 	tick();
 }
@@ -493,9 +493,9 @@ void ESPER::activate(bool withOpening) {
 
 	if (withOpening) {
 		setStateMain(kEsperMainStateOpening);
-		playSound(413, 25);
+		playSound(kSfxBR025_5A, 25);
 		wait(1000);
-		playSound(414, 25);
+		playSound(kSfxBR027_1P, 25);
 		wait(2000);
 	} else {
 		_buttons->deactivate();
@@ -505,7 +505,7 @@ void ESPER::activate(bool withOpening) {
 	_buttons->activate(nullptr, nullptr, mouseDownCallback, mouseUpCallback, this);
 	_buttons->defineImage(kPhotoCount + 3, Common::Rect(42, 403, 76, 437), nullptr, nullptr, _shapeButton, nullptr);
 
-	playSound(415, 25);
+	playSound(kSfxBR024_4B, 25);
 	wait(1000);
 
 	setStateMain(kEsperMainStateList);
@@ -608,7 +608,7 @@ void ESPER::draw(Graphics::Surface &surface) {
 			drawPhotoWithGrid(surface);
 			if (!drawSelectionZooming(surface)) {
 				setStatePhoto(kEsperPhotoStateSelectionBlinking);
-				playSound(418, 25);
+				playSound(kSfxBR030_3A, 25);
 			}
 			break;
 		case kEsperPhotoStateSelectionBlinking:
@@ -701,7 +701,7 @@ bool ESPER::drawSelectionZooming(Graphics::Surface &surface) {
 		zooming = false;
 	}
 	if (zooming) {
-		playSound(416, 20);
+		playSound(kSfxBR029_3A, 20);
 	}
 	return needMoreZooming;
 }
@@ -880,7 +880,7 @@ void ESPER::drawVideoZooming(Graphics::Surface &surface) {
 	int timeNow = _vm->_time->current();
 	if (timeNow > _timeZoomNext) {
 		_timeZoomNext = timeNow + 300;
-		playSound(419, 25);
+		playSound(kSfxBR031_1P, 25);
 		flash = true;
 		advanceFrame = true;
 		_blur += _zoomDelta * 5.0f;
@@ -906,7 +906,7 @@ void ESPER::drawVideoZoomOut(Graphics::Surface &surface) {
 	int timeNow = _vm->_time->current();
 	if (timeNow > _timeZoomNext && _vqaLastFrame > 0) {
 		_timeZoomNext = timeNow + 300;
-		playSound(419, 25);
+		playSound(kSfxBR031_1P, 25);
 		_vqaPlayerPhoto->seekToFrame(_vqaLastFrame);
 		int nextFrame = _vqaPlayerPhoto->getFrameCount() / 4;
 		if (nextFrame <= 0) {
@@ -1134,7 +1134,7 @@ void ESPER::flashViewport() {
 
 void ESPER::copyImageScale(Graphics::Surface *src, Common::Rect srcRect, Graphics::Surface *dst, Common::Rect dstRect) {
 	if (_flash) {
-		playSound(419, 25);
+		playSound(kSfxBR031_1P, 25);
 	}
 
 	int srcDstWidthRatio  = srcRect.width()  / dstRect.width();
@@ -1219,7 +1219,7 @@ void ESPER::copyImageScale(Graphics::Surface *src, Common::Rect srcRect, Graphic
 
 void ESPER::copyImageBlur(Graphics::Surface *src, Common::Rect srcRect, Graphics::Surface *dst, Common::Rect dstRect, float blur) {
 	if (_flash) {
-		playSound(419, 25);
+		playSound(kSfxBR031_1P, 25);
 	}
 
 	int srcDstWidthRatio  = srcRect.width()  / dstRect.width();
@@ -1456,8 +1456,8 @@ void ESPER::selectPhoto(int photoId) {
 	resetViewport();
 	setStateMain(kEsperMainStatePhotoOpening);
 	setStatePhoto(kEsperPhotoStateOpening);
-	playSound(422, 25);
-	playSound(423, 25);
+	playSound(kSfxBR032_7B, 25);
+	playSound(kSfxBR033_4B, 25);
 }
 
 void ESPER::unloadPhotos() {

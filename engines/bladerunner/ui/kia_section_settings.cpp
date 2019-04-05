@@ -320,7 +320,7 @@ void KIASectionSettings::checkBoxCallback(void *callbackData, void *source) {
 
 void KIASectionSettings::mouseInCallback(int buttonId, void *callbackData) {
 	KIASectionSettings *self = (KIASectionSettings *)callbackData;
-	self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(508), 100, 0, 0, 50, 0);
+	self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(kSfxTEXT3), 100, 0, 0, 50, 0);
 }
 
 void KIASectionSettings::mouseUpCallback(int buttonId, void *callbackData) {
@@ -331,27 +331,27 @@ void KIASectionSettings::mouseUpCallback(int buttonId, void *callbackData) {
 void KIASectionSettings::onButtonPressed(int buttonId) {
 	switch (buttonId) {
 	case 0:
-		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(513), 90, -30, -30, 50, 0);
+		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxELECBP1), 90, -30, -30, 50, 0);
 		_vm->_settings->setPlayerAgenda(0);
 		initConversationChoices();
 		break;
 	case 1:
-		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(513), 90, -15, -15, 50, 0);
+		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxELECBP1), 90, -15, -15, 50, 0);
 		_vm->_settings->setPlayerAgenda(1);
 		initConversationChoices();
 		break;
 	case 2:
-		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(513), 90, 0, 0, 50, 0);
+		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxELECBP1), 90, 0, 0, 50, 0);
 		_vm->_settings->setPlayerAgenda(2);
 		initConversationChoices();
 		break;
 	case 3:
-		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(513), 90, 15, 15, 50, 0);
+		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxELECBP1), 90, 15, 15, 50, 0);
 		_vm->_settings->setPlayerAgenda(3);
 		initConversationChoices();
 		break;
 	case 4:
-		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(513), 90, 30, 30, 50, 0);
+		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxELECBP1), 90, 30, 30, 50, 0);
 		_vm->_settings->setPlayerAgenda(4);
 		initConversationChoices();
 		break;

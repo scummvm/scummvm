@@ -44,10 +44,10 @@ void SceneScriptMA05::InitializeScene() {
 	Ambient_Sounds_Add_Looping_Sound(101, 90, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(99, 40, -100, 1);
 	Ambient_Sounds_Add_Looping_Sound(103, 50, 60, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 0, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 20, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 40, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 50, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 0, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Sound(68, 10, 100, 25, 50, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(69, 10, 100, 25, 50, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(375, 10, 70, 50, 100, 0, 0, -101, -101, 0, 0);
@@ -105,7 +105,7 @@ bool SceneScriptMA05::ClickedOn2DRegion(int region) {
 
 void SceneScriptMA05::SceneFrameAdvanced(int frame) {
 	if (frame == 20) {
-		Sound_Play(102, 70, -100, 100, 50);
+		Sound_Play(kSfxROOFLIT1, 70, -100, 100, 50);
 	}
 	//return true;
 }
@@ -118,7 +118,7 @@ void SceneScriptMA05::PlayerWalkedIn() {
 	if ((Random_Query(0, 4) == 1 || (Game_Flag_Query(kFlagChapter1Ending) && !Game_Flag_Query(kFlagChapter1Ended))) && Global_Variable_Query(kVariableChapter) == 1) {
 		Scene_Loop_Set_Default(kMA05LoopMain);
 		Scene_Loop_Start_Special(kSceneLoopModeOnce, kMA05LoopSpinner, true);
-		Sound_Play(69, 100, 0, 0, 50);
+		Sound_Play(kSfxSPIN3A, 100, 0, 0, 50);
 	}
 	if (Game_Flag_Query(kFlagChapter1Ending) && !Game_Flag_Query(kFlagChapter1Ended)) {
 		if (!Game_Flag_Query(kFlagDirectorsCut)) {

@@ -264,10 +264,10 @@ bool AIScriptBulletBob::UpdateAnimation(int *animation, int *frame) {
 			*animation = 506;
 		}
 		if (_animationFrame == 10) {
-			Sound_Play(492, 75, 0, 0, 50);
+			Sound_Play(kSfxSHOTCOK1, 75, 0, 0, 50);
 		}
 		if (_animationFrame == 5) {
-			Sound_Play(493, 90, 0, 0, 50);
+			Sound_Play(kSfxSHOTGUN1, 90, 0, 0, 50);
 			Actor_Set_Goal_Number(kActorBulletBob, kGoalBulletBobShotMcCoy);
 		}
 		break;

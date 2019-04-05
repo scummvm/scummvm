@@ -316,7 +316,7 @@ bool AIScriptGaff::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case kGoalGaffMA07ShootMcCoy:
 		Actor_Face_Actor(kActorGaff, kActorMcCoy, true);
 		Actor_Change_Animation_Mode(kActorGaff, kAnimationModeCombatAttack);
-		Sound_Play(27, 100, 0, 0, 50);
+		Sound_Play(kSfxSMCAL3, 100, 0, 0, 50);
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
 		Actor_Retired_Here(kActorMcCoy, 12, 12, true, -1);
 		return true;

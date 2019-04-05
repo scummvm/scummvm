@@ -739,7 +739,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case kGoalSteeleShootIzo:
 		Actor_Force_Stop_Walking(kActorMcCoy);
-		Sound_Play(27, 100, 0, 0, 50);
+		Sound_Play(kSfxSMCAL3, 100, 0, 0, 50);
 		Actor_Set_Goal_Number(kActorIzo, kGoalIzoDie);
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
 		Actor_Face_Actor(kActorMcCoy, kActorSteele, true);
@@ -1111,7 +1111,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case kGoalSteeleNR01ShootGordo:
 		Player_Loses_Control();
 		Actor_Change_Animation_Mode(kActorSteele, kAnimationModeCombatAttack);
-		Sound_Play(27, 100, 0, 0, 50);
+		Sound_Play(kSfxSMCAL3, 100, 0, 0, 50);
 		Game_Flag_Reset(kFlagSteeleAimingAtGordo);
 		Actor_Set_Targetable(kActorSteele, false);
 		Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR01Die);
@@ -1142,7 +1142,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case kGoalSteeleNR01ShootMcCoy:
 		ADQ_Flush();
 		Actor_Change_Animation_Mode(kActorSteele, kAnimationModeCombatAttack);
-		Sound_Play(27, 100, 0, 0, 50);
+		Sound_Play(kSfxSMCAL3, 100, 0, 0, 50);
 		Actor_Force_Stop_Walking(kActorMcCoy);
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
 		Actor_Retired_Here(kActorMcCoy, 12, 12, true, -1);
@@ -1182,7 +1182,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case kGoalSteeleNR01McCoyShotGun:
 		ADQ_Flush();
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAttack);
-		Sound_Play(27, 100, 0, 0, 50);
+		Sound_Play(kSfxSMCAL3, 100, 0, 0, 50);
 		_animationState = 38;
 		_animationFrame = 0;
 		Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR01ReleaseHostage);
@@ -1747,11 +1747,11 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 			} else {
 				snd = 9015;
 			}
-			Sound_Play_Speech_Line(1, snd, 75, 0, 99);
+			Sound_Play_Speech_Line(kActorSteele, snd, 75, 0, 99);
 		}
 
 		if (_animationFrame == 4) {
-			Actor_Combat_AI_Hit_Attempt(1);
+			Actor_Combat_AI_Hit_Attempt(kActorSteele);
 		}
 
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {

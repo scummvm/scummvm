@@ -202,11 +202,11 @@ bool SceneScriptHC02::ClickedOn2DRegion(int region) {
 
 void SceneScriptHC02::SceneFrameAdvanced(int frame) {
 	if (frame == 70) {
-		Sound_Play(73, 11, 50, -90, 50);
+		Sound_Play(kSfxSWEEP3, 11, 50, -90, 50);
 	}
 
 	if (frame == 58) {
-		Sound_Play(73, 11, 50, -90, 50);
+		Sound_Play(kSfxSWEEP3, 11, 50, -90, 50);
 	}
 
 	if (frame == 69
@@ -217,7 +217,7 @@ void SceneScriptHC02::SceneFrameAdvanced(int frame) {
 	 || frame == 113
 	 || frame == 119
 	) {
-		Sound_Play(60, Random_Query(6, 7), -20, 20, 50);
+		Sound_Play(kSfxNEON6, Random_Query(6, 7), -20, 20, 50);
 	}
 }
 

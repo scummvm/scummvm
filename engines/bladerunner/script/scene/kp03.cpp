@@ -182,7 +182,7 @@ bool SceneScriptKP03::ClickedOn2DRegion(int region) {
 
 void SceneScriptKP03::SceneFrameAdvanced(int frame) {
 	if (frame == 123) {
-		Ambient_Sounds_Play_Sound(491, 99, -60, 100, 99);
+		Ambient_Sounds_Play_Sound(kSfxCRYEXPL1, 99, -60, 100, 99);
 	}
 
 	if ( Game_Flag_Query(kFlagKP03BombActive)
@@ -308,7 +308,7 @@ void SceneScriptKP03::saveSteele() {
 	Scene_Loop_Start_Special(kSceneLoopModeOnce, kKP03MainLoopBombNoWire, false);
 	Actor_Set_Goal_Number(kActorSteele, kGoalSteeleKP03Leave);
 	Actor_Says(kActorMcCoy, 2195, 14);
-	Ambient_Sounds_Play_Sound(151, 40, -60, -60, 0);
+	Ambient_Sounds_Play_Sound(kSfxLABMISC6, 40, -60, -60, 0);
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1.0f, -36.55f, 111.0f, 0, false, false, 0);
 	Actor_Set_Goal_Number(kActorSteele, kGoalSteeleKP05Enter);
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);

@@ -152,7 +152,7 @@ bool AIScriptGenericWalkerB::ShotAtAndHit() {
 		AI_Movement_Track_Flush(kActorGenwalkerB);
 		_animationState = kGenericWalkerBStatesDie;
 		_animationFrame = 0;
-		Sound_Play(203, 100, 0, 0, 50);
+		Sound_Play(kSfxPOTSPL5, 100, 0, 0, 50);
 		movingStart();
 		return true;
 	}

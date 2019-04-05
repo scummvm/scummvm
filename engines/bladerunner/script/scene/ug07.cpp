@@ -136,13 +136,13 @@ bool SceneScriptUG07::ClickedOnExit(int exitId) {
 				if (Actor_Clue_Query(kActorClovis, kClueMcCoyRetiredDektora)) {
 					Actor_Says(kActorClovis, 560, 3);
 					Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyUG07BrokenFinger);
-					Sound_Play(561, 100, 0, 0, 50);
+					Sound_Play(kSfxBRKFNGR1, 100, 0, 0, 50);
 					Delay(2000);
 				}
 				if (Actor_Clue_Query(kActorClovis, kClueMcCoyRetiredLucy)) {
 					Actor_Says(kActorClovis, 570, 3);
 					Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyUG07BrokenFinger);
-					Sound_Play(561, 100, 0, 0, 50);
+					Sound_Play(kSfxBRKFNGR1, 100, 0, 0, 50);
 					Delay(2000);
 				}
 				Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyUG07Released);

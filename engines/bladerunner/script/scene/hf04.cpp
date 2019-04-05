@@ -110,11 +110,11 @@ bool SceneScriptHF04::ClickedOn2DRegion(int region) {
 
 void SceneScriptHF04::SceneFrameAdvanced(int frame) {
 	if (frame == 62) {
-		Sound_Play(359, Random_Query(43, 43), 0, 0, 50);
+		Sound_Play(kSfxSTONDOR1, Random_Query(43, 43), 0, 0, 50);
 	}
 
 	if (frame == 154) {
-		Sound_Play(360, Random_Query(43, 43), 0, 0, 50);
+		Sound_Play(kSfxSTONDOR2, Random_Query(43, 43), 0, 0, 50);
 	}
 
 	if (frame == 179

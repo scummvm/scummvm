@@ -57,10 +57,10 @@ void SceneScriptBB01::InitializeScene() {
 	Ambient_Sounds_Add_Sound(378, 5, 120, 25, 33, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(379, 5, 120, 25, 33, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(380, 5, 120, 25, 33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Speech_Sound(60,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 
 	if ( Game_Flag_Query(kFlagSpinnerAtBB01)
 	 && !Game_Flag_Query(kFlagDR02toBB01)
@@ -210,27 +210,27 @@ bool SceneScriptBB01::ClickedOn2DRegion(int region) {
 
 void SceneScriptBB01::SceneFrameAdvanced(int frame) {
 	if (frame == 193) {
-		Sound_Play(118, 40, 0, 0, 50);
+		Sound_Play(kSfxCARDOWN3, 40, 0, 0, 50);
 	}
 
 	if (frame == 241
 	 || frame == 363
 	) {
-		Sound_Play(116, 100, -50, -50, 50);
+		Sound_Play(kSfxSPINOPN4, 100, -50, -50, 50);
 	}
 
 	if (frame == 286
 	 || frame == 407
 	) {
-		Sound_Play(119, 100, -50, -50, 50);
+		Sound_Play(kSfxSPINCLS1, 100, -50, -50, 50);
 	}
 
 	if (frame == 433) {
-		Sound_Play(117, 40, -50, 80, 50);
+		Sound_Play(kSfxCARUP3,    40, -50, 80, 50);
 	}
 
 	if (frame == 120) {
-		Sound_Play(286, Random_Query(33, 33), 100, -100, 50);
+		Sound_Play(kSfxTRUCKBY1, Random_Query(33, 33), 100, -100, 50);
 	}
 }
 

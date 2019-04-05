@@ -47,10 +47,10 @@ void SceneScriptCT04::InitializeScene() {
 	Ambient_Sounds_Add_Looping_Sound(105, 34, 100, 1);
 	Ambient_Sounds_Add_Sound(68, 10, 40, 33, 50, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(69, 10, 40, 33, 50, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Speech_Sound(60,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Sound(376, 10, 60, 33, 50, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(377, 10, 60, 33, 50, -100, 100, -101, -101, 0, 0);
 }
@@ -133,7 +133,7 @@ bool SceneScriptCT04::ClickedOn3DObject(const char *objectName, bool a2) {
 		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 75, 0, true, false)) {
 			Actor_Face_Heading(kActorMcCoy, 707, false);
 			Actor_Change_Animation_Mode(kActorMcCoy, 38);
-			Ambient_Sounds_Play_Sound(553, 45, 30, 30, 0);
+			Ambient_Sounds_Play_Sound(kSfxGARBAGE, 45, 30, 30, 0);
 			Actor_Voice_Over(1810, kActorVoiceOver);
 			Actor_Voice_Over(1820, kActorVoiceOver);
 			return true;
@@ -244,7 +244,7 @@ bool SceneScriptCT04::ClickedOn2DRegion(int region) {
 void SceneScriptCT04::SceneFrameAdvanced(int frame) {
 	if (Game_Flag_Query(kFlagCT04BodyDumped)) {
 		Game_Flag_Reset(kFlagCT04BodyDumped);
-		Sound_Play(180, 100, 80, 80, 50);
+		Sound_Play(kSfxGARBAGE4, 100, 80, 80, 50);
 	}
 }
 

@@ -146,7 +146,7 @@ void VK::close() {
 		_vm->_audioPlayer->stop(_soundTrackId3, false);
 	}
 
-	_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(458), 33, 0, 0, 50, 0);
+	_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxBR018_1P), 33, 0, 0, 50, 0);
 
 	_script->shutdown(_actorId, _humanProbability, _replicantProbability, _anxiety);
 
@@ -329,11 +329,11 @@ void VK::mouseDownCallback(int buttonId, void *callbackData) {
 	case 3:
 	case 4:
 		if (self->_calibrationStarted) {
-			self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(457), 100, 0, 0, 50, 0);
+			self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(kSfxBUTN6), 100, 0, 0, 50, 0);
 		}
 		break;
 	case 5:
-		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(457), 100, 0, 0, 50, 0);
+		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(kSfxBUTN6), 100, 0, 0, 50, 0);
 		break;
 	default:
 		return;
@@ -482,14 +482,14 @@ void VK::draw() {
 	}
 
 	if (frame == 0) {
-		_soundTrackId2 = _vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(426), 33, 0, 0, 50, 0);
-		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(431), 50, 0, 0, 50, 0);
+		_soundTrackId2 = _vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxBR011_2A), 33, 0, 0, 50, 0);
+		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxBR016_2B), 50, 0, 0, 50, 0);
 	} else if (frame == 26) {
 		setAdjustment(158);
 		_vm->_audioPlayer->stop(_soundTrackId2, false);
-		_soundTrackId1 = _vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(429), 50, 30, 30, 50, kAudioPlayerLoop);
+		_soundTrackId1 = _vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxBR014_5A), 50, 30, 30, 50, kAudioPlayerLoop);
 	} else if (frame == 40) {
-		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(428), 33, 0, 0, 50, 0);
+		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxBR013_3D), 33, 0, 0, 50, 0);
 		eyeAnimates(1);
 	} else if (frame == 59) {
 		_vm->_mouse->enable();
@@ -505,7 +505,7 @@ void VK::draw() {
 		}
 	} else if (frame == 140) {
 		if (_vm->_rnd.getRandomNumberRng(0, 10) > 6) {
-			_soundTrackId3 = _vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(459), 83, 0, 0, 50, 0);
+			_soundTrackId3 = _vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxBR003_1A), 83, 0, 0, 50, 0);
 		}
 	}
 
@@ -528,11 +528,11 @@ void VK::draw() {
 			} else {
 				if (_humanProbability >= 80) {
 					_buttons->setImageShapeUp(6, _shapes[13]);
-					_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(0), 100, 0, 0, 50, 0);
+					_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxCROSLOCK), 100, 0, 0, 50, 0);
 				}
 				if (_replicantProbability >= 80) {
 					_buttons->setImageShapeUp(7, _shapes[14]);
-					_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(0), 100, 0, 0, 50, 0);
+					_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxCROSLOCK), 100, 0, 0, 50, 0);
 				}
 				_blinkState = 1;
 			}
@@ -591,7 +591,7 @@ void VK::draw() {
 				_blinkState = false;
 			} else {
 				_buttons->setImageShapeUp(0, _shapes[2]);
-				_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(461), 50, 0, 0, 50, 0);
+				_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxVKBEEP1), 50, 0, 0, 50, 0);
 				_blinkState = true;
 			}
 			_timeNextBlink = timeNow + 600;
@@ -627,7 +627,7 @@ void VK::draw() {
 				_buttons->setImageShapeUp(4, _shapes[11]);
 				_blinkState = 1;
 
-				_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(462), 33, 0, 0, 50, 0);
+				_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxVKBEEP2), 33, 0, 0, 50, 0);
 			}
 			_timeNextBlink = timeNow + 600;
 		}
@@ -654,7 +654,7 @@ void VK::draw() {
 					_needleValueDelta = 0;
 				}
 			}
-			_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(455), 20, 0, 0, 50, 0);
+			_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxBR027_3P), 20, 0, 0, 50, 0);
 			_timeNextNeedleStep = timeNow + 66;
 		}
 
@@ -790,7 +790,7 @@ void VK::drawReplicantGauge(Graphics::Surface &surface) {
 
 void VK::calibrate() {
 	if (_calibrationCounter >= 3 || _testStarted) {
-		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(460), 100, 0, 0, 50, 0);
+		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxBRTARGET), 100, 0, 0, 50, 0);
 	} else {
 		_vm->_mouse->disable();
 		_script->calibrate(_actorId);
@@ -834,13 +834,13 @@ void VK::beginTest() {
 		_buttons->setImageShapeUp(4, nullptr);
 		_vm->_mouse->enable();
 	} else {
-		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(460), 100, 0, 0, 50, 0);
+		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxBRTARGET), 100, 0, 0, 50, 0);
 	}
 }
 
 void VK::startAdjustement() {
 	if (_testStarted) {
-		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(460), 100, 0, 0, 50, 0);
+		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxBRTARGET), 100, 0, 0, 50, 0);
 	} else {
 		_isAdjusting = true;
 	}
@@ -872,7 +872,7 @@ void VK::setAdjustmentFromMouse() {
 		_vm->_mouse->getXY(&mouseX, &mouseY);
 		setAdjustment(mouseX);
 		if (_adjustmentTarget != _adjustment) {
-			_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(456), 100, 0, 0, 50, 0);
+			_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxBRWIND2), 100, 0, 0, 50, 0);
 		}
 		_adjustmentTarget = _adjustment;
 		_adjustmentDelta = 0;

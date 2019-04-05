@@ -512,11 +512,11 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 		_animationFrame++;
 
 		if (_animationFrame == 4) {
-			Ambient_Sounds_Play_Sound(492, 77, 0, 0, 20);
+			Ambient_Sounds_Play_Sound(kSfxSHOTCOK1, 77, 0, 0, 20);
 		}
 
 		if (_animationFrame == 6) {
-			Ambient_Sounds_Play_Sound(493, 97, 0, 0, 20);
+			Ambient_Sounds_Play_Sound(kSfxSHOTGUN1, 97, 0, 0, 20);
 		}
 
 		if (_animationFrame == 5) {

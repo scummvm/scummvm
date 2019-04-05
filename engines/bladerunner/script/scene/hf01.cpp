@@ -300,23 +300,23 @@ bool SceneScriptHF01::ClickedOn2DRegion(int region) {
 
 void SceneScriptHF01::SceneFrameAdvanced(int frame) {
 	if (frame == 10) {
-		Sound_Play(118, 40, 0, 0, 50);
+		Sound_Play(kSfxCARDOWN3, 40, 0, 0, 50);
 	}
 
 	if (frame == 72
 	 || frame == 193
 	) {
-		Sound_Play(116, 100, -50, -50, 50);
+		Sound_Play(kSfxSPINOPN4, 100, -50, -50, 50);
 	}
 
 	if (frame == 88
 	 || frame == 214
 	) {
-		Sound_Play(119, 100, -50, -50, 50);
+		Sound_Play(kSfxSPINCLS1, 100, -50, -50, 50);
 	}
 
 	if (frame == 242) {
-		Sound_Play(117, 40, -50, 80, 50);
+		Sound_Play(kSfxCARUP3,    40, -50, 80, 50);
 	}
 
 	if (Actor_Query_Goal_Number(kActorMurray) == 1) {

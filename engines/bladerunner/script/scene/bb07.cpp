@@ -153,7 +153,7 @@ bool SceneScriptBB07::ClickedOn2DRegion(int region) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -568.63f, 252.59f, -1114.81f, 0, true, false, 0)) {
 			Actor_Face_Heading(kActorMcCoy, 229, false);
 			if (!Game_Flag_Query(kFlagBB07ElectricityOn)) {
-				Ambient_Sounds_Play_Sound(592, 40, 20, 20, 99);
+				Ambient_Sounds_Play_Sound(kSfxCOMPON1, 40, 20, 20, 99);
 				Overlay_Play("BB07OVER", 1, false, true, 0);
 				Overlay_Play("BB07OVER", 2, true, false, 0);
 				Game_Flag_Set(kFlagBB07ElectricityOn);

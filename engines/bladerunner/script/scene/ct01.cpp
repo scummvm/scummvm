@@ -85,10 +85,10 @@ void SceneScriptCT01::InitializeScene() {
 	Ambient_Sounds_Add_Sound(62, 10, 30, 16, 20, 0, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(63, 10, 30, 16, 20, 0, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(64, 10, 30, 16, 20, 0, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Speech_Sound(60,  0, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 20, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 40, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 50, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Sound(68,  10, 40, 33, 50,    0,   0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(69,  10, 40, 33, 50,    0,   0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(375, 20, 40, 33, 50, -100, 100, -101, -101, 0, 0);
@@ -373,15 +373,15 @@ void SceneScriptCT01::SceneFrameAdvanced(int frame) {
 	 )
 	 && ((frame - 1) % 10) == 0
 	) {
-		Ambient_Sounds_Play_Sound(Random_Query(59, 60), 25, 30, 30, 0);
+		Ambient_Sounds_Play_Sound(Random_Query(kSfxNEON5, kSfxNEON6), 25, 30, 30, 0);
 	}
 
 	if (frame == 23) {
-		Ambient_Sounds_Play_Sound(118, 40, 99, 0, 0);
+		Ambient_Sounds_Play_Sound(kSfxCARDOWN3, 40,  99,   0,  0);
 	}
 
 	if (frame == 316) {
-		Ambient_Sounds_Play_Sound(373, 50, -50, 100, 99);
+		Ambient_Sounds_Play_Sound(kSfxCARUP3B,  50, -50, 100, 99);
 	}
 
 	if (frame == 196
@@ -391,16 +391,16 @@ void SceneScriptCT01::SceneFrameAdvanced(int frame) {
 		if (v3 == 0) {
 			Overlay_Play("ct01spnr", 0, false, true, 0);
 			if (Random_Query(0, 1)) {
-				Ambient_Sounds_Play_Sound(68, Random_Query(33, 50), 0, 0, 0);
+				Ambient_Sounds_Play_Sound(kSfxSPIN2B, Random_Query(33, 50), 0, 0, 0);
 			} else {
-				Ambient_Sounds_Play_Sound(67, Random_Query(33, 50), 0, 0, 0);
+				Ambient_Sounds_Play_Sound(kSfxSPIN2A, Random_Query(33, 50), 0, 0, 0);
 			}
 		} else if (v3 == 1) {
 			Overlay_Play("ct01spnr", 1, false, true, 0);
 			if (Random_Query(0, 1)) {
-				Ambient_Sounds_Play_Sound(69, Random_Query(33, 50), 0, 0, 0);
+				Ambient_Sounds_Play_Sound(kSfxSPIN3A, Random_Query(33, 50), 0, 0, 0);
 			} else {
-				Ambient_Sounds_Play_Sound(66, Random_Query(33, 50), 0, 0, 0);
+				Ambient_Sounds_Play_Sound(kSfxSPIN1A, Random_Query(33, 50), 0, 0, 0);
 			}
 		}
 	}

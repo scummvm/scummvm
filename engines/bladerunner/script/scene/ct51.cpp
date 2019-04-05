@@ -77,7 +77,7 @@ bool SceneScriptCT51::ClickedOnItem(int itemId, bool a2) {
 	if (itemId == kItemRagDoll) {
 		Actor_Clue_Acquire(kActorMcCoy, kClueRagDoll, true, -1);
 		Item_Pickup_Spin_Effect(943, 260, 200);
-		Ambient_Sounds_Play_Sound(563, 40, 99, 0, 0);
+		Ambient_Sounds_Play_Sound(kSfxBABYCRY2, 40, 99, 0, 0);
 		Item_Remove_From_World(kItemRagDoll);
 		return true;
 	}

@@ -76,13 +76,13 @@ static const int *getPoliceMazePS13TrackData46() {  // Enemy (kItemPS13Target1) 
 		kPMTIPosition,        0,
 		kPMTIWait,            2000,
 		kPMTIObstacleSet,     kItemPS13Target1,
-		kPMTIPlaySound,       33, 33,
+		kPMTIPlaySound,       kSfxTARGUP5, 33,
 		kPMTITargetSet,       kItemPS13Target1, 1,
 		kPMTIEnemySet,        kItemPS13Target1,
 		kPMTIWait,            1000,
 		kPMTIMove,            5,
 		kPMTIWait,            500,
-		kPMTIShoot,           27, 33,
+		kPMTIShoot,           kSfxSMCAL3, 33,
 		kPMTIWait,            500,
 		kPMTIMove,            0,
 		kPMTIObstacleReset,   kItemPS13Target1,
@@ -114,12 +114,12 @@ static const int *getPoliceMazePS13TrackData47() {  // Enemy (kItemPS13Target2) 
 		kPMTIWaitRandom,      5000, 6000,
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleSet,     kItemPS13Target2,
-		kPMTIPlaySound,       33, 33,
+		kPMTIPlaySound,       kSfxTARGUP5, 33,
 		kPMTITargetSet,       kItemPS13Target2, 1,
 		kPMTIEnemySet,        kItemPS13Target2,
 		kPMTIMove,            9,
 		kPMTIWait,            2000,
-		kPMTIShoot,           27, 33,
+		kPMTIShoot,           kSfxSMCAL3, 33,
 		kPMTIMove,            0,
 		kPMTIObstacleReset,   kItemPS13Target2,
 #if BLADERUNNER_ORIGINAL_BUGS
@@ -150,7 +150,7 @@ static const int *getPoliceMazePS13TrackData48() {  // Innocent (kItemPS13Target
 		kPMTIWaitRandom,      2000, 3000,
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleSet,     kItemPS13Target3,
-		kPMTIPlaySound,       33, 33,
+		kPMTIPlaySound,       kSfxTARGUP5, 33,
 		kPMTITargetSet,       kItemPS13Target3, 1,
 		kPMTIEnemyReset,      kItemPS13Target3,
 		kPMTIMove,            9,
@@ -182,12 +182,12 @@ static const int *getPoliceMazePS13TrackData49() {  // Enemy (kItemPS13Target4)
 		kPMTIPosition,        0,
 		kPMTIWaitRandom,      3000, 3000,
 		kPMTIObstacleSet,     kItemPS13Target4,
-		kPMTIPlaySound,       33, 33,
+		kPMTIPlaySound,       kSfxTARGUP5, 33,
 		kPMTITargetSet,       kItemPS13Target4, 1,
 		kPMTIEnemySet,        kItemPS13Target4,
 		kPMTIMove,            9,
 		kPMTIWait,            1000,
-		kPMTIShoot,           27, 33,
+		kPMTIShoot,           kSfxSMCAL3, 33,
 		kPMTIMove,            0,
 		kPMTIObstacleReset,   kItemPS13Target4,
 #if BLADERUNNER_ORIGINAL_BUGS
@@ -215,7 +215,7 @@ static const int *getPoliceMazePS13TrackData50() {  // Innocent (kItemPS13Target
 		kPMTIPosition,        0,
 		kPMTIWaitRandom,      3000, 5000,
 		kPMTIObstacleSet,     kItemPS13Target5,
-		kPMTIPlaySound,       33, 33,
+		kPMTIPlaySound,       kSfxTARGUP5, 33,
 		kPMTITargetSet,       kItemPS13Target5, 1,
 		kPMTIEnemyReset,      kItemPS13Target5,
 		kPMTIMove,            9,
@@ -251,12 +251,12 @@ static const int *getPoliceMazePS13TrackData51() {  // Enemy (kItemPS13Target6)
 		kPMTIWaitRandom,      2000, 3000,
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleSet,     kItemPS13Target6,
-		kPMTIPlaySound,       33, 33,
+		kPMTIPlaySound,       kSfxTARGUP5, 33,
 		kPMTITargetSet,       kItemPS13Target6, 1,
 		kPMTIEnemySet,        kItemPS13Target6,
 		kPMTIMove,            9,
 		kPMTIWait,            1000,
-		kPMTIShoot,           27, 33,
+		kPMTIShoot,           kSfxSMCAL3, 33,
 		kPMTIWait,            500,
 		kPMTIMove,            0,
 		kPMTIObstacleReset,   kItemPS13Target6,
@@ -284,7 +284,7 @@ static const int *getPoliceMazePS13TrackData52() {  // Enemy (kItemPS13Target7) 
 		kPMTIPosition,        0,
 		kPMTIWaitRandom,      5000, 10000,
 		kPMTIObstacleSet,     kItemPS13Target7,
-		kPMTIPlaySound,       33, 33,
+		kPMTIPlaySound,       kSfxTARGUP5, 33,
 		kPMTITargetSet,       kItemPS13Target7, 1,
 		kPMTIEnemyReset,      kItemPS13Target7,
 		kPMTIMove,            9,
@@ -294,7 +294,7 @@ static const int *getPoliceMazePS13TrackData52() {  // Enemy (kItemPS13Target7) 
 		kPMTIWait,            0,
 		kPMTIRotate,          833, 80,
 		kPMTIWait,            1000,
-		kPMTIShoot,           27, 33,
+		kPMTIShoot,           kSfxSMCAL3, 33,
 		kPMTIMove,            0,
 		kPMTIObstacleReset,   kItemPS13Target7,
 #if BLADERUNNER_ORIGINAL_BUGS
@@ -325,14 +325,14 @@ static const int *getPoliceMazePS13TrackData53() {  // Enemy (kItemPS13Target8) 
 		kPMTIWaitRandom,      3000, 4000,
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleSet,     kItemPS13Target8,
-		kPMTIPlaySound,       33, 33,
+		kPMTIPlaySound,       kSfxTARGUP5, 33,
 		kPMTITargetSet,       kItemPS13Target8, 1,
 		kPMTIEnemyReset,      kItemPS13Target8,
 		kPMTIMove,            5,
 		kPMTIEnemySet,        kItemPS13Target8,     // rotate - reveal
 		kPMTIRotate,          868, 200,
 		kPMTIWait,            1000,
-		kPMTIShoot,           27, 33,
+		kPMTIShoot,           kSfxSMCAL3, 33,
 		kPMTIRotate,          356, 60,
 		kPMTIWait,            1000,
 		kPMTIMove,            0,
@@ -365,7 +365,7 @@ static const int *getPoliceMazePS13TrackData54() {  // Enemy (kItemPS13Target9) 
 		kPMTIPosition,        0,
 		kPMTIWaitRandom,      10000, 20000,
 		kPMTIObstacleSet,     kItemPS13Target9,
-		kPMTIPlaySound,       33, 33,
+		kPMTIPlaySound,       kSfxTARGUP5, 33,
 		kPMTITargetSet,       kItemPS13Target9, 1,
 		kPMTIEnemyReset,      kItemPS13Target9,
 		kPMTIMove,            3,
@@ -373,7 +373,7 @@ static const int *getPoliceMazePS13TrackData54() {  // Enemy (kItemPS13Target9) 
 		kPMTIEnemySet,        kItemPS13Target9,     // rotate - reveal
 		kPMTIRotate,          768, 80,
 		kPMTIWait,            1000,
-		kPMTIShoot,           27, 33,
+		kPMTIShoot,           kSfxSMCAL3, 33,
 		kPMTIMove,            0,
 		kPMTIObstacleReset,   kItemPS13Target9,
 #if BLADERUNNER_ORIGINAL_BUGS
@@ -410,7 +410,7 @@ static const int *getPoliceMazePS13TrackData55() {  // Enemy linked series (kIte
 #else
 		kPMTIWaitRandom,      1000, 2000,
 #endif // BLADERUNNER_ORIGINAL_BUGS
-		kPMTIPlaySound,       33, 33,
+		kPMTIPlaySound,       kSfxTARGUP5, 33,
 		kPMTIEnemyReset,      kItemPS13Target10,
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
@@ -471,7 +471,7 @@ static const int *getPoliceMazePS13TrackData57() {  // Enemy linked series (kIte
 		kPMTIWait,            0,
 		kPMTIRotate,          843, 80,
 		kPMTIWait,            1000,
-		kPMTIShoot,           27, 33,
+		kPMTIShoot,           kSfxSMCAL3, 33,
 		kPMTIWait,            500,
 		kPMTIMove,            14,
 		kPMTIObstacleReset,   kItemPS13Target12,
@@ -504,7 +504,7 @@ static const int *getPoliceMazePS13TrackData58() {  // Special (kItemPS13Target1
 		kPMTIWaitRandom,      3000, 4000,
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleSet,     kItemPS13Target13,
-		kPMTIPlaySound,       33, 33,
+		kPMTIPlaySound,       kSfxTARGUP5, 33,
 		kPMTITargetSet,       kItemPS13Target13, 1,
 		kPMTIEnemyReset,      kItemPS13Target13,
 		kPMTIMove,            9,
@@ -548,7 +548,7 @@ static const int *getPoliceMazePS13TrackData62() {  // Enemy (kItemPS13Target14)
 		kPMTIWaitRandom,      3000, 4000,
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		kPMTIObstacleSet,     kItemPS13Target14,
-		kPMTIPlaySound,       33, 33,
+		kPMTIPlaySound,       kSfxTARGUP5, 33,
 		kPMTITargetSet,       kItemPS13Target14, 1,
 		kPMTIEnemyReset,      kItemPS13Target14,
 		kPMTIMove,            14,
@@ -558,7 +558,7 @@ static const int *getPoliceMazePS13TrackData62() {  // Enemy (kItemPS13Target14)
 		kPMTIWait,            0,
 		kPMTIRotate,          937, 80,
 		kPMTIWait,            1000,
-		kPMTIShoot,           27, 33,
+		kPMTIShoot,           kSfxSMCAL3, 33,
 		kPMTIWait,            500,
 		kPMTIRotate,          650, 80,
 		kPMTIWait,            0,
@@ -589,7 +589,7 @@ static const int *getPoliceMazePS13TrackData63() {  // Enemy (kItemPS13Target15)
 		kPMTIPosition,        0,
 		kPMTIWait,            3000,
 		kPMTIObstacleSet,     kItemPS13Target15,
-		kPMTIPlaySound,       33, 33,
+		kPMTIPlaySound,       kSfxTARGUP5, 33,
 		kPMTITargetSet,       kItemPS13Target15, 1,
 		kPMTIEnemyReset,      kItemPS13Target15,
 		kPMTIMove,            9,
@@ -599,7 +599,7 @@ static const int *getPoliceMazePS13TrackData63() {  // Enemy (kItemPS13Target15)
 		kPMTIWait,            0,
 		kPMTIRotate,          960, 80,
 		kPMTIWait,            1000,
-		kPMTIShoot,           27, 33,
+		kPMTIShoot,           kSfxSMCAL3, 33,
 		kPMTIWait,            500,
 		kPMTIRotate,          710, 80,
 		kPMTIWait,            0,
@@ -696,14 +696,14 @@ bool SceneScriptPS13::ClickedOnItem(int itemId, bool a2) {
 		switch (itemId) {
 		case kItemPS13Target3:             // fall-through
 		case kItemPS13Target5:
-			Sound_Play(4, 50, 0, 0, 50);   // FEMHURT2
+			Sound_Play(kSfxFEMHURT2, 50, 0, 0, 50);
 			break;
 		case kItemPS13Target10:            // fall-through
 		case kItemPS13Target11:
-			Sound_Play(555, 50, 0, 0, 50); // MALEHURT
+			Sound_Play(kSfxMALEHURT, 50, 0, 0, 50);
 			break;
 		default:
-			Sound_Play(2, 12, 0, 0, 50);   // SPINNY1
+			Sound_Play(kSfxSPINNY1,  12, 0, 0, 50);
 			break;
 		}
 #if BLADERUNNER_ORIGINAL_BUGS

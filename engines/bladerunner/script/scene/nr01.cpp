@@ -260,7 +260,7 @@ bool SceneScriptNR01::ClickedOn2DRegion(int region) {
 	if (region == 0
 	 && Player_Query_Combat_Mode()
 	) {
-		Sound_Play(517, 100, 0, 0, 50);
+		Sound_Play(kSfxGUNH1A, 100, 0, 0, 50);
 		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleNR01McCoyShotGun);
 		Scene_2D_Region_Remove(0);
 	}
@@ -268,7 +268,7 @@ bool SceneScriptNR01::ClickedOn2DRegion(int region) {
 	if (region == 1
 	 && Player_Query_Combat_Mode()
 	) {
-		Sound_Play(517, 100, 0, 0, 50);
+		Sound_Play(kSfxGUNH1A, 100, 0, 0, 50);
 		Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR01Die);
 		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleNR01McCoyShotGordo);
 		Scene_2D_Region_Remove(1);
@@ -280,11 +280,11 @@ bool SceneScriptNR01::ClickedOn2DRegion(int region) {
 
 void SceneScriptNR01::SceneFrameAdvanced(int frame) {
 	if (frame == 61) {
-		Sound_Play(118, 40, 0, 0, 50);
+		Sound_Play(kSfxCARDOWN3, 40, 0, 0, 50);
 	}
 
 	if (frame == 184) {
-		Sound_Play(117, 40, 80, 80, 50);
+		Sound_Play(kSfxCARUP3, 40, 80, 80, 50);
 	}
 	//return 0;
 }

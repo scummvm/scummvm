@@ -172,7 +172,7 @@ void AIScriptZuben::CompletedMovementTrack() {
 	} else {
 		if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT07RunToFreeSlotA) {
 			Music_Stop(2);
-			Sound_Play(574, 40, 100, 100, 50);
+			Sound_Play(kSfxDOORLOCK, 40, 100, 100, 50);
 			Delay(2000);
 			Game_Flag_Set(kFlagCT07toCT06);
 			Game_Flag_Set(kFlagZubenSpared);
@@ -872,7 +872,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 		*animation = 405;
 		_animationFrame++;
 		if (_animationFrame == 7) {
-			Sound_Play(207, 30, 0, 0, 50);
+			Sound_Play(kSfxZUBDEAD1, 30, 0, 0, 50);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 #if BLADERUNNER_ORIGINAL_BUGS
@@ -888,7 +888,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 		*animation = 393;
 		_animationFrame++;
 		if (_animationFrame == 7) {
-			Sound_Play(207, 30, 0, 0, 50);
+			Sound_Play(kSfxZUBDEAD1, 30, 0, 0, 50);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 #if BLADERUNNER_ORIGINAL_BUGS
@@ -1024,7 +1024,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 			Overlay_Play("ct02over", 1, false, true, 0);
 		}
 		if (_animationFrame == 6) {
-			Sound_Play(201, 40, 0, 0, 50);
+			Sound_Play(kSfxMTLDOOR2, 40, 0, 0, 50);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			Actor_Set_Frame_Rate_FPS(kActorZuben, -2);
@@ -1038,7 +1038,7 @@ bool AIScriptZuben::UpdateAnimation(int *animation, int *frame) {
 		*animation = 421;
 		_animationFrame++;
 		if (_animationFrame == 1) {
-			Sound_Play(206, 80, 0, 0, 50);
+			Sound_Play(kSfxZUBLAND1, 80, 0, 0, 50);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame = 0;

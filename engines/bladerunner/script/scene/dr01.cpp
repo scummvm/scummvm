@@ -62,10 +62,10 @@ void SceneScriptDR01::InitializeScene() {
 	Ambient_Sounds_Add_Looping_Sound( 54, 50,  0, 1);
 	Ambient_Sounds_Add_Looping_Sound(219, 12, 85, 1);
 	Ambient_Sounds_Add_Looping_Sound( 98, 14, 85, 1);
-	Ambient_Sounds_Add_Speech_Sound(60,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Sound( 67, 5, 80, 16,  25, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound( 66, 5, 80, 16,  25, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(378, 5, 80, 50, 100, -100, 100, -101, -101, 0, 0);
@@ -251,7 +251,7 @@ void SceneScriptDR01::SceneFrameAdvanced(int frame) {
 		Actor_Set_Invisible(kActorMcCoy, false);
 	}
 	if (frame == 2) {
-		Ambient_Sounds_Play_Sound(487, 40, -40, 100, 99);
+		Ambient_Sounds_Play_Sound(kSfxBIKEMIX4, 40, -40, 100, 99);
 	}
 }
 

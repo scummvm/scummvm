@@ -97,19 +97,19 @@ void Combat::disable() {
 }
 
 void Combat::setHitSound(int ammoType, int column, int soundId) {
-	_hitSoundId[ammoType * 3 + column] = soundId;
+	_hitSoundId[(kSoundCount/_vm->_settings->getAmmoTypesCount()) * ammoType + column] = soundId;
 }
 
 void Combat::setMissSound(int ammoType, int column, int soundId) {
-	_missSoundId[ammoType * 3 + column] = soundId;
+	_missSoundId[(kSoundCount/_vm->_settings->getAmmoTypesCount()) * ammoType + column] = soundId;
 }
 
 int Combat::getHitSound() const {
-	return _hitSoundId[3 * _vm->_settings->getAmmoType() + _vm->_rnd.getRandomNumber(2)];
+	return _hitSoundId[(kSoundCount/_vm->_settings->getAmmoTypesCount()) * _vm->_settings->getAmmoType() + _vm->_rnd.getRandomNumber(2)];
 }
 
 int Combat::getMissSound() const {
-	return _hitSoundId[3 * _vm->_settings->getAmmoType() + _vm->_rnd.getRandomNumber(2)];
+	return _missSoundId[(kSoundCount/_vm->_settings->getAmmoTypesCount()) * _vm->_settings->getAmmoType() + _vm->_rnd.getRandomNumber(2)];
 }
 
 void Combat::shoot(int actorId, Vector3 &to, int screenX) {

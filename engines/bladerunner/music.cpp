@@ -27,6 +27,7 @@
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/savefile.h"
+#include "bladerunner/game_constants.h"
 
 #include "common/timer.h"
 
@@ -169,7 +170,7 @@ int Music::getVolume() {
 
 void Music::playSample() {
 	if (!isPlaying()) {
-		play(_vm->_gameInfo->getSfxTrack(512), 100, 0, 2, -1, 0, 3);
+		play(_vm->_gameInfo->getSfxTrack(kSfxMUSVOL8), 100, 0, 2, -1, 0, 3);
 	}
 }
 

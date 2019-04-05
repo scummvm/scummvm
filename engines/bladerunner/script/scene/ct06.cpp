@@ -42,10 +42,10 @@ void SceneScriptCT06::InitializeScene() {
 	}
 	Ambient_Sounds_Add_Looping_Sound(381, 100, 1, 1);
 	Ambient_Sounds_Add_Looping_Sound(205,  20, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Sound(67,  80, 180, 16, 25, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(68,  50, 180, 16, 25, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(379, 50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
@@ -129,10 +129,10 @@ bool SceneScriptCT06::ClickedOnExit(int exitId) {
 	if (exitId == 1) {
 		if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT06HideAtFreeSlotA) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 203.91f, -58.02f, 0.47f, 0, 1, false, 0)) {
-				Ambient_Sounds_Remove_Sound(196, true);
-				Ambient_Sounds_Remove_Sound(197, true);
-				Ambient_Sounds_Remove_Sound(198, true);
-				Ambient_Sounds_Remove_Sound(199, true);
+				Ambient_Sounds_Remove_Sound(kSfxZUBWLK1, true);
+				Ambient_Sounds_Remove_Sound(kSfxZUBWLK2, true);
+				Ambient_Sounds_Remove_Sound(kSfxZUBWLK3, true);
+				Ambient_Sounds_Remove_Sound(kSfxZUBWLK4, true);
 				Player_Loses_Control();
 				Actor_Set_Goal_Number(kActorZuben, kGoalZubenCT06JumpDown);
 				Game_Flag_Reset(kFlagNotUsed212);

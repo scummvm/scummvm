@@ -240,7 +240,7 @@ void KIASectionCrimes::scrollBoxCallback(void *callbackData, void *source, int l
 	if (source == self->_cluesScrollBox && lineData >= 0) {
 		if (mouseButton) {
 			if (self->_vm->_gameFlags->query(kFlagKIAPrivacyAddon)) {
-				self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(511), 70, 0, 0, 50, 0);
+				self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(kSfxBEEP15), 70, 0, 0, 50, 0);
 
 				if (self->_clues->isPrivate(lineData)) {
 					self->_clues->setPrivate(lineData, false);

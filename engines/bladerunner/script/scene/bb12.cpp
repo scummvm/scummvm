@@ -124,11 +124,11 @@ void SceneScriptBB12::SceneFrameAdvanced(int frame) {
 	 || frame == 33
 	 || frame == 41
 	) {
-		Sound_Play(311, 17, -30, -30, 50);
+		Sound_Play(kSfxMONKCYM1, 17, -30, -30, 50);
 	}
 
 	if (frame == 3) {
-		Sound_Play(313, 16, -30, -30, 50);
+		Sound_Play(kSfxMONKEY1,  16, -30, -30, 50);
 	}
 }
 

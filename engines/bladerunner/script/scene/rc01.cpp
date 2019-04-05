@@ -587,25 +587,25 @@ bool SceneScriptRC01::ClickedOn2DRegion(int region) {
 
 void SceneScriptRC01::SceneFrameAdvanced(int frame) {
 	if (frame == 1) {
-		Sound_Play(118, 40, 0, 0, 50); // CARDOWN3.AUD
+		Sound_Play(kSfxCARDOWN3, 40, 0, 0, 50);
 	}
 	if (frame == 61 || frame == 362) {
-		Sound_Play(116, 100, 80, 80, 50); // SPINOPN4.AUD
+		Sound_Play(kSfxSPINOPN4, 100, 80, 80, 50);
 	}
 	if (frame == 108 || frame == 409) {
-		Sound_Play(119, 100, 80, 80, 50); // SPINCLS1.AUD
+		Sound_Play(kSfxSPINCLS1, 100, 80, 80, 50);
 	}
 	if (frame == 183 || frame == 484) {
-		Sound_Play(116, 100, 80, 80, 50); // SPINOPN4.AUD
+		Sound_Play(kSfxSPINOPN4, 100, 80, 80, 50);
 	}
 	if (frame == 228 || frame == 523) {
-		Sound_Play(119, 100, 80, 80, 50); // SPINCLS1.AUD
+		Sound_Play(kSfxSPINCLS1, 100, 80, 80, 50);
 	}
 	if (frame == 243 || frame == 545) {
-		Sound_Play(117, 40, 80, 80, 50); // CARUP3.AUD
+		Sound_Play(kSfxCARUP3, 40, 80, 80, 50);
 	}
 	if (frame == 315) {
-		Sound_Play(118, 40, 80, 80, 50); // CARDOWN3.AUD
+		Sound_Play(kSfxCARDOWN3, 40, 80, 80, 50);
 	}
 }
 

@@ -218,7 +218,7 @@ bool AIScriptHolloway::UpdateAnimation(int *animation, int *frame) {
 		_animationFrame++;
 
 		if (_animationFrame == 9) {
-			Ambient_Sounds_Play_Sound(222, 90, 99, 0, 0);
+			Ambient_Sounds_Play_Sound(kSfxKICK1, 90, 99, 0, 0);
 		}
 
 		if (_animationFrame == 10) {

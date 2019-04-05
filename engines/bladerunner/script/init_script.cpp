@@ -27,13 +27,13 @@
 namespace BladeRunner {
 
 void InitScript::SCRIPT_Initialize_Game() {
-	Assign_Player_Gun_Hit_Sounds(0, 517, 518, 519);
-	Assign_Player_Gun_Hit_Sounds(1, 520, 521, 522);
-	Assign_Player_Gun_Hit_Sounds(2, 523, 524, 525);
+	Assign_Player_Gun_Hit_Sounds(0, kSfxGUNH1A, kSfxGUNH1B, kSfxGUNH1C);
+	Assign_Player_Gun_Hit_Sounds(1, kSfxGUNH2A, kSfxGUNH2B, kSfxGUNH2C);
+	Assign_Player_Gun_Hit_Sounds(2, kSfxGUNH3A, kSfxGUNH3B, kSfxGUNH3C);
 
-	Assign_Player_Gun_Miss_Sounds(0, 526, 527, 528);
-	Assign_Player_Gun_Miss_Sounds(1, 529, 530, 531);
-	Assign_Player_Gun_Miss_Sounds(2, 532, 533, 534);
+	Assign_Player_Gun_Miss_Sounds(0, kSfxGUNM1A, kSfxGUNM1B, kSfxGUNM1C);
+	Assign_Player_Gun_Miss_Sounds(1, kSfxGUNM2A, kSfxGUNM2B, kSfxGUNM2C);
+	Assign_Player_Gun_Miss_Sounds(2, kSfxGUNM3A, kSfxGUNM3B, kSfxGUNM3C);
 
 	Init_Globals();
 	Init_Game_Flags();

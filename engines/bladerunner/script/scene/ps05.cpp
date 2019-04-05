@@ -133,7 +133,7 @@ bool SceneScriptPS05::ClickedOn2DRegion(int region) {
 
 void SceneScriptPS05::SceneFrameAdvanced(int frame) {
 	if (frame == 1 || frame == 16 || frame == 31 || frame == 46) {
-		Sound_Play(149, Random_Query(10, 10), 70, 70, 50);
+		Sound_Play(kSfxLABMISC4, Random_Query(10, 10), 70, 70, 50);
 	}
 	//return true;
 }

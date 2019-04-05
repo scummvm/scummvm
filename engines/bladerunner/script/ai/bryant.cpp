@@ -117,7 +117,7 @@ void AIScriptBryant::ShotAtAndMissed() {
 
 bool AIScriptBryant::ShotAtAndHit() {
 	AI_Movement_Track_Flush(kActorBryant);
-	Sound_Play(3, 100, 0, 0, 50);
+	Sound_Play(kSfxFEMHURT1, 100, 0, 0, 50);  // a bug?
 
 	return false;
 }

@@ -89,13 +89,13 @@ void AIScriptTransient::TimerExpired(int timer) {
 			AI_Countdown_Timer_Start(kActorTransient, 0, Random_Query(20, 10));
 			switch (Random_Query(1, 3)) {
 			case 1:
-				Sound_Play(356, 50, 0, 0, 50);
+				Sound_Play(kSfxBUMSNOR1, 50, 0, 0, 50);
 				break;
 			case 2:
-				Sound_Play(357, 50, 0, 0, 50);
+				Sound_Play(kSfxBUMSNOR2, 50, 0, 0, 50);
 				break;
 			case 3:
-				Sound_Play(358, 50, 0, 0, 50);
+				Sound_Play(kSfxBUMSNOR3, 50, 0, 0, 50);
 				break;
 			}
 		} else if (Actor_Query_Goal_Number(kActorTransient) != 599) {

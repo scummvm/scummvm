@@ -401,7 +401,7 @@ bool AIScriptEarlyQ::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Face_Actor(kActorEarlyQ, kActorMcCoy, true);
 		Actor_Change_Animation_Mode(kActorEarlyQ, 23);
 		Scene_Loop_Start_Special(kSceneLoopModeOnce, 2, false);
-		Ambient_Sounds_Play_Sound(582, 50, 99, 0, 0);
+		Ambient_Sounds_Play_Sound(kSfxDRUGOUT, 50, 99, 0, 0);
 		Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyNR04Drink);
 		break;
 
@@ -539,7 +539,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 		*animation = 381;
 		_animationFrame++;
 		if (_animationFrame == 18) {
-			Ambient_Sounds_Play_Sound(255, 99, 0, 0, 20);
+			Ambient_Sounds_Play_Sound(kSfxBARSFX4, 99, 0, 0, 20);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			Actor_Change_Animation_Mode(kActorEarlyQ, 74);
@@ -641,16 +641,16 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame++;
 		}
 		if (_animationFrame == 1) {
-			Ambient_Sounds_Play_Sound(555, 59, 0, 0, 20);
+			Ambient_Sounds_Play_Sound(kSfxMALEHURT, 59, 0, 0, 20);
 		}
 		if (_animationFrame == 8) {
-			Ambient_Sounds_Play_Sound(254, 47, 0, 0, 20);
+			Ambient_Sounds_Play_Sound(kSfxBARSFX3,  47, 0, 0, 20);
 		}
 		if (_animationFrame == 11) {
-			Ambient_Sounds_Play_Sound(560, 27, 0, 0, 20);
+			Ambient_Sounds_Play_Sound(kSfxDROPGLAS, 27, 0, 0, 20);
 		}
 		if (_animationFrame == 14) {
-			Ambient_Sounds_Play_Sound(206, 41, 0, 0, 20);
+			Ambient_Sounds_Play_Sound(kSfxZUBLAND1, 41, 0, 0, 20);
 		}
 		break;
 
@@ -686,7 +686,7 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 		*animation = 364;
 		_animationFrame++;
 		if (_animationFrame == 2) {
-			Ambient_Sounds_Play_Sound(12, 60, 0, 0, 20);
+			Ambient_Sounds_Play_Sound(kSfxLGCAL1, 60, 0, 0, 20);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(364)) {
 			_animationFrame = 0;

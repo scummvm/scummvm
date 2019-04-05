@@ -25,6 +25,7 @@
 #include "bladerunner/audio_player.h"
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/game_info.h"
+#include "bladerunner/game_constants.h"
 
 namespace BladeRunner {
 
@@ -111,7 +112,7 @@ void UISlider::handleMouseMove(int mouseX, int mouseY) {
 	_mouseX = mouseX;
 	if (_rect.contains(mouseX, mouseY)) {
 		if (!_hasFocus && _isEnabled && _pressedStatus == 0) {
-			_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(508), 100, 0, 0, 50, 0);
+			_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxTEXT3), 100, 0, 0, 50, 0);
 		}
 		_hasFocus = true;
 	} else {

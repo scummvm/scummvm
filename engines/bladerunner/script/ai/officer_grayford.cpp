@@ -973,7 +973,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 		*animation = 616;
 		_animationFrame++;
 		if (_animationFrame == 11) {
-			Ambient_Sounds_Play_Sound(556, 25, 0, 0, 25);
+			Ambient_Sounds_Play_Sound(kSfxHOLSTER1, 25, 0, 0, 25);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			*animation = 625;

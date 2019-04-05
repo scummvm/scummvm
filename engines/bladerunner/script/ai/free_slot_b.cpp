@@ -302,7 +302,7 @@ bool AIScriptFreeSlotB::UpdateAnimation(int *animation, int *frame) {
 
 	case 6:
 		if (_animationFrame == 1) {
-			Ambient_Sounds_Play_Sound(437, 99, 0, 0, 20);
+			Ambient_Sounds_Play_Sound(kSfxRATTY3, 99, 0, 0, 20);
 		}
 		*animation = 860;
 		_animationFrame++;
@@ -317,7 +317,7 @@ bool AIScriptFreeSlotB::UpdateAnimation(int *animation, int *frame) {
 		*animation = 859;
 		_animationFrame++;
 		if (_animationFrame == 1) {
-			Ambient_Sounds_Play_Sound(439, 99, 0, 0, 25);
+			Ambient_Sounds_Play_Sound(kSfxRATTY5, 99, 0, 0, 25);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(859)) {
 			_animationFrame = Slice_Animation_Query_Number_Of_Frames(859);

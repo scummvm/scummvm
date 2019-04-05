@@ -118,7 +118,7 @@ void AIScriptRunciter::OtherAgentEnteredCombatMode(int otherActorId, int combatM
 			Actor_Says(kActorRunciter, 590, 13);
 			Actor_Says(kActorMcCoy, 4775, -1);
 			Actor_Says(kActorRunciter, 600, 17);
-			Sound_Play(492, 100, 0, 100, 50);
+			Sound_Play(kSfxSHOTCOK1, 100, 0, 100, 50);
 			Actor_Says(kActorMcCoy, 4780, -1);
 			Actor_Says(kActorRunciter, 610, 18);
 			Actor_Says(kActorMcCoy, 4785, -1);
@@ -140,7 +140,7 @@ void AIScriptRunciter::OtherAgentEnteredCombatMode(int otherActorId, int combatM
 			Actor_Says(kActorRunciter, 480, 17);
 			Actor_Says(kActorMcCoy, 4735, -1);
 			Actor_Says(kActorRunciter, 490, 16);
-			Sound_Play(492, 100, 0, 100, 50);
+			Sound_Play(kSfxSHOTCOK1, 100, 0, 100, 50);
 			Actor_Says(kActorMcCoy, 4740, -1);
 			Actor_Says(kActorRunciter, 500, 18);
 			Actor_Says(kActorRunciter, 510, 19);

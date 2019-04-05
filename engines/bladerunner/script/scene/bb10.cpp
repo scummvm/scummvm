@@ -138,7 +138,7 @@ bool SceneScriptBB10::ClickedOnExit(int exitId) {
 bool SceneScriptBB10::ClickedOn2DRegion(int region) {
 	if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 225.58f, 67.2f, -102.1f, 0, true, false, 0)) {
 		Actor_Face_Heading(kActorMcCoy, 274, false);
-		Sound_Play(Random_Query(289, 290), 40, 70, 70, 50);
+		Sound_Play(Random_Query(kSfxGLASSY1, kSfxGLASSY2), 40, 70, 70, 50);
 		switch (region) {
 		case 0:
 			Overlay_Remove("BB10OVR1");

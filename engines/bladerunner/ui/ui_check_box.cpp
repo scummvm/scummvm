@@ -26,6 +26,7 @@
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/time.h"
+#include "bladerunner/game_constants.h"
 #include "bladerunner/ui/kia.h"
 #include "bladerunner/ui/kia_shapes.h"
 
@@ -113,7 +114,7 @@ void UICheckBox::setChecked(bool isChecked) {
 void UICheckBox::handleMouseMove(int mouseX, int mouseY) {
 	if (_rect.contains(mouseX, mouseY)) {
 		if (!_hasFocus && _isEnabled && !_isPressed ) {
-			_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(508), 100, 0, 0, 50, 0);
+			_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxTEXT3), 100, 0, 0, 50, 0);
 		}
 		_hasFocus = true;
 	} else {
@@ -128,7 +129,7 @@ void UICheckBox::handleMouseDown(bool alternateButton) {
 			if (_valueChangedCallback) {
 				_valueChangedCallback(_callbackData, this);
 			}
-			_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(509), 100, 0, 0, 50, 0);
+			_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxBEEP10), 100, 0, 0, 50, 0);
 		} else {
 			_isPressed = true;
 		}

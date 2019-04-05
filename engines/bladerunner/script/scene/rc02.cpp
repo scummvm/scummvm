@@ -49,12 +49,12 @@ void SceneScriptRC02::InitializeScene() {
 	Ambient_Sounds_Add_Sound(77, 5, 40,  6,  6, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(78, 5, 40,  6,  6, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(79, 5, 40,  6,  6, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Speech_Sound(23, 250, 10, 60, 5, 5, 100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(23, 330, 10, 60, 5, 5, 100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(24, 380, 10, 60, 5, 5, 100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(24, 510, 10, 60, 5, 5, 100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(38,  80, 10, 60, 5, 5, 100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(38, 160, 10, 60, 5, 5, 100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorOfficerLeary,    250, 10, 60, 5, 5, 100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorOfficerLeary,    330, 10, 60, 5, 5, 100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorOfficerGrayford, 380, 10, 60, 5, 5, 100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorOfficerGrayford, 510, 10, 60, 5, 5, 100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorDispatcher,       80, 10, 60, 5, 5, 100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorDispatcher,      160, 10, 60, 5, 5, 100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Sound(87, 20, 80, 10, 20, 100, 100, -101, -101, 0, 0);
 }
 

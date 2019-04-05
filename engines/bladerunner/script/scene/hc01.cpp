@@ -201,15 +201,15 @@ void SceneScriptHC01::SceneFrameAdvanced(int frame) {
 	}
 
 	if (frame == 61) {
-		Ambient_Sounds_Play_Sound(312, 90, 0, 0, 0);
+		Ambient_Sounds_Play_Sound(kSfxCAMERA2,  90,   0,   0, 0);
 	}
 
 	if (frame == 65) {
-		Ambient_Sounds_Play_Sound(315, 50, 0, 100, 0);
+		Ambient_Sounds_Play_Sound(kSfxRUNAWAY1, 50,   0, 100, 0);
 	}
 
 	if (frame == 80) {
-		Ambient_Sounds_Play_Sound(316, 40, 100, 100, 0);
+		Ambient_Sounds_Play_Sound(kSfxTRPDOOR1, 40, 100, 100, 0);
 		Item_Add_To_World(kItemGreenPawnLock, 931, kSetHC01_HC02_HC03_HC04, 582.0f, 27.0f, -41.0f, 0, 8, 8, true, true, false, true);
 	}
 }

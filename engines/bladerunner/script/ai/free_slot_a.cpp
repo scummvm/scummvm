@@ -393,10 +393,10 @@ bool AIScriptFreeSlotA::UpdateAnimation(int *animation, int *frame) {
 			} else {
 				snd = 9015;
 			}
-			Sound_Play_Speech_Line(64, snd, 75, 0, 99);
+			Sound_Play_Speech_Line(kActorFreeSlotA, snd, 75, 0, 99);
 		}
 		if (_animationFrame == 3) {
-			Ambient_Sounds_Play_Sound(438, 99, 0, 0, 20);
+			Ambient_Sounds_Play_Sound(kSfxRATTY4, 99, 0, 0, 20);
 			Actor_Combat_AI_Hit_Attempt(kActorFreeSlotA);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(857)) {
@@ -416,7 +416,7 @@ bool AIScriptFreeSlotA::UpdateAnimation(int *animation, int *frame) {
 
 	case 6:
 		if (_animationFrame == 1) {
-			Ambient_Sounds_Play_Sound(437, 99, 0, 0, 20);
+			Ambient_Sounds_Play_Sound(kSfxRATTY3, 99, 0, 0, 20);
 		}
 		*animation = 860;
 		_animationFrame++;
@@ -431,7 +431,7 @@ bool AIScriptFreeSlotA::UpdateAnimation(int *animation, int *frame) {
 		*animation = 859;
 		_animationFrame++;
 		if (_animationFrame == 0) {
-			Ambient_Sounds_Play_Sound(439, 99, 0, 0, 25);
+			Ambient_Sounds_Play_Sound(kSfxRATTY5, 99, 0, 0, 25);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(859) - 1) { // bug? shuld not be '-1'
 			_animationFrame = Slice_Animation_Query_Number_Of_Frames(859) - 1;

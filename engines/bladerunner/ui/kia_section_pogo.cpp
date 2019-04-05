@@ -28,6 +28,7 @@
 #include "bladerunner/game_info.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/time.h"
+#include "bladerunner/game_constants.h"
 
 namespace BladeRunner {
 
@@ -228,7 +229,7 @@ void KIASectionPogo::open() {
 
 	_timeLast = _vm->_time->currentSystem();
 
-	_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(319), 100, 0, 0, 50, 0);
+	_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxAUDLAFF1), 100, 0, 0, 50, 0);
 }
 
 void KIASectionPogo::draw(Graphics::Surface &surface) {

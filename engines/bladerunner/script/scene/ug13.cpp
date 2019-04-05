@@ -40,20 +40,20 @@ void SceneScriptUG13::InitializeScene() {
 #endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 
-	if (!Game_Flag_Query(kFlagUB08ElevatorUp)) {
+	if (!Game_Flag_Query(kFlagUG08ElevatorUp)) {
 		Scene_Exit_Add_2D_Exit(0, 394, 205, 464, 281, 0);
 	}
 	Scene_Exit_Add_2D_Exit(1, 560, 90, 639, 368, 1);
 	Scene_Exit_Add_2D_Exit(2, 108, 85, 175, 210, 3);
 
-	Ambient_Sounds_Add_Looping_Sound(331, 15, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(332, 40, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(333, 40, 0, 1);
-	Ambient_Sounds_Add_Sound(401, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(402, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(369, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(397, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
-	Ambient_Sounds_Add_Sound(398, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxSTMLOOP7, 15, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED1,   40, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED2,   40, 0, 1);
+	Ambient_Sounds_Add_Sound(kSfxYELL1M2,  2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxYELL1M3,  2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxGRUNT1M1, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxGRUNT2M2, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxGRUNT2M3, 2, 120, 11, 12, -100, 100, -100, 100, 0, 0);
 
 	if ( Global_Variable_Query(kVariableChapter) == 4
 	 && !Game_Flag_Query(kFlagCT04HomelessKilledByMcCoy)
@@ -68,7 +68,7 @@ void SceneScriptUG13::InitializeScene() {
 	if (Game_Flag_Query(kFlagUG08toUG13)) {
 		Scene_Loop_Start_Special(0, 0, 0);
 		Scene_Loop_Set_Default(1);
-	} else if (Game_Flag_Query(kFlagUB08ElevatorUp)) {
+	} else if (Game_Flag_Query(kFlagUG08ElevatorUp)) {
 		Scene_Loop_Set_Default(4);
 	} else {
 		Scene_Loop_Set_Default(1);
@@ -104,22 +104,22 @@ bool SceneScriptUG13::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("BOLLARD", objectName)) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 7.0f, 44.0f, -695.0f, 0, true, false, 0)) {
 			Actor_Face_Object(kActorMcCoy, "BOLLARD", true);
-			if (Game_Flag_Query(kFlagUB08ElevatorUp)) {
+			if (Game_Flag_Query(kFlagUG08ElevatorUp)) {
 				Scene_Loop_Set_Default(1);
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 				// start elevator sound, but wait a bit before starting the special loop
-				Ambient_Sounds_Play_Sound(372, 90, 0, 0, 100);
+				Ambient_Sounds_Play_Sound(kSfxCARGELE2, 90, 0, 0, 100);
 				Delay(1500);
 #endif // BLADERUNNER_ORIGINAL_BUGS
 				Scene_Loop_Start_Special(kSceneLoopModeOnce, 0, false);
-				Game_Flag_Reset(kFlagUB08ElevatorUp);
+				Game_Flag_Reset(kFlagUG08ElevatorUp);
 				Game_Flag_Set(kFlagUG13CallElevator);
 				return true;
 			} else {
 				Scene_Loop_Set_Default(4);
 				Scene_Loop_Start_Special(kSceneLoopModeOnce, 3, false);
-				Game_Flag_Set(kFlagUB08ElevatorUp);
+				Game_Flag_Set(kFlagUG08ElevatorUp);
 				Scene_Exit_Remove(0);
 				return true;
 			}
@@ -195,7 +195,7 @@ bool SceneScriptUG13::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -32.0f, 54.63f, -883.0f, 0, true, false, 0)) {
 			Player_Loses_Control();
 			Game_Flag_Set(kFlagUG13toUG08);
-			Game_Flag_Set(kFlagUB08ElevatorUp);
+			Game_Flag_Set(kFlagUG08ElevatorUp);
 			Set_Enter(kSetUG08, kSceneUG08);
 			Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 3, false);
 		}
@@ -237,7 +237,7 @@ bool SceneScriptUG13::ClickedOn2DRegion(int region) {
 
 void SceneScriptUG13::SceneFrameAdvanced(int frame) {
 	if (frame == 94) {
-		Ambient_Sounds_Play_Sound(372, 90, 0, 0, 100);
+		Ambient_Sounds_Play_Sound(kSfxCARGELE2, 90, 0, 0, 100);
 	}
 
 	if (Game_Flag_Query(kFlagUG13CallElevator)
@@ -306,11 +306,11 @@ void SceneScriptUG13::PlayerWalkedOut() {
 	Actor_Set_Invisible(kActorMcCoy, false);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 	if (Game_Flag_Query(kFlagUG13toUG08)) {
-		Ambient_Sounds_Remove_Sound(401, false);
-		Ambient_Sounds_Remove_Sound(402, false);
-		Ambient_Sounds_Remove_Sound(369, false);
-		Ambient_Sounds_Remove_Sound(397, false);
-		Ambient_Sounds_Remove_Sound(398, false);
+		Ambient_Sounds_Remove_Sound(kSfxYELL1M2,  false);
+		Ambient_Sounds_Remove_Sound(kSfxYELL1M3,  false);
+		Ambient_Sounds_Remove_Sound(kSfxGRUNT1M1, false);
+		Ambient_Sounds_Remove_Sound(kSfxGRUNT2M2, false);
+		Ambient_Sounds_Remove_Sound(kSfxGRUNT2M3, false);
 	} else {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	}

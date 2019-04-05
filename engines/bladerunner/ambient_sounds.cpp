@@ -27,6 +27,7 @@
 #include "bladerunner/game_info.h"
 #include "bladerunner/savefile.h"
 #include "bladerunner/time.h"
+#include "bladerunner/game_constants.h"
 
 #include "common/debug.h"
 #include "common/system.h"
@@ -248,7 +249,7 @@ int AmbientSounds::getVolume() const {
 }
 
 void AmbientSounds::playSample() {
-	playSound(66, 100, 0, 0, 0);
+	playSound(kSfxSPIN1A, 100, 0, 0, 0);
 }
 
 int AmbientSounds::findAvailableNonLoopingTrack() const {

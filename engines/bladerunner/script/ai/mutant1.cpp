@@ -474,7 +474,7 @@ bool AIScriptMutant1::UpdateAnimation(int *animation, int *frame) {
 		*animation = 899;
 		_animationFrame++;
 		if (_animationFrame == 1) {
-			Ambient_Sounds_Play_Sound(371, 99, 0, 0, 25);
+			Ambient_Sounds_Play_Sound(kSfxHURT1M1, 99, 0, 0, 25);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(899)) {
 			Actor_Change_Animation_Mode(kActorMutant1, 0);
@@ -485,7 +485,7 @@ bool AIScriptMutant1::UpdateAnimation(int *animation, int *frame) {
 		*animation = 900;
 		_animationFrame++;
 		if (_animationFrame == 1) {
-			Sound_Play(368, 100, 0, 0, 50);
+			Sound_Play(kSfxYELL1M1, 100, 0, 0, 50);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(900)) {
 			Actor_Change_Animation_Mode(kActorMutant1, 88);
@@ -501,7 +501,7 @@ bool AIScriptMutant1::UpdateAnimation(int *animation, int *frame) {
 		*animation = 899;
 		_animationFrame++;
 		if (_animationFrame == 9) {
-			Sound_Play(371, 100, 0, 0, 50);
+			Sound_Play(kSfxHURT1M1, 100, 0, 0, 50);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(899)) {
 			Actor_Change_Animation_Mode(kActorMutant1, 0);

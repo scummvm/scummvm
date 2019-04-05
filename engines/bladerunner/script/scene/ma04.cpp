@@ -106,7 +106,7 @@ bool SceneScriptMA04::ClickedOn3DObject(const char *objectName, bool a2) {
 			Game_Flag_Set(kFlagMA04WatchedTV);
 			Unclickable_Object("BED-TV-1");
 			Unclickable_Object("BED-TV-2");
-			Sound_Play(132, 100, 0, 0, 50);
+			Sound_Play(kSfxSPNBEEP4, 100, 0, 0, 50);
 			turnOnTV();
 			return false;
 		}
@@ -149,7 +149,7 @@ bool SceneScriptMA04::ClickedOnExit(int exitId) {
 	}
 	if (exitId == kMA04ExitKitchen) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7115.0f, 954.0f, 1742.0f, 0, true, false, 0)) {
-			int sounds[] = {252, 405, 404, 407, 406};
+			int sounds[] = {kSfxBARSFX1, kSfxTOILET1, kSfxDRAIN1X, kSfxWASH1, kSfxGARGLE1};
 			Ambient_Sounds_Play_Sound(sounds[Random_Query(0, 4)], 50, 0, 0, 0);
 			Delay(3000);
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7139.0f, 954.0f, 1746.0f, 0, true, false, 1);
@@ -171,8 +171,8 @@ bool SceneScriptMA04::ClickedOn2DRegion(int region) {
 			Actor_Face_Heading(kActorMcCoy, 256, false);
 			if (isPhoneRinging()) {
 				Actor_Says(kActorMcCoy, 2680, 0);
-				Ambient_Sounds_Remove_Sound(403, true);
-				Sound_Play(123, 100, 0, 0, 50);
+				Ambient_Sounds_Remove_Sound(kSfxVIDFONE1, true);
+				Sound_Play(kSfxSPNBEEP9, 100, 0, 0, 50);
 				Overlay_Remove("MA04OVER");
 				Delay(500);
 				if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
@@ -190,7 +190,7 @@ bool SceneScriptMA04::ClickedOn2DRegion(int region) {
 				return false;
 			}
 			if (Actor_Clue_Query(kActorClovis, kClueMcCoyRetiredZuben) && !Game_Flag_Query(kFlagMA04PhoneMessageFromClovis)) {
-				Sound_Play(123, 100, 0, 0, 50);
+				Sound_Play(kSfxSPNBEEP9, 100, 0, 0, 50);
 				Overlay_Remove("MA04OVER");
 				Delay(500);
 				Actor_Says(kActorClovis, 310, 3);
@@ -201,12 +201,12 @@ bool SceneScriptMA04::ClickedOn2DRegion(int region) {
 					Actor_Voice_Over(1320, kActorVoiceOver);
 				}
 				Actor_Says(kActorMcCoy, 2445, 13);
-				Sound_Play(123, 100, 0, 0, 50);
+				Sound_Play(kSfxSPNBEEP9, 100, 0, 0, 50);
 				Game_Flag_Set(kFlagMA04PhoneMessageFromClovis);
 				return true;
 			}
 			if (Actor_Clue_Query(kActorLucy, kClueMcCoyLetZubenEscape) && !Game_Flag_Query(kFlagMA04PhoneMessageFromLucy)) {
-				Sound_Play(123, 100, 0, 0, 50);
+				Sound_Play(kSfxSPNBEEP9, 100, 0, 0, 50);
 				Overlay_Remove("MA04OVER");
 				Delay(500);
 				Actor_Says(kActorLucy, 500, 3);
@@ -217,7 +217,7 @@ bool SceneScriptMA04::ClickedOn2DRegion(int region) {
 					Actor_Voice_Over(1350, kActorVoiceOver);
 				}
 				Actor_Says(kActorMcCoy, 2445, 13);
-				Sound_Play(123, 100, 0, 0, 50);
+				Sound_Play(kSfxSPNBEEP9, 100, 0, 0, 50);
 				Game_Flag_Set(kFlagMA04PhoneMessageFromLucy);
 				return true;
 			}
@@ -241,7 +241,7 @@ void SceneScriptMA04::SceneFrameAdvanced(int frame) {
 		Set_Fade_Density(0.0f);
 	}
 	if (frame == 121 && (Game_Flag_Query(kFlagZubenRetired) || Game_Flag_Query(kFlagZubenSpared)) && !Game_Flag_Query(kFlagPS04GuzzaTalkZubenRetired)) {
-		Sound_Play(403, 50, 0, 0, 50);
+		Sound_Play(kSfxVIDFONE1, 50, 0, 0, 50);
 	}
 }
 
@@ -265,11 +265,11 @@ void SceneScriptMA04::PlayerWalkedIn() {
 	Game_Flag_Reset(kFlagMA04McCoySleeping);
 	if (Game_Flag_Query(kFlagChapter1Ended)) {
 		if (Global_Variable_Query(kVariableChapter) == 2 && !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallGuzza)) {
-			Sound_Play(403, 100, 0, 0, 50);
+			Sound_Play(kSfxVIDFONE1, 100, 0, 0, 50);
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7176.0f, 954.0f, 1806.0f, 0, false, false, 0);
 			Actor_Face_Heading(kActorMcCoy, 256, true);
 			Actor_Says(kActorMcCoy, 2680, 0);
-			Sound_Play(123, 100, 0, 0, 50);
+			Sound_Play(kSfxSPNBEEP9, 100, 0, 0, 50);
 			Delay(500);
 			Actor_Says(kActorGuzza, 0, 3);
 			Actor_Says(kActorMcCoy, 2685, 13);
@@ -282,7 +282,7 @@ void SceneScriptMA04::PlayerWalkedIn() {
 			Actor_Says(kActorMcCoy, 2700, 3);
 			Actor_Says(kActorGuzza, 60, 3);
 			Actor_Says(kActorGuzza, 70, 3);
-			Sound_Play(123, 100, 0, 0, 50);
+			Sound_Play(kSfxSPNBEEP9, 100, 0, 0, 50);
 			Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallGuzza, false, kActorGuzza);
 			Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationTyrellBuilding, true);
 			Game_Flag_Set(kFlagRC01PoliceDone);
@@ -390,7 +390,7 @@ void SceneScriptMA04::phoneCallWithDektora() {
 		Actor_Says(kActorDektora, 410, 3);
 		Actor_Says(kActorMcCoy, 2525, 15);
 		Actor_Says(kActorDektora, 420, 3);
-		Sound_Play(123, 100, 0, 0, 50);
+		Sound_Play(kSfxSPNBEEP9, 100, 0, 0, 50);
 		Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallDektora1, true, -1);
 	} else {
 		Actor_Says_With_Pause(kActorMcCoy, 2505, 0.5f, 19);
@@ -403,7 +403,7 @@ void SceneScriptMA04::phoneCallWithDektora() {
 		Actor_Says_With_Pause(kActorDektora, 470, 1.0f, 3);
 		Actor_Says(kActorDektora, 480, 3);
 		Actor_Says(kActorDektora, 490, 3);
-		Sound_Play(123, 100, 0, 0, 50);
+		Sound_Play(kSfxSPNBEEP9, 100, 0, 0, 50);
 		Actor_Says(kActorMcCoy, 2540, 15);
 		Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallDektora2, true, -1);
 	}
@@ -443,7 +443,7 @@ void SceneScriptMA04::phoneCallWithLucy() {
 		}
 		Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallLucy1, true, -1);
 	}
-	Sound_Play(123, 100, 0, 0, 50);
+	Sound_Play(kSfxSPNBEEP9, 100, 0, 0, 50);
 }
 
 void SceneScriptMA04::phoneCallWithSteele() {
@@ -463,7 +463,7 @@ void SceneScriptMA04::phoneCallWithSteele() {
 	Actor_Says(kActorMcCoy, 2665, 13);
 	Actor_Says(kActorSteele, 810, 3);
 	Actor_Says(kActorSteele, 820, 3);
-	Sound_Play(123, 100, 0, 0, 50);
+	Sound_Play(kSfxSPNBEEP9, 100, 0, 0, 50);
 	Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallCrystal, true, -1);
 }
 
@@ -495,7 +495,7 @@ void SceneScriptMA04::phoneCallWithClovis() {
 	Actor_Says(kActorClovis, 500, 3);
 	Actor_Says(kActorClovis, 530, 3);
 	Actor_Says(kActorClovis, 540, 3);
-	Sound_Play(123, 100, 0, 0, 50);
+	Sound_Play(kSfxSPNBEEP9, 100, 0, 0, 50);
 	Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallClovis, true, -1);
 }
 

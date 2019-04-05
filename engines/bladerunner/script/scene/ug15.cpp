@@ -177,7 +177,7 @@ void SceneScriptUG15::SceneFrameAdvanced(int frame) {
 	}
 
 	if (frame == 61) {
-		Ambient_Sounds_Play_Sound(583, 80, 0, 0, 99);
+		Ambient_Sounds_Play_Sound(kSfxPLANKDWN, 80, 0, 0, 99);
 	}
 
 	if ( Game_Flag_Query(kFlagUG15BridgeWillBreak)

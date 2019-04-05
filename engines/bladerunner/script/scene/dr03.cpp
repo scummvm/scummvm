@@ -172,9 +172,9 @@ void SceneScriptDR03::SceneFrameAdvanced(int frame) {
 	 || frame == 49
 	) {
 		if (Random_Query(0, 1)) {
-			Sound_Play(97, Random_Query(20, 33), 80, 80, 50);
+			Sound_Play(kSfxNEON7, Random_Query(20, 33), 80, 80, 50);
 		} else {
-			Sound_Play(59, Random_Query(5, 6), 80, 80, 50);
+			Sound_Play(kSfxNEON5, Random_Query(5, 6), 80, 80, 50);
 		}
 	}
 }

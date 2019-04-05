@@ -436,7 +436,7 @@ bool AIScriptMutant2::UpdateAnimation(int *animation, int *frame) {
 		*animation = 907;
 		_animationFrame++;
 		if (_animationFrame == 1) {
-			Sound_Play(401, 100, 0, 0, 50);
+			Sound_Play(kSfxYELL1M2, 100, 0, 0, 50);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			Actor_Change_Animation_Mode(kActorMutant2, 88);
@@ -453,7 +453,7 @@ bool AIScriptMutant2::UpdateAnimation(int *animation, int *frame) {
 		_animationFrame += _var1;
 		if (_animationFrame == 4) {
 			_var1 = -1;
-			Sound_Play(399, 100, 0, 0, 50);
+			Sound_Play(kSfxHURT1M2, 100, 0, 0, 50);
 		} else {
 			if (!_animationFrame) {
 				Actor_Change_Animation_Mode(kActorMutant2, 0);

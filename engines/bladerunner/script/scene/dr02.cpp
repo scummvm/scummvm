@@ -160,7 +160,7 @@ bool SceneScriptDR02::ClickedOn2DRegion(int region) {
 
 void SceneScriptDR02::SceneFrameAdvanced(int frame) {
 	if (frame == 1) {
-		Sound_Play(1, 10, 85, 85, 50);
+		Sound_Play(kSfxSTEAM1, 10, 85, 85, 50);
 	}
 }
 

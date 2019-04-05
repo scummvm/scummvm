@@ -154,7 +154,7 @@ bool SceneScriptDR06::ClickedOn3DObject(const char *objectName, bool a2) {
 			if (!Game_Flag_Query(kFlagDR06MannequinHeadOpen)) {
 				Overlay_Play("DR06ovr2", 0, true, false, 0);
 				Game_Flag_Set(kFlagDR06MannequinHeadOpen);
-				Sound_Play(160, 100, 0, 0, 50);
+				Sound_Play(kSfxCEMENTL1, 100, 0, 0, 50);
 				if (!Actor_Clue_Query(kActorMcCoy, kClueEnvelope)) {
 					Actor_Voice_Over(850, kActorVoiceOver);
 					Item_Pickup_Spin_Effect(944, 171, 280);
@@ -169,12 +169,12 @@ bool SceneScriptDR06::ClickedOn3DObject(const char *objectName, bool a2) {
 			} else {
 				Overlay_Remove("DR06ovr2");
 				Game_Flag_Reset(kFlagDR06MannequinHeadOpen);
-				Sound_Play(161, 100, 0, 0, 50);
+				Sound_Play(kSfxCEMENTL2, 100, 0, 0, 50);
 			}
 
 			Global_Variable_Increment(kVariableDR06MannequinHeadOpened, 1);
 			if (Global_Variable_Query(kVariableDR06MannequinHeadOpened) > 12) {
-				Sound_Play(204, 100, 0, 0, 50);
+				Sound_Play(kSfxBIGPOT3, 100, 0, 0, 50);
 				Unclickable_Object("X2_TORSO04HIRES");
 			}
 		}

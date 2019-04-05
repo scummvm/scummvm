@@ -52,8 +52,8 @@ bool SceneScriptPS07::MouseClick(int x, int y) {
 }
 
 bool SceneScriptPS07::ClickedOn3DObject(const char *objectName, bool a2) {
-	if (Object_Query_Click("L.MOUSE", objectName)) {
-		Sound_Play(155, 70, 0, 0, 50);
+	if (Object_Query_Click("L.MOUSE", objectName)) { // a bug? Which object is this?
+		Sound_Play(kSfxLABBUZZ1, 70, 0, 0, 50);
 		if (Actor_Query_Goal_Number(kActorKlein) < 4 && Actor_Query_Goal_Number(kActorKlein) > 0) {
 			Actor_Face_Actor(kActorMcCoy, kActorKlein, true);
 			Actor_Set_Goal_Number(kActorKlein, 3);

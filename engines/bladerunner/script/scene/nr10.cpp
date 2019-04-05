@@ -75,7 +75,7 @@ bool SceneScriptNR10::ClickedOn3DObject(const char *objectName, bool combatMode)
 		Actor_Set_Invisible(kActorMcCoy, false);
 		Actor_Set_Invisible(kActorDektora, false);
 		Ambient_Sounds_Remove_Looping_Sound(452, true);
-		Sound_Play(453, 52, 0, 0, 50);
+		Sound_Play(kSfx35MMBRK1, 52, 0, 0, 50);
 		Scene_Loop_Set_Default(0);
 		Scene_Loop_Start_Special(kSceneLoopModeOnce, 0, true);
 		Un_Combat_Target_Object("BOX18");

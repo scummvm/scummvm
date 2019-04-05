@@ -156,7 +156,7 @@ bool AIScriptGeneralDoll::ShotAtAndHit() {
 	if (!Game_Flag_Query(kFlagGeneralDollShot)
 	 &&  Global_Variable_Query(kVariableGeneralDollShot) == 1
 	) {
-		Sound_Play(121, 100, 0, 0, 50);
+		Sound_Play(kSfxSERVOD1, 100, 0, 0, 50);
 		Game_Flag_Set(kFlagGeneralDollShot);
 		Actor_Set_Goal_Number(kActorGeneralDoll, 104);
 		ChangeAnimationMode(kAnimationModeDie);

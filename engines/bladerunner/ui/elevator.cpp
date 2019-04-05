@@ -313,7 +313,7 @@ void Elevator::mouseOutCallback(int, void *self) {
 
 void Elevator::mouseDownCallback(int, void *self) {
 	Elevator *elevator = ((Elevator *)self);
-	elevator->_vm->_audioPlayer->playAud(elevator->_vm->_gameInfo->getSfxTrack(515), 100, 0, 0, 50, 0);
+	elevator->_vm->_audioPlayer->playAud(elevator->_vm->_gameInfo->getSfxTrack(kSfxELEBUTN1), 100, 0, 0, 50, 0);
 }
 
 void Elevator::mouseUpCallback(int buttonId, void *self) {

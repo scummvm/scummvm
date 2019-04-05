@@ -173,7 +173,7 @@ void AIScriptDektora::CompletedMovementTrack() {
 	case 272:
 		AI_Movement_Track_Flush(kActorDektora);
 		Actor_Face_Heading(kActorDektora, 0, 0);
-		Sound_Play(451, 71, 0, 0, 50);
+		Sound_Play(kSfxDEKGLAS1, 71, 0, 0, 50);
 
 		_animationState = 35;
 		_animationFrame = 0;
@@ -487,7 +487,7 @@ bool AIScriptDektora::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Face_Actor(kActorSteele, kActorDektora, true);
 			Actor_Change_Animation_Mode(kActorSteele, kAnimationModeCombatAttack);
 			Delay(250);
-			Sound_Play(3, 100, 0, 0, 50);
+			Sound_Play(kSfxFEMHURT1, 100, 0, 0, 50);
 			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR11BurningGoToWindow);
 		} else {
 			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR11BurningGoToMcCoy);
@@ -722,7 +722,7 @@ bool AIScriptDektora::UpdateAnimation(int *animation, int *frame) {
 		}
 
 		if (_animationFrame == 5) {
-			Actor_Combat_AI_Hit_Attempt(3);
+			Actor_Combat_AI_Hit_Attempt(kActorDektora);
 		}
 
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(141)) {
@@ -750,11 +750,11 @@ bool AIScriptDektora::UpdateAnimation(int *animation, int *frame) {
 			} else {
 				speech = 9015;
 			}
-			Sound_Play_Speech_Line(3, speech, 75, 0, 99);
+			Sound_Play_Speech_Line(kActorDektora, speech, 75, 0, 99);
 		}
 
 		if (_animationFrame == 6) {
-			Actor_Combat_AI_Hit_Attempt(3);
+			Actor_Combat_AI_Hit_Attempt(kActorDektora);
 		}
 
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(142)) {
@@ -943,7 +943,7 @@ bool AIScriptDektora::UpdateAnimation(int *animation, int *frame) {
 		}
 
 		if (_animationFrame == 11) {
-			Ambient_Sounds_Play_Sound(206, 80, -20, -20, 20);
+			Ambient_Sounds_Play_Sound(kSfxZUBLAND1, 80, -20, -20, 20);
 		}
 		break;
 
@@ -952,15 +952,15 @@ bool AIScriptDektora::UpdateAnimation(int *animation, int *frame) {
 		if (_animationFrame == 1) {
 			switch (Random_Query(0, 2)) {
 			case 0:
-				Sound_Play(567, (100 / Random_Query(5, 9)), 0, 0, 50);
+				Sound_Play(kSfxWHISTLE1, (100 / Random_Query(5, 9)), 0, 0, 50);
 				break;
 
 			case 1:
-				Sound_Play(568, (100 / Random_Query(5, 9)), 0, 0, 50);
+				Sound_Play(kSfxWHISTLE2, (100 / Random_Query(5, 9)), 0, 0, 50);
 				break;
 
 			case 2:
-				Sound_Play(569, (100 / Random_Query(5, 9)), 0, 0, 50);
+				Sound_Play(kSfxWHISTLE3, (100 / Random_Query(5, 9)), 0, 0, 50);
 				break;
 			}
 		}
@@ -979,15 +979,15 @@ bool AIScriptDektora::UpdateAnimation(int *animation, int *frame) {
 		if (_animationFrame == 1) {
 			switch (Random_Query(0, 2)) {
 			case 0:
-				Sound_Play(567, (100 / Random_Query(5, 9)), 0, 0, 50);
+				Sound_Play(kSfxWHISTLE1, (100 / Random_Query(5, 9)), 0, 0, 50);
 				break;
 
 			case 1:
-				Sound_Play(568, (100 / Random_Query(5, 9)), 0, 0, 50);
+				Sound_Play(kSfxWHISTLE2, (100 / Random_Query(5, 9)), 0, 0, 50);
 				break;
 
 			case 2:
-				Sound_Play(569, (100 / Random_Query(5, 9)), 0, 0, 50);
+				Sound_Play(kSfxWHISTLE3, (100 / Random_Query(5, 9)), 0, 0, 50);
 				break;
 			}
 		}
@@ -1005,15 +1005,15 @@ bool AIScriptDektora::UpdateAnimation(int *animation, int *frame) {
 		if (_animationFrame == 1) {
 			switch (Random_Query(0, 2)) {
 			case 0:
-				Sound_Play(567, (100 / Random_Query(5, 9)), 0, 0, 50);
+				Sound_Play(kSfxWHISTLE1, (100 / Random_Query(5, 9)), 0, 0, 50);
 				break;
 
 			case 1:
-				Sound_Play(568, (100 / Random_Query(5, 9)), 0, 0, 50);
+				Sound_Play(kSfxWHISTLE2, (100 / Random_Query(5, 9)), 0, 0, 50);
 				break;
 
 			case 2:
-				Sound_Play(569, (100 / Random_Query(5, 9)), 0, 0, 50);
+				Sound_Play(kSfxWHISTLE3, (100 / Random_Query(5, 9)), 0, 0, 50);
 				break;
 			}
 		}
@@ -1030,15 +1030,15 @@ bool AIScriptDektora::UpdateAnimation(int *animation, int *frame) {
 		if (_animationFrame == 1) {
 			switch (Random_Query(0, 2)) {
 			case 0:
-				Sound_Play(567, (100 / Random_Query(5, 9)), 0, 0, 50);
+				Sound_Play(kSfxWHISTLE1, (100 / Random_Query(5, 9)), 0, 0, 50);
 				break;
 
 			case 1:
-				Sound_Play(568, (100 / Random_Query(5, 9)), 0, 0, 50);
+				Sound_Play(kSfxWHISTLE2, (100 / Random_Query(5, 9)), 0, 0, 50);
 				break;
 
 			case 2:
-				Sound_Play(569, (100 / Random_Query(5, 9)), 0, 0, 50);
+				Sound_Play(kSfxWHISTLE3, (100 / Random_Query(5, 9)), 0, 0, 50);
 				break;
 			}
 		}

@@ -234,7 +234,7 @@ void KIA::tick() {
 		_playerActorDialogueState = 0;
 	} else if (_playerActorDialogueState == 0) {
 		if (_playerSliceModelId == -1 && _playerPhotographId == -1 && _playerImage.getPixels() == nullptr) {
-			_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(495), 70, 0, 0, 50, 0);
+			_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxBEEP16), 70, 0, 0, 50, 0);
 		}
 		_playerActorDialogueState = 1;
 	} else if (_playerActorDialogueState == 200) {
@@ -272,7 +272,7 @@ void KIA::tick() {
 			if (_playerVqaFrame < 8) {
 				int newVqaFrame  = MIN(timeDiffDiv48 + _playerVqaFrame, 8);
 				if (_playerVqaFrame <= 0 && newVqaFrame > 0) {
-					_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(497), 100, 70, 70, 50, 0);
+					_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxMECHAN1), 100, 70, 70, 50, 0);
 				}
 				_playerVqaFrame = newVqaFrame;
 			}
@@ -280,7 +280,7 @@ void KIA::tick() {
 			if (_playerVqaFrame > 0) {
 				int newVqaFrame = MAX(_playerVqaFrame - timeDiffDiv48, 0);
 				if (_playerVqaFrame >= 8 && newVqaFrame < 8) {
-					_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(496), 100, 70, 70, 50, 0);
+					_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxMECHAN1C), 100, 70, 70, 50, 0);
 				}
 				_playerVqaFrame = newVqaFrame;
 			}
@@ -561,7 +561,7 @@ void KIA::playActorDialogue(int actorId, int sentenceId) {
 
 void KIA::playSliceModel(int sliceModelId) {
 	if (_playerVqaFrame == 8) {
-		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(502), 70, 0, 0, 50, 0);
+		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxBEEP1), 70, 0, 0, 50, 0);
 	}
 	_playerSliceModelId = sliceModelId;
 }
@@ -572,7 +572,7 @@ void KIA::playPhotograph(int photographId) {
 		_playerPhotograph = nullptr;
 	}
 	if (_playerVqaFrame == 8) {
-		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(502), 70, 0, 0, 50, 0);
+		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxBEEP1), 70, 0, 0, 50, 0);
 	}
 	_playerPhotographId = photographId;
 	_playerPhotograph = new Shape(_vm);
@@ -588,7 +588,7 @@ void KIA::mouseDownCallback(int buttonId, void *callbackData) {
 	switch (buttonId) {
 	case 0:
 	case 6:
-		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(503), 100, -65, -65, 50, 0);
+		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(kSfxBUTN4P), 100, -65, -65, 50, 0);
 		break;
 	case 1:
 	case 2:
@@ -603,13 +603,13 @@ void KIA::mouseDownCallback(int buttonId, void *callbackData) {
 	case 12:
 	case 13:
 	case 14:
-		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(505), 70, 0, 0, 50, 0);
+		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(kSfxBUTN5P), 70, 0, 0, 50, 0);
 		if (buttonId == 12){
-			self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(596), 70, 0, 0, 50, 0);
+			self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(kSfxSHUTDOWN), 70, 0, 0, 50, 0);
 		}
 		break;
 	case 15:
-		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(503), 70, 0, 0, 50, 0);
+		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(kSfxBUTN4P), 70, 0, 0, 50, 0);
 		break;
 	default:
 		break;
@@ -621,7 +621,7 @@ void KIA::mouseUpCallback(int buttonId, void *callbackData) {
 	switch (buttonId) {
 	case 0:
 	case 6:
-		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(504), 100, -65, -65, 50, 0);
+		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(kSfxBUTN4R), 100, -65, -65, 50, 0);
 		break;
 	case 1:
 	case 2:
@@ -636,10 +636,10 @@ void KIA::mouseUpCallback(int buttonId, void *callbackData) {
 	case 12:
 	case 13:
 	case 14:
-		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(506), 70, 0, 0, 50, 0);
+		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(kSfxBUTN5R), 70, 0, 0, 50, 0);
 		break;
 	case 15:
-		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(504), 100, 0, 0, 50, 0);
+		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(kSfxBUTN4R), 100, 0, 0, 50, 0);
 		break;
 	default:
 		break;
@@ -679,7 +679,7 @@ void KIA::init() {
 		_playerVqaPlayer->open();
 		_playerVqaPlayer->setLoop(0, -1, kLoopSetModeJustStart, nullptr, nullptr);
 	}
-	_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(501), 70, 0, 0, 50, 0);
+	_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxELECTRO1), 70, 0, 0, 50, 0);
 
 	_vm->_time->pause();
 }
@@ -1256,13 +1256,13 @@ void KIA::playTransitionSound(int transitionId) {
 	case 10:
 	case 11:
 	case 12:
-		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(498), 100, 0, 0, 50, 0);
+		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxPANEL1),  100, 0, 0, 50, 0);
 		break;
 	case 13:
-		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(499), 100, 0, 0, 50, 0);
+		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxPANEL2),  100, 0, 0, 50, 0);
 		break;
 	case 14:
-		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(500), 100, 0, 0, 50, 0);
+		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxPANOPEN), 100, 0, 0, 50, 0);
 		break;
 	}
 }

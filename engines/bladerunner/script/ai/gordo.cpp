@@ -160,7 +160,7 @@ void AIScriptGordo::CompletedMovementTrack() {
 
 	if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoNR02GoToPodium) {
 		if (Player_Query_Current_Set() == kSetNR02) {
-			Ambient_Sounds_Play_Sound(581, 58, 0, 0, 0);
+			Ambient_Sounds_Play_Sound(kSfxCOMEDY, 58, 0, 0, 0);
 			Actor_Face_Heading(kActorGordo, 0, false);
 			Loop_Actor_Travel_Stairs(kActorGordo, 4, true, kAnimationModeIdle);
 			Actor_Face_Heading(kActorGordo, 506, false);
@@ -544,8 +544,8 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Music_Stop(1);
 		Actor_Face_Actor(kActorMcCoy, kActorGordo, true);
 		Actor_Says(kActorGordo, 740, 17);
-		Sound_Play(575, 50, 0, 0, 50);
-		Sound_Play(319, 50, 0, 0, 50);
+		Sound_Play(kSfxRIMSHOT1, 50, 0, 0, 50);
+		Sound_Play(kSfxAUDLAFF1, 50, 0, 0, 50);
 		Actor_Says(kActorGordo, 750, 16);
 		Actor_Says(kActorGordo, 760, 15);
 		Actor_Says(kActorGordo, 770, 14);
@@ -557,8 +557,8 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Says(kActorMcCoy, 3910, 16);
 			if (Global_Variable_Query(kVariableHollowayArrest) == 2) {
 				Actor_Says(kActorGordo, 870, 16);
-				Sound_Play(576, 50, 0, 0, 50);
-				Sound_Play(319, 50, 0, 0, 50);
+				Sound_Play(kSfxRIMSHOT2, 50, 0, 0, 50);
+				Sound_Play(kSfxAUDLAFF1, 50, 0, 0, 50);
 				Actor_Set_Goal_Number(kActorHolloway, kGoalHollowayGoToNR02);
 				Actor_Says(kActorGordo, 880, 17);
 				Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR02WaitAtPodium);
@@ -569,8 +569,8 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		} else {
 			Actor_Says(kActorGordo, 790, 12);
 			Actor_Says(kActorMcCoy, 3890, 15);
-			Sound_Play(577, 50, 0, 0, 50);
-			Sound_Play(321, 50, 0, 0, 50);
+			Sound_Play(kSfxRIMSHOT3, 50, 0, 0, 50);
+			Sound_Play(kSfxAUDLAFF3, 50, 0, 0, 50);
 			Actor_Says(kActorGordo, 800, 15);
 			Actor_Says(kActorGordo, 810, 17);
 			Actor_Says(kActorMcCoy, 3895, 16);
@@ -579,8 +579,8 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Says(kActorGordo, 830, 15);
 			Actor_Says(kActorMcCoy, 3905, 13);
 			Actor_Says(kActorGordo, 840, 13);
-			Sound_Play(578, 50, 0, 0, 50);
-			Sound_Play(321, 50, 0, 0, 50);
+			Sound_Play(kSfxRIMSHOT4, 50, 0, 0, 50);
+			Sound_Play(kSfxAUDLAFF3, 50, 0, 0, 50);
 			Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR02RunAway1);
 		}
 		break;

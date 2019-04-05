@@ -148,6 +148,10 @@ bool Settings::openNewScene() {
 	return true;
 }
 
+int Settings::getAmmoTypesCount() {
+	return kAmmoTypesCount;
+}
+
 int Settings::getAmmoType() const {
 	return _ammoType;
 }
@@ -220,7 +224,7 @@ void Settings::save(SaveFileWriteStream &f) {
 	f.writeInt(_unk0);
 	f.writeInt(_difficulty);
 	f.writeInt(_ammoType);
-	for (int i = 0; i != 3; ++i) {
+	for (int i = 0; i != kAmmoTypesCount; ++i) {
 		f.writeInt(_ammoAmounts[i]);
 	}
 }
@@ -233,7 +237,7 @@ void Settings::load(SaveFileReadStream &f) {
 	_unk0 = f.readInt();
 	_difficulty = f.readInt();
 	_ammoType = f.readInt();
-	for (int i = 0; i != 3; ++i) {
+	for (int i = 0; i != kAmmoTypesCount; ++i) {
 		_ammoAmounts[i] = f.readInt();
 	}
 }

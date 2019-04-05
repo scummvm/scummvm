@@ -197,7 +197,7 @@ bool SceneScriptBB06::ClickedOn2DRegion(int region) {
 
 void SceneScriptBB06::SceneFrameAdvanced(int frame) {
 	if (frame == 34) {
-		Ambient_Sounds_Play_Sound(447, 40, -50, -50, 10);
+		Ambient_Sounds_Play_Sound(kSfxPNEUM5,  40, -50, -50, 10);
 	}
 #if BLADERUNNER_ORIGINAL_BUGS // Sebastian's Doll Fix
 #else
@@ -209,16 +209,16 @@ void SceneScriptBB06::SceneFrameAdvanced(int frame) {
 	}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 	if (frame == 16) {
-		Ambient_Sounds_Play_Sound(448, 20, -50, -50, 10);
+		Ambient_Sounds_Play_Sound(kSfxROBOTMV1, 20, -50, -50, 10);
 	}
 	if (frame == 20) {
-		Ambient_Sounds_Play_Sound(448, 20, -50, -50, 10);
+		Ambient_Sounds_Play_Sound(kSfxROBOTMV1, 20, -50, -50, 10);
 	}
 	if (frame == 25) {
-		Ambient_Sounds_Play_Sound(448, 20, -50, -50, 10);
+		Ambient_Sounds_Play_Sound(kSfxROBOTMV1, 20, -50, -50, 10);
 	}
 	if (frame == 29) {
-		Ambient_Sounds_Play_Sound(448, 20, -50, -50, 10);
+		Ambient_Sounds_Play_Sound(kSfxROBOTMV1, 20, -50, -50, 10);
 	}
 }
 

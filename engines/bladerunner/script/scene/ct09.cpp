@@ -59,7 +59,7 @@ bool SceneScriptCT09::ClickedOn3DObject(const char *objectName, bool a2) {
 		if (Actor_Query_Which_Set_In(kActorLeon) != kSetCT09) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 229.0f, 348.52f, 851.0f, 36, true, false, 0)) {
 				Actor_Face_Object(kActorMcCoy, "BELL", true);
-				Sound_Play(337, 100, 0, 0, 50);
+				Sound_Play(kSfxDESKBELL, 100, 0, 0, 50);
 				if (!Actor_Query_Goal_Number(kActorDeskClerk)) {
 					Actor_Says(kActorDeskClerk, 160, kAnimationModeTalk);
 				}
@@ -155,7 +155,7 @@ void SceneScriptCT09::SceneFrameAdvanced(int frame) {
 	 || frame == 46
 	 || frame == 59
 	) {
-		Sound_Play(97, Random_Query(47, 47), 70, 70, 50);
+		Sound_Play(kSfxNEON7, Random_Query(47, 47), 70, 70, 50); // a bug? random min == max
 	}
 }
 

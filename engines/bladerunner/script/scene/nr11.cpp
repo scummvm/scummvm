@@ -251,39 +251,39 @@ bool SceneScriptNR11::ClickedOn2DRegion(int region) {
 
 void SceneScriptNR11::SceneFrameAdvanced(int frame) {
 	if (frame == 62) {
-		Ambient_Sounds_Play_Sound(449, 40, 100, 100, 10);
+		Ambient_Sounds_Play_Sound(kSfxMCGUN1,  40, 100, 100, 10);
 	}
 
 	if (frame == 67) {
-		Ambient_Sounds_Play_Sound(449, 30, 90, 90, 10);
+		Ambient_Sounds_Play_Sound(kSfxMCGUN1,  30,  90,  90, 10);
 	}
 
 	if (frame == 74) {
-		Ambient_Sounds_Play_Sound(450, 50, 83, 83, 10);
+		Ambient_Sounds_Play_Sound(kSfxMCGUN2,  50,  83,  83, 10);
 	}
 
 	if (frame == 80) {
-		Ambient_Sounds_Play_Sound(449, 60, 65, 65, 10);
+		Ambient_Sounds_Play_Sound(kSfxMCGUN1,  60,  65,  65, 10);
 	}
 
 	if (frame == 92) {
-		Ambient_Sounds_Play_Sound(450, 30, 50, 50, 10);
+		Ambient_Sounds_Play_Sound(kSfxMCGUN2,  30,  50,  50, 10);
 	}
 
 	if (frame == 97) {
-		Ambient_Sounds_Play_Sound(449, 50, -40, -40, 10);
+		Ambient_Sounds_Play_Sound(kSfxMCGUN1,  50, -40, -40, 10);
 	}
 
 	if (frame == 103) {
-		Ambient_Sounds_Play_Sound(450, 40, -27, -27, 10);
+		Ambient_Sounds_Play_Sound(kSfxMCGUN2,  40, -27, -27, 10);
 	}
 
 	if (frame == 109) {
-		Ambient_Sounds_Play_Sound(449, 60, -20, -20, 10);
+		Ambient_Sounds_Play_Sound(kSfxMCGUN1,  60, -20, -20, 10);
 	}
 
 	if (frame == 62) {
-		Ambient_Sounds_Play_Sound(122, 80, 100, 100, 15);
+		Ambient_Sounds_Play_Sound(kSfxMTLHIT1, 80, 100, 100, 15);
 	}
 
 	if (Game_Flag_Query(kFlagNR11BreakWindow)) {

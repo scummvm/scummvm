@@ -177,7 +177,7 @@ bool SceneScriptTB07::ClickedOn2DRegion(int region) {
 
 void SceneScriptTB07::SceneFrameAdvanced(int frame) {
 	if (frame == 66) {
-		Ambient_Sounds_Play_Sound(591, 20, 99, 0, 0);
+		Ambient_Sounds_Play_Sound(kSfxLIGHTON, 20, 99, 0, 0);
 	}
 	//return false;
 }

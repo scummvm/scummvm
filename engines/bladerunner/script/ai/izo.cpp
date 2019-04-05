@@ -557,10 +557,10 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 			} else {
 				snd = 9015;
 			}
-			Sound_Play_Speech_Line(7, snd, 75, 0, 99);
+			Sound_Play_Speech_Line(kActorIzo, snd, 75, 0, 99);
 		}
 		if (_animationFrame == 9) {
-			Actor_Combat_AI_Hit_Attempt(7);
+			Actor_Combat_AI_Hit_Attempt(kActorIzo);
 		}
 		if (Actor_Query_Goal_Number(kActorIzo) == kGoalIzoWaitingAtRC03
 		 && _animationFrame == 6

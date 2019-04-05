@@ -186,7 +186,7 @@ DECLARE_SCRIPT(Izo)
 END_SCRIPT
 
 DECLARE_SCRIPT(Sadik)
-	int _var1;
+	int _nextSoundId;
 	int _var2;
 	int _var3;
 	int _var4;

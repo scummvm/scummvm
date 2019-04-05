@@ -832,10 +832,10 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 			} else {
 				snd = 9015;
 			}
-			Sound_Play_Speech_Line(5, snd, 75, 0, 99);
+			Sound_Play_Speech_Line(kActorClovis, snd, 75, 0, 99);
 		}
 		if (_animationFrame == 4) {
-			Actor_Combat_AI_Hit_Attempt(5);
+			Actor_Combat_AI_Hit_Attempt(kActorClovis);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			flag = true;

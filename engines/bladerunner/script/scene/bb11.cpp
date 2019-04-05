@@ -108,7 +108,7 @@ void SceneScriptBB11::SceneFrameAdvanced(int frame) {
 		Game_Flag_Set(kFlagBB11SadikPunchedMcCoy);
 	} else {
 		if (frame == 1) {
-			Sound_Play(74, 10, -100, 100, 50);
+			Sound_Play(kSfxSWEEP4, 10, -100, 100, 50);
 		}
 	}
 }

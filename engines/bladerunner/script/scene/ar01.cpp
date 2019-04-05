@@ -74,10 +74,10 @@ void SceneScriptAR01::InitializeScene() {
 	Ambient_Sounds_Add_Sound(247, 3, 30, 11, 11,   50, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(248, 3, 30, 11, 11,   50, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(249, 3, 30, 11, 11,   50, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Speech_Sound(60,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(60, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Sound( 68, 10, 180, 16,  25, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound( 69, 10, 180, 16,  25, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(375, 10, 180, 50, 100, 0, 0, -101, -101, 0, 0);
@@ -343,16 +343,16 @@ bool SceneScriptAR01::ClickedOn2DRegion(int region) {
 
 void SceneScriptAR01::SceneFrameAdvanced(int frame) {
 	if (frame == 16) {
-		Ambient_Sounds_Play_Sound(118, 40, 0, 0, 99);
+		Ambient_Sounds_Play_Sound(kSfxCARDOWN3,  40,   0,   0, 99);
 	}
 	if (frame == 78 || frame == 199) {
-		Ambient_Sounds_Play_Sound(116, 100, -50, -50, 99);
+		Ambient_Sounds_Play_Sound(kSfxSPINOPN4, 100, -50, -50, 99);
 	}
 	if (frame == 122 || frame == 242) {
-		Ambient_Sounds_Play_Sound(119, 100, -50, -50, 99);
+		Ambient_Sounds_Play_Sound(kSfxSPINCLS1, 100, -50, -50, 99);
 	}
 	if (frame == 256) {
-		Ambient_Sounds_Play_Sound(117, 40, -50, 80, 99);
+		Ambient_Sounds_Play_Sound(kSfxCARUP3,    40, -50,  80, 99);
 	}
 	if ((frame == 75
 	  || frame == 196

@@ -139,11 +139,11 @@ bool SceneScriptBB02::ClickedOn2DRegion(int region) {
 
 void SceneScriptBB02::SceneFrameAdvanced(int frame) {
 	if (frame == 1) {
-		Ambient_Sounds_Play_Sound(434, 40, -50, -50, 0);
+		Ambient_Sounds_Play_Sound(kSfxBBELE2, 40, -50, -50, 0);
 	}
 
 	if (frame == 124) {
-		Ambient_Sounds_Play_Sound(434, 40, -50, -50, 0);
+		Ambient_Sounds_Play_Sound(kSfxBBELE2, 40, -50, -50, 0);
 	}
 }
 

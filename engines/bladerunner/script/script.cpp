@@ -333,7 +333,8 @@ void ScriptBase::Actor_Says_With_Pause(int actorId, int sentenceId, float pause,
 	if (_vm->_sitcomMode) {
 		int rnd = Random_Query(1, 100);
 		if (rnd <= actor->getSitcomRatio()) {
-			Sound_Play(Random_Query(319, 327), 40, 0, 0, 50);
+			// Choose one of the nine (9) tracks between kSfxAUDLAFF1 and kSfxAUDLAFF9
+			Sound_Play(Random_Query(kSfxAUDLAFF1, kSfxAUDLAFF9), 40, 0, 0, 50);
 		}
 	}
 

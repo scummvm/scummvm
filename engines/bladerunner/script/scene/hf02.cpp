@@ -72,7 +72,7 @@ bool SceneScriptHF02::MouseClick(int x, int y) {
 }
 
 bool SceneScriptHF02::ClickedOn3DObject(const char *objectName, bool a2) {
-	Sound_Play(342, 47, -80, 0, 50);
+	Sound_Play(kSfxFORTUNE1, 47, -80, 0, 50); // a bug? Which object should this be?
 	return false;
 }
 

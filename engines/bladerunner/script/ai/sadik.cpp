@@ -26,7 +26,7 @@ namespace BladeRunner {
 
 AIScriptSadik::AIScriptSadik(BladeRunnerEngine *vm) : AIScriptBase(vm) {
 	_flag = 0;
-	_var1 = 0;
+	_nextSoundId = -1; // changed from original (0) to be more clear that this is an invalid sfx id
 	_var2 = 0;
 	_var3 = 0;
 	_var4 = 1;
@@ -39,7 +39,7 @@ void AIScriptSadik::Initialize() {
 	_animationNext = 0;
 
 	_flag = 0;
-	_var1 = 0;
+	_nextSoundId = -1; // changed from original (0) to be more clear that this is an invalid sfx id
 	_var2 = 0;
 	_var3 = 0;
 	_var4 = 1;
@@ -61,9 +61,9 @@ bool AIScriptSadik::Update() {
 		return true;
 	}
 
-	if (_var1 != 0) {
-		Sound_Play(_var1, 100, 0, 0, 50);
-		_var1 = 0;
+	if (_nextSoundId != -1) { // changed from original (0) to be more clear that this is an invalid sfx id
+		Sound_Play(_nextSoundId, 100, 0, 0, 50);
+		_nextSoundId = -1;   // changed from original (0) to be more clear that this is an invalid sfx id
 	}
 
 	if (Global_Variable_Query(kVariableChapter) == 3
@@ -311,7 +311,7 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case kGoalSadikBB11TalkWithClovis:
-		_var1 = 0;
+		_nextSoundId = -1; // changed from original (0) to be more clear that this is an invalid sfx id
 		return false;
 
 	case 200:
@@ -355,7 +355,7 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case kGoalSadikUG18PrepareShootMcCoy:
-		Sound_Play(12, 100, 0, 0, 50);
+		Sound_Play(kSfxLGCAL1, 100, 0, 0, 50);
 		AI_Countdown_Timer_Start(kActorSadik, 0, 2);
 		return true;
 
@@ -363,7 +363,7 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		if (Player_Query_Current_Scene() == kSceneUG18) {
 			Actor_Force_Stop_Walking(kActorMcCoy);
 			Actor_Change_Animation_Mode(kActorSadik, kAnimationModeCombatAttack);
-			Sound_Play(12, 100, 0, 0, 50);
+			Sound_Play(kSfxLGCAL1, 100, 0, 0, 50);
 			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
 			Actor_Retired_Here(kActorMcCoy, 6, 6, true, -1);
 		}
@@ -671,7 +671,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 			} else {
 				snd = 9015;
 			}
-			Sound_Play_Speech_Line(8, snd, 75, 0, 99);
+			Sound_Play_Speech_Line(kActorSadik, snd, 75, 0, 99);
 		}
 		if (_animationFrame == 7) {
 			Actor_Combat_AI_Hit_Attempt(kActorSadik);
@@ -793,7 +793,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 		*animation = 345;
 		_animationFrame++;
 		if (_animationFrame == 23) {
-			_var1 = 201;
+			_nextSoundId = kSfxMTLDOOR2;
 		}
 		if (_animationFrame >= 25) {
 			_animationFrame = 0;
@@ -808,7 +808,7 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 		_animationFrame++;
 		if (Actor_Query_Goal_Number(kActorSadik) == kGoalSadikBB11KnockOutMcCoy) {
 			if (_animationFrame == 4) {
-				_var1 = 221;
+				_nextSoundId = kSfxPUNCH1;
 			}
 			if (_animationFrame == 6) {
 				Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeHit);
@@ -832,10 +832,10 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 		if (_animationFrame == 4) {
 			if (Actor_Query_Goal_Number(kActorSadik) == kGoalSadikBB11KnockOutMcCoy) {
 				Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
-				_var1 = 222;
+				_nextSoundId = kSfxKICK1;
 			} else {
 				Actor_Change_Animation_Mode(kActorMcCoy, 68);
-				_var1 = 223;
+				_nextSoundId = kSfxKICK2;
 			}
 		}
 

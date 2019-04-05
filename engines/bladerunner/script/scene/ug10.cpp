@@ -201,22 +201,22 @@ bool SceneScriptUG10::ClickedOn2DRegion(int region) {
 
 void SceneScriptUG10::SceneFrameAdvanced(int frame) {
 	if (frame == 121) {
-		Ambient_Sounds_Play_Sound(558, 90, 0, 0, 99);
+		Ambient_Sounds_Play_Sound(kSfxUGLEVER1, 90, 0, 0, 99);
 	}
 	if (frame == 127) {
-		Ambient_Sounds_Play_Sound(353, 90, 0, 0, 99);
+		Ambient_Sounds_Play_Sound(kSfxMAGMOVE2, 90, 0, 0, 99);
 	}
 	if (frame == 147) {
-		Ambient_Sounds_Play_Sound(353, 90, 0, 0, 99);
+		Ambient_Sounds_Play_Sound(kSfxMAGMOVE2, 90, 0, 0, 99);
 	}
 	if (frame == 1) {
-		Ambient_Sounds_Play_Sound(558, 90, 0, 0, 99);
+		Ambient_Sounds_Play_Sound(kSfxUGLEVER1, 90, 0, 0, 99);
 	}
 	if (frame == 3) {
-		Ambient_Sounds_Play_Sound(353, 90, 0, 0, 99);
+		Ambient_Sounds_Play_Sound(kSfxMAGMOVE2, 90, 0, 0, 99);
 	}
 	if (frame == 23) {
-		Ambient_Sounds_Play_Sound(353, 90, 0, 0, 99);
+		Ambient_Sounds_Play_Sound(kSfxMAGMOVE2, 90, 0, 0, 99);
 	}
 	if (frame == 58 || frame == 179) {
 		Player_Gains_Control();

@@ -252,11 +252,11 @@ void SceneScriptNR03::SceneFrameAdvanced(int frame) {
 	}
 
 	if (frame == 72) {
-		Sound_Play(345, 83, -70, -70, 50);
+		Sound_Play(kSfxDORSLID1, 83, -70, -70, 50);
 	}
 
 	if (frame == 76) {
-		Sound_Play(353, 62, -70, -70, 50);
+		Sound_Play(kSfxMAGMOVE2, 62, -70, -70, 50);
 	}
 
 	if (frame > 70

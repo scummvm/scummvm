@@ -1485,9 +1485,9 @@ void BladeRunnerEngine::handleMouseClickEmpty(int x, int y, Vector3 &scenePositi
 	int actorId = Actor::findTargetUnderMouse(this, x, y);
 	int itemId = _items->findTargetUnderMouse(x, y);
 
-	if (_combat->isActive() && buttonDown && (actorId > 0 || itemId > 0)) {
+	if (_combat->isActive() && buttonDown && (actorId >= 0 || itemId >= 0)) {
 		_playerActor->stopWalking(false);
-		if (actorId > 0) {
+		if (actorId >= 0) {
 			_playerActor->faceActor(actorId, false);
 		} else {
 			_playerActor->faceItem(itemId, false);

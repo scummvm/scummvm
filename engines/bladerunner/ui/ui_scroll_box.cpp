@@ -28,6 +28,7 @@
 #include "bladerunner/game_info.h"
 #include "bladerunner/shape.h"
 #include "bladerunner/time.h"
+#include "bladerunner/game_constants.h"
 #include "bladerunner/ui/kia.h"
 #include "bladerunner/ui/kia_shapes.h"
 
@@ -172,9 +173,9 @@ void UIScrollBox::handleMouseMove(int mouseX, int mouseY) {
 
 		if (newHoveredLine != _hoveredLine && newHoveredLine >= 0 && newHoveredLine < _lineCount) {
 			if (_lines[newHoveredLine]->lineData >= 0 && _selectedLineState == 0) {
-				int soundId = 507;
+				int soundId = kSfxTEXT1;
 				if (_lines[newHoveredLine]->flags & 0x01 ) {
-					soundId = 508;
+					soundId = kSfxTEXT3;
 				}
 				_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(soundId), 100, 0, 0, 50, 0);
 			}
@@ -268,7 +269,7 @@ void UIScrollBox::handleMouseDown(bool alternateButton) {
 			}
 
 			if (_lines[_selectedLineIndex]->flags & 0x01) {
-				_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(509), 100, 0, 0, 50, 0);
+				_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxBEEP10), 100, 0, 0, 50, 0);
 			}
 		}
 	}

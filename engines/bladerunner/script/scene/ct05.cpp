@@ -193,19 +193,19 @@ void SceneScriptCT05::SceneFrameAdvanced(int frame) {
 	) {
 		switch (Random_Query(0, 4)) {
 		case 4:
-			Sound_Play(40, Random_Query(25, 50), -70, -70, 50);
+			Sound_Play(kSfxDRIPPY10, Random_Query(25, 50), -70, -70, 50);
 			break;
 		case 3:
-			Sound_Play(44, Random_Query(25, 50), -70, -70, 50);
+			Sound_Play(kSfxDRIPPY7, Random_Query(25, 50), -70, -70, 50);
 			break;
 		case 2:
-			Sound_Play(43, Random_Query(25, 50), -70, -70, 50);
+			Sound_Play(kSfxDRIPPY6, Random_Query(25, 50), -70, -70, 50);
 			break;
 		case 1:
-			Sound_Play(42, Random_Query(25, 50), -70, -70, 50);
+			Sound_Play(kSfxDRIPPY2, Random_Query(25, 50), -70, -70, 50);
 			break;
 		case 0:
-			Sound_Play(41, Random_Query(25, 50), -70, -70, 50);
+			Sound_Play(kSfxDRIPPY1, Random_Query(25, 50), -70, -70, 50);
 			break;
 		}
 	}

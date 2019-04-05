@@ -40,9 +40,9 @@ void SceneScriptUG16::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(1, 375, 166, 407, 251, 3);
 	Scene_Exit_Add_2D_Exit(2, 461, 148, 523, 248, 0);
 
-	Ambient_Sounds_Add_Looping_Sound(516, 33, 81, 0);
-	Ambient_Sounds_Add_Looping_Sound(332, 40,  0, 1);
-	Ambient_Sounds_Add_Looping_Sound(333, 40,  0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxELECLAB1, 33, 81, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED1,   40,  0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED2,   40,  0, 1);
 
 	if (Game_Flag_Query(kFlagUG16ComputerOff)) {
 		Scene_Loop_Set_Default(5);
@@ -88,7 +88,7 @@ bool SceneScriptUG16::ClickedOn3DObject(const char *objectName, bool a2) {
 				Delay(1000);
 				Actor_Voice_Over(3480, kActorVoiceOver);
 				Actor_Change_Animation_Mode(kActorMcCoy, 38);
-				Sound_Play(339, 100, 0, 0, 50);
+				Sound_Play(kSfxDRAWER1, 100, 0, 0, 50);
 				Delay(1000);
 				Item_Pickup_Spin_Effect(948, 460, 287);
 				Actor_Voice_Over(2740, kActorVoiceOver);
@@ -185,7 +185,7 @@ bool SceneScriptUG16::ClickedOn2DRegion(int region) {
 
 void SceneScriptUG16::SceneFrameAdvanced(int frame) {
 	if (frame == 132) {
-		Ambient_Sounds_Remove_Looping_Sound(516, true);
+		Ambient_Sounds_Remove_Looping_Sound(kSfxELECLAB1, true);
 	}
 }
 

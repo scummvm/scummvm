@@ -183,7 +183,7 @@ bool SceneScriptNR04::ClickedOn2DRegion(int region) {
 				Player_Loses_Control();
 				Actor_Voice_Over(4180, kActorVoiceOver);
 				Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
-				Ambient_Sounds_Play_Sound(555, 90, 99, 0, 0);
+				Ambient_Sounds_Play_Sound(kSfxMALEHURT, 90, 99, 0, 0);
 				Delay(350);
 				Actor_Set_At_XYZ(kActorMcCoy, 109.0f, 0.0f, 374.0f, 0);
 				Actor_Retired_Here(kActorMcCoy, 12, 12, true, -1);
