@@ -123,7 +123,7 @@ bool SceneScriptUG04::ClickedOn2DRegion(int region) {
 }
 
 void SceneScriptUG04::SceneFrameAdvanced(int frame) {
-	if (frame == 1) { // TODO - Maybe only play this sound when the train shows up
+	if (frame == 1) {
 		Ambient_Sounds_Play_Sound(kSfxSUBWAY1, 90, -100, 100, 100);
 	}
 }

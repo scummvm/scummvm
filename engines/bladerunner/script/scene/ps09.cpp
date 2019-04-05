@@ -254,7 +254,7 @@ void SceneScriptPS09::SceneFrameAdvanced(int frame) {
 	 || frame == 52
 	 || frame == 54
 	) {
-		Sound_Play(kSfxNEON7, Random_Query(50, 33), 10, 10, 50); // TODO needs support for swapped min, max in Random_Query
+		Sound_Play(kSfxNEON7, Random_Query(50, 33), 10, 10, 50);
 	}
 	//return true;
 }

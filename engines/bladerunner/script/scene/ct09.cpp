@@ -155,7 +155,7 @@ void SceneScriptCT09::SceneFrameAdvanced(int frame) {
 	 || frame == 46
 	 || frame == 59
 	) {
-		Sound_Play(kSfxNEON7, Random_Query(47, 47), 70, 70, 50); // a bug? random min == max
+		Sound_Play(kSfxNEON7, Random_Query(47, 47), 70, 70, 50);
 	}
 }
 

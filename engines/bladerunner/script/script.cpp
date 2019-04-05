@@ -957,6 +957,14 @@ int ScriptBase::Global_Variable_Decrement(int var, int dec) {
 
 int ScriptBase::Random_Query(int min, int max) {
 	debugC(9, kDebugScript, "Random_Query(%d, %d)", min, max);
+	if ( min == max )
+	{
+		return min;
+	}
+	if ( min > max ) // there is at least one such case
+	{
+		return _vm->_rnd.getRandomNumberRng(max, min); // swap the arguments
+	}
 	return _vm->_rnd.getRandomNumberRng(min, max);
 }
 
