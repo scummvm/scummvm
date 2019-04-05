@@ -27,9 +27,9 @@ namespace BladeRunner {
 void SceneScriptTB06::InitializeScene() {
 	Setup_Scene_Information(-16.0f, 149.0f, -466.0f, 990);
 	Scene_Exit_Add_2D_Exit(0, 330, 195, 417, 334, 0);
-	Ambient_Sounds_Add_Looping_Sound(236, 50, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(237, 50, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(285, 66, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxTB5LOOP1, 50, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxTB5LOOP2, 50, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxTBLOOP1,  66, 0, 1);
 	if (!Game_Flag_Query(kFlagNotUsed103)) {
 		Actor_Put_In_Set(kActorMarcus, kSetTB06);
 		Actor_Set_At_XYZ(kActorMarcus, 135.0f, 151.0f, -671.0f, 800);

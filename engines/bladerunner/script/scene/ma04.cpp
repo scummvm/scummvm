@@ -61,9 +61,9 @@ void SceneScriptMA04::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(kMA04ExitKitchen, 248, 98, 314, 284, 1);
 	Scene_2D_Region_Add(kMA04RegionPhone, 343, 97, 353, 190);
 	Scene_2D_Region_Add(kMA04RegionBed, 0, 340, 116, 479);
-	Ambient_Sounds_Add_Looping_Sound(408, 30, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(103, 30, -80, 1);
-	Ambient_Sounds_Add_Looping_Sound(104, 12, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxAPRTFAN1, 30,   0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 30, -80, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxAPRTAMB5, 12,   0, 1);
 	Ambient_Sounds_Add_Sound(72, 5, 30, 11, 11, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(73, 5, 30, 12, 12, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(74, 5, 30, 12, 12, -100, 100, -101, -101, 0, 0);

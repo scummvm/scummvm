@@ -43,9 +43,9 @@ void SceneScriptDR03::InitializeScene() {
 	}
 
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
-	Ambient_Sounds_Add_Looping_Sound(110,  7,  0, 1);
-	Ambient_Sounds_Add_Looping_Sound(109, 50,  0, 1);
-	Ambient_Sounds_Add_Looping_Sound( 95, 20, 70, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRESPRTR1,  7,  0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED3,   50,  0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxBOILPOT2, 20, 70, 1);
 }
 
 void SceneScriptDR03::SceneLoaded() {

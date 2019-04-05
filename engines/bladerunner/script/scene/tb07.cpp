@@ -35,7 +35,7 @@ void SceneScriptTB07::InitializeScene() {
 
 	Scene_Exit_Add_2D_Exit(0, 383, 445, 639, 479, 2);
 
-	Ambient_Sounds_Add_Looping_Sound(109, 20, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED3, 20, 0, 1);
 	Ambient_Sounds_Add_Sound(363, 2, 55, 14, 14, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(364, 2, 55, 14, 14, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(365, 2, 55, 14, 14, -100, 100, -101, -101, 0, 0);

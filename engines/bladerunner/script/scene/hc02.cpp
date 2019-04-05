@@ -35,8 +35,8 @@ void SceneScriptHC02::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0, 589, 255, 639, 479, 1);
 	Scene_Exit_Add_2D_Exit(1, 505,   0, 639, 170, 0);
 
-	Ambient_Sounds_Add_Looping_Sound(103, 50, 50, 0);
-	Ambient_Sounds_Add_Looping_Sound(280, 50, 50, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 50, 50, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxBARAMB1,  50, 50, 0);
 	Ambient_Sounds_Add_Sound(252, 3, 60, 33, 33,  -60,   0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(254, 3, 60, 33, 33,  -60,   0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(255, 3, 60, 33, 33,  -60,   0, -101, -101, 0, 0);

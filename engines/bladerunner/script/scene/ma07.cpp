@@ -35,7 +35,7 @@ void SceneScriptMA07::InitializeScene() {
 		Setup_Scene_Information( 104.0f, -162.16f,  56.0f, 519);
 	}
 
-	Ambient_Sounds_Add_Looping_Sound(381, 100, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRAIN10, 100, 1, 1);
 	Ambient_Sounds_Add_Sound(374, 100, 300, 16,  25, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound( 68,  60, 180, 16,  25, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound( 69,  60, 180, 16,  25, 0, 0, -101, -101, 0, 0);

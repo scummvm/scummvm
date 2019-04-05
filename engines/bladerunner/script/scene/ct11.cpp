@@ -42,7 +42,7 @@ void SceneScriptCT11::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(1,  97,   0, 155, 324, 0);
 	Scene_Exit_Add_2D_Exit(2,   0,   0,  20, 479, 3);
 
-	Ambient_Sounds_Add_Looping_Sound(54, 50, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 50, 0, 1);
 	Ambient_Sounds_Add_Sound( 67, 5, 80, 16,  25, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound( 66, 5, 80, 16,  25, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(378, 5, 80, 50, 100, -100, 100, -101, -101, 0, 0);

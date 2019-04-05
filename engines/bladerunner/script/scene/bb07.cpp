@@ -40,8 +40,8 @@ void SceneScriptBB07::InitializeScene() {
 
 	Scene_2D_Region_Add(0, 308, 283, 354, 308);
 
-	Ambient_Sounds_Add_Looping_Sound(332, 44, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(331, 24, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED1,   44, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxSTMLOOP7, 24, 0, 1);
 	Ambient_Sounds_Add_Sound(443, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(444, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(445, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);

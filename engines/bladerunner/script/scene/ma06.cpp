@@ -34,8 +34,8 @@ enum kMA06Loops {
 void SceneScriptMA06::InitializeScene() {
 	Setup_Scene_Information(40.0f, 1.0f, -20.0f, 400);
 
-	Ambient_Sounds_Add_Looping_Sound(210, 50, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(408, 33, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxELEAMB3,  50, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxAPRTFAN1, 33, 0, 1);
 
 	Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kMA06LoopDoorOpen, false);
 	Scene_Loop_Set_Default(kMA06LoopMain);

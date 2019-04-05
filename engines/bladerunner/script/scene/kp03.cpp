@@ -41,7 +41,7 @@ void SceneScriptKP03::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0,   0,   0,  30, 479, 3);
 	Scene_Exit_Add_2D_Exit(1, 287, 104, 367, 255, 0);
 
-	Ambient_Sounds_Add_Looping_Sound(381, 100, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRAIN10, 100, 1, 1);
 	Ambient_Sounds_Add_Sound( 68, 60, 180, 16,  25, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound( 69, 60, 180, 16,  25, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(375, 60, 180, 50, 100, 0, 0, -101, -101, 0, 0);

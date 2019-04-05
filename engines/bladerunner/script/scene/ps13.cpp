@@ -46,8 +46,8 @@ void SceneScriptPS13::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(1, 0,   0,  20, 479, 3);
 
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(0);
-	Ambient_Sounds_Add_Looping_Sound(387, 50, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound( 54, 50, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxESPLOOP2, 50, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1,  50, 1, 1);
 	Ambient_Sounds_Add_Sound(  1, 10,  50, 16, 25, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(389,  5,  50, 16, 25, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(390,  6,  50, 16, 25, -100, 100, -101, -101, 0, 0);

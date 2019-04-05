@@ -34,8 +34,8 @@ void SceneScriptUG02::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0, 529, 130, 607, 277, 0);
 	Scene_Exit_Add_2D_Exit(1, 305,  36, 335, 192, 0);
 
-	Ambient_Sounds_Add_Looping_Sound(332, 43, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(333, 43, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED1, 43, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED2, 43, 0, 1);
 	Ambient_Sounds_Add_Sound(303, 5, 50, 17, 37, 100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(304, 5, 50, 17, 37, 100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(123, 2, 50, 17, 37, -50, -20, -101, -101, 0, 0);

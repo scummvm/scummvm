@@ -50,9 +50,9 @@ void SceneScriptMA01::InitializeScene() {
 		Scene_Exit_Add_2D_Exit(kMA01ExitSpinner, 234, 240, 398, 328, 2);
 	}
 
-	Ambient_Sounds_Add_Looping_Sound(101, 90,    0, 1);
-	Ambient_Sounds_Add_Looping_Sound( 99, 40, -100, 1);
-	Ambient_Sounds_Add_Looping_Sound(100, 40,  100, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxROOFRAN1, 90,    0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxROOFAIR1, 40, -100, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxROOFRMB1, 40,  100, 1);
 	Ambient_Sounds_Add_Sound( 68, 10, 100, 25, 50, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound( 69, 10, 100, 25, 50, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(375, 10, 70, 50, 100, 0, 0, -101, -101, 0, 0);

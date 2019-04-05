@@ -41,9 +41,9 @@ void SceneScriptMA05::InitializeScene() {
 		Setup_Scene_Information(-7207.0f, 956.17f, 1564.0f, 0);
 	}
 	Scene_Exit_Add_2D_Exit(kMA05ExitMA04, 432, 21, 471, 226, 1);
-	Ambient_Sounds_Add_Looping_Sound(101, 90, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(99, 40, -100, 1);
-	Ambient_Sounds_Add_Looping_Sound(103, 50, 60, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxROOFRAN1, 90, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxROOFAIR1, 40, -100, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 50, 60, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 0, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);

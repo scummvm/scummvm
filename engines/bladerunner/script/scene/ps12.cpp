@@ -776,8 +776,8 @@ void SceneScriptPS12::SceneLoaded() {
 	Police_Maze_Target_Track_Add(kItemPS12Target17,  -580.0f, -80.0f,  925.0f,  -580.0f,  -8.0f,  925.0f, 10, getPoliceMazePS12TrackData45(), false);
 
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(0);
-	Ambient_Sounds_Add_Looping_Sound(387, 50, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound( 54, 50, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxESPLOOP2, 50, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1,  50, 1, 1);
 	Ambient_Sounds_Add_Sound(  1, 10,  50, 16, 25, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(389,  5,  50, 16, 25, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(390,  6,  50, 16, 25, -100, 100, -101, -101, 0, 0);

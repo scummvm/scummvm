@@ -38,7 +38,7 @@ void SceneScriptRC04::InitializeScene() {
 		Actor_Change_Animation_Mode(kActorBulletBob, 88);
 	}
 
-	Ambient_Sounds_Add_Looping_Sound(381, 100, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRAIN10, 100, 1, 1);
 	Ambient_Sounds_Add_Sound(82, 5, 30, 10, 20, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(83, 5, 30, 10, 20, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(84, 5, 30, 10, 20, -100, 100, -101, -101, 0, 0);

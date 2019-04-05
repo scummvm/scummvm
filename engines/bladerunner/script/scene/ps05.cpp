@@ -37,8 +37,8 @@ void SceneScriptPS05::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(2, 476, 96, 524, 240, 1);
 	Scene_2D_Region_Add(0, 519, 107, 537, 122);
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(0);
-	Ambient_Sounds_Add_Looping_Sound(384, 50, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound(141, 80, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRUMLOOP1, 50, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxLABAMB3,  80, 0, 1);
 	Ambient_Sounds_Add_Sound(385, 5, 50, 8, 8, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(156, 5, 20, 30, 30, -70, 70, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(157, 5, 20, 30, 30, -70, 70, -101, -101, 0, 0);

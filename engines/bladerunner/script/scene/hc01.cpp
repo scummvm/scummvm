@@ -40,8 +40,8 @@ void SceneScriptHC01::InitializeScene() {
 	}
 	Scene_Exit_Add_2D_Exit(2, 117, 0, 286, 319, 0);
 
-	Ambient_Sounds_Add_Looping_Sound(103, 50, 50, 0);
-	Ambient_Sounds_Add_Looping_Sound(241, 50, 50, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 50, 50, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxHCLOOP1,  50, 50, 0);
 	Ambient_Sounds_Add_Sound(242, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(243, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(244, 3, 30, 16, 16, -100, 100, -101, -101, 0, 0);

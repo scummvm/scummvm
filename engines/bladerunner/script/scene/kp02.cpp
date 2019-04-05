@@ -35,9 +35,9 @@ void SceneScriptKP02::InitializeScene() {
 	// exit 0 is missing the game, no way back
 	Scene_Exit_Add_2D_Exit(1, 0, 0, 30, 479, 3);
 
-	Ambient_Sounds_Add_Looping_Sound(464, 34, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound(383, 27, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound(384, 90, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxKPAMB1,   34, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxSKINBED1, 27, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRUMLOOP1, 90, 1, 1);
 
 	Ambient_Sounds_Add_Sound(440, 2, 100, 25,  33, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(441, 2, 100, 25,  33, -100, 100, -101, -101, 0, 0);

@@ -30,7 +30,7 @@ void SceneScriptCT10::InitializeScene() {
 
 	Scene_Exit_Add_2D_Exit(0, 135, 74, 238, 340, 0);
 
-	Ambient_Sounds_Add_Looping_Sound(336, 28, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxFLORBUZZ, 28, 0, 1);
 	Ambient_Sounds_Add_Sound(375, 6, 180, 33, 33, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(376, 5, 180, 33, 33, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(377, 5, 180, 33, 33, 0, 0, -101, -101, 0, 0);

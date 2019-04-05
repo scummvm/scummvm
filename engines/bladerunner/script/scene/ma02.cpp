@@ -53,8 +53,8 @@ void SceneScriptMA02::InitializeScene() {
 		Actor_Retired_Here(kActorMaggie, 24, 24, 1, -1);
 	}
 
-	Ambient_Sounds_Add_Looping_Sound(104, 12, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(71, 25, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxAPRTAMB5, 12, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED5,   25, 0, 1);
 	Ambient_Sounds_Add_Sound( 72,  5,  30,  5,  5, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound( 73,  5,  30,  5,  5, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound( 74,  5,  30,  5,  5, -100, 100, -101, -101, 0, 0);

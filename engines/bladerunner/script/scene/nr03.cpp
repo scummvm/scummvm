@@ -45,7 +45,7 @@ void SceneScriptNR03::InitializeScene() {
 
 	Scene_2D_Region_Add(0, 331, 73, 375, 114);
 
-	Ambient_Sounds_Add_Looping_Sound(280, 50, 38, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxBARAMB1, 50, 38, 0);
 	Ambient_Sounds_Add_Sound(252, 3, 60, 25, 25,    0, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(254, 3, 60, 25, 25,    0, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(255, 3, 60, 25, 25,    0, 100, -101, -101, 0, 0);

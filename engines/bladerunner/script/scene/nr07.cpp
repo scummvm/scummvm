@@ -29,7 +29,7 @@ void SceneScriptNR07::InitializeScene() {
 
 	Scene_Exit_Add_2D_Exit(0, 429, 137, 506, 251, 0);
 
-	Ambient_Sounds_Add_Looping_Sound(111, 25, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxDRAMB5, 25, 0, 1);
 }
 
 void SceneScriptNR07::SceneLoaded() {

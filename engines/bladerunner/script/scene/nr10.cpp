@@ -36,8 +36,8 @@ void SceneScriptNR10::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0, 144, 163, 194, 318, 3);
 	Scene_Exit_Add_2D_Exit(1, 475,  95, 568, 230, 0);
 
-	Ambient_Sounds_Add_Looping_Sound(205, 22, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound( 71, 33, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTDRONE1, 22, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED5,   33, 0, 1);
 	Ambient_Sounds_Add_Sound(303, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(304, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(305, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
@@ -48,7 +48,7 @@ void SceneScriptNR10::InitializeScene() {
 	if (Game_Flag_Query(kFlagNR10CameraDestroyed)) {
 		Scene_Loop_Set_Default(0);
 	} else {
-		Ambient_Sounds_Adjust_Looping_Sound(452, 31, 0, 1);
+		Ambient_Sounds_Adjust_Looping_Sound(kSfx35MM, 31, 0, 1);
 		Scene_Loop_Set_Default(2);
 	}
 }
@@ -74,7 +74,7 @@ bool SceneScriptNR10::ClickedOn3DObject(const char *objectName, bool combatMode)
 		Game_Flag_Reset(kFlagNR10McCoyBlinded);
 		Actor_Set_Invisible(kActorMcCoy, false);
 		Actor_Set_Invisible(kActorDektora, false);
-		Ambient_Sounds_Remove_Looping_Sound(452, true);
+		Ambient_Sounds_Remove_Looping_Sound(kSfx35MM, true);
 		Sound_Play(kSfx35MMBRK1, 52, 0, 0, 50);
 		Scene_Loop_Set_Default(0);
 		Scene_Loop_Start_Special(kSceneLoopModeOnce, 0, true);

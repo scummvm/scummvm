@@ -30,9 +30,9 @@ void SceneScriptBB11::InitializeScene() {
 		Scene_Exit_Add_2D_Exit(0, 280, 154, 388, 247, 2);
 	}
 
-	Ambient_Sounds_Add_Looping_Sound(101, 90, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound( 99, 45, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(100, 76, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxROOFRAN1, 90, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxROOFAIR1, 45, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxROOFRMB1, 76, 0, 1);
 	Ambient_Sounds_Add_Sound( 68, 5, 180, 16,  25, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound( 69, 5, 180, 16,  25, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(375, 5, 180, 50, 100, 0, 0, -101, -101, 0, 0);

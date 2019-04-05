@@ -36,7 +36,7 @@ void SceneScriptDR05::InitializeScene() {
 
 	Scene_Exit_Add_2D_Exit(0, 0, 38, 80, 467, 3);
 
-	Ambient_Sounds_Add_Looping_Sound(383, 25, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxSKINBED1, 25, 0, 1);
 
 	if (!Game_Flag_Query(kFlagDR05BombExploded)) {
 		Overlay_Play("DR05OVER", 0, true, false, 0);

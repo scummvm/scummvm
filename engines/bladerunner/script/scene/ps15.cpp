@@ -28,8 +28,8 @@ void SceneScriptPS15::InitializeScene() {
 	Setup_Scene_Information(-360.0f, -113.43f, 50.0f, 0);
 	Scene_Exit_Add_2D_Exit(0, 0, 0, 20, 479, 3);
 	Scene_Exit_Add_2D_Exit(1, 620, 0, 639, 479, 1);
-	Ambient_Sounds_Add_Looping_Sound(384, 20, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound(141, 80, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRUMLOOP1, 20, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxLABAMB3,  80, 0, 1);
 	Ambient_Sounds_Add_Sound(385, 5, 50, 8, 8, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(156, 5, 20, 30, 30, -70, 70, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(157, 5, 20, 30, 30, -70, 70, -101, -101, 0, 0);

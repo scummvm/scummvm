@@ -40,9 +40,9 @@ void SceneScriptRC02::InitializeScene() {
 		Scene_Exit_Add_2D_Exit(kRC02ExitRC51, 265, 58, 346, 154, 0);
 	}
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(0);
-	Ambient_Sounds_Add_Looping_Sound( 71, 50,   1, 1);
-	Ambient_Sounds_Add_Looping_Sound( 75, 75,   1, 1);
-	Ambient_Sounds_Add_Looping_Sound(105, 30, 100, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED5,   50,   1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxWINDLOP8, 75,   1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRUNOFF, 30, 100, 1);
 	Ambient_Sounds_Add_Sound(73, 5, 20, 10, 10, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(74, 5, 20, 10, 10, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(76, 5, 40,  6,  6, -100, 100, -101, -101, 0, 0);
@@ -343,9 +343,9 @@ bool SceneScriptRC02::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -71.51f, -1238.89f, 108587.15f, 0, true, false, 0)) {
 			Game_Flag_Set(kFlagRC02toRC01);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_Looping_Sound(71, true);
-			Ambient_Sounds_Remove_Looping_Sound(75, true);
-			Ambient_Sounds_Adjust_Looping_Sound(85, 100, -101, 1);
+			Ambient_Sounds_Remove_Looping_Sound(kSfxBRBED5,   true);
+			Ambient_Sounds_Remove_Looping_Sound(kSfxWINDLOP8, true);
+			Ambient_Sounds_Adjust_Looping_Sound(kSfxRCRAIN1, 100, -101, 1);
 			Actor_Set_Goal_Number(kActorRunciter, kGoalRunciterDefault);
 			Set_Enter(kSetRC01, kSceneRC01);
 		}

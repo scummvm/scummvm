@@ -81,9 +81,9 @@ void SceneScriptKP07::InitializeScene() {
 		}
 	}
 
-	Ambient_Sounds_Add_Looping_Sound(585,  7, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound(586, 52, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound(109, 38, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCOMPBED1,  7, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxMOONBED2, 52, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED3,   38, 1, 1);
 
 	if (Game_Flag_Query(kFlagKP07BusActive)) {
 		Scene_Loop_Set_Default(2);

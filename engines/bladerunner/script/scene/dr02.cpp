@@ -43,9 +43,9 @@ void SceneScriptDR02::InitializeScene() {
 
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(0);
 	Ambient_Sounds_Remove_All_Looping_Sounds(0);
-	Ambient_Sounds_Add_Looping_Sound(54, 50, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(219, 27, 85, 1);
-	Ambient_Sounds_Add_Looping_Sound(98, 38, 85, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 50, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxHUMMER3, 27, 85, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxBIGFAN2, 38, 85, 1);
 	Ambient_Sounds_Add_Sound(378, 2, 50, 33, 100, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(379, 2, 50, 33, 100, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(380, 2, 50, 33, 100, -100, 100, -101, -101, 0, 0);
@@ -125,8 +125,8 @@ bool SceneScriptDR02::ClickedOnExit(int exitId) {
 			Game_Flag_Set(kFlagDR02toDR01);
 			Set_Enter(kSetDR01_DR02_DR04, kSceneDR01);
 		}
-		Ambient_Sounds_Adjust_Looping_Sound(219, 12, -101, 1);
-		Ambient_Sounds_Adjust_Looping_Sound(98, 14, -101, 1);
+		Ambient_Sounds_Adjust_Looping_Sound(kSfxHUMMER3, 12, -101, 1);
+		Ambient_Sounds_Adjust_Looping_Sound(kSfxBIGFAN2, 14, -101, 1);
 		return true;
 	}
 

@@ -76,7 +76,7 @@ void SceneScriptRC01::InitializeScene() {
 	}
 
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(false);
-	Ambient_Sounds_Add_Looping_Sound(54, 30, 0, 1); // CTRAIN1.AUD
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 30, 0, 1);
 
 	if (!Game_Flag_Query(kFlagRC01PoliceDone)) {
 		Ambient_Sounds_Add_Sound(181, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0); // 67_0470R.AUD
@@ -95,7 +95,7 @@ void SceneScriptRC01::InitializeScene() {
 		Ambient_Sounds_Add_Sound(195, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0); // 67_1160R.AUD
 	}
 
-	Ambient_Sounds_Add_Looping_Sound(81, 60, 100, 1); // RCAMBR1.AUD
+	Ambient_Sounds_Add_Looping_Sound(kSfxRCAMBR1, 60, 100, 1);
 	Ambient_Sounds_Add_Sound(82,  5, 30, 30, 50, -100, 100, -101, -101, 0, 0); // RCCARBY1.AUD
 	Ambient_Sounds_Add_Sound(83,  5, 30, 30, 55, -100, 100, -101, -101, 0, 0); // RCCARBY2.AUD
 	Ambient_Sounds_Add_Sound(84,  5, 30, 30, 50, -100, 100, -101, -101, 0, 0); // RCCARBY3.AUD

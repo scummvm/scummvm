@@ -35,8 +35,8 @@ void SceneScriptNR04::InitializeScene() {
 	Scene_2D_Region_Add(1, 62, 327,  92, 479);
 	Scene_2D_Region_Add(2, 93, 343, 239, 479);
 
-	Ambient_Sounds_Add_Looping_Sound(408, 16, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound(384, 16, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxAPRTFAN1, 16, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRUMLOOP1, 16, 0, 1);
 	Ambient_Sounds_Add_Sound(259, 3, 60, 9, 9, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(260, 3, 60, 9, 9, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(261, 3, 60, 9, 9, -100, 100, -101, -101, 0, 0);

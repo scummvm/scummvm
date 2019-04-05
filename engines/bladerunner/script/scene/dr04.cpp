@@ -50,9 +50,9 @@ void SceneScriptDR04::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(2, 222, 110, 269, 207, 0);
 
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(0);
-	Ambient_Sounds_Add_Looping_Sound( 54, 50,    1,   1);
-	Ambient_Sounds_Add_Looping_Sound(288, 55, -100,   1);
-	Ambient_Sounds_Add_Looping_Sound(217, 28, -100, 100);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 50,    1,   1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxFIREBD1, 55, -100,   1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxHUMMER1, 28, -100, 100);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);

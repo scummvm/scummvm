@@ -30,7 +30,7 @@ void SceneScriptPS06::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0, 610, 0, 639, 479, 1);
 
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(false);
-	Ambient_Sounds_Add_Looping_Sound(388, 50, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxESPLOOP3, 50, 1, 1);
 }
 
 void SceneScriptPS06::SceneLoaded() {

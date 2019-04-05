@@ -54,9 +54,9 @@ void SceneScriptHF01::InitializeScene() {
 		}
 	}
 
-	Ambient_Sounds_Add_Looping_Sound( 54, 50,   0, 1);
-	Ambient_Sounds_Add_Looping_Sound(340, 25,   0, 1);
-	Ambient_Sounds_Add_Looping_Sound( 81, 60, 100, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 50,   0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxARCBED1, 25,   0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRCAMBR1, 60, 100, 1);
 	Ambient_Sounds_Add_Sound(182,  5,  70, 12,  12, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(184,  5,  70, 12,  12, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(185,  5,  70, 12,  12, -100, 100, -101, -101, 0, 0);

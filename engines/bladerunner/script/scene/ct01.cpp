@@ -78,9 +78,9 @@ void SceneScriptCT01::InitializeScene() {
 	if (Game_Flag_Query(kFlagSpinnerAtCT01)) {
 		Scene_Exit_Add_2D_Exit(kCT01ExitSpinner, 0, 286, 158, 350, 2);
 	}
-	Ambient_Sounds_Add_Looping_Sound(54, 50, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound(55, 40, -100, 1);
-	Ambient_Sounds_Add_Looping_Sound(56, 40, 100, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 50, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTAMBL1, 40, -100, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTAMBR1, 40, 100, 1);
 	Ambient_Sounds_Add_Sound(61, 10, 30, 16, 20, 0, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(62, 10, 30, 16, 20, 0, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(63, 10, 30, 16, 20, 0, 100, -101, -101, 0, 0);
@@ -434,8 +434,8 @@ void SceneScriptCT01::PlayerWalkedIn() {
 void SceneScriptCT01::PlayerWalkedOut() {
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	if (Game_Flag_Query(kFlagCT01toCT12)) {
-		Ambient_Sounds_Remove_Looping_Sound(55, true);
-		Ambient_Sounds_Remove_Looping_Sound(56, true);
+		Ambient_Sounds_Remove_Looping_Sound(kSfxCTAMBL1, true);
+		Ambient_Sounds_Remove_Looping_Sound(kSfxCTAMBR1, true);
 	} else {
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 	}

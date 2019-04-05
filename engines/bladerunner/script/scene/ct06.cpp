@@ -40,8 +40,8 @@ void SceneScriptCT06::InitializeScene() {
 		Actor_Set_At_XYZ(kActorZuben, 58.41f, -58.23f, -24.97f, 240);
 		Actor_Retired_Here(kActorZuben, 72, 36, 1, kActorMcCoy);
 	}
-	Ambient_Sounds_Add_Looping_Sound(381, 100, 1, 1);
-	Ambient_Sounds_Add_Looping_Sound(205,  20, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRAIN10,   100, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTDRONE1,  20, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);

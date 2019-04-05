@@ -91,7 +91,7 @@ bool AIScriptLuther::Update() {
 		Scene_Loop_Set_Default(5); // UG16MainLoopNoComputerLight
 		Scene_Loop_Start_Special(kSceneLoopModeOnce, 4, true); // UG16SparkLoop
 		Ambient_Sounds_Play_Sound(kSfxCOMPDWN4, 50, 0, 0, 99);
-		Ambient_Sounds_Remove_Looping_Sound(516, 1);
+		Ambient_Sounds_Remove_Looping_Sound(kSfxELECLAB1, 1);
 		return false;
 	}
 

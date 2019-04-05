@@ -51,7 +51,7 @@ void SceneScriptRC03::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(3,  85, 255, 112, 315, 0);
 	Scene_Exit_Add_2D_Exit(4, 428, 260, 453, 324, 0);
 
-	Ambient_Sounds_Add_Looping_Sound(54, 50, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 50, 0, 1);
 	Ambient_Sounds_Add_Sound(82, 5, 30, 40, 70, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(83, 5, 30, 40, 75, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(84, 5, 30, 40, 70, -100, 100, -101, -101, 0, 0);

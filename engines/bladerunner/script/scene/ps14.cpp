@@ -35,7 +35,7 @@ void SceneScriptPS14::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0, 610,  0, 639, 479, 1);
 	Scene_Exit_Add_2D_Exit(1,  46, 51, 125, 192, 0);
 
-	Ambient_Sounds_Add_Looping_Sound(381, 100, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRAIN10, 100, 1, 1);
 	Ambient_Sounds_Add_Sound(374, 100, 300, 16,  25, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound( 68,  60, 180, 16,  25, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound( 69,  60, 180, 16,  25, 0, 0, -101, -101, 0, 0);

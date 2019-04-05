@@ -54,9 +54,9 @@ void SceneScriptAR01::InitializeScene() {
 	if (Game_Flag_Query(kFlagSpinnerAtAR01)) {
 		Scene_Exit_Add_2D_Exit(kAR01ExitSpinner, 0, 404, 99, 479, 2);
 	}
-	Ambient_Sounds_Add_Looping_Sound( 54, 50,   1, 1);
-	Ambient_Sounds_Add_Looping_Sound( 81, 60, 100, 1);
-	Ambient_Sounds_Add_Looping_Sound(241, 50,   1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 50,   1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRCAMBR1, 60, 100, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxHCLOOP1, 50,   1, 1);
 	Ambient_Sounds_Add_Sound(182, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(184, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(185, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);

@@ -27,13 +27,13 @@ namespace BladeRunner {
 void SceneScriptNR09::InitializeScene() {
 	if (Game_Flag_Query(kFlagNR10toNR09)) {
 		if (!Game_Flag_Query(kFlagNR10CameraDestroyed)) {
-			Ambient_Sounds_Adjust_Looping_Sound(452, 22, 100, 2);
+			Ambient_Sounds_Adjust_Looping_Sound(kSfx35MM, 22, 100, 2);
 		}
 		Game_Flag_Reset(kFlagNR10toNR09);
 		Setup_Scene_Information(-556.07f, 0.35f, 399.04f, 440);
 	} else {
 		if (!Game_Flag_Query(kFlagNR10CameraDestroyed)) {
-			Ambient_Sounds_Add_Looping_Sound(452, 22, 100, 1);
+			Ambient_Sounds_Add_Looping_Sound(kSfx35MM, 22, 100, 1);
 		}
 		Setup_Scene_Information(-704.07f, 0.35f, 663.04f,   0);
 	}
@@ -41,8 +41,8 @@ void SceneScriptNR09::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0, 400, 100, 440, 280, 1);
 	Scene_Exit_Add_2D_Exit(1, 0, 0, 30, 479, 3);
 
-	Ambient_Sounds_Add_Looping_Sound(205, 22, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound( 71, 33, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTDRONE1, 22, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED5,   33, 0, 1);
 	Ambient_Sounds_Add_Sound(303, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(304, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(305, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);

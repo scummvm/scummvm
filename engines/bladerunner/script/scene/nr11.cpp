@@ -37,11 +37,11 @@ void SceneScriptNR11::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0, 450, 305, 565, 345, 2);
 
 	if (!Game_Flag_Query(kFlagNR10CameraDestroyed)) {
-		Ambient_Sounds_Adjust_Looping_Sound(452, 22, 0, 1);
+		Ambient_Sounds_Adjust_Looping_Sound(kSfx35MM, 22, 0, 1);
 	}
 
-	Ambient_Sounds_Add_Looping_Sound(205, 22, 0, 1);
-	Ambient_Sounds_Add_Looping_Sound( 71, 33, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTDRONE1, 22, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED5,   33, 0, 1);
 	Ambient_Sounds_Add_Sound(303, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(304, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(305, 2, 50, 7, 17, -100, 100, -101, -101, 0, 0);
@@ -51,10 +51,10 @@ void SceneScriptNR11::InitializeScene() {
 
 	if (Game_Flag_Query(kFlagNR01DektoraFall)) {
 		Scene_Loop_Set_Default(kNR11LoopMainLoopFires);
-		Ambient_Sounds_Add_Looping_Sound(381, 83, 0, 1);
+		Ambient_Sounds_Add_Looping_Sound(kSfxRAIN10, 83, 0, 1);
 	} else if (Game_Flag_Query(kFlagNR11BurnedUp)) {
 		Scene_Loop_Set_Default(kNR11LoopMainLoopBurnedUp);
-		Ambient_Sounds_Add_Looping_Sound(381, 83, 0, 1);
+		Ambient_Sounds_Add_Looping_Sound(kSfxRAIN10, 83, 0, 1);
 	} else {
 		Scene_Loop_Set_Default(kNR11LoopMainLoop);
 		Overlay_Play("NR11OVER", 0, true, false, 0);

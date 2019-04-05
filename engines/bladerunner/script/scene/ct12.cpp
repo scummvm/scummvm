@@ -49,9 +49,9 @@ void SceneScriptCT12::InitializeScene() {
 		Scene_Exit_Add_2D_Exit(4, 324, 150, 435, 340, 0);
 	}
 
-	Ambient_Sounds_Add_Looping_Sound(54, 33,    1, 1);
-	Ambient_Sounds_Add_Looping_Sound(55, 20, -100, 1);
-	Ambient_Sounds_Add_Looping_Sound(56, 20, -100, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 33,    1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTAMBL1, 20, -100, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxCTAMBR1, 20, -100, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);

@@ -39,9 +39,9 @@ void SceneScriptHC04::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0, 539,  51, 639, 309, 0);
 	Scene_Exit_Add_2D_Exit(1,   0, 456, 639, 479, 2);
 
-	Ambient_Sounds_Add_Looping_Sound(103, 50, 50, 0);
-	Ambient_Sounds_Add_Looping_Sound(329, 16, 16, 0);
-	Ambient_Sounds_Add_Looping_Sound(330, 40, 40, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 50, 50, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxMAMASNG1, 16, 16, 0);
+	Ambient_Sounds_Add_Looping_Sound(kSfxROTIS2,   40, 40, 0);
 	Ambient_Sounds_Add_Sound(182, 5, 70, 14, 16, -100,  100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(184, 5, 70, 14, 16, -100,  100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(185, 5, 70, 14, 16, -100,  100, -101, -101, 0, 0);
