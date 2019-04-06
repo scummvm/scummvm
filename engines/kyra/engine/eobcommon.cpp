@@ -537,7 +537,7 @@ Common::Error EoBCoreEngine::init() {
 	_monsterFlashOverlay = new uint8[16];
 	_monsterStoneOverlay = new uint8[16];
 	memset(_monsterFlashOverlay, (_configRenderMode == Common::kRenderCGA) ? 0xFF : guiSettings()->colors.guiColorWhite, 16 * sizeof(uint8));
-	memset(_monsterStoneOverlay, 0x0D, 16 * sizeof(uint8));
+	memset(_monsterStoneOverlay, (_flags.platform == Common::kPlatformAmiga) ? guiSettings()->colors.guiColorWhite : 0x0D, 16 * sizeof(uint8));
 	_monsterFlashOverlay[0] = _monsterStoneOverlay[0] = 0;
 
 	// Prevent autosave on game startup
