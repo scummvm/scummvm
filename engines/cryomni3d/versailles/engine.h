@@ -112,15 +112,15 @@ enum AbortCommand {
 struct GameVariables {
 	enum Var {
 		// TODO: make these enum members more correct
-		kCollectPartition = 0,         // 0
-		kUnlockPetitePorte,
-		kAlreadyCame31,
-		kDrawerStatus,
+		kCollectScore = 0, // OK       // 0
+		kUnlockHiddenDoor, // OK
+		kAlreadyWent3_19, // OK
+		kMedalsDrawerStatus, // OK
 		kCurrentTime, // OK
-		kGotMedaillesSolution,
-		kDrawerFurnitureStatus,
-		kCollectePartition,
-		kCollectPamphletArchi,
+		kGotMedalsSolution, // OK
+		kCabinetDrawerStatus, // OK
+		kDecipherScore, // OK
+		kCollectLampoonArchitecture, // OK
 		kGotRevealedPaper, // OK
 		kCollectKey, // OK             // 10
 		kCollectPortfolio, // OK
@@ -148,7 +148,7 @@ struct GameVariables {
 		kCollectedPaperInTrunk = 33, // OK
 		kBrushColor, // OK
 		kUsedScissors, // OK
-		kUsedClefsCombles,
+		kUnlockedAttic, // OK
 		kHasPlayedLebrun, // OK
 		kWarnedIncomplete,
 		kUsedPlanVauban1,
@@ -272,6 +272,7 @@ private:
 	        const Transition **transition);
 
 	unsigned int getFakeTransition(unsigned int actionId) const;
+	void fixActionId(unsigned int *actionId) const;
 
 	int handleWarp();
 	bool handleWarpMouse(unsigned int *actionId, unsigned int movingCuror);
@@ -437,6 +438,30 @@ private:
 	IMG_CB(41802b);
 	IMG_CB(41802c);
 	IMG_CB(41802d);
+	IMG_CB(43143);
+	IMG_CB(43143b);
+	IMG_CB(43145);
+	IMG_CB(43145b);
+	IMG_CB(43145c);
+	IMG_CB(43146);
+	IMG_CB(43146b);
+	IMG_CB(43146c);
+	IMG_CB(43160);
+	IMG_CB(43160b);
+	IMG_CB(43160c);
+	IMG_CB(43160d);
+	IMG_CB(43190);
+	IMG_CB(43190b);
+	IMG_CB(43190c);
+	IMG_CB(43190d);
+	IMG_CB(43190e);
+	IMG_CB(43190f);
+
+	IMG_CB(88001);
+	IMG_CB(88001b);
+	IMG_CB(88001c);
+	IMG_CB(88004);
+	IMG_CB(88004b);
 #undef IMG_CB
 
 #define FILTER_EVENT(level, place) bool filterEventLevel ## level ## Place ## place(unsigned int *event)
@@ -456,6 +481,20 @@ private:
 	FILTER_EVENT(2, 11);
 	FILTER_EVENT(2, 12);
 	FILTER_EVENT(2, 14);
+
+	FILTER_EVENT(3, 3);
+	FILTER_EVENT(3, 10);
+	FILTER_EVENT(3, 13);
+	FILTER_EVENT(3, 15);
+	FILTER_EVENT(3, 17);
+	FILTER_EVENT(3, 18);
+	FILTER_EVENT(3, 19);
+	FILTER_EVENT(3_5, 20);
+	FILTER_EVENT(3, 22);
+	FILTER_EVENT(3, 23);
+	bool filterEventLevel3Obj23151();
+	void collectLampoonArchitecture(const ZonFixedImage *fimg = nullptr);
+
 #undef FILTER_EVENT
 #undef INIT_PLACE
 

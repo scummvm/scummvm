@@ -293,7 +293,7 @@ void CryOmni3DEngine_Versailles::setupImgScripts() {
 	SET_SCRIPT_BY_PAINTING(43140, 34);
 	SET_SCRIPT_BY_PAINTING(43141, 35);
 	SET_SCRIPT_BY_PAINTING(43142, 36);
-	//SET_SCRIPT_BY_ID(43143); // TODO: implement it
+	SET_SCRIPT_BY_ID(43143);
 	SET_SCRIPT_BY_PAINTING(43144, 38);
 	SET_SCRIPT_BY_PAINTING(43150, 39);
 	SET_SCRIPT_BY_PAINTING(43151, 40);
@@ -329,19 +329,19 @@ void CryOmni3DEngine_Versailles::setupImgScripts() {
 	// From now specific handlers for anything that is not a painting
 	SET_SCRIPT_BY_ID(41801);
 	SET_SCRIPT_BY_ID(41802);
-	//SET_SCRIPT_BY_ID(43145); // TODO: implement it
-	//SET_SCRIPT_BY_ID(43146); // TODO: implement it
-	//SET_SCRIPT_BY_ID(43160); // TODO: implement it
-	//SET_SCRIPT_BY_ID(43190); // TODO: implement it
+	SET_SCRIPT_BY_ID(43145);
+	SET_SCRIPT_BY_ID(43146);
+	SET_SCRIPT_BY_ID(43160);
+	SET_SCRIPT_BY_ID(43190);
 	//SET_SCRIPT_BY_ID(44071); // TODO: implement it
 	//SET_SCRIPT_BY_ID(44161); // TODO: implement it
 	//SET_SCRIPT_BY_ID(45130); // TODO: implement it // Almost dumb
 	//SET_SCRIPT_BY_ID(45270); // TODO: implement it
 	//SET_SCRIPT_BY_ID(45280); // TODO: implement it // Almost dumb
-	//SET_SCRIPT_BY_ID(88001); // TODO: implement it
+	SET_SCRIPT_BY_ID(88001);
 	//SET_SCRIPT_BY_ID(88002); // TODO: implement it
 	//SET_SCRIPT_BY_ID(88003); // TODO: implement it
-	//SET_SCRIPT_BY_ID(88004); // TODO: implement it
+	SET_SCRIPT_BY_ID(88004);
 #undef SET_SCRIPT_BY_ID
 }
 
@@ -1187,6 +1187,629 @@ IMG_CB(41802d) {
 	}
 }
 
+IMG_CB(43143) {
+	// Lampoon is there: display it
+	if (!_gameVariables[GameVariables::kCollectLampoonArchitecture] &&
+	        (_currentLevel == 5 || currentGameTime() >= 3)) {
+		ZonFixedImage::CallbackFunctor *functor =
+		    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+		            &CryOmni3DEngine_Versailles::img_43143b);
+		fimg->changeCallback(functor);
+		return;
+	}
+
+	fimg->load("30L_31.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		HANDLE_QUESTION(37);
+	}
+}
+
+IMG_CB(43143b) {
+	fimg->load("30L_3101.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		HANDLE_QUESTION(37);
+		if (fimg->_zoneUse) {
+			// Paper is out of reach
+			displayMessageBox(kFixedimageMsgBoxParameters, fimg->surface(), 16,
+			                  fimg->getZoneCenter(fimg->_currentZone),
+			                  Common::Functor0Mem<void, ZonFixedImage>(fimg, &ZonFixedImage::manage));
+		} else if (fimg->_usedObject && fimg->_usedObject->idOBJ() == 119 && fimg->_currentZone == 0) {
+			_inventory.removeByNameID(119);
+			collectLampoonArchitecture(fimg);
+			// Display without the lampoon
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_43143);
+			fimg->changeCallback(functor);
+			break;
+		}
+	}
+}
+
+IMG_CB(43145) {
+	fimg->load("30L_50.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneUse) {
+			if (fimg->_currentZone == 0) {
+				playInGameVideo("30L_51");
+				// Force reload of the place
+				if (_nextPlaceId == -1u) {
+					_nextPlaceId = _currentPlaceId;
+				}
+
+				ZonFixedImage::CallbackFunctor *functor =
+				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+				            &CryOmni3DEngine_Versailles::img_43145b);
+				fimg->changeCallback(functor);
+				break;
+			} else if (fimg->_currentZone == 1) {
+				playInGameVideo("30L_52");
+				// Force reload of the place
+				if (_nextPlaceId == -1u) {
+					_nextPlaceId = _currentPlaceId;
+				}
+
+				ZonFixedImage::CallbackFunctor *functor =
+				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+				            &CryOmni3DEngine_Versailles::img_43145c);
+				fimg->changeCallback(functor);
+				break;
+			}
+		}
+	}
+}
+
+IMG_CB(43145b) {
+	fimg->load("30L_51.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit) {
+			break;
+		}
+		if (fimg->_zoneLow) {
+			// Go back to drawer closed
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_43145);
+			fimg->changeCallback(functor);
+			break;
+		}
+		if (fimg->_zoneUse) {
+			if (_gameVariables[GameVariables::kCabinetDrawerStatus] == 1) {
+				// Small key 2 has been put in it and not yet picked by us
+				collectObject(116, fimg);
+				_gameVariables[GameVariables::kCabinetDrawerStatus] = 2;
+			} else {
+				// Drawer is empty
+				displayMessageBox(kFixedimageMsgBoxParameters, fimg->surface(), 3,
+				                  fimg->getZoneCenter(fimg->_currentZone),
+				                  Common::Functor0Mem<void, ZonFixedImage>(fimg, &ZonFixedImage::manage));
+			}
+		}
+	}
+}
+
+IMG_CB(43145c) {
+	fimg->load("30L_52.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit) {
+			break;
+		}
+		if (fimg->_zoneLow) {
+			// Go back to drawer closed
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_43145);
+			fimg->changeCallback(functor);
+			break;
+		}
+		if (fimg->_zoneUse) {
+			// Drawer is empty
+			displayMessageBox(kFixedimageMsgBoxParameters, fimg->surface(), 3,
+			                  fimg->getZoneCenter(fimg->_currentZone),
+			                  Common::Functor0Mem<void, ZonFixedImage>(fimg, &ZonFixedImage::manage));
+		}
+	}
+}
+
+IMG_CB(43146) {
+	fimg->load("30L_40.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneUse) {
+			if (fimg->_currentZone == 0) {
+				playInGameVideo("30L_41");
+				// Force reload of the place
+				if (_nextPlaceId == -1u) {
+					_nextPlaceId = _currentPlaceId;
+				}
+
+				ZonFixedImage::CallbackFunctor *functor =
+				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+				            &CryOmni3DEngine_Versailles::img_43146b);
+				fimg->changeCallback(functor);
+				break;
+			} else if (fimg->_currentZone == 1) {
+				playInGameVideo("30L_42");
+				// Force reload of the place
+				if (_nextPlaceId == -1u) {
+					_nextPlaceId = _currentPlaceId;
+				}
+
+				ZonFixedImage::CallbackFunctor *functor =
+				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+				            &CryOmni3DEngine_Versailles::img_43146c);
+				fimg->changeCallback(functor);
+				break;
+			}
+		}
+	}
+}
+
+IMG_CB(43146b) {
+	fimg->load("30L_41.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit) {
+			break;
+		}
+		if (fimg->_zoneLow) {
+			// Go back to drawer closed
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_43146);
+			fimg->changeCallback(functor);
+			break;
+		}
+		if (fimg->_zoneUse) {
+			// Drawer is empty
+			displayMessageBox(kFixedimageMsgBoxParameters, fimg->surface(), 3,
+			                  fimg->getZoneCenter(fimg->_currentZone),
+			                  Common::Functor0Mem<void, ZonFixedImage>(fimg, &ZonFixedImage::manage));
+		}
+	}
+}
+
+IMG_CB(43146c) {
+	fimg->load("30L_42.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit) {
+			break;
+		}
+		if (fimg->_zoneLow) {
+			// Go back to drawer closed
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_43146);
+			fimg->changeCallback(functor);
+			break;
+		}
+		if (fimg->_zoneUse) {
+			// Drawer is empty
+			displayMessageBox(kFixedimageMsgBoxParameters, fimg->surface(), 3,
+			                  fimg->getZoneCenter(fimg->_currentZone),
+			                  Common::Functor0Mem<void, ZonFixedImage>(fimg, &ZonFixedImage::manage));
+		}
+	}
+}
+
+IMG_CB(43160) {
+	// Dispatch to the correct state
+	bool inInvCharcoal = _inventory.inInventoryByNameID(113);
+	bool inInvPaper = _inventory.inInventoryByNameID(114);
+	if (inInvCharcoal && inInvPaper) {
+		// When everything is collected, state of place change and we shouldn't be able to look at the table
+		error("BUG: Shouldn't be here");
+	} else if (inInvCharcoal && !inInvPaper) {
+		// Draw table with paper but without charcoal
+		ZonFixedImage::CallbackFunctor *functor =
+		    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+		            &CryOmni3DEngine_Versailles::img_43160b);
+		fimg->changeCallback(functor);
+		return;
+	} else if (!inInvCharcoal && inInvPaper) {
+		// Draw table with charcoal but without paper
+		ZonFixedImage::CallbackFunctor *functor =
+		    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+		            &CryOmni3DEngine_Versailles::img_43160c);
+		fimg->changeCallback(functor);
+		return;
+	}
+
+	// There we have charcoal and paper on table
+	fimg->load("31I01.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneUse) {
+			if (fimg->_currentZone == 0) {
+				// Collected charcoal
+				collectObject(113, fimg);
+				// Draw table with paper but without charcoal
+				ZonFixedImage::CallbackFunctor *functor =
+				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+				            &CryOmni3DEngine_Versailles::img_43160b);
+				fimg->changeCallback(functor);
+				break;
+			} else if (fimg->_currentZone == 1) {
+				// Collected paper
+				collectObject(114, fimg);
+				// Draw table with charcoal but without paper
+				ZonFixedImage::CallbackFunctor *functor =
+				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+				            &CryOmni3DEngine_Versailles::img_43160c);
+				fimg->changeCallback(functor);
+				break;
+			}
+		}
+	}
+}
+
+IMG_CB(43160b) {
+	// There we have paper on table but without charcoal
+	fimg->load("31I02.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit) {
+			break;
+		}
+		if (fimg->_zoneUse) {
+			// Collected paper
+			collectObject(114, fimg);
+			// Draw table empty
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_43160d);
+			fimg->changeCallback(functor);
+			break;
+		}
+	}
+}
+
+IMG_CB(43160c) {
+	// There we have charcoal on table but without paper
+	fimg->load("31I03.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit) {
+			break;
+		}
+		if (fimg->_zoneUse) {
+			// Collected charcoal
+			collectObject(113, fimg);
+			// Draw table empty
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_43160d);
+			fimg->changeCallback(functor);
+			break;
+		}
+	}
+}
+
+IMG_CB(43160d) {
+	// There we have neither charcoal nor paper on table
+	fimg->load("31I04.GIF");
+	setPlaceState(16, 1);
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+	}
+}
+
+IMG_CB(43190) {
+	fimg->load("31L1_20.GIF");
+	if (_gameVariables[GameVariables::kCollectScore]) {
+		fimg->disableZone(0);
+	}
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneUse) {
+			playInGameVideo("31L1_2A");
+			// Force reload of the place
+			if (_nextPlaceId == -1u) {
+				_nextPlaceId = _currentPlaceId;
+			}
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_43190b);
+			fimg->changeCallback(functor);
+			break;
+		}
+	}
+}
+
+IMG_CB(43190b) {
+	fimg->load("31L1_20B.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneUse) {
+			playInGameVideo("31L1_2B");
+			// Force reload of the place
+			if (_nextPlaceId == -1u) {
+				_nextPlaceId = _currentPlaceId;
+			}
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_43190c);
+			fimg->changeCallback(functor);
+			break;
+		}
+	}
+}
+
+IMG_CB(43190c) {
+	fimg->load("31L1_20C.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneUse) {
+			playInGameVideo("31L1_2C");
+			// Force reload of the place
+			if (_nextPlaceId == -1u) {
+				_nextPlaceId = _currentPlaceId;
+			}
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_43190d);
+			fimg->changeCallback(functor);
+			break;
+		}
+	}
+}
+
+IMG_CB(43190d) {
+	fimg->load("31L1_20D.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneUse) {
+			playInGameVideo("31L1_2D");
+			// Force reload of the place
+			if (_nextPlaceId == -1u) {
+				_nextPlaceId = _currentPlaceId;
+			}
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_43190e);
+			fimg->changeCallback(functor);
+			break;
+		}
+	}
+}
+
+IMG_CB(43190e) {
+	fimg->load("31L1_20E.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneUse) {
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_43190f);
+			fimg->changeCallback(functor);
+			break;
+		}
+	}
+}
+
+IMG_CB(43190f) {
+	fimg->load("31L1_22.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit) {
+			break;
+		}
+		if (fimg->_zoneUse) {
+			_gameVariables[GameVariables::kCollectScore] = 1;
+			collectObject(118, fimg);
+			fimg->_exit = true;
+			break;
+		}
+	}
+}
+
+IMG_CB(88001) {
+	if (!_inventory.inInventoryByNameID(121) &&
+	        _gameVariables[GameVariables::kMedalsDrawerStatus] == 3) {
+		ZonFixedImage::CallbackFunctor *functor =
+		    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+		            &CryOmni3DEngine_Versailles::img_88001c);
+		fimg->changeCallback(functor);
+		return;
+	}
+
+	fimg->load("33P_10.GIF");
+	if (_inventory.inInventoryByNameID(121)) {
+		fimg->disableZone(0);
+	}
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneUse &&
+		        !_inventory.inInventoryByNameID(121)) {
+			// Open the drawer
+
+			playInGameVideo("33P_10");
+			// Force reload of the place
+			if (_nextPlaceId == -1u) {
+				_nextPlaceId = _currentPlaceId;
+			}
+
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_88001b);
+			fimg->changeCallback(functor);
+			break;
+		}
+	}
+}
+
+IMG_CB(88001b) {
+	_gameVariables[GameVariables::kMedalsDrawerStatus] = 2;
+
+	fimg->load("33P_12.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit) {
+			break;
+		}
+		if (fimg->_zoneLow) {
+			_gameVariables[GameVariables::kMedalsDrawerStatus] = 0;
+			// Go back to drawer closed
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_88001);
+			fimg->changeCallback(functor);
+			break;
+		}
+		if (fimg->_usedObject &&
+		        fimg->_usedObject->idOBJ() == 114 &&
+		        fimg->_currentZone == 0) {
+			// Lay the paper on the medals
+			_inventory.removeByNameID(114);
+
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_88001c);
+			fimg->changeCallback(functor);
+			break;
+		}
+	}
+}
+
+IMG_CB(88001c) {
+	// Paper is laid on the medals
+	_gameVariables[GameVariables::kMedalsDrawerStatus] = 3;
+
+	fimg->load("33P_13.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_usedObject &&
+		        fimg->_usedObject->idOBJ() == 113 &&
+		        fimg->_currentZone == 0) {
+			// Use charcoal on paper and medals
+			_inventory.removeByNameID(113);
+
+			playInGameVideo("33P_14");
+			// Force reload of the place
+			if (_nextPlaceId == -1u) {
+				_nextPlaceId = _currentPlaceId;
+			}
+
+			collectObject(121, fimg);
+			_dialogsMan["{JOUEUR-POSSEDE-FUSAIN-MEDAILLES}"] = 'Y';
+
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_88001);
+			fimg->changeCallback(functor);
+			break;
+		}
+	}
+}
+
+IMG_CB(88004) {
+	fimg->load("31j31.gif");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneUse) {
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_88004b);
+			fimg->changeCallback(functor);
+			break;
+		}
+	}
+}
+
+IMG_CB(88004b) {
+	// Open the toilets
+	playInGameVideo("31j32");
+	// Force reload of the place
+	if (_nextPlaceId == -1u) {
+		_nextPlaceId = _currentPlaceId;
+	}
+	fimg->load("31j32.gif");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneUse) {
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_88004);
+			fimg->changeCallback(functor);
+			break;
+		}
+	}
+	if (!shouldQuit()) {
+		// Close the toilets
+		playInGameVideo("31j32b");
+		// Force reload of the place
+		if (_nextPlaceId == -1u) {
+			_nextPlaceId = _currentPlaceId;
+		}
+	}
+}
+
 #undef IMG_CB
 
 // Init place and filter event
@@ -1646,6 +2269,297 @@ FILTER_EVENT(2, 12) {
 
 FILTER_EVENT(2, 14) {
 	return filterEventLevel1Place14(event);
+}
+
+FILTER_EVENT(3, 3) {
+	if (*event == 23030 && _inventory.selectedObject() &&
+	        _inventory.selectedObject()->idOBJ() == 118 &&
+	        _gameVariables[GameVariables::kDecipherScore]) {
+		_dialogsMan["{JOUEUR-MONTRE-PAMPHLET-DECHIFFRE-PAR-LULLY}"] = 'Y';
+		_dialogsMan.play("31X_BON");
+
+		_forcePaletteUpdate = true;
+		// Force reload of the place
+		if (_nextPlaceId == -1u) {
+			_nextPlaceId = _currentPlaceId;
+		}
+
+		_dialogsMan["{JOUEUR-MONTRE-PAMPHLET-DECHIFFRE-PAR-LULLY}"] = 'N';
+		_inventory.deselectObject();
+	}
+	return true;
+}
+
+FILTER_EVENT(3, 10) {
+	if (*event == 23101 && _inventory.selectedObject() &&
+	        _inventory.selectedObject()->idOBJ() == 120) {
+		_inventory.removeByNameID(120);
+
+		_dialogsMan["{JOUEUR-MONTRE-AUTORISATION-DE-BONTEMPS}"] = 'Y';
+		_dialogsMan.play("31O_SUIP");
+
+		_forcePaletteUpdate = true;
+		// Force reload of the place
+		if (_nextPlaceId == -1u) {
+			_nextPlaceId = _currentPlaceId;
+		}
+
+		_dialogsMan["{JOUEUR-MONTRE-AUTORISATION-DE-BONTEMPS}"] = 'N';
+		_inventory.deselectObject();
+		return true;
+	} else if (*event == 21) {
+		if (_dialogsMan["SUISSE-VU-AUTORISATION"] == 'Y') {
+			fakeTransition(*event);
+			playInGameVideo("33O_SUIP");
+			playInGameVideo("33O_P");
+			executeSeeAction(88001);
+			if (!shouldAbort()) {
+				playInGameVideo("33P_O");
+			}
+			_forcePaletteUpdate = true;
+			// Force reload of the place
+			if (_nextPlaceId == -1u) {
+				_nextPlaceId = _currentPlaceId;
+			}
+		}
+		// This place is a fake one: so never go in there
+		return false;
+	}
+	return true;
+}
+
+FILTER_EVENT(3, 13) {
+	_dialogsMan["{JOUEUR-MONTRE-FUSAIN-MEDAILLES}"] = 'N';
+	_dialogsMan["{JOUEUR-MONTRE-TOUT-AUTRE-OBJET}"] = 'N';
+	if (*event == 33130 && !_inventory.inInventoryByNameID(119)) {
+		collectObject(119);
+		if (_placeStates[13].state) {
+			setPlaceState(13, 3);
+		} else {
+			setPlaceState(13, 1);
+		}
+		// We handle use here
+		return false;
+	} else if (*event == 23131 && _inventory.selectedObject()) {
+		if (_inventory.selectedObject()->idOBJ() == 121) {
+			_dialogsMan["{JOUEUR-MONTRE-FUSAIN-MEDAILLES}"] = 'Y';
+		} else {
+			_dialogsMan["{JOUEUR-MONTRE-TOUT-AUTRE-OBJET}"] = 'Y';
+		}
+		_dialogsMan.play("32M_MR");
+
+		_forcePaletteUpdate = true;
+		// Force reload of the place
+		if (_nextPlaceId == -1u) {
+			_nextPlaceId = _currentPlaceId;
+		}
+
+		_dialogsMan["{JOUEUR-MONTRE-FUSAIN-MEDAILLES}"] = 'N';
+		_dialogsMan["{JOUEUR-MONTRE-TOUT-AUTRE-OBJET}"] = 'N';
+		_inventory.deselectObject();
+		return true;
+	} else {
+		return true;
+	}
+}
+
+FILTER_EVENT(3, 15) {
+	if (*event == 23151 && _inventory.selectedObject()) {
+		return filterEventLevel3Obj23151();
+	}
+	return true;
+}
+
+FILTER_EVENT(3, 17) {
+	if (*event == 18) {
+		if (_inventory.selectedObject() &&
+		        _inventory.selectedObject()->idOBJ() == 123) {
+			_gameVariables[GameVariables::kUnlockHiddenDoor] = 1;
+			_inventory.removeByNameID(123);
+			return true;
+		} else if (_gameVariables[GameVariables::kUnlockHiddenDoor] != 1) {
+			// Locked
+			displayMessageBoxWarp(1);
+			_dialogsMan["{LE JOUEUR-A-TENTE-OUVRIR-PETITE-PORTE}"] = 'Y';
+			return false;
+		} else {
+			return true;
+		}
+	} else if (*event == 23151) {
+		return filterEventLevel3Obj23151();
+	} else {
+		return true;
+	}
+}
+
+FILTER_EVENT(3, 18) {
+	if (*event != 19) {
+		return true;
+	}
+
+	// Only take care of event 19
+
+	// Adjust camera
+	fakeTransition(*event);
+	// As we have just adjusted camera, don't do it later
+	_transitionAnimateWarp = false;
+
+	if (_placeStates[22].state) {
+		playInGameVideo("31J1_L2");
+	} else if (_gameVariables[GameVariables::kAlreadyWent3_19]) {
+		playInGameVideo("31J1_L1");
+	} else {
+		playInGameVideo("31J1_L0");
+		playInGameVideo("31L1_AL2");
+		playInGameVideo("31L1_AL3");
+		_gameVariables[GameVariables::kAlreadyWent3_19] = 1;
+		_gameVariables[GameVariables::kCabinetDrawerStatus] = 1;
+	}
+
+	_forcePaletteUpdate = true;
+	// Force reload of the place
+	if (_nextPlaceId == -1u) {
+		_nextPlaceId = _currentPlaceId;
+	}
+	return true;
+}
+
+FILTER_EVENT(3, 19) {
+	if (*event != 18) {
+		return true;
+	}
+	if (currentGameTime() != 3 || _placeStates[22].state) {
+		return true;
+	}
+
+	if (_gameVariables[GameVariables::kCollectLampoonArchitecture]) {
+		setPlaceState(22, 2);
+	} else {
+		setPlaceState(22, 1);
+	}
+	setPlaceState(19, 1);
+
+	return true;
+}
+
+FILTER_EVENT(3_5, 20) {
+	if (*event != 25) {
+		return true;
+	}
+
+	fakeTransition(*event);
+	playInGameVideo("31j31");
+
+	// Force reload of the place
+	if (_nextPlaceId == -1u) {
+		_nextPlaceId = _currentPlaceId;
+	}
+
+	// Toilets
+	executeSeeAction(88004);
+
+	_forcePaletteUpdate = true;
+
+	return false;
+}
+
+FILTER_EVENT(3, 22) {
+	if (*event == 33220) {
+		if (!_gameVariables[GameVariables::kCollectLampoonArchitecture]) {
+			if (_inventory.selectedObject() &&
+			        _inventory.selectedObject()->idOBJ() == 119) {
+				// Using pool cue
+				_inventory.removeByNameID(119);
+				collectLampoonArchitecture();
+				_forcePaletteUpdate = true;
+			} else {
+				// Paper is out of reach
+				displayMessageBoxWarp(16);
+			}
+		}
+		// We handle use here
+		return false;
+	}
+
+	if (*event >= 20000 && *event < 30000 &&
+	        _inventory.selectedObject() &&
+	        _inventory.selectedObject()->idOBJ() == 118) {
+		_dialogsMan["{JOUEUR-PRESENTE-PAMPHLET-PARTITION}"] = 'Y';
+		_dialogsMan.play("31L1_LUL");
+
+		_forcePaletteUpdate = true;
+		// Force reload of the place
+		if (_nextPlaceId == -1u) {
+			_nextPlaceId = _currentPlaceId;
+		}
+
+		_dialogsMan["{JOUEUR-PRESENTE-PAMPHLET-PARTITION}"] = 'N';
+		if (_dialogsMan["LULLY-DONNE-MISSION1-JOUEUR"] != 'Y' ||
+		        _gameVariables[GameVariables::kDecipherScore]) {
+			_inventory.deselectObject();
+		} else {
+			_inventory.removeByNameID(118);
+		}
+	}
+	return true;
+}
+
+FILTER_EVENT(3, 23) {
+	if (*event != 32) {
+		return true;
+	}
+
+	if (_inventory.selectedObject() &&
+	        _inventory.selectedObject()->idOBJ() == 140) {
+		_gameVariables[GameVariables::kUnlockedAttic] = 1;
+		_inventory.removeByNameID(140);
+		return true;
+	} else if (_gameVariables[GameVariables::kUnlockedAttic] != 1) {
+		// Locked
+		displayMessageBoxWarp(1);
+		return false;
+	} else {
+		return true;
+	}
+}
+
+bool CryOmni3DEngine_Versailles::filterEventLevel3Obj23151() {
+	if (_inventory.selectedObject() &&
+	        _inventory.selectedObject()->idOBJ() == 115) {
+		_dialogsMan["{JOUEUR-MONTRE-PAMPHLET-ARCHITECTURE}"] = 'Y';
+	} else if (_inventory.selectedObject() &&
+	           _inventory.selectedObject()->idOBJ() == 121 &&
+	           _gameVariables[GameVariables::kGotMedalsSolution]) {
+		_inventory.removeByNameID(121);
+		_dialogsMan["{JOUEUR-MONTRE-EPIGRAPHE-MEDAILLES}"] = 'Y';
+	} else {
+		_dialogsMan["{JOUEUR-MONTRE-TOUT-AUTRE-CHOSE}"] = 'Y';
+	}
+
+	_dialogsMan.play("32J_CRO");
+
+	_forcePaletteUpdate = true;
+	// Force reload of the place
+	if (_nextPlaceId == -1u) {
+		_nextPlaceId = _currentPlaceId;
+	}
+
+	_dialogsMan["{JOUEUR-MONTRE-PAMPHLET-ARCHITECTURE}"] = 'N';
+	_dialogsMan["{JOUEUR-MONTRE-EPIGRAPHE-MEDAILLES}"] = 'N';
+	_dialogsMan["{JOUEUR-MONTRE-TOUT-AUTRE-CHOSE}"] = 'N';
+
+	_inventory.deselectObject();
+
+	return true;
+}
+
+void CryOmni3DEngine_Versailles::collectLampoonArchitecture(const ZonFixedImage *fimg) {
+	_gameVariables[GameVariables::kCollectLampoonArchitecture] = 1;
+	collectObject(115, fimg);
+	if (_currentLevel == 3) {
+		setPlaceState(22, 2);
+	}
+	_dialogsMan["{JOUEUR_POSSEDE_PAMPHLET_ARCHI}"] = 'Y';
 }
 
 #undef FILTER_EVENT
