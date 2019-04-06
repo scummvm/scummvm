@@ -4168,17 +4168,105 @@ static const uint16 longbowPatchArcherPathfinding[] = {
 	PATCH_END
 };
 
-//          script, description,                                      signature                          patch
+// Longbow 1.0 has two random but common game-breaking bugs: Green Man's riddle
+//  scene never ends and the Sheriff's men catch Robin too quickly when sweeping
+//  the forest. Both are due to reusing an uninitialized global variable.
+//
+// Global 137 is used by the abbey hedge maze to store ego's cel during room
+//  transitions. Exiting the maze leaves this as a random value between 0 and 5.
+//  The forest sweep also uses this global but as a counter it expects to start
+//  at 0. It increments as Robin changes rooms during a sweep until it reaches a
+//  a maximum and he is caught. This is usually 7 but in some rooms it's only 3.
+//  A high initial value can make this sequence impossible. rm180:doit also
+//  tests the sweep counter and doesn't allow scripts to respond to a hand code
+//  when greater than 2. This breaks the riddle scene after the first answer.
+//
+// We fix this by clearing global 137 at the start of days 1-7 and 11 so that
+//  stale hedge maze values from days 5/6 and 10 don't affect the day 7 riddles
+//  or the sweeps on days 9 and 12. Ideally we could just clear this at the
+//  start of each day but there's no day initialization script. Instead we add
+//  our day-specific code to Robin's cave (room 140), similar to Sierra's patch
+//  and later versions.
+//
+// Applies to: English PC Floppy 1.0
+// Responsible method: localproc_001a in script 140
+// Fixes bug #5036
+static const uint16 longbowSignatureGreenManForestSweepFix[] = {
+	0x89, SIG_MAGICDWORD, 0x82,     // lsg 82 [ day ]
+	0x35, 0x01,                     // ldi 01
+	0x1a,                           // eq?
+	0x30, SIG_UINT16(0x0019),       // bnt 0019 [ skip horn init ]
+	0x38, SIG_SELECTOR16(has),      // pushi has
+	0x78,                           // push1
+	0x78,                           // push1
+	0x81, 0x00,                     // lag 00
+	0x4a, 0x06,                     // send 06 [ ego has: 1 ]
+	0x18,                           // not
+	0x30, SIG_UINT16(0x000c),       // bnt 000c [ skip horn init ]
+	0x39, SIG_SELECTOR8(init),      // pushi init
+	0x76,                           // push0
+	0x38, SIG_ADDTOOFFSET(+2),      // pushi stopUpd
+	0x76,                           // push0
+	0x72, SIG_UINT16(0x19b2),       // lofsa horn
+	0x4a, 0x08,                     // send 08 [ horn init: stopUpd: ]
+	0x89, 0x7e,                     // lsg 7e
+	0x35, 0x00,                     // ldi 00
+	0x1a,                           // eq?
+	0x2e, SIG_UINT16(0005),         // bt 0005
+	SIG_ADDTOOFFSET(+19),
+	0x39, SIG_SELECTOR8(init),      // push init
+	0x76,                           // push0
+	0x38, SIG_ADDTOOFFSET(+2),      // pushi stopUpd
+	0x76,                           // push0
+	0x72, SIG_UINT16(0x1912),       // lofsa bow
+	SIG_END
+};
+
+static const uint16 longbowPatchGreenManForestSweepFix[] = {
+	0x39, 0x07,                     // pushi 07
+	0x81, 0x82,                     // lag 82 [ day ]
+	0x22,                           // lt?
+	0x31, 0x06,                     // bnt 06
+	0x60,                           // pprev  [ day ]
+	0x35, 0x0b,                     // ldi 0b
+	0x1c,                           // ne?
+	0x2f, 0x02,                     // bt 02
+	0xa1, 0x89,                     // sag 89 [ sweep-count = 0 if day <= 7 or day == 11 ]
+	0x81, 0x82,                     // lag 82 [ day ]
+	0x78,                           // push1
+	0x1a,                           // eq?
+	0x31, 0x10,                     // bnt 10 [ skip horn init ]
+	0x38, PATCH_SELECTOR16(has),    // pushi has
+	0x78,                           // push1
+	0x78,                           // push1
+	0x81, 0x00,                     // lag 00
+	0x4a, 0x06,                     // send 06 [ ego has: 1 ]
+	0x2f, 0x05,                     // bt 05 [ skip horn init ]
+	0x72, PATCH_UINT16(0x19b2),     // lofsa horn
+	0x33, 0x1a,                     // jmp 1c [ continue horn init ]
+	0x81, 0x7e,                     // lag 7e
+	0x31, 0x08,                     // bnt 08
+	PATCH_ADDTOOFFSET(+19),
+	0x72, PATCH_UINT16(0x1912),     // lofsa bow
+	0x39, PATCH_SELECTOR8(init),    // push init
+	0x76,                           // push0
+	0x38, PATCH_GETORIGINALUINT16(+25), // pushi stopUpd
+	0x76,                           // push0
+	PATCH_END
+};
+
+//          script, description,                                      signature                                patch
 static const SciScriptPatcherEntry longbowSignatures[] = {
-	{  true,   150, "day 5/6 camp sunset fix",                     2, longbowSignatureCampSunsetFix,     longbowPatchCampSunsetFix },
-	{  true,   150, "day 7 tuck net fix",                          1, longbowSignatureTuckNetFix,        longbowPatchTuckNetFix },
-	{  true,   210, "hand code crash",                             5, longbowSignatureShowHandCode,      longbowPatchShowHandCode },
-	{  true,   225, "arithmetic berry bush fix",                   1, longbowSignatureBerryBushFix,      longbowPatchBerryBushFix },
-	{  true,   250, "day 5/6 rescue flag fix",                     1, longbowSignatureRescueFlagFix,     longbowPatchRescueFlagFix },
-	{  true,   260, "day 5/6 town map sunset fix",                 1, longbowSignatureTownMapSunsetFix,  longbowPatchTownMapSunsetFix },
-	{  true,   320, "day 8 archer pathfinding workaround",         1, longbowSignatureArcherPathfinding, longbowPatchArcherPathfinding },
-	{  true,   350, "day 9 cobbler hut fix",                      10, longbowSignatureCobblerHut,        longbowPatchCobblerHut },
-	{  true,   530, "amiga pub fix",                               1, longbowSignatureAmigaPubFix,       longbowPatchAmigaPubFix },
+	{  true,   140, "green man riddles and forest sweep fix",      1, longbowSignatureGreenManForestSweepFix,  longbowPatchGreenManForestSweepFix },
+	{  true,   150, "day 5/6 camp sunset fix",                     2, longbowSignatureCampSunsetFix,           longbowPatchCampSunsetFix },
+	{  true,   150, "day 7 tuck net fix",                          1, longbowSignatureTuckNetFix,              longbowPatchTuckNetFix },
+	{  true,   210, "hand code crash",                             5, longbowSignatureShowHandCode,            longbowPatchShowHandCode },
+	{  true,   225, "arithmetic berry bush fix",                   1, longbowSignatureBerryBushFix,            longbowPatchBerryBushFix },
+	{  true,   250, "day 5/6 rescue flag fix",                     1, longbowSignatureRescueFlagFix,           longbowPatchRescueFlagFix },
+	{  true,   260, "day 5/6 town map sunset fix",                 1, longbowSignatureTownMapSunsetFix,        longbowPatchTownMapSunsetFix },
+	{  true,   320, "day 8 archer pathfinding workaround",         1, longbowSignatureArcherPathfinding,       longbowPatchArcherPathfinding },
+	{  true,   350, "day 9 cobbler hut fix",                      10, longbowSignatureCobblerHut,              longbowPatchCobblerHut },
+	{  true,   530, "amiga pub fix",                               1, longbowSignatureAmigaPubFix,             longbowPatchAmigaPubFix },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
