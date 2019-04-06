@@ -67,6 +67,8 @@ protected:
 	virtual void textPageBreak();
 	void displayWaitButton();
 
+	void convertString(char *str);
+
 	char *_dialogueBuffer;
 
 	char *_tempString1;

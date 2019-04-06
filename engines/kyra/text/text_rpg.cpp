@@ -116,6 +116,7 @@ void TextDisplayer_rpg::removePageBreakFlag() {
 }
 
 void TextDisplayer_rpg::displayText(char *str, ...) {
+	convertString(str);
 	_printFlag = false;
 
 	_lineWidth = 0;
@@ -752,6 +753,27 @@ void TextDisplayer_rpg::displayWaitButton() {
 	_screen->updateScreen();
 	_vm->_dialogueButtonWidth = 95;
 	SWAP(_vm->_dialogueButtonLabelColor1, _vm->_dialogueButtonLabelColor2);
+}
+
+void TextDisplayer_rpg::convertString(char *str) {
+	static const char convertTable_EOB2_Amiga_DE[] = {
+		'\x84', '\x7F', '\x8E', '\x7F', '\x81', '\x7D', '\x9A', '\x7D', '\x94', '\x7E', '\x99', '\x7E', '\0', '\0'
+	};
+
+	const char *table = 0;
+
+	if (_vm->game() == GI_EOB2 && _vm->gameFlags().platform == Common::kPlatformAmiga && _vm->gameFlags().lang == Common::DE_DEU)
+		table = convertTable_EOB2_Amiga_DE;
+
+	if (!table)
+		return;
+
+	for (; *str; ++str) {
+		for (const char *c = table; *c; c += 2) {
+			if ((*str) == c[0])
+				*str = c[1];
+		}
+	}	
 }
 
 } // End of namespace Kyra
