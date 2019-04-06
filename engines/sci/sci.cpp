@@ -387,24 +387,6 @@ Common::Error SciEngine::run() {
 
 	// Show any special warnings for buggy scripts with severe game bugs,
 	// which have been patched by Sierra
-	if (getGameId() == GID_LONGBOW) {
-		// Longbow 1.0 has a buggy script which prevents the game
-		// from progressing during the Green Man riddle sequence.
-		// A patch for this buggy script has been released by Sierra,
-		// and is necessary to complete the game without issues.
-		// The patched script is included in Longbow 1.1.
-		// Refer to bug #3036609.
-		Resource *buggyScript = _resMan->findResource(ResourceId(kResourceTypeScript, 180), 0);
-
-		if (buggyScript && (buggyScript->size() == 12354 || buggyScript->size() == 12362)) {
-			showScummVMDialog(_("A known buggy game script has been detected, which could "
-			                  "prevent you from progressing later on in the game, during "
-			                  "the sequence with the Green Man's riddles. Please, apply "
-			                  "the latest patch for this game by Sierra to avoid possible "
-			                  "problems."));
-		}
-	}
-
 	if (getGameId() == GID_KQ7 && ConfMan.getBool("subtitles")) {
 		showScummVMDialog(_("Subtitles are enabled, but subtitling in King's"
 						  " Quest 7 was unfinished and disabled in the release"
