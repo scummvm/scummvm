@@ -608,7 +608,7 @@ void CryOmni3DEngine_Versailles::changeLevel(int level) {
 		}
 		// TODO: countdown
 		_inventory.clear();
-	} else if (_currentLevel <= 2) {
+	} else if (_currentLevel <= 3) {
 		// TODO: remove this when we implemented all levels
 	} else {
 		error("New level %d is not implemented (yet)", level);
@@ -1190,9 +1190,7 @@ int CryOmni3DEngine_Versailles::handleWarp() {
 
 bool CryOmni3DEngine_Versailles::handleWarpMouse(unsigned int *actionId,
         unsigned int movingCursor) {
-	PlaceStateActionKey mask = PlaceStateActionKey(_currentPlaceId, _placeStates[_currentPlaceId].state,
-	                           *actionId);
-	*actionId = _actionMasks.getVal(mask, *actionId);
+	fixActionId(actionId);
 
 	if (getCurrentMouseButton() == 2 ||
 	        getNextKey().keycode == Common::KEYCODE_SPACE) {
@@ -1238,6 +1236,44 @@ bool CryOmni3DEngine_Versailles::handleWarpMouse(unsigned int *actionId,
 		setCursor(45);
 	}
 	return false;
+}
+
+void CryOmni3DEngine_Versailles::fixActionId(unsigned int *actionId) const {
+	PlaceStateActionKey mask = PlaceStateActionKey(_currentPlaceId, _placeStates[_currentPlaceId].state,
+	                           *actionId);
+	Common::HashMap<PlaceStateActionKey, unsigned int>::const_iterator it = _actionMasks.find(mask);
+	if (it != _actionMasks.end()) {
+		*actionId = it->_value;
+		return;
+	}
+
+	// Special case for level 3 taking dialogs variables into account
+	if (_currentLevel == 3) {
+		if (_dialogsMan["{LE JOUEUR-A-TENTE-OUVRIR-PETITE-PORTE}"] == 'N') {
+			if (*actionId == 13060) {
+				*actionId = 23060;
+			} else if (*actionId == 13100) {
+				if (currentGameTime() != 4) {
+					*actionId = 23100;
+				}
+			} else if (*actionId == 13130) {
+				*actionId = 23130;
+			} else if (*actionId == 13150) {
+				*actionId = 23150;
+			}
+		} else if (_dialogsMan["{JOUEUR-POSSEDE-CLE}"] == 'Y') {
+			if (*actionId == 13100) {
+				if (currentGameTime() != 4) {
+					*actionId = 23100;
+				}
+			} else if (*actionId == 13130) {
+				*actionId = 23130;
+			} else if (*actionId == 13150) {
+				*actionId = 23150;
+			}
+
+		}
+	}
 }
 
 void CryOmni3DEngine_Versailles::animateWarpTransition(const Transition *transition) {

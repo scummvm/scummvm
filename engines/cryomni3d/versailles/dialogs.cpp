@@ -64,7 +64,7 @@ bool CryOmni3DEngine_Versailles::preprocessDialog(const Common::String &sequence
 	        _dialogsMan["CROISSY-ACCEPTE-TEXTE"] == 'Y' &&
 	        (!_inventory.inInventoryByNameID(121) || !_inventory.inInventoryByNameID(119) ||
 	         !_inventory.inInventoryByNameID(115) ||
-	         _gameVariables[GameVariables::kGotMedaillesSolution] == 0)) {
+	         _gameVariables[GameVariables::kGotMedalsSolution] == 0)) {
 		displayMessageBoxWarp(18);
 		_gameVariables[GameVariables::kWarnedIncomplete] = 1;
 		return 0;
@@ -116,18 +116,18 @@ void CryOmni3DEngine_Versailles::postprocessDialog(const Common::String &sequenc
 		if (currentGameTime() == 1 && _dialogsMan["LULLY-DONNE-MISSION1-JOUEUR"] == 'Y') {
 			setGameTime(2, 3);
 		}
-		if (!_gameVariables[GameVariables::kGotMedaillesSolution] &&
+		if (!_gameVariables[GameVariables::kGotMedalsSolution] &&
 		        _dialogsMan["MONSIEUR-DONNE-SOLUTION-MEDAILLES"] == 'Y') {
 			playInGameVideo("32M_MR2");
-			_gameVariables[GameVariables::kGotMedaillesSolution] = 1;
+			_gameVariables[GameVariables::kGotMedalsSolution] = 1;
 		}
-		if (!_gameVariables[GameVariables::kCollectePartition] &&
+		if (!_gameVariables[GameVariables::kDecipherScore] &&
 		        _dialogsMan["LULLY-DIT-CHAT-PENDU-JOUEUR"] == 'Y') {
-			_gameVariables[GameVariables::kCollectePartition] = 1;
+			_gameVariables[GameVariables::kDecipherScore] = 1;
 			collectObject(118);
 			setGameTime(3, 3);
 		}
-		if (currentGameTime() == 1 && _dialogsMan["CROISSY-ACCEPTE-TEXTE"] == 'Y') {
+		if (currentGameTime() == 3 && _dialogsMan["CROISSY-ACCEPTE-TEXTE"] == 'Y') {
 			setGameTime(4, 3);
 		}
 		if (_dialogsMan["{LEVEL3_FINI}"] == 'Y') {

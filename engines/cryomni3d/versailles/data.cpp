@@ -552,30 +552,29 @@ void CryOmni3DEngine_Versailles::initPlacesStates() {
 		SET_PLACE_STATE(14, nullptr, FILTER_EVENT(2, 14), nullptr);
 	} else if (_currentLevel == 3) {
 		_placeStates.resize(25);
-		// TODO: implement functions
 		SET_PLACE_STATE(1, nullptr, nullptr, "VS35");
 		SET_PLACE_STATE(2, nullptr, nullptr, "VS40");
-		SET_PLACE_STATE(3, nullptr, nullptr, "VS40");
+		SET_PLACE_STATE(3, nullptr, FILTER_EVENT(3, 3), "VS40");
 		SET_PLACE_STATE(4, nullptr, nullptr, "VS36");
 		SET_PLACE_STATE(5, nullptr, nullptr, "VS36");
 		SET_PLACE_STATE(6, nullptr, nullptr, "VS30");
 		SET_PLACE_STATE(7, nullptr, nullptr, "VS30");
 		SET_PLACE_STATE(8, nullptr, nullptr, "VS30");
 		SET_PLACE_STATE(9, nullptr, nullptr, "VS39");
-		SET_PLACE_STATE(10, nullptr, nullptr, "VS28");
+		SET_PLACE_STATE(10, nullptr, FILTER_EVENT(3, 10), "VS28");
 		SET_PLACE_STATE(11, nullptr, nullptr, "VS28");
 		SET_PLACE_STATE(12, nullptr, nullptr, "VS30");
-		SET_PLACE_STATE(13, nullptr, nullptr, "VS27");
+		SET_PLACE_STATE(13, nullptr, FILTER_EVENT(3, 13), "VS27");
 		SET_PLACE_STATE(14, nullptr, nullptr, "VS26");
-		SET_PLACE_STATE(15, nullptr, nullptr, "VS25");
+		SET_PLACE_STATE(15, nullptr, FILTER_EVENT(3, 15), "VS25");
 		SET_PLACE_STATE(16, nullptr, nullptr, "VS24");
-		SET_PLACE_STATE(17, nullptr, nullptr, "VS25");
-		SET_PLACE_STATE(18, nullptr, nullptr, nullptr);
-		SET_PLACE_STATE(19, nullptr, nullptr, "VS26");
-		SET_PLACE_STATE(20, nullptr, nullptr, nullptr);
+		SET_PLACE_STATE(17, nullptr, FILTER_EVENT(3, 17), "VS25");
+		SET_PLACE_STATE(18, nullptr, FILTER_EVENT(3, 18), nullptr);
+		SET_PLACE_STATE(19, nullptr, FILTER_EVENT(3, 19), "VS26");
+		SET_PLACE_STATE(20, nullptr, FILTER_EVENT(3_5, 20), nullptr);
 		SET_PLACE_STATE(21, nullptr, nullptr, "VS28");
-		SET_PLACE_STATE(22, nullptr, nullptr, "VS26");
-		SET_PLACE_STATE(23, nullptr, nullptr, nullptr);
+		SET_PLACE_STATE(22, nullptr, FILTER_EVENT(3, 22), "VS26");
+		SET_PLACE_STATE(23, nullptr, FILTER_EVENT(3, 23), nullptr);
 		SET_PLACE_STATE(24, nullptr, nullptr, "VS30");
 	} else if (_currentLevel == 4) {
 		_placeStates.resize(18);
