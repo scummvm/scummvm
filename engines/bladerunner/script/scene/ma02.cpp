@@ -55,16 +55,16 @@ void SceneScriptMA02::InitializeScene() {
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxAPRTAMB5, 12, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED5,   25, 0, 1);
-	Ambient_Sounds_Add_Sound( 72,  5,  30,  5,  5, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound( 73,  5,  30,  5,  5, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound( 74,  5,  30,  5,  5, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(375, 10,  60, 20, 20,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(376, 10,  60, 20, 20,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound( 87, 10,  60, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound( 68, 60, 180, 14, 14,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound( 69, 60, 180, 14, 14,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP2,   5,  30,  5,  5, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP3,   5,  30,  5,  5, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP4,   5,  30,  5,  5, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 10,  60, 20, 20,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 10,  60, 20, 20,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSIREN2,  10,  60, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2B,  60, 180, 14, 14,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN3A,  60, 180, 14, 14,    0,   0, -101, -101, 0, 0);
 	if (isPhoneRinging()) {
-		Ambient_Sounds_Add_Sound(403, 3, 3, 27, 27, -100, -100, -100, -100, 99, 0);
+		Ambient_Sounds_Add_Sound(kSfxVIDFONE1, 3, 3, 27, 27, -100, -100, -100, -100, 99, 0);
 	}
 
 	if ( Global_Variable_Query(kVariableChapter) == 5

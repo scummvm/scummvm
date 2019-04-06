@@ -39,13 +39,13 @@ void SceneScriptPS04::InitializeScene() {
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(0);
 	Ambient_Sounds_Add_Looping_Sound(kSfxPSAMB6, 16, 1, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxRTONE3, 50, 1, 1);
-	Ambient_Sounds_Add_Sound(47, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(48, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(49, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(50, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(51, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(52, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(53, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCANNER1, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCANNER2, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCANNER3, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCANNER4, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCANNER5, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCANNER6, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCANNER7, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
 	Scene_Loop_Start_Special(0, 0, 0);
 	Scene_Loop_Set_Default(1);
 }

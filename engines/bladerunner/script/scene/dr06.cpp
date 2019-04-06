@@ -39,8 +39,8 @@ void SceneScriptDR06::InitializeScene() {
 	}
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxSKINBED1, 25, 0, 1);
-	Ambient_Sounds_Add_Sound(73, 5, 60, 20, 20, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(74, 5, 60, 20, 20, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP3, 5, 60, 20, 20, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP4, 5, 60, 20, 20, -100, 100, -101, -101, 0, 0);
 
 	if (Game_Flag_Query(kFlagDR06JesterActive)) {
 		Overlay_Play("DR06over", 1, true, false, 0);

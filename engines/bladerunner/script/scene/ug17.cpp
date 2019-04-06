@@ -37,9 +37,9 @@ void SceneScriptUG17::InitializeScene() {
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxWINDLOOP, 100, 1, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxRUMLOOP1,  50, 1, 1);
-	Ambient_Sounds_Add_Sound(72, 5, 80, 10, 11, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(73, 5, 80, 10, 11, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(74, 5, 80, 10, 11, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP2, 5, 80, 10, 11, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP3, 5, 80, 10, 11, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP4, 5, 80, 10, 11, -100, 100, -101, -101, 0, 0);
 
 	Overlay_Play("UG17OVER", 0, true, false, 0);
 }

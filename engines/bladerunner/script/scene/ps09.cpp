@@ -37,9 +37,9 @@ void SceneScriptPS09::InitializeScene() {
 	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED5X,  50, 0, 0);
 	Ambient_Sounds_Add_Looping_Sound(kSfxPRISAMB1, 30, 0, 0);
 	Ambient_Sounds_Add_Looping_Sound(kSfxPRISAMB3, 30, 0, 0);
-	Ambient_Sounds_Add_Sound(125, 15, 60, 7, 10, 100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(126, 25, 60, 7, 10, 100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(127, 25, 60, 7, 10, 100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPRISSLM1, 15, 60, 7, 10, 100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPRISSLM2, 25, 60, 7, 10, 100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxPRISSLM3, 25, 60, 7, 10, 100, 100, -101, -101, 0, 0);
 
 	if (!Game_Flag_Query(kFlagGrigorianArrested)) {
 		Actor_Put_In_Set(kActorGrigorian, kSetPS09);

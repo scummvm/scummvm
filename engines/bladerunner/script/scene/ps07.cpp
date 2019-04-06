@@ -29,17 +29,17 @@ void SceneScriptPS07::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0, 610, 0, 639, 479, 1);
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(false);
 	Ambient_Sounds_Add_Looping_Sound(kSfxLABAMB3, 80, 0, 1);
-	Ambient_Sounds_Add_Sound(142, 5, 20, 5, 10, -70, 70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(146, 5, 30, 5, 10, -70, 70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(147, 2, 20, 5, 10, -70, 70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(148, 2, 10, 10, 20, -70, 70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(149, 2, 10, 10, 20, -70, 70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(150, 2, 10, 10, 20, -70, 70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(151, 2, 10, 10, 20, -70, 70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(152, 2, 30, 10, 15, -70, 70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(153, 2, 20, 10, 15, -70, 70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(154, 5, 20, 10, 15, -70, 70, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(145, 5, 30, 5, 8, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTUBES1,   5, 20,  5, 10,  -70,  70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC1, 5, 30,  5, 10,  -70,  70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC2, 2, 20,  5, 10,  -70,  70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC3, 2, 10, 10, 20,  -70,  70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC4, 2, 10, 10, 20,  -70,  70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC5, 2, 10, 10, 20,  -70,  70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC6, 2, 10, 10, 20,  -70,  70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC7, 2, 30, 10, 15,  -70,  70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC8, 2, 20, 10, 15,  -70,  70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC9, 5, 20, 10, 15,  -70,  70, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTUBES4,   5, 30,  5,  8, -100, 100, -101, -101, 0, 0);
 }
 
 void SceneScriptPS07::SceneLoaded() {

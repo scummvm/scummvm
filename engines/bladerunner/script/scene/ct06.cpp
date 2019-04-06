@@ -46,16 +46,16 @@ void SceneScriptCT06::InitializeScene() {
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Sound(67,  80, 180, 16, 25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(68,  50, 180, 16, 25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(379, 50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(380, 70, 180, 50, 100, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(377, 60, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2A,  80, 180, 16,  25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2B,  50, 180, 16,  25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDR2,  50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDR3,  70, 180, 50, 100, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 60, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 	if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT06HideAtFreeSlotA) {
-		Ambient_Sounds_Add_Sound(196, 1, 5, 25, 25, -100, 100, -101, -101, 0, 0);
-		Ambient_Sounds_Add_Sound(197, 1, 5, 25, 25, -100, 100, -101, -101, 0, 0);
-		Ambient_Sounds_Add_Sound(198, 1, 5, 25, 25, -100, 100, -101, -101, 0, 0);
-		Ambient_Sounds_Add_Sound(199, 1, 5, 25, 25, -100, 100, -101, -101, 0, 0);
+		Ambient_Sounds_Add_Sound(kSfxZUBWLK1, 1, 5, 25, 25, -100, 100, -101, -101, 0, 0);
+		Ambient_Sounds_Add_Sound(kSfxZUBWLK2, 1, 5, 25, 25, -100, 100, -101, -101, 0, 0);
+		Ambient_Sounds_Add_Sound(kSfxZUBWLK3, 1, 5, 25, 25, -100, 100, -101, -101, 0, 0);
+		Ambient_Sounds_Add_Sound(kSfxZUBWLK4, 1, 5, 25, 25, -100, 100, -101, -101, 0, 0);
 	}
 }
 

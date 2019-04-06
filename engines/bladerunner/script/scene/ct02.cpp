@@ -53,10 +53,10 @@ void SceneScriptCT02::InitializeScene() {
 	Ambient_Sounds_Add_Looping_Sound(kSfxKTCHRAIN, 25,   0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTAMBR1,  38, 100, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxBOILPOT2, 32,   0, 1);
-	Ambient_Sounds_Add_Sound(61, 10, 30, 8, 8, 100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(62, 10, 30, 7, 7, 100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(63, 10, 30, 8, 8, 100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(64, 10, 30, 7, 7, 100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxDISH1, 10, 30, 8, 8, 100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxDISH2, 10, 30, 7, 7, 100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxDISH3, 10, 30, 8, 8, 100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxDISH4, 10, 30, 7, 7, 100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 17, 19, 100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 17, 19, 100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 17, 19, 100, 100, -101, -101, 1, 1);

@@ -36,9 +36,9 @@ void SceneScriptHF07::InitializeScene() {
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxDRAMB4,   100, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxFACTAMB2,  32, 0, 1);
-	Ambient_Sounds_Add_Sound(303, 5, 40, 20, 33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(304, 5, 40, 20, 33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(305, 5, 40, 20, 33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN1, 5, 40, 20, 33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN2, 5, 40, 20, 33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN3, 5, 40, 20, 33, -100, 100, -101, -101, 0, 0);
 
 	if (Game_Flag_Query(kFlagHF07Hole)) {
 		Scene_Loop_Set_Default(2);

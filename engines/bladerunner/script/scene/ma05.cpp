@@ -41,20 +41,20 @@ void SceneScriptMA05::InitializeScene() {
 		Setup_Scene_Information(-7207.0f, 956.17f, 1564.0f, 0);
 	}
 	Scene_Exit_Add_2D_Exit(kMA05ExitMA04, 432, 21, 471, 226, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxROOFRAN1, 90, 0, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxROOFRAN1, 90,    0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxROOFAIR1, 40, -100, 1);
-	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 50, 60, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 0, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 50,   60, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Sound(68, 10, 100, 25, 50, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(69, 10, 100, 25, 50, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(375, 10, 70, 50, 100, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(376, 10, 70, 50, 100, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(87, 10, 70, 25, 25, -100, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2B,  10, 100, 25,  50,    0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN3A,  10, 100, 25,  50,    0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 10,  70, 50, 100,    0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 10,  70, 50, 100,    0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSIREN2,  10,  70, 25,  25, -100, 0, -101, -101, 0, 0);
 	if (isPhoneRinging()) {
-		Ambient_Sounds_Add_Sound(403, 3, 3, 32, 32, 100, 100, -101, -101, 0, 0);
+		Ambient_Sounds_Add_Sound(kSfxVIDFONE1, 3, 3, 32, 32, 100, 100, -101, -101, 0, 0);
 	}
 	if (Global_Variable_Query(kVariableChapter) != 2 && Global_Variable_Query(kVariableChapter) != 3) {
 		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kMA05LoopInshot, false);

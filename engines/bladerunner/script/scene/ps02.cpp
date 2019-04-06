@@ -33,7 +33,7 @@ void SceneScriptPS02::InitializeScene() {
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(0);
 	Ambient_Sounds_Add_Looping_Sound(kSfxESPLOOP1, 20, 1, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxELEAMB3,  20, 1, 1);
-	Ambient_Sounds_Add_Sound(0, 3, 20, 12, 16, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxCROSLOCK, 3, 20, 12, 16, 0, 0, -101, -101, 0, 0);
 
 	Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
 	Scene_Loop_Set_Default(1);

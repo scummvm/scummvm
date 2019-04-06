@@ -36,15 +36,15 @@ void SceneScriptTB05::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(1,  0, 455, 639, 479, 2);
 	Ambient_Sounds_Add_Looping_Sound(kSfxTB5LOOP1, 100, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxTB5LOOP2, 100, 0, 1);
-	Ambient_Sounds_Add_Sound(217, 5, 30, 25, 33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(218, 5, 30, 25, 33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(219, 5, 30, 25, 33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(220, 5, 30, 25, 33, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(146, 2, 30, 20, 25,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(147, 2, 30, 20, 25,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(148, 2, 30, 20, 25,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(149, 2, 30, 20, 25,    0,   0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(151, 2, 30, 20, 25,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHUMMER1,  5, 30, 25, 33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHUMMER2,  5, 30, 25, 33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHUMMER3,  5, 30, 25, 33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHUMMER4,  5, 30, 25, 33, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC1, 2, 30, 20, 25,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC2, 2, 30, 20, 25,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC3, 2, 30, 20, 25,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC4, 2, 30, 20, 25,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxLABMISC6, 2, 30, 20, 25,    0,   0, -101, -101, 0, 0);
 	Scene_Loop_Set_Default(0);
 }
 

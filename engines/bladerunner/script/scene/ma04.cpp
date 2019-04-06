@@ -56,24 +56,24 @@ void SceneScriptMA04::InitializeScene() {
 	} else {
 		Setup_Scene_Information(-7143.0f, 954.0f, 1868.0f, 733);
 	}
-	Scene_Exit_Add_2D_Exit(kMA04ExitMA02, 496, 0, 639, 354, 1);
-	Scene_Exit_Add_2D_Exit(kMA04ExitMA05, 33, 63, 113, 258, 0);
+	Scene_Exit_Add_2D_Exit(kMA04ExitMA02,    496,  0, 639, 354, 1);
+	Scene_Exit_Add_2D_Exit(kMA04ExitMA05,     33, 63, 113, 258, 0);
 	Scene_Exit_Add_2D_Exit(kMA04ExitKitchen, 248, 98, 314, 284, 1);
-	Scene_2D_Region_Add(kMA04RegionPhone, 343, 97, 353, 190);
-	Scene_2D_Region_Add(kMA04RegionBed, 0, 340, 116, 479);
+	Scene_2D_Region_Add(kMA04RegionPhone, 343,  97, 353, 190);
+	Scene_2D_Region_Add(kMA04RegionBed,     0, 340, 116, 479);
 	Ambient_Sounds_Add_Looping_Sound(kSfxAPRTFAN1, 30,   0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 30, -80, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxAPRTAMB5, 12,   0, 1);
-	Ambient_Sounds_Add_Sound(72, 5, 30, 11, 11, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(73, 5, 30, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(74, 5, 30, 12, 12, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(375, 10, 60, 20, 20, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(376, 10, 60, 20, 20, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(87, 10, 60, 16, 16, -100, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(68, 60, 180, 16, 25, 0, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(69, 60, 180, 16, 25, 0, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP2,   5,  30, 11, 11, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP3,   5,  30, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP4,   5,  30, 12, 12, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 10,  60, 20, 20,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 10,  60, 20, 20,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSIREN2,  10,  60, 16, 16, -100,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2B,  60, 180, 16, 25,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN3A,  60, 180, 16, 25,    0,   0, -101, -101, 0, 0);
 	if (isPhoneRinging()) {
-		Ambient_Sounds_Add_Sound(403, 3, 3, 100, 100, 0, 0, 0, 0, 99, 0);
+		Ambient_Sounds_Add_Sound(kSfxVIDFONE1, 3, 3, 100, 100, 0, 0, 0, 0, 99, 0);
 	}
 	Scene_Loop_Set_Default(kMA04LoopMain);
 }

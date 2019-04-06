@@ -42,18 +42,18 @@ void SceneScriptCT03::InitializeScene() {
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1,  50,    1, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTAMBR1,  22, -100, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTRUNOFF, 34, -100, 1);
-	Ambient_Sounds_Add_Sound(68, 10, 40, 33, 50,   0,  0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(69, 10, 40, 33, 50,   0,  0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(61,  3, 30,  8, 10, -100, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(62,  3, 30,  8, 10, -100, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(63,  3, 30,  8, 10, -100, 0, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(64,  3, 30,  8, 10, -100, 0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2B,  10, 40, 33, 50,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN3A,  10, 40, 33, 50,    0,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxDISH1,    3, 30,  8, 10, -100,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxDISH2,    3, 30,  8, 10, -100,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxDISH3,    3, 30,  8, 10, -100,   0, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxDISH4,    3, 30,  8, 10, -100,   0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Sound(376, 10, 60, 33, 50, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(377, 10, 60, 33, 50, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 10, 60, 33, 50, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 10, 60, 33, 50, -100, 100, -101, -101, 0, 0);
 }
 
 void SceneScriptCT03::SceneLoaded() {

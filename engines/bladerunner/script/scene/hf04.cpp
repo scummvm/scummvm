@@ -39,12 +39,12 @@ void SceneScriptHF04::InitializeScene() {
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxBOOLOOP2, 35, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED3,   40, 0, 1);
-	Ambient_Sounds_Add_Sound( 72, 6, 70, 14, 20, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound( 73, 3, 70, 14, 20, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound( 74, 5, 70, 14, 20, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(303, 5, 70, 33, 50, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(304, 5, 70, 33, 50, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(305, 5, 70, 33, 50, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP2, 6, 70, 14, 20, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP3, 3, 70, 14, 20, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSWEEP4, 5, 70, 14, 20, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN1, 5, 70, 33, 50, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN2, 5, 70, 33, 50, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN3, 5, 70, 33, 50, -100, 100, -101, -101, 0, 0);
 
 	if (Game_Flag_Query(kFlagHF04DoorsClosed)) {
 		Scene_Loop_Set_Default(kHF04LoopMainDoorsClosed);
@@ -55,7 +55,7 @@ void SceneScriptHF04::InitializeScene() {
 
 void SceneScriptHF04::SceneLoaded() {
 	if (Game_Flag_Query(kFlagHF04DoorsClosed)) {
-		Unobstacle_Object("PIVOT_WALL#1", true);
+		Unobstacle_Object("PIVOT_WALL#1",  true);
 		Unobstacle_Object("PIVOT_WALL#02", true);
 		Unobstacle_Object("PIVOT_WALL#03", true);
 	} else {

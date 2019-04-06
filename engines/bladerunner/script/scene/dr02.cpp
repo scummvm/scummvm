@@ -46,12 +46,12 @@ void SceneScriptDR02::InitializeScene() {
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 50, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxHUMMER3, 27, 85, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxBIGFAN2, 38, 85, 1);
-	Ambient_Sounds_Add_Sound(378, 2, 50, 33, 100, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(379, 2, 50, 33, 100, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(380, 2, 50, 33, 100, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound( 67, 5, 100, 16, 25, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDR1, 2,  50, 33, 100, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDR2, 2,  50, 33, 100, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxTHNDR3, 2,  50, 33, 100, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN2A, 5, 100, 16,  25, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSPIN1A, 5, 100, 16,  25, -100, 100, -101, -101, 0, 0);
 
-	Ambient_Sounds_Add_Sound( 66, 5, 100, 16, 25, -100, 100, -101, -101, 0, 0);
 	if (Game_Flag_Query(kFlagDR01toDR02)) {
 		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
 		Scene_Loop_Set_Default(1);
