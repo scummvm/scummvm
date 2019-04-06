@@ -1369,6 +1369,7 @@ void DarkMoonEngine::initStaticResource() {
 	_amigaSoundFiles2 = _staticres->loadStrings(kEoB2SoundFilesIngame2, temp);
 	_amigaSoundIndex1 = (const int8*)_staticres->loadRawData(kEoB2SoundIndex1, temp);
 	_amigaSoundIndex2 = _staticres->loadRawData(kEoB2SoundIndex2, temp);
+	_amigaSoundPatch = _staticres->loadRawData(kEoB2MonsterSoundPatchData, _amigaSoundPatchSize);
 
 	static const char *const errorSlotNoNameString[3] = {
 		" You must specify\r a name for your\r save game!",

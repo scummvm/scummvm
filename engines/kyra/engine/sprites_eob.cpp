@@ -88,62 +88,6 @@ uint8 *EoBCoreEngine::loadTownsShape(Common::SeekableReadStream *stream) {
 	return shape;
 }
 
-const uint8 *EoBCoreEngine::loadMonsterProperties(const uint8 *data) {
-	uint8 cmd = *data++;
-	while (cmd != 0xFF) {
-		EoBMonsterProperty *d = &_monsterProps[cmd];
-		d->armorClass = (int8)*data++;
-		d->hitChance = (int8)*data++;
-		d->level = (int8)*data++;
-		d->hpDcTimes = *data++;
-		d->hpDcPips = *data++;
-		d->hpDcBase = *data++;
-		d->attacksPerRound = *data++;
-		d->dmgDc[0].times = *data++;
-		d->dmgDc[0].pips = *data++;
-		d->dmgDc[0].base = (int8)*data++;
-		d->dmgDc[1].times = *data++;
-		d->dmgDc[1].pips = *data++;
-		d->dmgDc[1].base = (int8)*data++;
-		d->dmgDc[2].times = *data++;
-		d->dmgDc[2].pips = *data++;
-		d->dmgDc[2].base = (int8)*data++;
-		d->immunityFlags = READ_LE_UINT16(data);
-		data += 2;
-		d->capsFlags = READ_LE_UINT16(data);
-		data += 2;
-		d->typeFlags = READ_LE_UINT16(data);
-		data += 2;
-		d->experience = READ_LE_UINT16(data);
-		data += 2;
-
-		d->u30 = *data++;
-		d->sound1 = (int8)*data++;
-		d->sound2 = (int8)*data++;
-		d->numRemoteAttacks = *data++;
-
-		if (*data++ != 0xFF) {
-			d->remoteWeaponChangeMode = *data++;
-			d->numRemoteWeapons = *data++;
-
-			for (int i = 0; i < d->numRemoteWeapons; i++) {
-				d->remoteWeapons[i] = (int8)*data;
-				data += 2;
-			}
-		}
-
-		d->tuResist = (int8)*data++;
-		d->dmgModifierEvade = *data++;
-
-		for (int i = 0; i < 3; i++)
-			d->decorations[i] = *data++;
-
-		cmd = *data++;
-	}
-
-	return data;
-}
-
 const uint8 *EoBCoreEngine::loadActiveMonsterData(const uint8 *data, int level) {
 	for (uint8 p = *data++; p != 0xFF; p = *data++) {
 		uint8 v = *data++;
