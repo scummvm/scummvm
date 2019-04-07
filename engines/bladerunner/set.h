@@ -93,8 +93,8 @@ public:
 	void objectSetIsTarget(int objectId, bool isTarget);
 	const Common::String &objectGetName(int objectId) const;
 
-	void setWalkboxStepSound(int walkboxId, int soundId);
-	void setFoodstepSoundOverride(int soundId);
+	void setWalkboxStepSound(int walkboxId, int floorType);
+	void setFoodstepSoundOverride(int floorType);
 	void resetFoodstepSoundOverride();
 
 	int getWalkboxSoundWalkLeft(int walkboxId) const;

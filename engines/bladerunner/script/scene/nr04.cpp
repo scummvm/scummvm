@@ -297,6 +297,11 @@ void SceneScriptNR04::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptNR04::PlayerWalkedIn() {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Game_Flag_Reset(kFlagNR03toNR04);
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 53.0f, 0.0f, -26.0f, 0, false, false, 0);
 	if (Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)) {
 		Overlay_Play("nr04over", 0, true, false, 0);
@@ -307,6 +312,14 @@ void SceneScriptNR04::PlayerWalkedIn() {
 }
 
 void SceneScriptNR04::PlayerWalkedOut() {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	if (Game_Flag_Query(kFlagNR03McCoyThrownOut)) {
+		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
+		Ambient_Sounds_Remove_All_Looping_Sounds(1);
+		Music_Stop(1);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 void SceneScriptNR04::DialogueQueueFlushed(int a1) {

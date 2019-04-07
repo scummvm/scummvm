@@ -261,12 +261,12 @@ const Common::String &Set::objectGetName(int objectId) const {
 	return _objects[objectId].name;
 }
 
-void Set::setWalkboxStepSound(int walkboxId, int stepSound) {
-	_walkboxStepSound[walkboxId] = stepSound;
+void Set::setWalkboxStepSound(int walkboxId, int floorType) {
+	_walkboxStepSound[walkboxId] = floorType;
 }
 
-void Set::setFoodstepSoundOverride(int soundId) {
-	_footstepSoundOverride = soundId;
+void Set::setFoodstepSoundOverride(int floorType) {
+	_footstepSoundOverride = floorType;
 }
 
 void Set::resetFoodstepSoundOverride() {
@@ -274,48 +274,69 @@ void Set::resetFoodstepSoundOverride() {
 }
 
 int Set::getWalkboxSoundWalkLeft(int walkboxId) const{
-	int soundId;
+	int floorType;
 	if (_footstepSoundOverride >= 0) {
-		soundId = _footstepSoundOverride;
+		floorType = _footstepSoundOverride;
 	} else {
-		soundId = _walkboxStepSound[walkboxId];
+		floorType = _walkboxStepSound[walkboxId];
 	}
 
-	if (soundId == 0) { //stone floor
-		return _vm->_rnd.getRandomNumberRng(160, 164);
+	if (floorType == 0) { //stone floor
+		// one of kSfxCEMENTL1, kSfxCEMENTL2, kSfxCEMENTL3, kSfxCEMENTL4, kSfxCEMENTL5
+		return _vm->_rnd.getRandomNumberRng(kSfxCEMENTL1, kSfxCEMENTL5);
 	}
-	if (soundId == 1) { //gravel floor
-		return _vm->_rnd.getRandomNumberRng(164, 170);
+	if (floorType == 1) { //gravel floor
+#if BLADERUNNER_ORIGINAL_BUGS
+		// A bug?
+		// one of kSfxCEMENTL5, kSfxCEMENTR1, kSfxCEMENTR2, kSfxCEMENTR3, kSfxCEMENTR4, kSfxCEMENTR5, kSfxCEMWETL1
+		return _vm->_rnd.getRandomNumberRng(kSfxCEMENTL5, kSfxCEMWETL1);
+#else
+		// one of kSfxCEMWETL1, kSfxCEMWETL2, kSfxCEMWETL3, kSfxCEMWETL4, kSfxCEMWETL5
+		return _vm->_rnd.getRandomNumberRng(kSfxCEMWETL1, kSfxCEMWETL5);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	}
-	if (soundId == 2) { //wooden floor
-		return _vm->_rnd.getRandomNumberRng(476, 480);
+	if (floorType == 2) { //wooden floor
+		// one of kSfxWOODL1, kSfxWOODL2, kSfxWOODL3, kSfxWOODL4, kSfxWOODL5
+		return _vm->_rnd.getRandomNumberRng(kSfxWOODL1, kSfxWOODL5);
 	}
-	if (soundId == 3) { //metal floor
-		return _vm->_rnd.getRandomNumberRng(466, 470);
+	if (floorType == 3) { //metal floor
+		// one of kSfxMETALL1, kSfxMETALL2, kSfxMETALL3, kSfxMETALL4, kSfxMETALL5
+		return _vm->_rnd.getRandomNumberRng(kSfxMETALL1, kSfxMETALL5);
 	}
 
 	return -1;
 }
 
 int Set::getWalkboxSoundWalkRight(int walkboxId) const {
-	int soundId;
+	int floorType;
 	if (_footstepSoundOverride >= 0) {
-		soundId = _footstepSoundOverride;
+		floorType = _footstepSoundOverride;
 	} else {
-		soundId = _walkboxStepSound[walkboxId];
+		floorType = _walkboxStepSound[walkboxId];
 	}
 
-	if (soundId == 0) { //stone floor
-		return _vm->_rnd.getRandomNumberRng(165, 169);
+	if (floorType == 0) { //stone floor
+		// one of kSfxCEMENTR1, kSfxCEMENTR2, kSfxCEMENTR3, kSfxCEMENTR4, kSfxCEMENTR5
+		return _vm->_rnd.getRandomNumberRng(kSfxCEMENTR1, kSfxCEMENTR5);
 	}
-	if (soundId == 1) { //gravel floor
-		return _vm->_rnd.getRandomNumberRng(169, 175);
+	if (floorType == 1) { //gravel floor
+#if BLADERUNNER_ORIGINAL_BUGS
+		// A bug?
+		// one of kSfxCEMENTR5, kSfxCEMWETL1, kSfxCEMWETL2, kSfxCEMWETL3, kSfxCEMWETL4, kSfxCEMWETL5, kSfxCEMWETR1
+		return _vm->_rnd.getRandomNumberRng(kSfxCEMENTR5, kSfxCEMWETR1);
+#else
+		// one of kSfxCEMWETR1, kSfxCEMWETR2, kSfxCEMWETR3, kSfxCEMWETR4, kSfxCEMWETR5
+		return _vm->_rnd.getRandomNumberRng(kSfxCEMWETR1, kSfxCEMWETR5);
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 	}
-	if (soundId == 2) { //wooden floor
-		return _vm->_rnd.getRandomNumberRng(481, 485);
+	if (floorType == 2) { //wooden floor
+		// one of kSfxWOODR1, kSfxWOODR2, kSfxWOODR3, kSfxWOODR4, kSfxWOODR5
+		return _vm->_rnd.getRandomNumberRng(kSfxWOODR1, kSfxWOODR5);
 	}
-	if (soundId == 3) { //metal floor
-		return _vm->_rnd.getRandomNumberRng(471, 475);
+	if (floorType == 3) { //metal floor
+		// one of kSfxMETALR1, kSfxMETALR2, kSfxMETALR3, kSfxMETALR4, kSfxMETALR5
+		return _vm->_rnd.getRandomNumberRng(kSfxMETALR1, kSfxMETALR5);
 	}
 
 	return -1;

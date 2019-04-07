@@ -523,6 +523,7 @@ bool AIScriptMaggie::UpdateAnimation(int *animation, int *frame) {
 	case kMaggieStateHappyA:
 		*animation = 870;
 		if (_animationFrame == 1) {
+			// one of kSfxDOGBARK1, kSfxDOGBARK3
 			Sound_Play(Random_Query(kSfxDOGBARK1, kSfxDOGBARK3), 50, 0, 0, 50);
 		}
 		_animationFrame++;
