@@ -66,6 +66,13 @@ bool AIScriptHowieLee::Update() {
 	if ( Actor_Query_Goal_Number(kActorHowieLee) == 1
 	 &&  Game_Flag_Query(kFlagCT01BoughtHowieLeeFood)
 	 && !Game_Flag_Query(kFlagMcCoyInChinaTown)
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	// Prevents possibility of Howie Lee from blinking in/out of existence
+	// when the flyout loop is playing
+	// and when McCoy enters and exits the Spinner with the spinner doors animation restored
+	 &&  Player_Query_Current_Scene() != kSceneCT01
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	) {
 		Actor_Set_Goal_Number(kActorHowieLee, 4);
 		return true;

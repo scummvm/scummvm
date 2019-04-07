@@ -25,13 +25,13 @@
 namespace BladeRunner {
 
 enum kCT01Loops {
-	kCT01LoopInshotFromCT12WithSpinner = 0,
-	kCT01LoopInshot                    = 1,
-	kCT01LoopMain                      = 2,
-	kCT01LoopDoorAnim                  = 4,
-	kCT01LoopOutshot                   = 5,
-	kCT01LoopInshotFromCT12NoSpinner   = 6,
-	kCT01LoopMainLoopNoSpinner         = 7
+	kCT01LoopInshotFromCT12WithSpinner = 0, //   0 -  14
+	kCT01LoopInshot                    = 1, //  15 - 194
+	kCT01LoopMain                      = 2, // 195 - 255
+	kCT01LoopDoorAnim                  = 4, // 256 - 315
+	kCT01LoopOutshot                   = 5, // 316 - 435
+	kCT01LoopInshotFromCT12NoSpinner   = 6, // 436 - 450
+	kCT01LoopMainLoopNoSpinner         = 7  // 451 - 511
 };
 
 enum kCT01Exits {
@@ -63,6 +63,21 @@ void SceneScriptCT01::InitializeScene() {
 			}
 		}
 	} else if (Game_Flag_Query(kFlagSpinnerAtCT01)) {
+#if BLADERUNNER_RESTORED_CUT_CONTENT
+		// 0. This scene is not available in chapters 4 and 5
+		// 1. Don't always show the scene; but show it the first time (when kFlagCT01Visited is clear)
+		// 2. Add open/close spinner door animation and sound
+		// 3. Keep walkers from messing about with the scene (popping up or overlapping with landing) until spinner has landed
+		// Note: kFlagSpinnerAtCT01 reset (original) is not handled the same was as in NR01 but it still works
+		if ( Global_Variable_Query(kVariableChapter) < 4
+		    && (!Game_Flag_Query(kFlagCT01Visited) || Random_Query(1, 5) == 1 )
+		){
+			Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kCT01LoopInshot, false);
+			// There's also another flag called kFlagUnpauseGenWalkers
+			// but the usage of that flag seems more obscure and dubious for this purpose
+			Game_Flag_Set(kFlagGenericWalkerWaiting);
+		}
+#endif // BLADERUNNER_RESTORED_CUT_CONTENT
 		Setup_Scene_Information(-530.0f, -6.5f, 241.0f, 506);
 		Game_Flag_Set(kFlagArrivedFromSpinner1);
 	} else {
@@ -94,6 +109,7 @@ void SceneScriptCT01::InitializeScene() {
 	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 20, 40, 33, 50, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDER3, 20, 40, 33, 50, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 20, 40, 33, 50, -100, 100, -101, -101, 0, 0);
+
 	if (Game_Flag_Query(kFlagSpinnerAtCT01)) {
 		Scene_Loop_Set_Default(kCT01LoopMain);
 	} else {
@@ -272,7 +288,13 @@ bool SceneScriptCT01::ClickedOnExit(int exitId) {
 			Game_Flag_Reset(kFlagMcCoyInTyrellBuilding);
 			Game_Flag_Reset(kFlagMcCoyInDNARow);
 			Game_Flag_Reset(kFlagMcCoyInBradburyBuilding);
+#if BLADERUNNER_RESTORED_CUT_CONTENT
+			// Restored spinner door opens/ closes, so we disable this for now
+			// TODO This might be annoying since it slows down the pacing...
+			int spinnerDest = Spinner_Interface_Choose_Dest(kCT01LoopDoorAnim, false);
+#else
 			int spinnerDest = Spinner_Interface_Choose_Dest(-1, false);
+#endif // BLADERUNNER_RESTORED_CUT_CONTENT
 
 			switch (spinnerDest) {
 			case kSpinnerDestinationPoliceStation:
@@ -380,6 +402,16 @@ void SceneScriptCT01::SceneFrameAdvanced(int frame) {
 		Ambient_Sounds_Play_Sound(kSfxCARDOWN3, 40,  99,   0,  0);
 	}
 
+#if BLADERUNNER_RESTORED_CUT_CONTENT
+	if (frame == 136 || frame == 258) {
+		Sound_Play(kSfxSPINOPN4, 100, 80, 80, 50);
+	}
+
+	if (frame == 183 || frame == 303) {
+		Sound_Play(kSfxSPINCLS1, 100, 80, 80, 50);
+	}
+#endif // BLADERUNNER_RESTORED_CUT_CONTENT
+
 	if (frame == 316) {
 		Ambient_Sounds_Play_Sound(kSfxCARUP3B,  50, -50, 100, 99);
 	}
@@ -415,11 +447,19 @@ void SceneScriptCT01::PlayerWalkedIn() {
 		Game_Flag_Reset(kFlagCT02toCT01walk);
 	} else {
 		if (!Game_Flag_Query(kFlagArrivedFromSpinner1)) {
-			Game_Flag_Reset(kFlagArrivedFromSpinner1);
+			Game_Flag_Reset(kFlagArrivedFromSpinner1); // a bug? why reset a flag that is already cleared?
 			return;
 		}
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -330.0f, -6.5f, 221.0f, 0, false, false, 0);
+#if BLADERUNNER_RESTORED_CUT_CONTENT
+		if( Game_Flag_Query(kFlagArrivedFromSpinner1)
+			&& Game_Flag_Query(kFlagGenericWalkerWaiting)
+		) {
+			Game_Flag_Reset(kFlagGenericWalkerWaiting);
+		}
+#endif // BLADERUNNER_RESTORED_CUT_CONTENT
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -314.0f, -6.5f, 326.0f, 0, false, false, 0);
+
 		if (!Game_Flag_Query(kFlagCT01Visited)) {
 			Game_Flag_Set(kFlagCT01Visited);
 			if (!Game_Flag_Query(kFlagDirectorsCut)) {

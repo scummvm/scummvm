@@ -542,7 +542,7 @@ bool AIScriptOfficerGrayford::GoalChanged(int currentGoalNumber, int newGoalNumb
 
 		Actor_Change_Animation_Mode(kActorOfficerGrayford, 43);
 
-		if (Player_Query_Current_Scene() == 28) {
+		if (Player_Query_Current_Scene() == kSceneDR04) {
 			Actor_Says(kActorOfficerGrayford, 170, kAnimationModeTalk);
 		}
 		return true;

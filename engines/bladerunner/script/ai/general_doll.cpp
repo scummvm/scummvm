@@ -73,7 +73,7 @@ void AIScriptGeneralDoll::TimerExpired(int timer) {
 void AIScriptGeneralDoll::CompletedMovementTrack() {
 	switch (Actor_Query_Goal_Number(kActorGeneralDoll)) {
 	case 101:
-		if (Player_Query_Current_Scene() == 6) {
+		if (Player_Query_Current_Scene() == kSceneBB05) {
 			switch (Random_Query(0, 5)) {
 			case 0:
 				Ambient_Sounds_Play_Speech_Sound(kActorGeneralDoll, 0, 80, 0, 0, 0);

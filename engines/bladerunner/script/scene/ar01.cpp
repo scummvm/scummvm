@@ -215,7 +215,11 @@ bool SceneScriptAR01::ClickedOnExit(int exitId) {
 			Game_Flag_Set(kFlagAR01toAR02);
 			Async_Actor_Walk_To_XYZ(kActorMcCoy, -222.0, 0.0, -690.0, 0, false);
 			Set_Enter(kSetAR01_AR02, kSceneAR02);
+#if BLADERUNNER_ORIGINAL_BUGS
+			// Causes the fish dealer to blink out of existence
+			// during the transition to AR02
 			Actor_Set_Goal_Number(kActorFishDealer, 3);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		}
 		return true;
 	}

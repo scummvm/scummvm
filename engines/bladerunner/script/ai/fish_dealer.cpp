@@ -45,16 +45,33 @@ bool AIScriptFishDealer::Update() {
 		Actor_Set_Goal_Number(kActorFishDealer, 400);
 
 		return true;
-	} else if (Player_Query_Current_Scene()
-			|| Actor_Query_Goal_Number(kActorFishDealer) == 2
-			|| Actor_Query_Goal_Number(kActorFishDealer) == 1
-			|| Actor_Query_Goal_Number(kActorFishDealer) == 400) {
+	}
+#if BLADERUNNER_ORIGINAL_BUGS
+	else if (Player_Query_Current_Scene()
+			 || Actor_Query_Goal_Number(kActorFishDealer) == 2
+	         || Actor_Query_Goal_Number(kActorFishDealer) == 1
+	         || Actor_Query_Goal_Number(kActorFishDealer) == 400) {
 		return false;
 	} else {
 		Actor_Set_Goal_Number(kActorFishDealer, 1);
 
 		return true;
 	}
+#else
+	// prevent Fish Dealer from blinking out while McCoy is flying out from Animoid
+	else if (Actor_Query_Goal_Number(kActorFishDealer) == 400
+	         || ( Player_Query_Current_Scene() != kSceneAR01 )) {
+		return false;
+	}
+	else {
+		if (Player_Query_Current_Scene() == kSceneAR01
+		    && Actor_Query_Goal_Number(kActorFishDealer) == 3) {
+			Actor_Set_Goal_Number(kActorFishDealer, 1);
+		}
+		return true;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 }
 
 void AIScriptFishDealer::TimerExpired(int timer) {
@@ -65,7 +82,7 @@ void AIScriptFishDealer::CompletedMovementTrack() {
 	if (Actor_Query_Goal_Number(kActorFishDealer) != 1)
 		return; // false
 
-	Actor_Set_Goal_Number(kActorFishDealer, 99);
+	Actor_Set_Goal_Number(kActorFishDealer, 99); // A bug?
 	Actor_Set_Goal_Number(kActorFishDealer, 1);
 
 	//return true;

@@ -840,7 +840,7 @@ bool Debugger::cmdOverlay(int argc, const char **argv) {
 	}
 
 	if (_vm->_chapters->hasOpenResources()) {
-		chapterIdOverlaysAvailableInt = _vm->_chapters->currentResourceId();
+		chapterIdOverlaysAvailableInt = MIN(_vm->_chapters->currentResourceId(), 3);
 	}
 	if (chapterIdOverlaysAvailableInt == -1) {
 		debugPrintf("No available open resources to load VQAs from.\n Giving up.\n");
@@ -891,11 +891,10 @@ bool Debugger::cmdOverlay(int argc, const char **argv) {
 			const Common::String origSceneName = _vm->_gameInfo->getSceneName(_vm->_scene->_sceneId);
 
 			Common::String origVqaName;
-			int currentResourceId = _vm->_chapters->currentResourceId();
-			if (currentResourceId == 1) {
+			if (chapterIdOverlaysAvailableInt == 1) {
 				origVqaName = Common::String::format("%s.VQA", origSceneName.c_str());
 			} else {
-				origVqaName = Common::String::format("%s_%d.VQA", origSceneName.c_str(), MIN(currentResourceId, 3));
+				origVqaName = Common::String::format("%s_%d.VQA", origSceneName.c_str(), chapterIdOverlaysAvailableInt);
 			}
 
 			if (_vm->_scene->_vqaPlayer != nullptr) {
