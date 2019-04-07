@@ -260,7 +260,7 @@ void ResVmSdlGraphicsManager::notifyVideoExpose() {
 	//updateScreen();
 }
 
-bool ResVmSdlGraphicsManager::notifyMousePosition(Common::Point mouse) {
+bool ResVmSdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
 	transformMouseCoordinates(mouse);
 	// ResidualVM: not use that:
 	//setMousePos(mouse.x, mouse.y);
