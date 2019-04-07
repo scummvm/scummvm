@@ -65,18 +65,22 @@ void SceneScriptCT01::InitializeScene() {
 	} else if (Game_Flag_Query(kFlagSpinnerAtCT01)) {
 #if BLADERUNNER_RESTORED_CUT_CONTENT
 		// 0. This scene is not available in chapters 4 and 5
-		// 1. Don't always show the scene; but show it the first time (when kFlagCT01Visited is clear)
-		// 2. Add open/close spinner door animation and sound
-		// 3. Keep walkers from messing about with the scene (popping up or overlapping with landing) until spinner has landed
+		// 1. Add open/close spinner door animation and sound
+		// 2. Keep walkers from messing about with the scene (popping up or overlapping with landing) until spinner has landed
 		// Note: kFlagSpinnerAtCT01 reset (original) is not handled the same was as in NR01 but it still works
+		// Note 2: Gordo sitting at the diner overlaps with the counter bar in front of him
+		//         so the loop will be prevented from playing when he is there.
 		if ( Global_Variable_Query(kVariableChapter) < 4
-		    && (!Game_Flag_Query(kFlagCT01Visited) || Random_Query(1, 5) == 1 )
+			&& Actor_Query_Which_Set_In(kActorGordo) != kSetCT01_CT12
+		    && Random_Query(1, 3) == 1
 		){
 			Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kCT01LoopInshot, false);
-			// There's also another flag called kFlagUnpauseGenWalkers
-			// but the usage of that flag seems more obscure and dubious for this purpose
-			Game_Flag_Set(kFlagGenericWalkerWaiting);
 		}
+		// Pause generic walkers outside special loop
+		// so that they're always paused when McCoy enters (less chance to collide with him)
+		// There's also another flag called kFlagUnpauseGenWalkers
+		// but the usage of that flag seems more obscure and dubious for this purpose
+		Game_Flag_Set(kFlagGenericWalkerWaiting);
 #endif // BLADERUNNER_RESTORED_CUT_CONTENT
 		Setup_Scene_Information(-530.0f, -6.5f, 241.0f, 506);
 		Game_Flag_Set(kFlagArrivedFromSpinner1);
@@ -452,6 +456,7 @@ void SceneScriptCT01::PlayerWalkedIn() {
 		}
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -330.0f, -6.5f, 221.0f, 0, false, false, 0);
 #if BLADERUNNER_RESTORED_CUT_CONTENT
+		// unpause generic walkers here, less chance to collide with McCOy while he enters the scene
 		if( Game_Flag_Query(kFlagArrivedFromSpinner1)
 			&& Game_Flag_Query(kFlagGenericWalkerWaiting)
 		) {
