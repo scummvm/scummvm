@@ -1847,6 +1847,8 @@ void TransferPartyWiz::convertInventory() {
 				c->inventory[slot] = convertItem(itm);
 			}
 		}
+
+		_vm->recalcArmorClass(i);
 	}
 }
 
