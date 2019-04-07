@@ -2876,6 +2876,7 @@ case $_host_os in
 		add_line_to_config_mk 'RISCOS = 1'
 		append_var LDFLAGS "-L$GCCSDK_INSTALL_ENV/lib"
 		append_var CXXFLAGS "-I$GCCSDK_INSTALL_ENV/include"
+		_pkgconfig=$GCCSDK_INSTALL_ENV/ro-pkg-config
 		_sdlpath=$GCCSDK_INSTALL_ENV/bin
 		_freetypepath=$GCCSDK_INSTALL_ENV/bin
 		_libcurlpath=$GCCSDK_INSTALL_ENV/bin
