@@ -2354,6 +2354,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Larry 3 - German Amiga (from sluicebox, also includes English language)
+	// Game version 1.000, 1991-01-07
+	// Executable scanning reports "1.004.010"
+	{ "lsl3", "",{
+		{ "resource.map", 0, "9d9abcdf2acd1dba9dba6ba6c24835f0", 6984 },
+		{ "resource.001", 0, "17bfd686d59accc3fb3f079ad9278e66", 206673 },
+		{ "resource.002", 0, "17bfd686d59accc3fb3f079ad9278e66", 375899 },
+		{ "resource.003", 0, "17bfd686d59accc3fb3f079ad9278e66", 734462 },
+		{ "resource.004", 0, "17bfd686d59accc3fb3f079ad9278e66", 658874 },
+		{ "resource.005", 0, "17bfd686d59accc3fb3f079ad9278e66", 794252 },
+		AD_LISTEND },
+		Common::DE_DEU, Common::kPlatformAmiga, ADGF_ADDENGLISH, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI) },
+
 	// Larry 3 - English Atari ST
 	// Game version 1.021, 1990-01-27
 	// Int#6.26.90
