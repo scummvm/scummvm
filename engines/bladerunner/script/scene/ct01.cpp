@@ -292,13 +292,14 @@ bool SceneScriptCT01::ClickedOnExit(int exitId) {
 			Game_Flag_Reset(kFlagMcCoyInTyrellBuilding);
 			Game_Flag_Reset(kFlagMcCoyInDNARow);
 			Game_Flag_Reset(kFlagMcCoyInBradburyBuilding);
-#if BLADERUNNER_RESTORED_CUT_CONTENT
-			// Restored spinner door opens/ closes, so we disable this for now
-			// TODO This might be annoying since it slows down the pacing...
-			int spinnerDest = Spinner_Interface_Choose_Dest(kCT01LoopDoorAnim, false);
-#else
+//#if BLADERUNNER_RESTORED_CUT_CONTENT
+//			// Restored spinner door opens/ closes, so we disable this for now
+//			// NOTE: Reverted this cut content since this might be annoying
+//                   as it slows down the pacing...
+//			int spinnerDest = Spinner_Interface_Choose_Dest(kCT01LoopDoorAnim, false);
+//#else
 			int spinnerDest = Spinner_Interface_Choose_Dest(-1, false);
-#endif // BLADERUNNER_RESTORED_CUT_CONTENT
+//#endif // BLADERUNNER_RESTORED_CUT_CONTENT
 
 			switch (spinnerDest) {
 			case kSpinnerDestinationPoliceStation:
