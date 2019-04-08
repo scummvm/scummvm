@@ -138,7 +138,11 @@ bool SceneScriptMA04::ClickedOnExit(int exitId) {
 			if (isPhoneMessageWaiting() || isPhoneRinging()) {
 				Overlay_Remove("MA04OVER");
 			}
+#if BLADERUNNER_ORIGINAL_BUGS
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 955.0f, 1675.0f, 0, false, false, 1);
+#else
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 955.0f, 1627.0f, 0, false, false, 1);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Game_Flag_Set(kFlagMA04toMA05);
 			if (Global_Variable_Query(kVariableChapter) != 2 && Global_Variable_Query(kVariableChapter) != 3) {
 				Async_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 956.17f, 1568.0f, 0, false);

@@ -25,9 +25,9 @@
 namespace BladeRunner {
 
 enum kMA05Loops {
-	kMA05LoopInshot  = 0,
-	kMA05LoopMain    = 1,
-	kMA05LoopSpinner = 3
+	kMA05LoopInshot  = 0, //  0 -  29 // Frame 29 (in Acts 1 and 2 this ties in with Frame 30 of the Loop Main, in Act 5 it ties with frame 60?!)
+	kMA05LoopMain    = 1, // 30 -  90
+	kMA05LoopSpinner = 3  // 91 - 150 // Frame 150 ties in with Frame 30 of Loop Main
 };
 
 enum kMA05Exits {
@@ -38,7 +38,11 @@ void SceneScriptMA05::InitializeScene() {
 	if (Global_Variable_Query(kVariableChapter) != 2 && Global_Variable_Query(kVariableChapter) != 3) {
 		Setup_Scene_Information(-7204.0f, 953.97f, 1651.0f, 0);
 	} else {
+#if BLADERUNNER_ORIGINAL_BUGS
 		Setup_Scene_Information(-7207.0f, 956.17f, 1564.0f, 0);
+#else
+		Setup_Scene_Information(-7199.0f, 953.97f, 1605.0f, 0);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 	Scene_Exit_Add_2D_Exit(kMA05ExitMA04, 432, 21, 471, 226, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxROOFRAN1, 90,    0, 1);
@@ -130,6 +134,12 @@ void SceneScriptMA05::PlayerWalkedIn() {
 		Game_Flag_Set(kFlagChapter1Ended);
 		Player_Gains_Control();
 	}
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	if (Global_Variable_Query(kVariableChapter) == 2 || Global_Variable_Query(kVariableChapter) == 3) {
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 953.97f, 1564.0f, 0, false, false, 1);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	//return false;
 }
 
