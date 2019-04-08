@@ -46,6 +46,7 @@ class QueuingAudioStream;
 
 namespace Common {
 class SeekableReadStream;
+template <class BITSTREAM>
 class Huffman;
 
 class RDFT;
@@ -247,7 +248,7 @@ private:
 
 		Bundle _bundles[kSourceMAX]; ///< Bundles for decoding all data types.
 
-		Common::Huffman *_huffman[16]; ///< The 16 Huffman codebooks used in Bink decoding.
+		Common::Huffman<Common::BitStream32LELSB> *_huffman[16]; ///< The 16 Huffman codebooks used in Bink decoding.
 
 		/** Huffman codebooks to use for decoding high nibbles in color data types. */
 		Huffman _colHighHuffman[16];
