@@ -36,6 +36,7 @@ class QueuingAudioStream;
 }
 
 namespace Common {
+template <class BITSTREAM>
 class Huffman;
 }
 
@@ -105,16 +106,18 @@ private:
 			kPlaneV = 2
 		};
 
+		typedef Common::Huffman<Common::BitStreamMemory16LEMSB> HuffmanDecoder;
+
 		uint16 _macroBlocksW, _macroBlocksH;
 		byte *_yBuffer, *_cbBuffer, *_crBuffer;
 		void decodeMacroBlock(Common::BitStreamMemory16LEMSB *bits, int mbX, int mbY, uint16 scale, uint16 version);
 		void decodeBlock(Common::BitStreamMemory16LEMSB *bits, byte *block, int pitch, uint16 scale, uint16 version, PlaneType plane);
 
 		void readAC(Common::BitStreamMemory16LEMSB *bits, int *block);
-		Common::Huffman *_acHuffman;
+		HuffmanDecoder *_acHuffman;
 
 		int readDC(Common::BitStreamMemory16LEMSB *bits, uint16 version, PlaneType plane);
-		Common::Huffman *_dcHuffmanLuma, *_dcHuffmanChroma;
+		HuffmanDecoder *_dcHuffmanLuma, *_dcHuffmanChroma;
 		int _lastDC[3];
 
 		void dequantizeBlock(int *coefficients, float *block, uint16 scale);

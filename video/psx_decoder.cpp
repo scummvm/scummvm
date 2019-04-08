@@ -438,9 +438,9 @@ PSXStreamDecoder::PSXVideoTrack::PSXVideoTrack(Common::SeekableReadStream *first
 
 	_endOfTrack = false;
 	_curFrame = -1;
-	_acHuffman = new Common::Huffman(0, AC_CODE_COUNT, s_huffmanACCodes, s_huffmanACLengths, s_huffmanACSymbols);
-	_dcHuffmanChroma = new Common::Huffman(0, DC_CODE_COUNT, s_huffmanDCChromaCodes, s_huffmanDCChromaLengths, s_huffmanDCSymbols);
-	_dcHuffmanLuma = new Common::Huffman(0, DC_CODE_COUNT, s_huffmanDCLumaCodes, s_huffmanDCLumaLengths, s_huffmanDCSymbols);
+	_acHuffman = new HuffmanDecoder(0, AC_CODE_COUNT, s_huffmanACCodes, s_huffmanACLengths, s_huffmanACSymbols);
+	_dcHuffmanChroma = new HuffmanDecoder(0, DC_CODE_COUNT, s_huffmanDCChromaCodes, s_huffmanDCChromaLengths, s_huffmanDCSymbols);
+	_dcHuffmanLuma = new HuffmanDecoder(0, DC_CODE_COUNT, s_huffmanDCLumaCodes, s_huffmanDCLumaLengths, s_huffmanDCSymbols);
 }
 
 PSXStreamDecoder::PSXVideoTrack::~PSXVideoTrack() {
@@ -552,7 +552,7 @@ int PSXStreamDecoder::PSXVideoTrack::readDC(Common::BitStreamMemory16LEMSB *bits
 
 	// Version 3 has it stored as huffman codes as a difference from the previous DC value
 
-	Common::Huffman *huffman = (plane == kPlaneY) ? _dcHuffmanLuma : _dcHuffmanChroma;
+	HuffmanDecoder *huffman = (plane == kPlaneY) ? _dcHuffmanLuma : _dcHuffmanChroma;
 
 	uint32 symbol = huffman->getSymbol(*bits);
 	int dc = 0;
