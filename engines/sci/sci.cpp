@@ -311,11 +311,7 @@ Common::Error SciEngine::run() {
 	_kernel->init();
 
 	_features = new GameFeatures(segMan, _kernel);
-	// Only SCI0, SCI01 and SCI1 EGA games used a parser
-	_vocabulary = (getSciVersion() <= SCI_VERSION_1_EGA_ONLY) ? new Vocabulary(_resMan, false) : NULL;
-	// Also, XMAS1990 apparently had a parser too. Refer to https://forums.scummvm.org/viewtopic.php?t=9135
-	if (getGameId() == GID_CHRISTMAS1990)
-		_vocabulary = new Vocabulary(_resMan, false);
+	_vocabulary = hasParser() ? new Vocabulary(_resMan, false) : NULL;
 
 	_gamestate = new EngineState(segMan);
 	_guestAdditions = new GuestAdditions(_gamestate, _features, _kernel);
@@ -777,6 +773,13 @@ bool SciEngine::isBE() const{
 	default:
 		return false;
 	}
+}
+
+bool SciEngine::hasParser() const {
+	// Only SCI0, SCI01 and SCI1 EGA games used a parser, along with
+	//  multilingual LSL3 and SQ3 Amiga which are SCI_VERSION_1_MIDDLE
+	return getSciVersion() <= SCI_VERSION_1_EGA_ONLY ||
+			getGameId() == GID_LSL3 || getGameId() == GID_SQ3;
 }
 
 bool SciEngine::hasMacIconBar() const {
