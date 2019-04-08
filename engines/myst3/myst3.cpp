@@ -872,6 +872,9 @@ void Myst3Engine::loadNode(uint16 nodeID, uint32 roomID, uint32 ageID) {
 	}
 
 	runNodeInitScripts();
+	if (!_node) {
+		return; // The main init script does not load a node
+	}
 
 	// The effects can only be created after running the node init scripts
 	_node->initEffects();
