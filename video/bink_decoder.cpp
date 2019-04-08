@@ -594,7 +594,7 @@ void BinkDecoder::BinkVideoTrack::deinitBundles() {
 
 void BinkDecoder::BinkVideoTrack::initHuffman() {
 	for (int i = 0; i < 16; i++)
-		_huffman[i] = new Common::Huffman(binkHuffmanLengths[i][15], 16, binkHuffmanCodes[i], binkHuffmanLengths[i]);
+		_huffman[i] = new Common::Huffman<Common::BitStream32LELSB>(binkHuffmanLengths[i][15], 16, binkHuffmanCodes[i], binkHuffmanLengths[i]);
 }
 
 byte BinkDecoder::BinkVideoTrack::getHuffmanSymbol(VideoFrame &video, Huffman &huffman) {
