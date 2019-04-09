@@ -72,8 +72,8 @@ bool AIScriptKlein::Update() {
 	 &&  Actor_Query_Friendliness_To_Other(kActorKlein, kActorMcCoy) < 35
 	 && !Game_Flag_Query(kFlagPS07KleinInsulted)
 	) {
-		AI_Countdown_Timer_Reset(kActorKlein, 2);
-		AI_Countdown_Timer_Start(kActorKlein, 2, 5);
+		AI_Countdown_Timer_Reset(kActorKlein, kActorTimerAIScriptCustomTask2);
+		AI_Countdown_Timer_Start(kActorKlein, kActorTimerAIScriptCustomTask2, 5);
 		Game_Flag_Set(kFlagPS07KleinInsulted);
 		return true;
 	}
@@ -91,7 +91,7 @@ bool AIScriptKlein::Update() {
 }
 
 void AIScriptKlein::TimerExpired(int timer) {
-	if (timer == 2) {
+	if (timer == kActorTimerAIScriptCustomTask2) {
 		if ( Game_Flag_Query(kFlagPS07KleinInsulted)
 		 && !Game_Flag_Query(kFlagPS07KleinInsultedTalk)
 		 &&  Actor_Query_Is_In_Current_Set(kActorKlein)

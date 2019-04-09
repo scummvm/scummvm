@@ -111,14 +111,14 @@ bool AIScriptLucy::Update() {
 }
 
 void AIScriptLucy::TimerExpired(int timer) {
-	AI_Countdown_Timer_Reset(kActorLucy, 0);
-	if (timer == 0
-	 && Actor_Query_Goal_Number(kActorLucy) == kGoalLucyGoToHF03
-	) {
-		if (Player_Query_Current_Scene() == kSceneHF03) {
-			AI_Countdown_Timer_Start(kActorLucy, 0, 20);
-		} else {
-			Actor_Set_Goal_Number(kActorLucy, kGoalLucyMoveAround);
+	if (timer == kActorTimerAIScriptCustomTask0) { // rephrased this to be more expandable (if required)
+		AI_Countdown_Timer_Reset(kActorLucy, kActorTimerAIScriptCustomTask0);
+		if(Actor_Query_Goal_Number(kActorLucy) == kGoalLucyGoToHF03) {
+			if (Player_Query_Current_Scene() == kSceneHF03) {
+				AI_Countdown_Timer_Start(kActorLucy, kActorTimerAIScriptCustomTask0, 20);
+			} else {
+				Actor_Set_Goal_Number(kActorLucy, kGoalLucyMoveAround);
+			}
 		}
 	}
 }
@@ -132,8 +132,8 @@ void AIScriptLucy::CompletedMovementTrack() {
 			Actor_Set_Goal_Number(kActorLucy, kGoalLucyReturnToHF03);
 			return; //true;
 		}
-		AI_Countdown_Timer_Reset(kActorLucy, 0);
-		AI_Countdown_Timer_Start(kActorLucy, 0, 30);
+		AI_Countdown_Timer_Reset(kActorLucy, kActorTimerAIScriptCustomTask0);
+		AI_Countdown_Timer_Start(kActorLucy, kActorTimerAIScriptCustomTask0, 30);
 		break;
 
 	case kGoalLucyHF03RunOutPhase1:

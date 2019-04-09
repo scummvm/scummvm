@@ -250,11 +250,23 @@ bool SceneScriptRC01::ClickedOn3DObject(const char *objectName, bool a2) {
 		if (!Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "DOOR LEFT", 48, true, false)) {
 			Actor_Face_Object(kActorMcCoy, "DOOR LEFT", true);
 			if (!Actor_Clue_Query(kActorMcCoy, kClueDoorForced2) && Actor_Query_In_Set(kActorOfficerLeary, kSetRC01) && Global_Variable_Query(kVariableChapter) > 0) {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+				bool officerLearyWasInterrogatingTheCrowd = Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01CrowdInterrogation
+				                                            || Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01WalkToCrowd
+				                                            || Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01ResumeWalkToCrowd;
+#endif // BLADERUNNER_ORIGINAL_BUGS
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyDefault);
 				Actor_Face_Actor(kActorOfficerLeary, kActorMcCoy, true);
 				Actor_Says(kActorOfficerLeary, 0, 12);
 				Actor_Says(kActorMcCoy, 4495, 13);
 				Actor_Clue_Acquire(kActorMcCoy, kClueDoorForced2, true, kActorOfficerLeary);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+				if (officerLearyWasInterrogatingTheCrowd) {
+					Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyRC01ResumeWalkToCrowd);
+				}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			}
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
@@ -292,6 +304,12 @@ bool SceneScriptRC01::ClickedOn3DObject(const char *objectName, bool a2) {
 bool SceneScriptRC01::ClickedOnActor(int actorId) {
 	if (actorId == kActorOfficerLeary && Global_Variable_Query(kVariableChapter) == 1) {
 		if (!Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorOfficerLeary, 36, true, false)) {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+			bool officerLearyWasInterrogatingTheCrowd = Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01CrowdInterrogation
+			                                            || Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01WalkToCrowd
+			                                            || Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01ResumeWalkToCrowd;
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Actor_Face_Actor(kActorMcCoy, kActorOfficerLeary, true);
 			Actor_Face_Actor(kActorOfficerLeary, kActorMcCoy, true);
 			if (Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01WalkToCrowd) {
@@ -344,6 +362,12 @@ bool SceneScriptRC01::ClickedOnActor(int actorId) {
 				}
 				Game_Flag_Reset(kFlagRC01McCoyAndOfficerLearyTalking);
 			}
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+			if (officerLearyWasInterrogatingTheCrowd) {
+				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyRC01ResumeWalkToCrowd);
+			}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		}
 		return true;
 	}
@@ -352,6 +376,12 @@ bool SceneScriptRC01::ClickedOnActor(int actorId) {
 
 bool SceneScriptRC01::ClickedOnItem(int itemId, bool a2) {
 	if (itemId == kItemChromeDebris) {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		bool officerLearyWasInterrogatingTheCrowd = Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01CrowdInterrogation
+		                                            || Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01WalkToCrowd
+		                                            || Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01ResumeWalkToCrowd;
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyDefault);
 		if (!Loop_Actor_Walk_To_Item(kActorMcCoy, kItemChromeDebris, 36, true, false)) {
 			Actor_Face_Item(kActorMcCoy, kItemChromeDebris, true);
@@ -371,6 +401,12 @@ bool SceneScriptRC01::ClickedOnItem(int itemId, bool a2) {
 			I_Sez("JM: He keeps me chuckling non-stop!\n");
 			Loop_Actor_Walk_To_Actor(kActorOfficerLeary, kActorMcCoy, 36, 0, false);
 		}
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		if (officerLearyWasInterrogatingTheCrowd) {
+			Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyRC01ResumeWalkToCrowd);
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		return true;
 	}
 	return false;
@@ -564,6 +600,20 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 
 void SceneScriptRC01::interrogateCrowd() {
 	if (!Game_Flag_Query(kFlagRC01PoliceDone)) {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		bool officerLearyWasInterrogatingTheCrowd = Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01CrowdInterrogation
+		                                            || Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01WalkToCrowd
+		                                            || Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01ResumeWalkToCrowd;
+		if (officerLearyWasInterrogatingTheCrowd
+		    || (Actor_Clue_Query(kActorMcCoy, kClueCrowdInterviewA)
+		        && Actor_Clue_Query(kActorMcCoy, kClueCrowdInterviewB) )
+		) {
+			Actor_Says(kActorMcCoy, 8525, 3); // generic "hmph"
+			return;
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 		if (!Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "BARICADE03", 36, true, false)) {
 			Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyDefault);
 			Actor_Face_Object(kActorMcCoy, "BARICADE03", true);

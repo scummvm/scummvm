@@ -481,7 +481,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	_playerActor = _actors[_gameInfo->getPlayerId()];
 
 	_playerActor->setFPS(15);
-	_playerActor->timerStart(6, 200);
+	_playerActor->timerStart(kActorTimerRunningStaminaFPS, 200);
 
 	_policeMaze = new PoliceMaze(this);
 

@@ -73,18 +73,18 @@ bool AIScriptLeon::Update() {
 }
 
 void AIScriptLeon::TimerExpired(int timer) {
-	if (timer == 0
+	if (timer == kActorTimerAIScriptCustomTask0
 	 && Actor_Query_Goal_Number(kActorLeon) == kGoalLeonLeave
 	) {
-		AI_Countdown_Timer_Reset(kActorLeon, 0);
+		AI_Countdown_Timer_Reset(kActorLeon, kActorTimerAIScriptCustomTask0);
 		Actor_Set_Goal_Number(kActorLeon, kGoalLeonGone);
 	}
 }
 
 void AIScriptLeon::CompletedMovementTrack() {
 	if (Actor_Query_Goal_Number(kActorLeon) == kGoalLeonLeave) {
-		AI_Countdown_Timer_Reset(kActorLeon, 0);
-		AI_Countdown_Timer_Start(kActorLeon, 0, 8);
+		AI_Countdown_Timer_Reset(kActorLeon, kActorTimerAIScriptCustomTask0);
+		AI_Countdown_Timer_Start(kActorLeon, kActorTimerAIScriptCustomTask0, 8);
 		//return true;
 	}
 	//return false;
@@ -111,7 +111,7 @@ void AIScriptLeon::OtherAgentEnteredThisScene(int otherActorId) {
 	if (otherActorId == kActorMcCoy
 	 && Actor_Query_Goal_Number(kActorLeon) == kGoalLeonLeave
 	) {
-		AI_Countdown_Timer_Reset(kActorLeon, 0);
+		AI_Countdown_Timer_Reset(kActorLeon, kActorTimerAIScriptCustomTask0);
 		AI_Movement_Track_Flush(kActorLeon);
 		AI_Movement_Track_Append(kActorLeon, 353, 0);
 		AI_Movement_Track_Repeat(kActorLeon);

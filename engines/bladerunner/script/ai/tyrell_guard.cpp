@@ -46,15 +46,15 @@ bool AIScriptTyrellGuard::Update() {
 
 void AIScriptTyrellGuard::TimerExpired(int timer) {
 	switch (timer) {
-	case 0:
-		AI_Countdown_Timer_Reset(kActorTyrellGuard, 0);
+	case kActorTimerAIScriptCustomTask0:
+		AI_Countdown_Timer_Reset(kActorTyrellGuard, kActorTimerAIScriptCustomTask0);
 		if (Actor_Query_Which_Set_In(kActorMcCoy) == kSetTB02_TB03) {
 			Actor_Set_Goal_Number(kActorTyrellGuard, kGoalTyrellGuardWakeUpAndArrestMcCoy);
 		}
 		break;
 
-	case 1:
-		AI_Countdown_Timer_Reset(kActorTyrellGuard, 1);
+	case kActorTimerAIScriptCustomTask1:
+		AI_Countdown_Timer_Reset(kActorTyrellGuard, kActorTimerAIScriptCustomTask1);
 		Actor_Set_Goal_Number(kActorTyrellGuard, kGoalTyrellGuardArrestMcCoy);
 		break;
 	}
@@ -109,7 +109,7 @@ bool AIScriptTyrellGuard::GoalChanged(int currentGoalNumber, int newGoalNumber) 
 	case kGoalTyrellGuardSleeping:
 		if (currentGoalNumber != newGoalNumber) {
 			Actor_Change_Animation_Mode(kActorTyrellGuard, 55);
-			AI_Countdown_Timer_Start(kActorTyrellGuard, 0, 30);
+			AI_Countdown_Timer_Start(kActorTyrellGuard, kActorTimerAIScriptCustomTask0, 30);
 		}
 		return true;
 
@@ -125,9 +125,9 @@ bool AIScriptTyrellGuard::GoalChanged(int currentGoalNumber, int newGoalNumber) 
 		return true;
 
 	case kGoalTyrellGuardWakeUp:
-		AI_Countdown_Timer_Reset(kActorTyrellGuard, 0);
+		AI_Countdown_Timer_Reset(kActorTyrellGuard, kActorTimerAIScriptCustomTask0);
 		Actor_Says(kActorTyrellGuard, 310, 14);
-		AI_Countdown_Timer_Start(kActorTyrellGuard, 1, 20);
+		AI_Countdown_Timer_Start(kActorTyrellGuard, kActorTimerAIScriptCustomTask1, 20);
 		return true;
 
 	case kGoalTyrellGuardArrestMcCoy:
@@ -139,7 +139,7 @@ bool AIScriptTyrellGuard::GoalChanged(int currentGoalNumber, int newGoalNumber) 
 		return true;
 
 	case kGoalTyrellGuardWait:
-		AI_Countdown_Timer_Reset(kActorTyrellGuard, 1);
+		AI_Countdown_Timer_Reset(kActorTyrellGuard, kActorTimerAIScriptCustomTask1);
 		return true;
 	}
 	return false;

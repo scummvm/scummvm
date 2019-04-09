@@ -72,8 +72,8 @@ bool AIScriptLuther::Update() {
 	if ( Actor_Query_Goal_Number(kActorLuther) == kGoalLutherDyingStarted
 	 && !Game_Flag_Query(kFlagUG15LutherLanceStartedDying)
 	) {
-		AI_Countdown_Timer_Reset(kActorLuther, 2);
-		AI_Countdown_Timer_Start(kActorLuther, 2, 5);
+		AI_Countdown_Timer_Reset(kActorLuther, kActorTimerAIScriptCustomTask2);
+		AI_Countdown_Timer_Start(kActorLuther, kActorTimerAIScriptCustomTask2, 5);
 		Actor_Set_Goal_Number(kActorLuther, kGoalLutherDyingWait);
 		Game_Flag_Set(kFlagUG15LutherLanceStartedDying);
 		return false;
@@ -116,8 +116,8 @@ bool AIScriptLuther::Update() {
 }
 
 void AIScriptLuther::TimerExpired(int timer) {
-	if (timer == 2) {
-		AI_Countdown_Timer_Reset(kActorLuther, 2);
+	if (timer == kActorTimerAIScriptCustomTask2) {
+		AI_Countdown_Timer_Reset(kActorLuther, kActorTimerAIScriptCustomTask2);
 		Actor_Set_Goal_Number(kActorLuther, kGoalLutherDyingCheck);
 		// return true;
 	}

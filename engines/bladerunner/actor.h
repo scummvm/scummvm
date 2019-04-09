@@ -44,6 +44,8 @@ class View;
 class Actor {
 	BladeRunnerEngine *_vm;
 
+	static const int kActorTimers = 7;
+
 public:
 	BoundingBox    _bbox;
 	Common::Rect   _screenRectangle;
@@ -108,8 +110,8 @@ private:
 	int _retiredWidth;
 	int _retiredHeight;
 
-	int _timersLeft[7];
-	int _timersLast[7];
+	int _timersLeft[kActorTimers];
+	int _timersLast[kActorTimers];
 
 	float _scale;
 

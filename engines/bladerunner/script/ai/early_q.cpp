@@ -78,11 +78,11 @@ bool AIScriptEarlyQ::Update() {
 }
 
 void AIScriptEarlyQ::TimerExpired(int timer) {
-	if (timer == 0
+	if (timer == kActorTimerAIScriptCustomTask0
 	 && Actor_Query_Goal_Number(kActorEarlyQ) == kGoalEarlyQNR05WillLeave
 	) {
 		if (Player_Query_Current_Scene() == kSceneNR05) {
-			AI_Countdown_Timer_Reset(kActorEarlyQ, 0);
+			AI_Countdown_Timer_Reset(kActorEarlyQ, kActorTimerAIScriptCustomTask0);
 			Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR05Leave);
 		} else {
 			Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR05Wait);
@@ -90,19 +90,19 @@ void AIScriptEarlyQ::TimerExpired(int timer) {
 		return; //true;
 	}
 
-	if (timer == 0
+	if (timer == kActorTimerAIScriptCustomTask0
 	 && Actor_Query_Goal_Number(kActorEarlyQ) == kGoalEarlyQNR04GoToMcCoy
 	) {
 		Player_Loses_Control();
-		AI_Countdown_Timer_Reset(kActorEarlyQ, 0);
+		AI_Countdown_Timer_Reset(kActorEarlyQ, kActorTimerAIScriptCustomTask0);
 		Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR04HandDrink);
 		return; //true;
 	}
 
-	if (timer == 1
+	if (timer == kActorTimerAIScriptCustomTask1
 	 && Actor_Query_Goal_Number(kActorEarlyQ) == kGoalEarlyQNR04WaitForPulledGun
 	) {
-		AI_Countdown_Timer_Reset(kActorEarlyQ, 1);
+		AI_Countdown_Timer_Reset(kActorEarlyQ, kActorTimerAIScriptCustomTask1);
 		Player_Loses_Control();
 		Actor_Change_Animation_Mode(kActorEarlyQ, 29);
 		Delay(2500);
@@ -207,7 +207,7 @@ void AIScriptEarlyQ::OtherAgentEnteredCombatMode(int otherActorId, int combatMod
 			Game_Flag_Set(kFlagNotUsed565);
 		}
 		Game_Flag_Set(kFlagNR04McCoyAimedAtEarlyQ);
-		AI_Countdown_Timer_Reset(kActorEarlyQ, 0);
+		AI_Countdown_Timer_Reset(kActorEarlyQ, kActorTimerAIScriptCustomTask0);
 		Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR04McCoyPulledGun);
 		return; // true;
 	}
@@ -219,7 +219,7 @@ void AIScriptEarlyQ::OtherAgentEnteredCombatMode(int otherActorId, int combatMod
 		if (Game_Flag_Query(kFlagNotUsed565)) {
 			Game_Flag_Reset(kFlagNotUsed565);
 		}
-		AI_Countdown_Timer_Reset(kActorEarlyQ, 1);
+		AI_Countdown_Timer_Reset(kActorEarlyQ, kActorTimerAIScriptCustomTask1);
 		Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR04Talk3);
 		return; //true;
 	}
@@ -335,8 +335,8 @@ bool AIScriptEarlyQ::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case kGoalEarlyQNR04GoToMcCoy:
 		Loop_Actor_Walk_To_Actor(kActorEarlyQ, 0, 36, 0, 0);
-		AI_Countdown_Timer_Reset(kActorEarlyQ, 0);
-		AI_Countdown_Timer_Start(kActorEarlyQ, 0, 4);
+		AI_Countdown_Timer_Reset(kActorEarlyQ, kActorTimerAIScriptCustomTask0);
+		AI_Countdown_Timer_Start(kActorEarlyQ, kActorTimerAIScriptCustomTask0, 4);
 		break;
 
 	case kGoalEarlyQNR04McCoyPulledGun:
@@ -378,8 +378,8 @@ bool AIScriptEarlyQ::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		break;
 
 	case kGoalEarlyQNR04WaitForPulledGun:
-		AI_Countdown_Timer_Reset(kActorEarlyQ, 1);
-		AI_Countdown_Timer_Start(kActorEarlyQ, 1, 5);
+		AI_Countdown_Timer_Reset(kActorEarlyQ, kActorTimerAIScriptCustomTask1);
+		AI_Countdown_Timer_Start(kActorEarlyQ, kActorTimerAIScriptCustomTask1, 5);
 		break;
 
 	case kGoalEarlyQNR04TakeDisk:
@@ -432,8 +432,8 @@ bool AIScriptEarlyQ::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		break;
 
 	case kGoalEarlyQNR05WillLeave:
-		AI_Countdown_Timer_Reset(kActorEarlyQ, 0);
-		AI_Countdown_Timer_Start(kActorEarlyQ, 0, 20);
+		AI_Countdown_Timer_Reset(kActorEarlyQ, kActorTimerAIScriptCustomTask0);
+		AI_Countdown_Timer_Start(kActorEarlyQ, kActorTimerAIScriptCustomTask0, 20);
 		break;
 
 	case kGoalEarlyQNR05Leave:
@@ -460,7 +460,7 @@ bool AIScriptEarlyQ::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case 229:
 		AI_Movement_Track_Flush(kActorEarlyQ);
-		AI_Countdown_Timer_Reset(kActorEarlyQ, 0);
+		AI_Countdown_Timer_Reset(kActorEarlyQ, kActorTimerAIScriptCustomTask0);
 		break;
 
 	case kGoalEarlyQNR04Wait:

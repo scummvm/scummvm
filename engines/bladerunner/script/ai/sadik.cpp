@@ -87,8 +87,8 @@ bool AIScriptSadik::Update() {
 }
 
 void AIScriptSadik::TimerExpired(int timer) {
-	if (timer == 0) {
-		AI_Countdown_Timer_Reset(kActorSadik, 0);
+	if (timer == kActorTimerAIScriptCustomTask0) {
+		AI_Countdown_Timer_Reset(kActorSadik, kActorTimerAIScriptCustomTask0);
 
 		// goals 303, 304 and 305 are never set,  cut out part of game?
 		switch (Actor_Query_Goal_Number(kActorSadik)) {
@@ -340,13 +340,13 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	// goals 303, 304 and 305 are never set,  cut out part of game?
 	case 303:
-		AI_Countdown_Timer_Reset(kActorSadik, 0);
-		AI_Countdown_Timer_Start(kActorSadik, 0, 5);
+		AI_Countdown_Timer_Reset(kActorSadik, kActorTimerAIScriptCustomTask0);
+		AI_Countdown_Timer_Start(kActorSadik, kActorTimerAIScriptCustomTask0, 5);
 		return true;
 
 	case 304:
 		Actor_Set_Targetable(kActorSadik, false);
-		AI_Countdown_Timer_Reset(kActorSadik, 0);
+		AI_Countdown_Timer_Reset(kActorSadik, kActorTimerAIScriptCustomTask0);
 		return true;
 
 	case 305:
@@ -356,7 +356,7 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case kGoalSadikUG18PrepareShootMcCoy:
 		Sound_Play(kSfxLGCAL1, 100, 0, 0, 50);
-		AI_Countdown_Timer_Start(kActorSadik, 0, 2);
+		AI_Countdown_Timer_Start(kActorSadik, kActorTimerAIScriptCustomTask0, 2);
 		return true;
 
 	case kGoalSadikUG18ShootMcCoy:
@@ -370,7 +370,7 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case 309:
-		AI_Countdown_Timer_Reset(kActorSadik, 0);
+		AI_Countdown_Timer_Reset(kActorSadik, kActorTimerAIScriptCustomTask0);
 		return true;
 
 	case 400:

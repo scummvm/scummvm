@@ -110,20 +110,20 @@ bool AIScriptDektora::Update() {
 }
 
 void AIScriptDektora::TimerExpired(int timer) {
-	if (timer == 0) {
+	if (timer == kActorTimerAIScriptCustomTask0) {
 		if (Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR08Dance) {
 			if (Player_Query_Current_Scene() == kSceneNR08) {
-				AI_Countdown_Timer_Reset(kActorDektora, 0);
-				AI_Countdown_Timer_Start(kActorDektora, 0, 10);
+				AI_Countdown_Timer_Reset(kActorDektora, kActorTimerAIScriptCustomTask0);
+				AI_Countdown_Timer_Start(kActorDektora, kActorTimerAIScriptCustomTask0, 10);
 			} else {
 				Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR08Leave);
-				AI_Countdown_Timer_Reset(kActorDektora, 0);
+				AI_Countdown_Timer_Reset(kActorDektora, kActorTimerAIScriptCustomTask0);
 			}
 			return; //true;
 		}
 
 		if (Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR11Burning) {
-			AI_Countdown_Timer_Reset(kActorDektora, 0);
+			AI_Countdown_Timer_Reset(kActorDektora, kActorTimerAIScriptCustomTask0);
 			Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR11BurningGoToMcCoy);
 			return; //true;
 		}
@@ -417,8 +417,8 @@ bool AIScriptDektora::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Flush(kActorDektora);
 		Actor_Put_In_Set(kActorDektora, kSetNR05_NR08);
 		Actor_Set_At_XYZ(kActorDektora, -923.93f, 127.85f, 413.46f, 30);
-		AI_Countdown_Timer_Reset(kActorDektora, 0);
-		AI_Countdown_Timer_Start(kActorDektora, 0, 45);
+		AI_Countdown_Timer_Reset(kActorDektora, kActorTimerAIScriptCustomTask0);
+		AI_Countdown_Timer_Start(kActorDektora, kActorTimerAIScriptCustomTask0, 45);
 		break;
 
 	case kGoalDektoraNR08Leave:
@@ -458,9 +458,9 @@ bool AIScriptDektora::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case kGoalDektoraNR11Hiding:
 		AI_Movement_Track_Flush(kActorDektora);
-		AI_Countdown_Timer_Reset(kActorDektora, 0);
-		AI_Countdown_Timer_Reset(kActorDektora, 1);
-		AI_Countdown_Timer_Reset(kActorDektora, 2);
+		AI_Countdown_Timer_Reset(kActorDektora, kActorTimerAIScriptCustomTask0);
+		AI_Countdown_Timer_Reset(kActorDektora, kActorTimerAIScriptCustomTask1);
+		AI_Countdown_Timer_Reset(kActorDektora, kActorTimerAIScriptCustomTask2);
 		Actor_Put_In_Set(kActorDektora, kSetNR11);
 		Actor_Set_At_XYZ(kActorDektora, -184.0f, 0.33f, -268.0f, 256);
 		break;

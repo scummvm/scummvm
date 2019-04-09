@@ -61,10 +61,10 @@ bool AIScriptGeneralDoll::Update() {
 }
 
 void AIScriptGeneralDoll::TimerExpired(int timer) {
-	if (timer == 2) {
+	if (timer == kActorTimerAIScriptCustomTask2) {
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDie);
 		Actor_Change_Animation_Mode(kActorGeneralDoll, kAnimationModeDie);
-		AI_Countdown_Timer_Reset(kActorGeneralDoll, 2);
+		AI_Countdown_Timer_Reset(kActorGeneralDoll, kActorTimerAIScriptCustomTask2);
 		return; //true;
 	}
 	return; //false;

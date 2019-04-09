@@ -58,15 +58,15 @@ bool AIScriptBulletBob::Update() {
 	 && !Game_Flag_Query(kFlagRC04McCoyCombatMode)
 	 &&  Global_Variable_Query(kVariableChapter) < 4
 	) {
-		AI_Countdown_Timer_Reset(kActorBulletBob, 2);
-		AI_Countdown_Timer_Start(kActorBulletBob, 2, 10);
+		AI_Countdown_Timer_Reset(kActorBulletBob, kActorTimerAIScriptCustomTask2);
+		AI_Countdown_Timer_Start(kActorBulletBob, kActorTimerAIScriptCustomTask2, 10);
 		Actor_Set_Goal_Number(kActorBulletBob, kGoalBulletBobWarningMcCoy);
 		Actor_Modify_Friendliness_To_Other(kActorBulletBob, kActorMcCoy, -15);
 		Game_Flag_Set(kFlagRC04McCoyCombatMode);
 	} else if ( Actor_Query_Goal_Number(kActorBulletBob) == kGoalBulletBobWarningMcCoy
 	        && !Player_Query_Combat_Mode()
 	) {
-		AI_Countdown_Timer_Reset(kActorBulletBob, 2);
+		AI_Countdown_Timer_Reset(kActorBulletBob, kActorTimerAIScriptCustomTask2);
 		Game_Flag_Reset(kFlagRC04McCoyCombatMode);
 		Game_Flag_Set(kFlagRC04McCoyWarned);
 		Actor_Set_Goal_Number(kActorBulletBob, kGoalBulletBobDefault);
@@ -96,11 +96,11 @@ bool AIScriptBulletBob::Update() {
 }
 
 void AIScriptBulletBob::TimerExpired(int timer) {
-	if (timer == 2
+	if (timer == kActorTimerAIScriptCustomTask2
 	 && Actor_Query_Goal_Number(kActorBulletBob) == kGoalBulletBobWarningMcCoy
 	) {
 		Actor_Set_Goal_Number(kActorBulletBob, kGoalBulletBobShootMcCoy);
-		AI_Countdown_Timer_Reset(kActorBulletBob, 2);
+		AI_Countdown_Timer_Reset(kActorBulletBob, kActorTimerAIScriptCustomTask2);
 		return; //true;
 	}
 	return; //false;

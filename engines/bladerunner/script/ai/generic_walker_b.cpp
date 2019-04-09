@@ -62,8 +62,8 @@ bool AIScriptGenericWalkerB::Update() {
 }
 
 void AIScriptGenericWalkerB::TimerExpired(int timer) {
-	if (timer == 2) {
-		AI_Countdown_Timer_Reset(kActorGenwalkerB, 2);
+	if (timer == kActorTimerAIScriptCustomTask2) {
+		AI_Countdown_Timer_Reset(kActorGenwalkerB, kActorTimerAIScriptCustomTask2);
 		Game_Flag_Reset(kFlagGenericWalkerWaiting);
 		return;// true;
 	}
@@ -75,8 +75,8 @@ void AIScriptGenericWalkerB::CompletedMovementTrack() {
 		Actor_Set_Goal_Number(kActorGenwalkerB, 0);
 		if (!Game_Flag_Query(kFlagGenericWalkerWaiting)) {
 			Game_Flag_Set(kFlagGenericWalkerWaiting);
-			AI_Countdown_Timer_Reset(kActorGenwalkerB, 2);
-			AI_Countdown_Timer_Start(kActorGenwalkerB, 2, Random_Query(6, 10));
+			AI_Countdown_Timer_Reset(kActorGenwalkerB, kActorTimerAIScriptCustomTask2);
+			AI_Countdown_Timer_Start(kActorGenwalkerB, kActorTimerAIScriptCustomTask2, Random_Query(6, 10));
 		}
 		// return true;
 	}
@@ -334,8 +334,8 @@ bool AIScriptGenericWalkerB::prepareWalker() {
 
 	Global_Variable_Set(kVariableGenericWalkerBModel, model);
 	Game_Flag_Set(kFlagGenericWalkerWaiting);
-	AI_Countdown_Timer_Reset(kActorGenwalkerB, 2);
-	AI_Countdown_Timer_Start(kActorGenwalkerB, 2, Random_Query(4, 12));
+	AI_Countdown_Timer_Reset(kActorGenwalkerB, kActorTimerAIScriptCustomTask2);
+	AI_Countdown_Timer_Start(kActorGenwalkerB, kActorTimerAIScriptCustomTask2, Random_Query(4, 12));
 	Actor_Set_Goal_Number(kActorGenwalkerB, 1);
 	return true;
 }

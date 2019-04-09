@@ -48,8 +48,8 @@ bool AIScriptHolloway::Update() {
 }
 
 void AIScriptHolloway::TimerExpired(int timer) {
-	if (timer == 0) {
-		AI_Countdown_Timer_Reset(kActorHolloway, 0);
+	if (timer == kActorTimerAIScriptCustomTask0) {
+		AI_Countdown_Timer_Reset(kActorHolloway, kActorTimerAIScriptCustomTask0);
 		if (Global_Variable_Query(kVariableHollowayArrest) == 1) {
 			Player_Gains_Control();
 		}
@@ -90,7 +90,7 @@ void AIScriptHolloway::OtherAgentEnteredCombatMode(int otherActorId, int combatM
 	if (otherActorId == kActorMcCoy
 	 && Actor_Query_Goal_Number(kActorHolloway) == kGoalHollowayApproachMcCoy
 	) {
-		AI_Countdown_Timer_Reset(kActorHolloway, 0);
+		AI_Countdown_Timer_Reset(kActorHolloway, kActorTimerAIScriptCustomTask0);
 		Actor_Set_Goal_Number(kActorHolloway, kGoalHollowayKnockOutMcCoy);
 	}
 }
@@ -146,8 +146,8 @@ bool AIScriptHolloway::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		} else {
 			Actor_Says(kActorHolloway, 30, kAnimationModeTalk);
 			Actor_Face_Actor(kActorMcCoy, kActorHolloway, true);
-			AI_Countdown_Timer_Reset(kActorHolloway, 0);
-			AI_Countdown_Timer_Start(kActorHolloway, 0, 1);
+			AI_Countdown_Timer_Reset(kActorHolloway, kActorTimerAIScriptCustomTask0);
+			AI_Countdown_Timer_Start(kActorHolloway, kActorTimerAIScriptCustomTask0, 1);
 		}
 		break;
 

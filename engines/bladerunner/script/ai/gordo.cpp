@@ -101,8 +101,8 @@ bool AIScriptGordo::Update() {
 }
 
 void AIScriptGordo::TimerExpired(int timer) {
-	if (timer == 0) {
-		AI_Countdown_Timer_Reset(kActorGordo, 0);
+	if (timer == kActorTimerAIScriptCustomTask0) {
+		AI_Countdown_Timer_Reset(kActorGordo, kActorTimerAIScriptCustomTask0);
 		if (Player_Query_Combat_Mode()) {
 			Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR01RunAway);
 		} else {
@@ -629,7 +629,7 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case kGoalGordoNR01GiveUp:
 		ADQ_Add(kActorGordo, 170, 18);
-		AI_Countdown_Timer_Start(kActorGordo, 0, 10);
+		AI_Countdown_Timer_Start(kActorGordo, kActorTimerAIScriptCustomTask0, 10);
 		break;
 
 	case kGoalGordoNR01TalkToMcCoy:
@@ -689,7 +689,7 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case kGoalGordoNR01Die:
 		Music_Stop(2);
-		AI_Countdown_Timer_Reset(kActorGordo, 0);
+		AI_Countdown_Timer_Reset(kActorGordo, kActorTimerAIScriptCustomTask0);
 		ADQ_Flush();
 		AI_Movement_Track_Flush(kActorGordo);
 		if (Game_Flag_Query(kFlagGordoIsReplicant)) {

@@ -47,7 +47,7 @@ void AIScriptHanoi::Initialize() {
 
 bool AIScriptHanoi::Update() {
 	if (Actor_Query_Goal_Number(kActorHolloway) == kGoalHollowayGoToNR07) {
-		AI_Countdown_Timer_Reset(kActorHanoi, 0);
+		AI_Countdown_Timer_Reset(kActorHanoi, kActorTimerAIScriptCustomTask0);
 	}
 
 	if (Global_Variable_Query(kVariableChapter) == 3
@@ -99,7 +99,7 @@ bool AIScriptHanoi::Update() {
 }
 
 void AIScriptHanoi::TimerExpired(int timer) {
-	if (timer == 0) {
+	if (timer == kActorTimerAIScriptCustomTask0) {
 		if (Actor_Query_Goal_Number(kActorHanoi) == kGoalHanoiNR03StartGuarding) {
 			Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiNR03GoToDefaultPosition);
 			return; //true;
@@ -219,11 +219,11 @@ bool AIScriptHanoi::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	switch (newGoalNumber) {
 	case kGoalHanoiDefault:
-		AI_Countdown_Timer_Start(kActorHanoi, 0, 45);
+		AI_Countdown_Timer_Start(kActorHanoi, kActorTimerAIScriptCustomTask0, 45);
 		break;
 
 	case kGoalHanoiResetTimer:
-		AI_Countdown_Timer_Reset(kActorHanoi, 0);
+		AI_Countdown_Timer_Reset(kActorHanoi, kActorTimerAIScriptCustomTask0);
 		break;
 
 	case kGoalHanoiNR07TalkToMcCoy:
@@ -283,13 +283,13 @@ bool AIScriptHanoi::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case kGoalHanoiNR03StartGuarding:
 		Actor_Put_In_Set(kActorHanoi, kSetNR03);
 		Actor_Set_At_Waypoint(kActorHanoi, 362, 300);
-		AI_Countdown_Timer_Reset(kActorHanoi, 0);
-		AI_Countdown_Timer_Start(kActorHanoi, 0, 6);
+		AI_Countdown_Timer_Reset(kActorHanoi, kActorTimerAIScriptCustomTask0);
+		AI_Countdown_Timer_Start(kActorHanoi, kActorTimerAIScriptCustomTask0, 6);
 		break;
 
 	case kGoalHanoiThrowOutMcCoy:
 		Game_Flag_Set(kFlagNR03McCoyThrownOut);
-		AI_Countdown_Timer_Reset(kActorHanoi, 0);
+		AI_Countdown_Timer_Reset(kActorHanoi, kActorTimerAIScriptCustomTask0);
 		Player_Loses_Control();
 		Player_Set_Combat_Mode(false); // this is missing in ITA & SPA versions of the game
 		Actor_Force_Stop_Walking(kActorMcCoy);

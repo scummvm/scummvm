@@ -46,8 +46,8 @@ bool AIScriptMoraji::Update() {
 	 &&  Player_Query_Current_Scene() == kSceneDR05
 	 && !Game_Flag_Query(kFlagDR05BombActivated)
 	) {
-		AI_Countdown_Timer_Reset(kActorMoraji, 2);
-		AI_Countdown_Timer_Start(kActorMoraji, 2, 30);
+		AI_Countdown_Timer_Reset(kActorMoraji, kActorTimerAIScriptCustomTask2);
+		AI_Countdown_Timer_Start(kActorMoraji, kActorTimerAIScriptCustomTask2, 30);
 		Game_Flag_Set(kFlagDR05BombActivated);
 		return true;
 	}
@@ -63,8 +63,8 @@ bool AIScriptMoraji::Update() {
 }
 
 void AIScriptMoraji::TimerExpired(int timer) {
-	if (timer == 2) {
-		AI_Countdown_Timer_Reset(kActorMoraji, 2);
+	if (timer == kActorTimerAIScriptCustomTask2) {
+		AI_Countdown_Timer_Reset(kActorMoraji, kActorTimerAIScriptCustomTask2);
 
 		if (Actor_Query_Goal_Number(kActorMoraji) != kGoalMorajiJump
 		 && Actor_Query_Goal_Number(kActorMoraji) != kGoalMorajiLayDown
@@ -80,7 +80,7 @@ void AIScriptMoraji::TimerExpired(int timer) {
 
 void AIScriptMoraji::CompletedMovementTrack() {
 	if (Actor_Query_Goal_Number(kActorMoraji) == kGoalMorajiRunOut) {
-		AI_Countdown_Timer_Reset(kActorMoraji, 2);
+		AI_Countdown_Timer_Reset(kActorMoraji, kActorTimerAIScriptCustomTask2);
 		Game_Flag_Set(kFlagDR05BombWillExplode);
 		_animationState = 3;
 
@@ -476,7 +476,7 @@ void AIScriptMoraji::SetAnimationState(int animationState, int animationFrame, i
 
 bool AIScriptMoraji::ReachedMovementTrackWaypoint(int waypointId) {
 	if (waypointId == 96)
-		AI_Countdown_Timer_Reset(kActorMoraji, 2);
+		AI_Countdown_Timer_Reset(kActorMoraji, kActorTimerAIScriptCustomTask2);
 
 	return true;
 }

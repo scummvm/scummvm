@@ -2193,7 +2193,11 @@ enum GoalZuben {
 enum GoalOfficerLeary {
 	kGoalOfficerLearyDefault = 0,
 	kGoalOfficerLearyRC01WalkToCrowd = 1,
-	kGoalOfficerLearyRC01CrowdInterrogation = 2
+	kGoalOfficerLearyRC01CrowdInterrogation = 2,
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	kGoalOfficerLearyRC01ResumeWalkToCrowd = 4
+#endif // BLADERUNNER_ORIGINAL_BUGS
 };
 
 enum GoalHanoi {
@@ -2308,6 +2312,16 @@ enum GoalMaggie {
 	kGoalMaggieKP05WillExplode = 414,
 	kGoalMaggieKP05Explode = 415,
 	kGoalMaggieDead = 599
+};
+
+enum ActorTimers {
+	kActorTimerAIScriptCustomTask0 = 0,
+	kActorTimerAIScriptCustomTask1 = 1,
+	kActorTimerAIScriptCustomTask2 = 2,
+	kActorTimerMovementTrack       = 3,
+	kActorTimerClueExchange        = 4,
+	kActorTimerAnimationFrame      = 5,
+	kActorTimerRunningStaminaFPS   = 6,
 };
 
 // Certain tracks are available at Frank Klepacki's website/portfolio for Blade Runner
