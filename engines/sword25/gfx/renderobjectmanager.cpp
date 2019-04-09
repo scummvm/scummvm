@@ -52,7 +52,8 @@ void RenderObjectQueue::add(RenderObject *renderObject) {
 bool RenderObjectQueue::exists(const RenderObjectQueueItem &renderObjectQueueItem) {
 	for (RenderObjectQueue::iterator it = begin(); it != end(); ++it)
 		if ((*it)._renderObject == renderObjectQueueItem._renderObject &&
-			(*it)._version == renderObjectQueueItem._version)
+			(*it)._version == renderObjectQueueItem._version && 
+			(*it)._bbox == renderObjectQueueItem._bbox)
 			return true;
 	return false;
 }
