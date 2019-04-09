@@ -44,7 +44,7 @@ void BaseUtils::swap(int *a, int *b) {
 
 //////////////////////////////////////////////////////////////////////////
 float BaseUtils::normalizeAngle(float angle) {
-	while (angle > 360) {
+	while (angle > 359) {
 		angle -= 360;
 	}
 	while (angle < 0) {
