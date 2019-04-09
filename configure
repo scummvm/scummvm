@@ -4972,6 +4972,7 @@ EOF
 			then
 			_opengl=yes
 			_opengles2=yes
+			_opengl_shaders=yes
 			append_var OPENGL_LIBS "-lGLESv2"
 		fi
 	else
