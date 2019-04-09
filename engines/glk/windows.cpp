@@ -180,23 +180,27 @@ void Windows::windowClose(Window *win, StreamResult *result) {
 		PairWindow *pairWin = dynamic_cast<PairWindow *>(win->_parent);
 		PairWindow *grandparWin;
 
-		int index = pairWin->_children.indexOf(win);
-		if (index == -1) {
-			warning("windowClose: window tree is corrupted");
-			return;
-		}
+		if (pairWin) {
+			int index = pairWin->_children.indexOf(win);
+			if (index == -1) {
+				warning("windowClose: window tree is corrupted");
+				return;
+			}
 
-		sibWin = (index = ((int)pairWin->_children.size() - 1)) ?
-			pairWin->_children.front() : pairWin->_children[index + 1];
+			if (!(pairWin->_dir & winmethod_Arbitrary)) {
+				sibWin = (index = ((int)pairWin->_children.size() - 1)) ?
+					pairWin->_children.front() : pairWin->_children[index + 1];
 
-		grandparWin = dynamic_cast<PairWindow *>(pairWin->_parent);
-		if (!grandparWin) {
-			_rootWin = sibWin;
-			sibWin->_parent = nullptr;
-		} else {
-			index = grandparWin->_children.indexOf(pairWin);
-			grandparWin->_children[index] = sibWin;
-			sibWin->_parent = grandparWin;
+				grandparWin = dynamic_cast<PairWindow *>(pairWin->_parent);
+				if (!grandparWin) {
+					_rootWin = sibWin;
+					sibWin->_parent = nullptr;
+				} else {
+					index = grandparWin->_children.indexOf(pairWin);
+					grandparWin->_children[index] = sibWin;
+					sibWin->_parent = grandparWin;
+				}
+			}
 		}
 
 		// Begin closation
@@ -206,12 +210,9 @@ void Windows::windowClose(Window *win, StreamResult *result) {
 		// crawl up the tree to the root window.
 		win->close(true);
 
-		// This probably isn't necessary, but the child *is* gone, so just in case.
-		index = pairWin->_children.indexOf(win);
-		pairWin->_children[index] = nullptr;
-
-		// Now we can delete the parent pair.
-		pairWin->close(false);
+		if (pairWin && !(pairWin->_dir & winmethod_Arbitrary))
+			// Now we can delete the parent pair.
+			pairWin->close(false);
 
 		// Sort out the arrangements
 		rearrange();
@@ -526,17 +527,13 @@ Window::~Window() {
 	if (g_vm->gli_unregister_obj)
 		(*g_vm->gli_unregister_obj)(this, gidisp_Class_Window, _dispRock);
 
-	// Remove the window from any parent
+	// Remove the window from the parent's children list
 	PairWindow *parent = dynamic_cast<PairWindow *>(_parent);
 	if (parent) {
 		int index = parent->_children.indexOf(this);
 		if (index != -1)
-			parent->_children[index] = nullptr;
+			parent->_children.remove_at(index);
 	}
-
-	// Delete any attached window stream
-	_echoStream = nullptr;
-	delete _stream;
 
 	delete[] _lineTerminatorsBase;
 
@@ -550,6 +547,10 @@ Window::~Window() {
 		_windows->_windowList = next;
 	if (next)
 		next->_prev = prev;
+
+	// Delete any attached window stream
+	_echoStream = nullptr;
+	delete _stream;
 }
 
 void Window::close(bool recurse) {
