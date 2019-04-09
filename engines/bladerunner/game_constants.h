@@ -2321,7 +2321,7 @@ enum ActorTimers {
 	kActorTimerMovementTrack       = 3,
 	kActorTimerClueExchange        = 4,
 	kActorTimerAnimationFrame      = 5,
-	kActorTimerRunningStaminaFPS   = 6,
+	kActorTimerRunningStaminaFPS   = 6
 };
 
 // Certain tracks are available at Frank Klepacki's website/portfolio for Blade Runner
