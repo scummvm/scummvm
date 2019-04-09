@@ -343,6 +343,7 @@ void OSystem_Android::initBackend() {
 
 	ConfMan.set("fullscreen", "true");
 	ConfMan.registerDefault("aspect_ratio", true);
+	ConfMan.registerDefault("vsync", true);
 
 	ConfMan.setInt("autosave_period", 0);
 	ConfMan.setBool("FM_high_quality", false);
