@@ -289,17 +289,17 @@ void KIASectionSettings::sliderCallback(void *callbackData, void *source) {
 	}
 #else
 	if (source == self->_musicVolume) {
-		self->_vm->_mixer->setVolumeForSoundType(self->_vm->_mixer->kMusicSoundType, self->_musicVolume->_value);
-		self->_vm->_music->playSample();
 		ConfMan.setInt("music_volume", self->_musicVolume->_value);
+		self->_vm->syncSoundSettings();
+		self->_vm->_music->playSample();
 	} else if (source == self->_soundEffectVolume) {
-		self->_vm->_mixer->setVolumeForSoundType(self->_vm->_mixer->kSFXSoundType, self->_soundEffectVolume->_value);
-		self->_vm->_audioPlayer->playSample();
 		ConfMan.setInt("sfx_volume", self->_soundEffectVolume->_value);
+		self->_vm->syncSoundSettings();
+		self->_vm->_audioPlayer->playSample();
 	} else if (source == self->_speechVolume) {
-		self->_vm->_mixer->setVolumeForSoundType(self->_vm->_mixer->kSpeechSoundType, self->_speechVolume->_value);
-		self->_vm->_audioSpeech->playSample();
 		ConfMan.setInt("speech_volume", self->_speechVolume->_value);
+		self->_vm->syncSoundSettings();
+		self->_vm->_audioSpeech->playSample();
 	}
 #endif
 }
