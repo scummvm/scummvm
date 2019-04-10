@@ -268,7 +268,7 @@ static const int *getPoliceMazePS11TrackData14() {  // Enemy (kItemPS11Target6) 
 		kPMTIRotate,          644, 80,
 		kPMTIWait,            0,
 #if BLADERUNNER_ORIGINAL_BUGS
-1		kPMTIRotate,          388, 80,              // orientation is wrong here
+		kPMTIRotate,          388, 80,              // orientation is wrong here
 #else
 		kPMTIRotate,          260, 80,              // corrected orientation - face towards McCoy
 #endif // BLADERUNNER_ORIGINAL_BUGS

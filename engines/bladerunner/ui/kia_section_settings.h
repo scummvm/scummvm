@@ -23,6 +23,7 @@
 #ifndef BLADERUNNER_KIA_SECTION_SETTINGS_H
 #define BLADERUNNER_KIA_SECTION_SETTINGS_H
 
+#include "bladerunner/bladerunner.h" // for BLADERUNNER_ORIGINAL_SETTINGS macro
 #include "bladerunner/ui/kia_section_base.h"
 
 #include "common/config-manager.h"

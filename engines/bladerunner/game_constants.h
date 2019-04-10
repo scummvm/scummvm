@@ -2193,9 +2193,10 @@ enum GoalZuben {
 enum GoalOfficerLeary {
 	kGoalOfficerLearyDefault = 0,
 	kGoalOfficerLearyRC01WalkToCrowd = 1,
-	kGoalOfficerLearyRC01CrowdInterrogation = 2,
 #if BLADERUNNER_ORIGINAL_BUGS
+	kGoalOfficerLearyRC01CrowdInterrogation = 2
 #else
+	kGoalOfficerLearyRC01CrowdInterrogation = 2,
 	kGoalOfficerLearyRC01ResumeWalkToCrowd = 4
 #endif // BLADERUNNER_ORIGINAL_BUGS
 };
