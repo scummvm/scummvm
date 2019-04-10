@@ -710,6 +710,10 @@ void BladeRunnerEngine::shutdown() {
 		closeArchive("SPCHSFX.TLK");
 	}
 
+	if (isArchiveOpen("A.TLK")) {
+		closeArchive("A.TLK");
+	}
+
 	if (isArchiveOpen("SFX.MIX")) {
 		closeArchive("SFX.MIX");
 	}
