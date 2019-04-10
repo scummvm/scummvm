@@ -96,6 +96,8 @@ extern void checkGlError(const char *expr, const char *file, int line);
 #define GLTHREADCHECK do {  } while (false)
 #endif
 
+class MutexManager;
+
 class OSystem_Android : public EventsBaseBackend, public PaletteManager {
 private:
 	// passed from the dark side
@@ -145,6 +147,7 @@ private:
 	bool _enable_zoning;
 	bool _virtkeybd_on;
 
+	MutexManager *_mutexManager;
 	Audio::MixerImpl *_mixer;
 	timeval _startTime;
 
