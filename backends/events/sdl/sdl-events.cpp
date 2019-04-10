@@ -170,7 +170,11 @@ int SdlEventSource::mapKey(SDLKey sdlKey, SDLMod mod, Uint16 unicode) {
 	if (key >= Common::KEYCODE_F1 && key <= Common::KEYCODE_F9) {
 		return key - Common::KEYCODE_F1 + Common::ASCII_F1;
 	} else if (key >= Common::KEYCODE_KP0 && key <= Common::KEYCODE_KP9) {
-		#ifndef __amigaos4__ // Exclude AmigaOS4 due to it breaking the numpad fighting on said platform completely. This fixes bug #10558.
+		// WORKAROUND:  Disable this change for AmigaOS4 as it is breaking numpad usage ("fighting") on that platform.
+		// This fixes bug #10558.
+		// The actual issue here is that the SCUMM engine uses ASCII codes instead of keycodes for input.
+		// See also the relevant FIXME in SCUMM's input.cpp.
+		#ifndef __amigaos4__
 			if ((mod & KMOD_NUM) == 0)
 				return 0; // In case Num-Lock is NOT enabled, return 0 for ascii, so that directional keys on numpad work
 		#endif
