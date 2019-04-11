@@ -36,7 +36,7 @@ namespace MutationOfJB {
 
 class EncryptedFile;
 class Game;
-class Static;
+struct Static;
 
 class Room {
 public:
