@@ -61,6 +61,9 @@ void EoBCoreEngine::enableSysTimer(int sysTimer) {
 
 	KyraRpgEngine::enableSysTimer(sysTimer);
 
+	if (!_disableElapsedTime)
+		return;
+
 	_disableElapsedTime = _system->getMillis() - _disableElapsedTime;
 
 	for (int i = 0; i < 6; i++) {
@@ -75,8 +78,10 @@ void EoBCoreEngine::enableSysTimer(int sysTimer) {
 
 	if (_scriptTimersMode & 1) {
 		for (int i = 0; i < _scriptTimersCount; i++) {
-			if (_scriptTimers[i].next)
+			if (_scriptTimers[i].next) {
 				_scriptTimers[i].next += _disableElapsedTime;
+				debugC(3, kDebugLevelTimer, "EoBCoreEngine::enableSysTimer()     - CTIME: %08d   SCRIPT TIMER[%02d].NEXT: %08d", _system->getMillis(), i, _scriptTimers[i].next);
+			}
 		}
 	}
 
@@ -93,6 +98,9 @@ void EoBCoreEngine::disableSysTimer(int sysTimer) {
 		return;
 
 	KyraRpgEngine::disableSysTimer(sysTimer);
+
+	if (_disableElapsedTime)
+		return;
 
 	_disableElapsedTime = _system->getMillis();
 }
@@ -202,9 +210,11 @@ void EoBCoreEngine::advanceTimers(uint32 millis) {
 			if (_scriptTimers[i].next > ct) {
 				uint32 chrt = _scriptTimers[i].next - ct;
 				_scriptTimers[i].next = chrt > millis ? ct + chrt - millis : 1;
+				debugC(3, kDebugLevelTimer, "EoBCoreEngine::advanceTimers()      - CTIME: %08d   SCRIPT TIMER[%02d].NEXT: %08d", ct, i, _scriptTimers[i].next);
 			} else if (_scriptTimers[i].next) {
                 _scriptTimers[i].next = 1;
-            }
+				debugC(3, kDebugLevelTimer, "EoBCoreEngine::advanceTimers()      - CTIME: %08d   SCRIPT TIMER[%02d].NEXT: %08d", ct, i, _scriptTimers[i].next);
+            }			
 		}
 	}
 

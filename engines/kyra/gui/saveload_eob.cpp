@@ -51,6 +51,8 @@ Common::Error EoBCoreEngine::loadGameState(int slot) {
 	if (slot != -1)
 		_screen->fadeToBlack(10);
 
+	enableSysTimer(2);
+
 	for (int i = 0; i < 6; i++) {
 		EoBCharacter *c = &_characters[i];
 		c->id = in.readByte();

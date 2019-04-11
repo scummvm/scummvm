@@ -507,7 +507,7 @@ void EoBCoreEngine::gui_drawInventoryItem(int slot, int redraw, int pageNum) {
 
 		uint8 col1 = guiSettings()->colors.frame1;
 		uint8 col2 = guiSettings()->colors.frame2;
-		if (_flags.platform == Common::kPlatformAmiga) {
+		if (_flags.gameID == GI_EOB1 && _flags.platform == Common::kPlatformAmiga) {
 			col1 = guiSettings()->colors.inactiveTabFrame1;
 			col2 = guiSettings()->colors.inactiveTabFrame2;
 		} else if (_configRenderMode == Common::kRenderCGA) {
