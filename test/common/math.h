@@ -6,7 +6,7 @@
 // aren't further apart from each other than z.
 
 #define TS_ASSERT_ALMOST_EQUALS(x, y, z) \
-	TS_ASSERT_LESS_THAN(((x) - (y)) >= 0 ? (x) - (y) : (y) - (x), z)
+	TS_ASSERT_LESS_THAN_EQUALS(((x) - (y)) >= 0 ? (x) - (y) : (y) - (x), z)
 
 const float MAX_ERROR = 0.000001;
 class MathTestSuite : public CxxTest::TestSuite
