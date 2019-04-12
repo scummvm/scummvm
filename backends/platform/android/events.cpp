@@ -43,6 +43,9 @@
 #include "backends/platform/android/events.h"
 #include "backends/platform/android/jni.h"
 
+#include "engines/engine.h"
+#include "gui/gui-manager.h"
+
 // floating point. use sparingly
 template<class T>
 static inline T scalef(T in, float numerator, float denominator) {
@@ -103,7 +106,7 @@ void OSystem_Android::clipMouse(Common::Point &p) {
 }
 
 void OSystem_Android::scaleMouse(Common::Point &p, int x, int y,
-									bool deductDrawRect) {
+									bool deductDrawRect, bool touchpadMode) {
 	const GLESBaseTexture *tex;
 
 	if (_show_overlay)
@@ -113,7 +116,7 @@ void OSystem_Android::scaleMouse(Common::Point &p, int x, int y,
 
 	const Common::Rect &r = tex->getDrawRect();
 
-	if (_touchpad_mode) {
+	if (touchpadMode) {
 		x = x * 100 / _touchpad_scale;
 		y = y * 100 / _touchpad_scale;
 	}
@@ -301,42 +304,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		case JKEYCODE_DPAD_DOWN:
 		case JKEYCODE_DPAD_LEFT:
 		case JKEYCODE_DPAD_RIGHT:
-			if (_show_mouse) {
-				if (arg1 != JACTION_DOWN)
-					return;
-
-				e.type = Common::EVENT_MOUSEMOVE;
-
-				e.mouse = getEventManager()->getMousePos();
-
-				{
-					int16 *c;
-					int s;
-
-					if (arg2 == JKEYCODE_DPAD_UP || arg2 == JKEYCODE_DPAD_DOWN) {
-						c = &e.mouse.y;
-						s = _eventScaleY;
-					} else {
-						c = &e.mouse.x;
-						s = _eventScaleX;
-					}
-
-					// the longer the button held, the faster the pointer is
-					// TODO put these values in some option dlg?
-					int f = CLIP(arg4, 1, 8) * _dpad_scale * 100 / s;
-
-					if (arg2 == JKEYCODE_DPAD_UP || arg2 == JKEYCODE_DPAD_LEFT)
-						*c -= f;
-					else
-						*c += f;
-				}
-
-				clipMouse(e.mouse);
-
-				pushEvent(e);
-
-				return;
-			} else {
+			if (!shouldGenerateMouseEvents()) {
 				switch (arg1) {
 				case JACTION_DOWN:
 					e.type = Common::EVENT_KEYDOWN;
@@ -368,6 +336,41 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 				return;
 			}
 
+			if (arg1 != JACTION_DOWN)
+				return;
+
+			e.type = Common::EVENT_MOUSEMOVE;
+
+			e.mouse = getEventManager()->getMousePos();
+
+			{
+				int16 *c;
+				int s;
+
+				if (arg2 == JKEYCODE_DPAD_UP || arg2 == JKEYCODE_DPAD_DOWN) {
+					c = &e.mouse.y;
+					s = _eventScaleY;
+				} else {
+					c = &e.mouse.x;
+					s = _eventScaleX;
+				}
+
+				// the longer the button held, the faster the pointer is
+				// TODO put these values in some option dlg?
+				int f = CLIP(arg4, 1, 8) * _dpad_scale * 100 / s;
+
+				if (arg2 == JKEYCODE_DPAD_UP || arg2 == JKEYCODE_DPAD_LEFT)
+					*c -= f;
+				else
+					*c += f;
+			}
+
+			clipMouse(e.mouse);
+
+			pushEvent(e);
+
+			return;
+
 		case JKEYCODE_DPAD_CENTER:
 			switch (arg1) {
 			case JACTION_DOWN:
@@ -395,27 +398,28 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		break;
 
 	case JE_SCROLL:
-		if (_show_mouse) {
-			e.type = Common::EVENT_MOUSEMOVE;
+		if (!shouldGenerateMouseEvents())
+			return;
 
-			if (_touchpad_mode) {
-				if (_touch_pt_scroll.x == -1 && _touch_pt_scroll.y == -1) {
-					_touch_pt_scroll.x = arg3;
-					_touch_pt_scroll.y = arg4;
-					return;
-				}
+		e.type = Common::EVENT_MOUSEMOVE;
 
-				scaleMouse(e.mouse, arg3 - _touch_pt_scroll.x,
-							arg4 - _touch_pt_scroll.y, false);
-				e.mouse += _touch_pt_down;
-				clipMouse(e.mouse);
-			} else {
-				scaleMouse(e.mouse, arg3, arg4);
-				clipMouse(e.mouse);
+		if (_touchpad_mode) {
+			if (_touch_pt_scroll.x == -1 && _touch_pt_scroll.y == -1) {
+				_touch_pt_scroll.x = arg3;
+				_touch_pt_scroll.y = arg4;
+				return;
 			}
 
-			pushEvent(e);
+			scaleMouse(e.mouse, arg3 - _touch_pt_scroll.x,
+						arg4 - _touch_pt_scroll.y, false, true);
+			e.mouse += _touch_pt_down;
+			clipMouse(e.mouse);
+		} else {
+			scaleMouse(e.mouse, arg3, arg4);
+			clipMouse(e.mouse);
 		}
+
+		pushEvent(e);
 
 		return;
 
@@ -425,16 +429,21 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			return;
 		}
 
-		if (!_virtcontrols_on) {
-			e.type = Common::EVENT_MOUSEMOVE;
+		if (!shouldGenerateMouseEvents()) {
+			keyPress(Common::KEYCODE_RETURN, KeyReceiver::PRESS);
+			return;
+		}
 
-			if (_touchpad_mode) {
-				e.mouse = getEventManager()->getMousePos();
-			} else {
-				scaleMouse(e.mouse, arg1, arg2);
-				clipMouse(e.mouse);
-			}
+		e.type = Common::EVENT_MOUSEMOVE;
 
+		if (_touchpad_mode) {
+			e.mouse = getEventManager()->getMousePos();
+		} else {
+			scaleMouse(e.mouse, arg1, arg2);
+			clipMouse(e.mouse);
+		}
+
+		{
 			Common::EventType down, up;
 
 			// TODO put these values in some option dlg?
@@ -465,67 +474,65 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			_queuedEventTime = getMillis() + kQueuedInputEventDelay;
 
 			unlockMutex(_event_queue_lock);
-		} else {
-			keyPress(Common::KEYCODE_RETURN, KeyReceiver::PRESS);
 		}
 
 		return;
 
 	case JE_DOUBLE_TAP:
-		if (_show_mouse) {
-			e.type = Common::EVENT_MOUSEMOVE;
+		if (!shouldGenerateMouseEvents()) {
+			keyPress(Common::KEYCODE_u, KeyReceiver::PRESS);
+		}
 
-			if (_touchpad_mode) {
-				e.mouse = getEventManager()->getMousePos();
-			} else {
-				scaleMouse(e.mouse, arg1, arg2);
-				clipMouse(e.mouse);
-			}
+		e.type = Common::EVENT_MOUSEMOVE;
 
-			{
-				Common::EventType dptype = Common::EVENT_INVALID;
+		if (_touchpad_mode) {
+			e.mouse = getEventManager()->getMousePos();
+		} else {
+			scaleMouse(e.mouse, arg1, arg2);
+			clipMouse(e.mouse);
+		}
 
-				switch (arg3) {
-				case JACTION_DOWN:
-					dptype = Common::EVENT_LBUTTONDOWN;
-					_touch_pt_dt.x = -1;
-					_touch_pt_dt.y = -1;
-					break;
-				case JACTION_UP:
-					dptype = Common::EVENT_LBUTTONUP;
-					break;
-				// held and moved
-				case JACTION_MOVE:
-					if (_touch_pt_dt.x == -1 && _touch_pt_dt.y == -1) {
-						_touch_pt_dt.x = arg1;
-						_touch_pt_dt.y = arg2;
-						return;
-					}
+		{
+			Common::EventType dptype = Common::EVENT_INVALID;
 
-					dptype = Common::EVENT_MOUSEMOVE;
-
-					if (_touchpad_mode) {
-						scaleMouse(e.mouse, arg1 - _touch_pt_dt.x,
-									arg2 - _touch_pt_dt.y, false);
-						e.mouse += _touch_pt_down;
-
-						clipMouse(e.mouse);
-					}
-
-					break;
-				default:
-					LOGE("unhandled jaction on double tap: %d", arg3);
+			switch (arg3) {
+			case JACTION_DOWN:
+				dptype = Common::EVENT_LBUTTONDOWN;
+				_touch_pt_dt.x = -1;
+				_touch_pt_dt.y = -1;
+				break;
+			case JACTION_UP:
+				dptype = Common::EVENT_LBUTTONUP;
+				break;
+			// held and moved
+			case JACTION_MULTIPLE:
+				if (_touch_pt_dt.x == -1 && _touch_pt_dt.y == -1) {
+					_touch_pt_dt.x = arg1;
+					_touch_pt_dt.y = arg2;
 					return;
 				}
 
-				lockMutex(_event_queue_lock);
-				_event_queue.push(e);
-				e.type = dptype;
-				_event_queue.push(e);
-				unlockMutex(_event_queue_lock);
+				dptype = Common::EVENT_MOUSEMOVE;
+
+				if (_touchpad_mode) {
+					scaleMouse(e.mouse, arg1 - _touch_pt_dt.x,
+								arg2 - _touch_pt_dt.y, false, true);
+					e.mouse += _touch_pt_down;
+
+					clipMouse(e.mouse);
+				}
+
+				break;
+			default:
+				LOGE("unhandled jaction on double tap: %d", arg3);
+				return;
 			}
-		} else {
-			keyPress(Common::KEYCODE_u, KeyReceiver::PRESS);
+
+			lockMutex(_event_queue_lock);
+			_event_queue.push(e);
+			e.type = dptype;
+			_event_queue.push(e);
+			unlockMutex(_event_queue_lock);
 		}
 
 		return;
@@ -533,8 +540,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 	case JE_TOUCH:
 	case JE_MULTI:
-	{
-		if (!_show_mouse) {
+		if (!shouldGenerateMouseEvents()) {
 			_touchControls.update(arg1, arg2, arg3, arg4);
 			return;
 		}
@@ -542,17 +548,14 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		case JACTION_POINTER_DOWN:
 			if (arg1 > _fingersDown)
 				_fingersDown = arg1;
-				/* no break */
 
-		case JACTION_DOWN:
-		case JACTION_MOVE:
 			return;
 
-		case JACTION_UP:
-		case JACTION_POINTER_UP: {
-			if (_show_mouse) {
-				if (arg1 != _fingersDown)
-					return;
+		case JACTION_POINTER_UP:
+			if (arg1 != _fingersDown)
+				return;
+
+			{
 				Common::EventType up;
 
 				switch (_fingersDown) {
@@ -583,13 +586,15 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 				_queuedEventTime = getMillis() + kQueuedInputEventDelay;
 
 				unlockMutex(_event_queue_lock);
+				return;
+
+			default:
+				LOGE("unhandled jaction on multi tap: %d", arg2);
+				return;
 			}
-			return;
-		}
 		}
 
 		return;
-	}
 
 	case JE_BALL:
 		e.mouse = getEventManager()->getMousePos();
@@ -601,7 +606,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		case JACTION_UP:
 			e.type = Common::EVENT_LBUTTONUP;
 			break;
-		case JACTION_MOVE:
+		case JACTION_MULTIPLE:
 			e.type = Common::EVENT_MOUSEMOVE;
 
 			// already multiplied by 100
@@ -694,6 +699,21 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 	}
 
 	return true;
+}
+
+bool OSystem_Android::shouldGenerateMouseEvents() {
+	// Engine doesn't support joystick -> emulate mouse events
+	// TODO: Provide dedicated feature for handling touchscreen events
+	if (g_engine && !g_engine->hasFeature(Engine::kSupportsJoystick)) {
+		return true;
+	}
+
+	// Even if engine supports joystick, emulate mouse events if in GUI or in virtual keyboard
+	if (g_gui.isActive() || g_engine->isPaused()) {
+		return true;
+	}
+
+	return false;
 }
 
 void OSystem_Android::pushEvent(const Common::Event &event) {

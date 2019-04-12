@@ -176,7 +176,7 @@ void TouchControls::update(int ptr, int action, int x, int y) {
 			return;
 		}
 
-	case JACTION_MOVE: {
+	case JACTION_MULTIPLE: {
 		_pointers[ptr].currentX = x;
 		_pointers[ptr].currentY = y;
 		int dX = x - _pointers[ptr].startX;

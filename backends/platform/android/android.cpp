@@ -132,7 +132,6 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_ar_correction(true),
 	_show_mouse(false),
 	_show_overlay(false),
-	_virtcontrols_on(false),
 	_enable_zoning(false),
 	_mixer(0),
 	_queuedEventTime(0),
@@ -397,7 +396,6 @@ bool OSystem_Android::hasFeature(Feature f) {
 			f == kFeatureAspectRatioCorrection ||
 			f == kFeatureCursorPalette ||
 			f == kFeatureVirtualKeyboard ||
-			f == kFeatureVirtControls ||
 #ifdef USE_OPENGL
 			f == kFeatureOpenGL ||
 #endif
@@ -421,9 +419,6 @@ void OSystem_Android::setFeatureState(Feature f, bool enable) {
 		_virtkeybd_on = enable;
 		showVirtualKeyboard(enable);
 		break;
-	case kFeatureVirtControls:
-		_virtcontrols_on = enable;
-		break;
 	case kFeatureCursorPalette:
 		_use_mouse_palette = enable;
 		if (!enable)
@@ -442,8 +437,6 @@ bool OSystem_Android::getFeatureState(Feature f) {
 		return _ar_correction;
 	case kFeatureVirtualKeyboard:
 		return _virtkeybd_on;
-	case kFeatureVirtControls:
-		return _virtcontrols_on;
 	case kFeatureCursorPalette:
 		return _use_mouse_palette;
 	default:
