@@ -177,6 +177,17 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 			return;
 
+		case JKEYCODE_MEDIA_PAUSE:
+		case JKEYCODE_MEDIA_PLAY:
+		case JKEYCODE_MEDIA_PLAY_PAUSE:
+			if (arg1 == JACTION_DOWN) {
+				e.type = Common::EVENT_MAINMENU;
+
+				pushEvent(e);
+			}
+
+			return;
+
 		case JKEYCODE_CAMERA:
 		case JKEYCODE_SEARCH:
 			if (arg1 == JACTION_DOWN)
