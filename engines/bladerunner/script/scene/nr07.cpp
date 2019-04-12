@@ -244,11 +244,24 @@ void SceneScriptNR07::clickedOnVase() {
 			} else {
 				Actor_Modify_Friendliness_To_Other(kActorDektora, kActorMcCoy, -2);
 			}
-			Actor_Says(kActorMcCoy, 3600, 19);
-			Actor_Says(kActorDektora, 550, 30);
-			Actor_Says(kActorMcCoy, 3605, 19);
-			Actor_Says(kActorDektora, 560, 31);
-			Actor_Says(kActorMcCoy, 3610, 19);
+#if BLADERUNNER_ORIGINAL_BUGS
+			Actor_Says(kActorMcCoy, 3600, 19);  // The flowers are beautiful. (McCoy fake fan voice)
+			Actor_Says(kActorDektora, 550, 30); // And a extremely rare (...)
+			Actor_Says(kActorMcCoy, 3605, 19);  // That's a pretty card. (McCoy fake fan voice)
+			Actor_Says(kActorDektora, 560, 31); // Please don't touch that. It's private.
+			Actor_Says(kActorMcCoy, 3610, 19);  // Sorry (McCoy fake fan voice)
+#else
+			if (!Game_Flag_Query(kFlagNR07McCoyIsCop)) {
+				Actor_Says(kActorMcCoy, 3600, 19);  // The flowers are beautiful. (McCoy fake fan voice)
+				Actor_Says(kActorDektora, 550, 30); // And a extremely rare (...)
+				Actor_Says(kActorMcCoy, 3605, 19);  // That's a pretty card. (McCoy fake fan voice)
+				Actor_Says(kActorDektora, 560, 31); // Please don't touch that. It's private.
+				Actor_Says(kActorMcCoy, 3610, 19);  // Sorry (McCoy fake fan voice)
+			} else {
+				Actor_Says(kActorDektora, 560, 31); // Please don't touch that. It's private.
+				Actor_Says(kActorMcCoy, 8525, 19);  // Hmph.
+			}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		}
 	} else if (!Actor_Clue_Query(kActorMcCoy, kClueDektorasCard)) {
 		Actor_Clue_Acquire(kActorMcCoy, kClueDektorasCard, true, -1);
@@ -270,7 +283,7 @@ void SceneScriptNR07::talkAboutBelt1() {
 	Actor_Says(kActorMcCoy, 3630, 13);
 	Actor_Says_With_Pause(kActorDektora, 590, 1.0f, 30);
 	Actor_Says(kActorDektora, 600, 30);
-	Actor_Start_Speech_Sample(kActorMcCoy, 3640);
+	Actor_Start_Speech_Sample(kActorMcCoy, 3640);  // Tell you the truth, I'm from the LPD. (...)
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -109.0f, -73.0f, -89.0f, 0, false, false, 0);
 	Actor_Face_Actor(kActorMcCoy, kActorDektora, true);
 	Actor_Face_Actor(kActorDektora, kActorMcCoy, true);
