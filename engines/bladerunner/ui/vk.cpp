@@ -115,7 +115,7 @@ void VK::open(int actorId, int calibrationRatio) {
 		return;
 	}
 
-	_surfaceEye.create(172, 116, createRGB555());
+	_surfaceEye.create(172, 116, screenPixelForrmat());
 	_vqaPlayerEye = new VQAPlayer(_vm, &_surfaceEye, eyeVqa);
 	if (!_vqaPlayerEye->open()) {
 		return;
@@ -683,16 +683,15 @@ void VK::drawNeedle(Graphics::Surface &surface) {
 
 	float colorIntensity = MIN(78.0f, _needleValue + 39.0f) / 78.0f;
 
-	int r =  6 * colorIntensity;
-	int g =  8 * colorIntensity;
-	int b = 12 * colorIntensity;
+	uint16 color1 = surface.format.RGBToColor(56 - 48 * colorIntensity, 144 - 64 * colorIntensity, 184 - 96 * colorIntensity);
+	uint16 color2 = surface.format.RGBToColor(56 - 24 * colorIntensity, 144 - 32 * colorIntensity, 184 - 48 * colorIntensity);
 
-	surface.drawLine(203, 324, x - 2, y,     ((7 - r    ) << 10) | ((18 - g    ) << 5) | (23 - b    ));
-	surface.drawLine(203, 324, x + 2, y,     ((7 - r    ) << 10) | ((18 - g    ) << 5) | (23 - b    ));
-	surface.drawLine(203, 324, x - 1, y,     ((7 - r / 2) << 10) | ((18 - g / 2) << 5) | (23 - b / 2));
-	surface.drawLine(203, 324, x + 1, y,     ((7 - r / 2) << 10) | ((18 - g / 2) << 5) | (23 - b / 2));
-	surface.drawLine(203, 324, x,     y - 1, ((7 - r / 2) << 10) | ((18 - g / 2) << 5) | (23 - b / 2));
-	surface.drawLine(203, 324, x,     y,     0x1E57);
+	surface.drawLine(203, 324, x - 2, y,     color1);
+	surface.drawLine(203, 324, x + 2, y,     color1);
+	surface.drawLine(203, 324, x - 1, y,     color2);
+	surface.drawLine(203, 324, x + 1, y,     color2);
+	surface.drawLine(203, 324, x,     y - 1, color2);
+	surface.drawLine(203, 324, x,     y,     surface.format.RGBToColor(56, 144, 184));
 }
 
 void VK::drawEye(Graphics::Surface &surface) {
@@ -701,24 +700,24 @@ void VK::drawEye(Graphics::Surface &surface) {
 }
 
 void VK::drawEyeCrosshair(Graphics::Surface &surface, int timeNow) {
-	surface.drawLine(315,                                        _eyeLineY,     486,                                        _eyeLineY,     0x848u);
-	surface.drawLine(315,                                        _eyeLineY - 1, 486,                                        _eyeLineY - 1, 0x848u);
-	surface.drawLine(315,                                        _eyeLineY,     _vm->_rnd.getRandomNumberRng(10, 20) + 315, _eyeLineY,     0x84Au);
-	surface.drawLine(486 - _vm->_rnd.getRandomNumberRng(10, 20), _eyeLineY,     486,                                        _eyeLineY,     0x84Au);
-	surface.drawLine(486 - _vm->_rnd.getRandomNumberRng(10, 20), _eyeLineY - 1, 486,                                        _eyeLineY - 1, 0x846u);
-	surface.drawLine(315,                                        _eyeLineY - 1, _vm->_rnd.getRandomNumberRng(10, 20) + 315, _eyeLineY - 1, 0x846u);
+	surface.drawLine(315,                                        _eyeLineY,     486,                                        _eyeLineY,     surface.format.RGBToColor(16, 16, 64));
+	surface.drawLine(315,                                        _eyeLineY - 1, 486,                                        _eyeLineY - 1, surface.format.RGBToColor(16, 16, 64));
+	surface.drawLine(315,                                        _eyeLineY,     _vm->_rnd.getRandomNumberRng(10, 20) + 315, _eyeLineY,     surface.format.RGBToColor(16, 16, 80));
+	surface.drawLine(486 - _vm->_rnd.getRandomNumberRng(10, 20), _eyeLineY,     486,                                        _eyeLineY,     surface.format.RGBToColor(16, 16, 80));
+	surface.drawLine(486 - _vm->_rnd.getRandomNumberRng(10, 20), _eyeLineY - 1, 486,                                        _eyeLineY - 1, surface.format.RGBToColor(16, 16, 48));
+	surface.drawLine(315,                                        _eyeLineY - 1, _vm->_rnd.getRandomNumberRng(10, 20) + 315, _eyeLineY - 1, surface.format.RGBToColor(16, 16, 48));
 
-	surface.drawLine(_eyeLineX,     281,                                        _eyeLineX,     396,                                        0x848u);
-	surface.drawLine(_eyeLineX - 1, 281,                                        _eyeLineX - 1, 396,                                        0x848u);
-	surface.drawLine(_eyeLineX,     281,                                        _eyeLineX,     _vm->_rnd.getRandomNumberRng(10, 20) + 281, 0x846u);
-	surface.drawLine(_eyeLineX,     396 - _vm->_rnd.getRandomNumberRng(10, 20), _eyeLineX,     396,                                        0x846u);
-	surface.drawLine(_eyeLineX - 1, 396 - _vm->_rnd.getRandomNumberRng(10, 20), _eyeLineX - 1, 396,                                        0x84Au);
-	surface.drawLine(_eyeLineX - 1, 281,                                        _eyeLineX - 1, _vm->_rnd.getRandomNumberRng(10, 20) + 281, 0x84Au);
+	surface.drawLine(_eyeLineX,     281,                                        _eyeLineX,     396,                                        surface.format.RGBToColor(16, 16, 64));
+	surface.drawLine(_eyeLineX - 1, 281,                                        _eyeLineX - 1, 396,                                        surface.format.RGBToColor(16, 16, 64));
+	surface.drawLine(_eyeLineX,     281,                                        _eyeLineX,     _vm->_rnd.getRandomNumberRng(10, 20) + 281, surface.format.RGBToColor(16, 16, 48));
+	surface.drawLine(_eyeLineX,     396 - _vm->_rnd.getRandomNumberRng(10, 20), _eyeLineX,     396,                                        surface.format.RGBToColor(16, 16, 48));
+	surface.drawLine(_eyeLineX - 1, 396 - _vm->_rnd.getRandomNumberRng(10, 20), _eyeLineX - 1, 396,                                        surface.format.RGBToColor(16, 16, 80));
+	surface.drawLine(_eyeLineX - 1, 281,                                        _eyeLineX - 1, _vm->_rnd.getRandomNumberRng(10, 20) + 281, surface.format.RGBToColor(16, 16, 80));
 
 	if (timeNow >= _timeNextEyeLineStart) {
 		if (_eyeLineSelected) {
 			if (_eyeLineYLast != _eyeLineY) {
-				surface.drawLine(315, _eyeLineYLast, 486, _eyeLineYLast, 0x844u);
+				surface.drawLine(315, _eyeLineYLast, 486, _eyeLineYLast, surface.format.RGBToColor(16, 16, 32));
 			}
 			_eyeLineYLast = _eyeLineY;
 			if (timeNow >= _timeNextEyeLineStep) {
@@ -738,7 +737,7 @@ void VK::drawEyeCrosshair(Graphics::Surface &surface, int timeNow) {
 			}
 		} else {
 			if (_eyeLineXLast != _eyeLineX) {
-				surface.drawLine(_eyeLineXLast, 281, _eyeLineXLast, 396, 0x844u);
+				surface.drawLine(_eyeLineXLast, 281, _eyeLineXLast, 396, surface.format.RGBToColor(16, 16, 32));
 			}
 			_eyeLineXLast = _eyeLineX;
 			if (timeNow >= _timeNextEyeLineStep) {

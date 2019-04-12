@@ -302,7 +302,7 @@ void BladeRunnerEngine::pauseEngineIntern(bool pause) {
 }
 
 Common::Error BladeRunnerEngine::run() {
-	Graphics::PixelFormat format = createRGB555();
+	Graphics::PixelFormat format = screenPixelForrmat();
 	initGraphics(640, 480, &format);
 
 	_system->showMouse(true);
@@ -375,8 +375,8 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	// This is the original startup in the game
 
-	_surfaceFront.create(640, 480, createRGB555());
-	_surfaceBack.create(640, 480, createRGB555());
+	_surfaceFront.create(640, 480, screenPixelForrmat());
+	_surfaceBack.create(640, 480, screenPixelForrmat());
 
 	_time = new Time(this);
 
@@ -535,7 +535,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	_scores = new Scores(this);
 
 	_mainFont = new Font(this);
-	_mainFont->open("KIA6PT.FON", 640, 480, -1, 0, 0x252D);
+	_mainFont->open("KIA6PT.FON", 640, 480, -1, 0, _surfaceFront.format.RGBToColor(72, 72, 104));
 	_mainFont->setSpacing(1, 0);
 
 	for (int i = 0; i != 43; ++i) {
@@ -1874,7 +1874,7 @@ void BladeRunnerEngine::playerDied() {
 	_kia->open(kKIASectionLoad);
 }
 
-bool BladeRunnerEngine::saveGame(Common::WriteStream &stream, const Graphics::Surface &thumbnail) {
+bool BladeRunnerEngine::saveGame(Common::WriteStream &stream, Graphics::Surface &thumbnail) {
 	if ( !_gameIsAutoSaving
 	     && ( !playerHasControl() || _sceneScript->isInsideScript() || _aiScripts->isInsideScript())
 	){
@@ -1884,6 +1884,7 @@ bool BladeRunnerEngine::saveGame(Common::WriteStream &stream, const Graphics::Su
 	Common::MemoryWriteStreamDynamic memoryStream(DisposeAfterUse::YES);
 	SaveFileWriteStream s(memoryStream);
 
+	thumbnail.convertToInPlace(gameDataPixelFormat());
 	s.write(thumbnail.getPixels(), SaveFileManager::kThumbnailSize);
 	s.writeFloat(1.0f);
 	_settings->save(s);
@@ -2080,7 +2081,7 @@ void BladeRunnerEngine::blitToScreen(const Graphics::Surface &src) const {
 
 Graphics::Surface BladeRunnerEngine::generateThumbnail() const {
 	Graphics::Surface thumbnail;
-	thumbnail.create(640 / 8, 480 / 8, createRGB555());
+	thumbnail.create(640 / 8, 480 / 8, _surfaceFront.format);
 
 	for (int y = 0; y < thumbnail.h; ++y) {
 		for (int x = 0; x < thumbnail.w; ++x) {

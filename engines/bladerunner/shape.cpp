@@ -103,22 +103,22 @@ void Shape::draw(Graphics::Surface &surface, int x, int y) const {
 		return;
 	}
 
-	byte *src_p = _data + 2 * (src_y * _width + src_x);
-	byte *dst_p = (byte *)surface.getBasePtr(dst_x, dst_y);
+	const uint8 *src_p = _data + 2 * (src_y * _width + src_x);
 
 	for (int yi = 0; yi != rect_h; ++yi) {
 		for (int xi = 0; xi != rect_w; ++xi) {
-			uint16 color = READ_LE_UINT16(src_p);
-			if ((color & 0x8000) == 0) {
-				*(uint16 *)dst_p = color;
-			}
-
+			uint16 shpColor = READ_LE_UINT16(src_p);
 			src_p += 2;
-			dst_p += 2;
-		}
 
+			uint8 a, r, g, b;
+			gameDataPixelFormat().colorToARGB(shpColor, a, r, g, b);
+			uint16 outColor = (uint16)surface.format.ARGBToColor(a, r, g, b);
+
+			if (!a) {
+				*(uint16 *)(surface.getBasePtr(dst_x + xi, dst_y + yi)) = outColor;
+			}
+		}
 		src_p += 2 * (_width - rect_w);
-		dst_p += surface.pitch - 2 * rect_w;
 	}
 }
 

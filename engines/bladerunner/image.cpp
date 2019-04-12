@@ -73,8 +73,8 @@ bool Image::open(const Common::String &name) {
 #endif
 	}
 
-	const Graphics::PixelFormat pixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
-	_surface.init(width, height, 2*width, data, pixelFormat);
+	_surface.init(width, height, 2*width, data, gameDataPixelFormat());
+	_surface.convertToInPlace(screenPixelForrmat());
 
 	delete[] buf;
 	delete stream;

@@ -23,6 +23,7 @@
 #ifndef BLADERUNNER_UI_SCROLLBOX_H
 #define BLADERUNNER_UI_SCROLLBOX_H
 
+#include "bladerunner/color.h"
 #include "bladerunner/ui/ui_component.h"
 
 #include "common/array.h"
@@ -35,12 +36,12 @@ typedef void UIScrollBoxCallback(void *callbackData, void *source, int lineData,
 
 class UIScrollBox : public UIComponent {
 	static const int kLineHeight = 10;
-	static const int k3DFrameColors[];
-	static const int kTextBackgroundColors[];
-	static const int kTextColors1[];
-	static const int kTextColors2[];
-	static const int kTextColors3[];
-	static const int kTextColors4[];
+	static const Color256 k3DFrameColors[];
+	static const Color256 kTextBackgroundColors[];
+	static const Color256 kTextColors1[];
+	static const Color256 kTextColors2[];
+	static const Color256 kTextColors3[];
+	static const Color256 kTextColors4[];
 
 	struct Line {
 		Common::String text;

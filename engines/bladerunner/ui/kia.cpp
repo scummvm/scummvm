@@ -310,7 +310,7 @@ void KIA::tick() {
 	}
 	if (_currentSectionId != kKIASectionQuit && _transitionId != 14) {
 		if (_vm->_settings->getDifficulty() > 0) {
-			_vm->_mainFont->drawColor(Common::String::format("%04d", _vm->_gameVars[kVariableChinyen]), _vm->_surfaceFront, 580, 341, 0x2991);
+			_vm->_mainFont->drawColor(Common::String::format("%04d", _vm->_gameVars[kVariableChinyen]), _vm->_surfaceFront, 580, 341, _vm->_surfaceFront.format.RGBToColor(80, 96, 136));
 		} else {
 			_shapes->get(39)->draw(_vm->_surfaceFront, 583, 342);
 		}
@@ -332,7 +332,7 @@ void KIA::tick() {
 			int height  = _playerPhotograph->getHeight();
 			_playerPhotograph->draw(_vm->_surfaceFront, 590 - width / 2, 80 - height / 2);
 		} else if (_playerImage.getPixels() != nullptr) {
-			_vm->_surfaceFront.fillRect(Common::Rect(549, 49, 631, 111), 0x7FFF);
+			_vm->_surfaceFront.fillRect(Common::Rect(549, 49, 631, 111), _vm->_surfaceFront.format.RGBToColor(255, 255, 255));
 			_vm->_surfaceFront.copyRectToSurface(_playerImage.getPixels(), _playerImage.pitch, 550, 50, _playerImage.w,  _playerImage.h);
 		}
 	}
@@ -370,7 +370,7 @@ void KIA::tick() {
 			_shapes->get(47)->draw(_vm->_surfaceFront, 182, 446);
 		}
 	}
-	_vm->_mainFont->drawColor("1.00", _vm->_surfaceFront, 438, 471, 0x1CE7); // 1.01 is DVD version, but only cd handling routines were changed, no game logic
+	_vm->_mainFont->drawColor("1.00", _vm->_surfaceFront, 438, 471, _vm->_surfaceFront.format.RGBToColor(56, 56, 56)); // 1.01 is DVD version, but only cd handling routines were changed, no game logic
 	if (!_transitionId) {
 		_buttons->drawTooltip(_vm->_surfaceFront, mouse.x, mouse.y);
 	}

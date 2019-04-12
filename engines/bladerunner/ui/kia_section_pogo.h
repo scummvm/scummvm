@@ -23,15 +23,16 @@
 #ifndef BLADERUNNER_KIA_SECTION_POGO_H
 #define BLADERUNNER_KIA_SECTION_POGO_H
 
+#include "bladerunner/color.h"
 #include "bladerunner/ui/kia_section_base.h"
 
 namespace BladeRunner {
 
 class KIASectionPogo : public KIASectionBase {
-	static const int   kStringCount = 158;
-	static const int   kLineCount = 22;
-	static const char *kStrings[];
-	static const int   kTextColors[];
+	static const int      kStringCount = 158;
+	static const int      kLineCount = 22;
+	static const char    *kStrings[];
+	static const Color256 kTextColors[];
 
 	const char *_strings[kStringCount];
 	int         _stringIndex;

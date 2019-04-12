@@ -29,7 +29,24 @@
 
 namespace BladeRunner {
 
-const uint16 UISlider::kColors[] = { 0x0000, 0x0821, 0x1061, 0x1C82, 0x24C2, 0x2CE3, 0x3524, 0x4145, 0x4586, 0x4DC7, 0x5609, 0x5E4B, 0x668C, 0x6EEE, 0x7730, 0x7B92 };
+const Color256 UISlider::kColors[] = {
+	{ 0, 0, 0 },
+	{ 16, 8, 8 },
+	{ 32, 24, 8 },
+	{ 56, 32, 16 },
+	{ 72, 48, 16 },
+	{ 88, 56, 24 },
+	{ 104, 72, 32 },
+	{ 128, 80, 40 },
+	{ 136, 96, 48 },
+	{ 152, 112, 56 },
+	{ 168, 128, 72 },
+	{ 184, 144, 88 },
+	{ 200, 160, 96 },
+	{ 216, 184, 112 },
+	{ 232, 200, 128 },
+	{ 240, 224, 144 }
+};
 
 UISlider::UISlider(BladeRunnerEngine *vm, UIComponentCallback *valueChangedCallback, void *callbackData, Common::Rect rect, int maxValue, int value)
 	: UIComponent(vm) {
@@ -70,7 +87,7 @@ void UISlider::draw(Graphics::Surface &surface) {
 		--_currentFrameColor;
 	}
 
-	surface.frameRect(_rect, kColors[_currentFrameColor]);
+	surface.frameRect(_rect, surface.format.RGBToColor(kColors[_currentFrameColor].r, kColors[_currentFrameColor].g, kColors[_currentFrameColor].b));
 
 	int sliderX = 0;
 	if (_maxValue <= 1) {
@@ -98,7 +115,7 @@ void UISlider::draw(Graphics::Surface &surface) {
 				colorIndex = 3;
 			}
 
-			uint16 color = kColors[colorIndex];
+			uint16 color = surface.format.RGBToColor(kColors[colorIndex].r, kColors[colorIndex].g, kColors[colorIndex].b);
 			if ((striding + x) & 1 || x == sliderX) {
 				color = 0;
 			}

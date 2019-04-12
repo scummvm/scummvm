@@ -139,8 +139,8 @@ void Scores::tick() {
 	// vqaPlayer renders to _surfaceBack
 	blit(_vm->_surfaceBack, _vm->_surfaceFront);
 
-	_vm->_surfaceFront.hLine(200, 139, 400, 0x3e0);
-	_vm->_surfaceFront.hLine(200, 347, 400, 0x1f);
+	_vm->_surfaceFront.hLine(200, 139, 400, _vm->_surfaceFront.format.RGBToColor(0, 248, 0));
+	_vm->_surfaceFront.hLine(200, 347, 400, _vm->_surfaceFront.format.RGBToColor(0, 0, 248));
 
 	_font->draw(_txtScorers->getText(7), _vm->_surfaceFront, 200, 114);
 

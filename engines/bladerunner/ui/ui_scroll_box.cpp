@@ -34,12 +34,52 @@
 
 namespace BladeRunner {
 
-const int UIScrollBox::k3DFrameColors[]        = { 0x1083, 0x14A5, 0x14A6, 0x2508, 0x5230, 0x5230, 0x0000, 0x0000 };
-const int UIScrollBox::kTextBackgroundColors[] = { 0x14EA, 0x190C, 0x1D2E, 0x2570, 0x4F1F, 0x0000 };
-const int UIScrollBox::kTextColors1[]          = { 0x25B3, 0x31F7, 0x3A5B, 0x46BF, 0x4F1F };
-const int UIScrollBox::kTextColors2[]          = { 0x677F, 0x6F9F, 0x73BF, 0x77DF, 0x7FFF };
-const int UIScrollBox::kTextColors3[]          = { 0x7BB8, 0x7BBA, 0x7BDB, 0x7FDD, 0x7FFF };
-const int UIScrollBox::kTextColors4[]          = { 0x4DC7, 0x5E4B, 0x6EEE, 0x7751, 0x7F92 };
+const Color256 UIScrollBox::k3DFrameColors[] = {
+	{ 32, 32, 24 },
+	{ 40, 40, 40 },
+	{ 40, 40, 48 },
+	{ 72, 64, 64 },
+	{ 160, 136, 128 },
+	{ 160, 136, 128 },
+	{ 0, 0, 0 },
+	{ 0, 0, 0 }
+};
+const Color256 UIScrollBox::kTextBackgroundColors[] = {
+	{ 40, 56, 80 },
+	{ 48, 64, 96 },
+	{ 56, 72, 112 },
+	{ 72, 88, 128 },
+	{ 152, 192, 248 },
+	{ 0, 0, 0 }
+};
+const Color256 UIScrollBox::kTextColors1[] = {
+	{ 72, 104, 152 },
+	{ 96, 120, 184 },
+	{ 112, 144, 216 },
+	{ 136, 168, 248 },
+	{ 152, 192, 248 }
+};
+const Color256 UIScrollBox::kTextColors2[] = {
+	{ 200, 216, 248 },
+	{ 216, 224, 248 },
+	{ 224, 232, 248 },
+	{ 232, 240, 248 },
+	{ 248, 248, 248 }
+};
+const Color256 UIScrollBox::kTextColors3[] = {
+	{ 240, 232, 192 },
+	{ 240, 232, 208 },
+	{ 240, 240, 216 },
+	{ 248, 240, 232 },
+	{ 248, 248, 248 }
+};
+const Color256 UIScrollBox::kTextColors4[] = {
+	{ 152, 112, 56 },
+	{ 184, 144, 88 },
+	{ 216, 184, 112 },
+	{ 232, 208, 136 },
+	{ 248, 224, 144 }
+};
 
 UIScrollBox::UIScrollBox(BladeRunnerEngine *vm, UIScrollBoxCallback *lineSelectedCallback, void *callbackData, int maxLineCount, int style, bool center, Common::Rect rect, Common::Rect scrollBarRect) : UIComponent(vm) {
 	_selectedLineState     = 0;
@@ -438,16 +478,16 @@ void UIScrollBox::draw(Graphics::Surface &surface) {
 			if ((((_selectedLineState == 0 && i == _hoveredLine) || (_selectedLineState == 2 && i == _selectedLineIndex && _selectedLineIndex == _hoveredLine)) && _lines[i]->lineData != -1) || _lines[i]->flags & 0x04) {
 				v35 = true;
 				if (_style) {
-					color = kTextColors2[colorIndex];
+					color = surface.format.RGBToColor(kTextColors2[colorIndex].r, kTextColors2[colorIndex].g, kTextColors2[colorIndex].b);
 				} else {
-					color = kTextColors3[colorIndex];
+					color = surface.format.RGBToColor(kTextColors3[colorIndex].r, kTextColors3[colorIndex].g, kTextColors3[colorIndex].b);
 				}
 			}
 			else {
 				if (_style) {
-					color = kTextColors1[colorIndex];
+					color = surface.format.RGBToColor(kTextColors1[colorIndex].r, kTextColors1[colorIndex].g, kTextColors1[colorIndex].b);
 				} else {
-					color = kTextColors4[colorIndex];
+					color = surface.format.RGBToColor(kTextColors4[colorIndex].r, kTextColors4[colorIndex].g, kTextColors4[colorIndex].b);
 				}
 			}
 
@@ -492,9 +532,9 @@ void UIScrollBox::draw(Graphics::Surface &surface) {
 			if (_lines[i]->flags & 0x08) { // has background rectangle
 				int colorBackground = 0;
 				if (_style) {
-					colorBackground = kTextBackgroundColors[colorIndex];
+					colorBackground = surface.format.RGBToColor(kTextBackgroundColors[colorIndex].r, kTextBackgroundColors[colorIndex].g, kTextBackgroundColors[colorIndex].b);
 				} else {
-					colorBackground = 0x28E4;
+					colorBackground = surface.format.RGBToColor(80, 56, 32);
 				}
 				surface.fillRect(Common::Rect(x, y, _rect.right + 1, y1 + 1), colorBackground);
 			}
@@ -639,14 +679,15 @@ void UIScrollBox::draw3DFrame(Graphics::Surface &surface, Common::Rect rect, boo
 	int color1, color2;
 
 	if (pressed) {
-		color1 = k3DFrameColors[style + 6];
-		color2 = k3DFrameColors[style + 4];
+		color1 = surface.format.RGBToColor(k3DFrameColors[style + 6].r, k3DFrameColors[style + 6].g, k3DFrameColors[style + 6].b);
+		color2 = surface.format.RGBToColor(k3DFrameColors[style + 4].r, k3DFrameColors[style + 4].g, k3DFrameColors[style + 4].b);
 	} else {
-		color1 = k3DFrameColors[style + 4];
-		color2 = k3DFrameColors[style + 6];
+		color1 = surface.format.RGBToColor(k3DFrameColors[style + 4].r, k3DFrameColors[style + 4].g, k3DFrameColors[style + 4].b);
+		color2 = surface.format.RGBToColor(k3DFrameColors[style + 6].r, k3DFrameColors[style + 6].g, k3DFrameColors[style + 6].b);
 	}
 
-	int fillColor = k3DFrameColors[style + 2];
+	int color3 = surface.format.RGBToColor(k3DFrameColors[style].r, k3DFrameColors[style].g, k3DFrameColors[style].b);
+	int fillColor = surface.format.RGBToColor(k3DFrameColors[style + 2].r, k3DFrameColors[style + 2].g, k3DFrameColors[style + 2].b);
 
 	surface.fillRect(Common::Rect(rect.left + 1, rect.top + 1, rect.right - 1, rect.bottom - 1), fillColor);
 
@@ -654,8 +695,8 @@ void UIScrollBox::draw3DFrame(Graphics::Surface &surface, Common::Rect rect, boo
 	surface.hLine(rect.left + 1,  rect.bottom - 1, rect.right - 2,  color2);
 	surface.vLine(rect.left,      rect.top,        rect.bottom - 2, color1);
 	surface.vLine(rect.right - 1, rect.top + 1,    rect.bottom - 1, color2);
-	surface.hLine(rect.right - 1, rect.top,        rect.right - 1,  k3DFrameColors[style]);
-	surface.hLine(rect.left,      rect.bottom - 1, rect.left,       k3DFrameColors[style]);
+	surface.hLine(rect.right - 1, rect.top,        rect.right - 1,  color3);
+	surface.hLine(rect.left,      rect.bottom - 1, rect.left,       color3);
 }
 
 void UIScrollBox::scrollUp() {

@@ -32,7 +32,24 @@
 
 namespace BladeRunner {
 
-const int KIASectionPogo::kTextColors[] = { 0x0000, 0x0821, 0x1061, 0x1C82, 0x24C2, 0x2CE3, 0x3524, 0x4145, 0x4586, 0x4DC7, 0x5609, 0x5E4B, 0x668C, 0x6EEE, 0x7730, 0x7B92 };
+const Color256 KIASectionPogo::kTextColors[] = {
+	{ 0, 0, 0 },
+	{ 16, 8, 8 },
+	{ 32, 24, 8 },
+	{ 56, 32, 16 },
+	{ 72, 48, 16 },
+	{ 88, 56, 24 },
+	{ 104, 72, 32 },
+	{ 128, 80, 40 },
+	{ 136, 96, 48 },
+	{ 152, 112, 56 },
+	{ 168, 128, 72 },
+	{ 184, 144, 88 },
+	{ 200, 160, 96 },
+	{ 216, 184, 112 },
+	{ 232, 200, 128 },
+	{ 240, 224, 144 }
+};
 
 const char *KIASectionPogo::kStrings[] = {
 	"Air Conditioning",
@@ -242,7 +259,7 @@ void KIASectionPogo::draw(Graphics::Surface &surface) {
 	}
 
 	const char *title = "We 3 coders give special thanks to:";
-	_vm->_mainFont->drawColor(title, surface, 313 - _vm->_mainFont->getTextWidth(title) / 2, 143, 0x7BB8);
+	_vm->_mainFont->drawColor(title, surface, 313 - _vm->_mainFont->getTextWidth(title) / 2, 143, surface.format.RGBToColor(240, 232, 192));
 
 	int y = 158;
 	for (int i = 0; i < kLineCount; ++i) {
@@ -264,7 +281,7 @@ void KIASectionPogo::draw(Graphics::Surface &surface) {
 				colorIndex = 63 - colorIndex;
 			}
 			colorIndex /= 2;
-			_vm->_mainFont->drawColor(_lineTexts[i], surface, _lineOffsets[i], y, kTextColors[colorIndex]);
+			_vm->_mainFont->drawColor(_lineTexts[i], surface, _lineOffsets[i], y, surface.format.RGBToColor(kTextColors[colorIndex].r, kTextColors[colorIndex].g, kTextColors[colorIndex].b));
 		}
 		y += 10;
 	}

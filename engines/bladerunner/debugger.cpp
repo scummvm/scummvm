@@ -1129,13 +1129,13 @@ void Debugger::drawSceneObjects() {
 			case kSceneObjectTypeUnknown:
 				break;
 			case kSceneObjectTypeActor:
-				color = 0x7C00; // 11111 00000 00000;
+				color = _vm->_surfaceFront.format.RGBToColor(255, 0, 0);
 				drawBBox(a, b, _vm->_view, &_vm->_surfaceFront, color);
 				_vm->_surfaceFront.frameRect(sceneObject->screenRectangle, color);
 				_vm->_mainFont->drawColor(_vm->_textActorNames->getText(sceneObject->id - kSceneObjectOffsetActors), _vm->_surfaceFront, pos.x, pos.y, color);
 				break;
 			case kSceneObjectTypeItem:
-				color = 0x03E0; // 00000 11111 00000
+			color = _vm->_surfaceFront.format.RGBToColor(0, 255, 0);
 				char itemText[40];
 				drawBBox(a, b, _vm->_view, &_vm->_surfaceFront, color);
 				sprintf(itemText, "item %i", sceneObject->id - kSceneObjectOffsetItems);
@@ -1143,11 +1143,9 @@ void Debugger::drawSceneObjects() {
 				_vm->_mainFont->drawColor(itemText, _vm->_surfaceFront, pos.x, pos.y, color);
 				break;
 			case kSceneObjectTypeObject:
-				color = 0x3DEF; //01111 01111 01111;
-				//if (sceneObject->_isObstacle)
-				//	color += 0b100000000000000;
+				color = _vm->_surfaceFront.format.RGBToColor(127, 127, 127);
 				if (sceneObject->isClickable) {
-					color = 0x03E0; // 00000 11111 00000;
+					color = _vm->_surfaceFront.format.RGBToColor(0, 255, 0);
 				}
 				drawBBox(a, b, _vm->_view, &_vm->_surfaceFront, color);
 				_vm->_surfaceFront.frameRect(sceneObject->screenRectangle, color);
@@ -1175,10 +1173,7 @@ void Debugger::drawLights() {
 		posTarget.z = -t;
 
 		Vector3 size = Vector3(5.0f, 5.0f, 5.0f);
-		int colorR = (light->_color.r * 31.0f);
-		int colorG = (light->_color.g * 31.0f);
-		int colorB = (light->_color.b * 31.0f);
-		int color = (colorR << 10) + (colorG << 5) + colorB;
+		int color = _vm->_surfaceFront.format.RGBToColor(light->_color.r * 255.0f, light->_color.g * 255.0f, light->_color.b * 255.0f);
 
 		drawBBox(posOrigin - size, posOrigin + size, _vm->_view, &_vm->_surfaceFront, color);
 
@@ -1209,10 +1204,7 @@ void Debugger::drawFogs() {
 		posTarget.z = -t;
 
 		Vector3 size = Vector3(5.0f, 5.0f, 5.0f);
-		int colorR = (fog->_fogColor.r * 31.0f);
-		int colorG = (fog->_fogColor.g * 31.0f);
-		int colorB = (fog->_fogColor.b * 31.0f);
-		int color = (colorR << 10) + (colorG << 5) + colorB;
+		int color = _vm->_surfaceFront.format.RGBToColor(fog->_fogColor.r * 255.0f, fog->_fogColor.g * 255.0f, fog->_fogColor.b * 255.0f);
 
 		drawBBox(posOrigin - size, posOrigin + size, _vm->_view, &_vm->_surfaceFront, color);
 
@@ -1231,14 +1223,14 @@ void Debugger::drawRegions() {
 	for (int i = 0; i < 10; i++) {
 		Regions::Region *region = &_vm->_scene->_regions->_regions[i];
 		if (!region->present) continue;
-		_vm->_surfaceFront.frameRect(region->rectangle, 0x001F); // 00000 00000 11111
+		_vm->_surfaceFront.frameRect(region->rectangle, _vm->_surfaceFront.format.RGBToColor(0, 0, 255));
 	}
 
 	//draw exits
 	for (int i = 0; i < 10; i++) {
 		Regions::Region *region = &_vm->_scene->_exits->_regions[i];
 		if (!region->present) continue;
-		_vm->_surfaceFront.frameRect(region->rectangle, 0x7FFF); // 11111 11111 11111
+		_vm->_surfaceFront.frameRect(region->rectangle, _vm->_surfaceFront.format.RGBToColor(255, 255, 255));
 	}
 }
 
@@ -1251,7 +1243,7 @@ void Debugger::drawWaypoints() {
 		}
 		Vector3 pos = waypoint->position;
 		Vector3 size = Vector3(3.0f, 3.0f, 3.0f);
-		int color = 0x7FFF; // 11111 11111 11111
+		int color = _vm->_surfaceFront.format.RGBToColor(255, 255, 255);
 		drawBBox(pos - size, pos + size, _vm->_view, &_vm->_surfaceFront, color);
 		Vector3 spos = _vm->_view->calculateScreenPosition(pos);
 		char waypointText[40];
@@ -1267,7 +1259,7 @@ void Debugger::drawWaypoints() {
 		}
 		Vector3 pos = cover->position;
 		Vector3 size = Vector3(3.0f, 3.0f, 3.0f);
-		int color = 0x7C1F; // 11111 00000 11111
+		int color = _vm->_surfaceFront.format.RGBToColor(255, 0, 255);
 		drawBBox(pos - size, pos + size, _vm->_view, &_vm->_surfaceFront, color);
 		Vector3 spos = _vm->_view->calculateScreenPosition(pos);
 		char coverText[40];
@@ -1283,7 +1275,7 @@ void Debugger::drawWaypoints() {
 		}
 		Vector3 pos = flee->position;
 		Vector3 size = Vector3(3.0f, 3.0f, 3.0f);
-		int color = 0x03FF; // 00000 11111 11111
+		int color = _vm->_surfaceFront.format.RGBToColor(0, 255, 255);
 		drawBBox(pos - size, pos + size, _vm->_view, &_vm->_surfaceFront, color);
 		Vector3 spos = _vm->_view->calculateScreenPosition(pos);
 		char fleeText[40];
@@ -1300,9 +1292,9 @@ void Debugger::drawWalkboxes() {
 		for (int j = 0; j < walkbox->vertexCount; j++) {
 			Vector3 start = _vm->_view->calculateScreenPosition(walkbox->vertices[j]);
 			Vector3 end = _vm->_view->calculateScreenPosition(walkbox->vertices[(j + 1) % walkbox->vertexCount]);
-			_vm->_surfaceFront.drawLine(start.x, start.y, end.x, end.y, 0x7FE0); // 11111 11111 00000
+			_vm->_surfaceFront.drawLine(start.x, start.y, end.x, end.y, _vm->_surfaceFront.format.RGBToColor(255, 255, 0));
 			Vector3 pos = _vm->_view->calculateScreenPosition(0.5 * (start + end));
-			_vm->_mainFont->drawColor(walkbox->name, _vm->_surfaceFront, pos.x, pos.y, 0x7FE0); // 11111 11111 00000
+			_vm->_mainFont->drawColor(walkbox->name, _vm->_surfaceFront, pos.x, pos.y, _vm->_surfaceFront.format.RGBToColor(255, 255, 0));
 		}
 	}
 }
@@ -1317,19 +1309,16 @@ void Debugger::drawScreenEffects() {
 				Common::Rect r((entry.x + x) * 2, (entry.y + y) * 2, (entry.x + x) * 2 + 2, (entry.y + y) * 2 + 2);
 
 				int ec = entry.data[j++];
-				Color256 color = entry.palette[ec];
-				int bladeToScummVmConstant = 256 / 16;
+				const int bladeToScummVmConstant = 256 / 16;
 
-				Graphics::PixelFormat _pixelFormat = createRGB555();
-				int color555 = _pixelFormat.RGBToColor(
-					CLIP(color.r * bladeToScummVmConstant, 0, 255),
-					CLIP(color.g * bladeToScummVmConstant, 0, 255),
-					CLIP(color.b * bladeToScummVmConstant, 0, 255));
-				_vm->_surfaceFront.fillRect(r, color555);
+				int color = _vm->_surfaceFront.format.RGBToColor(
+					CLIP(entry.palette[ec].r * bladeToScummVmConstant, 0, 255),
+					CLIP(entry.palette[ec].g * bladeToScummVmConstant, 0, 255),
+					CLIP(entry.palette[ec].b * bladeToScummVmConstant, 0, 255));
+				_vm->_surfaceFront.fillRect(r, color);
 			}
 		}
 	}
 }
-
 
 } // End of namespace BladeRunner

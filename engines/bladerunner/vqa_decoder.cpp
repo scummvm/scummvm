@@ -830,42 +830,31 @@ bool VQADecoder::VQAVideoTrack::readVPTR(Common::SeekableReadStream *s, uint32 s
 }
 
 void VQADecoder::VQAVideoTrack::VPTRWriteBlock(Graphics::Surface *surface, unsigned int dstBlock, unsigned int srcBlock, int count, bool alpha) {
-	uint16 *frame        = (uint16 *)surface->getPixels();
-	uint16  frame_width  = _width;
-	uint32  frame_stride = surface->w;
-	uint16  block_width  = _blockW;
-	uint16  block_height = _blockH;
+	const uint8 *const block_src = &_codebook[2 * srcBlock * _blockW * _blockH];
 
-	const uint8 *const block_src =
-		&_codebook[2 * srcBlock * block_width * block_height];
+	int blocks_per_line = _width / _blockW;
 
-	int blocks_per_line = frame_width / block_width;
+	for (int i = 0; i < count; ++i) {
+		uint32 dst_x = (dstBlock + i) % blocks_per_line * _blockW + _offsetX;
+		uint32 dst_y = (dstBlock + i) / blocks_per_line * _blockH + _offsetY;
 
-	do {
-		uint32 frame_x = dstBlock % blocks_per_line * block_width  + _offsetX;
-		uint32 frame_y = dstBlock / blocks_per_line * block_height + _offsetY;
+		const uint8 *src_p = block_src;
 
-		uint32 dst_offset = frame_x + frame_y * frame_stride;
+		for (int y = 0; y != _blockH; ++y) {
+			for (int x = 0; x != _blockW; ++x) {
+				uint16 vqaColor = READ_LE_UINT16(src_p);
+				src_p += 2;
 
-		const uint8 *__restrict src = block_src;
-		uint16      *__restrict dst = frame + dst_offset;
+				uint8 a, r, g, b;
+				gameDataPixelFormat().colorToARGB(vqaColor, a, r, g, b);
+				uint16 outColor = (uint16)surface->format.ARGBToColor(a, r, g, b);
 
-		unsigned int block_y;
-		for (block_y = 0; block_y != block_height; ++block_y) {
-			unsigned int block_x;
-			for (block_x = 0; block_x != block_width; ++block_x) {
-				uint16 rgb555 = src[0] | (src[1] << 8);
-				src += 2;
-
-				if (!(alpha && (rgb555 & 0x8000)))
-					*dst = rgb555;
-				++dst;
+				if (!(alpha && a)) {
+					*(uint16 *)(surface->getBasePtr(dst_x + x, dst_y + y)) = outColor;
+				}
 			}
-			dst += frame_stride - block_width;
 		}
-
-		++dstBlock;
-	} while (--count);
+	}
 }
 
 bool VQADecoder::VQAVideoTrack::decodeFrame(Graphics::Surface *surface) {

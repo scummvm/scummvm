@@ -23,6 +23,7 @@
 #ifndef BLADERUNNER_KIA_SECTION_DIAGNOSTIC_H
 #define BLADERUNNER_KIA_SECTION_DIAGNOSTIC_H
 
+#include "bladerunner/color.h"
 #include "bladerunner/ui/kia_section_base.h"
 
 namespace BladeRunner {
@@ -30,8 +31,8 @@ namespace BladeRunner {
 class TextResource;
 
 class KIASectionDiagnostic : public KIASectionBase {
-	static const int kTextColors[];
-	static const int kLineHeight = 18;
+	static const Color256 kTextColors[];
+	static const int      kLineHeight = 18;
 
 	TextResource *_text;
 	int           _offset;

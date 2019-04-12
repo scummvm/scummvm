@@ -294,7 +294,7 @@ public:
 	void playerGainsControl();
 	void playerDied();
 
-	bool saveGame(Common::WriteStream &stream, const Graphics::Surface &thumbnail);
+	bool saveGame(Common::WriteStream &stream, Graphics::Surface &thumbnail);
 	bool loadGame(Common::SeekableReadStream &stream);
 	void newGame(int difficulty);
 	void autoSaveGame(int textId, bool endgame);
@@ -308,8 +308,13 @@ public:
 	Common::String getTargetName() const;
 };
 
-static inline const Graphics::PixelFormat createRGB555() {
-	return Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
+static inline const Graphics::PixelFormat gameDataPixelFormat() {
+	return Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15);
+}
+
+static inline const Graphics::PixelFormat screenPixelForrmat() {
+	// Should be a format supported by Android port
+	return Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0);
 }
 
 void blit(const Graphics::Surface &src, Graphics::Surface &dst);

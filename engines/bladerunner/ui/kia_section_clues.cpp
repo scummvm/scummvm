@@ -120,10 +120,10 @@ void KIASectionClues::close() {
 void KIASectionClues::draw(Graphics::Surface &surface) {
 	_uiContainer->draw(surface);
 
-	_vm->_mainFont->drawColor(_vm->_textKIA->getText(0), surface, 300, 162, 0x77DF);
-	_vm->_mainFont->drawColor(_vm->_textKIA->getText(2), surface, 440, 426, 0x2991);
-	_vm->_mainFont->drawColor(_vm->_textKIA->getText(1), surface, 440, 442, 0x2991);
-	_vm->_mainFont->drawColor(_vm->_textKIA->getText(4), surface, 440, 458, 0x2991);
+	_vm->_mainFont->drawColor(_vm->_textKIA->getText(0), surface, 300, 162, surface.format.RGBToColor(232, 240, 255));
+	_vm->_mainFont->drawColor(_vm->_textKIA->getText(2), surface, 440, 426, surface.format.RGBToColor(80, 96, 136));
+	_vm->_mainFont->drawColor(_vm->_textKIA->getText(1), surface, 440, 442, surface.format.RGBToColor(80, 96, 136));
+	_vm->_mainFont->drawColor(_vm->_textKIA->getText(4), surface, 440, 458, surface.format.RGBToColor(80, 96, 136));
 
 	int clueId = _cluesScrollBox->getSelectedLineData();
 	if (clueId != -1) {
@@ -135,7 +135,7 @@ void KIASectionClues::draw(Graphics::Surface &surface) {
 		} else {
 			text.clear();
 		}
-		_vm->_mainFont->drawColor(text, surface, 490, 426, 0x46BF);
+		_vm->_mainFont->drawColor(text, surface, 490, 426, surface.format.RGBToColor(136, 168, 255));
 
 		int crimeId = _vm->_crimesDatabase->getCrime(clueId);
 		if (crimeId != -1) {
@@ -143,7 +143,7 @@ void KIASectionClues::draw(Graphics::Surface &surface) {
 		} else {
 			text.clear();
 		}
-		_vm->_mainFont->drawColor(text, surface, 490, 442, 0x46BF);
+		_vm->_mainFont->drawColor(text, surface, 490, 442, surface.format.RGBToColor(136, 168, 255));
 
 		int assetType = _vm->_crimesDatabase->getAssetType(clueId);
 		if (assetType != -1) {
@@ -151,17 +151,17 @@ void KIASectionClues::draw(Graphics::Surface &surface) {
 		} else {
 			text.clear();
 		}
-		_vm->_mainFont->drawColor(text, surface, 490, 458, 0x46BF);
+		_vm->_mainFont->drawColor(text, surface, 490, 458, surface.format.RGBToColor(136, 168, 255));
 	}
 
 	_buttons->draw(surface);
 	_buttons->drawTooltip(surface, _mouseX, _mouseY);
 
 	if (_debugNop) {
-		_vm->_mainFont->drawColor(Common::String::format("Debug display: %s", _vm->_textActorNames->getText(_debugNop)), surface, 120, 132, 0x7FE0);
+		_vm->_mainFont->drawColor(Common::String::format("Debug display: %s", _vm->_textActorNames->getText(_debugNop)), surface, 120, 132, surface.format.RGBToColor(255, 255, 0));
 	}
 	if (_debugIntangible) {
-		_vm->_mainFont->drawColor("Debug Mode: Showing intangible clues.", surface, 220, 105, 0x7FE0);
+		_vm->_mainFont->drawColor("Debug Mode: Showing intangible clues.", surface, 220, 105, surface.format.RGBToColor(255, 255, 0));
 	}
 }
 

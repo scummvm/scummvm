@@ -56,10 +56,8 @@ bool SliceAnimations::open(const Common::String &name) {
 			_palettes[i].color[j].g = color_g;
 			_palettes[i].color[j].b = color_b;
 
-			uint16 rgb555 = ((uint16)color_r << 10) |
-			                ((uint16)color_g <<  5) |
-			                 (uint16)color_b;
-
+			const int bladeToScummVmConstant = 256 / 32; // 5 bits to 8 bits
+			uint16 rgb555 = screenPixelForrmat().RGBToColor(color_r * bladeToScummVmConstant, color_g * bladeToScummVmConstant, color_b * bladeToScummVmConstant);
 			_palettes[i].color555[j] = rgb555;
 		}
 	}

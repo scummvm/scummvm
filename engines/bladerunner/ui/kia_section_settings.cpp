@@ -167,35 +167,35 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 	_uiContainer->draw(surface);
 	_playerAgendaSelector->draw(surface);
 
-	_vm->_mainFont->drawColor(textConversationChoices, surface, posConversationChoices, 280, 0x7751);
+	_vm->_mainFont->drawColor(textConversationChoices, surface, posConversationChoices, 280, surface.format.RGBToColor(232, 208, 136));
 
-	_vm->_mainFont->drawColor(textMusic, surface, posMusic, 150, 0x7751);
-	_vm->_mainFont->drawColor(textSoft, surface, posSoft, 161, 0x6EEE);
-	_vm->_mainFont->drawColor(textLoud, surface, 462, 161, 0x6EEE);
+	_vm->_mainFont->drawColor(textMusic, surface, posMusic, 150, surface.format.RGBToColor(232, 208, 136));
+	_vm->_mainFont->drawColor(textSoft, surface, posSoft, 161, surface.format.RGBToColor(216, 184, 112));
+	_vm->_mainFont->drawColor(textLoud, surface, 462, 161, surface.format.RGBToColor(216, 184, 112));
 
-	_vm->_mainFont->drawColor(textSoundEffects, surface, posSoundEffects, 175, 0x7751);
-	_vm->_mainFont->drawColor(textSoft, surface, posSoft, 186, 0x6EEE);
-	_vm->_mainFont->drawColor(textLoud, surface, 462, 186, 0x6EEE);
+	_vm->_mainFont->drawColor(textSoundEffects, surface, posSoundEffects, 175, surface.format.RGBToColor(232, 208, 136));
+	_vm->_mainFont->drawColor(textSoft, surface, posSoft, 186, surface.format.RGBToColor(216, 184, 112));
+	_vm->_mainFont->drawColor(textLoud, surface, 462, 186, surface.format.RGBToColor(216, 184, 112));
 
 #if BLADERUNNER_ORIGINAL_SETTINGS
-	_vm->_mainFont->drawColor(textAmbientSound, surface, posAmbientSound, 200, 0x7751);
-	_vm->_mainFont->drawColor(textSoft, surface, posSoft, 211, 0x6EEE);
-	_vm->_mainFont->drawColor(textLoud, surface, 462, 211, 0x6EEE);
+	_vm->_mainFont->drawColor(textAmbientSound, surface, posAmbientSound, 200, surface.format.RGBToColor(232, 208, 136));
+	_vm->_mainFont->drawColor(textSoft, surface, posSoft, 211, surface.format.RGBToColor(216, 184, 112));
+	_vm->_mainFont->drawColor(textLoud, surface, 462, 211, surface.format.RGBToColor(216, 184, 112));
 
-	_vm->_mainFont->drawColor(textSpeech, surface, posSpeech, 225, 0x7751);
-	_vm->_mainFont->drawColor(textSoft, surface, posSoft, 236, 0x6EEE);
-	_vm->_mainFont->drawColor(textLoud, surface, 462, 236, 0x6EEE);
+	_vm->_mainFont->drawColor(textSpeech, surface, posSpeech, 225, surface.format.RGBToColor(232, 208, 136));
+	_vm->_mainFont->drawColor(textSoft, surface, posSoft, 236, surface.format.RGBToColor(216, 184, 112));
+	_vm->_mainFont->drawColor(textLoud, surface, 462, 236, surface.format.RGBToColor(216, 184, 112));
 
-	_vm->_mainFont->drawColor(textGammaCorrection, surface, posGammaCorrection, 250, 0x7751);
-	_vm->_mainFont->drawColor(textDark, surface, posDark, 261, 0x6EEE);
-	_vm->_mainFont->drawColor(textLight, surface, 462, 261, 0x6EEE);
+	_vm->_mainFont->drawColor(textGammaCorrection, surface, posGammaCorrection, 250, surface.format.RGBToColor(232, 208, 136));
+	_vm->_mainFont->drawColor(textDark, surface, posDark, 261, surface.format.RGBToColor(216, 184, 112));
+	_vm->_mainFont->drawColor(textLight, surface, 462, 261, surface.format.RGBToColor(216, 184, 112));
 #else
-	_vm->_mainFont->drawColor(textSpeech, surface, posSpeech, 200, 0x7751);
-	_vm->_mainFont->drawColor(textSoft, surface, posSoft, 211, 0x6EEE);
-	_vm->_mainFont->drawColor(textLoud, surface, 462, 211, 0x6EEE);
+	_vm->_mainFont->drawColor(textSpeech, surface, posSpeech, 200, surface.format.RGBToColor(232, 208, 136));
+	_vm->_mainFont->drawColor(textSoft, surface, posSoft, 211, surface.format.RGBToColor(216, 184, 112));
+	_vm->_mainFont->drawColor(textLoud, surface, 462, 211, surface.format.RGBToColor(216, 184, 112));
 #endif
 
-	_vm->_mainFont->drawColor(textDesignersCut, surface, 192, 365, 0x7751);
+	_vm->_mainFont->drawColor(textDesignersCut, surface, 192, 365, surface.format.RGBToColor(232, 208, 136));
 
 	if (_vm->_subtitles->isSystemActive()) {
 		// Allow this to be loading as an extra text item in the resource for text options
@@ -217,9 +217,9 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 		const char *textSubtitles  = strcmp(_vm->_textOptions->getText(42), "") == 0? subtitlesTranslation : _vm->_textOptions->getText(42); // +1 to the max of original index of textOptions which is 41
 
 		if (_vm->_language == Common::RU_RUS) {
-			_vm->_mainFont->drawColor(textSubtitles, surface, 288, 376, 0x7751); // special case for Russian version, put the option in a new line to avoid overlap
+			_vm->_mainFont->drawColor(textSubtitles, surface, 288, 376, surface.format.RGBToColor(232, 208, 136)); // special case for Russian version, put the option in a new line to avoid overlap
 		} else {
-			_vm->_mainFont->drawColor(textSubtitles, surface, 323, 365, 0x7751); // moved further to the right to avoid overlap with 'Designer's Cut' in some language versions (ESP)
+			_vm->_mainFont->drawColor(textSubtitles, surface, 323, 365, surface.format.RGBToColor(232, 208, 136)); // moved further to the right to avoid overlap with 'Designer's Cut' in some language versions (ESP)
 		}
 	}
 

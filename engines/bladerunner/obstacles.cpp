@@ -950,7 +950,7 @@ void Obstacles::draw() {
 				_polygons[i].vertices[j].y
 			));
 
-			_vm->_surfaceFront.drawLine(p0.x, p0.y, p1.x, p1.y, 0x7FFF);
+			_vm->_surfaceFront.drawLine(p0.x, p0.y, p1.x, p1.y, _vm->_surfaceFront.format.RGBToColor(255, 255, 255));
 
 			p0 = p1;
 		}
@@ -964,17 +964,17 @@ void Obstacles::draw() {
 		Vector3 p2 = _vm->_view->calculateScreenPosition(playerPos + Vector3( 12.0f, 0.0f,  12.0f));
 		Vector3 p3 = _vm->_view->calculateScreenPosition(playerPos + Vector3(-12.0f, 0.0f,  12.0f));
 
-		_vm->_surfaceFront.drawLine(p0.x, p0.y, p1.x, p1.y, 0x7C00);
-		_vm->_surfaceFront.drawLine(p1.x, p1.y, p2.x, p2.y, 0x7C00);
-		_vm->_surfaceFront.drawLine(p2.x, p2.y, p3.x, p3.y, 0x7C00);
-		_vm->_surfaceFront.drawLine(p3.x, p3.y, p0.x, p0.y, 0x7C00);
+		_vm->_surfaceFront.drawLine(p0.x, p0.y, p1.x, p1.y, _vm->_surfaceFront.format.RGBToColor(255, 0, 0));
+		_vm->_surfaceFront.drawLine(p1.x, p1.y, p2.x, p2.y, _vm->_surfaceFront.format.RGBToColor(255, 0, 0));
+		_vm->_surfaceFront.drawLine(p2.x, p2.y, p3.x, p3.y, _vm->_surfaceFront.format.RGBToColor(255, 0, 0));
+		_vm->_surfaceFront.drawLine(p3.x, p3.y, p0.x, p0.y, _vm->_surfaceFront.format.RGBToColor(255, 0, 0));
 	}
 
 	// draw path along polygons
 	for (int i = 1; i < _pathSize; ++i) {
 		Vector3 p0 = _vm->_view->calculateScreenPosition(Vector3(_path[i - 1].x, y, _path[i - 1].y));
 		Vector3 p1 = _vm->_view->calculateScreenPosition(Vector3(_path[i].x, y, _path[i].y));
-		_vm->_surfaceFront.drawLine(p0.x, p0.y, p1.x, p1.y, 0x7C00);
+		_vm->_surfaceFront.drawLine(p0.x, p0.y, p1.x, p1.y, _vm->_surfaceFront.format.RGBToColor(255, 0, 0));
 	}
 
 	// draw "next" vertex

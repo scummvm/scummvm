@@ -44,6 +44,7 @@ bool Font::open(const Common::String &fileName, int screenWidth, int screenHeigh
 	_screenHeight = screenHeight;
 	_spacing1 = spacing1;
 	_spacing2 = spacing2;
+	_defaultColor = color;
 	_color = color;
 
 	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->getResourceStream(fileName));
@@ -69,9 +70,11 @@ bool Font::open(const Common::String &fileName, int screenWidth, int screenHeigh
 		_characters[i].height = stream->readUint32LE();
 		_characters[i].dataOffset = stream->readUint32LE();
 	}
+
 	for (int i = 0; i < _dataSize; i++) {
 		_data[i] = stream->readUint16LE();
 	}
+
 	return true;
 }
 
@@ -90,10 +93,7 @@ void Font::setSpacing(int spacing1, int spacing2) {
 }
 
 void Font::setColor(uint16 color) {
-	if (_data && _color != color) {
-		replaceColor(_color, color);
-		_color = color;
-	}
+	_color = color;
 }
 
 void Font::draw(const Common::String &text, Graphics::Surface &surface, int x, int y) const {
@@ -114,9 +114,7 @@ void Font::draw(const Common::String &text, Graphics::Surface &surface, int x, i
 }
 
 void Font::drawColor(const Common::String &text, Graphics::Surface &surface, int x, int y, uint16 color) {
-	if (_color != color) {
-		setColor(color);
-	}
+	setColor(color);
 	draw(text, surface, x, y);
 }
 
@@ -159,21 +157,10 @@ void Font::reset() {
 	_screenHeight = 0;
 	_spacing1 = 0;
 	_spacing2 = 0;
-	_color = 0x7FFF;
+	_color = screenPixelForrmat().RGBToColor(255, 255, 255);
 	_intersperse = 0;
 
 	memset(_characters, 0, 256 * sizeof(Character));
-}
-
-void Font::replaceColor(uint16 oldColor, uint16 newColor) {
-	if (!_data || !_dataSize) {
-		return;
-	}
-	for (int i = 0; i < _dataSize; i++) {
-		if (_data[i] == oldColor) {
-			_data[i] = newColor;
-		}
-	}
 }
 
 void Font::drawCharacter(const uint8 character, Graphics::Surface &surface, int x, int y) const {
@@ -208,8 +195,14 @@ void Font::drawCharacter(const uint8 character, Graphics::Surface &surface, int 
 		int currentX = x;
 		int endX = width + x - 1;
 		while (currentX <= endX && currentX < _screenWidth) {
-			if ((*srcPtr & 0x8000) == 0) {
-				*dstPtr = *srcPtr;
+			uint8 a, r, g, b;
+			gameDataPixelFormat().colorToARGB(*srcPtr, a, r, g, b);
+			if (!a) {
+				if (_color == _defaultColor) {
+					*dstPtr = surface.format.RGBToColor(r, g, b);
+				} else {
+					*dstPtr = _color;
+				}
 			}
 			dstPtr++;
 			srcPtr++;

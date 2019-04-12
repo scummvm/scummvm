@@ -23,6 +23,7 @@
 #ifndef BLADERUNNER_UI_SLIDER_H
 #define BLADERUNNER_UI_SLIDER_H
 
+#include "bladerunner/color.h"
 #include "bladerunner/ui/ui_component.h"
 
 #include "common/rect.h"
@@ -30,7 +31,7 @@
 namespace BladeRunner {
 
 class UISlider : public UIComponent {
-	static const uint16   kColors[];
+	static const Color256 kColors[];
 
 	UIComponentCallback *_valueChangedCallback;
 	void                *_callbackData;

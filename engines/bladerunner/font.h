@@ -54,6 +54,7 @@ class Font {
 	int           _screenHeight;
 	int           _spacing1;
 	int           _spacing2;
+	uint16        _defaultColor;
 	uint16        _color;
 	int           _intersperse;
 
@@ -76,7 +77,6 @@ public:
 
 private:
 	void reset();
-	void replaceColor(uint16 oldColor, uint16 newColor);
 
 	void drawCharacter(const uint8 character, Graphics::Surface &surface, int x, int y) const;
 };
