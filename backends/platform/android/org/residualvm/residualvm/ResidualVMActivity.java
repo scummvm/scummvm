@@ -11,6 +11,7 @@ import android.net.wifi.WifiManager;
 import android.net.wifi.WifiInfo;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.ClipboardManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -89,6 +90,7 @@ public View.OnClickListener pickUpBtnOnClickListener = new View.OnClickListener(
         }
     };
 
+	private ClipboardManager _clipboard;
 
 	private class MyResidualVM extends ResidualVM {
 		private boolean usingSmallScreen() {
@@ -135,6 +137,42 @@ public View.OnClickListener pickUpBtnOnClickListener = new View.OnClickListener(
 		@Override
 		protected void openUrl(String url) {
 			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+		}
+
+		@Override
+		protected boolean hasTextInClipboard() {
+			return _clipboard.hasText();
+		}
+
+		@Override
+		protected byte[] getTextFromClipboard() {
+			CharSequence text = _clipboard.getText();
+			if (text != null) {
+				String encoding = getCurrentCharset();
+				byte[] out;
+				Log.d(LOG_TAG, String.format("Converting from UTF-8 to %s", encoding));
+				try {
+					out = text.toString().getBytes(encoding);
+				} catch (java.io.UnsupportedEncodingException e) {
+					out = text.toString().getBytes();
+				}
+				return out;
+			}
+			return null;
+		}
+
+		@Override
+		protected boolean setTextInClipboard(byte[] text) {
+			String encoding = getCurrentCharset();
+			String out;
+			Log.d(LOG_TAG, String.format("Converting from %s to UTF-8", encoding));
+			try {
+				out = new String(text, encoding);
+			} catch (java.io.UnsupportedEncodingException e) {
+				out = new String(text);
+			}
+			_clipboard.setText(out);
+			return true;
 		}
 
 		@Override
@@ -220,6 +258,8 @@ public View.OnClickListener pickUpBtnOnClickListener = new View.OnClickListener(
 			// If it doesn't work, resort to the internal app path.
 			savePath = getDir("saves", MODE_WORLD_READABLE).getPath();
 		}
+
+		_clipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
 
 		// Start ResidualVM
 		_residualvm = new MyResidualVM(main_surface.getHolder());
