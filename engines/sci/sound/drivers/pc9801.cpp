@@ -50,7 +50,7 @@ public:
 	void noteOff();
 	void noteOn(uint8 note, uint8 velo);
 
-	virtual void processNoteEvent(uint8 note, bool noteOn);
+	virtual void processNoteEvent(uint8 note, bool soundOn);
 	void update();
 	void setVolume(uint8 volume);
 
@@ -112,7 +112,7 @@ protected:
 private:
 	virtual void programChange(uint8 program) = 0;
 	virtual bool prepareFrequencyAndVolume(bool updateVolume);
-	virtual void sendSoundOnOff(bool noteOn) = 0;
+	virtual void sendSoundOnOff(bool soundOn) = 0;
 	virtual void sendFrequency() = 0;
 	virtual void sendVolume() = 0;	
 
@@ -133,7 +133,7 @@ public:
 
 private:
 	void programChange(uint8 program);
-	void sendSoundOnOff(bool noteOn);
+	void sendSoundOnOff(bool soundOn);
 	void sendVolume();
 	void sendFrequency();
 
@@ -151,14 +151,14 @@ public:
 	SoundChannel_PC9801_FM2OP(uint8 id, PC98AudioCore *pc98a, MidiPart_PC9801 **parts,  SciVersion version, SciSpan<const uint8> instrumentData, uint8 patchSize, bool &soundOn);
 	virtual ~SoundChannel_PC9801_FM2OP() {}
 	
-	void processNoteEvent(uint8 note, bool noteOn);
+	void processNoteEvent(uint8 note, bool soundOn);
 	void reset();
 
 private:
 	void programChange(uint8 program);
 	bool prepareFrequencyAndVolume(bool updateVolume);
 	void processSounds();
-	void sendSoundOnOff(bool noteOn);
+	void sendSoundOnOff(bool soundOn);
 	void sendVolume();
 	void sendFrequency();
 
@@ -197,7 +197,7 @@ private:
 
 	void programChange(uint8 program);
 	void processSounds();
-	void sendSoundOnOff(bool noteOn);
+	void sendSoundOnOff(bool soundOn);
 	void sendVolume();
 	void sendFrequency();
 	void updateNg();
@@ -397,7 +397,7 @@ void SoundChannel_PC9801::noteOn(uint8 note, uint8 velo) {
 	processNoteEvent(note, true);
 }
 
-void SoundChannel_PC9801::processNoteEvent(uint8 note, bool noteOn) {
+void SoundChannel_PC9801::processNoteEvent(uint8 note, bool soundOn) {
 	if (_note != note) {
 		_note = note;
 		_vbrEnvelopeTimer = _vbrInitialDelay;
@@ -406,10 +406,10 @@ void SoundChannel_PC9801::processNoteEvent(uint8 note, bool noteOn) {
 		_flags |= kChanVbrRestartEnv;
 	}
 
-	if (!prepareFrequencyAndVolume(noteOn))
-		noteOn = false;
+	if (!prepareFrequencyAndVolume(soundOn))
+		soundOn = false;
 
-	sendSoundOnOff(noteOn);
+	sendSoundOnOff(soundOn);
 }
 
 void SoundChannel_PC9801::update() {
@@ -664,9 +664,9 @@ void SoundChannel_PC9801_FM4OP::programChange(uint8 program) {
 	}
 }
 
-void SoundChannel_PC9801_FM4OP::sendSoundOnOff(bool noteOn) {
-	_flags = noteOn ? (_flags | kChanKeyOn) : (_flags & ~kChanKeyOn);
-	writeReg(0, 0x28, noteOn ? _operatorFlags : _operatorFlags & 7);
+void SoundChannel_PC9801_FM4OP::sendSoundOnOff(bool soundOn) {
+	_flags = soundOn ? (_flags | kChanKeyOn) : (_flags & ~kChanKeyOn);
+	writeReg(0, 0x28, soundOn ? _operatorFlags : _operatorFlags & 7);
 }
 
 void SoundChannel_PC9801_FM4OP::sendVolume() {
@@ -710,12 +710,12 @@ SoundChannel_PC9801_FM2OP::SoundChannel_PC9801_FM2OP(uint8 id, PC98AudioCore *pc
 	_opFreqOffset = opFreqOffset;
 }
 
-void SoundChannel_PC9801_FM2OP::processNoteEvent(uint8 note, bool noteOn) {
+void SoundChannel_PC9801_FM2OP::processNoteEvent(uint8 note, bool soundOn) {
 	if (_note != note) {
 		_vbrCur2 = 0x80;
 		_vbrFrequencyModifier2 = 0;
 	}
-	SoundChannel_PC9801::processNoteEvent(note, noteOn);
+	SoundChannel_PC9801::processNoteEvent(note, soundOn);
 }
 
 void SoundChannel_PC9801_FM2OP::reset() {
@@ -756,10 +756,10 @@ bool SoundChannel_PC9801_FM2OP::prepareFrequencyAndVolume(bool updateVolume) {
 	return true;
 }
 
-void SoundChannel_PC9801_FM2OP::sendSoundOnOff(bool noteOn) {
+void SoundChannel_PC9801_FM2OP::sendSoundOnOff(bool soundOn) {
 	uint8 op = 0x30 << (_regOffs << 1);
 
-	if (noteOn) {
+	if (soundOn) {
 		_flags |= kChanKeyOn;
 		_activeOperators |= op;
 	} else {
@@ -993,8 +993,8 @@ void SoundChannel_PC9801_SSG::processSounds() {
 	}
 }
 
-void SoundChannel_PC9801_SSG::sendSoundOnOff(bool noteOn) {
-	if (_version == SCI_VERSION_1_LATE && noteOn && !(_ssgEnvelopeState & kEnvSSG_keyOn)) {
+void SoundChannel_PC9801_SSG::sendSoundOnOff(bool soundOn) {
+	if (_version == SCI_VERSION_1_LATE && soundOn && !(_ssgEnvelopeState & kEnvSSG_keyOn)) {
 		_currentLevel = _selectedInstrument[19] << 4;
 		_ssgEnvelopeState = (kEnvSSG_keyOn | kEnvSSG_attack);
 		_ssgLevel = _selectedInstrument[11];
@@ -1008,14 +1008,14 @@ void SoundChannel_PC9801_SSG::sendSoundOnOff(bool noteOn) {
 			updateNg();
 			_flags |= kChanNgRestartEnv;
 		}
-	} else if (_version == SCI_VERSION_1_LATE && !noteOn) {
+	} else if (_version == SCI_VERSION_1_LATE && !soundOn) {
 		int16 l = _currentLevel + (int8)(_selectedInstrument[20] & 0xF0);
 		_currentLevel = (uint8)CLIP<int16>(l, 0, 255);
 		_ssgEnvelopeState = kEnvSSG_decay;
 		_ssgLevel = _selectedInstrument[17];
 		_ssgSpeed = _selectedInstrument[18];
 		_note = 0xFF;
-	} else if (_version == SCI_VERSION_0_LATE && noteOn) {
+	} else if (_version == SCI_VERSION_0_LATE && soundOn) {
 		_activeChannnelsStatus &= _chanEnableMask1;
 		if (_ccngEnabled)
 			_activeChannnelsStatus &= _chanEnableMask2;
