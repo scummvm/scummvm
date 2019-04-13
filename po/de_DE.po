@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-02-06 20:18+0100\n"
-"PO-Revision-Date: 2019-04-12 14:10+0000\n"
+"PO-Revision-Date: 2019-04-13 18:16+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -3200,7 +3200,7 @@ msgstr "Licht geht aus in "
 
 #: engines/glk/scott/scott.cpp:130
 msgid " turns. "
-msgstr " dreht. "
+msgstr " Runden. "
 
 #: engines/glk/scott/scott.cpp:133
 msgid "Your light is growing dim. "
