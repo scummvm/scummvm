@@ -3358,7 +3358,7 @@ void Screen::loadPalette(const byte *data, Palette &pal, int bytes) {
 	if (_isAmiga) {
 		// EOB II Amiga sometimes has multiple palettes here one after
 		// the other (64 bytes each). We only load the first one here.
-		pal.loadAmigaPalette(stream, 0, MIN(32, stream.size() / Palette::kAmigaBytesPerColor));
+		pal.loadAmigaPalette(stream, 0, MIN<int>(32, stream.size() / Palette::kAmigaBytesPerColor));
 	} else if (_vm->gameFlags().platform == Common::kPlatformPC98 && _use16ColorMode) {
 		pal.loadPC98Palette(stream, 0, stream.size() / Palette::kPC98BytesPerColor);
 	} else if (_renderMode == Common::kRenderEGA) {
