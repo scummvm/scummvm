@@ -2674,8 +2674,8 @@ void EoBCoreEngine::snd_stopSound() {
 	_sound->stopAllSoundEffects();
 }
 
-void EoBCoreEngine::snd_fadeOut(int delay) {
-	_sound->beginFadeOut(delay);
+void EoBCoreEngine::snd_fadeOut(int del) {
+	_sound->beginFadeOut(del);
 }
 
 } // End of namespace Kyra
