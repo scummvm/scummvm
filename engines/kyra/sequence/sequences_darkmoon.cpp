@@ -1121,7 +1121,7 @@ void DarkMoonEngine::seq_playCredits(DarkmoonSequenceHelper *sq, const uint8 *da
 		delete[] items[i].str;
 }
 
-DarkmoonSequenceHelper::DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *vm, Screen_EoB *screen, Mode mode) : _system(system), _vm(vm), _screen(screen) {
+DarkmoonSequenceHelper::DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *vm, Screen_EoB *screen, DarkmoonSequenceHelper::Mode mode) : _system(system), _vm(vm), _screen(screen) {
 	init(mode);
 }
 
@@ -1477,7 +1477,7 @@ void DarkmoonSequenceHelper::update(int srcPage) {
 	_screen->updateScreen();
 }
 
-void DarkmoonSequenceHelper::init(Mode mode) {
+void DarkmoonSequenceHelper::init(DarkmoonSequenceHelper::Mode mode) {
 	assert(mode == kIntro || mode == kFinale);
 
 	static const uint16 soundMarkersFMTowns[2][8] = {
