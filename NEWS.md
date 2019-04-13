@@ -22,7 +22,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed a bug that leads to enormous memory consumption in scene 22.
 
  Kyra:
-   - Added support for the Amiga version of Eye of the Beholder.
+   - Added support for the Amiga version of Eye of the Beholder I + II.
    - Added support for the FM-Towns version of Eye of the Beholder II.
    - Several bug fixes.
 
