@@ -64,12 +64,15 @@ MODULE_OBJS := \
 	sound/sound_amiga_lok.o \
 	sound/sound_digital_mr.o \
 	sound/sound_midi.o \
-	sound/sound_pcspk.o \
 	sound/sound_pc98_lok.o \
 	sound/sound_pc98_v2.o \
 	sound/sound_towns_lok.o \
 	sound/sound.o \
 	sound/sound_lok.o \
+	sound/drivers/adlib.o \
+	sound/drivers/audstream.o \
+	sound/drivers/midi.o \
+	sound/drivers/pcspeaker.o \
 	text/text.o \
 	text/text_lok.o \
 	text/text_hof.o \

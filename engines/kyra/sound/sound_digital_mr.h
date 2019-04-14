@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef KYRA_SOUND_DIGITAL_H
-#define KYRA_SOUND_DIGITAL_H
+#ifndef KYRA_SOUND_DIGITAL_MR_H
+#define KYRA_SOUND_DIGITAL_MR_H
 
 #include "audio/mixer.h"
 
