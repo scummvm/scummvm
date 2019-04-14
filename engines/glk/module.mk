@@ -58,6 +58,8 @@ MODULE_OBJS := \
 	frotz/sound_folder.o \
 	frotz/windows.o \
 	glulxe/detection.o \
+	glulxe/float.o \
+	glulxe/glkop.o \
 	glulxe/glulxe.o \
 	magnetic/detection.o \
 	magnetic/magnetic.o \

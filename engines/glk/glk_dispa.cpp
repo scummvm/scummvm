@@ -730,7 +730,7 @@ void GlkAPI::gidispatch_call(uint32 funcnum, uint32 numargs, gluniversal_t *argl
         case 0x0025: /* window_get_size */
             {
                 int ix = 1;
-                uint32 *ptr1, *ptr2;
+                uint *ptr1, *ptr2;
                 if (!arglist[ix]._ptrflag) {
                     ptr1 = nullptr;
                 } else {
@@ -755,7 +755,7 @@ void GlkAPI::gidispatch_call(uint32 funcnum, uint32 numargs, gluniversal_t *argl
         case 0x0027: /* window_get_arrangement */
             {
                 int ix = 1;
-                uint32 *ptr1, *ptr2;
+                uint *ptr1, *ptr2;
                 winid_t *ptr3;
                 if (!arglist[ix]._ptrflag) {
                     ptr1 = nullptr;
@@ -1023,7 +1023,7 @@ void GlkAPI::gidispatch_call(uint32 funcnum, uint32 numargs, gluniversal_t *argl
         case 0x00E0: /* image_get_info */
             {
                 int ix = 1;
-                uint32 *ptr1, *ptr2;
+                uint *ptr1, *ptr2;
                 if (!arglist[ix]._ptrflag) {
                     ptr1 = nullptr;
                 } else {
