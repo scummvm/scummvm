@@ -2284,6 +2284,16 @@ enum GoalLeon {
 	kGoalLeonGone = 8
 };
 
+enum GoalCrazyLegs {
+	kGoalCrazyLegsDefault = 0,
+	kGoalCrazyLegsShotAndHit = 1,
+	kGoalCrazyLegsLeavesShowroom = 2, // set either after McCoy re-holsters his gun, or if McCoy tells him to lie to Steele
+	// goal 10 seems unused
+	// goal 10 updates to 11 (also unused)
+	kGoalCrazyLegsMcCoyDrewHisGun = 210, // When McCoy draws gun and Ch < 5
+	kGoalCrazyLegsIsArrested = 699
+};
+
 enum GoalFreeSlotA { // Rat
 	kGoalFreeSlotAUG15Wait = 300,
 	kGoalFreeSlotAUG15WalkOut = 301,

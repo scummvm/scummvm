@@ -157,7 +157,7 @@ bool SceneScriptHF01::ClickedOnActor(int actorId) {
 			  || Actor_Clue_Query(kActorMcCoy, kCluePhoneCallLucy1)
 			 )
 			 && !Game_Flag_Query(kFlagCrazylegsArrested)
-			 &&  Actor_Query_Goal_Number(kActorCrazylegs) != 2
+			 &&  Actor_Query_Goal_Number(kActorCrazylegs) != kGoalCrazyLegsLeavesShowroom
 			 &&  Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
 			 && !Game_Flag_Query(kFlagHF01TalkToLovedOne)
 			) {
@@ -340,7 +340,7 @@ void SceneScriptHF01::PlayerWalkedIn() {
 	}
 
 	if (!Game_Flag_Query(kFlagCrazylegsArrested)
-	 &&  Actor_Query_Goal_Number(kActorCrazylegs) != 2
+	 &&  Actor_Query_Goal_Number(kActorCrazylegs) != kGoalCrazyLegsLeavesShowroom
 	) {
 		if (Actor_Clue_Query(kActorMcCoy, kCluePhoneCallLucy1)
 		 && Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy

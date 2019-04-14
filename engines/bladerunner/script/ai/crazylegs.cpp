@@ -77,34 +77,34 @@ void AIScriptCrazylegs::OtherAgentExitedThisScene(int otherActorId) {
 }
 
 void AIScriptCrazylegs::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
-	if (Actor_Query_Goal_Number(kActorCrazylegs) != 2 && !otherActorId) {
+	if (Actor_Query_Goal_Number(kActorCrazylegs) != kGoalCrazyLegsLeavesShowroom && otherActorId == kActorMcCoy) {
 		if (combatMode && Global_Variable_Query(kVariableChapter) < 5) {
-			Actor_Face_Actor(kActorCrazylegs, kActorMcCoy, 1);
-			Actor_Face_Actor(kActorMcCoy, kActorCrazylegs, 1);
+			Actor_Face_Actor(kActorCrazylegs, kActorMcCoy, true);
+			Actor_Face_Actor(kActorMcCoy, kActorCrazylegs, true);
 			Actor_Says(kActorCrazylegs, 430, 3);
 			Actor_Says_With_Pause(kActorCrazylegs, 440, 0.0, 3);
 			Actor_Says(kActorMcCoy, 1870, -1);
 			Actor_Says(kActorCrazylegs, 450, 3);
-			Actor_Set_Goal_Number(kActorCrazylegs, 210);
-		} else if (Actor_Query_Goal_Number(kActorCrazylegs) == 210) {
-			Actor_Face_Actor(kActorCrazylegs, kActorMcCoy, 1);
+			Actor_Set_Goal_Number(kActorCrazylegs, kGoalCrazyLegsMcCoyDrewHisGun);
+		} else if (Actor_Query_Goal_Number(kActorCrazylegs) == kGoalCrazyLegsMcCoyDrewHisGun) {
+			Actor_Face_Actor(kActorCrazylegs, kActorMcCoy, true);
 			Actor_Says(kActorCrazylegs, 460, 3);
 			Actor_Says(kActorCrazylegs, 470, 3);
-			Actor_Set_Goal_Number(kActorCrazylegs, 2);
+			Actor_Set_Goal_Number(kActorCrazylegs, kGoalCrazyLegsLeavesShowroom);
 		}
 	}
 }
 
 void AIScriptCrazylegs::ShotAtAndMissed() {
-	if (Actor_Query_Goal_Number(kActorCrazylegs) == 2)
+	if (Actor_Query_Goal_Number(kActorCrazylegs) == kGoalCrazyLegsLeavesShowroom)
 		return;
 
-	Actor_Set_Goal_Number(kActorCrazylegs, 2);
+	Actor_Set_Goal_Number(kActorCrazylegs, kGoalCrazyLegsLeavesShowroom);
 }
 
 bool AIScriptCrazylegs::ShotAtAndHit() {
-	Actor_Set_Goal_Number(kActorCrazylegs, 1);
-	Actor_Says(kActorMcCoy, 1875, 4);
+	Actor_Set_Goal_Number(kActorCrazylegs, kGoalCrazyLegsShotAndHit);
+	Actor_Says(kActorMcCoy, 1875, 4);  // I wouldn't drag that bucket of bolts if you paid me.
 	return false;
 }
 
@@ -117,17 +117,17 @@ int AIScriptCrazylegs::GetFriendlinessModifierIfGetsClue(int otherActorId, int c
 }
 
 bool AIScriptCrazylegs::GoalChanged(int currentGoalNumber, int newGoalNumber) {
-	if (newGoalNumber == 0) {
+	if (newGoalNumber == kGoalCrazyLegsDefault) {
 		return true;
 	}
 
-	if (newGoalNumber == 1) {
+	if (newGoalNumber == kGoalCrazyLegsShotAndHit) {
 		AI_Movement_Track_Flush(kActorCrazylegs);
-		Actor_Set_Targetable(kActorCrazylegs, 0);
+		Actor_Set_Targetable(kActorCrazylegs, false);
 		return true;
 	}
 
-	if (newGoalNumber == 2) {
+	if (newGoalNumber == kGoalCrazyLegsLeavesShowroom) {
 		AI_Movement_Track_Flush(kActorCrazylegs);
 		AI_Movement_Track_Append(kActorCrazylegs, 360, 0);
 		AI_Movement_Track_Append(kActorCrazylegs, 40, 0);

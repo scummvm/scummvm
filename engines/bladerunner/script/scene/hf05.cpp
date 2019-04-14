@@ -80,8 +80,8 @@ bool SceneScriptHF05::ClickedOn3DObject(const char *objectName, bool a2) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 95.0f, 40.63f, 308.0f, 0, true, false, 0)) {
 			Actor_Face_Object(kActorMcCoy, "TOP CON", true);
 			if (Actor_Query_In_Set(kActorCrazylegs, kSetHF05)
-			 && Actor_Query_Goal_Number(kActorCrazylegs) != 1
-			 && Actor_Query_Goal_Number(kActorCrazylegs) != 2
+			 && Actor_Query_Goal_Number(kActorCrazylegs) != kGoalCrazyLegsShotAndHit
+			 && Actor_Query_Goal_Number(kActorCrazylegs) != kGoalCrazyLegsLeavesShowroom
 			) {
 				Actor_Face_Actor(kActorCrazylegs, kActorMcCoy, true);
 				Actor_Says(kActorCrazylegs, 480, 13);
@@ -152,11 +152,26 @@ bool SceneScriptHF05::ClickedOn3DObject(const char *objectName, bool a2) {
 
 bool SceneScriptHF05::ClickedOnActor(int actorId) {
 	if (actorId == kActorCrazylegs) {
+#if BLADERUNNER_ORIGINAL_BUGS
 		if (!Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorCrazylegs, 60, true, false)) {
 			Actor_Face_Actor(kActorMcCoy, kActorCrazylegs, true);
 			Actor_Face_Actor(kActorCrazylegs, kActorMcCoy, true);
 			dialogueWithCrazylegs1();
 		}
+#else
+		// Don't (re)start a dialogue with CrayLegs if he is leaving or insulted by McCoy drawing his gun
+		if (Actor_Query_Goal_Number(kActorCrazylegs) != kGoalCrazyLegsLeavesShowroom
+		    && Actor_Query_Goal_Number(kActorCrazylegs) != kGoalCrazyLegsMcCoyDrewHisGun) {
+			if (!Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorCrazylegs, 60, true, false)) {
+				Actor_Face_Actor(kActorMcCoy, kActorCrazylegs, true);
+				Actor_Face_Actor(kActorCrazylegs, kActorMcCoy, true);
+				dialogueWithCrazylegs1();
+			}
+		} else {
+			Actor_Face_Actor(kActorMcCoy, kActorCrazylegs, true);
+			Actor_Says(kActorMcCoy, 5560, 15); // Hey
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 	return false;
 }
@@ -347,8 +362,8 @@ void SceneScriptHF05::PlayerWalkedIn() {
 }
 
 void SceneScriptHF05::PlayerWalkedOut() {
-	if (Actor_Query_Goal_Number(kActorCrazylegs) == 210) {
-		Actor_Set_Goal_Number(kActorCrazylegs, 2);
+	if (Actor_Query_Goal_Number(kActorCrazylegs) == kGoalCrazyLegsMcCoyDrewHisGun) {
+		Actor_Set_Goal_Number(kActorCrazylegs, kGoalCrazyLegsLeavesShowroom);
 	}
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -544,7 +559,7 @@ void SceneScriptHF05::dialogueWithCrazylegs2() { // cut feature? it is impossibl
 		Game_Flag_Set(kFlagCrazylegsArrested);
 		Actor_Put_In_Set(kActorCrazylegs, kSetPS09);
 		Actor_Set_At_XYZ(kActorCrazylegs, -315.15f, 0.0f, 241.06f, 583);
-		Actor_Set_Goal_Number(kActorCrazylegs, 699);
+		Actor_Set_Goal_Number(kActorCrazylegs, kGoalCrazyLegsIsArrested);
 		Game_Flag_Set(kFlagCrazylegsArrestedTalk);
 		if (Game_Flag_Query(kFlagSpinnerAtNR01)) {
 			Set_Enter(kSetNR01, kSceneNR01);
@@ -659,9 +674,9 @@ void SceneScriptHF05::talkWithCrazylegs3(int affectionTowardsActor) {
 		} else {
 			Actor_Says(kActorLucy, 380, kAnimationModeTalk);
 		}
-		Actor_Says(kActorMcCoy, 1740, 14);
-		Actor_Says(kActorCrazylegs, 120, 12);
-		Actor_Set_Goal_Number(kActorCrazylegs, 2);
+		Actor_Says(kActorMcCoy, 1740, 14);    // You tell her we're headed South.
+		Actor_Says(kActorCrazylegs, 120, 12); // Ten Four.
+		Actor_Set_Goal_Number(kActorCrazylegs, kGoalCrazyLegsLeavesShowroom);
 		if (affectionTowardsActor == kActorDektora) {
 			Actor_Says(kActorDektora, 100, kAnimationModeTalk);
 		} else {

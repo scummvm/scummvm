@@ -370,7 +370,7 @@ void SceneScriptMA04::phoneCallWithDektora() {
 	Actor_Says(kActorDektora, 340, 3);
 	Actor_Says(kActorDektora, 350, 3);
 	if (Game_Flag_Query(kFlagCrazylegsArrested)
-	 || Actor_Query_Goal_Number(kActorCrazylegs) == 2
+	 || Actor_Query_Goal_Number(kActorCrazylegs) == kGoalCrazyLegsLeavesShowroom
 	) {
 		answer = 1170; // CLOVIS
 	} else {
@@ -425,7 +425,7 @@ void SceneScriptMA04::phoneCallWithLucy() {
 	Actor_Says(kActorMcCoy, 2560, 17);
 	Actor_Says(kActorLucy, 580, 3);
 	if (Game_Flag_Query(kFlagCrazylegsArrested)
-	 || Actor_Query_Goal_Number(kActorCrazylegs) == 2
+	 || Actor_Query_Goal_Number(kActorCrazylegs) == kGoalCrazyLegsLeavesShowroom
 	) {
 		Actor_Says(kActorLucy, 630, 3);
 		Actor_Says_With_Pause(kActorMcCoy, 2575, 0.0f, 15);
