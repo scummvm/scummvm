@@ -690,333 +690,333 @@ void GlkAPI::gidispatch_call(uint32 funcnum, uint32 numargs, gluniversal_t *argl
             glk_tick();
             break;
         case 0x0004: /* gestalt */
-            arglist[3].uint = glk_gestalt(arglist[0].uint, arglist[1].uint);
+            arglist[3]._uint = glk_gestalt(arglist[0]._uint, arglist[1]._uint);
             break;
         case 0x0005: /* gestalt_ext */
-            if (arglist[2].ptrflag) {
-                arglist[6].uint = glk_gestalt_ext(arglist[0].uint, arglist[1].uint,
-                    (uint *)arglist[3].array, arglist[4].uint);
+            if (arglist[2]._ptrflag) {
+                arglist[6]._uint = glk_gestalt_ext(arglist[0]._uint, arglist[1]._uint,
+                    (uint *)arglist[3]._array, arglist[4]._uint);
             } else {
-                arglist[4].uint = glk_gestalt_ext(arglist[0].uint, arglist[1].uint,
+                arglist[4]._uint = glk_gestalt_ext(arglist[0]._uint, arglist[1]._uint,
                     nullptr, 0);
             }
             break;
         case 0x0020: /* window_iterate */
-            if (arglist[1].ptrflag)
-                arglist[4].opaqueref = glk_window_iterate((Window *)arglist[0].opaqueref, &arglist[2].uint);
+            if (arglist[1]._ptrflag)
+                arglist[4]._opaqueref = glk_window_iterate((Window *)arglist[0]._opaqueref, &arglist[2]._uint);
             else
-                arglist[3].opaqueref = glk_window_iterate((Window *)arglist[0].opaqueref, nullptr);
+                arglist[3]._opaqueref = glk_window_iterate((Window *)arglist[0]._opaqueref, nullptr);
             break;
         case 0x0021: /* window_get_rock */
-            arglist[2].uint = glk_window_get_rock((Window *)arglist[0].opaqueref);
+            arglist[2]._uint = glk_window_get_rock((Window *)arglist[0]._opaqueref);
             break;
         case 0x0022: /* window_get_root */
-            arglist[1].opaqueref = glk_window_get_root();
+            arglist[1]._opaqueref = glk_window_get_root();
             break;
         case 0x0023: /* window_open */
-            arglist[6].opaqueref = glk_window_open((Window *)arglist[0].opaqueref, arglist[1].uint,
-                arglist[2].uint, arglist[3].uint, arglist[4].uint);
+            arglist[6]._opaqueref = glk_window_open((Window *)arglist[0]._opaqueref, arglist[1]._uint,
+                arglist[2]._uint, arglist[3]._uint, arglist[4]._uint);
             break;
         case 0x0024: /* window_close */
-            if (arglist[1].ptrflag) {
+            if (arglist[1]._ptrflag) {
                 stream_result_t dat;
-                glk_window_close((Window *)arglist[0].opaqueref, &dat);
-                arglist[2].uint = dat._readCount;
-                arglist[3].uint = dat._writeCount;
+                glk_window_close((Window *)arglist[0]._opaqueref, &dat);
+                arglist[2]._uint = dat._readCount;
+                arglist[3]._uint = dat._writeCount;
             } else {
-                glk_window_close((Window *)arglist[0].opaqueref, nullptr);
+                glk_window_close((Window *)arglist[0]._opaqueref, nullptr);
             }
             break;
         case 0x0025: /* window_get_size */
             {
                 int ix = 1;
                 uint32 *ptr1, *ptr2;
-                if (!arglist[ix].ptrflag) {
+                if (!arglist[ix]._ptrflag) {
                     ptr1 = nullptr;
                 } else {
                     ix++;
-                    ptr1 = &(arglist[ix].uint);
+                    ptr1 = &(arglist[ix]._uint);
                 }
                 ix++;
-                if (!arglist[ix].ptrflag) {
+                if (!arglist[ix]._ptrflag) {
                     ptr2 = nullptr;
                 } else {
                     ix++;
-                    ptr2 = &(arglist[ix].uint);
+                    ptr2 = &(arglist[ix]._uint);
                 }
                 ix++;
-                glk_window_get_size((Window *)arglist[0].opaqueref, ptr1, ptr2);
+                glk_window_get_size((Window *)arglist[0]._opaqueref, ptr1, ptr2);
 				break;
             }
         case 0x0026: /* window_set_arrangement */
-            glk_window_set_arrangement((Window *)arglist[0].opaqueref, arglist[1].uint,
-                arglist[2].uint, (Window *)arglist[3].opaqueref);
+            glk_window_set_arrangement((Window *)arglist[0]._opaqueref, arglist[1]._uint,
+                arglist[2]._uint, (Window *)arglist[3]._opaqueref);
             break;
         case 0x0027: /* window_get_arrangement */
             {
                 int ix = 1;
                 uint32 *ptr1, *ptr2;
                 winid_t *ptr3;
-                if (!arglist[ix].ptrflag) {
+                if (!arglist[ix]._ptrflag) {
                     ptr1 = nullptr;
                 } else {
                     ix++;
-                    ptr1 = &(arglist[ix].uint);
+                    ptr1 = &(arglist[ix]._uint);
                 }
                 ix++;
-                if (!arglist[ix].ptrflag) {
+                if (!arglist[ix]._ptrflag) {
                     ptr2 = nullptr;
                 } else {
                     ix++;
-                    ptr2 = &(arglist[ix].uint);
+                    ptr2 = &(arglist[ix]._uint);
                 }
                 ix++;
-                if (!arglist[ix].ptrflag) {
+                if (!arglist[ix]._ptrflag) {
                     ptr3 = nullptr;
                 } else {
                     ix++;
-                    ptr3 = (winid_t *)(&(arglist[ix].opaqueref));
+                    ptr3 = (winid_t *)(&(arglist[ix]._opaqueref));
                 }
                 ix++;
-                glk_window_get_arrangement((Window *)arglist[0].opaqueref, ptr1, ptr2, ptr3);
+                glk_window_get_arrangement((Window *)arglist[0]._opaqueref, ptr1, ptr2, ptr3);
             }
             break;
         case 0x0028: /* window_get_type */
-            arglist[2].uint = glk_window_get_type((Window *)arglist[0].opaqueref);
+            arglist[2]._uint = glk_window_get_type((Window *)arglist[0]._opaqueref);
             break;
         case 0x0029: /* window_get_parent */
-            arglist[2].opaqueref = glk_window_get_parent((Window *)arglist[0].opaqueref);
+            arglist[2]._opaqueref = glk_window_get_parent((Window *)arglist[0]._opaqueref);
             break;
         case 0x002A: /* window_clear */
-            glk_window_clear((Window *)arglist[0].opaqueref);
+            glk_window_clear((Window *)arglist[0]._opaqueref);
             break;
         case 0x002B: /* window_move_cursor */
-            glk_window_move_cursor((Window *)arglist[0].opaqueref, arglist[1].uint,
-                arglist[2].uint);
+            glk_window_move_cursor((Window *)arglist[0]._opaqueref, arglist[1]._uint,
+                arglist[2]._uint);
             break;
         case 0x002C: /* window_get_stream */
-            arglist[2].opaqueref = glk_window_get_stream((Window *)arglist[0].opaqueref);
+            arglist[2]._opaqueref = glk_window_get_stream((Window *)arglist[0]._opaqueref);
             break;
         case 0x002D: /* window_set_echo_stream */
-            glk_window_set_echo_stream((Window *)arglist[0].opaqueref, (Stream *)arglist[1].opaqueref);
+            glk_window_set_echo_stream((Window *)arglist[0]._opaqueref, (Stream *)arglist[1]._opaqueref);
             break;
         case 0x002E: /* window_get_echo_stream */
-            arglist[2].opaqueref = glk_window_get_echo_stream((Window *)arglist[0].opaqueref);
+            arglist[2]._opaqueref = glk_window_get_echo_stream((Window *)arglist[0]._opaqueref);
             break;
         case 0x002F: /* set_window */
-            glk_set_window((Window *)arglist[0].opaqueref);
+            glk_set_window((Window *)arglist[0]._opaqueref);
             break;
         case 0x0030: /* window_get_sibling */
-            arglist[2].opaqueref = glk_window_get_sibling((Window *)arglist[0].opaqueref);
+            arglist[2]._opaqueref = glk_window_get_sibling((Window *)arglist[0]._opaqueref);
             break;
         case 0x0040: /* stream_iterate */
-            if (arglist[1].ptrflag)
-                arglist[4].opaqueref = glk_stream_iterate((Stream *)arglist[0].opaqueref, &arglist[2].uint);
+            if (arglist[1]._ptrflag)
+                arglist[4]._opaqueref = glk_stream_iterate((Stream *)arglist[0]._opaqueref, &arglist[2]._uint);
             else
-                arglist[3].opaqueref = glk_stream_iterate((Stream *)arglist[0].opaqueref, nullptr);
+                arglist[3]._opaqueref = glk_stream_iterate((Stream *)arglist[0]._opaqueref, nullptr);
             break;
         case 0x0041: /* stream_get_rock */
-            arglist[2].uint = glk_stream_get_rock((Stream *)arglist[0].opaqueref);
+            arglist[2]._uint = glk_stream_get_rock((Stream *)arglist[0]._opaqueref);
             break;
         case 0x0042: /* stream_open_file */
-            arglist[4].opaqueref = glk_stream_open_file((frefid_t)arglist[0].opaqueref, (FileMode)arglist[1].uint,
-                arglist[2].uint);
+            arglist[4]._opaqueref = glk_stream_open_file((frefid_t)arglist[0]._opaqueref, (FileMode)arglist[1]._uint,
+                arglist[2]._uint);
             break;
         case 0x0043: /* stream_open_memory */
-            if (arglist[0].ptrflag)
-                arglist[6].opaqueref = glk_stream_open_memory((char *)arglist[1].array,
-                    arglist[2].uint, (FileMode)arglist[3].uint, arglist[4].uint);
+            if (arglist[0]._ptrflag)
+                arglist[6]._opaqueref = glk_stream_open_memory((char *)arglist[1]._array,
+                    arglist[2]._uint, (FileMode)arglist[3]._uint, arglist[4]._uint);
             else
-                arglist[4].opaqueref = glk_stream_open_memory(nullptr, 0, (FileMode)arglist[1].uint, arglist[2].uint);
+                arglist[4]._opaqueref = glk_stream_open_memory(nullptr, 0, (FileMode)arglist[1]._uint, arglist[2]._uint);
             break;
         case 0x0044: /* stream_close */
-            if (arglist[1].ptrflag) {
+            if (arglist[1]._ptrflag) {
                 stream_result_t dat;
-                glk_stream_close((Stream *)arglist[0].opaqueref, &dat);
-                arglist[2].uint = dat._readCount;
-                arglist[3].uint = dat._writeCount;
+                glk_stream_close((Stream *)arglist[0]._opaqueref, &dat);
+                arglist[2]._uint = dat._readCount;
+                arglist[3]._uint = dat._writeCount;
             } else {
-                glk_stream_close((Stream *)arglist[0].opaqueref, nullptr);
+                glk_stream_close((Stream *)arglist[0]._opaqueref, nullptr);
             }
             break;
         case 0x0045: /* stream_set_position */
-            glk_stream_set_position((Stream *)arglist[0].opaqueref, arglist[1].sint,
-                arglist[2].uint);
+            glk_stream_set_position((Stream *)arglist[0]._opaqueref, arglist[1]._sint,
+                arglist[2]._uint);
             break;
         case 0x0046: /* stream_get_position */
-            arglist[2].uint = glk_stream_get_position((Stream *)arglist[0].opaqueref);
+            arglist[2]._uint = glk_stream_get_position((Stream *)arglist[0]._opaqueref);
             break;
         case 0x0047: /* stream_set_current */
-            glk_stream_set_current((Stream *)arglist[0].opaqueref);
+            glk_stream_set_current((Stream *)arglist[0]._opaqueref);
             break;
         case 0x0048: /* stream_get_current */
-            arglist[1].opaqueref = glk_stream_get_current();
+            arglist[1]._opaqueref = glk_stream_get_current();
             break;
         case 0x0060: /* fileref_create_temp */
-            arglist[3].opaqueref = glk_fileref_create_temp(arglist[0].uint,
-                arglist[1].uint);
+            arglist[3]._opaqueref = glk_fileref_create_temp(arglist[0]._uint,
+                arglist[1]._uint);
             break;
         case 0x0061: /* fileref_create_by_name */
-            arglist[4].opaqueref = glk_fileref_create_by_name(arglist[0].uint,
-                arglist[1].charstr, arglist[2].uint);
+            arglist[4]._opaqueref = glk_fileref_create_by_name(arglist[0]._uint,
+                arglist[1]._charstr, arglist[2]._uint);
             break;
         case 0x0062: /* fileref_create_by_prompt */
-            arglist[4].opaqueref = glk_fileref_create_by_prompt(arglist[0].uint, (FileMode)arglist[1].uint, arglist[2].uint);
+            arglist[4]._opaqueref = glk_fileref_create_by_prompt(arglist[0]._uint, (FileMode)arglist[1]._uint, arglist[2]._uint);
             break;
         case 0x0063: /* fileref_destroy */
-            glk_fileref_destroy((frefid_t)arglist[0].opaqueref);
+            glk_fileref_destroy((frefid_t)arglist[0]._opaqueref);
             break;
         case 0x0064: /* fileref_iterate */
-            if (arglist[1].ptrflag)
-                arglist[4].opaqueref = glk_fileref_iterate((frefid_t)arglist[0].opaqueref, &arglist[2].uint);
+            if (arglist[1]._ptrflag)
+                arglist[4]._opaqueref = glk_fileref_iterate((frefid_t)arglist[0]._opaqueref, &arglist[2]._uint);
             else
-                arglist[3].opaqueref = glk_fileref_iterate((frefid_t)arglist[0].opaqueref, nullptr);
+                arglist[3]._opaqueref = glk_fileref_iterate((frefid_t)arglist[0]._opaqueref, nullptr);
             break;
         case 0x0065: /* fileref_get_rock */
-            arglist[2].uint = glk_fileref_get_rock((frefid_t)arglist[0].opaqueref);
+            arglist[2]._uint = glk_fileref_get_rock((frefid_t)arglist[0]._opaqueref);
             break;
         case 0x0066: /* fileref_delete_file */
-            glk_fileref_delete_file((frefid_t)arglist[0].opaqueref);
+            glk_fileref_delete_file((frefid_t)arglist[0]._opaqueref);
             break;
         case 0x0067: /* fileref_does_file_exist */
-            arglist[2].uint = glk_fileref_does_file_exist((frefid_t)arglist[0].opaqueref);
+            arglist[2]._uint = glk_fileref_does_file_exist((frefid_t)arglist[0]._opaqueref);
             break;
         case 0x0068: /* fileref_create_from_fileref */
-            arglist[4].opaqueref = glk_fileref_create_from_fileref(arglist[0].uint, (frefid_t)arglist[1].opaqueref, arglist[2].uint);
+            arglist[4]._opaqueref = glk_fileref_create_from_fileref(arglist[0]._uint, (frefid_t)arglist[1]._opaqueref, arglist[2]._uint);
             break;
         case 0x0080: /* put_char */
-            glk_put_char(arglist[0].uch);
+            glk_put_char(arglist[0]._uch);
             break;
         case 0x0081: /* put_char_stream */
-            glk_put_char_stream((Stream *)arglist[0].opaqueref, arglist[1].uch);
+            glk_put_char_stream((Stream *)arglist[0]._opaqueref, arglist[1]._uch);
             break;
         case 0x0082: /* put_string */
-            glk_put_string(arglist[0].charstr);
+            glk_put_string(arglist[0]._charstr);
             break;
         case 0x0083: /* put_string_stream */
-            glk_put_string_stream((Stream *)arglist[0].opaqueref, arglist[1].charstr);
+            glk_put_string_stream((Stream *)arglist[0]._opaqueref, arglist[1]._charstr);
             break;
         case 0x0084: /* put_buffer */
-            if (arglist[0].ptrflag)
-                glk_put_buffer((const char *)arglist[1].array, arglist[2].uint);
+            if (arglist[0]._ptrflag)
+                glk_put_buffer((const char *)arglist[1]._array, arglist[2]._uint);
             else
                 glk_put_buffer(nullptr, 0);
             break;
         case 0x0085: /* put_buffer_stream */
-            if (arglist[1].ptrflag)
-                glk_put_buffer_stream((Stream *)arglist[0].opaqueref, (const char *)arglist[2].array, arglist[3].uint);
+            if (arglist[1]._ptrflag)
+                glk_put_buffer_stream((Stream *)arglist[0]._opaqueref, (const char *)arglist[2]._array, arglist[3]._uint);
             else
-                glk_put_buffer_stream((Stream *)arglist[0].opaqueref,
+                glk_put_buffer_stream((Stream *)arglist[0]._opaqueref,
                     nullptr, 0);
             break;
         case 0x0086: /* set_style */
-            glk_set_style(arglist[0].uint);
+            glk_set_style(arglist[0]._uint);
             break;
         case 0x0087: /* set_style_stream */
-            glk_set_style_stream((Stream *)arglist[0].opaqueref, arglist[1].uint);
+            glk_set_style_stream((Stream *)arglist[0]._opaqueref, arglist[1]._uint);
             break;
         case 0x0090: /* get_char_stream */
-            arglist[2].sint = glk_get_char_stream((Stream *)arglist[0].opaqueref);
+            arglist[2]._sint = glk_get_char_stream((Stream *)arglist[0]._opaqueref);
             break;
         case 0x0091: /* get_line_stream */
-            if (arglist[1].ptrflag)
-                arglist[5].uint = glk_get_line_stream((Stream *)arglist[0].opaqueref, (char *)arglist[2].array, arglist[3].uint);
+            if (arglist[1]._ptrflag)
+                arglist[5]._uint = glk_get_line_stream((Stream *)arglist[0]._opaqueref, (char *)arglist[2]._array, arglist[3]._uint);
             else
-                arglist[3].uint = glk_get_line_stream((Stream *)arglist[0].opaqueref,
+                arglist[3]._uint = glk_get_line_stream((Stream *)arglist[0]._opaqueref,
                     nullptr, 0);
             break;
         case 0x0092: /* get_buffer_stream */
-            if (arglist[1].ptrflag)
-                arglist[5].uint = glk_get_buffer_stream((Stream *)arglist[0].opaqueref, (char *)arglist[2].array, arglist[3].uint);
+            if (arglist[1]._ptrflag)
+                arglist[5]._uint = glk_get_buffer_stream((Stream *)arglist[0]._opaqueref, (char *)arglist[2]._array, arglist[3]._uint);
             else
-                arglist[3].uint = glk_get_buffer_stream((Stream *)arglist[0].opaqueref,
+                arglist[3]._uint = glk_get_buffer_stream((Stream *)arglist[0]._opaqueref,
                     nullptr, 0);
             break;
         case 0x00A0: /* char_to_lower */
-            arglist[2].uch = glk_char_to_lower(arglist[0].uch);
+            arglist[2]._uch = glk_char_to_lower(arglist[0]._uch);
             break;
         case 0x00A1: /* char_to_upper */
-            arglist[2].uch = glk_char_to_upper(arglist[0].uch);
+            arglist[2]._uch = glk_char_to_upper(arglist[0]._uch);
             break;
         case 0x00B0: /* stylehint_set */
-            glk_stylehint_set(arglist[0].uint, arglist[1].uint,
-                arglist[2].uint, arglist[3].sint);
+            glk_stylehint_set(arglist[0]._uint, arglist[1]._uint,
+                arglist[2]._uint, arglist[3]._sint);
             break;
         case 0x00B1: /* stylehint_clear */
-            glk_stylehint_clear(arglist[0].uint, arglist[1].uint,
-                arglist[2].uint);
+            glk_stylehint_clear(arglist[0]._uint, arglist[1]._uint,
+                arglist[2]._uint);
             break;
         case 0x00B2: /* style_distinguish */
-            arglist[4].uint = glk_style_distinguish((Window *)arglist[0].opaqueref, arglist[1].uint,
-                arglist[2].uint);
+            arglist[4]._uint = glk_style_distinguish((Window *)arglist[0]._opaqueref, arglist[1]._uint,
+                arglist[2]._uint);
             break;
         case 0x00B3: /* style_measure */
-            if (arglist[3].ptrflag)
-                arglist[6].uint = glk_style_measure((Window *)arglist[0].opaqueref, arglist[1].uint,
-                    arglist[2].uint, &(arglist[4].uint));
+            if (arglist[3]._ptrflag)
+                arglist[6]._uint = glk_style_measure((Window *)arglist[0]._opaqueref, arglist[1]._uint,
+                    arglist[2]._uint, &(arglist[4]._uint));
             else
-                arglist[5].uint = glk_style_measure((Window *)arglist[0].opaqueref, arglist[1].uint,
-                    arglist[2].uint, nullptr);
+                arglist[5]._uint = glk_style_measure((Window *)arglist[0]._opaqueref, arglist[1]._uint,
+                    arglist[2]._uint, nullptr);
             break;
         case 0x00C0: /* select */
-            if (arglist[0].ptrflag) {
+            if (arglist[0]._ptrflag) {
                 event_t dat;
                 glk_select(&dat);
-                arglist[1].uint = dat.type;
-                arglist[2].opaqueref = dat.window;
-                arglist[3].uint = dat.val1;
-                arglist[4].uint = dat.val2;
+                arglist[1]._uint = dat.type;
+                arglist[2]._opaqueref = dat.window;
+                arglist[3]._uint = dat.val1;
+                arglist[4]._uint = dat.val2;
             } else {
                 glk_select(nullptr);
             }
             break;
         case 0x00C1: /* select_poll */
-            if (arglist[0].ptrflag) {
+            if (arglist[0]._ptrflag) {
                 event_t dat;
                 glk_select_poll(&dat);
-                arglist[1].uint = dat.type;
-                arglist[2].opaqueref = dat.window;
-                arglist[3].uint = dat.val1;
-                arglist[4].uint = dat.val2;
+                arglist[1]._uint = dat.type;
+                arglist[2]._opaqueref = dat.window;
+                arglist[3]._uint = dat.val1;
+                arglist[4]._uint = dat.val2;
             } else {
                 glk_select_poll(nullptr);
             }
             break;
         case 0x00D0: /* request_line_event */
-            if (arglist[1].ptrflag)
-                glk_request_line_event((Window *)arglist[0].opaqueref, (char *)arglist[2].array,
-                    arglist[3].uint, arglist[4].uint);
+            if (arglist[1]._ptrflag)
+                glk_request_line_event((Window *)arglist[0]._opaqueref, (char *)arglist[2]._array,
+                    arglist[3]._uint, arglist[4]._uint);
             else
-                glk_request_line_event((Window *)arglist[0].opaqueref, nullptr,
-                    0, arglist[2].uint);
+                glk_request_line_event((Window *)arglist[0]._opaqueref, nullptr,
+                    0, arglist[2]._uint);
             break;
         case 0x00D1: /* cancel_line_event */
-            if (arglist[1].ptrflag) {
+            if (arglist[1]._ptrflag) {
                 event_t dat;
-                glk_cancel_line_event((Window *)arglist[0].opaqueref, &dat);
-                arglist[2].uint = dat.type;
-                arglist[3].opaqueref = dat.window;
-                arglist[4].uint = dat.val1;
-                arglist[5].uint = dat.val2;
+                glk_cancel_line_event((Window *)arglist[0]._opaqueref, &dat);
+                arglist[2]._uint = dat.type;
+                arglist[3]._opaqueref = dat.window;
+                arglist[4]._uint = dat.val1;
+                arglist[5]._uint = dat.val2;
             }
             else {
-                glk_cancel_line_event((Window *)arglist[0].opaqueref, nullptr);
+                glk_cancel_line_event((Window *)arglist[0]._opaqueref, nullptr);
             }
             break;
         case 0x00D2: /* request_char_event */
-            glk_request_char_event((Window *)arglist[0].opaqueref);
+            glk_request_char_event((Window *)arglist[0]._opaqueref);
             break;
         case 0x00D3: /* cancel_char_event */
-            glk_cancel_char_event((Window *)arglist[0].opaqueref);
+            glk_cancel_char_event((Window *)arglist[0]._opaqueref);
             break;
         case 0x00D4: /* request_mouse_event */
-            glk_request_mouse_event((Window *)arglist[0].opaqueref);
+            glk_request_mouse_event((Window *)arglist[0]._opaqueref);
             break;
         case 0x00D5: /* cancel_mouse_event */
-            glk_cancel_mouse_event((Window *)arglist[0].opaqueref);
+            glk_cancel_mouse_event((Window *)arglist[0]._opaqueref);
             break;
         case 0x00D6: /* request_timer_events */
-            glk_request_timer_events(arglist[0].uint);
+            glk_request_timer_events(arglist[0]._uint);
             break;
 
 #ifdef GLK_MODULE_IMAGE
@@ -1024,257 +1024,257 @@ void GlkAPI::gidispatch_call(uint32 funcnum, uint32 numargs, gluniversal_t *argl
             {
                 int ix = 1;
                 uint32 *ptr1, *ptr2;
-                if (!arglist[ix].ptrflag) {
+                if (!arglist[ix]._ptrflag) {
                     ptr1 = nullptr;
                 } else {
                     ix++;
-                    ptr1 = &(arglist[ix].uint);
+                    ptr1 = &(arglist[ix]._uint);
                 }
                 ix++;
-                if (!arglist[ix].ptrflag) {
+                if (!arglist[ix]._ptrflag) {
                     ptr2 = nullptr;
                 } else {
                     ix++;
-                    ptr2 = &(arglist[ix].uint);
+                    ptr2 = &(arglist[ix]._uint);
                 }
                 ix++;
                 ix++;
-                arglist[ix].uint = glk_image_get_info(arglist[0].uint, ptr1, ptr2);
+                arglist[ix]._uint = glk_image_get_info(arglist[0]._uint, ptr1, ptr2);
             }
             break;
         case 0x00E1: /* image_draw */
-            arglist[5].uint = glk_image_draw((Window *)arglist[0].opaqueref,
-                arglist[1].uint,
-                arglist[2].sint, arglist[3].sint);
+            arglist[5]._uint = glk_image_draw((Window *)arglist[0]._opaqueref,
+                arglist[1]._uint,
+                arglist[2]._sint, arglist[3]._sint);
             break;
         case 0x00E2: /* image_draw_scaled */
-            arglist[7].uint = glk_image_draw_scaled((Window *)arglist[0].opaqueref,
-                arglist[1].uint,
-                arglist[2].sint, arglist[3].sint,
-                arglist[4].uint, arglist[5].uint);
+            arglist[7]._uint = glk_image_draw_scaled((Window *)arglist[0]._opaqueref,
+                arglist[1]._uint,
+                arglist[2]._sint, arglist[3]._sint,
+                arglist[4]._uint, arglist[5]._uint);
             break;
         case 0x00E8: /* window_flow_break */
-            glk_window_flow_break((Window *)arglist[0].opaqueref);
+            glk_window_flow_break((Window *)arglist[0]._opaqueref);
             break;
         case 0x00E9: /* window_erase_rect */
-            glk_window_erase_rect((Window *)arglist[0].opaqueref,
-                arglist[1].sint, arglist[2].sint,
-                arglist[3].uint, arglist[4].uint);
+            glk_window_erase_rect((Window *)arglist[0]._opaqueref,
+                arglist[1]._sint, arglist[2]._sint,
+                arglist[3]._uint, arglist[4]._uint);
             break;
         case 0x00EA: /* window_fill_rect */
-            glk_window_fill_rect((Window *)arglist[0].opaqueref, arglist[1].uint,
-                arglist[2].sint, arglist[3].sint,
-                arglist[4].uint, arglist[5].uint);
+            glk_window_fill_rect((Window *)arglist[0]._opaqueref, arglist[1]._uint,
+                arglist[2]._sint, arglist[3]._sint,
+                arglist[4]._uint, arglist[5]._uint);
             break;
         case 0x00EB: /* window_set_background_color */
-            glk_window_set_background_color((Window *)arglist[0].opaqueref, arglist[1].uint);
+            glk_window_set_background_color((Window *)arglist[0]._opaqueref, arglist[1]._uint);
             break;
 #endif /* GLK_MODULE_IMAGE */
 
 #ifdef GLK_MODULE_SOUND
         case 0x00F0: /* schannel_iterate */
-            if (arglist[1].ptrflag)
-                arglist[4].opaqueref = glk_schannel_iterate((schanid_t)arglist[0].opaqueref, &arglist[2].uint);
+            if (arglist[1]._ptrflag)
+                arglist[4]._opaqueref = glk_schannel_iterate((schanid_t)arglist[0]._opaqueref, &arglist[2]._uint);
             else
-                arglist[3].opaqueref = glk_schannel_iterate((schanid_t)arglist[0].opaqueref, nullptr);
+                arglist[3]._opaqueref = glk_schannel_iterate((schanid_t)arglist[0]._opaqueref, nullptr);
             break;
         case 0x00F1: /* schannel_get_rock */
-            arglist[2].uint = glk_schannel_get_rock((schanid_t)arglist[0].opaqueref);
+            arglist[2]._uint = glk_schannel_get_rock((schanid_t)arglist[0]._opaqueref);
             break;
         case 0x00F2: /* schannel_create */
-            arglist[2].opaqueref = glk_schannel_create(arglist[0].uint);
+            arglist[2]._opaqueref = glk_schannel_create(arglist[0]._uint);
             break;
         case 0x00F3: /* schannel_destroy */
-            glk_schannel_destroy((schanid_t)arglist[0].opaqueref);
+            glk_schannel_destroy((schanid_t)arglist[0]._opaqueref);
             break;
         case 0x00F8: /* schannel_play */
-            arglist[3].uint = glk_schannel_play((schanid_t)arglist[0].opaqueref, arglist[1].uint);
+            arglist[3]._uint = glk_schannel_play((schanid_t)arglist[0]._opaqueref, arglist[1]._uint);
             break;
         case 0x00F9: /* schannel_play_ext */
-            arglist[5].uint = glk_schannel_play_ext((schanid_t)arglist[0].opaqueref,
-                arglist[1].uint, arglist[2].uint, arglist[3].uint);
+            arglist[5]._uint = glk_schannel_play_ext((schanid_t)arglist[0]._opaqueref,
+                arglist[1]._uint, arglist[2]._uint, arglist[3]._uint);
             break;
         case 0x00FA: /* schannel_stop */
-            glk_schannel_stop((schanid_t)arglist[0].opaqueref);
+            glk_schannel_stop((schanid_t)arglist[0]._opaqueref);
             break;
         case 0x00FB: /* schannel_set_volume */
-            glk_schannel_set_volume((schanid_t)arglist[0].opaqueref, arglist[1].uint);
+            glk_schannel_set_volume((schanid_t)arglist[0]._opaqueref, arglist[1]._uint);
             break;
         case 0x00FC: /* sound_load_hint */
-            glk_sound_load_hint(arglist[0].uint, arglist[1].uint);
+            glk_sound_load_hint(arglist[0]._uint, arglist[1]._uint);
             break;
 
 #ifdef GLK_MODULE_SOUND2
         case 0x00F4: /* schannel_create_ext */
-            arglist[3].opaqueref = glk_schannel_create_ext(arglist[0].uint, arglist[1].uint);
+            arglist[3]._opaqueref = glk_schannel_create_ext(arglist[0]._uint, arglist[1]._uint);
             break;
         case 0x00F7: /* schannel_play_multi */
-            if (arglist[0].ptrflag && arglist[3].ptrflag)
-                arglist[8].uint = glk_schannel_play_multi((schanid_t *)arglist[1].array, arglist[2].uint, (uint *)arglist[4].array, arglist[5].uint, arglist[6].uint);
-            else if (arglist[0].ptrflag)
-                arglist[6].uint = glk_schannel_play_multi((schanid_t *)arglist[1].array, arglist[2].uint, nullptr, 0, arglist[4].uint);
-            else if (arglist[1].ptrflag)
-                arglist[6].uint = glk_schannel_play_multi(nullptr, 0, (uint *)arglist[2].array, arglist[3].uint, arglist[4].uint);
+            if (arglist[0]._ptrflag && arglist[3]._ptrflag)
+                arglist[8]._uint = glk_schannel_play_multi((schanid_t *)arglist[1]._array, arglist[2]._uint, (uint *)arglist[4]._array, arglist[5]._uint, arglist[6]._uint);
+            else if (arglist[0]._ptrflag)
+                arglist[6]._uint = glk_schannel_play_multi((schanid_t *)arglist[1]._array, arglist[2]._uint, nullptr, 0, arglist[4]._uint);
+            else if (arglist[1]._ptrflag)
+                arglist[6]._uint = glk_schannel_play_multi(nullptr, 0, (uint *)arglist[2]._array, arglist[3]._uint, arglist[4]._uint);
             else
-                arglist[4].uint = glk_schannel_play_multi(nullptr, 0, nullptr, 0, arglist[2].uint);
+                arglist[4]._uint = glk_schannel_play_multi(nullptr, 0, nullptr, 0, arglist[2]._uint);
             break;
         case 0x00FD: /* schannel_set_volume_ext */
-            glk_schannel_set_volume_ext((schanid_t)arglist[0].opaqueref, arglist[1].uint, arglist[2].uint, arglist[3].uint);
+            glk_schannel_set_volume_ext((schanid_t)arglist[0]._opaqueref, arglist[1]._uint, arglist[2]._uint, arglist[3]._uint);
             break;
         case 0x00FE: /* schannel_pause */
-            glk_schannel_pause((schanid_t)arglist[0].opaqueref);
+            glk_schannel_pause((schanid_t)arglist[0]._opaqueref);
             break;
         case 0x00FF: /* schannel_unpause */
-            glk_schannel_unpause((schanid_t)arglist[0].opaqueref);
+            glk_schannel_unpause((schanid_t)arglist[0]._opaqueref);
             break;
 #endif /* GLK_MODULE_SOUND2 */
 #endif /* GLK_MODULE_SOUND */
 
 #ifdef GLK_MODULE_HYPERLINKS
         case 0x0100: /* set_hyperlink */
-            glk_set_hyperlink(arglist[0].uint);
+            glk_set_hyperlink(arglist[0]._uint);
             break;
         case 0x0101: /* set_hyperlink_stream */
-            glk_set_hyperlink_stream((strid_t)arglist[0].opaqueref, arglist[1].uint);
+            glk_set_hyperlink_stream((strid_t)arglist[0]._opaqueref, arglist[1]._uint);
             break;
         case 0x0102: /* request_hyperlink_event */
-            glk_request_hyperlink_event((Window *)arglist[0].opaqueref);
+            glk_request_hyperlink_event((Window *)arglist[0]._opaqueref);
             break;
         case 0x0103: /* cancel_hyperlink_event */
-            glk_cancel_hyperlink_event((Window *)arglist[0].opaqueref);
+            glk_cancel_hyperlink_event((Window *)arglist[0]._opaqueref);
             break;
 #endif /* GLK_MODULE_HYPERLINKS */
 
 #ifdef GLK_MODULE_UNICODE
         case 0x0120: /* buffer_to_lower_case_uni */
-            if (arglist[0].ptrflag)
-                arglist[5].uint = glk_buffer_to_lower_case_uni((uint32 *)arglist[1].array, arglist[2].uint, arglist[3].uint);
+            if (arglist[0]._ptrflag)
+                arglist[5]._uint = glk_buffer_to_lower_case_uni((uint32 *)arglist[1]._array, arglist[2]._uint, arglist[3]._uint);
             else
-                arglist[3].uint = glk_buffer_to_lower_case_uni(nullptr, 0, arglist[1].uint);
+                arglist[3]._uint = glk_buffer_to_lower_case_uni(nullptr, 0, arglist[1]._uint);
             break;
         case 0x0121: /* buffer_to_upper_case_uni */
-            if (arglist[0].ptrflag)
-                arglist[5].uint = glk_buffer_to_upper_case_uni((uint32 *)arglist[1].array, arglist[2].uint, arglist[3].uint);
+            if (arglist[0]._ptrflag)
+                arglist[5]._uint = glk_buffer_to_upper_case_uni((uint32 *)arglist[1]._array, arglist[2]._uint, arglist[3]._uint);
             else
-                arglist[3].uint = glk_buffer_to_upper_case_uni(nullptr, 0, arglist[1].uint);
+                arglist[3]._uint = glk_buffer_to_upper_case_uni(nullptr, 0, arglist[1]._uint);
             break;
         case 0x0122: /* buffer_to_title_case_uni */
-            if (arglist[0].ptrflag)
-                arglist[6].uint = glk_buffer_to_title_case_uni((uint32 *)arglist[1].array, arglist[2].uint, arglist[3].uint, arglist[4].uint);
+            if (arglist[0]._ptrflag)
+                arglist[6]._uint = glk_buffer_to_title_case_uni((uint32 *)arglist[1]._array, arglist[2]._uint, arglist[3]._uint, arglist[4]._uint);
             else
-                arglist[4].uint = glk_buffer_to_title_case_uni(nullptr, 0, arglist[1].uint, arglist[2].uint);
+                arglist[4]._uint = glk_buffer_to_title_case_uni(nullptr, 0, arglist[1]._uint, arglist[2]._uint);
             break;
         case 0x0128: /* put_char_uni */
-            glk_put_char_uni(arglist[0].uint);
+            glk_put_char_uni(arglist[0]._uint);
             break;
         case 0x0129: /* put_string_uni */
-            glk_put_string_uni(arglist[0].unicharstr);
+            glk_put_string_uni(arglist[0]._unicharstr);
             break;
         case 0x012A: /* put_buffer_uni */
-            if (arglist[0].ptrflag)
-                glk_put_buffer_uni((const uint32 *)arglist[1].array, arglist[2].uint);
+            if (arglist[0]._ptrflag)
+                glk_put_buffer_uni((const uint32 *)arglist[1]._array, arglist[2]._uint);
             else
                 glk_put_buffer_uni(nullptr, 0);
             break;
         case 0x012B: /* put_char_stream_uni */
-            glk_put_char_stream_uni((strid_t)arglist[0].opaqueref, arglist[1].uint);
+            glk_put_char_stream_uni((strid_t)arglist[0]._opaqueref, arglist[1]._uint);
             break;
         case 0x012C: /* put_string_stream_uni */
-            glk_put_string_stream_uni((strid_t)arglist[0].opaqueref, arglist[1].unicharstr);
+            glk_put_string_stream_uni((strid_t)arglist[0]._opaqueref, arglist[1]._unicharstr);
             break;
         case 0x012D: /* put_buffer_stream_uni */
-            if (arglist[1].ptrflag)
-                glk_put_buffer_stream_uni((strid_t)arglist[0].opaqueref, (const uint32 *)arglist[2].array, arglist[3].uint);
+            if (arglist[1]._ptrflag)
+                glk_put_buffer_stream_uni((strid_t)arglist[0]._opaqueref, (const uint32 *)arglist[2]._array, arglist[3]._uint);
             else
-                glk_put_buffer_stream_uni((strid_t)arglist[0].opaqueref, nullptr, 0);
+                glk_put_buffer_stream_uni((strid_t)arglist[0]._opaqueref, nullptr, 0);
             break;
         case 0x0130: /* get_char_stream_uni */
-            arglist[2].sint = glk_get_char_stream_uni((strid_t)arglist[0].opaqueref);
+            arglist[2]._sint = glk_get_char_stream_uni((strid_t)arglist[0]._opaqueref);
             break;
         case 0x0131: /* get_buffer_stream_uni */
-            if (arglist[1].ptrflag)
-                arglist[5].uint = glk_get_buffer_stream_uni((strid_t)arglist[0].opaqueref,
-                    (uint32 *)arglist[2].array, arglist[3].uint);
+            if (arglist[1]._ptrflag)
+                arglist[5]._uint = glk_get_buffer_stream_uni((strid_t)arglist[0]._opaqueref,
+                    (uint32 *)arglist[2]._array, arglist[3]._uint);
             else
-                arglist[3].uint = glk_get_buffer_stream_uni((strid_t)arglist[0].opaqueref, nullptr, 0);
+                arglist[3]._uint = glk_get_buffer_stream_uni((strid_t)arglist[0]._opaqueref, nullptr, 0);
             break;
         case 0x0132: /* get_line_stream_uni */
-            if (arglist[1].ptrflag)
-                arglist[5].uint = glk_get_line_stream_uni((strid_t)arglist[0].opaqueref,
-                    (uint32 *)arglist[2].array, arglist[3].uint);
+            if (arglist[1]._ptrflag)
+                arglist[5]._uint = glk_get_line_stream_uni((strid_t)arglist[0]._opaqueref,
+                    (uint32 *)arglist[2]._array, arglist[3]._uint);
             else
-                arglist[3].uint = glk_get_line_stream_uni((strid_t)arglist[0].opaqueref, nullptr, 0);
+                arglist[3]._uint = glk_get_line_stream_uni((strid_t)arglist[0]._opaqueref, nullptr, 0);
             break;
         case 0x0138: /* stream_open_file_uni */
-            arglist[4].opaqueref = glk_stream_open_file_uni((frefid_t)arglist[0].opaqueref, (FileMode)arglist[1].uint,
-                arglist[2].uint);
+            arglist[4]._opaqueref = glk_stream_open_file_uni((frefid_t)arglist[0]._opaqueref, (FileMode)arglist[1]._uint,
+                arglist[2]._uint);
             break;
         case 0x0139: /* stream_open_memory_uni */
-            if (arglist[0].ptrflag)
-                arglist[6].opaqueref = glk_stream_open_memory_uni((uint32 *)arglist[1].array,
-                    arglist[2].uint, (FileMode)arglist[3].uint, arglist[4].uint);
+            if (arglist[0]._ptrflag)
+                arglist[6]._opaqueref = glk_stream_open_memory_uni((uint32 *)arglist[1]._array,
+                    arglist[2]._uint, (FileMode)arglist[3]._uint, arglist[4]._uint);
             else
-                arglist[4].opaqueref = glk_stream_open_memory_uni(nullptr, 0, (FileMode)arglist[1].uint, arglist[2].uint);
+                arglist[4]._opaqueref = glk_stream_open_memory_uni(nullptr, 0, (FileMode)arglist[1]._uint, arglist[2]._uint);
             break;
         case 0x0140: /* request_char_event_uni */
-            glk_request_char_event_uni((Window *)arglist[0].opaqueref);
+            glk_request_char_event_uni((Window *)arglist[0]._opaqueref);
             break;
         case 0x0141: /* request_line_event_uni */
-            if (arglist[1].ptrflag)
-                glk_request_line_event_uni((Window *)arglist[0].opaqueref, (uint32 *)arglist[2].array,
-                    arglist[3].uint, arglist[4].uint);
+            if (arglist[1]._ptrflag)
+                glk_request_line_event_uni((Window *)arglist[0]._opaqueref, (uint32 *)arglist[2]._array,
+                    arglist[3]._uint, arglist[4]._uint);
             else
-                glk_request_line_event_uni((Window *)arglist[0].opaqueref, nullptr,
-                    0, arglist[2].uint);
+                glk_request_line_event_uni((Window *)arglist[0]._opaqueref, nullptr,
+                    0, arglist[2]._uint);
             break;
 #endif /* GLK_MODULE_UNICODE */
 
 #ifdef GLK_MODULE_UNICODE_NORM
         case 0x0123: /* buffer_canon_decompose_uni */
-            if (arglist[0].ptrflag)
-                arglist[5].uint = glk_buffer_canon_decompose_uni((uint32 *)arglist[1].array, arglist[2].uint, arglist[3].uint);
+            if (arglist[0]._ptrflag)
+                arglist[5]._uint = glk_buffer_canon_decompose_uni((uint32 *)arglist[1]._array, arglist[2]._uint, arglist[3]._uint);
             else
-                arglist[3].uint = glk_buffer_canon_decompose_uni(nullptr, 0, arglist[1].uint);
+                arglist[3]._uint = glk_buffer_canon_decompose_uni(nullptr, 0, arglist[1]._uint);
             break;
         case 0x0124: /* buffer_canon_normalize_uni */
-            if (arglist[0].ptrflag)
-                arglist[5].uint = glk_buffer_canon_normalize_uni((uint32 *)arglist[1].array, arglist[2].uint, arglist[3].uint);
+            if (arglist[0]._ptrflag)
+                arglist[5]._uint = glk_buffer_canon_normalize_uni((uint32 *)arglist[1]._array, arglist[2]._uint, arglist[3]._uint);
             else
-                arglist[3].uint = glk_buffer_canon_normalize_uni(nullptr, 0, arglist[1].uint);
+                arglist[3]._uint = glk_buffer_canon_normalize_uni(nullptr, 0, arglist[1]._uint);
             break;
 #endif /* GLK_MODULE_UNICODE_NORM */
 
 #ifdef GLK_MODULE_LINE_ECHO
         case 0x0150: /* set_echo_line_event */
-            glk_set_echo_line_event((Window *)arglist[0].opaqueref, arglist[1].uint);
+            glk_set_echo_line_event((Window *)arglist[0]._opaqueref, arglist[1]._uint);
             break;
 #endif /* GLK_MODULE_LINE_ECHO */
 
 #ifdef GLK_MODULE_LINE_TERMINATORS
         case 0x0151: /* set_terminators_line_event */
-            if (arglist[1].ptrflag)
-                glk_set_terminators_line_event((Window *)arglist[0].opaqueref, (const uint32 *)arglist[2].array, arglist[3].uint);
+            if (arglist[1]._ptrflag)
+                glk_set_terminators_line_event((Window *)arglist[0]._opaqueref, (const uint32 *)arglist[2]._array, arglist[3]._uint);
             else
-                glk_set_terminators_line_event((Window *)arglist[0].opaqueref,
+                glk_set_terminators_line_event((Window *)arglist[0]._opaqueref,
                     nullptr, 0);
             break;
 #endif /* GLK_MODULE_LINE_TERMINATORS */
 
 #ifdef GLK_MODULE_DATETIME
         case 0x0160: /* current_time */
-            if (arglist[0].ptrflag) {
+            if (arglist[0]._ptrflag) {
                 glktimeval_t dat;
                 glk_current_time(&dat);
-                arglist[1].sint = dat.high_sec;
-                arglist[2].uint = dat.low_sec;
-                arglist[3].sint = dat.microsec;
+                arglist[1]._sint = dat.high_sec;
+                arglist[2]._uint = dat.low_sec;
+                arglist[3]._sint = dat.microsec;
             }
             else {
                 glk_current_time(nullptr);
             }
             break;
         case 0x0161: /* current_simple_time */
-            arglist[2].sint = glk_current_simple_time(arglist[0].uint);
+            arglist[2]._sint = glk_current_simple_time(arglist[0]._uint);
             break;
         case 0x0168: /* time_to_date_utc */ {
             glktimeval_t timeval;
@@ -1282,25 +1282,25 @@ void GlkAPI::gidispatch_call(uint32 funcnum, uint32 numargs, gluniversal_t *argl
             glkdate_t date;
             glkdate_t *dateptr = nullptr;
             int ix = 0;
-            if (arglist[ix++].ptrflag) {
+            if (arglist[ix++]._ptrflag) {
                 timeptr = &timeval;
-                timeval.high_sec = arglist[ix++].sint;
-                timeval.low_sec = arglist[ix++].uint;
-                timeval.microsec = arglist[ix++].sint;
+                timeval.high_sec = arglist[ix++]._sint;
+                timeval.low_sec = arglist[ix++]._uint;
+                timeval.microsec = arglist[ix++]._sint;
             }
-            if (arglist[ix++].ptrflag) {
+            if (arglist[ix++]._ptrflag) {
                 dateptr = &date;
             }
             glk_time_to_date_utc(timeptr, dateptr);
             if (dateptr) {
-                arglist[ix++].sint = date.year;
-                arglist[ix++].sint = date.month;
-                arglist[ix++].sint = date.day;
-                arglist[ix++].sint = date.weekday;
-                arglist[ix++].sint = date.hour;
-                arglist[ix++].sint = date.minute;
-                arglist[ix++].sint = date.second;
-                arglist[ix++].sint = date.microsec;
+                arglist[ix++]._sint = date.year;
+                arglist[ix++]._sint = date.month;
+                arglist[ix++]._sint = date.day;
+                arglist[ix++]._sint = date.weekday;
+                arglist[ix++]._sint = date.hour;
+                arglist[ix++]._sint = date.minute;
+                arglist[ix++]._sint = date.second;
+                arglist[ix++]._sint = date.microsec;
             }
             }
             break;
@@ -1310,25 +1310,25 @@ void GlkAPI::gidispatch_call(uint32 funcnum, uint32 numargs, gluniversal_t *argl
             glkdate_t date;
             glkdate_t *dateptr = nullptr;
             int ix = 0;
-            if (arglist[ix++].ptrflag) {
+            if (arglist[ix++]._ptrflag) {
                 timeptr = &timeval;
-                timeval.high_sec = arglist[ix++].sint;
-                timeval.low_sec = arglist[ix++].uint;
-                timeval.microsec = arglist[ix++].sint;
+                timeval.high_sec = arglist[ix++]._sint;
+                timeval.low_sec = arglist[ix++]._uint;
+                timeval.microsec = arglist[ix++]._sint;
             }
-            if (arglist[ix++].ptrflag) {
+            if (arglist[ix++]._ptrflag) {
                 dateptr = &date;
             }
             glk_time_to_date_local(timeptr, dateptr);
             if (dateptr) {
-                arglist[ix++].sint = date.year;
-                arglist[ix++].sint = date.month;
-                arglist[ix++].sint = date.day;
-                arglist[ix++].sint = date.weekday;
-                arglist[ix++].sint = date.hour;
-                arglist[ix++].sint = date.minute;
-                arglist[ix++].sint = date.second;
-                arglist[ix++].sint = date.microsec;
+                arglist[ix++]._sint = date.year;
+                arglist[ix++]._sint = date.month;
+                arglist[ix++]._sint = date.day;
+                arglist[ix++]._sint = date.weekday;
+                arglist[ix++]._sint = date.hour;
+                arglist[ix++]._sint = date.minute;
+                arglist[ix++]._sint = date.second;
+                arglist[ix++]._sint = date.microsec;
             }
             }
             break;
@@ -1336,19 +1336,19 @@ void GlkAPI::gidispatch_call(uint32 funcnum, uint32 numargs, gluniversal_t *argl
             glkdate_t date;
             glkdate_t *dateptr = nullptr;
             int ix = 2;
-            if (arglist[ix++].ptrflag) {
+            if (arglist[ix++]._ptrflag) {
                 dateptr = &date;
             }
-            glk_simple_time_to_date_utc(arglist[0].sint, arglist[1].uint, dateptr);
+            glk_simple_time_to_date_utc(arglist[0]._sint, arglist[1]._uint, dateptr);
             if (dateptr) {
-                arglist[ix++].sint = date.year;
-                arglist[ix++].sint = date.month;
-                arglist[ix++].sint = date.day;
-                arglist[ix++].sint = date.weekday;
-                arglist[ix++].sint = date.hour;
-                arglist[ix++].sint = date.minute;
-                arglist[ix++].sint = date.second;
-                arglist[ix++].sint = date.microsec;
+                arglist[ix++]._sint = date.year;
+                arglist[ix++]._sint = date.month;
+                arglist[ix++]._sint = date.day;
+                arglist[ix++]._sint = date.weekday;
+                arglist[ix++]._sint = date.hour;
+                arglist[ix++]._sint = date.minute;
+                arglist[ix++]._sint = date.second;
+                arglist[ix++]._sint = date.microsec;
             }
             }
             break;
@@ -1356,19 +1356,19 @@ void GlkAPI::gidispatch_call(uint32 funcnum, uint32 numargs, gluniversal_t *argl
             glkdate_t date;
             glkdate_t *dateptr = nullptr;
             int ix = 2;
-            if (arglist[ix++].ptrflag) {
+            if (arglist[ix++]._ptrflag) {
                 dateptr = &date;
             }
-            glk_simple_time_to_date_local(arglist[0].sint, arglist[1].uint, dateptr);
+            glk_simple_time_to_date_local(arglist[0]._sint, arglist[1]._uint, dateptr);
             if (dateptr) {
-                arglist[ix++].sint = date.year;
-                arglist[ix++].sint = date.month;
-                arglist[ix++].sint = date.day;
-                arglist[ix++].sint = date.weekday;
-                arglist[ix++].sint = date.hour;
-                arglist[ix++].sint = date.minute;
-                arglist[ix++].sint = date.second;
-                arglist[ix++].sint = date.microsec;
+                arglist[ix++]._sint = date.year;
+                arglist[ix++]._sint = date.month;
+                arglist[ix++]._sint = date.day;
+                arglist[ix++]._sint = date.weekday;
+                arglist[ix++]._sint = date.hour;
+                arglist[ix++]._sint = date.minute;
+                arglist[ix++]._sint = date.second;
+                arglist[ix++]._sint = date.microsec;
             }
             }
             break;
@@ -1380,25 +1380,25 @@ void GlkAPI::gidispatch_call(uint32 funcnum, uint32 numargs, gluniversal_t *argl
 			timeval.high_sec = timeval.low_sec = timeval.microsec = 0;
 			
 			int ix = 0;
-            if (arglist[ix++].ptrflag) {
+            if (arglist[ix++]._ptrflag) {
                 dateptr = &date;
-                date.year = arglist[ix++].sint;
-                date.month = arglist[ix++].sint;
-                date.day = arglist[ix++].sint;
-                date.weekday = arglist[ix++].sint;
-                date.hour = arglist[ix++].sint;
-                date.minute = arglist[ix++].sint;
-                date.second = arglist[ix++].sint;
-                date.microsec = arglist[ix++].sint;
+                date.year = arglist[ix++]._sint;
+                date.month = arglist[ix++]._sint;
+                date.day = arglist[ix++]._sint;
+                date.weekday = arglist[ix++]._sint;
+                date.hour = arglist[ix++]._sint;
+                date.minute = arglist[ix++]._sint;
+                date.second = arglist[ix++]._sint;
+                date.microsec = arglist[ix++]._sint;
             }
-            if (arglist[ix++].ptrflag) {
+            if (arglist[ix++]._ptrflag) {
                 timeptr = &timeval;
             }
             glk_date_to_time_utc(dateptr, timeptr);
             if (timeptr) {
-                arglist[ix++].sint = timeval.high_sec;
-                arglist[ix++].uint = timeval.low_sec;
-                arglist[ix++].sint = timeval.microsec;
+                arglist[ix++]._sint = timeval.high_sec;
+                arglist[ix++]._uint = timeval.low_sec;
+                arglist[ix++]._sint = timeval.microsec;
             }
             }
             break;
@@ -1410,25 +1410,25 @@ void GlkAPI::gidispatch_call(uint32 funcnum, uint32 numargs, gluniversal_t *argl
 			timeval.high_sec = timeval.low_sec = timeval.microsec = 0;
 
             int ix = 0;
-            if (arglist[ix++].ptrflag) {
+            if (arglist[ix++]._ptrflag) {
                 dateptr = &date;
-                date.year = arglist[ix++].sint;
-                date.month = arglist[ix++].sint;
-                date.day = arglist[ix++].sint;
-                date.weekday = arglist[ix++].sint;
-                date.hour = arglist[ix++].sint;
-                date.minute = arglist[ix++].sint;
-                date.second = arglist[ix++].sint;
-                date.microsec = arglist[ix++].sint;
+                date.year = arglist[ix++]._sint;
+                date.month = arglist[ix++]._sint;
+                date.day = arglist[ix++]._sint;
+                date.weekday = arglist[ix++]._sint;
+                date.hour = arglist[ix++]._sint;
+                date.minute = arglist[ix++]._sint;
+                date.second = arglist[ix++]._sint;
+                date.microsec = arglist[ix++]._sint;
             }
-            if (arglist[ix++].ptrflag) {
+            if (arglist[ix++]._ptrflag) {
                 timeptr = &timeval;
             }
             glk_date_to_time_local(dateptr, timeptr);
             if (timeptr) {
-                arglist[ix++].sint = timeval.high_sec;
-                arglist[ix++].uint = timeval.low_sec;
-                arglist[ix++].sint = timeval.microsec;
+                arglist[ix++]._sint = timeval.high_sec;
+                arglist[ix++]._uint = timeval.low_sec;
+                arglist[ix++]._sint = timeval.microsec;
             }
             }
             break;
@@ -1436,52 +1436,52 @@ void GlkAPI::gidispatch_call(uint32 funcnum, uint32 numargs, gluniversal_t *argl
             glkdate_t date;
             glkdate_t *dateptr = nullptr;
             int ix = 0;
-            if (arglist[ix++].ptrflag) {
+            if (arglist[ix++]._ptrflag) {
                 dateptr = &date;
-                date.year = arglist[ix++].sint;
-                date.month = arglist[ix++].sint;
-                date.day = arglist[ix++].sint;
-                date.weekday = arglist[ix++].sint;
-                date.hour = arglist[ix++].sint;
-                date.minute = arglist[ix++].sint;
-                date.second = arglist[ix++].sint;
-                date.microsec = arglist[ix++].sint;
+                date.year = arglist[ix++]._sint;
+                date.month = arglist[ix++]._sint;
+                date.day = arglist[ix++]._sint;
+                date.weekday = arglist[ix++]._sint;
+                date.hour = arglist[ix++]._sint;
+                date.minute = arglist[ix++]._sint;
+                date.second = arglist[ix++]._sint;
+                date.microsec = arglist[ix++]._sint;
             }
-            arglist[ix+2].sint = glk_date_to_simple_time_utc(dateptr, arglist[ix].uint);
+            arglist[ix+2]._sint = glk_date_to_simple_time_utc(dateptr, arglist[ix]._uint);
             }
             break;
         case 0x016F: /* date_to_simple_time_local */ {
             glkdate_t date;
             glkdate_t *dateptr = nullptr;
             int ix = 0;
-            if (arglist[ix++].ptrflag) {
+            if (arglist[ix++]._ptrflag) {
                 dateptr = &date;
-                date.year = arglist[ix++].sint;
-                date.month = arglist[ix++].sint;
-                date.day = arglist[ix++].sint;
-                date.weekday = arglist[ix++].sint;
-                date.hour = arglist[ix++].sint;
-                date.minute = arglist[ix++].sint;
-                date.second = arglist[ix++].sint;
-                date.microsec = arglist[ix++].sint;
+                date.year = arglist[ix++]._sint;
+                date.month = arglist[ix++]._sint;
+                date.day = arglist[ix++]._sint;
+                date.weekday = arglist[ix++]._sint;
+                date.hour = arglist[ix++]._sint;
+                date.minute = arglist[ix++]._sint;
+                date.second = arglist[ix++]._sint;
+                date.microsec = arglist[ix++]._sint;
             }
-            arglist[ix+2].sint = glk_date_to_simple_time_local(dateptr, arglist[ix].uint);
+            arglist[ix+2]._sint = glk_date_to_simple_time_local(dateptr, arglist[ix]._uint);
             }
             break;
 #endif /* GLK_MODULE_DATETIME */
 
 #ifdef GLK_MODULE_GARGLKTEXT
         case 0x1100: /* garglk_set_zcolors */
-            garglk_set_zcolors( arglist[0].uint, arglist[1].uint );
+            garglk_set_zcolors( arglist[0]._uint, arglist[1]._uint );
             break;
         case 0x1101: /* garglk_set_zcolors_stream */
-            garglk_set_zcolors_stream((strid_t)arglist[0].opaqueref, arglist[1].uint, arglist[2].uint );
+            garglk_set_zcolors_stream((strid_t)arglist[0]._opaqueref, arglist[1]._uint, arglist[2]._uint );
             break;
         case 0x1102: /* garglk_set_reversevideo */
-            garglk_set_reversevideo( arglist[0].uint );
+            garglk_set_reversevideo( arglist[0]._uint );
             break;
         case 0x1103: /* garglk_set_reversevideo_stream */
-            garglk_set_reversevideo_stream((strid_t)arglist[0].opaqueref, arglist[1].uint );
+            garglk_set_reversevideo_stream((strid_t)arglist[0]._opaqueref, arglist[1]._uint );
             break;
 #endif /* GLK_MODULE_GARGLKTEXT */
 

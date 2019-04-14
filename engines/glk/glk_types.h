@@ -224,16 +224,16 @@ union gidispatch_rock_t {
 };
 
 union gluniversal_union {
-	uint uint;          ///< Iu
-	int32 sint;         ///< Is
-	void *opaqueref;    ///< Qa, Qb, Qc...
-	byte uch;           ///< Cu
-	int8 sch;           ///< Cs
-	char ch;            ///< Cn
-	char *charstr;      ///< S
-	uint32 *unicharstr; ///< U
-	void *array;        ///< all # arguments
-	uint32 ptrflag;     ///< [ ... ] or *?
+	uint _uint;          ///< Iu
+	int32 _sint;         ///< Is
+	void *_opaqueref;    ///< Qa, Qb, Qc...
+	byte _uch;           ///< Cu
+	int8 _sch;           ///< Cs
+	char _ch;            ///< Cn
+	char *_charstr;      ///< S
+	uint32 *_unicharstr; ///< U
+	void *_array;        ///< all # arguments
+	uint32 _ptrflag;     ///< [ ... ] or *?
 };
 typedef gluniversal_union gluniversal_t;
 
