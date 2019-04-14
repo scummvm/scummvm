@@ -223,6 +223,26 @@ union gidispatch_rock_t {
 	void *ptr;
 };
 
+union gluniversal_union {
+	uint32 uint;        ///< Iu
+	int32 sint;         ///< Is
+	void *opaqueref;    ///< Qa, Qb, Qc...
+	byte uch;           ///< Cu
+	int8 sch;           ///< Cs
+	char ch;            ///< Cn
+	char *charstr;      ///< S
+	uint32 *unicharstr; ///< U
+	void *array;        ///< all # arguments
+	uint32 ptrflag;     ///< [ ... ] or *?
+};
+typedef gluniversal_union gluniversal_t;
+
+struct gidispatch_intconst_struct {
+	const char *name;
+	uint32 val;
+};
+typedef gidispatch_intconst_struct gidispatch_intconst_t;
+
 } // End of namespace Glk
 
 #endif
