@@ -28,7 +28,7 @@
 #include "kyra/gui/debugger.h"
 #include "kyra/gui/gui_mr.h"
 #include "kyra/resource/resource.h"
-#include "kyra/sound/sound_digital.h"
+#include "kyra/sound/sound_digital_mr.h"
 
 #include "common/system.h"
 #include "common/config-manager.h"

@@ -20,7 +20,7 @@
  *
  */
 
-#include "kyra/sound/sound_digital.h"
+#include "kyra/sound/sound_digital_mr.h"
 #include "kyra/resource/resource.h"
 #include "kyra/engine/kyra_mr.h"
 
