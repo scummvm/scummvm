@@ -224,7 +224,7 @@ union gidispatch_rock_t {
 };
 
 union gluniversal_union {
-	uint32 uint;        ///< Iu
+	uint uint;          ///< Iu
 	int32 sint;         ///< Is
 	void *opaqueref;    ///< Qa, Qb, Qc...
 	byte uch;           ///< Cu

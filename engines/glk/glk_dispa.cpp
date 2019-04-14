@@ -340,7 +340,7 @@ uint32 GlkAPI::gidispatch_count_classes() const {
 }
 
 const gidispatch_intconst_t *GlkAPI::gidispatch_get_class(uint32 index) const {
-    if (index < 0 || index >= NUMCLASSES)
+    if (index >= NUMCLASSES)
         return nullptr;
     return &(class_table[index]);
 }
@@ -350,7 +350,7 @@ uint32 GlkAPI::gidispatch_count_intconst() const {
 }
 
 const gidispatch_intconst_t *GlkAPI::gidispatch_get_intconst(uint32 index) const {
-    if (index < 0 || index >= NUMINTCONSTANTS)
+    if (index >= NUMINTCONSTANTS)
         return nullptr;
     return &(intconstant_table[index]);
 }
@@ -360,7 +360,7 @@ uint32 GlkAPI::gidispatch_count_functions() const {
 }
 
 gidispatch_function_t *GlkAPI::gidispatch_get_function(uint32 index) const {
-    if (index < 0 || index >= NUMFUNCTIONS)
+    if (index >= NUMFUNCTIONS)
         return nullptr;
     return &(function_table[index]);
 }
