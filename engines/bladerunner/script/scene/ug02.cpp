@@ -130,7 +130,14 @@ bool SceneScriptUG02::ClickedOn3DObject(const char *objectName, bool a2) {
 			} else if (!Actor_Clue_Query(kActorMcCoy, kClueWeaponsCache)) {
 				Actor_Voice_Over(2510, kActorVoiceOver);
 				Actor_Voice_Over(2520, kActorVoiceOver);
-				Actor_Voice_Over(2530, kActorVoiceOver);
+#if BLADERUNNER_ORIGINAL_BUGS
+				Actor_Voice_Over(2530, kActorVoiceOver); // But there was no way to tell what was missing without Izo standing there checking his inventory.
+#else
+				// This voice over says that Izo is there in Chapter 4 checking out his weapon's cache
+				// This does not happen in the original game (Izo being there) although this case can be triggered
+				// TODO Restore this quote ONLY IF we restore the related cut-content so that Izo may appear here in Chapter 4.
+				//Actor_Voice_Over(2530, kActorVoiceOver); // But there was no way to tell what was missing without Izo standing there checking his inventory.
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			} else if (!Game_Flag_Query(kFlagUG02AmmoTaken)) {
 				Item_Pickup_Spin_Effect(996, 360, 440);
 				Actor_Says(kActorMcCoy, 8525, 14);
