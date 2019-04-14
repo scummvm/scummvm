@@ -45,7 +45,7 @@ struct TileMap {
 	uint16 h;
 	uint32 size;
 	byte *map;
-	uint8 tileIndexOffset;
+	uint16 tileIndexOffset;
 };
 
 class Background {

@@ -94,6 +94,16 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 		ini->field_1a_flags_maybe &= ~Dragons::INI_FLAG_10;
 	}
 
+	uint16 sceneIdStripped = (uint16)sceneId & ~0x8000;
+	if ((((((sceneIdStripped == 0x18) || (sceneIdStripped == 0x26)) ||
+		   (sceneIdStripped == 0x7)) ||
+		  ((sceneIdStripped == 0x17 || (sceneIdStripped == 0x5)))) ||
+		 ((sceneIdStripped == 0x19 || ((sceneIdStripped == 0x34 || (sceneIdStripped == 0x1d)))
+		 ))) || (sceneIdStripped == 0x6)) {
+//		buf2048bytes = buf2048bytes + 0x1800;
+		error("0x8002f404"); //TODO do we need this logic?
+	}
+
 	if (!(sceneId & 0x8000)) {
 		byte *obd = _dragonRMS->getObdDataField10(sceneId);
 		ScriptOpCall scriptOpCall;
