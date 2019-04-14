@@ -24,17 +24,17 @@
 #define KYRA_SOUND_INTERN_H
 
 
-
 #include "kyra/sound/sound.h"
 #include "kyra/sound/sound_adlib.h"
 
+#include "audio/midiparser.h"
+#include "audio/softsynth/emumidi.h"
+#include "audio/softsynth/fmtowns_pc98/towns_audio.h"
+
 #include "common/mutex.h"
 
-#include "audio/softsynth/fmtowns_pc98/towns_pc98_driver.h"
-#include "audio/softsynth/fmtowns_pc98/towns_euphony.h"
-
-#include "audio/softsynth/emumidi.h"
-#include "audio/midiparser.h"
+class EuphonyPlayer;
+class TownsPC98_AudioDriver;
 
 namespace Audio {
 class PCSpeaker;

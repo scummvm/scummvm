@@ -65,6 +65,8 @@ MODULE_OBJS := \
 	sound/sound_digital_mr.o \
 	sound/sound_midi.o \
 	sound/sound_pcspk.o \
+	sound/sound_pc98_lok.o \
+	sound/sound_pc98_v2.o \
 	sound/sound_towns_lok.o \
 	sound/sound.o \
 	sound/sound_lok.o \

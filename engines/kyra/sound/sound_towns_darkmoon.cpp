@@ -24,7 +24,6 @@
 #include "kyra/resource/resource.h"
 
 #include "common/config-manager.h"
-#include "common/system.h"
 
 #include "backends/audiocd/audiocd.h"
 
