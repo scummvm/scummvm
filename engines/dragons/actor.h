@@ -125,7 +125,7 @@ public:
 	byte *getSeqIpAtOffset(uint32 offset);
 	void loadFrame(uint16 frameOffset);
 	void reset_maybe();
-	bool pathfinding_maybe(int16 target_x, int16 target_y, int16 isNotFlicker);
+	bool pathfinding_maybe(int16 target_x, int16 target_y, uint16 isNotFlicker);
 	void walkPath();
 	void waitUntilFlag8IsSet();
 	void waitUntilFlag8And4AreSet();

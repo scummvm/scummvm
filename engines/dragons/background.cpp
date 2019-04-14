@@ -28,7 +28,7 @@ namespace Dragons {
 
 #define TILE_WIDTH 32
 #define TILE_HEIGHT 8
-#define TILE_SIZE (TILE_WIDTH * TILE_HEIGHT * 2)
+#define TILE_SIZE (TILE_WIDTH * TILE_HEIGHT)
 
 
 void Dragons::PriorityLayer::load(TileMap &tileMap, byte *tiles) {
@@ -50,8 +50,15 @@ int16 PriorityLayer::getPriority(Common::Point pos) {
 	const int16 tx = pos.x / TILE_WIDTH, sx = pos.x % TILE_WIDTH;
 	const int16 ty = pos.y / TILE_HEIGHT, sy = pos.y % TILE_HEIGHT;
 	uint16 mapIndex = READ_LE_UINT16(_map + 2 * (tx + ty * _mapWidth));
-	return _values[mapIndex * TILE_WIDTH * TILE_HEIGHT + sx + sy * TILE_WIDTH] + 1;
 
+//
+//	byte priority = *(byte *)((((uint)*(ushort *)
+//			(((int)pos.x / 32) * 2 +
+//			 ((int)pos.y / 8) * (uint)_mapWidth * 2 +
+//					_map) * 32) * 8) +
+//			_values + (((int)pos.y % 8) * 32) +
+//						 ((int)pos.x % 32));
+	return _values[mapIndex * TILE_WIDTH * TILE_HEIGHT + sx + sy * TILE_WIDTH] + 1;
 }
 
 Background::Background() : _priorityLayer(0), _points1(0), _points2(0), _data(0) {
