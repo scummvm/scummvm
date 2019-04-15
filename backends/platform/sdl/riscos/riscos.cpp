@@ -26,6 +26,7 @@
 
 #include "backends/platform/sdl/riscos/riscos.h"
 #include "backends/saves/default/default-saves.h"
+#include "backends/events/riscossdl/riscossdl-events.h"
 #include "backends/fs/riscos/riscos-fs-factory.h"
 #include "backends/fs/riscos/riscos-fs.h"
 
@@ -50,6 +51,10 @@ void OSystem_RISCOS::init() {
 
 void OSystem_RISCOS::initBackend() {
 	ConfMan.registerDefault("enable_reporter", false);
+
+	// Create the events manager
+	if (_eventSource == 0)
+		_eventSource = new RISCOSSdlEventSource();
 
 	// Create the savefile manager
 	if (_savefileManager == 0) {

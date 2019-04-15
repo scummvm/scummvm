@@ -219,6 +219,7 @@ endif
 
 ifdef RISCOS
 MODULE_OBJS += \
+	events/riscossdl/riscossdl-events.o \
 	fs/riscos/riscos-fs.o \
 	fs/riscos/riscos-fs-factory.o \
 	platform/sdl/riscos/riscos-utils.o
