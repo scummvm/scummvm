@@ -349,6 +349,8 @@ protected:
 	int _tableSfxGame_Size;
 };
 
+#ifdef ENABLE_EOB
+
 class SoundTowns_Darkmoon : public Sound, public TownsAudioInterfacePluginDriver {
 public:
 	SoundTowns_Darkmoon(KyraEngine_v1 *vm, Audio::Mixer *mixer);
@@ -440,6 +442,8 @@ private:
 
 	bool _ready;
 };
+
+#endif
 
 } // End of namespace Kyra
 

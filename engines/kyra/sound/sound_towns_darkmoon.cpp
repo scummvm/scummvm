@@ -20,6 +20,8 @@
  *
  */
 
+#ifdef ENABLE_EOB
+
 #include "kyra/sound/sound_intern.h"
 #include "kyra/resource/resource.h"
 
@@ -283,3 +285,5 @@ void SoundTowns_Darkmoon::resetTrigger() {
 }
 
 } // End of namespace Kyra
+
+#endif

@@ -20,6 +20,8 @@
  *
  */
 
+#ifdef ENABLE_EOB
+
 #include "kyra/sound/sound_intern.h"
 #include "kyra/resource/resource.h"
 #include "kyra/sound/drivers/audiomaster2.h"
@@ -234,3 +236,5 @@ int SoundAmiga_EoB::checkTrigger() {
 }
 
 } // End of namespace Kyra
+
+#endif

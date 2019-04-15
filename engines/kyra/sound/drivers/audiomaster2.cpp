@@ -20,6 +20,8 @@
  *
  */
 
+#ifdef ENABLE_EOB
+
 #include "kyra/resource/resource.h"
 #include "kyra/sound/drivers/audiomaster2.h"
 
@@ -1190,7 +1192,7 @@ void AudioMaster2IFFLoader::initResource() {
 AudioMaster2Internal *AudioMaster2Internal::_refInstance = 0;
 int AudioMaster2Internal::_refCount = 0;
 
-AudioMaster2Internal::AudioMaster2Internal(Audio::Mixer *mixer) : Paula(true, mixer->getOutputRate(), mixer->getOutputRate() / 50), _mixer(mixer), _res(0), _fadeOutSteps(0), _durationCounter(0), _ready(false) {
+AudioMaster2Internal::AudioMaster2Internal(Audio::Mixer *mixer) : Paula(true, mixer->getOutputRate(), mixer->getOutputRate() / 50), _mixer(mixer), _res(0), _io(0), _fadeOutSteps(0), _durationCounter(0), _ready(false) {
 	_channels[0] = _channels[1] = _channels[2] = _channels[3] = 0;
 	setAudioFilter(true);
 }
@@ -1553,3 +1555,5 @@ void AudioMaster2::setSoundEffectVolume(int volume) {
 }
 
 } // End of namespace Kyra
+
+#endif

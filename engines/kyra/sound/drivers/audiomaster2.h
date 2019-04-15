@@ -36,6 +36,8 @@
  *
  */
 
+#ifdef ENABLE_EOB
+
 #ifndef KYRA_SOUND_AUDIOMASTER2_H
 #define KYRA_SOUND_AUDIOMASTER2_H
 
@@ -79,5 +81,7 @@ private:
 };
 
 } // End of namespace Kyra
+
+#endif
 
 #endif
