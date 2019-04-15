@@ -250,6 +250,21 @@ enum Opcode {
 	op_jisinf       = 0x1C9
 };
 
+enum gestulx {
+	gestulx_GlulxVersion = 0,
+	gestulx_TerpVersion  = 1,
+	gestulx_ResizeMem    = 2,
+	gestulx_Undo         = 3,
+	gestulx_IOSystem     = 4,
+	gestulx_Unicode      = 5,
+	gestulx_MemCopy      = 6,
+	gestulx_MAlloc       = 7,
+	gestulx_MAllocHeap   = 8,
+	gestulx_Acceleration = 9,
+	gestulx_AccelFunc    = 10,
+	gestulx_Float        = 11
+};
+
 struct dispatch_splot_struct {
 	int numwanted;
 	int maxargs;

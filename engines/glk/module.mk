@@ -62,6 +62,7 @@ MODULE_OBJS := \
 	glulxe/exec.o \
 	glulxe/float.o \
 	glulxe/funcs.o \
+	glulxe/gestalt.o \
 	glulxe/glkop.o \
 	glulxe/glulxe.o \
 	magnetic/detection.o \
