@@ -567,6 +567,8 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		return handleMouseButtonDown(ev, event);
 	case SDL_MOUSEBUTTONUP:
 		return handleMouseButtonUp(ev, event);
+	case SDL_SYSWMEVENT:
+		return handleSysWMEvent(ev, event);
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	case SDL_MOUSEWHEEL: {
@@ -858,6 +860,10 @@ bool SdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 	_km.y = ev.button.y * MULTIPLIER;
 
 	return processMouseEvent(event, ev.button.x, ev.button.y);
+}
+
+bool SdlEventSource::handleSysWMEvent(SDL_Event &ev, Common::Event &event) {
+	return false;
 }
 
 void SdlEventSource::openJoystick(int joystickIndex) {
