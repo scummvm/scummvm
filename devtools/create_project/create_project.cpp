@@ -133,6 +133,7 @@ int main(int argc, char *argv[]) {
 	setup.features = getAllFeatures();
 
 	ProjectType projectType = kProjectNone;
+	const MSVCVersion* msvc = NULL;
 	int msvcVersion = 12;
 
 	// Parse command line arguments
@@ -192,10 +193,6 @@ int main(int argc, char *argv[]) {
 
 			msvcVersion = atoi(argv[++i]);
 
-			if (msvcVersion != 9 && msvcVersion != 10 && msvcVersion != 11 && msvcVersion != 12 && msvcVersion != 14 && msvcVersion != 15) {
-				std::cerr << "ERROR: Unsupported version: \"" << msvcVersion << "\" passed to \"--msvc-version\"!\n";
-				return -1;
-			}
 		} else if (!strncmp(argv[i], "--enable-engine=", 16)) {
 			const char *names = &argv[i][16];
 			if (!*names) {
@@ -482,6 +479,12 @@ int main(int argc, char *argv[]) {
 		break;
 
 	case kProjectMSVC:
+		msvc = getMSVCVersion(msvcVersion);
+		if (!msvc) {
+			std::cerr << "ERROR: Unsupported version: \"" << msvcVersion << "\" passed to \"--msvc-version\"!\n";
+			return -1;
+		}
+
 		////////////////////////////////////////////////////////////////////////////
 		// For Visual Studio, all warnings are on by default in the project files,
 		// so we pass a list of warnings to disable globally or per-project
@@ -584,7 +587,7 @@ int main(int argc, char *argv[]) {
 		globalWarnings.push_back("6385");
 		globalWarnings.push_back("6386");
 
-		if (msvcVersion == 14 || msvcVersion == 15) {
+		if (msvcVersion >= 14) {
 			globalWarnings.push_back("4267");
 			globalWarnings.push_back("4577");
 		}
@@ -608,9 +611,9 @@ int main(int argc, char *argv[]) {
 		projectWarnings["sci"].push_back("4373");
 
 		if (msvcVersion == 9)
-			provider = new CreateProjectTool::VisualStudioProvider(globalWarnings, projectWarnings, msvcVersion);
+			provider = new CreateProjectTool::VisualStudioProvider(globalWarnings, projectWarnings, msvcVersion, *msvc);
 		else
-			provider = new CreateProjectTool::MSBuildProvider(globalWarnings, projectWarnings, msvcVersion);
+			provider = new CreateProjectTool::MSBuildProvider(globalWarnings, projectWarnings, msvcVersion, *msvc);
 
 		break;
 
@@ -700,14 +703,13 @@ void displayHelp(const char *exe) {
 	        "                          directory\n"
 	        "\n"
 	        "MSVC specific settings:\n"
-	        " --msvc-version version   set the targeted MSVC version. Possible values:\n"
-	        "                           9 stands for \"Visual Studio 2008\"\n"
-	        "                           10 stands for \"Visual Studio 2010\"\n"
-	        "                           11 stands for \"Visual Studio 2012\"\n"
-	        "                           12 stands for \"Visual Studio 2013\"\n"
-	        "                           14 stands for \"Visual Studio 2015\"\n"
-	        "                           15 stands for \"Visual Studio 2017\"\n"
-	        "                           The default is \"12\", thus \"Visual Studio 2013\"\n"
+	        " --msvc-version version   set the targeted MSVC version. Possible values:\n";
+
+	const MSVCList msvc = getAllMSVCVersions();
+	for (MSVCList::const_iterator i = msvc.begin(); i != msvc.end(); ++i)
+		cout << "                           " << i->version << " stands for \"" << i->name << "\"\n";
+
+	cout << "                           The default is \"12\", thus \"Visual Studio 2013\"\n"
 	        " --build-events           Run custom build events as part of the build\n"
 	        "                          (default: false)\n"
 	        " --installer              Create installer after the build (implies --build-events)\n"
@@ -1082,6 +1084,16 @@ const Tool s_tools[] = {
 	{ "create_translations", true},
 	{ "qtable",              true}
 };
+
+const MSVCVersion s_msvc[] = {
+//    Ver    Name                     Solution                     Project    Toolset    LLVM
+	{  9,    "Visual Studio 2008",    "10.00",          "2008",     "4.0",     "v90",    "LLVM-vs2008" },
+	{ 10,    "Visual Studio 2010",    "11.00",          "2010",     "4.0",    "v100",    "LLVM-vs2010" },
+	{ 11,    "Visual Studio 2012",    "11.00",          "2012",     "4.0",    "v110",    "LLVM-vs2012" },
+	{ 12,    "Visual Studio 2013",    "12.00",          "2013",    "12.0",    "v120",    "LLVM-vs2013" },
+	{ 14,    "Visual Studio 2015",    "12.00",            "14",    "14.0",    "v140",    "LLVM-vs2014" },
+	{ 15,    "Visual Studio 2017",    "12.00",            "15",    "15.0",    "v141",    "llvm"        }
+};
 } // End of anonymous namespace
 
 FeatureList getAllFeatures() {
@@ -1145,6 +1157,27 @@ ToolList getAllTools() {
 		tools.push_back(s_tools[i]);
 
 	return tools;
+}
+
+MSVCList getAllMSVCVersions() {
+	const size_t msvcCount = sizeof(s_msvc) / sizeof(s_msvc[0]);
+
+	MSVCList msvcVersions;
+	for (size_t i = 0; i < msvcCount; ++i)
+		msvcVersions.push_back(s_msvc[i]);
+
+	return msvcVersions;
+}
+
+const MSVCVersion *getMSVCVersion(int version) {
+	const size_t msvcCount = sizeof(s_msvc) / sizeof(s_msvc[0]);
+
+	for (size_t i = 0; i < msvcCount; ++i) {
+		if (s_msvc[i].version == version)
+			return &s_msvc[i];
+	}
+
+	return NULL;
 }
 
 namespace CreateProjectTool {
