@@ -317,10 +317,33 @@ public:
 	 * @{
 	 */
 
+	/**
+	 * This writes a new call frame onto the stack, at stackptr. It leaves frameptr pointing
+	 * to the frame (ie, the original stackptr value.) argc and argv are an array of arguments.
+	 * Note that if argc is zero, argv may be NULL.
+	 */
 	void enter_function(uint addr, uint argc, uint *argv);
-	void leave_function(void);
+	
+	/**
+	 * Pop the current call frame off the stack. This is very simple.
+	*/
+	void leave_function();
+
+	/**
+	 * Push the magic four values on the stack: result destination, PC, and frameptr.
+	 */
 	void push_callstub(uint desttype, uint destaddr);
+
+	/**
+	 * Remove the magic four values from the stack, and use them. The returnvalue, whatever it is,
+	 * is put at the result destination; the PC and frameptr registers are set.
+	*/
 	void pop_callstub(uint returnvalue);
+
+	/**
+	 * Remove the magic four values, but interpret them as a string restart state.
+	 * Returns zero if it's a termination stub, or returns the restart address. The bitnum is extra.
+	 */
 	uint pop_callstub_string(int *bitnum);
 
 	/**@}*/
