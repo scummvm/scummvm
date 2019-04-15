@@ -136,6 +136,7 @@ public:
 	Stream *_prev;
 	Stream *_next;
 	uint _rock;
+	gidispatch_rock_t _dispRock;
 	bool _unicode;
 	uint _readCount;
 	uint _writeCount;

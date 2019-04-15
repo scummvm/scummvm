@@ -43,6 +43,7 @@ private:
 	Audio::SoundHandle _handle;
 public:
 	uint _rock;
+	gidispatch_rock_t _dispRock;
 public:
 	/**
 	 * Constructor

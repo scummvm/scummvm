@@ -335,6 +335,46 @@ static gidispatch_function_t function_table[] = {
 #endif /* GLK_MODULE_GARGLKTEXT */
 };
 
+void GlkAPI::gidispatch_set_object_registry(gidispatch_rock_t(*regi)(void *obj, uint objclass),
+		void(*unregi)(void *obj, uint objclass, gidispatch_rock_t objrock)) {
+	Window *win;
+	Stream *str;
+	frefid_t fref;
+
+	gli_register_obj = regi;
+	gli_unregister_obj = unregi;
+
+	if (gli_register_obj)
+	{
+		/* It's now necessary to go through all existing objects, and register
+			them. */
+		for (win = glk_window_iterate(NULL, NULL);
+			win;
+			win = glk_window_iterate(win, NULL))
+		{
+			win->_dispRock = (*gli_register_obj)(win, gidisp_Class_Window);
+		}
+		for (str = glk_stream_iterate(NULL, NULL);
+			str;
+			str = glk_stream_iterate(str, NULL))
+		{
+			str->_dispRock = (*gli_register_obj)(str, gidisp_Class_Stream);
+		}
+		for (fref = glk_fileref_iterate(NULL, NULL);
+			fref;
+			fref = glk_fileref_iterate(fref, NULL))
+		{
+			fref->_dispRock = (*gli_register_obj)(fref, gidisp_Class_Fileref);
+		}
+	}
+}
+
+void GlkAPI::gidispatch_set_retained_registry(gidispatch_rock_t(*regi)(void *array, uint len, char *typecode),
+		void(*unregi)(void *array, uint len, char *typecode, gidispatch_rock_t objrock)) {
+	gli_register_arr = regi;
+	gli_unregister_arr = unregi;
+}
+
 uint32 GlkAPI::gidispatch_count_classes() const {
     return NUMCLASSES;
 }
@@ -1489,6 +1529,24 @@ void GlkAPI::gidispatch_call(uint32 funcnum, uint32 numargs, gluniversal_t *argl
             /* do nothing */
             break;
     }
+}
+
+gidispatch_rock_t GlkAPI::gidispatch_get_objrock(void *obj, uint objclass) {
+	switch (objclass) {
+	case gidisp_Class_Window:
+		return ((Window *)obj)->_dispRock;
+	case gidisp_Class_Stream:
+		return ((Stream *)obj)->_dispRock;
+	case gidisp_Class_Fileref:
+		return ((FileReference *)obj)->_dispRock;
+	case gidisp_Class_Schannel:
+		return ((SoundChannel *)obj)->_dispRock;
+	default: {
+		gidispatch_rock_t dummy;
+		dummy.num = 0;
+		return dummy;
+	}
+	}
 }
 
 } // End of namespace Glk

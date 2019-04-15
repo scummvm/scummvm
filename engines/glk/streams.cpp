@@ -34,8 +34,10 @@
 namespace Glk {
 
 Stream::Stream(Streams *streams, bool readable, bool writable, uint rock, bool unicode) :
-	_streams(streams), _readable(readable), _writable(writable), _rock(0), _unicode(unicode),
-	_readCount(0), _writeCount(0), _prev(nullptr), _next(nullptr) {
+		_streams(streams), _readable(readable), _writable(writable), _rock(0), _unicode(unicode),
+		_readCount(0), _writeCount(0), _prev(nullptr), _next(nullptr) {
+	_dispRock.num = 0;
+	_dispRock.ptr = nullptr;
 }
 
 Stream::~Stream() {

@@ -27,8 +27,14 @@
 namespace Glk {
 namespace Glulxe {
 
+Glulxe *g_vm;
+
 Glulxe::Glulxe(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
-		vm_exited_cleanly(false) {
+		vm_exited_cleanly(false), gamefile(nullptr), gamefile_start(0), gamefile_len(0),
+		memmap(nullptr), stack(nullptr), ramstart(0), endgamefile(0), origendmem(0),  stacksize(0),
+		startfuncaddr(0), checksum(0), stackptr(0), frameptr(0), pc(0), prevpc(0), origstringtable(0),
+		stringtable(0), valstackbase(0), localsbase(0), endmem(0), protectstart(0), protectend(0) {
+	g_vm = this;
 }
 
 void Glulxe::runGame() {
@@ -71,6 +77,44 @@ bool Glulxe::is_gamefile_valid() {
 	}
 
 	return true;
+}
+
+void Glulxe::fatal_error_handler(const char *str, const char *arg, bool useVal, int val) {
+	Common::String msg = "Glulxe fatal error: ";
+
+	if (arg || useVal) {
+		msg += " (";
+
+		if (arg)
+			msg += Common::String::format("%s", arg);
+		if (arg && useVal)
+			msg += " ";
+		if (useVal)
+			msg += Common::String::format("%x", val);
+
+		msg += ")";
+	}
+
+	error("%s", msg.c_str());
+}
+
+void Glulxe::nonfatal_warning_handler(const char *str, const char *arg, bool useVal, int val) {
+	Common::String msg = "Glulxe warning: ";
+
+	if (arg || useVal) {
+		msg += " (";
+
+		if (arg)
+			msg += Common::String::format("%s", arg);
+		if (arg && useVal)
+			msg += " ";
+		if (useVal)
+			msg += Common::String::format("%x", val);
+
+		msg += ")";
+	}
+
+	warning("%s", msg.c_str());
 }
 
 } // End of namespace Glulxe

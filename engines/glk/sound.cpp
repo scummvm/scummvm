@@ -75,6 +75,8 @@ void Sounds::poll() {
 
 SoundChannel::SoundChannel(Sounds *owner) : _owner(owner), _soundNum(0),
 		_rock(0), _notify(0) {
+	_dispRock.num = 0;
+	_dispRock.ptr = nullptr;
 }
 
 SoundChannel::~SoundChannel() {
