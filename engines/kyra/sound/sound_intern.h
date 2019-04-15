@@ -110,10 +110,10 @@ private:
 	Common::Mutex _mutex;
 };
 
-class SoundTowns : public Sound {
+class SoundTowns_LoK : public Sound {
 public:
-	SoundTowns(KyraEngine_v1 *vm, Audio::Mixer *mixer);
-	virtual ~SoundTowns();
+	SoundTowns_LoK(KyraEngine_v1 *vm, Audio::Mixer *mixer);
+	virtual ~SoundTowns_LoK();
 
 	virtual kType getMusicType() const { return kTowns; }
 
@@ -164,10 +164,10 @@ private:
 	const uint8 *_sfxWDTable;
 };
 
-class SoundPC98 : public Sound {
+class SoundPC98_LoK : public Sound {
 public:
-	SoundPC98(KyraEngine_v1 *vm, Audio::Mixer *mixer);
-	virtual ~SoundPC98();
+	SoundPC98_LoK(KyraEngine_v1 *vm, Audio::Mixer *mixer);
+	virtual ~SoundPC98_LoK();
 
 	virtual kType getMusicType() const override { return kPC98; }
 
@@ -315,10 +315,10 @@ struct AmigaSfxTable {
 	uint8 pan;
 };
 
-class SoundAmiga : public Sound {
+class SoundAmiga_LoK : public Sound {
 public:
-	SoundAmiga(KyraEngine_v1 *vm, Audio::Mixer *mixer);
-	virtual ~SoundAmiga();
+	SoundAmiga_LoK(KyraEngine_v1 *vm, Audio::Mixer *mixer);
+	virtual ~SoundAmiga_LoK();
 
 	virtual kType getMusicType() const override { return kAmiga; } //FIXME
 

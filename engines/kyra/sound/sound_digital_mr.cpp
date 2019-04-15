@@ -102,17 +102,17 @@ int KyraAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 	return samplesRead;
 }
 
-SoundDigital::SoundDigital(KyraEngine_MR *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
+SoundDigital_MR::SoundDigital_MR(KyraEngine_MR *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	for (uint i = 0; i < ARRAYSIZE(_sounds); ++i)
 		_sounds[i].stream = 0;
 }
 
-SoundDigital::~SoundDigital() {
+SoundDigital_MR::~SoundDigital_MR() {
 	for (int i = 0; i < ARRAYSIZE(_sounds); ++i)
 		stopSound(i);
 }
 
-int SoundDigital::playSound(const char *filename, uint8 priority, Audio::Mixer::SoundType type, int volume, bool loop, int channel) {
+int SoundDigital_MR::playSound(const char *filename, uint8 priority, Audio::Mixer::SoundType type, int volume, bool loop, int channel) {
 	Sound *use = 0;
 	if (channel != -1 && channel < ARRAYSIZE(_sounds)) {
 		stopSound(channel);
@@ -194,7 +194,7 @@ int SoundDigital::playSound(const char *filename, uint8 priority, Audio::Mixer::
 	return use - _sounds;
 }
 
-bool SoundDigital::isPlaying(int channel) {
+bool SoundDigital_MR::isPlaying(int channel) {
 	if (channel == -1)
 		return false;
 
@@ -206,7 +206,7 @@ bool SoundDigital::isPlaying(int channel) {
 	return _mixer->isSoundHandleActive(_sounds[channel].handle);
 }
 
-void SoundDigital::stopSound(int channel) {
+void SoundDigital_MR::stopSound(int channel) {
 	if (channel == -1)
 		return;
 
@@ -215,14 +215,14 @@ void SoundDigital::stopSound(int channel) {
 	_sounds[channel].stream = 0;
 }
 
-void SoundDigital::stopAllSounds() {
+void SoundDigital_MR::stopAllSounds() {
 	for (int i = 0; i < ARRAYSIZE(_sounds); ++i) {
 		if (isPlaying(i))
 			stopSound(i);
 	}
 }
 
-void SoundDigital::beginFadeOut(int channel, int ticks) {
+void SoundDigital_MR::beginFadeOut(int channel, int ticks) {
 	if (isPlaying(channel))
 		_sounds[channel].stream->beginFadeOut(ticks * _vm->tickLength());
 }
@@ -231,7 +231,7 @@ void SoundDigital::beginFadeOut(int channel, int ticks) {
 
 Audio::SeekableAudioStream *makeAUDStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
 
-const SoundDigital::AudioCodecs SoundDigital::_supportedCodecs[] = {
+const SoundDigital_MR::AudioCodecs SoundDigital_MR::_supportedCodecs[] = {
 #ifdef USE_FLAC
 	{ ".FLA", Audio::makeFLACStream },
 #endif // USE_FLAC

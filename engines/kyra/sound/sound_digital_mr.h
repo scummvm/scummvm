@@ -44,10 +44,10 @@ class KyraEngine_MR;
  *
  * This is just used for Kyrandia 3.
  */
-class SoundDigital {
+class SoundDigital_MR {
 public:
-	SoundDigital(KyraEngine_MR *vm, Audio::Mixer *mixer);
-	~SoundDigital();
+	SoundDigital_MR(KyraEngine_MR *vm, Audio::Mixer *mixer);
+	~SoundDigital_MR();
 
 	/**
 	 * Plays a sound.

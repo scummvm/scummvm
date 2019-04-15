@@ -33,7 +33,7 @@
 
 namespace Kyra {
 
-class SoundDigital;
+class SoundDigital_MR;
 class Screen_MR;
 class MainMenu;
 class WSAMovie_v2;
@@ -55,7 +55,7 @@ public:
 	Screen *screen() { return _screen; }
 	Screen_v2 *screen_v2() const { return _screen; }
 	GUI *gui() const { return _gui; }
-	SoundDigital *soundDigital() { return _soundDigital; }
+	SoundDigital_MR *soundDigital() { return _soundDigital; }
 	int language() const { return _lang; }
 	bool heliumMode() const { return _configHelium; }
 
@@ -80,7 +80,7 @@ private:
 
 	// --
 	Screen_MR *_screen;
-	SoundDigital *_soundDigital;
+	SoundDigital_MR *_soundDigital;
 
 	Common::Error init();
 

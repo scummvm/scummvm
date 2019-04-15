@@ -31,14 +31,14 @@
 
 namespace Kyra {
 
-SoundTowns::SoundTowns(KyraEngine_v1 *vm, Audio::Mixer *mixer)
+SoundTowns_LoK::SoundTowns_LoK(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 	: Sound(vm, mixer), _lastTrack(-1), _musicTrackData(0), _sfxFileData(0), _cdaPlaying(0),
 	_sfxFileIndex((uint)-1), _musicFadeTable(0), _sfxWDTable(0), _sfxBTTable(0), _sfxChannel(0x46), _currentResourceSet(0) {
 	memset(&_resInfo, 0, sizeof(_resInfo));
 	_player = new EuphonyPlayer(_mixer);
 }
 
-SoundTowns::~SoundTowns() {
+SoundTowns_LoK::~SoundTowns_LoK() {
 	g_system->getAudioCDManager()->stop();
 	haltTrack();
 	delete _player;
@@ -48,7 +48,7 @@ SoundTowns::~SoundTowns() {
 		initAudioResourceInfo(i, 0);
 }
 
-bool SoundTowns::init() {
+bool SoundTowns_LoK::init() {
 	_vm->checkCD();
 	int unused = 0;
 	_musicFadeTable = _vm->staticres()->loadRawData(k1TownsMusicFadeTable, unused);
@@ -72,11 +72,11 @@ bool SoundTowns::init() {
 	return true;
 }
 
-void SoundTowns::process() {
+void SoundTowns_LoK::process() {
 	g_system->getAudioCDManager()->update();
 }
 
-void SoundTowns::playTrack(uint8 track) {
+void SoundTowns_LoK::playTrack(uint8 track) {
 	if (track < 2)
 		return;
 	track -= 2;
@@ -106,7 +106,7 @@ void SoundTowns::playTrack(uint8 track) {
 	_lastTrack = track;
 }
 
-void SoundTowns::haltTrack() {
+void SoundTowns_LoK::haltTrack() {
 	_lastTrack = -1;
 	g_system->getAudioCDManager()->stop();
 	g_system->getAudioCDManager()->update();
@@ -121,27 +121,27 @@ void SoundTowns::haltTrack() {
 	_player->stop();
 }
 
-void SoundTowns::initAudioResourceInfo(int set, void *info) {
+void SoundTowns_LoK::initAudioResourceInfo(int set, void *info) {
 	if (set >= kMusicIntro && set <= kMusicFinale) {
 		delete _resInfo[set];
 		_resInfo[set] = info ? new SoundResourceInfo_Towns(*(SoundResourceInfo_Towns*)info) : 0;
 	}
 }
 
-void SoundTowns::selectAudioResourceSet(int set) {
+void SoundTowns_LoK::selectAudioResourceSet(int set) {
 	if (set >= kMusicIntro && set <= kMusicFinale) {
 		if (_resInfo[set])
 			_currentResourceSet = set;
 	}
 }
 
-bool SoundTowns::hasSoundFile(uint file) const {
+bool SoundTowns_LoK::hasSoundFile(uint file) const {
 	if (file < res()->fileListSize)
 		return (res()->fileList[file] != 0);
 	return false;
 }
 
-void SoundTowns::loadSoundFile(uint file) {
+void SoundTowns_LoK::loadSoundFile(uint file) {
 	if (_sfxFileIndex == file || file >= res()->fileListSize)
 		return;
 	_sfxFileIndex = file;
@@ -149,7 +149,7 @@ void SoundTowns::loadSoundFile(uint file) {
 	_sfxFileData = _vm->resource()->fileData(res()->fileList[file], 0);
 }
 
-void SoundTowns::playSoundEffect(uint8 track, uint8) {
+void SoundTowns_LoK::playSoundEffect(uint8 track, uint8) {
 	if (!_sfxEnabled || !_sfxFileData)
 		return;
 
@@ -229,7 +229,7 @@ void SoundTowns::playSoundEffect(uint8 track, uint8) {
 	delete[] sfxPlaybackBuffer;
 }
 
-void SoundTowns::updateVolumeSettings() {
+void SoundTowns_LoK::updateVolumeSettings() {
 	if (!_player)
 		return;
 
@@ -241,7 +241,7 @@ void SoundTowns::updateVolumeSettings() {
 	_player->driver()->setSoundEffectVolume((mute ? 0 : ConfMan.getInt("sfx_volume")));
 }
 
-void SoundTowns::stopAllSoundEffects() {
+void SoundTowns_LoK::stopAllSoundEffects() {
 	_player->driver()->channelVolume(0x46, 0);
 	_player->driver()->channelVolume(0x47, 0);
 	_player->driver()->stopSoundEffect(0x46);
@@ -249,7 +249,7 @@ void SoundTowns::stopAllSoundEffects() {
 	_sfxChannel = 0x46;
 }
 
-void SoundTowns::beginFadeOut() {
+void SoundTowns_LoK::beginFadeOut() {
 	if (_cdaPlaying) {
 		for (int i = 118; i > 103; i--) {
 			_player->driver()->setOutputVolume(1, i, i);
@@ -316,7 +316,7 @@ void SoundTowns::beginFadeOut() {
 	haltTrack();
 }
 
-bool SoundTowns::loadInstruments() {
+bool SoundTowns_LoK::loadInstruments() {
 	uint8 *twm = _vm->resource()->fileData("twmusic.pak", 0);
 	if (!twm)
 		return false;
@@ -343,7 +343,7 @@ bool SoundTowns::loadInstruments() {
 	return true;
 }
 
-void SoundTowns::playEuphonyTrack(uint32 offset, int loop) {
+void SoundTowns_LoK::playEuphonyTrack(uint32 offset, int loop) {
 	uint8 *twm = _vm->resource()->fileData("twmusic.pak", 0);
 	Screen::decodeFrame4(twm + 19312 + offset, _musicTrackData, 50570);
 	delete[] twm;
@@ -381,7 +381,7 @@ void SoundTowns::playEuphonyTrack(uint32 offset, int loop) {
 	_player->startTrack(src, trackSize, startTick);
 }
 
-void SoundTowns::fadeOutSoundEffects() {
+void SoundTowns_LoK::fadeOutSoundEffects() {
 	for (int i = 127; i > 0; i-= 12) {
 		_player->driver()->channelVolume(0x46, i);
 		_player->driver()->channelVolume(0x47, i);

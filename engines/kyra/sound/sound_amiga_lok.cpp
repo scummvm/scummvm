@@ -28,7 +28,7 @@
 
 namespace Kyra {
 
-SoundAmiga::SoundAmiga(KyraEngine_v1 *vm, Audio::Mixer *mixer)
+SoundAmiga_LoK::SoundAmiga_LoK(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 	: Sound(vm, mixer),
 	  _driver(0),
 	  _musicHandle(),
@@ -39,12 +39,12 @@ SoundAmiga::SoundAmiga(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 	  _tableSfxGame_Size(0) {
 }
 
-SoundAmiga::~SoundAmiga() {
+SoundAmiga_LoK::~SoundAmiga_LoK() {
 	_mixer->stopHandle(_musicHandle);
 	delete _driver;
 }
 
-bool SoundAmiga::init() {
+bool SoundAmiga_LoK::init() {
 	_driver = new Audio::MaxTrax(_mixer->getOutputRate(), true);
 
 	_tableSfxIntro = _vm->staticres()->loadAmigaSfxTable(k1AmigaIntroSFXTable, _tableSfxIntro_Size);
@@ -53,24 +53,24 @@ bool SoundAmiga::init() {
 	return _driver != 0 && _tableSfxIntro && _tableSfxGame;
 }
 
-void SoundAmiga::initAudioResourceInfo(int set, void *info) {
+void SoundAmiga_LoK::initAudioResourceInfo(int set, void *info) {
 	// See comment below
 }
 
-void SoundAmiga::selectAudioResourceSet(int set) {
+void SoundAmiga_LoK::selectAudioResourceSet(int set) {
 	// It seems that loadSoundFile() is doing what would normally be done in here.
 	// As long as this driver is only required for one single target (Kyra 1 Amiga)
 	// this doesn't matter much.
 }
 
-bool SoundAmiga::hasSoundFile(uint file) const {
+bool SoundAmiga_LoK::hasSoundFile(uint file) const {
 	if (file < 3)
 		return true;
 	return false;
 }
 
-void SoundAmiga::loadSoundFile(uint file) {
-	debugC(5, kDebugLevelSound, "SoundAmiga::loadSoundFile(%d)", file);
+void SoundAmiga_LoK::loadSoundFile(uint file) {
+	debugC(5, kDebugLevelSound, "SoundAmiga_LoK::loadSoundFile(%d)", file);
 
 	static const char *const tableFilenames[3][2] = {
 		{ "introscr.mx",  "introinst.mx" },
@@ -92,14 +92,14 @@ void SoundAmiga::loadSoundFile(uint file) {
 			loaded = _driver->load(*scoreIn, true, false);
 			loaded = loaded && _driver->load(*sampleIn, false, true);
 		} else
-			warning("SoundAmiga: missing atleast one of those music files: %s, %s", scoreName, sampleName);
+			warning("SoundAmiga_LoK: missing atleast one of those music files: %s, %s", scoreName, sampleName);
 		delete sampleIn;
 	} else {
 		if (scoreIn) {
 			_fileLoaded = kFileNone;
 			loaded = _driver->load(*scoreIn);
 		} else
-			warning("SoundAmiga: missing music file: %s", scoreName);
+			warning("SoundAmiga_LoK: missing music file: %s", scoreName);
 	}
 	delete scoreIn;
 
@@ -107,8 +107,8 @@ void SoundAmiga::loadSoundFile(uint file) {
 		_fileLoaded = (FileType)file;
 }
 
-void SoundAmiga::playTrack(uint8 track) {
-	debugC(5, kDebugLevelSound, "SoundAmiga::playTrack(%d)", track);
+void SoundAmiga_LoK::playTrack(uint8 track) {
+	debugC(5, kDebugLevelSound, "SoundAmiga_LoK::playTrack(%d)", track);
 
 	static const byte tempoIntro[] = { 0x46, 0x55, 0x3C, 0x41 };
 	static const byte tempoFinal[] = { 0x78, 0x50 };
@@ -172,13 +172,13 @@ void SoundAmiga::playTrack(uint8 track) {
 		beginFadeOut();
 }
 
-void SoundAmiga::haltTrack() {
-	debugC(5, kDebugLevelSound, "SoundAmiga::haltTrack()");
+void SoundAmiga_LoK::haltTrack() {
+	debugC(5, kDebugLevelSound, "SoundAmiga_LoK::haltTrack()");
 	_driver->stopMusic();
 }
 
-void SoundAmiga::beginFadeOut() {
-	debugC(5, kDebugLevelSound, "SoundAmiga::beginFadeOut()");
+void SoundAmiga_LoK::beginFadeOut() {
+	debugC(5, kDebugLevelSound, "SoundAmiga_LoK::beginFadeOut()");
 	for (int i = 0x3F; i >= 0; --i) {
 		_driver->setVolume((byte)i);
 		_vm->delay(_vm->tickLength());
@@ -189,8 +189,8 @@ void SoundAmiga::beginFadeOut() {
 	_driver->setVolume(0x40);
 }
 
-void SoundAmiga::playSoundEffect(uint8 track, uint8) {
-	debugC(5, kDebugLevelSound, "SoundAmiga::playSoundEffect(%d)", track);
+void SoundAmiga_LoK::playSoundEffect(uint8 track, uint8) {
+	debugC(5, kDebugLevelSound, "SoundAmiga_LoK::playSoundEffect(%d)", track);
 	const AmigaSfxTable *sfx = 0;
 	bool pan = false;
 

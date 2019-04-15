@@ -29,12 +29,12 @@
 
 namespace Kyra {
 
-SoundPC98::SoundPC98(KyraEngine_v1 *vm, Audio::Mixer *mixer) :
+SoundPC98_LoK::SoundPC98_LoK(KyraEngine_v1 *vm, Audio::Mixer *mixer) :
 	Sound(vm, mixer), _musicTrackData(0), _sfxTrackData(0), _lastTrack(-1), _driver(0), _currentResourceSet(0) {
 	memset(&_resInfo, 0, sizeof(_resInfo));
 }
 
-SoundPC98::~SoundPC98() {
+SoundPC98_LoK::~SoundPC98_LoK() {
 	delete[] _musicTrackData;
 	delete[] _sfxTrackData;
 	delete _driver;
@@ -42,7 +42,7 @@ SoundPC98::~SoundPC98() {
 		initAudioResourceInfo(i, 0);
 }
 
-bool SoundPC98::init() {
+bool SoundPC98_LoK::init() {
 	_driver = new TownsPC98_AudioDriver(_mixer, TownsPC98_AudioDriver::kType26);
 	bool reslt = _driver->init();
 	updateVolumeSettings();
@@ -50,25 +50,25 @@ bool SoundPC98::init() {
 	return reslt;
 }
 
-void SoundPC98::initAudioResourceInfo(int set, void *info) {
+void SoundPC98_LoK::initAudioResourceInfo(int set, void *info) {
 	if (set >= kMusicIntro && set <= kMusicFinale) {
 		delete _resInfo[set];
 		_resInfo[set] = info ? new Common::String(((SoundResourceInfo_PC98*)info)->pattern) : 0;
 	}
 }
 
-void SoundPC98::selectAudioResourceSet(int set) {
+void SoundPC98_LoK::selectAudioResourceSet(int set) {
 	if (set >= kMusicIntro && set <= kMusicFinale) {
 		if (_resInfo[set])
 			_currentResourceSet = set;
 	}
 }
 
-bool SoundPC98::hasSoundFile(uint file) const {
+bool SoundPC98_LoK::hasSoundFile(uint file) const {
 	return true;
 }
 
-void SoundPC98::loadSoundFile(uint) {
+void SoundPC98_LoK::loadSoundFile(uint) {
 	if (_currentResourceSet == kMusicIntro) {
 		delete[] _sfxTrackData;
 		_sfxTrackData = 0;
@@ -86,12 +86,12 @@ void SoundPC98::loadSoundFile(uint) {
 	}
 }
 
-void SoundPC98::loadSoundFile(Common::String file) {
+void SoundPC98_LoK::loadSoundFile(Common::String file) {
 	delete[] _sfxTrackData;
 	_sfxTrackData = _vm->resource()->fileData(file.c_str(), 0);
 }
 
-void SoundPC98::playTrack(uint8 track) {
+void SoundPC98_LoK::playTrack(uint8 track) {
 	track -= 1;
 
 	if (track == _lastTrack && _musicEnabled)
@@ -108,12 +108,12 @@ void SoundPC98::playTrack(uint8 track) {
 	_lastTrack = track;
 }
 
-void SoundPC98::haltTrack() {
+void SoundPC98_LoK::haltTrack() {
 	_lastTrack = -1;
 	_driver->reset();
 }
 
-void SoundPC98::beginFadeOut() {
+void SoundPC98_LoK::beginFadeOut() {
 	if (!_driver->musicPlaying())
 		return;
 
@@ -124,14 +124,14 @@ void SoundPC98::beginFadeOut() {
 	haltTrack();
 }
 
-void SoundPC98::playSoundEffect(uint8 track, uint8) {
+void SoundPC98_LoK::playSoundEffect(uint8 track, uint8) {
 	if (!_sfxTrackData)
 		return;
 
 	_driver->loadSoundEffectData(_sfxTrackData, track);
 }
 
-void SoundPC98::updateVolumeSettings() {
+void SoundPC98_LoK::updateVolumeSettings() {
 	if (!_driver)
 		return;
 

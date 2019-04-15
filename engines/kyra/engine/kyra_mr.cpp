@@ -211,7 +211,7 @@ Common::Error KyraEngine_MR::init() {
 	KyraEngine_v1::init();
 	initStaticResource();
 
-	_soundDigital = new SoundDigital(this, _mixer);
+	_soundDigital = new SoundDigital_MR(this, _mixer);
 	assert(_soundDigital);
 	KyraEngine_v1::_text = _text = new TextDisplayer_MR(this, _screen);
 	assert(_text);
