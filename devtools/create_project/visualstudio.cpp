@@ -32,8 +32,8 @@ namespace CreateProjectTool {
 // Visual Studio Provider (Visual Studio 2008)
 //////////////////////////////////////////////////////////////////////////
 
-VisualStudioProvider::VisualStudioProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version)
-	: MSVCProvider(global_warnings, project_warnings, version) {
+VisualStudioProvider::VisualStudioProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version, const MSVCVersion& msvc)
+	: MSVCProvider(global_warnings, project_warnings, version, msvc) {
 }
 
 const char *VisualStudioProvider::getProjectExtension() {
@@ -42,13 +42,6 @@ const char *VisualStudioProvider::getProjectExtension() {
 
 const char *VisualStudioProvider::getPropertiesExtension() {
 	return ".vsprops";
-}
-
-int VisualStudioProvider::getVisualStudioVersion() {
-	if (_version == 9)
-		return 2008;
-
-	error("Unsupported version passed to getVisualStudioVersion");
 }
 
 void VisualStudioProvider::createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,

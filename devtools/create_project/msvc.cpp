@@ -31,8 +31,8 @@ namespace CreateProjectTool {
 //////////////////////////////////////////////////////////////////////////
 // MSVC Provider (Base class)
 //////////////////////////////////////////////////////////////////////////
-MSVCProvider::MSVCProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version)
-	: ProjectProvider(global_warnings, project_warnings, version) {
+MSVCProvider::MSVCProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version, const MSVCVersion &msvc)
+	: ProjectProvider(global_warnings, project_warnings, version), _msvcVersion(msvc) {
 
 	_enableLanguageExtensions = tokenize(ENABLE_LANGUAGE_EXTENSIONS, ',');
 	_disableEditAndContinue   = tokenize(DISABLE_EDIT_AND_CONTINUE, ',');
@@ -52,8 +52,8 @@ void MSVCProvider::createWorkspace(const BuildSetup &setup) {
 	if (!solution)
 		error("Could not open \"" + setup.outputDir + '/' + setup.projectName + ".sln\" for writing");
 
-	solution << "Microsoft Visual Studio Solution File, Format Version " << getSolutionVersion() << ".00\n";
-	solution << "# Visual Studio " << getVisualStudioVersion() << "\n";
+	solution << "Microsoft Visual Studio Solution File, Format Version " << _msvcVersion.solutionFormat << "\n";
+	solution << "# Visual Studio " << _msvcVersion.solutionVersion << "\n";
 
 	// Write main project
 	if (!setup.devTools) {
@@ -160,10 +160,6 @@ void MSVCProvider::createGlobalProp(const BuildSetup &setup) {
 	x64Defines.push_back("SDL_BACKEND");
 
 	outputGlobalPropFile(setup, properties, 64, x64Defines, convertPathToWin(setup.filePrefix), setup.runBuildEvents);
-}
-
-int MSVCProvider::getSolutionVersion() {
-	return _version + 1;
 }
 
 std::string MSVCProvider::getPreBuildEvent() const {
