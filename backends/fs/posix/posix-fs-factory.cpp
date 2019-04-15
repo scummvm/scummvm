@@ -34,6 +34,8 @@
 #include "backends/fs/posix/posix-fs-factory.h"
 #include "backends/fs/posix/posix-fs.h"
 
+#include <unistd.h>
+
 AbstractFSNode *POSIXFilesystemFactory::makeRootFileNode() const {
 	return new POSIXFilesystemNode("/");
 }

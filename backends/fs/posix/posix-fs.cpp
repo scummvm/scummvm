@@ -38,6 +38,9 @@
 
 #include <sys/param.h>
 #include <sys/stat.h>
+#ifdef MACOSX
+#include <sys/types.h>
+#endif
 #ifdef PSP2
 #include "backends/fs/psp2/psp2-dirent.h"
 #define mkdir sceIoMkdir
@@ -47,12 +50,25 @@
 #include <stdio.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 #ifdef __OS2__
 #define INCL_DOS
 #include <os2.h>
 #endif
 
+
+bool POSIXFilesystemNode::exists() const {
+	return access(_path.c_str(), F_OK) == 0;
+}
+
+bool POSIXFilesystemNode::isReadable() const {
+	return access(_path.c_str(), R_OK) == 0;
+}
+
+bool POSIXFilesystemNode::isWritable() const {
+	return access(_path.c_str(), W_OK) == 0;
+}
 
 void POSIXFilesystemNode::setFlags() {
 	struct stat st;
