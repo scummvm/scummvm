@@ -29,7 +29,7 @@ void Glulxe::execute_loop() {
   bool done_executing = false;
   int ix;
   uint opcode;
-  operandlist_t *oplist;
+  const operandlist_t *oplist;
   oparg_t inst[MAX_OPERANDS];
   uint value, addr, val0, val1;
   int vals0, vals1;

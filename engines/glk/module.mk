@@ -66,6 +66,7 @@ MODULE_OBJS := \
 	glulxe/glkop.o \
 	glulxe/glulxe.o \
 	glulxe/heap.o \
+	glulxe/operand.o \
 	magnetic/detection.o \
 	magnetic/magnetic.o \
 	scott/detection.o \

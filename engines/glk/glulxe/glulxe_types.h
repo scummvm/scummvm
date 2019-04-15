@@ -313,9 +313,9 @@ typedef classtable_struct classtable_t;
  * Represents the operand structure of an opcode.
  */
 struct operandlist_struct {
-	int num_ops; /* Number of operands for this opcode */
-	int arg_size; /* Usually 4, but can be 1 or 2 */
-	int *formlist; /* Array of values, either modeform_Load or modeform_Store */
+	int num_ops;			///< Number of operands for this opcode
+	int arg_size;			///< Usually 4, but can be 1 or 2
+	const int *formlist;	///< Array of values, either modeform_Load or modeform_Store
 };
 typedef operandlist_struct operandlist_t;
 

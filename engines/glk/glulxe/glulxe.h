@@ -108,6 +108,17 @@ public:
 	heapblock_t *heap_tail = NULL;
 
 	/**@}*/
+
+	/**
+	 * \defgroup operand fields
+	 * @{
+	 */
+
+	/**
+	 * This is a handy array in which to look up operandlists quickly. It stores the operandlists
+	 * for the first 128 opcodes, which are the ones used most frequently.
+	 */
+	const operandlist_t *fast_operandlist[0x80];
 protected:
 	/**
 	 * \defgroup glkop fields
@@ -330,11 +341,34 @@ public:
 	/**
 	 * \defgroup Operand access methods
 	 * @{
-	 */	operandlist_t *fast_operandlist[0x80];
-	void init_operands(void);
-	operandlist_t *lookup_operandlist(uint opcode);
-	void parse_operands(oparg_t *opargs, operandlist_t *oplist);
+	 */
+
+	 /**
+	  * Set up the fast-lookup array of operandlists. This is called just once, when the terp starts up.
+	  */
+	void init_operands();
+
+	/**
+	 * Return the operandlist for a given opcode. For opcodes in the range 00..7F, it's faster
+	 * to use the array fast_operandlist[].
+	*/
+	const operandlist_t *lookup_operandlist(uint opcode);
+
+	/**
+	 * Read the list of operands of an instruction, and put the values in args. This assumes
+	 * that the PC is at the beginning of the operand mode list (right after an opcode number.)
+	 * Upon return, the PC will be at the beginning of the next instruction.
+	 *
+	 * This also assumes that args points at an allocated array of MAX_OPERANDS oparg_t structures.
+	*/
+	void parse_operands(oparg_t *opargs, const operandlist_t *oplist);
+
+	/**
+	 * Store a result value, according to the desttype and destaddress given. This is usually used to store
+	 * the result of an opcode, but it's also used by any code that pulls a call-stub off the stack.
+	 */
 	void store_operand(uint desttype, uint destaddr, uint storeval);
+
 	void store_operand_s(uint desttype, uint destaddr, uint storeval);
 	void store_operand_b(uint desttype, uint destaddr, uint storeval);
 
