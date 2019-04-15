@@ -28,40 +28,46 @@
 namespace Glk {
 namespace Glulxe {
 
+class Glulxe;
 
-	/* Comment this definition to turn off memory-address checking. With
-	   verification on, all reads and writes to main memory will be checked
-	   to ensure they're in range. This is slower, but prevents malformed
-	   game files from crashing the interpreter. */
+/**
+ * Comment this definition to turn off memory-address checking. With verification on,
+ * all reads and writes to main memory will be checked to ensure they're in range.
+ * This is slower, but prevents malformed game files from crashing the interpreter.
+ */
 #define VERIFY_MEMORY_ACCESS (1)
 
-	   /* Uncomment this definition to permit an exception for memory-address
-		  checking for @glk and @copy opcodes that try to write to memory address 0.
-		  This was a bug in old Superglus-built game files. */
-		  /* #define TOLERATE_SUPERGLUS_BUG (1) */
+/**
+ * Uncomment this definition to permit an exception for memory-address checking for @glk and @copy
+ * opcodes that try to write to memory address 0. This was a bug in old Superglus-built game files.
+ */
+/* #define TOLERATE_SUPERGLUS_BUG (1) */
 
-		  /* Uncomment this definition to turn on Glulx VM profiling. In this
-			 mode, all function calls are timed, and the timing information is
-			 written to a data file called "profile-raw".
-			 (Build note: on Linux, glibc may require you to also define
-			 _BSD_SOURCE or _DEFAULT_SOURCE or both for the timeradd() macro.) */
-			 /* #define VM_PROFILING (1) */
+/**
+ * Uncomment this definition to turn on Glulx VM profiling. In this mode, all function calls are timed,
+ * and the timing information is written to a data file called "profile-raw".
+ * (Build note: on Linux, glibc may require you to also define _BSD_SOURCE or _DEFAULT_SOURCE or both
+ * for the timeradd() macro.)
+ */
+/* #define VM_PROFILING (1) */
 
-			 /* Uncomment this definition to turn on the Glulx debugger. You should
-				only do this when debugging facilities are desired; it slows down
-				the interpreter. If you do, you will need to build with libxml2;
-				see the Makefile. */
-				/* #define VM_DEBUGGER (1) */
+/**
+ * Uncomment this definition to turn on the Glulx debugger. You should only do this when debugging
+ * facilities are desired; it slows down the interpreter. If you do, you will need to build with libxml2;
+ * see the Makefile.
+ */
+/* #define VM_DEBUGGER (1) */
 
-				/* Comment this definition to turn off floating-point support. You
-				   might need to do this if you are building on a very limited platform
-				   with no math library. */
+/**
+ * Comment this definition to turn off floating-point support. You might need to do this if you are building
+ * on a very limited platform with no math library. */
 #define FLOAT_SUPPORT (1)
 
-				   /* Comment this definition to not cache the original state of RAM in
-					  (real) memory. This saves some memory, but slows down save/restore/undo
-					  operations, which will have to read the original state off disk
-					  every time. */
+/**
+ * Comment this definition to not cache the original state of RAM in (real) memory. This saves some memory,
+ * but slows down save/restore/undo operations, which will have to read the original state off disk
+ * every time.
+ */
 #define SERIALIZE_CACHE_RAM (1)
 
 /**
@@ -180,6 +186,19 @@ struct oparg_struct {
 typedef oparg_struct oparg_t;
 
 #define MAX_OPERANDS (8)
+
+typedef uint(Glulxe::*acceleration_func)(uint argc, uint *argv);
+
+struct accelentry_struct {
+	uint addr;
+	uint index;
+	acceleration_func func;
+	accelentry_struct *next;
+};
+typedef accelentry_struct accelentry_t;
+
+#define ACCEL_HASH_SIZE (511)
+
 
 } // End of namespace Glulxe
 } // End of namespace Glk

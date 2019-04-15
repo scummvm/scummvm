@@ -59,6 +59,24 @@ public:
 	uint endmem;
 	uint protectstart, protectend;
 	uint prevpc;
+
+	/**
+	 * \defgroup accel fields
+	 * @{
+	 */
+
+	uint classes_table;     ///< class object array
+	uint indiv_prop_start;  ///< first individual prop ID
+	uint class_metaclass;   ///< "Class" class object
+	uint object_metaclass;  ///< "Object" class object
+	uint routine_metaclass; ///< "Routine" class object
+	uint string_metaclass;  ///< "String" class object
+	uint self;              ///< address of global "self"
+	uint num_attr_bytes;    ///< number of attributes / 8
+	uint cpv__start;        ///< array of common prop defaults
+	accelentry_t **accelentries;
+
+	/**@}*/
 protected:
 	/**
 	 * \defgroup glkop fields
@@ -81,6 +99,52 @@ protected:
 
 	/**@}*/
 protected:
+	/**
+	 * \defgroup accel support methods
+	 * @{
+	 */
+
+	void accel_error(const char *msg);
+	uint func_1_z__region(uint argc, uint *argv);
+
+	/**
+	 * The old set of accel functions (2 through 7) are deprecated; they behave badly if the Inform 6
+	 * NUM_ATTR_BYTES option (parameter 7) is changed from its default value (7). They will not be removed,
+	 * but new games should use functions 8 through 13 instead
+	 */
+	uint func_2_cp__tab(uint argc, uint *argv);
+	uint func_3_ra__pr(uint argc, uint *argv);
+	uint func_4_rl__pr(uint argc, uint *argv);
+	uint func_5_oc__cl(uint argc, uint *argv);
+	uint func_6_rv__pr(uint argc, uint *argv);
+	uint func_7_op__pr(uint argc, uint *argv);
+
+	/**
+	 * Here are the newer functions, which support changing NUM_ATTR_BYTES.
+	   These call get_prop_new() instead of get_prop()
+	 */
+	uint func_8_cp__tab(uint argc, uint *argv);
+	uint func_9_ra__pr(uint argc, uint *argv);
+	uint func_10_rl__pr(uint argc, uint *argv);
+	uint func_11_oc__cl(uint argc, uint *argv);
+	uint func_12_rv__pr(uint argc, uint *argv);
+	uint func_13_op__pr(uint argc, uint *argv);
+	int obj_in_class(uint obj);
+
+	/**
+	 * Look up a property entry.
+	 */
+	uint get_prop(uint obj, uint id);
+
+	/**
+	 * Look up a property entry. This is part of the newer set of accel functions (8 through 13),
+	 * which support increasing NUM_ATTR_BYTES. It is identical to get_prop() except that it calls
+	 * the new versions of func_5 and func_2
+	 */
+	uint get_prop_new(uint obj, uint id);
+
+	 /**@}*/
+
 	/**
 	 * \defgroup glkop support methods
 	 * @{
@@ -467,14 +531,18 @@ public:
 	 * @{
 	 */
 
-	typedef uint(*acceleration_func)(uint argc, uint *argv);
-	void init_accel(void);
 	acceleration_func accel_find_func(uint index);
 	acceleration_func accel_get_func(uint addr);
 	void accel_set_func(uint index, uint addr);
 	void accel_set_param(uint index, uint val);
-	uint accel_get_param_count(void);
-	uint accel_get_param(uint index);
+
+	uint accel_get_param_count() const;
+	uint accel_get_param(uint index) const;
+
+	/**
+	 * Iterate the entire acceleration table, calling the callback for each (non-nullptr) entry.
+	 * This is used only for autosave.
+	 */
 	void accel_iterate_funcs(void(*func)(uint index, uint addr));
 
 	/**@}*/

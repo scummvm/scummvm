@@ -57,6 +57,7 @@ MODULE_OBJS := \
 	frotz/screen.o \
 	frotz/sound_folder.o \
 	frotz/windows.o \
+	glulxe/accel.o \
 	glulxe/detection.o \
 	glulxe/float.o \
 	glulxe/glkop.o \
