@@ -80,6 +80,34 @@ public:
 	accelentry_t **accelentries;
 
 	/**@}*/
+
+	/**
+	 * \defgroup heap fields
+	 * @{
+	 */
+
+	uint heap_start = 0;	///< zero for inactive heap
+	int alloc_count = 0;
+
+	/* The heap_head/heap_tail is a doubly-linked list of blocks, both
+	   free and allocated. It is kept in address order. It should be
+	   complete -- that is, the first block starts at heap_start, and each
+	   block ends at the beginning of the next block, until the last one,
+	   which ends at endmem.
+
+	   (Heap_start is never the same as end_mem; if there is no heap space,
+	   then the heap is inactive and heap_start is zero.)
+
+	   Adjacent free blocks may be merged at heap_alloc() time.
+
+	   ### To make alloc more efficient, we could keep a separate
+	   free-list. To make free more efficient, we could keep a hash
+	   table of allocations.
+	 */
+	heapblock_t *heap_head = NULL;
+	heapblock_t *heap_tail = NULL;
+
+	/**@}*/
 protected:
 	/**
 	 * \defgroup glkop fields
@@ -370,14 +398,61 @@ public:
 	 * \defgroup Heap access methods
 	 * @{
 	 */
+
+	/**
+	 * Set the heap state to inactive, and free the block lists. This is called when the game
+	 * starts or restarts.
+	 */
 	void heap_clear(void);
-	int heap_is_active(void);
-	uint heap_get_start(void);
+
+	/**
+	 * Returns whether the heap is active.
+	 */
+	int heap_is_active() const;
+
+	/**
+	 * Returns the start address of the heap, or 0 if the heap is not active.
+	 */
+	uint heap_get_start() const;
+
+	/**
+	 * Allocate a block. If necessary, activate the heap and/or extend memory. This may not be
+	 * available at all; #define FIXED_MEMSIZE if you want the interpreter to unconditionally refuse.
+	 * Returns the memory address of the block, or 0 if the operation failed.
+	 */
 	uint heap_alloc(uint len);
+
+	/**
+	 * Free a heap block. If necessary, deactivate the heap.
+	 */
 	void heap_free(uint addr);
+
+	/**
+	 * Create an array of words, in the VM serialization format:
+	 *
+	 *	 heap_start
+	 *	 alloc_count
+	 *	 addr of first block
+	 *	 len of first block
+	 *	 ...
+	 *
+	 * (Note that these are uint values -- native byte ordering. Also, the blocks will be in address order,
+	 * which is a stricter guarantee than the VM specifies; that'll help in heap_apply_summary().)
+	 *
+	 * If the heap is inactive, store NULL. Return 0 for success; otherwise, the operation failed.
+	 *
+	 * The array returned in summary must be freed with glulx_free() after the caller uses it.
+	 */
 	int heap_get_summary(uint *valcount, uint **summary);
+
+	/**
+	 * Given an array of words in the above format, set up the heap to contain it. As noted above,
+	 * the caller must ensure that the blocks are in address order. When this is called, the heap
+	 * must be inactive.
+	 *
+	 * Return 0 for success. Otherwise the operation failed (and, most likely, caused a fatal error).
+	*/
 	int heap_apply_summary(uint valcount, uint *summary);
-	void heap_sanity_check(void);
 
 	/**@}*/
 

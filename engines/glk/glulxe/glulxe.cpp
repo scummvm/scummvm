@@ -35,10 +35,12 @@ Glulxe::Glulxe(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst,
 		startfuncaddr(0), checksum(0), stackptr(0), frameptr(0), pc(0), prevpc(0), origstringtable(0),
 		stringtable(0), valstackbase(0), localsbase(0), endmem(0), protectstart(0), protectend(0),
 		stream_char_handler(nullptr), stream_unichar_handler(nullptr),
-		// Accel
+		// accel
 		classes_table(0), indiv_prop_start(0), class_metaclass(0), object_metaclass(0),
 		routine_metaclass(0), string_metaclass(0), self(0), num_attr_bytes(0), cpv__start(0),
-		accelentries(nullptr) {
+		accelentries(nullptr),
+		// heap
+		heap_start(0), alloc_count(0), heap_head(nullptr), heap_tail(nullptr) {
 	g_vm = this;
 }
 

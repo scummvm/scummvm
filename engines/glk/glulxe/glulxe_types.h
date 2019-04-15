@@ -348,6 +348,14 @@ typedef accelentry_struct accelentry_t;
 
 #define ACCEL_HASH_SIZE (511)
 
+struct heapblock_struct {
+	uint addr;
+	uint len;
+	int isfree;
+	struct heapblock_struct *next;
+	struct heapblock_struct *prev;
+};
+typedef heapblock_struct heapblock_t;
 
 } // End of namespace Glulxe
 } // End of namespace Glk
