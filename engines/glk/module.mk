@@ -59,6 +59,7 @@ MODULE_OBJS := \
 	frotz/windows.o \
 	glulxe/accel.o \
 	glulxe/detection.o \
+	glulxe/exec.o \
 	glulxe/float.o \
 	glulxe/glkop.o \
 	glulxe/glulxe.o \

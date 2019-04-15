@@ -60,6 +60,9 @@ public:
 	uint protectstart, protectend;
 	uint prevpc;
 
+	void (*Glulxe::stream_char_handler)(unsigned char ch);
+	void (*Glulxe::stream_unichar_handler)(uint ch);
+
 	/**
 	 * \defgroup accel fields
 	 * @{
@@ -288,7 +291,11 @@ public:
 	 * \defgroup Exec access methods
 	 * @{
 	 */
-	void execute_loop(void);
+
+	 /**
+	  * The main interpreter loop. This repeats until the program is done
+	  */
+	void execute_loop();
 
 	/**@}*/
 
