@@ -86,8 +86,8 @@ public:
 	 * @{
 	 */
 
-	uint heap_start = 0;	///< zero for inactive heap
-	int alloc_count = 0;
+	uint heap_start;	///< zero for inactive heap
+	int alloc_count;
 
 	/* The heap_head/heap_tail is a doubly-linked list of blocks, both
 	   free and allocated. It is kept in address order. It should be
@@ -104,8 +104,8 @@ public:
 	   free-list. To make free more efficient, we could keep a hash
 	   table of allocations.
 	 */
-	heapblock_t *heap_head = NULL;
-	heapblock_t *heap_tail = NULL;
+	heapblock_t *heap_head;
+	heapblock_t *heap_tail;
 
 	/**@}*/
 
@@ -119,6 +119,30 @@ public:
 	 * for the first 128 opcodes, which are the ones used most frequently.
 	 */
 	const operandlist_t *fast_operandlist[0x80];
+
+	/**@}*/
+
+	/**
+	 * \defgroup serial fields
+	 * @{
+	 */
+
+	 /**
+	  * This can be adjusted before startup by platform-specific startup code -- that is, preference code.
+	  */
+	int max_undo_level;
+
+	int undo_chain_size;
+	int undo_chain_num;
+	byte **undo_chain;
+
+	/**
+	 * This will contain a copy of RAM (ramstate to endmem) as it exists in the game file.
+	 */
+	byte *ramcache;
+
+	/**@}*/
+
 protected:
 	/**
 	 * \defgroup glkop fields
@@ -140,7 +164,7 @@ protected:
 	classtable_t **classes;
 
 	/**@}*/
-protected:
+
 	/**
 	 * \defgroup accel support methods
 	 * @{
@@ -258,6 +282,34 @@ protected:
 	 * be stored in keybuf if keysize <= 4; otherwise, it will be in memory.
 	 */
 	void fetchkey(unsigned char *keybuf, uint key, uint keysize, uint options);
+
+	/**@}*/
+
+	/**
+	 * \defgroup serial support methods
+	 * @{
+	 */
+
+	uint write_memstate(dest_t *dest);
+	uint write_heapstate(dest_t *dest, int portable);
+	uint write_stackstate(dest_t *dest, int portable);
+	uint read_memstate(dest_t *dest, uint chunklen);
+	uint read_heapstate(dest_t *dest, uint chunklen, int portable, uint *sumlen, uint **summary);
+	uint read_stackstate(dest_t *dest, uint chunklen, int portable);
+	uint write_heapstate_sub(uint sumlen, uint *sumarray, dest_t *dest, int portable);
+	static int sort_heap_summary(void *p1, void *p2);
+
+	int read_byte(dest_t *dest, byte *val);
+	int read_short(dest_t *dest, uint16 *val);
+	int read_long(dest_t *dest, uint *val);
+
+	int write_byte(dest_t *dest, byte val);
+	int write_short(dest_t *dest, uint16 val);
+	int write_long(dest_t *dest, uint val);
+
+	int read_buffer(dest_t *dest, byte *ptr, uint len);
+	int reposition_write(dest_t *dest, uint pos);
+	int write_buffer(dest_t *dest, const byte *ptr, uint len);
 
 	/**@}*/
 public:
@@ -508,15 +560,6 @@ public:
 	 * @{
 	 */
 
-	int max_undo_level;
-	int init_serial(void);
-	void final_serial(void);
-	uint perform_save(strid_t str);
-	uint perform_restore(strid_t str, int fromshell);
-	uint perform_saveundo(void);
-	uint perform_restoreundo(void);
-	uint perform_verify(void);
-
 	/**@}*/
 
 	/**
@@ -729,10 +772,6 @@ public:
 	 */
 #ifdef FLOAT_SUPPORT
 
-	/* You may have to edit the definition of gfloat32 to make sure it's really
-	   a 32-bit floating-point type. */
-	typedef float gfloat32;
-
 	/* Uncomment this definition if your gfloat32 type is not a standard
 	   IEEE-754 single-precision (32-bit) format. Normally, Glulxe assumes
 	   that it can reinterpret-cast IEEE-754 int values into gfloat32
@@ -753,6 +792,51 @@ public:
 	gfloat32 glulx_powf(gfloat32 val1, gfloat32 val2);
 
 #endif /* FLOAT_SUPPORT */
+	/**@}*/
+
+	/**
+	 * \defgroup serial access methods
+	 * @{
+	 */
+
+	 /**
+	  * Set up the undo chain and anything else that needs to be set up.
+	  */
+	bool init_serial();
+
+	/**
+	 * Clean up memory when the VM shuts down.
+	 */
+	void final_serial();
+
+	/**
+	 * Write the state to the output stream. This returns 0 on success, 1 on failure.
+	 */
+	uint perform_save(strid_t str);
+
+	/**
+	 * Pull a state pointer from a stream. This returns 0 on success, 1 on failure. Note that if it succeeds,
+	 * the frameptr, localsbase, and valstackbase registers are invalid; they must be rebuilt from the stack.
+	 *
+	 * If fromshell is true, the restore is being invoked by the library shell (an autorestore of some kind).
+	 * This currently happens only in iosglk.
+	 */
+	uint perform_restore(strid_t str, int fromshell);
+
+	/**
+	 * Add a state pointer to the undo chain. This returns 0 on success, 1 on failure.
+	 */
+	uint perform_saveundo();
+
+	/**
+	 * Pull a state pointer from the undo chain. This returns 0 on success, 1 on failure.
+	 * Note that if it succeeds, the frameptr, localsbase, and valstackbase registers are invalid;
+	 * they must be rebuilt from the stack.
+	 */
+	uint perform_restoreundo();
+
+	uint perform_verify();
+
 	/**@}*/
 };
 

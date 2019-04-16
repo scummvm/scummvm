@@ -266,6 +266,11 @@ enum gestulx {
 	gestulx_Float        = 11
 };
 
+/**
+ * You may have to edit the definition of gfloat32 to make sure it's really a 32-bit floating-point type.
+ */
+typedef float gfloat32;
+
 struct dispatch_splot_struct {
 	int numwanted;
 	int maxargs;
@@ -357,6 +362,22 @@ struct heapblock_struct {
 	struct heapblock_struct *prev;
 };
 typedef heapblock_struct heapblock_t;
+
+/**
+ * This structure allows us to write either to a Glk stream or to a dynamically-allocated memory chunk.
+ */
+struct dest_struct {
+	int ismem;
+
+	/* If it's a Glk stream: */
+	strid_t str;
+
+	/* If it's a block of memory: */
+	byte *ptr;
+	uint pos;
+	uint size;
+};
+typedef dest_struct dest_t;
 
 } // End of namespace Glulxe
 } // End of namespace Glk

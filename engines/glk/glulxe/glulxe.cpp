@@ -40,7 +40,9 @@ Glulxe::Glulxe(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst,
 		routine_metaclass(0), string_metaclass(0), self(0), num_attr_bytes(0), cpv__start(0),
 		accelentries(nullptr),
 		// heap
-		heap_start(0), alloc_count(0), heap_head(nullptr), heap_tail(nullptr) {
+		heap_start(0), alloc_count(0), heap_head(nullptr), heap_tail(nullptr),
+		// serial
+		max_undo_level(8), undo_chain_size(0), undo_chain_num(0), undo_chain(nullptr), ramcache(nullptr) {
 	g_vm = this;
 }
 
