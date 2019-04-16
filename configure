@@ -1471,6 +1471,11 @@ android | android-arm | android-v7a | android-arm-v7a | ouya)
 	_host_cpu=arm
 	_host_alias=arm-linux-androideabi
 	;;
+android-arm64-v8a)
+	_host_os=android
+	_host_cpu=aarch64
+	_host_alias=aarch64-linux-android
+	;;
 android-mips)
 	_host_os=android
 	_host_cpu=mipsel
@@ -2931,7 +2936,7 @@ if test -n "$_host"; then
 			_vorbis=no
 			_port_mk="backends/platform/3ds/3ds.mk"
 			;;
-		android | android-arm | android-v7a | android-arm-v7a | android-mips | android-x86 | ouya)
+		android | android-arm | android-v7a | android-arm-v7a | android-mips | android-x86 | ouya | android-arm64-v8a)
 			# we link a .so as default
 			append_var LDFLAGS "-shared"
 			append_var LDFLAGS "-Wl,-Bsymbolic,--no-undefined"

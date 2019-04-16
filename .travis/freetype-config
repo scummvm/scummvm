@@ -1,0 +1,10 @@
+#!/bin/sh
+
+root=$TRAVIS_BUILD_DIR/dependencies
+
+for flag in "$@"; do
+	case "$flag" in
+		--libs) echo "-L$root/lib -lfreetype -lz" ;;
+		--cflags) echo "-I$root/include/freetype2" ;;
+	esac
+done
