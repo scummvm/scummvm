@@ -30,11 +30,18 @@
 namespace Glk {
 namespace Glulxe {
 
+class Glulxe;
+typedef void (Glulxe::*CharHandler)(unsigned char);
+typedef void (Glulxe::*UnicharHandler)(uint);
+
 /**
  * Glulxe game interpreter
  */
 class Glulxe : public GlkAPI {
 public:
+	CharHandler stream_char_handler;
+	UnicharHandler stream_unichar_handler, glkio_unichar_han_ptr;
+
 	bool vm_exited_cleanly;
 	strid_t gamefile;
 	uint gamefile_start, gamefile_len;
@@ -59,9 +66,6 @@ public:
 	uint endmem;
 	uint protectstart, protectend;
 	uint prevpc;
-
-	void (*Glulxe::stream_char_handler)(unsigned char ch);
-	void (*Glulxe::stream_unichar_handler)(uint ch);
 
 	/**
 	 * \defgroup accel fields
@@ -140,6 +144,26 @@ public:
 	 * This will contain a copy of RAM (ramstate to endmem) as it exists in the game file.
 	 */
 	byte *ramcache;
+
+	/**@}*/
+
+	/**
+	 * \defgroup string fields
+	 * @{
+	 */
+
+	uint iosys_mode;
+	uint iosys_rock;
+
+	/**
+	 * The current string-decoding tables, broken out into a fast and easy-to-use form.
+	 */
+	bool tablecache_valid;
+	cacheblock_t tablecache;
+
+	/* This misbehaves if a Glk function has more than one S argument. */
+	#define STATIC_TEMP_BUFSIZE (127)
+	char temp_buf[STATIC_TEMP_BUFSIZE + 1];
 
 	/**@}*/
 
@@ -312,6 +336,25 @@ protected:
 	int write_buffer(dest_t *dest, const byte *ptr, uint len);
 
 	/**@}*/
+
+	/**
+	 * \defgroup string support methods
+	 * @{
+	 */
+
+	void stream_setup_unichar(void);
+
+	void nopio_char_han(unsigned char ch);
+	void filio_char_han(unsigned char ch);
+	void nopio_unichar_han(uint ch);
+	void filio_unichar_han(uint ch);
+	void glkio_unichar_nouni_han(uint val);
+
+	void dropcache(cacheblock_t *cablist);
+	void buildcache(cacheblock_t *cablist, uint nodeaddr, int depth, int mask);
+	void dumpcache(cacheblock_t *cablist, int count, int indent);
+
+	/**@}*/
 public:
 	/**
 	 * Constructor
@@ -472,24 +515,6 @@ public:
 	 * Returns zero if it's a termination stub, or returns the restart address. The bitnum is extra.
 	 */
 	uint pop_callstub_string(int *bitnum);
-
-	/**@}*/
-
-	/**
-	 * \defgroup Strings access methods
-	 * @{
-	 */
-
-	void stream_num(int val, int inmiddle, int charnum);
-	void stream_string(uint addr, int inmiddle, int bitnum);
-	uint stream_get_table(void);
-	void stream_set_table(uint addr);
-	void stream_get_iosys(uint *mode, uint *rock);
-	void stream_set_iosys(uint mode, uint rock);
-	char *make_temp_string(uint addr);
-	uint *make_temp_ustring(uint addr);
-	void free_temp_string(const char *str);
-	void free_temp_ustring(const uint *str);
 
 	/**@}*/
 
@@ -836,6 +861,42 @@ public:
 	uint perform_restoreundo();
 
 	uint perform_verify();
+
+	/**@}*/
+
+
+	/**
+	 * \defgroup Strings access methods
+	 * @{
+	 */
+
+	 /**
+	  * Write a signed integer to the current output stream.
+	  */
+	void stream_num(int val, int inmiddle, int charnum);
+
+	/**
+	 * Write a Glulx string object to the current output stream. inmiddle is zero if we are beginning
+	 * a new string, or nonzero if restarting one (E0/E1/E2, as appropriate for the string type).
+	 */
+	void stream_string(uint addr, int inmiddle, int bitnum);
+
+	/**
+	 * Get the current table address.
+	 */
+	uint stream_get_table(void);
+
+	/**
+	 * Set the current table address, and rebuild decoding cache.
+	 */
+	void stream_set_table(uint addr);
+
+	void stream_get_iosys(uint *mode, uint *rock);
+	void stream_set_iosys(uint mode, uint rock);
+	char *make_temp_string(uint addr);
+	uint *make_temp_ustring(uint addr);
+	void free_temp_string(char *str);
+	void free_temp_ustring(uint *str);
 
 	/**@}*/
 };

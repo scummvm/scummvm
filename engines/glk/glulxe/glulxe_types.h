@@ -379,6 +379,31 @@ struct dest_struct {
 };
 typedef dest_struct dest_t;
 
+/**
+ * These constants are defined in the Glulx spec.
+ */
+enum iosys {
+	iosys_None   = 0,
+	iosys_Filter = 1,
+	iosys_Glk    = 2
+};
+
+#define CACHEBITS (4)
+#define CACHESIZE (1 << CACHEBITS) 
+#define CACHEMASK (15)
+
+struct cacheblock_struct {
+	int depth; /* 1 to 4 */
+	int type;
+	union {
+		struct cacheblock_struct *branches;
+		unsigned char ch;
+		uint uch;
+		uint addr;
+	} u;
+};
+typedef cacheblock_struct cacheblock_t;
+
 } // End of namespace Glulxe
 } // End of namespace Glk
 

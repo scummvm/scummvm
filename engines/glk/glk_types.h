@@ -230,7 +230,7 @@ union gluniversal_union {
 	byte _uch;           ///< Cu
 	int8 _sch;           ///< Cs
 	char _ch;            ///< Cn
-	const char *_charstr; ///< S
+	char *_charstr;		 ///< S
 	uint32 *_unicharstr; ///< U
 	void *_array;        ///< all # arguments
 	uint32 _ptrflag;     ///< [ ... ] or *?

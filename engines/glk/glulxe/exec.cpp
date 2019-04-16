@@ -543,13 +543,13 @@ void Glulxe::execute_loop() {
       case op_streamchar:
         profile_in(0xE0000001, stackptr, false);
         value = inst[0].value & 0xFF;
-        (*stream_char_handler)(value);
+        (this->*stream_char_handler)(value);
         profile_out(stackptr);
         break;
       case op_streamunichar:
         profile_in(0xE0000002, stackptr, false);
         value = inst[0].value;
-        (*stream_unichar_handler)(value);
+        (this->*stream_unichar_handler)(value);
         profile_out(stackptr);
         break;
       case op_streamnum:
