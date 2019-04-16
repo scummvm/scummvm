@@ -90,7 +90,19 @@ public View.OnClickListener pickUpBtnOnClickListener = new View.OnClickListener(
         }
     };
 
+	/* Establish whether the hover events are available */
+	private static boolean _hoverAvailable;
+
 	private ClipboardManager _clipboard;
+
+	static {
+		try {
+			MouseHelper.checkHoverAvailable(); // this throws exception if we're on too old version
+			_hoverAvailable = true;
+		} catch (Throwable t) {
+			_hoverAvailable = false;
+		}
+	}
 
 	private class MyResidualVM extends ResidualVM {
 		private boolean usingSmallScreen() {
@@ -212,6 +224,7 @@ public View.OnClickListener pickUpBtnOnClickListener = new View.OnClickListener(
 
 	private MyResidualVM _residualvm;
 	private ResidualVMEvents _events;
+	private MouseHelper _mouseHelper;
 	private Thread _residualvm_thread;
 
 	@Override
@@ -271,7 +284,13 @@ public View.OnClickListener pickUpBtnOnClickListener = new View.OnClickListener(
 			"--savepath=" + savePath
 		});
 
-		_events = new ResidualVMEvents(this, _residualvm);
+		Log.d(ResidualVM.LOG_TAG, "Hover available: " + _hoverAvailable);
+		if (_hoverAvailable) {
+			_mouseHelper = new MouseHelper(_residualvm);
+			_mouseHelper.attach(main_surface);
+		}
+
+		_events = new ResidualVMEvents(this, _residualvm, _mouseHelper);
 
 		// On screen buttons listeners
 		((ImageView)findViewById(R.id.options)).setOnClickListener(optionsBtnOnClickListener);

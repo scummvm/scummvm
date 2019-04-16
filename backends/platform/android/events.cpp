@@ -161,11 +161,18 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		}
 
 		switch (arg2) {
+
+		// special case. we'll only get it's up event
 		case JKEYCODE_BACK:
 			e.kbd.keycode = Common::KEYCODE_ESCAPE;
 			e.kbd.ascii = Common::ASCII_ESCAPE;
 
-			pushEvent(e);
+			lockMutex(_event_queue_lock);
+			e.type = Common::EVENT_KEYDOWN;
+			_event_queue.push(e);
+			e.type = Common::EVENT_KEYUP;
+			_event_queue.push(e);
+			unlockMutex(_event_queue_lock);
 
 			return;
 
@@ -633,6 +640,68 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		}
 
 		pushEvent(e);
+
+		return;
+
+	case JE_MOUSE_MOVE:
+		e.type = Common::EVENT_MOUSEMOVE;
+
+		scaleMouse(e.mouse, arg1, arg2);
+		clipMouse(e.mouse);
+
+		pushEvent(e);
+
+		return;
+
+	case JE_LMB_DOWN:
+		e.type = Common::EVENT_LBUTTONDOWN;
+
+		scaleMouse(e.mouse, arg1, arg2);
+		clipMouse(e.mouse);
+
+		pushEvent(e);
+
+		return;
+
+	case JE_LMB_UP:
+		e.type = Common::EVENT_LBUTTONUP;
+
+		scaleMouse(e.mouse, arg1, arg2);
+		clipMouse(e.mouse);
+
+		pushEvent(e);
+
+		return;
+
+	case JE_RMB_DOWN:
+		e.type = Common::EVENT_RBUTTONDOWN;
+
+		scaleMouse(e.mouse, arg1, arg2);
+		clipMouse(e.mouse);
+
+		pushEvent(e);
+
+		return;
+
+	case JE_RMB_UP:
+		e.type = Common::EVENT_RBUTTONUP;
+
+		scaleMouse(e.mouse, arg1, arg2);
+		clipMouse(e.mouse);
+
+		pushEvent(e);
+
+		return;
+
+	case JE_MMB_DOWN:
+		e.type = Common::EVENT_MAINMENU;
+
+		pushEvent(e);
+
+		return;
+
+	case JE_MMB_UP:
+		// No action
 
 		return;
 
