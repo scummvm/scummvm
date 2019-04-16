@@ -411,10 +411,6 @@ byte *GfxOpenGLS::setupScreen(int screenW, int screenH, bool fullscreen) {
 	_scaleW = _screenWidth / (float)_gameWidth;
 	_scaleH = _screenHeight / (float)_gameHeight;
 
-#ifdef USE_GLES2
-	g_system->setFeatureState(OSystem::kFeatureVirtControls, true);
-#endif
-
 	g_system->showMouse(false);
 
 	g_system->setWindowCaption("ResidualVM: OpenGL Renderer with shaders");

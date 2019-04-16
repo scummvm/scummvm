@@ -355,7 +355,6 @@ public:
 
 		//ResidualVM specific
 		kFeatureOpenGL,
-		kFeatureVirtControls,
 		// Can side textures be rendered on the side for widescreen support?
 		kFeatureSideTextures,
 

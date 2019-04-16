@@ -133,8 +133,6 @@ private:
 	bool _show_mouse;
 	bool _use_mouse_palette;
 
-	bool _virtcontrols_on;
-
 	int _graphicsMode;
 	bool _fullscreen;
 	bool _ar_correction;
@@ -216,6 +214,7 @@ public:
 public:
 	void pushEvent(int type, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6);
 	void keyPress(const Common::KeyCode keycode, const KeyReceiver::KeyPressType type);
+	bool shouldGenerateMouseEvents();
 
 private:
 	Common::Queue<Common::Event> _event_queue;
@@ -233,7 +232,7 @@ private:
 	int _fingersDown;
 
 	void clipMouse(Common::Point &p);
-	void scaleMouse(Common::Point &p, int x, int y, bool deductDrawRect = true);
+	void scaleMouse(Common::Point &p, int x, int y, bool deductDrawRect = true, bool touchpadMode = false);
 	void updateEventScale();
 	void disableCursorPalette();
 
