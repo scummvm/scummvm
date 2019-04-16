@@ -343,15 +343,17 @@ void OSystem_Android::initBackend() {
 
 	ConfMan.set("fullscreen", "true");
 	ConfMan.registerDefault("aspect_ratio", true);
+	ConfMan.registerDefault("touchpad_mouse_mode", true);
 	ConfMan.registerDefault("vsync", true);
 
 	ConfMan.setInt("autosave_period", 0);
 	ConfMan.setBool("FM_high_quality", false);
 	ConfMan.setBool("FM_medium_quality", true);
 
-	// TODO hackity hack
-	if (ConfMan.hasKey("multi_midi"))
-		_touchpad_mode = !ConfMan.getBool("multi_midi");
+	if (ConfMan.hasKey("touchpad_mouse_mode"))
+		_touchpad_mode = ConfMan.getBool("touchpad_mouse_mode");
+	else
+		ConfMan.setBool("touchpad_mouse_mode", true);
 
 	// must happen before creating TimerManager to avoid race in
 	// creating EventManager
@@ -403,7 +405,9 @@ bool OSystem_Android::hasFeature(Feature f) {
 			f == kFeatureOpenGL ||
 #endif
 			f == kFeatureOverlaySupportsAlpha ||
-			f == kFeatureOpenUrl);
+			f == kFeatureOpenUrl ||
+			f == kFeatureTouchpadMode ||
+			f == kFeatureClipboardSupport);
 }
 
 void OSystem_Android::setFeatureState(Feature f, bool enable) {
@@ -430,6 +434,10 @@ void OSystem_Android::setFeatureState(Feature f, bool enable) {
 		if (!enable)
 			disableCursorPalette();
 		break;
+	case kFeatureTouchpadMode:
+		ConfMan.setBool("touchpad_mouse_mode", enable);
+		_touchpad_mode = enable;
+		break;
 	default:
 		break;
 	}
@@ -447,6 +455,8 @@ bool OSystem_Android::getFeatureState(Feature f) {
 		return _virtcontrols_on;
 	case kFeatureCursorPalette:
 		return _use_mouse_palette;
+	case kFeatureTouchpadMode:
+		return ConfMan.getBool("touchpad_mouse_mode");
 	default:
 		return false;
 	}
@@ -595,6 +605,18 @@ Common::String OSystem_Android::getSystemLanguage() const {
 
 bool OSystem_Android::openUrl(const Common::String &url) {
 	return JNI::openUrl(url.c_str());
+}
+
+bool OSystem_Android::hasTextInClipboard() {
+	return JNI::hasTextInClipboard();
+}
+
+Common::String OSystem_Android::getTextFromClipboard() {
+	return JNI::getTextFromClipboard();
+}
+
+bool OSystem_Android::setTextInClipboard(const Common::String &text) {
+	return JNI::setTextInClipboard(text);
 }
 
 Common::String OSystem_Android::getSystemProperty(const char *name) const {

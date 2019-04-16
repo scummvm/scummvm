@@ -164,7 +164,6 @@ private:
 	void initOverlay();
 
 #ifdef USE_RGB_COLOR
-	Common::String getPixelFormatName(const Graphics::PixelFormat &format) const;
 	void initTexture(GLESBaseTexture **texture, uint width, uint height,
 						const Graphics::PixelFormat *format);
 #endif
@@ -299,6 +298,9 @@ public:
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s,
 											int priority = 0);
 	virtual bool openUrl(const Common::String &url);
+	virtual bool hasTextInClipboard();
+	virtual Common::String getTextFromClipboard();
+	virtual bool setTextInClipboard(const Common::String &text);
 	virtual Common::String getSystemLanguage() const;
 
 	// ResidualVM specific method
