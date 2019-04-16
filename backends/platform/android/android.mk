@@ -8,6 +8,7 @@ PATH_DIST = $(srcdir)/dists/android
 
 PORT_DISTFILES = $(PATH_DIST)/README.Android
 DIST_ANDROID_CONTROLS = $(PATH_DIST)/assets/arrows.tga
+GRADLE = $(PATH_DIST)/gradlew
 
 
 PATH_BUILD = ./android
@@ -49,10 +50,10 @@ $(PATH_BUILD_SETUPAPK): $(PATH_BUILD_ASSETS) $(PATH_BUILD_JNI) $(PATH_BUILD_GRAD
 	touch $(PATH_BUILD_SETUPAPK)
 
 $(APK_MAIN): $(PATH_BUILD_SETUPAPK) libresidualvm.so
-	gradle assembleDebug -p "$(PATH_BUILD)" && touch $@
+	$(GRADLE) assembleDebug -p "$(PATH_BUILD)" && touch $@
 
 $(APK_MAIN_RELEASE): $(PATH_BUILD_SETUPAPK) libresidualvm.so
-	gradle assembleRelease -p "$(PATH_BUILD)" && touch $@
+	$(GRADLE) assembleRelease -p "$(PATH_BUILD)" && touch $@
 
 all: $(APK_MAIN)
 
@@ -65,7 +66,7 @@ androiddebug: $(APK_MAIN)
 androidrelease: $(APK_MAIN_RELEASE)
 
 androidtestmain: $(APK_MAIN)
-	gradle installDebug -p "$(PATH_BUILD)"
+	$(GRADLE) installDebug -p "$(PATH_BUILD)"
 	$(ADB) shell am start -a android.intent.action.MAIN -c android.intent.category.LAUNCHER -n org.residualvm.residualvm/.Unpacker
 
 androidtest: $(APK_MAIN) $(APK_PLUGINS)
