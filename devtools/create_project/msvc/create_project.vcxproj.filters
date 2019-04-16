@@ -33,6 +33,9 @@
     <ClInclude Include="..\config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\cmake.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\codeblocks.cpp">
@@ -53,6 +56,9 @@
     <ClCompile Include="..\xcode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\cmake.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\scripts\prebuild.cmd">
@@ -67,10 +73,11 @@
     <None Include="..\scripts\installer.vbs">
       <Filter>scripts</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Natvis Include="..\scripts\scummvm.natvis">
+    <None Include="..\scripts\install-natvis.bat">
       <Filter>scripts</Filter>
-    </Natvis>
+    </None>
+    <None Include="..\scripts\scummvm.natvis">
+      <Filter>scripts</Filter>
+    </None>
   </ItemGroup>
 </Project>
