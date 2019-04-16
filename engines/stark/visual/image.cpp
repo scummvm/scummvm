@@ -102,18 +102,21 @@ bool VisualImageXMG::loadPNG(Common::SeekableReadStream *stream) {
 }
 
 Graphics::Surface *VisualImageXMG::multiplyColorWithAlpha(const Graphics::Surface *source) {
-	assert(source->format.bytesPerPixel == 4);
+	assert(source->format == Gfx::Driver::getRGBAPixelFormat());
 
 	Graphics::Surface *dest = new Graphics::Surface();
 	dest->create(source->w, source->h, Gfx::Driver::getRGBAPixelFormat());
 
 	for (uint y = 0; y < source->h; y++) {
-		const uint32 *srcPixel = (const uint32 *) source->getBasePtr(0, y);
-		uint32 *dstPixel = (uint32 *) dest->getBasePtr(0, y);
+		const uint8 *src = (const uint8 *) source->getBasePtr(0, y);
+		uint8 *dst = (uint8 *) dest->getBasePtr(0, y);
 
 		for (uint x = 0; x < source->w; x++) {
-			byte a, r, g, b;
-			source->format.colorToARGB(*srcPixel++, a, r, g, b);
+			uint8 a, r, g, b;
+			r = *src++;
+			g = *src++;
+			b = *src++;
+			a = *src++;
 
 			if (a != 0xFF) {
 				r = (int) r * a / 255;
@@ -121,7 +124,10 @@ Graphics::Surface *VisualImageXMG::multiplyColorWithAlpha(const Graphics::Surfac
 				b = (int) b * a / 255;
 			}
 
-			*dstPixel++ = dest->format.ARGBToColor(a, r, g, b);
+			*dst++ = r;
+			*dst++ = g;
+			*dst++ = b;
+			*dst++ = a;
 		}
 	}
 
