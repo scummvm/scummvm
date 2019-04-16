@@ -26,53 +26,54 @@
 #include "common/scummsys.h"
 
 namespace Glk {
-	namespace Glulxe {
+namespace Glulxe {
 
-		class Glulxe;
+class Glulxe;
 
-		/**
-		 * Comment this definition to turn off memory-address checking. With verification on,
-		 * all reads and writes to main memory will be checked to ensure they're in range.
-		 * This is slower, but prevents malformed game files from crashing the interpreter.
-		 */
+/**
+ * Comment this definition to turn off memory-address checking. With verification on,
+ * all reads and writes to main memory will be checked to ensure they're in range.
+ * This is slower, but prevents malformed game files from crashing the interpreter.
+ */
 #define VERIFY_MEMORY_ACCESS (1)
 
-		 /**
-		  * Uncomment this definition to permit an exception for memory-address checking for @glk and @copy
-		  * opcodes that try to write to memory address 0. This was a bug in old Superglus-built game files.
-		  */
-		  /* #define TOLERATE_SUPERGLUS_BUG (1) */
+/**
+ * Uncomment this definition to permit an exception for memory-address checking for @glk and @copy
+ * opcodes that try to write to memory address 0. This was a bug in old Superglus-built game files.
+ */
+/* #define TOLERATE_SUPERGLUS_BUG (1) */
 
-		  /**
-		   * Uncomment this definition to turn on Glulx VM profiling. In this mode, all function calls are timed,
-		   * and the timing information is written to a data file called "profile-raw".
-		   * (Build note: on Linux, glibc may require you to also define _BSD_SOURCE or _DEFAULT_SOURCE or both
-		   * for the timeradd() macro.)
-		   */
-		   /* #define VM_PROFILING (1) */
+/**
+ * Uncomment this definition to turn on Glulx VM profiling. In this mode, all function calls are timed,
+ * and the timing information is written to a data file called "profile-raw".
+ * (Build note: on Linux, glibc may require you to also define _BSD_SOURCE or _DEFAULT_SOURCE or both
+ * for the timeradd() macro.)
+ */
+/* #define VM_PROFILING (1) */
 
-		   /**
-			* Uncomment this definition to turn on the Glulx debugger. You should only do this when debugging
-			* facilities are desired; it slows down the interpreter. If you do, you will need to build with libxml2;
-			* see the Makefile.
-			*/
-			/* #define VM_DEBUGGER (1) */
+/**
+ * Uncomment this definition to turn on the Glulx debugger. You should only do this when debugging
+ * facilities are desired; it slows down the interpreter. If you do, you will need to build with libxml2;
+ * see the Makefile.
+ */
+/* #define VM_DEBUGGER (1) */
 
-			/**
-			 * Comment this definition to turn off floating-point support. You might need to do this if you are building
-			 * on a very limited platform with no math library. */
+/**
+ * Comment this definition to turn off floating-point support. You might need to do this if you are building
+ * on a very limited platform with no math library.
+ */
 #define FLOAT_SUPPORT (1)
 
-			 /**
-			  * Comment this definition to not cache the original state of RAM in (real) memory. This saves some memory,
-			  * but slows down save/restore/undo operations, which will have to read the original state off disk
-			  * every time.
-			  */
+/**
+ * Comment this definition to not cache the original state of RAM in (real) memory. This saves some memory,
+ * but slows down save/restore/undo operations, which will have to read the original state off disk
+ * every time.
+ */
 #define SERIALIZE_CACHE_RAM (1)
 
-			  /**
-			   * Some macros to read and write integers to memory, always in big-endian format.
-			   */
+/**
+ * Some macros to read and write integers to memory, always in big-endian format.
+ */
 #define Read4(ptr) READ_BE_UINT32(ptr)
 #define Read2(ptr) READ_BE_UINT16(ptr)
 #define Read1(ptr) ((byte)(((byte *)(ptr))[0]))
@@ -88,19 +89,19 @@ namespace Glk {
 #define VerifyW(adr, ln) (0)
 #endif /* VERIFY_MEMORY_ACCESS */
 
-#define Mem1(adr)  (Verify(adr, 1), Read1(memmap+(adr)))
-#define Mem2(adr)  (Verify(adr, 2), Read2(memmap+(adr)))
-#define Mem4(adr)  (Verify(adr, 4), Read4(memmap+(adr)))
+#define Mem1(adr)  (Read1(memmap+(adr)))
+#define Mem2(adr)  (Read2(memmap+(adr)))
+#define Mem4(adr)  (Read4(memmap+(adr)))
 #define MemW1(adr, vl)  (VerifyW(adr, 1), Write1(memmap+(adr), (vl)))
 #define MemW2(adr, vl)  (VerifyW(adr, 2), Write2(memmap+(adr), (vl)))
 #define MemW4(adr, vl)  (VerifyW(adr, 4), Write4(memmap+(adr), (vl)))
 
-			   /**
-				* Macros to access values on the stack. These *must* be used with proper alignment!
-				* (That is, Stk4 and StkW4 must take addresses which are multiples of four, etc.)
-				* If the alignment rules are not followed, the program will see performance
-				* degradation or even crashes, depending on the machine CPU.
-				*/
+/**
+ * Macros to access values on the stack. These *must* be used with proper alignment!
+ * (That is, Stk4 and StkW4 must take addresses which are multiples of four, etc.)
+ * If the alignment rules are not followed, the program will see performance
+ * degradation or even crashes, depending on the machine CPU.
+ */
 #define Stk1(adr)   \
   (*((unsigned char *)(stack+(adr))))
 #define Stk2(adr)   \

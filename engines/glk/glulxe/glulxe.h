@@ -40,8 +40,8 @@ public:
 	uint gamefile_start, gamefile_len;
 	char *init_err, *init_err2;
 
-	unsigned char *memmap;
-	unsigned char *stack;
+	byte *memmap;
+	byte *stack;
 
 	uint ramstart;
 	uint endgamefile;
@@ -245,6 +245,19 @@ protected:
 	 * Create a string identifying this game. We use the first 64 bytes of the memory map, encoded as hex,
 	 */
 	char *get_game_id();
+
+	/**@}*/
+
+	/**
+	 * \defgroup search support methods
+	 * @{
+	 */
+
+	/**
+	 * This massages the key into a form that's easier to handle. When it returns, the key will
+	 * be stored in keybuf if keysize <= 4; otherwise, it will be in memory.
+	 */
+	void fetchkey(unsigned char *keybuf, uint key, uint keysize, uint options);
 
 	/**@}*/
 public:
@@ -511,15 +524,39 @@ public:
 	 * @{
 	 */
 
-	uint linear_search(uint key, uint keysize,
-		uint start, uint structsize, uint numstructs,
+
+	 /**
+	  * An array of data structures is stored in memory, beginning at start, each structure being structsize bytes.
+	  * Within each struct, there is a key value keysize bytes long, starting at position keyoffset (from
+	  * the start of the structure.) Search through these in order. If one is found whose key matches, return it.
+	  * If numstructs are searched with no result, return NULL.
+	  *
+	  * numstructs may be -1 (0xFFFFFFFF) to indicate no upper limit to the number of structures to search.
+	  * The search will continue until a match is found, or (if ZeroKeyTerminates is set) a zero key.
+	  *
+	  * The KeyIndirect, ZeroKeyTerminates, and ReturnIndex options may be used.
+	  */
+	uint linear_search(uint key, uint keysize, uint start, uint structsize, uint numstructs,
 		uint keyoffset, uint options);
-	uint binary_search(uint key, uint keysize,
-		uint start, uint structsize, uint numstructs,
+
+	/**
+	 * An array of data structures is in memory, as above. However, the structs must be stored in forward
+	 * order of their keys (taking each key to be a multibyte unsigned integer.) There can be no duplicate keys.
+	 * numstructs must indicate the exact length of the array; it cannot be -1.
+	 *
+	 * The KeyIndirect and ReturnIndex options may be used.
+	 */
+	uint binary_search(uint key, uint keysize, uint start, uint structsize, uint numstructs,
 		uint keyoffset, uint options);
-	uint linked_search(uint key, uint keysize,
-		uint start, uint keyoffset, uint nextoffset,
-		uint options);
+
+	/**
+	 * The structures may be anywhere in memory, in any order. They are linked by a four-byte address field,
+	 * which is found in each struct at position nextoffset. If this field contains zero, it indicates
+	 * the end of the linked list.
+	 *
+	 * The KeyIndirect and ZeroKeyTerminates options may be used.
+	 */
+	uint linked_search(uint key, uint keysize, uint start, uint keyoffset, uint nextoffset, uint options);
 
 	/**@}*/
 
