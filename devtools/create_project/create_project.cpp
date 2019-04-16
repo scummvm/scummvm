@@ -134,7 +134,7 @@ int main(int argc, char *argv[]) {
 
 	ProjectType projectType = kProjectNone;
 	const MSVCVersion* msvc = NULL;
-	int msvcVersion = 12;
+	int msvcVersion = 0;
 
 	// Parse command line arguments
 	using std::cout;
@@ -479,6 +479,17 @@ int main(int argc, char *argv[]) {
 		break;
 
 	case kProjectMSVC:
+		// Auto-detect if no version is specified
+		if (msvcVersion == 0) {
+			msvcVersion = getInstalledMSVC();
+			if (msvcVersion == 0) {
+				std::cerr << "ERROR: No Visual Studio versions found, please specify one with \"--msvc-version\"\n";
+				return -1;
+			} else {
+				cout << "Visual Studio " << msvcVersion << " detected\n\n";
+			}
+		}
+
 		msvc = getMSVCVersion(msvcVersion);
 		if (!msvc) {
 			std::cerr << "ERROR: Unsupported version: \"" << msvcVersion << "\" passed to \"--msvc-version\"!\n";
@@ -709,7 +720,7 @@ void displayHelp(const char *exe) {
 	for (MSVCList::const_iterator i = msvc.begin(); i != msvc.end(); ++i)
 		cout << "                           " << i->version << " stands for \"" << i->name << "\"\n";
 
-	cout << "                           The default is \"12\", thus \"Visual Studio 2013\"\n"
+	cout << "                           If no version is set, the latest installed version is used\n"
 	        " --build-events           Run custom build events as part of the build\n"
 	        "                          (default: false)\n"
 	        " --installer              Create installer after the build (implies --build-events)\n"
@@ -1179,6 +1190,42 @@ const MSVCVersion *getMSVCVersion(int version) {
 	}
 
 	return NULL;
+}
+
+int getInstalledMSVC() {
+	int latest = 0;
+#if defined(_WIN32) || defined(WIN32)
+	// Use the Visual Studio Installer to get the latest version
+	const char *vsWhere = "\"\"%PROGRAMFILES(X86)%\\Microsoft Visual Studio\\Installer\\vswhere.exe\" -latest -legacy -property installationVersion\"";
+	FILE *pipe = _popen(vsWhere, "rt");
+	if (pipe != NULL) {
+		char version[50];
+		if (fgets(version, 50, pipe) != NULL) {
+			latest = atoi(version);
+		}
+		_pclose(pipe);
+	}
+
+	// Use the registry to get the latest version
+	if (latest == 0) {
+		HKEY key;
+		LSTATUS err = RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\VisualStudio\\SxS\\VS7", 0, KEY_QUERY_VALUE | KEY_WOW64_32KEY, &key);
+		if (err == ERROR_SUCCESS && key != NULL) {
+			const MSVCList msvc = getAllMSVCVersions();
+			for (MSVCList::const_reverse_iterator i = msvc.rbegin(); i != msvc.rend(); ++i) {
+				std::ostringstream version;
+				version << i->version << ".0";
+				err = RegQueryValueEx(key, version.str().c_str(), NULL, NULL, NULL, NULL);
+				if (err == ERROR_SUCCESS) {
+					latest = i->version;
+					break;
+				}
+			}
+			RegCloseKey(key);
+		}
+	}
+#endif
+	return latest;
 }
 
 namespace CreateProjectTool {
