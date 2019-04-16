@@ -228,7 +228,6 @@ public View.OnClickListener pickUpBtnOnClickListener = new View.OnClickListener(
 			"ResidualVM",
 			"--config=" + getFileStreamPath("residualvmrc").getPath(),
 			"--path=" + Environment.getExternalStorageDirectory().getPath(),
-			"--gui-theme=modern",
 			"--savepath=" + savePath
 		});
 

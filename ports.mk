@@ -268,7 +268,7 @@ OSX_STATIC_LIBS += -framework Sparkle -Wl,-rpath,@loader_path/../Frameworks
 endif
 
 # ResidualVM specific:
-ifdef USE_OPENGL_SHADERS
+ifdef USE_GLEW
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libglew.a
 endif
 
