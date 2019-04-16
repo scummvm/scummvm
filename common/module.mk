@@ -52,7 +52,6 @@ MODULE_OBJS += \
 	cosinetables.o \
 	dct.o \
 	fft.o \
-	huffman.o \
 	rdft.o \
 	sinetables.o
 

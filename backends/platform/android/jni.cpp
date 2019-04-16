@@ -483,7 +483,7 @@ void JNI::setAudioStop() {
 void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 				jobject egl, jobject egl_display,
 				jobject at, jint audio_sample_rate, jint audio_buffer_size) {
-	LOGI(gScummVMFullVersion);
+	LOGI("%s", gScummVMFullVersion);
 
 	assert(!_system);
 

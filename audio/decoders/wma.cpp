@@ -433,7 +433,7 @@ void WMACodec::initNoise() {
 		_noiseTable[i] = (float)((int)seed) * norm;
 	}
 
-	_hgainHuffman = new Common::Huffman(0, ARRAYSIZE(hgainHuffCodes),
+	_hgainHuffman = new HuffmanDecoder(0, ARRAYSIZE(hgainHuffCodes),
 	                                    hgainHuffCodes, hgainHuffBits);
 }
 
@@ -470,17 +470,17 @@ void WMACodec::initMDCT() {
 
 void WMACodec::initExponents() {
 	if (_useExpHuffman)
-		_expHuffman = new Common::Huffman(0, ARRAYSIZE(scaleHuffCodes),
+		_expHuffman = new HuffmanDecoder(0, ARRAYSIZE(scaleHuffCodes),
 		                                  scaleHuffCodes, scaleHuffBits);
 	else
 		initLSPToCurve();
 }
 
-Common::Huffman *WMACodec::initCoefHuffman(uint16 *&runTable, float *&levelTable,
+WMACodec::HuffmanDecoder *WMACodec::initCoefHuffman(uint16 *&runTable, float *&levelTable,
 		uint16 *&intTable, const WMACoefHuffmanParam &params) {
 
-	Common::Huffman *huffman =
-		new Common::Huffman(0, params.n, params.huffCodes, params.huffBits);
+	HuffmanDecoder *huffman =
+		new HuffmanDecoder(0, params.n, params.huffCodes, params.huffBits);
 
 	runTable   = new uint16[params.n];
 	levelTable = new  float[params.n];
@@ -1328,7 +1328,7 @@ bool WMACodec::decodeExpLSP(Common::BitStream8MSB &bits, int ch) {
 	return true;
 }
 
-bool WMACodec::decodeRunLevel(Common::BitStream8MSB &bits, const Common::Huffman &huffman,
+bool WMACodec::decodeRunLevel(Common::BitStream8MSB &bits, const HuffmanDecoder &huffman,
 	const float *levelTable, const uint16 *runTable, int version, float *ptr,
 	int offset, int numCoefs, int blockLen, int frameLenBits, int coefNbBits) {
 

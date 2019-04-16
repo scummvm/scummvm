@@ -32,8 +32,9 @@
 #include "audio/decoders/codec.h"
 
 namespace Common {
-	class Huffman;
-	class MDCT;
+template <class BITSTREAM>
+class Huffman;
+class MDCT;
 }
 
 namespace Audio {
@@ -109,7 +110,8 @@ private:
 	int    _exponentHighSizes[kBlockNBSizes];
 	int    _exponentHighBands[kBlockNBSizes][kHighBandSizeMax];
 
-	Common::Huffman *_coefHuffman[2];                ///< Coefficients Huffman codes.
+	typedef Common::Huffman<Common::BitStream8MSB> HuffmanDecoder;
+	HuffmanDecoder *_coefHuffman[2];                ///< Coefficients Huffman codes.
 	const WMACoefHuffmanParam *_coefHuffmanParam[2]; ///< Params for coef Huffman codes.
 
 	uint16 *_coefHuffmanRunTable[2];   ///< Run table for the coef Huffman.
@@ -121,14 +123,14 @@ private:
 	float _noiseTable[kNoiseTabSize]; ///< Noise table.
 	int   _noiseIndex;
 
-	Common::Huffman *_hgainHuffman; ///< Perceptual noise huffman code.
+	HuffmanDecoder *_hgainHuffman; ///< Perceptual noise huffman code.
 
 	// Exponents
 	int   _exponentsBSize[kChannelsMax];
 	float _exponents[kChannelsMax][kBlockSizeMax];
 	float _maxExponent[kChannelsMax];
 
-	Common::Huffman *_expHuffman; ///< Exponents huffman code.
+	HuffmanDecoder *_expHuffman; ///< Exponents huffman code.
 
 	// Coded values in high bands
 	bool _highBandCoded [kChannelsMax][kHighBandSizeMax];
@@ -174,7 +176,7 @@ private:
 	void initMDCT();
 	void initExponents();
 
-	Common::Huffman *initCoefHuffman(uint16 *&runTable, float *&levelTable,
+	HuffmanDecoder *initCoefHuffman(uint16 *&runTable, float *&levelTable,
 	                                 uint16 *&intTable, const WMACoefHuffmanParam &params);
 	void initLSPToCurve();
 
@@ -201,7 +203,7 @@ private:
 
 	bool decodeExpHuffman(Common::BitStream8MSB &bits, int ch);
 	bool decodeExpLSP(Common::BitStream8MSB &bits, int ch);
-	bool decodeRunLevel(Common::BitStream8MSB &bits, const Common::Huffman &huffman,
+	bool decodeRunLevel(Common::BitStream8MSB &bits, const HuffmanDecoder &huffman,
 		const float *levelTable, const uint16 *runTable, int version, float *ptr,
 		int offset, int numCoefs, int blockLen, int frameLenBits, int coefNbBits);
 
