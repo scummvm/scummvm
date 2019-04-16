@@ -285,12 +285,12 @@ void NORETURN_PRE error(const std::string &message) NORETURN_POST;
  */
 struct MSVCVersion {
 	int version;                 ///< Version number passed as parameter.
-	const char* name;            ///< Full program name.
-	const char* solutionFormat;  ///< Format used for solution files.
-	const char* solutionVersion; ///< Version number used in solution files.
-	const char* project;         ///< Version number used in project files.
-	const char* toolsetMSVC;     ///< Toolset version for MSVC compiler.
-	const char* toolsetLLVM;     ///< Toolset version for Clang/LLVM compiler.
+	const char *name;            ///< Full program name.
+	const char *solutionFormat;  ///< Format used for solution files.
+	const char *solutionVersion; ///< Version number used in solution files.
+	const char *project;         ///< Version number used in project files.
+	const char *toolsetMSVC;     ///< Toolset version for MSVC compiler.
+	const char *toolsetLLVM;     ///< Toolset version for Clang/LLVM compiler.
 };
 typedef std::list<MSVCVersion> MSVCList;
 
@@ -308,6 +308,13 @@ MSVCList getAllMSVCVersions();
  * @return The version information, or NULL if the version isn't supported.
  */
 const MSVCVersion *getMSVCVersion(int version);
+
+/**
+ * Auto-detects the latest version of Visual Studio installed.
+ *
+ * @return Version number, or 0 if no installations were found.
+ */
+int getInstalledMSVC();
 
 namespace CreateProjectTool {
 
