@@ -13,19 +13,18 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{CF177559-077D-4A08-AABE-BE0FD35F6C63}</ProjectGuid>
     <RootNamespace>create_project</RootNamespace>
-    <VCTargetsPath Condition="'$(VCTargetsPath11)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath11)</VCTargetsPath>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' != '10.0'">$(DefaultPlatformToolset)</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' != '10.0'">$(DefaultPlatformToolset)</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -47,13 +46,13 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
       <DisableSpecificWarnings>4003;4512;4127;4100;4244</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -63,11 +62,7 @@
     </Link>
     <PostBuildEvent>
       <Command>@echo off
-xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc11\"
-xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc10\"
-xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc9\"
-xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\codeblocks\"
-xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\iphone\"</Command>
+xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -79,6 +74,7 @@ xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\iphone\"</Command>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4003;4512;4127</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -89,11 +85,7 @@ xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\iphone\"</Command>
     </Link>
     <PostBuildEvent>
       <Command>@echo off
-xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc11\"
-xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc10\"
-xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc9\"
-xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\codeblocks\"
-xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\iphone\"</Command>
+xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc\"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>
@@ -121,9 +113,11 @@ xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\iphone\"</Command>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\scripts\installer.vbs" />
+    <None Include="..\scripts\install-natvis.bat" />
     <None Include="..\scripts\postbuild.cmd" />
     <None Include="..\scripts\prebuild.cmd" />
     <None Include="..\scripts\revision.vbs" />
+    <None Include="..\scripts\scummvm.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,7 +1,7 @@
 @echo off
 
 echo.
-echo Automatic creation of the MSVC15 project files
+echo Automatic creation of the MSVC project files
 echo.
 
 if "%~1"=="/stable" goto stable
@@ -55,28 +55,28 @@ goto done
 echo.
 echo Creating project files with all engines enabled (stable and unstable)
 echo.
-create_project ..\.. --enable-all-engines --disable-fluidsynth --msvc --msvc-version 15 --build-events
+create_project ..\.. --enable-all-engines --disable-fluidsynth --msvc --build-events
 goto done
 
 :stable
 echo.
 echo Creating normal project files, with only the stable engines enabled
 echo.
-create_project ..\.. --disable-fluidsynth --msvc --msvc-version 15
+create_project ..\.. --disable-fluidsynth --msvc
 goto done
 
 :tools
 echo.
 echo Creating tools project files
 echo.
-create_project ..\.. --tools --msvc --msvc-version 15
+create_project ..\.. --tools --msvc
 goto done
 
 :tests
 echo.
 echo Creating tests project files
 echo.
-create_project ..\.. --tests --msvc --msvc-version 15
+create_project ..\.. --tests --msvc
 goto done
 
 :clean_check
@@ -92,6 +92,8 @@ goto clean_check
 :clean
 echo.
 echo Removing all project files
+del /Q *.vcproj* > NUL 2>&1
+del /Q *.vsprops > NUL 2>&1
 del /Q *.vcxproj* > NUL 2>&1
 del /Q *.props > NUL 2>&1
 del /Q *.sln* > NUL 2>&1

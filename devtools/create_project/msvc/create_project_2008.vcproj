@@ -82,6 +82,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="@echo off&#x0D;&#x0A;xcopy /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)\..\..\..\dists\msvc\&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -154,6 +155,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="@echo off&#x0D;&#x0A;xcopy /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)\..\..\..\dists\msvc\&quot;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -234,7 +236,7 @@
 		</Filter>
 		<Filter
 			Name="Scripts"
-			Filter="vbs;cmd"
+			Filter="vbs;cmd;bat;natvis"
 			UniqueIdentifier="{45B110C8-4C64-4677-8ED6-F9A93C6D55A0}"
 			>
 			<File
@@ -251,6 +253,14 @@
 			</File>
 			<File
 				RelativePath="..\scripts\installer.vbs"
+				>
+			</File>
+			<File
+				RelativePath="..\scripts\scummvm.natvis"
+				>
+			</File>
+			<File
+				RelativePath="..\scripts\install-natvis.bat"
 				>
 			</File>
 		</Filter>

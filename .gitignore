@@ -105,14 +105,14 @@ project.xcworkspace
 /dists/macosx/scummvm.xcodeproj
 /dists/macosx/create_project
 
-/dists/msvc*/[Dd]ebug*/
-/dists/msvc*/[Rr]elease*/
-/dists/msvc*/[Aa]nalysis*/
-/dists/msvc*/*.lib
-/dists/msvc*/*.SAV
-/dists/msvc*/*.dat
-/dists/msvc*/*.dll
-/dists/msvc*/test_runner.cpp
+/dists/msvc/[Dd]ebug*/
+/dists/msvc/[Rr]elease*/
+/dists/msvc/[Aa]nalysis*/
+/dists/msvc/*.lib
+/dists/msvc/*.SAV
+/dists/msvc/*.dat
+/dists/msvc/*.dll
+/dists/msvc/test_runner.cpp
 
 /dists/engine-data/testbed-audiocd-files/testbed.config
 /dists/engine-data/testbed-audiocd-files/testbed.out
@@ -193,6 +193,7 @@ ipch/
 *.tss
 *.VC.db
 .vs/
+UpgradeLog.htm
 
 #Ignore default Visual Studio build folders
 [Dd]ebug/
@@ -223,8 +224,8 @@ ScummVM.includes
 .DS_Store
 
 #Ignore MS Visual C++ temporary files/subdirectories (except create_project.bat)
-dists/msvc*/**
-!dists/msvc*/create_project.bat
+dists/msvc/**
+!dists/msvc/create_project.bat
 
 #Ignore bison debug output
 *.output
