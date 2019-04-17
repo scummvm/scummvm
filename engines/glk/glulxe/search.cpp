@@ -31,185 +31,180 @@ enum serop {
 	serop_ReturnIndex       = 0x04
 };
 
-uint Glulxe::linear_search(uint key, uint keysize,  uint start, uint structsize, uint numstructs, 
-		uint keyoffset, uint options) {
-  unsigned char keybuf[4];
-  uint count;
-  uint ix;
-  int retindex = ((options & serop_ReturnIndex) != 0);
-  int zeroterm = ((options & serop_ZeroKeyTerminates) != 0);
+uint Glulxe::linear_search(uint key, uint keysize,  uint start, uint structsize, uint numstructs,
+                           uint keyoffset, uint options) {
+	unsigned char keybuf[4];
+	uint count;
+	uint ix;
+	int retindex = ((options & serop_ReturnIndex) != 0);
+	int zeroterm = ((options & serop_ZeroKeyTerminates) != 0);
 
-  fetchkey(keybuf, key, keysize, options);
+	fetchkey(keybuf, key, keysize, options);
 
-  for (count=0; count<numstructs; count++, start+=structsize) {
-    int match = true;
-    if (keysize <= 4) {
-      for (ix=0; match && ix<keysize; ix++) {
-        if (Mem1(start + keyoffset + ix) != keybuf[ix])
-          match = false;
-      }
-    }
-    else {
-      for (ix=0; match && ix<keysize; ix++) {
-        if (Mem1(start + keyoffset + ix) != Mem1(key + ix))
-          match = false;
-      }
-    }
+	for (count = 0; count < numstructs; count++, start += structsize) {
+		int match = true;
+		if (keysize <= 4) {
+			for (ix = 0; match && ix < keysize; ix++) {
+				if (Mem1(start + keyoffset + ix) != keybuf[ix])
+					match = false;
+			}
+		} else {
+			for (ix = 0; match && ix < keysize; ix++) {
+				if (Mem1(start + keyoffset + ix) != Mem1(key + ix))
+					match = false;
+			}
+		}
 
-    if (match) {
-      if (retindex)
-        return count;
-      else
-        return start;
-    }
+		if (match) {
+			if (retindex)
+				return count;
+			else
+				return start;
+		}
 
-    if (zeroterm) {
-      match = true;
-      for (ix=0; match && ix<keysize; ix++) {
-        if (Mem1(start + keyoffset + ix) != 0)
-          match = false;
-      }
-      if (match) {
-        break;
-      }
-    }
-  }
-  
-  if (retindex)
-    return (uint)-1;
-  else
-    return 0;
+		if (zeroterm) {
+			match = true;
+			for (ix = 0; match && ix < keysize; ix++) {
+				if (Mem1(start + keyoffset + ix) != 0)
+					match = false;
+			}
+			if (match) {
+				break;
+			}
+		}
+	}
+
+	if (retindex)
+		return (uint) - 1;
+	else
+		return 0;
 }
 
 
-uint Glulxe::binary_search(uint key, uint keysize,  uint start, uint structsize, uint numstructs, 
-		uint keyoffset, uint options) {
-  byte keybuf[4];
-  byte byte1, byte2;
-  uint top, bot, val, addr;
-  uint ix;
-  int retindex = ((options & serop_ReturnIndex) != 0);
+uint Glulxe::binary_search(uint key, uint keysize,  uint start, uint structsize, uint numstructs,
+                           uint keyoffset, uint options) {
+	byte keybuf[4];
+	byte byte1, byte2;
+	uint top, bot, val, addr;
+	uint ix;
+	int retindex = ((options & serop_ReturnIndex) != 0);
 
-  fetchkey(keybuf, key, keysize, options);
-  
-  bot = 0;
-  top = numstructs;
-  while (bot < top) {
-    int cmp = 0;
-    val = (top+bot) / 2;
-    addr = start + val * structsize;
+	fetchkey(keybuf, key, keysize, options);
 
-    if (keysize <= 4) {
-      for (ix=0; (!cmp) && ix<keysize; ix++) {
-        byte1 = Mem1(addr + keyoffset + ix);
-        byte2 = keybuf[ix];
-        if (byte1 < byte2)
-          cmp = -1;
-        else if (byte1 > byte2)
-          cmp = 1;
-      }
-    }
-    else {
-      for (ix=0; (!cmp) && ix<keysize; ix++) {
-        byte1 = Mem1(addr + keyoffset + ix);
-        byte2 = Mem1(key + ix);
-        if (byte1 < byte2)
-          cmp = -1;
-        else if (byte1 > byte2)
-          cmp = 1;
-      }
-    }
+	bot = 0;
+	top = numstructs;
+	while (bot < top) {
+		int cmp = 0;
+		val = (top + bot) / 2;
+		addr = start + val * structsize;
 
-    if (!cmp) {
-      if (retindex)
-        return val;
-      else
-        return addr;
-    }
+		if (keysize <= 4) {
+			for (ix = 0; (!cmp) && ix < keysize; ix++) {
+				byte1 = Mem1(addr + keyoffset + ix);
+				byte2 = keybuf[ix];
+				if (byte1 < byte2)
+					cmp = -1;
+				else if (byte1 > byte2)
+					cmp = 1;
+			}
+		} else {
+			for (ix = 0; (!cmp) && ix < keysize; ix++) {
+				byte1 = Mem1(addr + keyoffset + ix);
+				byte2 = Mem1(key + ix);
+				if (byte1 < byte2)
+					cmp = -1;
+				else if (byte1 > byte2)
+					cmp = 1;
+			}
+		}
 
-    if (cmp < 0) {
-      bot = val+1;
-    }
-    else {
-      top = val;
-    }
-  }
+		if (!cmp) {
+			if (retindex)
+				return val;
+			else
+				return addr;
+		}
 
-  if (retindex)
-    return (uint)-1;
-  else
-    return 0;
+		if (cmp < 0) {
+			bot = val + 1;
+		} else {
+			top = val;
+		}
+	}
+
+	if (retindex)
+		return (uint) - 1;
+	else
+		return 0;
 }
 
 uint Glulxe::linked_search(uint key, uint keysize,  uint start, uint keyoffset, uint nextoffset, uint options) {
-  unsigned char keybuf[4];
-  uint ix;
-  uint val;
-  int zeroterm = ((options & serop_ZeroKeyTerminates) != 0);
+	unsigned char keybuf[4];
+	uint ix;
+	uint val;
+	int zeroterm = ((options & serop_ZeroKeyTerminates) != 0);
 
-  fetchkey(keybuf, key, keysize, options);
+	fetchkey(keybuf, key, keysize, options);
 
-  while (start != 0) {
-    int match = true;
-    if (keysize <= 4) {
-      for (ix=0; match && ix<keysize; ix++) {
-        if (Mem1(start + keyoffset + ix) != keybuf[ix])
-          match = false;
-      }
-    }
-    else {
-      for (ix=0; match && ix<keysize; ix++) {
-        if (Mem1(start + keyoffset + ix) != Mem1(key + ix))
-          match = false;
-      }
-    }
+	while (start != 0) {
+		int match = true;
+		if (keysize <= 4) {
+			for (ix = 0; match && ix < keysize; ix++) {
+				if (Mem1(start + keyoffset + ix) != keybuf[ix])
+					match = false;
+			}
+		} else {
+			for (ix = 0; match && ix < keysize; ix++) {
+				if (Mem1(start + keyoffset + ix) != Mem1(key + ix))
+					match = false;
+			}
+		}
 
-    if (match) {
-      return start;
-    }
+		if (match) {
+			return start;
+		}
 
-    if (zeroterm) {
-      match = true;
-      for (ix=0; match && ix<keysize; ix++) {
-        if (Mem1(start + keyoffset + ix) != 0)
-          match = false;
-      }
-      if (match) {
-        break;
-      }
-    }
-    
-    val = start + nextoffset;
-    start = Mem4(val);
-  }
+		if (zeroterm) {
+			match = true;
+			for (ix = 0; match && ix < keysize; ix++) {
+				if (Mem1(start + keyoffset + ix) != 0)
+					match = false;
+			}
+			if (match) {
+				break;
+			}
+		}
 
-  return 0;
+		val = start + nextoffset;
+		start = Mem4(val);
+	}
+
+	return 0;
 }
 
 void Glulxe::fetchkey(unsigned char *keybuf, uint key, uint keysize,  uint options) {
-  uint ix;
+	uint ix;
 
-  if (options & serop_KeyIndirect) {
-    if (keysize <= 4) {
-      for (ix=0; ix<keysize; ix++)
-        keybuf[ix] = Mem1(key+ix);
-    }
-  }
-  else {
-    switch (keysize) {
-    case 4:
-      Write4(keybuf, key);
-      break;
-    case 2:
-      Write2(keybuf, key);
-      break;
-    case 1:
-      Write1(keybuf, key);
-      break;
-    default:
-      fatal_error("Direct search key must hold one, two, or four bytes.");
-    }
-  }
+	if (options & serop_KeyIndirect) {
+		if (keysize <= 4) {
+			for (ix = 0; ix < keysize; ix++)
+				keybuf[ix] = Mem1(key + ix);
+		}
+	} else {
+		switch (keysize) {
+		case 4:
+			Write4(keybuf, key);
+			break;
+		case 2:
+			Write2(keybuf, key);
+			break;
+		case 1:
+			Write1(keybuf, key);
+			break;
+		default:
+			fatal_error("Direct search key must hold one, two, or four bytes.");
+		}
+	}
 }
 
 } // End of namespace Glulxe

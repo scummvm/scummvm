@@ -30,23 +30,23 @@ namespace Glulxe {
 Glulxe *g_vm;
 
 Glulxe::Glulxe(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc), _random("glulxe"),
-		vm_exited_cleanly(false), gamefile_start(0), gamefile_len(0), memmap(nullptr), stack(nullptr),
-		ramstart(0), endgamefile(0), origendmem(0),  stacksize(0), startfuncaddr(0), checksum(0),
-		stackptr(0), frameptr(0), pc(0), prevpc(0), origstringtable(0), stringtable(0), valstackbase(0),
-		localsbase(0), endmem(0), protectstart(0), protectend(0),
-		stream_char_handler(nullptr), stream_unichar_handler(nullptr),
-		// main
-		library_autorestore_hook(nullptr),
-		// accel
-		classes_table(0), indiv_prop_start(0), class_metaclass(0), object_metaclass(0),
-		routine_metaclass(0), string_metaclass(0), self(0), num_attr_bytes(0), cpv__start(0),
-		accelentries(nullptr),
-		// heap
-		heap_start(0), alloc_count(0), heap_head(nullptr), heap_tail(nullptr),
-		// serial
-		max_undo_level(8), undo_chain_size(0), undo_chain_num(0), undo_chain(nullptr), ramcache(nullptr),
-		// string
-		iosys_mode(0), iosys_rock(0), tablecache_valid(false), glkio_unichar_han_ptr(nullptr) {
+	vm_exited_cleanly(false), gamefile_start(0), gamefile_len(0), memmap(nullptr), stack(nullptr),
+	ramstart(0), endgamefile(0), origendmem(0),  stacksize(0), startfuncaddr(0), checksum(0),
+	stackptr(0), frameptr(0), pc(0), prevpc(0), origstringtable(0), stringtable(0), valstackbase(0),
+	localsbase(0), endmem(0), protectstart(0), protectend(0),
+	stream_char_handler(nullptr), stream_unichar_handler(nullptr),
+	// main
+	library_autorestore_hook(nullptr),
+	// accel
+	classes_table(0), indiv_prop_start(0), class_metaclass(0), object_metaclass(0),
+	routine_metaclass(0), string_metaclass(0), self(0), num_attr_bytes(0), cpv__start(0),
+	accelentries(nullptr),
+	// heap
+	heap_start(0), alloc_count(0), heap_head(nullptr), heap_tail(nullptr),
+	// serial
+	max_undo_level(8), undo_chain_size(0), undo_chain_num(0), undo_chain(nullptr), ramcache(nullptr),
+	// string
+	iosys_mode(0), iosys_rock(0), tablecache_valid(false), glkio_unichar_han_ptr(nullptr) {
 	g_vm = this;
 }
 

@@ -78,10 +78,10 @@ private:
 	 * @{
 	 */
 
-	 /**
-	  * The library_autorestore_hook is called right after the VM's initial setup. This is an appropriate time
-	  * to autorestore an initial game state, if the library has that capability. (Currently, only iosglk does.)
-	  */
+	/**
+	 * The library_autorestore_hook is called right after the VM's initial setup. This is an appropriate time
+	 * to autorestore an initial game state, if the library has that capability. (Currently, only iosglk does.)
+	 */
 	void(*library_autorestore_hook)(void);
 	Common::RandomSource _random;
 
@@ -110,7 +110,7 @@ private:
 	 * @{
 	 */
 
-	uint heap_start;	///< zero for inactive heap
+	uint heap_start;    ///< zero for inactive heap
 	int alloc_count;
 
 	/* The heap_head/heap_tail is a doubly-linked list of blocks, both
@@ -151,9 +151,9 @@ private:
 	 * @{
 	 */
 
-	 /**
-	  * This can be adjusted before startup by platform-specific startup code -- that is, preference code.
-	  */
+	/**
+	 * This can be adjusted before startup by platform-specific startup code -- that is, preference code.
+	 */
 	int max_undo_level;
 
 	int undo_chain_size;
@@ -182,7 +182,7 @@ private:
 	cacheblock_t tablecache;
 
 	/* This misbehaves if a Glk function has more than one S argument. */
-	#define STATIC_TEMP_BUFSIZE (127)
+#define STATIC_TEMP_BUFSIZE (127)
 	char temp_buf[STATIC_TEMP_BUFSIZE + 1];
 
 	/**@}*/
@@ -253,7 +253,7 @@ protected:
 	 */
 	uint get_prop_new(uint obj, uint id);
 
-	 /**@}*/
+	/**@}*/
 
 	/**
 	 * \defgroup glkop support methods
@@ -302,12 +302,12 @@ protected:
 	 * to deal with structures.
 	 */
 	void parse_glk_args(dispatch_splot_t *splot, const char **proto, int depth, int *argnumptr, uint subaddress, int subpassin);
-		
+
 	/**
 	 * This is about the reverse of parse_glk_args().
 	 */
 	void unparse_glk_args(dispatch_splot_t *splot, const char **proto, int depth,
-		int *argnumptr, uint subaddress, int subpassout);
+	                      int *argnumptr, uint subaddress, int subpassout);
 
 	/**
 	 * Create a string identifying this game. We use the first 64 bytes of the memory map, encoded as hex,
@@ -389,7 +389,9 @@ public:
 	/**
 	 * Returns the running interpreter type
 	 */
-	virtual InterpreterType getInterpreterType() const override { return INTERPRETER_GLULXE; }
+	virtual InterpreterType getInterpreterType() const override {
+		return INTERPRETER_GLULXE;
+	}
 
 	/**
 	 * Load a savegame from the passed stream
@@ -427,9 +429,9 @@ public:
 	 * @{
 	 */
 
-	 /**
-	  * Validates the game file, and if it's invalid, displays an error dialog
-	  */
+	/**
+	 * Validates the game file, and if it's invalid, displays an error dialog
+	 */
 	bool is_gamefile_valid();
 
 	/**@}*/
@@ -439,16 +441,16 @@ public:
 	 * @{
 	 */
 
-	 /**
-	  * Read in the game file and build the machine, allocating all the memory necessary.
-	 */
+	/**
+	 * Read in the game file and build the machine, allocating all the memory necessary.
+	*/
 	void setup_vm();
 
 	/**
 	 * Deallocate all the memory and shut down the machine.
 	 */
 	void finalize_vm();
-	
+
 	/**
 	 * Put the VM into a state where it's ready to begin executing the game. This is called
 	 * both at startup time, and when the machine performs a "restart" opcode.
@@ -461,14 +463,14 @@ public:
 	 * when the heap-allocation system is calling. Returns 0 for success; otherwise, the operation failed.
 	 */
 	uint change_memsize(uint newlen, bool internal);
-	
+
 	/**
 	 * If addr is 0, pop N arguments off the stack, and put them in an array. If non-0, take N arguments
 	 * from that main memory address instead. This has to dynamically allocate if there are more than
 	 * 32 arguments, but that shouldn't be a problem.
 	 */
 	uint *pop_arguments(uint count, uint addr);
-	
+
 	/**
 	 * Make sure that count bytes beginning with addr all fall within the current memory map.
 	 * This is called at every memory (read) access if VERIFY_MEMORY_ACCESS is defined in the header file.
@@ -495,9 +497,9 @@ public:
 	 * @{
 	 */
 
-	 /**
-	  * The main interpreter loop. This repeats until the program is done
-	  */
+	/**
+	 * The main interpreter loop. This repeats until the program is done
+	 */
 	void execute_loop();
 
 	/**@}*/
@@ -507,9 +509,9 @@ public:
 	 * @{
 	 */
 
-	 /**
-	  * Set up the fast-lookup array of operandlists. This is called just once, when the terp starts up.
-	  */
+	/**
+	 * Set up the fast-lookup array of operandlists. This is called just once, when the terp starts up.
+	 */
 	void init_operands();
 
 	/**
@@ -549,7 +551,7 @@ public:
 	 * Note that if argc is zero, argv may be nullptr.
 	 */
 	void enter_function(uint addr, uint argc, uint *argv);
-	
+
 	/**
 	 * Pop the current call frame off the stack. This is very simple.
 	*/
@@ -610,11 +612,11 @@ public:
 	/**
 	 * Create an array of words, in the VM serialization format:
 	 *
-	 *	 heap_start
-	 *	 alloc_count
-	 *	 addr of first block
-	 *	 len of first block
-	 *	 ...
+	 *   heap_start
+	 *   alloc_count
+	 *   addr of first block
+	 *   len of first block
+	 *   ...
 	 *
 	 * (Note that these are uint values -- native byte ordering. Also, the blocks will be in address order,
 	 * which is a stricter guarantee than the VM specifies; that'll help in heap_apply_summary().)
@@ -649,19 +651,19 @@ public:
 	 */
 
 
-	 /**
-	  * An array of data structures is stored in memory, beginning at start, each structure being structsize bytes.
-	  * Within each struct, there is a key value keysize bytes long, starting at position keyoffset (from
-	  * the start of the structure.) Search through these in order. If one is found whose key matches, return it.
-	  * If numstructs are searched with no result, return nullptr.
-	  *
-	  * numstructs may be -1 (0xFFFFFFFF) to indicate no upper limit to the number of structures to search.
-	  * The search will continue until a match is found, or (if ZeroKeyTerminates is set) a zero key.
-	  *
-	  * The KeyIndirect, ZeroKeyTerminates, and ReturnIndex options may be used.
-	  */
+	/**
+	 * An array of data structures is stored in memory, beginning at start, each structure being structsize bytes.
+	 * Within each struct, there is a key value keysize bytes long, starting at position keyoffset (from
+	 * the start of the structure.) Search through these in order. If one is found whose key matches, return it.
+	 * If numstructs are searched with no result, return nullptr.
+	 *
+	 * numstructs may be -1 (0xFFFFFFFF) to indicate no upper limit to the number of structures to search.
+	 * The search will continue until a match is found, or (if ZeroKeyTerminates is set) a zero key.
+	 *
+	 * The KeyIndirect, ZeroKeyTerminates, and ReturnIndex options may be used.
+	 */
 	uint linear_search(uint key, uint keysize, uint start, uint structsize, uint numstructs,
-		uint keyoffset, uint options);
+	                   uint keyoffset, uint options);
 
 	/**
 	 * An array of data structures is in memory, as above. However, the structs must be stored in forward
@@ -671,7 +673,7 @@ public:
 	 * The KeyIndirect and ReturnIndex options may be used.
 	 */
 	uint binary_search(uint key, uint keysize, uint start, uint structsize, uint numstructs,
-		uint keyoffset, uint options);
+	                   uint keyoffset, uint options);
 
 	/**
 	 * The structures may be anywhere in memory, in any order. They are linked by a four-byte address field,
@@ -723,9 +725,9 @@ public:
 	 * @{
 	 */
 
-	 /**
-	  * glkop section initialization
-	  */
+	/**
+	 * glkop section initialization
+	 */
 	void glkopInit();
 
 	void set_library_select_hook(void(*func)(uint));
@@ -754,7 +756,7 @@ public:
 	 * Read the prefixes of an argument string -- the "<>&+:#!" chars.
 	 */
 	const char *read_prefix(const char *cx, int *isref, int *isarray, int *passin, int *passout,
-		int *nullok, int *isretained, int *isreturn);
+	                        int *nullok, int *isretained, int *isreturn);
 
 	/**
 	 * This is used by some interpreter code which has to, well, find a Glk stream given its ID.
@@ -868,9 +870,11 @@ public:
 	   that it can reinterpret-cast IEEE-754 int values into gfloat32
 	   values. If you uncomment this, Glulxe switches to lengthier
 	   (but safer) encoding and decoding functions. */
-	   /* #define FLOAT_NOT_NATIVE (1) */
+	/* #define FLOAT_NOT_NATIVE (1) */
 
-	int init_float() { return true; }
+	int init_float() {
+		return true;
+	}
 
 	/**
 	 * Encode floats by a lot of annoying bit manipulation.
@@ -887,7 +891,7 @@ public:
 	/* Uncomment this definition if your powf() function does not support
 	   all the corner cases specified by C99. If you uncomment this,
 	   osdepend.c will provide a safer implementation of glulx_powf(). */
-	   /* #define FLOAT_COMPILE_SAFER_POWF (1) */
+	/* #define FLOAT_COMPILE_SAFER_POWF (1) */
 
 	inline gfloat32 glulx_powf(gfloat32 val1, gfloat32 val2) const {
 		return powf(val1, val2);
@@ -901,9 +905,9 @@ public:
 	 * @{
 	 */
 
-	 /**
-	  * Set up the undo chain and anything else that needs to be set up.
-	  */
+	/**
+	 * Set up the undo chain and anything else that needs to be set up.
+	 */
 	bool init_serial();
 
 	/**
@@ -946,9 +950,9 @@ public:
 	 * @{
 	 */
 
-	 /**
-	  * Write a signed integer to the current output stream.
-	  */
+	/**
+	 * Write a signed integer to the current output stream.
+	 */
 	void stream_num(int val, int inmiddle, int charnum);
 
 	/**

@@ -103,18 +103,18 @@ class Glulxe;
  * degradation or even crashes, depending on the machine CPU.
  */
 #define Stk1(adr)   \
-  (*((unsigned char *)(stack+(adr))))
+	(*((unsigned char *)(stack+(adr))))
 #define Stk2(adr)   \
-  (*((uint16 *)(stack+(adr))))
+	(*((uint16 *)(stack+(adr))))
 #define Stk4(adr)   \
-  (*((uint32 *)(stack+(adr))))
+	(*((uint32 *)(stack+(adr))))
 
 #define StkW1(adr, vl)   \
-  (*((byte *)(stack+(adr))) = (byte)(vl))
+	(*((byte *)(stack+(adr))) = (byte)(vl))
 #define StkW2(adr, vl)   \
-  (*((uint16 *)(stack+(adr))) = (uint16)(vl))
+	(*((uint16 *)(stack+(adr))) = (uint16)(vl))
 #define StkW4(adr, vl)   \
-  (*((uint32 *)(stack+(adr))) = (uint32)(vl))
+	(*((uint32 *)(stack+(adr))) = (uint32)(vl))
 
 enum Opcode {
 	op_nop          = 0x00,
@@ -319,9 +319,9 @@ typedef classtable_struct classtable_t;
  * Represents the operand structure of an opcode.
  */
 struct operandlist_struct {
-	int num_ops;			///< Number of operands for this opcode
-	int arg_size;			///< Usually 4, but can be 1 or 2
-	const int *formlist;	///< Array of values, either modeform_Load or modeform_Store
+	int num_ops;            ///< Number of operands for this opcode
+	int arg_size;           ///< Usually 4, but can be 1 or 2
+	const int *formlist;    ///< Array of values, either modeform_Load or modeform_Store
 };
 typedef operandlist_struct operandlist_t;
 
@@ -389,7 +389,7 @@ enum iosys {
 };
 
 #define CACHEBITS (4)
-#define CACHESIZE (1 << CACHEBITS) 
+#define CACHESIZE (1 << CACHEBITS)
 #define CACHEMASK (15)
 
 struct cacheblock_struct {
