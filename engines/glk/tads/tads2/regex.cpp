@@ -67,10 +67,10 @@ Notes
   numbers.
 */
 
-#include "engines/glk/tads/tads2/regex.h"
-#include "engines/glk/tads/tads2/ler.h"
-#include "engines/glk/tads/tads2/os.h"
-//#include "engines/glk/tads/tads2/std.h"
+#include "glk/tads/tads2/regex.h"
+#include "glk/tads/tads2/ler.h"
+#include "glk/tads/tads2/os.h"
+//#include "glk/tads/tads2/std.h"
 #//include "engines/glk/tads/tads2/ler.h"
 
 namespace Glk {

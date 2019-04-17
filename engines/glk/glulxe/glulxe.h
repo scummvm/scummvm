@@ -24,6 +24,7 @@
 #define GLK_GLULXE
 
 #include "common/scummsys.h"
+#include "common/random.h"
 #include "glk/glk_api.h"
 #include "glk/glulxe/glulxe_types.h"
 
@@ -70,6 +71,20 @@ private:
 	uint endmem;
 	uint protectstart, protectend;
 	uint prevpc;
+
+	/**@}*/
+
+	/**
+	 * \defgroup main fields
+	 * @{
+	 */
+
+	 /**
+	  * The library_autorestore_hook is called right after the VM's initial setup. This is an appropriate time
+	  * to autorestore an initial game state, if the library has that capability. (Currently, only iosglk does.)
+	  */
+	void(*library_autorestore_hook)(void);
+	Common::RandomSource _random;
 
 	/**@}*/
 
@@ -327,7 +342,7 @@ protected:
 	uint read_heapstate(dest_t *dest, uint chunklen, int portable, uint *sumlen, uint **summary);
 	uint read_stackstate(dest_t *dest, uint chunklen, int portable);
 	uint write_heapstate_sub(uint sumlen, uint *sumarray, dest_t *dest, int portable);
-	static int sort_heap_summary(void *p1, void *p2);
+	static int sort_heap_summary(const void *p1, const void *p2);
 
 	int read_byte(dest_t *dest, byte *val);
 	int read_short(dest_t *dest, uint16 *val);
@@ -675,13 +690,23 @@ public:
 	 * @{
 	 */
 
-	void *glulx_malloc(uint len);
-	void *glulx_realloc(void *ptr, uint len);
-	void glulx_free(void *ptr);
-	void glulx_setrandom(uint seed);
-	uint glulx_random();
-	void glulx_sort(void *addr, int count, int size,
-		int(*comparefunc)(void *p1, void *p2));
+	inline void *glulx_malloc(uint len) {
+		return malloc(len);
+	}
+	inline void *glulx_realloc(void *ptr, uint len) {
+		return realloc(ptr, len);
+	}
+	inline void glulx_free(void *ptr) {
+		free(ptr);
+	}
+	inline void glulx_setrandom(uint32 seed) {
+		_random.setSeed(seed);
+	}
+	inline uint glulx_random() {
+		return _random.getRandomNumber(0xffffffff);
+	}
+
+	void glulx_sort(void *addr, int count, int size, int(*comparefunc)(const void *p1, const void *p2));
 
 	/**@}*/
 
@@ -846,17 +871,28 @@ public:
 	   (but safer) encoding and decoding functions. */
 	   /* #define FLOAT_NOT_NATIVE (1) */
 
-	   /* float.c */
-	int init_float();
-	uint encode_float(gfloat32 val);
-	gfloat32 decode_float(uint val);
+	int init_float() { return true; }
+
+	/**
+	 * Encode floats by a lot of annoying bit manipulation.
+	 * The function is adapted from code in Python  (Objects/floatobject.c)
+	 */
+	static uint encode_float(gfloat32 val);
+
+	/**
+	 * Decode floats by a lot of annoying bit manipulation.
+	 * The function is adapted from code in Python  (Objects/floatobject.c)
+	 */
+	static gfloat32 decode_float(uint val);
 
 	/* Uncomment this definition if your powf() function does not support
 	   all the corner cases specified by C99. If you uncomment this,
 	   osdepend.c will provide a safer implementation of glulx_powf(). */
 	   /* #define FLOAT_COMPILE_SAFER_POWF (1) */
 
-	gfloat32 glulx_powf(gfloat32 val1, gfloat32 val2);
+	inline gfloat32 glulx_powf(gfloat32 val1, gfloat32 val2) const {
+		return powf(val1, val2);
+	}
 
 #endif /* FLOAT_SUPPORT */
 	/**@}*/
@@ -905,7 +941,6 @@ public:
 	uint perform_verify();
 
 	/**@}*/
-
 
 	/**
 	 * \defgroup Strings access methods

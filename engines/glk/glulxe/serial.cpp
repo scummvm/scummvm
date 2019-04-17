@@ -20,7 +20,7 @@
  *
  */
 
-#include "engines/glk/glulxe/glulxe.h"
+#include "glk/glulxe/glulxe.h"
 
 namespace Glk {
 namespace Glulxe {
@@ -751,7 +751,7 @@ uint Glulxe::write_heapstate_sub(uint sumlen, uint *sumarray, dest_t *dest, int 
   return 0;
 }
 
-int Glulxe::sort_heap_summary(void *p1, void *p2) {
+int Glulxe::sort_heap_summary(const void *p1, const void *p2) {
   uint v1 = *(uint *)p1;
   uint v2 = *(uint *)p2;
 

@@ -24,7 +24,7 @@
 #define GLK_TADS_TADS2_REGEX
 
 #include "common/array.h"
-#include "engines/glk/tads/tads2/ler.h"
+#include "glk/tads/tads2/ler.h"
 
 namespace Glk {
 namespace TADS {

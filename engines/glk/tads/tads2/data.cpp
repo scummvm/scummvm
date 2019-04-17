@@ -20,9 +20,9 @@
  *
  */
 
-#include "engines/glk/tads/tads2/data.h"
-#include "engines/glk/tads/tads2/types.h"
-#include "engines/glk/tads/tads2/vocabulary.h"
+#include "glk/tads/tads2/data.h"
+#include "glk/tads/tads2/types.h"
+#include "glk/tads/tads2/vocabulary.h"
 #include "common/algorithm.h"
 
 namespace Glk {

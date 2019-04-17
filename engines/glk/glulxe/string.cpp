@@ -20,7 +20,7 @@
  *
  */
 
-#include "engines/glk/glulxe/glulxe.h"
+#include "glk/glulxe/glulxe.h"
 
 namespace Glk {
 namespace Glulxe {

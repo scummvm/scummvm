@@ -29,12 +29,14 @@ namespace Glulxe {
 
 Glulxe *g_vm;
 
-Glulxe::Glulxe(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
+Glulxe::Glulxe(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc), _random("glulxe"),
 		vm_exited_cleanly(false), gamefile(nullptr), gamefile_start(0), gamefile_len(0),
 		memmap(nullptr), stack(nullptr), ramstart(0), endgamefile(0), origendmem(0),  stacksize(0),
 		startfuncaddr(0), checksum(0), stackptr(0), frameptr(0), pc(0), prevpc(0), origstringtable(0),
 		stringtable(0), valstackbase(0), localsbase(0), endmem(0), protectstart(0), protectend(0),
 		stream_char_handler(nullptr), stream_unichar_handler(nullptr),
+		// main
+		library_autorestore_hook(nullptr),
 		// accel
 		classes_table(0), indiv_prop_start(0), class_metaclass(0), object_metaclass(0),
 		routine_metaclass(0), string_metaclass(0), self(0), num_attr_bytes(0), cpv__start(0),
@@ -52,7 +54,20 @@ void Glulxe::runGame() {
 	if (!is_gamefile_valid())
 		return;
 
-	// TODO
+	setup_vm();
+	if (library_autorestore_hook)
+		library_autorestore_hook();
+
+	execute_loop();
+	finalize_vm();
+
+	gamefile = NULL;
+	gamefile_start = 0;
+	gamefile_len = 0;
+	init_err = NULL;
+	vm_exited_cleanly = true;
+
+	profile_quit();
 }
 
 Common::Error Glulxe::loadGameData(strid_t file) {
@@ -126,6 +141,10 @@ void Glulxe::nonfatal_warning_handler(const char *str, const char *arg, bool use
 	}
 
 	warning("%s", msg.c_str());
+}
+
+void Glulxe::glulx_sort(void *addr, int count, int size, int(*comparefunc)(const void *p1, const void *p2)) {
+	qsort(addr, count, size, comparefunc);
 }
 
 } // End of namespace Glulxe

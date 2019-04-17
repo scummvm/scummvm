@@ -20,43 +20,38 @@
  *
  */
 
-#include "engines/glk/glulxe/glulxe.h"
+#include "glk/glulxe/glulxe.h"
 
 namespace Glk {
 namespace Glulxe {
 
 void Glulxe::setup_vm() {
-  unsigned char buf[4 * 7];
-  int res;
+  byte buf[4 * 7];
 
-  pc = 0; /* Clear this, so that error messages are cleaner. */
+  pc = 0;			// Clear this, so that error messages are cleaner.
   prevpc = 0;
 
-  /* Read in all the size constants from the game file header. */
+  // Read in all the size constants from the game file header
+  stream_char_handler = nullptr;
+  stream_unichar_handler = nullptr;
 
-  stream_char_handler = NULL;
-  stream_unichar_handler = NULL;
-
-  glk_stream_set_position(gamefile, gamefile_start+8, seekmode_Start);
-  res = glk_get_buffer_stream(gamefile, (char *)buf, 4 * 7);
-  if (res != 4 * 7) {
+  _gameFile.seek(0);
+  if (_gameFile.read(buf, 4 * 7) != (4 * 7))
     fatal_error("The game file header is too short.");
-  }
   
-  ramstart = Read4(buf+0);
-  endgamefile = Read4(buf+4);
-  origendmem = Read4(buf+8);
-  stacksize = Read4(buf+12);
-  startfuncaddr = Read4(buf+16);
-  origstringtable = Read4(buf+20);
-  checksum = Read4(buf+24);
+  ramstart = Read4(buf + 0);
+  endgamefile = Read4(buf + 4);
+  origendmem = Read4(buf + 8);
+  stacksize = Read4(buf + 12);
+  startfuncaddr = Read4(buf + 16);
+  origstringtable = Read4(buf + 20);
+  checksum = Read4(buf + 24);
 
-  /* Set the protection range to (0, 0), meaning "off". */
+  // Set the protection range to (0, 0), meaning "off".
   protectstart = 0;
   protectend = 0;
 
-  /* Do a few sanity checks. */
-
+  // Do a few sanity checks.
   if ((ramstart & 0xFF)
     || (endgamefile & 0xFF) 
     || (origendmem & 0xFF)
@@ -81,28 +76,29 @@ void Glulxe::setup_vm() {
   /* Allocate main memory and the stack. This is where memory allocation
      errors are most likely to occur. */
   endmem = origendmem;
-  memmap = (unsigned char *)glulx_malloc(origendmem);
+  memmap = (byte *)glulx_malloc(origendmem);
   if (!memmap) {
     fatal_error("Unable to allocate Glulx memory space.");
   }
-  stack = (unsigned char *)glulx_malloc(stacksize);
+  stack = (byte *)glulx_malloc(stacksize);
   if (!stack) {
     glulx_free(memmap);
-    memmap = NULL;
+    memmap = nullptr;
     fatal_error("Unable to allocate Glulx stack space.");
   }
   stringtable = 0;
 
-  /* Initialize various other things in the terp. */
+  // Initialize various other things in the terp.
   init_operands(); 
   init_serial();
 
-  /* Set up the initial machine state. */
+  // Set up the initial machine state.
   vm_restart();
 
   /* If the debugger is compiled in, check that the debug data matches
      the game. (This only prints warnings for mismatch.) */
   debugger_check_story_file();
+
   /* Also, set up any start-time debugger state. This may do a block-
      and-debug, if the user has requested that. */
   debugger_setup_start_state();
@@ -113,11 +109,11 @@ void Glulxe::finalize_vm() {
 
   if (memmap) {
     glulx_free(memmap);
-    memmap = NULL;
+    memmap = nullptr;
   }
   if (stack) {
     glulx_free(stack);
-    stack = NULL;
+    stack = nullptr;
   }
 
   final_serial();
@@ -173,7 +169,7 @@ void Glulxe::vm_restart() {
   /* Note that we do not reset the protection range. */
 
   /* Push the first function call. (No arguments.) */
-  enter_function(startfuncaddr, 0, NULL);
+  enter_function(startfuncaddr, 0, nullptr);
 
   /* We're now ready to execute. */
 }
@@ -219,17 +215,17 @@ uint Glulxe::change_memsize(uint newlen, bool internal) {
 }
 
 uint *Glulxe::pop_arguments(uint count, uint addr) {
-  int ix;
+  uint ix;
   uint argptr;
   uint *array;
 
   #define MAXARGS (32)
   static uint statarray[MAXARGS];
-  static uint *dynarray = NULL;
+  static uint *dynarray = nullptr;
   static uint dynarray_size = 0;
 
   if (count == 0)
-    return NULL;
+    return nullptr;
 
   if (count <= MAXARGS) {
     /* Store in the static array. */

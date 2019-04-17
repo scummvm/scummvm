@@ -20,11 +20,111 @@
  *
  */
 
-#include "glk/glulxe/float.h"
+#include "glk/glulxe/glulxe.h"
 
 namespace Glk {
 namespace Glulxe {
 
+uint Glulxe::encode_float(gfloat32 val) {
+    gfloat32 absval;
+    uint sign;
+    int expo;
+    gfloat32 mant;
+    uint fbits;
+ 
+    if (signbit(val)) {
+        sign = 0x80000000;
+        absval = -val;
+    }
+    else {
+        sign = 0x0;
+        absval = val;
+    }
+
+    if (isinf(val)) {
+        return sign | 0x7f800000; /* infinity */
+    }
+
+    if (isnan(val)) {
+        return sign | 0x7fc00000;
+    }
+
+    mant = frexpf(absval, &expo);
+
+    /* Normalize mantissa to be in the range [1.0, 2.0) */
+    if (0.5 <= mant && mant < 1.0) {
+        mant *= 2.0;
+        expo--;
+    }
+    else if (mant == 0.0) {
+        expo = 0;
+    }
+    else {
+        return sign | 0x7f800000; /* infinity */
+    }
+
+    if (expo >= 128) {
+        return sign | 0x7f800000; /* infinity */
+    }
+    else if (expo < -126) {
+        /* Denormalized (very small) number */
+        mant = ldexpf(mant, 126 + expo);
+        expo = 0;
+    }
+    else if (!(expo == 0 && mant == 0.0)) {
+        expo += 127;
+        mant -= 1.0; /* Get rid of leading 1 */
+    }
+
+    mant *= 8388608.0; /* 2^23 */
+    fbits = (uint)(mant + 0.5); /* round mant to nearest int */
+    if (fbits >> 23) {
+        /* The carry propagated out of a string of 23 1 bits. */
+        fbits = 0;
+        expo++;
+        if (expo >= 255) {
+            return sign | 0x7f800000; /* infinity */
+        }
+    }
+
+    return (sign) | ((uint)(expo << 23)) | (fbits);
+}
+
+gfloat32 Glulxe::decode_float(uint val) {
+    int sign;
+    int expo;
+    uint mant;
+    gfloat32 res;
+
+    /* First byte */
+    sign = ((val & 0x80000000) != 0);
+    expo = (val >> 23) & 0xFF;
+    mant = val & 0x7FFFFF;
+
+    if (expo == 255) {
+        if (mant == 0) {
+            /* Infinity */
+            return (sign ? (-INFINITY) : (INFINITY));
+        }
+        else {
+            /* Not a number */
+            return (sign ? (-NAN) : (NAN));
+        }
+    }
+
+    res = (gfloat32)mant / 8388608.0;
+
+    if (expo == 0) {
+        expo = -126;
+    }
+    else {
+        res += 1.0;
+        expo -= 127;
+    }
+    res = ldexpf(res, expo);
+
+    return (sign ? (-res) : (res));
+}
 
 } // End of namespace Glulxe
 } // End of namespace Glk
