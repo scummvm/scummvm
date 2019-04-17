@@ -118,7 +118,8 @@ page at: <https://www.scummvm.org/>
   - [9.0) Screenshots (SDL backend
     only)](#90-screenshots-sdl-backend-only)
   - [10.0) Compiling](#100-compiling)
-  - [11.0) Credits](#110-credits)
+  - [11.0) Changelog](#110-changelog)
+  - [12.0) Credits](#120-credits)
 
 ## 1.0) Introduction
 
@@ -2939,11 +2940,13 @@ debug messages (see
       - Please refer to:
         <https://wiki.scummvm.org/index.php/Compiling_ScummVM/Symbian>
 
-## 11.0) Credits
+## 11.0) Changelog
 
-Please refer to our extensive Credits list at:
+Please refer to our extensive Changelog [here](NEWS.md).
 
-<https://www.scummvm.org/credits/>
+## 12.0) Credits
+
+Please refer to our extensive Credits list [here](AUTHORS).
 
 -----
 
