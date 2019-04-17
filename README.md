@@ -17,7 +17,7 @@ page at: <https://www.scummvm.org/>
       - [3.2) Datafiles](#32-datafiles)
       - [3.3) Multi-CD games notes](#33-multi-cd-games-notes)
       - [3.4) Known Problems](#34-known-problems)
-      - [3.5) Extra Data Files](#35-extra-data-files)      
+      - [3.5) Extra Data Files](#35-extra-data-files)
       - [3.6) Broken Sword games notes](#36-broken-sword-games-notes)
           - [3.6.1) Broken Sword](#361-broken-sword)
           - [3.6.2) Broken Sword II](#362-broken-sword-ii)
@@ -25,18 +25,18 @@ page at: <https://www.scummvm.org/>
             cutscenes](#363-broken-sword-games-cutscenes)
           - [3.6.4) Broken Sword games cutscenes, in
             retrospect](#364-broken-sword-games-cutscenes-in-retrospect)
-      - [3.7) Day of the Tentacle notes](#37-day-of-the-tentacle-notes)      
+      - [3.7) Day of the Tentacle notes](#37-day-of-the-tentacle-notes)
       - [3.8) Dragon History notes](#38-dragon-history-notes)
       - [3.9) Flight of the Amazon Queen
         notes](#39-flight-of-the-amazon-queen-notes)
       - [3.10) Gobliiins notes](#310-gobliiins-notes)
       - [3.11) Inherit the Earth: Quest for the Orb
-        notes](#311-inherit-the-earth-quest-for-the-orb-notes)      
+        notes](#311-inherit-the-earth-quest-for-the-orb-notes)
       - [3.12) Mickey's Space Adventure
         notes](#312-mickeys-space-adventure-notes)
       - [3.13) Might and Magic Xeen games
         notes](#313-might-and-magic-xeen-games-notes)
-      - [3.14) Myst game notes](#314-myst-game-notes)      
+      - [3.14) Myst game notes](#314-myst-game-notes)
       - [3.15) Quest for Glory notes](#315-quest-for-glory-notes)
       - [3.16) Riven game notes](#316-riven-game-notes)
       - [3.17) Simon the Sorcerer games
@@ -1589,9 +1589,8 @@ games and other games.
     F5                     - Displays a save/load box
     Alt-F5                 - Displays the original save/load box, if the
                              game has one. You can save and load games using
-                             using this, however it is not intended for this
-                             purpose, and may even crash ScummVM in some
-                             games.
+                             this, however it is not intended for this purpose,
+                             and may even crash ScummVM in some games.
     i                      - Displays IQ points (Indiana Jones and the Last
                              Crusade, and Indiana Jones and the Fate of
                              Atlantis)
