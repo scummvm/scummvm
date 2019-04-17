@@ -38,7 +38,11 @@ typedef void (Glulxe::*UnicharHandler)(uint);
  * Glulxe game interpreter
  */
 class Glulxe : public GlkAPI {
-public:
+private:
+	/**
+	 * \defgroup vm fields
+	 * @{
+	 */
 	CharHandler stream_char_handler;
 	UnicharHandler stream_unichar_handler, glkio_unichar_han_ptr;
 
@@ -66,6 +70,8 @@ public:
 	uint endmem;
 	uint protectstart, protectend;
 	uint prevpc;
+
+	/**@}*/
 
 	/**
 	 * \defgroup accel fields
@@ -342,7 +348,7 @@ protected:
 	 * @{
 	 */
 
-	void stream_setup_unichar(void);
+	void stream_setup_unichar();
 
 	void nopio_char_han(unsigned char ch);
 	void filio_char_han(unsigned char ch);
@@ -385,8 +391,6 @@ public:
 	 * \defgroup Main access methods
 	 * @{
 	 */
-	void set_library_start_hook(void(*)(void));
-	void set_library_autorestore_hook(void(*)(void));
 
 	/**
 	 * Display an error in the error window, and then exit.
@@ -414,8 +418,6 @@ public:
 	  */
 	bool is_gamefile_valid();
 
-	int locate_gamefile(int isblorb);
-	
 	/**@}*/
 
 	/**
@@ -423,13 +425,53 @@ public:
 	 * @{
 	 */
 
-	void setup_vm(void);
-	void finalize_vm(void);
-	void vm_restart(void);
-	uint change_memsize(uint newlen, int internal);
+	 /**
+	  * Read in the game file and build the machine, allocating all the memory necessary.
+	 */
+	void setup_vm();
+
+	/**
+	 * Deallocate all the memory and shut down the machine.
+	 */
+	void finalize_vm();
+	
+	/**
+	 * Put the VM into a state where it's ready to begin executing the game. This is called
+	 * both at startup time, and when the machine performs a "restart" opcode.
+	 */
+	void vm_restart();
+
+	/**
+	 * Change the size of the memory map. This may not be available at all; #define FIXED_MEMSIZE
+	 * if you want the interpreter to unconditionally refuse. The internal flag should be true only
+	 * when the heap-allocation system is calling. Returns 0 for success; otherwise, the operation failed.
+	 */
+	uint change_memsize(uint newlen, bool internal);
+	
+	/**
+	 * If addr is 0, pop N arguments off the stack, and put them in an array. If non-0, take N arguments
+	 * from that main memory address instead. This has to dynamically allocate if there are more than
+	 * 32 arguments, but that shouldn't be a problem.
+	 */
 	uint *pop_arguments(uint count, uint addr);
+	
+	/**
+	 * Make sure that count bytes beginning with addr all fall within the current memory map.
+	 * This is called at every memory (read) access if VERIFY_MEMORY_ACCESS is defined in the header file.
+	*/
 	void verify_address(uint addr, uint count);
+
+	/**
+	 * Make sure that count bytes beginning with addr all fall within RAM. This is called at every memory
+	 * write if VERIFY_MEMORY_ACCESS is defined in the header file.
+	*/
 	void verify_address_write(uint addr, uint count);
+
+	/**
+	 * Make sure that an array of count elements (size bytes each), starting at addr, does not fall
+	 * outside the memory map. This goes to some trouble that verify_address() does not, because we need
+	 * to be wary of lengths near -- or beyond -- 0x7FFFFFFF.
+	 */
 	void verify_array_addresses(uint addr, uint count, uint size);
 
 	/**@}*/
@@ -527,7 +569,7 @@ public:
 	 * Set the heap state to inactive, and free the block lists. This is called when the game
 	 * starts or restarts.
 	 */
-	void heap_clear(void);
+	void heap_clear();
 
 	/**
 	 * Returns whether the heap is active.
@@ -637,7 +679,7 @@ public:
 	void *glulx_realloc(void *ptr, uint len);
 	void glulx_free(void *ptr);
 	void glulx_setrandom(uint seed);
-	uint glulx_random(void);
+	uint glulx_random();
 	void glulx_sort(void *addr, int count, int size,
 		int(*comparefunc)(void *p1, void *p2));
 
@@ -723,16 +765,16 @@ public:
 	 */
 
 	void setup_profile(strid_t stream, char *filename);
-	int init_profile(void);
+	int init_profile();
 	void profile_set_call_counts(int flag);
 #if VM_PROFILING
 	uint profile_opcount;
 #define profile_tick() (profile_opcount++)
-	int profile_profiling_active(void);
+	int profile_profiling_active();
 	void profile_in(uint addr, uint stackuse, int accel);
 	void profile_out(uint stackuse);
 	void profile_fail(char *reason);
-	void profile_quit(void);
+	void profile_quit();
 #else /* VM_PROFILING */
 #define profile_tick()         (0)
 #define profile_profiling_active()         (0)
@@ -751,15 +793,15 @@ public:
 	void debugger_set_start_trap(int flag);
 	void debugger_set_quit_trap(int flag);
 	void debugger_set_crash_trap(int flag);
-	void debugger_check_story_file(void);
-	void debugger_setup_start_state(void);
-	int debugger_ever_invoked(void);
+	void debugger_check_story_file();
+	void debugger_setup_start_state();
+	int debugger_ever_invoked();
 	int debugger_cmd_handler(char *cmd);
 	void debugger_cycle_handler(int cycle);
 	void debugger_check_func_breakpoint(uint addr);
 	void debugger_block_and_debug(char *msg);
 	void debugger_handle_crash(char *msg);
-	void debugger_handle_quit(void);
+	void debugger_handle_quit();
 #else /* VM_DEBUGGER */
 #define debugger_tick()              (0)
 #define debugger_check_story_file()  (0)
@@ -805,7 +847,7 @@ public:
 	   /* #define FLOAT_NOT_NATIVE (1) */
 
 	   /* float.c */
-	int init_float(void);
+	int init_float();
 	uint encode_float(gfloat32 val);
 	gfloat32 decode_float(uint val);
 
@@ -884,7 +926,7 @@ public:
 	/**
 	 * Get the current table address.
 	 */
-	uint stream_get_table(void);
+	uint stream_get_table();
 
 	/**
 	 * Set the current table address, and rebuild decoding cache.

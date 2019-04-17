@@ -70,6 +70,7 @@ MODULE_OBJS := \
 	glulxe/search.o \
 	glulxe/serial.o \
 	glulxe/string.o \
+	glulxe/vm.o \
 	magnetic/detection.o \
 	magnetic/magnetic.o \
 	scott/detection.o \

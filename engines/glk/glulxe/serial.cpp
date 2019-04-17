@@ -517,7 +517,7 @@ int Glulxe::write_buffer(dest_t *dest, const byte *ptr, uint len) {
   return 0;
 }
 
-int Glulxe::read_buffer(dest_t *dest, unsigned char *ptr, uint len) {
+int Glulxe::read_buffer(dest_t *dest, byte *ptr, uint len) {
   uint newlen;
 
   if (dest->ismem) {
@@ -546,7 +546,7 @@ int Glulxe::write_short(dest_t *dest, uint16 val) {
   return write_buffer(dest, buf, 2);
 }
 
-int Glulxe::write_byte(dest_t *dest, unsigned char val) {
+int Glulxe::write_byte(dest_t *dest, byte val) {
   return write_buffer(dest, &val, 1);
 }
 
