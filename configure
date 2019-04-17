@@ -1851,6 +1851,11 @@ riscos)
 	elif `which tokenize >/dev/null 2>&1`; then
 		add_line_to_config_mk "TOKENIZE := tokenize"
 	fi
+	if test -e "$GCCSDK_INSTALL_ENV/bin/bindhelp"; then
+		add_line_to_config_mk "BINDHELP := $GCCSDK_INSTALL_ENV/bin/bindhelp"
+	elif `which bindhelp >/dev/null 2>&1`; then
+		add_line_to_config_mk "BINDHELP := bindhelp"
+	fi
 	;;
 tizen)
 	if test -z "$TIZEN_ROOTSTRAP"; then
@@ -2892,6 +2897,7 @@ case $_host_os in
 		append_var CXXFLAGS "-fdata-sections"
 		append_var LDFLAGS "-Wl,--gc-sections"
 		_port_mk="backends/platform/sdl/riscos/riscos.mk"
+		_pandoc=yes
 		;;
 	solaris*)
 		append_var DEFINES "-DSOLARIS"
