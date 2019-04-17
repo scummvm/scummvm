@@ -394,8 +394,7 @@ void Scene::loadImageOverlay(uint16 iptId) {
 		}
 
 		if (img->field_e == 2 || img->field_e == 0) {
-			// error("img->field_e == 2 || img->field_e == 0");
-			//TODO what does this do? Do we need it? 0x800177f8
+			_stage->overlayPriorityTileMap(img->data + img->w * img->h * 2, img->x, img->y, img->w, img->h);
 		}
 	}
 }
@@ -403,6 +402,7 @@ void Scene::loadImageOverlay(uint16 iptId) {
 void Scene::removeImageOverlay(uint16 iptId) {
 	IMG *img =_vm->_dragonIMG->getIMG(iptId);
 	_stage->restoreTiles(img->layerNum - 1, img->x, img->y, img->w, img->h);
+	_stage->restorePriorityTileMap(img->x, img->y, img->w, img->h);
 }
 
 void Scene::setSceneId(int16 newSceneId) {

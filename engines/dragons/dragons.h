@@ -216,7 +216,7 @@ private:
 	void FUN_8003130c();
 	void actor_related_80030e88();
 	void FUN_80038890();
-	void FUN_8002837c();
+	void walkFlickerToObject();
 	void FUN_80031480();
 	void FUN_80038994();
 

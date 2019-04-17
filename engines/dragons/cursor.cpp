@@ -172,16 +172,26 @@ int16 Cursor::updateINIUnderCursor() {
 		}
 	}
 
-	_iniUnderCursor = 0; //TODO remove this once we complete function.
+	// _iniUnderCursor = 0; //TODO remove this once we complete function.
 
 	// TODO 0x80028940
 	int16 inventoryType = _vm->_inventory->getType();
 	if (inventoryType == 1) {
 		// Might be open inventory bag.
 		//TODO 0x80028da8
-	} else if (inventoryType > 2) {
-		_iniUnderCursor = 0;
-		return 0;
+	} else {
+		if (inventoryType < 2) {
+			if (inventoryType != 0) {
+				_iniUnderCursor = 0;
+				return 0;
+			}
+		}
+		else {
+			if (inventoryType != 2) {
+				_iniUnderCursor = 0;
+				return 0;
+			}
+		}
 	}
 
 	return updateIniFromScene();

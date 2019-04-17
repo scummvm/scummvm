@@ -72,6 +72,8 @@ public:
 	Common::Point getPoint2(uint32 pointIndex);
 	byte *getPalette() { return _palette; }
 
+	void overlayPriorityTileMap(byte *data, int16 x, int16 y, int16 w, int16 h);
+	void restorePriorityTileMap(int16 x, int16 y, int16 w, int16 h);
 	void overlayImage(uint16 layerNum, byte *data, int16 x, int16 y, int16 w, int16 h);
 	void restoreTiles(uint16 layerNum, int16 x, int16 y, int16 w, int16 h);
 
@@ -85,10 +87,13 @@ class PriorityLayer {
 public:
 	void load(TileMap &tileMap, byte *tiles);
 	int16 getPriority(Common::Point pos);
+	void overlayTileMap(byte *data, int16 x, int16 y, int16 w, int16 h);
+	void restoreTileMap(int16 x, int16 y, int16 w, int16 h);
 protected:
 	int16 _width, _height;
 	int16 _mapWidth, _mapHeight;
 	byte *_map, *_values;
+	byte *_mapBase;
 };
 
 } // End of namespace Dragons

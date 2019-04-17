@@ -485,14 +485,14 @@ void DragonsEngine::gameLoop()
 						_cursor->data_80072890 = _cursor->_iniUnderCursor;
 						if (_cursor->_sequenceID < 5) {
 							_cursor->data_800728b0_cursor_seqID = _cursor->_sequenceID;
-							FUN_8002837c();
+							walkFlickerToObject();
 							if (bit_flags_8006fbd8 != 0) {
 								clearFlags(ENGINE_FLAG_8);
 							}
 						}
 						else {
 							_cursor->data_800728b0_cursor_seqID = _cursor->_sequenceID;
-							FUN_8002837c();
+							walkFlickerToObject();
 							if (bit_flags_8006fbd8 != 0) {
 								clearFlags(ENGINE_FLAG_8);
 							}
@@ -565,7 +565,7 @@ void DragonsEngine::gameLoop()
 						_scriptOpcodes->_data_800728c0 = _cursor->_iniUnderCursor;
 					}
 					clearFlags(ENGINE_FLAG_8);
-					FUN_8002837c();
+					walkFlickerToObject();
 					goto LAB_8002790c;
 				}
 				if (_cursor->_iniUnderCursor != unkArray_uint16[0]) {
@@ -1074,7 +1074,7 @@ void DragonsEngine::FUN_80038890() {
 	error("FUN_80038890"); //TODO
 }
 
-void DragonsEngine::FUN_8002837c()
+void DragonsEngine::walkFlickerToObject()
 {
 	ushort targetX;
 	ushort targetY;
