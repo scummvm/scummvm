@@ -28,7 +28,7 @@ namespace Glulxe {
 /**
  * The actual immutable structures which lookup_operandlist() returns.
  */
-static const operandlist_t list_none = { 0, 4, NULL };
+static const operandlist_t list_none = { 0, 4, nullptr };
 
 static const int array_S[1] = { modeform_Store };
 static const operandlist_t list_S = { 1, 4, &array_S[0] };
@@ -276,7 +276,7 @@ const operandlist_t *Glulxe::lookup_operandlist(uint opcode) {
 #endif /* GLULX_EXTEND_OPERANDS */
 
   default: 
-    return NULL;
+    return nullptr;
   }
 }
 

@@ -30,10 +30,10 @@ namespace Glulxe {
 Glulxe *g_vm;
 
 Glulxe::Glulxe(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc), _random("glulxe"),
-		vm_exited_cleanly(false), gamefile(nullptr), gamefile_start(0), gamefile_len(0),
-		memmap(nullptr), stack(nullptr), ramstart(0), endgamefile(0), origendmem(0),  stacksize(0),
-		startfuncaddr(0), checksum(0), stackptr(0), frameptr(0), pc(0), prevpc(0), origstringtable(0),
-		stringtable(0), valstackbase(0), localsbase(0), endmem(0), protectstart(0), protectend(0),
+		vm_exited_cleanly(false), gamefile_start(0), gamefile_len(0), memmap(nullptr), stack(nullptr),
+		ramstart(0), endgamefile(0), origendmem(0),  stacksize(0), startfuncaddr(0), checksum(0),
+		stackptr(0), frameptr(0), pc(0), prevpc(0), origstringtable(0), stringtable(0), valstackbase(0),
+		localsbase(0), endmem(0), protectstart(0), protectend(0),
 		stream_char_handler(nullptr), stream_unichar_handler(nullptr),
 		// main
 		library_autorestore_hook(nullptr),
@@ -61,10 +61,9 @@ void Glulxe::runGame() {
 	execute_loop();
 	finalize_vm();
 
-	gamefile = NULL;
 	gamefile_start = 0;
 	gamefile_len = 0;
-	init_err = NULL;
+	init_err = nullptr;
 	vm_exited_cleanly = true;
 
 	profile_quit();

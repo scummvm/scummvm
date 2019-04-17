@@ -135,12 +135,12 @@ void Glulxe::vm_restart() {
 
   /* Load in all of main memory. We do this in 256-byte chunks, because
      why rely on OS stream buffering? */
-  glk_stream_set_position(gamefile, gamefile_start, seekmode_Start);
+  _gameFile.seek(gamefile_start);
   bufpos = 0x100;
 
   for (lx=0; lx<endgamefile; lx++) {
     if (bufpos >= 0x100) {
-      int count = glk_get_buffer_stream(gamefile, buf, 0x100);
+      int count = _gameFile.read(buf, 0x100);
       if (count != 0x100) {
         fatal_error("The game file ended unexpectedly.");
       }

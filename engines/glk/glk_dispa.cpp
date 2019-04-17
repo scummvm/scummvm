@@ -348,21 +348,21 @@ void GlkAPI::gidispatch_set_object_registry(gidispatch_rock_t(*regi)(void *obj, 
 	{
 		/* It's now necessary to go through all existing objects, and register
 			them. */
-		for (win = glk_window_iterate(NULL, NULL);
+		for (win = glk_window_iterate(nullptr, nullptr);
 			win;
-			win = glk_window_iterate(win, NULL))
+			win = glk_window_iterate(win, nullptr))
 		{
 			win->_dispRock = (*gli_register_obj)(win, gidisp_Class_Window);
 		}
-		for (str = glk_stream_iterate(NULL, NULL);
+		for (str = glk_stream_iterate(nullptr, nullptr);
 			str;
-			str = glk_stream_iterate(str, NULL))
+			str = glk_stream_iterate(str, nullptr))
 		{
 			str->_dispRock = (*gli_register_obj)(str, gidisp_Class_Stream);
 		}
-		for (fref = glk_fileref_iterate(NULL, NULL);
+		for (fref = glk_fileref_iterate(nullptr, nullptr);
 			fref;
-			fref = glk_fileref_iterate(fref, NULL))
+			fref = glk_fileref_iterate(fref, nullptr))
 		{
 			fref->_dispRock = (*gli_register_obj)(fref, gidisp_Class_Fileref);
 		}

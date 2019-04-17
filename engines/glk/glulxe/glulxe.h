@@ -48,7 +48,6 @@ private:
 	UnicharHandler stream_unichar_handler, glkio_unichar_han_ptr;
 
 	bool vm_exited_cleanly;
-	strid_t gamefile;
 	uint gamefile_start, gamefile_len;
 	char *init_err, *init_err2;
 
@@ -547,7 +546,7 @@ public:
 	/**
 	 * This writes a new call frame onto the stack, at stackptr. It leaves frameptr pointing
 	 * to the frame (ie, the original stackptr value.) argc and argv are an array of arguments.
-	 * Note that if argc is zero, argv may be NULL.
+	 * Note that if argc is zero, argv may be nullptr.
 	 */
 	void enter_function(uint addr, uint argc, uint *argv);
 	
@@ -620,7 +619,7 @@ public:
 	 * (Note that these are uint values -- native byte ordering. Also, the blocks will be in address order,
 	 * which is a stricter guarantee than the VM specifies; that'll help in heap_apply_summary().)
 	 *
-	 * If the heap is inactive, store NULL. Return 0 for success; otherwise, the operation failed.
+	 * If the heap is inactive, store nullptr. Return 0 for success; otherwise, the operation failed.
 	 *
 	 * The array returned in summary must be freed with glulx_free() after the caller uses it.
 	 */
@@ -654,7 +653,7 @@ public:
 	  * An array of data structures is stored in memory, beginning at start, each structure being structsize bytes.
 	  * Within each struct, there is a key value keysize bytes long, starting at position keyoffset (from
 	  * the start of the structure.) Search through these in order. If one is found whose key matches, return it.
-	  * If numstructs are searched with no result, return NULL.
+	  * If numstructs are searched with no result, return nullptr.
 	  *
 	  * numstructs may be -1 (0xFFFFFFFF) to indicate no upper limit to the number of structures to search.
 	  * The search will continue until a match is found, or (if ZeroKeyTerminates is set) a zero key.

@@ -41,8 +41,9 @@ bool Glulxe::init_serial() {
     ramcache = (unsigned char *)glulx_malloc(sizeof(unsigned char *) * len);
     if (!ramcache)
       return false;
-    glk_stream_set_position(gamefile, gamefile_start+ramstart, seekmode_Start);
-    res = glk_get_buffer_stream(gamefile, (char *)ramcache, len);
+
+	_gameFile.seek(gamefile_start + ramstart);
+    res = _gameFile.read(ramcache, len);
     if (res != len)
       return false;
   }
@@ -59,14 +60,14 @@ void Glulxe::final_serial() {
     }
     glulx_free(undo_chain);
   }
-  undo_chain = NULL;
+  undo_chain = nullptr;
   undo_chain_size = 0;
   undo_chain_num = 0;
 
 #ifdef SERIALIZE_CACHE_RAM
   if (ramcache) {
     glulx_free(ramcache);
-    ramcache = NULL;
+    ramcache = nullptr;
   }
 #endif /* SERIALIZE_CACHE_RAM */
 }
@@ -89,8 +90,8 @@ uint Glulxe::perform_saveundo() {
   dest.ismem = true;
   dest.size = 0;
   dest.pos = 0;
-  dest.ptr = NULL;
-  dest.str = NULL;
+  dest.ptr = nullptr;
+  dest.str = nullptr;
 
   res = 0;
   if (res == 0) {
@@ -147,7 +148,7 @@ uint Glulxe::perform_saveundo() {
     /* It worked. */
     if (undo_chain_num >= undo_chain_size) {
       glulx_free(undo_chain[undo_chain_num-1]);
-      undo_chain[undo_chain_num-1] = NULL;
+      undo_chain[undo_chain_num-1] = nullptr;
     }
     if (undo_chain_size > 1)
       memmove(undo_chain+1, undo_chain, 
@@ -155,13 +156,13 @@ uint Glulxe::perform_saveundo() {
     undo_chain[0] = dest.ptr;
     if (undo_chain_num < undo_chain_size)
       undo_chain_num += 1;
-    dest.ptr = NULL;
+    dest.ptr = nullptr;
   }
   else {
     /* It didn't work. */
     if (dest.ptr) {
       glulx_free(dest.ptr);
-      dest.ptr = NULL;
+      dest.ptr = nullptr;
     }
   }
     
@@ -172,7 +173,7 @@ uint Glulxe::perform_restoreundo() {
   dest_t dest;
   uint res, val = 0;
   uint heapsumlen = 0;
-  uint *heapsumarr = NULL;
+  uint *heapsumarr = nullptr;
 
   /* If profiling is enabled and active then fail. */
   #if VM_PROFILING
@@ -187,7 +188,7 @@ uint Glulxe::perform_restoreundo() {
   dest.size = 0;
   dest.pos = 0;
   dest.ptr = undo_chain[0];
-  dest.str = NULL;
+  dest.str = nullptr;
 
   res = 0;
   if (res == 0) {
@@ -223,11 +224,11 @@ uint Glulxe::perform_restoreundo() {
         (undo_chain_size-1) * sizeof(unsigned char *));
     undo_chain_num -= 1;
     glulx_free(dest.ptr);
-    dest.ptr = NULL;
+    dest.ptr = nullptr;
   }
   else {
     /* It didn't work. */
-    dest.ptr = NULL;
+    dest.ptr = nullptr;
   }
 
   return res;
@@ -253,7 +254,7 @@ uint Glulxe::perform_save(strid_t str) {
   dest.ismem = false;
   dest.size = 0;
   dest.pos = 0;
-  dest.ptr = NULL;
+  dest.ptr = nullptr;
   dest.str = str;
 
   res = 0;
@@ -368,7 +369,7 @@ uint Glulxe::perform_restore(strid_t str, int fromshell) {
   uint lx, res, val;
   uint filestart, filelen = 0;
   uint heapsumlen = 0;
-  uint *heapsumarr = NULL;
+  uint *heapsumarr = nullptr;
 
   /* If profiling is enabled and active then fail. */
   #if VM_PROFILING
@@ -390,7 +391,7 @@ uint Glulxe::perform_restore(strid_t str, int fromshell) {
   dest.ismem = false;
   dest.size = 0;
   dest.pos = 0;
-  dest.ptr = NULL;
+  dest.ptr = nullptr;
   dest.str = str;
 
   res = 0;
@@ -590,7 +591,7 @@ uint Glulxe::write_memstate(dest_t *dest) {
 #ifdef SERIALIZE_CACHE_RAM
   cachepos = 0;
 #else /* SERIALIZE_CACHE_RAM */
-  glk_stream_set_position(gamefile, gamefile_start+ramstart, seekmode_Start);
+  _gameFile.seek(gamefile_start + ramstart);
 #endif /* SERIALIZE_CACHE_RAM */
 
   for (pos=ramstart; pos<endmem; pos++) {
@@ -662,7 +663,7 @@ uint Glulxe::read_memstate(dest_t *dest, uint chunklen) {
 #ifdef SERIALIZE_CACHE_RAM
   cachepos = 0;
 #else /* SERIALIZE_CACHE_RAM */
-  glk_stream_set_position(gamefile, gamefile_start+ramstart, seekmode_Start);
+  _gameFile.seek(gamefile_start + ramstart);
 #endif /* SERIALIZE_CACHE_RAM */
 
   for (pos=ramstart; pos<endmem; pos++) {
@@ -671,14 +672,13 @@ uint Glulxe::read_memstate(dest_t *dest, uint chunklen) {
       val = ramcache[cachepos];
       cachepos++;
 #else /* SERIALIZE_CACHE_RAM */
-      val = glk_get_char_stream(gamefile);
-      if (val == -1) {
-        fatal_error("The game file ended unexpectedly while restoring.");
+		if (_gameFile.pos() >= _gameFile.size()) {
+			fatal_error("The game file ended unexpectedly while restoring.");
+		val = _gameFile.readByte();
       }
 #endif /* SERIALIZE_CACHE_RAM */
       ch = (unsigned char)val;
-    }
-    else {
+    } else {
       ch = 0;
     }
 
@@ -767,7 +767,7 @@ uint Glulxe::read_heapstate(dest_t *dest, uint chunklen, int portable, uint *sum
   uint *arr;
 
   *sumlen = 0;
-  *summary = NULL;
+  *summary = nullptr;
 
   if (chunklen == 0)
     return 0; /* no heap */
@@ -1106,12 +1106,12 @@ uint Glulxe::perform_verify() {
   if (len < 256 || (len & 0xFF) != 0)
     return 1;
 
-  glk_stream_set_position(gamefile, gamefile_start, seekmode_Start);
+  _gameFile.seek(gamefile_start);
   newsum = 0;
 
   /* Read the header */
   for (ix=0; ix<9; ix++) {
-    newlen = glk_get_buffer_stream(gamefile, (char *)buf, 4);
+	  newlen = _gameFile.read(buf, 4);
     if (newlen != 4)
       return 1;
     val = Read4(buf);
@@ -1127,7 +1127,7 @@ uint Glulxe::perform_verify() {
 
   /* Read everything else */
   for (; ix < len/4; ix++) {
-    newlen = glk_get_buffer_stream(gamefile, (char *)buf, 4);
+    newlen = _gameFile.read(buf, 4);
     if (newlen != 4)
       return 1;
     val = Read4(buf);

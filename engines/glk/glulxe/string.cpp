@@ -358,7 +358,7 @@ void Glulxe::stream_string(uint addr, int inmiddle, int bitnum) {
                 }
                 else {
                   argc = 0;
-                  argv = NULL;
+                  argv = nullptr;
                 }
                 pc = addr;
                 push_callstub(0x10, bitnum);
@@ -528,7 +528,7 @@ void Glulxe::stream_string(uint addr, int inmiddle, int bitnum) {
                 }
                 else {
                   argc = 0;
-                  argv = NULL;
+                  argv = nullptr;
                 }
                 pc = addr;
                 push_callstub(0x10, bitnum);
@@ -641,7 +641,7 @@ void Glulxe::stream_set_table(uint addr) {
   if (tablecache_valid) {
     if (tablecache.type == 0)
       dropcache(tablecache.u.branches);
-    tablecache.u.branches = NULL;
+    tablecache.u.branches = nullptr;
     tablecache_valid = false;
   }
 
@@ -752,7 +752,7 @@ void Glulxe::dropcache(cacheblock_t *cablist) {
     cacheblock_t *cab = &(cablist[ix]);
     if (cab->type == 0) {
       dropcache(cab->u.branches);
-      cab->u.branches = NULL;
+      cab->u.branches = nullptr;
     }
   }
   glulx_free(cablist);
