@@ -584,7 +584,7 @@ bool Actor::isFlagSet(uint32 flag) {
 	return (flags & flag) == flag;
 }
 
-uint16 Actor::pathfindingUnk(int16 actor_x, int16 actor_y, int16 target_x, int16 target_y, int16 unkType) {
+uint16 Actor::pathfindingUnk(int16 actor_x, int16 actor_y, int16 target_x, int16 target_y, uint16 unkType) {
 	debug(1, "pathfindingUnk. (%X,%X) -> (%X,%X) %d", x_pos, y_pos, target_x, target_y, unkType);
 
 	if (unkType == 2) {
@@ -593,16 +593,17 @@ uint16 Actor::pathfindingUnk(int16 actor_x, int16 actor_y, int16 target_x, int16
 	uint16 width = getEngine()->_scene->getStageWidth();
 	uint16 height = getEngine()->_scene->getStageHeight();
 
-	if (unkType & 0x8000
-	|| actor_x < 0
-	|| width - 1 < actor_x
-	|| actor_y < 0
-	|| height - 1 < actor_y
-	|| target_x < 0
-	|| width - 1 < target_x
-	|| target_y < 0
-	|| height - 1 < target_y) {
-		return 0;
+	if (unkType & 0x8000) {
+		if (actor_x < 0
+			|| width - 1 < actor_x
+			|| actor_y < 0
+			|| height - 1 < actor_y
+			|| target_x < 0
+			|| width - 1 < target_x
+			|| target_y < 0
+			|| height - 1 < target_y) {
+			return 0;
+		}
 	}
 
 	int32 x_increment = 0;

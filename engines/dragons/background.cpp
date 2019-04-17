@@ -38,9 +38,11 @@ void Dragons::PriorityLayer::load(TileMap &tileMap, byte *tiles) {
 	_mapHeight = tileMap.h;
 	size_t tileSize = (size_t)tileMap.tileIndexOffset * TILE_SIZE;
 	_map = new byte[tileMap.size];
+	_mapBase = new byte[tileMap.size];
 	_values = new byte[tileSize];
 
 	memcpy(_map, tileMap.map, tileMap.size);
+	memcpy(_mapBase, tileMap.map, tileMap.size);
 	memcpy(_values, tiles, tileSize);
 }
 
@@ -59,6 +61,27 @@ int16 PriorityLayer::getPriority(Common::Point pos) {
 //			_values + (((int)pos.y % 8) * 32) +
 //						 ((int)pos.x % 32));
 	return _values[mapIndex * TILE_WIDTH * TILE_HEIGHT + sx + sy * TILE_WIDTH] + 1;
+}
+
+void PriorityLayer::overlayTileMap(byte *data, int16 x, int16 y, int16 w, int16 h) {
+	byte *ptr = _map + (x + y * _mapWidth) * 2;
+	byte *src = data;
+	for (int i=0;i < h; i++) {
+		memcpy(ptr, src, w * 2);
+		src += w * 2;
+		ptr += _mapWidth * 2;
+	}
+}
+
+void PriorityLayer::restoreTileMap(int16 x, int16 y, int16 w, int16 h) {
+	byte *ptr = _map + (x + y * _mapWidth) * 2;
+	byte *src = _mapBase + (x + y * _mapWidth) * 2;
+	for (int i=0;i < h; i++) {
+		memcpy(ptr, src, w * 2);
+		src += _mapWidth * 2;
+		ptr += _mapWidth * 2;
+	}
+
 }
 
 Background::Background() : _priorityLayer(0), _points1(0), _points2(0), _data(0) {
@@ -211,6 +234,14 @@ void Background::restoreTiles(uint16 layerNum, int16 x, int16 y, int16 w, int16 
 			drawTileToSurface(_layer[layerNum], _tileDataOffset + idx * 0x100, x * TILE_WIDTH, y * TILE_HEIGHT);
 		}
 	}
+}
+
+void Background::overlayPriorityTileMap(byte *data, int16 x, int16 y, int16 w, int16 h) {
+	_priorityLayer->overlayTileMap(data, x, y, w, h);
+}
+
+void Background::restorePriorityTileMap(int16 x, int16 y, int16 w, int16 h) {
+	_priorityLayer->restoreTileMap(x, y, w, h);
 }
 
 BackgroundResourceLoader::BackgroundResourceLoader(BigfileArchive *bigFileArchive, DragonRMS *dragonRMS) : _bigFileArchive(
