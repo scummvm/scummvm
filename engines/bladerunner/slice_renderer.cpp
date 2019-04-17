@@ -36,7 +36,7 @@ namespace BladeRunner {
 
 SliceRenderer::SliceRenderer(BladeRunnerEngine *vm) {
 	_vm = vm;
-	_pixelFormat = screenPixelForrmat();
+	_pixelFormat = screenPixelFormat();
 
 	for (int i = 0; i < 942; i++) { // yes, its going just to 942 and not 997
 		_animationsShadowEnabled[i] = true;

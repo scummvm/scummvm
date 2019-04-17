@@ -35,7 +35,7 @@ namespace BladeRunner {
 
 OuttakePlayer::OuttakePlayer(BladeRunnerEngine *vm) {
 	_vm = vm;
-	_surfaceVideo.create(_vm->_surfaceBack.w, _vm->_surfaceBack.h, screenPixelForrmat());
+	_surfaceVideo.create(_vm->_surfaceBack.w, _vm->_surfaceBack.h, screenPixelFormat());
 }
 
 OuttakePlayer::~OuttakePlayer() {

@@ -157,7 +157,7 @@ void Font::reset() {
 	_screenHeight = 0;
 	_spacing1 = 0;
 	_spacing2 = 0;
-	_color = screenPixelForrmat().RGBToColor(255, 255, 255);
+	_color = screenPixelFormat().RGBToColor(255, 255, 255);
 	_intersperse = 0;
 
 	memset(_characters, 0, 256 * sizeof(Character));

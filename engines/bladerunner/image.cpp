@@ -74,7 +74,7 @@ bool Image::open(const Common::String &name) {
 	}
 
 	_surface.init(width, height, 2*width, data, gameDataPixelFormat());
-	_surface.convertToInPlace(screenPixelForrmat());
+	_surface.convertToInPlace(screenPixelFormat());
 
 	delete[] buf;
 	delete stream;

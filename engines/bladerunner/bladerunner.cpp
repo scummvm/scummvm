@@ -302,7 +302,7 @@ void BladeRunnerEngine::pauseEngineIntern(bool pause) {
 }
 
 Common::Error BladeRunnerEngine::run() {
-	Graphics::PixelFormat format = screenPixelForrmat();
+	Graphics::PixelFormat format = screenPixelFormat();
 	initGraphics(640, 480, &format);
 
 	_system->showMouse(true);
@@ -375,8 +375,8 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	// This is the original startup in the game
 
-	_surfaceFront.create(640, 480, screenPixelForrmat());
-	_surfaceBack.create(640, 480, screenPixelForrmat());
+	_surfaceFront.create(640, 480, screenPixelFormat());
+	_surfaceBack.create(640, 480, screenPixelFormat());
 
 	_time = new Time(this);
 

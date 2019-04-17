@@ -312,7 +312,7 @@ static inline const Graphics::PixelFormat gameDataPixelFormat() {
 	return Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15);
 }
 
-static inline const Graphics::PixelFormat screenPixelForrmat() {
+static inline const Graphics::PixelFormat screenPixelFormat() {
 	// Should be a format supported by Android port
 	return Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0);
 }
