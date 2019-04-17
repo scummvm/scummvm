@@ -35,7 +35,7 @@ void Glulxe::setup_vm() {
 	stream_char_handler = nullptr;
 	stream_unichar_handler = nullptr;
 
-	_gameFile.seek(0);
+	_gameFile.seek(gamefile_start + 8);
 	if (_gameFile.read(buf, 4 * 7) != (4 * 7))
 		fatal_error("The game file header is too short.");
 

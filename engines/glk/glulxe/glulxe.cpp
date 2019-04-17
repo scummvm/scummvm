@@ -105,7 +105,7 @@ bool Glulxe::is_gamefile_valid() {
 }
 
 void Glulxe::fatal_error_handler(const char *str, const char *arg, bool useVal, int val) {
-	Common::String msg = "Glulxe fatal error: ";
+	Common::String msg = Common::String::format("Glulxe fatal error: %s", str);
 
 	if (arg || useVal) {
 		msg += " (";
@@ -124,7 +124,7 @@ void Glulxe::fatal_error_handler(const char *str, const char *arg, bool useVal, 
 }
 
 void Glulxe::nonfatal_warning_handler(const char *str, const char *arg, bool useVal, int val) {
-	Common::String msg = "Glulxe warning: ";
+	Common::String msg = Common::String::format("Glulxe warning: %s", str);
 
 	if (arg || useVal) {
 		msg += " (";
