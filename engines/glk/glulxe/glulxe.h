@@ -831,7 +831,7 @@ public:
 
 #if VM_DEBUGGER
 	unsigned long debugger_opcount;
-#define debugger_tick() (debugger_opcount++)
+	void debugger_tick() { debugger_opcount++ }
 	int debugger_load_info_stream(strid_t stream);
 	int debugger_load_info_chunk(strid_t stream, uint pos, uint len);
 	void debugger_track_cpu(int flag);
@@ -848,11 +848,11 @@ public:
 	void debugger_handle_crash(char *msg);
 	void debugger_handle_quit();
 #else /* VM_DEBUGGER */
-#define debugger_tick()              (0)
-#define debugger_check_story_file()  (0)
-#define debugger_setup_start_state() (0)
-#define debugger_check_func_breakpoint(addr)  (0)
-#define debugger_handle_crash(msg)   (0)
+	void debugger_tick() {}
+	void debugger_check_story_file() {}
+	void debugger_setup_start_state() {}
+	void debugger_check_func_breakpoint(uint addr) {}
+	void debugger_handle_crash(const char *msg) {}
 #endif /* VM_DEBUGGER */
 
 	/**@}*/

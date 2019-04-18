@@ -96,6 +96,16 @@ class Glulxe;
 #define MemW2(adr, vl)  (VerifyW(adr, 2), Write2(memmap+(adr), (vl)))
 #define MemW4(adr, vl)  (VerifyW(adr, 4), Write4(memmap+(adr), (vl)))
 
+#ifndef _HUGE_ENUF
+#define _HUGE_ENUF  1e+300  // _HUGE_ENUF*_HUGE_ENUF must overflow
+#endif
+#ifndef INFINITY
+#define INFINITY   ((float)(_HUGE_ENUF * _HUGE_ENUF))
+#endif
+#ifndef NAN
+#define NAN        ((float)(INFINITY * 0.0F))
+#endif
+
 /**
  * Macros to access values on the stack. These *must* be used with proper alignment!
  * (That is, Stk4 and StkW4 must take addresses which are multiples of four, etc.)
