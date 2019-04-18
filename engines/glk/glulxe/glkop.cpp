@@ -1366,11 +1366,11 @@ void Glulxe::ReleaseVMString(char *ptr) {
 	free_temp_string(ptr);
 }
 
-uint *Glulxe::DecodeVMUstring(uint addr) {
+uint32 *Glulxe::DecodeVMUstring(uint addr) {
 	return make_temp_ustring(addr);
 }
 
-void Glulxe::ReleaseVMUstring(uint *ptr) {
+void Glulxe::ReleaseVMUstring(uint32 *ptr) {
 	free_temp_ustring(ptr);
 }
 

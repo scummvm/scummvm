@@ -231,7 +231,7 @@ union gluniversal_union {
 	int8 _sch;           ///< Cs
 	char _ch;            ///< Cn
 	char *_charstr;		 ///< S
-	uint *_unicharstr;   ///< U
+	uint32 *_unicharstr; ///< U
 	void *_array;        ///< all # arguments
 	uint _ptrflag;       ///< [ ... ] or *?
 };

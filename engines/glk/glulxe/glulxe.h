@@ -326,8 +326,8 @@ protected:
 	void WriteStructField(uint addr, uint fieldnum, uint val);
 	char *DecodeVMString(uint addr);
 	void ReleaseVMString(char *ptr);
-	uint *DecodeVMUstring(uint addr);
-	void ReleaseVMUstring(uint *ptr);
+	uint32 *DecodeVMUstring(uint addr);
+	void ReleaseVMUstring(uint32 *ptr);
 
 	/**@}*/
 
@@ -993,9 +993,9 @@ public:
 	void stream_get_iosys(uint *mode, uint *rock);
 	void stream_set_iosys(uint mode, uint rock);
 	char *make_temp_string(uint addr);
-	uint *make_temp_ustring(uint addr);
+	uint32 *make_temp_ustring(uint addr);
 	void free_temp_string(char *str);
-	void free_temp_ustring(uint *str);
+	void free_temp_ustring(uint32 *str);
 
 	/**@}*/
 };

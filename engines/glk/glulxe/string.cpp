@@ -766,10 +766,10 @@ char *Glulxe::make_temp_string(uint addr) {
 	return res;
 }
 
-uint *Glulxe::make_temp_ustring(uint addr) {
+uint32 *Glulxe::make_temp_ustring(uint addr) {
 	int ix, len;
 	uint addr2;
-	uint *res;
+	uint32 *res;
 
 	if (Mem1(addr) != 0xE2)
 		fatal_error("Ustring argument to a Glk call must be unencoded.");
@@ -778,9 +778,9 @@ uint *Glulxe::make_temp_ustring(uint addr) {
 	for (addr2 = addr; Mem4(addr2); addr2 += 4) { };
 	len = (addr2 - addr) / 4;
 	if ((len + 1) * 4 < STATIC_TEMP_BUFSIZE) {
-		res = (uint *)temp_buf;
+		res = (uint32 *)temp_buf;
 	} else {
-		res = (uint *)glulx_malloc((len + 1) * 4);
+		res = (uint32 *)glulx_malloc((len + 1) * 4);
 		if (!res)
 			fatal_error("Unable to allocate space for ustring argument to Glk call.");
 	}
@@ -798,8 +798,8 @@ void Glulxe::free_temp_string(char *str) {
 		glulx_free(str);
 }
 
-void Glulxe::free_temp_ustring(uint *str) {
-	if (str && str != (uint *)temp_buf)
+void Glulxe::free_temp_ustring(uint32 *str) {
+	if (str && str != (uint32 *)temp_buf)
 		glulx_free(str);
 }
 
