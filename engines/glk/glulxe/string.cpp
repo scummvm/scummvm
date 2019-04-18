@@ -75,7 +75,7 @@ void Glulxe::stream_set_iosys(uint mode, uint rock) {
 void Glulxe::nopio_char_han(unsigned char ch) {
 }
 
-void Glulxe::nopio_unichar_han(uint ch) {
+void Glulxe::nopio_unichar_han(uint32 ch) {
 }
 
 void Glulxe::filio_char_han(unsigned char ch) {
@@ -84,12 +84,12 @@ void Glulxe::filio_char_han(unsigned char ch) {
 	enter_function(iosys_rock, 1, &val);
 }
 
-void Glulxe::filio_unichar_han(uint val) {
+void Glulxe::filio_unichar_han(uint32 val) {
 	push_callstub(0, 0);
 	enter_function(iosys_rock, 1, &val);
 }
 
-void Glulxe::glkio_unichar_nouni_han(uint val) {
+void Glulxe::glkio_unichar_nouni_han(uint32 val) {
 	/* Only used if the Glk library has no Unicode functions */
 	if (val > 0xFF)
 		val = '?';

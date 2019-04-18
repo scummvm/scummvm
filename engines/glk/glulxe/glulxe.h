@@ -33,7 +33,7 @@ namespace Glulxe {
 
 class Glulxe;
 typedef void (Glulxe::*CharHandler)(unsigned char);
-typedef void (Glulxe::*UnicharHandler)(uint);
+typedef void (Glulxe::*UnicharHandler)(uint32);
 
 /**
  * Glulxe game interpreter
@@ -381,9 +381,9 @@ protected:
 
 	void nopio_char_han(unsigned char ch);
 	void filio_char_han(unsigned char ch);
-	void nopio_unichar_han(uint ch);
-	void filio_unichar_han(uint ch);
-	void glkio_unichar_nouni_han(uint val);
+	void nopio_unichar_han(uint32 ch);
+	void filio_unichar_han(uint32 ch);
+	void glkio_unichar_nouni_han(uint32 val);
 
 	void dropcache(cacheblock_t *cablist);
 	void buildcache(cacheblock_t *cablist, uint nodeaddr, int depth, int mask);
