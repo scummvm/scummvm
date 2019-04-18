@@ -65,43 +65,6 @@ namespace Glulxe {
      To work this code over for a new VM, just diddle the macros.
 */
 
-#define ReadMemory(addr)  \
-	(((addr) == 0xffffffff) \
-	 ? (stackptr -= 4, Stk4(stackptr)) \
-	 : (Mem4(addr)))
-#define WriteMemory(addr, val)  \
-	(((addr) == 0xffffffff) \
-	 ? (StkW4(stackptr, (val)), stackptr += 4) \
-	 : (MemW4((addr), (val))))
-#define CaptureCArray(addr, len, passin)  \
-	(grab_temp_c_array(addr, len, passin))
-#define ReleaseCArray(ptr, addr, len, passout)  \
-	(release_temp_c_array(ptr, addr, len, passout))
-#define CaptureIArray(addr, len, passin)  \
-	(grab_temp_i_array(addr, len, passin))
-#define ReleaseIArray(ptr, addr, len, passout)  \
-	(release_temp_i_array(ptr, addr, len, passout))
-#define CapturePtrArray(addr, len, objclass, passin)  \
-	(grab_temp_ptr_array(addr, len, objclass, passin))
-#define ReleasePtrArray(ptr, addr, len, objclass, passout)  \
-	(release_temp_ptr_array(ptr, addr, len, objclass, passout))
-#define ReadStructField(addr, fieldnum)  \
-	(((addr) == 0xffffffff) \
-	 ? (stackptr -= 4, Stk4(stackptr)) \
-	 : (Mem4((addr)+(fieldnum)*4)))
-#define WriteStructField(addr, fieldnum, val)  \
-	(((addr) == 0xffffffff) \
-	 ? (StkW4(stackptr, (val)), stackptr += 4) \
-	 : (MemW4((addr)+(fieldnum)*4, (val))))
-#define DecodeVMString(addr)  \
-	(make_temp_string(addr))
-#define ReleaseVMString(ptr)  \
-	(free_temp_string(ptr))
-#define DecodeVMUstring(addr)  \
-	(make_temp_ustring(addr))
-#define ReleaseVMUstring(ptr)  \
-	(free_temp_ustring(ptr))
-
 static gidispatch_rock_t classtable_register(void *obj, uint objclass) {
 	return g_vm->glulxe_classtable_register(obj, objclass);
 }
@@ -125,9 +88,6 @@ void Glulxe::glkopInit() {
 	classes = nullptr;
 }
 
-/* init_dispatch():
-   Set up the class hash tables and other startup-time stuff.
-*/
 bool Glulxe::init_dispatch() {
 	int ix;
 
@@ -1336,6 +1296,82 @@ char *Glulxe::get_game_id() {
 	buf[jx++] = '\0';
 
 	return buf;
+}
+
+uint Glulxe::ReadMemory(uint addr) {
+	if (addr == 0xffffffff) {
+		stackptr -= 4;
+		return Stk4(stackptr);
+	} else {
+		return Mem4(addr);
+	}
+}
+
+void Glulxe::WriteMemory(uint addr, uint val) {
+	if (addr == 0xffffffff) {
+		StkW4(stackptr, (val));
+		stackptr += 4;
+	} else {
+		MemW4(addr, val);
+	}
+}
+
+char *Glulxe::CaptureCArray(uint addr, uint len, int passin) {
+	return grab_temp_c_array(addr, len, passin);
+}
+
+void Glulxe::ReleaseCArray(char *ptr, uint addr, uint len, int passout) {
+	release_temp_c_array(ptr, addr, len, passout);
+}
+
+uint *Glulxe::CaptureIArray(uint addr, uint len, int passin) {
+	return grab_temp_i_array(addr, len, passin);
+}
+
+void Glulxe::ReleaseIArray(uint *ptr, uint addr, uint len, int passout) {
+	release_temp_i_array(ptr, addr, len, passout);
+}
+
+void **Glulxe::CapturePtrArray(uint addr, uint len, int objclass, int passin) {
+	return grab_temp_ptr_array(addr, len, objclass, passin);
+}
+
+void Glulxe::ReleasePtrArray(void **ptr, uint addr, uint len, int objclass, int passout) {
+	return release_temp_ptr_array(ptr, addr, len, objclass, passout);
+}
+
+uint Glulxe::ReadStructField(uint addr, uint fieldnum) {
+	if (addr == 0xffffffff) {
+		stackptr -= 4;
+		return Stk4(stackptr);
+	} else {
+		return Mem4(addr + (fieldnum * 4));
+	}
+}
+
+void Glulxe::WriteStructField(uint addr, uint fieldnum, uint val) {
+	if (addr == 0xffffffff) {
+		StkW4(stackptr, val);
+		stackptr += 4;
+	} else {
+		MemW4(addr + (fieldnum * 4), val);
+	}
+}
+
+char *Glulxe::DecodeVMString(uint addr) {
+	return make_temp_string(addr);
+}
+
+void Glulxe::ReleaseVMString(char *ptr) {
+	free_temp_string(ptr);
+}
+
+uint *Glulxe::DecodeVMUstring(uint addr) {
+	return make_temp_ustring(addr);
+}
+
+void Glulxe::ReleaseVMUstring(uint *ptr) {
+	free_temp_ustring(ptr);
 }
 
 } // End of namespace Glulxe

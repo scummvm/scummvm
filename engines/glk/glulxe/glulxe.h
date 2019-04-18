@@ -314,6 +314,21 @@ protected:
 	 */
 	char *get_game_id();
 
+	uint ReadMemory(uint addr);
+	void WriteMemory(uint addr, uint val);
+	char *CaptureCArray(uint addr, uint len, int passin);
+	void ReleaseCArray(char *ptr, uint addr, uint len, int passout);
+	uint *CaptureIArray(uint addr, uint len, int passin);
+	void ReleaseIArray(uint *ptr, uint addr, uint len, int passout);
+	void **CapturePtrArray(uint addr, uint len, int objclass, int passin);
+	void ReleasePtrArray(void **ptr, uint addr, uint len, int objclass, int passout);
+	uint ReadStructField(uint addr, uint fieldnum);
+	void WriteStructField(uint addr, uint fieldnum, uint val);
+	char *DecodeVMString(uint addr);
+	void ReleaseVMString(char *ptr);
+	uint *DecodeVMUstring(uint addr);
+	void ReleaseVMUstring(uint *ptr);
+
 	/**@}*/
 
 	/**
@@ -732,6 +747,9 @@ public:
 
 	void set_library_select_hook(void(*func)(uint));
 
+	/**
+	 * Set up the class hash tables and other startup-time stuff.
+	 */
 	bool init_dispatch();
 
 	/**
@@ -793,22 +811,23 @@ public:
 	void setup_profile(strid_t stream, char *filename);
 	int init_profile();
 	void profile_set_call_counts(int flag);
-#if VM_PROFILING
+
+	#if VM_PROFILING
 	uint profile_opcount;
-#define profile_tick() (profile_opcount++)
+	#define profile_tick() (profile_opcount++)
 	int profile_profiling_active();
 	void profile_in(uint addr, uint stackuse, int accel);
 	void profile_out(uint stackuse);
-	void profile_fail(char *reason);
+	void profile_fail(const char *reason);
 	void profile_quit();
-#else /* VM_PROFILING */
-#define profile_tick()         (0)
-#define profile_profiling_active()         (0)
-#define profile_in(addr, stackuse, accel)  (0)
-#define profile_out(stackuse)  (0)
-#define profile_fail(reason)   (0)
-#define profile_quit()         (0)
-#endif /* VM_PROFILING */
+	#else /* VM_PROFILING */
+	void profile_tick() {}
+	void profile_profiling_active() {}
+	void profile_in(uint addr, uint stackuse, int accel) {}
+	void profile_out(uint stackuse)  {}
+	void profile_fail(const char *reason) {}
+	void profile_quit() {}
+	#endif /* VM_PROFILING */
 
 #if VM_DEBUGGER
 	unsigned long debugger_opcount;

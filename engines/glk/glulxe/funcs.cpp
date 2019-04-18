@@ -36,14 +36,14 @@ void Glulxe::enter_function(uint funcaddr, uint argc, uint *argv) {
 
 	accelFunc = accel_get_func(addr);
 	if (accelFunc) {
-		profile_in(addr, stackptr, TRUE);
+		profile_in(addr, stackptr, true);
 		val = (this->*accelFunc)(argc, argv);
 		profile_out(stackptr);
 		pop_callstub(val);
 		return;
 	}
 
-	profile_in(addr, stackptr, FALSE);
+	profile_in(addr, stackptr, false);
 
 	/* Check the Glulx type identifier byte. */
 	functype = Mem1(addr);
