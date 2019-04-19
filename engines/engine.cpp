@@ -61,6 +61,10 @@
 #include "graphics/pixelformat.h"
 #include "image/bmp.h"
 
+#ifdef ENABLE_SPLASH_OVERRIDE
+#include "image/png.h"
+#endif
+
 #ifdef _WIN32_WCE
 extern bool isSmartphone();
 #endif
@@ -216,46 +220,94 @@ void initCommonGFX() {
 
 // Please leave the splash screen in working order for your releases, even if they're commercial.
 // This is a proper and good way to show your appreciation for our hard work over these years.
+// However, if ScummVM was compiled with support for splash screen overriding, you can provide
+// your own splash screen. In this case, please consider adding our own logo to your custom splash!
 bool splash = false;
 
 #include "logo_data.h"
 
 void splashScreen() {
-	Common::MemoryReadStream stream(logo_data, ARRAYSIZE(logo_data));
-
+	
+	bool bSplashOverride = false;
 	Image::BitmapDecoder bitmap;
+	Common::File overrideImageFile;
 
-	if (!bitmap.loadStream(stream)) {
-		warning("Error loading logo file");
-		return;
+	#ifdef ENABLE_SPLASH_OVERRIDE
+	Image::PNGDecoder overrideImage;
+	if(overrideImageFile.open(ConfMan.getActiveDomainName() +"-splash.png")){
+		bSplashOverride = true;
+		if(!overrideImage.loadStream(overrideImageFile))
+		{
+			warning("Error loading override logo file");
+			return;
+		}
+	}
+	else
+	#endif
+	{
+		Common::MemoryReadStream stream(logo_data, ARRAYSIZE(logo_data));
+		if (!bitmap.loadStream(stream)) {
+			warning("Error loading logo file");
+			return;
+		}
 	}
 
 	g_system->showOverlay();
 
-	// Fill with orange
 	Graphics::Surface screen;
 	screen.create(g_system->getOverlayWidth(), g_system->getOverlayHeight(), g_system->getOverlayFormat());
-	screen.fillRect(Common::Rect(screen.w, screen.h), screen.format.ARGBToColor(0xff, 0xcc, 0x66, 0x00));
+
+	if(bSplashOverride) {
+		// Fill with black
+		screen.fillRect(Common::Rect(screen.w, screen.h), screen.format.ARGBToColor(0xff, 0x00, 0x00, 0x00));
+	}
+	else
+	{
+		// Fill with orange
+		screen.fillRect(Common::Rect(screen.w, screen.h), screen.format.ARGBToColor(0xff, 0xcc, 0x66, 0x00));
+	}
 
 	// Load logo
-	Graphics::Surface *logo = bitmap.getSurface()->convertTo(g_system->getOverlayFormat(), bitmap.getPalette());
+	Graphics::Surface *logo;
+	
+	#ifdef ENABLE_SPLASH_OVERRIDE
+	if(bSplashOverride) {
+		logo = overrideImage.getSurface()->convertTo(g_system->getOverlayFormat(), overrideImage.getPalette());
+	}
+	else
+	#endif
+	{
+		logo = bitmap.getSurface()->convertTo(g_system->getOverlayFormat(), bitmap.getPalette());
+	}
 	int lx = MAX((g_system->getOverlayWidth() - logo->w) / 2, 0);
 	int ly = MAX((g_system->getOverlayHeight() - logo->h) / 2, 0);
-
-	// Print version information
-	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
-	int w = font->getStringWidth(gScummVMVersionDate);
-	int x = g_system->getOverlayWidth() - w - 5; // lx + logo->w - w + 5;
-	int y = g_system->getOverlayHeight() - font->getFontHeight() - 5; //ly + logo->h + 5;
-	font->drawString(&screen, gScummVMVersionDate, x, y, w, screen.format.ARGBToColor(0xff, 0, 0, 0));
-
-	g_system->copyRectToOverlay(screen.getPixels(), screen.pitch, 0, 0, screen.w, screen.h);
-	screen.free();
-
-	// Draw logo
 	int lw = MIN<uint16>(logo->w, g_system->getOverlayWidth() - lx);
 	int lh = MIN<uint16>(logo->h, g_system->getOverlayHeight() - ly);
+	if(bSplashOverride) {
+		// Make room for the version information by reducing height by 20px
+		lh = lh - 20;
+	}
 
+	
+	// Print version information
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
+	Common::String scummVMCopyright;
+	if (bSplashOverride) {
+		scummVMCopyright += "powered by ScummVM ";
+	}
+	scummVMCopyright += gScummVMVersionDate;
+	int w = font->getStringWidth(scummVMCopyright);
+	int x = g_system->getOverlayWidth() - w - 5; // lx + logo->w - w + 5;
+	int y = g_system->getOverlayHeight() - font->getFontHeight() - 5; //ly + logo->h + 5;
+	if (bSplashOverride) {
+		font->drawString(&screen, scummVMCopyright, x, y, w, screen.format.ARGBToColor(0xff, 0xff, 0xff, 0xff));
+	} else {
+		font->drawString(&screen, scummVMCopyright, x, y, w, screen.format.ARGBToColor(0xff, 0x00, 0x00, 0x00));
+	}
+	g_system->copyRectToOverlay(screen.getPixels(), screen.pitch, 0, 0, screen.w, screen.h);
+	screen.free();
+	
+	// Draw logo
 	g_system->copyRectToOverlay(logo->getPixels(), logo->pitch, lx, ly, lw, lh);
 	logo->free();
 	delete logo;
@@ -375,7 +427,6 @@ inline Graphics::PixelFormat findCompatibleFormat(const Common::List<Graphics::P
 	return Graphics::PixelFormat::createFormatCLUT8();
 }
 
-
 void initGraphics(int width, int height, const Common::List<Graphics::PixelFormat> &formatList) {
 	Graphics::PixelFormat format = findCompatibleFormat(g_system->getSupportedFormats(), formatList);
 	initGraphics(width, height, &format);
@@ -426,7 +477,7 @@ void Engine::checkCD() {
 #endif
 #ifdef USE_FLAC
 	if (Common::File::exists("track1.fla") ||
-            Common::File::exists("track1.flac") ||
+	    Common::File::exists("track1.flac") ||
 	    Common::File::exists("track01.fla") ||
 	    Common::File::exists("track01.flac"))
 		return;
