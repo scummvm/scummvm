@@ -8034,6 +8034,41 @@ static const uint16 qfg1vgaPatchMacAntwerpControls[] = {
 	PATCH_END
 };
 
+// The Mac version's Sierra logo and introduction are often skipped when using a
+//  mouse. This is a bug in the original that accidentally relies on slower
+//  machines. In DOS these scenes could be skipped by pressing Enter. Sierra
+//  updated this to include the mouse, but they did this by accepting any event
+//  type, including mouse-up. These rooms load in response to mouse-down and if
+//  they finish loading before the button is released then they are skipped.
+//
+// We fix this by excluding mouse-up events from these room event handlers.
+//
+// Applies to: Mac Floppy
+// Responsible methods: LogoRoom:handleEvent, intro:handleEvent
+// Fixes bug: #10937
+static const uint16 qfg1vgaSignatureMacLogoIntroSkip[] = {
+	0x4a, 0x04,                             // send 04 [ event type? ]
+	0x31, SIG_ADDTOOFFSET(+1),              // bnt [ skip if event:type == none (0) ]
+	0x39, SIG_ADDTOOFFSET(+1),              // pushi claimed
+	SIG_MAGICDWORD,
+	0x78,                                   // push1
+	0x78,                                   // push1
+	0x87, 0x01,                             // lap 01
+	0x4a, 0x06,                             // send 06 [ event claimed: 1 ]
+	SIG_END
+};
+
+static const uint16 qfg1vgaPatchMacLogoIntroSkip[] = {
+	0x39, PATCH_GETORIGINALBYTE(+5),        // pushi claimed
+	0x78,                                   // push1
+	0x78,                                   // push1
+	0x4a, 0x0a,                             // send 0a [ event type? claimed: 1 ]
+	0x38, PATCH_UINT16(0x00fd),             // pushi 00fd
+	0x12,                                   // and
+	0x31, PATCH_GETORIGINALBYTEADJUST(+3, -8), // bnt [ skip if event:type == none (0) or mouse-up (2)]
+	PATCH_END
+};
+
 //          script, description,                                      signature                            patch
 static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 	{  true,    41, "moving to castle gate",                       1, qfg1vgaSignatureMoveToCastleGate,    qfg1vgaPatchMoveToCastleGate },
@@ -8043,12 +8078,14 @@ static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 	{  true,    78, "mac: enable antwerp controls",                1, qfg1vgaSignatureMacAntwerpControls,  qfg1vgaPatchMacAntwerpControls },
 	{  true,    96, "funny room script bug fixed",                 1, qfg1vgaSignatureFunnyRoomFix,        qfg1vgaPatchFunnyRoomFix },
 	{  true,    96, "yorick door #2 lockup fixed",                 1, qfg1vgaSignatureYorickDoorTwoRect,   qfg1vgaPatchYorickDoorTwoRect },
+	{  true,   200, "mac: intro mouse-up fix",                     1, qfg1vgaSignatureMacLogoIntroSkip,    qfg1vgaPatchMacLogoIntroSkip },
 	{  true,   210, "cheetaur description fixed",                  1, qfg1vgaSignatureCheetaurDescription, qfg1vgaPatchCheetaurDescription },
 	{  true,   215, "fight event issue",                           1, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
 	{  true,   216, "weapon master event issue",                   1, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
 	{  true,   299, "speedtest",                                   1, qfg1vgaSignatureSpeedTest,           qfg1vgaPatchSpeedTest },
 	{  true,   331, "moving to crusher",                           1, qfg1vgaSignatureMoveToCrusher,       qfg1vgaPatchMoveToCrusher },
 	{  true,   331, "moving to crusher from card game",            1, qfg1vgaSignatureCrusherCardGame,     qfg1vgaPatchCrusherCardGame },
+	{  true,   603, "mac: logo mouse-up fix",                      1, qfg1vgaSignatureMacLogoIntroSkip,    qfg1vgaPatchMacLogoIntroSkip },
 	{  true,   814, "window text temp space",                      1, qfg1vgaSignatureTempSpace,           qfg1vgaPatchTempSpace },
 	{  true,   814, "dialog header offset",                        3, qfg1vgaSignatureDialogHeader,        qfg1vgaPatchDialogHeader },
 	{  true,   970, "antwerps wandering off-screen",               1, qfg1vgaSignatureAntwerpWander,       qfg1vgaPatchAntwerpWander },
