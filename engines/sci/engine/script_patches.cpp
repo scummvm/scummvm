@@ -7872,24 +7872,27 @@ static const uint16 qfg1vgaPatchBrutusScriptFreeze[] = {
 	PATCH_END
 };
 
-// Speed up the speed test by a factor 50, ensuring the detected speed
-// will end up at the highest level. This improves the detail in
-// Yorick's room (96), and slightly changes the timing in other rooms.
+// Patch the speed test so that it always ends up at the highest level. This
+//  improves the detail in Yorick's room (96), and slightly changes the timing
+//  in other rooms. This is compatible with PC and Mac versions which use
+//  significantly different tests and calculations.
 //
-// Method changed: speedTest::changeState
+// Applies to: PC Floppy, Mac Floppy
+// Responsible method: speedTest:changeState(2)
 static const uint16 qfg1vgaSignatureSpeedTest[] = {
 	0x76,                               // push0
 	0x43, 0x42, 0x00,                   // callk GetTime, 0
 	SIG_MAGICDWORD,
-	0xa3, 0x01,                         // sal local[1]
-	0x35, 0x32,                         // ldi 50
-	0x65, 0x1a,                         // aTop cycles
+	0x36,                               // push
+	0x83, 0x01,                         // lal 01
+	0x04,                               // sub
+	0xa3, 0x00,                         // sal 00
 	SIG_END
 };
 
 static const uint16 qfg1vgaPatchSpeedTest[] = {
-	PATCH_ADDTOOFFSET(+6),
-	0x35, 0x01,                         // ldi 1
+	0x35, 0x00,                         // ldi 00 [ local0 = 0, the best result ]
+	0x33, 0x04,                         // jmp 04
 	PATCH_END
 };
 
