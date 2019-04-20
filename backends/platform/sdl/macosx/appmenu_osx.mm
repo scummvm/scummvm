@@ -62,11 +62,22 @@ typedef unsigned long NSUInteger;
 static void openFromBundle(NSString *file) {
 	NSString *path = [[NSBundle mainBundle] pathForResource:file ofType:@"rtf"];
 	if (!path) {
-		path = [[NSBundle mainBundle] pathForResource:file ofType:@""];
+		path = [[NSBundle mainBundle] pathForResource:file ofType:@"html"];
+		if (!path) {
+			path = [[NSBundle mainBundle] pathForResource:file ofType:@""];
+			if (!path)
+				path = [[NSBundle mainBundle] pathForResource:file ofType:@"md"];
+		}
 	}
 
 	if (path) {
-		[[NSWorkspace sharedWorkspace] openFile:path];
+		// RTF and HTML files are widely recognized and we can rely on the default
+		// file association working for those. For the other ones this might not be
+		// the case so we explicitely indicate they should be open with TextEdit.
+		if ([path hasSuffix:@".html"] || [path hasSuffix:@".rtf"])
+			[[NSWorkspace sharedWorkspace] openFile:path];
+		else
+			[[NSWorkspace sharedWorkspace] openFile:path withApplication:@"TextEdit"];
 	}
 }
 
