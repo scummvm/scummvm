@@ -75,6 +75,7 @@ public:
 	bool cmdSave(int argc, const char **argv);
 	bool cmdOverlay(int argc, const char **argv);
 	bool cmdSubtitle(int argc, const char **argv);
+	bool cmdList(int argc, const char **argv);
 
 	void drawDebuggerOverlay();
 

@@ -86,6 +86,7 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 
 	registerCmd("anim", WRAP_METHOD(Debugger, cmdAnimation));
 	registerCmd("draw", WRAP_METHOD(Debugger, cmdDraw));
+	registerCmd("list", WRAP_METHOD(Debugger, cmdList));
 	registerCmd("flag", WRAP_METHOD(Debugger, cmdFlag));
 	registerCmd("goal", WRAP_METHOD(Debugger, cmdGoal));
 	registerCmd("loop", WRAP_METHOD(Debugger, cmdLoop));
@@ -1071,6 +1072,187 @@ bool Debugger::cmdSubtitle(int argc, const char **argv) {
 
 }
 
+/**
+*
+* Similar to draw but only list items instead of drawing
+* Maybe keep this separate from the draw command, even though some code gets repeated here
+* DONE: Provide more info (bbox or position)
+* DONE: For actors show current goal too.
+* TODO: For items provide friendly name (enum in constants!)
+* DONE: Split items in items, actors and objects?
+*/
+bool Debugger::cmdList(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Enables debug listing of actors, scene objects, items, waypoints, regions, lights, fogs and walk-boxes.\n");
+		debugPrintf("Usage: %s (act | obj | items | way | reg | lit | fog | walk )\n", argv[0]);
+		return true;
+	}
+
+	Common::String arg = argv[1];
+	if (arg == "act") {
+		debugPrintf("Listing scene actors: \n");
+		int count = 0;
+		for (int i = 0; i < _vm->_sceneObjects->_count; i++) {
+			SceneObjects::SceneObject *sceneObject = &_vm->_sceneObjects->_sceneObjects[_vm->_sceneObjects->_sceneObjectsSortedByDistance[i]];
+
+			if (sceneObject->type == kSceneObjectTypeActor) {
+				debugPrintf("%02d. %s (CLK: %s, TRG: %s, PRS: %s, OBS: %s, MVG: %s), Goal: %d, Pos(%02.2f,%02.2f,%02.2f)\n",
+				             count, _vm->_textActorNames->getText(sceneObject->id - kSceneObjectOffsetActors),
+				             sceneObject->isClickable? "T" : "F",
+				             sceneObject->isTarget?    "T" : "F",
+				             sceneObject->isPresent?   "T" : "F",
+				             sceneObject->isObstacle?  "T" : "F",
+				             sceneObject->isMoving?    "T" : "F",
+				             _vm->_actors[sceneObject->id - kSceneObjectOffsetActors]->getGoal(),
+				             _vm->_actors[sceneObject->id - kSceneObjectOffsetActors]->getPosition().x,
+				             _vm->_actors[sceneObject->id - kSceneObjectOffsetActors]->getPosition().y,
+				             _vm->_actors[sceneObject->id - kSceneObjectOffsetActors]->getPosition().z);
+				++count;
+			}
+		}
+		debugPrintf("%d actors were found in scene.\n", count);
+	} else if (arg == "obj") {
+		debugPrintf("Listing scene objects: \n");
+		int count = 0;
+		for (int i = 0; i < _vm->_sceneObjects->_count; i++) {
+			SceneObjects::SceneObject *sceneObject = &_vm->_sceneObjects->_sceneObjects[_vm->_sceneObjects->_sceneObjectsSortedByDistance[i]];
+			const BoundingBox &bbox = sceneObject->boundingBox;
+			Vector3 a, b;
+			bbox.getXYZ(&a.x, &a.y, &a.z, &b.x, &b.y, &b.z);
+			Vector3 pos = _vm->_view->calculateScreenPosition(0.5 * (a + b));
+
+			if (sceneObject->type == kSceneObjectTypeUnknown) {
+				debugPrintf("%02d. Unknown object type\n", count);
+				++count;
+			} else if (sceneObject->type == kSceneObjectTypeObject) {
+				debugPrintf("%02d. %s (CLK: %s, TRG: %s, PRS: %s, OBS: %s, MVG: %s), Pos(%02.2f,%02.2f,%02.2f), Bbox:(%02.2f,%02.2f,%02.2f)~(%02.2f,%02.2f,%02.2f)\n",
+				             count, _vm->_scene->objectGetName(sceneObject->id - kSceneObjectOffsetObjects).c_str(),
+				             sceneObject->isClickable? "T" : "F",
+				             sceneObject->isTarget?    "T" : "F",
+				             sceneObject->isPresent?   "T" : "F",
+				             sceneObject->isObstacle?  "T" : "F",
+				             sceneObject->isMoving?    "T" : "F",
+				             pos.x, pos.y, pos.z,
+				             a.x, a.y, a.z, b.x, b.y, b.z);
+				++count;
+			}
+		}
+		debugPrintf("%d objects were found in scene.\n", count);
+	} else if (arg == "items") {
+		debugPrintf("Listing scene items: \n");
+		int count = 0;
+		for (int i = 0; i < _vm->_sceneObjects->_count; i++) {
+			SceneObjects::SceneObject *sceneObject = &_vm->_sceneObjects->_sceneObjects[_vm->_sceneObjects->_sceneObjectsSortedByDistance[i]];
+
+			if (sceneObject->type == kSceneObjectTypeItem) {
+				const BoundingBox &bbox = sceneObject->boundingBox;
+				Vector3 a, b;
+				bbox.getXYZ(&a.x, &a.y, &a.z, &b.x, &b.y, &b.z);
+				Vector3 pos = _vm->_view->calculateScreenPosition(0.5 * (a + b));
+				char itemText[40];
+				sprintf(itemText, "item %i", sceneObject->id - kSceneObjectOffsetItems);
+				debugPrintf("%02d. %s (CLK: %s, TRG: %s, PRS: %s, OBS: %s, MVG: %s), Pos(%02.2f,%02.2f,%02.2f), Bbox:(%02.2f,%02.2f,%02.2f)~(%02.2f,%02.2f,%02.2f)\n",
+				             count, itemText,
+				             sceneObject->isClickable? "T" : "F",
+				             sceneObject->isTarget?    "T" : "F",
+				             sceneObject->isPresent?   "T" : "F",
+				             sceneObject->isObstacle?  "T" : "F",
+				             sceneObject->isMoving?    "T" : "F",
+				             pos.x, pos.y, pos.z,
+				             a.x, a.y, a.z, b.x, b.y, b.z);
+				++count;
+			}
+		}
+		debugPrintf("%d items were found in scene.\n", count);
+	} else if (arg == "reg") {
+		debugPrintf("Listing regions: \n");
+		int count = 0;
+		//list regions
+		for (int i = 0; i < 10; i++) {
+			Regions::Region *region = &_vm->_scene->_regions->_regions[i];
+			if (!region->present) continue;
+			debugPrintf("%02d. Region slot: %d\n", count, i);
+			++count;
+		}
+
+		//list exits
+		for (int i = 0; i < 10; i++) {
+			Regions::Region *region = &_vm->_scene->_exits->_regions[i];
+			if (!region->present) continue;
+			debugPrintf("%02d. Exit slot: %d\n", count, i);
+			++count;
+		}
+		debugPrintf("%d regions were found in scene.\n", count);
+	} else if (arg == "way") {
+		debugPrintf("Listing waypoints: \n");
+		int count = 0;
+		for (int i = 0; i < _vm->_waypoints->_count; i++) {
+			Waypoints::Waypoint *waypoint = &_vm->_waypoints->_waypoints[i];
+			if(waypoint->setId != _vm->_scene->getSetId()) {
+				continue;
+			}
+			char waypointText[40];
+			sprintf(waypointText, "waypoint %i", i);
+			debugPrintf("%02d. %s\n", count, waypointText);
+			++count;
+		}
+
+		// list combat cover waypoints
+		for (int i = 0; i < (int)_vm->_combat->_coverWaypoints.size(); i++) {
+			Combat::CoverWaypoint *cover = &_vm->_combat->_coverWaypoints[i];
+			if (cover->setId != _vm->_scene->getSetId()) {
+				continue;
+			}
+			char coverText[40];
+			sprintf(coverText, "cover %i", i);
+			debugPrintf("%02d. %s\n", count, coverText);
+			++count;
+		}
+
+		// list combat flee waypoints
+		for (int i = 0; i < (int)_vm->_combat->_fleeWaypoints.size(); i++) {
+			Combat::FleeWaypoint *flee = &_vm->_combat->_fleeWaypoints[i];
+			if (flee->setId != _vm->_scene->getSetId()) {
+				continue;
+			}
+			char fleeText[40];
+			sprintf(fleeText, "flee %i", i);
+			debugPrintf("%02d. %s\n", count, fleeText);
+			++count;
+		}
+		debugPrintf("%d waypoints were found in scene.\n", count);
+	} else if (arg == "walk") {
+		debugPrintf("Listing walkboxes: \n");
+		// list walkboxes
+		for (int i = 0; i < _vm->_scene->_set->_walkboxCount; i++) {
+			Set::Walkbox *walkbox = &_vm->_scene->_set->_walkboxes[i];
+
+			debugPrintf("%02d. Walkbox %s, vertices: %d\n", i, walkbox->name.c_str(), walkbox->vertexCount);
+		}
+		debugPrintf("%d walkboxes were found in scene.\n", _vm->_scene->_set->_walkboxCount);
+	} else if (arg == "fog") {
+		debugPrintf("Listing fogs: \n");
+		int count = 0;
+		for (Fog *fog = _vm->_scene->_set->_effects->_fogs; fog != nullptr; fog = fog->_next) {
+			debugPrintf("%02d. Fog %s\n", count, fog->_name.c_str());
+			++count;
+		}
+		debugPrintf("%d fogs were found in scene.\n", count);
+	} else if (arg == "lit") {
+		debugPrintf("Listing lights: \n");
+		// list lights
+		for (int i = 0; i < (int)_vm->_lights->_lights.size(); i++) {
+			Light *light = _vm->_lights->_lights[i];
+			debugPrintf("%02d. Light %s\n", i, light->_name.c_str());
+		}
+		debugPrintf("%d lights were found in scene.\n", (int)_vm->_lights->_lights.size());
+	} else {
+		debugPrintf("Invalid item type was specified.\n");
+	}
+
+	return true;
+}
+
 
 void Debugger::drawDebuggerOverlay() {
 	if (_viewSceneObjects) drawSceneObjects();
@@ -1135,7 +1317,7 @@ void Debugger::drawSceneObjects() {
 				_vm->_mainFont->drawColor(_vm->_textActorNames->getText(sceneObject->id - kSceneObjectOffsetActors), _vm->_surfaceFront, pos.x, pos.y, color);
 				break;
 			case kSceneObjectTypeItem:
-			color = _vm->_surfaceFront.format.RGBToColor(0, 255, 0);
+				color = _vm->_surfaceFront.format.RGBToColor(0, 255, 0);
 				char itemText[40];
 				drawBBox(a, b, _vm->_view, &_vm->_surfaceFront, color);
 				sprintf(itemText, "item %i", sceneObject->id - kSceneObjectOffsetItems);
