@@ -85,8 +85,9 @@ void Glulxe::filio_char_han(unsigned char ch) {
 }
 
 void Glulxe::filio_unichar_han(uint32 val) {
+	uint v = val;
 	push_callstub(0, 0);
-	enter_function(iosys_rock, 1, &val);
+	enter_function(iosys_rock, 1, &v);
 }
 
 void Glulxe::glkio_unichar_nouni_han(uint32 val) {
