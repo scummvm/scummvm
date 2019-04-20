@@ -268,7 +268,7 @@ void SceneScriptNR04::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 		case kGoalEarlyQNR04Talk3:
 			Actor_Clue_Acquire(kActorMcCoy, kClueDektorasDressingRoom, false, kActorEarlyQ);
-			Item_Pickup_Spin_Effect(984, 200, 160);
+			Item_Pickup_Spin_Effect(kModelAnimationPhoto, 200, 160);
 			Actor_Says(kActorEarlyQ, 200, 30);
 			Actor_Says(kActorEarlyQ, 210, 30);
 			Actor_Says(kActorEarlyQ, 220, 30);

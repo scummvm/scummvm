@@ -197,7 +197,7 @@ void SceneScriptRC01::SceneLoaded() {
 	}
 
 	if (!Game_Flag_Query(kFlagRC01ChromeDebrisTaken)) {
-		Item_Add_To_World(kItemChromeDebris, 938, kSetRC01, -148.60f, -0.30f, 225.15f, 256, 24, 24, false, true, false, true);
+		Item_Add_To_World(kItemChromeDebris, kModelAnimationChromeDebris, kSetRC01, -148.60f, -0.30f, 225.15f, 256, 24, 24, false, true, false, true);
 	}
 
 	if (!Game_Flag_Query(kFlagIntroPlayed)) {

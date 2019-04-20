@@ -115,21 +115,21 @@ bool SceneScriptNR02::ClickedOnActor(int actorId) {
 }
 
 bool SceneScriptNR02::ClickedOnItem(int itemId, bool a2) {
-	if (itemId == kItemGordosLighter1
-	 || itemId == kItemGordosLighter2
+	if (itemId == kItemGordosLighterReplicant
+	 || itemId == kItemGordosLighterHuman
 	) {
 		if(!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 109.38f, -24.0f, 420.5f, 0, true, false, 0)) {
 			Actor_Face_Heading(kActorMcCoy, 423, false);
-			if (itemId == kItemGordosLighter1) {
-				Item_Remove_From_World(kItemGordosLighter1);
+			if (itemId == kItemGordosLighterReplicant) {
+				Item_Remove_From_World(kItemGordosLighterReplicant);
 				Item_Pickup_Spin_Effect(953, 214, 380);
-				Actor_Clue_Acquire(kActorMcCoy, kClueGordosLighter1, true, -1);
+				Actor_Clue_Acquire(kActorMcCoy, kClueGordosLighterReplicant, true, -1);
 			}
 
-			if (itemId == kItemGordosLighter2) {
-				Item_Remove_From_World(kItemGordosLighter2);
+			if (itemId == kItemGordosLighterHuman) {
+				Item_Remove_From_World(kItemGordosLighterHuman);
 				Item_Pickup_Spin_Effect(954, 214, 380);
-				Actor_Clue_Acquire(kActorMcCoy, kClueGordosLighter2, true, -1);
+				Actor_Clue_Acquire(kActorMcCoy, kClueGordosLighterHuman, true, -1);
 			}
 		}
 	}

@@ -73,7 +73,7 @@ void SceneScriptCT10::checkCabinet() {
 		if (Actor_Clue_Query(kActorMcCoy, kClueHoldensBadge)) {
 			Actor_Voice_Over(3700, kActorVoiceOver);
 		} else {
-			Item_Pickup_Spin_Effect(931, 435, 258);
+			Item_Pickup_Spin_Effect(kModelAnimationBadge, 435, 258);
 			Actor_Clue_Acquire(kActorMcCoy, kClueHoldensBadge, true, -1);
 		}
 		Player_Gains_Control();

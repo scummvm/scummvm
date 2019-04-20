@@ -94,7 +94,7 @@ void AIScriptGenericWalkerA::ReceivedClue(int clueId, int fromActorId) {
 void AIScriptGenericWalkerA::ClickedByPlayer() {
 	Actor_Face_Actor(kActorMcCoy, kActorGenwalkerA, true);
 	if (Actor_Query_Goal_Number(kActorGenwalkerA) == 200) {
-		Actor_Says(kActorMcCoy, 5290, 18);
+		Actor_Says(kActorMcCoy, 5290, 18);   // kActorGenwalkerA here is actually the tracking gun in Bullet Bob's
 	} else {
 		switch (Random_Query(1, 10)) {
 		case 1:
@@ -256,9 +256,9 @@ bool AIScriptGenericWalkerA::UpdateAnimation(int *animation, int *frame) {
 		}
 		break;
 	case kGenericWalkerAStatesGun:
-		*animation = 440;
+		*animation = kModelAnimationBulletBobsTrackingGun;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(440)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationBulletBobsTrackingGun)) {
 			_animationFrame = 0;
 		}
 		break;

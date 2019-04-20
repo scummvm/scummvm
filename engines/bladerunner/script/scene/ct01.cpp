@@ -586,7 +586,7 @@ void SceneScriptCT01::dialogueWithHowieLee() {
 		Actor_Says(kActorMcCoy, 290, 13);
 		if (Actor_Query_Friendliness_To_Other(kActorHowieLee, kActorMcCoy) > 49
 		 && (Global_Variable_Query(kVariableChinyen) > 10
-		  || Query_Difficulty_Level() == 0
+		  || Query_Difficulty_Level() == kGameDifficultyEasy
 		 )
 		) {
 			Actor_Says(kActorHowieLee, 50, kAnimationModeTalk);
@@ -594,7 +594,7 @@ void SceneScriptCT01::dialogueWithHowieLee() {
 			Actor_Face_Actor(kActorHowieLee, kActorMcCoy, true);
 			Actor_Says(kActorHowieLee, 70, 16);
 			Actor_Says(kActorMcCoy, 325, 13);
-			if (Query_Difficulty_Level() != 0) {
+			if (Query_Difficulty_Level() != kGameDifficultyEasy) {
 				Global_Variable_Decrement(kVariableChinyen, 10);
 			}
 			Game_Flag_Set(kFlagCT01BoughtHowieLeeFood);

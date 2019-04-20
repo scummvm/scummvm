@@ -280,7 +280,7 @@ void AIScriptLucy::Retired(int byActorId) {
 		Non_Player_Actor_Combat_Mode_On(kActorSteele, kActorCombatStateUncover, true, kActorMcCoy, 15, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 25, 300, false);
 	}
 
-	if (Query_Difficulty_Level() != 0
+	if (Query_Difficulty_Level() != kGameDifficultyEasy
 	 && byActorId == kActorMcCoy
 	 && Game_Flag_Query(kFlagLucyIsReplicant)
 	) {

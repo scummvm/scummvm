@@ -61,17 +61,17 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 1990);
 		break;
 	case kClueShellCasings:
-		KIA_Play_Slice_Model(966);
+		KIA_Play_Slice_Model(kModelAnimationShellCasings);
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 1960);
 		break;
 	case kClueCandy:
-		KIA_Play_Slice_Model(933);
+		KIA_Play_Slice_Model(kModelAnimationCandy);
 		break;
 	case kClueToyDog:
-		KIA_Play_Slice_Model(971);
+		KIA_Play_Slice_Model(kModelAnimationToyDog);
 		break;
 	case kClueChopstickWrapper:
-		KIA_Play_Slice_Model(937);
+		KIA_Play_Slice_Model(kModelAnimationChopstickWrapper);
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2010);
 		break;
 	case kClueSushiMenu:
@@ -91,7 +91,7 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorKlein, 90);
 		break;
 	case kClueRuncitersVideo:
-		KIA_Play_Slice_Model(975);
+		KIA_Play_Slice_Model(kModelAnimationVideoDisc);
 		break;
 	case kClueLucy:
 		KIA_Play_Photograph(5);
@@ -101,7 +101,7 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 4050);
 		break;
 	case kClueReferenceLetter:
-		KIA_Play_Slice_Model(964);
+		KIA_Play_Slice_Model(kModelAnimationReferenceLetter);
 		KIA_Play_Actor_Dialogue(kActorRunciter, 280);
 		KIA_Play_Actor_Dialogue(kActorRunciter, 290);
 		break;
@@ -150,7 +150,7 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 1890);
 		break;
 	case kClueChromeDebris:
-		KIA_Play_Slice_Model(938);
+		KIA_Play_Slice_Model(kModelAnimationChromeDebris);
 		break;
 	case kClueRuncitersViewA:
 		KIA_Play_Photograph(11);
@@ -165,7 +165,7 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Photograph(9);
 		break;
 	case kClueBriefcase:
-		KIA_Play_Slice_Model(987);
+		KIA_Play_Slice_Model(kModelAnimationBriefcase);
 		KIA_Play_Actor_Dialogue(kActorMcCoy, 5870);
 		KIA_Play_Actor_Dialogue(kActorGuzza, 810);
 		KIA_Play_Actor_Dialogue(kActorGuzza, 820);
@@ -176,7 +176,7 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorGaff, 30);
 		break;
 	case kClueLicensePlate:
-		KIA_Play_Slice_Model(952);
+		KIA_Play_Slice_Model(kModelAnimationLicensePlate);
 		break;
 	case kClueLabPaintTransfer:
 		KIA_Play_Actor_Dialogue(kActorKlein, 170);
@@ -199,13 +199,13 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorGuzza, 70);
 		break;
 	case kClueDragonflyEarring:
-		KIA_Play_Slice_Model(940);
+		KIA_Play_Slice_Model(kModelAnimationDragonflyEarring);
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2140);
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2150);
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2160);
 		break;
 	case kClueTyrellSecurity:
-		KIA_Play_Slice_Model(975);
+		KIA_Play_Slice_Model(kModelAnimationVideoDisc);
 		break;
 	case kClueTyrellGuardInterview:
 		KIA_Play_Actor_Dialogue(kActorMcCoy, 5140);
@@ -219,7 +219,7 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2160);
 		break;
 	case kClueDetonatorWire:
-		KIA_Play_Slice_Model(974);
+		KIA_Play_Slice_Model(kModelAnimationDetonatorWire);
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2320);
 		if (Game_Flag_Query(kFlagSadikIsReplicant)) {
 			KIA_Play_Actor_Dialogue(kActorVoiceOver, 2330);
@@ -246,20 +246,20 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorSteele, 2280);
 		break;
 	case kClueKingstonKitchenBox1:
-		KIA_Play_Slice_Model(955);
-		if (Query_Difficulty_Level() == 0) {
+		KIA_Play_Slice_Model(kModelAnimationKingstonKitchenBox);
+		if (Query_Difficulty_Level() == kGameDifficultyEasy) {
 			KIA_Play_Actor_Dialogue(kActorVoiceOver, 4140);
 		} else {
 			KIA_Play_Actor_Dialogue(kActorVoiceOver, 4150);
 		}
 		break;
-	case kClueTyrellSalesPamphlet1:
-		KIA_Play_Slice_Model(973);
+	case kClueTyrellSalesPamphletEntertainModel:
+		KIA_Play_Slice_Model(kModelAnimationTyrellSalesPamphletKIA);
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 4280);
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 4290);
 		break;
-	case kClueTyrellSalesPamphlet2:
-		KIA_Play_Slice_Model(973);
+	case kClueTyrellSalesPamphletLolita:
+		KIA_Play_Slice_Model(kModelAnimationTyrellSalesPamphletKIA);
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 4280);
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 4300);
 		break;
@@ -304,7 +304,7 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorIzo, 790);
 		break;
 	case kClueRadiationGoggles:
-		KIA_Play_Slice_Model(963);
+		KIA_Play_Slice_Model(kModelAnimationRadiationGoggles);
 		break;
 	case kClueGogglesReplicantIssue:
 		KIA_Play_Actor_Dialogue(kActorBulletBob, 560);
@@ -316,7 +316,7 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorFishDealer, 130);
 		break;
 	case kClueDogCollar1:
-		KIA_Play_Slice_Model(942);
+		KIA_Play_Slice_Model(kModelAnimationDogCollar);
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 4160);
 		break;
 	case kClueWeaponsCache:
@@ -372,10 +372,10 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 4400);
 		break;
 	case kClueMaggieBracelet:
-		KIA_Play_Slice_Model(956);
+		KIA_Play_Slice_Model(kModelAnimationMaggieBracelet);
 		break;
 	case kClueEnvelope:
-		KIA_Play_Slice_Model(944);
+		KIA_Play_Slice_Model(kModelAnimationEnvelope);
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 850);
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 860);
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 870);
@@ -396,10 +396,10 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorInsectDealer, 340);
 		break;
 	case kClueWeaponsOrderForm:
-		KIA_Play_Slice_Model(965);
+		KIA_Play_Slice_Model(kModelAnimationWeaponsOrderForm);
 		break;
 	case kClueShippingForm:
-		KIA_Play_Slice_Model(965);
+		KIA_Play_Slice_Model(kModelAnimationWeaponsOrderForm);
 		break;
 	case kClueGuzzasCash:
 		KIA_Play_Actor_Dialogue(kActorGuzza, 520);
@@ -408,29 +408,29 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorGuzza, 550);
 		break;
 	case kClueHysteriaToken:
-		KIA_Play_Slice_Model(970);
+		KIA_Play_Slice_Model(kModelAnimationHysteriaToken);
 		break;
 	case kClueRagDoll:
-		KIA_Play_Slice_Model(943);
+		KIA_Play_Slice_Model(kModelAnimationRagDoll);
 		break;
 	case kClueMoonbus1:
 		KIA_Play_Photograph(34);
 		break;
 	case kClueCheese:
-		KIA_Play_Slice_Model(936);
+		KIA_Play_Slice_Model(kModelAnimationCheese);
 		break;
 	case kClueDektorasDressingRoom:
 		KIA_Play_Photograph(16);
 		break;
 	case kClueEarlyQsClub:
-		KIA_Play_Slice_Model(975);
+		KIA_Play_Slice_Model(kModelAnimationVideoDisc);
 		break;
 	case kClueDragonflyCollection:
 		KIA_Play_Actor_Dialogue(kActorInsectDealer, 290);
 		KIA_Play_Actor_Dialogue(kActorInsectDealer, 300);
 		break;
 	case kClueDragonflyBelt:
-		KIA_Play_Slice_Model(939);
+		KIA_Play_Slice_Model(kModelAnimationDragonflyBelt);
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 4050);
 		break;
 	case kClueEarlyQInterview:
@@ -438,7 +438,7 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorEarlyQ, 150);
 		break;
 	case kClueStrangeScale1:
-		KIA_Play_Slice_Model(969);
+		KIA_Play_Slice_Model(kModelAnimationStrangeScale);
 		break;
 	case kClueDektoraInterview1:
 		KIA_Play_Actor_Dialogue(kActorDektora, 650);
@@ -456,13 +456,13 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorDektora, 550);
 		break;
 	case kClueDektorasCard:
-		KIA_Play_Slice_Model(935);
+		KIA_Play_Slice_Model(kModelAnimationDektorasCard);
 		break;
 	case kClueGrigoriansNote:
-		KIA_Play_Slice_Model(957);
+		KIA_Play_Slice_Model(kModelAnimationGrigoriansNote);
 		break;
 	case kClueCollectionReceipt:
-		KIA_Play_Slice_Model(961);
+		KIA_Play_Slice_Model(kModelAnimationCollectionReceipt);
 		break;
 	case kClueSpecialIngredient:
 		KIA_Play_Actor_Dialogue(kActorMurray, 210);
@@ -485,12 +485,12 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorGordo, 540);
 		KIA_Play_Actor_Dialogue(kActorGordo, 550);
 		break;
-	case kClueGordosLighter1:
-		KIA_Play_Slice_Model(953);
+	case kClueGordosLighterReplicant:
+		KIA_Play_Slice_Model(kModelAnimationGordosLighterReplicant);
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 350);
 		break;
-	case kClueGordosLighter2:
-		KIA_Play_Slice_Model(954);
+	case kClueGordosLighterHuman:
+		KIA_Play_Slice_Model(kModelAnimationGordosLighterHuman);
 		break;
 	case kClueDektoraInterview4:
 		KIA_Play_Actor_Dialogue(kActorMcCoy, 3860);
@@ -505,10 +505,10 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorHolloway, 10);
 		break;
 	case kClueBakersBadge:
-		KIA_Play_Slice_Model(931);
+		KIA_Play_Slice_Model(kModelAnimationBadge);
 		break;
 	case kClueHoldensBadge:
-		KIA_Play_Slice_Model(931);
+		KIA_Play_Slice_Model(kModelAnimationBadge);
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 4420);
 		break;
 	case kClueCarIdentified:
@@ -538,10 +538,10 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorCrazylegs, 850);
 		break;
 	case kClueLichenDogWrapper:
-		KIA_Play_Slice_Model(951);
+		KIA_Play_Slice_Model(kModelAnimationLichenDogWrapper);
 		break;
 	case kClueRequisitionForm:
-		KIA_Play_Slice_Model(962);
+		KIA_Play_Slice_Model(kModelAnimationRequisitionForm);
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 3930);
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 3940);
 		break;
@@ -585,7 +585,7 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2730);
 		break;
 	case kClueFolder:
-		KIA_Play_Slice_Model(946);
+		KIA_Play_Slice_Model(kModelAnimationFolder);
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2740);
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2750);
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2760);
@@ -595,16 +595,16 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 3320);
 		break;
 	case kClueOriginalShippingForm:
-		KIA_Play_Slice_Model(959);
+		KIA_Play_Slice_Model(kModelAnimationOriginalShippingForm);
 		break;
 	case kClueOriginalRequisitionForm:
-		KIA_Play_Slice_Model(958);
+		KIA_Play_Slice_Model(kModelAnimationOriginalRequisitionForm);
 		break;
 	case kClueCandyWrapper:
-		KIA_Play_Slice_Model(934);
+		KIA_Play_Slice_Model(kModelAnimationCandyWrapper);
 		break;
 	case kClueFlaskOfAbsinthe:
-		KIA_Play_Slice_Model(945);
+		KIA_Play_Slice_Model(kModelAnimationFlaskOfAbsinthe);
 		break;
 	case kClueLutherLanceInterview:
 		KIA_Play_Actor_Dialogue(kActorLuther, 240);
@@ -647,10 +647,10 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorSteele, 760);
 		break;
 	case kCluePowerSource:
-		KIA_Play_Slice_Model(960);
+		KIA_Play_Slice_Model(kModelAnimationPowerSource);
 		break;
 	case kClueBomb:
-		KIA_Play_Slice_Model(932);
+		KIA_Play_Slice_Model(kModelAnimationBomb);
 		break;
 	case kClueDNATyrell:
 	case kClueDNASebastian:
@@ -661,24 +661,24 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		{
 			int dnaEvidences = Global_Variable_Query(kVariableDNAEvidence);
 			if (dnaEvidences == 1) {
-				KIA_Play_Slice_Model(988);
+				KIA_Play_Slice_Model(kModelAnimationDNAEvidenceOnePart);
 			} else if (dnaEvidences == 2) {
-				KIA_Play_Slice_Model(990);
+				KIA_Play_Slice_Model(kModelAnimationDNAEvidenceTwoParts);
 			} else if (dnaEvidences == 3) {
-				KIA_Play_Slice_Model(991);
+				KIA_Play_Slice_Model(kModelAnimationDNAEvidenceThreeParts);
 			} else if (dnaEvidences >= 4) {
-				KIA_Play_Slice_Model(993);
+				KIA_Play_Slice_Model(kModelAnimationDNAEvidenceComplete);
 			}
 		}
 		break;
 	case kClueGarterSnake:
-		KIA_Play_Slice_Model(950);
+		KIA_Play_Slice_Model(kModelAnimationGarterSnake);
 		break;
 	case kClueSlug:
-		KIA_Play_Slice_Model(967);
+		KIA_Play_Slice_Model(kModelAnimationSlug);
 		break;
 	case kClueGoldfish:
-		KIA_Play_Slice_Model(947);
+		KIA_Play_Slice_Model(kModelAnimationGoldfish);
 		break;
 	case kClueZubenTalksAboutLucy1:
 		KIA_Play_Actor_Dialogue(kActorZuben, 230);
@@ -866,7 +866,7 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Photograph(27);
 		break;
 	case kClueChinaBarSecurityDisc:
-		KIA_Play_Slice_Model(975);
+		KIA_Play_Slice_Model(kModelAnimationVideoDisc);
 		break;
 	case kClueScorpionbox:
 		KIA_Play_Photograph(0);
@@ -886,21 +886,21 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		break;
 	case kClueKingstonKitchenBox2:
 		KIA_Play_Photograph(29);
-		if (Query_Difficulty_Level() == 0) {
+		if (Query_Difficulty_Level() == kGameDifficultyEasy) {
 			KIA_Play_Actor_Dialogue(kActorVoiceOver, 4140);
 		} else {
 			KIA_Play_Actor_Dialogue(kActorVoiceOver, 4150);
 		}
 		break;
 	case kClueCrystalsCigarette:
-		KIA_Play_Slice_Model(985);
+		KIA_Play_Slice_Model(kModelAnimationCrystalsCigarette);
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 1770);
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 1150);
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 1180);
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 1190);
 		break;
 	case kClueSpinnerKeys:
-		KIA_Play_Slice_Model(986);
+		KIA_Play_Slice_Model(kModelAnimationSpinnerKeys);
 		break;
 	case kClueExpertBomber:
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 730);

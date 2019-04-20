@@ -114,7 +114,7 @@ bool SceneScriptHC02::ClickedOnActor(int actorId) {
 			} else if ( Actor_Clue_Query(kActorMcCoy, kClueHomelessManInterview1)
 			        && !Actor_Clue_Query(kActorMcCoy, kClueFlaskOfAbsinthe)
 			        &&  (Global_Variable_Query(kVariableChinyen) > 20
-			         ||  Query_Difficulty_Level() == 0
+			         ||  Query_Difficulty_Level() == kGameDifficultyEasy
 			        )
 			) {
 				Actor_Clue_Acquire(kActorMcCoy, kClueFlaskOfAbsinthe, true, kActorHawkersBarkeep);
@@ -129,7 +129,7 @@ bool SceneScriptHC02::ClickedOnActor(int actorId) {
 				Actor_Change_Animation_Mode(kActorMcCoy, 23);
 				Delay(1500);
 				Actor_Says_With_Pause(kActorHawkersBarkeep, 50, 1.6f, 17);
-				if (Query_Difficulty_Level() != 0) {
+				if (Query_Difficulty_Level() != kGameDifficultyEasy) {
 					Global_Variable_Decrement(kVariableChinyen, 20);
 				}
 				Actor_Says(kActorMcCoy, 1245, 13);
@@ -143,9 +143,9 @@ bool SceneScriptHC02::ClickedOnActor(int actorId) {
 					Game_Flag_Set(kFlagHC02HawkersBarkeepBraceletTalk);
 				}
 				if (Global_Variable_Query(kVariableChinyen) > 5
-				 || Query_Difficulty_Level() == 0
+				 || Query_Difficulty_Level() == kGameDifficultyEasy
 				) {
-					if (Query_Difficulty_Level() != 0) {
+					if (Query_Difficulty_Level() != kGameDifficultyEasy) {
 						Global_Variable_Decrement(kVariableChinyen, 5);
 					}
 					Global_Variable_Increment(kVariableMcCoyDrinks, 1);

@@ -157,8 +157,8 @@ enum Clues {
 	kClueAttemptedFileAccess = 51,
 	kClueCrystalsCase = 52,
 	kClueKingstonKitchenBox1 = 53,
-	kClueTyrellSalesPamphlet1 = 54,
-	kClueTyrellSalesPamphlet2 = 55,
+	kClueTyrellSalesPamphletEntertainModel = 54,
+	kClueTyrellSalesPamphletLolita = 55,
 	kCluePeruvianLadyInterview = 56,
 	kClueHasanInterview = 57,
 	kClueBobInterview1 = 58,
@@ -208,8 +208,8 @@ enum Clues {
 	kClueStolenCheese = 102,
 	kClueGordoInterview3 = 103,
 	kClueGordoConfession = 104,
-	kClueGordosLighter1 = 105,
-	kClueGordosLighter2 = 106,
+	kClueGordosLighterReplicant = 105,
+	kClueGordosLighterHuman = 106,
 	kClueDektoraInterview4 = 107,
 	kClueHollowayInterview = 108,
 	kClueBakersBadge = 109,
@@ -1648,8 +1648,8 @@ enum GameItems {
 	// 86 is never used
 	// 87 is never used
 	kItemRadiationGoogles = 88,
-	kItemGordosLighter1 = 89,
-	kItemGordosLighter2 = 90,
+	kItemGordosLighterReplicant = 89,
+	kItemGordosLighterHuman = 90,
 	kItemBriefcase = 91,
 	// 92 is never used
 	// 93 is never used
@@ -1665,7 +1665,7 @@ enum GameItems {
 	kItemDeadDogA = 103,
 	kItemDeadDogB = 104,
 	kItemDeadDogC = 105,
-	kItemScrorpions = 106,
+	kItemScorpions = 106,
 	kItemCamera = 107,
 	kItemKitchenBox = 108,
 	kItemChair = 109,
@@ -1682,6 +1682,85 @@ enum GameItems {
 	kItemMoonbusPhoto = 120,
 	kItemGreenPawnLock = 121,
 	kItemChain = 122
+};
+
+enum GameModelAnimations {
+	kModelAnimationBulletBobsTrackingGun       = 440,
+	kModelAnimationMaleTargetEmptyHandsActive  = 441,
+	kModelAnimationMaleTargetEmptyHandsDead    = 442, // 441+1
+	kModelAnimationMaleTargetWithGunActive     = 443,
+	kModelAnimationMaleTargetWithGunDead       = 444, // 443+1
+	kModelAnimationMaleTargetWithShotgunActive = 445,
+	kModelAnimationMaleTargetWithShotgunDead   = 446, // 445+1
+	kModelAnimationFemaleTargetWithBabyActive  = 447,
+	kModelAnimationFemaleTargetWithBabyDead    = 448, // 447+1
+	kModelAnimationFemaleTargetWithGunActive   = 449,
+	kModelAnimationFemaleTargetWithGunDead     = 450, // 449+1
+
+	kModelAnimationBadge                       = 931,
+	kModelAnimationBomb                        = 932,
+	kModelAnimationCandy                       = 933,
+	kModelAnimationCandyWrapper                = 934,
+	kModelAnimationDektorasCard                = 935,
+	kModelAnimationCheese                      = 936,
+	kModelAnimationChopstickWrapper            = 937,
+	kModelAnimationChromeDebris                = 938,
+	kModelAnimationDragonflyBelt               = 939,
+	kModelAnimationDragonflyEarring            = 940,
+	kModelAnimationDNADataDisc                 = 941,
+	kModelAnimationDogCollar                   = 942,
+	kModelAnimationRagDoll                     = 943,
+	kModelAnimationEnvelope                    = 944,
+	kModelAnimationFlaskOfAbsinthe             = 945,
+	kModelAnimationFolderInKIA                 = 946,
+	kModelAnimationGoldfish                    = 947,
+	kModelAnimationFolder                      = 948,
+//	kModelAnimationLetter                      = 949, // unused?
+	kModelAnimationGarterSnake                 = 950,
+	kModelAnimationLichenDogWrapper            = 951,
+	kModelAnimationLicensePlate                = 952,
+	kModelAnimationGordosLighterReplicant      = 953,
+	kModelAnimationGordosLighterHuman          = 954,
+	kModelAnimationKingstonKitchenBox          = 955,
+	kModelAnimationMaggieBracelet              = 956,
+	kModelAnimationGrigoriansNote              = 957,
+	kModelAnimationOriginalRequisitionForm     = 958,
+	kModelAnimationOriginalShippingForm        = 959,
+	kModelAnimationPowerSource                 = 960,
+	kModelAnimationCollectionReceipt           = 961,
+	kModelAnimationRequisitionForm             = 962,
+	kModelAnimationRadiationGoggles            = 963,
+	kModelAnimationReferenceLetter             = 964,
+	kModelAnimationWeaponsOrderForm            = 965,
+	kModelAnimationShellCasings                = 966,
+	kModelAnimationSlug                        = 967,
+//	kModelAnimation                            = 968, // unused - a knife?
+	kModelAnimationStrangeScale                = 969,
+	kModelAnimationHysteriaToken               = 970,
+	kModelAnimationToyDog                      = 971,
+	kModelAnimationTyrellSalesPamphlet         = 972,
+	kModelAnimationTyrellSalesPamphletKIA      = 973,
+	kModelAnimationDetonatorWire               = 974,
+	kModelAnimationVideoDisc                   = 975,
+	kModelAnimationCageOfScorpions             = 976,
+	kModelAnimationIzoCamera                   = 977,
+	kModelAnimationDeadDogA                    = 978,
+	kModelAnimationDeadDogB                    = 979,
+	kModelAnimationDeadDogC                    = 980,
+	kModelAnimationMarcusDead                  = 981,
+	kModelAnimationYukonHotelChair             = 982,
+	kModelAnimationWeaponsCrate                = 983,
+	kModelAnimationPhoto                       = 984,
+	kModelAnimationCrystalsCigarette           = 985,
+	kModelAnimationSpinnerKeys                 = 986,
+	kModelAnimationBriefcase                   = 987,
+	kModelAnimationDNAEvidenceOnePart          = 988,
+//	kModelAnimation                            = 989, // unused?
+	kModelAnimationDNAEvidenceTwoParts         = 990,
+	kModelAnimationDNAEvidenceThreeParts       = 991,
+//	kModelAnimation                            = 992, // unused?
+	kModelAnimationDNAEvidenceComplete         = 993
+//	kModelAnimation                            = 994-996
 };
 
 enum Elevators {
@@ -2963,6 +3042,11 @@ enum SFXSounds {
 	kSfxSHUTDOWN = 596
 };
 
+enum GameDifficultyLevel {
+	kGameDifficultyEasy   = 0,
+	kGameDifficultyMedium = 1,
+	kGameDifficultyHard   = 2
+};
 } // End of namespace BladeRunner
 
 #endif

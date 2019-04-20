@@ -770,15 +770,6 @@ void ScriptBase::Item_Remove_From_World(int itemId) {
 	_vm->_items->remove(itemId);
 }
 
-// Show text as subtitles mainly for debugging purposes
-// eg. display debug data on screen as subtitles
-void ScriptBase::Set_Subtitle_Text_On_Screen(Common::String displayText) {
-	debugC(kDebugScript, "Set_Subtitle_Text_On_Screen(%s)", displayText.c_str());
-	_vm->_subtitles->setGameSubsText(displayText, true);
-	_vm->_subtitles->show();
-}
-
-
 void ScriptBase::Item_Spin_In_World(int itemId) {
 	debugC(kDebugScript, "Item_Spin_In_World(%d)", itemId);
 	_vm->_items->spinInWorld(itemId);
@@ -807,6 +798,14 @@ void ScriptBase::Item_Pickup_Spin_Effect(int animationId, int x, int y) {
 bool ScriptBase::Item_Query_Visible(int itemId) {
 	debugC(kDebugScript, "Item_Query_Visible(%d)", itemId);
 	return _vm->_items->isVisible(itemId);
+}
+
+// Show text as subtitles mainly for debugging purposes
+// eg. display debug data on screen as subtitles
+void ScriptBase::Set_Subtitle_Text_On_Screen(Common::String displayText) {
+	debugC(kDebugScript, "Set_Subtitle_Text_On_Screen(%s)", displayText.c_str());
+	_vm->_subtitles->setGameSubsText(displayText, true);
+	_vm->_subtitles->show();
 }
 
 int ScriptBase::Animation_Open() {

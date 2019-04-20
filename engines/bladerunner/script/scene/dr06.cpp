@@ -162,7 +162,7 @@ bool SceneScriptDR06::ClickedOn3DObject(const char *objectName, bool a2) {
 					Actor_Voice_Over(870, kActorVoiceOver);
 					Actor_Voice_Over(880, kActorVoiceOver);
 					Actor_Clue_Acquire(kActorMcCoy, kClueEnvelope, true, kActorLance);
-					if (Query_Difficulty_Level() != 0) {
+					if (Query_Difficulty_Level() != kGameDifficultyEasy) {
 						Global_Variable_Increment(kVariableChinyen, 200);
 					}
 				}

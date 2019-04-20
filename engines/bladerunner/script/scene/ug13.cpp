@@ -92,7 +92,7 @@ void SceneScriptUG13::SceneLoaded() {
 	  ||  Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm)
 	 )
 	) {
-		Item_Add_To_World(kItemWeaponsOrderForm, 958, 85, -209.01f, 70.76f, -351.79f, 0, 16, 12, false, true, false, true);
+		Item_Add_To_World(kItemWeaponsOrderForm, kModelAnimationOriginalRequisitionForm, 85, -209.01f, 70.76f, -351.79f, 0, 16, 12, false, true, false, true);
 	}
 }
 

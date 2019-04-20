@@ -81,10 +81,10 @@ void SceneScriptCT08::SceneLoaded() {
 	Obstacle_Object("ASHTRAY", true);
 	Unobstacle_Object("BLANKET03", true);
 	if (!Actor_Clue_Query(kActorMcCoy, kClueRagDoll)) {
-		Item_Add_To_World(kItemRagDoll, 943, kSetCT08_CT51_UG12, 44.0f, 0.0f, -95.0f, 540, 12, 12, false, true, false, true);
+		Item_Add_To_World(kItemRagDoll, kModelAnimationRagDoll, kSetCT08_CT51_UG12, 44.0f, 0.0f, -95.0f, 540, 12, 12, false, true, false, true);
 	}
 	if (!Actor_Clue_Query(kActorMcCoy, kClueCheese)) {
-		Item_Add_To_World(kItemCheese, 936, kSetCT08_CT51_UG12, -102.0f, 2.0f, 41.0f, 432, 6, 6, false, true, false, true);
+		Item_Add_To_World(kItemCheese, kModelAnimationCheese, kSetCT08_CT51_UG12, -102.0f, 2.0f, 41.0f, 432, 6, 6, false, true, false, true);
 	}
 }
 

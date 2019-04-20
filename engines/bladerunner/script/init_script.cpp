@@ -2441,8 +2441,8 @@ void InitScript::Init_CDB() {
 	CDB_Set_Crime(kClueVictimInformation, kCrimeEisendullerMurder);
 	CDB_Set_Crime(kClueAttemptedFileAccess, kCrimeEisendullerMurder);
 	CDB_Set_Crime(kClueKingstonKitchenBox1, kCrimeEisendullerMurder);
-	CDB_Set_Crime(kClueTyrellSalesPamphlet1, kCrimeEisendullerMurder);
-	CDB_Set_Crime(kClueTyrellSalesPamphlet2, kCrimeEisendullerMurder);
+	CDB_Set_Crime(kClueTyrellSalesPamphletEntertainModel, kCrimeEisendullerMurder);
+	CDB_Set_Crime(kClueTyrellSalesPamphletLolita, kCrimeEisendullerMurder);
 	CDB_Set_Crime(kClueDogCollar1, kCrimeEisendullerMurder);
 	CDB_Set_Crime(kClueRachaelInterview, kCrimeEisendullerMurder);
 	CDB_Set_Crime(kClueTyrellInterview, kCrimeEisendullerMurder);
@@ -2541,8 +2541,8 @@ void InitScript::Init_CDB() {
 	CDB_Set_Clue_Asset_Type(kClueAttemptedFileAccess, kClueTypeAudioRecording);
 	CDB_Set_Clue_Asset_Type(kClueCrystalsCase, kClueTypeAudioRecording);
 	CDB_Set_Clue_Asset_Type(kClueKingstonKitchenBox1, kClueTypeObject);
-	CDB_Set_Clue_Asset_Type(kClueTyrellSalesPamphlet1, kClueTypeObject);
-	CDB_Set_Clue_Asset_Type(kClueTyrellSalesPamphlet2, kClueTypeObject);
+	CDB_Set_Clue_Asset_Type(kClueTyrellSalesPamphletEntertainModel, kClueTypeObject);
+	CDB_Set_Clue_Asset_Type(kClueTyrellSalesPamphletLolita, kClueTypeObject);
 	CDB_Set_Clue_Asset_Type(kCluePeruvianLadyInterview, kClueTypeAudioRecording);
 	CDB_Set_Clue_Asset_Type(kClueHasanInterview, kClueTypeAudioRecording);
 	CDB_Set_Clue_Asset_Type(kClueBobInterview1, kClueTypeAudioRecording);
@@ -2585,8 +2585,8 @@ void InitScript::Init_CDB() {
 	CDB_Set_Clue_Asset_Type(kClueStolenCheese, kClueTypeAudioRecording);
 	CDB_Set_Clue_Asset_Type(kClueGordoInterview3, kClueTypeAudioRecording);
 	CDB_Set_Clue_Asset_Type(kClueGordoConfession, kClueTypeAudioRecording);
-	CDB_Set_Clue_Asset_Type(kClueGordosLighter1, kClueTypeObject);
-	CDB_Set_Clue_Asset_Type(kClueGordosLighter2, kClueTypeObject);
+	CDB_Set_Clue_Asset_Type(kClueGordosLighterReplicant, kClueTypeObject);
+	CDB_Set_Clue_Asset_Type(kClueGordosLighterHuman, kClueTypeObject);
 	CDB_Set_Clue_Asset_Type(kClueDektoraInterview4, kClueTypeAudioRecording);
 	CDB_Set_Clue_Asset_Type(kClueHollowayInterview, kClueTypeAudioRecording);
 	CDB_Set_Clue_Asset_Type(kClueBakersBadge, kClueTypeObject);

@@ -145,7 +145,7 @@ bool SceneScriptCT04::ClickedOn3DObject(const char *objectName, bool a2) {
 void SceneScriptCT04::dialogueWithHomeless() {
 	Dialogue_Menu_Clear_List();
 	if (Global_Variable_Query(kVariableChinyen) > 10
-	 || Query_Difficulty_Level() == 0
+	 || Query_Difficulty_Level() == kGameDifficultyEasy
 	) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(410, 8, 4, -1); // YES
 	}
@@ -160,7 +160,7 @@ void SceneScriptCT04::dialogueWithHomeless() {
 		Actor_Says(kActorTransient, 10, 14);
 		Actor_Says(kActorTransient, 20, 14);
 		Actor_Modify_Friendliness_To_Other(kActorTransient, kActorMcCoy, 5);
-		if (Query_Difficulty_Level() != 0) {
+		if (Query_Difficulty_Level() != kGameDifficultyEasy) {
 			Global_Variable_Decrement(kVariableChinyen, 10);
 		}
 		break;

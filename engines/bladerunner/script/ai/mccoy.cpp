@@ -139,7 +139,7 @@ void AIScriptMcCoy::ReceivedClue(int clueId, int fromActorId) {
 
 	case kClueKingstonKitchenBox1:
 	case kClueKingstonKitchenBox2:
-		if (Query_Difficulty_Level() == 0) {
+		if (Query_Difficulty_Level() == kGameDifficultyEasy) {
 			Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationAnimoidRow, true);
 		}
 		break;
@@ -1217,7 +1217,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 			_animationLoopLength = 0;
 			_animationState = 0;
 			Player_Gains_Control();
-			Item_Add_To_World(kItemChair, 982, kSetCT08_CT51_UG12, -110.0, 0.0, -192.0, 0, 48, 32, false, true, false, false);
+			Item_Add_To_World(kItemChair, kModelAnimationYukonHotelChair, kSetCT08_CT51_UG12, -110.0, 0.0, -192.0, 0, 48, 32, false, true, false, false);
 		}
 		break;
 

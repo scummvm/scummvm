@@ -45,10 +45,10 @@ void SceneScriptCT51::SceneLoaded() {
 	Unobstacle_Object("BLANKET03", true);
 	Clickable_Object("BED02");
 	if (!Actor_Clue_Query(kActorMcCoy, kClueRagDoll)) {
-		Item_Add_To_World(kItemRagDoll, 943, kSetCT08_CT51_UG12, 44.0f, 0.0f, -95.0f, 540, 24, 24, false, true, false, true);
+		Item_Add_To_World(kItemRagDoll, kModelAnimationRagDoll, kSetCT08_CT51_UG12, 44.0f, 0.0f, -95.0f, 540, 24, 24, false, true, false, true);
 	}
 	if (!Actor_Clue_Query(kActorMcCoy, kClueMoonbus1)) {
-		Item_Add_To_World(kItemMoonbusPhoto, 984, kSetCT08_CT51_UG12, 44.0f, 0.0f, -22.0f, 0, 12, 12, false, true, false, true);
+		Item_Add_To_World(kItemMoonbusPhoto, kModelAnimationPhoto, kSetCT08_CT51_UG12, 44.0f, 0.0f, -22.0f, 0, 12, 12, false, true, false, true);
 	}
 }
 
@@ -84,7 +84,7 @@ bool SceneScriptCT51::ClickedOnItem(int itemId, bool a2) {
 
 	if (itemId == kItemMoonbusPhoto) {
 		Actor_Clue_Acquire(kActorMcCoy, kClueMoonbus1, true, -1);
-		Item_Pickup_Spin_Effect(984, 490, 307);
+		Item_Pickup_Spin_Effect(kModelAnimationPhoto, 490, 307);
 		Item_Remove_From_World(kItemMoonbusPhoto);
 		Actor_Says(kActorMcCoy, 8527, kAnimationModeTalk);
 		return true;

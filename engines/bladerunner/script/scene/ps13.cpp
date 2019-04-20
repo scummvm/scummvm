@@ -645,21 +645,21 @@ void SceneScriptPS13::SceneLoaded() {
 // every maze target begins as NON-targetable
 		targetStateMZ = false;
 #endif // BLADERUNNER_ORIGINAL_BUGS
-		Item_Add_To_World(kItemPS13Target1,  443, kSetPS10_PS11_PS12_PS13, -372.0f,   -9.0f,  1509.0f, 960, 72, 36, targetStateMZ, false, false, true);
-		Item_Add_To_World(kItemPS13Target2,  443, kSetPS10_PS11_PS12_PS13, 291.61f,  -0.66f,  1610.3f, 823, 72, 36, targetStateMZ, false, false, true);
-		Item_Add_To_World(kItemPS13Target3,  447, kSetPS10_PS11_PS12_PS13,  -25.0f,  102.0f,  1625.0f, 823, 72, 36, targetStateMZ, false, false, true);
-		Item_Add_To_World(kItemPS13Target4,  449, kSetPS10_PS11_PS12_PS13, -45.51f,   -8.8f,  1676.0f, 922, 72, 36, targetStateMZ, false, false, true);
-		Item_Add_To_World(kItemPS13Target5,  447, kSetPS10_PS11_PS12_PS13, 291.61f,  -0.66f,  1610.3f, 823, 72, 36, targetStateMZ, false, false, true);
-		Item_Add_To_World(kItemPS13Target6,  443, kSetPS10_PS11_PS12_PS13,  -24.0f,  102.0f,  1625.0f, 823, 72, 36, targetStateMZ, false, false, true);
-		Item_Add_To_World(kItemPS13Target7,  449, kSetPS10_PS11_PS12_PS13,  180.0f,  -72.7f,  1605.0f, 305, 72, 36, targetStateMZ, false, false, true);
-		Item_Add_To_World(kItemPS13Target8,  443, kSetPS10_PS11_PS12_PS13, 127.79f,  14.56f, 1703.03f, 356, 72, 36, targetStateMZ, false, false, true);
-		Item_Add_To_World(kItemPS13Target9,  443, kSetPS10_PS11_PS12_PS13, 136.37f,  -6.84f, 1425.43f, 512, 72, 36, targetStateMZ, false, false, true);
-		Item_Add_To_World(kItemPS13Target10, 441, kSetPS10_PS11_PS12_PS13,  77.83f,  -79.8f,  1520.5f, 327, 72, 36, targetStateMZ, false, false, true);
-		Item_Add_To_World(kItemPS13Target11, 441, kSetPS10_PS11_PS12_PS13,  77.83f,   -7.8f,  1520.5f, 327, 72, 36, targetStateMZ, false, false, true);
-		Item_Add_To_World(kItemPS13Target12, 443, kSetPS10_PS11_PS12_PS13,  -88.0f,   -8.8f,  1520.5f, 327, 72, 36, targetStateMZ, false, false, true);
-		Item_Add_To_World(kItemPS13Target13, 447, kSetPS10_PS11_PS12_PS13, -45.51f,   -8.8f,  1676.0f, 922, 72, 36, targetStateMZ, false, false, true);
-		Item_Add_To_World(kItemPS13Target14, 445, kSetPS10_PS11_PS12_PS13, -300.0f, -79.75f,  1543.0f, 465, 72, 36, targetStateMZ, false, false, true);
-		Item_Add_To_World(kItemPS13Target15, 449, kSetPS10_PS11_PS12_PS13, -325.0f,  -7.75f,  1543.0f, 465, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS13Target1,  kModelAnimationMaleTargetWithGunActive,     kSetPS10_PS11_PS12_PS13, -372.0f,   -9.0f,  1509.0f, 960, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS13Target2,  kModelAnimationMaleTargetWithGunActive,     kSetPS10_PS11_PS12_PS13, 291.61f,  -0.66f,  1610.3f, 823, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS13Target3,  kModelAnimationFemaleTargetWithBabyActive,  kSetPS10_PS11_PS12_PS13,  -25.0f,  102.0f,  1625.0f, 823, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS13Target4,  kModelAnimationFemaleTargetWithGunActive,   kSetPS10_PS11_PS12_PS13, -45.51f,   -8.8f,  1676.0f, 922, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS13Target5,  kModelAnimationFemaleTargetWithBabyActive,  kSetPS10_PS11_PS12_PS13, 291.61f,  -0.66f,  1610.3f, 823, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS13Target6,  kModelAnimationMaleTargetWithGunActive,     kSetPS10_PS11_PS12_PS13,  -24.0f,  102.0f,  1625.0f, 823, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS13Target7,  kModelAnimationFemaleTargetWithGunActive,   kSetPS10_PS11_PS12_PS13,  180.0f,  -72.7f,  1605.0f, 305, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS13Target8,  kModelAnimationMaleTargetWithGunActive,     kSetPS10_PS11_PS12_PS13, 127.79f,  14.56f, 1703.03f, 356, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS13Target9,  kModelAnimationMaleTargetWithGunActive,     kSetPS10_PS11_PS12_PS13, 136.37f,  -6.84f, 1425.43f, 512, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS13Target10, kModelAnimationMaleTargetEmptyHandsActive,  kSetPS10_PS11_PS12_PS13,  77.83f,  -79.8f,  1520.5f, 327, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS13Target11, kModelAnimationMaleTargetEmptyHandsActive,  kSetPS10_PS11_PS12_PS13,  77.83f,   -7.8f,  1520.5f, 327, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS13Target12, kModelAnimationMaleTargetWithGunActive,     kSetPS10_PS11_PS12_PS13,  -88.0f,   -8.8f,  1520.5f, 327, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS13Target13, kModelAnimationFemaleTargetWithBabyActive,  kSetPS10_PS11_PS12_PS13, -45.51f,   -8.8f,  1676.0f, 922, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS13Target14, kModelAnimationMaleTargetWithShotgunActive, kSetPS10_PS11_PS12_PS13, -300.0f, -79.75f,  1543.0f, 465, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS13Target15, kModelAnimationFemaleTargetWithGunActive,   kSetPS10_PS11_PS12_PS13, -325.0f,  -7.75f,  1543.0f, 465, 72, 36, targetStateMZ, false, false, true);
 	}
 
 	Police_Maze_Target_Track_Add(kItemPS13Target1,  -372.0f,   -9.0f,  1509.0f, -345.0f,   -9.0f,  1509.0f,  6, getPoliceMazePS13TrackData46(),  true);

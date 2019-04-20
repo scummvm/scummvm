@@ -55,9 +55,9 @@ void SceneScriptDR05::SceneLoaded() {
 	Clickable_Object("T2 DOORWAY");
 
 	if (!Game_Flag_Query(kFlagDR05BombExploded)) {
-		Item_Add_To_World(kItemBomb, 932, kSetDR05, -1.57f, 31.33f, 75.21f, 540, 16, 16, true, true, false, true);
+		Item_Add_To_World(kItemBomb, kModelAnimationBomb, kSetDR05, -1.57f, 31.33f, 75.21f, 540, 16, 16, true, true, false, true);
 		if (Actor_Query_Goal_Number(kActorMoraji) == kGoalMorajiDefault) {
-			Item_Add_To_World(kItemChain, 931, kSetDR05, 37.35f, 1.59f, 46.72f, 0, 20, 20, true, true, false, true);
+			Item_Add_To_World(kItemChain, kModelAnimationBadge, kSetDR05, 37.35f, 1.59f, 46.72f, 0, 20, 20, true, true, false, true); // TODO a bug? reusing still animation of kModelAnimationBadge
 		}
 	}
 }

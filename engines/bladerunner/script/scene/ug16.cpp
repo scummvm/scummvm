@@ -90,7 +90,7 @@ bool SceneScriptUG16::ClickedOn3DObject(const char *objectName, bool a2) {
 				Actor_Change_Animation_Mode(kActorMcCoy, 38);
 				Sound_Play(kSfxDRAWER1, 100, 0, 0, 50);
 				Delay(1000);
-				Item_Pickup_Spin_Effect(948, 460, 287);
+				Item_Pickup_Spin_Effect(kModelAnimationFolder, 460, 287);
 				Actor_Voice_Over(2740, kActorVoiceOver);
 				Actor_Voice_Over(2750, kActorVoiceOver);
 				Actor_Voice_Over(2760, kActorVoiceOver);
@@ -120,7 +120,7 @@ bool SceneScriptUG16::ClickedOn3DObject(const char *objectName, bool a2) {
 				Delay(2000);
 				Actor_Says(kActorMcCoy, 5725, 14);
 				Delay(1000);
-				Item_Pickup_Spin_Effect(941, 418, 305);
+				Item_Pickup_Spin_Effect(kModelAnimationDNADataDisc, 418, 305);
 				Actor_Clue_Acquire(kActorMcCoy, kClueDNALutherLance, true, -1);
 				return true;
 			}
@@ -386,7 +386,7 @@ void SceneScriptUG16::dialogueWithLuther() {
 		Actor_Says(kActorLance, 420, 17);
 		Actor_Says(kActorMcCoy, 5835, 13);
 		Delay(1000);
-		Item_Pickup_Spin_Effect(948, 239, 454);
+		Item_Pickup_Spin_Effect(kModelAnimationFolder, 239, 454);
 		Actor_Voice_Over(2740, kActorVoiceOver);
 		Actor_Voice_Over(2750, kActorVoiceOver);
 		Actor_Voice_Over(2760, kActorVoiceOver);

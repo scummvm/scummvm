@@ -73,7 +73,7 @@ void SceneScriptUG02::SceneLoaded() {
 	if (!Game_Flag_Query(kFlagUG02RagiationGooglesTaken)
 	  && Game_Flag_Query(kFlagIzoIsReplicant)
 	) {
-		Item_Add_To_World(kItemRadiationGoogles, 963, kSetUG02, -300.37f, 120.16f, -81.31f, 0, 8, 8, false, true, false, true);
+		Item_Add_To_World(kItemRadiationGoogles, kModelAnimationRadiationGoggles, kSetUG02, -300.37f, 120.16f, -81.31f, 0, 8, 8, false, true, false, true);
 	}
 }
 

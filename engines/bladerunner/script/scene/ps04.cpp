@@ -61,7 +61,7 @@ void SceneScriptPS04::SceneLoaded() {
 	 && !Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm)
 	 && !Game_Flag_Query(kFlagPS04WeaponsOrderForm)
 	) {
-		Item_Add_To_World(kItemWeaponsOrderForm, 958, kSetPS04, -643.5f, -318.82f, 1148.87f, 525, 16, 12, false, true, false, true);
+		Item_Add_To_World(kItemWeaponsOrderForm, kModelAnimationOriginalRequisitionForm, kSetPS04, -643.5f, -318.82f, 1148.87f, 525, 16, 12, false, true, false, true);
 		Game_Flag_Set(kFlagPS04WeaponsOrderForm);
 	}
 
@@ -192,7 +192,7 @@ void SceneScriptPS04::dialogueWithGuzza() {
 			Actor_Says(kActorGuzza, 550, 32);
 			Actor_Says(kActorMcCoy, 4065, 18);
 			Actor_Says(kActorGuzza, 560, 34);
-			if (Query_Difficulty_Level() != 0) {
+			if (Query_Difficulty_Level() != kGameDifficultyEasy) {
 				Global_Variable_Increment(kVariableChinyen, 100);
 			}
 		} else {
@@ -215,7 +215,7 @@ void SceneScriptPS04::dialogueWithGuzza() {
 		Actor_Says(kActorGuzza, 550, 32);
 		Actor_Says(kActorMcCoy, 4065, 18);
 		Actor_Says(kActorGuzza, 560, 34);
-		if (Query_Difficulty_Level() != 0) {
+		if (Query_Difficulty_Level() != kGameDifficultyEasy) {
 			Global_Variable_Increment(kVariableChinyen, 100);
 		}
 #endif // BLADERUNNER_RESTORED_CUT_CONTENT
@@ -260,13 +260,13 @@ void SceneScriptPS04::dialogueWithGuzza() {
 			Actor_Says(kActorGuzza, 270, 32);
 			Game_Flag_Set(kFlagPS04GuzzaTalkZubenRetired);
 #if BLADERUNNER_ORIGINAL_BUGS
-			if (Query_Difficulty_Level() != 0) {
+			if (Query_Difficulty_Level() != kGameDifficultyEasy) {
 				Global_Variable_Increment(kVariableChinyen, 200);
 			}
 			Game_Flag_Set(kFlagZubenBountyPaid);
 #else
 			if (!Game_Flag_Query(kFlagZubenBountyPaid)) { // get retirement money only if haven't been auto-paid at end of Day 1 (sleep trigger)
-				if (Query_Difficulty_Level() != 0) {
+				if (Query_Difficulty_Level() != kGameDifficultyEasy) {
 					Global_Variable_Increment(kVariableChinyen, 200);
 				}
 				Game_Flag_Set(kFlagZubenBountyPaid); // not a proper bug, but was missing from original code, so the flag would remain in non-consistent state in this case

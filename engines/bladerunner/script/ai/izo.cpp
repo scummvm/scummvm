@@ -738,7 +738,7 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 			_animationState = 0;
 			Game_Flag_Set(kFlagUnused407);
-			Item_Add_To_World(kItemCamera, 977, kSetHC01_HC02_HC03_HC04, 597.46f, 0.14f, 49.92f, 0, 12, 12, false, true, false, false);
+			Item_Add_To_World(kItemCamera, kModelAnimationIzoCamera, kSetHC01_HC02_HC03_HC04, 597.46f, 0.14f, 49.92f, 0, 12, 12, false, true, false, false);
 			Actor_Set_Goal_Number(kActorIzo, kGoalIzoRunToUG02);
 		}
 		break;

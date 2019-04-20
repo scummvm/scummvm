@@ -76,7 +76,7 @@ bool SceneScriptBB07::ClickedOn3DObject(const char *objectName, bool a2) {
 			 && !Game_Flag_Query(kFlagBB07PrinterChecked)
 			) {
 				Actor_Voice_Over(130, kActorVoiceOver);
-				Item_Pickup_Spin_Effect(941, 439, 242);
+				Item_Pickup_Spin_Effect(kModelAnimationDNADataDisc, 439, 242);
 				Actor_Voice_Over(140, kActorVoiceOver);
 				Game_Flag_Set(kFlagBB07PrinterChecked);
 				Actor_Clue_Acquire(kActorMcCoy, kClueDNASebastian, true, -1);
@@ -99,9 +99,9 @@ bool SceneScriptBB07::ClickedOnActor(int actorId) {
 }
 
 bool SceneScriptBB07::ClickedOnItem(int itemId, bool a2) {
-	if (itemId == 83) { // this item is never added to this set/scene
-		if (!Loop_Actor_Walk_To_Item(kActorMcCoy, 83, 36, true, false)) {
-			Actor_Face_Item(kActorMcCoy, 83, true);
+	if (itemId == kItemDNATyrell) { // this item is never added to this set/scene - a bug?
+		if (!Loop_Actor_Walk_To_Item(kActorMcCoy, kItemDNATyrell, 36, true, false)) {
+			Actor_Face_Item(kActorMcCoy, kItemDNATyrell, true);
 			if (Game_Flag_Query(kFlagBB07ElectricityOn)) {
 				Actor_Voice_Over(150, kActorVoiceOver);
 				Actor_Voice_Over(160, kActorVoiceOver);

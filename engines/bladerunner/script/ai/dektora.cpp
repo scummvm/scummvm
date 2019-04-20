@@ -57,7 +57,7 @@ bool AIScriptDektora::Update() {
 			 &&  Player_Query_Current_Scene() != kSceneAR02
 			) {
 				if (Game_Flag_Query(kFlagAR02Entered)) {
-					Item_Remove_From_World(kItemScrorpions);
+					Item_Remove_From_World(kItemScorpions);
 				}
 				Game_Flag_Set(kFlagAR02DektoraBoughtScorpions);
 			}

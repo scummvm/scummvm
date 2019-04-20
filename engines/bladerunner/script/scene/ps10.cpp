@@ -452,15 +452,15 @@ void SceneScriptPS10::SceneLoaded() {
 // every maze target begins as NON-targetable
 		targetStateMZ = false;
 #endif // BLADERUNNER_ORIGINAL_BUGS
-		Item_Add_To_World(kItemPS10Target1, 443, kSetPS10_PS11_PS12_PS13,  -240.0f, -80.74f, 145.0f, 989, 72, 36, targetStateMZ, false, false, true);
-		Item_Add_To_World(kItemPS10Target2, 443, kSetPS10_PS11_PS12_PS13,  -240.0f,  -8.74f, 145.0f, 740, 72, 36, targetStateMZ, false, false, true);
-		Item_Add_To_World(kItemPS10Target3, 445, kSetPS10_PS11_PS12_PS13,  -165.0f, 111.53f, -10.0f, 993, 72, 36, targetStateMZ, false, false, true);
-		Item_Add_To_World(kItemPS10Target4, 447, kSetPS10_PS11_PS12_PS13,  -125.0f,  160.0f, -10.0f, 993, 72, 36, targetStateMZ, false, false, true);
-		Item_Add_To_World(kItemPS10Target5, 441, kSetPS10_PS11_PS12_PS13, -246.71f, 205.51f, -20.0f,   0, 72, 36, targetStateMZ, false, false, true);
-		Item_Add_To_World(kItemPS10Target6, 445, kSetPS10_PS11_PS12_PS13,  -27.69f, -86.92f, 434.0f, 999, 72, 36, targetStateMZ, false, false, true);
-		Item_Add_To_World(kItemPS10Target7, 441, kSetPS10_PS11_PS12_PS13, -347.15f,   7.68f, -20.0f, 264, 72, 36, targetStateMZ, false, false, true);
-		Item_Add_To_World(kItemPS10Target8, 449, kSetPS10_PS11_PS12_PS13,   -51.0f,  160.0f, -10.0f, 993, 72, 36, targetStateMZ, false, false, true);
-		Item_Add_To_World(kItemPS10Target9, 445, kSetPS10_PS11_PS12_PS13,    39.0f,   9.16f, -20.0f, 738, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS10Target1, kModelAnimationMaleTargetWithGunActive,     kSetPS10_PS11_PS12_PS13,  -240.0f, -80.74f, 145.0f, 989, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS10Target2, kModelAnimationMaleTargetWithGunActive,     kSetPS10_PS11_PS12_PS13,  -240.0f,  -8.74f, 145.0f, 740, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS10Target3, kModelAnimationMaleTargetWithShotgunActive, kSetPS10_PS11_PS12_PS13,  -165.0f, 111.53f, -10.0f, 993, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS10Target4, kModelAnimationFemaleTargetWithBabyActive,  kSetPS10_PS11_PS12_PS13,  -125.0f,  160.0f, -10.0f, 993, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS10Target5, kModelAnimationMaleTargetEmptyHandsActive,  kSetPS10_PS11_PS12_PS13, -246.71f, 205.51f, -20.0f,   0, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS10Target6, kModelAnimationMaleTargetWithShotgunActive, kSetPS10_PS11_PS12_PS13,  -27.69f, -86.92f, 434.0f, 999, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS10Target7, kModelAnimationMaleTargetEmptyHandsActive,  kSetPS10_PS11_PS12_PS13, -347.15f,   7.68f, -20.0f, 264, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS10Target8, kModelAnimationFemaleTargetWithGunActive,   kSetPS10_PS11_PS12_PS13,   -51.0f,  160.0f, -10.0f, 993, 72, 36, targetStateMZ, false, false, true);
+		Item_Add_To_World(kItemPS10Target9, kModelAnimationMaleTargetWithShotgunActive, kSetPS10_PS11_PS12_PS13,    39.0f,   9.16f, -20.0f, 738, 72, 36, targetStateMZ, false, false, true);
 
 	}
 
@@ -473,16 +473,16 @@ void SceneScriptPS10::SceneLoaded() {
 	Police_Maze_Target_Track_Add(kItemPS10Target7, -347.15f,   7.68f, -20.0f,    39.0f,   9.16f, -20.0f, 90, getPoliceMazePS10TrackData7(), false);
 	Police_Maze_Target_Track_Add(kItemPS10Target8,   -51.0f,  160.0f, -10.0f,  -125.0f,  160.0f, -10.0f, 35, getPoliceMazePS10TrackData8(),  true);
 	Police_Maze_Target_Track_Add(kItemPS10Target9,    39.0f,   9.16f, -20.0f, -347.15f,   7.68f, -20.0f, 90, getPoliceMazePS10TrackData9(), false);
-	Preload(441);
-	Preload(442);
-	Preload(443);
-	Preload(444);
-	Preload(445);
-	Preload(446);
-	Preload(447);
-	Preload(448);
-	Preload(449);
-	Preload(450);
+	Preload(kModelAnimationMaleTargetEmptyHandsActive);
+	Preload(kModelAnimationMaleTargetEmptyHandsDead);
+	Preload(kModelAnimationMaleTargetWithGunActive);
+	Preload(kModelAnimationMaleTargetWithGunDead);
+	Preload(kModelAnimationMaleTargetWithShotgunActive);
+	Preload(kModelAnimationMaleTargetWithShotgunDead);
+	Preload(kModelAnimationFemaleTargetWithBabyActive);
+	Preload(kModelAnimationFemaleTargetWithBabyDead);
+	Preload(kModelAnimationFemaleTargetWithGunActive);
+	Preload(kModelAnimationFemaleTargetWithGunDead);
 }
 
 bool SceneScriptPS10::MouseClick(int x, int y) {

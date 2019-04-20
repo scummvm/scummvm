@@ -90,7 +90,7 @@ void SceneScriptUG18::SceneLoaded() {
 	 && !Game_Flag_Query(kFlagUG18GuzzaScene)
 	 &&  Global_Variable_Query(kVariableChapter) == 4
 	) {
-		Item_Add_To_World(kItemBriefcase, 987, kSetUG18, -55.21f, 0.0f, -302.17f, 0, 12, 12, false, true, false, true);
+		Item_Add_To_World(kItemBriefcase, kModelAnimationBriefcase, kSetUG18, -55.21f, 0.0f, -302.17f, 0, 12, 12, false, true, false, true);
 	}
 }
 

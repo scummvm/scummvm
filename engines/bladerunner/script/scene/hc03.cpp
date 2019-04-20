@@ -130,11 +130,11 @@ bool SceneScriptHC03::ClickedOnItem(int itemId, bool combatMode) {
 
 	if (itemId == kItemCamera) {
 		Item_Remove_From_World(kItemCamera);
-		Item_Pickup_Spin_Effect(977, 68, 435);
+		Item_Pickup_Spin_Effect(kModelAnimationIzoCamera, 68, 435);
 		Delay(1500);
-		Item_Pickup_Spin_Effect(984, 78, 435);
+		Item_Pickup_Spin_Effect(kModelAnimationPhoto, 78, 435);
 		Delay(1500);
-		Item_Pickup_Spin_Effect(984, 58, 435);
+		Item_Pickup_Spin_Effect(kModelAnimationPhoto, 58, 435);
 		if (Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)) {
 			Actor_Clue_Acquire(kActorMcCoy, kCluePhotoOfMcCoy1, true, kActorIzo);
 		} else {

@@ -85,9 +85,9 @@ void SceneScriptRC02::SceneLoaded() {
 		Unclickable_Object("SCRTY CA03");
 	}
 	if (!Game_Flag_Query(kFlagRC02ShellCasingsTaken)) {
-		Item_Add_To_World(kItemShellCasingA, 966, kSetRC02_RC51, -52.88f, -1238.89f, 108467.74f, 256, 6, 6, false, true, false, true);
-		Item_Add_To_World(kItemShellCasingB, 966, kSetRC02_RC51, -37.16f, -1238.89f, 108456.59f, 512, 6, 6, false, true, false, true);
-		Item_Add_To_World(kItemShellCasingC, 966, kSetRC02_RC51, -62.86f, -1238.89f, 108437.52f, 625, 6, 6, false, true, false, true);
+		Item_Add_To_World(kItemShellCasingA, kModelAnimationShellCasings, kSetRC02_RC51, -52.88f, -1238.89f, 108467.74f, 256, 6, 6, false, true, false, true);
+		Item_Add_To_World(kItemShellCasingB, kModelAnimationShellCasings, kSetRC02_RC51, -37.16f, -1238.89f, 108456.59f, 512, 6, 6, false, true, false, true);
+		Item_Add_To_World(kItemShellCasingC, kModelAnimationShellCasings, kSetRC02_RC51, -62.86f, -1238.89f, 108437.52f, 625, 6, 6, false, true, false, true);
 	}
 }
 

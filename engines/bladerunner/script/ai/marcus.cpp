@@ -91,7 +91,7 @@ bool AIScriptMarcus::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 }
 
 bool AIScriptMarcus::UpdateAnimation(int *animation, int *frame) {
-	*animation = 981;
+	*animation = kModelAnimationMarcusDead;
 	*frame = 0;
 
 	return true;

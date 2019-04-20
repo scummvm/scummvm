@@ -80,13 +80,13 @@ void SceneScriptAR02::InitializeScene() {
 void SceneScriptAR02::SceneLoaded() {
 	Obstacle_Object("DF_BOOTH", true);
 	if (!Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)) {
-		Item_Add_To_World(kItemScrorpions, 976, kSetAR01_AR02, -442.84f, 36.77f, -1144.51f, 360, 36, 36, false, true, false, true);
+		Item_Add_To_World(kItemScorpions, kModelAnimationCageOfScorpions, kSetAR01_AR02, -442.84f, 36.77f, -1144.51f, 360, 36, 36, false, true, false, true);
 	}
 	if ( Global_Variable_Query(kVariableChapter) == 4
 	 && !Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)
 	) {
 		Game_Flag_Set(kFlagNotUsed0);
-		Item_Remove_From_World(kItemScrorpions);
+		Item_Remove_From_World(kItemScorpions);
 	}
 }
 
@@ -180,7 +180,7 @@ bool SceneScriptAR02::ClickedOnActor(int actorId) {
 }
 
 bool SceneScriptAR02::ClickedOnItem(int itemId, bool a2) {
-	if (itemId == kItemScrorpions) {
+	if (itemId == kItemScorpions) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -386.96f, 0.0f, -1078.45f, 12, true, false, 0)) {
 			Actor_Face_Actor(kActorMcCoy, kActorInsectDealer, true);
 			if (!Game_Flag_Query(kFlagAR02ScorpionsChecked)) {
@@ -323,7 +323,7 @@ void SceneScriptAR02::dialogueWithInsectDealer2() {
 	Dialogue_Menu_Clear_List();
 
 	if (Global_Variable_Query(kVariableChinyen) >= 15
-	 || Query_Difficulty_Level() == 0
+	 || Query_Difficulty_Level() == kGameDifficultyEasy
 	) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(530, 7, 5, 3); // BUY
 	}
@@ -335,7 +335,7 @@ void SceneScriptAR02::dialogueWithInsectDealer2() {
 
 	if (answerValue == 530) { // BUY
 		Actor_Says(kActorMcCoy, 120, 12);
-		if (Query_Difficulty_Level() != 0) {
+		if (Query_Difficulty_Level() != kGameDifficultyEasy) {
 			Global_Variable_Decrement(kVariableChinyen, 15);
 		}
 		Actor_Clue_Acquire(kActorMcCoy, kClueMaggieBracelet, true, kActorInsectDealer);

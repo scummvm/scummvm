@@ -280,7 +280,7 @@ void AIScriptGordo::Retired(int byActorId) {
 		Actor_Voice_Over(1410, kActorVoiceOver);
 		Actor_Voice_Over(1430, kActorVoiceOver);
 		Actor_Voice_Over(1440, kActorVoiceOver);
-		if (Query_Difficulty_Level() > 0) {
+		if (Query_Difficulty_Level() > kGameDifficultyEasy) {
 			Global_Variable_Increment(kVariableChinyen, 200);
 		}
 		Player_Gains_Control();
@@ -1130,9 +1130,9 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			if (Game_Flag_Query(kFlagNR02GordoLeaveLighter)) {
 				Game_Flag_Reset(kFlagNR02GordoLeaveLighter);
 				if (Game_Flag_Query(kFlagGordoIsReplicant)) {
-					Item_Add_To_World(kItemGordosLighter1, 953, kSetNR02, 148.94f, 22.19f, 476.1f, 0, 6, 6, false, true, false, false);
+					Item_Add_To_World(kItemGordosLighterReplicant, kModelAnimationGordosLighterReplicant, kSetNR02, 148.94f, 22.19f, 476.1f, 0, 6, 6, false, true, false, false);
 				} else {
-					Item_Add_To_World(kItemGordosLighter2, 954, kSetNR02, 148.94f, 22.19f, 476.1f, 0, 6, 6, false, true, false, false);
+					Item_Add_To_World(kItemGordosLighterHuman, kModelAnimationGordosLighterHuman, kSetNR02, 148.94f, 22.19f, 476.1f, 0, 6, 6, false, true, false, false);
 				}
 				Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR02GoToPodium);
 			}

@@ -131,11 +131,11 @@ bool SceneScriptHC01::ClickedOnActor(int actorId) {
 bool SceneScriptHC01::ClickedOnItem(int itemId, bool a2) {
 	if (itemId == kItemCamera) {
 		Item_Remove_From_World(kItemCamera);
-		Item_Pickup_Spin_Effect(977, 361, 381);
+		Item_Pickup_Spin_Effect(kModelAnimationIzoCamera, 361, 381);
 		Delay(1500);
-		Item_Pickup_Spin_Effect(984, 377, 397);
+		Item_Pickup_Spin_Effect(kModelAnimationPhoto, 377, 397);
 		Delay(1500);
-		Item_Pickup_Spin_Effect(984, 330, 384);
+		Item_Pickup_Spin_Effect(kModelAnimationPhoto, 330, 384);
 		if (Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)) {
 			Actor_Clue_Acquire(kActorMcCoy, kCluePhotoOfMcCoy1, true, kActorIzo);
 		} else {
@@ -210,7 +210,7 @@ void SceneScriptHC01::SceneFrameAdvanced(int frame) {
 
 	if (frame == 80) {
 		Ambient_Sounds_Play_Sound(kSfxTRPDOOR1, 40, 100, 100, 0);
-		Item_Add_To_World(kItemGreenPawnLock, 931, kSetHC01_HC02_HC03_HC04, 582.0f, 27.0f, -41.0f, 0, 8, 8, true, true, false, true);
+		Item_Add_To_World(kItemGreenPawnLock, kModelAnimationBadge, kSetHC01_HC02_HC03_HC04, 582.0f, 27.0f, -41.0f, 0, 8, 8, true, true, false, true); // TODO a bug? reusing still animation of kModelAnimationBadge
 	}
 }
 
@@ -278,7 +278,7 @@ void SceneScriptHC01::dialogueWithIzo() {
 			Actor_Says(kActorIzo, 250, 13);
 			Actor_Modify_Friendliness_To_Other(kActorIzo, kActorMcCoy, -1);
 			if (Actor_Query_Friendliness_To_Other(kActorIzo, kActorMcCoy) < 47
-			 && Query_Difficulty_Level() == 0
+			 && Query_Difficulty_Level() == kGameDifficultyEasy
 			) {
 				takePhotoAndRunAway();
 			}
@@ -303,7 +303,7 @@ void SceneScriptHC01::dialogueWithIzo() {
 			Actor_Says(kActorIzo, 220, 16);
 			Actor_Says(kActorIzo, 230, kAnimationModeTalk);
 			Actor_Says(kActorIzo, 240, 15);
-			if (Query_Difficulty_Level() < 2) {
+			if (Query_Difficulty_Level() < kGameDifficultyHard) {
 				Actor_Modify_Friendliness_To_Other(kActorIzo, kActorMcCoy, -1);
 			}
 		}
@@ -315,7 +315,7 @@ void SceneScriptHC01::dialogueWithIzo() {
 			Actor_Says(kActorIzo, 170, kAnimationModeTalk);
 			Actor_Says(kActorIzo, 180, kAnimationModeTalk);
 			Actor_Says(kActorIzo, 190, 12);
-			if (Query_Difficulty_Level() < 2) {
+			if (Query_Difficulty_Level() < kGameDifficultyHard) {
 				Actor_Modify_Friendliness_To_Other(kActorIzo, kActorMcCoy, -2);
 			}
 		}
@@ -342,7 +342,7 @@ void SceneScriptHC01::dialogueWithIzo() {
 			Actor_Says(kActorIzo, 300, 12);
 			Actor_Says(kActorIzo, 310, 17);
 			Actor_Says(kActorMcCoy, 1140, kAnimationModeTalk);
-			if (Query_Difficulty_Level() < 2) {
+			if (Query_Difficulty_Level() < kGameDifficultyHard) {
 				Actor_Modify_Friendliness_To_Other(kActorIzo, kActorMcCoy, -2);
 			}
 			if (Actor_Query_Friendliness_To_Other(kActorIzo, kActorMcCoy) < 47) {

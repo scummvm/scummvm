@@ -43,7 +43,7 @@ void SceneScriptPS15::InitializeScene() {
 void SceneScriptPS15::SceneLoaded() {
 	Obstacle_Object("E.ARCH", true);
 	if (Global_Variable_Query(kVariableChapter) == 2) {
-		Item_Add_To_World(kItemWeaponsCrate, 983, 101, -208.0f, -113.43f, 30.28f, 750, 16, 12, false, true, false, true);
+		Item_Add_To_World(kItemWeaponsCrate, kModelAnimationWeaponsCrate, 101, -208.0f, -113.43f, 30.28f, 750, 16, 12, false, true, false, true);
 	}
 }
 

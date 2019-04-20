@@ -123,12 +123,12 @@ protected:
 	void Actor_Set_Immunity_To_Obstacles(int actorId, bool isImmune);
 	void Item_Add_To_World(int itemId, int animationId, int setId, float x, float y, float z, signed int facing, int height, int width, bool isTargetable, bool isObstacle, bool isPoliceMazeEnemy, bool updateOnly);
 	void Item_Remove_From_World(int itemId);
-	void Set_Subtitle_Text_On_Screen(Common::String displayText);
 	void Item_Spin_In_World(int itemId);
 	void Item_Flag_As_Target(int itemId);
 	void Item_Flag_As_Non_Target(int itemId);
-	void Item_Pickup_Spin_Effect(int a1, int a2, int a3);
+	void Item_Pickup_Spin_Effect(int animationId, int x, int y);
 	bool Item_Query_Visible(int itemId);
+	void Set_Subtitle_Text_On_Screen(Common::String displayText);
 	int Animation_Open();
 	int Animation_Close();
 	int Animation_Start();

@@ -50,17 +50,17 @@ void SceneScriptTB06::SceneLoaded() {
 	if (!Game_Flag_Query(kFlagTB06DogCollarTaken)
 	 &&  Actor_Query_Goal_Number(kActorPhotographer) != 199
 	) {
-		Item_Add_To_World(kItemDogCollar, 942, kSetTB06, 36.54f, 149.48f, -565.67f, 0, 6, 6, false, true, false, true);
+		Item_Add_To_World(kItemDogCollar, kModelAnimationDogCollar, kSetTB06, 36.54f, 149.48f, -565.67f, 0, 6, 6, false, true, false, true);
 	}
 
 	if (!Game_Flag_Query(kFlagTB06KitchenBoxTaken)) {
-		Item_Add_To_World(kItemKitchenBox, 955, kSetTB06, 18.0f, 149.65f, -599.0f, 0, 6, 6, false, true, false, true);
+		Item_Add_To_World(kItemKitchenBox, kModelAnimationKingstonKitchenBox, kSetTB06, 18.0f, 149.65f, -599.0f, 0, 6, 6, false, true, false, true);
 	}
 
 	if (Actor_Query_Goal_Number(kActorPhotographer) != 199) {
-		Item_Add_To_World(kItemDeadDogA, 978, kSetTB06, -46.82f, 149.6f, -666.88f, 0, 12, 12, false, true, false, true);
-		Item_Add_To_World(kItemDeadDogB, 979, kSetTB06, -30.27f, 149.6f, -610.7f, 0, 15, 45, false, true, false, true);
-		Item_Add_To_World(kItemDeadDogC, 980, kSetTB06, 9.87f, 149.6f, -683.5f, 0, 12, 12, false, true, false, true);
+		Item_Add_To_World(kItemDeadDogA, kModelAnimationDeadDogA, kSetTB06, -46.82f, 149.6f, -666.88f, 0, 12, 12, false, true, false, true);
+		Item_Add_To_World(kItemDeadDogB, kModelAnimationDeadDogB, kSetTB06, -30.27f, 149.6f, -610.7f, 0, 15, 45, false, true, false, true);
+		Item_Add_To_World(kItemDeadDogC, kModelAnimationDeadDogC, kSetTB06, 9.87f, 149.6f, -683.5f, 0, 12, 12, false, true, false, true);
 	}
 }
 
