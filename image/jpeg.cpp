@@ -197,15 +197,17 @@ J_COLOR_SPACE fromScummvmPixelFormat(const Graphics::PixelFormat &format) {
 		{ Graphics::PixelFormat(4, 8, 8, 8, 0, 16,  8,  0, 24), JCS_EXT_XRGB, JCS_EXT_BGRX },
 		{ Graphics::PixelFormat(4, 8, 8, 8, 0,  8, 16, 24,  0), JCS_EXT_BGRX, JCS_EXT_XRGB },
 		{ Graphics::PixelFormat(3, 8, 8, 8, 0, 16,  8,  0,  0), JCS_EXT_RGB,  JCS_EXT_BGR  },
-		{ Graphics::PixelFormat(3, 8, 8, 8, 0,  0,  8, 16,  0), JCS_EXT_BGR,  JCS_EXT_RGB  },
+		{ Graphics::PixelFormat(3, 8, 8, 8, 0,  0,  8, 16,  0), JCS_EXT_BGR,  JCS_EXT_RGB  }
+#endif
+#if defined(JCS_EXTENSIONS) and defined(JCS_ALPHA_EXTENSIONS)
+		,
 #endif
 #ifdef JCS_ALPHA_EXTENSIONS
 		{ Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16,  8,  0), JCS_EXT_RGBA, JCS_EXT_ABGR },
 		{ Graphics::PixelFormat(4, 8, 8, 8, 8,  0,  8, 16, 24), JCS_EXT_ABGR, JCS_EXT_RGBA },
 		{ Graphics::PixelFormat(4, 8, 8, 8, 8, 16,  8,  0, 24), JCS_EXT_ARGB, JCS_EXT_BGRA },
-		{ Graphics::PixelFormat(4, 8, 8, 8, 8,  8, 16, 24,  0), JCS_EXT_BGRA, JCS_EXT_ARGB },
+		{ Graphics::PixelFormat(4, 8, 8, 8, 8,  8, 16, 24,  0), JCS_EXT_BGRA, JCS_EXT_ARGB }
 #endif
-		{ Graphics::PixelFormat(2, 5, 6, 5, 0, 11,  5,  0,  0), JCS_RGB565,   JCS_RGB565   }
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(mappings); i++) {
