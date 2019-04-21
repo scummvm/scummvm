@@ -1096,7 +1096,7 @@ bool Debugger::cmdList(int argc, const char **argv) {
 			SceneObjects::SceneObject *sceneObject = &_vm->_sceneObjects->_sceneObjects[_vm->_sceneObjects->_sceneObjectsSortedByDistance[i]];
 
 			if (sceneObject->type == kSceneObjectTypeActor) {
-				debugPrintf("%02d. %s (CLK: %s, TRG: %s, PRS: %s, OBS: %s, MVG: %s), Goal: %d, Pos(%02.2f,%02.2f,%02.2f)\n",
+				debugPrintf("%02d. %s (Clk: %s, Trg: %s, Prs: %s, Obs: %s, Mvg: %s), Goal: %d, Pos(%02.2f,%02.2f,%02.2f)\n",
 				             count, _vm->_textActorNames->getText(sceneObject->id - kSceneObjectOffsetActors),
 				             sceneObject->isClickable? "T" : "F",
 				             sceneObject->isTarget?    "T" : "F",
@@ -1125,7 +1125,7 @@ bool Debugger::cmdList(int argc, const char **argv) {
 				debugPrintf("%02d. Unknown object type\n", count);
 				++count;
 			} else if (sceneObject->type == kSceneObjectTypeObject) {
-				debugPrintf("%02d. %s (CLK: %s, TRG: %s, PRS: %s, OBS: %s, MVG: %s), Pos(%02.2f,%02.2f,%02.2f), Bbox:(%02.2f,%02.2f,%02.2f)~(%02.2f,%02.2f,%02.2f)\n",
+				debugPrintf("%02d. %s (Clk: %s, Trg: %s, Prs: %s, Obs: %s, Mvg: %s), Pos(%02.2f,%02.2f,%02.2f)\n     Bbox(%02.2f,%02.2f,%02.2f) ~ (%02.2f,%02.2f,%02.2f)\n",
 				             count, _vm->_scene->objectGetName(sceneObject->id - kSceneObjectOffsetObjects).c_str(),
 				             sceneObject->isClickable? "T" : "F",
 				             sceneObject->isTarget?    "T" : "F",
@@ -1151,7 +1151,7 @@ bool Debugger::cmdList(int argc, const char **argv) {
 				Vector3 pos = _vm->_view->calculateScreenPosition(0.5 * (a + b));
 				char itemText[40];
 				sprintf(itemText, "item %i", sceneObject->id - kSceneObjectOffsetItems);
-				debugPrintf("%02d. %s (CLK: %s, TRG: %s, PRS: %s, OBS: %s, MVG: %s), Pos(%02.2f,%02.2f,%02.2f), Bbox:(%02.2f,%02.2f,%02.2f)~(%02.2f,%02.2f,%02.2f)\n",
+				debugPrintf("%02d. %s (Clk: %s, Trg: %s, Prs: %s, Obs: %s, Mvg: %s), Pos(%02.2f,%02.2f,%02.2f)\n    Bbox(%02.2f,%02.2f,%02.2f) ~ (%02.2f,%02.2f,%02.2f)\n",
 				             count, itemText,
 				             sceneObject->isClickable? "T" : "F",
 				             sceneObject->isTarget?    "T" : "F",
