@@ -207,7 +207,7 @@ bool U32String::equals(const String &x) const {
 		return false;
 
 	for (size_t idx = 0; idx < _size; ++idx)
-		if (_str[idx] != x[idx])
+		if (_str[idx] != (value_type)x[idx])
 			return false;
 
 	return true;
