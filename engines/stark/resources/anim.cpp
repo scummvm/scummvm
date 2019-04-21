@@ -34,6 +34,7 @@
 #include "engines/stark/resources/direction.h"
 #include "engines/stark/resources/image.h"
 #include "engines/stark/resources/item.h"
+#include "engines/stark/resources/location.h"
 #include "engines/stark/resources/textureset.h"
 
 #include "engines/stark/services/archiveloader.h"
@@ -310,6 +311,14 @@ void AnimVideo::readData(Formats::XRCReadStream *stream) {
 	}
 
 	_archiveName = stream->getArchiveName();
+
+	// WORKAROUND: Fix the position of various items being incorrect in the game datafiles
+	Location *location = findParent<Location>();
+	if (_name == "Mountain comes down" && location && location->getName() == "Below Floating Mountain") {
+		for (uint i = 0; i < _sizes.size(); i++) {
+			_positions[i].x = 352;
+		}
+	}
 }
 
 void AnimVideo::onAllLoaded() {
