@@ -209,7 +209,10 @@ void KIASectionSettings::draw(Graphics::Surface &surface) {
 		} else if (_vm->_language == Common::IT_ITA) {
 			subtitlesTranslation = "Sottotitoli";      // IT_ITA
 		} else if (_vm->_language == Common::RU_RUS) {
-			subtitlesTranslation = "Subtitry";         // RU_RUS
+			// The supported Russian version is using its own KIA6PT.FON
+			// where it has replaced the mapping of Latin characters to Russian characters
+			// So the character string here does not make sense, but it will appear correctly
+			subtitlesTranslation = "CE,NBNHS";         // RU_RUS "Subtitry"
 		} else if (_vm->_language == Common::ES_ESP) {
 			subtitlesTranslation = "Subtitulos";       // ES_ESP
 		}
