@@ -13,7 +13,7 @@ all: $(EXECUTABLE).dwp
 endif
 
 ifdef USE_PANDOC
-all: README NEWS
+all: README$(PANDOCEXT) NEWS$(PANDOCEXT)
 endif
 
 ######################################################################
@@ -237,10 +237,10 @@ VERFILE := $(DISTDIR)/$(DISTNAME)/base/internal_version.h
 
 ifdef USE_PANDOC
 # Convert README.md and NEWS.md to plain text for any platform that might require it
-README: ${srcdir}/README.md
+README$(PANDOCEXT): ${srcdir}/README.md
 	$(QUIET_PANDOC)$(PANDOC) -f gfm -t $(PANDOCFORMAT) -o $@ $<
 
-NEWS: ${srcdir}/NEWS.md
+NEWS$(PANDOCEXT): ${srcdir}/NEWS.md
 	$(QUIET_PANDOC)$(PANDOC) -f gfm -t $(PANDOCFORMAT) -o $@ $<
 endif
 
@@ -275,7 +275,7 @@ dist-src: \
 # Common files
 DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING COPYING.BSD COPYING.LGPL COPYING.FREEFONT COPYRIGHT NEWS.md README.md)
 ifdef USE_PANDOC
-DIST_FILES_DOCS+=README NEWS
+DIST_FILES_DOCS+=README$(PANDOCEXT) NEWS$(PANDOCEXT)
 endif
 
 DIST_FILES_DOCS_languages=cz da de es fr it no-nb se

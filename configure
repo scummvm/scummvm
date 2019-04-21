@@ -229,7 +229,8 @@ NASM=""
 _tainted_build=no
 PANDOC=""
 _pandocpath="$PATH"
-_pandocformat="plain"
+_pandocformat="default"
+_pandocext="default"
 # The following variables are automatically detected, and should not
 # be modified otherwise. Consider them read-only.
 _posix=no
@@ -2705,6 +2706,16 @@ case $_host_os in
 				echo "Could not determine path for Xcode Tools"
 			fi
 		fi
+
+		# Use pandoc to generate README and NEWS file for the bundle
+		# Also default to  HTML rather than plain text as it gives a nicer
+		# formating, especially for the README. We could consider using RTF
+		# as well, but TextEdit does not support links within the document,
+		# and having a TOC with links, which we do with html, is quite convenient.
+		_pandoc=yes
+		if test "$_pandocformat" = "default"; then
+			_pandocformat="html"
+		fi
 		;;
 	dreamcast)
 		append_var DEFINES "-D__DC__"
@@ -5141,6 +5152,19 @@ fi
 
 define_in_config_if_yes $_pandoc 'USE_PANDOC'
 
+# Default to plain text output for pandoc
+if test -z "$_pandocformat" -o "$_pandocformat" = "default"; then
+	_pandocformat="plain"
+fi
+
+if test "$_pandocext" = "default"; then
+	if test "$_pandocformat" = plain; then
+		_pandocext=""
+	else
+		_pandocext=".$_pandocformat"
+	fi
+fi
+
 #
 # Enable vkeybd / keymapper / event recorder
 #
@@ -5619,6 +5643,7 @@ NASM := $NASM
 NASMFLAGS := $NASMFLAGS
 PANDOC := $PANDOC
 PANDOCFORMAT := $_pandocformat
+PANDOCEXT := $_pandocext
 ZLIB_LIBS := $ZLIB_LIBS
 ZLIB_CFLAGS := $ZLIB_CFLAGS
 

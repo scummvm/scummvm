@@ -38,7 +38,9 @@ lib*.a
 /scummvm-conf.cpp
 /tmp_*.cpp
 /README
+/README.html
 /NEWS
+/NEWS.html
 
 /build
 /staging
