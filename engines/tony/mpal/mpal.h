@@ -394,7 +394,7 @@ void mpalFree();
  * @remarks		This is the specialized version of the original single mpalQuery
  * method that returns numeric results.
  */
-uint32 mpalQueryDWORD(uint16 wQueryType, ...);
+uint32 mpalQueryDWORD(uint wQueryType, ...);
 
 /**
  * This is a general function to communicate with the library, to request information
@@ -405,7 +405,7 @@ uint32 mpalQueryDWORD(uint16 wQueryType, ...);
  * @remarks		This is the specialized version of the original single mpalQuery
  * method that returns a pointer or handle.
  */
-MpalHandle mpalQueryHANDLE(uint16 wQueryType, ...);
+MpalHandle mpalQueryHANDLE(uint wQueryType, ...);
 
 /**
  * This is a general function to communicate with the library, to request information

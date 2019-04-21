@@ -33,14 +33,14 @@ BEGIN_MESSAGE_MAP(CBrainSlot, CGameObject)
 	ON_MESSAGE(MouseDragStartMsg)
 END_MESSAGE_MAP()
 
-int CBrainSlot::_added;
+int CBrainSlot::_numAdded;
 bool CBrainSlot::_woken;
 
 void CBrainSlot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_value1, indent);
+	file->writeNumberLine(_occupied, indent);
 	file->writeQuotedLine(_target, indent);
-	file->writeNumberLine(_added, indent);
+	file->writeNumberLine(_numAdded, indent);
 	file->writeNumberLine(_woken, indent);
 
 	CGameObject::save(file, indent);
@@ -48,9 +48,9 @@ void CBrainSlot::save(SimpleFile *file, int indent) {
 
 void CBrainSlot::load(SimpleFile *file) {
 	file->readNumber();
-	_value1 = file->readNumber();
+	_occupied = file->readNumber();
 	_target = file->readString();
-	_added = file->readNumber();
+	_numAdded = file->readNumber();
 	_woken = file->readNumber();
 
 	CGameObject::load(file);
@@ -58,12 +58,12 @@ void CBrainSlot::load(SimpleFile *file) {
 
 bool CBrainSlot::SetFrameMsg(CSetFrameMsg *msg) {
 	loadFrame(msg->_frameNumber);
-	_value1 = 1;
+	_occupied = true;
 	return true;
 }
 
 bool CBrainSlot::AddHeadPieceMsg(CAddHeadPieceMsg *msg) {
-	_added = 1;
+	_numAdded++;
 	_cursorId = CURSOR_HAND;
 	CAddHeadPieceMsg addMsg("NULL");
 
@@ -87,21 +87,21 @@ bool CBrainSlot::AddHeadPieceMsg(CAddHeadPieceMsg *msg) {
 	if (addMsg._value != "NULL")
 		addMsg.execute("TitaniaControl");
 
-	if (addMsg._value == "OlfactoryCentre")
+	if (msg->_value == "OlfactoryCentre")
 		loadFrame(2);
-	else if (addMsg._value == "AuditoryCentre")
+	else if (msg->_value == "AuditoryCentre")
 		loadFrame(1);
-	else if (addMsg._value == "SpeechCentre")
+	else if (msg->_value == "SpeechCentre")
 		loadFrame(3);
-	else if (addMsg._value == "VisionCentre")
+	else if (msg->_value == "VisionCentre")
 		loadFrame(4);
-	else if (addMsg._value == "CentralCore") {
+	else if (msg->_value == "CentralCore") {
 		CActMsg actMsg("Insert Central Core");
 		actMsg.execute("CentralCoreSlot");
 	}
 
 	_target = msg->_value;
-	_value1 = 1;
+	_occupied = true;
 	return true;
 }
 
@@ -124,7 +124,7 @@ bool CBrainSlot::ActMsg(CActMsg *msg) {
 }
 
 bool CBrainSlot::MouseDragStartMsg(CMouseDragStartMsg *msg) {
-	if (!_value1 || _woken || !checkPoint(msg->_mousePos, false, true))
+	if (!_occupied || _woken || !checkPoint(msg->_mousePos, false, true))
 		return false;
 
 	_cursorId = CURSOR_ARROW;
@@ -134,14 +134,14 @@ bool CBrainSlot::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 	takeMsg.execute("TitaniaControl");
 
 	loadFrame(isEquals("CentralCoreSlot") ? 21 : 0);
-	_value1 = 0;
+	_occupied = false;
 
 	CPassOnDragStartMsg passMsg;
 	passMsg._mousePos = msg->_mousePos;
 	passMsg.execute(_target);
 
 	msg->_dragItem = getRoot()->findByName(_target);
-	_added = 0;
+	_numAdded--;
 
 	return true;
 }

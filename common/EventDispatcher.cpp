@@ -24,7 +24,7 @@
 
 namespace Common {
 
-EventDispatcher::EventDispatcher() : _autoFreeMapper(false), _mapper(0) {
+EventDispatcher::EventDispatcher() : _autoFreeMapper(false), _mapper(nullptr) {
 }
 
 EventDispatcher::~EventDispatcher() {
@@ -41,7 +41,7 @@ EventDispatcher::~EventDispatcher() {
 	if (_autoFreeMapper) {
 		delete _mapper;
 	}
-	_mapper = 0;
+	_mapper = nullptr;
 }
 
 void EventDispatcher::dispatch() {
@@ -69,6 +69,15 @@ void EventDispatcher::dispatch() {
 		dispatchEvent(delayedEvent);
 	}
 }
+
+void EventDispatcher::clearEvents() {
+	Event event;
+
+	for (List<SourceEntry>::iterator i = _sources.begin(); i != _sources.end(); ++i) {
+		while (i->source->pollEvent(event)) {}
+	}
+}
+
 
 void EventDispatcher::registerMapper(EventMapper *mapper, bool autoFree) {
 	if (_autoFreeMapper) {

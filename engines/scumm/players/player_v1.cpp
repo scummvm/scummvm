@@ -416,7 +416,7 @@ void Player_V1::nextPCjrCmd() {
 			switch (_channels[i].hull_counter) {
 			case 1:
 				_channels[i].volume -= _channels[i].attack;
-				if ((int) _channels[i].volume <= 0) {
+				if ((int)_channels[i].volume <= 0) {
 					_channels[i].volume = 0;
 					_channels[i].hull_counter++;
 				}
@@ -432,7 +432,7 @@ void Player_V1::nextPCjrCmd() {
 				if (--_channels[i].sustctr < 0) {
 					_channels[i].sustctr = _channels[i].sustain_2;
 					_channels[i].volume += _channels[i].sustain_1;
-					if ((int) _channels[i].volume >= 15) {
+					if ((int)_channels[i].volume >= 15) {
 						_channels[i].volume = 15;
 						_channels[i].hull_counter++;
 					}

@@ -21,51 +21,127 @@
  */
 
 #include "titanic/star_control/fvector.h"
-#include "titanic/star_control/star_control_sub6.h"
-#include "common/algorithm.h"
-#include "common/textconsole.h"
+#include "titanic/star_control/fpose.h"
+
+#include "common/math.h"
 
 namespace Titanic {
 
-void FVector::fn1(FVector *v) {
-	v->_x = (ABS(_x - _y) < 0.00001 && ABS(_y - _z) < 0.00001 &&
-		ABS(_x - _z) < 0.00001) ? -_x : _x;
-	v->_y = _y;
-	v->_z = _z;
+FVector FVector::swapComponents() const {
+	return FVector(
+		(ABS(_x - _y) < 0.00001 && ABS(_y - _z) < 0.00001 &&
+			ABS(_x - _z) < 0.00001) ? -_y : _y,
+		_z,
+		_x
+	);
 }
 
-void FVector::multiply(FVector *dest, const FVector *src) {
-	dest->_x = (src->_z * _y) - (_z * src->_y);
-	dest->_y = (src->_x * _z) - (_x * src->_z);
-	dest->_z = (src->_y * _x) - (_y * src->_x);
+FVector FVector::crossProduct(const FVector &src) const {
+	return FVector(
+		src._z * _y - _z * src._y,
+		src._x * _z - _x * src._z,
+		src._y * _x - _y * src._x
+	);
 }
 
-void FVector::fn3() {
-	double hyp = sqrt(_x * _x + _y * _y + _z * _z);
-	assert(hyp);
+void FVector::rotVectAxisY(float angleDeg) {
+	float sinVal = sin(Common::deg2rad<double>(angleDeg));
+	float cosVal = cos(Common::deg2rad<double>(angleDeg));
+	float x = cosVal * _x - sinVal * _z;
+	float z = cosVal * _z + sinVal * _x;
+
+	_x = x;
+	_z = z;
+}
+
+bool FVector::normalize(float & hyp) {
+	hyp = sqrt(_x * _x + _y * _y + _z * _z);
+	if (hyp==0) {
+		return false;
+	}
 
 	_x *= 1.0 / hyp;
 	_y *= 1.0 / hyp;
 	_z *= 1.0 / hyp;
+	return true;
 }
 
-double FVector::getDistance(const FVector *src) const {
-	double xd = src->_x - _x;
-	double yd = src->_y - _y;
-	double zd = src->_z - _z;
+FVector FVector::addAndNormalize(const FVector &v) const {
+	FVector tempV(_x + v._x, _y + v._y, _z + v._z);
+
+	float unusedScale = 0.0;
+	if (!tempV.normalize(unusedScale)) {
+		// Do the normalization, put the scale amount in unusedScale,
+		// but if it is unsuccessful, crash
+		assert(unusedScale);
+	}
+
+	return tempV;
+}
+
+FVector FVector::getAnglesAsVect() const {
+	FVector vector = *this;
+	FVector dest;
+
+	if (!vector.normalize(dest._x)) {
+		// Makes this vector have magnitude=1, put the scale amount in dest._x,
+		// but if it is unsuccessful, crash
+		assert(dest._x);
+	}
+
+	dest._y = acos(vector._y);	// radian distance/angle that this vector's y component is from the +y axis,
+								// result is restricted to [0,pi]
+	dest._z = atan2(vector._x,vector._z); // result is restricted to [-pi,pi]
+
+	return dest;
+}
+
+float FVector::getDistance(const FVector &src) const {
+	float xd = src._x - _x;
+	float yd = src._y - _y;
+	float zd = src._z - _z;
 
 	return sqrt(xd * xd + yd * yd + zd * zd);
 }
 
-void FVector::fn4(FVector *dest, const FVector *v1, const FVector *v2) {
-	FVector tempVector(v1->_x + v2->_x, v1->_y + v2->_y, v1->_z + v2->_z);
-	tempVector.fn3();
-
-	*dest = tempVector;
+FVector FVector::matProdRowVect(const FPose &pose) const {
+	FVector v;
+	v._x = pose._row2._x * _y + pose._row3._x * _z + pose._row1._x * _x + pose._vector._x;
+	v._y = pose._row2._y * _y + pose._row3._y * _z + pose._row1._y * _x + pose._vector._y;
+	v._z = pose._row3._z * _z + pose._row2._z * _y + pose._row1._z * _x + pose._vector._z;
+	return v;
 }
 
-void FVector::fn5(FVector *dest, const CStarControlSub6 *sub6) const {
-	error("TODO: FVector::fn5");
+FPose FVector::getFrameTransform(const FVector &v) {
+	FPose matrix1, matrix2, matrix3, matrix4;
+
+	FVector vector1 = getAnglesAsVect();
+	matrix1.setRotationMatrix(X_AXIS, Common::rad2deg<double>(vector1._y));
+	matrix2.setRotationMatrix(Y_AXIS, Common::rad2deg<double>(vector1._z));
+	fposeProd(matrix1, matrix2, matrix3);
+	matrix4 = matrix3.inverseTransform();
+
+	vector1 = v.getAnglesAsVect();
+	matrix1.setRotationMatrix(X_AXIS, Common::rad2deg<double>(vector1._y));
+	matrix2.setRotationMatrix(Y_AXIS, Common::rad2deg<double>(vector1._z));
+	fposeProd(matrix1, matrix2, matrix3);
+	fposeProd(matrix4, matrix3, matrix1);
+
+	return matrix1;
+}
+
+FPose FVector::formRotXY() const {
+	FVector v1 = getAnglesAsVect();
+	FPose m1, m2;
+	m1.setRotationMatrix(X_AXIS, Common::rad2deg<double>(v1._y));
+	m2.setRotationMatrix(Y_AXIS, Common::rad2deg<double>(v1._z));
+	FPose m3;
+	fposeProd(m1, m2, m3);
+	return m3;
+}
+
+Common::String FVector::toString() const {
+	return Common::String::format("(%.3f,%.3f,%.3f)", _x, _y, _z);
 }
 
 } // End of namespace Titanic

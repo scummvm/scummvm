@@ -33,9 +33,9 @@ class CWheelButton : public CBackground {
 	bool TimerMsg(CTimerMsg *msg);
 	bool LeaveViewMsg(CLeaveViewMsg *msg);
 public:
-	bool _fieldE0;
+	bool _blinking;
 	int _timerId;
-	int _fieldE8;
+	int _unused5;
 public:
 	CLASSDEF;
 	CWheelButton();

@@ -29,8 +29,9 @@
 
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 #include "backends/cloud/cloudmanager.h"
-#include "common/file.h"
 #endif
+#include "common/file.h"
+#include "common/system.h"
 
 #if !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
 
@@ -369,6 +370,8 @@ void DefaultSaveFileManager::saveTimestamps(Common::HashMap<Common::String, uint
 	f.close();
 }
 
+#endif // ifdef USE_LIBCURL
+
 Common::String DefaultSaveFileManager::concatWithSavesPath(Common::String name) {
 	DefaultSaveFileManager *manager = dynamic_cast<DefaultSaveFileManager *>(g_system->getSavefileManager());
 	Common::String path = (manager ? manager->getSavePath() : ConfMan.get("savepath"));
@@ -384,7 +387,5 @@ Common::String DefaultSaveFileManager::concatWithSavesPath(Common::String name) 
 	if (backslashes > 0) return path + '\\' + name;
 	return path + '/' + name;
 }
-
-#endif // ifdef USE_LIBCURL
 
 #endif // !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)

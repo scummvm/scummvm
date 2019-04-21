@@ -157,7 +157,7 @@ void AGOSEngine::animateSprites() {
 	}
 
 	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2) {
-		const uint8 var = (getGameType() == GType_ELVIRA1) ? 293 : 71;
+		const uint var = (getGameType() == GType_ELVIRA1) ? 293 : 71;
 		if (_wallOn && !_variableArray[var]) {
 			_wallOn--;
 

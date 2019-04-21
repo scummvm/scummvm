@@ -41,7 +41,7 @@ void CNutReplacer::load(SimpleFile *file) {
 
 bool CNutReplacer::ReplaceBowlAndNutsMsg(CReplaceBowlAndNutsMsg *msg) {
 	setVisible(true);
-	playMovie(MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
+	playMovie(MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
 	return true;
 }
 

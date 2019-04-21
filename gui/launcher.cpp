@@ -45,6 +45,7 @@
 #include "gui/EventRecorder.h"
 #endif
 #include "gui/saveload.h"
+#include "gui/unknown-game-dialog.h"
 #include "gui/widgets/edittext.h"
 #include "gui/widgets/list.h"
 #include "gui/widgets/tab.h"
@@ -204,7 +205,10 @@ void LauncherDialog::clean() {
 	while (_firstWidget) {
 		Widget* w = _firstWidget;
 		removeWidget(w);
-		delete w;
+		// This is called from rebuild() which may result from handleCommand being called by
+		// a child widget sendCommand call. In such a case sendCommand is still being executed
+		// so we should not delete yet the child widget. Thus delay the deletion.
+		g_gui.addToTrash(w, this);
 	}
 	delete _browser;
 	delete _loadDialog;
@@ -214,7 +218,7 @@ void LauncherDialog::rebuild() {
 	clean();
 	build();
 	reflowLayout();
-	setFocusWidget(_firstWidget);
+	setDefaultFocusedWidget();
 }
 
 void LauncherDialog::open() {
@@ -243,6 +247,8 @@ void LauncherDialog::close() {
 
 void LauncherDialog::updateListing() {
 	StringArray l;
+	ListWidget::ColorList colors;
+	ThemeEngine::FontColor color;
 
 	// Retrieve a list of all games defined in the config file
 	_domains.clear();
@@ -259,13 +265,14 @@ void LauncherDialog::updateListing() {
 
 		String gameid(iter->_value.getVal("gameid"));
 		String description(iter->_value.getVal("description"));
+		Common::FSNode path(iter->_value.getVal("path"));
 
 		if (gameid.empty())
 			gameid = iter->_key;
 		if (description.empty()) {
-			GameDescriptor g = EngineMan.findGame(gameid);
-			if (g.contains("description"))
-				description = g.description();
+			PlainGameDescriptor g = EngineMan.findGame(gameid);
+			if (g.description)
+				description = g.description;
 		}
 
 		if (description.empty()) {
@@ -278,13 +285,25 @@ void LauncherDialog::updateListing() {
 
 			while (pos < size && (scumm_stricmp(description.c_str(), l[pos].c_str()) > 0))
 				pos++;
+
+			color = ThemeEngine::kFontColorNormal;
+			if (!path.isDirectory()) {
+				color = ThemeEngine::kFontColorAlternate;
+				// If more conditions which grey out entries are added we should consider
+				// enabling this so that it is easy to spot why a certain game entry cannot
+				// be started.
+
+				// description += Common::String::format(" (%s)", _("Not found"));
+			}
+
 			l.insert_at(pos, description);
+			colors.insert_at(pos, color);
 			_domains.insert_at(pos, iter->_key);
 		}
 	}
 
 	const int oldSel = _list->getSelected();
-	_list->setList(l);
+	_list->setList(l, &colors);
 	if (oldSel < (int)l.size())
 		_list->setSelected(oldSel);	// Restore the old selection
 	else if (oldSel != -1)
@@ -320,7 +339,7 @@ void LauncherDialog::addGame() {
 				selectTarget(newTarget);
 			}
 
-			draw();
+			g_gui.scheduleTopDialogRedraw();
 		}
 
 		// We need to update the buttons here, so "Mass add" will revert to "Add game"
@@ -372,45 +391,6 @@ void LauncherDialog::addGame() {
 	} while (looping);
 }
 
-Common::String addGameToConf(const GameDescriptor &result) {
-	// The auto detector or the user made a choice.
-	// Pick a domain name which does not yet exist (after all, we
-	// are *adding* a game to the config, not replacing).
-	Common::String domain = result.preferredtarget();
-
-	assert(!domain.empty());
-	if (ConfMan.hasGameDomain(domain)) {
-		int suffixN = 1;
-		Common::String gameid(domain);
-
-		while (ConfMan.hasGameDomain(domain)) {
-			domain = gameid + Common::String::format("-%d", suffixN);
-			suffixN++;
-		}
-	}
-
-	// Add the name domain
-	ConfMan.addGameDomain(domain);
-
-	// Copy all non-empty key/value pairs into the new domain
-	for (GameDescriptor::const_iterator iter = result.begin(); iter != result.end(); ++iter) {
-		if (!iter->_value.empty() && iter->_key != "preferredtarget")
-			ConfMan.set(iter->_key, iter->_value, domain);
-	}
-
-	// TODO: Setting the description field here has the drawback
-	// that the user does never notice when we upgrade our descriptions.
-	// It might be nice ot leave this field empty, and only set it to
-	// a value when the user edits the description string.
-	// However, at this point, that's impractical. Once we have a method
-	// to query all backends for the proper & full description of a given
-	// game target, we can change this (currently, you can only query
-	// for the generic gameid description; it's not possible to obtain
-	// a description which contains extended information like language, etc.).
-
-	return domain;
-}
-
 void LauncherDialog::removeGame(int item) {
 	MessageDialog alert(_("Do you really want to remove this game configuration?"), _("Yes"), _("No"));
 
@@ -424,7 +404,7 @@ void LauncherDialog::removeGame(int item) {
 
 		// Update the ListWidget and force a redraw
 		updateListing();
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 	}
 }
 
@@ -439,7 +419,8 @@ void LauncherDialog::editGame(int item) {
 	String gameId(ConfMan.get("gameid", _domains[item]));
 	if (gameId.empty())
 		gameId = _domains[item];
-	EditGameDialog editDialog(_domains[item], EngineMan.findGame(gameId).description());
+
+	EditGameDialog editDialog(_domains[item]);
 	if (editDialog.runModal() > 0) {
 		// User pressed OK, so make changes permanent
 
@@ -449,7 +430,7 @@ void LauncherDialog::editGame(int item) {
 		// Update the ListWidget, reselect the edited game and force a redraw
 		updateListing();
 		selectTarget(editDialog.getDomain());
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 	}
 }
 
@@ -501,7 +482,7 @@ void LauncherDialog::loadGame(int item) {
 	if (gameId.empty())
 		gameId = _domains[item];
 
-	const EnginePlugin *plugin = 0;
+	const Plugin *plugin = nullptr;
 
 	EngineMan.findGame(gameId, &plugin);
 
@@ -509,8 +490,9 @@ void LauncherDialog::loadGame(int item) {
 	target.toLowercase();
 
 	if (plugin) {
-		if ((*plugin)->hasFeature(MetaEngine::kSupportsListSaves) &&
-			(*plugin)->hasFeature(MetaEngine::kSupportsLoadingDuringStartup)) {
+		const MetaEngine &metaEngine = plugin->get<MetaEngine>();
+		if (metaEngine.hasFeature(MetaEngine::kSupportsListSaves) &&
+			metaEngine.hasFeature(MetaEngine::kSupportsLoadingDuringStartup)) {
 			int slot = _loadDialog->runModalWithPluginAndTarget(plugin, target);
 			if (slot >= 0) {
 				ConfMan.setActiveDomain(_domains[item]);
@@ -569,7 +551,17 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 
 	// ...so let's determine a list of candidates, games that
 	// could be contained in the specified directory.
-	GameList candidates(EngineMan.detectGames(files));
+	DetectionResults detectionResults = EngineMan.detectGames(files);
+
+	if (detectionResults.foundUnknownGames()) {
+		Common::String report = detectionResults.generateUnknownGameReport(false, 80);
+		g_system->logMessage(LogMessageType::kInfo, report.c_str());
+
+		UnknownGameDialog dialog(detectionResults);
+		dialog.runModal();
+	}
+
+	Common::Array<DetectedGame> candidates = detectionResults.listRecognizedGames();
 
 	int idx;
 	if (candidates.empty()) {
@@ -585,22 +577,19 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 		// Display the candidates to the user and let her/him pick one
 		StringArray list;
 		for (idx = 0; idx < (int)candidates.size(); idx++)
-			list.push_back(candidates[idx].description());
+			list.push_back(candidates[idx].description);
 
 		ChooserDialog dialog(_("Pick the game:"));
 		dialog.setList(list);
 		idx = dialog.runModal();
 	}
 	if (0 <= idx && idx < (int)candidates.size()) {
-		GameDescriptor result = candidates[idx];
+		const DetectedGame &result = candidates[idx];
 
-		// TODO: Change the detectors to set "path" !
-		result["path"] = dir.getPath();
-
-		Common::String domain = addGameToConf(result);
+		Common::String domain = EngineMan.createTargetForGame(result);
 
 		// Display edit dialog for the new entry
-		EditGameDialog editDialog(domain, result.description());
+		EditGameDialog editDialog(domain);
 		if (editDialog.runModal() > 0) {
 			// User pressed OK, so make changes permanent
 
@@ -610,7 +599,7 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 			// Update the ListWidget, select the new item, and force a redraw
 			updateListing();
 			selectTarget(editDialog.getDomain());
-			draw();
+			g_gui.scheduleTopDialogRedraw();
 		} else {
 			// User aborted, remove the the new domain again
 			ConfMan.removeGameDomain(domain);
@@ -684,15 +673,15 @@ void LauncherDialog::updateButtons() {
 	bool enable = (_list->getSelected() >= 0);
 	if (enable != _startButton->isEnabled()) {
 		_startButton->setEnabled(enable);
-		_startButton->draw();
+		_startButton->markAsDirty();
 	}
 	if (enable != _editButton->isEnabled()) {
 		_editButton->setEnabled(enable);
-		_editButton->draw();
+		_editButton->markAsDirty();
 	}
 	if (enable != _removeButton->isEnabled()) {
 		_removeButton->setEnabled(enable);
-		_removeButton->draw();
+		_removeButton->markAsDirty();
 	}
 
 	int item = _list->getSelected();
@@ -703,7 +692,7 @@ void LauncherDialog::updateButtons() {
 
 	if (en != _loadButton->isEnabled()) {
 		_loadButton->setEnabled(en);
-		_loadButton->draw();
+		_loadButton->markAsDirty();
 	}
 	switchButtonsText(_addButton, "~A~dd Game...", _s("Mass Add..."));
 #ifdef ENABLE_EVENTRECORDER

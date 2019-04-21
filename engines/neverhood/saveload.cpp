@@ -32,7 +32,7 @@ namespace Neverhood {
 
 #define NEVERHOOD_SAVEGAME_VERSION 0
 
-NeverhoodEngine::kReadSaveHeaderError NeverhoodEngine::readSaveHeader(Common::SeekableReadStream *in, bool loadThumbnail, SaveHeader &header) {
+WARN_UNUSED_RESULT NeverhoodEngine::kReadSaveHeaderError NeverhoodEngine::readSaveHeader(Common::SeekableReadStream *in, SaveHeader &header, bool skipThumbnail) {
 
 	header.version = in->readUint32LE();
 	if (header.version > NEVERHOOD_SAVEGAME_VERSION)
@@ -43,10 +43,8 @@ NeverhoodEngine::kReadSaveHeaderError NeverhoodEngine::readSaveHeader(Common::Se
 	while (descriptionLen--)
 		header.description += (char)in->readByte();
 
-	if (loadThumbnail) {
-		header.thumbnail = Graphics::loadThumbnail(*in);
-	} else {
-		Graphics::skipThumbnail(*in);
+	if (!Graphics::loadThumbnail(*in, header.thumbnail, skipThumbnail)) {
+		return kRSHEIoError;
 	}
 
 	// Not used yet, reserved for future usage
@@ -110,7 +108,7 @@ bool NeverhoodEngine::loadgame(const char *filename) {
 
 	SaveHeader header;
 
-	kReadSaveHeaderError errorCode = readSaveHeader(in, false, header);
+	kReadSaveHeaderError errorCode = readSaveHeader(in, header);
 
 	if (errorCode != kRSHENoError) {
 		warning("Error loading savegame '%s'", filename);

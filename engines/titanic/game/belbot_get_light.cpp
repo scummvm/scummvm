@@ -61,7 +61,7 @@ bool CBelbotGetLight::MovieEndMsg(CMovieEndMsg *msg) {
 }
 
 bool CBelbotGetLight::MovieFrameMsg(CMovieFrameMsg *msg) {
-	if (getMovieFrame() == 37) {
+	if (msg->_frameNumber == 37) {
 		CActMsg actMsg("BellbotGetLight");
 		actMsg.execute("Eye1");
 	}

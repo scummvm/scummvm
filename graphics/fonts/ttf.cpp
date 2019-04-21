@@ -31,11 +31,13 @@
 #include "graphics/font.h"
 #include "graphics/surface.h"
 
+#include "common/file.h"
 #include "common/singleton.h"
 #include "common/stream.h"
 #include "common/memstream.h"
 #include "common/hashmap.h"
 #include "common/ptr.h"
+#include "common/unzip.h"
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -663,6 +665,23 @@ Font *loadTTFFont(Common::SeekableReadStream &stream, int size, TTFSizeMode size
 		return 0;
 	}
 
+	return font;
+}
+
+Font *loadTTFFontFromArchive(const Common::String &filename, int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, const uint32 *mapping) {
+	Common::Archive *archive;
+	if (!Common::File::exists("fonts.dat") || (archive = Common::makeZipArchive("fonts.dat")) == nullptr) {
+		return 0;
+	}
+
+	Common::File f;
+	if (!f.open(filename, *archive)) {
+		return 0;
+	}
+
+	Font *font = loadTTFFont(f, size, sizeMode, dpi, renderMode, mapping);
+
+	delete archive;
 	return font;
 }
 

@@ -26,22 +26,22 @@ namespace Titanic {
 
 EMPTY_MESSAGE_MAP(CBrokenPellBase, CBackground);
 
-bool CBrokenPellBase::_v1;
-int CBrokenPellBase::_v2;
+bool CBrokenPellBase::_pelleratorOpen;
+bool CBrokenPellBase::_gottenHose;
 
 void CBrokenPellBase::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_v1, indent);
-	file->writeNumberLine(_v2, indent);
-	file->writeNumberLine(_exitAction, indent);
+	file->writeNumberLine(_pelleratorOpen, indent);
+	file->writeNumberLine(_gottenHose, indent);
+	file->writeNumberLine(_closeAction, indent);
 	CBackground::save(file, indent);
 }
 
 void CBrokenPellBase::load(SimpleFile *file) {
 	file->readNumber();
-	_v1 = file->readNumber();
-	_v2 = file->readNumber();
-	_exitAction = file->readNumber();
+	_pelleratorOpen = file->readNumber();
+	_gottenHose = file->readNumber();
+	_closeAction = (CloseAction)file->readNumber();
 	CBackground::load(file);
 }
 

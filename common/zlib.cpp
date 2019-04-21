@@ -71,7 +71,7 @@ bool inflateZlibHeaderless(byte *dst, uint dstLen, const byte *src, uint srcLen,
 		return false;
 
 	// Set the dictionary, if provided
-	if (dict != 0) {
+	if (dict != nullptr) {
 		err = inflateSetDictionary(&stream, const_cast<byte *>(dict), dictLen);
 		if (err != Z_OK)
 			return false;
@@ -168,7 +168,7 @@ protected:
 public:
 
 	GZipReadStream(SeekableReadStream *w, uint32 knownSize = 0) : _wrapped(w), _stream() {
-		assert(w != 0);
+		assert(w != nullptr);
 
 		// Verify file header is correct
 		w->seek(0, SEEK_SET);
@@ -281,7 +281,7 @@ public:
 			_wrapped->seek(0, SEEK_SET);
 			_zlibErr = inflateReset(&_stream);
 			if (_zlibErr != Z_OK)
-				return false;	// FIXME: STREAM REWRITE
+				return false; // FIXME: STREAM REWRITE
 			_stream.next_in = _buf;
 			_stream.avail_in = 0;
 		}
@@ -297,7 +297,7 @@ public:
 		}
 
 		_eos = false;
-		return true;	// FIXME: STREAM REWRITE
+		return true; // FIXME: STREAM REWRITE
 	}
 };
 
@@ -335,7 +335,7 @@ protected:
 
 public:
 	GZipWriteStream(WriteStream *w) : _wrapped(w), _stream(), _pos(0) {
-		assert(w != 0);
+		assert(w != nullptr);
 
 		// Adding 16 to windowBits indicates to zlib that it is supposed to
 		// write gzip headers. This feature was added in zlib 1.2.0.4,
@@ -352,7 +352,7 @@ public:
 		_stream.next_out = _buf;
 		_stream.avail_out = BUFSIZE;
 		_stream.avail_in = 0;
-		_stream.next_in = 0;
+		_stream.next_in = nullptr;
 	}
 
 	~GZipWriteStream() {

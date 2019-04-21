@@ -51,7 +51,7 @@ public:
 	/**
 	 * Setup the engine
 	 */
-	virtual void setup(int val1, int val2 = 0);
+	virtual void setup(int val1, VocabMode vocabMode = VOCAB_MODE_NONE);
 
 	/**
 	 * Sets a conversation reponse
@@ -80,7 +80,7 @@ public:
 	/**
 	 * Setup the engine
 	 */
-	virtual void setup(int val1, int val2 = 0);
+	virtual void setup(int val1, VocabMode vocabMode = VOCAB_MODE_NONE);
 
 	/**
 	 * Sets a conversation reponse

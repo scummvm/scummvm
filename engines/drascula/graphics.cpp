@@ -76,7 +76,7 @@ void DrasculaEngine::moveCursor() {
 	moveCharacters();
 	updateRefresh();
 
-	if (!strcmp(textName, "hacker") && _hasName) {
+	if (!strcmp(textName, _textmisc[3]) && _hasName) {
 		if (_color != kColorRed && !_menuScreen)
 			color_abc(kColorRed);
 	} else if (!_menuScreen && _color != kColorLightGreen)
@@ -195,6 +195,11 @@ void DrasculaEngine::copyRect(int xorg, int yorg, int xdes, int ydes, int width,
 
 	dest += xdes + ydes * 320;
 	src += xorg + yorg * 320;
+
+	assert(xorg >= 0);
+	assert(yorg >= 0);
+	assert(xorg + width <= 320);
+	assert(yorg + height <= 200);
 
 	int ptr = 0;
 	for (y = 0; y < height; y++) {

@@ -20,191 +20,147 @@
  *
  */
 
-#include "prince/sound.h"
-#include "prince/musNum.h"
-
 #include "common/archive.h"
-#include "common/debug.h"
-#include "audio/mididrv.h"
-#include "audio/midiparser.h"
+
+#include "audio/audiostream.h"
+#include "audio/decoders/wave.h"
+
+#include "prince/prince.h"
+#include "prince/hero.h"
+#include "prince/script.h"
 
 namespace Prince {
 
-const char *MusicPlayer::_musTable[] = {
-	"",
-	"Battlfld.mid",
-	"Cave.mid",
-	"Cemetery.mid",
-	"Credits.mid",
-	"Fjord.mid",
-	"Guitar.mid",
-	"Hell.mid",
-	"Jingle.mid",
-	"Main.mid",
-	"Night.mid",
-	"Reality.mid",
-	"Sunlord.mid",
-	"Tavern.mid",
-	"Temple.mid",
-	"Boruta.mid",
-	"Intro.mid"
-};
-
-const uint8 MusicPlayer::_musRoomTable[] = {
-	0,
-	ROOM01MUS,
-	ROOM02MUS,
-	ROOM03MUS,
-	ROOM04MUS,
-	ROOM05MUS,
-	ROOM06MUS,
-	ROOM07MUS,
-	ROOM08MUS,
-	ROOM09MUS,
-	ROOM10MUS,
-	ROOM11MUS,
-	ROOM12MUS,
-	ROOM13MUS,
-	ROOM14MUS,
-	ROOM15MUS,
-	ROOM16MUS,
-	ROOM17MUS,
-	ROOM18MUS,
-	ROOM19MUS,
-	ROOM20MUS,
-	ROOM21MUS,
-	ROOM22MUS,
-	ROOM23MUS,
-	ROOM24MUS,
-	ROOM25MUS,
-	ROOM26MUS,
-	ROOM27MUS,
-	ROOM28MUS,
-	ROOM29MUS,
-	ROOM30MUS,
-	ROOM31MUS,
-	ROOM32MUS,
-	ROOM33MUS,
-	ROOM34MUS,
-	ROOM35MUS,
-	ROOM36MUS,
-	ROOM37MUS,
-	ROOM38MUS,
-	ROOM39MUS,
-	ROOM40MUS,
-	ROOM41MUS,
-	ROOM42MUS,
-	ROOM43MUS,
-	0,
-	0,
-	ROOM46MUS,
-	ROOM47MUS,
-	ROOM48MUS,
-	ROOM49MUS,
-	ROOM50MUS,
-	ROOM51MUS,
-	ROOM52MUS,
-	ROOM53MUS,
-	ROOM54MUS,
-	ROOM55MUS,
-	ROOM56MUS,
-	ROOM57MUS,
-	ROOM58MUS,
-	ROOM59MUS,
-	ROOM60MUS,
-	ROOM61MUS
-};
-
-
-MusicPlayer::MusicPlayer(PrinceEngine *vm) : _vm(vm) {
-	_data = nullptr;
-	_dataSize = 0;
-	_isGM = false;
-
-	MidiPlayer::createDriver();
-
-	int ret = _driver->open();
-	if (ret == 0) {
-		if (_nativeMT32)
-			_driver->sendMT32Reset();
-		else
-			_driver->sendGMReset();
-
-		_driver->setTimerCallback(this, &timerCallback);
+void PrinceEngine::playSample(uint16 sampleId, uint16 loopType) {
+	if (_audioStream[sampleId]) {
+		if (_mixer->isSoundIDActive(sampleId)) {
+			return;
+		}
+		_audioStream[sampleId]->rewind();
+		if (sampleId < 28) {
+			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle[sampleId], _audioStream[sampleId], sampleId, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+		} else {
+			_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle[sampleId], _audioStream[sampleId], sampleId, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+		}
 	}
 }
 
-MusicPlayer::~MusicPlayer() {
-	killMidi();
+void PrinceEngine::stopSample(uint16 sampleId) {
+	_mixer->stopID(sampleId);
 }
 
-void MusicPlayer::killMidi() {
-	Audio::MidiPlayer::stop();
-
-	free(_data);
-	_data = nullptr;
+void PrinceEngine::stopAllSamples() {
+	_mixer->stopAll();
 }
 
-void MusicPlayer::loadMidi(const char *name) {
-	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(name);
-	if (!stream) {
-		debug("Can't load midi stream %s", name);
+void PrinceEngine::freeSample(uint16 sampleId) {
+	stopSample(sampleId);
+	if (_audioStream[sampleId] != nullptr) {
+		delete _audioStream[sampleId];
+		_audioStream[sampleId] = nullptr;
+	}
+}
+
+void PrinceEngine::freeAllSamples() {
+	for (int sampleId = 0; sampleId < kMaxSamples; sampleId++) {
+		freeSample(sampleId);
+	}
+}
+
+bool PrinceEngine::loadSample(uint32 sampleSlot, const Common::String &streamName) {
+	// FIXME: This is just a workaround streamName is a path
+	// SOUND\\SCIERKA1.WAV for now only last path component is used
+	Common::String normalizedPath = lastPathComponent(streamName, '\\');
+
+	// WALKAROUND: Wrong name in script, not existing sound in data files
+	if (!normalizedPath.compareTo("9997BEKA.WAV")) {
+		return 0;
+	}
+
+	debugEngine("loadSample slot %d, name %s", sampleSlot, normalizedPath.c_str());
+
+	freeSample(sampleSlot);
+	Common::SeekableReadStream *sampleStream = SearchMan.createReadStreamForMember(normalizedPath);
+	if (sampleStream == nullptr) {
+		delete sampleStream;
+		error("Can't load sample %s to slot %d", normalizedPath.c_str(), sampleSlot);
+	}
+	_audioStream[sampleSlot] = Audio::makeWAVStream(sampleStream, DisposeAfterUse::NO);
+	delete sampleStream;
+	return true;
+}
+
+bool PrinceEngine::loadVoice(uint32 slot, uint32 sampleSlot, const Common::String &streamName) {
+	if (getFeatures() & GF_NOVOICES)
+		return false;
+
+	debugEngine("Loading wav %s slot %d", streamName.c_str(), slot);
+
+	if (slot >= kMaxTexts) {
+		error("Text slot bigger than MAXTEXTS %d", kMaxTexts - 1);
+		return false;
+	}
+
+	freeSample(sampleSlot);
+	Common::SeekableReadStream *sampleStream = SearchMan.createReadStreamForMember(streamName);
+	if (sampleStream == nullptr) {
+		warning("loadVoice: Can't open %s", streamName.c_str());
+		return false;
+	}
+
+	uint32 id = sampleStream->readUint32LE();
+	if (id != MKTAG('F', 'F', 'I', 'R')) {
+		error("It's not RIFF file %s", streamName.c_str());
+		return false;
+	}
+
+	sampleStream->skip(0x20);
+	id = sampleStream->readUint32LE();
+	if (id != MKTAG('a', 't', 'a', 'd')) {
+		error("No data section in %s id %04x", streamName.c_str(), id);
+		return false;
+	}
+
+	id = sampleStream->readUint32LE();
+	debugEngine("SetVoice slot %d time %04x", slot, id);
+	id <<= 3;
+	id /= 22050;
+	id += 2;
+
+	_textSlots[slot]._time = id;
+	if (!slot) {
+		_mainHero->_talkTime = id;
+	} else if (slot == 1) {
+		_secondHero->_talkTime = id;
+	}
+
+	debugEngine("SetVoice slot %d time %04x", slot, id);
+	sampleStream->seek(SEEK_SET);
+	_audioStream[sampleSlot] = Audio::makeWAVStream(sampleStream, DisposeAfterUse::NO);
+	delete sampleStream;
+	return true;
+}
+
+void PrinceEngine::setVoice(uint16 slot, uint32 sampleSlot, uint16 flag) {
+	Common::String sampleName;
+	uint32 currentString = _interpreter->getCurrentString();
+
+	if (currentString >= 80000) {
+		uint32 nr = currentString - 80000;
+		sampleName = Common::String::format("%02d0%02d-%02d.WAV", nr / 100, nr % 100, flag);
+	} else if (currentString >= 70000) {
+		sampleName = Common::String::format("inv%02d-01.WAV", currentString - 70000);
+	} else if (currentString >= 60000) {
+		sampleName = Common::String::format("M%04d-%02d.WAV", currentString - 60000, flag);
+	} else if (currentString >= 2000) {
 		return;
+	} else if (flag >= 100) {
+		sampleName = Common::String::format("%03d-%03d.WAV", currentString, flag);
+	} else {
+		sampleName = Common::String::format("%03d-%02d.WAV", currentString, flag);
 	}
 
-	// Stop any currently playing MIDI file
-	killMidi();
-
-	// Read in the data for the file
-	_dataSize = stream->size();
-	_data = (byte *)malloc(_dataSize);
-	stream->read(_data, _dataSize);
-
-	delete stream;
-
-	// Start playing the music
-	sndMidiStart();
-}
-
-void MusicPlayer::sndMidiStart() {
-	_isGM = true;
-
-	MidiParser *parser = MidiParser::createParser_SMF();
-	if (parser->loadMusic(_data, _dataSize)) {
-		parser->setTrack(0);
-		parser->setMidiDriver(this);
-		parser->setTimerRate(_driver->getBaseTempo());
-		parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
-
-		_parser = parser;
-
-		syncVolume();
-
-		// Al the tracks are supposed to loop
-		_isLooping = true;
-		_isPlaying = true;
-	}
-}
-
-void MusicPlayer::send(uint32 b) {
-	if ((b & 0xF0) == 0xC0 && !_isGM && !_nativeMT32) {
-		b = (b & 0xFFFF00FF) | MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8;
-	}
-
-	Audio::MidiPlayer::send(b);
-}
-
-void MusicPlayer::sendToChannel(byte channel, uint32 b) {
-	if (!_channelsTable[channel]) {
-		_channelsTable[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
-		// If a new channel is allocated during the playback, make sure
-		// its volume is correctly initialized.
-		if (_channelsTable[channel])
-			_channelsTable[channel]->volume(_channelsVolume[channel] * _masterVolume / 255);
-	}
-
-	if (_channelsTable[channel])
-		_channelsTable[channel]->send(b);
+	loadVoice(slot, sampleSlot, sampleName);
 }
 
 } // End of namespace Prince

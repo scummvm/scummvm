@@ -1883,7 +1883,7 @@ void Scene2440::signal() {
 	case 2440:
 		_oilLamp.remove();
 		R2_INVENTORY.setObjectScene(R2_ALCOHOL_LAMP_2, 2);
-	// No break on purpose
+		// fall through
 	default:
 		R2_GLOBALS._player.enableControl();
 		break;
@@ -4388,7 +4388,7 @@ void Scene2800::Action2::signal() {
 		_object4.setStrip(2);
 		_object4.setFrame(11);
 		R2_GLOBALS._player.hide();
-	// No break on purpose
+		// fall through
 	case 18:
 		R2_GLOBALS._sound1.play(241);
 		_object4.animate(ANIM_MODE_6, this);

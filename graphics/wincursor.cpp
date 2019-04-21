@@ -318,8 +318,7 @@ WinCursorGroup *WinCursorGroup::createCursorGroup(Common::PEResources &exe, cons
 
 		// Plane count
 		if (stream->readUint16LE() != 1) {
-			delete group;
-			return 0;
+			warning("PlaneCount is not 1.");
 		}
 
 		stream->readUint16LE(); // bits per pixel

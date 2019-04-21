@@ -266,7 +266,7 @@ void Scene900::Action1::signal() {
 		}
 	case 6:
 		_actionIndex = 0;
-		// No break on purpose
+		// fall through
 	case 4:
 		setDelay(30);
 		break;
@@ -1629,7 +1629,7 @@ bool Scene910::BlackPlug::startAction(CursorType action, Event &event) {
 				SET_EXT_FGCOLOR, 13, LIST_END);
 			return true;
 		}
-	// no break on purpose
+		// fall through
 	case INV_YELLOW_CORD:
 		if (BF_GLOBALS._v4CECC == 0) {
 			BF_GLOBALS._v4CECC = 1;
@@ -1664,7 +1664,7 @@ bool Scene910::BlackPlug::startAction(CursorType action, Event &event) {
 				SET_EXT_FGCOLOR, 13, LIST_END);
 			return true;
 		}
-	//No break on purpose
+		// fall through
 	case INV_BLACK_CORD:
 		if (BF_GLOBALS._v4CECA == 0) {
 			if (_state == 1) {
@@ -2305,7 +2305,7 @@ void Scene910::signal() {
 		BF_GLOBALS._player.disableControl();
 		BF_GLOBALS._player.setAction(&_sequenceManager2, NULL, 9117, &_nico, NULL);
 		BF_GLOBALS._nico910State = 2;
-	// No break on purpose
+		// fall through
 	case 15:
 		_stuart.postInit();
 		_stuart.setDetails(910, 66, 67, 68, 5, &_nico);
@@ -3165,7 +3165,7 @@ bool Scene930::Object4::startAction(CursorType action, Event &event) {
 		if (BF_GLOBALS._bookmark >= bFlashBackTwo) {
 			_lookLineNum = 71;
 			NamedObject::startAction(action, event);
-			scene->ShowSoleInset();
+			scene->showSoleInset();
 			remove();
 		} else
 			NamedObject::startAction(action, event);
@@ -3304,7 +3304,7 @@ void Scene930::Action2::signal() {
 				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 				SET_EXT_FGCOLOR, 13, LIST_END);
-		scene->ShowBoxInset();
+		scene->showBoxInset();
 		BF_GLOBALS._player.enableControl();
 		remove();
 		break;
@@ -3460,7 +3460,7 @@ void Scene930::showBootInset() {
 	_bootsInset.setDetails(930, 69, 70, 93);
 }
 
-void Scene930::ShowBoxInset() {
+void Scene930::showBoxInset() {
 	_boxInset.postInit();
 	_boxInset.setVisage(930);
 	_boxInset.setStrip(1);
@@ -3470,7 +3470,7 @@ void Scene930::ShowBoxInset() {
 	_boxInset.setDetails(930, 73, 74, 75);
 }
 
-void Scene930::ShowSoleInset() {
+void Scene930::showSoleInset() {
 	_soleInset.postInit();
 	_soleInset.setVisage(930);
 	_soleInset.setStrip(3);

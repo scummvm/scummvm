@@ -141,13 +141,8 @@ SaveStateList GnapMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
 
 			if (in) {
-				Gnap::GnapEngine::readSavegameHeader(in, header);
-				saveList.push_back(SaveStateDescriptor(slot, header._saveName));
-
-				if (header._thumbnail) {
-					header._thumbnail->free();
-					delete header._thumbnail;
-				}
+				if (Gnap::GnapEngine::readSavegameHeader(in, header))
+					saveList.push_back(SaveStateDescriptor(slot, header._saveName));
 				delete in;
 			}
 		}
@@ -179,7 +174,11 @@ SaveStateDescriptor GnapMetaEngine::querySaveMetaInfos(const char *target, int s
 		SaveStateDescriptor desc(slot, saveName);
 
 		if (version != 1) {
-			Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*file);
+			Graphics::Surface *thumbnail;
+			if (!Graphics::loadThumbnail(*file, thumbnail)) {
+				delete file;
+				return SaveStateDescriptor();
+			}
 			desc.setThumbnail(thumbnail);
 		}
 

@@ -267,8 +267,10 @@ void QuickTimeDecoder::VideoSampleDesc::initCodec() {
 	_videoCodec = Image::createQuickTimeCodec(_codecTag, _parentTrack->width, _parentTrack->height, _bitsPerSample & 0x1f);
 }
 
-QuickTimeDecoder::AudioTrackHandler::AudioTrackHandler(QuickTimeDecoder *decoder, QuickTimeAudioTrack *audioTrack)
-		: _decoder(decoder), _audioTrack(audioTrack) {
+QuickTimeDecoder::AudioTrackHandler::AudioTrackHandler(QuickTimeDecoder *decoder, QuickTimeAudioTrack *audioTrack) :
+		SeekableAudioTrack(decoder->getSoundType()),
+		_decoder(decoder),
+		_audioTrack(audioTrack) {
 }
 
 void QuickTimeDecoder::AudioTrackHandler::updateBuffer() {
@@ -283,6 +285,8 @@ Audio::SeekableAudioStream *QuickTimeDecoder::AudioTrackHandler::getSeekableAudi
 }
 
 QuickTimeDecoder::VideoTrackHandler::VideoTrackHandler(QuickTimeDecoder *decoder, Common::QuickTimeParser::Track *parent) : _decoder(decoder), _parent(parent) {
+	checkEditListBounds();
+
 	_curEdit = 0;
 	enterNewEditList(false);
 
@@ -295,6 +299,37 @@ QuickTimeDecoder::VideoTrackHandler::VideoTrackHandler(QuickTimeDecoder *decoder
 	_forcedDitherPalette = 0;
 	_ditherTable = 0;
 	_ditherFrame = 0;
+}
+
+void QuickTimeDecoder::VideoTrackHandler::checkEditListBounds() {
+	// Check all the edit list entries are within the bounds of the media
+	// In the Spanish version of Riven, the last edit of the video ogk.mov
+	// ends one frame after the end of the media.
+
+	uint32 offset = 0;
+	uint32 mediaDuration = _parent->mediaDuration * _decoder->_timeScale / _parent->timeScale;
+
+	for (uint i = 0; i < _parent->editList.size(); i++) {
+		EditListEntry &edit = _parent->editList[i];
+
+		if (edit.mediaTime < 0) {
+			offset += edit.trackDuration;
+			continue; // Ignore empty edits
+		}
+
+		if ((uint32) edit.mediaTime > mediaDuration) {
+			// Check if the edit starts after the end of the media
+			// If so, mark it as empty so it is ignored
+			edit.mediaTime = -1;
+		} else if (edit.mediaTime + edit.trackDuration > mediaDuration) {
+			// Check if the edit ends after the end of the media
+			// If so, clip it so it fits in the media
+			edit.trackDuration = mediaDuration - edit.mediaTime;
+		}
+
+		edit.timeOffset = offset;
+		offset += edit.trackDuration;
+	}
 }
 
 QuickTimeDecoder::VideoTrackHandler::~VideoTrackHandler() {
@@ -324,8 +359,12 @@ bool QuickTimeDecoder::VideoTrackHandler::seek(const Audio::Timestamp &requested
 			break;
 
 	// If we did reach the end of the track, break out
-	if (atLastEdit())
+	if (atLastEdit()) {
+		// Call setReverse to set the position to the last frame of the last edit
+		if (_reversed)
+			setReverse(true);
 		return true;
+	}
 
 	// If this track is in an empty edit, position us at the next non-empty
 	// edit. There's nothing else to do after this.
@@ -342,8 +381,12 @@ bool QuickTimeDecoder::VideoTrackHandler::seek(const Audio::Timestamp &requested
 	enterNewEditList(false);
 
 	// One extra check for the end of a track
-	if (atLastEdit())
+	if (atLastEdit()) {
+		// Call setReverse to set the position to the last frame of the last edit
+		if (_reversed)
+			setReverse(true);
 		return true;
+	}
 
 	// Now we're in the edit and need to figure out what frame we need
 	Audio::Timestamp time = requestedTime.convertToFramerate(_parent->timeScale);
@@ -505,7 +548,7 @@ bool QuickTimeDecoder::VideoTrackHandler::setReverse(bool reverse) {
 	_reversed = reverse;
 
 	if (_reversed) {
-		if (_parent->editCount != 1) {
+		if (_parent->editList.size() != 1) {
 			// TODO: Myst's holo.mov needs this :(
 			warning("Can only set reverse without edits");
 			return false;
@@ -515,7 +558,7 @@ bool QuickTimeDecoder::VideoTrackHandler::setReverse(bool reverse) {
 			// If we're at the end of the video, go to the penultimate edit.
 			// The current frame is set to one beyond the last frame here;
 			// one "past" the currently displayed frame.
-			_curEdit = _parent->editCount - 1;
+			_curEdit = _parent->editList.size() - 1;
 			_curFrame = _parent->frameCount;
 			_nextFrameStartTime = _parent->editList[_curEdit].trackDuration + _parent->editList[_curEdit].timeOffset;
 		} else if (_durationOverride >= 0) {
@@ -767,7 +810,7 @@ uint32 QuickTimeDecoder::VideoTrackHandler::getCurEditTrackDuration() const {
 }
 
 bool QuickTimeDecoder::VideoTrackHandler::atLastEdit() const {
-	return _curEdit == _parent->editCount;
+	return _curEdit == _parent->editList.size();
 }
 
 bool QuickTimeDecoder::VideoTrackHandler::endOfCurEdit() const {

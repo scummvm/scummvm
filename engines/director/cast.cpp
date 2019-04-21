@@ -21,12 +21,13 @@
  */
 
 #include "director/director.h"
+#include "director/cachedmactext.h"
 #include "director/cast.h"
 #include "director/score.h"
 
 namespace Director {
 
-BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint16 version) {
+BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 version) {
 	if (version < 4) {
 		flags = stream.readByte();
 		someFlaggyThing = stream.readUint16();
@@ -40,7 +41,7 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint16 version) {
 			unk1 = stream.readUint16();
 			unk2 = stream.readUint16();
 		}
-	} else {
+	} else if (version == 4) {
 		stream.readByte();
 		stream.readByte();
 
@@ -65,8 +66,30 @@ BitmapCast::BitmapCast(Common::ReadStreamEndian &stream, uint16 version) {
 		}
 
 		warning("BitmapCast: %d bytes left", tail);
+	} else if (version == 5) {
+		uint16 count = stream.readUint16();
+		for (uint16 cc = 0; cc < count; cc++)
+			stream.readUint32();
+
+		uint32 stringLength = stream.readUint32();
+		for (uint32 s = 0; s < stringLength; s++)
+			stream.readByte();
+
+		/*uint16 width =*/ stream.readUint16LE(); //maybe?
+		initialRect = Score::readRect(stream);
+
+		/*uint32 somethingElse =*/ stream.readUint32();
+		boundingRect = Score::readRect(stream);
+
+		bitsPerPixel = stream.readUint16();
+
+		regX = 0;
+		regY = 0;
+
+		stream.readUint32();
 	}
 	modified = 0;
+	tag = castTag;
 }
 
 TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
@@ -83,7 +106,7 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 	textSlant = 0;
 	palinfo1 = palinfo2 = palinfo3 = 0;
 
-	if (version < 4) {
+	if (version <= 3) {
 		flags1 = stream.readByte();
 		borderSize = static_cast<SizeType>(stream.readByte());
 		gutterSize = static_cast<SizeType>(stream.readByte());
@@ -94,10 +117,23 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 		palinfo2 = stream.readUint16();
 		palinfo3 = stream.readUint16();
 
-		int t = stream.readUint32();
-		assert(t == 0); // So far we saw only 0 here
+		if (version == 2) {
+			int t = stream.readUint16();
+			if (t != 0) { // In D2 there are values
+				warning("TextCast: t: %x", t);
+			}
 
-		initialRect = Score::readRect(stream);
+			initialRect = Score::readRect(stream);
+			stream.readUint16();
+		} else {
+			int t = stream.readUint32();
+			if (t != 0) { // In D2 there are values
+				warning("TextCast: t: %x", t);
+			}
+
+			initialRect = Score::readRect(stream); 
+		}
+
 		textShadow = static_cast<SizeType>(stream.readByte());
 		byte flags = stream.readByte();
 		if (flags & 0x1)
@@ -113,18 +149,18 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 		fontId = stream.readByte();
 		fontSize = stream.readByte();
 		textSlant = 0;
-	} else if (version < 5) {
+	} else if (version == 4) {
 		borderSize = static_cast<SizeType>(stream.readByte());
 		gutterSize = static_cast<SizeType>(stream.readByte());
 		boxShadow = static_cast<SizeType>(stream.readByte());
 		textType = static_cast<TextType>(stream.readByte());
-		textAlign = static_cast<TextAlignType>(stream.readSint16()); //this is because 'right' is -1? or should that be 255?
+		textAlign = static_cast<TextAlignType>(stream.readSint16()); // this is because 'right' is -1? or should that be 255?
 		stream.readUint16();
 		stream.readUint16();
 		stream.readUint16();
 		stream.readUint16();
 
-		fontId = 1; //this is in STXT
+		fontId = 1; // this is in STXT
 
 		initialRect = Score::readRect(stream);
 		stream.readUint16();
@@ -132,16 +168,59 @@ TextCast::TextCast(Common::ReadStreamEndian &stream, uint16 version) {
 		byte flags = stream.readByte();
 
 		if (flags)
-			warning("Unproxessed text cast flags: %x", flags);
+			warning("Unprocessed text cast flags: %x", flags);
 
 		fontSize = stream.readUint16();
 		textSlant = 0;
 	} else {
+		fontId = 1;
+		fontSize = 12;
+
+		stream.readUint32();
+		stream.readUint32(); 
+		stream.readUint32();
+		stream.readUint32();
+		uint16 skip = stream.readUint16();
+		for (int i = 0; i < skip; i++) 
+			stream.readUint32();
+
+		stream.readUint32();
+		stream.readUint32();
+		stream.readUint32();
+		stream.readUint32();
+		stream.readUint32();
+		stream.readUint32();
+
 		initialRect = Score::readRect(stream);
 		boundingRect = Score::readRect(stream);
+
+		stream.readUint32();
+		stream.readUint16();
+		stream.readUint16();
 	}
 
 	modified = 0;
+
+	cachedMacText = new CachedMacText(this, version);
+	// TODO Destroy me
+}
+
+void TextCast::importStxt(const Stxt *stxt) {
+	fontId = stxt->_fontId;
+	textSlant = stxt->_textSlant;
+	fontSize = stxt->_fontSize;
+	palinfo1 = stxt->_palinfo1;
+	palinfo2 = stxt->_palinfo2;
+	palinfo3 = stxt->_palinfo3;
+	_ftext = stxt->_ftext;
+}
+
+void TextCast::importRTE(byte* text) 	{
+	//assert(rteList.size() == 3);
+	//child0 is probably font data.
+	//child1 is the raw text.
+	_ftext = Common::String((char*)text);
+	//child2 is positional?
 }
 
 ShapeCast::ShapeCast(Common::ReadStreamEndian &stream, uint16 version) {
@@ -180,8 +259,9 @@ ButtonCast::ButtonCast(Common::ReadStreamEndian &stream, uint16 version) : TextC
 		stream.readByte();
 		stream.readByte();
 
-		initialRect = Score::readRect(stream);
-		boundingRect = Score::readRect(stream);
+		// This has already been populated in the super TextCast constructor
+		//initialRect = Score::readRect(stream);
+		//boundingRect = Score::readRect(stream);
 
 		buttonType = static_cast<ButtonType>(stream.readUint16BE());
 	}
@@ -191,7 +271,7 @@ ButtonCast::ButtonCast(Common::ReadStreamEndian &stream, uint16 version) : TextC
 ScriptCast::ScriptCast(Common::ReadStreamEndian &stream, uint16 version) {
 	if (version < 4) {
 		error("Unhandled Script cast");
-	} else {
+	} else if (version == 4) {
 		stream.readByte();
 		stream.readByte();
 
@@ -204,6 +284,18 @@ ScriptCast::ScriptCast(Common::ReadStreamEndian &stream, uint16 version) {
 
 		stream.readByte(); // There should be no more data
 		assert(stream.eos());
+	} else if (version > 4) {
+		stream.readByte();
+		stream.readByte();
+
+		initialRect = Score::readRect(stream);
+		boundingRect = Score::readRect(stream);
+
+		id = stream.readUint32();
+
+		debugC(4, kDebugLoading, "CASt: Script id: %d", id);
+
+		// WIP need to complete this!
 	}
 	modified = 0;
 }

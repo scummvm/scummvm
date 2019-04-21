@@ -197,7 +197,7 @@ bool GfxCompare::kernelIsItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo,
 	const CelInfo *celInfo = tmpView->getCelInfo(loopNo, celNo);
 	position.x = CLIP<int>(position.x, 0, celInfo->width - 1);
 	position.y = CLIP<int>(position.y, 0, celInfo->height - 1);
-	const byte *celData = tmpView->getBitmap(loopNo, celNo);
+	const SciSpan<const byte> &celData = tmpView->getBitmap(loopNo, celNo);
 	bool result = (celData[position.y * celInfo->width + position.x] == celInfo->clearKey);
 	return result;
 }
@@ -224,15 +224,7 @@ void GfxCompare::kernelBaseSetter(reg_t object) {
 		if (scaleSignal & kScaleSignalDoScaling) {
 			celRect = getNSRect(object);
 		} else {
-			if (tmpView->isSci2Hires())
-				tmpView->adjustToUpscaledCoordinates(y, x);
-
 			tmpView->getCelRect(loopNo, celNo, x, y, z, celRect);
-
-			if (tmpView->isSci2Hires()) {
-				tmpView->adjustBackUpscaledCoordinates(celRect.top, celRect.left);
-				tmpView->adjustBackUpscaledCoordinates(celRect.bottom, celRect.right);
-			}
 		}
 
 		celRect.bottom = y + 1;

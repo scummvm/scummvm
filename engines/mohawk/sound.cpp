@@ -21,9 +21,6 @@
  */
 
 #include "common/debug.h"
-#include "common/events.h"
-#include "common/system.h"
-#include "common/textconsole.h"
 
 #include "audio/mididrv.h"
 #include "audio/midiparser.h"
@@ -33,7 +30,9 @@
 #include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
 
+#include "mohawk/mohawk.h"
 #include "mohawk/sound.h"
+#include "mohawk/resource.h"
 
 namespace Mohawk {
 
@@ -159,10 +158,15 @@ Audio::RewindableAudioStream *makeMohawkWaveStream(Common::SeekableReadStream *s
 	// The sound in the CD version of Riven is encoded in Intel DVI ADPCM
 	// The sound in the DVD version of Riven is encoded in MPEG-2 Layer II or Intel DVI ADPCM
 	if (dataChunk.encoding == kCodecRaw) {
-		byte flags = Audio::FLAG_UNSIGNED;
+		byte flags = 0;
 
 		if (dataChunk.channels == 2)
 			flags |= Audio::FLAG_STEREO;
+
+		if (dataChunk.bitsPerSample == 16)
+			flags |= Audio::FLAG_16BITS;
+		else
+			flags |= Audio::FLAG_UNSIGNED;
 
 		return Audio::makeRawStream(dataChunk.audioData, dataChunk.sampleRate, flags);
 	} else if (dataChunk.encoding == kCodecADPCM) {
@@ -181,59 +185,18 @@ Audio::RewindableAudioStream *makeMohawkWaveStream(Common::SeekableReadStream *s
 	return nullptr;
 }
 
-Sound::Sound(MohawkEngine* vm) : _vm(vm) {
-	_midiDriver = NULL;
-	_midiParser = NULL;
-	_midiData = NULL;
-	_mystBackgroundSound.type = kFreeHandle;
-	initMidi();
+Sound::Sound(MohawkEngine* vm) :
+		_vm(vm) {
 }
 
 Sound::~Sound() {
 	stopSound();
-	stopBackgroundMyst();
-
-	if (_midiParser) {
-		_midiParser->unloadMusic();
-		delete _midiParser;
-	}
-
-	if (_midiDriver) {
-		_midiDriver->close();
-		delete _midiDriver;
-	}
-
-	if (_midiData)
-		delete[] _midiData;
-}
-
-void Sound::initMidi() {
-	if (!(_vm->getFeatures() & GF_HASMIDI))
-		return;
-
-	// Let's get our MIDI parser/driver
-	_midiParser = MidiParser::createParser_SMF();
-	_midiDriver = MidiDriver::createMidi(MidiDriver::detectDevice(MDT_ADLIB|MDT_MIDI));
-
-	// Set up everything!
-	_midiDriver->open();
-	_midiParser->setMidiDriver(_midiDriver);
-	_midiParser->setTimerRate(_midiDriver->getBaseTempo());
 }
 
 Audio::RewindableAudioStream *Sound::makeAudioStream(uint16 id, CueList *cueList) {
-	Audio::RewindableAudioStream *audStream = NULL;
+	Audio::RewindableAudioStream *audStream = nullptr;
 
 	switch (_vm->getGameType()) {
-	case GType_MYST:
-		if (_vm->getFeatures() & GF_ME)
-			audStream = Audio::makeWAVStream(_vm->getResource(ID_MSND, convertMystID(id)), DisposeAfterUse::YES);
-		else
-			audStream = makeMohawkWaveStream(_vm->getResource(ID_MSND, id), cueList);
-		break;
-	case GType_ZOOMBINI:
-		audStream = makeMohawkWaveStream(_vm->getResource(ID_SND, id));
-		break;
 	case GType_LIVINGBOOKSV1:
 		audStream = makeLivingBooksWaveStream_v1(_vm->getResource(ID_WAV, id));
 		break;
@@ -270,100 +233,7 @@ Audio::SoundHandle *Sound::playSound(uint16 id, byte volume, bool loop, CueList 
 		return &handle->handle;
 	}
 
-	return NULL;
-}
-
-Audio::SoundHandle *Sound::replaceSoundMyst(uint16 id, byte volume, bool loop) {
-	debug (0, "Replacing sound %d", id);
-
-	// The original engine also forces looping for those sounds
-	switch (id) {
-	case 2205:
-	case 2207:
-	case 5378:
-	case 7220:
-	case 9119: 	// Elevator engine sound in mechanical age is looping.
-	case 9120:
-	case 9327:
-		loop = true;
-		break;
-	}
-
-	stopSound();
-	return playSound(id, volume, loop);
-}
-
-void Sound::playSoundBlocking(uint16 id, byte volume) {
-	Audio::SoundHandle *handle = playSound(id, volume);
-
-	while (_vm->_mixer->isSoundHandleActive(*handle) && !_vm->shouldQuit()) {
-		Common::Event event;
-		while (_vm->_system->getEventManager()->pollEvent(event)) {
-			switch (event.type) {
-				case Common::EVENT_KEYDOWN:
-					switch (event.kbd.keycode) {
-						case Common::KEYCODE_SPACE:
-							_vm->pauseGame();
-							break;
-						default:
-							break;
-					}
-				default:
-					break;
-			}
-		}
-
-		// Cut down on CPU usage
-		_vm->_system->delayMillis(10);
-	}
-}
-
-void Sound::playMidi(uint16 id) {
-	uint32 idTag;
-	if (!(_vm->getFeatures() & GF_HASMIDI)) {
-		warning ("Attempting to play MIDI in a game without MIDI");
-		return;
-	}
-
-	assert(_midiDriver && _midiParser);
-
-	_midiParser->unloadMusic();
-	if (_midiData)
-		delete[] _midiData;
-
-	Common::SeekableReadStream *midi = _vm->getResource(ID_TMID, id);
-
-	idTag = midi->readUint32BE();
-	assert(idTag == ID_MHWK);
-	midi->readUint32BE(); // Skip size
-	idTag = midi->readUint32BE();
-	assert(idTag == ID_MIDI);
-
-	_midiData = new byte[midi->size() - 12]; // Enough to cover MThd/Prg#/MTrk
-
-	// Read the MThd Data
-	midi->read(_midiData, 14);
-
-	// TODO: Load patches from the Prg# section... skip it for now.
-	idTag = midi->readUint32BE();
-	assert(idTag == ID_PRG);
-	midi->skip(midi->readUint32BE());
-
-	// Read the MTrk Data
-	uint32 mtrkSize = midi->size() - midi->pos();
-	midi->read(_midiData + 14, mtrkSize);
-
-	delete midi;
-
-	// Now, play it :)
-	if (!_midiParser->loadMusic(_midiData, 14 + mtrkSize))
-		error ("Could not play MIDI music from tMID %04x\n", id);
-
-	_midiDriver->setTimerCallback(_midiParser, MidiParser::timerCallback);
-}
-
-void Sound::stopMidi() {
-	_midiParser->unloadMusic();
+	return nullptr;
 }
 
 Audio::RewindableAudioStream *Sound::makeLivingBooksWaveStream_v1(Common::SeekableReadStream *stream) {
@@ -453,84 +323,6 @@ uint Sound::getNumSamplesPlayed(uint16 id) {
 		}
 
 	return 0;
-}
-
-uint16 Sound::convertMystID(uint16 id) {
-	// Myst ME is a bit more efficient with sound storage than Myst
-	// Myst has lots of sounds repeated. To overcome this, Myst ME
-	// has MJMP resources which provide a link to the actual MSND
-	// resource we're looking for. This saves a lot of space from
-	// repeated data.
-	if (_vm->hasResource(ID_MJMP, id)) {
-		Common::SeekableReadStream *mjmpStream = _vm->getResource(ID_MJMP, id);
-		id = mjmpStream->readUint16LE();
-		delete mjmpStream;
-	}
-
-	return id;
-}
-
-void Sound::replaceBackgroundMyst(uint16 id, uint16 volume) {
-	debug(0, "Replacing background sound with %d", id);
-
-	// TODO: The original engine does fading
-
-	Common::String name = _vm->getResourceName(ID_MSND, convertMystID(id));
-
-	// Only the first eight characters need to be the same to have a match
-	Common::String prefix;
-	if (name.size() >= 8)
-		prefix = Common::String(name.c_str(), name.c_str() + 8);
-	else
-		prefix = name;
-
-	// Check if sound is already playing
-	if (_mystBackgroundSound.type == kUsedHandle && _vm->_mixer->isSoundHandleActive(_mystBackgroundSound.handle)
-			&& _vm->getResourceName(ID_MSND, convertMystID(_mystBackgroundSound.id)).hasPrefix(prefix)) {
-		// The sound is already playing, just change the volume
-		changeBackgroundVolumeMyst(volume);
-		return;
-	}
-
-	// Stop old background sound
-	stopBackgroundMyst();
-
-	// Play new sound
-	Audio::RewindableAudioStream *rewindStream = makeAudioStream(id);
-
-	if (rewindStream) {
-		_mystBackgroundSound.type = kUsedHandle;
-		_mystBackgroundSound.id = id;
-		_mystBackgroundSound.samplesPerSecond = rewindStream->getRate();
-
-		// Set the stream to loop
-		Audio::AudioStream *audStream = Audio::makeLoopingAudioStream(rewindStream, 0);
-
-		_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mystBackgroundSound.handle, audStream, -1, volume >> 8);
-	}
-}
-
-void Sound::stopBackgroundMyst() {
-	if (_mystBackgroundSound.type == kUsedHandle) {
-		_vm->_mixer->stopHandle(_mystBackgroundSound.handle);
-		_mystBackgroundSound.type = kFreeHandle;
-		_mystBackgroundSound.id = 0;
-	}
-}
-
-void Sound::pauseBackgroundMyst() {
-	if (_mystBackgroundSound.type == kUsedHandle)
-		_vm->_mixer->pauseHandle(_mystBackgroundSound.handle, true);
-}
-
-void Sound::resumeBackgroundMyst() {
-	if (_mystBackgroundSound.type == kUsedHandle)
-		_vm->_mixer->pauseHandle(_mystBackgroundSound.handle, false);
-}
-
-void Sound::changeBackgroundVolumeMyst(uint16 vol) {
-	if (_mystBackgroundSound.type == kUsedHandle)
-		_vm->_mixer->setChannelVolume(_mystBackgroundSound.handle, vol >> 8);
 }
 
 } // End of namespace Mohawk

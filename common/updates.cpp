@@ -47,7 +47,7 @@ int UpdateManager::normalizeInterval(int interval) {
 		val++;
 	}
 
-	return val[-1];	// Return maximal acceptable value
+	return val[-1]; // Return maximal acceptable value
 }
 
 const char *UpdateManager::updateIntervalToString(int interval) {

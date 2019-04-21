@@ -24,20 +24,39 @@
 
 namespace Titanic {
 
+BEGIN_MESSAGE_MAP(CWheelSpinHorn, CWheelSpin)
+	ON_MESSAGE(MouseButtonDownMsg)
+END_MESSAGE_MAP()
+
 void CWheelSpinHorn::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string1, indent);
-	file->writeQuotedLine(_string2, indent);
+	file->writeQuotedLine(_soundName, indent);
+	file->writeQuotedLine(_message, indent);
 
 	CWheelSpin::save(file, indent);
 }
 
 void CWheelSpinHorn::load(SimpleFile *file) {
 	file->readNumber();
-	_string1 = file->readString();
-	_string2 = file->readString();
+	_soundName = file->readString();
+	_message = file->readString();
 
 	CWheelSpin::load(file);
+}
+
+bool CWheelSpinHorn::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
+	if (_active) {
+		if (!_soundName.empty())
+			playSound(_soundName);
+
+		if (!_message.empty())
+			petDisplayMessage(_message);
+
+		CActMsg actMsg("Honk");
+		actMsg.execute("CaptainsWheel");
+	}
+
+	return true;
 }
 
 } // End of namespace Titanic

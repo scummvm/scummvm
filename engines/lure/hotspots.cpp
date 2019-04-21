@@ -509,7 +509,7 @@ void Hotspot::endAction() {
 	_voiceCtr = 0;
 	setActionCtr(0);
 	if (_hotspotId == PLAYER_ID)
-		room.setCursorState((CursorState) ((int) room.cursorState() & 2));
+		room.setCursorState((CursorState) ((int)room.cursorState() & 2));
 
 	if (currentActions().top().hasSupportData()) {
 		CharacterScheduleEntry *rec = currentActions().top().supportData().next();
@@ -704,7 +704,7 @@ bool Hotspot::walkingStep() {
 		++_pathFinder.stepCtr();
 	} else {
 		warning("Hotspot %xh dir frame not found: currentFrame=%d, dir=%s",
-			_hotspotId, frameNumber(), directionList[(int) _pathFinder.top().direction()]);
+			_hotspotId, frameNumber(), directionList[(int)_pathFinder.top().direction()]);
 	}
 
 	return false;
@@ -2713,7 +2713,7 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 		pathFinder.reset(paths);
 		h.currentActions().top().setAction(PROCESSING_PATH);
 
-		// Deliberate fall through to processing walking path
+		// fall through
 
 	case PROCESSING_PATH:
 		// Handle processing pathfinding
@@ -2781,7 +2781,7 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 			assert(newEntry);
 
 			// Increment the blocked state
-			h.setBlockedState((BlockedState) ((int) h.blockedState() + 1));
+			h.setBlockedState((BlockedState) ((int)h.blockedState() + 1));
 			if (!h.blockedFlag()) {
 				// Not already handling blocked, so add a new dummy action so that the new
 				// action set below will not replace the existing one
@@ -2800,6 +2800,8 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 		// otherwise break out to exit method
 		if (h.currentActions().isEmpty() || h.currentActions().top().action() != WALKING)
 			break;
+
+		// fall through
 
 	case WALKING:
 		// The character is currently moving
@@ -3061,7 +3063,8 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 		// Set current action to processing walking path
 		actions.pop();
 		h.currentActions().addFront(PROCESSING_PATH, h.roomNumber());
-		// Deliberate fall through to processing walking path
+
+		// fall through
 
 	case PROCESSING_PATH:
 		h.setCharacterMode(CHARMODE_NONE);
@@ -3092,7 +3095,7 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 				h.tempDest().position.x = h.destX();
 				h.tempDest().position.y = h.destY();
 				h.tempDest().counter = 1;
-				h.setBlockedState((BlockedState) ((int) h.blockedState() + 1));
+				h.setBlockedState((BlockedState) ((int)h.blockedState() + 1));
 				h.setRandomDest();
 				return;
 			}
@@ -3111,7 +3114,7 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 		if (mouse.getCursorNum() != CURSOR_CAMERA)
 			mouse.setCursorNum(CURSOR_ARROW);
 
-		// Deliberate fall through to walking
+		// fall through
 
 	case WALKING:
 		// The character is currently moving
@@ -3469,7 +3472,7 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 		if (room.isDialogShowing())
 			return;
 
-		// Fall through to TALK_START
+		// fall through
 
 	case TALK_START:
 		// Handle initial setup of talking options
@@ -3599,6 +3602,8 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 
 		if (res.getTalkingCharacter() != 0)
 			return;
+
+		// fall through
 
 	case TALK_RESPOND_3:
 		// Respond
@@ -4045,7 +4050,8 @@ void HotspotTickHandlers::rackSerfAnimHandler(Hotspot &h) {
 		h.setActionCtr(4);
 		h.setLayer(2);
 
-		// Deliberate fall-through
+		// fall through
+
 	case 4:
 		if (HotspotScript::execute(&h)) {
 			h.setLayer(255);
@@ -4697,7 +4703,7 @@ void Support::characterChangeRoom(Hotspot &h, uint16 roomNumber,
 			h.tempDest().counter = 1;
 			Room::getReference().setCursorState(CS_BUMPED);
 			h.setActionCtr(0);
-			h.setBlockedState((BlockedState) ((int) h.blockedState() + 1));
+			h.setBlockedState((BlockedState) ((int)h.blockedState() + 1));
 			h.setDestHotspot(0);
 			h.setRandomDest();
 			p.roomNumber = 0;

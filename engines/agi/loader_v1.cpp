@@ -61,7 +61,7 @@ int AgiLoader_v1::detectGame() {
 	_filenameDisk0 = _vm->getDiskName(BooterDisk1);
 	_filenameDisk1 = _vm->getDiskName(BooterDisk2);
 
-	return _vm->setupV2Game(_vm->getVersion());
+	return errOK;
 }
 
 int AgiLoader_v1::loadDir_DDP(AgiDir *agid, int offset, int max) {

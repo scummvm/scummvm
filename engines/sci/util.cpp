@@ -20,8 +20,6 @@
  *
  */
 
-#include "common/endian.h"
-
 #include "sci/util.h"
 #include "sci/sci.h"
 

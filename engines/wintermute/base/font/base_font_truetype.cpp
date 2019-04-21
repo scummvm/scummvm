@@ -38,7 +38,6 @@
 #include "graphics/fonts/ttf.h"
 #include "graphics/fontman.h"
 #include "common/unzip.h"
-#include "common/config-manager.h" // For Scummmodern.zip
 #include <limits.h>
 
 namespace Wintermute {
@@ -587,35 +586,10 @@ bool BaseFontTT::initFont() {
 		file = nullptr;
 	}
 
-	// Fallback2: Try to find ScummModern.zip, and get the font from there:
+	// Fallback2: Try load the font from the common fonts archive:
 	if (!_font) {
-		Common::SeekableReadStream *themeFile = nullptr;
-		if (ConfMan.hasKey("themepath")) {
-			Common::FSNode themePath(ConfMan.get("themepath"));
-			if (themePath.exists()) {
-				Common::FSNode scummModern = themePath.getChild("scummmodern.zip");
-				if (scummModern.exists()) {
-					themeFile = scummModern.createReadStream();
-				}
-			}
-		}
-		if (!themeFile) { // Fallback 2.5: Search for ScummModern.zip in SearchMan.
-			themeFile = SearchMan.createReadStreamForMember("scummmodern.zip");
-		}
-		if (themeFile) {
-			Common::Archive *themeArchive = Common::makeZipArchive(themeFile);
-			if (themeArchive->hasFile(fallbackFilename)) {
-				file = nullptr;
-				file = themeArchive->createReadStreamForMember(fallbackFilename);
-				_deletableFont = Graphics::loadTTFFont(*file, _fontHeight, Graphics::kTTFSizeModeCharacter, 96); // Use the same dpi as WME (96 vs 72).
-				_font = _deletableFont;
-			}
-			// We're not using BaseFileManager, so clean up after ourselves:
-			delete file;
-			file = nullptr;
-			delete themeArchive;
-			themeArchive = nullptr;
-		}
+		_deletableFont = Graphics::loadTTFFontFromArchive(fallbackFilename, _fontHeight, Graphics::kTTFSizeModeCharacter, 96); // Use the same dpi as WME (96 vs 72).
+		_font = _deletableFont;
 	}
 
 	// Fallback3: Try to ask FontMan for the FreeSans.ttf ScummModern.zip uses:

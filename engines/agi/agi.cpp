@@ -173,6 +173,7 @@ int AgiEngine::agiInit() {
 #endif
 
 	_keyHoldMode = false;
+	_keyHoldModeLastKey = Common::KEYCODE_INVALID;
 
 	_game.mouseFence.setWidth(0); // Reset
 
@@ -213,7 +214,7 @@ int AgiEngine::agiDeinit() {
 	agiUnloadResources();    // unload resources in memory
 	_loader->unloadResource(RESOURCETYPE_LOGIC, 0);
 	ec = _loader->deinit();
-	unloadObjects();
+	_objects.clear();
 	_words->unloadDictionary();
 
 	clearImageStack();
@@ -385,15 +386,12 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 
 	memset(&_stringdata, 0, sizeof(struct StringData));
 
-	_objects = NULL;
-
 	_restartGame = false;
 
 	_firstSlot = 0;
 
 	resetControllers();
 
-	setupOpcodes();
 	_game._curLogic = NULL;
 	_veryFirstInitialCycle = true;
 	_instructionCounter = 0;
@@ -423,6 +421,7 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	_inventory = nullptr;
 
 	_keyHoldMode = false;
+	_keyHoldModeLastKey = Common::KEYCODE_INVALID;
 
 	_artificialDelayCurrentRoom = 0;
 	_artificialDelayCurrentPicture = 0;
@@ -496,6 +495,8 @@ void AgiEngine::initialize() {
 	} else {
 		warning("Could not open AGI game");
 	}
+	// finally set up actual VM opcodes, because we should now have figured out the right AGI version
+	setupOpCodes(getVersion());
 
 	debugC(2, kDebugLevelMain, "Init sound");
 }

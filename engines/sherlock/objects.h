@@ -470,7 +470,7 @@ struct SceneImage {
 	int _filesize;					// File size
 
 	SceneImage();
-} ;
+};
 
 } // End of namespace Sherlock
 

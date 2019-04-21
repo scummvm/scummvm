@@ -24,6 +24,7 @@
 
 #include "sci/resource.h"
 #include "sci/sound/drivers/mididriver.h"
+#include "sci/util.h"
 
 #include "common/file.h"
 #include "common/system.h"
@@ -71,8 +72,8 @@ private:
 
 	void setVoiceParam(byte voice, byte param, byte value);
 	void setSystemParam(byte sysChan, byte param, byte value);
-	void sendVoiceData(byte instrument, const byte *data);
-	void sendBanks(const byte *data, int size);
+	void sendVoiceData(byte instrument, const SciSpan<const byte> &data);
+	void sendBanks(const SciSpan<const byte> &data);
 	void storeVoiceData(byte instrument, byte bank, byte index);
 	void initVoices();
 
@@ -442,22 +443,22 @@ void MidiPlayer_Fb01::setTimerCallback(void *timer_param, Common::TimerManager::
 	_driver->setTimerCallback(this, midiTimerCallback);
 }
 
-void MidiPlayer_Fb01::sendBanks(const byte *data, int size) {
-	if (size < 3072)
+void MidiPlayer_Fb01::sendBanks(const SciSpan<const byte> &data) {
+	if (data.size() < 3072)
 		error("Failed to read FB-01 patch");
 
 	// SSCI sends bank dumps containing 48 instruments at once. We cannot do that
 	// due to the limited maximum SysEx length. Instead we send the instruments
 	// one by one and store them in the banks.
 	for (int i = 0; i < 48; i++) {
-		sendVoiceData(0, data + i * 64);
+		sendVoiceData(0, data.subspan(i * 64));
 		storeVoiceData(0, 0, i);
 	}
 
 	// Send second bank if available
-	if ((size >= 6146) && (READ_BE_UINT16(data + 3072) == 0xabcd)) {
+	if (data.size() >= 6146 && data.getUint16BEAt(3072) == 0xabcd) {
 		for (int i = 0; i < 48; i++) {
-			sendVoiceData(0, data + 3074 + i * 64);
+			sendVoiceData(0, data.subspan(3074 + i * 64));
 			storeVoiceData(0, 1, i);
 		}
 	}
@@ -479,10 +480,10 @@ int MidiPlayer_Fb01::open(ResourceManager *resMan) {
 	// Turn off memory protection
 	setSystemParam(0, 0x21, 0);
 
-	Resource *res = resMan->findResource(ResourceId(kResourceTypePatch, 2), 0);
+	Resource *res = resMan->findResource(ResourceId(kResourceTypePatch, 2), false);
 
 	if (res) {
-		sendBanks(res->data, res->size);
+		sendBanks(*res);
 	} else {
 		// Early SCI0 games have the sound bank embedded in the IMF driver.
 		// Note that these games didn't actually support the FB-01 as a device,
@@ -494,27 +495,23 @@ int MidiPlayer_Fb01::open(ResourceManager *resMan) {
 		Common::File f;
 
 		if (f.open("IMF.DRV")) {
-			int size = f.size();
-			byte *buf = new byte[size];
-
-			f.read(buf, size);
+			Common::SpanOwner<SciSpan<const byte> > buf;
+			buf->allocateFromStream(f);
 
 			// Search for start of sound bank
-			int offset;
-			for (offset = 0; offset < size; ++offset) {
-				if (!strncmp((char *)buf + offset, "SIERRA ", 7))
+			uint offset;
+			for (offset = 0; offset < buf->size() - 7; ++offset) {
+				if (!strncmp((const char *)buf->getUnsafeDataAt(offset, 7), "SIERRA ", 7))
 					break;
 			}
 
 			// Skip to voice data
 			offset += 0x20;
 
-			if (offset >= size)
+			if (offset >= buf->size())
 				error("Failed to locate start of FB-01 sound bank");
 
-			sendBanks(buf + offset, size - offset);
-
-			delete[] buf;
+			sendBanks(buf->subspan(offset));
 		} else
 			error("Failed to open IMF.DRV");
 	}
@@ -553,7 +550,7 @@ void MidiPlayer_Fb01::setSystemParam(byte sysChan, byte param, byte value) {
 	sysEx(_sysExBuf, 6);
 }
 
-void MidiPlayer_Fb01::sendVoiceData(byte instrument, const byte *data) {
+void MidiPlayer_Fb01::sendVoiceData(byte instrument, const SciSpan<const byte> &data) {
 	_sysExBuf[2] = 0x00;
 	_sysExBuf[3] = 0x08 | instrument;
 	_sysExBuf[4] = 0x00;

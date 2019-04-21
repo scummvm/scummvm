@@ -25,10 +25,7 @@
 
 namespace Agi {
 
-AgiInstruction *logicNamesTest;
-AgiInstruction *logicNamesCmd;
-
-AgiInstruction insV1Test[] = {
+const AgiOpCodeDefinitionEntry opCodesV1Cond[] = {
 	{ "",                   "",         &condUnknown },     // 00
 	{ "equaln",             "vn",       &condEqual },       // 01
 	{ "equalv",             "vv",       &condEqualV },      // 02
@@ -48,7 +45,7 @@ AgiInstruction insV1Test[] = {
 	{ "bit",                "nv",       &condBit },         // 10
 };
 
-AgiInstruction insV1[] = {
+const AgiOpCodeDefinitionEntry opCodesV1[] = {
 	{ "return",             "",         NULL },                 // 00
 	{ "increment",          "v",        &cmdIncrement },        // 01
 	{ "decrement",          "v",        &cmdDecrement },        // 02
@@ -149,7 +146,7 @@ AgiInstruction insV1[] = {
 	{ "...",                "nv",       &cmdUnknown },          // 61 # clearbit
 };
 
-AgiInstruction insV2Test[] = {
+AgiOpCodeDefinitionEntry opCodesV2Cond[] = {
 	{ "",                   "",         &condUnknown },         // 00
 	{ "equaln",             "vn",       &condEqual },           // 01
 	{ "equalv",             "vv",       &condEqualV },          // 02
@@ -172,7 +169,7 @@ AgiInstruction insV2Test[] = {
 	{ "in.motion.using.mouse", "",      &condUnknown13 }        // 13
 };
 
-AgiInstruction insV2[] = {
+AgiOpCodeDefinitionEntry opCodesV2[] = {
 	{ "return",             "",         NULL },                 // 00
 	{ "increment",          "v",        &cmdIncrement },        // 01
 	{ "decrement",          "v",        &cmdDecrement },        // 02
@@ -358,36 +355,115 @@ AgiInstruction insV2[] = {
 	{ "adj.ego.move.to.xy", "",         &cmdAdjEgoMoveToXY }    // C6
 };
 
-void AgiEngine::setupOpcodes() {
-	if (getVersion() >= 0x2000) {
-		for (int i = 0; i < ARRAYSIZE(insV2Test); ++i)
-			_agiCondCommands[i] = insV2Test[i].func;
-		for (int i = 0; i < ARRAYSIZE(insV2); ++i)
-			_agiCommands[i] = insV2[i].func;
+//
+// Currently, there is no known difference between v3.002.098 -> v3.002.149
+// So version emulated;
+// 0x0086,
+// 0x0149
+//
 
-		logicNamesTest = insV2Test;
-		logicNamesCmd = insV2;
+void AgiEngine::setupOpCodes(uint16 version) {
+	const AgiOpCodeDefinitionEntry *opCodesTable = nullptr;
+	const AgiOpCodeDefinitionEntry *opCodesCondTable = nullptr;
+	uint16 opCodesTableSize = 0;
+	uint16 opCodesCondTableSize = 0;
+	uint16 opCodesTableMaxSize = sizeof(_opCodes) / sizeof(AgiOpCodeEntry);
+	uint16 opCodesCondTableMaxSize = sizeof(_opCodesCond) / sizeof(AgiOpCodeEntry);
 
-		// Alter opcode parameters for specific games
-		// TODO: This could be either turned into a game feature, or a version
-		// specific check, instead of a game version check
+	debug(0, "Setting up for version 0x%04X", version);
 
-		// The Apple IIGS versions of MH1 and Goldrush both have a parameter for
-		// show.mouse and hide.mouse. Fixes bugs #3577754 and #3426946.
-		if ((getGameID() == GID_MH1 || getGameID() == GID_GOLDRUSH) &&
-		        getPlatform() == Common::kPlatformApple2GS) {
-			logicNamesCmd[176].args = "n";  // hide.mouse
-			logicNamesCmd[178].args = "n";  // show.mouse
-		}
+	if (version >= 0x2000) {
+		opCodesTable = opCodesV2;
+		opCodesCondTable = opCodesV2Cond;
+		opCodesTableSize = ARRAYSIZE(opCodesV2);
+		opCodesCondTableSize = ARRAYSIZE(opCodesV2Cond);
 	} else {
-		for (int i = 0; i < ARRAYSIZE(insV1Test); ++i)
-			_agiCondCommands[i] = insV1Test[i].func;
-		for (int i = 0; i < ARRAYSIZE(insV1); ++i)
-			_agiCommands[i] = insV1[i].func;
+		opCodesTable = opCodesV1;
+		opCodesCondTable = opCodesV1Cond;
+		opCodesTableSize = ARRAYSIZE(opCodesV1);
+		opCodesCondTableSize = ARRAYSIZE(opCodesV1Cond);
+	}
 
-		logicNamesTest = insV1Test;
-		logicNamesCmd = insV1;
+	// copy data over
+	for (int opCodeNr = 0; opCodeNr < opCodesTableSize; opCodeNr++) {
+		_opCodes[opCodeNr].name = opCodesTable[opCodeNr].name;
+		_opCodes[opCodeNr].parameters = opCodesTable[opCodeNr].parameters;
+		_opCodes[opCodeNr].functionPtr = opCodesTable[opCodeNr].functionPtr;
+	}
+
+	for (int opCodeNr = 0; opCodeNr < opCodesCondTableSize; opCodeNr++) {
+		_opCodesCond[opCodeNr].name = opCodesCondTable[opCodeNr].name;
+		_opCodesCond[opCodeNr].parameters = opCodesCondTable[opCodeNr].parameters;
+		_opCodesCond[opCodeNr].functionPtr = opCodesCondTable[opCodeNr].functionPtr;
+	}
+
+	// Alter opcode parameters for specific games
+	if ((version >= 0x2000) && (version < 0x3000)) {
+		// AGI3 adjustments
+
+		// 'quit' takes 0 args for 2.089
+		if (version == 0x2089)
+			_opCodes[0x86].parameters = "";
+
+		// 'print.at' and 'print.at.v' take 3 args before 2.272
+		// This is documented in the specs as only < 2.440, but it seems
+		// that KQ3 (2.272) needs a 'print.at' taking 4 args.
+		if (version < 0x2272) {
+			_opCodes[0x97].parameters = "vvv";
+			_opCodes[0x98].parameters = "vvv";
+		}
+	}
+
+	if (version >= 0x3000) {
+		// AGI3 adjustments
+		// 'unknown176' takes 1 arg for 3.002.086, not 0 args.
+		// 'unknown173' also takes 1 arg for 3.002.068, not 0 args.
+		// Is this actually used anywhere? -- dsymonds
+		if (version == 0x3086) {
+			_opCodes[0xb0].parameters = "n";
+			_opCodes[0xad].parameters = "n";
+		}
+	}
+
+	// TODO: This could be either turned into a game feature, or a version
+	// specific check, instead of a game version check
+	// The Apple IIGS versions of MH1 and Goldrush both have a parameter for
+	// show.mouse and hide.mouse. Fixes bugs #3577754 and #3426946.
+	if ((getGameID() == GID_MH1 || getGameID() == GID_GOLDRUSH) &&
+	        getPlatform() == Common::kPlatformApple2GS) {
+		_opCodes[176].parameters = "n";  // hide.mouse
+		_opCodes[178].parameters = "n";  // show.mouse
+	}
+
+	// FIXME: Apply this fix to other games also that use 2 arguments for command 182.
+	// 'adj.ego.move.to.x.y' (i.e. command 182) takes 2 arguments for at least the
+	// Amiga Gold Rush! (v2.05 1989-03-09) using Amiga AGI 2.316. Amiga's Gold Rush
+	// has been set to use AGI 3.149 in ScummVM so that's why this initialization is
+	// here and not in setupV2Game.
+	if (getGameID() == GID_GOLDRUSH && getPlatform() == Common::kPlatformAmiga)
+		_opCodes[182].parameters = "vv";
+
+	// add invalid entries for every opcode, that is not defined at all
+	for (int opCodeNr = opCodesTableSize; opCodeNr < opCodesTableMaxSize; opCodeNr++) {
+		_opCodes[opCodeNr].name = "illegal";
+		_opCodes[opCodeNr].parameters = "";
+		_opCodes[opCodeNr].functionPtr = nullptr;
+	}
+
+	for (int opCodeNr = opCodesCondTableSize; opCodeNr < opCodesCondTableMaxSize; opCodeNr++) {
+		_opCodesCond[opCodeNr].name = "illegal";
+		_opCodesCond[opCodeNr].parameters = "";
+		_opCodesCond[opCodeNr].functionPtr = nullptr;
+	}
+
+	// calculate parameter size
+	for (int opCodeNr = 0; opCodeNr < opCodesTableSize; opCodeNr++) {
+		_opCodes[opCodeNr].parameterSize = strlen( _opCodes[opCodeNr].parameters);
+	}
+
+	for (int opCodeNr = 0; opCodeNr < opCodesCondTableSize; opCodeNr++) {
+		_opCodesCond[opCodeNr].parameterSize = strlen( _opCodesCond[opCodeNr].parameters);
 	}
 }
 
-}
+} // End of namespace Agi

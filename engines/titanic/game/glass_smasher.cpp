@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/glass_smasher.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -41,8 +42,8 @@ void CGlassSmasher::load(SimpleFile *file) {
 
 bool CGlassSmasher::StatusChangeMsg(CStatusChangeMsg *msg) {
 	setVisible(true);
-	playSound("b#40.wav");
-	playMovie(MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+	playSound(TRANSLATE("b#40.wav", "b#19.wav"));
+	playMovie(MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 	return true;
 }
 

@@ -21,6 +21,7 @@
  */
 
 #include "titanic/true_talk/tt_concept.h"
+#include "titanic/true_talk/script_handler.h"
 #include "titanic/true_talk/tt_script_base.h"
 #include "titanic/true_talk/tt_word.h"
 #include "titanic/titanic.h"
@@ -300,10 +301,14 @@ TTconcept *TTconcept::findBy20(int val) {
 }
 
 bool TTconcept::isWordId(int id) const {
+	if (this == nullptr)
+		return false;
 	return _wordP && _wordP->_id == id;
 }
 
 int TTconcept::getWordId() const {
+	if (this == nullptr)
+		return 0;
 	return _wordP ? _wordP->_id : 0;
 }
 

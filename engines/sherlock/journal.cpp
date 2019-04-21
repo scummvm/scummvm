@@ -379,6 +379,8 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 		journalString += '\n';
 	}
 
+	const int inspectorId = (IS_SERRATED_SCALPEL) ? 2 : 18;
+
 	// If Holmes has something to say first, then take care of it
 	if (!replyOnly) {
 		// Handle the grammar
@@ -391,13 +393,13 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 			if (asked)
 				journalString += fixedText.getJournalText(kFixedJournalText_HolmesAskedMe);
 			else
-				journalString += fixedText.getJournalText(kFixedJournalText_HolmesSaidToTheInspector);
+				journalString += fixedText.getJournalText(kFixedJournalText_HolmesSaidToMe);
 
-		} else if ((talk._talkTo == 2 && IS_SERRATED_SCALPEL) || (talk._talkTo == 18 && IS_ROSE_TATTOO)) {
+		} else if (talk._talkTo == inspectorId) {
 			if (asked)
 				journalString += fixedText.getJournalText(kFixedJournalText_HolmesAskedTheInspector);
 			else
-				journalString += fixedText.getJournalText(kFixedJournalText_HolmesSaidToMe);
+				journalString += fixedText.getJournalText(kFixedJournalText_HolmesSaidToTheInspector);
 
 		} else {
 			const char *text = nullptr;
@@ -421,7 +423,6 @@ void Journal::loadJournalFile(bool alreadyLoaded) {
 	bool commentFlag = false;
 	bool commentJustPrinted = false;
 	const byte *replyP = (const byte *)statement._reply.c_str();
-	const int inspectorId = (IS_SERRATED_SCALPEL) ? 2 : 18;
 	int beforeLastSpeakerChange = journalString.size();
 	bool justChangedSpeaker = true;
 

@@ -72,11 +72,11 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Tony Engine";
+		return "Tony Tough and the Night of Roasted Moths";
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Tony Engine (C) Protonic Interactive";
+		return "Tony Tough and the Night of Roasted Moths (C) Protonic Interactive";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;

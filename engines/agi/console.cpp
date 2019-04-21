@@ -94,16 +94,18 @@ bool Console::Cmd_SetObj(int argc, const char **argv) {
 }
 
 bool Console::Cmd_RunOpcode(int argc, const char **argv) {
+	const AgiOpCodeEntry *opCodes = _vm->getOpCodesTable();
+
 	if (argc < 2) {
 		debugPrintf("Usage: runopcode <name> <parameter0> ....\n");
 		return true;
 	}
 
-	for (int i = 0; logicNamesCmd[i].name; i++) {
-		if (!strcmp(argv[1], logicNamesCmd[i].name)) {
+	for (int i = 0; opCodes[i].name; i++) {
+		if (!strcmp(argv[1], opCodes[i].name)) {
 			uint8 p[16];
-			if ((argc - 2) != logicNamesCmd[i].argumentsLength()) {
-				debugPrintf("AGI command wants %d arguments\n", logicNamesCmd[i].argumentsLength());
+			if ((argc - 2) != opCodes[i].parameterSize) {
+				debugPrintf("AGI command wants %d arguments\n", opCodes[i].parameterSize);
 				return 0;
 			}
 			p[0] = argv[2] ? (char)strtoul(argv[2], NULL, 0) : 0;
@@ -112,7 +114,7 @@ bool Console::Cmd_RunOpcode(int argc, const char **argv) {
 			p[3] = argv[5] ? (char)strtoul(argv[5], NULL, 0) : 0;
 			p[4] = argv[6] ? (char)strtoul(argv[6], NULL, 0) : 0;
 
-			debugC(5, kDebugLevelMain, "Opcode: %s %s %s %s", logicNamesCmd[i].name, argv[1], argv[2], argv[3]);
+			debugC(5, kDebugLevelMain, "Opcode: %s %s %s %s", opCodes[i].name, argv[1], argv[2], argv[3]);
 
 			_vm->executeAgiCommand(i, p);
 
@@ -392,24 +394,26 @@ bool Console::Cmd_Room(int argc, const char **argv) {
 }
 
 bool Console::Cmd_BT(int argc, const char **argv) {
+	const AgiOpCodeEntry *opCodes = _vm->getOpCodesTable();
+
 	debugPrintf("Current script: %d\nStack depth: %d\n", _vm->_game.curLogicNr, _vm->_game.execStack.size());
 
 	uint8 *code = NULL;
 	uint8 op = 0;
 	uint8 p[CMD_BSIZE] = { 0 };
-	int num;
+	int parameterSize;
 	Common::Array<ScriptPos>::iterator it;
 
 	for (it = _vm->_game.execStack.begin(); it != _vm->_game.execStack.end(); ++it) {
 		code = _vm->_game.logics[it->script].data;
 		op = code[it->curIP];
-		num = logicNamesCmd[op].argumentsLength();
-		memmove(p, &code[it->curIP], num);
-		memset(p + num, 0, CMD_BSIZE - num);
+		parameterSize = opCodes[op].parameterSize;
+		memmove(p, &code[it->curIP], parameterSize);
+		memset(p + parameterSize, 0, CMD_BSIZE - parameterSize);
 
-		debugPrintf("%d(%d): %s(", it->script, it->curIP, logicNamesCmd[op].name);
+		debugPrintf("%d(%d): %s(", it->script, it->curIP, opCodes[op].name);
 
-		for (int i = 0; i < num; i++)
+		for (int i = 0; i < parameterSize; i++)
 			debugPrintf("%d, ", p[i]);
 
 		debugPrintf(")\n");

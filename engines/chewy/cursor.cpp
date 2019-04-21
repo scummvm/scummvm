@@ -63,6 +63,35 @@ Cursor::~Cursor() {
 	delete _cursorSprites;
 }
 
+// TODO: This may need to be refactored, since in the original the user
+// selects the cursor to use from a pop-up menu
+CurrentCursor Cursor::getCurrentCursor() const {
+	switch (_curCursor) {
+	case 0:
+	case 1:
+	case 2:
+	case 3:
+		return kWalk;
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+		return kUse;
+	case 13:
+	case 14:
+	case 15:
+	case 16:
+		return kLook;
+	case 17:
+	case 18:
+	case 19:
+	case 20:
+		return kTalk;
+	default:
+		return kOther;
+	}
+}
+
 void Cursor::setCursor(uint num, bool newCursor) {
 	TAFChunk *cursor = _cursorSprites->getSprite(num);
 	if (newCursor)

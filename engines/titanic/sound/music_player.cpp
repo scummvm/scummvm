@@ -22,6 +22,7 @@
 
 #include "titanic/sound/music_player.h"
 #include "titanic/sound/music_room.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -39,7 +40,7 @@ void CMusicPlayer::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writeNumberLine(_isActive, indent);
 	file->writeQuotedLine(_stopTarget, indent);
-	file->writeNumberLine(_stopWaves, indent);
+	file->writeNumberLine(_musicActive, indent);
 	file->writeNumberLine(_volume, indent);
 
 	CGameObject::save(file, indent);
@@ -49,7 +50,7 @@ void CMusicPlayer::load(SimpleFile *file) {
 	file->readNumber();
 	_isActive = file->readNumber();
 	_stopTarget = file->readString();
-	_stopWaves = file->readNumber();
+	_musicActive = file->readNumber();
 	_volume = file->readNumber();
 
 	CGameObject::load(file);
@@ -98,7 +99,7 @@ bool CMusicPlayer::StopMusicMsg(CStopMusicMsg *msg) {
 }
 
 bool CMusicPlayer::FrameMsg(CFrameMsg *msg) {
-	if (_isActive && !CMusicRoom::_musicHandler->poll()) {
+	if (_isActive && !CMusicRoom::_musicHandler->update()) {
 		getMusicRoom()->stopMusic();
 		_isActive = false;
 
@@ -122,43 +123,43 @@ bool CMusicPlayer::LeaveRoomMsg(CLeaveRoomMsg *msg) {
 
 bool CMusicPlayer::CreateMusicPlayerMsg(CCreateMusicPlayerMsg *msg) {
 	if (CMusicRoom::_musicHandler) {
-		CMusicRoom::_musicHandler->setStopWaves(_stopWaves);
+		CMusicRoom::_musicHandler->setActive(_musicActive);
 		return true;
 	}
 
 	CMusicRoomHandler *musicHandler = getMusicRoom()->createMusicHandler();
-	CMusicWave *wave;
+	CMusicRoomInstrument *ins;
 
 	if (musicHandler) {
-		wave = musicHandler->createMusicWave(BELLS, 3);
-		wave->load(0, "z#490.wav", 60);
-		wave->load(1, "z#488.wav", 62);
-		wave->load(2, "z#489.wav", 63);
+		ins = musicHandler->createInstrument(BELLS, 3);
+		ins->load(0, TRANSLATE("z#490.wav", "z#227.wav"), 60);
+		ins->load(1, TRANSLATE("z#488.wav", "z#225.wav"), 62);
+		ins->load(2, TRANSLATE("z#489.wav", "z#226.wav"), 63);
 
-		wave = musicHandler->createMusicWave(SNAKE, 5);
-		wave->load(0, "z#493.wav", 22);
-		wave->load(1, "z#495.wav", 29);
-		wave->load(2, "z#492.wav", 34);
-		wave->load(3, "z#494.wav", 41);
-		wave->load(4, "z#491.wav", 46);
+		ins = musicHandler->createInstrument(SNAKE, 5);
+		ins->load(0, TRANSLATE("z#493.wav", "z#230.wav"), 22);
+		ins->load(1, TRANSLATE("z#495.wav", "z#232.wav"), 29);
+		ins->load(2, TRANSLATE("z#492.wav", "z#229.wav"), 34);
+		ins->load(3, TRANSLATE("z#494.wav", "z#231.wav"), 41);
+		ins->load(4, TRANSLATE("z#491.wav", "z#228.wav"), 46);
 
-		wave = musicHandler->createMusicWave(PIANO, 5);
-		wave->load(0, "z#499.wav", 26);
-		wave->load(1, "z#497.wav", 34);
-		wave->load(2, "z#498.wav", 38);
-		wave->load(3, "z#496.wav", 46);
-		wave->load(4, "z#500.wav", 60);
+		ins = musicHandler->createInstrument(PIANO, 5);
+		ins->load(0, TRANSLATE("z#499.wav", "z#236.wav"), 26);
+		ins->load(1, TRANSLATE("z#497.wav", "z#234.wav"), 34);
+		ins->load(2, TRANSLATE("z#498.wav", "z#235.wav"), 38);
+		ins->load(3, TRANSLATE("z#496.wav", "z#233.wav"), 46);
+		ins->load(4, TRANSLATE("z#500.wav", "z#237.wav"), 60);
 
-		wave = musicHandler->createMusicWave(BASS, 7);
-		wave->load(0, "z#504.wav", 22);
-		wave->load(1, "z#507.wav", 29);
-		wave->load(2, "z#503.wav", 34);
-		wave->load(3, "z#506.wav", 41);
-		wave->load(4, "z#502.wav", 46);
-		wave->load(5, "z#505.wav", 53);
-		wave->load(6, "z#501.wav", 58);
+		ins = musicHandler->createInstrument(BASS, 7);
+		ins->load(0, TRANSLATE("z#504.wav", "z#241.wav"), 22);
+		ins->load(1, TRANSLATE("z#507.wav", "z#244.wav"), 29);
+		ins->load(2, TRANSLATE("z#503.wav", "z#240.wav"), 34);
+		ins->load(3, TRANSLATE("z#506.wav", "z#243.wav"), 41);
+		ins->load(4, TRANSLATE("z#502.wav", "z#239.wav"), 46);
+		ins->load(5, TRANSLATE("z#505.wav", "z#242.wav"), 53);
+		ins->load(6, TRANSLATE("z#501.wav", "z#238.wav"), 58);
 
-		CMusicRoom::_musicHandler->setStopWaves(_stopWaves);
+		CMusicRoom::_musicHandler->setActive(_musicActive);
 	}
 
 	return true;

@@ -41,6 +41,7 @@
 
 #include <osbind.h>
 #include "audio/mpu401.h"
+#include "common/error.h"
 #include "common/util.h"
 #include "audio/musicplugin.h"
 

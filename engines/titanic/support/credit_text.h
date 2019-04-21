@@ -65,21 +65,16 @@ private:
 public:
 	CScreenManager *_screenManagerP;
 	Rect _rect;
-	int _field14;
 	CCreditLineGroups _groups;
 	uint _ticks;
 	int _fontHeight;
 	CGameObject *_objectP;
 	CCreditLineGroups::iterator _groupIt;
 	CCreditLines::iterator _lineIt;
-	int _totalHeight;
-	int _field40;
-	int _field44;
-	int _field48;
-	int _field4C;
-	int _field50;
-	int _field54;
-	int _field58;
+	int _yOffset;
+	int _priorInc;
+	int _textR, _textG, _textB;
+	int _deltaR, _deltaG, _deltaB;
 	int _counter;
 public:
 	CCreditText();
@@ -93,7 +88,7 @@ public:
 	 * Sets the game object this override is associated with
 	 */
 	void load(CGameObject *obj, CScreenManager *screenManager,
-		const Rect &rect, int v = 0);
+		const Rect &rect);
 
 	/**
 	 * Draw the item

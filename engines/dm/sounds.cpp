@@ -43,7 +43,7 @@ SoundMan *SoundMan::getSoundMan(DMEngine *vm, const DMADGameDescription *gameVer
 	switch (gameVersion->_desc.platform) {
 	default:
 		warning("Unknown platform, using default Amiga SoundMan");
-		// No break on purpose
+		// fall through
 	case Common::kPlatformAmiga:
 		return new SoundMan(vm);
 	case Common::kPlatformAtariST:

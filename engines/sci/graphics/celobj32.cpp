@@ -30,11 +30,15 @@
 #include "sci/graphics/remap32.h"
 #include "sci/graphics/text32.h"
 #include "sci/engine/workarounds.h"
+#include "sci/util.h"
+#include "graphics/larryScale.h"
+#include "common/config-manager.h"
+#include "common/gui_options.h"
 
 namespace Sci {
 #pragma mark CelScaler
 
-CelScaler *CelObj::_scaler = nullptr;
+Common::ScopedPtr<CelScaler> CelObj::_scaler;
 
 void CelScaler::activateScaleTables(const Ratio &scaleX, const Ratio &scaleY) {
 	for (int i = 0; i < ARRAYSIZE(_scaleTables); ++i) {
@@ -73,9 +77,9 @@ void CelScaler::buildLookupTable(int *table, const Ratio &ratio, const int size)
 	}
 }
 
-const CelScalerTable *CelScaler::getScalerTable(const Ratio &scaleX, const Ratio &scaleY) {
+const CelScalerTable &CelScaler::getScalerTable(const Ratio &scaleX, const Ratio &scaleY) {
 	activateScaleTables(scaleX, scaleY);
-	return &_scaleTables[_activeIndex];
+	return _scaleTables[_activeIndex];
 }
 
 #pragma mark -
@@ -86,21 +90,13 @@ void CelObj::init() {
 	CelObj::deinit();
 	_drawBlackLines = false;
 	_nextCacheId = 1;
-	_scaler = new CelScaler();
-	_cache = new CelCache;
-	_cache->resize(100);
+	_scaler.reset(new CelScaler());
+	_cache.reset(new CelCache(100));
 }
 
 void CelObj::deinit() {
-	delete _scaler;
-	_scaler = nullptr;
-	if (_cache != nullptr) {
-		for (CelCache::iterator it = _cache->begin(); it != _cache->end(); ++it) {
-			delete it->celObj;
-		}
-	}
-	delete _cache;
-	_cache = nullptr;
+	_scaler.reset();
+	_cache.reset();
 }
 
 #pragma mark -
@@ -161,6 +157,9 @@ struct SCALER_Scale {
 #endif
 	const byte *_row;
 	READER _reader;
+	// If _sourceBuffer is set, it contains the full (possibly scaled) source
+	// image and takes precedence over _reader.
+	Common::SharedPtr<Buffer> _sourceBuffer;
 	int16 _x;
 	static int16 _valuesX[kCelScalerTableSize];
 	static int16 _valuesY[kCelScalerTableSize];
@@ -171,11 +170,11 @@ struct SCALER_Scale {
 	_minX(targetRect.left),
 	_maxX(targetRect.right - 1),
 #endif
-	// The maximum width of the scaled object may not be as
-	// wide as the source data it requires if downscaling,
-	// so just always make the reader decompress an entire
-	// line of source data when scaling
-	_reader(celObj, celObj._width) {
+	// The maximum width of the scaled object may not be as wide as the source
+	// data it requires if downscaling, so just always make the reader
+	// decompress an entire line of source data when scaling
+	_reader(celObj, celObj._width),
+	_sourceBuffer() {
 #ifndef NDEBUG
 		assert(_minX <= _maxX);
 #endif
@@ -202,45 +201,100 @@ struct SCALER_Scale {
 		// games which use global scaling are the ones that use low-resolution
 		// script coordinates too.
 
-		const CelScalerTable *table = CelObj::_scaler->getScalerTable(scaleX, scaleY);
+		const CelScalerTable &table = CelObj::_scaler->getScalerTable(scaleX, scaleY);
 
-		if (g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth == kLowResX) {
-			const int16 unscaledX = (scaledPosition.x / scaleX).toInt();
-			if (FLIP) {
-				const int lastIndex = celObj._width - 1;
-				for (int16 x = targetRect.left; x < targetRect.right; ++x) {
-					_valuesX[x] = lastIndex - (table->valuesX[x] - unscaledX);
+		const bool useLarryScale = Common::checkGameGUIOption(GAMEOPTION_LARRYSCALE, ConfMan.get("guioptions")) && ConfMan.getBool("enable_larryscale");
+		if (useLarryScale) {
+			// LarryScale is an alternative, high-quality cel scaler implemented
+			// for ScummVM. Due to the nature of smooth upscaling, it does *not*
+			// respect the global scaling pattern. Instead, it simply scales the
+			// cel to the extent of targetRect.
+
+			class Copier: public Graphics::RowReader, public Graphics::RowWriter {
+				READER &_souceReader;
+				Buffer &_targetBuffer;
+			public:
+				Copier(READER& souceReader, Buffer& targetBuffer) :
+					_souceReader(souceReader),
+					_targetBuffer(targetBuffer) {}
+				const Graphics::LarryScaleColor* readRow(int y) {
+					return _souceReader.getRow(y);
 				}
-			} else {
-				for (int16 x = targetRect.left; x < targetRect.right; ++x) {
-					_valuesX[x] = table->valuesX[x] - unscaledX;
+				void writeRow(int y, const Graphics::LarryScaleColor* row) {
+					memcpy(_targetBuffer.getBasePtr(0, y), row, _targetBuffer.w);
 				}
+			};
+
+			// Scale the cel using LarryScale and write it to _sourceBuffer
+			// scaledImageRect is not necessarily identical to targetRect
+			// because targetRect may be cropped to render only a segment.
+			Common::Rect scaledImageRect(
+				scaledPosition.x,
+				scaledPosition.y,
+				scaledPosition.x + (celObj._width * scaleX).toInt(),
+				scaledPosition.y + (celObj._height * scaleY).toInt());
+			_sourceBuffer = Common::SharedPtr<Buffer>(new Buffer(), Graphics::SurfaceDeleter());
+			_sourceBuffer->create(
+				scaledImageRect.width(), scaledImageRect.height(),
+				Graphics::PixelFormat::createFormatCLUT8());
+			Copier copier(_reader, *_sourceBuffer);
+			Graphics::larryScale(
+				celObj._width, celObj._height, celObj._skipColor, copier,
+				scaledImageRect.width(), scaledImageRect.height(), copier);
+
+			// Set _valuesX and _valuesY to reference the scaled image without additional scaling
+			for (int16 x = targetRect.left; x < targetRect.right; ++x) {
+				const int16 unsafeValue = FLIP
+					? scaledImageRect.right - x - 1
+					: x - scaledImageRect.left;
+				_valuesX[x] = CLIP<int16>(unsafeValue, 0, scaledImageRect.width() - 1);
 			}
-
-			const int16 unscaledY = (scaledPosition.y / scaleY).toInt();
 			for (int16 y = targetRect.top; y < targetRect.bottom; ++y) {
-				_valuesY[y] = table->valuesY[y] - unscaledY;
+				const int16 unsafeValue = y - scaledImageRect.top;
+				_valuesY[y] = CLIP<int16>(unsafeValue, 0, scaledImageRect.height() - 1);
 			}
 		} else {
-			if (FLIP) {
-				const int lastIndex = celObj._width - 1;
-				for (int16 x = targetRect.left; x < targetRect.right; ++x) {
-					_valuesX[x] = lastIndex - table->valuesX[x - scaledPosition.x];
+			const bool useGlobalScaling = g_sci->_gfxFrameout->getScriptWidth() == kLowResX;
+			if (useGlobalScaling) {
+				const int16 unscaledX = (scaledPosition.x / scaleX).toInt();
+				if (FLIP) {
+					const int lastIndex = celObj._width - 1;
+					for (int16 x = targetRect.left; x < targetRect.right; ++x) {
+						_valuesX[x] = lastIndex - (table.valuesX[x] - unscaledX);
+					}
+				} else {
+					for (int16 x = targetRect.left; x < targetRect.right; ++x) {
+						_valuesX[x] = table.valuesX[x] - unscaledX;
+					}
+				}
+
+				const int16 unscaledY = (scaledPosition.y / scaleY).toInt();
+				for (int16 y = targetRect.top; y < targetRect.bottom; ++y) {
+					_valuesY[y] = table.valuesY[y] - unscaledY;
 				}
 			} else {
-				for (int16 x = targetRect.left; x < targetRect.right; ++x) {
-					_valuesX[x] = table->valuesX[x - scaledPosition.x];
+				if (FLIP) {
+					const int lastIndex = celObj._width - 1;
+					for (int16 x = targetRect.left; x < targetRect.right; ++x) {
+						_valuesX[x] = lastIndex - table.valuesX[x - scaledPosition.x];
+					}
+				} else {
+					for (int16 x = targetRect.left; x < targetRect.right; ++x) {
+						_valuesX[x] = table.valuesX[x - scaledPosition.x];
+					}
 				}
-			}
 
-			for (int16 y = targetRect.top; y < targetRect.bottom; ++y) {
-				_valuesY[y] = table->valuesY[y - scaledPosition.y];
+				for (int16 y = targetRect.top; y < targetRect.bottom; ++y) {
+					_valuesY[y] = table.valuesY[y - scaledPosition.y];
+				}
 			}
 		}
 	}
 
 	inline void setTarget(const int16 x, const int16 y) {
-		_row = _reader.getRow(_valuesY[y]);
+		_row = _sourceBuffer
+			? static_cast<const byte *>( _sourceBuffer->getBasePtr(0, _valuesY[y]))
+			: _reader.getRow(_valuesY[y]);
 		_x = x;
 		assert(_x >= _minX && _x <= _maxX);
 	}
@@ -262,7 +316,7 @@ int16 SCALER_Scale<FLIP, READER>::_valuesY[kCelScalerTableSize];
 struct READER_Uncompressed {
 private:
 #ifndef NDEBUG
-	const int16 _sourceHeight;
+	int16 _sourceHeight;
 #endif
 	const byte *_pixels;
 	const int16 _sourceWidth;
@@ -273,8 +327,18 @@ public:
 	_sourceHeight(celObj._height),
 #endif
 	_sourceWidth(celObj._width) {
-		const byte *resource = celObj.getResPointer();
-		_pixels = resource + READ_SCI11ENDIAN_UINT32(resource + celObj._celHeaderOffset + 24);
+		const SciSpan<const byte> resource = celObj.getResPointer();
+		const uint32 pixelsOffset = resource.getUint32SEAt(celObj._celHeaderOffset + 24);
+		const int32 numPixels = MIN<int32>(resource.size() - pixelsOffset, celObj._width * celObj._height);
+
+		if (numPixels < celObj._width * celObj._height) {
+			warning("%s is truncated", celObj._info.toString().c_str());
+#ifndef NDEBUG
+			_sourceHeight = numPixels / celObj._width;
+#endif
+		}
+
+		_pixels = resource.getUnsafeDataAt(pixelsOffset, numPixels);
 	}
 
 	inline const byte *getRow(const int16 y) const {
@@ -285,7 +349,7 @@ public:
 
 struct READER_Compressed {
 private:
-	const byte *const _resource;
+	const SciSpan<const byte> _resource;
 	byte _buffer[kCelScalerTableSize];
 	uint32 _controlOffset;
 	uint32 _dataOffset;
@@ -304,20 +368,38 @@ public:
 	_maxWidth(maxWidth) {
 		assert(maxWidth <= celObj._width);
 
-		const byte *const celHeader = _resource + celObj._celHeaderOffset;
-		_dataOffset = READ_SCI11ENDIAN_UINT32(celHeader + 24);
-		_uncompressedDataOffset = READ_SCI11ENDIAN_UINT32(celHeader + 28);
-		_controlOffset = READ_SCI11ENDIAN_UINT32(celHeader + 32);
+		const SciSpan<const byte> celHeader = _resource.subspan(celObj._celHeaderOffset);
+		_dataOffset = celHeader.getUint32SEAt(24);
+		_uncompressedDataOffset = celHeader.getUint32SEAt(28);
+		_controlOffset = celHeader.getUint32SEAt(32);
 	}
 
 	inline const byte *getRow(const int16 y) {
 		assert(y >= 0 && y < _sourceHeight);
 		if (y != _y) {
 			// compressed data segment for row
-			const byte *row = _resource + _dataOffset + READ_SCI11ENDIAN_UINT32(_resource + _controlOffset + y * 4);
+			const uint32 rowOffset = _resource.getUint32SEAt(_controlOffset + y * sizeof(uint32));
+
+			uint32 rowCompressedSize;
+			if (y + 1 < _sourceHeight) {
+				rowCompressedSize = _resource.getUint32SEAt(_controlOffset + (y + 1) * sizeof(uint32)) - rowOffset;
+			} else {
+				rowCompressedSize = _resource.size() - rowOffset - _dataOffset;
+			}
+
+			const byte *row = _resource.getUnsafeDataAt(_dataOffset + rowOffset, rowCompressedSize);
 
 			// uncompressed data segment for row
-			const byte *literal = _resource + _uncompressedDataOffset + READ_SCI11ENDIAN_UINT32(_resource + _controlOffset + _sourceHeight * 4 + y * 4);
+			const uint32 literalOffset = _resource.getUint32SEAt(_controlOffset + _sourceHeight * sizeof(uint32) + y * sizeof(uint32));
+
+			uint32 literalRowSize;
+			if (y + 1 < _sourceHeight) {
+				literalRowSize = _resource.getUint32SEAt(_controlOffset + _sourceHeight * sizeof(uint32) + (y + 1) * sizeof(uint32)) - literalOffset;
+			} else {
+				literalRowSize = _resource.size() - literalOffset - _uncompressedDataOffset;
+			}
+
+			const byte *literal = _resource.getUnsafeDataAt(_uncompressedDataOffset + literalOffset, literalRowSize);
 
 			uint8 length;
 			for (int16 i = 0; i < _maxWidth; i += length) {
@@ -383,8 +465,8 @@ struct MAPPER_NoMDNoSkip {
 struct MAPPER_Map {
 	inline void draw(byte *target, const byte pixel, const uint8 skipColor) const {
 		if (pixel != skipColor) {
-			// NOTE: For some reason, SSCI never checks if the source
-			// pixel is *above* the range of remaps.
+			// For some reason, SSCI never checks if the source pixel is *above*
+			// the range of remaps, so we do not either.
 			if (pixel < g_sci->_gfxRemap32->getStartColor()) {
 				*target = pixel;
 			} else if (g_sci->_gfxRemap32->remapEnabled(pixel)) {
@@ -400,8 +482,8 @@ struct MAPPER_Map {
  */
 struct MAPPER_NoMap {
 	inline void draw(byte *target, const byte pixel, const uint8 skipColor) const {
-		// NOTE: For some reason, SSCI never checks if the source
-		// pixel is *above* the range of remaps.
+		// For some reason, SSCI never checks if the source pixel is *above* the
+		// range of remaps, so we do not either.
 		if (pixel != skipColor && pixel < g_sci->_gfxRemap32->getStartColor()) {
 			*target = pixel;
 		}
@@ -415,9 +497,9 @@ void CelObj::draw(Buffer &target, const ScreenItem &screenItem, const Common::Re
 	_drawBlackLines = screenItem._drawBlackLines;
 
 	if (_remap) {
-		// NOTE: In the original code this check was `g_Remap_numActiveRemaps && _remap`,
-		// but since we are already in a `_remap` branch, there is no reason to check it
-		// again
+		// In SSCI, this check was `g_Remap_numActiveRemaps && _remap`, but
+		// since we are already in a `_remap` branch, there is no reason to
+		// check that again
 		if (g_sci->_gfxRemap32->getRemapCount()) {
 			if (scaleX.isOne() && scaleY.isOne()) {
 				if (_compressionType == kCelCompressionNone) {
@@ -573,7 +655,8 @@ uint8 CelObj::readPixel(uint16 x, const uint16 y, bool mirrorX) const {
 
 void CelObj::submitPalette() const {
 	if (_hunkPaletteOffset) {
-		const HunkPalette palette(getResPointer() + _hunkPaletteOffset);
+		const SciSpan<const byte> data = getResPointer();
+		const HunkPalette palette(data.subspan(_hunkPaletteOffset));
 		g_sci->_gfxPalette32->submit(palette);
 	}
 }
@@ -582,7 +665,7 @@ void CelObj::submitPalette() const {
 #pragma mark CelObj - Caching
 
 int CelObj::_nextCacheId = 1;
-CelCache *CelObj::_cache = nullptr;
+Common::ScopedPtr<CelCache> CelObj::_cache;
 
 int CelObj::searchCache(const CelInfo32 &celInfo, int *const nextInsertIndex) const {
 	*nextInsertIndex = -1;
@@ -618,12 +701,7 @@ void CelObj::putCopyInCache(const int cacheIndex) const {
 	}
 
 	CelCacheEntry &entry = (*_cache)[cacheIndex];
-
-	if (entry.celObj != nullptr) {
-		delete entry.celObj;
-	}
-
-	entry.celObj = duplicate();
+	entry.celObj.reset(duplicate());
 	entry.id = ++_nextCacheId;
 }
 
@@ -642,9 +720,9 @@ struct RENDERER {
 	_skipColor(skipColor) {}
 
 	inline void draw(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-		byte *targetPixel = (byte *)target.getPixels() + target.screenWidth * targetRect.top + targetRect.left;
+		byte *targetPixel = (byte *)target.getPixels() + target.w * targetRect.top + targetRect.left;
 
-		const int16 skipStride = target.screenWidth - targetRect.width();
+		const int16 skipStride = target.w - targetRect.width();
 		const int16 targetWidth = targetRect.width();
 		const int16 targetHeight = targetRect.height();
 		for (int16 y = 0; y < targetHeight; ++y) {
@@ -777,8 +855,8 @@ void CelObj::drawUncompHzFlipNoMDNoSkip(Buffer &target, const Common::Rect &targ
 }
 
 void CelObj::scaleDrawNoMD(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	// In SSCI the checks are > because their rects are BR-inclusive;
-	// our checks are >= because our rects are BR-exclusive
+	// In SSCI the checks are > because their rects are BR-inclusive; our checks
+	// are >= because our rects are BR-exclusive
 	if (g_sci->_features->hasEmptyScaleDrawHack() &&
 		(targetRect.left >= targetRect.right ||
 		 targetRect.top >= targetRect.bottom)) {
@@ -792,8 +870,8 @@ void CelObj::scaleDrawNoMD(Buffer &target, const Ratio &scaleX, const Ratio &sca
 }
 
 void CelObj::scaleDrawUncompNoMD(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	// In SSCI the checks are > because their rects are BR-inclusive;
-	// our checks are >= because our rects are BR-exclusive
+	// In SSCI the checks are > because their rects are BR-inclusive; our checks
+	// are >= because our rects are BR-exclusive
 	if (g_sci->_features->hasEmptyScaleDrawHack() &&
 		(targetRect.left >= targetRect.right ||
 		 targetRect.top >= targetRect.bottom)) {
@@ -817,8 +895,7 @@ int16 CelObjView::getNumLoops(const GuiResourceId viewId) {
 		return 0;
 	}
 
-	assert(resource->size >= 3);
-	return resource->data[2];
+	return resource->getUint8At(2);
 }
 
 int16 CelObjView::getNumCels(const GuiResourceId viewId, int16 loopNo) {
@@ -828,15 +905,15 @@ int16 CelObjView::getNumCels(const GuiResourceId viewId, int16 loopNo) {
 		return 0;
 	}
 
-	const byte *const data = resource->data;
+	const SciSpan<const byte> &data = *resource;
 
 	const uint16 loopCount = data[2];
 
-	// Every version of SCI32 has a logic error in this function that causes
-	// random memory to be read if a script requests the cel count for one
-	// past the maximum loop index. For example, GK1 room 808 does this, and
-	// gets stuck in an infinite loop because the game script expects this
-	// method to return a non-zero value.
+	// Every version of SSCI has a logic error in this function that causes
+	// random memory to be read if a script requests the cel count for one past
+	// the maximum loop index. For example, GK1 room 808 does this, and gets
+	// stuck in an infinite loop because the game script expects this method to
+	// return a non-zero value.
 	// This bug is triggered in basically every SCI32 game and appears to be
 	// universally fixable simply by always using the next lowest loop instead.
 	if (loopNo == loopCount) {
@@ -849,19 +926,14 @@ int16 CelObjView::getNumCels(const GuiResourceId viewId, int16 loopNo) {
 		return 0;
 	}
 
-	const uint16 viewHeaderSize = READ_SCI11ENDIAN_UINT16(data);
+	const uint16 viewHeaderSize = data.getUint16SEAt(0);
 	const uint8 loopHeaderSize = data[12];
 	const uint8 viewHeaderFieldSize = 2;
 
-#ifndef NDEBUG
-	const byte *const dataMax = data + resource->size;
-#endif
-	const byte *loopHeader = data + viewHeaderFieldSize + viewHeaderSize + (loopHeaderSize * loopNo);
-	assert(loopHeader + 3 <= dataMax);
+	SciSpan<const byte> loopHeader = data.subspan(viewHeaderFieldSize + viewHeaderSize + (loopHeaderSize * loopNo));
 
-	if ((int8)loopHeader[0] != -1) {
-		loopHeader = data + viewHeaderFieldSize + viewHeaderSize + (loopHeaderSize * (int8)loopHeader[0]);
-		assert(loopHeader >= data && loopHeader + 3 <= dataMax);
+	if (loopHeader.getInt8At(0) != -1) {
+		loopHeader = data.subspan(viewHeaderFieldSize + viewHeaderSize + (loopHeaderSize * loopHeader.getInt8At(0)));
 	}
 
 	return loopHeader[2];
@@ -880,7 +952,7 @@ CelObjView::CelObjView(const GuiResourceId viewId, const int16 loopNo, const int
 	const int cacheIndex = searchCache(_info, &cacheInsertIndex);
 	if (cacheIndex != -1) {
 		CelCacheEntry &entry = (*_cache)[cacheIndex];
-		const CelObjView *const cachedCelObj = dynamic_cast<CelObjView *>(entry.celObj);
+		const CelObjView *const cachedCelObj = dynamic_cast<CelObjView *>(entry.celObj.get());
 		if (cachedCelObj == nullptr) {
 			error("Expected a CelObjView in cache slot %d", cacheIndex);
 		}
@@ -889,21 +961,17 @@ CelObjView::CelObjView(const GuiResourceId viewId, const int16 loopNo, const int
 		return;
 	}
 
-	// TODO: The next code should be moved to a common file that
-	// generates view resource metadata for both SCI16 and SCI32
-	// implementations
-
 	const Resource *const resource = g_sci->getResMan()->findResource(ResourceId(kResourceTypeView, viewId), false);
 
-	// NOTE: SCI2.1/SQ6 just silently returns here.
+	// SSCI just silently returns here
 	if (!resource) {
 		error("View resource %d not found", viewId);
 	}
 
-	const byte *const data = resource->data;
+	const Resource &data = *resource;
 
-	_xResolution = READ_SCI11ENDIAN_UINT16(data + 14);
-	_yResolution = READ_SCI11ENDIAN_UINT16(data + 16);
+	_xResolution = data.getUint16SEAt(14);
+	_yResolution = data.getUint16SEAt(16);
 
 	if (_xResolution == 0 && _yResolution == 0) {
 		byte sizeFlag = data[5];
@@ -924,24 +992,22 @@ CelObjView::CelObjView(const GuiResourceId viewId, const int16 loopNo, const int
 		_info.loopNo = loopCount - 1;
 	}
 
-	// NOTE: This is the actual check, in the actual location,
-	// from SCI engine.
 	if (loopNo < 0) {
 		error("Loop is less than 0");
 	}
 
-	const uint16 viewHeaderSize = READ_SCI11ENDIAN_UINT16(data);
+	const uint16 viewHeaderSize = data.getUint16SEAt(0);
 	const uint8 loopHeaderSize = data[12];
 	const uint8 viewHeaderFieldSize = 2;
 
-	const byte *loopHeader = data + viewHeaderFieldSize + viewHeaderSize + (loopHeaderSize * _info.loopNo);
+	SciSpan<const byte> loopHeader = data.subspan(viewHeaderFieldSize + viewHeaderSize + (loopHeaderSize * _info.loopNo));
 
-	if ((int8)loopHeader[0] != -1) {
+	if (loopHeader.getInt8At(0) != -1) {
 		if (loopHeader[1] == 1) {
 			_mirrorX = true;
 		}
 
-		loopHeader = data + viewHeaderFieldSize + viewHeaderSize + (loopHeaderSize * (int8)loopHeader[0]);
+		loopHeader = data.subspan(viewHeaderFieldSize + viewHeaderSize + (loopHeaderSize * loopHeader.getInt8At(0)));
 	}
 
 	uint8 celCount = loopHeader[2];
@@ -962,18 +1028,28 @@ CelObjView::CelObjView(const GuiResourceId viewId, const int16 loopNo, const int
 		error("Cel is less than 0 on loop 0");
 	}
 
-	_hunkPaletteOffset = READ_SCI11ENDIAN_UINT32(data + 8);
-	_celHeaderOffset = READ_SCI11ENDIAN_UINT32(loopHeader + 12) + (data[13] * _info.celNo);
+	// HACK: Phantasmagoria view 64001 contains a bad palette that overwrites
+	// parts of the palette used by the background picture in room 6400, causing
+	// the black shadows to become tan, and many of the other background colors
+	// to end up a little bit off. View 64001 renders fine using the existing
+	// palette created by the background image, so here we just ignore the
+	// embedded palette entirely.
+	if (g_sci->getGameId() == GID_PHANTASMAGORIA &&
+		_info.type == kCelTypeView && _info.resourceId == 64001) {
 
-	const byte *const celHeader = data + _celHeaderOffset;
-
-	_width = READ_SCI11ENDIAN_UINT16(celHeader);
-	_height = READ_SCI11ENDIAN_UINT16(celHeader + 2);
-	_origin.x = _width / 2 - (int16)READ_SCI11ENDIAN_UINT16(celHeader + 4);
-	if (g_sci->_features->usesAlternateSelectors() && _mirrorX) {
-		_origin.x = _width - _origin.x - 1;
+		_hunkPaletteOffset = 0;
+	} else {
+		_hunkPaletteOffset = data.getUint32SEAt(8);
 	}
-	_origin.y = _height - (int16)READ_SCI11ENDIAN_UINT16(celHeader + 6) - 1;
+	_celHeaderOffset = loopHeader.getUint32SEAt(12) + (data[13] * _info.celNo);
+
+	const SciSpan<const byte> celHeader = data.subspan(_celHeaderOffset);
+
+	_width = celHeader.getUint16SEAt(0);
+	_height = celHeader.getUint16SEAt(2);
+	assert(_width <= kCelScalerTableSize && _height <= kCelScalerTableSize);
+	_origin.x = _width / 2 - celHeader.getInt16SEAt(4);
+	_origin.y = _height - celHeader.getInt16SEAt(6) - 1;
 	_skipColor = celHeader[8];
 	_compressionType = (CelCompressionType)celHeader[9];
 
@@ -981,10 +1057,8 @@ CelObjView::CelObjView(const GuiResourceId viewId, const int16 loopNo, const int
 		error("Compression type not supported - V: %d  L: %d  C: %d", _info.resourceId, _info.loopNo, _info.celNo);
 	}
 
-	if (celHeader[10] & 128) {
-		// NOTE: This is correct according to SCI2.1/SQ6/DOS;
-		// the engine re-reads the byte value as a word value
-		uint16 flags = READ_SCI11ENDIAN_UINT16(celHeader + 10);
+	const uint16 flags = celHeader.getUint16SEAt(10);
+	if (flags & 0x80) {
 		_transparent = flags & 1 ? true : false;
 		_remap = flags & 2 ? true : false;
 	} else if (_compressionType == kCelCompressionNone) {
@@ -997,7 +1071,9 @@ CelObjView::CelObjView(const GuiResourceId viewId, const int16 loopNo, const int
 }
 
 bool CelObjView::analyzeUncompressedForRemap() const {
-	const byte *pixels = getResPointer() + READ_SCI11ENDIAN_UINT32(getResPointer() + _celHeaderOffset + 24);
+	const SciSpan<const byte> data = getResPointer();
+	const uint32 pixelsOffset = data.getUint32SEAt(_celHeaderOffset + 24);
+	const byte *pixels = data.getUnsafeDataAt(pixelsOffset, _width * _height);
 	for (int i = 0; i < _width * _height; ++i) {
 		const byte pixel = pixels[i];
 		if (
@@ -1038,12 +1114,44 @@ CelObjView *CelObjView::duplicate() const {
 	return new CelObjView(*this);
 }
 
-byte *CelObjView::getResPointer() const {
+const SciSpan<const byte> CelObjView::getResPointer() const {
 	Resource *const resource = g_sci->getResMan()->findResource(ResourceId(kResourceTypeView, _info.resourceId), false);
 	if (resource == nullptr) {
 		error("Failed to load view %d from resource manager", _info.resourceId);
 	}
-	return resource->data;
+	return *resource;
+}
+
+Common::Point CelObjView::getLinkPosition(const int16 linkId) const {
+	const SciSpan<const byte> resource = getResPointer();
+
+	if (resource[18] < 0x84) {
+		error("%s unsupported version %u for Links", _info.toString().c_str(), resource[18]);
+	}
+
+	const SciSpan<const byte> celHeader = resource.subspan(_celHeaderOffset);
+	const int16 numLinks = celHeader.getInt16SEAt(40);
+
+	if (numLinks) {
+		const int recordSize = 6;
+		SciSpan<const byte> linkTable = resource.subspan(celHeader.getInt32SEAt(36), recordSize * numLinks);
+		for (int16 i = 0; i < numLinks; ++i) {
+			if (linkTable[4] == linkId) {
+				Common::Point point;
+				point.x = linkTable.getInt16SEAt(0);
+				if (_mirrorX) {
+					// SSCI had an off-by-one error here (missing -1)
+					point.x = _width - point.x - 1;
+				}
+				point.y = linkTable.getInt16SEAt(2);
+				return point;
+			}
+
+			linkTable += recordSize;
+		}
+	}
+
+	return Common::Point(-1, -1);
 }
 
 #pragma mark -
@@ -1063,7 +1171,7 @@ CelObjPic::CelObjPic(const GuiResourceId picId, const int16 celNo) {
 	const int cacheIndex = searchCache(_info, &cacheInsertIndex);
 	if (cacheIndex != -1) {
 		CelCacheEntry &entry = (*_cache)[cacheIndex];
-		const CelObjPic *const cachedCelObj = dynamic_cast<CelObjPic *>(entry.celObj);
+		const CelObjPic *const cachedCelObj = dynamic_cast<CelObjPic *>(entry.celObj.get());
 		if (cachedCelObj == nullptr) {
 			error("Expected a CelObjPic in cache slot %d", cacheIndex);
 		}
@@ -1074,36 +1182,36 @@ CelObjPic::CelObjPic(const GuiResourceId picId, const int16 celNo) {
 
 	const Resource *const resource = g_sci->getResMan()->findResource(ResourceId(kResourceTypePic, picId), false);
 
-	// NOTE: SCI2.1/SQ6 just silently returns here.
+	// SSCI just silently returns here
 	if (!resource) {
 		error("Pic resource %d not found", picId);
 	}
 
-	const byte *const data = resource->data;
+	const Resource &data = *resource;
 
-	_celCount = data[2];
+	_celCount = data.getUint8At(2);
 
 	if (_info.celNo >= _celCount) {
 		error("Cel number %d greater than cel count %d", _info.celNo, _celCount);
 	}
 
-	_celHeaderOffset = READ_SCI11ENDIAN_UINT16(data) + (READ_SCI11ENDIAN_UINT16(data + 4) * _info.celNo);
-	_hunkPaletteOffset = READ_SCI11ENDIAN_UINT32(data + 6);
+	_celHeaderOffset = data.getUint16SEAt(0) + (data.getUint16SEAt(4) * _info.celNo);
+	_hunkPaletteOffset = data.getUint32SEAt(6);
 
-	const byte *const celHeader = data + _celHeaderOffset;
+	const SciSpan<const byte> celHeader = data.subspan(_celHeaderOffset);
 
-	_width = READ_SCI11ENDIAN_UINT16(celHeader);
-	_height = READ_SCI11ENDIAN_UINT16(celHeader + 2);
-	_origin.x = (int16)READ_SCI11ENDIAN_UINT16(celHeader + 4);
-	_origin.y = (int16)READ_SCI11ENDIAN_UINT16(celHeader + 6);
+	_width = celHeader.getUint16SEAt(0);
+	_height = celHeader.getUint16SEAt(2);
+	_origin.x = celHeader.getInt16SEAt(4);
+	_origin.y = celHeader.getInt16SEAt(6);
 	_skipColor = celHeader[8];
 	_compressionType = (CelCompressionType)celHeader[9];
-	_priority = READ_SCI11ENDIAN_UINT16(celHeader + 36);
-	_relativePosition.x = (int16)READ_SCI11ENDIAN_UINT16(celHeader + 38);
-	_relativePosition.y = (int16)READ_SCI11ENDIAN_UINT16(celHeader + 40);
+	_priority = celHeader.getInt16SEAt(36);
+	_relativePosition.x = celHeader.getInt16SEAt(38);
+	_relativePosition.y = celHeader.getInt16SEAt(40);
 
-	const uint16 sizeFlag1 = READ_SCI11ENDIAN_UINT16(data + 10);
-	const uint16 sizeFlag2 = READ_SCI11ENDIAN_UINT16(data + 12);
+	const uint16 sizeFlag1 = data.getUint16SEAt(10);
+	const uint16 sizeFlag2 = data.getUint16SEAt(12);
 
 	if (sizeFlag2) {
 		_xResolution = sizeFlag1;
@@ -1119,10 +1227,9 @@ CelObjPic::CelObjPic(const GuiResourceId picId, const int16 celNo) {
 		_yResolution = 400;
 	}
 
-	if (celHeader[10] & 128) {
-		// NOTE: This is correct according to SCI2.1/SQ6/DOS;
-		// the engine re-reads the byte value as a word value
-		const uint16 flags = READ_SCI11ENDIAN_UINT16(celHeader + 10);
+
+	const uint16 flags = celHeader.getUint16SEAt(10);
+	if (flags & 0x80) {
 		_transparent = flags & 1 ? true : false;
 		_remap = flags & 2 ? true : false;
 	} else {
@@ -1137,9 +1244,16 @@ CelObjPic::CelObjPic(const GuiResourceId picId, const int16 celNo) {
 }
 
 bool CelObjPic::analyzeUncompressedForSkip() const {
-	const byte *const resource = getResPointer();
-	const byte *const pixels = resource + READ_SCI11ENDIAN_UINT32(resource + _celHeaderOffset + 24);
-	for (int i = 0; i < _width * _height; ++i) {
+	const SciSpan<const byte> resource = getResPointer();
+	const uint32 pixelsOffset = resource.getUint32SEAt(_celHeaderOffset + 24);
+	const int32 numPixels = MIN<int32>(resource.size() - pixelsOffset, _width * _height);
+
+	if (numPixels < _width * _height) {
+		warning("%s is truncated", _info.toString().c_str());
+	}
+
+	const byte *const pixels = resource.getUnsafeDataAt(pixelsOffset, numPixels);
+	for (int32 i = 0; i < numPixels; ++i) {
 		uint8 pixel = pixels[i];
 		if (pixel == _skipColor) {
 			return true;
@@ -1159,12 +1273,12 @@ CelObjPic *CelObjPic::duplicate() const {
 	return new CelObjPic(*this);
 }
 
-byte *CelObjPic::getResPointer() const {
+const SciSpan<const byte> CelObjPic::getResPointer() const {
 	const Resource *const resource = g_sci->getResMan()->findResource(ResourceId(kResourceTypePic, _info.resourceId), false);
 	if (resource == nullptr) {
 		error("Failed to load pic %d from resource manager", _info.resourceId);
 	}
-	return resource->data;
+	return *resource;
 }
 
 #pragma mark -
@@ -1180,7 +1294,8 @@ CelObjMem::CelObjMem(const reg_t bitmapObject) {
 
 	SciBitmap *bitmap = g_sci->getEngineState()->_segMan->lookupBitmap(bitmapObject);
 
-	// NOTE: SSCI did no error checking here at all.
+	// SSCI did no error checking here at all so would just end up reading
+	// garbage or crashing if this ever happened
 	if (!bitmap) {
 		error("Bitmap %04x:%04x not found", PRINT_REG(bitmapObject));
 	}
@@ -1199,8 +1314,9 @@ CelObjMem *CelObjMem::duplicate() const {
 	return new CelObjMem(*this);
 }
 
-byte *CelObjMem::getResPointer() const {
-	return g_sci->getEngineState()->_segMan->lookupBitmap(_info.bitmap)->getRawData();
+const SciSpan<const byte> CelObjMem::getResPointer() const {
+	SciBitmap &bitmap = *g_sci->getEngineState()->_segMan->lookupBitmap(_info.bitmap);
+	return SciSpan<const byte>(bitmap.getRawData(), bitmap.getRawSize(), Common::String::format("bitmap %04x:%04x", PRINT_REG(_info.bitmap)));
 }
 
 #pragma mark -
@@ -1211,8 +1327,8 @@ CelObjColor::CelObjColor(const uint8 color, const int16 width, const int16 heigh
 	_info.color = color;
 	_origin.x = 0;
 	_origin.y = 0;
-	_xResolution = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	_yResolution = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+	_xResolution = g_sci->_gfxFrameout->getScriptWidth();
+	_yResolution = g_sci->_gfxFrameout->getScriptHeight();
 	_hunkPaletteOffset = 0;
 	_mirrorX = false;
 	_remap = false;
@@ -1221,8 +1337,8 @@ CelObjColor::CelObjColor(const uint8 color, const int16 width, const int16 heigh
 }
 
 void CelObjColor::draw(Buffer &target, const ScreenItem &screenItem, const Common::Rect &targetRect, const bool mirrorX) {
-	// TODO: The original engine sets this flag but why? One cannot
-	// draw a solid color mirrored.
+	// One cannot draw a solid color mirrored, but SSCI sets it anyway, so we do
+	// too
 	_drawMirrored = mirrorX;
 	draw(target, targetRect);
 }
@@ -1237,7 +1353,7 @@ CelObjColor *CelObjColor::duplicate() const {
 	return new CelObjColor(*this);
 }
 
-byte *CelObjColor::getResPointer() const {
+const SciSpan<const byte> CelObjColor::getResPointer() const {
 	error("Unsupported method");
 }
 } // End of namespace Sci

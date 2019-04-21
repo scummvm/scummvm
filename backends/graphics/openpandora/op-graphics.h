@@ -34,8 +34,8 @@ class OPGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
 	OPGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
 
-	bool loadGFXMode();
-	void unloadGFXMode();
+	bool loadGFXMode() override;
+	void unloadGFXMode() override;
 };
 
 #endif /* BACKENDS_GRAPHICS_OP_H */

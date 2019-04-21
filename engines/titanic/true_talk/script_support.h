@@ -134,19 +134,19 @@ public:
 };
 
 struct TThandleQuoteEntry {
+	uint _tag1;
+	uint _tag2;
 	uint _index;
-	uint _tagId;
-	uint _dialogueId;
 
-	TThandleQuoteEntry() : _index(0), _tagId(0), _dialogueId(0) {}
+	TThandleQuoteEntry() : _tag1(0), _tag2(0), _index(0) {}
 };
 
 class TThandleQuoteEntries : public Common::Array<TThandleQuoteEntry> {
 public:
-	uint _tag1, _tag2;
 	uint _rangeStart, _rangeEnd;
+	uint _incr;
 public:
-	TThandleQuoteEntries() : _tag1(0), _tag2(0), _rangeStart(0), _rangeEnd(0) {}
+	TThandleQuoteEntries() : _rangeStart(0), _rangeEnd(0), _incr(0) {}
 	void load(const char *name);
 };
 

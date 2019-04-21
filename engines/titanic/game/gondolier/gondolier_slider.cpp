@@ -24,7 +24,10 @@
 
 namespace Titanic {
 
-static const int ARRAY[11] = { 0, 0, 1, 4, 9, 15, 21, 27, 32, 35, 36 };
+/**
+ * Y offsets within slider for each successive thumbnail position
+ */
+static const int Y_OFFSETS[11] = { 0, 0, 1, 4, 9, 15, 21, 27, 32, 35, 36 };
 
 BEGIN_MESSAGE_MAP(CGondolierSlider, CGondolierBase)
 	ON_MESSAGE(MouseButtonDownMsg)
@@ -40,86 +43,66 @@ BEGIN_MESSAGE_MAP(CGondolierSlider, CGondolierBase)
 END_MESSAGE_MAP()
 
 CGondolierSlider::CGondolierSlider() : CGondolierBase(),
-	_fieldBC(0), _fieldC0(0), _fieldC4(0), _fieldC8(0),
-	_arrayIndex(0), _string1("NULL"), _fieldFC(0), _field118(0) {
+	_sliderIndex(0), _stringUnused("NULL"), _sliderNum(0), _dragging(false) {
 }
 
 void CGondolierSlider::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldBC, indent);
-	file->writeNumberLine(_fieldC0, indent);
-	file->writeNumberLine(_fieldC4, indent);
-	file->writeNumberLine(_fieldC8, indent);
-	file->writeNumberLine(_sliderRect1.left, indent);
-	file->writeNumberLine(_sliderRect1.top, indent);
-	file->writeNumberLine(_sliderRect1.right, indent);
-	file->writeNumberLine(_sliderRect1.bottom, indent);
-	file->writeNumberLine(_sliderRect2.left, indent);
-	file->writeNumberLine(_sliderRect2.top, indent);
-	file->writeNumberLine(_sliderRect2.right, indent);
-	file->writeNumberLine(_sliderRect2.bottom, indent);
-	file->writeNumberLine(_sliderRect1.left, indent);
-	file->writeQuotedLine(_string1, indent);
-	file->writeNumberLine(_fieldFC, indent);
-	file->writeQuotedLine(_string2, indent);
-	file->writeQuotedLine(_string3, indent);
-	file->writeNumberLine(_field118, indent);
+	file->writeRect(_rectUnused, indent);
+	file->writeRect(_thumbRect, indent);
+	file->writeRect(_defaultThumbRect, indent);
+	file->writeNumberLine(_sliderIndex, indent);
+	file->writeQuotedLine(_stringUnused, indent);
+	file->writeNumberLine(_sliderNum, indent);
+	file->writeQuotedLine(_armName, indent);
+	file->writeQuotedLine(_signalTarget, indent);
+	file->writeNumberLine(_dragging, indent);
 
 	CGondolierBase::save(file, indent);
 }
 
 void CGondolierSlider::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldBC = file->readNumber();
-	_fieldC0 = file->readNumber();
-	_fieldC4 = file->readNumber();
-	_fieldC8 = file->readNumber();
-	_sliderRect1.left = file->readNumber();
-	_sliderRect1.top = file->readNumber();
-	_sliderRect1.right = file->readNumber();
-	_sliderRect1.bottom = file->readNumber();
-	_sliderRect2.left = file->readNumber();
-	_sliderRect2.top = file->readNumber();
-	_sliderRect2.right = file->readNumber();
-	_sliderRect2.bottom = file->readNumber();
-	_arrayIndex = file->readNumber();
-	_string1 = file->readString();
-	_fieldFC = file->readNumber();
-	_string2 = file->readString();
-	_string3 = file->readString();
-	_field118 = file->readNumber();
+	_rectUnused = file->readRect();
+	_thumbRect = file->readRect();
+	_defaultThumbRect = file->readRect();
+	_sliderIndex = file->readNumber();
+	_stringUnused = file->readString();
+	_sliderNum = file->readNumber();
+	_armName = file->readString();
+	_signalTarget = file->readString();
+	_dragging = file->readNumber();
 
 	CGondolierBase::load(file);
 }
 
 bool CGondolierSlider::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	if (!_v1)
+	if (!_chestOpen)
 		return false;
-	if (_fieldFC ? _v5 : _v8)
+	if (_sliderNum ? _leftSliderHooked : _rightSliderHooked)
 		return false;
 
-	return _sliderRect1.contains(msg->_mousePos);
+	return _thumbRect.contains(msg->_mousePos);
 }
 
 bool CGondolierSlider::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
-	if (!(_fieldFC ? _v5 : _v8)) {
+	if (!(_sliderNum ? _leftSliderHooked : _rightSliderHooked)) {
 		int minVal = 0x7FFFFFFF;
 		int foundIndex = -1;
-		int yp = (_sliderRect2.top + _sliderRect2.bottom) / 2
+		int yp = (_defaultThumbRect.top + _defaultThumbRect.bottom) / 2
 			+ _bounds.top - msg->_mousePos.y;
 
 		for (int idx = 0; idx < 11; ++idx) {
-			int yv = yp + ARRAY[idx];
-			if (yv < 0)
-				yv = -yv;
-			if (yv < minVal) {
-				minVal = yv;
+			int yDiff = ABS(yp + Y_OFFSETS[idx]);
+
+			if (yDiff < minVal) {
+				minVal = yDiff;
 				foundIndex = idx;
 			}
 		}
 
 		if (foundIndex >= 0) {
-			_arrayIndex = foundIndex;
+			_sliderIndex = foundIndex;
 			CSignalObject signalMsg;
 			signalMsg.execute(this);
 		}
@@ -135,70 +118,71 @@ bool CGondolierSlider::EnterViewMsg(CEnterViewMsg *msg) {
 }
 
 bool CGondolierSlider::MouseDragStartMsg(CMouseDragStartMsg *msg) {
-	if (!_v1)
+	if (!_chestOpen)
 		return false;
-	if (_fieldFC ? _v5 : _v8)
+	if (_sliderNum ? _leftSliderHooked : _rightSliderHooked)
 		return false;
 
-	_field118 = checkStartDragging(msg);
-	return _field118;
+	_dragging = checkStartDragging(msg);
+	return _dragging;
 }
 
 bool CGondolierSlider::StatusChangeMsg(CStatusChangeMsg *msg) {
-	_arrayIndex = CLIP(10 - msg->_newStatus, 0, 10);
-	_sliderRect1 = _sliderRect2;
-	_sliderRect1.translate(_bounds.left, _bounds.top);
-	_sliderRect1.translate(0, ARRAY[_arrayIndex]);
+	_sliderIndex = CLIP(10 - msg->_newStatus, 0, 10);
+	_thumbRect = _defaultThumbRect;
+	_thumbRect.translate(_bounds.left, _bounds.top);
+	_thumbRect.translate(0, Y_OFFSETS[_sliderIndex]);
 
-	loadFrame(_arrayIndex);
+	loadFrame(_sliderIndex);
 	return true;
 }
 
 bool CGondolierSlider::MouseDragEndMsg(CMouseDragEndMsg *msg) {
-	_field118 = false;
+	_dragging = false;
 	return true;
 }
 
 bool CGondolierSlider::IsHookedOnMsg(CIsHookedOnMsg *msg) {
-	if (_fieldFC ? _v5 : _v8)
+	if (_sliderNum ? _leftSliderHooked : _rightSliderHooked)
 		return false;
 
-	if (!_sliderRect1.intersects(msg->_rect)) {
-		_string2 = CString();
-		msg->_result = false;
+	if (!_thumbRect.intersects(msg->_rect)) {
+		_armName = CString();
+		msg->_isHooked = false;
 	} else {
-		_string2 = _string1;
-		if (_fieldFC) {
-			_v5 = _v9 = 1;
+		_armName = msg->_armName;
+		if (_sliderNum) {
+			_leftSliderHooked = _priorLeftSliderHooked = true;
 		} else {
-			_v8 = _v10 = 1;
+			_rightSliderHooked = _priorRightSliderHooked = true;
 		}
 
-		msg->_result = true;
+		msg->_isHooked = true;
 	}
 
 	return true;
 }
 
 bool CGondolierSlider::FrameMsg(CFrameMsg *msg) {
-	if (_fieldFC ? _v5 : _v8) {
-		if (_arrayIndex < 10) {
-			++_arrayIndex;
+	if (_sliderNum ? _leftSliderHooked : _rightSliderHooked) {
+		if (_sliderIndex < 10) {
+			++_sliderIndex;
 			CSignalObject signalMsg;
 			signalMsg.execute(this);
 
 			int yp = 0;
-			if (_arrayIndex > 0)
-				yp = ARRAY[_arrayIndex] - ARRAY[_arrayIndex - 1];
+			if (_sliderIndex > 0)
+				yp = Y_OFFSETS[_sliderIndex] - Y_OFFSETS[_sliderIndex - 1];
 
-			if (!_string2.empty()) {
+			if (!_armName.empty()) {
 				CTranslateObjectMsg transMsg;
 				transMsg._delta = Point(0, yp);
-				transMsg.execute(_string2);
+				transMsg.execute(_armName);
 			}
 		}
-	} else if (_fieldFC ? _v10 : _v9) {
-		if (!_field118 && !_puzzleSolved && _arrayIndex > 0) {
+	} else if (_sliderNum ? _priorRightSliderHooked : _priorLeftSliderHooked) {
+		if (!_dragging && !_puzzleSolved && _sliderIndex > 0) {
+			--_sliderIndex;
 			CSignalObject signalMsg;
 			signalMsg.execute(this);
 		}
@@ -208,28 +192,28 @@ bool CGondolierSlider::FrameMsg(CFrameMsg *msg) {
 }
 
 bool CGondolierSlider::SignalObject(CSignalObject *msg) {
-	_arrayIndex = CLIP(_arrayIndex, 0, 10);
-	_sliderRect1 = _sliderRect2;
-	_sliderRect1.translate(_bounds.left, _bounds.top);
-	_sliderRect1.translate(0, ARRAY[_arrayIndex]);
-	loadFrame(_arrayIndex);
+	_sliderIndex = CLIP(_sliderIndex, 0, 10);
+	_thumbRect = _defaultThumbRect;
+	_thumbRect.translate(_bounds.left, _bounds.top);
+	_thumbRect.translate(0, Y_OFFSETS[_sliderIndex]);
+	loadFrame(_sliderIndex);
 
 	CSignalObject signalMsg;
-	signalMsg._numValue = 10 - _arrayIndex;
-	signalMsg._strValue = _fieldFC ? "Fly" : "Tos";
-	signalMsg.execute(_string3);
+	signalMsg._numValue = 10 - _sliderIndex;
+	signalMsg._strValue = _sliderNum ? "Fly" : "Tos";
+	signalMsg.execute(_signalTarget);
 
 	return true;
 }
 
 bool CGondolierSlider::ActMsg(CActMsg *msg) {
 	if (msg->_action == "Unhook") {
-		if (_fieldFC) {
-			_v5 = _v9 = 0;
-			_v10 = _v8;
+		if (_sliderNum) {
+			_leftSliderHooked = _priorLeftSliderHooked = false;
+			_priorRightSliderHooked = _rightSliderHooked;
 		} else {
-			_v8 = _v10 = 0;
-			_v9 = _v5;
+			_rightSliderHooked = _priorRightSliderHooked = false;
+			_priorLeftSliderHooked = _leftSliderHooked;
 		}
 	}
 

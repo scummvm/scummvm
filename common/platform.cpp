@@ -56,7 +56,7 @@ const PlatformDescription g_platforms[] = {
 	{ "os2", "os2", "os2", "OS/2", kPlatformOS2 },
 	{ "beos", "beos", "beos", "BeOS", kPlatformBeOS },
 
-	{ 0, 0, 0, "Default", kPlatformUnknown }
+	{ nullptr, nullptr, nullptr, "Default", kPlatformUnknown }
 };
 
 Platform parsePlatform(const String &str) {
@@ -88,7 +88,7 @@ const char *getPlatformCode(Platform id) {
 		if (l->id == id)
 			return l->code;
 	}
-	return 0;
+	return nullptr;
 }
 
 const char *getPlatformAbbrev(Platform id) {
@@ -97,7 +97,7 @@ const char *getPlatformAbbrev(Platform id) {
 		if (l->id == id)
 			return l->abbrev;
 	}
-	return 0;
+	return nullptr;
 }
 
 const char *getPlatformDescription(Platform id) {

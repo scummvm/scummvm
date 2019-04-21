@@ -42,7 +42,7 @@ namespace MacVenture {
 #define MACVENTURE_SAVE_VERSION 1 //1 BYTE
 #define MACVENTURE_DESC_LENGTH 4 //4 BYTE for the metadata length
 
-SaveStateDescriptor loadMetaData(Common::SeekableReadStream *s, int slot) {
+SaveStateDescriptor loadMetaData(Common::SeekableReadStream *s, int slot, bool skipThumbnail) {
 	// Metadata is stored at the end of the file
 	// |THUMBNAIL						|
 	// |								|
@@ -65,8 +65,11 @@ SaveStateDescriptor loadMetaData(Common::SeekableReadStream *s, int slot) {
 	s->seek(-(5 + MACVENTURE_DESC_LENGTH + metaSize), SEEK_END);
 
 	// Load the thumbnail
-	Graphics::Surface *thumb = Graphics::loadThumbnail(*s);
-	desc.setThumbnail(thumb);
+	Graphics::Surface *thumbnail;
+	if (!Graphics::loadThumbnail(*s, thumbnail, skipThumbnail)) {
+		return desc;
+	}
+	desc.setThumbnail(thumbnail);
 
 	// Load the description
 	Common::String name;

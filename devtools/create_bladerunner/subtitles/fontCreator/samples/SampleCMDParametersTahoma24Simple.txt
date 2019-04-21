@@ -1,0 +1,1 @@
+python2.7 fontCreator.py -im ./samples/Tahoma_24ShdwSimpleN3BlackMrgd.png -oe ./samples/overrideEncodingTahoma24.txt -om TAHOMA24.FON -pxLL 45 -pxTT 40 -pxKn 1 -pxWS 8 -pxYo 2 -ld EN_ANY --trace

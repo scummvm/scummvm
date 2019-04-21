@@ -39,6 +39,13 @@ ScummVM Team
        Gregory Montoir              - (retired)
        Eugene Sandulenko
 
+    Access:
+       Arnaud Boutonne
+       Paul Gilbert
+
+    ADL:
+       Walter van Niftrik
+
     AGI:
        Stuart George
        Matthew Hoops                - (retired)
@@ -57,16 +64,18 @@ ScummVM Team
        Oliver Kiehl                 - (retired)
        Ludvig Strigeus              - (retired)
 
-    Access:
-       Arnaud Boutonne
-       Paul Gilbert
-
     Avalanche:
        Peter Bozso
        Arnaud Boutonne
 
     BBVS:
        Benjamin Haisch
+
+    Blade Runner:
+       Thanasis Antoniou
+       Thomas Fach-Pedersen
+       Peter Kohaut
+       Eugene Sandulenko
 
     CGE:
        Arnaud Boutonne
@@ -100,12 +109,27 @@ ScummVM Team
        Pawel Kolodziejski
        Thierry Crozat
 
+    DM:
+       Arnaud Boutonne
+       Bendeguz Nagy
+
     DreamWeb:
        Torbjorn Andersson
        Bertrand Augereau
        Filippos Karapetis
        Vladimir Menshakov           - (retired)
        Willem Jan Palenstijn
+
+    Fullpipe:
+       Eugene Sandulenko
+
+    ScummGlk:
+       Paul Gilbert
+       Tor Andersson                - GarGlk library
+       Stefan Jokisch               - Frotz interpreter
+       Andrew Plotkin               - Glulxe interpreter
+       Alan Cox                     - ScottFree interpreter
+       Michael J. Roberts           - TADS interpreter
 
     Gnap:
        Arnaud Boutonne
@@ -131,12 +155,22 @@ ScummVM Team
        Oystein Eftevaag
        Eugene Sandulenko
 
+    Illusions:
+       Benjamin Haisch
+       Eric Fry
+
     Kyra:
        Torbjorn Andersson           - VQA Player
        Oystein Eftevaag
        Florian Kagerer
        Gregory Montoir              - (retired)
        Johannes Schickel            - (retired)
+
+    Lab:
+       Arnaud Boutonne
+       Filippos Karapetis
+       Willem Jan Palenstijn
+       Eugene Sandulenko
 
     Lastexpress:
        Matthew Hoops                - (retired)
@@ -162,10 +196,15 @@ ScummVM Team
        Alyssa Milburn
        Eugene Sandulenko
        David Turner
+       David Fioramonti
 
     Mortevielle:
        Arnaud Boutonne
        Paul Gilbert
+
+    MutationOfJB:
+       Lubomir Remak
+       Miroslav Remak
 
     Neverhood:
        Benjamin Haisch
@@ -176,6 +215,11 @@ ScummVM Team
 
     Pegasus:
        Matthew Hoops                - (retired)
+
+    Prince:
+       Eugene Sandulenko
+       Lukasz Watka
+       Kamil Zbrog
 
     Queen:
        David Eriksson               - (retired)
@@ -200,6 +244,7 @@ ScummVM Team
        Willem Jan Palenstijn
        Jordi Vilalta Prat
        Lars Skovlund
+       Colin Snover
 
     Sherlock:
        Paul Gilbert
@@ -240,6 +285,11 @@ ScummVM Team
        Filippos Karapetis
        Joost Peters
 
+    Titanic:
+       David Fioramonti
+       Paul Gilbert
+       Colin Snover
+
     Toltecs:
        Benjamin Haisch
        Filippos Karapetis
@@ -269,6 +319,11 @@ ScummVM Team
     Wintermute:
        Einar Johan T. Somaaen
        Tobia Tesan
+
+    Xeen:
+       Paul Gilbert
+       David Goldsmith              - (analysis)
+       Matt Taylor                  - (analysis)
 
     Z-Vision:
        Adrian Astley
@@ -327,6 +382,10 @@ ScummVM Team
     PSP (PlayStation Portable):
        Yotam Barnoy
        Joost Peters
+
+    PlayStation Vita:
+       Cpasjuste
+       rsn8887
 
     SDL (Win/Linux/OS X/etc.):
        Max Horn                     - (retired)
@@ -394,6 +453,7 @@ ScummVM Team
      Eugene Sandulenko            - Forum, IRC channel, Screen Shots and
                                     Mailing list maintainer
      John Willis
+     Matan Bareket                - Site maintainer
 
   Website (content)
   -----------------
@@ -459,6 +519,9 @@ Other contributions
 
     OS/2:
        Paul Smedley
+
+    RISC OS:
+       Cameron Cawley
 
     SlackWare:
        Robert Kelsen
@@ -707,8 +770,8 @@ Special thanks to
    supportive.
 
    Joe Pearce from The Wyrmkeep Entertainment Co. for sharing the source of
-   their famous title Inherit the Earth and always prompt replies to our
-   questions.
+   their famous title Inherit the Earth, for sharing the source of The
+   Labyrinth of Time and for always replying promptly to our questions.
 
    Aric Wilmunder, Ron Gilbert, David Fox, Vince Lee, and all those at
    LucasFilm/LucasArts who made SCUMM the insane mess to reimplement that it

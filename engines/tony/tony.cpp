@@ -281,13 +281,6 @@ void TonyEngine::initCustomFunctionMap() {
 	INIT_CUSTOM_FUNCTION(_funcList, _funcListStrings);
 }
 
-/**
- * Display an error message
- */
-void TonyEngine::GUIError(const Common::String &msg) {
-	GUIErrorMessage(msg);
-}
-
 void TonyEngine::playMusic(int nChannel, const Common::String &fname, int nFX, bool bLoop, int nSync) {
 	if (nChannel < 4) {
 		if (GLOBALS._flipflop)

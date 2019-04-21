@@ -245,7 +245,7 @@ void EventsManager::pollEvents() {
 	checkForNextFrameCounter();
 
 	Common::Event event;
-	while (g_system->getEventManager()->pollEvent(event)) {
+	while (g_system->getEventManager()->pollEvent(event) && !_vm->shouldQuit()) {
 		// Handle keypress
 		switch (event.type) {
 		case Common::EVENT_QUIT:

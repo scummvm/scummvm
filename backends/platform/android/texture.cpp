@@ -185,9 +185,9 @@ void GLESBaseTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
 
 	const GLshort vertices[] = {
 		x, y,
-		x + w, y,
-		x, y + h,
-		x + w, y + h,
+		GLshort(x + w), y,
+		x, GLshort(y + h),
+		GLshort(x + w), GLshort(y + h)
 	};
 
 	GLCALL(glVertexPointer(2, GL_SHORT, 0, vertices));

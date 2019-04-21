@@ -49,6 +49,7 @@
 #define WAGE_WAGE_H
 
 #include "engines/engine.h"
+#include "audio/mixer.h"
 #include "common/debug.h"
 #include "common/endian.h"
 #include "common/rect.h"
@@ -126,6 +127,8 @@ public:
 	void processTurn(Common::String *textInput, Designed *clickInput);
 	void regen();
 
+	const char *getTargetName() { return _targetName.c_str(); }
+
 private:
 	bool loadWorld(Common::MacResManager *resMan);
 	void performInitialSetup();
@@ -191,6 +194,8 @@ public:
 	bool _isGameOver;
 	bool _commandWasQuick;
 
+	bool _shouldQuit;
+
 	Common::String _inputText;
 
 	void playSound(Common::String soundName);
@@ -233,7 +238,7 @@ private:
 
 	Common::MacResManager *_resManager;
 
-	bool _shouldQuit;
+	Audio::SoundHandle _soundHandle;
 };
 
 // Example console class

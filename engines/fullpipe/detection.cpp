@@ -134,11 +134,11 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Fullpipe Engine";
+		return "Full Pipe";
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Fullpipe Engine (C) Pipe Studio";
+		return "Full Pipe (C) Pipe Studio";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
@@ -156,6 +156,7 @@ bool FullpipeMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
 		(f == kSavesSupportCreationDate) ||
+		(f == kSavesSupportPlayTime) ||
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSimpleSavesNames);
 }
@@ -180,13 +181,20 @@ SaveStateList FullpipeMetaEngine::listSaves(const char *target) const {
 		int slotNum = atoi(file->c_str() + file->size() - 2);
 
 		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
-			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
+			Common::ScopedPtr<Common::InSaveFile> in(saveFileMan->openForLoading(*file));
 			if (in) {
 				Fullpipe::FullpipeSavegameHeader header;
-				Fullpipe::readSavegameHeader(in, header);
-				saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
-				delete header.thumbnail;
-				delete in;
+				if (!Fullpipe::readSavegameHeader(in.get(), header)) {
+					continue;
+				}
+
+				SaveStateDescriptor desc;
+
+				parseSavegameHeader(header, desc);
+
+				desc.setSaveSlot(slotNum);
+
+				saveList.push_back(desc);
 			}
 		}
 	}
@@ -201,16 +209,21 @@ void FullpipeMetaEngine::removeSaveState(const char *target, int slot) const {
 }
 
 SaveStateDescriptor FullpipeMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(
-		Fullpipe::getSavegameFile(slot));
+	Common::ScopedPtr<Common::InSaveFile> f(g_system->getSavefileManager()->openForLoading(
+		Fullpipe::getSavegameFile(slot)));
 
 	if (f) {
 		Fullpipe::FullpipeSavegameHeader header;
-		Fullpipe::readSavegameHeader(f, header);
-		delete f;
+		if (!Fullpipe::readSavegameHeader(f.get(), header, false)) {
+			return SaveStateDescriptor();
+		}
 
 		// Create the return descriptor
-		SaveStateDescriptor desc(slot, header.saveName);
+		SaveStateDescriptor desc;
+
+		parseSavegameHeader(header, desc);
+
+		desc.setSaveSlot(slot);
 		desc.setThumbnail(header.thumbnail);
 
 		return desc;

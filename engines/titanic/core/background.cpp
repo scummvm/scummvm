@@ -58,7 +58,7 @@ void CBackground::load(SimpleFile *file) {
 bool CBackground::StatusChangeMsg(CStatusChangeMsg *msg) {
 	setVisible(true);
 	if (_isBlocking) {
-		playMovie(_startFrame, _endFrame, MOVIE_GAMESTATE);
+		playMovie(_startFrame, _endFrame, MOVIE_WAIT_FOR_FINISH);
 	} else {
 		playMovie(_startFrame, _endFrame, 0);
 	}

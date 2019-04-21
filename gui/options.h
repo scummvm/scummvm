@@ -81,12 +81,15 @@ protected:
 	ButtonWidget *_soundFontButton;
 	StaticTextWidget *_soundFont;
 	ButtonWidget *_soundFontClearButton;
-	
+
 	virtual void build();
 	virtual void clean();
 	void rebuild();
 
+
+	void addControlControls(GuiObject *boss, const Common::String &prefix);
 	void addGraphicControls(GuiObject *boss, const Common::String &prefix);
+	void addShaderControls(GuiObject *boss, const Common::String &prefix);
 	void addAudioControls(GuiObject *boss, const Common::String &prefix);
 	void addMIDIControls(GuiObject *boss, const Common::String &prefix);
 	void addMT32Controls(GuiObject *boss, const Common::String &prefix);
@@ -103,6 +106,8 @@ protected:
 	void setVolumeSettingsState(bool enabled);
 	void setSubtitleSettingsState(bool enabled);
 
+	virtual void setupGraphicsTab();
+
 	bool loadMusicDeviceSetting(PopUpWidget *popup, Common::String setting, MusicType preferredType = MT_AUTO);
 	void saveMusicDeviceSetting(PopUpWidget *popup, Common::String setting);
 
@@ -112,17 +117,43 @@ protected:
 	int _pathsTabId;
 
 private:
+
+	//
+	// Control controls
+	//
+	bool _enableControlSettings;
+
+	CheckboxWidget *_touchpadCheckbox;
+	CheckboxWidget *_onscreenCheckbox;
+	CheckboxWidget *_swapMenuAndBackBtnsCheckbox;
+
+	StaticTextWidget *_kbdMouseSpeedDesc;
+	SliderWidget *_kbdMouseSpeedSlider;
+	StaticTextWidget *_kbdMouseSpeedLabel;
+	StaticTextWidget *_joystickDeadzoneDesc;
+	SliderWidget *_joystickDeadzoneSlider;
+	StaticTextWidget *_joystickDeadzoneLabel;
+
 	//
 	// Graphics controls
 	//
 	bool _enableGraphicSettings;
 	StaticTextWidget *_gfxPopUpDesc;
 	PopUpWidget *_gfxPopUp;
+	StaticTextWidget *_stretchPopUpDesc;
+	PopUpWidget *_stretchPopUp;
 	CheckboxWidget *_fullscreenCheckbox;
 	CheckboxWidget *_filteringCheckbox;
 	CheckboxWidget *_aspectCheckbox;
 	StaticTextWidget *_renderModePopUpDesc;
 	PopUpWidget *_renderModePopUp;
+
+	//
+	// Shader controls
+	//
+	bool _enableShaderSettings;
+	StaticTextWidget *_shaderPopUpDesc;
+	PopUpWidget *_shaderPopUp;
 
 	//
 	// Audio controls
@@ -132,8 +163,6 @@ private:
 	PopUpWidget *_midiPopUp;
 	StaticTextWidget *_oplPopUpDesc;
 	PopUpWidget *_oplPopUp;
-	StaticTextWidget *_outputRatePopUpDesc;
-	PopUpWidget *_outputRatePopUp;
 
 	StaticTextWidget *_mt32DevicePopUpDesc;
 	PopUpWidget *_mt32DevicePopUp;
@@ -175,6 +204,9 @@ private:
 	//
 	// Volume controls
 	//
+	void updateMusicVolume(const int newValue) const;
+	void updateSfxVolume(const int newValue) const;
+	void updateSpeechVolume(const int newValue) const;
 	bool _enableVolumeSettings;
 
 	StaticTextWidget *_musicVolumeDesc;
@@ -249,6 +281,9 @@ protected:
 	PopUpWidget *_autosavePeriodPopUp;
 	StaticTextWidget *_guiLanguagePopUpDesc;
 	PopUpWidget *_guiLanguagePopUp;
+	CheckboxWidget *_guiLanguageUseGameLanguageCheckbox;
+	CheckboxWidget *_useSystemDialogsCheckbox;
+
 
 #ifdef USE_UPDATES
 	StaticTextWidget *_updatesPopUpDesc;

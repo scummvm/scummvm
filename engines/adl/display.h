@@ -40,6 +40,8 @@ namespace Adl {
 
 #define DISPLAY_WIDTH 280
 #define DISPLAY_HEIGHT 192
+#define DISPLAY_PITCH (DISPLAY_WIDTH / 7)
+#define DISPLAY_SIZE (DISPLAY_PITCH * DISPLAY_HEIGHT)
 #define TEXT_WIDTH 40
 #define TEXT_HEIGHT 24
 
@@ -62,10 +64,13 @@ public:
 	bool saveThumbnail(Common::WriteStream &out);
 
 	// Graphics
+	static void loadFrameBuffer(Common::ReadStream &stream, byte *dst);
 	void loadFrameBuffer(Common::ReadStream &stream);
 	void putPixel(const Common::Point &p, byte color);
+	void setPixelByte(const Common::Point &p, byte color);
 	void setPixelBit(const Common::Point &p, byte color);
 	void setPixelPalette(const Common::Point &p, byte color);
+	byte getPixelByte(const Common::Point &p) const;
 	bool getPixelBit(const Common::Point &p) const;
 	void clear(byte color);
 

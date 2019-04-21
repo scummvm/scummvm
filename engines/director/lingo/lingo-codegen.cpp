@@ -48,6 +48,7 @@
 #include "audio/decoders/wave.h"
 
 #include "director/lingo/lingo-gr.h"
+#include "director/util.h"
 
 namespace Director {
 
@@ -103,7 +104,7 @@ Common::String Lingo::decodeInstruction(uint pc, uint *newPc) {
 				{
 					Datum d;
 					i = (*_currentScript)[pc++];
-					d.u.i = READ_UINT32(&i);
+					d.u.f = *(double *)(&i);
 
 					res += Common::String::format(" %f", d.u.f);
 					break;
@@ -142,40 +143,40 @@ Common::String Lingo::decodeInstruction(uint pc, uint *newPc) {
 }
 
 Symbol *Lingo::lookupVar(const char *name, bool create, bool putInGlobalList) {
-	Symbol *sym;
+	Symbol *sym = nullptr;
 
 	// Looking for the cast member constants
 	if (_vm->getVersion() < 4) { // TODO: There could be a flag 'Allow Outdated Lingo' in Movie Info in D4
-		if (strlen(name) == 3) {
-			if (tolower(name[0]) >= 'a' && tolower(name[0]) <= 'h' &&
-				name[1] >= '1' && name[1] <= '8' &&
-				name[2] >= '1' && name[2] <= '8') {
+		int val = castNumToNum(name);
 
-				if (!create)
-					error("Cast reference used in wrong context: %s", name);
+		if (val != -1) {
+			if (!create)
+				error("Cast reference used in wrong context: %s", name);
 
-				int val = (tolower(name[0]) - 'a') * 64 + (name[1] - '1') * 8 + (name[2] - '1') + 1;
-				sym = new Symbol;
+			sym = new Symbol;
 
-				sym->type = CASTREF;
-				sym->u.i = val;
+			sym->type = CASTREF;
+			sym->u.i = val;
 
-				return sym;
-			}
+			return sym;
 		}
 	}
 
-	if (!_localvars->contains(name)) { // Create variable if it was not defined
+	if (!_localvars || !_localvars->contains(name)) { // Create variable if it was not defined
+		// Check if it is a global symbol
+		if (_globalvars.contains(name) && _globalvars[name]->type == SYMBOL)
+			return _globalvars[name];
+
 		if (!create)
 			return NULL;
 
 		sym = new Symbol;
-		sym->name = (char *)calloc(strlen(name) + 1, 1);
-		Common::strlcpy(sym->name, name, strlen(name) + 1);
+		sym->name = name;
 		sym->type = VOID;
 		sym->u.i = 0;
 
-		(*_localvars)[name] = sym;
+		if (_localvars)
+			(*_localvars)[name] = sym;
 
 		if (putInGlobalList) {
 			sym->global = true;
@@ -197,9 +198,7 @@ void Lingo::cleanLocalVars() {
 
 	for (SymbolHash::const_iterator h = _localvars->begin(); h != _localvars->end(); ++h) {
 		if (!h->_value->global) {
-			Symbol *sym = h->_value;
-			free(sym->name);
-			delete sym;
+			delete h->_value;
 		}
 	}
 
@@ -212,20 +211,23 @@ void Lingo::define(Common::String &name, int start, int nargs, Common::String *p
 	if (prefix)
 		name = *prefix + "-" + name;
 
-	debugC(3, kDebugLingoCompile, "define(\"%s\", %d, %d, %d)", name.c_str(), start, _currentScript->size() - 1, nargs);
+	debugC(1, kDebugLingoCompile, "define(\"%s\", %d, %d, %d)", name.c_str(), start, _currentScript->size() - 1, nargs);
 
 	Symbol *sym = getHandler(name);
 	if (sym == NULL) { // Create variable if it was not defined
 		sym = new Symbol;
 
-		sym->name = (char *)calloc(name.size() + 1, 1);
-		Common::strlcpy(sym->name, name.c_str(), name.size() + 1);
+		sym->name = name;
 		sym->type = HANDLER;
 
-		_handlers[ENTITY_INDEX(_eventHandlerTypeIds[name.c_str()], _currentEntityId)] = sym;
+		if (!_eventHandlerTypeIds.contains(name)) {
+			_builtins[name] = sym;
+		} else {
+			_handlers[ENTITY_INDEX(_eventHandlerTypeIds[name.c_str()], _currentEntityId)] = sym;
+		}
 	} else {
-		//we don't want to be here. The getHandler call should have used the EntityId and the result
-		//should have been unique!
+		// we don't want to be here. The getHandler call should have used the EntityId and the result
+		// should have been unique!
 		warning("Redefining handler '%s'", name.c_str());
 		delete sym->u.defn;
 	}
@@ -306,7 +308,6 @@ void Lingo::codeArgStore() {
 		code1(c_varpush);
 		codeString(arg->c_str());
 		code1(c_assign);
-		code1(c_xpop);
 
 		delete arg;
 	}
@@ -375,6 +376,9 @@ void Lingo::processIf(int elselabel, int endlabel) {
 		if (!label)
 			break;
 
+		if (else1)
+			else1 = else1 - label;
+
 		WRITE_UINT32(&ielse1, else1);
 		(*_currentScript)[label + 2] = ielse1;    /* elsepart */
 		(*_currentScript)[label + 3] = iend;      /* end, if cond fails */
@@ -388,8 +392,7 @@ void Lingo::codeFactory(Common::String &name) {
 
 	Symbol *sym = new Symbol;
 
-	sym->name = (char *)calloc(name.size() + 1, 1);
-	Common::strlcpy(sym->name, name.c_str(), name.size());
+	sym->name = name;
 	sym->type = BLTIN;
 	sym->nargs = -1;
 	sym->maxArgs = 0;

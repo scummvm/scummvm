@@ -59,6 +59,10 @@ public:
 
 
 public:
+	static bool hasInstance() {
+		return _singleton != 0;
+	}
+
 	static T& instance() {
 		// TODO: We aren't thread safe. For now we ignore it since the
 		// only thing using this singleton template is the config manager,

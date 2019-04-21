@@ -25,63 +25,18 @@
 
 #include "xeen/files.h"
 #include "xeen/sprites.h"
+#include "xeen/subtitles.h"
 
 namespace Xeen {
-
-#define WAIT(time) events.updateGameCounter(); \
-	if (events.wait(time)) \
-		return false
 
 class XeenEngine;
 
 class Cutscenes {
 protected:
 	XeenEngine *_vm;
-	StringArray _subtitles;
-	SpriteResource *_boxSprites;
-	uint _timeElapsed;
-	Common::String _subtitleLine;
-	uint _subtitleLineNum, _subtitleSize;
 protected:
-	Cutscenes(XeenEngine *vm) : _vm(vm), _timeElapsed(0), _boxSprites(nullptr),
-		_subtitleLineNum(0), _subtitleSize(0) {}
+	Cutscenes(XeenEngine *vm) : _vm(vm) {}
 	virtual ~Cutscenes() {}
-
-	/**
-	 * Resets the subtitles position
-	 */
-	void resetSubtitles(uint lineNum, uint defaultSize = 1);
-
-	/**
-	 * Free subtitles
-	 */
-	void freeSubtitles();
-
-	/**
-	 * Shows subtitles
-	 */
-	void showSubtitles(uint windowIndex = 0);
-
-	/**
-	 * Delays either the specified number of frames, or until
-	 * an entire subtitle line is shown if subtitles are on
-	 */
-	bool subtitlesWait(uint minTime = 0);
-
-	/**
-	 * Wait for the end of currently playing sound or subtitles line
-	 */
-	bool waitForLineOrSound();
-
-	/**
-	 * Records the current execution time
-	 */
-	void recordTime();
-
-	/**
-	 * Returns the number of ticks since the last recordTime
-	 */
-	uint timeElapsed();
 
 	/**
 	 * Get a speaking frame from a range

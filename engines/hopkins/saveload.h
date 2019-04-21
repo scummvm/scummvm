@@ -61,9 +61,9 @@ public:
 	bool saveFile(const Common::String &file, const void *buf, size_t n);
 	void load(const Common::String &file, byte *buf);
 
-	static bool readSavegameHeader(Common::InSaveFile *in, hopkinsSavegameHeader &header);
+	WARN_UNUSED_RESULT static bool readSavegameHeader(Common::InSaveFile *in, hopkinsSavegameHeader &header, bool skipThumbnail = true);
 	void writeSavegameHeader(Common::OutSaveFile *out, hopkinsSavegameHeader &header);
-	bool readSavegameHeader(int slot, hopkinsSavegameHeader &header);
+	WARN_UNUSED_RESULT bool readSavegameHeader(int slot, hopkinsSavegameHeader &header, bool skipThumbnail = true);
 	Common::Error saveGame(int slot, const Common::String &saveName);
 	Common::Error loadGame(int slot);
 

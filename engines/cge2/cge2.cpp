@@ -191,7 +191,7 @@ bool CGE2Engine::hasFeature(EngineFeature f) const {
 
 Common::Error CGE2Engine::run() {
 	syncSoundSettings();
-	initGraphics(kScrWidth, kScrHeight, false);
+	initGraphics(kScrWidth, kScrHeight);
 
 	init();
 	cge2_main();

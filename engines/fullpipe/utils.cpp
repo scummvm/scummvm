@@ -24,6 +24,7 @@
 
 #include "common/file.h"
 #include "common/memstream.h"
+#include "common/ptr.h"
 
 #include "fullpipe/objects.h"
 #include "fullpipe/motion.h"
@@ -33,7 +34,7 @@
 
 namespace Fullpipe {
 
-bool CObject::loadFile(const char *fname) {
+bool CObject::loadFile(const Common::String &fname) {
 	Common::File file;
 
 	if (!file.open(fname))
@@ -44,30 +45,14 @@ bool CObject::loadFile(const char *fname) {
 	return load(archive);
 }
 
-bool ObList::load(MfcArchive &file) {
-	debugC(5, kDebugLoading, "ObList::load()");
-	int count = file.readCount();
-
-	debugC(9, kDebugLoading, "ObList::count: %d:", count);
-
-	for (int i = 0; i < count; i++) {
-		debugC(9, kDebugLoading, "ObList::[%d]", i);
-		CObject *t = file.readClass();
-
-		push_back(t);
-	}
-
-	return true;
-}
-
 bool ObArray::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "ObArray::load()");
 	int count = file.readCount();
 
-	resize(count);
+	reserve(count);
 
 	for (int i = 0; i < count; i++) {
-		CObject *t = file.readClass();
+		CObject *t = file.readClass<CObject>();
 
 		push_back(*t);
 	}
@@ -81,7 +66,7 @@ bool DWordArray::load(MfcArchive &file) {
 
 	debugC(9, kDebugLoading, "DWordArray::count: %d", count);
 
-	resize(count);
+	reserve(count);
 
 	for (int i = 0; i < count; i++) {
 		int32 t = file.readSint32LE();
@@ -92,9 +77,10 @@ bool DWordArray::load(MfcArchive &file) {
 	return true;
 }
 
-char *MfcArchive::readPascalString(bool twoByte) {
+Common::String MfcArchive::readPascalString(bool twoByte) {
 	char *tmp;
 	int len;
+	Common::String result;
 
 	if (twoByte)
 		len = readUint16LE();
@@ -103,25 +89,26 @@ char *MfcArchive::readPascalString(bool twoByte) {
 
 	tmp = (char *)calloc(len + 1, 1);
 	read(tmp, len);
+	result = tmp;
+	free(tmp);
 
-	debugC(9, kDebugLoading, "readPascalString: %d <%s>", len, transCyrillic((byte *)tmp));
+	debugC(9, kDebugLoading, "readPascalString: %d <%s>", len, transCyrillic(result));
 
-	return tmp;
+	return result;
 }
 
-void MfcArchive::writePascalString(const char *str, bool twoByte) {
-	int len = strlen(str);
+void MfcArchive::writePascalString(const Common::String &str, bool twoByte) {
+	int len = str.size();
 
 	if (twoByte)
 		writeUint16LE(len);
 	else
 		writeByte(len);
 
-	write(str, len);
+	write(str.c_str(), len);
 }
 
 MemoryObject::MemoryObject() {
-	_memfilename = 0;
 	_mfield_8 = 0;
 	_mfield_C = 0;
 	_mfield_10 = -1;
@@ -134,19 +121,14 @@ MemoryObject::MemoryObject() {
 
 MemoryObject::~MemoryObject() {
 	freeData();
-	if (_memfilename)
-		free(_memfilename);
 }
 
 bool MemoryObject::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "MemoryObject::load()");
 	_memfilename = file.readPascalString();
 
-	if (char *p = strchr(_memfilename, '\\')) {
-		for (char *d = _memfilename; *p;) {
-			p++;
-			*d++ = *p;
-		}
+	while (_memfilename.contains('\\')) {
+		_memfilename.deleteChar(0);
 	}
 
 	if (g_fp->_currArchive) {
@@ -157,10 +139,10 @@ bool MemoryObject::load(MfcArchive &file) {
 	return true;
 }
 
-void MemoryObject::loadFile(char *filename) {
-	debugC(5, kDebugLoading, "MemoryObject::loadFile(<%s>)", filename);
+void MemoryObject::loadFile(const Common::String &filename) {
+	debugC(5, kDebugLoading, "MemoryObject::loadFile(<%s>)", filename.c_str());
 
-	if (!*filename)
+	if (filename.empty())
 		return;
 
 	if (!_data) {
@@ -169,18 +151,16 @@ void MemoryObject::loadFile(char *filename) {
 		if (g_fp->_currArchive != _libHandle && _libHandle)
 			g_fp->_currArchive = _libHandle;
 
-		Common::SeekableReadStream *s = g_fp->_currArchive->createReadStreamForMember(filename);
+		Common::ScopedPtr<Common::SeekableReadStream> s(g_fp->_currArchive->createReadStreamForMember(filename));
 
 		if (s) {
 			assert(s->size() > 0);
 
 			_dataSize = s->size();
 
-			debugC(5, kDebugLoading, "Loading %s (%d bytes)", filename, _dataSize);
+			debugC(5, kDebugLoading, "Loading %s (%d bytes)", filename.c_str(), _dataSize);
 			_data = (byte *)calloc(_dataSize, 1);
 			s->read(_data, _dataSize);
-
-			delete s;
 		} else {
 			// We have no object to read. This is fine
 		}
@@ -205,7 +185,7 @@ byte *MemoryObject::loadData() {
 }
 
 void MemoryObject::freeData() {
-	debugC(8, kDebugMemory, "MemoryObject::freeData(): file: %s", _memfilename);
+	debugC(8, kDebugMemory, "MemoryObject::freeData(): file: %s", _memfilename.c_str());
 
 	if (_data)
 		free(_data);
@@ -238,9 +218,9 @@ bool MemoryObject2::load(MfcArchive &file) {
 
 	_mflags |= 1;
 
-	debugC(5, kDebugLoading, "MemoryObject2::load: <%s>", _memfilename);
+	debugC(5, kDebugLoading, "MemoryObject2::load: <%s>", _memfilename.c_str());
 
-	if (_memfilename && *_memfilename) {
+	if (!_memfilename.empty()) {
 		MemoryObject::loadFile(_memfilename);
 	}
 
@@ -383,7 +363,7 @@ void MfcArchive::init() {
 	_objectIdMap.push_back(kNullObject);
 }
 
-CObject *MfcArchive::readClass() {
+CObject *MfcArchive::readBaseClass() {
 	bool isCopyReturned;
 	CObject *res = parseClass(&isCopyReturned);
 
@@ -394,7 +374,7 @@ CObject *MfcArchive::readClass() {
 }
 
 CObject *MfcArchive::parseClass(bool *isCopyReturned) {
-	char *name;
+	Common::String name;
 	int objectId = 0;
 	CObject *res = 0;
 
@@ -410,13 +390,13 @@ CObject *MfcArchive::parseClass(bool *isCopyReturned) {
 		debugC(7, kDebugLoading, "parseClass::schema = %d", schema);
 
 		name = readPascalString(true);
-		debugC(7, kDebugLoading, "parseClass::class <%s>", name);
+		debugC(7, kDebugLoading, "parseClass::class <%s>", name.c_str());
 
-		if (!_classMap.contains(name)) {
-			error("Unknown class in MfcArchive: <%s>", name);
+		if (!_classMap.contains(name.c_str())) {
+			error("Unknown class in MfcArchive: <%s>", name.c_str());
 		}
 
-		objectId = _classMap[name];
+		objectId = _classMap[name.c_str()];
 
 		debugC(7, kDebugLoading, "tag: %d 0x%x (%x)", _objectMap.size() - 1, _objectMap.size() - 1, objectId);
 
@@ -489,22 +469,23 @@ void MfcArchive::writeObject(CObject *obj) {
 	}
 }
 
-char *genFileName(int superId, int sceneId, const char *ext) {
-	char *s = (char *)calloc(256, 1);
+Common::String genFileName(int superId, int sceneId, const char *ext) {
+	Common::String s;
 
 	if (superId) {
-		snprintf(s, 255, "%04d%04d.%s", superId, sceneId, ext);
+		s = Common::String::format("%04d%04d.%s", superId, sceneId, ext);
 	} else {
-		snprintf(s, 255, "%04d.%s", sceneId, ext);
+		s = Common::String::format("%04d.%s", sceneId, ext);
 	}
 
-	debugC(7, kDebugLoading, "genFileName: %s", s);
+	debugC(7, kDebugLoading, "genFileName: %s", s.c_str());
 
 	return s;
 }
 
 // Translates cp-1251..utf-8
-byte *transCyrillic(byte *s) {
+byte *transCyrillic(const Common::String &str) {
+	const byte *s = (const byte *)str.c_str();
 	static byte tmp[1024];
 
 #ifndef WIN32
@@ -529,7 +510,7 @@ byte *transCyrillic(byte *s) {
 
 	int i = 0;
 
-	for (byte *p = s; *p; p++) {
+	for (const byte *p = s; *p; p++) {
 #ifdef WIN32
 		// translate from cp1251 to cp866
 		byte c = *p;
@@ -563,6 +544,45 @@ byte *transCyrillic(byte *s) {
 	tmp[i] = 0;
 
 	return tmp;
+}
+
+void FullpipeEngine::loadGameObjH() {
+	Common::File file;
+
+	if (!file.open("gameobj.h"))
+		return;
+
+	while(true) {
+		Common::String s = file.readLine();
+
+		if (file.eos())
+			break;
+
+		if (!s.hasPrefix("#define ")) {
+			warning("Bad read: <%s>", s.c_str());
+			continue;
+		}
+
+		int cnt = 0;
+		const char *ptr = &s.c_str()[8]; // Skip '#define ''
+
+		while (*ptr && *ptr != ' ') {
+			cnt++;
+			ptr++;
+		}
+
+		Common::String val(&s.c_str()[8], cnt);
+		int key = strtol(ptr, NULL, 10);
+
+		_gameObjH[(uint16)key] = val;
+	}
+}
+
+Common::String FullpipeEngine::gameIdToStr(uint16 id) {
+	if (_gameObjH.contains(id))
+		return _gameObjH[id];
+
+	return Common::String::format("%d", id);
 }
 
 } // End of namespace Fullpipe

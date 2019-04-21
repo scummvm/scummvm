@@ -1,6 +1,5 @@
 html {
-	background: rgb(212, 117, 11);
-	background: linear-gradient(to bottom, rgb(212, 117, 11) 0%, rgb(212, 117, 11) 36%, rgb(239, 196, 24) 100%);
+	background: rgb(204, 102, 0);
 	min-height: 100vh;
 }
 

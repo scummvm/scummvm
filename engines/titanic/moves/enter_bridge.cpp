@@ -45,7 +45,7 @@ bool CEnterBridge::EnterRoomMsg(CEnterRoomMsg *msg) {
 		CActMsg actMsg("Disable");
 		actMsg.execute("ShipAnnouncements");
 
-		setState1C(false);
+		stateSetSoundMakerAllowed(false);
 		_flag = false;
 	}
 

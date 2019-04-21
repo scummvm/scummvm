@@ -48,10 +48,10 @@
 #include "avalanche/mainmenu.h"
 #include "avalanche/highscore.h"
 
+#include "common/error.h"
 #include "common/serializer.h"
 
 #include "engines/engine.h"
-#include "engines/advancedDetector.h"
 
 #include "graphics/cursorman.h"
 
@@ -61,9 +61,7 @@ class RandomSource;
 
 namespace Avalanche {
 
-struct AvalancheGameDescription {
-	ADGameDescription desc;
-};
+struct AvalancheGameDescription;
 
 static const int kSavegameVersion = 2;
 
@@ -132,7 +130,6 @@ protected:
 
 private:
 	AvalancheConsole *_console;
-	Common::Platform _platform;
 
 public:
 	// For Thinkabout:

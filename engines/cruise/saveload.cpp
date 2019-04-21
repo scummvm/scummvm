@@ -43,9 +43,8 @@ struct overlayRestoreTemporary {
 
 overlayRestoreTemporary ovlRestoreData[90];
 
-bool readSavegameHeader(Common::InSaveFile *in, CruiseSavegameHeader &header) {
+WARN_UNUSED_RESULT bool readSavegameHeader(Common::InSaveFile *in, CruiseSavegameHeader &header, bool skipThumbnail) {
 	char saveIdentBuffer[6];
-	header.thumbnail = NULL;
 
 	// Validate the header Id
 	in->read(saveIdentBuffer, 6);
@@ -62,9 +61,10 @@ bool readSavegameHeader(Common::InSaveFile *in, CruiseSavegameHeader &header) {
 	while ((ch = (char)in->readByte()) != '\0') header.saveName += ch;
 
 	// Get the thumbnail
-	header.thumbnail = Graphics::loadThumbnail(*in);
-	if (!header.thumbnail)
+	header.thumbnail = nullptr;
+	if (!Graphics::loadThumbnail(*in, header.thumbnail, skipThumbnail)) {
 		return false;
+	}
 
 	return true;
 }
@@ -827,8 +827,10 @@ Common::Error loadSavegameData(int saveGameIdx) {
 
 	// Skip over the savegame header
 	CruiseSavegameHeader header;
-	readSavegameHeader(f, header);
-	delete header.thumbnail;
+	if (!readSavegameHeader(f, header)) {
+		delete f;
+		return Common::kReadingFailed;
+	}
 
 	// Synchronise the remaining data of the savegame
 	Common::Serializer s(f, NULL);

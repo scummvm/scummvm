@@ -23,6 +23,7 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/translation.h"
 
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
@@ -33,6 +34,7 @@
 #include "sci/event.h"
 
 #include "sci/engine/features.h"
+#include "sci/engine/guest_additions.h"
 #include "sci/engine/message.h"
 #include "sci/engine/object.h"
 #include "sci/engine/state.h"
@@ -40,6 +42,7 @@
 #include "sci/engine/script.h"	// for script_adjust_opcode_formats
 #include "sci/engine/script_patches.h"
 #include "sci/engine/selector.h"	// for SELECTOR
+#include "sci/engine/scriptdebug.h"
 
 #include "sci/sound/audio.h"
 #include "sci/sound/music.h"
@@ -94,6 +97,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	_video32 = nullptr;
 	_gfxCursor32 = nullptr;
 #endif
+	_guestAdditions = nullptr;
 	_features = 0;
 	_resMan = 0;
 	_gamestate = 0;
@@ -148,6 +152,8 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	SearchMan.addSubDirectoryMatching(gameDataDir, "robots");	// robot movie files
 	SearchMan.addSubDirectoryMatching(gameDataDir, "movie");	// VMD movie files
 	SearchMan.addSubDirectoryMatching(gameDataDir, "movies");	// VMD movie files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "music");	// LSL7 music files (GOG version)
+	SearchMan.addSubDirectoryMatching(gameDataDir, "music/22s16");	// LSL7 music files
 	SearchMan.addSubDirectoryMatching(gameDataDir, "vmd");	// VMD movie files
 	SearchMan.addSubDirectoryMatching(gameDataDir, "duk");	// Duck movie files in Phantasmagoria 2
 	SearchMan.addSubDirectoryMatching(gameDataDir, "Robot Folder"); // Mac robot files
@@ -157,9 +163,40 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	SearchMan.addSubDirectoryMatching(gameDataDir, "VMD Folder"); // Mac VMD files
 
 	// Add the patches directory, except for KQ6CD; The patches folder in some versions of KQ6CD
-	// is for the demo of Phantasmagoria, included in the disk
-	if (_gameId != GID_KQ6)
-		SearchMan.addSubDirectoryMatching(gameDataDir, "patches");	// resource patches
+	// (e.g. KQ Collection 1997) is for the demo of Phantasmagoria, included in the disk
+	if (_gameId != GID_KQ6) {
+		// Patch files in the root directory of Phantasmagoria 2 are higher
+		// priority than patch files in the patches directory (the SSCI
+		// installer copies these patches to HDD and gives the HDD directory
+		// top priority)
+		const int priority = _gameId == GID_PHANTASMAGORIA2 ? -1 : 0;
+		SearchMan.addSubDirectoryMatching(gameDataDir, "patches", priority);	// resource patches
+	}
+
+	// Some releases (e.g. Pointsoft Torin) use a different patch directory name
+	SearchMan.addSubDirectoryMatching(gameDataDir, "patch");	// resource patches
+
+	switch (desc->language) {
+	case Common::DE_DEU:
+		SearchMan.addSubDirectoryMatching(gameDataDir, "german/msg");
+		break;
+	case Common::EN_ANY:
+	case Common::EN_GRB:
+	case Common::EN_USA:
+		SearchMan.addSubDirectoryMatching(gameDataDir, "english/msg");
+		break;
+	case Common::ES_ESP:
+		SearchMan.addSubDirectoryMatching(gameDataDir, "spanish/msg");
+		break;
+	case Common::FR_FRA:
+		SearchMan.addSubDirectoryMatching(gameDataDir, "french/msg");
+		break;
+	case Common::IT_ITA:
+		SearchMan.addSubDirectoryMatching(gameDataDir, "italian/msg");
+		break;
+	default:
+		break;
+	}
 }
 
 SciEngine::~SciEngine() {
@@ -202,6 +239,7 @@ SciEngine::~SciEngine() {
 	delete _kernel;
 	delete _vocabulary;
 	delete _console;
+	delete _guestAdditions;
 	delete _features;
 	delete _gfxMacIconBar;
 
@@ -238,7 +276,7 @@ Common::Error SciEngine::run() {
 
 	// Add the after market GM patches for the specified game, if they exist
 	_resMan->addNewGMPatch(_gameId);
-	_gameObjectAddress = _resMan->findGameObject();
+	_gameObjectAddress = _resMan->findGameObject(true, isBE());
 
 	_scriptPatcher = new ScriptPatcher();
 	SegManager *segMan = new SegManager(_resMan, _scriptPatcher);
@@ -273,16 +311,13 @@ Common::Error SciEngine::run() {
 	_kernel->init();
 
 	_features = new GameFeatures(segMan, _kernel);
-	// Only SCI0, SCI01 and SCI1 EGA games used a parser
-	_vocabulary = (getSciVersion() <= SCI_VERSION_1_EGA_ONLY) ? new Vocabulary(_resMan, false) : NULL;
-	// Also, XMAS1990 apparently had a parser too. Refer to http://forums.scummvm.org/viewtopic.php?t=9135
-	if (getGameId() == GID_CHRISTMAS1990)
-		_vocabulary = new Vocabulary(_resMan, false);
+	_vocabulary = hasParser() ? new Vocabulary(_resMan, false) : NULL;
 
 	_gamestate = new EngineState(segMan);
+	_guestAdditions = new GuestAdditions(_gamestate, _features, _kernel);
 	_eventMan = new EventManager(_resMan->detectFontExtended());
 #ifdef ENABLE_SCI32
-	if (getSciVersion() >= SCI_VERSION_2_1_EARLY) {
+	if (getSciVersion() >= SCI_VERSION_2) {
 		_audio32 = new Audio32(_resMan);
 	} else
 #endif
@@ -331,18 +366,14 @@ Common::Error SciEngine::run() {
 	_soundCmd = new SoundCommandParser(_resMan, segMan, _kernel, _audio, _features->detectDoSoundType());
 
 	syncSoundSettings();
-	syncIngameAudioOptions();
-
-	// Patch in our save/restore code, so that dialogs are replaced
-	patchGameSaveRestore();
+	_guestAdditions->syncAudioOptionsFromScummVM();
+	_guestAdditions->patchGameSaveRestore();
 	setLauncherLanguage();
 
 	// Check whether loading a savestate was requested
 	int directSaveSlotLoading = ConfMan.getInt("save_slot");
 	if (directSaveSlotLoading >= 0) {
-		_gamestate->_delayedRestoreGame = true;
 		_gamestate->_delayedRestoreGameId = directSaveSlotLoading;
-		_gamestate->_delayedRestoreFromLauncher = true;
 
 		// Jones only initializes its menus when restarting/restoring, thus set
 		// the gameIsRestarting flag here before initializing. Fixes bug #6536.
@@ -352,33 +383,15 @@ Common::Error SciEngine::run() {
 
 	// Show any special warnings for buggy scripts with severe game bugs,
 	// which have been patched by Sierra
-	if (getGameId() == GID_LONGBOW) {
-		// Longbow 1.0 has a buggy script which prevents the game
-		// from progressing during the Green Man riddle sequence.
-		// A patch for this buggy script has been released by Sierra,
-		// and is necessary to complete the game without issues.
-		// The patched script is included in Longbow 1.1.
-		// Refer to bug #3036609.
-		Resource *buggyScript = _resMan->findResource(ResourceId(kResourceTypeScript, 180), 0);
-
-		if (buggyScript && (buggyScript->size == 12354 || buggyScript->size == 12362)) {
-			showScummVMDialog("A known buggy game script has been detected, which could "
-			                  "prevent you from progressing later on in the game, during "
-			                  "the sequence with the Green Man's riddles. Please, apply "
-			                  "the latest patch for this game by Sierra to avoid possible "
-			                  "problems");
-		}
-	}
-
 	if (getGameId() == GID_KQ7 && ConfMan.getBool("subtitles")) {
-		showScummVMDialog("Subtitles are enabled, but subtitling in King's"
+		showScummVMDialog(_("Subtitles are enabled, but subtitling in King's"
 						  " Quest 7 was unfinished and disabled in the release"
 						  " version of the game. ScummVM allows the subtitles"
 						  " to be re-enabled, but because they were removed from"
 						  " the original game, they do not always render"
 						  " properly or reflect the actual game speech."
 						  " This is not a ScummVM bug -- it is a problem with"
-						  " the game's assets.");
+						  " the game's assets."));
 	}
 
 	// Show a warning if the user has selected a General MIDI device, no GM patch exists
@@ -395,7 +408,7 @@ Common::Error SciEngine::run() {
 			case GID_SQ1:
 			case GID_SQ4:
 			case GID_FAIRYTALES:
-				showScummVMDialog("You have selected General MIDI as a sound device. Sierra "
+				showScummVMDialog(_("You have selected General MIDI as a sound device. Sierra "
 				                  "has provided after-market support for General MIDI for this "
 				                  "game in their \"General MIDI Utility\". Please, apply this "
 				                  "patch in order to enjoy MIDI music with this game. Once you "
@@ -405,7 +418,7 @@ Common::Error SciEngine::run() {
 				                  "the instructions in the READ.ME file included in the patch and "
 				                  "rename the associated *.PAT file to 4.PAT and place it in the "
 				                  "game folder. Without this patch, General MIDI music for this "
-				                  "game will sound badly distorted.");
+				                  "game will sound badly distorted."));
 				break;
 			default:
 				break;
@@ -414,11 +427,11 @@ Common::Error SciEngine::run() {
 	}
 
 	if (gameHasFanMadePatch()) {
-		showScummVMDialog("Your game is patched with a fan made script patch. Such patches have "
+		showScummVMDialog(_("Your game is patched with a fan made script patch. Such patches have "
 		                  "been reported to cause issues, as they modify game scripts extensively. "
 		                  "The issues that these patches fix do not occur in ScummVM, so you are "
 		                  "advised to remove this patch from your game folder in order to avoid "
-		                  "having unexpected errors and/or issues later on.");
+		                  "having unexpected errors and/or issues later on."));
 	}
 
 	runGame();
@@ -477,10 +490,10 @@ bool SciEngine::gameHasFanMadePatch() {
 		if (patchInfo[curEntry].gameID == getGameId()) {
 			Resource *targetScript = _resMan->findResource(ResourceId(kResourceTypeScript, patchInfo[curEntry].targetScript), 0);
 
-			if (targetScript && targetScript->size + 2 == patchInfo[curEntry].targetSize) {
+			if (targetScript && targetScript->size() + 2 == patchInfo[curEntry].targetSize) {
 				if (patchInfo[curEntry].patchedByteOffset == 0)
 					return true;
-				else if (targetScript->data[patchInfo[curEntry].patchedByteOffset - 2] == patchInfo[curEntry].patchedByte)
+				else if (targetScript->getUint8At(patchInfo[curEntry].patchedByteOffset - 2) == patchInfo[curEntry].patchedByte)
 					return true;
 			}
 		}
@@ -489,194 +502,6 @@ bool SciEngine::gameHasFanMadePatch() {
 	}
 
 	return false;
-}
-
-static byte patchGameRestoreSave[] = {
-	0x39, 0x03,        // pushi 03
-	0x76,              // push0
-	0x38, 0xff, 0xff,  // pushi -1
-	0x76,              // push0
-	0x43, 0xff, 0x06,  // callk kRestoreGame/kSaveGame (will get changed afterwards)
-	0x48,              // ret
-};
-
-#ifdef ENABLE_SCI32
-// SCI2 version: Same as above, but the second parameter to callk is a word
-// and third parameter is a string reference
-static byte patchGameRestoreSci2[] = {
-	0x39, 0x03,             // pushi 03
-	0x76,                   // push0          (game name)
-	0x38, 0xff, 0xff,       // pushi -1       (save number)
-	0x89, 0x1b,             // lsg global[27] (game version)
-	0x43, 0xff, 0x06, 0x00, // callk kRestoreGame (0xFF will be overwritten by patcher)
-	0x48,                   // ret
-};
-
-static byte patchGameSaveSci2[] = {
-	0x39, 0x04,             // pushi 04
-	0x76,                   // push0          (game name)
-	0x38, 0xff, 0xff,       // pushi -1       (save number)
-	0x76,                   // push0          (save description)
-	0x89, 0x1b,             // lsg global[27] (game version)
-	0x43, 0xff, 0x08, 0x00, // callk kSaveGame (0xFF will be overwritten by patcher)
-	0x48,                   // ret
-};
-
-// SCI2.1mid version: Same as above, but with an extra subop parameter
-static byte patchGameRestoreSci21[] = {
-	0x39, 0x04,             // pushi 04
-	0x78,                   // push1          (subop)
-	0x76,                   // push0          (game name)
-	0x38, 0xff, 0xff,       // pushi -1       (save number)
-	0x89, 0x1b,             // lsg global[27] (game version)
-	0x43, 0xff, 0x08, 0x00, // callk kSave (0xFF will be overwritten by patcher)
-	0x48,                   // ret
-};
-
-static byte patchGameSaveSci21[] = {
-	0x39, 0x05,             // pushi 05
-	0x76,                   // push0          (subop)
-	0x76,                   // push0          (game name)
-	0x38, 0xff, 0xff,       // pushi -1       (save number)
-	0x76,                   // push0          (save description)
-	0x89, 0x1b,             // lsg global[27] (game version)
-	0x43, 0xff, 0x0a, 0x00, // callk kSave (0xFF will be overwritten by patcher)
-	0x48,                   // ret
-};
-#endif
-
-static void patchGameSaveRestoreCode(SegManager *segMan, reg_t methodAddress, byte id) {
-	Script *script = segMan->getScript(methodAddress.getSegment());
-	byte *patchPtr = const_cast<byte *>(script->getBuf(methodAddress.getOffset()));
-
-	memcpy(patchPtr, patchGameRestoreSave, sizeof(patchGameRestoreSave));
-	patchPtr[8] = id;
-}
-
-#ifdef ENABLE_SCI32
-static void patchGameSaveRestoreCodeSci2(SegManager *segMan, reg_t methodAddress, byte id, bool doRestore) {
-	Script *script = segMan->getScript(methodAddress.getSegment());
-	byte *patchPtr = const_cast<byte *>(script->getBuf(methodAddress.getOffset()));
-	int kcallOffset;
-
-	if (getSciVersion() < SCI_VERSION_2_1_MIDDLE) {
-		if (doRestore) {
-			memcpy(patchPtr, patchGameRestoreSci2, sizeof(patchGameRestoreSci2));
-			kcallOffset = 9;
-		} else {
-			memcpy(patchPtr, patchGameSaveSci2, sizeof(patchGameSaveSci2));
-			kcallOffset = 10;
-		}
-	} else {
-		if (doRestore) {
-			memcpy(patchPtr, patchGameRestoreSci21, sizeof(patchGameRestoreSci21));
-			kcallOffset = 10;
-		} else {
-			memcpy(patchPtr, patchGameSaveSci21, sizeof(patchGameSaveSci21));
-			kcallOffset = 11;
-		}
-	}
-
-	patchPtr[kcallOffset] = id;
-	if (g_sci->isBE()) {
-		SWAP(patchPtr[kcallOffset + 1], patchPtr[kcallOffset + 2]);
-	}
-}
-#endif
-
-void SciEngine::patchGameSaveRestore() {
-	SegManager *segMan = _gamestate->_segMan;
-	const Object *gameObject = segMan->getObject(_gameObjectAddress);
-	const Object *gameSuperObject = segMan->getObject(gameObject->getSuperClassSelector());
-	if (!gameSuperObject)
-		gameSuperObject = gameObject;	// happens in KQ5CD, when loading saved games before r54510
-	byte kernelIdRestore = 0;
-	byte kernelIdSave = 0;
-
-	switch (_gameId) {
-	case GID_HOYLE1: // gets confused, although the game doesn't support saving/restoring at all
-	case GID_HOYLE2: // gets confused, see hoyle1
-	case GID_JONES: // gets confused, when we patch us in, the game is only able to save to 1 slot, so hooking is not required
-	case GID_KQ7: // has custom save/load code
-	case GID_MOTHERGOOSE: // mother goose EGA saves/restores directly and has no save/restore dialogs
-	case GID_MOTHERGOOSE256: // mother goose saves/restores directly and has no save/restore dialogs
-	case GID_MOTHERGOOSEHIRES: // has custom save/load code
-	case GID_PHANTASMAGORIA: // has custom save/load code
-	case GID_PQSWAT: // has custom save/load code
-	case GID_SHIVERS: // has custom save/load code
-		return;
-	default:
-		break;
-	}
-
-	if (ConfMan.getBool("originalsaveload"))
-		return;
-
-	uint16 kernelNamesSize = _kernel->getKernelNamesSize();
-	for (uint16 kernelNr = 0; kernelNr < kernelNamesSize; kernelNr++) {
-		Common::String kernelName = _kernel->getKernelName(kernelNr);
-		if (kernelName == "RestoreGame")
-			kernelIdRestore = kernelNr;
-		if (kernelName == "SaveGame")
-			kernelIdSave = kernelNr;
-		if (kernelName == "Save")
-			kernelIdSave = kernelIdRestore = kernelNr;
-	}
-
-	// Search for gameobject superclass ::restore
-	uint16 gameSuperObjectMethodCount = gameSuperObject->getMethodCount();
-	for (uint16 methodNr = 0; methodNr < gameSuperObjectMethodCount; methodNr++) {
-		uint16 selectorId = gameSuperObject->getFuncSelector(methodNr);
-		Common::String methodName = _kernel->getSelectorName(selectorId);
-		if (methodName == "restore") {
-#ifdef ENABLE_SCI32
-			if (getSciVersion() >= SCI_VERSION_2) {
-				patchGameSaveRestoreCodeSci2(segMan, gameSuperObject->getFunction(methodNr), kernelIdRestore, true);
-			} else
-#endif
-				patchGameSaveRestoreCode(segMan, gameSuperObject->getFunction(methodNr), kernelIdRestore);
-		}
-		else if (methodName == "save") {
-			if (_gameId != GID_FAIRYTALES) {	// Fairy Tales saves automatically without a dialog
-#ifdef ENABLE_SCI32
-				if (getSciVersion() >= SCI_VERSION_2) {
-					patchGameSaveRestoreCodeSci2(segMan, gameSuperObject->getFunction(methodNr), kernelIdSave, false);
-				} else
-#endif
-					patchGameSaveRestoreCode(segMan, gameSuperObject->getFunction(methodNr), kernelIdSave);
-			}
-		}
-	}
-
-	const Object *patchObjectSave = nullptr;
-
-	if (getSciVersion() < SCI_VERSION_2) {
-		// Patch gameobject ::save for now for SCI0 - SCI1.1
-		// TODO: It seems this was never adjusted to superclass, but adjusting it now may cause
-		// issues with some game. Needs to get checked and then possibly changed.
-		patchObjectSave = gameObject;
-	} else {
-		// Patch superclass ::save for SCI32
-		patchObjectSave = gameSuperObject;
-	}
-
-	// Search for gameobject ::save, if there is one patch that one too
-	uint16 patchObjectMethodCount = patchObjectSave->getMethodCount();
-	for (uint16 methodNr = 0; methodNr < patchObjectMethodCount; methodNr++) {
-		uint16 selectorId = patchObjectSave->getFuncSelector(methodNr);
-		Common::String methodName = _kernel->getSelectorName(selectorId);
-		if (methodName == "save") {
-			if (_gameId != GID_FAIRYTALES) {	// Fairy Tales saves automatically without a dialog
-#ifdef ENABLE_SCI32
-				if (getSciVersion() >= SCI_VERSION_2) {
-					patchGameSaveRestoreCodeSci2(segMan, gameSuperObject->getFunction(methodNr), kernelIdSave, false);
-				} else
-#endif
-					patchGameSaveRestoreCode(segMan, patchObjectSave->getFunction(methodNr), kernelIdSave);
-			}
-			break;
-		}
-	}
 }
 
 bool SciEngine::initGame() {
@@ -722,6 +547,10 @@ bool SciEngine::initGame() {
 	// Load game language into printLang property of game object
 	setSciLanguage();
 
+#ifdef ENABLE_SCI32
+	_guestAdditions->sciEngineInitGameHook();
+#endif
+
 	return true;
 }
 
@@ -763,7 +592,7 @@ void SciEngine::initGraphics() {
 	} else {
 #endif
 		_gfxPalette16 = new GfxPalette(_resMan, _gfxScreen);
-		if (getGameId() == GID_QFG4DEMO)
+		if (getGameId() == GID_QFG4DEMO || getGameId() == GID_CATDATE)
 			_gfxRemap16 = new GfxRemap(_gfxPalette16);
 #ifdef ENABLE_SCI32
 	}
@@ -819,14 +648,14 @@ void SciEngine::initStackBaseWithSelector(Selector selector) {
 
 	// Register the first element on the execution stack
 	if (!send_selector(_gamestate, _gameObjectAddress, _gameObjectAddress, _gamestate->stack_base, 2, _gamestate->stack_base)) {
-		_console->printObject(_gameObjectAddress);
+		printObject(_gameObjectAddress);
 		error("initStackBaseWithSelector: error while registering the first selector in the call stack");
 	}
 
 }
 
 void SciEngine::runGame() {
-	setTotalPlayTime(0);
+	setTotalPlayTime(17);
 
 	initStackBaseWithSelector(SELECTOR(play)); // Call the play selector
 
@@ -834,39 +663,38 @@ void SciEngine::runGame() {
 	if (DebugMan.isDebugChannelEnabled(kDebugLevelOnStartup))
 		_console->attach();
 
-	_gamestate->_syncedAudioOptions = false;
+	_guestAdditions->reset();
 
 	do {
 		_gamestate->_executionStackPosChanged = false;
 		run_vm(_gamestate);
 		exitGame();
 
-		_gamestate->_syncedAudioOptions = true;
+		_guestAdditions->sciEngineRunGameHook();
 
 		if (_gamestate->abortScriptProcessing == kAbortRestartGame) {
 			_gamestate->_segMan->resetSegMan();
 			initGame();
 			initStackBaseWithSelector(SELECTOR(play));
-			patchGameSaveRestore();
+			_guestAdditions->patchGameSaveRestore();
 			setLauncherLanguage();
 			_gamestate->gameIsRestarting = GAMEISRESTARTING_RESTART;
 			_gamestate->_throttleLastTime = 0;
 			if (_gfxMenu)
 				_gfxMenu->reset();
 			_gamestate->abortScriptProcessing = kAbortNone;
-			_gamestate->_syncedAudioOptions = false;
+			_guestAdditions->reset();
 		} else if (_gamestate->abortScriptProcessing == kAbortLoadGame) {
 			_gamestate->abortScriptProcessing = kAbortNone;
 			_gamestate->_executionStack.clear();
 			initStackBaseWithSelector(SELECTOR(replay));
-			patchGameSaveRestore();
+			_guestAdditions->patchGameSaveRestore();
 			setLauncherLanguage();
 			_gamestate->shrinkStackToBase();
 			_gamestate->abortScriptProcessing = kAbortNone;
 
 			syncSoundSettings();
-			syncIngameAudioOptions();
-			// Games do not set their audio settings when loading
+			_guestAdditions->syncAudioOptionsFromScummVM();
 		} else {
 			break;	// exit loop
 		}
@@ -947,6 +775,13 @@ bool SciEngine::isBE() const{
 	}
 }
 
+bool SciEngine::hasParser() const {
+	// Only SCI0, SCI01 and SCI1 EGA games used a parser, along with
+	//  multilingual LSL3 and SQ3 Amiga which are SCI_VERSION_1_MIDDLE
+	return getSciVersion() <= SCI_VERSION_1_EGA_ONLY ||
+			getGameId() == GID_LSL3 || getGameId() == GID_SQ3;
+}
+
 bool SciEngine::hasMacIconBar() const {
 	return _resMan->isSci11Mac() && getSciVersion() == SCI_VERSION_1_1 &&
 			(getGameId() == GID_KQ6 || getGameId() == GID_FREDDYPHARKAS);
@@ -998,12 +833,30 @@ int SciEngine::inQfGImportRoom() const {
 }
 
 void SciEngine::sleep(uint32 msecs) {
+	if (!msecs) {
+		return;
+	}
+
 	uint32 time;
 	const uint32 wakeUpTime = g_system->getMillis() + msecs;
 
 	for (;;) {
 		// let backend process events and update the screen
-		_eventMan->getSciEvent(SCI_EVENT_PEEK);
+		_eventMan->getSciEvent(kSciEventPeek);
+
+		// There is no point in waiting any more if we are just waiting to quit
+		if (g_engine->shouldQuit()) {
+			return;
+		}
+
+#ifdef ENABLE_SCI32
+		// If a game is in a wait loop, kFrameOut is not called, but mouse
+		// movement is still occurring and the screen needs to be updated to
+		// reflect it
+		if (getSciVersion() >= SCI_VERSION_2) {
+			g_sci->_gfxFrameout->updateScreen();
+		}
+#endif
 		time = g_system->getMillis();
 		if (time + 10 < wakeUpTime) {
 			g_system->delayMillis(10);
@@ -1012,7 +865,6 @@ void SciEngine::sleep(uint32 msecs) {
 				g_system->delayMillis(wakeUpTime - time);
 			break;
 		}
-
 	}
 }
 
@@ -1054,150 +906,20 @@ void SciEngine::pauseEngineIntern(bool pause) {
 }
 
 void SciEngine::syncSoundSettings() {
+	updateSoundMixerVolumes();
+	_guestAdditions->syncSoundSettingsFromScummVM();
+}
+
+void SciEngine::updateSoundMixerVolumes() {
 	Engine::syncSoundSettings();
 
-	bool mute = false;
-	if (ConfMan.hasKey("mute"))
-		mute = ConfMan.getBool("mute");
-
-	int soundVolumeMusic = (mute ? 0 : ConfMan.getInt("music_volume"));
-
-	if (_gamestate && _soundCmd) {
-		int vol =  (soundVolumeMusic + 1) * MUSIC_MASTERVOLUME_MAX / Audio::Mixer::kMaxMixerVolume;
-		_soundCmd->setMasterVolume(vol);
-	}
-}
-
-void SciEngine::syncIngameAudioOptions() {
-	bool useGlobal90 = false;
-
-	// Sync the in-game speech/subtitles settings for SCI1.1 CD games
-	if (isCD()) {
-		switch (getSciVersion()) {
-		case SCI_VERSION_1_1:
-			// All SCI1.1 CD games use global 90
-			useGlobal90 = true;
-			break;
-#ifdef ENABLE_SCI32
-		case SCI_VERSION_2:
-		case SCI_VERSION_2_1_EARLY:
-		case SCI_VERSION_2_1_MIDDLE:
-		case SCI_VERSION_2_1_LATE:
-			// Only use global 90 for some specific games, not all SCI32 games used this method
-			switch (_gameId) {
-			case GID_KQ7: // SCI2.1
-			case GID_GK1: // SCI2
-			case GID_GK2: // SCI2.1
-			case GID_SQ6: // SCI2.1
-			case GID_TORIN: // SCI2.1
-			case GID_QFG4: // SCI2.1
-			case GID_PQ4:	// SCI2
-			case GID_PHANTASMAGORIA:	// SCI2.1
-			case GID_MOTHERGOOSEHIRES:	// SCI2.1
-				useGlobal90 = true;
-				break;
-			case GID_LSL6: // SCI2.1
-				// TODO: Uses gameFlags array
-				break;
-			// Shivers does not use global 90
-			// Police Quest: SWAT does not use global 90
-			//
-			// TODO: Unknown at the moment:
-			// LSL7, Lighthouse, RAMA, Phantasmagoria 2
-			default:
-				return;
-			}
-			break;
-#endif // ENABLE_SCI32
-		default:
-			return;
-		}
-
-		bool subtitlesOn = ConfMan.getBool("subtitles");
-		bool speechOn = !ConfMan.getBool("speech_mute");
-
-#ifdef ENABLE_SCI32
-		if (getSciVersion() >= SCI_VERSION_2) {
-			GlobalVar index;
-			uint16 textSpeed;
-
-			switch (g_sci->getGameId()) {
-			case GID_LSL6HIRES:
-				index = kGlobalVarLSL6HiresTextSpeed;
-				textSpeed = 14 - ConfMan.getInt("talkspeed") * 14 / 255 + 1;
-				break;
-			default:
-				index = kGlobalVarTextSpeed;
-				textSpeed = 8 - ConfMan.getInt("talkspeed") * 8 / 255;
-			}
-
-			_gamestate->variables[VAR_GLOBAL][index] = make_reg(0, textSpeed);
-		}
-#endif
-
-		if (useGlobal90) {
-			if (subtitlesOn && !speechOn) {
-				_gamestate->variables[VAR_GLOBAL][kGlobalVarMessageType] = make_reg(0, 1);	// subtitles
-			} else if (!subtitlesOn && speechOn) {
-				_gamestate->variables[VAR_GLOBAL][kGlobalVarMessageType] = make_reg(0, 2);	// speech
-			} else if (subtitlesOn && speechOn) {
-				// Is it a game that supports simultaneous speech and subtitles?
-				switch (_gameId) {
-				case GID_SQ4:
-				case GID_FREDDYPHARKAS:
-				case GID_ECOQUEST:
-				case GID_LSL6:
-				case GID_LAURABOW2:
-				case GID_KQ6:
-#ifdef ENABLE_SCI32
-				// Unsure about Gabriel Knight 2
-				case GID_KQ7: // SCI2.1
-				case GID_GK1: // SCI2
-				case GID_SQ6: // SCI2.1, SQ6 seems to always use subtitles anyway
-				case GID_TORIN: // SCI2.1
-				case GID_QFG4: // SCI2.1
-				case GID_PQ4:	// SCI2
-				// Phantasmagoria does not support simultaneous speech + subtitles
-				// Mixed Up Mother Goose Deluxe does not support simultaneous speech + subtitles
-#endif // ENABLE_SCI32
-					_gamestate->variables[VAR_GLOBAL][kGlobalVarMessageType] = make_reg(0, 3);	// speech + subtitles
-					break;
-				default:
-					// Game does not support speech and subtitles, set it to speech
-					_gamestate->variables[VAR_GLOBAL][kGlobalVarMessageType] = make_reg(0, 2);	// speech
-				}
-			}
-		}
-	}
-}
-
-void SciEngine::updateScummVMAudioOptions() {
-	// Update ScummVM's speech/subtitles settings for SCI1.1 CD games,
-	// depending on the in-game settings
-	if ((isCD() && getSciVersion() == SCI_VERSION_1_1) ||
-		getSciVersion() >= SCI_VERSION_2) {
-
-		uint16 ingameSetting = _gamestate->variables[VAR_GLOBAL][kGlobalVarMessageType].getOffset();
-
-		switch (ingameSetting) {
-		case 1:
-			// subtitles
-			ConfMan.setBool("subtitles", true);
-			ConfMan.setBool("speech_mute", true);
-			break;
-		case 2:
-			// speech
-			ConfMan.setBool("subtitles", false);
-			ConfMan.setBool("speech_mute", false);
-			break;
-		case 3:
-			// speech + subtitles
-			ConfMan.setBool("subtitles", true);
-			ConfMan.setBool("speech_mute", false);
-			break;
-		default:
-			break;
-		}
+	// ScummVM adjusts the software mixer volume in Engine::syncSoundSettings,
+	// but MIDI either does not run through the ScummVM mixer (e.g. hardware
+	// synth) or it uses a kPlainSoundType channel type, so the master MIDI
+	// volume must be adjusted here for MIDI playback volume to be correct
+	if (_soundCmd) {
+		const int16 musicVolume = (ConfMan.getInt("music_volume") + 1) * MUSIC_MASTERVOLUME_MAX / Audio::Mixer::kMaxMixerVolume;
+		_soundCmd->setMasterVolume(ConfMan.getBool("mute") ? 0 : musicVolume);
 	}
 }
 

@@ -139,7 +139,6 @@ MODULE_OBJS += \
 	events/sdl/sdl-events.o \
 	graphics/sdl/sdl-graphics.o \
 	graphics/surfacesdl/surfacesdl-graphics.o \
-	mixer/doublebuffersdl/doublebuffersdl-mixer.o \
 	mixer/sdl/sdl-mixer.o \
 	mutex/sdl/sdl-mutex.o \
 	plugins/sdl/sdl-provider.o \
@@ -180,6 +179,7 @@ endif
 ifdef MACOSX
 MODULE_OBJS += \
 	audiocd/macosx/macosx-audiocd.o \
+	dialogs/macosx/macosx-dialogs.o \
 	midi/coreaudio.o \
 	midi/coremidi.o \
 	updates/macosx/macosx-updates.o \
@@ -189,6 +189,7 @@ endif
 ifdef WIN32
 MODULE_OBJS += \
 	audiocd/win32/win32-audiocd.o \
+	dialogs/win32/win32-dialogs.o \
 	fs/windows/windows-fs.o \
 	fs/windows/windows-fs-factory.o \
 	midi/windows.o \
@@ -196,6 +197,11 @@ MODULE_OBJS += \
 	saves/windows/windows-saves.o \
 	updates/win32/win32-updates.o \
 	taskbar/win32/win32-taskbar.o
+endif
+
+ifeq ($(BACKEND),android)
+MODULE_OBJS += \
+	mutex/pthread/pthread-mutex.o
 endif
 
 ifeq ($(BACKEND),androidsdl)
@@ -209,6 +215,13 @@ MODULE_OBJS += \
 	fs/amigaos4/amigaos4-fs.o \
 	fs/amigaos4/amigaos4-fs-factory.o \
 	midi/camd.o
+endif
+
+ifdef RISCOS
+MODULE_OBJS += \
+	fs/riscos/riscos-fs.o \
+	fs/riscos/riscos-fs-factory.o \
+	platform/sdl/riscos/riscos-utils.o
 endif
 
 ifdef PLAYSTATION3
@@ -288,6 +301,15 @@ MODULE_OBJS += \
 	plugins/psp/psp-provider.o \
 	saves/psp/psp-saves.o \
 	timer/psp/timer.o
+endif
+
+ifeq ($(BACKEND),psp2)
+MODULE_OBJS += \
+	fs/posix/posix-fs.o \
+	fs/psp2/psp2-fs-factory.o \
+	fs/psp2/psp2-dirent.o \
+	events/psp2sdl/psp2sdl-events.o \
+	graphics/psp2sdl/psp2sdl-graphics.o
 endif
 
 ifeq ($(BACKEND),samsungtv)

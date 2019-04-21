@@ -88,13 +88,7 @@ void Dialog::open() {
 	_visible = true;
 	g_gui.openDialog(this);
 
-	Widget *w = _firstWidget;
-	// Search for the first objects that wantsFocus() (if any) and give it the focus
-	while (w && !w->wantsFocus()) {
-		w = w->_next;
-	}
-
-	setFocusWidget(w);
+	setDefaultFocusedWidget();
 }
 
 void Dialog::close() {
@@ -142,6 +136,16 @@ void Dialog::setFocusWidget(Widget *widget) {
 	_focusedWidget = widget;
 }
 
+void Dialog::setDefaultFocusedWidget() {
+	Widget *w = _firstWidget;
+	// Search for the first objects that wantsFocus() (if any) and give it the focus
+	while (w && !w->wantsFocus()) {
+		w = w->_next;
+	}
+
+	setFocusWidget(w);
+}
+
 void Dialog::releaseFocus() {
 	if (_focusedWidget) {
 		_focusedWidget->lostFocus();
@@ -149,20 +153,30 @@ void Dialog::releaseFocus() {
 	}
 }
 
-void Dialog::draw() {
-	//TANOKU - FIXME when is this enabled? what does this do?
-	// Update: called on tab drawing, mainly...
-	// we can pass this as open a new dialog or something
-//	g_gui._needRedraw = true;
-	g_gui._redrawStatus = GUI::GuiManager::kRedrawTopDialog;
+void Dialog::markWidgetsAsDirty() {
+	Widget *w = _firstWidget;
+	while (w) {
+		w->markAsDirty();
+		w = w->_next;
+	}
 }
 
-void Dialog::drawDialog() {
+void Dialog::drawDialog(DrawLayer layerToDraw) {
 
 	if (!isVisible())
 		return;
 
-	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x+_w, _y+_h), _backgroundType);
+	g_gui.theme()->_layerToDraw = layerToDraw;
+	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x + _w, _y + _h), _backgroundType);
+
+	markWidgetsAsDirty();
+	drawWidgets();
+}
+
+void Dialog::drawWidgets() {
+
+	if (!isVisible())
+		return;
 
 	// Draw all children
 	Widget *w = _firstWidget;
@@ -361,11 +375,11 @@ Widget *Dialog::findWidget(const char *name) {
 }
 
 void Dialog::removeWidget(Widget *del) {
-	if (del == _mouseWidget)
+	if (del == _mouseWidget || del->containsWidget(_mouseWidget))
 		_mouseWidget = NULL;
-	if (del == _focusedWidget)
+	if (del == _focusedWidget || del->containsWidget(_focusedWidget))
 		_focusedWidget = NULL;
-	if (del == _dragWidget)
+	if (del == _dragWidget || del->containsWidget(_dragWidget))
 		_dragWidget = NULL;
 
 	GuiObject::removeWidget(del);

@@ -38,21 +38,21 @@ CCDROM::CCDROM() : CGameObject() {
 
 void CCDROM::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writePoint(_tempPos, indent);
+	file->writePoint(_centroid, indent);
 	CGameObject::save(file, indent);
 }
 
 void CCDROM::load(SimpleFile *file) {
 	file->readNumber();
-	_tempPos = file->readPoint();
+	_centroid = file->readPoint();
 	CGameObject::load(file);
 }
 
 bool CCDROM::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 	if (checkStartDragging(msg)) {
 		hideMouse();
-		_tempPos = msg->_mousePos - _bounds;
-		setPosition(msg->_mousePos - _tempPos);
+		_centroid = msg->_mousePos - _bounds;
+		setPosition(msg->_mousePos - _centroid);
 		return true;
 	} else {
 		return false;
@@ -77,7 +77,7 @@ bool CCDROM::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 }
 
 bool CCDROM::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
-	setPosition(msg->_mousePos - _tempPos);
+	setPosition(msg->_mousePos - _centroid);
 	return true;
 }
 

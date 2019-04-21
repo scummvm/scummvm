@@ -28,6 +28,9 @@
 
 #include "common/hashmap.h"
 #include "engines/engine.h"
+#include "director/cast.h"
+
+#define CHANNEL_COUNT 30
 
 namespace Common {
 class MacResManager;
@@ -50,16 +53,27 @@ struct DirectorGameDescription;
 class DirectorSound;
 class Lingo;
 class Score;
-struct Cast;
+class Cast;
 
 enum {
 	kDebugLingoExec		= 1 << 0,
 	kDebugLingoCompile	= 1 << 1,
 	kDebugLoading		= 1 << 2,
 	kDebugImages		= 1 << 3,
-	kDebugText			= 1 << 4
+	kDebugText			= 1 << 4,
+	kDebugEvents		= 1 << 5,
+	kDebugLingoParse	= 1 << 6
 };
 
+struct MovieReference {
+	Common::String movie;
+	Common::String frameS;
+	int frameI;
+
+	MovieReference() { frameI = -1; }
+};
+
+extern byte defaultPalette[768];
 
 class DirectorEngine : public ::Engine {
 public:
@@ -78,6 +92,7 @@ public:
 	Archive *getMainArchive() const { return _mainArchive; }
 	Lingo *getLingo() const { return _lingo; }
 	Score *getCurrentScore() const { return _currentScore; }
+	Score *getSharedScore() const { return _sharedScore; }
 	void setPalette(byte *palette, uint16 count);
 	bool hasFeature(EngineFeature f) const;
 	const byte *getPalette() const { return _currentPalette; }
@@ -91,13 +106,15 @@ public:
 	Archive *createArchive();
 	void cleanupMainArchive();
 
+	void processEvents(); // evetns.cpp
+	void setDraggedSprite(uint16 id); // events.cpp
+
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *getSharedDIB() const { return _sharedDIB; }
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *getSharedBMP() const { return _sharedBMP; }
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *getSharedSTXT() const { return _sharedSTXT; }
-	Common::HashMap<int, Cast *> *getSharedCasts() const { return _sharedCasts; }
+	Common::HashMap<int, CastType> *getSharedCastTypes();
 
 	Common::HashMap<Common::String, Score *> *_movies;
-	Score *_currentScore;
 
 	Common::RandomSource _rnd;
 	Graphics::MacWindowManager *_wm;
@@ -107,6 +124,11 @@ public:
 	unsigned char _key;
 	int _keyCode;
 	int _machineType;
+	bool _playbackPaused;
+	bool _skipFrameAdvance;
+
+	MovieReference _nextMovie;
+	Common::List<MovieReference> _movieStack;
 
 protected:
 	virtual Common::Error run();
@@ -123,7 +145,7 @@ private:
 	void loadEXERIFX(Common::SeekableReadStream *stream, uint32 offset);
 	void loadMac(const Common::String movie);
 
-	Common::HashMap<int, Cast *> *_sharedCasts;
+	Score *_sharedScore;
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *_sharedDIB;
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *_sharedSTXT;
 	Common::HashMap<int, Common::SeekableSubReadStreamEndian *> *_sharedSound;
@@ -136,10 +158,17 @@ private:
 	uint16 _currentPaletteLength;
 	Lingo *_lingo;
 
+	Score *_currentScore;
+
 	Graphics::MacPatterns _director3Patterns;
 	Graphics::MacPatterns _director3QuickDrawPatterns;
 
 	Common::String _sharedCastFile;
+	Common::HashMap<int, CastType> _dummyCastType;
+
+	bool _draggingSprite;
+	uint16 _draggingSpriteId;
+	Common::Point _draggingSpritePos;
 
 private:
 	void testFontScaling();

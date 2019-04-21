@@ -44,23 +44,25 @@ namespace Sci {
 #define SIG_UINT16(_value_)          SIG_CODE_UINT16 | ((_value_) & 0xFF), ((_value_) >> 8)
 #define SIG_CODE_BYTE                0x0000
 
-#define PATCH_END                                            SIG_END
-#define PATCH_COMMANDMASK                                    SIG_COMMANDMASK
-#define PATCH_VALUEMASK                                      SIG_VALUEMASK
-#define PATCH_BYTEMASK                                       SIG_BYTEMASK
-#define PATCH_CODE_ADDTOOFFSET                               SIG_CODE_ADDTOOFFSET
-#define PATCH_ADDTOOFFSET(_offset_)                          SIG_CODE_ADDTOOFFSET | (_offset_)
-#define PATCH_CODE_GETORIGINALBYTE                           0xD000
-#define PATCH_GETORIGINALBYTE(_offset_)                      PATCH_CODE_GETORIGINALBYTE | (_offset_)
-#define PATCH_CODE_GETORIGINALBYTEADJUST                     0xC000
-#define PATCH_GETORIGINALBYTEADJUST(_offset_, _adjustValue_) PATCH_CODE_GETORIGINALBYTEADJUST | (_offset_), (uint16)(_adjustValue_)
-#define PATCH_CODE_SELECTOR16                                SIG_CODE_SELECTOR16
-#define PATCH_SELECTOR16(_selectorID_)                       SIG_CODE_SELECTOR16 | SELECTOR_##_selectorID_
-#define PATCH_CODE_SELECTOR8                                 SIG_CODE_SELECTOR8
-#define PATCH_SELECTOR8(_selectorID_)                        SIG_CODE_SELECTOR8 | SELECTOR_##_selectorID_
-#define PATCH_CODE_UINT16                                    SIG_CODE_UINT16
-#define PATCH_UINT16(_value_)                                SIG_CODE_UINT16 | ((_value_) & 0xFF), ((_value_) >> 8)
-#define PATCH_CODE_BYTE                                      SIG_CODE_BYTE
+#define PATCH_END                                              SIG_END
+#define PATCH_COMMANDMASK                                      SIG_COMMANDMASK
+#define PATCH_VALUEMASK                                        SIG_VALUEMASK
+#define PATCH_BYTEMASK                                         SIG_BYTEMASK
+#define PATCH_CODE_ADDTOOFFSET                                 SIG_CODE_ADDTOOFFSET
+#define PATCH_ADDTOOFFSET(_offset_)                            SIG_CODE_ADDTOOFFSET | (_offset_)
+#define PATCH_CODE_GETORIGINALBYTE                             0xC000
+#define PATCH_GETORIGINALBYTE(_offset_)                        PATCH_CODE_GETORIGINALBYTE | (_offset_), 0
+#define PATCH_GETORIGINALBYTEADJUST(_offset_, _adjustValue_)   PATCH_CODE_GETORIGINALBYTE | (_offset_), (uint16)(_adjustValue_)
+#define PATCH_CODE_GETORIGINALUINT16                           0xD000
+#define PATCH_GETORIGINALUINT16(_offset_)                      PATCH_CODE_GETORIGINALUINT16 | (_offset_), 0
+#define PATCH_GETORIGINALUINT16ADJUST(_offset_, _adjustValue_) PATCH_CODE_GETORIGINALUINT16 | (_offset_), (uint16)(_adjustValue_)
+#define PATCH_CODE_SELECTOR16                                  SIG_CODE_SELECTOR16
+#define PATCH_SELECTOR16(_selectorID_)                         SIG_CODE_SELECTOR16 | SELECTOR_##_selectorID_
+#define PATCH_CODE_SELECTOR8                                   SIG_CODE_SELECTOR8
+#define PATCH_SELECTOR8(_selectorID_)                          SIG_CODE_SELECTOR8 | SELECTOR_##_selectorID_
+#define PATCH_CODE_UINT16                                      SIG_CODE_UINT16
+#define PATCH_UINT16(_value_)                                  SIG_CODE_UINT16 | ((_value_) & 0xFF), ((_value_) >> 8)
+#define PATCH_CODE_BYTE                                        SIG_CODE_BYTE
 
 // defines maximum scratch area for getting original bytes from unpatched script data
 #define PATCH_VALUELIMIT      4096
@@ -95,14 +97,14 @@ public:
 	void calculateMagicDWordAndVerify(const char *signatureDescription, const uint16 *signatureData, bool magicDWordIncluded, uint32 &calculatedMagicDWord, int &calculatedMagicDWordOffset);
 
 	// Called when a script is loaded to check for signature matches and apply patches in such cases
-	void processScript(uint16 scriptNr, byte *scriptData, const uint32 scriptSize);
+	void processScript(uint16 scriptNr, SciSpan<byte> scriptData);
 
 	// Verifies, if a given signature matches the given script data (pointed to by additional byte offset)
-	bool verifySignature(uint32 byteOffset, const uint16 *signatureData, const char *signatureDescription, const byte *scriptData, const uint32 scriptSize);
+	bool verifySignature(uint32 byteOffset, const uint16 *signatureData, const char *signatureDescription, const SciSpan<const byte> &scriptData);
 
 	// searches for a given signature inside script data
 	// returns -1 in case it was not found or an offset to the matching data
-	int32 findSignature(uint32 magicDWord, int magicOffset, const uint16 *signatureData, const char *patchDescription, const byte *scriptData, const uint32 scriptSize);
+	int32 findSignature(uint32 magicDWord, int magicOffset, const uint16 *signatureData, const char *patchDescription, const SciSpan<const byte> &scriptData);
 
 private:
 	// Initializes a patch table and creates run time information for it (for enabling/disabling), also calculates magic DWORD)
@@ -113,10 +115,10 @@ private:
 
 	// Searches for a given signature entry inside script data
 	// returns -1 in case it was not found or an offset to the matching data
-	int32 findSignature(const SciScriptPatcherEntry *patchEntry, const SciScriptPatcherRuntimeEntry *runtimeEntry, const byte *scriptData, const uint32 scriptSize);
+	int32 findSignature(const SciScriptPatcherEntry *patchEntry, const SciScriptPatcherRuntimeEntry *runtimeEntry, const SciSpan<const byte> &scriptData);
 
 	// Applies a patch to a given script + offset (overwrites parts)
-	void applyPatch(const SciScriptPatcherEntry *patchEntry, byte *scriptData, const uint32 scriptSize, int32 signatureOffset);
+	void applyPatch(const SciScriptPatcherEntry *patchEntry, SciSpan<byte> scriptData, int32 signatureOffset);
 
 	Selector *_selectorIdTable;
 	SciScriptPatcherRuntimeEntry *_runtimeTable;

@@ -5,7 +5,7 @@ un peu l'anglais, jetez un coup d'oeil au fichier README anglais.
 
 Pour plus d'informations, liste des jeux compatibles, détails pour
 faire un don, la dernière version disponibles et bien plus encore,
-visitez le site web de ScummVM à l'adresse http://www.scummvm.org/
+visitez le site web de ScummVM à l'adresse https://www.scummvm.org/
 
 Table des matières:
 -------------------
@@ -81,7 +81,7 @@ il est sans doute préférable de lire le fichier README Anglais.
 Pour les plus impatients, voici comment obtenir ScummVM en cinq étapes
 simples.
 
-1. Télécharger ScummVM sur <http://www.scummvm.org/downloads.php> et
+1. Télécharger ScummVM sur <https://www.scummvm.org/downloads/> et
 installer l'application.
 
 2. Créez un répertoire sur votre disque dur et copier les fichiers de
@@ -128,7 +128,7 @@ les sous-répertoires à la recherche de jeux supportés.
 ---- --------
 La meilleure façon de contacter l'équipe de ScummVM est de soumettre
 des rapports de bogues (voir section 2.1) ou d'utiliser nos forums
-http://forums.scummvm.org. Vous pouvez également envoyer un e-mail sur
+https://forums.scummvm.org. Vous pouvez également envoyer un e-mail sur
 la liste de diffusion scummvm-devel, ou discuter avec nous sur IRC
 (#scummvm sur irc.freenode.net). S'il vous plaît ne nous demandez pas de
 supporter un jeu non pris en charge - lire la FAQ sur notre site web
@@ -145,7 +145,7 @@ vérifiez que le bogue est reproductible, et se produit encore dans la
 connus (ci-dessous) et la liste de compatibilité sur notre site Web pour
 ce jeu, pour s'assurer que le problème n'est pas déjà connue:
 
-   http://www.scummvm.org/compatibility_stable.php
+   https://www.scummvm.org/compatibility/
 
 Veuillez ne pas rapporter de bogues sur les jeux qui ne sont pas
 répertoriés comme étant finissable sur la liste de compatibilité. Nous

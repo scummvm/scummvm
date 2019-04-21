@@ -52,7 +52,7 @@ int AgiLoader_v3::detectGame() {
 			strncpy(_vm->_game.name, f.c_str(), MIN((uint)8, f.size() > 5 ? f.size() - 5 : f.size()));
 			debugC(3, kDebugLevelMain, "game.name = %s", _vm->_game.name);
 
-			ec = _vm->setupV3Game(_vm->getVersion());
+			ec = errOK;
 
 			found = true;
 		}

@@ -31,52 +31,30 @@ CTransparencySurface::CTransparencySurface(const Graphics::Surface *surface,
 	_pitch = 0;
 	_runLength = 0;
 	_flag = false;
-	_flag1 = false;
-	_flag2 = true;
+	_opaqueColor = 0;
+	_transparentColor = 0xff;
 
 	switch (transMode) {
 	case TRANS_MASK0:
 	case TRANS_ALPHA0:
-		_flag2 = false;
-		_flag1 = true;
+		_transparentColor = 0;
+		_opaqueColor = 0xff;
 		break;
 	case TRANS_MASK255:
 	case TRANS_ALPHA255:
-		_flag2 = true;
-		_flag1 = false;
+		_transparentColor = 0xff;
+		_opaqueColor = 0;
 		break;
 	case TRANS_DEFAULT:
+		// If top left pixel is low, then 0 is the transparent color
 		if (*(const byte *)surface->getPixels() < 0x80) {
-			_flag1 = true;
-			_flag2 = false;
+			_opaqueColor = 0xff;
+			_transparentColor = 0;
 		}
 		break;
 	default:
 		break;
 	}
-}
-
-int CTransparencySurface::moveX() {
-	if (++_pos.x >= _surface->w) {
-		_pos.x = 0;
-		++_pos.y;
-	}
-
-	return 1;
-}
-
-uint CTransparencySurface::getPixel() const {
-	byte pixel = *(const byte *)_surface->getBasePtr(_pos.x, _pos.y);
-	return pixel;
-}
-
-uint CTransparencySurface::getAlpha() const {
-	byte pixel = getPixel();
-	return _flag1 ? 0xFF - pixel : pixel;
-}
-
-bool CTransparencySurface::isPixelTransparent() {
-	return getAlpha() == 0xff;
 }
 
 } // End of namespace Titanic

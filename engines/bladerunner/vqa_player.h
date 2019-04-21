@@ -32,70 +32,97 @@
 
 namespace BladeRunner {
 
+enum LoopSetModes {
+	kLoopSetModeJustStart = 0,
+	kLoopSetModeEnqueue = 1,
+	kLoopSetModeImmediate = 2
+};
+
 class BladeRunnerEngine;
 class View;
 class Lights;
+class ZBuffer;
 
 class VQAPlayer {
+	friend class Debugger;
+
 	BladeRunnerEngine           *_vm;
+	Common::String               _name;
 	Common::SeekableReadStream  *_s;
 	VQADecoder                   _decoder;
-	const Graphics::Surface     *_surface;
-	const uint16                *_zBuffer;
 	Audio::QueuingAudioStream   *_audioStream;
+	Graphics::Surface           *_surface;
 
-	int _curFrame;
-	int _decodedFrame;
-	int _curLoop;
-	int _loopBegin;
-	int _loopEnd;
+	int _frame;
+	int _frameNext;
+	int _frameBegin;
+	int _frameEnd;
+	int _loop;
+	int _repeatsCount;
 
-	uint32 _nextFrameTime;
+	int _repeatsCountQueued;
+	int _frameEndQueued;
+
+	int _loopInitial;
+	int _repeatsCountInitial;
+
+	uint32 _frameNextTime;
 	bool   _hasAudio;
 	bool   _audioStarted;
 	Audio::SoundHandle _soundHandle;
 
-	void (*_callbackLoopEnded)(void*, int frame, int loopId);
+	void (*_callbackLoopEnded)(void *, int frame, int loopId);
 	void  *_callbackData;
 
 public:
 
-	VQAPlayer(BladeRunnerEngine *vm)
+	VQAPlayer(BladeRunnerEngine *vm, Graphics::Surface *surface, const Common::String &name)
 		: _vm(vm),
+		  _name(name),
 		  _s(nullptr),
-		  _surface(nullptr),
+		  _surface(surface),
+		  _decoder(),
 		  _audioStream(nullptr),
-		  _curFrame(-1),
-		  _decodedFrame(-1),
-		  _curLoop(-1),
-		  _loopBegin(-1),
-		  _loopEnd(-1),
-		  _nextFrameTime(0),
+		  _frame(-1),
+		  _frameNext(-1),
+		  _frameBegin(-1),
+		  _frameEnd(-1),
+		  _loop(-1),
+		  _repeatsCount(-1),
+		  _repeatsCountQueued(-1),
+		  _frameEndQueued(-1),
+		  _loopInitial(-1),
+		  _repeatsCountInitial(-1),
+		  _frameNextTime(0),
 		  _hasAudio(false),
 		  _audioStarted(false),
-		  _callbackLoopEnded(nullptr) {
-	}
+		  _callbackLoopEnded(nullptr),
+		  _callbackData(nullptr) { }
 
 	~VQAPlayer() {
 		close();
 	}
 
-	bool open(const Common::String &name);
+	bool open();
 	void close();
 
-	int  update();
-	const Graphics::Surface *getSurface() const;
-	const uint16 *getZBuffer() const;
+	int  update(bool forceDraw = false, bool advanceFrame = true, bool useTime = true, Graphics::Surface *customSurface = nullptr);
+	void updateZBuffer(ZBuffer *zbuffer);
 	void updateView(View *view);
+	void updateScreenEffects(ScreenEffects *screenEffects);
 	void updateLights(Lights *lights);
 
-	bool setLoop(int loop, int unknown, int loopMode, void(*callback)(void*, int, int), void* callbackData);
+	bool setBeginAndEndFrame(int begin, int end, int repeatsCount, int loopSetMode, void(*callback)(void *, int, int), void *callbackData);
+	bool setLoop(int loop, int repeatsCount, int loopSetMode, void(*callback)(void*, int, int), void *callbackData);
+
+	bool seekToFrame(int frame);
 
 	int getLoopBeginFrame(int loop);
 	int getLoopEndFrame(int loop);
 
+	int getFrameCount();
+
 private:
-	int calcNextFrame(int frame) const;
 	void queueAudioFrame(Audio::AudioStream *audioStream);
 };
 

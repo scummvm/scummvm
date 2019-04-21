@@ -22,6 +22,7 @@
 
 #include "titanic/carry/brain.h"
 #include "titanic/game/brain_slot.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -33,14 +34,14 @@ BEGIN_MESSAGE_MAP(CBrain, CCarry)
 	ON_MESSAGE(PETGainedObjectMsg)
 END_MESSAGE_MAP()
 
-CBrain::CBrain() : CCarry(), _field134(0), _field138(0) {
+CBrain::CBrain() : CCarry(), _pieceAdded(false), _perchGained(false) {
 }
 
 void CBrain::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
 	file->writePoint(_pos1, indent);
-	file->writeNumberLine(_field134, indent);
-	file->writeNumberLine(_field138, indent);
+	file->writeNumberLine(_pieceAdded, indent);
+	file->writeNumberLine(_perchGained, indent);
 
 	CCarry::save(file, indent);
 }
@@ -48,36 +49,38 @@ void CBrain::save(SimpleFile *file, int indent) {
 void CBrain::load(SimpleFile *file) {
 	file->readNumber();
 	_pos1 = file->readPoint();
-	_field134 = file->readNumber();
-	_field138 = file->readNumber();
+	_pieceAdded = file->readNumber();
+	_perchGained = file->readNumber();
 
 	CCarry::load(file);
 }
 
 bool CBrain::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 	CBrainSlot *slot = dynamic_cast<CBrainSlot *>(msg->_other);
-	if (slot) {
-		if (slot->getName() == "CentralCore") {
-			setVisible(false);
-			petMoveToHiddenRoom();
-			CAddHeadPieceMsg headpieceMsg(getName());
-			headpieceMsg.execute("CentralCoreSlot");
-		}
-		else if (!slot->_value1 && slot->getName() == "CentralCoreSlot") {
-			setVisible(false);
-			petMoveToHiddenRoom();
-			CAddHeadPieceMsg headpieceMsg(getName());
-			headpieceMsg.execute(msg->_other);
-			playSound("z#116.wav");
-			setPosition(Point(0, 0));
-			setVisible(false);
-			_field134 = 1;
-		}
-
-		return true;
-	} else {
+	if (!slot)
 		return CCarry::UseWithOtherMsg(msg);
+
+	if (isEquals("CentralCore")) {
+		setVisible(false);
+		petMoveToHiddenRoom();
+		CAddHeadPieceMsg headpieceMsg(getName());
+		headpieceMsg.execute("CentralCoreSlot");
+	} else if (!slot->_occupied && slot->getName() != "CentralCoreSlot") {
+		// Brain card goes into vacant slot
+		setVisible(false);
+		petMoveToHiddenRoom();
+		CAddHeadPieceMsg headpieceMsg(getName());
+		headpieceMsg.execute(msg->_other);
+		playSound(TRANSLATE("z#116.wav", "z#647.wav"));
+		setPosition(Point(0, 0));
+		setVisible(false);
+		_pieceAdded = true;
+	} else {
+		// Trying to put brain card into an already occupied slot
+		petAddToInventory();
 	}
+
+	return true;
 }
 
 bool CBrain::VisibleMsg(CVisibleMsg *msg) {
@@ -89,11 +92,11 @@ bool CBrain::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 	if (!checkStartDragging(msg))
 		return false;
 
-	if (_field134) {
+	if (_pieceAdded) {
 		CTakeHeadPieceMsg headpieceMsg(getName());
 		headpieceMsg.execute("TitaniaControl");
 
-		_field134 = 0;
+		_pieceAdded = false;
 		setVisible(true);
 		moveToView();
 
@@ -105,10 +108,10 @@ bool CBrain::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 }
 
 bool CBrain::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
-	if (_field134) {
+	if (_pieceAdded) {
 		CTakeHeadPieceMsg headpieceMsg(getName());
 		headpieceMsg.execute("TitaniaControl");
-		_field134 = 0;
+		_pieceAdded = false;
 
 		setVisible(true);
 		moveToView();
@@ -120,10 +123,10 @@ bool CBrain::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
 }
 
 bool CBrain::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
-	if (!_field138) {
+	if (!_perchGained) {
 		if (getName() == "Perch") {
-			stateInc38();
-			_field138 = 1;
+			incParrotResponse();
+			_perchGained = true;
 		}
 	}
 

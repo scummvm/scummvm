@@ -207,7 +207,7 @@ void convertYUV444ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup
 
 	for (int h = 0; h < yHeight; h++) {
 		for (int w = 0; w < yWidth; w++) {
-			register const uint32 *L;
+			const uint32 *L;
 
 			int16 cr_r  = Cr_r_tab[*vSrc];
 			int16 crb_g = Cr_g_tab[*vSrc] + Cb_g_tab[*uSrc];
@@ -256,7 +256,7 @@ void convertYUV420ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup
 
 	for (int h = 0; h < halfHeight; h++) {
 		for (int w = 0; w < halfWidth; w++) {
-			register const uint32 *L;
+			const uint32 *L;
 
 			int16 cr_r  = Cr_r_tab[*vSrc];
 			int16 crb_g = Cr_g_tab[*vSrc] + Cb_g_tab[*uSrc];
@@ -346,7 +346,7 @@ void convertYUV410ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup
 			// Declare some variables for the following macros
 			byte u, v;
 			int16 cr_r, crb_g, cb_b;
-			register const uint32 *L;
+			const uint32 *L;
 
 			READ_QUAD(uSrc, u);
 			READ_QUAD(vSrc, v);

@@ -29,8 +29,9 @@ const MSGMAP *CMessageTarget::getMessageMap() const {
 }
 
 const MSGMAP *CMessageTarget::getThisMessageMap() {
+	static const ClassDef *nullDef = nullptr;
 	static const MSGMAP_ENTRY _messageEntries[] = {
-		{ (PMSG)nullptr, nullptr }
+		{ (PMSG)nullptr, &nullDef }
 	};
 
 	static const MSGMAP messageMap = { nullptr, &_messageEntries[0] };

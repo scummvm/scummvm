@@ -104,6 +104,7 @@ void CPhonographCylinder::load(SimpleFile *file) {
 bool CPhonographCylinder::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 	CPhonograph *phonograph = dynamic_cast<CPhonograph *>(msg->_other);
 	if (phonograph) {
+		// Below is redundant, since original never actually executes message
 		CSetVarMsg varMsg("m_RecordStatus", 1);
 		return true;
 	} else {
@@ -158,6 +159,8 @@ bool CPhonographCylinder::RecordOntoCylinderMsg(CRecordOntoCylinderMsg *msg) {
 	_bassPitchControl = queryMsg._value;
 	queryMsg.execute("Bass Inversion Control");
 	_bassInversionControl = queryMsg._value;
+	queryMsg.execute("Bass Direction Control");
+	_bassDirectionControl = queryMsg._value;
 
 	return true;
 }

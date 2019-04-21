@@ -237,11 +237,11 @@ void Video::clearScreen() {
 	g_system->fillScreen(0);
 }
 
-void Video::setSize(bool defaultTo1XScaler) {
+void Video::setSize() {
 	if (_vm->isTrueColor())
-		initGraphics(_vm->_width, _vm->_height, defaultTo1XScaler, 0);
+		initGraphics(_vm->_width, _vm->_height, nullptr);
 	else
-		initGraphics(_vm->_width, _vm->_height, defaultTo1XScaler);
+		initGraphics(_vm->_width, _vm->_height);
 }
 
 void Video::retrace(bool mouse) {

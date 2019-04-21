@@ -29,7 +29,6 @@
 #include "common/endian.h"
 #include "common/util.h"
 #include "common/stream.h"
-#include "common/memstream.h"
 #include "common/bitstream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -54,9 +53,9 @@ enum SmkBlockTypes {
 
 class SmallHuffmanTree {
 public:
-	SmallHuffmanTree(Common::BitStream &bs);
+	SmallHuffmanTree(Common::BitStreamMemory8LSB &bs);
 
-	uint16 getCode(Common::BitStream &bs);
+	uint16 getCode(Common::BitStreamMemory8LSB &bs);
 private:
 	enum {
 		SMK_NODE = 0x8000
@@ -70,10 +69,10 @@ private:
 	uint16 _prefixtree[256];
 	byte _prefixlength[256];
 
-	Common::BitStream &_bs;
+	Common::BitStreamMemory8LSB &_bs;
 };
 
-SmallHuffmanTree::SmallHuffmanTree(Common::BitStream &bs)
+SmallHuffmanTree::SmallHuffmanTree(Common::BitStreamMemory8LSB &bs)
 	: _treeSize(0), _bs(bs) {
 	uint32 bit = _bs.getBit();
 	assert(bit);
@@ -118,7 +117,7 @@ uint16 SmallHuffmanTree::decodeTree(uint32 prefix, int length) {
 	return r1+r2+1;
 }
 
-uint16 SmallHuffmanTree::getCode(Common::BitStream &bs) {
+uint16 SmallHuffmanTree::getCode(Common::BitStreamMemory8LSB &bs) {
 	byte peek = bs.peekBits(MIN<uint32>(bs.size() - bs.pos(), 8));
 	uint16 *p = &_tree[_prefixtree[peek]];
 	bs.skip(_prefixlength[peek]);
@@ -139,11 +138,11 @@ uint16 SmallHuffmanTree::getCode(Common::BitStream &bs) {
 
 class BigHuffmanTree {
 public:
-	BigHuffmanTree(Common::BitStream &bs, int allocSize);
+	BigHuffmanTree(Common::BitStreamMemory8LSB &bs, int allocSize);
 	~BigHuffmanTree();
 
 	void reset();
-	uint32 getCode(Common::BitStream &bs);
+	uint32 getCode(Common::BitStreamMemory8LSB &bs);
 private:
 	enum {
 		SMK_NODE = 0x80000000
@@ -159,13 +158,13 @@ private:
 	byte _prefixlength[256];
 
 	/* Used during construction */
-	Common::BitStream &_bs;
+	Common::BitStreamMemory8LSB &_bs;
 	uint32 _markers[3];
 	SmallHuffmanTree *_loBytes;
 	SmallHuffmanTree *_hiBytes;
 };
 
-BigHuffmanTree::BigHuffmanTree(Common::BitStream &bs, int allocSize)
+BigHuffmanTree::BigHuffmanTree(Common::BitStreamMemory8LSB &bs, int allocSize)
 	: _bs(bs) {
 	uint32 bit = _bs.getBit();
 	if (!bit) {
@@ -256,7 +255,7 @@ uint32 BigHuffmanTree::decodeTree(uint32 prefix, int length) {
 	return r1+r2+1;
 }
 
-uint32 BigHuffmanTree::getCode(Common::BitStream &bs) {
+uint32 BigHuffmanTree::getCode(Common::BitStreamMemory8LSB &bs) {
 	byte peek = bs.peekBits(MIN<uint32>(bs.size() - bs.pos(), 8));
 	uint32 *p = &_tree[_prefixtree[peek]];
 	bs.skip(_prefixlength[peek]);
@@ -277,7 +276,7 @@ uint32 BigHuffmanTree::getCode(Common::BitStream &bs) {
 	return v;
 }
 
-SmackerDecoder::SmackerDecoder(Audio::Mixer::SoundType soundType) : _soundType(soundType) {
+SmackerDecoder::SmackerDecoder() {
 	_fileStream = 0;
 	_firstFrameStart = 0;
 	_frameTypes = 0;
@@ -369,7 +368,7 @@ bool SmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
 			if (_header.audioInfo[i].compression == kCompressionRDFT || _header.audioInfo[i].compression == kCompressionDCT)
 				warning("Unhandled Smacker v2 audio compression");
 
-			addTrack(new SmackerAudioTrack(_header.audioInfo[i], _soundType));
+			addTrack(new SmackerAudioTrack(_header.audioInfo[i], getSoundType()));
 		}
 	}
 
@@ -386,7 +385,7 @@ bool SmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
 	byte *huffmanTrees = (byte *) malloc(_header.treesSize);
 	_fileStream->read(huffmanTrees, _header.treesSize);
 
-	Common::BitStream8LSB bs(new Common::MemoryReadStream(huffmanTrees, _header.treesSize, DisposeAfterUse::YES), DisposeAfterUse::YES);
+	Common::BitStreamMemory8LSB bs(new Common::BitStreamMemoryStream(huffmanTrees, _header.treesSize, DisposeAfterUse::YES), DisposeAfterUse::YES);
 	videoTrack->readTrees(bs, _header.mMapSize, _header.mClrSize, _header.fullSize, _header.typeSize);
 
 	_firstFrameStart = _fileStream->pos();
@@ -469,7 +468,7 @@ void SmackerDecoder::readNextPacket() {
 
 	_fileStream->read(frameData, frameDataSize);
 
-	Common::BitStream8LSB bs(new Common::MemoryReadStream(frameData, frameDataSize + 1, DisposeAfterUse::YES), DisposeAfterUse::YES);
+	Common::BitStreamMemory8LSB bs(new Common::BitStreamMemoryStream(frameData, frameDataSize + 1, DisposeAfterUse::YES), DisposeAfterUse::YES);
 	videoTrack->decodeFrame(bs);
 
 	_fileStream->seek(startPos + frameSize);
@@ -553,14 +552,14 @@ Graphics::PixelFormat SmackerDecoder::SmackerVideoTrack::getPixelFormat() const 
 	return _surface->format;
 }
 
-void SmackerDecoder::SmackerVideoTrack::readTrees(Common::BitStream &bs, uint32 mMapSize, uint32 mClrSize, uint32 fullSize, uint32 typeSize) {
+void SmackerDecoder::SmackerVideoTrack::readTrees(Common::BitStreamMemory8LSB &bs, uint32 mMapSize, uint32 mClrSize, uint32 fullSize, uint32 typeSize) {
 	_MMapTree = new BigHuffmanTree(bs, mMapSize);
 	_MClrTree = new BigHuffmanTree(bs, mClrSize);
 	_FullTree = new BigHuffmanTree(bs, fullSize);
 	_TypeTree = new BigHuffmanTree(bs, typeSize);
 }
 
-void SmackerDecoder::SmackerVideoTrack::decodeFrame(Common::BitStream &bs) {
+void SmackerDecoder::SmackerVideoTrack::decodeFrame(Common::BitStreamMemory8LSB &bs) {
 	_MMapTree->reset();
 	_MClrTree->reset();
 	_FullTree->reset();
@@ -754,7 +753,8 @@ void SmackerDecoder::SmackerVideoTrack::unpackPalette(Common::SeekableReadStream
 }
 
 SmackerDecoder::SmackerAudioTrack::SmackerAudioTrack(const AudioInfo &audioInfo, Audio::Mixer::SoundType soundType) :
-		_audioInfo(audioInfo), _soundType(soundType) {
+		AudioTrack(soundType),
+		_audioInfo(audioInfo) {
 	_audioStream = Audio::makeQueuingAudioStream(_audioInfo.sampleRate, _audioInfo.isStereo);
 }
 
@@ -773,7 +773,7 @@ Audio::AudioStream *SmackerDecoder::SmackerAudioTrack::getAudioStream() const {
 }
 
 void SmackerDecoder::SmackerAudioTrack::queueCompressedBuffer(byte *buffer, uint32 bufferSize, uint32 unpackedSize) {
-	Common::BitStream8LSB audioBS(new Common::MemoryReadStream(buffer, bufferSize), DisposeAfterUse::YES);
+	Common::BitStreamMemory8LSB audioBS(new Common::BitStreamMemoryStream(buffer, bufferSize), DisposeAfterUse::YES);
 	bool dataPresent = audioBS.getBit();
 
 	if (!dataPresent)

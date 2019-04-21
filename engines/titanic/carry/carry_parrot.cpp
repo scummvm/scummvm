@@ -27,6 +27,7 @@
 #include "titanic/npcs/parrot.h"
 #include "titanic/npcs/succubus.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -86,7 +87,7 @@ bool CCarryParrot::TimerMsg(CTimerMsg *msg) {
 }
 
 bool CCarryParrot::IsParrotPresentMsg(CIsParrotPresentMsg *msg) {
-	msg->_value = true;
+	msg->_isPresent = true;
 	return true;
 }
 
@@ -113,7 +114,7 @@ bool CCarryParrot::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 			CTreeItem *perchedParrot = findUnder(getRoot(), "PerchedParrot");
 			detach();
 			addUnder(perchedParrot);
-			sound8(true);
+			stopSoundChannel(true);
 
 			CPutParrotBackMsg backMsg(msg->_mousePos.x);
 			backMsg.execute(perchedParrot);
@@ -121,8 +122,8 @@ bool CCarryParrot::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 			setVisible(false);
 			_canTake = false;
 			CParrot::_state = PARROT_ESCAPED;
-			playSound("z#475.wav");
-			sound8(true);
+			playSound(TRANSLATE("z#475.wav", "z#212.wav"));
+			stopSoundChannel(true);
 			moveUnder(findRoom());
 
 			CActMsg actMsg("Shut");
@@ -136,8 +137,8 @@ bool CCarryParrot::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 		} else {
 			setVisible(false);
 			_canTake = false;
-			playSound("z#475.wav");
-			sound8(true);
+			playSound(TRANSLATE("z#475.wav", "z#212.wav"));
+			stopSoundChannel(true);
 			moveUnder(findRoom());
 		}
 	}
@@ -169,7 +170,8 @@ bool CCarryParrot::PassOnDragStartMsg(CPassOnDragStartMsg *msg) {
 		startTalking(npc, 0x446BF);
 
 	_canTake = false;
-	playSound("z#475.wav");
+	CProximity prox(Audio::Mixer::kSpeechSoundType);
+	playSound(TRANSLATE("z#475.wav", "z#212.wav"), prox);
 	moveUnder(findRoom());
 	CParrot::_state = PARROT_ESCAPED;
 
@@ -204,7 +206,7 @@ bool CCarryParrot::ActMsg(CActMsg *msg) {
 		_canTake = false;
 
 		if (CParrot::_state == PARROT_4) {
-			playSound("z#475.wav");
+			playSound(TRANSLATE("z#475.wav", "z#212.wav"));
 
 			if (!_feathersFlag) {
 				CCarry *feathers = dynamic_cast<CCarry *>(getRoot()->findByName("Feathers"));

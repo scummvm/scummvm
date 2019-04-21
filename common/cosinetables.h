@@ -28,33 +28,45 @@ namespace Common {
 class CosineTable {
 public:
 	/**
-	 * Construct a cosine table with the specified bit precision
+	 * Construct a cosine table given the number of points
 	 *
-	 * @param bitPrecision Precision of the table, which must be in range [4, 16]
+	 * @param nPoints Number of distinct radian points, which must be in range [16,65536] and be divisible by 4
 	 */
-	CosineTable(int bitPrecision);
+	CosineTable(int nPoints);
 	~CosineTable();
 
 	/**
 	 * Get pointer to table.
 	 *
-	 * This table contains 2^bitPrecision/2 entries.
+	 * This table contains nPoints/2 entries.
+	 * Prefer to use at()
 	 * The layout of this table is as follows:
-	 * - Entries 0 up to (excluding) 2^bitPrecision/4:
-	 *           cos(0) till (excluding) cos(1/2*pi)
-	 * - Entries 2^bitPrecision/4 up to (excluding) 2^bitPrecision/2:
-	 *           cos(3/2*pi) till (excluding) cos(2*pi)
+	 * - Entries 0 up to (including) nPoints/4:
+	 *           cos(0) till (including) cos(1/2*pi)
+	 * - Entries (excluding) nPoints/4 up to nPoints/2:
+	 *           (excluding) cos(3/2*pi) till (excluding) cos(2*pi)
 	 */
-	const float *getTable() { return _table; }
+	const float *getTable() { return _tableEOS; }
 
 	/**
-	 * Get pointer to table
+	 * Returns cos(2*pi * index / nPoints )
+	 * Index must be in range [0, nPoints - 1]
+	 * Faster than atLegacy
 	 */
-	int getPrecision() { return _bitPrecision; }
+	float at(int index) const;
+
+	/**
+	 * Returns cos(2*pi * index / nPoints )
+	 * Index must be in range [0, nPoints - 1]
+	 */
+	float atLegacy(int index) const;
 
 private:
+	float *_tableEOS;
 	float *_table;
-	int _bitPrecision;
+	double _radResolution; // Smallest radian increment
+	int _refSize; // _nPoints / 4
+	int _nPoints; // range of operator[]
 };
 
 } // End of namespace Common

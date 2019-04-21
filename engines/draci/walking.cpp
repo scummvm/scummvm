@@ -751,7 +751,7 @@ Movement WalkingState::animationForSightDirection(SightDirection dir, const Comm
 		} else if (mouse.x > hero.x) {
 			return kStopRight;
 		}
-		// fall-through here intentional
+		// fall through
 	default: {
 		// Find the last horizontal direction on the path.
 		int i = path.size() - 1;

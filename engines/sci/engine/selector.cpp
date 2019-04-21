@@ -90,6 +90,7 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(message);
 	// edit
 	FIND_SELECTOR(play);
+	FIND_SELECTOR(restore);
 	FIND_SELECTOR(number);
 	FIND_SELECTOR(handle);	// nodePtr
 	FIND_SELECTOR(client);
@@ -164,6 +165,10 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(vanishingY);
 	FIND_SELECTOR(iconIndex);
 	FIND_SELECTOR(select);
+	FIND_SELECTOR(handsOff);
+	FIND_SELECTOR(setStep);
+	FIND_SELECTOR(setMotion);
+	FIND_SELECTOR(cycleSpeed);
 
 #ifdef ENABLE_SCI32
 	FIND_SELECTOR(data);
@@ -202,6 +207,35 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(magnifier);
 	FIND_SELECTOR(frameOut);
 	FIND_SELECTOR(casts);
+	FIND_SELECTOR(setVol);
+	FIND_SELECTOR(reSyncVol);
+	FIND_SELECTOR(set);
+	FIND_SELECTOR(clear);
+	FIND_SELECTOR(curPos);
+	FIND_SELECTOR(update);
+	FIND_SELECTOR(show);
+	FIND_SELECTOR(position);
+	FIND_SELECTOR(musicVolume);
+	FIND_SELECTOR(soundVolume);
+	FIND_SELECTOR(initialOff);
+	FIND_SELECTOR(setPos);
+	FIND_SELECTOR(setSize);
+	FIND_SELECTOR(displayValue);
+	FIND_SELECTOR2(new_, "new");
+	FIND_SELECTOR(mainCel);
+	FIND_SELECTOR(move);
+	FIND_SELECTOR(eachElementDo);
+	FIND_SELECTOR(physicalBar);
+	FIND_SELECTOR(init);
+	FIND_SELECTOR(scratch);
+	FIND_SELECTOR(num);
+	FIND_SELECTOR(reallyRestore);
+	FIND_SELECTOR(bookMark);
+	FIND_SELECTOR(fileNumber);
+	FIND_SELECTOR(description);
+	FIND_SELECTOR(dispose);
+	FIND_SELECTOR(masterVolume);
+	FIND_SELECTOR(setCel);
 #endif
 }
 
@@ -215,17 +249,8 @@ reg_t readSelector(SegManager *segMan, reg_t object, Selector selectorId) {
 }
 
 #ifdef ENABLE_SCI32
-void updateInfoFlagViewVisible(Object *obj, int index) {
-	int minIndex, maxIndex;
-	if (g_sci->_features->usesAlternateSelectors()) {
-		minIndex = 24;
-		maxIndex = 43;
-	} else {
-		minIndex = 26;
-		maxIndex = 44;
-	}
-
-	if (index >= minIndex && index <= maxIndex && getSciVersion() >= SCI_VERSION_2) {
+void updateInfoFlagViewVisible(Object *obj, int index, bool fromPropertyOp) {
+	if (getSciVersion() >= SCI_VERSION_2 && obj->mustSetViewVisible(index, fromPropertyOp)) {
 		obj->setInfoSelectorFlag(kInfoFlagViewVisible);
 	}
 }

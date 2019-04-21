@@ -28,45 +28,45 @@ BEGIN_MESSAGE_MAP(CGondolierBase, CGameObject)
 	ON_MESSAGE(PuzzleSolvedMsg)
 END_MESSAGE_MAP()
 
-int CGondolierBase::_v1;
+bool CGondolierBase::_chestOpen;
 bool CGondolierBase::_puzzleSolved;
 int CGondolierBase::_volume1;
-int CGondolierBase::_v4;
-int CGondolierBase::_v5;
+int CGondolierBase::_slider1;
 int CGondolierBase::_volume2;
-int CGondolierBase::_v7;
-int CGondolierBase::_v8;
-int CGondolierBase::_v9;
-int CGondolierBase::_v10;
+int CGondolierBase::_slider2;
+bool CGondolierBase::_rightSliderHooked;
+bool CGondolierBase::_leftSliderHooked;
+bool CGondolierBase::_priorLeftSliderHooked;
+bool CGondolierBase::_priorRightSliderHooked;
 
 void CGondolierBase::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_v1, indent);
+	file->writeNumberLine(_chestOpen, indent);
 	file->writeNumberLine(_puzzleSolved, indent);
 	file->writeNumberLine(_volume1, indent);
-	file->writeNumberLine(_v4, indent);
-	file->writeNumberLine(_v5, indent);
+	file->writeNumberLine(_slider1, indent);
+	file->writeNumberLine(_rightSliderHooked, indent);
 	file->writeNumberLine(_volume2, indent);
-	file->writeNumberLine(_v7, indent);
-	file->writeNumberLine(_v8, indent);
-	file->writeNumberLine(_v9, indent);
-	file->writeNumberLine(_v10, indent);
+	file->writeNumberLine(_slider2, indent);
+	file->writeNumberLine(_leftSliderHooked, indent);
+	file->writeNumberLine(_priorLeftSliderHooked, indent);
+	file->writeNumberLine(_priorRightSliderHooked, indent);
 
 	CGameObject::save(file, indent);
 }
 
 void CGondolierBase::load(SimpleFile *file) {
 	file->readNumber();
-	_v1 = file->readNumber();
+	_chestOpen = file->readNumber();
 	_puzzleSolved = file->readNumber();
 	_volume1 = file->readNumber();
-	_v4 = file->readNumber();
-	_v5 = file->readNumber();
+	_slider1 = file->readNumber();
+	_leftSliderHooked = file->readNumber();
 	_volume2 = file->readNumber();
-	_v7 = file->readNumber();
-	_v8 = file->readNumber();
-	_v9 = file->readNumber();
-	_v10 = file->readNumber();
+	_slider2 = file->readNumber();
+	_rightSliderHooked = file->readNumber();
+	_priorLeftSliderHooked = file->readNumber();
+	_priorRightSliderHooked = file->readNumber();
 
 	CGameObject::load(file);
 }

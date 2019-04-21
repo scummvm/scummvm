@@ -2422,9 +2422,7 @@ void Mars::doCanyonChase() {
 				_vm->drawScaledFrame(frame, 0, 0);
 		}
 
-		Common::Event event;
-		while (g_system->getEventManager()->pollEvent(event))
-			;
+		InputDevice.pumpEvents();
 
 		g_system->delayMillis(10);
 	}
@@ -3055,9 +3053,7 @@ void Mars::transportToRobotShip() {
 				_vm->drawScaledFrame(frame, 0, 0);
 		}
 
-		Common::Event event;
-		while (g_system->getEventManager()->pollEvent(event))
-			;
+		InputDevice.pumpEvents();
 
 		g_system->delayMillis(10);
 	}

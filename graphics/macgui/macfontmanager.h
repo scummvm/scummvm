@@ -77,9 +77,9 @@ public:
 		_font = NULL;
 	}
 
-	int getId() { return _id; };
-	int getSize() { return _size; }
-	int getSlant() { return _slant; }
+	int getId() const { return _id; };
+	int getSize() const { return _size; }
+	int getSlant() const { return _slant; }
 	Common::String getName() { return _name; }
 	void setName(Common::String &name) { _name = name; }
 	void setName(const char *name) { _name = name; }
@@ -123,8 +123,8 @@ public:
 	 * @param size size of the font
 	 * @return the font name or NULL if ID goes beyond the mapping
 	 */
-	const char *getFontName(int id, int size, int slant = kMacFontRegular);
-	const char *getFontName(MacFont &font);
+	const Common::String getFontName(int id, int size, int slant = kMacFontRegular, bool tryGen = false);
+	const Common::String getFontName(MacFont &font);
 	int getFontIdByName(Common::String name);
 
 	void loadFonts(Common::SeekableReadStream *stream);

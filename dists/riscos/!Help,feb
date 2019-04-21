@@ -1,0 +1,3 @@
+Run <Obey$Dir>.!Boot
+Filer_Opendir <ScummVM$Dir>.docs
+IfThere <ScummVM$Dir>.FindHelp Then Run <ScummVM$Dir>.FindHelp

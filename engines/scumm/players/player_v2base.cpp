@@ -602,8 +602,8 @@ void Player_V2Base::next_freqs(ChannelInfo *channel) {
 		channel->d.freqmod_offset -= channel->d.freqmod_modulo;
 
 	channel->d.freq =
-		(int) (freqmod_table[channel->d.freqmod_table + (channel->d.freqmod_offset >> 4)])
-		* (int) channel->d.freqmod_multiplier / 256
+		(int)(freqmod_table[channel->d.freqmod_table + (channel->d.freqmod_offset >> 4)])
+		* (int)channel->d.freqmod_multiplier / 256
 		+ channel->d.base_freq;
 
 	debug(9, "Freq: %d/%d, %d/%d/%d*%d %d",

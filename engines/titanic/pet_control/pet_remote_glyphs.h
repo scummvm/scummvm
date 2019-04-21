@@ -38,10 +38,10 @@ enum RemoteGlyph {
 	GLYPH_DEPLOY_WORK_SURFACE = 12, GLYPH_DEPLOY_MINOR_RELAXATION = 13,
 	GLYPH_DEPLOY_SINK = 14, GLYPH_DEPLOY_MAJOR_STORAGE = 15,
 	GLYPH_SUCCUBUS_DELIVERY = 16, GLYPH_NAVIGATION_CONTROLLER = 17,
-	GLYPH_GOTO_BOTTOM_OF_WELL = 18, GLYPH_GOTO_TOP_OF_WELL = 19,
-	GLYPH_GOTO_STATEROOM = 20, GLYPH_GOTO_BAR = 21,
-	GLYPH_GOTO_PROMENADE = 22, GLYPH_GOTO_ARBORETUM = 23,
-	GLYPH_GOTO_MUSIC_ROOM = 24, GLYPH_GOTO_RESTAURANT = 25
+	GLYPH_SKIP_NAVIGATION = 18, GLYPH_GOTO_BOTTOM_OF_WELL = 19,
+	GLYPH_GOTO_TOP_OF_WELL = 20, GLYPH_GOTO_STATEROOM = 21,
+	GLYPH_GOTO_BAR = 22, GLYPH_GOTO_PROMENADE = 23, GLYPH_GOTO_ARBORETUM = 24,
+	GLYPH_GOTO_MUSIC_ROOM = 25, GLYPH_GOTO_RESTAURANT = 26
 };
 
 enum RemoteMessage {
@@ -698,6 +698,38 @@ public:
 class CGotoRestaurantGlyph : public CRemoteGotoGlyph {
 public:
 	CGotoRestaurantGlyph();
+};
+
+class CSkipNavigationGlyph : public CPetRemoteGlyph {
+protected:
+	CPetGfxElement *_button;
+public:
+	CSkipNavigationGlyph() : CPetRemoteGlyph(), _button(nullptr) {}
+
+	/**
+	 * Setup the glyph
+	 */
+	virtual bool setup(CPetControl *petControl, CPetGlyphs *owner);
+
+	/**
+	 * Handles any secondary drawing of the glyph
+	 */
+	virtual void draw2(CScreenManager *screenManager);
+
+	/**
+	 * Called for mouse button down messages
+	 */
+	virtual bool MouseButtonDownMsg(const Point &pt);
+
+	/**
+	 * Handles mouse button up messages
+	 */
+	virtual bool MouseButtonUpMsg(const Point &pt);
+
+	/**
+	 * Returns the tooltip text for when the glyph is selected
+	 */
+	virtual void getTooltip(CTextControl *text);
 };
 
 } // End of namespace Titanic

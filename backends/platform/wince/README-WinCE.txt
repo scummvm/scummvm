@@ -230,7 +230,7 @@ Vorbis compression, it's recommended to sample the files to 11 kHz (this sample
 rate is not supported by other versions of ScummVM).
 
 If you need more details, you can check SirDave's mini-manual online available
-at: http://forums.scummvm.org/viewtopic.php?t=936
+at: https://forums.scummvm.org/viewtopic.php?t=936
 and at: http://www.pocketmatrix.com/forums/viewtopic.php?t=8606
 
 How do I run a game ?
@@ -708,7 +708,7 @@ Help, I've read everything and ...
 
 Luckily, as there is a huge variety of Windows CE devices, a specific forum
 is dedicated to this ScummVM port. You can ask your question on the WinCE
-ScummVM forum available at http://forums.scummvm.org/viewforum.php?f=6
+ScummVM forum available at https://forums.scummvm.org/viewforum.php?f=6
 
 Some older questions and very nice tutorials are still available on the historic
 PocketMatrix forum at http://www.pocketmatrix.com/forums/viewforum.php?f=20
@@ -731,13 +731,13 @@ I want to compile my own ScummVM for Windows CE
 -----------------------------------------------
 
 Take a look at:
-http://wiki.scummvm.org/index.php/Compiling_ScummVM/Windows_CE
+https://wiki.scummvm.org/index.php/Compiling_ScummVM/Windows_CE
 
 
 ------------------------------------------------------------------------
 Good Luck and Happy Adventuring!
 The ScummVM team.
-http://www.scummvm.org/
+https://www.scummvm.org/
 ------------------------------------------------------------------------
 
 

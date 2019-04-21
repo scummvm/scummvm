@@ -127,15 +127,15 @@ class ValueDisplayDialog : public GUI::Dialog {
 public:
 	ValueDisplayDialog(const Common::String& label, int minVal, int maxVal, int val, uint16 incKey, uint16 decKey);
 
-	virtual void open();
-	virtual void drawDialog();
-	virtual void handleTickle();
-	virtual void handleMouseDown(int x, int y, int button, int clickCount) {
+	virtual void open() override;
+	void drawDialog(GUI::DrawLayer layerToDraw) override;
+	virtual void handleTickle() override;
+	virtual void handleMouseDown(int x, int y, int button, int clickCount) override {
 		close();
 	}
-	virtual void handleKeyDown(Common::KeyState state);
+	virtual void handleKeyDown(Common::KeyState state) override;
 
-	virtual void reflowLayout();
+	virtual void reflowLayout() override;
 
 protected:
 	enum {

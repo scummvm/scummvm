@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/captains_wheel.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -34,17 +35,17 @@ BEGIN_MESSAGE_MAP(CCaptainsWheel, CBackground)
 END_MESSAGE_MAP()
 
 CCaptainsWheel::CCaptainsWheel() : CBackground(),
-	_fieldE0(0), _fieldE4(0), _fieldE8(0), _fieldEC(0),
-	_fieldF0(0), _fieldF4(0) {
+		_stopEnabled(false), _actionNum(0), _fieldE8(0),
+		_cruiseEnabled(false), _goEnabled(false), _fieldF4(0) {
 }
 
 void CCaptainsWheel::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldE0, indent);
-	file->writeNumberLine(_fieldE4, indent);
+	file->writeNumberLine(_stopEnabled, indent);
+	file->writeNumberLine(_actionNum, indent);
 	file->writeNumberLine(_fieldE8, indent);
-	file->writeNumberLine(_fieldEC, indent);
-	file->writeNumberLine(_fieldF0, indent);
+	file->writeNumberLine(_cruiseEnabled, indent);
+	file->writeNumberLine(_goEnabled, indent);
 	file->writeNumberLine(_fieldF4, indent);
 
 	CBackground::save(file, indent);
@@ -52,19 +53,19 @@ void CCaptainsWheel::save(SimpleFile *file, int indent) {
 
 void CCaptainsWheel::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldE0 = file->readNumber();
-	_fieldE4 = file->readNumber();
+	_stopEnabled = file->readNumber();
+	_actionNum = file->readNumber();
 	_fieldE8 = file->readNumber();
-	_fieldEC = file->readNumber();
-	_fieldF0 = file->readNumber();
+	_cruiseEnabled = file->readNumber();
+	_goEnabled = file->readNumber();
 	_fieldF4 = file->readNumber();
 
 	CBackground::load(file);
 }
 
 bool CCaptainsWheel::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	if (_fieldE0) {
-		_fieldE0 = false;
+	if (_stopEnabled) {
+		_stopEnabled = false;
 		CTurnOff offMsg;
 		offMsg.execute(this);
 		playMovie(162, 168, 0);
@@ -76,11 +77,11 @@ bool CCaptainsWheel::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 }
 
 bool CCaptainsWheel::LeaveViewMsg(CLeaveViewMsg *msg) {
-	if (_fieldE0) {
-		_fieldE0 = false;
+	if (_stopEnabled) {
+		_stopEnabled = false;
 		CTurnOff offMsg;
 		offMsg.execute(this);
-		playMovie(162, 168, MOVIE_GAMESTATE);
+		playMovie(162, 168, MOVIE_WAIT_FOR_FINISH);
 	}
 
 	return true;
@@ -88,45 +89,46 @@ bool CCaptainsWheel::LeaveViewMsg(CLeaveViewMsg *msg) {
 
 bool CCaptainsWheel::ActMsg(CActMsg *msg) {
 	if (msg->_action == "Spin") {
-		if (_fieldE0) {
+		if (_stopEnabled) {
 			CTurnOn onMsg;
 			onMsg.execute("RatchetySound");
-			playMovie(8, 142, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playMovie(8, 142, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		}
 	} else if (msg->_action == "Honk") {
-		if (_fieldE0) {
-			playMovie(150, 160, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		if (_stopEnabled) {
+			playMovie(150, 160, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		}
 	} else if (msg->_action == "Go") {
-		if (!_fieldE0) {
+		if (_stopEnabled) {
+			_goEnabled = false;
 			incTransitions();
-			_fieldE0 = false;
-			_fieldE4 = 1;
+			_stopEnabled = false;
+			_actionNum = 1;
 
 			CTurnOff offMsg;
 			offMsg.execute(this);
-			playMovie(162, 168, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playMovie(162, 168, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		}
 	} else if (msg->_action == "Cruise") {
-		if (_fieldE0) {
+		if (_stopEnabled) {
 			incTransitions();
-			_fieldE0 = false;
-			_fieldE4 = 2;
+			_stopEnabled = false;
+			_actionNum = 2;
 
 			CTurnOff offMsg;
 			offMsg.execute(this);
-			playMovie(162, 168, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playMovie(162, 168, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		}
 	} else if (msg->_action == "SetDestin") {
-		playSound("a#44.wav");
+		playSound(TRANSLATE("a#44.wav", "a#37.wav"));
 		CSetVolumeMsg volumeMsg;
 		volumeMsg._volume = 25;
 		volumeMsg.execute("EngineSounds");
 		CTurnOn onMsg;
 		onMsg.execute("EngineSounds");
-		_fieldF0 = 1;
+		_goEnabled = true;
 	} else if (msg->_action == "ClearDestin") {
-		_fieldF0 = 0;
+		_goEnabled = false;
 	}
 
 	return true;
@@ -152,17 +154,17 @@ bool CCaptainsWheel::TurnOn(CTurnOn *msg) {
 	signalMsg.execute("WheelSpin");
 	signalMsg.execute("SeagullHorn");
 
-	if (_fieldE0) {
+	if (_stopEnabled) {
 		signalMsg.execute("WheelStopButt");
 		signalMsg.execute("StopHotSpot");
 	}
 
-	if (_fieldEC) {
+	if (_cruiseEnabled) {
 		signalMsg.execute("WheelCruiseButt");
 		signalMsg.execute("CruiseHotSpot");
 	}
 
-	if (_fieldF0) {
+	if (_goEnabled) {
 		signalMsg.execute("WheelGoButt");
 		signalMsg.execute("GoHotSpot");
 	}
@@ -172,7 +174,7 @@ bool CCaptainsWheel::TurnOn(CTurnOn *msg) {
 
 bool CCaptainsWheel::MovieEndMsg(CMovieEndMsg *msg) {
 	if (msg->_endFrame == 8) {
-		_fieldE0 = true;
+		_stopEnabled = true;
 		CTurnOn onMsg;
 		onMsg.execute(this);
 	}
@@ -183,9 +185,9 @@ bool CCaptainsWheel::MovieEndMsg(CMovieEndMsg *msg) {
 	}
 
 	if (msg->_endFrame == 168) {
-		switch (_fieldE4) {
+		switch (_actionNum) {
 		case 1: {
-			CActMsg actMsg(starFn2() ? "GoEnd" : "Go");
+			CActMsg actMsg(starIsSolved() ? "GoEnd" : "Go");
 			actMsg.execute("GoSequence");
 			break;
 		}
@@ -200,7 +202,7 @@ bool CCaptainsWheel::MovieEndMsg(CMovieEndMsg *msg) {
 			break;
 		}
 
-		_fieldE4 = 0;
+		_actionNum = 0;
 	}
 
 	return true;

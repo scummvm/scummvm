@@ -32,8 +32,8 @@ class GfxScreen;
 class GfxText32;
 
 enum MessageBoxStyle {
-	kMessageBoxOK               = 0x0,
-	kMessageBoxYesNo            = 0x4
+	kMessageBoxOK    = 0x0,
+	kMessageBoxYesNo = 0x4
 };
 
 struct TextEditor {
@@ -89,14 +89,12 @@ struct TextEditor {
 	uint16 cursorCharPosition;
 
 	/**
-	 * Whether or not the cursor is currently drawn to the
-	 * screen.
+	 * Whether or not the cursor is currently drawn to the screen.
 	 */
 	bool cursorIsDrawn;
 
 	/**
-	 * The rectangle for drawing the input cursor, in bitmap
-	 * pixels.
+	 * The rectangle for drawing the input cursor, in bitmap pixels.
 	 */
 	Common::Rect cursorRect;
 
@@ -111,30 +109,26 @@ struct TextEditor {
  */
 struct ScrollWindowEntry {
 	/**
-	 * ID of the line. In SSCI this was actually a memory
-	 * handle for the string of this line. We use a simple
-	 * numeric ID instead.
+	 * ID of the line. In SSCI this was actually a memory handle for the string
+	 * of this line. We use a simple numeric ID instead.
 	 */
 	reg_t id;
 
 	/**
-	 * The alignment to use when rendering this line of
-	 * text. If -1, the default alignment from the
-	 * corresponding ScrollWindow will be used.
+	 * The alignment to use when rendering this line of text. If -1, the default
+	 * alignment from the corresponding ScrollWindow will be used.
 	 */
 	TextAlign alignment;
 
 	/**
-	 * The color to use to render this line of text. If -1,
-	 * the default foreground color from the corresponding
-	 * ScrollWindow will be used.
+	 * The color to use to render this line of text. If -1, the default
+	 * foreground color from the corresponding ScrollWindow will be used.
 	 */
 	int16 foreColor;
 
 	/**
-	 * The font to use to render this line of text. If -1,
-	 * the default font from the corresponding ScrollWindow
-	 * will be used.
+	 * The font to use to render this line of text. If -1, the default font from
+	 * the corresponding ScrollWindow will be used.
 	 */
 	GuiResourceId fontId;
 
@@ -155,16 +149,15 @@ public:
 	~ScrollWindow();
 
 	/**
-	 * Adds a new text entry to the window. If `fontId`,
-	 * `foreColor`, or `alignment` are `-1`, the
-	 * ScrollWindow's default values will be used.
+	 * Adds a new text entry to the window. If `fontId`, `foreColor`, or
+	 * `alignment` are `-1`, the ScrollWindow's default values will be used.
 	 */
 	reg_t add(const Common::String &text, const GuiResourceId fontId, const int16 foreColor, const TextAlign alignment, const bool scrollTo);
 
 	/**
-	 * Modifies an existing text entry with the given ID. If
-	 * `fontId`, `foreColor`, or `alignment` are `-1`, the
-	 * ScrollWindow's default values will be used.
+	 * Modifies an existing text entry with the given ID. If `fontId`,
+	 * `foreColor`, or `alignment` are `-1`, the ScrollWindow's default values
+	 * will be used.
 	 */
 	reg_t modify(const reg_t id, const Common::String &text, const GuiResourceId fontId, const int16 foreColor, const TextAlign alignment, const bool scrollTo);
 
@@ -179,9 +172,8 @@ public:
 	void hide();
 
 	/**
-	 * Gets the number of lines that the content of a
-	 * ScrollWindow is scrolled upward, as a ratio of the
-	 * total number of lines of content.
+	 * Gets the number of lines that the content of a ScrollWindow is scrolled
+	 * upward, as a ratio of the total number of lines of content.
 	 */
 	Ratio where() const;
 
@@ -221,8 +213,8 @@ public:
 	void pageDown();
 
 	/**
-	 * Gets a reference to the in-memory bitmap that
-	 * is used to render the text in the ScrollWindow.
+	 * Gets a reference to the in-memory bitmap that is used to render the text
+	 * in the ScrollWindow.
 	 */
 	const reg_t getBitmap() const { return _bitmap; }
 
@@ -232,31 +224,26 @@ private:
 	typedef Common::Array<ScrollWindowEntry> EntriesList;
 
 	/**
-	 * A convenience function that fills a
-	 * ScrollWindowEntry's properties.
+	 * A convenience function that fills a ScrollWindowEntry's properties.
 	 */
 	void fillEntry(ScrollWindowEntry &entry, const Common::String &text, const GuiResourceId fontId, const int16 foreColor, const TextAlign alignment);
 
 	/**
-	 * Rescans the entire text of the ScrollWindow when an
-	 * entry is added or modified, calculating the character
-	 * offsets of all line endings, the total number of
-	 * lines of text, the height of the viewport (in lines
-	 * of text), the last character visible in the viewport
-	 * (assuming the viewport is scrolled to the top), and
-	 * the line index of the bottommost visible line
-	 * (assuming the viewport is scrolled to the top).
+	 * Rescans the entire text of the ScrollWindow when an entry is added or
+	 * modified, calculating the character offsets of all line endings, the
+	 * total number of lines of text, the height of the viewport (in lines of
+	 * text), the last character visible in the viewport (assuming the viewport
+	 * is scrolled to the top), and the line index of the bottommost visible
+	 * line (assuming the viewport is scrolled to the top).
 	 */
 	void computeLineIndices();
 
 	/**
-	 * Calculates which text is visible within the
-	 * ScrollWindow's viewport and renders the text to the
-	 * internal bitmap.
+	 * Calculates which text is visible within the ScrollWindow's viewport and
+	 * renders the text to the internal bitmap.
 	 *
-	 * If `doFrameOut` is true, the screen will be refreshed
-	 * immediately instead of waiting for the next call to
-	 * `kFrameOut`.
+	 * If `doFrameOut` is true, the screen will be refreshed immediately instead
+	 * of waiting for the next call to `kFrameOut`.
 	 */
 	void update(const bool doFrameOut);
 
@@ -266,21 +253,18 @@ private:
 	GfxText32 _gfxText32;
 
 	/**
-	 * The individual text entries added to the
-	 * ScrollWindow.
+	 * The individual text entries added to the ScrollWindow.
 	 */
 	EntriesList _entries;
 
 	/**
-	 * The maximum number of entries allowed. Once this
-	 * limit is reached, the oldest entry will be removed
-	 * when a new entry is added.
+	 * The maximum number of entries allowed. Once this limit is reached, the
+	 * oldest entry will be removed when a new entry is added.
 	 */
 	uint _maxNumEntries;
 
 	/**
-	 * A mapping from a line index to the line's character
-	 * offset in `_text`.
+	 * A mapping from a line index to the line's character offset in `_text`.
 	 */
 	Common::Array<int> _startsOfLines;
 
@@ -300,39 +284,36 @@ private:
 	int _firstVisibleChar;
 
 	/**
-	 * The index of the line that is at the top of the
-	 * viewport.
+	 * The index of the line that is at the top of the viewport.
 	 */
 	int _topVisibleLine;
 
 	/**
-	 * The index of the last visible character in `_text`,
-	 * or -1 if there is no text.
+	 * The index of the last visible character in `_text`, or -1 if there is no
+	 * text.
 	 */
 	int _lastVisibleChar;
 
 	/**
-	 * The index of the line that is at the bottom of the
-	 * viewport, or -1 if there is no text.
+	 * The index of the line that is at the bottom of the viewport, or -1 if
+	 * there is no text.
 	 */
 	int _bottomVisibleLine;
 
 	/**
-	 * The total number of lines in the backbuffer. This
-	 * number may be higher than the total number of entries
-	 * if an entry contains newlines.
+	 * The total number of lines in the backbuffer. This number may be higher
+	 * than the total number of entries if an entry contains newlines.
 	 */
 	int _numLines;
 
 	/**
-	 * The number of lines that are currently visible in the
-	 * text area of the window.
+	 * The number of lines that are currently visible in the text area of the
+	 * window.
 	 */
 	int _numVisibleLines;
 
 	/**
-	 * The plane in which the ScrollWindow should be
-	 * rendered.
+	 * The plane in which the ScrollWindow should be rendered.
 	 */
 	reg_t _plane;
 
@@ -347,20 +328,18 @@ private:
 	uint8 _backColor;
 
 	/**
-	 * The default border color of the text bitmap. If -1,
-	 * the viewport will have no border.
+	 * The default border color of the text bitmap. If -1, the viewport will
+	 * have no border.
 	 */
 	int16 _borderColor;
 
 	/**
-	 * The default font used for rendering text into the
-	 * ScrollWindow.
+	 * The default font used for rendering text into the ScrollWindow.
 	 */
 	GuiResourceId _fontId;
 
 	/**
-	 * The default text alignment used for rendering text
-	 * into the ScrollWindow.
+	 * The default text alignment used for rendering text into the ScrollWindow.
 	 */
 	TextAlign _alignment;
 
@@ -370,22 +349,20 @@ private:
 	bool _visible;
 
 	/**
-	 * The dimensions of the text box inside the font
-	 * bitmap, in text-system coordinates.
+	 * The dimensions of the text box inside the font bitmap, in text-system
+	 * coordinates.
 	 */
 	Common::Rect _textRect;
 
 	/**
-	 * The top-left corner of the ScrollWindow's screen
-	 * item, in game script coordinates, relative to the
-	 * parent plane.
+	 * The top-left corner of the ScrollWindow's screen item, in game script
+	 * coordinates, relative to the parent plane.
 	 */
 	Common::Point _position;
 
 	/**
-	 * The height of the default font in screen pixels. All
-	 * fonts rendered into the ScrollWindow must have this
-	 * same height.
+	 * The height of the default font in screen pixels. All fonts rendered into
+	 * the ScrollWindow must have this same height.
 	 */
 	uint8 _pointSize;
 
@@ -395,8 +372,8 @@ private:
 	reg_t _bitmap;
 
 	/**
-	 * A monotonically increasing ID used to identify
-	 * text entries added to the ScrollWindow.
+	 * A monotonically increasing ID used to identify text entries added to the
+	 * ScrollWindow.
 	 */
 	uint16 _nextEntryId;
 
@@ -407,7 +384,8 @@ private:
 };
 
 /**
- * Controls class, handles drawing of controls in SCI32 (SCI2, SCI2.1, SCI3) games
+ * Controls class, handles drawing of UI controls in SCI32 games that use kernel
+ * controls instead of custom script controls.
  */
 class GfxControls32 {
 public:
@@ -426,14 +404,13 @@ public:
 
 private:
 	/**
-	 * If true, typing will overwrite text that already
-	 * exists at the text cursor's current position.
+	 * If true, typing will overwrite text that already exists at the text
+	 * cursor's current position.
 	 */
 	bool _overwriteMode;
 
 	/**
-	 * The tick at which the text cursor should be toggled
-	 * by `flashCursor`.
+	 * The tick at which the text cursor should be toggled by `flashCursor`.
 	 */
 	uint32 _nextCursorFlashTick;
 
@@ -448,8 +425,8 @@ private:
 	void eraseCursor(TextEditor &editor);
 
 	/**
-	 * Toggles the text cursor for the given editor to be
-	 * either drawn or erased.
+	 * Toggles the text cursor for the given editor to be either drawn or
+	 * erased.
 	 */
 	void flashCursor(TextEditor &editor);
 
@@ -457,9 +434,8 @@ private:
 #pragma mark Scrollable window control
 public:
 	/**
-	 * Creates a new scrollable window and returns the ID
-	 * for the new window, which is used by game scripts to
-	 * interact with scrollable windows.
+	 * Creates a new scrollable window and returns the ID for the new window,
+	 * which is used by game scripts to interact with scrollable windows.
 	 */
 	reg_t makeScrollWindow(const Common::Rect &gameRect, const Common::Point &position, const reg_t plane, const uint8 defaultForeColor, const uint8 defaultBackColor, const GuiResourceId defaultFontId, const TextAlign defaultAlignment, const int16 defaultBorderColor, const uint16 maxNumEntries);
 
@@ -477,8 +453,7 @@ private:
 	typedef Common::HashMap<uint16, ScrollWindow *> ScrollWindowMap;
 
 	/**
-	 * Monotonically increasing ID used to identify
-	 * ScrollWindow instances.
+	 * Monotonically increasing ID used to identify ScrollWindow instances.
 	 */
 	uint16 _nextScrollWindowId;
 
@@ -497,8 +472,7 @@ public:
 
 private:
 	/**
-	 * Convenience function for creating and showing a
-	 * message box.
+	 * Convenience function for creating and showing a message box.
 	 */
 	int16 showMessageBox(const Common::String &message, const char *const okLabel, const char *const altLabel, const int16 okValue, const int16 altValue);
 };

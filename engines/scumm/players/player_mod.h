@@ -26,6 +26,7 @@
 #include "scumm/scumm.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
+#include "common/mutex.h"
 
 namespace Audio {
 class RateConverter;
@@ -55,6 +56,7 @@ public:
 
 	// AudioStream API
 	int readBuffer(int16 *buffer, const int numSamples) {
+		Common::StackLock lock(_mutex);
 		do_mix(buffer, numSamples / 2);
 		return numSamples;
 	}
@@ -80,6 +82,7 @@ private:
 
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
+	Common::Mutex _mutex;
 
 	uint32 _mixamt;
 	uint32 _mixpos;

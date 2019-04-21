@@ -1035,6 +1035,15 @@ void MidiDriver_Miles_AdLib::pitchBendChange(byte midiChannel, byte parameter1, 
 		return;
 	}
 	_midiChannels[midiChannel].currentPitchBender = parameter1 | (parameter2 << 7);
+	for (byte virtualFmVoice = 0; virtualFmVoice < _modeVirtualFmVoicesCount; virtualFmVoice++) {
+		if (_virtualFmVoices[virtualFmVoice].inUse) {
+			// used
+			if (_virtualFmVoices[virtualFmVoice].actualMidiChannel == midiChannel) {
+				// by our current MIDI channel -> update
+				updatePhysicalFmVoice(virtualFmVoice, true, kMilesAdLibUpdateFlags_Reg_A0);
+			}
+		}
+	}
 }
 
 void MidiDriver_Miles_AdLib::setRegister(int reg, int value) {

@@ -151,7 +151,7 @@ void LegacySoundArchive::clearCache() {
  */
 SoundSample *LegacySoundArchive::getSample(int i, uint freq) {
 	// Check whether requested file exists
-	if (i < 0 || i >= (int) _sampleCount) {
+	if (i < 0 || i >= (int)_sampleCount) {
 		return NULL;
 	}
 
@@ -230,7 +230,7 @@ void ZipSoundArchive::clearCache() {
 }
 
 SoundSample *ZipSoundArchive::getSample(int i, uint freq) {
-	if (i < 0 || i >= (int) _sampleCount) {
+	if (i < 0 || i >= (int)_sampleCount) {
 		return NULL;
 	}
 	debugCN(2, kDraciArchiverDebugLevel, "Accessing sample %d.%s from archive %s (format %d@%d, capacity %d): ",

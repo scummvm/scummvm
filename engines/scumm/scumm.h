@@ -33,6 +33,7 @@
 #include "common/random.h"
 #include "common/rect.h"
 #include "common/rendermode.h"
+#include "common/serializer.h"
 #include "common/str.h"
 #include "common/textconsole.h"
 #include "graphics/surface.h"
@@ -88,7 +89,6 @@ class MusicEngine;
 class Player_Towns;
 class ScummEngine;
 class ScummDebugger;
-class Serializer;
 class Sound;
 
 struct Box;
@@ -375,7 +375,7 @@ class ResourceManager;
 /**
  * Base class for all SCUMM engines.
  */
-class ScummEngine : public Engine {
+class ScummEngine : public Engine, public Common::Serializable {
 	friend class ScummDebugger;
 	friend class CharsetRenderer;
 	friend class CharsetRendererTownsClassic;
@@ -608,10 +608,10 @@ protected:
 	bool saveState(int slot, bool compat, Common::String &fileName);
 	bool loadState(int slot, bool compat);
 	bool loadState(int slot, bool compat, Common::String &fileName);
-	virtual void saveOrLoad(Serializer *s);
-	void saveResource(Serializer *ser, ResType type, ResId idx);
-	void loadResource(Serializer *ser, ResType type, ResId idx);
-	void loadResourceOLD(Serializer *ser, ResType type, ResId idx);	// "Obsolete"
+	virtual void saveLoadWithSerializer(Common::Serializer &s);
+	void saveResource(Common::Serializer &ser, ResType type, ResId idx);
+	void loadResource(Common::Serializer &ser, ResType type, ResId idx);
+	void loadResourceOLD(Common::Serializer &ser, ResType type, ResId idx);	// "Obsolete"
 
 	virtual Common::SeekableReadStream *openSaveFileForReading(int slot, bool compat, Common::String &fileName);
 	virtual Common::WriteStream *openSaveFileForWriting(int slot, bool compat, Common::String &fileName);
@@ -1166,6 +1166,7 @@ protected:
 		int x1, y1, scale1;
 		int x2, y2, scale2;
 	};
+	friend void syncWithSerializer(Common::Serializer &, ScaleSlot &);
 	ScaleSlot _scaleSlots[20];
 	void setScaleSlot(int slot, int x1, int y1, int scale1, int x2, int y2, int scale2);
 	void setBoxScaleSlot(int box, int slot);

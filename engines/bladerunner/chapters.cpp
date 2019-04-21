@@ -23,11 +23,15 @@
 #include "bladerunner/chapters.h"
 
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/slice_animations.h"
 
 namespace BladeRunner {
 
 bool Chapters::enterChapter(int chapter) {
 	int id = _resourceIds[chapter];
+
+	if (!_vm->_sliceAnimations->openFrames(id))
+		return false;
 
 	if (!_vm->openArchive("A.TLK"))
 		return false;
@@ -49,7 +53,13 @@ bool Chapters::enterChapter(int chapter) {
 void Chapters::closeResources() {
 	int id = _resourceIds[_chapter];
 
+#if BLADERUNNER_ORIGINAL_BUGS
 	_vm->closeArchive("A.TLK");
+#else
+	if (_vm->isArchiveOpen("A.TLK")) {
+		_vm->closeArchive("A.TLK");
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	_vm->closeArchive(Common::String::format("VQA%d.MIX", MIN(id, 3)));
 	_vm->closeArchive(Common::String::format("%d.TLK", MIN(id, 3)));
 	_vm->closeArchive(Common::String::format("OUTTAKE%d.MIX", id));

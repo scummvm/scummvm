@@ -24,8 +24,15 @@
 #define SCI_GRAPHICS_FONT_H
 
 #include "sci/graphics/helpers.h"
+#include "sci/util.h"
 
 namespace Sci {
+
+#ifdef ENABLE_SCI32
+enum {
+	kSci32SystemFont = -1
+};
+#endif
 
 class GfxFont {
 public:
@@ -51,8 +58,8 @@ public:
 	~GfxFontFromResource();
 
 	GuiResourceId getResourceId();
-	byte getHeight();
-	byte getCharWidth(uint16 chr);
+	uint8 getHeight();
+	uint8 getCharWidth(uint16 chr);
 	void draw(uint16 chr, int16 top, int16 left, byte color, bool greyedOutput);
 #ifdef ENABLE_SCI32
 	// SCI2/2.1 equivalent
@@ -60,23 +67,22 @@ public:
 #endif
 
 private:
-	byte getCharHeight(uint16 chr);
-	byte *getCharData(uint16 chr);
+	uint8 getCharHeight(uint16 chr);
+	SciSpan<const byte> getCharData(uint16 chr);
 
 	ResourceManager *_resMan;
 	GfxScreen *_screen;
 
 	Resource *_resource;
+	SciSpan<const byte> _resourceData;
 	GuiResourceId _resourceId;
-	byte *_resourceData;
 
 	struct Charinfo {
-		byte width;
-		byte height;
+		uint8 width, height;
 		int16 offset;
 	};
 
-	byte _fontHeight;
+	uint8 _fontHeight;
 	uint16 _numChars;
 	Charinfo *_chars;
 };

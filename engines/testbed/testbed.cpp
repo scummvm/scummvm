@@ -39,7 +39,7 @@
 #include "testbed/savegame.h"
 #include "testbed/sound.h"
 #include "testbed/testbed.h"
-#ifdef USE_LIBCURL
+#ifdef USE_CLOUD
 #include "testbed/cloud.h"
 #endif
 #ifdef USE_SDL_NET
@@ -140,7 +140,7 @@ TestbedEngine::TestbedEngine(OSystem *syst)
 	// Midi
 	ts = new MidiTestSuite();
 	_testsuiteList.push_back(ts);
-#ifdef USE_LIBCURL
+#if defined(USE_CLOUD) && defined(USE_LIBCURL)
 	// Cloud
 	ts = new CloudTestSuite();
 	_testsuiteList.push_back(ts);
@@ -185,7 +185,7 @@ void TestbedEngine::invokeTestsuites(TestbedConfigManager &cfMan) {
 
 Common::Error TestbedEngine::run() {
 	// Initialize graphics using following:
-	initGraphics(320, 200, false);
+	initGraphics(320, 200);
 
 	// As of now we are using GUI::MessageDialog for interaction, Test if it works.
 	// interactive mode could also be modified by a config parameter "non-interactive=1"

@@ -28,10 +28,7 @@
 #include "common/taskbar.h"
 #include "common/translation.h"
 
-#include "gui/launcher.h"	// For addGameToConf()
 #include "gui/massadd.h"
-#include "gui/widget.h"
-#include "gui/widgets/list.h"
 
 #ifndef DISABLE_MASS_ADD
 namespace GUI {
@@ -120,14 +117,14 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 }
 
 struct GameTargetLess {
-	bool operator()(const GameDescriptor &x, const GameDescriptor &y) const {
-		return x.preferredtarget().compareToIgnoreCase(y.preferredtarget()) < 0;
+	bool operator()(const DetectedGame &x, const DetectedGame &y) const {
+		return x.preferredTarget.compareToIgnoreCase(y.preferredTarget) < 0;
 	}
 };
 
 struct GameDescLess {
-	bool operator()(const GameDescriptor &x, const GameDescriptor &y) const {
-		return x.description().compareToIgnoreCase(y.description()) < 0;
+	bool operator()(const DetectedGame &x, const DetectedGame &y) const {
+		return x.description.compareToIgnoreCase(y.description) < 0;
 	}
 };
 
@@ -143,13 +140,13 @@ void MassAddDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	if (cmd == kOkCmd) {
 		// Sort the detected games. This is not strictly necessary, but nice for
 		// people who want to edit their config file by hand after a mass add.
-		sort(_games.begin(), _games.end(), GameTargetLess());
+		Common::sort(_games.begin(), _games.end(), GameTargetLess());
 		// Add all the detected games to the config
-		for (GameList::iterator iter = _games.begin(); iter != _games.end(); ++iter) {
+		for (DetectedGames::iterator iter = _games.begin(); iter != _games.end(); ++iter) {
 			debug(1, "  Added gameid '%s', desc '%s'\n",
-				(*iter)["gameid"].c_str(),
-				(*iter)["description"].c_str());
-			(*iter)["gameid"] = addGameToConf(*iter);
+				iter->gameId.c_str(),
+				iter->description.c_str());
+			iter->gameId = EngineMan.createTargetForGame(*iter);
 		}
 
 		// Write everything to disk
@@ -157,8 +154,8 @@ void MassAddDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 
 		// And scroll to first detected game
 		if (!_games.empty()) {
-			sort(_games.begin(), _games.end(), GameDescLess());
-			ConfMan.set("temp_selection", _games.front().gameid());
+			Common::sort(_games.begin(), _games.end(), GameDescLess());
+			ConfMan.set("temp_selection", _games.front().gameId);
 		}
 
 		close();
@@ -187,7 +184,12 @@ void MassAddDialog::handleTickle() {
 		}
 
 		// Run the detector on the dir
-		GameList candidates(EngineMan.detectGames(files));
+		DetectionResults detectionResults = EngineMan.detectGames(files);
+
+		if (detectionResults.foundUnknownGames()) {
+			Common::String report = detectionResults.generateUnknownGameReport(false, 80);
+			g_system->logMessage(LogMessageType::kInfo, report.c_str());
+		}
 
 		// Just add all detected games / game variants. If we get more than one,
 		// that either means the directory contains multiple games, or the detector
@@ -195,8 +197,10 @@ void MassAddDialog::handleTickle() {
 		// case, let the user choose which entries he wants to keep.
 		//
 		// However, we only add games which are not already in the config file.
-		for (GameList::const_iterator cand = candidates.begin(); cand != candidates.end(); ++cand) {
-			GameDescriptor result = *cand;
+		DetectedGames candidates = detectionResults.listRecognizedGames();
+		for (DetectedGames::const_iterator cand = candidates.begin(); cand != candidates.end(); ++cand) {
+			const DetectedGame &result = *cand;
+
 			Common::String path = dir.getPath();
 
 			// Remove trailing slashes
@@ -205,6 +209,9 @@ void MassAddDialog::handleTickle() {
 
 			// Check for existing config entries for this path/gameid/lang/platform combination
 			if (_pathToTargets.contains(path)) {
+				Common::String resultPlatformCode = Common::getPlatformCode(result.platform);
+				Common::String resultLanguageCode = Common::getLanguageCode(result.language);
+
 				bool duplicate = false;
 				const StringArray &targets = _pathToTargets[path];
 				for (StringArray::const_iterator iter = targets.begin(); iter != targets.end(); ++iter) {
@@ -212,22 +219,21 @@ void MassAddDialog::handleTickle() {
 					Common::ConfigManager::Domain *dom = ConfMan.getDomain(*iter);
 					assert(dom);
 
-					if ((*dom)["gameid"] == result["gameid"] &&
-					    (*dom)["platform"] == result["platform"] &&
-					    (*dom)["language"] == result["language"]) {
+					if ((*dom)["gameid"] == result.gameId &&
+					    (*dom)["platform"] == resultPlatformCode &&
+					    (*dom)["language"] == resultLanguageCode) {
 						duplicate = true;
 						break;
 					}
 				}
 				if (duplicate) {
 					_oldGamesCount++;
-					break;	// Skip duplicates
+					continue;	// Skip duplicates
 				}
 			}
-			result["path"] = path;
 			_games.push_back(result);
 
-			_list->append(result.description());
+			_list->append(result.description);
 		}
 
 
@@ -274,7 +280,7 @@ void MassAddDialog::handleTickle() {
 		_list->scrollToEnd();
 	}
 
-	drawDialog();
+	drawDialog(kDrawLayerForeground);
 }
 
 

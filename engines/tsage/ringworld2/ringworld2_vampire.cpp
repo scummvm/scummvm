@@ -1166,7 +1166,7 @@ void Scene1950::initArea() {
 	// No break on purpose
 	case 65:
 		_upExit._enabled = true;
-	// No break on purpose
+		// fall through
 	case 35:
 	// No break on purpose
 	case 38:
@@ -1665,7 +1665,7 @@ void Scene1950::signal() {
 	case 1975:
 		SceneItem::display(1950, 21, SET_WIDTH, 280, SET_X, 160, SET_POS_MODE, 1,
 			SET_Y, 20, SET_EXT_BGCOLOR, 7, LIST_END);
-	// No break on purpose
+		// fall through
 	case 13:
 		// Moving east within the Flub maze
 		++R2_GLOBALS._flubMazeArea;

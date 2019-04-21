@@ -23,6 +23,7 @@
 #include "common/textconsole.h"
 #include "titanic/true_talk/maitred_script.h"
 #include "titanic/true_talk/true_talk_manager.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -71,19 +72,20 @@ int MaitreDScript::chooseResponse(const TTroomScript *roomScript, const TTsenten
 int MaitreDScript::process(const TTroomScript *roomScript, const TTsentence *sentence) {
 	if (roomScript->_scriptId != 132)
 		return 2;
-	if (preprocess(roomScript, sentence) == 1)
+	if (preprocess(roomScript, sentence) != 1)
 		return 1;
 
 	CTrueTalkManager::setFlags(10, 0);
 	setState(0);
 
 	if (getValue(12) == 0) {
-		trigger12(false);
+		stopFighting(false);
 		_answerCtr = 0;
 
-		if (sentence->contains("restaurant at the end of the universe")
+		if (sentence->contains(TRANSLATE("restaurant at the end of the universe",
+				"restaurant am ende des universums"))
 				|| sentence->contains("milliway")
-				|| sentence->contains("big bang burger bar")) {
+				|| sentence->contains(TRANSLATE("big bang burger bar", "frittenbude"))) {
 			addResponse(getDialogueId(260975));
 			applyResponse();
 		} else if (processEntries(&_entries, _entryCount, roomScript, sentence) == 2) {
@@ -111,29 +113,47 @@ int MaitreDScript::process(const TTroomScript *roomScript, const TTsentence *sen
 
 	if (++_answerCtr > 50 || sentence->localWord("stop") || sentence->localWord("enough")
 			|| sentence->contains("i give up") || sentence->contains("i give in")
-			|| sentence->contains("i surrender") || sentence->contains("i submit")) {
+			|| sentence->contains("i surrender") || sentence->contains("i submit")
+			|| sentence->contains("ich gebe auf")
+			|| sentence->contains("ich ergebe mich")
+			|| sentence->contains("ich kapituliere")
+			|| sentence->contains("ich unterwerfe mich")
+			|| sentence->contains("hoer auf")
+			|| sentence->contains("lass")
+			|| sentence->contains("schluss")
+			|| sentence->contains("hoer sofort")
+			|| sentence->contains("genug")
+			|| sentence->contains("basta")
+			|| sentence->contains("halt")
+			|| sentence->contains("voll")
+			|| sentence->contains("was soll")) {
 		_answerCtr = 0;
-		trigger12(false);
+		stopFighting(false);
 		addResponse(getDialogueId(260063));
 	} else if (sentence->localWord("not") && sentence->localWord("fight") &&
 			(sentence->localWord("feel") || sentence->localWord("want")
 			|| sentence->localWord("do") || sentence->localWord("will"))) {
 		_answerCtr = 0;
-		trigger12(false);
+		stopFighting(false);
 		addResponse(getDialogueId(260678));
 	} else if (sentence->contains("touche") || sentence->contains("toushe")) {
 		addResponse(getDialogueId(260098));
-	} else if (sentence->contains("have at you")) {
+	} else if (sentence->contains("have at you") || sentence->contains("ausfall")) {
 		addResponse(getDialogueId(260047));
-	} else if (sentence->contains("en garde") || sentence->contains("on guard")) {
+	} else if (sentence->contains("en garde") || sentence->contains("on guard")
+			|| sentence->contains("attacke")) {
 		addResponse(getDialogueId(260008));
+	} else if (g_language == Common::DE_DEU && !sentence->contains("ich")
+			&& (sentence->contains("surrender") || sentence->contains("gebe auf")
+				|| sentence->contains("ergebe mich"))) {
+		addResponse(getDialogueId(260086));
 	} else if ((sentence->localWord("surrender") && !sentence->contains("i surrender"))
 			|| (sentence->contains("give up") && !sentence->contains("i give up"))
 			|| (sentence->contains("give in") && !sentence->contains("i give in"))
 			|| (sentence->contains("submit") && !sentence->contains("i submit"))) {
 		addResponse(getDialogueId(260086));
 	} else {
-		addResponse(getDialogueId(260031));
+		addResponse(getDialogueId(260131));
 	}
 
 	applyResponse();
@@ -146,7 +166,7 @@ ScriptChangedResult MaitreDScript::scriptChanged(const TTroomScript *roomScript,
 
 	switch (id) {
 	case 3:
-		if (getValue(4))
+		if (getValue(8))
 			addResponse(getDialogueId(260655));
 		else if (getValue(12))
 			addResponse(getDialogueId(260622));
@@ -165,7 +185,7 @@ ScriptChangedResult MaitreDScript::scriptChanged(const TTroomScript *roomScript,
 	case 110:
 		addResponse(getDialogueId(260118));
 		applyResponse();
-		trigger12(true);
+		stopFighting(true);
 		CTrueTalkManager::setFlags(8, 1);
 		CTrueTalkManager::setFlags(9, 1);
 		break;
@@ -207,7 +227,7 @@ ScriptChangedResult MaitreDScript::scriptChanged(const TTroomScript *roomScript,
 	case 117:
 		CTrueTalkManager::setFlags(8, 0);
 		CTrueTalkManager::setFlags(9, 0);
-		setFlags12();
+		startFighting();
 		break;
 
 	case 132:
@@ -291,7 +311,7 @@ ScriptChangedResult MaitreDScript::scriptChanged(const TTroomScript *roomScript,
 			break;
 
 		case 13:
-			setFlags12();
+			startFighting();
 			addResponse(getDialogueId(260131));
 			applyResponse();
 			break;
@@ -361,8 +381,8 @@ ScriptChangedResult MaitreDScript::scriptChanged(const TTroomScript *roomScript,
 }
 
 int MaitreDScript::handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
-		uint val, uint tagId, uint remainder) {
-	switch (tagId) {
+		uint tag1, uint tag2, uint remainder) {
+	switch (tag2) {
 	case MKTAG('A', 'D', 'V', 'T'):
 	case MKTAG('A', 'R', 'T', 'I'):
 	case MKTAG('A', 'R', 'T', 'Y'):
@@ -383,7 +403,7 @@ int MaitreDScript::handleQuote(const TTroomScript *roomScript, const TTsentence 
 	case MKTAG('T', 'E', 'A', 'M'):
 	case MKTAG('T', 'V', 'S', 'H'):
 	case MKTAG('W', 'W', 'E', 'B'):
-		tagId = MKTAG('E', 'N', 'T', 'N');
+		tag2 = MKTAG('E', 'N', 'T', 'N');
 		break;
 	case MKTAG('A', 'C', 'T', 'R'):
 	case MKTAG('A', 'C', 'T', 'S'):
@@ -417,57 +437,56 @@ int MaitreDScript::handleQuote(const TTroomScript *roomScript, const TTsentence 
 	case MKTAG('T', 'D', 'V', 'P'):
 	case MKTAG('T', 'W', 'A', 'T'):
 	case MKTAG('W', 'E', 'A', 'T'):
-		tagId = MKTAG('P', 'R', 'S', 'N');
+		tag2 = MKTAG('P', 'R', 'S', 'N');
 		break;
 	case MKTAG('C', 'H', 'S', 'E'):
 	case MKTAG('C', 'M', 'N', 'T'):
 	case MKTAG('F', 'I', 'L', 'M'):
 	case MKTAG('L', 'I', 'Q', 'D'):
-		tagId = MKTAG('F', 'O', 'O', 'D');
+		tag2 = MKTAG('F', 'O', 'O', 'D');
 		break;
 	case MKTAG('C', 'R', 'I', 'M'):
 	case MKTAG('C', 'S', 'P', 'Y'):
 	case MKTAG('D', 'R', 'U', 'G'):
-		tagId = MKTAG('V', 'B', 'A', 'D');
+		tag2 = MKTAG('V', 'B', 'A', 'D');
 		break;
 	case MKTAG('E', 'A', 'R', 'T'):
 	case MKTAG('H', 'O', 'M', 'E'):
 	case MKTAG('N', 'P', 'L', 'C'):
 	case MKTAG('P', 'L', 'A', 'N'):
-		tagId = MKTAG('P', 'L', 'A', 'C');
+		tag2 = MKTAG('P', 'L', 'A', 'C');
 		break;
 	case MKTAG('F', 'A', 'U', 'N'):
 	case MKTAG('F', 'I', 'S', 'H'):
 	case MKTAG('F', 'L', 'O', 'R'):
-		tagId = MKTAG('N', 'A', 'T', 'R');
+		tag2 = MKTAG('N', 'A', 'T', 'R');
 		break;
 	case MKTAG('H', 'H', 'L', 'D'):
 	case MKTAG('T', 'O', 'Y', 'S'):
 	case MKTAG('W', 'E', 'A', 'P'):
-		tagId = MKTAG('M', 'A', 'C', 'H');
+		tag2 = MKTAG('M', 'A', 'C', 'H');
 		break;
 	case MKTAG('M', 'L', 'T', 'Y'):
 	case MKTAG('P', 'G', 'R', 'P'):
 	case MKTAG('P', 'T', 'I', 'C'):
-		tagId = MKTAG('G', 'R', 'U', 'P');
+		tag2 = MKTAG('G', 'R', 'U', 'P');
 		break;
 	case MKTAG('P', 'K', 'U', 'P'):
 	case MKTAG('S', 'E', 'X', '1'):
 	case MKTAG('S', 'W', 'E', 'R'):
-		tagId = MKTAG('R', 'U', 'D', 'E');
+		tag2 = MKTAG('R', 'U', 'D', 'E');
 		break;
 	case MKTAG('P', 'H', 'I', 'L'):
 	case MKTAG('R', 'C', 'K', 'T'):
-		tagId = MKTAG('S', 'C', 'I', 'E');
+		tag2 = MKTAG('S', 'C', 'I', 'E');
 		break;
 	case MKTAG('T', 'R', 'A', '2'):
 	case MKTAG('T', 'R', 'A', '3'):
-		tagId = MKTAG('T', 'R', 'A', 'V');
+		tag2 = MKTAG('T', 'R', 'A', 'V');
 		break;
-
 	}
 
-	return TTnpcScript::handleQuote(roomScript, sentence, val, tagId, remainder);
+	return TTnpcScript::handleQuote(roomScript, sentence, tag1, tag2, remainder);
 }
 
 int MaitreDScript::updateState(uint oldId, uint newId, int index) {
@@ -533,21 +552,21 @@ int MaitreDScript::updateState(uint oldId, uint newId, int index) {
 
 	if (newId == 260076 || newId == 260181 || newId == 261010) {
 		CTrueTalkManager::setFlags(14, 1);
-		trigger12(true);
+		stopFighting(true);
 		setFlags10(newId, index);
 		return newId;
 	}
 
 	if (!getValue(12)) {
-		static const uint FLAG_IDS[] = {
+		static const uint FIGHTING_IDS[] = {
 			260080, 260066, 260067, 260062, 260050, 260087, 260090, 260171, 260173,
 			260184, 260193, 260202, 260205, 260220, 260221, 260223, 260231, 260232,
 			260365, 260373, 260374, 260387, 260421, 260622, 260695, 0
 		};
 
-		for (uint idx = 0; FLAG_IDS[idx]; ++idx) {
-			if (FLAG_IDS[idx] == newId) {
-				setFlags12();
+		for (uint idx = 0; FIGHTING_IDS[idx]; ++idx) {
+			if (FIGHTING_IDS[idx] == newId) {
+				startFighting();
 				break;
 			}
 		}
@@ -634,12 +653,11 @@ uint MaitreDScript::getStateDialogueId(uint oldId, uint newId) {
 	}
 }
 
-
-void MaitreDScript::setFlags12() {
-	int val = getValue(12);
+void MaitreDScript::startFighting() {
+	bool isFighting = getValue(12);
 	CTrueTalkManager::setFlags(12, 1);
 
-	if (!val) {
+	if (!isFighting) {
 		CTrueTalkManager::triggerAction(8, 0);
 		resetRange(260121);
 		resetRange(260122);
@@ -647,6 +665,16 @@ void MaitreDScript::setFlags12() {
 		resetRange(260124);
 		resetRange(260125);
 		resetRange(260126);
+	}
+}
+
+void MaitreDScript::stopFighting(bool flag) {
+	bool isFighting = getValue(12);
+	CTrueTalkManager::setFlags(12, 0);
+
+	if (isFighting) {
+		// Surrender
+		CTrueTalkManager::triggerAction(flag ? 10 : 9, 0);
 	}
 }
 
@@ -661,15 +689,6 @@ void MaitreDScript::setFlags10(uint newId, uint index) {
 	}
 
 	CTrueTalkManager::setFlags(10, val);
-}
-
-void MaitreDScript::trigger12(bool flag) {
-	int val = getValue(12);
-	CTrueTalkManager::setFlags(12, 0);
-
-	if (val) {
-		CTrueTalkManager::triggerAction(flag ? 10 : 9, 0);
-	}
 }
 
 int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *sentence) {
@@ -739,18 +758,18 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 8:
 		if (sentence->_category == 11 || sentence->_category == 13) {
-			trigger12(false);
+			stopFighting(false);
 			addResponse(getDialogueId(260094));
 			CTrueTalkManager::setFlags(11, 1);
 		} else {
-			setFlags12();
+			startFighting();
 			addResponse(getDialogueId(260131));
 		}
 		applyFlag = true;
 		break;
 
 	case 9:
-		setFlags12();
+		startFighting();
 		break;
 
 	case 11:
@@ -835,7 +854,7 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 			applyFlag = true;
 			stateFlag = false;
 		} else {
-			setFlags12();
+			startFighting();
 			addResponse(getDialogueId(260221));
 			applyFlag = true;
 			stateFlag = false;
@@ -916,7 +935,7 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 21:
 	case 22:
-		if (sentence->contains("cooking")
+		if (sentence->contains(TRANSLATE("cooking", "kochen"))
 				|| (sentence->localWord("what") && sentence->localWord("mean"))) {
 			addResponse(getDialogueId(260238));
 			applyFlag = true;
@@ -954,6 +973,7 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 			addResponse(getDialogueId(260251));
 			applyFlag = true;
 		}
+		break;
 
 	case 25:
 		if ((sentence->localWord("open") && sentence->localWord("it"))
@@ -1025,7 +1045,7 @@ int MaitreDScript::preprocess(const TTroomScript *roomScript, const TTsentence *
 
 	case 29:
 		if (sentence->_category == 11) {
-			setFlags12();
+			startFighting();
 			addResponse(getDialogueId(260131));
 		} else {
 			addResponse(getDialogueId(260966));

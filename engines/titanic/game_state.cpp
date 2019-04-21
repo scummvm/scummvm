@@ -21,24 +21,26 @@
  */
 
 #include "titanic/game_state.h"
-#include "titanic/titanic.h"
+#include "titanic/game_view.h"
+#include "titanic/events.h"
 #include "titanic/game_manager.h"
 #include "titanic/support/screen_manager.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
 bool CGameStateMovieList::empty() {
 	for (CGameStateMovieList::iterator i = begin(); i != end(); ) {
-		CMovieListItem *movieItem = *i;
+		CMovie *movie = *i;
 
-		if (movieItem->_item->isActive()) {
+		if (movie->isActive()) {
 			++i;
 		} else {
 			i = erase(i);
 		}
 	}
 
-	return List<CMovieListItem>::empty();
+	return Common::List<CMovie *>::empty();
 }
 
 /*------------------------------------------------------------------------*/
@@ -46,8 +48,8 @@ bool CGameStateMovieList::empty() {
 CGameState::CGameState(CGameManager *gameManager) :
 		_gameManager(gameManager), _gameLocation(this), _passengerClass(NO_CLASS),
 		_priorClass(NO_CLASS), _mode(GSMODE_NONE), _seasonNum(SEASON_SUMMER),
-		_petActive(false), _field1C(false), _quitGame(false), _parrotMet(false),
-		_nodeChangeCtr(0), _nodeEnterTicks(0), _field38(0) {
+		_petActive(false), _soundMakerAllowed(false), _quitGame(false), _parrotMet(false),
+		_nodeChangeCtr(0), _nodeEnterTicks(0), _parrotResponseIndex(0) {
 }
 
 void CGameState::save(SimpleFile *file) const {
@@ -56,9 +58,9 @@ void CGameState::save(SimpleFile *file) const {
 	file->writeNumber(_priorClass);
 	file->writeNumber(_seasonNum);
 	file->writeNumber(_parrotMet);
-	file->writeNumber(_field38);
+	file->writeNumber(_parrotResponseIndex);
 	_gameLocation.save(file);
-	file->writeNumber(_field1C);
+	file->writeNumber(_soundMakerAllowed);
 }
 
 void CGameState::load(SimpleFile *file) {
@@ -67,10 +69,10 @@ void CGameState::load(SimpleFile *file) {
 	_priorClass = (PassengerClass)file->readNumber();
 	_seasonNum = (Season)file->readNumber();
 	_parrotMet = file->readNumber();
-	_field38 = file->readNumber();
+	_parrotResponseIndex = file->readNumber();
 	_gameLocation.load(file);
 
-	_field1C = file->readNumber();
+	_soundMakerAllowed = file->readNumber();
 	_nodeChangeCtr = 0;
 	_nodeEnterTicks = 0;
 }
@@ -161,7 +163,7 @@ void CGameState::checkForViewChange() {
 }
 
 void CGameState::addMovie(CMovie *movie) {
-	_movieList.push_back(new CMovieListItem(movie));
+	_movieList.push_back(movie);
 	setMode(GSMODE_CUTSCENE);
 }
 

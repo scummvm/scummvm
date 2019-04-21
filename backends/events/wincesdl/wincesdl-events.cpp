@@ -43,13 +43,13 @@ void WINCESdlEventSource::init(WINCESdlGraphicsManager *graphicsMan) {
 	_graphicsMan = graphicsMan;
 }
 
-void WINCESdlEventSource::processMouseEvent(Common::Event &event, int x, int y) {
+bool WINCESdlEventSource::processMouseEvent(Common::Event &event, int x, int y) {
 	event.mouse.x = x;
 	event.mouse.y = y;
 
 	// Update the "keyboard mouse" coords
-	_km.x = event.mouse.x;
-	_km.y = event.mouse.y;
+	_km.x = event.mouse.x * MULTIPLIER;
+	_km.y = event.mouse.y * MULTIPLIER;
 
 	// Adjust for the screen scaling
 	if (_graphicsMan->_zoomDown)
@@ -57,6 +57,8 @@ void WINCESdlEventSource::processMouseEvent(Common::Event &event, int x, int y) 
 
 	event.mouse.x = event.mouse.x * _graphicsMan->_scaleFactorXd / _graphicsMan->_scaleFactorXm;
 	event.mouse.y = event.mouse.y * _graphicsMan->_scaleFactorYd / _graphicsMan->_scaleFactorYm;
+
+	return true;
 }
 
 bool WINCESdlEventSource::pollEvent(Common::Event &event) {
@@ -69,7 +71,9 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 
 	memset(&event, 0, sizeof(Common::Event));
 
-	handleKbdMouse();
+	if (handleKbdMouse(event)) {
+		return true;
+	}
 
 	// If the screen changed, send an Common::EVENT_SCREEN_CHANGED
 	int screenID = _graphicsMan->getScreenChangeID();
@@ -153,7 +157,13 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 
 		case SDL_MOUSEMOTION:
 			event.type = Common::EVENT_MOUSEMOVE;
-			processMouseEvent(event, ev.motion.x, ev.motion.y);
+			if (!processMouseEvent(event, ev.motion.x, ev.motion.y)) {
+				return false;
+			}
+			// update KbdMouse
+			_km.x = ev.motion.x * MULTIPLIER;
+			_km.y = ev.motion.y * MULTIPLIER;
+
 			_graphicsMan->setMousePos(event.mouse.x, event.mouse.y);
 
 			return true;
@@ -165,8 +175,12 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 				event.type = Common::EVENT_RBUTTONDOWN;
 			else
 				break;
-			processMouseEvent(event, ev.button.x, ev.button.y);
-
+			if (!processMouseEvent(event, ev.button.x, ev.button.y)) {
+				return false;
+			}
+			// update KbdMouse
+			_km.x = ev.button.x * MULTIPLIER;
+			_km.y = ev.button.y * MULTIPLIER;
 
 			if (event.mouse.x > _tapX)
 				deltaX = event.mouse.x - _tapX;
@@ -241,7 +255,12 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 				_rbutton = false;
 			}
 
-			processMouseEvent(event, ev.button.x, ev.button.y);
+			if (!processMouseEvent(event, ev.button.x, ev.button.y)) {
+				return false;
+			}
+			// update KbdMouse
+			_km.x = ev.button.x * MULTIPLIER;
+			_km.y = ev.button.y * MULTIPLIER;
 
 			if (freeLookActive && !_closeClick) {
 				_tapX = event.mouse.x;

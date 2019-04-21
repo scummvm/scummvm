@@ -65,14 +65,14 @@ void CRoomItem::load(SimpleFile *file) {
 		// Read exit movie
 		file->readBuffer();
 		_exitMovieKey.load(file);
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 2:
 		// Read room dimensions
 		file->readBuffer();
 		_roomDimensionX = (double)file->readNumber() / 1000.0;
 		_roomDimensionY = (double)file->readNumber() / 1000.0;
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 1:
 		// Read transition movie key and clip list
@@ -82,7 +82,7 @@ void CRoomItem::load(SimpleFile *file) {
 		file->readBuffer();
 		_clipList.load(file);
 		postLoad();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 0:
 		// Read room rect
@@ -103,10 +103,10 @@ void CRoomItem::load(SimpleFile *file) {
 }
 
 void CRoomItem::postLoad() {
-	if (!_exitMovieKey.exists().empty())
+	if (!_exitMovieKey.getFilename().empty())
 		return;
 
-	CString name = _transitionMovieKey.exists();
+	CString name = _transitionMovieKey.getFilename();
 	if (name.right(7) == "nav.avi") {
 		_exitMovieKey = CResourceKey(name.left(name.size() - 7) + "exit.avi");
 	}

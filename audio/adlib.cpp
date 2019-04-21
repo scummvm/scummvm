@@ -1796,7 +1796,7 @@ void MidiDriver_ADLIB::adlibSetParam(int channel, byte param, int value, bool pr
 			value -= 15;
 		else
 			value -= 383;
-		value <<= 4;
+		value *= 16;
 		_channelTable2[channel] = value;
 		adlibPlayNote(channel, _curNotTable[channel] + value);
 		return;
@@ -2287,7 +2287,7 @@ void MidiDriver_ADLIB::adlibNoteOnEx(int chan, byte note, int mod) {
 class AdLibEmuMusicPlugin : public MusicPluginObject {
 public:
 	const char *getName() const {
-		return _s("AdLib Emulator");
+		return _s("AdLib emulator");
 	}
 
 	const char *getId() const {

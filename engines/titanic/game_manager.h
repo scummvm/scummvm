@@ -27,18 +27,24 @@
 #include "titanic/game_state.h"
 #include "titanic/input_handler.h"
 #include "titanic/input_translator.h"
-#include "titanic/support/simple_file.h"
-#include "titanic/support/time_event_info.h"
-#include "titanic/support/video_surface.h"
-#include "titanic/true_talk/true_talk_manager.h"
-#include "titanic/sound/background_sound_maker.h"
+#include "titanic/support/time_event_info.h" // class CTimeEventInfo
+#include "titanic/true_talk/true_talk_manager.h" // class CTrueTalkManager
 #include "titanic/sound/music_room.h"
 #include "titanic/sound/sound.h"
 
 namespace Titanic {
 
-class CProjectItem;
+class CBackgroundSoundMaker;
 class CGameView;
+class CMovie;
+class CMovieClip;
+class CProjectItem;
+class CRoomItem;
+class CScreenManager;
+class CTreeItem;
+class CViewItem;
+class CVideoSurface;
+class SimpleFile;
 
 class CGameManager {
 private:
@@ -75,8 +81,8 @@ public:
 	CInputHandler _inputHandler;
 	CInputTranslator _inputTranslator;
 	CTreeItem *_dragItem;
-	CMusicRoom _musicRoom;
 	CSound _sound;
+	CMusicRoom _musicRoom;
 public:
 	CGameManager(CProjectItem *project, CGameView *gameView, Audio::Mixer *mixer);
 	~CGameManager();
@@ -157,9 +163,9 @@ public:
 	void update();
 
 	/**
-	 * Called when the view changes
+	 * Called when the room changes
 	 */
-	void viewChange();
+	void roomChange();
 
 	/**
 	 * Returns true if no transition is currently in progress

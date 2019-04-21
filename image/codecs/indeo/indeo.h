@@ -398,6 +398,7 @@ public:
 
 	IVIHuffTab		_mbVlc;			///< current macroblock table descriptor
 	IVIHuffTab		_blkVlc;		///< current block table descriptor
+	IVIHuffTab		_transVlc;		///< current transparency table descriptor
 
 	uint8			_rvmapSel;
 	bool			_inImf;
@@ -419,6 +420,7 @@ public:
 	int				_bufInvalid[4];
 
 	bool			_isIndeo4;
+	uint32			_transKeyColor;
 
 	AVFrame *		_pFrame;
 	bool			_gotPFrame;
@@ -518,7 +520,7 @@ private:
 protected:
 	IVI45DecContext _ctx;
 	Graphics::PixelFormat _pixelFormat;
-	Graphics::Surface *_surface;
+	Graphics::Surface _surface;
 
 	/**
 	 *  Scan patterns shared between indeo4 and indeo5
@@ -566,7 +568,7 @@ protected:
 	/**
 	 * Decodes optional transparency data within Indeo frames
 	 */
-	virtual void decodeTransparency() {}
+	virtual int decodeTransparency() { return -1; }
 
 	/**
 	 * Decodes the Indeo frame from the bit reader already

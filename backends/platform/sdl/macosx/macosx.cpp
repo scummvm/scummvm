@@ -28,11 +28,11 @@
 #ifdef MACOSX
 
 #include "backends/audiocd/macosx/macosx-audiocd.h"
-#include "backends/mixer/doublebuffersdl/doublebuffersdl-mixer.h"
 #include "backends/platform/sdl/macosx/appmenu_osx.h"
 #include "backends/platform/sdl/macosx/macosx.h"
 #include "backends/updates/macosx/macosx-updates.h"
 #include "backends/taskbar/macosx/macosx-taskbar.h"
+#include "backends/dialogs/macosx/macosx-dialogs.h"
 #include "backends/platform/sdl/macosx/macosx_wrapper.h"
 
 #include "common/archive.h"
@@ -48,6 +48,10 @@ OSystem_MacOSX::OSystem_MacOSX()
 	OSystem_POSIX("Library/Preferences/ScummVM Preferences") {
 }
 
+OSystem_MacOSX::~OSystem_MacOSX() {
+	releaseMenu();
+}
+
 void OSystem_MacOSX::init() {
 	// Use an iconless window on OS X, as we use a nicer external icon there.
 	_window = new SdlIconlessWindow();
@@ -57,19 +61,16 @@ void OSystem_MacOSX::init() {
 	_taskbarManager = new MacOSXTaskbarManager();
 #endif
 
+#if defined(USE_SYSDIALOGS)
+	// Initialize dialog manager
+	_dialogManager = new MacOSXDialogManager();
+#endif
+
 	// Invoke parent implementation of this method
 	OSystem_POSIX::init();
 }
 
 void OSystem_MacOSX::initBackend() {
-	// Create the mixer manager
-	if (_mixer == 0) {
-		_mixerManager = new DoubleBufferSDLMixerManager();
-
-		// Setup and start mixer
-		_mixerManager->init();
-	}
-
 #ifdef USE_TRANSLATION
 	// We need to initialize the translataion manager here for the following
 	// call to replaceApplicationMenuItems() work correctly
@@ -109,6 +110,12 @@ void OSystem_MacOSX::addSysArchivesToSearchSet(Common::SearchSet &s, int priorit
 bool OSystem_MacOSX::hasFeature(Feature f) {
 	if (f == kFeatureDisplayLogFile || f == kFeatureClipboardSupport || f == kFeatureOpenUrl)
 		return true;
+
+#ifdef USE_SYSDIALOGS
+	if (f == kFeatureSystemBrowserDialog)
+		return true;
+#endif
+
 	return OSystem_POSIX::hasFeature(f);
 }
 
@@ -133,11 +140,15 @@ Common::String OSystem_MacOSX::getTextFromClipboard() {
 	return getTextFromClipboardMacOSX();
 }
 
+bool OSystem_MacOSX::setTextInClipboard(const Common::String &text) {
+	return setTextInClipboardMacOSX(text);
+}
+
 bool OSystem_MacOSX::openUrl(const Common::String &url) {
 	CFURLRef urlRef = CFURLCreateWithBytes (NULL, (UInt8*)url.c_str(), url.size(), kCFStringEncodingASCII, NULL);
 	OSStatus err = LSOpenCFURLRef(urlRef, NULL);
 	CFRelease(urlRef);
-	return err != noErr;
+	return err == noErr;
 }
 
 Common::String OSystem_MacOSX::getSystemLanguage() const {
@@ -185,6 +196,15 @@ Common::String OSystem_MacOSX::getSystemLanguage() const {
 #else // USE_DETECTLANG
 	return OSystem_POSIX::getSystemLanguage();
 #endif // USE_DETECTLANG
+}
+
+Common::String OSystem_MacOSX::getScreenshotsPath() {
+	Common::String path = ConfMan.get("screenshotpath");
+	if (path.empty())
+		path = getDesktopPathMacOSX();
+	if (!path.empty() && !path.hasSuffix("/"))
+		path += "/";
+	return path;
 }
 
 AudioCDManager *OSystem_MacOSX::createAudioCDManager() {

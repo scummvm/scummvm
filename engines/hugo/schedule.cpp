@@ -1162,7 +1162,7 @@ void Scheduler::insertAction(Act *action) {
 	// Workaround: When dying, switch to storyMode in order to block the keyboard.
 	case GAMEOVER:
 		_vm->getGameStatus()._storyModeFl = true;
-	// No break on purpose
+		// fall through
 	default:
 		curEvent->_localActionFl = true;                // Rest are for current screen only
 		break;

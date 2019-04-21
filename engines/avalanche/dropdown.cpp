@@ -684,9 +684,9 @@ void DropDownMenu::update() {
 	Common::Point cursorPos = _vm->getMousePos();
 	while (!_activeMenuItem._activeNow && (cursorPos.y <= 21) && _vm->_holdLeftMouse) {
 		_menuBar.chooseMenuItem(cursorPos.x);
-		do
+		do {
 			_vm->updateEvents();
-		while (_vm->_holdLeftMouse && !_vm->shouldQuit());
+		} while (_vm->_holdLeftMouse && !_vm->shouldQuit());
 
 		while (!_vm->shouldQuit()) {
 			do {

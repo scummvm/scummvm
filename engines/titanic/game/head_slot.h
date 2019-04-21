@@ -38,17 +38,17 @@ class CHeadSlot : public CGameObject {
 	bool ActMsg(CActMsg *msg);
 	bool MouseDragStartMsg(CMouseDragStartMsg *msg);
 public:
-	static int _v1;
+	static bool _titaniaWoken;
 public:
-	int _fieldBC;
-	CString _string1;
-	CString _string2;
-	int _fieldD8;
-	int _fieldDC;
-	int _fieldE0;
-	int _fieldE4;
-	int _fieldE8;
-	bool _fieldEC;
+	bool _occupied;
+	CString _senseState;
+	CString _target;
+	int _timerDuration;
+	int _frameNum1;
+	int _frameNum2;
+	int _frameNum3;
+	int _frameNum4;
+	bool _workingFlag;
 public:
 	CLASSDEF;
 	CHeadSlot();

@@ -237,6 +237,7 @@ BaseGame::~BaseGame() {
 	LOG(0, "Shutting down...");
 
 	ConfMan.setBool("last_run", true);
+	ConfMan.flushToDisk();
 
 	cleanup();
 
@@ -3884,7 +3885,6 @@ bool BaseGame::isDoubleClick(int32 buttonIndex) {
 //////////////////////////////////////////////////////////////////////////
 void BaseGame::autoSaveOnExit() {
 	_soundMgr->saveSettings();
-	ConfMan.flushToDisk();
 
 	if (!_autoSaveOnExit) {
 		return;

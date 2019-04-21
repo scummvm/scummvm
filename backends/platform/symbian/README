@@ -1,7 +1,7 @@
 
  ScummVM - ScummVM ported to EPOC/SymbianOS
 
- Copyright (C) 2008-2017 ScummVM Team
+ Copyright (C) 2008-2019 ScummVM Team
  Copyright (C) 2013-2013 Fedor Strizhniou aka zanac
  Copyright (C) 2003-2013 Lars 'AnotherGuest' Persson
  Copyright (C) 2002-2008 Jurgen 'SumthinWicked' Braam
@@ -82,9 +82,9 @@ Release version: 1.6.0
 	Release version: 0.12.0
 	* This version is only supported on Symbian OS 9 devices due to compiler constraints for older devices. (That means UIQ3 and S60V3 devices)
 	* Updated to SDL version 1.2.13 (previous version used was 1.2.2)
-	* Information about S60 devices can be found here http://wiki.scummvm.org/index.php/SymbianOS_S60
-	* Information about UIQ devices can be found here http://wiki.scummvm.org/index.php/SymbianOS_UIQ
-	* Best source of general information is the ScummVM forum, http://forums.scummvm.org
+	* Information about S60 devices can be found here https://wiki.scummvm.org/index.php/SymbianOS_S60
+	* Information about UIQ devices can be found here https://wiki.scummvm.org/index.php/SymbianOS_UIQ
+	* Best source of general information is the ScummVM forum, https://forums.scummvm.org
 	* SVN builds (not frequently updated) can be found at http://www.anotherguest.se
 
 

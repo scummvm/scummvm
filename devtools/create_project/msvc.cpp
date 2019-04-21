@@ -31,8 +31,8 @@ namespace CreateProjectTool {
 //////////////////////////////////////////////////////////////////////////
 // MSVC Provider (Base class)
 //////////////////////////////////////////////////////////////////////////
-MSVCProvider::MSVCProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version)
-	: ProjectProvider(global_warnings, project_warnings, version) {
+MSVCProvider::MSVCProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version, const MSVCVersion &msvc)
+	: ProjectProvider(global_warnings, project_warnings, version), _msvcVersion(msvc) {
 
 	_enableLanguageExtensions = tokenize(ENABLE_LANGUAGE_EXTENSIONS, ',');
 	_disableEditAndContinue   = tokenize(DISABLE_EDIT_AND_CONTINUE, ',');
@@ -52,8 +52,8 @@ void MSVCProvider::createWorkspace(const BuildSetup &setup) {
 	if (!solution)
 		error("Could not open \"" + setup.outputDir + '/' + setup.projectName + ".sln\" for writing");
 
-	solution << "Microsoft Visual Studio Solution File, Format Version " << getSolutionVersion() << ".00\n";
-	solution << "# Visual Studio " << getVisualStudioVersion() << "\n";
+	solution << "Microsoft Visual Studio Solution File, Format Version " << _msvcVersion.solutionFormat << "\n";
+	solution << "# Visual Studio " << _msvcVersion.solutionVersion << "\n";
 
 	// Write main project
 	if (!setup.devTools) {
@@ -158,13 +158,8 @@ void MSVCProvider::createGlobalProp(const BuildSetup &setup) {
 	// HACK: This definitely should not be here, but otherwise we would not define SDL_BACKEND for x64.
 	x64Defines.push_back("WIN32");
 	x64Defines.push_back("SDL_BACKEND");
-	x64Defines.push_back("SCUMM_64BITS");
 
 	outputGlobalPropFile(setup, properties, 64, x64Defines, convertPathToWin(setup.filePrefix), setup.runBuildEvents);
-}
-
-int MSVCProvider::getSolutionVersion() {
-	return _version + 1;
 }
 
 std::string MSVCProvider::getPreBuildEvent() const {
@@ -173,7 +168,7 @@ std::string MSVCProvider::getPreBuildEvent() const {
 	cmdLine = "@echo off\n"
 	          "echo Executing Pre-Build script...\n"
 	          "echo.\n"
-	          "@call &quot;$(SolutionDir)../../devtools/create_project/scripts/prebuild.cmd&quot; &quot;$(SolutionDir)/../..&quot;  &quot;$(TargetDir)&quot;\n"
+	          "@call &quot;$(SolutionDir)../../devtools/create_project/scripts/prebuild.cmd&quot; &quot;$(SolutionDir)/../..&quot; &quot;$(SolutionDir)&quot;\n"
 	          "EXIT /B0";
 
 	return cmdLine;
@@ -186,10 +181,10 @@ std::string MSVCProvider::getTestPreBuildEvent(const BuildSetup &setup) const {
 	for (StringList::const_iterator it = setup.testDirs.begin(); it != setup.testDirs.end(); ++it)
 		target += " $(SolutionDir)" + *it + "*.h";
 
-	return "&quot;$(SolutionDir)../../test/cxxtest/cxxtestgen.py&quot; --runner=ParenPrinter --no-std --no-eh -o $(SolutionDir)test_runner.cpp" + target;
+	return "&quot;$(SolutionDir)../../test/cxxtest/cxxtestgen.py&quot; --runner=ParenPrinter --no-std --no-eh -o &quot;$(SolutionDir)test_runner.cpp&quot;" + target;
 }
 
-std::string MSVCProvider::getPostBuildEvent(bool isWin32, bool createInstaller) const {
+std::string MSVCProvider::getPostBuildEvent(bool isWin32, const BuildSetup &setup) const {
 	std::string cmdLine = "";
 
 	cmdLine = "@echo off\n"
@@ -197,12 +192,14 @@ std::string MSVCProvider::getPostBuildEvent(bool isWin32, bool createInstaller) 
 	          "echo.\n"
 	          "@call &quot;$(SolutionDir)../../devtools/create_project/scripts/postbuild.cmd&quot; &quot;$(SolutionDir)/../..&quot; &quot;$(OutDir)&quot; ";
 
-	cmdLine += (isWin32) ? "x86" : "x64";
+	cmdLine += (setup.useSDL2) ? "SDL2" : "SDL";
 
-	cmdLine += " %" LIBS_DEFINE "% ";
+	cmdLine += " &quot;%" LIBS_DEFINE "%/lib/";
+	cmdLine += (isWin32) ? "x86" : "x64";
+	cmdLine += "/$(Configuration)&quot; ";
 
 	// Specify if installer needs to be built or not
-	cmdLine += (createInstaller ? "1" : "0");
+	cmdLine += (setup.createInstaller ? "1" : "0");
 
 	cmdLine += "\n"
 	           "EXIT /B0";

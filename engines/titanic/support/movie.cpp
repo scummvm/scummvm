@@ -21,9 +21,13 @@
  */
 
 #include "titanic/support/movie.h"
-#include "titanic/support/avi_surface.h"
-#include "titanic/sound/sound_manager.h"
+#include "titanic/core/game_object.h"
+#include "titanic/events.h"
 #include "titanic/messages/messages.h"
+#include "titanic/support/avi_surface.h"
+#include "titanic/support/screen_manager.h"
+#include "titanic/support/video_surface.h"
+#include "titanic/sound/sound_manager.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -36,8 +40,7 @@ namespace Titanic {
 CMovieList *CMovie::_playingMovies;
 CVideoSurface *CMovie::_movieSurface;
 
-CMovie::CMovie() : ListItem(), _handled(false), _hasVideoFrame(false),
-		_hasAudioTiming(false) {
+CMovie::CMovie() : ListItem(), _handled(false), _hasVideoFrame(false) {
 }
 
 CMovie::~CMovie() {
@@ -116,7 +119,7 @@ void OSMovie::play(uint startFrame, uint endFrame, uint initialFrame, uint flags
 		movieStarted();
 }
 
-void OSMovie::playCutscene(const Rect &drawRect, uint startFrame, uint endFrame) {
+bool OSMovie::playCutscene(const Rect &drawRect, uint startFrame, uint endFrame) {
 	if (!_movieSurface)
 		_movieSurface = CScreenManager::_screenManagerPtr->createSurface(600, 340, 32);
 
@@ -124,10 +127,10 @@ void OSMovie::playCutscene(const Rect &drawRect, uint startFrame, uint endFrame)
 	CEventTarget eventTarget;
 	g_vm->_events->addTarget(&eventTarget);
 
-	_aviSurface.setFrame(startFrame);
-	_aviSurface.playCutscene(drawRect, startFrame, endFrame);
+	bool result = _aviSurface.playCutscene(drawRect, startFrame, endFrame);
 
 	g_vm->_events->removeTarget();
+	return result;
 }
 
 void OSMovie::pause() {
@@ -194,6 +197,10 @@ void OSMovie::movieStarted() {
 
 void OSMovie::setFrameRate(double rate) {
 	_aviSurface.setFrameRate(rate);
+}
+
+void OSMovie::setPlaying(bool playingFlag) {
+	_aviSurface.setPlaying(playingFlag);
 }
 
 Graphics::ManagedSurface *OSMovie::duplicateTransparency() const {

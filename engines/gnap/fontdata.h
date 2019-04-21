@@ -747,105 +747,51 @@ const byte _dejaVuSans9ptCharBitmaps[] = {
 };
 
 /* Character descriptors for DejaVu Sans 9pt */
-/* { [Char width in bits], [Offset into dejaVuSans9ptCharBitmaps in bytes] } */
-const FONT_CHAR_INFO _dejaVuSans9ptCharDescriptors[] = {
-	FONT_CHAR_INFO(5, 0), 		/*   */
-	FONT_CHAR_INFO(1, 10), 		/* ! */
-	FONT_CHAR_INFO(3, 12), 		/* " */
-	FONT_CHAR_INFO(8, 18), 		/* # */
-	FONT_CHAR_INFO(5, 34), 		/* $ */
-	FONT_CHAR_INFO(10, 44), 	/* % */
-	FONT_CHAR_INFO(8, 64), 		/* & */
-	FONT_CHAR_INFO(1, 80), 		/* ' */
-	FONT_CHAR_INFO(3, 82), 		/* ( */
-	FONT_CHAR_INFO(3, 88), 		/* ) */
-	FONT_CHAR_INFO(5, 94), 		/* * */
-	FONT_CHAR_INFO(7, 104), 	/* + */
-	FONT_CHAR_INFO(1, 118), 	/* , */
-	FONT_CHAR_INFO(3, 120), 	/* - */
-	FONT_CHAR_INFO(1, 126), 	/* . */
-	FONT_CHAR_INFO(4, 128), 	/* / */
-	FONT_CHAR_INFO(6, 136), 	/* 0 */
-	FONT_CHAR_INFO(5, 148), 	/* 1 */
-	FONT_CHAR_INFO(6, 158), 	/* 2 */
-	FONT_CHAR_INFO(6, 170), 	/* 3 */
-	FONT_CHAR_INFO(6, 182), 	/* 4 */
-	FONT_CHAR_INFO(6, 194), 	/* 5 */
-	FONT_CHAR_INFO(6, 206), 	/* 6 */
-	FONT_CHAR_INFO(6, 218), 	/* 7 */
-	FONT_CHAR_INFO(6, 230), 	/* 8 */
-	FONT_CHAR_INFO(6, 242), 	/* 9 */
-	FONT_CHAR_INFO(1, 254), 	/* : */
-	FONT_CHAR_INFO(1, 256), 	/* ; */
-	FONT_CHAR_INFO(8, 258), 	/* < */
-	FONT_CHAR_INFO(8, 274), 	/* = */
-	FONT_CHAR_INFO(8, 290), 	/* > */
-	FONT_CHAR_INFO(5, 306), 	/* ? */
-	FONT_CHAR_INFO(11, 316), 	/* @ */
-	FONT_CHAR_INFO(8, 338), 	/* A */
-	FONT_CHAR_INFO(6, 354), 	/* B */
-	FONT_CHAR_INFO(6, 366), 	/* C */
-	FONT_CHAR_INFO(7, 378), 	/* D */
-	FONT_CHAR_INFO(6, 392), 	/* E */
-	FONT_CHAR_INFO(5, 404), 	/* F */
-	FONT_CHAR_INFO(7, 414), 	/* G */
-	FONT_CHAR_INFO(7, 428), 	/* H */
-	FONT_CHAR_INFO(1, 442), 	/* I */
-	FONT_CHAR_INFO(3, 444), 	/* J */
-	FONT_CHAR_INFO(6, 450), 	/* K */
-	FONT_CHAR_INFO(5, 462), 	/* L */
-	FONT_CHAR_INFO(8, 472), 	/* M */
-	FONT_CHAR_INFO(7, 488), 	/* N */
-	FONT_CHAR_INFO(7, 502), 	/* O */
-	FONT_CHAR_INFO(6, 516), 	/* P */
-	FONT_CHAR_INFO(7, 528), 	/* Q */
-	FONT_CHAR_INFO(7, 542), 	/* R */
-	FONT_CHAR_INFO(6, 556), 	/* S */
-	FONT_CHAR_INFO(7, 568), 	/* T */
-	FONT_CHAR_INFO(7, 582), 	/* U */
-	FONT_CHAR_INFO(8, 596), 	/* V */
-	FONT_CHAR_INFO(11, 612), 	/* W */
-	FONT_CHAR_INFO(7, 634), 	/* X */
-	FONT_CHAR_INFO(7, 648), 	/* Y */
-	FONT_CHAR_INFO(7, 662), 	/* Z */
-	FONT_CHAR_INFO(2, 676), 	/* [ */
-	FONT_CHAR_INFO(4, 680), 	/* \ */
-	FONT_CHAR_INFO(2, 688), 	/* ] */
-	FONT_CHAR_INFO(6, 692), 	/* ^ */
-	FONT_CHAR_INFO(6, 704), 	/* _ */
-	FONT_CHAR_INFO(2, 716), 	/* ` */
-	FONT_CHAR_INFO(6, 720), 	/* a */
-	FONT_CHAR_INFO(6, 732), 	/* b */
-	FONT_CHAR_INFO(5, 744), 	/* c */
-	FONT_CHAR_INFO(6, 754), 	/* d */
-	FONT_CHAR_INFO(6, 766), 	/* e */
-	FONT_CHAR_INFO(4, 778), 	/* f */
-	FONT_CHAR_INFO(6, 786), 	/* g */
-	FONT_CHAR_INFO(6, 798), 	/* h */
-	FONT_CHAR_INFO(1, 810), 	/* i */
-	FONT_CHAR_INFO(2, 812), 	/* j */
-	FONT_CHAR_INFO(5, 816), 	/* k */
-	FONT_CHAR_INFO(1, 826), 	/* l */
-	FONT_CHAR_INFO(9, 828), 	/* m */
-	FONT_CHAR_INFO(6, 846), 	/* n */
-	FONT_CHAR_INFO(6, 858), 	/* o */
-	FONT_CHAR_INFO(6, 870), 	/* p */
-	FONT_CHAR_INFO(6, 882), 	/* q */
-	FONT_CHAR_INFO(4, 894), 	/* r */
-	FONT_CHAR_INFO(5, 902), 	/* s */
-	FONT_CHAR_INFO(4, 912), 	/* t */
-	FONT_CHAR_INFO(6, 920), 	/* u */
-	FONT_CHAR_INFO(6, 932), 	/* v */
-	FONT_CHAR_INFO(9, 944), 	/* w */
-	FONT_CHAR_INFO(6, 962), 	/* x */
-	FONT_CHAR_INFO(6, 974), 	/* y */
-	FONT_CHAR_INFO(5, 986), 	/* z */
-	FONT_CHAR_INFO(5, 996), 	/* { */
-	FONT_CHAR_INFO(1, 1006), 	/* | */
-	FONT_CHAR_INFO(5, 1008), 	/* ) */
-	FONT_CHAR_INFO(8, 1018) 	/* ~ */
+const byte _dejaVuSans9ptWidth[] = {
+	5, /*   */  1, /* ! */  3, /* " */  8, /* # */  5, /* $ */
+	10,/* % */  8, /* & */  1, /* ' */  3, /* ( */  3, /* ) */
+	5, /* * */  7, /* + */  1, /* , */  3, /* - */  1, /* . */
+	4, /* / */  6, /* 0 */  5, /* 1 */  6, /* 2 */  6, /* 3 */
+	6, /* 4 */  6, /* 5 */  6, /* 6 */  6, /* 7 */  6, /* 8 */
+	6, /* 9 */  1, /* : */  1, /* ; */  8, /* < */  8, /* = */
+	8, /* > */  5, /* ? */  11,/* @ */  8, /* A */  6, /* B */
+	6, /* C */  7, /* D */  6, /* E */  5, /* F */  7, /* G */
+	7, /* H */  1, /* I */  3, /* J */  6, /* K */  5, /* L */
+	8, /* M */  7, /* N */  7, /* O */  6, /* P */  7, /* Q */
+	7, /* R */  6, /* S */  7, /* T */  7, /* U */  8, /* V */
+	11,/* W */  7, /* X */  7, /* Y */  7, /* Z */  2, /* [ */
+	4, /* \ */  2, /* ] */  6, /* ^ */  6, /* _ */  2, /* ` */
+	6, /* a */  6, /* b */  5, /* c */  6, /* d */  6, /* e */
+	4, /* f */  6, /* g */  6, /* h */  1, /* i */  2, /* j */
+	5, /* k */  1, /* l */  9, /* m */  6, /* n */  6, /* o */
+	6, /* p */  6, /* q */  4, /* r */  5, /* s */  4, /* t */
+	6, /* u */  6, /* v */  9, /* w */  6, /* x */  6, /* y */
+	5, /* z */  5, /* { */  1, /* | */  5, /* ) */  8  /* ~ */
+};
+
+const uint16 _dejaVuSans9ptOffsets[] = {
+	0,    /*   */  10,    /* ! */  12,    /* " */  18,    /* # */  34,    /* $ */
+	44,   /* % */  64,    /* & */  80,    /* ' */  82,    /* ( */  88,    /*  */
+	94,   /* * */  104,   /* + */  118,   /* , */  120,   /* - */  126,   /* . */
+	128,  /* / */  136,   /* 0 */  148,   /* 1 */  158,   /* 2 */  170,   /* 3 */
+	182,  /* 4 */  194,   /* 5 */  206,   /* 6 */  218,   /* 7 */  230,   /* 8 */
+	242,  /* 9 */  254,   /* : */  256,   /* ; */  258,   /* < */  274,   /* = */
+	290,  /* > */  306,   /* ? */  316,   /* @ */  338,   /* A */  354,   /* B */
+	366,  /* C */  378,   /* D */  392,   /* E */  404,   /* F */  414,   /* G */
+	428,  /* H */  442,   /* I */  444,   /* J */  450,   /* K */  462,   /* L */
+	472,  /* M */  488,   /* N */  502,   /* O */  516,   /* P */  528,   /* Q */
+	542,  /* R */  556,   /* S */  568,   /* T */  582,   /* U */  596,   /* V */
+	612,  /* W */  634,   /* X */  648,   /* Y */  662,   /* Z */  676,   /* [ */
+	680,  /* \ */  688,   /* ] */  692,   /* ^ */  704,   /* _ */  716,   /* ` */
+	720,  /* a */  732,   /* b */  744,   /* c */  754,   /* d */  766,   /* e */
+	778,  /* f */  786,   /* g */  798,   /* h */  810,   /* i */  812,   /* j */
+	816,  /* k */  826,   /* l */  828,   /* m */  846,   /* n */  858,   /* o */
+	870,  /* p */  882,   /* q */  894,   /* r */  902,   /* s */  912,   /* t */
+	920,  /* u */  932,   /* v */  944,   /* w */  962,   /* x */  974,   /* y */
+	986,  /* z */  996,   /* { */  1006,  /* | */  1008,  /*  */   1018   /* ~ */
 };
 
 } // End of namespace Gnap
 
 #endif // GNAP_RESOURCE_H
+

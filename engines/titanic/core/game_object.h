@@ -27,6 +27,7 @@
 #include "common/stream.h"
 #include "titanic/core/named_item.h"
 #include "titanic/sound/proximity.h"
+#include "titanic/sound/sound_manager.h"
 #include "titanic/support/mouse_cursor.h"
 #include "titanic/support/credit_text.h"
 #include "titanic/support/movie_range_info.h"
@@ -42,6 +43,11 @@ namespace Titanic {
 enum Find { FIND_GLOBAL = 1, FIND_ROOM = 2, FIND_PET = 4, FIND_MAILMAN = 8 };
 enum Found { FOUND_NONE = 0, FOUND_GLOBAL = 1, FOUND_ROOM = 2, FOUND_PET = 3, FOUND_MAILMAN = 4 };
 enum RoomFlagsComparison { RFC_LOCATION = 1, RFC_CLASS_ELEVATOR = 2, RFC_TITANIA = 3 };
+enum StarControlAction {
+	STAR_SHOW = 0, STAR_HIDE, STAR_2, STAR_RESET_POS, STAR_4, STAR_5, STAR_6, STAR_FULL_SPEED,
+	STAR_8, STAR_TOGGLE_MODE, STAR_10, STAR_11, STAR_12, STAR_13, STAR_SET_REFERENCE, STAR_FADE_IN,
+	STAR_FADE_OUT, LOCK_STAR, UNLOCK_STAR, STAR_19
+};
 
 class CDontSaveFileItem;
 class CMailMan;
@@ -77,13 +83,11 @@ private:
 protected:
 	static CCreditText *_credits;
 protected:
-	double _field34;
-	double _field38;
-	double _field3C;
+	double _unused1;
+	double _unused2;
+	double _unused3;
 	bool _nonvisual;
-	int _field44;
-	int _field48;
-	int _field4C;
+	byte _toggleR, _toggleG, _toggleB;
 	CMovieClipList _movieClips;
 	int _initialFrame;
 	CMovieRangeInfoList _movieRangeInfoList;
@@ -91,11 +95,10 @@ protected:
 	CTextControl *_text;
 	uint _textBorder;
 	uint _textBorderRight;
-	int _field9C;
 	Common::Point _savedPos;
 	CVideoSurface *_surface;
 	CString _resource;
-	int _fieldB8;
+	int _unused4;
 protected:
 	/**
 	 * Saves the current position the object is located at
@@ -227,8 +230,8 @@ protected:
 	 * @param balance		Sound balance (not actually used by original)
 	 * @param repeated		If true, sound will repeat indefinitely
 	 */
-	int queueSound(const CString &name, uint priorHandle, uint volume = 100,
-		int balance = 0, bool repeated = false);
+	int queueSound(const CString &name, uint priorHandle, uint volume = 100, int balance = 0,
+		bool repeated = false, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 
 	/**
 	 * Stop a sound
@@ -251,7 +254,7 @@ protected:
 	void setSoundVolume(int handle, uint percent, uint seconds);
 
 	/**
-	 * Plays a sound, and saves it's handle in the global sound handles list
+	 * Plays an ambient sound, and saves it's handle in the ambient sound handles list
 	 * @param resName		Filename of sound to play
 	 * @param mode			Volume mode level
 	 * @param initialMute	If set, sound transitions in from mute over 2 seconds
@@ -259,25 +262,28 @@ protected:
 	 * @param handleIndex	Slot 0 to 3 in the shared sound handle list to store the sound's handle
 	 * @param soundType		Specifies whether the sound is a sound effect or music
 	 */
-	void playGlobalSound(const CString &resName, int mode, bool initialMute, bool repeated,
+	void playAmbientSound(const CString &resName, VolumeMode mode, bool initialMute, bool repeated,
 		int handleIndex, Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
 
 	/**
-	 * Stops a sound saved in the global sound handle list
+	 * Stops playing an ambient sound
 	 * @param transition	If set, the sound transitions to silent before stopping
-	 * @param handleIndex	Index of sound to stop. If -1, all global sounds are stopped
+	 * @param handleIndex	Index of sound to stop. If -1, all ambient sounds are stopped
 	 */
-	void stopGlobalSound(bool transition, int handleIndex);
+	void stopAmbientSound(bool transition, int handleIndex);
 
 	/**
-	 * Updates the volume for a global sound based on the specified mode's volume
+	 * Updates the volume for an ambient sound based on the specified mode's volume
 	 * @param mode			Volume level mode
 	 * @param seconds		Number of seconds to transition to new volume
-	 * @param handleIndex	Index of global sound to update. If -1, all global sounds are updated
+	 * @param handleIndex	Index of ambient sound to update. If -1, all ambient sounds are updated
 	 */
-	void setGlobalSoundVolume(int mode, uint seconds, int handleIndex);
+	void setAmbientSoundVolume(VolumeMode mode, uint seconds, int handleIndex);
 
-	void sound8(bool flag) const;
+	/**
+	 * Stops sound channel 3 or 0
+	 */
+	void stopSoundChannel(bool channel3);
 
 	/**
 	 * Adds a timer
@@ -323,7 +329,7 @@ protected:
 	/**
 	 * Compare the name of the parent room to the item to a passed string
 	 */
-	int compareRoomNameTo(const CString &name);
+	bool compareRoomNameTo(const CString &name);
 
 	/**
 	 * Gets the first object under the system MailMan
@@ -387,8 +393,9 @@ protected:
 
 	/**
 	 * Play a cutscene
+	 * @returns		True if the cutscene was not interrupted
 	 */
-	void playCutscene(uint startFrame, uint endFrame);
+	bool playCutscene(uint startFrame, uint endFrame);
 
 	/**
 	 * Play a clip randomly from a passed list of names
@@ -462,7 +469,11 @@ protected:
 	 */
 	void setPassengerClass(PassengerClass newClass);
 
-	void fn10(int v1, int v2, int v3);
+	/**
+	 * Sets color RGB for toggles
+	 * @remarks		The color set isn't actually used anywhere
+	 */
+	void setToggleColor(byte r, byte g, byte b);
 
 	/**
 	 * Gets the duration of a specified clip in milliseconds
@@ -523,7 +534,7 @@ public:
 	bool _isPendingMail;
 	uint _destRoomFlags;
 	uint _roomFlags;
-	int _field60;
+	bool _handleMouseFlag;
 	CursorId _cursorId;
 	bool _visible;
 public:
@@ -567,9 +578,9 @@ public:
 	virtual Rect getBounds() const;
 
 	/**
-	 * Called when the view changes
+	 * Free up any surface the object used
 	 */
-	virtual void viewChange();
+	virtual void freeSurface();
 
 	/**
 	 * Allows the item to draw itself
@@ -596,6 +607,15 @@ public:
 	 * with extra checking of object flags status
 	 */
 	bool checkPoint(const Point &pt, bool ignoreSurface = false, bool visibleOnly = false);
+
+	/**
+	 * Returns a point that falls within the object. Used for simulating
+	 * mouse clicks for movement when arrow keys are pressed
+	 * @param quadrant	Quadrant (edge) to return point for
+	 * @param pt		Return point
+	 * @returns			True if a point was found
+	 */
+	bool findPoint(Quadrant quadrant, Point &pt);
 
 	/**
 	 * Set the position of the object
@@ -633,9 +653,9 @@ public:
 	void stopMovie();
 
 	/**
-	 * Overrides whether the object's movie has audio timing
+	 * Overrides whether the object's movie is playing or paused
 	 */
-	void movieSetAudioTiming(bool flag);
+	void movieSetPlaying(bool flag);
 
 	/**
 	 * Get the current movie frame
@@ -769,6 +789,11 @@ public:
 	 * Returns the text cursor
 	 */
 	CTextCursor *getTextCursor() const;
+
+	/**
+	 * Get the movement, if any, the cursor represents
+	 */
+	Movement getMovement() const;
 
 	/*--- CGameManager Methods ---*/
 
@@ -925,6 +950,16 @@ public:
 	void petShow();
 
 	/**
+	 * Increment the number of PET area (tab) locks
+	 */
+	void petIncAreaLocks();
+
+	/**
+	 * Decrement the number of PET area (tab) locks
+	 */
+	void petDecAreaLocks();
+
+	/**
 	 * Shows the text cursor in the current section, if applicable
 	 */
 	void petShowCursor();
@@ -941,8 +976,15 @@ public:
 	 */
 	CStarControl *getStarControl() const;
 
-	void starFn1(int v);
-	bool starFn2();
+	/**
+	 * Executes an action in the StarControl subsystem
+	 */
+	void starFn(StarControlAction action);
+
+	/**
+	 * Returns true if the starmap puzzle has been solved
+	 */
+	bool starIsSolved() const;
 
 	/*--- CTrueTalkManager Methods ---*/
 
@@ -987,7 +1029,10 @@ public:
 
 	/*--- CGameState Methods ---*/
 
-	void setState1C(bool flag);
+	/**
+	 * Sets whether a background sound maker is allowed for the rooms if available
+	 */
+	void stateSetSoundMakerAllowed(bool flag);
 
 	/**
 	 * Change to the next season
@@ -1009,8 +1054,15 @@ public:
 	 */
 	bool stateGetParrotMet() const;
 
-	void stateInc38();
-	int stateGet38() const;
+	/**
+	 * Moves the parrot to the next idle response
+	 */
+	void incParrotResponse();
+
+	/**
+	 * Gets the index to use for parrot idle responses
+	 */
+	int getParrotResponse() const;
 
 	/**
 	 * Gets the game state node changed counter

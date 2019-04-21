@@ -3,11 +3,11 @@ TARGET := scummvm
 APP_TITLE       := ScummVM
 APP_DESCRIPTION := Point-and-click adventure game engines
 APP_AUTHOR      := ScummVM Team
-APP_ICON        := backends/platform/3ds/app/icon.png
+APP_ICON        := $(srcdir)/backends/platform/3ds/app/icon.png
 
-APP_RSF         := backends/platform/3ds/app/scummvm.rsf
-APP_BANNER_IMAGE:= backends/platform/3ds/app/banner.png
-APP_BANNER_AUDIO:= backends/platform/3ds/app/banner.wav
+APP_RSF         := $(srcdir)/backends/platform/3ds/app/scummvm.rsf
+APP_BANNER_IMAGE:= $(srcdir)/backends/platform/3ds/app/banner.png
+APP_BANNER_AUDIO:= $(srcdir)/backends/platform/3ds/app/banner.wav
 
 ARCH     := -march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 CXXFLAGS += -std=gnu++11
@@ -23,7 +23,7 @@ clean_3ds:
 	$(RM) $(TARGET).cia
 
 $(TARGET).smdh: $(APP_ICON)
-	@bannertool makesmdh -s "$(APP_TITLE)" -l "$(APP_DESCRIPTION)" -p "$(APP_AUTHOR)" -i $(APP_ICON) -o $@
+	@smdhtool --create "$(APP_TITLE)" "$(APP_DESCRIPTION)" "$(APP_AUTHOR)" $(APP_ICON) $@
 	@echo built ... $(notdir $@)
 
 $(TARGET).3dsx: $(EXECUTABLE) $(TARGET).smdh
@@ -50,6 +50,10 @@ define shader-as
 	echo "extern const u8" `(echo $(FILE) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"[];" >> `(echo $(FILEPATH) | tr . _)`.h
 	echo "extern const u32" `(echo $(FILE) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`_size";" >> `(echo $(FILEPATH) | tr . _)`.h
 endef
+
+vpath %.v.pica $(srcdir)
+vpath %.g.pica $(srcdir)
+vpath %.shlist $(srcdir)
 
 %.shbin.o : %.v.pica %.g.pica
 	@echo $(notdir $^)

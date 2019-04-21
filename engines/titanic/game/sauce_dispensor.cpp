@@ -23,6 +23,7 @@
 #include "titanic/game/sauce_dispensor.h"
 #include "titanic/carry/chicken.h"
 #include "titanic/carry/glass.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -73,7 +74,7 @@ bool CSauceDispensor::Use(CUse *msg) {
 		CChicken *chicken = static_cast<CChicken *>(msg->_item);
 		_field104 = true;
 		if (_starlingsDead) {
-			playSound("b#15.wav", 50);
+			playSound(TRANSLATE("b#15.wav", "z#562.wav"), 50);
 
 			if (chicken->_condiment != "None") {
 				petDisplayMessage(1, FOODSTUFF_ALREADY_GARNISHED);
@@ -96,7 +97,7 @@ bool CSauceDispensor::Use(CUse *msg) {
 
 		CMovieEndMsg endMsg(0, 0);
 		endMsg.execute(this);
-		playSound("z#120.wav");
+		playSound(TRANSLATE("z#120.wav", "z#651.wav"));
 
 		petDisplayMessage(1, DISPENSOR_IS_EMPTY);
 	} else if (msg->_item->isEquals("BeerGlass")) {

@@ -577,7 +577,7 @@ public:
 	void getHorizBounds();
 	int getRegionIndex();
 	int checkRegion(const Common::Point &pt);
-	void animate(AnimateMode animMode, ...);
+	void animate(int animMode, ...);
 	void checkAngle(const SceneObject *obj);
 	void checkAngle(const Common::Point &pt);
 	void hide();

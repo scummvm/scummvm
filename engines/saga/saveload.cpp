@@ -191,6 +191,7 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 	// Thumbnail
 	// First draw scene without save dialog
 	int oldMode = _interface->getMode();
+	_render->clearFlag(RF_RENDERPAUSE); // Don't show paused game message in saved thumbnail
 	_interface->setMode(kPanelMain);
 	_render->drawScene();
 
@@ -381,6 +382,12 @@ void SagaEngine::load(const char *fileName) {
 	_music->setVolume(volume);
 
 	_interface->draw();
+
+	// Abort any scene entry protagonist animations and auto-cue speeches.
+	// Fixes bug #10009.
+	_actor->abortAllSpeeches();
+	_actor->_protagonist->_location = _actor->_protagonist->_finalTarget;
+	_actor->actorEndWalk(ID_PROTAG, true);
 }
 
 } // End of namespace Saga

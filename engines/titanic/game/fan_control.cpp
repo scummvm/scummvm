@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/fan_control.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -74,7 +75,7 @@ bool CFanControl::ActMsg(CActMsg *msg) {
 
 bool CFanControl::StatusChangeMsg(CStatusChangeMsg *msg) {
 	if (!_starlingsDying) {
-		playSound("z#42.wav");
+		playSound(TRANSLATE("z#42.wav", "z#743.wav"));
 		if (_enabled) {
 			switch (msg->_newStatus) {
 			case 1:
@@ -107,7 +108,7 @@ bool CFanControl::StatusChangeMsg(CStatusChangeMsg *msg) {
 			case 2:
 				// Fan Speed button
 				if (_fanOn) {
-					_state = (_state + 1) % 4;
+					_state = (_state + 1) % 3;
 					switch (_state) {
 					case 0:
 						playMovie(18, 24, 0);
@@ -121,7 +122,7 @@ bool CFanControl::StatusChangeMsg(CStatusChangeMsg *msg) {
 							// It's puret time
 							incTransitions();
 							_starlingsDying = true;
-							playMovie(12, 18, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+							playMovie(12, 18, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 						} else {
 							playMovie(12, 18, 0);
 						}

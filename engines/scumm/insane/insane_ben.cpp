@@ -776,6 +776,7 @@ void Insane::actor02Reaction(int32 buttons) {
 						_actor[0].act[2].state = 106;
 						break;
 					}
+				break;
 			default:
 				smlayer_setActorFacing(0, 2, 20, 180);
 				_actor[0].act[2].state = 16;
@@ -868,7 +869,7 @@ void Insane::actor02Reaction(int32 buttons) {
 					_actor[0].act[2].state = 77;
 					break;
 				}
-				// break skipped intentionally
+				// fall through
 			default:
 				smlayer_setActorFacing(0, 2, 20, 180);
 				_actor[0].act[2].state = 20;
@@ -954,7 +955,7 @@ void Insane::actor02Reaction(int32 buttons) {
 					_actor[0].act[2].state = 83;
 					break;
 				}
-				// break missed intentionally
+				// fall through
 			default:
 				smlayer_setActorFacing(0, 2, 20, 180);
 				_actor[0].act[2].state = 24;
@@ -1035,7 +1036,7 @@ void Insane::actor02Reaction(int32 buttons) {
 					_actor[0].act[2].state = 75;
 					break;
 				}
-				// break missed intentionaly
+				// fall through
 			default:
 				smlayer_setActorFacing(0, 2, 20, 180);
 				_actor[0].act[2].state = 28;

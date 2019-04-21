@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/credits.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -56,16 +57,18 @@ bool CCredits::SignalObject(CSignalObject *msg) {
 }
 
 bool CCredits::TimerMsg(CTimerMsg *msg) {
-	stopGlobalSound(true, -1);
+	stopAmbientSound(true, -1);
 	setVisible(true);
-	loadSound("a#16.wav");
-	loadSound("a#24.wav");
+	loadSound(TRANSLATE("a#16.wav", "a#11.wav"));
+	loadSound(TRANSLATE("a#24.wav", "a#19.wav"));
 
-	playCutscene(0, 18);
-	playGlobalSound("a#16.wav", -1, false, false, 0);
-	playCutscene(19, 642);
-	playSound("a#24.wav");
-	playCutscene(643, 750);
+	if (playCutscene(0, 18)) {
+		playAmbientSound(TRANSLATE("a#16.wav", "a#11.wav"), VOL_NORMAL, false, false, 0);
+		if (playCutscene(19, 642)) {
+			playSound(TRANSLATE("a#24.wav", "a#19.wav"));
+			playCutscene(643, 750);
+		}
+	}
 
 	COpeningCreditsMsg creditsMsg;
 	creditsMsg.execute("Service Elevator Entity");
@@ -74,7 +77,7 @@ bool CCredits::TimerMsg(CTimerMsg *msg) {
 	setVisible(false);
 	petShow();
 	enableMouse();
-	stopGlobalSound(true, -1);
+	stopAmbientSound(true, -1);
 	return true;
 }
 

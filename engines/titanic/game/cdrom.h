@@ -36,7 +36,7 @@ class CCDROM : public CGameObject {
 	bool MouseDragMoveMsg(CMouseDragMoveMsg *msg);
 	bool ActMsg(CActMsg *msg);
 private:
-	Point _tempPos;
+	Point _centroid;
 public:
 	CLASSDEF;
 	CCDROM();

@@ -21,6 +21,7 @@
  */
 
 #include "titanic/npcs/titania.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -43,7 +44,7 @@ CTitania::CTitania() : CCharacter() {
 	_ear2 = false;
 	_nose = false;
 	_mouth = false;
-	_showIntro = true;
+	_showSpeech = true;
 }
 
 void CTitania::save(SimpleFile *file, int indent) {
@@ -59,7 +60,7 @@ void CTitania::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_ear2, indent);
 	file->writeNumberLine(_nose, indent);
 	file->writeNumberLine(_mouth, indent);
-	file->writeNumberLine(_showIntro, indent);
+	file->writeNumberLine(_showSpeech, indent);
 
 	CCharacter::save(file, indent);
 }
@@ -77,7 +78,7 @@ void CTitania::load(SimpleFile *file) {
 	_ear2 = file->readNumber();
 	_nose = file->readNumber();
 	_mouth = file->readNumber();
-	_showIntro = file->readNumber();
+	_showSpeech = file->readNumber();
 
 	CCharacter::load(file);
 }
@@ -99,7 +100,7 @@ bool CTitania::AddHeadPieceMsg(CAddHeadPieceMsg *msg) {
 		_eye2 = true;
 	} else if (msg->_value == "Ear1") {
 		_ear1 = true;
-	} else if (msg->_value == "Ear2") {
+	} else if (msg->_value == "Ear 2") {
 		_ear2 = true;
 	} else if (msg->_value == "Mouth") {
 		_mouth = true;
@@ -129,7 +130,7 @@ bool CTitania::TakeHeadPieceMsg(CTakeHeadPieceMsg *msg) {
 		_eye2 = false;
 	} else if (msg->_value == "Ear1") {
 		_ear1 = false;
-	} else if (msg->_value == "Ear2") {
+	} else if (msg->_value == "Ear 2") {
 		_ear2 = false;
 	} else if (msg->_value == "Mouth") {
 		_mouth = false;
@@ -146,12 +147,13 @@ bool CTitania::ActMsg(CActMsg *msg) {
 	if (msg->_action == "SleepTitania") {
 		setVisible(true);
 		playCutscene(52, 104);
-		playSound("z#47.wav", 100);
+		playSound(TRANSLATE("z#47.wav", "z#578.wav"), 100);
 		changeView("Titania.Node 7.S", "");
 
+		// Re-enable control, and reset bomb's volume back to normal 60%
 		petShow();
 		enableMouse();
-		CSetFrameMsg frameMsg;
+		CSetFrameMsg frameMsg(60);
 		frameMsg.execute("Bomb");
 
 	} else if (msg->_action == "CheckHead") {
@@ -173,9 +175,11 @@ bool CTitania::ActMsg(CActMsg *msg) {
 			workingMsg3._value = _speechCentre ? "Working" : "Random";
 		}
 
-		if (_centralCore && _eye1 && _eye2 && _ear1 && _ear2 && _nose && _mouth
-				&& _speechCentre && _olfactoryCentre && _auditoryCentre) {
-			playSound("z#47.wav");
+		if (_centralCore && _eye1 && _eye2 && _ear1 && _ear2 && _nose
+				&& _mouth && _visionCentre && _speechCentre
+				&& _olfactoryCentre && _auditoryCentre) {
+			CProximity prox(Audio::Mixer::kSpeechSoundType);
+			playSound(TRANSLATE("z#47.wav", "z#578.wav"), prox);
 
 			CActMsg actMsg("Woken");
 			actMsg.execute("MouthSlot");
@@ -197,16 +201,19 @@ bool CTitania::ActMsg(CActMsg *msg) {
 }
 
 bool CTitania::EnterViewMsg(CEnterViewMsg *msg) {
-	if (_showIntro) {
-		_showIntro = false;
+	if (_showSpeech) {
+		_showSpeech = false;
 		disableMouse();
 		petHide();
 
+		// The Bomb uses the CSetFrameMsg as a hack for setting the volume.
+		// In case it's currently active, set it to a quieter 25% so that
+		// it won't obscure Titania's speech.
 		CSetFrameMsg frameMsg;
 		frameMsg._frameNumber = 25;
 		frameMsg.execute("Bomb");
-		playCutscene(0, 52);
 
+		playCutscene(0, 52);
 		setVisible(false);
 		CActMsg actMsg("TitaniaSpeech");
 		actMsg.execute("TitaniaSpeech");
@@ -216,8 +223,11 @@ bool CTitania::EnterViewMsg(CEnterViewMsg *msg) {
 }
 
 bool CTitania::TimerMsg(CTimerMsg *msg) {
-	changeView("Titania.Node 18.N", "");
+	// WORKAROUND: The original uses the disc change dialog as a pause
+	// to allow the parrot speech to finish. I've rewritten it to instead
+	// use the standard TrueTalkNotifySpeechEndedMsg message instead
 	startTalking("PerchedParrot", 80022);
+	lockMouse();
 
 	return true;
 }

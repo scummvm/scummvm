@@ -248,6 +248,8 @@ Common::SeekableSubReadStreamEndian *MacArchive::getResource(uint32 tag, uint16 
 bool RIFFArchive::openStream(Common::SeekableReadStream *stream, uint32 startOffset) {
 	close();
 
+	_startOffset = startOffset;
+
 	stream->seek(startOffset);
 
 	if (convertTagToUppercase(stream->readUint32BE()) != MKTAG('R', 'I', 'F', 'F'))
@@ -275,8 +277,8 @@ bool RIFFArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		if (tag == 0)
 			break;
 
-		uint16 startResPos = stream->pos();
-		stream->seek(offset + 12);
+		uint32 startResPos = stream->pos();
+		stream->seek(startOffset + offset + 12);
 
 		Common::String name = "";
 		byte nameSize = stream->readByte();
@@ -289,13 +291,14 @@ bool RIFFArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 
 		stream->seek(startResPos);
 
-		debug(3, "Found RIFF resource '%s' %d: %d @ 0x%08x", tag2str(tag), id, size, offset);
+		debug(3, "Found RIFF resource '%s' %d: %d @ 0x%08x (0x%08x)", tag2str(tag), id, size, offset, startOffset + offset);
 
 		ResourceMap &resMap = _types[tag];
 		Resource &res = resMap[id];
 		res.offset = offset;
 		res.size = size;
 		res.name = name;
+		res.tag = tag;
 	}
 
 	_stream = stream;
@@ -317,7 +320,7 @@ Common::SeekableSubReadStreamEndian *RIFFArchive::getResource(uint32 tag, uint16
 	uint32 offset = res.offset + 12;
 	uint32 size = res.size - 4;
 	// Skip the Pascal string
-	_stream->seek(offset);
+	_stream->seek(_startOffset + offset);
 	byte stringSize = _stream->readByte(); // 1 for this byte
 
 	offset += stringSize + 1;
@@ -329,7 +332,7 @@ Common::SeekableSubReadStreamEndian *RIFFArchive::getResource(uint32 tag, uint16
 		size--;
 	}
 
-	return new Common::SeekableSubReadStreamEndian(_stream, offset, offset + size, true, DisposeAfterUse::NO);
+	return new Common::SeekableSubReadStreamEndian(_stream, _startOffset + offset, _startOffset + offset + size, true, DisposeAfterUse::NO);
 }
 
 // RIFX Archive code
@@ -354,7 +357,9 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 
 	uint32 rifxType = subStream.readUint32();
 
-	if (rifxType != MKTAG('M', 'V', '9', '3') && rifxType != MKTAG('A', 'P', 'P', 'L'))
+	if (rifxType != MKTAG('M', 'V', '9', '3') && 
+		rifxType != MKTAG('A', 'P', 'P', 'L') && 
+		rifxType != MKTAG('M', 'C', '9', '5'))
 		return false;
 
 	if (subStream.readUint32() != MKTAG('i', 'm', 'a', 'p'))
@@ -400,6 +405,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		Resource res;
 		res.offset = offset;
 		res.size = size;
+		res.tag = tag;
 		resources.push_back(res);
 
 		// APPL is a special case; it has an embedded "normal" archive
@@ -411,10 +417,13 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 			keyRes = &resources[resources.size() - 1];
 		else if (tag == MKTAG('C', 'A', 'S', '*'))
 			casRes = &resources[resources.size() - 1];
-		//or the children of
+		// or the children of
 		else if (tag == MKTAG('S', 'T', 'X', 'T') ||
 				 tag == MKTAG('B', 'I', 'T', 'D') ||
-				 tag == MKTAG('D', 'I', 'B', ' '))
+				 tag == MKTAG('D', 'I', 'B', ' ') ||
+				 tag == MKTAG('R', 'T', 'E', '0') ||
+				 tag == MKTAG('R', 'T', 'E', '1') ||
+				 tag == MKTAG('R', 'T', 'E', '2'))
 			_types[tag][i] = res;
 	}
 
@@ -441,14 +450,13 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		debugCN(2, kDebugLoading, "CAS*: %d [", casSize);
 
 		for (uint i = 0; i < casSize; i++) {
-			uint32 index = casStream.readUint32();
+			uint32 index = casStream.readUint32BE();
+			debugCN(2, kDebugLoading, "%d ", index);
 
 			Resource &res = resources[index];
 			res.index = index;
 			res.castId = i + 1;
 			_types[castTag][res.castId] = res;
-
-			debugCN(2, kDebugLoading, "%d ", index);
 		}
 		debugC(2, kDebugLoading, "]");
 	}

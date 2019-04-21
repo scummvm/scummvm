@@ -74,7 +74,7 @@ InventoryMan::InventoryMan(DMEngine *vm) : _vm(vm) {
 	_panelContent = kDMPanelContentFoodWaterPoisoned;
 	for (uint16 i = 0; i < 8; ++i)
 		_chestSlots[i] = Thing(0);
-	_openChest = Thing::_none;
+	_openChest = _vm->_thingNone;
 	_objDescTextXpos = 0;
 	_objDescTextYpos = 0;
 
@@ -266,11 +266,11 @@ void InventoryMan::drawPanel() {
 		_panelContent = kDMPanelContentScroll;
 		break;
 	default:
-		thing = Thing::_none;
+		thing = _vm->_thingNone;
 		break;
 	}
 
-	if (thing == Thing::_none)
+	if (thing == _vm->_thingNone)
 		drawPanelFoodWaterPoisoned();
 	else
 		drawPanelObject(thing, false);
@@ -280,20 +280,20 @@ void InventoryMan::closeChest() {
 	DungeonMan &dunMan = *_vm->_dungeonMan;
 
 	bool processFirstChestSlot = true;
-	if (_openChest == Thing::_none)
+	if (_openChest == _vm->_thingNone)
 		return;
 	Container *container = (Container *)dunMan.getThingData(_openChest);
-	_openChest = Thing::_none;
-	container->getSlot() = Thing::_endOfList;
+	_openChest = _vm->_thingNone;
+	container->getSlot() = _vm->_thingEndOfList;
 	Thing prevThing;
 	for (int16 chestSlotIndex = 0; chestSlotIndex < 8; ++chestSlotIndex) {
 		Thing thing = _chestSlots[chestSlotIndex];
-		if (thing != Thing::_none) {
-			_chestSlots[chestSlotIndex] = Thing::_none; // CHANGE8_09_FIX
+		if (thing != _vm->_thingNone) {
+			_chestSlots[chestSlotIndex] = _vm->_thingNone; // CHANGE8_09_FIX
 
 			if (processFirstChestSlot) {
 				processFirstChestSlot = false;
-				*dunMan.getThingData(thing) = Thing::_endOfList.toUint16();
+				*dunMan.getThingData(thing) = _vm->_thingEndOfList.toUint16();
 				container->getSlot() = prevThing = thing;
 			} else {
 				dunMan.linkThingToList(thing, prevThing, kDMMapXNotOnASquare, 0);
@@ -368,7 +368,7 @@ void InventoryMan::openAndDrawChest(Thing thingToOpen, Container *chest, bool is
 	if (_openChest == thingToOpen)
 		return;
 
-	if (_openChest != Thing::_none)
+	if (_openChest != _vm->_thingNone)
 		closeChest(); // CHANGE8_09_FIX
 
 	_openChest = thingToOpen;
@@ -380,7 +380,7 @@ void InventoryMan::openAndDrawChest(Thing thingToOpen, Container *chest, bool is
 	int16 chestSlotIndex = 0;
 	Thing thing = chest->getSlot();
 	int16 thingCount = 0;
-	while (thing != Thing::_endOfList) {
+	while (thing != _vm->_thingEndOfList) {
 		if (++thingCount > 8)
 			break; // CHANGE8_08_FIX, make sure that no more than the first 8 objects in a chest are drawn
 
@@ -390,7 +390,7 @@ void InventoryMan::openAndDrawChest(Thing thingToOpen, Container *chest, bool is
 	}
 	while (chestSlotIndex < 8) {
 		objMan.drawIconInSlotBox(chestSlotIndex + kDMSlotBoxChestFirstSlot, kDMIconIndiceNone);
-		_chestSlots[chestSlotIndex++] = Thing::_none;
+		_chestSlots[chestSlotIndex++] = _vm->_thingNone;
 	}
 }
 
@@ -872,7 +872,7 @@ void InventoryMan::drawStopPressingEye() {
 	drawPanel();
 	_vm->_displayMan->drawViewport(k0_viewportNotDungeonView);
 	Thing leaderHandObject = _vm->_championMan->_leaderHandObject;
-	if (leaderHandObject != Thing::_none)
+	if (leaderHandObject != _vm->_thingNone)
 		_vm->_objectMan->drawLeaderObjectName(leaderHandObject);
 
 	_vm->_eventMan->showMouse();
@@ -940,7 +940,7 @@ void InventoryMan::clickOnMouth() {
 	} else if (handThingType == kDMThingTypePotion)
 		removeObjectFromLeaderHand = false;
 	else {
-		junkData->setNextThing(Thing::_none);
+		junkData->setNextThing(_vm->_thingNone);
 		removeObjectFromLeaderHand = true;
 	}
 	_vm->_eventMan->showMouse();

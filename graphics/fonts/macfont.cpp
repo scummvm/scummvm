@@ -328,10 +328,8 @@ bool MacFONTFont::loadFont(Common::SeekableReadStream &stream, MacFontFamily *fa
 	}
 
 	if (_data._fontType & kFontTypeImageHeightTable) {
-		warning("Skipping image height table");
-
 		for (uint16 i = 0; i < glyphCount; i++)
-			stream.readUint16BE();
+			_data._glyphs[i].height = stream.readUint16BE();
 	}
 
 	free(bitmapOffsets);

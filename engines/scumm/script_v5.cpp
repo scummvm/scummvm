@@ -420,6 +420,16 @@ void ScummEngine_v5::o5_actorFromPos() {
 void ScummEngine_v5::o5_actorOps() {
 	static const byte convertTable[20] =
 		{ 1, 0, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 20 };
+	// Fix for bug #2233 "MI2 FM-TOWNS: Elaine's mappiece directly flies to treehouse"
+	// There's extra code inserted in script 45 from room 45 that caused that behaviour,
+	// the code below just skips the extra script code.
+	if (_game.id == GID_MONKEY2 && _game.platform == Common::kPlatformFMTowns &&
+		vm.slot[_currentScript].number == 45 && _currentRoom == 45 &&
+		(_scriptPointer - _scriptOrgPointer == 0xA9)) {
+		_scriptPointer += 0xCF - 0xA1;
+		writeVar(32811, 0); // clear bit 43
+		return;
+	}
 	int act = getVarOrDirectByte(PARAM_1);
 	Actor *a = derefActor(act, "o5_actorOps");
 	int i, j;
@@ -1760,6 +1770,7 @@ void ScummEngine_v5::o5_roomOps() {
 					return;
 				case 18: // clear kMainVirtScreen layer 2 buffer
 					_textSurface.fillRect(Common::Rect(0, _virtscr[kMainVirtScreen].topline * _textSurfaceMultiplier, _textSurface.pitch, (_virtscr[kMainVirtScreen].topline + _virtscr[kMainVirtScreen].h) * _textSurfaceMultiplier), 0);
+					return;
 				case 19: // enable palette operations (palManipulate(), cyclePalette() etc.)
 					_townsPaletteFlags |= 1;
 					return;

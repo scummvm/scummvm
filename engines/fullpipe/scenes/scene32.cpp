@@ -91,6 +91,8 @@ void scene32_initScene(Scene *sc) {
 	g_fp->lift_init(sc, QU_SC32_ENTERLIFT, QU_SC32_EXITLIFT);
 
 	g_fp->initArcadeKeys("SC_32");
+
+	warning("cactus: %d, state: %d", g_fp->getObjectState(sO_Cactus), g_vars->scene32_cactus->_statics->_staticsId);
 }
 
 void scene32_setupMusic() {

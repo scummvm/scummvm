@@ -52,19 +52,18 @@ void CMagazine::load(SimpleFile *file) {
 }
 
 bool CMagazine::UseWithCharMsg(CUseWithCharMsg *msg) {
+	// WORKAROUND: Slight difference to original to ensure that when the
+	// magazine is used on an incorrect char, it's returned to inventory
 	CDeskbot *deskbot = dynamic_cast<CDeskbot *>(msg->_character);
-	if (deskbot) {
-		if (deskbot->_deskbotActive) {
-			setVisible(false);
-			setPosition(Point(1000, 1000));
-			CActMsg actMsg("2ndClassUpgrade");
-			actMsg.execute("Deskbot");
-		}
-
+	if (deskbot && deskbot->_deskbotActive) {
+		setVisible(false);
+		setPosition(Point(1000, 1000));
+		CActMsg actMsg("2ndClassUpgrade");
+		actMsg.execute("Deskbot");
 		return true;
-	} else {
-		return CCarry::UseWithCharMsg(msg);
 	}
+
+	return CCarry::UseWithCharMsg(msg);
 }
 
 bool CMagazine::MouseDoubleClickMsg(CMouseDoubleClickMsg *msg) {
@@ -77,17 +76,20 @@ bool CMagazine::VisibleMsg(CVisibleMsg *msg) {
 }
 
 bool CMagazine::UseWithOtherMsg(CUseWithOtherMsg *msg) {
+	// WORKAROUND: Slight difference to original to ensure that when the
+	// magazine is used on an incorrect object, it's returned to inventory
 	if (msg->_other->getName() == "SwitchOnDeskbot") {
-		// TODO: other _field108 if
-		if (false) {
+		CDeskbot *deskbot = dynamic_cast<CDeskbot *>(msg->_other);
+		if (deskbot && deskbot->_deskbotActive) {
 			setVisible(false);
 			setPosition(Point(1000, 1000));
 			CActMsg actMsg("2ndClassUpgrade");
 			actMsg.execute("Deskbot");
+			return true;
 		}
 	}
 
-	return true;
+	return CCarry::UseWithOtherMsg(msg);
 }
 
 } // End of namespace Titanic

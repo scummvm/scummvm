@@ -20,45 +20,48 @@
  *
  */
 
-#ifndef ADL_PICTURE_H
-#define ADL_PICTURE_H
+#ifndef ADL_GRAPHICS_H
+#define ADL_GRAPHICS_H
+
+#include "common/rect.h"
 
 namespace Common {
 class SeekableReadStream;
-struct Point;
 }
 
 namespace Adl {
 
 class Display;
 
+// Used in hires1
 class GraphicsMan {
 public:
+	GraphicsMan(Display &display) : _bounds(280, 160), _display(display) { }
 	virtual ~GraphicsMan() { }
-	virtual void drawPic(Common::SeekableReadStream &pic, const Common::Point &pos) = 0;
+
+	// Applesoft BASIC HLINE
+	void drawLine(const Common::Point &p1, const Common::Point &p2, byte color) const;
+	// Applesoft BASIC DRAW
+	void drawShape(Common::ReadStream &shape, Common::Point &pos, byte rotation = 0, byte scaling = 1, byte color = 0x7f) const;
+
+	virtual void drawPic(Common::SeekableReadStream &pic, const Common::Point &pos);
+	void clearScreen() const;
+	void putPixel(const Common::Point &p, byte color) const;
+	void setBounds(const Common::Rect &r) { _bounds = r; }
 
 protected:
-	GraphicsMan(Display &display) : _display(display) { }
-	void drawLine(const Common::Point &p1, const Common::Point &p2, byte color) const;
-
 	Display &_display;
-};
-
-// Used in hires1
-class Graphics_v1 : public GraphicsMan {
-public:
-	Graphics_v1(Display &display) : GraphicsMan(display) { }
-	void drawPic(Common::SeekableReadStream &pic, const Common::Point &pos);
-	void drawCorners(Common::ReadStream &corners, const Common::Point &pos, byte rotation = 0, byte scaling = 1, byte color = 0x7f) const;
+	Common::Rect _bounds;
 
 private:
-	void drawCornerPixel(Common::Point &p, byte color, byte bits, byte quadrant) const;
+	void drawShapePixel(Common::Point &p, byte color, byte bits, byte quadrant) const;
+	virtual byte getClearColor() const { return 0x00; }
 };
 
 // Used in hires0 and hires2-hires4
-class Graphics_v2 : public GraphicsMan {
+class GraphicsMan_v2 : public GraphicsMan {
 public:
-	Graphics_v2(Display &display) : GraphicsMan(display), _color(0) { }
+	GraphicsMan_v2(Display &display) : GraphicsMan(display), _color(0) { }
 	void drawPic(Common::SeekableReadStream &pic, const Common::Point &pos);
 
 protected:
@@ -66,22 +69,22 @@ protected:
 	void fillRow(Common::Point p, const byte pattern, const bool stopBit = false);
 
 private:
-	void clear();
 	void drawCorners(Common::SeekableReadStream &pic, bool yFirst);
 	void drawRelativeLines(Common::SeekableReadStream &pic);
 	void drawAbsoluteLines(Common::SeekableReadStream &pic);
 	virtual void fillRowLeft(Common::Point p, const byte pattern, const bool stopBit);
 	virtual void fillAt(Common::Point p, const byte pattern);
 	void fill(Common::SeekableReadStream &pic);
+	byte getClearColor() const { return 0xff; }
 
 	byte _color;
 	Common::Point _offset;
 };
 
 // Used in hires5, hires6 and gelfling (possibly others as well)
-class Graphics_v3 : public Graphics_v2 {
+class GraphicsMan_v3 : public GraphicsMan_v2 {
 public:
-	Graphics_v3(Display &display) : Graphics_v2(display) { }
+	GraphicsMan_v3(Display &display) : GraphicsMan_v2(display) { }
 
 private:
 	void fillRowLeft(Common::Point p, const byte pattern, const bool stopBit);

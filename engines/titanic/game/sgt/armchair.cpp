@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/sgt/armchair.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -55,8 +56,8 @@ bool CArmchair::TurnOn(CTurnOn *msg) {
 			_endFrame = 10;
 		}
 
-		playMovie(_startFrame, _endFrame, MOVIE_GAMESTATE);
-		playSound("b#0.wav");
+		playMovie(_startFrame, _endFrame, MOVIE_WAIT_FOR_FINISH);
+		playSound(TRANSLATE("b#0.wav", "b#85.wav"));
 		_statics->_armchair = "Open";
 		_isClosed = false;
 	}
@@ -70,8 +71,8 @@ bool CArmchair::TurnOff(CTurnOff *msg) {
 		_startFrame = 11;
 		_endFrame = 21;
 		_isClosed = true;
-		playMovie(11, 21, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
-		playSound("b#0.wav");
+		playMovie(11, 21, MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
+		playSound(TRANSLATE("b#0.wav", "b#85.wav"));
 	}
 
 	return true;

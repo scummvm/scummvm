@@ -359,7 +359,7 @@ void Scene3125::signal() {
 		break;
 	case 3126:
 		R2_GLOBALS.setFlag(79);
-	// No break on purpose
+		// fall through
 	case 3176:
 		R2_GLOBALS._sceneManager.changeScene(3250);
 		break;
@@ -3027,7 +3027,7 @@ void Scene3500::Action1::turnShuttle(bool arg1) {
 	case 4:
 		scene->_shuttle._frameChange = _direction;
 		scene->_shuttle.setFrame(scene->_shuttle.changeFrame());
-	// No break on purpose
+		// fall through
 	case 3:
 		_actionIndex = 10;
 		setDelay(0);
@@ -3050,7 +3050,7 @@ void Scene3500::Action1::turnShuttle(bool arg1) {
 		scene->_shuttle._frameChange = _direction;
 		scene->_shuttle.setFrame(scene->_shuttle.changeFrame());
 		setDelay(1);
-	// No break on purpose
+		// fall through
 	case 8:
 		scene->_tunnelHorzCircle.setStrip(2);
 		_actionIndex = 1;
@@ -3079,7 +3079,7 @@ void Scene3500::Action1::signal() {
 			setDelay(1);
 			return;
 		}
-	// No break on purpose
+		// fall through
 	case 3:
 		scene->_shuttle._frameChange = _direction;
 		scene->_shuttle.setFrame(scene->_shuttle.changeFrame());
@@ -3158,7 +3158,7 @@ void Scene3500::Action1::signal() {
 			break;
 		}
 		}
-	// No break on purpose
+		// fall through
 	case 2: {
 		scene->_tunnelVertCircle.setPosition(Common::Point(160, 73));
 		scene->_tunnelVertCircle._moveDiff.x = 160 - scene->_mazeChangeAmount;
@@ -4345,7 +4345,7 @@ void Scene3600::Action2::signal() {
 		R2_GLOBALS._player.enableControl();
 		_actionIndex = 3619;
 		scene->_protector._state = 0;
-	// No break on purpose
+		// fall through
 	case 3619: {
 		++_actionIndex;
 		scene->_protector.setup(3127, 2, 1);

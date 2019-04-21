@@ -34,6 +34,9 @@ class String;
 
 namespace Adl {
 
+// Used for disk image detection
+int32 computeMD5(const Common::FSNode &node, Common::String &md5, uint32 md5Bytes);
+
 class DataBlock {
 public:
 	virtual ~DataBlock() { }
@@ -87,6 +90,9 @@ public:
 	const DataBlockPtr getDataBlock(uint track, uint sector, uint offset = 0, uint size = 0) const;
 	Common::SeekableReadStream *createReadStream(uint track, uint sector, uint offset = 0, uint size = 0, uint sectorsUsed = 0) const;
 	void setSectorLimit(uint sectorLimit) { _sectorLimit = sectorLimit; } // Maximum number of sectors to read per track before stepping
+	uint getBytesPerSector() const { return _bytesPerSector; }
+	uint getSectorsPerTrack() const { return _sectorsPerTrack; }
+	uint getTracks() const { return _tracks; }
 
 protected:
 	class DataBlock : public Adl::DataBlock {
@@ -122,12 +128,12 @@ public:
 };
 
 // Data in files contained in Apple DOS 3.3 disk image
-class Files_DOS33 : public Files {
+class Files_AppleDOS : public Files {
 public:
-	Files_DOS33();
-	~Files_DOS33();
+	Files_AppleDOS();
+	~Files_AppleDOS();
 
-	bool open(const Common::String &filename);
+	bool open(const Common::String &filename, uint trackVTOC = 17);
 	const DataBlockPtr getDataBlock(const Common::String &filename, uint offset = 0) const;
 	Common::SeekableReadStream *createReadStream(const Common::String &filename, uint offset = 0) const;
 
@@ -154,7 +160,7 @@ private:
 		Common::Array<TrackSector> sectors;
 	};
 
-	void readVTOC();
+	void readVTOC(uint trackVTOC);
 	void readSectorList(TrackSector start, Common::Array<TrackSector> &list);
 	Common::SeekableReadStream *createReadStreamText(const TOCEntry &entry) const;
 	Common::SeekableReadStream *createReadStreamBinary(const TOCEntry &entry) const;

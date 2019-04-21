@@ -36,7 +36,6 @@ Command::Command() {
 	_valid = false;
 
 	_flags = 0;
-	_string = 0;
 	_callable = 0;
 	_object = 0;
 	_counterValue = 0;
@@ -44,27 +43,20 @@ Command::Command() {
 	_zeta1 = 0;
 	_zeta2 = 0;
 	_characterId = 0;
-	_string2 = 0;
 	_musicCommand = 0;
 	_musicParm = 0;
 }
 
-Command::~Command() {
-	free(_string);
-	free(_string2);
-}
-
-
 Animation::Animation() {
 	gfxobj = NULL;
-	_scriptName = 0;
 	_frame = 0;
 	_z = 0;
 }
 
 Animation::~Animation() {
-	free(_scriptName);
-	gfxobj->release();
+	if (gfxobj) {
+		gfxobj->release();
+	}
 }
 
 void Animation::getFrameRect(Common::Rect &r) const {
@@ -305,14 +297,7 @@ Instruction::Instruction() {
 	_endif = 0;
 
 	// BRA specific
-	_text = 0;
-	_text2 = 0;
 	_y = 0;
-}
-
-Instruction::~Instruction() {
-	free(_text);
-	free(_text2);
 }
 
 int16 ScriptVar::getValue() {
@@ -413,8 +398,9 @@ void Table::addData(const char* s) {
 	if (!(_used < _size))
 		error("Table overflow");
 
-	_data[_used++] = strdup(s);
-
+	char *data = (char *)malloc(strlen(s) + 1);
+	strcpy(data, s);
+	_data[_used++] = data;
 }
 
 uint16 Table::lookup(const char* s) {

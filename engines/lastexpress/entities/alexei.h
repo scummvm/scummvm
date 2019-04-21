@@ -47,11 +47,11 @@ public:
 	DECLARE_FUNCTION_1(playSound, const char *filename)
 
 	/**
-	 * Updates parameter 2 using ticks value
+	 * Updates parameter 2 using time value
 	 *
-	 * @param ticks The number of ticks to add
+	 * @param time The time to add
 	 */
-	DECLARE_FUNCTION_1(updateFromTicks, uint32 ticks)
+	DECLARE_FUNCTION_1(updateFromTime, uint32 time)
 
 	/**
 	 * Draws the entity

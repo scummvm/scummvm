@@ -294,8 +294,8 @@ void GameSys::drawTextToSurface(Graphics::Surface *surface, int x, int y, byte r
 			if (c < 32 || c >= 127)
 				c = (byte)'_';
 			c -= 32;
-			int w = _dejaVuSans9ptCharDescriptors[c]._width;
-			const byte *data = _dejaVuSans9ptCharBitmaps + _dejaVuSans9ptCharDescriptors[c]._offset;
+			int w = _dejaVuSans9ptWidth[c];
+			const byte *data = _dejaVuSans9ptCharBitmaps + _dejaVuSans9ptOffsets[c];
 			for (int xc = 0; xc < w; ++xc) {
 				for (int yc = 15; yc >= 0; --yc) {
 					byte *dst = (byte *)surface->getBasePtr(x + xc, y + yc);
@@ -319,7 +319,7 @@ int GameSys::getTextHeight(const char *text) {
 		if (c < 32 || c >= 127)
 			c = (byte)'_';
 		c -= 32;
-		height = MAX(height, _dejaVuSans9ptCharDescriptors[c]._width);
+		height = MAX(height, _dejaVuSans9ptWidth[c]);
 	}
 	return height;
 }
@@ -331,7 +331,7 @@ int GameSys::getTextWidth(const char *text) {
 		if (c < 32 || c >= 127)
 			c = (byte)'_';
 		c -= 32;
-		width += _dejaVuSans9ptCharDescriptors[c]._width + 1;
+		width += _dejaVuSans9ptWidth[c] + 1;
 	}
 	return width;
 }
@@ -555,6 +555,7 @@ void GameSys::seqRemoveGfx(int sequenceId, int id) {
 bool GameSys::updateSequenceDuration(int sequenceId, int id, int *outDuration) {
 	bool found = false;
 	int duration = 0x7FFFFFFF;
+	*outDuration = 0;
 	for (int i = 0; i < _gfxItemsCount; ++i) {
 		GfxItem *gfxItem = &_gfxItems[i];
 		if (gfxItem->_sequenceId == sequenceId && gfxItem->_id == id) {
@@ -577,8 +578,10 @@ bool GameSys::updateSequenceDuration(int sequenceId, int id, int *outDuration) {
 			}
 		}
 	}
+
 	if (found)
 		*outDuration = duration;
+
 	return found;
 }
 

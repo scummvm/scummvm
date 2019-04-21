@@ -40,8 +40,6 @@
 
 namespace LastExpress {
 
-#define DISABLE_COMPRESSION 1
-
 // Names of savegames
 static const struct {
 	const char *saveFile;
@@ -509,7 +507,7 @@ void SaveLoad::loadLastGame() {
 	_gameTicksLastSavegame = getState()->timeTicks;
 
 	if (header.keepIndex) {
-		getSoundQueue()->clearQueue();
+		getSoundQueue()->destroyAllSound();
 
 		readEntry(&type, &entity, &val, false);
 	}
@@ -730,7 +728,7 @@ void SaveLoad::writeEntry(SavegameType type, EntityIndex entity, uint32 value) {
 	writeValue(ser, "inventory", WRAP_SYNC_FUNCTION(getInventory(), Inventory, saveLoadWithSerializer), 7 * 32);
 	writeValue(ser, "objects", WRAP_SYNC_FUNCTION(getObjects(), Objects, saveLoadWithSerializer), 5 * 128);
 	writeValue(ser, "entities", WRAP_SYNC_FUNCTION(getEntities(), Entities, saveLoadWithSerializer), 1262 * 40);
-	writeValue(ser, "sound", WRAP_SYNC_FUNCTION(getSoundQueue(), SoundQueue, saveLoadWithSerializer), 3 * 4 + getSoundQueue()->count() * 64);
+	writeValue(ser, "sound", WRAP_SYNC_FUNCTION(getSoundQueue(), SoundQueue, saveLoadWithSerializer), 3 * 4 + getSoundQueue()->count() * 68);
 	writeValue(ser, "savepoints", WRAP_SYNC_FUNCTION(getSavePoints(), SavePoints, saveLoadWithSerializer), 128 * 16 + 4 + getSavePoints()->count() * 16);
 	_savegame->process();
 
@@ -802,7 +800,7 @@ void SaveLoad::readEntry(SavegameType *type, EntityIndex *entity, uint32 *val, b
 	// Skip padding
 	uint32 offset = (uint32)_savegame->pos() - originalPosition;
 	if (offset & 0xF) {
-		_savegame->seek((~offset & 0xF) + 1, SEEK_SET);
+		_savegame->seek((~offset & 0xF) + 1, SEEK_CUR);
 	}
 }
 

@@ -3,47 +3,61 @@ MODULE := engines/xeen
 MODULE_OBJS := \
 	worldofxeen/clouds_cutscenes.o \
 	worldofxeen/darkside_cutscenes.o \
+	worldofxeen/worldofxeen_cutscenes.o \
 	worldofxeen/worldofxeen_menu.o \
 	worldofxeen/worldofxeen.o \
-	worldofxeen/worldofxeen_resources.o \
+	swordsofxeen/swordsofxeen.o \
+	swordsofxeen/swordsofxeen_menu.o \
+	dialogs/credits_screen.o \
+	dialogs/dialogs.o \
+	dialogs/dialogs_awards.o \
+	dialogs/dialogs_char_info.o \
+	dialogs/dialogs_control_panel.o \
+	dialogs/dialogs_copy_protection.o \
+	dialogs/dialogs_create_char.o \
+	dialogs/dialogs_difficulty.o \
+	dialogs/dialogs_dismiss.o \
+	dialogs/dialogs_exchange.o \
+	dialogs/dialogs_info.o \
+	dialogs/dialogs_input.o \
+	dialogs/dialogs_items.o \
+	dialogs/dialogs_map.o \
+	dialogs/dialogs_message.o \
+	dialogs/dialogs_party.o \
+	dialogs/dialogs_query.o \
+	dialogs/dialogs_quests.o \
+	dialogs/dialogs_quick_fight.o \
+	dialogs/dialogs_quick_ref.o \
+	dialogs/dialogs_spells.o \
+	dialogs/dialogs_whowill.o \
+	dialogs/please_wait.o \
 	character.o \
 	combat.o \
 	cutscenes.o \
 	debugger.o \
 	detection.o \
-	dialogs.o \
-	dialogs_automap.o \
-	dialogs_char_info.o \
-	dialogs_control_panel.o \
-	dialogs_dismiss.o \
-	dialogs_error.o \
-	dialogs_exchange.o \
-	dialogs_fight_options.o \
-	dialogs_info.o \
-	dialogs_input.o \
-	dialogs_items.o \
-	dialogs_party.o \
-	dialogs_query.o \
-	dialogs_quests.o \
-	dialogs_quick_ref.o \
-	dialogs_spells.o \
-	dialogs_whowill.o \
 	events.o \
 	files.o \
 	font.o \
 	interface.o \
-	interface_map.o \
+	interface_minimap.o \
+	interface_scene.o \
+	item.o \
+	locations.o \
 	map.o \
-	music.o \
 	party.o \
+	patcher.o \
 	resources.o \
 	saves.o \
 	screen.o \
 	scripts.o \
 	sound.o \
+	sound_driver.o \
+	sound_driver_adlib.o \
 	spells.o \
 	sprites.o \
-	town.o \
+	subtitles.o \
+	window.o \
 	xeen.o \
 	xsurface.o
 

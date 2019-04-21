@@ -55,10 +55,9 @@ public:
 	const CString &getString() const { return _key; }
 
 	/**
-	 * Checks whether a file for the given key exists,
-	 * and returns it's filename if it does
+	 * Extracts a filename from the resource key
 	 */
-	CString exists() const;
+	CString getFilename() const;
 
 	/**
 	 * Scans for a file with a matching name

@@ -55,15 +55,7 @@ namespace Tinsel {
  * only saves/loads those which are valid for the version of the savegame
  * which is being loaded/saved currently.
  */
-#define CURRENT_VER 2
-
-/**
- * An auxillary macro, used to specify savegame versions. We use this instead
- * of just writing the raw version, because this way they stand out more to
- * the reading eye, making it a bit easier to navigate through the code.
- */
-#define VER(x) x
-
+#define CURRENT_VER 3
 
 //----------------- GLOBAL GLOBAL DATA --------------------
 
@@ -94,6 +86,7 @@ struct SaveGameHeader {
 	uint32 ver;
 	char desc[SG_DESC_LEN];
 	TimeDate dateTime;
+	uint32 playTime;	
 	bool scnFlag;
 	byte language;
 	uint16 numInterpreters;			// Savegame version 2 or later only
@@ -102,7 +95,7 @@ struct SaveGameHeader {
 enum {
 	DW1_SAVEGAME_ID = 0x44575399,	// = 'DWSc' = "DiscWorld 1 ScummVM"
 	DW2_SAVEGAME_ID = 0x44573253,	// = 'DW2S' = "DiscWorld 2 ScummVM"
-	SAVEGAME_HEADER_SIZE = 4 + 4 + 4 + SG_DESC_LEN + 7 + 1 + 1 + 2
+	SAVEGAME_HEADER_SIZE = 4 + 4 + 4 + SG_DESC_LEN + 7 + 4 + 1 + 1 + 2
 };
 
 #define SAVEGAME_ID (TinselV2 ? (uint32)DW2_SAVEGAME_ID : (uint32)DW1_SAVEGAME_ID)
@@ -160,6 +153,11 @@ static bool syncSaveGameHeader(Common::Serializer &s, SaveGameHeader &hdr) {
 
 	syncTime(s, hdr.dateTime);
 
+	if (hdr.ver >= 3)
+		s.syncAsUint32LE(hdr.playTime);
+	else
+		hdr.playTime = 0;
+
 	int tmp = hdr.size - s.bytesSynced();
 
 	// NOTE: We can't use SAVEGAME_ID here when attempting to remove a saved game from the launcher,
@@ -192,7 +190,10 @@ static bool syncSaveGameHeader(Common::Serializer &s, SaveGameHeader &hdr) {
 		hdr.numInterpreters = NUM_INTERPRET;
 		s.syncAsUint16LE(hdr.numInterpreters);
 	} else {
-		hdr.numInterpreters = (TinselV2 ? 70 : 64) - 20;
+		if(_vm) // See comment above about bug #3387551
+			hdr.numInterpreters = (TinselV2 ? 70 : 64) - 20;
+		else
+			hdr.numInterpreters = 50; // This value doesn't matter since the saved game is being deleted.
 	}
 
 	// Skip over any extra bytes
@@ -503,6 +504,11 @@ static bool DoRestore() {
 		return false;
 	}
 
+	if (hdr.ver >= 3)
+		_vm->setTotalPlayTime(hdr.playTime);
+	else
+		_vm->setTotalPlayTime(0);
+
 	// Load in the data. For older savegame versions, we potentially need to load the data twice, once
 	// for pre 1.5 savegames, and if that fails, a second time for 1.5 savegames
 	int numInterpreters = hdr.numInterpreters;
@@ -597,6 +603,7 @@ static void DoSave() {
 	memset(hdr.desc, 0, SG_DESC_LEN);
 	Common::strlcpy(hdr.desc, g_SaveSceneDesc, SG_DESC_LEN);
 	g_system->getTimeAndDate(hdr.dateTime);
+	hdr.playTime = _vm->getTotalPlayTime();
 	hdr.scnFlag = _vm->getFeatures() & GF_SCNFILES;
 	hdr.language = _vm->_config->_language;
 

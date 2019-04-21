@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/bridge_view.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -31,13 +32,13 @@ END_MESSAGE_MAP()
 
 void CBridgeView::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_mode, indent);
+	file->writeNumberLine(_action, indent);
 	CBackground::save(file, indent);
 }
 
 void CBridgeView::load(SimpleFile *file) {
 	file->readNumber();
-	_mode = file->readNumber();
+	_action = (BridgeAction)file->readNumber();
 	CBackground::load(file);
 }
 
@@ -47,14 +48,15 @@ bool CBridgeView::ActMsg(CActMsg *msg) {
 	volumeMsg._secondsTransition = 1;
 
 	if (msg->_action == "End") {
-		_mode = 4;
+		_action = BA_ENDING2;
 		petLockInput();
 		petHide();
 		setVisible(true);
 		playMovie(MOVIE_NOTIFY_OBJECT);
 	} else if (msg->_action == "Go") {
-		_mode = 1;
+		_action = BA_GO;
 		setVisible(true);
+		hideMouse();
 		volumeMsg._volume = 100;
 		volumeMsg.execute("EngineSounds");
 		onMsg.execute("EngineSounds");
@@ -65,16 +67,19 @@ bool CBridgeView::ActMsg(CActMsg *msg) {
 		onMsg.execute("EngineSounds");
 
 		if (msg->_action == "Cruise") {
-			_mode = 2;
+			_action = BA_CRUISE;
 			setVisible(true);
+			hideMouse();
 			playMovie(MOVIE_NOTIFY_OBJECT);
-		} else if (msg->_action == "GoENd") {
-			_mode = 3;
+		} else if (msg->_action == "GoEnd") {
+			_action = BA_ENDING1;
 			setVisible(true);
+			hideMouse();
+
 			CChangeMusicMsg musicMsg;
-			musicMsg._flags = 1;
+			musicMsg._action = MUSIC_STOP;
 			musicMsg.execute("BridgeAutoMusicPlayer");
-			playSound("a#42.wav");
+			playSound(TRANSLATE("a#42.wav", "a#35.wav"));
 			playMovie(MOVIE_NOTIFY_OBJECT);
 		}
 	}
@@ -86,21 +91,22 @@ bool CBridgeView::MovieEndMsg(CMovieEndMsg *msg) {
 	CTurnOff offMsg;
 	offMsg.execute("EngineSounds");
 
-	switch (_mode) {
-	case 0:
-	case 1:
+	switch (_action) {
+	case BA_GO:
+	case BA_CRUISE:
 		setVisible(false);
+		showMouse();
 		decTransitions();
 		break;
 
-	case 2: {
+	case BA_ENDING1: {
 		setVisible(false);
 		CActMsg actMsg("End");
 		actMsg.execute("HomeSequence");
 		break;
 	}
 
-	case 3:
+	case BA_ENDING2:
 		setVisible(false);
 		changeView("TheEnd.Node 3.N");
 		break;

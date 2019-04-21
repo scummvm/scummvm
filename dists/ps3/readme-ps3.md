@@ -1,8 +1,8 @@
 Prerequisites
 =============
 - A homebrew enabled PlayStation 3 console. As of now that mostly means having a custom firmware installed. Obtaining and installing such a software is out of the scope of this document. Sorry, but you're on your own for that one.
-- At least one ScummVM supported game. The list of compatible games can be seen here: http://www.scummvm.org/compatibility/
-The page http://wiki.scummvm.org/index.php/Where_to_get_the_games references some places where those games can be bought. Demonstration versions for most of the supported games are downloadable on http://scummvm.org/demos/
+- At least one ScummVM supported game. The list of compatible games can be seen here: https://www.scummvm.org/compatibility/
+The page https://wiki.scummvm.org/index.php/Where_to_get_the_games references some places where those games can be bought. Demonstration versions for most of the supported games are downloadable on https://scummvm.org/demos/
 - An USB drive.
 
 Installing
@@ -12,7 +12,7 @@ After having plugged the USB drive to you PS3, the installation package should a
 
 Configuring and playing games
 =============================
-The user manual describes how to add games to ScummVM and launch them : http://wiki.scummvm.org/index.php/User_Manual
+The user manual describes how to add games to ScummVM and launch them : https://wiki.scummvm.org/index.php/User_Manual
 
 PlayStation 3 Specifics
 =======================
@@ -21,14 +21,21 @@ Savegames are wrote in the /hdd0/game/SCUM12000/saves folder.
 
 Joypad button mapping
 =====================
-- Left stick => Mouse
-- Cross      => Left mouse button
-- Circle     => Right mouse button
-- Triangle   => Game menu (F5)
-- Square     => Escape
-- Start      => ScummVM's in global game menu
-- Select     => Toggle virtual keyboard
-- L1         => AGI predictive input dialog
+- Left stick      => Mouse
+- R1 + Left stick => Slow Mouse
+- Cross           => Left mouse button
+- Circle          => Right mouse button
+- DPad            => Cursor Keys (useful for character motion)
+- R1 + DPad       => Diagonal Cursor Keys
+- L1              => Game menu (F5)
+- R1              => Shift (used to enable Mass Add in menu)
+- Square          => Period '.' (used to skip dialog lines)
+- R1 + Square     => Space ' '
+- Triangle        => Escape (used to skip cutscenes)
+- R1 + Triangle   => Return
+- Start           => ScummVM's global in-game menu
+- Select          => Toggle virtual keyboard
+- R1 + Select     => AGI predictive input dialog
 
 Disclaimer
 ==========

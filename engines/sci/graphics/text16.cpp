@@ -200,7 +200,7 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 	if (!_font)
 		return 0;
 
-	while (1) {
+	for (;;) {
 		curChar = (*(const byte *)textPtr);
 		if (_font->isDoubleByte(curChar)) {
 			curChar |= (*(const byte *)(textPtr + 1)) << 8;
@@ -225,7 +225,7 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 			if ((*(const byte *)(textPtr + 1)) == 0xA) {
 				curCharCount++; textPtr++;
 			}
-			// it's meant to pass through here
+			// fall through
 		case 0xA:
 		case 0x9781: // this one is used by SQ4/japanese as line break as well (was added for SCI1/PC98)
 			curCharCount++; textPtr++;
@@ -233,7 +233,7 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 				// skip another byte in case char is double-byte (PC-98)
 				curCharCount++; textPtr++;
 			}
-			// and it's also meant to pass through here
+			// fall through
 		case 0:
 			SetFont(previousFontId);
 			_ports->penColor(previousPenColor);
@@ -300,7 +300,7 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 				punctuationTable = text16_shiftJIS_punctuation_SCI01;
 			}
 
-			while (1) {
+			for (;;) {
 				// Look up if character shouldn't be the first on a new line
 				nonBreakingPos = 0;
 				while (punctuationTable[nonBreakingPos]) {
@@ -367,6 +367,8 @@ void GfxText16::Width(const char *text, int16 from, int16 len, GuiResourceId org
 					len -= CodeProcessing(text, orgFontId, 0, false);
 					break;
 				}
+				// fall through
+				// FIXME: fall through intended?
 			default:
 				textHeight = MAX<int16> (textHeight, _ports->_curPort->fontHeight);
 				textWidth += _font->getCharWidth(curChar);
@@ -383,15 +385,15 @@ void GfxText16::Width(const char *text, int16 from, int16 len, GuiResourceId org
 	return;
 }
 
-void GfxText16::StringWidth(const char *str, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight) {
-	Width(str, 0, (int16)strlen(str), orgFontId, textWidth, textHeight, true);
+void GfxText16::StringWidth(const Common::String &str, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight) {
+	Width(str.c_str(), 0, str.size(), orgFontId, textWidth, textHeight, true);
 }
 
-void GfxText16::ShowString(const char *str, GuiResourceId orgFontId, int16 orgPenColor) {
-	Show(str, 0, (int16)strlen(str), orgFontId, orgPenColor);
+void GfxText16::ShowString(const Common::String &str, GuiResourceId orgFontId, int16 orgPenColor) {
+	Show(str.c_str(), 0, str.size(), orgFontId, orgPenColor);
 }
-void GfxText16::DrawString(const char *str, GuiResourceId orgFontId, int16 orgPenColor) {
-	Draw(str, 0, (int16)strlen(str), orgFontId, orgPenColor);
+void GfxText16::DrawString(const Common::String &str, GuiResourceId orgFontId, int16 orgPenColor) {
+	Draw(str.c_str(), 0, str.size(), orgFontId, orgPenColor);
 }
 
 int16 GfxText16::Size(Common::Rect &rect, const char *text, uint16 languageSplitter, GuiResourceId fontId, int16 maxWidth) {
@@ -471,6 +473,8 @@ void GfxText16::Draw(const char *text, int16 from, int16 len, GuiResourceId orgF
 				len -= CodeProcessing(text, orgFontId, orgPenColor, true);
 				break;
 			}
+			// fall through
+			// FIXME: fall through intended?
 		default:
 			charWidth = _font->getCharWidth(curChar);
 			// clear char
@@ -580,20 +584,21 @@ void GfxText16::Box(const char *text, uint16 languageSplitter, bool show, const 
 	}
 }
 
-void GfxText16::DrawString(const char *text) {
+void GfxText16::DrawString(const Common::String &text) {
 	GuiResourceId previousFontId = GetFontId();
 	int16 previousPenColor = _ports->_curPort->penClr;
 
-	Draw(text, 0, strlen(text), previousFontId, previousPenColor);
+	Draw(text.c_str(), 0, text.size(), previousFontId, previousPenColor);
 	SetFont(previousFontId);
 	_ports->penColor(previousPenColor);
 }
 
 // we need to have a separate status drawing code
 //  In KQ4 the IV char is actually 0xA, which would otherwise get considered as linebreak and not printed
-void GfxText16::DrawStatus(const char *text) {
+void GfxText16::DrawStatus(const Common::String &str) {
 	uint16 curChar, charWidth;
-	uint16 textLen = strlen(text);
+	const byte *text = (const byte *)str.c_str();
+	uint16 textLen = str.size();
 	Common::Rect rect;
 
 	GetFont();
@@ -603,7 +608,7 @@ void GfxText16::DrawStatus(const char *text) {
 	rect.top = _ports->_curPort->curTop;
 	rect.bottom = rect.top + _ports->_curPort->fontHeight;
 	while (textLen--) {
-		curChar = (*(const byte *)text++);
+		curChar = *text++;
 		switch (curChar) {
 		case 0:
 			break;

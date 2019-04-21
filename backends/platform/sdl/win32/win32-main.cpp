@@ -33,7 +33,6 @@
 // "ARRAYSIZE" for example.
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#undef ARRAYSIZE // winnt.h defines ARRAYSIZE, but we want our own one...
 
 #include "backends/platform/sdl/win32/win32.h"
 #include "backends/plugins/sdl/sdl-provider.h"
@@ -72,7 +71,7 @@ int main(int argc, char *argv[]) {
 	int res = scummvm_main(argc, argv);
 
 	// Free OSystem
-	delete (OSystem_Win32 *)g_system;
+	g_system->destroy();
 
 	return res;
 }

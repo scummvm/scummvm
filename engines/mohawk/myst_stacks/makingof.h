@@ -33,12 +33,12 @@ struct MystScriptEntry;
 
 namespace MystStacks {
 
-#define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
+#define DECLARE_OPCODE(x) void x(uint16 var, const ArgumentsArray &args)
 
 class MakingOf : public MystScriptParser {
 public:
-	MakingOf(MohawkEngine_Myst *vm);
-	~MakingOf();
+	explicit MakingOf(MohawkEngine_Myst *vm);
+	~MakingOf() override;
 
 	void disablePersistentScripts() override;
 	void runPersistentScripts() override;

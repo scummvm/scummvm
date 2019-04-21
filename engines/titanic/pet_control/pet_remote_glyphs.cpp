@@ -21,9 +21,11 @@
  */
 
 #include "titanic/pet_control/pet_remote_glyphs.h"
-#include "titanic/pet_control/pet_remote.h"
-#include "titanic/pet_control/pet_control.h"
+#include "titanic/game_manager.h"
 #include "titanic/messages/pet_messages.h"
+#include "titanic/pet_control/pet_control.h"
+#include "titanic/pet_control/pet_remote.h"
+#include "titanic/star_control/star_control.h"
 #include "titanic/support/strings.h"
 #include "titanic/titanic.h"
 
@@ -544,11 +546,16 @@ bool CNavigationControllerGlyph::MouseButtonUpMsg(const Point &pt) {
 	if (!_gfxElement->MouseButtonUpMsg(pt))
 		return false;
 
+	CPetControl *pet = getPetControl();
+	CStarControl *starControl = pet->getStarControl();
 	_flag = !_flag;
-	CTreeItem *target = getPetControl()->_remoteTarget;
-	if (target) {
-		CPETHelmetOnOffMsg msg;
-		msg.execute(target);
+
+	if (!starControl->isSkipped()) {
+		CTreeItem *target = pet->_remoteTarget;
+		if (target) {
+			CPETHelmetOnOffMsg msg;
+			msg.execute(target);
+		}
 	}
 
 	return true;
@@ -616,6 +623,47 @@ CGotoMusicRoomGlyph::CGotoMusicRoomGlyph() : CRemoteGotoGlyph("3PetMusicRoom",
 
 CGotoRestaurantGlyph::CGotoRestaurantGlyph() : CRemoteGotoGlyph("3Pet1stClassRest",
 		g_vm->_strings[GO_TO_1ST_CLASS_RESTAURANT], 1) {
+}
+
+/*------------------------------------------------------------------------*/
+
+bool CSkipNavigationGlyph::setup(CPetControl *petControl, CPetGlyphs *owner) {
+	CPetRemoteGlyph::setup(petControl, owner);
+	setDefaults("3PetTV", petControl);
+	if (owner) {
+		_button = getElement(7);
+	}
+
+	return true;
+}
+
+void CSkipNavigationGlyph::draw2(CScreenManager *screenManager) {
+	_button->draw(screenManager);
+}
+
+bool CSkipNavigationGlyph::MouseButtonDownMsg(const Point &pt) {
+	if (_button && _button->MouseButtonDownMsg(pt))
+		return true;
+
+	return false;
+}
+
+bool CSkipNavigationGlyph::MouseButtonUpMsg(const Point &pt) {
+	if (_button && _button->MouseButtonUpMsg(pt)) {
+		CPetRemote *remote = static_cast<CPetRemote *>(_owner->getOwner());
+		CStarControl *starControl = remote->getPetControl()->getStarControl();
+		starControl->forceSolved();
+
+		CActMsg actMsg("SetDestin");
+		actMsg.execute("CaptainsWheel");
+		return true;
+	}
+
+	return false;
+}
+
+void CSkipNavigationGlyph::getTooltip(CTextControl *text) {
+	text->setText(SKIP_NAVIGATION);
 }
 
 } // End of namespace Titanic

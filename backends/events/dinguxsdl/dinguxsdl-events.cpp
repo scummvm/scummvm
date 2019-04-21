@@ -72,54 +72,54 @@
 bool DINGUXSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 	if (ev.key.keysym.sym == PAD_UP) {
 		if (ev.type == SDL_KEYDOWN) {
-			_km.y_vel = -1;
+			_km.y_vel = -1 * MULTIPLIER;
 			_km.y_down_count = 1;
 		} else {
-			_km.y_vel = 0;
+			_km.y_vel = 0 * MULTIPLIER;
 			_km.y_down_count = 0;
 		}
 
 		event.type = Common::EVENT_MOUSEMOVE;
-		processMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 
 		return true;
 	} else if (ev.key.keysym.sym == PAD_DOWN) {
 		if (ev.type == SDL_KEYDOWN) {
-			_km.y_vel = 1;
+			_km.y_vel = 1 * MULTIPLIER;
 			_km.y_down_count = 1;
 		} else {
-			_km.y_vel = 0;
+			_km.y_vel = 0 * MULTIPLIER;
 			_km.y_down_count = 0;
 		}
 
 		event.type = Common::EVENT_MOUSEMOVE;
-		processMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 
 		return true;
 	} else if (ev.key.keysym.sym == PAD_LEFT) {
 		if (ev.type == SDL_KEYDOWN) {
-			_km.x_vel = -1;
+			_km.x_vel = -1 * MULTIPLIER;
 			_km.x_down_count = 1;
 		} else {
-			_km.x_vel = 0;
+			_km.x_vel = 0 * MULTIPLIER;
 			_km.x_down_count = 0;
 		}
 
 		event.type = Common::EVENT_MOUSEMOVE;
-		processMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 
 		return true;
 	} else if (ev.key.keysym.sym == PAD_RIGHT) {
 		if (ev.type == SDL_KEYDOWN) {
-			_km.x_vel = 1;
+			_km.x_vel = 1 * MULTIPLIER;
 			_km.x_down_count = 1;
 		} else {
-			_km.x_vel = 0;
+			_km.x_vel = 0 * MULTIPLIER;
 			_km.x_down_count = 0;
 		}
 
 		event.type = Common::EVENT_MOUSEMOVE;
-		processMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 
 		return true;
 	} else if (ev.key.keysym.sym == BUT_Y) { // left mouse button
@@ -129,7 +129,7 @@ bool DINGUXSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 			event.type = Common::EVENT_LBUTTONUP;
 		}
 
-		processMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 
 		return true;
 	} else if (ev.key.keysym.sym == BUT_B) { // right mouse button
@@ -139,7 +139,7 @@ bool DINGUXSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 			event.type = Common::EVENT_RBUTTONUP;
 		}
 
-		processMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 
 		return true;
 	} else if (ev.key.keysym.sym == BUT_X) { // '.' skip dialogue

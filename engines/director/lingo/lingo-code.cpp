@@ -43,6 +43,8 @@
 // ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 // THIS SOFTWARE.
 
+#include "director/cast.h"
+#include "director/util.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-gr.h"
 
@@ -104,6 +106,7 @@ static struct FuncDescr {
 	{ Lingo::c_repeatwithcode,"c_repeatwithcode","ooooos" },
 	{ Lingo::c_exitRepeat,	"c_exitRepeat",	"" },
 	{ Lingo::c_ifcode,		"c_ifcode",		"oooi" },
+	{ Lingo::c_tellcode,	"c_tellcode",	"o" },
 	{ Lingo::c_whencode,	"c_whencode",	"os" },
 	{ Lingo::c_goto,		"c_goto",		"" },
 	{ Lingo::c_gotoloop,	"c_gotoloop",	"" },
@@ -114,6 +117,7 @@ static struct FuncDescr {
 	{ Lingo::c_call,		"c_call",		"si" },
 	{ Lingo::c_procret,		"c_procret",	"" },
 	{ Lingo::c_global,		"c_global",		"s" },
+	{ Lingo::c_property,	"c_property",	"s" },
 	{ Lingo::c_instance,	"c_instance",	"s" },
 	{ Lingo::c_open,		"c_open",		"" },
 	{ 0, 0, 0 }
@@ -140,7 +144,7 @@ void Lingo::pushVoid() {
 
 Datum Lingo::pop(void) {
 	if (_stack.size() == 0)
-		error("stack underflow");
+		assert(0);
 
 	Datum ret = _stack.back();
 	_stack.pop_back();
@@ -169,8 +173,8 @@ void Lingo::c_printtop(void) {
 		if (!d.u.sym) {
 			warning("Inconsistent stack: var, val: %d", d.u.i);
 		} else {
-			if (d.u.sym->name)
-				warning("var: %s", d.u.sym->name);
+			if (!d.u.sym->name.empty())
+				warning("var: %s", d.u.sym->name.c_str());
 			else
 				warning("Nameless var. val: %d", d.u.sym->u.i);
 		}
@@ -210,7 +214,7 @@ void Lingo::c_voidpush() {
 void Lingo::c_fconstpush() {
 	Datum d;
 	inst i = (*g_lingo->_currentScript)[g_lingo->_pc];
-	d.u.i = READ_UINT32(&i);	// d.u.f value will be read
+	d.u.f = *(double *)(&i);
 	d.type = FLOAT;
 
 	g_lingo->_pc += g_lingo->calcCodeAlignment(sizeof(double));
@@ -297,14 +301,30 @@ void Lingo::c_assign() {
 	d1 = g_lingo->pop();
 	d2 = g_lingo->pop();
 
-	if (d1.type != VAR) {
+	if (d1.type != VAR && d1.type != REFERENCE) {
 		warning("assignment to non-variable");
+		return;
+	}
+
+	if (d1.type == REFERENCE) {
+		if (!g_director->getCurrentScore()->_loadedText->contains(d1.u.i)) {
+			if (!g_director->getCurrentScore()->_loadedText->contains(d1.u.i - 1024)) {
+				warning("c_assign: Unknown REFERENCE %d", d1.u.i);
+				g_lingo->pushVoid();
+				return;
+			} else {
+				d1.u.i -= 1024;
+			}
+		}
+
+		warning("STUB: c_assing REFERENCE");
+
 		return;
 	}
 
 	if (d1.u.sym->type != INT && d1.u.sym->type != VOID &&
 			d1.u.sym->type != FLOAT && d1.u.sym->type != STRING) {
-		warning("assignment to non-variable '%s'", d1.u.sym->name);
+		warning("assignment to non-variable '%s'", d1.u.sym->name.c_str());
 		return;
 	}
 
@@ -334,19 +354,17 @@ void Lingo::c_assign() {
 	}
 
 	d1.u.sym->type = d2.type;
-
-	g_lingo->push(d1);
 }
 
 bool Lingo::verify(Symbol *s) {
-	if (s->type != INT && s->type != VOID && s->type != FLOAT && s->type != STRING && s->type != POINT) {
-		warning("attempt to evaluate non-variable '%s'", s->name);
+	if (s->type != INT && s->type != VOID && s->type != FLOAT && s->type != STRING && s->type != POINT && s->type != SYMBOL) {
+		warning("attempt to evaluate non-variable '%s'", s->name.c_str());
 
 		return false;
 	}
 
 	if (s->type == VOID)
-		warning("Variable used before assigning a value '%s'", s->name);
+		warning("Variable used before assigning a value '%s'", s->name.c_str());
 
 	return true;
 }
@@ -413,8 +431,6 @@ void Lingo::c_theentityassign() {
 
 	Datum d = g_lingo->pop();
 	g_lingo->setTheEntity(entity, id, field, d);
-
-	g_lingo->push(d); // Dummy value
 }
 
 void Lingo::c_swap() {
@@ -567,8 +583,8 @@ void Lingo::c_contains() {
 	d1.toString();
 	d2.toString();
 
-	Common::String *s1 = g_lingo->toLowercaseMac(d1.u.s);
-	Common::String *s2 = g_lingo->toLowercaseMac(d2.u.s);
+	Common::String *s1 = toLowercaseMac(d1.u.s);
+	Common::String *s2 = toLowercaseMac(d2.u.s);
 
 	int res = s1->contains(*s2) ? 1 : 0;
 
@@ -590,8 +606,8 @@ void Lingo::c_starts() {
 	d1.toString();
 	d2.toString();
 
-	Common::String *s1 = g_lingo->toLowercaseMac(d1.u.s);
-	Common::String *s2 = g_lingo->toLowercaseMac(d2.u.s);
+	Common::String *s1 = toLowercaseMac(d1.u.s);
+	Common::String *s2 = toLowercaseMac(d2.u.s);
 
 	int res = s1->hasPrefix(*s2) ? 1 : 0;
 
@@ -824,7 +840,7 @@ void Lingo::c_repeatwhilecode(void) {
 	d.toInt();
 
 	while (d.u.i) {
-		g_lingo->execute(body);	/* body */
+		g_lingo->execute(body + savepc - 1);	/* body */
 		if (g_lingo->_returning)
 			break;
 
@@ -839,7 +855,7 @@ void Lingo::c_repeatwhilecode(void) {
 	}
 
 	if (!g_lingo->_returning)
-		g_lingo->_pc = end; /* next stmt */
+		g_lingo->_pc = end + savepc - 1; /* next stmt */
 }
 
 void Lingo::c_repeatwithcode(void) {
@@ -858,14 +874,14 @@ void Lingo::c_repeatwithcode(void) {
 		error("Cast ref used as index: %s", countername.c_str());
 	}
 
-	g_lingo->execute(init);	/* condition */
+	g_lingo->execute(init + savepc - 1);	/* condition */
 	d = g_lingo->pop();
 	d.toInt();
 	counter->u.i = d.u.i;
 	counter->type = INT;
 
 	while (true) {
-		g_lingo->execute(body);	/* body */
+		g_lingo->execute(body + savepc - 1);	/* body */
 		if (g_lingo->_returning)
 			break;
 
@@ -875,7 +891,7 @@ void Lingo::c_repeatwithcode(void) {
 		}
 
 		counter->u.i += inc;
-		g_lingo->execute(finish);	/* condition */
+		g_lingo->execute(finish + savepc - 1);	/* condition */
 		d = g_lingo->pop();
 		d.toInt();
 
@@ -884,9 +900,7 @@ void Lingo::c_repeatwithcode(void) {
 	}
 
 	if (!g_lingo->_returning)
-		g_lingo->_pc = end; /* next stmt */
-
-	delete counter;
+		g_lingo->_pc = end + savepc - 1; /* next stmt */
 }
 
 void Lingo::c_exitRepeat(void) {
@@ -909,14 +923,14 @@ void Lingo::c_ifcode() {
 
 	if (d.toInt()) {
 		debugC(8, kDebugLingoExec, "executing then");
-		g_lingo->execute(then);
+		g_lingo->execute(then + savepc - 1);
 	} else if (elsep) { /* else part? */
 		debugC(8, kDebugLingoExec, "executing else");
-		g_lingo->execute(elsep);
+		g_lingo->execute(elsep + savepc - 1);
 	}
 
 	if (!g_lingo->_returning && !skipEnd) {
-		g_lingo->_pc = end; /* next stmt */
+		g_lingo->_pc = end + savepc - 1; /* next stmt */
 		debugC(8, kDebugLingoExec, "executing end");
 	} else {
 		debugC(8, kDebugLingoExec, "Skipped end");
@@ -926,25 +940,35 @@ void Lingo::c_ifcode() {
 void Lingo::c_whencode() {
 	Datum d;
 	uint start = g_lingo->_pc;
-	uint end = READ_UINT32(&(*g_lingo->_currentScript)[start]);
+	uint end = READ_UINT32(&(*g_lingo->_currentScript)[start]) + start - 1;
 	Common::String eventname((char *)&(*g_lingo->_currentScript)[start + 1]);
 
 	start += g_lingo->calcStringAlignment(eventname.c_str()) + 1;
 
-	debugC(3, kDebugLingoExec, "c_whencode([%5d][%5d], %s)", start, end, eventname.c_str());
+	debugC(1, kDebugLingoExec, "c_whencode([%5d][%5d], %s)", start, end, eventname.c_str());
+
+	int entity = g_lingo->_currentEntityId;
+	g_lingo->_currentEntityId = 0;
 
 	g_lingo->define(eventname, start, 0, NULL, end);
 
-	if (debugChannelSet(3, kDebugLingoExec)) {
+	g_lingo->_currentEntityId = entity;
+
+	if (debugChannelSet(1, kDebugLingoExec)) {
 		uint pc = start;
 		while (pc <= end) {
 			Common::String instr = g_lingo->decodeInstruction(pc, &pc);
-			debugC(3, kDebugLingoExec, "[%5d] %s", pc, instr.c_str());
+			debugC(1, kDebugLingoExec, "[%5d] %s", pc, instr.c_str());
 		}
 	}
 
 	g_lingo->_pc = end;
 }
+
+void Lingo::c_tellcode() {
+	warning("STUB: c_tellcode");
+}
+
 
 //************************
 // Built-in functions
@@ -984,23 +1008,11 @@ void Lingo::c_play() {
 	if (mode.u.i == 1 || mode.u.i == 3)
 		frame = g_lingo->pop();
 
-	if (frame.type == VOID) {
-		frame.u.s = new Common::String("<void>");
-		frame.type = STRING;
-	}
-	frame.toString();
-
-	if (movie.type == VOID) {
-		movie.u.s = new Common::String("<void>");
-		movie.type = STRING;
-	}
-	movie.toString();
-
-	warning("STUB: c_play(%s, %s)", frame.u.s->c_str(), movie.u.s->c_str());
+	g_lingo->func_play(frame, movie);
 }
 
 void Lingo::c_playdone() {
-	warning("STUB: c_playdone()");
+	g_lingo->func_playdone();
 }
 
 void Lingo::c_call() {
@@ -1014,6 +1026,9 @@ void Lingo::c_call() {
 
 void Lingo::call(Common::String name, int nargs) {
 	bool dropArgs = false;
+
+	if (debugChannelSet(3, kDebugLingoExec))
+		printSTUBWithArglist(name.c_str(), nargs, "call:");
 
 	Symbol *sym = g_lingo->getHandler(name);
 
@@ -1030,7 +1045,8 @@ void Lingo::call(Common::String name, int nargs) {
 		warning("Call to undefined handler '%s'. Dropping %d stack items", name.c_str(), nargs);
 		dropArgs = true;
 	} else {
-		if (sym->type == BLTIN && sym->nargs != -1 && sym->nargs != nargs && sym->maxArgs != nargs) {
+		if ((sym->type == BLTIN || sym->type == FBLTIN || sym->type == RBLTIN)
+				&& sym->nargs != -1 && sym->nargs != nargs && sym->maxArgs != nargs) {
 			if (sym->nargs == sym->maxArgs)
 				warning("Incorrect number of arguments to handler '%s', expecting %d. Dropping %d stack items", name.c_str(), sym->nargs, nargs);
 			else
@@ -1057,11 +1073,24 @@ void Lingo::call(Common::String name, int nargs) {
 			g_lingo->pop();
 	}
 
-	if (sym->type == BLTIN) {
-		if (sym->u.bltin == b_factory)
+	if (sym->type == BLTIN || sym->type == FBLTIN || sym->type == RBLTIN) {
+		if (sym->u.bltin == b_factory) {
 			g_lingo->factoryCall(name, nargs);
-		else
+		} else {
+			int stackSize = _stack.size() - nargs;
+
 			(*sym->u.bltin)(nargs);
+
+			int stackNewSize = _stack.size();
+
+			if (sym->type == FBLTIN || sym->type == RBLTIN) {
+				if (stackNewSize - stackSize != 1)
+					warning("built-in function %s did not return value", name.c_str());
+			} else {
+				if (stackNewSize - stackSize != 0)
+					warning("built-in procedure %s returned extra %d values", name.c_str(), stackNewSize - stackSize);
+			}
+		}
 
 		return;
 	}
@@ -1095,7 +1124,7 @@ void Lingo::call(Common::String name, int nargs) {
 
 void Lingo::c_procret() {
 	if (!g_lingo->_callstack.size()) {
-		warning("Call stack underflow");
+		warning("c_procret: Call stack underflow");
 		g_lingo->_returning = true;
 		return;
 	}
@@ -1130,8 +1159,14 @@ void Lingo::c_global() {
 	s->global = true;
 
 	g_lingo->_pc += g_lingo->calcStringAlignment(name.c_str());
+}
 
-	delete s;
+void Lingo::c_property() {
+	Common::String name((char *)&(*g_lingo->_currentScript)[g_lingo->_pc]);
+
+	g_lingo->_pc += g_lingo->calcStringAlignment(name.c_str());
+
+	warning("STUB: c_property()");
 }
 
 void Lingo::c_instance() {

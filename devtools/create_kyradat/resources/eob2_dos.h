@@ -2330,14 +2330,6 @@ static const byte kEoB2DscTileIndexDOS[18] = {
 
 static const ByteProvider kEoB2DscTileIndexDOSProvider = { ARRAYSIZE(kEoB2DscTileIndexDOS), kEoB2DscTileIndexDOS };
 
-static const byte kEoB2DscUnk2DOS[23] = {
-	0x00, 0x00, 0x00, 0x03, 0x03, 0x03, 0x03, 0x03,
-	0x08, 0x08, 0x08, 0x08, 0x08, 0x0D, 0x0D, 0x0D,
-	0x0D, 0x0D, 0x12, 0x12, 0x12, 0x12, 0x12
-};
-
-static const ByteProvider kEoB2DscUnk2DOSProvider = { ARRAYSIZE(kEoB2DscUnk2DOS), kEoB2DscUnk2DOS };
-
 static const byte kEoB2DscDimData1DOS[324] = {
 	0xD7, 0xD7, 0xD7, 0xD7, 0xD7, 0xD7, 0xD7, 0xD7,
 	0xD7, 0xD7, 0xD7, 0xD7, 0xD7, 0xD7, 0xD7, 0xD7,
@@ -2499,3 +2491,15 @@ static const byte kEoB2DscBlockIndexDOS[72] = {
 
 static const ByteProvider kEoB2DscBlockIndexDOSProvider = { ARRAYSIZE(kEoB2DscBlockIndexDOS), kEoB2DscBlockIndexDOS };
 
+static const char *const kEoB2SoundFilesIntroDOS[1] = {
+	"INTRO"
+};
+
+static const StringListProvider kEoB2SoundFilesIntroDOSProvider = { ARRAYSIZE(kEoB2SoundFilesIntroDOS), kEoB2SoundFilesIntroDOS };
+
+static const char *const kEoB2SoundFilesFinaleDOS[2] = {
+	"FINALE1",
+	"FINALE2"
+};
+
+static const StringListProvider kEoB2SoundFilesFinaleDOSProvider = { ARRAYSIZE(kEoB2SoundFilesFinaleDOS), kEoB2SoundFilesFinaleDOS };

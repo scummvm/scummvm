@@ -20,8 +20,8 @@
  *
  */
 
-#include "wordcompletion.h"
 #include "osystem_ds.h"
+#include "wordcompletion.h"
 #include "engines/agi/agi.h"	// Caution for #define for NUM_CHANNELS, causes problems in mixer_intern.h
 
 #ifdef ENABLE_AGI

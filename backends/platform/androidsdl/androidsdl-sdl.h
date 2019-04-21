@@ -28,6 +28,14 @@
 class OSystem_ANDROIDSDL : public OSystem_POSIX {
 public:
 	virtual void initBackend();
+	virtual void setFeatureState(Feature f, bool enable);
+	virtual bool getFeatureState(Feature f);
+	virtual bool hasFeature(Feature f);
+	void touchpadMode(bool enable);
+	void swapMenuAndBackButtons(bool enable);
+	void switchToDirectMouseMode();
+	void switchToRelativeMouseMode();
+	void showOnScreenControl(bool enable);
 
 #ifdef ENABLE_KEYMAPPER
 	// FIXME: This just calls parent methods, is it needed?

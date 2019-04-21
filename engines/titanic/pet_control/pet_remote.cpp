@@ -50,9 +50,15 @@ static const byte REMOTE_DATA[] = {
 		GLYPH_SUCCUBUS_DELIVERY,
 	0x09, 0x01,
 		GLYPH_SUCCUBUS_DELIVERY,
-	0x0A, 0x02, GLYPH_SUMMON_ELEVATOR, GLYPH_SUCCUBUS_DELIVERY,
+	0x0A, 0x02,
+		GLYPH_SUMMON_ELEVATOR, GLYPH_SUCCUBUS_DELIVERY,
+#if defined(DISABLE_SKIP)
 	0x0B, 0x01,
 		GLYPH_NAVIGATION_CONTROLLER,
+#else
+	0x0B, 0x02,
+		GLYPH_NAVIGATION_CONTROLLER, GLYPH_SKIP_NAVIGATION,
+#endif
 	0x0C, 0x01,
 		GLYPH_SUCCUBUS_DELIVERY,
 	0x0D, 0x01,
@@ -419,6 +425,12 @@ bool CPetRemote::loadGlyph(int glyphIndex) {
 		glyph = new CNavigationControllerGlyph();
 		break;
 
+#if !defined(DISABLE_SKIP)
+	case GLYPH_SKIP_NAVIGATION:
+		glyph = new CSkipNavigationGlyph();
+		break;
+#endif
+
 	case GLYPH_GOTO_BOTTOM_OF_WELL:
 		glyph = new CGotoBottomOfWellGlyph();
 		break;
@@ -433,6 +445,7 @@ bool CPetRemote::loadGlyph(int glyphIndex) {
 
 	case GLYPH_GOTO_BAR:
 		glyph = new CGotoBarGlyph();
+		break;
 
 	case GLYPH_GOTO_PROMENADE:
 		glyph = new CGotoPromenadeDeckGlyph();

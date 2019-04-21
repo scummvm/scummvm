@@ -1,0 +1,1 @@
+python2.7 fontCreator.py -im ./samples/Tahoma_18Shdw-G3NewMrgd.png -oe ./samples/overrideEncodingSUBLTS.txt -om SUBTLS_E.FON -pxLL 42 -pxTT 30 -pxKn 1 -pxWS 7 -ld EN_ANY --trace

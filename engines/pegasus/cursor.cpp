@@ -89,8 +89,6 @@ void Cursor::setCurrentFrameIndex(int32 index) {
 			} else {
 				CursorMan.replaceCursor(_info[index].surface->getPixels(), _info[index].surface->w, _info[index].surface->h, _info[index].hotspot.x, _info[index].hotspot.y, _info[index].surface->format.RGBToColor(0xFF, 0xFF, 0xFF), false, &_info[index].surface->format);
 			}
-
-			((PegasusEngine *)g_engine)->_gfx->markCursorAsDirty();
 		}
 	}
 }
@@ -104,13 +102,11 @@ void Cursor::show() {
 		CursorMan.showMouse(true);
 
 	_cursorObscured = false;
-	((PegasusEngine *)g_engine)->_gfx->markCursorAsDirty();
 }
 
 void Cursor::hide() {
 	CursorMan.showMouse(false);
 	setCurrentFrameIndex(0);
-	((PegasusEngine *)g_engine)->_gfx->markCursorAsDirty();
 }
 
 void Cursor::hideUntilMoved() {
@@ -125,7 +121,6 @@ void Cursor::useIdleTime() {
 		_cursorLocation = g_system->getEventManager()->getMousePos();
 		if (_index != -1 && _cursorObscured)
 			show();
-		((PegasusEngine *)g_engine)->_gfx->markCursorAsDirty();
 	}
 }
 

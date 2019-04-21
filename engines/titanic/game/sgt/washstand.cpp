@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/sgt/washstand.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -47,8 +48,8 @@ bool CWashstand::TurnOn(CTurnOn *msg) {
 		_isClosed = false;
 		_startFrame = 0;
 		_endFrame = 14;
-		playMovie(0, 14, MOVIE_GAMESTATE);
-		playSound("b#14.wav");
+		playMovie(0, 14, MOVIE_WAIT_FOR_FINISH);
+		playSound(TRANSLATE("b#14.wav", "b#99.wav"));
 	}
 
 	return true;
@@ -61,8 +62,8 @@ bool CWashstand::TurnOff(CTurnOff *msg) {
 		_isClosed = true;
 		_startFrame = 14;
 		_endFrame = 28;
-		playMovie(14, 28, MOVIE_GAMESTATE | MOVIE_NOTIFY_OBJECT);
-		playSound("b#14.wav");
+		playMovie(14, 28, MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
+		playSound(TRANSLATE("b#14.wav", "b#99.wav"));
 	}
 
 	return true;

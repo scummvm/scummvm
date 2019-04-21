@@ -108,8 +108,6 @@ void OSystem_SDL_Maemo::initBackend() {
 		_keymapperDefaultBindings = new Common::KeymapperDefaultBindings();
 #endif
 
-	ConfMan.set("vkeybdpath", DATA_PATH);
-
 	_model = detectModel();
 
 #ifdef ENABLE_KEYMAPPER

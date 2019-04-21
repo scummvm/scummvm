@@ -21,7 +21,9 @@
  */
 
 #include "titanic/npcs/barbot.h"
+#include "titanic/support/files_manager.h"
 #include "titanic/titanic.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -166,7 +168,7 @@ bool CBarbot::ActMsg(CActMsg *msg) {
 			playRange(_frames[7]);
 			playRange(_frames[8]);
 			playRange(_frames[13]);
-			playRange(_frames[40], MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playRange(_frames[40], MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 			_frameNum = _frames[40]._endFrame;
 		}
 	} else if (msg->_action == "GiveBackVisCentre") {
@@ -242,7 +244,7 @@ bool CBarbot::ActMsg(CActMsg *msg) {
 			_field160 = 1;
 			_addedTV = true;
 
-			playSound("c#5.wav", _volume);
+			playSound(TRANSLATE("c#5.wav", "c#65.wav"), _volume);
 			playRange(_frames[35], MOVIE_NOTIFY_OBJECT);
 			movieEvent();
 			playRange(_frames[34]);
@@ -316,7 +318,7 @@ bool CBarbot::TurnOn(CTurnOn *msg) {
 			playRange(_frames[38], MOVIE_NOTIFY_OBJECT);
 			playRange(_frames[58], MOVIE_NOTIFY_OBJECT);
 			playRange(_frames[57], MOVIE_NOTIFY_OBJECT);
-			playRange(_frames[56], MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playRange(_frames[56], MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 			_frameNum = _frames[56]._endFrame;
 		} else {
 			playRange(_frames[38]);
@@ -363,13 +365,13 @@ bool CBarbot::TurnOff(CTurnOff *msg) {
 
 		if (_visCenterOnCounter) {
 			// Barbot will put away the vision center
-			playRange(_frames[28], MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playRange(_frames[28], MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 			_frameNum = _frames[28]._endFrame;
 			_visCenterOnCounter = false;
 			_field134 = 1;
 		}
 
-		playRange(_frames[29], MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		playRange(_frames[29], MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		movieEvent(_frames[29]._startFrame);
 		_frameNum = _frames[29]._endFrame;
 		_fieldC4 = 0;
@@ -406,18 +408,20 @@ bool CBarbot::MovieEndMsg(CMovieEndMsg *msg) {
 	}
 
 	if (msg->_endFrame == _frames[58]._endFrame || msg->_endFrame == _frames[21]._endFrame) {
-		CVisibleMsg visibleMsg(true);
-		visibleMsg.execute("BarShelfVisCentre");
+		if (!_gottenDrunk) {
+			CVisibleMsg visibleMsg(true);
+			visibleMsg.execute("BarShelfVisCentre");
+		}
 	}
 
 	if (msg->_endFrame == _frames[57]._endFrame) {
 		startTalking(this, 250575);
-		playSound("c#10.wav", _volume);
+		playSound(TRANSLATE("c#10.wav", "c#70.wav"), _volume);
 		return true;
 	}
 
 	if (msg->_endFrame == _frames[55]._endFrame) {
-		playSound("c#10.wav", _volume);
+		playSound(TRANSLATE("c#10.wav", "c#70.wav"), _volume);
 		return true;
 	}
 
@@ -473,22 +477,22 @@ bool CBarbot::MovieEndMsg(CMovieEndMsg *msg) {
 	}
 
 	if (msg->_endFrame == _frames[38]._endFrame || msg->_endFrame == _frames[23]._endFrame) {
-		playSound("c#3.wav", _volume);
+		playSound(TRANSLATE("c#3.wav", "c#63.wav"), _volume);
 	} else if (msg->_endFrame == _frames[36]._endFrame) {
-		playSound("c#6.wav", _volume);
+		playSound(TRANSLATE("c#6.wav", "c#66.wav"), _volume);
 	} else if (msg->_endFrame == _frames[35]._endFrame) {
-		playSound("c#8.wav", _volume);
+		playSound(TRANSLATE("c#8.wav", "c#68.wav"), _volume);
 	} else if (msg->_endFrame == _frames[33]._endFrame) {
-		playSound("c#4.wav", _volume);
+		playSound(TRANSLATE("c#4.wav", "c#64.wav"), _volume);
 	} else if (msg->_endFrame == _frames[32]._endFrame) {
 		startTalking(this, 145);
-		playSound("c#9.wav", _volume);
+		playSound(TRANSLATE("c#9.wav", "c#69.wav"), _volume);
 	} else if (msg->_endFrame == _frames[47]._endFrame) {
-		playSound("c#9.wav", _volume);
+		playSound(TRANSLATE("c#9.wav", "c#69.wav"), _volume);
 		_addedVodka = true;
 		_drunkFlag = true;
 	} else if (msg->_endFrame == _frames[30]._endFrame) {
-		playSound("c#4.wav", 60);
+		playSound(TRANSLATE("c#4.wav", "c#64.wav"), 60);
 	} else if (msg->_endFrame == _frames[29]._endFrame) {
 		if (!_fieldC4) {
 			performAction(true, nullptr);
@@ -560,7 +564,7 @@ bool CBarbot::TrueTalkTriggerActionMsg(CTrueTalkTriggerActionMsg *msg) {
 			_frameNum = _frames[27]._endFrame;
 		} else if (!_gottenDrunk && _drunkFlag) {
 			playRange(_frames[45], MOVIE_NOTIFY_OBJECT);
-			playRange(_frames[44], MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playRange(_frames[44], MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 			_frameNum = _frames[44]._endFrame;
 		}
 		break;
@@ -697,7 +701,7 @@ bool CBarbot::LoadSuccessMsg(CLoadSuccessMsg *msg) {
 
 bool CBarbot::MovieFrameMsg(CMovieFrameMsg *msg) {
 	if (msg->_frameNumber == _frames[29]._startFrame) {
-		playSound("c#2.wav", _volume);
+		playSound(TRANSLATE("c#2.wav", "c#62.wav"), _volume);
 
 	} else if (msg->_frameNumber == _frames[55]._startFrame
 			|| msg->_frameNumber == _frames[32]._startFrame) {

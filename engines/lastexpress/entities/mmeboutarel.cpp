@@ -38,13 +38,13 @@ namespace LastExpress {
 
 MmeBoutarel::MmeBoutarel(LastExpressEngine *engine) : Entity(engine, kEntityMmeBoutarel) {
 	ADD_CALLBACK_FUNCTION(MmeBoutarel, reset);
-	ADD_CALLBACK_FUNCTION(MmeBoutarel, playSound);
-	ADD_CALLBACK_FUNCTION(MmeBoutarel, draw);
-	ADD_CALLBACK_FUNCTION(MmeBoutarel, updateFromTime);
-	ADD_CALLBACK_FUNCTION(MmeBoutarel, enterExitCompartment);
-	ADD_CALLBACK_FUNCTION(MmeBoutarel, enterExitCompartment2);
-	ADD_CALLBACK_FUNCTION(MmeBoutarel, updateEntity);
-	ADD_CALLBACK_FUNCTION(MmeBoutarel, function8);
+	ADD_CALLBACK_FUNCTION_S(MmeBoutarel, playSound);
+	ADD_CALLBACK_FUNCTION_S(MmeBoutarel, draw);
+	ADD_CALLBACK_FUNCTION_I(MmeBoutarel, updateFromTime);
+	ADD_CALLBACK_FUNCTION_SI(MmeBoutarel, enterExitCompartment);
+	ADD_CALLBACK_FUNCTION_SI(MmeBoutarel, enterExitCompartment2);
+	ADD_CALLBACK_FUNCTION_II(MmeBoutarel, updateEntity);
+	ADD_CALLBACK_FUNCTION_S(MmeBoutarel, function8);
 	ADD_CALLBACK_FUNCTION(MmeBoutarel, function9);
 	ADD_CALLBACK_FUNCTION(MmeBoutarel, chapter1);
 	ADD_CALLBACK_FUNCTION(MmeBoutarel, function11);
@@ -163,6 +163,7 @@ IMPLEMENT_FUNCTION(9, MmeBoutarel, function9)
 		if (!params->param1) {
 			getData()->entityPosition = getEntityData(kEntityBoutarel)->entityPosition;
 			getData()->location = getEntityData(kEntityBoutarel)->location;
+			getData()->car = getEntityData(kEntityBoutarel)->car;
 		}
 		break;
 
@@ -886,7 +887,7 @@ IMPLEMENT_FUNCTION(21, MmeBoutarel, chapter3Handler)
 			if (getState()->time <= kTime2038500) {
 				if (!getEntities()->isPlayerInCar(kCarRedSleeping)
 				 || !params->param1
-				 || getSoundQueue()->isBuffered("FRA2012")
+				 || getSoundQueue()->isBuffered("FRA2012") // the original game tests this sound twice. Maybe a bug?
 				 || getSoundQueue()->isBuffered("FRA2010")
 				 ||!params->param2)
 					params->param2 = (uint)getState()->time;
@@ -912,6 +913,7 @@ IMPLEMENT_FUNCTION(21, MmeBoutarel, chapter3Handler)
 		getObjects()->update(kObject51, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		getObjects()->update(kObject43, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 		getEntities()->drawSequenceLeft(kEntityMmeBoutarel, "501");
+		getSavePoints()->push(kEntityMmeBoutarel, kEntityFrancois, kAction189872836);
 		break;
 
 	case kActionCallback:
@@ -968,6 +970,7 @@ IMPLEMENT_FUNCTION(21, MmeBoutarel, chapter3Handler)
 		case 9:
 			getEntities()->drawSequenceLeft(kEntityMmeBoutarel, "501");
 			params->param1 = 1;
+			getSavePoints()->push(kEntityMmeBoutarel, kEntityFrancois, kAction190390860);
 			break;
 		}
 		break;

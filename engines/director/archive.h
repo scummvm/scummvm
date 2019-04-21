@@ -39,6 +39,7 @@ struct Resource {
 	uint32 offset;
 	uint32 size;
 	uint32 castId;
+	uint32 tag;
 	Common::String name;
 	Common::Array<Resource> children;
 };
@@ -94,11 +95,13 @@ private:
 
 class RIFFArchive : public Archive {
 public:
-	RIFFArchive() : Archive() {}
+	RIFFArchive() : Archive() { _startOffset = 0; }
 	~RIFFArchive() {}
 
 	bool openStream(Common::SeekableReadStream *stream, uint32 startOffset = 0);
 	Common::SeekableSubReadStreamEndian *getResource(uint32 tag, uint16 id);
+
+	uint32 _startOffset;
 };
 
 class RIFXArchive : public Archive {

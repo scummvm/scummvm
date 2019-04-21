@@ -1,0 +1,8 @@
+Set ScummVM$Dir <Obey$Dir>
+IconSprites <ScummVM$Dir>.!Sprites
+
+Set ScummVM$Title "ScummVM"
+Set ScummVM$Description "Play certain classic graphical point-and-click adventure games"
+Set ScummVM$Publisher "ScummVM Developers"
+Set ScummVM$Web "https://www.scummvm.org/"
+Set ScummVM$Version "@VERSION@"

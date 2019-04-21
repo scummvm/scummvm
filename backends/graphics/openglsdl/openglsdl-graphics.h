@@ -30,45 +30,52 @@
 #include "common/array.h"
 #include "common/events.h"
 
-class OpenGLSdlGraphicsManager : public OpenGL::OpenGLGraphicsManager, public SdlGraphicsManager, public Common::EventObserver {
+class OpenGLSdlGraphicsManager : public OpenGL::OpenGLGraphicsManager, public SdlGraphicsManager {
 public:
 	OpenGLSdlGraphicsManager(uint desktopWidth, uint desktopHeight, SdlEventSource *eventSource, SdlWindow *window);
 	virtual ~OpenGLSdlGraphicsManager();
 
 	// GraphicsManager API
-	virtual void activateManager();
-	virtual void deactivateManager();
+	virtual void activateManager() override;
+	virtual void deactivateManager() override;
 
-	virtual bool hasFeature(OSystem::Feature f);
-	virtual void setFeatureState(OSystem::Feature f, bool enable);
-	virtual bool getFeatureState(OSystem::Feature f);
+	virtual bool hasFeature(OSystem::Feature f) const override;
+	virtual void setFeatureState(OSystem::Feature f, bool enable) override;
+	virtual bool getFeatureState(OSystem::Feature f) const override;
 
-	virtual bool setGraphicsMode(int mode);
-	virtual void resetGraphicsScale();
+	virtual const OSystem::GraphicsMode *getSupportedStretchModes() const override;
+	virtual int getDefaultStretchMode() const override;
+	virtual bool setStretchMode(int mode) override;
+	virtual int getStretchMode() const override;
+
+	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format) override;
 
 #ifdef USE_RGB_COLOR
-	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const override;
 #endif
 
-	virtual void updateScreen();
+	virtual void updateScreen() override;
 
 	// EventObserver API
-	virtual bool notifyEvent(const Common::Event &event);
+	virtual bool notifyEvent(const Common::Event &event) override;
 
 	// SdlGraphicsManager API
-	virtual void notifyVideoExpose();
-	virtual void notifyResize(const uint width, const uint height);
-	virtual void transformMouseCoordinates(Common::Point &point);
-	virtual void notifyMousePos(Common::Point mouse);
+	virtual void notifyVideoExpose() override;
+	virtual void notifyResize(const int width, const int height) override;
 
 protected:
-	virtual void setInternalMousePosition(int x, int y);
+	virtual bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) override;
 
-	virtual bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format);
+	virtual void refreshScreen() override;
 
-	virtual void refreshScreen();
+	virtual void *getProcAddress(const char *name) const override;
 
-	virtual void *getProcAddress(const char *name) const;
+	virtual void handleResizeImpl(const int width, const int height) override;
+
+	virtual bool saveScreenshot(const Common::String &filename) const override;
+
+	virtual int getGraphicsModeScale(int mode) const override { return 1; }
+
 private:
 	bool setupMode(uint width, uint height);
 
@@ -77,14 +84,12 @@ private:
 	SDL_GLContext _glContext;
 #else
 	uint32 _lastVideoModeLoad;
-	SDL_Surface *_hwScreen;
 #endif
-
-	void getWindowDimensions(int *width, int *height);
 
 	uint _lastRequestedWidth;
 	uint _lastRequestedHeight;
 	uint _graphicsScale;
+	int _stretchMode;
 	bool _ignoreLoadVideoMode;
 	bool _gotResize;
 
@@ -121,7 +126,7 @@ private:
 	uint _desiredFullscreenWidth;
 	uint _desiredFullscreenHeight;
 
-	virtual bool isHotkey(const Common::Event &event);
+	bool isHotkey(const Common::Event &event) const;
 };
 
 #endif

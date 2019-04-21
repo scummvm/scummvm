@@ -32,6 +32,8 @@
 #include "common/system.h"
 #include "common/keyboard.h"
 
+#define KEYSTATES_ARRAY_SIZE (Common::KEYCODE_UNDO + 1) // Hardcoded size for the common/keyboard.h enum
+
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseKeyboardState, false)
@@ -46,8 +48,8 @@ BaseKeyboardState::BaseKeyboardState(BaseGame *inGame) : BaseScriptable(inGame) 
 	_currentAlt = false;
 	_currentControl = false;
 
-	_keyStates = new uint8[323]; // Hardcoded size for the common/keyboard.h enum
-	for (int i = 0; i < 323; i++) {
+	_keyStates = new uint8[KEYSTATES_ARRAY_SIZE];
+	for (int i = 0; i < KEYSTATES_ARRAY_SIZE; i++) {
 		_keyStates[i] = false;
 	}
 }
@@ -198,20 +200,46 @@ const char *BaseKeyboardState::scToString() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseKeyboardState::readKey(Common::Event *event) {
-	//_currentPrintable = (event->type == SDL_TEXTINPUT); // TODO
-	_currentCharCode = keyCodeToVKey(event);
-	// convert all lowercase keys to uppercase to make it easier for handling later on for consistency
-	if (Common::isLower(_currentCharCode) && (event->kbd.hasFlags(Common::KBD_SHIFT) || event->kbd.flags & Common::KBD_CAPS)) {
-		if (!(event->kbd.keycode >= Common::KEYCODE_F1 && event->kbd.keycode <= Common::KEYCODE_F12)) {
-			_currentCharCode = toupper(_currentCharCode);
-		}
-	}
-	// Verify that this is a printable ISO-8859-character (including the upper charset)
-	if ((_currentCharCode <= 0x7E && _currentCharCode >= 0x20) || (_currentCharCode <= 0xFF && _currentCharCode >= 0xA0)) {
-		_currentPrintable = true;
-	} else {
+
+	Common::KeyCode code = event->kbd.keycode;
+
+	if (event->type != Common::EVENT_KEYDOWN) {
+		_currentCharCode = 0;
 		_currentPrintable = false;
 	}
+
+	// use ASCII value if key pressed is an alphanumeric or punctuation key
+	// keys pressed on numpad are handled in next 2 blocks
+	else if (code > Common::KEYCODE_SPACE && code < Common::KEYCODE_DELETE) {
+		_currentCharCode = event->kbd.ascii;
+		_currentPrintable = true;
+	}
+
+	// use ASCII value for numpad '/', '*', '-', '+'
+	else if (code >= Common::KEYCODE_KP_DIVIDE && code <= Common::KEYCODE_KP_PLUS) {
+		_currentCharCode = event->kbd.ascii;
+		_currentPrintable = true;
+	}
+
+	// if NumLock is active, use ASCII for numpad keys '0'~'9' and '.'
+	// keys pressed on numpad without NumLock are considered as normal keycodes, handled in the next block
+	else if ((code >= Common::KEYCODE_KP0 && code <= Common::KEYCODE_KP_PERIOD) && ((event->kbd.flags & Common::KBD_NUM) != 0)) {
+		_currentCharCode = event->kbd.ascii;
+		_currentPrintable = true;
+	}
+
+	// use keyCodeToVKey mapping for all other events
+	// some keys are printable from those keys
+	else {
+		_currentCharCode = keyCodeToVKey(event);
+		_currentPrintable = code == Common::KEYCODE_BACKSPACE || 
+		                    code == Common::KEYCODE_TAB || 
+		                    code == Common::KEYCODE_RETURN || 
+		                    code == Common::KEYCODE_KP_ENTER || 
+		                    code == Common::KEYCODE_ESCAPE || 
+		                    code == Common::KEYCODE_SPACE;
+	}
+
 	//_currentKeyData = KeyData;
 
 	_currentControl = isControlDown();
@@ -269,22 +297,26 @@ bool BaseKeyboardState::isCurrentPrintable() const {
 
 //////////////////////////////////////////////////////////////////////////
 enum VKeyCodes {
-	kVkBack       = 8,
-	kVkTab        = 9,
-
-	kVkReturn     = 13,
+	kVkBack       = 8,  //printable
+	kVkTab        = 9,  //printable
+	kVkClear      = 12,
+	kVkReturn     = 13, //printable
 	kVkPause      = 19,
+	kVkCapital    = 20,
+	kVkEscape     = 27, //printable
+	kVkSpace      = 32, //printable
 
-	kVkEscape     = 27,
-
-	kVkSpace      = 32,
+	kVkPrior      = 33,
+	kVkNext       = 34,
 	kVkEnd        = 35,
 	kVkHome       = 36,
 	kVkLeft       = 37,
 	kVkUp         = 38,
 	kVkRight      = 39,
 	kVkDown       = 40,
+	kVkPrint      = 42,
 	kVkInsert     = 45,
+	kVkDelete     = 46,
 
 	kVkF1         = 112,
 	kVkF2         = 113,
@@ -297,43 +329,41 @@ enum VKeyCodes {
 	kVkF9         = 120,
 	kVkF10        = 121,
 	kVkF11        = 122,
-	kVkF12        = 123
+	kVkF12        = 123,
 
+	kVkNumLock    = 144,
+	kVkScroll     = 145
+
+    //TODO: shift, ctrl, menu, etc...
 };
 
 //////////////////////////////////////////////////////////////////////////
 uint32 BaseKeyboardState::keyCodeToVKey(Common::Event *event) {
-	// todo
-	if (event->type != Common::EVENT_KEYDOWN) {
-		return 0;
-	}
-
-	// return ASCII value if key pressed is an alphanumeric key
-	// number keys pressed on numpad are handled in next block
-	if (Common::isAlnum(event->kbd.keycode)) {
-		return event->kbd.ascii;
-	}
-
-	// if NumLock is active, return ASCII for numpad keys
-	// keys pressed on numpad without NumLock are considered as normal keycodes, handled in the next block
-	if (Common::isDigit(event->kbd.ascii) && ((event->kbd.flags & Common::KBD_NUM) != 0)) {
-		return event->kbd.ascii;
-	}
-
 	switch (event->kbd.keycode) {
 	case Common::KEYCODE_BACKSPACE:
 		return kVkBack;
 	case Common::KEYCODE_TAB:
 		return kVkTab;
+	case Common::KEYCODE_CLEAR:
+	case Common::KEYCODE_KP5:
+		return kVkClear;
 	case Common::KEYCODE_RETURN:
 	case Common::KEYCODE_KP_ENTER:
 		return kVkReturn;
 	case Common::KEYCODE_PAUSE:
 		return kVkPause;
+	case Common::KEYCODE_CAPSLOCK:
+		return kVkCapital;
 	case Common::KEYCODE_ESCAPE:
 		return kVkEscape;
 	case Common::KEYCODE_SPACE:
 		return kVkSpace;
+	case Common::KEYCODE_KP9:
+	case Common::KEYCODE_PAGEUP:
+		return kVkPrior;
+	case Common::KEYCODE_KP3:
+	case Common::KEYCODE_PAGEDOWN:
+		return kVkNext;
 	case Common::KEYCODE_END:
 	case Common::KEYCODE_KP1:
 		return kVkEnd;
@@ -352,9 +382,14 @@ uint32 BaseKeyboardState::keyCodeToVKey(Common::Event *event) {
 	case Common::KEYCODE_DOWN:
 	case Common::KEYCODE_KP2:
 		return kVkDown;
+	case Common::KEYCODE_PRINT:
+		return kVkPrint;
 	case Common::KEYCODE_INSERT:
 	case Common::KEYCODE_KP0:
 		return kVkInsert;
+	case Common::KEYCODE_DELETE:
+	case Common::KEYCODE_KP_PERIOD:
+		return kVkDelete;
 	case Common::KEYCODE_F1:
 		return kVkF1;
 	case Common::KEYCODE_F2:
@@ -379,6 +414,10 @@ uint32 BaseKeyboardState::keyCodeToVKey(Common::Event *event) {
 		return kVkF11;
 	case Common::KEYCODE_F12:
 		return kVkF12;
+	case Common::KEYCODE_NUMLOCK:
+		return kVkNumLock;
+	case Common::KEYCODE_SCROLLOCK:
+		return kVkScroll;
 	default:
 		// check if any non-sticky keys were used, otherwise key is unknown to us
 		if ((event->kbd.flags & Common::KBD_NON_STICKY) == 0) {
@@ -393,14 +432,31 @@ uint32 BaseKeyboardState::keyCodeToVKey(Common::Event *event) {
 
 //////////////////////////////////////////////////////////////////////////
 Common::KeyCode BaseKeyboardState::vKeyToKeyCode(uint32 vkey) {
-	// todo
 	switch (vkey) {
+	case kVkBack:
+		return Common::KEYCODE_BACKSPACE;
+	case kVkTab:
+		return Common::KEYCODE_TAB;
+	case kVkClear:
+		return Common::KEYCODE_CLEAR;
+	case kVkReturn:
+		return Common::KEYCODE_RETURN;
+	case kVkPause:
+		return Common::KEYCODE_PAUSE;
+	case kVkCapital:
+		return Common::KEYCODE_CAPSLOCK;
 	case kVkEscape:
 		return Common::KEYCODE_ESCAPE;
 	case kVkSpace:
 		return Common::KEYCODE_SPACE;
+	case kVkPrior:
+		return Common::KEYCODE_PAGEUP;
+	case kVkNext:
+		return Common::KEYCODE_PAGEDOWN;
 	case kVkHome:
 		return Common::KEYCODE_HOME;
+	case kVkEnd:
+		return Common::KEYCODE_END;
 	case kVkLeft:
 		return Common::KEYCODE_LEFT;
 	case kVkRight:
@@ -409,6 +465,12 @@ Common::KeyCode BaseKeyboardState::vKeyToKeyCode(uint32 vkey) {
 		return Common::KEYCODE_UP;
 	case kVkDown:
 		return Common::KEYCODE_DOWN;
+	case kVkPrint:
+		return Common::KEYCODE_PRINT;
+	case kVkInsert:
+		return Common::KEYCODE_INSERT;
+	case kVkDelete:
+		return Common::KEYCODE_DELETE;
 	case kVkF1:
 		return Common::KEYCODE_F1;
 	case kVkF2:
@@ -433,9 +495,13 @@ Common::KeyCode BaseKeyboardState::vKeyToKeyCode(uint32 vkey) {
 		return Common::KEYCODE_F11;
 	case kVkF12:
 		return Common::KEYCODE_F12;
+	case kVkNumLock:
+		return Common::KEYCODE_NUMLOCK;
+	case kVkScroll:
+		return Common::KEYCODE_SCROLLOCK;
 	default:
 		warning("Unknown VKEY: %d", vkey);
-		return (Common::KeyCode)vkey;
+		return (Common::KeyCode)(vkey < KEYSTATES_ARRAY_SIZE ? vkey : 0);
 		break;
 	}
 

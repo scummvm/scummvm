@@ -51,7 +51,7 @@ public:
 	/**
 	 * Find a string node in the linked chain by name
 	 */
-	TTstringNode *findByName(const TTstring &str, int mode);
+	TTstringNode *findByName(const TTstring &str, VocabMode mode);
 };
 
 } // End of namespace Titanic

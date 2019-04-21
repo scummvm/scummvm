@@ -45,13 +45,12 @@ enum Season {
 	SEASON_SPRING = 3
 };
 
-PTR_LIST_ITEM(CMovie);
-class CGameStateMovieList : public List<CMovieListItem> {
+class CGameStateMovieList : public Common::List<CMovie *> {
 public:
 	CViewItem *_destView;
 	CMovieClip *_movieClip;
 public:
-	CGameStateMovieList() : List<CMovieListItem>(), _destView(nullptr), _movieClip(nullptr) {}
+	CGameStateMovieList() : Common::List<CMovie *>(), _destView(nullptr), _movieClip(nullptr) {}
 
 	/**
 	 * Returns true if there are no movies in the list
@@ -69,13 +68,13 @@ public:
 	GameStateMode _mode;
 	Season _seasonNum;
 	bool _petActive;
-	bool _field1C;
+	bool _soundMakerAllowed;
 	bool _quitGame;
 	bool _parrotMet;
 	uint _nodeChangeCtr;
 	uint32 _nodeEnterTicks;
 	Point _mousePos;
-	int _field38;
+	int _parrotResponseIndex;
 public:
 	CGameState(CGameManager *gameManager);
 
@@ -151,9 +150,21 @@ public:
 	 */
 	bool getParrotMet() const { return _parrotMet; }
 
+	/**
+	 * Gets the counter for the number of times different nodes have
+	 * been entered
+	 */
 	int getNodeChangedCtr() const { return _nodeChangeCtr; }
+
+	/**
+	 * Gets the node enter ticks amount
+	 */
 	uint32 getNodeEnterTicks() const { return _nodeEnterTicks; }
-	void inc38() { ++_field38; }
+
+	/**
+	 * Increments the index to use for parrot idle responses
+	 */
+	void incParrotResponse() { ++_parrotResponseIndex; }
 };
 
 } // End of namespace Titanic

@@ -36,7 +36,7 @@ const uint ITEM_MODES[40] = {
 };
 
 void CPetInventoryGlyph::enter() {
-	startBackgroundMovie();
+	startRepeatedMovie();
 }
 
 void CPetInventoryGlyph::leave() {
@@ -44,43 +44,43 @@ void CPetInventoryGlyph::leave() {
 }
 
 void CPetInventoryGlyph::drawAt(CScreenManager *screenManager, const Point &pt, bool isHighlighted_) {
-	if (!_field34)
+	if (!_active)
 		return;
 
-	if (_image) {
-		if (_image->hasActiveMovie()) {
+	if (_singular) {
+		if (_singular->hasActiveMovie()) {
 			if (isHighlighted_)
-				_image->draw(screenManager);
+				_singular->draw(screenManager);
 			else
-				_image->draw(screenManager, pt);
+				_singular->draw(screenManager, pt);
 			return;
 		}
 
-		_image = nullptr;
-		if (_background && isHighlighted_) {
-			_background->setPosition(pt);
-			startBackgroundMovie();
+		_singular = nullptr;
+		if (_repeated && isHighlighted_) {
+			_repeated->setPosition(pt);
+			startRepeatedMovie();
 		}
 	}
 
-	if (_background) {
+	if (_repeated) {
 		if (isHighlighted_)
-			_background->draw(screenManager);
+			_repeated->draw(screenManager);
 		else
-			_background->draw(screenManager, pt);
-	} else if (_image) {
-		_image->draw(screenManager, pt, Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+			_repeated->draw(screenManager, pt);
+	} else if (_singular) {
+		_singular->draw(screenManager, pt, Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 	}
 }
 
 
 void CPetInventoryGlyph::unhighlightCurrent() {
-	if (_image) {
-		_image->setPosition(Point(0, 0));
+	if (_singular) {
+		_singular->setPosition(Point(0, 0));
 		stopMovie();
-	} else if (_background) {
-		_background->setPosition(Point(0, 0));
-		_background->loadFrame(0);
+	} else if (_repeated) {
+		_repeated->setPosition(Point(0, 0));
+		_repeated->loadFrame(0);
 		stopMovie();
 	}
 }
@@ -94,16 +94,16 @@ void CPetInventoryGlyph::highlightCurrent(const Point &pt) {
 }
 
 void CPetInventoryGlyph::glyphFocused(const Point &topLeft, bool flag) {
-	if (_background && flag)
-		_background->setPosition(topLeft);
+	if (_repeated && flag)
+		_repeated->setPosition(topLeft);
 }
 
 bool CPetInventoryGlyph::dragGlyph(const Point &topLeft, CMouseDragStartMsg *msg) {
 	if (!_item)
 		return false;
 
-	if (_background) {
-		_field34 = 0;
+	if (_repeated) {
+		_active = false;
 		stopMovie();
 	}
 
@@ -133,8 +133,8 @@ bool CPetInventoryGlyph::dragGlyph(const Point &topLeft, CMouseDragStartMsg *msg
 	msg->_handled = true;
 	if (msg->execute(item)) {
 		_item = nullptr;
-		_background = nullptr;
-		_field34 = 0;
+		_repeated = nullptr;
+		_active = false;
 		petControl->setAreaChangeType(1);
 		return true;
 	} else {
@@ -147,7 +147,7 @@ void CPetInventoryGlyph::getTooltip(CTextControl *text) {
 	if (text) {
 		text->setText("");
 
-		if (_field34 && _item) {
+		if (_active && _item) {
 			int itemIndex = populateItem(_item, 0);
 			if (itemIndex >= 14 && itemIndex <= 18) {
 				// Variations of the chicken
@@ -176,15 +176,15 @@ bool CPetInventoryGlyph::doAction(CGlyphAction *action) {
 	case ACTION_REMOVED:
 		if (invAction->_item == _item) {
 			_item = nullptr;
-			_background = nullptr;
-			_field34 = 0;
+			_repeated = nullptr;
+			_active = false;
 		}
 		break;
 
-	case ACTION_REMOVE:
+	case ACTION_CHANGE:
 		if (_item == invAction->_item && _owner) {
 			int v = populateItem(_item, 0);
-			_background = owner->getBackground(v);
+			_repeated = owner->getBackground(v);
 
 			if (isHighlighted()) {
 				Point glyphPos = _owner->getHighlightedGlyphPos();
@@ -205,9 +205,9 @@ void CPetInventoryGlyph::setItem(CGameObject *item, bool isLoading) {
 	_item = item;
 
 	if (_owner && item) {
-		int v1 = populateItem(item, isLoading);
-		_background = static_cast<CPetInventoryGlyphs *>(_owner)->getBackground(v1);
-		_image = static_cast<CPetInventory *>(getPetSection())->getImage(v1);
+		int idx = populateItem(item, isLoading);
+		_repeated = static_cast<CPetInventoryGlyphs *>(_owner)->getBackground(idx);
+		_singular = static_cast<CPetInventory *>(getPetSection())->getTransformAnimation(idx);
 	}
 }
 
@@ -302,19 +302,19 @@ int CPetInventoryGlyph::getItemIndex(CGameObject *item, bool isLoading) {
 	return movieFrame;
 }
 
-void CPetInventoryGlyph::startBackgroundMovie() {
+void CPetInventoryGlyph::startRepeatedMovie() {
 	if (_owner) {
 		CPetInventory *section = dynamic_cast<CPetInventory *>(_owner->getOwner());
 		if (section)
-			section->playMovie(_background, MOVIE_REPEAT);
+			section->playMovie(_repeated, true);
 	}
 }
 
-void CPetInventoryGlyph::startForegroundMovie() {
+void CPetInventoryGlyph::startSingularMovie() {
 	if (_owner) {
 		CPetInventory *section = dynamic_cast<CPetInventory *>(_owner->getOwner());
 		if (section)
-			section->playMovie(_image, MOVIE_REPEAT);
+			section->playMovie(_singular, false);
 	}
 }
 
@@ -322,17 +322,19 @@ void CPetInventoryGlyph::stopMovie() {
 	if (_owner) {
 		CPetInventory *section = dynamic_cast<CPetInventory *>(_owner->getOwner());
 		if (section)
-			section->playMovie(nullptr, MOVIE_REPEAT);
+			section->playMovie(nullptr);
 	}
 }
 
 void CPetInventoryGlyph::reposition(const Point &pt) {
-	if (_image) {
-		_image->setPosition(pt);
-		startForegroundMovie();
-	} else if (_background) {
-		_background->setPosition(pt);
-		startBackgroundMovie();
+	if (_singular) {
+		// Special transformation of item to piece of Titania
+		_singular->setPosition(pt);
+		startSingularMovie();
+	} else if (_repeated) {
+		// Standard repeating animation
+		_repeated->setPosition(pt);
+		startRepeatedMovie();
 	}
 }
 

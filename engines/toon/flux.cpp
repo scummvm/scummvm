@@ -86,8 +86,7 @@ int32 CharacterFlux::fixFacingForAnimation(int32 originalFacing, int32 animation
 		}
 		v5 >>= 1;
 		v6 <<= 1;
-	}
-	while (!facingMask);
+	} while (!facingMask);
 
 	int32 finalFacing = 0;
 	for (finalFacing = 0; ; ++finalFacing) {

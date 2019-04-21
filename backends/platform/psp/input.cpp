@@ -23,6 +23,7 @@
 #include <pspctrl.h>
 #include "gui/message.h"
 #include "backends/platform/psp/input.h"
+#include "common/config-manager.h"
 
 //#define __PSP_DEBUG_FUNCS__	/* Uncomment for debugging the stack */
 //#define __PSP_DEBUG_PRINT__ /* Uncomment for debug prints */
@@ -36,7 +37,7 @@
 #define PSP_TRIGGERS (PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER)
 #define PSP_ALL_BUTTONS (PSP_DPAD | PSP_4BUTTONS | PSP_TRIGGERS | PSP_CTRL_START | PSP_CTRL_SELECT)
 
-#define PAD_CHECK_TIME	53
+#define PAD_CHECK_TIME	13 // was 53
 
 Button::Button() {
 	clear();
@@ -273,11 +274,68 @@ bool Nub::getEvent(Common::Event &event, PspEvent &pspEvent, SceCtrlData &pad) {
 		return _buttonPad.getEventFromButtonState(event, pspEvent, buttonState);
 	}
 
-	int32 analogStepX = pad.Lx;		// Goes up to 255.
+	int32 analogStepX = pad.Lx;             // Goes up to 255.
 	int32 analogStepY = pad.Ly;
 
 	analogStepX = modifyNubAxisMotion(analogStepX);
 	analogStepY = modifyNubAxisMotion(analogStepY);
+
+	int32 speedFactor = 25;
+	switch (ConfMan.getInt("kbdmouse_speed")) {
+	// 0.25 keyboard pointer speed
+	case 0:
+		speedFactor = 100;
+		break;
+	// 0.5 speed
+	case 1:
+		speedFactor = 50;
+		break;
+	// 0.75 speed
+	case 2:
+		speedFactor = 33;
+		break;
+	// 1.0 speed
+	case 3:
+		speedFactor = 25;
+		break;
+	// 1.25 speed
+	case 4:
+		speedFactor = 20;
+		break;
+	// 1.5 speed
+	case 5:
+		speedFactor = 17;
+		break;
+	// 1.75 speed
+	case 6:
+		speedFactor = 14;
+		break;
+	// 2.0 speed
+	case 7:
+		speedFactor = 12;
+		break;
+	default:
+		speedFactor = 25;
+	}
+
+	// the larger the factor, the slower the cursor will move
+	int32 additionalFactor = 16;
+	if (_shifted) {
+		additionalFactor = 192;
+	}
+
+	int32 factor = (speedFactor * additionalFactor) / 25;
+
+	// hi-res cumulative analog delta for sub-pixel cursor positioning
+	_hiresX += (analogStepX * 1024) / factor;
+	_hiresY += (analogStepY * 1024) / factor;
+
+	analogStepX = (_hiresX / 1024);
+	analogStepY = (_hiresY / 1024);
+
+	// keep track of remainder for true sub-pixel cursor position
+	_hiresX %= 1024;
+	_hiresY %= 1024;
 
 	int32 oldX = _cursor->getX();
 	int32 oldY = _cursor->getY();
@@ -285,27 +343,8 @@ bool Nub::getEvent(Common::Event &event, PspEvent &pspEvent, SceCtrlData &pad) {
 	if (analogStepX != 0 || analogStepY != 0) {
 
 		PSP_DEBUG_PRINT("raw x[%d], y[%d]\n", analogStepX, analogStepY);
-
-		// If no movement then this has no effect
-		if (_shifted) {
-			// Fine control mode for analog
-			if (analogStepX != 0) {
-				if (analogStepX > 0)
-					_cursor->increaseXY(2, 0);
-				else
-					_cursor->increaseXY(-2, 0);
-			}
-
-			if (analogStepY != 0) {
-				if (analogStepY > 0)
-					_cursor->increaseXY(0, 2);
-				else
-					_cursor->increaseXY(0, -2);
-			}
-		} else {	// Regular speed movement
-			_cursor->increaseXY(analogStepX, 0);
-			_cursor->increaseXY(0, analogStepY);
-		}
+		_cursor->increaseXY(analogStepX, 0);
+		_cursor->increaseXY(0, analogStepY);
 
 		int32 newX = _cursor->getX();
 		int32 newY = _cursor->getY();
@@ -338,7 +377,8 @@ void Nub::translateToDpadState(int dpadX, int dpadY, uint32 &buttonState) {
 
 inline int32 Nub::modifyNubAxisMotion(int32 input) {
 	DEBUG_ENTER_FUNC();
-	const int MIN_NUB_MOTION = 30;
+
+	int MIN_NUB_MOTION = 10 * ConfMan.getInt("joystick_deadzone");
 
 	input -= 128;	// Center on 0.
 
@@ -349,6 +389,9 @@ inline int32 Nub::modifyNubAxisMotion(int32 input) {
 	else 				// between these points, dampen the response to 0
 		input = 0;
 
+	if (input != 0) { // scaled deadzone
+		input = (input * 128)/(128 - MIN_NUB_MOTION);
+	}
 	return input;
 }
 

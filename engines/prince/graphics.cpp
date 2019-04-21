@@ -31,7 +31,7 @@
 namespace Prince {
 
 GraphicsMan::GraphicsMan(PrinceEngine *vm) : _vm(vm), _changed(false) {
-	initGraphics(640, 480, true);
+	initGraphics(640, 480);
 
 	_frontScreen = new Graphics::Surface();
 	_frontScreen->create(640, 480, Graphics::PixelFormat::createFormatCLUT8());

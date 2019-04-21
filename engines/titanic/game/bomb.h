@@ -40,14 +40,14 @@ class CBomb : public CBackground {
 	bool SetFrameMsg(CSetFrameMsg *msg);
 	DECLARE_MESSAGE_MAP;
 private:
-	int _fieldE0;
-	int _fieldE4;
-	int _fieldE8;
-	int _fieldEC;
-	int _fieldF0;
+	bool _active;
+	int _numCorrectWheels;
+	int _tappedCtr;
+	int _hammerCtr;
+	int _commentCtr;
 	int _countdown;
 	int _soundHandle;
-	int _fieldFC;
+	int _unusedHandle;
 	int _startingTicks;
 	int _volume;
 public:

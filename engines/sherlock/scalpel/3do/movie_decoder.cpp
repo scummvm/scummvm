@@ -146,7 +146,7 @@ bool Scalpel3DOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 				_stream->readUint32BE(); // Unknown 0x00000004 compression ratio?
 				_stream->readUint32BE(); // Unknown 0x00000A2C
 
-				_audioTrack = new StreamAudioTrack(audioCodecTag, audioSampleRate, audioChannels);
+				_audioTrack = new StreamAudioTrack(audioCodecTag, audioSampleRate, audioChannels, getSoundType());
 				addTrack(_audioTrack);
 				break;
 
@@ -393,7 +393,8 @@ void Scalpel3DOMovieDecoder::StreamVideoTrack::decodeFrame(Common::SeekableReadS
 	_curFrame++;
 }
 
-Scalpel3DOMovieDecoder::StreamAudioTrack::StreamAudioTrack(uint32 codecTag, uint32 sampleRate, uint32 channels) {
+Scalpel3DOMovieDecoder::StreamAudioTrack::StreamAudioTrack(uint32 codecTag, uint32 sampleRate, uint32 channels, Audio::Mixer::SoundType soundType) :
+		AudioTrack(soundType) {
 	switch (codecTag) {
 	case MKTAG('A','D','P','4'):
 	case MKTAG('S','D','X','2'):

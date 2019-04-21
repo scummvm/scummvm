@@ -1808,7 +1808,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const 
 	// It was added as a kind of hack to fix some corner cases, but it compares
 	// the room width to the virtual screen width; but the former should always
 	// be bigger than the latter (except for MM NES, maybe)... strange
-	int limit = MAX(_vm->_roomWidth, (int) vs->w) / 8 - x;
+	int limit = MAX(_vm->_roomWidth, (int)vs->w) / 8 - x;
 	if (limit > numstrip)
 		limit = numstrip;
 	if (limit > _numStrips - sx)

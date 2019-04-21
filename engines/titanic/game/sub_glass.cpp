@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/sub_glass.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -67,7 +68,7 @@ bool CSUBGlass::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 	if (!_fieldBC && _startFrame >= 0) {
 		_fieldBC = true;
 		playMovie(_startFrame, _endFrame, MOVIE_NOTIFY_OBJECT);
-		playSound("z#30.wav");
+		playSound(TRANSLATE("z#30.wav", "z#561.wav"));
 	}
 
 	return true;
@@ -88,8 +89,8 @@ bool CSUBGlass::SignalObject(CSignalObject *msg) {
 		setVisible(true);
 
 		if (_signalStartFrame >= 0) {
-			playMovie(_signalStartFrame, _signalEndFrame, MOVIE_GAMESTATE);
-			playSound("z#30.wav");
+			playMovie(_signalStartFrame, _signalEndFrame, MOVIE_WAIT_FOR_FINISH);
+			playSound(TRANSLATE("z#30.wav", "z#561.wav"));
 			_fieldBC = false;
 		}
 	}

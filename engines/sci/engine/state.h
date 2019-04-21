@@ -83,18 +83,6 @@ enum VideoFlags {
 	kStretch         = 1 << 8
 };
 
-struct VideoState {
-	Common::String fileName;
-	uint16 x;
-	uint16 y;
-	uint16 flags;
-
-	void reset() {
-		fileName = "";
-		x = y = flags = 0;
-	}
-};
-
 /**
  * Trace information about a VM function call.
  */
@@ -126,9 +114,11 @@ public:
 	uint32 _screenUpdateTime;	/**< The last time the game updated the screen */
 
 	void speedThrottler(uint32 neededSleep);
-	void wait(int16 ticks);
+	int wait(int16 ticks);
 
-	uint32 _throttleCounter; /**< total times kAnimate was invoked */
+#ifdef ENABLE_SCI32
+	uint32 _eventCounter; /**< total times kGetEvent was invoked since the last call to kFrameOut */
+#endif
 	uint32 _throttleLastTime; /**< last time kAnimate was invoked */
 	bool _throttleTrigger;
 	bool _gameIsBenchmarking;
@@ -143,9 +133,7 @@ public:
 	int16 _lastSaveNewId;    // last newly created filename-id by kSaveGame
 
 	// see detection.cpp / SciEngine::loadGameState()
-	bool _delayedRestoreGame;  // boolean, that triggers delayed restore (triggered by ScummVM menu)
 	int _delayedRestoreGameId; // the saved game id, that it supposed to get restored (triggered by ScummVM menu)
-	bool _delayedRestoreFromLauncher; // is set, when the the delayed restore game was triggered from launcher
 
 	uint _chosenQfGImportItem; // Remembers the item selected in QfG import rooms
 
@@ -212,10 +200,6 @@ public:
 	uint16 _memorySegmentSize;
 	byte _memorySegment[kMemorySegmentMax];
 
-	// TODO: Excise video code from the state manager
-	VideoState _videoState;
-	bool _syncedAudioOptions;
-
 	/**
 	 * Resets the engine state.
 	 */
@@ -225,6 +209,11 @@ public:
 	 * Finds and returns the origin of the current call.
 	 */
 	SciCallOrigin getCurrentCallOrigin() const;
+
+	/**
+	 * Determines whether the given object method is in the current stack.
+	 */
+	bool callInStack(const reg_t object, const Selector selector) const;
 };
 
 } // End of namespace Sci

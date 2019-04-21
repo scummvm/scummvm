@@ -56,12 +56,17 @@ namespace Sci {
 // HIGH_RESOLUTION_GRAPHICS availability is checked for in SciEngine::run()
 #define GAMEOPTION_HIGH_RESOLUTION_GRAPHICS GUIO_GAMEOPTIONS8
 #define GAMEOPTION_ENABLE_BLACK_LINED_VIDEO GUIO_GAMEOPTIONS9
+#define GAMEOPTION_HQ_VIDEO                 GUIO_GAMEOPTIONS10
+#define GAMEOPTION_ENABLE_CENSORING         GUIO_GAMEOPTIONS11
+#define GAMEOPTION_LARRYSCALE               GUIO_GAMEOPTIONS12
+#define GAMEOPTION_UPSCALE_VIDEOS           GUIO_GAMEOPTIONS13
 
 struct EngineState;
 class Vocabulary;
 class ResourceManager;
 class Kernel;
 class GameFeatures;
+class GuestAdditions;
 class Console;
 class AudioPlayer;
 class SoundCommandParser;
@@ -206,13 +211,15 @@ enum SciGameId {
 	GID_SQ6,
 	GID_TORIN,
 
+	GID_CATDATE,
+
 	GID_FANMADE	// FIXME: Do we really need/want this?
 };
 
 /**
  * SCI versions
  * For more information, check here:
- * http://wiki.scummvm.org/index.php/Sierra_Game_Versions#SCI_Games
+ * https://wiki.scummvm.org/index.php/Sierra_Game_Versions#SCI_Games
  */
 enum SciVersion {
 	SCI_VERSION_NONE,
@@ -221,7 +228,7 @@ enum SciVersion {
 	SCI_VERSION_01, // KQ1 and multilingual games (S.old.*)
 	SCI_VERSION_1_EGA_ONLY, // SCI 1 EGA with parser (i.e. QFG2 only)
 	SCI_VERSION_1_EARLY, // KQ5 floppy, SQ4 floppy, XMAS card 1990, Fairy tales, Jones floppy
-	SCI_VERSION_1_MIDDLE, // LSL1, Jones CD
+	SCI_VERSION_1_MIDDLE, // LSL1, Jones CD, LSL3 & SQ3 multilingual Amiga
 	SCI_VERSION_1_LATE, // Dr. Brain 1, EcoQuest 1, Longbow, PQ3, SQ1, LSL5, KQ5 CD
 	SCI_VERSION_1_1, // Dr. Brain 2, EcoQuest 1 CD, EcoQuest 2, KQ6, QFG3, SQ4CD, XMAS 1992 and many more
 	SCI_VERSION_2, // GK1, PQ4 floppy, QFG4 floppy
@@ -259,31 +266,10 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &desc);
 	bool canLoadGameStateCurrently();
 	bool canSaveGameStateCurrently();
-	void syncSoundSettings();
+	void syncSoundSettings(); ///< from ScummVM to the game
+	void updateSoundMixerVolumes();
 	uint32 getTickCount();
 	void setTickCount(const uint32 ticks);
-
-	/**
-	 * Syncs the audio options of the ScummVM launcher (speech, subtitles or
-	 * both) with the in-game audio options of certain CD game versions. For
-	 * some games, this allows simultaneous playing of speech and subtitles,
-	 * even if the original games didn't support this feature.
-	 *
-	 * SCI1.1 games which support simultaneous speech and subtitles:
-	 * - EcoQuest 1 CD
-	 * - Leisure Suit Larry 6 CD
-	 * SCI1.1 games which don't support simultaneous speech and subtitles,
-	 * and we add this functionality in ScummVM:
-	 * - Space Quest 4 CD
-	 * - Freddy Pharkas CD
-	 * - Laura Bow 2 CD
-	 * SCI1.1 games which don't support simultaneous speech and subtitles,
-	 * and we haven't added any extra functionality in ScummVM because extra
-	 * script patches are needed:
-	 * - King's Quest 6 CD
-	 */
-	void syncIngameAudioOptions();
-	void updateScummVMAudioOptions();
 
 	const SciGameId &getGameId() const { return _gameId; }
 	const char *getGameIdStr() const;
@@ -297,6 +283,7 @@ public:
 	/** Returns true if the game's original platform is big-endian. */
 	bool isBE() const;
 
+	bool hasParser() const;
 	bool hasMacIconBar() const;
 
 	inline ResourceManager *getResMan() const { return _resMan; }
@@ -333,11 +320,10 @@ public:
 	void scriptDebug();
 	bool checkExportBreakpoint(uint16 script, uint16 pubfunct);
 	bool checkSelectorBreakpoint(BreakpointType breakpointType, reg_t send_obj, int selector);
-	bool checkAddressBreakpoint(const reg32_t &address);
-
-	void patchGameSaveRestore();
+	bool checkAddressBreakpoint(const reg_t &address);
 
 public:
+	bool checkKernelBreakpoint(const Common::String &name);
 
 	/**
 	 * Processes a multilanguage string based on the current language settings and
@@ -398,6 +384,7 @@ public:
 	Sync *_sync;
 	SoundCommandParser *_soundCmd;
 	GameFeatures *_features;
+	GuestAdditions *_guestAdditions;
 
 	opcode_format (*_opcode_formats)[4];
 

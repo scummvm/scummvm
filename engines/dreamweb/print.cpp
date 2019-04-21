@@ -60,7 +60,7 @@ uint8 DreamWebEngine::getNextWord(const GraphicsFile &charSet, const uint8 *stri
 	}
 }
 
-void DreamWebEngine::printChar(const GraphicsFile &charSet, uint16* x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height) {
+void DreamWebEngine::printChar(const GraphicsFile &charSet, uint16* x, uint16 y, uint8 c, uint8 nextChar, uint8 *width, uint8 *height, bool kerning) {
 	// WORKAROUND: Some texts contain leftover tab characters, which will cause
 	// OOB memory access when showing a character, as all the printable ones are
 	// from 32 onwards. We compensate for that here by ignoring all the invalid
@@ -77,7 +77,7 @@ void DreamWebEngine::printChar(const GraphicsFile &charSet, uint16* x, uint16 y,
 		y -= 3;
 	uint16 tmp = c - 32 + _charShift;
 	showFrame(charSet, *x, y, tmp & 0x1ff, (tmp >> 8) & 0xfe, width, height);
-	if (_kerning == 0)
+	if (!kerning)
 		*width = kernChars(c, nextChar, *width);
 	(*x) += *width;
 }
@@ -130,7 +130,7 @@ uint8 DreamWebEngine::printDirect(const uint8* string, uint16 x, uint16 y, uint8
 	return printDirect(&string, x, &y, maxWidth, centered);
 }
 
-uint8 DreamWebEngine::printDirect(const uint8** string, uint16 x, uint16 *y, uint8 maxWidth, bool centered) {
+uint8 DreamWebEngine::printDirect(const uint8** string, uint16 x, uint16 *y, uint8 maxWidth, bool centered, bool kerning) {
 	_lastXPos = x;
 	const GraphicsFile &charSet = *_currentCharset;
 	while (true) {
@@ -211,7 +211,6 @@ uint16 DreamWebEngine::waitFrames() {
 }
 
 const char *DreamWebEngine::monPrint(const char *string) {
-	_kerning = 1;
 	uint16 x = _monAdX;
 	const char *iterator = string;
 	bool done = false;
@@ -233,7 +232,7 @@ const char *DreamWebEngine::monPrint(const char *string) {
 				break;
 			}
 			c = modifyChar(c);
-			printChar(_monitorCharset, &x, _monAdY, c, 0, NULL, NULL);
+			printChar(_monitorCharset, &x, _monAdY, c, 0, NULL, NULL, true);
 			_cursLocX = x;
 			_cursLocY = _monAdY;
 			_mainTimer = 1;
@@ -248,7 +247,6 @@ const char *DreamWebEngine::monPrint(const char *string) {
 		_cursLocX = _monAdX;
 	}
 
-	_kerning = 0;
 	return iterator;
 }
 

@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/parrot/parrot_lobby_link_updater.h"
+#include "titanic/support/files_manager.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {

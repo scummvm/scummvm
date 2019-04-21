@@ -94,7 +94,7 @@ public:
 protected:
 	// PaletteManager API
 	void setPalette(const byte *colors, uint start, uint num);
-	void grabPalette(byte *colors, uint start, uint num);
+	void grabPalette(byte *colors, uint start, uint num) const;
 public:
 	void setCursorPalette(const byte *colors, uint start, uint num);
 

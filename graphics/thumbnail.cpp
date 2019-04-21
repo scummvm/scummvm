@@ -147,7 +147,12 @@ bool skipThumbnail(Common::SeekableReadStream &in) {
 	return true;
 }
 
-Graphics::Surface *loadThumbnail(Common::SeekableReadStream &in) {
+bool loadThumbnail(Common::SeekableReadStream &in, Graphics::Surface *&thumbnail, bool skipThumbnail) {
+	if (skipThumbnail) {
+		thumbnail = nullptr;
+		return Graphics::skipThumbnail(in);
+	}
+
 	const uint32 position = in.pos();
 	ThumbnailHeader header;
 	HeaderState headerState = loadHeader(in, header, true);
@@ -160,32 +165,32 @@ Graphics::Surface *loadThumbnail(Common::SeekableReadStream &in) {
 	// stream at this point then.
 	if (headerState == kHeaderNone) {
 		in.seek(position, SEEK_SET);
-		return 0;
+		return false;
 	} else if (headerState == kHeaderUnsupported) {
 		in.seek(header.size - (in.pos() - position), SEEK_CUR);
-		return 0;
+		return false;
 	}
 
 	if (header.format.bytesPerPixel != 2 && header.format.bytesPerPixel != 4) {
 		warning("trying to load thumbnail with unsupported bit depth %d", header.format.bytesPerPixel);
-		return 0;
+		return false;
 	}
 
-	Graphics::Surface *const to = new Graphics::Surface();
-	to->create(header.width, header.height, header.format);
+	thumbnail = new Graphics::Surface();
+	thumbnail->create(header.width, header.height, header.format);
 
-	for (int y = 0; y < to->h; ++y) {
+	for (int y = 0; y < thumbnail->h; ++y) {
 		switch (header.format.bytesPerPixel) {
 		case 2: {
-			uint16 *pixels = (uint16 *)to->getBasePtr(0, y);
-			for (uint x = 0; x < to->w; ++x) {
+			uint16 *pixels = (uint16 *)thumbnail->getBasePtr(0, y);
+			for (uint x = 0; x < thumbnail->w; ++x) {
 				*pixels++ = in.readUint16BE();
 			}
 			} break;
 
 		case 4: {
-			uint32 *pixels = (uint32 *)to->getBasePtr(0, y);
-			for (uint x = 0; x < to->w; ++x) {
+			uint32 *pixels = (uint32 *)thumbnail->getBasePtr(0, y);
+			for (uint x = 0; x < thumbnail->w; ++x) {
 				*pixels++ = in.readUint32BE();
 			}
 			} break;
@@ -194,7 +199,7 @@ Graphics::Surface *loadThumbnail(Common::SeekableReadStream &in) {
 			assert(0);
 		}
 	}
-	return to;
+	return true;
 }
 
 bool saveThumbnail(Common::WriteStream &out) {

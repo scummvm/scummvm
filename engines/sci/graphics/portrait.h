@@ -23,13 +23,15 @@
 #ifndef SCI_GRAPHICS_PORTRAITS_H
 #define SCI_GRAPHICS_PORTRAITS_H
 
+#include "sci/util.h"
+
 namespace Sci {
 
 struct PortraitBitmap {
 	int16 width, height;
 	int16 extraBytesPerLine;
 	uint16 displaceX, displaceY;
-	byte *rawBitmap;
+	SciSpan<const byte> rawBitmap;
 };
 
 /**
@@ -40,7 +42,6 @@ struct PortraitBitmap {
 class Portrait {
 public:
 	Portrait(ResourceManager *resMan, EventManager *event, GfxScreen *screen, GfxPalette *palette, AudioPlayer *audio, Common::String resourceName);
-	~Portrait();
 
 	void setupAudio(uint16 resourceId, uint16 noun, uint16 verb, uint16 cond, uint16 seq);
 	void doit(Common::Point position, uint16 resourceId, uint16 noun, uint16 verb, uint16 cond, uint16 seq);
@@ -54,7 +55,7 @@ private:
 
 	int16 raveGetTicks(Resource *resource, uint *offset);
 	uint16 raveGetID(Resource *resource, uint *offset);
-	byte *raveGetLipSyncData(uint16 raveID);
+	SciSpan<const byte> raveGetLipSyncData(const uint16 raveID);
 
 	ResourceManager *_resMan;
 	EventManager *_event;
@@ -66,19 +67,17 @@ private:
 	uint16 _width;
 	Palette _portraitPalette;
 
-	uint16 _bitmapCount;
-	PortraitBitmap *_bitmaps;
+	Common::Array<PortraitBitmap> _bitmaps;
 
 	Common::String _resourceName;
 
-	byte *_fileData;
+	Common::SpanOwner<SciSpan<const byte> > _fileData;
 
 	uint32 _lipSyncIDCount;
-	byte *_lipSyncIDTable;
+	SciSpan<const byte> _lipSyncIDTable;
 
-	byte *_lipSyncData;
-	uint16 *_lipSyncDataOffsetTable;
-	byte *_lipSyncDataOffsetTableEnd;
+	SciSpan<const byte> _lipSyncData;
+	Common::Array<uint16> _lipSyncDataOffsetTable;
 
 	Common::Point _position;
 };

@@ -47,7 +47,7 @@ public:
 private:
 	bool _isBlack;
 	uint32 fadePixel(uint32 color, int32 percent) const;
-	Graphics::Surface *_screen;
+	Graphics::Surface _screen;
 };
 
 // Transitions are faders that range over [0,1000], which makes their

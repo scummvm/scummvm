@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/bar_bell.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -68,23 +69,23 @@ bool CBarBell::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		case 0:
 		case 1:
 		case 5:
-			playSound("c#54.wav", _volume, _soundVal3);
+			playSound(TRANSLATE("c#54.wav", "c#38.wav"), _volume, _soundVal3);
 			break;
 
 		case 2:
-			playSound("c#52.wav", _volume, _soundVal3);
+			playSound(TRANSLATE("c#52.wav", "c#36.wav"), _volume, _soundVal3);
 			break;
 
 		case 3:
-			playSound("c#53.wav", _volume, _soundVal3);
+			playSound(TRANSLATE("c#53.wav", "c#37.wav"), _volume, _soundVal3);
 			break;
 
 		case 4:
-			playSound("c#55.wav", _volume, _soundVal3);
+			playSound(TRANSLATE("c#55.wav", "c#39.wav"), _volume, _soundVal3);
 			break;
 
 		default:
-			playSound("c#51.wav", _volume, _soundVal3);
+			playSound(TRANSLATE("c#51.wav", "c#35.wav"), _volume, _soundVal3);
 			break;
 		}
 	} else if (_fieldBC >= 5) {
@@ -93,7 +94,7 @@ bool CBarBell::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 			actMsg.execute("Barbot");
 		}
 
-		playSound("c#51.wav", _volume, _soundVal3);
+		playSound(TRANSLATE("c#51.wav", "c#35.wav"), _volume, _soundVal3);
 	} else {
 		if (_fieldBC == 3) {
 			CActMsg actMsg("BellRing1");
@@ -103,7 +104,7 @@ bool CBarBell::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 			actMsg.execute("Barbot");
 		}
 
-		playSound("c#54.wav", _volume, _soundVal3);
+		playSound(TRANSLATE("c#54.wav", "c#38.wav"), _volume, _soundVal3);
 	}
 
 	return true;

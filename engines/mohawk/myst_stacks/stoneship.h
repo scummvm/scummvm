@@ -33,12 +33,12 @@ struct MystScriptEntry;
 
 namespace MystStacks {
 
-#define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
+#define DECLARE_OPCODE(x) void x(uint16 var, const ArgumentsArray &args)
 
 class Stoneship : public MystScriptParser {
 public:
-	Stoneship(MohawkEngine_Myst *vm);
-	~Stoneship();
+	explicit Stoneship(MohawkEngine_Myst *vm);
+	~Stoneship() override;
 
 	void disablePersistentScripts() override;
 	void runPersistentScripts() override;
@@ -49,7 +49,7 @@ private:
 	void toggleVar(uint16 var) override;
 	bool setVarValue(uint16 var, uint16 value) override;
 
-	virtual uint16 getMap() override { return 9933; }
+	uint16 getMap() override { return 9933; }
 
 	DECLARE_OPCODE(o_pumpTurnOff);
 	DECLARE_OPCODE(o_brotherDoorOpen);

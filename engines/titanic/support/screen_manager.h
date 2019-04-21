@@ -64,6 +64,7 @@ public:
 	static CScreenManager *setCurrent();
 public:
 	Common::Array<VideoSurfaceEntry> _backSurfaces;
+	Rect _frontSurfaceBounds;
 	CVideoSurface *_frontRenderSurface;
 	CMouseCursor *_mouseCursor;
 	CTextCursor *_textCursor;

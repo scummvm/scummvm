@@ -23,6 +23,7 @@
 #ifndef SCI_GRAPHICS_CURSOR32_H
 #define SCI_GRAPHICS_CURSOR32_H
 
+#include "common/array.h"           // for Array
 #include "common/rect.h"            // for Point, Rect
 #include "common/scummsys.h"        // for int16, byte, uint8
 #include "common/serializer.h"      // for Serializable, Serializer (ptr only)
@@ -37,53 +38,46 @@ public:
 	~GfxCursor32();
 
 	/**
-	 * Initialises the cursor system with the given
-	 * buffer to use as the output buffer for
-	 * rendering the cursor.
+	 * Initialises the cursor system with the given buffer to use as the output
+	 * buffer for rendering the cursor.
 	 */
-	void init(const Buffer &vmap);
+	void init(const Buffer &outputBuffer);
 
 	/**
 	 * Called when the hardware mouse moves.
 	 */
-	void deviceMoved(Common::Point &position);
+	bool deviceMoved(Common::Point &position);
 
 	/**
-	 * Called by GfxFrameout once for each show
-	 * rectangle that is going to be drawn to
-	 * hardware.
+	 * Called by GfxFrameout once for each show rectangle that is going to be
+	 * drawn to hardware.
 	 */
 	void gonnaPaint(Common::Rect paintRect);
 
 	/**
-	 * Called by GfxFrameout when the rendering to
-	 * hardware begins.
+	 * Called by GfxFrameout when the rendering to hardware begins.
 	 */
 	void paintStarting();
 
 	/**
-	 * Called by GfxFrameout when the output buffer
-	 * has finished rendering to hardware.
+	 * Called by GfxFrameout when the output buffer has finished rendering to
+	 * hardware.
 	 */
 	void donePainting();
 
 	/**
-	 * Hides the cursor. Each call to `hide` will
-	 * increment a hide counter, which must be
-	 * returned to 0 before the cursor will be
-	 * shown again.
+	 * Hides the cursor. Each call to `hide` will increment a hide counter,
+	 * which must be returned to 0 before the cursor will be shown again.
 	 */
 	void hide();
 
 	/**
-	 * Shows the cursor, if the hide counter is
-	 * returned to 0.
+	 * Shows the cursor, if the hide counter is returned to 0.
 	 */
 	void unhide();
 
 	/**
-	 * Shows the cursor regardless of the state of
-	 * the hide counter.
+	 * Shows the cursor regardless of the state of the hide counter.
 	 */
 	void show();
 
@@ -93,14 +87,12 @@ public:
 	void setView(const GuiResourceId viewId, const int16 loopNo, const int16 celNo);
 
 	/**
-	 * Explicitly sets the position of the cursor,
-	 * in game script coordinates.
+	 * Explicitly sets the position of the cursor, in game script coordinates.
 	 */
 	void setPosition(const Common::Point &position);
 
 	/**
-	 * Sets the region that the mouse is allowed
-	 * to move within.
+	 * Sets the region that the mouse is allowed to move within.
 	 */
 	void setRestrictedArea(const Common::Rect &rect);
 
@@ -108,8 +100,6 @@ public:
 	 * Removes restrictions on mouse movement.
 	 */
 	void clearRestrictedArea();
-
-	void setMacCursorRemapList(int cursorCount, reg_t *cursors);
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
@@ -119,42 +109,41 @@ private:
 		byte *data;
 		uint8 skipColor;
 
-		DrawRegion() : rect(), data(nullptr) {}
+		DrawRegion() : data(nullptr) {}
 	};
 
 	/**
-	 * Information about the current cursor.
-	 * Used to restore cursor when loading a
-	 * savegame.
+	 * Information about the current cursor. Used to restore cursor when loading
+	 * a savegame.
 	 */
 	CelInfo32 _cursorInfo;
 
 	/**
-	 * Content behind the cursor? TODO
+	 * The content of the frame buffer which was behind the cursor prior to its
+	 * being drawn.
 	 */
 	DrawRegion _cursorBack;
 
 	/**
 	 * Scratch buffer.
 	 */
-	DrawRegion _drawBuff1;
+	DrawRegion _scratch1;
 
 	/**
 	 * Scratch buffer 2.
 	 */
-	DrawRegion _drawBuff2;
+	DrawRegion _scratch2;
 
 	/**
-	 * A draw region representing the current
-	 * output buffer.
+	 * A draw region representing the entire output buffer.
 	 */
-	DrawRegion _vmapRegion;
+	DrawRegion _screenRegion;
 
 	/**
-	 * The content behind the cursor in the
+	 * The region behind the cursor immediately before it is painted to the
 	 * output buffer.
 	 */
-	DrawRegion _savedVmapRegion;
+	DrawRegion _savedScreenRegion;
 
 	/**
 	 * The cursor bitmap.
@@ -162,93 +151,82 @@ private:
 	DrawRegion _cursor;
 
 	/**
-	 * The width and height of the cursor,
-	 * in screen coordinates.
+	 * The width and height of the cursor, in screen coordinates.
 	 */
 	int16 _width, _height;
 
 	/**
-	 * The output buffer where the cursor is
-	 * rendered.
+	 * The output buffer where the cursor is rendered.
 	 */
-	Buffer _vmap;
+	Buffer _screen;
 
 	/**
-	 * The number of times the cursor has been
-	 * hidden.
+	 * The number of times the cursor has been hidden.
 	 */
 	int _hideCount;
 
 	/**
-	 * The rendered position of the cursor, in
-	 * screen coordinates.
+	 * The rendered position of the cursor, in screen coordinates.
 	 */
 	Common::Point _position;
 
 	/**
-	 * The position of the cursor hot spot, relative
-	 * to the cursor origin, in screen pixels.
+	 * The position of the cursor hot spot, relative to the cursor origin, in
+	 * screen pixels.
 	 */
 	Common::Point _hotSpot;
 
 	/**
-	 * The area within which the cursor is allowed
-	 * to move, in screen pixels.
+	 * The area within which the cursor is allowed to move, in screen pixels.
 	 */
 	Common::Rect _restrictedArea;
 
 	/**
-	 * Indicates whether or not the cursor needs to
-	 * be repainted on the output buffer due to a
-	 * change of graphics in the area underneath the
-	 * cursor.
+	 * Indicates whether or not the cursor needs to be repainted on the output
+	 * buffer due to a change of graphics in the area underneath the cursor.
 	 */
-	bool _writeToVMAP;
-
-	// Mac versions of games use a remap list to remap their cursors
-	Common::Array<uint16> _macCursorRemap;
+	bool _needsPaint;
 
 	/**
-	 * Reads data from the output buffer or hardware
-	 * to the given draw region.
+	 * Reads data from the output buffer to the given draw region.
 	 */
-	void readVideo(DrawRegion &target);
+	void copyFromScreen(DrawRegion &target);
 
 	/**
-	 * Reads data from the output buffer to the
-	 * given draw region.
+	 * Copies pixel data from the given source to the given target. If SKIP is
+	 * true, pixels that match the `skipColor` property of the source will be
+	 * skipped.
+	 *
+	 * @note In SSCI, the function that did not handle skip color was called
+	 * `copy` and the one that did was called `paint`.
 	 */
-	void readVideoFromVmap(DrawRegion &target);
-
-	/**
-	 * Copies pixel data from the given source to
-	 * the given target.
-	 */
+	template <bool SKIP>
 	void copy(DrawRegion &target, const DrawRegion &source);
 
 	/**
-	 * Draws from the given source onto the given
-	 * target, skipping pixels in the source that
-	 * match the `skipColor` property.
-	 */
-	void paint(DrawRegion &target, const DrawRegion &source);
-
-	/**
-	 * Draws the cursor to the position it was
-	 * drawn to prior to moving offscreen or being
-	 * hidden by a call to `hide`.
+	 * Draws the cursor to the position it was drawn to prior to moving
+	 * offscreen or being hidden by a call to `hide`.
 	 */
 	void revealCursor();
 
 	/**
 	 * Draws the given source to the output buffer.
 	 */
-	void drawToHardware(const DrawRegion &source);
+	void drawToScreen(const DrawRegion &source);
 
 	/**
 	 * Renders the cursor at its new location.
 	 */
 	void move();
+
+#ifdef ENABLE_SCI32_MAC
+public:
+	void setMacCursorRemapList(int cursorCount, reg_t *cursors);
+
+private:
+	// Mac versions of games use a remap list to remap their cursors
+	Common::Array<uint16> _macCursorRemap;
+#endif
 };
 
 } // End of namespace Sci

@@ -380,8 +380,8 @@ class Scene930: public PalettedScene {
 	};
 
 	void showBootInset();
-	void ShowBoxInset();
-	void ShowSoleInset();
+	void showBoxInset();
+	void showSoleInset();
 public:
 	SequenceManager _sequenceManager1;
 	Object1 _box;

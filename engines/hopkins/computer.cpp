@@ -918,9 +918,9 @@ void ComputerManager::getScoreName() {
 	char score[16];
 	sprintf(score, "%d", _breakoutScore);
 	int scoreLen = 0;
-	do
+	do {
 		++scoreLen;
-	while (score[scoreLen]);
+	} while (score[scoreLen]);
 
 	for (int i = scoreLen - 1, scorePos = 8; i >= 0; i--) {
 		_score[scoreLine]._score.setChar(score[i], scorePos--);

@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2017 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -119,7 +119,7 @@ void MidiStreamParserImpl::parseStream(const Bit8u *stream, Bit32u length) {
 
 void MidiStreamParserImpl::processShortMessage(const Bit32u message) {
 	// Adds running status to the MIDI message if it doesn't contain one
-	Bit8u status = Bit8u(message);
+	Bit8u status = Bit8u(message & 0xFF);
 	if (0xF8 <= status) {
 		midiReceiver.handleSystemRealtimeMessage(status);
 	} else if (processStatusByte(status)) {

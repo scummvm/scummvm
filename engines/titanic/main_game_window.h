@@ -23,16 +23,21 @@
 #ifndef TITANIC_MAIN_GAME_WINDOW_H
 #define TITANIC_MAIN_GAME_WINDOW_H
 
-#include "common/scummsys.h"
-#include "common/array.h"
-#include "titanic/game_manager.h"
-#include "titanic/game_view.h"
-#include "titanic/support/image.h"
 #include "titanic/core/project_item.h"
 #include "titanic/events.h"
+#include "common/array.h"
+#include "common/scummsys.h"
+
+namespace Common {
+struct Point;
+}
 
 namespace Titanic {
 
+class CGameManager;
+class CGameView;
+class CScreenManager;
+class Image;
 class TitanicEngine;
 
 class CMainGameWindow : public CEventTarget {
@@ -41,8 +46,13 @@ private:
 	int _pendingLoadSlot;
 	uint32 _priorLeftDownTime;
 	uint32 _priorMiddleDownTime;
-	uint32 _priorRightDownTime;
 private:
+	/**
+	 * Returns true if a savegame was selected to be loaded
+	 * from the ScummVM launcher
+	 */
+	bool isLoadingFromLauncher() const;
+
 	/**
 	 * Checks for the presence of any savegames and, if present,
 	 * lets the user pick one to resume
@@ -72,7 +82,6 @@ private:
 
 	void leftButtonDoubleClick(const Point &mousePos);
 	void middleButtonDoubleClick(const Point &mousePos);
-	void rightButtonDoubleClick(const Point &mousePos);
 
 	/**
 	 * Returns true if the player can control the mouse
@@ -99,8 +108,6 @@ public:
 	virtual void leftButtonUp(const Point &mousePos);
 	virtual void middleButtonDown(const Point &mousePos);
 	virtual void middleButtonUp(const Point &mousePos);
-	virtual void rightButtonDown(const Point &mousePos);
-	virtual void rightButtonUp(const Point &mousePos);
 	virtual void mouseWheel(const Point &mousePos, bool wheelUp);
 	virtual void keyDown(Common::KeyState keyState);
 

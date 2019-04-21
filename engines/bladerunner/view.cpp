@@ -27,12 +27,13 @@
 
 namespace BladeRunner {
 
-bool View::read(Common::ReadStream *stream) {
+bool View::readVqa(Common::ReadStream *stream) {
 	_frame = stream->readUint32LE();
 
 	float d[12];
-	for (int i = 0; i != 12; ++i)
+	for (int i = 0; i != 12; ++i) {
 		d[i] = stream->readFloatLE();
+	}
 
 	_frameViewMatrix = Matrix4x3(d);
 
@@ -48,24 +49,17 @@ bool View::read(Common::ReadStream *stream) {
 void View::setFovX(float fovX) {
 	_fovX = fovX;
 
-	_viewportHalfWidth = 320.0f;
-	_viewportHalfHeight = 240.0f;
-
-	_viewportDistance = 320.0f / tanf(_fovX / 2.0f);
+	_viewportPosition.x = 320.0f;
+	_viewportPosition.y = 240.0f;
+	_viewportPosition.z = 320.0f / tan(_fovX / 2.0f);
 }
 
 void View::calculateSliceViewMatrix() {
-	Matrix4x3 m = _frameViewMatrix;
-
-	m = m * rotationMatrixX(float(M_PI) / 2.0f);
-
-	Matrix4x3 a(-1.0f,  0.0f, 0.0f, 0.0f,
-	             0.0f, -1.0f, 0.0f, 0.0f,
-	             0.0f,  0.0f, 1.0f, 0.0f);
-
-	m = a * m;
-
-	_sliceViewMatrix = m;
+	Matrix4x3 mRotation = rotationMatrixX(float(M_PI) / 2.0f);
+	Matrix4x3 mInvert(-1.0f,  0.0f, 0.0f, 0.0f,
+	                   0.0f, -1.0f, 0.0f, 0.0f,
+	                   0.0f,  0.0f, 1.0f, 0.0f);
+	_sliceViewMatrix = mInvert * (_frameViewMatrix * mRotation);
 }
 
 void View::calculateCameraPosition() {
@@ -79,8 +73,8 @@ void View::calculateCameraPosition() {
 Vector3 View::calculateScreenPosition(Vector3 worldPosition) {
 	Vector3 viewPosition = _frameViewMatrix * worldPosition;
 	return Vector3(
-		this->_viewportHalfWidth - viewPosition.x / viewPosition.z * _viewportDistance,
-		this->_viewportHalfHeight - viewPosition.y / viewPosition.z * _viewportDistance,
+		_viewportPosition.x - viewPosition.x / viewPosition.z * _viewportPosition.z,
+		_viewportPosition.y - viewPosition.y / viewPosition.z * _viewportPosition.z,
 		viewPosition.z
 	);
 }

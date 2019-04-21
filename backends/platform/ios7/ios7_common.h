@@ -25,7 +25,7 @@
 
 #include "graphics/surface.h"
 
-// #define ENABLE_IOS7_SCALERS
+#define ENABLE_IOS7_SCALERS
 
 
 enum InputEvent {
@@ -122,6 +122,7 @@ void iOS7_updateScreen();
 bool iOS7_fetchEvent(InternalEvent *event);
 bool iOS7_isBigDevice();
 
+void iOS7_buildSharedOSystemInstance();
 void iOS7_main(int argc, char **argv);
 const char *iOS7_getDocumentsDir();
 bool iOS7_touchpadModeEnabled();

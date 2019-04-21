@@ -538,10 +538,13 @@ bool Scene::processEvent(const Common::Event &event) {
 		default:
 			break;
 		}
+		break;
 
 	default:
 		return false;
 	}
+
+	return false;
 }
 
 struct ZOrderCmp {

@@ -134,12 +134,12 @@ void GfxPalette::setDefault() {
 #define SCI_PAL_FORMAT_CONSTANT 1
 #define SCI_PAL_FORMAT_VARIABLE 0
 
-void GfxPalette::createFromData(byte *data, int bytesLeft, Palette *paletteOut) const {
+void GfxPalette::createFromData(const SciSpan<const byte> &data, Palette *paletteOut) const {
 	int palFormat = 0;
-	int palOffset = 0;
-	int palColorStart = 0;
-	int palColorCount = 0;
-	int colorNo = 0;
+	uint palOffset = 0;
+	uint palColorStart = 0;
+	uint palColorCount = 0;
+	uint colorNo = 0;
 
 	memset(paletteOut, 0, sizeof(Palette));
 
@@ -148,16 +148,16 @@ void GfxPalette::createFromData(byte *data, int bytesLeft, Palette *paletteOut) 
 		paletteOut->mapping[colorNo] = colorNo;
 	}
 
-	if (bytesLeft < 37) {
+	if (data.size() < 37) {
 		// This happens when loading palette of picture 0 in sq5 - the resource is broken and doesn't contain a full
 		//  palette
-		debugC(kDebugLevelResMan, "GfxPalette::createFromData() - not enough bytes in resource (%d), expected palette header", bytesLeft);
+		debugC(kDebugLevelResMan, "GfxPalette::createFromData() - not enough bytes in resource (%u), expected palette header", data.size());
 		return;
 	}
 
 	// palette formats in here are not really version exclusive, we can not use sci-version to differentiate between them
 	//  they were just called that way, because they started appearing in sci1.1 for example
-	if ((data[0] == 0 && data[1] == 1) || (data[0] == 0 && data[1] == 0 && READ_SCI11ENDIAN_UINT16(data + 29) == 0)) {
+	if ((data[0] == 0 && data[1] == 1) || (data[0] == 0 && data[1] == 0 && data.getUint16SEAt(29) == 0)) {
 		// SCI0/SCI1 palette
 		palFormat = SCI_PAL_FORMAT_VARIABLE; // CONSTANT;
 		palOffset = 260;
@@ -168,13 +168,13 @@ void GfxPalette::createFromData(byte *data, int bytesLeft, Palette *paletteOut) 
 		palFormat = data[32];
 		palOffset = 37;
 		palColorStart = data[25];
-		palColorCount = READ_SCI11ENDIAN_UINT16(data + 29);
+		palColorCount = data.getUint16SEAt(29);
 	}
 
 	switch (palFormat) {
 		case SCI_PAL_FORMAT_CONSTANT:
 			// Check, if enough bytes left
-			if (bytesLeft < palOffset + (3 * palColorCount)) {
+			if (data.size() < palOffset + (3 * palColorCount)) {
 				warning("GfxPalette::createFromData() - not enough bytes in resource, expected palette colors");
 				return;
 			}
@@ -187,7 +187,7 @@ void GfxPalette::createFromData(byte *data, int bytesLeft, Palette *paletteOut) 
 			}
 			break;
 		case SCI_PAL_FORMAT_VARIABLE:
-			if (bytesLeft < palOffset + (4 * palColorCount)) {
+			if (data.size() < palOffset + (4 * palColorCount)) {
 				warning("GfxPalette::createFromData() - not enough bytes in resource, expected palette colors");
 				return;
 			}
@@ -237,7 +237,7 @@ bool GfxPalette::setAmiga() {
 }
 
 // Called from picture class, some amiga sci1 games set half of the palette
-void GfxPalette::modifyAmigaPalette(byte *data) {
+void GfxPalette::modifyAmigaPalette(const SciSpan<const byte> &data) {
 	int16 curPos = 0;
 
 	for (int curColor = 0; curColor < 16; curColor++) {
@@ -525,7 +525,7 @@ bool GfxPalette::kernelSetFromResource(GuiResourceId resourceId, bool force) {
 	Palette palette;
 
 	if (palResource) {
-		createFromData(palResource->data, palResource->size, &palette);
+		createFromData(*palResource, &palette);
 		set(&palette, force);
 		return true;
 	}
@@ -716,6 +716,7 @@ void GfxPalette::palVaryInit() {
 	_palVaryStepStop = 0;
 	_palVaryDirection = 0;
 	_palVaryTicks = 0;
+	_palVaryZeroTick = false;
 }
 
 bool GfxPalette::palVaryLoadTargetPalette(GuiResourceId resourceId) {
@@ -723,7 +724,7 @@ bool GfxPalette::palVaryLoadTargetPalette(GuiResourceId resourceId) {
 	Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, resourceId), false);
 	if (palResource) {
 		// Load and initialize destination palette
-		createFromData(palResource->data, palResource->size, &_palVaryTargetPalette);
+		createFromData(*palResource, &_palVaryTargetPalette);
 		return true;
 	}
 	return false;
@@ -759,19 +760,13 @@ bool GfxPalette::kernelPalVaryInit(GuiResourceId resourceId, uint16 ticks, uint1
 		_palVaryStep = 1;
 		_palVaryStepStop = stepStop;
 		_palVaryDirection = direction;
+
 		// if no ticks are given, jump directly to destination
-		if (!_palVaryTicks) {
+		if (!_palVaryTicks)
 			_palVaryDirection = stepStop;
-			// sierra sci set the timer to 1 tick instead of calling it directly
-			//  we have to change this to prevent a race condition to happen in
-			//  at least freddy pharkas during nighttime. In that case kPalVary is
-			//  called right before a transition and because we load pictures much
-			//  faster, the 1 tick won't pass sometimes resulting in the palette
-			//  being daytime instead of nighttime during the transition.
-			palVaryProcess(1, true);
-		} else {
-			palVaryInstallTimer();
-		}
+		_palVaryZeroTick = (_palVaryTicks == 0); //see delayForPalVaryWorkaround()
+
+		palVaryInstallTimer();
 		return true;
 	}
 	return false;
@@ -788,14 +783,13 @@ int16 GfxPalette::kernelPalVaryReverse(int16 ticks, uint16 stepStop, int16 direc
 	_palVaryStepStop = stepStop;
 	_palVaryDirection = direction != -1 ? -direction : -_palVaryDirection;
 
-	if (!_palVaryTicks) {
+	// if no ticks are given, jump directly to destination
+	if (!_palVaryTicks)
 		_palVaryDirection = _palVaryStepStop - _palVaryStep;
-		// see palVaryInit above, we fix the code here as well
-		//  just in case
-		palVaryProcess(1, true);
-	} else {
-		palVaryInstallTimer();
-	}
+	_palVaryZeroTick = (_palVaryTicks == 0); // see delayForPalVaryWorkaround()
+
+	palVaryInstallTimer();
+
 	return kernelPalVaryGetCurrentStep();
 }
 
@@ -810,7 +804,7 @@ int16 GfxPalette::kernelPalVaryChangeTarget(GuiResourceId resourceId) {
 		Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, resourceId), false);
 		if (palResource) {
 			Palette insertPalette;
-			createFromData(palResource->data, palResource->size, &insertPalette);
+			createFromData(*palResource, &insertPalette);
 			// insert new palette into target
 			insert(&insertPalette, &_palVaryTargetPalette);
 			// update palette and set on screen
@@ -855,6 +849,7 @@ void GfxPalette::palVaryIncreaseSignal() {
 	// FIXME: increments from another thread aren't guaranteed to be atomic
 	if (!_palVaryPaused)
 		_palVarySignal++;
+	_palVaryZeroTick = false;
 }
 
 // Actually do the pal vary processing
@@ -862,6 +857,34 @@ void GfxPalette::palVaryUpdate() {
 	if (_palVarySignal) {
 		palVaryProcess(_palVarySignal, true);
 		_palVarySignal = 0;
+	}
+}
+
+void GfxPalette::delayForPalVaryWorkaround() {
+	if (_palVaryResourceId == -1)
+		return;
+	if (_palVaryPaused)
+		return;
+
+	// This gets called at the very beginning of kAnimate.
+	// If a zero-tick palVary is running, we delay briefly to give the
+	// palVary time to trigger. In theory there should be no reason for this
+	// to have to wait more than a tick, but we time-out after 4 ticks
+	// to be on the safe side.
+	//
+	// This prevents a race condition in Freddy Pharkas during nighttime,
+	// since we load pictures much faster than on original hardware (bug #5298).
+
+	if (_palVaryZeroTick) {
+		int i;
+		for (i = 0; i < 4; ++i) {
+			g_sci->sleep(17);
+			if (!_palVaryZeroTick)
+				break;
+		}
+		debugC(kDebugLevelGraphics, "Delayed kAnimate for kPalVary, %d times", i+1);
+		if (_palVaryZeroTick)
+			warning("Delayed kAnimate for kPalVary timed out");
 	}
 }
 

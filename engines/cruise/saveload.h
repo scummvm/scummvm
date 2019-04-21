@@ -38,7 +38,7 @@ struct CruiseSavegameHeader {
 
 Common::Error saveSavegameData(int saveGameIdx, const Common::String &saveName);
 Common::Error loadSavegameData(int saveGameIdx);
-bool readSavegameHeader(Common::InSaveFile *in, CruiseSavegameHeader &header);
+WARN_UNUSED_RESULT bool readSavegameHeader(Common::InSaveFile *in, CruiseSavegameHeader &header, bool skipThumbnail = true);
 void initVars();
 
 } // End of namespace Cruise

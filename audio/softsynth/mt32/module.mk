@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	BReverbModel.o \
 	File.o \
 	FileStream.o \
+	LA32FloatWaveGenerator.o \
 	LA32Ramp.o \
 	LA32WaveGenerator.o \
 	MidiStreamParser.o \
@@ -19,7 +20,8 @@ MODULE_OBJS := \
 	TVF.o \
 	TVP.o \
 	sha1/sha1.o \
-	c_interface/c_interface.o
+	c_interface/c_interface.o \
+	SampleRateConverter.o
 
 # Include common rules
 include $(srcdir)/rules.mk

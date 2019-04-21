@@ -49,7 +49,7 @@ enum InkType {
 	kInkTypeDark
 };
 
-//Director v4
+// Director v4
 enum SpriteType {
 	kInactiveSprite, // turns the sprite off
 	kBitmapSprite,
@@ -110,7 +110,14 @@ public:
 	byte _spriteType;
 	InkType _ink;
 	uint16 _trails;
-	Cast *_cast;
+
+	BitmapCast *_bitmapCast;
+	ShapeCast *_shapeCast;
+	//SoundCast *_soundCast;
+	TextCast *_textCast;
+	ButtonCast *_buttonCast;
+	//ScriptCast *_scriptCast;
+
 	uint16 _flags;
 	Common::Point _startPoint;
 	uint16 _width;

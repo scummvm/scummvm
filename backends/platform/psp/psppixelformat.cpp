@@ -173,7 +173,7 @@ Graphics::PixelFormat PSPPixelFormat::convertToScummvmPixelFormat(PSPPixelFormat
 	return pf;
 }
 
-uint32 PSPPixelFormat::convertTo32BitColor(uint32 color) {
+uint32 PSPPixelFormat::convertTo32BitColor(uint32 color) const {
 	DEBUG_ENTER_FUNC();
 	uint32 r, g, b, a, output;
 

@@ -67,7 +67,7 @@ Building from sources
 Recommended method is building by cross-compiling on a GNU/Linux X86-based computer.
 You can find concise instructions for this on the ScummVM wiki:
 
-http://wiki.scummvm.org/index.php/Compiling_ScummVM/RPI 
+https://wiki.scummvm.org/index.php/Compiling_ScummVM/RPI
 
 The configure script is disabling scalers because we prefer dispmanx for that, which 
 makes scalers unnecessary on a CPU limited platform like this, timestamps because most people

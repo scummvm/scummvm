@@ -130,19 +130,18 @@ void DemoPlayer::clearScreen() {
 
 void DemoPlayer::playVideo(const char *fileName) {
 	uint32 waitTime = 0;
-	char *file, *filePtr;
-
-	file = filePtr = strdup(fileName);
+	Common::String filePtr(fileName);
+	Common::String::iterator file = filePtr.begin();
 
 	// Trimming spaces front
 	while (*file == ' ')
 		file++;
 
-	char *spaceBack = strchr(file, ' ');
-	if (spaceBack) {
-		char *nextSpace = strchr(spaceBack, ' ');
+	Common::String::iterator spaceBack = Common::find(file, filePtr.end(), ' ');
+	if (spaceBack != filePtr.end()) {
+		Common::String::iterator nextSpace = Common::find(spaceBack, filePtr.end(), ' ');
 
-		if (nextSpace)
+		if (nextSpace != filePtr.end())
 			*nextSpace = '\0';
 
 		*spaceBack++ = '\0';
@@ -180,9 +179,6 @@ void DemoPlayer::playVideo(const char *fileName) {
 		if (waitTime > 0)
 			_vm->_util->longDelay(waitTime);
 	}
-
-
-	free(filePtr);
 }
 
 void DemoPlayer::playADL(const char *params) {

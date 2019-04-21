@@ -1460,7 +1460,7 @@ DIR_ENT FAT_DirEntFromPath (const char* path)
 		{
 			// Match filename
 			found = true;
-			for (namePos = 0; (namePos < MAX_FILENAME_LENGTH) && found && (name[namePos] != '\0') && (lfnName[namePos] != '\0'); namePos++)
+			for (namePos = 0; (namePos < MAX_FILENAME_LENGTH-1) && found && (name[namePos] != '\0') && (lfnName[namePos] != '\0'); namePos++)
 			{
 				if (name[namePos] != ucase(lfnName[namePos]))
 				{
@@ -1477,7 +1477,7 @@ DIR_ENT FAT_DirEntFromPath (const char* path)
 			{
 				FAT_GetFilename(dirEntry, alias);
 				found = true;
-				for (namePos = 0; (namePos < 13) && found && (name[namePos] != '\0') && (alias[namePos] != '\0'); namePos++)
+				for (namePos = 0; (namePos < (sizeof(alias)/sizeof(alias[0]))-1) && found && (name[namePos] != '\0') && (alias[namePos] != '\0'); namePos++)
 				{
 					if (name[namePos] != ucase(alias[namePos]))
 					{
@@ -3186,7 +3186,7 @@ int FAT_mkdir (const char* path)
 	// Create . directory entry
 	dirEntry.name[0] = '.';
 	// Fill name and extension with spaces
-	for (i = 1; i < 11; i++)
+	for (i = 1; i < (sizeof(dirEntry.name)/sizeof(dirEntry.name[0])); i++)
 	{
 		dirEntry.name[i] = ' ';
 	}

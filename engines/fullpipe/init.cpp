@@ -144,7 +144,7 @@ void FullpipeEngine::setLevelStates() {
 
 void FullpipeEngine::addCursor(CursorInfo *cursorInfo, Scene *inv, int pictureId, int hotspotX, int hotspotY, int itemPictureOffsX, int itemPictureOffsY) {
 	cursorInfo->pictureId = pictureId;
-	cursorInfo->picture = inv->getPictureObjectById(pictureId, 0)->_picture;
+	cursorInfo->picture = inv->getPictureObjectById(pictureId, 0)->_picture.get();
 	cursorInfo->hotspotX = hotspotX;
 	cursorInfo->hotspotY = hotspotY;
 	cursorInfo->itemPictureOffsX = itemPictureOffsX;

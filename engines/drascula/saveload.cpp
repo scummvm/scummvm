@@ -138,7 +138,7 @@ SaveStateDescriptor loadMetaData(Common::ReadStream *s, int slot, bool setPlayTi
 	return desc;
 }
 
-void saveMetaData(Common::WriteStream *s, Common::String &desc) {
+void saveMetaData(Common::WriteStream *s, const Common::String &desc) {
 	TimeDate curTime;
 	g_system->getTimeAndDate(curTime);
 
@@ -155,7 +155,7 @@ void saveMetaData(Common::WriteStream *s, Common::String &desc) {
 	s->writeUint32LE(playTime);
 }
 
-void DrasculaEngine::convertSaveGame(int slot, Common::String &desc) {
+void DrasculaEngine::convertSaveGame(int slot, const Common::String &desc) {
 	Common::String oldFileName = Common::String::format("%s%02d", _targetName.c_str(), slot);
 	Common::String newFileName = Common::String::format("%s.%03d", _targetName.c_str(), slot);
 	Common::InSaveFile *oldFile = _saveFileMan->openForLoading(oldFileName);
@@ -188,6 +188,26 @@ void DrasculaEngine::convertSaveGame(int slot, Common::String &desc) {
 	_saveFileMan->removeSavefile(oldFileName);
 }
 
+Common::Error DrasculaEngine::loadGameState(int slot) {
+	// The boolean returned by loadGame() indicates if loading is in the same
+	// chapter or in a different one. Thus it does not indicate an error.
+	loadGame(slot);
+	return Common::kNoError;
+}
+
+bool DrasculaEngine::canLoadGameStateCurrently() {
+	return _canSaveLoad;
+}
+
+Common::Error DrasculaEngine::saveGameState(int slot, const Common::String &desc) {
+	saveGame(slot, desc);
+	return Common::kNoError;
+}
+
+bool DrasculaEngine::canSaveGameStateCurrently() {
+	return _canSaveLoad;
+}
+
 /**
  * Loads the first 10 save names, to be used in Drascula's save/load screen
  */
@@ -205,7 +225,7 @@ void DrasculaEngine::loadSaveNames() {
 	}
 }
 
-void DrasculaEngine::saveGame(int slot, Common::String &desc) {
+void DrasculaEngine::saveGame(int slot, const Common::String &desc) {
 	Common::OutSaveFile *out;
 	int l;
 
@@ -261,7 +281,7 @@ bool DrasculaEngine::loadGame(int slot) {
 	// things. Reset those before loading the savegame otherwise we may have some
 	// issues such as the protagonist being invisible after reloading a savegame.
 	if (_roomNumber == 102 && flags[1] == 2) {
-		characterVisible = 1;
+		_characterVisible = true;
 		loadPic(96, frontSurface);
 		loadPic(97, frontSurface);
 		loadPic(97, extraSurface);
@@ -297,9 +317,8 @@ bool DrasculaEngine::loadGame(int slot) {
 	takeObject = in->readSint32LE();
 	pickedObject = in->readSint32LE();
 	_loadedDifferentChapter = false;
-	if (!sscanf(currentData, "%d.ald", &roomNum)) {
+	if (!sscanf(currentData, "%d.ald", &roomNum))
 		error("Bad save format");
-	}
 
 	// When loading room 102 while being attached below the pendulum Some variables
 	// are not correctly set and can cause random crashes when calling enterRoom below.

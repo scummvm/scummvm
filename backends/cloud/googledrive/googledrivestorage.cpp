@@ -22,6 +22,7 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
+#include <curl/curl.h>
 #include "backends/cloud/googledrive/googledrivestorage.h"
 #include "backends/cloud/cloudmanager.h"
 #include "backends/cloud/googledrive/googledrivetokenrefresher.h"
@@ -34,7 +35,6 @@
 #include "common/debug.h"
 #include "common/json.h"
 #include "common/debug.h"
-#include <curl/curl.h>
 
 #ifdef ENABLE_RELEASE
 #include "dists/clouds/cloud_keys.h"

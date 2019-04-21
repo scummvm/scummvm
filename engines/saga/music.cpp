@@ -129,7 +129,6 @@ void MusicDriver::play(SagaEngine *vm, ByteArray *buffer, bool loop) {
 
 	// Handle music looping
 	_parser->property(MidiParser::mpAutoLoop, loop);
-//	_isLooping = loop;
 
 	_isPlaying = true;
 }
@@ -150,7 +149,6 @@ void MusicDriver::playQuickTime(const Common::String &musicName, bool loop) {
 
 	// Handle music looping
 	_parser->property(MidiParser::mpAutoLoop, loop);
-//	_isLooping = loop;
 
 	_isPlaying = true;
 }

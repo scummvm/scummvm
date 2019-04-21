@@ -22,44 +22,81 @@
 
 #include "bladerunner/scene.h"
 
-#include "bladerunner/bladerunner.h"
-
 #include "bladerunner/actor.h"
-#include "bladerunner/adq.h"
+#include "bladerunner/actor_dialogue_queue.h"
+#include "bladerunner/bladerunner.h"
 #include "bladerunner/chapters.h"
-#include "bladerunner/gameinfo.h"
+#include "bladerunner/game_info.h"
 #include "bladerunner/items.h"
-#include "bladerunner/settings.h"
+#include "bladerunner/overlays.h"
+#include "bladerunner/regions.h"
+#include "bladerunner/savefile.h"
 #include "bladerunner/scene_objects.h"
-#include "bladerunner/script/script.h"
+#include "bladerunner/screen_effects.h"
+#include "bladerunner/set.h"
+#include "bladerunner/settings.h"
 #include "bladerunner/slice_renderer.h"
+#include "bladerunner/script/police_maze.h"
+#include "bladerunner/script/scene_script.h"
+#include "bladerunner/ui/spinner.h"
+#include "bladerunner/vqa_player.h"
+#include "bladerunner/zbuffer.h"
 
 #include "common/str.h"
 
 namespace BladeRunner {
 
+Scene::Scene(BladeRunnerEngine *vm)
+	: _vm(vm),
+	_setId(-1),
+	_sceneId(-1),
+	_vqaPlayer(nullptr),
+	_defaultLoop(0),
+	_defaultLoopSet(false),
+	_specialLoopMode(kSceneLoopModeLoseControl),
+	_specialLoop(0),
+	_defaultLoopPreloadedSet(false),
+	// _introFinished(false),
+	_nextSetId(-1),
+	_nextSceneId(-1),
+	_frame(0),
+	_actorStartFacing(0),
+	_playerWalkedIn(false),
+	_set(new Set(vm)),
+	_regions(new Regions()),
+	_exits(new Regions()) {
+}
+
+Scene::~Scene() {
+	delete _set;
+	delete _regions;
+	delete _exits;
+	delete _vqaPlayer;
+}
+
 bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 	if (!isLoadingGame) {
-		_vm->_adq->flush(1, false);
+		_vm->_actorDialogueQueue->flush(1, false);
 	}
+
+	_vm->walkingReset();
 
 	_setId = setId;
 	_sceneId = sceneId;
 
-	const Common::String setName = _vm->_gameInfo->getSceneName(_sceneId);
+	const Common::String sceneName = _vm->_gameInfo->getSceneName(_sceneId);
 
 	if (isLoadingGame) {
-		// TODO: Set up overlays
+		_vm->_overlays->resume(true);
 	} else {
 		_regions->clear();
 		_exits->clear();
-		// TODO: Reset aesc
-		// TODO: Clear regions
-		// TODO: Destroy all overlays
+		_vm->_screenEffects->_entries.clear();
+		_vm->_overlays->removeAll();
 		_defaultLoop = 0;
 		_defaultLoopSet = false;
-		_specialLoopAtEnd = false;
-		_specialLoopMode = -1;
+		_defaultLoopPreloadedSet = false;
+		_specialLoopMode = kSceneLoopModeNone;
 		_specialLoop = -1;
 		_frame = -1;
 	}
@@ -67,50 +104,53 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 	Common::String vqaName;
 	int currentResourceId = _vm->_chapters->currentResourceId();
 	if (currentResourceId == 1) {
-		vqaName = Common::String::format("%s.VQA", setName.c_str());
+		vqaName = Common::String::format("%s.VQA", sceneName.c_str());
 	} else {
-		vqaName = Common::String::format("%s_%d.VQA", setName.c_str(), MIN(currentResourceId, 3));
+		vqaName = Common::String::format("%s_%d.VQA", sceneName.c_str(), MIN(currentResourceId, 3));
 	}
 
-	if (_vqaPlayer != nullptr)
+	if (_vqaPlayer != nullptr) {
 		delete _vqaPlayer;
+	}
 
-	_vqaPlayer = new VQAPlayer(_vm);
+	_vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceBack, vqaName);
 
-	Common::String sceneName = _vm->_gameInfo->getSceneName(sceneId);
-	if (!_vm->_script->open(sceneName))
+	if (!_vm->_sceneScript->open(sceneName)) {
 		return false;
+	}
 
-	if (!isLoadingGame)
-		_vm->_script->InitializeScene();
+	if (!isLoadingGame) {
+		_vm->_sceneScript->initializeScene();
+	}
 
 	Common::String setResourceName = Common::String::format("%s-MIN.SET", sceneName.c_str());
-	if (!_set->open(setResourceName))
+	if (!_set->open(setResourceName)) {
 		return false;
+	}
 
-	_vm->_sliceRenderer->setView(*_vm->_view);
+	_vm->_sliceRenderer->setView(_vm->_view);
 
 	if (isLoadingGame) {
-		// TODO: Advance VQA frame
-		if (sceneId >= 73 && sceneId <= 76)
-			_vm->_script->SceneLoaded();
+		resume(true);
+		if (sceneId == kScenePS10 || sceneId == kScenePS11 || sceneId == kScenePS12 || sceneId == kScenePS13) { // police maze?
+			_vm->_sceneScript->sceneLoaded();
+		}
 		return true;
 	}
 
-	if (!_vqaPlayer->open(vqaName))
+	if (!_vqaPlayer->open()) {
 		return false;
-
-	if (_specialLoop == -1) {
-		_vqaPlayer->setLoop(_defaultLoop, -1, 2, nullptr, nullptr);
-		_defaultLoopSet = true;
-		_specialLoopAtEnd = false;
 	}
-	_vm->_scene->advanceFrame(_vm->_surface1, _vm->_zBuffer1);
+
+	if (_specialLoopMode == kSceneLoopModeNone) {
+		startDefaultLoop();
+	}
+	advanceFrame();
 
 	_vm->_playerActor->setAtXYZ(_actorStartPosition, _actorStartFacing);
-	//_vm->_playerActor->setSetId(setId);
+	_vm->_playerActor->setSetId(setId);
 
-	_vm->_script->SceneLoaded();
+	_vm->_sceneScript->sceneLoaded();
 
 	_vm->_sceneObjects->clear();
 
@@ -120,24 +160,23 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 		Actor *actor = _vm->_actors[i];
 		if (actor->getSetId() == setId) {
 			_vm->_sceneObjects->addActor(
-				   i,
-				   actor->getBoundingBox(),
-				   actor->getScreenRectangle(),
-				   1,
-				   0,
-				   actor->isTargetable(),
-				   actor->isRetired());
+				i + kSceneObjectOffsetActors,
+				actor->getBoundingBox(),
+				actor->getScreenRectangle(),
+				true,
+				false,
+				actor->isTarget(),
+				actor->isRetired()
+			);
 		}
 	}
 
 	_set->addObjectsToScene(_vm->_sceneObjects);
 	_vm->_items->addToSet(setId);
 	_vm->_sceneObjects->updateObstacles();
-	// TODO: add all items to scene
-	// TODO: calculate walking obstacles??
 
-	if (_specialLoopMode) {
-		_vm->_script->PlayerWalkedIn();
+	if (_specialLoopMode != kSceneLoopModeLoseControl) {
+		_vm->_sceneScript->playerWalkedIn();
 	}
 
 	return true;
@@ -149,9 +188,10 @@ bool Scene::close(bool isLoadingGame) {
 		return true;
 	}
 
-	//_vm->_policeMaze->clear(!isLoadingGame);
+	_vm->_policeMaze->clear(!isLoadingGame);
+
 	if (isLoadingGame) {
-		_vm->_script->PlayerWalkedOut();
+		_vm->_sceneScript->playerWalkedOut();
 	}
 
 	//	if (SceneScript_isLoaded() && !SceneScript_unload()) {
@@ -168,30 +208,33 @@ bool Scene::close(bool isLoadingGame) {
 	return result;
 }
 
-int Scene::advanceFrame(Graphics::Surface &surface, uint16 *&zBuffer) {
-	int frame = _vqaPlayer->update();
+int Scene::advanceFrame(bool useTime) {
+	int frame = _vqaPlayer->update(false, true, useTime);
 	if (frame >= 0) {
-		surface.copyFrom(*_vqaPlayer->getSurface());
-		memcpy(zBuffer, _vqaPlayer->getZBuffer(), 640 * 480 * 2);
+		blit(_vm->_surfaceBack, _vm->_surfaceFront);
+		_vqaPlayer->updateZBuffer(_vm->_zbuffer);
 		_vqaPlayer->updateView(_vm->_view);
+		_vqaPlayer->updateScreenEffects(_vm->_screenEffects);
 		_vqaPlayer->updateLights(_vm->_lights);
 	}
 
-	if (_specialLoopMode && _specialLoopMode != 2 && _specialLoopMode != 3) {
-		if (_specialLoopMode == 1) {
-			if (frame == -3) { // TODO: when will this happen? bad data in/eof of vqa
-				_vm->_settings->setNewSetAndScene(_nextSetId, _nextSceneId);
-				_vm->playerGainsControl();
+	if (_specialLoopMode == kSceneLoopModeLoseControl || _specialLoopMode == kSceneLoopModeOnce || _specialLoopMode == kSceneLoopModeSpinner) {
+		if (!_defaultLoopSet) {
+			_vqaPlayer->setLoop(_defaultLoop, -1, kLoopSetModeEnqueue, &Scene::loopEndedStatic, this);
+			_defaultLoopSet = true;
+			if (_specialLoopMode == kSceneLoopModeLoseControl) {
+				_vm->playerLosesControl();
 			}
-		} else if (!_specialLoopAtEnd) {
-			_vqaPlayer->setLoop(_defaultLoop + 1, -1, 0, &Scene::loopEndedStatic, this);
-			_specialLoopAtEnd = true;
 		}
-	} else if (!this->_defaultLoopSet) {
-		_vqaPlayer->setLoop(_defaultLoop, -1, 1, &Scene::loopEndedStatic, this);
-		_defaultLoopSet = true;
-		if (_specialLoopMode == 0) {
-			_vm->playerLosesControl();
+	} else if (_specialLoopMode == kSceneLoopModeChangeSet) {
+		if (frame == -3) { // EOF
+			_vm->_settings->setNewSetAndScene(_nextSetId, _nextSceneId);
+			_vm->playerGainsControl();
+		}
+	} else if (_specialLoopMode == kSceneLoopModeNone) {
+		if (!_defaultLoopPreloadedSet) {
+			_vqaPlayer->setLoop(_defaultLoop + 1, -1, kLoopSetModeJustStart, &Scene::loopEndedStatic, this);
+			_defaultLoopPreloadedSet = true;
 		}
 	}
 
@@ -200,6 +243,59 @@ int Scene::advanceFrame(Graphics::Surface &surface, uint16 *&zBuffer) {
 	}
 
 	return frame;
+}
+
+void Scene::resume(bool isLoadingGame) {
+	if (!_vqaPlayer) {
+		return;
+	}
+
+	int targetFrame = _frame;
+
+	if (isLoadingGame) {
+		_vqaPlayer->open();
+	} else {
+		_vm->_zbuffer->disable();
+	}
+
+	if (_specialLoopMode == kSceneLoopModeNone) {
+		startDefaultLoop();
+	} else {
+		if (_specialLoopMode == kSceneLoopModeChangeSet) {
+			_vm->_settings->setNewSetAndScene(_setId, _sceneId);
+		}
+		if (_defaultLoopPreloadedSet) {
+			_specialLoopMode = kSceneLoopModeNone;
+			startDefaultLoop();
+			advanceFrame(false);
+			loopStartSpecial(_specialLoopMode, _specialLoop, false);
+		} else {
+			_defaultLoopPreloadedSet = true;
+			loopStartSpecial(_specialLoopMode, _specialLoop, true);
+			if (_specialLoopMode == kSceneLoopModeLoseControl || _specialLoopMode == kSceneLoopModeChangeSet) {
+				_vm->playerGainsControl();
+
+			}
+		}
+		if (_specialLoopMode == kSceneLoopModeChangeSet) {
+			_vm->_settings->clearNewSetAndScene();
+		}
+	}
+
+	int frame;
+	do {
+		frame = advanceFrame(false);
+	} while (frame >= 0 && frame != targetFrame);
+
+	if (!isLoadingGame) {
+		_vm->_zbuffer->enable();
+	}
+}
+
+void Scene::startDefaultLoop() {
+	_vqaPlayer->setLoop(_defaultLoop, -1, kLoopSetModeImmediate, nullptr, nullptr);
+	_defaultLoopSet = true;
+	_defaultLoopPreloadedSet = false;
 }
 
 void Scene::setActorStart(Vector3 position, int facing) {
@@ -211,32 +307,32 @@ void Scene::loopSetDefault(int loopId) {
 	_defaultLoop = loopId;
 }
 
-void Scene::loopStartSpecial(int specialLoopMode, int loopId, int flags) {
+void Scene::loopStartSpecial(int specialLoopMode, int loopId, bool immediately) {
 	_specialLoopMode = specialLoopMode;
 	_specialLoop = loopId;
 
-	int unknown = -1;
-	if (_specialLoopMode == 1) {
-		unknown = 0;
+	int repeats = -1;
+	if (_specialLoopMode == kSceneLoopModeChangeSet) {
+		repeats = 0;
 	}
 
-	int loopMode = 1;
-	if (flags) {
-		loopMode = 2;
+	int loopMode = kLoopSetModeEnqueue;
+	if (immediately) {
+		loopMode = kLoopSetModeImmediate;
 	}
 
-	_vqaPlayer->setLoop(_specialLoop, unknown, loopMode, &Scene::loopEndedStatic, this);
-	if (_specialLoopMode == 1) {
-		this->_nextSetId = _vm->_settings->getNewSet();
-		this->_nextSceneId = _vm->_settings->getNewScene();
+	_vqaPlayer->setLoop(_specialLoop, repeats, loopMode, &Scene::loopEndedStatic, this);
+	if (_specialLoopMode == kSceneLoopModeChangeSet) {
+		_nextSetId = _vm->_settings->getNewSet();
+		_nextSceneId = _vm->_settings->getNewScene();
 	}
-	if (flags) {
-		this->_specialLoopAtEnd = true;
+	if (immediately) {
+		_defaultLoopPreloadedSet = true;
 		loopEnded(0, _specialLoop);
 	}
 }
 
-int Scene::findObject(const char *objectName) {
+int Scene::findObject(const Common::String &objectName) {
 	return _set->findObject(objectName);
 }
 
@@ -251,14 +347,14 @@ bool Scene::objectGetBoundingBox(int objectId, BoundingBox *boundingBox) {
 void Scene::objectSetIsClickable(int objectId, bool isClickable, bool sceneLoaded) {
 	_set->objectSetIsClickable(objectId, isClickable);
 	if (sceneLoaded) {
-		_vm->_sceneObjects->setIsClickable(objectId + 198, isClickable);
+		_vm->_sceneObjects->setIsClickable(objectId + kSceneObjectOffsetObjects, isClickable);
 	}
 }
 
 void Scene::objectSetIsObstacle(int objectId, bool isObstacle, bool sceneLoaded, bool updateWalkpath) {
 	_set->objectSetIsObstacle(objectId, isObstacle);
 	if (sceneLoaded) {
-		_vm->_sceneObjects->setIsObstacle(objectId + 198, isObstacle);
+		_vm->_sceneObjects->setIsObstacle(objectId + kSceneObjectOffsetObjects, isObstacle);
 		if (updateWalkpath) {
 			_vm->_sceneObjects->updateObstacles();
 		}
@@ -270,7 +366,7 @@ void Scene::objectSetIsObstacleAll(bool isObstacle, bool sceneLoaded) {
 	for (i = 0; i < (int)_set->getObjectCount(); i++) {
 		_set->objectSetIsObstacle(i, isObstacle);
 		if (sceneLoaded) {
-			_vm->_sceneObjects->setIsObstacle(i + 198, isObstacle);
+			_vm->_sceneObjects->setIsObstacle(i + kSceneObjectOffsetObjects, isObstacle);
 		}
 	}
 }
@@ -278,45 +374,77 @@ void Scene::objectSetIsObstacleAll(bool isObstacle, bool sceneLoaded) {
 void Scene::objectSetIsTarget(int objectId, bool isTarget, bool sceneLoaded) {
 	_set->objectSetIsTarget(objectId, isTarget);
 	if (sceneLoaded) {
-		_vm->_sceneObjects->setIsTarget(objectId + 198, isTarget);
+		_vm->_sceneObjects->setIsTarget(objectId + kSceneObjectOffsetObjects, isTarget);
 	}
 }
 
-const char *Scene::objectGetName(int objectId) {
+const Common::String &Scene::objectGetName(int objectId) {
 	return _set->objectGetName(objectId);
 }
 
 void Scene::loopEnded(int frame, int loopId) {
-	if (_specialLoopMode && _specialLoopMode != 2 && _specialLoopMode != 3) {
-		if (_specialLoopMode == 1) {
+	if (_specialLoopMode == kSceneLoopModeLoseControl || _specialLoopMode == kSceneLoopModeOnce || _specialLoopMode == kSceneLoopModeSpinner) {
+		if (_defaultLoopPreloadedSet) {
+			_vqaPlayer->setLoop(_defaultLoop, -1, kLoopSetModeEnqueue, &Scene::loopEndedStatic, this);
 			_defaultLoopSet = true;
-			_specialLoopAtEnd = false;
-			_vm->playerLosesControl();
+			_defaultLoopPreloadedSet = false;
+			if (_specialLoopMode == kSceneLoopModeLoseControl) {
+				_vm->playerLosesControl();
+			}
+		} else {
+			if (_specialLoopMode == kSceneLoopModeLoseControl) {
+				_vm->playerGainsControl();
+				_playerWalkedIn = true;
+			}
+			if (_specialLoopMode == kSceneLoopModeSpinner) {
+				_vm->_spinner->open();
+			}
+			_specialLoopMode = kSceneLoopModeNone;
+			_specialLoop = -1;
+			_vqaPlayer->setLoop(_defaultLoop + 1, -1, kLoopSetModeJustStart, nullptr, nullptr);
+			_defaultLoopPreloadedSet = true;
 		}
-	} else if (_specialLoopAtEnd) {
-		_vqaPlayer->setLoop(_defaultLoop, -1, 1, &Scene::loopEndedStatic, this);
+	} else if (_specialLoopMode == kSceneLoopModeChangeSet) {
 		_defaultLoopSet = true;
-		_specialLoopAtEnd = false;
-		if (_specialLoopMode == 0) {
-			_vm->playerLosesControl();
-		}
-	} else {
-		if (_specialLoopMode == 0) {
-			_vm->playerGainsControl();
-			_playerWalkedIn = true;
-		}
-		if (_specialLoopMode == 3) {
-			//TODO:
-			//spinner::open(Spinner);
-		}
-		_specialLoopMode = -1;
-		_specialLoop = -1;
-		_vqaPlayer->setLoop(_defaultLoop + 1, -1, 0, nullptr, nullptr);
-		_specialLoopAtEnd = true;
+		_defaultLoopPreloadedSet = false;
+		_vm->playerLosesControl();
 	}
 }
 
 void Scene::loopEndedStatic(void *data, int frame, int loopId) {
-	((Scene*)data)->loopEnded(frame, loopId);
+	((Scene *)data)->loopEnded(frame, loopId);
 }
+
+void Scene::save(SaveFileWriteStream &f) {
+	f.writeInt(_setId);
+	f.writeInt(_sceneId);
+	f.writeInt(_defaultLoop);
+	f.writeBool(_defaultLoopSet);
+	f.writeBool(_defaultLoopPreloadedSet);
+	f.writeInt(_specialLoopMode);
+	f.writeInt(_specialLoop);
+	f.writeInt(_nextSetId);
+	f.writeInt(_nextSceneId);
+	f.writeInt(_frame);
+	f.writeVector3(_actorStartPosition);
+	f.writeInt(_actorStartFacing);
+	f.writeBool(_playerWalkedIn);
+}
+
+void Scene::load(SaveFileReadStream &f) {
+	_setId = f.readInt();
+	_sceneId = f.readInt();
+	_defaultLoop = f.readInt();
+	_defaultLoopSet = f.readBool();
+	_defaultLoopPreloadedSet = f.readBool();
+	_specialLoopMode = f.readInt();
+	_specialLoop = f.readInt();
+	_nextSetId = f.readInt();
+	_nextSceneId = f.readInt();
+	_frame = f.readInt();
+	_actorStartPosition = f.readVector3();
+	_actorStartFacing = f.readInt();
+	_playerWalkedIn = f.readBool();
+}
+
 } // End of namespace BladeRunner

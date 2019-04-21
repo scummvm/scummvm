@@ -70,7 +70,7 @@ ToltecsEngine::~ToltecsEngine() {
 }
 
 Common::Error ToltecsEngine::run() {
-	initGraphics(640, 400, true);
+	initGraphics(640, 400);
 
 	_isSaveAllowed = true;
 

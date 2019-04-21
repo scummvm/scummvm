@@ -23,28 +23,35 @@
 #ifndef TITANIC_STAR_FIELD_H
 #define TITANIC_STAR_FIELD_H
 
-#include "titanic/star_control/star_control_sub2.h"
-#include "titanic/star_control/star_control_sub5.h"
-#include "titanic/star_control/star_control_sub7.h"
-#include "titanic/star_control/star_control_sub8.h"
+#include "titanic/star_control/star_field_base.h"
+#include "titanic/star_control/star_closeup.h"
+#include "titanic/star_control/star_markers.h"
+#include "titanic/star_control/star_crosshairs.h"
 #include "titanic/star_control/star_points1.h"
 #include "titanic/star_control/star_points2.h"
 
 namespace Titanic {
 
-class CStarField : public CStarControlSub2 {
+class CStarField : public CStarFieldBase {
 private:
-	CStarControlSub7 _sub7;
-	CStarControlSub8 _sub8;
+	CStarMarkers _markers;
+	CStarCrosshairs _crosshairs;
 	CStarPoints1 _points1;
 	CStarPoints2 _points2;
-	CStarControlSub5 _sub5;
-	int _val1;
-	int _val2;
-	int _val3;
-	bool _val4;
-	int _val5;
-	bool _val6;
+	CStarCloseup _starCloseup;
+	bool _points1On;
+	bool _points2On;
+	StarMode _mode;
+	bool _showBox;
+	bool _closeToMarker;
+	bool _isSolved;
+private:
+	/**
+	 * Draws the big square box in the middle of the screen
+	 */
+	void drawBox(CSurfaceArea *surfaceArea);
+
+	void fn4(CSurfaceArea *surfaceArea, CStarCamera *camera);
 public:
 	CStarField();
 
@@ -63,7 +70,7 @@ public:
 	/**
 	 * Renders the contents of the starfield
 	 */
-	void render(CVideoSurface *surface, CStarControlSub12 *sub12);
+	void render(CVideoSurface *surface, CStarCamera *camera);
 
 	int get1() const;
 	void set1(int val);
@@ -71,14 +78,92 @@ public:
 	void set2(int val);
 	int get54() const;
 	void set54(int val);
-	int get3() const;
-	void set3(int val);
-	void toggle4();
-	bool set4(bool val);
-	int get88() const;
-	int get5() const;
-	void update6();
-	int get6() const;
+
+	/**
+	 * Gets the current display mode
+	 */
+	StarMode getMode() const;
+
+	/**
+	 * Sets the display mode
+	 */
+	void setMode(StarMode mode);
+
+	/**
+	 * Toggles whether the big box is visible
+	 */
+	void toggleBox();
+
+	/**
+	 * Sets whether the big box is visible
+	 */
+	bool setBoxVisible(bool isVisible);
+
+	/**
+	 * Returns the index for the number of star matches
+	 */
+	int getMatchedIndex() const;
+
+	/**
+	 * Returns true if the center of the starfield viewpoint is close to a marker
+	 */
+	bool isCloseToMarker() const;
+
+	/**
+	 * Sets the flag that the starfield has been solved
+	 */
+	void setSolved();
+
+	/**
+	 * Returns true if the starfield puzzle has been solved
+	 */
+	bool isSolved() const;
+
+	/**
+	 * Return true if the starfield puzzle was skipped
+	 */
+	bool isSkipped() const;
+
+	/**
+	 * Skips the starfield puzzle
+	 */
+	void skipPuzzle();
+
+	/**
+	 * Returns the number of markers placed in the starfield
+	 */
+	int getMarkerCount() const {
+		return _markers.size();
+	}
+
+	void fn1(CErrorCode *errorCode);
+	double fn5(CSurfaceArea *surfaceArea, CStarCamera *camera,
+		FVector &v1, FVector &v2, FVector &v3);
+	void fn6(CVideoSurface *surface, CStarCamera *camera);
+
+	/**
+	 * Increments the number of matched markers
+	 */
+	void incMatches();
+
+	void fn8(CVideoSurface *surface);
+	void fn9() { _starCloseup.fn1(); }
+
+	/**
+	 * Called when the starfield is clicked
+	 */
+	bool mouseButtonDown(CVideoSurface *surface, CStarCamera *camera,
+		int flags, const Common::Point &pt);
+
+	/**
+	 * Gets a random star
+	 */
+	const CBaseStarEntry *getRandomStar() const;
+
+	/**
+	 * Gets a specified star
+	 */
+	const CBaseStarEntry *getStar(int index) const;
 };
 
 } // End of namespace Titanic

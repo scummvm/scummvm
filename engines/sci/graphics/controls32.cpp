@@ -43,8 +43,8 @@ GfxControls32::GfxControls32(SegManager *segMan, GfxCache *cache, GfxText32 *tex
 	_gfxText32(text),
 	_overwriteMode(false),
 	_nextCursorFlashTick(0),
-	// SSCI used a memory handle for a ScrollWindow object
-	// as ID. We use a simple numeric handle instead.
+	// SSCI used a memory handle for a ScrollWindow object as ID. We use a
+	// simple numeric handle instead.
 	_nextScrollWindowId(10000) {}
 
 GfxControls32::~GfxControls32() {
@@ -128,7 +128,7 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 
 	Plane *plane = new Plane(editorPlaneRect, kPlanePicTransparent);
 	plane->changePic();
-	g_sci->_gfxFrameout->addPlane(*plane);
+	g_sci->_gfxFrameout->addPlane(plane);
 
 	CelInfo32 celInfo;
 	celInfo.type = kCelTypeMem;
@@ -137,39 +137,39 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 	ScreenItem *screenItem = new ScreenItem(plane->_object, celInfo, Common::Point(), ScaleInfo());
 	plane->_screenItemList.add(screenItem);
 
-	// frameOut must be called after the screen item is
-	// created, and before it is updated at the end of the
-	// event loop, otherwise it has both created and updated
-	// flags set which crashes the engine (it runs updates
-	// before creations)
+	// frameOut must be called after the screen item is created, and before it
+	// is updated at the end of the event loop, otherwise it has both created
+	// and updated flags set which crashes the engine (updates are handled
+	// before creations, but the screen item is not in the correct state for an
+	// update)
 	g_sci->_gfxFrameout->frameOut(true);
 
 	EventManager *eventManager = g_sci->getEventManager();
 	bool clearTextOnInput = true;
 	bool textChanged = false;
 	for (;;) {
-		// We peek here because the last event needs to be allowed to
-		// dispatch a second time to the normal event handling system.
-		// In the actual engine, the event is always consumed and then
-		// the last event just gets posted back to the event manager for
-		// reprocessing, but instead, we only remove the event from the
-		// queue *after* we have determined it is not a defocusing event
-		const SciEvent event = eventManager->getSciEvent(SCI_EVENT_ANY | SCI_EVENT_PEEK);
+		// We peek here because the last event needs to be allowed to dispatch a
+		// second time to the normal event handling system. In SSCI, the event
+		// is always consumed and then the last event just gets posted back to
+		// the event manager for reprocessing, but instead, we only remove the
+		// event from the queue *after* we have determined it is not a
+		// defocusing event
+		const SciEvent event = eventManager->getSciEvent(kSciEventAny | kSciEventPeek);
 
 		bool focused = true;
-		// Original engine did not have a QUIT event but we have to handle it
-		if (event.type == SCI_EVENT_QUIT) {
+		// SSCI did not have a QUIT event, but we do, so we have to handle it
+		if (event.type == kSciEventQuit) {
 			focused = false;
-		} else if (event.type == SCI_EVENT_MOUSE_PRESS && !editorPlaneRect.contains(event.mousePosSci)) {
+		} else if (event.type == kSciEventMousePress && !editorPlaneRect.contains(event.mousePosSci)) {
 			focused = false;
-		} else if (event.type == SCI_EVENT_KEYBOARD) {
+		} else if (event.type == kSciEventKeyDown) {
 			switch (event.character) {
-			case SCI_KEY_ESC:
-			case SCI_KEY_UP:
-			case SCI_KEY_DOWN:
-			case SCI_KEY_TAB:
-			case SCI_KEY_SHIFT_TAB:
-			case SCI_KEY_ENTER:
+			case kSciKeyEsc:
+			case kSciKeyUp:
+			case kSciKeyDown:
+			case kSciKeyTab:
+			case kSciKeyShiftTab:
+			case kSciKeyEnter:
 				focused = false;
 				break;
 			}
@@ -179,64 +179,62 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 			break;
 		}
 
-		// Consume the event now that we know it is not one of the
-		// defocusing events above
-		if (event.type != SCI_EVENT_NONE)
-			eventManager->getSciEvent(SCI_EVENT_ANY);
+		// Consume the event now that we know it is not one of the defocusing
+		// events above
+		if (event.type != kSciEventNone)
+			eventManager->getSciEvent(kSciEventAny);
 
-		// NOTE: In the original engine, the font and bitmap were
-		// reset here on each iteration through the loop, but it
-		// doesn't seem like this should be necessary since
-		// control is not yielded back to the VM until input is
-		// received, which means there is nothing that could modify
-		// the GfxText32's state with a different font in the
-		// meantime
+		// In SSCI, the font and bitmap were reset here on each iteration
+		// through the loop, but this is not necessary since control is not
+		// yielded back to the VM until input is received, which means there is
+		// nothing that could modify the GfxText32's state with a different font
+		// in the meantime
 
 		bool shouldDeleteChar = false;
 		bool shouldRedrawText = false;
 		uint16 lastCursorPosition = editor.cursorCharPosition;
- 		if (event.type == SCI_EVENT_KEYBOARD) {
+		if (event.type == kSciEventKeyDown) {
 			switch (event.character) {
-			case SCI_KEY_LEFT:
+			case kSciKeyLeft:
 				clearTextOnInput = false;
 				if (editor.cursorCharPosition > 0) {
 					--editor.cursorCharPosition;
 				}
 				break;
 
-			case SCI_KEY_RIGHT:
+			case kSciKeyRight:
 				clearTextOnInput = false;
 				if (editor.cursorCharPosition < editor.text.size()) {
 					++editor.cursorCharPosition;
 				}
 				break;
 
-			case SCI_KEY_HOME:
+			case kSciKeyHome:
 				clearTextOnInput = false;
 				editor.cursorCharPosition = 0;
 				break;
 
-			case SCI_KEY_END:
+			case kSciKeyEnd:
 				clearTextOnInput = false;
 				editor.cursorCharPosition = editor.text.size();
 				break;
 
-			case SCI_KEY_INSERT:
+			case kSciKeyInsert:
 				clearTextOnInput = false;
-				// Redrawing also changes the cursor rect to
-				// reflect the new insertion mode
+				// Redrawing also changes the cursor rect to reflect the new
+				// insertion mode
 				shouldRedrawText = true;
 				_overwriteMode = !_overwriteMode;
 				break;
 
-			case SCI_KEY_DELETE:
+			case kSciKeyDelete:
 				clearTextOnInput = false;
 				if (editor.cursorCharPosition < editor.text.size()) {
 					shouldDeleteChar = true;
 				}
 				break;
 
-			case SCI_KEY_BACKSPACE:
+			case kSciKeyBackspace:
 				clearTextOnInput = false;
 				shouldDeleteChar = true;
 				if (editor.cursorCharPosition > 0) {
@@ -244,7 +242,7 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 				}
 				break;
 
-			case SCI_KEY_ETX:
+			case kSciKeyEtx:
 				editor.text.clear();
 				editor.cursorCharPosition = 0;
 				shouldRedrawText = true;
@@ -299,7 +297,6 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 		}
 
 		g_sci->_gfxFrameout->frameOut(true);
-		g_sci->getSciDebugger()->onFrame();
 		g_sci->_gfxFrameout->throttle();
 	}
 
@@ -325,10 +322,9 @@ void GfxControls32::drawCursor(TextEditor &editor) {
 
 		const int16 scaledFontHeight = _gfxText32->scaleUpHeight(_gfxText32->_font->getHeight());
 
-		// NOTE: The original code branched on borderColor here but
-		// the two branches appeared to be identical, differing only
-		// because the compiler decided to be differently clever
-		// when optimising multiplication in each branch
+		// SSCI branched on borderColor here but the two branches appeared to be
+		// identical, differing only because the compiler decided to be
+		// differently clever when optimising multiplication in each branch
 		if (_overwriteMode) {
 			editor.cursorRect.top = editor.textRect.top;
 			editor.cursorRect.setHeight(scaledFontHeight);
@@ -395,8 +391,8 @@ ScrollWindow::ScrollWindow(SegManager *segMan, const Common::Rect &gameRect, con
 	_gfxText32.setFont(_fontId);
 	_pointSize = _gfxText32._font->getHeight();
 
-	const uint16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	const uint16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+	const uint16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
+	const uint16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
 
 	Common::Rect bitmapRect(gameRect);
 	mulinc(bitmapRect, Ratio(_gfxText32._xResolution, scriptWidth), Ratio(_gfxText32._yResolution, scriptHeight));
@@ -466,9 +462,8 @@ reg_t ScrollWindow::add(const Common::String &text, const GuiResourceId fontId, 
 	if (_entries.size() == _maxNumEntries) {
 		ScrollWindowEntry removedEntry = _entries.remove_at(0);
 		_text.erase(0, removedEntry.text.size());
-		// `_firstVisibleChar` will be reset shortly if
-		// `scrollTo` is true, so there is no reason to
-		// update it
+		// `_firstVisibleChar` will be reset shortly if `scrollTo` is true, so
+		// there is no reason to update it
 		if (!scrollTo) {
 			_firstVisibleChar -= removedEntry.text.size();
 		}
@@ -477,17 +472,17 @@ reg_t ScrollWindow::add(const Common::String &text, const GuiResourceId fontId, 
 	_entries.push_back(ScrollWindowEntry());
 	ScrollWindowEntry &entry = _entries.back();
 
-	// NOTE: In SSCI the line ID was a memory handle for the
-	// string of this line. We use a numeric ID instead.
+	// In SSCI, the line ID was a memory handle for the string of this line. We
+	// use a numeric ID instead.
 	entry.id = make_reg(0, _nextEntryId++);
 
 	if (_nextEntryId > _maxNumEntries) {
 		_nextEntryId = 1;
 	}
 
-	// NOTE: In SSCI this was updated after _text was
-	// updated, which meant there was an extra unnecessary
-	// subtraction operation (subtracting `entry.text` size)
+	// In SSCI, this was updated after _text was updated, which meant there was
+	// an extra unnecessary subtraction operation (subtracting `entry.text`
+	// size)
 	if (scrollTo) {
 		_firstVisibleChar = _text.size();
 	}
@@ -518,9 +513,8 @@ void ScrollWindow::fillEntry(ScrollWindowEntry &entry, const Common::String &tex
 	// with properties -1 can inherit properties from the previously rendered
 	// line instead of the defaults.
 
-	// NOTE: SSCI added "|s<lineIndex>|" here, but |s| is
-	// not a valid control code, so it just always ended up
-	// getting skipped
+	// SSCI added "|s<lineIndex>|" here, but |s| is not a valid control code, so
+	// it just always ended up getting skipped by the text rendering code
 	if (entry.fontId != -1) {
 		formattedText += Common::String::format("|f%d|", entry.fontId);
 	}
@@ -706,9 +700,8 @@ void ScrollWindow::pageDown() {
 
 void ScrollWindow::computeLineIndices() {
 	_gfxText32.setFont(_fontId);
-	// NOTE: Unlike SSCI, foreColor and alignment are not
-	// set since these properties do not affect the width of
-	// lines
+	// Unlike SSCI, foreColor and alignment are not set since these properties
+	// do not affect the width of lines
 
 	if (_gfxText32._font->getHeight() != _pointSize) {
 		error("Illegal font size font = %d pointSize = %d, should be %d.", _fontId, _gfxText32._font->getHeight(), _pointSize);
@@ -718,8 +711,8 @@ void ScrollWindow::computeLineIndices() {
 
 	_startsOfLines.clear();
 
-	// NOTE: The original engine had a 1000-line limit; we
-	// do not enforce any limit
+	// SSCI had a 1000-line limit; we do not enforce any limit since we use
+	// dynamic containers
 	for (uint charIndex = 0; charIndex < _text.size(); ) {
 		_startsOfLines.push_back(charIndex);
 		charIndex += _gfxText32.getTextCount(_text, charIndex, lineRect, false);

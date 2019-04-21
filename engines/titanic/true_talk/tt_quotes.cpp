@@ -20,9 +20,10 @@
  *
  */
 
-#include "common/algorithm.h"
 #include "titanic/true_talk/tt_quotes.h"
+#include "titanic/support/files_manager.h"
 #include "titanic/titanic.h"
+#include "common/algorithm.h"
 
 namespace Titanic {
 
@@ -36,7 +37,7 @@ TTquotes::~TTquotes() {
 }
 
 void TTquotes::load() {
-	Common::SeekableReadStream *r = g_vm->_filesManager->getResource("TEXT/JRQUOTES.TXT");
+	Common::SeekableReadStream *r = g_vm->_filesManager->getResource("TEXT/JRQUOTES");
 	size_t size = r->readUint32LE();
 	_loaded = true;
 

@@ -483,6 +483,7 @@ DEFFN(ListItem);
 DEFFN(CMailMan);
 DEFFN(CMessageTarget);
 DEFFN(CMovieClip);
+DEFFN(CMovieRangeInfo);
 DEFFN(CMultiDropTarget);
 DEFFN(CNamedItem);
 DEFFN(CNodeItem);
@@ -836,6 +837,7 @@ DEFFN(CMouseDragStartMsg);
 DEFFN(CMouseDragMoveMsg);
 DEFFN(CMouseDragEndMsg);
 DEFFN(CMouseWheelMsg);
+DEFFN(CMovementMsg);
 DEFFN(CMoveToStartPosMsg);
 DEFFN(CMovieEndMsg);
 DEFFN(CMovieFrameMsg);
@@ -955,6 +957,7 @@ DEFFN(CUseWithCharMsg);
 DEFFN(CUseWithOtherMsg);
 DEFFN(CVirtualKeyCharMsg);
 DEFFN(CVisibleMsg);
+DEFFN(CCheckCodeWheelsMsg);
 
 DEFFN(CEnterBombRoom);
 DEFFN(CEnterBridge);
@@ -1023,9 +1026,12 @@ void CSaveableObject::initClassList() {
 	_classDefs = new ClassDefList();
 	_classList = new ClassListMap();
 
+	CSaveableObject::_type = new TypeTemplate<CSaveableObject>("CSaveableObject", nullptr);
+	_classDefs->push_back(CSaveableObject::_type);
+	(*_classList)["CSaveableObject"] = FunctionCSaveableObject;
+
 	// Setup the type definitions for each class. Note that these have to be
 	// in order of hierarchy from ancestor class to descendent
-	ADDFN(CSaveableObject, CSaveableObject);
 	ADDFN(CMessage, CSaveableObject);
 	ADDFN(CMessageTarget, CSaveableObject);
 	ADDFN(CResourceKey, CSaveableObject);
@@ -1048,6 +1054,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CFileListItem, ListItem);
 	ADDFN(CMailMan, CGameObject);
 	ADDFN(CMovieClip, ListItem);
+	ADDFN(CMovieRangeInfo, ListItem);
 	ADDFN(CMultiDropTarget, CDropTarget);
 	ADDFN(CStartAction, CBackground);
 	ADDFN(CEditControl, CGameObject);
@@ -1416,6 +1423,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CMouseDragMoveMsg, CMouseDragMsg);
 	ADDFN(CMouseDragEndMsg, CMouseDragMsg);
 	ADDFN(CMouseWheelMsg, CMouseMsg);
+	ADDFN(CMovementMsg, CMessage);
 	ADDFN(CMoveToStartPosMsg, CMessage);
 	ADDFN(CMovieEndMsg, CMessage);
 	ADDFN(CMovieFrameMsg, CMessage);
@@ -1538,6 +1546,7 @@ void CSaveableObject::initClassList() {
 	ADDFN(CUseWithOtherMsg, CMessage);
 	ADDFN(CVirtualKeyCharMsg, CMessage);
 	ADDFN(CVisibleMsg, CMessage);
+	ADDFN(CCheckCodeWheelsMsg, CMessage);
 
 	ADDFN(CMovePlayerTo, CGameObject);
 	ADDFN(CMovePlayerToFrom, CGameObject);
@@ -1614,8 +1623,6 @@ void CSaveableObject::initClassList() {
 	ADDFN(CGondolierSong, CRoomAutoSoundPlayer);
 	ADDFN(CSeasonNoises, CViewAutoSoundPlayer);
 	ADDFN(CSeasonalMusicPlayer, CAutoMusicPlayerBase);
-	ADDFN(CAutoMusicPlayer, CAutoMusicPlayerBase);
-	ADDFN(CAutoMusicPlayerBase, CAutoMusicPlayer);
 	ADDFN(CTitaniaSpeech, CGameObject);
 	ADDFN(CStarControl, CGameObject);
 	ADDFN(CTimeEventInfo, ListItem);

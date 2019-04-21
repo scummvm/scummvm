@@ -97,7 +97,7 @@ void sceneHandler35_startFlow() {
 			ExCommand *cmd = new ExCommand(g_vars->scene35_bellyInflater->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
 
 			cmd->_excFlags |= 3;
-			cmd->_field_14 = 256;
+			cmd->_z = 256;
 			cmd->_messageNum = 0;
 
 			mq->addExCommandToEnd(cmd);
@@ -123,10 +123,10 @@ void sceneHandler35_genFlies() {
 	StaticANIObject *fly = g_fp->_currentScene->getStaticANIObject1ById(ANI_FLY, -1);
 
 	int xoff = 0;
-	if ((!fly || !(fly->_flags & 4)) && !(g_fp->_rnd->getRandomNumber(32767) % 30)) {
+	if ((!fly || !(fly->_flags & 4)) && !(g_fp->_rnd.getRandomNumber(32767) % 30)) {
 		int x, y;
 
-		if (g_fp->_rnd->getRandomNumber(1)) {
+		if (g_fp->_rnd.getRandomNumber(1)) {
 			x = 600;
 			y = 0;
 		} else {
@@ -134,16 +134,16 @@ void sceneHandler35_genFlies() {
 			y = 600;
 		}
 
-		int numFlies = g_fp->_rnd->getRandomNumber(3) + 1;
+		int numFlies = g_fp->_rnd.getRandomNumber(3) + 1;
 
 		while (numFlies--) {
-			g_fp->_floaters->genFlies(g_fp->_currentScene, g_fp->_rnd->getRandomNumber(55) + 1057,  g_fp->_rnd->getRandomNumber(60) + x + xoff, 4, 1);
+			g_fp->_floaters->genFlies(g_fp->_currentScene, g_fp->_rnd.getRandomNumber(55) + 1057,  g_fp->_rnd.getRandomNumber(60) + x + xoff, 4, 1);
 
 			xoff += 40;
 
-			g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val2 = 1084;
-			g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val3 = y;
-			g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val11 = 8.0;
+			g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1].val2 = 1084;
+			g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1].val3 = y;
+			g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1].val11 = 8.0;
 		}
 
 		g_vars->scene35_fliesCounter = 0;

@@ -444,26 +444,26 @@ void Sound::processSfxQueues() {
 
 		if (_vm->_imuseDigital) {
 			finished = !isSoundRunning(kTalkSoundID);
+#if defined(ENABLE_SCUMM_7_8)
+			_curSoundPos = _vm->_imuseDigital->getSoundElapsedTimeInMs(kTalkSoundID) * 60 / 1000;
+#endif
 		} else if (_vm->_game.heversion >= 60) {
 			finished = !isSoundRunning(1);
 		} else {
 			finished = !_mixer->isSoundHandleActive(*_talkChannelHandle);
+			// calculate speech sound position simulating increment at 60FPS
+			_curSoundPos = (_mixer->getSoundElapsedTime(*_talkChannelHandle) * 60) / 1000;
 		}
-
 		if ((uint) act < 0x80 && ((_vm->_game.version == 8) || (_vm->_game.version <= 7 && !_vm->_string[0].no_talk_anim))) {
 			a = _vm->derefActor(act, "processSfxQueues");
 			if (a->isInCurrentRoom()) {
-				if (isMouthSyncOff(_curSoundPos) && !_mouthSyncMode) {
-					if (!_endOfMouthSync)
-						a->runActorTalkScript(a->_talkStopFrame);
+				if (finished || (isMouthSyncOff(_curSoundPos) && _mouthSyncMode)) {
+					a->runActorTalkScript(a->_talkStopFrame);
 					_mouthSyncMode = 0;
-				} else  if (isMouthSyncOff(_curSoundPos) == 0 && !_mouthSyncMode) {
+				} else if (isMouthSyncOff(_curSoundPos) == 0 && !_mouthSyncMode) {
 					a->runActorTalkScript(a->_talkStartFrame);
 					_mouthSyncMode = 1;
 				}
-
-				if (_vm->_game.version <= 6 && finished)
-					a->runActorTalkScript(a->_talkStopFrame);
 			}
 		}
 
@@ -487,10 +487,10 @@ static int compareMP3OffsetTable(const void *a, const void *b) {
 void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle *handle) {
 	int num = 0, i;
 	int id = -1;
-#if defined(USE_FLAC) || defined(USE_VORBIS) || defined(USE_MAD)
 	int size = 0;
-#endif
 	Common::ScopedPtr<ScummFile> file;
+
+	bool _sampleIsPCMS16BE44100 = false;
 
 	if (_vm->_game.id == GID_CMI) {
 		_sfxMode |= mode;
@@ -584,10 +584,17 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 			size = result->compressed_size;
 #endif
 		} else {
+			// WORKAROUND: Original Indy4 MONSTER.SOU bug
+			// The speech sample at VCTL offset 0x76ccbca ("Hey you!") which is used
+			// when Indy gets caught on the German submarine seems to not be a VOC
+			// but raw PCM s16be at (this is a guess) 44.1 kHz with a bogus VOC header.
+			// To work around this we skip the VOC header and decode the raw PCM data.
+			// Fixes Trac#10559
+			if (mode == 2 && (_vm->_game.id == GID_INDY4) && (_vm->_language == Common::EN_ANY) && offset == 0x76ccbca) {
+				_sampleIsPCMS16BE44100 = true;
+				size = 86016; // size of speech sample
+			}
 			offset += 8;
-#if defined(USE_FLAC) || defined(USE_VORBIS) || defined(USE_MAD)
-			size = -1;
-#endif
 		}
 
 		file.reset(new ScummFile());
@@ -650,7 +657,12 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 #endif
 			break;
 		default:
-			input = Audio::makeVOCStream(file.release(), Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+			if (_sampleIsPCMS16BE44100) {
+				offset += 32; // size of VOC header
+				input = Audio::makeRawStream(new Common::SeekableSubReadStream(file.release(), offset, offset + size, DisposeAfterUse::YES), 44100, Audio::FLAG_16BITS, DisposeAfterUse::YES);
+			} else {
+				input = Audio::makeVOCStream(file.release(), Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+			}
 			break;
 		}
 
@@ -1116,14 +1128,9 @@ AudioCDManager::Status Sound::getCDStatus() {
 	}
 }
 
-void Sound::saveLoadWithSerializer(Serializer *ser) {
-	static const SaveLoadEntry soundEntries[] = {
-		MKLINE(Sound, _currentCDSound, sleInt16, VER(35)),
-		MKLINE(Sound, _currentMusic, sleInt16, VER(35)),
-		MKEND()
-	};
-
-	ser->saveLoadEntries(this, soundEntries);
+void Sound::saveLoadWithSerializer(Common::Serializer &s) {
+	s.syncAsSint16LE(_currentCDSound, VER(35));
+	s.syncAsSint16LE(_currentMusic, VER(35));
 }
 
 
@@ -1326,8 +1333,9 @@ int ScummEngine::readSoundResource(ResId idx) {
 			//dumpResource("sound-", idx, ptr);
 			return 1;
 		}
-		error("Unrecognized base tag 0x%08x in sound %d", basetag, idx);
 	}
+
+	warning("Unrecognized base tag 0x%08x in sound %d", basetag, idx);
 	_res->_types[rtSound][idx]._roomoffs = RES_INVALID_OFFSET;
 	return 0;
 }

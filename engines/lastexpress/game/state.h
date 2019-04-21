@@ -313,13 +313,14 @@ public:
 		 * @return true if equal, false if not.
 		 */
 		bool isEqual(uint index, uint val) {
-			return getValueName(index) == val;
+			return getOrSetValueName(index) == val;
 		}
 
-		uint32 getValueName(uint index, Common::String *name = NULL) {
-			#define EXPOSE_VALUE(idx, entryName) \
+		uint32 getOrSetValueName(uint index, Common::String *name = NULL, const uint32* newValue = NULL) {
+			#define EXPOSE_VALUE(idx, entryName, fieldType) \
 				case idx: { \
 					if (name) (*name) = "" #entryName; \
+					if (newValue) {entryName = (fieldType)*newValue;} \
 					return (uint32)entryName; \
 				}
 
@@ -328,134 +329,134 @@ public:
 				error("[GameProgress::getValueName] Invalid index value (was: %d, max:127)", index);
 				break;
 
-			EXPOSE_VALUE(0, field_0);
-			EXPOSE_VALUE(1, jacket);
-			EXPOSE_VALUE(2, eventCorpseMovedFromFloor);
-			EXPOSE_VALUE(3, field_C);
-			EXPOSE_VALUE(4, eventCorpseFound);
-			EXPOSE_VALUE(5, field_14);
-			EXPOSE_VALUE(6, field_18);
-			EXPOSE_VALUE(7, portrait);
-			EXPOSE_VALUE(8, eventCorpseThrown);
-			EXPOSE_VALUE(9, field_24);
-			EXPOSE_VALUE(10, field_28);
-			EXPOSE_VALUE(11, chapter);
-			EXPOSE_VALUE(12, field_30);
-			EXPOSE_VALUE(13, eventMetAugust);
-			EXPOSE_VALUE(14, isNightTime);
-			EXPOSE_VALUE(15, field_3C);
-			EXPOSE_VALUE(16, field_40);
-			EXPOSE_VALUE(17, field_44);
-			EXPOSE_VALUE(18, field_48);
-			EXPOSE_VALUE(19, field_4C);
-			EXPOSE_VALUE(20, isTrainRunning);
-			EXPOSE_VALUE(21, field_54);
-			EXPOSE_VALUE(22, field_58);
-			EXPOSE_VALUE(23, field_5C);
-			EXPOSE_VALUE(24, field_60);
-			EXPOSE_VALUE(25, field_64);
-			EXPOSE_VALUE(26, field_68);
-			EXPOSE_VALUE(27, eventMertensAugustWaiting);
-			EXPOSE_VALUE(28, eventMertensKronosInvitation);
-			EXPOSE_VALUE(29, isEggOpen);
-			EXPOSE_VALUE(30, field_78);
-			EXPOSE_VALUE(31, field_7C);
-			EXPOSE_VALUE(32, field_80);
-			EXPOSE_VALUE(33, field_84);
-			EXPOSE_VALUE(34, field_88);
-			EXPOSE_VALUE(35, field_8C);
-			EXPOSE_VALUE(36, field_90);
-			EXPOSE_VALUE(37, field_94);
-			EXPOSE_VALUE(38, field_98);
-			EXPOSE_VALUE(39, field_9C);
-			EXPOSE_VALUE(40, field_A0);
-			EXPOSE_VALUE(41, field_A4);
-			EXPOSE_VALUE(42, field_A8);
-			EXPOSE_VALUE(43, field_AC);
-			EXPOSE_VALUE(44, field_B0);
-			EXPOSE_VALUE(45, field_B4);
-			EXPOSE_VALUE(46, field_B8);
-			EXPOSE_VALUE(47, field_BC);
-			EXPOSE_VALUE(48, field_C0);
-			EXPOSE_VALUE(49, field_C4);
-			EXPOSE_VALUE(50, field_C8);
-			EXPOSE_VALUE(51, field_CC);
-			EXPOSE_VALUE(52, eventMetBoutarel);
-			EXPOSE_VALUE(53, eventMetHadija);
-			EXPOSE_VALUE(54, eventMetYasmin);
-			EXPOSE_VALUE(55, field_DC);
-			EXPOSE_VALUE(56, field_E0);
-			EXPOSE_VALUE(57, field_E4);
-			EXPOSE_VALUE(58, field_E8);
-			EXPOSE_VALUE(59, field_EC);
-			EXPOSE_VALUE(60, field_F0);
-			EXPOSE_VALUE(61, field_F4);
-			EXPOSE_VALUE(62, field_F8);
-			EXPOSE_VALUE(63, field_FC);
-			EXPOSE_VALUE(64, field_100);
-			EXPOSE_VALUE(65, field_104);
-			EXPOSE_VALUE(66, field_108);
-			EXPOSE_VALUE(67, field_10C);
-			EXPOSE_VALUE(68, field_110);
-			EXPOSE_VALUE(69, field_114);
-			EXPOSE_VALUE(70, field_118);
-			EXPOSE_VALUE(71, field_11C);
-			EXPOSE_VALUE(72, field_120);
-			EXPOSE_VALUE(73, field_124);
-			EXPOSE_VALUE(74, field_128);
-			EXPOSE_VALUE(75, field_12C);
-			EXPOSE_VALUE(76, field_130);
-			EXPOSE_VALUE(77, field_134);
-			EXPOSE_VALUE(78, field_138);
-			EXPOSE_VALUE(79, field_13C);
-			EXPOSE_VALUE(80, field_140);
-			EXPOSE_VALUE(81, field_144);
-			EXPOSE_VALUE(82, field_148);
-			EXPOSE_VALUE(83, field_14C);
-			EXPOSE_VALUE(84, field_150);
-			EXPOSE_VALUE(85, field_154);
-			EXPOSE_VALUE(86, field_158);
-			EXPOSE_VALUE(87, field_15C);
-			EXPOSE_VALUE(88, field_160);
-			EXPOSE_VALUE(89, field_164);
-			EXPOSE_VALUE(90, field_168);
-			EXPOSE_VALUE(91, field_16C);
-			EXPOSE_VALUE(92, field_170);
-			EXPOSE_VALUE(93, field_174);
-			EXPOSE_VALUE(94, field_178);
-			EXPOSE_VALUE(95, field_17C);
-			EXPOSE_VALUE(96, field_180);
-			EXPOSE_VALUE(97, field_184);
-			EXPOSE_VALUE(98, field_188);
-			EXPOSE_VALUE(99, field_18C);
-			EXPOSE_VALUE(100, field_190);
-			EXPOSE_VALUE(101, field_194);
-			EXPOSE_VALUE(102, field_198);
-			EXPOSE_VALUE(103, field_19C);
-			EXPOSE_VALUE(104, field_1A0);
-			EXPOSE_VALUE(105, field_1A4);
-			EXPOSE_VALUE(106, field_1A8);
-			EXPOSE_VALUE(107, field_1AC);
-			EXPOSE_VALUE(108, field_1B0);
-			EXPOSE_VALUE(109, field_1B4);
-			EXPOSE_VALUE(110, field_1B8);
-			EXPOSE_VALUE(111, field_1BC);
-			EXPOSE_VALUE(112, field_1C0);
-			EXPOSE_VALUE(113, field_1C4);
-			EXPOSE_VALUE(114, field_1C8);
-			EXPOSE_VALUE(115, field_1CC);
-			EXPOSE_VALUE(116, field_1D0);
-			EXPOSE_VALUE(117, field_1D4);
-			EXPOSE_VALUE(118, field_1D8);
-			EXPOSE_VALUE(119, field_1DC);
-			EXPOSE_VALUE(120, field_1E0);
-			EXPOSE_VALUE(121, field_1E4);
-			EXPOSE_VALUE(122, field_1E8);
-			EXPOSE_VALUE(123, field_1EC);
-			EXPOSE_VALUE(124, field_1F0);
-			EXPOSE_VALUE(125, field_1F4);
-			EXPOSE_VALUE(126, field_1F8);
-			EXPOSE_VALUE(127, field_1FC);
+			EXPOSE_VALUE(0, field_0, uint32);
+			EXPOSE_VALUE(1, jacket, JacketType);
+			EXPOSE_VALUE(2, eventCorpseMovedFromFloor, bool);
+			EXPOSE_VALUE(3, field_C, uint32);
+			EXPOSE_VALUE(4, eventCorpseFound, bool);
+			EXPOSE_VALUE(5, field_14, uint32);
+			EXPOSE_VALUE(6, field_18, uint32);
+			EXPOSE_VALUE(7, portrait, uint32);
+			EXPOSE_VALUE(8, eventCorpseThrown, bool);
+			EXPOSE_VALUE(9, field_24, uint32);
+			EXPOSE_VALUE(10, field_28, uint32);
+			EXPOSE_VALUE(11, chapter, ChapterIndex);
+			EXPOSE_VALUE(12, field_30, uint32);
+			EXPOSE_VALUE(13, eventMetAugust, bool);
+			EXPOSE_VALUE(14, isNightTime, bool);
+			EXPOSE_VALUE(15, field_3C, uint32);
+			EXPOSE_VALUE(16, field_40, uint32);
+			EXPOSE_VALUE(17, field_44, uint32);
+			EXPOSE_VALUE(18, field_48, uint32);
+			EXPOSE_VALUE(19, field_4C, uint32);
+			EXPOSE_VALUE(20, isTrainRunning, bool);
+			EXPOSE_VALUE(21, field_54, uint32);
+			EXPOSE_VALUE(22, field_58, uint32);
+			EXPOSE_VALUE(23, field_5C, uint32);
+			EXPOSE_VALUE(24, field_60, uint32);
+			EXPOSE_VALUE(25, field_64, uint32);
+			EXPOSE_VALUE(26, field_68, uint32);
+			EXPOSE_VALUE(27, eventMertensAugustWaiting, bool);
+			EXPOSE_VALUE(28, eventMertensKronosInvitation, bool);
+			EXPOSE_VALUE(29, isEggOpen, bool);
+			EXPOSE_VALUE(30, field_78, uint32);
+			EXPOSE_VALUE(31, field_7C, uint32);
+			EXPOSE_VALUE(32, field_80, uint32);
+			EXPOSE_VALUE(33, field_84, uint32);
+			EXPOSE_VALUE(34, field_88, uint32);
+			EXPOSE_VALUE(35, field_8C, uint32);
+			EXPOSE_VALUE(36, field_90, uint32);
+			EXPOSE_VALUE(37, field_94, uint32);
+			EXPOSE_VALUE(38, field_98, uint32);
+			EXPOSE_VALUE(39, field_9C, uint32);
+			EXPOSE_VALUE(40, field_A0, uint32);
+			EXPOSE_VALUE(41, field_A4, uint32);
+			EXPOSE_VALUE(42, field_A8, uint32);
+			EXPOSE_VALUE(43, field_AC, uint32);
+			EXPOSE_VALUE(44, field_B0, uint32);
+			EXPOSE_VALUE(45, field_B4, uint32);
+			EXPOSE_VALUE(46, field_B8, uint32);
+			EXPOSE_VALUE(47, field_BC, uint32);
+			EXPOSE_VALUE(48, field_C0, uint32);
+			EXPOSE_VALUE(49, field_C4, uint32);
+			EXPOSE_VALUE(50, field_C8, uint32);
+			EXPOSE_VALUE(51, field_CC, uint32);
+			EXPOSE_VALUE(52, eventMetBoutarel, bool);
+			EXPOSE_VALUE(53, eventMetHadija, bool);
+			EXPOSE_VALUE(54, eventMetYasmin, bool);
+			EXPOSE_VALUE(55, field_DC, uint32);
+			EXPOSE_VALUE(56, field_E0, uint32);
+			EXPOSE_VALUE(57, field_E4, uint32);
+			EXPOSE_VALUE(58, field_E8, uint32);
+			EXPOSE_VALUE(59, field_EC, uint32);
+			EXPOSE_VALUE(60, field_F0, uint32);
+			EXPOSE_VALUE(61, field_F4, uint32);
+			EXPOSE_VALUE(62, field_F8, uint32);
+			EXPOSE_VALUE(63, field_FC, uint32);
+			EXPOSE_VALUE(64, field_100, uint32);
+			EXPOSE_VALUE(65, field_104, uint32);
+			EXPOSE_VALUE(66, field_108, uint32);
+			EXPOSE_VALUE(67, field_10C, uint32);
+			EXPOSE_VALUE(68, field_110, uint32);
+			EXPOSE_VALUE(69, field_114, uint32);
+			EXPOSE_VALUE(70, field_118, uint32);
+			EXPOSE_VALUE(71, field_11C, uint32);
+			EXPOSE_VALUE(72, field_120, uint32);
+			EXPOSE_VALUE(73, field_124, uint32);
+			EXPOSE_VALUE(74, field_128, uint32);
+			EXPOSE_VALUE(75, field_12C, uint32);
+			EXPOSE_VALUE(76, field_130, uint32);
+			EXPOSE_VALUE(77, field_134, uint32);
+			EXPOSE_VALUE(78, field_138, uint32);
+			EXPOSE_VALUE(79, field_13C, uint32);
+			EXPOSE_VALUE(80, field_140, uint32);
+			EXPOSE_VALUE(81, field_144, uint32);
+			EXPOSE_VALUE(82, field_148, uint32);
+			EXPOSE_VALUE(83, field_14C, uint32);
+			EXPOSE_VALUE(84, field_150, uint32);
+			EXPOSE_VALUE(85, field_154, uint32);
+			EXPOSE_VALUE(86, field_158, uint32);
+			EXPOSE_VALUE(87, field_15C, uint32);
+			EXPOSE_VALUE(88, field_160, uint32);
+			EXPOSE_VALUE(89, field_164, uint32);
+			EXPOSE_VALUE(90, field_168, uint32);
+			EXPOSE_VALUE(91, field_16C, uint32);
+			EXPOSE_VALUE(92, field_170, uint32);
+			EXPOSE_VALUE(93, field_174, uint32);
+			EXPOSE_VALUE(94, field_178, uint32);
+			EXPOSE_VALUE(95, field_17C, uint32);
+			EXPOSE_VALUE(96, field_180, uint32);
+			EXPOSE_VALUE(97, field_184, uint32);
+			EXPOSE_VALUE(98, field_188, uint32);
+			EXPOSE_VALUE(99, field_18C, uint32);
+			EXPOSE_VALUE(100, field_190, uint32);
+			EXPOSE_VALUE(101, field_194, uint32);
+			EXPOSE_VALUE(102, field_198, uint32);
+			EXPOSE_VALUE(103, field_19C, uint32);
+			EXPOSE_VALUE(104, field_1A0, uint32);
+			EXPOSE_VALUE(105, field_1A4, uint32);
+			EXPOSE_VALUE(106, field_1A8, uint32);
+			EXPOSE_VALUE(107, field_1AC, uint32);
+			EXPOSE_VALUE(108, field_1B0, uint32);
+			EXPOSE_VALUE(109, field_1B4, uint32);
+			EXPOSE_VALUE(110, field_1B8, uint32);
+			EXPOSE_VALUE(111, field_1BC, uint32);
+			EXPOSE_VALUE(112, field_1C0, uint32);
+			EXPOSE_VALUE(113, field_1C4, uint32);
+			EXPOSE_VALUE(114, field_1C8, uint32);
+			EXPOSE_VALUE(115, field_1CC, uint32);
+			EXPOSE_VALUE(116, field_1D0, uint32);
+			EXPOSE_VALUE(117, field_1D4, uint32);
+			EXPOSE_VALUE(118, field_1D8, uint32);
+			EXPOSE_VALUE(119, field_1DC, uint32);
+			EXPOSE_VALUE(120, field_1E0, uint32);
+			EXPOSE_VALUE(121, field_1E4, uint32);
+			EXPOSE_VALUE(122, field_1E8, uint32);
+			EXPOSE_VALUE(123, field_1EC, uint32);
+			EXPOSE_VALUE(124, field_1F0, uint32);
+			EXPOSE_VALUE(125, field_1F4, uint32);
+			EXPOSE_VALUE(126, field_1F8, uint32);
+			EXPOSE_VALUE(127, field_1FC, uint32);
 			}
 		}
 
@@ -464,7 +465,7 @@ public:
 
 			for (uint i = 0; i < 128; i++) {
 				Common::String name = "";
-				uint val = getValueName(i, &name);
+				uint val = getOrSetValueName(i, &name, NULL);
 				ret += Common::String::format("(%03d) %s = %d\n", i, name.c_str(), val);
 			}
 
@@ -472,9 +473,17 @@ public:
 		}
 
 		void saveLoadWithSerializer(Common::Serializer &s) {
-			for (uint i = 0; i < 128; i++) {
-				uint32 val = getValueName(i);
-				s.syncAsUint32LE(val);
+			if (s.isLoading()) {
+				for (uint i = 0; i < 128; i++) {
+					uint32 val;
+					s.syncAsUint32LE(val);
+					getOrSetValueName(i, NULL, &val);
+				}
+			} else {
+				for (uint i = 0; i < 128; i++) {
+					uint32 val = getOrSetValueName(i);
+					s.syncAsUint32LE(val);
+				}
 			}
 		}
 	};

@@ -37,6 +37,29 @@ public:
 	virtual ~Framebuffer() {};
 
 public:
+	enum BlendMode {
+		/**
+		 * Newly drawn pixels overwrite the existing contents of the framebuffer
+		 * without mixing with them
+		 */
+		kBlendModeDisabled,
+
+		/**
+		 * Newly drawn pixels mix with the framebuffer based on their alpha value
+		 * for transparency.
+		 */
+		kBlendModeTraditionalTransparency,
+
+		/**
+		 * Newly drawn pixels mix with the framebuffer based on their alpha value
+		 * for transparency.
+		 *
+		 * Requires the image data being drawn to have its color values pre-multipled
+		 * with the alpha value.
+		 */
+		kBlendModePremultipliedTransparency
+	};
+
 	/**
 	 * Set the clear color of the framebuffer.
 	 */
@@ -45,7 +68,7 @@ public:
 	/**
 	 * Enable/disable GL_BLEND.
 	 */
-	void enableBlend(bool enable);
+	void enableBlend(BlendMode mode);
 
 	/**
 	 * Enable/disable GL_SCISSOR_TEST.
@@ -102,7 +125,7 @@ private:
 	GLfloat _clearColor[4];
 	void applyClearColor();
 
-	bool _blendState;
+	BlendMode _blendState;
 	void applyBlendState();
 
 	bool _scissorTestState;

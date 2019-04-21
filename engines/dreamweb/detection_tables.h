@@ -244,6 +244,24 @@ static const DreamWebGameDescription gameDescriptions[] = {
 		},
 	},
 
+	// Italian CD release
+	{
+		{
+			"dreamweb",
+			"CD",
+			{
+				{"dreamweb.exe", 0, "44d1708535cdb863b9cca372ad0b05dd", 65370},
+				{"dreamweb.r00", 0, "66dcab08354232f423c590156335f819", 155448},
+				{"dreamweb.r02", 0, "87a026e9f80ed4f94169381f871ee305", 199676},
+				AD_LISTEND
+			},
+			Common::IT_ITA,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_BRIGHTPALETTE)
+		},
+	},
+
 	// Czech fan-made translation
 	// From bug #7078
 	{
@@ -257,6 +275,24 @@ static const DreamWebGameDescription gameDescriptions[] = {
 				AD_LISTEND
 			},
 			Common::CZ_CZE,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_BRIGHTPALETTE)
+		},
+	},
+
+	// Russian fan-made translation
+	{
+		{
+			"dreamweb",
+			"CD",
+			{
+				{"dreamweb.r00", 0, "b457b515f1042d345c07e4e58a7ef792", 151975},
+				{"dreamweb.r02", 0, "eebf681cef5a06ee12a2630512c5eb83", 197091},
+				{"dreamweb.exe", 0, "9386c192d3bdce2ef4de2135c29fa66d", 65370},
+				AD_LISTEND
+			},
+			Common::RU_RUS,
 			Common::kPlatformDOS,
 			ADGF_CD,
 			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_BRIGHTPALETTE)

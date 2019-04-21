@@ -61,7 +61,7 @@ void CmdText::displayTemp(InkColor color, Verb v) {
 
 void CmdText::displayTemp(InkColor color, const char *name, bool outlined) {
 	char temp[MAX_COMMAND_LEN];
-	sprintf(temp, "%s %s", _command, name);
+	snprintf(temp, MAX_COMMAND_LEN, "%s %s", _command, name);
 	display(color, temp, outlined);
 }
 
@@ -87,7 +87,7 @@ public:
 	virtual void displayTemp(InkColor color, const char *name, bool outlined) {
 		char temp[MAX_COMMAND_LEN];
 
-		sprintf(temp, "%s %s", name, _command);
+		snprintf(temp, MAX_COMMAND_LEN, "%s %s", name, _command);
 		display(color, temp, outlined);
 	}
 
@@ -119,9 +119,9 @@ public:
 		char temp[MAX_COMMAND_LEN];
 		// don't show a space after the goto and give commands in the Greek version
 		if (_command[1] != (char)-34 && !(_command[1] == (char)-2 && strlen(_command) > 5))
-			sprintf(temp, "%s %s", _command, name);
+			snprintf(temp, MAX_COMMAND_LEN, "%s %s", _command, name);
 		else
-			sprintf(temp, "%s%s", _command, name);
+			snprintf(temp, MAX_COMMAND_LEN, "%s%s", _command, name);
 		display(color, temp, outlined);
 	}
 
@@ -1207,6 +1207,7 @@ uint16 Command::nextObjectDescription(ObjectDescription* objDesc, uint16 firstDe
 			break;
 		}
 		// already displayed first, do a random
+		// fall through
 	case 1:
 		i = objDesc->lastSeenNumber;
 		while (i == objDesc->lastSeenNumber) {

@@ -52,9 +52,9 @@ void CToggleSwitch::load(SimpleFile *file) {
 bool CToggleSwitch::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 	_pressed = !_pressed;
 	if (_pressed)
-		fn10(0, 0, 0);
+		setToggleColor(0, 0, 0);
 	else
-		fn10(0xff, 0xff, 0xff);
+		setToggleColor(0xff, 0xff, 0xff);
 	return true;
 }
 

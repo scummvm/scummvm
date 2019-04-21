@@ -1,3 +1,164 @@
+scummvm (1.9.0+dfsg-2) unstable; urgency=medium
+
+  * Team upload.
+  * Avoid disabling -Wformat, which causes a build failure with GCC 7.
+    Closes: #871161.
+
+ -- Stephen Kitt <skitt@debian.org>  Thu, 10 Aug 2017 12:05:39 +0200
+
+scummvm (1.9.0+dfsg-1) unstable; urgency=medium
+
+  * New upstream release [October 2016].
+  * Removed obsolete "libsdl2.patch".
+  * Removed traces of -dbg package.
+  * Build reproducibly (Closes: #827145)
+    Thanks, Reiner Herrmann.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Fri, 11 Nov 2016 23:17:07 +1100
+
+scummvm (1.8.1+dfsg-1) unstable; urgency=medium
+
+  * New upstream release [May 2016].
+  * Standards-Version: 3.9.8.
+  * Removed obsolete "format-security.patch".
+  * Build-Depends:
+    + libfreetype6-dev
+    + libpng-dev
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Mon, 06 Jun 2016 00:28:50 +1000
+
+scummvm (1.8.0+dfsg-1) unstable; urgency=low
+
+  * New upstream release [March 2016].
+
+  [ Alexandre Detiste ]
+  * Use HTTPS for Vcs URLs.
+  * Standards-Version: 3.9.7.
+  * Watch "http://scummvm.org/downloads/" for releases.
+
+  [ Dmitry Smirnov ]
+  * Corrected icons installation path (Closes: #778687)
+  * Update watch file to v4; use copyright/Files-Exclided;
+    simplified rules/get-orig-source.
+  * watch: check GitHub for releases.
+  * Removed .menu file.
+  * Fixed in new upstream release 1.8.0:
+    + Spelling mistake in Spanish translation of Lure of the Temptress:
+      "obsevar" -> "observar" has been fixed upstream (Closes: #805215).
+  * clean: remove "config.mk".
+  * Removed obsolete "drop1test.patch".
+  * Switch to libsdl2 (Closes: #807710):
+    + New "libsdl2.patch" to find "sdl2-config";
+    + Build-Depends:
+      - libsdl1.2-dev
+      + libsdl2-dev | libsdl1.2-dev
+  * Added "format-security.patch" to fix FTBFS.
+  * Build with full hardening.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Tue, 15 Mar 2016 10:07:19 +1100
+
+scummvm (1.7.0+dfsg-2) unstable; urgency=medium
+
+  * Team upload.
+  * Add disable-arm-asm.patch.
+    Fix a crash and segmentation fault on ARM systems by disabling asm
+    optimizations.
+    Thanks to Konstantinos Margaritis <markos@freevec.org> for the report
+    and patch and Vagrant Cascadian for further testing.
+    (Closes: #779029)
+
+ -- Markus Koschany <apo@gambaru.de>  Sat, 28 Feb 2015 18:50:52 +0100
+
+scummvm (1.7.0+dfsg-1) unstable; urgency=low
+
+  * New upstream release [July 2014].
+    - remove old/obsolete patches.
+    + added new "drop1test.patch" to disable problematic test.
+    + build with "--disable-eventrecorder" to avoid FTBFS in tests.
+    + added "libjpeg-dev" and "libfaad-dev" to Build-Depends.
+  * Install all arch-independent files (themes, game data, etc.).
+  * Build-time re-compression of "classic" theme.
+  * Added "debian/gbp.conf".
+  * Standards-Version to 3.9.5.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Sun, 10 Aug 2014 00:50:36 +1000
+
+scummvm (1.6.0+dfsg-3) unstable; urgency=medium
+
+  * Touch "config.mk" before dh_auto_clean to fix FTBFS (Closes: #718164).
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Tue, 30 Jul 2013 17:05:40 +1000
+
+scummvm (1.6.0+dfsg-2) unstable; urgency=low
+
+  * New patches to produce working executables on kFreeBSD and Hurd:
+    + [hurd+kfreebsd] to build on Hurd & kFreeBSD (Closes: #711320);
+      thanks to Petr Salinger.
+    + [posix] to fix FTBFS in timidity on GNU Hurd.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Fri, 07 Jun 2013 18:40:21 +1000
+
+scummvm (1.6.0+dfsg-1) unstable; urgency=low
+
+  * New upstream release [May 2013].
+  * Added "libtheora-dev" to Build-Depends.
+  * get-orig-source: minor repacking improvement to produce identical
+    archives.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Sun, 02 Jun 2013 19:09:54 +1000
+
+scummvm (1.5.0+dfsg-1) unstable; urgency=low
+
+  [ Dmitry Smirnov ]
+  * New upstream release [July 2012].
+  * xz compression for .deb files and debian source.
+  * debhelper to version 9.
+  * Standards to 3.9.4.
+  * Built-Using field for scummvm-data to document bundled fonts.
+  * Build-Depends:
+    + alphabetising and sorting.
+    + added "fonts-freefont-ttf" and "zip" to facilitate substitution
+      of font files and theme re-compression.
+    + introduced "autotools_dev".
+  * Added Vcs links.
+  * Tightened relationships with "scummvm-data (= ${source:Version})".
+  * lintianisation: removed tabs from package description.
+  * Added commented scummvm-dbg package.
+  * debian/rules:
+    + optimisation.
+    + enabled parallel build.
+    + increased log verbosity with "--enable-verbose-build".
+    + install upstream changelog.
+    + gracefully handle stripping if -dbg package is
+      (un-)commented in debian/control.
+    + re-compress scummmodern.zip and replace bundled fonts from
+      fonts-freefont-ttf.
+    + added "get-orig-source" target for DFSG-repackaging and removing
+      non-free fonts.
+    + fixed FTBFS on GNU Hurd.
+  * debian/copyright:
+    + to copyright-format-1.0.
+    + audit of upstream copyrights/licenses.
+  * Dropped obsolete patch "debian-changes-1.0.0-1".
+  * Dropped empty directories.
+  * Moved .desktop file to the main package, added breaks/replaces
+  * Added README.source with notes regarding DFSG concerns.
+  * Added debian/watch.
+  * Added myself to Uploaders.
+
+  [ Markus Koschany ]
+  * Update package description. Suggest new ScummVM games Drascula and
+    Lure of the Temptress.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Sun, 05 May 2013 20:46:54 +1000
+
+scummvm (1.4.1-1) unstable; urgency=low
+
+  * New upstream release
+  * Install translations.dat into scummvm-data	
+
+ -- Moritz Muehlenhoff <jmm@debian.org>  Sat, 14 Jan 2012 11:39:15 +0100
+
 scummvm (1.4.0-1) unstable; urgency=low
 
   * New upstream release

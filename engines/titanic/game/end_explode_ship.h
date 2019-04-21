@@ -34,10 +34,11 @@ class CEndExplodeShip : public CGameObject {
 	bool MovieEndMsg(CMovieEndMsg *msg);
 	bool MovieFrameMsg(CMovieFrameMsg *msg);
 public:
-	int _value1, _value2;
+	bool _isExploding;
+	int _unused5;
 public:
 	CLASSDEF;
-	CEndExplodeShip() : CGameObject(), _value1(0), _value2(0) {}
+	CEndExplodeShip() : CGameObject(), _isExploding(false), _unused5(0) {}
 
 	/**
 	 * Save the data for the class to file

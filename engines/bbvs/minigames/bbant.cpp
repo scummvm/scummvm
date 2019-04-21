@@ -85,7 +85,7 @@ void MinigameBbAnt::buildDrawList1(DrawList &drawList) {
 		Obj *obj = &_objects[i];
 		if (obj->kind) {
 			drawList.add(obj->anim->frameIndices[obj->frameIndex],
-				_stompX + (obj->x >> 16), _stompY + (obj->y >> 16),
+				_stompX + (obj->x / 65536), _stompY + (obj->y / 65536),
 				obj->priority);
 		}
 	}
@@ -256,8 +256,8 @@ void MinigameBbAnt::initObjects1() {
 	for (int i = 3; i < 12; ++i) {
 		const ObjInit *objInit = getObjInit(i - 3);
 		_objects[i].kind = 6;
-		_objects[i].x = objInit->x << 16;
-		_objects[i].y = objInit->y << 16;
+		_objects[i].x = objInit->x * 65536;
+		_objects[i].y = objInit->y * 65536;
 		_objects[i].xIncr = 0;
 		_objects[i].yIncr = 0;
 		_objects[i].anim = objInit->anim1;
@@ -429,7 +429,7 @@ bool MinigameBbAnt::updateStatus1(int mouseX, int mouseY, uint mouseButtons) {
 	if ((mouseButtons & kLeftButtonClicked) && _objects[2].status == 0 && isMagGlassAtBeavisLeg(2)) {
 		if (_vm->getRandom(10) == 1 && !isAnySoundPlaying(kSoundTbl4, 10))
 			playSound(16);
-		insertSmokeObj(_objects[0].x << 16, _objects[0].y << 16);
+		insertSmokeObj(_objects[0].x * 65536, _objects[0].y * 65536);
 	}
 
 	if (_skullBugCtr > 0) {
@@ -515,8 +515,8 @@ bool MinigameBbAnt::updateStatus2(int mouseX, int mouseY, uint mouseButtons) {
 					Obj *obj = &_objects[i];
 					if (obj->status == 13) {
 						const ObjInit *objInit = getObjInit(i - 3);
-						obj->x = objInit->x << 16;
-						obj->y = objInit->y << 16;
+						obj->x = objInit->x * 65536;
+						obj->y = objInit->y * 65536;
 						obj->anim = objInit->anim3;
 						obj->frameIndex = 0;
 						obj->ticks = _objects[0].anim->frameTicks[0];
@@ -588,7 +588,7 @@ void MinigameBbAnt::insertBugSmokeObj(int x, int y, int bugObjIndex) {
 		obj->priority = 950;
 		if (bugObj->status >= 4 && (bugObj->status <= 6 || bugObj->status == 8)) {
 			obj->xIncr = 0;
-			obj->yIncr = (-1 << 16);
+			obj->yIncr = (-1 * 65536);
 		} else {
 			obj->xIncr = bugObj->xIncr / 8;
 			obj->yIncr = bugObj->yIncr / 8;
@@ -648,11 +648,11 @@ void MinigameBbAnt::insertBugObj(int kind, int animIndexIncr, int always0, int x
 		obj->field30 = field30;
 		obj->animIndexIncr = animIndexIncr;
 		obj->kind = kind;
-		obj->x = x << 16;
-		obj->y = y << 16;
+		obj->x = x * 65536;
+		obj->y = y * 65536;
 		obj->priority = 610;
-		obj->xIncr = kPosIncrTbl1[0].x << 16;
-		obj->yIncr = kPosIncrTbl1[0].y << 16;
+		obj->xIncr = kPosIncrTbl1[0].x * 65536;
+		obj->yIncr = kPosIncrTbl1[0].y * 65536;
 		obj->anim = objKindAnimTable[0];
 		obj->frameIndex = 0;
 		obj->ticks = obj->anim->frameTicks[0];
@@ -692,8 +692,8 @@ void MinigameBbAnt::updateBugObjAnim(int objIndex) {
 		break;
 	}
 	const ObjAnimation * const *objKindAnimTable = getObjKindAnimTable(obj->kind);
-	obj->xIncr = kPosIncrTbl1[obj->animIndexIncr].x << 16;
-	obj->yIncr = kPosIncrTbl1[obj->animIndexIncr].y << 16;
+	obj->xIncr = kPosIncrTbl1[obj->animIndexIncr].x * 65536;
+	obj->yIncr = kPosIncrTbl1[obj->animIndexIncr].y * 65536;
 	obj->anim = objKindAnimTable[obj->animIndexIncr];
 	obj->frameIndex = 0;
 	obj->ticks = obj->anim->frameTicks[0];
@@ -711,8 +711,8 @@ void MinigameBbAnt::updateObjAnim2(int objIndex) {
 	if (obj->animIndexIncr >= 8)
 		obj->animIndexIncr %= 8;
 	const ObjAnimation * const *objKindAnimTable = getObjKindAnimTable(obj->kind);
-	obj->xIncr = kPosIncrTbl1[obj->animIndex + obj->animIndexIncr].x << 16;
-	obj->yIncr = kPosIncrTbl1[obj->animIndex + obj->animIndexIncr].y << 16;
+	obj->xIncr = kPosIncrTbl1[obj->animIndex + obj->animIndexIncr].x * 65536;
+	obj->yIncr = kPosIncrTbl1[obj->animIndex + obj->animIndexIncr].y * 65536;
 	obj->anim = objKindAnimTable[obj->animIndex + obj->animIndexIncr];
 	obj->frameIndex = 0;
 	obj->ticks = obj->anim->frameTicks[0];
@@ -730,8 +730,8 @@ bool MinigameBbAnt::isBugOutOfScreen(int objIndex) {
 	Obj *obj = &_objects[objIndex];
 
 	return
-		obj->x < (-10 << 16) || obj->x > (330 << 16) ||
-		obj->y < (-10 << 16) || obj->y > (250 << 16);
+		obj->x < (-10 * 65536) || obj->x > (330 * 65536) ||
+		obj->y < (-10 * 65536) || obj->y > (250 * 65536);
 }
 
 void MinigameBbAnt::updateObjAnim3(int objIndex) {
@@ -743,8 +743,8 @@ void MinigameBbAnt::updateObjAnim3(int objIndex) {
 	if (obj->animIndexIncr > 7)
 		obj->animIndexIncr = 0;
 	const ObjAnimation * const *objKindAnimTable = getObjKindAnimTable(obj->kind);
-	obj->xIncr = kPosIncrTbl1[obj->animIndexIncr].x << 16;
-	obj->yIncr = kPosIncrTbl1[obj->animIndexIncr].y << 16;
+	obj->xIncr = kPosIncrTbl1[obj->animIndexIncr].x * 65536;
+	obj->yIncr = kPosIncrTbl1[obj->animIndexIncr].y * 65536;
 	obj->anim = objKindAnimTable[obj->animIndexIncr];
 }
 
@@ -824,8 +824,8 @@ void MinigameBbAnt::updateBugObj1(int objIndex) {
 		_objects[obj->otherObjIndex].y = obj->y;
 		if (isBugOutOfScreen(objIndex)) {
 			_objects[obj->otherObjIndex].status = 13;
-			_objects[obj->otherObjIndex].x = (500 << 16);
-			_objects[obj->otherObjIndex].y = (500 << 16);
+			_objects[obj->otherObjIndex].x = (500 * 65536);
+			_objects[obj->otherObjIndex].y = (500 * 65536);
 			removeBugObj(objIndex);
 			--_counter1;
 		}
@@ -847,8 +847,8 @@ void MinigameBbAnt::updateBugObj1(int objIndex) {
 		if (flag1) {
 			const ObjAnimation * const *objKindAnimTable = getObjKindAnimTable(obj->kind);
 			obj->status = 7;
-			obj->xIncr = kPosIncrTbl2[obj->animIndexIncr].x << 16;
-			obj->yIncr = kPosIncrTbl2[obj->animIndexIncr].y << 16;
+			obj->xIncr = kPosIncrTbl2[obj->animIndexIncr].x * 65536;
+			obj->yIncr = kPosIncrTbl2[obj->animIndexIncr].y * 65536;
 			obj->anim = objKindAnimTable[obj->animIndexIncr + 8];
 			obj->frameIndex = 0;
 			obj->ticks = obj->anim->frameTicks[0];
@@ -873,8 +873,8 @@ void MinigameBbAnt::updateBugObj1(int objIndex) {
 			obj->anim = obj->anim2;
 			obj->frameIndex = obj->frameIndex2;
 			obj->ticks = obj->ticks2;
-			obj->xIncr = kPosIncrTbl1[obj->animIndex + obj->animIndexIncr].x << 16;
-			obj->yIncr = kPosIncrTbl1[obj->animIndex + obj->animIndexIncr].y << 16;
+			obj->xIncr = kPosIncrTbl1[obj->animIndex + obj->animIndexIncr].x * 65536;
+			obj->yIncr = kPosIncrTbl1[obj->animIndex + obj->animIndexIncr].y * 65536;
 			obj->priority = 610;
 		}
 		break;
@@ -931,7 +931,7 @@ void MinigameBbAnt::updateFootObj(int objIndex) {
 
 	case 1:
 		obj->xIncr = -0x8000;
-		obj->yIncr = (-4 << 16);
+		obj->yIncr = (-4 * 65536);
 		obj->status = 2;
 		_stompCounter1 += 5;
 		_stompCounter2 = 100;
@@ -941,9 +941,9 @@ void MinigameBbAnt::updateFootObj(int objIndex) {
 		obj->x += obj->xIncr;
 		obj->y += obj->yIncr;
 		obj->yIncr += 0x2000;
-		if (obj->y < (20 << 16)) {
+		if (obj->y < (20 * 65536)) {
 			obj->xIncr = 0x8000;
-			obj->yIncr = (7 << 16);
+			obj->yIncr = (7 * 65536);
 			obj->status = 3;
 		}
 		break;
@@ -953,8 +953,8 @@ void MinigameBbAnt::updateFootObj(int objIndex) {
 		obj->y += obj->yIncr;
 		obj->yIncr += 0x2000;
 		if (obj->y >= 0x4B0000) {
-			obj->x = (40 << 16);
-			obj->y = (75 << 16);
+			obj->x = (40 * 65536);
+			obj->y = (75 * 65536);
 			obj->status = 4;
 			_stompDelay1 = 6;
 			_stompY = 0;
@@ -1023,15 +1023,15 @@ bool MinigameBbAnt::isBugAtCandy(int objIndex, int &candyObjIndex) {
 
 	if (obj->kind >= 1 && obj->kind <= 4) {
 		const BBRect &frameRect1 = obj->anim->frameRects[obj->frameIndex];
-		const int obj1X1 = frameRect1.x + (obj->x >> 16);
-		const int obj1Y1 = frameRect1.y + (obj->y >> 16);
+		const int obj1X1 = frameRect1.x + (obj->x / 65536);
+		const int obj1Y1 = frameRect1.y + (obj->y / 65536);
 		const int obj1X2 = obj1X1 + frameRect1.width;
 		const int obj1Y2 = obj1Y1 + frameRect1.height;
 		for (int i = 3; i < 12 && !result; ++i) {
 			Obj *obj2 = &_objects[i];
 			const BBRect &frameRect2 = obj->anim->frameRects[obj2->frameIndex]; // sic
-			const int obj2X1 = (obj2->x >> 16) + frameRect2.x;
-			const int obj2Y1 = (obj2->y >> 16) + frameRect2.y;
+			const int obj2X1 = (obj2->x / 65536) + frameRect2.x;
+			const int obj2Y1 = (obj2->y / 65536) + frameRect2.y;
 			const int obj2X2 = obj2X1 + frameRect2.width;
 			const int obj2Y2 = obj2Y1 + frameRect2.height;
 			if (obj2->status == 9 && obj1X1 <= obj2X2 && obj1X2 >= obj2X1 && obj1Y1 <= obj2Y2 && obj1Y2 >= obj2Y1) {
@@ -1055,8 +1055,8 @@ bool MinigameBbAnt::isMagGlassAtBug(int objIndex) {
 		const int obj1X2 = obj1X1 + frameRect1.width;
 		const int obj1Y2 = obj1Y1 + frameRect1.height;
 		const BBRect &frameRect2 = obj->anim->frameRects[obj->frameIndex];
-		const int obj2X1 = (obj->x >> 16) + frameRect2.x;
-		const int obj2Y1 = (obj->y >> 16) + frameRect2.y;
+		const int obj2X1 = (obj->x / 65536) + frameRect2.x;
+		const int obj2Y1 = (obj->y / 65536) + frameRect2.y;
 		const int obj2X2 = obj2X1 + frameRect2.width;
 		const int obj2Y2 = obj2Y1 + frameRect2.height;
 		if (obj2X2 >= obj1X1 && obj1X2 >= obj2X1 && obj1Y1 <= obj2Y2 && obj1Y2 >= obj2Y1)
@@ -1076,8 +1076,8 @@ bool MinigameBbAnt::isMagGlassAtBeavisLeg(int objIndex) {
 	const int obj1X2 = obj1X1 + frameRect1.width;
 	const int obj1Y2 = obj1Y1 + frameRect1.height;
 	const BBRect &frameRect2 = obj->anim->frameRects[obj->frameIndex];
-	const int obj2X1 = (obj->x >> 16) + frameRect2.x;
-	const int obj2Y1 = (obj->y >> 16) + frameRect2.y;
+	const int obj2X1 = (obj->x / 65536) + frameRect2.x;
+	const int obj2Y1 = (obj->y / 65536) + frameRect2.y;
 	const int obj2X2 = obj2X1 + frameRect2.width;
 	const int obj2Y2 = obj2Y1 + frameRect2.height;
 	if (obj2X2 >= obj1X1 && obj1X2 >= obj2X1 && obj1Y1 <= obj2Y2 && obj1Y2 >= obj2Y1)
@@ -1089,8 +1089,8 @@ bool MinigameBbAnt::testObj5(int objIndex) {
 	Obj *obj = &_objects[objIndex];
 	bool result = false;
 	if (obj->kind >= 1 && obj->kind <= 5) {
-		const int x = obj->x >> 16;
-		const int y = obj->y >> 16;
+		const int x = obj->x / 65536;
+		const int y = obj->y / 65536;
 		if (x < 0 || x >= 110 || y < 0 || y >= 110) {
 			obj->flag = 0;
 		} else if (!obj->flag) {

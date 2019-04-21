@@ -433,7 +433,8 @@ void chemin0(int depart, int arrivee) {
 	for (int i = 0; i < 20 + 1; i++)
 		fl[i] = -1;
 
-	X = 0, Y = 30;
+	X = 0;
+	Y = 30;
 
 	explore(depart, arrivee);
 }
@@ -853,6 +854,7 @@ void processAnimation() {
 						}
 					}
 				}
+				// fall through
 
 				case ANIM_PHASE_MOVE:
 				{
@@ -893,6 +895,7 @@ void processAnimation() {
 						break;
 					}
 				}
+				// fall through
 
 				case ANIM_PHASE_END:
 				{

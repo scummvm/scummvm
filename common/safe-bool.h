@@ -52,7 +52,7 @@ namespace Common {
 	public:
 		operator bool_type() const {
 			return static_cast<const DerivedT *>(this)->operator_bool() ?
-			&impl_t::stub : 0;
+			&impl_t::stub : nullptr;
 		}
 
 		operator bool_type() {

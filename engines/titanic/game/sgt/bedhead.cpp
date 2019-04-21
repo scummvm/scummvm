@@ -21,7 +21,9 @@
  */
 
 #include "titanic/game/sgt/bedhead.h"
+#include "titanic/support/files_manager.h"
 #include "titanic/titanic.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -110,8 +112,8 @@ bool CBedhead::TurnOn(CTurnOn *msg) {
 				setVisible(true);
 
 				_statics->_bedhead = entry._name4;
-				playMovie(entry._startFrame, entry._endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-				playSound("b#6.wav");
+				playMovie(entry._startFrame, entry._endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+				playSound(TRANSLATE("b#6.wav", "b#91.wav"));
 				_isClosed = false;
 			}
 		}
@@ -157,9 +159,9 @@ bool CBedhead::TurnOff(CTurnOff *msg) {
 			setVisible(true);
 
 			_statics->_bedhead = entry._name4;
-			playMovie(entry._startFrame, entry._endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+			playMovie(entry._startFrame, entry._endFrame, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 			playSound("193_436_bed fold up 1.wav");
-			_isClosed = false;
+			_isClosed = true;
 		}
 	}
 

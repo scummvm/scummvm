@@ -55,19 +55,7 @@ struct SherlockSavegameHeader {
 
 class SherlockEngine;
 
-
-/**
- * Derived serializer class with extra synchronization types
- */
-class Serializer : public Common::Serializer {
-public:
-	Serializer(Common::SeekableReadStream *in, Common::WriteStream *out) : Common::Serializer(in, out) {}
-
-	/**
-	 * New method to allow setting the version
-	 */
-	void setSaveVersion(byte version) { _version = version; }
-};
+typedef Common::Serializer Serializer;
 
 class SaveManager {
 protected:
@@ -117,7 +105,7 @@ public:
 	/**
 	 * Read in the header information for a savegame
 	 */
-	static bool readSavegameHeader(Common::InSaveFile *in, SherlockSavegameHeader &header);
+	WARN_UNUSED_RESULT static bool readSavegameHeader(Common::InSaveFile *in, SherlockSavegameHeader &header, bool skipThumbnail = true);
 
 	/**
 	 * Return the index of the button the mouse is over, if any

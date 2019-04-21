@@ -26,7 +26,10 @@
  * written, produced, and directed by Alan Smithee
  */
 
+#include "common/algorithm.h"
+#include "common/debug.h"
 #include "common/memstream.h"
+#include "common/rect.h"
 #include "common/textconsole.h"
 #include "graphics/yuv_to_rgb.h"
 #include "image/codecs/indeo4.h"
@@ -56,7 +59,7 @@ bool Indeo4Decoder::isIndeo4(Common::SeekableReadStream &stream) {
 	stream.seek(-16, SEEK_CUR);
 
 	// Validate the first 18-bit word has the correct identifier
-	Indeo::GetBits gb(new Common::MemoryReadStream(buffer, 16 * 8), DisposeAfterUse::YES);
+	Indeo::GetBits gb(buffer, 16 * 8);
 	bool isIndeo4 = gb.getBits(18) == 0x3FFF8;
 
 	return isIndeo4;
@@ -74,7 +77,7 @@ const Graphics::Surface *Indeo4Decoder::decodeFrame(Common::SeekableReadStream &
 	_ctx._frameSize = stream.size();
 
 	// Set up the GetBits instance for reading the data
-	_ctx._gb = new GetBits(new Common::MemoryReadStream(_ctx._frameData, _ctx._frameSize));
+	_ctx._gb = new GetBits(_ctx._frameData, _ctx._frameSize);
 
 	// Decode the frame
 	int err = decodeIndeoFrame();
@@ -86,7 +89,7 @@ const Graphics::Surface *Indeo4Decoder::decodeFrame(Common::SeekableReadStream &
 	_ctx._frameData = nullptr;
 	_ctx._frameSize = 0;
 
-	return (err < 0) ? nullptr : _surface;
+	return (err < 0) ? nullptr : &_surface;
 }
 
 int Indeo4Decoder::decodePictureHeader() {
@@ -109,6 +112,12 @@ int Indeo4Decoder::decodePictureHeader() {
 		_ctx._hasBFrames = true;
 
 	_ctx._hasTransp = _ctx._gb->getBit();
+	if (_ctx._hasTransp && _surface.format.aBits() == 0) {
+		// Surface is 4 bytes per pixel, but only RGB. So promote the
+		// surface to full RGBA, and convert all the existing pixels
+		_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+		_surface.convertToInPlace(_pixelFormat);
+	}
 
 	// unknown bit: Mac decoder ignores this bit, XANIM returns error
 	if (_ctx._gb->getBit()) {
@@ -484,8 +493,8 @@ int Indeo4Decoder::decodeMbInfo(IVIBandDesc *band, IVITile *tile) {
 
 				mb->_qDelta = 0;
 				if (!band->_plane && !band->_bandNum && _ctx._inQ) {
-					mb->_qDelta = _ctx._gb->getVLC2(_ctx._mbVlc._tab->_table,
-						IVI_VLC_BITS, 1);
+					mb->_qDelta = _ctx._gb->getVLC2<1>(_ctx._mbVlc._tab->_table,
+						IVI_VLC_BITS);
 					mb->_qDelta = IVI_TOSIGNED(mb->_qDelta);
 				}
 
@@ -522,8 +531,8 @@ int Indeo4Decoder::decodeMbInfo(IVIBandDesc *band, IVITile *tile) {
 					if (refMb) mb->_qDelta = refMb->_qDelta;
 				} else if (mb->_cbp || (!band->_plane && !band->_bandNum &&
 					_ctx._inQ)) {
-					mb->_qDelta = _ctx._gb->getVLC2(_ctx._mbVlc._tab->_table,
-						IVI_VLC_BITS, 1);
+					mb->_qDelta = _ctx._gb->getVLC2<1>(_ctx._mbVlc._tab->_table,
+						IVI_VLC_BITS);
 					mb->_qDelta = IVI_TOSIGNED(mb->_qDelta);
 				}
 
@@ -543,22 +552,22 @@ int Indeo4Decoder::decodeMbInfo(IVIBandDesc *band, IVITile *tile) {
 						}
 					} else {
 						// decode motion vector deltas
-						mvDelta = _ctx._gb->getVLC2(_ctx._mbVlc._tab->_table,
-							IVI_VLC_BITS, 1);
+						mvDelta = _ctx._gb->getVLC2<1>(_ctx._mbVlc._tab->_table,
+							IVI_VLC_BITS);
 						mvY += IVI_TOSIGNED(mvDelta);
-						mvDelta = _ctx._gb->getVLC2(_ctx._mbVlc._tab->_table,
-							IVI_VLC_BITS, 1);
+						mvDelta = _ctx._gb->getVLC2<1>(_ctx._mbVlc._tab->_table,
+							IVI_VLC_BITS);
 						mvX += IVI_TOSIGNED(mvDelta);
 						mb->_mvX = mvX;
 						mb->_mvY = mvY;
 						if (mb->_type == 3) {
-							mvDelta = _ctx._gb->getVLC2(
+							mvDelta = _ctx._gb->getVLC2<1>(
 								_ctx._mbVlc._tab->_table,
-								IVI_VLC_BITS, 1);
+								IVI_VLC_BITS);
 							mvY += IVI_TOSIGNED(mvDelta);
-							mvDelta = _ctx._gb->getVLC2(
+							mvDelta = _ctx._gb->getVLC2<1>(
 								_ctx._mbVlc._tab->_table,
-								IVI_VLC_BITS, 1);
+								IVI_VLC_BITS);
 							mvX += IVI_TOSIGNED(mvDelta);
 							mb->_bMvX = -mvX;
 							mb->_bMvY = -mvY;
@@ -595,52 +604,221 @@ int Indeo4Decoder::decodeMbInfo(IVIBandDesc *band, IVITile *tile) {
 	return 0;
 }
 
-void Indeo4Decoder::decodeTransparency() {
-	// FIXME: Since I don't currently know how to decode the transparency layer,
-	// I'm currently doing a hack where I take the color of the top left corner,
-	// and mark the range of pixels of that color from the start and end of
-	// each line as transparent
-	assert(_surface->format.bytesPerPixel == 4);
-	byte r, g, b;
+int Indeo4Decoder::decodeRLETransparency(VLC_TYPE (*table)[2]) {
+	const uint32 startPos = _ctx._gb->pos();
 
-	if (_surface->format.aBits() == 0) {
-		// Surface is 4 bytes per pixel, but only RGB. So promote the
-		// surface to full RGBA, and convert all the existing pixels
-		Graphics::PixelFormat oldFormat = _pixelFormat;
-		_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-		_surface->format = _pixelFormat;
+	_ctx._gb->align();
 
-		for (int y = 0; y < _surface->h; ++y) {
-			uint32 *lineP = (uint32 *)_surface->getBasePtr(0, y);
-			for (int x = 0; x < _surface->w; ++x, ++lineP) {
-				oldFormat.colorToRGB(*lineP, r, g, b);
-				*lineP = _pixelFormat.ARGBToColor(0xff, r, g, b);
+	bool runIsOpaque = _ctx._gb->getBit();
+	bool nextRunIsOpaque = !runIsOpaque;
+
+	uint32 *pixel = (uint32 *)_surface.getPixels();
+	const int surfacePixelPitch = _surface.pitch / _surface.format.bytesPerPixel;
+	const int surfacePadding = surfacePixelPitch - _surface.w;
+	const uint32 *endOfVisibleRow = pixel + _surface.w;
+	const uint32 *endOfVisibleArea = pixel + surfacePixelPitch * _surface.h - surfacePadding;
+
+	const int codecAlignedWidth = (_surface.w + 31) & ~31;
+	const int codecPaddingSize = codecAlignedWidth - _surface.w;
+
+	int numPixelsToRead = codecAlignedWidth * _surface.h;
+	int numPixelsToSkip = 0;
+	while (numPixelsToRead > 0) {
+		int value = _ctx._gb->getVLC2<1>(table, IVI_VLC_BITS);
+
+		if (value == -1) {
+			warning("Transparency VLC code read failed");
+			return -1;
+		}
+
+		if (value == 0) {
+			value = 255;
+			nextRunIsOpaque = runIsOpaque;
+		}
+
+		numPixelsToRead -= value;
+
+		debugN(9, "%d%s ", value, runIsOpaque ? "O" : "T");
+
+		// The rest of the transparency data must be consumed but it will not
+		// participate in writing any more pixels
+		if (pixel == endOfVisibleArea) {
+			debug(5, "Indeo4: Done writing transparency, but still need to consume %d pixels", numPixelsToRead + value);
+			continue;
+		}
+
+		// If a run ends in the padding area of a row, the next run needs to
+		// be partially consumed by the remaining pixels of the padding area
+		if (numPixelsToSkip) {
+			value -= numPixelsToSkip;
+			if (value < 0) {
+				numPixelsToSkip = -value;
+				value = 0;
+			} else {
+				numPixelsToSkip = 0;
 			}
 		}
-	} else {
-		// Working on a frame when the surface is already RGBA. In which case,
-		// start of by defaulting all pixels of the frame to fully opaque
-		for (int y = 0; y < _surface->h; ++y) {
-			uint32 *lineP = (uint32 *)_surface->getBasePtr(0, y);
-			for (int x = 0; x < _surface->w; ++x, ++lineP)
-				*lineP |= 0xff;
+
+		while (value > 0) {
+			const int length = MIN<int>(value, endOfVisibleRow - pixel);
+			if (!runIsOpaque) {
+				Common::fill(pixel, pixel + length, _ctx._transKeyColor);
+			}
+			value -= length;
+			pixel += length;
+
+			if (pixel == endOfVisibleRow) {
+				pixel += surfacePadding;
+				endOfVisibleRow += surfacePixelPitch;
+				value -= codecPaddingSize;
+
+				if (value < 0) {
+					numPixelsToSkip = -value;
+					break;
+				}
+
+				if (pixel == endOfVisibleArea) {
+					break;
+				}
+			}
+		}
+
+		runIsOpaque = nextRunIsOpaque;
+		nextRunIsOpaque = !runIsOpaque;
+	}
+
+	debugN(9, "\n");
+
+	if (numPixelsToRead != 0) {
+		warning("Wrong number of transparency pixels read; delta = %d", numPixelsToRead);
+	}
+
+	_ctx._gb->align();
+
+	return (_ctx._gb->pos() - startPos) / 8;
+}
+
+int Indeo4Decoder::decodeTransparency() {
+	if (_ctx._gb->getBits(2) != 3 || _ctx._gb->getBits(3) != 0) {
+		warning("Invalid transparency marker");
+		return -1;
+	}
+
+	Common::Rect drawRect;
+
+	for (int numRects = _ctx._gb->getBits(8); numRects; --numRects) {
+		const int x1 = _ctx._gb->getBits(16);
+		const int y1 = _ctx._gb->getBits(16);
+		const int x2 = x1 + _ctx._gb->getBits(16);
+		const int y2 = y1 + _ctx._gb->getBits(16);
+		drawRect.extend(Common::Rect(x1, y1, x2, y2));
+	}
+
+	debug(4, "Indeo4: Transparency rect is (%d, %d, %d, %d)", drawRect.left, drawRect.top, drawRect.right, drawRect.bottom);
+
+	if (_ctx._gb->getBit()) { /* @350 */
+		/* @358 */
+		_ctx._transKeyColor = _surface.format.ARGBToColor(0, _ctx._gb->getBits(8), _ctx._gb->getBits(8), _ctx._gb->getBits(8));
+		debug(4, "Indeo4: Key color is %08x", _ctx._transKeyColor);
+		/* @477 */
+	}
+
+	if (_ctx._gb->getBit() == 0) { /* @4D9 */
+		warning("Invalid transparency band?");
+		return -1;
+	}
+
+	IVIHuffDesc huffDesc;
+
+	const int numHuffRows = huffDesc._numRows = _ctx._gb->getBits(4);
+	if (numHuffRows == 0 || numHuffRows > IVI_VLC_BITS - 1) {
+		warning("Invalid codebook row count %d", numHuffRows);
+		return -1;
+	}
+
+	for (int i = 0; i < numHuffRows; ++i) {
+		huffDesc._xBits[i] = _ctx._gb->getBits(4);
+	}
+
+	/* @5E2 */
+	_ctx._gb->align();
+
+	IVIHuffTab &huffTable = _ctx._transVlc;
+
+	if (huffDesc.huffDescCompare(&huffTable._custDesc) || !huffTable._custTab._table) {
+		if (huffTable._custTab._table) {
+			huffTable._custTab.freeVlc();
+		}
+
+		huffTable._custDesc = huffDesc;
+		huffTable._tabSel = 7;
+		huffTable._tab = &huffTable._custTab;
+		if (huffTable._custDesc.createHuffFromDesc(huffTable._tab, false)) {
+			// reset faulty description
+			huffTable._custDesc._numRows = 0;
+			warning("Error while initializing transparency VLC table");
+			return -1;
 		}
 	}
 
-	// Use the top-left pixel as the key color, and figure out the
-	// equivalent value as fully transparent
-	uint32 keyColor = *(const uint32 *)_surface->getPixels();
-	uint32 transColor = keyColor & ~0xff;
+	// FIXME: The transparency plane can be split, apparently for local decoding
+	// mode (y459.avi in Titanic has the scalable flag and its transparency
+	// plane seems to be decoded successfully, so the split transparency plane
+	// does not seem to be related to scaling mode). This adds complexity to the
+	// implementation, so avoid supporting unless it turns out to actually be
+	// necessary for correct decoding of game videos.
+	assert(!_ctx._usesTiling);
 
-	for (int y = 0; y < _surface->h; ++y) {
-		uint32 *startP = (uint32 *)_surface->getBasePtr(0, y);
-		uint32 *endP = (uint32 *)_surface->getBasePtr(_surface->w - 1, y);
+	assert(_surface.format.bytesPerPixel == 4);
+	assert((_surface.pitch % 4) == 0);
 
-		while (startP <= endP && *startP == keyColor)
-			*startP++ = transColor;
-		while (endP > startP && *endP == keyColor)
-			*endP-- = transColor;
+	const uint32 startByte = _ctx._gb->pos() / 8;
+
+	/* @68D */
+	const bool useFillTransparency = _ctx._gb->getBit();
+	if (useFillTransparency) {
+		/* @6F2 */
+		const bool runIsOpaque = _ctx._gb->getBit();
+		if (!runIsOpaque) {
+			// It should only be necessary to draw transparency here since the
+			// data from the YUV planes gets drawn to the output surface on each
+			// frame, which resets the surface pixels to be fully opaque
+			_surface.fillRect(Common::Rect(_surface.w, _surface.h), _ctx._transKeyColor);
+		}
+
+		// No alignment here
+	} else {
+		/* @7BF */
+		const bool hasDataSize = _ctx._gb->getBit();
+		if (hasDataSize) { /* @81A */
+			/* @822 */
+			int expectedSize = _ctx._gb->getBits(8);
+			if (expectedSize == 0xFF) {
+				expectedSize = _ctx._gb->getBits(24);
+			}
+
+			expectedSize -= ((_ctx._gb->pos() + 7) / 8) - startByte;
+
+			const int bytesRead = decodeRLETransparency(huffTable._tab->_table);
+			if (bytesRead == -1) {
+				// A more specific warning should have been emitted already
+				return -1;
+			} else if (bytesRead != expectedSize) {
+				warning("Mismatched read %u != %u", bytesRead, expectedSize);
+				return -1;
+			}
+		} else {
+			/* @95B */
+			if (decodeRLETransparency(huffTable._tab->_table) == -1) {
+				warning("Transparency data read failure");
+				return -1;
+			}
+		}
+
+		_ctx._gb->align();
 	}
+
+	return 0;
 }
 
 int Indeo4Decoder::scaleTileSize(int defSize, int sizeFactor) {

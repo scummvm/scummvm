@@ -141,7 +141,8 @@ In find_if(In first, In last, Pred p) {
  */
 template<class In, class Op>
 Op for_each(In first, In last, Op f) {
-	while (first != last) f(*first++);
+	while (first != last)
+		f(*first++);
 	return f;
 }
 

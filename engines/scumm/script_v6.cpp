@@ -1636,6 +1636,9 @@ void ScummEngine_v6::o6_roomOps() {
 		c = pop();
 		b = pop();
 		a = pop();
+		// Prevent assert() error with corner case, fixes bug #9871
+		if (_game.id == GID_FT && _roomResource == 0)
+			break;
 		darkenPalette(a, a, a, b, c);
 		break;
 

@@ -376,7 +376,7 @@ uint8 AgiEngine::testSaid(uint8 nwords, uint8 *cc) {
 	return true;
 }
 
-int AgiEngine::testIfCode(int lognum) {
+bool AgiEngine::testIfCode(int16 logicNr) {
 	AgiGame *state = &_game;
 	uint8 op;
 	uint8 p[16];
@@ -387,8 +387,8 @@ int AgiEngine::testIfCode(int lognum) {
 	int result = true;
 
 	while (!(shouldQuit() || _restartGame) && !endTest) {
-		if (_debug.enabled && (_debug.logic0 || lognum))
-			debugConsole(lognum, lTEST_MODE, NULL);
+		if (_debug.enabled && (_debug.logic0 || logicNr))
+			debugConsole(logicNr, lTEST_MODE, NULL);
 
 		op = *(code + ip++);
 		memmove(p, (code + ip), 16);
@@ -418,7 +418,14 @@ int AgiEngine::testIfCode(int lognum) {
 
 		default:
 			// Evaluate the command and skip the rest of the instruction
-			_agiCondCommands[op](state, this, p);
+			_opCodesCond[op].functionPtr(state, this, p);
+			if (state->exitAllLogics) {
+				// required even here, because of at least the timer heuristic
+				// which when triggered waits a bit and processes ScummVM events and user may therefore restore a saved game
+				// fixes bug #9707
+				// TODO: maybe delay restoring the game instead, when GMM is used?
+ 				return true;
+			}
 			skipInstruction(op);
 
 			// NOT mode is enabled only for one instruction
@@ -457,8 +464,8 @@ int AgiEngine::testIfCode(int lognum) {
 	else
 		ip += READ_LE_UINT16(code + ip) + 2;
 
-	if (_debug.enabled && (_debug.logic0 || lognum))
-		debugConsole(lognum, 0xFF, result ? "=true" : "=false");
+	if (_debug.enabled && (_debug.logic0 || logicNr))
+		debugConsole(logicNr, 0xFF, result ? "=true" : "=false");
 
 	return result;
 }
@@ -469,16 +476,26 @@ void AgiEngine::skipInstruction(byte op) {
 		return;
 	if (op == 0x0E && state->_vm->getVersion() >= 0x2000) // said
 		ip += *(code + ip) * 2 + 1;
-	else
-		ip += logicNamesTest[op].argumentsLength();
+	else {
+		ip += _opCodesCond[op].parameterSize;
+	}
 }
 
 void AgiEngine::skipInstructionsUntil(byte v) {
 	AgiGame *state = &_game;
+	int originalIP = state->_curLogic->cIP;
+
 	while (1) {
 		byte op = *(code + ip++);
 		if (op == v)
 			return;
+
+		if (op < 0xFC) {
+			if (!_opCodesCond[op].functionPtr) {
+				// security-check
+				error("illegal opcode %x during skipinstructions in script %d at %d (triggered at %d)", op, state->curLogicNr, ip, originalIP);
+			}
+		}
 		skipInstruction(op);
 	}
 }

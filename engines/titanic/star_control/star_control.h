@@ -23,11 +23,13 @@
 #ifndef TITANIC_STAR_CONTROL_H
 #define TITANIC_STAR_CONTROL_H
 
-#include "titanic/core/game_object.h"
+#include "titanic/core/game_object.h" // class SimpleFile
 #include "titanic/star_control/star_field.h"
 #include "titanic/star_control/star_view.h"
 
 namespace Titanic {
+
+class CPetControl;
 
 class CStarControl : public CGameObject {
 	DECLARE_MESSAGE_MAP;
@@ -35,14 +37,13 @@ class CStarControl : public CGameObject {
 	bool MouseMoveMsg(CMouseMoveMsg *msg);
 	bool KeyCharMsg(CKeyCharMsg *msg);
 	bool FrameMsg(CFrameMsg *msg);
+	bool MovementMsg(CMovementMsg *msg);
 private:
-	int _fieldBC;
+	bool _enabled;
 	CStarField _starField;
 	CStarView _view;
 	Rect _starRect;
-#if 0
-	int _field80B0;
-#endif
+	CPetControl *_petControl;
 private:
 	/**
 	 * Called for ever new game frame
@@ -68,8 +69,30 @@ public:
 	 */
 	virtual void draw(CScreenManager *screenManager);
 
-	void fn1(int action);
-	bool fn4();
+	/**
+	 * _starField is currently showing the starfield
+	 */
+	bool isStarFieldMode();
+
+	/**
+	 * Does an action in the star control
+	 */
+	void doAction(StarControlAction action);
+
+	/**
+	 * Returns true if the starfield puzzle has been solved
+	 */
+	bool isSolved() const;
+
+	/**
+	 * Return true if the starfield puzzle was skipped
+	 */
+	bool isSkipped() const;
+
+	/**
+	 * Forces the starfield to be solved
+	 */
+	void forceSolved();
 
 	/**
 	 * Returns true if a star destination can be set
@@ -80,6 +103,11 @@ public:
 	 * Called when a star destination is set
 	 */
 	void starDestinationSet();
+
+	/**
+	 * Updates the camerea for the star view
+	 */
+	void updateCamera() { _view.updateCamera(); }
 };
 
 } // End of namespace Titanic

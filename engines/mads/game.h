@@ -237,7 +237,7 @@ public:
 	/**
 	 * Read in a savegame header
 	 */
-	static bool readSavegameHeader(Common::InSaveFile *in, MADSSavegameHeader &header);
+	WARN_UNUSED_RESULT static bool readSavegameHeader(Common::InSaveFile *in, MADSSavegameHeader &header, bool skipThumbnail = true);
 
 	/**
 	 * Creates a temporary thumbnail for use in saving games

@@ -63,6 +63,7 @@ struct SelectorCache {
 	Selector message; ///< Used by GetEvent
 	// edit
 	Selector play; ///< Play function (first function to be called)
+	Selector restore;
 	Selector number;
 	Selector handle;	///< Replaced by nodePtr in SCI1+
 	Selector nodePtr;	///< Replaces handle in SCI1+
@@ -87,6 +88,7 @@ struct SelectorCache {
 	// value, save, restore, title, button, icon, draw
 	Selector delete_; ///< Called by Animate() to dispose a view object
 	Selector z;
+	Selector setPri;
 
 	// SCI1+ static selectors
 	Selector parseLang;
@@ -129,6 +131,11 @@ struct SelectorCache {
 	Selector iconIndex; ///< Used to index icon bar objects
 	Selector select;
 
+	Selector handsOff;
+	Selector setStep;
+	Selector setMotion;
+	Selector cycleSpeed;
+
 #ifdef ENABLE_SCI32
 	Selector data; // Used by Array()/String()
 	Selector picture; // Used to hold the picture ID for SCI32 pictures
@@ -158,6 +165,35 @@ struct SelectorCache {
 	Selector magnifier;
 	Selector frameOut;
 	Selector casts; // needed for sync'ing screen items/planes with scripts, when our save/restore code is patched in (see GfxFrameout::syncWithScripts)
+	Selector setVol; // for GK2 volume sync on restore
+	Selector reSyncVol; // for Torin volume sync on restore
+	Selector set; // for LSL6hires subtitle sync
+	Selector clear; // for LSL6hires subtitle sync
+	Selector curPos; // for LSL6hires volume sync
+	Selector update; // for LSL6hires volume sync
+	Selector show; // for GK1 volume sync
+	Selector position; // for GK1 volume sync
+	Selector musicVolume; // for GK1 volume sync
+	Selector soundVolume; // for GK1 volume sync
+	Selector initialOff; // for GK2 volume sync
+	Selector setPos; // for Torin volume sync
+	Selector setSize; // for PQ4 volume sync
+	Selector displayValue; // for PQ:SWAT volume sync
+	Selector new_; // for Torin/LSL7 save/load patching
+	Selector mainCel; // for MGDX volume sync
+	Selector move; // for Phant2 volume sync
+	Selector eachElementDo; // for Phant2 volume sync
+	Selector physicalBar; // for Phant2 volume sync
+	Selector init; // for Phant2 save/load patching
+	Selector scratch; // for Phant2 save/load patching
+	Selector num; // for Phant2 restore from launcher
+	Selector reallyRestore; // for Phant2 restore from launcher
+	Selector bookMark; // for Phant2 auto-save
+	Selector fileNumber; // for RAMA save/load
+	Selector description; // for RAMA save/load
+	Selector dispose; // for RAMA save/load save from launcher
+	Selector masterVolume; // for RAMA volume sync
+	Selector setCel; // for RAMA volume sync
 #endif
 };
 
@@ -203,7 +239,7 @@ void invokeSelector(EngineState *s, reg_t object, int selectorId,
  * This function checks if index is in the right range, and sets the flag
  * on obj.-info- if it is.
  */
-void updateInfoFlagViewVisible(Object *obj, int index);
+void updateInfoFlagViewVisible(Object *obj, int index, bool fromPropertyOp = false);
 #endif
 
 } // End of namespace Sci

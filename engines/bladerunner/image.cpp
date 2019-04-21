@@ -23,15 +23,14 @@
 #include "bladerunner/image.h"
 
 #include "bladerunner/bladerunner.h"
-
 #include "bladerunner/decompress_lcw.h"
 
 #include "common/rect.h"
 
 namespace BladeRunner {
 
-Image::Image(BladeRunnerEngine *vm)
-	: _vm(vm) {
+Image::Image(BladeRunnerEngine *vm) {
+	_vm = vm;
 }
 
 Image::~Image() {
@@ -41,7 +40,7 @@ Image::~Image() {
 bool Image::open(const Common::String &name) {
 	Common::SeekableReadStream *stream = _vm->getResourceStream(name);
 	if (!stream) {
-		debug("Image::open failed to open '%s'\n", name.c_str());
+		warning("Image::open failed to open '%s'\n", name.c_str());
 		return false;
 	}
 
@@ -62,13 +61,20 @@ bool Image::open(const Common::String &name) {
 	assert(data);
 
 	if (strcmp(tag, "LZO") == 0) {
-		debug("LZO");
+		warning("LZO image decompression is not implemented");
 	} else if (strcmp(tag, "LCW") == 0) {
-		decompress_lcw(buf, bufSize, (uint8*)data, dataSize);
+		decompress_lcw(buf, bufSize, (uint8 *)data, dataSize);
+#ifdef SCUMM_BIG_ENDIAN
+		// As the compression is working with 8-bit data, on big-endian architectures we have to switch order of bytes in uncompressed data
+		uint8 *rawData = (uint8 *)data;
+		for (size_t i = 0; i < dataSize - 1; i += 2) {
+			SWAP(rawData[i], rawData[i + 1]);
+		}
+#endif
 	}
 
-	const Graphics::PixelFormat pixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
-	_surface.init(width, height, 2*width, data, pixelFormat);
+	_surface.init(width, height, 2*width, data, gameDataPixelFormat());
+	_surface.convertToInPlace(screenPixelFormat());
 
 	delete[] buf;
 	delete stream;

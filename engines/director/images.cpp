@@ -147,7 +147,7 @@ bool BITDDecoder::loadStream(Common::SeekableReadStream &stream) {
 	// If the stream has exactly the required number of bits for this image,
 	// we assume it is uncompressed.
 	if (stream.size() * 8 == _surface->pitch * _surface->h) {
-		debugC(3, kDebugImages, "Skipping compression");
+		debugC(6, kDebugImages, "Skipping compression");
 		for (y = 0; y < _surface->h; y++) {
 			for (x = 0; x < _surface->pitch; ) {
 				byte color = stream.readByte();
@@ -265,7 +265,7 @@ bool BITDDecoderV4::loadStream(Common::SeekableReadStream &stream) {
 	// If the stream has exactly the required number of bits for this image,
 	// we assume it is uncompressed.
 	if (stream.size() * 8 == _surface->pitch * _surface->h) {
-		debugC(3, kDebugImages, "Skipping compression");
+		debugC(6, kDebugImages, "Skipping compression");
 		for (y = 0; y < _surface->h; y++) {
 			for (x = 0; x < _surface->pitch; ) {
 				byte color = stream.readByte();
@@ -301,7 +301,7 @@ bool BITDDecoderV4::loadStream(Common::SeekableReadStream &stream) {
 	}
 
 	int offset = 0;
-	if (_surface->w < (pixels.size() / _surface->h)) 
+	if (_surface->w < (pixels.size() / _surface->h))
 		offset = (pixels.size() / _surface->h) - _surface->w;
 
 	if (pixels.size() > 0) {
@@ -316,7 +316,7 @@ bool BITDDecoderV4::loadStream(Common::SeekableReadStream &stream) {
 				}
 
 				case 8:
-					//this calculation is wrong.. need a demo with colours.
+					// this calculation is wrong.. need a demo with colours.
 					*((byte *)_surface->getBasePtr(x, y)) = 0xff - pixels[(y * _surface->w) + x + (y * offset)];
 					x++;
 					break;

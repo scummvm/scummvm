@@ -40,18 +40,15 @@ class CGondolierSlider : public CGondolierBase {
 	bool SignalObject(CSignalObject *msg);
 	bool ActMsg(CActMsg *msg);
 private:
-	int _fieldBC;
-	int _fieldC0;
-	int _fieldC4;
-	int _fieldC8;
-	Rect _sliderRect1;
-	Rect _sliderRect2;
-	int _arrayIndex;
-	CString _string1;
-	int _fieldFC;
-	CString _string2;
-	CString _string3;
-	bool _field118;
+	Rect _rectUnused;
+	Rect _thumbRect;
+	Rect _defaultThumbRect;
+	int _sliderIndex;
+	CString _stringUnused;
+	int _sliderNum;
+	CString _armName;
+	CString _signalTarget;
+	bool _dragging;
 public:
 	CLASSDEF;
 	CGondolierSlider();

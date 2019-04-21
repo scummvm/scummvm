@@ -23,6 +23,7 @@
 #ifndef FULLPIPE_UTILS_H
 #define FULLPIPE_UTILS_H
 
+#include "common/hash-ptr.h"
 #include "common/hash-str.h"
 #include "common/array.h"
 #include "common/file.h"
@@ -32,22 +33,7 @@ namespace Fullpipe {
 class CObject;
 class NGIArchive;
 
-struct Pointer_EqualTo {
-	bool operator()(const void *x, const void *y) const { return x == y; }
-};
-
-struct Pointer_Hash {
-	uint operator()(const void *x) const {
-#ifdef SCUMM_64BITS
-		uint64 v = (uint64)x;
-		return (v >> 32) ^ (v & 0xffffffff);
-#else
-		return (uint)x;
-#endif
-	}
-};
-
-typedef Common::HashMap<void *, int, Pointer_Hash, Pointer_EqualTo> ObjHash;
+typedef Common::HashMap<void *, int> ObjHash;
 
 typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ClassMap;
 
@@ -67,12 +53,23 @@ public:
 	MfcArchive(Common::SeekableReadStream *file);
 	MfcArchive(Common::WriteStream *file);
 
-	char *readPascalString(bool twoByte = false);
-	void writePascalString(const char *str, bool twoByte = false);
+	Common::String readPascalString(bool twoByte = false);
+	void writePascalString(const Common::String &str, bool twoByte = false);
 	int readCount();
 	double readDouble();
 	CObject *parseClass(bool *isCopyReturned);
-	CObject *readClass();
+
+	/** ownership of returned object is passed to caller */
+	template <typename T>
+	T *readClass() {
+		CObject *obj = readBaseClass();
+		if (!obj)
+			return nullptr;
+
+		T *res = dynamic_cast<T *>(obj);
+		assert(res);
+		return res;
+	}
 
 	void writeObject(CObject *obj);
 
@@ -90,6 +87,7 @@ public:
 
 private:
 	void init();
+	CObject *readBaseClass();
 };
 
 enum ObjType {
@@ -117,12 +115,27 @@ public:
 	virtual void save(MfcArchive &out) { error("Not implemented for obj type: %d", _objtype); }
 	virtual ~CObject() {}
 
-	bool loadFile(const char *fname);
+	bool loadFile(const Common::String &fname);
 };
 
-class ObList : public Common::List<CObject *>, public CObject {
- public:
-	virtual bool load(MfcArchive &file);
+template <class T>
+class ObList : public Common::List<T *>, public CObject {
+public:
+	virtual bool load(MfcArchive &file) {
+		debugC(5, kDebugLoading, "ObList::load()");
+		int count = file.readCount();
+
+		debugC(9, kDebugLoading, "ObList::count: %d:", count);
+
+		for (int i = 0; i < count; i++) {
+			debugC(9, kDebugLoading, "ObList::[%d]", i);
+			T *t = file.readClass<T>();
+
+			this->push_back(t);
+		}
+
+		return true;
+	}
 };
 
 class MemoryObject : CObject {
@@ -130,7 +143,7 @@ class MemoryObject : CObject {
 	friend class Scene;
 
  protected:
-	char *_memfilename;
+	Common::String _memfilename;
 	int _mfield_8;
 	int _mfield_C;
 	int _mfield_10;
@@ -145,7 +158,7 @@ class MemoryObject : CObject {
 	virtual ~MemoryObject();
 
 	virtual bool load(MfcArchive &file);
-	void loadFile(char *filename);
+	void loadFile(const Common::String &filename);
 	void load() { loadFile(_memfilename); }
 	byte *getData();
 	byte *loadData();
@@ -180,8 +193,8 @@ class DWordArray : public Common::Array<int32>, public CObject {
 	virtual bool load(MfcArchive &file);
 };
 
-char *genFileName(int superId, int sceneId, const char *ext);
-byte *transCyrillic(byte *s);
+Common::String genFileName(int superId, int sceneId, const char *ext);
+byte *transCyrillic(const Common::String &str);
 
 } // End of namespace Fullpipe
 

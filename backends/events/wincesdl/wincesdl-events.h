@@ -43,7 +43,7 @@ public:
 	// Overloaded from SDL backend (toolbar handling)
 	bool pollEvent(Common::Event &event);
 	// Overloaded from SDL backend (mouse and new scaler handling)
-	void processMouseEvent(Common::Event &event, int x, int y);
+	bool processMouseEvent(Common::Event &event, int x, int y);
 
 protected:
 

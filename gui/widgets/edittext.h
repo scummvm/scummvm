@@ -25,6 +25,7 @@
 
 #include "gui/widgets/editable.h"
 #include "common/str.h"
+#include "gui/dialog.h"
 
 namespace GUI {
 

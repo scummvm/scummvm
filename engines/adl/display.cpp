@@ -39,9 +39,6 @@ namespace Adl {
 
 // This implements the Apple II "Hi-Res" display mode
 
-#define DISPLAY_PITCH (DISPLAY_WIDTH / 7)
-#define DISPLAY_SIZE (DISPLAY_PITCH * DISPLAY_HEIGHT)
-
 #define TEXT_BUF_SIZE (TEXT_WIDTH * TEXT_HEIGHT)
 
 #define COLOR_PALETTE_ENTRIES 8
@@ -201,8 +198,7 @@ bool Display::saveThumbnail(Common::WriteStream &out) {
 	return retval;
 }
 
-void Display::loadFrameBuffer(Common::ReadStream &stream) {
-	byte *dst = _frameBuf;
+void Display::loadFrameBuffer(Common::ReadStream &stream, byte *dst) {
 	for (uint j = 0; j < 8; ++j) {
 		for (uint i = 0; i < 8; ++i) {
 			stream.read(dst, DISPLAY_PITCH);
@@ -219,6 +215,10 @@ void Display::loadFrameBuffer(Common::ReadStream &stream) {
 
 	if (stream.eos() || stream.err())
 		error("Failed to read frame buffer");
+}
+
+void Display::loadFrameBuffer(Common::ReadStream &stream) {
+	loadFrameBuffer(stream, _frameBuf);
 }
 
 void Display::putPixel(const Common::Point &p, byte color) {
@@ -241,6 +241,12 @@ void Display::putPixel(const Common::Point &p, byte color) {
 	writeFrameBuffer(p, color, mask);
 }
 
+void Display::setPixelByte(const Common::Point &p, byte color) {
+	assert(p.x >= 0 && p.x < DISPLAY_WIDTH && p.y >= 0 && p.y < DISPLAY_HEIGHT);
+
+	_frameBuf[p.y * DISPLAY_PITCH + p.x / 7] = color;
+}
+
 void Display::setPixelBit(const Common::Point &p, byte color) {
 	writeFrameBuffer(p, color, 1 << (p.x % 7));
 }
@@ -249,7 +255,15 @@ void Display::setPixelPalette(const Common::Point &p, byte color) {
 	writeFrameBuffer(p, color, 0x80);
 }
 
+byte Display::getPixelByte(const Common::Point &p) const {
+	assert(p.x >= 0 && p.x < DISPLAY_WIDTH && p.y >= 0 && p.y < DISPLAY_HEIGHT);
+
+	return _frameBuf[p.y * DISPLAY_PITCH + p.x / 7];
+}
+
 bool Display::getPixelBit(const Common::Point &p) const {
+	assert(p.x >= 0 && p.x < DISPLAY_WIDTH && p.y >= 0 && p.y < DISPLAY_HEIGHT);
+
 	byte *b = _frameBuf + p.y * DISPLAY_PITCH + p.x / 7;
 	return *b & (1 << (p.x % 7));
 }
@@ -334,8 +348,7 @@ void Display::showCursor(bool enable) {
 }
 
 void Display::writeFrameBuffer(const Common::Point &p, byte color, byte mask) {
-	if (p.x >= DISPLAY_WIDTH || p.y >= DISPLAY_HEIGHT)
-		return;
+	assert(p.x >= 0 && p.x < DISPLAY_WIDTH && p.y >= 0 && p.y < DISPLAY_HEIGHT);
 
 	byte *b = _frameBuf + p.y * DISPLAY_PITCH + p.x / 7;
 	color ^= *b;

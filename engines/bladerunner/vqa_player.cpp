@@ -23,6 +23,7 @@
 #include "bladerunner/vqa_player.h"
 
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/time.h"
 
 #include "audio/decoders/raw.h"
 
@@ -30,20 +31,39 @@
 
 namespace BladeRunner {
 
-bool VQAPlayer::open(const Common::String &name) {
-	_s = _vm->getResourceStream(name);
-	if (!_s)
+bool VQAPlayer::open() {
+	_s = _vm->getResourceStream(_name);
+	if (!_s) {
 		return false;
+	}
 
-	if(!_decoder.loadStream(_s)) {
+	if (!_decoder.loadStream(_s)) {
 		delete _s;
 		_s = nullptr;
 		return false;
 	}
 
 	_hasAudio = _decoder.hasAudio();
-	if (_hasAudio)
+	if (_hasAudio) {
 		_audioStream = Audio::makeQueuingAudioStream(_decoder.frequency(), false);
+	}
+
+	_repeatsCount = 0;
+	_loop = -1;
+	_frame = -1;
+	_frameBegin = -1;
+	_frameEnd = _decoder.numFrames() - 1;
+	_frameEndQueued = -1;
+	_repeatsCountQueued = -1;
+
+	if (_loopInitial >= 0) {
+		// TODO? When does this happen? _loopInitial seems to be unused
+		setLoop(_loopInitial, _repeatsCountInitial, kLoopSetModeImmediate, nullptr, nullptr);
+	} else {
+		_frameNext = 0;
+		// TODO? Removed as redundant
+//		setBeginAndEndFrame(0, _frameEnd, 0, kLoopSetModeJustStart, nullptr, nullptr);
+	}
 
 	return true;
 }
@@ -54,88 +74,168 @@ void VQAPlayer::close() {
 	_s = nullptr;
 }
 
-int VQAPlayer::update() {
-	uint32 now = 60 * _vm->_system->getMillis();
+int VQAPlayer::update(bool forceDraw, bool advanceFrame, bool useTime, Graphics::Surface *customSurface) {
+	uint32 now = 60 * _vm->_time->currentSystem();
+	int result = -1;
 
-	if (_curFrame == -1) {
-		_curFrame = 0;
-		if (_curFrame >= 0) {
-			_decoder.readPacket(_curFrame);
-			if (_hasAudio)
-				queueAudioFrame(_decoder.decodeAudioFrame());
-			_surface = _decoder.decodeVideoFrame();
-			_zBuffer = _decoder.decodeZBuffer();
+	if (_frameNext < 0) {
+		_frameNext = _frameBegin;
+	}
+
+	if ((_repeatsCount > 0 || _repeatsCount == -1) && (_frameNext > _frameEnd)) {
+		int loopEndQueued = _frameEndQueued;
+		if (_frameEndQueued != -1) {
+			_frameEnd = _frameEndQueued;
+			_frameEndQueued = -1;
+		}
+		if (_frameNext != _frameBegin) {
+			_frameNext = _frameBegin;
 		}
 
-		_decodedFrame = calcNextFrame(_curFrame);
-		if (_decodedFrame >= 0) {
-			_decoder.readPacket(_decodedFrame);
-			if (_hasAudio)
-				queueAudioFrame(_decoder.decodeAudioFrame());
+		if (loopEndQueued == -1) {
+			if (_repeatsCount != -1) {
+				_repeatsCount--;
+			}
+			//callback for repeat, it is not used in the blade runner
+		} else {
+			_repeatsCount = _repeatsCountQueued;
+			_repeatsCountQueued = -1;
+
+			if (_callbackLoopEnded != nullptr) {
+				_callbackLoopEnded(_callbackData, 0, _loop);
+			}
 		}
+
+		result = -1;
+	} else if (_frameNext > _frameEnd) {
+		result = -3;
+		// _repeatsCount == 0, so return here at the end of the video, to release the resource
+		return result;
+	} else if (useTime && (now < _frameNextTime)) {
+		result = -1;
+	} else if (advanceFrame) {
+		_frame = _frameNext;
+		_decoder.readFrame(_frameNext, kVQAReadVideo);
+		_decoder.decodeVideoFrame(customSurface != nullptr ? customSurface : _surface, _frameNext);
 
 		if (_hasAudio) {
-			_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, _audioStream);
-			_audioStarted = true;
-		}
-
-		_nextFrameTime = now + 60000 / 15;
-		return _curFrame;
-	}
-
-	if (now >= _nextFrameTime) {
-		_curFrame = _decodedFrame;
-		if (_curFrame >= 0) {
-			_surface = _decoder.decodeVideoFrame();
-			_zBuffer = _decoder.decodeZBuffer();
-		}
-
-		_decodedFrame = calcNextFrame(_curFrame);
-		if (_decodedFrame >= 0) {
-			_decoder.readPacket(_decodedFrame);
-			if (_hasAudio)
+			int audioPreloadFrames = 14;
+			if (!_audioStarted) {
+				for (int i = 0; i < audioPreloadFrames; i++) {
+					if (_frameNext + i < _frameEnd) {
+						_decoder.readFrame(_frameNext + i, kVQAReadAudio);
+						queueAudioFrame(_decoder.decodeAudioFrame());
+					}
+				}
+				_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, _audioStream);
+				_audioStarted = true;
+			}
+			if (_frameNext + audioPreloadFrames < _frameEnd) {
+				_decoder.readFrame(_frameNext + audioPreloadFrames, kVQAReadAudio);
 				queueAudioFrame(_decoder.decodeAudioFrame());
+			}
 		}
+		if (useTime) {
+			_frameNextTime += 60000 / 15;
 
-		_nextFrameTime += 60000 / 15;
-		return _curFrame;
+			// In some cases (as overlay paused by kia or game window is moved) new time might be still in the past.
+			// This can cause rapid playback of video where every refresh renders different frame of the video.
+			// Can be avoided by setting next time to the future.
+			if (_frameNextTime < now) {
+				_frameNextTime = now + 60000 / 15;
+			}
+		}
+		_frameNext++;
+		result = _frame;
 	}
 
-	_surface = nullptr;
-	return -1;
+	if (result < 0 && forceDraw && _frame != -1) {
+		_decoder.decodeVideoFrame(customSurface != nullptr ? customSurface : _surface, _frame, true);
+		result = _frame;
+	}
+	return result; // Note: result here could be negative.
+	               // Negative valid value should only be -1, since there are various assertions
+	               // assert(frame >= -1) in overlay modes (elevator, scores, spinner)
 }
 
-const Graphics::Surface *VQAPlayer::getSurface() const {
-	return _surface;
-}
-
-const uint16 *VQAPlayer::getZBuffer() const {
-	return _zBuffer;
+void VQAPlayer::updateZBuffer(ZBuffer *zbuffer) {
+	_decoder.decodeZBuffer(zbuffer);
 }
 
 void VQAPlayer::updateView(View *view) {
 	_decoder.decodeView(view);
 }
 
+void VQAPlayer::updateScreenEffects(ScreenEffects *screenEffects) {
+	_decoder.decodeScreenEffects(screenEffects);
+}
+
 void VQAPlayer::updateLights(Lights *lights) {
 	_decoder.decodeLights(lights);
 }
 
-bool VQAPlayer::setLoop(int loop, int unknown, int loopMode, void(*callback)(void*, int, int), void *callbackData) {
+bool VQAPlayer::setLoop(int loop, int repeatsCount, int loopSetMode, void (*callback)(void *, int, int), void *callbackData) {
+	if (_s == nullptr) {
+		_loopInitial = loop;
+		_repeatsCountInitial = repeatsCount;
+		return true;
+	}
+
 	int begin, end;
 	if (!_decoder.getLoopBeginAndEndFrame(loop, &begin, &end)) {
 		return false;
 	}
+	if (setBeginAndEndFrame(begin, end, repeatsCount, loopSetMode, callback, callbackData)) {
+		_loop = loop;
+		return true;
+	}
+	return false;
+}
 
-	_curLoop   = loop;
-	_loopBegin = begin;
-	_loopEnd   = end;
+bool VQAPlayer::setBeginAndEndFrame(int begin, int end, int repeatsCount, int loopSetMode, void (*callback)(void *, int, int), void *callbackData) {
+	if ( begin >= getFrameCount()
+	    || end >= getFrameCount()
+	    || begin >= end
+	    || loopSetMode < 0
+	    || loopSetMode >= 3
+	) {
+		warning("VQAPlayer::setBeginAndEndFrame - Invalid arguments for video");
+		return false; // VQA_DECODER_ERROR_BAD_INPUT case
+	}
+
+	if (repeatsCount < 0) {
+		repeatsCount = -1;
+	}
+
+	if (_repeatsCount == 0 && loopSetMode == kLoopSetModeEnqueue) {
+		// if the member var _repeatsCount is 0 (which means "don't repeat existing loop")
+		// then execute set the enqueued loop for immediate execution
+		loopSetMode = kLoopSetModeImmediate;
+	}
+
+	_frameBegin = begin;
+
+	if (loopSetMode == kLoopSetModeJustStart) {
+		_repeatsCount = repeatsCount;
+		_frameEnd = end;
+	} else if (loopSetMode == kLoopSetModeEnqueue) {
+		_repeatsCountQueued = repeatsCount;
+		_frameEndQueued = end;
+	} else if (loopSetMode == kLoopSetModeImmediate) {
+		_repeatsCount = repeatsCount;
+		_frameEnd = end;
+		seekToFrame(begin);
+	}
 
 	_callbackLoopEnded = callback;
 	_callbackData = callbackData;
 
-	// warning("\t\t\tActive Loop: %d - %d\n", begin, end);
+	return true;
+}
 
+bool VQAPlayer::seekToFrame(int frame) {
+	_frameNext = frame;
+	_frameNextTime = 60 * _vm->_time->currentSystem();
 	return true;
 }
 
@@ -155,23 +255,8 @@ int VQAPlayer::getLoopEndFrame(int loop) {
 	return end;
 }
 
-int VQAPlayer::calcNextFrame(int frame) const {
-	if (frame < 0)
-		return -3;
-
-	if (_curLoop != -1 && frame >= _loopEnd) {
-		frame = _loopBegin;
-		if (_callbackLoopEnded != nullptr) {
-			_callbackLoopEnded(_callbackData, 0, _curLoop);
-		}
-	} else {
-		frame++;
-	}
-
-	if (frame == _decoder.numFrames())
-		frame = -3;
-
-	return frame;
+int VQAPlayer::getFrameCount() {
+	return _decoder.numFrames();
 }
 
 void VQAPlayer::queueAudioFrame(Audio::AudioStream *audioStream) {

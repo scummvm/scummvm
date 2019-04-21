@@ -34,13 +34,48 @@
 
 namespace Drascula {
 
-void DrasculaEngine::updateVolume(Audio::Mixer::SoundType soundType, int prevVolume) {
-	int vol = _mixer->getVolumeForSoundType(soundType) / 16;
-	if (_mouseY < prevVolume && vol < 15)
-		vol++;
-	if (_mouseY > prevVolume && vol > 0)
-		vol--;
-	_mixer->setVolumeForSoundType(soundType, vol * 16);
+void DrasculaEngine::syncSoundSettings() {
+	// Sync the engine with the config manager
+
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+
+	// We need to handle the speech mute separately here. This is because the
+	// engine code should be able to rely on all speech sounds muted when the
+	// user specified subtitles only mode, which results in "speech_mute" to
+	// be set to "true". The global mute setting has precedence over the
+	// speech mute setting though.
+	bool speechMute = mute;
+	if (!speechMute)
+		speechMute = ConfMan.getBool("speech_mute");
+
+	_mixer->muteSoundType(Audio::Mixer::kPlainSoundType, mute);
+	_mixer->muteSoundType(Audio::Mixer::kSFXSoundType, mute);
+	_mixer->muteSoundType(Audio::Mixer::kSpeechSoundType, speechMute);
+	_mixer->muteSoundType(Audio::Mixer::kMusicSoundType, mute);
+
+	int voiceVolume = ConfMan.getInt("speech_volume");
+	int musicVolume = ConfMan.getInt("music_volume");
+	// If the music and voice volume are correct, don't change anything.
+	// Otherwise compute the master volume using an approximation of sqrt(max) * 16 which would result in the master
+	// volume being the same value as the max of music and voice.
+	if (_mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) != voiceVolume || _mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) != musicVolume) {
+		int masterVolume = MAX(musicVolume, voiceVolume) * 2 / 3 + 86;
+		_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, masterVolume);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, voiceVolume);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, voiceVolume);
+		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, musicVolume);
+	}
+}
+
+int DrasculaEngine::updateVolume(int prevVolume, int prevVolumeY) {
+	prevVolumeY += 10;
+	if (_mouseY < prevVolumeY && prevVolume < 15)
+		prevVolume++;
+	if (_mouseY > prevVolumeY && prevVolume > 0)
+		prevVolume--;
+	return prevVolume;
 }
 
 void DrasculaEngine::volumeControls() {
@@ -53,10 +88,22 @@ void DrasculaEngine::volumeControls() {
 	setCursor(kCursorCrosshair);
 	showCursor();
 
+	// The engine has three volume controls: master, SFx/Speech and Music.
+	// ScummVM doesn't have a master volume, so we abuse the kPlainSoundType to store it.
+	// In drascula, we only use the kMusicSoundType and kSpeechSoundType to play sounds.
+	// For consistency with the ScummVM options dialog we also set the kSFXSoundType volume
+	// to the same value as the kMusicSoundType value, but we don't actually use it.
+
+	// The engines uses masterVolume, voiceVolume and musicVolume between 0 and 15.
+	// We store in the mixer:
+	//   - masterVolume * 16 in kPlainSoundType
+	//   - (masterVolume + 1) * (voiceVolume + 1) - 1 in both kSpeechSoundType and kSFXSoundType
+	//   - (masterVolume + 1) * (musicVolume + 1) - 1 in kMusicSoundType
+
 	while (!shouldQuit()) {
 		int masterVolume = CLIP((_mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) / 16), 0, 15);
-		int voiceVolume = CLIP((_mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) / 16), 0, 15);
-		int musicVolume = CLIP((_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 16), 0, 15);
+		int voiceVolume = CLIP(((_mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) + 1) / (masterVolume + 1) - 1), 0, 15);
+		int musicVolume = CLIP(((_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) + 1) / (masterVolume + 1) - 1), 0, 15);
 
 		int masterVolumeY = 72 + 61 - masterVolume * 4;
 		int voiceVolumeY = 72 + 61 - voiceVolume * 4;
@@ -87,16 +134,25 @@ void DrasculaEngine::volumeControls() {
 		if (_leftMouseButton == 1) {
 			delay(100);
 			if (_mouseX > 80 && _mouseX < 121) {
-				updateVolume(Audio::Mixer::kPlainSoundType, masterVolumeY);
+				masterVolume = updateVolume(masterVolume, masterVolumeY);
+				_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, masterVolume * 16);
 			}
 
-			if (_mouseX > 136 && _mouseX < 178) {
-				updateVolume(Audio::Mixer::kSpeechSoundType, voiceVolumeY);
-			}
+			if (_mouseX > 136 && _mouseX < 178)
+				voiceVolume = updateVolume(voiceVolume, voiceVolumeY);
 
-			if (_mouseX > 192 && _mouseX < 233) {
-				updateVolume(Audio::Mixer::kMusicSoundType, musicVolumeY);
-			}
+			if (_mouseX > 192 && _mouseX < 233)
+				musicVolume = updateVolume(musicVolume, musicVolumeY);
+
+			voiceVolume = (masterVolume + 1) * (voiceVolume + 1) - 1;
+			_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, voiceVolume);
+			_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, voiceVolume);
+			ConfMan.setInt("speech_volume", voiceVolume);
+			ConfMan.setInt("sfx_volume", voiceVolume);
+
+			musicVolume = (masterVolume + 1) * (musicVolume + 1) - 1;
+			_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, musicVolume);
+			ConfMan.setInt("music_volume", musicVolume);
 		}
 
 	}

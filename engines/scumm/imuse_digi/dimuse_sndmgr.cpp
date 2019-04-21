@@ -662,7 +662,7 @@ int32 ImuseDigiSndMgr::getDataFromRegion(SoundDesc *soundDesc, int region, byte 
 	} else if ((soundDesc->bundle) && (soundDesc->compressed)) {
 		*buf = (byte *)malloc(size);
 		assert(*buf);
-		char fileName[24];
+		char fileName[26];
 		int offsetMs = (((offset * 8 * 10) / soundDesc->bits) / (soundDesc->channels * soundDesc->freq)) * 100;
 		sprintf(fileName, "%s_reg%03d", soundDesc->name, region);
 		if (scumm_stricmp(fileName, soundDesc->lastFileName) != 0) {

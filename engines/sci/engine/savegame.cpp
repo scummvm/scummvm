@@ -25,6 +25,7 @@
 #include "common/system.h"
 #include "common/func.h"
 #include "common/serializer.h"
+#include "common/translation.h"
 #include "graphics/thumbnail.h"
 
 #include "sci/sci.h"
@@ -48,19 +49,17 @@
 #include "sci/sound/music.h"
 
 #ifdef ENABLE_SCI32
+#include "common/config-manager.h"
+#include "common/gui_options.h"
+#include "sci/engine/guest_additions.h"
 #include "sci/graphics/cursor32.h"
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/palette32.h"
 #include "sci/graphics/remap32.h"
+#include "sci/graphics/video32.h"
 #endif
 
 namespace Sci {
-
-
-#define VER(x) Common::Serializer::Version(x)
-
-
-#pragma mark -
 
 // These are serialization functions for various objects.
 
@@ -68,14 +67,13 @@ void syncWithSerializer(Common::Serializer &s, Common::Serializable &obj) {
 	obj.saveLoadWithSerializer(s);
 }
 
-// FIXME: Object could implement Serializable to make use of the function
-// above.
-void syncWithSerializer(Common::Serializer &s, Object &obj) {
-	obj.saveLoadWithSerializer(s);
+void syncWithSerializer(Common::Serializer &s, ResourceId &obj) {
+	s.syncAsByte(obj._type);
+	s.syncAsUint16LE(obj._number);
+	s.syncAsUint32LE(obj._tuple);
 }
 
 void syncWithSerializer(Common::Serializer &s, reg_t &obj) {
-	// Segment and offset are accessed directly here
 	s.syncAsUint16LE(obj._segment);
 	s.syncAsUint16LE(obj._offset);
 }
@@ -230,7 +228,6 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 			}
 #ifdef ENABLE_SCI32
 		} else if (type == SEG_TYPE_ARRAY) {
-			// Set the correct segment for SCI32 arrays
 			_arraysSegId = i;
 		} else if (s.getVersion() >= 36 && type == SEG_TYPE_BITMAP) {
 			_bitmapSegId = i;
@@ -248,18 +245,10 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 		if (type == SEG_TYPE_SCRIPT) {
 			Script *scr = (Script *)mobj;
 
-			// If we are loading a script, perform some extra steps
 			if (s.isLoading()) {
-				// Hook the script up in the script->segment map
 				_scriptSegMap[scr->getScriptNumber()] = i;
-
-				ObjMap objects = scr->getObjectMap();
-				for (ObjMap::iterator it = objects.begin(); it != objects.end(); ++it)
-					it->_value.syncBaseObject(scr->getBuf(it->_value.getPos().getOffset()));
-
 			}
 
-			// Sync the script's string heap
 			if (s.getVersion() >= 28)
 				scr->syncStringHeap(s);
 		}
@@ -271,31 +260,81 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 
 	syncArray<Class>(s, _classTable);
 
-	// Now that all scripts are loaded, init their objects.
-	// Just like in Script::initializeObjectsSci0, we do two passes
-	// in case an object is loaded before its base.
-	int passes = getSciVersion() < SCI_VERSION_1_1 ? 2 : 1;
-	for (int pass = 1; pass <= passes; ++pass) {
-		for (uint i = 0; i < _heap.size(); i++) {
-			if (!_heap[i] ||  _heap[i]->getType() != SEG_TYPE_SCRIPT)
-				continue;
+	if (s.isLoading()) {
+		// Now that all scripts are loaded, init their objects.
+		// Just like in Script::initializeObjectsSci0, we do two passes
+		// in case an object is loaded before its base.
+		int passes = getSciVersion() < SCI_VERSION_1_1 ? 2 : 1;
+		for (int pass = 1; pass <= passes; ++pass) {
+			for (uint i = 0; i < _heap.size(); i++) {
+				if (!_heap[i] ||  _heap[i]->getType() != SEG_TYPE_SCRIPT)
+					continue;
 
-			Script *scr = (Script *)_heap[i];
-			scr->syncLocalsBlock(this);
+				Script *scr = (Script *)_heap[i];
+				scr->syncLocalsBlock(this);
 
-			ObjMap objects = scr->getObjectMap();
-			for (ObjMap::iterator it = objects.begin(); it != objects.end(); ++it) {
-				reg_t addr = it->_value.getPos();
-				Object *obj = scr->scriptObjInit(addr, false);
-
-				if (pass == 2) {
-					if (!obj->initBaseObject(this, addr, false)) {
-						// TODO/FIXME: This should not be happening at all. It might indicate a possible issue
-						// with the garbage collector. It happens for example in LSL5 (German, perhaps English too).
-						warning("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
-						objects.erase(addr.toUint16());
+				ObjMap &objects = scr->getObjectMap();
+				for (ObjMap::iterator it = objects.begin(); it != objects.end(); ++it) {
+					reg_t addr = it->_value.getPos();
+					if (pass == 1) {
+						scr->scriptObjInit(addr, false);
+					} else {
+						Object *obj = scr->getObject(addr.getOffset());
+						// When a game disposes a script with kDisposeScript,
+						// the script is marked as deleted and its lockers are
+						// set to 0, which makes the GC stop using the script
+						// as a retainer of its own objects. Most of the time,
+						// this means that the script and all of its objects are
+						// cleaned up on the next GC cycle, but occasionally a
+						// game will retain a reference to an object within a
+						// disposed script somewhere else, which keeps the
+						// script (and all of its objects) alive. This does not
+						// prevent the GC from safely collecting other objects
+						// that had only been retained by now-unreachable script
+						// objects, so references held by these unreachable
+						// objects may be invalidated. If the superclass of one
+						// of these objects is GC'd (because it was the only
+						// retainer of the superclass), and a save game is
+						// created after kDisposeScript is called but before
+						// the script actually becomes collectable, it will
+						// cause the `initBaseObject` call to fail on restore,
+						// but this is fine because the object isn't reachable
+						// anyway (it is just waiting to be GC'd).
+						//
+						// For example, in EcoQuest floppy, after opening the
+						// gate for Delphineus at the beginning of the game,
+						// the game calls to dispose script 380, but there are
+						// still reachable references to the script 380 object
+						// `outsideGateLever` at `CueObj::client` and
+						// `OnMeAndLowY::theObj`, so script 380 (and all of its
+						// objects) are retained. However, the now-unreachable
+						// `fJump` object had been the only retainer of its
+						// superclass `JumpTo`, so the `JumpTo` class gets
+						// GC'd, and the `fJump` object is left with no valid
+						// superclass. If the game is saved and restored at this
+						// point, `initBaseObject` will fail on `fJump` because
+						// it has no superclass (but, again, this is fine
+						// because this is an unreachable object). Later,
+						// `outsideGateLever` becomes unreachable as the
+						// `CueObj::client` and `OnMeAndLowY::theObj` properties
+						// are changed, which means that all script 380 objects
+						// are finally unreachable and the script and its
+						// objects get fully disposed.
+						//
+						// All that said, if a script has lockers and the base
+						// object necessary for restoring the object is still
+						// missing, that is probably a real bug.
+						if (!obj->initBaseObject(this, addr, false) && scr->getLockers()) {
+							warning("Failed to locate base object %04x:%04x for object %04x:%04x (%s); skipping", PRINT_REG(obj->getSpeciesSelector()), PRINT_REG(addr), getObjectName(addr));
+						}
 					}
 				}
+
+#ifdef ENABLE_SCI32
+				if (pass == passes) {
+					g_sci->_guestAdditions->segManSaveLoadScriptHook(*scr);
+				}
+#endif
 			}
 		}
 	}
@@ -378,6 +417,12 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 			g_sci->_gfxPorts->kernelSetPicWindow(picPortRect, picPortTop, picPortLeft, false);
 	}
 
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		g_sci->_video32->beforeSaveLoadWithSerializer(s);
+	}
+#endif
+
 	_segMan->saveLoadWithSerializer(s);
 
 	g_sci->_soundCmd->syncPlayList(s);
@@ -387,6 +432,8 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 		g_sci->_gfxPalette32->saveLoadWithSerializer(s);
 		g_sci->_gfxRemap32->saveLoadWithSerializer(s);
 		g_sci->_gfxCursor32->saveLoadWithSerializer(s);
+		g_sci->_audio32->saveLoadWithSerializer(s);
+		g_sci->_video32->saveLoadWithSerializer(s);
 	} else
 #endif
 		g_sci->_gfxPalette16->saveLoadWithSerializer(s);
@@ -402,11 +449,25 @@ void LocalVariables::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 void Object::saveLoadWithSerializer(Common::Serializer &s) {
-	s.syncAsSint32LE(_flags);
+	s.syncAsSint32LE(_isFreed);
 	syncWithSerializer(s, _pos);
 	s.syncAsSint32LE(_methodCount);		// that's actually a uint16
 
 	syncArray<reg_t>(s, _variables);
+
+#ifdef ENABLE_SCI32
+	if (s.getVersion() >= 42 && getSciVersion() == SCI_VERSION_3) {
+		// Obsolete mustSetViewVisible array
+		if (s.getVersion() == 42 && s.isLoading()) {
+			uint32 len;
+			s.syncAsUint32LE(len);
+			s.skip(len);
+		}
+		syncWithSerializer(s, _superClassPosSci3);
+		syncWithSerializer(s, _speciesSelectorSci3);
+		syncWithSerializer(s, _infoSelectorSci3);
+	}
+#endif
 }
 
 
@@ -437,42 +498,42 @@ void HunkTable::saveLoadWithSerializer(Common::Serializer &s) {
 void Script::syncStringHeap(Common::Serializer &s) {
 	if (getSciVersion() < SCI_VERSION_1_1) {
 		// Sync all of the SCI_OBJ_STRINGS blocks
-		byte *buf = _buf;
+		SciSpan<byte> buf = *_buf;
 		bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 
 		if (oldScriptHeader)
 			buf += 2;
 
-		do {
-			int blockType = READ_LE_UINT16(buf);
+		for (;;) {
+			int blockType = buf.getUint16LEAt(0);
 			int blockSize;
 			if (blockType == 0)
 				break;
 
-			blockSize = READ_LE_UINT16(buf + 2);
+			blockSize = buf.getUint16LEAt(2);
 			assert(blockSize > 0);
 
 			if (blockType == SCI_OBJ_STRINGS)
-				s.syncBytes(buf, blockSize);
+				s.syncBytes(buf.getUnsafeDataAt(0, blockSize), blockSize);
 
 			buf += blockSize;
-
-			if (_buf - buf == 0)
-				break;
-		} while (1);
+		}
 
 	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE){
 		// Strings in SCI1.1 come after the object instances
-		byte *buf = _heapStart + 4 + READ_SCI11ENDIAN_UINT16(_heapStart + 2) * 2;
+		SciSpan<byte> buf = _heap.subspan(4 + _heap.getUint16SEAt(2) * 2);
 
 		// Skip all of the objects
-		while (READ_SCI11ENDIAN_UINT16(buf) == SCRIPT_OBJECT_MAGIC_NUMBER)
-			buf += READ_SCI11ENDIAN_UINT16(buf + 2) * 2;
+		while (buf.getUint16SEAt(0) == SCRIPT_OBJECT_MAGIC_NUMBER)
+			buf += buf.getUint16SEAt(2) * 2;
 
 		// Now, sync everything till the end of the buffer
-		s.syncBytes(buf, _heapSize - (buf - _heapStart));
+		const int length = _heap.size() - (buf - _heap);
+		s.syncBytes(buf.getUnsafeDataAt(0, length), length);
 	} else if (getSciVersion() == SCI_VERSION_3) {
-		warning("TODO: syncStringHeap(): Implement SCI3 variant");
+		const int stringOffset = _buf->getInt32SEAt(4);
+		const int length = _buf->getInt32SEAt(8) - stringOffset;
+		s.syncBytes(_buf->getUnsafeDataAt(stringOffset, length), length);
 	}
 }
 
@@ -647,10 +708,10 @@ void SoundCommandParser::reconstructPlayList() {
 		initSoundResource(entry);
 
 #ifdef ENABLE_SCI32
-		if (_soundVersion >= SCI_VERSION_2_1_EARLY && entry->isSample) {
+		if (_soundVersion >= SCI_VERSION_2 && entry->isSample) {
 			const reg_t &soundObj = entry->soundObj;
 
-			if ((int)readSelectorValue(_segMan, soundObj, SELECTOR(loop)) != -1 &&
+			if (readSelectorValue(_segMan, soundObj, SELECTOR(loop)) == 0xFFFF &&
 				readSelector(_segMan, soundObj, SELECTOR(handle)) != NULL_REG) {
 
 				writeSelector(_segMan, soundObj, SELECTOR(handle), NULL_REG);
@@ -734,7 +795,7 @@ void SciBitmap::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncBytes(_data, _dataSize);
 
 	if (s.isLoading()) {
-		_buffer = Buffer(getWidth(), getHeight(), getPixels());
+		_buffer.init(getWidth(), getHeight(), getWidth(), getPixels(), Graphics::PixelFormat::createFormatCLUT8());
 	}
 }
 #endif
@@ -799,25 +860,25 @@ void GfxPalette::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 #ifdef ENABLE_SCI32
-static void saveLoadPalette32(Common::Serializer &s, Palette *const palette) {
-	s.syncAsUint32LE(palette->timestamp);
-	for (int i = 0; i < ARRAYSIZE(palette->colors); ++i) {
-		s.syncAsByte(palette->colors[i].used);
-		s.syncAsByte(palette->colors[i].r);
-		s.syncAsByte(palette->colors[i].g);
-		s.syncAsByte(palette->colors[i].b);
+static void saveLoadPalette32(Common::Serializer &s, Palette &palette) {
+	s.syncAsUint32LE(palette.timestamp);
+	for (int i = 0; i < ARRAYSIZE(palette.colors); ++i) {
+		s.syncAsByte(palette.colors[i].used);
+		s.syncAsByte(palette.colors[i].r);
+		s.syncAsByte(palette.colors[i].g);
+		s.syncAsByte(palette.colors[i].b);
 	}
 }
 
-static void saveLoadOptionalPalette32(Common::Serializer &s, Palette **const palette) {
+static void saveLoadOptionalPalette32(Common::Serializer &s, Common::ScopedPtr<Palette> &palette) {
 	bool hasPalette = false;
 	if (s.isSaving()) {
-		hasPalette = (*palette != nullptr);
+		hasPalette = palette;
 	}
 	s.syncAsByte(hasPalette);
 	if (hasPalette) {
 		if (s.isLoading()) {
-			*palette = new Palette;
+			palette.reset(new Palette);
 		}
 		saveLoadPalette32(s, *palette);
 	}
@@ -832,14 +893,11 @@ void GfxPalette32::saveLoadWithSerializer(Common::Serializer &s) {
 		++_version;
 
 		for (int i = 0; i < kNumCyclers; ++i) {
-			delete _cyclers[i];
-			_cyclers[i] = nullptr;
+			_cyclers[i].reset();
 		}
 
-		delete _varyTargetPalette;
-		_varyTargetPalette = nullptr;
-		delete _varyStartPalette;
-		_varyStartPalette = nullptr;
+		_varyTargetPalette.reset();
+		_varyStartPalette.reset();
 	}
 
 	s.syncAsSint16LE(_varyDirection);
@@ -859,24 +917,33 @@ void GfxPalette32::saveLoadWithSerializer(Common::Serializer &s) {
 		s.syncAsByte(_cycleMap[i]);
 	}
 
-	saveLoadOptionalPalette32(s, &_varyTargetPalette);
-	saveLoadOptionalPalette32(s, &_varyStartPalette);
-	// NOTE: _sourcePalette and _nextPalette are not saved
-	// by SCI engine
+	if (g_sci->_features->hasLatePaletteCode() && s.getVersion() >= 41) {
+		s.syncAsSint16LE(_gammaLevel);
+		saveLoadPalette32(s, _sourcePalette);
+		++_version;
+		_needsUpdate = true;
+		_gammaChanged = true;
+	}
+
+	saveLoadOptionalPalette32(s, _varyTargetPalette);
+	saveLoadOptionalPalette32(s, _varyStartPalette);
+
+	// _nextPalette is not saved by SSCI
 
 	for (int i = 0; i < ARRAYSIZE(_cyclers); ++i) {
 		PalCycler *cycler = nullptr;
 
 		bool hasCycler = false;
 		if (s.isSaving()) {
-			cycler = _cyclers[i];
+			cycler = _cyclers[i].get();
 			hasCycler = (cycler != nullptr);
 		}
 		s.syncAsByte(hasCycler);
 
 		if (hasCycler) {
 			if (s.isLoading()) {
-				_cyclers[i] = cycler = new PalCycler;
+				cycler = new PalCycler;
+				_cyclers[i].reset(cycler);
 			}
 
 			s.syncAsByte(cycler->fromColor);
@@ -945,6 +1012,61 @@ void GfxCursor32::saveLoadWithSerializer(Common::Serializer &s) {
 		}
 	}
 }
+
+void Audio32::saveLoadWithSerializer(Common::Serializer &s) {
+	if (!g_sci->_features->hasSci3Audio() || s.getVersion() < 44) {
+		return;
+	}
+
+	syncArray(s, _lockedResourceIds);
+}
+
+void Video32::beforeSaveLoadWithSerializer(Common::Serializer &s) {
+	if (getSciVersion() < SCI_VERSION_3 || s.isSaving()) {
+		return;
+	}
+
+	_robotPlayer.close();
+}
+
+void Video32::saveLoadWithSerializer(Common::Serializer &s) {
+	if (getSciVersion() < SCI_VERSION_3) {
+		return;
+	}
+
+	bool robotExists = _robotPlayer.getStatus() != RobotDecoder::kRobotStatusUninitialized;
+	s.syncAsByte(robotExists);
+	if (robotExists) {
+		GuiResourceId robotId;
+		reg_t planeId;
+		Common::Point position;
+		int16 priority, scale;
+		int frameNo;
+
+		if (s.isSaving()) {
+			robotId = _robotPlayer.getResourceId();
+			planeId = _robotPlayer.getPlaneId();
+			priority = _robotPlayer.getPriority();
+			position = _robotPlayer.getPosition();
+			scale = _robotPlayer.getScale();
+			frameNo = _robotPlayer.getFrameNo();
+		}
+
+		s.syncAsUint16LE(robotId);
+		syncWithSerializer(s, planeId);
+		s.syncAsSint16LE(priority);
+		s.syncAsSint16LE(position.x);
+		s.syncAsSint16LE(position.y);
+		s.syncAsSint16LE(scale);
+		s.syncAsSint32LE(frameNo);
+
+		if (s.isLoading()) {
+			_robotPlayer.open(robotId, planeId, priority, position.x, position.y, scale);
+			_robotPlayer.showFrame(frameNo, position.x, position.y, priority);
+		}
+	}
+}
+
 #endif
 
 void GfxPorts::saveLoadWithSerializer(Common::Serializer &s) {
@@ -1054,30 +1176,8 @@ void SegManager::reconstructClones() {
 
 
 bool gamestate_save(EngineState *s, Common::WriteStream *fh, const Common::String &savename, const Common::String &version) {
-	TimeDate curTime;
-	g_system->getTimeAndDate(curTime);
-
-	SavegameMetadata meta;
-	meta.version = CURRENT_SAVEGAME_VERSION;
-	meta.name = savename;
-	meta.gameVersion = version;
-	meta.saveDate = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
-	meta.saveTime = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min) & 0xFF) << 8) | ((curTime.tm_sec) & 0xFF);
-
-	Resource *script0 = g_sci->getResMan()->findResource(ResourceId(kResourceTypeScript, 0), false);
-	meta.script0Size = script0->size;
-	meta.gameObjectOffset = g_sci->getGameObject().getOffset();
-
-	// Checking here again
-// TODO: This breaks Torin autosave, is there actually any reason for it?
-//	if (s->executionStackBase) {
-//		warning("Cannot save from below kernel function");
-//		return false;
-//	}
-
-	Common::Serializer ser(0, fh);
-	sync_SavegameMetadata(ser, meta);
-	Graphics::saveThumbnail(*fh);
+	Common::Serializer ser(nullptr, fh);
+	set_savegame_metadata(ser, fh, savename, version);
 	s->saveLoadWithSerializer(ser);		// FIXME: Error handling?
 	if (g_sci->_gfxPorts)
 		g_sci->_gfxPorts->saveLoadWithSerializer(ser);
@@ -1091,24 +1191,6 @@ bool gamestate_save(EngineState *s, Common::WriteStream *fh, const Common::Strin
 }
 
 extern void showScummVMDialog(const Common::String &message);
-
-void gamestate_delayedrestore(EngineState *s) {
-	int savegameId = s->_delayedRestoreGameId; // delayedRestoreGameId gets destroyed within gamestate_restore()!
-	Common::String fileName = g_sci->getSavegameName(savegameId);
-	Common::SeekableReadStream *in = g_sci->getSaveFileManager()->openForLoading(fileName);
-
-	if (in) {
-		// found a savegame file
-		gamestate_restore(s, in);
-		delete in;
-		if (s->r_acc != make_reg(0, 1)) {
-			gamestate_afterRestoreFixUp(s, savegameId);
-			return;
-		}
-	}
-
-	error("Restoring gamestate '%s' failed", fileName.c_str());
-}
 
 void gamestate_afterRestoreFixUp(EngineState *s, int savegameId) {
 	switch (g_sci->getGameId()) {
@@ -1168,10 +1250,33 @@ void gamestate_afterRestoreFixUp(EngineState *s, int savegameId) {
 		}
 		break;
 	case GID_PQ2:
-		// HACK: Same as above - enable the save game menu option when loading in PQ2 (bug #6875).
-		// It gets disabled in the game's death screen.
+		// HACK: Same as in Jones - enable the save game menu option when loading in
+		// PQ2 (bug #6875). It gets disabled in the game's death screen.
 		g_sci->_gfxMenu->kernelSetAttribute(2, 1, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);	// Game -> Save Game
 		break;
+#ifdef ENABLE_SCI32
+	case GID_KQ7:
+		if (Common::checkGameGUIOption(GAMEOPTION_UPSCALE_VIDEOS, ConfMan.get("guioptions"))) {
+			uint16 value = ConfMan.getBool("enable_video_upscale") ? 32 : 0;
+			s->variables[VAR_GLOBAL][kGlobalVarKQ7UpscaleVideos] = make_reg(0, value);
+		}
+		break;
+	case GID_PHANTASMAGORIA2:
+		if (Common::checkGameGUIOption(GAMEOPTION_ENABLE_CENSORING, ConfMan.get("guioptions"))) {
+			s->variables[VAR_GLOBAL][kGlobalVarPhant2CensorshipFlag] = make_reg(0, ConfMan.getBool("enable_censoring"));
+		}
+		break;
+	case GID_SHIVERS:
+		// WORKAROUND: When loading a saved game from the GMM in the same scene in
+		// Shivers, we end up with the same draw list, but the scene palette is not
+		// set properly. Normally, Shivers does a room change when showing the saved
+		// game list, which does not occur when loading directly from the GMM. When
+		// loading from the GMM, at this point all of the visible planes and items
+		// are deleted, so calling frameOut here helps reset the game palette
+		// properly, like when changing a room.
+		g_sci->_gfxFrameout->frameOut(true);
+		break;
+#endif
 	default:
 		break;
 	}
@@ -1188,25 +1293,28 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 		return;
 	}
 
-	if ((meta.version < MINIMUM_SAVEGAME_VERSION) || (meta.version > CURRENT_SAVEGAME_VERSION)) {
-		if (meta.version < MINIMUM_SAVEGAME_VERSION) {
-			showScummVMDialog("The format of this saved game is obsolete, unable to load it");
-		} else {
-			Common::String msg = Common::String::format("Savegame version is %d, maximum supported is %0d", meta.version, CURRENT_SAVEGAME_VERSION);
-			showScummVMDialog(msg);
-		}
-
-		s->r_acc = TRUE_REG;	// signal failure
-		return;
-	}
-
-	if (meta.gameObjectOffset > 0 && meta.script0Size > 0) {
-		Resource *script0 = g_sci->getResMan()->findResource(ResourceId(kResourceTypeScript, 0), false);
-		if (script0->size != meta.script0Size || g_sci->getGameObject().getOffset() != meta.gameObjectOffset) {
-			showScummVMDialog("This saved game was created with a different version of the game, unable to load it");
+	// In SCI32 these checks are all in kCheckSaveGame32
+	if (getSciVersion() < SCI_VERSION_2) {
+		if ((meta.version < MINIMUM_SAVEGAME_VERSION) || (meta.version > CURRENT_SAVEGAME_VERSION)) {
+			if (meta.version < MINIMUM_SAVEGAME_VERSION) {
+				showScummVMDialog(_("The format of this saved game is obsolete, unable to load it"));
+			} else {
+				Common::String msg = Common::String::format(_("Savegame version is %d, maximum supported is %0d"), meta.version, CURRENT_SAVEGAME_VERSION);
+				showScummVMDialog(msg);
+			}
 
 			s->r_acc = TRUE_REG;	// signal failure
 			return;
+		}
+
+		if (meta.gameObjectOffset > 0 && meta.script0Size > 0) {
+			Resource *script0 = g_sci->getResMan()->findResource(ResourceId(kResourceTypeScript, 0), false);
+			if (script0->size() != meta.script0Size || g_sci->getGameObject().getOffset() != meta.gameObjectOffset) {
+				showScummVMDialog(_("This saved game was created with a different version of the game, unable to load it"));
+
+				s->r_acc = TRUE_REG;	// signal failure
+				return;
+			}
 		}
 	}
 
@@ -1231,19 +1339,6 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 		if (g_sci->_gfxScreen)
 			g_sci->_gfxScreen->clearForRestoreGame();
 	}
-#ifdef ENABLE_SCI32
-	// Delete current planes/elements of actively loaded VM, only when our ScummVM dialogs are patched in
-	// We MUST NOT delete all planes/screen items. At least Space Quest 6 has a few in memory like for example
-	// the options plane, which are not re-added and are in memory all the time right from the start of the
-	// game. Sierra SCI32 did not clear planes, only scripts cleared the ones inside planes::elements.
-	if (getSciVersion() >= SCI_VERSION_2) {
-		if (!s->_delayedRestoreFromLauncher) {
-			// Only do it, when we are restoring regulary and not from launcher
-			// As it could result in option planes etc. on the screen (happens in gk1)
-			g_sci->_gfxFrameout->syncWithScripts(false);
-		}
-	}
-#endif
 
 	s->reset(true);
 	s->saveLoadWithSerializer(ser);	// FIXME: Error handling?
@@ -1267,13 +1362,6 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	if (g_sci->_gfxPorts)
 		g_sci->_gfxPorts->saveLoadWithSerializer(ser);
 
-	// SCI32:
-	// Current planes/screen elements of freshly loaded VM are re-added by scripts in [gameID]::replay
-	// We don't have to do that in here.
-	// But we may have to do it ourselves in case we ever implement some soft-error handling in case
-	// a saved game can't be restored. That way we can restore the game screen.
-	// see _gfxFrameout->syncWithScripts()
-
 	Vocabulary *voc = g_sci->getVocabulary();
 	if (ser.getVersion() >= 30 && voc)
 		voc->saveLoadWithSerializer(ser);
@@ -1291,26 +1379,48 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	// signal restored game to game scripts
 	s->gameIsRestarting = GAMEISRESTARTING_RESTORE;
-
-	s->_delayedRestoreFromLauncher = false;
 }
 
-bool get_savegame_metadata(Common::SeekableReadStream *stream, SavegameMetadata *meta) {
-	assert(stream);
-	assert(meta);
+void set_savegame_metadata(Common::Serializer &ser, Common::WriteStream *fh, const Common::String &savename, const Common::String &version) {
+	TimeDate curTime;
+	g_system->getTimeAndDate(curTime);
 
-	Common::Serializer ser(stream, 0);
-	sync_SavegameMetadata(ser, *meta);
+	SavegameMetadata meta;
+	meta.version = CURRENT_SAVEGAME_VERSION;
+	meta.name = savename;
+	meta.gameVersion = version;
+	meta.saveDate = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
+	meta.saveTime = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min) & 0xFF) << 8) | ((curTime.tm_sec) & 0xFF);
+
+	Resource *script0 = g_sci->getResMan()->findResource(ResourceId(kResourceTypeScript, 0), false);
+	assert(script0);
+	meta.script0Size = script0->size();
+	meta.gameObjectOffset = g_sci->getGameObject().getOffset();
+
+	sync_SavegameMetadata(ser, meta);
+	Graphics::saveThumbnail(*fh);
+}
+
+void set_savegame_metadata(Common::WriteStream *fh, const Common::String &savename, const Common::String &version) {
+	Common::Serializer ser(nullptr, fh);
+	set_savegame_metadata(ser, fh, savename, version);
+}
+
+bool get_savegame_metadata(Common::SeekableReadStream *stream, SavegameMetadata &meta) {
+	assert(stream);
+
+	Common::Serializer ser(stream, nullptr);
+	sync_SavegameMetadata(ser, meta);
 
 	if (stream->eos())
 		return false;
 
-	if ((meta->version < MINIMUM_SAVEGAME_VERSION) ||
-	    (meta->version > CURRENT_SAVEGAME_VERSION)) {
-		if (meta->version < MINIMUM_SAVEGAME_VERSION)
+	if ((meta.version < MINIMUM_SAVEGAME_VERSION) ||
+	    (meta.version > CURRENT_SAVEGAME_VERSION)) {
+		if (meta.version < MINIMUM_SAVEGAME_VERSION)
 			warning("Old savegame version detected- can't load");
 		else
-			warning("Savegame version is %d- maximum supported is %0d", meta->version, CURRENT_SAVEGAME_VERSION);
+			warning("Savegame version is %d- maximum supported is %0d", meta.version, CURRENT_SAVEGAME_VERSION);
 
 		return false;
 	}

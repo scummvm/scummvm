@@ -28,7 +28,6 @@
 #include "graphics/sjis.h"
 #include "scumm/scumm.h"
 #include "scumm/gfx.h"
-#include "scumm/saveload.h"
 
 namespace Scumm {
 
@@ -89,7 +88,7 @@ public:
 
 	virtual void setColor(byte color) { _color = color; translateColor(); }
 
-	void saveLoadWithSerializer(Serializer *ser);
+	void saveLoadWithSerializer(Common::Serializer &ser);
 };
 
 class CharsetRendererCommon : public CharsetRenderer {

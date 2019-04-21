@@ -20,15 +20,15 @@
  *
  */
 
+#include "common/error.h"
+
 #include "adl/adl_v4.h"
 #include "adl/display.h"
-#include "adl/detection.h"
 
 namespace Adl {
 
 AdlEngine_v4::AdlEngine_v4(OSystem *syst, const AdlGameDescription *gd) :
 		AdlEngine_v3(syst, gd),
-		_currentVolume(0),
 		_itemPicIndex(nullptr) {
 
 }
@@ -127,7 +127,7 @@ void AdlEngine_v4::loadState(Common::ReadStream &stream) {
 	if (size != expectedSize)
 		error("Variable count mismatch (expected %i; found %i)", expectedSize, size);
 
-	for (uint i = getRegion(1).vars.size(); i < size; ++i)
+	for (uint i = getRegion(1).vars.size(); i < _state.vars.size(); ++i)
 		_state.vars[i] = stream.readByte();
 
 	if (stream.err() || stream.eos())
@@ -139,6 +139,7 @@ void AdlEngine_v4::loadState(Common::ReadStream &stream) {
 }
 
 void AdlEngine_v4::saveState(Common::WriteStream &stream) {
+	getCurRoom().isFirstTime = false;
 	backupVars();
 	backupRoomState(_state.room);
 
@@ -189,27 +190,6 @@ Common::String AdlEngine_v4::getItemDescription(const Item &item) const {
 	return _itemDesc[item.id - 1];
 }
 
-DiskImage *AdlEngine_v4::loadDisk(byte volume) const {
-	const ADGameFileDescription *ag;
-
-	for (ag = _gameDescription->desc.filesDescriptions; ag->fileName; ag++) {
-		if (ag->fileType == volume) {
-			DiskImage *disk = new DiskImage();
-			if (!disk->open(ag->fileName))
-				error("Failed to open %s", ag->fileName);
-			return disk;
-		}
-	}
-
-	error("Disk volume %d not found", volume);
-}
-
-void AdlEngine_v4::insertDisk(byte volume) {
-	delete _disk;
-	_disk = loadDisk(volume);
-	_currentVolume = volume;
-}
-
 void AdlEngine_v4::loadRegionLocations(Common::ReadStream &stream, uint regions) {
 	for (uint r = 0; r < regions; ++r) {
 		RegionLocation loc;
@@ -238,6 +218,11 @@ void AdlEngine_v4::loadRegionInitDataOffsets(Common::ReadStream &stream, uint re
 	}
 }
 
+void AdlEngine_v4::initRoomState(RoomState &roomState) const {
+	roomState.picture = 1;
+	roomState.isFirstTime = 1;
+}
+
 void AdlEngine_v4::initRegions(const byte *roomsPerRegion, uint regions) {
 	_state.regions.resize(regions);
 
@@ -247,12 +232,8 @@ void AdlEngine_v4::initRegions(const byte *roomsPerRegion, uint regions) {
 		regn.vars.resize(24);
 
 		regn.rooms.resize(roomsPerRegion[r]);
-		for (uint rm = 0; rm < roomsPerRegion[r]; ++rm) {
-			// TODO: hires6 uses 0xff and has slightly different
-			// code working on these values
-			regn.rooms[rm].picture = 1;
-			regn.rooms[rm].isFirstTime = 1;
-		}
+		for (uint rm = 0; rm < roomsPerRegion[r]; ++rm)
+			initRoomState(regn.rooms[rm]);
 	}
 }
 
@@ -271,6 +252,27 @@ void AdlEngine_v4::fixupDiskOffset(byte &track, byte &sector) const {
 
 void AdlEngine_v4::adjustDataBlockPtr(byte &track, byte &sector, byte &offset, byte &size) const {
 	fixupDiskOffset(track, sector);
+}
+
+AdlEngine_v4::RegionChunkType AdlEngine_v4::getRegionChunkType(const uint16 addr) const {
+	switch (addr) {
+		case 0x9000:
+			return kRegionChunkMessages;
+		case 0x4a80:
+			return kRegionChunkGlobalPics;
+		case 0x4000:
+			return kRegionChunkVerbs;
+		case 0x1800:
+			return kRegionChunkNouns;
+		case 0x0e00:
+			return kRegionChunkRooms;
+		case 0x7b00:
+			return kRegionChunkRoomCmds;
+		case 0x9500:
+			return kRegionChunkGlobalCmds;
+		default:
+			return kRegionChunkUnknown;
+	}
 }
 
 void AdlEngine_v4::loadRegion(byte region) {
@@ -302,29 +304,29 @@ void AdlEngine_v4::loadRegion(byte region) {
 		stream.reset(_disk->createReadStream(track, sector, offset, size / 256 + 1));
 		stream->skip(4);
 
-		switch (addr) {
-		case 0x9000: {
+		switch (getRegionChunkType(addr)) {
+		case kRegionChunkMessages: {
 			// Messages
 			_messages.clear();
 			uint count = size / 4;
 			loadMessages(*stream, count);
 			break;
 		}
-		case 0x4a80: {
+		case kRegionChunkGlobalPics: {
 			// Global pics
 			_pictures.clear();
 			loadPictures(*stream);
 			break;
 		}
-		case 0x4000:
+		case kRegionChunkVerbs:
 			// Verbs
 			loadWords(*stream, _verbs, _priVerbs);
 			break;
-		case 0x1800:
+		case kRegionChunkNouns:
 			// Nouns
 			loadWords(*stream, _nouns, _priNouns);
 			break;
-		case 0x0e00: {
+		case kRegionChunkRooms: {
 			// Rooms
 			uint count = size / 14 - 1;
 			stream->skip(14); // Skip invalid room 0
@@ -333,12 +335,11 @@ void AdlEngine_v4::loadRegion(byte region) {
 			loadRooms(*stream, count);
 			break;
 		}
-		case 0x7b00:
-			// TODO: hires6 has global and room lists swapped
+		case kRegionChunkRoomCmds:
 			// Room commands
 			readCommands(*stream, _roomCommands);
 			break;
-		case 0x9500:
+		case kRegionChunkGlobalCmds:
 			// Global commands
 			readCommands(*stream, _globalCommands);
 			break;
@@ -375,13 +376,16 @@ void AdlEngine_v4::backupRoomState(byte room) {
 	backup.picture = getRoom(room).picture;
 }
 
-void AdlEngine_v4::restoreRoomState(byte room) {
+byte AdlEngine_v4::restoreRoomState(byte room) {
 	const RoomState &backup = getCurRegion().rooms[room - 1];
 
 	if (backup.isFirstTime != 1) {
 		getRoom(room).curPicture = getRoom(room).picture = backup.picture;
 		getRoom(room).isFirstTime = false;
+		return 0;
 	}
+
+	return 1;
 }
 
 void AdlEngine_v4::backupVars() {
@@ -416,7 +420,22 @@ void AdlEngine_v4::switchRoom(byte roomNr) {
 	restoreRoomState(_state.room);
 }
 
-int AdlEngine_v4::o4_isItemInRoom(ScriptEnv &e) {
+void AdlEngine_v4::setupOpcodeTables() {
+	AdlEngine_v3::setupOpcodeTables();
+
+	_condOpcodes[0x08] = opcode(&AdlEngine_v4::o_isVarGT);
+	_condOpcodes[0x0a].reset();
+
+	_actOpcodes[0x0a] = opcode(&AdlEngine_v4::o_setRegionToPrev);
+	_actOpcodes[0x0b].reset();
+	_actOpcodes[0x0e] = opcode(&AdlEngine_v4::o_setRegion);
+	_actOpcodes[0x12] = opcode(&AdlEngine_v4::o_setRegionRoom);
+	_actOpcodes[0x13].reset();
+	_actOpcodes[0x1e].reset();
+	_actOpcodes[0x1f].reset();
+}
+
+int AdlEngine_v4::o_isItemInRoom(ScriptEnv &e) {
 	OP_DEBUG_2("\t&& GET_ITEM_ROOM(%s) == %s", itemStr(e.arg(1)).c_str(), itemRoomStr(e.arg(2)).c_str());
 
 	const Item &item = getItem(e.arg(1));
@@ -430,7 +449,7 @@ int AdlEngine_v4::o4_isItemInRoom(ScriptEnv &e) {
 	return -1;
 }
 
-int AdlEngine_v4::o4_isVarGT(ScriptEnv &e) {
+int AdlEngine_v4::o_isVarGT(ScriptEnv &e) {
 	OP_DEBUG_2("\t&& VARS[%d] > %d", e.arg(1), e.arg(2));
 
 	if (getVar(e.arg(1)) > e.arg(2))
@@ -439,13 +458,13 @@ int AdlEngine_v4::o4_isVarGT(ScriptEnv &e) {
 	return -1;
 }
 
-int AdlEngine_v4::o4_moveItem(ScriptEnv &e) {
-	o2_moveItem(e);
+int AdlEngine_v4::o_moveItem(ScriptEnv &e) {
+	AdlEngine_v3::o_moveItem(e);
 	getItem(e.arg(1)).region = _state.region;
 	return 2;
 }
 
-int AdlEngine_v4::o4_setRegionToPrev(ScriptEnv &e) {
+int AdlEngine_v4::o_setRegionToPrev(ScriptEnv &e) {
 	OP_DEBUG_0("\tREGION = PREV_REGION");
 
 	switchRegion(_state.prevRegion);
@@ -454,7 +473,7 @@ int AdlEngine_v4::o4_setRegionToPrev(ScriptEnv &e) {
 	return -1;
 }
 
-int AdlEngine_v4::o4_moveAllItems(ScriptEnv &e) {
+int AdlEngine_v4::o_moveAllItems(ScriptEnv &e) {
 	OP_DEBUG_2("\tMOVE_ALL_ITEMS(%s, %s)", itemRoomStr(e.arg(1)).c_str(), itemRoomStr(e.arg(2)).c_str());
 
 	byte room1 = roomArg(e.arg(1));
@@ -491,7 +510,7 @@ int AdlEngine_v4::o4_moveAllItems(ScriptEnv &e) {
 	return 2;
 }
 
-int AdlEngine_v4::o4_setRegion(ScriptEnv &e) {
+int AdlEngine_v4::o_setRegion(ScriptEnv &e) {
 	OP_DEBUG_1("\tREGION = %d", e.arg(1));
 
 	switchRegion(e.arg(1));
@@ -500,7 +519,7 @@ int AdlEngine_v4::o4_setRegion(ScriptEnv &e) {
 	return -1;
 }
 
-int AdlEngine_v4::o4_save(ScriptEnv &e) {
+int AdlEngine_v4::o_save(ScriptEnv &e) {
 	OP_DEBUG_0("\tSAVE_GAME()");
 
 	_display->printString(_strings_v2.saveReplace);
@@ -521,7 +540,7 @@ int AdlEngine_v4::o4_save(ScriptEnv &e) {
 	return 0;
 }
 
-int AdlEngine_v4::o4_restore(ScriptEnv &e) {
+int AdlEngine_v4::o_restore(ScriptEnv &e) {
 	OP_DEBUG_0("\tRESTORE_GAME()");
 
 	const int slot = askForSlot(_strings_v2.restoreInsert);
@@ -540,7 +559,7 @@ int AdlEngine_v4::o4_restore(ScriptEnv &e) {
 	return -1;
 }
 
-int AdlEngine_v4::o4_restart(ScriptEnv &e) {
+int AdlEngine_v4::o_restart(ScriptEnv &e) {
 	OP_DEBUG_0("\tRESTART_GAME()");
 
 	while (true) {
@@ -551,7 +570,7 @@ int AdlEngine_v4::o4_restart(ScriptEnv &e) {
 			return -1;
 
 		if (input.firstChar() == APPLECHAR('N')) {
-			return o1_quit(e);
+			return o_quit(e);
 		} else if (input.firstChar() == APPLECHAR('Y')) {
 			// The original game loads a special save game from volume 3
 			initState();
@@ -562,7 +581,7 @@ int AdlEngine_v4::o4_restart(ScriptEnv &e) {
 	}
 }
 
-int AdlEngine_v4::o4_setRegionRoom(ScriptEnv &e) {
+int AdlEngine_v4::o_setRegionRoom(ScriptEnv &e) {
 	OP_DEBUG_2("\tSET_REGION_ROOM(%d, %d)", e.arg(1), e.arg(2));
 
 	switchRegion(e.arg(1));
@@ -572,8 +591,8 @@ int AdlEngine_v4::o4_setRegionRoom(ScriptEnv &e) {
 	return -1;
 }
 
-int AdlEngine_v4::o4_setRoomPic(ScriptEnv &e) {
-	o1_setRoomPic(e);
+int AdlEngine_v4::o_setRoomPic(ScriptEnv &e) {
+	AdlEngine_v3::o_setRoomPic(e);
 	backupRoomState(e.arg(1));
 	return 2;
 }

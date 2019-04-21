@@ -26,8 +26,12 @@
 #include "common/rect.h"
 #include "common/substream.h"
 #include "director/archive.h"
+#include "graphics/surface.h"
 
 namespace Director {
+
+class Stxt;
+class CachedMacText;
 
 enum CastType {
 	kCastTypeNull = 0,
@@ -41,20 +45,25 @@ enum CastType {
 	kCastShape = 8,
 	kCastMovie = 9,
 	kCastDigitalVideo = 10,
-	kCastLingoScript = 11
+	kCastLingoScript = 11,
+	kCastRTE = 12
 };
 
-struct Cast {
+class Cast {
+public:
 	CastType type;
 	Common::Rect initialRect;
 	Common::Rect boundingRect;
 	Common::Array<Resource> children;
 
+	const Graphics::Surface *surface;
+
 	byte modified;
 };
 
-struct BitmapCast : Cast {
-	BitmapCast(Common::ReadStreamEndian &stream, uint16 version = 2);
+class BitmapCast : public Cast {
+public:
+	BitmapCast(Common::ReadStreamEndian &stream, uint32 castTag, uint16 version = 2);
 
 	uint16 regX;
 	uint16 regY;
@@ -63,6 +72,8 @@ struct BitmapCast : Cast {
 	uint16 unk1, unk2;
 
 	uint16 bitsPerPixel;
+
+	uint32 tag;
 };
 
 enum ShapeType {
@@ -72,7 +83,8 @@ enum ShapeType {
 	kShapeLine
 };
 
-struct ShapeCast : Cast {
+class ShapeCast : public Cast {
+public:
 	ShapeCast(Common::ReadStreamEndian &stream, uint16 version = 2);
 
 	ShapeType shapeType;
@@ -111,7 +123,8 @@ enum SizeType {
 	kSizeLargest
 };
 
-struct TextCast : Cast {
+class TextCast : public Cast {
+public:
 	TextCast(Common::ReadStreamEndian &stream, uint16 version = 2);
 
 	SizeType borderSize;
@@ -127,6 +140,11 @@ struct TextCast : Cast {
 	byte textSlant;
 	Common::Array<TextFlag> textFlags;
 	uint16 palinfo1, palinfo2, palinfo3;
+
+	Common::String _ftext;
+	void importStxt(const Stxt *stxt);
+	void importRTE(byte* text);
+	CachedMacText *cachedMacText;
 };
 
 enum ButtonType {
@@ -135,13 +153,15 @@ enum ButtonType {
 	kTypeRadio
 };
 
-struct ButtonCast : TextCast {
+class ButtonCast : public TextCast {
+public:
 	ButtonCast(Common::ReadStreamEndian &stream, uint16 version = 2);
 
 	ButtonType buttonType;
 };
 
-struct ScriptCast : Cast {
+class ScriptCast : public Cast {
+public:
 	ScriptCast(Common::ReadStreamEndian &stream, uint16 version = 2);
 
 	uint32 id;

@@ -206,7 +206,6 @@ void CVideoSurface::transBlitRect(const Rect &srcRect, const Rect &destRect, CVi
 			Graphics::ManagedSurface *srcSurface = src->_rawSurface;
 			Graphics::ManagedSurface *destSurface = _rawSurface;
 			Graphics::Surface destArea = destSurface->getSubArea(destRect);
-			uint transColor = getTransparencyColor();
 
 			const uint16 *srcPtr = (const uint16 *)srcSurface->getBasePtr(
 				srcRect.left, flipFlag ? srcRect.top : srcRect.bottom - 1);
@@ -224,7 +223,9 @@ void CVideoSurface::transBlitRect(const Rect &srcRect, const Rect &destRect, CVi
 				transSurface.setCol(srcRect.left);
 
 				for (int srcX = srcRect.left; srcX < srcRect.right; ++srcX) {
-					if (*lineSrcP != transColor)
+					if (transSurface.isPixelOpaque())
+						*lineDestP = *lineSrcP;
+					else if (!transSurface.isPixelTransparent())
 						copyPixel(lineDestP, lineSrcP, transSurface.getAlpha() >> 3, srcSurface->format, isAlpha);
 
 					++lineSrcP;
@@ -527,13 +528,12 @@ void OSVideoSurface::clear() {
 	if (!loadIfReady())
 		error("Could not load resource");
 
+	_ddSurface->fill(nullptr, 0);
 }
 
 void OSVideoSurface::playMovie(uint flags, CGameObject *obj) {
 	if (loadIfReady() && _movie)
 		_movie->play(flags, obj);
-
-	_ddSurface->fill(nullptr, 0);
 }
 
 void OSVideoSurface::playMovie(uint startFrame, uint endFrame, uint flags, CGameObject *obj) {

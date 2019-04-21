@@ -79,7 +79,7 @@ bool CPortHole::MovieEndMsg(CMovieEndMsg *msg) {
 bool CPortHole::LeaveViewMsg(CLeaveViewMsg *msg) {
 	if (_open) {
 		playSound(_closeSoundName);
-		playMovie(14, 26, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
+		playMovie(14, 26, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		_open = false;
 	}
 

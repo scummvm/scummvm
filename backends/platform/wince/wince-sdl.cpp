@@ -24,6 +24,9 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
+#include <windows.h>
+
+#include "backends/platform/wince/missing/fopen.h"
 #include "backends/platform/wince/wince-sdl.h"
 
 #include "common/config-manager.h"
@@ -163,7 +166,6 @@ int handleException(EXCEPTION_POINTERS *exceptionPointers) {
 }
 #endif
 
-extern "C" char *getcwd(char *buf, int size);
 int SDL_main(int argc, char **argv) {
 	FILE *newfp = NULL;
 #ifdef __GNUC__
@@ -182,8 +184,8 @@ int SDL_main(int argc, char **argv) {
 	CEDevice::init();
 
 	/* Redirect standard input and standard output */
-	strcpy(stdout_fname, getcwd(NULL, MAX_PATH));
-	strcpy(stderr_fname, getcwd(NULL, MAX_PATH));
+	strcpy(stdout_fname, wce_getcwd(NULL, MAX_PATH));
+	strcpy(stderr_fname, wce_getcwd(NULL, MAX_PATH));
 	strcat(stdout_fname, STDOUT_FNAME);
 	strcat(stderr_fname, STDERR_FNAME);
 #ifndef __GNUC__
@@ -237,7 +239,7 @@ int SDL_main(int argc, char **argv) {
 		res = scummvm_main(argc, argv);
 
 		// Free OSystem
-		delete(OSystem_WINCE3 *)g_system;
+		g_system->destroy();
 #if !defined(DEBUG) && !defined(__GNUC__)
 	}
 	__except(handleException(GetExceptionInformation())) {
@@ -279,7 +281,7 @@ int console_main(int argc, char *argv[]) {
 	appname = bufp;
 
 	if (SDL_Init(SDL_INIT_NOPARACHUTE) < 0) {
-		error("WinMain() error: %d", SDL_GetError());
+		error("WinMain() error: %s", SDL_GetError());
 		return(FALSE);
 	}
 
@@ -461,7 +463,7 @@ bool OSystem_WINCE3::isOzone() {
 
 Common::String OSystem_WINCE3::getDefaultConfigFileName() {
 	char configFile[MAXPATHLEN];
-	strcpy(configFile, getcwd(NULL, MAX_PATH));
+	strcpy(configFile, wce_getcwd(NULL, MAX_PATH));
 	strcat(configFile, "\\");
 	strcat(configFile, DEFAULT_CONFIG_FILE);
 	return configFile;
@@ -621,6 +623,25 @@ void OSystem_WINCE3::getTimeAndDate(TimeDate &t) const {
 	t.tm_min    = systime.wMinute;
 	t.tm_sec    = systime.wSecond;
 	t.tm_wday   = systime.wDayOfWeek;
+}
+
+void OSystem_WINCE3::logMessage(LogMessageType::Type type, const char *message) {
+	OSystem_SDL::logMessage(type, message);
+
+#if defined( USE_WINDBG )
+	TCHAR buf_unicode[1024];
+	MultiByteToWideChar(CP_ACP, 0, message, strlen(message) + 1, buf_unicode, sizeof(buf_unicode));
+	OutputDebugString(buf_unicode);
+
+	if (type == LogMessageType::kError) {
+#ifndef DEBUG
+		drawError(message);
+#else
+		int cmon_break_into_the_debugger_if_you_please = *(int *)(message + 1);	// bus error
+		printf("%d", cmon_break_into_the_debugger_if_you_please);			// don't optimize the int out
+#endif
+	}
+#endif
 }
 
 Common::String OSystem_WINCE3::getSystemLanguage() const {

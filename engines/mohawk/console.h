@@ -35,8 +35,8 @@ class MohawkEngine_Myst;
 
 class MystConsole : public GUI::Debugger {
 public:
-	MystConsole(MohawkEngine_Myst *vm);
-	virtual ~MystConsole(void);
+	explicit MystConsole(MohawkEngine_Myst *vm);
+	~MystConsole() override;
 
 private:
 	MohawkEngine_Myst *_vm;
@@ -66,8 +66,8 @@ class MohawkEngine_Riven;
 
 class RivenConsole : public GUI::Debugger {
 public:
-	RivenConsole(MohawkEngine_Riven *vm);
-	virtual ~RivenConsole(void);
+	explicit RivenConsole(MohawkEngine_Riven *vm);
+	~RivenConsole() override;
 
 private:
 	MohawkEngine_Riven *_vm;
@@ -82,20 +82,22 @@ private:
 	bool Cmd_ChangeStack(int argc, const char **argv);
 	bool Cmd_Hotspots(int argc, const char **argv);
 	bool Cmd_ZipMode(int argc, const char **argv);
-	bool Cmd_RunAllBlocks(int argc, const char **argv);
+	bool Cmd_DumpCard(int argc, const char **argv);
+	bool Cmd_DumpStack(int argc, const char **argv);
 	bool Cmd_DumpScript(int argc, const char **argv);
 	bool Cmd_ListZipCards(int argc, const char **argv);
 	bool Cmd_GetRMAP(int argc, const char **argv);
 	bool Cmd_Combos(int argc, const char **argv);
 	bool Cmd_SliderState(int argc, const char **argv);
+	bool Cmd_QuickTest(int argc, const char **argv);
 };
 
 #endif
 
 class LivingBooksConsole : public GUI::Debugger {
 public:
-	LivingBooksConsole(MohawkEngine_LivingBooks *vm);
-	virtual ~LivingBooksConsole(void);
+	explicit LivingBooksConsole(MohawkEngine_LivingBooks *vm);
+	~LivingBooksConsole() override;
 
 private:
 	MohawkEngine_LivingBooks *_vm;

@@ -476,6 +476,11 @@ public:
 	bool isGlyphHighlighted(const CPetGlyph *glyph) const;
 
 	/**
+	 * Returns the highlighted index, if any
+	 */
+	int getHighlightIndex() const { return _highlightIndex; }
+
+	/**
 	 * Get the top-left position of the currently highlighted glyph
 	 */
 	Point getHighlightedGlyphPos() const;

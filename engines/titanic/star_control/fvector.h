@@ -23,46 +23,152 @@
 #ifndef TITANIC_FVECTOR_H
 #define TITANIC_FVECTOR_H
 
+#include "titanic/star_control/fpoint.h"
+
 namespace Titanic {
 
-class CStarControlSub6;
+enum Axis { X_AXIS, Y_AXIS, Z_AXIS };
+
+class FPose;
 
 /**
  * Floating point vector class.
- * @remarks		TODO: See if it can be merged with DVector
  */
 class FVector {
 public:
-	double _x, _y, _z;
+	float _x, _y, _z;
 public:
 	FVector() : _x(0), _y(0), _z(0) {}
-	FVector(double x, double y, double z) : _x(x), _y(y), _z(z) {}
+	FVector(float x, float y, float z) : _x(x), _y(y), _z(z) {}
 
-	void fn1(FVector *v);
-	void multiply(FVector *dest, const FVector *src);
-	void fn3();
+	/**
+	 * Clears the vector
+	 */
+	void clear() {
+		_x = _y = _z = 0.0;
+	}
+
+	/**
+	 * Returns a vector with all components of this vector circularlly rotated up 1.
+	 * this x being _y, this y being _z, and this z being _x. A sign change may also
+	 * be done on x/_y based on some conditions.
+	 */
+	FVector swapComponents() const;
+
+	/**
+	 * Calculates the cross-product between this matrix and a passed one
+	 */
+	FVector crossProduct(const FVector &src) const;
+
+	/**
+	 * Rotate this vector about the Y axis
+	 */
+	void rotVectAxisY(float angleDeg);
+
+	/**
+	 * Attempts to normalizes the vector so the length from origin equals 1.0
+	 * Return value is whether or not it was successful in normalizing
+	 * First argument is scale value that normalizes the vector
+	 * TODO: split this function into 2. One that calculates the normalization
+	 * and another that does the normalization. The 2nd would assert if a
+	 * normalization of one was requested. This is cleaner than the current
+	 * implementation.
+	 */
+	bool normalize(float &);
+
+	/**
+	 * Adds the current vector and a passed one together, normalizes them,
+	 * and then returns the resulting vector
+	 */
+	FVector addAndNormalize(const FVector &v) const;
+
+	/**
+	 * Returns a vector, v, that represents a magnitude, and two angles in radians
+	 * 1. Scale this vector to be unit magnitude and store scale in x component of v
+	 * 2. X rotation angle from +y axis of this vector is put in y component of v
+	 * 3. z component output of v is the 4-quadrant angle that z makes with x (Y axis rotation)
+	 */
+	FVector getAnglesAsVect() const;
 
 	/**
 	 * Returns the distance between a specified point and this one
 	 */
-	double getDistance(const FVector *src) const;
+	float getDistance(const FVector &src) const;
 
-	static void fn4(FVector *dest, const FVector *v1, const FVector *v2);
-	void fn5(FVector *dest, const CStarControlSub6 *sub6) const;
+	/**
+	 * Returns a vector that is this vector on the left as a row vector
+	 * times the 3x4 affine matrix on the right.
+	 */
+	FVector matProdRowVect(const FPose &pose) const;
+
+	/**
+	 * Returns a matrix that contains the frame rotation based on this vector and 
+	 * a vector rotation based on input vector v
+	 */
+	FPose getFrameTransform(const FVector &v);
+
+	/**
+	 * Constructs an affine matrix that does a x then a y axis frame rotation
+	 * based on the orientation of this vector
+	 */
+	FPose formRotXY() const;
 
 	/**
 	 * Returns true if the passed vector equals this one
 	 */
 	bool operator==(const FVector &src) const {
-		return _x != src._x || _y != src._y || _z != src._z;
+		return _x == src._x && _y == src._y && _z == src._z;
 	}
 
 	/**
 	 * Returns true if the passed vector does not equal this one
 	 */
 	bool operator!=(const FVector &src) const {
-		return !operator==(src);
+		return _x != src._x || _y != src._y || _z != src._z;
 	}
+
+	FVector operator+(const FVector &delta) const {
+		return FVector(_x + delta._x, _y + delta._y, _z + delta._z);
+	}
+
+	FVector operator-(const FVector &delta) const {
+		return FVector(_x - delta._x, _y - delta._y, _z - delta._z);
+	}
+
+	const FVector operator*(float right) const {
+		return FVector(_x * right, _y * right, _z * right);
+	}
+
+	const FVector operator*(const FVector &right) const {
+		return FVector(_x * right._x, _y * right._y, _z * right._z);
+	}	
+
+	void operator+=(const FVector &delta) {
+		_x += delta._x;
+		_y += delta._y;
+		_z += delta._z;
+	}
+
+	void operator-=(const FVector &delta) {
+		_x -= delta._x;
+		_y -= delta._y;
+		_z -= delta._z;
+	}
+
+	void operator+=(const FPoint &delta) {
+		_x += delta._x;
+		_y += delta._y;
+	}
+
+	void operator-=(const FPoint &delta) {
+		_x -= delta._x;
+		_y -= delta._y;
+	}
+
+	/**
+	 * Converts the vector to a string
+	 */
+	Common::String toString() const;
 };
 
 } // End of namespace Titanic

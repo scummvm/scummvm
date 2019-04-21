@@ -30,142 +30,53 @@
 namespace Adl {
 
 AdlEngine_v5::AdlEngine_v5(OSystem *syst, const AdlGameDescription *gd) :
-		AdlEngine_v3(syst, gd),
-		_curDisk(0) {
+		AdlEngine_v4(syst, gd) {
 }
 
-Common::String AdlEngine_v5::loadMessage(uint idx) const {
-	Common::String str = AdlEngine_v2::loadMessage(idx);
+void AdlEngine_v5::initRoomState(RoomState &roomState) const {
+	roomState.picture = 0xff;
+	roomState.isFirstTime = 0xff;
+}
 
-	for (uint i = 0; i < str.size(); ++i) {
-		const char *xorStr = "AVISDURGAN";
-		str.setChar(str[i] ^ xorStr[i % strlen(xorStr)], i);
+byte AdlEngine_v5::restoreRoomState(byte room) {
+	const RoomState &backup = getCurRegion().rooms[room - 1];
+
+	if (backup.isFirstTime != 0xff) {
+		getRoom(room).curPicture = getRoom(room).picture = backup.picture;
+
+		// CHECKME: Why doesn't this just copy the flag unconditionally?
+		if (backup.isFirstTime != 1) {
+			getRoom(room).isFirstTime = false;
+			return 0;
+		}
 	}
 
-	return str;
+	return backup.isFirstTime;
 }
 
-Common::String AdlEngine_v5::getItemDescription(const Item &item) const {
-	return _itemDesc[item.id - 1];
-}
-
-void AdlEngine_v5::applyDiskOffset(byte &track, byte &sector) const {
-	sector += _diskOffsets[_curDisk].sector;
-	if (sector >= 16) {
-		sector -= 16;
-		++track;
+AdlEngine_v5::RegionChunkType AdlEngine_v5::getRegionChunkType(const uint16 addr) const {
+	switch (addr) {
+	case 0x7b00:
+		return kRegionChunkGlobalCmds;
+	case 0x9500:
+		return kRegionChunkRoomCmds;
+	default:
+		return AdlEngine_v4::getRegionChunkType(addr);
 	}
-
-	track += _diskOffsets[_curDisk].track;
 }
-
-void AdlEngine_v5::adjustDataBlockPtr(byte &track, byte &sector, byte &offset, byte &size) const {
-	applyDiskOffset(track, sector);
-}
-
-typedef Common::Functor1Mem<ScriptEnv &, int, AdlEngine_v5> OpcodeV4;
-#define SetOpcodeTable(x) table = &x;
-#define Opcode(x) table->push_back(new OpcodeV4(this, &AdlEngine_v5::x))
-#define OpcodeUnImpl() table->push_back(new OpcodeV4(this, 0))
 
 void AdlEngine_v5::setupOpcodeTables() {
-	Common::Array<const Opcode *> *table = 0;
+	AdlEngine_v4::setupOpcodeTables();
 
-	SetOpcodeTable(_condOpcodes);
-	// 0x00
-	OpcodeUnImpl();
-	Opcode(o2_isFirstTime);
-	Opcode(o2_isRandomGT);
-	Opcode(o5_isItemInRoom);
-	// 0x04
-	Opcode(o5_isNounNotInRoom);
-	Opcode(o1_isMovesGT);
-	Opcode(o1_isVarEQ);
-	Opcode(o2_isCarryingSomething);
-	// 0x08
-	Opcode(o5_isVarGT);
-	Opcode(o1_isCurPicEQ);
-	Opcode(o5_skipOneCommand);
+	_condOpcodes[0x0a] = opcode(&AdlEngine_v5::o_abortScript);
 
-	SetOpcodeTable(_actOpcodes);
-	// 0x00
-	OpcodeUnImpl();
-	Opcode(o1_varAdd);
-	Opcode(o1_varSub);
-	Opcode(o1_varSet);
-	// 0x04
-	Opcode(o1_listInv);
-	Opcode(o5_moveItem);
-	Opcode(o1_setRoom);
-	Opcode(o2_setCurPic);
-	// 0x08
-	Opcode(o2_setPic);
-	Opcode(o1_printMsg);
-	Opcode(o5_dummy);
-	Opcode(o5_setTextMode);
-	// 0x0c
-	Opcode(o2_moveAllItems);
-	Opcode(o1_quit);
-	Opcode(o5_dummy);
-	Opcode(o2_save);
-	// 0x10
-	Opcode(o2_restore);
-	Opcode(o1_restart);
-	Opcode(o5_setDisk);
-	Opcode(o5_dummy);
-	// 0x14
-	Opcode(o1_resetPic);
-	Opcode(o1_goDirection<IDI_DIR_NORTH>);
-	Opcode(o1_goDirection<IDI_DIR_SOUTH>);
-	Opcode(o1_goDirection<IDI_DIR_EAST>);
-	// 0x18
-	Opcode(o1_goDirection<IDI_DIR_WEST>);
-	Opcode(o1_goDirection<IDI_DIR_UP>);
-	Opcode(o1_goDirection<IDI_DIR_DOWN>);
-	Opcode(o1_takeItem);
-	// 0x1c
-	Opcode(o1_dropItem);
-	Opcode(o1_setRoomPic);
-	Opcode(o5_sound);
-	OpcodeUnImpl();
-	// 0x20
-	Opcode(o2_initDisk);
+	_actOpcodes[0x0a] = opcode(&AdlEngine_v5::o_dummy);
+	_actOpcodes[0x0b] = opcode(&AdlEngine_v5::o_setTextMode);
+	_actOpcodes[0x0e] = opcode(&AdlEngine_v5::o_dummy);
+	_actOpcodes[0x13] = opcode(&AdlEngine_v5::o_dummy);
 }
 
-int AdlEngine_v5::o5_isVarGT(ScriptEnv &e) {
-	OP_DEBUG_2("\t&& VARS[%d] > %d", e.arg(1), e.arg(2));
-
-	if (getVar(e.arg(1)) > e.arg(2))
-		return 2;
-
-	return -1;
-}
-
-int AdlEngine_v5::o5_skipOneCommand(ScriptEnv &e) {
-	OP_DEBUG_0("\t&& SKIP_ONE_COMMAND()");
-
-	_skipOneCommand = true;
-	setVar(2, 0);
-
-	return -1;
-}
-
-// FIXME: Rename "isLineArt" and look at code duplication
-int AdlEngine_v5::o5_isItemInRoom(ScriptEnv &e) {
-	OP_DEBUG_2("\t&& GET_ITEM_ROOM(%s) == %s", itemStr(e.arg(1)).c_str(), itemRoomStr(e.arg(2)).c_str());
-
-	const Item &item = getItem(e.arg(1));
-
-	if (e.arg(2) != IDI_ANY && item.isLineArt != _curDisk)
-		return -1;
-
-	if (item.room == roomArg(e.arg(2)))
-		return 2;
-
-	return -1;
-}
-
-int AdlEngine_v5::o5_isNounNotInRoom(ScriptEnv &e) {
+int AdlEngine_v5::o_isNounNotInRoom(ScriptEnv &e) {
 	OP_DEBUG_1("\t&& NO_SUCH_ITEMS_IN_ROOM(%s)", itemRoomStr(e.arg(1)).c_str());
 
 	Common::List<Item>::const_iterator item;
@@ -183,64 +94,72 @@ int AdlEngine_v5::o5_isNounNotInRoom(ScriptEnv &e) {
 	return 1;
 }
 
-int AdlEngine_v5::o5_moveItem(ScriptEnv &e) {
-	OP_DEBUG_2("\tSET_ITEM_ROOM(%s, %s)", itemStr(e.arg(1)).c_str(), itemRoomStr(e.arg(2)).c_str());
+int AdlEngine_v5::o_abortScript(ScriptEnv &e) {
+	OP_DEBUG_0("\t&& ABORT_SCRIPT()");
 
-	byte room = roomArg(e.arg(2));
+	_abortScript = true;
+	setVar(2, 0);
 
-	Item &item = getItem(e.arg(1));
-
-	if (item.room == _roomOnScreen)
-		_picOnScreen = 0;
-
-	// Set items that move from inventory to a room to state "dropped"
-	if (item.room == IDI_ANY && room != IDI_VOID_ROOM)
-		item.state = IDI_ITEM_DROPPED;
-
-	item.room = room;
-	item.isLineArt = _curDisk;
-	return 2;
+	return -1;
 }
 
-int AdlEngine_v5::o5_dummy(ScriptEnv &e) {
+int AdlEngine_v5::o_dummy(ScriptEnv &e) {
 	OP_DEBUG_0("\tDUMMY()");
 
 	return 0;
 }
 
-int AdlEngine_v5::o5_setTextMode(ScriptEnv &e) {
+int AdlEngine_v5::o_setTextMode(ScriptEnv &e) {
 	OP_DEBUG_1("\tSET_TEXT_MODE(%d)", e.arg(1));
 
-	// TODO
-	// 1: 4-line mode
-	// 2: 24-line mode
-
 	switch (e.arg(1)) {
+	case 1:
+		if (_linesPrinted != 0) {
+			_display->printChar(APPLECHAR(' '));
+			handleTextOverflow();
+			_display->moveCursorTo(Common::Point(0, 23));
+			_maxLines = 4;
+		}
+		return 1;
+	case 2:
+		_textMode = true;
+		_display->setMode(DISPLAY_MODE_TEXT);
+		_display->home();
+		_maxLines = 24;
+		_linesPrinted = 0;
+		return 1;
 	case 3:
 		// We re-use the restarting flag here, to simulate a long jump
 		_isRestarting = true;
 		return -1;
+	default:
+		error("Invalid text mode %d", e.arg(1));
 	}
-
-	return 1;
 }
 
-int AdlEngine_v5::o5_setDisk(ScriptEnv &e) {
-	OP_DEBUG_2("\tSET_DISK(%d, %d)", e.arg(1), e.arg(2));
+int AdlEngine_v5::o_setRegionRoom(ScriptEnv &e) {
+	OP_DEBUG_2("\tSET_REGION_ROOM(%d, %d)", e.arg(1), e.arg(2));
 
-	// TODO
-	// Arg 1: disk
-	// Arg 2: room
+	getCurRoom().curPicture = getCurRoom().picture;
+	getCurRoom().isFirstTime = false;
+	switchRegion(e.arg(1));
+	_state.room = e.arg(2);
+	restoreRoomState(_state.room);
+	return -1;
+}
 
+int AdlEngine_v5::o_setRoomPic(ScriptEnv &e) {
+	const byte isFirstTime = restoreRoomState(e.arg(1));
+
+	// CHECKME: More peculiar isFirstTime handling (see also restoreRoomState).
+	// Is this here to prevent changing the backed up flag from 1 to 0? Since
+	// that could only happen if the room isFirstTime is 0 while the backed up flag
+	// is 1, is this scenario even possible?
+	if (isFirstTime != 0xff)
+		getRoom(e.arg(1)).isFirstTime = isFirstTime;
+
+	AdlEngine_v4::o_setRoomPic(e);
 	return 2;
-}
-
-int AdlEngine_v5::o5_sound(ScriptEnv &e) {
-	OP_DEBUG_0("\tSOUND()");
-
-	// TODO
-
-	return 0;
 }
 
 } // End of namespace Adl

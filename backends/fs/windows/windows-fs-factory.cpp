@@ -25,8 +25,8 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "backends/fs/windows/windows-fs-factory.h"
 #include "backends/fs/windows/windows-fs.h"
+#include "backends/fs/windows/windows-fs-factory.h"
 
 AbstractFSNode *WindowsFilesystemFactory::makeRootFileNode() const {
 	return new WindowsFilesystemNode();

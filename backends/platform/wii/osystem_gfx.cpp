@@ -352,7 +352,7 @@ void OSystem_Wii::setPalette(const byte *colors, uint start, uint num) {
 	}
 }
 
-void OSystem_Wii::grabPalette(byte *colors, uint start, uint num) {
+void OSystem_Wii::grabPalette(byte *colors, uint start, uint num) const {
 #ifdef USE_RGB_COLOR
 	assert(_pfGame.bytesPerPixel == 1);
 #endif
@@ -713,7 +713,7 @@ void OSystem_Wii::setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
 			}
 
 			// nasty, shouldn't the frontend set the alpha channel?
-			u16 *s = (u16 *) buf;
+			const u16 *s = (const u16 *) buf;
 			u16 *d = (u16 *) tmp;
 			for (u16 y = 0; y < h; ++y) {
 				for (u16 x = 0; x < w; ++x) {

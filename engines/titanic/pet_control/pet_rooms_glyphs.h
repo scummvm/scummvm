@@ -24,10 +24,11 @@
 #define TITANIC_PET_ROOMS_GLYPHS_H
 
 #include "titanic/pet_control/pet_glyphs.h"
-#include "titanic/support/simple_file.h"
 #include "titanic/game_location.h"
 
 namespace Titanic {
+
+class SimpleFile;
 
 enum RoomGlyphMode {
 	RGM_UNASSIGNED = 0, RGM_ASSIGNED_ROOM = 1, RGM_PREV_ASSIGNED_ROOM = 2

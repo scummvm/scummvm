@@ -26,55 +26,14 @@
 
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-gr.h"
+#include "director/frame.h"
+#include "director/sprite.h"
 
 namespace Director {
 
 Lingo *g_lingo;
 
-struct EventHandlerType {
-	LEvent handler;
-	const char *name;
-} static const eventHandlerDescs[] = {
-	{ kEventPrepareMovie,		"prepareMovie" },
-	{ kEventStartMovie,			"startMovie" },
-	{ kEventStopMovie,			"stopMovie" },
-
-	{ kEventNew,				"newSprite" },
-	{ kEventBeginSprite,		"beginSprite" },
-	{ kEventEndSprite,			"endSprite" },
-
-	{ kEventEnterFrame, 		"enterFrame" },
-	{ kEventPrepareFrame, 		"prepareFrame" },
-	{ kEventIdle,				"idle" },
-	{ kEventStepFrame,			"stepFrame"},
-	{ kEventExitFrame, 			"exitFrame" },
-
-	{ kEventActivateWindow,		"activateWindow" },
-	{ kEventDeactivateWindow,	"deactivateWindow" },
-	{ kEventMoveWindow,			"moveWindow" },
-	{ kEventResizeWindow,		"resizeWindow" },
-	{ kEventOpenWindow,			"openWindow" },
-	{ kEventCloseWindow,		"closeWindow" },
-	{ kEventStart,				"start" },
-
-	{ kEventKeyUp,				"keyUp" },
-	{ kEventKeyDown,			"keyDown" },			// D2 as when
-	{ kEventMouseUp,			"mouseUp" },			// D2 as when
-	{ kEventMouseDown,			"mouseDown" },			// D2 as when
-	{ kEventRightMouseDown,		"rightMouseDown" },
-	{ kEventRightMouseUp,		"rightMouseUp" },
-	{ kEventMouseEnter,			"mouseEnter" },
-	{ kEventMouseLeave,			"mouseLeave" },
-	{ kEventMouseUpOutSide,		"mouseUpOutSide" },
-	{ kEventMouseWithin,		"mouseWithin" },
-
-	{ kEventTimeout,			"timeout" },			// D2 as when
-
-	{ kEventNone,				0 },
-};
-
 Symbol::Symbol() {
-	name = NULL;
 	type = VOID;
 	u.s = NULL;
 	nargs = 0;
@@ -85,15 +44,6 @@ Symbol::Symbol() {
 
 Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	g_lingo = this;
-
-	for (const EventHandlerType *t = &eventHandlerDescs[0]; t->handler != kEventNone; ++t) {
-		_eventHandlerTypeIds[t->name] = t->handler;
-		_eventHandlerTypes[t->handler] = t->name;
-	}
-
-	initBuiltIns();
-	initFuncs();
-	initTheEntities();
 
 	_currentScript = 0;
 	_currentScriptType = kMovieScript;
@@ -119,6 +69,12 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 
 	_localvars = NULL;
 
+	initEventHandlerTypes();
+
+	initBuiltIns();
+	initFuncs();
+	initTheEntities();
+
 	warning("Lingo Inited");
 }
 
@@ -136,17 +92,22 @@ const char *Lingo::findNextDefinition(const char *s) {
 			return NULL;
 
 		if (!strncmp(res, "macro ", 6)) {
-			debugC(3, kDebugLingoCompile, "See macro");
+			debugC(1, kDebugLingoCompile, "See macro");
+			return res;
+		}
+
+		if (!strncmp(res, "on ", 3)) {
+			debugC(1, kDebugLingoCompile, "See on");
 			return res;
 		}
 
 		if (!strncmp(res, "factory ", 8)) {
-			debugC(3, kDebugLingoCompile, "See factory");
+			debugC(1, kDebugLingoCompile, "See factory");
 			return res;
 		}
 
 		if (!strncmp(res, "method ", 7)) {
-			debugC(3, kDebugLingoCompile, "See method");
+			debugC(1, kDebugLingoCompile, "See method");
 			return res;
 		}
 
@@ -158,7 +119,7 @@ const char *Lingo::findNextDefinition(const char *s) {
 }
 
 void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
-	debugC(2, kDebugLingoCompile, "Add code \"%s\" for type %d with id %d", code, type, id);
+	debugC(1, kDebugLingoCompile, "Add code \"%s\" for type %s with id %d", code, scriptType2str(type), id);
 
 	if (_scripts[type].contains(id)) {
 		delete _scripts[type][id];
@@ -175,7 +136,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 	const char *begin, *end;
 
 	if (!strncmp(code, "menu:", 5)) {
-		debugC(2, kDebugLingoCompile, "Parsing menu");
+		debugC(1, kDebugLingoCompile, "Parsing menu");
 		parseMenu(code);
 
 		return;
@@ -195,12 +156,12 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 
 			if (chunk.hasPrefix("factory") || chunk.hasPrefix("method"))
 				_inFactory = true;
-			else if (chunk.hasPrefix("macro"))
+			else if (chunk.hasPrefix("macro") || chunk.hasPrefix("on"))
 				_inFactory = false;
 			else
 				_inFactory = false;
 
-			debugC(2, kDebugLingoCompile, "Code chunk:\n#####\n%s#####", chunk.c_str());
+			debugC(1, kDebugLingoCompile, "Code chunk:\n#####\n%s#####", chunk.c_str());
 
 			parse(chunk.c_str());
 
@@ -208,7 +169,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 				uint pc = 0;
 				while (pc < _currentScript->size()) {
 					Common::String instr = decodeInstruction(pc, &pc);
-					debugC(3, kDebugLingoCompile, "[%5d] %s", pc, instr.c_str());
+					debugC(2, kDebugLingoCompile, "[%5d] %s", pc, instr.c_str());
 				}
 			}
 
@@ -219,7 +180,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 
 		_hadError = true; // HACK: This is for preventing test execution
 
-		debugC(2, kDebugLingoCompile, "Code chunk:\n#####\n%s#####", begin);
+		debugC(1, kDebugLingoCompile, "Code chunk:\n#####\n%s#####", begin);
 		parse(begin);
 	} else {
 		parse(code);
@@ -236,7 +197,7 @@ void Lingo::addCode(const char *code, ScriptType type, uint16 id) {
 		uint pc = 0;
 		while (pc < _currentScript->size()) {
 			Common::String instr = decodeInstruction(pc, &pc);
-			debugC(3, kDebugLingoCompile, "[%5d] %s", pc, instr.c_str());
+			debugC(2, kDebugLingoCompile, "[%5d] %s", pc, instr.c_str());
 		}
 	}
 }
@@ -247,7 +208,7 @@ void Lingo::executeScript(ScriptType type, uint16 id) {
 		return;
 	}
 
-	debugC(2, kDebugLingoExec, "Executing script type: %d, id: %d", type, id);
+	debugC(1, kDebugLingoExec, "Executing script type: %s, id: %d", scriptType2str(type), id);
 
 	_currentScript = _scripts[type][id];
 	_pc = 0;
@@ -260,57 +221,15 @@ void Lingo::executeScript(ScriptType type, uint16 id) {
 	cleanLocalVars();
 }
 
-ScriptType Lingo::event2script(LEvent ev) {
-	if (_vm->getVersion() < 4) {
-		switch (ev) {
-		//case kEventStartMovie: // We are precompiling it now
-		//	return kMovieScript;
-		case kEventEnterFrame:
-			return kFrameScript;
-		default:
-			return kNoneScript;
-		}
-	}
-
-	return kNoneScript;
-}
-
-Symbol *Lingo::getHandler(Common::String &name) {
-	if (!_eventHandlerTypeIds.contains(name)) {
-		if (_builtins.contains(name))
-			return _builtins[name];
-
-		return NULL;
-	}
-
-	uint32 entityIndex = ENTITY_INDEX(_eventHandlerTypeIds[name], _currentEntityId);
-	if (!_handlers.contains(entityIndex))
-		return NULL;
-
-	return _handlers[entityIndex];
-}
-
-void Lingo::processEvent(LEvent event, ScriptType st, int entityId) {
-	if (entityId <= 0)
-		return;
-
-	_currentEntityId = entityId;
-
-	if (!_eventHandlerTypes.contains(event))
-		error("processEvent: Unknown event %d for entity %d", event, entityId);
-
-	if (_handlers.contains(ENTITY_INDEX(event, entityId))) {
-		call(_eventHandlerTypes[event], 0); //D4+ Events
-		pop();
-	} else if (_scripts[st].contains(entityId)) {
-		executeScript(st, entityId + 1); //D3 list of scripts.
-	} else {
-		debugC(8, kDebugLingoExec, "STUB: processEvent(%s) for %d", _eventHandlerTypes[event], entityId);
-	}
-}
-
 void Lingo::restartLingo() {
 	warning("STUB: restartLingo()");
+
+	for (int i = 0; i <= kMaxScriptType; i++) {
+		for (ScriptHash::iterator it = _scripts[i].begin(); it != _scripts[i].end(); ++it)
+			delete it->_value;
+
+		_scripts[i].clear();
+	}
 
 	// TODO
 	//
@@ -387,6 +306,7 @@ Common::String *Datum::toString() {
 		delete s;
 		s = u.s;
 		break;
+	case SYMBOL:
 	case OBJECT:
 		*s = Common::String::format("#%s", u.s->c_str());
 		break;
@@ -394,7 +314,10 @@ Common::String *Datum::toString() {
 		*s = "#void";
 		break;
 	case VAR:
-		*s = Common::String::format("var: #%s", u.sym->name);
+		*s = Common::String::format("var: #%s", u.sym->name.c_str());
+		break;
+	case REFERENCE:
+		*s = Common::String::format("field#%d", u.i);
 		break;
 	default:
 		warning("Incorrect operation toString() for type: %s", type2str());
@@ -426,54 +349,14 @@ const char *Datum::type2str(bool isk) {
 		return isk ? "#symbol" : "SYMBOL";
 	case OBJECT:
 		return isk ? "#object" : "OBJECT";
+	case REFERENCE:
+		return "REFERENCE";
 	case VAR:
 		return isk ? "#var" : "VAR";
 	default:
 		snprintf(res, 20, "-- (%d) --", type);
 		return res;
 	}
-}
-
-// This is table for built-in Macintosh font lowercasing.
-// '.' means that the symbol should be not changed, rest
-// of the symbols are stripping the diacritics
-// The table starts from 0x80
-//
-// TODO: Check it for correctness.
-static char lowerCaseConvert[] =
-"aacenoua" // 80
-"aaaaacee" // 88
-"eeiiiino" // 90
-"oooouuuu" // 98
-"........" // a0
-".......o" // a8
-"........" // b0
-".......o" // b8
-"........" // c0
-".. aao.." // c8
-"--.....y";// d0-d8
-
-Common::String *Lingo::toLowercaseMac(Common::String *s) {
-	Common::String *res = new Common::String;
-	const unsigned char *p = (const unsigned char *)s->c_str();
-
-	while (*p) {
-		if (*p >= 0x80 && *p <= 0xd8) {
-			if (lowerCaseConvert[*p - 0x80] != '.')
-				*res += lowerCaseConvert[*p - 0x80];
-			else
-				*res += *p;
-		} else if (*p < 0x80) {
-			*res += tolower(*p);
-		} else {
-			warning("Unacceptable symbol in toLowercaseMac: %c", *p);
-
-			*res += *p;
-		}
-		p++;
-	}
-
-	return res;
 }
 
 void Lingo::parseMenu(const char *code) {
@@ -518,6 +401,14 @@ void Lingo::runTests() {
 		}
 
 		inFile.close();
+	}
+}
+
+void Lingo::executeImmediateScripts(Frame *frame) {
+	for (uint16 i = 0; i < CHANNEL_COUNT; i++) {
+		if (_vm->getCurrentScore()->_immediateActions.contains(frame->_sprites[i]->_scriptId)) {
+			g_lingo->processEvent(kEventMouseUp, kFrameScript, frame->_sprites[i]->_scriptId);
+		}
 	}
 }
 

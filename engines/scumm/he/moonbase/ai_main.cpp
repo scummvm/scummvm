@@ -2811,9 +2811,9 @@ int AI::simulateBuildingLaunch(int x, int y, int power, int angle, int numSteps,
 		numSteps = 1;
 
 	if (!sXSpeed && !sYSpeed) {
-		sZSpeed = (static_cast<int>(.70711 * power)) ;
-		sXSpeed = (static_cast<int>(cos(degToRad(angle)) * sZSpeed)) ;
-		sYSpeed = (static_cast<int>(sin(degToRad(angle)) * sZSpeed)) ;
+		sZSpeed = (static_cast<int>(.70711 * power));
+		sXSpeed = (static_cast<int>(cos(degToRad(angle)) * sZSpeed));
+		sYSpeed = (static_cast<int>(sin(degToRad(angle)) * sZSpeed));
 
 		sZSpeed *= SCALE_Z;
 
@@ -2959,9 +2959,9 @@ int AI::simulateWeaponLaunch(int x, int y, int power, int angle, int numSteps) {
 	if (!numSteps) numSteps = 1;
 
 	if (!sXSpeed && !sYSpeed) {
-		sZSpeed = (static_cast<int>(.70711 * power)) ;
-		sXSpeed = (static_cast<int>(cos(degToRad(angle)) * sZSpeed)) ;
-		sYSpeed = (static_cast<int>(sin(degToRad(angle)) * sZSpeed)) ;
+		sZSpeed = (static_cast<int>(.70711 * power));
+		sXSpeed = (static_cast<int>(cos(degToRad(angle)) * sZSpeed));
+		sYSpeed = (static_cast<int>(sin(degToRad(angle)) * sZSpeed));
 
 		sZSpeed *= SCALE_Z;
 

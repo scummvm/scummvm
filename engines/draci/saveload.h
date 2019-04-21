@@ -42,7 +42,7 @@ struct DraciSavegameHeader {
 
 class DraciEngine;
 
-bool readSavegameHeader(Common::InSaveFile *in, DraciSavegameHeader &header);
+WARN_UNUSED_RESULT bool readSavegameHeader(Common::InSaveFile *in, DraciSavegameHeader &header, bool skipThumbnail = true);
 void writeSavegameHeader(Common::OutSaveFile *out, const DraciSavegameHeader &header);
 Common::Error saveSavegameData(int saveGameIdx, const Common::String &saveName, DraciEngine &vm);
 Common::Error loadSavegameData(int saveGameIdx, DraciEngine *vm);

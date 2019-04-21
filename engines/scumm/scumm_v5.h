@@ -66,7 +66,7 @@ protected:
 	virtual void resetScummVars();
 	virtual void decodeParseString();
 
-	virtual void saveOrLoad(Serializer *s);
+	virtual void saveLoadWithSerializer(Common::Serializer &s);
 
 	virtual void readMAXS(int blockSize);
 

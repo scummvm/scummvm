@@ -54,7 +54,7 @@ Screen::Screen(VoyeurEngine *vm) : Graphics::Screen(), _vm(vm), _drawPtr(&_defau
 }
 
 void Screen::sInitGraphics() {
-	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT, false);
+	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 	create(SCREEN_WIDTH, SCREEN_HEIGHT);
 	clearPalette();
 }
@@ -910,10 +910,13 @@ void Screen::flipPage() {
 	bool flipFlag = false;
 
 	for (uint idx = 0; idx < viewPorts.size(); ++idx) {
-		if ((viewPorts[idx]->_flags & (DISPFLAG_20 | DISPFLAG_8 | DISPFLAG_1)) == (DISPFLAG_20 | DISPFLAG_8 | DISPFLAG_1)) {
-			if (_planeSelect == idx)
-				sDisplayPic(viewPorts[idx]->_currentPic);
-			flipFlag = true;
+		if (viewPorts[idx]->_flags & DISPFLAG_20) {
+			flipFlag = false;
+			if ((viewPorts[idx]->_flags & DISPFLAG_8) && (viewPorts[idx]->_flags & DISPFLAG_1)) {
+				if (_planeSelect == idx)
+					sDisplayPic(viewPorts[idx]->_currentPic);
+				flipFlag = true;
+			}
 		}
 
 		if (flipFlag) {

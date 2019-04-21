@@ -172,7 +172,7 @@ class IFFParser {
 		IFF_ID id;
 		uint32 size;
 
-		IFFChunkNav() : _input(0) {
+		IFFChunkNav() : _input(nullptr) {
 		}
 		void setInputStream(ReadStream *input) {
 			_input = input;

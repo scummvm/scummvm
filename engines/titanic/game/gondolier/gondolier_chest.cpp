@@ -41,13 +41,13 @@ void CGondolierChest::load(SimpleFile *file) {
 }
 
 bool CGondolierChest::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	if (!_v1)
+	if (!_chestOpen)
 		playMovie(0, 14, MOVIE_NOTIFY_OBJECT);
 	else if (msg->_mousePos.y < 330)
 		return false;
-	else if (!_v8 && !_v5) {
+	else if (!_leftSliderHooked && !_rightSliderHooked) {
 		playMovie(14, 29, 0);
-		_v1 = 0;
+		_chestOpen = false;
 	}
 
 	return true;
@@ -55,7 +55,7 @@ bool CGondolierChest::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 
 bool CGondolierChest::MovieEndMsg(CMovieEndMsg *msg) {
 	if (msg->_endFrame == 14)
-		_v1 = 1;
+		_chestOpen = true;
 	return true;
 }
 

@@ -12,6 +12,7 @@ MODULE_OBJS := \
 	engine/features.o \
 	engine/file.o \
 	engine/gc.o \
+	engine/guest_additions.o \
 	engine/kernel.o \
 	engine/kevent.o \
 	engine/kfile.o \
@@ -76,6 +77,7 @@ MODULE_OBJS := \
 	sound/drivers/fmtowns.o \
 	sound/drivers/midi.o \
 	sound/drivers/pcjr.o \
+	sound/drivers/pc9801.o \
 	video/seq_decoder.o
 
 

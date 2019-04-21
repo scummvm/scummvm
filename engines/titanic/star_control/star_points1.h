@@ -23,17 +23,21 @@
 #ifndef TITANIC_STAR_POINTS1_H
 #define TITANIC_STAR_POINTS1_H
 
-#include "common/array.h"
-#include "titanic/star_control/surface_area.h"
 #include "titanic/star_control/fvector.h"
+#include "common/array.h"
 
 namespace Titanic {
 
-class CStarControlSub12;
+class CStarCamera;
+class CSurfaceArea;
 
 class CStarPoints1 {
+	struct CStarPointEntry : public FVector {
+		bool _flag;
+		CStarPointEntry() : FVector(), _flag(false) {}
+	};
 private:
-	Common::Array<FVector> _data;
+	Common::Array<CStarPointEntry> _data;
 public:
 	CStarPoints1();
 
@@ -45,7 +49,7 @@ public:
 	/**
 	 * Draw the starfield points
 	 */
-	void draw(CSurfaceArea *surface, CStarControlSub12 *img);
+	void draw(CSurfaceArea *surface, CStarCamera *camera);
 };
 
 } // End of namespace Titanic

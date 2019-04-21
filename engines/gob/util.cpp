@@ -37,7 +37,7 @@
 namespace Gob {
 
 Util::Util(GobEngine *vm) : _vm(vm) {
-	_mouseButtons   = kMouseButtonsNone,
+	_mouseButtons   = kMouseButtonsNone;
 	_keyBufferHead  = 0;
 	_keyBufferTail  = 0;
 	_fastMode       = 0;
@@ -496,7 +496,7 @@ void Util::setScrollOffset(int16 x, int16 y) {
 void Util::insertStr(const char *str1, char *str2, int16 pos) {
 	int len1 = strlen(str1);
 	int len2 = strlen(str2);
-	int from = MIN((int) pos, len2);
+	int from = MIN((int)pos, len2);
 
 	for (int i = len2; i >= from; i--)
 		str2[len1 + i] = str2[i];

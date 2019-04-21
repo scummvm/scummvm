@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/sgt/chest_of_drawers.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -46,8 +47,8 @@ bool CChestOfDrawers::TurnOn(CTurnOn *msg) {
 		_statics->_chestOfDrawers = "Open";
 		_startFrame = 1;
 		_endFrame = 14;
-		playMovie(1, 14, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-		playSound("b#11.wav");
+		playMovie(1, 14, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+		playSound(TRANSLATE("b#11.wav", "b#96.wav"));
 	}
 
 	return true;
@@ -55,15 +56,15 @@ bool CChestOfDrawers::TurnOn(CTurnOn *msg) {
 
 bool CChestOfDrawers::TurnOff(CTurnOff *msg) {
 	if (_statics->_chestOfDrawers == "Open" && _statics->_drawer == "Closed") {
-		CVisibleMsg visibleMsg;
+		CVisibleMsg visibleMsg(false);
 		visibleMsg.execute("Drawer");
 		_statics->_chestOfDrawers = "Closed";
 		_isClosed = true;
 
 		_startFrame = 14;
 		_endFrame = 27;
-		playMovie(14, 27, MOVIE_NOTIFY_OBJECT | MOVIE_GAMESTATE);
-		playSound("b#11.wav");
+		playMovie(14, 27, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+		playSound(TRANSLATE("b#11.wav", "b#96.wav"));
 	}
 
 	return true;

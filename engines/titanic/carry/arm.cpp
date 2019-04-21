@@ -22,6 +22,7 @@
 
 #include "titanic/carry/arm.h"
 #include "titanic/messages/messages.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -35,55 +36,41 @@ BEGIN_MESSAGE_MAP(CArm, CCarry)
 	ON_MESSAGE(MouseDragMoveMsg)
 END_MESSAGE_MAP()
 
-CArm::CArm() : CCarry(), _string6("Key"),
-	_field138(0), _field158(0), _field16C(3), _field170(0),
+CArm::CArm() : CCarry(), _heldItemName("Key"),
+	_puzzleUnused(0), _armUnlocked(false), _arboretumFrame(3), _unlockedFrame(0),
 	_armRect(220, 208, 409, 350) {
 }
 
 void CArm::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string6, indent);
-	file->writeNumberLine(_field138, indent);
-	file->writeNumberLine(_hookedRect.left, indent);
-	file->writeNumberLine(_hookedRect.top, indent);
-	file->writeNumberLine(_hookedRect.right, indent);
-	file->writeNumberLine(_hookedRect.bottom, indent);
-
-	file->writeQuotedLine(_string7, indent);
-	file->writeNumberLine(_field158, indent);
-	file->writeNumberLine(_armRect.left, indent);
-	file->writeNumberLine(_armRect.top, indent);
-	file->writeNumberLine(_armRect.right, indent);
-	file->writeNumberLine(_armRect.bottom, indent);
-	file->writeNumberLine(_field16C, indent);
-	file->writeNumberLine(_field170, indent);
+	file->writeQuotedLine(_heldItemName, indent);
+	file->writeNumberLine(_puzzleUnused, indent);
+	file->writeRect(_hookedRect, indent);
+	file->writeQuotedLine(_hookedTarget, indent);
+	file->writeNumberLine(_armUnlocked, indent);
+	file->writeRect(_armRect, indent);
+	file->writeNumberLine(_arboretumFrame, indent);
+	file->writeNumberLine(_unlockedFrame, indent);
 
 	CCarry::save(file, indent);
 }
 
 void CArm::load(SimpleFile *file) {
 	file->readNumber();
-	_string6 = file->readString();
-	_field138 = file->readNumber();
-	_hookedRect.left = file->readNumber();
-	_hookedRect.top = file->readNumber();
-	_hookedRect.right = file->readNumber();
-	_hookedRect.bottom = file->readNumber();
-
-	_string7 = file->readString();
-	_field158 = file->readNumber();
-	_armRect.left = file->readNumber();
-	_armRect.top = file->readNumber();
-	_armRect.right = file->readNumber();
-	_armRect.bottom = file->readNumber();
-	_field16C = file->readNumber();
-	_field170 = file->readNumber();
+	_heldItemName = file->readString();
+	_puzzleUnused = file->readNumber();
+	_hookedRect = file->readRect();
+	_hookedTarget = file->readString();
+	_armUnlocked = file->readNumber();
+	_armRect = file->readRect();
+	_arboretumFrame = file->readNumber();
+	_unlockedFrame = file->readNumber();
 
 	CCarry::load(file);
 }
 
 bool CArm::PuzzleSolvedMsg(CPuzzleSolvedMsg *msg) {
-	_field138 = 0;
+	_puzzleUnused = 0;
 	_canTake = true;
 
 	CString name = getName();
@@ -101,13 +88,13 @@ bool CArm::PuzzleSolvedMsg(CPuzzleSolvedMsg *msg) {
 }
 
 bool CArm::TranslateObjectMsg(CTranslateObjectMsg *msg) {
-	Point newPos(_bounds.left - msg->_delta.x, _bounds.top - msg->_delta.y);
+	Point newPos(_bounds.left + msg->_delta.x, _bounds.top + msg->_delta.y);
 	setPosition(newPos);
 	return true;
 }
 
 bool CArm::UseWithOtherMsg(CUseWithOtherMsg *msg) {
-	if (_string6 != "None") {
+	if (_heldItemName != "None") {
 		CShowTextMsg textMsg(ARM_ALREADY_HOLDING);
 		textMsg.execute("PET");
 		return false;
@@ -116,8 +103,8 @@ bool CArm::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 		hookedMsg._rect.translate(_bounds.left, _bounds.top);
 		hookedMsg.execute("GondolierLeftLever");
 
-		if (hookedMsg._result) {
-			_string7 = "GondolierLeftLever";
+		if (hookedMsg._isHooked) {
+			_hookedTarget = "GondolierLeftLever";
 		} else {
 			petAddToInventory();
 		}
@@ -126,11 +113,13 @@ bool CArm::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 		hookedMsg._rect.translate(_bounds.left, _bounds.top);
 		hookedMsg.execute("GondolierRightLever");
 
-		if (hookedMsg._result) {
-			_string7 = "GondolierRightLever";
+		if (hookedMsg._isHooked) {
+			_hookedTarget = "GondolierRightLever";
 		} else {
 			petAddToInventory();
 		}
+	} else {
+		petAddToInventory();
 	}
 
 	return true;
@@ -142,13 +131,13 @@ bool CArm::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 		textMsg.execute("PET");
 	} else if (checkStartDragging(msg)) {
 		hideMouse();
-		_tempPos = msg->_mousePos - _bounds;
-		setPosition(msg->_mousePos - _tempPos);
+		_centroid = msg->_mousePos - _bounds;
+		setPosition(msg->_mousePos - _centroid);
 
-		if (!_string7.empty()) {
+		if (!_hookedTarget.empty()) {
 			CActMsg actMsg("Unhook");
-			actMsg.execute(_string7);
-			_string7.clear();
+			actMsg.execute(_hookedTarget);
+			_hookedTarget.clear();
 		}
 
 		loadFrame(_visibleFrame);
@@ -161,39 +150,39 @@ bool CArm::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 bool CArm::MaitreDHappyMsg(CMaitreDHappyMsg *msg) {
 	CGameObject *petItem;
 	if (find(getName(), &petItem, FIND_PET)) {
-		if (!_field158)
-			playSound("z#47.wav");
-		if (_string6 == "Key" || _string6 == "AuditoryCentre") {
-			CGameObject *child = dynamic_cast<CGameObject *>(getFirstChild());
-			if (child) {
-				child->setVisible(true);
-				petAddToInventory();
+		if (!_armUnlocked)
+			playSound(TRANSLATE("z#47.wav", "z#578.wav"));
+		if (_heldItemName == "Key" || _heldItemName == "AuditoryCentre") {
+			CGameObject *heldItem = dynamic_cast<CGameObject *>(getFirstChild());
+			if (heldItem) {
+				heldItem->setVisible(true);
+				heldItem->petAddToInventory();
 			}
 
-			_visibleFrame = _field170;
+			_visibleFrame = _unlockedFrame;
 			loadFrame(_visibleFrame);
-			_string6 = "None";
+			_heldItemName = "None";
 			petInvChange();
 		}
 	}
 
-	_field158 = 1;
+	_armUnlocked = true;
 	_canTake = true;
 	return true;
 }
 
 bool CArm::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
-	if (_field158) {
-		if (_string6 == "Key" || _string6 == "AuditoryCentre") {
+	if (_armUnlocked) {
+		if (_heldItemName == "Key" || _heldItemName == "AuditoryCentre") {
 			CCarry *child = dynamic_cast<CCarry *>(getFirstChild());
 			if (child) {
-				_visibleFrame = _field170;
+				_visibleFrame = _unlockedFrame;
 				loadFrame(_visibleFrame);
 				child->setVisible(true);
 				child->petAddToInventory();
 			}
 
-			_string6 = "None";
+			_heldItemName = "None";
 		}
 	}
 
@@ -201,11 +190,11 @@ bool CArm::PETGainedObjectMsg(CPETGainedObjectMsg *msg) {
 }
 
 bool CArm::MouseDragMoveMsg(CMouseDragMoveMsg *msg) {
-	setPosition(msg->_mousePos - _tempPos);
+	setPosition(msg->_mousePos - _centroid);
 
-	if (_string6 != "None" && compareViewNameTo("FrozenArboretum.Node 5.S")) {
+	if (_heldItemName == "None" && compareViewNameTo("FrozenArboretum.Node 5.S")) {
 		loadFrame(_armRect.contains(msg->_mousePos) ?
-			_field16C : _visibleFrame);
+			_arboretumFrame : _visibleFrame);
 	}
 
 	return true;

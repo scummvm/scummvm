@@ -20,10 +20,11 @@
  *
  */
 
-#include "common/file.h"
-#include "titanic/titanic.h"
-#include "titanic/support/simple_file.h"
 #include "titanic/core/resource_key.h"
+#include "titanic/support/files_manager.h"
+#include "titanic/support/simple_file.h"
+#include "titanic/titanic.h"
+#include "common/file.h"
 
 namespace Titanic {
 
@@ -58,7 +59,7 @@ void CResourceKey::setValue(const CString &name) {
 		_value = _value.mid(idx + 1);
 }
 
-CString CResourceKey::exists() const {
+CString CResourceKey::getFilename() const {
 	CString name = _key;
 
 	// Check for a resource being specified within an ST container
@@ -68,10 +69,9 @@ CString CResourceKey::exists() const {
 		name += ".st";
 	}
 
-	// The original did tests for the file in the different
-	// asset paths, which aren't needed in ScummVM
-	Common::File f;
-	return f.exists(name) ? name : CString();
+	// The original did tests for the file in the different asset paths,
+	// which aren't needed in ScummVM, so just return full name
+	return name;
 }
 
 bool CResourceKey::scanForFile() const {

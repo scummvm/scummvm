@@ -23,13 +23,12 @@
 #ifndef MOHAWK_SOUND_H
 #define MOHAWK_SOUND_H
 
+#include "common/array.h"
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "common/stream.h"
 
 #include "audio/mixer.h"
-
-#include "mohawk/mohawk.h"
-#include "mohawk/resource.h"
 
 class MidiDriver;
 class MidiParser;
@@ -103,44 +102,25 @@ class MohawkEngine;
 
 class Sound {
 public:
-	Sound(MohawkEngine *vm);
+	explicit Sound(MohawkEngine *vm);
 	~Sound();
 
 	// Generic sound functions
 	Audio::SoundHandle *playSound(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume, bool loop = false, CueList *cueList = NULL);
-	void playSoundBlocking(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume);
-	void playMidi(uint16 id);
-	void stopMidi();
 	void stopSound();
 	void stopSound(uint16 id);
 	bool isPlaying(uint16 id);
 	bool isPlaying();
 	uint getNumSamplesPlayed(uint16 id);
 
-	// Myst-specific sound functions
-	Audio::SoundHandle *replaceSoundMyst(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume, bool loop = false);
-	void replaceBackgroundMyst(uint16 id, uint16 volume = 0xFFFF);
-	void pauseBackgroundMyst();
-	void resumeBackgroundMyst();
-	void stopBackgroundMyst();
-	void changeBackgroundVolumeMyst(uint16 vol);
-
 private:
 	MohawkEngine *_vm;
-	MidiDriver *_midiDriver;
-	MidiParser *_midiParser;
-	byte *_midiData;
 
 	static Audio::RewindableAudioStream *makeLivingBooksWaveStream_v1(Common::SeekableReadStream *stream);
-	void initMidi();
 
 	Common::Array<SndHandle> _handles;
 	SndHandle *getHandle();
-	Audio::RewindableAudioStream *makeAudioStream(uint16 id, CueList *cueList = NULL);
-	uint16 convertMystID(uint16 id);
-
-	// Myst-specific
-	SndHandle _mystBackgroundSound;
+	Audio::RewindableAudioStream *makeAudioStream(uint16 id, CueList *cueList = nullptr);
 };
 
 } // End of namespace Mohawk

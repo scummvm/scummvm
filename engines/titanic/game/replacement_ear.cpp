@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/replacement_ear.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -40,8 +41,8 @@ void CReplacementEar::load(SimpleFile *file) {
 
 bool CReplacementEar::VisibleMsg(CVisibleMsg *msg) {
 	setVisible(true);
-	playMovie(MOVIE_GAMESTATE);
-	playSound("z#64.wav");
+	playMovie(MOVIE_WAIT_FOR_FINISH);
+	playSound(TRANSLATE("z#64.wav", "z#595.wav"));
 	return true;
 }
 

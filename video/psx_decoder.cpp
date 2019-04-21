@@ -27,7 +27,6 @@
 #include "audio/decoders/raw.h"
 #include "common/bitstream.h"
 #include "common/huffman.h"
-#include "common/memstream.h"
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -232,7 +231,7 @@ void PSXStreamDecoder::readNextPacket() {
 
 				if (curSector == sectorCount - 1) {
 					// Done assembling the frame
-					Common::SeekableReadStream *frame = new Common::MemoryReadStream(partialFrame, frameSize, DisposeAfterUse::YES);
+					Common::BitStreamMemoryStream *frame = new Common::BitStreamMemoryStream(partialFrame, frameSize, DisposeAfterUse::YES);
 
 					_videoTrack->decodeFrame(frame, sectorsRead);
 
@@ -247,7 +246,7 @@ void PSXStreamDecoder::readNextPacket() {
 			// We only handle one audio channel so far
 			if (track == 1) {
 				if (!_audioTrack) {
-					_audioTrack = new PSXAudioTrack(sector);
+					_audioTrack = new PSXAudioTrack(sector, getSoundType());
 					addTrack(_audioTrack);
 				}
 
@@ -308,7 +307,8 @@ static const int s_xaTable[5][2] = {
    { 122, -60 }
 };
 
-PSXStreamDecoder::PSXAudioTrack::PSXAudioTrack(Common::SeekableReadStream *sector) {
+PSXStreamDecoder::PSXAudioTrack::PSXAudioTrack(Common::SeekableReadStream *sector, Audio::Mixer::SoundType soundType) :
+		AudioTrack(soundType) {
 	assert(sector);
 	_endOfTrack = false;
 
@@ -438,9 +438,9 @@ PSXStreamDecoder::PSXVideoTrack::PSXVideoTrack(Common::SeekableReadStream *first
 
 	_endOfTrack = false;
 	_curFrame = -1;
-	_acHuffman = new Common::Huffman(0, AC_CODE_COUNT, s_huffmanACCodes, s_huffmanACLengths, s_huffmanACSymbols);
-	_dcHuffmanChroma = new Common::Huffman(0, DC_CODE_COUNT, s_huffmanDCChromaCodes, s_huffmanDCChromaLengths, s_huffmanDCSymbols);
-	_dcHuffmanLuma = new Common::Huffman(0, DC_CODE_COUNT, s_huffmanDCLumaCodes, s_huffmanDCLumaLengths, s_huffmanDCSymbols);
+	_acHuffman = new HuffmanDecoder(0, AC_CODE_COUNT, s_huffmanACCodes, s_huffmanACLengths, s_huffmanACSymbols);
+	_dcHuffmanChroma = new HuffmanDecoder(0, DC_CODE_COUNT, s_huffmanDCChromaCodes, s_huffmanDCChromaLengths, s_huffmanDCSymbols);
+	_dcHuffmanLuma = new HuffmanDecoder(0, DC_CODE_COUNT, s_huffmanDCLumaCodes, s_huffmanDCLumaLengths, s_huffmanDCSymbols);
 }
 
 PSXStreamDecoder::PSXVideoTrack::~PSXVideoTrack() {
@@ -463,10 +463,10 @@ const Graphics::Surface *PSXStreamDecoder::PSXVideoTrack::decodeNextFrame() {
 	return _surface;
 }
 
-void PSXStreamDecoder::PSXVideoTrack::decodeFrame(Common::SeekableReadStream *frame, uint sectorCount) {
+void PSXStreamDecoder::PSXVideoTrack::decodeFrame(Common::BitStreamMemoryStream *frame, uint sectorCount) {
 	// A frame is essentially an MPEG-1 intra frame
 
-	Common::BitStream16LEMSB bits(frame);
+	Common::BitStreamMemory16LEMSB bits(frame);
 
 	bits.skip(16); // unknown
 	bits.skip(16); // 0x3800
@@ -498,7 +498,7 @@ void PSXStreamDecoder::PSXVideoTrack::decodeFrame(Common::SeekableReadStream *fr
 	_nextFrameStartTime = _nextFrameStartTime.addFrames(sectorCount);
 }
 
-void PSXStreamDecoder::PSXVideoTrack::decodeMacroBlock(Common::BitStream *bits, int mbX, int mbY, uint16 scale, uint16 version) {
+void PSXStreamDecoder::PSXVideoTrack::decodeMacroBlock(Common::BitStreamMemory16LEMSB *bits, int mbX, int mbY, uint16 scale, uint16 version) {
 	int pitchY = _macroBlocksW * 16;
 	int pitchC = _macroBlocksW * 8;
 
@@ -545,14 +545,14 @@ void PSXStreamDecoder::PSXVideoTrack::dequantizeBlock(int *coefficients, float *
 	}
 }
 
-int PSXStreamDecoder::PSXVideoTrack::readDC(Common::BitStream *bits, uint16 version, PlaneType plane) {
+int PSXStreamDecoder::PSXVideoTrack::readDC(Common::BitStreamMemory16LEMSB *bits, uint16 version, PlaneType plane) {
 	// Version 2 just has its coefficient as 10-bits
 	if (version == 2)
 		return readSignedCoefficient(bits);
 
 	// Version 3 has it stored as huffman codes as a difference from the previous DC value
 
-	Common::Huffman *huffman = (plane == kPlaneY) ? _dcHuffmanLuma : _dcHuffmanChroma;
+	HuffmanDecoder *huffman = (plane == kPlaneY) ? _dcHuffmanLuma : _dcHuffmanChroma;
 
 	uint32 symbol = huffman->getSymbol(*bits);
 	int dc = 0;
@@ -575,7 +575,7 @@ int PSXStreamDecoder::PSXVideoTrack::readDC(Common::BitStream *bits, uint16 vers
 	if (count > 63) \
 		error("PSXStreamDecoder::readAC(): Too many coefficients")
 
-void PSXStreamDecoder::PSXVideoTrack::readAC(Common::BitStream *bits, int *block) {
+void PSXStreamDecoder::PSXVideoTrack::readAC(Common::BitStreamMemory16LEMSB *bits, int *block) {
 	// Clear the block first
 	for (int i = 0; i < 63; i++)
 		block[i] = 0;
@@ -610,7 +610,7 @@ void PSXStreamDecoder::PSXVideoTrack::readAC(Common::BitStream *bits, int *block
 	}
 }
 
-int PSXStreamDecoder::PSXVideoTrack::readSignedCoefficient(Common::BitStream *bits) {
+int PSXStreamDecoder::PSXVideoTrack::readSignedCoefficient(Common::BitStreamMemory16LEMSB *bits) {
 	uint val = bits->getBits(10);
 
 	// extend the sign
@@ -671,7 +671,7 @@ void PSXStreamDecoder::PSXVideoTrack::idct(float *dequantData, float *result) {
 	}
 }
 
-void PSXStreamDecoder::PSXVideoTrack::decodeBlock(Common::BitStream *bits, byte *block, int pitch, uint16 scale, uint16 version, PlaneType plane) {
+void PSXStreamDecoder::PSXVideoTrack::decodeBlock(Common::BitStreamMemory16LEMSB *bits, byte *block, int pitch, uint16 scale, uint16 version, PlaneType plane) {
 	// Version 2 just has signed 10 bits for DC
 	// Version 3 has them huffman coded
 	int coefficients[8 * 8];

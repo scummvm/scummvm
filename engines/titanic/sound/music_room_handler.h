@@ -23,7 +23,9 @@
 #ifndef TITANIC_MUSIC_ROOM_HANDLER_H
 #define TITANIC_MUSIC_ROOM_HANDLER_H
 
-#include "titanic/sound/music_wave.h"
+#include "titanic/sound/audio_buffer.h"
+#include "titanic/sound/music_room_instrument.h"
+#include "titanic/sound/music_song.h"
 #include "titanic/sound/wave_file.h"
 
 namespace Titanic {
@@ -44,49 +46,82 @@ struct MusicRoomInstrument {
 };
 
 class CMusicRoomHandler {
-	struct Array5Entry {
-		int _v1;
-		int _v2;
-		Array5Entry() : _v1(0), _v2(0) {}
-	};
 private:
 	CProjectItem *_project;
 	CSoundManager *_soundManager;
-	CMusicWave *_musicWaves[4];
+	CMusicRoomInstrument *_instruments[4];
 	MusicRoomInstrument _array1[4];
 	MusicRoomInstrument _array2[4];
-	Array5Entry _array5[4];
-	bool _stopWaves;
+	CMusicSong *_songs[4];
+	int _startPos[4];
+	int _position[4];
+	double _animExpiryTime[4];
+
+	bool _active;
 	CWaveFile *_waveFile;
 	int _soundHandle;
-	int _soundVolume;
-	int _field108;
+	int _instrumentsActive;
+	CAudioBuffer *_audioBuffer;
+	bool _isPlaying;
+	uint _soundStartTicks;
+	uint _startTicks;
+	int _volume;
+private:
+	/**
+	 * Starts music room instruments animation
+	 */
+	void start();
+
+	/**
+	 * Handles updating the raw audio being played for all the instruments
+	 */
+	void updateAudio();
+
+	/**
+	 * Handles updating the instruments themselves, and keeping them animating
+	 */
+	void updateInstruments();
+
+	/**
+	 * Polls a specified instrument for any updates to see if it's still active.
+	 * @returns Returns true if a given instrument is still active..
+	 * that is, that there is still more data that can be read from it to play
+	 */
+	bool pollInstrument(MusicInstrument instrument);
+
+	/**
+	 * Gets the duration for a given fragment of an instrument to play
+	 * out, so that animations of the instruments can be synchronized
+	 * to the actual music
+	 */
+	double getAnimDuration(MusicInstrument instrument, int arrIndex);
+
+	/**
+	 * Figures out a pitch value (of some sort) for use in determining
+	 * which wave file the music instruments will use.
+	 */
+	int getPitch(MusicInstrument instrument, int arrIndex);
 public:
 	CMusicRoomHandler(CProjectItem *project, CSoundManager *soundManager);
 	~CMusicRoomHandler();
 
 	/**
-	 * Creates a new music wave class instance, and assigns it to a slot
-	 * in the music handler
-	 * @param instrument	Which instrument instance is for
-	 * @param count			Number of files the new instance will contain
+	 * Creates a new music room instrument class to handle the operation of one
+	 * of the instruments in the music room.
+	 * @param instrument	Which instrument to create for
+	 * @param count			Number of Wave files the new instance will contain
 	 */
-	CMusicWave *createMusicWave(MusicInstrument instrument, int count);
-
-	void createWaveFile(int musicVolume);
+	CMusicRoomInstrument *createInstrument(MusicInstrument instrument, int count);
 
 	/**
-	 * Handles regular polling the music handler
+	 * Main setup for the music room handler
 	 */
-	bool poll();
-
-	bool isBusy();
+	void setup(int volume);
 
 	/**
-	 * Flags whether the loaded music waves will be stopped when the
-	 * music handler is stopped
+	 * Flags whether the music handler is active
 	 */
-	void setStopWaves(bool flag) { _stopWaves = flag; }
+	void setActive(bool flag) { _active = flag; }
 
 	/**
 	 * Stop playing the music
@@ -142,6 +177,12 @@ public:
 	 * Sets the mute control value
 	 */
 	void setMuteControl(MusicInstrument instrument, bool value);
+
+	/**
+	 * Handles regular updates
+	 * @returns		True if the music is still playing
+	 */
+	bool update();
 };
 
 } // End of namespace Titanic

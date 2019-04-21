@@ -44,6 +44,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"CD1.HPF", 0, "8c86db47304033fcff32c69fddd5a920", 525522944},  // 1997-02-10 17:04:40
 			{"CD2.HPF", 0, "58aa26e782d10ec5d2231e539d2fe6a2", 669581312},  // 1997-02-10 16:19:30
 			{"CD3.HPF", 0, "00554fbf78a2ad391d98578fbbbe1c48", 641128448},  // 1997-02-10 15:44:09
+			AD_LISTEND
 		},
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
@@ -62,6 +63,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"CD1.HPF", 0, "8c86db47304033fcff32c69fddd5a920", 525522944},  // 1997-04-10 11:03:36
 			{"CD2.HPF", 0, "2672348691e1ae22d37d9f46f3683a07", 669509632},  // 1997-04-11 09:48:33
 			{"CD3.HPF", 0, "33f5e35f51063cb90f6bed9974475aa6", 641056768},  // 1997-04-11 09:48:55
+			AD_LISTEND
 		},
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
@@ -80,6 +82,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"CD1.HPF", 0, "8c86db47304033fcff32c69fddd5a920", 525522944},
 			{"CD2.HPF", 0, "58aa26e782d10ec5d2231e539d2fe6a2", 669581312},
 			{"CD3.HPF", 0, "00554fbf78a2ad391d98578fbbbe1c48", 641128448},
+			AD_LISTEND
 		},
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
@@ -95,6 +98,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"Demo",
 		{
 			{"Demo.HPF",  0, "baf3b1f64155d34872896e61c3d3cb78", 58191872},  // 1997-08-14 14:44:26
+			AD_LISTEND
 		},
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
@@ -113,6 +117,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"CD1.HPF", 0, "b4277b22bc5cd6ad3b00c2ec04d4645d", 522924032},  // 1997-04-03 07:53:14
 			{"CD2.HPF", 0, "8c9610aa4cb707ab51f61c30feb22c1a", 665710592},  // 1997-04-09 12:04:30
 			{"CD3.HPF", 0, "411c1bab57b3e8da4fb359c5b40ef5d7", 640884736},  // 1997-04-03 08:21:47
+			AD_LISTEND
 		},
 		Common::FR_FRA,
 		Common::kPlatformUnknown,
@@ -131,6 +136,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"CD1.HPF", 0, "6d74cc861d172466bc745ff8bf0e59c5", 522971136},  // 1997-04-08 13:05:56
 			{"CD2.HPF", 0, "b71ac9391de415807c74ff078f4fab22", 655702016},  // 1997-04-08 15:26:14
 			{"CD3.HPF", 0, "ee55d4310546dd2a38560b096d1c2771", 641144832},  // 1997-04-05 18:35:50
+			AD_LISTEND
 		},
 		Common::DE_DEU,
 		Common::kPlatformUnknown,
@@ -149,6 +155,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"CD1.HPF", 0, "367a3a8581f6f88ddc51af7cde105ba9", 519927808},  // 1997-09-28 19:30:38
 			{"CD2.HPF", 0, "af5566df3000472852ec182c9ec57797", 662210560},  // 1997-10-03 05:36:20
 			{"CD3.HPF", 0, "0d1901662f4d063a5c250c9fbf64b771", 639504384},  // 1997-09-28 19:55:34
+			AD_LISTEND
 		},
 		Common::ES_ESP,
 		Common::kPlatformUnknown,
@@ -167,6 +174,7 @@ static const ADGameDescription gameDescriptions[] = {
 			{"CD1.HPF", 0, "3c1c80b41f2c454b7b89dcb32648796c", 522328064},  // 1997-12-11 14:39:46
 			{"CD2.HPF", 0, "ea6414d5a718501cfd55de3884f4431d", 665411584},  // 1997-12-11 15:20:26
 			{"CD3.HPF", 0, "a5bd5b58acddbd951d4551f68de22025", 637718528},  // 1997-12-11 15:58:44
+			AD_LISTEND
 		},
 		Common::IT_ITA,
 		Common::kPlatformUnknown,
@@ -185,8 +193,28 @@ static const ADGameDescription gameDescriptions[] = {
 			{"CD1.HPF", 0, "80fbb95c9228353436b7b38e4b5bb64d", 525805568},  // 1999-04-07 13:30:14
 			{"CD2.HPF", 0, "a1c8c344754e03eaa86eaabc6024709e", 677289984},  // 1999-04-07 16:19:56
 			{"CD3.HPF", 0, "ea5adac447e59ea6d4a1737abad46480", 642584576},  // 1999-04-07 17:26:18
+			AD_LISTEND
 		},
 		Common::RU_RUS,
+		Common::kPlatformUnknown,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
+
+	// The Last Express (GOG)
+	//   expressw.exe ???
+	//   express.exe  2010-12-14 13:49:04
+	{
+		"lastexpress",
+		"",
+		{
+			{"HD.HPF",  0, "ab940d5815008b176502f759ae753fb7", 30715904},   // 2000-03-01 17:03:58
+			{"CD1.HPF", 0, "cec8810125b050f41b7f34ab72371f81", 525522944},  // 2000-02-14 16:02:02
+			{"CD2.HPF", 0, "c648872b31e43d458680cf16bedc636c", 669581312},  // 1997-02-10 21:19:30
+			{"CD3.HPF", 0, "8cb3e68a6dca354e556c487ea24a6b10", 641128448},  // 1997-02-10 20:44:08
+			AD_LISTEND
+		},
+		Common::EN_ANY,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
@@ -204,11 +232,11 @@ public:
 	}
 
 	const char *getName() const {
-		return "Lastexpress";
+		return "The Last Express";
 	}
 
 	const char *getOriginalCopyright() const {
-		return "LastExpress Engine (C) 1997 Smoking Car Productions";
+		return "The Last Express (C) 1997 Smoking Car Productions";
 	}
 
 protected:

@@ -248,7 +248,7 @@ static const char *const kEoB2WandStringsDOSGerman[1] = {
 static const StringListProvider kEoB2WandStringsDOSGermanProvider = { ARRAYSIZE(kEoB2WandStringsDOSGerman), kEoB2WandStringsDOSGerman };
 
 static const char *const kEoB2ItemMisuseStringsDOSGerman[3] = {
-	" kann diesen Gegenstand nicht nutzen.\r",
+	"%s kann diesen Gegenstand nicht nutzen.\r",
 	"Der Gegenstand wird automatisch beim tragen benutzt.\r",
 	"Das kann man so nicht benutzen.\r"
 };
@@ -516,7 +516,7 @@ static const char *const kEoB2CharGuiStringsWp2DOSGerman[3] = {
 static const StringListProvider kEoB2CharGuiStringsWp2DOSGermanProvider = { ARRAYSIZE(kEoB2CharGuiStringsWp2DOSGerman), kEoB2CharGuiStringsWp2DOSGerman };
 
 static const char *const kEoB2CharGuiStringsWrDOSGerman[4] = {
-	"ZU",
+	" ZU ",
 	"WEIT",
 	"OHNE",
 	"MUN"
@@ -558,7 +558,7 @@ static const char *const kEoB2CharStatusStrings82DOSGerman[1] = {
 static const StringListProvider kEoB2CharStatusStrings82DOSGermanProvider = { ARRAYSIZE(kEoB2CharStatusStrings82DOSGerman), kEoB2CharStatusStrings82DOSGerman };
 
 static const char *const kEoB2CharStatusStrings9DOSGerman[1] = {
-	"%s ist nicht l""\x84""nger bet""\x84""ubt!\r"
+	"\x06\x04""%s ist nicht l""\x84""nger bet""\x84""ubt!\r"
 };
 
 static const StringListProvider kEoB2CharStatusStrings9DOSGermanProvider = { ARRAYSIZE(kEoB2CharStatusStrings9DOSGerman), kEoB2CharStatusStrings9DOSGerman };

@@ -395,7 +395,7 @@ bool LuaScriptEngine::persist(OutputPersistenceBlock &writer) {
 	lua_getglobal(_state, "_G");
 
 	// Lua persists and stores the data in a WriteStream
-	Common::MemoryWriteStreamDynamic writeStream;
+	Common::MemoryWriteStreamDynamic writeStream(DisposeAfterUse::YES);
 	Lua::persistLua(_state, &writeStream);
 
 	// Persistenzdaten in den Writer schreiben.

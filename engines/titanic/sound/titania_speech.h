@@ -36,10 +36,11 @@ class CTitaniaSpeech : public CGameObject {
 	bool TimerMsg(CTimerMsg *msg);
 	bool EnterRoomMsg(CEnterRoomMsg *msg);
 private:
-	int _paraNum, _frameNum;
+	int _actionNum;
+	int _backgroundFrame;
 public:
 	CLASSDEF;
-	CTitaniaSpeech() : CGameObject(), _paraNum(1), _frameNum(0) {}
+	CTitaniaSpeech() : CGameObject(), _actionNum(1), _backgroundFrame(0) {}
 
 	/**
 	 * Save the data for the class to file

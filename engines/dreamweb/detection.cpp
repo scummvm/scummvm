@@ -76,7 +76,7 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "DreamWeb engine";
+		return "DreamWeb";
 	}
 
 	virtual const char *getOriginalCopyright() const {
@@ -198,7 +198,12 @@ SaveStateDescriptor DreamWebMetaEngine::querySaveMetaInfos(const char *target, i
 			uint32 saveDate = in->readUint32LE();
 			uint32 saveTime = in->readUint32LE();
 			uint32 playTime = in->readUint32LE();
-			Graphics::Surface *thumbnail = Graphics::loadThumbnail(*in);
+			Graphics::Surface *thumbnail;
+			if (!Graphics::loadThumbnail(*in, thumbnail)) {
+				warning("Missing or broken thumbnail - skipping");
+				delete in;
+				return desc;
+			}
 
 			int day = (saveDate >> 24) & 0xFF;
 			int month = (saveDate >> 16) & 0xFF;

@@ -24,49 +24,64 @@
 
 #include "bladerunner/bladerunner.h"
 
+#include "bladerunner/savefile.h"
 #include "bladerunner/text_resource.h"
 
 namespace BladeRunner {
 
-CrimesDatabase::CrimesDatabase(BladeRunnerEngine *vm, const char *cluesResource, int crimesCount) : _crimesCount(crimesCount) {
-	// reset();
+CrimesDatabase::CrimesDatabase(BladeRunnerEngine *vm, const Common::String &cluesResource, int crimeCount) {
+	_crimeCount = crimeCount;
 
-	_crimes     = new int[_crimesCount];
-	_assetTypes = new int[_crimesCount];
+	_crimes.resize(_crimeCount);
+	_assetTypes.resize(_crimeCount);
 
 	_cluesText = new TextResource(vm);
-	_cluesText->open(cluesResource);
+	if (!_cluesText->open(cluesResource)) {
+		delete _cluesText;
+		return;
+	}
 
-	for (int i = 0; i != _crimesCount; ++i) {
+	for (int i = 0; i != _crimeCount; ++i) {
 		_crimes[i] = -1;
 		_assetTypes[i] = -1;
 	}
 }
 
 CrimesDatabase::~CrimesDatabase() {
-	delete   _cluesText;
-	delete[] _assetTypes;
-	delete[] _crimes;
+	delete _cluesText;
 }
 
-void CrimesDatabase::setCrime(int crimeId, int value) {
-	_crimes[crimeId] = value;
+void CrimesDatabase::setCrime(int clueId, int crimeId) {
+	_crimes[clueId] = crimeId;
 }
 
-int CrimesDatabase::getCrime(int crimeId) {
-	return _crimes[crimeId];
+int CrimesDatabase::getCrime(int clueId) const {
+	return _crimes[clueId];
 }
 
-void CrimesDatabase::setAssetType(int assetId, int assetType) {
-	_assetTypes[assetId] = assetType;
+void CrimesDatabase::setAssetType(int clueId, int assetType) {
+	_assetTypes[clueId] = assetType;
 }
 
-int CrimesDatabase::getAssetType(int assetId) {
-	return _assetTypes[assetId];
+int CrimesDatabase::getAssetType(int clueId) const {
+	return _assetTypes[clueId];
 }
 
-const char *CrimesDatabase::getClueText(int id) {
-	return _cluesText->getText(id);
+const char *CrimesDatabase::getClueText(int clueId) const {
+	return _cluesText->getText(clueId);
+}
+
+void CrimesDatabase::save(SaveFileWriteStream &f) {
+	for (int i = 0; i < _crimeCount; ++i) {
+		int8 c = _crimes[i];
+		f.writeSByte(c);
+	}
+}
+
+void CrimesDatabase::load(SaveFileReadStream &f) {
+	for (int i = 0; i < _crimeCount; ++i) {
+		_crimes[i] = f.readSByte();
+	}
 }
 
 } // End of namespace BladeRunner

@@ -124,7 +124,7 @@ void sceneHandlerFinal_fallCoin() {
 }
 
 void updateMusic() {
-	if (g_vars->sceneFinal_trackHasStarted && !g_fp->_mixer->isSoundHandleActive(*g_fp->_soundStream1)) { // loop music
+	if (g_vars->sceneFinal_trackHasStarted && !g_fp->_mixer->isSoundHandleActive(g_fp->_soundStream1)) { // loop music
 		sceneHandlerFinal_startMusic("track16.ogg");
 	}
 }

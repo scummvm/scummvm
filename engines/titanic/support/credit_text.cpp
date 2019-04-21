@@ -21,14 +21,20 @@
  */
 
 #include "titanic/support/credit_text.h"
+#include "titanic/core/game_object.h"
+#include "titanic/events.h"
+#include "titanic/support/files_manager.h"
+#include "titanic/support/screen_manager.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
 
-CCreditText::CCreditText() : _screenManagerP(nullptr), _field14(0),
-	_ticks(0), _fontHeight(1), _objectP(nullptr), _totalHeight(0),
-	_field40(0), _field44(0), _field48(0), _field4C(0), _field50(0),
-	_field54(0), _field58(0), _counter(0) {
+#define FRAMES_PER_CYCLE 16
+
+CCreditText::CCreditText() : _screenManagerP(nullptr), _ticks(0),
+		_fontHeight(1), _objectP(nullptr), _yOffset(0),
+		_priorInc(0), _textR(0), _textG(0), _textB(0), _deltaR(0),
+		_deltaG(0), _deltaB(0), _counter(0) {
 }
 
 void CCreditText::clear() {
@@ -37,21 +43,21 @@ void CCreditText::clear() {
 }
 
 void CCreditText::load(CGameObject *obj, CScreenManager *screenManager,
-		const Rect &rect, int v) {
+		const Rect &rect) {
 	_objectP = obj;
 	_screenManagerP = screenManager;
-	_field14 = v;
+	_rect = rect;
 
 	setup();
 
 	_ticks = g_vm->_events->getTicksCount();
-	_field40 = 0;
-	_field44 = 0xFF;
-	_field48 = 0xFF;
-	_field4C = 0xFF;
-	_field50 = 0;
-	_field54 = 0;
-	_field58 = 0;
+	_priorInc = 0;
+	_textR = 0xFF;
+	_textG = 0xFF;
+	_textB = 0xFF;
+	_deltaR = 0;
+	_deltaG = 0;
+	_deltaB = 0;
 	_counter = 0;
 }
 
@@ -94,7 +100,7 @@ void CCreditText::setup() {
 	_screenManagerP->setFontNumber(oldFontNumber);
 	_groupIt = _groups.begin();
 	_lineIt = (*_groupIt)->_lines.begin();
-	_totalHeight = _objectP->getBounds().height() + _fontHeight * 2;
+	_yOffset = _objectP->_bounds.height() + _fontHeight * 2;
 }
 
 CString CCreditText::readLine(Common::SeekableReadStream *stream) {
@@ -153,28 +159,29 @@ bool CCreditText::draw() {
 	if (_groupIt == _groups.end())
 		return false;
 
-	if (++_counter > 200) {
-		_field44 += _field50;
-		_field48 += _field54;
-		_field4C += _field58;
-		_field50 = g_vm->getRandomNumber(63) + 192 - _field44;
-		_field54 = g_vm->getRandomNumber(63) + 192 - _field48;
-		_field58 = g_vm->getRandomNumber(63) + 192 - _field4C;
+	if (++_counter >= FRAMES_PER_CYCLE) {
+		_textR += _deltaR;
+		_textG += _deltaG;
+		_textB += _deltaB;
+		_deltaR = g_vm->getRandomNumber(63) + 192 - _textR;
+		_deltaG = g_vm->getRandomNumber(63) + 192 - _textG;
+		_deltaB = g_vm->getRandomNumber(63) + 192 - _textB;
 		_counter = 0;
 	}
 
 	// Positioning adjustment, changing lines and/or group if necessary
-	int yDiff = (int)(g_vm->_events->getTicksCount() - _ticks) / 22 - _field40;
+	int yDiff = (int)(g_vm->_events->getTicksCount() - _ticks) / 22 - _priorInc;
+
 	while (yDiff > 0) {
-		if (_totalHeight > 0) {
-			if (yDiff < _totalHeight) {
-				_totalHeight -= yDiff;
-				_field40 += yDiff;
+		if (_yOffset > 0) {
+			if (yDiff < _yOffset) {
+				_yOffset -= yDiff;
+				_priorInc += yDiff;
 				yDiff = 0;
 			} else {
-				yDiff -= _totalHeight;
-				_field40 += _totalHeight;
-				_totalHeight = 0;
+				yDiff -= _yOffset;
+				_priorInc += _yOffset;
+				_yOffset = 0;
 			}
 		} else {
 			if (yDiff < _fontHeight)
@@ -182,7 +189,7 @@ bool CCreditText::draw() {
 
 			++_lineIt;
 			yDiff -= _fontHeight;
-			_field40 += _fontHeight;
+			_priorInc += _fontHeight;
 
 			if (_lineIt == (*_groupIt)->_lines.end()) {
 				// Move to next line group
@@ -192,7 +199,7 @@ bool CCreditText::draw() {
 					return false;
 
 				_lineIt = (*_groupIt)->_lines.begin();
-				_totalHeight = _fontHeight * 3 / 2;
+				_yOffset = _fontHeight * 3 / 2;
 			}
 		}
 	}
@@ -202,11 +209,11 @@ bool CCreditText::draw() {
 	CCreditLines::iterator lineIt = _lineIt;
 
 	Point textPos;
-	for (textPos.y = _rect.top + _totalHeight; textPos.y <= _rect.bottom;
+	for (textPos.y = _rect.top + _yOffset - yDiff; textPos.y <= _rect.bottom;
 			textPos.y += _fontHeight) {
-		int textR = _field44 + _field50 * _counter / 200;
-		int textG = _field48 + _field54 * _counter / 200;
-		int textB = _field4C + _field58 * _counter / 200;
+		int textR = _textR + _deltaR * _counter / FRAMES_PER_CYCLE;
+		int textG = _textG + _deltaG * _counter / FRAMES_PER_CYCLE;
+		int textB = _textB + _deltaB * _counter / FRAMES_PER_CYCLE;
 
 		// Single iteration loop to figure out RGB values for the line
 		do {

@@ -61,83 +61,58 @@ bool SceneTagList::load(MfcArchive &file) {
 	int numEntries = file.readUint16LE();
 
 	for (int i = 0; i < numEntries; i++) {
-		SceneTag *t = new SceneTag();
-		t->load(file);
-		push_back(*t);
+		push_back(SceneTag());
+		back().load(file);
 	}
 
 	return true;
 }
 
-SceneTag::SceneTag() {
-	_field_4 = 0;
-	_scene = 0;
-	_tag = 0;
-	_sceneId = 0;
+SceneTag::SceneTag() :
+	_scene(nullptr),
+	_sceneId(0) {}
+
+SceneTag::~SceneTag() {
+	delete _scene;
 }
 
 bool SceneTag::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "SceneTag::load()");
 
-	_field_4 = 0;
-	_scene = 0;
-
 	_sceneId = file.readUint16LE();
 
 	_tag = file.readPascalString();
 
-	debugC(6, kDebugLoading, "sceneId: %d  tag: %s", _sceneId, _tag);
+	debugC(6, kDebugLoading, "sceneId: %d  tag: %s", _sceneId, _tag.c_str());
 
 	return true;
 }
 
-SceneTag::~SceneTag() {
-	free(_tag);
-
-	delete _scene;
-	delete _field_4;
-}
-
 void SceneTag::loadScene() {
-	char *archname = genFileName(0, _sceneId, "nl");
+	Common::String archname = genFileName(0, _sceneId, "nl");
 
 	Common::Archive *arch = makeNGIArchive(archname);
 
-	char *fname = genFileName(0, _sceneId, "sc");
+	Common::String fname = genFileName(0, _sceneId, "sc");
 
-	Common::SeekableReadStream *file = arch->createReadStreamForMember(fname);
+	Common::ScopedPtr<Common::SeekableReadStream> file(arch->createReadStreamForMember(fname));
 
+	delete _scene;
 	_scene = new Scene();
 
-	MfcArchive archive(file);
+	MfcArchive archive(file.get());
 
 	_scene->load(archive);
 
 	if (_scene->_shadows)
 		_scene->_shadows->init();
 
-	delete file;
-
-	g_fp->_currArchive = 0;
-
-	free(fname);
-	free(archname);
+	g_fp->_currArchive = nullptr;
 }
 
-Scene::Scene() {
-	_sceneId = 0;
-	_field_BC = 0;
-	_shadows = 0;
-	_soundList = 0;
-	_libHandle = 0;
-	_sceneName = 0;
-}
+Scene::Scene() : _sceneId(0), _field_BC(0) {}
 
 Scene::~Scene() {
-	delete _soundList;
-	delete _shadows;
-	delete _palette;
-
 	// _faObjlist is not used
 
 	for (uint i = 0; i < _messageQueueList.size(); i++)
@@ -150,11 +125,9 @@ Scene::~Scene() {
 
 	_staticANIObjectList1.clear();
 
-	delete _libHandle;
+	g_fp->_globalPalette = &g_fp->_defaultPalette;
 
 	// delete _field_BC;
-
-	free(_sceneName);
 }
 
 bool Scene::load(MfcArchive &file) {
@@ -165,14 +138,14 @@ bool Scene::load(MfcArchive &file) {
 	_sceneId = file.readUint16LE();
 
 	_sceneName = file.readPascalString();
-	debug(0, "scene: <%s> %d", transCyrillic((byte *)_sceneName), _sceneId);
+	debug(0, "scene: <%s> %d", transCyrillic(_sceneName), _sceneId);
 
 	int count = file.readUint16LE();
 	debugC(7, kDebugLoading, "scene.ani: %d", count);
 
 	for (int i = 0; i < count; i++) {
 		int aniNum = file.readUint16LE();
-		char *aniname = genFileName(0, aniNum, "ani");
+		Common::String aniname = genFileName(0, aniNum, "ani");
 
 		Common::SeekableReadStream *f = g_fp->_currArchive->createReadStreamForMember(aniname);
 
@@ -186,7 +159,6 @@ bool Scene::load(MfcArchive &file) {
 		_staticANIObjectList1.push_back(ani);
 
 		delete f;
-		free(aniname);
 	}
 
 	count = file.readUint16LE();
@@ -194,7 +166,7 @@ bool Scene::load(MfcArchive &file) {
 
 	for (int i = 0; i < count; i++) {
 		int qNum = file.readUint16LE();
-		char *qname = genFileName(0, qNum, "qu");
+		Common::String qname = genFileName(0, qNum, "qu");
 
 		Common::SeekableReadStream *f = g_fp->_currArchive->createReadStreamForMember(qname);
 		MfcArchive archive(f);
@@ -208,7 +180,6 @@ bool Scene::load(MfcArchive &file) {
 		_messageQueueList.push_back(mq);
 
 		delete f;
-		free(qname);
 	}
 
 	count = file.readUint16LE();
@@ -219,46 +190,48 @@ bool Scene::load(MfcArchive &file) {
 		assert(0);
 	}
 
-	_libHandle = g_fp->_currArchive;
+	_libHandle.reset(g_fp->_currArchive);
 
-	if (_picObjList.size() > 0 && _bgname && strlen(_bgname) > 1) {
+	if (_picObjList.size() > 0 && !_bgname.empty()) {
 		char fname[260];
 
-		strcpy(fname, _bgname);
-		strcpy(strrchr(fname, '.') + 1, "col");
+		Common::strlcpy(fname, _bgname.c_str(), 260);
+		Common::strlcpy(strrchr(fname, '.') + 1, "col", 260);
 
-		MemoryObject *col = new MemoryObject();
+		Common::ScopedPtr<MemoryObject> col(new MemoryObject());
 		col->loadFile(fname);
-
-		_palette = col;
+		if (col->getDataSize()) {
+			assert(col->getDataSize() == 256 * sizeof(uint32));
+			const byte *data = col->getData();
+			for (int i = 0; i < 256; ++i) {
+				_palette.push_back(READ_LE_UINT32(data));
+				data += sizeof(uint32);
+			}
+		}
 	}
 
-	char *shdname = genFileName(0, _sceneId, "shd");
+	Common::String shdname = genFileName(0, _sceneId, "shd");
 
 	Shadows *shd = new Shadows();
 
 	if (shd->loadFile(shdname))
-		_shadows = shd;
+		_shadows.reset(shd);
+	else
+		delete shd;
 
-	free(shdname);
-
-	char *slsname = genFileName(0, _sceneId, "sls");
+	Common::String slsname = genFileName(0, _sceneId, "sls");
 
 	if (g_fp->_soundEnabled) {
-		_soundList = new SoundList();
+		_soundList.reset(new SoundList());
 
 		if (g_fp->_flgSoundList) {
-			char *nlname = genFileName(17, _sceneId, "nl");
+			Common::String nlname = genFileName(17, _sceneId, "nl");
 
 			_soundList->loadFile(slsname, nlname);
-
-			free(nlname);
 		} else {
 			_soundList->loadFile(slsname, 0);
 		}
 	}
-
-	free(slsname);
 
 	initStaticANIObjects();
 
@@ -280,7 +253,7 @@ void Scene::init() {
 	g_fp->_sceneRect.moveTo(0, 0);
 
 	for (uint i = 0; i < _picObjList.size(); i++)
-		((PictureObject *)_picObjList[i])->clearFlags();
+		_picObjList[i]->clearFlags();
 
 	for (uint i = 0; i < _staticANIObjectList1.size(); i++)
 		_staticANIObjectList1[i]->clearFlags();
@@ -310,9 +283,9 @@ StaticANIObject *Scene::getStaticANIObject1ById(int obj, int a3) {
 	return 0;
 }
 
-StaticANIObject *Scene::getStaticANIObject1ByName(char *name, int a3) {
+StaticANIObject *Scene::getStaticANIObject1ByName(const Common::String &name, int a3) {
 	for (uint i = 0; i < _staticANIObjectList1.size(); i++) {
-		if (!strcmp(_staticANIObjectList1[i]->_objectName, name) && (a3 == -1 || _staticANIObjectList1[i]->_odelay == a3))
+		if ((_staticANIObjectList1[i]->_objectName == name) && (a3 == -1 || _staticANIObjectList1[i]->_odelay == a3))
 			return _staticANIObjectList1[i];
 	}
 
@@ -353,28 +326,28 @@ void Scene::addStaticANIObject(StaticANIObject *obj, bool addList2) {
 
 void Scene::setPictureObjectsFlag4() {
 	for (uint i = 0; i < _picObjList.size(); i++) {
-		((PictureObject *)_picObjList[i])->_flags |= 4;
+		_picObjList[i]->_flags |= 4;
 	}
 }
 
 void Scene::stopAllSounds() {
 	for (int i = 0; i < _soundList->getCount(); i++)
-		_soundList->getSoundByIndex(i)->stop();
+		_soundList->getSoundByIndex(i).stop();
 }
 
 PictureObject *Scene::getPictureObjectById(int objId, int flags) {
 	for (uint i = 1; i < _picObjList.size(); i++) {
-		if (((PictureObject *)_picObjList[i])->_id == objId && ((PictureObject *)_picObjList[i])->_odelay == flags)
-			return (PictureObject *)_picObjList[i];
+		if (_picObjList[i]->_id == objId && _picObjList[i]->_odelay == flags)
+			return _picObjList[i];
 	}
 
 	return 0;
 }
 
-PictureObject *Scene::getPictureObjectByName(const char *objName, int flags) {
+PictureObject *Scene::getPictureObjectByName(const Common::String &objName, int flags) {
 	for (uint i = 0; i < _picObjList.size(); i++) {
-		if (!strcmp(((PictureObject *)_picObjList[i])->_objectName, objName) && (((PictureObject *)_picObjList[i])->_odelay == flags || flags == -1))
-			return (PictureObject *)_picObjList[i];
+		if ((_picObjList[i]->_objectName == objName) && (_picObjList[i]->_odelay == flags || flags == -1))
+			return _picObjList[i];
 	}
 
 	return 0;
@@ -382,7 +355,7 @@ PictureObject *Scene::getPictureObjectByName(const char *objName, int flags) {
 
 void Scene::deletePictureObject(PictureObject *obj) {
 	for (uint i = 0; i < _picObjList.size(); i++) {
-		if (((PictureObject *)_picObjList[i]) == obj) {
+		if (_picObjList[i] == obj) {
 			_picObjList.remove_at(i);
 			delete obj;
 
@@ -399,9 +372,9 @@ MessageQueue *Scene::getMessageQueueById(int messageId) {
 	return 0;
 }
 
-MessageQueue *Scene::getMessageQueueByName(char *name) {
+MessageQueue *Scene::getMessageQueueByName(const Common::String &name) {
 	for (uint i = 0; i < _messageQueueList.size(); i++)
-		if (!strcmp(_messageQueueList[i]->_queueName.c_str(), name))
+		if (_messageQueueList[i]->_queueName == name)
 			return _messageQueueList[i];
 
 	return 0;
@@ -535,7 +508,7 @@ void Scene::draw() {
 	updateScrolling();
 
 	// Clean previous stuff
-	g_fp->_backgroundSurface->fillRect(Common::Rect(0, 0, 800, 600), 0);
+	g_fp->_backgroundSurface.fillRect(Common::Rect(0, 0, 800, 600), 0);
 
 	drawContent(60000, 0, true);
 
@@ -576,7 +549,7 @@ void Scene::updateScrolling() {
 		int offsetY = 0;
 
 		if (_x < 0) {
-			if (!g_fp->_sceneRect.left && !(((PictureObject *)_picObjList[0])->_flags & 2))
+			if (!g_fp->_sceneRect.left && !(_picObjList[0]->_flags & 2))
 				_x = 0;
 
 			if (_x <= -g_fp->_scrollSpeed) {
@@ -608,13 +581,11 @@ void Scene::updateScrolling() {
 
 void Scene::updateScrolling2() {
 	if (_picObjList.size()) {
-		Common::Point point;
 		int offsetY = 0;
 		int offsetX = 0;
 
-		((PictureObject *)_picObjList[0])->getDimensions(&point);
-
-		int flags = ((PictureObject *)_picObjList[0])->_flags;
+		const Dims dims = _picObjList[0]->getDimensions();
+		const int flags = _picObjList[0]->_flags;
 
 		if (g_fp->_sceneRect.left < 0 && !(flags & 2))
 			offsetX = -g_fp->_sceneRect.left;
@@ -622,11 +593,11 @@ void Scene::updateScrolling2() {
 		if (g_fp->_sceneRect.top < 0 && !(flags & 0x20))
 			offsetY = -g_fp->_sceneRect.top;
 
-		if (g_fp->_sceneRect.right > point.x - 1 && g_fp->_sceneRect.left > 0 && !(flags & 2))
-			offsetX = point.x - g_fp->_sceneRect.right - 1;
+		if (g_fp->_sceneRect.right > dims.x - 1 && g_fp->_sceneRect.left > 0 && !(flags & 2))
+			offsetX = dims.x - g_fp->_sceneRect.right - 1;
 
-		if (g_fp->_sceneRect.bottom > point.y - 1 && g_fp->_sceneRect.top > 0 && !(flags & 0x20))
-			offsetY = point.y - g_fp->_sceneRect.bottom - 1;
+		if (g_fp->_sceneRect.bottom > dims.y - 1 && g_fp->_sceneRect.top > 0 && !(flags & 0x20))
+			offsetY = dims.y - g_fp->_sceneRect.bottom - 1;
 
 		g_fp->_sceneRect.translate(offsetX, offsetY);
 	}
@@ -651,7 +622,7 @@ PictureObject *Scene::getPictureObjectAtPos(int x, int y) {
 	PictureObject *res = 0;
 
 	for (uint i = 0; i < _picObjList.size(); i++) {
-		PictureObject *p = (PictureObject *)_picObjList[i];
+		PictureObject *p = _picObjList[i];
 		if ((p->_field_8 & 0x100) && (p->_flags & 4) &&
 				p->isPixelHitAtPos(x, y) &&
 				(!res || res->_priority >= p->_priority))
@@ -666,7 +637,7 @@ int Scene::getPictureObjectIdAtPos(int x, int y) {
 	int res = 0;
 
 	for (uint i = 0; i < _picObjList.size(); i++) {
-		PictureObject *p = (PictureObject *)_picObjList[i];
+		PictureObject *p = _picObjList[i];
 		if ((p->_field_8 & 0x100) && (p->_flags & 4) &&
 				p->isPixelHitAtPos(x, y) &&
 				(!res || resp->_priority >= p->_priority)) {
@@ -686,11 +657,11 @@ void Scene::update(int counterdiff) {
 }
 
 void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
-	if (!_picObjList.size() && !_bigPictureArray1Count)
+	if (!_picObjList.size() && !_bigPictureXDim)
 		return;
 
-	if (_palette) {
-		g_fp->_globalPalette = _palette->_data;
+	if (_palette.size()) {
+		g_fp->_globalPalette = &_palette;
 	}
 
 	debugC(1, kDebugDrawing, "Scene::drawContent(>%d, <%d, %d)", minPri, maxPri, drawBg);
@@ -704,42 +675,42 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 #endif
 
 	if (minPri == -1 && _picObjList.size())
-		minPri = ((PictureObject *)_picObjList.back())->_priority - 1;
+		minPri = _picObjList.back()->_priority - 1;
 
 	if (maxPri == -1)
 		maxPri = 60000;
 
 	debugC(1, kDebugDrawing, "-> Scene::drawContent(>%d, <%d, %d)", minPri, maxPri, drawBg);
 
-	Common::Point point;
+	Dims dims;
 
-	debugC(1, kDebugDrawing, "_bigPict: %d objlist: %d", _bigPictureArray1Count, _picObjList.size());
+	debugC(1, kDebugDrawing, "_bigPict: %d objlist: %d", _bigPictureXDim, _picObjList.size());
 
-	if (drawBg && _bigPictureArray1Count && _picObjList.size()) {
+	if (drawBg && _bigPictureXDim && _picObjList.size()) {
 
-		_bigPictureArray[0][0]->getDimensions(&point);
+		dims = _bigPictureArray[0]->getDimensions();
 
-		int width = point.x;
-		int height = point.y;
+		int width = dims.x;
+		int height = dims.y;
 
 		debugC(8, kDebugDrawing, "w: %d h:%d", width, height);
 
-		((PictureObject *)_picObjList[0])->getDimensions(&point);
+		dims = _picObjList[0]->getDimensions();
 
-		debugC(8, kDebugDrawing, "w2: %d h2:%d", point.x, point.y);
+		debugC(8, kDebugDrawing, "w2: %d h2:%d", dims.x, dims.y);
 
-		int bgStX = g_fp->_sceneRect.left % point.x;
+		int bgStX = g_fp->_sceneRect.left % dims.x;
 
 		if (bgStX < 0)
-			bgStX += point.x;
+			bgStX += dims.x;
 
 		int bgNumX = bgStX / width;
 		int bgOffsetX = bgStX % width;
 
-		int bgStY = g_fp->_sceneRect.top % point.y;
+		int bgStY = g_fp->_sceneRect.top % dims.y;
 
 		if (bgStY < 0)
-			bgStY += point.y;
+			bgStY += dims.y;
 
 		int bgNumY = bgStY / height;
 		int bgOffsetY = bgStY % height;
@@ -747,27 +718,27 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 		int bgPosX = g_fp->_sceneRect.left - bgOffsetX;
 
 		if (bgPosX < g_fp->_sceneRect.right - 1) {
-			while (1) {
-				int v25 = bgNumY;
+			for (;;) {
+				uint v25 = bgNumY;
 				for (int y = g_fp->_sceneRect.top - bgOffsetY; y < g_fp->_sceneRect.bottom - 1;) {
-					BigPicture *v27 = _bigPictureArray[bgNumX][v25];
+					BigPicture *v27 = getBigPicture(bgNumX, v25);
 					v27->draw(bgPosX, y, 0, 0);
-					y += v27->getDimensions(&point)->y;
+					y += v27->getDimensions().y;
 					v25++;
 
-					if (v25 >= _bigPictureArray2Count) {
-						if (!(((PictureObject *)_picObjList[0])->_flags & 0x20))
+					if (v25 >= _bigPictureYDim) {
+						if (!(_picObjList[0]->_flags & 0x20))
 							break;
 						v25 = 0;
 					}
 				}
-				_bigPictureArray[bgNumX][0]->getDimensions(&point);
-				int oldx = point.x + bgPosX;
-				bgPosX += point.x;
+				dims = getBigPicture(bgNumX, 0)->getDimensions();
+				int oldx = dims.x + bgPosX;
+				bgPosX += dims.x;
 				bgNumX++;
 
-				if (bgNumX >= _bigPictureArray1Count) {
-					if (!(((PictureObject *)_picObjList[0])->_flags & 0x2))
+				if (bgNumX >= (int)_bigPictureXDim) {
+					if (!(_picObjList[0]->_flags & 0x2))
 						break;
 					bgNumX = 0;
 				}
@@ -779,7 +750,7 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 
 
 	for (uint i = 1; i < _picObjList.size(); i++) {
-		PictureObject *obj = (PictureObject *)_picObjList[i];
+		PictureObject *obj = _picObjList[i];
 
 		if (obj->_priority < minPri || obj->_priority >= maxPri)
 			continue;
@@ -789,10 +760,10 @@ void Scene::drawContent(int minPri, int maxPri, bool drawBg) {
 
 		debugC(8, kDebugDrawing, "obj: %d %d", objX, objY);
 
-		obj->getDimensions(&point);
+		dims = obj->getDimensions();
 
-		int width = point.x;
-		int height = point.y;
+		int width = dims.x;
+		int height = dims.y;
 
 		if (obj->_flags & 8) {
 			while (objX > g_fp->_sceneRect.right) {

@@ -83,7 +83,7 @@ struct ExecStack {
 
 	union {
 		ObjVarRef varp; // Variable pointer for r/w access
-		reg32_t pc;       // Pointer to the initial program counter. Not accurate for the TOS element
+		reg_t pc;       // Pointer to the initial program counter. Not accurate for the TOS element
 	} addr;
 
 	StackPtr fp; // Frame pointer
@@ -105,7 +105,7 @@ struct ExecStack {
 	reg_t* getVarPointer(SegManager *segMan) const;
 
 	ExecStack(reg_t objp_, reg_t sendp_, StackPtr sp_, int argc_, StackPtr argp_,
-				SegmentId localsSegment_, reg32_t pc_, Selector debugSelector_,
+				SegmentId localsSegment_, reg_t pc_, Selector debugSelector_,
 				int debugKernelFunction_, int debugKernelSubFunction_,
 				int debugExportId_, int debugLocalCallOffset_, int debugOrigin_,
 				ExecStackType type_) {
@@ -116,7 +116,7 @@ struct ExecStack {
 		fp = sp = sp_;
 		argc = argc_;
 		variables_argp = argp_;
-		if (localsSegment_ != 0xFFFF)
+		if (localsSegment_ != kUninitializedSegment)
 			local_segment = localsSegment_;
 		else
 			local_segment = pc_.getSegment();
@@ -132,26 +132,55 @@ struct ExecStack {
 
 enum {
 	VAR_GLOBAL = 0,
-	VAR_LOCAL = 1,
-	VAR_TEMP = 2,
-	VAR_PARAM = 3
+	VAR_LOCAL  = 1,
+	VAR_TEMP   = 2,
+	VAR_PARAM  = 3
 };
 
 enum GlobalVar {
 	kGlobalVarEgo            = 0,
+	kGlobalVarGame           = 1,
 	kGlobalVarCurrentRoom    = 2,
 	kGlobalVarSpeed          = 3,  // SCI16
 	kGlobalVarQuit           = 4,
+	kGlobalVarSounds         = 8,
 	kGlobalVarPlanes         = 10, // SCI32
 	kGlobalVarCurrentRoomNo  = 11,
 	kGlobalVarPreviousRoomNo = 12,
 	kGlobalVarNewRoomNo      = 13,
 	kGlobalVarScore          = 15,
-	kGlobalVarFastCast       = 84, // SCI16
-	kGlobalVarMessageType    = 90,
-	kGlobalVarTextSpeed      = 94, // SCI32; 0 is fastest, 8 is slowest
-	kGlobalVarLSL6HiresTextSpeed = 167, // 1 is fastest, 14 is slowest
-	kGlobalVarShivers1Score  = 349
+	kGlobalVarGK2MusicVolume = 76, // 0 to 127
+	kGlobalVarPhant2SecondaryVolume = 76, // 0 to 127
+	kGlobalVarFastCast             = 84, // SCI16
+	kGlobalVarMessageType          = 90,
+	kGlobalVarTextSpeed            = 94, // SCI32; 0 is fastest, 8 is slowest
+	kGlobalVarGK1Music1            = 102, // 0 to 127
+	kGlobalVarGK1Music2            = 103, // 0 to 127
+	kGlobalVarRamaCatalogFile      = 130,
+	kGlobalVarLSL6HiresGameFlags   = 137,
+	kGlobalVarKQ7UpscaleVideos     = 160,
+	kGlobalVarGK1NarratorMode      = 166, // 0 for text, 1 for speech
+	kGlobalVarRamaMusicVolume      = 176, // 0 to 16
+	kGlobalVarPhant1MusicVolume    = 187, // 0 to 15
+	kGlobalVarPhant1DACVolume      = 188, // 0 to 127
+	kGlobalVarLSL6HiresMusicVolume = 194, // 0 to 13
+	kGlobalVarGK1DAC1              = 207, // 0 to 127
+	kGlobalVarPhant2CensorshipFlag = 207,
+	kGlobalVarGK1DAC2              = 208, // 0 to 127
+	kGlobalVarLSL6HiresRestoreTextWindow = 210,
+	kGlobalVarGK1DAC3              = 211, // 0 to 127
+	kGlobalVarShiversFlags         = 211,
+	kGlobalVarTorinMusicVolume     = 227, // 0 to 100
+	kGlobalVarTorinSFXVolume       = 228, // 0 to 100
+	kGlobalVarTorinSpeechVolume    = 229, // 0 to 100
+	// Phant2 labels its volume slider as "music volume" but it is actually
+	// a master volume that affects both music *and* sound effects
+	kGlobalVarPhant2MasterVolume   = 236, // 0 to 127
+	kGlobalVarPhant2ControlPanel   = 250,
+	kGlobalVarShivers1Score        = 349,
+	kGlobalVarQFG4Flags            = 500,
+	kGlobalVarHoyle5MusicVolume    = 897,
+	kkGlobalVarHoyle5ResponseTime  = 899
 };
 
 /** Number of kernel calls in between gcs; should be < 50000 */

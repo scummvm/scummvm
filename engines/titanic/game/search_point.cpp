@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/search_point.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -47,7 +48,7 @@ bool CSearchPoint::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 			child->petAddToInventory();
 			CVisibleMsg visibleMsg(true);
 			visibleMsg.execute(child->getName());
-			playSound("z#47.wav");
+			playSound(TRANSLATE("z#47.wav", "z#578.wav"));
 		}
 
 		if (--_value == 0)

@@ -21,6 +21,9 @@
  */
 
 #include "titanic/messages/bilge_dispensor_event.h"
+#include "titanic/events.h"
+#include "titanic/titanic.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -42,22 +45,31 @@ void CBilgeDispensorEvent::load(SimpleFile *file) {
 }
 
 bool CBilgeDispensorEvent::EnterRoomMsg(CEnterRoomMsg *msg) {
-	_value1 = 0;
+	_counter = 0;
+	_ticksDelayEnd = 0;
+	_soundHandle = -1;
 	return true;
 }
 
 bool CBilgeDispensorEvent::LeaveRoomMsg(CLeaveRoomMsg *msg) {
-	_value1 = -1;
+	_counter = -1;
 	return true;
 }
 
 bool CBilgeDispensorEvent::FrameMsg(CFrameMsg *msg) {
-	if (_value1 >= 0 && (_value1 & 0xffff) == 0x4000) {
-		int volume = 20 + getRandomNumber(30);
-		int val3 = getRandomNumber(20) - 10;
+	uint32 ticks = g_vm->_events->getTicksCount();
+
+	if ((_ticksDelayEnd && ticks >= _ticksDelayEnd) ||
+			_soundHandle == -1 || !isSoundActive(_soundHandle)) {
+		_soundHandle = -1;
+		_ticksDelayEnd = 0;
 
 		if (getRandomNumber(2) == 0) {
-			playSound("b#18.wav", volume, val3);
+			int volume = 20 + getRandomNumber(30);
+			int balance = getRandomNumber(20) - 10;
+			_soundHandle = playSound(TRANSLATE("b#18.wav", "b#102.wav"), volume, balance);
+		} else {
+			_ticksDelayEnd = ticks + 1000;
 		}
 	}
 
@@ -67,9 +79,9 @@ bool CBilgeDispensorEvent::FrameMsg(CFrameMsg *msg) {
 
 bool CBilgeDispensorEvent::StatusChangeMsg(CStatusChangeMsg *msg) {
 	if (msg->_newStatus == 1)
-		_value1 = -1;
+		_counter = -1;
 	else if (msg->_newStatus == 2)
-		_value1 = 0;
+		_counter = 0;
 
 	return true;
 }

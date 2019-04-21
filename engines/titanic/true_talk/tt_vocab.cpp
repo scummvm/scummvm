@@ -20,21 +20,22 @@
  *
  */
 
-#include "common/file.h"
 #include "titanic/true_talk/tt_vocab.h"
-#include "titanic/true_talk/tt_adj.h"
+#include "titanic/true_talk/script_handler.h"
 #include "titanic/true_talk/tt_action.h"
 #include "titanic/true_talk/tt_adj.h"
 #include "titanic/true_talk/tt_major_word.h"
 #include "titanic/true_talk/tt_picture.h"
 #include "titanic/true_talk/tt_pronoun.h"
 #include "titanic/titanic.h"
+#include "titanic/translation.h"
+#include "common/file.h"
 
 namespace Titanic {
 
-TTvocab::TTvocab(int val): _headP(nullptr), _tailP(nullptr),
-		_word(nullptr), _vocabMode(val) {
-	load("STVOCAB.TXT");
+TTvocab::TTvocab(VocabMode vocabMode): _headP(nullptr), _tailP(nullptr),
+		_word(nullptr), _vocabMode(vocabMode) {
+	load("STVOCAB");
 }
 
 TTvocab::~TTvocab() {
@@ -131,7 +132,8 @@ int TTvocab::load(const CString &name) {
 }
 
 void TTvocab::addWord(TTword *word) {
-	TTword *existingWord = findWord(word->_text);
+	TTword *existingWord = g_language == Common::DE_DEU ? nullptr :
+		findWord(word->_text);
 
 	if (existingWord) {
 		if (word->_synP) {
@@ -160,7 +162,7 @@ TTword *TTvocab::findWord(const TTstring &str) {
 	TTword *word = _headP;
 
 	while (word && !flag) {
-		if (_vocabMode != 3 || strcmp(word->c_str(), str)) {
+		if (_vocabMode != VOCAB_MODE_EN || strcmp(word->c_str(), str)) {
 			if (word->findSynByName(str, tempNode, _vocabMode))
 				flag = true;
 			else
@@ -180,10 +182,10 @@ TTword *TTvocab::getWord(TTstring &str, TTword **srcWord) const {
 	if (!word) {
 		TTstring tempStr(str);
 		if (tempStr.size() > 2) {
-			word = getSuffixedWord(tempStr);
+			word = getSuffixedWord(tempStr, srcWord);
 
 			if (!word)
-				word = getPrefixedWord(tempStr);
+				word = getPrefixedWord(tempStr, srcWord);
 		}
 	}
 
@@ -203,7 +205,7 @@ TTword *TTvocab::getPrimeWord(TTstring &str, TTword **srcWord) const {
 	} else {
 		// Standard word
 		for (vocabP = _headP; vocabP; vocabP = vocabP->_nextP) {
-			if (_vocabMode == 3 && !strcmp(str.c_str(), vocabP->c_str())) {
+			if (_vocabMode == VOCAB_MODE_EN && !strcmp(str.c_str(), vocabP->c_str())) {
 				newWord = vocabP->copy();
 				newWord->_nextP = nullptr;
 				newWord->setSyn(nullptr);
@@ -223,14 +225,35 @@ TTword *TTvocab::getPrimeWord(TTstring &str, TTword **srcWord) const {
 	if (srcWord)
 		// Pass out the pointer to the original word
 		*srcWord = vocabP;
-	
+
 	// Return the new copy of the word
 	return newWord;
 }
 
-TTword *TTvocab::getSuffixedWord(TTstring &str) const {
+TTword *TTvocab::getSuffixedWord(TTstring &str, TTword **srcWord) const {
 	TTstring tempStr(str);
 	TTword *word = nullptr;
+
+	if (g_language == Common::DE_DEU) {
+		static const char *const SUFFIXES[11] = {
+			"est", "em", "en", "er", "es", "et", "st",
+			"s", "e", "n", "t"
+		};
+
+		for (int idx = 0; idx < 11; ++idx) {
+			if (tempStr.hasSuffix(SUFFIXES[idx])) {
+				tempStr.deleteSuffix(strlen(SUFFIXES[idx]));
+				word = getPrimeWord(tempStr, srcWord);
+				if (word)
+					break;
+				tempStr = str;
+			}
+		}
+
+		if (word)
+			word->setSynStr(str);
+		return word;
+	}
 
 	if (tempStr.hasSuffix("s")) {
 		tempStr.deleteSuffix(1);
@@ -244,7 +267,7 @@ TTword *TTvocab::getSuffixedWord(TTstring &str) const {
 				word = getPrimeWord(tempStr);
 			}
 		}
-	
+
 	} else if (tempStr.hasSuffix("ing")) {
 		tempStr.deleteSuffix(3);
 		word = getPrimeWord(tempStr);
@@ -280,11 +303,11 @@ TTword *TTvocab::getSuffixedWord(TTstring &str) const {
 				}
 			}
 		}
-	
+
 	} else if (tempStr.hasSuffix("ed")) {
 		tempStr.deleteSuffix(1);
 		word = getPrimeWord(tempStr);
-		
+
 		if (!word) {
 			tempStr.deleteSuffix(1);
 			word = getPrimeWord(tempStr);
@@ -292,7 +315,9 @@ TTword *TTvocab::getSuffixedWord(TTstring &str) const {
 
 		if (word) {
 			if (word->_wordClass == WC_ACTION) {
-				dynamic_cast<TTaction *>(word)->setVal(1);
+				TTaction *action = dynamic_cast<TTaction *>(word);
+				assert(action);
+				action->setVal(1);
 			}
 		} else {
 			tempStr = str;
@@ -308,7 +333,7 @@ TTword *TTvocab::getSuffixedWord(TTstring &str) const {
 		} else {
 			tempStr = str;
 		}
-	
+
 	} else if (tempStr.hasSuffix("er")) {
 		tempStr.deleteSuffix(1);
 		word = getPrimeWord(tempStr);
@@ -370,7 +395,7 @@ TTword *TTvocab::getSuffixedWord(TTstring &str) const {
 				}
 			}
 		}
-	
+
 	} else if (tempStr.hasSuffix("est")) {
 		tempStr.deleteSuffix(2);
 		word = getPrimeWord(tempStr);
@@ -491,7 +516,7 @@ TTword *TTvocab::getSuffixedWord(TTstring &str) const {
 	return word;
 }
 
-TTword *TTvocab::getPrefixedWord(TTstring &str) const {
+TTword *TTvocab::getPrefixedWord(TTstring &str, TTword **srcWord) const {
 	TTstring tempStr(str);
 	TTword *word = nullptr;
 	int prefixLen = 0;

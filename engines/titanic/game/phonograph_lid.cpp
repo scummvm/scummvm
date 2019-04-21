@@ -76,7 +76,7 @@ bool CPhonographLid::LockPhonographMsg(CLockPhonographMsg *msg) {
 
 bool CPhonographLid::LeaveViewMsg(CLeaveViewMsg *msg) {
 	if (_open) {
-		playMovie(27, 55, MOVIE_GAMESTATE);
+		playMovie(27, 55, MOVIE_WAIT_FOR_FINISH);
 		_open = false;
 	}
 

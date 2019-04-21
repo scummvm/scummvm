@@ -104,7 +104,7 @@ static const EntrySizeFix entrySizeFixes[] = {
 	{ 0x008C0AC24,  1031009,   3030,   6498,   3646 },	// Overwrite dialog
 	{ 0x0c6604282, 12813649,  19623,  35894,  30370 },	// One of the fonts when reading Willie's notes
 	{ 0x080283101, 13104841,   1961,   3712,   3511 },	// First message from Willie
-	{ 0x058208810, 46010519,  24852, 131874, 131776 },  // Entry to hut with musical lock (untested)
+	{ 0x058208810, 46010519,  24852, 131874, 114762 },  // Entry to hut with musical lock
 	{ 0x000918480, 17676417,    581,    916,    706 },	// First wall in the museum
 	{ 0x00800090C, 16064875,  19555,  38518,  30263 },	// First wall in the museum
 	{ 0x00008E486, 39600019,    240,    454,    271 },  // Second wall in the museum
@@ -116,6 +116,7 @@ static const EntrySizeFix entrySizeFixes[] = {
 	{ 0x000098880, 39603114,   3028,  10860,   4762 },  // Next walls in the museum
 	{ 0x040080183, 39600259,   2855,  13400,   4305 },  // Next walls in the museum
 	{ 0x004290188, 39580567,   7297,  27131,  12322 },  // Next walls in the museum
+	{ 0x0283CE401, 12795150,  18499,  36658,  29166 },  // Late-game notes
 
 	// Fixes for the Russian "Fargus" version
 	{ 0x041137051,   758264,  29037,  49590,  49591 },	// "Options" menu header text

@@ -30,7 +30,7 @@
 namespace Common {
 
 NEResources::NEResources() {
-	_exe = 0;
+	_exe = nullptr;
 }
 
 NEResources::~NEResources() {
@@ -40,7 +40,7 @@ NEResources::~NEResources() {
 void NEResources::clear() {
 	if (_exe) {
 		delete _exe;
-		_exe = 0;
+		_exe = nullptr;
 	}
 
 	_resources.clear();
@@ -270,14 +270,14 @@ const NEResources::Resource *NEResources::findResource(const WinResourceID &type
 		if (it->type == type && it->id == id)
 			return &*it;
 
-	return 0;
+	return nullptr;
 }
 
 SeekableReadStream *NEResources::getResource(const WinResourceID &type, const WinResourceID &id) {
 	const Resource *res = findResource(type, id);
 
 	if (!res)
-		return 0;
+		return nullptr;
 
 	_exe->seek(res->offset);
 	return _exe->readStream(res->size);

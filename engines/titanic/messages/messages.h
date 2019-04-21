@@ -219,8 +219,38 @@ public:
 enum MissiveOMatAction {
 	MESSAGE_NONE = 1, MESSAGE_SHOW = 2, NEXT_MESSAGE = 3, PRIOR_MESSAGE = 4,
 	MESSAGE_5 = 5, MESSAGE_DOWN = 6, MESSAGE_UP = 7, REDRAW_MESSAGE = 8,
-	MESSAGE_9 = 9
+	MESSAGE_STARTUP = 9
 };
+
+enum Movement {
+	MOVE_NONE = 0, MOVE_FORWARDS, MOVE_BACKWARDS, TURN_LEFT, TURN_RIGHT
+};
+
+enum ChangeMusicAction {
+	MUSIC_NONE = 0, MUSIC_STOP = 1, MUSIC_START = 2
+};
+
+class CMovementMsg : public CMessage {
+public:
+	Movement _movement;
+	Point _posToUse;
+public:
+	CLASSDEF;
+	CMovementMsg() : _movement(MOVE_NONE) {}
+	CMovementMsg(Movement move) : _movement(move) {}
+	CMovementMsg(Common::KeyCode key) :
+		_movement(getMovement(key)) {}
+
+	static bool isSupportedBy(const CTreeItem *item) {
+		return supports(item, _type);
+	}
+
+	/**
+	 * Returns the movement associated with a given key, if any
+	 */
+	static Movement getMovement(Common::KeyCode keycode);
+};
+
 
 MESSAGE1(CActMsg, CString, action, "");
 MESSAGE1(CActivationmsg, CString, value, "");
@@ -231,7 +261,7 @@ MESSAGE0(CArmPickedUpFromTableMsg);
 MESSAGE0(CBodyInBilgeRoomMsg);
 MESSAGE1(CBowlStateChangeMsg, int, state, 0);
 MESSAGE2(CCarryObjectArrivedMsg, CString, strValue, "", int, numValue, 0);
-MESSAGE2(CChangeMusicMsg, CString, filename, "", int, flags, 0);
+MESSAGE2(CChangeMusicMsg, CString, filename, "", ChangeMusicAction, action, MUSIC_NONE);
 MESSAGE1(CChangeSeasonMsg, CString, season, "Summer");
 MESSAGE0(CCheckAllPossibleCodes);
 MESSAGE2(CCheckChevCode, int, classNum, 0, uint, chevCode, 0);
@@ -273,8 +303,8 @@ MESSAGE1(CGetChevRoomNum, int, roomNum, 0);
 MESSAGE2(CHoseConnectedMsg, bool, connected, true, CGameObject *, object, nullptr);
 MESSAGE0(CInitializeAnimMsg);
 MESSAGE1(CIsEarBowlPuzzleDone, int, value, 0);
-MESSAGE3(CIsHookedOnMsg, Rect, rect, Rect(), bool, result, false, CString, string1, "");
-MESSAGE1(CIsParrotPresentMsg, bool, value, false);
+MESSAGE3(CIsHookedOnMsg, Rect, rect, Rect(), bool, isHooked, false, CString, armName, "");
+MESSAGE1(CIsParrotPresentMsg, bool, isPresent, false);
 MESSAGE1(CKeyCharMsg, int, key, 32);
 MESSAGE2(CLeaveNodeMsg, CNodeItem *, oldNode, nullptr, CNodeItem *, newNode, nullptr);
 MESSAGE2(CLeaveRoomMsg, CRoomItem *, oldRoom, nullptr, CRoomItem *, newRoom, nullptr);
@@ -296,16 +326,16 @@ MESSAGE2(CNPCPlayAnimationMsg, const char *const *, names, nullptr, int, maxDura
 MESSAGE1(CNPCPlayIdleAnimationMsg, const char *const *, names, 0);
 MESSAGE3(CNPCPlayTalkingAnimationMsg, uint, speechDuration, 0, int, value2, 0, const char *const *, names, nullptr);
 MESSAGE0(CNPCQueueIdleAnimMsg);
-MESSAGE1(CNutPuzzleMsg, CString, value, "");
+MESSAGE1(CNutPuzzleMsg, CString, action, "");
 MESSAGE1(COnSummonBotMsg, int, value, 0);
 MESSAGE0(COpeningCreditsMsg);
 MESSAGE1(CPanningAwayFromParrotMsg, CMovePlayerTo *, target, nullptr);
 MESSAGE2(CParrotSpeakMsg, CString, target, "", CString, action, "");
-MESSAGE2(CParrotTriesChickenMsg, int, value1, 0, int, value2, 0);
+MESSAGE2(CParrotTriesChickenMsg, bool, isHot, false, int, condiment, 0);
 MESSAGE1(CPhonographPlayMsg, int, value, 0);
 MESSAGE0(CPhonographReadyToPlayMsg);
-MESSAGE1(CPhonographRecordMsg, int, value, 0);
-MESSAGE3(CPhonographStopMsg, int, value1, 0, int, value2, 0, int, value3, 0);
+MESSAGE1(CPhonographRecordMsg, bool, canRecord, false);
+MESSAGE3(CPhonographStopMsg, bool, leavingRoom, false, bool, cylinderPresent, false, bool, dontStop, false);
 MESSAGE2(CPlayRangeMsg, int, value1, 0, int, value2, 0);
 MESSAGE2(CPlayerTriesRestaurantTableMsg, int, tableId, 0, bool, result, false);
 MESSAGE1(CPreSaveMsg, int, value, 0);
@@ -314,7 +344,7 @@ MESSAGE2(CPumpingMsg, int, value, 0, CGameObject *, object, nullptr);
 MESSAGE1(CPutBotBackInHisBoxMsg, int, value, 0);
 MESSAGE1(CPutParrotBackMsg, int, value, 0);
 MESSAGE0(CPuzzleSolvedMsg);
-MESSAGE3(CQueryCylinderHolderMsg, int, value1, 0, int, value2, 0, CTreeItem *, target, (CTreeItem *)nullptr);
+MESSAGE3(CQueryCylinderHolderMsg, bool, isOpen, false, bool, isPresent, false, CTreeItem *, target, (CTreeItem *)nullptr);
 MESSAGE1(CQueryCylinderMsg, CString, name, "");
 MESSAGE1(CQueryCylinderNameMsg, CString, name, "");
 MESSAGE3(CQueryCylinderTypeMsg, int, value1, 0, int, value2, 0, int, value3, 0);
@@ -378,6 +408,7 @@ MESSAGE1(CUseWithCharMsg, CCharacter *, character, nullptr);
 MESSAGE1(CUseWithOtherMsg, CGameObject *, other, 0);
 MESSAGE1(CVirtualKeyCharMsg, Common::KeyState, keyState, Common::KeyState());
 MESSAGE1(CVisibleMsg, bool, visible, true);
+MESSAGE1(CCheckCodeWheelsMsg, bool, isCorrect, true);
 
 } // End of namespace Titanic
 

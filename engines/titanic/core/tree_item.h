@@ -155,9 +155,9 @@ public:
 	virtual Rect getBounds() const { return Rect(); }
 
 	/**
-	 * Called when the view changes
+	 * Free up any surface the object used
 	 */
-	virtual void viewChange() {}
+	virtual void freeSurface() {}
 
 	/**
 	 * Get the parent for the given item

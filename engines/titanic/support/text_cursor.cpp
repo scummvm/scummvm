@@ -20,10 +20,11 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "titanic/support/text_cursor.h"
+#include "titanic/events.h"
 #include "titanic/support/screen_manager.h"
 #include "titanic/titanic.h"
+#include "common/textconsole.h"
 
 namespace Titanic {
 

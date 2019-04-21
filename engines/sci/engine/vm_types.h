@@ -30,6 +30,12 @@ namespace Sci {
 // Segment ID type
 typedef uint16 SegmentId;
 
+enum {
+	kUninitializedSegment = 0x1FFF,
+	kSegmentMask = 0x1FFF,
+	kOffsetMask = 0x7FFFF
+};
+
 struct reg_t {
 	// Segment and offset. These should never be accessed directly
 	SegmentId _segment;
@@ -40,7 +46,7 @@ struct reg_t {
 	uint32 getOffset() const;
 	void setOffset(uint32 offset);
 
-	inline void incOffset(int16 offset) {
+	inline void incOffset(int32 offset) {
 		setOffset(getOffset() + offset);
 	}
 
@@ -61,14 +67,14 @@ struct reg_t {
 	}
 
 	bool isPointer() const {
-		return getSegment() != 0 && getSegment() != 0xFFFF;
+		return getSegment() != 0 && getSegment() != kUninitializedSegment;
 	}
 
 	uint16 requireUint16() const;
 	int16 requireSint16() const;
 
 	inline bool isInitialized() const {
-		return getSegment() != 0xFFFF;
+		return getSegment() != kUninitializedSegment;
 	}
 
 	// Comparison operators
@@ -173,50 +179,14 @@ static inline reg_t make_reg(SegmentId segment, uint16 offset) {
 	return r;
 }
 
-#define PRINT_REG(r) (0xffff) & (unsigned) (r).getSegment(), (unsigned) (r).getOffset()
-
-// A true 32-bit reg_t
-struct reg32_t {
-	// Segment and offset. These should never be accessed directly
-	SegmentId _segment;
-	uint32 _offset;
-
-	inline SegmentId getSegment() const {
-		return _segment;
-	}
-
-	inline void setSegment(SegmentId segment) {
-		_segment = segment;
-	}
-
-	inline uint32 getOffset() const {
-		return _offset;
-	}
-
-	inline void setOffset(uint32 offset) {
-		_offset = offset;
-	}
-
-	inline void incOffset(int32 offset) {
-		setOffset(getOffset() + offset);
-	}
-
-	// Comparison operators
-	bool operator==(const reg32_t &x) const {
-		return (getOffset() == x.getOffset()) && (getSegment() == x.getSegment());
-	}
-
-	bool operator!=(const reg32_t &x) const {
-		return (getOffset() != x.getOffset()) || (getSegment() != x.getSegment());
-	}
-};
-
-static inline reg32_t make_reg32(SegmentId segment, uint32 offset) {
-	reg32_t r;
+static inline reg_t make_reg32(SegmentId segment, uint32 offset) {
+	reg_t r;
 	r.setSegment(segment);
 	r.setOffset(offset);
 	return r;
 }
+
+#define PRINT_REG(r) (kSegmentMask) & (unsigned) (r).getSegment(), (unsigned) (r).getOffset()
 
 // Stack pointer type
 typedef reg_t *StackPtr;

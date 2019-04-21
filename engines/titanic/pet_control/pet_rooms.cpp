@@ -22,6 +22,7 @@
 
 #include "titanic/pet_control/pet_rooms.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -30,7 +31,7 @@ CPetRooms::CPetRooms() :
 		_chevRightOnDim(nullptr), _chevRightOffDim(nullptr),
 		_chevLeftOnLit(nullptr), _chevLeftOffLit(nullptr),
 		_chevRightOnLit(nullptr), _chevRightOffLit(nullptr),
-		_floorNum(1), _elevatorNum(0), _roomNum(0), _field1CC(1),
+		_floorNum(1), _elevatorNum(0), _roomNum(0), _sublevel(1),
 		_wellEntry(0), _elevatorBroken(true) {
 }
 
@@ -139,7 +140,7 @@ void CPetRooms::load(SimpleFile *file, int param) {
 		_floorNum = file->readNumber();
 		_elevatorNum = file->readNumber();
 		_roomNum = file->readNumber();
-		_field1CC = file->readNumber();
+		_sublevel = file->readNumber();
 		_wellEntry = file->readNumber();
 		_elevatorBroken = file->readNumber();
 	}
@@ -155,7 +156,7 @@ void CPetRooms::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_floorNum, indent);
 	file->writeNumberLine(_elevatorNum, indent);
 	file->writeNumberLine(_roomNum, indent);
-	file->writeNumberLine(_field1CC, indent);
+	file->writeNumberLine(_sublevel, indent);
 	file->writeNumberLine(_wellEntry, indent);
 	file->writeNumberLine(_elevatorBroken, indent);
 }
@@ -202,8 +203,8 @@ bool CPetRooms::setupControl(CPetControl *petControl) {
 	if (!petControl)
 		return false;
 
-	Rect rect1(0, 0, 470, 15);
-	rect1.moveTo(32, 445);
+	Rect rect1(0, 0, 470, TRANSLATE(15, 32));
+	rect1.moveTo(32, TRANSLATE(445, 439));
 	_text.setBounds(rect1);
 	_text.setHasBorder(false);
 
@@ -260,7 +261,7 @@ uint CPetRooms::getRoomFlags() const {
 				roomFlags.setElevatorNum(_elevatorNum == 1 || _elevatorNum == 2 ? 2 : 4);
 			}
 
-			roomFlags.setRoomBits(((_roomNum - 1) & 1) + (_field1CC > 1 ? 3 : 2));
+			roomFlags.setRoomBits(((_roomNum - 1) & 1) + (_sublevel > 1 ? 3 : 1));
 		} else {
 			roomFlags.setRoomBits(0);
 		}
@@ -268,7 +269,7 @@ uint CPetRooms::getRoomFlags() const {
 
 	case THIRD_CLASS:
 		roomFlags.setElevatorNum(_elevatorNum);
-		roomFlags.setRoomBits(_roomNum + _field1CC * 6 - 6);
+		roomFlags.setRoomBits(_roomNum + _sublevel * 6 - 6);
 		break;
 
 	default:
@@ -299,17 +300,15 @@ CPetRoomsGlyph *CPetRooms::addRoom(uint roomFlags, bool highlight_) {
 	if (_glyphs.hasFlags(roomFlags))
 		return nullptr;
 
-	if (_glyphs.size() >= 32)
-		// Too many rooms already
-		return nullptr;
-
-	// Do a preliminary scan of the glyph list for any glyph that is
-	// no longer valid, and thus can be removed
-	for (CPetRoomsGlyphs::iterator i = _glyphs.begin(); i != _glyphs.end(); ++i) {
-		CPetRoomsGlyph *glyph = dynamic_cast<CPetRoomsGlyph *>(*i);
-		if (!glyph->isAssigned()) {
-			_glyphs.erase(i);
-			break;
+	if (_glyphs.size() >= 32) {
+		// Too many room glyphs present. Scan for and remove the first
+		// glyph that isn't for an assigned bedroom
+		for (CPetRoomsGlyphs::iterator i = _glyphs.begin(); i != _glyphs.end(); ++i) {
+			CPetRoomsGlyph *glyph = dynamic_cast<CPetRoomsGlyph *>(*i);
+			if (!glyph->isAssigned()) {
+				_glyphs.erase(i);
+				break;
+			}
 		}
 	}
 
@@ -340,7 +339,7 @@ bool CPetRooms::changeLocationClass(PassengerClass newClassNum) {
 	return true;
 }
 
-bool CPetRooms::hasRoomFlags(uint roomFlags) const {
+bool CPetRooms::isAssignedRoom(uint roomFlags) const {
 	for (CPetRoomsGlyphs::const_iterator i = _glyphs.begin(); i != _glyphs.end(); ++i) {
 		const CPetRoomsGlyph *glyph = static_cast<const CPetRoomsGlyph *>(*i);
 		if (glyph->isAssigned() && glyph->getRoomFlags() == roomFlags)

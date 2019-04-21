@@ -64,6 +64,8 @@ class PictureMgr {
 public:
 	PictureMgr(AgiBase *agi, GfxMgr *gfx);
 
+	int16 getResourceNr() { return _resourceNr; };
+
 private:
 	void draw_xCorner(bool skipOtherCoords = false);
 	void yCorner(bool skipOtherCoords = false);

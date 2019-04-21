@@ -1,0 +1,1 @@
+python2.7 fontCreator.py -im ./samples/KIA6PT.FON-Ext012TranspZeroThresh0002.png -oe ./samples/overrideEncodingKIA6PT.txt -om KIA6PT.FON -pxLL 14 -pxTT 15 -pxKn 1 -pxWS 4 -pxYo 1 --noAutoTabCalculation -ld EN_ANY  --trace

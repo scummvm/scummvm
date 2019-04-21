@@ -24,6 +24,7 @@
 #define SCI_SFX_SOFTSEQ_MIDIDRIVER_H
 
 #include "sci/sci.h"
+#include "sci/util.h"
 #include "audio/mididrv.h"
 #include "common/error.h"
 
@@ -119,18 +120,25 @@ public:
 		}
 	}
 
+	// Prepares the driver for the playback of SCI0 midi tracks.
+	// The main purpose is the assignment of voices ("hardware" sound channels) to the 16 midi parts.
+	// This is basically the predecessor of the 0x4B midi event.
+	// Some drivers also do other things in here.
+	virtual void initTrack(SciSpan<const byte> &) {}
+
 protected:
 	SciVersion _version;
 };
 
 extern MidiPlayer *MidiPlayer_AdLib_create(SciVersion version);
-extern MidiPlayer *MidiPlayer_AmigaMac_create(SciVersion version);
+extern MidiPlayer *MidiPlayer_AmigaMac_create(SciVersion version, Common::Platform platform);
 extern MidiPlayer *MidiPlayer_PCJr_create(SciVersion version);
 extern MidiPlayer *MidiPlayer_PCSpeaker_create(SciVersion version);
 extern MidiPlayer *MidiPlayer_CMS_create(SciVersion version);
 extern MidiPlayer *MidiPlayer_Midi_create(SciVersion version);
 extern MidiPlayer *MidiPlayer_Fb01_create(SciVersion version);
 extern MidiPlayer *MidiPlayer_FMTowns_create(SciVersion version);
+extern MidiPlayer *MidiPlayer_PC9801_create(SciVersion version);
 
 } // End of namespace Sci
 

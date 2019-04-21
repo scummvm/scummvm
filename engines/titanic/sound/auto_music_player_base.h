@@ -36,8 +36,8 @@ class CAutoMusicPlayerBase : public CGameObject {
 protected:
 	CString _filename;
 	bool _initialMute;
-	bool _isRepeated;
-	int _volumeMode;
+	bool _isEnabled;
+	VolumeMode _volumeMode;
 	int _transition;
 public:
 	CLASSDEF;

@@ -42,14 +42,13 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 		_rnd("director") {
 	DebugMan.addDebugChannel(kDebugLingoExec, "lingoexec", "Lingo Execution");
 	DebugMan.addDebugChannel(kDebugLingoCompile, "lingocompile", "Lingo Compilation");
+	DebugMan.addDebugChannel(kDebugLingoParse, "lingoparse", "Lingo code parsing");
 	DebugMan.addDebugChannel(kDebugLoading, "loading", "Loading");
 	DebugMan.addDebugChannel(kDebugImages, "images", "Image drawing");
 	DebugMan.addDebugChannel(kDebugText, "text", "Text rendering");
+	DebugMan.addDebugChannel(kDebugEvents, "events", "Event processing");
 
 	g_director = this;
-
-	if (!_mixer->isReady())
-		error("Sound initialization failed");
 
 	// Setup mixer
 	syncSoundSettings();
@@ -57,7 +56,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	// Load Patterns
 	loadPatterns();
 
-	_sharedCasts = nullptr;
+	_sharedScore = nullptr;
 
 	_currentScore = nullptr;
 	_soundManager = nullptr;
@@ -65,7 +64,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_currentPaletteLength = 0;
 	_lingo = nullptr;
 
-	_sharedCasts = nullptr;
+	_sharedScore = nullptr;
 	_sharedSound = nullptr;
 	_sharedBMP = nullptr;
 	_sharedSTXT = nullptr;
@@ -76,16 +75,24 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 
 	_movies = nullptr;
 
+	_nextMovie.frameI = -1;
+
 	_wm = nullptr;
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "install");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "main");		// Meet Mediaband
 
 	_colorDepth = 8;	// 256-color
 	_key = 0;
 	_keyCode = 0;
 	_machineType = 9; // Macintosh IIci
+	_playbackPaused = false;
+	_skipFrameAdvance = false;
+
+	_draggingSprite = false;
+	_draggingSpriteId = 0;
 }
 
 DirectorEngine::~DirectorEngine() {
@@ -93,6 +100,7 @@ DirectorEngine::~DirectorEngine() {
 	delete _sharedBMP;
 	delete _sharedSTXT;
 	delete _sharedDIB;
+	delete _sharedScore;
 
 	delete _currentScore;
 
@@ -104,6 +112,10 @@ DirectorEngine::~DirectorEngine() {
 
 Common::Error DirectorEngine::run() {
 	debug("Starting v%d Director game", getVersion());
+
+	if (!_mixer->isReady()) {
+		return Common::kAudioDeviceInitFailed;
+	}
 
 	_currentPalette = nullptr;
 
@@ -119,32 +131,89 @@ Common::Error DirectorEngine::run() {
 		_mainArchive = nullptr;
 		_currentScore = nullptr;
 
-		testFontScaling();
-		testFonts();
+		if (debugChannelSet(-1, kDebugText)) {
+			testFontScaling();
+			testFonts();
+		}
 
 		_lingo->runTests();
 
 		return Common::kNoError;
 	}
 
-	//FIXME
+	// FIXME
 	//_mainArchive = new RIFFArchive();
 	//_mainArchive->openFile("bookshelf_example.mmm");
 
-	if (getPlatform() == Common::kPlatformWindows)
-		_sharedCastFile = "SHARDCST.MMM";
-	else
-		_sharedCastFile = "Shared Cast";
+	_currentScore = new Score(this);
+
+	if (getVersion() < 4) {
+		if (getPlatform() == Common::kPlatformWindows) {
+			_sharedCastFile = "SHARDCST.MMM";
+		} else {
+			_sharedCastFile = "Shared Cast";
+		}
+	} else if (getVersion() == 5) {
+		if (getPlatform() == Common::kPlatformWindows) {
+			_sharedCastFile = "SHARED.Cxt";
+		}
+	} else {
+		_sharedCastFile = "Shared.dir";
+	}
 
 	loadSharedCastsFrom(_sharedCastFile);
 
 	loadInitialMovie(getEXEName());
 
-	_currentScore = new Score(this, _mainArchive);
+	_currentScore->setArchive(_mainArchive);
 	debug(0, "Score name %s", _currentScore->getMacName().c_str());
 
-	_currentScore->loadArchive();
-	_currentScore->startLoop();
+	bool loop = true;
+
+	while (loop) {
+		loop = false;
+
+		_currentScore->loadArchive();
+
+		// If we came in a loop, then skip as requested
+		if (!_nextMovie.frameS.empty()) {
+			_currentScore->setStartToLabel(_nextMovie.frameS);
+			_nextMovie.frameS.clear();
+		}
+
+		if (_nextMovie.frameI != -1) {
+			_currentScore->setCurrentFrame(_nextMovie.frameI);
+			_nextMovie.frameI = -1;
+		}
+
+		debugC(1, kDebugEvents, "Starting playback of score '%s'", _currentScore->getMacName().c_str());
+
+		_currentScore->startLoop();
+
+		debugC(1, kDebugEvents, "Finished playback of score '%s'", _currentScore->getMacName().c_str());
+
+		// If a loop was requested, do it
+		if (!_nextMovie.movie.empty()) {
+			_lingo->restartLingo();
+
+			delete _currentScore;
+
+			Archive *mov = openMainArchive(_nextMovie.movie);
+
+			if (!mov) {
+				warning("nextMovie: No score is loaded");
+
+				return Common::kNoError;
+			}
+
+			_currentScore = new Score(this);
+			_currentScore->setArchive(mov);
+			debug(0, "Switching to score '%s'", _currentScore->getMacName().c_str());
+
+			_nextMovie.movie.clear();
+			loop = true;
+		}
+	}
 
 	return Common::kNoError;
 }
@@ -179,7 +248,8 @@ Common::HashMap<Common::String, Score *> *DirectorEngine::scanMovies(const Commo
 
 			warning("name: %s", i->getName().c_str());
 			arc->openFile(i->getName());
-			Score *sc = new Score(this, arc);
+			Score *sc = new Score(this);
+			sc->setArchive(arc);
 			nameMap->setVal(sc->getMacName(), sc);
 
 			debugC(2, kDebugLoading, "Movie name: \"%s\"", sc->getMacName().c_str());
@@ -189,32 +259,11 @@ Common::HashMap<Common::String, Score *> *DirectorEngine::scanMovies(const Commo
 	return nameMap;
 }
 
-void DirectorEngine::setPalette(byte *palette, uint16 count) {
-	_currentPalette = palette;
-	_currentPaletteLength = count;
-}
+Common::HashMap<int, CastType> *DirectorEngine::getSharedCastTypes() {
+	if (_sharedScore)
+		return &_sharedScore->_castTypes;
 
-void DirectorEngine::testFonts() {
-	Common::String fontName("Helvetica");
-
-	Common::MacResManager *fontFile = new Common::MacResManager();
-	if (!fontFile->open(fontName))
-		error("Could not open %s as a resource fork", fontName.c_str());
-
-	Common::MacResIDArray fonds = fontFile->getResIDArray(MKTAG('F','O','N','D'));
-	if (fonds.size() > 0) {
-		for (Common::Array<uint16>::iterator iterator = fonds.begin(); iterator != fonds.end(); ++iterator) {
-			Common::SeekableReadStream *stream = fontFile->getResource(MKTAG('F', 'O', 'N', 'D'), *iterator);
-			Common::String name = fontFile->getResName(MKTAG('F', 'O', 'N', 'D'), *iterator);
-
-			debug("Font: %s", name.c_str());
-
-			Graphics::MacFontFamily font;
-			font.load(*stream);
-		}
-	}
-
-	delete fontFile;
+	return &_dummyCastType;
 }
 
 } // End of namespace Director

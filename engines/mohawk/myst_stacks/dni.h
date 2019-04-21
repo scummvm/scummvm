@@ -33,12 +33,12 @@ struct MystScriptEntry;
 
 namespace MystStacks {
 
-#define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
+#define DECLARE_OPCODE(x) void x(uint16 var, const ArgumentsArray &args)
 
 class Dni : public MystScriptParser {
 public:
-	Dni(MohawkEngine_Myst *vm);
-	~Dni();
+	explicit Dni(MohawkEngine_Myst *vm);
+	~Dni() override;
 
 	void disablePersistentScripts() override;
 	void runPersistentScripts() override;
@@ -58,7 +58,10 @@ private:
 	bool _atrusRunning;
 	bool _notSeenAtrus; // 56
 	uint32 _atrusLeftTime; // 60
+
 	Common::String _video; // 64
+	Common::Point _videoPos;
+
 	bool _waitForLoop;
 	uint32 _loopStart; // 72
 	uint32 _loopEnd; // 76

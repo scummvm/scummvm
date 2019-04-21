@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/useless_lever.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -42,11 +43,11 @@ void CUselessLever::load(SimpleFile *file) {
 bool CUselessLever::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (_fieldE0) {
 		playMovie(15, 30, 0);
-		playSound("z#56.wav");
+		playSound(TRANSLATE("z#56.wav", "z#587.wav"));
 		_fieldE0 = false;
 	} else {
 		playMovie(0, 14, 0);
-		playSound("z#56.wav");
+		playSound(TRANSLATE("z#56.wav", "z#587.wav"));
 		_fieldE0 = true;
 	}
 

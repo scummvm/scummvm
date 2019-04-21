@@ -21,6 +21,8 @@
  */
 
 #include "titanic/game/bomb.h"
+#include "titanic/game/code_wheel.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -36,19 +38,19 @@ BEGIN_MESSAGE_MAP(CBomb, CBackground)
 	ON_MESSAGE(SetFrameMsg)
 END_MESSAGE_MAP()
 
-static const char *const WAVE_NAMES1[] = {
-	"z#353.wav", "z#339.wav", "z#325.wav", "z#311.wav", "z#297.wav",
+const int CORRECT_WHEELS = 23;
+
+static const char *const HUNDREDS_WAVS_EN[] = {
+	"", "z#353.wav", "z#339.wav", "z#325.wav", "z#311.wav", "z#297.wav",
 	"z#283.wav", "z#269.wav", "z#255.wav", "z#241.wav"
 };
 
-static const char *const WAVE_NAMES2[] = {
+static const char *const HUNDREDS_AND_WAVS_EN[] = {
 	"", "z#352.wav", "z#338.wav", "z#324.wav", "z#310.wav", "z#296.wav",
-	"z#281.wav", "z#268.wav", "z#254.wav", "z#240.wav", "", "z#351.wav",
-	"z#337.wav", "z#323.wav", "z#309.wav", "z#295.wav", "z#282.wav",
-	"z#267.wav", "z#253.wav", "z#239.wav"
+	"z#281.wav", "z#268.wav", "z#254.wav", "z#240.wav"
 };
 
-static const char *const WAVE_NAMES3[100] = {
+static const char *const COUNTDOWN_WAVS_EN[100] = {
 	"bombcountdown_c0.wav", "z#355.wav", "z#341.wav",  "z#327.wav", "z#313.wav",
 	"z#299.wav", "z#285.wav", "z#271.wav", "z#257.wav", "z#243.wav",
 	"z#354.wav", "z#350.wav", "z#349.wav", "z#348.wav", "z#347.wav",
@@ -71,29 +73,60 @@ static const char *const WAVE_NAMES3[100] = {
 	"z#234.wav", "z#233.wav", "z#232.wav", "z#231.wav", "z#230.wav",
 };
 
+const char *const HUNDREDS_WAVS_DE[10] = {
+	"z#56.wav", "z#54.wav", "z#53.wav", "z#52.wav", "z#51.wav",
+	"z#50.wav", "z#49.wav", "z#48.wav", "z#47.wav", "z#55.wav"
+};
+
+const char *const ONE_TO_NINETEEN_WAVS_DE[19] = {
+	"z#15.wav", "z#97.wav", "z#95.wav", "z#86.wav", "z#84.wav",
+	"z#82.wav", "z#80.wav", "z#78.wav", "z#76.wav", "z#74.wav",
+	"z#73.wav", "z#72.wav", "z#71.wav", "z#70.wav", "z#69.wav",
+	"z#68.wav", "z#67.wav", "z#66.wav", "z#65.wav"
+};
+
+const char *const TENS_WAVS_DE[9] = {
+	"z#98.wav", "z#96.wav", "z#92.wav", "z#85.wav", "z#83.wav",
+	"z#81.wav", "z#79.wav", "z#77.wav", "z#75.wav"
+};
+
+const char *const DIGITS_WAVS_DE[9] = {
+	"z#74.wav", "z#64.wav", "z#63.wav", "z#62.wav", "z#61.wav",
+	"z#60.wav", "z#59.wav", "z#58.wav", "z#57.wav"
+};
+
+const char *const WAVES_970_DE[30] = {
+	"z#46.wav", "z#45.wav", "z#44.wav", "z#43.wav", "z#42.wav",
+	"z#41.wav", "z#40.wav", "z#39.wav", "z#38.wav", "z#37.wav",
+	"z#36.wav", "z#35.wav", "z#34.wav", "z#33.wav", "z#32.wav",
+	"z#31.wav", "z#30.wav", "z#29.wav", "z#28.wav", "z#27.wav",
+	"z#26.wav", "z#25.wav", "z#24.wav", "z#23.wav", "z#22.wav",
+	"z#21.wav", "z#20.wav", "z#19.wav", "z#18.wav", "z#17.wav"
+};
+
 CBomb::CBomb() : CBackground() {
-	_fieldE0 = 0;
-	_fieldE4 = 0;
-	_fieldE8 = 17;
-	_fieldEC = 9;
-	_fieldF0 = 0;
+	_active = false;
+	_numCorrectWheels = 0;
+	_tappedCtr = 17;
+	_hammerCtr = 9;
+	_commentCtr = 0;
 	_countdown = 999;
 	_soundHandle = 0;
-	_fieldFC = 0;
+	_unusedHandle = 0;
 	_startingTicks = 0;
 	_volume = 60;
 }
 
 void CBomb::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldE0, indent);
-	file->writeNumberLine(_fieldE4, indent);
-	file->writeNumberLine(_fieldE8, indent);
-	file->writeNumberLine(_fieldEC, indent);
-	file->writeNumberLine(_fieldF0, indent);
+	file->writeNumberLine(_active, indent);
+	file->writeNumberLine(_numCorrectWheels, indent);
+	file->writeNumberLine(_tappedCtr, indent);
+	file->writeNumberLine(_hammerCtr, indent);
+	file->writeNumberLine(_commentCtr, indent);
 	file->writeNumberLine(_countdown, indent);
 	file->writeNumberLine(_soundHandle, indent);
-	file->writeNumberLine(_fieldFC, indent);
+	file->writeNumberLine(_unusedHandle, indent);
 	file->writeNumberLine(_startingTicks, indent);
 	file->writeNumberLine(_volume, indent);
 
@@ -102,14 +135,14 @@ void CBomb::save(SimpleFile *file, int indent) {
 
 void CBomb::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldE0 = file->readNumber();
-	_fieldE4 = file->readNumber();
-	_fieldE8 = file->readNumber();
-	_fieldEC = file->readNumber();
-	_fieldF0 = file->readNumber();
+	_active = file->readNumber();
+	_numCorrectWheels = file->readNumber();
+	_tappedCtr = file->readNumber();
+	_hammerCtr = file->readNumber();
+	_commentCtr = file->readNumber();
 	_countdown = file->readNumber();
 	_soundHandle = file->readNumber();
-	_fieldFC = file->readNumber();
+	_unusedHandle = file->readNumber();
 	_startingTicks = file->readNumber();
 	_volume = file->readNumber();
 
@@ -117,88 +150,94 @@ void CBomb::load(SimpleFile *file) {
 }
 
 bool CBomb::StatusChangeMsg(CStatusChangeMsg *msg) {
-	_fieldE4 += msg->_newStatus;
+	// Check whether the wheels are corect
+	CCheckCodeWheelsMsg checkMsg;
+	checkMsg.execute(findRoom(), nullptr, MSGFLAG_SCAN);
 
-	if (_fieldE4 == 23) {
+	_numCorrectWheels = checkMsg._isCorrect ? CORRECT_WHEELS : 0;
+
+	if (_numCorrectWheels == CORRECT_WHEELS) {
+		// Nobody likes a smartass
 		startAnimTimer("Disarmed", 2000);
 		lockMouse();
 	}
 
-	_fieldF0 %= 1000;
-	if (!(_fieldF0 % 20) && _countdown < 995) {
+	_commentCtr = (_commentCtr % 1000) + 1;
+	if (!(_commentCtr % 20) && _countdown < 995) {
 		int val = getRandomNumber(5) + 25;
-		if (_fieldF0 < 20 || _fieldF0 > 80)
+		if (_commentCtr < 20 || _commentCtr > 80)
 			val = 28;
 
 		CString name;
-		switch (val - 25) {
-		case 0:
-			name = "z#372.wav";
+		switch (val) {
+		case 25:
+			name = TRANSLATE("z#372.wav", "z#115.wav");
 			break;
-		case 1:
-			name = "z#371.wav";
+		case 26:
+			name = TRANSLATE("z#371.wav", "z#114.wav");
 			break;
-		case 2:
-			name = "z#370.wav";
+		case 27:
+			name = TRANSLATE("z#370.wav", "z#113.wav");
 			break;
-		case 3:
-			name = "z#369.wav";
+		case 28:
+			name = TRANSLATE("z#369.wav", "z#112.wav");
 			break;
-		case 4:
-			name = "z#368.wav";
+		case 29:
+			name = TRANSLATE("z#368.wav", "z#111.wav");
 			break;
 		default:
-			name = "z#366.wav";
+			name = TRANSLATE("z#366.wav", "z#109.wav");
 			break;
 		}
 
-		_soundHandle = queueSound(name, _soundHandle, _volume);
+		_soundHandle = queueSound(name, _soundHandle, _volume, 0, false, Audio::Mixer::kSpeechSoundType);
 	}
 
 	return true;
 }
 
 bool CBomb::EnterViewMsg(CEnterViewMsg *msg) {
-	_fieldE4 = 2;
+	// WORKAROUND: Don't keep resetting wheels
 	return true;
 }
 
 bool CBomb::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	playSound("z#62.wav");
+	playSound(TRANSLATE("z#62.wav", "z#593.wav"));
 
-	if (_fieldE0) {
+	if (_active) {
 		stopSound(_soundHandle);
-		if (_fieldE4 < 23) {
-			_fieldE8 = MIN(_fieldE8 + 1, 23);
+
+		if (_numCorrectWheels < CORRECT_WHEELS) {
+			_tappedCtr = MIN(_tappedCtr + 1, 23);
 
 			CString name;
-			switch (_fieldE8) {
+			switch (_tappedCtr) {
 			case 18:
-				name = "z#380.wav";
+				name = TRANSLATE("z#380.wav", "z#122.wav");
 				break;
 			case 19:
-				name = "z#379.wav";
+				name = TRANSLATE("z#379.wav", "z#121.wav");
 				break;
 			case 20:
-				name = "z#377.wav";
+				name = TRANSLATE("z#377.wav", "z#119.wav");
 				break;
 			case 21:
-				name = "z#376.wav";
+				name = TRANSLATE("z#376.wav", "z#118.wav");
 				break;
 			case 22:
-				name = "z#375.wav";
+				name = TRANSLATE("z#375.wav", "z#117.wav");
 				break;
 			default:
-				name = "z#374.wav";
+				name = TRANSLATE("z#374.wav", "z#116.wav");
 				break;
 			}
 
-			_soundHandle = queueSound(name, _soundHandle, _volume);
+			_soundHandle = queueSound(name, _soundHandle, _volume, 0, false, Audio::Mixer::kSpeechSoundType);
 			_countdown = 999;
 		}
 	} else {
-		_soundHandle = playSound("z#389.wav", _volume);
-		_fieldE0 = true;
+		_soundHandle = playSound(TRANSLATE("z#389.wav", "z#131.wav"), _volume);
+		_active = true;
 		CActMsg actMsg("Arm Bomb");
 		actMsg.execute("EndExplodeShip");
 	}
@@ -207,50 +246,50 @@ bool CBomb::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 }
 
 bool CBomb::EnterRoomMsg(CEnterRoomMsg *msg) {
-	_fieldE8 = 17;
-	_fieldEC = 9;
-	_fieldF0 = 0;
+	_tappedCtr = 17;
+	_hammerCtr = 9;
+	_commentCtr = 0;
 	_startingTicks = getTicksCount();
 	return true;
 }
 
 bool CBomb::ActMsg(CActMsg *msg) {
 	if (msg->_action == "Hit") {
-		playSound("z#63.wav");
+		playSound(TRANSLATE("z#63.wav", "z#594.wav"));
 		stopSound(_soundHandle);
 
-		if (_fieldEC < 17)
-			++_fieldEC;
+		if (_hammerCtr < 17)
+			++_hammerCtr;
 
 		CString name;
-		switch (_fieldEC) {
+		switch (_hammerCtr) {
 		case 10:
-			name = "z#388.wav";
+			name = TRANSLATE("z#388.wav", "z#130.wav");
 			break;
 		case 11:
-			name = "z#387.wav";
+			name = TRANSLATE("z#387.wav", "z#129.wav");
 			break;
 		case 12:
-			name = "z#386.wav";
+			name = TRANSLATE("z#386.wav", "z#128.wav");
 			break;
 		case 13:
-			name = "z#385.wav";
+			name = TRANSLATE("z#385.wav", "z#127.wav");
 			break;
 		case 14:
-			name = "z#384.wav";
+			name = TRANSLATE("z#384.wav", "z#126.wav");
 			break;
 		case 15:
-			name = "z#383.wav";
+			name = TRANSLATE("z#383.wav", "z#125.wav");
 			break;
 		case 16:
-			name = "z#382.wav";
+			name = TRANSLATE("z#382.wav", "z#124.wav");
 			break;
 		default:
-			name = "z#381.wav";
+			name = TRANSLATE("z#381.wav", "z#123.wav");
 			break;
 		}
 
-		_soundHandle = queueSound(name, _soundHandle, _volume);
+		_soundHandle = queueSound(name, _soundHandle, _volume, 0, false, Audio::Mixer::kSpeechSoundType);
 		_countdown = 999;
 	}
 
@@ -258,9 +297,20 @@ bool CBomb::ActMsg(CActMsg *msg) {
 }
 
 bool CBomb::TurnOn(CTurnOn *msg) {
-	if (!_fieldE0) {
-		_soundHandle = playSound("z#389.wav", _volume);
-		_fieldE0 = true;
+	if (!_active) {
+		CProximity prox(Audio::Mixer::kSpeechSoundType, _volume);
+		_soundHandle = playSound(TRANSLATE("z#389.wav", "z#131.wav"), prox);
+		_active = true;
+
+		// WORKAROUND: Only reset the code wheels back to 'O' value
+		// when first arming the bomb, not whenever the bomb view is entered
+		_numCorrectWheels = 2;
+		CRoomItem *room = findRoom();
+		for (CTreeItem *treeItem = room; treeItem; treeItem = treeItem->scan(room)) {
+			CodeWheel *codeWheel = dynamic_cast<CodeWheel *>(treeItem);
+			if (codeWheel)
+				codeWheel->reset();
+		}
 
 		CActMsg actMsg("Arm Bomb");
 		actMsg.execute("EndExplodeShip");
@@ -277,12 +327,13 @@ bool CBomb::TurnOn(CTurnOn *msg) {
 
 bool CBomb::TimerMsg(CTimerMsg *msg) {
 	if (msg->_action == "Disarmed") {
+		CProximity prox(Audio::Mixer::kSpeechSoundType, _volume);
 		stopSound(_soundHandle);
-		playSound("z#364.wav", _volume);
+		playSound(TRANSLATE("z#364.wav", "z#107.wav"), prox);
 
 		CActMsg actMsg1("Disarm Bomb");
 		actMsg1.execute("EndExplodeShip");
-		_fieldE0 = false;
+		_active = false;
 		CActMsg actMsg2("Titania.Node 5.N");
 		actMsg2.execute("BombNav");
 		actMsg2.execute("EnterBombNav");
@@ -292,57 +343,121 @@ bool CBomb::TimerMsg(CTimerMsg *msg) {
 		unlockMouse();
 	}
 
-	if (compareRoomNameTo("Titania")) {
-		if (msg->_actionVal == 1 && getRandomNumber(9) == 0) {
-			if (!_fieldE0)
-				return true;
-
-			CParrotSpeakMsg speakMsg("Bomb", "BombCountdown");
-			speakMsg.execute("PerchedParrot");
-		}
-
-		if (_fieldE0) {
-			if (isSoundActive(_soundHandle)) {
-				if (msg->_actionVal == 0) {
-					addTimer(1, 1000, 0);
-				} else {
-					_soundHandle = 0;
-					int section = _countdown / 100;
-					int index = _countdown % 100;
-
-					if (_countdown >= 100) {
-						CString name1 = index ? WAVE_NAMES2[section] :
-							WAVE_NAMES1[section];
-						playSound(name1, _volume);
-					}
-
-					CString name2 = WAVE_NAMES3[index];
-					if (_countdown == 10) {
-						name2 = "z#229.wav";
-						_countdown = 998;
-					}
-
-					if (_soundHandle > 0) {
-						_soundHandle = queueSound(name2, _soundHandle, _volume);
-					} else {
-						_soundHandle = playSound(name2, _volume);
-					}
-
-					--_countdown;
-					addTimer(0, 1000, 0);
-				}
-			} else {
-				addTimer(0, 100, 0);
-			}
-		}
-	} else {
-		if (_fieldE0) {
+	if (!compareRoomNameTo("Titania")) {
+		// In rooms other than the bomb room
+		if (_active) {
 			--_countdown;
 			addTimer(6000);
 
 			if (_countdown < 11)
 				_countdown = getRandomNumber(900) + 50;
 		}
+
+		return true;
+	}
+
+	if (msg->_actionVal == 1 && getRandomNumber(9) == 0) {
+		if (!_active)
+			return true;
+
+		CParrotSpeakMsg speakMsg("Bomb", "BombCountdown");
+		speakMsg.execute("PerchedParrot");
+	}
+
+	// Don't execute if the bomb isn't actually active
+	if (!_active)
+		return true;
+
+	if (isSoundActive(_soundHandle)) {
+		// Bomb speech currently active, so schedule the method
+		// to re-trigger after 100ms to check if speech is finished
+		addTimer(0, 100, 0);
+		return true;
+	}
+
+	if (msg->_actionVal == 0) {
+		addTimer(1, 1000, 0);
+	} else {
+		_soundHandle = 0;
+		int hundreds = _countdown / 100;
+		int remainder = _countdown % 100;
+
+		if (g_language == Common::DE_DEU) {
+			if (_countdown <= 10) {
+				// Reset countdown back to 1000
+				CProximity prox(Audio::Mixer::kSpeechSoundType, _volume);
+				_soundHandle = playSound("z#14.wav", prox);
+				_countdown = 999;
+			} else {
+				if (_countdown >= 970) {
+					// Sounds for numbers 970 to 999
+					CProximity prox(Audio::Mixer::kSpeechSoundType, _volume);
+					_soundHandle = playSound(WAVES_970_DE[_countdown - 970], prox);
+				} else {
+					if (hundreds >= 1) {
+						CProximity prox(Audio::Mixer::kSpeechSoundType, _volume);
+						_soundHandle = playSound(HUNDREDS_WAVS_DE[hundreds - 1], prox);
+					}
+
+					if (remainder >= 20) {
+						int tens = remainder / 10;
+						int digit = remainder % 10;
+
+						// Tens
+						const char *tensStr = TENS_WAVS_DE[tens - 1];
+						if (_soundHandle) {
+							_soundHandle = queueSound(tensStr, _soundHandle,
+								_volume, 0, false, Audio::Mixer::kSpeechSoundType);
+						} else {
+							CProximity prox(Audio::Mixer::kSpeechSoundType, _volume);
+							_soundHandle = playSound(tensStr, prox);
+						}
+
+						// Digit
+						if (digit != 0) {
+							const char *digitStr = DIGITS_WAVS_DE[digit - 1];
+							_soundHandle = queueSound(digitStr, _soundHandle,
+								_volume, 0, false, Audio::Mixer::kSpeechSoundType);
+						}
+					} else if (remainder != 0) {
+						// One to nineteen
+						const char *name = ONE_TO_NINETEEN_WAVS_DE[remainder - 1];
+						if (_soundHandle) {
+							_soundHandle = queueSound(name, _soundHandle,
+								_volume, 0, false, Audio::Mixer::kSpeechSoundType);
+						} else {
+							CProximity prox(Audio::Mixer::kSpeechSoundType, _volume);
+							_soundHandle = playSound(name, prox);
+						}
+					}
+				}
+			}
+		} else {
+			if (_countdown >= 100) {
+				// Play "x hundred and" or just "x hundred"
+				CProximity prox(Audio::Mixer::kSpeechSoundType, _volume);
+				CString hName = remainder ? HUNDREDS_AND_WAVS_EN[hundreds] : HUNDREDS_WAVS_EN[hundreds];
+				_soundHandle = playSound(hName, prox);
+			}
+
+			CString ctrName = COUNTDOWN_WAVS_EN[remainder];
+			if (_countdown == 10) {
+				ctrName = "z#229.wav";
+				_countdown = 998;
+			}
+
+			// Play the sub-hundred portion of the countdown amount
+			if (_soundHandle > 0) {
+				_soundHandle = queueSound(ctrName, _soundHandle, _volume, 0, false, Audio::Mixer::kSpeechSoundType);
+			} else {
+				CProximity prox(Audio::Mixer::kSpeechSoundType, _volume);
+				_soundHandle = playSound(ctrName, prox);
+			}
+		}
+
+		// Reduce countdown and schedule another timer
+		--_countdown;
+		addTimer(0, 1000, 0);
 	}
 
 	return true;
@@ -350,7 +465,7 @@ bool CBomb::TimerMsg(CTimerMsg *msg) {
 
 bool CBomb::TrueTalkGetStateValueMsg(CTrueTalkGetStateValueMsg *msg) {
 	if (msg->_stateNum == 10)
-		msg->_stateVal = _fieldE0;
+		msg->_stateVal = _active ? 1 : 0;
 
 	return true;
 }

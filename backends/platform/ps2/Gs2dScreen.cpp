@@ -21,6 +21,8 @@
  */
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
+#define FORBIDDEN_SYMBOL_EXCEPTION_abort
+#define FORBIDDEN_SYMBOL_EXCEPTION_exit
 
 #include "Gs2dScreen.h"
 #include <kernel.h>
@@ -556,7 +558,7 @@ void Gs2dScreen::setPalette(const uint8 *pal, uint8 start, uint16 num) {
 	SignalSema(g_DmacSema);
 }
 
-void Gs2dScreen::grabPalette(uint8 *pal, uint8 start, uint16 num) {
+void Gs2dScreen::grabPalette(uint8 *pal, uint8 start, uint16 num) const {
 	assert(start + num <= 256);
 	for (uint16 cnt = 0; cnt < num; cnt++) {
 		uint16 src = start + cnt;

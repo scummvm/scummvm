@@ -289,7 +289,8 @@ protected:
 	 * @param alpha Alpha intensity of the pixel (0-255)
 	 */
 	inline void blendFill(PixelType *first, PixelType *last, PixelType color, uint8 alpha) {
-		while (first != last) blendPixelPtr(first++, color, alpha);
+		while (first != last)
+			blendPixelPtr(first++, color, alpha);
 	}
 
 	inline void blendFillClip(PixelType *first, PixelType *last, PixelType color, uint8 alpha, int realX, int realY) {

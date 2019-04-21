@@ -24,27 +24,29 @@
 
 #include "bladerunner/audio_player.h"
 #include "bladerunner/bladerunner.h"
-#include "bladerunner/gameinfo.h"
+#include "bladerunner/game_info.h"
+#include "bladerunner/savefile.h"
+#include "bladerunner/time.h"
+#include "bladerunner/game_constants.h"
 
 #include "common/debug.h"
 #include "common/system.h"
 
 namespace BladeRunner {
 
-#define NON_LOOPING_SOUNDS 25
-#define LOOPING_SOUNDS      3
+AmbientSounds::AmbientSounds(BladeRunnerEngine *vm) {
+	_vm = vm;
+	_nonLoopingSounds = new NonLoopingSound[kNonLoopingSounds];
+	_loopingSounds = new LoopingSound[kLoopingSounds];
 
-AmbientSounds::AmbientSounds(BladeRunnerEngine *vm) : _vm(vm) {
-	_nonLoopingSounds = new NonLoopingSound[NON_LOOPING_SOUNDS];
-	_loopingSounds = new LoopingSound[LOOPING_SOUNDS];
-	_ambientVolume = 65;
+	_ambientVolume = BLADERUNNER_ORIGINAL_SETTINGS ? 65 : 100;
 
-	for (int i = 0; i != NON_LOOPING_SOUNDS; ++i) {
+	for (int i = 0; i != kNonLoopingSounds; ++i) {
 		NonLoopingSound &track = _nonLoopingSounds[i];
 		track.isActive = false;
 	}
 
-	for (int i = 0; i != LOOPING_SOUNDS; ++i) {
+	for (int i = 0; i != kLoopingSounds; ++i) {
 		LoopingSound &track = _loopingSounds[i];
 		track.isActive = false;
 	}
@@ -64,153 +66,386 @@ static inline void sort(int &a, int &b) {
 }
 
 void AmbientSounds::addSound(
-		int id,
-		int timeRangeBegin, int timeRangeEnd,
-		int volumeRangeBegin, int volumeRangeEnd,
-		int unk1RangeBegin, int unk1RangeEnd,
-		int unk2RangeBegin, int unk2RangeEnd,
-		int priority, int unk3) {
-	const char *name = _vm->_gameInfo->getSfxTrack(id);
+	int sfxId,
+	int timeMin, int timeMax,
+	int volumeMin, int volumeMax,
+	int panStartMin, int panStartMax,
+	int panEndMin, int panEndMax,
+	int priority, int unk) {
 
-	sort(volumeRangeBegin, volumeRangeEnd);
-	sort(unk1RangeBegin, unk1RangeEnd);
-	sort(unk2RangeBegin, unk2RangeEnd);
+	sort(volumeMin, volumeMax);
+	sort(panStartMin, panStartMax);
+	sort(panEndMin, panEndMax);
 
 	addSoundByName(
-		name,
-		timeRangeBegin, timeRangeEnd,
-		volumeRangeBegin, volumeRangeEnd,
-		unk1RangeBegin, unk1RangeEnd,
-		unk2RangeBegin, unk2RangeEnd,
-		priority, unk3
-	);
+				_vm->_gameInfo->getSfxTrack(sfxId),
+				timeMin, timeMax,
+				volumeMin, volumeMax,
+				panStartMin, panStartMax,
+				panEndMin, panEndMax,
+				priority, unk
+				);
 }
 
-void AmbientSounds::addLoopingSound(int sfx_id, int volume, int unk, int fadeInTime) {
-	const char *name = _vm->_gameInfo->getSfxTrack(sfx_id);
+void AmbientSounds::removeNonLoopingSound(int sfxId, bool stopPlaying) {
+	int32 hash = MIXArchive::getHash(_vm->_gameInfo->getSfxTrack(sfxId));
+	int index = findNonLoopingTrackByHash(hash);
+	if (index >= 0) {
+		removeNonLoopingSoundByIndex(index, stopPlaying);
+	}
+}
 
-	int32 hash = mix_id(name);
+void AmbientSounds::removeAllNonLoopingSounds(bool stopPlaying) {
+	for (int i = 0; i < kNonLoopingSounds; i++) {
+		removeNonLoopingSoundByIndex(i, stopPlaying);
+	}
+}
 
-	if (findLoopingTrackByHash(hash) >= 0)
+void AmbientSounds::addSpeech(int actorId, int sentenceId, int timeMin, int timeMax, int volumeMin, int volumeMax, int panStartMin, int panStartMax, int panEndMin, int panEndMax, int priority, int unk) {
+	sort(volumeMin, volumeMax);
+	sort(panStartMin, panStartMax);
+	sort(panEndMin, panEndMax);
+
+	Common::String name = Common::String::format( "%02d-%04d%s.AUD", actorId, sentenceId, _vm->_languageCode.c_str());
+	addSoundByName(name,
+					timeMin, timeMax,
+					volumeMin, volumeMax,
+					panStartMin, panStartMax,
+					panEndMin, panEndMax,
+					priority, unk);
+}
+
+void AmbientSounds::playSound(int sfxId, int volume, int panStart, int panEnd, int priority) {
+	_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(sfxId), volume * _ambientVolume / 100, panStart, panEnd, priority, kAudioPlayerOverrideVolume);
+}
+
+void AmbientSounds::playSpeech(int actorId, int sentenceId, int volume, int panStart, int panEnd, int priority) {
+	Common::String name = Common::String::format( "%02d-%04d%s.AUD", actorId, sentenceId, _vm->_languageCode.c_str());
+	_vm->_audioPlayer->playAud(name, volume * _ambientVolume / 100, panStart, panEnd, priority, kAudioPlayerOverrideVolume, Audio::Mixer::kSpeechSoundType);
+}
+
+void AmbientSounds::addLoopingSound(int sfxId, int volume, int pan, int delay) {
+	const Common::String &name = _vm->_gameInfo->getSfxTrack(sfxId);
+	int32 hash = MIXArchive::getHash(name);
+
+	if (findLoopingTrackByHash(hash) >= 0) {
 		return;
+	}
 
 	int i = findAvailableLoopingTrack();
-	if (i == -1)
+	if (i == -1) {
 		return;
+	}
+	LoopingSound &track = _loopingSounds[i];
 
-	int actualVolume = volume * _ambientVolume / 100;
+	track.isActive = true;
+	track.name = name;
+	track.hash = hash;
+	track.pan = pan;
+	track.volume = volume;
 
-	int balance = 0;
+	int actualVolumeStart = volume * _ambientVolume / 100;
+	int actualVolumeEnd = actualVolumeStart;
 
-	_vm->_audioPlayer->playAud(name, actualVolume, balance, balance, 100, AudioPlayer::LOOP | AudioPlayer::OVERRIDE_VOLUME);
+	if (delay > 0) {
+		actualVolumeStart = 0;
+	}
+
+	track.audioPlayerTrack = _vm->_audioPlayer->playAud(name, actualVolumeStart, pan, pan, 99, kAudioPlayerLoop | kAudioPlayerOverrideVolume);
+
+	if (track.audioPlayerTrack == -1) {
+		removeLoopingSoundByIndex(i, 0);
+	} else {
+		if (delay) {
+			_vm->_audioPlayer->adjustVolume(track.audioPlayerTrack, actualVolumeEnd, delay, false);
+		}
+	}
+}
+
+void AmbientSounds::adjustLoopingSound(int sfxId, int volume, int pan, int delay) {
+	int32 hash = MIXArchive::getHash(_vm->_gameInfo->getSfxTrack(sfxId));
+	int index = findLoopingTrackByHash(hash);
+
+	if (index >= 0 && _loopingSounds[index].audioPlayerTrack != -1 && _vm->_audioPlayer->isActive(_loopingSounds[index].audioPlayerTrack)) {
+		if (volume != -1) {
+			_loopingSounds[index].volume = volume;
+			_vm->_audioPlayer->adjustVolume(_loopingSounds[index].audioPlayerTrack, _ambientVolume * volume / 100, delay, false);
+		}
+		if (pan != -101) {
+			_loopingSounds[index].pan = pan;
+			_vm->_audioPlayer->adjustPan(_loopingSounds[index].audioPlayerTrack, pan, delay);
+		}
+	}
+}
+
+void AmbientSounds::removeLoopingSound(int sfxId, int delay) {
+	int32 hash = MIXArchive::getHash(_vm->_gameInfo->getSfxTrack(sfxId));
+	int index = findLoopingTrackByHash(hash);
+	if (index >= 0) {
+		removeLoopingSoundByIndex(index, delay);
+	}
+}
+
+void AmbientSounds::removeAllLoopingSounds(int delay) {
+	for (int i = 0; i < kLoopingSounds; i++) {
+		removeLoopingSoundByIndex(i, delay);
+	}
 }
 
 void AmbientSounds::tick() {
-	uint32 now = g_system->getMillis();
+	uint32 now = _vm->_time->current();
 
-	for (int i = 0; i != NON_LOOPING_SOUNDS; ++i) {
+	for (int i = 0; i != kNonLoopingSounds; ++i) {
 		NonLoopingSound &track = _nonLoopingSounds[i];
 
-		if (!track.isActive || track.nextPlayTime > now)
+		if (!track.isActive || track.nextPlayTime > now) {
 			continue;
-
-		int pan1, pan2;
-
-		pan1 = _vm->_rnd.getRandomNumberRng(track.pan1begin, track.pan1end);
-		if (track.pan2begin == -101) {
-			pan2 = pan1;
-		} else {
-			pan2 = _vm->_rnd.getRandomNumberRng(track.pan2begin, track.pan2end);
 		}
 
-		track.volume = _vm->_rnd.getRandomNumberRng(track.volume1, track.volume2);
+		int panEnd;
+		int panStart = _vm->_rnd.getRandomNumberRng(track.panStartMin, track.panStartMax);
+		if (track.panEndMin == -101) {
+			panEnd = panStart;
+		} else {
+			panEnd = _vm->_rnd.getRandomNumberRng(track.panEndMin, track.panEndMax);
+		}
 
-		track.audio_player_track = _vm->_audioPlayer->playAud(
-			track.name,
-			track.volume * _ambientVolume / 100,
-			pan1, pan2,
-			track.priority,
-			AudioPlayer::OVERRIDE_VOLUME
-		);
+		track.volume = _vm->_rnd.getRandomNumberRng(track.volumeMin, track.volumeMax);
 
-		track.nextPlayTime = now + _vm->_rnd.getRandomNumberRng(track.time1, track.time2);
+		track.audioPlayerTrack = _vm->_audioPlayer->playAud(track.name,
+															track.volume * _ambientVolume / 100,
+															panStart,
+															panEnd,
+															track.priority,
+															kAudioPlayerOverrideVolume);
 
+		track.nextPlayTime = now + _vm->_rnd.getRandomNumberRng(track.timeMin, track.timeMax);
 	}
 }
 
-int AmbientSounds::findAvailableNonLoopingTrack() {
-	for (int i = 0; i != NON_LOOPING_SOUNDS; ++i) {
-		if (!_nonLoopingSounds[i].isActive)
+void AmbientSounds::setVolume(int volume) {
+	if (_loopingSounds) {
+		for (int i = 0; i < kLoopingSounds; i++) {
+			if (_loopingSounds[i].isActive && _loopingSounds[i].audioPlayerTrack != -1) {
+				int newVolume = _loopingSounds[i].volume * volume / 100;
+				if (_vm->_audioPlayer->isActive(_loopingSounds[i].audioPlayerTrack)) {
+					_vm->_audioPlayer->adjustVolume(_loopingSounds[i].audioPlayerTrack, newVolume, 1, false);
+				} else {
+					_loopingSounds[i].audioPlayerTrack = _vm->_audioPlayer->playAud(_loopingSounds[i].name, 1, _loopingSounds[i].pan, _loopingSounds[i].pan, 99, kAudioPlayerLoop | kAudioPlayerOverrideVolume);
+					if (_loopingSounds[i].audioPlayerTrack == -1) {
+						removeLoopingSound(i, 0);
+					} else {
+						_vm->_audioPlayer->adjustVolume(_loopingSounds[i].audioPlayerTrack, newVolume, 1, false);
+					}
+				}
+			}
+		}
+	}
+	_ambientVolume = volume;
+}
+
+int AmbientSounds::getVolume() const {
+	return _ambientVolume;
+}
+
+void AmbientSounds::playSample() {
+	playSound(kSfxSPIN1A, 100, 0, 0, 0);
+}
+
+int AmbientSounds::findAvailableNonLoopingTrack() const {
+	for (int i = 0; i != kNonLoopingSounds; ++i) {
+		if (!_nonLoopingSounds[i].isActive) {
 			return i;
+		}
 	}
 
 	return -1;
 }
 
-int AmbientSounds::findNonLoopingTrackByHash(int32 hash) {
-	for (int i = 0; i != NON_LOOPING_SOUNDS; ++i) {
+int AmbientSounds::findNonLoopingTrackByHash(int32 hash) const {
+	for (int i = 0; i != kNonLoopingSounds; ++i) {
 		NonLoopingSound &track = _nonLoopingSounds[i];
 
-		if (track.isActive && track.hash == hash)
+		if (track.isActive && track.hash == hash) {
 			return i;
+		}
 	}
 
 	return -1;
 }
 
-int AmbientSounds::findAvailableLoopingTrack() {
-	for (int i = 0; i != LOOPING_SOUNDS; ++i) {
-		if (!_loopingSounds[i].isActive)
+int AmbientSounds::findAvailableLoopingTrack() const {
+	for (int i = 0; i != kLoopingSounds; ++i) {
+		if (!_loopingSounds[i].isActive) {
 			return i;
+		}
 	}
 
 	return -1;
 }
 
-int AmbientSounds::findLoopingTrackByHash(int32 hash) {
-	for (int i = 0; i != LOOPING_SOUNDS; ++i) {
+int AmbientSounds::findLoopingTrackByHash(int32 hash) const {
+	for (int i = 0; i != kLoopingSounds; ++i) {
 		LoopingSound &track = _loopingSounds[i];
 
-		if (track.isActive && track.hash == hash)
+		if (track.isActive && track.hash == hash) {
 			return i;
+		}
 	}
 
 	return -1;
 }
 
 void AmbientSounds::addSoundByName(
-		const char *name,
-		int timeRangeBegin, int timeRangeEnd,
-		int volumeRangeBegin, int volumeRangeEnd,
-		int pan1begin, int pan1end,
-		int pan2begin, int pan2end,
-		int priority, int unk3) {
-	if (strlen(name) > 12) {
-		error("AmbientSounds::addSoundByName: Overlong name '%s'", name);
-	}
+	const Common::String &name,
+	int timeMin, int timeMax,
+	int volumeMin, int volumeMax,
+	int panStartMin, int panStartMax,
+	int panEndMin, int panEndMax,
+	int priority, int unk) {
 
 	int i = findAvailableNonLoopingTrack();
-	if (i < 0)
+	if (i < 0) {
 		return;
+	}
 
 	NonLoopingSound &track = _nonLoopingSounds[i];
 
-	uint32 now = g_system->getMillis();
+	uint32 now = _vm->_time->current();
 
-	track.isActive      = true;
-	strcpy(track.name, name);
-	track.hash          = mix_id(name);
-	track.time1         = 1000 * timeRangeBegin;
-	track.time2         = 1000 * timeRangeEnd;
-	track.nextPlayTime  = now + _vm->_rnd.getRandomNumberRng(track.time1, track.time2);
-	track.volume1       = volumeRangeBegin;
-	track.volume2       = volumeRangeEnd;
-	track.volume        = 0;
-	track.pan1begin     = pan1begin;
-	track.pan1end       = pan1end;
-	track.pan2begin     = pan2begin;
-	track.pan2end       = pan2end;
-	track.priority      = priority;
+	track.isActive = true;
+	track.name = name;
+	track.hash = MIXArchive::getHash(name);
+	track.timeMin = 1000 * timeMin;
+	track.timeMax = 1000 * timeMax;
+	track.nextPlayTime = now + _vm->_rnd.getRandomNumberRng(track.timeMin, track.timeMax);
+	track.volumeMin = volumeMin;
+	track.volumeMax = volumeMax;
+	track.volume = 0;
+	track.panStartMin = panStartMin;
+	track.panStartMax = panStartMax;
+	track.panEndMin = panEndMin;
+	track.panEndMax = panEndMax;
+	track.priority = priority;
+}
+
+void AmbientSounds::removeNonLoopingSoundByIndex(int index, bool stopPlaying) {
+	NonLoopingSound &track = _nonLoopingSounds[index];
+	if (stopPlaying) {
+		if (track.isActive && track.audioPlayerTrack != -1 && _vm->_audioPlayer->isActive(track.audioPlayerTrack)) {
+			_vm->_audioPlayer->stop(track.audioPlayerTrack, stopPlaying);
+		}
+	}
+	track.isActive = false;
+	track.audioPlayerTrack = -1;
+	//	track.field_45 = 0;
+}
+
+void AmbientSounds::removeLoopingSoundByIndex(int index, int delay) {
+	LoopingSound &track = _loopingSounds[index];
+	if (track.isActive && track.audioPlayerTrack != -1 && _vm->_audioPlayer->isActive(track.audioPlayerTrack)) {
+		if (delay > 0) {
+			_vm->_audioPlayer->adjustVolume(track.audioPlayerTrack, 0, delay, false);
+		} else {
+			_vm->_audioPlayer->stop(track.audioPlayerTrack, false);
+		}
+	}
+	track.isActive = false;
+	track.name.clear();
+	track.hash = 0;
+	track.audioPlayerTrack = -1;
+	track.volume = 0;
+	track.pan = 0;
+}
+
+void AmbientSounds::save(SaveFileWriteStream &f) {
+	f.writeBool(false); // _isDisabled - not used
+
+	for (int i = 0; i != kNonLoopingSounds; ++i) {
+		// 73 bytes per non-looping sound
+		NonLoopingSound &track = _nonLoopingSounds[i];
+		f.writeBool(track.isActive);
+		f.writeStringSz(track.name, 13);
+		f.writeSint32LE(track.hash);
+		f.writeInt(-1); // track.audioPlayerTrack is not used after load
+		f.writeInt(track.timeMin);
+		f.writeInt(track.timeMax);
+		f.writeInt(0); // track.nextPlayTime is not used after load
+		f.writeInt(track.volumeMin);
+		f.writeInt(track.volumeMax);
+		f.writeInt(track.volume);
+		f.writeInt(track.panStartMin);
+		f.writeInt(track.panStartMax);
+		f.writeInt(track.panEndMin);
+		f.writeInt(track.panEndMax);
+		f.writeInt(track.priority);
+		f.padBytes(4); // field_45
+	}
+
+	for (int i = 0; i != kLoopingSounds; ++i) {
+		// 33 bytes per looping sound
+		LoopingSound &track = _loopingSounds[i];
+		f.writeBool(track.isActive);
+		f.writeStringSz(track.name, 13);
+		f.writeSint32LE(track.hash);
+		f.writeInt(-1); // track.audioPlayerTrack is not used after load
+		f.writeInt(track.volume);
+		f.writeInt(track.pan);
+	}
+}
+
+void AmbientSounds::load(SaveFileReadStream &f) {
+	removeAllLoopingSounds(0);
+	removeAllNonLoopingSounds(true);
+
+	f.skip(4); // _isDisabled - not used
+
+	uint32 now = _vm->_time->getPauseStart();
+
+	for (int i = 0; i != kNonLoopingSounds; ++i) {
+		NonLoopingSound &track = _nonLoopingSounds[i];
+		track.isActive = f.readBool();
+		track.name = f.readStringSz(13);
+		track.hash = f.readSint32LE();
+		f.skip(4); // track.audioPlayerTrack is not used after load
+		track.audioPlayerTrack = -1;
+		track.timeMin = f.readInt();
+		track.timeMax = f.readInt();
+		f.skip(4); // track.nextPlayTime is not used after load
+		track.nextPlayTime = now + _vm->_rnd.getRandomNumberRng(track.timeMin, track.timeMax);
+		track.volumeMin = f.readInt();
+		track.volumeMax = f.readInt();
+		track.volume = f.readInt();
+		track.panStartMin = f.readInt();
+		track.panStartMax = f.readInt();
+		track.panEndMin = f.readInt();
+		track.panEndMax = f.readInt();
+		track.priority = f.readInt();
+		f.skip(4); // field_45
+	}
+
+	for (int i = 0; i != kLoopingSounds; ++i) {
+		LoopingSound &track = _loopingSounds[i];
+		track.isActive = f.readBool();
+		track.name = f.readStringSz(13);
+		track.hash = f.readSint32LE();
+		f.skip(4); // track.audioPlayerTrack is not used after load
+		track.audioPlayerTrack = -1;
+		track.volume = f.readInt();
+		track.pan = f.readInt();
+	}
+
+	for (int i = 0; i != kLoopingSounds; ++i) {
+		LoopingSound &track = _loopingSounds[i];
+		if (track.isActive) {
+			track.audioPlayerTrack = _vm->_audioPlayer->playAud(track.name, 1, track.pan, track.pan, 99, kAudioPlayerLoop | kAudioPlayerOverrideVolume);
+			if (track.audioPlayerTrack == -1) {
+				removeLoopingSoundByIndex(i, 0);
+			} else {
+				_vm->_audioPlayer->adjustVolume(track.audioPlayerTrack, _ambientVolume * track.volume / 100, 2, false);
+			}
+		}
+	}
 }
 
 } // End of namespace BladeRunner

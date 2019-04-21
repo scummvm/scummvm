@@ -23,6 +23,7 @@
 #include "titanic/game/up_lighter.h"
 #include "titanic/core/project_item.h"
 #include "titanic/npcs/parrot.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -62,7 +63,7 @@ void CUpLighter::load(SimpleFile *file) {
 
 bool CUpLighter::MovieEndMsg(CMovieEndMsg *msg) {
 	if (_hosePumping) {
-		playSound("z#47.wav");
+		playSound(TRANSLATE("z#47.wav", "z#578.wav"));
 		_noseDispensed = true;
 
 		CVisibleMsg visibleMsg(true);

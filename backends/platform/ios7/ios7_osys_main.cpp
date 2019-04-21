@@ -111,7 +111,7 @@ OSystem_iOS7::OSystem_iOS7() :
 	_screenOrientation(kScreenOrientationFlippedLandscape), _mouseClickAndDragEnabled(false),
 	_gestureStartX(-1), _gestureStartY(-1), _fullScreenIsDirty(false), _fullScreenOverlayIsDirty(false),
 	_mouseDirty(false), _timeSuspended(0), _lastDragPosX(-1), _lastDragPosY(-1), _screenChangeCount(0),
-	_lastErrorMessage(NULL), _mouseCursorPaletteEnabled(false), _gfxTransactionError(kTransactionSuccess) {
+	_mouseCursorPaletteEnabled(false), _gfxTransactionError(kTransactionSuccess) {
 	_queuedInputEvent.type = Common::EVENT_INVALID;
 	_touchpadModeEnabled = !iOS7_isBigDevice();
 #ifdef IPHONE_SANDBOXED
@@ -171,6 +171,7 @@ bool OSystem_iOS7::hasFeature(Feature f) {
 	switch (f) {
 	case kFeatureCursorPalette:
 	case kFeatureFilteringMode:
+	case kFeatureVirtualKeyboard:
 		return true;
 
 	default:
@@ -193,6 +194,9 @@ void OSystem_iOS7::setFeatureState(Feature f, bool enable) {
 	case kFeatureAspectRatioCorrection:
 		_videoContext->asprectRatioCorrection = enable;
 		break;
+	case kFeatureVirtualKeyboard:
+		setShowKeyboard(enable);
+		break;
 
 	default:
 		break;
@@ -207,6 +211,8 @@ bool OSystem_iOS7::getFeatureState(Feature f) {
 		return _videoContext->filtering;
 	case kFeatureAspectRatioCorrection:
 		return _videoContext->asprectRatioCorrection;
+	case kFeatureVirtualKeyboard:
+		return isKeyboardShown();
 
 	default:
 		return false;
@@ -352,8 +358,7 @@ void OSystem_iOS7::logMessage(LogMessageType::Type type, const char *message) {
 		output = stderr;
 
 	if (type == LogMessageType::kError) {
-		free(_lastErrorMessage);
-		_lastErrorMessage = strdup(message);
+		_lastErrorMessage = message;
 	}
 
 	fputs(message, output);
@@ -363,6 +368,10 @@ void OSystem_iOS7::logMessage(LogMessageType::Type type, const char *message) {
 bool iOS7_touchpadModeEnabled() {
 	OSystem_iOS7 *sys = (OSystem_iOS7 *) g_system;
 	return sys && sys->touchpadModeEnabled();
+}
+
+void iOS7_buildSharedOSystemInstance() {
+	OSystem_iOS7::sharedInstance();
 }
 
 void iOS7_main(int argc, char **argv) {
@@ -397,4 +406,10 @@ void iOS7_main(int argc, char **argv) {
 	// Invoke the actual ScummVM main entry point:
 	scummvm_main(argc, (const char *const *) argv);
 	g_system->quit();       // TODO: Consider removing / replacing this!
+
+	if (newfp != NULL) {
+		//*stdout = NULL;
+		//*stderr = NULL;
+		fclose(newfp);
+	}
 }

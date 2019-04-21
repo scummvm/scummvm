@@ -243,7 +243,6 @@ void TizenAppForm::pushEvent(Common::EventType type, const Point &currentPositio
 void TizenAppForm::pushKey(Common::KeyCode keycode) {
 	if (_eventQueueLock) {
 		Common::Event e;
-		e.synthetic = false;
 		e.kbd.keycode = keycode;
 		e.kbd.ascii = keycode;
 		e.kbd.flags = 0;

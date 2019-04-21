@@ -28,25 +28,31 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "engines/util.h"
+#include "graphics/fonts/ttf.h"
+#include "graphics/fontman.h"
 #include "graphics/palette.h"
+#include "graphics/scaler.h"
 #include "image/pict.h"
 
 namespace Mohawk {
 
-MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : GraphicsManager(), _vm(vm) {
+MystGraphics::MystGraphics(MohawkEngine_Myst* vm) :
+		GraphicsManager(),
+		_vm(vm),
+		_menuFont(nullptr) {
 	_bmpDecoder = new MystBitmap();
 
 	_viewport = Common::Rect(544, 332);
 
 	if (_vm->getFeatures() & GF_ME) {
 		// High color
-		initGraphics(_viewport.width(), _viewport.height(), true, nullptr);
+		initGraphics(_viewport.width(), _viewport.height(), nullptr);
 
 		if (_vm->_system->getScreenFormat().bytesPerPixel == 1)
 			error("Myst ME requires greater than 256 colors to run");
 	} else {
 		// Paletted
-		initGraphics(_viewport.width(), _viewport.height(), true);
+		initGraphics(_viewport.width(), _viewport.height());
 		clearScreenPalette();
 	}
 
@@ -56,8 +62,30 @@ MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : GraphicsManager(), _vm(vm) {
 	_backBuffer = new Graphics::Surface();
 	_backBuffer->create(_vm->_system->getWidth(), _vm->_system->getHeight(), _pixelFormat);
 
-	_nextAllowedDrawTime = _vm->_system->getMillis();
-	_enableDrawingTimeSimulation = 0;
+	_mainMenuBackupScreen.reset(new Graphics::Surface());
+	_mainMenuBackupScreenThumbnail.reset(new Graphics::Surface());
+	_mainMenuBackupBackBuffer.reset(new Graphics::Surface());
+
+	if (_vm->getFeatures() & GF_25TH) {
+		const char *menuFontName = "NotoSans-ExtraBold.ttf";
+#ifdef USE_FREETYPE2
+		int fontSize;
+		if (_vm->getLanguage() == Common::PL_POL) {
+			fontSize = 11; // The Polish diacritics need significantly more space, so we use a smaller font
+		} else {
+			fontSize = 16;
+		}
+
+		Common::SeekableReadStream *fontStream = SearchMan.createReadStreamForMember(menuFontName);
+		if (fontStream) {
+			_menuFont = Graphics::loadTTFFont(*fontStream, fontSize);
+			delete fontStream;
+		} else
+#endif
+		{
+			warning("Unable to open the menu font file '%s'", menuFontName);
+		}
+	}
 }
 
 MystGraphics::~MystGraphics() {
@@ -65,6 +93,7 @@ MystGraphics::~MystGraphics() {
 
 	_backBuffer->free();
 	delete _backBuffer;
+	delete _menuFont;
 }
 
 MohawkSurface *MystGraphics::decodeImage(uint16 id) {
@@ -100,7 +129,7 @@ MohawkSurface *MystGraphics::decodeImage(uint16 id) {
 		Image::PICTDecoder pict;
 
 		if (!pict.loadStream(*dataStream))
-			error("Could not decode Myst ME PICT");
+			error("Could not decode Myst ME PICT %d", id);
 
 		delete dataStream;
 
@@ -116,7 +145,78 @@ MohawkSurface *MystGraphics::decodeImage(uint16 id) {
 	}
 
 	assert(mhkSurface);
+	applyImagePatches(id, mhkSurface);
 	return mhkSurface;
+}
+
+void MystGraphics::applyImagePatches(uint16 id, const MohawkSurface *mhkSurface) const {
+
+	// In the English ME version of the game, the instructions found on Stoneship
+	// to open the vault are incorrect. They are:
+	//     Turn every one of [these switches to the] "off" position.
+	// They should be:
+	//     Turn every one of [these switches to the] "on" position.
+	//
+	// Here we stomp over the "off" with an "on".
+	// The fixed image was provided by dafioram in bug Trac#10115.
+	if (id == 2019 && _vm->getFeatures() & GF_ME && _vm->getLanguage() == Common::EN_ANY) {
+		static const byte markerSwitchInstructionsFixPic[] = {
+				0x1d, 0x1c, 0x19, 0x19, 0x19, 0x19, 0x1c, 0x19, 0x19, 0x17, 0x19, 0x19, 0x19, 0x19, 0x19,
+				0x1e, 0x1e, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19,
+				0x1c, 0x19, 0x19, 0x19, 0x1c, 0x19, 0x19, 0x19, 0x1c, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19,
+				0x1d, 0x1e, 0x16, 0x0d, 0x0e, 0x12, 0x19, 0x19, 0x17, 0x10, 0x06, 0x05, 0x19, 0x19, 0x19,
+				0x1e, 0x1e, 0x10, 0x13, 0x1c, 0x11, 0x0d, 0x19, 0x12, 0x09, 0x16, 0x04, 0x18, 0x18, 0x19,
+				0x1e, 0x1a, 0x03, 0x1b, 0x1c, 0x17, 0x02, 0x15, 0x13, 0x00, 0x19, 0x06, 0x18, 0x19, 0x18,
+				0x1e, 0x1e, 0x01, 0x1b, 0x1c, 0x1b, 0x02, 0x15, 0x13, 0x00, 0x19, 0x07, 0x0a, 0x19, 0x18,
+				0x1e, 0x1c, 0x0c, 0x0e, 0x14, 0x0c, 0x0c, 0x19, 0x0b, 0x00, 0x19, 0x00, 0x08, 0x19, 0x19,
+				0x1e, 0x1c, 0x19, 0x14, 0x0f, 0x0f, 0x14, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x17,
+				0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19,
+				0x1c, 0x1c, 0x1e, 0x19, 0x19, 0x19, 0x17, 0x19, 0x19, 0x17, 0x19, 0x19, 0x19, 0x19, 0x19
+		};
+
+		static const byte markerSwitchInstructionsFixPal[] = {
+				0x00, 0x00, 0x00,
+				0x10, 0x08, 0x08,
+				0x18, 0x10, 0x10,
+				0x28, 0x10, 0x08,
+				0x20, 0x18, 0x18,
+				0x28, 0x20, 0x20,
+				0x38, 0x20, 0x10,
+				0x30, 0x28, 0x20,
+				0x38, 0x30, 0x28,
+				0x40, 0x38, 0x28,
+				0x48, 0x38, 0x28,
+				0x48, 0x40, 0x30,
+				0x50, 0x48, 0x38,
+				0x50, 0x48, 0x40,
+				0x60, 0x50, 0x38,
+				0x68, 0x58, 0x40,
+				0x68, 0x58, 0x48,
+				0x70, 0x60, 0x50,
+				0x78, 0x68, 0x50,
+				0x80, 0x70, 0x50,
+				0x80, 0x78, 0x60,
+				0x88, 0x80, 0x60,
+				0x98, 0x90, 0x70,
+				0xb0, 0xa0, 0x78,
+				0xb8, 0xa8, 0x8d,
+				0xb8, 0xa8, 0x90,
+				0xb8, 0xb0, 0x88,
+				0xc0, 0xb8, 0x90,
+				0xd8, 0xcc, 0x98,
+				0xd0, 0xe0, 0xc8,
+				0xf0, 0xe4, 0xc8
+		};
+
+		Graphics::Surface fixSurf;
+		fixSurf.create(15, 11, Graphics::PixelFormat::createFormatCLUT8());
+		fixSurf.copyRectToSurface(markerSwitchInstructionsFixPic, fixSurf.w, 0, 0, fixSurf.w, fixSurf.h);
+		fixSurf.convertToInPlace(_pixelFormat, markerSwitchInstructionsFixPal);
+
+		mhkSurface->getSurface()->copyRectToSurface(fixSurf, 171, 208, Common::Rect(fixSurf.w, fixSurf.h));
+
+		fixSurf.free();
+	}
 }
 
 void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Common::Rect dest) {
@@ -156,14 +256,21 @@ void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Comm
 	debug(3, "\twidth: %d", width);
 	debug(3, "\theight: %d", height);
 
-	simulatePreviousDrawDelay(dest);
-
 	_vm->_system->copyRectToScreen(surface->getBasePtr(src.left, top), surface->pitch, dest.left, dest.top, width, height);
 }
 
 void MystGraphics::copyImageSectionToBackBuffer(uint16 image, Common::Rect src, Common::Rect dest) {
 	MohawkSurface *mhkSurface = findImage(image);
 	Graphics::Surface *surface = mhkSurface->getSurface();
+
+	if (image == 2258 && _vm->getFeatures() & GF_ME) {
+		// In Myst ME, the image for the open red page brother door
+		// when the special lights are on does not have the correct width.
+		// We work around this issue by tweaking the destination rectangle
+		// so it renders at the correct position.
+		// The original executable does the same hack.
+		dest.left += 49;
+	}
 
 	// Make sure the image is bottom aligned in the dest rect
 	dest.top = dest.bottom - MIN<int>(surface->h, dest.height());
@@ -222,15 +329,10 @@ void MystGraphics::copyImageToBackBuffer(uint16 image, Common::Rect dest) {
 void MystGraphics::copyBackBufferToScreen(Common::Rect r) {
 	r.clip(_viewport);
 
-	simulatePreviousDrawDelay(r);
-
 	_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(r.left, r.top), _backBuffer->pitch, r.left, r.top, r.width(), r.height());
 }
 
 void MystGraphics::runTransition(TransitionType type, Common::Rect rect, uint16 steps, uint16 delay) {
-
-	// Transitions are barely visible without adding delays between the draw calls
-	enableDrawingTimeSimulation(true);
 
 	switch (type) {
 	case kTransitionLeftToRight:	{
@@ -242,18 +344,14 @@ void MystGraphics::runTransition(TransitionType type, Common::Rect rect, uint16 
 				area.left = rect.left + step * i;
 				area.right = area.left + step;
 
-				_vm->_system->delayMillis(delay);
-				_vm->pollAndDiscardEvents();
-
 				copyBackBufferToScreen(area);
-				_vm->_system->updateScreen();
+				_vm->wait(delay);
 			}
 			if (area.right < rect.right) {
 				area.left = area.right;
 				area.right = rect.right;
 
 				copyBackBufferToScreen(area);
-				_vm->_system->updateScreen();
 			}
 		}
 		break;
@@ -266,18 +364,14 @@ void MystGraphics::runTransition(TransitionType type, Common::Rect rect, uint16 
 				area.right = rect.right - step * i;
 				area.left = area.right - step;
 
-				_vm->_system->delayMillis(delay);
-				_vm->pollAndDiscardEvents();
-
 				copyBackBufferToScreen(area);
-				_vm->_system->updateScreen();
+				_vm->wait(delay);
 			}
 			if (area.left > rect.left) {
 				area.right = area.left;
 				area.left = rect.left;
 
 				copyBackBufferToScreen(area);
-				_vm->_system->updateScreen();
 			}
 		}
 		break;
@@ -293,11 +387,8 @@ void MystGraphics::runTransition(TransitionType type, Common::Rect rect, uint16 
 			debugC(kDebugView, "Dissolve");
 
 			for (int16 step = 0; step < 8; step++) {
-				// Only one eighth of the rect pixels are updated by a draw step,
-				// delay by one eighth of the regular time
-				simulatePreviousDrawDelay(Common::Rect(rect.width() / 8, rect.height()));
-
 				transitionDissolve(rect, step);
+				_vm->doFrame();
 			}
 		}
 		break;
@@ -310,18 +401,14 @@ void MystGraphics::runTransition(TransitionType type, Common::Rect rect, uint16 
 				area.top = rect.top + step * i;
 				area.bottom = area.top + step;
 
-				_vm->_system->delayMillis(delay);
-				_vm->pollAndDiscardEvents();
-
 				copyBackBufferToScreen(area);
-				_vm->_system->updateScreen();
+				_vm->wait(delay);
 			}
 			if (area.bottom < rect.bottom) {
 				area.top = area.bottom;
 				area.bottom = rect.bottom;
 
 				copyBackBufferToScreen(area);
-				_vm->_system->updateScreen();
 			}
 		}
 		break;
@@ -334,18 +421,14 @@ void MystGraphics::runTransition(TransitionType type, Common::Rect rect, uint16 
 				area.bottom = rect.bottom - step * i;
 				area.top = area.bottom - step;
 
-				_vm->_system->delayMillis(delay);
-				_vm->pollAndDiscardEvents();
-
 				copyBackBufferToScreen(area);
-				_vm->_system->updateScreen();
+				_vm->wait(delay);
 			}
 			if (area.top > rect.top) {
 				area.bottom = area.top;
 				area.top = rect.top;
 
 				copyBackBufferToScreen(area);
-				_vm->_system->updateScreen();
 			}
 		}
 		break;
@@ -371,13 +454,10 @@ void MystGraphics::runTransition(TransitionType type, Common::Rect rect, uint16 
 		break;
 	case kTransitionCopy:
 		copyBackBufferToScreen(rect);
-		_vm->_system->updateScreen();
 		break;
 	default:
 		error("Unknown transition %d", type);
 	}
-
-	enableDrawingTimeSimulation(false);
 }
 
 void MystGraphics::transitionDissolve(Common::Rect rect, uint step) {
@@ -460,8 +540,6 @@ void MystGraphics::transitionDissolve(Common::Rect rect, uint step) {
 	}
 
 	_vm->_system->unlockScreen();
-	_vm->pollAndDiscardEvents();
-	_vm->_system->updateScreen();
 }
 
 void MystGraphics::transitionSlideToLeft(Common::Rect rect, uint16 steps, uint16 delay) {
@@ -475,18 +553,13 @@ void MystGraphics::transitionSlideToLeft(Common::Rect rect, uint16 steps, uint16
 		dstRect.right = dstRect.left + step * stepWidth;
 		srcRect.left = srcRect.right - step * stepWidth;
 
-		_vm->_system->delayMillis(delay);
-
-		simulatePreviousDrawDelay(dstRect);
 		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
 				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
-		_vm->pollAndDiscardEvents();
-		_vm->_system->updateScreen();
+		_vm->wait(delay);
 	}
 
 	if (dstRect.right != rect.right) {
 		copyBackBufferToScreen(rect);
-		_vm->_system->updateScreen();
 	}
 }
 
@@ -501,18 +574,13 @@ void MystGraphics::transitionSlideToRight(Common::Rect rect, uint16 steps, uint1
 		dstRect.left = dstRect.right - step * stepWidth;
 		srcRect.right = srcRect.left + step * stepWidth;
 
-		_vm->_system->delayMillis(delay);
-
-		simulatePreviousDrawDelay(dstRect);
 		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
 				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
-		_vm->pollAndDiscardEvents();
-		_vm->_system->updateScreen();
+		_vm->wait(delay);
 	}
 
 	if (dstRect.left != rect.left) {
 		copyBackBufferToScreen(rect);
-		_vm->_system->updateScreen();
 	}
 }
 
@@ -527,19 +595,14 @@ void MystGraphics::transitionSlideToTop(Common::Rect rect, uint16 steps, uint16 
 		dstRect.bottom = dstRect.top + step * stepWidth;
 		srcRect.top = srcRect.bottom - step * stepWidth;
 
-		_vm->_system->delayMillis(delay);
-
-		simulatePreviousDrawDelay(dstRect);
 		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
 				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
-		_vm->pollAndDiscardEvents();
-		_vm->_system->updateScreen();
+		_vm->wait(delay);
 	}
 
 
 	if (dstRect.bottom < rect.bottom) {
 		copyBackBufferToScreen(rect);
-		_vm->_system->updateScreen();
 	}
 }
 
@@ -554,19 +617,14 @@ void MystGraphics::transitionSlideToBottom(Common::Rect rect, uint16 steps, uint
 		dstRect.top = dstRect.bottom - step * stepWidth;
 		srcRect.bottom = srcRect.top + step * stepWidth;
 
-		_vm->_system->delayMillis(delay);
-
-		simulatePreviousDrawDelay(dstRect);
 		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
 				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
-		_vm->pollAndDiscardEvents();
-		_vm->_system->updateScreen();
+		_vm->wait(delay);
 	}
 
 
 	if (dstRect.top > rect.top) {
 		copyBackBufferToScreen(rect);
-		_vm->_system->updateScreen();
 	}
 }
 
@@ -581,15 +639,12 @@ void MystGraphics::transitionPartialToRight(Common::Rect rect, uint32 width, uin
 		dstRect.right = dstRect.left + step * stepWidth;
 		srcRect.left = srcRect.right - step * stepWidth;
 
-		simulatePreviousDrawDelay(dstRect);
 		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
 				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
-		_vm->pollAndDiscardEvents();
-		_vm->_system->updateScreen();
+		_vm->doFrame();
 	}
 
 	copyBackBufferToScreen(rect);
-	_vm->_system->updateScreen();
 }
 
 void MystGraphics::transitionPartialToLeft(Common::Rect rect, uint32 width, uint32 steps) {
@@ -603,15 +658,12 @@ void MystGraphics::transitionPartialToLeft(Common::Rect rect, uint32 width, uint
 		dstRect.left = dstRect.right - step * stepWidth;
 		srcRect.right = srcRect.left + step * stepWidth;
 
-		simulatePreviousDrawDelay(dstRect);
 		_vm->_system->copyRectToScreen(_backBuffer->getBasePtr(dstRect.left, dstRect.top),
 				_backBuffer->pitch, srcRect.left, srcRect.top, srcRect.width(), srcRect.height());
-		_vm->pollAndDiscardEvents();
-		_vm->_system->updateScreen();
+		_vm->doFrame();
 	}
 
 	copyBackBufferToScreen(rect);
-	_vm->_system->updateScreen();
 }
 
 void MystGraphics::drawRect(Common::Rect rect, RectState state) {
@@ -637,36 +689,6 @@ void MystGraphics::drawLine(const Common::Point &p1, const Common::Point &p2, ui
 	_backBuffer->drawLine(p1.x, p1.y, p2.x, p2.y, color);
 }
 
-void MystGraphics::enableDrawingTimeSimulation(bool enable) {
-	if (enable)
-		_enableDrawingTimeSimulation++;
-	else
-		_enableDrawingTimeSimulation--;
-
-	if (_enableDrawingTimeSimulation < 0)
-		_enableDrawingTimeSimulation = 0;
-}
-
-void MystGraphics::simulatePreviousDrawDelay(const Common::Rect &dest) {
-	uint32 time = 0;
-
-	if (_enableDrawingTimeSimulation) {
-		time = _vm->_system->getMillis();
-
-		// Do not draw anything new too quickly after the previous draw call
-		// so that images stay at least a little while on screen
-		// This is enabled only for scripted draw calls
-		if (time < _nextAllowedDrawTime) {
-			debugC(kDebugView, "Delaying draw call by %d ms", _nextAllowedDrawTime - time);
-			_vm->_system->delayMillis(_nextAllowedDrawTime - time);
-		}
-	}
-
-	// Next draw call allowed at DELAY + AERA * COEFF milliseconds from now
-	time = _vm->_system->getMillis();
-	_nextAllowedDrawTime = time + _constantDrawDelay + dest.height() * dest.width() / _proportionalDrawDelay;
-}
-
 void MystGraphics::fadeToBlack() {
 	// This is only for the demo
 	assert(!(_vm->getFeatures() & GF_ME));
@@ -681,7 +703,7 @@ void MystGraphics::fadeToBlack() {
 			*dst++ = *src++ * i / 64;
 
 		_vm->_system->getPaletteManager()->setPalette(palette, 0, 256);
-		_vm->_system->updateScreen();
+		_vm->doFrame();
 	}
 }
 
@@ -701,12 +723,11 @@ void MystGraphics::fadeFromBlack() {
 			*dst++ = *src++ * i / 64;
 
 		_vm->_system->getPaletteManager()->setPalette(palette, 0, 256);
-		_vm->_system->updateScreen();
+		_vm->doFrame();
 	}
 
 	// Set the full palette
 	_vm->_system->getPaletteManager()->setPalette(_palette, 0, 256);
-	_vm->_system->updateScreen();
 }
 
 void MystGraphics::clearScreenPalette() {
@@ -808,6 +829,73 @@ byte MystGraphics::getColorIndex(const byte *palette, byte red, byte green, byte
 
 void MystGraphics::setPaletteToScreen() {
 	_vm->_system->getPaletteManager()->setPalette(_palette, 0, 256);
+}
+
+void MystGraphics::saveStateForMainMenu() {
+	Graphics::Surface *screen = _vm->_system->lockScreen();
+	_mainMenuBackupScreen->copyFrom(*screen);
+	_vm->_system->unlockScreen();
+
+	// Create a thumbnail of the screen that will be used when saving from the main menu
+	createThumbnailFromScreen(_mainMenuBackupScreenThumbnail.get());
+
+	_mainMenuBackupBackBuffer->copyFrom(*_backBuffer);
+}
+
+void MystGraphics::restoreStateForMainMenu() {
+	_vm->_system->copyRectToScreen(_mainMenuBackupScreen->getPixels(), _mainMenuBackupScreen->pitch,
+	                               0, 0, _mainMenuBackupScreen->w, _mainMenuBackupScreen->h);
+
+	_backBuffer->copyFrom(*_mainMenuBackupBackBuffer);
+
+	_mainMenuBackupScreen->free();
+	_mainMenuBackupScreenThumbnail->free();
+	_mainMenuBackupBackBuffer->free();
+}
+
+Graphics::Surface *MystGraphics::getThumbnailForMainMenu() const {
+	return _mainMenuBackupScreenThumbnail.get();
+}
+
+void MystGraphics::drawText(uint16 image, const Common::U32String &text, const Common::Rect &dest, uint8 r, uint8 g, uint8 b, Graphics::TextAlign align, int16 deltaY) {
+	MohawkSurface *mhkSurface = findImage(image);
+	Graphics::Surface *surface = mhkSurface->getSurface();
+
+	const Graphics::Font *font = getMenuFont();
+	font->drawString(surface, text, dest.left, dest.top + deltaY, dest.width(), surface->format.RGBToColor(r, g, b), align);
+}
+
+Common::Rect MystGraphics::getTextBoundingBox(const Common::U32String &text, const Common::Rect &dest, Graphics::TextAlign align) {
+	const Graphics::Font *font = getMenuFont();
+	return font->getBoundingBox(text, dest.left, dest.top, dest.width(), align);
+}
+
+const Graphics::Font *MystGraphics::getMenuFont() const {
+	const Graphics::Font *font;
+	if (_menuFont) {
+		font = _menuFont;
+	} else {
+		font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+	}
+	return font;
+}
+
+void MystGraphics::replaceImageWithRect(uint16 destImage, uint16 sourceImage, const Common::Rect &sourceRect) {
+	MohawkSurface *sourceSurface = findImage(sourceImage);
+	const Graphics::Surface sourceArea = sourceSurface->getSurface()->getSubArea(sourceRect);
+
+	Graphics::Surface *replacementSurface = new Graphics::Surface();
+	replacementSurface->copyFrom(sourceArea);
+
+	MohawkSurface *destSurface = new MohawkSurface(replacementSurface, nullptr, 0, 0);
+	addImageToCache(destImage, destSurface);
+}
+
+void MystGraphics::clearScreen() {
+	if (_vm->getFeatures() & GF_ME)
+		_vm->_system->fillScreen(_pixelFormat.RGBToColor(0, 0, 0));
+	else
+		_vm->_system->fillScreen(0);
 }
 
 } // End of namespace Mohawk

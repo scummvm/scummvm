@@ -22,6 +22,7 @@
 
 #include "titanic/game/seasonal_adjustment.h"
 #include "titanic/core/project_item.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -79,7 +80,7 @@ bool CSeasonalAdjustment::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 }
 
 bool CSeasonalAdjustment::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
-	playSound("z#42.wav");
+	playSound(TRANSLATE("z#42.wav", "z#743.wav"));
 	if (!_enabled) {
 		petDisplayMessage(1, SEASONAL_SWITCH_NOT_WORKING);
 	} else if (!_switching) {

@@ -420,7 +420,7 @@ void Logic::resetState() {
  */
 void Logic::gameOver(SavegameType type, uint32 value, SceneIndex sceneIndex, bool showScene) const {
 
-	getSoundQueue()->processEntries();
+	getSoundQueue()->endAmbient();
 	getEntities()->reset();
 	getFlags()->isGameRunning = false;
 	getSavePoints()->reset();
@@ -428,7 +428,7 @@ void Logic::gameOver(SavegameType type, uint32 value, SceneIndex sceneIndex, boo
 
 	if (showScene) {
 
-		getSoundQueue()->processEntry(kSoundType11);
+		getSoundQueue()->fade(kSoundTagIntro);
 
 		if (sceneIndex && !getFlags()->mouseRightClick) {
 			getScenes()->loadScene(sceneIndex);
@@ -447,7 +447,7 @@ void Logic::gameOver(SavegameType type, uint32 value, SceneIndex sceneIndex, boo
 }
 
 void Logic::switchChapter() const {
-	getSoundQueue()->clearStatus();
+	getSoundQueue()->stopAll();
 
 	switch(getState()->progress.chapter) {
 	default:
@@ -487,7 +487,7 @@ void Logic::switchChapter() const {
 }
 
 void Logic::playFinalSequence() const {
-	getSoundQueue()->processEntries();
+	getSoundQueue()->endAmbient();
 
 	_action->playAnimation(kEventFinalSequence);
 	showCredits();

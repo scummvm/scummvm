@@ -25,23 +25,29 @@
 
 #include "mohawk/installer_archive.h"
 #include "mohawk/mohawk.h"
-#include "mohawk/riven_scripts.h"
 
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/random.h"
 #include "common/rect.h"
 
+#include "graphics/surface.h"
+
 namespace Mohawk {
 
 struct MohawkGameDescription;
 class MohawkArchive;
 class RivenGraphics;
-class RivenExternal;
 class RivenConsole;
 class RivenSaveLoad;
 class RivenOptionsDialog;
+class RivenStack;
+class RivenCard;
+class RivenHotspot;
+class RivenScriptManager;
 class RivenSoundManager;
+class RivenInventory;
+class RivenVideoManager;
 
 // Riven Stack Types
 enum {
@@ -59,51 +65,10 @@ enum {
 	kStackLast = kStackAspit
 };
 
-// NAME Resource ID's
+// Engine Debug Flags
 enum {
-	CardNames = 1,
-	HotspotNames = 2,
-	ExternalCommandNames = 3,
-	VariableNames = 4,
-	StackNames = 5
-};
-
-enum RivenTransitionSpeed {
-	kRivenTransitionSpeedNone = 5000,
-	kRivenTransitionSpeedFastest = 5001,
-	kRivenTransitionSpeedNormal = 5002,
-	kRivenTransitionSpeedBest = 5003
-};
-
-// Rects for the inventory object positions (initialized in
-// MohawkEngine_Riven's constructor).
-extern Common::Rect *g_atrusJournalRect1;
-extern Common::Rect *g_atrusJournalRect2;
-extern Common::Rect *g_cathJournalRect2;
-extern Common::Rect *g_atrusJournalRect3;
-extern Common::Rect *g_cathJournalRect3;
-extern Common::Rect *g_trapBookRect3;
-extern Common::Rect *g_demoExitRect;
-
-struct RivenHotspot {
-	uint16 blstID;
-	int16 name_resource;
-	Common::Rect rect;
-	uint16 u0;
-	uint16 mouse_cursor;
-	uint16 index;
-	int16 u1;
-	int16 zipModeHotspot;
-	RivenScriptList scripts;
-
-	bool enabled;
-};
-
-struct Card {
-	int16 name;
-	uint16 zipModePlace;
-	bool hasData;
-	RivenScriptList scripts;
+	kRivenDebugScript   = (1 << 0),
+	kRivenDebugPatches  = (1 << 1)
 };
 
 struct ZipMode {
@@ -116,106 +81,109 @@ typedef Common::HashMap<Common::String, uint32, Common::IgnoreCase_Hash, Common:
 
 class MohawkEngine_Riven : public MohawkEngine {
 protected:
-	Common::Error run();
+	Common::Error run() override;
 
 public:
 	MohawkEngine_Riven(OSystem *syst, const MohawkGameDescription *gamedesc);
-	virtual ~MohawkEngine_Riven();
+	~MohawkEngine_Riven() override;
 
+	RivenVideoManager *_video;
 	RivenSoundManager *_sound;
 	RivenGraphics *_gfx;
-	RivenExternal *_externalScriptHandler;
 	Common::RandomSource *_rnd;
 	RivenScriptManager *_scriptMan;
+	RivenInventory *_inventory;
 
-	Card _cardData;
+	// Display debug rectangles around the hotspots
+	bool _showHotspots;
 
-	GUI::Debugger *getDebugger();
+	GUI::Debugger *getDebugger() override;
 
-	bool canLoadGameStateCurrently() { return !(getFeatures() & GF_DEMO); }
-	bool canSaveGameStateCurrently() { return !(getFeatures() & GF_DEMO); }
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &desc);
-	bool hasFeature(EngineFeature f) const;
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	bool hasFeature(EngineFeature f) const override;
 
-	typedef void (*TimerProc)(MohawkEngine_Riven *vm);
-
-	void doVideoTimer(VideoHandle handle, bool force);
+	void doFrame();
+	void processInput();
 
 private:
+	// Datafiles
 	MohawkArchive *_extrasFile; // We need a separate handle for the extra data
+	const char **listExpectedDatafiles() const;
+	void loadLanguageDatafile(char prefix, uint16 stackId);
+	bool checkDatafiles();
+
 	RivenConsole *_console;
 	RivenSaveLoad *_saveLoad;
 	RivenOptionsDialog *_optionsDialog;
 	InstallerArchive _installerArchive;
 
 	// Stack/Card-related functions and variables
-	uint16 _curCard;
-	uint16 _curStack;
-	void loadCard(uint16);
-	void handleEvents();
+	RivenCard *_card;
+	RivenStack *_stack;
 
-	// Hotspot related functions and variables
-	uint16 _hotspotCount;
-	void loadHotspots(uint16);
-	void checkInventoryClick();
-	bool _showHotspots;
-	void updateZipMode();
-	void checkHotspotChange();
+	int _menuSavedCard;
+	int _menuSavedStack;
+	Common::ScopedPtr<Graphics::Surface, Graphics::SurfaceDeleter> _menuThumbnail;
+
+	bool _gameEnded;
+	uint32 _lastSaveTime;
 
 	// Variables
 	void initVars();
 
-	// Timer
-	TimerProc _timerProc;
-	uint32 _timerTime;
-
-	// Miscellaneous
-	bool _gameOver;
-	bool _ignoreNextMouseUp;
-	void checkSunnerAlertClick();
-
+	void pauseEngineIntern(bool) override;
 public:
 	// Stack/card/script funtions
+	RivenStack *constructStackById(uint16 id);
 	void changeToCard(uint16 dest);
-	void changeToStack(uint16);
-	void refreshCard();
-	Common::String getName(uint16 nameResource, uint16 nameID);
-	Common::String getStackName(uint16 stack) const;
-	void runCardScript(uint16 scriptType);
-	void runUpdateScreenScript() { runCardScript(kCardUpdateScript); }
-	uint16 getCurCard() const { return _curCard; }
-	uint16 getCurStack() const { return _curStack; }
-	uint16 matchRMAPToCard(uint32);
-	uint32 getCurCardRMAP();
+	void changeToStack(uint16 stackId);
+	RivenCard *getCard() const { return _card; }
+	RivenStack *getStack() const { return _stack; }
 
 	// Hotspot functions/variables
-	RivenHotspot *_hotspots;
-	int32 _curHotspot;
 	Common::Array<ZipMode> _zipModeData;
-	uint16 getHotspotCount() const { return _hotspotCount; }
-	void runHotspotScript(uint16 hotspot, uint16 scriptType);
-	int32 getCurHotspot() const { return _curHotspot; }
-	Common::String getHotspotName(uint16 hotspot);
-	void updateCurrentHotspot();
+	void addZipVisitedCard(uint16 cardId, uint16 cardNameId);
+	bool isZipVisitedCard(const Common::String &hotspotName) const;
 
 	// Variables
 	RivenVariableMap _vars;
 	uint32 &getStackVar(uint32 index);
 
 	// Miscellaneous
-	void setGameOver() { _gameOver = true; }
-	void ignoreNextMouseUp() { _ignoreNextMouseUp = true; }
+	Common::Array<uint16> getResourceIDList(uint32 type) const;
 	Common::SeekableReadStream *getExtrasResource(uint32 tag, uint16 id);
+	bool _activatedPLST;
 	bool _activatedSLST;
-	void runLoadDialog();
-	void delayAndUpdate(uint32 ms);
+	void delay(uint32 ms);
+	void runOptionsDialog();
 
-	// Timer
-	void installTimer(TimerProc proc, uint32 time);
-	void installCardTimer();
-	void checkTimer();
-	void removeTimer();
+	// Save / Load
+	void runLoadDialog();
+	void runSaveDialog();
+	void tryAutoSaving();
+	void loadGameStateAndDisplayError(int slot);
+	Common::Error saveGameState(int slot, const Common::String &desc, bool autosave);
+	void saveGameStateAndDisplayError(int slot, const Common::String &desc);
+
+	/**
+	 * Has the game ended, or has the user requested to quit?
+	 */
+	bool hasGameEnded() const;
+
+	/**
+	 * End the game gracefully
+	 */
+	void setGameEnded();
+
+	// Main menu handling
+	void goToMainMenu();
+	void resumeFromMainMenu();
+	bool isInMainMenu() const;
+	bool isGameStarted() const;
+	void startNewGame();
 };
 
 } // End of namespace Mohawk

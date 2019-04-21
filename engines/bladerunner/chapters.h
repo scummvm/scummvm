@@ -35,7 +35,8 @@ class Chapters {
 	bool _hasOpenResources;
 
 public:
-	Chapters(BladeRunnerEngine *vm) : _vm(vm), _chapter(0) {
+	Chapters(BladeRunnerEngine *vm) {
+		_vm = vm;
 		_chapter = 0;
 
 		_resourceIds[0] = 1;

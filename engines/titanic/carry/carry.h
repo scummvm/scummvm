@@ -43,22 +43,20 @@ class CCarry : public CGameObject {
 	bool MoveToStartPosMsg(CMoveToStartPosMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool PassOnDragStartMsg(CPassOnDragStartMsg *msg);
-protected:
-	int _fieldDC;
-	CString _string3;
-	CString _string4;
-	Point _tempPos;
-	int _field100;
-	int _field104;
-	int _field108;
-	int _field10C;
+private:
+	int _unused5;
+	CString _doesNothingMsg;
+	CString _doesntWantMsg;
+	int _unusedR, _unusedG, _unusedB;
 	int _itemFrame;
-	CString _string5;
+	CString _unused6;
 	int _enterFrame;
 	bool _enterFrameSet;
+protected:
+	Point _centroid;
 	int _visibleFrame;
 public:
-	CString _string1;
+	CString _npcUse;
 	bool _canTake;
 	Point _origPos;
 	CString _fullViewName;

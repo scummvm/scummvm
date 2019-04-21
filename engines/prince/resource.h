@@ -24,74 +24,85 @@
 #define PRINCE_RESOURCE_H
 
 #include "common/stream.h"
+#include "common/memstream.h"
 #include "common/archive.h"
 #include "common/debug-channels.h"
 #include "common/ptr.h"
+
+#include "prince/decompress.h"
 
 namespace Prince {
 
 namespace Resource {
 
-	template <typename T>
-	bool loadFromStream(T &resource, Common::SeekableReadStream &stream) {
-		return resource.loadStream(stream);
+Common::SeekableReadStream *getDecompressedStream(Common::SeekableReadStream *stream);
+
+template <typename T>
+bool loadFromStream(T &resource, Common::SeekableReadStream &stream) {
+	return resource.loadStream(stream);
+}
+
+template<typename T>
+bool loadResource(T *resource, const char *resourceName, bool required) {
+	Common::SeekableReadStream *stream_(SearchMan.createReadStreamForMember(resourceName));
+	if (!stream_) {
+		if (required)
+			error("Can't load %s", resourceName);
+		return false;
 	}
 
-	template<typename T>
-	bool loadResource(T *resource, const char *resourceName, bool required) {
-		Common::ScopedPtr<Common::SeekableReadStream> stream(SearchMan.createReadStreamForMember(resourceName));
-		if (!stream) {
-			if (required)
-				error("Can't load %s", resourceName);
-			return false;
+	Common::ScopedPtr<Common::SeekableReadStream> stream(getDecompressedStream(stream_));
+
+	return loadFromStream(*resource, *stream);
+}
+
+template <typename T>
+bool loadResource(Common::Array<T> &array, Common::SeekableReadStream &stream, bool required = true) {
+	T t;
+	while (t.loadFromStream(stream))
+		array.push_back(t);
+
+	return true;
+}
+
+
+template <typename T>
+bool loadResource(Common::Array<T> &array, const char *resourceName, bool required = true) {
+	Common::SeekableReadStream *stream_(SearchMan.createReadStreamForMember(resourceName));
+	if (!stream_) {
+		if (required)
+			error("Can't load %s", resourceName);
+		return false;
+	}
+
+	Common::ScopedPtr<Common::SeekableReadStream> stream(getDecompressedStream(stream_));
+
+	return loadResource(array, *stream, required);
+}
+
+template <typename T>
+bool loadResource(Common::Array<T *> &array, const char *resourceName, bool required = true) {
+
+	Common::SeekableReadStream *stream_(SearchMan.createReadStreamForMember(resourceName));
+	if (!stream_) {
+		if (required)
+			error("Can't load %s", resourceName);
+		return false;
+	}
+
+	Common::ScopedPtr<Common::SeekableReadStream> stream(getDecompressedStream(stream_));
+
+	// FIXME: This is stupid. Maybe loadFromStream should be helper method that returns initialized object
+	while (true) {
+		T* t = new T();
+		if (!t->loadFromStream(*stream)) {
+			delete t;
+			break;
 		}
-
-		return loadFromStream(*resource, *stream);
+		array.push_back(t);
 	}
-
-	template <typename T>
-	bool loadResource(Common::Array<T> &array, Common::SeekableReadStream &stream, bool required = true) {
-		T t;
-		while (t.loadFromStream(stream))
-			array.push_back(t);
-
-		return true;
-	}
-
-
-	template <typename T>
-	bool loadResource(Common::Array<T> &array, const char *resourceName, bool required = true) {
-		Common::ScopedPtr<Common::SeekableReadStream> stream(SearchMan.createReadStreamForMember(resourceName));
-		if (!stream) {
-			if (required)
-				error("Can't load %s", resourceName);
-			return false;
-		}
-
-		return loadResource(array, *stream, required);
-	}
-
-	template <typename T>
-	bool loadResource(Common::Array<T *> &array, const char *resourceName, bool required = true) {
-
-		Common::ScopedPtr<Common::SeekableReadStream> stream(SearchMan.createReadStreamForMember(resourceName));
-		if (!stream) {
-			if (required)
-				error("Can't load %s", resourceName);
-			return false;
-		}
-
-		// FIXME: This is stupid. Maybe loadFromStream should be helper method that returns initiailzed object
-		while (true) {
-			T* t = new T();
-			if (!t->loadFromStream(*stream)) {
-				delete t;
-				break;
-			}
-			array.push_back(t);
-		}
-		return true;
-	}
+	return true;
+}
 
 }
 

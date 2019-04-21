@@ -112,7 +112,7 @@ public:
 	void initPrimary(int16 mode);
 	SurfacePtr initSurfDesc(int16 width, int16 height, int16 flags = 0);
 
-	void setSize(bool defaultTo1XScaler);
+	void setSize();
 
 	void clearScreen();
 	void retrace(bool mouse = true);
