@@ -12,7 +12,6 @@
     Commands:
           sudo apt-get install build-essential
           sudo apt-get install git
-          sudo apt-get install zipalign
 
 1d) Install the JDK. You can do this using the apt-get tool or by downloading the JDK from Oracle's official site (in the latter case you must set environment variables for JDK; see guides "How install JDK and set environment variables for JDK").
     Recommended command:
