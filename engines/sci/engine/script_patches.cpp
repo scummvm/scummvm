@@ -106,6 +106,7 @@ static const char *const selectorNameTable[] = {
 	"handsOn",      // system selector
 	"localize",     // Freddy Pharkas
 	"put",          // Police Quest 1 VGA
+	"hide",         // Quest For Glory 1 VGA, QFG4
 	"say",          // Quest For Glory 1 VGA, QFG4
 	"script",       // Quest For Glory 1 VGA
 	"solvePuzzle",  // Quest For Glory 3
@@ -177,7 +178,6 @@ static const char *const selectorNameTable[] = {
 	"curInvIcon",   // QFG4
 	"getCursor",    // QFG4
 	"heading",      // QFG4
-	"hide",         // QFG4
 	"moveSpeed",    // QFG4
 	"sayMessage",   // QFG4
 	"setCursor",    // QFG4
@@ -214,6 +214,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_handsOn,
 	SELECTOR_localize,
 	SELECTOR_put,
+	SELECTOR_hide,
 	SELECTOR_say,
 	SELECTOR_script,
 	SELECTOR_solvePuzzle,
@@ -286,7 +287,6 @@ enum ScriptPatcherSelectors {
 	SELECTOR_curInvIcon,
 	SELECTOR_getCursor,
 	SELECTOR_heading,
-	SELECTOR_hide,
 	SELECTOR_moveSpeed,
 	SELECTOR_sayMessage,
 	SELECTOR_setCursor,
@@ -8123,6 +8123,55 @@ static const uint16 qfg1vgaPatchMacLogoIntroSkip[] = {
 	PATCH_END
 };
 
+// The Thieves' Guild cashier in room 332 stops responding to verbs when he
+//  reappears at his window. This is due to heGoes:changeState(1) disposing and
+//  deleting borisThief once he's out of sight, indirectly deleting his actions
+//  object borisTeller which handles verbs. borisTeller is only initialized in
+//  rm332:init and this leaves the player unable to purchase or fence items.
+//
+// We fix this by toggling borisThief's visibility with the hide and show
+//  methods instead of disposing and re-initializing.
+//
+// Applies to: PC Floppy, Mac Floppy
+// Responsible methods: heComes:changeState, heGoes:changeState
+// Fixes bug #10939
+static const uint16 qfg1vgaSignatureThievesGuildCashier[] = {
+	0x30, SIG_UINT16(0x0024),               // bnt 0024 [ state 1 ]
+	SIG_ADDTOOFFSET(+31),
+	SIG_MAGICDWORD,
+	0x4a, 0x20,                             // send 20  [ borisThief ... init: ... ]
+	0x32, SIG_UINT16(0x002b),               // jmp 002b [ end of method ]
+	0x3c,                                   // dup
+	0x35, 0x01,                             // ldi 01
+	0x1a,                                   // eq?
+	0x30, SIG_UINT16(0x0019),               // bnt 0019 [ state 2 ]
+	SIG_ADDTOOFFSET(+82),
+	0x39, SIG_SELECTOR8(dispose),           // pushi dispose
+	0x76,                                   // push0
+	0x39, SIG_SELECTOR8(delete),            // pushi delete
+	SIG_ADDTOOFFSET(+4),
+	0x4a, 0x08,                             // send 08 [ borisThief dispose: delete: ]
+	SIG_END
+};
+
+static const uint16 qfg1vgaPatchThievesGuildCashier[] = {
+	0x30, PATCH_UINT16(0x0025),             // bnt 0025 [ state 1 ]
+	PATCH_ADDTOOFFSET(+31),
+	0x38, PATCH_SELECTOR16(show),           // pushi show
+	0x76,                                   // push0
+	0x4a, 0x24,                             // send 24 [ borisThief ... init: ... show: ]
+	0x3c,                                   // dup
+	0x35, 0x01,                             // ldi 01
+	0x1a,                                   // eq?
+	0x31, 0x19,                             // bnt 19 [ state 2 ]
+	PATCH_ADDTOOFFSET(+82),
+	0x39, PATCH_SELECTOR8(hide),            // pushi hide
+	0x32, PATCH_UINT16(0x0000),             // jmp 0000
+	PATCH_ADDTOOFFSET(+4),
+	0x4a, 0x04,                             // send 04 [ borisThief hide: ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                            patch
 static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 	{  true,     0, "inventory weight warning",                    1, qfg1vgaSignatureInventoryWeightWarn, qfg1vgaPatchInventoryWeightWarn },
@@ -8140,6 +8189,7 @@ static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 	{  true,   299, "speedtest",                                   1, qfg1vgaSignatureSpeedTest,           qfg1vgaPatchSpeedTest },
 	{  true,   331, "moving to crusher",                           1, qfg1vgaSignatureMoveToCrusher,       qfg1vgaPatchMoveToCrusher },
 	{  true,   331, "moving to crusher from card game",            1, qfg1vgaSignatureCrusherCardGame,     qfg1vgaPatchCrusherCardGame },
+	{  true,   332, "thieves' guild cashier fix",                  1, qfg1vgaSignatureThievesGuildCashier, qfg1vgaPatchThievesGuildCashier },
 	{  true,   603, "mac: logo mouse-up fix",                      1, qfg1vgaSignatureMacLogoIntroSkip,    qfg1vgaPatchMacLogoIntroSkip },
 	{  true,   814, "window text temp space",                      1, qfg1vgaSignatureTempSpace,           qfg1vgaPatchTempSpace },
 	{  true,   814, "dialog header offset",                        3, qfg1vgaSignatureDialogHeader,        qfg1vgaPatchDialogHeader },
