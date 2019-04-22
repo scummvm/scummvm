@@ -1060,25 +1060,26 @@ const Feature s_features[] = {
 	{    "sdlnet",     "USE_SDL_NET", "SDL_net",          true, "SDL_net support" },
 
 	// Feature flags
-	{            "bink",             "USE_BINK",         "", true,  "Bink video support" },
-	{         "scalers",          "USE_SCALERS",         "", true,  "Scalers" },
-	{       "hqscalers",       "USE_HQ_SCALERS",         "", true,  "HQ scalers" },
-	{           "16bit",        "USE_RGB_COLOR",         "", true,  "16bit color support" },
-	{         "highres",          "USE_HIGHRES",         "", true,  "high resolution" },
-	{         "mt32emu",          "USE_MT32EMU",         "", true,  "integrated MT-32 emulator" },
-	{            "nasm",             "USE_NASM",         "", true,  "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
-	{          "opengl",           "USE_OPENGL",         "", true,  "OpenGL support" },
-	{        "opengles",             "USE_GLES",         "", true,  "forced OpenGL ES mode" },
-	{         "taskbar",          "USE_TASKBAR",         "", true,  "Taskbar integration support" },
-	{           "cloud",            "USE_CLOUD",         "", true,  "Cloud integration support" },
-	{     "translation",      "USE_TRANSLATION",         "", true,  "Translation support" },
-	{          "vkeybd",        "ENABLE_VKEYBD",         "", false, "Virtual keyboard support"},
-	{       "keymapper",     "ENABLE_KEYMAPPER",         "", false, "Keymapper support"},
-	{   "eventrecorder", "ENABLE_EVENTRECORDER",         "", false, "Event recorder support"},
-	{         "updates",          "USE_UPDATES",         "", false, "Updates support"},
-	{         "dialogs",       "USE_SYSDIALOGS",         "", true,  "System dialogs support"},
-	{      "langdetect",       "USE_DETECTLANG",         "", true,  "System language detection support" } // This feature actually depends on "translation", there
-	                                                                                                      // is just no current way of properly detecting this...
+	{            "bink",                      "USE_BINK",  "", true,  "Bink video support" },
+	{         "scalers",                   "USE_SCALERS",  "", true,  "Scalers" },
+	{       "hqscalers",                "USE_HQ_SCALERS",  "", true,  "HQ scalers" },
+	{           "16bit",                 "USE_RGB_COLOR",  "", true,  "16bit color support" },
+	{         "highres",                   "USE_HIGHRES",  "", true,  "high resolution" },
+	{         "mt32emu",                   "USE_MT32EMU",  "", true,  "integrated MT-32 emulator" },
+	{            "nasm",                      "USE_NASM",  "", true,  "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
+	{          "opengl",                    "USE_OPENGL",  "", true,  "OpenGL support" },
+	{        "opengles",                      "USE_GLES",  "", true,  "forced OpenGL ES mode" },
+	{         "taskbar",                   "USE_TASKBAR",  "", true,  "Taskbar integration support" },
+	{           "cloud",                     "USE_CLOUD",  "", true,  "Cloud integration support" },
+	{     "translation",               "USE_TRANSLATION",  "", true,  "Translation support" },
+	{          "vkeybd",                 "ENABLE_VKEYBD",  "", false, "Virtual keyboard support"},
+	{       "keymapper",              "ENABLE_KEYMAPPER",  "", false, "Keymapper support"},
+	{   "eventrecorder",          "ENABLE_EVENTRECORDER",  "", false, "Event recorder support"},
+	{         "updates",                   "USE_UPDATES",  "", false, "Updates support"},
+	{         "dialogs",                "USE_SYSDIALOGS",  "", true,  "System dialogs support"},
+	{      "langdetect",                "USE_DETECTLANG",  "", true,  "System language detection support" }, // This feature actually depends on "translation", there
+	                                                                                                         // is just no current way of properly detecting this...
+	{    "text-console", "USE_TEXT_CONSOLE_FOR_DEBUGGER",  "", false, "Text console debugger" } // This feature is always applied in xcode projects
 };
 
 const Tool s_tools[] = {
