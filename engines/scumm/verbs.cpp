@@ -1009,8 +1009,13 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 		while (*msg == 0xFF)
 			msg += 4;
 
+		// Set the specified charset id
+		int oldID = _charset->getCurID();
+		_charset->setCurID(vs->charset_nr);
+
 		// reverse string for rtl support
-		if (_language == Common::HE_ISR || true) {
+		if ((_language == Common::HE_ISR || true)/* && !(_game.id == GID_FT && (_charset->getCurID() == 6 || _charset->getCurID() == 7))*/) {
+
 			int lens = strlen((const char *)msg);
 
 			for (int l = 0; l < lens; l++) {
@@ -1020,12 +1025,15 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 			msg = rev;
 		}
 
-		// Set the specified charset id
-		int oldID = _charset->getCurID();
-		_charset->setCurID(vs->charset_nr);
+		// char numt[10] ={0};
+		// sprintf(numt, "%d, %d\n", _charset->getCurID(), oldID);
+		// warning(numt);
+
 
 		// Compute the text rect
-		vs->curRect.left = _screenWidth - _charset->getStringWidth(0, buf);
+		if ((_language == Common::HE_ISR || true)/* && !(_game.id == GID_FT && (_charset->getCurID() == 6 || _charset->getCurID() == 7))*/) {
+			vs->curRect.left = _screenWidth - _charset->getStringWidth(0, buf);
+		}
 		vs->curRect.right = 0;
 		vs->curRect.bottom = 0;
 		const byte *msg2 = msg;
