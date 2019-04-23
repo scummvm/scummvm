@@ -7896,6 +7896,60 @@ static const uint16 qfg1vgaPatchSpeedTest[] = {
 	PATCH_END
 };
 
+// QFG1VGA has a bug where exceeding the weight limit during certain scenes
+//  breaks the character screen for the rest of the game. Picking mushrooms,
+//  searching cheetaurs, and fetching the seed are among the vulnerable actions.
+//
+// When adding inventory, ego:get displays a warning if the new items exceed the
+//  weight limit. If this happens while qfgMessager is displaying a message
+//  then both will display at the same time but only one will be disposed. This
+//  leaves an extra entry in the kernel's window list for the rest of the game.
+//  kDisplay then sends text to the wrong window, breaking the character screen
+//  and others, and prevents the player from ever viewing their stats.
+//
+// We fix this by adding a check to ego:get that skips displaying messages if a
+//  dialog already exists. This is what Sierra did in the Mac version after
+//  reverting the scene-specific patches they issued for the PC version.
+//
+// Applies to: PC Floppy
+// Responsible method: ego:get
+// Fixes bug: #10942
+static const uint16 qfg1vgaSignatureInventoryWeightWarn[] = {
+	0x8f, 0x00,                         // lsp 00
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	0x31, 0x04,                         // bnt 04
+	0x35, 0x01,                         // ldi 01
+	0x33, 0x02,                         // jmp 02
+	0x87, 0x02,                         // lap 02
+	0xa5, SIG_MAGICDWORD, 0x01,         // sat 01
+	0x38, SIG_UINT16(0x024d),           // pushi amount [ hard-coded for PC ]
+	0x76,                               // push0
+	0x85, 0x00,                         // lat 00
+	0x4a, 0x04,                         // send 04 [ temp0 amount? ]
+	0xa5, 0x02,                         // sat 02
+	SIG_ADDTOOFFSET(+0x0092),
+	0x8d, 0x01,                         // lst 01
+	SIG_END
+};
+
+static const uint16 qfg1vgaPatchInventoryWeightWarn[] = {
+	0x87, 0x00,                         // lap 00
+	0x78,                               // push1 [ save 1 byte ]
+	0x1a,                               // eq?
+	0x2f, 0x02,                         // bt 02 [ save 4 bytes ]
+	0x87, 0x02,                         // lap 02
+	0xa5, 0x01,                         // sat 01
+	0x38, PATCH_UINT16(0x024d),         // pushi amount [ hard-coded for PC ]
+	0x76,                               // push0
+	0x85, 0x00,                         // lat 00
+	0x4a, 0x04,                         // send 04 [ temp0 amount? ]
+	0xa5, 0x02,                         // sat 02
+	0x81, 0x19,                         // lag 19  [ dialog ]
+	0x2e, PATCH_UINT16(0x0092),         // bt 0092 [ skip messages if dialog ]
+	PATCH_END
+};
+
 // The baby antwerps in room 78 lockup the game if they get in ego's way when
 //  exiting south. They also crash the interpreter if they wander too far off
 //  the screen. These problems also occur in Sierra's interpreter.
@@ -8071,6 +8125,7 @@ static const uint16 qfg1vgaPatchMacLogoIntroSkip[] = {
 
 //          script, description,                                      signature                            patch
 static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
+	{  true,     0, "inventory weight warning",                    1, qfg1vgaSignatureInventoryWeightWarn, qfg1vgaPatchInventoryWeightWarn },
 	{  true,    41, "moving to castle gate",                       1, qfg1vgaSignatureMoveToCastleGate,    qfg1vgaPatchMoveToCastleGate },
 	{  true,    55, "healer's hut, no delay for buy/steal",        1, qfg1vgaSignatureHealerHutNoDelay,    qfg1vgaPatchHealerHutNoDelay },
 	{  true,    73, "brutus script freeze glitch",                 1, qfg1vgaSignatureBrutusScriptFreeze,  qfg1vgaPatchBrutusScriptFreeze },
