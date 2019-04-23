@@ -8172,6 +8172,31 @@ static const uint16 qfg1vgaPatchThievesGuildCashier[] = {
 	PATCH_END
 };
 
+// When entering the great hall (room 141), the Mac version stores ego's speed
+//  in a temp variable in egoEnters:changeState(0) and expects that value to be
+//  there in state 6 when restoring ego's speed. We patch the script to use its
+//  register instead so that it works and doesn't do an uninitialized read.
+//
+// Applies to: Mac Floppy
+// Responsible method: egoEnters:changeState
+// Fixes bug: #10945
+static const uint16 qfg1vgaSignatureMacEnterGreatHall[] = {
+	SIG_MAGICDWORD,
+	0x4a, 0x04,                             // send 04 [ ego cycleSpeed? ]
+	0xa5, 0x00,                             // sat 00
+	SIG_ADDTOOFFSET(+140),
+	0x8d, 0x00,                             // lst 00
+	SIG_END
+};
+
+static const uint16 qfg1vgaPatchMacEnterGreatHall[] = {
+	PATCH_ADDTOOFFSET(+2),
+	0x65, 0x24,                             // aTop register
+	PATCH_ADDTOOFFSET(+140),
+	0x67, 0x24,                             // pTos register
+	PATCH_END
+};
+
 //          script, description,                                      signature                            patch
 static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 	{  true,     0, "inventory weight warning",                    1, qfg1vgaSignatureInventoryWeightWarn, qfg1vgaPatchInventoryWeightWarn },
@@ -8182,6 +8207,7 @@ static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 	{  true,    78, "mac: enable antwerp controls",                1, qfg1vgaSignatureMacAntwerpControls,  qfg1vgaPatchMacAntwerpControls },
 	{  true,    96, "funny room script bug fixed",                 1, qfg1vgaSignatureFunnyRoomFix,        qfg1vgaPatchFunnyRoomFix },
 	{  true,    96, "yorick door #2 lockup fixed",                 1, qfg1vgaSignatureYorickDoorTwoRect,   qfg1vgaPatchYorickDoorTwoRect },
+	{  true,   141, "mac: enter great hall",                       1, qfg1vgaSignatureMacEnterGreatHall,   qfg1vgaPatchMacEnterGreatHall },
 	{  true,   200, "mac: intro mouse-up fix",                     1, qfg1vgaSignatureMacLogoIntroSkip,    qfg1vgaPatchMacLogoIntroSkip },
 	{  true,   210, "cheetaur description fixed",                  1, qfg1vgaSignatureCheetaurDescription, qfg1vgaPatchCheetaurDescription },
 	{  true,   215, "fight event issue",                           1, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
