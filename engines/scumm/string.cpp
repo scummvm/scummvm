@@ -650,8 +650,25 @@ void ScummEngine::CHARSET_1() {
 				}
 
 				char buf[384] = {0};
+				char stack[384] = {0};
+				int sthead = 0;
 				for (int j = 0; j < i; j++) {
-					buf[j] = text[start + i - j - 1];
+					// buf[j] = text[start + i - j - 1];
+					char curr = text[start + i - j - 1];
+					if (curr > '9' || curr < '0') {
+						while (sthead > 0) {
+							buf[j - sthead] = stack[sthead];
+							--sthead;
+						}
+						buf[j] = curr;
+					} else {
+						++sthead;
+						stack[sthead] = curr;
+					}
+				}
+				while (sthead > 0) {
+					buf[i - sthead] = stack[sthead];
+					--sthead;
 				}
 				memcpy(text + start, buf, i);
 				start += i + 1;
@@ -985,8 +1002,24 @@ void ScummEngine::drawString(int a, const byte *msg) {
 		while(1) {
 			if (*current == 13 || *current == 0 || *current == -1 || *current == -2) {
 				char buff[384] = {0};
+				char stack[384] = {0};
+				int sthead = 0;
 				for (int j = 0; j < pos; j++) {
-					buff[j] = text[start + pos - j - 1];
+					char curr = text[start + pos - j - 1];
+					if (curr > '9' || curr < '0') {
+						while (sthead > 0) {
+							buff[j - sthead] = stack[sthead];
+							--sthead;
+						}
+						buff[j] = curr;
+					} else {
+						++sthead;
+						stack[sthead] = curr;
+					}
+				}
+				while (sthead > 0) {
+					buff[pos - sthead] = stack[sthead];
+					--sthead;
 				}
 				memcpy(fin + ll + start, buff, pos);
 				start += pos + 1;
@@ -1083,7 +1116,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 
 	if (_charset->_center) {
 		_charset->_left -= _charset->getStringWidth(a, buf) / 2;
-	} else if (_game.version >= 4 && _game.version < 7 && (_language == Common::HE_ISR || true)) {
+	} else if (_game.version >= 4 && _game.version < 7 && _game.id != GID_SAMNMAX && (_language == Common::HE_ISR || true)) {
 		// warning("FIRST BOTTTOMd");
 		if (_game.id != GID_INDY4 || buf[0] == 127) {
 			if (_game.id == GID_INDY4 && buf[0] == 127) {
