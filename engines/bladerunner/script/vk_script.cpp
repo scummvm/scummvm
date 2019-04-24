@@ -86,48 +86,101 @@ bool VKScript::isInsideScript() const {
 }
 
 bool VKScript::SCRIPT_VK_DLL_Initialize(int actorId) {
-	VK_Add_Question(0, 7400, -1);
-	VK_Add_Question(0, 7405, -1);
-	VK_Add_Question(0, 7410, -1);
-	VK_Add_Question(0, 7415, -1);
-	VK_Add_Question(0, 7420, -1);
-	VK_Add_Question(0, 7425, -1);
-	if (actorId == kActorLucy || actorId == kActorDektora) {
-		VK_Add_Question(0, 7430, -1);
+	VK_Add_Question(0, 7400, -1);       // Low 01
+	VK_Add_Question(0, 7405, -1);       // Low 02
+	VK_Add_Question(0, 7410, -1);       // Low 03
+	VK_Add_Question(0, 7415, -1);       // Low 04
+	VK_Add_Question(0, 7420, -1);       // Low 05
+	VK_Add_Question(0, 7425, -1);       // Low 06
+#if BLADERUNNER_RESTORED_CUT_CONTENT
+	if (actorId == kActorLucy) {
+		VK_Add_Question(0, 7430, 7770); // Low 07 -> High 10 (A game/ It's not, really, just part of the test)
+	} else if (actorId == kActorDektora) {
+		VK_Add_Question(0, 7430, -1);   // Low 07
 	}
-	VK_Add_Question(0, 7435, -1);
-	VK_Add_Question(0, 7440, -1);
-	VK_Add_Question(0, 7445, -1);
-	VK_Add_Question(0, 7450, -1);
-	VK_Add_Question(0, 7455, -1);
-	VK_Add_Question(0, 7460, -1);
-	VK_Add_Question(0, 7465, -1);
-	VK_Add_Question(0, 7470, -1);
-	VK_Add_Question(1, 7475, -1);
-	VK_Add_Question(1, 7480, -1);
-	VK_Add_Question(1, 7485, -1);
-	VK_Add_Question(1, 7490, -1);
-	VK_Add_Question(1, 7495, -1);
-	VK_Add_Question(1, 7515, -1);
-	VK_Add_Question(1, 7525, -1);
-	VK_Add_Question(1, 7535, -1);
-	VK_Add_Question(1, 7540, -1);
-	VK_Add_Question(1, 7550, -1);
-	VK_Add_Question(1, 7565, -1);
-	VK_Add_Question(1, 7580, -1);
-	VK_Add_Question(1, 7585, -1);
-	VK_Add_Question(1, 7595, -1);
-	VK_Add_Question(1, 7600, -1);
-	VK_Add_Question(2, 7605, -1);
-	VK_Add_Question(2, 7620, -1);
-	VK_Add_Question(2, 7635, -1);
-	VK_Add_Question(2, 7670, -1);
-	VK_Add_Question(2, 7680, -1);
-	VK_Add_Question(2, 7690, -1);
-	VK_Add_Question(2, 7705, -1);
-	VK_Add_Question(2, 7740, -1);
-	VK_Add_Question(2, 7750, -1);
-	VK_Add_Question(2, 7770, -1);
+#else
+	if (actorId == kActorLucy || actorId == kActorDektora) {
+		VK_Add_Question(0, 7430, -1);   // Low 07
+	}
+#endif // BLADERUNNER_RESTORED_CUT_CONTENT
+	VK_Add_Question(0, 7435, -1);       // Low 08
+	VK_Add_Question(0, 7440, -1);       // Low 09
+	VK_Add_Question(0, 7445, -1);       // Low 10
+	VK_Add_Question(0, 7450, -1);       // Low 11
+	VK_Add_Question(0, 7455, -1);       // Low 12
+	VK_Add_Question(0, 7460, -1);       // Low 13
+	VK_Add_Question(0, 7465, -1);       // Low 14
+	VK_Add_Question(0, 7470, -1);       // Low 15
+	VK_Add_Question(1, 7475, -1);       // Medium 01
+	VK_Add_Question(1, 7480, -1);       // Medium 02
+	VK_Add_Question(1, 7485, -1);       // Medium 03
+	VK_Add_Question(1, 7490, -1);       // Medium 04
+	VK_Add_Question(1, 7495, -1);       // Medium 05
+	VK_Add_Question(1, 7515, -1);       // Medium 06
+	VK_Add_Question(1, 7525, -1);       // Medium 07
+	VK_Add_Question(1, 7535, -1);       // Medium 08
+	VK_Add_Question(1, 7540, -1);       // Medium 09
+	VK_Add_Question(1, 7550, -1);       // Medium 10
+	VK_Add_Question(1, 7565, -1);       // Medium 11
+	VK_Add_Question(1, 7580, -1);       // Medium 12
+	VK_Add_Question(1, 7585, -1);       // Medium 13
+#if BLADERUNNER_RESTORED_CUT_CONTENT
+	if (actorId == kActorBulletBob) {
+		// Bullet Bob's Medium 14 is related to Low 05 (Low 05 is supposed to be asked first)
+		VK_Add_Question(1, 7595, 7420); // Medium 14 -> Low 05 (Hamster)
+	} else {
+		VK_Add_Question(1, 7595, -1);   // Medium 14
+	}
+#else
+	VK_Add_Question(1, 7595, -1);       // Medium 14
+#endif // BLADERUNNER_RESTORED_CUT_CONTENT
+#if BLADERUNNER_RESTORED_CUT_CONTENT
+	if (actorId == kActorLucy) {
+		VK_Add_Question(1, 7600, 7475); // Medium 15 -> Medium 01 (Can't have children not ever)
+	} else {
+		VK_Add_Question(1, 7600, -1);   // Medium 15
+	}
+#else
+	VK_Add_Question(1, 7600, -1);       // Medium 15
+#endif // BLADERUNNER_RESTORED_CUT_CONTENT
+	VK_Add_Question(2, 7605, -1);       // High 01
+	VK_Add_Question(2, 7620, -1);       // High 02
+#if BLADERUNNER_RESTORED_CUT_CONTENT
+	if (actorId == kActorGrigorian) {
+		VK_Add_Question(2, 7635, 7585); // High 03 -> Medium 13   // book/ magazine with dead animals
+	} else {
+		VK_Add_Question(2, 7635, -1);   // High 03
+	}
+#else
+	VK_Add_Question(2, 7635, -1);       // High 03
+#endif // BLADERUNNER_RESTORED_CUT_CONTENT
+	VK_Add_Question(2, 7670, -1);       // High 04
+	VK_Add_Question(2, 7680, -1);       // High 05
+#if BLADERUNNER_RESTORED_CUT_CONTENT
+	if (actorId == kActorBulletBob) {
+		VK_Add_Question(2, 7690, 7565); // High 06 -> Medium 11 (when people laughing at him)
+	} else if (actorId == kActorDektora) {
+		VK_Add_Question(2, 7690, 7750); // High 06 -> High 09  (You don't write them / I Just read 'em)
+	} else {
+		VK_Add_Question(2, 7690, -1);   // High 06
+	}
+#else
+	VK_Add_Question(2, 7690, -1);       // High 06
+#endif // BLADERUNNER_RESTORED_CUT_CONTENT
+#if BLADERUNNER_RESTORED_CUT_CONTENT
+	if (actorId == kActorBulletBob) {
+		VK_Add_Question(2, 7705, 7635); // High 07 -> High 03 (I've had enough)
+	} else if (actorId == kActorGrigorian) {
+		VK_Add_Question(2, 7705, 7605); // High 07 -> High 01 (They're just questions x2)
+	} else {
+		VK_Add_Question(2, 7705, -1);   // High 07
+	}
+#else
+	VK_Add_Question(2, 7705, -1);       // High 07
+#endif // BLADERUNNER_RESTORED_CUT_CONTENT
+	VK_Add_Question(2, 7740, -1);       // High 08
+	VK_Add_Question(2, 7750, -1);       // High 09
+	VK_Add_Question(2, 7770, -1);       // High 10
 
 	switch (actorId) {
 	case kActorDektora:

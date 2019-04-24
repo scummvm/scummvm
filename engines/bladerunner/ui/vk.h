@@ -167,6 +167,7 @@ private:
 	void setAdjustment(int x);
 	void setAdjustmentFromMouse();
 
+	void findRelatedQuestionBySentenceId(int inSentenceId, int &outRelatedQuestionId, int &outRelatedIntensity);
 	void askQuestion(int intensity);
 };
 

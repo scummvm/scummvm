@@ -45,6 +45,7 @@
 
 #include "common/str.h"
 #include "common/keyboard.h"
+#include "bladerunner/debugger.h"
 
 namespace BladeRunner {
 
@@ -878,6 +879,27 @@ void VK::setAdjustmentFromMouse() {
 	}
 }
 
+/**
+* This is ScummVM's version of this function (original name: findQuestionById)
+* It will search through all questions to find a related question Id and its intensity
+*/
+void VK::findRelatedQuestionBySentenceId(int inSentenceId, int &outRelatedQuestionId, int &outRelatedIntensity) {
+    outRelatedQuestionId = -1;
+    outRelatedIntensity  = -1;
+
+	for (int intensity = 0; intensity < 3; ++intensity) {
+		for (int i = 0; i < (int)_questions[intensity].size(); ++i) {
+			if (_questions[intensity][i].isPresent
+				&& _questions[intensity][i].sentenceId == inSentenceId
+			) {
+				outRelatedQuestionId = i;
+				outRelatedIntensity  = intensity;
+				return;
+			}
+		}
+	}
+}
+
 void VK::askQuestion(int intensity) {
 	assert(intensity < (int)_questions.size());
 
@@ -895,18 +917,37 @@ void VK::askQuestion(int intensity) {
 	for (int i = 0; i < (int)_questions[intensity].size(); ++i) {
 		if (_questions[intensity][i].isPresent && !_questions[intensity][i].wasAsked) {
 			// cut content? related questions are not used in game
-			// int relatedQuestion = -1;
-			// if (_questions[intensity][i].relatedSentenceId >= 0) {
-			// 	relatedQuestion = vk::findQuestionById(this, questions, relatedQuestionId);
-			// }
+			//
+			// Note: There are questions that seem related and a subject may reference them
+			// (eg Bullet Bob does that with the "hamster" - VK Low 05 and VK Medium 14)
+			//
+			// This was probably meant to be a mechanism to prevent asking a related question before asking the original one
+			// to avoid inconsistencies. However, this seems it would restrict relevant questions within the same intensity
+			// which should be changed.
+			//
+			// An issue with this issue is that if in a pair of related questions from different intensities
+			// (eg in Bob's case L05 -> M14), if M14 is the last available question from the Medium intensity,
+			// and L05 has not been asked, then what question should McCoy ask?
+			//
+			// The original code (if it worked) would simply not make any question and that's the simplest solution to adopt.
+			// This issue is only likely to occur in vanilla game (with very low probability)
+			// with High intensity questions that depend on questions of other intensity
+			//
+			int relatedSentenceId = _questions[intensity][i].relatedSentenceId;
+			int relatedQuestionId = -1;
+			int relatedQuestionIntensity = -1;
 
-			// if (relatedQuestion < 0 || _questions[intensity][relatedQuestion].wasAsked) {
-			foundQuestionIndexLast = i;
-			if (_vm->_rnd.getRandomNumberRng(0, 100) < 20) {
-				foundQuestionIndex = i;
-				break;
+			if (relatedSentenceId >= 0) {
+				findRelatedQuestionBySentenceId(relatedSentenceId, relatedQuestionId, relatedQuestionIntensity);
 			}
-			// }
+
+			if (relatedQuestionId < 0 || _questions[relatedQuestionIntensity][relatedQuestionId].wasAsked) {
+				foundQuestionIndexLast = i;
+				if (_vm->_rnd.getRandomNumberRng(0, 100) < 20) {
+					foundQuestionIndex = i;
+					break;
+				}
+			}
 		}
 	}
 
