@@ -30,6 +30,8 @@ namespace BladeRunner {
 class BladeRunnerEngine;
 
 class VKScript : ScriptBase {
+	friend class Debugger;
+
 	int _inScriptCounter;
 	int _calibrationQuestionCounter;
 	int _questionCounter;

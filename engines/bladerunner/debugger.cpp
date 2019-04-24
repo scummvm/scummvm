@@ -56,6 +56,7 @@
 #include "bladerunner/ui/elevator.h"
 #include "bladerunner/ui/vk.h"
 #include "bladerunner/ui/scores.h"
+#include "bladerunner/script/vk_script.h"
 #include "bladerunner/overlays.h"
 #include "bladerunner/subtitles.h"
 
@@ -83,6 +84,7 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 	_viewWaypoints = false;
 	_viewWalkboxes = false;
 	_viewZBuffer = false;
+	_playFullVk = false;
 
 	registerCmd("anim", WRAP_METHOD(Debugger, cmdAnimation));
 	registerCmd("draw", WRAP_METHOD(Debugger, cmdDraw));
@@ -101,6 +103,7 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 	registerCmd("save", WRAP_METHOD(Debugger, cmdSave));
 	registerCmd("overlay", WRAP_METHOD(Debugger, cmdOverlay));
 	registerCmd("subtitle", WRAP_METHOD(Debugger, cmdSubtitle));
+	registerCmd("vk", WRAP_METHOD(Debugger, cmdVk));
 }
 
 Debugger::~Debugger() {
@@ -1072,6 +1075,41 @@ bool Debugger::cmdSubtitle(int argc, const char **argv) {
 
 }
 
+/**
+* Toggle playing a full VK session (full)
+* Only available in VK mode
+*/
+bool Debugger::cmdVk(int argc, const char **argv) {
+	bool invalidSyntax = false;
+
+	if (argc != 2) {
+		invalidSyntax = true;
+	} else {
+		if (!_vm->_vk->isOpen()) {
+			debugPrintf("Error:Command %s is only valid within a Voigt-Kampff session\n",  argv[0]);
+			return true;
+		}
+		//
+		// set a debug variable to enable going through the (remaining) VK session
+		// enabling all the remaining VK questions
+		//
+		Common::String argName = argv[1];
+		argName.toLowercase();
+		if (argc == 2 && argName == "full") {
+			_playFullVk = !_playFullVk;
+			debugPrintf("Playing full V-K session = %s\n", _playFullVk ? "True":"False");
+		} else {
+			invalidSyntax = true;
+		}
+	}
+
+	if (invalidSyntax) {
+		debugPrintf("Toggle playing the full VK session instead of the at most 10 questions of the vanilla mode\n");
+		debugPrintf("Usage: %s full\n", argv[0]);
+	}
+	return true;
+
+}
 /**
 *
 * Similar to draw but only list items instead of drawing

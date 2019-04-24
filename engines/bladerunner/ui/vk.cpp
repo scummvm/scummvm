@@ -271,6 +271,7 @@ void VK::subjectReacts(int intensity, int humanResponse, int replicantResponse, 
 	replicantResponse = CLIP(replicantResponse, -20, 20);
 
 	int timeNow = _vm->_time->current();
+	bool closeVK = false;
 
 	if (intensity > 0) {
 		_needleValueTarget = 78 * intensity / 100;
@@ -280,10 +281,27 @@ void VK::subjectReacts(int intensity, int humanResponse, int replicantResponse, 
 
 	if (humanResponse != 0) {
 		_humanProbability = CLIP(_humanProbability + humanResponse + _calibration, 0, 100);
+//		debug("Human probability is %d, human response is %d, calibration is %d", _humanProbability, humanResponse,_calibration);
 		if (_humanProbability >= 80 && !_isClosing) {
-			_isClosing = true;
-			_timeClose = timeNow + 3000;
-			_vm->_mouse->disable();
+			closeVK = false;
+			if (_vm->_debugger->_playFullVk
+			    && intensity == 5
+			    && (humanResponse == 0 || humanResponse == 20 )
+			    && replicantResponse == 0
+			    && anxiety == 100
+			) {	// only close if 5, 0, 0, 100 argument (the actual anxiety ending of VK)
+				// force Human result
+				_replicantProbability = 0;
+				closeVK = true;
+			} else if (!_vm->_debugger->_playFullVk) {
+				closeVK = true;
+			}
+
+			if (closeVK == true) {
+				_isClosing = true;
+				_timeClose = timeNow + 3000;
+				_vm->_mouse->disable();
+			}
 		}
 		_humanGaugeTarget = humanResponse;
 		_humanGaugeDelta = humanResponse / 10;
@@ -294,10 +312,27 @@ void VK::subjectReacts(int intensity, int humanResponse, int replicantResponse, 
 
 	if (replicantResponse != 0) {
 		_replicantProbability = CLIP(_replicantProbability + replicantResponse - _calibration, 0, 100);
+//		debug("Replicant probability is %d, replicant response is %d, calibration is %d", _replicantProbability, replicantResponse, _calibration);
 		if (_replicantProbability >= 80 && !_isClosing) {
-			_isClosing = true;
-			_timeClose = timeNow + 3000;
-			_vm->_mouse->disable();
+			closeVK = false;
+			if (_vm->_debugger->_playFullVk
+			    && intensity == 5
+			    && humanResponse == 0
+			    && (replicantResponse == 0 || replicantResponse == 20 )
+			    && anxiety == 100
+			) { // only close if 5, 0, 0, 100 argument (the actual anxiety ending of VK)
+				// force Rep result
+				_humanProbability = 0;
+				closeVK = true;
+			} else if (!_vm->_debugger->_playFullVk) {
+				closeVK = true;
+			}
+
+			if (closeVK == true) {
+				_isClosing = true;
+				_timeClose = timeNow + 3000;
+				_vm->_mouse->disable();
+			}
 		}
 		_replicantGaugeTarget = replicantResponse;
 		_replicantGauge = replicantResponse / 10;
@@ -306,8 +341,22 @@ void VK::subjectReacts(int intensity, int humanResponse, int replicantResponse, 
 		}
 	}
 
-	_anxiety = CLIP(_anxiety + anxiety, 0, 100);
-	if (_anxiety == 100 && !_isClosing) {
+	closeVK = false;
+	if (_vm->_debugger->_playFullVk
+	    && intensity == 5
+	    && humanResponse == 0
+	    && replicantResponse == 0
+	    && anxiety == 100 && !_isClosing
+	) {
+		closeVK = true;
+	} else if (!_vm->_debugger->_playFullVk) {
+		_anxiety = CLIP(_anxiety + anxiety, 0, 100);
+		if (_anxiety == 100 && !_isClosing) {
+			closeVK = true;
+		}
+	}
+
+	if (closeVK == true) {
 		_isClosing = true;
 		_timeClose = timeNow + 3000;
 		_vm->_mouse->disable();
@@ -914,38 +963,53 @@ void VK::askQuestion(int intensity) {
 	int foundQuestionIndex     = -1;
 	int foundQuestionIndexLast = -1;
 
-	for (int i = 0; i < (int)_questions[intensity].size(); ++i) {
-		if (_questions[intensity][i].isPresent && !_questions[intensity][i].wasAsked) {
-			// cut content? related questions are not used in game
-			//
-			// Note: There are questions that seem related and a subject may reference them
-			// (eg Bullet Bob does that with the "hamster" - VK Low 05 and VK Medium 14)
-			//
-			// This was probably meant to be a mechanism to prevent asking a related question before asking the original one
-			// to avoid inconsistencies. However, this seems it would restrict relevant questions within the same intensity
-			// which should be changed.
-			//
-			// An issue with this issue is that if in a pair of related questions from different intensities
-			// (eg in Bob's case L05 -> M14), if M14 is the last available question from the Medium intensity,
-			// and L05 has not been asked, then what question should McCoy ask?
-			//
-			// The original code (if it worked) would simply not make any question and that's the simplest solution to adopt.
-			// This issue is only likely to occur in vanilla game (with very low probability)
-			// with High intensity questions that depend on questions of other intensity
-			//
-			int relatedSentenceId = _questions[intensity][i].relatedSentenceId;
-			int relatedQuestionId = -1;
-			int relatedQuestionIntensity = -1;
+	if (_vm->_debugger->_playFullVk) {
+		// loop backwards to maintain proper order in sound files
+		for (int i = (int)_questions[intensity].size() - 1; i >= 0; --i) {
 
-			if (relatedSentenceId >= 0) {
-				findRelatedQuestionBySentenceId(relatedSentenceId, relatedQuestionId, relatedQuestionIntensity);
-			}
-
-			if (relatedQuestionId < 0 || _questions[relatedQuestionIntensity][relatedQuestionId].wasAsked) {
+			if (_questions[intensity][i].isPresent && !_questions[intensity][i].wasAsked) {
+				// In full VK debug mode we don't need the question dependencies (related questions)
+				// We also assign the new question id deterministically from an intensity "pack"
+				// we don't use randomness here
 				foundQuestionIndexLast = i;
-				if (_vm->_rnd.getRandomNumberRng(0, 100) < 20) {
-					foundQuestionIndex = i;
-					break;
+				foundQuestionIndex     = i;
+			}
+		}
+	} else {
+		// original code
+		for (int i = 0; i < (int)_questions[intensity].size(); ++i) {
+			if (_questions[intensity][i].isPresent && !_questions[intensity][i].wasAsked) {
+				// cut content? related questions are not used in game
+				//
+				// Note: There are questions that seem related and a subject may reference them
+				// (eg Bullet Bob does that with the "hamster" - VK Low 05 and VK Medium 14)
+				//
+				// This was probably meant to be a mechanism to prevent asking a related question before asking the original one
+				// to avoid inconsistencies. However, this seems it would restrict relevant questions within the same intensity
+				// which should be changed.
+				//
+				// An issue with this issue is that if in a pair of related questions from different intensities
+				// (eg in Bob's case L05 -> M14), if M14 is the last available question from the Medium intensity,
+				// and L05 has not been asked, then what question should McCoy ask?
+				//
+				// The original code (if it worked) would simply not make any question and that's the simplest solution to adopt.
+				// This issue is only likely to occur in vanilla game (with very low probability)
+				// with High intensity questions that depend on questions of other intensity
+				//
+				int relatedSentenceId = _questions[intensity][i].relatedSentenceId;
+				int relatedQuestionId = -1;
+				int relatedQuestionIntensity = -1;
+
+				if (relatedSentenceId >= 0) {
+					findRelatedQuestionBySentenceId(relatedSentenceId, relatedQuestionId, relatedQuestionIntensity);
+				}
+
+				if (relatedQuestionId < 0 || _questions[relatedQuestionIntensity][relatedQuestionId].wasAsked) {
+					foundQuestionIndexLast = i;
+					if (_vm->_rnd.getRandomNumberRng(0, 100) < 20) {
+						foundQuestionIndex = i;
+						break;
+					}
 				}
 			}
 		}
@@ -961,7 +1025,9 @@ void VK::askQuestion(int intensity) {
 		_script->mcCoyAsksQuestion(_actorId, _questions[intensity][foundQuestionIndex].sentenceId);
 		_script->questionAsked(_actorId, _questions[intensity][foundQuestionIndex].sentenceId);
 		_vm->_mouse->enable();
-	} else if (!_isClosing && !_script->isInsideScript()) {
+	} else if (!_isClosing && !_script->isInsideScript()
+	           && !_vm->_debugger->_playFullVk
+	) {
 		_isClosing = true;
 		_vm->_mouse->disable();
 		_timeClose = _vm->_time->current() + 3000;

@@ -37,6 +37,8 @@ class UIImagePicker;
 class VQAPlayer;
 
 class VK {
+	friend class Debugger;
+
 	struct Question {
 		bool isPresent;
 		bool wasAsked;

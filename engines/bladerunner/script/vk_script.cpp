@@ -24,6 +24,7 @@
 
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/mouse.h"
+#include "bladerunner/debugger.h"
 
 namespace BladeRunner {
 
@@ -405,8 +406,47 @@ void VKScript::SCRIPT_VK_DLL_McCoy_Asks_Question(int actorId, int questionId) {
 		VK_Play_Speech_Line(kActorMcCoy, 7780, 0.5f);
 		break;
 	}
-	if (++_questionCounter >= 10) {
-		VK_Subject_Reacts(5, 0, 0, 100);
+
+	if ( _vm->_debugger->_playFullVk ) {
+		if (++_questionCounter >= 40) {
+			switch(actorId) {
+			case kActorLucy:
+				//debug("Last Lucy Question!");
+				if (Game_Flag_Query(kFlagLucyIsReplicant)) {
+					VK_Subject_Reacts(5, 0, 100, 100); // Replicant result
+				} else {
+					VK_Subject_Reacts(5, 100, 0, 100); // Human result
+				}
+				break;
+			case kActorDektora:
+				//debug("Last Dektora Question!");
+				if (Game_Flag_Query(kFlagDektoraIsReplicant)) {
+					VK_Subject_Reacts(5, 0, 100, 100); // Replicant result
+				} else {
+					VK_Subject_Reacts(5, 100, 0, 100); // Human result
+				}
+				break;
+			case kActorGrigorian:
+				//debug("Last Grigorian Question!");
+				VK_Subject_Reacts(5, 100, 0, 100); // Human result
+				break;
+			case kActorRunciter:
+				//debug("Last Runciter Question!");
+				VK_Subject_Reacts(5, 100, 0, 100); // Human result
+				break;
+			case kActorBulletBob:
+				//debug("Last Bullet Bob Question!");
+				// don't break for BOB
+				// fall-through
+			default:
+				VK_Subject_Reacts(5, 0, 0, 100);
+			}
+		}
+	} else {
+		// original behavior
+		if (++_questionCounter >= 10) {
+			VK_Subject_Reacts(5, 0, 0, 100);
+		}
 	}
 }
 

@@ -53,7 +53,7 @@ public:
 	bool _viewWaypoints;
 	bool _viewWalkboxes;
 	bool _viewZBuffer;
-
+	bool _playFullVk;
 
 	Debugger(BladeRunnerEngine *vm);
 	~Debugger();
@@ -76,6 +76,7 @@ public:
 	bool cmdOverlay(int argc, const char **argv);
 	bool cmdSubtitle(int argc, const char **argv);
 	bool cmdList(int argc, const char **argv);
+	bool cmdVk(int argc, const char **argv);
 
 	void drawDebuggerOverlay();
 
