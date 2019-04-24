@@ -117,7 +117,7 @@ bool SceneScriptAR02::ClickedOnActor(int actorId) {
 					Actor_Says(kActorInsectDealer, 230, 14);
 					Actor_Says(kActorMcCoy, 115, 18);
 					Actor_Says(kActorInsectDealer, 240, 14);
-					Item_Pickup_Spin_Effect(956, 288, 257);
+					Item_Pickup_Spin_Effect(kModelAnimationMaggieBracelet, 288, 257);
 					Actor_Says(kActorInsectDealer, 250, 14);
 					Player_Gains_Control();
 					dialogueWithInsectDealer2();

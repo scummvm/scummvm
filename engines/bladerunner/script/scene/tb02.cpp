@@ -321,7 +321,7 @@ void SceneScriptTB02::PlayerWalkedIn() {
 			Actor_Says(kActorTyrellGuard, 0, 50);
 			Actor_Says(kActorMcCoy, 5130, 13);
 			Actor_Says(kActorTyrellGuard, 10, 15);
-			Item_Pickup_Spin_Effect(975, 351, 315);
+			Item_Pickup_Spin_Effect(kModelAnimationVideoDisc, 351, 315);
 			Actor_Says(kActorTyrellGuard, 20, 23);
 			Actor_Says(kActorMcCoy, 5140, 17);
 			Actor_Says(kActorTyrellGuard, 30, 14);

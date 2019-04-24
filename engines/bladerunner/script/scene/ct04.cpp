@@ -124,7 +124,7 @@ bool SceneScriptCT04::ClickedOn3DObject(const char *objectName, bool a2) {
 				Actor_Face_Heading(kActorMcCoy, 707, false);
 				Actor_Change_Animation_Mode(kActorMcCoy, 38);
 				Actor_Clue_Acquire(kActorMcCoy, kClueLicensePlate, true, -1);
-				Item_Pickup_Spin_Effect(952, 392, 225);
+				Item_Pickup_Spin_Effect(kModelAnimationLicensePlate, 392, 225);
 				Game_Flag_Set(kFlagCT04LicensePlaceFound);
 				return true;
 			}

@@ -157,7 +157,7 @@ bool SceneScriptDR06::ClickedOn3DObject(const char *objectName, bool a2) {
 				Sound_Play(kSfxCEMENTL1, 100, 0, 0, 50);
 				if (!Actor_Clue_Query(kActorMcCoy, kClueEnvelope)) {
 					Actor_Voice_Over(850, kActorVoiceOver);
-					Item_Pickup_Spin_Effect(944, 171, 280);
+					Item_Pickup_Spin_Effect(kModelAnimationEnvelope, 171, 280);
 					Actor_Voice_Over(860, kActorVoiceOver);
 					Actor_Voice_Over(870, kActorVoiceOver);
 					Actor_Voice_Over(880, kActorVoiceOver);

@@ -93,7 +93,7 @@ bool SceneScriptCT10::ClickedOn3DObject(const char *objectName, bool a2) {
 				Actor_Voice_Over(3700, kActorVoiceOver);
 			} else {
 				Actor_Clue_Acquire(kActorMcCoy, kClueStrangeScale1, true, -1);
-				Item_Pickup_Spin_Effect(969, 364, 214);
+				Item_Pickup_Spin_Effect(kModelAnimationStrangeScale, 364, 214);
 			}
 			Delay(1000);
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -41.0f, 0.0f, -82.0f, 0, 0, false, 1);

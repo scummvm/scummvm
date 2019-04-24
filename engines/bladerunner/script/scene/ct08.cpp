@@ -105,7 +105,7 @@ bool SceneScriptCT08::ClickedOnItem(int itemId, bool a2) {
 		if (!Loop_Actor_Walk_To_Item(kActorMcCoy, kItemCheese, 36, true, false)) {
 			if (!Game_Flag_Query(kFlagMcCoyTiedDown)) {
 				Actor_Clue_Acquire(kActorMcCoy, kClueCheese, true, -1);
-				Item_Pickup_Spin_Effect(936, 266, 328);
+				Item_Pickup_Spin_Effect(kModelAnimationCheese, 266, 328);
 				Item_Remove_From_World(kItemCheese);
 				Actor_Voice_Over(480, kActorVoiceOver);
 				Actor_Voice_Over(490, kActorVoiceOver);

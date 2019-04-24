@@ -122,13 +122,13 @@ bool SceneScriptNR02::ClickedOnItem(int itemId, bool a2) {
 			Actor_Face_Heading(kActorMcCoy, 423, false);
 			if (itemId == kItemGordosLighterReplicant) {
 				Item_Remove_From_World(kItemGordosLighterReplicant);
-				Item_Pickup_Spin_Effect(953, 214, 380);
+				Item_Pickup_Spin_Effect(kModelAnimationGordosLighterReplicant, 214, 380);
 				Actor_Clue_Acquire(kActorMcCoy, kClueGordosLighterReplicant, true, -1);
 			}
 
 			if (itemId == kItemGordosLighterHuman) {
 				Item_Remove_From_World(kItemGordosLighterHuman);
-				Item_Pickup_Spin_Effect(954, 214, 380);
+				Item_Pickup_Spin_Effect(kModelAnimationGordosLighterHuman, 214, 380);
 				Actor_Clue_Acquire(kActorMcCoy, kClueGordosLighterHuman, true, -1);
 			}
 		}

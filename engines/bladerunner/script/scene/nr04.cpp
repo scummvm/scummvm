@@ -95,7 +95,7 @@ bool SceneScriptNR04::ClickedOn3DObject(const char *objectName, bool a2) {
 					Actor_Voice_Over(1610, kActorVoiceOver);
 				} else if (!Actor_Clue_Query(kActorMcCoy, kClueCollectionReceipt)) {
 					Actor_Clue_Acquire(kActorMcCoy, kClueCollectionReceipt, false, -1);
-					Item_Pickup_Spin_Effect(961, 247, 141);
+					Item_Pickup_Spin_Effect(kModelAnimationCollectionReceipt, 247, 141);
 					Actor_Voice_Over(1560, kActorVoiceOver);
 					Actor_Voice_Over(1570, kActorVoiceOver);
 					Actor_Voice_Over(1580, kActorVoiceOver);
@@ -122,7 +122,7 @@ bool SceneScriptNR04::ClickedOn3DObject(const char *objectName, bool a2) {
 		Player_Loses_Control();
 		Game_Flag_Set(kFlagNR04DiscFound);
 		Actor_Face_Object(kActorMcCoy, "TORUS01", true);
-		Item_Pickup_Spin_Effect(975, 358, 160);
+		Item_Pickup_Spin_Effect(kModelAnimationVideoDisc, 358, 160);
 		Actor_Voice_Over(1620, kActorVoiceOver);
 		Actor_Voice_Over(1630, kActorVoiceOver);
 		Actor_Clue_Acquire(kActorMcCoy, kClueEarlyQsClub, false, -1);

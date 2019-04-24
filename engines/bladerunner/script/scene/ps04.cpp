@@ -97,7 +97,7 @@ bool SceneScriptPS04::ClickedOnItem(int itemId, bool a2) {
 		Actor_Says(kActorGuzza, 560, 30);
 	} else if (!Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm)) {
 		Item_Remove_From_World(kItemWeaponsOrderForm);
-		Item_Pickup_Spin_Effect(958, 464, 362);
+		Item_Pickup_Spin_Effect(kModelAnimationOriginalRequisitionForm, 464, 362);
 		Actor_Says(kActorMcCoy, 4485, kAnimationModeTalk);
 		Actor_Clue_Acquire(kActorMcCoy, kClueWeaponsOrderForm, true, kActorMcCoy);
 	}

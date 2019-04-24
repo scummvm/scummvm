@@ -110,7 +110,7 @@ bool SceneScriptHC02::ClickedOnActor(int actorId) {
 				Actor_Says(kActorHawkersBarkeep, 120, 12);
 				Actor_Says(kActorHawkersBarkeep, 180, 13);
 				Actor_Clue_Acquire(kActorMcCoy, kClueChinaBarSecurityDisc, true, kActorHawkersBarkeep);
-				Item_Pickup_Spin_Effect(975, 229, 215);
+				Item_Pickup_Spin_Effect(kModelAnimationVideoDisc, 229, 215);
 			} else if ( Actor_Clue_Query(kActorMcCoy, kClueHomelessManInterview1)
 			        && !Actor_Clue_Query(kActorMcCoy, kClueFlaskOfAbsinthe)
 			        &&  (Global_Variable_Query(kVariableChinyen) > 20
@@ -124,7 +124,7 @@ bool SceneScriptHC02::ClickedOnActor(int actorId) {
 				Actor_Says(kActorHawkersBarkeep, 30, 15);
 				Actor_Says(kActorMcCoy, 1240, 13);
 				Actor_Says(kActorHawkersBarkeep, 40, 14);
-				Item_Pickup_Spin_Effect(945, 229, 215);
+				Item_Pickup_Spin_Effect(kModelAnimationFlaskOfAbsinthe, 229, 215);
 				Actor_Set_Goal_Number(kActorHawkersBarkeep, 2);
 				Actor_Change_Animation_Mode(kActorMcCoy, 23);
 				Delay(1500);

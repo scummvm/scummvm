@@ -123,7 +123,7 @@ bool SceneScriptHF01::ClickedOnActor(int actorId) {
 				Actor_Says(kActorMurray, 40, 13);
 				Actor_Says(kActorMcCoy, 1460, 13);
 				Actor_Says(kActorMurray, 50, 12);
-				Item_Pickup_Spin_Effect(951, 396, 359);
+				Item_Pickup_Spin_Effect(kModelAnimationLichenDogWrapper, 396, 359);
 				Actor_Face_Heading(kActorMurray, 271, false);
 				Actor_Says(kActorMurray, 60, 12);
 				Actor_Says(kActorMcCoy, 1465, 15);

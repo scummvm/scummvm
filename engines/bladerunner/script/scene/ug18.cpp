@@ -111,7 +111,7 @@ bool SceneScriptUG18::ClickedOnItem(int itemId, bool combatMode) {
 		if (combatMode) {
 			Item_Remove_From_World(kItemBriefcase);
 		} else if (!Loop_Actor_Walk_To_Item(kActorMcCoy, kItemBriefcase, 12, true, false)) {
-			Item_Pickup_Spin_Effect(987, 368, 243);
+			Item_Pickup_Spin_Effect(kModelAnimationBriefcase, 368, 243);
 			Item_Remove_From_World(itemId);
 			Game_Flag_Set(kFlagUG18BriefcaseTaken);
 			Actor_Clue_Acquire(kActorMcCoy, kClueBriefcase, true, kActorGuzza);

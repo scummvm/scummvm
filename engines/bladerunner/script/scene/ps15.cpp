@@ -70,7 +70,7 @@ bool SceneScriptPS15::ClickedOnActor(int actorId) {
 				Actor_Says(kActorMcCoy, 4475, 18);
 				Actor_Says(kActorMcCoy, 4480, 13);
 				Actor_Says(kActorSergeantWalls, 140, 16);
-				Item_Pickup_Spin_Effect(965, 211, 239);
+				Item_Pickup_Spin_Effect(kModelAnimationWeaponsOrderForm, 211, 239);
 				Actor_Says(kActorSergeantWalls, 150, 14);
 				Actor_Clue_Acquire(kActorMcCoy, kClueShippingForm, true, kActorSergeantWalls);
 				if (!Game_Flag_Query(kFlagPS04WeaponsOrderForm)) {

@@ -118,7 +118,7 @@ bool SceneScriptRC02::ClickedOn3DObject(const char *objectName, bool a2) {
 			Delay(2000);
 			Loop_Actor_Walk_To_Waypoint(kActorRunciter, 89, 0, 0, false);
 			Loop_Actor_Walk_To_Actor(kActorRunciter, kActorMcCoy, 24, 0, false);
-			Item_Pickup_Spin_Effect(975, 357, 228);
+			Item_Pickup_Spin_Effect(kModelAnimationVideoDisc, 357, 228);
 			Actor_Face_Actor(kActorMcCoy, kActorRunciter, true);
 			Actor_Face_Actor(kActorRunciter, kActorMcCoy, true);
 			Actor_Says(kActorRunciter, 30, 23);
@@ -138,14 +138,14 @@ bool SceneScriptRC02::ClickedOn3DObject(const char *objectName, bool a2) {
 
 void SceneScriptRC02::dialogueWithRunciter() {
 	Dialogue_Menu_Clear_List();
-	DM_Add_To_List_Never_Repeat_Once_Selected( 0, 5, 6, 2); // MOTIVES
-	DM_Add_To_List_Never_Repeat_Once_Selected(10, 5, 4, 8); // LUCY
+	DM_Add_To_List_Never_Repeat_Once_Selected( 0, 5, 6, 2);     // MOTIVES
+	DM_Add_To_List_Never_Repeat_Once_Selected(10, 5, 4, 8);     // LUCY
 	if (Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewB1)
 	 || Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewB2)
 	) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(20, 6, 4, 5); // REFERENCE
 	}
-	Dialogue_Menu_Add_DONE_To_List(30); // DONE
+	Dialogue_Menu_Add_DONE_To_List(30);                         // DONE
 
 	Dialogue_Menu_Appear(320, 240);
 	int answer = Dialogue_Menu_Query_Input();
@@ -202,7 +202,7 @@ void SceneScriptRC02::dialogueWithRunciter() {
 		Loop_Actor_Walk_To_Actor(kActorRunciter, kActorMcCoy, 24, false, false);
 		Actor_Face_Actor(kActorRunciter, kActorMcCoy, true);
 		Actor_Face_Actor(kActorMcCoy, kActorRunciter, true);
-		Item_Pickup_Spin_Effect(964, 357, 228);
+		Item_Pickup_Spin_Effect(kModelAnimationReferenceLetter, 357, 228);
 		Actor_Says(kActorRunciter, 1700, 13);
 		Actor_Clue_Acquire(kActorMcCoy, kClueReferenceLetter, true, kActorRunciter);
 		break;
@@ -330,7 +330,7 @@ bool SceneScriptRC02::ClickedOnItem(int itemId, bool a2) {
 			Item_Remove_From_World(kItemShellCasingA);
 			Item_Remove_From_World(kItemShellCasingB);
 			Item_Remove_From_World(kItemShellCasingC);
-			Item_Pickup_Spin_Effect(966, 395, 352);
+			Item_Pickup_Spin_Effect(kModelAnimationShellCasings, 395, 352);
 			Actor_Voice_Over(1960, kActorVoiceOver);
 		}
 		return true;

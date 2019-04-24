@@ -81,7 +81,7 @@ bool SceneScriptKP05::ClickedOnItem(int itemId, bool a2) {
 			Actor_Face_Item(kActorMcCoy, kItemPowerSource, true);
 			Actor_Clue_Acquire(kActorMcCoy, kCluePowerSource, true, -1);
 			Item_Remove_From_World(kItemPowerSource);
-			Item_Pickup_Spin_Effect(960, 58, 321);
+			Item_Pickup_Spin_Effect(kModelAnimationPowerSource, 58, 321);
 		}
 	}
 	return false;

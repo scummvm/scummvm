@@ -188,7 +188,7 @@ void SceneScriptHF06::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 			Actor_Voice_Over(1000, kActorVoiceOver);
 			Actor_Voice_Over(1010, kActorVoiceOver);
 			Loop_Actor_Walk_To_Actor(kActorMcCoy, otherActorId, 24, false, false);
-			Item_Pickup_Spin_Effect(932, 355, 200);
+			Item_Pickup_Spin_Effect(kModelAnimationBomb, 355, 200);
 			Actor_Voice_Over(1020, kActorVoiceOver);
 			Actor_Voice_Over(1030, kActorVoiceOver);
 			Actor_Voice_Over(1040, kActorVoiceOver);

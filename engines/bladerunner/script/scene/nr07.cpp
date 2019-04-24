@@ -267,7 +267,7 @@ void SceneScriptNR07::clickedOnVase() {
 		Actor_Clue_Acquire(kActorMcCoy, kClueDektorasCard, true, -1);
 		Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "VASE", 100, true, false);
 		Actor_Change_Animation_Mode(kActorMcCoy, 23);
-		Item_Pickup_Spin_Effect(935, 526, 268);
+		Item_Pickup_Spin_Effect(kModelAnimationDektorasCard, 526, 268);
 		Actor_Voice_Over(1690, kActorVoiceOver);
 		Actor_Voice_Over(1700, kActorVoiceOver);
 	} else {

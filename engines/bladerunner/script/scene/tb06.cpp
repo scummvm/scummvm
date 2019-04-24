@@ -78,7 +78,7 @@ bool SceneScriptTB06::ClickedOnActor(int actorId) {
 			if (!Actor_Clue_Query(kActorMcCoy, kClueDetonatorWire)) {
 				Actor_Voice_Over(2300, kActorVoiceOver);
 				Actor_Voice_Over(2310, kActorVoiceOver);
-				Item_Pickup_Spin_Effect(974, 66, 397);
+				Item_Pickup_Spin_Effect(kModelAnimationDetonatorWire, 66, 397);
 				Actor_Voice_Over(2320, kActorVoiceOver);
 				if (Game_Flag_Query(kFlagSadikIsReplicant)) {
 					Actor_Voice_Over(2330, kActorVoiceOver);
@@ -100,7 +100,7 @@ bool SceneScriptTB06::ClickedOnItem(int itemId, bool a2) {
 		if (!Loop_Actor_Walk_To_Item(kActorMcCoy, kItemDogCollar, 12, true, false)) {
 			Actor_Face_Item(kActorMcCoy, kItemDogCollar, true);
 			Actor_Clue_Acquire(kActorMcCoy, kClueDogCollar1, true, -1);
-			Item_Pickup_Spin_Effect(942, 341, 368);
+			Item_Pickup_Spin_Effect(kModelAnimationDogCollar, 341, 368);
 			Item_Remove_From_World(kItemDogCollar);
 			Actor_Voice_Over(4160, kActorVoiceOver);
 			Game_Flag_Set(kFlagTB06DogCollarTaken);
@@ -112,7 +112,7 @@ bool SceneScriptTB06::ClickedOnItem(int itemId, bool a2) {
 			Actor_Face_Item(kActorMcCoy, kItemKitchenBox, true);
 			Actor_Clue_Acquire(kActorMcCoy, kClueKingstonKitchenBox1, true, -1);
 			Item_Remove_From_World(kItemKitchenBox);
-			Item_Pickup_Spin_Effect(955, 390, 368);
+			Item_Pickup_Spin_Effect(kModelAnimationKingstonKitchenBox, 390, 368);
 			Actor_Says(kActorMcCoy, 8775, kAnimationModeTalk);
 			Game_Flag_Set(kFlagTB06KitchenBoxTaken);
 			return true;

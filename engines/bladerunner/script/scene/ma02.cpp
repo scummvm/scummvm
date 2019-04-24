@@ -104,7 +104,7 @@ bool SceneScriptMA02::ClickedOn3DObject(const char *objectName, bool a2) {
 			        && !Actor_Clue_Query(kActorMcCoy, kClueCrystalsCigarette)
 			) {
 				Overlay_Remove("MA02OVER");
-				Item_Pickup_Spin_Effect(985, 480, 240);
+				Item_Pickup_Spin_Effect(kModelAnimationCrystalsCigarette, 480, 240);
 				Actor_Voice_Over(1150, kActorVoiceOver);
 				Actor_Voice_Over(1160, kActorVoiceOver);
 				Actor_Voice_Over(1170, kActorVoiceOver);

@@ -547,7 +547,7 @@ void SceneScriptHF05::dialogueWithCrazylegs2() { // cut feature? it is impossibl
 	if (answer == 1250) { // ARREST
 		Actor_Says(kActorMcCoy, 1955, 17);
 		Actor_Says(kActorMcCoy, 1960, 23);
-		Item_Pickup_Spin_Effect(986, 315, 327);
+		Item_Pickup_Spin_Effect(kModelAnimationSpinnerKeys, 315, 327);
 		Delay(2000);
 		Actor_Says(kActorMcCoy, 1980, 23);
 		Actor_Says(kActorMcCoy, 1985, kAnimationModeTalk);
@@ -661,7 +661,7 @@ void SceneScriptHF05::talkWithCrazylegs3(int affectionTowardsActor) {
 		Actor_Says(kActorCrazylegs, 70, 13);
 		Actor_Says(kActorMcCoy, 1730, kAnimationModeTalk);
 		Loop_Actor_Walk_To_Actor(kActorCrazylegs, kActorMcCoy, 28, false, false);
-		Item_Pickup_Spin_Effect(986, 315, 327);
+		Item_Pickup_Spin_Effect(kModelAnimationSpinnerKeys, 315, 327);
 		Actor_Says(kActorCrazylegs, 80, 23);
 		Actor_Clue_Acquire(kActorMcCoy, kClueSpinnerKeys, true, kActorCrazylegs);
 		Actor_Says(kActorCrazylegs, 90, 15);

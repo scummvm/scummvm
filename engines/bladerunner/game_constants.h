@@ -1759,8 +1759,10 @@ enum GameModelAnimations {
 	kModelAnimationDNAEvidenceTwoParts         = 990,
 	kModelAnimationDNAEvidenceThreeParts       = 991,
 //	kModelAnimation                            = 992, // unused?
-	kModelAnimationDNAEvidenceComplete         = 993
-//	kModelAnimation                            = 994-996
+	kModelAnimationDNAEvidenceComplete         = 993,
+//	kModelAnimation                            = 994, // unused?
+    kModelAnimationAmmoType01                  = 995, // from Bullet Bob's
+	kModelAnimationAmmoType02                  = 996  // from Izo stash (Act 4)
 };
 
 enum Elevators {

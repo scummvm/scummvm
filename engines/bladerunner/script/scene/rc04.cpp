@@ -265,7 +265,7 @@ void SceneScriptRC04::dialogueWithBulletBob() {
 			if (Query_Difficulty_Level() != kGameDifficultyEasy) {
 				Global_Variable_Decrement(kVariableChinyen, 40);
 			}
-			Item_Pickup_Spin_Effect(995, 405, 192);
+			Item_Pickup_Spin_Effect(kModelAnimationAmmoType01, 405, 192);
 			Give_McCoy_Ammo(1, 24);
 		} else {
 			Actor_Says(kActorMcCoy, 125, 13);

@@ -145,7 +145,7 @@ bool SceneScriptTB05::ClickedOnItem(int itemId, bool a2) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 54.0f, 147.12f, -209.0f, 0, true, false, 0)) {
 			Actor_Face_Heading(kActorMcCoy, 126, false);
 			Item_Remove_From_World(kItemDragonflyEarring);
-			Item_Pickup_Spin_Effect(940, 295, 408);
+			Item_Pickup_Spin_Effect(kModelAnimationDragonflyEarring, 295, 408);
 			Actor_Voice_Over(2140, kActorVoiceOver);
 			Actor_Voice_Over(2150, kActorVoiceOver);
 			Actor_Voice_Over(2160, kActorVoiceOver);

@@ -177,7 +177,7 @@ bool SceneScriptUG13::ClickedOnItem(int itemId, bool a2) {
 			Actor_Face_Item(kActorMcCoy, kItemWeaponsOrderForm, true);
 			Actor_Clue_Acquire(kActorMcCoy, kClueOriginalRequisitionForm, true, -1);
 			Item_Remove_From_World(kItemWeaponsOrderForm);
-			Item_Pickup_Spin_Effect(958, 426, 316);
+			Item_Pickup_Spin_Effect(kModelAnimationOriginalRequisitionForm, 426, 316);
 			Actor_Voice_Over(3950, kActorVoiceOver);
 			Actor_Voice_Over(3960, kActorVoiceOver);
 			Actor_Voice_Over(3970, kActorVoiceOver);
@@ -385,7 +385,7 @@ void SceneScriptUG13::dialogueWithHomeless1() {
 	case 1350: // GIVE FLASK
 		Actor_Clue_Acquire(kActorTransient, kClueFlaskOfAbsinthe, false, kActorMcCoy);
 		Actor_Says_With_Pause(kActorMcCoy, 5595, 1.0f, 23);
-		Item_Pickup_Spin_Effect(945, 193, 325);
+		Item_Pickup_Spin_Effect(kModelAnimationFlaskOfAbsinthe, 193, 325);
 		Actor_Says(kActorTransient, 290, 33);
 		Actor_Says(kActorMcCoy, 5660, 13);
 		Actor_Clue_Lose(kActorMcCoy, kClueFlaskOfAbsinthe);

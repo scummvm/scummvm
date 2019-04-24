@@ -139,7 +139,7 @@ bool SceneScriptUG02::ClickedOn3DObject(const char *objectName, bool a2) {
 				//Actor_Voice_Over(2530, kActorVoiceOver); // But there was no way to tell what was missing without Izo standing there checking his inventory.
 #endif // BLADERUNNER_ORIGINAL_BUGS
 			} else if (!Game_Flag_Query(kFlagUG02AmmoTaken)) {
-				Item_Pickup_Spin_Effect(996, 360, 440);
+				Item_Pickup_Spin_Effect(kModelAnimationAmmoType02, 360, 440);
 				Actor_Says(kActorMcCoy, 8525, 14);
 				Give_McCoy_Ammo(2, 18);
 				Game_Flag_Set(kFlagUG02AmmoTaken);
@@ -164,7 +164,7 @@ bool SceneScriptUG02::ClickedOnItem(int itemId, bool a2) {
 		Actor_Clue_Acquire(kActorMcCoy, kClueRadiationGoggles, true, -1);
 		Game_Flag_Set(kFlagUG02RagiationGooglesTaken);
 		Item_Remove_From_World(kItemRadiationGoogles);
-		Item_Pickup_Spin_Effect(963, 426, 316);
+		Item_Pickup_Spin_Effect(kModelAnimationRadiationGoggles, 426, 316);
 		return true;
 	}
 	return false;

@@ -81,7 +81,7 @@ bool SceneScriptRC51::ClickedOnItem(int itemId, bool a2) {
 			Actor_Face_Item(kActorMcCoy, kItemChopstickWrapper, true);
 			Actor_Clue_Acquire(kActorMcCoy, kClueChopstickWrapper, true, -1);
 			Item_Remove_From_World(kItemChopstickWrapper);
-			Item_Pickup_Spin_Effect(937, 437, 407);
+			Item_Pickup_Spin_Effect(kModelAnimationChopstickWrapper, 437, 407);
 			Actor_Voice_Over(2010, kActorVoiceOver);
 			Game_Flag_Set(kFlagRC51ChopstickWrapperTaken);
 			return true;
@@ -106,7 +106,7 @@ bool SceneScriptRC51::ClickedOnItem(int itemId, bool a2) {
 			Actor_Face_Item(kActorMcCoy, kItemToyDog, true);
 			Actor_Clue_Acquire(kActorMcCoy, kClueToyDog, true, -1);
 			Item_Remove_From_World(kItemToyDog);
-			Item_Pickup_Spin_Effect(971, 55, 376);
+			Item_Pickup_Spin_Effect(kModelAnimationToyDog, 55, 376);
 			Actor_Says(kActorMcCoy, 8525, 3);
 			Actor_Says(kActorMcCoy, 8740, 3);
 			Game_Flag_Set(kFlagRC51ToyDogTaken);

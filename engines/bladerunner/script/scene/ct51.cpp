@@ -59,7 +59,7 @@ bool SceneScriptCT51::MouseClick(int x, int y) {
 bool SceneScriptCT51::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("BED02", objectName)) {
 		if (!Actor_Clue_Query(kActorMcCoy, kClueHysteriaToken)) {
-			Item_Pickup_Spin_Effect(970, 203, 200);
+			Item_Pickup_Spin_Effect(kModelAnimationHysteriaToken, 203, 200);
 			Actor_Clue_Acquire(kActorMcCoy, kClueHysteriaToken, true, -1);
 			Actor_Voice_Over(420, kActorVoiceOver);
 			return true;
@@ -76,7 +76,7 @@ bool SceneScriptCT51::ClickedOnActor(int actorId) {
 bool SceneScriptCT51::ClickedOnItem(int itemId, bool a2) {
 	if (itemId == kItemRagDoll) {
 		Actor_Clue_Acquire(kActorMcCoy, kClueRagDoll, true, -1);
-		Item_Pickup_Spin_Effect(943, 260, 200);
+		Item_Pickup_Spin_Effect(kModelAnimationRagDoll, 260, 200);
 		Ambient_Sounds_Play_Sound(kSfxBABYCRY2, 40, 99, 0, 0);
 		Item_Remove_From_World(kItemRagDoll);
 		return true;

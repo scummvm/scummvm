@@ -390,7 +390,7 @@ bool SceneScriptRC01::ClickedOnItem(int itemId, bool a2) {
 			Actor_Says(kActorOfficerLeary, 20, 12);
 			Game_Flag_Set(kFlagRC01ChromeDebrisTaken);
 			Item_Remove_From_World(kItemChromeDebris);
-			Item_Pickup_Spin_Effect(938, 426, 316);
+			Item_Pickup_Spin_Effect(kModelAnimationChromeDebris, 426, 316);
 			I_Sez("JM: Chrome...is that what that is?");
 			Actor_Says(kActorMcCoy, 4505, 13);
 			ADQ_Flush();

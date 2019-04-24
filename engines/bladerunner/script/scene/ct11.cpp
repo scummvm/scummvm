@@ -141,7 +141,7 @@ bool SceneScriptCT11::ClickedOn2DRegion(int region) {
 			Actor_Face_Heading(kActorMcCoy, 47, false);
 			Item_Remove_From_World(kItemDogWrapper);
 			Actor_Clue_Acquire(kActorMcCoy, kClueLichenDogWrapper, false, -1);
-			Item_Pickup_Spin_Effect(951, 510, 319);
+			Item_Pickup_Spin_Effect(kModelAnimationLichenDogWrapper, 510, 319);
 			Game_Flag_Reset(kFlagCT11DogWrapperAvailable);
 			Game_Flag_Set(kFlagCT11DogWrapperTaken);
 			Actor_Voice_Over(550, kActorVoiceOver);
