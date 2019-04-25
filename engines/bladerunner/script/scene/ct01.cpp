@@ -63,25 +63,25 @@ void SceneScriptCT01::InitializeScene() {
 			}
 		}
 	} else if (Game_Flag_Query(kFlagSpinnerAtCT01)) {
-#if BLADERUNNER_RESTORED_CUT_CONTENT
-		// 0. This scene is not available in chapters 4 and 5
-		// 1. Add open/close spinner door animation and sound
-		// 2. Keep walkers from messing about with the scene (popping up or overlapping with landing) until spinner has landed
-		// Note: kFlagSpinnerAtCT01 reset (original) is not handled the same was as in NR01 but it still works
-		// Note 2: Gordo sitting at the diner overlaps with the counter bar in front of him
-		//         so the loop will be prevented from playing when he is there.
-		if ( Global_Variable_Query(kVariableChapter) < 4
-			&& Actor_Query_Which_Set_In(kActorGordo) != kSetCT01_CT12
-		    && Random_Query(1, 3) == 1
-		){
-			Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kCT01LoopInshot, false);
+		if (_vm->_cutContent) {
+			// 0. This scene is not available in chapters 4 and 5
+			// 1. Add open/close spinner door animation and sound
+			// 2. Keep walkers from messing about with the scene (popping up or overlapping with landing) until spinner has landed
+			// Note: kFlagSpinnerAtCT01 reset (original) is not handled the same was as in NR01 but it still works
+			// Note 2: Gordo sitting at the diner overlaps with the counter bar in front of him
+			//         so the loop will be prevented from playing when he is there.
+			if ( Global_Variable_Query(kVariableChapter) < 4
+				&& Actor_Query_Which_Set_In(kActorGordo) != kSetCT01_CT12
+					&& Random_Query(1, 3) == 1
+			){
+				Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kCT01LoopInshot, false);
+			}
+			// Pause generic walkers outside special loop
+			// so that they're always paused when McCoy enters (less chance to collide with him)
+			// There's also another flag called kFlagUnpauseGenWalkers
+			// but the usage of that flag seems more obscure and dubious for this purpose
+			Game_Flag_Set(kFlagGenericWalkerWaiting);
 		}
-		// Pause generic walkers outside special loop
-		// so that they're always paused when McCoy enters (less chance to collide with him)
-		// There's also another flag called kFlagUnpauseGenWalkers
-		// but the usage of that flag seems more obscure and dubious for this purpose
-		Game_Flag_Set(kFlagGenericWalkerWaiting);
-#endif // BLADERUNNER_RESTORED_CUT_CONTENT
 		Setup_Scene_Information(-530.0f, -6.5f, 241.0f, 506);
 		Game_Flag_Set(kFlagArrivedFromSpinner1);
 	} else {
@@ -292,14 +292,14 @@ bool SceneScriptCT01::ClickedOnExit(int exitId) {
 			Game_Flag_Reset(kFlagMcCoyInTyrellBuilding);
 			Game_Flag_Reset(kFlagMcCoyInDNARow);
 			Game_Flag_Reset(kFlagMcCoyInBradburyBuilding);
-//#if BLADERUNNER_RESTORED_CUT_CONTENT
+//if (_vm->_cutContent) {
 //			// Restored spinner door opens/ closes, so we disable this for now
 //			// NOTE: Reverted this cut content since this might be annoying
 //                   as it slows down the pacing...
 //			int spinnerDest = Spinner_Interface_Choose_Dest(kCT01LoopDoorAnim, false);
-//#else
+//} else {
 			int spinnerDest = Spinner_Interface_Choose_Dest(-1, false);
-//#endif // BLADERUNNER_RESTORED_CUT_CONTENT
+//}
 
 			switch (spinnerDest) {
 			case kSpinnerDestinationPoliceStation:
@@ -407,15 +407,15 @@ void SceneScriptCT01::SceneFrameAdvanced(int frame) {
 		Ambient_Sounds_Play_Sound(kSfxCARDOWN3, 40,  99,   0,  0);
 	}
 
-#if BLADERUNNER_RESTORED_CUT_CONTENT
-	if (frame == 136 || frame == 258) {
-		Sound_Play(kSfxSPINOPN4, 100, 80, 80, 50);
-	}
+	if (_vm->_cutContent) {
+		if (frame == 136 || frame == 258) {
+			Sound_Play(kSfxSPINOPN4, 100, 80, 80, 50);
+		}
 
-	if (frame == 183 || frame == 303) {
-		Sound_Play(kSfxSPINCLS1, 100, 80, 80, 50);
+		if (frame == 183 || frame == 303) {
+			Sound_Play(kSfxSPINCLS1, 100, 80, 80, 50);
+		}
 	}
-#endif // BLADERUNNER_RESTORED_CUT_CONTENT
 
 	if (frame == 316) {
 		Ambient_Sounds_Play_Sound(kSfxCARUP3B,  50, -50, 100, 99);
@@ -456,14 +456,14 @@ void SceneScriptCT01::PlayerWalkedIn() {
 			return;
 		}
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -330.0f, -6.5f, 221.0f, 0, false, false, 0);
-#if BLADERUNNER_RESTORED_CUT_CONTENT
-		// unpause generic walkers here, less chance to collide with McCOy while he enters the scene
-		if( Game_Flag_Query(kFlagArrivedFromSpinner1)
-			&& Game_Flag_Query(kFlagGenericWalkerWaiting)
-		) {
-			Game_Flag_Reset(kFlagGenericWalkerWaiting);
+		if (_vm->_cutContent) {
+			// unpause generic walkers here, less chance to collide with McCOy while he enters the scene
+			if( Game_Flag_Query(kFlagArrivedFromSpinner1)
+				&& Game_Flag_Query(kFlagGenericWalkerWaiting)
+			) {
+				Game_Flag_Reset(kFlagGenericWalkerWaiting);
+			}
 		}
-#endif // BLADERUNNER_RESTORED_CUT_CONTENT
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -314.0f, -6.5f, 326.0f, 0, false, false, 0);
 
 		if (!Game_Flag_Query(kFlagCT01Visited)) {

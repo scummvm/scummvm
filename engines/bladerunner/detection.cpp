@@ -59,6 +59,15 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			false
 		}
 	},
+	{
+		GAMEOPTION_CUT_CONTENT,
+		{
+			_s("Restore cut content"),
+			_s("Restore content which was cut from the original game"),
+			"cutcontent",
+			true
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 

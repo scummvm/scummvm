@@ -1180,10 +1180,10 @@ bool AIScriptZuben::ChangeAnimationMode(int mode) {
 		break;
 	case kAnimationModeDie:
 		Actor_Set_Targetable(kActorZuben, false);
-#if BLADERUNNER_RESTORED_CUT_CONTENT
-		// original code used no voice here
-		Sound_Play_Speech_Line(kActorZuben, 9020, 75, 0, 99); // add Zuben's death rattle here
-#endif // BLADERUNNER_RESTORED_CUT_CONTENT
+		if (_vm->_cutContent) {
+			// original code used no voice here
+			Sound_Play_Speech_Line(kActorZuben, 9020, 75, 0, 99); // add Zuben's death rattle here
+		}
 		switch (_animationState) {
 			case 2:
 			case 4:

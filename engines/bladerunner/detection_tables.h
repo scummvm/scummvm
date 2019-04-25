@@ -27,6 +27,7 @@
 
 #define GAMEOPTION_SITCOM GUIO_GAMEOPTIONS1
 #define GAMEOPTION_SHORTY GUIO_GAMEOPTIONS2
+#define GAMEOPTION_CUT_CONTENT GUIO_GAMEOPTIONS3
 
 namespace BladeRunner {
 
@@ -39,7 +40,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO2(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY)
+		GUIO3(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY, GAMEOPTION_CUT_CONTENT)
 	},
 
 	// BladeRunner (German)
@@ -50,7 +51,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO2(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY)
+		GUIO3(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY, GAMEOPTION_CUT_CONTENT)
 	},
 
 	// BladeRunner (French) - Bug #9722
@@ -61,7 +62,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::FR_FRA,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO2(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY)
+		GUIO3(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY, GAMEOPTION_CUT_CONTENT)
 	},
 
 	// BladeRunner (Italian)
@@ -72,7 +73,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::IT_ITA,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO2(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY)
+		GUIO3(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY, GAMEOPTION_CUT_CONTENT)
 	},
 
 	// BladeRunner (Russian)
@@ -83,7 +84,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::RU_RUS,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO2(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY)
+		GUIO3(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY, GAMEOPTION_CUT_CONTENT)
 	},
 
 	// BladeRunner (Russian - alternate version)
@@ -94,7 +95,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::RU_RUS,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO2(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY)
+		GUIO3(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY, GAMEOPTION_CUT_CONTENT)
 	},
 
 
@@ -106,7 +107,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
-		GUIO2(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY)
+		GUIO3(GAMEOPTION_SITCOM, GAMEOPTION_SHORTY, GAMEOPTION_CUT_CONTENT)
 	},
 
 	AD_TABLE_END_MARKER

@@ -39,8 +39,6 @@
 #define BLADERUNNER_DEBUG_CONSOLE 0
 #define BLADERUNNER_ORIGINAL_SETTINGS 0
 #define BLADERUNNER_ORIGINAL_BUGS 0
-#define BLADERUNNER_RESTORED_CUT_CONTENT 1
-
 
 namespace Common {
 struct Event;
@@ -113,9 +111,10 @@ public:
 	static const int kActorCount = 100;
 	static const int kActorVoiceOver = kActorCount - 1;
 
-	bool           _gameIsRunning;
-	bool           _windowIsActive;
-	int            _playerLosesControlCounter;
+	bool _gameIsRunning;
+	bool _windowIsActive;
+	int  _playerLosesControlCounter;
+
 	Common::String   _languageCode;
 	Common::Language _language;
 
@@ -203,6 +202,7 @@ public:
 	bool _subtitlesEnabled;  // tracks the state of whether subtitles are enabled or disabled from ScummVM GUI option or KIA checkbox (the states are synched)
 	bool _sitcomMode;
 	bool _shortyMode;
+	bool _cutContent;
 
 	int _walkSoundId;
 	int _walkSoundVolume;

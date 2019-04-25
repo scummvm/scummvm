@@ -145,9 +145,9 @@ void SceneScriptRC02::dialogueWithRunciter() {
 	) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(20, 6, 4, 5); // REFERENCE
 	}
-#if BLADERUNNER_RESTORED_CUT_CONTENT
-	DM_Add_To_List_Never_Repeat_Once_Selected(200, -1, 3, 6);   // VK - TEST
-#endif // BLADERUNNER_RESTORED_CUT_CONTENT
+	if (_vm->_cutContent) {
+		DM_Add_To_List_Never_Repeat_Once_Selected(200, -1, 3, 6);   // VK - TEST
+	}
 	Dialogue_Menu_Add_DONE_To_List(30);                         // DONE
 
 	Dialogue_Menu_Appear(320, 240);
@@ -210,17 +210,17 @@ void SceneScriptRC02::dialogueWithRunciter() {
 		Actor_Clue_Acquire(kActorMcCoy, kClueReferenceLetter, true, kActorRunciter);
 		break;
 
-#if BLADERUNNER_RESTORED_CUT_CONTENT // scene 16 79
 	case 200:
-		Actor_Face_Actor(kActorMcCoy, kActorRunciter, true);
-        Actor_Says(kActorMcCoy, 395, 14);
-		Actor_Face_Actor(kActorRunciter, kActorMcCoy, true);
-		Actor_Says(kActorRunciter, 1680, 13);
-        Actor_Says(kActorMcCoy, 400, 14);
-		Voight_Kampff_Activate(kActorRunciter, 20);
-		Actor_Modify_Friendliness_To_Other(kActorRunciter, kActorMcCoy, -10);
+		if (_vm->_cutContent) { // scene 16 79
+			Actor_Face_Actor(kActorMcCoy, kActorRunciter, true);
+			Actor_Says(kActorMcCoy, 395, 14);
+			Actor_Face_Actor(kActorRunciter, kActorMcCoy, true);
+			Actor_Says(kActorRunciter, 1680, 13);
+			Actor_Says(kActorMcCoy, 400, 14);
+			Voight_Kampff_Activate(kActorRunciter, 20);
+			Actor_Modify_Friendliness_To_Other(kActorRunciter, kActorMcCoy, -10);
+		}
 		break;
-#endif // BLADERUNNER_RESTORED_CUT_CONTENT
 
 	case 30: // DONE
 		Actor_Says(kActorMcCoy, 4595, 14);

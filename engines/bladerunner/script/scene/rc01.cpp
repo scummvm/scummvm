@@ -271,11 +271,11 @@ bool SceneScriptRC01::ClickedOn3DObject(const char *objectName, bool a2) {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 			else if (!Actor_Clue_Query(kActorMcCoy, kClueDoorForced2) && !Actor_Clue_Query(kActorMcCoy, kClueDoorForced1) && !Actor_Query_In_Set(kActorOfficerLeary, kSetRC01) && Global_Variable_Query(kVariableChapter) == 1) {
-#if BLADERUNNER_RESTORED_CUT_CONTENT
-				Actor_Voice_Over(1870, kActorVoiceOver);
-#else
-				Actor_Says(kActorMcCoy, 8570, 14);
-#endif // BLADERUNNER_RESTORED_CUT_CONTENT
+				if (_vm->_cutContent) {
+					Actor_Voice_Over(1870, kActorVoiceOver);
+				} else {
+					Actor_Says(kActorMcCoy, 8570, 14);
+				}
 				Actor_Clue_Acquire(kActorMcCoy, kClueDoorForced1, true, -1);
 			}
 #endif // BLADERUNNER_ORIGINAL_BUGS

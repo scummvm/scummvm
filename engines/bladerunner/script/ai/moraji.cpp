@@ -191,11 +191,9 @@ bool AIScriptMoraji::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case kGoalMorajiDie:
 		// Added check here  to have Moraji death speech SFX
 		// when shot by McCoy outside the Dermo Design Lab
-		if (Game_Flag_Query(kFlagDR04McCoyShotMoraji)) {
-#if BLADERUNNER_RESTORED_CUT_CONTENT
+		if (_vm->_cutContent && Game_Flag_Query(kFlagDR04McCoyShotMoraji)) {
 			// original code used no voice here
 			Sound_Play_Speech_Line(kActorMoraji, 9020, 50, 0, 50); // Use Moraji's death SPCHSFX, also lower volume
-#endif // BLADERUNNER_RESTORED_CUT_CONTENT
 		}
 		_animationFrame = -1;
 		_animationState = 13;
