@@ -883,6 +883,7 @@ uint16 ScriptOpcodes::getINIField(uint32 iniIndex, uint16 fieldOffset) {
 
 	switch (fieldOffset) {
 		case 0 : return ini->iptIndex_maybe;
+		case 4 : return ini->actorResourceId;
 		case 6 : return ini->sequenceId;
 		case 0xC  : return ini->sceneId;
 		case 0x12  : return ini->field_12;
@@ -900,6 +901,7 @@ void ScriptOpcodes::setINIField(uint32 iniIndex, uint16 fieldOffset, uint16 valu
 
 	switch (fieldOffset) {
 		case 0 : ini->iptIndex_maybe = value; break;
+		case 4 : ini->actorResourceId = value; break;
 		case 6 : ini->sequenceId = value; break;
 		case 0xc  : ini->sceneId = value; break;
 		case 0x12 : ini->field_12 = value; break;

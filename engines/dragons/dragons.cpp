@@ -912,6 +912,79 @@ void DragonsEngine::runINIScripts() {
 		}
 	}
 }
+/*
+void DragonsEngine::engineFlag0x20UpdateFunction() {
+{
+	ushort uVar1;
+	uint16_t uVar2;
+	DragonINI *pDVar3;
+	DragonINI *pDVar4;
+	ushort uVar5;
+	uint actorId;
+
+	DragonINI *flickerINI = _dragonINIResource->getFlickerRecord();
+	uint16 currentSceneId = _scene->getSceneId();
+
+
+//	uVar1 = flickerINI->actorId;
+//	actorId = (uint)uVar1;
+//	uVar5 = dragon_ini_pointer[dragon_ini_const__2 + -1].field_0x1c;
+	if (flickerINI == NULL) {
+		//LAB_80027d40:
+//		if ((flickerINI->sceneId == currentSceneId)
+//			&& (uVar5 != 0xffff)) {
+//			actors[(uint)uVar5].﻿_sequenceID = 8;
+//			actors[(uint)uVar5].﻿priorityLayer_maybe = 0;
+//		}
+	}
+	else {
+		if (flickerINI->sceneId == currentSceneId) {
+			if ((flickerINI == NULL) || flickerINI->actor->isFlagSet(ACTOR_FLAG_10)) {
+				if ((flickerINI->sceneId == currentSceneId)
+					&& (uVar5 != 0xffff)) {
+//					actors[(uint)uVar5].﻿_sequenceID = 8;
+//					actors[(uint)uVar5].﻿priorityLayer_maybe = 0;
+				}
+			} else {
+				if ((bit_flags_8006fbd8 & 2) == 0) {
+					bit_flags_8006fbd8 = bit_flags_8006fbd8 | 2;
+				}
+//				if (((((actors[actorId].flags & 0x2000) == 0) && ((actors[actorId].flags & 4) != 0)) &&
+//					 (actors[actorId].﻿_sequenceID2 != actors[actorId].﻿_sequenceID)) &&
+//				(actors[actorId].﻿_sequenceID2 != -1)) {
+//					actor_update_sequenceID(actorId,actors[actorId].﻿_sequenceID2);
+//				}
+			}
+
+		} else {
+			//actors[(uint)uVar5].﻿priorityLayer_maybe = 0;
+		}
+
+	}
+
+
+	LAB_80027db4:
+	uVar1 = num_ini_records_maybe;
+	pDVar3 = dragon_ini_pointer;
+	uVar2 = currentSceneId;
+	if ((inventoryType == 0) && (uVar5 = 0, num_ini_records_maybe != 0)) {
+		actorId = 0;
+		do {
+			pDVar4 = pDVar3 + actorId;
+			if (((-1 < (int)((uint)pDVar4->field_0x10 << 0x10)) && (pDVar4->sceneId_maybe == uVar2)) &&
+				(pDVar4->field_0x10 = pDVar4->field_0x10 - 1, (int)((uint)pDVar4->field_0x10 << 0x10) < 0))
+			{
+				pDVar4->field_1a_flags_maybe = pDVar4->field_1a_flags_maybe | 0x10;
+			}
+			uVar5 = uVar5 + 1;
+			actorId = (uint)uVar5;
+		} while (uVar5 < uVar1);
+	}
+	if (run_func_ptr_unk_countdown_timer != 0) {
+		run_func_ptr_unk_countdown_timer = run_func_ptr_unk_countdown_timer - 1;
+	}
+	return (uint)run_func_ptr_unk_countdown_timer;
+} */
 
 void DragonsEngine::engineFlag0x20UpdateFunction() {
 	if (_flags & Dragons::ENGINE_FLAG_20) {
@@ -921,6 +994,47 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 		//TODO 0x80027be4
 
 		uint16 currentSceneId = _scene->getSceneId();
+
+
+		DragonINI *flickerINI = _dragonINIResource->getFlickerRecord();
+//		uint16 currentSceneId = _scene->getSceneId();
+
+
+//	uVar1 = flickerINI->actorId;
+//	actorId = (uint)uVar1;
+//	uVar5 = dragon_ini_pointer[dragon_ini_const__2 + -1].field_0x1c;
+		if (flickerINI == NULL) {
+			//LAB_80027d40:
+//		if ((flickerINI->sceneId == currentSceneId)
+//			&& (uVar5 != 0xffff)) {
+//			actors[(uint)uVar5].﻿_sequenceID = 8;
+//			actors[(uint)uVar5].﻿priorityLayer_maybe = 0;
+//		}
+		}
+		else {
+			if (flickerINI->sceneId == currentSceneId) {
+				if ((flickerINI == NULL) || flickerINI->actor->isFlagSet(ACTOR_FLAG_10)) {
+					if ((flickerINI->sceneId == currentSceneId)) {
+						//&& (uVar5 != 0xffff)) {
+//					actors[(uint)uVar5].﻿_sequenceID = 8;
+//					actors[(uint)uVar5].﻿priorityLayer_maybe = 0;
+					}
+				} else {
+					if ((bit_flags_8006fbd8 & 2) == 0) {
+						bit_flags_8006fbd8 = bit_flags_8006fbd8 | 2;
+					}
+//				if (((((actors[actorId].flags & 0x2000) == 0) && ((actors[actorId].flags & 4) != 0)) &&
+//					 (actors[actorId].﻿_sequenceID2 != actors[actorId].﻿_sequenceID)) &&
+//				(actors[actorId].﻿_sequenceID2 != -1)) {
+//					actor_update_sequenceID(actorId,actors[actorId].﻿_sequenceID2);
+//				}
+				}
+
+			} else {
+				//actors[(uint)uVar5].﻿priorityLayer_maybe = 0;
+			}
+
+		}
 
 		// 0x80027db8
 		if (!_inventory->isVisible()) {
@@ -938,8 +1052,6 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 		if (run_func_ptr_unk_countdown_timer != 0) {
 			run_func_ptr_unk_countdown_timer--;
 		}
-	} else {
-		run_func_ptr_unk_countdown_timer = 1;
 	}
 }
 
