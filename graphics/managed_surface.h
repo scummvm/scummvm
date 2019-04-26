@@ -317,7 +317,7 @@ public:
 	 */
 	void drawLine(int x0, int y0, int x1, int y1, uint32 color) {
 		_innerSurface.drawLine(x0, y0, x1, y1, color);
-		addDirtyRect(Common::Rect(x0, y0, x1, y1));
+		addDirtyRect(Common::Rect(MIN(x0, x1), MIN(y0, y1), MAX(x0, x1), MAX(y0, y1)));
 	}
 
 	/**
@@ -325,7 +325,7 @@ public:
 	 */
 	void drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, uint32 color) {
 		_innerSurface.drawThickLine(x0, y0, x1, y1, penX, penY, color);
-		addDirtyRect(Common::Rect(x0, y0, x1 + penX, y1 + penY));
+		addDirtyRect(Common::Rect(MIN(x0, x1 + penX), MIN(y0, y1 + penY), MAX(x0, x1 + penX), MAX(y0, y1 + penY)));
 	}
 
 	/**
