@@ -5144,7 +5144,7 @@ if test "$_pandoc" = yes ; then
 	IFS="$ac_save_ifs"
 
 	if ! test "$PANDOC" ; then
-		_pandoc = no
+		_pandoc=no
 	fi
 
 	echo $_pandoc
