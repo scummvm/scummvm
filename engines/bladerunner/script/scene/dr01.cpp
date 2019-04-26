@@ -25,15 +25,12 @@
 namespace BladeRunner {
 
 enum kDR01Loops {
-	kDR01LoopInshotWithCrowd   = 0,
-	kDR01LoopWithCrowd         = 1,
-	kDR01LoopDoorAnimWithCrowd = 3,
-	kDR01LoopOutshotWithCrowd  = 4,
-	kDR01LoopInshotNoCrowd     = 5,
-	kDR01LoopNoCrowd           = 6,
-	kDR01LoopDoorAnimNoCrowd   = 8,
-	kDR01LoopOutshotNoCrowd    = 9,
-	kDR01LoopNoCrowdNoSpinner  = 10
+	kDR01LoopBikerInshot          = 0,
+	kDR01LoopPanFromDR02          = 1,
+	kDR01LoopPanFromDR04Pre       = 2,
+	kDR01LoopPanFromDR04Post      = 3,
+	kDR01LoopMainLoop             = 4,
+	kDR01LoopMainLoopNoFirstFrame = 5,
 };
 
 void SceneScriptDR01::InitializeScene() {
@@ -58,7 +55,7 @@ void SceneScriptDR01::InitializeScene() {
 		Scene_Exit_Add_2D_Exit(3, 0, 45, 142, 201, 0);
 	}
 
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(0);
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(false);
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 50,  0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxHUMMER3, 12, 85, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxBIGFAN2, 14, 85, 1);
@@ -75,21 +72,26 @@ void SceneScriptDR01::InitializeScene() {
 	if (Game_Flag_Query(kFlagDR05BombExploded)
 	 && Game_Flag_Query(kFlagDR04toDR01)
 	) {
-		Scene_Loop_Start_Special(0, 3, false);
-		Scene_Loop_Set_Default(4);
+		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kDR01LoopPanFromDR04Post, false);
+		Scene_Loop_Set_Default(kDR01LoopMainLoop);
 	} else if (!Game_Flag_Query(kFlagDR05BombExploded)
 	        &&  Game_Flag_Query(kFlagDR04toDR01)
 	) {
-		Scene_Loop_Start_Special(0, 2, false);
-		Scene_Loop_Set_Default(4);
+		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kDR01LoopPanFromDR04Pre, false);
+		Scene_Loop_Set_Default(kDR01LoopMainLoop);
 	} else if (Game_Flag_Query(kFlagDR02toDR01)) {
-		Scene_Loop_Start_Special(0, 1, false);
-		Scene_Loop_Set_Default(4);
+		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kDR01LoopPanFromDR02, false);
+		Scene_Loop_Set_Default(kDR01LoopMainLoop);
 	} else if (Game_Flag_Query(kFlagCT11toDR01)) {
-		Scene_Loop_Set_Default(4);
+		Scene_Loop_Set_Default(kDR01LoopMainLoop);
 	} else {
-		Scene_Loop_Start_Special(0, 0, false);
-		Scene_Loop_Set_Default(4);
+		if ((!Game_Flag_Query(kFlagDR01Visited) && Global_Variable_Query(kVariableChapter) == 2)
+		     || Random_Query(1, 5) == 1)
+		{ 	// enhancement: don't always play the bikers after first visit
+			// But first visit in 2nd chapter should always show it.
+			Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kDR01LoopBikerInshot, false);
+		}
+		Scene_Loop_Set_Default(kDR01LoopMainLoop);
 	}
 }
 
@@ -266,6 +268,26 @@ void SceneScriptDR01::PlayerWalkedIn() {
 	) {
 		Player_Loses_Control();
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -447.39f, 0.16f, -92.38f, 0, false, false, 0);
+#if BLADERUNNER_RESTORED_CUT_CONTENT
+		if (!Game_Flag_Query(kFlagDR01Visited)) {
+			Game_Flag_Set(kFlagDR01Visited);
+			// Make use of the kFlagDirectorsCut like in CT01 case
+			// extra flags and chapter check are for compatibility / sane behavior
+			// in imported original save games (or "exported" save games for the original)
+			if (
+				Global_Variable_Query(kVariableChapter) == 2
+				&& !Game_Flag_Query(kFlagDR03ChewTalk1)
+				&& !Game_Flag_Query(kFlagDR05MorajiTalk)
+				&& !Game_Flag_Query(kFlagDirectorsCut)) {
+				Actor_Voice_Over(600, kActorVoiceOver);
+				Actor_Voice_Over(610, kActorVoiceOver);
+				Actor_Voice_Over(620, kActorVoiceOver);
+				Actor_Voice_Over(630, kActorVoiceOver);
+				Actor_Voice_Over(640, kActorVoiceOver);
+				Actor_Voice_Over(650, kActorVoiceOver);
+			}
+		}
+#endif // BLADERUNNER_RESTORED_CUT_CONTENT
 		Player_Gains_Control();
 	}
 	Game_Flag_Reset(kFlagDR02toDR01);

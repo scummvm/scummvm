@@ -1167,7 +1167,7 @@ enum Flags {
 	kFlagCT11DogWrapperAvailable = 725,
 	kFlagAR02Entered = 726,
 	kFlagPS04WeaponsOrderForm = 727,
-	// 728 is never used
+	kFlagDR01Visited = 728, // Re-purposed: Original: 728 is never used
 	kFlagNR08DektoraShow = 729
 };
 
