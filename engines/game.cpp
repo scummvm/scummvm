@@ -142,7 +142,7 @@ bool DetectionResults::foundUnknownGames() const {
 	return false;
 }
 
-DetectedGames DetectionResults::listRecognizedGames() {
+DetectedGames DetectionResults::listRecognizedGames() const {
 	DetectedGames candidates;
 	for (uint i = 0; i < _detectedGames.size(); i++) {
 		if (_detectedGames[i].canBeAdded) {
@@ -213,4 +213,19 @@ Common::String DetectionResults::generateUnknownGameReport(bool translate, uint3
 	report += "\n";
 
 	return report;
+}
+
+Common::StringArray DetectionResults::getUnknownGameEngines() const {
+	Common::StringArray engines;
+	const char *currentEngineName = nullptr;
+	for (uint i = 0; i < _detectedGames.size(); i++) {
+		const DetectedGame &game = _detectedGames[i];
+		if (!game.hasUnknownFiles)
+			continue;
+		if (!currentEngineName || strcmp(currentEngineName, game.engineName) != 0) {
+			currentEngineName = game.engineName;
+			engines.push_back(Common::String(currentEngineName));
+		}
+	}
+	return engines;
 }

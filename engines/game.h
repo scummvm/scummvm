@@ -26,6 +26,7 @@
 #include "common/array.h"
 #include "common/hash-str.h"
 #include "common/str.h"
+#include "common/str-array.h"
 #include "common/language.h"
 #include "common/platform.h"
 
@@ -198,7 +199,7 @@ public:
 	 *
 	 * Recognized games can be added to the configuration manager and then launched.
 	 */
-	DetectedGames listRecognizedGames();
+	DetectedGames listRecognizedGames() const;
 
 	/**
 	 * Were unknown game variants found by the engines?
@@ -215,6 +216,11 @@ public:
 	 * @param wordwrapAt word wrap the text part of the report after a number of characters
 	 */
 	Common::String generateUnknownGameReport(bool translate, uint32 wordwrapAt = 0) const;
+
+	/**
+	 * Get the list of engines for which an unknown game variant was found.
+	 */
+	Common::StringArray getUnknownGameEngines() const;
 
 private:
 	DetectedGames _detectedGames;
