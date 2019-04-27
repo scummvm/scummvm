@@ -259,6 +259,16 @@ void SceneScriptBB01::PlayerWalkedIn() {
 void SceneScriptBB01::PlayerWalkedOut() {
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	if (!Game_Flag_Query(kFlagBB01toBB02)
+	    && !Game_Flag_Query(kFlagBB01toDR02)) {
+		// Acts 2, 3 - should still use a spinner fly-through transition
+		if (!Game_Flag_Query(kFlagMcCoyInTyrellBuilding)) {
+			Outtake_Play(kOuttakeTowards3, true, -1); // available in Acts 1, 2, 3
+		}
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 void SceneScriptBB01::DialogueQueueFlushed(int a1) {

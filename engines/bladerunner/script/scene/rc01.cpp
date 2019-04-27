@@ -698,11 +698,23 @@ void SceneScriptRC01::PlayerWalkedOut() {
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 	if (!Game_Flag_Query(kFlagRC01toRC02)
 	 && !Game_Flag_Query(kFlagRC01toRC03)
-	 &&  Global_Variable_Query(kVariableChapter) == 1
 	) {
-		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-		Ambient_Sounds_Remove_All_Looping_Sounds(1);
-		Outtake_Play(kOuttakeAway2, true, -1);
+		if(Global_Variable_Query(kVariableChapter) == 1) {
+			if (_vm->_cutContent) {
+				Outtake_Play(kOuttakeAscent, true, -1);
+			}
+			Outtake_Play(kOuttakeAway2, true, -1);
+		}
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		else {
+			// Acts 2, 3 - should still use a spinner fly-through transition
+			if (!Game_Flag_Query(kFlagMcCoyInTyrellBuilding)) {
+				// don't play this extra outtake when going to Tyrell Building
+				Outtake_Play(kOuttakeAway1, true, -1);    // available in Acts 2, 3
+			}
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 	//	return 1;
 }

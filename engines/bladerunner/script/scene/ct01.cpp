@@ -487,11 +487,23 @@ void SceneScriptCT01::PlayerWalkedOut() {
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 	}
 	Music_Stop(5);
+#if BLADERUNNER_ORIGINAL_BUGS
 	if (!Game_Flag_Query(kFlagMcCoyInChinaTown) && Global_Variable_Query(kVariableChapter) == 1) {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		Outtake_Play(kOuttakeTowards3, true, -1);
 	}
+#else
+	// Acts 2, 3 - should still use a spinner fly-through transition
+	// also removed the redundant Ambient_Sounds_Remove_All_Non_Looping_Sounds
+	if (!Game_Flag_Query(kFlagMcCoyInChinaTown)) {
+		Ambient_Sounds_Remove_All_Looping_Sounds(1);
+		if (!Game_Flag_Query(kFlagMcCoyInTyrellBuilding)) {
+			// don't play this outtake when going to Tyrell Building
+			Outtake_Play(kOuttakeTowards3, true, -1);   // available in Acts 1, 2, 3
+		}
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 void SceneScriptCT01::DialogueQueueFlushed(int a1) {

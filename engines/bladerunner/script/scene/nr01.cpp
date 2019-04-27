@@ -462,10 +462,17 @@ void SceneScriptNR01::PlayerWalkedOut() {
 	 && !Game_Flag_Query(kFlagNR01DektoraFall)
 	 && !Game_Flag_Query(kFlagChapter4Starting)
 	) {
-		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-		Ambient_Sounds_Remove_All_Looping_Sounds(1);
-		Outtake_Play(kOuttakeAway1, true, -1);
+#if BLADERUNNER_ORIGINAL_BUGS
+		Outtake_Play(kOuttakeAway1,   true, -1);
 		Outtake_Play(kOuttakeInside2, true, -1);
+#else
+		if (!Game_Flag_Query(kFlagMcCoyInTyrellBuilding)) {
+			// don't play an extra outtake when going to Tyrell Building
+			// also switch order so inside2 outtake is not last
+			Outtake_Play(kOuttakeInside2, true, -1);
+			Outtake_Play(kOuttakeAway1,   true, -1);
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 	Game_Flag_Reset(kFlagChapter4Starting);
 }

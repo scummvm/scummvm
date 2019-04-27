@@ -303,6 +303,14 @@ void SceneScriptDR01::PlayerWalkedOut() {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		Outtake_Play(kOuttakeInside2, true, -1);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		// add another transition to make it less abrupt
+		if (!Game_Flag_Query(kFlagMcCoyInTyrellBuilding)) {
+			// but don't play this extra outtake when going to Tyrell Building
+			Outtake_Play(kOuttakeAway1,   true, -1);
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 }
 
