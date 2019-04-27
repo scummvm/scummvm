@@ -23,6 +23,7 @@ win32dist: all
 	cp $(srcdir)/COPYING.BSD $(WIN32PATH)/COPYING.BSD.txt
 	cp $(srcdir)/COPYING.LGPL $(WIN32PATH)/COPYING.LGPL.txt
 	cp $(srcdir)/COPYING.FREEFONT $(WIN32PATH)/COPYING.FREEFONT.txt
+	cp $(srcdir)/COPYING.OFL $(WIN32PATH)/COPYING.OFL.txt
 	cp $(srcdir)/COPYRIGHT $(WIN32PATH)/COPYRIGHT.txt
 	cp $(srcdir)/doc/cz/PrectiMe $(WIN32PATH)/doc/cz/PrectiMe.txt
 	cp $(srcdir)/doc/de/NEUES $(WIN32PATH)/doc/de/NEUES.txt
