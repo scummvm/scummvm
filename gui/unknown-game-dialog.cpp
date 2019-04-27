@@ -63,13 +63,7 @@ UnknownGameDialog::UnknownGameDialog(const DetectionResults &detectionResults) :
 
 	//Check if we have support for opening URLs
 	if (g_system->hasFeature(OSystem::kFeatureOpenUrl)) {
-		buttonPos -= openBugtrackerURLButtonWidth + 5;
 		_openBugTrackerUrlButton = new ButtonWidget(this, 0, 0, 0, 0, _("Report game"), 0, kOpenBugtrackerURL);
-		//Formatting the reportData for bugtracker submission [replace line breaks]...
-		_bugtrackerGameData = _reportData;
-		while (_bugtrackerGameData.contains("\n")) {
-			Common::replace(_bugtrackerGameData, "\n", "%0A");
-		}
 	} else
 #endif
 		_openBugTrackerUrlButton = nullptr;
@@ -113,7 +107,6 @@ void UnknownGameDialog::rebuild() {
 		reportTranslated += "\n";
 		reportTranslated += _("Use the button below to copy the required game information into your clipboard.");
 	}
-
 #if 0
 	// Check if we have support for opening URLs and expand the reportTranslated message if needed...
 	if (g_system->hasFeature(OSystem::kFeatureOpenUrl)) {
@@ -174,21 +167,47 @@ void UnknownGameDialog::rebuild() {
 	}
 }
 
+void UnknownGameDialog::encodeUrlString(Common::String& string) {
+	// First we need to replace the literal %
+	for (uint c = 0 ; c < string.size() ; ++c) {
+		if (string[c] == '%') {
+			string.replace(c, 1, "%25");
+			c += 2;
+		}
+	}
+	// Now replace some other characters that we may have but should not appear literally in the URL
+	while (string.contains("\n")) {
+		Common::replace(string, "\n", "%0A");
+	}
+	while (string.contains(" ")) {
+		Common::replace(string, " ", "%20");
+	}
+	while (string.contains("&")) {
+		Common::replace(string, "&", "%26");
+	}
+	while (string.contains("/")) {
+		Common::replace(string, "/", "%2F");
+	}
+}
 
 Common::String UnknownGameDialog::generateBugtrackerURL() {
 	// TODO: Remove the filesystem path from the bugtracker report
 	Common::String report = _detectionResults.generateUnknownGameReport(false);
+	encodeUrlString(report);
 
-	// Formatting the report for bugtracker submission [replace line breaks]...
-	while (report.contains("\n")) {
-		Common::replace(report, "\n", "%0A");
+	// Pass engine name if there is only one.
+	Common::String engineName;
+	Common::StringArray engines = _detectionResults.getUnknownGameEngines();
+	if (engines.size() == 1) {
+		engineName = engines.front();
+		encodeUrlString(engineName);
 	}
 
 	return Common::String::format(
-		"https://bugs.scummvm.org/newticket?"
-		"&description=%s"
-		"&type=enhancement"
-		"&keywords=unknown-game",
+		"https://bugs.scummvm.org/unknowngame?"
+		"engine=%s"
+		"&description=%s",
+		engineName.c_str(),
 		report.c_str());
 }
 

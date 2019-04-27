@@ -46,6 +46,7 @@ private:
 	void reflowLayout() override;
 
 	Common::String generateBugtrackerURL();
+	void encodeUrlString(Common::String&);
 
 	const DetectionResults &_detectionResults;
 	ScrollContainerWidget *_textContainer;
