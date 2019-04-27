@@ -33,8 +33,8 @@
 
 namespace GUI {
 
-#define kConsoleCharWidth	(_font->getMaxCharWidth())
-#define kConsoleLineHeight	(_font->getFontHeight() + 2)
+#define kConsoleCharWidth  (_font->getCharWidth('M'))
+#define kConsoleLineHeight (_font->getFontHeight())
 
 enum {
 	kConsoleSlideDownDuration = 200	// Time in milliseconds
@@ -93,8 +93,7 @@ void ConsoleDialog::init() {
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
 
-	_font = FontMan.getFontByUsage((Graphics::FontManager::FontUsage)
-		g_gui.xmlEval()->getVar("Console.Font", Graphics::FontManager::kConsoleFont));
+	_font = &g_gui.getFont(ThemeEngine::kFontStyleConsole);
 
 	_leftPadding = g_gui.xmlEval()->getVar("Globals.Console.Padding.Left", 0);
 	_rightPadding = g_gui.xmlEval()->getVar("Globals.Console.Padding.Right", 0);
@@ -167,21 +166,16 @@ void ConsoleDialog::drawDialog(DrawLayer layerToDraw) {
 	Dialog::drawDialog(layerToDraw);
 
 	for (int line = 0; line < _linesPerPage; line++)
-		drawLine(line, false);
+		drawLine(line);
 }
 
-void ConsoleDialog::drawLine(int line, bool restoreBg) {
+void ConsoleDialog::drawLine(int line) {
 	int x = _x + 1 + _leftPadding;
 	int start = _scrollLine - _linesPerPage + 1;
 	int y = _y + 2 + _topPadding;
 	int limit = MIN(_pageWidth, (int)kCharsPerLine);
 
 	y += line * kConsoleLineHeight;
-
-	if (restoreBg) {
-		Common::Rect r(_x, y - 2, _x + _pageWidth * kConsoleCharWidth, y+kConsoleLineHeight);
-		g_gui.theme()->restoreBackground(r);
-	}
 
 	for (int column = 0; column < limit; column++) {
 #if 0
@@ -726,7 +720,7 @@ void ConsoleDialog::drawCaret(bool erase) {
 	}
 
 	int x = _x + 1 + _leftPadding + (_currentPos % kCharsPerLine) * kConsoleCharWidth;
-	int y = _y + _topPadding + displayLine * kConsoleLineHeight;
+	int y = _y + 2 + _topPadding + displayLine * kConsoleLineHeight;
 
 	_caretVisible = !erase;
 	g_gui.theme()->drawCaret(Common::Rect(x, y, x + 1, y + kConsoleLineHeight), erase);
