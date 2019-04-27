@@ -270,6 +270,23 @@ void SceneScriptDR01::PlayerWalkedIn() {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -447.39f, 0.16f, -92.38f, 0, false, false, 0);
 		if (!Game_Flag_Query(kFlagDR01Visited)) {
 			Game_Flag_Set(kFlagDR01Visited);
+			// Make use of the kFlagDirectorsCut like in CT01 case
+			// extra flags and chapter check are for compatibility / sane behavior
+			// in imported original save games (or "exported" save games for the original)
+			if (_vm->_cutContent) {
+				if (
+					Global_Variable_Query(kVariableChapter) == 2
+					&& !Game_Flag_Query(kFlagDR03ChewTalk1)
+					&& !Game_Flag_Query(kFlagDR05MorajiTalk)
+					&& !Game_Flag_Query(kFlagDirectorsCut)) {
+					Actor_Voice_Over(600, kActorVoiceOver);
+					Actor_Voice_Over(610, kActorVoiceOver);
+					Actor_Voice_Over(620, kActorVoiceOver);
+					Actor_Voice_Over(630, kActorVoiceOver);
+					Actor_Voice_Over(640, kActorVoiceOver);
+					Actor_Voice_Over(650, kActorVoiceOver);
+				}
+			}
 		}
 		Player_Gains_Control();
 	}
