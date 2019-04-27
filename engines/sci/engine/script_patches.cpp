@@ -8197,11 +8197,35 @@ static const uint16 qfg1vgaPatchMacEnterGreatHall[] = {
 	PATCH_END
 };
 
+// When fighting the giant in room 58, the Mac version stores the weapon in a
+//  temp variable in giantFights:changeState(2) and expects that value to be
+//  there in later states to determine whether or not to run sword animation.
+//  We patch the script to use the local variable that holds the weapon instead
+//  so that this works and doesn't do an uninitialized read.
+//
+// Applies to: Mac Floppy
+// Responsible method: giantFights:changeState
+// Fixes bug: #10948
+static const uint16 qfg1vgaSignatureMacGiantFight[] = {
+	SIG_MAGICDWORD,
+	0x8d, 0x00,                             // lst 00 [ temp0 set to 0 in state 2 if local5 == 1 ]
+	0x35, 0x00,                             // ldi 00
+	0x1a,                                   // eq?
+	SIG_END
+};
+
+static const uint16 qfg1vgaPatchMacGiantFight[] = {
+	0x8b, 0x05,                             // lsl 05
+	0x35, 0x01,                             // ldi 01
+	PATCH_END
+};
+
 //          script, description,                                      signature                            patch
 static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 	{  true,     0, "inventory weight warning",                    1, qfg1vgaSignatureInventoryWeightWarn, qfg1vgaPatchInventoryWeightWarn },
 	{  true,    41, "moving to castle gate",                       1, qfg1vgaSignatureMoveToCastleGate,    qfg1vgaPatchMoveToCastleGate },
 	{  true,    55, "healer's hut, no delay for buy/steal",        1, qfg1vgaSignatureHealerHutNoDelay,    qfg1vgaPatchHealerHutNoDelay },
+	{  true,    58, "mac: giant fight",                            6, qfg1vgaSignatureMacGiantFight,       qfg1vgaPatchMacGiantFight },
 	{  true,    73, "brutus script freeze glitch",                 1, qfg1vgaSignatureBrutusScriptFreeze,  qfg1vgaPatchBrutusScriptFreeze },
 	{  true,    77, "white stag dagger throw animation glitch",    1, qfg1vgaSignatureWhiteStagDagger,     qfg1vgaPatchWhiteStagDagger },
 	{  true,    78, "mac: enable antwerp controls",                1, qfg1vgaSignatureMacAntwerpControls,  qfg1vgaPatchMacAntwerpControls },
