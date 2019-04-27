@@ -29,8 +29,7 @@ enum kDR01Loops {
 	kDR01LoopPanFromDR02          = 1,
 	kDR01LoopPanFromDR04Pre       = 2,
 	kDR01LoopPanFromDR04Post      = 3,
-	kDR01LoopMainLoop             = 4,
-	kDR01LoopMainLoopNoFirstFrame = 5,
+	kDR01LoopMainLoop             = 4
 };
 
 void SceneScriptDR01::InitializeScene() {
@@ -86,8 +85,9 @@ void SceneScriptDR01::InitializeScene() {
 		Scene_Loop_Set_Default(kDR01LoopMainLoop);
 	} else {
 		if ((!Game_Flag_Query(kFlagDR01Visited) && Global_Variable_Query(kVariableChapter) == 2)
-		     || Random_Query(1, 5) == 1)
-		{ 	// enhancement: don't always play the bikers after first visit
+		     || Random_Query(1, 3) == 1)
+		{
+			// enhancement: don't always play after first visit
 			// But first visit in 2nd chapter should always show it.
 			Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kDR01LoopBikerInshot, false);
 		}
@@ -268,26 +268,9 @@ void SceneScriptDR01::PlayerWalkedIn() {
 	) {
 		Player_Loses_Control();
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -447.39f, 0.16f, -92.38f, 0, false, false, 0);
-#if BLADERUNNER_RESTORED_CUT_CONTENT
 		if (!Game_Flag_Query(kFlagDR01Visited)) {
 			Game_Flag_Set(kFlagDR01Visited);
-			// Make use of the kFlagDirectorsCut like in CT01 case
-			// extra flags and chapter check are for compatibility / sane behavior
-			// in imported original save games (or "exported" save games for the original)
-			if (
-				Global_Variable_Query(kVariableChapter) == 2
-				&& !Game_Flag_Query(kFlagDR03ChewTalk1)
-				&& !Game_Flag_Query(kFlagDR05MorajiTalk)
-				&& !Game_Flag_Query(kFlagDirectorsCut)) {
-				Actor_Voice_Over(600, kActorVoiceOver);
-				Actor_Voice_Over(610, kActorVoiceOver);
-				Actor_Voice_Over(620, kActorVoiceOver);
-				Actor_Voice_Over(630, kActorVoiceOver);
-				Actor_Voice_Over(640, kActorVoiceOver);
-				Actor_Voice_Over(650, kActorVoiceOver);
-			}
 		}
-#endif // BLADERUNNER_RESTORED_CUT_CONTENT
 		Player_Gains_Control();
 	}
 	Game_Flag_Reset(kFlagDR02toDR01);

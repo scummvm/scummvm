@@ -27,7 +27,7 @@ namespace BladeRunner {
 // Appears that names for "open" and "close" are switched
 enum kMA06Loops {
 	kMA06LoopDoorOpen  = 0,
-	kMA06LoopMain      = 1,
+	kMA06LoopMainLoop  = 1,
 	kMA06LoopDoorClose = 3
 };
 
@@ -38,7 +38,7 @@ void SceneScriptMA06::InitializeScene() {
 	Ambient_Sounds_Add_Looping_Sound(kSfxAPRTFAN1, 33, 0, 1);
 
 	Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kMA06LoopDoorOpen, false);
-	Scene_Loop_Set_Default(kMA06LoopMain);
+	Scene_Loop_Set_Default(kMA06LoopMainLoop);
 
 	Sound_Play(kSfxELDOORC1, 100, 50, 50, 100);
 }
@@ -142,7 +142,7 @@ void SceneScriptMA06::activateElevator() {
 		int floor = Elevator_Activate(kElevatorMA);
 		Player_Loses_Control();
 
-		Scene_Loop_Start_Special(kSceneLoopModeOnce, kMA06LoopMain, true);
+		Scene_Loop_Start_Special(kSceneLoopModeOnce, kMA06LoopMainLoop, true);
 
 		if (floor > 1) {
 			Game_Flag_Set(kFlagMA06toMA07);

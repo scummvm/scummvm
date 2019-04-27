@@ -1134,12 +1134,12 @@ enum Flags {
 	kFlagPS05TV4 = 692,
 	kFlagUG03DeadHomeless = 693,
 	kFlagUG14DeadHomeless = 694,
-	// 695 is never used
+	kFlagNR01VisitedFirstTimeWithSpinner = 695, // Re-purposed. Original: 695 is never used
 	kFlagKP07ReplicantsAttackMcCoy = 696,
 	kFlagKP07McCoyPulledGun = 697,
 	kFlagUG15LanceLuthorTrade = 698,
 	kFlagTalkToZuben = 699,
-	// 700 is never used
+	kFlagBB01VisitedFirstTimeWithSpinner = 700, // Re-purposed. Original: 700 is never used
 	kFlagMcCoyAttackedLucy = 701,
 	kFlagBulletBobDead = 702,
 	kFlagUG18BriefcaseTaken = 703,
@@ -1167,7 +1167,7 @@ enum Flags {
 	kFlagCT11DogWrapperAvailable = 725,
 	kFlagAR02Entered = 726,
 	kFlagPS04WeaponsOrderForm = 727,
-	kFlagDR01Visited = 728, // Re-purposed: Original: 728 is never used
+	kFlagDR01Visited = 728,                     // Re-purposed. Original: 728 is never used
 	kFlagNR08DektoraShow = 729
 };
 

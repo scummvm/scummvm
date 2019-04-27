@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 enum kHC03Loops {
-	kHC03LoopMain                     = 0,
+	kHC03LoopMainLoop                 = 0,
 	kHC03LoopCageDoorOpening          = 2,
 	kHC03LoopMainCageOpen             = 3,
 	kHC03LoopTrapDoorOpening          = 5,
@@ -85,7 +85,7 @@ void SceneScriptHC03::InitializeScene() {
 	) {
 		Scene_Loop_Set_Default(kHC03LoopMainCageOpen);
 	} else {
-		Scene_Loop_Set_Default(kHC03LoopMain);
+		Scene_Loop_Set_Default(kHC03LoopMainLoop);
 	}
 }
 

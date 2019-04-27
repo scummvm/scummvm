@@ -24,6 +24,11 @@
 
 namespace BladeRunner {
 
+enum kRC03Loops {
+	kRC03LoopInshot   = 0,
+	kRC03LoopMainLoop = 1
+};
+
 void SceneScriptRC03::InitializeScene() {
 	if (Game_Flag_Query(kFlagRC01toRC03)) {
 		Setup_Scene_Information(298.0f, -4.0f, 405.0f, 800);
@@ -82,11 +87,12 @@ void SceneScriptRC03::InitializeScene() {
 	if (Game_Flag_Query(kFlagHC04toRC03)
 	 && Actor_Query_Goal_Number(kActorIzo) != kGoalIzoWaitingAtRC03
 	) {
-		if (Random_Query(1, 3) == 1) { // enhancement: don't always play this scene when exiting Hawker's Circle
-			Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
+		if (Random_Query(1, 3) == 1) {
+			// enhancement: don't always play this scene when exiting Hawker's Circle
+			Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kRC03LoopInshot, false);
 		}
 	}
-	Scene_Loop_Set_Default(1);
+	Scene_Loop_Set_Default(kRC03LoopMainLoop);
 }
 
 void SceneScriptRC03::SceneLoaded() {

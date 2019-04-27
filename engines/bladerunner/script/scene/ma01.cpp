@@ -25,10 +25,10 @@
 namespace BladeRunner {
 
 enum kMA01Loops {
-	kMA01LoopInshotRoof  = 0,
-	kMA01LoopMain        = 1,
-	kMA01LoopOutDoorAnim = 3,
-	kMA01LoopOutshotRoof = 4
+	kMA01LoopInshotRoof   = 0,
+	kMA01LoopMainLoop = 1,
+	kMA01LoopOutDoorAnim  = 3,
+	kMA01LoopOutshotRoof  = 4
 };
 
 enum kMA01Exits {
@@ -60,13 +60,13 @@ void SceneScriptMA01::InitializeScene() {
 	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 10,  70, 50, 100, 0, 0, -101, -101, 0, 0);
 
 	if (Game_Flag_Query(kFlagMA06toMA01)) {
-		Scene_Loop_Set_Default(kMA01LoopMain);
+		Scene_Loop_Set_Default(kMA01LoopMainLoop);
 		Game_Flag_Reset(kFlagMA06toMA01);
 	} else {
 		Actor_Set_Invisible(kActorMcCoy, true);
 		Game_Flag_Set(kFlagArrivedFromSpinner2);
 		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kMA01LoopInshotRoof, false);
-		Scene_Loop_Set_Default(kMA01LoopMain);
+		Scene_Loop_Set_Default(kMA01LoopMainLoop);
 	}
 
 	if (Game_Flag_Query(kFlagMA01GaffApproachMcCoy)) {

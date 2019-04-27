@@ -26,7 +26,7 @@ namespace BladeRunner {
 
 enum kRC51Loops {
 	kRC51LoopInshotFromRC02 = 0,
-	kRC51LoopMain           = 1
+	kRC51LoopMainLoop       = 1
 };
 
 enum kRC51Exits {
@@ -37,7 +37,7 @@ void SceneScriptRC51::InitializeScene() {
 	Setup_Scene_Information(-8.87f, -1238.89f, 108164.27f, 66);
 	Scene_Exit_Add_2D_Exit(kRC51ExitRC02, 0, 460, 639, 479, 2);
 	Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kRC51LoopInshotFromRC02, false);
-	Scene_Loop_Set_Default(kRC51LoopMain);
+	Scene_Loop_Set_Default(kRC51LoopMainLoop);
 }
 
 void SceneScriptRC51::SceneLoaded() {

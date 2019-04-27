@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 enum kHF04Loops {
-	kHF04LoopMain            = 0,
+	kHF04LoopMainLoop        = 0,
 	kHF04LoopDoorsClosing    = 2,
 	kHF04LoopMainDoorsClosed = 3,
 	kHF04LoopDoorsOpening    = 5
@@ -49,7 +49,7 @@ void SceneScriptHF04::InitializeScene() {
 	if (Game_Flag_Query(kFlagHF04DoorsClosed)) {
 		Scene_Loop_Set_Default(kHF04LoopMainDoorsClosed);
 	} else {
-		Scene_Loop_Set_Default(kHF04LoopMain);
+		Scene_Loop_Set_Default(kHF04LoopMainLoop);
 	}
 }
 
@@ -133,7 +133,7 @@ void SceneScriptHF04::SceneFrameAdvanced(int frame) {
 
 	if (Game_Flag_Query(kFlagHF04OpenDoors)) {
 		Game_Flag_Reset(kFlagHF04OpenDoors);
-		Scene_Loop_Set_Default(kHF04LoopMain);
+		Scene_Loop_Set_Default(kHF04LoopMainLoop);
 		Scene_Loop_Start_Special(kSceneLoopModeOnce, kHF04LoopDoorsOpening, true);
 		return; // true;
 	}

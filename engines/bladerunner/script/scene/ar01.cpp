@@ -26,10 +26,10 @@ namespace BladeRunner {
 
 enum kAR01Loops {
 	kAR01LoopFromAR02WithSpinner = 0,
-	kAR01LoopInshoot             = 1,
+	kAR01LoopInshot              = 1,
 	kAR01LoopMainLoop            = 2,
 	kAR01LoopDoorAnim            = 4,
-	kAR01LoopOutshoot            = 5,
+	kAR01LoopOutshot             = 5,
 	kAR01LoopFromAR02NoSpinner   = 6,
 	kAR01LoopMainLoopNoSpinner   = 7
 };
@@ -89,7 +89,7 @@ void SceneScriptAR01::InitializeScene() {
 	) {
 		Actor_Set_Invisible(kActorMcCoy, true);
 		Game_Flag_Set(kFlagArrivedFromSpinner2);
-		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kAR01LoopInshoot, false);
+		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kAR01LoopInshot, false);
 		Scene_Loop_Set_Default(kAR01LoopMainLoop);
 	} else if (Game_Flag_Query(kFlagSpinnerAtAR01)
 	        && Game_Flag_Query(kFlagAR02toAR01)
@@ -272,63 +272,63 @@ bool SceneScriptAR01::ClickedOnExit(int exitId) {
 				Game_Flag_Reset(kFlagSpinnerAtAR01);
 				Game_Flag_Set(kFlagSpinnerAtPS01);
 				Set_Enter(kSetPS01, kScenePS01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kAR01LoopOutshoot, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kAR01LoopOutshot, true);
 				break;
 			case kSpinnerDestinationMcCoysApartment:
 				Game_Flag_Set(kFlagMcCoyInMcCoyApartment);
 				Game_Flag_Reset(kFlagSpinnerAtAR01);
 				Game_Flag_Set(kFlagSpinnerAtMA01);
 				Set_Enter(kSetMA01, kSceneMA01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kAR01LoopOutshoot, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kAR01LoopOutshot, true);
 				break;
 			case kSpinnerDestinationRuncitersAnimals:
 				Game_Flag_Set(kFlagMcCoyInRunciters);
 				Game_Flag_Reset(kFlagSpinnerAtAR01);
 				Game_Flag_Set(kFlagSpinnerAtRC01);
 				Set_Enter(kSetRC01, kSceneRC01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kAR01LoopOutshoot, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kAR01LoopOutshot, true);
 				break;
 			case kSpinnerDestinationChinatown:
 				Game_Flag_Set(kFlagMcCoyInChinaTown);
 				Game_Flag_Reset(kFlagSpinnerAtAR01);
 				Game_Flag_Set(kFlagSpinnerAtCT01);
 				Set_Enter(kSetCT01_CT12, kSceneCT01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kAR01LoopOutshoot, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kAR01LoopOutshot, true);
 				break;
 			case kSpinnerDestinationTyrellBuilding:
 				Game_Flag_Set(kFlagMcCoyInTyrellBuilding);
 				Game_Flag_Reset(kFlagSpinnerAtAR01);
 				Game_Flag_Set(kFlagSpinnerAtTB02);
 				Set_Enter(kSetTB02_TB03, kSceneTB02);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kAR01LoopOutshoot, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kAR01LoopOutshot, true);
 				break;
 			case kSpinnerDestinationDNARow:
 				Game_Flag_Set(kFlagMcCoyInDNARow);
 				Game_Flag_Reset(kFlagSpinnerAtAR01);
 				Game_Flag_Set(kFlagSpinnerAtDR01);
 				Set_Enter(kSetDR01_DR02_DR04, kSceneDR01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kAR01LoopOutshoot, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kAR01LoopOutshot, true);
 				break;
 			case kSpinnerDestinationBradburyBuilding:
 				Game_Flag_Set(kFlagMcCoyInBradburyBuilding);
 				Game_Flag_Reset(kFlagSpinnerAtAR01);
 				Game_Flag_Set(kFlagSpinnerAtBB01);
 				Set_Enter(kSetBB01, kSceneBB01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kAR01LoopOutshoot, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kAR01LoopOutshot, true);
 				break;
 			case kSpinnerDestinationNightclubRow:
 				Game_Flag_Set(kFlagMcCoyInNightclubRow);
 				Game_Flag_Reset(kFlagSpinnerAtAR01);
 				Game_Flag_Set(kFlagSpinnerAtNR01);
 				Set_Enter(kSetNR01, kSceneNR01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kAR01LoopOutshoot, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kAR01LoopOutshot, true);
 				break;
 			case kSpinnerDestinationHysteriaHall:
 				Game_Flag_Set(kFlagMcCoyInHysteriaHall);
 				Game_Flag_Reset(kFlagSpinnerAtAR01);
 				Game_Flag_Set(kFlagSpinnerAtHF01);
 				Set_Enter(kSetHF01, kSceneHF01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kAR01LoopOutshoot, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kAR01LoopOutshot, true);
 				break;
 			default:
 				Game_Flag_Set(kFlagMcCoyInAnimoidRow);

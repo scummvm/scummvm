@@ -25,10 +25,10 @@
 namespace BladeRunner {
 
 enum kPS01Loops {
-	kPS01LoopInshoot   = 0,
+	kPS01LoopInshot   = 0,
 	kPS01LoopMainLoop  = 1,
 	kPS01LoopDoorAnim  = 3,
-	kPS01LoopOutshoot  = 4,
+	kPS01LoopOutshot  = 4,
 	kPS01LoopNoSpinner = 5
 };
 
@@ -54,7 +54,7 @@ void SceneScriptPS01::InitializeScene() {
 	} else {
 		Actor_Set_Invisible(kActorMcCoy, true);
 		Game_Flag_Set(kFlagArrivedFromSpinner2);
-		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kPS01LoopInshoot, false);
+		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kPS01LoopInshot, false);
 		Scene_Loop_Set_Default(kPS01LoopMainLoop);
 		Player_Loses_Control();
 	}
@@ -112,63 +112,63 @@ bool SceneScriptPS01::ClickedOnExit(int exitId) {
 				Game_Flag_Reset(kFlagSpinnerAtPS01);
 				Game_Flag_Set(kFlagSpinnerAtMA01);
 				Set_Enter(kSetMA01, kSceneMA01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kPS01LoopOutshoot, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kPS01LoopOutshot, true);
 				break;
 			case kSpinnerDestinationRuncitersAnimals:
 				Game_Flag_Set(kFlagMcCoyInRunciters);
 				Game_Flag_Reset(kFlagSpinnerAtPS01);
 				Game_Flag_Set(kFlagSpinnerAtRC01);
 				Set_Enter(kSetRC01, kSceneRC01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kPS01LoopOutshoot, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kPS01LoopOutshot, true);
 				break;
 			case kSpinnerDestinationChinatown:
 				Game_Flag_Set(kFlagMcCoyInChinaTown);
 				Game_Flag_Reset(kFlagSpinnerAtPS01);
 				Game_Flag_Set(kFlagSpinnerAtCT01);
 				Set_Enter(kSetCT01_CT12, kSceneCT01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kPS01LoopOutshoot, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kPS01LoopOutshot, true);
 				break;
 			case kSpinnerDestinationAnimoidRow:
 				Game_Flag_Set(kFlagMcCoyInAnimoidRow);
 				Game_Flag_Reset(kFlagSpinnerAtPS01);
 				Game_Flag_Set(kFlagSpinnerAtAR01);
 				Set_Enter(kSetAR01_AR02, kSceneAR01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kPS01LoopOutshoot, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kPS01LoopOutshot, true);
 				break;
 			case kSpinnerDestinationTyrellBuilding:
 				Game_Flag_Set(kFlagMcCoyInTyrellBuilding);
 				Game_Flag_Reset(kFlagSpinnerAtPS01);
 				Game_Flag_Set(kFlagSpinnerAtTB02);
 				Set_Enter(kSetTB02_TB03, kSceneTB02);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kPS01LoopOutshoot, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kPS01LoopOutshot, true);
 				break;
 			case kSpinnerDestinationDNARow:
 				Game_Flag_Set(kFlagMcCoyInDNARow);
 				Game_Flag_Reset(kFlagSpinnerAtPS01);
 				Game_Flag_Set(kFlagSpinnerAtDR01);
 				Set_Enter(kSetDR01_DR02_DR04, kSceneDR01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kPS01LoopOutshoot, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kPS01LoopOutshot, true);
 				break;
 			case kSpinnerDestinationBradburyBuilding:
 				Game_Flag_Set(kFlagMcCoyInBradburyBuilding);
 				Game_Flag_Reset(kFlagSpinnerAtPS01);
 				Game_Flag_Set(kFlagSpinnerAtBB01);
 				Set_Enter(kSetBB01, kSceneBB01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kPS01LoopOutshoot, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kPS01LoopOutshot, true);
 				break;
 			case kSpinnerDestinationNightclubRow:
 				Game_Flag_Set(kFlagMcCoyInNightclubRow);
 				Game_Flag_Reset(kFlagSpinnerAtPS01);
 				Game_Flag_Set(kFlagSpinnerAtNR01);
 				Set_Enter(kSetNR01, kSceneNR01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kPS01LoopOutshoot, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kPS01LoopOutshot, true);
 				break;
 			case kSpinnerDestinationHysteriaHall:
 				Game_Flag_Set(kFlagMcCoyInHysteriaHall);
 				Game_Flag_Reset(kFlagSpinnerAtPS01);
 				Game_Flag_Set(kFlagSpinnerAtHF01);
 				Set_Enter(kSetHF01, kSceneHF01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kPS01LoopOutshoot, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kPS01LoopOutshot, true);
 				break;
 			default:
 				Actor_Face_Heading(kActorMcCoy, 870, false);

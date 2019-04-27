@@ -25,16 +25,16 @@
 namespace BladeRunner {
 
 enum kMA04Loops {
-	kMA04LoopInshot = 0,
-	kMA04LoopMain   = 1,
-	kMA04LoopSleep  = 3,
-	kMA04LoopWakeup = 4
+	kMA04LoopInshot   = 0,
+	kMA04LoopMainLoop = 1,
+	kMA04LoopSleep    = 3,
+	kMA04LoopWakeup   = 4
 };
 
 enum kMA04Exits {
-	kMA04ExitMA02    = 0,
-	kMA04ExitMA05    = 1,
-	kMA04ExitKitchen = 2
+	kMA04ExitMA02     = 0,
+	kMA04ExitMA05     = 1,
+	kMA04ExitKitchen  = 2
 };
 
 enum kMA04Regions {
@@ -75,7 +75,7 @@ void SceneScriptMA04::InitializeScene() {
 	if (isPhoneRinging()) {
 		Ambient_Sounds_Add_Sound(kSfxVIDFONE1, 3, 3, 100, 100, 0, 0, 0, 0, 99, 0);
 	}
-	Scene_Loop_Set_Default(kMA04LoopMain);
+	Scene_Loop_Set_Default(kMA04LoopMainLoop);
 }
 
 void SceneScriptMA04::SceneLoaded() {

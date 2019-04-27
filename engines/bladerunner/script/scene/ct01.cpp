@@ -27,7 +27,7 @@ namespace BladeRunner {
 enum kCT01Loops {
 	kCT01LoopInshotFromCT12WithSpinner = 0, //   0 -  14
 	kCT01LoopInshot                    = 1, //  15 - 194
-	kCT01LoopMain                      = 2, // 195 - 255
+	kCT01LoopMainLoop                  = 2, // 195 - 255
 	kCT01LoopDoorAnim                  = 4, // 256 - 315
 	kCT01LoopOutshot                   = 5, // 316 - 435
 	kCT01LoopInshotFromCT12NoSpinner   = 6, // 436 - 450
@@ -71,9 +71,10 @@ void SceneScriptCT01::InitializeScene() {
 			// Note 2: Gordo sitting at the diner overlaps with the counter bar in front of him
 			//         so the loop will be prevented from playing when he is there.
 			if ( Global_Variable_Query(kVariableChapter) < 4
-				&& Actor_Query_Which_Set_In(kActorGordo) != kSetCT01_CT12
-					&& Random_Query(1, 3) == 1
+			    && Actor_Query_Which_Set_In(kActorGordo) != kSetCT01_CT12
+			    && Random_Query(1, 3) == 1
 			){
+				// enhancement: don't always play
 				Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kCT01LoopInshot, false);
 			}
 			// Pause generic walkers outside special loop
@@ -115,7 +116,7 @@ void SceneScriptCT01::InitializeScene() {
 	Ambient_Sounds_Add_Sound(kSfxTHNDER4, 20, 40, 33, 50, -100, 100, -101, -101, 0, 0);
 
 	if (Game_Flag_Query(kFlagSpinnerAtCT01)) {
-		Scene_Loop_Set_Default(kCT01LoopMain);
+		Scene_Loop_Set_Default(kCT01LoopMainLoop);
 	} else {
 		Scene_Loop_Set_Default(kCT01LoopMainLoopNoSpinner);
 	}

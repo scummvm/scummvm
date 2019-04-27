@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 enum kDR05Loops {
-	kDR05LoopMain          = 0,
+	kDR05LoopMainLoop      = 0,
 	kDR05LoopMainDestroyed = 2
 };
 
@@ -44,7 +44,7 @@ void SceneScriptDR05::InitializeScene() {
 	if (Game_Flag_Query(kFlagDR05BombExploded)) {
 		Scene_Loop_Set_Default(kDR05LoopMainDestroyed);
 	} else {
-		Scene_Loop_Set_Default(kDR05LoopMain);
+		Scene_Loop_Set_Default(kDR05LoopMainLoop);
 	}
 }
 

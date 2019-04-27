@@ -25,9 +25,9 @@
 namespace BladeRunner {
 
 enum kMA05Loops {
-	kMA05LoopInshot  = 0, //  0 -  29 // Frame 29 (in Acts 1 and 2 this ties in with Frame 30 of the Loop Main, in Act 5 it ties with frame 60?!)
-	kMA05LoopMain    = 1, // 30 -  90
-	kMA05LoopSpinner = 3  // 91 - 150 // Frame 150 ties in with Frame 30 of Loop Main
+	kMA05LoopInshot   = 0, //  0 -  29 // Frame 29 (in Acts 1 and 2 this ties in with Frame 30 of the Loop Main, in Act 5 it ties with frame 60?!)
+	kMA05LoopMainLoop = 1, // 30 -  90
+	kMA05LoopSpinner  = 3  // 91 - 150 // Frame 150 ties in with Frame 30 of Loop Main
 };
 
 enum kMA05Exits {
@@ -63,7 +63,7 @@ void SceneScriptMA05::InitializeScene() {
 	if (Global_Variable_Query(kVariableChapter) != 2 && Global_Variable_Query(kVariableChapter) != 3) {
 		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kMA05LoopInshot, false);
 	}
-	Scene_Loop_Set_Default(kMA05LoopMain);
+	Scene_Loop_Set_Default(kMA05LoopMainLoop);
 }
 
 void SceneScriptMA05::SceneLoaded() {
@@ -120,7 +120,7 @@ void SceneScriptMA05::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 void SceneScriptMA05::PlayerWalkedIn() {
 	Music_Play(kMusicBRBlues, 52, 0, 2, -1, 0, 0);
 	if ((Random_Query(0, 4) == 1 || (Game_Flag_Query(kFlagChapter1Ending) && !Game_Flag_Query(kFlagChapter1Ended))) && Global_Variable_Query(kVariableChapter) == 1) {
-		Scene_Loop_Set_Default(kMA05LoopMain);
+		Scene_Loop_Set_Default(kMA05LoopMainLoop);
 		Scene_Loop_Start_Special(kSceneLoopModeOnce, kMA05LoopSpinner, true);
 		Sound_Play(kSfxSPIN3A, 100, 0, 0, 50);
 	}

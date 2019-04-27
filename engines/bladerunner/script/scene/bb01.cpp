@@ -28,7 +28,7 @@ enum kBB01Loops {
 	kBB01LoopInshot            = 0,
 	kBB01LoopMainLoop          = 1,
 	kBB01LoopDoorAnim          = 3,
-	kBB01LoopOutshoot          = 4,
+	kBB01LoopOutshot           = 4,
 	kBB01LoopMainLoopNoSpinner = 5
 };
 
@@ -66,7 +66,12 @@ void SceneScriptBB01::InitializeScene() {
 	 && !Game_Flag_Query(kFlagDR02toBB01)
 	 && !Game_Flag_Query(kFlagBB02toBB01)
 	) {
-		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kBB01LoopInshot, false);
+		if (!Game_Flag_Query(kFlagBB01VisitedFirstTimeWithSpinner)
+		    || Random_Query(1, 3) == 1
+		) {
+			// enhancement: don't always play after first visit
+			Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kBB01LoopInshot, false);
+		}
 		Scene_Loop_Set_Default(kBB01LoopMainLoop);
 	} else if (Game_Flag_Query(kFlagSpinnerAtBB01)
 	        && Game_Flag_Query(kFlagDR02toBB01)
@@ -135,63 +140,63 @@ bool SceneScriptBB01::ClickedOnExit(int exitId) {
 				Game_Flag_Reset(kFlagSpinnerAtBB01);
 				Game_Flag_Set(kFlagSpinnerAtPS01);
 				Set_Enter(kSetPS01, kScenePS01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kBB01LoopOutshoot, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kBB01LoopOutshot, true);
 				break;
 			case kSpinnerDestinationMcCoysApartment:
 				Game_Flag_Set(kFlagMcCoyInMcCoyApartment);
 				Game_Flag_Reset(kFlagSpinnerAtBB01);
 				Game_Flag_Set(kFlagSpinnerAtMA01);
 				Set_Enter(kSetMA01, kSceneMA01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kBB01LoopOutshoot, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kBB01LoopOutshot, true);
 				break;
 			case kSpinnerDestinationRuncitersAnimals:
 				Game_Flag_Set(kFlagMcCoyInRunciters);
 				Game_Flag_Reset(kFlagSpinnerAtBB01);
 				Game_Flag_Set(kFlagSpinnerAtRC01);
 				Set_Enter(kSetRC01, kSceneRC01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kBB01LoopOutshoot, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kBB01LoopOutshot, true);
 				break;
 			case kSpinnerDestinationChinatown:
 				Game_Flag_Set(kFlagMcCoyInChinaTown);
 				Game_Flag_Reset(kFlagSpinnerAtBB01);
 				Game_Flag_Set(kFlagSpinnerAtCT01);
 				Set_Enter(kSetCT01_CT12, kSceneCT01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kBB01LoopOutshoot, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kBB01LoopOutshot, true);
 				break;
 			case kSpinnerDestinationAnimoidRow:
 				Game_Flag_Set(kFlagMcCoyInAnimoidRow);
 				Game_Flag_Reset(kFlagSpinnerAtBB01);
 				Game_Flag_Set(kFlagSpinnerAtAR01);
 				Set_Enter(kSetAR01_AR02, kSceneAR01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kBB01LoopOutshoot, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kBB01LoopOutshot, true);
 				break;
 			case kSpinnerDestinationTyrellBuilding:
 				Game_Flag_Set(kFlagMcCoyInTyrellBuilding);
 				Game_Flag_Reset(kFlagSpinnerAtBB01);
 				Game_Flag_Set(kFlagSpinnerAtTB02);
 				Set_Enter(kSetTB02_TB03, kSceneTB02);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kBB01LoopOutshoot, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kBB01LoopOutshot, true);
 				break;
 			case kSpinnerDestinationDNARow:
 				Game_Flag_Set(kFlagMcCoyInDNARow);
 				Game_Flag_Reset(kFlagSpinnerAtBB01);
 				Game_Flag_Set(kFlagSpinnerAtDR01);
 				Set_Enter(kSetDR01_DR02_DR04, kSceneDR01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kBB01LoopOutshoot, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kBB01LoopOutshot, true);
 				break;
 			case kSpinnerDestinationNightclubRow:
 				Game_Flag_Set(kFlagMcCoyInNightclubRow);
 				Game_Flag_Reset(kFlagSpinnerAtBB01);
 				Game_Flag_Set(kFlagSpinnerAtNR01);
 				Set_Enter(kSetNR01, kSceneNR01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kBB01LoopOutshoot, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kBB01LoopOutshot, true);
 				break;
 			case kSpinnerDestinationHysteriaHall:
 				Game_Flag_Set(kFlagMcCoyInHysteriaHall);
 				Game_Flag_Reset(kFlagSpinnerAtBB01);
 				Game_Flag_Set(kFlagSpinnerAtHF01);
 				Set_Enter(kSetHF01, kSceneHF01);
-				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kBB01LoopOutshoot, true);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kBB01LoopOutshot, true);
 				break;
 			default:
 				Game_Flag_Set(kFlagMcCoyInBradburyBuilding);
@@ -244,6 +249,9 @@ void SceneScriptBB01::PlayerWalkedIn() {
 	} else if (Game_Flag_Query(kFlagBB02toBB01)) {
 		Game_Flag_Reset(kFlagBB02toBB01);
 	} else {
+		if (!Game_Flag_Query(kFlagBB01VisitedFirstTimeWithSpinner) && Game_Flag_Query(kFlagSpinnerAtBB01)) {
+			Game_Flag_Set(kFlagBB01VisitedFirstTimeWithSpinner);
+		}
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 43.0f, 0.0f, 954.0f, 0, false, false, 0);
 	}
 }

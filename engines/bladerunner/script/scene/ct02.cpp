@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 enum kCT02Loops {
-	kCT02LoopMain          = 0,
+	kCT02LoopMainLoop      = 0,
 	kCT02LoopTippingPot    = 2,
 	kCT02LoopMainPotTipped = 3
 };
@@ -64,7 +64,7 @@ void SceneScriptCT02::InitializeScene() {
 	if (Game_Flag_Query(kFlagCT02PotTipped)) {
 		Scene_Loop_Set_Default(kCT02LoopMainPotTipped);
 	} else {
-		Scene_Loop_Set_Default(kCT02LoopMain);
+		Scene_Loop_Set_Default(kCT02LoopMainLoop);
 	}
 }
 

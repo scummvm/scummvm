@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 enum kCT11Loops {
-	kCT11LoopMain = 0,
+	kCT11LoopMainLoop  = 0,
 	kCT11LoopMainNoCar = 2
 };
 
@@ -52,7 +52,7 @@ void SceneScriptCT11::InitializeScene() {
 	if (Global_Variable_Query(kVariableChapter) > 3) {
 		Scene_Loop_Set_Default(kCT11LoopMainNoCar);
 	} else {
-		Scene_Loop_Set_Default(kCT11LoopMain);
+		Scene_Loop_Set_Default(kCT11LoopMainLoop);
 	}
 }
 

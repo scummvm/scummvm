@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 enum kTB07Loops {
-	kTB07LoopMain          = 0,
+	kTB07LoopMainLoop      = 0,
 	kTB07LoopShadeDrop     = 2,
 	kTB07LoopMainShadeDown = 3
 };
@@ -54,7 +54,7 @@ void SceneScriptTB07::InitializeScene() {
 	if (Game_Flag_Query(kFlagTB07ShadeDown)) {
 		Scene_Loop_Set_Default(kTB07LoopMainShadeDown);
 	} else {
-		Scene_Loop_Set_Default(kTB07LoopMain);
+		Scene_Loop_Set_Default(kTB07LoopMainLoop);
 	}
 }
 

@@ -24,6 +24,11 @@
 
 namespace BladeRunner {
 
+enum kUG04Loops {
+	kUG04LoopTrainLoop = 0,
+	kUG04LoopMainLoop  = 1
+};
+
 void SceneScriptUG04::InitializeScene() {
 	if (Game_Flag_Query(kFlagUG05toUG04)) {
 		Setup_Scene_Information(   0.0f, -1.74f, -2400.0f, 496);
@@ -61,10 +66,11 @@ void SceneScriptUG04::InitializeScene() {
 
 	if ((Global_Variable_Query(kVariableChapter) == 3)
 		|| (Global_Variable_Query(kVariableChapter) > 3 && Random_Query(1, 5) == 1)
-	){ // enhancement: don't always play the passing train after chapter 3
-		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
+	){
+		// enhancement: don't always play the bikers after chapter 3
+		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kUG04LoopTrainLoop, false);
 	}
-	Scene_Loop_Set_Default(1);
+	Scene_Loop_Set_Default(kUG04LoopMainLoop);
 }
 
 void SceneScriptUG04::SceneLoaded() {

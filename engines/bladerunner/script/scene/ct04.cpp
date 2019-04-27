@@ -24,18 +24,18 @@
 
 namespace BladeRunner {
 
-enum kCT03Loops {
-	kCT03LoopInshoot = 0,
-	kCT03LoopMain    = 1
+enum kCT04Loops {
+	kCT04LoopInshot   = 0,
+	kCT04LoopMainLoop = 1
 };
 
 void SceneScriptCT04::InitializeScene() {
 	if (Game_Flag_Query(kFlagCT03toCT04)) {
-		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kCT03LoopInshoot, false);
-		Scene_Loop_Set_Default(kCT03LoopMain);
+		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kCT04LoopInshot, false);
+		Scene_Loop_Set_Default(kCT04LoopMainLoop);
 		Setup_Scene_Information(-150.0f, -621.3f, 357.0f, 533);
 	} else {
-		Scene_Loop_Set_Default(kCT03LoopMain);
+		Scene_Loop_Set_Default(kCT04LoopMainLoop);
 		Setup_Scene_Information(-82.86f, -621.3f, 769.03f, 1020);
 	}
 
