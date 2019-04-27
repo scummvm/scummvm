@@ -40,7 +40,8 @@ static const TextDataInfo kTextDataDefaults[] = {
 	{ kTextDataDefault,			"text_default" },
 	{ kTextDataButton,			"text_button" },
 	{ kTextDataNormalFont,		"text_normal" },
-	{ kTextDataTooltip,			"tooltip_normal" }
+	{ kTextDataTooltip,			"tooltip_normal" },
+	{ kTextDataConsole,			"console" }
 };
 
 

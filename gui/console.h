@@ -167,7 +167,7 @@ protected:
 
 	int pos2line(int pos) { return (pos - (_scrollLine - _linesPerPage + 1) * kCharsPerLine) / kCharsPerLine; }
 
-	void drawLine(int line, bool restoreBg = true);
+	void drawLine(int line);
 	void drawCaret(bool erase);
 	void printCharIntern(int c);
 	void insertIntoPrompt(const char *str);
