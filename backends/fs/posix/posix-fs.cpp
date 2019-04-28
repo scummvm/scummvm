@@ -263,9 +263,9 @@ AbstractFSNode *POSIXFilesystemNode::getParent() const {
 		return 0;	// The filesystem root has no parent
 
 #ifdef __OS2__
-    if (_path.size() == 3 && _path.hasSuffix(":/"))
-        // This is a root directory of a drive
-        return makeNode("/");   // return a virtual root for a list of drives
+	if (_path.size() == 3 && _path.hasSuffix(":/"))
+		// This is a root directory of a drive
+		return makeNode("/");   // return a virtual root for a list of drives
 #endif
 #ifdef PSP2
 	if (_path.hasSuffix(":"))
