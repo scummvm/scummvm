@@ -1502,7 +1502,7 @@ void MidiDriver_PC9801::assignFreeChannels(int num) {
 			continue;
 		if (missing < num) {
 			num -= missing;
-			_parts[i]->addChannels(num, 0);
+			_parts[i]->addChannels(missing, 0);
 		} else {
 			_parts[i]->addChannels(num, missing - num);
 			return;
