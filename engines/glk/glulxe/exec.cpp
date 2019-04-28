@@ -39,7 +39,7 @@ void Glulxe::execute_loop() {
 	gfloat32 valf, valf1, valf2;
 #endif /* FLOAT_SUPPORT */
 
-	while (!done_executing) {
+	while (!done_executing && !g_vm->shouldQuit()) {
 
 		profile_tick();
 		debugger_tick();

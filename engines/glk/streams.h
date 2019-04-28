@@ -381,11 +381,17 @@ private:
 	void *_bufEnd;
 	void *_bufEof;
 	size_t _bufLen; ///< # of bytes for latin1, # of 4-byte words for unicode
+	gidispatch_rock_t _arrayRock;
 public:
 	/**
 	 * Constructor
 	 */
 	MemoryStream(Streams *streams, void *buf, size_t buflen, FileMode mode, uint rock = 0, bool unicode = true);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~MemoryStream();
 
 	/**
 	 * Write a character

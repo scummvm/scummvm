@@ -1165,6 +1165,10 @@ void Glulxe::glulxe_retained_unregister(void *array, uint len, const  char *type
 	uint ix, addr2, val;
 	uint elemsize = 0;
 
+	// TODO: See if original GLULXE has code I'm overlooking to cleanly close everything before freeing memmap
+	if (!memmap)
+		return;
+
 	if (typecode[4] == 'C')
 		elemsize = 1;
 	else if (typecode[4] == 'I')

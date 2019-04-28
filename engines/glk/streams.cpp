@@ -318,6 +318,16 @@ MemoryStream::MemoryStream(Streams *streams, void *buf, size_t buflen, FileMode 
 	else
 		_bufEnd = (byte *)buf + buflen;
 	_bufEof = mode == filemode_Write ? _buf : _bufEnd;
+
+	if (g_vm->gli_register_arr)
+		_arrayRock = (*g_vm->gli_register_arr)(buf, buflen, unicode ?  "&+#!Iu" : "&+#!Cn");
+}
+
+MemoryStream::~MemoryStream() {
+	if (g_vm->gli_unregister_arr) {
+		const char *typedesc = _unicode ? "&+#!Iu" : "&+#!Cn";
+		(*g_vm->gli_unregister_arr)(_buf, _bufLen, typedesc, _arrayRock);
+	}
 }
 
 void MemoryStream::putChar(unsigned char ch) {
