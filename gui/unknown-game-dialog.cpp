@@ -53,19 +53,10 @@ UnknownGameDialog::UnknownGameDialog(const DetectionResults &detectionResults) :
 	} else
 		_copyToClipboardButton = nullptr;
 
-#if 0
-	// Do not create the button for reporting the game directly to the bugtracker
-	// for now until we find a proper solution for the problem that a change
-	// to our bugtracker system might break the URL generation. A possible approach
-	// for solving this would be to have a ULR under the .scummvm.org (of the type
-	// https://www.scummvm.org/unknowngame?engine=Foo&description=Bar) that would
-	// redirect to whatever our bugtracker system is.
-
 	//Check if we have support for opening URLs
 	if (g_system->hasFeature(OSystem::kFeatureOpenUrl)) {
 		_openBugTrackerUrlButton = new ButtonWidget(this, 0, 0, 0, 0, _("Report game"), 0, kOpenBugtrackerURL);
 	} else
-#endif
 		_openBugTrackerUrlButton = nullptr;
 
 	// Use a ScrollContainer for the report in case we have a lot of lines.
@@ -107,13 +98,11 @@ void UnknownGameDialog::rebuild() {
 		reportTranslated += "\n";
 		reportTranslated += _("Use the button below to copy the required game information into your clipboard.");
 	}
-#if 0
 	// Check if we have support for opening URLs and expand the reportTranslated message if needed...
 	if (g_system->hasFeature(OSystem::kFeatureOpenUrl)) {
 		reportTranslated += "\n";
 		reportTranslated += _("You can also directly report your game to the Bug Tracker.");
 	}
-#endif
 
 	// We use a ScrollContainer to display the text, with a 2 * 8 pixels margin to the dialog border,
 	// the scrollbar, and 2 * 10 margin for the text in the container.
@@ -167,44 +156,51 @@ void UnknownGameDialog::rebuild() {
 	}
 }
 
-void UnknownGameDialog::encodeUrlString(Common::String& string) {
-	// First we need to replace the literal %
-	for (uint c = 0 ; c < string.size() ; ++c) {
-		if (string[c] == '%') {
-			string.replace(c, 1, "%25");
-			c += 2;
-		}
+Common::String UnknownGameDialog::encodeUrlString(const Common::String& string) {
+	Common::String encoded;
+	for (uint i = 0 ; i < string.size() ; ++i) {
+		char c = string[i];
+		if ((c >= 'a' && c <= 'z') || (c >= 'A'  && c <= 'Z') || (c >= '0' && c <= '9') ||
+			c == '~' || c == '-' || c == '.' || c == '_')
+			encoded += c;
+		else
+			encoded += Common::String::format("%%%02X", c);
 	}
-	// Now replace some other characters that we may have but should not appear literally in the URL
-	while (string.contains("\n")) {
-		Common::replace(string, "\n", "%0A");
-	}
-	while (string.contains(" ")) {
-		Common::replace(string, " ", "%20");
-	}
-	while (string.contains("&")) {
-		Common::replace(string, "&", "%26");
-	}
-	while (string.contains("/")) {
-		Common::replace(string, "/", "%2F");
-	}
+	return encoded;
 }
 
 Common::String UnknownGameDialog::generateBugtrackerURL() {
-	// TODO: Remove the filesystem path from the bugtracker report
 	Common::String report = _detectionResults.generateUnknownGameReport(false);
-	encodeUrlString(report);
+	// Remove the filesystem path from the bugtracker report.
+	// The path is on the first line between single quotes. We strip everything except the last level.
+	int path_start = -1, path_size = 0;
+	for (int i = 0 ; i < report.size() ; ++i) {
+		char c = report[i];
+		if (c == '\'') {
+			if (path_start == -1)
+				path_start = i + 1;
+			else
+				break;
+		} else if (path_start != -1 && (c == '/' || c == '\\')) {
+			path_size = 1 + i - path_start;
+		} else if (c == '\n') {
+			path_size = 0;
+			break;
+		}
+	}
+	if (path_size > 0)
+		report.erase(path_start, path_size);
+	report = encodeUrlString(report);
 
 	// Pass engine name if there is only one.
-	Common::String engineName;
+	Common::String engineName = "unknown";
 	Common::StringArray engines = _detectionResults.getUnknownGameEngines();
-	if (engines.size() == 1) {
+	if (engines.size() == 1)
 		engineName = engines.front();
-		encodeUrlString(engineName);
-	}
+	engineName = encodeUrlString(engineName);
 
 	return Common::String::format(
-		"https://bugs.scummvm.org/unknowngame?"
+		"https://www.scummvm.org/unknowngame?"
 		"engine=%s"
 		"&description=%s",
 		engineName.c_str(),
