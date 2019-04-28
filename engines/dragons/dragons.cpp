@@ -388,7 +388,9 @@ void DragonsEngine::gameLoop()
 				if (_cursor->_sequenceID != 5) {
 					uVar6 = _cursor->data_80072890;
 				}
-				flicker->actor->_sequenceID2 = getINI(uVar6 - 1)->field_e;
+				if (uVar6 > 0) {
+					flicker->actor->_sequenceID2 = getINI(uVar6 - 1)->field_e;
+				}
 			}
 
 			works_with_obd_data_1();
@@ -588,7 +590,7 @@ void DragonsEngine::gameLoop()
 					actor->flags = 0;
 					actor->priorityLayer = 0;
 					actor->field_e = 0x100;
-					actor->updateSequence(getINI((uint)*puVar9 - 1)->field_1a_flags_maybe * 2 + 10);
+					actor->updateSequence(getINI((uint)*puVar9 - 1)->field_1a_flags_maybe * 2 + 10); //TODO this doesn't look right
 					actor->setFlag(ACTOR_FLAG_40);
 					actor->setFlag(ACTOR_FLAG_80);
 					actor->setFlag(ACTOR_FLAG_100);
@@ -1023,6 +1025,12 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 					if ((bit_flags_8006fbd8 & 2) == 0) {
 						bit_flags_8006fbd8 = bit_flags_8006fbd8 | 2;
 					}
+					if (flickerINI->actor->isFlagClear(ACTOR_FLAG_2000)
+					&& flickerINI->actor->isFlagSet(ACTOR_FLAG_4)
+					&& flickerINI->actor->_sequenceID2 != -1
+					&& flickerINI->actor->_sequenceID2 != flickerINI->actor->_sequenceID)	{
+						flickerINI->actor->updateSequence(flickerINI->actor->_sequenceID2);
+					}
 //				if (((((actors[actorId].flags & 0x2000) == 0) && ((actors[actorId].flags & 4) != 0)) &&
 //					 (actors[actorId].﻿_sequenceID2 != actors[actorId].﻿_sequenceID)) &&
 //				(actors[actorId].﻿_sequenceID2 != -1)) {
@@ -1112,6 +1120,7 @@ void DragonsEngine::works_with_obd_data_1() {
 	uVar6 = 0;
 	_scriptOpcodes->_data_80071f5c = 0;
 
+	assert(_cursor->data_80072890 > 0);
 	byte *obd = _dragonOBD->getFromOpt(_cursor->data_80072890 - 1);
 
 
