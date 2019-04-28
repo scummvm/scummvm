@@ -719,7 +719,7 @@ public:
 		_random.setSeed(seed);
 	}
 	inline uint glulx_random() {
-		return _random.getRandomNumber(0xffffffff);
+		return _random.getRandomNumber(0xfffffff);
 	}
 
 	void glulx_sort(void *addr, int count, int size, int(*comparefunc)(const void *p1, const void *p2));

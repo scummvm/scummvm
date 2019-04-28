@@ -91,11 +91,6 @@ void Glulxe::glkopInit() {
 bool Glulxe::init_dispatch() {
 	int ix;
 
-	/* What with one thing and another, this *could* be called more than
-	   once. We only need to allocate the tables once. */
-	if (classes)
-		return true;
-
 	/* Set up the game-ID hook. (This is ifdeffed because not all Glk
 	   libraries have this call.) */
 #ifdef GI_DISPA_GAME_ID_AVAILABLE
