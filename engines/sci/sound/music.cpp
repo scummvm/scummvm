@@ -84,8 +84,9 @@ void SciMusic::init() {
 	if (g_sci->_features->useAltWinGMSound())
 		deviceFlags |= MDT_PREFER_GM;
 
-	// Currently our CMS implementation only supports SCI1(.1)
-	if (getSciVersion() >= SCI_VERSION_1_EGA_ONLY && getSciVersion() <= SCI_VERSION_1_1)
+	// SCI_VERSION_0_EARLY games apparently don't support the CMS. At least there
+	// is no patch resource 101 and I also haven't seen any CMS driver file so far.
+	if (getSciVersion() > SCI_VERSION_0_EARLY && getSciVersion() <= SCI_VERSION_1_1)
 		deviceFlags |= MDT_CMS;
 
 	if (g_sci->getPlatform() == Common::kPlatformFMTowns) {
