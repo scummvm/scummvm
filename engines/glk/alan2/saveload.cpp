@@ -211,7 +211,7 @@ void SaveLoad::restore() {
 
 bool SaveLoad::endOfTable(AtrElem *addr) {
 	Aword *x = (Aword *)addr;
-	return *x == EOF;
+	return *x == (Aword)EOF;
 }
 
 } // End of namespace Alan2

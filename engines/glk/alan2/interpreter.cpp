@@ -165,7 +165,7 @@ void Interpreter::curVar(Aword i) {
 	switch (I_OP(i)) {
 	case V_PARAM:
 		if (stpflg)
-			debug("PARAM \t%5ld\t\t(%ld)", _stack->top(), _vm->params[_stack->top() - 1].code);
+			debug("PARAM \t%5ld\t\t(%d)", _stack->top(), _vm->params[_stack->top() - 1].code);
 		_stack->push(_vm->params[_stack->pop() - 1].code);
 		break;
 	case V_CURLOC:
@@ -290,7 +290,7 @@ void Interpreter::stMop(Aword i, Aaddr oldpc) {
 	case I_SCORE:
 		arg1 = _stack->pop();	// score
 		if (stpflg)
-			debug("SCORE \t%5ld\t\t(%ld)", arg1, _vm->scores[arg1 - 1]);
+			debug("SCORE \t%5ld\t\t(%d)", arg1, _vm->scores[arg1 - 1]);
 		_execute->score(arg1);
 		break;
 	case I_VISITS:
@@ -428,8 +428,9 @@ void Interpreter::stMop(Aword i, Aaddr oldpc) {
 		if (stpflg)
 			debug("IN \t%5ld, %5ld ", arg1, arg2);
 		_stack->push(_execute->in(arg1, arg2));
-		if (stpflg)
+		if (stpflg) {
 			if (_stack->top()) debug("\t(TRUE)"); else debug("\t(FALSE)");
+		}
 		break;
 	case I_DESCRIBE:
 		arg1 = _stack->pop();	// id
@@ -489,8 +490,9 @@ void Interpreter::stMop(Aword i, Aaddr oldpc) {
 			if (rh) debug("TRUE"); else debug("FALSE");
 		}
 		_stack->push(lh && rh);
-		if (stpflg)
+		if (stpflg) {
 			if (_stack->top()) debug("\t(TRUE)"); else debug("\t(FALSE)");
+		}
 		break;
 	case I_OR:
 		rh = _stack->pop();
@@ -514,8 +516,9 @@ void Interpreter::stMop(Aword i, Aaddr oldpc) {
 		if (stpflg)
 			debug("NE \t%5ld, %5ld", lh, rh);
 		_stack->push(lh != rh);
-		if (stpflg)
+		if (stpflg) {
 			if (_stack->top()) debug("\t(TRUE)"); else debug("\t(FALSE)");
+		}
 		break;
 	case I_EQ:
 		rh = _stack->pop();
@@ -536,8 +539,9 @@ void Interpreter::stMop(Aword i, Aaddr oldpc) {
 		if (stpflg)
 			debug("STREQ \t%5ld, %5ld", lh, rh);
 		_stack->push(_execute->streq((char *)lh, (char *)rh));
-		if (stpflg)
+		if (stpflg) {
 			if (_stack->top()) debug("\t(TRUE)"); else debug("\t(FALSE)");
+		}
 		break;
 	case I_STREXACT:
 		rh = _stack->pop();
@@ -545,8 +549,9 @@ void Interpreter::stMop(Aword i, Aaddr oldpc) {
 		if (stpflg)
 			debug("STREXACT \t%5ld, %5ld", lh, rh);
 		_stack->push(strcmp((char *)lh, (char *)rh) == 0);
-		if (stpflg)
+		if (stpflg) {
 			if (_stack->top()) debug("\t(TRUE)"); else debug("\t(FALSE)");
+		}
 		free((void *)lh);
 		free((void *)rh);
 		break;
@@ -556,8 +561,9 @@ void Interpreter::stMop(Aword i, Aaddr oldpc) {
 		if (stpflg)
 			debug("LE \t%5ld, %5ld", lh, rh);
 		_stack->push(lh <= rh);
-		if (stpflg)
+		if (stpflg) {
 			if (_stack->top()) debug("\t(TRUE)"); else debug("\t(FALSE)");
+		}
 		break;
 	case I_GE:
 		rh = _stack->pop();
@@ -565,8 +571,9 @@ void Interpreter::stMop(Aword i, Aaddr oldpc) {
 		if (stpflg)
 			debug("GE \t%5ld, %5ld", lh, rh);
 		_stack->push(lh >= rh);
-		if (stpflg)
+		if (stpflg) {
 			if (_stack->top()) debug("\t(TRUE)"); else debug("\t(FALSE)");
+		}
 		break;
 	case I_LT:
 		rh = _stack->pop();
@@ -574,8 +581,9 @@ void Interpreter::stMop(Aword i, Aaddr oldpc) {
 		if (stpflg)
 			debug("LT \t%5ld, %5ld", lh, rh);
 		_stack->push((signed int)lh < (signed int)rh);
-		if (stpflg)
+		if (stpflg) {
 			if (_stack->top()) debug("\t(TRUE)"); else debug("\t(FALSE)");
+		}
 		break;
 	case I_GT:
 		rh = _stack->pop();
@@ -583,8 +591,9 @@ void Interpreter::stMop(Aword i, Aaddr oldpc) {
 		if (stpflg)
 			debug("GT \t%5ld, %5ld", lh, rh);
 		_stack->push(lh > rh);
-		if (stpflg)
+		if (stpflg) {
 			if (_stack->top()) debug("\t(TRUE)"); else debug("\t(FALSE)");
+		}
 		break;
 	case I_PLUS:
 		rh = _stack->pop();
@@ -629,8 +638,9 @@ void Interpreter::stMop(Aword i, Aaddr oldpc) {
 			if (arg1) debug("TRUE"); else debug("FALSE");
 		}
 		_stack->push(!arg1);
-		if (stpflg)
+		if (stpflg) {
 			if (_stack->top()) debug("\t\t(TRUE)"); else debug("\t\t(FALSE)");
+		}
 		break;
 	case I_MAX:
 		arg1 = _stack->pop();	// atr
@@ -749,7 +759,7 @@ void Interpreter::interpret(Aaddr adr) {
 		switch (I_CLASS(i)) {
 		case C_CONST:
 			if (stpflg)
-				debug("PUSH  \t%5ld", I_OP(i));
+				debug("PUSH  \t%5d", I_OP(i));
 			_stack->push(I_OP(i));
 			break;
 		case C_CURVAR:

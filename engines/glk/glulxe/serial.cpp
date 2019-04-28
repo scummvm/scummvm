@@ -503,7 +503,7 @@ int Glulxe::write_buffer(dest_t *dest, const byte *ptr, uint len) {
 		}
 		memcpy(dest->ptr + dest->pos, ptr, len);
 	} else {
-		glk_put_buffer_stream(dest->str, (char *)ptr, len);
+		glk_put_buffer_stream(dest->str, (const char *)ptr, len);
 	}
 
 	dest->pos += len;
@@ -740,8 +740,8 @@ uint Glulxe::write_heapstate_sub(uint sumlen, uint *sumarray, dest_t *dest, int 
 }
 
 int Glulxe::sort_heap_summary(const void *p1, const void *p2) {
-	uint v1 = *(uint *)p1;
-	uint v2 = *(uint *)p2;
+	uint v1 = *(const uint *)p1;
+	uint v2 = *(const uint *)p2;
 
 	if (v1 < v2)
 		return -1;

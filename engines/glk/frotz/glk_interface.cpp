@@ -565,7 +565,7 @@ int GlkInterface::os_peek_color() {
 		return (_reverseVideo) ? h_default_foreground : h_default_background;
 	}
 /*
- if (u_setup.color_enabled) {
+ if (u_setup.color_enabled) { */
 #ifdef COLOR_SUPPORT
 	short fg, bg;
 	pair_content(PAIR_NUMBER(inch() & A_COLOR), &fg, &bg);
