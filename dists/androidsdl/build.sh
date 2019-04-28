@@ -9,7 +9,10 @@ if [ \! -d ../../../androidsdl ] ; then
    cd androidsdl
    git submodule update --init project/jni/iconv/src
    git checkout d378ee692f2e380a0ab0635c1df2eb6941b5bf58
-   cd ../scummvm/dists/androidsdl
+   cd project/jni/iconv/src
+# checkout a specific version of iconv that allows building with the specific version (d378ee692f2e380a0ab0635c1df2eb6941b5bf58) of androidsdl 
+   git checkout 07bead221ed4fa61cc8d880db3d9a5e704866097
+   cd ../../../../../scummvm/dists/androidsdl
 fi
 
 if [ \! -d scummvm/scummvm ] ; then
