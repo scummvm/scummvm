@@ -75,13 +75,16 @@ void Sounds::poll() {
 
 SoundChannel::SoundChannel(Sounds *owner) : _owner(owner), _soundNum(0),
 		_rock(0), _notify(0) {
-	_dispRock.num = 0;
-	_dispRock.ptr = nullptr;
+	if (g_vm->gli_register_obj)
+		_dispRock = (*g_vm->gli_register_obj)(this, gidisp_Class_Schannel);
 }
 
 SoundChannel::~SoundChannel() {
 	stop();
 	_owner->removeSound(this);
+
+	if (g_vm->gli_unregister_obj)
+		(*g_vm->gli_unregister_obj)(this, gidisp_Class_Schannel, _dispRock);
 }
 
 uint SoundChannel::play(uint soundNum, uint repeats, uint notify) {

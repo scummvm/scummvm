@@ -517,10 +517,12 @@ Window::Window(Windows *windows, uint rock) : _windows(windows), _rock(rock),
 
 	_bgColor = g_conf->_windowColor;
 	_fgColor = g_conf->_propInfo._moreColor;
-	_dispRock.num = 0;
 
 	Streams &streams = *g_vm->_streams;
 	_stream = streams.openWindowStream(this);
+
+	if (g_vm->gli_register_obj)
+		_dispRock = (*g_vm->gli_register_obj)(this, gidisp_Class_Window);
 }
 
 Window::~Window() {

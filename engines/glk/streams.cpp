@@ -36,12 +36,15 @@ namespace Glk {
 Stream::Stream(Streams *streams, bool readable, bool writable, uint rock, bool unicode) :
 		_streams(streams), _readable(readable), _writable(writable), _rock(0), _unicode(unicode),
 		_readCount(0), _writeCount(0), _prev(nullptr), _next(nullptr) {
-	_dispRock.num = 0;
-	_dispRock.ptr = nullptr;
+	if (g_vm->gli_register_obj)
+		_dispRock = (*g_vm->gli_register_obj)(this, gidisp_Class_Stream);
 }
 
 Stream::~Stream() {
 	_streams->removeStream(this);
+
+	if (g_vm->gli_unregister_obj)
+		(*g_vm->gli_unregister_obj)(this, gidisp_Class_Stream, _dispRock);
 }
 
 Stream *Stream::getNext(uint *rock) const {
