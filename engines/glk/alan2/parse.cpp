@@ -103,8 +103,8 @@ char *Parser::gettoken(char *tokenBuffer) {
 }
 
 void Parser::agetline() {
-	static char buf[LISTLEN + 1];	// The input buffer
-	static char isobuf[LISTLEN + 1];	// The input buffer in ISO
+	// static char buf[LISTLEN + 1];	// The input buffer
+	// static char isobuf[LISTLEN + 1];	// The input buffer in ISO
 
 	_vm->paragraph();
 
@@ -163,7 +163,7 @@ void Parser::agetline() {
 
 void Parser::scan() {
 	uint i;
-	int w;
+	// int w;
 
 	agetline();
 	wrds[0] = 0;
@@ -180,7 +180,7 @@ void Parser::scan() {
 			tmp.toLowercase();
 			strcpy(token, tmp.c_str());
 
-			w = lookup(token);
+			// w = lookup(token);
 
 			// TODO
 			//if (!isNoise(w))
@@ -295,7 +295,7 @@ void Parser::buildall(ParamElem list[]) {
 void Parser::listCopy(ParamElem a[], ParamElem b[]) {
 	int i;
 
-	for (i = 0; b[i].code != EOF; i++)
+	for (i = 0; b[i].code != (Aword)EOF; i++)
 		a[i] = b[i];
 
 	a[i].code = (Aword)EOF;
@@ -304,7 +304,7 @@ void Parser::listCopy(ParamElem a[], ParamElem b[]) {
 bool Parser::listContains(ParamElem l[], Aword e) {
 	int i;
 
-	for (i = 0; l[i].code != EOF && l[i].code != e; i++);
+	for (i = 0; l[i].code != (Aword)EOF && l[i].code != e; i++);
 
 	return (l[i].code == e);
 }
@@ -312,7 +312,7 @@ bool Parser::listContains(ParamElem l[], Aword e) {
 void Parser::listIntersection(ParamElem a[], ParamElem b[]) {
 	int i, last = 0;
 
-	for (i = 0; a[i].code != EOF; i++)
+	for (i = 0; a[i].code != (Aword)EOF; i++)
 		if (listContains(b, a[i].code))
 			a[last++] = a[i];
 
@@ -322,7 +322,7 @@ void Parser::listIntersection(ParamElem a[], ParamElem b[]) {
 void Parser::listCopyFromDictionary(ParamElem p[], Aword r[]) {
 	int i;
 
-	for (i = 0; r[i] != EOF; i++) {
+	for (i = 0; r[i] != (Aword)EOF; i++) {
 		p[i].code = r[i];
 		p[i].firstWord = (Aword)EOF;
 	}
@@ -333,7 +333,7 @@ void Parser::listCopyFromDictionary(ParamElem p[], Aword r[]) {
 int Parser::listLength(ParamElem a[]) {
 	int i = 0;
 
-	while (a[i].code != EOF)
+	while (a[i].code != (Aword)EOF)
 		i++;
 
 	return (i);
@@ -342,7 +342,7 @@ int Parser::listLength(ParamElem a[]) {
 void Parser::listCompact(ParamElem a[]) {
 	int i, j;
 
-	for (i = 0, j = 0; a[j].code != EOF; j++)
+	for (i = 0, j = 0; a[j].code != (Aword)EOF; j++)
 		if (a[j].code != 0)
 			a[i++] = a[j];
 
@@ -352,9 +352,9 @@ void Parser::listCompact(ParamElem a[]) {
 void Parser::listMerge(ParamElem a[], ParamElem b[]) {
 	int i, last;
 
-	for (last = 0; a[last].code != EOF; last++); // Find end of list
+	for (last = 0; a[last].code != (Aword)EOF; last++); // Find end of list
 
-	for (i = 0; b[i].code != EOF; i++) {
+	for (i = 0; b[i].code != (Aword)EOF; i++) {
 		if (!listContains(a, b[i].code)) {
 			a[last++] = b[i];
 			a[last].code = (Aword)EOF;
@@ -363,7 +363,7 @@ void Parser::listMerge(ParamElem a[], ParamElem b[]) {
 }
 
 void Parser::listSubtract(ParamElem a[], ParamElem b[]) {
-	for (int i = 0; a[i].code != EOF; i++)
+	for (int i = 0; a[i].code != (Aword)EOF; i++)
 		if (listContains(b, a[i].code))
 			a[i].code = 0;		// Mark empty
 
@@ -454,7 +454,7 @@ void Parser::unambig(ParamElem plst[]) {
 			listCopy(plst, savlst);	// Restore to before last adjective
 			listCopyFromDictionary(refs, (Aword *)addrTo(dict[wrds[wrdidx-1]].nounrefs));
 			
-			if (plst[0].code == EOF)
+			if (plst[0].code == (Aword)EOF)
 				listCopy(plst, refs);
 			else
 				listIntersection(plst, refs);
@@ -466,7 +466,7 @@ void Parser::unambig(ParamElem plst[]) {
 
 	// Allow remote objects, but resolve ambiguities by presence
 	if (listLength(plst) > 1) {
-		for (i=0; plst[i].code != EOF; i++)
+		for (i=0; plst[i].code != (Aword)EOF; i++)
 			if (!isHere(plst[i].code))
 				plst[i].code = 0;
 
@@ -504,7 +504,7 @@ void Parser::simple(ParamElem olst[]) {
 		if (isThem(wrds[wrdidx])) {
 			plural = true;
 
-			for (i = 0; pmlst[i].code != EOF; i++)
+			for (i = 0; pmlst[i].code != (Aword)EOF; i++)
 				if (!isHere(pmlst[i].code))
 					pmlst[i].code = 0;
 
@@ -602,7 +602,7 @@ void Parser::resolve(ParamElem plst[]) {
 		return;	// ALL has already done this
 
 	// Resolve ambiguities by presence
-	for (int i = 0; plst[i].code != EOF; i++)  {
+	for (int i = 0; plst[i].code != (Aword)EOF; i++)  {
 		if (plst[i].code < LITMIN) { // Literals are always 'here'
 			if (!isHere(plst[i].code)) {
 				params[0] = plst[i];	// Copy error param as first one for message
@@ -615,37 +615,37 @@ void Parser::resolve(ParamElem plst[]) {
 
 bool Parser::endOfTable(StxElem *addr) {
 	Aword *x = (Aword *)addr;
-	return *x == EOF;
+	return *x == (Aword)EOF;
 }
 
 bool Parser::endOfTable(ElmElem *addr) {
 	Aword *x = (Aword *)addr;
-	return *x == EOF;
+	return *x == (Aword)EOF;
 }
 
 bool Parser::endOfTable(ClaElem *addr) {
 	Aword *x = (Aword *)addr;
-	return *x == EOF;
+	return *x == (Aword)EOF;
 }
 
 bool Parser::endOfTable(VrbElem *addr) {
 	Aword *x = (Aword *)addr;
-	return *x == EOF;
+	return *x == (Aword)EOF;
 }
 
 bool Parser::endOfTable(AltElem *addr) {
 	Aword *x = (Aword *)addr;
-	return *x == EOF;
+	return *x == (Aword)EOF;
 }
 
 bool Parser::endOfTable(ChkElem *addr) {
 	Aword *x = (Aword *)addr;
-	return *x == EOF;
+	return *x == (Aword)EOF;
 }
 
 bool Parser::endOfTable(WrdElem *addr) {
 	Aword *x = (Aword *)addr;
-	return *x == EOF;
+	return *x == (Aword)EOF;
 }
 
 AltElem *Parser::findalt(Aword vrbsadr, Aword param) {
@@ -708,7 +708,7 @@ bool Parser::possible() {
 		if (!trycheck(alt[1]->checks, false))
 			return false;
 
-	for (i = 0; params[i].code != EOF; i++) {
+	for (i = 0; params[i].code != (Aword)EOF; i++) {
 		alt[i + 2] = findalt(objs[params[i].code - OBJMIN].vrbs, i + 1);
 		// CHECKs in a possible parameter
 		if (alt[i + 2] != 0 && alt[i + 2]->checks != 0)
@@ -716,10 +716,10 @@ bool Parser::possible() {
 				return false;
 	}
 
-	for (i = 0; i < 2 || params[i - 2].code != EOF; i++)
+	for (i = 0; i < 2 || params[i - 2].code != (Aword)EOF; i++)
 		if (alt[i] != 0 && alt[i]->action != 0)
 			break;
-	if (i >= 2 && params[i - 2].code == EOF)
+	if (i >= 2 && params[i - 2].code == (Aword)EOF)
 		// Didn't find any code for this verb/object combination
 		return false;
 	else
@@ -752,13 +752,13 @@ void Parser::tryMatch(ParamElem mlstArr[]) {
 	while (true) {
 		// End of input?
 		if (wrds[wrdidx] == EOF || isConj(wrds[wrdidx])) {
-			while (!endOfTable(elms) && elms->code != EOS)
+			while (!endOfTable(elms) && elms->code != (Aword)EOS)
 				elms++;
 
-				if (endOfTable(elms))
-					_vm->printError(M_WHAT);
-				else
-					break;
+			if (endOfTable(elms))
+				_vm->printError(M_WHAT);
+			else
+				break;
 		} else {
 			// A preposition?
 			if (isPrep(wrds[wrdidx])) {
@@ -811,13 +811,13 @@ void Parser::tryMatch(ParamElem mlstArr[]) {
 	if (elms->next == 0)	// No verb code, verb not declared!
 		_vm->printError(M_CANT0);
 
-	for (p = 0; params[p].code != EOF; p++) /* Mark all parameters unchecked */
+	for (p = 0; params[p].code != (Aword)EOF; p++) /* Mark all parameters unchecked */
 		checked[p] = false;
 
 	for (cla = (ClaElem *) addrTo(elms->next); !endOfTable(cla); cla++) {
 		if (params[cla->code - 1].code == 0) {
 			// This was a multiple parameter, so check all and remove failing
-			for (i = 0; mlstArr[i].code != EOF; i++) {
+			for (i = 0; mlstArr[i].code != (Aword)EOF; i++) {
 				params[cla->code-1] = mlstArr[i];
 				if (!claCheck(cla)) {
 					// Multiple could be both an explicit list of params and an ALL
@@ -847,11 +847,11 @@ void Parser::tryMatch(ParamElem mlstArr[]) {
 	}
 
 	// Now check the rest of the parameters, must be objects
-	for (p = 0; params[p].code != EOF; p++) {
+	for (p = 0; params[p].code != (Aword)EOF; p++) {
 		if (!checked[p]) {
 			if (params[p].code == 0) {
 				// This was a multiple parameter, check all and remove failing
-				for (i = 0; mlstArr[i].code != EOF; i++) {
+				for (i = 0; mlstArr[i].code != (Aword)EOF; i++) {
 					if (mlstArr[i].code != 0 && !isObj(mlstArr[i].code)) // Skip any empty slots
 						mlstArr[i].code = 0;
 				}
@@ -915,12 +915,12 @@ void Parser::action(ParamElem plst[]) {
 		
 		sprintf(marker, "($%d)", mpos + 1); // Prepare a printout with $1/2/3
 
-		for (i = 0; plst[i].code != EOF; i++) {
+		for (i = 0; plst[i].code != (Aword)EOF; i++) {
 			params[mpos] = plst[i];
 			_vm->output(marker);
 			//do_it();	// TODO
 
-			if (plst[i + 1].code != EOF)
+			if (plst[i + 1].code != (Aword)EOF)
 				_vm->paragraph();
 		}
 

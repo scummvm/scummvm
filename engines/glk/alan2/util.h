@@ -69,17 +69,17 @@ inline bool isLit(Aword x) {
 
 inline bool endOfTable(LimElem *addr) {
 	Aword *x = (Aword *)addr;
-	return *x == EOF;
+	return *x == (Aword)EOF;
 }
 
 inline bool endOfTable(ScrElem *addr) {
 	Aword *x = (Aword *)addr;
-	return *x == EOF;
+	return *x == (Aword)EOF;
 }
 
 inline bool endOfTable(ExtElem *addr) {
 	Aword *x = (Aword *)addr;
-	return *x == EOF;
+	return *x == (Aword)EOF;
 }
 
 } // End of namespace Alan2

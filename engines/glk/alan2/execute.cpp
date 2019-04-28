@@ -503,17 +503,17 @@ Aint Execute::agrsum(Aword atr, Aword whr) {
 
 Aint Execute::agrcount(Aword whr) {
 	Aword i;
-	Aword count = 0;
+	Aword countVal = 0;
 
 	for (i = OBJMIN; i <= OBJMAX; i++) {
 		if (isLoc(whr)) {
 			if (where(i) == whr)
-				count++;
+				countVal++;
 		} else if (_objs[i-OBJMIN].loc == whr)
-			count++;
+			countVal++;
 	}
 
-	return(count);
+	return(countVal);
 }
 
 void Execute::locobj(Aword obj, Aword whr) {

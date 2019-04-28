@@ -59,14 +59,15 @@ void Rules::parseRules() {
 					change = true;
 					_ruls[i - 1].run = true;
 
-					if (trcflg)
-						if (!stpflg)
+					if (trcflg) {
+						if (!stpflg) {
 							debug(", Executing:>\n");
-						else {
+						} else {
 							debug("\nRULE %d (at ", i);
 							//debugsay(cur.loc);	// TODO
 							debug("), Executing:>\n");
 						}
+					}
 
 					_interpreter->interpret(_ruls[i - 1].stms);
 					
@@ -80,7 +81,7 @@ void Rules::parseRules() {
 
 bool Rules::endOfTable(RulElem *addr) {
 	Aword *x = (Aword *)addr;
-	return *x == EOF;
+	return *x == (Aword)EOF;
 }
 
 } // End of namespace Alan2
