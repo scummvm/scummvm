@@ -1575,6 +1575,18 @@ frefid_t Streams::iterate(frefid_t fref, uint *rock) {
 
 /*--------------------------------------------------------------------------*/
 
+FileReference::FileReference(int slot, const Common::String &desc, uint usage, uint rock) :
+		_rock(rock), _slotNumber(slot), _description(desc),
+		_fileType((FileUsage)(usage & fileusage_TypeMask)), _textMode(usage & fileusage_TextMode) {
+	if (g_vm->gli_register_obj)
+		_dispRock = (*g_vm->gli_register_obj)(this, gidisp_Class_Fileref);
+}
+
+FileReference::~FileReference() {
+	if (g_vm->gli_unregister_obj)
+		(*g_vm->gli_unregister_obj)(this, gidisp_Class_Fileref, _dispRock);
+}
+
 const Common::String FileReference::getSaveName() const {
 	assert(_slotNumber != -1);
 	return g_vm->getSaveName(_slotNumber);

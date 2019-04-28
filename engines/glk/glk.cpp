@@ -47,8 +47,9 @@ GlkEngine::GlkEngine(OSystem *syst, const GlkGameDescription &gameDesc) :
 		_gameDescription(gameDesc), Engine(syst), _random("Glk"), _blorb(nullptr),
 		_clipboard(nullptr), _conf(nullptr), _events(nullptr), _pictures(nullptr),
 		_screen(nullptr), _selection(nullptr), _sounds(nullptr), _windows(nullptr),
-		_copySelect(false), _terminated(false), gli_unregister_obj(nullptr),
-		_pcSpeaker(nullptr), gli_register_arr(nullptr), gli_unregister_arr(nullptr) {
+		_copySelect(false), _terminated(false), _pcSpeaker(nullptr),
+		gli_register_obj(nullptr), gli_unregister_obj(nullptr), gli_register_arr(nullptr),
+		gli_unregister_arr(nullptr) {
 	g_vm = this;
 }
 

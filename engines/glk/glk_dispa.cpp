@@ -369,8 +369,8 @@ void GlkAPI::gidispatch_set_object_registry(gidispatch_rock_t(*regi)(void *obj, 
 	}
 }
 
-void GlkAPI::gidispatch_set_retained_registry(gidispatch_rock_t(*regi)(void *array, uint len, char *typecode),
-		void(*unregi)(void *array, uint len, char *typecode, gidispatch_rock_t objrock)) {
+void GlkAPI::gidispatch_set_retained_registry(gidispatch_rock_t(*regi)(void *array, uint len, const char *typecode),
+		void(*unregi)(void *array, uint len, const char *typecode, gidispatch_rock_t objrock)) {
 	gli_register_arr = regi;
 	gli_unregister_arr = unregi;
 }

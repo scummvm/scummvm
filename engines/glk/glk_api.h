@@ -52,11 +52,6 @@ private:
 	bool _gliFirstEvent;
 	unsigned char _charTolowerTable[256];
 	unsigned char _charToupperTable[256];
-
-	gidispatch_rock_t(*gli_register_obj)(void *obj, uint objclass);
-	void(*gli_unregister_obj)(void *obj, uint objclass, gidispatch_rock_t objrock);
-	gidispatch_rock_t(*gli_register_arr)(void *array, uint len, char *typecode);
-	void(*gli_unregister_arr)(void *array, uint len, char *typecode, gidispatch_rock_t objrock);
 public:
 	/**
 	 * Constructor
@@ -306,8 +301,8 @@ public:
 	void gidispatch_set_object_registry(gidispatch_rock_t(*regi)(void *obj, uint objclass),
 		void(*unregi)(void *obj, uint objclass, gidispatch_rock_t objrock));
 
-	void gidispatch_set_retained_registry(gidispatch_rock_t(*regi)(void *array, uint len, char *typecode),
-		void(*unregi)(void *array, uint len, char *typecode, gidispatch_rock_t objrock));
+	void gidispatch_set_retained_registry(gidispatch_rock_t(*regi)(void *array, uint len, const char *typecode),
+		void(*unregi)(void *array, uint len, const char *typecode, gidispatch_rock_t objrock));
 
 	uint32 gidispatch_count_classes() const;
 	const gidispatch_intconst_t *gidispatch_get_class(uint32 index) const;

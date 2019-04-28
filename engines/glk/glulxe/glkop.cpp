@@ -73,11 +73,11 @@ static void classtable_unregister(void *obj, uint objclass, gidispatch_rock_t ob
 	g_vm->glulxe_classtable_unregister(obj, objclass, objrock);
 }
 
-static gidispatch_rock_t retained_register(void *array, uint len, char *typecode) {
+static gidispatch_rock_t retained_register(void *array, uint len, const char *typecode) {
 	return g_vm->glulxe_retained_register(array, len, typecode);
 }
 
-static void retained_unregister(void *array, uint len, char *typecode, gidispatch_rock_t objrock) {
+static void retained_unregister(void *array, uint len, const char *typecode, gidispatch_rock_t objrock) {
 	g_vm->glulxe_retained_unregister(array, len, typecode, objrock);
 }
 
@@ -1132,7 +1132,7 @@ void Glulxe::release_temp_ptr_array(void **arr, uint addr, uint len, int objclas
 	}
 }
 
-gidispatch_rock_t Glulxe::glulxe_retained_register(void *array, uint len, char *typecode) {
+gidispatch_rock_t Glulxe::glulxe_retained_register(void *array, uint len, const char *typecode) {
 	gidispatch_rock_t rock;
 	arrayref_t *arref = nullptr;
 	arrayref_t **aptr;
@@ -1164,7 +1164,7 @@ gidispatch_rock_t Glulxe::glulxe_retained_register(void *array, uint len, char *
 	return rock;
 }
 
-void Glulxe::glulxe_retained_unregister(void *array, uint len, char *typecode, gidispatch_rock_t objrock) {
+void Glulxe::glulxe_retained_unregister(void *array, uint len, const  char *typecode, gidispatch_rock_t objrock) {
 	arrayref_t *arref = nullptr;
 	arrayref_t **aptr;
 	uint ix, addr2, val;

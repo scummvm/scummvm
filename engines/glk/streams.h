@@ -103,9 +103,12 @@ struct FileReference {
 	/**
 	 * Constructor
 	 */
-	FileReference(int slot, const Common::String &desc, uint usage, uint rock = 0) :
-		_rock(rock), _slotNumber(slot), _description(desc),
-		_fileType((FileUsage)(usage & fileusage_TypeMask)), _textMode(usage & fileusage_TextMode) {}
+	FileReference(int slot, const Common::String &desc, uint usage, uint rock = 0);
+
+	/**
+	 * Destructor
+	 */
+	~FileReference();
 
 	/**
 	 * Get savegame filename

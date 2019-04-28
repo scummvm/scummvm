@@ -221,6 +221,8 @@ enum ImageAlign {
 union gidispatch_rock_t {
 	uint num;
 	void *ptr;
+
+	gidispatch_rock_t() : num(0), ptr(nullptr) {}
 };
 
 union gluniversal_union {

@@ -762,8 +762,8 @@ public:
 
 	void glulxe_classtable_unregister(void *obj, uint objclass, gidispatch_rock_t objrock);
 
-	gidispatch_rock_t glulxe_retained_register(void *array, uint len, char *typecode);
-	void glulxe_retained_unregister(void *array, uint len, char *typecode, gidispatch_rock_t objrock);
+	gidispatch_rock_t glulxe_retained_register(void *array, uint len, const char *typecode);
+	void glulxe_retained_unregister(void *array, uint len, const char *typecode, gidispatch_rock_t objrock);
 
 	/**
 	 * Turn a list of Glulx arguments into a list of Glk arguments, dispatch the function call, and return the result.

@@ -115,10 +115,11 @@ public:
 	Windows *_windows;
 	bool _copySelect;
 	bool _terminated;
-	void (*gli_unregister_obj)(void *obj, uint objclass, gidispatch_rock_t objrock);
-	gidispatch_rock_t (*gli_register_arr)(void *array, uint len, const char *typecode);
-	void (*gli_unregister_arr)(void *array, uint len, const char *typecode, gidispatch_rock_t objrock);
 
+	gidispatch_rock_t(*gli_register_obj)(void *obj, uint objclass);
+	void(*gli_unregister_obj)(void *obj, uint objclass, gidispatch_rock_t objrock);
+	gidispatch_rock_t(*gli_register_arr)(void *array, uint len, const char *typecode);
+	void(*gli_unregister_arr)(void *array, uint len, const char *typecode, gidispatch_rock_t objrock);
 public:
 	GlkEngine(OSystem *syst, const GlkGameDescription &gameDesc);
 	virtual ~GlkEngine();
