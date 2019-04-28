@@ -800,8 +800,15 @@ void SciMusic::sendMidiCommand(uint32 cmd) {
 
 void SciMusic::sendMidiCommand(MusicEntry *pSnd, uint32 cmd) {
 	Common::StackLock lock(_mutex);
-	if (!pSnd->pMidiParser)
-		error("tried to cmdSendMidi on non midi slot (%04x:%04x)", PRINT_REG(pSnd->soundObj));
+	if (!pSnd->pMidiParser) {
+		// FPFP calls kDoSound SendMidi to mute and unmute its gameMusic2 sound
+		//  object but some scenes set this to an audio sample. In Act 2, room
+		//  660 sets this to audio of restaurant customers talking. Walking up
+		//  the hotel stairs from room 500 to 235 calls gameMusic2:mute and
+		//  triggers this if gameMusic2 hasn't changed. Bug #10952
+		warning("tried to cmdSendMidi on non midi slot (%04x:%04x)", PRINT_REG(pSnd->soundObj));
+		return;
+	}
 
 	pSnd->pMidiParser->mainThreadBegin();
 	pSnd->pMidiParser->sendFromScriptToDriver(cmd);
