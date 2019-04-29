@@ -47,9 +47,16 @@ enum {
 	JE_DOUBLE_TAP = 6,
 	JE_MULTI = 7,
 	JE_BALL = 8,
-	JE_TOUCH = 9,
-	JE_LONG = 10,
-	JE_FLING = 11,
+	JE_LMB_DOWN = 9,
+	JE_LMB_UP = 10,
+	JE_RMB_DOWN = 11,
+	JE_RMB_UP = 12,
+	JE_MOUSE_MOVE = 13,
+	JE_MMB_DOWN = 16,
+	JE_MMB_UP = 17,
+	JE_TOUCH = 18,
+	JE_LONG = 19,
+	JE_FLING = 20,
 	JE_QUIT = 0x1000
 };
 
