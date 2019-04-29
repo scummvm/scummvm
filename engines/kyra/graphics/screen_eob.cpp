@@ -2250,7 +2250,7 @@ void AmigaDOSFont::errorDialog(int index) {
 	// I've made rather elaborate dialogs here, since the Amiga font file handling is quite prone to cause problems for users.
 	// This will hopefully prevent unnecessary forum posts and bug reports.
 	if (index == 0) {
-		::GUI::displayErrorDialog(_s(
+		::GUI::displayErrorDialog(_(
 			"This AMIGA version requires the following font files:\n\nEOBF6.FONT\nEOBF6/6\nEOBF8.FONT\nEOBF8/8\n\n"
 			"If you used the orginal installer for the installation these files\nshould be located in the AmigaDOS system 'Fonts/' folder.\n"
 			"Please copy them into the EOB game data directory.\n"
@@ -2258,7 +2258,7 @@ void AmigaDOSFont::errorDialog(int index) {
 		
 		error("Failed to load font files.");
 	} else if (index == 1) {
-		::GUI::displayErrorDialog(_s(
+		::GUI::displayErrorDialog(_(
 			"This AMIGA version requires the following font files:\n\nEOBF6.FONT\nEOBF6/6\nEOBF8.FONT\nEOBF8/8\n\n"
 			"This is a localized (non-English) version of EOB II which uses language specific characters\n"
 			"contained only in the specific font files that came with your game. You cannot use the font\n"
