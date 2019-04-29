@@ -437,7 +437,7 @@ osxsnap: bundle
 	rm -rf ScummVM-snapshot
 
 publish-appcast:
-	scp dists/macosx/scummvm_appcast.xml www.scummvm.org:/var/www/html/appcasts/macosx/release.xml
+	scp dists/macosx/scummvm_appcast.xml www.scummvm.org:/var/www/scummvm-web/public_html/appcasts/macosx/release.xml
 
 
 #
