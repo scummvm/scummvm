@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-02-06 20:18+0100\n"
-"PO-Revision-Date: 2018-12-17 23:07+0000\n"
-"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
+"PO-Revision-Date: 2019-04-29 19:03+0000\n"
+"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -39,7 +39,7 @@ msgstr "Afficher les fichiers cachés"
 
 #: gui/browser.cpp:75
 msgid "Show files marked with the hidden attribute"
-msgstr "Montre les fichiers cachés"
+msgstr "Affiche les fichiers marqués avec l'attribut caché"
 
 #: gui/browser.cpp:79 gui/remotebrowser.cpp:57
 msgid "Go up"
@@ -890,16 +890,16 @@ msgstr "Shader matériel :"
 
 #: gui/options.cpp:1032 gui/options.cpp:1034
 msgid "Different hardware shaders give different visual effects"
-msgstr "Les divers shaders matériels créent des effets visuels différents"
+msgstr "Des shaders matériels différents créent des effets visuels différents"
 
 #: gui/options.cpp:1034
 msgctxt "lowres"
 msgid "HW Shader:"
-msgstr "Shader :"
+msgstr "Shader matériel :"
 
 #: gui/options.cpp:1035
 msgid "Different shaders give different visual effects"
-msgstr "Divers shaders créent des effets visuels différents"
+msgstr "Des shaders différents créent des effets visuels différents"
 
 #: gui/options.cpp:1052
 msgid "Graphics mode:"
@@ -2059,7 +2059,7 @@ msgid ""
 msgstr ""
 "Attention : le jeu que vous vous apprêtez à lancer n'est pas encore "
 "complètement supporté par ScummVM. Il est donc instable et les sauvegardes "
-"peuvent ne pas  marcher avec une future version de ScummVM."
+"peuvent ne pas marcher avec une future version de ScummVM."
 
 #: engines/engine.cpp:546
 msgid "Start anyway"
@@ -3503,11 +3503,11 @@ msgstr "Activer les barres de santé (Hit Point)"
 #. I18N: L/R stands for Left/Right
 #: engines/kyra/detection.cpp:138
 msgid "Fight Button L/R Swap"
-msgstr ""
+msgstr "Bouton Combat - Permuter G/D"
 
 #: engines/kyra/detection.cpp:139
 msgid "Left button to attack, right button to pick up items"
-msgstr ""
+msgstr "Bouton Gauche pour attaquer, bouton Droite pour ramasser les objets"
 
 #: engines/kyra/eobcommon.cpp:343 engines/kyra/lol.cpp:481
 msgid "Move Forward"
@@ -4048,7 +4048,7 @@ msgstr "Active la censure optionnel inclus dans le jeu"
 
 #: engines/sci/detection.cpp:523
 msgid "Upscale videos"
-msgstr "Agrandir les vidéos"
+msgstr "Upscaler les vidéos"
 
 #: engines/sci/detection.cpp:524
 msgid "Upscale videos to double their size"
