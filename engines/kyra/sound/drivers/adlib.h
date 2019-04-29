@@ -43,6 +43,9 @@
 #include "kyra/resource/resource.h"
 #include "common/mutex.h"
 
+// Basic AdLib Programming:
+// https://web.archive.org/web/20050322080425/http://www.gamedev.net/reference/articles/article446.asp
+
 
 namespace Audio {
 class Mixer;
