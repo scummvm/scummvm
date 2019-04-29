@@ -705,6 +705,8 @@ ScummEngine_v2::ScummEngine_v2(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v3old(syst, dr) {
 
 	_inventoryOffset = 0;
+	_flashlight.xStrips = 6;
+	_flashlight.yStrips = 4;
 
 	VAR_SENTENCE_VERB = 0xFF;
 	VAR_SENTENCE_OBJECT1 = 0xFF;
