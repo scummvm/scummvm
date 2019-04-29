@@ -39,6 +39,9 @@ struct GlulxeGameDescription {
 };
 
 const PlainGameDescriptor GLULXE_GAME_LIST[] = {
+	{ "glulx", "Glulx Game" },
+
+	// English games
 	{ "aafn", "An Apple From Nowhere" },
 	{ "acg", "Adventurer's Consumer Guide" },
 	{ "adventglulx", "Adventure" },
@@ -257,15 +260,61 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	{ "wordsofpower", "Words of Power" },
 	{ "zorkglulx", "Zork: A Computerized Fantasy Simulation Game" },
 
-	{ "glulxe", "Glulxe Game" },
+	// Apollo 18+20 IF Tribute Album
+	{ "apollo3glulx", "She's Actual Size" },
+	{ "apollo10glulx", "Narrow Your Eyes" },
+	{ "apollo12glulx", "Which Describes How You're Feeling" },
+	{ "apollo15glulx", "Turn Around" },
+	{ "apollo19glulx", "Fingertips - I Hear the Wind Blow" },
+	{ "apollo33glulx", "Fingertips - Mysterious Whispers" },
+
+	// French games
+	{ "ekphrasis", "Ekphrasis, les Aventures de Gilbert Fontenelle" },
+	{ "lieuxcommunsglulx", "Lieux communs" },
+	{ "sarvegneglulx", "Sarvegne, une visite qui conduit loin" },
+	{ "scarabeekatana", "Le Scarabee et le Katana" },
+	{ "templefeu", "Le Temple de Feu" },
+
+	// German games
+	{ "dergarten", "Der onirische Garten" },
+	{ "deronirischegarten", "Der unsagliche und vermeidbare Tod des Matthias Claudius" },
+	{ "matthiasclaudius", "Der Garten: Der Aufenthalt in einem traumhaften Garten" },
+	{ "morgenwirdklausur", "Morgen wird Klausur geschrieben" },
+	{ "patanoirde", "PataNoir - Ein unvergleichlicher Kriminalfall" },
+
+	// Italian games
+	{ "pietradellaluna", "La Pietra della Luna" },
+	{ "mancasolo", "Manca solo un verso a quella poesia" },
+	{ "schizo", "Schizo - Escape to the Void" },
+	{ "snuff", "Snuff Movie" },
+	{ "villamorganaglulx", "Villa Morgana" },
+
+	// Spanish games
+	{ "alienlaaventura", "ALIEN: La Aventura" },
+	{ "conrumbo", "Con Rumbo" },
+	{ "elultimohogarglulx", "Misterio en el Último Hogar" },
+	{ "hhorcusglulx", "Homo Homini Orcus" },
+	{ "kerulenglulx", "Ke rulen los petas" },
+	{ "lanochedelensayo", "La Noche del Ensayo" },
+	{ "legado", "El Legado" },
+	{ "regente", "El Anillo Regente" },
+	{ "rur", "Las Aventuras de Rudolphine Rur" },
+
+	// Swedish games
+	{ "drakmagiglulx", "Drakmagi (Dragon Magic)" },
+	{ "vanyarglulx", "Vanyar" },
+
 	{ nullptr, nullptr }
 };
 
 #define ENTRY0(ID, MD5, FILESIZE) { ID, nullptr, MD5, FILESIZE, Common::EN_ANY }
 #define ENTRY1(ID, EXTRA, MD5, FILESIZE) { ID, EXTRA, MD5, FILESIZE, Common::EN_ANY }
+#define ENTRYL0(ID, MD5, FILESIZE, LANG) { ID, nullptr, MD5, FILESIZE, LANG }
+#define ENTRYL1(ID, EXTRA, MD5, FILESIZE, LANG) { ID, EXTRA, MD5, FILESIZE, LANG }
 #define TABLE_END_MARKER { nullptr, nullptr, nullptr, 0, Common::EN_ANY }
 
 const GlulxeGameDescription GLULXE_GAMES[] = {
+	// English games
 	ENTRY0("aafn", "98c22f842ffadfb08a8e2a93d32c7495", 163328),
 	ENTRY1("acg", "070501", "1a3eb782d28dd8ae8da40f21adb174f0", 817408),
 	ENTRY1("adventglulx", "961209", "e1939485dc2d4aab637144fc842b479d", 195406),
@@ -490,6 +539,58 @@ const GlulxeGameDescription GLULXE_GAMES[] = {
 	ENTRY1("wordsofpower", "021229 (No Sound)", "487ab63bce62d7fd86852b1974ba1a1c", 465306),
 	ENTRY1("wordsofpower", "021229", "dfb5064095b4d71291b81dd281d8c520", 6240896),
 	ENTRY1("zorkglulx", "080504", "94839db9d8437e493a4b254e6e540359", 1020160),
+
+	// Apollo 18+20 IF Tribute Album
+	ENTRY0("apollo3glulx", "33cf75f5bcc2a28af85d83e4e3f3b846", 482978),
+	ENTRY0("apollo10glulx", "ac5fe600e5cf179738af4329f71304f8", 1897372),
+	ENTRY0("apollo12glulx", "bfadac2b1ac0eab7187e4a5166a72798", 883926),
+	ENTRY0("apollo15glulx", "c1e23a471ff61e3846b63cc21ff9edfa", 633818),
+	ENTRY0("apollo19glulx", "66b599c4aecd63caa59b00bfd5101f43", 466244),
+	ENTRY0("apollo33glulx", "74457b493e101e87463a0be645d2ab65", 411726),
+
+	// French games
+	ENTRYL1("ekphrasis", "050718", "009ca5994d9e8fe6cfb400a9da00b123", 64609308, Common::FR_FRA),
+	ENTRYL0("lieuxcommunsglulx", "6e18273de25a0b882b0cf01770003146", 15659070, Common::FR_FRA),
+	ENTRYL1("sarvegneglulx", "061101", "518ab27b773bb51f57c6526655f38e6f", 594306, Common::FR_FRA),
+	ENTRYL1("scarabeekatana", "070906", "e2ca97ca5579b544765e744964c9624f", 651590, Common::FR_FRA),
+	ENTRYL1("templefeu", "070731", "73c3a0486d41a41c454108298014fac0", 2576096, Common::FR_FRA),
+
+	// German games
+	ENTRYL1("dergarten", "180510", "b90eda22c098c5d70eb2a0cb5140dbe0", 2183442, Common::DE_DEU),
+	ENTRYL1("deronirischegarten", "180730", "eb41961e5772ca99c03ba49f6b4ceb62", 476352, Common::DE_DEU),
+	ENTRYL1("matthiasclaudius", "170328", "514f28c468487b3239cb2fbc7c4a2dac", 1007368, Common::DE_DEU),
+	ENTRYL1("matthiasclaudius", "171010", "437460fae6cd8b57d9e9599f5c29504f", 1010696, Common::DE_DEU),
+	ENTRYL1("matthiasclaudius", "180730", "bc2d409cc3ab7c65f52332d64e792bae", 1016584, Common::DE_DEU),
+	ENTRYL1("morgenwirdklausur", "170423", "b71391f995becb65992561d57ed80829", 724164, Common::DE_DEU),
+	ENTRYL1("morgenwirdklausur", "170430", "85a966e56c4e0fc7d10df9bc3824da95", 727492, Common::DE_DEU),
+	ENTRYL1("patanoirde", "131202", "9ed40b987510c7a8b7da4386ff8879b1", 969304, Common::DE_DEU),
+
+	// Italian games
+	ENTRYL1("beyondglulx", "100115", "a0cd0a410cc99aa7ff661129b8ec5de8", 1331582, Common::IT_ITA),
+	ENTRYL1("pietradellaluna", "110106", "8834e0273fc730b8f6dcd38bbba2894d", 1060656, Common::IT_ITA),
+	ENTRYL1("mancasolo", "398874", "de6d58b378dee41d273f7bb3c5da4220", 978440, Common::IT_ITA),
+	ENTRYL1("schizo", "180907", "3531f6066802f53f9b095b5221fac4d2", 6198900, Common::IT_ITA),
+	ENTRYL1("schizo", "180907", "30ff0bffbe7e1c11ea4a7ec30e0b8c76", 194560, Common::IT_ITA),
+	ENTRYL1("snuff", "180827", "1005bf49b80982997ed3b0930c390d5d", 135168, Common::IT_ITA),
+	ENTRYL1("villamorganaglulx", "090404", "88feac9efb31e7e6bd832bda02ff0cfa", 1263196, Common::IT_ITA),
+
+	// Spanish games
+	ENTRYL1("alienlaaventura", "081124", "e09c0e91e53a07c768eb473deae9619c", 6884846, Common::ES_ESP),
+	ENTRYL1("conrumbo", "010527", "024946d9d10190694d90dedd34ab648e", 127744, Common::ES_ESP),
+	ENTRYL1("dracula1glulx", "071227", "a2266f816a8e6afa324ad98e8ddb707b", 467354, Common::ES_ESP),
+	ENTRYL1("dracula2glulx", "080819", "c9ff350c10f4ef88db667e58a3696938", 715450, Common::ES_ESP),
+	ENTRYL1("elultimohogarglulx", "021225", "08d4168a767dce4899640a000d2809d8", 663576, Common::ES_ESP),
+	ENTRYL1("hhorcusglulx", "100818", "48e7d8f6cd53506778e035eeab6c545c", 4191072, Common::ES_ESP),
+	ENTRYL1("kerulenglulx", "090720", "0f4c8d5fb20666d5e66da025c3167285", 6842790, Common::ES_ESP),
+	ENTRYL1("lanochedelensayo", "100122", "23845407e62d47b5d51267492137e05e", 2527892, Common::ES_ESP),
+	ENTRYL0("legado", "3f5652cfb07d22c1cf668c33fc92a611", 513472, Common::ES_ESP),
+	ENTRYL1("regente", "021129", "7c8608e214821c55bc9224ccfd5beb44", 273092, Common::ES_ESP),
+	ENTRYL0("rur", "4d7dab1227494292f37107da1729392e", 3432966, Common::ES_ESP),
+	ENTRYL1("rur", "Text Only", "de15e8cdd8523c774b66950a0232a0f9", 413184, Common::ES_ESP),
+
+	// Swedish games
+	ENTRYL1("drakmagiglulx", "080419", "93db2e43fafb22b9e4d10f7d6f3a5136", 203630, Common::SE_SWE),
+	ENTRYL1("vanyarglulx", "030613", "4a80396f31f9cced2b6689341ac5d2cc", 278780, Common::SE_SWE),
 
 	TABLE_END_MARKER
 };
