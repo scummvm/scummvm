@@ -51,7 +51,7 @@
  *
  */
 Win32UpdateManager::Win32UpdateManager() {
-    const char *appcastUrl = "https://www.scummvm.org/appcasts/macosx/release.xml";
+    const char *appcastUrl = "https://www.scummvm.org/appcast.xml";
 
     win_sparkle_set_appcast_url(appcastUrl);
     win_sparkle_init();
