@@ -172,7 +172,11 @@ bool SceneScriptAR01::ClickedOnActor(int actorId) {
 					Actor_Says(kActorFishDealer, 140, 14);
 					Actor_Says(kActorMcCoy, 50, 13);
 					Actor_Says(kActorFishDealer, 150, 14);
-					Actor_Clue_Acquire(kActorMcCoy, kClueFishLadyInterview, true, kActorMcCoy);
+#if BLADERUNNER_ORIGINAL_BUGS
+					Actor_Clue_Acquire(kActorMcCoy, kClueFishLadyInterview, true, kActorMcCoy); // A bug? Shouldn't the last argument be -1 or kActorFishDealer here?
+#else
+					Actor_Clue_Acquire(kActorMcCoy, kClueFishLadyInterview, true, kActorFishDealer);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 				} else {
 					if (Random_Query(1, 2) == 1) {
 						Actor_Says(kActorMcCoy, 30, 17);

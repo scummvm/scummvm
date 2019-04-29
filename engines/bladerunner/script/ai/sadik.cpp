@@ -189,20 +189,22 @@ bool AIScriptSadik::ShotAtAndHit() {
 	if (Actor_Query_Goal_Number(kActorSadik) == kGoalSadikUG18Move) {
 		// this lowers Sadik's original health but makes it impossible to kill him here (UG18)
 		if (Game_Flag_Query(kFlagSadikIsReplicant)) {
-#if BLADERUNNER_ORIGINAL_BUGS // Sadik killed in BB09 dead end bug fix
+#if BLADERUNNER_ORIGINAL_BUGS
 			Actor_Set_Health(kActorSadik, 60, 60);
 #else
-			if (Actor_Query_Current_HP(kActorSadik) == 60) { // shot also at Bradburry, so lower his health further
+			// Sadik killed in BB09 dead end bug fix
+			if (Actor_Query_Current_HP(kActorSadik) == 60) { // shot also at Bradbury, so lower his health further
 				Actor_Set_Health(kActorSadik, 50, 50);
 			} else {
 				Actor_Set_Health(kActorSadik, 60, 60);
 			}
 #endif
 		} else {
-#if BLADERUNNER_ORIGINAL_BUGS // Sadik killed in BB09 dead end bug fix
+#if BLADERUNNER_ORIGINAL_BUGS
 			Actor_Set_Health(kActorSadik, 40, 40);
 #else
-			if (Actor_Query_Current_HP(kActorSadik) == 40) { // shot also at Bradburry, so lower his health further
+			// Sadik killed in BB09 dead end bug fix
+			if (Actor_Query_Current_HP(kActorSadik) == 40) { // shot also at Bradbury, so lower his health further
 				Actor_Set_Health(kActorSadik, 30, 30);
 			} else {
 				Actor_Set_Health(kActorSadik, 40, 40);

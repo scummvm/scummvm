@@ -56,7 +56,7 @@ void SceneScriptBB09::InitializeScene() {
 	Ambient_Sounds_Add_Sound(kSfxHAUNT1,   5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxHAUNT2,   5,  50, 17, 27, -100,  100, -101, -101, 0, 0);
 
-	Actor_Set_Targetable(kActorSadik, true); // Don't kill Sadik yet, game cannot continue, a bug?
+	Actor_Set_Targetable(kActorSadik, true); // Don't kill Sadik yet, game cannot continue. This is an original bug - fixed in ScummVM in Sadik's AI script (method ShotAtAndHit() )
 }
 
 void SceneScriptBB09::SceneLoaded() {

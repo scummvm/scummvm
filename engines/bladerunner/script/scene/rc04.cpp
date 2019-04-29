@@ -126,7 +126,11 @@ void SceneScriptRC04::dialogueWithBulletBob() {
 			Actor_Says(kActorBulletBob, 380, 37);
 			Actor_Says(kActorBulletBob, 390, 11);
 			Actor_Says(kActorBulletBob, 400, 37);
-			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview1, true, kActorMcCoy);
+#if BLADERUNNER_ORIGINAL_BUGS
+			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview1, true, kActorMcCoy);  // A bug? Shouldn't the last argument be -1 or kActorBulletBob here?
+#else
+			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview1, true, kActorBulletBob);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		} else {
 			Actor_Says(kActorBulletBob, 410, 11);
 			Actor_Says(kActorBulletBob, 420, 37);
@@ -136,7 +140,11 @@ void SceneScriptRC04::dialogueWithBulletBob() {
 			Actor_Says(kActorBulletBob, 450, 32);
 			Actor_Says(kActorMcCoy, 5030, 16);
 			Actor_Says(kActorBulletBob, 460, 37);
-			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview2, true, kActorMcCoy);
+#if BLADERUNNER_ORIGINAL_BUGS
+			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview2, true, kActorMcCoy);  // A bug? Shouldn't the last argument be -1 or kActorBulletBob here?
+#else
+			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview2, true, kActorBulletBob);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		}
 		return;
 
@@ -165,7 +173,11 @@ void SceneScriptRC04::dialogueWithBulletBob() {
 			Actor_Says(kActorBulletBob, 380, 33);
 			Actor_Says(kActorBulletBob, 390, 37);
 			Actor_Says(kActorBulletBob, 400, 32);
-			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview1, true, kActorMcCoy);
+#if BLADERUNNER_ORIGINAL_BUGS
+			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview1, true, kActorMcCoy);  // A bug? Shouldn't the last argument be -1 or kActorBulletBob here?
+#else
+			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview1, true, kActorBulletBob);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		} else {
 			Actor_Says(kActorBulletBob, 410, 32);
 			Actor_Says(kActorBulletBob, 420, 30);
@@ -175,7 +187,11 @@ void SceneScriptRC04::dialogueWithBulletBob() {
 			Actor_Says(kActorBulletBob, 450, 37);
 			Actor_Says(kActorMcCoy, 5030, 16);
 			Actor_Says(kActorBulletBob, 460, 30);
-			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview2, true, kActorMcCoy);
+#if BLADERUNNER_ORIGINAL_BUGS
+			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview2, true, kActorMcCoy);  // A bug? Shouldn't the last argument be -1 or kActorBulletBob here?
+#else
+			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview2, true, kActorBulletBob);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		}
 		break;
 
@@ -205,7 +221,11 @@ void SceneScriptRC04::dialogueWithBulletBob() {
 			Actor_Says(kActorBulletBob, 720, 30);
 			Actor_Says(kActorMcCoy, 5080, 11);
 			Actor_Says(kActorBulletBob, 730, 37);
-			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview1, true, kActorMcCoy);
+#if BLADERUNNER_ORIGINAL_BUGS
+			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview1, true, kActorMcCoy);  // A bug? Shouldn't the last argument be -1 or kActorBulletBob here?
+#else
+			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview1, true, kActorBulletBob);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		} else {
 			Actor_Says(kActorBulletBob, 560, 37);
 			Actor_Says(kActorMcCoy, 5070, 13);
@@ -222,7 +242,11 @@ void SceneScriptRC04::dialogueWithBulletBob() {
 			Actor_Says(kActorBulletBob, 650, 35);
 			Actor_Says(kActorBulletBob, 660, 30);
 			Actor_Says(kActorMcCoy, 5060, 13);
-			Actor_Clue_Acquire(kActorMcCoy, kClueGogglesReplicantIssue, true, kActorMcCoy);
+#if BLADERUNNER_ORIGINAL_BUGS
+			Actor_Clue_Acquire(kActorMcCoy, kClueGogglesReplicantIssue, true, kActorMcCoy);  // A bug? Shouldn't the last argument be -1 or kActorBulletBob here?
+#else
+			Actor_Clue_Acquire(kActorMcCoy, kClueGogglesReplicantIssue, true, kActorBulletBob);  // A bug? Shouldn't the last argument be -1 or kActorBulletBob here?
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		}
 		break;
 

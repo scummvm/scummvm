@@ -69,6 +69,13 @@ bool SceneScriptBB51::MouseClick(int x, int y) {
 
 bool SceneScriptBB51::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("V2CHESSTBL01", objectName)) {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		// acquire chess clue
+		if (!Actor_Clue_Query(kActorMcCoy, kClueChessTable)) {
+			Actor_Clue_Acquire(kActorMcCoy, kClueChessTable, true, -1);
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Face_Object(kActorMcCoy, "V2CHESSTBL01", true);
 		Actor_Voice_Over(80, kActorVoiceOver);
 		Actor_Voice_Over(90, kActorVoiceOver);

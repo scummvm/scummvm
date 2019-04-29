@@ -133,7 +133,7 @@ bool SceneScriptDR06::ClickedOn3DObject(const char *objectName, bool a2) {
 		}
 		return true;
 	}
-
+#if BLADERUNNER_ORIGINAL_BUGS
 	if ( Object_Query_Click("X2_KEYBRD02", objectName) // a bug? there is no X2_KEYBRD02 only X2KEYBRD02
 	 && !Game_Flag_Query(kFlagDR06KeyboardChecked)) {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -655.57f, 136.6f, -1092.64f, 0, true, false, 0);
@@ -143,6 +143,17 @@ bool SceneScriptDR06::ClickedOn3DObject(const char *objectName, bool a2) {
 		Game_Flag_Set(kFlagDR06KeyboardChecked);
 		return true;
 	}
+#else
+	if ( Object_Query_Click("X2KEYBRD02", objectName) // Use X2KEYBRD02 in place of X2_KEYBRD02
+	 && !Game_Flag_Query(kFlagDR06KeyboardChecked)) {
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -655.57f, 136.6f, -1092.64f, 0, true, false, 0);
+		Actor_Face_Object(kActorMcCoy, "X2KEYBRD02", true);
+		Actor_Voice_Over(830, kActorVoiceOver);
+		Actor_Voice_Over(840, kActorVoiceOver);
+		Game_Flag_Set(kFlagDR06KeyboardChecked);
+		return true;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	if (Object_Query_Click("X2_TORSO04HIRES", objectName)) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -700.0f, 136.6f, -1133.0f, 4, true, false, 0)) {

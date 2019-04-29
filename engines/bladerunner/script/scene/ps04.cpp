@@ -99,7 +99,11 @@ bool SceneScriptPS04::ClickedOnItem(int itemId, bool a2) {
 		Item_Remove_From_World(kItemWeaponsOrderForm);
 		Item_Pickup_Spin_Effect(kModelAnimationOriginalRequisitionForm, 464, 362);
 		Actor_Says(kActorMcCoy, 4485, kAnimationModeTalk);
-		Actor_Clue_Acquire(kActorMcCoy, kClueWeaponsOrderForm, true, kActorMcCoy);
+#if BLADERUNNER_ORIGINAL_BUGS
+		Actor_Clue_Acquire(kActorMcCoy, kClueWeaponsOrderForm, true, kActorMcCoy); // A bug? Shouldn't the last argument be -1 here?
+#else
+		Actor_Clue_Acquire(kActorMcCoy, kClueWeaponsOrderForm, true, -1);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 	return false;
 }

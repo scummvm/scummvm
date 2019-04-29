@@ -84,7 +84,7 @@ void SceneScriptBB06::SceneLoaded() {
 	Clickable_Object("BOX31");
 #if BLADERUNNER_ORIGINAL_BUGS // Sebastian's Doll Fix
 	// This Item_Add_To_World call is only ok for the transition from BB51 to BB06,
-	// otherwise the doll item is not placed in the current set
+	// otherwise the "doll" item (actually the badge item) is not placed in the current set
 	Item_Add_To_World(kItemBB06ControlBox, kModelAnimationBadge, kSetBB06_BB07, -127.0f, 68.42f, 57.0f, 0, 8, 8, true, true, false, true);
 #else
 	if (!Game_Flag_Query(kFlagBB06AndroidDestroyed)) {

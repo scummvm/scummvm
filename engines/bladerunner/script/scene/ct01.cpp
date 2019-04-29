@@ -221,7 +221,7 @@ bool SceneScriptCT01::ClickedOnActor(int actorId) {
 			Game_Flag_Set(kFlagCT01GordoTalk);
 			Actor_Clue_Acquire(kActorGordo, kClueMcCoysDescription, true, kActorMcCoy);
 #if BLADERUNNER_ORIGINAL_BUGS
-			Actor_Clue_Acquire(kActorMcCoy, kClueMcCoyIsABladeRunner, true, kActorMcCoy);
+			Actor_Clue_Acquire(kActorMcCoy, kClueMcCoyIsABladeRunner, true, kActorMcCoy); // a bug?
 #else
 			Actor_Clue_Acquire(kActorGordo, kClueMcCoyIsABladeRunner, true, kActorMcCoy);
 #endif // BLADERUNNER_ORIGINAL_BUGS
