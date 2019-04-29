@@ -296,7 +296,7 @@ void SceneScriptPS09::dialogueWithGrigorian() {
 	 || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1)
 	 || Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2)
 	) {
-		DM_Add_To_List_Never_Repeat_Once_Selected(170, 5, 5, 3); // PROTEST
+		DM_Add_To_List_Never_Repeat_Once_Selected(170,  5, 5, 3); // PROTEST
 		DM_Add_To_List_Never_Repeat_Once_Selected(180, -1, 5, 5); // CARS
 		DM_Add_To_List_Never_Repeat_Once_Selected(200, -1, 3, 6); // VOIGT-KAMPFF
 	}
@@ -308,7 +308,7 @@ void SceneScriptPS09::dialogueWithGrigorian() {
 	) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(190, 5, 6, -1); // NOTE
 	}
-	Dialogue_Menu_Add_To_List(210); // DONE
+	Dialogue_Menu_Add_To_List(210); // DONE // A bug? why not Dialogue_Menu_Add_DONE_To_List?
 
 	Dialogue_Menu_Appear(320, 240);
 	int answer = Dialogue_Menu_Query_Input();

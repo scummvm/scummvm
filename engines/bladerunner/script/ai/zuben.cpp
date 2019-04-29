@@ -1234,12 +1234,12 @@ void AIScriptZuben::FledCombat() {
 
 void AIScriptZuben::dialogue() {
 	Dialogue_Menu_Clear_List();
-	DM_Add_To_List_Never_Repeat_Once_Selected(1490, 5, 5, -1);
+	DM_Add_To_List_Never_Repeat_Once_Selected(1490, 5, 5, -1); // CLOVIS
 	if (Actor_Query_Goal_Number(kActorLucy) != kGoalLucyGone) {
-		DM_Add_To_List_Never_Repeat_Once_Selected(1500, 5, 5, 5);
+		DM_Add_To_List_Never_Repeat_Once_Selected(1500, 5, 5, 5); // LUCY
 	}
-	DM_Add_To_List_Never_Repeat_Once_Selected(1510, -1, 5, 5);
-	Dialogue_Menu_Add_DONE_To_List(1520);
+	DM_Add_To_List_Never_Repeat_Once_Selected(1510, -1, 5, 5); // RUNCITER
+	Dialogue_Menu_Add_DONE_To_List(1520); // DONE
 	Dialogue_Menu_Appear(320, 240);
 	int answer = Dialogue_Menu_Query_Input();
 	Dialogue_Menu_Disappear();

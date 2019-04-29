@@ -146,9 +146,9 @@ void SceneScriptRC02::dialogueWithRunciter() {
 		DM_Add_To_List_Never_Repeat_Once_Selected(20, 6, 4, 5); // REFERENCE
 	}
 	if (_vm->_cutContent) {
-		DM_Add_To_List_Never_Repeat_Once_Selected(200, -1, 3, 6);   // VK - TEST
+		DM_Add_To_List_Never_Repeat_Once_Selected(200, -1, 3, 6); // VK - TEST
 	}
-	Dialogue_Menu_Add_DONE_To_List(30);                         // DONE
+	Dialogue_Menu_Add_DONE_To_List(30); // DONE
 
 	Dialogue_Menu_Appear(320, 240);
 	int answer = Dialogue_Menu_Query_Input();

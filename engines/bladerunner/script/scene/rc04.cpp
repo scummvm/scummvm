@@ -245,7 +245,7 @@ void SceneScriptRC04::dialogueWithBulletBob() {
 #if BLADERUNNER_ORIGINAL_BUGS
 			Actor_Clue_Acquire(kActorMcCoy, kClueGogglesReplicantIssue, true, kActorMcCoy);  // A bug? Shouldn't the last argument be -1 or kActorBulletBob here?
 #else
-			Actor_Clue_Acquire(kActorMcCoy, kClueGogglesReplicantIssue, true, kActorBulletBob);  // A bug? Shouldn't the last argument be -1 or kActorBulletBob here?
+			Actor_Clue_Acquire(kActorMcCoy, kClueGogglesReplicantIssue, true, kActorBulletBob);
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		}
 		break;

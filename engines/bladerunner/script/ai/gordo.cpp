@@ -1673,8 +1673,8 @@ void AIScriptGordo::talkToMcCoyAtNR02() {
 void AIScriptGordo::dialogue2() {
 	Music_Stop(5);
 	Dialogue_Menu_Clear_List();
-	DM_Add_To_List_Never_Repeat_Once_Selected(820, -1, 5, 7);
-	DM_Add_To_List_Never_Repeat_Once_Selected(830, 7, 5, -1);
+	DM_Add_To_List_Never_Repeat_Once_Selected(820, -1, 5,  7); // ARREST
+	DM_Add_To_List_Never_Repeat_Once_Selected(830,  7, 5, -1); // LET GO
 
 	Dialogue_Menu_Appear(320, 240);
 	int answer = Dialogue_Menu_Query_Input();

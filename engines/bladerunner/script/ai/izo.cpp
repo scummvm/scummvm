@@ -1017,32 +1017,32 @@ void AIScriptIzo::FledCombat() {
 
 void AIScriptIzo::dialogueWithIzo() {
 	Dialogue_Menu_Clear_List();
-	DM_Add_To_List_Never_Repeat_Once_Selected(0, 7, 4, -1); // MOTIVES
+	DM_Add_To_List_Never_Repeat_Once_Selected(0, 7, 4, -1); // MOTIVES // A bug? This is a wrong option
 
 	if (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA)) {
-		DM_Add_To_List_Never_Repeat_Once_Selected(10, 8, -1, -1); // LUCY
+		DM_Add_To_List_Never_Repeat_Once_Selected(10, 8, -1, -1); // LUCY  // A bug? This is a wrong option
 	}
 
-	DM_Add_To_List_Never_Repeat_Once_Selected(20, 3, 7, 4); // REFERENCE
-	DM_Add_To_List_Never_Repeat_Once_Selected(30, -1, 3, 7);
+	DM_Add_To_List_Never_Repeat_Once_Selected(20, 3, 7, 4); // REFERENCE  // A bug? This is a wrong option
+	DM_Add_To_List_Never_Repeat_Once_Selected(30, -1, 3, 7); // DONE // A bug? why not Dialogue_Menu_Add_DONE_To_List?
 
 	Dialogue_Menu_Appear(320, 240);
 	int input = Dialogue_Menu_Query_Input();
 	Dialogue_Menu_Disappear();
 
 	switch (input) {
-	case 0: // MOTIVES
-		Actor_Says(kActorMcCoy, 5470, 15);
-		Actor_Says(kActorMcCoy, 710, 13);
+	case 0: // MOTIVES -> Should be "LET GO"?
+		Actor_Says(kActorMcCoy, 5470, 15); // Get lost, Izo. Take off.
+		Actor_Says(kActorIzo, 710, 13);    //
 		Actor_Set_Goal_Number(kActorIzo, kGoalIzoEscape);
 		Player_Gains_Control();
 		break;
 
-	case 10: // LUCY
+	case 10: // LUCY -> Should be split to "WEAPONS" AND "CRYSTAL" (if Replicant)?
 		if (Game_Flag_Query(kFlagIzoIsReplicant)) {
-			Actor_Says(kActorMcCoy, 5475, 18);
+			Actor_Says(kActorMcCoy, 5475, 18); // Listen, there's another Blade Runner after you and she won't stop to talk.
 			Actor_Says(kActorIzo, 720, 12);
-			Actor_Says(kActorMcCoy, 5485, 13);
+			Actor_Says(kActorMcCoy, 5485, 13); // Where did you get the hardware, Izo?
 			Actor_Says(kActorIzo, 740, 14);
 			Actor_Says(kActorMcCoy, 5495, 12);
 			Actor_Says(kActorIzo, 750, 15);
@@ -1050,10 +1050,10 @@ void AIScriptIzo::dialogueWithIzo() {
 			Actor_Says(kActorMcCoy, 5500, 12);
 			Actor_Says(kActorIzo, 770, 15);
 			Actor_Says(kActorIzo, 780, 15);
-			Actor_Says(kActorMcCoy, 5505, 12);
+			Actor_Says(kActorMcCoy, 5505, 12); // I need to talk to Clovis.
 			Actor_Says(kActorIzo, 790, 15);
 		} else {
-			Actor_Says(kActorMcCoy, 5510, 15);
+			Actor_Says(kActorMcCoy, 5510, 15); // Where did you get the hardware, Izo?
 			Actor_Says(kActorIzo, 820, 13);
 			Actor_Says(kActorMcCoy, 5520, 13);
 			Actor_Says(kActorIzo, 830, 13);
@@ -1063,8 +1063,8 @@ void AIScriptIzo::dialogueWithIzo() {
 		Player_Gains_Control();
 		break;
 
-	case 20: // REFERENCE
-		Actor_Says(kActorMcCoy, 5480, 18);
+	case 20: // REFERENCE -> Should be VOIGT-KAMPFF
+		Actor_Says(kActorMcCoy, 5480, 18); // Look, just come along with me. You’re gonna have to take a little personality test.
 		Actor_Set_Goal_Number(kActorIzo, kGoalIzoEscape);
 		Player_Gains_Control();
 		break;
