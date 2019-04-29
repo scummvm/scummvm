@@ -202,7 +202,9 @@ Common::String UnknownGameDialog::generateBugtrackerURL() {
 	return Common::String::format(
 		"https://www.scummvm.org/unknowngame?"
 		"engine=%s"
+		"&summary=Unknown game variant for %s"
 		"&description=%s",
+		engineName.c_str(),
 		engineName.c_str(),
 		report.c_str());
 }
