@@ -44,10 +44,6 @@
 #include "common/mutex.h"
 
 
-// Basic AdLib Programming:
-// http://www.gamedev.net/reference/articles/article446.asp
-
-
 namespace Audio {
 class Mixer;
 }
