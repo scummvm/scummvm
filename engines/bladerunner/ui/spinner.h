@@ -52,6 +52,10 @@ class Spinner {
 	Common::Array<Shape *>  _shapes;
 	UIImagePicker          *_imagePicker;
 
+	int                    _actorId;
+	int                    _sentenceId;
+	int                    _timeSpeakDescription;
+
 public:
 	Spinner(BladeRunnerEngine *vm);
 	~Spinner();
@@ -72,10 +76,19 @@ public:
 	void reset();
 	void resume();
 
+	void playSpeechLine(int actorId, int sentenceId, float duration);
+	void destinationFocus(int destination);
+	void setupDescription(int actorId, int sentenceId);
+	void resetDescription();
+	void tickDescription();
+
 	void save(SaveFileWriteStream &f);
 	void load(SaveFileReadStream &f);
 
 private:
+	static void mouseInCallback(int, void *);
+	static void mouseOutCallback(int, void *);
+	static void mouseDownCallback(int, void *);
 	static void mouseUpCallback(int, void *);
 	static const Destination *getDestinationsFar();
 	static const Destination *getDestinationsMedium();
