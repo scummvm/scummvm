@@ -1110,7 +1110,7 @@ Optional Libraries:
   --with-sdlnet-prefix=DIR prefix where SDL_Net is installed (optional)
   --disable-sdlnet         disable SDL_Net networking library [autodetect]
 
-  --with-libcurl-prefix=DIR    prefix where libcurl is installed (optional)
+  --with-libcurl-prefix=DIR    prefix where libcurl-config is installed (optional)
   --disable-libcurl        disable libcurl networking library [autodetect]
 
 Some influential environment variables:
@@ -4876,7 +4876,7 @@ echo "$_libunity"
 #
 find_freetype() {
         # Wrapper function which tries to find freetype
-        # either by calling freetype-config or by using
+        # either by callimg freetype-config or by using
         # pkg-config.
         # As of freetype-2.9.1 the freetype-config file
         # no longer gets installed by default.
