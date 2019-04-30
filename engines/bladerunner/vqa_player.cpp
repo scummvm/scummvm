@@ -43,6 +43,13 @@ bool VQAPlayer::open() {
 		return false;
 	}
 
+#if !BLADERUNNER_ORIGINAL_BUGS
+	// TB05 has wrong end of a loop and this will load empty zbuffer from next loop, which will lead to broken pathfinding
+	if (_name.equals("TB05_2.VQA")) {
+		_decoder._loopInfo.loops[1].end = 60;
+	}
+#endif
+
 	_hasAudio = _decoder.hasAudio();
 	if (_hasAudio) {
 		_audioStream = Audio::makeQueuingAudioStream(_decoder.frequency(), false);
