@@ -1180,7 +1180,7 @@ bool ScriptBase::Dialogue_Menu_Add_To_List(int answer) {
 
 bool ScriptBase::Dialogue_Menu_Add_DONE_To_List(int answer) {
 	debugC(kDebugScript, "Dialogue_Menu_Add_DONE_To_List(%d)", answer);
-	_vm->_dialogueMenu->addToList(answer, 1, 0, 0, 0);
+	_vm->_dialogueMenu->addToList(answer, true, 0, 0, 0);
 	return false;
 }
 

@@ -135,7 +135,7 @@ bool DialogueMenu::addToList(int answer, bool done, int priorityPolite, int prio
 	_items[index].isDone = done;
 	_items[index].priorityPolite = priorityPolite;
 	_items[index].priorityNormal = priorityNormal;
-	_items[index].prioritySurly = prioritySurly;
+	_items[index].prioritySurly  = prioritySurly;
 
 	// CHECK(madmoose): BLADE.EXE calls this needlessly
 	// calculatePosition();
@@ -193,6 +193,7 @@ int DialogueMenu::queryInput() {
 		_selectedItemIndex = 0;
 		answer = _items[_selectedItemIndex].answerValue;
 	} else if (_listSize == 2) {
+#if BLADERUNNER_ORIGINAL_BUGS
 		if (_items[0].isDone) {
 			_selectedItemIndex = 1;
 			answer = _items[_selectedItemIndex].answerValue;
@@ -200,6 +201,20 @@ int DialogueMenu::queryInput() {
 			_selectedItemIndex = 0;
 			answer = _items[_selectedItemIndex].answerValue;
 		}
+#else
+		// In User Choice mode, avoid auto-select of last option
+		// In this mode, player should still have agency to skip the last (non- "DONE")
+		// question instead of automatically asking it because the other remaining option is "DONE"
+		if (_vm->_settings->getPlayerAgenda() != kPlayerAgendaUserChoice) {
+			if (_items[0].isDone) {
+				_selectedItemIndex = 1;
+				answer = _items[_selectedItemIndex].answerValue;
+			} else if (_items[1].isDone) {
+				_selectedItemIndex = 0;
+				answer = _items[_selectedItemIndex].answerValue;
+			}
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 
 	if (answer == -1) {

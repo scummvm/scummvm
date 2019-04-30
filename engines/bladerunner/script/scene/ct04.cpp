@@ -157,8 +157,8 @@ void SceneScriptCT04::dialogueWithHomeless() {
 
 	switch (answer) {
 	case 410: // YES
-		Actor_Says(kActorTransient, 10, 14);
-		Actor_Says(kActorTransient, 20, 14);
+		Actor_Says(kActorTransient, 10, 14); // Thanks. The big man. He kind of limping.
+		Actor_Says(kActorTransient, 20, 14); // That way.
 		Actor_Modify_Friendliness_To_Other(kActorTransient, kActorMcCoy, 5);
 		if (Query_Difficulty_Level() != kGameDifficultyEasy) {
 			Global_Variable_Decrement(kVariableChinyen, 10);
@@ -167,7 +167,7 @@ void SceneScriptCT04::dialogueWithHomeless() {
 
 	case 420: // NO
 		Actor_Says(kActorMcCoy, 430, 3);
-		Actor_Says(kActorTransient, 30, 14);
+		Actor_Says(kActorTransient, 30, 14); // Hey, that'd work.
 		Actor_Modify_Friendliness_To_Other(kActorTransient, kActorMcCoy, -5);
 		break;
 	}
@@ -192,7 +192,7 @@ bool SceneScriptCT04::ClickedOnActor(int actorId) {
 					} else {
 						Music_Stop(3);
 						Actor_Says(kActorMcCoy, 425, kAnimationModeTalk);
-						Actor_Says(kActorTransient, 0, 13);
+						Actor_Says(kActorTransient, 0, 13); // Hey, maybe spare some chinyen?
 						dialogueWithHomeless();
 						Actor_Set_Goal_Number(kActorTransient, kGoalTransientCT04Leave);
 					}

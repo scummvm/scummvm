@@ -395,6 +395,11 @@ void AIScriptSebastian::dialogue() {
 	DM_Add_To_List_Never_Repeat_Once_Selected(990, 7, 3, -1); // NEXUS-6
 
 	if (Dialogue_Menu_Query_List_Size()) {
+		// This condition clause for non-empty dialogue menu options before adding the DONE option
+		// only occurs in Sebastian's AI script.
+		// Probably because, selecting "DONE" here, McCoy has nothing to say
+		// so there's no point to add it as a "auto-selected" last option
+		// if no other options exist in the list
 		Dialogue_Menu_Add_DONE_To_List(1000); // DONE
 		Dialogue_Menu_Appear(320, 240);
 		int answer = Dialogue_Menu_Query_Input();

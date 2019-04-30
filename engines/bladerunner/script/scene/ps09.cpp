@@ -308,7 +308,11 @@ void SceneScriptPS09::dialogueWithGrigorian() {
 	) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(190, 5, 6, -1); // NOTE
 	}
+#if BLADERUNNER_ORIGINAL_BUGS
 	Dialogue_Menu_Add_To_List(210); // DONE // A bug? why not Dialogue_Menu_Add_DONE_To_List?
+#else
+	Dialogue_Menu_Add_DONE_To_List(210); // DONE
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	Dialogue_Menu_Appear(320, 240);
 	int answer = Dialogue_Menu_Query_Input();
