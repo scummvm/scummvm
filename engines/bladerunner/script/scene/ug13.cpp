@@ -222,7 +222,10 @@ bool SceneScriptUG13::ClickedOnExit(int exitId) {
 				if (!Game_Flag_Query(kFlagCallWithGuzza)) {
 					// Passage to UG18 is locked
 					// This two lines of dialogue is not in the code of the original game
-					if (Actor_Query_Goal_Number(kActorTransient) == 395) {
+					if (Actor_Query_Goal_Number(kActorTransient) == 391
+					    || Actor_Query_Goal_Number(kActorTransient) == 395
+					    || Actor_Query_Goal_Number(kActorTransient) == 599
+					) {
 						Actor_Says(kActorMcCoy, 8522, 14); // Locked
 					} else {
 						Actor_Says(kActorMcCoy, 5555, 14); // How do I get this thing open?

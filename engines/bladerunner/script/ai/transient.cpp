@@ -199,6 +199,7 @@ bool AIScriptTransient::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Set_At_Waypoint(kActorTransient, 40, 0);
 		return true;
 	case 390:
+		// laying on the couch - not sleeping
 		Actor_Put_In_Set(kActorTransient, kSetUG13);
 		Actor_Set_At_XYZ(kActorTransient, -310.0, 55.0, -350.0, 400);
 		Actor_Change_Animation_Mode(kActorTransient, 53);
@@ -206,9 +207,11 @@ bool AIScriptTransient::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Game_Flag_Set(kFlagUG13HomelessLayingdown);
 		return true;
 	case 391:
+		// laying on the couch - sleeping - dialogue exhausted pre-flask - awaiting flask
 		Actor_Change_Animation_Mode(kActorTransient, 53);
 		return true;
 	case 395:
+		// laying on the couch - sleeping - post flask
 		Actor_Change_Animation_Mode(kActorTransient, 55);
 		AI_Countdown_Timer_Start(kActorTransient, kActorTimerAIScriptCustomTask0, Random_Query(30, 40));
 		return true;
