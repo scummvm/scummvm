@@ -92,7 +92,7 @@ bool WinFont::loadFromNE(const Common::String &fileName, const WinFontDirEntry &
 		return false;
 
 	// Let's pull out the font directory
-	Common::SeekableReadStream *fontDirectory = exe.getResource(Common::kNEFontDir, Common::String("FONTDIR"));
+	Common::SeekableReadStream *fontDirectory = exe.getResource(Common::kWinFontDir, Common::String("FONTDIR"));
 	if (!fontDirectory) {
 		warning("No font directory in '%s'", fileName.c_str());
 		return false;
@@ -109,7 +109,7 @@ bool WinFont::loadFromNE(const Common::String &fileName, const WinFontDirEntry &
 	}
 
 	// Actually go get our font now...
-	Common::SeekableReadStream *fontStream = exe.getResource(Common::kNEFont, fontId);
+	Common::SeekableReadStream *fontStream = exe.getResource(Common::kWinFont, fontId);
 	if (!fontStream) {
 		warning("Could not find font %d in %s", fontId, fileName.c_str());
 		return false;
@@ -129,7 +129,7 @@ bool WinFont::loadFromPE(const Common::String &fileName, const WinFontDirEntry &
 	}
 
 	// Let's pull out the font directory
-	Common::SeekableReadStream *fontDirectory = exe->getResource(Common::kPEFontDir, Common::String("FONTDIR"));
+	Common::SeekableReadStream *fontDirectory = exe->getResource(Common::kWinFontDir, Common::String("FONTDIR"));
 	if (!fontDirectory) {
 		warning("No font directory in '%s'", fileName.c_str());
 		delete exe;
@@ -148,7 +148,7 @@ bool WinFont::loadFromPE(const Common::String &fileName, const WinFontDirEntry &
 	}
 
 	// Actually go get our font now...
-	Common::SeekableReadStream *fontStream = exe->getResource(Common::kPEFont, fontId);
+	Common::SeekableReadStream *fontStream = exe->getResource(Common::kWinFont, fontId);
 	if (!fontStream) {
 		warning("Could not find font %d in %s", fontId, fileName.c_str());
 		delete exe;

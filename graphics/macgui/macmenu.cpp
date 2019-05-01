@@ -183,7 +183,7 @@ static Common::U32String readUnicodeString(Common::SeekableReadStream *stream) {
 
 
 MacMenu *MacMenu::createMenuFromPEexe(Common::PEResources &exe, MacWindowManager *wm) {
-	Common::SeekableReadStream *menuData = exe.getResource(Common::kPEMenu, 128);
+	Common::SeekableReadStream *menuData = exe.getResource(Common::kWinMenu, 128);
 	if (!menuData)
 		return nullptr;
 
