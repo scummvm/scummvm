@@ -253,7 +253,7 @@ PECursorManager::PECursorManager(const Common::String &appName) {
 		return;
 	}
 
-	const Common::Array<Common::WinResourceID> cursorGroups = exe.getNameList(Common::kPEGroupCursor);
+	const Common::Array<Common::WinResourceID> cursorGroups = exe.getNameList(Common::kWinGroupCursor);
 
 	_cursors.resize(cursorGroups.size());
 	for (uint i = 0; i < cursorGroups.size(); i++) {

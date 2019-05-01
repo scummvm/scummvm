@@ -233,7 +233,7 @@ Common::Error GnapEngine::run() {
 		error("Could not load ufos.exe");
 
 #ifdef USE_FREETYPE2
-	Common::SeekableReadStream *stream = _exe->getResource(Common::kPEFont, 2000);
+	Common::SeekableReadStream *stream = _exe->getResource(Common::kWinFont, 2000);
 	_font = Graphics::loadTTFFont(*stream, 24);
 	if (!_font)
 		warning("Unable to load font");

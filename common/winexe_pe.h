@@ -33,29 +33,6 @@ namespace Common {
 template<class T> class Array;
 class SeekableReadStream;
 
-/** The default Windows PE resources. */
-enum PEResourceType {
-	kPECursor =       0x01,
-	kPEBitmap =       0x02,
-	kPEIcon =         0x03,
-	kPEMenu =         0x04,
-	kPEDialog =       0x05,
-	kPEString =       0x06,
-	kPEFontDir =      0x07,
-	kPEFont =         0x08,
-	kPEAccelerator =  0x09,
-	kPERCData =       0x0A,
-	kPEMessageTable = 0x0B,
-	kPEGroupCursor =  0x0C,
-	kPEGroupIcon =    0x0E,
-	kPEVersion =      0x10,
-	kPEDlgInclude =   0x11,
-	kPEPlugPlay =     0x13,
-	kPEVXD =          0x14,
-	kPEAniCursor =    0x15,
-	kPEAniIcon =      0x16
-};
-
 /**
  * A class able to load resources from a Windows Portable Executable, such
  * as cursors, bitmaps, and sounds.

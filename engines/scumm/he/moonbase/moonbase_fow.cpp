@@ -103,7 +103,7 @@ bool Moonbase::setFOWImage(int image) {
 					error("Cannot open file %s", _fileName.c_str());
 			}
 
-			Common::SeekableReadStream *stream = _exe.getResource(Common::kPERCData, resId);
+			Common::SeekableReadStream *stream = _exe.getResource(Common::kWinRCData, resId);
 
 			if (stream->size()) {
 				_fowImage = (uint8 *)malloc(stream->size());
