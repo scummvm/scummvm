@@ -30,8 +30,8 @@
 #include "bladerunner/script/police_maze.h"
 #include "bladerunner/script/scene_script.h"
 #include "bladerunner/time.h"
-//#include "bladerunner/subtitles.h"             // Display score and debug info on-screen
-
+#include "bladerunner/subtitles.h"
+#include "bladerunner/debugger.h"
 // ----------------------
 // Maze point system info
 // ----------------------
@@ -152,8 +152,10 @@ void PoliceMaze::tick() {
 		}
 	}
 
-//	_vm->_subtitles->setGameSubsText(Common::String::format("Score: %02d", Global_Variable_Query(kVariablePoliceMazeScore)), true); // for debug purposes, show maze score
-//	_vm->_subtitles->show(); // for debug purposes, show maze score
+	if (_vm->_debugger->_showMazeScore && _isActive && !_isEnding) {
+		_vm->_subtitles->setGameSubsText(Common::String::format("Score: %02d", Global_Variable_Query(kVariablePoliceMazeScore)), true);
+		_vm->_subtitles->show();
+	}
 
 	if (notFound && _isActive && !_isEnding) {
 		_isActive = false;

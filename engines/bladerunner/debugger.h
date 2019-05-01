@@ -54,6 +54,7 @@ public:
 	bool _viewWalkboxes;
 	bool _viewZBuffer;
 	bool _playFullVk;
+	bool _showMazeScore;
 
 	Debugger(BladeRunnerEngine *vm);
 	~Debugger();
@@ -75,6 +76,9 @@ public:
 	bool cmdSave(int argc, const char **argv);
 	bool cmdOverlay(int argc, const char **argv);
 	bool cmdSubtitle(int argc, const char **argv);
+	bool cmdMazeScore(int argc, const char **argv);
+	bool cmdBoundBox(int argc, const char **argv);
+	bool cmdObstacle(int argc, const char **argv);
 	bool cmdList(int argc, const char **argv);
 	bool cmdVk(int argc, const char **argv);
 

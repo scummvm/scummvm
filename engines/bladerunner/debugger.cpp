@@ -85,6 +85,7 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 	_viewWalkboxes = false;
 	_viewZBuffer = false;
 	_playFullVk = false;
+	_showMazeScore = false;
 
 	registerCmd("anim", WRAP_METHOD(Debugger, cmdAnimation));
 	registerCmd("draw", WRAP_METHOD(Debugger, cmdDraw));
@@ -104,6 +105,9 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 	registerCmd("overlay", WRAP_METHOD(Debugger, cmdOverlay));
 	registerCmd("subtitle", WRAP_METHOD(Debugger, cmdSubtitle));
 	registerCmd("vk", WRAP_METHOD(Debugger, cmdVk));
+	registerCmd("mazescore", WRAP_METHOD(Debugger, cmdMazeScore));
+	registerCmd("boundbox", WRAP_METHOD(Debugger, cmdBoundBox));
+	registerCmd("obstacle", WRAP_METHOD(Debugger, cmdObstacle));
 }
 
 Debugger::~Debugger() {
@@ -1073,6 +1077,56 @@ bool Debugger::cmdSubtitle(int argc, const char **argv) {
 	}
 	return true;
 
+}
+
+/**
+* Toggle showing Maze score on the fly as subtitle during the Police Maze Course
+*/
+bool Debugger::cmdMazeScore(int argc, const char **argv) {
+bool invalidSyntax = false;
+
+	if (argc != 2) {
+		invalidSyntax = true;
+	} else {
+		if (_vm->_scene->getSetId() != kSetPS10_PS11_PS12_PS13) {
+			debugPrintf("Error:Command %s is only valid during the Police Maze course\n",  argv[0]);
+			return true;
+		}
+		//
+		// set a debug variable to enable showing the maze score
+		//
+		Common::String argName = argv[1];
+		argName.toLowercase();
+		if (argc == 2 && argName == "toggle") {
+			_showMazeScore = !_showMazeScore;
+			debugPrintf("Showing maze score = %s\n", _showMazeScore ? "True":"False");
+		} else {
+			invalidSyntax = true;
+		}
+	}
+
+	if (invalidSyntax) {
+		debugPrintf("Toggle showing the Maze Score as a subtitle during the Shooting Grounds Course\n");
+		debugPrintf("Usage: %s toggle", argv[0]);
+	}
+	return true;
+}
+
+/**
+* Change Bound box for objects to debug click box optimization
+*/
+bool Debugger::cmdBoundBox(int argc, const char **argv) {
+	// TODO
+	return true;
+}
+
+/**
+* Add or remove obstacle to debug some issues whereby existing obstacle layout does not prevent
+* characters from walking where they shouldn't
+*/
+bool Debugger::cmdObstacle(int argc, const char **argv) {
+	// TODO
+	return true;
 }
 
 /**
