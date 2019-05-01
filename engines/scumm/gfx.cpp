@@ -1460,8 +1460,8 @@ void ScummEngine_v5::drawFlashlight() {
 
 	blit(_flashlight.buffer, vs->pitch, bgbak, vs->pitch, _flashlight.w, _flashlight.h, vs->format.bytesPerPixel);
 
-	// C64 MM and the V1 Zak do not round the flashlight
-	if (_game.version >= 1 && !(_game.version == 1 && _game.id == GID_ZAK)) {
+	// C64 does not round the flashlight
+	if (_game.platform != Common::kPlatformC64) {
 
 		// Round the corners. To do so, we simply hard-code a set of nicely
 		// rounded corners.
