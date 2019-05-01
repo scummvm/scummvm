@@ -68,7 +68,7 @@ struct SaveInfoSection {
 
 #define SaveInfoSectionSize (4+4+4 + 4+4 + 4+2)
 
-#define CURRENT_VER 98
+#define CURRENT_VER 99
 #define INFOSECTION_VERSION 2
 
 #pragma mark -
@@ -1518,6 +1518,9 @@ void ScummEngine_v2::saveLoadWithSerializer(Common::Serializer &s) {
 	if (s.getVersion() < VER(79) && s.isLoading()) {
 		_inventoryOffset = 0;
 	}
+
+	s.syncAsByte(_flashlight.xStrips, VER(99));
+	s.syncAsByte(_flashlight.yStrips, VER(99));
 }
 
 void ScummEngine_v5::saveLoadWithSerializer(Common::Serializer &s) {
