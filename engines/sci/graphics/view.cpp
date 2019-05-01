@@ -286,10 +286,15 @@ void GfxView::initData(GuiResourceId resourceId) {
 
 			seekEntry = loopData[0];
 			if (seekEntry != 255) {
-				if (seekEntry >= loopCount)
-					error("Bad loop-pointer in sci 1.1 view");
 				_loop[loopNo].mirrorFlag = true;
-				loopData = _resource->subspan(headerSize + (seekEntry * loopSize));
+
+				// use the root loop for mirroring. this handles rare loops that
+				//  mirror loops that mirror loops. (FPFP view 844, bug #10953)
+				do {
+					if (seekEntry >= loopCount)
+						error("Bad loop-pointer in sci 1.1 view");
+					loopData = _resource->subspan(headerSize + (seekEntry * loopSize));
+				} while ((seekEntry = loopData[0]) != 255);
 			} else {
 				_loop[loopNo].mirrorFlag = false;
 			}
