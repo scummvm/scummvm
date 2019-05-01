@@ -45,11 +45,12 @@ public:
 
 	void init(ActorManager *actorManager);
 	void loadScene(uint32 sceneId);
+	bool isActorSet() { return true; }
 
 	int32 getSequenceId() {
 		return _sequenceId;
 	}
-
+	void setActorSequenceId(int32 sequenceId);
 	int16 getType() { return _type; }
 	void setType(int16 newType) { _type = newType; }
 
@@ -65,7 +66,9 @@ public:
 
 	void updateVisibility();
 	void setActorFlag400();
+	void setPriority(uint16 priority);
 
+	void actor_related_80030e88();
 };
 
 } // End of namespace Dragons

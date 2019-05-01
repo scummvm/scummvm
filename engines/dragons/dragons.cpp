@@ -66,7 +66,6 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	data_8006a3a0_flag = 0;
 	data_800633fa = 0;
 	data_8006f3a8 = 0;
-	_data_either_5_or_0 = 0;
 	_inventory = new Inventory(this);
 	_cursor = new Cursor(this);
 
@@ -81,6 +80,8 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 		opCode1A_tbl[i].field6 = 0;
 		opCode1A_tbl[i].field8 = 0;
 	}
+
+	memset(unkArray_uint16, 0, sizeof(unkArray_uint16));
 }
 
 DragonsEngine::~DragonsEngine() {
@@ -268,7 +269,7 @@ void DragonsEngine::gameLoop()
 	ushort *puVar9;
 	ScriptOpCall local_30;
 
-	_data_either_5_or_0 = 0;
+	_cursor->_cursorActivationSeqOffset = 0;
 	bit_flags_8006fbd8 = 0;
 	_counter = 0;
 	setFlags(ENGINE_FLAG_8);
@@ -340,10 +341,10 @@ void DragonsEngine::gameLoop()
 
 		if (_cursor->updateINIUnderCursor() == 0 ||
 			(!(_cursor->_iniUnderCursor & 0x8000) && (getINI(_cursor->_iniUnderCursor - 1)->field_1a_flags_maybe & 0x4000) != 0)) { //TODO check this. This logic looks a bit strange.
-			_data_either_5_or_0 = 0;
+			_cursor->_cursorActivationSeqOffset = 0;
 		}
 		else {
-			_data_either_5_or_0 = 5;
+			_cursor->_cursorActivationSeqOffset = 5;
 		}
 
 		if (_rightMouseButtonUp && isInputEnabled()) {
@@ -423,7 +424,7 @@ void DragonsEngine::gameLoop()
 						else {
 							_counter = 0;
 							_inventory->setType(1);
-							actor_related_80030e88();
+							_inventory->actor_related_80030e88();
 							joined_r0x80027a38:
 							if (data_8006f3a8 == 0) {
 								_cursor->_sequenceID = 1;
@@ -513,7 +514,7 @@ void DragonsEngine::gameLoop()
 						_counter = 0;
 						_inventory->setType(1);
 						_inventory->_old_showing_value = uVar6;
-						actor_related_80030e88();
+						_inventory->actor_related_80030e88();
 						goto joined_r0x80027a38;
 					}
 					if (checkForActionButtonRelease() && isFlagSet(ENGINE_FLAG_8)) goto LAB_80027ab4;
@@ -996,10 +997,7 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 		//TODO 0x80027be4
 
 		uint16 currentSceneId = _scene->getSceneId();
-
-
 		DragonINI *flickerINI = _dragonINIResource->getFlickerRecord();
-//		uint16 currentSceneId = _scene->getSceneId();
 
 
 //	uVar1 = flickerINI->actorId;
@@ -1007,6 +1005,7 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 //	uVar5 = dragon_ini_pointer[dragon_ini_const__2 + -1].field_0x1c;
 		if (flickerINI == NULL) {
 			//LAB_80027d40:
+			//error("LAB_80027d40"); //TODO is this logic required?
 //		if ((flickerINI->sceneId == currentSceneId)
 //			&& (uVar5 != 0xffff)) {
 //			actors[(uint)uVar5].﻿_sequenceID = 8;
@@ -1015,11 +1014,10 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 		}
 		else {
 			if (flickerINI->sceneId == currentSceneId) {
-				if ((flickerINI == NULL) || flickerINI->actor->isFlagSet(ACTOR_FLAG_10)) {
-					if ((flickerINI->sceneId == currentSceneId)) {
-						//&& (uVar5 != 0xffff)) {
-//					actors[(uint)uVar5].﻿_sequenceID = 8;
-//					actors[(uint)uVar5].﻿priorityLayer_maybe = 0;
+				if (flickerINI->actor->isFlagSet(ACTOR_FLAG_10)) {
+					if (_inventory->isActorSet()) {
+						_inventory->setActorSequenceId(8);
+						_inventory->setPriority(0);
 					}
 				} else {
 					if ((bit_flags_8006fbd8 & 2) == 0) {
@@ -1028,18 +1026,12 @@ void DragonsEngine::engineFlag0x20UpdateFunction() {
 					if (flickerINI->actor->isFlagClear(ACTOR_FLAG_2000)
 					&& flickerINI->actor->isFlagSet(ACTOR_FLAG_4)
 					&& flickerINI->actor->_sequenceID2 != -1
-					&& flickerINI->actor->_sequenceID2 != flickerINI->actor->_sequenceID)	{
+					&& flickerINI->actor->_sequenceID2 != flickerINI->actor->_sequenceID) {
 						flickerINI->actor->updateSequence(flickerINI->actor->_sequenceID2);
 					}
-//				if (((((actors[actorId].flags & 0x2000) == 0) && ((actors[actorId].flags & 4) != 0)) &&
-//					 (actors[actorId].﻿_sequenceID2 != actors[actorId].﻿_sequenceID)) &&
-//				(actors[actorId].﻿_sequenceID2 != -1)) {
-//					actor_update_sequenceID(actorId,actors[actorId].﻿_sequenceID2);
-//				}
 				}
-
 			} else {
-				//actors[(uint)uVar5].﻿priorityLayer_maybe = 0;
+				_inventory->setPriority(0); //TODO I don't think this is quite right.
 			}
 
 		}
@@ -1185,10 +1177,6 @@ bool DragonsEngine::checkForActionButtonRelease() {
 
 void DragonsEngine::FUN_8003130c() {
 	error("FUN_8003130c"); //TODO
-}
-
-void DragonsEngine::actor_related_80030e88() {
-	error("actor_related_80030e88"); //TODO
 }
 
 void DragonsEngine::FUN_80038890() {

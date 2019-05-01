@@ -41,11 +41,11 @@ public:
 	int16 _x;
 	int16 _y;
 	int16 data_8007283c;
+	int16 _cursorActivationSeqOffset;
 private:
 	DragonsEngine *_vm;
 	Actor *_actor;
 
-	int16 data_either_5_or_0;
 
 public:
 	Cursor(DragonsEngine *vm);
