@@ -23,6 +23,7 @@
 #include "actor.h"
 #include "dragons.h"
 #include "dragonrms.h"
+#include "dragonini.h"
 #include "inventory.h"
 
 namespace Dragons {
@@ -86,6 +87,37 @@ Common::Point Inventory::getPosition() {
 
 void Inventory::setActorFlag400() {
 	_actor->setFlag(ACTOR_FLAG_400);
+}
+
+void Inventory::setPriority(uint16 priority) {
+	_actor->priorityLayer = priority;
+}
+
+void Inventory::setActorSequenceId(int32 sequenceId) {
+	if (isActorSet()) {
+		_actor->_sequenceID = sequenceId;
+	}
+}
+
+void Inventory::actor_related_80030e88() {
+
+	for(int i = 0; i < 0x29; i++) {
+		Actor *item = _vm->_actorManager->getActor(i + 0x17);
+
+		item->x_pos = 0x28; //TODO
+		item->y_pos = 0x28;
+
+		if (_vm->unkArray_uint16[i]) {
+			item->field_e = 0x100;
+			item->priorityLayer = 0;
+			item->updateSequence(_vm->getINI(_vm->unkArray_uint16[i] - 1)->field_8 * 2 + 10);
+			item->setFlag(ACTOR_FLAG_200); //80 + 40
+			item->setFlag(ACTOR_FLAG_100);
+			item->setFlag(ACTOR_FLAG_80);
+			item->setFlag(ACTOR_FLAG_40);
+			item->priorityLayer = 6;
+		}
+	}
 }
 
 } // End of namespace Dragons

@@ -52,7 +52,7 @@ void Cursor::init(ActorManager *actorManager, DragonINIResource *dragonINIResour
 	dragonINIResource->getFlickerRecord()->field_1a_flags_maybe |= Dragons::INI_FLAG_1;
 	_iniUnderCursor = 0;
 	data_8007283c = 0;
-	data_either_5_or_0 = 0;
+	_cursorActivationSeqOffset = 0;
 	data_800728b0_cursor_seqID = 0;
 }
 
@@ -100,16 +100,16 @@ void Cursor::update() {
 		if ((_iniUnderCursor != 0x8001) || ((inventorySequenceID != 0 && (inventorySequenceID != 3)))) {
 			if (_sequenceID == 5) {
 				uint16 uVar1 = (uint) data_8007283c;
-				if (data_either_5_or_0 != 0) {
+				if (_cursorActivationSeqOffset != 0) {
 					uVar1 = uVar1 + 1;
 				}
 				if (uVar1 == (uint) _actor->_sequenceID) {
 					return;
 				}
-				_actor->updateSequence((uint) data_8007283c + (uint) (data_either_5_or_0 != 0));
+				_actor->updateSequence((uint) data_8007283c + (uint) (_cursorActivationSeqOffset != 0));
 			} else {
-				if (_sequenceID + (uint) data_either_5_or_0 != (uint) _actor->_sequenceID) {
-					_actor->updateSequence(_sequenceID + (uint) data_either_5_or_0);
+				if (_sequenceID + (uint) _cursorActivationSeqOffset != (uint) _actor->_sequenceID) {
+					_actor->updateSequence(_sequenceID + (uint) _cursorActivationSeqOffset);
 				}
 			}
 			return;

@@ -147,7 +147,6 @@ private:
 	uint32 _counter;
 	uint32 bit_flags_8006fbd8;
 	uint16 data_8006a3a0_flag; // screen related flags?
-	int16 _data_either_5_or_0;
 	//unk
 
 	uint16 run_func_ptr_unk_countdown_timer;
@@ -214,7 +213,6 @@ private:
 	bool checkForActionButtonRelease();
 
 	void FUN_8003130c();
-	void actor_related_80030e88();
 	void FUN_80038890();
 	void walkFlickerToObject();
 	void FUN_80031480();
