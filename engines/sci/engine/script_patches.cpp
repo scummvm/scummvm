@@ -1274,11 +1274,37 @@ static const uint16 freddypharkasPatchMacEasterEgg[] = {
 	PATCH_END
 };
 
+// FPFP Mac is missing view 844 of Hop Singh leaving town, breaking the scene.
+//  This occurs when going to the desert (room 200) after the restaurant closes
+//  but before act 3 ends. This would also crash the original so we just disable
+//  this minor optional scene.
+//
+// Applies to: Mac Floppy
+// Responsible method: rm200:init
+// Fixes bug #10954
+static const uint16 freddypharkasSignatureMacHopSingh[] = {
+	0x89, 0x77,                     // lsg 77
+	0x35, 0x13,                     // ldi 13
+	0x1a,                           // eq? [ did restaurant just close? ]
+	0x31, 0x46,                     // bnt 46 [ skip hop singh scene ]
+	SIG_ADDTOOFFSET(+0x41),
+	SIG_MAGICDWORD,
+	0x72, 0x01, 0xd0,               // lofsa hopSingh [ hard-coded big endian for mac ]
+	0x4a, 0x20,                     // send 20 [ hopSingh init: ... setScript: sLeaveTown ]
+	SIG_END
+};
+
+static const uint16 freddypharkasPatchMacHopSingh[] = {
+	0x33, 0x4b,                     // jmp 4b [ always skip hop singh scene ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                            patch
 static const SciScriptPatcherEntry freddypharkasSignatures[] = {
 	{  true,     0, "CD: score early disposal",                    1, freddypharkasSignatureScoreDisposal, freddypharkasPatchScoreDisposal },
 	{  true,    15, "Mac: broken inventory",                       1, freddypharkasSignatureMacInventory,  freddypharkasPatchMacInventory },
 	{  true,   110, "intro scaling workaround",                    2, freddypharkasSignatureIntroScaling,  freddypharkasPatchIntroScaling },
+	{  true,   200, "Mac: skip broken hop singh scene",            1, freddypharkasSignatureMacHopSingh,   freddypharkasPatchMacHopSingh },
 	{  true,   235, "CD: canister pickup hang",                    3, freddypharkasSignatureCanisterHang,  freddypharkasPatchCanisterHang },
 	{  true,   270, "Mac: easter egg hang",                        1, freddypharkasSignatureMacEasterEgg,  freddypharkasPatchMacEasterEgg },
 	{  true,   320, "ladder event issue",                          2, freddypharkasSignatureLadderEvent,   freddypharkasPatchLadderEvent },
