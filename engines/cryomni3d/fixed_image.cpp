@@ -60,6 +60,9 @@ void ZonFixedImage::run(const CallbackFunctor *callback) {
 
 	delete _callback;
 	_callback = nullptr;
+
+	// Don't use the current _imageSurface, we may not own it anymore
+	_imageSurface = nullptr;
 }
 
 void ZonFixedImage::load(const Common::String &image) {
@@ -292,6 +295,19 @@ void ZonFixedImage::handleMouseZones(const Common::Array<Zone>::const_iterator &
 	} else {
 		error("Invalid cursor ID: %d in ImgFix", currentZone->cursorId);
 	}
+}
+
+void ZonFixedImage::updateSurface(const Graphics::Surface *newSurface) {
+	if (newSurface->w != _imageSurface->w ||
+	        newSurface->h != _imageSurface->h ||
+	        newSurface->format != _imageSurface->format) {
+		error("New surface has invalid attributes");
+	}
+
+	// Be careful the surface must be destroyed after the fixed image has finished with it
+	_imageSurface = newSurface;
+
+	display();
 }
 
 } // End of namespace CryOmni3D
