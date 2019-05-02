@@ -36,7 +36,6 @@ struct MacFontRun {
 
 	uint16 fontId;
 	byte textSlant;
-	byte unk3f;
 	uint16 fontSize;
 	uint16 palinfo1;
 	uint16 palinfo2;
@@ -47,22 +46,21 @@ struct MacFontRun {
 
 	MacFontRun() {
 		wm = nullptr;
-		fontId = textSlant = unk3f = fontSize = 0;
+		fontId = textSlant = fontSize = 0;
 		palinfo1 = palinfo2  = palinfo3 = 0;
 		font = nullptr;
 	}
 
-	MacFontRun(MacWindowManager *wm_, uint16 fontId_, byte textSlant_, byte unk3f_, uint16 fontSize_,
+	MacFontRun(MacWindowManager *wm_, uint16 fontId_, byte textSlant_, uint16 fontSize_,
 			uint16 palinfo1_, uint16 palinfo2_, uint16 palinfo3_) {
-		setValues(wm_, fontId_, textSlant_, unk3f_, fontSize_, palinfo1_, palinfo2_, palinfo3_);
+		setValues(wm_, fontId_, textSlant_, fontSize_, palinfo1_, palinfo2_, palinfo3_);
 	}
 
-	void setValues(MacWindowManager *wm_, uint16 fontId_, byte textSlant_, byte unk3f_, uint16 fontSize_,
+	void setValues(MacWindowManager *wm_, uint16 fontId_, byte textSlant_, uint16 fontSize_,
 			uint16 palinfo1_, uint16 palinfo2_, uint16 palinfo3_) {
 		wm        = wm_;
 		fontId    = fontId_;
 		textSlant = textSlant_;
-		unk3f     = unk3f_;
 		fontSize  = fontSize_;
 		palinfo1  = palinfo1_;
 		palinfo2  = palinfo2_;
@@ -71,6 +69,8 @@ struct MacFontRun {
 	}
 
 	const Font *getFont();
+
+	const Common::String toString();
 };
 
 struct MacTextLine {
@@ -92,15 +92,31 @@ public:
 			int maxWidth = -1, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0);
 			// 0 pixels between the lines by default
 	~MacText();
+
+	int getInterLinear() { return _interLinear; }
 	void setInterLinear(int interLinear);
+	void setMaxWidth(int maxWidth);
+	void setDefaultFormatting(uint16 fontId_, byte textSlant_, uint16 fontSize_,
+			uint16 palinfo1_, uint16 palinfo2_, uint16 palinfo3_) {
+				_defaultFormatting.setValues(_defaultFormatting.wm, fontId_, textSlant_, fontSize_, palinfo1_, palinfo2_, palinfo3_);
+			}
 
 	void draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff);
-	void appendText(Common::String str);
+	void appendText(Common::String str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular, bool skipAdd = false);
+	void appendTextDefault(Common::String str, bool skipAdd = false);
+	void clearText();
 	void replaceLastLine(Common::String str);
+	void removeLastLine();
 	int getLineCount() { return _textLines.size(); }
+	int getTextHeight() { return _textMaxHeight; }
+	int getLineHeight(int line);
 
 	void render();
 	Graphics::ManagedSurface *getSurface() { return _surface; }
+
+	void getRowCol(int x, int y, int *sx, int *sy, int *row, int *col);
+
+	Common::String getTextChunk(int startRow, int startCol, int endRow, int endCol, bool formatted = false, bool newlines = true);
 
 private:
 	void splitString(Common::String &s);
@@ -108,7 +124,6 @@ private:
 	void recalcDims();
 	void reallocSurface();
 	int getLineWidth(int line, bool enforce = false);
-	int getLineHeight(int line);
 
 private:
 	MacWindowManager *_wm;

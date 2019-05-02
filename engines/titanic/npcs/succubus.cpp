@@ -25,6 +25,7 @@
 #include "titanic/carry/chicken.h"
 #include "titanic/core/view_item.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -46,9 +47,9 @@ BEGIN_MESSAGE_MAP(CSuccUBus, CTrueTalkNPC)
 	ON_MESSAGE(MouseDragStartMsg)
 END_MESSAGE_MAP()
 
-bool CSuccUBus::_isOn;
-bool CSuccUBus::_style;
-bool CSuccUBus::_enabled;
+bool CSuccUBus::_isOn;				// SuccUBus turned on
+bool CSuccUBus::_motherBlocked;		// Bilge SuccUBus is blocked
+bool CSuccUBus::_fuseboxOn;			// SuccUBus dial in fusebox is on
 
 CSuccUBus::CSuccUBus() : CTrueTalkNPC() {
 	_initialStartFrame = -1;
@@ -78,7 +79,7 @@ CSuccUBus::CSuccUBus() : CTrueTalkNPC() {
 	_endFrame1 = 40;
 	_rect1 = Rect(82, 284, 148, 339);
 	_field184 = 15;
-	_field188 = 0;
+	_mailPresent = false;
 	_rect2 = Rect(0, 0, 240, 340);
 	_sendLost = false;
 	_soundHandle = -1;
@@ -118,7 +119,7 @@ void CSuccUBus::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_okEndFrame, indent);
 	file->writeNumberLine(_flagsComparison, indent);
 
-	file->writeNumberLine(_style, indent);
+	file->writeNumberLine(_motherBlocked, indent);
 	file->writeNumberLine(_afterReceiveStartFrame, indent);
 	file->writeNumberLine(_afterReceiveEndFrame, indent);
 	file->writeNumberLine(_trayOutStartFrame, indent);
@@ -133,7 +134,7 @@ void CSuccUBus::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_rect1.right, indent);
 	file->writeNumberLine(_rect1.bottom, indent);
 	file->writeNumberLine(_field184, indent);
-	file->writeNumberLine(_field188, indent);
+	file->writeNumberLine(_mailPresent, indent);
 	file->writeNumberLine(_rect2.left, indent);
 	file->writeNumberLine(_rect2.top, indent);
 	file->writeNumberLine(_rect2.right, indent);
@@ -154,7 +155,7 @@ void CSuccUBus::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_pumpingEndFrame, indent);
 	file->writeNumberLine(_destRoomFlags, indent);
 
-	file->writeNumberLine(_enabled, indent);
+	file->writeNumberLine(_fuseboxOn, indent);
 	file->writeNumberLine(_inProgress, indent);
 	file->writeNumberLine(_field104, indent);
 
@@ -181,7 +182,7 @@ void CSuccUBus::load(SimpleFile *file) {
 	_okEndFrame = file->readNumber();
 	_flagsComparison = (RoomFlagsComparison)file->readNumber();
 
-	_style = file->readNumber();
+	_motherBlocked = file->readNumber();
 	_afterReceiveStartFrame = file->readNumber();
 	_afterReceiveEndFrame = file->readNumber();
 	_trayOutStartFrame = file->readNumber();
@@ -197,7 +198,7 @@ void CSuccUBus::load(SimpleFile *file) {
 	_rect1.right = file->readNumber();
 	_rect1.bottom = file->readNumber();
 	_field184 = file->readNumber();
-	_field188 = file->readNumber();
+	_mailPresent = file->readNumber();
 	_rect2.left = file->readNumber();
 	_rect2.top = file->readNumber();
 	_rect2.right = file->readNumber();
@@ -218,7 +219,7 @@ void CSuccUBus::load(SimpleFile *file) {
 	_pumpingEndFrame = file->readNumber();
 	_destRoomFlags = file->readNumber();
 
-	_enabled = file->readNumber();
+	_fuseboxOn = file->readNumber();
 	_inProgress = file->readNumber();
 	_field104 = file->readNumber();
 
@@ -226,32 +227,39 @@ void CSuccUBus::load(SimpleFile *file) {
 }
 
 bool CSuccUBus::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	if (!_inProgress) {
-		Rect tempRect = _rect1;
-		tempRect.translate(_bounds.left, _bounds.top);
+	if (_inProgress)
+		return true;
 
-		if (!_isOn || (_field188 && tempRect.contains(msg->_mousePos))) {
-			CTurnOn onMsg;
-			onMsg.execute(this);
-			_isOn = true;
-		} else if (getRandomNumber(256) < 130) {
-			_isOn = false;
-			CTurnOff offMsg;
-			offMsg.execute(this);
-		} else {
-			switch (getRandomNumber(2, &_priorRandomVal1)) {
-			case 0:
-				startTalking(this, 230055, findView());
-				break;
-			case 1:
-				startTalking(this, 230067, findView());
-				break;
-			case 2:
-				startTalking(this, 230045, findView());
-				break;
-			default:
-				break;
-			}
+	Rect tempRect = _rect1;
+	tempRect.translate(_bounds.left, _bounds.top);
+
+	if (!_isOn) {
+		CTurnOn onMsg;
+		onMsg.execute(this);
+		_isOn = true;
+		return true;
+	}
+
+	if (_mailPresent && tempRect.contains(msg->_mousePos))
+		return true;
+
+	if (getRandomNumber(256) < 130) {
+		_isOn = false;
+		CTurnOff offMsg;
+		offMsg.execute(this);
+	} else {
+		switch (getRandomNumber(2, &_priorRandomVal1)) {
+		case 0:
+			startTalking(this, 230055, findView());
+			break;
+		case 1:
+			startTalking(this, 230067, findView());
+			break;
+		case 2:
+			startTalking(this, 230045, findView());
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -282,13 +290,13 @@ bool CSuccUBus::SubAcceptCCarryMsg(CSubAcceptCCarryMsg *msg) {
 
 		item->setVisible(false);
 		if (_startFrame1 >= 0) {
-			playSound("z#23.wav");
+			playSound(TRANSLATE("z#23.wav", "z#554.wav"));
 			playMovie(_startFrame1, _endFrame1, 0);
 		}
 
 		if (!chickenFlag) {
 			// Not chicken, or chicken with condiments
-			_field188 = 1;
+			_mailPresent = true;
 			item->addMail(roomFlags);
 			petSetArea(PET_REMOTE);
 			petHighlightGlyph(16);
@@ -359,7 +367,7 @@ bool CSuccUBus::LeaveViewMsg(CLeaveViewMsg *msg) {
 	if (_isOn) {
 		_isOn = false;
 		if (_offStartFrame >= 0)
-			playSound("z#27.wav", 100);
+			playSound(TRANSLATE("z#27.wav", "z#558.wav"), 100);
 
 		if (_signalFlag)
 			setVisible(false);
@@ -385,9 +393,10 @@ bool CSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 	if (!pet)
 		return true;
 
-	uint destRoomFlags = pet->getRoomFlags();
-	CGameObject *mailObject = findMail(destRoomFlags);
+	uint srcRoomFlags = pet->getRoomFlags();
+	CGameObject *mailObject = findMail(srcRoomFlags);
 	if (!mailObject) {
+		// Nothing to send
 		switch (getRandomNumber(2)) {
 		case 0:
 			startTalking(this, 70111, findView());
@@ -415,14 +424,14 @@ bool CSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 		_isFeathers = mailObject->getName() == "Feathers";
 		_isChicken = mailObject->getName() == "Chicken";
 		_sendAction = SA_SENT;
-		_field188 = 0;
+		_mailPresent = false;
 		_inProgress = true;
-		incTransitions();
+		lockMouse();
 
 		if (_isFeathers) {
 			// The feather has special handling to be rejected by the SuccUBus
 			_sendLost = false;
-			sendMail(destRoomFlags, roomFlags);
+			sendMail(srcRoomFlags, roomFlags);
 			pet->phonographAction("");
 
 			if (_okStartFrame >= 0) {
@@ -487,8 +496,12 @@ bool CSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 			break;
 		}
 	} else {
+		// When the SuccUBus dial in Titania's fusebox is on, then
+		// any mail can be received by the SuccUBus in the bomb room.
+		// Otherwise, only get mail sent to this specific SuccUBus
 		CGameObject *mailObject = findMailByFlags(
-			_enabled && compareRoomNameTo("Titania") ? RFC_TITANIA : _flagsComparison, petRoomFlags);
+			_fuseboxOn && compareRoomNameTo("Titania") ? RFC_TITANIA : _flagsComparison, petRoomFlags);
+
 		if (!mailObject) {
 			// No mail for this SuccUBus
 			if (getRandomNumber(1) == 0) {
@@ -508,7 +521,7 @@ bool CSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 			if (_receiveStartFrame >= 0) {
 				_sendAction = SA_FEATHERS;
 				_inProgress = true;
-				incTransitions();
+				lockMouse();
 				playMovie(_receiveStartFrame, _receiveEndFrame, MOVIE_NOTIFY_OBJECT);
 			}
 		}
@@ -523,7 +536,7 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 
 	if (msg->_endFrame == _offEndFrame) {
 		if (_endingStartFrame >= 0)
-			playSound("z#30.wav", 100);
+			playSound(TRANSLATE("z#30.wav", "z#561.wav"), 100);
 
 		if (_signalFlag) {
 			_signalFlag = false;
@@ -538,7 +551,7 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 		bool flag = false;
 
 		if (pet && !mailExists(petRoomFlags)) {
-			CGameObject *mailObject = _enabled && compareRoomNameTo("Titania") ?
+			CGameObject *mailObject = _fuseboxOn && compareRoomNameTo("Titania") ?
 				findMailByFlags(RFC_TITANIA, petRoomFlags) :
 				findMailByFlags(_flagsComparison, petRoomFlags);
 
@@ -566,11 +579,11 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 			}
 		}
 
-		if (!_field188 && !flag) {
+		if (!_mailPresent && !flag) {
 			stopSound(_soundHandle);
 			_soundHandle = -1;
 
-			switch (getRandomNumber(_style ? 7 : 5, &_priorRandomVal2)) {
+			switch (getRandomNumber(_motherBlocked ? 7 : 5, &_priorRandomVal2)) {
 			case 2:
 				startTalking(this, 230001, findView());
 				break;
@@ -612,7 +625,7 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 
 		if (_inProgress) {
 			_inProgress = false;
-			decTransitions();
+			unlockMouse();
 		}
 
 		CSUBTransition transMsg;
@@ -625,11 +638,11 @@ bool CSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 			_mailP->setMailDest(petRoomFlags);
 		}
 
-		_field188 = 1;
+		_mailPresent = true;
 		_mailP = nullptr;
 		if (_inProgress) {
 			_inProgress = false;
-			decTransitions();
+			unlockMouse();
 		}
 
 		CSUBTransition transMsg;
@@ -668,12 +681,12 @@ bool CSuccUBus::TurnOn(CTurnOn *msg) {
 	if (pet) {
 		if (!_signalFlag && _initialStartFrame >= 0) {
 			playMovie(_initialStartFrame, _initialEndFrame, 0);
-			playSound("z#30.wav", 100);
+			playSound(TRANSLATE("z#30.wav", "z#561.wav"), 100);
 		}
 
 		if (_onStartFrame >= 0) {
 			playMovie(_onStartFrame, _onEndFrame, MOVIE_NOTIFY_OBJECT);
-			playSound("z#26.wav", 100);
+			playSound(TRANSLATE("z#26.wav", "z#557.wav"), 100);
 		}
 
 		uint petRoomFlags = pet->getRoomFlags();
@@ -700,7 +713,7 @@ bool CSuccUBus::TurnOff(CTurnOff *msg) {
 	}
 
 	if (_offStartFrame >= 0) {
-		playSound("z#27.wav", 100);
+		playSound(TRANSLATE("z#27.wav", "z#558.wav"), 100);
 		playMovie(_offStartFrame, _offEndFrame, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 	}
 
@@ -741,7 +754,7 @@ bool CSuccUBus::SUBTransition(CSUBTransition *msg) {
 bool CSuccUBus::SetChevRoomBits(CSetChevRoomBits *msg) {
 	if (_isOn) {
 		_destRoomFlags = msg->_roomFlags;
-		playSound("z#98.wav", 100);
+		playSound(TRANSLATE("z#98.wav", "z#629.wav"), 100);
 	}
 
 	return true;
@@ -749,9 +762,11 @@ bool CSuccUBus::SetChevRoomBits(CSetChevRoomBits *msg) {
 
 bool CSuccUBus::ActMsg(CActMsg *msg) {
 	if (msg->_action == "EnableObject")
-		_enabled = true;
+		// SuccUBus dial in fusebox was turned on
+		_fuseboxOn = true;
 	else if (msg->_action == "DisableObject")
-		_enabled = false;
+		// SuccUBus dial in fusebox was turned off
+		_fuseboxOn = false;
 
 	return true;
 }
@@ -761,7 +776,7 @@ bool CSuccUBus::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 	Rect tempRect = _rect1;
 	tempRect.translate(_bounds.left, _bounds.top);
 
-	if (_inProgress || !_isOn || !_field188 || !tempRect.contains(msg->_mousePos)
+	if (_inProgress || !_isOn || !_mailPresent || !tempRect.contains(msg->_mousePos)
 			|| !pet)
 		return true;
 
@@ -790,7 +805,7 @@ bool CSuccUBus::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 		msg->_dragItem = mailObject;
 
 	loadFrame(_field184);
-	_field188 = 0;
+	_mailPresent = false;
 	CSUBTransition transMsg;
 	transMsg.execute(this);
 

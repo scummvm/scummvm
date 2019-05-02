@@ -151,17 +151,16 @@ SOLStream<STEREO, S16BIT, OLDDPCM8>::SOLStream(Common::SeekableReadStream *strea
 		const uint8 compressionRatio = 2;
 		const uint8 numChannels = STEREO ? 2 : 1;
 		const uint8 bytesPerSample = S16BIT ? 2 : 1;
-		_length = Audio::Timestamp((_rawDataSize * compressionRatio * 1000) / (_sampleRate * numChannels * bytesPerSample), 60);
+		_length = ((uint64)_rawDataSize * compressionRatio * 1000) / (_sampleRate * numChannels * bytesPerSample);
 	}
 
 template <bool STEREO, bool S16BIT, bool OLDDPCM8>
 bool SOLStream<STEREO, S16BIT, OLDDPCM8>::seek(const Audio::Timestamp &where) {
 	if (where != 0) {
-		// In order to seek in compressed SOL files, all
-		// previous bytes must be known since it uses
-		// differential compression. Therefore, only seeking
-		// to the beginning is supported now (SSCI does not
-		// offer seeking anyway)
+		// In order to seek in compressed SOL files, all previous bytes must be
+		// known since it uses differential compression. Therefore, only seeking
+		// to the beginning is supported now (SSCI does not offer seeking
+		// anyway)
 		return false;
 	}
 
@@ -254,20 +253,20 @@ Audio::SeekableAudioStream *makeSOLStream(Common::SeekableReadStream *stream, Di
 
 	if (flags & kCompressed) {
 		if (flags & kStereo && flags & k16Bit) {
-			return new SOLStream<true, true, false>(new Common::SeekableSubReadStream(stream, initialPosition, initialPosition + dataSize, disposeAfterUse), disposeAfterUse, sampleRate, dataSize);
+			return new SOLStream<true, true, false>(new Common::SeekableSubReadStream(stream, initialPosition, initialPosition + dataSize, disposeAfterUse), DisposeAfterUse::YES, sampleRate, dataSize);
 		} else if (flags & kStereo) {
 			if (getSciVersion() < SCI_VERSION_2_1_EARLY) {
 				error("SCI2 and earlier did not support stereo SOL audio");
 			}
 
-			return new SOLStream<true, false, false>(new Common::SeekableSubReadStream(stream, initialPosition, initialPosition + dataSize, disposeAfterUse), disposeAfterUse, sampleRate, dataSize);
+			return new SOLStream<true, false, false>(new Common::SeekableSubReadStream(stream, initialPosition, initialPosition + dataSize, disposeAfterUse), DisposeAfterUse::YES, sampleRate, dataSize);
 		} else if (flags & k16Bit) {
-			return new SOLStream<false, true, false>(new Common::SeekableSubReadStream(stream, initialPosition, initialPosition + dataSize, disposeAfterUse), disposeAfterUse, sampleRate, dataSize);
+			return new SOLStream<false, true, false>(new Common::SeekableSubReadStream(stream, initialPosition, initialPosition + dataSize, disposeAfterUse), DisposeAfterUse::YES, sampleRate, dataSize);
 		} else {
 			if (getSciVersion() < SCI_VERSION_2_1_EARLY) {
-				return new SOLStream<false, false, true>(new Common::SeekableSubReadStream(stream, initialPosition, initialPosition + dataSize, disposeAfterUse), disposeAfterUse, sampleRate, dataSize);
+				return new SOLStream<false, false, true>(new Common::SeekableSubReadStream(stream, initialPosition, initialPosition + dataSize, disposeAfterUse), DisposeAfterUse::YES, sampleRate, dataSize);
 			} else {
-				return new SOLStream<false, false, false>(new Common::SeekableSubReadStream(stream, initialPosition, initialPosition + dataSize, disposeAfterUse), disposeAfterUse, sampleRate, dataSize);
+				return new SOLStream<false, false, false>(new Common::SeekableSubReadStream(stream, initialPosition, initialPosition + dataSize, disposeAfterUse), DisposeAfterUse::YES, sampleRate, dataSize);
 			}
 		}
 	}

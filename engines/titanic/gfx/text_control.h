@@ -24,11 +24,14 @@
 #define TITANIC_TEXT_CONTROL_H
 
 #include "common/keyboard.h"
-#include "titanic/support/simple_file.h"
 #include "titanic/support/screen_manager.h"
-#include "titanic/support/text_cursor.h"
+#include "titanic/support/strings.h"
 
 namespace Titanic {
+
+class CScreenManager;
+class CTextCursor;
+class SimpleFile;
 
 class CTextControl {
 	struct ArrayEntry {
@@ -36,6 +39,7 @@ class CTextControl {
 		CString _rgb;
 		CString _string3;
 	};
+
 private:
 	Common::Array<ArrayEntry> _array;
 	CString _lines;

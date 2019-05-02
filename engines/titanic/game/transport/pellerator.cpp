@@ -22,13 +22,20 @@
 
 #include "titanic/game/transport/pellerator.h"
 #include "titanic/core/room_item.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
-static const char *const WAVE_NAMES[10] = {
+static const char *const WAVE_NAMES_EN[10] = {
 	"z#465.wav", "z#456.wav", "z#455.wav", "z#453.wav",
 	"z#452.wav", "NoStandingInFunnyWays", "z#450.wav",
 	"z#449.wav", "z#435.wav", "z#434.wav"
+};
+
+static const char *const WAVE_NAMES_DE[10] = {
+	"z#202.wav", "z#193.wav", "z#192.wav", "z#190.wav",
+	"z#189.wav", "NoStandingInFunnyWays", "z#187.wav",
+	"z#186.wav", "z#180.wav", "z#179.wav"
 };
 
 BEGIN_MESSAGE_MAP(CPellerator, CTransport)
@@ -62,7 +69,6 @@ void CPellerator::load(SimpleFile *file) {
 
 bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 	setVisible(true);
-	playGlobalSound("z#74.wav", -2, true, true, 0);
 	int classNum = getPassengerClass();
 	int newDest = msg->_newStatus;
 
@@ -71,6 +77,8 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 	} else if (classNum == 3 || (msg->_newStatus > 4 && classNum != 1)) {
 		petDisplayMessage(1, CLASS_NOT_ALLOWED_AT_DEST);
 	} else if (newDest > _destination) {
+		playAmbientSound(TRANSLATE("z#74.wav", "z#605.wav"), VOL_QUIET, true, true, 0);
+
 		CString name = getName();
 		changeView(name == "PelleratorObject2" ?
 			"Pellerator.Node 1.N" : "Pellerator.Node 1.S");
@@ -155,7 +163,7 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 				case 5:
 					playMovie(315, 323, 0);
 					for (int idx = 0; idx < 7; ++idx)
-						playMovie(229, 304, 0);
+						playMovie(299, 304, 0);
 					for (int idx = 0; idx < 12; ++idx)
 						playMovie(245, 255, 0);
 					for (int idx = 0; idx < 3; ++idx)
@@ -172,6 +180,8 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 		playMovie(264, 264, MOVIE_NOTIFY_OBJECT);
 		_destination = newDest;
 	} else if (newDest < _destination) {
+		playAmbientSound(TRANSLATE("z#74.wav", "z#605.wav"), VOL_QUIET, true, true, 0);
+
 		CString name = getName();
 		changeView(name == "PelleratorObject2" ?
 			"Pellerator.Node 1.N" : "Pellerator.Node 1.S");
@@ -229,7 +239,7 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 				}
 			}
 		} else {
-			for (--_destination; _destination > newDest; --_destination) {
+			for (--_destination; _destination >= newDest; --_destination) {
 				switch (_destination) {
 				case 0:
 				case 1:
@@ -288,8 +298,11 @@ bool CPellerator::StatusChangeMsg(CStatusChangeMsg *msg) {
 
 bool CPellerator::EnterRoomMsg(CEnterRoomMsg *msg) {
 	if (isEquals("PelleratorObject")) {
+		if (g_language == Common::DE_DEU)
+			_soundHandle = queueSound("z#200.wav", _soundHandle);
+
 		for (int idx = 0; idx < 10; ++idx)
-			loadSound(WAVE_NAMES[idx]);
+			loadSound(TRANSLATE(WAVE_NAMES_EN[idx], WAVE_NAMES_DE[idx]));
 		addTimer(10000);
 	}
 
@@ -297,8 +310,11 @@ bool CPellerator::EnterRoomMsg(CEnterRoomMsg *msg) {
 	int oldVal = _destination;
 
 	if (name.empty()) {
-		_destination = 4;
-		oldVal = 4;
+		// WORKAROUND: Called when loading a savegame, the original reset the
+		// destination to '4' resulting in potentially longer travel times.
+		// Since the destination is saved as part of savegames anyway, I'm
+		// changing this to leave it unchanged
+		oldVal = _destination;
 	} else if (name == "PromenadeDeck") {
 		_destination = 0;
 	} else if (name == "MusicRoomLobby") {
@@ -325,26 +341,26 @@ bool CPellerator::EnterRoomMsg(CEnterRoomMsg *msg) {
 
 bool CPellerator::MovieEndMsg(CMovieEndMsg *msg) {
 	setVisible(false);
-	stopGlobalSound(true, -1);
+	stopAmbientSound(true, -1);
 
 	switch (_destination) {
 	case 0:
-		_soundHandle = queueSound("z#429.wav", _soundHandle);
+		_soundHandle = queueSound(TRANSLATE("z#429.wav", "z#174.wav"), _soundHandle);
 		break;
 	case 1:
-		_soundHandle = queueSound("z#430.wav", _soundHandle);
+		_soundHandle = queueSound(TRANSLATE("z#430.wav", "z#175.wav"), _soundHandle);
 		break;
 	case 2:
-		_soundHandle = queueSound("z#431.wav", _soundHandle);
+		_soundHandle = queueSound(TRANSLATE("z#431.wav", "z#176.wav"), _soundHandle);
 		break;
 	case 4:
-		_soundHandle = queueSound("z#428.wav", _soundHandle);
+		_soundHandle = queueSound(TRANSLATE("z#428.wav", "z#173.wav"), _soundHandle);
 		break;
 	case 5:
-		_soundHandle = queueSound("z#433.wav", _soundHandle);
+		_soundHandle = queueSound(TRANSLATE("z#433.wav", "z#178.wav"), _soundHandle);
 		break;
 	case 6:
-		_soundHandle = queueSound("z#432.wav", _soundHandle);
+		_soundHandle = queueSound(TRANSLATE("z#432.wav", "z#177.wav"), _soundHandle);
 		break;
 	default:
 		break;
@@ -355,7 +371,8 @@ bool CPellerator::MovieEndMsg(CMovieEndMsg *msg) {
 
 bool CPellerator::TimerMsg(CTimerMsg *msg) {
 	if (compareRoomNameTo("Pellerator")) {
-		_soundHandle = queueSound(WAVE_NAMES[getRandomNumber(9)], _soundHandle);
+		_soundHandle = queueSound(TRANSLATE(WAVE_NAMES_EN[getRandomNumber(9)],
+				WAVE_NAMES_DE[getRandomNumber(9)]), _soundHandle);
 		addTimer(20000 + getRandomNumber(10000));
 	}
 

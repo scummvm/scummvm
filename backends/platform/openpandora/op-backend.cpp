@@ -27,7 +27,6 @@
 
 #include "backends/platform/sdl/sdl-sys.h"
 
-#include "backends/mixer/doublebuffersdl/doublebuffersdl-mixer.h"
 #include "backends/platform/openpandora/op-sdl.h"
 #include "backends/plugins/posix/posix-provider.h"
 #include "backends/saves/default/default-saves.h"

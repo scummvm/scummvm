@@ -24,11 +24,11 @@
 #define XEEN_SAVES_H
 
 #include "common/scummsys.h"
-#include "common/memstream.h"
 #include "common/savefile.h"
+#include "common/serializer.h"
+#include "common/str.h"
 #include "graphics/surface.h"
 #include "xeen/party.h"
-#include "xeen/files.h"
 
 namespace Xeen {
 
@@ -41,54 +41,63 @@ struct XeenSavegameHeader {
 	int _totalFrames;
 };
 
-class XeenEngine;
-class SavesManager;
-
-class OutFile : public Common::MemoryWriteStreamDynamic {
+class SavesManager {
 private:
-	XeenEngine *_vm;
-	Common::String _filename;
-public:
-	OutFile(XeenEngine *vm, const Common::String filename);
-
-	void finalize();
-};
-
-class SavesManager: public BaseCCArchive {
-	friend class OutFile;
+	Common::String _targetName;
 private:
-	XeenEngine *_vm;
-	Party &_party;
-	byte *_data;
-	Common::HashMap<uint16, Common::MemoryWriteStreamDynamic > _newData;
-
-	void load(Common::SeekableReadStream *stream);
-public:
 	/**
-	 * Synchronizes a boolean array as a bitfield set
+	 * Support method that generates a savegame name
+	 * @param slot		Slot number
 	 */
-	static void syncBitFlags(Common::Serializer &s, bool *startP, bool *endP);
+	Common::String generateSaveName(int slot);
+
+	/**
+	 * Initializes a new savegame
+	 */
+	void reset();
 public:
 	bool _wonWorld;
 	bool _wonDarkSide;
 public:
-	SavesManager(XeenEngine *vm, Party &party);
-
+	SavesManager(const Common::String &targetName);
 	~SavesManager();
 
 	/**
-	 * Sets up the dynamic data for the game for a new game
+	 * Read in a savegame header
 	 */
-	void reset();
+	WARN_UNUSED_RESULT static bool readSavegameHeader(Common::InSaveFile *in, XeenSavegameHeader &header, bool skipThumbnail = true);
 
-	void readCharFile();
+	/**
+	 * Write out a savegame header
+	 */
+	void writeSavegameHeader(Common::OutSaveFile *out, XeenSavegameHeader &header);
 
-	void writeCharFile();
+	/**
+	 * Load a savegame
+	 */
+	Common::Error loadGameState(int slot);
 
-	void saveChars();
+	/**
+	 * Save the game
+	 */
+	Common::Error saveGameState(int slot, const Common::String &desc);
 
-	// Archive implementation
-	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
+	/**
+	 * Sets up a new game
+	 */
+	void newGame();
+
+	/**
+	 * Shows the load game dialog, and lets the user load a game
+	 * @returns		True if a savegame was loaded
+	 */
+	bool loadGame();
+
+	/**
+	 * Shows the save game dialog, and lets the user save their game
+	 * @returns		True if a savegame was saved
+	 */
+	bool saveGame();
 };
 
 } // End of namespace Xeen

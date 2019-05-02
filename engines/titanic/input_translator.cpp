@@ -80,40 +80,47 @@ void CInputTranslator::middleButtonDoubleClick(int special, const Point &pt) {
 	_inputHandler->handleMessage(msg);
 }
 
-void CInputTranslator::rightButtonDown(int special, const Point &pt) {
-	CMouseButtonDownMsg msg(pt, MB_RIGHT);
-	_inputHandler->handleMessage(msg);
-}
-
-void CInputTranslator::rightButtonUp(int special, const Point &pt) {
-	CMouseButtonUpMsg msg(pt, MB_RIGHT);
-	_inputHandler->handleMessage(msg);
-}
-
 void CInputTranslator::mouseWheel(bool wheelUp, const Point &pt) {
 	CMouseWheelMsg msg(pt, wheelUp);
 	_inputHandler->handleMessage(msg);
 }
 
-void CInputTranslator::rightButtonDoubleClick(int special, const Point &pt) {
-	CMouseDoubleClickMsg msg(pt, MB_RIGHT);
-	_inputHandler->handleMessage(msg);
-}
-
 void CInputTranslator::keyDown(const Common::KeyState &keyState) {
-	if (keyState.keycode >= Common::KEYCODE_F1 && keyState.keycode <= Common::KEYCODE_F5) {
-		CVirtualKeyCharMsg msg(keyState);
-		_inputHandler->handleMessage(msg);
+	if (keyState.ascii > 0 && keyState.ascii <= 127) {
+		CKeyCharMsg msg(keyState.ascii);
+		if (_inputHandler->handleMessage(msg))
+			return;
 	}
 
-	if (keyState.ascii <= 127) {
-		CKeyCharMsg msg(keyState.ascii);
+	if (CMovementMsg::getMovement(keyState.keycode) != MOVE_NONE) {
+		CMovementMsg msg(keyState.keycode);
+		if (_inputHandler->handleMessage(msg))
+			return;
+	}
+
+	if (isSpecialKey(keyState.keycode)) {
+		CVirtualKeyCharMsg msg(keyState);
+		msg._keyState.ascii = 0;
 		_inputHandler->handleMessage(msg);
 	}
 }
 
 bool CInputTranslator::isMousePressed() const {
 	return g_vm->_events->getSpecialButtons() & (MK_LBUTTON | MK_RBUTTON | MK_MBUTTON);
+}
+
+bool CInputTranslator::isSpecialKey(Common::KeyCode key) {
+	if ((key >= Common::KEYCODE_F1 && key <= Common::KEYCODE_F8) ||
+		(key >= Common::KEYCODE_KP1 && key <= Common::KEYCODE_KP9))
+		return true;
+
+	if (key == Common::KEYCODE_PAGEUP || key == Common::KEYCODE_PAGEDOWN ||
+		key == Common::KEYCODE_HOME || key == Common::KEYCODE_END ||
+		key == Common::KEYCODE_LEFT || key == Common::KEYCODE_RIGHT ||
+		key == Common::KEYCODE_UP || key == Common::KEYCODE_DOWN)
+		return true;
+
+	return false;
 }
 
 } // End of namespace Titanic

@@ -193,7 +193,7 @@ int Paula::readBufferIntern(int16 *buffer, const int numSamples) {
 class AmigaMusicPlugin : public NullMusicPlugin {
 public:
 	const char *getName() const {
-		return _s("Amiga Audio Emulator");
+		return _s("Amiga Audio emulator");
 	}
 
 	const char *getId() const {

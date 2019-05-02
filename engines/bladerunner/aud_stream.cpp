@@ -22,18 +22,27 @@
 
 #include "bladerunner/aud_stream.h"
 
-#include "bladerunner/audio_player.h"
+#include "bladerunner/audio_cache.h"
 
 #include "common/util.h"
 
 namespace BladeRunner {
 
-AudStream::AudStream(byte *data) : _cache(nullptr) {
+AudStream::AudStream(byte *data, int overrideFrequency) {
+	_hash  = 0;
+	_cache = nullptr;
+	_overrideFrequency = overrideFrequency;
+
 	init(data);
 }
 
-AudStream::AudStream(AudioCache *cache, int32 hash)
-		: _cache(cache), _hash(hash) {
+AudStream::AudStream(AudioCache *cache, int32 hash, int overrideFrequency) {
+	assert(cache != nullptr);
+
+	_cache = cache;
+	_hash  = hash;
+	_overrideFrequency = overrideFrequency;
+
 	_cache->incRef(_hash);
 
 	init(_cache->findByHash(_hash));
@@ -41,18 +50,23 @@ AudStream::AudStream(AudioCache *cache, int32 hash)
 
 void AudStream::init(byte *data) {
 	_data = data;
-	_end = _data + READ_LE_UINT32(_data + 2) + 12;
-	assert(_end - _data >= 12);
-
+	_frequency = READ_LE_UINT16(_data);
+	_size = READ_LE_UINT32(_data + 2);
+	_sizeDecompressed = READ_LE_UINT32(_data + 6);
+	_flags = *(_data + 10);
 	_compressionType = *(_data + 11);
+
+	_end = _data + _size + 12;
+	assert(_end - _data >= 12);
 
 	_deafBlockRemain = 0;
 	_p = _data + 12;
 }
 
 AudStream::~AudStream() {
-	if (_cache)
+	if (_cache) {
 		_cache->decRef(_hash);
+	}
 }
 
 int AudStream::readBuffer(int16 *buffer, const int numSamples) {
@@ -90,8 +104,7 @@ int AudStream::readBuffer(int16 *buffer, const int numSamples) {
 			assert(_end - _p >= _deafBlockRemain);
 
 			int bytesConsumed = MIN<int>(_deafBlockRemain, (numSamples - samplesRead) / 2);
-
-			_decoder.decode(_p, bytesConsumed, buffer + samplesRead);
+			_decoder.decode(_p, bytesConsumed, buffer + samplesRead, false);
 			_p += bytesConsumed;
 			_deafBlockRemain -= bytesConsumed;
 
@@ -111,6 +124,22 @@ bool AudStream::rewind() {
 	_p = _data + 12;
 	_decoder.setParameters(0, 0);
 	return true;
+}
+
+int AudStream::getLength() const {
+	int bytesPerSecond = _overrideFrequency > 0 ? _overrideFrequency : _frequency;
+	if (_flags & 1) { // 16 bit
+		bytesPerSecond *= 2;
+	}
+	if (_flags & 2) { // stereo
+		bytesPerSecond *= 2;
+	}
+
+	// since everything is 44100, we easily get overflows with ints
+	// thus we must use doubles
+	double res = (double)_sizeDecompressed * 1000.0 / (double)bytesPerSecond;
+
+	return (int32)res;
 }
 
 } // End of namespace BladeRunner

@@ -212,11 +212,12 @@ class QMixer {
 		byte getRawVolume() const;
 	};
 private:
-	Audio::Mixer *_mixer;
 	Common::Array<ChannelEntry> _channels;
+protected:
+	Audio::Mixer *_mixer;
 public:
 	QMixer(Audio::Mixer *mixer);
-	virtual ~QMixer() {}
+	virtual ~QMixer();
 
 	/**
 	 * Initializes the mixer

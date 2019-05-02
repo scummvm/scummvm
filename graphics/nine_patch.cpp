@@ -156,7 +156,7 @@ NinePatchBitmap::NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bi
 	bmp->format.colorToARGB(*(uint32 *)bmp->getBasePtr(x, y), a, r, g, b); \
 	if (a != 0 && r + g + b + a != 4) goto bad_bitmap;
 
-	_check_pixel(0,0);
+	_check_pixel(0, 0);
 	_check_pixel(bmp->w - 1, 0);
 	_check_pixel(0, bmp->h - 1);
 	_check_pixel(bmp->w - 1, bmp->h - 1);

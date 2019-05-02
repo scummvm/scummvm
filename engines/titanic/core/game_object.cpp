@@ -24,13 +24,16 @@
 #include "titanic/core/mail_man.h"
 #include "titanic/core/resource_key.h"
 #include "titanic/core/room_item.h"
+#include "titanic/core/project_item.h"
+#include "titanic/debugger.h"
+#include "titanic/events.h"
+#include "titanic/game_manager.h"
 #include "titanic/npcs/true_talk_npc.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/star_control/star_control.h"
 #include "titanic/support/files_manager.h"
 #include "titanic/support/screen_manager.h"
 #include "titanic/support/video_surface.h"
-#include "titanic/game_manager.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -94,6 +97,7 @@ void CGameObject::save(SimpleFile *file, int indent) {
 				i != rangeList->end(); ++i) {
 				CMovieRangeInfo *rangeInfo = new CMovieRangeInfo(*i);
 				rangeInfo->_initialFrame = (i == rangeList->begin()) ? getMovieFrame() : -1;
+				_movieRangeInfoList.push_back(rangeInfo);
 			}
 		}
 	}
@@ -141,27 +145,27 @@ void CGameObject::load(SimpleFile *file) {
 	case 7:
 		_movieRangeInfoList.load(file);
 		_frameNumber = file->readNumber();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 6:
 		_cursorId = (CursorId)file->readNumber();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 5:
 		_movieClips.load(file);
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 4:
 		_handleMouseFlag = file->readNumber();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 3:
 		_nonvisual = file->readNumber();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 2:
 		_resource = file->readString();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 1:
 		_bounds = file->readBounds();
@@ -287,6 +291,26 @@ bool CGameObject::checkPoint(const Point &pt, bool ignoreSurface, bool visibleOn
 	uint transColor = _surface->getTransparencyColor();
 	uint pixel = _surface->getPixel(pixelPos);
 	return pixel != transColor;
+}
+
+bool CGameObject::findPoint(Quadrant quadrant, Point &pt) {
+	// Start by checking a centroid point in the bounds
+	if (!_bounds.isEmpty()) {
+		pt = _bounds.getPoint(quadrant);
+		if (checkPoint(pt, false, true))
+			return true;
+	}
+
+	// Scan through all the area of the bounds to find a valid point
+	for (; pt.y < _bounds.bottom; ++pt.y, pt.x = _bounds.left) {
+		for (; pt.x < _bounds.right; ++pt.x) {
+			if (checkPoint(pt, false, true))
+				return true;
+		}
+	}
+
+	pt = Point(0, 0);
+	return false;
 }
 
 bool CGameObject::clipRect(const Rect &rect1, Rect &rect2) const {
@@ -441,7 +465,7 @@ bool CGameObject::isSoundActive(int handle) const {
 	return false;
 }
 
-void CGameObject::playGlobalSound(const CString &resName, int mode, bool initialMute, bool repeated,
+void CGameObject::playAmbientSound(const CString &resName, VolumeMode mode, bool initialMute, bool repeated,
 		int handleIndex, Audio::Mixer::SoundType soundType) {
 	if (handleIndex < 0 || handleIndex > 3)
 		return;
@@ -500,7 +524,7 @@ void CGameObject::setSoundVolume(int handle, uint percent, uint seconds) {
 	}
 }
 
-void CGameObject::stopGlobalSound(bool transition, int handleIndex) {
+void CGameObject::stopAmbientSound(bool transition, int handleIndex) {
 	CGameManager *gameManager = getGameManager();
 	if (!gameManager)
 		return;
@@ -526,7 +550,7 @@ void CGameObject::stopGlobalSound(bool transition, int handleIndex) {
 	}
 }
 
-void CGameObject::setGlobalSoundVolume(int mode, uint seconds, int handleIndex) {
+void CGameObject::setAmbientSoundVolume(VolumeMode mode, uint seconds, int handleIndex) {
 	CGameManager *gameManager = getGameManager();
 	if (!gameManager)
 		return;
@@ -535,7 +559,7 @@ void CGameObject::setGlobalSoundVolume(int mode, uint seconds, int handleIndex) 
 	if (handleIndex == -1) {
 		// Iterate through calling the method for each handle
 		for (int idx = 0; idx < 3; ++idx)
-			setGlobalSoundVolume(mode, seconds, idx);
+			setAmbientSoundVolume(mode, seconds, idx);
 	} else if (handleIndex >= 0 && handleIndex <= 3 && _soundHandles[handleIndex] != -1) {
 		uint newVolume = sound._soundManager.getModeVolume(mode);
 		sound.setVolume(_soundHandles[handleIndex], newVolume, seconds);
@@ -587,6 +611,18 @@ void CGameObject::petHide() {
 		gameManager->_gameState.setMode(GSMODE_INTERACTIVE);
 		gameManager->markAllDirty();
 	}
+}
+
+void CGameObject::petIncAreaLocks() {
+	CPetControl *pet = getPetControl();
+	if (pet)
+		pet->incAreaLocks();
+}
+
+void CGameObject::petDecAreaLocks() {
+	CPetControl *pet = getPetControl();
+	if (pet)
+		pet->decAreaLocks();
 }
 
 void CGameObject::petSetRemoteTarget() {
@@ -661,6 +697,7 @@ void CGameObject::playClip(uint startFrame, uint endFrame) {
 	CRoomItem *room = gameManager->getRoom();
 
 	gameManager->playClip(clip, room, room);
+	delete clip;
 }
 
 void CGameObject::playRandomClip(const char *const *names, uint flags) {
@@ -674,18 +711,21 @@ void CGameObject::playRandomClip(const char *const *names, uint flags) {
 	playClip(name, flags);
 }
 
-void CGameObject::playCutscene(uint startFrame, uint endFrame) {
+bool CGameObject::playCutscene(uint startFrame, uint endFrame) {
 	if (!_surface) {
 		if (!_resource.empty())
 			loadResource(_resource);
 		_resource.clear();
 	}
 
+	bool result = true;
 	if (_surface && _surface->loadIfReady() && _surface->_movie) {
 		disableMouse();
-		_surface->_movie->playCutscene(_bounds, startFrame, endFrame);
+		result = _surface->_movie->playCutscene(_bounds, startFrame, endFrame);
 		enableMouse();
 	}
+
+	return result;
 }
 
 void CGameObject::savePosition() {
@@ -721,6 +761,11 @@ bool CGameObject::hasActiveMovie() const {
 int CGameObject::getMovieFrame() const {
 	if (_surface && _surface->_movie)
 		return _surface->_movie->getFrame();
+	else if (_frameNumber > 0)
+		// WORKAROUND: If an object has a pending frame to be set to,
+		// but the movie hasn't yet been loaded, return that frame
+		return _frameNumber;
+
 	return _initialFrame;
 }
 
@@ -801,30 +846,40 @@ int CGameObject::addTimer(uint firstDuration, uint repeatDuration) {
 	CTimeEventInfo *timer = new CTimeEventInfo(getTicksCount(), repeatDuration != 0,
 		firstDuration, repeatDuration, this, 0, CString());
 
-	getGameManager()->addTimer(timer);
+	CGameManager *gameMan = getGameManager();
+	if (gameMan)
+		gameMan->addTimer(timer);
 	return timer->_id;
 }
 
 void CGameObject::stopTimer(int id) {
-	getGameManager()->stopTimer(id);
+	CGameManager *gameMan = getGameManager();
+	if (gameMan)
+		gameMan->stopTimer(id);
 }
 
 int CGameObject::startAnimTimer(const CString &action, uint firstDuration, uint repeatDuration) {
-	CTimeEventInfo *timer = new CTimeEventInfo(getTicksCount(), repeatDuration > 0,
-		firstDuration, repeatDuration, this, 0, action);
-	getGameManager()->addTimer(timer);
+	CGameManager *gameMan = getGameManager();
+	if (gameMan) {
+		CTimeEventInfo *timer = new CTimeEventInfo(getTicksCount(), repeatDuration > 0,
+			firstDuration, repeatDuration, this, 0, action);
+		gameMan->addTimer(timer);
+		return timer->_id;
+	}
 
-	return timer->_id;
+	return -1;
 }
 
 void CGameObject::stopAnimTimer(int id) {
-	getGameManager()->stopTimer(id);
+	CGameManager *gameMan = getGameManager();
+	if (gameMan)
+		gameMan->stopTimer(id);
 }
 
 void CGameObject::gotoView(const CString &viewName, const CString &clipName) {
 	CViewItem *newView = parseView(viewName);
 	CGameManager *gameManager = getGameManager();
-	CViewItem *oldView = gameManager ? gameManager->getView() : newView;
+	CViewItem *oldView = gameManager->getView();
 	if (!oldView || !newView)
 		return;
 
@@ -842,57 +897,7 @@ void CGameObject::gotoView(const CString &viewName, const CString &clipName) {
 }
 
 CViewItem *CGameObject::parseView(const CString &viewString) {
-	int firstIndex = viewString.indexOf('.');
-	int lastIndex = viewString.lastIndexOf('.');
-	CString roomName, nodeName, viewName;
-
-	if (firstIndex == -1) {
-		roomName = viewString;
-	} else {
-		roomName = viewString.left(firstIndex);
-
-		if (lastIndex > firstIndex) {
-			nodeName = viewString.mid(firstIndex + 1, lastIndex - firstIndex - 1);
-			viewName = viewString.mid(lastIndex + 1);
-		} else {
-			nodeName = viewString.mid(firstIndex + 1);
-		}
-	}
-
-	CGameManager *gameManager = getGameManager();
-	if (!gameManager)
-		return nullptr;
-
-	CRoomItem *room = gameManager->getRoom();
-	CProjectItem *project = room->getRoot();
-
-	// Ensure we have the specified room
-	if (project) {
-		if (room->getName().compareToIgnoreCase(roomName)) {
-			// Scan for the correct room
-			for (room = project->findFirstRoom();
-					room && room->getName().compareToIgnoreCase(roomName);
-					room = project->findNextRoom(room)) ;
-		}
-	}
-	if (!room)
-		return nullptr;
-
-	// Find the designated node within the room
-	CNodeItem *node = dynamic_cast<CNodeItem *>(room->findChildInstanceOf(CNodeItem::_type));
-	while (node && node->getName().compareToIgnoreCase(nodeName))
-		node = dynamic_cast<CNodeItem *>(room->findNextInstanceOf(CNodeItem::_type, node));
-	if (!node)
-		return nullptr;
-
-	CViewItem *view = dynamic_cast<CViewItem *>(node->findChildInstanceOf(CViewItem::_type));
-	while (view && view->getName().compareToIgnoreCase(viewName))
-		view = dynamic_cast<CViewItem *>(node->findNextInstanceOf(CViewItem::_type, view));
-	if (!view)
-		return nullptr;
-
-	// Find the view, so return it
-	return view;
+	return getRoot()->parseView(viewString);
 }
 
 CString CGameObject::getViewFullName() const {
@@ -922,7 +927,7 @@ bool CGameObject::compareViewNameTo(const CString &name) const {
 	return !getViewFullName().compareToIgnoreCase(name);
 }
 
-int CGameObject::compareRoomNameTo(const CString &name) {
+bool CGameObject::compareRoomNameTo(const CString &name) {
 	CRoomItem *room = getGameManager()->getRoom();
 	return !room->getName().compareToIgnoreCase(name);
 }
@@ -964,7 +969,7 @@ CGameObject *CGameObject::findMailByFlags(RoomFlagsComparison compareType, uint 
 
 	for (CGameObject *obj = mailMan->getFirstObject(); obj;
 			obj = mailMan->getNextObject(obj)) {
-		if (compareRoomFlags(compareType, roomFlags, obj->_roomFlags))
+		if (compareRoomFlags(compareType, obj->_roomFlags, roomFlags))
 			return obj;
 	}
 
@@ -1131,6 +1136,10 @@ CTextCursor *CGameObject::getTextCursor() const {
 	return CScreenManager::_screenManagerPtr->_textCursor;
 }
 
+Movement CGameObject::getMovement() const {
+	return CLinkItem::getMovementFromCursor(_cursorId);
+}
+
 void CGameObject::scrollTextUp() {
 	if (_text)
 		_text->scrollUp(CScreenManager::_screenManagerPtr);
@@ -1208,28 +1217,11 @@ void CGameObject::loadSurface() {
 }
 
 bool CGameObject::changeView(const CString &viewName) {
-	return changeView(viewName, "");
+	return getRoot()->changeView(viewName, "");
 }
 
 bool CGameObject::changeView(const CString &viewName, const CString &clipName) {
-	CViewItem *newView = parseView(viewName);
-	CGameManager *gameManager = getGameManager();
-	CViewItem *oldView = gameManager->getView();
-
-	if (!oldView || !newView)
-		return false;
-
-	CMovieClip *clip = nullptr;
-	if (!clipName.empty()) {
-		clip = oldView->findNode()->findRoom()->findClip(clipName);
-	} else {
-		CLinkItem *link = oldView->findLink(newView);
-		if (link)
-			clip = link->getClip();
-	}
-
-	gameManager->_gameState.changeView(newView, clip);
-	return true;
+	return getRoot()->changeView(viewName, clipName);
 }
 
 void CGameObject::dragMove(const Point &pt) {
@@ -1262,7 +1254,7 @@ bool CGameObject::clipExistsByEnd(const CString &name, int endFrame) const {
 void CGameObject::petClear() const {
 	CPetControl *petControl = getPetControl();
 	if (petControl)
-		petControl->resetActiveNPC();
+		petControl->resetRemoteTarget();
 }
 
 CDontSaveFileItem *CGameObject::getDontSave() const {
@@ -1360,7 +1352,7 @@ void CGameObject::setPassengerClass(PassengerClass newClass) {
 		// Setup the PET again, so the new class's PET background can take effect
 		CPetControl *petControl = getPetControl();
 		if (petControl)
-			petControl->setup();
+			petControl->reset();
 	}
 }
 
@@ -1377,14 +1369,14 @@ void CGameObject::setToggleColor(byte r, byte g, byte b) {
 	_toggleB = b;
 }
 
-void CGameObject::movieSetAudioTiming(bool flag) {
+void CGameObject::movieSetPlaying(bool flag) {
 	if (!_surface && !_resource.empty()) {
 		loadResource(_resource);
 		_resource.clear();
 	}
 
 	if (_surface && _surface->_movie)
-		_surface->_movie->_hasAudioTiming = flag;
+		_surface->_movie->setPlaying(flag);
 }
 
 void CGameObject::movieEvent(int frameNumber) {

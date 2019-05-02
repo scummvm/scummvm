@@ -820,7 +820,7 @@ const byte *ThreadResource::cardPerform(const byte *card) {
 	case 27:
 	case 28:
 		subId -= 3;
-		// Deliberate fall-through
+		// fall through
 
 	case 21:
 	case 22:
@@ -864,7 +864,7 @@ const byte *ThreadResource::cardPerform(const byte *card) {
 			if (cardPerform2(card, id)) {
 				card += subId;
 				card = cardPerform(card);
-				while (*card++ != 61) ;
+				while (*card++ != 61) {}
 			} else {
 				card += subId;
 				while (*card != 61 && *card != 29)

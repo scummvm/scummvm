@@ -519,7 +519,7 @@ void Sound::loadSfxTable(const char *gameFilename, uint32 base) {
 
 	delete _effects;
 	const bool dataIsUnsigned = true;
-	if (_vm->getPlatform() == Common::kPlatformWindows)
+	if (_vm->getPlatform() == Common::kPlatformWindows || (_vm->getFeatures() & GF_WAVSFX))
 		_effects = new WavSound(_mixer, gameFilename, base);
 	else
 		_effects = new VocSound(_mixer, gameFilename, dataIsUnsigned, base, false);

@@ -163,7 +163,6 @@ public:
 	RMGfxEngine *getEngine() {
 		return &_theEngine;
 	}
-	void GUIError(const Common::String &msg);
 
 	virtual bool canLoadGameStateCurrently();
 	virtual bool canSaveGameStateCurrently();

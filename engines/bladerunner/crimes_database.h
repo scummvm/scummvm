@@ -23,28 +23,35 @@
 #ifndef BLADERUNNER_CRIMES_DATABASE_H
 #define BLADERUNNER_CRIMES_DATABASE_H
 
+#include "common/array.h"
+
 namespace BladeRunner {
 
 class BladeRunnerEngine;
+class SaveFileReadStream;
+class SaveFileWriteStream;
 class TextResource;
 
 class CrimesDatabase {
-	int           _crimesCount;
-	int          *_crimes;
-	int          *_assetTypes;
-	TextResource *_cluesText;
+	int                 _crimeCount;
+	Common::Array<int>  _crimes;
+	Common::Array<int>  _assetTypes;
+	TextResource       *_cluesText;
 
 public:
-	CrimesDatabase(BladeRunnerEngine *vm, const char *cluesResource, int crimesCount);
+	CrimesDatabase(BladeRunnerEngine *vm, const Common::String &cluesResource, int crimeCount);
 	~CrimesDatabase();
 
 	void setCrime(int clueId, int crimeId);
-	int getCrime(int clueId);
+	int getCrime(int clueId) const;
 
 	void setAssetType(int clueId, int assetType);
-	int getAssetType(int clueId);
+	int getAssetType(int clueId) const;
 
-	const char *getClueText(int clueId);
+	const char *getClueText(int clueId) const;
+
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
 };
 
 } // End of namespace BladeRunner

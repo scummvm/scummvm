@@ -21,6 +21,7 @@
  */
 
 #include "titanic/support/strings.h"
+#include "titanic/support/files_manager.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {

@@ -22,6 +22,7 @@
 
 #include "bladerunner/adpcm_decoder.h"
 
+#include "common/endian.h"
 #include "common/util.h"
 
 namespace BladeRunner {
@@ -122,7 +123,7 @@ uint16 imaStepTable[712] = {
  0x0fff,0x2ffe,0x4ffe,0x6ffd,0x8ffe,0xaffd,0xcffd,0xeffc
 };
 
-void ADPCMWestwoodDecoder::decode(uint8 *in, size_t size, int16 *out) {
+void ADPCMWestwoodDecoder::decode(uint8 *in, size_t size, int16 *out, bool forceLittleEndianOut) {
 	uint8 *end = in + size;
 
 	int16 stepIndex = _stepIndex;
@@ -149,8 +150,16 @@ void ADPCMWestwoodDecoder::decode(uint8 *in, size_t size, int16 *out) {
 
 			predictor = CLIP<int32>(predictor, -32768, 32767);
 
-			*out++ = (int16)predictor;
-
+			if (forceLittleEndianOut) {
+				// Bugfix:
+				// enforce "little-endian" type of output for VQA audio stream
+				// This is needed for Big Endian platforms to behave correctly in raw audio streams in VQA videos
+				// because in VQADecoder::VQAAudioTrack::decodeAudioFrame() a raw stream is created for the audio
+				// with the explicit flag: FLAG_LITTLE_ENDIAN
+				WRITE_LE_INT16(out++, (int16)predictor);
+			} else {
+				*out++ = (int16)predictor;
+			}
 			stepIndex = imaIndexTable[code] + stepIndex;
 			stepIndex = CLIP<int16>(stepIndex, 0, 88);
 		}

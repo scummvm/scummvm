@@ -61,7 +61,7 @@ bool CEmptyNutBowl::ReplaceBowlAndNutsMsg(CReplaceBowlAndNutsMsg *msg) {
 }
 
 bool CEmptyNutBowl::NutPuzzleMsg(CNutPuzzleMsg *msg) {
-	if (msg->_value == "NutsGone")
+	if (msg->_action == "NutsGone")
 		setVisible(true);
 	return true;
 }

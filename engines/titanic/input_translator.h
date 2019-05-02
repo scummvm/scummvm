@@ -36,6 +36,12 @@ private:
 	 * Converts the special buttons bitset into a buttons bitset
 	 */
 	int getButtons(int special) const;
+
+	/**
+	 * Returns true if a key down contains a special non-ascii key
+	 * that should still be passed onto the game
+	 */
+	bool isSpecialKey(Common::KeyCode key);
 public:
 	CInputHandler *_inputHandler;
 public:
@@ -48,10 +54,7 @@ public:
 	void middleButtonDown(int special, const Point &pt);
 	void middleButtonUp(int special, const Point &pt);
 	void middleButtonDoubleClick(int special, const Point &pt);
-	void rightButtonDown(int special, const Point &pt);
-	void rightButtonUp(int special, const Point &pt);
 	void mouseWheel(bool wheelUp, const Point &pt);
-	void rightButtonDoubleClick(int special, const Point &pt);
 	void keyDown(const Common::KeyState &keyState);
 
 	/**

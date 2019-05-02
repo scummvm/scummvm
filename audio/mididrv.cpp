@@ -92,9 +92,9 @@ MusicType MidiDriver::getMusicType(MidiDriver::DeviceHandle handle) {
 		return MT_MT32;
 
 	if (handle) {
-		const MusicPlugin::List p = MusicMan.getPlugins();
-		for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); m++) {
-			MusicDevices i = (**m)->getDevices();
+		const PluginList p = MusicMan.getPlugins();
+		for (PluginList::const_iterator m = p.begin(); m != p.end(); m++) {
+			MusicDevices i = (*m)->get<MusicPluginObject>().getDevices();
 			for (MusicDevices::iterator d = i.begin(); d != i.end(); d++) {
 				if (handle == d->getHandle())
 					return d->getMusicType();
@@ -107,9 +107,9 @@ MusicType MidiDriver::getMusicType(MidiDriver::DeviceHandle handle) {
 
 Common::String MidiDriver::getDeviceString(DeviceHandle handle, DeviceStringType type) {
 	if (handle) {
-		const MusicPlugin::List p = MusicMan.getPlugins();
-		for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); m++) {
-			MusicDevices i = (**m)->getDevices();
+		const PluginList p = MusicMan.getPlugins();
+		for (PluginList::const_iterator m = p.begin(); m != p.end(); m++) {
+			MusicDevices i = (*m)->get<MusicPluginObject>().getDevices();
 			for (MusicDevices::iterator d = i.begin(); d != i.end(); d++) {
 				if (handle == d->getHandle()) {
 					if (type == kDriverName)
@@ -226,7 +226,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 
 	// If the selected driver did not match the flags setting,
 	// we try to determine a suitable and "optimal" music driver.
-	const MusicPlugin::List p = MusicMan.getPlugins();
+	const PluginList p = MusicMan.getPlugins();
 	// If only MDT_MIDI but not MDT_PREFER_MT32 or MDT_PREFER_GM is set we prefer the other devices (which will always be
 	// detected since they are hard coded and cannot be disabled).
 	bool skipMidi = !(flags & (MDT_PREFER_GM | MDT_PREFER_MT32));
@@ -280,8 +280,8 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 				// and there is no preferred MT32 or GM device selected either or if the detected device is unavailable we arrive here.
 				// If MT32 is preferred we try for the first available device with music type 'MT_MT32' (usually the mt32 emulator).
 				if (flags & MDT_PREFER_MT32) {
-					for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
-						MusicDevices i = (**m)->getDevices();
+					for (PluginList::const_iterator m = p.begin(); m != p.end(); ++m) {
+						MusicDevices i = (*m)->get<MusicPluginObject>().getDevices();
 						for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
 							if (d->getMusicType() == MT_MT32) {
 								hdl = d->getHandle();
@@ -295,8 +295,8 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 				// Now we default to the first available device with music type 'MT_GM' if not
 				// MT-32 is preferred or if MT-32 is preferred but all other devices have failed.
 				if (!(flags & MDT_PREFER_MT32) || flags == (MDT_PREFER_MT32 | MDT_MIDI)) {
-					for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
-						MusicDevices i = (**m)->getDevices();
+					for (PluginList::const_iterator m = p.begin(); m != p.end(); ++m) {
+						MusicDevices i = (*m)->get<MusicPluginObject>().getDevices();
 						for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
 							if (d->getMusicType() == MT_GM || d->getMusicType() == MT_GS) {
 								hdl = d->getHandle();
@@ -348,8 +348,8 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 			tp = MT_AUTO;
 		}
 
-		for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
-			MusicDevices i = (**m)->getDevices();
+		for (PluginList::const_iterator m = p.begin(); m != p.end(); ++m) {
+			MusicDevices i = (*m)->get<MusicPluginObject>().getDevices();
 			for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
 				if (d->getMusicType() == tp) {
 					hdl = d->getHandle();
@@ -365,33 +365,35 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 
 MidiDriver *MidiDriver::createMidi(MidiDriver::DeviceHandle handle) {
 	MidiDriver *driver = 0;
-	const MusicPlugin::List p = MusicMan.getPlugins();
-	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); m++) {
-		if (getDeviceString(handle, MidiDriver::kDriverId).equals((**m)->getId()))
-			(**m)->createInstance(&driver, handle);
+	const PluginList p = MusicMan.getPlugins();
+	for (PluginList::const_iterator m = p.begin(); m != p.end(); m++) {
+		const MusicPluginObject &musicPlugin = (*m)->get<MusicPluginObject>();
+		if (getDeviceString(handle, MidiDriver::kDriverId).equals(musicPlugin.getId()))
+			musicPlugin.createInstance(&driver, handle);
 	}
 
 	return driver;
 }
 
 bool MidiDriver::checkDevice(MidiDriver::DeviceHandle handle) {
-	const MusicPlugin::List p = MusicMan.getPlugins();
-	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); m++) {
-		if (getDeviceString(handle, MidiDriver::kDriverId).equals((**m)->getId()))
-			return (**m)->checkDevice(handle);
+	const PluginList p = MusicMan.getPlugins();
+	for (PluginList::const_iterator m = p.begin(); m != p.end(); m++) {
+		const MusicPluginObject &musicPlugin = (*m)->get<MusicPluginObject>();
+		if (getDeviceString(handle, MidiDriver::kDriverId).equals(musicPlugin.getId()))
+			return musicPlugin.checkDevice(handle);
 	}
 
 	return false;
 }
 
 MidiDriver::DeviceHandle MidiDriver::getDeviceHandle(const Common::String &identifier) {
-	const MusicPlugin::List p = MusicMan.getPlugins();
+	const PluginList p = MusicMan.getPlugins();
 
 	if (p.begin() == p.end())
 		error("MidiDriver::getDeviceHandle: Music plugins must be loaded prior to calling this method");
 
-	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); m++) {
-		MusicDevices i = (**m)->getDevices();
+	for (PluginList::const_iterator m = p.begin(); m != p.end(); m++) {
+		MusicDevices i = (*m)->get<MusicPluginObject>().getDevices();
 		for (MusicDevices::iterator d = i.begin(); d != i.end(); d++) {
 			// The music driver id isn't unique, but it will match
 			// driver's first device. This is useful when selecting

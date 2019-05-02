@@ -175,6 +175,8 @@ void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, con
 					}
 					src += 2;
 					pixels++;
+					if (pixels >= cx + sx)
+						break;
 				}
 			} else { // skip
 				if ((code & 1) == 0) {
@@ -184,6 +186,8 @@ void Moonbase::blitT14WizImage(uint8 *dst, int dstw, int dsth, int dstPitch, con
 						if (pixels >= sx)
 							dst1 += 2;
 						pixels++;
+						if (pixels >= cx + sx)
+							break;
 					}
 				} else { // special case
 					if (pixels >= sx) {

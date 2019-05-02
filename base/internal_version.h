@@ -1,5 +1,5 @@
-#ifndef INCLUDED_FROM_BASE_VERSION_CPP
-#error This file may only be included by base/version.cpp
+#if !defined(INCLUDED_FROM_BASE_VERSION_CPP) && !defined(RC_INVOKED)
+#error This file may only be included by base/version.cpp or dists/scummvm.rc
 #endif
 
 // Reads revision number from file
@@ -16,4 +16,8 @@
 #define SCUMMVM_REVISION
 #endif
 
-#define SCUMMVM_VERSION "1.10.0git" SCUMMVM_REVISION
+#define SCUMMVM_VERSION "2.1.0git"
+
+#define SCUMMVM_VER_MAJOR 2
+#define SCUMMVM_VER_MINOR 1
+#define SCUMMVM_VER_PATCH 0

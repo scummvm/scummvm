@@ -28,7 +28,7 @@
 namespace Mohawk {
 
 InstallerArchive::InstallerArchive() : Common::Archive() {
-	_stream = 0;
+	_stream = nullptr;
 }
 
 InstallerArchive::~InstallerArchive() {
@@ -103,7 +103,7 @@ bool InstallerArchive::open(const Common::String &filename) {
 }
 
 void InstallerArchive::close() {
-	delete _stream; _stream = 0;
+	delete _stream; _stream = nullptr;
 	_map.clear();
 }
 
@@ -124,7 +124,7 @@ const Common::ArchiveMemberPtr InstallerArchive::getMember(const Common::String 
 
 Common::SeekableReadStream *InstallerArchive::createReadStreamForMember(const Common::String &name) const {
 	if (!_stream || !_map.contains(name))
-		return 0;
+		return nullptr;
 
 	const FileEntry &entry = _map[name];
 

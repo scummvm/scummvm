@@ -519,7 +519,7 @@ bool MoviePlayerSMK::processFrame() {
 
 MoviePlayer *makeMoviePlayer(AGOSEngine_Feeble *vm, const char *name) {
 	char baseName[40];
-	char filename[20];
+	char filename[45];
 
 	int baseLen = strlen(name) - 4;
 	memset(baseName, 0, sizeof(baseName));
@@ -528,7 +528,7 @@ MoviePlayer *makeMoviePlayer(AGOSEngine_Feeble *vm, const char *name) {
 	if (vm->getLanguage() == Common::DE_DEU && baseLen >= 8) {
 		// Check short filename to work around
 		// bug in a German Windows 2CD version.
-		char shortName[20];
+		char shortName[10];
 		memset(shortName, 0, sizeof(shortName));
 		memcpy(shortName, baseName, 6);
 

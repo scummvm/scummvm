@@ -153,7 +153,7 @@ void Expression::skipExpr(char stopToken) {
 
 			case 15:
 				_vm->_game->_script->skip(2);
-
+				// fall through
 			case OP_ARRAY_INT8:
 			case OP_ARRAY_INT32:
 			case OP_ARRAY_INT16:

@@ -44,7 +44,7 @@ const RenderModeDescription g_renderModes[] = {
 	{ "2gs", "Apple IIgs", kRenderApple2GS },
 	{ "atari", "Atari ST", kRenderAtariST },
 	{ "macintosh", "Macintosh", kRenderMacintosh },
-	{0, 0, kRenderDefault}
+	{nullptr, nullptr, kRenderDefault}
 };
 
 struct RenderGUIOMapping {
@@ -92,7 +92,7 @@ const char *getRenderModeCode(RenderMode id) {
 		if (l->id == id)
 			return l->code;
 	}
-	return 0;
+	return nullptr;
 }
 
 const char *getRenderModeDescription(RenderMode id) {
@@ -101,7 +101,7 @@ const char *getRenderModeDescription(RenderMode id) {
 		if (l->id == id)
 			return l->description;
 	}
-	return 0;
+	return nullptr;
 }
 
 String renderMode2GUIO(RenderMode id) {

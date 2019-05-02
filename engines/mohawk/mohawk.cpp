@@ -35,19 +35,14 @@
 namespace Mohawk {
 
 MohawkEngine::MohawkEngine(OSystem *syst, const MohawkGameDescription *gamedesc) : Engine(syst), _gameDescription(gamedesc) {
-	if (!_mixer->isReady())
-		error ("Sound initialization failed");
-
 	// Setup mixer
 	syncSoundSettings();
 
-	_video = 0;
-	_pauseDialog = 0;
-	_cursor = 0;
+	_pauseDialog = nullptr;
+	_cursor = nullptr;
 }
 
 MohawkEngine::~MohawkEngine() {
-	delete _video;
 	delete _pauseDialog;
 	delete _cursor;
 
@@ -57,21 +52,9 @@ MohawkEngine::~MohawkEngine() {
 }
 
 Common::Error MohawkEngine::run() {
-	_video = new VideoManager(this);
 	_pauseDialog = new PauseDialog(this, _("The game is paused. Press any key to continue."));
 
 	return Common::kNoError;
-}
-
-void MohawkEngine::pauseEngineIntern(bool pause) {
-	Engine::pauseEngineIntern(pause);
-
-	if (pause) {
-		_video->pauseVideos();
-	} else {
-		_video->resumeVideos();
-		_system->updateScreen();
-	}
 }
 
 void MohawkEngine::pauseGame() {
@@ -84,7 +67,6 @@ Common::SeekableReadStream *MohawkEngine::getResource(uint32 tag, uint16 id) {
 			return _mhk[i]->getResource(tag, id);
 
 	error("Could not find a '%s' resource with ID %04x", tag2str(tag), id);
-	return NULL;
 }
 
 bool MohawkEngine::hasResource(uint32 tag, uint16 id) {
@@ -109,7 +91,6 @@ uint32 MohawkEngine::getResourceOffset(uint32 tag, uint16 id) {
 			return _mhk[i]->getOffset(tag, id);
 
 	error("Could not find a '%s' resource with ID %04x", tag2str(tag), id);
-	return 0;
 }
 
 uint16 MohawkEngine::findResourceID(uint32 tag, const Common::String &resName) {
@@ -118,7 +99,6 @@ uint16 MohawkEngine::findResourceID(uint32 tag, const Common::String &resName) {
 			return _mhk[i]->findResourceID(tag, resName);
 
 	error("Could not find a '%s' resource matching name '%s'", tag2str(tag), resName.c_str());
-	return 0xFFFF;
 }
 
 Common::String MohawkEngine::getResourceName(uint32 tag, uint16 id) {
@@ -128,7 +108,6 @@ Common::String MohawkEngine::getResourceName(uint32 tag, uint16 id) {
 		}
 
 	error("Could not find a \'%s\' resource with ID %04x", tag2str(tag), id);
-	return 0;
 }
 
 } // End of namespace Mohawk

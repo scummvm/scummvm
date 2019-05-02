@@ -123,7 +123,7 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Lab";
+		return "Labyrinth of Time";
 	}
 
 	virtual const char *getOriginalCopyright() const {
@@ -208,7 +208,7 @@ SaveStateDescriptor LabMetaEngine::querySaveMetaInfos(const char *target, int sl
 	if (in) {
 		Lab::SaveGameHeader header;
 
-		bool successfulRead = Lab::readSaveGameHeader(in, header);
+		bool successfulRead = Lab::readSaveGameHeader(in, header, false);
 		delete in;
 
 		if (successfulRead) {

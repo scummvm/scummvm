@@ -101,7 +101,7 @@ Common::Error ComposerEngine::run() {
 	uint height = 480;
 	if (_bookIni.hasKey("Height", "Common"))
 		height = atoi(getStringFromConfig("Common", "Height").c_str());
-	initGraphics(width, height, true);
+	initGraphics(width, height);
 	_screen.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
 
 	Graphics::Cursor *cursor = Graphics::makeDefaultWinCursor();
@@ -122,7 +122,7 @@ Common::Error ComposerEngine::run() {
 		warning("FPS in book.ini is zero. Defaulting to 8...");
 	uint32 lastDrawTime = 0;
 	_lastSaveTime = _system->getMillis();
-	
+
 	bool loadFromLauncher = ConfMan.hasKey("save_slot");
 
 	while (!shouldQuit()) {
@@ -355,6 +355,10 @@ Common::String ComposerEngine::mangleFilename(Common::String filename) {
 		filename = filename.c_str() + 1;
 
 	uint slashesToStrip = _directoriesToStrip;
+
+	if (filename.hasPrefix(".."))
+		slashesToStrip = 1;
+
 	while (slashesToStrip--) {
 		for (uint i = 0; i < filename.size(); i++) {
 			if (filename[i] != '\\' && filename[i] != ':')

@@ -40,12 +40,12 @@ namespace LastExpress {
 
 Salko::Salko(LastExpressEngine *engine) : Entity(engine, kEntitySalko) {
 	ADD_CALLBACK_FUNCTION(Salko, reset);
-	ADD_CALLBACK_FUNCTION(Salko, enterExitCompartment);
-	ADD_CALLBACK_FUNCTION(Salko, draw);
-	ADD_CALLBACK_FUNCTION(Salko, updateEntity);
-	ADD_CALLBACK_FUNCTION(Salko, updateFromTime);
-	ADD_CALLBACK_FUNCTION(Salko, savegame);
-	ADD_CALLBACK_FUNCTION(Salko, function7);
+	ADD_CALLBACK_FUNCTION_SI(Salko, enterExitCompartment);
+	ADD_CALLBACK_FUNCTION_S(Salko, draw);
+	ADD_CALLBACK_FUNCTION_II(Salko, updateEntity);
+	ADD_CALLBACK_FUNCTION_I(Salko, updateFromTime);
+	ADD_CALLBACK_FUNCTION_II(Salko, savegame);
+	ADD_CALLBACK_FUNCTION_II(Salko, function7);
 	ADD_CALLBACK_FUNCTION(Salko, function8);
 	ADD_CALLBACK_FUNCTION(Salko, chapter1);
 	ADD_CALLBACK_FUNCTION(Salko, chapter1Handler);
@@ -176,11 +176,12 @@ IMPLEMENT_FUNCTION(10, Salko, chapter1Handler)
 	case kActionNone:
 		getData()->entityPosition = getEntityData(kEntityIvo)->entityPosition;
 		getData()->location = getEntityData(kEntityIvo)->location;
+		getData()->car = getEntityData(kEntityIvo)->car;
 		break;
 
 	case kActionCallback:
 		if (getCallback() == 1) {
-			getEntities()->clearSequences(kEntitySalko);
+			getEntities()->drawSequenceLeft(kEntitySalko, "BLANK");
 			setup_function8();
 		}
 		break;
@@ -357,6 +358,8 @@ label_callback3:
 			break;
 
 		case 2:
+			getEntities()->drawSequenceLeft(kEntitySalko, "612AF");
+			getEntities()->enterCompartment(kEntitySalko, kObjectCompartmentF, true);
 			break;
 
 		case 3:
@@ -416,7 +419,7 @@ IMPLEMENT_FUNCTION(17, Salko, function17)
 		getData()->inventoryItem = kItemNone;
 
 		setCallback(1);
-		setup_updateEntity(kCarGreenSleeping, kPosition_2740);
+		setup_updateEntity(kCarRedSleeping, kPosition_2740);
 		break;
 
 	case kActionCallback:
@@ -599,7 +602,7 @@ IMPLEMENT_FUNCTION(24, Salko, chapter5Handler)
 
 		case 1:
 			if (getSoundQueue()->isBuffered("MUS050"))
-				getSoundQueue()->processEntry("MUS050");
+				getSoundQueue()->fade("MUS050");
 
 			getAction()->playAnimation(kEventCathSalkoTrainTopFight);
 

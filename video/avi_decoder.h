@@ -62,8 +62,8 @@ namespace Video {
  */
 class AVIDecoder : public VideoDecoder {
 public:
-	AVIDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
-	AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
+	AVIDecoder();
+	AVIDecoder(const Common::Rational &frameRateOverride);
 	virtual ~AVIDecoder();
 
 	bool loadStream(Common::SeekableReadStream *stream);
@@ -75,6 +75,26 @@ public:
 	bool isRewindable() const { return true; }
 	bool isSeekable() const;
 
+	/**
+	 * Decode the next frame into a surface and return the latter.
+	 *
+	 * A subclass may override this, but must still call this function. As an
+	 * example, a subclass may do this to apply some global video scale to
+	 * individual track's frame.
+	 *
+	 * Note that this will call readNextPacket() internally first before calling
+	 * the next video track's decodeNextFrame() function.
+	 *
+	 * @return a surface containing the decoded frame, or 0
+	 * @note Ownership of the returned surface stays with the VideoDecoder,
+	 *       hence the caller must *not* free it.
+	 * @note this may return 0, in which case the last frame should be kept on screen
+	 */
+	virtual const Graphics::Surface *decodeNextFrame();
+
+	/**
+	 * Decodes the next transparency track frame
+	 */
 	const Graphics::Surface *decodeNextTransparency();
 protected:
 	// VideoDecoder API
@@ -229,9 +249,19 @@ protected:
 		 * Returns true if at the end of the video track
 		 */
 		virtual bool endOfTrack() const;
-	protected:
+
+		/**
+		 * Get track frame rate
+		 */
 		Common::Rational getFrameRate() const { return Common::Rational(_vidsHeader.rate, _vidsHeader.scale); }
 
+		/**
+		 * Force sets a new frame rate
+		 */
+		void setFrameRate(const Common::Rational &r) {
+			_vidsHeader.rate = r.getNumerator();
+			_vidsHeader.scale = r.getDenominator();
+		}
 	private:
 		AVIStreamHeader _vidsHeader;
 		BitmapInfoHeader _bmInfo;
@@ -253,7 +283,6 @@ protected:
 
 		virtual void createAudioStream();
 		virtual void queueSound(Common::SeekableReadStream *stream);
-		Audio::Mixer::SoundType getSoundType() const { return _soundType; }
 		void skipAudio(const Audio::Timestamp &time, const Audio::Timestamp &frameTime);
 		virtual void resetStream();
 		uint32 getCurChunk() const { return _curChunk; }
@@ -278,7 +307,6 @@ protected:
 
 		AVIStreamHeader _audsHeader;
 		PCMWaveFormat _wvInfo;
-		Audio::Mixer::SoundType _soundType;
 		Audio::AudioStream *_audioStream;
 		Audio::PacketizedAudioStream *_packetStream;
 		uint32 _curChunk;
@@ -307,7 +335,6 @@ protected:
 	bool _foundMovieList;
 	uint32 _movieListStart, _movieListEnd;
 
-	Audio::Mixer::SoundType _soundType;
 	Common::Rational _frameRateOverride;
 
 	int _videoTrackCounter, _audioTrackCounter;
@@ -327,8 +354,10 @@ protected:
 
 	void handleNextPacket(TrackStatus& status);
 	bool shouldQueueAudio(TrackStatus& status);
-	Common::Array<TrackStatus> _videoTracks, _audioTracks;
+	void seekTransparencyFrame(int frame);
 
+	Common::Array<TrackStatus> _videoTracks, _audioTracks;
+	TrackStatus _transparencyTrack;
 public:
 	virtual AVIAudioTrack *createAudioTrack(AVIStreamHeader sHeader, PCMWaveFormat wvInfo);
 

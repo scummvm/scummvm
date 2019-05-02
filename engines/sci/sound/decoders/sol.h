@@ -47,8 +47,7 @@ private:
 	uint16 _sampleRate;
 
 	/**
-	 * The raw (possibly-compressed) size of audio data in
-	 * the stream.
+	 * The raw (possibly-compressed) size of audio data in the stream.
 	 */
 	int32 _rawDataSize;
 

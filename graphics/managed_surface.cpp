@@ -335,7 +335,8 @@ void ManagedSurface::addDirtyRect(const Common::Rect &r) {
 }
 
 void ManagedSurface::clear(uint color) {
-	fillRect(getBounds(), color);
+	if (!empty())
+		fillRect(getBounds(), color);
 }
 
 } // End of namespace Graphics

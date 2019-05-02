@@ -37,10 +37,10 @@ private:
 	bool _isSummer;
 	bool _isAutumn;
 	bool _isWinter;
-	int _springMode;
-	int _summerMode;
-	int _autumnMode;
-	int _winterMode;
+	VolumeMode _springMode;
+	VolumeMode _summerMode;
+	VolumeMode _autumnMode;
+	VolumeMode _winterMode;
 public:
 	CLASSDEF;
 	CSeasonalMusicPlayer();

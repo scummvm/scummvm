@@ -296,7 +296,7 @@ public:
 	void showEndingNews();
 };
 
-#define VOYEUR_SAVEGAME_VERSION 1
+#define VOYEUR_SAVEGAME_VERSION 2
 
 /**
  * Header for Voyeur savegame files
@@ -312,7 +312,7 @@ struct VoyeurSavegameHeader {
 	/**
 	 * Read in the header from the specified file
 	 */
-	bool read(Common::InSaveFile *f);
+	bool read(Common::InSaveFile *f, bool skipThumbnail = true);
 
 	/**
 	 * Write out header information to the specified file

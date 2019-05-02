@@ -332,7 +332,7 @@ public:
 	Thing _thingParty;				 // @ C0xFFFF_THING_PARTY
 };
 
-bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader *header);
+WARN_UNUSED_RESULT bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader *header, bool skipThumbnail = true);
 
 } // End of namespace DM
 

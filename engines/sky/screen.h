@@ -64,8 +64,8 @@ public:
 	void paletteFadeUp(uint8 *pal);
 	void paletteFadeUp(uint16 fileNr);
 
-	void showScreen(uint16 fileNum);
-	void showScreen(uint8 *pScreen);
+	void showScreen(uint16 fileNum, bool fullscreen = false);
+	void showScreen(uint8 *pScreen, bool fullscreen = false);
 
 	void handleTimer();
 	void startSequence(uint16 fileNum);
@@ -83,7 +83,7 @@ public:
 	void fnFadeUp(uint32 palNum, uint32 scroll);
 	void fnFadeDown(uint32 scroll);
 	void fnDrawScreen(uint32 palette, uint32 scroll);
-	void clearScreen();
+	void clearScreen(bool fullscreen = false);
 	void setFocusRectangle(const Common::Rect& rect);
 
 	void recreate();

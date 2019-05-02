@@ -67,6 +67,12 @@ public:
 	 * Get the game object associated with this item
 	 */
 	virtual CGameObject *getObject() const;
+
+	/**
+	 * Gets the explicit bounds set for the graphic element,
+	 * ignoring any associated sub-object bounds
+	 */
+	const Rect &getRawBounds() const { return _bounds; }
 };
 
 } // End of namespace Titanic

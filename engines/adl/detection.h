@@ -23,8 +23,6 @@
 #ifndef ADL_DETECTION_H
 #define ADL_DETECTION_H
 
-#include "engines/advancedDetector.h"
-
 namespace Adl {
 
 #define SAVEGAME_VERSION 0
@@ -35,15 +33,41 @@ enum GameType {
 	GAME_TYPE_HIRES0,
 	GAME_TYPE_HIRES1,
 	GAME_TYPE_HIRES2,
+	GAME_TYPE_HIRES3,
 	GAME_TYPE_HIRES4,
 	GAME_TYPE_HIRES5,
 	GAME_TYPE_HIRES6
 };
 
-struct AdlGameDescription {
-	ADGameDescription desc;
-	GameType gameType;
+/*
+ * ====== Mystery House supported versions ======
+ * GAME_VER_HR1_SIMI:
+ * - Instructions always shown (no prompt)
+ * - Instructions contain Simi Valley address
+ * - On-Line Systems title screen in main executable only and waits for key
+ * GAME_VER_HR1_COARSE:
+ * - Longer instructions, now containing Coarsegold address
+ * - On-Line Systems title screen with instructions prompt
+ * GAME_VER_HR1_PD:
+ * - Public Domain disclaimer on startup
+ * - Sierra On-Line title screen with instructions prompt
+ *
+ * Note: there are probably at least two or three more variants
+ */
+
+enum GameVersion {
+	GAME_VER_NONE = 0,
+	GAME_VER_HR1_SIMI = 0,
+	GAME_VER_HR1_COARSE,
+	GAME_VER_HR1_PD
 };
+
+struct AdlGameDescription;
+
+Common::String getDiskImageName(const AdlGameDescription &adlDesc, byte volume);
+GameType getGameType(const AdlGameDescription &desc);
+GameVersion getGameVersion(const AdlGameDescription &desc);
+Common::Platform getPlatform(const AdlGameDescription &desc);
 
 } // End of namespace Adl
 

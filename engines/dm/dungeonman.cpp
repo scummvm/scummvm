@@ -935,7 +935,7 @@ T0172010_ClosedFakeWall:
 		}
 		aspectArray[kDMSquareAspectElement] = kDMElementTypeCorridor;
 		AL0307_uc_FootprintsAllowed = getFlag(AL0307_uc_Square, kDMSquareMaskFakeWallRandOrnamentOrFootprintsAllowed) ? 8 : 0;
-		// No break on purpose
+		// fall through
 	case kDMElementTypeCorridor:
 	case kDMElementTypePit:
 	case kDMElementTypeTeleporter:
@@ -1465,6 +1465,7 @@ Thing DungeonMan::getDiscardThing(uint16 thingType) {
 							case kDMThingTypeGroup:
 								if (((Group *)squareThingData)->getDoNotDiscard())
 									continue;
+								// fall through
 							case kDMThingTypeProjectile:
 								setCurrentMap(mapIndex);
 								if (thingType == kDMThingTypeGroup) {

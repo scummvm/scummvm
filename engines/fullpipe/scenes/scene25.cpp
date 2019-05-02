@@ -161,14 +161,14 @@ void sceneHandler25_enterMan() {
 void sceneHandler25_enterTruba() {
 	PicAniInfo info;
 
-	g_fp->_aniMan->getPicAniInfo(&info);
+	g_fp->_aniMan->getPicAniInfo(info);
 	g_fp->_aniMan->_messageQueueId = 0;
 	g_fp->_aniMan->changeStatics2(g_fp->_aniMan->_statics->_staticsId);
 
 	int x = g_fp->_aniMan->_ox;
 	int y = g_fp->_aniMan->_oy;
 
-	g_fp->_aniMan->setPicAniInfo(&info);
+	g_fp->_aniMan->setPicAniInfo(info);
 
 	int id = g_fp->_aniMan->_statics->_staticsId;
 	int qid = 0;
@@ -196,14 +196,14 @@ void sceneHandler25_saveEntrance(int value) {
 void sceneHandler25_toLadder() {
 	PicAniInfo info;
 
-	g_fp->_aniMan->getPicAniInfo(&info);
+	g_fp->_aniMan->getPicAniInfo(info);
 	g_fp->_aniMan->_messageQueueId = 0;
 	g_fp->_aniMan->changeStatics2(g_fp->_aniMan->_statics->_staticsId);
 
 	int x = g_fp->_aniMan->_ox;
 	int y = g_fp->_aniMan->_oy;
 
-	g_fp->_aniMan->setPicAniInfo(&info);
+	g_fp->_aniMan->setPicAniInfo(info);
 
 	int id = g_fp->_aniMan->_statics->_staticsId;
 	int qid = 0;
@@ -229,29 +229,29 @@ void sceneHandler25_toLadder() {
 }
 
 void sceneHandler25_animateBearders() {
-	if (g_fp->_rnd->getRandomNumber(32767) < 218) {
+	if (g_fp->_rnd.getRandomNumber(32767) < 218) {
 		MessageQueue *mq;
 
 		mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC25_BEARDED), 0, 1);
 
 		mq->setParamInt(-1, g_vars->scene25_bearders[0]->_odelay);
-		mq->getExCommandByIndex(0)->_x = g_fp->_rnd->getRandomNumber(650) + 100;
+		mq->getExCommandByIndex(0)->_x = g_fp->_rnd.getRandomNumber(650) + 100;
 		mq->chain(0);
 
 		g_vars->scene25_beardersCounter = 0;
 
-		if (g_fp->_rnd->getRandomNumber(32767) < 0x1FFF) {
+		if (g_fp->_rnd.getRandomNumber(32767) < 0x1FFF) {
 			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC25_BEARDED2), 0, 1);
 
 			mq->setParamInt(-1, g_vars->scene25_bearders[1]->_odelay);
-			mq->getExCommandByIndex(0)->_x = g_fp->_rnd->getRandomNumber(650) + 100;
+			mq->getExCommandByIndex(0)->_x = g_fp->_rnd.getRandomNumber(650) + 100;
 			mq->chain(0);
 
-			if (g_fp->_rnd->getRandomNumber(32767) < 8191) {
+			if (g_fp->_rnd.getRandomNumber(32767) < 8191) {
 				mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC25_BEARDED3), 0, 1);
 
 				mq->setParamInt(-1, g_vars->scene25_bearders[2]->_odelay);
-				mq->getExCommandByIndex(0)->_x = g_fp->_rnd->getRandomNumber(650) + 100;
+				mq->getExCommandByIndex(0)->_x = g_fp->_rnd.getRandomNumber(650) + 100;
 				mq->chain(0);
 			}
 		}
@@ -259,7 +259,7 @@ void sceneHandler25_animateBearders() {
 }
 
 void sceneHandler25_sneeze() {
-	if (g_fp->_rnd->getRandomNumber(32767) % 10) {
+	if (g_fp->_rnd.getRandomNumber(32767) % 10) {
 		if (g_fp->_aniMan->_statics->_staticsId == ST_MAN25_ONBOARD) {
 			g_fp->_aniMan->startAnim(MV_MAN25_ONBOARD, 0, -1);
 		} else if (g_fp->_aniMan->_statics->_staticsId == (ST_MAN25_ONBOARD|0x4000)) {
@@ -275,14 +275,14 @@ void sceneHandler25_sneeze() {
 void sceneHandler25_rowShovel() {
 	PicAniInfo info;
 
-	g_fp->_aniMan->getPicAniInfo(&info);
+	g_fp->_aniMan->getPicAniInfo(info);
 	g_fp->_aniMan->_messageQueueId = 0;
 	g_fp->_aniMan->changeStatics2(g_fp->_aniMan->_statics->_staticsId);
 
 	int x = g_fp->_aniMan->_ox;
 	int y = g_fp->_aniMan->_oy;
 
-	g_fp->_aniMan->setPicAniInfo(&info);
+	g_fp->_aniMan->setPicAniInfo(info);
 
 	int id = g_fp->_aniMan->_statics->_staticsId;
 	int qid = 0;
@@ -309,14 +309,14 @@ void sceneHandler25_rowShovel() {
 void sceneHandler25_rowHand() {
 	PicAniInfo info;
 
-	g_fp->_aniMan->getPicAniInfo(&info);
+	g_fp->_aniMan->getPicAniInfo(info);
 	g_fp->_aniMan->_messageQueueId = 0;
 	g_fp->_aniMan->changeStatics2(g_fp->_aniMan->_statics->_staticsId);
 
 	int x = g_fp->_aniMan->_ox;
 	int y = g_fp->_aniMan->_oy;
 
-	g_fp->_aniMan->setPicAniInfo(&info);
+	g_fp->_aniMan->setPicAniInfo(info);
 
 	int id = g_fp->_aniMan->_statics->_staticsId;
 	int qid = 0;
@@ -363,14 +363,14 @@ void sceneHandler25_tryWater() {
 void sceneHandler25_tryRow(int obj) {
 	PicAniInfo info;
 
-	g_fp->_aniMan->getPicAniInfo(&info);
+	g_fp->_aniMan->getPicAniInfo(info);
 	g_fp->_aniMan->_messageQueueId = 0;
 	g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT | 0x4000);
 
 	int x = g_fp->_aniMan->_ox;
 	int y = g_fp->_aniMan->_oy;
 
-	g_fp->_aniMan->setPicAniInfo(&info);
+	g_fp->_aniMan->setPicAniInfo(info);
 
 	int qid = 0;
 
@@ -441,7 +441,7 @@ void sceneHandler25_walkOnLadder(StaticANIObject *ani, Common::Point *pnt, Messa
 
 	if (flag) {
 		if (ani->_movement) {
-			ani->_movement->calcSomeXY(point, 0, ani->_movement->_currDynamicPhaseIndex);
+			point = ani->_movement->calcSomeXY(0, ani->_movement->_currDynamicPhaseIndex);
 			newx = point.x;
 			aniY = ani->_oy - point.y;
 		}
@@ -478,7 +478,7 @@ void sceneHandler25_walkOnLadder(StaticANIObject *ani, Common::Point *pnt, Messa
 				newy = pnty;
 			}
 
-			ani->getMovementById(ex->_messageNum)->calcSomeXY(point, 0, -1);
+			point = ani->getMovementById(ex->_messageNum)->calcSomeXY(0, -1);
 			pntx += point.x;
 			pnty += point.y;
 		}
@@ -489,7 +489,7 @@ void sceneHandler25_walkOnLadder(StaticANIObject *ani, Common::Point *pnt, Messa
 
 	ex = new ExCommand(ani->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
 
-	ex->_field_14 = 256;
+	ex->_z = 256;
 	ex->_messageNum = 0;
 	ex->_excFlags |= 3;
 
@@ -570,7 +570,7 @@ int sceneHandler25(ExCommand *cmd) {
 		break;
 
 	case MSG_BRD_TURN:
-		switch (g_fp->_rnd->getRandomNumber(3)) {
+		switch (g_fp->_rnd.getRandomNumber(3)) {
 		case 0:
 			g_fp->playSound(SND_25_025, 0);
 			break;

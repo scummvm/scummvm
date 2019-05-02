@@ -31,6 +31,7 @@ BEGIN_MESSAGE_MAP(CRestaurantCylinderHolder, CDropTarget)
 	ON_MESSAGE(QueryCylinderHolderMsg)
 	ON_MESSAGE(QueryCylinderNameMsg)
 	ON_MESSAGE(MouseDragStartMsg)
+	ON_MESSAGE(DropObjectMsg)
 END_MESSAGE_MAP()
 
 CRestaurantCylinderHolder::CRestaurantCylinderHolder() : CDropTarget(),
@@ -110,7 +111,7 @@ bool CRestaurantCylinderHolder::MovieEndMsg(CMovieEndMsg *msg) {
 	} else {
 		_isOpen = true;
 		_dropEnabled = false;
-		_cursorId = findByName("Phonograph Cylinder") ? _dropCursorId : _dragCursorId;
+		_cursorId = findByName("Phonograph Cylinder", true) ? _dropCursorId : _dragCursorId;
 	}
 
 	CCylinderHolderReadyMsg holderMsg;
@@ -147,6 +148,13 @@ bool CRestaurantCylinderHolder::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 		return CDropTarget::MouseDragStartMsg(msg);
 	else
 		return true;
+}
+
+bool CRestaurantCylinderHolder::DropObjectMsg(CDropObjectMsg *msg) {
+	if (_isOpen)
+		return CDropTarget::DropObjectMsg(msg);
+	else
+		return false;
 }
 
 } // End of namespace Titanic

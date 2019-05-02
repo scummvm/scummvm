@@ -21,25 +21,37 @@
  */
 
 #include "titanic/star_control/fmatrix.h"
-#include "titanic/star_control/dmatrix.h"
+#include "titanic/support/simple_file.h"
 
 namespace Titanic {
+
+// Non-member functions
+
+void matProd(const FMatrix &a, const FMatrix &m, FMatrix &C) {
+	C._row1._x = a._row1._y * m._row2._x + a._row1._z * m._row3._x + a._row1._x * m._row1._x;
+	C._row1._y = a._row1._x * m._row1._y + m._row2._y * a._row1._y + m._row3._y * a._row1._z;
+	C._row1._z = a._row1._x * m._row1._z + a._row1._y * m._row2._z + a._row1._z * m._row3._z;
+	C._row2._x = m._row1._x * a._row2._x + m._row3._x * a._row2._z + m._row2._x * a._row2._y;
+	C._row2._y = m._row3._y * a._row2._z + m._row1._y * a._row2._x + m._row2._y * a._row2._y;
+	C._row2._z = a._row2._z * m._row3._z + a._row2._x * m._row1._z + a._row2._y * m._row2._z;
+	C._row3._x = m._row1._x * a._row3._x + a._row3._z * m._row3._x + a._row3._y * m._row2._x;
+	C._row3._y = a._row3._y * m._row2._y + a._row3._z * m._row3._y + a._row3._x * m._row1._y;
+	C._row3._z = a._row3._x * m._row1._z + a._row3._y * m._row2._z + a._row3._z * m._row3._z;
+}
+
+// Member functions
 
 FMatrix::FMatrix() :
 	_row1(1.0, 0.0, 0.0), _row2(0.0, 1.0, 0.0), _row3(0.0, 0.0, 1.0) {
 }
 
-FMatrix::FMatrix(const DMatrix &src) {
-	copyFrom(src);
+FMatrix::FMatrix(const FVector &row1, const FVector &row2, const FVector &row3) {
+	_row1 = row1;
+	_row2 = row2;
+	_row3 = row3;
 }
 
 FMatrix::FMatrix(const FMatrix &src) {
-	_row1 = src._row1;
-	_row2 = src._row2;
-	_row3 = src._row3;
-}
-
-void FMatrix::copyFrom(const DMatrix &src) {
 	_row1 = src._row1;
 	_row2 = src._row2;
 	_row3 = src._row3;
@@ -81,13 +93,13 @@ void FMatrix::identity() {
 	_row3 = FVector(0.0, 0.0, 1.0);
 }
 
-void FMatrix::set(const FVector &row1, const FVector &row2, const FVector &row3) {
-	_row1 = row1;
-	_row2 = row2;
-	_row3 = row3;
+void FMatrix::set(const FMatrix &m) {
+	_row1 = m._row1;
+	_row2 = m._row2;
+	_row3 = m._row3;
 }
 
-void FMatrix::set(const DVector &row1, const DVector &row2, const DVector &row3) {
+void FMatrix::set(const FVector &row1, const FVector &row2, const FVector &row3) {
 	_row1 = row1;
 	_row2 = row2;
 	_row3 = row3;
@@ -95,45 +107,37 @@ void FMatrix::set(const DVector &row1, const DVector &row2, const DVector &row3)
 
 void FMatrix::set(const FVector &v) {
 	_row3 = v;
-	_row2 = _row3.fn1();
+	_row2 = _row3.swapComponents();
 
 	_row1 = _row3.crossProduct(_row2);
-	_row1.normalize();
+
+	float unused_scale=0.0;
+	if (!_row1.normalize(unused_scale)) {
+		// Do the normalization, put the scale amount in unused_scale,
+		// but if it is unsuccessful, crash
+		assert(unused_scale);
+	}
 
 	_row2 = _row3.crossProduct(_row1);
-	_row2.normalize();
+	if (!_row2.normalize(unused_scale)) {
+		// Do the normalization, put the scale amount in unused_scale,
+		// but if it is unsuccessful, crash
+		assert(unused_scale);
+	}
 }
 
-void FMatrix::fn2(const FMatrix &m) {
-	float x1 = _row1._y * m._row2._x + _row1._z * m._row3._x + _row1._x * m._row1._x;
-	float y1 = _row1._x * m._row1._y + m._row2._y * _row1._y + m._row3._y * _row1._z;
-	float z1 = _row1._x * m._row1._z + _row1._y * m._row2._z + _row1._z * m._row3._z;
-	float x2 = m._row1._x * _row2._x + m._row3._x * _row2._z + m._row2._x * _row2._y;
-	float y2 = m._row3._y * _row2._z + m._row1._y * _row2._x + m._row2._y * _row2._y;
-	float z2 = _row2._z * m._row3._z + _row2._x * m._row1._z + _row2._y * m._row2._z;
-	float x3 = m._row1._x * _row3._x + _row3._z * m._row3._x + _row3._y * m._row2._x;
-	float y3 = _row3._y * m._row2._y + _row3._z * m._row3._y + _row3._x * m._row1._y;
-	float z3 = _row3._x * m._row1._z + _row3._y * m._row2._z + _row3._z * m._row3._z;
-
-	_row1 = FVector(x1, y1, z1);
-	_row2 = FVector(x2, y2, z2);
-	_row3 = FVector(x3, y3, z3);
+void FMatrix::matRProd(const FMatrix &m) {
+	FMatrix C = FMatrix();
+	FMatrix A = FMatrix(_row1, _row2, _row3);
+	matProd(A, m, C);
+	this->set(C);
 }
 
-void FMatrix::fn3(const FMatrix &m) {
-	float x1 = _row2._x * m._row1._y + m._row1._z * _row3._x + _row1._x * m._row1._x;
-	float y1 = m._row1._x * _row1._y + _row3._y * m._row1._z + _row2._y * m._row1._y;
-	float z1 = m._row1._x * _row1._z + m._row1._y * _row2._z + m._row1._z * _row3._z;
-	float x2 = _row1._x * m._row2._x + _row2._x * m._row2._y + _row3._x * m._row2._z;
-	float y2 = _row3._y * m._row2._z + _row1._y * m._row2._x + _row2._y * m._row2._y;
-	float z2 = m._row2._z * _row3._z + m._row2._x * _row1._z + m._row2._y * _row2._z;
-	float x3 = _row1._x * m._row3._x + m._row3._z * _row3._x + m._row3._y * _row2._x;
-	float y3 = m._row3._y * _row2._y + m._row3._z * _row3._y + m._row3._x * _row1._y;
-	float z3 = m._row3._x * _row1._z + m._row3._y * _row2._z + m._row3._z * _row3._z;
-
-	_row1 = FVector(x1, y1, z1);
-	_row2 = FVector(x2, y2, z2);
-	_row3 = FVector(x3, y3, z3);
+void FMatrix::matLProd(const FMatrix &m) {
+	FMatrix C = FMatrix();
+	FMatrix A = FMatrix(_row1, _row2, _row3);
+	matProd(m, A, C);
+	this->set(C);
 }
 
 } // End of namespace Titanic

@@ -41,7 +41,7 @@ class MohawkBitmap;
 class MohawkSurface {
 public:
 	MohawkSurface();
-	MohawkSurface(Graphics::Surface *surface, byte *palette = NULL, int offsetX = 0, int offsetY = 0);
+	explicit MohawkSurface(Graphics::Surface *surface, byte *palette = nullptr, int offsetX = 0, int offsetY = 0);
 	~MohawkSurface();
 
 	// getSurface() returns the surface in the current format

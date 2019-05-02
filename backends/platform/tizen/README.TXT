@@ -25,7 +25,7 @@ export CFLAGS=${CPPFLAGS}
 3. Build dependencies
 
  See: "Building the libraries" under:
- http://wiki.scummvm.org/index.php/Compiling_ScummVM/MinGW#Building_the_libraries
+ https://wiki.scummvm.org/index.php/Compiling_ScummVM/MinGW#Building_the_libraries
  for instructions on how to obtain these modules
 
  3.1 zlib

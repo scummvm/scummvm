@@ -33,12 +33,12 @@
 namespace LastExpress {
 
 Waiter2::Waiter2(LastExpressEngine *engine) : Entity(engine, kEntityWaiter2) {
-	ADD_CALLBACK_FUNCTION(Waiter2, updateFromTime);
-	ADD_CALLBACK_FUNCTION(Waiter2, draw);
-	ADD_CALLBACK_FUNCTION(Waiter2, updatePosition);
+	ADD_CALLBACK_FUNCTION_I(Waiter2, updateFromTime);
+	ADD_CALLBACK_FUNCTION_S(Waiter2, draw);
+	ADD_CALLBACK_FUNCTION_SII(Waiter2, updatePosition);
 	ADD_CALLBACK_FUNCTION(Waiter2, callbackActionOnDirection);
-	ADD_CALLBACK_FUNCTION(Waiter2, callSavepoint);
-	ADD_CALLBACK_FUNCTION(Waiter2, playSound);
+	ADD_CALLBACK_FUNCTION_SIIS(Waiter2, callSavepoint);
+	ADD_CALLBACK_FUNCTION_S(Waiter2, playSound);
 	ADD_CALLBACK_FUNCTION(Waiter2, monsieurServeUs);
 	ADD_CALLBACK_FUNCTION(Waiter2, chapter1);
 	ADD_CALLBACK_FUNCTION(Waiter2, milosOrder);
@@ -131,7 +131,7 @@ IMPLEMENT_FUNCTION(7, Waiter2, monsieurServeUs)
 
 		case 2:
 			getSavePoints()->push(kEntityWaiter2, kEntityBoutarel, kAction122288808);
-			setCallback(2);
+			setCallback(3);
 			setup_draw("926");
 			break;
 
@@ -260,7 +260,7 @@ IMPLEMENT_FUNCTION(10, Waiter2, monsieurOrder)
 		case 3:
 			getEntities()->clearSequences(kEntityWaiter2);
 			getData()->entityPosition = kPosition_5900;
-			ENTITY_PARAM(0, 2) = 0;
+			ENTITY_PARAM(1, 2) = 0;
 
 			callbackAction();
 			break;
@@ -290,7 +290,7 @@ switch (savepoint.action) {
 	default:
 		break;
 
-	case kActionDefault:
+	case kActionNone:
 		if (!getEntities()->isInKitchen(kEntityWaiter2) || !getEntities()->isSomebodyInsideRestaurantOrSalon())
 			break;
 
@@ -524,7 +524,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(24, Waiter2, annaBringTea3)
-	serveSalon(savepoint, "927", "Ann3143A", kEntityAnna, "Ann31444", "112C", kAction122288808, "928", &ENTITY_PARAM(1, 1));
+	serveSalon(savepoint, "927", "Ann3143A", kEntityAnna, "Ann3144", "112C", kAction122288808, "928", &ENTITY_PARAM(1, 1));
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
@@ -562,7 +562,7 @@ IMPLEMENT_FUNCTION(26, Waiter2, serving4)
 		break;
 
 	case kActionNone:
-		if (params->param2) {
+		if (params->param1) {
 			if (Entity::updateParameter(params->param2, getState()->time, 900)) {
 				ENTITY_PARAM(1, 5) = 1;
 				params->param1 = 0;
@@ -740,7 +740,7 @@ void Waiter2::serveSalon(const SavePoint &savepoint, const char *seq1, const cha
 			if (getEntities()->isInRestaurant(kEntityPlayer))
 				getEntities()->updateFrame(kEntityWaiter2);
 
-			if (!strcmp(snd1, ""))
+			if (strcmp(snd1, ""))
 				getSound()->playSound(kEntityWaiter2, snd1);
 
 			setCallback(2);
@@ -753,7 +753,9 @@ void Waiter2::serveSalon(const SavePoint &savepoint, const char *seq1, const cha
 			getSound()->playSound(kEntityWaiter2, snd2);
 
 			setCallback(3);
-			setup_updatePosition(seq2, kCarRestaurant, 57);
+			// the last arg is actually a constant varying between calls,
+			// but this function already has too many args to add yet another one
+			setup_updatePosition(seq2, kCarRestaurant, strcmp(seq2, "127D") ? 57 : 56);
 			break;
 
 		case 3:

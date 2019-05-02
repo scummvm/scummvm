@@ -28,6 +28,7 @@
 class OSystem_MacOSX : public OSystem_POSIX {
 public:
 	OSystem_MacOSX();
+	~OSystem_MacOSX();
 
 	virtual bool hasFeature(Feature f);
 
@@ -35,6 +36,7 @@ public:
 
 	virtual bool hasTextInClipboard();
 	virtual Common::String getTextFromClipboard();
+	virtual bool setTextInClipboard(const Common::String &text);
 
 	virtual bool openUrl(const Common::String &url);
 

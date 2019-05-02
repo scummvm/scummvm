@@ -22,6 +22,7 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
+#include <curl/curl.h>
 #include "backends/cloud/dropbox/dropboxstorage.h"
 #include "backends/cloud/dropbox/dropboxcreatedirectoryrequest.h"
 #include "backends/cloud/dropbox/dropboxinforequest.h"
@@ -33,7 +34,6 @@
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/json.h"
-#include <curl/curl.h>
 
 #ifdef ENABLE_RELEASE
 #include "dists/clouds/cloud_keys.h"

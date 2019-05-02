@@ -20,11 +20,16 @@
  *
  */
 
-#include "graphics/cursorman.h"
 #include "titanic/support/mouse_cursor.h"
+#include "titanic/support/screen_manager.h"
 #include "titanic/support/transparency_surface.h"
 #include "titanic/support/video_surface.h"
+#include "titanic/events.h"
+#include "titanic/input_handler.h"
+#include "titanic/messages/mouse_messages.h"
 #include "titanic/titanic.h"
+#include "graphics/cursorman.h"
+#include "graphics/screen.h"
 
 namespace Titanic {
 
@@ -49,8 +54,7 @@ static const int CURSOR_DATA[NUM_CURSORS][4] = {
 };
 
 CMouseCursor::CursorEntry::~CursorEntry() {
-	delete _videoSurface;
-	delete _transSurface;
+	delete _surface;
 }
 
 CMouseCursor::CMouseCursor(CScreenManager *screenManager) :
@@ -75,15 +79,33 @@ void CMouseCursor::loadCursorImages() {
 
 		// Create the surface
 		CVideoSurface *surface = _screenManager->createSurface(CURSOR_SIZE, CURSOR_SIZE);
-		_cursors[idx]._videoSurface = surface;
 
 		// Open the cursors video and move to the given frame
-		OSMovie movie(key, surface);
-		movie.setFrame(idx);
+		OSMovie *movie = new OSMovie(key, surface);
+		movie->setFrame(idx);
+		Graphics::ManagedSurface *transSurface = movie->duplicateTransparency();
 
-		Graphics::ManagedSurface *transSurface = movie.duplicateTransparency();
-		_cursors[idx]._transSurface = transSurface;
-		surface->setTransparencySurface(transSurface);
+		// Create a managed surface to hold the RGBA version of the cursor
+		Graphics::PixelFormat rgbaFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+		_cursors[idx]._surface = new Graphics::ManagedSurface(CURSOR_SIZE, CURSOR_SIZE, rgbaFormat);
+
+		// Copy the cursor from the movie's video surface
+		surface->lock();
+		_cursors[idx]._surface->blitFrom(*surface->getRawSurface());
+		surface->unlock();
+
+		// We need to separately merge in the transparency surface
+		for (int y = 0; y < CURSOR_SIZE; ++y) {
+			const byte *srcP = (const byte *)transSurface->getBasePtr(0, y);
+			uint32 *destP = (uint32 *)_cursors[idx]._surface->getBasePtr(0, y);
+
+			for (int x = 0; x < CURSOR_SIZE; ++x, ++srcP, ++destP)
+				*destP = (*destP & ~0xff) | *srcP;
+		}
+
+		delete movie;
+		delete transSurface;
+		delete surface;
 	}
 }
 
@@ -126,35 +148,12 @@ void CMouseCursor::setCursor(CursorId cursorId) {
 	++_setCursorCount;
 
 	if (cursorId != _cursorId && _busyCount == 0) {
-		// The original cursors supported partial alpha when rendering the cursor.
-		// Since we're using the ScummVM CursorMan, we can't do that, so we need
-		// to build up a surface of the cursor with even partially transparent
-		// pixels as wholy transparent
-		CursorEntry &ce = _cursors[cursorId - 1];
-		CVideoSurface &srcSurface = *ce._videoSurface;
-		srcSurface.lock();
-
-		Graphics::ManagedSurface surface(CURSOR_SIZE, CURSOR_SIZE, g_system->getScreenFormat());
-		const uint16 *srcP = srcSurface.getPixels();
-		CTransparencySurface transSurface(&ce._transSurface->rawSurface(), TRANS_ALPHA0);
-		uint16 *destP = (uint16 *)surface.getPixels();
-
-		for (int y = 0; y < CURSOR_SIZE; ++y) {
-			transSurface.setRow(y);
-			transSurface.setCol(0);
-
-			for (int x = 0; x < CURSOR_SIZE; ++x, ++srcP, ++destP) {
-				*destP = transSurface.isPixelTransparent() ? srcSurface.getTransparencyColor() : *srcP;
-				transSurface.moveX();
-			}
-		}
-
-		srcSurface.unlock();
+		const CursorEntry &ce = _cursors[cursorId - 1];
+		_cursorId = cursorId;
 
 		// Set the cursor
-		_cursorId = cursorId;
-		CursorMan.replaceCursor(surface.getPixels(), CURSOR_SIZE, CURSOR_SIZE,
-			ce._centroid.x, ce._centroid.y, srcSurface.getTransparencyColor(), false, &g_vm->_screen->format);
+		CursorMan.replaceCursor(ce._surface->getPixels(), CURSOR_SIZE, CURSOR_SIZE,
+			ce._centroid.x, ce._centroid.y, 0, false, &ce._surface->format);
 	}
 }
 

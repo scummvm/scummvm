@@ -171,7 +171,7 @@ void OSystem_Dreamcast::setCursorPalette(const byte *colors, uint start, uint nu
   _enable_cursor_palette = true;
 }
 
-void OSystem_Dreamcast::grabPalette(byte *colors, uint start, uint num)
+void OSystem_Dreamcast::grabPalette(byte *colors, uint start, uint num) const
 {
   const unsigned short *src = palette + start;
   if (num>0)

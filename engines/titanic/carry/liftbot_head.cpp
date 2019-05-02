@@ -55,6 +55,8 @@ bool CLiftbotHead::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 			CActMsg actMsg("AddRightHead");
 			actMsg.execute("FaultyLiftbot");
 			setVisible(false);
+		} else {
+			petAddToInventory();
 		}
 
 		return true;

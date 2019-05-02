@@ -30,11 +30,9 @@
 #include "gui/object.h"
 #include "gui/ThemeEngine.h"
 
-#ifdef ENABLE_KEYMAPPER
 namespace Common {
 struct Event;
 }
-#endif
 
 namespace GUI {
 
@@ -88,8 +86,14 @@ protected:
 	virtual void open();
 	virtual void close();
 
-	virtual void draw();
-	virtual void drawDialog();
+	/** Recursively mark all the widgets in this dialog as dirty so they are redrawn */
+	void markWidgetsAsDirty();
+
+	/** Draw the dialog in its entirety (background and widgets) */
+	virtual void drawDialog(DrawLayer layerToDraw);
+
+	/** Draw only the dialog's widgets */
+	void drawWidgets();
 
 	virtual void handleTickle(); // Called periodically (in every guiloop() )
 	virtual void handleMouseDown(int x, int y, int button, int clickCount);
@@ -99,9 +103,7 @@ protected:
 	virtual void handleKeyUp(Common::KeyState state);
 	virtual void handleMouseMoved(int x, int y, int button);
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
-#ifdef ENABLE_KEYMAPPER
 	virtual void handleOtherEvent(Common::Event evt);
-#endif
 
 	Widget *findWidget(int x, int y); // Find the widget at pos x,y if any
 	Widget *findWidget(const char *name);

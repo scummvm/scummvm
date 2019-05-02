@@ -69,7 +69,10 @@ static const int ATTACK_TYPE_FX[23] = {
 	4, 5, 4, 9, 27, 29, 44, 51, 53, 61, 71
 };
 
-static const int MONSTER_SHOOT_POW[7] = { 12, 14, 0, 4, 8, 10, 13 };
+static const PowType MONSTER_SHOOT_POW[7] = { 
+	POW_MAGIC_ARROW, POW_SPARKLES, POW_FIREBALL,
+	POW_MEGAVOLTS, POW_COLD_RAY, POW_SPRAY, POW_ENERGY_BLAST
+};
 
 static const int COMBAT_SHOOTING[4] = { 1, 1, 2, 3 };
 
@@ -88,14 +91,9 @@ static const int MONSTER_ITEM_RANGES[6] = { 10, 20, 50, 100, 100, 100 };
 
 /*------------------------------------------------------------------------*/
 
-Combat::Combat(XeenEngine *vm): _vm(vm), _missVoc("miss.voc"), _pow1Voc("pow1.voc") {
+Combat::Combat(XeenEngine *vm): _vm(vm), _missVoc("miss.voc") {
 	Common::fill(&_attackMonsters[0], &_attackMonsters[26], 0);
-	Common::fill(&_charsArray1[0], &_charsArray1[12], 0);
-	Common::fill(&_monPow[0], &_monPow[12], 0);
-	Common::fill(&_monsterScale[0], &_monsterScale[12], 0);
-	Common::fill(&_elemPow[0], &_elemPow[12], ELEM_FIRE);
-	Common::fill(&_elemScale[0], &_elemScale[12], 0);
-	Common::fill(&_shooting[0], &_shooting[8], 0);
+	Common::fill(&_shootingRow[0], &_shootingRow[MAX_PARTY_COUNT], 0);
 	Common::fill(&_monsterMap[0][0], &_monsterMap[32][32], 0);
 	Common::fill(&_monsterMoved[0], &_monsterMoved[MAX_NUM_MONSTERS], false);
 	Common::fill(&_rangeAttacking[0], &_rangeAttacking[MAX_NUM_MONSTERS], false);
@@ -105,8 +103,8 @@ Combat::Combat(XeenEngine *vm): _vm(vm), _missVoc("miss.voc"), _pow1Voc("pow1.vo
 	_whosTurn = -1;
 	_itemFlag = false;
 	_monstersAttacking = false;
-	_combatMode = COMBATMODE_0;
-	_monsterIndex = 0;
+	_combatMode = COMBATMODE_STARTUP;
+	_attackDurationCtr = 0;
 	_partyRan = false;
 	_monster2Attack = -1;
 	_whosSpeed = 0;
@@ -116,57 +114,66 @@ Combat::Combat(XeenEngine *vm): _vm(vm), _missVoc("miss.voc"), _pow1Voc("pow1.vo
 	_monsterDamage = 0;
 	_weaponDamage = 0;
 	_weaponDie = _weaponDice = 0;
+	_weaponElemMaterial = 0;
 	_attackWeapon = nullptr;
 	_attackWeaponId = 0;
 	_hitChanceBonus = 0;
 	_dangerPresent = false;
 	_moveMonsters = false;
 	_rangeType = RT_SINGLE;
+	_combatTarget = 0;
 }
 
-void Combat::clear() {
-	Common::fill(&_attackMonsters[0], &_attackMonsters[26], -1);
+void Combat::clearAttackers() {
+	Common::fill(&_attackMonsters[0], &_attackMonsters[ATTACK_MONSTERS_COUNT], -1);
+}
+
+void Combat::clearBlocked() {
+	Common::fill(_charsBlocked, _charsBlocked + PARTY_AND_MONSTERS, false);
+}
+
+void Combat::clearShooting() {
+	Common::fill(_shootingRow, _shootingRow + MAX_PARTY_COUNT, 0);
 }
 
 void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
+	EventsManager &events = *_vm->_events;
+	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
-	Scripts &scripts = *_vm->_scripts;
 	Sound &sound = *_vm->_sound;
-	int charIndex1 = charIndex + 1;
-	int selectedIndex1 = 0;
-	int selectedIndex2 = 0;
+	Windows &windows = *_vm->_windows;
+	int endIndex = charIndex + 1;
+	int selectedIndex = 0;
 	bool breakFlag = false;
 
-	screen.closeWindows();
+	windows.closeAll();
 
 	int idx = (int)party._activeParty.size();
-	if (!scripts._v2) {
+	if (_combatTarget == 2) {
 		for (idx = 0; idx < (int)party._activeParty.size(); ++idx) {
 			Character &c = party._activeParty[idx];
 			Condition condition = c.worstCondition();
 
 			if (!(condition >= UNCONSCIOUS && condition <= ERADICATED)) {
-				if (!selectedIndex1) {
-					selectedIndex1 = idx + 1;
+				if (!charIndex) {
+					charIndex = idx + 1;
 				} else {
-					selectedIndex2 = idx + 1;
+					selectedIndex = idx + 1;
+					--charIndex;
 					break;
 				}
 			}
 		}
 	}
 	if (idx == (int)party._activeParty.size()) {
-		selectedIndex1 = scripts._v2 ? charIndex : 0;
-		goto loop;
+		if (!_combatTarget)
+			charIndex = 0;
 	}
 
 	for (;;) {
-		// The if below is to get around errors due to the
-		// goto I was forced to use when reimplementing this method
-		if (true) {
-			Character &c = party._activeParty[selectedIndex1];
-			c._conditions[ASLEEP] = 0;	// Force character to be awake
+		for (; charIndex < (_combatTarget ? endIndex : (int)party._activeParty.size()); ++charIndex) {
+			Character &c = party._activeParty[charIndex];
+			c._conditions[ASLEEP] = 0;	// Force attacked character to be awake
 
 			int frame = 0, fx = 0;
 			switch (attackType) {
@@ -217,9 +224,8 @@ void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
 
 			// Draw the attack effect on the character sprite
 			sound.playFX(fx);
-			_powSprites.draw(screen, frame,
-				Common::Point(Res.CHAR_FACES_X[selectedIndex1], 150));
-			screen._windows[33].update();
+			intf._charPowSprites.draw(0, frame, Common::Point(Res.CHAR_FACES_X[charIndex], 150));
+			windows[33].update();
 
 			// Reduce damage if power shield active, and set it zero
 			// if the damage amount has become negative.. you wouldn't
@@ -229,8 +235,6 @@ void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
 			if (damage < 0)
 				damage = 0;
 
-			// TODO: This seems weird.. maybe I've got attack types wrong..
-			// why should attack type 7 (DT_SLEEP) set the dead condition?
 			if (attackType == DT_SLEEP) {
 				damage = c._currentHp;
 				c._conditions[DEAD] = 1;
@@ -238,31 +242,31 @@ void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
 
 			// Subtract the hit points from the character
 			c.subtractHitPoints(damage);
-		}
-
-		if (selectedIndex2) {
-			++selectedIndex1;
-loop:
-			if ((scripts._v2 ? charIndex1 : (int)party._activeParty.size()) > selectedIndex1)
+			if (selectedIndex)
 				break;
 		}
 
 		// Break check and if not, move to other index
-		if (!selectedIndex2 || breakFlag)
+		if (!selectedIndex || breakFlag)
 			break;
 
-		selectedIndex1 = selectedIndex2 - 1;
+		charIndex = selectedIndex - 1;
 		breakFlag = true;
 	}
+
+	events.ipause(5);
+	intf.drawParty(true);
+	party.checkPartyDead();
 }
 
 void Combat::doCharDamage(Character &c, int charNum, int monsterDataIndex) {
+	Debugger &debugger = *g_vm->_debugger;
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
+	Windows &windows = *_vm->_windows;
 	MonsterStruct &monsterData = map._monsterData[monsterDataIndex];
 
 	// Attacked characters are automatically woken up
@@ -275,7 +279,7 @@ void Combat::doCharDamage(Character &c, int charNum, int monsterDataIndex) {
 
 
 	int fx = 29, frame = 0;
-	if (monsterData._attackType) {
+	if (monsterData._attackType != DT_PHYSICAL) {
 		if (c.charSavingThrow(monsterData._attackType))
 			damage /= 2;
 
@@ -317,10 +321,10 @@ void Combat::doCharDamage(Character &c, int charNum, int monsterDataIndex) {
 	}
 
 	sound.playFX(fx);
-	intf._charPowSprites.draw(screen, frame, Common::Point(Res.CHAR_FACES_X[charNum], 150));
-	screen._windows[33].update();
+	intf._charPowSprites.draw(0, frame, Common::Point(Res.CHAR_FACES_X[charNum], 150));
+	windows[33].update();
 
-	damage -= party._powerShield;
+	damage = MAX(damage - party._powerShield, 0);
 	if (damage > 0 && monsterData._specialAttack && !c.charSavingThrow(DT_PHYSICAL)) {
 		switch (monsterData._specialAttack) {
 		case SA_POISON:
@@ -344,13 +348,7 @@ void Combat::doCharDamage(Character &c, int charNum, int monsterDataIndex) {
 			sound.playFX(36);
 			break;
 		case SA_CURSEITEM:
-			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
-				if (c._weapons[idx]._id != 34)
-					c._weapons[idx]._bonusFlags |= ITEMFLAG_CURSED;
-				c._armor[idx]._bonusFlags |= ITEMFLAG_CURSED;
-				c._accessories[idx]._bonusFlags |= ITEMFLAG_CURSED;
-				c._misc[idx]._bonusFlags |= ITEMFLAG_CURSED;
-			}
+			c._items.curseUncurse(true);
 			sound.playFX(37);
 			break;
 		case SA_DRAINSP:
@@ -380,8 +378,8 @@ void Combat::doCharDamage(Character &c, int charNum, int monsterDataIndex) {
 		case SA_BREAKWEAPON:
 			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
 				XeenItem &weapon = c._weapons[idx];
-				if (weapon._id != 34 && weapon._id != 0 && weapon._frame != 0) {
-					weapon._bonusFlags |= ITEMFLAG_BROKEN;
+				if (weapon._id < XEEN_SLAYER_SWORD && weapon._id != 0 && weapon._frame != 0) {
+					weapon._state._broken = true;
 					weapon._frame = 0;
 				}
 			}
@@ -423,9 +421,14 @@ void Combat::doCharDamage(Character &c, int charNum, int monsterDataIndex) {
 		default:
 			break;
 		}
-
-		c.subtractHitPoints(damage);
 	}
+
+	if (debugger._invincible)
+		// Invincibility mode is on, so reset conditions that were set
+		c.clearConditions();
+	else
+		// Standard gameplay, deal out the damage
+		c.subtractHitPoints(damage);
 
 	events.ipause(2);
 	intf.drawParty(true);
@@ -451,7 +454,10 @@ void Combat::moveMonsters() {
 
 	for (uint idx = 0; idx < map._mobData._monsters.size(); ++idx) {
 		MazeMonster &monster = map._mobData._monsters[idx];
-		if (monster._position.y < 32) {
+
+		// WORKAROUND: Original only checked on y, but some monsters have an invalid X instead
+		if ((uint)monster._position.x < 32 && (uint)monster._position.y < 32) {
+			assert((uint)monster._position.x < 32);
 			_monsterMap[monster._position.y][monster._position.x]++;
 		}
 	}
@@ -475,7 +481,7 @@ void Combat::moveMonsters() {
 								// Check for range attacks
 								if (monsterData._rangeAttack && !_rangeAttacking[idx]
 									&& _attackMonsters[0] != idx && _attackMonsters[1] != idx
-									&& _attackMonsters[2] != idx && !monster._damageType) {
+									&& _attackMonsters[2] != idx && monster._damageType == DT_PHYSICAL) {
 									// Setup monster for attacking
 									setupMonsterAttack(monster._spriteId, pt);
 									_rangeAttacking[idx] = true;
@@ -485,12 +491,12 @@ void Combat::moveMonsters() {
 							switch (party._mazeDirection) {
 							case DIR_NORTH:
 							case DIR_SOUTH:
-								if (monsterCanMove(pt, Res.MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX1[arrIndex]],
+								if (canMonsterMove(pt, Res.MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX1[arrIndex]],
 										MONSTER_GRID_X[arrIndex], MONSTER_GRID_Y[arrIndex], idx)) {
 									// Move the monster
 									moveMonster(idx, Common::Point(MONSTER_GRID_X[arrIndex], MONSTER_GRID_Y[arrIndex]));
 								} else {
-									if (monsterCanMove(pt, Res.MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX2[arrIndex]],
+									if (canMonsterMove(pt, Res.MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX2[arrIndex]],
 										arrIndex >= 21 && arrIndex <= 27 ? MONSTER_GRID3[arrIndex] : 0,
 										arrIndex >= 21 && arrIndex <= 27 ? 0 : MONSTER_GRID3[arrIndex],
 										idx)) {
@@ -505,7 +511,7 @@ void Combat::moveMonsters() {
 
 							case DIR_EAST:
 							case DIR_WEST:
-								if (monsterCanMove(pt, Res.MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX2[arrIndex]],
+								if (canMonsterMove(pt, Res.MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX2[arrIndex]],
 									arrIndex >= 21 && arrIndex <= 27 ? MONSTER_GRID3[arrIndex] : 0,
 									arrIndex >= 21 && arrIndex <= 27 ? 0 : MONSTER_GRID3[arrIndex],
 									idx)) {
@@ -514,7 +520,7 @@ void Combat::moveMonsters() {
 									} else {
 										moveMonster(idx, Common::Point(0, MONSTER_GRID3[arrIndex]));
 									}
-								} else if (monsterCanMove(pt, Res.MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX1[arrIndex]],
+								} else if (canMonsterMove(pt, Res.MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX1[arrIndex]],
 										MONSTER_GRID_X[arrIndex], MONSTER_GRID_Y[arrIndex], idx)) {
 									moveMonster(idx, Common::Point(MONSTER_GRID_X[arrIndex], MONSTER_GRID_Y[arrIndex]));
 								}
@@ -540,7 +546,7 @@ void Combat::monstersAttack() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Sound &sound = *_vm->_sound;
-	int powNum = -1;
+	PowType powNum = POW_INVALID;
 	MonsterStruct *monsterData = nullptr;
 	OutdoorDrawList &outdoorList = intf._outdoorList;
 	IndoorDrawList &indoorList = intf._indoorList;
@@ -549,16 +555,16 @@ void Combat::monstersAttack() {
 		if (_gmonHit[idx] != -1) {
 			monsterData = &map._monsterData[_gmonHit[idx]];
 			powNum = MONSTER_SHOOT_POW[monsterData->_attackType];
-			if (powNum != 12)
+			if (powNum != POW_MAGIC_ARROW)
 				break;
 		}
 	}
 
-	_powSprites.load(Common::String::format("pow%d.icn", powNum));
+	_powSprites.load(Common::String::format("pow%d.icn", (int)powNum));
 	sound.playFX(ATTACK_TYPE_FX[monsterData->_attackType]);
 
 	for (int charNum = 0; charNum < MAX_PARTY_COUNT; ++charNum) {
-		if (!_shooting[charNum])
+		if (!_shootingRow[charNum])
 			continue;
 
 		if (map._isOutdoors) {
@@ -571,7 +577,7 @@ void Combat::monstersAttack() {
 			outdoorList._attackImgs3[charNum]._sprites = nullptr;
 			outdoorList._attackImgs4[charNum]._sprites = nullptr;
 
-			switch (_shooting[charNum]) {
+			switch (_shootingRow[charNum]) {
 			case 1:
 				outdoorList._attackImgs1[charNum]._sprites = &_powSprites;
 				break;
@@ -592,7 +598,7 @@ void Combat::monstersAttack() {
 			indoorList._attackImgs3[charNum]._sprites = nullptr;
 			indoorList._attackImgs4[charNum]._sprites = nullptr;
 
-			switch (_shooting[charNum]) {
+			switch (_shootingRow[charNum]) {
 			case 1:
 				indoorList._attackImgs1[charNum]._sprites = &_powSprites;
 				break;
@@ -610,7 +616,7 @@ void Combat::monstersAttack() {
 	do {
 		intf.draw3d(true);
 		events.pollEventsAndWait();
-	} while (!_vm->shouldQuit() && intf._isAttacking);
+	} while (!_vm->shouldExit() && intf._isAttacking);
 
 	endAttack();
 
@@ -627,12 +633,12 @@ void Combat::monstersAttack() {
 
 	_monstersAttacking = false;
 
-	if (_vm->_mode != MODE_SLEEPING) {
+	if (_vm->_mode == MODE_SLEEPING) {
 		for (uint charNum = 0; charNum < party._activeParty.size(); ++charNum) {
 			Condition condition = party._activeParty[charNum].worstCondition();
 
-			if (condition != ASLEEP && (condition < PARALYZED || condition == NO_CONDITION)) {
-				_vm->_mode = MODE_1;
+			if (condition == DEPRESSED || condition == CONFUSED || condition == NO_CONDITION) {
+				_vm->_mode = MODE_INTERACTIVE;
 				break;
 			}
 		}
@@ -643,7 +649,7 @@ void Combat::setupMonsterAttack(int monsterDataIndex, const Common::Point &pt) {
 	Party &party = *_vm->_party;
 
 	for (int idx = 0; idx < 36; ++idx) {
-		if (_gmonHit[idx] != -1) {
+		if (_gmonHit[idx] == -1) {
 			int result = stopAttack(pt - party._mazePosition);
 			if (result) {
 				_monstersAttacking = true;
@@ -651,18 +657,20 @@ void Combat::setupMonsterAttack(int monsterDataIndex, const Common::Point &pt) {
 
 				if (result != 1) {
 					for (int charNum = 0; charNum < MAX_PARTY_COUNT; ++charNum) {
-						if (!_shooting[charNum]) {
-							_shooting[charNum] = COMBAT_SHOOTING[result - 1];
+						if (!_shootingRow[charNum]) {
+							_shootingRow[charNum] = COMBAT_SHOOTING[result - 1];
+							break;
 						}
 					}
 				}
 			}
+
+			break;
 		}
 	}
 }
 
-bool Combat::monsterCanMove(const Common::Point &pt, int wallShift,
-		int xDiff, int yDiff, int monsterId) {
+bool Combat::canMonsterMove(const Common::Point &pt, int wallShift, int xDiff, int yDiff, int monsterId) {
 	Map &map = *_vm->_map;
 	MazeMonster &monster = map._mobData._monsters[monsterId];
 	MonsterStruct &monsterData = *monster._monsterData;
@@ -695,7 +703,7 @@ bool Combat::monsterCanMove(const Common::Point &pt, int wallShift,
 			} else if (surfaceType == SURFTYPE_SPACE) {
 				return monsterData._flying;
 			} else {
-				return _vm->_files->_isDarkCc || monster._spriteId != 59;
+				return _vm->_files->_ccNum || monster._spriteId != 59;
 			}
 		default:
 			return v <= map.mazeData()._difficulties._wallNoPass;
@@ -708,7 +716,11 @@ void Combat::moveMonster(int monsterId, const Common::Point &moveDelta) {
 	MazeMonster &monster = map._mobData._monsters[monsterId];
 	Common::Point newPos = monster._position + moveDelta;
 
-	if (_monsterMap[newPos.y][newPos.x] < 3 && !monster._damageType && _moveMonsters) {
+	// FIXME: Monster moved outside mapping area. Which shouldn't happen, so ignore the move if it does
+	if ((uint)newPos.x >= 32 || (uint)newPos.y >= 32)
+		return;
+
+	if (_monsterMap[newPos.y][newPos.x] < 3 && monster._damageType == DT_PHYSICAL && _moveMonsters) {
 		// Adjust monster's position
 		++_monsterMap[newPos.y][newPos.x];
 		--_monsterMap[monster._position.y][monster._position.x];
@@ -747,7 +759,7 @@ void Combat::endAttack() {
 		}
 	}
 
-	Common::fill(&_shooting[0], &_shooting[MAX_PARTY_COUNT], false);
+	clearShooting();
 }
 
 void Combat::monsterOvercome() {
@@ -760,7 +772,7 @@ void Combat::monsterOvercome() {
 		if (monster._damageType != DT_PHYSICAL && monster._damageType != DT_DRAGONSLEEP) {
 			// Do a saving throw for monster
 			if (dataIndex <= _vm->getRandomNumber(1, dataIndex + 50))
-				monster._damageType = 0;
+				monster._damageType = DT_PHYSICAL;
 		}
 	}
 }
@@ -771,7 +783,7 @@ void Combat::doMonsterTurn(int monsterId) {
 	Party &party = *_vm->_party;
 	Sound &sound = *_vm->_sound;
 
-	if (_monstersAttacking) {
+	if (!_monstersAttacking) {
 		int monsterIndex;
 		switch (_whosTurn - _combatParty.size()) {
 		case 0:
@@ -788,13 +800,14 @@ void Combat::doMonsterTurn(int monsterId) {
 			intf._indoorList[153]._scale = 0;
 		}
 
+		assert(monsterIndex != -1);
 		MazeMonster &monster = map._mobData._monsters[monsterIndex];
 		MonsterStruct &monsterData = *monster._monsterData;
-		if (monster._damageType)
+		if (monster._damageType != DT_PHYSICAL)
 			return;
 
 		monster._frame = 8;
-		monster._fieldA = 3;
+		monster._postAttackDelay = 3;
 		monster._field9 = 0;
 		intf.draw3d(true);
 		intf.draw3d(true);
@@ -804,15 +817,20 @@ void Combat::doMonsterTurn(int monsterId) {
 	}
 
 	MonsterStruct &monsterData = map._monsterData[monsterId];
-	bool flag = false;
 	for (int attackNum = 0; attackNum < monsterData._numberOfAttacks; ++attackNum) {
 		int charNum = -1;
 		bool isHated = false;
 
-		if (monsterData._hatesClass != -1) {
-			if (monsterData._hatesClass == 15)
-				// Monster hates all classes
-				goto loop;
+		if (monsterData._hatesClass != CLASS_PALADIN) {
+			if (monsterData._hatesClass == HATES_PARTY) {
+				// Monster hates entire party, even the disabled/dead
+				for (uint idx = 0; idx < _combatParty.size(); ++idx) {
+					doMonsterTurn(monsterId, idx);
+				}
+
+				// Move onto monster's next attack (if any)
+				continue;
+			}
 
 			for (uint charIndex = 0; charIndex < _combatParty.size(); ++charIndex) {
 				Character &c = *_combatParty[charIndex];
@@ -820,10 +838,8 @@ void Combat::doMonsterTurn(int monsterId) {
 				if (cond >= PARALYZED && cond <= ERADICATED)
 					continue;
 
-				isHated = false;
 				switch (monsterData._hatesClass) {
 				case CLASS_KNIGHT:
-				case CLASS_PALADIN:
 				case CLASS_ARCHER:
 				case CLASS_CLERIC:
 				case CLASS_SORCERER:
@@ -834,7 +850,7 @@ void Combat::doMonsterTurn(int monsterId) {
 				case CLASS_RANGER:
 					isHated = c._class == monsterData._hatesClass;
 					break;
-				case 12:
+				case HATES_DWARF:
 					isHated = c._race == DWARF;
 					break;
 				default:
@@ -849,98 +865,76 @@ void Combat::doMonsterTurn(int monsterId) {
 		}
 
 		if (!isHated) {
-			// No particularly hated foe, so decide which character to start with
-			switch (_combatParty.size()) {
-			case 1:
-				charNum = 0;
-				break;
-			case 2:
-			case 3:
-			case 4:
-			case 5:
-				charNum = _vm->getRandomNumber(0, _combatParty.size() - 1);
-				break;
-			case 6:
-				if (_vm->getRandomNumber(1, 6) == 6)
-					charNum = 5;
-				else
-					charNum = _vm->getRandomNumber(0, 4);
-				break;
-			}
+			// No particularly hated foe, so pick a random character to start with
+			// Note: Original had a whole switch statement depending on party size, that boiled down to
+			// picking a random character in all cases anyway
+			charNum = _vm->getRandomNumber(0, _combatParty.size() - 1);
 		}
 
-		// Attacking loop
-		do {
-			if (!flag) {
-				Condition cond = _combatParty[charNum]->worstCondition();
+		// If the chosen character is already disabled, we need to pick a still able body character
+		// from the remainder of the combat party
+		Condition cond = _combatParty[charNum]->worstCondition();
+		if (cond >= PARALYZED && cond <= ERADICATED) {
+			Common::Array<int> ableChars;
 
-				if (cond >= PARALYZED && cond <= ERADICATED) {
-					Common::Array<int> ableChars;
-					bool skip = false;
-
-					for (uint idx = 0; idx < _combatParty.size() && !skip; ++idx) {
-						switch (_combatParty[idx]->worstCondition()) {
-						case PARALYZED:
-						case UNCONSCIOUS:
-							if (flag)
-								skip = true;
-							break;
-						case DEAD:
-						case STONED:
-						case ERADICATED:
-							break;
-						default:
-							ableChars.push_back(idx);
-							break;
-						}
-					}
-
-					if (!skip) {
-						if (ableChars.size() == 0) {
-							party._dead = true;
-							_vm->_mode = MODE_1;
-							return;
-						}
-
-						charNum = ableChars[_vm->getRandomNumber(0, ableChars.size() - 1)];
-					}
-				}
-			}
-
-			// Unconditional if to get around goto initialization errors
-			if (true) {
-				Character &c = *_combatParty[charNum];
-				if (monsterData._attackType != DT_PHYSICAL || c._conditions[ASLEEP]) {
-					doCharDamage(c, charNum, monsterId);
-				} else {
-					int v = _vm->getRandomNumber(1, 20);
-					if (v == 1) {
-						sound.playFX(6);
-					} else {
-						if (v == 20)
-							doCharDamage(c, charNum, monsterId);
-						v += monsterData._hitChance / 4 + _vm->getRandomNumber(1,
-							monsterData._hitChance);
-
-						int ac = c.getArmorClass() + (!_charsBlocked[charNum] ? 10 :
-							c.getCurrentLevel() / 2 + 15);
-						if (ac > v) {
-							sound.playFX(6);
-						} else {
-							doCharDamage(c, charNum, monsterId);
-						}
-					}
-				}
-
-				if (flag)
+			for (uint idx = 0; idx < _combatParty.size(); ++idx) {
+				switch (_combatParty[idx]->worstCondition()) {
+				case PARALYZED:
+				case UNCONSCIOUS:
+				case DEAD:
+				case STONED:
+				case ERADICATED:
 					break;
+				default:
+					ableChars.push_back(idx);
+					break;
+				}
 			}
-loop:
-			flag = true;
-		} while (++charNum < (int)_combatParty.size());
+
+			if (ableChars.size() == 0) {
+				party._dead = true;
+				_vm->_mode = MODE_INTERACTIVE;
+				return;
+			}
+
+			charNum = ableChars[_vm->getRandomNumber(0, ableChars.size() - 1)];
+		}
+
+		doMonsterTurn(monsterId, charNum);
 	}
 
 	intf.drawParty(true);
+}
+
+void Combat::doMonsterTurn(int monsterId, int charNum) {
+	Map &map = *_vm->_map;
+	Sound &sound = *_vm->_sound;
+	MonsterStruct &monsterData = map._monsterData[monsterId];
+	Character &c = *_combatParty[charNum];
+
+	if (monsterData._attackType != DT_PHYSICAL || c._conditions[ASLEEP]) {
+		doCharDamage(c, charNum, monsterId);
+	} else {
+		int v = _vm->getRandomNumber(1, 20);
+		if (v == 1) {
+			// Critical Save
+			sound.playFX(6);
+		} else {
+			if (v == 20)
+				// Critical failure
+				doCharDamage(c, charNum, monsterId);
+			v += monsterData._hitChance / 4 + _vm->getRandomNumber(1,
+				monsterData._hitChance);
+
+			int ac = c.getArmorClass() + (!_charsBlocked[charNum] ? 10 :
+				c.getCurrentLevel() / 2 + 15);
+			if (ac > v) {
+				sound.playFX(6);
+			} else {
+				doCharDamage(c, charNum, monsterId);
+			}
+		}
+	}
 }
 
 int Combat::stopAttack(const Common::Point &diffPt) {
@@ -1063,10 +1057,10 @@ void Combat::setupCombatParty() {
 void Combat::setSpeedTable() {
 	Map &map = *_vm->_map;
 	Common::Array<int> charSpeeds;
-	bool hasSpeed = _whosSpeed != -1 && _whosSpeed < (int)_speedTable.size();
-	int oldSpeed = hasSpeed ? _speedTable[_whosSpeed] : 0;
+	bool hasSpeed = _whosSpeed != -1;
+	int oldSpeed = hasSpeed && _whosSpeed < (int)_speedTable.size() ? _speedTable[_whosSpeed] : 0;
 
-	// Set up speeds for party membres
+	// Set up speeds for party members
 	int maxSpeed = 0;
 	for (uint charNum = 0; charNum < _combatParty.size(); ++charNum) {
 		Character &c = *_combatParty[charNum];
@@ -1091,7 +1085,7 @@ void Combat::setSpeedTable() {
 	// Populate the _speedTable list with the character/monster indexes
 	// in order of attacking speed
 	_speedTable.clear();
-	for (; maxSpeed >= 0; --maxSpeed) {
+	for (; maxSpeed > 0; --maxSpeed) {
 		for (uint idx = 0; idx < charSpeeds.size(); ++idx) {
 			if (charSpeeds[idx] == maxSpeed)
 				_speedTable.push_back(idx);
@@ -1099,19 +1093,26 @@ void Combat::setSpeedTable() {
 	}
 
 	if (hasSpeed) {
-		if (_speedTable[_whosSpeed] != oldSpeed) {
-			for (uint idx = 0; idx < charSpeeds.size(); ++idx) {
-				if (oldSpeed == _speedTable[idx]) {
-					_whosSpeed = idx;
+		if (_speedTable.empty()) {
+			_whosSpeed = 0;
+		} else if (_whosSpeed >= (int)_speedTable.size() || _speedTable[_whosSpeed] != oldSpeed) {
+			for (_whosSpeed = 0; _whosSpeed < (int)_speedTable.size(); ++_whosSpeed) {
+				if (oldSpeed == _speedTable[_whosSpeed])
 					break;
-				}
 			}
+
+			if (_whosSpeed == (int)charSpeeds.size())
+				error("Could not reset next speedy character. Beep beep.");
 		}
 	}
 }
 
 bool Combat::allHaveGone() const {
-	for (uint idx = 0; idx < _charsGone.size(); ++idx) {
+	int monsCount = (_attackMonsters[0] != -1 ? 1 : 0)
+		+ (_attackMonsters[1] != -1 ? 1 : 0)
+		+ (_attackMonsters[2] != -1 ? 1 : 0);
+
+	for (uint idx = 0; idx < (_combatParty.size() + monsCount); ++idx) {
 		if (!_charsGone[idx]) {
 			if (idx >= _combatParty.size()) {
 				return false;
@@ -1153,13 +1154,13 @@ Common::String Combat::getMonsterDescriptions() {
 		}
 	}
 
-	if (_monsterIndex == 2 && _attackMonsters[2] != -1) {
+	if (_attackDurationCtr == 2 && _attackMonsters[2] != -1) {
 		_monster2Attack = _attackMonsters[2];
-	} if (_monsterIndex == 1 && _attackMonsters[1] != -1) {
+	} if (_attackDurationCtr == 1 && _attackMonsters[1] != -1) {
 		_monster2Attack = _attackMonsters[1];
 	} else {
 		_monster2Attack = _attackMonsters[0];
-		_monsterIndex = 0;
+		_attackDurationCtr = 0;
 	}
 
 	return Common::String::format(Res.COMBAT_DETAILS, lines[0].c_str(),
@@ -1179,13 +1180,12 @@ void Combat::attack(Character &c, RangeType rangeType) {
 	int monsterDataIndex = monster._spriteId;
 	MonsterStruct &monsterData = map._monsterData[monsterDataIndex];
 
-	if (rangeType) {
+	if (rangeType != RT_SINGLE) {
 		if (_shootType != ST_1 || _damageType == DT_MAGIC_ARROW) {
 			if (!monsterData._magicResistence || monsterData._magicResistence <=
 					_vm->getRandomNumber(1, 100 + _oldCharacter->getCurrentLevel())) {
 				if (_monsterDamage != 0) {
 					attack2(damage, rangeType);
-					setSpeedTable();
 				} else {
 					switch (_damageType) {
 					case DT_SLEEP:
@@ -1199,18 +1199,15 @@ void Combat::attack(Character &c, RangeType rangeType) {
 							&& !monsterSavingThrow(monsterDataIndex)) {
 							damage = MIN(monster._hp, 50);
 							attack2(damage, RT_ALL);
-							setSpeedTable();
 						}
 						break;
 					case DT_HOLYWORD:
 						if (monsterData._monsterType == MONSTER_UNDEAD) {
 							attack2(monster._hp, RT_ALL);
-							setSpeedTable();
 						}
 						break;
 					case DT_MASS_DISTORTION:
 						attack2(MAX(monster._hp / 2, 1), RT_ALL);
-						setSpeedTable();
 						break;
 					case DT_UNDEAD:
 						if (monsterData._monsterType == MONSTER_UNDEAD)
@@ -1218,7 +1215,6 @@ void Combat::attack(Character &c, RangeType rangeType) {
 						else
 							rangeType = RT_ALL;
 						attack2(damage, rangeType);
-						setSpeedTable();
 						break;
 					case DT_BEASTMASTER:
 						if ((monsterData._monsterType == MONSTER_ANIMAL || monsterData._monsterType == MONSTER_HUMANOID)
@@ -1233,7 +1229,6 @@ void Combat::attack(Character &c, RangeType rangeType) {
 					case DT_GOLEMSTOPPER:
 						if (monsterData._monsterType == MONSTER_GOLEM) {
 							attack2(100, rangeType);
-							setSpeedTable();
 						}
 						break;
 					case DT_HYPNOTIZE:
@@ -1245,12 +1240,10 @@ void Combat::attack(Character &c, RangeType rangeType) {
 					case DT_INSECT_SPRAY:
 						if (monsterData._monsterType == MONSTER_INSECT) {
 							attack2(25, rangeType);
-							setSpeedTable();
 						}
 						break;
 					case DT_MAGIC_ARROW:
 						attack2(8, rangeType);
-						setSpeedTable();
 						break;
 					default:
 						break;
@@ -1258,19 +1251,19 @@ void Combat::attack(Character &c, RangeType rangeType) {
 				}
 			}
 		} else {
-			Common::fill(&_elemPow[0], &_elemPow[PARTY_AND_MONSTERS], ELEM_FIRE);
+			_pow.resetElementals();
 			damage = 0;
 
 			for (uint charIndex = 0; charIndex < party._activeParty.size(); ++charIndex) {
 				Character &ch = party._activeParty[charIndex];
 
-				if (_shooting[charIndex] && !_missedShot[charIndex]) {
+				if (_shootingRow[charIndex] && !_missedShot[charIndex]) {
 					if (!hitMonster(ch, rangeType)) {
 						++_missedShot[charIndex];
 					} else {
 						damage = _monsterDamage ? _monsterDamage : _weaponDamage;
-						_shooting[charIndex] = 0;
-						attack2(damage, rangeType);
+						_shootingRow[charIndex] = 0;
+						attack2(damage, RT_HIT);
 
 						if (map._isOutdoors) {
 							intf._outdoorList._attackImgs1[charIndex]._scale = 0;
@@ -1323,7 +1316,7 @@ void Combat::attack(Character &c, RangeType rangeType) {
 			divisor = 8;
 			break;
 		default:
-			break;
+			error("Invalid class");
 		}
 
 		int numberOfAttacks = c.getCurrentLevel() / divisor + 1;
@@ -1336,96 +1329,103 @@ void Combat::attack(Character &c, RangeType rangeType) {
 
 		for (int itemIndex = 0; itemIndex < INV_ITEMS_TOTAL; ++itemIndex) {
 			XeenItem &weapon = c._weapons[itemIndex];
-			if (weapon._frame != 0) {
-				switch (weapon._bonusFlags & ITEMFLAG_BONUS_MASK) {
-				case 1:
+			if (weapon.isEquipped()) {
+				switch (weapon._state._counter) {
+				case EFFECTIVE_DRAGON:
 					if (monsterData._monsterType == MONSTER_DRAGON)
 						damage *= 3;
 					break;
-				case 2:
+				case EFFECTIVE_UNDEAD	:
 					if (monsterData._monsterType == MONSTER_UNDEAD)
 						damage *= 3;
 					break;
-				case 3:
+				case EFFECTIVE_GOLEM:
 					if (monsterData._monsterType == MONSTER_GOLEM)
 						damage *= 3;
 					break;
-				case 4:
+				case EFFECTIVE_INSECT:
 					if (monsterData._monsterType == MONSTER_INSECT)
 						damage *= 3;
 					break;
-				case 5:
-					if (monsterData._monsterType == MONSTER_0)
+				case EFFEctIVE_MONSTERS:
+					if (monsterData._monsterType == MONSTER_MONSTERS)
 						damage *= 3;
 					break;
-				case 6:
+				case EFFECTIVE_ANIMAL:
 					if (monsterData._monsterType == MONSTER_ANIMAL)
 						damage *= 3;
+					break;
+				default:
 					break;
 				}
 			}
 		}
 
 		attack2(damage, rangeType);
-		setSpeedTable();
 	}
+
+	setSpeedTable();
 }
 
 void Combat::attack2(int damage, RangeType rangeType) {
+	Debugger &debugger = *_vm->_debugger;
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Sound &sound = *_vm->_sound;
-	bool isDarkCc = _vm->_files->_isDarkCc;
+	int ccNum = _vm->_files->_ccNum;
 	MazeMonster &monster = map._mobData._monsters[_monster2Attack];
 	MonsterStruct &monsterData = *monster._monsterData;
 	bool monsterDied = false;
 
-	if (!isDarkCc && damage && rangeType && monster._spriteId == 89)
+	if (!ccNum && damage && rangeType != RT_SINGLE && monster._spriteId == 89)
 		damage = 0;
+	if (debugger._superStrength)
+		damage = 10000;
 
 	if (!damage) {
 		sound.playSound(_missVoc, 1);
 		sound.playFX(6);
 	} else {
-		if (!isDarkCc && monster._spriteId == 89)
+		if (!ccNum && monster._spriteId == 89)
 			damage += 100;
 		if (monster._damageType == DT_SLEEP || monster._damageType == DT_DRAGONSLEEP)
 			monster._damageType = DT_PHYSICAL;
 
-		if ((!rangeType || !_damageType) && _attackWeaponId != 34) {
+		if ((rangeType == RT_SINGLE || _damageType == DT_PHYSICAL) && _attackWeaponId < XEEN_SLAYER_SWORD) {
 			if (monsterData._phsyicalResistence != 0) {
 				if (monsterData._phsyicalResistence == 100) {
+					// Completely immune to the damage
 					damage = 0;
 				} else {
-					// This doesn't seem to have any effect?
-					damage = (damage * 100) / 100;
+					// Reduce the damage based on physical resistance
+					damage = damage * (100 - monsterData._phsyicalResistence) / 100;
 				}
 			}
 		}
 
 		if (damage) {
-			_charsArray1[_monsterIndex] = 3;
-			_monPow[_monsterIndex] = _damageType == DT_PHYSICAL && (rangeType == 3 || rangeType == 0);
+			_pow[_attackDurationCtr]._duration = 3;
+			_pow[_attackDurationCtr]._active = _damageType == DT_PHYSICAL && (rangeType == RT_HIT || rangeType == RT_SINGLE);
 			monster._frame = 11;
-			monster._fieldA = 5;
+			monster._postAttackDelay = 5;
 		}
 
 		int monsterResist = getMonsterResistence(rangeType);
 		damage += monsterResist;
 		if (monsterResist > 0) {
-			_elemPow[_monsterIndex] = _attackWeapon->getElementalCategory();
-			_elemScale[_monsterIndex] = getDamageScale(monsterResist);
-		} else if (rangeType != 3) {
-			_elemPow[_monsterIndex] = ELEM_FIRE;
+			_pow[_attackDurationCtr]._elemFrame = XeenItem::getElementalCategory(_weaponElemMaterial);
+			_pow[_attackDurationCtr]._elemScale = getDamageScale(monsterResist);
+		} else if (rangeType != RT_HIT) {
+			_pow[_attackDurationCtr]._elemFrame = 0;
 		}
 
-		if (rangeType != 0 && rangeType != 3) {
+		if (rangeType != RT_SINGLE && rangeType != RT_HIT) {
 			monster._effect2 = DAMAGE_TYPE_EFFECTS[_damageType];
 			monster._effect1 = 0;
 		}
 
-		if (rangeType && monsterSavingThrow(monster._spriteId)) {
+		if (rangeType != RT_SINGLE && monsterSavingThrow(monster._spriteId)) {
 			switch (_damageType) {
 			case DT_FINGEROFDEATH:
 			case DT_MASS_DISTORTION:
@@ -1451,13 +1451,13 @@ void Combat::attack2(int damage, RangeType rangeType) {
 			sound.playSound(_missVoc, 1);
 			sound.playFX(6);
 		} else {
-			_monsterScale[_monsterIndex] = getDamageScale(damage);
+			_pow[_attackDurationCtr]._scale = getDamageScale(damage);
 			intf.draw3d(true);
 
 			sound.stopSound();
-			File powVoc(Common::String::format("pow%d.voc",
-				POW_WEAPON_VOCS[_attackWeaponId]));
-			sound.playFX(60 + POW_WEAPON_VOCS[_attackWeaponId]);
+			int powNum = (_attackWeaponId > XEEN_SLAYER_SWORD) ? 0 : POW_WEAPON_VOCS[_attackWeaponId];
+			File powVoc(Common::String::format("pow%d.voc", powNum));
+			sound.playFX(60 + powNum);
 			sound.playSound(powVoc, 1);
 
 			if (monster._hp > damage) {
@@ -1472,31 +1472,32 @@ void Combat::attack2(int damage, RangeType rangeType) {
 	intf.draw3d(true);
 
 	if (monsterDied) {
-		if (!isDarkCc) {
+		if (!ccNum) {
 			if (_monster2Attack == 20 && party._mazeId == 41)
-				party._gameFlags[11] = true;
+				party._gameFlags[0][11] = true;
 			if (_monster2Attack == 8 && party._mazeId == 78) {
-				party._gameFlags[60] = true;
-				party._quests[23] = false;
+				party._gameFlags[0][60] = true;
+				party._questFlags[23] = false;
 
 				for (uint idx = 0; idx < party._activeParty.size(); ++idx)
 					party._activeParty[idx].setAward(42, true);
 
 				if (_monster2Attack == 27 && party._mazeId == 29)
-					party._gameFlags[104] = true;
+					party._gameFlags[0][104] = true;
 			}
 		}
 
 		giveExperience(monsterData._experience);
 
 		if (party._mazeId != 85) {
-			party._treasure._gold = monsterData._gold;
-			party._treasure._gems = monsterData._gems;
+			party._treasure._gold += monsterData._gold;
+			party._treasure._gems += monsterData._gems;
 
-			if (!isDarkCc && monster._spriteId == 89) {
+			if (!ccNum && monster._spriteId == 89) {
+				// Xeen's Scepter of Temporal Distortion
 				party._treasure._weapons[0]._id = 90;
-				party._treasure._weapons[0]._bonusFlags = 0;
 				party._treasure._weapons[0]._material = 0;
+				party._treasure._weapons[0]._state.clear();
 				party._treasure._hasItems = true;
 				party._questItems[8]++;
 			}
@@ -1510,36 +1511,36 @@ void Combat::attack2(int damage, RangeType rangeType) {
 					switch (category) {
 					case CATEGORY_WEAPON:
 						for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
-							if (party._treasure._weapons[idx]._id == 0) {
+							if (party._treasure._weapons[idx].empty()) {
 								party._treasure._weapons[idx] = tempChar._weapons[0];
-								party._treasure._hasItems = 1;
+								party._treasure._hasItems = true;
 								break;
 							}
 						}
 						break;
 					case CATEGORY_ARMOR:
 						for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
-							if (party._treasure._armor[idx]._id == 0) {
+							if (party._treasure._armor[idx].empty()) {
 								party._treasure._armor[idx] = tempChar._armor[0];
-								party._treasure._hasItems = 1;
+								party._treasure._hasItems = true;
 								break;
 							}
 						}
 						break;
 					case CATEGORY_ACCESSORY:
 						for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
-							if (party._treasure._accessories[idx]._id == 0) {
+							if (party._treasure._accessories[idx].empty()) {
 								party._treasure._accessories[idx] = tempChar._accessories[0];
-								party._treasure._hasItems = 1;
+								party._treasure._hasItems = true;
 								break;
 							}
 						}
 						break;
 					case CATEGORY_MISC:
 						for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
-							if (party._treasure._accessories[idx]._id == 0) {
+							if (party._treasure._accessories[idx].empty()) {
 								party._treasure._accessories[idx] = tempChar._accessories[0];
-								party._treasure._hasItems = 1;
+								party._treasure._hasItems = true;
 								break;
 							}
 						}
@@ -1550,13 +1551,13 @@ void Combat::attack2(int damage, RangeType rangeType) {
 		}
 
 		monster._position = Common::Point(0x80, 0x80);
-		_charsArray1[_monsterIndex] = 0;
+		_pow[_attackDurationCtr]._duration = 0;
 		_monster2Attack = -1;
 		intf.draw3d(true);
 
 		if (_attackMonsters[0] != -1) {
 			_monster2Attack = _attackMonsters[0];
-			_monsterIndex = 0;
+			_attackDurationCtr = 0;
 		}
 	}
 }
@@ -1575,7 +1576,7 @@ void Combat::quickFight() {
 		break;
 	case QUICK_SPELL:
 		if (c->_currentSpell != -1) {
-			spells.castSpell(c, (MagicSpell)Res.SPELLS_ALLOWED[c->getClassCategory()][c->_currentSpell]);
+			spells.castSpell(c, (MagicSpell)Res.SPELLS_ALLOWED[c->getSpellsCategory()][c->_currentSpell]);
 		}
 		break;
 	case QUICK_BLOCK:
@@ -1611,10 +1612,6 @@ bool Combat::hitMonster(Character &c, RangeType rangeType) {
 	int divisor = 0;
 
 	switch (c._class) {
-	case CLASS_KNIGHT:
-	case CLASS_BARBARIAN:
-		divisor = 1;
-		break;
 	case CLASS_PALADIN :
 	case CLASS_ARCHER:
 	case CLASS_ROBBER:
@@ -1629,7 +1626,10 @@ bool Combat::hitMonster(Character &c, RangeType rangeType) {
 	case CLASS_SORCERER:
 		divisor = 4;
 		break;
+	case CLASS_KNIGHT:
+	case CLASS_BARBARIAN:
 	default:
+		divisor = 1;
 		break;
 	}
 
@@ -1650,7 +1650,7 @@ bool Combat::hitMonster(Character &c, RangeType rangeType) {
 	if (monster._damageType != DT_PHYSICAL)
 		chance += 20;
 
-	return chance >= (monsterData._accuracy + 10);
+	return chance >= (monsterData._armorClass + 10);
 }
 
 void Combat::getWeaponDamage(Character &c, RangeType rangeType) {
@@ -1659,27 +1659,31 @@ void Combat::getWeaponDamage(Character &c, RangeType rangeType) {
 	_weaponDie = _weaponDice = 0;
 	_weaponDamage = 0;
 	_hitChanceBonus = 0;
+	_weaponElemMaterial = 0;
 
 	for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
+		XeenItem &weapon = c._weapons[idx];
 		bool flag;
-		if (rangeType) {
-			flag = c._weapons[idx]._frame == 4;
+		if (rangeType != RT_SINGLE) {
+			flag = weapon._frame == 4;
 		} else {
-			flag = c._weapons[idx]._frame == 1 || c._weapons[idx]._frame == 13;
+			flag = weapon._frame == 1 || weapon._frame == 13;
 		}
 
 		if (flag) {
-			if (!(c._weapons[idx]._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED))) {
-				_attackWeapon = &c._weapons[idx];
+			if (!weapon.isBad()) {
+				_attackWeapon = &weapon;
 
-				if (c._weapons[idx]._material >= 37 && c._weapons[idx]._material < 59) {
-					_hitChanceBonus = Res.METAL_DAMAGE_PERCENT[c._weapons[idx]._material - 37];
-					_weaponDamage = Res.METAL_DAMAGE[c._weapons[idx]._material - 37];
+				if (weapon._material < 37) {
+					_weaponElemMaterial = weapon._material;
+				} else if (weapon._material < 59) {
+					_hitChanceBonus = Res.METAL_DAMAGE_PERCENT[weapon._material - 37];
+					_weaponDamage = Res.METAL_DAMAGE[weapon._material - 37];
 				}
 			}
 
 			_hitChanceBonus += party._heroism;
-			_attackWeaponId = c._weapons[idx]._id;
+			_attackWeaponId = weapon._id;
 			_weaponDice = Res.WEAPON_DAMAGE_BASE[_attackWeaponId];
 			_weaponDie = Res.WEAPON_DAMAGE_MULTIPLIER[_attackWeaponId];
 
@@ -1690,7 +1694,7 @@ void Combat::getWeaponDamage(Character &c, RangeType rangeType) {
 
 	if (_weaponDamage < 1)
 		_weaponDamage = 0;
-	if (!party._difficulty) {
+	if (party._difficulty == ADVENTURER) {
 		_hitChanceBonus += 5;
 		_weaponDamage *= 3;
 	}
@@ -1716,7 +1720,7 @@ int Combat::getMonsterResistence(RangeType rangeType) {
 	MonsterStruct &monsterData = *monster._monsterData;
 	int resistence = 0, damage = 0;
 
-	if (rangeType != RT_SINGLE && rangeType != RT_3) {
+	if (rangeType != RT_SINGLE && rangeType != RT_HIT) {
 		switch (_damageType) {
 		case DT_PHYSICAL:
 			resistence = monsterData._phsyicalResistence;
@@ -1743,7 +1747,7 @@ int Combat::getMonsterResistence(RangeType rangeType) {
 			break;
 		}
 	} else {
-		int material = !_attackWeapon ? 0 : _attackWeapon->_material;
+		int material = _weaponElemMaterial;
 		damage = Res.ELEMENTAL_DAMAGE[material];
 
 		if (material != 0) {
@@ -1790,8 +1794,8 @@ void Combat::giveExperience(int experience) {
 					++count;
 				} else {
 					int exp = experience / count;
-					if (c._level._permanent < 15)
-						exp /= 2;
+					if (c._level._permanent < 15 && _vm->getGameID() != GType_Clouds)
+						exp *= 2;
 					c._experience += exp;
 				}
 			}
@@ -1799,7 +1803,7 @@ void Combat::giveExperience(int experience) {
 	}
 }
 
-void Combat::multiAttack(int powNum) {
+void Combat::rangedAttack(PowType powNum) {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
@@ -1808,8 +1812,8 @@ void Combat::multiAttack(int powNum) {
 	if (_damageType == DT_POISON_VOLLEY) {
 		_damageType = DT_POISON;
 		_shootType = ST_1;
-		Common::fill(&_shooting[0], &_shooting[6], 1);
-	} else if (powNum == 11) {
+		Common::fill(&_shootingRow[0], &_shootingRow[MAX_ACTIVE_PARTY], 1);
+	} else if (powNum == POW_ARROW) {
 		_shootType = ST_1;
 		bool flag = false;
 
@@ -1817,12 +1821,12 @@ void Combat::multiAttack(int powNum) {
 			for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
 				Character &c = party._activeParty[idx];
 				if (c.hasMissileWeapon()) {
-					_shooting[idx] = 1;
+					_shootingRow[idx] = 1;
 					flag = true;
 				}
 			}
 		} else {
-			_shooting[0] = 1;
+			_shootingRow[0] = 1;
 			flag = true;
 		}
 
@@ -1830,14 +1834,16 @@ void Combat::multiAttack(int powNum) {
 			sound.playFX(21);
 			return;
 		}
+
+		sound.playFX(49);
 	} else {
-		_shooting[0] = 1;
+		_shootingRow[0] = 1;
 		_shootType = ST_0;
 	}
 
 	intf._charsShooting = true;
-	_powSprites.load(Common::String::format("pow%d.icn", powNum));
-	int monsterIndex = _monsterIndex;
+	_powSprites.load(Common::String::format("pow%d.icn", (int)powNum));
+	int attackDurationCtr = _attackDurationCtr;
 	int monster2Attack = _monster2Attack;
 	bool attackedFlag = false;
 
@@ -1847,16 +1853,16 @@ void Combat::multiAttack(int powNum) {
 			attackMonsters.push_back(_attackMonsters[idx]);
 	}
 
-	_monsterIndex = -1;
+	_attackDurationCtr = -1;
 	if (_monster2Attack != -1) {
-		_monsterIndex--;
+		_attackDurationCtr = attackDurationCtr - 1;
 		if (attackMonsters.empty())
 			attackMonsters.resize(1);
 		attackMonsters[0] = monster2Attack;
 	}
 
 	for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
-		if (_shooting[idx]) {
+		if (_shootingRow[idx]) {
 			if (map._isOutdoors) {
 				intf._outdoorList._attackImgs1[idx]._scale = 0;
 				intf._outdoorList._attackImgs2[idx]._scale = 4;
@@ -1881,16 +1887,20 @@ void Combat::multiAttack(int powNum) {
 
 	intf.draw3d(true);
 
-	++_monsterIndex;
-	for (uint monIdx = 0; monIdx < attackMonsters.size(); ++monIdx, ++_monsterIndex) {
-		Common::fill(&_missedShot[0], &_missedShot[8], false);
-		_monster2Attack = attackMonsters[monIdx];
-		attack(*_oldCharacter, RT_GROUP);
-		attackedFlag = true;
+	// Iterate through the three possible monster positions in the first row
+	for (uint monIdx = 0; monIdx < 3; ++monIdx) {
+		++_attackDurationCtr;
 
-		if (_rangeType == RT_SINGLE)
-			// Only single shot, so exit now that the attack is done
-			goto finished;
+		if (monIdx < attackMonsters.size()) {
+			Common::fill(&_missedShot[0], &_missedShot[MAX_PARTY_COUNT], false);
+			_monster2Attack = attackMonsters[monIdx];
+			attack(*_oldCharacter, RT_GROUP);
+			attackedFlag = true;
+
+			if (_rangeType == RT_SINGLE)
+				// Only single shot, so exit now that the attack is done
+				goto finished;
+		}
 	}
 
 	if (attackedFlag && _rangeType == RT_GROUP)
@@ -1914,7 +1924,7 @@ void Combat::multiAttack(int powNum) {
 		}
 	} else {
 		int cell = map.getCell(2);
-		if (cell < map.mazeData()._difficulties._wallNoPass) {
+		if (cell >= map.mazeData()._difficulties._wallNoPass) {
 			sound.playFX(46);
 			goto finished;
 		}
@@ -1931,16 +1941,20 @@ void Combat::multiAttack(int powNum) {
 			attackMonsters.push_back(_attackMonsters[idx]);
 	}
 
-	++_monsterIndex;
-	for (uint monIdx = 0; monIdx < attackMonsters.size(); ++monIdx, ++_monsterIndex) {
-		Common::fill(&_missedShot[0], &_missedShot[8], false);
-		_monster2Attack = attackMonsters[monIdx];
-		attack(*_oldCharacter, RT_GROUP);
-		attackedFlag = true;
+	// Iterate through the three possible monster positions in the second row
+	for (uint monIdx = 0; monIdx < 3; ++monIdx) {
+		++_attackDurationCtr;
 
-		if (_rangeType == RT_SINGLE)
-			// Only single shot, so exit now that the attack is done
-			goto finished;
+		if (monIdx < attackMonsters.size()) {
+			Common::fill(&_missedShot[0], &_missedShot[MAX_PARTY_COUNT], false);
+			_monster2Attack = attackMonsters[monIdx];
+			attack(*_oldCharacter, RT_GROUP);
+			attackedFlag = true;
+
+			if (_rangeType == RT_SINGLE)
+				// Only single shot, so exit now that the attack is done
+				goto finished;
+		}
 	}
 
 	if (attackedFlag && _rangeType == RT_GROUP)
@@ -1964,7 +1978,7 @@ void Combat::multiAttack(int powNum) {
 		}
 	} else {
 		int cell = map.getCell(7);
-		if (cell < map.mazeData()._difficulties._wallNoPass) {
+		if (cell >= map.mazeData()._difficulties._wallNoPass) {
 			sound.playFX(46);
 			goto finished;
 		}
@@ -1981,16 +1995,20 @@ void Combat::multiAttack(int powNum) {
 			attackMonsters.push_back(_attackMonsters[idx]);
 	}
 
-	++_monsterIndex;
-	for (uint monIdx = 0; monIdx < attackMonsters.size(); ++monIdx, ++_monsterIndex) {
-		Common::fill(&_missedShot[0], &_missedShot[8], false);
-		_monster2Attack = attackMonsters[monIdx];
-		attack(*_oldCharacter, RT_GROUP);
-		attackedFlag = true;
+	// Iterate through the three possible monster positions in the third row
+	for (uint monIdx = 0; monIdx < 3; ++monIdx) {
+		++_attackDurationCtr;
 
-		if (_rangeType == RT_SINGLE)
-			// Only single shot, so exit now that the attack is done
-			goto finished;
+		if (monIdx < attackMonsters.size()) {
+			Common::fill(&_missedShot[0], &_missedShot[MAX_PARTY_COUNT], false);
+			_monster2Attack = attackMonsters[monIdx];
+			attack(*_oldCharacter, RT_GROUP);
+			attackedFlag = true;
+
+			if (_rangeType == RT_SINGLE)
+				// Only single shot, so exit now that the attack is done
+				goto finished;
+		}
 	}
 
 	if (attackedFlag && _rangeType == RT_GROUP)
@@ -2014,7 +2032,7 @@ void Combat::multiAttack(int powNum) {
 		}
 	} else {
 		int cell = map.getCell(14);
-		if (cell < map.mazeData()._difficulties._wallNoPass) {
+		if (cell >= map.mazeData()._difficulties._wallNoPass) {
 			sound.playFX(46);
 			goto finished;
 		}
@@ -2031,16 +2049,20 @@ void Combat::multiAttack(int powNum) {
 			attackMonsters.push_back(_attackMonsters[idx]);
 	}
 
-	++_monsterIndex;
-	for (uint monIdx = 0; monIdx < attackMonsters.size(); ++monIdx, ++_monsterIndex) {
-		Common::fill(&_missedShot[0], &_missedShot[8], false);
-		_monster2Attack = attackMonsters[monIdx];
-		attack(*_oldCharacter, RT_GROUP);
-		attackedFlag = true;
+	// Iterate through the three possible monster positions in the fourth row
+	for (uint monIdx = 0; monIdx < 3; ++monIdx) {
+		++_attackDurationCtr;
 
-		if (_rangeType == RT_SINGLE)
-			// Only single shot, so exit now that the attack is done
-			goto finished;
+		if (monIdx < attackMonsters.size()) {
+			Common::fill(&_missedShot[0], &_missedShot[MAX_PARTY_COUNT], false);
+			_monster2Attack = attackMonsters[monIdx];
+			attack(*_oldCharacter, RT_GROUP);
+			attackedFlag = true;
+
+			if (_rangeType == RT_SINGLE)
+				// Only single shot, so exit now that the attack is done
+				goto finished;
+		}
 	}
 
 	if (!(attackedFlag && _rangeType == RT_GROUP))
@@ -2048,17 +2070,35 @@ void Combat::multiAttack(int powNum) {
 
 finished:
 	endAttack();
+
 done:
-	Common::fill(&_shooting[0], &_shooting[MAX_PARTY_COUNT], 0);
+	clearShooting();
 	_monster2Attack = monster2Attack;
-	_monsterIndex = monsterIndex;
+	_attackDurationCtr = attackDurationCtr;
 	party.giveTreasure();
 }
 
 void Combat::shootRangedWeapon() {
 	_rangeType = RT_ALL;
 	_damageType = DT_PHYSICAL;
-	multiAttack(11);
+	rangedAttack(POW_ARROW);
+}
+
+bool Combat::areMonstersPresent() const {
+	for (int idx = 0; idx < 26; ++idx) {
+		if (_attackMonsters[idx] != -1)
+			return true;
+	}
+
+	return false;
+}
+
+void Combat::reset() {
+	clearShooting();
+	setupCombatParty();
+
+	_combatMode = COMBATMODE_INTERACTIVE;
+	_monster2Attack = -1;
 }
 
 } // End of namespace Xeen

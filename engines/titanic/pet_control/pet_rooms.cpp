@@ -22,6 +22,7 @@
 
 #include "titanic/pet_control/pet_rooms.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -202,8 +203,8 @@ bool CPetRooms::setupControl(CPetControl *petControl) {
 	if (!petControl)
 		return false;
 
-	Rect rect1(0, 0, 470, 15);
-	rect1.moveTo(32, 445);
+	Rect rect1(0, 0, 470, TRANSLATE(15, 32));
+	rect1.moveTo(32, TRANSLATE(445, 439));
 	_text.setBounds(rect1);
 	_text.setHasBorder(false);
 
@@ -299,17 +300,15 @@ CPetRoomsGlyph *CPetRooms::addRoom(uint roomFlags, bool highlight_) {
 	if (_glyphs.hasFlags(roomFlags))
 		return nullptr;
 
-	if (_glyphs.size() >= 32)
-		// Too many rooms already
-		return nullptr;
-
-	// Do a preliminary scan of the glyph list for any glyph that is
-	// no longer valid, and thus can be removed
-	for (CPetRoomsGlyphs::iterator i = _glyphs.begin(); i != _glyphs.end(); ++i) {
-		CPetRoomsGlyph *glyph = dynamic_cast<CPetRoomsGlyph *>(*i);
-		if (!glyph->isAssigned()) {
-			_glyphs.erase(i);
-			break;
+	if (_glyphs.size() >= 32) {
+		// Too many room glyphs present. Scan for and remove the first
+		// glyph that isn't for an assigned bedroom
+		for (CPetRoomsGlyphs::iterator i = _glyphs.begin(); i != _glyphs.end(); ++i) {
+			CPetRoomsGlyph *glyph = dynamic_cast<CPetRoomsGlyph *>(*i);
+			if (!glyph->isAssigned()) {
+				_glyphs.erase(i);
+				break;
+			}
 		}
 	}
 
@@ -340,7 +339,7 @@ bool CPetRooms::changeLocationClass(PassengerClass newClassNum) {
 	return true;
 }
 
-bool CPetRooms::hasRoomFlags(uint roomFlags) const {
+bool CPetRooms::isAssignedRoom(uint roomFlags) const {
 	for (CPetRoomsGlyphs::const_iterator i = _glyphs.begin(); i != _glyphs.end(); ++i) {
 		const CPetRoomsGlyph *glyph = static_cast<const CPetRoomsGlyph *>(*i);
 		if (glyph->isAssigned() && glyph->getRoomFlags() == roomFlags)

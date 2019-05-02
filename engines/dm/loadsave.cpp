@@ -70,7 +70,10 @@ LoadgameResult DMEngine::loadgame(int16 slot) {
 		file = saveFileManager->openForLoading(fileName);
 
 		SaveGameHeader header;
-		readSaveGameHeader(file, &header);
+		if (!readSaveGameHeader(file, &header)) {
+			delete file;
+			return kDMLoadgameFailure;
+		}
 
 		warning("MISSING CODE: missing check for matching format and platform in save in f435_loadgame");
 
@@ -397,7 +400,7 @@ bool DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescrip
 	return true;
 }
 
-bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader *header) {
+WARN_UNUSED_RESULT bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader *header, bool skipThumbnail) {
 	uint32 id = in->readUint32BE();
 
 	// Check if it's a valid ScummVM savegame
@@ -419,7 +422,11 @@ bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader *header) {
 	header->_descr.setDescription(saveName);
 
 	// Get the thumbnail
-	header->_descr.setThumbnail(Graphics::loadThumbnail(*in));
+	Graphics::Surface *thumbnail;
+	if (!Graphics::loadThumbnail(*in, thumbnail, skipThumbnail)) {
+		return false;
+	}
+	header->_descr.setThumbnail(thumbnail);
 
 	uint32 saveDate = in->readUint32BE();
 	uint16 saveTime = in->readUint16BE();

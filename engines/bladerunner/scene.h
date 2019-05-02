@@ -23,31 +23,35 @@
 #ifndef BLADERUNNER_SCENE_H
 #define BLADERUNNER_SCENE_H
 
-#include "bladerunner/bladerunner.h"
+#include "bladerunner/vector.h"
 
-#include "bladerunner/regions.h"
-#include "bladerunner/set.h"
-#include "bladerunner/view.h"
-#include "bladerunner/vqa_player.h"
+#include "common/str.h"
 
 namespace BladeRunner {
 
 class BladeRunnerEngine;
+class BoundingBox;
+class Regions;
+class SaveFileReadStream;
+class SaveFileWriteStream;
+class Set;
+class VQAPlayer;
 
 class Scene {
+	friend class Debugger;
+
 	BladeRunnerEngine *_vm;
 
-private:
 	int         _setId;
 	int         _sceneId;
 	VQAPlayer  *_vqaPlayer;
 
 	int         _defaultLoop;
 	bool        _defaultLoopSet;
+	bool        _defaultLoopPreloadedSet;
 	int         _specialLoopMode;
 	int         _specialLoop;
-	bool        _specialLoopAtEnd;
-	int         _introFinished;
+	// int         _introFinished;
 	int         _nextSetId;
 	int         _nextSceneId;
 	int         _frame;
@@ -58,60 +62,43 @@ private:
 
 public:
 	Set        *_set;
-	Regions*    _regions;
-	Regions*    _exits;
-
-	// _default_loop_id = 0;
-	// _scene_vqa_frame_number = -1;
+	Regions    *_regions;
+	Regions    *_exits;
 
 public:
-	Scene(BladeRunnerEngine *vm)
-		: _vm(vm),
-		  _setId(-1),
-		  _sceneId(-1),
-		  _vqaPlayer(nullptr),
-		  _defaultLoop(0),
-		  _introFinished(false),
-		  _nextSetId(-1),
-		  _nextSceneId(-1),
-		  _playerWalkedIn(false),
-		  _set(new Set(vm)),
-		  _regions(new Regions()),
-		  _exits(new Regions())
-	{}
-
-	~Scene() {
-		delete _set;
-		delete _regions;
-		delete _exits;
-		delete _vqaPlayer;
-	}
+	Scene(BladeRunnerEngine *vm);
+	~Scene();
 
 	bool open(int setId, int sceneId, bool isLoadingGame);
 	bool close(bool isLoadingGame);
-	int  advanceFrame(Graphics::Surface &surface);
+	int  advanceFrame(bool useTime = true);
+	void resume(bool isLoadingGame = false);
+	void startDefaultLoop();
 	void setActorStart(Vector3 position, int facing);
 
-	void loopSetDefault(int a);
-	void loopStartSpecial(int a, int b, int c);
+	void loopSetDefault(int loopId);
+	void loopStartSpecial(int specialLoopMode, int loopId, bool immediately);
 
 	int getSetId() const { return _setId; }
 	int getSceneId() const { return _sceneId; }
 
 	bool didPlayerWalkIn() { bool r = _playerWalkedIn; _playerWalkedIn = false; return r; }
 
-	int findObject(const char *objectName);
+	int findObject(const Common::String &objectName);
 	bool objectSetHotMouse(int objectId);
 	bool objectGetBoundingBox(int objectId, BoundingBox *boundingBox);
 	void objectSetIsClickable(int objectId, bool isClickable, bool sceneLoaded);
 	void objectSetIsObstacle(int objectId, bool isObstacle, bool sceneLoaded, bool updateWalkpath);
 	void objectSetIsObstacleAll(bool isObstacle, bool sceneLoaded);
 	void objectSetIsTarget(int objectId, bool isTarget, bool sceneLoaded);
-	const char *objectGetName(int objectId);
+	const Common::String &objectGetName(int objectId);
+
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
 
 private:
 	void loopEnded(int frame, int loopId);
-	static void loopEndedStatic(void* data, int frame, int loopId);
+	static void loopEndedStatic(void *data, int frame, int loopId);
 };
 
 } // End of namespace BladeRunner

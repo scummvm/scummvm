@@ -27,6 +27,7 @@
  *  - lastexpress
  *  - mohawk
  *  - saga
+ *  - sci (DK3 ADPCM for Phantasmagoria 2)
  *  - scumm
  *  - tinsel
  */

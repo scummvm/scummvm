@@ -43,7 +43,7 @@ class ItemPickup {
 	int          _timeLeft;
 	int          _timeLast;
 	Common::Rect _screenRect;
-	
+
 public:
 	ItemPickup(BladeRunnerEngine *vm);
 	~ItemPickup();

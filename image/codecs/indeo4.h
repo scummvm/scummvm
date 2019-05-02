@@ -91,9 +91,14 @@ protected:
 	virtual int decodeMbInfo(IVIBandDesc *band, IVITile *tile);
 
 	/**
-	 * Decodes optional transparency data within Indeo frames
+	 * Decodes huffman + RLE-coded transparency data within Indeo4 frames
 	 */
-	virtual void decodeTransparency();
+	int decodeRLETransparency(VLC_TYPE (*table)[2]);
+
+	/**
+	 * Decodes optional transparency data within Indeo4 frames
+	 */
+	virtual int decodeTransparency();
 private:
 	int scaleTileSize(int defSize, int sizeFactor);
 

@@ -22,12 +22,27 @@
 
 #include "cge2/console.h"
 
+#include "cge2/vga13h.h"
+
 namespace CGE2 {
 
-CGE2Console::CGE2Console(CGE2Engine *vm) : GUI::Debugger() {
+CGE2Console::CGE2Console(CGE2Engine *vm) : _vm(vm), GUI::Debugger() {
+	registerCmd("do_carpet_workaround", WRAP_METHOD(CGE2Console, doCarpetWorkaround));
 }
 
 CGE2Console::~CGE2Console() {
+}
+
+bool CGE2Console::doCarpetWorkaround(int argc, const char **argv) {
+	Sprite *spr = _vm->_vga->_showQ->locate(1537); // 1537 is Carpet
+
+	if (spr) {
+		if (spr->_actionCtrl[1]._ptr == 26) {
+			spr->_actionCtrl[1]._ptr = 8;
+		}
+	}
+
+	return true;
 }
 
 } // End of namespace CGE

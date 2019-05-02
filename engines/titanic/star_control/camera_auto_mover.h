@@ -23,12 +23,16 @@
 #ifndef TITANIC_CAMERA_AUTO_MOVER_H
 #define TITANIC_CAMERA_AUTO_MOVER_H
 
-#include "titanic/star_control/error_code.h"
-#include "titanic/star_control/fmatrix.h"
 #include "titanic/star_control/fvector.h"
 #include "titanic/star_control/orientation_changer.h"
+#include "common/array.h"
 
 namespace Titanic {
+
+class CErrorCode;
+class FMatrix;
+const int nMoverTransitions = 32; // The number of vector transitions when doing a mover change is fixed
+enum MoverState { NOT_ACTIVE = 0, MOVING = 1, DONE_MOVING = 2 };
 
 /**
  * Base class for automatic movement of the starview camera
@@ -47,7 +51,7 @@ protected:
 	int _field44;
 	int _field48;
 	int _field4C;
-	Common::Array<double> _speeds;
+	double _speeds[nMoverTransitions];
 	int _field54;
 	double _transitionPercent;
 	double _transitionPercentInc;
@@ -56,12 +60,25 @@ public:
 	CCameraAutoMover();
 	virtual ~CCameraAutoMover() {}
 
-	virtual void proc2(const FVector &oldPos, const FVector &newPos,
-		const FMatrix &oldOrientation, const FMatrix &newOrientation);
-	virtual void proc3(const FMatrix &srcOrient, const FMatrix &destOrient);
-	virtual void setPath(const FVector &srcV, const FVector &destV, const FMatrix &orientation);
-	virtual int proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) { return 2; }
-	virtual void proc6(int val1, int val2, float val);
+	/**
+	 * Clear src and dest orientation and set some default values for other fields
+	 */
+	void clear();
+
+	/**
+	 * Setup a transition to from one position to another
+	 */
+	void setPath(const FVector &srcV, const FVector &destV);
+
+	/**
+	 * Applys speeds to the mover. More than one application is usually done for several transitions
+	 */
+	virtual MoverState move(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) { return DONE_MOVING; }
+	/**
+	 * Given a distance to cover, determines a bunch of speeds for a gradual transition
+	 * from one position to another (the mover). The speeds go from fast to slow
+	 */
+	virtual void calcSpeeds(int val1, int val2, float distance);
 
 	bool isActive() const { return _active; }
 };

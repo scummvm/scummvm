@@ -26,6 +26,8 @@
 
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-gr.h"
+#include "director/frame.h"
+#include "director/sprite.h"
 
 namespace Director {
 
@@ -399,6 +401,14 @@ void Lingo::runTests() {
 		}
 
 		inFile.close();
+	}
+}
+
+void Lingo::executeImmediateScripts(Frame *frame) {
+	for (uint16 i = 0; i < CHANNEL_COUNT; i++) {
+		if (_vm->getCurrentScore()->_immediateActions.contains(frame->_sprites[i]->_scriptId)) {
+			g_lingo->processEvent(kEventMouseUp, kFrameScript, frame->_sprites[i]->_scriptId);
+		}
 	}
 }
 

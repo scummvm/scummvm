@@ -110,6 +110,17 @@ public:
 		}
 	}
 
+	inline bool gameScriptsControlMasterVolume() const {
+		switch (g_sci->getGameId()) {
+		case GID_LSL7:
+		case GID_PHANTASMAGORIA2:
+		case GID_TORIN:
+			return true;
+		default:
+			return false;
+		}
+	}
+
 	inline bool hasSci3Audio() const {
 		return getSciVersion() == SCI_VERSION_3 || g_sci->getGameId() == GID_GK2;
 	}
@@ -117,7 +128,7 @@ public:
 	inline bool hasTransparentPicturePlanes() const {
 		const SciGameId &gid = g_sci->getGameId();
 
-		// NOTE: MGDX is assumed to not have transparent picture planes since it
+		// MGDX is assumed to not have transparent picture planes since it
 		// was released before SQ6, but this has not been verified since it
 		// cannot be disassembled at the moment (Phar Lap Windows-only release)
 		return getSciVersion() >= SCI_VERSION_2_1_MIDDLE &&
@@ -217,6 +228,8 @@ public:
 	 */
 	MoveCountType detectMoveCountType();
 
+	int detectPlaneIdBase();
+	
 	bool handleMoveCount() { return detectMoveCountType() == kIncrementMoveCount; }
 
 	bool usesCdTrack() { return _usesCdTrack; }
@@ -227,6 +240,11 @@ public:
 	 * KQ5 and SQ4.
 	 */
 	bool useAltWinGMSound();
+
+	/**
+	 * Checks if the game only supports General MIDI for music playback.
+	 */
+	bool generalMidiOnly();
 
 	/**
 	 * Forces DOS soundtracks in Windows CD versions when the user hasn't

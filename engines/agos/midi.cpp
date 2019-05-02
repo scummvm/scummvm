@@ -482,20 +482,14 @@ void MidiPlayer::pause(bool b) {
 }
 
 void MidiPlayer::setVolume(int musicVol, int sfxVol) {
-	if (musicVol < 0)
-		musicVol = 0;
-	else if (musicVol > 255)
-		musicVol = 255;
-	if (sfxVol < 0)
-		sfxVol = 0;
-	else if (sfxVol > 255)
-		sfxVol = 255;
+	musicVol = CLIP(musicVol, 0, 255);
+	sfxVol   = CLIP(sfxVol,   0, 255);
 
 	if (_musicVolume == musicVol && _sfxVolume == sfxVol)
 		return;
 
 	_musicVolume = musicVol;
-	_sfxVolume = sfxVol;
+	_sfxVolume   = sfxVol;
 
 	// Now tell all the channels this.
 	Common::StackLock lock(_mutex);

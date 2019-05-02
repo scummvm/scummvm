@@ -23,6 +23,7 @@
 #include "titanic/carry/photograph.h"
 #include "titanic/core/dont_save_file_item.h"
 #include "titanic/core/room_item.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -63,7 +64,7 @@ bool CPhotograph::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 	if (target && target->isEquals("NavigationComputer")) {
 		moveUnder(getDontSave());
 		makeDirty();
-		playSound("a#46.wav");
+		playSound(TRANSLATE("a#46.wav", "a#39.wav"));
 		starFn(STAR_SET_REFERENCE);
 		showMouse();
 		return true;

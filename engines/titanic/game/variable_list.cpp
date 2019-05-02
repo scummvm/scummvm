@@ -43,16 +43,16 @@ void CVariableListItem::load(SimpleFile *file) {
 	switch (file->readNumber()) {
 	case 3:
 		field44 = file->readNumber();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 2:
 		_string1 = file->readString();
 		_field18 = file->readNumber();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 1:
 		field40 = file->readNumber();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 0:
 		_string2 = file->readString();

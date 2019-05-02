@@ -30,6 +30,7 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/func.h"
+#include "common/ptr.h"
 #include "common/scummsys.h"
 
 #include "engines/engine.h"
@@ -40,6 +41,7 @@
 #include "adl/console.h"
 #include "adl/disk.h"
 #include "adl/sound.h"
+#include "adl/detection.h"
 
 namespace Common {
 class ReadStream;
@@ -47,6 +49,7 @@ class WriteStream;
 class SeekableReadStream;
 class File;
 struct Event;
+class RandomSource;
 }
 
 namespace Adl {
@@ -241,6 +244,9 @@ protected:
 	Common::Error saveGameState(int slot, const Common::String &desc);
 	bool canSaveGameStateCurrently();
 
+	Common::String getDiskImageName(byte volume) const { return Adl::getDiskImageName(*_gameDescription, volume); }
+	GameType getGameType() const { return Adl::getGameType(*_gameDescription); }
+	GameVersion getGameVersion() const { return Adl::getGameVersion(*_gameDescription); }
 	virtual void gameLoop();
 	virtual void loadState(Common::ReadStream &stream);
 	virtual void saveState(Common::WriteStream &stream);
@@ -279,35 +285,48 @@ protected:
 	void loadDroppedItemOffsets(Common::ReadStream &stream, byte count);
 
 	// Opcodes
-	int o1_isItemInRoom(ScriptEnv &e);
-	int o1_isMovesGT(ScriptEnv &e);
-	int o1_isVarEQ(ScriptEnv &e);
-	int o1_isCurPicEQ(ScriptEnv &e);
-	int o1_isItemPicEQ(ScriptEnv &e);
+	typedef Common::SharedPtr<Common::Functor1<ScriptEnv &, int> > Opcode;
 
-	int o1_varAdd(ScriptEnv &e);
-	int o1_varSub(ScriptEnv &e);
-	int o1_varSet(ScriptEnv &e);
-	int o1_listInv(ScriptEnv &e);
-	int o1_moveItem(ScriptEnv &e);
-	int o1_setRoom(ScriptEnv &e);
-	int o1_setCurPic(ScriptEnv &e);
-	int o1_setPic(ScriptEnv &e);
-	int o1_printMsg(ScriptEnv &e);
-	int o1_setLight(ScriptEnv &e);
-	int o1_setDark(ScriptEnv &e);
-	int o1_save(ScriptEnv &e);
-	int o1_restore(ScriptEnv &e);
-	int o1_restart(ScriptEnv &e);
-	int o1_quit(ScriptEnv &e);
-	int o1_placeItem(ScriptEnv &e);
-	int o1_setItemPic(ScriptEnv &e);
-	int o1_resetPic(ScriptEnv &e);
-	template <Direction D>
-	int o1_goDirection(ScriptEnv &e);
-	int o1_takeItem(ScriptEnv &e);
-	int o1_dropItem(ScriptEnv &e);
-	int o1_setRoomPic(ScriptEnv &e);
+	template <class T>
+	Opcode opcode(int (T::*f)(ScriptEnv &)) {
+		return Opcode(new Common::Functor1Mem<ScriptEnv &, int, T>(static_cast<T *>(this), f));
+	}
+
+	virtual int o_isItemInRoom(ScriptEnv &e);
+	virtual int o_isMovesGT(ScriptEnv &e);
+	virtual int o_isVarEQ(ScriptEnv &e);
+	virtual int o_isCurPicEQ(ScriptEnv &e);
+	virtual int o_isItemPicEQ(ScriptEnv &e);
+
+	virtual int o_varAdd(ScriptEnv &e);
+	virtual int o_varSub(ScriptEnv &e);
+	virtual int o_varSet(ScriptEnv &e);
+	virtual int o_listInv(ScriptEnv &e);
+	virtual int o_moveItem(ScriptEnv &e);
+	virtual int o_setRoom(ScriptEnv &e);
+	virtual int o_setCurPic(ScriptEnv &e);
+	virtual int o_setPic(ScriptEnv &e);
+	virtual int o_printMsg(ScriptEnv &e);
+	virtual int o_setLight(ScriptEnv &e);
+	virtual int o_setDark(ScriptEnv &e);
+	virtual int o_save(ScriptEnv &e);
+	virtual int o_restore(ScriptEnv &e);
+	virtual int o_restart(ScriptEnv &e);
+	virtual int o_quit(ScriptEnv &e);
+	virtual int o_placeItem(ScriptEnv &e);
+	virtual int o_setItemPic(ScriptEnv &e);
+	virtual int o_resetPic(ScriptEnv &e);
+	virtual int o_takeItem(ScriptEnv &e);
+	virtual int o_dropItem(ScriptEnv &e);
+	virtual int o_setRoomPic(ScriptEnv &e);
+
+	virtual int goDirection(ScriptEnv &e, Direction D);
+	int o_goNorth(ScriptEnv &e) { return goDirection(e, IDI_DIR_NORTH); }
+	int o_goSouth(ScriptEnv &e) { return goDirection(e, IDI_DIR_SOUTH); }
+	int o_goEast(ScriptEnv &e) { return goDirection(e, IDI_DIR_EAST); }
+	int o_goWest(ScriptEnv &e) { return goDirection(e, IDI_DIR_WEST); }
+	int o_goUp(ScriptEnv &e) { return goDirection(e, IDI_DIR_UP); }
+	int o_goDown(ScriptEnv &e) { return goDirection(e, IDI_DIR_DOWN); }
 
 	// Graphics
 	void drawPic(byte pic, Common::Point pos = Common::Point()) const;
@@ -352,8 +371,7 @@ protected:
 	bool _textMode;
 
 	// Opcodes
-	typedef Common::Functor1<ScriptEnv &, int> Opcode;
-	Common::Array<const Opcode *> _condOpcodes, _actOpcodes;
+	Common::Array<Opcode> _condOpcodes, _actOpcodes;
 	// Message strings in data file
 	Common::Array<DataBlockPtr> _messages;
 	// Picture data
@@ -395,8 +413,13 @@ protected:
 	bool _isRestarting, _isRestoring, _isQuitting;
 	bool _canSaveNow, _canRestoreNow;
 	bool _abortScript;
+	Common::RandomSource *_random;
 
 	const AdlGameDescription *_gameDescription;
+
+	mutable Common::File *_inputScript;
+	mutable uint _scriptDelay;
+	mutable bool _scriptPaused;
 
 private:
 	virtual void runIntro() { }
@@ -407,7 +430,10 @@ private:
 	virtual void loadRoom(byte roomNr) = 0;
 	virtual void showRoom() = 0;
 	virtual void switchRegion(byte region) { }
-
+	void runScript(const char *filename) const;
+	void stopScript() const;
+	void setScriptDelay(uint scriptDelay) const { _scriptDelay = scriptDelay; }
+	Common::String getScriptLine() const;
 	// Engine
 	Common::Error run();
 	bool hasFeature(EngineFeature f) const;

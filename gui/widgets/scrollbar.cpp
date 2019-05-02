@@ -47,6 +47,7 @@ ScrollBarWidget::ScrollBarWidget(GuiObject *boss, int x, int y, int w, int h)
 	_numEntries = 0;
 	_entriesPerPage = 0;
 	_currentPos = 0;
+	_singleStep = 1;
 
 	_repeatTimer = 0;
 }
@@ -60,12 +61,12 @@ void ScrollBarWidget::handleMouseDown(int x, int y, int button, int clickCount) 
 
 	if (y <= UP_DOWN_BOX_HEIGHT) {
 		// Up arrow
-		_currentPos--;
+		_currentPos -= _singleStep;
 		_repeatTimer = g_system->getMillis() + kRepeatInitialDelay;
 		_draggingPart = kUpArrowPart;
 	} else if (y >= _h - UP_DOWN_BOX_HEIGHT) {
 		// Down arrow
-		_currentPos++;
+		_currentPos += _singleStep;
 		_repeatTimer = g_system->getMillis() + kRepeatInitialDelay;
 		_draggingPart = kDownArrowPart;
 	} else if (y < _sliderPos) {
@@ -93,9 +94,9 @@ void ScrollBarWidget::handleMouseWheel(int x, int y, int direction) {
 		return;
 
 	if (direction < 0) {
-		_currentPos--;
+		_currentPos -= _singleStep;
 	} else {
-		_currentPos++;
+		_currentPos += _singleStep;
 	}
 
 	// Make sure that _currentPos is still inside the bounds
@@ -135,7 +136,7 @@ void ScrollBarWidget::handleMouseMoved(int x, int y, int button) {
 			_part = kSliderPart;
 
 		if (old_part != _part)
-			draw();
+			markAsDirty();
 	}
 }
 
@@ -146,9 +147,9 @@ void ScrollBarWidget::handleTickle() {
 			const int old_pos = _currentPos;
 
 			if (_part == kUpArrowPart)
-				_currentPos -= 3;
+				_currentPos -= 3 * _singleStep;
 			else if (_part == kDownArrowPart)
-				_currentPos += 3;
+				_currentPos += 3 * _singleStep;
 
 			checkBounds(old_pos);
 
@@ -165,7 +166,7 @@ void ScrollBarWidget::checkBounds(int old_pos) {
 
 	if (old_pos != _currentPos) {
 		recalc();
-		draw();
+		markAsDirty();
 		sendCommand(kSetPositionCmd, _currentPos);
 	}
 }
@@ -203,11 +204,7 @@ void ScrollBarWidget::drawWidget() {
 		state = ThemeEngine::kScrollbarStateSlider;
 	}
 
-	Common::Rect clipRect = getBossClipRect();
-	//scrollbar is not a usual child of ScrollContainerWidget, so it gets this special treatment
-	if (dynamic_cast<ScrollContainerWidget *>(_boss))
-		clipRect.right += _w;
-	g_gui.theme()->drawScrollbarClip(Common::Rect(_x, _y, _x+_w, _y+_h), clipRect, _sliderPos, _sliderHeight, state, _state);
+	g_gui.theme()->drawScrollbar(Common::Rect(_x, _y, _x + _w, _y + _h), _sliderPos, _sliderHeight, state);
 }
 
 } // End of namespace GUI

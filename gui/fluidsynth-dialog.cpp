@@ -21,6 +21,7 @@
  */
 
 #include "gui/fluidsynth-dialog.h"
+#include "gui/gui-manager.h"
 #include "gui/message.h"
 #include "gui/widgets/tab.h"
 #include "gui/widgets/popup.h"
@@ -180,45 +181,45 @@ void FluidSynthSettingsDialog::handleCommand(CommandSender *sender, uint32 cmd, 
 		break;
 	case kChorusVoiceCountChangedCmd:
 		_chorusVoiceCountLabel->setLabel(Common::String::format("%d", _chorusVoiceCountSlider->getValue()));
-		_chorusVoiceCountLabel->draw();
+		_chorusVoiceCountLabel->markAsDirty();
 		break;
 	case kChorusLevelChangedCmd:
 		_chorusLevelLabel->setLabel(Common::String::format("%d", _chorusLevelSlider->getValue()));
-		_chorusLevelLabel->draw();
+		_chorusLevelLabel->markAsDirty();
 		break;
 	case kChorusSpeedChangedCmd:
 		_chorusSpeedLabel->setLabel(Common::String::format("%d", _chorusSpeedSlider->getValue()));
-		_chorusSpeedLabel->draw();
+		_chorusSpeedLabel->markAsDirty();
 		break;
 	case kChorusDepthChangedCmd:
 		_chorusDepthLabel->setLabel(Common::String::format("%d", _chorusDepthSlider->getValue()));
-		_chorusDepthLabel->draw();
+		_chorusDepthLabel->markAsDirty();
 		break;
 	case kActivateReverbCmd:
 		setReverbSettingsState(data);
 		break;
 	case kReverbRoomSizeChangedCmd:
 		_reverbRoomSizeLabel->setLabel(Common::String::format("%d", _reverbRoomSizeSlider->getValue()));
-		_reverbRoomSizeLabel->draw();
+		_reverbRoomSizeLabel->markAsDirty();
 		break;
 	case kReverbDampingChangedCmd:
 		_reverbDampingLabel->setLabel(Common::String::format("%d", _reverbDampingSlider->getValue()));
-		_reverbDampingLabel->draw();
+		_reverbDampingLabel->markAsDirty();
 		break;
 	case kReverbWidthChangedCmd:
 		_reverbWidthLabel->setLabel(Common::String::format("%d", _reverbWidthSlider->getValue()));
-		_reverbWidthLabel->draw();
+		_reverbWidthLabel->markAsDirty();
 		break;
 	case kReverbLevelChangedCmd:
 		_reverbLevelLabel->setLabel(Common::String::format("%d", _reverbLevelSlider->getValue()));
-		_reverbLevelLabel->draw();
+		_reverbLevelLabel->markAsDirty();
 		break;
 	case kResetSettingsCmd: {
 		MessageDialog alert(_("Do you really want to reset all FluidSynth settings to their default values?"), _("Yes"), _("No"));
 		if (alert.runModal() == GUI::kMessageOK) {
 			resetSettings();
 			readSettings();
-			draw();
+			g_gui.scheduleTopDialogRedraw();
 		}
 		break;
 	}

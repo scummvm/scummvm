@@ -65,9 +65,6 @@ SoundEngine::SoundEngine(Kernel *pKernel) : ResourceService(pKernel) {
 	_mixer = g_system->getMixer();
 
 	_maxHandleId = 1;
-
-	for (int i = 0; i < SOUND_HANDLES; i++)
-		_handles[i].type = kFreeHandle;
 }
 
 bool SoundEngine::init(uint sampleRate, uint channels) {
@@ -206,8 +203,8 @@ bool SoundEngine::playSound(const Common::String &fileName, SOUND_TYPES type, fl
 }
 
 uint SoundEngine::playSoundEx(const Common::String &fileName, SOUND_TYPES type, float volume, float pan, bool loop, int loopStart, int loopEnd, uint layer, uint handleId) {
-	Common::SeekableReadStream *in = Kernel::getInstance()->getPackage()->getStream(fileName);
 #ifdef USE_VORBIS
+	Common::SeekableReadStream *in = Kernel::getInstance()->getPackage()->getStream(fileName);
 	Audio::SeekableAudioStream *stream = Audio::makeVorbisStream(in, DisposeAfterUse::YES);
 #endif
 	uint id = handleId;
@@ -394,5 +391,16 @@ bool SoundEngine::unpersist(InputPersistenceBlock &reader) {
 	return reader.isGood();
 }
 
+SndHandle::SndHandle() :
+		type(kFreeHandle),
+		id(0),
+		sndType(-1),
+		volume(0),
+		pan(0),
+		loop(false),
+		loopStart(0),
+		loopEnd(0),
+		layer(0) {
+}
 
 } // End of namespace Sword25

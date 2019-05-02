@@ -24,6 +24,7 @@
 #include "titanic/carry/chicken.h"
 #include "titanic/core/view_item.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -73,13 +74,14 @@ bool CBilgeSuccUBus::FrameMsg(CFrameMsg *msg) {
 bool CBilgeSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 	CPetControl *pet = getPetControl();
 
-	if (_style) {
+	if (_motherBlocked) {
+		// Mother hasn't yet been unblocked, so don't receive anything
 		if (_receiveStartFrame >= 0)
 			playMovie(_receiveStartFrame, _receiveEndFrame, MOVIE_WAIT_FOR_FINISH);
 		if (_afterReceiveStartFrame >= 0)
 			playMovie(_afterReceiveStartFrame, _afterReceiveEndFrame, MOVIE_WAIT_FOR_FINISH);
 
-		playSound("z#28.wav", 70);
+		playSound(TRANSLATE("z#28.wav", "z#559.wav"), 70);
 	} else if (!_isOn) {
 		petDisplayMessage(2, SUCCUBUS_IS_IN_STANDBY);
 		return false;
@@ -88,13 +90,14 @@ bool CBilgeSuccUBus::PETReceiveMsg(CPETReceiveMsg *msg) {
 	} else {
 		uint roomFlags = pet->getRoomFlags();
 		CGameObject *mailObject = findMailByFlags(
-			_enabled && compareRoomNameTo("Titania") ? RFC_TITANIA : _flagsComparison,
+			_fuseboxOn && compareRoomNameTo("Titania") ? RFC_TITANIA : _flagsComparison,
 			roomFlags);
 
 		if (mailObject) {
+			startTalking(this, 230004);
 			_mailP = mailObject;
 			if (_receiveStartFrame >= 0)
-				playMovie(_receiveStartFrame, _receiveEndFrame, MOVIE_WAIT_FOR_FINISH);
+				playMovie(_receiveStartFrame, _receiveEndFrame, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		} else {
 			petDisplayMessage(2, NOTHING_TO_DELIVER);
 		}
@@ -129,7 +132,7 @@ bool CBilgeSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 	_isFeathers = mailObject->getName() == "Feathers";
 	_sendAction = SA_SENT;
 
-	if (_style) {
+	if (_motherBlocked) {
 		if (_isFeathers) {
 			startTalking(this, 230022);
 			_sendAction = SA_FEATHERS;
@@ -141,7 +144,7 @@ bool CBilgeSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 				playMovie(_trayOutStartFrame, _trayOutEndFrame, MOVIE_WAIT_FOR_FINISH);
 				playMovie(_sneezing1StartFrame, _sneezing1EndFrame, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 				playMovie(_sneezing2StartFrame, _sneezing2EndFrame, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
-				incTransitions();
+				lockMouse();
 			}
 		} else {
 			startTalking(this, 230012);
@@ -182,13 +185,13 @@ bool CBilgeSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 
 	if (msg->_endFrame == _trayOutEndFrame) {
 		if (_offStartFrame >= 0)
-			playSound("z#27.wav");
+			playSound(TRANSLATE("z#27.wav", "z#558.wav"));
 	} else if (msg->_endFrame == _offEndFrame) {
 		if (_endingStartFrame >= 0)
-			playSound("z#30.wav");
+			playSound(TRANSLATE("z#30.wav", "z#561.wav"));
 	} else {
 		if (msg->_endFrame == _onEndFrame && pet) {
-			if (_style) {
+			if (_motherBlocked) {
 				startTalking(this, getRandomNumber(1) ? 230062 : 230063);
 			} else if (!findMail(pet->getRoomFlags())) {
 				switch (getRandomNumber(4)) {
@@ -210,11 +213,11 @@ bool CBilgeSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 			switch (_sendAction) {
 			case SA_EATEN:
 				stopSound(_soundHandle, 1);
-				_soundHandle = playSound("z#3.wav", 1);
+				_soundHandle = playSound(TRANSLATE("z#3.wav", "z#539.wav"), 1);
 				break;
 			case SA_BILGE_FEATHERS:
 				stopSound(_soundHandle);
-				_soundHandle = playSound("z#12.wav");
+				_soundHandle = playSound(TRANSLATE("z#12.wav", "z#532.wav"));
 				break;
 			case SA_BILGE_SENT:
 				if (_isChicken) {
@@ -248,12 +251,12 @@ bool CBilgeSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 			}
 
 		} else if (msg->_endFrame == _sneezing1EndFrame) {
-			playSound("z#25.wav", 70);
-			playSound("z#24.wav", 70);
+			playSound(TRANSLATE("z#25.wav", "z#556.wav"), 70);
+			playSound(TRANSLATE("z#24.wav", "z#555.wav"), 70);
 
 		} else if (msg->_endFrame == _sneezing2EndFrame) {
 			changeView("BilgeRoomWith.Node 1.N", "");
-			_style = false;
+			_motherBlocked = false;
 			resetMail();
 
 			if (_mailP) {
@@ -268,7 +271,7 @@ bool CBilgeSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 			startTalking(this, 150);
 			CBodyInBilgeRoomMsg bodyMsg;
 			bodyMsg.execute("Service Elevator Entity");
-			decTransitions();
+			unlockMouse();
 			_sendAction = SA_SENT;
 
 		} else {
@@ -334,7 +337,8 @@ bool CBilgeSuccUBus::SubAcceptCCarryMsg(CSubAcceptCCarryMsg *msg) {
 
 	petContainerRemove(item);
 	pet->phonographAction("");
-	playSound("z#23.wav");
+	item->setVisible(false);
+	playSound(TRANSLATE("z#23.wav", "z#554.wav"));
 
 	CChicken *chicken = dynamic_cast<CChicken *>(item);
 	bool chickenFlag = chicken ? chicken->_condiment == "None" : false;
@@ -396,7 +400,7 @@ bool CBilgeSuccUBus::LeaveViewMsg(CLeaveViewMsg *msg) {
 	if (_isOn) {
 		_isOn = false;
 		if (_offStartFrame >= 0)
-			playSound("z#27.wav");
+			playSound(TRANSLATE("z#27.wav", "z#558.wav"));
 	}
 
 	performAction(true);
@@ -419,7 +423,7 @@ bool CBilgeSuccUBus::TurnOn(CTurnOn *msg) {
 	if (pet) {
 		if (_onStartFrame >= 0) {
 			playMovie(_onStartFrame, _onEndFrame, MOVIE_NOTIFY_OBJECT);
-			playSound("z#26.wav");
+			playSound(TRANSLATE("z#26.wav", "z#557.wav"));
 		}
 
 		if (mailExists(pet->getRoomFlags()) && _okStartFrame >= 0)

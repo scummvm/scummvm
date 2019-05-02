@@ -238,7 +238,7 @@ public:
 	 * an opening or closing squiggly bracket denoting a class
 	 * definition start or end. Returns true if it's a class start
 	 */
-	bool IsClassStart();
+	bool isClassStart();
 
 	/**
 	 * Write the starting header for a class definition

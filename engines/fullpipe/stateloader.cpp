@@ -22,6 +22,13 @@
 
 #include "fullpipe/fullpipe.h"
 
+#include "fullpipe/constants.h"
+#include "fullpipe/gameloader.h"
+#include "fullpipe/interaction.h"
+#include "fullpipe/objects.h"
+#include "fullpipe/scene.h"
+#include "fullpipe/statics.h"
+
 #include "common/file.h"
 #include "common/array.h"
 #include "common/list.h"
@@ -29,20 +36,11 @@
 
 #include "graphics/thumbnail.h"
 
-#include "fullpipe/objects.h"
-#include "fullpipe/gameloader.h"
-#include "fullpipe/scene.h"
-#include "fullpipe/statics.h"
-#include "fullpipe/interaction.h"
-#include "fullpipe/gameloader.h"
-
-#include "fullpipe/constants.h"
-
 namespace Fullpipe {
 
 bool GameLoader::readSavegame(const char *fname) {
 	SaveHeader header;
-	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(fname);
+	Common::ScopedPtr<Common::InSaveFile> saveFile(g_system->getSavefileManager()->openForLoading(fname));
 
 	if (!saveFile) {
 		warning("Cannot open save %s for loading", fname);
@@ -63,29 +61,33 @@ bool GameLoader::readSavegame(const char *fname) {
 
 	_updateCounter = header.updateCounter;
 
-	byte *data = (byte *)malloc(header.encSize);
-	saveFile->read(data, header.encSize);
+	Common::Array<byte> data(header.encSize);
+	saveFile->read(data.data(), header.encSize);
 
-	byte *map = (byte *)malloc(800);
-	saveFile->read(map, 800);
+	Common::Array<byte> map(800);
+	saveFile->read(map.data(), 800);
 
-	Common::MemoryReadStream *tempStream = new Common::MemoryReadStream(map, 800);
-	MfcArchive temp(tempStream);
+	FullpipeSavegameHeader header2;
+	if (Fullpipe::readSavegameHeader(saveFile.get(), header2)) {
+		g_fp->setTotalPlayTime(header2.playtime * 1000);
+	}
 
-	if (_savegameCallback)
-		_savegameCallback(&temp, false);
+	{
+		Common::MemoryReadStream tempStream(map.data(), 800, DisposeAfterUse::NO);
+		MfcArchive temp(&tempStream);
 
-	delete tempStream;
-	delete saveFile;
+		if (_savegameCallback)
+			_savegameCallback(&temp, false);
+	}
 
 	// Deobfuscate the data
 	for (int i = 0; i < header.encSize; i++)
 		data[i] -= i & 0x7f;
 
-	Common::MemoryReadStream *archiveStream = new Common::MemoryReadStream(data, header.encSize);
-	MfcArchive *archive = new MfcArchive(archiveStream);
+	Common::MemoryReadStream archiveStream(data.data(), header.encSize, DisposeAfterUse::NO);
+	MfcArchive archive(&archiveStream);
 
-	GameVar *var = (GameVar *)archive->readClass();
+	GameVar *var = archive.readClass<GameVar>();
 
 	GameVar *v = _gameVar->getSubVarByName("OBJSTATES");
 
@@ -94,39 +96,34 @@ bool GameLoader::readSavegame(const char *fname) {
 
 		if (!v) {
 			warning("No state to save");
-			delete archiveStream;
-			delete archive;
+			delete var;
 			return false;
 		}
 	}
 
 	addVar(var, v);
 
-	getGameLoaderInventory()->loadPartial(*archive);
+	getGameLoaderInventory()->loadPartial(archive);
 
-	uint32 arrSize = archive->readUint32LE();
+	uint32 arrSize = archive.readUint32LE();
 
 	debugC(3, kDebugLoading, "Reading %d infos", arrSize);
 
 	for (uint i = 0; i < arrSize; i++) {
-		_sc2array[i]._picAniInfosCount = archive->readUint32LE();
 
-		if (_sc2array[i]._picAniInfosCount)
-			debugC(3, kDebugLoading, "Count %d: %d", i, _sc2array[i]._picAniInfosCount);
+		const uint picAniInfosCount = archive.readUint32LE();
+		if (picAniInfosCount)
+			debugC(3, kDebugLoading, "Count %d: %d", i, picAniInfosCount);
 
-		free(_sc2array[i]._picAniInfos);
-		_sc2array[i]._picAniInfos = (PicAniInfo **)malloc(sizeof(PicAniInfo *) * _sc2array[i]._picAniInfosCount);
+		_sc2array[i]._picAniInfos.clear();
+		_sc2array[i]._picAniInfos.resize(picAniInfosCount);
 
-		for (int j = 0; j < _sc2array[i]._picAniInfosCount; j++) {
-			_sc2array[i]._picAniInfos[j] = new PicAniInfo();
-			_sc2array[i]._picAniInfos[j]->load(*archive);
+		for (uint j = 0; j < picAniInfosCount; j++) {
+			_sc2array[i]._picAniInfos[j].load(archive);
 		}
 
-		_sc2array[i]._isLoaded = 0;
+		_sc2array[i]._isLoaded = false;
 	}
-
-	delete archiveStream;
-	delete archive;
 
 	getGameLoaderInventory()->rebuildItemRects();
 
@@ -184,19 +181,17 @@ void parseSavegameHeader(Fullpipe::FullpipeSavegameHeader &header, SaveStateDesc
 	desc.setSaveTime(hour, minutes);
 	desc.setPlayTime(header.playtime * 1000);
 
-	desc.setDescription(header.saveName);
+	desc.setDescription(header.description);
 }
 
 void fillDummyHeader(Fullpipe::FullpipeSavegameHeader &header) {
 	// This is wrong header, perhaps it is original savegame. Thus fill out dummy values
 	header.date = (20 << 24) | (9 << 16) | 2016;
 	header.time = (9 << 8) | 56;
-	header.playtime = 1000;
+	header.playtime = 0;
 }
 
-bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header) {
-	header.thumbnail = NULL;
-
+WARN_UNUSED_RESULT bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header, bool skipThumbnail) {
 	uint oldPos = in->pos();
 
 	in->seek(-4, SEEK_END);
@@ -222,29 +217,30 @@ bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header) 
 	}
 
 	header.version = in->readByte();
-	if (header.version != FULLPIPE_SAVEGAME_VERSION) {
-		in->seek(oldPos, SEEK_SET); // Rewind the file
-		fillDummyHeader(header);
-		return false;
-	}
-
 	header.date = in->readUint32LE();
 	header.time = in->readUint16LE();
 	header.playtime = in->readUint32LE();
+
+	if (header.version > 1)
+		header.description = in->readPascalString();
 
 	// Generate savename
 	SaveStateDescriptor desc;
 
 	parseSavegameHeader(header, desc);
+
 	header.saveName = Common::String::format("%s %s", desc.getSaveDate().c_str(), desc.getSaveTime().c_str());
 
+	if (header.description.empty())
+		header.description = header.saveName;
+
 	// Get the thumbnail
-	header.thumbnail = Graphics::loadThumbnail(*in);
+	if (!Graphics::loadThumbnail(*in, header.thumbnail, skipThumbnail)) {
+		in->seek(oldPos, SEEK_SET); // Rewind the file
+		return false;
+	}
 
 	in->seek(oldPos, SEEK_SET); // Rewind the file
-
-	if (!header.thumbnail)
-		return false;
 
 	return true;
 }
@@ -280,7 +276,7 @@ void gameLoaderSavegameCallback(MfcArchive *archive, bool mode) {
 }
 
 bool FullpipeEngine::loadGam(const char *fname, int scene) {
-	_gameLoader = new GameLoader();
+	_gameLoader.reset(new GameLoader());
 
 	if (!_gameLoader->loadFile(fname))
 		return false;
@@ -303,7 +299,7 @@ bool FullpipeEngine::loadGam(const char *fname, int scene) {
 	_inventory->rebuildItemRects();
 
 	for (uint i = 0; i < _inventory->getScene()->_picObjList.size(); i++)
-		((MemoryObject *)_inventory->getScene()->_picObjList[i]->_picture)->load();
+		_inventory->getScene()->_picObjList[i]->_picture->MemoryObject::load();
 
 	// _sceneSwitcher = sceneSwitcher; // substituted with direct call
 	_gameLoader->_preloadCallback = preloadCallback;
@@ -312,7 +308,7 @@ bool FullpipeEngine::loadGam(const char *fname, int scene) {
 	_aniMan = accessScene(SC_COMMON)->getAniMan();
 	_scene2 = 0;
 
-	_movTable = _aniMan->countMovements();
+	_movTable.reset(_aniMan->countMovements());
 
 	_aniMan->setSpeed(1);
 
@@ -361,8 +357,6 @@ bool FullpipeEngine::loadGam(const char *fname, int scene) {
 GameProject::GameProject() {
 	_field_4 = 0;
 	_field_10 = 12;
-
-	_sceneTagList = 0;
 }
 
 bool GameProject::load(MfcArchive &file) {
@@ -382,7 +376,7 @@ bool GameProject::load(MfcArchive &file) {
 	debugC(1, kDebugLoading, "_scrollSpeed = %d", g_fp->_scrollSpeed);
 	debugC(1, kDebugLoading, "_headerFilename = %s", _headerFilename.c_str());
 
-	_sceneTagList = new SceneTagList();
+	_sceneTagList.reset(new SceneTagList());
 
 	_sceneTagList->load(file);
 
@@ -395,10 +389,6 @@ bool GameProject::load(MfcArchive &file) {
 	}
 
 	return true;
-}
-
-GameProject::~GameProject() {
-	delete _sceneTagList;
 }
 
 GameVar::GameVar() {
@@ -482,11 +472,11 @@ bool GameVar::load(MfcArchive &file) {
 	}
 
 	file.incLevel();
-	_parentVarObj = (GameVar *)file.readClass();
-	_prevVarObj = (GameVar *)file.readClass();
-	_nextVarObj = (GameVar *)file.readClass();
-	_field_14 = (GameVar *)file.readClass();
-	_subVars = (GameVar *)file.readClass();
+	_parentVarObj = file.readClass<GameVar>();
+	_prevVarObj = file.readClass<GameVar>();
+	_nextVarObj = file.readClass<GameVar>();
+	_field_14 = file.readClass<GameVar>();
+	_subVars = file.readClass<GameVar>();
 	file.decLevel();
 
 	return true;

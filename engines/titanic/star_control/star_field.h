@@ -78,17 +78,17 @@ public:
 	void set2(int val);
 	int get54() const;
 	void set54(int val);
-	
+
 	/**
 	 * Gets the current display mode
 	 */
 	StarMode getMode() const;
-	
+
 	/**
 	 * Sets the display mode
 	 */
 	void setMode(StarMode mode);
-	
+
 	/**
 	 * Toggles whether the big box is visible
 	 */
@@ -118,6 +118,16 @@ public:
 	 * Returns true if the starfield puzzle has been solved
 	 */
 	bool isSolved() const;
+
+	/**
+	 * Return true if the starfield puzzle was skipped
+	 */
+	bool isSkipped() const;
+
+	/**
+	 * Skips the starfield puzzle
+	 */
+	void skipPuzzle();
 
 	/**
 	 * Returns the number of markers placed in the starfield

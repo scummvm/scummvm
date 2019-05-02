@@ -87,7 +87,7 @@ void scene34_initScene(Scene *sc) {
 	g_vars->scene34_dudeClimbed = false;
 	g_vars->scene34_dudeOnBoard = false;
 	g_vars->scene34_dudeOnCactus = false;
-	g_vars->scene34_fliesCountdown = g_fp->_rnd->getRandomNumber(500) + 500;
+	g_vars->scene34_fliesCountdown = g_fp->_rnd.getRandomNumber(500) + 500;
 
 	g_fp->_floaters->init(g_fp->getGameLoaderGameVar()->getSubVarByName("SC_34"));
 
@@ -160,11 +160,11 @@ void sceneHandler34_climb() {
 void sceneHandler34_genFlies() {
 	g_fp->_floaters->genFlies(g_fp->_currentScene, 1072, -50, 100, 4);
 
-	g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->countdown = 1;
-	g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val6 = 1072;
-	g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val7 = -50;
+	g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1].countdown = 1;
+	g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1].val6 = 1072;
+	g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1].val7 = -50;
 
-	g_vars->scene34_fliesCountdown = g_fp->_rnd->getRandomNumber(500) + 500;
+	g_vars->scene34_fliesCountdown = g_fp->_rnd.getRandomNumber(500) + 500;
 }
 
 void sceneHandler34_fromCactus(ExCommand *cmd) {
@@ -180,7 +180,7 @@ void sceneHandler34_fromCactus(ExCommand *cmd) {
 
 	ex->_messageNum = 0;
 	ex->_excFlags |= 3;
-	ex->_field_14 = 256;
+	ex->_z = 256;
 	mq->addExCommandToEnd(ex);
 
 	ex = cmd->createClone();

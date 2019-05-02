@@ -28,9 +28,98 @@
 
 namespace Sci {
 
+enum SciEventType {
+	kSciEventNone         = 0,
+	kSciEventMousePress   = 1,
+	kSciEventMouseRelease = 1 << 1,
+	kSciEventMouse        = kSciEventMousePress | kSciEventMouseRelease,
+	kSciEventKeyDown      = 1 << 2,
+	kSciEventKeyUp        = 1 << 3,
+	kSciEventKey          = kSciEventKeyDown | kSciEventKeyUp,
+	kSciEventDirection    = 1 << 6,
+	kSciEventSaid         = 1 << 7,
+#ifdef ENABLE_SCI32
+	kSciEventHotRectangle = 1 << 10,
+#endif
+	kSciEventQuit         = 1 << 11,
+	kSciEventPeek         = 1 << 15,
+
+	kSciEventAny          = ~kSciEventPeek
+};
+
+inline SciEventType operator|(const SciEventType a, const SciEventType b) {
+	return static_cast<SciEventType>((int)a | (int)b);
+}
+
+inline SciEventType &operator|=(SciEventType &a, const SciEventType b) {
+	return a = static_cast<SciEventType>((int)a | (int)b);
+}
+
+enum SciKeyCode {
+	kSciKeyEtx       = 3,
+	kSciKeyBackspace = 8,
+	kSciKeyTab       = '\t',
+	kSciKeyEnter     = 13,
+	kSciKeyEsc       = 27,
+	kSciKeyShiftTab  = 15 << 8,
+
+	kSciKeyHome      = 71 << 8, // numpad 7
+	kSciKeyUp        = 72 << 8, // numpad 8
+	kSciKeyPageUp    = 73 << 8, // numpad 9
+	kSciKeyLeft      = 75 << 8, // numpad 4
+	kSciKeyCenter    = 76 << 8, // numpad 5
+	kSciKeyRight     = 77 << 8, // numpad 6
+	kSciKeyEnd       = 79 << 8, // numpad 1
+	kSciKeyDown      = 80 << 8, // numpad 2
+	kSciKeyPageDown  = 81 << 8, // numpad 3
+	kSciKeyInsert    = 82 << 8, // numpad 0
+	kSciKeyDelete    = 83 << 8, // numpad .
+
+	kSciKeyF1        = 59 << 8,
+	kSciKeyF2        = 60 << 8,
+	kSciKeyF3        = 61 << 8,
+	kSciKeyF4        = 62 << 8,
+	kSciKeyF5        = 63 << 8,
+	kSciKeyF6        = 64 << 8,
+	kSciKeyF7        = 65 << 8,
+	kSciKeyF8        = 66 << 8,
+	kSciKeyF9        = 67 << 8,
+	kSciKeyF10       = 68 << 8,
+
+	kSciKeyShiftF1   = 84 << 8,
+	kSciKeyShiftF2   = 85 << 8,
+	kSciKeyShiftF3   = 86 << 8,
+	kSciKeyShiftF4   = 87 << 8,
+	kSciKeyShiftF5   = 88 << 8,
+	kSciKeyShiftF6   = 89 << 8,
+	kSciKeyShiftF7   = 90 << 8,
+	kSciKeyShiftF8   = 91 << 8,
+	kSciKeyShiftF9   = 92 << 8,
+	kSciKeyShiftF10  = 93 << 8
+};
+
+enum SciKeyModifiers {
+	kSciKeyModNone      = 0,
+	kSciKeyModRShift    = 1,
+	kSciKeyModLShift    = 1 << 1,
+	kSciKeyModShift     = kSciKeyModRShift | kSciKeyModLShift,
+	kSciKeyModCtrl      = 1 << 2,
+	kSciKeyModAlt       = 1 << 3,
+	kSciKeyModScrLock   = 1 << 4,
+	kSciKeyModNumLock   = 1 << 5,
+	kSciKeyModCapsLock  = 1 << 6,
+	kSciKeyModInsert    = 1 << 7,
+	kSciKeyModNonSticky = kSciKeyModRShift | kSciKeyModLShift | kSciKeyModCtrl | kSciKeyModAlt,
+	kSciKeyModAll       = ~kSciKeyModNone
+};
+
+inline SciKeyModifiers &operator|=(SciKeyModifiers &a, SciKeyModifiers b) {
+	return a = static_cast<SciKeyModifiers>((int)a | (int)b);
+}
+
 struct SciEvent {
-	uint16 type;
-	uint16 modifiers;
+	SciEventType type;
+	SciKeyModifiers modifiers;
 	/**
 	 * For keyboard events: the actual character of the key that was pressed
 	 * For 'Alt', characters are interpreted by their
@@ -39,96 +128,25 @@ struct SciEvent {
 	uint16 character;
 
 	/**
-	 * The mouse position at the time the event was created,
-	 * in display coordinates.
+	 * The mouse position at the time the event was created, in script
+	 * coordinates (SCI16) or display coordinates (SCI32).
 	 */
 	Common::Point mousePos;
 
 #ifdef ENABLE_SCI32
 	/**
-	 * The mouse position at the time the event was created,
-	 * in script coordinates.
+	 * The mouse position at the time the event was created, in script
+	 * coordinates. Used only by SCI32.
 	 */
 	Common::Point mousePosSci;
 
+	/**
+	 * The currently active hot rectangle, or -1 if no hot rectangle is active.
+	 * Used only by the chase scene in Phantasmagoria 1.
+	 */
 	int16 hotRectangleIndex;
 #endif
 };
-
-/*Values for type*/
-#define SCI_EVENT_NONE            0
-#define SCI_EVENT_MOUSE_PRESS     (1 << 0)
-#define SCI_EVENT_MOUSE_RELEASE   (1 << 1)
-#define SCI_EVENT_KEYBOARD        (1 << 2)
-#define SCI_EVENT_DIRECTION       (1 << 6)
-#define SCI_EVENT_SAID            (1 << 7)
-#ifdef ENABLE_SCI32
-#define SCI_EVENT_HOT_RECTANGLE   (1 << 8)
-#endif
-/*Fake values for other events*/
-#define SCI_EVENT_QUIT            (1 << 11)
-#define SCI_EVENT_PEEK            (1 << 15)
-#define SCI_EVENT_ANY             0x7fff
-
-/* Keycodes of special keys: */
-#ifdef ENABLE_SCI32
-#define SCI_KEY_ETX           3
-#endif
-#define SCI_KEY_ESC          27
-#define SCI_KEY_BACKSPACE     8
-#define SCI_KEY_ENTER        13
-#define SCI_KEY_TAB        '\t'
-#define SCI_KEY_SHIFT_TAB  (0xf << 8)
-
-#define SCI_KEY_HOME   (71 << 8)	// 7
-#define SCI_KEY_UP     (72 << 8)	// 8
-#define SCI_KEY_PGUP   (73 << 8)	// 9
-//
-#define SCI_KEY_LEFT   (75 << 8)	// 4
-#define SCI_KEY_CENTER (76 << 8)	// 5
-#define SCI_KEY_RIGHT  (77 << 8)	// 6
-//
-#define SCI_KEY_END    (79 << 8)	// 1
-#define SCI_KEY_DOWN   (80 << 8)	// 2
-#define SCI_KEY_PGDOWN (81 << 8)	// 3
-//
-#define SCI_KEY_INSERT (82 << 8)	// 0
-#define SCI_KEY_DELETE (83 << 8)	// .
-
-#define SCI_KEY_F1   (59 << 8)
-#define SCI_KEY_F2   (60 << 8)
-#define SCI_KEY_F3   (61 << 8)
-#define SCI_KEY_F4   (62 << 8)
-#define SCI_KEY_F5   (63 << 8)
-#define SCI_KEY_F6   (64 << 8)
-#define SCI_KEY_F7   (65 << 8)
-#define SCI_KEY_F8   (66 << 8)
-#define SCI_KEY_F9   (67 << 8)
-#define SCI_KEY_F10  (68 << 8)
-
-#define SCI_KEY_SHIFT_F1   (84 << 8)
-#define SCI_KEY_SHIFT_F2   (85 << 8)
-#define SCI_KEY_SHIFT_F3   (86 << 8)
-#define SCI_KEY_SHIFT_F4   (87 << 8)
-#define SCI_KEY_SHIFT_F5   (88 << 8)
-#define SCI_KEY_SHIFT_F6   (89 << 8)
-#define SCI_KEY_SHIFT_F7   (90 << 8)
-#define SCI_KEY_SHIFT_F8   (91 << 8)
-#define SCI_KEY_SHIFT_F9   (92 << 8)
-#define SCI_KEY_SHIFT_F10  (93 << 8)
-
-/*Values for buckybits */
-#define SCI_KEYMOD_RSHIFT    (1 << 0)
-#define SCI_KEYMOD_LSHIFT    (1 << 1)
-#define SCI_KEYMOD_CTRL      (1 << 2)
-#define SCI_KEYMOD_ALT       (1 << 3)
-#define SCI_KEYMOD_SCRLOCK   (1 << 4)
-#define SCI_KEYMOD_NUMLOCK   (1 << 5)
-#define SCI_KEYMOD_CAPSLOCK  (1 << 6)
-#define SCI_KEYMOD_INSERT    (1 << 7)
-
-#define SCI_KEYMOD_NO_FOOLOCK      (~(SCI_KEYMOD_SCRLOCK | SCI_KEYMOD_NUMLOCK | SCI_KEYMOD_CAPSLOCK | SCI_KEYMOD_INSERT))
-#define SCI_KEYMOD_ALL             0xFF
 
 class EventManager {
 public:
@@ -136,7 +154,8 @@ public:
 	~EventManager();
 
 	void updateScreen();
-	SciEvent getSciEvent(uint32 mask);
+	SciEvent getSciEvent(SciEventType mask);
+	void flushEvents();
 
 private:
 	SciEvent getScummVMEvent();

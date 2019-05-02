@@ -30,7 +30,7 @@ namespace Common {
 
 bool INIFile::isValidName(const String &name) {
 	const char *p = name.c_str();
-	while (*p && (isAlnum(*p) || *p == '-' || *p == '_' || *p == '.'))
+	while (*p && (isAlnum(*p) || *p == '-' || *p == '_' || *p == '.' || *p == ' '))
 		p++;
 	return *p == 0;
 }
@@ -108,7 +108,7 @@ bool INIFile::loadFromStream(SeekableReadStream &stream) {
 			// is, verify that it only consists of alphanumerics,
 			// periods, dashes and underscores). Mohawk Living Books games
 			// can have periods in their section names.
-			while (*p && (isAlnum(*p) || *p == '-' || *p == '_' || *p == '.'))
+			while (*p && (isAlnum(*p) || *p == '-' || *p == '_' || *p == '.' || *p == ' '))
 				p++;
 
 			if (*p == '\0')
@@ -249,7 +249,7 @@ void INIFile::removeSection(const String &section) {
 bool INIFile::hasSection(const String &section) const {
 	assert(isValidName(section));
 	const Section *s = getSection(section);
-	return s != 0;
+	return s != nullptr;
 }
 
 void INIFile::renameSection(const String &oldName, const String &newName) {
@@ -341,7 +341,7 @@ INIFile::Section *INIFile::getSection(const String &section) {
 			return &(*i);
 		}
 	}
-	return 0;
+	return nullptr;
 }
 
 const INIFile::Section *INIFile::getSection(const String &section) const {
@@ -350,11 +350,11 @@ const INIFile::Section *INIFile::getSection(const String &section) const {
 			return &(*i);
 		}
 	}
-	return 0;
+	return nullptr;
 }
 
 bool INIFile::Section::hasKey(const String &key) const {
-	return getKey(key) != 0;
+	return getKey(key) != nullptr;
 }
 
 const INIFile::KeyValue* INIFile::Section::getKey(const String &key) const {
@@ -363,7 +363,7 @@ const INIFile::KeyValue* INIFile::Section::getKey(const String &key) const {
 			return &(*i);
 		}
 	}
-	return 0;
+	return nullptr;
 }
 
 void INIFile::Section::setKey(const String &key, const String &value) {

@@ -47,7 +47,7 @@
 
 namespace Video {
 
-TheoraDecoder::TheoraDecoder(Audio::Mixer::SoundType soundType) : _soundType(soundType) {
+TheoraDecoder::TheoraDecoder() {
 	_fileStream = 0;
 
 	_videoTrack = 0;
@@ -177,7 +177,7 @@ bool TheoraDecoder::loadStream(Common::SeekableReadStream *stream) {
 	th_setup_free(theoraSetup);
 
 	if (_hasAudio) {
-		_audioTrack = new VorbisAudioTrack(_soundType, _vorbisInfo);
+		_audioTrack = new VorbisAudioTrack(getSoundType(), _vorbisInfo);
 
 		// Get enough audio data to start us off
 		while (!_audioTrack->hasAudio()) {
@@ -330,7 +330,8 @@ void TheoraDecoder::TheoraVideoTrack::translateYUVtoRGBA(th_ycbcr_buffer &YUVBuf
 
 static vorbis_info *info = 0;
 
-TheoraDecoder::VorbisAudioTrack::VorbisAudioTrack(Audio::Mixer::SoundType soundType, vorbis_info &vorbisInfo) : _soundType(soundType) {
+TheoraDecoder::VorbisAudioTrack::VorbisAudioTrack(Audio::Mixer::SoundType soundType, vorbis_info &vorbisInfo) :
+		AudioTrack(soundType) {
 	vorbis_synthesis_init(&_vorbisDSP, &vorbisInfo);
 	vorbis_block_init(&_vorbisDSP, &_vorbisBlock);
 	info = &vorbisInfo;
@@ -355,9 +356,11 @@ Audio::AudioStream *TheoraDecoder::VorbisAudioTrack::getAudioStream() const {
 
 #define AUDIOFD_FRAGSIZE 10240
 
+#ifndef USE_TREMOR
 static double rint(double v) {
 	return floor(v + 0.5);
 }
+#endif
 
 bool TheoraDecoder::VorbisAudioTrack::decodeSamples() {
 #ifdef USE_TREMOR
@@ -382,7 +385,11 @@ bool TheoraDecoder::VorbisAudioTrack::decodeSamples() {
 
 		for (i = 0; i < ret && i < maxsamples; i++) {
 			for (int j = 0; j < channels; j++) {
+#ifdef USE_TREMOR
+				int val = CLIP((int)pcm[j][i] >> 9, -32768, 32767);
+#else
 				int val = CLIP((int)rint(pcm[j][i] * 32767.f), -32768, 32767);
+#endif
 				_audioBuffer[count++] = val;
 			}
 		}

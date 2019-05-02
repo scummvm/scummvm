@@ -44,12 +44,12 @@ public:
 inline Matrix3x2 operator*(const Matrix3x2 &a, const Matrix3x2 &b) {
 	Matrix3x2 t;
 
-	t(0,0) = a(0,0)*b(0,0) + a(0,1)*b(1,0);
-	t(0,1) = a(0,0)*b(0,1) + a(0,1)*b(1,1);
-	t(0,2) = a(0,0)*b(0,2) + a(0,1)*b(1,2) + a(0,2);
-	t(1,0) = a(1,0)*b(0,0) + a(1,1)*b(1,0);
-	t(1,1) = a(1,0)*b(0,1) + a(1,1)*b(1,1);
-	t(1,2) = a(1,0)*b(0,2) + a(1,1)*b(1,2) + a(1,2);
+	t(0, 0) = a(0, 0) * b(0, 0) + a(0, 1) * b(1, 0);
+	t(0, 1) = a(0, 0) * b(0, 1) + a(0, 1) * b(1, 1);
+	t(0, 2) = a(0, 0) * b(0, 2) + a(0, 1) * b(1, 2) + a(0, 2);
+	t(1, 0) = a(1, 0) * b(0, 0) + a(1, 1) * b(1, 0);
+	t(1, 1) = a(1, 0) * b(0, 1) + a(1, 1) * b(1, 1);
+	t(1, 2) = a(1, 0) * b(0, 2) + a(1, 1) * b(1, 2) + a(1, 2);
 
 	return t;
 }
@@ -57,8 +57,8 @@ inline Matrix3x2 operator*(const Matrix3x2 &a, const Matrix3x2 &b) {
 inline Matrix3x2 operator+(const Matrix3x2 &a, Vector2 b) {
 	Matrix3x2 t(a);
 
-	t(0,2) += b.x;
-	t(1,2) += b.y;
+	t(0, 2) += b.x;
+	t(1, 2) += b.y;
 
 	return t;
 }
@@ -66,8 +66,8 @@ inline Matrix3x2 operator+(const Matrix3x2 &a, Vector2 b) {
 inline Vector2 operator*(const Matrix3x2 &a, Vector2 b) {
 	Vector2 t;
 
-	t.x = a(0,0) * b.x + a(0,1) * b.y + a(0,2);
-	t.y = a(1,0) * b.x + a(1,1) * b.y + a(1,2);
+	t.x = a(0, 0) * b.x + a(0, 1) * b.y + a(0, 2);
+	t.y = a(1, 0) * b.x + a(1, 1) * b.y + a(1, 2);
 
 	return t;
 }
@@ -96,11 +96,10 @@ inline Matrix4x3 operator*(const Matrix4x3 &a, const Matrix4x3 &b) {
 	Matrix4x3 t;
 
 	for (int i = 0; i !=3; ++i) {
-		// printf("t(%d,0) = %7.2f*%7.2f + %7.2f*%7.2f + %7.2f*%7.2f\n", i, a(i,0), b(0,0), a(i,0), b(1,0), a(i,0), b(2,0));
-		t(i,0) = a(i,0)*b(0,0) + a(i,1)*b(1,0) + a(i,2)*b(2,0);
-		t(i,1) = a(i,0)*b(0,1) + a(i,1)*b(1,1) + a(i,2)*b(2,1);
-		t(i,2) = a(i,0)*b(0,2) + a(i,1)*b(1,2) + a(i,2)*b(2,2);
-		t(i,3) = a(i,0)*b(0,3) + a(i,1)*b(1,3) + a(i,2)*b(2,3) + a(i,3);
+		t(i, 0) = a(i, 0) * b(0, 0) + a(i, 1) * b(1, 0) + a(i, 2) * b(2, 0);
+		t(i, 1) = a(i, 0) * b(0, 1) + a(i, 1) * b(1, 1) + a(i, 2) * b(2, 1);
+		t(i, 2) = a(i, 0) * b(0, 2) + a(i, 1) * b(1, 2) + a(i, 2) * b(2, 2);
+		t(i, 3) = a(i, 0) * b(0, 3) + a(i, 1) * b(1, 3) + a(i, 2) * b(2, 3) + a(i, 3);
 	}
 
 	return t;

@@ -21,12 +21,14 @@
  */
 
 #include "titanic/star_control/unmarked_auto_mover.h"
-#include "common/textconsole.h"
+#include "titanic/star_control/fmatrix.h"
+#include "titanic/star_control/error_code.h"
+// Not currently being used: #include "common/textconsole.h"
 
 namespace Titanic {
 
-void CUnmarkedAutoMover::proc3(const FMatrix &srcOrient, const FMatrix &destOrient) {
-	CCameraAutoMover::proc3(srcOrient, destOrient);
+void CUnmarkedAutoMover::setOrientations(const FMatrix &srcOrient, const FMatrix &destOrient) {
+	CCameraAutoMover::clear();
 	_orientationChanger.load(srcOrient, destOrient);
 	_transitionPercentInc = 0.1;
 	_transitionPercent = 0.0;
@@ -34,13 +36,13 @@ void CUnmarkedAutoMover::proc3(const FMatrix &srcOrient, const FMatrix &destOrie
 	_active = true;
 }
 
-void CUnmarkedAutoMover::setPath(const FVector &srcV, const FVector &destV, const FMatrix &orientation) {
-	CCameraAutoMover::setPath(srcV, destV, orientation);
+void CUnmarkedAutoMover::setPathOrient(const FVector &srcV, const FVector &destV, const FMatrix &orientation) {
+	CCameraAutoMover::setPath(srcV, destV);
 
 	if (_distance > 8000.0) {
 		_active = true;
 		_field34 = 1;
-		proc6(120, 4, _distance - 8000.0);
+		calcSpeeds(120, 4, _distance - 8000.0);
 	}
 
 	FVector row3 = orientation._row3;
@@ -73,11 +75,11 @@ void CUnmarkedAutoMover::setPath(const FVector &srcV, const FVector &destV, cons
 	}
 }
 
-int CUnmarkedAutoMover::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
+MoverState CUnmarkedAutoMover::move(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
 	FVector v1, v2, v3, v4;
 
 	if (!_active)
-		return 0;
+		return NOT_ACTIVE;
 
 	// Firstly we have to do a transition of the camera orientation from
 	// it's current position to one where the destination star is centered
@@ -85,18 +87,24 @@ int CUnmarkedAutoMover::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orie
 		_transitionPercent += _transitionPercentInc;
 		orientation = _orientationChanger.getOrientation(_transitionPercent);
 		errorCode.set();
-		return 1;
+		return MOVING;
 	}
 
 	// From here on, we handle the movement to the given destination
 	if (!_field34) {
 		_active = false;
-		return 2;
+		return DONE_MOVING;
 	}
 
 	v2 = orientation._row3;
 	v3 = _destPos - pos;
-	v3.normalize();
+
+	float unusedScale = 0.0;
+	if (!v3.normalize(unusedScale)) {
+		// Do the normalization, put the scale amount in unusedScale,
+		// but if it is unsuccessful, crash
+		assert(unusedScale);
+	}
 
 	double val = orientation._row3._x * v3._x + orientation._row3._y * v3._y + orientation._row3._z * v3._z;
 	bool flag = false;
@@ -125,7 +133,7 @@ int CUnmarkedAutoMover::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orie
 
 		--_field40;
 		errorCode.set();
-		return 1;
+		return MOVING;
 	}
 
 	if (_field44 > 0) {
@@ -137,11 +145,11 @@ int CUnmarkedAutoMover::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orie
 
 		--_field44;
 		errorCode.set();
-		return 1;
+		return MOVING;
 	}
 
 	if (_field48 >= 0) {
-		double speedVal = _speeds[31 - _field48];
+		double speedVal = _speeds[nMoverTransitions - 1 - _field48];
 		v1._y = v2._y * speedVal;
 		v1._z = v2._z * speedVal;
 		v1._x = v2._x * speedVal;
@@ -151,11 +159,11 @@ int CUnmarkedAutoMover::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orie
 
 		--_field48;
 		errorCode.set();
-		return 1;
+		return MOVING;
 	}
 
 	_active = false;
-	return 2;
+	return DONE_MOVING;
 }
 
 } // End of namespace Titanic

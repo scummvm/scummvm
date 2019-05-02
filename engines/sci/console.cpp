@@ -53,9 +53,11 @@
 #include "video/avi_decoder.h"
 #include "sci/video/seq_decoder.h"
 #ifdef ENABLE_SCI32
+#include "common/memstream.h"
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/paint32.h"
 #include "sci/graphics/palette32.h"
+#include "sci/sound/decoders/sol.h"
 #include "video/coktel_decoder.h"
 #endif
 
@@ -117,6 +119,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerCmd("alloc_list",				WRAP_METHOD(Console, cmdAllocList));
 	registerCmd("hexgrep",			WRAP_METHOD(Console, cmdHexgrep));
 	registerCmd("verify_scripts",		WRAP_METHOD(Console, cmdVerifyScripts));
+	registerCmd("integrity_dump",	WRAP_METHOD(Console, cmdResourceIntegrityDump));
 	// Game
 	registerCmd("save_game",			WRAP_METHOD(Console, cmdSaveGame));
 	registerCmd("restore_game",		WRAP_METHOD(Console, cmdRestoreGame));
@@ -172,6 +175,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerCmd("show_instruments",	WRAP_METHOD(Console, cmdShowInstruments));
 	registerCmd("map_instrument",		WRAP_METHOD(Console, cmdMapInstrument));
 	registerCmd("audio_list",		WRAP_METHOD(Console, cmdAudioList));
+	registerCmd("audio_dump",		WRAP_METHOD(Console, cmdAudioDump));
 	// Script
 	registerCmd("addresses",			WRAP_METHOD(Console, cmdAddresses));
 	registerCmd("registers",			WRAP_METHOD(Console, cmdRegisters));
@@ -261,60 +265,23 @@ void Console::preEnter() {
 	_engine->pauseEngine(true);
 }
 
-extern void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState);
+extern void playVideo(Video::VideoDecoder &videoDecoder);
 
 void Console::postEnter() {
 	if (!_videoFile.empty()) {
-		Video::VideoDecoder *videoDecoder = 0;
-
-#ifdef ENABLE_SCI32
-		bool duckMode = false;
-#endif
+		Common::ScopedPtr<Video::VideoDecoder> videoDecoder;
 
 		if (_videoFile.hasSuffix(".seq")) {
-			videoDecoder = new SEQDecoder(_videoFrameDelay);
-#ifdef ENABLE_SCI32
-		} else if (_videoFile.hasSuffix(".vmd")) {
-			videoDecoder = new Video::AdvancedVMDDecoder();
-		} else if (_videoFile.hasSuffix(".duk")) {
-			duckMode = true;
-			videoDecoder = new Video::AVIDecoder();
-#endif
+			videoDecoder.reset(new SEQDecoder(_videoFrameDelay));
 		} else if (_videoFile.hasSuffix(".avi")) {
-			videoDecoder = new Video::AVIDecoder();
+			videoDecoder.reset(new Video::AVIDecoder());
 		} else {
 			warning("Unrecognized video type");
 		}
 
 		if (videoDecoder && videoDecoder->loadFile(_videoFile)) {
 			_engine->_gfxCursor->kernelHide();
-
-#ifdef ENABLE_SCI32
-			// Duck videos are 16bpp, so we need to change pixel formats
-			int oldWidth = g_system->getWidth();
-			int oldHeight = g_system->getHeight();
-			if (duckMode) {
-				Common::List<Graphics::PixelFormat> formats;
-				formats.push_back(videoDecoder->getPixelFormat());
-				initGraphics(640, 480, true, formats);
-
-				if (g_system->getScreenFormat().bytesPerPixel != videoDecoder->getPixelFormat().bytesPerPixel)
-					error("Could not switch screen format for the duck video");
-			}
-#endif
-
-			VideoState emptyState;
-			emptyState.reset();
-			emptyState.fileName = _videoFile;
-			emptyState.flags = kDoubled;	// always allow the videos to be double sized
-			playVideo(videoDecoder, emptyState);
-
-#ifdef ENABLE_SCI32
-			// Switch back to 8bpp if we played a duck video
-			if (duckMode)
-				initGraphics(oldWidth, oldHeight, oldWidth > 320);
-#endif
-
+			playVideo(*videoDecoder);
 			_engine->_gfxCursor->kernelShow();
 		} else
 			warning("Could not play video %s\n", _videoFile.c_str());
@@ -373,6 +340,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" alloc_list - Lists all allocated resources\n");
 	debugPrintf(" hexgrep - Searches some resources for a particular sequence of bytes, represented as hexadecimal numbers\n");
 	debugPrintf(" verify_scripts - Performs sanity checks on SCI1.1-SCI2.1 game scripts (e.g. if they're up to 64KB in total)\n");
+	debugPrintf(" integrity_dump - Dumps integrity data about resources in the current game to disk\n");
 	debugPrintf("\n");
 	debugPrintf("Game:\n");
 	debugPrintf(" save_game - Saves the current game state to the hard disk\n");
@@ -423,7 +391,8 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" sfx01_track - Dumps a track of a SCI01 song\n");
 	debugPrintf(" show_instruments - Shows the instruments of a specific song, or all songs\n");
 	debugPrintf(" map_instrument - Dynamically maps an MT-32 instrument to a GM instrument\n");
-	debugPrintf(" audio_list - Lists currently active digital audio samples (SCI2.1+)\n");
+	debugPrintf(" audio_list - Lists currently active digital audio samples (SCI2+)\n");
+	debugPrintf(" audio_dump - Dumps the requested audio resource as an uncompressed wave file (SCI2+)\n");
 	debugPrintf("\n");
 	debugPrintf("Script:\n");
 	debugPrintf(" addresses - Provides information on how to pass addresses\n");
@@ -519,6 +488,9 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 	debugPrintf("Resource map version: %s\n", g_sci->getResMan()->getMapVersionDesc());
 	debugPrintf("Contains selector vocabulary (vocab.997): %s\n", hasVocab997 ? "yes" : "no");
 	debugPrintf("Has CantBeHere selector: %s\n", g_sci->getKernel()->_selectorCache.cantBeHere != -1 ? "yes" : "no");
+	if (getSciVersion() >= SCI_VERSION_2) {
+		debugPrintf("Plane id base: %d\n", g_sci->_features->detectPlaneIdBase());
+	}
 	debugPrintf("Game version (VERSION file): %s\n", gameVersion.c_str());
 	debugPrintf("\n");
 
@@ -916,6 +888,113 @@ bool Console::cmdList(int argc, const char **argv) {
 	}
 
 	debugPrintf("\n");
+	return true;
+}
+
+bool Console::cmdResourceIntegrityDump(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Dumps integrity data about resources in the current game to disk.\n");
+		debugPrintf("Usage: %s <filename> [<skip video file hashing>] [<skip video files altogether>]\n", argv[0]);
+		return true;
+	}
+
+	Common::DumpFile outFile;
+	if (!outFile.open(argv[1])) {
+		debugPrintf("Failed to open output file %s.\n", argv[1]);
+		return true;
+	}
+
+	const bool hashVideoFiles = argc < 3;
+	const bool videoFiles = argc < 4;
+
+	for (int i = 0; i < kResourceTypeInvalid; ++i) {
+		const ResourceType resType = (ResourceType)i;
+
+		// This will list video resources inside of resource bundles even if
+		// video files are skipped, but this seems fine since those files are
+		// small because they were intended to load into memory. (This happens
+		// with VMDs in GK2.)
+		Common::List<ResourceId> resources = _engine->getResMan()->listResources(resType);
+
+		const char *extension = "";
+		if (videoFiles) {
+			switch (resType) {
+			case kResourceTypeRobot:
+			case kResourceTypeVMD:
+			case kResourceTypeDuck:
+			case kResourceTypeClut: {
+				extension = getResourceTypeExtension(resType);
+				assert(*extension != '\0');
+
+				const Common::String filesGlob = Common::String::format("*.%s", extension).c_str();
+				Common::ArchiveMemberList files;
+				const int numMatches = SearchMan.listMatchingMembers(files, filesGlob);
+				if (numMatches > 0) {
+					Common::ArchiveMemberList::const_iterator it;
+					for (it = files.begin(); it != files.end(); ++it) {
+						const uint resNo = atoi((*it)->getName().c_str());
+						resources.push_back(ResourceId(resType, resNo));
+					}
+				}
+
+				break;
+			}
+			default:
+				break;
+			}
+		}
+
+		if (resources.size()) {
+			Common::sort(resources.begin(), resources.end());
+			Common::List<ResourceId>::const_iterator it;
+			debugPrintf("%s: ", getResourceTypeName(resType));
+			for (it = resources.begin(); it != resources.end(); ++it) {
+				Common::String statusName;
+				if (resType == kResourceTypeAudio36 || resType == kResourceTypeSync36) {
+					statusName = it->toPatchNameBase36();
+				} else {
+					statusName = Common::String::format("%d", it->getNumber());
+				}
+
+				const Common::String resourceName = it->toString();
+
+				Resource *resource = _engine->getResMan()->findResource(*it, false);
+				if (resource) {
+					Common::MemoryReadStream stream = resource->toStream();
+					writeIntegrityDumpLine(statusName, resourceName, outFile, &stream, resource->size(), true);
+				} else if (videoFiles && *extension != '\0') {
+					const Common::String fileName = Common::String::format("%u.%s", it->getNumber(), extension);
+					Common::File file;
+					Common::ReadStream *stream = nullptr;
+					if (file.open(fileName)) {
+						stream = &file;
+					}
+					writeIntegrityDumpLine(statusName, resourceName, outFile, stream, file.size(), hashVideoFiles);
+				}
+			}
+
+			debugPrintf("\n");
+		}
+	}
+
+	const char *otherVideoFiles[] = { "avi", "seq" };
+	for (uint i = 0; i < ARRAYSIZE(otherVideoFiles); ++i) {
+		const char *extension = otherVideoFiles[i];
+
+		Common::ArchiveMemberList files;
+		if (SearchMan.listMatchingMembers(files, Common::String::format("*.%s", extension).c_str()) > 0) {
+			debugPrintf("%s: ", extension);
+			Common::sort(files.begin(), files.end(), Common::ArchiveMemberListComparator());
+			Common::ArchiveMemberList::const_iterator it;
+			for (it = files.begin(); it != files.end(); ++it) {
+				const Common::ArchiveMember &file = **it;
+				Common::ScopedPtr<Common::SeekableReadStream> stream(file.createReadStream());
+				writeIntegrityDumpLine(file.getName(), file.getName(), outFile, stream.get(), stream->size(), hashVideoFiles);
+			}
+			debugPrintf("\n");
+		}
+	}
+
 	return true;
 }
 
@@ -1340,6 +1419,146 @@ bool Console::cmdAudioList(int argc, const char **argv) {
 	debugPrintf("SCI32 isn't included in this compiled executable\n");
 #endif
 
+	return true;
+}
+
+bool Console::cmdAudioDump(int argc, const char **argv) {
+#ifdef ENABLE_SCI32
+	if (argc != 2 && argc != 6) {
+		debugPrintf("Dumps the requested audio resource as an uncompressed wave file.\n");
+		debugPrintf("Usage (audio): %s <audio resource id>\n", argv[0]);
+		debugPrintf("Usage (audio36): %s <audio map id> <noun> <verb> <cond> <seq>\n", argv[0]);
+		return true;
+	}
+
+	ResourceId id;
+	if (argc == 2) {
+		id = ResourceId(kResourceTypeAudio, atoi(argv[1]));
+	} else {
+		id = ResourceId(kResourceTypeAudio36, atoi(argv[1]), atoi(argv[2]), atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
+	}
+
+	Resource *resource = _engine->_resMan->findResource(id, false);
+	if (!resource) {
+		debugPrintf("Not found.\n");
+		return true;
+	}
+
+	Common::MemoryReadStream stream = resource->toStream();
+
+	Common::DumpFile outFile;
+	const Common::String fileName = Common::String::format("%s.wav", id.toString().c_str());
+	if (!outFile.open(fileName)) {
+		debugPrintf("Could not open dump file %s.\n", fileName.c_str());
+		return true;
+	}
+
+	const bool isSol = detectSolAudio(stream);
+	const bool isWave = !isSol && detectWaveAudio(stream);
+	const bool isRaw = !isSol && !isWave;
+
+	if (isSol || isRaw) {
+		uint16 sampleRate = 11025;
+		int numChannels = 1;
+		int bytesPerSample = 1;
+		bool sourceIs8Bit = true;
+		uint32 compressedSize;
+		uint32 decompressedSize;
+
+		if (isSol) {
+			stream.seek(6, SEEK_SET);
+			sampleRate = stream.readUint16LE();
+			const byte flags = stream.readByte();
+			compressedSize = stream.readUint32LE();
+
+			// All AudioStreams must output 16-bit samples
+			bytesPerSample = 2;
+
+			decompressedSize = compressedSize;
+
+			if (flags & kCompressed) {
+				decompressedSize *= 2;
+			}
+			if (flags & k16Bit) {
+				sourceIs8Bit = false;
+			} else {
+				// 8-bit is implicitly up-converted by AudioStream to 16-bit
+				decompressedSize *= 2;
+			}
+			if (flags & kStereo) {
+				numChannels = 2;
+			}
+		} else {
+			decompressedSize = resource->size();
+		}
+
+		enum {
+			kWaveHeaderSize = 36
+		};
+
+		outFile.writeString("RIFF");
+		outFile.writeUint32LE(kWaveHeaderSize + decompressedSize);
+		outFile.writeString("WAVEfmt ");
+		outFile.writeUint32LE(16);
+		outFile.writeUint16LE(1);
+		outFile.writeUint16LE(numChannels);
+		outFile.writeUint32LE(sampleRate);
+		outFile.writeUint32LE(sampleRate * bytesPerSample * numChannels);
+		outFile.writeUint16LE(bytesPerSample * numChannels);
+		outFile.writeUint16LE(bytesPerSample * 8);
+		outFile.writeString("data");
+		outFile.writeUint32LE(decompressedSize);
+
+		if (isSol) {
+			stream.seek(0, SEEK_SET);
+			Common::ScopedPtr<Audio::SeekableAudioStream> audioStream(makeSOLStream(&stream, DisposeAfterUse::NO));
+
+			if (!audioStream) {
+				debugPrintf("Could not create SOL stream.\n");
+				return true;
+			}
+
+			byte buffer[4096];
+			const int samplesToRead = ARRAYSIZE(buffer) / 2;
+			uint bytesWritten = 0;
+			int samplesRead;
+			while ((samplesRead = audioStream->readBuffer((int16 *)buffer, samplesToRead))) {
+				uint bytesToWrite = samplesRead * bytesPerSample;
+				outFile.write(buffer, bytesToWrite);
+				bytesWritten += bytesToWrite;
+			}
+
+			if (bytesWritten != decompressedSize) {
+				debugPrintf("WARNING: Should have written %u bytes but wrote %u bytes!\n", decompressedSize, bytesWritten);
+				while (bytesWritten < decompressedSize) {
+					outFile.writeByte(0);
+					++bytesWritten;
+				}
+			}
+
+			const char *bits;
+			if (sourceIs8Bit) {
+				bits = "upconverted 16";
+			} else {
+				bits = "16";
+			}
+
+			debugPrintf("%s-bit %uHz %d-channel SOL audio, %u -> %u bytes\n", bits, sampleRate, numChannels, compressedSize, decompressedSize);
+		} else {
+			outFile.write(resource->data(), resource->size());
+			debugPrintf("%d-bit %uHz %d-channel raw audio, %u bytes\n", bytesPerSample * 8, sampleRate, numChannels, decompressedSize);
+		}
+	} else if (isWave) {
+		outFile.write(resource->data(), resource->size());
+		debugPrintf("Raw wave file\n");
+	} else {
+		error("Impossible situation");
+	}
+
+	debugPrintf("Written to %s successfully.\n", fileName.c_str());
+#else
+	debugPrintf("SCI32 isn't included in this compiled executable\n");
+#endif
 	return true;
 }
 
@@ -1792,7 +2011,7 @@ bool Console::cmdPicVisualize(int argc, const char **argv) {
 
 bool Console::cmdPlayVideo(int argc, const char **argv) {
 	if (argc < 2) {
-		debugPrintf("Plays a SEQ, AVI, VMD, RBT or DUK video.\n");
+		debugPrintf("Plays a SEQ or AVI video.\n");
 		debugPrintf("Usage: %s <video file name> <delay>\n", argv[0]);
 		debugPrintf("The video file name should include the extension\n");
 		debugPrintf("Delay is only used in SEQ videos and is measured in ticks (default: 10)\n");
@@ -1802,8 +2021,7 @@ bool Console::cmdPlayVideo(int argc, const char **argv) {
 	Common::String filename = argv[1];
 	filename.toLowercase();
 
-	if (filename.hasSuffix(".seq") || filename.hasSuffix(".avi") || filename.hasSuffix(".vmd") ||
-		filename.hasSuffix(".rbt") || filename.hasSuffix(".duk")) {
+	if (filename.hasSuffix(".seq") || filename.hasSuffix(".avi")) {
 		_videoFile = filename;
 		_videoFrameDelay = (argc == 2) ? 10 : atoi(argv[2]);
 		return cmdExit(0, 0);
@@ -2353,6 +2571,13 @@ bool Console::cmdShowMap(int argc, const char **argv) {
 		return true;
 	}
 
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		debugPrintf("Command not available / implemented for SCI32 games.\n");
+		return true;
+	}
+#endif
+
 	int map = atoi(argv[1]);
 
 	switch (map) {
@@ -2360,7 +2585,9 @@ bool Console::cmdShowMap(int argc, const char **argv) {
 	case 1:
 	case 2:
 	case 3:
-		_engine->_gfxScreen->debugShowMap(map);
+		if (_engine->_gfxScreen) {
+			_engine->_gfxScreen->debugShowMap(map);
+		}
 		break;
 
 	default:
@@ -2832,94 +3059,7 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 		}
 	}
 
-	int type_mask = g_sci->getKernel()->findRegType(reg);
-	int filter;
-	int found = 0;
-
-	debugPrintf("%04x:%04x is of type 0x%x: ", PRINT_REG(reg), type_mask);
-
-	if (reg.getSegment() == 0 && reg.getOffset() == 0) {
-		debugPrintf("Null.\n");
-		return true;
-	}
-
-	if (reg_end.getSegment() != reg.getSegment() && reg_end != NULL_REG) {
-		debugPrintf("Ending segment different from starting segment. Assuming no bound on dump.\n");
-		reg_end = NULL_REG;
-	}
-
-	for (filter = 1; filter < 0xf000; filter <<= 1) {
-		int type = type_mask & filter;
-
-		if (found && type) {
-			debugPrintf("--- Alternatively, it could be a ");
-		}
-
-
-		switch (type) {
-		case 0:
-			break;
-		case SIG_TYPE_LIST:
-			printList(reg);
-			break;
-		case SIG_TYPE_NODE:
-			debugPrintf("list node\n");
-			printNode(reg);
-			break;
-		case SIG_TYPE_OBJECT:
-			debugPrintf("object\n");
-			printObject(reg);
-			break;
-		case SIG_TYPE_REFERENCE: {
-			switch (_engine->_gamestate->_segMan->getSegmentType(reg.getSegment())) {
-#ifdef ENABLE_SCI32
-				case SEG_TYPE_ARRAY: {
-					printArray(reg);
-					break;
-				}
-				case SEG_TYPE_BITMAP: {
-					printBitmap(reg);
-					break;
-				}
-#endif
-				default: {
-					const SegmentRef block = _engine->_gamestate->_segMan->dereference(reg);
-					uint16 size = block.maxSize;
-
-					debugPrintf("raw data\n");
-
-					if (reg_end.getSegment() != 0 && (size < reg_end.getOffset() - reg.getOffset())) {
-						debugPrintf("Block end out of bounds (size %d). Resetting.\n", size);
-						reg_end = NULL_REG;
-					}
-
-					if (reg_end.getSegment() != 0 && (size >= reg_end.getOffset() - reg.getOffset()))
-						size = reg_end.getOffset() - reg.getOffset();
-
-					if (reg_end.getSegment() != 0)
-						debugPrintf("Block size less than or equal to %d\n", size);
-
-					if (block.isRaw)
-						Common::hexdump(block.raw, size, 16, 0);
-					else
-						hexDumpReg(block.reg, size / 2, 4, 0);
-				}
-			}
-			break;
-		}
-		case SIG_TYPE_INTEGER:
-			debugPrintf("arithmetic value\n  %d (%04x)\n", (int16) reg.getOffset(), reg.getOffset());
-			break;
-		default:
-			debugPrintf("unknown type %d.\n", type);
-		}
-
-		if (type) {
-			debugPrintf("\n");
-			found = 1;
-		}
-	}
-
+	printReference(reg, reg_end);
 	return true;
 }
 
@@ -3043,9 +3183,9 @@ bool Console::cmdDumpReference(int argc, const char **argv) {
 }
 
 bool Console::cmdViewObject(int argc, const char **argv) {
-	if (argc != 2) {
+	if (argc < 2) {
 		debugPrintf("Examines the object at the given address.\n");
-		debugPrintf("Usage: %s <address>\n", argv[0]);
+		debugPrintf("Usage: %s <address> [<selector name> ...]\n", argv[0]);
 		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
 	}
@@ -3058,8 +3198,45 @@ bool Console::cmdViewObject(int argc, const char **argv) {
 		return true;
 	}
 
-	debugPrintf("Information on the object at the given address:\n");
-	printObject(addr);
+	if (argc >= 3) {
+		for (int i = 2; i < argc; ++i) {
+			const Object *obj = _engine->_gamestate->_segMan->getObject(addr);
+			if (!obj) {
+				debugPrintf("%04x:%04x is not an object.\n", PRINT_REG(addr));
+				break;
+			}
+
+			const Selector selector = _engine->getKernel()->findSelector(argv[i]);
+			if (selector == -1) {
+				debugPrintf("Invalid selector '%s'.\n", argv[i]);
+				break;
+			}
+
+			const int index = obj->locateVarSelector(_engine->_gamestate->_segMan, selector);
+			if (index == -1) {
+				debugPrintf("Selector '%s' is not valid for object %04x:%04x.\n", argv[i], PRINT_REG(addr));
+				break;
+			}
+
+			const reg_t value = obj->getVariable(index);
+			if (i == argc - 1) {
+				if (value.isPointer()) {
+					printReference(value);
+				} else {
+					debugPrintf("%04x:%04x (%u)\n", PRINT_REG(value), value.toUint16());
+				}
+			} else if (!value.isPointer()) {
+				debugPrintf("Selector '%s' on object %04x:%04x is not a pointer to an object.\n", argv[i], PRINT_REG(addr));
+				debugPrintf("Value is %04x:%04x (%u).\n", PRINT_REG(value), value.toUint16());
+				break;
+			} else {
+				addr = value;
+			}
+		}
+	} else {
+		debugPrintf("Information on the object at the given address:\n");
+		printObject(addr);
+	}
 
 	return true;
 }
@@ -3280,9 +3457,7 @@ bool Console::cmdTrace(int argc, const char **argv) {
 bool Console::cmdStepOver(int argc, const char **argv) {
 	_debugState.seeking = kDebugSeekStepOver;
 	_debugState.seekLevel = _engine->_gamestate->_executionStack.size();
-	_debugState.debugging = true;
-
-	return cmdExit(0, 0);
+	return cmdTrace(argc, argv);
 }
 
 bool Console::cmdStepEvent(int argc, const char **argv) {
@@ -3401,8 +3576,7 @@ bool Console::cmdDisassemble(int argc, const char **argv) {
 			if (jumpTarget > farthestTarget)
 				farthestTarget = jumpTarget;
 		}
-		// TODO: Use a true 32-bit reg_t for the position (addr)
-		addr = disassemble(_engine->_gamestate, make_reg32(addr.getSegment(), addr.getOffset()), objAddr, printBWTag, printBytecode);
+		addr = disassemble(_engine->_gamestate, make_reg32(addr.getSegment(), addr.getOffset()), obj, printBWTag, printBytecode);
 		if (addr.isNull() && prevAddr < farthestTarget)
 			addr = prevAddr + 1; // skip past the ret
 	} while (addr.getOffset() > 0);
@@ -3425,7 +3599,7 @@ bool Console::cmdDisassembleAddress(int argc, const char **argv) {
 	uint opCount = 1;
 	bool printBWTag = false;
 	bool printBytes = false;
-	uint16 size;
+	uint32 size;
 
 	if (parse_reg_t(_engine->_gamestate, argv[1], &vpc, false)) {
 		debugPrintf("Invalid address passed.\n");
@@ -3450,8 +3624,7 @@ bool Console::cmdDisassembleAddress(int argc, const char **argv) {
 	}
 
 	do {
-		// TODO: Use a true 32-bit reg_t for the position (vpc)
-		vpc = disassemble(_engine->_gamestate, make_reg32(vpc.getSegment(), vpc.getOffset()), NULL_REG, printBWTag, printBytes);
+		vpc = disassemble(_engine->_gamestate, make_reg32(vpc.getSegment(), vpc.getOffset()), nullptr, printBWTag, printBytes);
 	} while ((vpc.getOffset() > 0) && (vpc.getOffset() + 6 < size) && (--opCount));
 
 	return true;
@@ -3840,7 +4013,7 @@ bool Console::cmdBreakpointAction(int argc, const char **argv) {
 
 	if (usage) {
 		debugPrintf("Change the action for the breakpoint with the specified index.\n");
-		debugPrintf("Usage: %s <breakpoint index> break|log|bt|inspect|none\n", argv[0]);
+		debugPrintf("Usage: %s <breakpoint index> break|log|bt|inspect|ignore\n", argv[0]);
 		debugPrintf("<index> * will process all breakpoints\n");
 		debugPrintf("Actions: break  : break into debugger\n");
 		debugPrintf("         log    : log without breaking\n");
@@ -4083,6 +4256,8 @@ bool Console::cmdBreakpointFunction(int argc, const char **argv) {
 	_debugState._breakpoints.push_back(bp);
 	_debugState._activeBreakpointTypes |= BREAK_EXPORT;
 
+	printBreakpoint(_debugState._breakpoints.size() - 1, bp);
+
 	return true;
 }
 
@@ -4118,6 +4293,8 @@ bool Console::cmdBreakpointAddress(int argc, const char **argv) {
 
 	_debugState._breakpoints.push_back(bp);
 	_debugState._activeBreakpointTypes |= BREAK_ADDRESS;
+
+	printBreakpoint(_debugState._breakpoints.size() - 1, bp);
 
 	return true;
 }
@@ -4415,14 +4592,10 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest, bool mayBeV
 		relativeOffset = true;
 
 		if (!scumm_strnicmp(str + 1, "PC", 2)) {
-			reg32_t pc = s->_executionStack.back().addr.pc;
-			dest->setSegment(pc.getSegment());
-			dest->setOffset(pc.getOffset());
+			*dest = s->_executionStack.back().addr.pc;
 			offsetStr = str + 3;
 		} else if (!scumm_strnicmp(str + 1, "P", 1)) {
-			reg32_t pc = s->_executionStack.back().addr.pc;
-			dest->setSegment(pc.getSegment());
-			dest->setOffset(pc.getOffset());
+			*dest = s->_executionStack.back().addr.pc;;
 			offsetStr = str + 2;
 		} else if (!scumm_strnicmp(str + 1, "PREV", 4)) {
 			*dest = s->r_prev;
@@ -4791,6 +4964,96 @@ int Console::printNode(reg_t addr) {
 	return 0;
 }
 
+void Console::printReference(reg_t reg, reg_t reg_end) {
+	int type_mask = g_sci->getKernel()->findRegType(reg);
+	int filter;
+	int found = 0;
+
+	debugPrintf("%04x:%04x is of type 0x%x: ", PRINT_REG(reg), type_mask);
+
+	if (reg.getSegment() == 0 && reg.getOffset() == 0) {
+		debugPrintf("Null.\n");
+		return;
+	}
+
+	if (reg_end.getSegment() != reg.getSegment() && reg_end != NULL_REG) {
+		debugPrintf("Ending segment different from starting segment. Assuming no bound on dump.\n");
+		reg_end = NULL_REG;
+	}
+
+	for (filter = 1; filter < 0xf000; filter <<= 1) {
+		int type = type_mask & filter;
+
+		if (found && type) {
+			debugPrintf("--- Alternatively, it could be a ");
+		}
+
+
+		switch (type) {
+		case 0:
+			break;
+		case SIG_TYPE_LIST:
+			printList(reg);
+			break;
+		case SIG_TYPE_NODE:
+			debugPrintf("list node\n");
+			printNode(reg);
+			break;
+		case SIG_TYPE_OBJECT:
+			debugPrintf("object\n");
+			printObject(reg);
+			break;
+		case SIG_TYPE_REFERENCE: {
+			switch (_engine->_gamestate->_segMan->getSegmentType(reg.getSegment())) {
+#ifdef ENABLE_SCI32
+				case SEG_TYPE_ARRAY: {
+					printArray(reg);
+					break;
+				}
+				case SEG_TYPE_BITMAP: {
+					printBitmap(reg);
+					break;
+				}
+#endif
+				default: {
+					const SegmentRef block = _engine->_gamestate->_segMan->dereference(reg);
+					uint16 size = block.maxSize;
+
+					debugPrintf("raw data\n");
+
+					if (reg_end.getSegment() != 0 && (size < reg_end.getOffset() - reg.getOffset())) {
+						debugPrintf("Block end out of bounds (size %d). Resetting.\n", size);
+						reg_end = NULL_REG;
+					}
+
+					if (reg_end.getSegment() != 0 && (size >= reg_end.getOffset() - reg.getOffset()))
+						size = reg_end.getOffset() - reg.getOffset();
+
+					if (reg_end.getSegment() != 0)
+						debugPrintf("Block size less than or equal to %d\n", size);
+
+					if (block.isRaw)
+						Common::hexdump(block.raw, size, 16, 0);
+					else
+						hexDumpReg(block.reg, size / 2, 4, 0);
+				}
+			}
+			break;
+		}
+		case SIG_TYPE_INTEGER:
+			debugPrintf("arithmetic value\n  %d (%04x)\n", (int16) reg.getOffset(), reg.getOffset());
+			break;
+		default:
+			debugPrintf("unknown type %d.\n", type);
+		}
+
+		if (type) {
+			debugPrintf("\n");
+			found = 1;
+		}
+	}
+}
+
 #ifdef ENABLE_SCI32
 void Console::printArray(reg_t reg) {
 	SegmentObj *mobj = _engine->_gamestate->_segMan->getSegment(reg.getSegment(), SEG_TYPE_ARRAY);
@@ -4867,6 +5130,25 @@ void Console::printBitmap(reg_t reg) {
 }
 
 #endif
+
+void Console::writeIntegrityDumpLine(const Common::String &statusName, const Common::String &resourceName, Common::WriteStream &out, Common::ReadStream *const data, const int size, const bool writeHash) {
+	debugPrintf("%s", statusName.c_str());
+
+	out.writeString(resourceName);
+	if (!data) {
+		out.writeString(" ERROR\n");
+		debugPrintf("[ERR] ");
+	} else {
+		out.writeString(Common::String::format(" %d ", size));
+		if (writeHash) {
+			out.writeString(Common::computeStreamMD5AsString(*data));
+		} else {
+			out.writeString("disabled");
+		}
+		out.writeString("\n");
+		debugPrintf("[OK] ");
+	}
+}
 
 static void printChar(byte c) {
 	if (c < 32 || c >= 127)

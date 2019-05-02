@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/throw_tv_down_well.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -68,7 +69,7 @@ bool CThrowTVDownWell::EnterViewMsg(CEnterViewMsg *msg) {
 bool CThrowTVDownWell::MovieEndMsg(CMovieEndMsg *msg) {
 	sleep(2000);
 	changeView("ParrotLobby.Node 11.N");
-	playSound("z#471.wav");
+	playSound(TRANSLATE("z#471.wav", "z#208.wav"));
 	addTimer(2, 7000, 0);
 	return true;
 }
@@ -77,19 +78,19 @@ bool CThrowTVDownWell::TimerMsg(CTimerMsg *msg) {
 	if (msg->_actionVal == 1) {
 		changeView("ParrotLobby.Node 10.N");
 	} else if (msg->_actionVal == 2) {
-		playSound("z#468.wav", 50);
+		playSound(TRANSLATE("z#468.wav", "z#205.wav"), 50);
 		sleep(1500);
 		changeView(_viewName);
 		_viewName = "NULL";
 		unlockMouse();
-		playSound("z#47.wav");
+		playSound(TRANSLATE("z#47.wav", "z#578.wav"));
 	}
 
 	return true;
 }
 
 bool CThrowTVDownWell::MovieFrameMsg(CMovieFrameMsg *msg) {
-	playSound("z#470.wav");
+	playSound(TRANSLATE("z#470.wav", "z#207.wav"));
 	return true;
 }
 

@@ -42,18 +42,15 @@ void CEarSweetBowl::load(SimpleFile *file) {
 }
 
 bool CEarSweetBowl::MovieEndMsg(CMovieEndMsg *msg) {
+	setVisible(false);
 	CIsEarBowlPuzzleDone doneMsg;
 	doneMsg.execute(findRoom());
 
 	if (!doneMsg._value) {
-		CPetControl *pet = getPetControl();
-		if (pet)
-			pet->hasRoomFlags();
-
 		CIsParrotPresentMsg parrotMsg;
 		parrotMsg.execute(findRoom());
 
-		if (parrotMsg._value) {
+		if (parrotMsg._isPresent) {
 			CNutPuzzleMsg nutMsg("Jiggle");
 			nutMsg.execute("NutsParrotPlayer");
 		}

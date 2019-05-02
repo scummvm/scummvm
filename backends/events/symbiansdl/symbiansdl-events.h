@@ -50,6 +50,8 @@ protected:
 	static zoneDesc _zones[TOTAL_ZONES];
 
 	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
+
+	virtual bool handleAxisToMouseMotion(int16 xAxis, int16 yAxis);
 };
 
 #endif

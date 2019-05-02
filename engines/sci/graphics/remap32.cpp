@@ -100,9 +100,9 @@ bool SingleRemap::updateBrightness() {
 		}
 
 		if (_percent != _lastPercent || _originalColorsChanged[i]) {
-			// NOTE: SSCI checked if percent was over 100 and only
-			// then clipped values, but we always unconditionally
-			// ensure the result is in the correct range
+			// SSCI checked if percent was over 100 and only then clipped
+			// values, but we always unconditionally ensure the result is in the
+			// correct range for simplicity's sake
 			color.r = MIN(255, (uint16)color.r * _percent / 100);
 			color.g = MIN(255, (uint16)color.g * _percent / 100);
 			color.b = MIN(255, (uint16)color.b * _percent / 100);
@@ -188,8 +188,7 @@ bool SingleRemap::apply() {
 	const GfxRemap32 *const gfxRemap32 = g_sci->_gfxRemap32;
 	const uint8 remapStartColor = gfxRemap32->getStartColor();
 
-	// Blocked colors are not allowed to be used as target
-	// colors for the remap
+	// Blocked colors are not allowed to be used as target colors for the remap
 	bool blockedColors[236];
 	Common::fill(blockedColors, blockedColors + remapStartColor, false);
 
@@ -207,9 +206,8 @@ bool SingleRemap::apply() {
 		}
 	}
 
-	// NOTE: SSCI did a loop over colors here to create a
-	// new array of updated, unblocked colors, but then
-	// never used it
+	// SSCI did a loop over colors here to create a new array of updated,
+	// unblocked colors, but then never used it
 
 	bool updated = false;
 	for (uint i = 1; i < remapStartColor; ++i) {
@@ -280,8 +278,8 @@ int16 SingleRemap::matchColor(const Color &color, const int minimumDistance, int
 		bestIndex = i;
 	}
 
-	// This value is only valid if the last index to
-	// perform a distance calculation was the best index
+	// This value is only valid if the last index to perform a distance
+	// calculation was the best index
 	outDistance = distance;
 	return bestIndex;
 }
@@ -295,10 +293,9 @@ GfxRemap32::GfxRemap32() :
 	_blockedRangeCount(0),
 	_remapStartColor(236),
 	_numActiveRemaps(0) {
-	// The `_remapStartColor` seems to always be 236 in SSCI,
-	// but if it is ever changed then the various C-style
-	// member arrays hard-coded to 236 need to be changed to
-	// match the highest possible value of `_remapStartColor`
+	// The `_remapStartColor` seems to always be 236 in SSCI, but if it is ever
+	// changed then the various C-style member arrays hard-coded to 236 need to
+	// be changed to match the highest possible value of `_remapStartColor`
 	assert(_remapStartColor == 236);
 
 	if (g_sci->_features->hasMidPaletteCode()) {
@@ -316,9 +313,8 @@ void GfxRemap32::remapOff(const uint8 color) {
 		return;
 	}
 
-	// NOTE: SSCI simply ignored invalid input values, but
-	// we at least give a warning so games can be investigated
-	// for script bugs
+	// SSCI simply ignored invalid input values, but we at least give a warning
+	// so games can be investigated for script bugs
 	if (color < _remapStartColor || color > _remapEndColor) {
 		warning("GfxRemap32::remapOff: %d out of remap range", color);
 		return;
@@ -341,9 +337,8 @@ void GfxRemap32::remapAllOff() {
 }
 
 void GfxRemap32::remapByRange(const uint8 color, const int16 from, const int16 to, const int16 delta) {
-	// NOTE: SSCI simply ignored invalid input values, but
-	// we at least give a warning so games can be investigated
-	// for script bugs
+	// SSCI simply ignored invalid input values, but we at least give a warning
+	// so games can be investigated for script bugs
 	if (color < _remapStartColor || color > _remapEndColor) {
 		warning("GfxRemap32::remapByRange: %d out of remap range", color);
 		return;
@@ -375,9 +370,8 @@ void GfxRemap32::remapByRange(const uint8 color, const int16 from, const int16 t
 }
 
 void GfxRemap32::remapByPercent(const uint8 color, const int16 percent) {
-	// NOTE: SSCI simply ignored invalid input values, but
-	// we at least give a warning so games can be investigated
-	// for script bugs
+	// SSCI simply ignored invalid input values, but we at least give a warning
+	// so games can be investigated for script bugs
 	if (color < _remapStartColor || color > _remapEndColor) {
 		warning("GfxRemap32::remapByPercent: %d out of remap range", color);
 		return;
@@ -397,9 +391,8 @@ void GfxRemap32::remapByPercent(const uint8 color, const int16 percent) {
 }
 
 void GfxRemap32::remapToGray(const uint8 color, const int8 gray) {
-	// NOTE: SSCI simply ignored invalid input values, but
-	// we at least give a warning so games can be investigated
-	// for script bugs
+	// SSCI simply ignored invalid input values, but we at least give a warning
+	// so games can be investigated for script bugs
 	if (color < _remapStartColor || color > _remapEndColor) {
 		warning("GfxRemap32::remapToGray: %d out of remap range", color);
 		return;
@@ -423,9 +416,8 @@ void GfxRemap32::remapToGray(const uint8 color, const int8 gray) {
 }
 
 void GfxRemap32::remapToPercentGray(const uint8 color, const int16 gray, const int16 percent) {
-	// NOTE: SSCI simply ignored invalid input values, but
-	// we at least give a warning so games can be investigated
-	// for script bugs
+	// SSCI simply ignored invalid input values, but we at least give a warning
+	// so games can be investigated for script bugs
 	if (color < _remapStartColor || color > _remapEndColor) {
 		warning("GfxRemap32::remapToPercentGray: %d out of remap range", color);
 		return;

@@ -23,7 +23,8 @@
 #ifndef PLATFORM_3DS_H
 #define PLATFORM_3DS_H
 
-#include <citro3d.h>
+#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+
 #include "backends/mutex/mutex.h"
 #include "backends/base-backend.h"
 #include "graphics/palette.h"
@@ -105,7 +106,7 @@ public:
 	int16 getHeight(){ return _gameHeight; }
 	int16 getWidth(){ return _gameWidth; }
 	void setPalette(const byte *colors, uint start, uint num);
-	void grabPalette(byte *colors, uint start, uint num);
+	void grabPalette(byte *colors, uint start, uint num) const;
 	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w,
 	                      int h);
 	Graphics::Surface *lockScreen();

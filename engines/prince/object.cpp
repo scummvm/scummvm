@@ -28,6 +28,7 @@
 #include "graphics/surface.h"
 
 #include "prince/object.h"
+#include "prince/resource.h"
 
 namespace Prince {
 
@@ -73,6 +74,8 @@ bool Object::loadFromStream(Common::SeekableReadStream &stream) {
 	const Common::String obStreamName = Common::String::format("OB%02d", stream.readUint16LE());
 	Common::SeekableReadStream *obStream = SearchMan.createReadStreamForMember(obStreamName);
 	if (obStream) {
+		obStream = Resource::getDecompressedStream(obStream);
+
 		loadSurface(*obStream);
 	}
 	delete obStream;

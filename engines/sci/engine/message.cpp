@@ -24,6 +24,7 @@
 #include "sci/engine/message.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/seg_manager.h"
+#include "sci/engine/state.h"
 #include "sci/util.h"
 
 namespace Sci {
@@ -149,7 +150,7 @@ public:
 	}
 };
 
-#ifdef ENABLE_SCI32
+#ifdef ENABLE_SCI32_MAC
 // SCI32 Mac decided to add an extra byte (currently unknown in meaning) between
 // the talker and the string...
 class MessageReaderV4_MacSCI32 : public MessageReader {
@@ -202,6 +203,8 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 	case 4:
 #ifdef ENABLE_SCI32
 	case 5: // v5 seems to be compatible with v4
+#endif
+#ifdef ENABLE_SCI32_MAC
 		// SCI32 Mac is different than SCI32 DOS/Win here
 		if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_2_1_EARLY)
 			reader = new MessageReaderV4_MacSCI32(*res);
@@ -225,6 +228,9 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 		MessageTuple &t = stack.top();
 
 		// Fix known incorrect message tuples
+		// TODO: Add a more generic mechanism, like the one we have for
+		// script workarounds, for cases with incorrect sync resources,
+		// like the ones below.
 		if (g_sci->getGameId() == GID_QFG1VGA && stack.getModule() == 322 &&
 			t.noun == 14 && t.verb == 1 && t.cond == 19 && t.seq == 1) {
 			// Talking to Kaspar the shopkeeper - bug #3604944
@@ -241,6 +247,87 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 			t.noun == 10 && t.verb == 1 && t.cond == 0 && t.seq == 1) {
 			// Using the eye icon on Keith in the Blue Room - bug #3605654
 			t.cond = 13;
+		}
+
+		if (g_sci->getGameId() == GID_QFG4 && stack.getModule() == 16 &&
+			t.noun == 49 && t.verb == 1 && t.cond == 0 && t.seq == 2) {
+			// Examining the statue inventory item from the monastery - bug #10770
+			// The description says "squid-like monster", yet the icon is
+			// clearly an insect. It turned Chief into "an enormous beetle". We
+			// change the phrase to "monstrous insect".
+			//
+			// Note: The German string contains accented characters.
+			//  0x84 "a with diaeresis"
+			//  0x94 "o with diaeresis"
+			//
+			// Values were pulled from SCI Companion's raw message data. They
+			// are escaped that way here, as encoded bytes.
+			record.tuple = t;
+			record.refTuple = MessageTuple();
+			record.talker = 99;
+			if (g_sci->getSciLanguage() == K_LANG_GERMAN) {
+				record.string = "Die groteske Skulptur eines schrecklichen, monstr\x94sen insekts ist sorgf\x84ltig in die Einkaufstasche eingewickelt.";
+				record.length = 112;
+			} else {
+				record.string = "Carefully wrapped in a shopping bag is the grotesque sculpture of a horrible, monstrous insect.";
+				record.length = 95;
+			}
+			delete reader;
+			return true;
+		}
+
+		if (g_sci->getGameId() == GID_QFG4 && stack.getModule() == 579 &&
+			t.noun == 0 && t.verb == 0 && t.cond == 0 && t.seq == 1) {
+			// Talking with the Leshy and telling him about "bush in goo" - bug #10137
+			t.verb = 1;
+		}
+
+		if (g_sci->getGameId() == GID_QFG4 && g_sci->isCD() && stack.getModule() == 520 &&
+			t.noun == 2 && t.verb == 59 && t.cond == 0) {
+			// The CD edition mangled the Rusalka flowers dialogue. - bug #10849
+			// In the floppy edition, there are 3 lines, the first from
+			// the narrator, then two from Rusalka. The CD edition omits
+			// narration and only has the 3rd text, with the 2nd audio! The
+			// 3rd audio is orphaned but available.
+			//
+			// We only restore Rusalka's lines, providing the correct text
+			// for seq:1 to match the audio. We respond to seq:2 requests
+			// with Rusalka's last text. The orphaned audio (seq:3) has its
+			// tuple adjusted to seq:2 in resource_audio.cpp.
+			if (t.seq == 1) {
+				record.tuple = t;
+				record.refTuple = MessageTuple();
+				record.talker = 28;
+				record.string = "Thank you for the beautiful flowers.  No one has been so nice to me since I can remember.";
+				record.length = 89;
+				delete reader;
+				return true;
+			} else if (t.seq == 2) {
+				// The CD edition ships with this text at seq:1.
+				//  Look it up instead of hardcoding.
+				t.seq = 1;
+				if (!reader->findRecord(t, record)) {
+					delete reader;
+					return false;
+				}
+				t.seq = 2;             // Prevent an endless 2=1 -> 2=1 -> 2=1... loop.
+				record.tuple.seq = 2;  // Make the record seq:2 to get the seq:2 audio.
+				record.refTuple = MessageTuple();
+				delete reader;
+				return true;
+			}
+		}
+
+		if (g_sci->getGameId() == GID_LAURABOW2 && !g_sci->isCD() && stack.getModule() == 1885 &&
+			t.noun == 1 && t.verb == 6 && t.cond == 16 && t.seq == 4 &&
+			(g_sci->getEngineState()->currentRoomNumber() == 350 ||
+			 g_sci->getEngineState()->currentRoomNumber() == 360 ||
+			 g_sci->getEngineState()->currentRoomNumber() == 370)) {
+			// Asking Yvette about Tut in act 2 party - bug #10723
+			// Skip the last two lines of dialogue about a murder that hasn't occurred yet.
+			// Sierra fixed this in cd version by creating a copy of this message without those lines.
+			// Room-specific as the message is used again later where it should display in full.
+			t.seq += 2;
 		}
 
 		// Fill in known missing message tuples

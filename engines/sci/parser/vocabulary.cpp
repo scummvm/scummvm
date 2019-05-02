@@ -60,7 +60,7 @@ Vocabulary::Vocabulary(ResourceManager *resMan, bool foreign) : _resMan(resMan),
 		_resourceIdBranches += 10;
 	}
 
-	if (getSciVersion() <= SCI_VERSION_1_EGA_ONLY && loadParserWords()) {
+	if (g_sci->hasParser() && loadParserWords()) {
 		loadSuffixes();
 		if (loadBranches())
 			// Now build a GNF grammar out of this

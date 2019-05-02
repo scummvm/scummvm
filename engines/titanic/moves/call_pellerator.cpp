@@ -21,6 +21,7 @@
  */
 
 #include "titanic/moves/call_pellerator.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
@@ -29,6 +30,7 @@ BEGIN_MESSAGE_MAP(CCallPellerator, CGameObject)
 	ON_MESSAGE(LeaveViewMsg)
 	ON_MESSAGE(PETActivateMsg)
 	ON_MESSAGE(MouseButtonDownMsg)
+	ON_MESSAGE(TimerMsg)
 END_MESSAGE_MAP()
 
 void CCallPellerator::save(SimpleFile *file, int indent) {
@@ -42,15 +44,18 @@ void CCallPellerator::load(SimpleFile *file) {
 }
 
 bool CCallPellerator::EnterViewMsg(CEnterViewMsg *msg) {
-	petSetArea(PET_REMOTE);
-	petHighlightGlyph(1);
-	CString name = getFullViewName();
-
-	if (name == "TopOfWell.Node 6.S") {
-		petDisplayMessage(2, STANDING_OUTSIDE_PELLERATOR);
+	CString viewName = msg->_newView->getFullViewName();
+	if (viewName == "MusicRoomLobby.Node 1.N") {
+		// WORKAROUND: In original, the Remote tab icons don't get loaded
+		// until after the EnterViewMsg call is made when entering a new
+		// room. So in the special case of the Music Room Lobby, since
+		// you're immediately at the Pellerator when you enter, set up a
+		// quick timer to not select the Call glyph until the remote is loaded
+		addTimer(10);
+	} else {
+		showCallPellerator();
 	}
 
-	petSetRemoteTarget();
 	return true;
 }
 
@@ -79,6 +84,23 @@ bool CCallPellerator::PETActivateMsg(CPETActivateMsg *msg) {
 
 bool CCallPellerator::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	return true;
+}
+
+bool CCallPellerator::TimerMsg(CTimerMsg *msg) {
+	showCallPellerator();
+	return true;
+}
+
+void CCallPellerator::showCallPellerator() {
+	petSetArea(PET_REMOTE);
+	petHighlightGlyph(1);
+	CString name = getFullViewName();
+
+	if (name == "TopOfWell.Node 6.S") {
+		petDisplayMessage(2, STANDING_OUTSIDE_PELLERATOR);
+	}
+
+	petSetRemoteTarget();
 }
 
 } // End of namespace Titanic

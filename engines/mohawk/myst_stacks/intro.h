@@ -34,12 +34,12 @@ struct MystScriptEntry;
 
 namespace MystStacks {
 
-#define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
+#define DECLARE_OPCODE(x) void x(uint16 var, const ArgumentsArray &args)
 
 class Intro : public MystScriptParser {
 public:
-	Intro(MohawkEngine_Myst *vm);
-	~Intro();
+	explicit Intro(MohawkEngine_Myst *vm, MystStack stackId = kIntroStack);
+	~Intro() override;
 
 	void disablePersistentScripts() override;
 	void runPersistentScripts() override;

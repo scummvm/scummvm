@@ -39,22 +39,35 @@
 namespace BladeRunner {
 
 class Lights;
+class ScreenEffects;
 class View;
 class ZBuffer;
 
+enum VQADecoderSkipFlags {
+	kVQAReadCodebook           = 1,
+	kVQAReadVectorPointerTable = 2,
+	kVQAReadCustom             = 4,
+	kVQAReadVideo              = kVQAReadCodebook|kVQAReadVectorPointerTable|kVQAReadCustom,
+	kVQAReadAudio              = 8,
+	kVQAReadAll                = kVQAReadVideo|kVQAReadAudio
+};
+
 class VQADecoder {
+	friend class Debugger;
+
 public:
 	VQADecoder();
 	~VQADecoder();
 
 	bool loadStream(Common::SeekableReadStream *s);
 
-	void readFrame(int frame, int skipFlags);
+	void readFrame(int frame, uint readFlags = kVQAReadAll);
 
-	const Graphics::Surface    *decodeVideoFrame();
+	void                        decodeVideoFrame(Graphics::Surface *surface, int frame, bool forceDraw = false);
 	void                        decodeZBuffer(ZBuffer *zbuffer);
 	Audio::SeekableAudioStream *decodeAudioFrame();
 	void                        decodeView(View *view);
+	void                        decodeScreenEffects(ScreenEffects *aesc);
 	void                        decodeLights(Lights *lights);
 
 	uint16 numFrames() const { return _header.numFrames; }
@@ -68,9 +81,6 @@ public:
 
 	bool getLoopBeginAndEndFrame(int loop, int *begin, int *end);
 
-protected:
-
-private:
 	struct Header {
 		uint16 version;     // 0x00
 		uint16 flags;       // 0x02
@@ -112,14 +122,16 @@ private:
 		uint32  flags;
 		Loop   *loops;
 
-		LoopInfo() : loopCount(0), loops(nullptr) {}
+		LoopInfo() : loopCount(0), loops(nullptr), flags(0) {}
 		~LoopInfo() {
 			delete[] loops;
 		}
 	};
 
-	struct ClipInfo {
-		uint16 clipCount;
+	struct CodebookInfo {
+		uint16  frame;
+		uint32  size;
+		uint8  *data;
 	};
 
 	class VQAVideoTrack;
@@ -128,8 +140,11 @@ private:
 	Common::SeekableReadStream *_s;
 
 	Header   _header;
+	int      _readingFrame;
+	int      _decodingFrame;
 	LoopInfo _loopInfo;
-	ClipInfo _clipInfo;
+
+	Common::Array<CodebookInfo> _codebooks;
 
 	uint32  *_frameInfo;
 
@@ -140,7 +155,7 @@ private:
 	VQAVideoTrack *_videoTrack;
 	VQAAudioTrack *_audioTrack;
 
-	void readPacket(int skipFlags);
+	void readPacket(uint readFlags);
 
 	bool readVQHD(Common::SeekableReadStream *s, uint32 size);
 	bool readMSCI(Common::SeekableReadStream *s, uint32 size);
@@ -151,6 +166,8 @@ private:
 	bool readLNIN(Common::SeekableReadStream *s, uint32 size);
 	bool readCLIP(Common::SeekableReadStream *s, uint32 size);
 
+	CodebookInfo &codebookInfoForFrame(int frame);
+
 	class VQAVideoTrack {
 	public:
 		VQAVideoTrack(VQADecoder *vqaDecoder);
@@ -158,17 +175,18 @@ private:
 
 		uint16 getWidth() const;
 		uint16 getHeight() const;
-		Graphics::PixelFormat getPixelFormat() const;
-		int getCurFrame() const;
+
 		int getFrameCount() const;
-		const Graphics::Surface *decodeVideoFrame();
+
+		void decodeVideoFrame(Graphics::Surface *surface, bool forceDraw);
 		void decodeZBuffer(ZBuffer *zbuffer);
 		void decodeView(View *view);
+		void decodeScreenEffects(ScreenEffects *aesc);
 		void decodeLights(Lights *lights);
 
-		bool readVQFR(Common::SeekableReadStream *s, uint32 size);
+		bool readVQFR(Common::SeekableReadStream *s, uint32 size, uint readFlags);
 		bool readVPTR(Common::SeekableReadStream *s, uint32 size);
-		bool readVQFL(Common::SeekableReadStream *s, uint32 size);
+		bool readVQFL(Common::SeekableReadStream *s, uint32 size, uint readFlags);
 		bool readCBFZ(Common::SeekableReadStream *s, uint32 size);
 		bool readZBUF(Common::SeekableReadStream *s, uint32 size);
 		bool readVIEW(Common::SeekableReadStream *s, uint32 size);
@@ -181,7 +199,8 @@ private:
 		bool useAudioSync() const { return false; }
 
 	private:
-		Graphics::Surface *_surface;
+		VQADecoder        *_vqaDecoder;
+
 		bool _hasNewFrame;
 
 		uint16 _numFrames;
@@ -195,10 +214,8 @@ private:
 		uint32  _maxCBFZSize;
 		uint32  _maxZBUFChunkSize;
 
-		uint32   _codebookSize;
 		uint8   *_codebook;
 		uint8   *_cbfz;
-		bool     _zbufChunkComplete;
 		uint32   _zbufChunkSize;
 		uint8   *_zbufChunk;
 
@@ -208,12 +225,14 @@ private:
 		int      _curFrame;
 
 		uint8   *_viewData;
-		uint32	_viewDataSize;
+		uint32   _viewDataSize;
 		uint8   *_lightsData;
-		uint32	_lightsDataSize;
+		uint32   _lightsDataSize;
+		uint8   *_screenEffectsData;
+		uint32   _screenEffectsDataSize;
 
-		void VPTRWriteBlock(uint16 *frame, unsigned int dstBlock, unsigned int srcBlock, int count, bool alpha = false);
-		bool decodeFrame(uint16 *frame);
+		void VPTRWriteBlock(Graphics::Surface *surface, unsigned int dstBlock, unsigned int srcBlock, int count, bool alpha = false);
+		bool decodeFrame(Graphics::Surface *surface);
 	};
 
 	class VQAAudioTrack {

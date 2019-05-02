@@ -35,9 +35,8 @@ namespace Draci {
 
 static const char *const draciIdentString = "DRACI";
 
-bool readSavegameHeader(Common::InSaveFile *in, DraciSavegameHeader &header) {
+WARN_UNUSED_RESULT bool readSavegameHeader(Common::InSaveFile *in, DraciSavegameHeader &header, bool skipThumbnail) {
 	char saveIdentBuffer[6];
-	header.thumbnail = NULL;
 
 	// Validate the header Id
 	in->read(saveIdentBuffer, 6);
@@ -59,9 +58,9 @@ bool readSavegameHeader(Common::InSaveFile *in, DraciSavegameHeader &header) {
 	header.playtime = in->readUint32LE();
 
 	// Get the thumbnail
-	header.thumbnail = Graphics::loadThumbnail(*in);
-	if (!header.thumbnail)
+	if (!Graphics::loadThumbnail(*in, header.thumbnail, skipThumbnail)) {
 		return false;
+	}
 
 	return true;
 }
@@ -107,7 +106,7 @@ Common::Error saveSavegameData(int saveGameIdx, const Common::String &saveName, 
 	} else {
 		// Create the remainder of the savegame
 		Common::Serializer s(NULL, f);
-		vm._game->DoSync(s, header.version);
+		vm._game->synchronize(s, header.version);
 
 		f->finalize();
 		delete f;
@@ -130,10 +129,6 @@ Common::Error loadSavegameData(int saveGameIdx, DraciEngine *vm) {
 	if (!readSavegameHeader(f, header)) {
 		return Common::kNoGameDataFoundError;
 	}
-	if (header.thumbnail) {
-		header.thumbnail->free();
-		delete header.thumbnail;
-	}
 
 	// Pre-processing
 	vm->_game->rememberRoomNumAsPrevious();
@@ -141,7 +136,7 @@ Common::Error loadSavegameData(int saveGameIdx, DraciEngine *vm) {
 
 	// Synchronise the remaining data of the savegame
 	Common::Serializer s(f, NULL);
-	vm->_game->DoSync(s, header.version);
+	vm->_game->synchronize(s, header.version);
 	delete f;
 
 	// Post-processing

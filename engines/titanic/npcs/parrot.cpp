@@ -23,6 +23,9 @@
 #include "titanic/npcs/parrot.h"
 #include "titanic/core/project_item.h"
 #include "titanic/carry/carry.h"
+#include "titanic/carry/chicken.h"
+#include "titanic/game_manager.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -43,6 +46,7 @@ BEGIN_MESSAGE_MAP(CParrot, CTrueTalkNPC)
 	ON_MESSAGE(PreEnterViewMsg)
 	ON_MESSAGE(PanningAwayFromParrotMsg)
 	ON_MESSAGE(LeaveRoomMsg)
+	ON_MESSAGE(TrueTalkNotifySpeechStartedMsg)
 	ON_MESSAGE(TrueTalkNotifySpeechEndedMsg)
 END_MESSAGE_MAP()
 
@@ -60,7 +64,7 @@ CParrot::CParrot() : CTrueTalkNPC() {
 	_lastSpeakTime = 0;
 	_newXp = 73;
 	_newXc = 58;
-	_canEatChicken = false;
+	_triedEatChicken = false;
 	_eatOffsetX = 0;
 	_panTarget = nullptr;
 
@@ -84,7 +88,7 @@ void CParrot::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_lastSpeakTime, indent);
 	file->writeNumberLine(_newXp, indent);
 	file->writeNumberLine(_newXc, indent);
-	file->writeNumberLine(_canEatChicken, indent);
+	file->writeNumberLine(_triedEatChicken, indent);
 	file->writeNumberLine(_eatOffsetX, indent);
 	file->writeNumberLine(_state, indent);
 	file->writeNumberLine(_coreReplaced, indent);
@@ -108,7 +112,7 @@ void CParrot::load(SimpleFile *file) {
 	_lastSpeakTime = file->readNumber();
 	_newXp = file->readNumber();
 	_newXc = file->readNumber();
-	_canEatChicken = file->readNumber();
+	_triedEatChicken = file->readNumber();
 	_eatOffsetX = file->readNumber();
 	_state = (ParrotState)file->readNumber();
 	_coreReplaced = file->readNumber();
@@ -117,23 +121,16 @@ void CParrot::load(SimpleFile *file) {
 }
 
 bool CParrot::ActMsg(CActMsg *msg) {
-	if (msg->_action == "PistaccioEaten") {
-		CActMsg actMsg("NutsEaten");
-		actMsg.execute("Ear2");
-	} else if (msg->_action == "Chicken") {
+	if (msg->_action == "Chicken") {
 		// Nothing to do
 	} else if (msg->_action == "CarryParrotLeftView") {
-		if (!_takeOff) {
-			_eatingChicken = false;
-			CStatusChangeMsg statusMsg;
-			statusMsg._newStatus = 1;
-			statusMsg.execute("PerchCoreHolder");
-		}
+		if (!_takeOff)
+			setEatingChicken(false);
 	} else if (msg->_action == "StartChickenDrag") {
 		if (_state == PARROT_IN_CAGE) {
 			stopMovie();
 			startTalking(this, 280275, findView());
-			_canEatChicken = false;
+			_triedEatChicken = false;
 		}
 	} else if (msg->_action == "EnteringFromTOW" &&
 			(_state == PARROT_IN_CAGE || _state == PARROT_ESCAPED)) {
@@ -249,22 +246,23 @@ bool CParrot::MovieEndMsg(CMovieEndMsg *msg) {
 			return true;
 
 		} else if (clipExistsByEnd("Lean Over To Chicken", msg->_endFrame)) {
-			// Leaning left out of cage to eat the chicken
-			playClip("Eat Chicken");
+			// WORKAROUND: Do what the original obviously intended but got
+			// wrong.. only flag chicken as eaten if it's still being dragged
+			CTreeItem *dragItem = getGameManager()->_dragItem;
+			CCarry *chicken = dynamic_cast<CCarry *>(dragItem);
+
+			if (chicken)
+				playClip("Eat Chicken");
 			playClip("Eat Chicken 2", MOVIE_NOTIFY_OBJECT);
-			_eatingChicken = true;
 
-			CStatusChangeMsg statusMsg;
-			statusMsg._newStatus = 0;
-			statusMsg.execute("PerchCoreHolder");
-
-			CTrueTalkTriggerActionMsg actionMsg;
-			actionMsg._action = 280266;
-			actionMsg._param2 = 1;
-			actionMsg.execute(this);
-
-			CCarry *chicken = dynamic_cast<CCarry *>(findUnder(getRoot(), "Chicken"));
 			if (chicken) {
+				setEatingChicken(true);
+
+				CTrueTalkTriggerActionMsg actionMsg;
+				actionMsg._action = 280266;
+				actionMsg._param2 = 1;
+				actionMsg.execute(this);
+
 				CActMsg actMsg("Eaten");
 				actMsg.execute(chicken);
 			}
@@ -276,15 +274,11 @@ bool CParrot::MovieEndMsg(CMovieEndMsg *msg) {
 
 	if (clipExistsByEnd("Eat Chicken 2", msg->_endFrame)) {
 		// Parrot has finished eating Chicken
-		_eatingChicken = false;
-
-		CStatusChangeMsg statusMsg;
-		statusMsg._newStatus = 1;
-		statusMsg.execute("PerchCoreHolder");
+		setEatingChicken(false);
 
 		if (_takeOff) {
 			// Perch has been taken, so take off
-			loadMovie("z168.avi", false);
+			loadMovie(TRANSLATE("z168.avi", "z191.avi"), false);
 			playClip("Take Off", MOVIE_NOTIFY_OBJECT);
 			setPosition(Point(20, 10));
 			_npcFlags |= NPCFLAG_TAKE_OFF;
@@ -325,7 +319,7 @@ bool CParrot::EnterViewMsg(CEnterViewMsg *msg) {
 		}
 
 		petSetArea(PET_CONVERSATION);
-		_canEatChicken = false;
+		_triedEatChicken = false;
 		_npcFlags |= NPCFLAG_START_IDLING;
 	}
 
@@ -393,7 +387,7 @@ bool CParrot::ParrotSpeakMsg(CParrotSpeakMsg *msg) {
 	if ((getTicksCount() - _lastSpeakTime) < 20000 || _speechCounter)
 		return true;
 
-	playSound("z#475.wav", 50);
+	playSound(TRANSLATE("z#475.wav", "z#212.wav"), 50);
 
 	if (msg->_target == "Bomb") {
 		startTalking("PerchedParrot", 280236);
@@ -450,7 +444,7 @@ bool CParrot::NPCPlayTalkingAnimationMsg(CNPCPlayTalkingAnimationMsg *msg) {
 	if (!(_npcFlags & (NPCFLAG_MOVING | NPCFLAG_MOVE_START | NPCFLAG_MOVE_LOOP | NPCFLAG_MOVE_FINISH 
 			| NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT | NPCFLAG_MOVE_END))
 			&& _visible && _state == PARROT_IN_CAGE) {
-		if (!compareViewNameTo("ParrotLobby.Node 1.N"))
+		if (compareViewNameTo("ParrotLobby.Node 1.N"))
 			msg->_names = NAMES;
 	}
 
@@ -465,10 +459,10 @@ bool CParrot::NPCPlayIdleAnimationMsg(CNPCPlayIdleAnimationMsg *msg) {
 
 	if (!(_npcFlags & (NPCFLAG_MOVING | NPCFLAG_MOVE_START | NPCFLAG_MOVE_LOOP | NPCFLAG_MOVE_FINISH 
 			| NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT | NPCFLAG_MOVE_END))
-			&& _visible && _state == PARROT_IN_CAGE && !compareViewNameTo("ParrotLobby.Node 1.N")) {
+			&& _visible && _state == PARROT_IN_CAGE && compareViewNameTo("ParrotLobby.Node 1.N")) {
 		CGameObject *dragItem = getDraggingObject();
 		if (!dragItem || dragItem->getName() == "Chicken") {
-			if (!_coreReplaced ||getRandomNumber(3) != 0) {
+			if (!_coreReplaced || getRandomNumber(3) != 0) {
 				if (getRandomNumber(1)) {
 					startTalking(this, 280267, findView());
 				} else {
@@ -555,6 +549,9 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 				| NPCFLAG_MOVE_FINISH | NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT | NPCFLAG_MOVE_END);
 			return true;
 		}
+
+		// WORKAROUND: Prevent panning away from stalling if Parrot was moving
+		_npcFlags &= ~NPCFLAG_MOVING;
 	} else {
 		if (dragObject)
 			chickenFlag = dragObject && dragObject->isEquals("Chicken");
@@ -583,6 +580,10 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 		_npcFlags |= NPCFLAG_MOVING | NPCFLAG_MOVE_START;
 
 		if (_newXc >= xp) {
+			// WORKAROUND: Original did not properly reset the eating chicken
+			// flag when the player turns away from the cage
+			setEatingChicken(false);
+
 			setPosition(Point(_bounds.left + 30, _bounds.top));
 			_npcFlags |= NPCFLAG_MOVE_RIGHT;
 			playClip("Walk Right Intro", MOVIE_NOTIFY_OBJECT);
@@ -590,28 +591,28 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 			_npcFlags |= NPCFLAG_MOVE_LEFT;
 			playClip("Walk Left Intro", MOVIE_NOTIFY_OBJECT);
 		}
-	} else if (chickenFlag && pt.y >= 90 && pt.y <= 280 && !_canEatChicken) {
+	} else if (chickenFlag && pt.y >= 90 && pt.y <= 280 && !_triedEatChicken) {
 		CParrotTriesChickenMsg triesMsg;
 		triesMsg.execute(dragObject);
 
 		CTrueTalkTriggerActionMsg triggerMsg;
 		int &action = triggerMsg._action;
-		switch (triesMsg._value2) {
+		switch (triesMsg._condiment) {
 		case 1:
-			action = 280056 + (triesMsg._value1 ? 234 : 0);
+			action = triesMsg._isHot ? 280034 : 280056;
 			break;
 		case 2:
-			action = 280055 + (triesMsg._value1 ? 234 : 0);
+			action = triesMsg._isHot ? 280033 : 280055;
 			break;
 		case 3:
-			action = 280054 + (triesMsg._value1 ? 234 : 0);
+			action = triesMsg._isHot ? 280032 : 280054;
 			break;
 		default:
-			action = 280053 + (triesMsg._value1 ? 234 : 0);
+			action = triesMsg._isHot ? 280266 : 280053;
 			break;
 		}
 
-		if (action != 280266) {
+		if (action == 280266) {
 			if (pt.x < 75) {
 				// Parrot needs to reach outside the cage
 				_npcFlags |= NPCFLAG_CHICKEN_OUTSIDE_CAGE;
@@ -637,7 +638,7 @@ bool CParrot::FrameMsg(CFrameMsg *msg) {
 		if (chickenFlag) {
 			triggerMsg._param2 = 1;
 			triggerMsg.execute(this);
-			_canEatChicken = true;
+			_triedEatChicken = true;
 		}
 	}
 
@@ -696,7 +697,7 @@ bool CParrot::PutParrotBackMsg(CPutParrotBackMsg *msg) {
 
 bool CParrot::PreEnterViewMsg(CPreEnterViewMsg *msg) {
 	if (_state == PARROT_IN_CAGE) {
-		loadMovie("z167.avi", false);
+		loadMovie(TRANSLATE("z167.avi", "z190.avi"), false);
 		loadFrame(0);
 	}
 
@@ -710,7 +711,7 @@ bool CParrot::PanningAwayFromParrotMsg(CPanningAwayFromParrotMsg *msg) {
 		_panTarget = nullptr;
 	} else if (_takeOff) {
 		_panTarget = msg->_target;
-		loadMovie("z168.avi", false);
+		loadMovie(TRANSLATE("z168.avi", "z191.avi"), false);
 		stopMovie();
 		playClip("Take Off", MOVIE_NOTIFY_OBJECT);
 		_npcFlags |= NPCFLAG_TAKE_OFF;
@@ -730,6 +731,15 @@ bool CParrot::LeaveRoomMsg(CLeaveRoomMsg *msg) {
 	return true;
 }
 
+bool CParrot::TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMsg *msg) {
+	// WORKAROUND: Fix parrot freezing up if you drag the chicken whilst
+	// he's still returning to the center from a prior chicken drag
+	if (_npcFlags & (NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT))
+		_npcFlags &= ~(NPCFLAG_MOVING | NPCFLAG_MOVE_LEFT | NPCFLAG_MOVE_RIGHT);
+
+	return CTrueTalkNPC::TrueTalkNotifySpeechStartedMsg(msg);
+}
+
 bool CParrot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) {
 	if (msg->_dialogueId == 80022) {
 		// WORKAROUND: End of parrot speech after having fixed Titania
@@ -740,5 +750,11 @@ bool CParrot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) {
 	return CTrueTalkNPC::TrueTalkNotifySpeechEndedMsg(msg);
 }
 
+void CParrot::setEatingChicken(bool eating) {
+	_eatingChicken = eating;
+	CStatusChangeMsg statusMsg;
+	statusMsg._newStatus = eating ? 0 : 1;
+	statusMsg.execute("PerchCoreHolder");
+}
 
 } // End of namespace Titanic

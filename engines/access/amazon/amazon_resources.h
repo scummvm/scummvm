@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "access/resources.h"
+#include "access/font.h"
 
 namespace Access {
 
@@ -128,10 +129,7 @@ protected:
 	 */
 	virtual void load(Common::SeekableReadStream &s);
 public:
-	Common::Array<int> FONT2_INDEX;
-	Common::Array<byte> FONT2_DATA;
-	Common::Array<int> FONT6x6_INDEX;
-	Common::Array<byte> FONT6x6_DATA;
+	AmazonFont *_font3x5, *_font6x6;
 	Common::String NO_HELP_MESSAGE;
 	Common::String NO_HINTS_MESSAGE;
 	Common::String RIVER_HIT1;
@@ -140,8 +138,8 @@ public:
 	Common::String HELPLVLTXT[3];
 	Common::String IQLABELS[9];
 public:
-	AmazonResources(AccessEngine *vm) : Resources(vm) {}
-	virtual ~AmazonResources() {}
+	AmazonResources(AccessEngine *vm) : Resources(vm), _font3x5(nullptr), _font6x6(nullptr) {}
+	virtual ~AmazonResources();
 };
 
 #define AMRES (*((Amazon::AmazonResources *)_vm->_res))

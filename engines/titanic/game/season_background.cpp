@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/season_background.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -65,40 +66,46 @@ bool CSeasonBackground::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
 
 	switch (_seasonNum) {
 	case SEASON_SUMMER:
-		playMovie(0, 45, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
-		_defaultFrame = 45;
+		playMovie(0, TRANSLATE(45, 49), MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+		_defaultFrame = TRANSLATE(45, 49);
 		break;
 
 	case SEASON_AUTUMN:
 		if (_flag) {
-			playMovie(232, 278, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
-			_defaultFrame = 278;
+			playMovie(TRANSLATE(232, 49), TRANSLATE(278, 98),
+				MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+			_defaultFrame = TRANSLATE(278, 98);
 		} else {
-			playMovie(45, 91, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
-			_defaultFrame = 91;
+			playMovie(TRANSLATE(45, 196), TRANSLATE(91, 245),
+				MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+			_defaultFrame = TRANSLATE(91, 245);
 		}
 		break;
 
 	case SEASON_WINTER:
 		if (_flag) {
-			playMovie(278, 326, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
-			_defaultFrame = 326;
+			playMovie(TRANSLATE(278, 98), TRANSLATE(326, 147),
+				MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+			_defaultFrame = TRANSLATE(326, 147);
 		} else {
 			CStatusChangeMsg changeMsg;
 			changeMsg._newStatus = 0;
 			changeMsg.execute("PickUpSpeechCentre");
-			playMovie(91, 139, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
-			_defaultFrame = 139;
+			playMovie(TRANSLATE(91, 245), TRANSLATE(139, 294),
+				MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+			_defaultFrame = TRANSLATE(139, 294);
 		}
 		break;
 
 	case SEASON_SPRING:
 		if (_flag) {
-			playMovie(326, 417, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
-			_defaultFrame = 417;
+			playMovie(TRANSLATE(326, 147), TRANSLATE(417, 195),
+				MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+			_defaultFrame = TRANSLATE(417, 195);
 		} else {
-			playMovie(139, 228, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
-			_defaultFrame = 228;
+			playMovie(TRANSLATE(139, 294), TRANSLATE(228, 342),
+				MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
+			_defaultFrame = TRANSLATE(228, 342);
 		}
 		break;
 
@@ -115,7 +122,7 @@ bool CSeasonBackground::MovieEndMsg(CMovieEndMsg *msg) {
 		onMsg.execute("SeasonalAdjust");
 	}
 
-	if (msg->_endFrame == 91 && !_flag) {
+	if (msg->_endFrame == TRANSLATE(91, 245) && !_flag) {
 		CStatusChangeMsg changeMsg;
 		changeMsg.execute("PickUpSpeechCentre");
 	}
@@ -125,8 +132,8 @@ bool CSeasonBackground::MovieEndMsg(CMovieEndMsg *msg) {
 
 bool CSeasonBackground::ActMsg(CActMsg *msg) {
 	if (msg->_action == "PlayerGetsSpeechCentre") {
-		loadFrame(278);
-		_defaultFrame = 278;
+		_defaultFrame = TRANSLATE(278, 98);
+		loadFrame(_defaultFrame);
 		_flag = true;
 	}
 

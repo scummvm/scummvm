@@ -34,12 +34,12 @@ struct MystScriptEntry;
 
 namespace MystStacks {
 
-#define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
+#define DECLARE_OPCODE(x) void x(uint16 var, const ArgumentsArray &args)
 
 class Selenitic : public MystScriptParser {
 public:
-	Selenitic(MohawkEngine_Myst *vm);
-	~Selenitic();
+	explicit Selenitic(MohawkEngine_Myst *vm);
+	~Selenitic() override;
 
 	void disablePersistentScripts() override;
 	void runPersistentScripts() override;
@@ -50,7 +50,7 @@ private:
 	void toggleVar(uint16 var) override;
 	bool setVarValue(uint16 var, uint16 value) override;
 
-	virtual uint16 getMap() override { return 9930; }
+	uint16 getMap() override { return 9930; }
 
 	DECLARE_OPCODE(o_mazeRunnerMove);
 	DECLARE_OPCODE(o_mazeRunnerSoundRepeat);
@@ -74,6 +74,14 @@ private:
 	DECLARE_OPCODE(o_mazeRunnerRight_init);
 	DECLARE_OPCODE(o_mazeRunnerLeft_init);
 
+	enum SoundReceiverSpeed {
+		kSoundReceiverSpeedStill  = 0,
+		kSoundReceiverSpeedSlow   = 1,
+		kSoundReceiverSpeedNormal = 5,   // The original has this at 10
+		kSoundReceiverSpeedFast   = 10,  // The original has this at 50 too fast!
+		kSoundReceiverSpeedFaster = 13   // The original has this at 100, way too fast!
+	};
+
 	void soundReceiver_run();
 
 	MystGameState::Selenitic &_state;
@@ -84,8 +92,9 @@ private:
 	MystAreaImageSwitch *_soundReceiverCurrentSource; // 112
 	uint16 *_soundReceiverPosition; // 116
 	uint16 _soundReceiverDirection; // 120
-	uint16 _soundReceiverSpeed; // 122
+	SoundReceiverSpeed _soundReceiverSpeed; // 122
 	uint32 _soundReceiverStartTime; //124
+	uint _soundReceiverNearBlinkCounter;
 	MystAreaImageSwitch *_soundReceiverViewer; // 128
 	MystAreaImageSwitch *_soundReceiverRightButton; // 132
 	MystAreaImageSwitch *_soundReceiverLeftButton; // 136

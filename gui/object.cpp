@@ -30,7 +30,7 @@
 namespace GUI {
 
 GuiObject::GuiObject(const Common::String &name)
-	: _x(-1000), _y(-1000), _w(0), _h(0), _name(name), _firstWidget(0), _textDrawableArea(Common::Rect(0, 0, 0, 0)) {
+	: _x(-1000), _y(-1000), _w(0), _h(0), _name(name), _firstWidget(nullptr) {
 	reflowLayout();
 }
 
@@ -65,6 +65,10 @@ void GuiObject::removeWidget(Widget *del) {
 		}
 		w = w->next();
 	}
+}
+
+Common::Rect GuiObject::getClipRect() const {
+	return Common::Rect(getAbsX(), getAbsY(), getAbsX() + getWidth(), getAbsY() + getHeight());
 }
 
 } // End of namespace GUI

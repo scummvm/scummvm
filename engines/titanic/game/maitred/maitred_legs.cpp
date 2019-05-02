@@ -68,7 +68,7 @@ bool CMaitreDLegs::AnimateMaitreDMsg(CAnimateMaitreDMsg *msg) {
 			playRandomClip(FIGHTING_CLIPS);
 
 			if (getRandomNumber(2) != 0)
-				playSound(ARCING_SOUNDS[getRandomNumber(9)],
+				playSound(ARCING_SOUNDS[getRandomNumber(8)],
 					40 + getRandomNumber(30));
 		} else {
 			playClip("Walk Right");

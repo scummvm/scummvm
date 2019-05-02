@@ -145,8 +145,8 @@ bool ScummDebugger::Cmd_IMuse(int argc, const char **argv) {
 					debugPrintf("Selecting from %d songs...\n", _vm->_numSounds);
 					sound = _vm->_rnd.getRandomNumber(_vm->_numSounds);
 				}
-				_vm->ensureResourceLoaded(rtSound, sound);
-				_vm->_musicEngine->startSound(sound);
+				if (_vm->getResourceAddress(rtSound, sound))
+					_vm->_musicEngine->startSound(sound);
 
 				debugPrintf("Attempted to start music %d.\n", sound);
 			} else {

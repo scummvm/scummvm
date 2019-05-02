@@ -119,7 +119,7 @@ private:
 
 	class StreamAudioTrack : public AudioTrack {
 	public:
-		StreamAudioTrack(uint32 sampleRate);
+		StreamAudioTrack(uint32 sampleRate, Audio::Mixer::SoundType soundType);
 		~StreamAudioTrack();
 
 		void queueAudio(Common::SeekableReadStream *stream, byte chunkId);

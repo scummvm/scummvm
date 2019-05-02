@@ -1,0 +1,8 @@
+--- a/project/AndroidManifest.xml	2018-01-01 17:35:08.893995813 +0200
++++ a/project/AndroidManifest.xml	2018-01-01 17:35:41.888969151 +0200
+@@ -6,4 +6,5 @@
+ 	  android:installLocation="auto"
++	  android:sharedUserId="org.scummvm.scummvm"
+ >
+ 	<application android:label="@string/app_name"
+ 				 android:icon="@drawable/icon"

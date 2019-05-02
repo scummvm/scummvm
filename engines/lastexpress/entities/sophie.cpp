@@ -33,7 +33,7 @@ namespace LastExpress {
 
 Sophie::Sophie(LastExpressEngine *engine) : Entity(engine, kEntitySophie) {
 	ADD_CALLBACK_FUNCTION(Sophie, reset);
-	ADD_CALLBACK_FUNCTION(Sophie, updateEntity);
+	ADD_CALLBACK_FUNCTION_II(Sophie, updateEntity);
 	ADD_CALLBACK_FUNCTION(Sophie, chaptersHandler);
 	ADD_CALLBACK_FUNCTION(Sophie, chapter1);
 	ADD_CALLBACK_FUNCTION(Sophie, function5);
@@ -70,8 +70,8 @@ IMPLEMENT_FUNCTION_II(2, Sophie, updateEntity, CarIndex, EntityPosition)
 		CarIndex rebeccaCar = getEntityData(kEntityRebecca)->car;
 
 		if (getEntities()->isDistanceBetweenEntities(kEntitySophie, kEntityRebecca, 500)
-		|| (direction == kDirectionUp && car >= rebeccaCar && position > rebecca_position)
-		|| (direction == kDirectionDown && car <= rebeccaCar && position < rebecca_position)) {
+		|| (direction == kDirectionUp && (car > rebeccaCar || (car == rebeccaCar && position > rebecca_position)))
+		|| (direction == kDirectionDown && (car < rebeccaCar || (car == rebeccaCar && position < rebecca_position)))) {
 			 getData()->field_49B = 0;
 			 params->param3 = 1;
 		}
@@ -108,6 +108,7 @@ IMPLEMENT_FUNCTION(3, Sophie, chaptersHandler)
 
 	case kActionNone:
 		getData()->entityPosition = getEntityData(kEntityRebecca)->entityPosition;
+		getData()->location = getEntityData(kEntityRebecca)->location;
 		getData()->car = getEntityData(kEntityRebecca)->car;
 		break;
 

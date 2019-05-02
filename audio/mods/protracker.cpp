@@ -101,15 +101,13 @@ private:
 
 	void doPorta(int track) {
 		if (_track[track].portaToNote && _track[track].portaToNoteSpeed) {
-			if (_track[track].period < _track[track].portaToNote) {
-				_track[track].period += _track[track].portaToNoteSpeed;
-				if (_track[track].period > _track[track].portaToNote)
-					_track[track].period = _track[track].portaToNote;
-			} else if (_track[track].period > _track[track].portaToNote) {
-				_track[track].period -= _track[track].portaToNoteSpeed;
-				if (_track[track].period < _track[track].portaToNote)
-					_track[track].period = _track[track].portaToNote;
-			}
+			int distance = _track[track].period - _track[track].portaToNote;
+			int sign = distance > 0 ? 1 : -1;
+
+			if ((sign * distance) > _track[track].portaToNoteSpeed)
+				_track[track].period -= sign * _track[track].portaToNoteSpeed;
+			else
+				_track[track].period = _track[track].portaToNote;
 		}
 	}
 	void doVibrato(int track) {
@@ -330,7 +328,7 @@ void ProtrackerStream::updateRow() {
 				_speed = exy;
 			} else {
 				_bpm = exy;
-				setInterruptFreq((int) (getRate() / (_bpm * 0.4)));
+				setInterruptFreq((int)(getRate() / (_bpm * 0.4)));
 			}
 			break;
 		default:

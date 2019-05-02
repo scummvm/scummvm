@@ -118,12 +118,15 @@ bool StyledTTFont::loadFont(const Common::String &fontName, int32 point, uint st
 	bool sharp = (_style & TTF_STYLE_SHARP) == TTF_STYLE_SHARP;
 
 	Common::File file;
+	Graphics::Font *newFont;
 	if (!file.open(newFontName) && !_engine->getSearchManager()->openFile(file, newFontName) &&
 		!file.open(liberationFontName) && !_engine->getSearchManager()->openFile(file, liberationFontName) &&
-		!file.open(freeFontName) && !_engine->getSearchManager()->openFile(file, freeFontName))
-		error("Unable to open font file %s (Liberation Font alternative: %s, FreeFont alternative: %s)", newFontName.c_str(), liberationFontName.c_str(), freeFontName.c_str());
+		!file.open(freeFontName) && !_engine->getSearchManager()->openFile(file, freeFontName)) {
+		newFont = Graphics::loadTTFFontFromArchive(freeFontName, point, Graphics::kTTFSizeModeCell, 0, (sharp ? Graphics::kTTFRenderModeMonochrome : Graphics::kTTFRenderModeNormal));
+	} else {
+		newFont = Graphics::loadTTFFont(file, point, Graphics::kTTFSizeModeCell, 0, (sharp ? Graphics::kTTFRenderModeMonochrome : Graphics::kTTFRenderModeNormal));
+	}
 
-	Graphics::Font *newFont = Graphics::loadTTFFont(file, point, Graphics::kTTFSizeModeCell, 0, (sharp ? Graphics::kTTFRenderModeMonochrome : Graphics::kTTFRenderModeNormal));
 	if (newFont == nullptr) {
 		return false;
 	}
@@ -165,36 +168,6 @@ int StyledTTFont::getKerningOffset(byte left, byte right) {
 	return 0;
 }
 
-Common::U32String StyledTTFont::convertUtf8ToUtf32(const Common::String &str) {
-	// The String class, and therefore the Font class as well, assume one
-	// character is one byte, but in this case it's actually an UTF-8
-	// string with up to 4 bytes per character. To work around this,
-	// convert it to an U32String before drawing it, because our Font class
-	// can handle that.
-	Common::U32String u32str;
-	uint i = 0;
-	while (i < str.size()) {
-		uint32 chr = 0;
-		if ((str[i] & 0xF8) == 0xF0) {
-			chr |= (str[i++] & 0x07) << 18;
-			chr |= (str[i++] & 0x3F) << 12;
-			chr |= (str[i++] & 0x3F) << 6;
-			chr |= (str[i++] & 0x3F);
-		} else if ((str[i] & 0xF0) == 0xE0) {
-			chr |= (str[i++] & 0x0F) << 12;
-			chr |= (str[i++] & 0x3F) << 6;
-			chr |= (str[i++] & 0x3F);
-		} else if ((str[i] & 0xE0) == 0xC0) {
-			chr |= (str[i++] & 0x1F) << 6;
-			chr |= (str[i++] & 0x3F);
-		} else {
-			chr = (str[i++] & 0x7F);
-		}
-		u32str += chr;
-	}
-	return u32str;
-}
-
 void StyledTTFont::drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint32 color) {
 	if (_font) {
 		_font->drawChar(dst, chr, x, y, color);
@@ -213,7 +186,7 @@ void StyledTTFont::drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint
 
 void StyledTTFont::drawString(Graphics::Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, Graphics::TextAlign align) {
 	if (_font) {
-		Common::U32String u32str = convertUtf8ToUtf32(str);
+		Common::U32String u32str = Common::convertUtf8ToUtf32(str);
 		_font->drawString(dst, u32str, x, y, w, color, align);
 		if (_style & TTF_STYLE_UNDERLINE) {
 			int16 pos = (int16)floor(_font->getFontHeight() * 0.87);

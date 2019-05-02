@@ -113,7 +113,7 @@ bool Console::Cmd_DrawImage(int argc, const char **argv) {
 
 	Common::String filename = argv[1];
 	int resNum = atoi(argv[2]);
-	
+
 	_vm->_graphics->drawImage(filename, resNum);
 
 	return false;

@@ -72,7 +72,7 @@ protected:
 	int _languageIndexSize;
 	char _lastStringTag[12+1];
 
-#if defined(__SYMBIAN32__) || defined(_WIN32_WCE) // for some reason VC6 cannot find the base class TextObject
+#if defined(__SYMBIAN32__) // for some reason VC6 cannot find the base class TextObject
 	struct SubtitleText {
 		int16 xpos, ypos;
 		byte color;
@@ -84,6 +84,7 @@ protected:
 	struct SubtitleText : TextObject {
 		bool actorSpeechMsg;
 	};
+	friend void syncWithSerializer(Common::Serializer &, SubtitleText &);
 #endif
 
 	int _subtitleQueuePos;
@@ -111,7 +112,7 @@ protected:
 
 	virtual void akos_processQueue();
 
-	virtual void saveOrLoad(Serializer *s);
+	virtual void saveLoadWithSerializer(Common::Serializer &s);
 
 	virtual void readMAXS(int blockSize);
 	virtual void readGlobalObjects();

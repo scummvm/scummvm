@@ -34,7 +34,7 @@ namespace Mohawk {
 LBGraphics::LBGraphics(MohawkEngine_LivingBooks *vm, uint16 width, uint16 height) : GraphicsManager(), _vm(vm) {
 	_bmpDecoder = _vm->isPreMohawk() ? new LivingBooksBitmap_v1() : new MohawkBitmap();
 
-	initGraphics(width, height, true);
+	initGraphics(width, height);
 }
 
 LBGraphics::~LBGraphics() {

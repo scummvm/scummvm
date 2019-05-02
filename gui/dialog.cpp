@@ -21,10 +21,7 @@
  */
 
 #include "common/rect.h"
-
-#ifdef ENABLE_KEYMAPPER
 #include "common/events.h"
-#endif
 
 #include "gui/gui-manager.h"
 #include "gui/dialog.h"
@@ -153,20 +150,30 @@ void Dialog::releaseFocus() {
 	}
 }
 
-void Dialog::draw() {
-	//TANOKU - FIXME when is this enabled? what does this do?
-	// Update: called on tab drawing, mainly...
-	// we can pass this as open a new dialog or something
-//	g_gui._needRedraw = true;
-	g_gui._redrawStatus = GUI::GuiManager::kRedrawTopDialog;
+void Dialog::markWidgetsAsDirty() {
+	Widget *w = _firstWidget;
+	while (w) {
+		w->markAsDirty();
+		w = w->_next;
+	}
 }
 
-void Dialog::drawDialog() {
+void Dialog::drawDialog(DrawLayer layerToDraw) {
 
 	if (!isVisible())
 		return;
 
-	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x+_w, _y+_h), _backgroundType);
+	g_gui.theme()->_layerToDraw = layerToDraw;
+	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x + _w, _y + _h), _backgroundType);
+
+	markWidgetsAsDirty();
+	drawWidgets();
+}
+
+void Dialog::drawWidgets() {
+
+	if (!isVisible())
+		return;
 
 	// Draw all children
 	Widget *w = _firstWidget;
@@ -349,9 +356,8 @@ void Dialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	}
 }
 
-#ifdef ENABLE_KEYMAPPER
 void Dialog::handleOtherEvent(Common::Event evt) { }
-#endif
+
 /*
  * Determine the widget at location (x,y) if any. Assumes the coordinates are
  * in the local coordinate system, i.e. relative to the top left of the dialog.

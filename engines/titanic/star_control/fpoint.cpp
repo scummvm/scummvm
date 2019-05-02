@@ -21,7 +21,6 @@
  */
 
 #include "titanic/star_control/fpoint.h"
-#include "common/algorithm.h"
 
 namespace Titanic {
 

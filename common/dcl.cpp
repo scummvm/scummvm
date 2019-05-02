@@ -98,7 +98,7 @@ uint32 DecompressorDCL::getBitsLSB(int n) {
 	// Fetching more data to buffer if needed
 	if (_nBits < n)
 		fetchBitsLSB();
-	uint32 ret = (_dwBits & ~((~0) << n));
+	uint32 ret = (_dwBits & ~(~0UL << n));
 	_dwBits >>= n;
 	_nBits -= n;
 	return ret;

@@ -20,10 +20,11 @@
  *
  */
 
-#include "common/file.h"
-#include "titanic/titanic.h"
-#include "titanic/support/simple_file.h"
 #include "titanic/core/resource_key.h"
+#include "titanic/support/files_manager.h"
+#include "titanic/support/simple_file.h"
+#include "titanic/titanic.h"
+#include "common/file.h"
 
 namespace Titanic {
 

@@ -28,7 +28,7 @@
 
 namespace Common {
 
-RDFT::RDFT(int bits, TransformType trans) : _bits(bits), _sin(bits), _cos(bits), _fft(0) {
+RDFT::RDFT(int bits, TransformType trans) : _bits(bits), _sin(1 << bits), _cos(1 << bits), _fft(nullptr) {
 	assert((_bits >= 4) && (_bits <= 16));
 
 	_inverse        = trans == IDFT_C2R || trans == DFT_C2R;

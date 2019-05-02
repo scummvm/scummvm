@@ -44,20 +44,20 @@ private:
 	uint getStateDialogueId(uint oldId, uint newId);
 
 	/**
-	 * Sets flags 12 and resets some ranges
+	 * Starts the MaitreD fighting, if he isn't already
 	 */
-	void setFlags12();
+	void startFighting();
+
+	/**
+	 * Stops the MaitreD fighting
+	 */
+	void stopFighting(bool flag);
 
 	/**
 	 * Sets flags 10 to different values based on the passed
 	 * dialogue Id
 	 */
 	void setFlags10(uint newId, uint index);
-
-	/**
-	 * Trigers 12
-	 */
-	void trigger12(bool flag);
 
 	/**
 	 * Does preprocessing for the sentence
@@ -83,7 +83,7 @@ public:
 	virtual ScriptChangedResult scriptChanged(const TTroomScript *roomScript, uint id);
 
 	virtual int handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
-		uint val, uint tagId, uint remainder);
+		uint tag1, uint tag2, uint remainder);
 
 	/**
 	 * Handles updating NPC state based on specified dialogue Ids and dial positions

@@ -119,8 +119,8 @@ public:
 
 	void scale2x(const SciSpan<const byte> &src, SciSpan<byte> &dst, int16 srcWidth, int16 srcHeight, byte bytesPerPixel = 1);
 
-	void adjustToUpscaledCoordinates(int16 &y, int16 &x, Sci32ViewNativeResolution viewScalingType = SCI_VIEW_NATIVERES_NONE);
-	void adjustBackUpscaledCoordinates(int16 &y, int16 &x, Sci32ViewNativeResolution viewScalingType = SCI_VIEW_NATIVERES_NONE);
+	void adjustToUpscaledCoordinates(int16 &y, int16 &x);
+	void adjustBackUpscaledCoordinates(int16 &y, int16 &x);
 
 	void dither(bool addToFlag);
 

@@ -31,55 +31,55 @@ class NullGraphicsManager : public GraphicsManager {
 public:
 	virtual ~NullGraphicsManager() {}
 
-	bool hasFeature(OSystem::Feature f) { return false; }
-	void setFeatureState(OSystem::Feature f, bool enable) {}
-	bool getFeatureState(OSystem::Feature f) { return false; }
+	bool hasFeature(OSystem::Feature f) const override { return false; }
+	void setFeatureState(OSystem::Feature f, bool enable) override {}
+	bool getFeatureState(OSystem::Feature f) const override { return false; }
 
-	const OSystem::GraphicsMode *getSupportedGraphicsModes() const { return s_noGraphicsModes; }
-	int getDefaultGraphicsMode() const { return 0; }
-	bool setGraphicsMode(int mode) { return true; }
-	void resetGraphicsScale(){}
-	int getGraphicsMode() const { return 0; }
-	inline Graphics::PixelFormat getScreenFormat() const {
+	const OSystem::GraphicsMode *getSupportedGraphicsModes() const override { return s_noGraphicsModes; }
+	int getDefaultGraphicsMode() const override { return 0; }
+	bool setGraphicsMode(int mode) override { return true; }
+	void resetGraphicsScale() override {}
+	int getGraphicsMode() const override { return 0; }
+	inline Graphics::PixelFormat getScreenFormat() const override {
 		return Graphics::PixelFormat::createFormatCLUT8();
 	}
-	inline Common::List<Graphics::PixelFormat> getSupportedFormats() const {
+	inline Common::List<Graphics::PixelFormat> getSupportedFormats() const override {
 		Common::List<Graphics::PixelFormat> list;
 		list.push_back(Graphics::PixelFormat::createFormatCLUT8());
 		return list;
 	}
-	void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL) {}
-	virtual int getScreenChangeID() const { return 0; }
+	void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL) override {}
+	virtual int getScreenChangeID() const override { return 0; }
 
-	void beginGFXTransaction() {}
-	OSystem::TransactionError endGFXTransaction() { return OSystem::kTransactionSuccess; }
+	void beginGFXTransaction() override {}
+	OSystem::TransactionError endGFXTransaction() override { return OSystem::kTransactionSuccess; }
 
-	int16 getHeight() { return 0; }
-	int16 getWidth() { return 0; }
-	void setPalette(const byte *colors, uint start, uint num) {}
-	void grabPalette(byte *colors, uint start, uint num) {}
-	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {}
-	Graphics::Surface *lockScreen() { return NULL; }
-	void unlockScreen() {}
-	void fillScreen(uint32 col) {}
-	void updateScreen() {}
-	void setShakePos(int shakeOffset) {}
-	void setFocusRectangle(const Common::Rect& rect) {}
-	void clearFocusRectangle() {}
+	int16 getHeight() const override { return 0; }
+	int16 getWidth() const override { return 0; }
+	void setPalette(const byte *colors, uint start, uint num) override {}
+	void grabPalette(byte *colors, uint start, uint num) const override {}
+	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) override {}
+	Graphics::Surface *lockScreen() override { return NULL; }
+	void unlockScreen() override {}
+	void fillScreen(uint32 col) override {}
+	void updateScreen() override {}
+	void setShakePos(int shakeOffset) override {}
+	void setFocusRectangle(const Common::Rect& rect) override {}
+	void clearFocusRectangle() override {}
 
-	void showOverlay() {}
-	void hideOverlay() {}
-	Graphics::PixelFormat getOverlayFormat() const { return Graphics::PixelFormat(); }
-	void clearOverlay() {}
-	void grabOverlay(void *buf, int pitch) {}
-	void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {}
-	int16 getOverlayHeight() { return 0; }
-	int16 getOverlayWidth() { return 0; }
+	void showOverlay() override {}
+	void hideOverlay() override {}
+	Graphics::PixelFormat getOverlayFormat() const override { return Graphics::PixelFormat(); }
+	void clearOverlay() override {}
+	void grabOverlay(void *buf, int pitch) const override {}
+	void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) override {}
+	int16 getOverlayHeight() const override { return 0; }
+	int16 getOverlayWidth() const override { return 0; }
 
-	bool showMouse(bool visible) { return !visible; }
-	void warpMouse(int x, int y) {}
-	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL) {}
-	void setCursorPalette(const byte *colors, uint start, uint num) {}
+	bool showMouse(bool visible) override { return !visible; }
+	void warpMouse(int x, int y) override {}
+	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL) override {}
+	void setCursorPalette(const byte *colors, uint start, uint num) override {}
 };
 
 #endif

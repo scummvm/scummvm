@@ -281,6 +281,24 @@ static const DreamWebGameDescription gameDescriptions[] = {
 		},
 	},
 
+	// Russian fan-made translation
+	{
+		{
+			"dreamweb",
+			"CD",
+			{
+				{"dreamweb.r00", 0, "b457b515f1042d345c07e4e58a7ef792", 151975},
+				{"dreamweb.r02", 0, "eebf681cef5a06ee12a2630512c5eb83", 197091},
+				{"dreamweb.exe", 0, "9386c192d3bdce2ef4de2135c29fa66d", 65370},
+				AD_LISTEND
+			},
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO2(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_BRIGHTPALETTE)
+		},
+	},
+
 
 	{ AD_TABLE_END_MARKER }
 };

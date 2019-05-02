@@ -56,7 +56,7 @@ File outputFile;
 
 void writeHeader(int numExecutables);
 void writeAmazonCommonData();
-void writeMartianCommonData();
+void writeMartianCommonData(int argc, char *argv[]);
 bool processExecutable(int idx, const char *name);
 
 void NORETURN_PRE error(const char *s, ...) {
@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
 
 	// Write out entries containing common data for the games
 	writeAmazonCommonData();
-	writeMartianCommonData();
+	writeMartianCommonData(argc, argv);
 
 	// Iterate through processing each specified executable
 	outputFile.seek(0, SEEK_END);
@@ -141,7 +141,7 @@ void writeAmazonCommonData() {
 }
 
 
-void writeMartianCommonData() {
+void writeMartianCommonData(int argc, char *argv[]) {
 	// Write out the header entry
 	outputFile.seek(16);
 	outputFile.writeByte(2);    // Martian
@@ -152,12 +152,69 @@ void writeMartianCommonData() {
 
 	// Write out cursor list
 	outputFile.seek(0, SEEK_END);
-	outputFile.writeByte(MARTIAN_NUM_CURSORS);
+	outputFile.writeWord(MARTIAN_NUM_CURSORS);
 
 	for (uint idx = 0; idx < MARTIAN_NUM_CURSORS; ++idx) {
 		outputFile.writeWord(Martian::CURSOR_SIZES[idx]);
 		outputFile.write(Martian::CURSORS[idx], Martian::CURSOR_SIZES[idx]);
 	}
+
+	// Check for the presence of a Martian Memorandum executable
+	for (int idx = 2; idx < argc; ++idx) {
+		File exeFile;
+		if (!exeFile.open(argv[idx]))
+			continue;
+
+		// Total up the first 256 bytes of the executable as a simplified checksum
+		uint fileChecksum = 0;
+		for (int i = 0; i < 256; ++i)
+			fileChecksum += exeFile.readByte();
+
+		if (fileChecksum == 10454) {
+			// Write out font data
+			const int DATA_SEGMENT = 0x9600;
+			#define FONT_COUNT 119
+			const int FONT_WIDTHS[2] = { 0x47E6, 0x4C9C };
+			const int FONT_CHAR_OFFSETS[2] = { 0x46F8, 0x4BAE };
+			const uint FONT_DATA_SIZE[2] = { 849, 907 };
+			int dataOffset;
+
+			for (int fontNum = 0; fontNum < 2; ++fontNum) {
+				// Write out sizes
+				outputFile.writeWord(FONT_COUNT);
+				outputFile.writeWord(FONT_DATA_SIZE[fontNum]);
+
+				// Write out character widths
+				exeFile.seek(DATA_SEGMENT + FONT_WIDTHS[fontNum]);
+				outputFile.write(exeFile, FONT_COUNT);
+
+				// Write out character offsets
+				uint offsets[FONT_COUNT];
+				exeFile.seek(DATA_SEGMENT + FONT_CHAR_OFFSETS[fontNum]);
+				for (int i = 0; i < FONT_COUNT; ++i) {
+					offsets[i] = exeFile.readWord();
+					if (i == 0)
+						dataOffset = offsets[0];
+					offsets[i] -= dataOffset;
+					assert(offsets[i] < FONT_DATA_SIZE[fontNum]);
+
+					outputFile.writeWord(offsets[i]);
+				}
+
+				// Write out character data
+				exeFile.seek(DATA_SEGMENT + dataOffset);
+				outputFile.write(exeFile, FONT_DATA_SIZE[fontNum]);
+			}
+
+			return;
+		}
+	}
+
+	// No executable found, so store 0 size fonts
+	outputFile.writeWord(0);
+	outputFile.writeWord(0);
+	outputFile.writeWord(0);
+	outputFile.writeWord(0);
 }
 
 bool processExecutable(int exeIdx, const char *name) {
@@ -262,10 +319,10 @@ bool processExecutable(int exeIdx, const char *name) {
 		printf("It needs to be first unpacked before it can be used with this tool.\n");
 		return false;
 
-	case 0:
-		// Martian Memorandum English
+	case 10454:
+		// Martian Memorandum English decompressed
 		gameId = 2;
-		dataSegmentOffset = 0x8d78;
+		dataSegmentOffset = 0x9600;
 		filenamesOffset = dataSegmentOffset + 0x373A;
 		numFilenames = 80;
 		charsStart = dataSegmentOffset + 0x40F2;
@@ -278,7 +335,7 @@ bool processExecutable(int exeIdx, const char *name) {
 		deathScreens = Martian::DEATH_SCREENS_ENG;
 		deathText = &Martian::DEATH_TEXT_ENG[0];
 		numDeaths = sizeof(Martian::DEATH_SCREENS_ENG);
-		numItems = 85;
+		numItems = 55;
 		itemNames = &Martian::INVENTORY_NAMES_ENG[0];
 		comboTable = nullptr;
 		break;

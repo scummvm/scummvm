@@ -51,6 +51,7 @@ class CParrot : public CTrueTalkNPC {
 	bool PreEnterViewMsg(CPreEnterViewMsg *msg);
 	bool PanningAwayFromParrotMsg(CPanningAwayFromParrotMsg *msg);
 	bool LeaveRoomMsg(CLeaveRoomMsg *msg);
+	bool TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMsg *msg);
 	bool TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg);
 public:
 	static bool _eatingChicken;
@@ -66,9 +67,14 @@ private:
 	uint _lastSpeakTime;
 	int _newXp;
 	int _newXc;
-	bool _canEatChicken;
+	bool _triedEatChicken;
 	int _eatOffsetX;
 	CMovePlayerTo *_panTarget;
+private:
+	/**
+	 * Called for the Parrot to start or finish eating
+	 */
+	void setEatingChicken(bool eating);
 public:
 	CLASSDEF;
 	CParrot();

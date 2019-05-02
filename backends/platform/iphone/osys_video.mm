@@ -155,7 +155,7 @@ void OSystem_IPHONE::setPalette(const byte *colors, uint start, uint num) {
 		_mouseDirty = _mouseNeedTextureUpdate = true;
 }
 
-void OSystem_IPHONE::grabPalette(byte *colors, uint start, uint num) {
+void OSystem_IPHONE::grabPalette(byte *colors, uint start, uint num) const {
 	//printf("grabPalette(%p, %u, %u)\n", colors, start, num);
 	assert(start + num <= 256);
 	byte *b = colors;

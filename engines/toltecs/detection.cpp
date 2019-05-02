@@ -210,11 +210,11 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Toltecs Engine";
+		return "3 Skulls of the Toltecs";
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Toltecs Engine Revistronic (C) 1996";
+		return "3 Skulls of the Toltecs (C) Revistronic 1996";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
@@ -276,7 +276,7 @@ SaveStateList ToltecsMetaEngine::listSaves(const char *target) const {
 		if (slotNum >= 0 && slotNum <= 999) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
-				if (Toltecs::ToltecsEngine::readSaveHeader(in, false, header) == Toltecs::ToltecsEngine::kRSHENoError) {
+				if (Toltecs::ToltecsEngine::readSaveHeader(in, header) == Toltecs::ToltecsEngine::kRSHENoError) {
 					saveList.push_back(SaveStateDescriptor(slotNum, header.description));
 				}
 				delete in;
@@ -325,7 +325,7 @@ SaveStateDescriptor ToltecsMetaEngine::querySaveMetaInfos(const char *target, in
 		Toltecs::ToltecsEngine::SaveHeader header;
 		Toltecs::ToltecsEngine::kReadSaveHeaderError error;
 
-		error = Toltecs::ToltecsEngine::readSaveHeader(in, true, header);
+		error = Toltecs::ToltecsEngine::readSaveHeader(in, header, false);
 		delete in;
 
 		if (error == Toltecs::ToltecsEngine::kRSHENoError) {

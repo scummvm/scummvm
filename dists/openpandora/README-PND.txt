@@ -1,10 +1,10 @@
-ScummVM 1.10.0git - OPENPANDORA README - HOW TO INSTALL
+ScummVM 2.1.0git - OPENPANDORA README - HOW TO INSTALL
 ------------------------------------------------------------------------
 
 Please refer to the:
 
-ScummVM Forum: <http://forums.scummvm.org/>
-WiKi: <http://wiki.scummvm.org/index.php/OpenPandora>
+ScummVM Forum: <https://forums.scummvm.org/>
+WiKi: <https://wiki.scummvm.org/index.php/OpenPandora>
 
 for the most current information on the port and any updates to this
 documentation.

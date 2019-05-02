@@ -352,7 +352,7 @@ void OSystem_Wii::setPalette(const byte *colors, uint start, uint num) {
 	}
 }
 
-void OSystem_Wii::grabPalette(byte *colors, uint start, uint num) {
+void OSystem_Wii::grabPalette(byte *colors, uint start, uint num) const {
 #ifdef USE_RGB_COLOR
 	assert(_pfGame.bytesPerPixel == 1);
 #endif

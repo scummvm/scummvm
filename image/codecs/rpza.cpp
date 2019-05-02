@@ -270,6 +270,7 @@ static inline void decodeFrameTmpl(Common::SeekableReadStream &stream, PixelInt 
 		// Fill blocks with 4 colors
 		case 0xc0:
 			colorA = stream.readUint16BE();
+			// fall through
 		case 0x20:
 			colorB = stream.readUint16BE();
 

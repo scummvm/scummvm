@@ -28,8 +28,6 @@
 
 #include "engines/engine.h"
 
-#include "mohawk/video.h"
-
 class OSystem;
 
 namespace Common {
@@ -51,14 +49,7 @@ enum MohawkGameType {
 	GType_MYST,
 	GType_MAKINGOF,
 	GType_RIVEN,
-	GType_ZOOMBINI,
 	GType_CSTIME,
-	GType_CSWORLD,
-	GType_CSAMTRAK,
-	GType_JAMESMATH,
-	GType_TREEHOUSE,
-	GType_1STDEGREE,
-	GType_CSUSA,
 	GType_LIVINGBOOKSV1,
 	GType_LIVINGBOOKSV2,
 	GType_LIVINGBOOKSV3,
@@ -67,11 +58,12 @@ enum MohawkGameType {
 };
 
 enum MohawkGameFeatures {
-	GF_ME =      (1 << 0),	// Myst Masterpiece Edition
-	GF_DVD =     (1 << 1),
-	GF_DEMO =    (1 << 2),
-	GF_HASMIDI = (1 << 3),
-	GF_LB_10   = (1 << 4)   // very early Living Books 1.0 games
+	GF_ME             = (1 << 0), // Myst Masterpiece Edition
+	GF_25TH           = (1 << 1), // Myst and Riven 25th Anniversary
+	GF_DVD            = (1 << 2),
+	GF_DEMO           = (1 << 3),
+	GF_LB_10          = (1 << 4), // very early Living Books 1.0 games
+	GF_LANGUAGE_FILES = (1 << 5)  // Myst and Riven versions using language override files
 };
 
 struct MohawkGameDescription;
@@ -82,25 +74,24 @@ class CursorManager;
 
 class MohawkEngine : public ::Engine {
 protected:
-	virtual Common::Error run();
+	Common::Error run() override;
 
 public:
 	MohawkEngine(OSystem *syst, const MohawkGameDescription *gamedesc);
-	virtual ~MohawkEngine();
+	~MohawkEngine() override;
 
 	// Detection related functions
 	const MohawkGameDescription *_gameDescription;
 	const char *getGameId() const;
 	uint32 getFeatures() const;
 	const char *getAppName() const;
-	uint16 getVersion() const;
 	Common::Platform getPlatform() const;
 	uint8 getGameType() const;
 	Common::Language getLanguage() const;
+	Common::String getDatafileLanguageName(const char *prefix) const;
 
-	bool hasFeature(EngineFeature f) const;
+	bool hasFeature(EngineFeature f) const override;
 
-	VideoManager *_video;
 	CursorManager *_cursor;
 
 	virtual Common::SeekableReadStream *getResource(uint32 tag, uint16 id);
@@ -112,13 +103,8 @@ public:
 
 	void pauseGame();
 
-	// Check if events should be done based on a video's current time
-	// (currently only used for Riven's storeMovieOpcode function)
-	virtual void doVideoTimer(VideoHandle handle, bool force) {}
-
 private:
 	PauseDialog *_pauseDialog;
-	void pauseEngineIntern(bool);
 
 protected:
 	// An array holding the main Mohawk archives require by the games

@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/maitred/maitred_body.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -66,7 +67,7 @@ bool CMaitreDBody::ActMsg(CActMsg *msg) {
 	if (msg->_action == "LoseArm") {
 		_armed = false;
 		loadFrame(262);
-		playSound("c#75.wav");
+		playSound(TRANSLATE("c#75.wav", "c#57.wav"));
 	}
 
 	return true;

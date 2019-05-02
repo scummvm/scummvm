@@ -26,6 +26,7 @@
 #include "titanic/support/mouse_cursor.h"
 #include "titanic/core/named_item.h"
 #include "titanic/support/movie_clip.h"
+#include "titanic/messages/messages.h"
 
 namespace Titanic {
 
@@ -49,6 +50,8 @@ protected:
 public:
 	Rect _bounds;
 	CursorId _cursorId;
+public:
+	static Movement getMovementFromCursor(CursorId cursorId);
 public:
 	CLASSDEF;
 	CLinkItem();
@@ -93,6 +96,20 @@ public:
 	 * Get the movie clip, if any, that's used when the link is used
 	 */
 	CMovieClip *getClip() const;
+
+	/**
+	 * Get the movement, if any, the cursor represents
+	 */
+	Movement getMovement() const;
+
+	/**
+	 * Returns a point that falls within the link. Used for simulating
+	 * mouse clicks for movement when arrow keys are pressed
+	 * @param quadrant	Quadrant (edge) to return point for
+	 * @param pt		Return point
+	 * @returns			True if a point was found
+	 */
+	bool findPoint(Quadrant quadrant, Point &pt);
 };
 
 } // End of namespace Titanic

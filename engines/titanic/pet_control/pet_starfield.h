@@ -56,11 +56,14 @@ private:
 	void drawButton(MarkerState state, int index, CScreenManager *screenManager);
 
 	/**
-	 * Mouse down handling for Nav elements
+	 * Handles clicking on any of the three locked star LED markers
 	 */
-	bool elementsMouseDown(CMouseButtonDownMsg *msg);
+	bool markersMouseDown(CMouseButtonDownMsg *msg);
 
-	bool elementMouseButton(int index, CMouseButtonDownMsg *msg, const Rect &rect);
+	/**
+	 * Handles clicking on a specific locked star LED marker
+	 */
+	bool markerMouseDown(int index, CMouseButtonDownMsg *msg, const Rect &rect);
 public:
 	CPetStarfield();
 

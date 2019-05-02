@@ -76,7 +76,7 @@ void LabEngine::writeSaveGameHeader(Common::OutSaveFile *out, const Common::Stri
 	out->writeUint32BE(playTime);
 }
 
-bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header) {
+WARN_UNUSED_RESULT bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header, bool skipThumbnail) {
 	uint32 id = in->readUint32BE();
 
 	// Check if it's a valid ScummVM savegame
@@ -98,7 +98,12 @@ bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header) {
 	header._descr.setDescription(saveName);
 
 	// Get the thumbnail
-	header._descr.setThumbnail(Graphics::loadThumbnail(*in));
+	Graphics::Surface *thumbnail = nullptr;
+	if (!Graphics::loadThumbnail(*in, thumbnail, skipThumbnail)) {
+		return false;
+	}
+
+	header._descr.setThumbnail(thumbnail);
 
 	uint32 saveDate = in->readUint32BE();
 	uint16 saveTime = in->readUint16BE();
@@ -174,7 +179,11 @@ bool LabEngine::loadGame(int slot) {
 		return false;
 
 	SaveGameHeader header;
-	readSaveGameHeader(file, header);
+	if (!readSaveGameHeader(file, header)) {
+		delete file;
+		return false;
+	}
+
 	_roomNum = file->readUint16LE();
 	_music->checkRoomMusic(1, _roomNum);
 	_direction = file->readUint16LE();

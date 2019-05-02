@@ -103,6 +103,8 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"gk1demo",         "Gabriel Knight: Sins of the Fathers"},
 	{"qfg4demo",        "Quest for Glory IV: Shadows of Darkness"},
 	{"pq4demo",         "Police Quest IV: Open Season"},
+	// === SCI1.1+ games ======================================================
+	{"catdate",         "The Dating Pool"},
 	// === SCI2 games =========================================================
 	{"gk1",             "Gabriel Knight: Sins of the Fathers"},
 	{"pq4",             "Police Quest IV: Open Season"}, // floppy is SCI2, CD SCI2.1
@@ -126,7 +128,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	// === SCI3 games =========================================================
 	{"lsl7",            "Leisure Suit Larry 7: Love for Sail!"},
 	{"lighthouse",      "Lighthouse: The Dark Being"},
-	{"phantasmagoria2", "Phantasmagoria II: A Puzzle of Flesh"},
+	{"phantasmagoria2", "Phantasmagoria 2: A Puzzle of Flesh"},
 	//{"shivers2",        "Shivers II: Harvest of Souls"},	// Not SCI
 	{"rama",            "RAMA"},
 	{0, 0}
@@ -207,6 +209,7 @@ static const GameIdStrToEnum s_gameIdStrToEnum[] = {
 	{ "qfg4",            GID_QFG4 },
 	{ "qfg4demo",        GID_QFG4DEMO },
 	{ "rama",            GID_RAMA },
+	{ "catdate",         GID_CATDATE },
 	{ "sci-fanmade",     GID_FANMADE },	// FIXME: Do we really need/want this?
 	{ "shivers",         GID_SHIVERS },
 	//{ "shivers2",        GID_SHIVERS2 },	// Not SCI
@@ -227,76 +230,77 @@ struct OldNewIdTableEntry {
 };
 
 static const OldNewIdTableEntry s_oldNewTable[] = {
-	{ "archive",    "chest",            SCI_VERSION_NONE     },
-	{ "arthur",		"camelot",			SCI_VERSION_NONE     },
-	{ "brain",      "castlebrain",      SCI_VERSION_1_MIDDLE },	// Amiga
-	{ "brain",      "castlebrain",      SCI_VERSION_1_LATE   },
-	{ "demo",		"christmas1988",	SCI_VERSION_NONE     },
-	{ "card",       "christmas1990",    SCI_VERSION_1_EARLY, },
-	{ "card",       "christmas1992",    SCI_VERSION_1_1      },
-	{ "RH Budget",	"cnick-longbow",	SCI_VERSION_NONE     },
+	{ "archive",    "chest",            SCI_VERSION_NONE       },
+	{ "arthur",		"camelot",			SCI_VERSION_NONE       },
+	{ "brain",      "castlebrain",      SCI_VERSION_1_MIDDLE   },	// Amiga
+	{ "brain",      "castlebrain",      SCI_VERSION_1_LATE     },
+	{ "demo",		"christmas1988",	SCI_VERSION_NONE       },
+	{ "card",       "christmas1990",    SCI_VERSION_1_EARLY,   },
+	{ "card",       "christmas1992",    SCI_VERSION_1_1        },
+	{ "RH Budget",	"cnick-longbow",	SCI_VERSION_NONE       },
 	// iceman is the same
-	{ "icedemo",	"iceman",			SCI_VERSION_NONE     },
+	{ "icedemo",	"iceman",			SCI_VERSION_NONE       },
 	// longbow is the same
-	{ "eco",		"ecoquest",			SCI_VERSION_NONE     },
-	{ "eco2",		"ecoquest2",		SCI_VERSION_NONE     },	// EcoQuest 2 demo
-	{ "rain",		"ecoquest2",		SCI_VERSION_NONE     },	// EcoQuest 2 full
-	{ "tales",		"fairytales",		SCI_VERSION_NONE     },
-	{ "fp",			"freddypharkas",	SCI_VERSION_NONE     },
-	{ "emc",		"funseeker",		SCI_VERSION_NONE     },
-	{ "gk",			"gk1",				SCI_VERSION_NONE     },
+	{ "eco",		"ecoquest",			SCI_VERSION_NONE       },
+	{ "eco2",		"ecoquest2",		SCI_VERSION_NONE       },	// EcoQuest 2 demo
+	{ "rain",		"ecoquest2",		SCI_VERSION_NONE       },	// EcoQuest 2 full
+	{ "tales",		"fairytales",		SCI_VERSION_NONE       },
+	{ "fp",			"freddypharkas",	SCI_VERSION_NONE       },
+	{ "emc",		"funseeker",		SCI_VERSION_NONE       },
+	{ "gk",			"gk1",				SCI_VERSION_NONE       },
 	// gk2 is the same
-	{ "gk2demo",	"gk2",				SCI_VERSION_NONE     },
-	{ "hoyledemo",	"hoyle1",			SCI_VERSION_NONE     },
-	{ "cardgames",	"hoyle1",			SCI_VERSION_NONE     },
-	{ "solitare",	"hoyle2",			SCI_VERSION_NONE     },
-	// hoyle3 is the same
-	// hoyle4 is the same
-	{ "brain",      "islandbrain",      SCI_VERSION_1_1      },
-	{ "demo000",	"kq1sci",			SCI_VERSION_NONE     },
-	{ "kq1",		"kq1sci",			SCI_VERSION_NONE     },
-	{ "kq4",		"kq4sci",			SCI_VERSION_NONE     },
+	{ "gk2demo",	"gk2",				SCI_VERSION_NONE       },
+	{ "hoyledemo",	"hoyle1",			SCI_VERSION_NONE       },
+	{ "cardgames",	"hoyle1",			SCI_VERSION_NONE       },
+	{ "solitare",	"hoyle2",			SCI_VERSION_NONE       },
+	{ "hoyle3",	    "hoyle3",			SCI_VERSION_NONE       },
+	{ "hoyle4",	    "hoyle4",			SCI_VERSION_1_1        },
+	{ "hoyle4",	    "hoyle5",			SCI_VERSION_2_1_MIDDLE },
+	{ "brain",      "islandbrain",      SCI_VERSION_1_1        },
+	{ "demo000",	"kq1sci",			SCI_VERSION_NONE       },
+	{ "kq1",		"kq1sci",			SCI_VERSION_NONE       },
+	{ "kq4",		"kq4sci",			SCI_VERSION_NONE       },
 	// kq5 is the same
 	// kq6 is the same
-	{ "kq7cd",		"kq7",				SCI_VERSION_NONE     },
-	{ "quizgame-demo", "kquestions",    SCI_VERSION_NONE     },
-	{ "mm1",		"laurabow",			SCI_VERSION_NONE     },
-	{ "cb1",		"laurabow",			SCI_VERSION_NONE     },
-	{ "lb2",		"laurabow2",		SCI_VERSION_NONE     },
-	{ "rh",			"longbow",			SCI_VERSION_NONE     },
-	{ "ll1",		"lsl1sci",			SCI_VERSION_NONE     },
-	{ "lsl1",		"lsl1sci",			SCI_VERSION_NONE     },
+	{ "kq7cd",		"kq7",				SCI_VERSION_NONE       },
+	{ "quizgame-demo", "kquestions",    SCI_VERSION_NONE       },
+	{ "mm1",		"laurabow",			SCI_VERSION_NONE       },
+	{ "cb1",		"laurabow",			SCI_VERSION_NONE       },
+	{ "lb2",		"laurabow2",		SCI_VERSION_NONE       },
+	{ "rh",			"longbow",			SCI_VERSION_NONE       },
+	{ "ll1",		"lsl1sci",			SCI_VERSION_NONE       },
+	{ "lsl1",		"lsl1sci",			SCI_VERSION_NONE       },
 	// lsl2 is the same
-	{ "lsl3",		"lsl3",				SCI_VERSION_NONE     },
-	{ "ll5",		"lsl5",				SCI_VERSION_NONE     },
+	{ "lsl3",		"lsl3",				SCI_VERSION_NONE       },
+	{ "ll5",		"lsl5",				SCI_VERSION_NONE       },
 	// lsl5 is the same
 	// lsl6 is the same
-	{ "mg",			"mothergoose",		SCI_VERSION_NONE     },
-	{ "twisty",		"pepper",			SCI_VERSION_NONE     },
-	{ "scary",      "phantasmagoria",   SCI_VERSION_NONE     },
+	{ "mg",			"mothergoose",		SCI_VERSION_NONE       },
+	{ "twisty",		"pepper",			SCI_VERSION_NONE       },
+	{ "scary",      "phantasmagoria",   SCI_VERSION_NONE       },
 	// TODO: distinguish the full version of Phantasmagoria from the demo
-	{ "pq1",		"pq1sci",			SCI_VERSION_NONE     },
-	{ "pq",			"pq2",				SCI_VERSION_NONE     },
+	{ "pq1",		"pq1sci",			SCI_VERSION_NONE       },
+	{ "pq",			"pq2",				SCI_VERSION_NONE       },
 	// pq3 is the same
 	// pq4 is the same
-	{ "hq",			"qfg1",				SCI_VERSION_NONE     },	// QFG1 SCI0/EGA
-	{ "glory",      "qfg1",             SCI_VERSION_0_LATE   },	// QFG1 SCI0/EGA
-	{ "trial",		"qfg2",				SCI_VERSION_NONE     },
-	{ "hq2demo",	"qfg2",				SCI_VERSION_NONE     },
+	{ "hq",			"qfg1",				SCI_VERSION_NONE       },	// QFG1 SCI0/EGA
+	{ "glory",      "qfg1",             SCI_VERSION_0_LATE     },	// QFG1 SCI0/EGA
+	{ "trial",		"qfg2",				SCI_VERSION_NONE       },
+	{ "hq2demo",	"qfg2",				SCI_VERSION_NONE       },
 	// rama is the same
 	// TODO: distinguish the full version of rama from the demo
-	{ "thegame",	"slater",			SCI_VERSION_NONE     },
-	{ "sq1demo",	"sq1sci",			SCI_VERSION_NONE     },
-	{ "sq1",		"sq1sci",			SCI_VERSION_NONE     },
+	{ "thegame",	"slater",			SCI_VERSION_NONE       },
+	{ "sq1demo",	"sq1sci",			SCI_VERSION_NONE       },
+	{ "sq1",		"sq1sci",			SCI_VERSION_NONE       },
 	// sq3 is the same
 	// sq4 is the same
 	// sq5 is the same
 	// sq6 is the same
 	// TODO: distinguish the full version of SQ6 from the demo
 	// torin is the same
-
-
-	// TODO: SCI3 IDs
+	{ "l7",			"lsl7",				SCI_VERSION_NONE       },
+	{ "p2",			"phantasmagoria2",	SCI_VERSION_NONE       },
+	{ "lite",		"lighthouse",		SCI_VERSION_NONE       },
 
 	{ "", "", SCI_VERSION_NONE }
 };
@@ -318,6 +322,7 @@ Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags, R
 		sierraId == "mg" || sierraId == "pq" ||
 		sierraId == "jones" ||
 		sierraId == "cardgames" || sierraId == "solitare" ||
+		sierraId == "catdate" ||
 		sierraId == "hoyle4")
 		demoThreshold = 40;
 	if (sierraId == "hoyle3")
@@ -379,15 +384,6 @@ Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags, R
 		return "qfg3";
 	}
 
-	if (sierraId == "l7")
-		return "lsl7";
-
-	if (sierraId == "p2")
-		return "phantasmagoria2";
-
-	if (sierraId == "lite")
-		return "lighthouse";
-
 	return sierraId;
 }
 
@@ -421,6 +417,28 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Draw black lines over videos to increase their apparent sharpness"),
 			"enable_black_lined_video",
 			false
+		}
+	},
+
+#ifdef USE_RGB_COLOR
+	{
+		GAMEOPTION_HQ_VIDEO,
+		{
+			_s("Use high-quality video scaling"),
+			_s("Use linear interpolation when upscaling videos, where possible"),
+			"enable_hq_video",
+			true
+		}
+	},
+#endif
+
+	{
+		GAMEOPTION_LARRYSCALE,
+		{
+			_s("Use high-quality \"LarryScale\" cel scaling"),
+			_s("Use special cartoon scaler for drawing character sprites"),
+			"enable_larryscale",
+			true
 		}
 	},
 
@@ -487,6 +505,27 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 
+	// Phantasmagoria 2 - content censoring option
+	{
+		GAMEOPTION_ENABLE_CENSORING,
+		{
+			_s("Enable content censoring"),
+			_s("Enable the game's built-in optional content censoring"),
+			"enable_censoring",
+			false
+		}
+	},
+
+	// KQ7 - Upscale videos to double their size (The in-game "Full screen" video setting)
+	{
+		GAMEOPTION_UPSCALE_VIDEOS,
+	{
+		_s("Upscale videos"),
+		_s("Upscale videos to double their size"),
+		"enable_video_upscale",
+		true
+	}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
@@ -507,6 +546,7 @@ static ADGameDescription s_fallbackDesc = {
 static char s_fallbackGameIdBuf[256];
 
 static const char *directoryGlobs[] = {
+	"avi",
 	"english",
 	"french",
 	"german",
@@ -526,9 +566,11 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "SCI [SCI0, SCI01, SCI10, SCI11"
+		return "SCI ["
 #ifdef ENABLE_SCI32
-			", SCI32"
+			"all games"
+#else
+			"SCI0, SCI01, SCI10, SCI11"
 #endif
 			"]";
 	}
@@ -538,7 +580,7 @@ public:
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const;
-	const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
@@ -566,7 +608,7 @@ Common::Language charToScummVMLanguage(const char c) {
 	}
 }
 
-const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+ADDetectedGame SciMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 	bool foundResMap = false;
 	bool foundRes000 = false;
 
@@ -623,7 +665,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 
 	// If these files aren't found, it can't be SCI
 	if (!foundResMap && !foundRes000)
-		return 0;
+		return ADDetectedGame();
 
 	ResourceManager resMan(true);
 	resMan.addAppropriateSourcesForDetection(fslist);
@@ -634,7 +676,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	// Is SCI32 compiled in? If not, and this is a SCI32 game,
 	// stop here
 	if (getSciVersionForDetection() >= SCI_VERSION_2)
-		return 0;
+		return ADDetectedGame();
 #endif
 
 	ViewType gameViews = resMan.getViewType();
@@ -643,7 +685,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	// Can't be SCI (or unsupported SCI views). Pinball Creep by Sierra also uses resource.map/resource.000 files
 	// but doesn't share SCI format at all
 	if (gameViews == kViewUnknown)
-		return 0;
+		return ADDetectedGame();
 
 	// Set the platform to Amiga if the game is using Amiga views
 	if (gameViews == kViewAmiga)
@@ -654,11 +696,10 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 
 	// If we don't have a game id, the game is not SCI
 	if (sierraGameId.empty())
-		return 0;
+		return ADDetectedGame();
 
 	Common::String gameId = convertSierraGameId(sierraGameId, &s_fallbackDesc.flags, resMan);
-	strncpy(s_fallbackGameIdBuf, gameId.c_str(), sizeof(s_fallbackGameIdBuf) - 1);
-	s_fallbackGameIdBuf[sizeof(s_fallbackGameIdBuf) - 1] = 0;	// Make sure string is NULL terminated
+	Common::strlcpy(s_fallbackGameIdBuf, gameId.c_str(), sizeof(s_fallbackGameIdBuf));
 	s_fallbackDesc.gameId = s_fallbackGameIdBuf;
 
 	// Try to determine the game language
@@ -729,7 +770,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 			s_fallbackDesc.extra = "CD";
 	}
 
-	return &s_fallbackDesc;
+	return ADDetectedGame(&s_fallbackDesc);
 }
 
 bool SciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -788,7 +829,7 @@ SaveStateList SciMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
 				SavegameMetadata meta;
-				if (!get_savegame_metadata(in, &meta)) {
+				if (!get_savegame_metadata(in, meta)) {
 					// invalid
 					delete in;
 					continue;
@@ -837,7 +878,7 @@ SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int sl
 	if (in) {
 		SavegameMetadata meta;
 
-		if (!get_savegame_metadata(in, &meta)) {
+		if (!get_savegame_metadata(in, meta)) {
 			// invalid
 			delete in;
 
@@ -847,7 +888,14 @@ SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int sl
 
 		descriptor.setDescription(meta.name);
 
-		Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*in);
+		Graphics::Surface *thumbnail;
+		if (!Graphics::loadThumbnail(*in, thumbnail)) {
+			// invalid
+			delete in;
+
+			descriptor.setDescription("*Invalid*");
+			return descriptor;
+		}
 		descriptor.setThumbnail(thumbnail);
 
 		int day = (meta.saveDate >> 24) & 0xFF;

@@ -411,6 +411,11 @@ public:
 	const char *getObjectName(reg_t pos);
 
 	/**
+	 * Finds the addresses of all objects with the given name.
+	 */
+	Common::Array<reg_t> findObjectsByName(const Common::String &name);
+
+	/**
 	 * Find the address of an object by its name. In case multiple objects
 	 * with the same name occur, the optional index parameter can be used
 	 * to distinguish between them. If index is -1, then if there is a

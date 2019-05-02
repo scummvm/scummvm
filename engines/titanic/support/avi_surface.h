@@ -23,6 +23,7 @@
 #ifndef TITANIC_AVI_SURFACE_H
 #define TITANIC_AVI_SURFACE_H
 
+#include "common/stream.h"
 #include "video/avi_decoder.h"
 #include "graphics/managed_surface.h"
 #include "titanic/core/resource_key.h"
@@ -41,12 +42,42 @@ enum MovieFlag {
 	MOVIE_WAIT_FOR_FINISH = 0x10	// Let finish before playing next movie for object
 };
 
+/**
+ * This implements a special read stream for the y222.avi video
+ * that fixes that totalFrames field of the header from it's
+ * incorrect value of 1 to a correct 1085.
+ */
+class y222 : virtual public Common::SeekableReadStream {
+private:
+	File *_innerStream;
+public:
+	y222();
+	virtual ~y222();
+
+	virtual uint32 read(void *dataPtr, uint32 dataSize);
+	virtual bool eos() const { return _innerStream->eos(); }
+	virtual int32 pos() const { return _innerStream->pos(); }
+	virtual int32 size() const { return _innerStream->size(); }
+	virtual bool seek(int32 offset, int whence = SEEK_SET) {
+		return _innerStream->seek(offset, whence);
+	}
+	virtual bool skip(uint32 offset) {
+		return _innerStream->skip(offset);
+	}
+	virtual char *readLine(char *s, size_t bufSize) {
+		return _innerStream->readLine(s, bufSize);
+	}
+	virtual Common::String readLine() {
+		return _innerStream->readLine();
+	}
+};
+
+
 class AVIDecoder : public Video::AVIDecoder {
 public:
-	AVIDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType) :
-		Video::AVIDecoder(soundType) {}
-	AVIDecoder(const Common::Rational &frameRateOverride, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType) :
-		Video::AVIDecoder(frameRateOverride, soundType) {}
+	AVIDecoder() {}
+	AVIDecoder(const Common::Rational &frameRateOverride) :
+		Video::AVIDecoder(frameRateOverride) {}
 
 	/**
 	 * Returns the number of video tracks the decoder has
@@ -57,6 +88,13 @@ public:
 	 * Returns the specified video track
 	 */
 	Video::AVIDecoder::AVIVideoTrack &getVideoTrack(uint idx);
+
+	/**
+	 * Returns the transparency video track, if present
+	 */
+	AVIVideoTrack *getTransparencyTrack() {
+		return static_cast<AVIVideoTrack *>(_transparencyTrack.track);
+	}
 };
 
 class AVISurface {
@@ -66,8 +104,8 @@ private:
 	CMovieRangeInfoList _movieRangeInfo;
 	int _streamCount;
 	Graphics::ManagedSurface *_movieFrameSurface[2];
-	Graphics::ManagedSurface *_framePixels;
-	bool _isReversed;
+	bool _framePixels;
+	double _frameRate;
 	int _currentFrame, _priorFrame;
 	uint32 _priorFrameTime;
 	Common::String _movieName;
@@ -98,18 +136,12 @@ protected:
 	bool startAtFrame(int frameNumber);
 
 	/**
-	 * Sets whether the movie is playing in reverse
-	 */
-	void setReversed(bool isReversed);
-
-	/**
 	 * Seeks to a given frame number in the video
 	 */
 	virtual void seekToFrame(uint frameNumber);
 public:
 	CSoundManager *_soundManager;
 	bool _hasAudio;
-	double _frameRate;
 public:
 	AVISurface(const CResourceKey &key);
 	virtual ~AVISurface();
@@ -149,6 +181,13 @@ public:
 	 */
 	virtual bool isPlaying() const {
 		return _decoder->isPlaying();
+	}
+
+	/**
+	 * Sets whether the video is playing (versus paused)
+	 */
+	virtual void setPlaying(bool playingFlag) {
+		_decoder->pauseVideo(!playingFlag);
 	}
 
 	/**
@@ -215,13 +254,19 @@ public:
 
 	/**
 	 * Plays an interruptable cutscene
+	 * @returns		True if the cutscene was not interrupted
 	 */
-	void playCutscene(const Rect &r, uint startFrame, uint endFrame);
+	bool playCutscene(const Rect &r, uint startFrame, uint endFrame);
 
 	/**
 	 * Returns the pixel depth of the movie in bits
 	 */
 	uint getBitDepth() const;
+
+	/**
+	 * Returns true if the movie is to play backwards
+	 */
+	bool isReversed() const { return _frameRate < 0.0; }
 };
 
 } // End of namespace Titanic

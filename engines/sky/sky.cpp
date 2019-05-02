@@ -47,13 +47,6 @@
 
 #include "engines/util.h"
 
-
-#ifdef _WIN32_WCE
-
-extern bool toolbar_drawn;
-extern bool draw_keyboard;
-#endif
-
 /*
  At the beginning the reverse engineers were happy, and did rejoice at
  their task, for the engine before them did shineth and was full of
@@ -187,6 +180,7 @@ Common::Error SkyEngine::go() {
 		}
 
 		if (!shouldQuit()) {
+			_skyScreen->clearScreen(true);
 			// restartGame() takes us to the first scene, without showing the
 			// initial animation where Foster is being chased. initScreen0()
 			// shows the first scene together with that animation. We can't
@@ -259,7 +253,7 @@ Common::Error SkyEngine::go() {
 }
 
 Common::Error SkyEngine::init() {
-	initGraphics(320, 200, false);
+	initGraphics(320, 200);
 
 	_skyDisk = new Disk();
 	_skySound = new Sound(_mixer, _skyDisk, Audio::Mixer::kMaxChannelVolume);

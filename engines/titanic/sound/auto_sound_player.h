@@ -35,7 +35,7 @@ class CAutoSoundPlayer : public CGameObject {
 	bool SetVolumeMsg(CSetVolumeMsg *msg);
 	bool LoadSuccessMsg(CLoadSuccessMsg *msg);
 public:
-	int _fieldBC;
+	int _unused;
 	CString _filename;
 	int _volume;
 	int _balance;
@@ -44,7 +44,7 @@ public:
 	int _stopSeconds;
 	int _startSeconds;
 	bool _active;
-	int _fieldE8;
+	bool _isVectorSound;
 public:
 	CLASSDEF;
 	CAutoSoundPlayer();

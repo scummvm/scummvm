@@ -83,7 +83,7 @@ namespace Sword2 {
  *         error-signal character (chequered flag)
  */
 
-byte *FontRenderer::makeTextSprite(byte *sentence, uint16 maxWidth, uint8 pen, uint32 fontRes, uint8 border) {
+byte *FontRenderer::makeTextSprite(const byte *sentence, uint16 maxWidth, uint8 pen, uint32 fontRes, uint8 border) {
 	debug(5, "makeTextSprite(\"%s\", maxWidth=%u)", sentence, maxWidth);
 
 	_borderPen = border;
@@ -123,7 +123,7 @@ byte *FontRenderer::makeTextSprite(byte *sentence, uint16 maxWidth, uint8 pen, u
 	return textSprite;
 }
 
-uint16 FontRenderer::analyzeSentence(byte *sentence, uint16 maxWidth, uint32 fontRes, LineInfo *line) {
+uint16 FontRenderer::analyzeSentence(const byte *sentence, uint16 maxWidth, uint32 fontRes, LineInfo *line) {
 	// joinWidth = how much extra space is needed to append a word to a
 	// line. NB. SPACE requires TWICE the '_charSpacing' to join a word
 	// to line
@@ -207,7 +207,7 @@ uint16 FontRenderer::analyzeSentence(byte *sentence, uint16 maxWidth, uint32 fon
  *         error-signal character (chequered flag)
  */
 
-byte *FontRenderer::buildTextSprite(byte *sentence, uint32 fontRes, uint8 pen, LineInfo *line, uint16 noOfLines) {
+byte *FontRenderer::buildTextSprite(const byte *sentence, uint32 fontRes, uint8 pen, LineInfo *line, uint16 noOfLines) {
 	uint16 i;
 
 	// Find the width of the widest line in the output text

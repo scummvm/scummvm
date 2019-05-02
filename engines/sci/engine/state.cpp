@@ -117,8 +117,6 @@ void EngineState::reset(bool isRestoring) {
 
 	scriptStepCounter = 0;
 	scriptGCInterval = GC_INTERVAL;
-
-	_videoState.reset();
 }
 
 void EngineState::speedThrottler(uint32 neededSleep) {
@@ -136,13 +134,14 @@ void EngineState::speedThrottler(uint32 neededSleep) {
 	}
 }
 
-void EngineState::wait(int16 ticks) {
+int EngineState::wait(int16 ticks) {
 	uint32 time = g_system->getMillis();
-	r_acc = make_reg(0, ((long)time - (long)lastWaitTime) * 60 / 1000);
+	const int tickDelta = ((long)time - (long)lastWaitTime) * 60 / 1000;
 	lastWaitTime = time;
 
 	ticks *= g_debug_sleeptime_factor;
 	g_sci->sleep(ticks * 1000 / 60);
+	return tickDelta;
 }
 
 void EngineState::initGlobals() {
@@ -421,6 +420,18 @@ SciCallOrigin EngineState::getCurrentCallOrigin() const {
 	reply.localCallOffset = xs->debugLocalCallOffset;
 	reply.roomNr = currentRoomNumber();
 	return reply;
+}
+
+bool EngineState::callInStack(const reg_t object, const Selector selector) const {
+	Common::List<ExecStack>::const_iterator it;
+	for (it = _executionStack.begin(); it != _executionStack.end(); ++it) {
+		const ExecStack &call = *it;
+		if (call.sendp == object && call.debugSelector == selector) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 } // End of namespace Sci

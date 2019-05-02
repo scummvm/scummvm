@@ -27,6 +27,7 @@
 #include "common/stream.h"
 #include "titanic/core/named_item.h"
 #include "titanic/sound/proximity.h"
+#include "titanic/sound/sound_manager.h"
 #include "titanic/support/mouse_cursor.h"
 #include "titanic/support/credit_text.h"
 #include "titanic/support/movie_range_info.h"
@@ -253,7 +254,7 @@ protected:
 	void setSoundVolume(int handle, uint percent, uint seconds);
 
 	/**
-	 * Plays a sound, and saves it's handle in the global sound handles list
+	 * Plays an ambient sound, and saves it's handle in the ambient sound handles list
 	 * @param resName		Filename of sound to play
 	 * @param mode			Volume mode level
 	 * @param initialMute	If set, sound transitions in from mute over 2 seconds
@@ -261,23 +262,23 @@ protected:
 	 * @param handleIndex	Slot 0 to 3 in the shared sound handle list to store the sound's handle
 	 * @param soundType		Specifies whether the sound is a sound effect or music
 	 */
-	void playGlobalSound(const CString &resName, int mode, bool initialMute, bool repeated,
+	void playAmbientSound(const CString &resName, VolumeMode mode, bool initialMute, bool repeated,
 		int handleIndex, Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
 
 	/**
-	 * Stops a sound saved in the global sound handle list
+	 * Stops playing an ambient sound
 	 * @param transition	If set, the sound transitions to silent before stopping
-	 * @param handleIndex	Index of sound to stop. If -1, all global sounds are stopped
+	 * @param handleIndex	Index of sound to stop. If -1, all ambient sounds are stopped
 	 */
-	void stopGlobalSound(bool transition, int handleIndex);
+	void stopAmbientSound(bool transition, int handleIndex);
 
 	/**
-	 * Updates the volume for a global sound based on the specified mode's volume
+	 * Updates the volume for an ambient sound based on the specified mode's volume
 	 * @param mode			Volume level mode
 	 * @param seconds		Number of seconds to transition to new volume
-	 * @param handleIndex	Index of global sound to update. If -1, all global sounds are updated
+	 * @param handleIndex	Index of ambient sound to update. If -1, all ambient sounds are updated
 	 */
-	void setGlobalSoundVolume(int mode, uint seconds, int handleIndex);
+	void setAmbientSoundVolume(VolumeMode mode, uint seconds, int handleIndex);
 
 	/**
 	 * Stops sound channel 3 or 0
@@ -328,7 +329,7 @@ protected:
 	/**
 	 * Compare the name of the parent room to the item to a passed string
 	 */
-	int compareRoomNameTo(const CString &name);
+	bool compareRoomNameTo(const CString &name);
 
 	/**
 	 * Gets the first object under the system MailMan
@@ -392,8 +393,9 @@ protected:
 
 	/**
 	 * Play a cutscene
+	 * @returns		True if the cutscene was not interrupted
 	 */
-	void playCutscene(uint startFrame, uint endFrame);
+	bool playCutscene(uint startFrame, uint endFrame);
 
 	/**
 	 * Play a clip randomly from a passed list of names
@@ -607,6 +609,15 @@ public:
 	bool checkPoint(const Point &pt, bool ignoreSurface = false, bool visibleOnly = false);
 
 	/**
+	 * Returns a point that falls within the object. Used for simulating
+	 * mouse clicks for movement when arrow keys are pressed
+	 * @param quadrant	Quadrant (edge) to return point for
+	 * @param pt		Return point
+	 * @returns			True if a point was found
+	 */
+	bool findPoint(Quadrant quadrant, Point &pt);
+
+	/**
 	 * Set the position of the object
 	 */
 	void setPosition(const Point &newPos);
@@ -642,9 +653,9 @@ public:
 	void stopMovie();
 
 	/**
-	 * Overrides whether the object's movie has audio timing
+	 * Overrides whether the object's movie is playing or paused
 	 */
-	void movieSetAudioTiming(bool flag);
+	void movieSetPlaying(bool flag);
 
 	/**
 	 * Get the current movie frame
@@ -778,6 +789,11 @@ public:
 	 * Returns the text cursor
 	 */
 	CTextCursor *getTextCursor() const;
+
+	/**
+	 * Get the movement, if any, the cursor represents
+	 */
+	Movement getMovement() const;
 
 	/*--- CGameManager Methods ---*/
 
@@ -932,6 +948,16 @@ public:
 	 * Show the PET
 	 */
 	void petShow();
+
+	/**
+	 * Increment the number of PET area (tab) locks
+	 */
+	void petIncAreaLocks();
+
+	/**
+	 * Decrement the number of PET area (tab) locks
+	 */
+	void petDecAreaLocks();
 
 	/**
 	 * Shows the text cursor in the current section, if applicable

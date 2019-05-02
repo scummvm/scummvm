@@ -96,7 +96,7 @@ public:
 	 *
 	 * @see getScreenFormat
 	 */
-	virtual void grabPalette(byte *colors, uint start, uint num) = 0;
+	virtual void grabPalette(byte *colors, uint start, uint num) const = 0;
 };
 
 #endif

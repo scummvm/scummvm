@@ -57,7 +57,6 @@ public:
 	Graphics::Surface *getCurSurface() { return _curSurface; }
 	void setCurSurface(Graphics::Surface *surface) { _curSurface = surface; }
 	Graphics::Surface *getWorkArea() { return &_workArea; }
-	void clearScreen();
 	DisplayElement *findDisplayElement(const DisplayElementID id);
 	void shakeTheWorld(TimeValue time, TimeScale scale);
 	void enableErase();
@@ -69,13 +68,10 @@ public:
 	void doFadeOutSync(const TimeValue = kOneSecondPerThirtyTicks, const TimeScale = kThirtyTicksPerSecond, bool isBlack = true);
 	void doFadeInSync(const TimeValue = kOneSecondPerThirtyTicks, const TimeScale = kThirtyTicksPerSecond, bool isBlack = true);
 
-protected:
-	void markCursorAsDirty();
-
 private:
 	PegasusEngine *_vm;
 
-	bool _modifiedScreen, _erase;
+	bool _erase;
 	Common::Rect _dirtyRect;
 	DisplayOrder _backLayer, _frontLayer;
 	DisplayElement *_firstDisplayElement, *_lastDisplayElement;

@@ -25,319 +25,16 @@
 #include "graphics/surface.h"
 #include "xeen/screen.h"
 #include "xeen/resources.h"
+#include "xeen/window.h"
 #include "xeen/xeen.h"
 
 namespace Xeen {
 
-XeenEngine *Window::_vm;
-
-void Window::init(XeenEngine *vm) {
-	_vm = vm;
-}
-
-Window::Window() : XSurface(), _enabled(false),
-	_a(0), _border(0), _xLo(0), _xHi(0), _ycL(0), _ycH(0) {
-}
-
-Window::Window(const Window &src) : XSurface(), _enabled(src._enabled),
-		_a(src._a), _border(src._border), _xLo(src._xLo), _ycL(src._ycL),
-		_xHi(src._xHi), _ycH(src._ycH) {
-
-	setBounds(src._bounds);
-	create(*_vm->_screen, Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
-}
-
-Window::Window(const Common::Rect &bounds, int a, int border,
-		int xLo, int ycL, int xHi, int ycH): XSurface(),
-		_enabled(false), _a(a), _border(border),
-		_xLo(xLo), _ycL(ycL), _xHi(xHi), _ycH(ycH) {
-	setBounds(bounds);
-	create(*_vm->_screen, Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
-}
-
-void Window::setBounds(const Common::Rect &r) {
-	_bounds = r;
-	_innerBounds = r;
-	_innerBounds.grow(-_border);
-}
-
-void Window::open() {
-	if (!_enabled) {
-		_enabled = true;
-		_vm->_screen->_windowStack.push_back(this);
-		open2();
-	}
-
-	if (_vm->_mode == MODE_9) {
-		warning("TODO: copyFileToMemory");
-	}
-}
-
-void Window::open2() {
-	Screen &screen = *_vm->_screen;
-
-	// Save a copy of the area under the window
-	_savedArea.create(_bounds.width(), _bounds.height());
-	_savedArea.copyRectToSurface(screen, 0, 0, _bounds);
-
-	// Mark the area as dirty and fill it with a default background
-	addDirtyRect(_bounds);
-	frame();
-	fill();
-
-	screen._writePos.x = _bounds.right - 8;
-	screen.writeSymbol(19);
-
-	screen._writePos.x = _innerBounds.left;
-	screen._writePos.y = _innerBounds.top;
-	screen._fontJustify = JUSTIFY_NONE;
-	screen._fontReduced = false;
-}
-
-void Window::frame() {
-	Screen &screen = *_vm->_screen;
-	int xCount = (_bounds.width() - 9) / FONT_WIDTH;
-	int yCount = (_bounds.height() - 9) / FONT_HEIGHT;
-
-	// Write the top line
-	screen._writePos = Common::Point(_bounds.left, _bounds.top);
-	screen.writeSymbol(0);
-
-	if (xCount > 0) {
-		int symbolId = 1;
-		for (int i = 0; i < xCount; ++i) {
-			screen.writeSymbol(symbolId);
-			if (++symbolId == 5)
-				symbolId = 1;
-		}
-	}
-
-	screen._writePos.x = _bounds.right - FONT_WIDTH;
-	screen.writeSymbol(5);
-
-	// Write the vertical edges
-	if (yCount > 0) {
-		int symbolId = 6;
-		for (int i = 0; i < yCount; ++i) {
-			screen._writePos.y += 8;
-
-			screen._writePos.x = _bounds.left;
-			screen.writeSymbol(symbolId);
-
-			screen._writePos.x = _bounds.right - FONT_WIDTH;
-			screen.writeSymbol(symbolId + 4);
-
-			if (++symbolId == 10)
-				symbolId = 6;
-		}
-	}
-
-	// Write the bottom line
-	screen._writePos = Common::Point(_bounds.left, _bounds.bottom - FONT_HEIGHT);
-	screen.writeSymbol(14);
-
-	if (xCount > 0) {
-		int symbolId = 15;
-		for (int i = 0; i < xCount; ++i) {
-			screen.writeSymbol(symbolId);
-			if (++symbolId == 19)
-				symbolId = 15;
-		}
-	}
-
-	screen._writePos.x = _bounds.right - FONT_WIDTH;
-	screen.writeSymbol(19);
-}
-
-void Window::close() {
-	Screen &screen = *_vm->_screen;
-
-	if (_enabled) {
-		// Update the window
-		update();
-
-		// Restore the saved original content
-		screen.copyRectToSurface(_savedArea, _bounds.left, _bounds.top,
-			Common::Rect(0, 0, _bounds.width(), _bounds.height()));
-		addDirtyRect(_bounds);
-
-		// Remove the window from the stack and flag it as now disabled
-		for (uint i = 0; i < _vm->_screen->_windowStack.size(); ++i) {
-			if (_vm->_screen->_windowStack[i] == this)
-				_vm->_screen->_windowStack.remove_at(i);
-		}
-
-		_enabled = false;
-	}
-
-	if (_vm->_mode == MODE_9) {
-		warning("TODO: copyFileToMemory");
-	}
-}
-
-void Window::update() {
-	// Since all window drawing is done on the screen surface anyway,
-	// there's nothing that needs to be updated here
-}
-
-void Window::addDirtyRect(const Common::Rect &r) {
-	_vm->_screen->addDirtyRect(r);
-}
-
-void Window::fill() {
-	fillRect(_innerBounds, _vm->_screen->_bgColor);
-}
-
-const char *Window::writeString(const Common::String &s) {
-	return _vm->_screen->writeString(s, _innerBounds);
-}
-
-void Window::drawList(DrawStruct *items, int count) {
-	for (int i = 0; i < count; ++i, ++items) {
-		if (items->_frame == -1 || items->_scale == -1 || items->_sprites == nullptr)
-			continue;
-
-		Common::Point pt(items->_x, items->_y);
-		pt.x += _innerBounds.left;
-		pt.y += _innerBounds.top;
-
-		items->_sprites->draw(*this, items->_frame, pt, items->_flags, items->_scale);
-	}
-}
-
-/*------------------------------------------------------------------------*/
-
 Screen::Screen(XeenEngine *vm) : _vm(vm) {
-	Window::init(vm);
 	_fadeIn = false;
 	create(SCREEN_WIDTH, SCREEN_HEIGHT);
 	Common::fill(&_tempPalette[0], &_tempPalette[PALETTE_SIZE], 0);
 	Common::fill(&_mainPalette[0], &_mainPalette[PALETTE_SIZE], 0);
-
-	// Load font data for the screen
-	File f("fnt");
-	byte *data = new byte[f.size()];
-	f.read(data, f.size());
-	_fontData = data;
-}
-
-Screen::~Screen() {
-	delete[] _fontData;
-}
-
-void Screen::setupWindows() {
-	Window windows[40] = {
-		Window(Common::Rect(0, 0, 320, 200), 0, 0, 0, 0, 320, 200),
-		Window(Common::Rect(237, 9, 317, 74), 0, 0, 237, 12, 307, 68),
-		Window(Common::Rect(225, 1, 319, 73), 1, 8, 225, 1, 319, 73),
-		Window(Common::Rect(0, 0, 230, 149), 0, 0, 9, 8, 216, 140),
-		Window(Common::Rect(235, 148, 309, 189), 2, 8, 0, 0, 0, 0),
-		Window(Common::Rect(70, 20, 250, 183), 3, 8, 80, 38, 240, 166),
-		Window(Common::Rect(52, 149, 268, 197), 4, 8, 0, 0, 0, 0),
-		Window(Common::Rect(108, 0, 200, 200), 5, 0, 0, 0, 0, 0),
-		Window(Common::Rect(232, 9, 312, 74), 0, 0, 0, 0, 0, 0),
-		Window(Common::Rect(103, 156, 217, 186), 6, 8, 0, 0, 0, 0),
-		Window(Common::Rect(226, 0, 319, 146), 7, 8, 0, 0, 0, 0),
-		Window(Common::Rect(8, 8, 224, 140), 8, 8, 8, 8, 224, 200),
-		Window(Common::Rect(0, 143, 320, 199), 9, 8, 0, 0, 0, 0),
-		Window(Common::Rect(50, 103, 266, 139), 10, 8, 0, 0, 0, 0),
-		Window(Common::Rect(0, 7, 320, 138), 11, 8, 0, 0, 0, 0),
-		Window(Common::Rect(50, 71, 182, 129), 12, 8, 0, 0, 0, 0),
-		Window(Common::Rect(228, 106, 319, 146), 13, 8, 0, 0, 0, 0),
-		Window(Common::Rect(20, 142, 290, 199), 14, 8, 0, 0, 0, 0),
-		Window(Common::Rect(0, 20, 320, 180), 15, 8, 0, 0, 0, 0),
-		Window(Common::Rect(231, 48, 317, 141), 16, 8, 0, 0, 0, 0),
-		Window(Common::Rect(72, 37, 248, 163), 17, 8, 0, 0, 0, 0),
-		Window(Common::Rect(99, 59, 237, 141), 18, 8, 99, 59, 237, 0),
-		Window(Common::Rect(65, 23, 250, 163), 19, 8, 75, 36, 245, 141),
-		Window(Common::Rect(80, 28, 256, 148), 20, 8, 80, 28, 256, 172),
-		Window(Common::Rect(0, 0, 320, 146), 21, 8, 0, 0, 320, 148),
-		Window(Common::Rect(27, 6, 207, 142), 22, 8, 0, 0, 0, 146),
-		Window(Common::Rect(15, 15, 161, 91), 23, 8, 0, 0, 0, 0),
-		Window(Common::Rect(90, 45, 220, 157), 24, 8, 0, 0, 0, 0),
-		Window(Common::Rect(0, 0, 320, 200), 25, 8, 0, 0, 0, 0),
-		Window(Common::Rect(0, 101, 320, 146), 26, 8, 0, 101, 320, 0),
-		Window(Common::Rect(0, 0, 320, 108), 27, 8, 0, 0, 0, 45),
-		Window(Common::Rect(50, 112, 266, 148), 28, 8, 0, 0, 0, 0),
-		Window(Common::Rect(12, 11, 164, 94), 0, 0, 0, 0, 52, 0),
-		Window(Common::Rect(8, 147, 224, 192), 0, 8, 0, 0, 0, 94),
-		Window(Common::Rect(232, 74, 312, 138), 29, 8, 0, 0, 0, 0),
-		Window(Common::Rect(226, 26, 319, 146), 30, 8, 0, 0, 0, 0),
-		Window(Common::Rect(225, 74, 319, 154), 31, 8, 0, 0, 0, 0),
-		Window(Common::Rect(27, 6, 195, 142), 0, 8, 0, 0, 0, 0),
-		Window(Common::Rect(225, 140, 319, 199), 0, 8, 0, 0, 0, 0)
-	};
-
-	_windows = Common::Array<Window>(windows, 40);
-}
-
-void Screen::closeWindows() {
-	for (int i = (int)_windowStack.size() - 1; i >= 0; --i)
-		_windowStack[i]->close();
-	assert(_windowStack.size() == 0);
-}
-
-void Screen::update() {
-	// Merge the dirty rects
-	mergeDirtyRects();
-
-	// Loop through copying dirty areas to the physical screen
-	Common::List<Common::Rect>::iterator i;
-	for (i = _dirtyRects.begin(); i != _dirtyRects.end(); ++i) {
-		const Common::Rect &r = *i;
-		const byte *srcP = (const byte *)getBasePtr(r.left, r.top);
-		g_system->copyRectToScreen(srcP, this->pitch, r.left, r.top,
-			r.width(), r.height());
-	}
-
-	// Signal the physical screen to update
-	g_system->updateScreen();
-	_dirtyRects.clear();
-}
-
-void Screen::addDirtyRect(const Common::Rect &r) {
-	assert(r.isValidRect() && r.width() > 0 && r.height() > 0
-		&& r.left >= 0 && r.top >= 0
-		&& r.right <= SCREEN_WIDTH && r.bottom <= SCREEN_HEIGHT);
-	_dirtyRects.push_back(r);
-}
-
-void Screen::mergeDirtyRects() {
-	Common::List<Common::Rect>::iterator rOuter, rInner;
-
-	// Ensure dirty rect list has at least two entries
-	rOuter = _dirtyRects.begin();
-	for (int i = 0; i < 2; ++i, ++rOuter) {
-		if (rOuter == _dirtyRects.end())
-			return;
-	}
-
-	// Process the dirty rect list to find any rects to merge
-	for (rOuter = _dirtyRects.begin(); rOuter != _dirtyRects.end(); ++rOuter) {
-		rInner = rOuter;
-		while (++rInner != _dirtyRects.end()) {
-
-			if ((*rOuter).intersects(*rInner)) {
-				// these two rectangles overlap or
-				// are next to each other - merge them
-
-				unionRectangle(*rOuter, *rOuter, *rInner);
-
-				// remove the inner rect from the list
-				_dirtyRects.erase(rInner);
-
-				// move back to beginning of list
-				rInner = rOuter;
-			}
-		}
-	}
-}
-
-bool Screen::unionRectangle(Common::Rect &destRect, const Common::Rect &src1, const Common::Rect &src2) {
-	destRect = src1;
-	destRect.extend(src2);
-
-	return !destRect.isEmpty();
 }
 
 void Screen::loadPalette(const Common::String &name) {
@@ -407,12 +104,6 @@ void Screen::vertMerge(int yp) {
 	markAllDirty();
 }
 
-void Screen::draw(void *data) {
-	// TODO: Figure out data structure that can be passed to method
-	assert(!data);
-	drawScreen();
-}
-
 void Screen::drawScreen() {
 	addDirtyRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 }
@@ -428,7 +119,7 @@ void Screen::fadeOut(int step) {
 }
 
 void Screen::fadeInner(int step) {
-	for (int idx = 128; idx >= 0 && !_vm->shouldQuit(); idx -= step) {
+	for (int idx = 128; idx >= 0 && !_vm->shouldExit(); idx -= step) {
 		int val = MAX(idx, 0);
 		bool flag = !_fadeIn;
 		if (!flag) {
@@ -472,21 +163,100 @@ void Screen::restoreBackground(int slot) {
 	blitFrom(_savedScreens[slot - 1]);
 }
 
-void Screen::frameWindow(uint bgType) {
-	if (bgType >= 4)
-		return;
+bool Screen::doScroll(bool rollUp, bool fadeInFlag) {
+	Screen &screen = *_vm->_screen;
+	EventsManager &events = *_vm->_events;
+	const int SCROLL_L[8] = { 29, 23, 15, -5, -11, -23, -49, -71 };
+	const int SCROLL_R[8] = { 165, 171, 198, 218, 228, 245, 264, 281 };
 
-	if (bgType == 0) {
-		// Totally black background
-		_vm->_screen->fillRect(Common::Rect(8, 8, 224, 140), 0);
+	if (_vm->_files->_ccNum) {
+		if (fadeInFlag)
+			screen.fadeIn(2);
+		return _vm->shouldExit();
+	}
+
+	screen.saveBackground();
+
+	// Load hand sprites
+	SpriteResource *hand[16];
+	for (int i = 0; i < 16; ++i) {
+		Common::String name = Common::String::format("hand%02d.vga", i);
+		hand[i] = new SpriteResource(name);
+	}
+
+	// Load marb sprites
+	SpriteResource *marb[5];
+	for (int i = 0; i < 4; ++i) {
+		Common::String name = Common::String::format("marb%02d.vga", i + 1);
+		marb[i] = new SpriteResource(name);
+	}
+
+	if (rollUp) {
+		for (int i = 22, ctr = 7; i > 0 && !events.isKeyMousePressed()
+				&& !_vm->shouldExit(); --i) {
+			events.updateGameCounter();
+			screen.restoreBackground();
+
+			if (i > 14) {
+				hand[14]->draw(0, 0, Common::Point(SCROLL_L[ctr], 0), SPRFLAG_800);
+				hand[15]->draw(0, 0, Common::Point(SCROLL_R[ctr], 0), SPRFLAG_800);
+				--ctr;
+			} else if (i != 0) {
+				hand[i - 1]->draw(0, 0);
+			}
+
+			if (i <= 20)
+				marb[(i - 1) / 5]->draw(0, (i - 1) % 5);
+			screen.update();
+
+			while (!_vm->shouldExit() && events.timeElapsed() == 0)
+				events.pollEventsAndWait();
+
+			if (i == 0 && fadeInFlag)
+				screen.fadeIn(2);
+		}
 	} else {
-		const byte *lookup = Res.BACKGROUND_XLAT + bgType;
-		for (int yp = 8; yp < 140; ++yp) {
-			byte *destP = (byte *)_vm->_screen->getBasePtr(8, yp);
-			for (int xp = 8; xp < 224; ++xp, ++destP)
-				*destP = lookup[*destP];
+		for (int i = 0, ctr = 0; i < 22 && !events.isKeyMousePressed()
+				&& !_vm->shouldExit(); ++i) {
+			events.updateGameCounter();
+			screen.restoreBackground();
+
+			if (i < 14) {
+				hand[i]->draw(0, 0);
+			} else {
+				hand[14]->draw(0, 0, Common::Point(SCROLL_L[ctr], 0), SPRFLAG_800);
+				hand[15]->draw(0, 0, Common::Point(SCROLL_R[ctr], 0), SPRFLAG_800);
+				++ctr;
+			}
+
+			if (i < 20) {
+				marb[i / 5]->draw(0, i % 5);
+			}
+			screen.update();
+
+			while (!_vm->shouldExit() && events.timeElapsed() == 0)
+				events.pollEventsAndWait();
+
+			if (i == 0 && fadeInFlag)
+				screen.fadeIn(2);
 		}
 	}
+
+	if (rollUp) {
+		hand[0]->draw(0, 0);
+		marb[0]->draw(0, 0);
+	} else {
+		screen.restoreBackground();
+	}
+	screen.update();
+
+	// Free resources
+	for (int i = 0; i < 4; ++i)
+		delete marb[i];
+	for (int i = 0; i < 16; ++i)
+		delete hand[i];
+
+	return _vm->shouldExit() || events.isKeyMousePressed();
 }
 
 } // End of namespace Xeen

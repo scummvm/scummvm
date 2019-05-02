@@ -374,6 +374,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 			case 'x':
 			case 'u':
 				unsignedVar = true;
+				/* fall through */
 			case 'd': { /* Copy decimal */
 				/* int templen; -- unused atm */
 				const char *format_string = "%d";
@@ -681,14 +682,6 @@ reg_t kStringCompare(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, (result > 0) - (result < 0));
 }
 
-reg_t kStringGetData(EngineState *s, int argc, reg_t *argv) {
-	if (s->_segMan->isObject(argv[0])) {
-		return readSelector(s->_segMan, argv[0], SELECTOR(data));
-	}
-
-	return argv[0];
-}
-
 reg_t kStringLength(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, s->_segMan->getString(argv[0]).size());
 }
@@ -802,26 +795,30 @@ Common::String format(const Common::String &source, int argc, const reg_t *argv)
 }
 
 reg_t kStringFormat(EngineState *s, int argc, reg_t *argv) {
-	reg_t stringHandle;
-	SciArray &target = *s->_segMan->allocateArray(kArrayTypeString, 0, &stringHandle);
-	reg_t source = argv[0];
-	// Str objects may be passed in place of direct references to string data
-	if (s->_segMan->isObject(argv[0])) {
-		source = readSelector(s->_segMan, argv[0], SELECTOR(data));
-	}
-	target.fromString(format(s->_segMan->getString(source), argc - 1, argv + 1));
-	return stringHandle;
+	Common::Array<reg_t> args;
+	args.resize(argc + 1);
+	args[0] = NULL_REG;
+	Common::copy(argv, argv + argc, &args[1]);
+	return kStringFormatAt(s, args.size(), &args[0]);
 }
 
 reg_t kStringFormatAt(EngineState *s, int argc, reg_t *argv) {
-	SciArray &target = *s->_segMan->lookupArray(argv[0]);
+	reg_t stringHandle;
+	SciArray *target;
+	if (argv[0].isNull()) {
+		target = s->_segMan->allocateArray(kArrayTypeString, 0, &stringHandle);
+	} else {
+		target = s->_segMan->lookupArray(argv[0]);
+		stringHandle = argv[0];
+	}
+
 	reg_t source = argv[1];
 	// Str objects may be passed in place of direct references to string data
 	if (s->_segMan->isObject(argv[1])) {
 		source = readSelector(s->_segMan, argv[1], SELECTOR(data));
 	}
-	target.fromString(format(s->_segMan->getString(source), argc - 2, argv + 2));
-	return argv[0];
+	target->fromString(format(s->_segMan->getString(source), argc - 2, argv + 2));
+	return stringHandle;
 }
 
 reg_t kStringToInteger(EngineState *s, int argc, reg_t *argv) {

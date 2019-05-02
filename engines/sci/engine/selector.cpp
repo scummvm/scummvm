@@ -165,6 +165,10 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(vanishingY);
 	FIND_SELECTOR(iconIndex);
 	FIND_SELECTOR(select);
+	FIND_SELECTOR(handsOff);
+	FIND_SELECTOR(setStep);
+	FIND_SELECTOR(setMotion);
+	FIND_SELECTOR(cycleSpeed);
 
 #ifdef ENABLE_SCI32
 	FIND_SELECTOR(data);
@@ -217,6 +221,21 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(setPos);
 	FIND_SELECTOR(setSize);
 	FIND_SELECTOR(displayValue);
+	FIND_SELECTOR2(new_, "new");
+	FIND_SELECTOR(mainCel);
+	FIND_SELECTOR(move);
+	FIND_SELECTOR(eachElementDo);
+	FIND_SELECTOR(physicalBar);
+	FIND_SELECTOR(init);
+	FIND_SELECTOR(scratch);
+	FIND_SELECTOR(num);
+	FIND_SELECTOR(reallyRestore);
+	FIND_SELECTOR(bookMark);
+	FIND_SELECTOR(fileNumber);
+	FIND_SELECTOR(description);
+	FIND_SELECTOR(dispose);
+	FIND_SELECTOR(masterVolume);
+	FIND_SELECTOR(setCel);
 #endif
 }
 

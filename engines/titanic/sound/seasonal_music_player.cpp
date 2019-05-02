@@ -21,6 +21,7 @@
  */
 
 #include "titanic/sound/seasonal_music_player.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -35,10 +36,10 @@ CSeasonalMusicPlayer::CSeasonalMusicPlayer() : CAutoMusicPlayerBase() {
 	_isSummer = true;
 	_isAutumn = false;
 	_isWinter = false;
-	_springMode = -4;
-	_summerMode = -2;
-	_autumnMode = -4;
-	_winterMode = -4;
+	_springMode = VOL_MUTE;
+	_summerMode = VOL_QUIET;
+	_autumnMode = VOL_MUTE;
+	_winterMode = VOL_MUTE;
 }
 
 void CSeasonalMusicPlayer::save(SimpleFile *file, int indent) {
@@ -61,10 +62,10 @@ void CSeasonalMusicPlayer::load(SimpleFile *file) {
 	_isSummer = file->readNumber();
 	_isAutumn = file->readNumber();
 	_isWinter = file->readNumber();
-	_springMode = file->readNumber();
-	_summerMode = file->readNumber();
-	_autumnMode = file->readNumber();
-	_winterMode = file->readNumber();
+	_springMode = (VolumeMode)file->readNumber();
+	_summerMode = (VolumeMode)file->readNumber();
+	_autumnMode = (VolumeMode)file->readNumber();
+	_winterMode = (VolumeMode)file->readNumber();
 
 	CAutoMusicPlayerBase::load(file);
 }
@@ -75,10 +76,10 @@ bool CSeasonalMusicPlayer::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
 	_isAutumn = msg->_season == "autumn";
 	_isWinter = msg->_season == "winter";
 
-	_springMode = _isSpring ? -2 : -4;
-	_summerMode = _isSummer ? -2 : -4;
-	_autumnMode = _isAutumn ? -2 : -4;
-	_winterMode = _isWinter ? -2 : -4;
+	_springMode = _isSpring ? VOL_QUIET : VOL_MUTE;
+	_summerMode = _isSummer ? VOL_QUIET : VOL_MUTE;
+	_autumnMode = _isAutumn ? VOL_QUIET : VOL_MUTE;
+	_winterMode = _isWinter ? VOL_QUIET : VOL_MUTE;
 
 	CChangeMusicMsg changeMsg;
 	changeMsg._filename = msg->_season;
@@ -89,44 +90,44 @@ bool CSeasonalMusicPlayer::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
 
 bool CSeasonalMusicPlayer::ArboretumGateMsg(CArboretumGateMsg *msg) {
 	CChangeMusicMsg changeMsg;
-	changeMsg._flags = msg->_value ? 2 : 1;
+	changeMsg._action = msg->_value ? MUSIC_START : MUSIC_STOP;
 	changeMsg.execute(this);
 
 	return true;
 }
 
 bool CSeasonalMusicPlayer::ChangeMusicMsg(CChangeMusicMsg *msg) {
-	if (_isRepeated && msg->_flags == 1) {
-		_isRepeated = false;
-		stopGlobalSound(_transition, -1);
+	if (_isEnabled && msg->_action == MUSIC_STOP) {
+		_isEnabled = false;
+		stopAmbientSound(_transition, -1);
 	}
 
 	if (!msg->_filename.empty()) {
 		if (_isSummer) {
-			setGlobalSoundVolume(-4, 2, 0);
-			setGlobalSoundVolume(-2, 2, 1);
+			setAmbientSoundVolume(VOL_MUTE, 2, 0);
+			setAmbientSoundVolume(VOL_QUIET, 2, 1);
 		} else if (_isAutumn) {
-			setGlobalSoundVolume(-4, 2, 1);
-			setGlobalSoundVolume(-2, 2, 2);
+			setAmbientSoundVolume(VOL_MUTE, 2, 1);
+			setAmbientSoundVolume(VOL_QUIET, 2, 2);
 		} else if (_isWinter) {
-			setGlobalSoundVolume(-4, 2, 2);
-			setGlobalSoundVolume(-2, 2, 3);
+			setAmbientSoundVolume(VOL_MUTE, 2, 2);
+			setAmbientSoundVolume(VOL_QUIET, 2, 3);
 		} else if (_isSpring) {
-			setGlobalSoundVolume(-4, 2, 3);
-			setGlobalSoundVolume(-2, 2, 0);
+			setAmbientSoundVolume(VOL_MUTE, 2, 3);
+			setAmbientSoundVolume(VOL_QUIET, 2, 0);
 		}
 	}
 
-	if (!_isRepeated && msg->_flags == 2) {
-		_isRepeated = true;
-		loadSound("c#64.wav");
-		loadSound("c#63.wav");
-		loadSound("c#65.wav");
-		loadSound("c#62.wav");
-		playGlobalSound("c#64.wav", _springMode, _isSpring, true, 0);
-		playGlobalSound("c#63.wav", _summerMode, _isSummer, true, 1);
-		playGlobalSound("c#65.wav", _autumnMode, _isAutumn, true, 2);
-		playGlobalSound("c#62.wav", _winterMode, _isWinter, true, 3);
+	if (!_isEnabled && msg->_action == MUSIC_START) {
+		_isEnabled = true;
+		loadSound(TRANSLATE("c#64.wav", "c#47.wav"));
+		loadSound(TRANSLATE("c#63.wav", "c#46.wav"));
+		loadSound(TRANSLATE("c#65.wav", "c#48.wav"));
+		loadSound(TRANSLATE("c#62.wav", "c#47.wav"));
+		playAmbientSound(TRANSLATE("c#64.wav", "c#47.wav"), _springMode, _isSpring, true, 0);
+		playAmbientSound(TRANSLATE("c#63.wav", "c#46.wav"), _summerMode, _isSummer, true, 1);
+		playAmbientSound(TRANSLATE("c#65.wav", "c#48.wav"), _autumnMode, _isAutumn, true, 2);
+		playAmbientSound(TRANSLATE("c#62.wav", "c#47.wav"), _winterMode, _isWinter, true, 3);
 	}
 
 	return true;

@@ -54,6 +54,7 @@ public:
 	// Overloaded from SDL backend
 	void init();
 	void quit();
+	virtual void logMessage(LogMessageType::Type type, const char *message);
 	virtual Common::String getSystemLanguage() const;
 
 	// Overloaded from OSystem

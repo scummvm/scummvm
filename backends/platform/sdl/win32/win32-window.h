@@ -30,6 +30,7 @@
 class SdlWindow_Win32 : public SdlWindow {
 public:
 	virtual void setupIcon();
+	HWND getHwnd();
 };
 
 #endif

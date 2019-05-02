@@ -20,12 +20,17 @@
  *
  */
 
-#include "common/system.h"
 #include "titanic/sound/qmixer.h"
+#include "titanic/debugger.h"
+#include "common/system.h"
 
 namespace Titanic {
 
 QMixer::QMixer(Audio::Mixer *mixer) : _mixer(mixer) {
+}
+
+QMixer::~QMixer() {
+	_channels.clear();
 }
 
 bool QMixer::qsWaveMixInitEx(const QMIXCONFIG &config) {
@@ -88,10 +93,12 @@ void QMixer::qsWaveMixSetVolume(int iChannel, uint flags, uint volume) {
 	assert(volume <= 32767);
 	byte newVolume = (volume >= 32700) ? 255 : volume * 255 / 32767;
 
-	channel._volumeStart = newVolume;
-	channel._volumeEnd = volume * 255 / 100; // Convert from 0-100 (percent) to 0-255
+	channel._volumeStart = channel._volume;
+	channel._volumeEnd = newVolume;
 	channel._volumeChangeStart = g_system->getMillis();
 	channel._volumeChangeEnd = channel._volumeChangeStart + channel._panRate;
+	debugC(DEBUG_DETAILED, kDebugCore, "qsWaveMixSetPanRate vol=%d to %d, start=%u, end=%u",
+		channel._volumeStart, channel._volumeEnd, channel._volumeChangeStart, channel._volumeChangeEnd);
 }
 
 void QMixer::qsWaveMixSetSourcePosition(int iChannel, uint flags, const QSVECTOR &position) {
@@ -190,6 +197,9 @@ void QMixer::qsWaveMixPump() {
 					(int)(currentTicks - channel._volumeChangeStart) / (int)channel._panRate;
 			}
 
+			debugC(DEBUG_DETAILED, kDebugCore, "qsWaveMixPump time=%u vol=%d",
+				currentTicks, channel._volume);
+
 			if (channel._volume != oldVolume && !channel._sounds.empty()
 					&& channel._sounds.front()._started) {
 				_mixer->setChannelVolume(channel._sounds.front()._soundHandle,
@@ -202,21 +212,13 @@ void QMixer::qsWaveMixPump() {
 		if (!channel._sounds.empty()) {
 			SoundEntry &sound = channel._sounds.front();
 			if (sound._started && !_mixer->isSoundHandleActive(sound._soundHandle)) {
-				if (sound._loops == -1 || sound._loops-- > 0) {
-					// Need to loop the sound again
-					sound._waveFile->audioStream()->rewind();
-					_mixer->playStream(sound._waveFile->_soundType,
-						&sound._soundHandle, sound._waveFile->audioStream(),
-						-1, channel.getRawVolume(), 0, DisposeAfterUse::NO);
-				} else {
-					// Sound is finished
-					if (sound._callback)
-						// Call the callback to signal end
-						sound._callback(iChannel, sound._waveFile, sound._userData);
+				// Sound is finished
+				if (sound._callback)
+					// Call the callback to signal end
+					sound._callback(iChannel, sound._waveFile, sound._userData);
 
-					// Remove sound record from channel
-					channel._sounds.erase(channel._sounds.begin());
-				}
+				// Remove sound record from channel
+				channel._sounds.erase(channel._sounds.begin());
 			}
 		}
 
@@ -228,10 +230,9 @@ void QMixer::qsWaveMixPump() {
 				if (channel._resetDistance)
 					channel._distance = 0.0;
 
-				// Calculate an effective volume based on distance of source
-				_mixer->playStream(sound._waveFile->_soundType,
-					&sound._soundHandle, sound._waveFile->audioStream(),
-					-1, channel.getRawVolume(), 0, DisposeAfterUse::NO);
+				// Play the wave
+				sound._soundHandle = sound._waveFile->play(
+					sound._loops, channel.getRawVolume());
 				sound._started = true;
 			}
 		}

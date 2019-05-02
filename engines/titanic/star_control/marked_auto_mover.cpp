@@ -21,38 +21,37 @@
  */
 
 #include "titanic/star_control/marked_auto_mover.h"
-#include "common/textconsole.h"
+#include "titanic/star_control/error_code.h"
+// Not currently being used: #include "common/textconsole.h"
 
 namespace Titanic {
 
-void CMarkedAutoMover::proc2(const FVector &oldPos, const FVector &newPos,
+void CMarkedAutoMover::setPathOrients(const FVector &oldPos, const FVector &newPos,
 	const FMatrix &oldOrientation, const FMatrix &newOrientation) {
-	CCameraAutoMover::proc2(oldPos, newPos, oldOrientation, newOrientation);
+	CCameraAutoMover::setPath(oldPos, newPos);
 
 	double distance = _distance;
-	if (distance > 0.0) {
+	_active = true;
+	_field34 = true;
+	calcSpeeds(120, 4, distance);
+
+
+	_orientationChanger.load(oldOrientation, newOrientation);
+	_transitionPercent = 0.0;
+
+	if (_field4C == 0) {
+		_transitionPercentInc = 0.1;
 		_active = true;
-		_field34 = true;
-		proc6(120, 4, distance);
+	} else {
+		_transitionPercentInc = 1.0 / _field4C;
+		_active = true;
 	}
 
-	if (newPos != oldPos) {
-		_orientationChanger.load(oldOrientation, newOrientation);
-		_transitionPercent = 0.0;
-
-		if (_field4C == 0) {
-			_transitionPercentInc = 0.1;
-			_active = true;
-		} else {
-			_transitionPercentInc = 1.0 / _field4C;
-			_active = true;
-		}
-	}
 }
 
-int CMarkedAutoMover::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
+MoverState CMarkedAutoMover::move(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
 	if (!_active)
-		return 0;
+		return NOT_ACTIVE;
 
 	_transitionPercent += _transitionPercentInc;
 	orientation = _orientationChanger.getOrientation(_transitionPercent);
@@ -65,25 +64,25 @@ int CMarkedAutoMover::proc5(CErrorCode &errorCode, FVector &pos, FMatrix &orient
 
 		--_field40;
 		errorCode.set();
-		return 1;
+		return MOVING;
 	} else if (_field44 > 0) {
 		pos += _posDelta * _field38;
 		getVectorOnPath(pos);
 
 		--_field44;
 		errorCode.set();
-		return 1;
+		return MOVING;
 	} else if (_field48 >= 0) {
-		double speedVal = _speeds[31 - _field48];
+		double speedVal = _speeds[nMoverTransitions - 1 - _field48];
 		pos += _posDelta * speedVal;
 		getVectorOnPath(pos);
 
 		--_field48;
 		errorCode.set();
-		return 1;
+		return MOVING;
 	} else {
 		_active = false;
-		return 2;
+		return DONE_MOVING;
 	}
 }
 

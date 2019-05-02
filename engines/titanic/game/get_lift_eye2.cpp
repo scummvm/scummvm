@@ -92,6 +92,7 @@ bool CGetLiftEye2::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 		dragMsg.execute(*_destObject);
 
 		msg->_dragItem = getRoot()->findByName(*_destObject);
+		*_destObject = "NULL";
 		return true;
 	} else {
 		return false;

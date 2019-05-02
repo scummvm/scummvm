@@ -23,19 +23,19 @@
 #ifndef TITANIC_STAR_CROSSHAIRS_H
 #define TITANIC_STAR_CROSSHAIRS_H
 
+#include "titanic/star_control/base_stars.h"
+#include "titanic/star_control/fpoint.h"
+#include "titanic/star_control/surface_area.h"
+#include "titanic/support/video_surface.h"
 #include "common/array.h"
 #include "common/rect.h"
-#include "titanic/star_control/base_stars.h"
-#include "titanic/star_control/surface_area.h"
-#include "titanic/star_control/fpoint.h"
-#include "titanic/support/simple_file.h"
-#include "titanic/support/video_surface.h"
 
 namespace Titanic {
 
 class CStarField;
 class CStarMarkers;
 class CStarCamera;
+class SimpleFile;
 
 class CStarCrosshairs {
 private:
@@ -80,12 +80,12 @@ public:
 
 	bool fn1(CStarField *starField, CSurfaceArea *surfaceArea, CStarCamera *camera);
 	void fn2(CVideoSurface *surface, CStarField *starField, CStarMarkers *markers);
-	
+
 	/**
 	 * Increments the index for the number of matches
 	 */
 	void incMatches();
-	
+
 	/**
 	 * Draw the crosshairs for a given star
 	 */
@@ -101,12 +101,12 @@ public:
 	 * Erase crosshairs for the most recently selected star
 	 */
 	void eraseCurrent(CSurfaceArea *surfaceArea);
-	
+
 	/**
 	 * Draw crosshairs at the given position
 	 */
 	void drawAt(const FPoint &pt, CSurfaceArea *surfaceArea);
-	
+
 	/**
 	 * Returns the position of the most recently selected star
 	 */
@@ -120,7 +120,12 @@ public:
 	/**
 	 * Returns true if the starfield is solved
 	 */
-	bool isSolved() const { return _matchIndex == 2; }
+	bool isSolved() const { return _matchIndex >= 2; }
+
+	/**
+	 * Return true if the starfield puzzle was skipped
+	 */
+	bool isSkipped() const { return _matchIndex == 3; }
 };
 
 } // End of namespace Titanic

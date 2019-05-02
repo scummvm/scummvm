@@ -27,6 +27,7 @@
 #include "common/noncopyable.h"
 #include "common/keyboard.h"
 
+#include "graphics/mode.h"
 #include "graphics/palette.h"
 
 /**
@@ -37,9 +38,9 @@ class GraphicsManager : public PaletteManager {
 public:
 	virtual ~GraphicsManager() {}
 
-	virtual bool hasFeature(OSystem::Feature f) = 0;
+	virtual bool hasFeature(OSystem::Feature f) const = 0;
 	virtual void setFeatureState(OSystem::Feature f, bool enable) = 0;
-	virtual bool getFeatureState(OSystem::Feature f) = 0;
+	virtual bool getFeatureState(OSystem::Feature f) const = 0;
 
 	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const = 0;
 	virtual int getDefaultGraphicsMode() const = 0;
@@ -52,21 +53,29 @@ public:
 	};
 	virtual bool setShader(int id) { return false; }
 	virtual int getShader() const { return 0; }
+	virtual const OSystem::GraphicsMode *getSupportedStretchModes() const {
+		static const OSystem::GraphicsMode noStretchModes[] = {{"NONE", "Normal", 0}, {nullptr, nullptr, 0 }};
+		return noStretchModes;
+	}
+	virtual int getDefaultStretchMode() const { return 0; }
+	virtual bool setStretchMode(int mode) { return false; }
+	virtual int getStretchMode() const { return 0; }
 
 #ifdef USE_RGB_COLOR
 	virtual Graphics::PixelFormat getScreenFormat() const = 0;
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const = 0;
 #endif
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL) = 0;
+	virtual void initSizeHint(const Graphics::ModeList &modes) {}
 	virtual int getScreenChangeID() const = 0;
 
 	virtual void beginGFXTransaction() = 0;
 	virtual OSystem::TransactionError endGFXTransaction() = 0;
 
-	virtual int16 getHeight() = 0;
-	virtual int16 getWidth() = 0;
+	virtual int16 getHeight() const = 0;
+	virtual int16 getWidth() const = 0;
 	virtual void setPalette(const byte *colors, uint start, uint num) = 0;
-	virtual void grabPalette(byte *colors, uint start, uint num) = 0;
+	virtual void grabPalette(byte *colors, uint start, uint num) const = 0;
 	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) = 0;
 	virtual Graphics::Surface *lockScreen() = 0;
 	virtual void unlockScreen() = 0;
@@ -80,10 +89,10 @@ public:
 	virtual void hideOverlay() = 0;
 	virtual Graphics::PixelFormat getOverlayFormat() const = 0;
 	virtual void clearOverlay() = 0;
-	virtual void grabOverlay(void *buf, int pitch) = 0;
-	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h)= 0;
-	virtual int16 getOverlayHeight() = 0;
-	virtual int16 getOverlayWidth() = 0;
+	virtual void grabOverlay(void *buf, int pitch) const = 0;
+	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) = 0;
+	virtual int16 getOverlayHeight() const = 0;
+	virtual int16 getOverlayWidth() const = 0;
 
 	virtual bool showMouse(bool visible) = 0;
 	virtual void warpMouse(int x, int y) = 0;
@@ -96,7 +105,7 @@ public:
 
 	// Graphics::PaletteManager interface
 	//virtual void setPalette(const byte *colors, uint start, uint num) = 0;
-	//virtual void grabPalette(byte *colors, uint start, uint num) = 0;
+	//virtual void grabPalette(byte *colors, uint start, uint num) const = 0;
 };
 
 #endif

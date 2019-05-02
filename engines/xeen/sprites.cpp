@@ -33,18 +33,24 @@ namespace Xeen {
 #define SCENE_CLIP_LEFT 8
 #define SCENE_CLIP_RIGHT 223
 
+int SpriteResource::_clippedBottom;
+
 SpriteResource::SpriteResource() {
 	_filesize = 0;
 	_data = nullptr;
 	_scaledWidth = _scaledHeight = 0;
-	Common::fill(&_lineDist[0], &_lineDist[SCREEN_WIDTH], false);
 }
 
 SpriteResource::SpriteResource(const Common::String &filename) {
 	_data = nullptr;
 	_scaledWidth = _scaledHeight = 0;
-	Common::fill(&_lineDist[0], &_lineDist[SCREEN_WIDTH], false);
 	load(filename);
+}
+
+SpriteResource::SpriteResource(const Common::String &filename, int ccMode) {
+	_data = nullptr;
+	_scaledWidth = _scaledHeight = 0;
+	load(filename, ccMode);
 }
 
 SpriteResource::~SpriteResource() {
@@ -67,12 +73,14 @@ SpriteResource &SpriteResource::operator=(const SpriteResource &src) {
 }
 
 void SpriteResource::load(const Common::String &filename) {
+	_filename = filename;
 	File f(filename);
 	load(f);
 }
 
-void SpriteResource::load(const Common::String &filename, ArchiveType archiveType) {
-	File f(filename, archiveType);
+void SpriteResource::load(const Common::String &filename, int ccMode) {
+	_filename = filename;
+	File f(filename, ccMode);
 	load(f);
 }
 
@@ -98,21 +106,23 @@ void SpriteResource::clear() {
 	delete[] _data;
 	_data = nullptr;
 	_filesize = 0;
+	_index.clear();
 }
 
 void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Point &pt,
-		const Common::Rect &clipRect, int flags, int scale) {
+		const Common::Rect &clipRect, uint flags, int scale) {
 	static const uint SCALE_TABLE[] = {
 		0xFFFF, 0xFFEF, 0xEFEF, 0xEFEE, 0xEEEE, 0xEEAE, 0xAEAE, 0xAEAA,
 		0xAAAA, 0xAA8A, 0x8A8A, 0x8A88, 0x8888, 0x8880, 0x8080, 0x8000
 	};
 	static const int PATTERN_STEPS[] = { 0, 1, 1, 1, 2, 2, 3, 3, 0, -1, -1, -1, -2, -2, -3, -3 };
 
-	uint16 scaleMask = SCALE_TABLE[scale & 0x7fff];
+	assert((scale & SCALE_MASK) < 16);
+	uint16 scaleMask = SCALE_TABLE[scale & SCALE_MASK];
 	uint16 scaleMaskX = scaleMask, scaleMaskY = scaleMask;
 	bool flipped = (flags & SPRFLAG_HORIZ_FLIPPED) != 0;
 	int xInc = flipped ? -1 : 1;
-	bool enlarge = (scale & 0x8000) != 0;
+	bool enlarge = (scale & SCALE_ENLARGE) != 0;
 
 	// Get cell header
 	Common::MemoryReadStream f(_data, _filesize);
@@ -136,6 +146,9 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 			dest.create(xOffset + width, yOffset + height);
 		bounds = Common::Rect(0, 0, dest.w, dest.h);
 	}
+	if (flags & SPRFLAG_SCENE_CLIPPED) {
+		bounds.clip(Common::Rect(8, 8, 223, 141));
+	}
 
 	uint16 scaleMaskXCopy = scaleMaskX;
 	Common::Rect drawBounds;
@@ -151,7 +164,7 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 		if (lineLength == 0) {
 			// Skip the specified number of scan lines
 			int numLines = f.readByte();
-			destPos.y += getScaledVal(numLines, scaleMaskY);
+			destPos.y += getScaledVal(numLines + 1, scaleMaskY);
 			yCtr -= numLines;
 			continue;
 		}
@@ -257,7 +270,7 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 			assert(byteCount == lineLength);
 
 			drawBounds.top = MIN(drawBounds.top, destPos.y);
-			drawBounds.bottom = MAX(drawBounds.bottom, destPos.y);
+			drawBounds.bottom = MAX((int)drawBounds.bottom, destPos.y + 1);
 
 			// Handle drawing out the line
 			byte *destP = (byte *)dest.getBasePtr(destPos.x, destPos.y);
@@ -270,18 +283,24 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 
 				if (bit) {
 					// Check whether there's a pixel to write, and we're within the allowable bounds. Note that for
-					// the SPRFLAG_SCENE_CLIPPED or when scale == 0x8000, we also have an extra horizontal bounds check
-					if (*lineP != -1 && xp >= bounds.left && xp < bounds.right &&
-							((!(flags & SPRFLAG_SCENE_CLIPPED) && !enlarge) || (xp >= SCENE_CLIP_LEFT && xp < SCENE_CLIP_RIGHT))) {
+					// the SPRFLAG_SCENE_CLIPPED or when enlarging, we also have an extra horizontal bounds check
+					if (*lineP != -1 && xp >= bounds.left && xp < bounds.right) {
 						drawBounds.left = MIN(drawBounds.left, xp);
-						drawBounds.right = MAX(drawBounds.right, xp);
+						drawBounds.right = MAX((int)drawBounds.right, xp + 1);
 						*destP = (byte)*lineP;
-						if (enlarge)
+						if (enlarge) {
 							*(destP + SCREEN_WIDTH) = (byte)*lineP;
+							*(destP + 1) = (byte)*lineP;
+							*(destP + 1 + SCREEN_WIDTH) = (byte)*lineP;
+						}
 					}
 
-					++destP;
 					++xp;
+					++destP;
+					if (enlarge) {
+						++destP;
+						++xp;
+					}
 				}
 			}
 
@@ -299,25 +318,39 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 }
 
 void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos,
-		int flags, int scale) {
+		uint flags, int scale) {
 	draw(dest, frame, destPos, Common::Rect(0, 0, dest.w, dest.h), flags, scale);
 }
 
 void SpriteResource::draw(Window &dest, int frame, const Common::Point &destPos,
-		int flags, int scale) {
+		uint flags, int scale) {
 	draw(dest, frame, destPos, dest.getBounds(), flags, scale);
 }
 
-void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos,
-		const Common::Rect &bounds, int flags, int scale) {
+void SpriteResource::draw(int windowIndex, int frame, const Common::Point &destPos,
+		uint flags, int scale) {
+	Window &win = (*g_vm->_windows)[windowIndex];
+	draw(win, frame, destPos, flags, scale);
+}
 
-	drawOffset(dest, _index[frame]._offset1, destPos, bounds, flags, scale);
+void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos,
+		const Common::Rect &bounds, uint flags, int scale) {
+	Common::Rect r = bounds;
+	if (flags & SPRFLAG_BOTTOM_CLIPPED)
+		r.clip(SCREEN_WIDTH, _clippedBottom);
+
+	// Sprites can consist of separate background & foreground
+	drawOffset(dest, _index[frame]._offset1, destPos, r, flags, scale);
 	if (_index[frame]._offset2)
-		drawOffset(dest, _index[frame]._offset2, destPos, bounds, flags, scale);
+		drawOffset(dest, _index[frame]._offset2, destPos, r, flags, scale);
 }
 
 void SpriteResource::draw(XSurface &dest, int frame) {
 	draw(dest, frame, Common::Point());
+}
+
+void SpriteResource::draw(int windowIndex, int frame) {
+	draw((*g_vm->_windows)[windowIndex], frame, Common::Point());
 }
 
 uint SpriteResource::getScaledVal(int xy, uint16 &scaleMask) {
@@ -332,6 +365,24 @@ uint SpriteResource::getScaledVal(int xy, uint16 &scaleMask) {
 	}
 
 	return result;
+}
+
+Common::Point SpriteResource::getFrameSize(int frame) const {
+	Common::MemoryReadStream f(_data, _filesize);
+	Common::Point frameSize;
+
+	for (int idx = 0; idx < (_index[frame]._offset2 ? 2 : 1); ++idx) {
+		f.seek((idx == 0) ? _index[frame]._offset1 : _index[frame]._offset2);
+		int xOffset = f.readUint16LE();
+		int width = f.readUint16LE();
+		int yOffset = f.readUint16LE();
+		int height = f.readUint16LE();
+
+		frameSize.x = MAX((int)frameSize.x, xOffset + width);
+		frameSize.y = MAX((int)frameSize.y, yOffset + height);
+	}
+
+	return frameSize;
 }
 
 } // End of namespace Xeen

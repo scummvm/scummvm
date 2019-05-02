@@ -23,10 +23,11 @@
 #ifndef IMAGE_CODECS_SVQ1_H
 #define IMAGE_CODECS_SVQ1_H
 
+#include "common/bitstream.h"
 #include "image/codecs/codec.h"
 
 namespace Common {
-class BitStream;
+template <class BITSTREAM>
 class Huffman;
 struct Point;
 }
@@ -53,22 +54,24 @@ private:
 
 	byte *_last[3];
 
-	Common::Huffman *_blockType;
-	Common::Huffman *_intraMultistage[6];
-	Common::Huffman *_interMultistage[6];
-	Common::Huffman *_intraMean;
-	Common::Huffman *_interMean;
-	Common::Huffman *_motionComponent;
+	typedef Common::Huffman<Common::BitStream32BEMSB> HuffmanDecoder;
 
-	bool svq1DecodeBlockIntra(Common::BitStream *s, byte *pixels, int pitch);
-	bool svq1DecodeBlockNonIntra(Common::BitStream *s, byte *pixels, int pitch);
-	bool svq1DecodeMotionVector(Common::BitStream *s, Common::Point *mv, Common::Point **pmv);
+	HuffmanDecoder *_blockType;
+	HuffmanDecoder *_intraMultistage[6];
+	HuffmanDecoder *_interMultistage[6];
+	HuffmanDecoder *_intraMean;
+	HuffmanDecoder *_interMean;
+	HuffmanDecoder *_motionComponent;
+
+	bool svq1DecodeBlockIntra(Common::BitStream32BEMSB *s, byte *pixels, int pitch);
+	bool svq1DecodeBlockNonIntra(Common::BitStream32BEMSB *s, byte *pixels, int pitch);
+	bool svq1DecodeMotionVector(Common::BitStream32BEMSB *s, Common::Point *mv, Common::Point **pmv);
 	void svq1SkipBlock(byte *current, byte *previous, int pitch, int x, int y);
-	bool svq1MotionInterBlock(Common::BitStream *ss, byte *current, byte *previous, int pitch,
+	bool svq1MotionInterBlock(Common::BitStream32BEMSB *ss, byte *current, byte *previous, int pitch,
 			Common::Point *motion, int x, int y);
-	bool svq1MotionInter4vBlock(Common::BitStream *ss, byte *current, byte *previous, int pitch,
+	bool svq1MotionInter4vBlock(Common::BitStream32BEMSB *ss, byte *current, byte *previous, int pitch,
 			Common::Point *motion, int x, int y);
-	bool svq1DecodeDeltaBlock(Common::BitStream *ss, byte *current, byte *previous, int pitch,
+	bool svq1DecodeDeltaBlock(Common::BitStream32BEMSB *ss, byte *current, byte *previous, int pitch,
 			Common::Point *motion, int x, int y);
 
 	void putPixels8C(byte *block, const byte *pixels, int lineSize, int h);

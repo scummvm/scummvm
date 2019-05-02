@@ -54,6 +54,7 @@ MohawkEngine_CSTime::MohawkEngine_CSTime(OSystem *syst, const MohawkGameDescript
 
 	_console = 0;
 	_gfx = 0;
+	_video = 0;
 	_sound = 0;
 	_cursor = 0;
 	_interface = 0;
@@ -68,6 +69,7 @@ MohawkEngine_CSTime::~MohawkEngine_CSTime() {
 	delete _view;
 	delete _console;
 	delete _sound;
+	delete _video;
 	delete _gfx;
 	delete _rnd;
 }
@@ -75,8 +77,13 @@ MohawkEngine_CSTime::~MohawkEngine_CSTime() {
 Common::Error MohawkEngine_CSTime::run() {
 	MohawkEngine::run();
 
+	if (!_mixer->isReady()) {
+		return Common::kAudioDeviceInitFailed;
+	}
+
 	_console = new CSTimeConsole(this);
 	_gfx = new CSTimeGraphics(this);
+	_video = new VideoManager(this);
 	_sound = new Sound(this);
 	_cursor = new DefaultCursorManager(this, ID_CURS);
 
@@ -182,6 +189,17 @@ void MohawkEngine_CSTime::update() {
 
 	// Cut down on CPU usage
 	_system->delayMillis(10);
+}
+
+void MohawkEngine_CSTime::pauseEngineIntern(bool pause) {
+	MohawkEngine::pauseEngineIntern(pause);
+
+	if (pause) {
+		_video->pauseVideos();
+	} else {
+		_video->resumeVideos();
+		_system->updateScreen();
+	}
 }
 
 void MohawkEngine_CSTime::initCase() {

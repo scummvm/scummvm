@@ -57,7 +57,7 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 	virtual const char *getName() const {
-		return "Sword25";
+		return "Broken Sword 2.5";
 	}
 
 	virtual const char *getOriginalCopyright() const {

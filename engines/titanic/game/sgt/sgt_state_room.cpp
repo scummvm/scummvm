@@ -22,6 +22,7 @@
 
 #include "titanic/game/sgt/sgt_state_room.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -124,10 +125,10 @@ bool CSGTStateRoom::VisibleMsg(CVisibleMsg *msg) {
 
 bool CSGTStateRoom::EnterRoomMsg(CEnterRoomMsg *msg) {
 	CPetControl *pet = getPetControl();
-	uint roomFlags = pet->getRoomFlags();
-	uint assignedRoom = pet->getAssignedRoomFlags();
 
-	if (roomFlags == assignedRoom) {
+	// WORKAROUND: Correctly show SGT furniture states in assigned stateroom
+	// even when the user has already upgraded to 2nd or 1st class
+	if (pet->isInAssignedRoom()) {
 		loadFrame(_savedFrame);
 		_isClosed = _savedIsClosed;
 		setVisible(_savedVisible);
@@ -138,17 +139,17 @@ bool CSGTStateRoom::EnterRoomMsg(CEnterRoomMsg *msg) {
 
 	if (isEquals("Drawer")) {
 		petSetArea(PET_REMOTE);
-		if (roomFlags == assignedRoom && getPassengerClass() == 3
+		if (pet->isInAssignedRoom() && getPassengerClass() == 3
 				&& _statics->_announcementFlag) {
 			// Congratulations, you may have won an upgrade
-			playSound("b#21.wav");
+			playSound(TRANSLATE("b#21.wav", "b#2.wav"));
 			_statics->_announcementFlag = false;
 		}
 
 		_statics->_drawer = "Closed";
 		setVisible(false);
 		_isClosed = true;
-	} else if (roomFlags != assignedRoom) {
+	} else if (!pet->isInAssignedRoom()) {
 		loadFrame(0);
 		if (_displayFlag) {
 			setVisible(true);

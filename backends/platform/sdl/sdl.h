@@ -59,10 +59,8 @@ public:
 
 	// Override functions from ModularBackend and OSystem
 	virtual void initBackend();
-#if defined(USE_TASKBAR)
 	virtual void engineInit();
 	virtual void engineDone();
-#endif
 	virtual void quit();
 	virtual void fatalError();
 
@@ -74,6 +72,7 @@ public:
 	// Clipboard
 	virtual bool hasTextInClipboard();
 	virtual Common::String getTextFromClipboard();
+	virtual bool setTextInClipboard(const Common::String &text);
 
 	virtual void setWindowCaption(const char *caption);
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);

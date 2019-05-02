@@ -243,9 +243,7 @@ bool CGEEngine::loadGame(int slotNumber, SavegameHeader *header, bool tiny) {
 			return true;
 		}
 
-		// Delete the thumbnail
-		saveHeader.thumbnail->free();
-		delete saveHeader.thumbnail;
+		g_engine->setTotalPlayTime(saveHeader.playTime * 1000);
 	}
 
 	// Get in the savegame
@@ -371,6 +369,8 @@ void CGEEngine::writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &he
 	out->writeSint16LE(td.tm_mday);
 	out->writeSint16LE(td.tm_hour);
 	out->writeSint16LE(td.tm_min);
+
+	out->writeUint32LE(g_engine->getTotalPlayTime() / 1000);
 }
 
 void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteStream *writeStream, bool tiny) {
@@ -378,7 +378,7 @@ void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteSt
 
 	if (s.isSaving()) {
 		for (int i = 0; i < kPocketNX; i++) {
-			register Sprite *pocSpr = _pocket[i];
+			Sprite *pocSpr = _pocket[i];
 			_pocref[i] = (pocSpr) ? pocSpr->_ref : -1;
 		}
 
@@ -417,15 +417,23 @@ void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteSt
 			}
 
 			for (int i = 0; i < kPocketNX; i++) {
-				register int r = _pocref[i];
+				int r = _pocref[i];
 				_pocket[i] = (r < 0) ? NULL : _vga->_spareQ->locate(r);
 			}
 		}
 	}
 }
 
-bool CGEEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header) {
-	header.thumbnail = nullptr;
+WARN_UNUSED_RESULT bool CGEEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header, bool skipThumbnail) {
+	header.version     = 0;
+	header.saveName.clear();
+	header.thumbnail   = nullptr;
+	header.saveYear    = 0;
+	header.saveMonth   = 0;
+	header.saveDay     = 0;
+	header.saveHour    = 0;
+	header.saveMinutes = 0;
+	header.playTime    = 0;
 
 	// Get the savegame version
 	header.version = in->readByte();
@@ -433,22 +441,25 @@ bool CGEEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &heade
 		return false;
 
 	// Read in the string
-	header.saveName.clear();
 	char ch;
 	while ((ch = (char)in->readByte()) != '\0')
 		header.saveName += ch;
 
 	// Get the thumbnail
-	header.thumbnail = Graphics::loadThumbnail(*in);
-	if (!header.thumbnail)
+	if (!Graphics::loadThumbnail(*in, header.thumbnail, skipThumbnail)) {
 		return false;
+	}
 
 	// Read in save date/time
-	header.saveYear = in->readSint16LE();
-	header.saveMonth = in->readSint16LE();
-	header.saveDay = in->readSint16LE();
-	header.saveHour = in->readSint16LE();
+	header.saveYear    = in->readSint16LE();
+	header.saveMonth   = in->readSint16LE();
+	header.saveDay     = in->readSint16LE();
+	header.saveHour    = in->readSint16LE();
 	header.saveMinutes = in->readSint16LE();
+
+	if (header.version >= 3) {
+		header.playTime = in->readUint32LE();
+	}
 
 	return true;
 }

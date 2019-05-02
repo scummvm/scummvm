@@ -28,19 +28,20 @@
 #include "common/rect.h"
 #include "common/serializer.h"
 #include "xeen/combat.h"
+#include "xeen/item.h"
 #include "xeen/sprites.h"
 
 namespace Xeen {
 
 #define INV_ITEMS_TOTAL 9
+#define SPELLS_PER_CLASS 39
+#define AWARDS_TOTAL 88
+#define WARZONE_AWARD 9
 
-enum BonusFlags {
-	ITEMFLAG_BONUS_MASK = 0xBF, ITEMFLAG_CURSED = 0x40, ITEMFLAG_BROKEN = 0x80
-};
-
-enum ItemCategory {
-	CATEGORY_WEAPON = 0, CATEGORY_ARMOR = 1, CATEGORY_ACCESSORY = 2, CATEGORY_MISC = 3,
-	NUM_ITEM_CATEGORIES = 4
+enum Award {
+	SHANGRILA_GUILD_MEMBER = 5, GOOBER = 76, SUPER_GOOBER = 77,
+	CASTLEVIEW_GUILD_MEMBER = 83, SANDCASTER_GUILD_MEMBER = 84,
+	LAKESIDE_GUILD_MEMBER = 85, NECROPOLIS_GUILD_MEMBER = 86, OLYMPUS_GUILD_MEMBER = 87
 };
 
 enum Sex { MALE = 0, FEMALE = 1, YES_PLEASE = 2 };
@@ -50,7 +51,11 @@ enum Race { HUMAN = 0, ELF = 1, DWARF = 2, GNOME = 3, HALF_ORC = 4 };
 enum CharacterClass {
 	CLASS_KNIGHT = 0, CLASS_PALADIN = 1, CLASS_ARCHER = 2, CLASS_CLERIC = 3,
 	CLASS_SORCERER = 4, CLASS_ROBBER = 5, CLASS_NINJA = 6, CLASS_BARBARIAN = 7,
-	CLASS_DRUID = 8, CLASS_RANGER = 9, TOTAL_CLASSES = 10, CLASS_12 = 12, CLASS_15 = 15, CLASS_16 = 16
+	CLASS_DRUID = 8, CLASS_RANGER = 9, TOTAL_CLASSES = 10
+};
+
+enum HatesClass {
+	HATES_DWARF = 12, HATES_PARTY = 15, HATES_NOBODY = 16
 };
 
 enum Attribute {
@@ -74,184 +79,16 @@ enum Condition {
 	NO_CONDITION = 16
 };
 
-enum AttributeCategory {
-	ATTR_MIGHT = 0, ATTR_INTELLECT = 1, ATTR_PERSONALITY = 2, ATTR_SPEED = 3,
-	ATTR_ACCURACY = 4, ATTR_LUCK = 5, ATTR_HIT_POINTS = 6, ATTR_SPELL_POINTS = 7,
-	ATTR_ARMOR_CLASS = 8, ATTR_THIEVERY  = 9
-};
-
 enum QuickAction {
 	QUICK_ATTACK = 0, QUICK_SPELL = 1, QUICK_BLOCK = 2, QUICK_RUN = 3
 };
 
+enum SpellsCategory {
+	SPELLCAT_INVALID = -1, SPELLCAT_CLERICAL = 0, SPELLCAT_WIZARDRY = 1, SPELLCAT_DRUIDIC = 2
+};
+
+
 class XeenEngine;
-class Character;
-
-class XeenItem {
-public:
-	int _material;
-	uint _id;
-	int _bonusFlags;
-	int _frame;
-public:
-	XeenItem();
-
-	void clear();
-
-	bool empty() const { return _id != 0; }
-
-	void synchronize(Common::Serializer &s);
-
-	ElementalCategory getElementalCategory() const;
-
-	AttributeCategory getAttributeCategory() const;
-};
-
-class InventoryItems : public Common::Array<XeenItem> {
-protected:
-	Character *_character;
-	ItemCategory _category;
-	const char *const *_names;
-
-	XeenEngine *getVm();
-	void equipError(int itemIndex1, ItemCategory category1, int itemIndex2,
-		ItemCategory category2);
-
-	virtual Common::String getAttributes(XeenItem &item, const Common::String &classes) = 0;
-public:
-	InventoryItems(Character *character, ItemCategory category);
-	virtual ~InventoryItems() {}
-
-	void clear();
-
-	/**
-	 * Return whether a given item passes class-based usage restrictions
-	 */
-	bool passRestrictions(int itemId, bool showError) const;
-
-	/**
-	 * Return the bare name of a given inventory item
-	 */
-	Common::String getName(int itemIndex);
-
-	virtual Common::String getFullDescription(int itemIndex, int displayNum = 15) = 0;
-
-	Common::String getIdentifiedDetails(int itemIndex);
-
-	/**
-	 * Discard an item from the inventory
-	 */
-	bool discardItem(int itemIndex);
-
-	virtual void equipItem(int itemIndex) {}
-
-	/**
-	 * Un-equips the given item
-	 */
-	void removeItem(int itemIndex);
-
-	/**
-	 * Sorts the items list, removing any empty item slots to the end of the array
-	 */
-	void sort();
-
-	virtual void enchantItem(int itemIndex, int amount);
-
-	/**
-	 * Return if the given inventory items list is full
-	 */
-	bool isFull() const;
-};
-
-class WeaponItems: public InventoryItems {
-protected:
-	virtual Common::String getAttributes(XeenItem &item, const Common::String &classes);
-public:
-	WeaponItems(Character *character) : InventoryItems(character, CATEGORY_WEAPON) {}
-	virtual ~WeaponItems() {}
-
-	/**
-	 * Equip a given weapon
-	 */
-	virtual void equipItem(int itemIndex);
-
-	/**
-	 * Assembles a full lines description for a specified item for use in
-	 * the Items dialog
-	 */
-	virtual Common::String getFullDescription(int itemIndex, int displayNum);
-
-	virtual void enchantItem(int itemIndex, int amount);
-};
-
-class ArmorItems : public InventoryItems {
-protected:
-	virtual Common::String getAttributes(XeenItem &item, const Common::String &classes);
-public:
-	ArmorItems(Character *character) : InventoryItems(character, CATEGORY_ARMOR) {}
-	virtual ~ArmorItems() {}
-
-	/**
-	 * Equip a given piece of armor
-	 */
-	virtual void equipItem(int itemIndex);
-
-	/**
-	 * Assembles a full lines description for a specified item for use in
-	 * the Items dialog
-	 */
-	virtual Common::String getFullDescription(int itemIndex, int displayNum);
-
-	virtual void enchantItem(int itemIndex, int amount);
-};
-
-class AccessoryItems : public InventoryItems {
-protected:
-	virtual Common::String getAttributes(XeenItem &item, const Common::String &classes);
-public:
-	AccessoryItems(Character *character) : InventoryItems(character, CATEGORY_ACCESSORY) {}
-
-	/**
-	 * Equip a given accessory
-	 */
-	virtual void equipItem(int itemIndex);
-
-	/**
-	 * Assembles a full lines description for a specified item for use in
-	 * the Items dialog
-	 */
-	virtual Common::String getFullDescription(int itemIndex, int displayNum);
-};
-
-class MiscItems : public InventoryItems {
-protected:
-	virtual Common::String getAttributes(XeenItem &item, const Common::String &classes);
-public:
-	MiscItems(Character *character) : InventoryItems(character, CATEGORY_MISC) {}
-	virtual ~MiscItems() {}
-
-	/**
-	 * Assembles a full lines description for a specified item for use in
-	 * the Items dialog
-	 */
-	virtual Common::String getFullDescription(int itemIndex, int displayNum);
-};
-
-class InventoryItemsGroup {
-private:
-	InventoryItems *_itemSets[4];
-public:
-	InventoryItemsGroup(InventoryItems &weapons, InventoryItems &armor,
-		InventoryItems &accessories, InventoryItems &misc);
-
-	InventoryItems &operator[](ItemCategory category);
-
-	/**
-	 * Breaks all the items in a given character's inventory
-	 */
-	void breakAllItems();
-};
-
 
 class AttributePair {
 public:
@@ -286,18 +123,18 @@ public:
 	uint _birthDay;
 	int _tempAge;
 	int _skills[18];
-	bool _awards[128];
-	int _spells[39];
+	int _awards[128];
+	bool _spells[SPELLS_PER_CLASS];
 	int _lloydMap;
 	Common::Point _lloydPosition;
 	bool _hasSpells;
 	int8 _currentSpell;
 	QuickAction _quickOption;
-	InventoryItemsGroup _items;
 	WeaponItems _weapons;
 	ArmorItems _armor;
 	AccessoryItems _accessories;
 	MiscItems _misc;
+	InventoryItemsGroup _items;
 	int _lloydSide;
 	AttributePair _fireResistence;
 	AttributePair _coldResistence;
@@ -318,10 +155,39 @@ public:
 	SpriteResource *_faceSprites;
 	int _rosterId;
 public:
+	/**
+	 * Constructor
+	 */
 	Character();
 
+	/**
+	 * Constructor
+	 */
+	Character(const Character &src);
+
+	/**
+	 * Equality operator
+	 */
+	bool operator==(const Character &src) const { return src._rosterId == _rosterId; }
+
+	/**
+	 * Inequality operator
+	 */
+	bool operator!=(const Character &src) const { return src._rosterId != _rosterId; }
+
+	/**
+	 * Clears the data for a character
+	 */
 	void clear();
 
+	/**
+	 * Assignment operator
+	 */
+	Character &operator=(const Character &src);
+
+	/**
+	 * Synchronizes data for the character
+	 */
 	void synchronize(Common::Serializer &s);
 
 	/**
@@ -349,8 +215,14 @@ public:
 	 */
 	int getAge(bool ignoreTemp = false) const;
 
+	/**
+	 * Gets the maximum hit points for a character
+	 */
 	int getMaxHP() const;
 
+	/**
+	 * Gets the maximum spell points for a character
+	 */
 	int getMaxSP() const;
 
 	/**
@@ -364,16 +236,34 @@ public:
 	 */
 	static int statColor(int amount, int threshold);
 
+	/**
+	 * Returns the bonus the character gets for stats
+	 */
 	int statBonus(uint statValue) const;
 
+	/**
+	 * Returns true if the character passes a saving throw for a given attack type
+	 */
 	bool charSavingThrow(DamageType attackType) const;
 
+	/**
+	 * Returns true if the character is unable to perform any action
+	 */
 	bool noActions();
 
+	/**
+	 * Sets an award status
+	 */
 	void setAward(int awardId, bool value);
 
+	/**
+	 * Returns true if a character has a given award
+	 */
 	bool hasAward(int awardId) const;
 
+	/**
+	 * Returns the character's armor class
+	 */
 	int getArmorClass(bool baseOnly = false) const;
 
 	/**
@@ -383,23 +273,50 @@ public:
 
 	uint getCurrentLevel() const;
 
+	/**
+	 * Scans the character's inventory for the given item
+	 */
 	int itemScan(int itemId) const;
 
+	/**
+	 * Sets various attributes of a character
+	 */
 	void setValue(int id, uint value);
 
+	/**
+	 * Returns true if the character is a member of the current town's guild
+	 */
 	bool guildMember() const;
 
+	/**
+	 * Returns the experience required to reach the next level
+	 */
 	uint experienceToNextLevel() const;
 
+	/**
+	 * Returns the next level the character will reach
+	 */
 	uint nextExperienceLevel() const;
 
+	/**
+	 * Returns the character's current experience
+	 */
 	uint getCurrentExperience() const;
 
+	/**
+	 * Returns the number of skills the character has
+	 */
 	int getNumSkills() const;
 
+	/**
+	 * Returns the number of awards the character has
+	 */
 	int getNumAwards() const;
 
-	int makeItem(int p1, int itemIndex, int p3);
+	/**
+	 * Creates an item and adds it to the inventory
+	 */
+	ItemCategory makeItem(int p1, int itemIndex, int p3);
 
 	/**
 	 * Add hit points to a character
@@ -407,15 +324,44 @@ public:
 	void addHitPoints(int amount);
 
 	/**
-	 * Remove hit points fromo the character
+	 * Remove hit points from the character
 	 */
 	void subtractHitPoints(int amount);
 
-	bool hasSpecialItem() const;
+	/**
+	 * Returns true if the character has the Xeen Slayer Sword
+	 */
+	bool hasSlayerSword() const;
 
+	/**
+	 * Returns true if the character has a missile weapon, such as a bow
+	 */
 	bool hasMissileWeapon() const;
 
-	int getClassCategory() const;
+	/**
+	 * Returns the spells category for the character's class
+	 */
+	SpellsCategory getSpellsCategory() const;
+
+	/**
+	 * Returns an expense factor for purchasing spells by certain character classes
+	 */
+	int getSpellsExpenseFactor() const {
+		return (_class == CLASS_PALADIN || _class == CLASS_ARCHER || _class == CLASS_RANGER) ? 1 : 0;
+	}
+
+	/**
+	 * Clears the character of any currently set conditions
+	 */
+	void clearConditions();
+};
+
+class CharacterArray : public Common::Array<Character> {
+public:
+	/**
+	 * Returns the index of a given character in the array
+	 */
+	int indexOf(const Character &c);
 };
 
 } // End of namespace Xeen

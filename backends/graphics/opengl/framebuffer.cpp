@@ -28,7 +28,7 @@ namespace OpenGL {
 
 Framebuffer::Framebuffer()
     : _viewport(), _projectionMatrix(), _isActive(false), _clearColor(),
-      _blendState(false), _scissorTestState(false), _scissorBox() {
+      _blendState(kBlendModeDisabled), _scissorTestState(false), _scissorBox() {
 }
 
 void Framebuffer::activate() {
@@ -62,8 +62,8 @@ void Framebuffer::setClearColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
 	}
 }
 
-void Framebuffer::enableBlend(bool enable) {
-	_blendState = enable;
+void Framebuffer::enableBlend(BlendMode mode) {
+	_blendState = mode;
 
 	// Directly apply changes when we are active.
 	if (isActive()) {
@@ -105,10 +105,18 @@ void Framebuffer::applyClearColor() {
 }
 
 void Framebuffer::applyBlendState() {
-	if (_blendState) {
-		GL_CALL(glEnable(GL_BLEND));
-	} else {
-		GL_CALL(glDisable(GL_BLEND));
+	switch (_blendState) {
+		case kBlendModeDisabled:
+			GL_CALL(glDisable(GL_BLEND));
+			break;
+		case kBlendModeTraditionalTransparency:
+			GL_CALL(glEnable(GL_BLEND));
+			GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+			break;
+		case kBlendModePremultipliedTransparency:
+			GL_CALL(glEnable(GL_BLEND));
+			GL_CALL(glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
+			break;
 	}
 }
 

@@ -39,7 +39,6 @@ uint32 ScreenItem::_nextCreationId = 0;
 
 ScreenItem::ScreenItem(const reg_t object) :
 _creationId(_nextCreationId++),
-_celObj(nullptr),
 _object(object),
 _pictureId(-1),
 _created(g_sci->_gfxFrameout->getScreenCount()),
@@ -59,7 +58,6 @@ _plane(plane),
 _useInsetRect(false),
 _z(0),
 _celInfo(celInfo),
-_celObj(nullptr),
 _fixedPriority(false),
 _position(0, 0),
 _object(make_reg(0, _nextObjectId++)),
@@ -76,7 +74,6 @@ _plane(plane),
 _useInsetRect(false),
 _z(0),
 _celInfo(celInfo),
-_celObj(nullptr),
 _fixedPriority(false),
 _position(rect.left, rect.top),
 _object(make_reg(0, _nextObjectId++)),
@@ -98,7 +95,6 @@ _scale(scaleInfo),
 _useInsetRect(false),
 _z(0),
 _celInfo(celInfo),
-_celObj(nullptr),
 _fixedPriority(false),
 _position(position),
 _object(make_reg(0, _nextObjectId++)),
@@ -115,7 +111,6 @@ _plane(other._plane),
 _scale(other._scale),
 _useInsetRect(other._useInsetRect),
 _celInfo(other._celInfo),
-_celObj(nullptr),
 _object(other._object),
 _mirrorX(other._mirrorX),
 _scaledPosition(other._scaledPosition),
@@ -127,15 +122,18 @@ _drawBlackLines(other._drawBlackLines) {
 }
 
 void ScreenItem::operator=(const ScreenItem &other) {
-	// NOTE: The original engine did not check for differences in `_celInfo`
-	// to clear `_celObj` here; instead, it unconditionally set `_celInfo`,
-	// didn't clear `_celObj`, and did hacky stuff in `kIsOnMe` to avoid
-	// testing a mismatched `_celObj`. See `GfxFrameout::kernelIsOnMe` for
-	// more detail.
-	if (_celInfo != other._celInfo) {
+	// SSCI did not check for differences in `_celInfo` to clear `_celObj` here;
+	// instead, it unconditionally set `_celInfo`, didn't clear `_celObj`, and
+	// did hacky stuff in `kIsOnMe` to avoid testing a mismatched `_celObj`. See
+	// `GfxFrameout::kernelIsOnMe` for more detail.
+	//
+	// kCelTypeMem types are unconditionally invalidated because the properties
+	// of a CelObjMem can "change" when a game deletes a bitmap and then creates
+	// a new one that reuses the old bitmap's offset in BitmapTable (as happens
+	// in the LSL7 About screen when hovering names).
+	if (_celInfo.type == kCelTypeMem || _celInfo != other._celInfo) {
 		_celInfo = other._celInfo;
-		delete _celObj;
-		_celObj = nullptr;
+		_celObj.reset();
 	}
 
 	_creationId = other._creationId;
@@ -148,10 +146,6 @@ void ScreenItem::operator=(const ScreenItem &other) {
 	_scale = other._scale;
 	_scaledPosition = other._scaledPosition;
 	_drawBlackLines = other._drawBlackLines;
-}
-
-ScreenItem::~ScreenItem() {
-	delete _celObj;
 }
 
 void ScreenItem::init() {
@@ -173,17 +167,12 @@ void ScreenItem::setFromObject(SegManager *segMan, const reg_t object, const boo
 		_celInfo.celNo = readSelectorValue(segMan, object, SELECTOR(cel));
 
 		if (_celInfo.resourceId <= kPlanePic) {
-			// TODO: Enhance GfxView or ResourceManager to allow
-			// metadata for resources to be retrieved once, from a
-			// single location
 			Resource *view = g_sci->getResMan()->findResource(ResourceId(kResourceTypeView, _celInfo.resourceId), false);
 			if (!view) {
 				error("Failed to load %s", _celInfo.toString().c_str());
 			}
 
-			// NOTE: +2 because the header size field itself is excluded from
-			// the header size in the data
-			const uint16 headerSize = view->getUint16SEAt(0) + 2;
+			const uint16 headerSize = view->getUint16SEAt(0) + /* header size field */ sizeof(uint16);
 			const uint8 loopCount = view->getUint8At(2);
 			const uint8 loopSize = view->getUint8At(12);
 
@@ -222,8 +211,7 @@ void ScreenItem::setFromObject(SegManager *segMan, const reg_t object, const boo
 	}
 
 	if (updateCel || updateBitmap) {
-		delete _celObj;
-		_celObj = nullptr;
+		_celObj.reset();
 	}
 
 	if (readSelectorValue(segMan, object, SELECTOR(fixPriority))) {
@@ -263,10 +251,10 @@ void ScreenItem::setFromObject(SegManager *segMan, const reg_t object, const boo
 }
 
 void ScreenItem::calcRects(const Plane &plane) {
-	const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
-	const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
-	const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
+	const int16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
+	const int16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
+	const int16 screenWidth = g_sci->_gfxFrameout->getScreenWidth();
+	const int16 screenHeight = g_sci->_gfxFrameout->getScreenHeight();
 
 	const CelObj &celObj = getCelObj();
 
@@ -294,19 +282,25 @@ void ScreenItem::calcRects(const Plane &plane) {
 	if (scaleX.getNumerator() && scaleY.getNumerator()) {
 		_screenItemRect = _insetRect;
 
-		const Ratio celToScreenX(screenWidth, celObj._xResolution);
-		const Ratio celToScreenY(screenHeight, celObj._yResolution);
+		Ratio celToScreenX;
+		Ratio celToScreenY;
+		if (getSciVersion() < SCI_VERSION_2_1_LATE) {
+			celToScreenX = Ratio(screenWidth, celObj._xResolution);
+			celToScreenY = Ratio(screenHeight, celObj._yResolution);
+		}
 
 		// Cel may use a coordinate system that is not the same size as the
-		// script coordinate system (usually this means high-resolution
-		// pictures with low-resolution scripts)
+		// script coordinate system (usually this means high-resolution pictures
+		// with low-resolution scripts)
 		if (celObj._xResolution != kLowResX || celObj._yResolution != kLowResY) {
 			// high resolution coordinates
 
 			if (_useInsetRect) {
-				const Ratio scriptToCelX(celObj._xResolution, scriptWidth);
-				const Ratio scriptToCelY(celObj._yResolution, scriptHeight);
-				mulru(_screenItemRect, scriptToCelX, scriptToCelY, 0);
+				if (getSciVersion() < SCI_VERSION_2_1_LATE) {
+					const Ratio scriptToCelX(celObj._xResolution, scriptWidth);
+					const Ratio scriptToCelY(celObj._yResolution, scriptHeight);
+					mulru(_screenItemRect, scriptToCelX, scriptToCelY, 0);
+				}
 
 				if (_screenItemRect.intersects(celRect)) {
 					_screenItemRect.clip(celRect);
@@ -358,7 +352,7 @@ void ScreenItem::calcRects(const Plane &plane) {
 			const Ratio scriptToScreenX = Ratio(screenWidth, scriptWidth);
 			const Ratio scriptToScreenY = Ratio(screenHeight, scriptHeight);
 
-			if (/* TODO: dword_C6288 */ false && _celInfo.type == kCelTypePic) {
+			if (/* TODO: dword_C6288 */ (false) && _celInfo.type == kCelTypePic) {
 				_scaledPosition.x = _position.x;
 				_scaledPosition.y = _position.y;
 			} else {
@@ -377,7 +371,7 @@ void ScreenItem::calcRects(const Plane &plane) {
 
 				mulinc(temp, celToScreenX, Ratio());
 
-				CelObjPic *celObjPic = dynamic_cast<CelObjPic *>(_celObj);
+				CelObjPic *celObjPic = dynamic_cast<CelObjPic *>(_celObj.get());
 				if (celObjPic == nullptr) {
 					error("Expected a CelObjPic");
 				}
@@ -406,9 +400,8 @@ void ScreenItem::calcRects(const Plane &plane) {
 
 			if (!scaleX.isOne() || !scaleY.isOne()) {
 				mulinc(_screenItemRect, scaleX, scaleY);
-				// TODO: This was in the original code, baked into the
-				// multiplication though it is not immediately clear
-				// why this is the only one that reduces the BR corner
+				// TODO: This was in SSCI, baked into the multiplication. It is
+				// not clear why this is the only one that reduces the BR corner
 				_screenItemRect.right -= 1;
 				_screenItemRect.bottom -= 1;
 			}
@@ -425,7 +418,7 @@ void ScreenItem::calcRects(const Plane &plane) {
 					temp.right -= 1;
 				}
 
-				CelObjPic *celObjPic = dynamic_cast<CelObjPic *>(_celObj);
+				CelObjPic *celObjPic = dynamic_cast<CelObjPic *>(_celObj.get());
 				if (celObjPic == nullptr) {
 					error("Expected a CelObjPic");
 				}
@@ -442,7 +435,7 @@ void ScreenItem::calcRects(const Plane &plane) {
 			_scaledPosition.y += plane._gameRect.top;
 			_screenItemRect.translate(plane._gameRect.left, plane._gameRect.top);
 
-			if (celObj._xResolution != screenWidth || celObj._yResolution != screenHeight) {
+			if (!celToScreenX.isOne() || !celToScreenY.isOne()) {
 				mulru(_scaledPosition, celToScreenX, celToScreenY);
 				mulru(_screenItemRect, celToScreenX, celToScreenY, 1);
 			}
@@ -478,19 +471,19 @@ void ScreenItem::calcRects(const Plane &plane) {
 }
 
 CelObj &ScreenItem::getCelObj() const {
-	if (_celObj == nullptr) {
+	if (!_celObj) {
 		switch (_celInfo.type) {
 			case kCelTypeView:
-				_celObj = new CelObjView(_celInfo.resourceId, _celInfo.loopNo, _celInfo.celNo);
+				_celObj.reset(new CelObjView(_celInfo.resourceId, _celInfo.loopNo, _celInfo.celNo));
 			break;
 			case kCelTypePic:
 				error("Internal error, pic screen item with no cel.");
 			break;
 			case kCelTypeMem:
-				_celObj = new CelObjMem(_celInfo.bitmap);
+				_celObj.reset(new CelObjMem(_celInfo.bitmap));
 			break;
 			case kCelTypeColor:
-				_celObj = new CelObjColor(_celInfo.color, _insetRect.width(), _insetRect.height());
+				_celObj.reset(new CelObjColor(_celInfo.color, _insetRect.width(), _insetRect.height()));
 			break;
 		}
 	}
@@ -525,7 +518,7 @@ void ScreenItem::printDebugInfo(Console *con) const {
 
 	con->debugPrintf("    %s\n", _celInfo.toString().c_str());
 
-	if (_celObj != nullptr) {
+	if (_celObj) {
 		con->debugPrintf("    width %d, height %d, x-resolution %d, y-resolution %d\n",
 			_celObj->_width,
 			_celObj->_height,
@@ -574,8 +567,7 @@ void ScreenItem::update() {
 	}
 	_deleted = 0;
 
-	delete _celObj;
-	_celObj = nullptr;
+	_celObj.reset();
 }
 
 Common::Rect ScreenItem::getNowSeenRect(const Plane &plane) const {
@@ -595,8 +587,8 @@ Common::Rect ScreenItem::getNowSeenRect(const Plane &plane) const {
 		nsRect = celObjRect;
 	}
 
-	const uint16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	const uint16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+	const uint16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
+	const uint16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
 
 	Ratio scaleX, scaleY;
 	if (_scale.signal == kScaleSignalManual) {
@@ -623,9 +615,11 @@ Common::Rect ScreenItem::getNowSeenRect(const Plane &plane) const {
 		// high resolution coordinates
 
 		if (_useInsetRect) {
-			Ratio scriptToCelX(celObj._xResolution, scriptWidth);
-			Ratio scriptToCelY(celObj._yResolution, scriptHeight);
-			mulru(nsRect, scriptToCelX, scriptToCelY, 0);
+			if (getSciVersion() < SCI_VERSION_2_1_LATE) {
+				const Ratio scriptToCelX(celObj._xResolution, scriptWidth);
+				const Ratio scriptToCelY(celObj._yResolution, scriptHeight);
+				mulru(nsRect, scriptToCelX, scriptToCelY, 0);
+			}
 
 			if (nsRect.intersects(celObjRect)) {
 				nsRect.clip(celObjRect);
@@ -636,15 +630,13 @@ Common::Rect ScreenItem::getNowSeenRect(const Plane &plane) const {
 
 		if (!scaleX.isOne() || !scaleY.isOne()) {
 			// Different games use a different cel scaling mode, but the
-			// difference isn't consistent across SCI versions; instead,
-			// it seems to be related to an update that happened during
-			// SCI2.1mid where games started using hi-resolution game
-			// scripts
+			// difference isn't consistent across SCI versions; instead, it
+			// seems to be related to an update that happened during SCI2.1mid
+			// where games started using high-resolution game scripts
 			if (scriptWidth == kLowResX) {
 				mulinc(nsRect, scaleX, scaleY);
-				// TODO: This was in the original code, baked into the
-				// multiplication though it is not immediately clear
-				// why this is the only one that reduces the BR corner
+				// TODO: This was in SSCI, baked into the multiplication. It is
+				// not clear why this is the only one that reduces the BR corner
 				nsRect.right -= 1;
 				nsRect.bottom -= 1;
 			} else {
@@ -665,8 +657,12 @@ Common::Rect ScreenItem::getNowSeenRect(const Plane &plane) const {
 			}
 		}
 
-		Ratio celToScriptX(scriptWidth, celObj._xResolution);
-		Ratio celToScriptY(scriptHeight, celObj._yResolution);
+		Ratio celToScriptX;
+		Ratio celToScriptY;
+		if (getSciVersion() < SCI_VERSION_2_1_LATE) {
+			celToScriptX = Ratio(scriptWidth, celObj._xResolution);
+			celToScriptY = Ratio(scriptHeight, celObj._yResolution);
+		}
 
 		originX = (originX * scaleX * celToScriptX).toInt();
 		originY = (originY * scaleY * celToScriptY).toInt();
@@ -678,9 +674,8 @@ Common::Rect ScreenItem::getNowSeenRect(const Plane &plane) const {
 
 		if (!scaleX.isOne() || !scaleY.isOne()) {
 			mulinc(nsRect, scaleX, scaleY);
-			// TODO: This was in the original code, baked into the
-			// multiplication though it is not immediately clear
-			// why this is the only one that reduces the BR corner
+			// TODO: This was in SSCI, baked into the multiplication. It is not
+			// clear why this is the only one that reduces the BR corner
 			nsRect.right -= 1;
 			nsRect.bottom -= 1;
 		}

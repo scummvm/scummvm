@@ -23,9 +23,11 @@
 #ifndef TITANIC_MATRIX_TRANSFORM_H
 #define TITANIC_MATRIX_TRANSFORM_H
 
-#include "titanic/star_control/dmatrix.h"
+#include "titanic/star_control/fvector.h"
 
 namespace Titanic {
+
+class FMatrix;
 
 class CMatrixTransform {
 private:
@@ -33,7 +35,7 @@ private:
 	CMatrixTransform resize(double factor) const;
 public:
 	double _field0;
-	DVector _vector;
+	FVector _vector;
 public:
 	CMatrixTransform() : _field0(1.0) {}
 
@@ -48,7 +50,7 @@ public:
 	void copyFrom(const CMatrixTransform &src);
 
 	double fn1() const;
-	void fn4(const DMatrix &m);
+	void fn4(const FMatrix &m);
 	CMatrixTransform fn5(double percent, const CMatrixTransform &src);
 };
 

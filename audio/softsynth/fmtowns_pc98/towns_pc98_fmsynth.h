@@ -66,6 +66,7 @@ public:
 	virtual void reset();
 
 	void writeReg(uint8 part, uint8 regAddress, uint8 value);
+	uint8 readReg(uint8 part, uint8 regAddress);
 
 	// AudioStream interface
 	int readBuffer(int16 *buffer, const int numSamples);
@@ -80,9 +81,6 @@ protected:
 	// additional output that has to be inserted into the buffer.
 	virtual void nextTickEx(int32 *buffer, uint32 bufferSize) {}
 
-	void toggleRegProtection(bool prot);
-	uint8 readSSGStatus();
-
 	virtual void timerCallbackA() = 0;
 	virtual void timerCallbackB() = 0;
 
@@ -94,6 +92,8 @@ protected:
 	void setVolumeIntern(int volA, int volB);
 	void setVolumeChannelMasks(int channelMaskA, int channelMaskB);
 
+	void setLevelSSG(int vol);
+
 	const int _numChan;
 	const int _numSSG;
 	const bool _hasPercussion;
@@ -104,7 +104,6 @@ protected:
 private:
 	void generateTables();
 	void nextTick(int32 *buffer, uint32 bufferSize);
-	void generateOutput(int32 &leftSample, int32 &rightSample, int32 *del, int32 *feed);
 
 	struct ChanInternal {
 		ChanInternal();
@@ -117,8 +116,6 @@ private:
 			frqModSvty = value << 5;
 		}
 
-		uint16 frqTemp;
-		uint8 fmIndex;
 		bool enableLeft;
 		bool enableRight;
 		bool updateEnvelopeParameters;
@@ -145,8 +142,6 @@ private:
 	int32 *_oprLevelOut;
 	int32 *_oprDetune;
 
-	bool _regProtectionFlag;
-
 	typedef void (TownsPC98_FmSynth::*ChipTimerProc)();
 	void idleTimerCallback() {}
 
@@ -170,6 +165,8 @@ private:
 	const float _baserate;
 	uint32 _timerbase;
 	uint32 _rtt;
+
+	uint8 _registers[255][2];
 
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;

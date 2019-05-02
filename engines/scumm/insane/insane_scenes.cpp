@@ -222,7 +222,7 @@ void Insane::stopSceneSounds(int sceneId) {
 	case 3:
 	case 21:
 		flag = 1;
-		// break is omittted intentionally
+		// fall through
 	case 13:
 		if (_actor[0].runningSound != 0)
 			smlayer_stopSound(_actor[0].runningSound);

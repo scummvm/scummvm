@@ -134,73 +134,12 @@ void HiRes5Engine::animateLights() const {
 	}
 }
 
-typedef Common::Functor1Mem<ScriptEnv &, int, HiRes5Engine> OpcodeH5;
-#define SetOpcodeTable(x) table = &x;
-#define Opcode(x) table->push_back(new OpcodeH5(this, &HiRes5Engine::x))
-#define OpcodeUnImpl() table->push_back(new OpcodeH5(this, 0))
-
 void HiRes5Engine::setupOpcodeTables() {
-	Common::Array<const Opcode *> *table = 0;
+	AdlEngine_v4::setupOpcodeTables();
 
-	SetOpcodeTable(_condOpcodes);
-	// 0x00
-	OpcodeUnImpl();
-	Opcode(o2_isFirstTime);
-	Opcode(o2_isRandomGT);
-	Opcode(o4_isItemInRoom);
-	// 0x04
-	Opcode(o3_isNounNotInRoom);
-	Opcode(o1_isMovesGT);
-	Opcode(o1_isVarEQ);
-	Opcode(o2_isCarryingSomething);
-	// 0x08
-	Opcode(o4_isVarGT);
-	Opcode(o1_isCurPicEQ);
-	OpcodeUnImpl();
-
-	SetOpcodeTable(_actOpcodes);
-	// 0x00
-	OpcodeUnImpl();
-	Opcode(o1_varAdd);
-	Opcode(o1_varSub);
-	Opcode(o1_varSet);
-	// 0x04
-	Opcode(o1_listInv);
-	Opcode(o4_moveItem);
-	Opcode(o1_setRoom);
-	Opcode(o2_setCurPic);
-	// 0x08
-	Opcode(o2_setPic);
-	Opcode(o1_printMsg);
-	Opcode(o4_setRegionToPrev);
-	Opcode(o_checkItemTimeLimits);
-	// 0x0c
-	Opcode(o4_moveAllItems);
-	Opcode(o1_quit);
-	Opcode(o4_setRegion);
-	Opcode(o4_save);
-	// 0x10
-	Opcode(o4_restore);
-	Opcode(o4_restart);
-	Opcode(o4_setRegionRoom);
-	Opcode(o_startAnimation);
-	// 0x14
-	Opcode(o1_resetPic);
-	Opcode(o1_goDirection<IDI_DIR_NORTH>);
-	Opcode(o1_goDirection<IDI_DIR_SOUTH>);
-	Opcode(o1_goDirection<IDI_DIR_EAST>);
-	// 0x18
-	Opcode(o1_goDirection<IDI_DIR_WEST>);
-	Opcode(o1_goDirection<IDI_DIR_UP>);
-	Opcode(o1_goDirection<IDI_DIR_DOWN>);
-	Opcode(o1_takeItem);
-	// 0x1c
-	Opcode(o1_dropItem);
-	Opcode(o4_setRoomPic);
-	Opcode(o_winGame);
-	OpcodeUnImpl();
-	// 0x20
-	Opcode(o2_initDisk);
+	_actOpcodes[0x0b] = opcode(&HiRes5Engine::o_checkItemTimeLimits);
+	_actOpcodes[0x13] = opcode(&HiRes5Engine::o_startAnimation);
+	_actOpcodes[0x1e] = opcode(&HiRes5Engine::o_winGame);
 }
 
 bool HiRes5Engine::isInventoryFull() {
@@ -292,7 +231,7 @@ int HiRes5Engine::o_winGame(ScriptEnv &e) {
 	showRoom();
 	playTones(_song, true);
 
-	return o1_quit(e);
+	return o_quit(e);
 }
 
 void HiRes5Engine::runIntro() {

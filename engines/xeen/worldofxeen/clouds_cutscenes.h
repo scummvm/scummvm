@@ -24,6 +24,7 @@
 #define XEEN_WORLDOFXEEN_CLOUDS_CUTSCENES_H
 
 #include "xeen/cutscenes.h"
+#include "xeen/subtitles.h"
 #include "xeen/xeen.h"
 
 namespace Xeen {
@@ -38,14 +39,49 @@ private:
 	static const byte _DECODE_TABLE1[256];
 	static const byte _DECODE_TABLE2[256];
 private:
+	Subtitles _subtitles;
+	SpriteResource _mirror, _mirrBack;
+	int _mergeX;
+private:
 	void loadScreen(const Common::String &name);
-public:
-	CloudsCutscenes(XeenEngine *vm) : Cutscenes(vm) {}
 
 	/**
 	 * Shows the Clouds of Xeen title screen
 	 */
 	bool showCloudsTitle();
+
+	/**
+	 * Inner implementation of the the Clouds of Xeen intro sequence
+	 */
+	bool showCloudsIntroInner();
+
+	/**
+	 * Shows part 1 of the Clouds of Xeen ending, with the castle being destroyed
+	 */
+	bool showCloudsEnding1();
+
+	/**
+	 * Shows part 2 of the Clouds of Xeen ending, King Roland's throneroom
+	 */
+	bool showCloudsEnding2();
+
+	/**
+	 * Shows part 3 of the Clouds of Xeen ending, which shows a display
+	 * of the game's monsters
+	 */
+	bool showCloudsEnding3();
+
+	/**
+	 * Shows part 4 of the Clouds of Xeen ending, the final score
+	 */
+	bool showCloudsEnding4(uint finalScore);
+
+	/**
+	 * Shows part 5 of the Clouds of Xeen ending, final king display
+	 */
+	bool showCloudsEnding5();
+public:
+	CloudsCutscenes(XeenEngine *vm) : Cutscenes(vm), _mergeX(0) {}
 
 	/**
 	 * Shows the Clouds of Xeen intro sequence
@@ -55,7 +91,7 @@ public:
 	/**
 	 * Shows the Clouds of Xeen ending sequence
 	 */
-	bool showCloudsEnding();
+	void showCloudsEnding(uint finalScore);
 };
 
 } // End of namespace WorldOfXeen

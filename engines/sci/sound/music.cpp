@@ -68,7 +68,16 @@ void SciMusic::init() {
 	_dwTempo = 0;
 
 	Common::Platform platform = g_sci->getPlatform();
-	uint32 deviceFlags = MDT_PCSPK | MDT_PCJR | MDT_ADLIB | MDT_MIDI;
+	uint32 deviceFlags;
+#ifdef ENABLE_SCI32
+	if (g_sci->_features->generalMidiOnly()) {
+		deviceFlags = MDT_MIDI;
+	} else {
+#endif
+		deviceFlags = MDT_PCSPK | MDT_PCJR | MDT_ADLIB | MDT_MIDI;
+#ifdef ENABLE_SCI32
+	}
+#endif
 
 	// Default to MIDI for Windows versions of SCI1.1 games, as their
 	// soundtrack is written for GM.
@@ -86,6 +95,9 @@ void SciMusic::init() {
 			deviceFlags |= MDT_TOWNS;
 	}
 
+	if (g_sci->getPlatform() == Common::kPlatformPC98)
+		deviceFlags |= MDT_PC98;
+
 	uint32 dev = MidiDriver::detectDevice(deviceFlags);
 	_musicType = MidiDriver::getMusicType(dev);
 
@@ -93,13 +105,18 @@ void SciMusic::init() {
 		warning("A Windows CD version with an alternate MIDI soundtrack has been chosen, "
 				"but no MIDI music device has been selected. Reverting to the DOS soundtrack");
 		g_sci->_features->forceDOSTracks();
+#ifdef ENABLE_SCI32
+	} else if (g_sci->_features->generalMidiOnly() && _musicType != MT_GM) {
+		warning("This game only supports General MIDI, but a non-GM device has "
+				"been selected. Some music may be wrong or missing");
+#endif
 	}
 
 	switch (_musicType) {
 	case MT_ADLIB:
 		// FIXME: There's no Amiga sound option, so we hook it up to AdLib
 		if (g_sci->getPlatform() == Common::kPlatformAmiga || platform == Common::kPlatformMacintosh)
-			_pMidiDrv = MidiPlayer_AmigaMac_create(_soundVersion);
+			_pMidiDrv = MidiPlayer_AmigaMac_create(_soundVersion, platform);
 		else
 			_pMidiDrv = MidiPlayer_AdLib_create(_soundVersion);
 		break;
@@ -114,6 +131,9 @@ void SciMusic::init() {
 		break;
 	case MT_TOWNS:
 		_pMidiDrv = MidiPlayer_FMTowns_create(_soundVersion);
+		break;
+	case MT_PC98:		
+		_pMidiDrv = MidiPlayer_PC9801_create(_soundVersion);
 		break;
 	default:
 		if (ConfMan.getBool("native_fb01"))
@@ -131,12 +151,6 @@ void SciMusic::init() {
 			// HACK: The Fun Seeker's Guide demo doesn't have patch 3 and the version
 			// of the Adlib driver (adl.drv) that it includes is unsupported. That demo
 			// doesn't have any sound anyway, so this shouldn't be fatal.
-		} else if (g_sci->getGameId() == GID_MOTHERGOOSEHIRES) {
-			// HACK: Mixed-Up Mother Goose Deluxe does not seem to use synthesized music,
-			// so just set a default tempo (for fading)
-			// TODO: Review this
-			_dwTempo = 1000000 / 250;
-			warning("Temporary music hack for MUMG Deluxe");
 		} else {
 			error("Failed to initialize sound driver");
 		}
@@ -342,8 +356,27 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 	pSnd->time = ++_timeCounter;
 
 	if (track) {
+		bool playSample;
+
+		if (_soundVersion <= SCI_VERSION_0_LATE && !_useDigitalSFX) {
+			// For SCI0 the digital sample is present in the same track as the
+			// MIDI. If the user specifically requests not to use the digital
+			// samples, play the MIDI data instead. If the MIDI portion of the
+			// track is empty however, play the digital sample anyway. This is
+			// necessary for e.g. the "Where am I?" sample in the SQ3 intro.
+			playSample = false;
+
+			if (track->channelCount == 2) {
+				SoundResource::Channel &chan = track->channels[0];
+				if (chan.data.size() < 2 || chan.data[1] == SCI_MIDI_EOT) {
+					playSample = true;
+				}
+			}
+		} else
+			playSample = (track->digitalChannelNr != -1);
+
 		// Play digital sample
-		if (track->digitalChannelNr != -1) {
+		if (playSample) {
 			const SciSpan<const byte> &channelData = track->channels[track->digitalChannelNr].data;
 			delete pSnd->pStreamAud;
 			byte flags = Audio::FLAG_UNSIGNED;
@@ -599,13 +632,7 @@ void SciMusic::soundStop(MusicEntry *pSnd) {
 
 void SciMusic::soundSetVolume(MusicEntry *pSnd, byte volume) {
 	assert(volume <= MUSIC_VOLUME_MAX);
-	if (pSnd->isSample) {
-#ifdef ENABLE_SCI32
-		if (_soundVersion >= SCI_VERSION_2_1_EARLY) {
-			g_sci->_audio32->setVolume(ResourceId(kResourceTypeAudio, pSnd->resourceId), pSnd->soundObj, volume);
-		}
-#endif
-	} else if (pSnd->pMidiParser) {
+	if (!pSnd->isSample && pSnd->pMidiParser) {
 		Common::StackLock lock(_mutex);
 		pSnd->pMidiParser->mainThreadBegin();
 		pSnd->pMidiParser->setVolume(volume);

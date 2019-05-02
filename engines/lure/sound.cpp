@@ -165,7 +165,7 @@ void SoundManager::bellsBodge() {
 			break;
 		case 2:
 			setVolume(0, 15);
-			// Deliberate fall through
+			// fall through
 		default:
 			killSound(1);
 			break;
@@ -649,10 +649,7 @@ MidiMusic::~MidiMusic() {
 }
 
 void MidiMusic::setVolume(int volume) {
-	if (volume < 0)
-		volume = 0;
-	else if (volume > 255)
-		volume = 255;
+	volume = CLIP(volume, 0, 255);
 
 	if (_volume == volume)
 		return;

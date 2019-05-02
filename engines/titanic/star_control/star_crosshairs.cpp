@@ -25,6 +25,7 @@
 #include "titanic/star_control/star_camera.h"
 #include "titanic/star_control/star_field.h"
 #include "titanic/star_control/star_ref.h"
+#include "titanic/support/simple_file.h"
 
 namespace Titanic {
 
@@ -39,8 +40,15 @@ void CStarCrosshairs::selectStar(int index, CVideoSurface *surface,
 			// All the stars selected so far have been matched. Only allow
 			// a selection addition if not all three stars have been found
 			if (!isSolved()) {
-				// Don't allow the most recent match to be re-selected
+				// Don't allow the most recent match or the one before
+				// it to be re-selected (while they are locked/matched)
 				if (_positions[index] != _entries[_entryIndex]) {
+					if (_entryIndex == 1) {
+						// 2 stars are matched
+						if (_positions[index] == _entries[_entryIndex - 1])
+							return;
+					}
+
 					surface->lock();
 
 					// Draw crosshairs around the selected star
@@ -63,6 +71,7 @@ void CStarCrosshairs::selectStar(int index, CVideoSurface *surface,
 			// So we allow the user to reselect it to remove the selection, or shift
 			// the selection to some other star
 			if (_positions[index] == _entries[_entryIndex]) {
+				// Player has selected the most recent star
 				// Remove the crosshairs for the previously selected star
 				surface->lock();
 				CSurfaceArea surfaceArea(surface);
@@ -76,6 +85,15 @@ void CStarCrosshairs::selectStar(int index, CVideoSurface *surface,
 				const CBaseStarEntry *starP = starField->getDataPtr(_positions[index]._index1);
 				markers->addStar(starP);
 			} else {
+				// Player has selected some other star other than the most recent
+				// Remove/Add it if it is not one of the other star(s) already matched
+
+				// Check that it is not a previously star and don't remove it if it is
+				for (int i = 0; i < _entryIndex; ++i) {
+					if (_positions[index] == _entries[i])
+						return;
+				}
+
 				// Erase the prior selection and draw the new one
 				surface->lock();
 				CSurfaceArea surfaceArea(surface);

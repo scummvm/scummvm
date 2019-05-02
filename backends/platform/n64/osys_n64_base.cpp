@@ -227,7 +227,7 @@ int OSystem_N64::getDefaultGraphicsMode() const {
 bool OSystem_N64::setGraphicsMode(const char *mode) {
 	int i = 0;
 	while (s_supportedGraphicsModes[i].name) {
-		if (!strcmpi(s_supportedGraphicsModes[i].name, mode)) {
+		if (!scumm_stricmp(s_supportedGraphicsModes[i].name, mode)) {
 			_graphicMode = s_supportedGraphicsModes[i].id;
 
 			switchGraphicModeId(_graphicMode);
@@ -408,7 +408,7 @@ void OSystem_N64::rebuildOffscreenMouseBuffer(void) {
 	}
 }
 
-void OSystem_N64::grabPalette(byte *colors, uint start, uint num) {
+void OSystem_N64::grabPalette(byte *colors, uint start, uint num) const {
 #ifdef N64_EXTREME_MEMORY_SAVING  // This way loses precisions
 	uint32 i;
 	uint16 color;

@@ -33,6 +33,7 @@ class CComputerScreen : public CGameObject {
 	bool MovieEndMsg(CMovieEndMsg *msg);
 	bool EnterViewMsg(CEnterViewMsg *msg);
 	bool TimerMsg(CTimerMsg *msg);
+	bool MovementMsg(CMovementMsg *msg);
 public:
 	CLASSDEF;
 	CComputerScreen();

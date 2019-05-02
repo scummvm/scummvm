@@ -984,7 +984,7 @@ OnceUpon::MenuAction OnceUpon::doIngameMenu() {
 		// User pressed the return to game button
 		action = kMenuActionPlay;
 
-	} else if (kMenuActionMainMenu) {
+	} else if (action == kMenuActionMainMenu) {
 
 		// User pressed the return to main menu button
 		action = handleMainMenu();

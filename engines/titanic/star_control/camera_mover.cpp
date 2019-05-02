@@ -21,7 +21,10 @@
  */
 
 #include "titanic/star_control/camera_mover.h"
-#include "common/textconsole.h"
+#include "titanic/star_control/base_stars.h" // includes class CStarVector
+#include "titanic/star_control/error_code.h"
+#include "titanic/support/simple_file.h"
+// Not currently being used: #include "common/textconsole.h"
 
 namespace Titanic {
 
@@ -32,14 +35,7 @@ CCameraMover::CCameraMover(const CNavigationInfo *src) {
 	if (src) {
 		copyFrom(src);
 	} else {
-		_speed = 0.0;
-		_speedChangeCtr = 0.0;
-		_speedChangeInc = 20.0;
-		_unused = 0.0;
-		_maxSpeed = 50000.0;
-		_unusedX = 1.0;
-		_unusedY = 1.0;
-		_unusedZ = 0.0;
+		reset();
 	}
 }
 
@@ -47,34 +43,62 @@ CCameraMover::~CCameraMover() {
 	clear();
 }
 
-void CCameraMover::copyFrom(const CNavigationInfo *src) {
-	*((CNavigationInfo *)this) = *src;
-}
-
-void CCameraMover::copyTo(CNavigationInfo *dest) {
-	*dest = *((CNavigationInfo *)this);
-}
-
-void CCameraMover::increaseSpeed() {
-	if (!isLocked() && _speed < _maxSpeed) {
-		_speedChangeCtr += _speedChangeInc;
-		if (_speedChangeCtr > _speed)
-			_speed -= _speedChangeCtr;
-		else
-			_speed += _speedChangeCtr;
+void CCameraMover::clear() {
+	if (_starVector) {
+		delete _starVector;
+		_starVector = nullptr;
 	}
 }
 
-void CCameraMover::decreaseSpeed() {
-	if (!isLocked()) {
-		_speedChangeCtr -= _speedChangeInc;
-		if (_speedChangeCtr > _speed)
-			_speed -= _speedChangeCtr;
-		else
-			_speed += _speedChangeCtr;
+void CCameraMover::reset() {
+	_speed = 0.0;
+	_speedChangeCtr = 0.0;
+	_speedChangeInc = 20.0;
+	_unused = 0.0;
+	_maxSpeed = 50000.0;
+	_unusedX = 1.0;
+	_unusedY = 1.0;
+	_unusedZ = 0.0;
+}
 
-		if (_speedChangeCtr < 0.0)
-			_speedChangeCtr = 0.0;
+void CCameraMover::setVector(CStarVector *sv) {
+	clear();
+	_starVector = sv;
+}
+
+void CCameraMover::copyFrom(const CNavigationInfo *src) {
+	_speed = src->_speed;
+	_unused = src->_speedChangeCtr;
+	_maxSpeed = src->_speedChangeInc;
+	_speedChangeCtr = src->_unused;
+	_speedChangeInc = src->_maxSpeed;
+	_unusedX = src->_unusedX;
+	_unusedY = src->_unusedY;
+	_unusedZ = src->_unusedZ;
+}
+
+void CCameraMover::copyTo(CNavigationInfo *dest) {
+	dest->_speed = _speed;
+	dest->_speedChangeCtr = _unused;
+	dest->_speedChangeInc = _maxSpeed;
+	dest->_unused = _speedChangeCtr;
+	dest->_maxSpeed = _speedChangeInc;
+	dest->_unusedX = _unusedX;
+	dest->_unusedY = _unusedY;
+	dest->_unusedZ = _unusedZ;
+}
+
+void CCameraMover::increaseForwardSpeed() {
+	if (!isLocked() && _speed < _maxSpeed) {
+		_speedChangeCtr += _speedChangeInc;
+		_speed += ABS(_speedChangeCtr);
+	}
+}
+
+void CCameraMover::increaseBackwardSpeed() {
+	if (!isLocked() && _speed > -_maxSpeed) {
+		_speedChangeCtr -= _speedChangeInc;
+		_speed -= ABS(_speedChangeCtr);
 	}
 }
 
@@ -90,28 +114,7 @@ void CCameraMover::stop() {
 	}
 }
 
-void CCameraMover::updatePosition(CErrorCode &errorCode, FVector &pos, FMatrix &orientation) {
-	if (_speed > 0.0) {
-		pos._x += orientation._row3._x * _speed;
-		pos._y += orientation._row3._y * _speed;
-		pos._z += orientation._row3._z * _speed;
-
-		errorCode.set();
-	}
-}
-
-void CCameraMover::setVector(CStarVector *sv) {
-	clear();
-	_starVector = sv;
-}
-
-void CCameraMover::clear() {
-	if (_starVector) {
-		delete _starVector;
-		_starVector = nullptr;
-	}
-}
-
+// TODO: this is confusing to negate the val value
 void CCameraMover::load(SimpleFile *file, int val) {
 	if (!val) {
 		_speed = file->readFloat();
@@ -137,6 +140,7 @@ void CCameraMover::save(SimpleFile *file, int indent) {
 }
 
 void CCameraMover::incLockCount() {
+	if (_lockCounter < 3)
 	++_lockCounter;
 }
 

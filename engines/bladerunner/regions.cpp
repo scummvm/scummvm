@@ -22,16 +22,14 @@
 
 #include "bladerunner/regions.h"
 
+#include "bladerunner/savefile.h"
+
 namespace BladeRunner {
 
 Regions::Regions() {
 	_enabled = true;
-	_regions = new Region[10];
+	_regions.resize(10);
 	clear();
-}
-
-Regions::~Regions() {
-	delete[] _regions;
 }
 
 void BladeRunner::Regions::clear() {
@@ -43,12 +41,12 @@ bool Regions::add(int index, Common::Rect rect, int type) {
 	if (index < 0 || index >= 10)
 		return false;
 
-	if (_regions[index]._present)
+	if (_regions[index].present)
 		return false;
 
-	_regions[index]._rectangle = rect;
-	_regions[index]._type = type;
-	_regions[index]._present = 1;
+	_regions[index].rectangle = rect;
+	_regions[index].type = type;
+	_regions[index].present = 1;
 
 	return true;
 }
@@ -57,34 +55,33 @@ bool Regions::remove(int index) {
 	if (index < 0 || index >= 10)
 		return false;
 
-	_regions[index]._rectangle = Common::Rect(-1, -1, -1, -1);
-	_regions[index]._type = -1;
-	_regions[index]._present = 0;
+	_regions[index].rectangle = Common::Rect(-1, -1, -1, -1);
+	_regions[index].type = -1;
+	_regions[index].present = 0;
 
 	return true;
 }
 
-int Regions::getTypeAtXY(int x, int y) {
+int Regions::getTypeAtXY(int x, int y) const {
 	int index = getRegionAtXY(x, y);
 
 	if (index == -1)
 		return -1;
 
-	return _regions[index]._type;
+	return _regions[index].type;
 }
 
-int Regions::getRegionAtXY(int x, int y) {
+int Regions::getRegionAtXY(int x, int y) const {
 	if (!_enabled)
 		return -1;
 
 	for (int i = 0; i != 10; ++i) {
-		if (!_regions[i]._present)
+		if (!_regions[i].present)
 			continue;
 
 		// Common::Rect::contains is exclusive of right and bottom but
 		// Blade Runner wants inclusive, so we adjust the edges.
-		// TODO: Roll our own rect class?
-		Common::Rect r = _regions[i]._rectangle;
+		Common::Rect r = _regions[i].rectangle;
 		r.right++;
 		r.bottom++;
 
@@ -101,6 +98,24 @@ void Regions::setEnabled(bool enabled) {
 
 void Regions::enable() {
 	_enabled = true;
+}
+
+void Regions::save(SaveFileWriteStream &f) {
+	f.writeBool(_enabled);
+	for (int i = 0; i != 10; ++i) {
+		f.writeRect(_regions[i].rectangle);
+		f.writeInt(_regions[i].type);
+		f.writeInt(_regions[i].present);
+	}
+}
+
+void Regions::load(SaveFileReadStream &f) {
+	_enabled = f.readBool();
+	for (int i = 0; i != 10; ++i) {
+		_regions[i].rectangle = f.readRect();
+		_regions[i].type = f.readInt();
+		_regions[i].present = f.readInt();
+	}
 }
 
 } // End of namespace BladeRunner

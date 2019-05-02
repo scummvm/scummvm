@@ -228,7 +228,7 @@ void DirectorEngine::testFontScaling() {
 	int w = 640;
 	int h = 480;
 
-	initGraphics(w, h, true);
+	initGraphics(w, h);
 	_system->getPaletteManager()->setPalette(defaultPalette, 0, 256);
 
 	Graphics::ManagedSurface surface;

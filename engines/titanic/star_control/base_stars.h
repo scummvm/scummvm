@@ -23,16 +23,22 @@
 #ifndef TITANIC_BASE_STARS_H
 #define TITANIC_BASE_STARS_H
 
-#include "titanic/support/simple_file.h"
-#include "titanic/star_control/frange.h"
-#include "titanic/star_control/star_closeup.h"
-#include "titanic/star_control/surface_area.h"
+#include "titanic/star_control/frange.h" // class Fvector
+#include "common/array.h"
+
+namespace Common {
+class SeekableReadStream;
+}
 
 namespace Titanic {
 
 enum StarMode { MODE_STARFIELD = 0, MODE_PHOTO = 1 };
 
 class CStarCamera;
+class CStarCloseup;
+class CString;
+class CSurfaceArea;
+class SimpleFile;
 
 struct CBaseStarEntry {
 	byte _red;

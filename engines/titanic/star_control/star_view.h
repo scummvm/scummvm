@@ -23,18 +23,19 @@
 #ifndef TITANIC_STAR_VIEW_H
 #define TITANIC_STAR_VIEW_H
 
-#include "titanic/support/simple_file.h"
-#include "titanic/support/video_surface.h"
 #include "titanic/star_control/star_camera.h"
-#include "titanic/star_control/viewport.h"
 #include "titanic/star_control/surface_fader.h"
-#include "titanic/star_control/error_code.h"
-#include "titanic/star_control/fvector.h"
+#include "titanic/star_control/viewport.h"
+#include "titanic/support/rect.h"
 
 namespace Titanic {
 
+class CErrorCode;
+class CGameObject;
 class CStarControl;
 class CStarField;
+class CVideoSurface;
+class FVector;
 
 class CStarView {
 private:
@@ -50,7 +51,6 @@ private:
 	bool _field218;
 	bool _showingPhoto;
 private:
-	bool fn1();
 	void fn18(CStarCamera *camera);
 	void fn19(int v);
 
@@ -71,6 +71,7 @@ private:
 		CVideoSurface **surface);
 public:
 	CStarView();
+	~CStarView();
 
 	/**
 	 * Load the data for the class from file
@@ -93,6 +94,11 @@ public:
 	 * Allows the item to draw itself
 	 */
 	void draw(CScreenManager *screenManager);
+
+	/**
+	 * Updates the camera, allowing for movement
+	 */
+	bool updateCamera();
 
 	/**
 	 * Handles mouse down messages
@@ -142,14 +148,14 @@ public:
 	 * Toggles between starfield and photo modes
 	 */
 	void toggleMode();
-	
+
 	void fn11();
 
 	/**
 	 * Toggles whether the viewpoint box is visible in the starfield
 	 */
 	void toggleBox();
-	
+
 	void fn13();
 	void fn14();
 
@@ -157,17 +163,16 @@ public:
 	 * Called when the photograph is used on the navigation computer
 	 */
 	void setHasReference();
-	
+
 	/**
-	  * Handles locking in a star
-	  */
+	 * Handles locking in a star
+	 */
 	void lockStar();
 
 	/**
 	 * Handles unlocking a star
 	 */
 	void unlockStar();
-
 };
 
 } // End of namespace Titanic

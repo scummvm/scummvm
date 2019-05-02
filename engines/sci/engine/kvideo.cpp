@@ -42,6 +42,7 @@
 #include "video/qt_decoder.h"
 #include "sci/video/seq_decoder.h"
 #ifdef ENABLE_SCI32
+#include "sci/engine/guest_additions.h"
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/video32.h"
 #include "sci/video/robot_decoder.h"
@@ -49,17 +50,14 @@
 
 namespace Sci {
 
-void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
-	if (!videoDecoder)
-		return;
-
-	videoDecoder->start();
+void playVideo(Video::VideoDecoder &videoDecoder) {
+	videoDecoder.start();
 
 	Common::SpanOwner<SciSpan<byte> > scaleBuffer;
-	byte bytesPerPixel = videoDecoder->getPixelFormat().bytesPerPixel;
-	uint16 width = videoDecoder->getWidth();
-	uint16 height = videoDecoder->getHeight();
-	uint16 pitch = videoDecoder->getWidth() * bytesPerPixel;
+	byte bytesPerPixel = videoDecoder.getPixelFormat().bytesPerPixel;
+	uint16 width = videoDecoder.getWidth();
+	uint16 height = videoDecoder.getHeight();
+	uint16 pitch = videoDecoder.getWidth() * bytesPerPixel;
 	uint16 screenWidth = g_sci->_gfxScreen->getDisplayWidth();
 	uint16 screenHeight = g_sci->_gfxScreen->getDisplayHeight();
 	uint32 numPixels;
@@ -69,7 +67,7 @@ void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
 		height *= 2;
 		pitch *= 2;
 		numPixels = width * height * bytesPerPixel;
-		scaleBuffer->allocate(numPixels, videoState.fileName + " scale buffer");
+		scaleBuffer->allocate(numPixels, "video scale buffer");
 	}
 
 	uint16 x = (screenWidth - width) / 2;
@@ -77,27 +75,27 @@ void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
 
 	bool skipVideo = false;
 
-	if (videoDecoder->hasDirtyPalette()) {
-		const byte *palette = videoDecoder->getPalette();
+	if (videoDecoder.hasDirtyPalette()) {
+		const byte *palette = videoDecoder.getPalette();
 		g_system->getPaletteManager()->setPalette(palette, 0, 255);
 	}
 
-	while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
-		if (videoDecoder->needsUpdate()) {
-			const Graphics::Surface *frame = videoDecoder->decodeNextFrame();
+	while (!g_engine->shouldQuit() && !videoDecoder.endOfVideo() && !skipVideo) {
+		if (videoDecoder.needsUpdate()) {
+			const Graphics::Surface *frame = videoDecoder.decodeNextFrame();
 
 			if (frame) {
 				if (scaleBuffer) {
 					const SciSpan<const byte> input((const byte *)frame->getPixels(), frame->w * frame->h * bytesPerPixel);
 					// TODO: Probably should do aspect ratio correction in KQ6
-					g_sci->_gfxScreen->scale2x(input, *scaleBuffer, videoDecoder->getWidth(), videoDecoder->getHeight(), bytesPerPixel);
+					g_sci->_gfxScreen->scale2x(input, *scaleBuffer, videoDecoder.getWidth(), videoDecoder.getHeight(), bytesPerPixel);
 					g_system->copyRectToScreen(scaleBuffer->getUnsafeDataAt(0, pitch * height), pitch, x, y, width, height);
 				} else {
 					g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, width, height);
 				}
 
-				if (videoDecoder->hasDirtyPalette()) {
-					const byte *palette = videoDecoder->getPalette();
+				if (videoDecoder.hasDirtyPalette()) {
+					const byte *palette = videoDecoder.getPalette();
 					g_system->getPaletteManager()->setPalette(palette, 0, 255);
 				}
 
@@ -115,8 +113,6 @@ void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState) {
 
 		g_system->delayMillis(10);
 	}
-
-	delete videoDecoder;
 }
 
 reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
@@ -129,9 +125,9 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	uint16 screenWidth = g_system->getWidth();
 	uint16 screenHeight = g_system->getHeight();
 
-	Video::VideoDecoder *videoDecoder = 0;
+	Common::ScopedPtr<Video::VideoDecoder> videoDecoder;
 
-	if (argv[0].getSegment() != 0) {
+	if (argv[0].isPointer()) {
 		Common::String filename = s->_segMan->getString(argv[0]);
 
 		if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
@@ -139,26 +135,25 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 			// The only argument is the string for the video
 
 			// HACK: Switch to 16bpp graphics for Cinepak.
-			initGraphics(screenWidth, screenHeight, screenWidth > 320, NULL);
+			initGraphics(screenWidth, screenHeight, nullptr);
 
 			if (g_system->getScreenFormat().bytesPerPixel == 1) {
 				warning("This video requires >8bpp color to be displayed, but could not switch to RGB color mode");
 				return NULL_REG;
 			}
 
-			videoDecoder = new Video::QuickTimeDecoder();
+			videoDecoder.reset(new Video::QuickTimeDecoder());
 			if (!videoDecoder->loadFile(filename))
 				error("Could not open '%s'", filename.c_str());
 		} else {
 			// DOS SEQ
 			// SEQ's are called with no subops, just the string and delay
 			// Time is specified as ticks
-			videoDecoder = new SEQDecoder(argv[1].toUint16());
+			videoDecoder.reset(new SEQDecoder(argv[1].toUint16()));
 
 			if (!videoDecoder->loadFile(filename)) {
 				warning("Failed to open movie file %s", filename.c_str());
-				delete videoDecoder;
-				videoDecoder = 0;
+				videoDecoder.reset();
 			}
 		}
 	} else {
@@ -169,28 +164,10 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 		switch (argv[0].toUint16()) {
 		case 0: {
 			Common::String filename = s->_segMan->getString(argv[1]);
-
-			if (filename.equalsIgnoreCase("gk2a.avi")) {
-				// HACK: Switch to 16bpp graphics for Indeo3.
-				// The only known movie to do use this codec is the GK2 demo trailer
-				// If another video turns up that uses Indeo, we may have to add a better
-				// check.
-				initGraphics(screenWidth, screenHeight, screenWidth > 320, NULL);
-
-				if (g_system->getScreenFormat().bytesPerPixel == 1) {
-					warning("This video requires >8bpp color to be displayed, but could not switch to RGB color mode");
-					return NULL_REG;
-				}
-			}
-
-			videoDecoder = new Video::AVIDecoder();
-
+			videoDecoder.reset(new Video::AVIDecoder());
 			if (!videoDecoder->loadFile(filename.c_str())) {
 				warning("Failed to open movie file %s", filename.c_str());
-				delete videoDecoder;
-				videoDecoder = 0;
-			} else {
-				s->_videoState.fileName = filename;
+				videoDecoder.reset();
 			}
 			break;
 		}
@@ -200,13 +177,13 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	if (videoDecoder) {
-		playVideo(videoDecoder, s->_videoState);
+		playVideo(*videoDecoder);
 
 		// HACK: Switch back to 8bpp if we played a true color video.
 		// We also won't be copying the screen to the SCI screen...
 		if (g_system->getScreenFormat().bytesPerPixel != 1)
-			initGraphics(screenWidth, screenHeight, screenWidth > 320);
-		else if (getSciVersion() < SCI_VERSION_2) {
+			initGraphics(screenWidth, screenHeight);
+		else {
 			g_sci->_gfxScreen->kernelSyncWithFramebuffer();
 			g_sci->_gfxPalette16->kernelSyncScreenPalette();
 		}
@@ -332,11 +309,12 @@ reg_t kShowMovieWinInit(EngineState *s, int argc, reg_t *argv) {
 		--argc;
 	}
 
-	const int16 x = argv[0].toSint16();
-	const int16 y = argv[1].toSint16();
-	const int16 width = argc > 3 ? argv[2].toSint16() : 0;
-	const int16 height = argc > 3 ? argv[3].toSint16() : 0;
-	return make_reg(0, g_sci->_video32->getAVIPlayer().init1x(x, y, width, height));
+	// argv[0] is a broken x-coordinate
+	// argv[1] is a broken y-coordinate
+	// argv[2] is an optional broken width
+	// argv[3] is an optional broken height
+	const bool pixelDouble = argc > 3 && argv[2].toSint16() && argv[3].toSint16();
+	return make_reg(0, g_sci->_video32->getAVIPlayer().init(pixelDouble));
 }
 
 reg_t kShowMovieWinPlay(EngineState *s, int argc, reg_t *argv) {
@@ -386,9 +364,9 @@ reg_t kShowMovieWinPlayUntilEvent(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kShowMovieWinInitDouble(EngineState *s, int argc, reg_t *argv) {
 	// argv[0] is a broken movie ID
-	const int16 x = argv[1].toSint16();
-	const int16 y = argv[2].toSint16();
-	return make_reg(0, g_sci->_video32->getAVIPlayer().init2x(x, y));
+	// argv[1] is a broken x-coordinate
+	// argv[2] is a broken y-coordinate
+	return make_reg(0, g_sci->_video32->getAVIPlayer().init(true));
 }
 
 reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
@@ -442,6 +420,10 @@ reg_t kPlayVMDGetStatus(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kPlayVMDPlayUntilEvent(EngineState *s, int argc, reg_t *argv) {
+	if (g_sci->_guestAdditions->kPlayDuckPlayVMDHook()) {
+		return make_reg(0, VMDPlayer::kEventFlagEnd);
+	}
+
 	const VMDPlayer::EventFlags flags = (VMDPlayer::EventFlags)argv[0].toUint16();
 	const int16 lastFrameNo = argc > 1 ? argv[1].toSint16() : -1;
 	const int16 yieldInterval = argc > 2 ? argv[2].toSint16() : -1;
@@ -454,8 +436,8 @@ reg_t kPlayVMDShowCursor(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kPlayVMDSetBlackoutArea(EngineState *s, int argc, reg_t *argv) {
-	const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+	const int16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
+	const int16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
 
 	Common::Rect blackoutArea;
 	blackoutArea.left = MAX<int16>(0, argv[0].toSint16());
@@ -483,6 +465,9 @@ reg_t kPlayDuck(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kPlayDuckPlay(EngineState *s, int argc, reg_t *argv) {
+	if (g_sci->_guestAdditions->kPlayDuckPlayVMDHook()) {
+		return NULL_REG;
+	}
 	kPlayDuckOpen(s, argc, argv);
 	g_sci->_video32->getDuckPlayer().play(-1);
 	g_sci->_video32->getDuckPlayer().close();

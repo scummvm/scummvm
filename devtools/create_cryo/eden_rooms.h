@@ -26,7 +26,7 @@
 // Note: the following data can be found in the original game's executable
 const int kNumRooms = 424;
 const room_t gameRooms[kNumRooms] = {
-	// Mo        
+	// Mo
 	{ 1, {255,  0,  0,  0}, 0, 66, 0xFFFF,29, 93,  1,  4},
 	{ 7, {  4,  0,  6,  0}, 4, 72, 0xFFFF, 8,143,  2,  2},
 	{ 3, { 24,  0,  5,  0}, 6, 99,      1, 6,  6,  3,  0},

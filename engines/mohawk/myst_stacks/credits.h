@@ -33,12 +33,12 @@ struct MystScriptEntry;
 
 namespace MystStacks {
 
-#define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
+#define DECLARE_OPCODE(x) void x(uint16 var, const ArgumentsArray &args)
 
 class Credits : public MystScriptParser {
 public:
-	Credits(MohawkEngine_Myst *vm);
-	~Credits();
+	explicit Credits(MohawkEngine_Myst *vm);
+	~Credits() override;
 
 	void disablePersistentScripts() override;
 	void runPersistentScripts() override;

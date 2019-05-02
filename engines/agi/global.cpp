@@ -69,7 +69,7 @@ byte AgiEngine::getVar(int16 varNr) {
 	switch (varNr) {
 	case VM_VAR_SECONDS:
 		getVarSecondsHeuristicTrigger();
-		// is supposed to fall through
+		// fall through
 	case VM_VAR_MINUTES:
 	case VM_VAR_HOURS:
 	case VM_VAR_DAYS:

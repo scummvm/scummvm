@@ -269,7 +269,12 @@ public:
 	virtual bool handleWord(uint id) const;
 
 	virtual int handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
-		uint val, uint tagId, uint remainder);
+		uint tag1, uint tag2, uint remainder);
+
+	/**
+	 * Returns true if the NPC's dial region affects quote responses
+	 */
+	virtual bool isQuoteDialled() const { return false; }
 
 	/**
 	 * Given an Id for a previously registered set of random number values,

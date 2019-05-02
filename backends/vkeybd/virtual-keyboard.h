@@ -226,7 +226,7 @@ public:
 protected:
 
 	OSystem *_system;
-	Archive *_fileArchive;
+	DisposablePtr<Archive> _fileArchive;
 
 	friend class VirtualKeyboardGUI;
 	VirtualKeyboardGUI *_kbdGUI;
@@ -237,7 +237,7 @@ protected:
 	VirtualKeyboardParser *_parser;
 
 	void reset();
-	bool openPack(const String &packName, const FSNode &node);
+	bool openPack(const String &packName, Archive *searchPath, DisposeAfterUse::Flag disposeSearchPath);
 	void deleteEvents();
 	bool checkModeResolutions();
 	void switchMode(Mode *newMode);

@@ -14,12 +14,12 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INTERNAL_RESAMPLER_H
-#define INTERNAL_RESAMPLER_H
+#ifndef MT32EMU_INTERNAL_RESAMPLER_H
+#define MT32EMU_INTERNAL_RESAMPLER_H
 
-#include "../SampleRateConverter.h"
+#include "../Enumerations.h"
 
-#include "FloatSampleProvider.h"
+#include "srctools/include/FloatSampleProvider.h"
 
 namespace MT32Emu {
 
@@ -27,7 +27,7 @@ class Synth;
 
 class InternalResampler {
 public:
-	InternalResampler(Synth &synth, double targetSampleRate, SampleRateConverter::Quality quality);
+	InternalResampler(Synth &synth, double targetSampleRate, SamplerateConversionQuality quality);
 	~InternalResampler();
 
 	void getOutputSamples(float *buffer, unsigned int length);
@@ -39,4 +39,4 @@ private:
 
 } // namespace MT32Emu
 
-#endif // INTERNAL_RESAMPLER_H
+#endif // MT32EMU_INTERNAL_RESAMPLER_H

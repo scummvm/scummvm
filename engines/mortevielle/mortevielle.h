@@ -33,7 +33,6 @@
 #include "common/random.h"
 #include "common/rect.h"
 #include "common/stack.h"
-#include "engines/advancedDetector.h"
 #include "engines/engine.h"
 #include "common/error.h"
 #include "graphics/surface.h"

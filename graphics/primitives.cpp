@@ -121,19 +121,16 @@ void drawThickLine2(int x1, int y1, int x2, int y2, int thick, int color, void (
 
 	if (dy <= dx) {
 		/* More-or-less horizontal. use wid for vertical stroke */
-		/* Doug Claar: watch out for NaN in atan2 (2.0.5) */
 
 		/* 2.0.12: Michael Schwartz: divide rather than multiply;
 			  TBB: but watch out for /0! */
-		double ac = cos(atan2((double)dy, (double)dx));
-		if (ac != 0) {
-			wid = thick / ac;
+		if (dx != 0 && thick != 0) {
+			double ac_recip = 1/dx * sqrt(dx * dx + dy * dy); // 1 / cos(atan2((double)dy, (double)dx));
+			wid = thick * ac_recip;
 		} else {
 			wid = 1;
 		}
-		if (wid == 0) {
-			wid = 1;
-		}
+
 		d = 2 * dy - dx;
 		incr1 = 2 * dy;
 		incr2 = 2 * (dy - dx);
@@ -185,14 +182,12 @@ void drawThickLine2(int x1, int y1, int x2, int y2, int thick, int color, void (
 		/* More-or-less vertical. use wid for horizontal stroke */
 		/* 2.0.12: Michael Schwartz: divide rather than multiply;
 		   TBB: but watch out for /0! */
-		double as = sin(atan2((double)dy, (double)dx));
-		if (as != 0) {
-			wid = thick / as;
+		if (dy != 0 && thick != 0) {
+			double as_recip = 1/dy * sqrt(dx * dx + dy * dy); // 1 / sin(atan2((double)dy, (double)dx));
+			wid = thick * as_recip;
 		} else {
 			wid = 1;
 		}
-		if (wid == 0)
-			wid = 1;
 
 		d = 2 * dx - dy;
 		incr1 = 2 * dx;
@@ -262,13 +257,13 @@ void drawRoundRect(Common::Rect &rect, int arc, int color, bool filled, void (*p
 
 		do {
 			if (filled) {
-				drawHLine(rect.left+x+r, rect.right-x-r, rect.top-y+r-stop, color, plotProc, data);
-				drawHLine(rect.left+x+r, rect.right-x-r, rect.bottom+y-r+stop, color, plotProc, data);
+				drawHLine(rect.left + x + r, rect.right - x - r, rect.top    - y + r - stop, color, plotProc, data);
+				drawHLine(rect.left + x + r, rect.right - x - r, rect.bottom + y - r + stop, color, plotProc, data);
 			} else {
-				(*plotProc)(rect.left+x+r, rect.top-y+r-stop, color, data);
-				(*plotProc)(rect.right-x-r, rect.top-y+r-stop, color, data);
-				(*plotProc)(rect.left+x+r, rect.bottom+y-r+stop, color, data);
-				(*plotProc)(rect.right-x-r, rect.bottom+y-r+stop, color, data);
+				(*plotProc)(rect.left  + x + r, rect.top    - y + r - stop, color, data);
+				(*plotProc)(rect.right - x - r, rect.top    - y + r - stop, color, data);
+				(*plotProc)(rect.left  + x + r, rect.bottom + y - r + stop, color, data);
+				(*plotProc)(rect.right - x - r, rect.bottom + y - r + stop, color, data);
 
 				lastx = x;
 				lasty = y;
@@ -284,15 +279,15 @@ void drawRoundRect(Common::Rect &rect, int arc, int color, bool filled, void (*p
 			x = lastx;
 			y = lasty;
 
-			drawHLine(rect.left+x+r, rect.right-x-r, rect.top-y+r-stop, color, plotProc, data);
-			drawHLine(rect.left+x+r, rect.right-x-r, rect.bottom+y-r+stop, color, plotProc, data);
+			drawHLine(rect.left + x + r, rect.right - x - r, rect.top    - y + r - stop, color, plotProc, data);
+			drawHLine(rect.left + x + r, rect.right - x - r, rect.bottom + y - r + stop, color, plotProc, data);
 		}
 
 		for (int i = 0; i < dy; i++) {
 			if (filled) {
 				drawHLine(rect.left, rect.right, rect.top + r + i, color, plotProc, data);
 			} else {
-				(*plotProc)(rect.left, rect.top + r + i, color, data);
+				(*plotProc)(rect.left,  rect.top + r + i, color, data);
 				(*plotProc)(rect.right, rect.top + r + i, color, data);
 			}
 		}
@@ -307,13 +302,13 @@ void drawRoundRect(Common::Rect &rect, int arc, int color, bool filled, void (*p
 
 		do {
 			if (filled) {
-				drawVLine(rect.left-x+r-stop, rect.top+y+r, rect.bottom-y-r, color, plotProc, data);
-				drawVLine(rect.right+x-r+stop, rect.top+y+r, rect.bottom-y-r, color, plotProc, data);
+				drawVLine(rect.left  - x + r - stop, rect.top + y + r, rect.bottom - y - r, color, plotProc, data);
+				drawVLine(rect.right + x - r + stop, rect.top + y + r, rect.bottom - y - r, color, plotProc, data);
 			} else {
-				(*plotProc)(rect.left-x+r-stop, rect.top+y+r, color, data);
-				(*plotProc)(rect.left-x+r-stop, rect.bottom-y-r, color, data);
-				(*plotProc)(rect.right+x-r+stop, rect.top+y+r, color, data);
-				(*plotProc)(rect.right+x-r+stop, rect.bottom-y-r, color, data);
+				(*plotProc)(rect.left  - x + r - stop, rect.top    + y + r, color, data);
+				(*plotProc)(rect.left  - x + r - stop, rect.bottom - y - r, color, data);
+				(*plotProc)(rect.right + x - r + stop, rect.top    + y + r, color, data);
+				(*plotProc)(rect.right + x - r + stop, rect.bottom - y - r, color, data);
 
 				lastx = x;
 				lasty = y;
@@ -329,15 +324,15 @@ void drawRoundRect(Common::Rect &rect, int arc, int color, bool filled, void (*p
 		if (!filled) {
 			x = lastx;
 			y = lasty;
-			drawVLine(rect.left-x+r-stop, rect.top+y+r, rect.bottom-y-r, color, plotProc, data);
-			drawVLine(rect.right+x-r+stop, rect.top+y+r, rect.bottom-y-r, color, plotProc, data);
+			drawVLine(rect.left  - x + r - stop, rect.top + y + r, rect.bottom - y - r, color, plotProc, data);
+			drawVLine(rect.right + x - r + stop, rect.top + y + r, rect.bottom - y - r, color, plotProc, data);
 		}
 
 		for (int i = 0; i < dx; i++) {
 			if (filled) {
 				drawVLine(rect.left + r + i, rect.top, rect.bottom, color, plotProc, data);
 			} else {
-				(*plotProc)(rect.left + r + i, rect.top, color, data);
+				(*plotProc)(rect.left + r + i, rect.top,    color, data);
 				(*plotProc)(rect.left + r + i, rect.bottom, color, data);
 			}
 		}
@@ -385,14 +380,14 @@ void drawPolygonScan(int *polyX, int *polyY, int npoints, Common::Rect &bbox, in
 
 // http://members.chello.at/easyfilter/bresenham.html
 void drawEllipse(int x0, int y0, int x1, int y1, int color, bool filled, void (*plotProc)(int, int, int, void *), void *data) {
-	int a = abs(x1-x0), b = abs(y1-y0), b1 = b&1; /* values of diameter */
-	long dx = 4*(1-a)*b*b, dy = 4*(b1+1)*a*a; /* error increment */
-	long err = dx+dy+b1*a*a, e2; /* error of 1.step */
+	int a = abs(x1 - x0), b = abs(y1 - y0), b1 = b & 1; /* values of diameter */
+	long dx = 4 * (1 - a) * b * b, dy = 4 * (b1 + 1) * a * a; /* error increment */
+	long err = dx + dy + b1 * a * a, e2; /* error of 1.step */
 
 	if (x0 > x1) { x0 = x1; x1 += a; } /* if called with swapped points */
 	if (y0 > y1) y0 = y1; /* .. exchange them */
-	y0 += (b+1)/2; y1 = y0-b1;   /* starting pixel */
-	a *= 8*a; b1 = 8*b*b;
+	y0 += (b + 1) / 2; y1 = y0 - b1;   /* starting pixel */
+	a *= 8 * a; b1 = 8 * b * b;
 
 	do {
 		if (filled) {
@@ -411,15 +406,15 @@ void drawEllipse(int x0, int y0, int x1, int y1, int color, bool filled, void (*
 
 	while (y0-y1 < b) {  /* too early stop of flat ellipses a=1 */
 		if (filled) {
-			drawHLine(x0-1, x0-1, y0, color, plotProc, data); /* -> finish tip of ellipse */
-			drawHLine(x1+1, x1+1, y0, color, plotProc, data);
-			drawHLine(x0-1, x0-1, y1, color, plotProc, data);
-			drawHLine(x1+1, x1+1, y1, color, plotProc, data);
+			drawHLine(x0 - 1, x0 - 1, y0, color, plotProc, data); /* -> finish tip of ellipse */
+			drawHLine(x1 + 1, x1 + 1, y0, color, plotProc, data);
+			drawHLine(x0 - 1, x0 - 1, y1, color, plotProc, data);
+			drawHLine(x1 + 1, x1 + 1, y1, color, plotProc, data);
 		} else {
-			(*plotProc)(x0-1, y0, color, data); /* -> finish tip of ellipse */
-			(*plotProc)(x1+1, y0, color, data);
-			(*plotProc)(x0-1, y1, color, data);
-			(*plotProc)(x1+1, y1, color, data);
+			(*plotProc)(x0 - 1, y0, color, data); /* -> finish tip of ellipse */
+			(*plotProc)(x1 + 1, y0, color, data);
+			(*plotProc)(x0 - 1, y1, color, data);
+			(*plotProc)(x1 + 1, y1, color, data);
 		}
 		y0++;
 		y1--;

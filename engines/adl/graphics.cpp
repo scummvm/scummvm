@@ -350,7 +350,7 @@ void GraphicsMan_v2::fillAt(Common::Point p, const byte pattern) {
 	const bool stopBit = !_display.getPixelBit(p);
 
 	// Move up into the open space above p
-	while (--p.y >= _bounds.top && canFillAt(p, stopBit));
+	while (--p.y >= _bounds.top && canFillAt(p, stopBit)) {}
 
 	// Then fill by moving down
 	while (++p.y < _bounds.bottom && canFillAt(p, stopBit))

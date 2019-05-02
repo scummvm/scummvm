@@ -56,9 +56,12 @@ public:
 	bool hasMouseFocus() const;
 
 	/**
-	 * Warp the mouse to the specified position in window coordinates.
+	 * Warp the mouse to the specified position in window coordinates. The mouse
+	 * will only be warped if the window is focused in the window manager.
+	 *
+	 * @returns true if the system cursor was warped.
 	 */
-	void warpMouseInWindow(uint x, uint y);
+	bool warpMouseInWindow(int x, int y);
 
 	/**
 	 * Iconifies the window.
@@ -73,6 +76,18 @@ public:
 	 */
 	bool getSDLWMInformation(SDL_SysWMinfo *info) const;
 
+	bool mouseIsGrabbed() const {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		if (_window) {
+			return SDL_GetWindowGrab(_window) == SDL_TRUE;
+		}
+#endif
+		return _inputGrabState;
+	}
+
+private:
+	bool _inputGrabState;
+
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 public:
 	/**
@@ -81,14 +96,14 @@ public:
 	SDL_Window *getSDLWindow() const { return _window; }
 
 	/**
-	 * Creates a new SDL window (and destroys the old one).
+	 * Creates or updates the SDL window.
 	 *
 	 * @param width   Width of the window.
 	 * @param height  Height of the window.
 	 * @param flags   SDL flags passed to SDL_CreateWindow
 	 * @return true on success, false otherwise
 	 */
-	bool createWindow(int width, int height, uint32 flags);
+	bool createOrUpdateWindow(int width, int height, uint32 flags);
 
 	/**
 	 * Destroys the current SDL window.
@@ -99,7 +114,15 @@ protected:
 	SDL_Window *_window;
 
 private:
-	bool _inputGrabState;
+	uint32 _lastFlags;
+
+	/**
+	 * Switching between software and OpenGL modes requires the window to be
+	 * destroyed and recreated. These properties store the position of the last
+	 * window so the new window will be created in the same place.
+	 */
+	int _lastX, _lastY;
+
 	Common::String _windowCaption;
 #endif
 };

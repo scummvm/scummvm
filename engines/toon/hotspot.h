@@ -50,10 +50,10 @@ public:
 	Hotspots(ToonEngine *vm);
 	~Hotspots();
 
-	bool LoadRif(const Common::String &rifName, const Common::String &additionalRifName);
-	int32 Find(int16 x, int16 y);
-	int32 FindBasedOnCorner(int16 x, int16 y);
-	HotspotData *Get(int32 id);
+	bool loadRif(const Common::String &rifName, const Common::String &additionalRifName);
+	int32 find(int16 x, int16 y);
+	int32 findBasedOnCorner(int16 x, int16 y);
+	HotspotData *get(int32 id);
 	int32 getCount() const { return _numItems; }
 
 	void load(Common::ReadStream *Stream);

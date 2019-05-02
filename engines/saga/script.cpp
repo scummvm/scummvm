@@ -1709,15 +1709,16 @@ void Script::whichObject(const Point& mousePoint) {
 					if (_vm->getGameId() == GID_IHNM && objectId == 8199)
 						newRightButtonVerb = getVerbType(kVerbLookAt);
 
-					if ((_currentVerb == getVerbType(kVerbPickUp)) ||
-						(_currentVerb == getVerbType(kVerbOpen)) ||
-						(_currentVerb == getVerbType(kVerbClose)) ||
-						((_currentVerb == getVerbType(kVerbGive)) && !_firstObjectSet) ||
-						((_currentVerb == getVerbType(kVerbUse)) && !(actor->_flags & kFollower))) {
-							if (_vm->getGameId() == GID_ITE) {
-								objectId = ID_NOTHING;
-								newObjectId = ID_NOTHING;
-							}
+					bool actorIsFollower = (actor->_flags & kFollower);
+					bool actorCanBeUsed = (actor->_flags & kUsable);
+
+					if ( _currentVerb == getVerbType(kVerbPickUp) ||
+						 _currentVerb == getVerbType(kVerbOpen) ||
+						 _currentVerb == getVerbType(kVerbClose) ||
+						(_currentVerb == getVerbType(kVerbGive) && !_firstObjectSet) ||
+						(_currentVerb == getVerbType(kVerbUse) && !_firstObjectSet && !(actorIsFollower || actorCanBeUsed))) {
+							objectId = ID_NOTHING;
+							newObjectId = ID_NOTHING;
 						}
 				}
 			}

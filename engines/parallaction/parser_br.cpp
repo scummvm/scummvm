@@ -519,7 +519,7 @@ DECLARE_COMMAND_PARSER(location)  {
 
 	createCommand(_parser->_lookup);
 
-	ctxt.cmd->_string = strdup(_tokens[1]);
+	ctxt.cmd->_string = _tokens[1];
 	ctxt.nextToken++;
 
 	ctxt.cmd->_startPos.x = -1000;
@@ -550,7 +550,7 @@ DECLARE_COMMAND_PARSER(string)  {
 
 	createCommand(_parser->_lookup);
 
-	ctxt.cmd->_string = strdup(_tokens[1]);
+	ctxt.cmd->_string = _tokens[1];
 	ctxt.nextToken++;
 
 	parseCommandFlags();
@@ -685,11 +685,11 @@ DECLARE_COMMAND_PARSER(text)  {
 		ctxt.cmd->_zeta0 = -1;
 	}
 
-	ctxt.cmd->_string = strdup(_tokens[ctxt.nextToken]);
+	ctxt.cmd->_string = _tokens[ctxt.nextToken];
 	ctxt.nextToken++;
 
 	if (_tokens[ctxt.nextToken][0] != '\0' && scumm_stricmp("flags", _tokens[ctxt.nextToken])) {
-		ctxt.cmd->_string2 = strdup(_tokens[ctxt.nextToken]);
+		ctxt.cmd->_string2 = _tokens[ctxt.nextToken];
 		ctxt.nextToken++;
 	}
 
@@ -1011,11 +1011,11 @@ DECLARE_INSTRUCTION_PARSER(text)  {
 		ctxt.inst->_y = -1;
 	}
 
-	ctxt.inst->_text = strdup(_tokens[_si]);
+	ctxt.inst->_text = _tokens[_si];
 	_si++;
 
 	if (_tokens[_si][0] != '\0' && scumm_stricmp("flags", _tokens[_si])) {
-		ctxt.inst->_text2 = strdup(_tokens[_si]);
+		ctxt.inst->_text2 = _tokens[_si];
 	}
 	ctxt.inst->_index = _parser->_lookup;
 

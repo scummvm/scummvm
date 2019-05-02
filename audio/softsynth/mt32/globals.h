@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2017 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -87,7 +87,7 @@
 #define MT32EMU_MAX_STREAM_BUFFER_SIZE 32768
 
 /* This should correspond to the MIDI buffer size used in real h/w devices.
- * CM-32L control ROM seems using 1000 bytes, old MT-32 isn't confirmed by now.
+ * CM-32L control ROM is using 1000 bytes, and MT-32 GEN0 is using only 240 bytes (semi-confirmed by now).
  */
 #define MT32EMU_SYSEX_BUFFER_SIZE 1000
 

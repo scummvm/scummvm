@@ -28,7 +28,7 @@
 #include "sci/engine/vm_types.h"
 
 namespace Sci {
-enum ShowStyleType /* : uint8 */ {
+enum ShowStyleType {
 	kShowStyleNone = 0,
 	kShowStyleHShutterOut = 1,
 	kShowStyleHShutterIn = 2,
@@ -48,14 +48,12 @@ enum ShowStyleType /* : uint8 */ {
 };
 
 /**
- * Show styles represent transitions applied to draw planes.
- * One show style per plane can be active at a time.
+ * A show style represents a transition applied to a Plane. One show style per
+ * plane can be active at a time.
  */
 struct PlaneShowStyle {
 	/**
-	 * The ID of the plane this show style belongs to.
-	 * In SCI2.1mid (at least SQ6), per-plane transitions
-	 * were removed and a single plane ID is used.
+	 * The ID of the plane this transition applies to.
 	 */
 	reg_t plane;
 
@@ -65,9 +63,8 @@ struct PlaneShowStyle {
 	ShowStyleType type;
 
 	/**
-	 * When true, the show style is an entry transition
-	 * to a new room. When false, it is an exit
-	 * transition away from an old room.
+	 * When true, the show style is an entry transition to a new room. When
+	 * false, it is an exit transition away from an old room.
 	 */
 	bool fadeUp;
 
@@ -77,38 +74,35 @@ struct PlaneShowStyle {
 	int16 divisions;
 
 	/**
-	 * The color used by transitions that draw CelObjColor
-	 * screen items. -1 for transitions that do not draw
-	 * screen items.
+	 * The color used by transitions that draw CelObjColor screen items. -1 for
+	 * transitions that do not draw screen items.
 	 */
 	int16 color;
 
-	// TODO: Probably uint32
-	// TODO: This field probably should be used in order to
-	// provide time-accurate processing of show styles. In the
-	// actual SCI engine (at least 2–2.1mid) it appears that
-	// style transitions are drawn “as fast as possible”, one
-	// step per loop, even though this delay field exists
+	/**
+	 * The amount of time, in ticks, between each cycle of the animation.
+	 */
 	int delay;
 
-	// TODO: Probably bool, but never seems to be true?
+	/**
+	 * If true, GfxTransitions32 will yield back to the main game loop after
+	 * calculating the next frame. Otherwise, GfxTransitions32 takes exclusive
+	 * control over the game loop until the transition has completed.
+	 */
 	bool animate;
 
 	/**
-	 * The wall time at which the next step of the animation
-	 * should execute.
+	 * The time at which the next step of the animation should execute.
 	 */
 	uint32 nextTick;
 
 	/**
-	 * During playback of the show style, the current step
-	 * (out of divisions).
+	 * During playback of the show style, the current step (out of `divisions`).
 	 */
 	int currentStep;
 
 	/**
-	 * Whether or not this style has finished running and
-	 * is ready for disposal.
+	 * Whether or not this style has finished running and is ready for disposal.
 	 */
 	bool processed;
 
@@ -117,32 +111,30 @@ struct PlaneShowStyle {
 	//
 
 	/**
-	 * A list of screen items, each representing one
-	 * block of a wipe transition.
+	 * A list of screen items, each representing one block of a wipe transition.
+	 * These screen items are owned by GfxFrameout.
 	 */
 	Common::Array<ScreenItem *> screenItems;
 
 	/**
-	 * For wipe transitions, the number of edges with a
-	 * moving wipe (1, 2, or 4).
+	 * For wipe transitions, the number of edges with a moving wipe (1, 2, or
+	 * 4).
 	 */
 	uint8 numEdges;
 
 	/**
-	 * The dimensions of the plane, in game script
-	 * coordinates.
+	 * The dimensions of the plane, in game script coordinates.
 	 */
 	int16 width, height;
 
 	/**
-	 * For pixel dissolve transitions, the screen item
-	 * used to render the transition.
+	 * For pixel dissolve transitions, the screen item used to render the
+	 * transition. This screen item is owned by GfxFrameout.
 	 */
 	ScreenItem *bitmapScreenItem;
 
 	/**
-	 * For pixel dissolve transitions, the bitmap used
-	 * to render the transition.
+	 * For pixel dissolve transitions, the bitmap used to render the transition.
 	 */
 	reg_t bitmap;
 
@@ -152,15 +144,13 @@ struct PlaneShowStyle {
 	uint32 dissolveMask;
 
 	/**
-	 * The first pixel that was dissolved in a pixel
-	 * dissolve transition.
+	 * The first pixel that was dissolved in a pixel dissolve transition.
 	 */
 	uint32 firstPixel;
 
 	/**
-	 * The last pixel that was dissolved. Once all
-	 * pixels have been dissolved, `pixel` will once
-	 * again equal `firstPixel`.
+	 * The last pixel that was dissolved. Once all pixels have been dissolved,
+	 * `pixel` will once again equal `firstPixel`.
 	 */
 	uint32 pixel;
 
@@ -169,21 +159,15 @@ struct PlaneShowStyle {
 	//
 
 	/**
-	 * The number of entries in the fadeColorRanges array.
-	 */
-	uint8 fadeColorRangesCount;
-
-	/**
-	 * A pointer to an dynamically sized array of palette
-	 * indexes, in the order [ fromColor, toColor, ... ].
+	 * An array of palette indexes, in the order [ fromColor, toColor, ... ].
 	 * Only colors within this range are transitioned.
 	 */
-	uint16 *fadeColorRanges;
+	Common::Array<uint16> fadeColorRanges;
 };
 
 /**
- * PlaneScroll describes a transition between two different
- * pictures within a single plane.
+ * PlaneScroll describes a transition between two different pictures within a
+ * single plane.
  */
 struct PlaneScroll {
 	/**
@@ -197,28 +181,26 @@ struct PlaneScroll {
 	int16 x, y;
 
 	/**
-	 * The distance that should be scrolled. Only one of
-	 * `deltaX` or `deltaY` may be set.
+	 * The distance that should be scrolled. Only one of `deltaX` or `deltaY`
+	 * may be set.
 	 */
 	int16 deltaX, deltaY;
 
 	/**
-	 * The pic that should be created and scrolled into
-	 * view inside the plane.
+	 * The pic that should be created and scrolled into view inside the plane.
 	 */
 	GuiResourceId newPictureId;
 
 	/**
-	 * The picture that should be scrolled out of view
-	 * and deleted from the plane.
+	 * The picture that should be scrolled out of view and deleted from the
+	 * plane.
 	 */
 	GuiResourceId oldPictureId;
 
 	/**
-	 * If true, the scroll animation is interleaved
-	 * with other updates to the graphics. If false,
-	 * the scroll will be exclusively animated until
-	 * it is finished.
+	 * If true, GfxTransitions32 will yield back to the main game loop after
+	 * calculating the next frame. Otherwise, GfxTransitions32 takes exclusive
+	 * control over the game loop until the transition has completed.
 	 */
 	bool animate;
 
@@ -235,6 +217,7 @@ class GfxTransitions32 {
 public:
 	GfxTransitions32(SegManager *_segMan);
 	~GfxTransitions32();
+
 private:
 	SegManager *_segMan;
 
@@ -264,203 +247,185 @@ public:
 	inline bool hasShowStyles() const { return !_showStyles.empty(); }
 
 	/**
-	 * Processes all active show styles in a loop
-	 * until they are finished.
+	 * Processes all active show styles in a loop until they are finished.
 	 */
 	void processShowStyles();
 
 	/**
-	 * Processes show styles that are applied
-	 * through `GfxFrameout::palMorphFrameOut`.
+	 * Processes show styles that are applied through
+	 * `GfxFrameout::palMorphFrameOut`.
 	 */
 	void processEffects(PlaneShowStyle &showStyle);
 
-	// NOTE: This signature is taken from SCI3 Phantasmagoria 2
-	// and is valid for all implementations of SCI32
 	void kernelSetShowStyle(const uint16 argc, const reg_t planeObj, const ShowStyleType type, const int16 seconds, const int16 direction, const int16 priority, const int16 animate, const int16 frameOutNow, reg_t pFadeArray, int16 divisions, const int16 blackScreen);
 
 	/**
-	 * Sets the range that will be used by
-	 * `GfxFrameout::palMorphFrameOut` to alter
-	 * palette entries.
+	 * Sets the range that will be used by `GfxFrameout::palMorphFrameOut` to
+	 * alter palette entries.
 	 */
 	void kernelSetPalStyleRange(const uint8 fromColor, const uint8 toColor);
 
 	/**
-	 * A map of palette entries that can be morphed
-	 * by the Morph show style.
+	 * A map of palette entries that can be morphed by the Morph show style.
 	 */
 	int8 _styleRanges[256];
 
 private:
 	/**
-	 * Default sequence values for pixel dissolve
-	 * transition bit masks.
+	 * Default sequence values for pixel dissolve transition bit masks.
 	 */
 	int *_dissolveSequenceSeeds;
 
 	/**
-	 * Default values for `PlaneShowStyle::divisions`
-	 * for the current SCI version.
+	 * Default values for `PlaneShowStyle::divisions` for the current SCI
+	 * version.
 	 */
 	int16 *_defaultDivisions;
 
 	/**
-	 * The list of PlaneShowStyles that are
-	 * currently active.
+	 * The list of PlaneShowStyles that are currently active.
 	 */
 	ShowStyleList _showStyles;
 
 	/**
-	 * Finds a show style that applies to the given
-	 * plane.
+	 * Finds a show style that applies to the given plane.
 	 */
 	PlaneShowStyle *findShowStyleForPlane(const reg_t planeObj);
 
 	/**
-	 * Finds the iterator for a show style that
-	 * applies to the given plane.
+	 * Finds the iterator for a show style that applies to the given plane.
 	 */
 	ShowStyleList::iterator findIteratorForPlane(const reg_t planeObj);
 
 	/**
-	 * Deletes the given PlaneShowStyle and returns
-	 * the next PlaneShowStyle from the list of
-	 * styles.
+	 * Deletes the given PlaneShowStyle and returns the next PlaneShowStyle from
+	 * the list of styles.
 	 */
 	ShowStyleList::iterator deleteShowStyle(const ShowStyleList::iterator &showStyle);
 
 	/**
-	 * Initializes the given PlaneShowStyle for a
-	 * horizontal wipe effect for SCI2 to 2.1early.
+	 * Initializes the given PlaneShowStyle for a horizontal wipe effect for
+	 * SCI2 to 2.1early.
 	 */
 	void configure21EarlyHorizontalWipe(PlaneShowStyle &showStyle, const int16 priority);
 
 	/**
-	 * Initializes the given PlaneShowStyle for an
-	 * iris effect for SCI2 to 2.1early.
+	 * Initializes the given PlaneShowStyle for a horizontal shutter effect for
+	 * SCI2 to 2.1early.
+	 */
+	void configure21EarlyHorizontalShutter(PlaneShowStyle &showStyle, const int16 priority);
+
+	/**
+	 * Initializes the given PlaneShowStyle for an iris effect for SCI2 to
+	 * 2.1early.
 	 */
 	void configure21EarlyIris(PlaneShowStyle &showStyle, const int16 priority);
 
 	/**
-	 * Initializes the given PlaneShowStyle for a
-	 * pixel dissolve effect for SCI2 to 2.1early.
+	 * Initializes the given PlaneShowStyle for a pixel dissolve effect for SCI2
+	 * to 2.1early.
 	 */
 	void configure21EarlyDissolve(PlaneShowStyle &showStyle, const int16 priority, const Common::Rect &gameRect);
 
 	/**
-	 * Processes one tick of the given
-	 * PlaneShowStyle.
+	 * Processes one tick of the given PlaneShowStyle.
 	 */
 	bool processShowStyle(PlaneShowStyle &showStyle, uint32 now);
 
 	/**
-	 * Performs an instant transition between two
-	 * rooms.
+	 * Performs an instant transition between two rooms.
 	 */
 	bool processNone(PlaneShowStyle &showStyle);
 
 	/**
-	 * Performs a transition that renders into a room
-	 * with a horizontal shutter effect.
+	 * Performs a transition that renders into a room with a horizontal shutter
+	 * effect.
 	 */
-	void processHShutterOut(PlaneShowStyle &showStyle);
+	bool processHShutterOut(PlaneShowStyle &showStyle);
 
 	/**
-	 * Performs a transition that renders to black
-	 * with a horizontal shutter effect.
+	 * Performs a transition that renders to black with a horizontal shutter
+	 * effect.
 	 */
 	void processHShutterIn(const PlaneShowStyle &showStyle);
 
 	/**
-	 * Performs a transition that renders into a room
-	 * with a vertical shutter effect.
+	 * Performs a transition that renders into a room with a vertical shutter
+	 * effect.
 	 */
 	void processVShutterOut(PlaneShowStyle &showStyle);
 
 	/**
-	 * Performs a transition that renders to black
-	 * with a vertical shutter effect.
+	 * Performs a transition that renders to black with a vertical shutter
+	 * effect.
 	 */
 	void processVShutterIn(PlaneShowStyle &showStyle);
 
 	/**
-	 * Performs a transition that renders into a room
-	 * with a wipe to the left.
+	 * Performs a transition that renders into a room with a wipe to the left.
 	 */
 	void processWipeLeft(PlaneShowStyle &showStyle);
 
 	/**
-	 * Performs a transition that renders to black
-	 * with a wipe to the right.
+	 * Performs a transition that renders to black with a wipe to the right.
 	 */
 	void processWipeRight(PlaneShowStyle &showStyle);
 
 	/**
-	 * Performs a transition that renders into a room
-	 * with a wipe upwards.
+	 * Performs a transition that renders into a room with a wipe upwards.
 	 */
 	void processWipeUp(PlaneShowStyle &showStyle);
 
 	/**
-	 * Performs a transition that renders to black
-	 * with a wipe downwards.
+	 * Performs a transition that renders to black with a wipe downwards.
 	 */
 	void processWipeDown(PlaneShowStyle &showStyle);
 
 	/**
-	 * Performs a transition that renders into a room
-	 * with an iris effect.
+	 * Performs a transition that renders into a room with an iris effect.
 	 */
 	bool processIrisOut(PlaneShowStyle &showStyle);
 
 	/**
-	 * Performs a transition that renders to black
-	 * with an iris effect.
+	 * Performs a transition that renders to black with an iris effect.
 	 */
 	bool processIrisIn(PlaneShowStyle &showStyle);
 
 	/**
-	 * Performs a transition that renders between
-	 * rooms using a block dissolve effect.
+	 * Performs a transition that renders between rooms using a block dissolve
+	 * effect.
 	 */
 	void processDissolveNoMorph(PlaneShowStyle &showStyle);
 
 	/**
-	 * Performs a transition that renders between
-	 * rooms with a pixel dissolve effect.
+	 * Performs a transition that renders between rooms with a pixel dissolve
+	 * effect.
 	 */
 	bool processPixelDissolve(PlaneShowStyle &showStyle);
 
 	/**
-	 * SCI2 to 2.1early implementation of pixel
-	 * dissolve.
+	 * SCI2 to 2.1early implementation of pixel dissolve.
 	 */
 	bool processPixelDissolve21Early(PlaneShowStyle &showStyle);
 
 	/**
-	 * SCI2.1mid and later implementation of
-	 * pixel dissolve.
+	 * SCI2.1mid and later implementation of pixel dissolve.
 	 */
 	bool processPixelDissolve21Mid(const PlaneShowStyle &showStyle);
 
 	/**
-	 * Performs a transition that fades to black
-	 * between rooms.
+	 * Performs a transition that fades to black between rooms.
 	 */
 	bool processFade(const int8 direction, PlaneShowStyle &showStyle);
 
 	/**
-	 * Morph transition calls back into the
-	 * transition system's `processEffects`
-	 * method, which then applies transitions
-	 * other than None, Fade, or Morph.
+	 * Morph transition calls back into the transition system's `processEffects`
+	 * method, which then applies transitions other than None, Fade, or Morph.
 	 */
 	bool processMorph(PlaneShowStyle &showStyle);
 
 	/**
-	 * Performs a generic transition for any of
-	 * the wipe/shutter/iris effects.
+	 * Performs a generic transition for any of the wipe/shutter/iris effects.
 	 */
 	bool processWipe(const int8 direction, PlaneShowStyle &showStyle);
 
@@ -470,8 +435,7 @@ public:
 	inline bool hasScrolls() const { return !_scrolls.empty(); }
 
 	/**
-	 * Processes all active plane scrolls
-	 * in a loop until they are finished.
+	 * Processes all active plane scrolls in a loop until they are finished.
 	 */
 	void processScrolls();
 
@@ -484,8 +448,7 @@ private:
 	ScrollList _scrolls;
 
 	/**
-	 * Performs a scroll of the content of
-	 * a plane.
+	 * Performs a scroll of the content of a plane.
 	 */
 	bool processScroll(PlaneScroll &scroll);
 };

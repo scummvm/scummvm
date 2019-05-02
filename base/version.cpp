@@ -55,18 +55,18 @@
  * I don't know VC enough to be sure). And of course it must be robust enough
  * to properly work in exports (i.e. release tar balls etc.).
  */
-const char *gScummVMVersion = SCUMMVM_VERSION;
+const char *gScummVMVersion = SCUMMVM_VERSION SCUMMVM_REVISION;
 #ifdef __amigaos4__
-static const char *version_cookie __attribute__((used)) = "$VER: ScummVM " SCUMMVM_VERSION " (" AMIGA_DATE ")";
+static const char *version_cookie __attribute__((used)) = "$VER: ScummVM " SCUMMVM_VERSION SCUMMVM_REVISION " (" AMIGA_DATE ")";
 #endif
 #ifdef __PLAYSTATION2__
 const char *gScummVMBuildDate = "Git Master"; /* ScummVM Git Master */
-const char *gScummVMVersionDate = SCUMMVM_VERSION " - PlayStation2";
-const char *gScummVMFullVersion = "ScummVM " SCUMMVM_VERSION " - PlayStation2";
+const char *gScummVMVersionDate = SCUMMVM_VERSION SCUMMVM_REVISION " - PlayStation2";
+const char *gScummVMFullVersion = "ScummVM " SCUMMVM_VERSION SCUMMVM_REVISION " - PlayStation2";
 #else
 const char *gScummVMBuildDate = __DATE__ " " __TIME__;
-const char *gScummVMVersionDate = SCUMMVM_VERSION " (" __DATE__ " " __TIME__ ")";
-const char *gScummVMFullVersion = "ScummVM " SCUMMVM_VERSION " (" __DATE__ " " __TIME__ ")";
+const char *gScummVMVersionDate = SCUMMVM_VERSION SCUMMVM_REVISION " (" __DATE__ " " __TIME__ ")";
+const char *gScummVMFullVersion = "ScummVM " SCUMMVM_VERSION SCUMMVM_REVISION " (" __DATE__ " " __TIME__ ")";
 #endif
 const char *gScummVMFeatures = ""
 #ifdef TAINTED_BUILD
@@ -133,6 +133,10 @@ const char *gScummVMFeatures = ""
 
 #ifdef USE_FAAD
 	"AAC "
+#endif
+
+#ifdef USE_A52
+	"A/52 "
 #endif
 
 #ifdef USE_FREETYPE2

@@ -33,7 +33,7 @@ namespace Sci {
 class SciEngine;
 struct List;
 
-reg_t disassemble(EngineState *s, reg32_t pos, reg_t objAddr, bool printBWTag, bool printBytecode);
+reg_t disassemble(EngineState *s, reg_t pos, const Object *obj, bool printBWTag, bool printBytecode);
 bool isJumpOpcode(EngineState *s, reg_t pos, reg_t& jumpOffset);
 
 class Console : public GUI::Debugger {
@@ -41,16 +41,10 @@ public:
 	Console(SciEngine *engine);
 	virtual ~Console();
 
-#ifdef ENABLE_SCI32
-	void printArray(reg_t reg);
-	void printBitmap(reg_t reg);
-#endif
-
 private:
 	virtual void preEnter();
 	virtual void postEnter();
 
-private:
 	// General
 	bool cmdHelp(int argc, const char **argv);
 	// Kernel
@@ -77,6 +71,7 @@ private:
 	bool cmdResourceInfo(int argc, const char **argv);
 	bool cmdResourceTypes(int argc, const char **argv);
 	bool cmdList(int argc, const char **argv);
+	bool cmdResourceIntegrityDump(int argc, const char **argv);
 	bool cmdAllocList(int argc, const char **argv);
 	bool cmdHexgrep(int argc, const char **argv);
 	bool cmdVerifyScripts(int argc, const char **argv);
@@ -127,6 +122,7 @@ private:
 	bool cmdShowInstruments(int argc, const char **argv);
 	bool cmdMapInstrument(int argc, const char **argv);
 	bool cmdAudioList(int argc, const char **argv);
+	bool cmdAudioDump(int argc, const char **argv);
 	// Script
 	bool cmdAddresses(int argc, const char **argv);
 	bool cmdRegisters(int argc, const char **argv);
@@ -192,6 +188,13 @@ private:
 	void printKernelCallsFound(int kernelFuncNum, bool showFoundScripts);
 
 	void printBreakpoint(int index, const Breakpoint &bp);
+	void printReference(reg_t reg, reg_t reg_end = NULL_REG);
+#ifdef ENABLE_SCI32
+	void printArray(reg_t reg);
+	void printBitmap(reg_t reg);
+#endif
+
+	void writeIntegrityDumpLine(const Common::String &statusName, const Common::String &resourceName, Common::WriteStream &out, Common::ReadStream *const data, const int size, const bool writeHash);
 
 	SciEngine *_engine;
 	DebugState &_debugState;

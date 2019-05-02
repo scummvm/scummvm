@@ -53,6 +53,12 @@ public:
 typedef SharedPtr<ArchiveMember> ArchiveMemberPtr;
 typedef List<ArchiveMemberPtr> ArchiveMemberList;
 
+struct ArchiveMemberListComparator {
+	bool operator()(const ArchiveMemberPtr &a, const ArchiveMemberPtr &b) {
+		return a->getName() < b->getName();
+	}
+};
+
 class Archive;
 
 /**

@@ -39,23 +39,23 @@ void OSystem_ANDROIDSDL::initBackend() {
 	if (_graphicsManager == 0)
 		_graphicsManager = new AndroidSdlGraphicsManager(_eventSource, _window);
 
-	if (!ConfMan.hasKey("browser_lastpath"))
+	if (!ConfMan.hasKey("browser_lastpath") || (ConfMan.hasKey("browser_lastpath") && (ConfMan.get("browser_lastpath") == "/storage")))
 		ConfMan.set("browser_lastpath", getenv("SDCARD"));
 
 	if (!ConfMan.hasKey("gfx_mode"))
 		ConfMan.set("gfx_mode", "2x");
-	
+
 	if (!ConfMan.hasKey("swap_menu_and_back_buttons"))
 		ConfMan.setBool("swap_menu_and_back_buttons", true);
 	else
 		swapMenuAndBackButtons(ConfMan.getBool("swap_menu_and_back_buttons"));
-	
+
 	if (!ConfMan.hasKey("touchpad_mouse_mode")) {
 		const bool enable = SDL_ANDROID_GetMouseEmulationMode();
 		ConfMan.setBool("touchpad_mouse_mode", enable);
 	} else
 		touchpadMode(ConfMan.getBool("touchpad_mouse_mode"));
-	
+
 	if (!ConfMan.hasKey("onscreen_control")) {
 		const bool enable = SDL_ANDROID_GetScreenKeyboardShown();
 		ConfMan.setBool("onscreen_control", enable);
@@ -115,7 +115,7 @@ void OSystem_ANDROIDSDL::setFeatureState(Feature f, bool enable) {
 			swapMenuAndBackButtons(enable);
 			break;
 	}
-	
+
 	OSystem_POSIX::setFeatureState(f, enable);
 }
 

@@ -257,7 +257,7 @@ public:
 
 	int getItemStatus(int itemID) const { return _itemStatus[itemID]; }
 	void setItemStatus(int itemID, int status) { _itemStatus[itemID] = status; }
-	GameItem *getItem(int id) { return id >= 0 && id < (int) _info._numItems ? &_items[id] : NULL; }
+	GameItem *getItem(int id) { return id >= 0 && id < (int)_info._numItems ? &_items[id] : NULL; }
 	GameItem *getCurrentItem() const { return _currentItem; }
 	void setCurrentItem(GameItem *item) { _currentItem = item; }
 	int getPreviousItemPosition() const { return _previousItemPosition; }
@@ -330,7 +330,7 @@ public:
 	void setEnableSpeedText(bool value) { _enableSpeedText = value; }
 	bool getEnableSpeedText() const { return _enableSpeedText; }
 
-	void DoSync(Common::Serializer &s, uint8 saveVersion);
+	void synchronize(Common::Serializer &s, uint8 saveVersion);
 
 private:
 	void updateOrdinaryCursor();

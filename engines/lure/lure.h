@@ -111,7 +111,6 @@ public:
 	bool saveGame(uint8 slotNumber, Common::String &caption);
 	Common::String *detectSave(int slotNumber);
 	uint8 saveVersion() { return _saveVersion; }
-	void GUIError(const char *msg, ...) GCC_PRINTF(2, 3);
 
 	uint32 getFeatures() const;
 	LureLanguage getLureLanguage() const;
@@ -121,11 +120,11 @@ public:
 	bool isEGA() const { return (getFeatures() & GF_EGA) != 0; }
 
 	virtual Common::Error loadGameState(int slot) {
-		return loadGame(slot) ? Common::kReadingFailed : Common::kNoError;
+		return loadGame(slot) ? Common::kNoError : Common::kReadingFailed;
 	}
 	virtual Common::Error saveGameState(int slot, const Common::String &desc) {
 		Common::String s(desc);
-		return saveGame(slot, s) ? Common::kReadingFailed : Common::kNoError;
+		return saveGame(slot, s) ? Common::kNoError : Common::kReadingFailed;
 	}
 	virtual bool canLoadGameStateCurrently() {
 		return _saveLoadAllowed && !Fights.isFighting();

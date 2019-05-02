@@ -235,7 +235,7 @@ void sceneHandler27_startBat(StaticANIObject *bat) {
 	newbat->currX = newbat->powerCos + (double)g_fp->_aniMan->_ox + 42.0;
 	newbat->currY = newbat->powerSin + (double)g_fp->_aniMan->_oy + 58.0;
 
-	bat->_statics = (Statics *)bat->_staticsList[0];
+	bat->_statics = bat->_staticsList[0];
 	bat->setOXY((int)newbat->currX, (int)newbat->currY);
 	bat->_flags |= 4;
 
@@ -335,7 +335,7 @@ void sceneHandler27_knockBats(int bat1n, int bat2n) {
 	debugC(2, kDebugSceneLogic, "scene27: knockBats(%d, %d)", bat1n, bat2n);
 
 	if (bat1->power != 0.0) {
-		double rndF = (double)g_fp->_rnd->getRandomNumber(32767) * 0.03 / 32767.0 - 0.015
+		double rndF = (double)g_fp->_rnd.getRandomNumber(32767) * 0.03 / 32767.0 - 0.015
 			+ atan2(bat2->currY - bat1->currY, bat2->currX - bat1->currX);
 
 		double pow1x = cos(bat1->angle - rndF) * ((bat2->currX - bat1->currX) >= 0 ? bat1->power : -bat1->power);
@@ -349,7 +349,7 @@ void sceneHandler27_knockBats(int bat1n, int bat2n) {
 
 		debugC(3, kDebugSceneLogic, "scene27: knockBats: bat1 to: powerCos: %f powerSin: %f", bat1->powerCos, bat1->powerSin);
 
-		double rndF2 = (double)g_fp->_rnd->getRandomNumber(32767) * 0.03 / 32767.0 - 0.015
+		double rndF2 = (double)g_fp->_rnd.getRandomNumber(32767) * 0.03 / 32767.0 - 0.015
 								+ atan2(bat1->currY - bat2->currY, bat1->currX - bat2->currX);
 		double pow2x = cos(bat2->angle - rndF2) * ((bat1->currX - bat2->currX) >= 0 ? bat2->power : -bat2->power);
 		double pow2y = sin(bat2->angle - rndF2) * ((bat1->currY - bat2->currY) >= 0 ? bat2->power : -bat2->power);

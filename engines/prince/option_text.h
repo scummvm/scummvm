@@ -82,4 +82,23 @@ const char *optionsTextEN[] = {
 	"Talk to"
 };
 
+// RU
+const char *invOptionsTextRU[] = {
+	"Cvjnhtnm",
+	"Bcgjkmp.",
+	"Jnrhsnm/""\x83""bnm ",
+	"Pfrhsnm/Nzyenm  ",
+	"Lfnm "
+};
+
+const char *optionsTextRU[] = {
+	"Gjlevfnm",
+	"Jcvjnhtnm",
+	"Dpznm ",
+	"Bcgjkmp.",
+	"Jnrhsnm/""\x83""bnm ",
+	"Pfrhsnm/Nzyenm  ",
+	"Ujdjhbnm  "
+};
+
 } // End of namespace Prince

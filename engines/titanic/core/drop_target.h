@@ -40,7 +40,7 @@ protected:
 	CString _itemMatchName;
 	bool _itemMatchStartsWith;
 	CString _soundName;
-	bool _showItem;
+	bool _hideItem;
 	CString _itemName;
 	bool _dropEnabled;
 	int _dropFrame;

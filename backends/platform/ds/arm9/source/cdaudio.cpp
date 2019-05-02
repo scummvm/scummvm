@@ -23,10 +23,10 @@
 // Disable symbol overrides for FILE as that is used in FLAC headers
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 
+#include "dsmain.h"
 #include "cdaudio.h"
 #include "backends/fs/ds/ds-fs.h"
 #include "common/config-manager.h"
-#include "dsmain.h"
 #include "NDS/scummvm_ipc.h"
 
 #define WAV_FORMAT_IMA_ADPCM 0x14

@@ -26,45 +26,45 @@
 namespace Titanic {
 
 CAudioBuffer::CAudioBuffer(int maxSize) : _finished(false) {
-	_data.resize(maxSize);
 	reset();
 }
 
 void CAudioBuffer::reset() {
-	_frontP = _backP = &_data[0];
+	_data.clear();
 }
 
 void CAudioBuffer::push(int16 value) {
-	assert(!full());
-	compact();
-
-	*_backP++ = value;
+	enterCriticalSection();
+	_data.push(value);
+	leaveCriticalSection();
 }
 
-void CAudioBuffer::push(int16 *values, int count) {
-	compact();
-	assert(freeSize() >= count);
+void CAudioBuffer::push(const int16 *values, int count) {
+	enterCriticalSection();
 
-	Common::copy(values, values + count, _backP);
-	_backP += count;
+	for (; count > 0; --count, ++values)
+		_data.push(*values);
+
+	leaveCriticalSection();
 }
 
 int16 CAudioBuffer::pop() {
-	assert(!empty());
-	return *_frontP++;
+	enterCriticalSection();
+	int16 value = _data.pop();
+	leaveCriticalSection();
+
+	return value;
 }
 
-void CAudioBuffer::compact() {
-	if (_frontP != &_data[0]) {
-		Common::copy(_frontP, _backP, &_data[0]);
-		_backP -= _frontP - &_data[0];
-		_frontP = &_data[0];
-	}
-}
+int CAudioBuffer::read(int16 *values, int count) {
+	enterCriticalSection();
 
-int CAudioBuffer::freeSize() {
-	compact();
-	return &_data[0] + _data.size() - _backP;
+	int bytesRead = 0;
+	for (; count > 0 && !_data.empty(); --count, ++bytesRead)
+		*values++ = _data.pop();
+
+	leaveCriticalSection();
+	return bytesRead;
 }
 
 void CAudioBuffer::enterCriticalSection() {

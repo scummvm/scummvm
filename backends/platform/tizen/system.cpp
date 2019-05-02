@@ -312,7 +312,7 @@ void TizenSystem::initBackend() {
 	Common::String dataPath = fromString(App::GetInstance()->GetAppDataPath());
 
 	// use the mobile device theme
-	ConfMan.set("gui_theme", _resourcePath + "scummmodern");
+	ConfMan.set("gui_theme", _resourcePath + "scummremastered");
 
 	// allow tizen virtual keypad pack to be found
 	ConfMan.set("vkeybdpath", _resourcePath + "vkeybd_bada");

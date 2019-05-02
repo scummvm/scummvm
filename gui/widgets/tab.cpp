@@ -154,7 +154,7 @@ void TabWidget::removeTab(int tabID) {
 	}
 
 	// Finally trigger a redraw
-	_boss->draw();
+	g_gui.scheduleTopDialogRedraw();
 }
 
 void TabWidget::setActiveTab(int tabID) {
@@ -167,14 +167,14 @@ void TabWidget::setActiveTab(int tabID) {
 		}
 		_activeTab = tabID;
 		_firstWidget = _tabs[tabID].firstWidget;
-		
+
 		// Also ensure the tab is visible in the tab bar
 		if (_firstVisibleTab > tabID)
 			setFirstVisible(tabID, true);
 		while (_lastVisibleTab < tabID)
 			setFirstVisible(_firstVisibleTab + 1, false);
 
-		_boss->draw();
+		g_gui.scheduleTopDialogRedraw();
 	}
 }
 
@@ -246,7 +246,7 @@ void TabWidget::setFirstVisible(int tabID, bool adjustIfRoom) {
 
 	computeLastVisibleTab(adjustIfRoom);
 
-	_boss->draw(); // TODO: Necessary?
+	g_gui.scheduleTopDialogRedraw(); // TODO: Necessary?
 }
 
 void TabWidget::reflowLayout() {
@@ -320,9 +320,12 @@ void TabWidget::drawWidget() {
 		tabs.push_back(_tabs[i].title);
 		widths.push_back(_tabs[i]._tabWidth);
 	}
-	g_gui.theme()->drawDialogBackgroundClip(Common::Rect(_x + _bodyLP, _y + _bodyTP, _x+_w-_bodyRP, _y+_h-_bodyBP+_tabHeight), getBossClipRect(), _bodyBackgroundType);
+	g_gui.theme()->drawDialogBackground(
+			Common::Rect(_x + _bodyLP, _y + _bodyTP, _x + _w - _bodyRP, _y + _h - _bodyBP + _tabHeight),
+			_bodyBackgroundType);
 
-	g_gui.theme()->drawTabClip(Common::Rect(_x, _y, _x+_w, _y+_h), getBossClipRect(), _tabHeight, widths, tabs, _activeTab - _firstVisibleTab, 0, _titleVPad);
+	g_gui.theme()->drawTab(Common::Rect(_x, _y, _x + _w, _y + _h), _tabHeight, widths, tabs,
+	                       _activeTab - _firstVisibleTab);
 }
 
 void TabWidget::draw() {
@@ -331,6 +334,15 @@ void TabWidget::draw() {
 	if (_navButtonsVisible) {
 		_navLeft->draw();
 		_navRight->draw();
+	}
+}
+
+void TabWidget::markAsDirty() {
+	Widget::markAsDirty();
+
+	if (_navButtonsVisible) {
+		_navLeft->markAsDirty();
+		_navRight->markAsDirty();
 	}
 }
 

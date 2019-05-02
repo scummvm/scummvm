@@ -47,17 +47,17 @@
 static inline void stage_scale2x(void* dst0, void* dst1, const void* src0, const void* src1, const void* src2, unsigned pixel, unsigned pixel_per_row) {
 	switch (pixel) {
 #if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-	case 1 : scale2x_8_mmx(DST(8,0), DST(8,1), SRC(8,0), SRC(8,1), SRC(8,2), pixel_per_row); break;
-	case 2 : scale2x_16_mmx(DST(16,0), DST(16,1), SRC(16,0), SRC(16,1), SRC(16,2), pixel_per_row); break;
-	case 4 : scale2x_32_mmx(DST(32,0), DST(32,1), SRC(32,0), SRC(32,1), SRC(32,2), pixel_per_row); break;
+	case 1: scale2x_8_mmx( DST( 8,0), DST( 8,1), SRC( 8,0), SRC( 8,1), SRC( 8,2), pixel_per_row); break;
+	case 2: scale2x_16_mmx(DST(16,0), DST(16,1), SRC(16,0), SRC(16,1), SRC(16,2), pixel_per_row); break;
+	case 4: scale2x_32_mmx(DST(32,0), DST(32,1), SRC(32,0), SRC(32,1), SRC(32,2), pixel_per_row); break;
 #elif defined(USE_ARM_SCALER_ASM)
-	case 1 : scale2x_8_arm(DST(8,0), DST(8,1), SRC(8,0), SRC(8,1), SRC(8,2), pixel_per_row); break;
-	case 2 : scale2x_16_arm(DST(16,0), DST(16,1), SRC(16,0), SRC(16,1), SRC(16,2), pixel_per_row); break;
-	case 4 : scale2x_32_arm(DST(32,0), DST(32,1), SRC(32,0), SRC(32,1), SRC(32,2), pixel_per_row); break;
+	case 1: scale2x_8_arm( DST( 8,0), DST( 8,1), SRC( 8,0), SRC( 8,1), SRC( 8,2), pixel_per_row); break;
+	case 2: scale2x_16_arm(DST(16,0), DST(16,1), SRC(16,0), SRC(16,1), SRC(16,2), pixel_per_row); break;
+	case 4: scale2x_32_arm(DST(32,0), DST(32,1), SRC(32,0), SRC(32,1), SRC(32,2), pixel_per_row); break;
 #else
-	case 1 : scale2x_8_def(DST(8,0), DST(8,1), SRC(8,0), SRC(8,1), SRC(8,2), pixel_per_row); break;
-	case 2 : scale2x_16_def(DST(16,0), DST(16,1), SRC(16,0), SRC(16,1), SRC(16,2), pixel_per_row); break;
-	case 4 : scale2x_32_def(DST(32,0), DST(32,1), SRC(32,0), SRC(32,1), SRC(32,2), pixel_per_row); break;
+	case 1: scale2x_8_def( DST( 8,0), DST( 8,1), SRC( 8,0), SRC( 8,1), SRC( 8,2), pixel_per_row); break;
+	case 2: scale2x_16_def(DST(16,0), DST(16,1), SRC(16,0), SRC(16,1), SRC(16,2), pixel_per_row); break;
+	case 4: scale2x_32_def(DST(32,0), DST(32,1), SRC(32,0), SRC(32,1), SRC(32,2), pixel_per_row); break;
 #endif
 	}
 }
@@ -67,9 +67,9 @@ static inline void stage_scale2x(void* dst0, void* dst1, const void* src0, const
  */
 static inline void stage_scale3x(void* dst0, void* dst1, void* dst2, const void* src0, const void* src1, const void* src2, unsigned pixel, unsigned pixel_per_row) {
 	switch (pixel) {
-	case 1 : scale3x_8_def(DST(8,0), DST(8,1), DST(8,2), SRC(8,0), SRC(8,1), SRC(8,2), pixel_per_row); break;
-	case 2 : scale3x_16_def(DST(16,0), DST(16,1), DST(16,2), SRC(16,0), SRC(16,1), SRC(16,2), pixel_per_row); break;
-	case 4 : scale3x_32_def(DST(32,0), DST(32,1), DST(32,2), SRC(32,0), SRC(32,1), SRC(32,2), pixel_per_row); break;
+	case 1: scale3x_8_def( DST( 8,0), DST( 8,1), DST( 8,2), SRC( 8,0), SRC( 8,1), SRC( 8,2), pixel_per_row); break;
+	case 2: scale3x_16_def(DST(16,0), DST(16,1), DST(16,2), SRC(16,0), SRC(16,1), SRC(16,2), pixel_per_row); break;
+	case 4: scale3x_32_def(DST(32,0), DST(32,1), DST(32,2), SRC(32,0), SRC(32,1), SRC(32,2), pixel_per_row); break;
 	}
 }
 
@@ -281,12 +281,12 @@ int scale_precondition(unsigned scale, unsigned pixel, unsigned width, unsigned 
 		return -1;
 
 	switch (scale) {
-	case 2 :
-	case 3 :
+	case 2:
+	case 3:
 		if (height < 2)
 			return -1;
 		break;
-	case 4 :
+	case 4:
 		if (height < 4)
 			return -1;
 		break;
@@ -294,14 +294,14 @@ int scale_precondition(unsigned scale, unsigned pixel, unsigned width, unsigned 
 
 #if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
 	switch (scale) {
-	case 2 :
-	case 4 :
+	case 2:
+	case 4:
 		if (width < (16 / pixel))
 			return -1;
 		if (width % (8 / pixel) != 0)
 			return -1;
 		break;
-	case 3 :
+	case 3:
 		if (width < 2)
 			return -1;
 		break;
@@ -329,13 +329,13 @@ int scale_precondition(unsigned scale, unsigned pixel, unsigned width, unsigned 
 void scale(unsigned scale, void* void_dst, unsigned dst_slice, const void* void_src, unsigned src_slice, unsigned pixel, unsigned width, unsigned height)
 {
 	switch (scale) {
-	case 2 :
+	case 2:
 		scale2x(void_dst, dst_slice, void_src, src_slice, pixel, width, height);
 		break;
-	case 3 :
+	case 3:
 		scale3x(void_dst, dst_slice, void_src, src_slice, pixel, width, height);
 		break;
-	case 4 :
+	case 4:
 		scale4x(void_dst, dst_slice, void_src, src_slice, pixel, width, height);
 		break;
 	}

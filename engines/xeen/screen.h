@@ -23,14 +23,10 @@
 #ifndef XEEN_SCREEN_H
 #define XEEN_SCREEN_H
 
-#include "common/scummsys.h"
-#include "common/system.h"
-#include "common/array.h"
-#include "common/keyboard.h"
 #include "common/rect.h"
+#include "graphics/screen.h"
 #include "xeen/font.h"
 #include "xeen/sprites.h"
-#include "xeen/xsurface.h"
 
 namespace Xeen {
 
@@ -38,88 +34,17 @@ namespace Xeen {
 #define SCREEN_HEIGHT 200
 #define PALETTE_COUNT 256
 #define PALETTE_SIZE (256 * 3)
-#define GAME_WINDOW 28
 
 class XeenEngine;
-class Screen;
 
-struct DrawStruct {
-	SpriteResource *_sprites;
-	int _frame;
-	int _x;
-	int _y;
-	int _scale;
-	int _flags;
-
-	DrawStruct(int frame, int x, int y, int scale = 0, int flags = 0) :
-		_sprites(nullptr), _frame(frame), _x(x), _y(y), _scale(scale), _flags(flags) {}
-	DrawStruct(): _sprites(nullptr), _frame(0), _x(0), _y(0), _scale(0), _flags(0) {}
-};
-
-class Window: public XSurface {
-private:
-	static XeenEngine *_vm;
-	Common::Rect _bounds;
-	Common::Rect _innerBounds;
-	XSurface _savedArea;
-	int _a;
-	int _border;
-	int _xLo, _xHi;
-	int _ycL, _ycH;
-
-	void open2();
-public:
-	bool _enabled;
-public:
-	static void init(XeenEngine *vm);
-public:
-	Window();
-	Window(const Window &src);
-	Window(const Common::Rect &bounds, int a, int border,
-		int xLo, int ycL, int xHi, int ycH);
-
-	virtual void addDirtyRect(const Common::Rect &r);
-
-	void setBounds(const Common::Rect &r);
-
-	const Common::Rect &getBounds() { return _bounds; }
-
-	void open();
-
-	void close();
-
-	/**
-	 * Update the window
-	 */
-	void update();
-
-	void frame();
-
-	/**
-	 * Fill the content area of a window with the current background color
-	 */
-	void fill();
-
-	const char *writeString(const Common::String &s);
-
-	void drawList(DrawStruct *items, int count);
-
-	int getString(Common::String &line, uint maxLen, int maxWidth);
-};
-
-class Screen: public FontSurface {
+class Screen: public Graphics::Screen {
 private:
 	XeenEngine *_vm;
-	Common::List<Common::Rect> _dirtyRects;
 	byte _mainPalette[PALETTE_SIZE];
 	byte _tempPalette[PALETTE_SIZE];
 	XSurface _pages[2];
 	XSurface _savedScreens[10];
 	bool _fadeIn;
-
-	void mergeDirtyRects();
-
-	bool unionRectangle(Common::Rect &destRect, const Common::Rect &src1, const Common::Rect &src2);
 
 	/**
 	 * Mark the entire screen for drawing
@@ -132,24 +57,14 @@ private:
 
 	void updatePalette(const byte *pal, int start, int count16);
 public:
-	/**
-	 * Adds an area that requires redrawing on the next frame update
-	 */
-	virtual void addDirtyRect(const Common::Rect &r);
-public:
-	Common::Array<Window> _windows;
-
-	Common::Array<Window *> _windowStack;
-public:
 	Screen(XeenEngine *vm);
+	virtual ~Screen() {}
 
-	virtual ~Screen();
-
-	void setupWindows();
-
-	void closeWindows();
-
-	void update();
+	/**
+	 * Base method that descendent classes can override for recording affected
+	 * dirty areas of the surface
+	 */
+	virtual void addDirtyRect(const Common::Rect &r) { Graphics::Screen::addDirtyRect(r); }
 
 	/**
 	 * Load a palette resource into the temporary palette
@@ -178,17 +93,33 @@ public:
 	 */
 	void vertMerge(int yp);
 
-	void draw(void *data = nullptr);
-
+	/**
+	 * Fades in the screen
+	 */
 	void fadeIn(int step = 4);
 
+	/**
+	 * Fades out the screen
+	 */
 	void fadeOut(int step = 4);
 
+	/**
+	 * Saves a copy of the current screen into a specified slot
+	 */
 	void saveBackground(int slot = 1);
 
+	/**
+	 * Restores a previously saved screen
+	 */
 	void restoreBackground(int slot = 1);
 
-	void frameWindow(uint bgType);
+	/**
+	 * Draws the scroll in the background
+	 * @param rollUp		If true, rolls up the scroll. If false, unrolls.
+	 * @param fadeInFlag	If true, does an initial fade in
+	 * @returns		True if key or mouse pressed
+	 */
+	bool doScroll(bool rollUp, bool fadeInFlag);
 };
 
 } // End of namespace Xeen

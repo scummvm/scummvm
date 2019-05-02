@@ -164,8 +164,14 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 
 	// Add the patches directory, except for KQ6CD; The patches folder in some versions of KQ6CD
 	// (e.g. KQ Collection 1997) is for the demo of Phantasmagoria, included in the disk
-	if (_gameId != GID_KQ6)
-		SearchMan.addSubDirectoryMatching(gameDataDir, "patches");	// resource patches
+	if (_gameId != GID_KQ6) {
+		// Patch files in the root directory of Phantasmagoria 2 are higher
+		// priority than patch files in the patches directory (the SSCI
+		// installer copies these patches to HDD and gives the HDD directory
+		// top priority)
+		const int priority = _gameId == GID_PHANTASMAGORIA2 ? -1 : 0;
+		SearchMan.addSubDirectoryMatching(gameDataDir, "patches", priority);	// resource patches
+	}
 
 	// Some releases (e.g. Pointsoft Torin) use a different patch directory name
 	SearchMan.addSubDirectoryMatching(gameDataDir, "patch");	// resource patches
@@ -305,11 +311,7 @@ Common::Error SciEngine::run() {
 	_kernel->init();
 
 	_features = new GameFeatures(segMan, _kernel);
-	// Only SCI0, SCI01 and SCI1 EGA games used a parser
-	_vocabulary = (getSciVersion() <= SCI_VERSION_1_EGA_ONLY) ? new Vocabulary(_resMan, false) : NULL;
-	// Also, XMAS1990 apparently had a parser too. Refer to http://forums.scummvm.org/viewtopic.php?t=9135
-	if (getGameId() == GID_CHRISTMAS1990)
-		_vocabulary = new Vocabulary(_resMan, false);
+	_vocabulary = hasParser() ? new Vocabulary(_resMan, false) : NULL;
 
 	_gamestate = new EngineState(segMan);
 	_guestAdditions = new GuestAdditions(_gamestate, _features, _kernel);
@@ -381,24 +383,6 @@ Common::Error SciEngine::run() {
 
 	// Show any special warnings for buggy scripts with severe game bugs,
 	// which have been patched by Sierra
-	if (getGameId() == GID_LONGBOW) {
-		// Longbow 1.0 has a buggy script which prevents the game
-		// from progressing during the Green Man riddle sequence.
-		// A patch for this buggy script has been released by Sierra,
-		// and is necessary to complete the game without issues.
-		// The patched script is included in Longbow 1.1.
-		// Refer to bug #3036609.
-		Resource *buggyScript = _resMan->findResource(ResourceId(kResourceTypeScript, 180), 0);
-
-		if (buggyScript && (buggyScript->size() == 12354 || buggyScript->size() == 12362)) {
-			showScummVMDialog(_("A known buggy game script has been detected, which could "
-			                  "prevent you from progressing later on in the game, during "
-			                  "the sequence with the Green Man's riddles. Please, apply "
-			                  "the latest patch for this game by Sierra to avoid possible "
-			                  "problems."));
-		}
-	}
-
 	if (getGameId() == GID_KQ7 && ConfMan.getBool("subtitles")) {
 		showScummVMDialog(_("Subtitles are enabled, but subtitling in King's"
 						  " Quest 7 was unfinished and disabled in the release"
@@ -563,6 +547,10 @@ bool SciEngine::initGame() {
 	// Load game language into printLang property of game object
 	setSciLanguage();
 
+#ifdef ENABLE_SCI32
+	_guestAdditions->sciEngineInitGameHook();
+#endif
+
 	return true;
 }
 
@@ -604,7 +592,7 @@ void SciEngine::initGraphics() {
 	} else {
 #endif
 		_gfxPalette16 = new GfxPalette(_resMan, _gfxScreen);
-		if (getGameId() == GID_QFG4DEMO)
+		if (getGameId() == GID_QFG4DEMO || getGameId() == GID_CATDATE)
 			_gfxRemap16 = new GfxRemap(_gfxPalette16);
 #ifdef ENABLE_SCI32
 	}
@@ -787,6 +775,13 @@ bool SciEngine::isBE() const{
 	}
 }
 
+bool SciEngine::hasParser() const {
+	// Only SCI0, SCI01 and SCI1 EGA games used a parser, along with
+	//  multilingual LSL3 and SQ3 Amiga which are SCI_VERSION_1_MIDDLE
+	return getSciVersion() <= SCI_VERSION_1_EGA_ONLY ||
+			getGameId() == GID_LSL3 || getGameId() == GID_SQ3;
+}
+
 bool SciEngine::hasMacIconBar() const {
 	return _resMan->isSci11Mac() && getSciVersion() == SCI_VERSION_1_1 &&
 			(getGameId() == GID_KQ6 || getGameId() == GID_FREDDYPHARKAS);
@@ -838,18 +833,28 @@ int SciEngine::inQfGImportRoom() const {
 }
 
 void SciEngine::sleep(uint32 msecs) {
+	if (!msecs) {
+		return;
+	}
+
 	uint32 time;
 	const uint32 wakeUpTime = g_system->getMillis() + msecs;
 
 	for (;;) {
 		// let backend process events and update the screen
-		_eventMan->getSciEvent(SCI_EVENT_PEEK);
+		_eventMan->getSciEvent(kSciEventPeek);
+
+		// There is no point in waiting any more if we are just waiting to quit
+		if (g_engine->shouldQuit()) {
+			return;
+		}
+
 #ifdef ENABLE_SCI32
 		// If a game is in a wait loop, kFrameOut is not called, but mouse
 		// movement is still occurring and the screen needs to be updated to
 		// reflect it
 		if (getSciVersion() >= SCI_VERSION_2) {
-			g_system->updateScreen();
+			g_sci->_gfxFrameout->updateScreen();
 		}
 #endif
 		time = g_system->getMillis();
@@ -860,7 +865,6 @@ void SciEngine::sleep(uint32 msecs) {
 				g_system->delayMillis(wakeUpTime - time);
 			break;
 		}
-
 	}
 }
 

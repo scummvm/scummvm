@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/speech_dispensor.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -85,7 +86,7 @@ bool CSpeechDispensor::FrameMsg(CFrameMsg *msg) {
 
 		switch (_state) {
 		case 0:
-			playSound("z#93.wav");
+			playSound(TRANSLATE("z#93.wav", "z#624.wav"));
 			if (_seasonNum == SEASON_WINTER) {
 				petDisplayMessage(1, FROZEN_TO_BRANCH);
 				_hitCounter = 0;
@@ -120,7 +121,7 @@ bool CSpeechDispensor::FrameMsg(CFrameMsg *msg) {
 
 bool CSpeechDispensor::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 	if (!_speechFallen) {
-		playSound("z#93.wav");
+		playSound(TRANSLATE("z#93.wav", "z#624.wav"));
 		if (_failureType) {
 			petDisplayMessage(1, OUT_OF_REACH);
 		} else {

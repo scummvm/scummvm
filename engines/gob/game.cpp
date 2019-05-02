@@ -796,7 +796,7 @@ int16 Game::checkKeys(int16 *pMouseX, int16 *pMouseY,
 
 	if (_vm->_mult->_multData && _vm->_inter->_variables &&
 			(VAR(58) != 0)) {
-		if (_vm->_mult->_multData->frameStart != (int) VAR(58) - 1)
+		if (_vm->_mult->_multData->frameStart != (int)VAR(58) - 1)
 			_vm->_mult->_multData->frameStart++;
 		else
 			_vm->_mult->_multData->frameStart = 0;

@@ -145,6 +145,7 @@ MohawkEngine_LivingBooks::MohawkEngine_LivingBooks(OSystem *syst, const MohawkGa
 	_rnd = new Common::RandomSource("livingbooks");
 
 	_sound = NULL;
+	_video = NULL;
 	_page = NULL;
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -160,6 +161,7 @@ MohawkEngine_LivingBooks::~MohawkEngine_LivingBooks() {
 
 	delete _console;
 	delete _sound;
+	delete _video;
 	delete _gfx;
 	delete _rnd;
 	_bookInfoFile.clear();
@@ -167,6 +169,10 @@ MohawkEngine_LivingBooks::~MohawkEngine_LivingBooks() {
 
 Common::Error MohawkEngine_LivingBooks::run() {
 	MohawkEngine::run();
+
+	if (!_mixer->isReady()) {
+		return Common::kAudioDeviceInitFailed;
+	}
 
 	_console = new LivingBooksConsole(this);
 	// Load the book info from the detected file
@@ -184,6 +190,7 @@ Common::Error MohawkEngine_LivingBooks::run() {
 		error("Could not find xRes/yRes variables");
 
 	_gfx = new LBGraphics(this, _screenWidth, _screenHeight);
+	_video = new VideoManager(this);
 	_sound = new Sound(this);
 
 	if (getGameType() != GType_LIVINGBOOKSV1)
@@ -285,6 +292,17 @@ Common::Error MohawkEngine_LivingBooks::run() {
 	}
 
 	return Common::kNoError;
+}
+
+void MohawkEngine_LivingBooks::pauseEngineIntern(bool pause) {
+	MohawkEngine::pauseEngineIntern(pause);
+
+	if (pause) {
+		_video->pauseVideos();
+	} else {
+		_video->resumeVideos();
+		_system->updateScreen();
+	}
 }
 
 void MohawkEngine_LivingBooks::loadBookInfo(const Common::String &filename) {
@@ -823,6 +841,7 @@ void LBPage::loadBITL(uint16 resourceId) {
 			break;
 		default:
 			warning("Unknown item type %04x", type);
+			// fall through
 		case 3: // often used for buttons
 			res = new LBItem(_vm, this, rect);
 			break;
@@ -3814,8 +3833,8 @@ LBMovieItem::~LBMovieItem() {
 
 void LBMovieItem::update() {
 	if (_playing) {
-		VideoHandle videoHandle = _vm->_video->findVideoHandle(_resourceId);
-		if (!videoHandle || videoHandle->endOfVideo())
+		VideoEntryPtr video = _vm->_video->findVideo(_resourceId);
+		if (!video || video->endOfVideo())
 			done(true);
 	}
 
@@ -3826,11 +3845,11 @@ bool LBMovieItem::togglePlaying(bool playing, bool restart) {
 	if (playing) {
 		if ((_loaded && _enabled && _globalEnabled) || _phase == kLBPhaseNone) {
 			debug("toggled video for phase %d", _phase);
-			VideoHandle handle = _vm->_video->playMovie(_resourceId);
-			if (!handle)
+			VideoEntryPtr video = _vm->_video->playMovie(_resourceId);
+			if (!video)
 				error("Failed to open tMOV %d", _resourceId);
 
-			handle->moveTo(_rect.left, _rect.top);
+			video->moveTo(_rect.left, _rect.top);
 			return true;
 		}
 	}

@@ -21,14 +21,20 @@
  */
 
 #include "titanic/support/credit_text.h"
+#include "titanic/core/game_object.h"
+#include "titanic/events.h"
+#include "titanic/support/files_manager.h"
+#include "titanic/support/screen_manager.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
 
+#define FRAMES_PER_CYCLE 16
+
 CCreditText::CCreditText() : _screenManagerP(nullptr), _ticks(0),
 		_fontHeight(1), _objectP(nullptr), _yOffset(0),
-		_priorInc(0), _textR(0), _textG(0), _textB(0), _destR(0),
-		_destG(0), _destB(0), _counter(0) {
+		_priorInc(0), _textR(0), _textG(0), _textB(0), _deltaR(0),
+		_deltaG(0), _deltaB(0), _counter(0) {
 }
 
 void CCreditText::clear() {
@@ -49,9 +55,9 @@ void CCreditText::load(CGameObject *obj, CScreenManager *screenManager,
 	_textR = 0xFF;
 	_textG = 0xFF;
 	_textB = 0xFF;
-	_destR = 0;
-	_destG = 0;
-	_destB = 0;
+	_deltaR = 0;
+	_deltaG = 0;
+	_deltaB = 0;
 	_counter = 0;
 }
 
@@ -94,7 +100,7 @@ void CCreditText::setup() {
 	_screenManagerP->setFontNumber(oldFontNumber);
 	_groupIt = _groups.begin();
 	_lineIt = (*_groupIt)->_lines.begin();
-	_yOffset = _objectP->getBounds().height() + _fontHeight * 2;
+	_yOffset = _objectP->_bounds.height() + _fontHeight * 2;
 }
 
 CString CCreditText::readLine(Common::SeekableReadStream *stream) {
@@ -153,13 +159,13 @@ bool CCreditText::draw() {
 	if (_groupIt == _groups.end())
 		return false;
 
-	if (++_counter > 200) {
-		_textR += _destR;
-		_textG += _destG;
-		_textB += _destB;
-		_destR = g_vm->getRandomNumber(63) + 192 - _textR;
-		_destG = g_vm->getRandomNumber(63) + 192 - _textG;
-		_destB = g_vm->getRandomNumber(63) + 192 - _textB;
+	if (++_counter >= FRAMES_PER_CYCLE) {
+		_textR += _deltaR;
+		_textG += _deltaG;
+		_textB += _deltaB;
+		_deltaR = g_vm->getRandomNumber(63) + 192 - _textR;
+		_deltaG = g_vm->getRandomNumber(63) + 192 - _textG;
+		_deltaB = g_vm->getRandomNumber(63) + 192 - _textB;
 		_counter = 0;
 	}
 
@@ -205,9 +211,9 @@ bool CCreditText::draw() {
 	Point textPos;
 	for (textPos.y = _rect.top + _yOffset - yDiff; textPos.y <= _rect.bottom;
 			textPos.y += _fontHeight) {
-		int textR = _textR + _destR * _counter / 200;
-		int textG = _textG + _destG * _counter / 200;
-		int textB = _textB + _destB * _counter / 200;
+		int textR = _textR + _deltaR * _counter / FRAMES_PER_CYCLE;
+		int textG = _textG + _deltaG * _counter / FRAMES_PER_CYCLE;
+		int textB = _textB + _deltaB * _counter / FRAMES_PER_CYCLE;
 
 		// Single iteration loop to figure out RGB values for the line
 		do {

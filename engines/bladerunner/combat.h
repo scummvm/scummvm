@@ -23,36 +23,76 @@
 #ifndef BLADERUNNER_COMBAT_H
 #define BLADERUNNER_COMBAT_H
 
+#include "bladerunner/vector.h"
+
+#include "common/array.h"
+
 namespace BladeRunner {
 
 class BladeRunnerEngine;
+class SaveFileReadStream;
+class SaveFileWriteStream;
+class Vector3;
 
 class Combat {
+	static const int kSoundCount = 9;
+
 	BladeRunnerEngine *_vm;
 
 	bool _active;
 	bool _enabled;
-	int _hitSoundId[9];
-	int _missSoundId[9];
-//	int _random1;
-//	int _random2;
+	int  _hitSoundId[kSoundCount];
+	int  _missSoundId[kSoundCount];
+	// int  _random1;
+	// int  _random2;
 
 public:
 	int _ammoDamage[3];
+
+	struct CoverWaypoint {
+		int      type;
+		int      setId;
+		int      sceneId;
+		Vector3  position;
+	};
+
+	struct FleeWaypoint {
+		int     type;
+		int     setId;
+		int     sceneId;
+		Vector3 position;
+		int     field7;
+	};
+
+	Common::Array<CoverWaypoint> _coverWaypoints;
+	Common::Array<FleeWaypoint>  _fleeWaypoints;
 
 public:
 	Combat(BladeRunnerEngine *vm);
 	~Combat();
 
+	void reset();
+
 	void activate();
 	void deactivate();
-	bool isActive();
+	void change();
+	bool isActive() const;
 
 	void enable();
 	void disable();
 
-	void setHitSoundId(int row, int column, int soundId);
-	void setMissSoundId(int row, int column, int soundId);
+	void setHitSound(int ammoType, int column, int soundId);
+	void setMissSound(int ammoType, int column, int soundId);
+	int getHitSound() const;
+	int getMissSound() const;
+
+	void shoot(int actorId, Vector3 &to, int screenX);
+
+	int findFleeWaypoint(int setId, int enemyId, const Vector3& position) const;
+	int findCoverWaypoint(int waypointType, int actorId, int enemyId) const;
+
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
 };
 
 } // End of namespace BladeRunner

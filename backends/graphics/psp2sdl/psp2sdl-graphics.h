@@ -30,20 +30,19 @@ class PSP2SdlGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
 	PSP2SdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
 	virtual ~PSP2SdlGraphicsManager();
-	
-	virtual OSystem::TransactionError endGFXTransaction();
-	virtual const OSystem::GraphicsMode *getSupportedShaders() const;
+
+	virtual OSystem::TransactionError endGFXTransaction() override;
+	virtual const OSystem::GraphicsMode *getSupportedShaders() const override;
 
 protected:
-	virtual void setGraphicsModeIntern();
-	virtual void unloadGFXMode();
-	virtual bool hotswapGFXMode();
+	virtual void setGraphicsModeIntern() override;
+	virtual void unloadGFXMode() override;
+	virtual bool hotswapGFXMode() override;
 
-	virtual void internUpdateScreen();
-	virtual void updateShader();
-	virtual void setAspectRatioCorrection(bool enable);
-	virtual SDL_Surface *SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags);
-	void PSP2_UpdateRects(SDL_Surface *screen, int numrects, SDL_Rect *rects);
+	virtual void updateShader() override;
+	virtual void setAspectRatioCorrection(bool enable) override;
+	virtual SDL_Surface *SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags) override;
+	virtual void SDL_UpdateRects(SDL_Surface *screen, int numrects, SDL_Rect *rects) override;
 	void PSP2_UpdateFiltering();
 
 	bool _hardwareAspectRatioCorrection;

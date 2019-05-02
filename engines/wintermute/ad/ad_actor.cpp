@@ -878,7 +878,7 @@ void AdActor::getNextStep() {
 		maxStepX--;
 	}
 
-	if (((AdGame *)_gameRef)->_scene->isBlockedAt((int)_pFX, (int) _pFY, true, this)) {
+	if (((AdGame *)_gameRef)->_scene->isBlockedAt((int)_pFX, (int)_pFY, true, this)) {
 		if (_pFCount == 0) {
 			_state = _nextState;
 			_nextState = STATE_READY;

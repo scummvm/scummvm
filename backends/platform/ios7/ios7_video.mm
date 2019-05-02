@@ -55,16 +55,31 @@ bool iOS7_isBigDevice() {
 	return UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad;
 }
 
+static inline void execute_on_main_thread(void (^block)(void)) {
+	if ([NSThread currentThread] == [NSThread mainThread]) {
+		block();
+	}
+	else {
+		dispatch_sync(dispatch_get_main_queue(), block);
+	}
+}
+
 void iOS7_updateScreen() {
 	//printf("Mouse: (%i, %i)\n", mouseX, mouseY);
 	if (!g_needsScreenUpdate) {
 		g_needsScreenUpdate = 1;
-		[[iOS7AppDelegate iPhoneView] performSelectorOnMainThread:@selector(updateSurface) withObject:nil waitUntilDone: NO];
+		execute_on_main_thread(^{
+			[[iOS7AppDelegate iPhoneView] updateSurface];
+		});
 	}
 }
 
 bool iOS7_fetchEvent(InternalEvent *event) {
-	return [[iOS7AppDelegate iPhoneView] fetchEvent:event];
+	__block bool fetched;
+	execute_on_main_thread(^{
+		fetched = [[iOS7AppDelegate iPhoneView] fetchEvent:event];
+	});
+	return fetched;
 }
 
 uint getSizeNextPOT(uint size) {
@@ -334,6 +349,19 @@ uint getSizeNextPOT(uint size) {
 }
 
 - (void)setupGestureRecognizers {
+	const NSUInteger KEYBOARDSWIPETOUCHCOUNT = 3;
+	UISwipeGestureRecognizer *swipeUpKeyboard = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(keyboardSwipeUp:)];
+	swipeUpKeyboard.direction = UISwipeGestureRecognizerDirectionUp;
+	swipeUpKeyboard.numberOfTouchesRequired = KEYBOARDSWIPETOUCHCOUNT;
+	swipeUpKeyboard.delaysTouchesBegan = NO;
+	swipeUpKeyboard.delaysTouchesEnded = NO;
+
+	UISwipeGestureRecognizer *swipeDownKeyboard = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(keyboardSwipeDown:)];
+	swipeDownKeyboard.direction = UISwipeGestureRecognizerDirectionDown;
+	swipeDownKeyboard.numberOfTouchesRequired = KEYBOARDSWIPETOUCHCOUNT;
+	swipeDownKeyboard.delaysTouchesBegan = NO;
+	swipeDownKeyboard.delaysTouchesEnded = NO;
+
 	UISwipeGestureRecognizer *swipeRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(twoFingersSwipeRight:)];
 	swipeRight.direction = UISwipeGestureRecognizerDirectionRight;
 	swipeRight.numberOfTouchesRequired = 2;
@@ -364,12 +392,16 @@ uint getSizeNextPOT(uint size) {
 	doubleTapTwoFingers.delaysTouchesBegan = NO;
 	doubleTapTwoFingers.delaysTouchesEnded = NO;
 
+	[self addGestureRecognizer:swipeUpKeyboard];
+	[self addGestureRecognizer:swipeDownKeyboard];
 	[self addGestureRecognizer:swipeRight];
 	[self addGestureRecognizer:swipeLeft];
 	[self addGestureRecognizer:swipeUp];
 	[self addGestureRecognizer:swipeDown];
 	[self addGestureRecognizer:doubleTapTwoFingers];
 
+	[swipeUpKeyboard release];
+	[swipeDownKeyboard release];
 	[swipeRight release];
 	[swipeLeft release];
 	[swipeUp release];
@@ -398,6 +430,7 @@ uint getSizeNextPOT(uint size) {
 #endif
 
 	_keyboardView = nil;
+	_keyboardVisible = NO;
 	_screenTexture = 0;
 	_overlayTexture = 0;
 	_mouseCursorTexture = 0;
@@ -705,6 +738,14 @@ uint getSizeNextPOT(uint size) {
 		screenHeight = MAX(_renderBufferWidth, _renderBufferHeight);
 	}
 
+	if (_keyboardView == nil) {
+		_keyboardView = [[SoftKeyboard alloc] initWithFrame:CGRectZero];
+		[_keyboardView setInputDelegate:self];
+		[self addSubview:[_keyboardView inputView]];
+		[self addSubview: _keyboardView];
+		[self showKeyboard];
+	}
+
 	glBindRenderbuffer(GL_RENDERBUFFER, _viewRenderbuffer); printOpenGLError();
 
 	[self clearColorBuffer];
@@ -746,8 +787,6 @@ uint getSizeNextPOT(uint size) {
 			yOffset = (screenHeight - rectHeight) / 2;
 		}
 
-		[_keyboardView hideKeyboard];
-
 		//printf("Rect: %i, %i, %i, %i\n", xOffset, yOffset, rectWidth, rectHeight);
 		_gameScreenRect = CGRectMake(xOffset, yOffset, rectWidth, rectHeight);
 		overlayPortraitRatio = 1.0f;
@@ -755,17 +794,9 @@ uint getSizeNextPOT(uint size) {
 		GLfloat ratio = adjustedHeight / adjustedWidth;
 		int height = (int)(screenWidth * ratio);
 		//printf("Making rect (%u, %u)\n", screenWidth, height);
+        
 		_gameScreenRect = CGRectMake(0, 0, screenWidth, height);
 
-		CGRect keyFrame = CGRectMake(0.0f, 0.0f, 0.0f, 0.0f);
-		if (_keyboardView == nil) {
-			_keyboardView = [[SoftKeyboard alloc] initWithFrame:keyFrame];
-			[_keyboardView setInputDelegate:self];
-			[self addSubview:[_keyboardView inputView]];
-			[self addSubview: _keyboardView];
-		}
-
-		[_keyboardView showKeyboard];
 		overlayPortraitRatio = (_videoContext.overlayHeight * ratio) / _videoContext.overlayWidth;
 	}
 	_overlayRect = CGRectMake(0, 0, screenWidth, screenHeight * overlayPortraitRatio);
@@ -780,6 +811,39 @@ uint getSizeNextPOT(uint size) {
 
 	[self setViewTransformation];
 	[self updateMouseCursorScaling];
+    [self adjustViewFrameForSafeArea];
+}
+
+#ifndef __has_builtin
+#define __has_builtin(x) 0
+#endif
+
+-(void)adjustViewFrameForSafeArea {
+	// The code below does not quite compile with SDKs older than 11.0.
+	// warning: instance method '-safeAreaInsets' not found (return type defaults to 'id')
+	// error: no viable conversion from 'id' to 'UIEdgeInsets'
+	// So for now disable this code when compiled with an older SDK, which means it is only
+	// available when running on iOS 11+ if it has been compiled on iOS 11+
+#ifdef __IPHONE_11_0
+#if __has_builtin(__builtin_available)
+    if ( @available(iOS 11,*) ) {
+#else
+    if ( [[[UIApplication sharedApplication] keyWindow] respondsToSelector:@selector(safeAreaInsets)] ) {
+#endif
+        CGRect screenSize = [[UIScreen mainScreen] bounds];
+        UIEdgeInsets inset = [[[UIApplication sharedApplication] keyWindow] safeAreaInsets];
+        UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+        CGRect newFrame = screenSize;
+        if ( orientation == UIInterfaceOrientationPortrait ) {
+            newFrame = CGRectMake(screenSize.origin.x, screenSize.origin.y + inset.top, screenSize.size.width, screenSize.size.height - inset.top);
+        } else if ( orientation == UIInterfaceOrientationLandscapeLeft ) {
+            newFrame = CGRectMake(screenSize.origin.x, screenSize.origin.y, screenSize.size.width - inset.right, screenSize.size.height);
+        } else if ( orientation == UIInterfaceOrientationLandscapeRight ) {
+            newFrame = CGRectMake(screenSize.origin.x + inset.left, screenSize.origin.y, screenSize.size.width - inset.left, screenSize.size.height);
+        }
+        self.frame = newFrame;
+    }
+#endif
 }
 
 - (void)setViewTransformation {
@@ -858,6 +922,27 @@ uint getSizeNextPOT(uint size) {
 
 - (void)deviceOrientationChanged:(UIDeviceOrientation)orientation {
 	[self addEvent:InternalEvent(kInputOrientationChanged, orientation, 0)];
+
+  BOOL isLandscape = (self.bounds.size.width > self.bounds.size.height);
+  if (isLandscape) {
+    [self hideKeyboard];
+  } else {
+    [self showKeyboard];
+  }
+}
+
+- (void)showKeyboard {
+	[_keyboardView showKeyboard];
+	_keyboardVisible = YES;
+}
+
+- (void)hideKeyboard {
+	[_keyboardView hideKeyboard];
+	_keyboardVisible = NO;
+}
+
+- (BOOL)isKeyboardShown {
+	return _keyboardVisible;
 }
 
 - (UITouch *)secondTouchOtherTouchThan:(UITouch *)touch in:(NSSet *)set {
@@ -945,6 +1030,14 @@ uint getSizeNextPOT(uint size) {
 	_secondTouch = nil;
 }
 
+- (void)keyboardSwipeUp:(UISwipeGestureRecognizer *)recognizer {
+	[self showKeyboard];
+}
+
+- (void)keyboardSwipeDown:(UISwipeGestureRecognizer *)recognizer {
+	[self hideKeyboard];
+}
+
 - (void)twoFingersSwipeRight:(UISwipeGestureRecognizer *)recognizer {
 	[self addEvent:InternalEvent(kInputSwipe, kUIViewSwipeRight, 2)];
 }
@@ -966,7 +1059,11 @@ uint getSizeNextPOT(uint size) {
 }
 
 - (void)handleKeyPress:(unichar)c {
-	[self addEvent:InternalEvent(kInputKeyPressed, c, 0)];
+	if (c == '`') {
+		[self addEvent:InternalEvent(kInputKeyPressed, '\E', 0)];
+	} else {
+		[self addEvent:InternalEvent(kInputKeyPressed, c, 0)];
+	}
 }
 
 - (void)applicationSuspend {

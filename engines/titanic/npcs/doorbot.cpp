@@ -22,7 +22,9 @@
 
 #include "titanic/npcs/doorbot.h"
 #include "titanic/core/room_item.h"
-#include "titanic/titanic.h"
+#include "titanic/debugger.h"
+#include "titanic/pet_control/pet_control.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -95,6 +97,7 @@ bool CDoorbot::MovieEndMsg(CMovieEndMsg *msg) {
 		case 6:
 			if (clipExistsByEnd("Cloak On", msg->_endFrame)) {
 				petShow();
+				petDecAreaLocks();
 				stateSetSoundMakerAllowed(true);
 				changeView("ServiceElevator.Node 1.S");
 				changeView("ServiceElevator.Node 1.N");
@@ -107,7 +110,8 @@ bool CDoorbot::MovieEndMsg(CMovieEndMsg *msg) {
 			break;
 
 		case 9:
-			startTalking(this, 221468);
+			if (msg->_endFrame == 949)
+				startTalking(this, 221468);
 			break;
 
 		case 11:
@@ -159,27 +163,32 @@ bool CDoorbot::MovieEndMsg(CMovieEndMsg *msg) {
 }
 
 bool CDoorbot::OnSummonBotMsg(COnSummonBotMsg *msg) {
-	const char *const ROOM_WAVES[8][2] = {
-		{ "EmbLobby", "z#186.wav" },
-		{ "PromenadeDeck", "z#184.wav" },
-		{ "Arboretum", "z#188.wav" },
-		{ "Frozen Arboretum", "z#188.wav" },
-		{ "Bar", "z#187.wav" },
-		{ "MusicRoom", "z#185.wav" },
-		{ "MusicRoomLobby", "z#185.wav" },
-		{ "1stClassRestaurant", "z#183.wav" },
+	struct RoomWave {
+		const char *_room;
+		const char *_enSound;
+		const char *_deSound;
+	};
+	const RoomWave ROOM_WAVES[8] = {
+		{ "EmbLobby", "z#186.wav", "z#716.wav" },
+		{ "PromenadeDeck", "z#184.wav", "z#714.wav" },
+		{ "Arboretum", "z#188.wav", "z#718.wav" },
+		{ "Frozen Arboretum", "z#188.wav", "z#718.wav" },
+		{ "Bar", "z#187.wav", "z#717.wav" },
+		{ "MusicRoom", "z#185.wav", "z#715.wav" },
+		{ "MusicRoomLobby", "z#185.wav", "z#715.wav" },
+		{ "1stClassRestaurant", "z#183.wav", "z#713.wav" },
 	};
 
 	if (msg->_value != -1) {
 		int idx;
 		for (idx = 0; idx < 8; ++idx) {
-			if (compareRoomNameTo(ROOM_WAVES[idx][0])) {
-				playSound(ROOM_WAVES[idx][1]);
-
+			if (compareRoomNameTo(ROOM_WAVES[idx]._room)) {
+				playSound(TRANSLATE(ROOM_WAVES[idx]._enSound, ROOM_WAVES[idx]._deSound));
+				break;
 			}
 		}
 		if (idx == 8)
-			playSound("z#146.wav");
+			playSound(TRANSLATE("z#146.wav", "z#702.wav"));
 
 		sleep(2000);
 	}
@@ -421,58 +430,59 @@ bool CDoorbot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) 
 
 	if (_npcFlags & NPCFLAG_DOORBOT_INTRO) {
 		// Initial speech by Doorbot in 
-		switch (msg->_dialogueId) {
-		case 10552:
+		switch (msg->_dialogueId - TRANSLATE(10552, 10563)) {
+		case 0:
 			playClip("SE Try Buttons", MOVIE_NOTIFY_OBJECT);
 			_introMovieNum = 9;
 			break;
 
-		case 10553:
+		case 1:
 			enableMouse();
 			break;
 
-		case 10557:
+		case 5:
 			playClip("SE Move To Right", MOVIE_NOTIFY_OBJECT);
 			_introMovieNum = 11;
 			break;
 
-		case 10559:
+		case 7:
 			stopAnimTimer(_timerId);
 			_timerId = addTimer(0, 2500, 0);
 			break;
 
-		case 10560:
+		case 8:
 			petShow();
 			petSetArea(PET_CONVERSATION);
+			petIncAreaLocks();
 			stopAnimTimer(_timerId);
 			_timerId = addTimer(1, 1000, 0);
 			break;
 
-		case 10561:
+		case 9:
 			enableMouse();
 			_introMovieNum = 1;
 			stopAnimTimer(_timerId);
 			_timerId = addTimer(2, 10000, 0);
 			break;
 
-		case 10562:
+		case 10:
 			if (_introMovieNum == 1) {
 				stopAnimTimer(_timerId);
-				_timerId = addTimer(2, getRandomNumber(5000), 0);
+				_timerId = addTimer(2, getRandomNumber(5000) + 5000, 0);
 			}
 			break;
 
-		case 10563:
-		case 10564:
+		case 11:
+		case 12:
 			disableMouse();
 			startTalking(this, 221480);
 			break;
 
-		case 10565:
+		case 13:
 			startTalking(this, 221481);
 			break;
 
-		case 10566:
+		case 14:
 			stopAnimTimer(_timerId);
 			_timerId = 0;
 			if (_field110 == 2) {
@@ -483,7 +493,7 @@ bool CDoorbot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) 
 			}
 			break;
 
-		case 10567: {
+		case 15: {
 			CActMsg actMsg("BecomeGettable");
 			actMsg.execute("Photograph");
 			enableMouse();
@@ -492,26 +502,26 @@ bool CDoorbot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) 
 			break;
 		}
 
-		case 10568:
+		case 16:
 			// Start moving cursor to photograph
 			mouseDisableControl();
 			mouseSetPosition(Point(600, 250), 2500);
 			_timerId = addTimer(6, 2500, 0);
 			break;
 
-		case 10569:
+		case 17:
 			if (_field110 != 2) {
 				stopAnimTimer(_timerId);
 				_timerId = addTimer(5, 3000, 0);
 			}
 			break;
 
-		case 10570:
+		case 18:
 			mouseSetPosition(Point(200, 430), 2500);
 			_timerId = addTimer(7, 3000, 0);
 			break;
 
-		case 10571:
+		case 19:
 			playClip("Cloak On", MOVIE_NOTIFY_OBJECT);
 			_introMovieNum = 6;
 			break;
@@ -550,6 +560,12 @@ bool CDoorbot::TextInputMsg(CTextInputMsg *msg) {
 bool CDoorbot::EnterViewMsg(CEnterViewMsg *msg) {
 	if ((_npcFlags & NPCFLAG_DOORBOT_INTRO) && _introMovieNum == 7)
 		playClip("SE Move And Turn", MOVIE_NOTIFY_OBJECT);
+	else if (!compareRoomNameTo("ServiceElevator") && msg->_newView == getParent() && getPetControl()->canSummonBot("DoorBot")) {
+		// WORKAROUND: Calling bot in front of doors and then going through them
+		// can leave it in the view. Detect this and properly remove him when
+		// the player returns to that view
+		petMoveToHiddenRoom();
+	}
 
 	return true;
 }

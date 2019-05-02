@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/sgt/bedfoot.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -46,11 +47,11 @@ bool CBedfoot::TurnOn(CTurnOn *msg) {
 		if (_statics->_washstand == "Open") {
 			_endFrame = 13;
 			_statics->_bedfoot = "Open";
-			playSound("b#7.wav");
+			playSound(TRANSLATE("b#7.wav", "b#92.wav"));
 		} else {
 			_endFrame = 17;
 			_statics->_bedfoot = "NotOnWashstand";
-			playSound("b#4.wav");
+			playSound(TRANSLATE("b#4.wav", "b#89.wav"));
 		}
 
 		playMovie(_startFrame, _endFrame, MOVIE_WAIT_FOR_FINISH);
@@ -95,7 +96,7 @@ bool CBedfoot::TurnOff(CTurnOff *msg) {
 		}
 
 		playMovie(_startFrame, _endFrame, MOVIE_WAIT_FOR_FINISH);
-		playSound("b#7.wav");
+		playSound(TRANSLATE("b#7.wav", "b#92.wav"));
 
 	} else if (_statics->_bedfoot == "NotOnWashstand" && _statics->_bedhead == "ClosedWrong") {
 		_isClosed = true;
@@ -110,14 +111,14 @@ bool CBedfoot::TurnOff(CTurnOff *msg) {
 		}
 
 		playMovie(_startFrame, _endFrame, MOVIE_WAIT_FOR_FINISH);
-		playSound("b#7.wav");
+		playSound(TRANSLATE("b#7.wav", "b#92.wav"));
 
 	} else if (_statics->_bedfoot == "RestingUTV" && _statics->_tv == "Closed") {
 		_statics->_bedfoot = "Closed";
 		_startFrame = 25;
 		_endFrame = 30;
 		playMovie(25, 30, MOVIE_WAIT_FOR_FINISH);
-		playSound("b#7.wav");
+		playSound(TRANSLATE("b#7.wav", "b#92.wav"));
 	}
 
 	if (_statics->_bedfoot == "Closed")

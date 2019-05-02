@@ -1567,6 +1567,8 @@ void WSC::arriveAt(const RoomID room, const DirectionConstant dir) {
 			playSpotSoundSync(kPaging2In, kPaging2Out);
 			GameState.setWSCHeardPage2(true);
 		}
+		// fall through
+		// FIXME: fall through intentional?
 	case MakeRoomView(kWSC10, kNorth):
 	case MakeRoomView(kWSC26, kSouth):
 	case MakeRoomView(kWSC72, kWest):
@@ -1645,6 +1647,8 @@ void WSC::turnTo(const DirectionConstant direction) {
 			playSpotSoundSync(kPaging1In, kPaging1Out);
 			GameState.setWSCHeardPage1(true);
 		}
+		// fall through
+		// FIXME: fall through intentional?
 		// clone2727 says: This falls through?!??! WTF?
 	case MakeRoomView(kWSC42, kEast):
 		_privateFlags.setFlag(kWSCPrivateSinclairOfficeOpenFlag, false);

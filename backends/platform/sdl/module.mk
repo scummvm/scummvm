@@ -22,6 +22,7 @@ ifdef WIN32
 MODULE_OBJS += \
 	win32/win32-main.o \
 	win32/win32-window.o \
+	win32/win32_wrapper.o \
 	win32/win32.o
 endif
 
@@ -29,6 +30,13 @@ ifdef AMIGAOS
 MODULE_OBJS += \
 	amigaos/amigaos-main.o \
 	amigaos/amigaos.o
+endif
+
+ifdef RISCOS
+MODULE_OBJS += \
+	riscos/riscos-main.o \
+	riscos/riscos-utils.o \
+	riscos/riscos.o
 endif
 
 ifdef PLAYSTATION3

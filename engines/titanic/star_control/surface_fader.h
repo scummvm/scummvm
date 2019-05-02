@@ -23,11 +23,13 @@
 #ifndef TITANIC_SURFACE_FADER_H
 #define TITANIC_SURFACE_FADER_H
 
-#include "titanic/support/video_surface.h"
-#include "titanic/support/screen_manager.h"
-#include "titanic/star_control/surface_area.h"
+#include "common/scummsys.h" // typedef for byte
 
 namespace Titanic {
+
+class CVideoSurface;
+class CScreenManager;
+class CSurfaceArea;
 
 class CSurfaceFader {
 private:

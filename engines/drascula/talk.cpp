@@ -39,7 +39,15 @@ bool DrasculaEngine::isTalkFinished() {
 		return true;
 	}
 
-	if (getScan() != 0)
+	Common::KeyCode key = getScan();
+	if (key == Common::KEYCODE_SPACE || key == Common::KEYCODE_PAUSE) {
+		// Pause speech until space is pressed again
+		// Note: an alternative is to implement a PauseDialog as is done in engines/scumm/dialogs.cpp
+		do {
+			pause(10);
+			key = getScan();
+		} while (key != Common::KEYCODE_SPACE && key != Common::KEYCODE_PAUSE && !shouldQuit());
+	} else if (key != 0)
 		stopSound();
 	if (soundIsActive())
 		return false;
@@ -338,14 +346,14 @@ void DrasculaEngine::talk_bj(int index) {
 
 			updateRefresh_pre();
 
-			copyBackground(bjX + 2, bjY - 1, bjX + 2, bjY - 1, 27, 40, bgSurface, screenSurface);
+			copyBackground(170 + 2, 90 - 1, 170 + 2, 90 - 1, 27, 40, bgSurface, screenSurface);
 
-			copyRect(x_talk[face], 99, bjX + 2, bjY - 1, 27, 40, drawSurface3, screenSurface);
+			copyRect(x_talk[face], 99, 170 + 2, 90 - 1, 27, 40, drawSurface3, screenSurface);
 			moveCharacters();
 			updateRefresh();
 
 			if (!_subtitlesDisabled)
-				centerText(said, bjX + 7, bjY);
+				centerText(said, 170 + 7, 90);
 
 			updateScreen();
 
@@ -973,7 +981,7 @@ void DrasculaEngine::grr() {
 	copyBackground(253, 110, 150, 65, 20, 30, drawSurface3, screenSurface);
 
 	if (!_subtitlesDisabled)
-		centerText("groaaarrrrgghhhh!", 153, 65);
+		centerText(_textmisc[6], 153, 65); // "groaaarrrrgghhhh!"
 
 	updateScreen();
 

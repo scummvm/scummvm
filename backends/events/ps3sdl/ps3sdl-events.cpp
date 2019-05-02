@@ -31,128 +31,34 @@
 #include "common/util.h"
 #include "common/events.h"
 
-enum {
-	BTN_LEFT		= 0,
-	BTN_DOWN		= 1,
-	BTN_RIGHT		= 2,
-	BTN_UP			= 3,
-
-	BTN_START		= 4,
-	BTN_R3			= 5,
-	BTN_L3			= 6,
-	BTN_SELECT		= 7,
-
-	BTN_SQUARE		= 8,
-	BTN_CROSS		= 9,
-	BTN_CIRCLE		= 10,
-	BTN_TRIANGLE	= 11,
-
-	BTN_R1			= 12,
-	BTN_L1			= 13,
-	BTN_R2			= 14,
-	BTN_L2			= 15
-};
-
-bool PS3SdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
-
-	event.kbd.flags = 0;
-
-	switch (ev.jbutton.button) {
-	case BTN_CROSS: // Left mouse button
-		event.type = Common::EVENT_LBUTTONDOWN;
-		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
-		break;
-	case BTN_CIRCLE: // Right mouse button
-		event.type = Common::EVENT_RBUTTONDOWN;
-		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
-		break;
-	case BTN_TRIANGLE: // Game menu
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = Common::KEYCODE_F5;
-		event.kbd.ascii = mapKey(SDLK_F5, (SDLMod) ev.key.keysym.mod, 0);
-		break;
-	case BTN_SELECT: // Virtual keyboard
-#ifdef ENABLE_VKEYBD
-		event.type = Common::EVENT_VIRTUAL_KEYBOARD;
-#endif
-		break;
-	case BTN_SQUARE: // Escape
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = Common::KEYCODE_ESCAPE;
-		event.kbd.ascii = mapKey(SDLK_ESCAPE, (SDLMod) ev.key.keysym.mod, 0);
-		break;
-	case BTN_L1: // Predictive input dialog
-		event.type = Common::EVENT_PREDICTIVE_DIALOG;
-		break;
-	case BTN_START: // ScummVM in game menu
-		event.type = Common::EVENT_MAINMENU;
-		break;
-	}
-	return true;
-}
-
-bool PS3SdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
-
-	event.kbd.flags = 0;
-
-	switch (ev.jbutton.button) {
-	case BTN_CROSS: // Left mouse button
-		event.type = Common::EVENT_LBUTTONUP;
-		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
-		break;
-	case BTN_CIRCLE: // Right mouse button
-		event.type = Common::EVENT_RBUTTONUP;
-		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
-		break;
-	case BTN_TRIANGLE: // Game menu
-		event.type = Common::EVENT_KEYUP;
-		event.kbd.keycode = Common::KEYCODE_F5;
-		event.kbd.ascii = mapKey(SDLK_F5, (SDLMod) ev.key.keysym.mod, 0);
-		break;
-	case BTN_SELECT: // Virtual keyboard
-		// Handled in key down
-		break;
-	case BTN_SQUARE: // Escape
-		event.type = Common::EVENT_KEYUP;
-		event.kbd.keycode = Common::KEYCODE_ESCAPE;
-		event.kbd.ascii = mapKey(SDLK_ESCAPE, (SDLMod) ev.key.keysym.mod, 0);
-		break;
-	}
-	return true;
-}
-
 /**
  * The XMB (PS3 in game menu) needs the screen buffers to be constantly flip while open.
  * This pauses execution and keeps redrawing the screen until the XMB is closed.
  */
 void PS3SdlEventSource::preprocessEvents(SDL_Event *event) {
-	if (event->type == SDL_WINDOWEVENT) {
-		if (event->window.event == SDL_WINDOWEVENT_LEAVE) {
-			// XMB opened
-			if (g_engine)
-				g_engine->pauseEngine(true);
+	if (event->type == SDL_APP_DIDENTERBACKGROUND) {
+		// XMB opened
+		if (g_engine)
+			g_engine->pauseEngine(true);
 
-			for (;;) {
-				if (!SDL_PollEvent(event)) {
-					// Locking the screen forces a full redraw
-					Graphics::Surface* screen = g_system->lockScreen();
-					if (screen) {
-						g_system->unlockScreen();
-						g_system->updateScreen();
-					}
-					SDL_Delay(10);
-					continue;
+		for (;;) {
+			if (!SDL_PollEvent(event)) {
+				// Locking the screen forces a full redraw
+				Graphics::Surface* screen = g_system->lockScreen();
+				if (screen) {
+					g_system->unlockScreen();
+					g_system->updateScreen();
 				}
-				if (event->type == SDL_QUIT)
-					return;
-				if (event->type != SDL_WINDOWEVENT)
-					continue;
-				if (event->window.event == SDL_WINDOWEVENT_ENTER) {
-					// XMB closed
-					if (g_engine)
-						g_engine->pauseEngine(false);
-					return;
-				}
+				SDL_Delay(10);
+				continue;
+			}
+			if (event->type == SDL_QUIT)
+				return;
+			if (event->type == SDL_APP_DIDENTERFOREGROUND) {
+				// XMB closed
+				if (g_engine)
+					g_engine->pauseEngine(false);
+				return;
 			}
 		}
 	}

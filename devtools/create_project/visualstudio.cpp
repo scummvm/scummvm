@@ -32,8 +32,8 @@ namespace CreateProjectTool {
 // Visual Studio Provider (Visual Studio 2008)
 //////////////////////////////////////////////////////////////////////////
 
-VisualStudioProvider::VisualStudioProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version)
-	: MSVCProvider(global_warnings, project_warnings, version) {
+VisualStudioProvider::VisualStudioProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version, const MSVCVersion& msvc)
+	: MSVCProvider(global_warnings, project_warnings, version, msvc) {
 }
 
 const char *VisualStudioProvider::getProjectExtension() {
@@ -42,13 +42,6 @@ const char *VisualStudioProvider::getProjectExtension() {
 
 const char *VisualStudioProvider::getPropertiesExtension() {
 	return ".vsprops";
-}
-
-int VisualStudioProvider::getVisualStudioVersion() {
-	if (_version == 9)
-		return 2008;
-
-	error("Unsupported version passed to getVisualStudioVersion");
 }
 
 void VisualStudioProvider::createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
@@ -171,7 +164,7 @@ void VisualStudioProvider::outputBuildEvents(std::ostream &project, const BuildS
 		           "\t\t\t\tCommandLine=\"" << getPreBuildEvent() << "\"\n"
 		           "\t\t\t/>\n"
 		           "\t\t\t<Tool\tName=\"VCPostBuildEventTool\"\n"
-		           "\t\t\t\tCommandLine=\"" << getPostBuildEvent(isWin32, setup.createInstaller) << "\"\n"
+		           "\t\t\t\tCommandLine=\"" << getPostBuildEvent(isWin32, setup) << "\"\n"
 		           "\t\t\t/>\n";
 	}
 
@@ -228,7 +221,7 @@ void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::of
 	              "\t\tName=\"VCCLCompilerTool\"\n"
 	              "\t\tDisableLanguageExtensions=\"" << (setup.devTools ? "false" : "true") << "\"\n"
 	              "\t\tDisableSpecificWarnings=\"" << warnings << "\"\n"
-	              "\t\tAdditionalIncludeDirectories=\".\\;" << prefix << ";" << prefix << "\\engines;$(" << LIBS_DEFINE << ")\\include;$(" << LIBS_DEFINE << ")\\include\\SDL;" << (setup.tests ? prefix + "\\test\\cxxtest;" : "") << "$(TargetDir)\"\n"
+	              "\t\tAdditionalIncludeDirectories=\".\\;" << prefix << ";" << prefix << "\\engines;$(" << LIBS_DEFINE << ")\\include;$(" << LIBS_DEFINE << ")\\include\\SDL;" << (setup.tests ? prefix + "\\test\\cxxtest;" : "") << "\"\n"
 	              "\t\tPreprocessorDefinitions=\"" << definesList << "\"\n"
 	              "\t\tExceptionHandling=\"" << ((setup.devTools || setup.tests || _version == 14) ? "1" : "0") << "\"\n";
 
@@ -258,7 +251,8 @@ void VisualStudioProvider::outputGlobalPropFile(const BuildSetup &setup, std::of
 	              "\t/>\n"
 	              "\t<Tool\n"
 	              "\t\tName=\"VCResourceCompilerTool\"\n"
-	              "\t\tAdditionalIncludeDirectories=\"" << prefix << "\"\n"
+	              "\t\tAdditionalIncludeDirectories=\".\\;" << prefix << "\"\n"
+	              "\t\tPreprocessorDefinitions=\"" << definesList << "\"\n"
 	              "\t/>\n"
 	              "</VisualStudioPropertySheet>\n";
 

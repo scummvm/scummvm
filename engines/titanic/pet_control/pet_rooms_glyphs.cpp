@@ -21,11 +21,14 @@
  */
 
 #include "titanic/pet_control/pet_rooms_glyphs.h"
+#include "titanic/events.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/pet_control/pet_section.h"
-#include "titanic/support/screen_manager.h"
 #include "titanic/room_flags.h"
+#include "titanic/support/screen_manager.h"
+#include "titanic/support/simple_file.h"
 #include "titanic/titanic.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -90,7 +93,7 @@ void CPetRoomsGlyph::drawAt(CScreenManager *screenManager, const Point &pt, bool
 	drawObjects(floorBits & 15, destPt, screenManager);
 	destPt.y += 10;
 	drawObjects(roomBits >> 3, destPt, screenManager);
-	destPt.y += 7;
+	destPt.y += 10;
 	drawObjects(((roomBits & 7) << 1) + (roomFlags.getBit0() ? 1 : 0),
 		destPt, screenManager);
 
@@ -147,24 +150,24 @@ void CPetRoomsGlyph::getTooltip(CTextControl *text) {
 
 	CString prefix;
 	if (isCurrentlyAssigned()) {
-		prefix = "Your assigned room: ";
+		prefix = g_vm->_strings[YOUR_ASSIGNED_ROOM];
 	} else if (isPreviouslyAssigned()) {
-		prefix = "A previously assigned room: ";
+		prefix = g_vm->_strings[PREVIOUSLY_ASSIGNED_ROOM];
 	} else if (!_mailFlag) {
-		prefix = "Saved Chevron: ";
+		prefix = g_vm->_strings[SAVED_CHEVRON];
 	} else if (_mailFlag == 1 && owner->getRoomFlags() == _roomFlags) {
-		prefix = "Current location: ";
+		prefix = g_vm->_strings[CURRENT_LOCATION];
 	}
 
 	// Get the room description
 	CString roomStr = roomFlags.getRoomDesc();
 
-	if (roomStr == "The Elevator") {
+	if (roomStr == TRANSLATE("The Elevator", "Der Aufzug")) {
 		int elevNum = owner->getElevatorNum();
-		roomStr = CString::format("Elevator %d", elevNum);
+		roomStr = CString::format(g_vm->_strings[ELEVATOR_NUM].c_str(), elevNum);
 	}
 
-	roomStr += " (shift-click edits)";
+	roomStr += g_vm->_strings[SHIFT_CLICK_TO_EDIT];
 	text->setText(prefix + roomStr);
 }
 

@@ -14,8 +14,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SINC_RESAMPLER_H
-#define SINC_RESAMPLER_H
+#ifndef SRCTOOLS_SINC_RESAMPLER_H
+#define SRCTOOLS_SINC_RESAMPLER_H
 
 #include "FIRResampler.h"
 
@@ -43,4 +43,4 @@ namespace SincResampler {
 
 } // namespace SRCTools
 
-#endif // SINC_RESAMPLER_H
+#endif // SRCTOOLS_SINC_RESAMPLER_H

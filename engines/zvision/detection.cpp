@@ -88,8 +88,8 @@ bool ZVisionMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
 		(f == kSavesSupportCreationDate) ||
+		(f == kSavesSupportPlayTime) ||
 		(f == kSimpleSavesNames);
-		//(f == kSavesSupportPlayTime);
 }
 
 bool ZVision::ZVision::hasFeature(EngineFeature f) const {
@@ -178,7 +178,7 @@ SaveStateDescriptor ZVisionMetaEngine::querySaveMetaInfos(const char *target, in
 
 		// We only use readSaveGameHeader() here, which doesn't need an engine callback
 		ZVision::SaveManager *zvisionSaveMan = new ZVision::SaveManager(NULL);
-		bool successfulRead = zvisionSaveMan->readSaveGameHeader(in, header);
+		bool successfulRead = zvisionSaveMan->readSaveGameHeader(in, header, false);
 		delete zvisionSaveMan;
 		delete in;
 
@@ -192,7 +192,7 @@ SaveStateDescriptor ZVisionMetaEngine::querySaveMetaInfos(const char *target, in
 
 			desc.setThumbnail(header.thumbnail);
 
-			if (header.version > 0) {
+			if (header.version >= 1) {
 				int day = header.saveDay;
 				int month = header.saveMonth;
 				int year = header.saveYear;
@@ -203,8 +203,10 @@ SaveStateDescriptor ZVisionMetaEngine::querySaveMetaInfos(const char *target, in
 				int minutes = header.saveMinutes;
 
 				desc.setSaveTime(hour, minutes);
+			}
 
-				//desc.setPlayTime(header.playTime * 1000);
+			if (header.version >= 2) {
+				desc.setPlayTime(header.playTime * 1000);
 			}
 
 			return desc;

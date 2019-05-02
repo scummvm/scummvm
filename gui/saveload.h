@@ -51,7 +51,7 @@ public:
 	 * @return The selcted save slot. -1 in case none is selected.
 	 */
 	int runModalWithCurrentTarget();
-	int runModalWithPluginAndTarget(const EnginePlugin *plugin, const String &target);
+	int runModalWithPluginAndTarget(const Plugin *plugin, const String &target);
 
 	const Common::String &getResultString() const;
 

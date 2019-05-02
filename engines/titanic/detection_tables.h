@@ -23,6 +23,7 @@
 namespace Titanic {
 
 static const TitanicGameDescription gameDescriptions[] = {
+	// English version
 	{
 		{
 			"titanic",
@@ -30,13 +31,12 @@ static const TitanicGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("newgame.st", "c276f2661f0d0a547445a65db78b2292", 87227),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			0,
 			GUIO1(GUIO_NONE)
 		},
 	},
 
-	// German version currently disabled because it won't start up,
-	// even with the English generated titanic.dat file
+	// German version
 	{
 		{
 			"titanic",
@@ -44,7 +44,7 @@ static const TitanicGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("newgame.st", "db22924adfd6730f4b79f4e51b25e779", 87608),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			0,
 			GUIO1(GUIO_NONE)
 		},
 	},

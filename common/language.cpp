@@ -31,11 +31,13 @@ const LanguageDescription g_languages[] = {
 	{    "zh", "zh_TW", "Chinese (Taiwan)", ZH_TWN },
 	{    "hr", "hr_HR", "Croatian", HR_HRV },
 	{    "cz", "cs_CZ", "Czech", CZ_CZE },
+	{    "da",    "da", "Danish", DA_DAN },
 	{    "nl", "nl_NL", "Dutch", NL_NLD },
 	{    "en",    "en", "English", EN_ANY }, // Generic English (when only one game version exist)
 	{    "gb", "en_GB", "English (GB)", EN_GRB },
 	{    "us", "en_US", "English (US)", EN_USA },
 	{    "et", "et_EE", "Estonian", ET_EST },
+	{    "fi", "fi_FI", "Finnish", FI_FIN },
 	{    "fr", "fr_FR", "French", FR_FRA },
 	{    "de", "de_DE", "German", DE_DEU },
 	{    "gr", "el_GR", "Greek", GR_GRE },
@@ -46,13 +48,16 @@ const LanguageDescription g_languages[] = {
 	{    "jp", "ja_JP", "Japanese", JA_JPN },
 	{    "kr", "ko_KR", "Korean", KO_KOR },
 	{    "lv", "lv_LV", "Latvian", LV_LAT },
-	{    "nb", "nb_NO", "Norwegian Bokm\xE5l", NB_NOR }, // TODO Someone should verify the unix locale
+	{    "nb", "nb_NO", "Norwegian Bokm\xE5l", NB_NOR },
 	{    "pl", "pl_PL", "Polish", PL_POL },
-	{    "br", "pt_BR", "Portuguese", PT_BRA },
+	{    "br", "pt_BR", "Portuguese (Brazil)", PT_BRA },
+	{    "pt", "pt_PT", "Portuguese (Portugal)", PT_POR },
 	{    "ru", "ru_RU", "Russian", RU_RUS },
+	{    "sk", "sk_SK", "Slovak", SK_SVK },
 	{    "es", "es_ES", "Spanish", ES_ESP },
 	{    "se", "sv_SE", "Swedish", SE_SWE },
-	{       0,       0, 0, UNK_LANG }
+	{    "uk", "uk_UA", "Ukrainian", UA_UKR },
+	{ nullptr, nullptr, nullptr, UNK_LANG }
 };
 
 Language parseLanguage(const String &str) {
@@ -87,7 +92,7 @@ const char *getLanguageCode(Language id) {
 		if (l->id == id)
 			return l->code;
 	}
-	return 0;
+	return nullptr;
 }
 
 const char *getLanguageLocale(Language id) {
@@ -96,7 +101,7 @@ const char *getLanguageLocale(Language id) {
 		if (l->id == id)
 			return l->unixLocale;
 	}
-	return 0;
+	return nullptr;
 }
 
 const char *getLanguageDescription(Language id) {
@@ -105,7 +110,7 @@ const char *getLanguageDescription(Language id) {
 		if (l->id == id)
 			return l->description;
 	}
-	return 0;
+	return nullptr;
 }
 
 bool checkGameGUIOptionLanguage(Language lang, const String &str) {

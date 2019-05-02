@@ -43,7 +43,7 @@ public:
 		kPalCiaClock     = kPalSystemClock / 10,
 		kNtscCiaClock    = kNtscSystemClock / 10,
 		kPalPaulaClock   = kPalSystemClock / 2,
-		kNtscPauleClock  = kNtscSystemClock / 2
+		kNtscPaulaClock  = kNtscSystemClock / 2
 	};
 
 	/* TODO: Document this */

@@ -21,109 +21,302 @@
  */
 
 #include "common/savefile.h"
+#include "common/system.h"
 #include "common/textconsole.h"
+#include "graphics/thumbnail.h"
 
 #include "tucker/tucker.h"
 
 namespace Tucker {
 
+#define kSavegameSignature MKTAG('T', 'C', 'K', 'R')
+
 enum {
-	kCurrentGameStateVersion = 1
+	kSavegameVersionCurrent = 2,
+	kSavegameVersionMinimum = 1
+};
+
+enum SavegameFlag {
+	kSavegameFlagAutosave = 1 << 0
 };
 
 Common::String generateGameStateFileName(const char *target, int slot, bool prefixOnly) {
 	Common::String name(target);
 	if (prefixOnly) {
-		name += ".*";
+		name += ".#*";
 	} else {
 		name += Common::String::format(".%d", slot);
 	}
 	return name;
 }
 
-static void saveOrLoadInt(Common::WriteStream &stream, int &i) {
+static void saveOrLoadVar(Common::WriteStream &stream, int &i) {
 	stream.writeSint32LE(i);
 }
 
-static void saveOrLoadInt(Common::ReadStream &stream, int &i) {
+static void saveOrLoadVar(Common::ReadStream &stream, int &i) {
 	i = stream.readSint32LE();
 }
 
+static void saveOrLoadVar(Common::WriteStream &stream, Location &location) {
+	stream.writeSint32LE((int)location);
+}
+
+static void saveOrLoadVar(Common::ReadStream &stream, Location &location) {
+	location = (Location)stream.readSint32LE();
+}
+
 template<class S>
-void TuckerEngine::saveOrLoadGameStateData(S &s) {
+TuckerEngine::SavegameError TuckerEngine::saveOrLoadGameStateData(S &s) {
 	for (int i = 0; i < kFlagsTableSize; ++i) {
-		saveOrLoadInt(s, _flagsTable[i]);
+		saveOrLoadVar(s, _flagsTable[i]);
 	}
 	for (int i = 0; i < 40; ++i) {
-		saveOrLoadInt(s, _inventoryObjectsList[i]);
+		saveOrLoadVar(s, _inventoryObjectsList[i]);
 	}
 	for (int i = 0; i < 50; ++i) {
-		saveOrLoadInt(s, _inventoryItemsState[i]);
+		saveOrLoadVar(s, _inventoryItemsState[i]);
 	}
 	for (int i = 0; i < 50; ++i) {
-		saveOrLoadInt(s, _panelObjectsOffsetTable[i]);
+		saveOrLoadVar(s, _panelObjectsOffsetTable[i]);
 	}
-	saveOrLoadInt(s, _mainSpritesBaseOffset);
-	saveOrLoadInt(s, _selectedObject._xPos);
-	saveOrLoadInt(s, _selectedObject._yPos);
-	saveOrLoadInt(s, _locationNum);
-	saveOrLoadInt(s, _xPosCurrent);
-	saveOrLoadInt(s, _yPosCurrent);
-	saveOrLoadInt(s, _inventoryObjectsCount);
-	saveOrLoadInt(s, _inventoryObjectsOffset);
+	saveOrLoadVar(s, _mainSpritesBaseOffset);
+	saveOrLoadVar(s, _selectedObject._xPos);
+	saveOrLoadVar(s, _selectedObject._yPos);
+	saveOrLoadVar(s, _location);
+	saveOrLoadVar(s, _xPosCurrent);
+	saveOrLoadVar(s, _yPosCurrent);
+	saveOrLoadVar(s, _inventoryObjectsCount);
+	saveOrLoadVar(s, _inventoryObjectsOffset);
+
+	return s.err() ? kSavegameIoError : kSavegameNoError;
 }
 
-Common::Error TuckerEngine::loadGameState(int num) {
-	Common::Error ret = Common::kNoError;
-	Common::String gameStateFileName = generateGameStateFileName(_targetName.c_str(), num);
-	Common::InSaveFile *f = _saveFileMan->openForLoading(gameStateFileName);
-	if (f) {
-		uint16 version = f->readUint16LE();
-		if (version < kCurrentGameStateVersion) {
-			warning("Unsupported gamestate version %d (slot %d)", version, num);
-		} else {
-			f->skip(2);
-			saveOrLoadGameStateData(*f);
-			if (f->err() || f->eos()) {
-				warning("Can't read file '%s'", gameStateFileName.c_str());
-				ret = Common::kReadingFailed;
-			} else {
-				_nextLocationNum = _locationNum;
-				setBlackPalette();
-				loadBudSpr(0);
-				_forceRedrawPanelItems = true;
-			}
+Common::Error TuckerEngine::loadGameState(int slot) {
+	Common::String fileName = generateGameStateFileName(_targetName.c_str(), slot);
+	Common::InSaveFile *file = _saveFileMan->openForLoading(fileName);
+
+	if (!file) {
+		return Common::kReadingFailed;
+	}
+
+	SavegameHeader header;
+	SavegameError savegameError = readSavegameHeader(file, header);
+
+	if (!savegameError) {
+		savegameError = saveOrLoadGameStateData(*file);
+	}
+
+	if (savegameError) {
+		switch (savegameError) {
+		case kSavegameInvalidTypeError:
+			warning("Invalid savegame '%s' (does not look like a ScummVM Tucker-engine savegame)", fileName.c_str());
+			break;
+
+		case kSavegameInvalidVersionError:
+			warning("Invalid savegame '%s' (expected savegame version v%i-v%i, got v%i)",
+				fileName.c_str(), kSavegameVersionMinimum, kSavegameVersionCurrent, header.version);
+			break;
+
+		default:
+			warning("Failed to load savegame '%s'", fileName.c_str());
+			break;
 		}
-		delete f;
+
+		delete file;
+		return Common::kReadingFailed;
 	}
-	return ret;
+
+	g_engine->setTotalPlayTime(header.playTime * 1000);
+
+	_nextLocation = _location;
+	setBlackPalette();
+	loadBudSpr();
+	_forceRedrawPanelItems = true;
+	_panelType = kPanelTypeNormal;
+	setCursorState(kCursorStateNormal);
+
+	delete file;
+	return Common::kNoError;
 }
 
-Common::Error TuckerEngine::saveGameState(int num, const Common::String &description) {
-	Common::Error ret = Common::kNoError;
-	Common::String gameStateFileName = generateGameStateFileName(_targetName.c_str(), num);
-	Common::OutSaveFile *f = _saveFileMan->openForSaving(gameStateFileName);
-	if (f) {
-		f->writeUint16LE(kCurrentGameStateVersion);
-		f->writeUint16LE(0);
-		saveOrLoadGameStateData(*f);
-		f->finalize();
-		if (f->err()) {
-			warning("Can't write file '%s'", gameStateFileName.c_str());
-			ret = Common::kWritingFailed;
+
+WARN_UNUSED_RESULT TuckerEngine::SavegameError TuckerEngine::readSavegameHeader(const char *target, int slot, SavegameHeader &header) {
+	Common::String fileName = generateGameStateFileName(target, slot);
+	Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(fileName);
+
+	if (!file) {
+		return kSavegameNotFoundError;
+	}
+
+	SavegameError savegameError = readSavegameHeader(file, header);
+
+	delete file;
+	return savegameError;
+}
+
+WARN_UNUSED_RESULT TuckerEngine::SavegameError TuckerEngine::readSavegameHeader(Common::InSaveFile *file, SavegameHeader &header, bool skipThumbnail) {
+	header.version   = 0;
+	header.flags     = 0;
+	header.description.clear();
+	header.saveDate  = 0;
+	header.saveTime  = 0;
+	header.playTime  = 0;
+	header.thumbnail = nullptr;
+
+	if (file->readUint32BE() == kSavegameSignature) {
+		header.version = file->readUint16LE();
+	} else {
+		// possibly an old, headerless savegame
+
+		file->seek(0, SEEK_SET);
+
+		header.version = file->readUint16LE();
+		// old savegames are always version 1
+		if (header.version != 1) {
+			return kSavegameInvalidTypeError;
 		}
-		delete f;
+
+		file->skip(2);
 	}
-	return ret;
+
+	if (header.version < kSavegameVersionMinimum || header.version > kSavegameVersionCurrent) {
+		return kSavegameInvalidVersionError;
+	}
+
+	if (header.version >= 2) {
+		// savegame flags
+		header.flags = file->readUint32LE();
+
+		char ch;
+		while ((ch = (char)file->readByte()) != '\0')
+			header.description += ch;
+
+		header.saveDate = file->readUint32LE();
+		header.saveTime = file->readUint32LE();
+		header.playTime = file->readUint32LE();
+
+		if (!Graphics::loadThumbnail(*file, header.thumbnail, skipThumbnail)) {
+			return kSavegameIoError;
+		}
+	}
+
+	return ((file->err() || file->eos()) ? kSavegameIoError : kSavegameNoError);
 }
 
+TuckerEngine::SavegameError TuckerEngine::writeSavegameHeader(Common::OutSaveFile *file, SavegameHeader &header) {
+	// Tucker savegame signature
+	file->writeUint32BE(kSavegameSignature);
+
+	// version information
+	file->writeUint16LE(kSavegameVersionCurrent);
+
+	// savegame flags
+	file->writeUint32LE(header.flags);
+
+	// savegame name
+	file->writeString(header.description);
+	file->writeByte(0);
+
+	// creation/play time
+	TimeDate curTime;
+	_system->getTimeAndDate(curTime);
+	header.saveDate = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
+	header.saveTime = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min)     & 0xFF) <<  8) | ((curTime.tm_sec)         & 0xFF);
+	header.playTime = g_engine->getTotalPlayTime() / 1000;
+	file->writeUint32LE(header.saveDate);
+	file->writeUint32LE(header.saveTime);
+	file->writeUint32LE(header.playTime);
+
+	// thumbnail
+	Graphics::saveThumbnail(*file);
+
+	return (file->err() ? kSavegameIoError : kSavegameNoError);
+}
+
+Common::Error TuckerEngine::saveGameState(int slot, const Common::String &description) {
+	return writeSavegame(slot, description, false);
+}
+
+Common::Error TuckerEngine::writeSavegame(int slot, const Common::String &description, bool autosave) {
+	Common::String fileName = generateGameStateFileName(_targetName.c_str(), slot);
+	Common::OutSaveFile *file = _saveFileMan->openForSaving(fileName);
+	SavegameHeader header;
+	SavegameError savegameError = kSavegameNoError;
+
+	if (!file)
+		savegameError = kSavegameIoError;
+
+	if (!savegameError) {
+		// savegame flags
+		if (autosave)
+			header.flags |= kSavegameFlagAutosave;
+
+		// description
+		header.description = description;
+
+		savegameError = writeSavegameHeader(file, header);
+	}
+
+	if (!savegameError)
+		savegameError = saveOrLoadGameStateData(*file);
+
+	if (!savegameError)
+		file->finalize();
+
+	delete file;
+
+	if (savegameError) {
+		warning("Error writing savegame '%s'", fileName.c_str());
+		return Common::kWritingFailed;
+	}
+
+	return Common::kNoError;
+}
+
+bool TuckerEngine::isAutosaveAllowed() {
+	return isAutosaveAllowed(_targetName.c_str());
+}
+
+bool TuckerEngine::isAutosaveAllowed(const char *target) {
+	SavegameHeader savegameHeader;
+	SavegameError savegameError = readSavegameHeader(target, kAutoSaveSlot, savegameHeader);
+	return (savegameError == kSavegameNotFoundError || (savegameHeader.flags & kSavegameFlagAutosave));
+}
+
+void TuckerEngine::writeAutosave() {
+	if (canSaveGameStateCurrently()) {
+		// unconditionally reset last autosave timestamp so we don't start
+		// hammering the disk in case we can't/don't actually write the file
+		_lastSaveTime = _system->getMillis();
+
+		if (!isAutosaveAllowed()) {
+			warning("Refusing to overwrite non-autosave savegame in slot %i, skipping autosave", kAutoSaveSlot);
+			return;
+		}
+
+		if (writeSavegame(kAutoSaveSlot, "Autosave", true).getCode() != Common::kNoError) {
+			warning("Can't create autosave in slot %i, game not saved", kAutoSaveSlot);
+			return;
+		}
+	}
+}
+
+bool TuckerEngine::canLoadOrSave() const {
+	return !_player && _cursorState != kCursorStateDisabledHidden;
+}
 
 bool TuckerEngine::canLoadGameStateCurrently() {
-	return !_player && _cursorType < 2;
+	return canLoadOrSave();
 }
 
 bool TuckerEngine::canSaveGameStateCurrently() {
-	return !_player && _cursorType < 2;
+	return canLoadOrSave();
+}
+
+bool TuckerEngine::existsSavegame() {
+	Common::String pattern = generateGameStateFileName(_targetName.c_str(), 0, true);
+	return !_saveFileMan->listSavefiles(pattern).empty();
 }
 
 } // namespace Tucker

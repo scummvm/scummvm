@@ -3,6 +3,8 @@ PSP_EBOOT = EBOOT.PBP
 PSP_EBOOT_SFO = param.sfo
 PSP_EBOOT_TITLE = ScummVM-PSP
 DATE = $(shell date +%Y%m%d)
+DIST_EXECUTABLES=$(PSP_EBOOT) $(PLUGINS)
+DIST_FILES_PLATFORM=$(srcdir)/backends/platform/psp/README.PSP
 
 MKSFO = mksfoex -d MEMSIZE=1
 PACK_PBP = pack-pbp

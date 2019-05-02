@@ -46,6 +46,7 @@ void Scalpel3DOScreen::SHblitFrom(const Graphics::Surface &src, const Common::Po
 	}
 
 	Common::Rect srcRect = srcBounds;
+	srcRect.clip(320, 200);
 	Common::Rect destRect(pt.x, pt.y, pt.x + srcRect.width(), pt.y + srcRect.height());
 
 	if (!srcRect.isValidRect() || !clip(srcRect, destRect))

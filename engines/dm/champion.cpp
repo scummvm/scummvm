@@ -729,7 +729,7 @@ Thing ChampionMan::getObjectRemovedFromSlot(uint16 champIndex, uint16 slotIndex)
 			switch (curIconIndex) {
 			case kDMIconIndiceContainerChestClosed:
 				inventory.closeChest();
-			// No break on purpose
+				// fall through
 			case kDMIconIndiceScrollOpen:
 			case kDMIconIndiceScrollClosed:
 				setFlag(curChampion->_attributes, kDMAttributePanel);
@@ -2015,7 +2015,8 @@ void ChampionMan::addCandidateChampionToParty(uint16 championPortraitIndex) {
 	int16 curMapX = dungeon._partyMapX;
 	int16 curMapY = dungeon._partyMapY;
 	uint16 championObjectsCell = _vm->returnOppositeDir(dungeon._partyDir);
-	curMapX += _vm->_dirIntoStepCountEast[dungeon._partyDir], curMapY += _vm->_dirIntoStepCountNorth[dungeon._partyDir];
+	curMapX += _vm->_dirIntoStepCountEast[dungeon._partyDir];
+	curMapY += _vm->_dirIntoStepCountNorth[dungeon._partyDir];
 	curThing = dungeon.getSquareFirstThing(curMapX, curMapY);
 	int16 slotIdx = kDMSlotBackpackLine1_1;
 	while (curThing != _vm->_thingEndOfList) {

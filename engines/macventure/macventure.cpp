@@ -146,7 +146,7 @@ void MacVentureEngine::initDebugChannels() {
 
 Common::Error MacVentureEngine::run() {
 	debug("MacVenture::MacVentureEngine::init()");
-	initGraphics(kScreenWidth, kScreenHeight, true);
+	initGraphics(kScreenWidth, kScreenHeight);
 
 	_debugger = new Console(this);
 
@@ -728,7 +728,7 @@ int MacVentureEngine::findObjectInArray(ObjID objID, const Common::Array<ObjID> 
 		}
 	}
 	// HACK, should use iterator
-	return found ? i : -1;
+	return found ? (int)i : -1;
 }
 
 uint MacVentureEngine::getPrefixNdx(ObjID obj) {

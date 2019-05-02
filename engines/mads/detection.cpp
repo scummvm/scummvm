@@ -145,11 +145,11 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "MADS Engine";
+		return "MADS";
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "MADS (C)";
+		return "MADS (C) Microprose";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
@@ -203,11 +203,8 @@ SaveStateList MADSMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
 
 			if (in) {
-				MADS::Game::readSavegameHeader(in, header);
-				saveList.push_back(SaveStateDescriptor(slot, header._saveName));
-
-				header._thumbnail->free();
-				delete header._thumbnail;
+				if (MADS::Game::readSavegameHeader(in, header))
+					saveList.push_back(SaveStateDescriptor(slot, header._saveName));
 				delete in;
 			}
 		}
@@ -233,7 +230,10 @@ SaveStateDescriptor MADSMetaEngine::querySaveMetaInfos(const char *target, int s
 
 	if (f) {
 		MADS::MADSSavegameHeader header;
-		MADS::Game::readSavegameHeader(f, header);
+		if (!MADS::Game::readSavegameHeader(f, header, false)) {
+			delete f;
+			return SaveStateDescriptor();
+		}
 		delete f;
 
 		// Create the return descriptor

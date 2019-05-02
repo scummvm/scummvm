@@ -20,38 +20,47 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/archive.h"
-#include "common/config-manager.h"
-#include "common/debug-channels.h"
-#include "common/events.h"
-#include "engines/util.h"
-#include "graphics/scaler.h"
-#include "graphics/thumbnail.h"
 #include "titanic/titanic.h"
-#include "titanic/debugger.h"
 #include "titanic/carry/hose.h"
 #include "titanic/core/saveable_object.h"
+#include "titanic/debugger.h"
+#include "titanic/events.h"
+#include "titanic/game_manager.h"
 #include "titanic/game/get_lift_eye2.h"
 #include "titanic/game/television.h"
 #include "titanic/game/parrot/parrot_lobby_object.h"
 #include "titanic/game/sgt/sgt_navigation.h"
 #include "titanic/game/sgt/sgt_state_room.h"
+#include "titanic/main_game_window.h"
 #include "titanic/moves/enter_exit_first_class_state.h"
 #include "titanic/moves/enter_exit_sec_class_mini_lift.h"
 #include "titanic/moves/exit_pellerator.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/sound/music_room.h"
 #include "titanic/sound/music_room_instrument.h"
+#include "titanic/support/files_manager.h"
 #include "titanic/support/simple_file.h"
 #include "titanic/true_talk/tt_npc_script.h"
+#include "common/archive.h"
+#include "common/config-manager.h"
+#include "common/debug-channels.h"
+#include "common/events.h"
+#include "common/scummsys.h"
+#include "common/translation.h"
+#include "engines/util.h"
+#include "graphics/scaler.h"
+#include "graphics/screen.h"
+#include "gui/saveload.h"
 
 namespace Titanic {
 
 TitanicEngine *g_vm;
+Common::Language g_language;
 
 TitanicEngine::TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDesc)
 		: _gameDescription(gameDesc), Engine(syst), _randomSource("Titanic") {
 	g_vm = this;
+	g_language = getLanguage();
 	_debugger = nullptr;
 	_events = nullptr;
 	_filesManager = nullptr;
@@ -61,6 +70,7 @@ TitanicEngine::TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDe
 	_scriptHandler = nullptr;
 	_script = nullptr;
 	CMusicRoom::_musicHandler = nullptr;
+	_loadSaveSlot = -1;
 
 	// Set up debug channels
 	DebugMan.addDebugChannel(kDebugCore, "core", "Core engine debug level");
@@ -110,6 +120,8 @@ bool TitanicEngine::initialize() {
 
 	setItemNames();
 	setRoomNames();
+
+	syncSoundSettings();
 
 	_window->applicationStarting();
 	return true;
@@ -176,24 +188,49 @@ void TitanicEngine::setRoomNames() {
 }
 
 bool TitanicEngine::canLoadGameStateCurrently() {
+	CGameManager *gameManager = _window->_gameManager;
+	CScreenManager *screenMan = CScreenManager::_screenManagerPtr;
+
+	if (!gameManager)
+		// Allow loading from copyright screen and continue dialogs
+		return true;
+
 	if (!_window->_inputAllowed)
 		return false;
-	CProjectItem *project = _window->_gameManager->_project;
+	if (screenMan && screenMan->_inputHandler->isLocked())
+		return false;
+	if (!gameManager->isntTransitioning())
+		return false;
+
+	CProjectItem *project = gameManager->_project;
 	if (project) {
-		CPetControl *pet = project->getPetControl();
-		if (pet && !pet->isAreaUnlocked())
-			return false;
+		if (gameManager->_gameState._petActive) {
+			CPetControl *pet = project->getPetControl();
+			if (pet && !pet->isAreaUnlocked())
+				return false;
+		}
+	} else {
+		return false;
 	}
 
 	return true;
 }
 
 bool TitanicEngine::canSaveGameStateCurrently() {
-	return canLoadGameStateCurrently();
+	CGameManager *gameManager = _window->_gameManager;
+	if (!gameManager)
+		return false;
+
+	return gameManager->_gameState._petActive &&
+		canLoadGameStateCurrently();
 }
 
 Common::Error TitanicEngine::loadGameState(int slot) {
-	_window->_project->loadGame(slot);
+	CGameManager *gameManager = _window->_gameManager;
+	if (!gameManager)
+		_loadSaveSlot = slot;
+	else
+		_window->_project->loadGame(slot);
 	return Common::kNoError;
 }
 
@@ -218,11 +255,6 @@ CString TitanicEngine::getSavegameName(int slot) {
 
 		TitanicSavegameHeader header;
 		bool isValid = CProjectItem::readSavegameHeader(&file, header);
-		if (header._thumbnail) {
-			header._thumbnail->free();
-			delete header._thumbnail;
-		}
-
 		file.close();
 
 		if (isValid)
@@ -233,16 +265,58 @@ CString TitanicEngine::getSavegameName(int slot) {
 	return CString();
 }
 
-void TitanicEngine::GUIError(const char *msg, ...) {
-	char buffer[STRINGBUFLEN];
-	va_list va;
+void TitanicEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
 
-	// Generate the full error message
-	va_start(va, msg);
-	vsnprintf(buffer, STRINGBUFLEN, msg, va);
-	va_end(va);
+	if (_window->_project) {
+		CPetControl *pet = _window->_project->getPetControl();
+		if (pet) {
+			pet->syncSoundSettings();
+		}
+	}
+}
 
-	GUIErrorMessage(buffer);
+
+void TitanicEngine::showScummVMSaveDialog() {
+	if (!canSaveGameStateCurrently())
+		return;
+
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+
+	pauseEngine(true);
+	int slot = dialog->runModalWithCurrentTarget();
+	pauseEngine(false);
+
+	if (slot >= 0) {
+		Common::String desc = dialog->getResultString();
+
+		if (desc.empty()) {
+			// create our own description for the saved game, the user didn't enter it
+			desc = dialog->createDefaultSaveDescription(slot);
+		}
+
+		// Save the game
+		saveGameState(slot, desc);
+	}
+
+	delete dialog;
+}
+
+void TitanicEngine::showScummVMRestoreDialog() {
+	if (!canLoadGameStateCurrently())
+		return;
+
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+
+	pauseEngine(true);
+	int slot = dialog->runModalWithCurrentTarget();
+	pauseEngine(false);
+
+	if (slot >= 0) {
+		loadGameState(slot);
+	}
+
+	delete dialog;
 }
 
 } // End of namespace Titanic

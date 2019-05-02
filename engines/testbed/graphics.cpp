@@ -464,7 +464,7 @@ TestExitStatus GFXtests::fullScreenMode() {
 		}
 
 		g_system->beginGFXTransaction();
-		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, !isFeatureEnabled);
+			g_system->setFeatureState(OSystem::kFeatureFullscreenMode, !isFeatureEnabled);
 		g_system->endGFXTransaction();
 
 		// Current state should be now !isFeatureEnabled
@@ -482,7 +482,7 @@ TestExitStatus GFXtests::fullScreenMode() {
 		}
 
 		g_system->beginGFXTransaction();
-		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, !isFeatureEnabled);
+			g_system->setFeatureState(OSystem::kFeatureFullscreenMode, !isFeatureEnabled);
 		g_system->endGFXTransaction();
 
 		g_system->delayMillis(1000);
@@ -536,7 +536,7 @@ TestExitStatus GFXtests::filteringMode() {
 		if (g_system->hasFeature(OSystem::kFeatureFullscreenMode) && !g_system->getFeatureState(OSystem::kFeatureFullscreenMode)) {
 			fullScreenToggled = true;
 			g_system->beginGFXTransaction();
-			g_system->setFeatureState(OSystem::kFeatureFullscreenMode, true);
+				g_system->setFeatureState(OSystem::kFeatureFullscreenMode, true);
 			g_system->endGFXTransaction();
 		}
 
@@ -557,7 +557,7 @@ TestExitStatus GFXtests::filteringMode() {
 		}
 
 		g_system->beginGFXTransaction();
-		g_system->setFeatureState(OSystem::kFeatureFilteringMode, !isFeatureEnabled);
+			g_system->setFeatureState(OSystem::kFeatureFilteringMode, !isFeatureEnabled);
 		g_system->endGFXTransaction();
 
 		// Current state should be now !isFeatureEnabled
@@ -575,7 +575,7 @@ TestExitStatus GFXtests::filteringMode() {
 		}
 
 		g_system->beginGFXTransaction();
-		g_system->setFeatureState(OSystem::kFeatureFilteringMode, !isFeatureEnabled);
+			g_system->setFeatureState(OSystem::kFeatureFilteringMode, !isFeatureEnabled);
 		g_system->endGFXTransaction();
 
 		g_system->delayMillis(1000);
@@ -591,7 +591,7 @@ TestExitStatus GFXtests::filteringMode() {
 		// Restore fullscreen state
 		if (fullScreenToggled) {
 			g_system->beginGFXTransaction();
-			g_system->setFeatureState(OSystem::kFeatureFullscreenMode, false);
+				g_system->setFeatureState(OSystem::kFeatureFullscreenMode, false);
 			g_system->endGFXTransaction();
 		}
 
@@ -601,7 +601,7 @@ TestExitStatus GFXtests::filteringMode() {
 
 	return passed;
 }
-	
+
 /**
  * Tests the aspect ratio correction by: drawing an ellipse, when corrected the ellipse should render to a circle
  */
@@ -639,7 +639,7 @@ TestExitStatus GFXtests::aspectRatio() {
 		}
 
 		g_system->beginGFXTransaction();
-		g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, !isFeatureEnabled);
+			g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, !isFeatureEnabled);
 		g_system->endGFXTransaction();
 
 		g_system->delayMillis(1000);
@@ -653,7 +653,7 @@ TestExitStatus GFXtests::aspectRatio() {
 		}
 
 		g_system->beginGFXTransaction();
-		g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, isFeatureEnabled);
+			g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, isFeatureEnabled);
 		g_system->endGFXTransaction();
 	} else {
 		Testsuite::displayMessage("feature not supported");
@@ -835,13 +835,13 @@ TestExitStatus GFXtests::iconifyWindow() {
 		// Toggle
 
 		g_system->beginGFXTransaction();
-		g_system->setFeatureState(OSystem::kFeatureIconifyWindow, !isFeatureEnabled);
+			g_system->setFeatureState(OSystem::kFeatureIconifyWindow, !isFeatureEnabled);
 		g_system->endGFXTransaction();
 
 		g_system->delayMillis(1000);
 
 		g_system->beginGFXTransaction();
-		g_system->setFeatureState(OSystem::kFeatureIconifyWindow, isFeatureEnabled);
+			g_system->setFeatureState(OSystem::kFeatureIconifyWindow, isFeatureEnabled);
 		g_system->endGFXTransaction();
 	} else {
 		Testsuite::displayMessage("feature not supported");
@@ -884,7 +884,7 @@ TestExitStatus GFXtests::scaledCursors() {
 
 	if (isAspectRatioCorrected) {
 		g_system->beginGFXTransaction();
-		g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, false);
+			g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, false);
 		g_system->endGFXTransaction();
 	}
 
@@ -911,8 +911,8 @@ TestExitStatus GFXtests::scaledCursors() {
 
 		g_system->beginGFXTransaction();
 
-		bool isGFXModeSet = g_system->setGraphicsMode(gfxMode->id);
-		g_system->initSize(320, 200);
+			bool isGFXModeSet = g_system->setGraphicsMode(gfxMode->id);
+			g_system->initSize(320, 200);
 
 		OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 
@@ -947,12 +947,13 @@ TestExitStatus GFXtests::scaledCursors() {
 
 	// Restore Original State
 	g_system->beginGFXTransaction();
-	bool isGFXModeSet = g_system->setGraphicsMode(currGFXMode);
-	g_system->initSize(320, 200);
 
-	if (isAspectRatioCorrected) {
-		g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, true);
-	}
+		bool isGFXModeSet = g_system->setGraphicsMode(currGFXMode);
+		g_system->initSize(320, 200);
+
+		if (isAspectRatioCorrected) {
+			g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, true);
+		}
 
 	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 
@@ -1226,7 +1227,7 @@ TestExitStatus GFXtests::pixelFormats() {
 
 		// Switch to that pixel Format
 		g_system->beginGFXTransaction();
-		g_system->initSize(320, 200, &(*iter));
+			g_system->initSize(320, 200, &(*iter));
 		g_system->endGFXTransaction();
 		Testsuite::clearScreen(true);
 
@@ -1272,7 +1273,7 @@ TestExitStatus GFXtests::pixelFormats() {
 
 	// Revert back to 8bpp
 	g_system->beginGFXTransaction();
-	g_system->initSize(320, 200);
+		g_system->initSize(320, 200);
 	g_system->endGFXTransaction();
 	GFXTestSuite::setCustomColor(255, 0, 0);
 	initMousePalette();

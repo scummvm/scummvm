@@ -31,8 +31,6 @@ namespace Xeen {
 class XeenEngine;
 class Character;
 
-#define MAX_SPELLS_PER_CLASS 40
-
 enum MagicSpell {
 	MS_AcidSpray = 0, MS_Awaken = 1, MS_BeastMaster = 2, MS_Bless = 3,
 	MS_Clairvoyance = 4,  MS_ColdRay = 5, MS_CreateFood = 6,
@@ -58,7 +56,7 @@ enum MagicSpell {
 	MS_SuppressDisease = 67, MS_SuppressPoison = 68, MS_Teleport = 69,
 	MS_TimeDistortion = 70, MS_TownPortal = 71, MS_ToxicCloud = 72,
 	MS_TurnUndead = 73, MS_WalkOnWater = 74, MS_WizardEye = 75,
-	NO_SPELL = 76
+	NO_SPELL = 76, TOTAL_SPELLS = 76
 };
 
 class Spells {

@@ -22,7 +22,6 @@
 
 #include "titanic/star_control/surface_area.h"
 #include "graphics/primitives.h"
-#include "titanic/titanic.h"
 
 namespace Titanic {
 

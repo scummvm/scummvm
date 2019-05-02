@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/record_phonograph_button.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -46,7 +47,7 @@ bool CRecordPhonographButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	recordMsg.execute(getParent());
 
 	if (recordMsg._canRecord) {
-		playSound("z#58.wav");
+		playSound(TRANSLATE("z#58.wav", "z#589.wav"));
 		loadFrame(1);
 		_active = true;
 	}
@@ -56,7 +57,7 @@ bool CRecordPhonographButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 
 bool CRecordPhonographButton::PhonographStopMsg(CPhonographStopMsg *msg) {
 	if (_active) {
-		playSound("z#57.wav");
+		playSound(TRANSLATE("z#57.wav", "z#588.wav"));
 		loadFrame(0);
 		_active = false;
 	}

@@ -102,7 +102,7 @@ void HnmPlayer::waitLoop() {
 	_nextFrameTime = _expectedFrameTime - _timeDrift;
 	if (_useSoundSync && _vm->_timerTicks > 1000.0 + _nextFrameTime)
 		_useSound = false;
-	while (_vm->_timerTicks < _nextFrameTime) ;  // waste time
+	while (_vm->_timerTicks < _nextFrameTime) {} // waste time
 	_timeDrift = _vm->_timerTicks - _nextFrameTime;
 }
 

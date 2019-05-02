@@ -2,7 +2,7 @@ PŘEČTIMĚ ScummVM
 ------------------------------------------------------------------------
 
 Pro více informací, seznamy kompatibility, podrobnosti o dotacích, nejnovější verze,
-novinky o vývoji a další, prosím navštivte domovskou stránku ScummVM na: <http://www.scummvm.org/>
+novinky o vývoji a další, prosím navštivte domovskou stránku ScummVM na: <https://www.scummvm.org/>
 
 
 Obsah:
@@ -112,7 +112,7 @@ Pokud máte ScummVM rádi, můžete ho podpořit dotací pomocí tlačítka PayP
 ---- -------------
 Pro ty netrpělivé z Vás je tu návod, jak ScummVM spustit v několika krocích.
 
-1. Stáhněte si ScummVM z <http://www.scummvm.org/downloads.php> a nainstalujte ho.
+1. Stáhněte si ScummVM z <https://www.scummvm.org/downloads/> a nainstalujte ho.
 
 2. Na Vašem pevném disku vytvořte složku a zkopírujte datové soubory z původního média do této složky. Zopakujte pro všechny hry, které chcete hrát
 
@@ -130,19 +130,19 @@ Rada: Pokud chcete přidat více her najednou, zkuste stisknout a držet kláves
 
 1.3) Nejčastější otázky
 ---- ------------------
-Na <http://www.scummvm.org/faq/> jsme pro Vás připravili seznam nejčastějších otázek a jejich odpovědí.
+Na <https://www.scummvm.org/faq/> jsme pro Vás připravili seznam nejčastějších otázek a jejich odpovědí.
 
 
 2.0) Kontakt:
 ---- --------
-Nejjednodušším způsobem, jak kontaktovat tým ScummVM je předložením hlášení o chybě (viz oddíl 2.1) nebo použitím našich fór na <http://forums.scummvm.org>.
+Nejjednodušším způsobem, jak kontaktovat tým ScummVM je předložením hlášení o chybě (viz oddíl 2.1) nebo použitím našich fór na <https://forums.scummvm.org>.
 Můžete se také připojit a odesílat a e-maily na korespondenční seznam scummvm-devel, nebo si s námi popovídejte na IRC (#scummvm na irc.freenode.net) Nežádejte nás, prosím, o podporu nefungující hry – nejdříve si přečtěte nejčastější otázky na naší stránce
 
 2.1) Hlášení chyb:
 ---- -------------
 Abyste mohli nahlásit chybu, nejdříve si, prosíme, vytvořte si účet na SourceForge a klikněte na odkaz "Bug Tracker" na naší stránce. Ujistěte se, prosím, že se chyba dá znovu zjistit a stále se objevuje v nejnovější verzi git/denního sestavení. Také na naší stránce zkontrolujte seznam známých problémů (níže) a seznam kompatibility pro tuto hru, abyste se ujistili, že problém již není znám:
 
-  <http://www.scummvm.org/compatibility>
+  <https://www.scummvm.org/compatibility/>
 
 Prosíme, nenahlašujte chyby ve hrách, které nejsou v seznamu v sekci 'Supported Games' nebo seznamu kompatibility uvedeny jako dokončitelné. My –víme-, že tyto hry mají chyby.
 
@@ -163,7 +163,7 @@ Nakonec prosíme, abyste každou chybu nahlašovali samostatně; neohlašujte n�
 V tuto chvíli je o následujících hrách známo, že fungují a měly by být hratelné až dokonce.
 Podrobnější seznam kompatibility podporovaných her můžete nalézt na adrese:
 
- <http://www.scummvm.org/compatibility/>)
+ <https://www.scummvm.org/compatibility/>)
 
 
 Hry od LucasArts (SCUMM):
@@ -469,7 +469,7 @@ ScummVM přeskakuje ochranu v následujících hrách:
 ---- --------------
 Pro přehledný seznam požadovaných datových souborů u podporovaných her navštivte:
 
-<http://wiki.scummvm.org/index.php/Datafiles>
+<https://wiki.scummvm.org/index.php/Datafiles>
 
 
 3.3) Poznámky ke hrám Multi-CD:
@@ -575,11 +575,11 @@ Videa pro hry Broken Sword mají v sobě trochu historie (viz další oddíl, p
 
 Ve verzích pro PlayStation, můžete původní videa vypsat z disku. Každý soubor, který má příponu "STR", byste měli vypsat jako *čist* sektory z disku (všech 2352 bajtů na sektor). Můžete také míst toho použít přeformátovaná videa, která jsou zmíněna níže, ale to nebude fungovat pro všechny videa v Broken Sword II. Pro více informací si prohlédněte:
 
-  <http://wiki.scummvm.org/index.php/HOWTO-PlayStation_Videos>
+  <https://wiki.scummvm.org/index.php/HOWTO-PlayStation_Videos>
 
 Některá vydání hry, a také verze pro PlayStation, Smacker videa nemají. Revolution Software nám laskavě dovolilo poskytovat přeformátovaná videa ke stažení na naší stránce:
 
-  <http://www.scummvm.org/downloads.php>
+  <https://www.scummvm.org/downloads/>
 
 Tato videa jsou poskytována ve formátu DXA se zvukem ve formátu FLAC. Jejich kvalita se rovná originálu díky použití bezztrátové komprese. Zobrazení těchto videí vyžaduje, aby verze ScummVM byla sestavena s podporou FLAC i zlib.
 
@@ -652,7 +652,7 @@ CD verze série Gobliiins obsahuje jednu velkou zvukovou stopu, kterou je třeba
 ----- ------------------------------------------------
 Abyste mohli spustit verzi pro Mac OS X od Wyrmkeep musíte data zkopírovat z CD na Váš pevný disk. Pokud používáte PC, pak se podívejte na:
 
-  <http://wiki.scummvm.org/index.php/HOWTO-Mac_Games>
+  <https://wiki.scummvm.org/index.php/HOWTO-Mac_Games>
 
 I když se v tomto článku píše hlavně o hrách SCUMM, je zde také zmíněn nástroj "HFSExplorer", který potřebujete k extrakci souborů. Nezapomeňte, že data řeči "Inherit the Earth Voices" musíte umístit do stejného adresáře, kde jsou uložena data hry:
 
@@ -716,7 +716,7 @@ Amiga/Macintosh:
 Musíte nainstalovat malý balíček videí, které chybí v obou těchto verzích této hry. Jmenuje se "The Feeble Files - Omni TV and epilogue cutscenes for the Amiga and Macintosh versions"
 a lze ho získat zde:
 
-  <http://www.scummvm.org/games/#feeble>
+  <https://www.scummvm.org/games/#feeble>
 
 Windows:
 Pokud máte verzi pro Windows, je třeba si uvědomit pár věcí.
@@ -825,13 +825,13 @@ Zork Nemesis: The Forbidden Lands
 Všechny verze
 
 Stáhněte si balíček písem Liberation(tm)
-<https://fedorahosted.org/releases/l/i/liberation-fonts/liberation-fonts-ttf-2.00.1.tar.gz>
+<https://releases.pagure.org/liberation-fonts/liberation-fonts-ttf-2.00.1.tar.gz>
 a rozbalte všechny soubory ttf do vaší dodatečné složky ScummVM.
 Nebo si stáhněte balíček GNU FreeFont TTF
 <https://ftp.gnu.org/gnu/freefont/freefont-ttf.zip> a umístěte všechny soubory ttf z adresáře sfd do dodatečné složky ScummVM, i když je třeba říci, že v současné době
 mají některá tato písma potíže při vykreslování.
 Stáhněte si opravu pro titulky
-<http://www.thezorklibrary.com/installguides/znpatch.zip> a rozbalte adresář addon přímo do kořenového adresáře hry
+<https://www.thezorklibrary.com/installguides/znpatch.zip> a rozbalte adresář addon přímo do kořenového adresáře hry
 
 Verze z GoG
 
@@ -864,7 +864,7 @@ Zork: Grand Inquisitor
 Všechny verze
 
 Stáhněte si balíček písem Liberation(tm)
-<https://fedorahosted.org/releases/l/i/liberation-fonts/liberation-fonts-ttf-2.00.1.tar.gz>
+<https://releases.pagure.org/liberation-fonts/liberation-fonts-ttf-2.00.1.tar.gz>
 a rozbalte všechny soubory ttf do vaší dodatečné složky ScummVM.
 Nebo si stáhněte balíček GNU FreeFont TTF
 <https://ftp.gnu.org/gnu/freefont/freefont-ttf.zip> a umístěte všechny soubory ttf z adresáře sfd do dodatečné složky ScummVM, i když je třeba říci, že v současné době
@@ -888,7 +888,7 @@ subtitle.zfs
 Z CD1 zkopírujte adresář zassets1 do kořenového adresáře hry
 Z CD2 zkopírujte adresář zassets2 do kořenového adresáře hry
 Doporučujeme V8m nainstalovat záplatu 1.2
-<http://www.thezorklibrary.com/installguides/Zpatch.exe>,
+<https://www.thezorklibrary.com/installguides/Zpatch.exe>,
 ale je možné že pro to budete muset hru nainstalovat normálním způsobem, protože záplata má vlastní instalátor.
 
 Verze z DVD
@@ -926,7 +926,7 @@ V balíčku nástrojů také poskytujeme nástroj nazvaný 'extract_scumm_mac',
 
 Pro další informace o kopírování herních souborů Macintosh na Váš pevný disk si prohlédněte:
 
-  <http://wiki.scummvm.org/index.php/HOWTO-Mac_Games>
+  <https://wiki.scummvm.org/index.php/HOWTO-Mac_Games>
 
 
 4.0) Podporované Platformy:
@@ -960,7 +960,7 @@ Podporované platformy zahrnují (mimo jiné):
 
 Verze pro Dreamcast nepodporuje The Curse of Monkey Island, ani The Dig. Verze pro Nintendo DS nepodporuje Full Throttle, The Dig, nebo The Curse of Monkey Island.
 Pro další omezení v závislosti na platformě se, prosím, podívejte na naší  Wiki:
-  <http://wiki.scummvm.org/index.php/Platforms>
+  <https://wiki.scummvm.org/index.php/Platforms>
 
 Ve verzi pro Macintosh je stisknutí pravého tlačítka myši emulováno pomocí Cmd-kliknutí (to je, že stisknete tlačítko myši při držení klávesy
 Command/Apple/Vrtule).
@@ -1023,7 +1023,7 @@ ScummVM může také hru spustit přímo pomocí argumentů příkazové řádky
   --native-mt32            Pravý Roland MT-32 (zakáže emulaci GM)
   --enable-gs              Povolí režim Roland GS pro přehrávání MIDI
   --output-rate=FREKVENCE  Výstupní vzorkovací kmitočet v Hz (např. 22050)
-  --opl-driver=OVLADAČ     Vybere emulátor AdLib (OPL) (db, mame)
+  --opl-driver=OVLADAČ     Vybere emulátor AdLib (OPL) (db, mame, nuked)
   --aspect-ratio           Povolí korekci poměru stran
   --render-mode=REŽIM      Povolí dodatečné režimy vykreslení (hercGreen, hercAmber,
                            cga, ega, vga, amiga, fmtowns, pc9821, pc9801, 2gs,
@@ -2015,118 +2015,118 @@ Pokud vlastní možnosti nejsou zobrazeny, musí být konkrétní hry spuštěny
 ---- ----------
 Pro aktuální přehled o tom, jak ScummVM sestavit pro různé platformy, prohlédněte si, prosím, naší Wiki, zvláště tuto stránku:
 
-   <http://wiki.scummvm.org/index.php/Compiling_ScummVM>
+   <https://wiki.scummvm.org/index.php/Compiling_ScummVM>
 
 Pokud sestavujete ve Windows, Linux nebo Mac OS X, potřebujete SDL-1.2.2
 Nebo novější (starší verze mohou fungovat, ale nejsou podporovány) a podporovaný kompilátor. Většina kompilátorů, včetně GCC, mingw a novějších verzí Microsoft Visual C++ jsou podporovány. Pokud chcete použít stopy CD komprimované do MP3 nebo soubory .SOU, musíte nainstalovat knihovnu MAD; podobně potřebujete vhodné knihovny pro komprimovaný zvuk pomocí Ogg Vorbis a FLAC. Pro komprimované uložené stavy je potřeba mít zlib.
 
-Některé části ScummVM, zvláště zvětšovače, mají vysoce optimalizované verze napsané v assembleru. Pokud si přejete tuto možnost použít, potřebuje mít nainstalován assembler nasm (viz http://www.nasm.us/). Nezapomeňte, že v současnosti máme pouze verze optimalizované pro x86 MMX, a nebudou sestaveny pro jiné procesory.
+Některé části ScummVM, zvláště zvětšovače, mají vysoce optimalizované verze napsané v assembleru. Pokud si přejete tuto možnost použít, potřebuje mít nainstalován assembler nasm (viz https://www.nasm.us/). Nezapomeňte, že v současnosti máme pouze verze optimalizované pro x86 MMX, a nebudou sestaveny pro jiné procesory.
 
-Na Win9x/NT/XP můžete určit USE_WINDBG a připojit WinDbg pro procházení ladících zpráv (viz <https://technet.microsoft.com/en-us/sysinternals/debugview.aspx)>.
+Na Windows můžete určit USE_WINDBG a připojit WinDbg pro procházení ladících zpráv (viz <https://docs.microsoft.com/cs-cz/windows-hardware/drivers/debugger/index>).
 
    Windows:
    * Dev-C++
       Přečtěte si prosím:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/DevCPP>
+      <https://wiki.scummvm.org/index.php/Compiling_ScummVM/DevCPP>
    * MinGW
       Přečtěte si prosím:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/MinGW>
+      <https://wiki.scummvm.org/index.php/Compiling_ScummVM/MinGW>
    * Visual Studio (MSVC)
       Přečtěte si prosím:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Visual_Studio>
+      <https://wiki.scummvm.org/index.php/Compiling_ScummVM/Visual_Studio>
    * Windows CE/Mobile
       Přečtěte si prosím:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Windows_CE>
+      <https://wiki.scummvm.org/index.php/Compiling_ScummVM/Windows_CE>
 
    Linux:
    * GCC
       Přečtěte si prosím:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/GCC>
+      <https://wiki.scummvm.org/index.php/Compiling_ScummVM/GCC>
 
    Mac OS X:
       Přečtěte si prosím:
-      <http://wiki.scummvm.org/index.php/Mac_OS_X>
+      <https://wiki.scummvm.org/index.php/Mac_OS_X>
 
    AmigaOS4:
       Přečtěte si prosím:
-      <http://wiki.scummvm.org/index.php/AmigaOS>
+      <https://wiki.scummvm.org/index.php/AmigaOS>
 
    Apple iPhone:
       Přečtěte si prosím:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/iPhone>
+      <https://wiki.scummvm.org/index.php/Compiling_ScummVM/iPhone>
 
    Atari/FreeMiNT:
       Přečtěte si prosím:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Atari/FreeMiNT>
+      <https://wiki.scummvm.org/index.php/Compiling_ScummVM/Atari/FreeMiNT>
 
    Bada/Tizen:
       Přečtěte si prosím:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Bada/Tizen>
+      <https://wiki.scummvm.org/index.php/Compiling_ScummVM/Bada/Tizen>
 
    BeOS/ZETA/Haiku:
       Přečtěte si prosím:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/BeOS/ZETA/Haiku>
+      <https://wiki.scummvm.org/index.php/Compiling_ScummVM/BeOS/ZETA/Haiku>
 
    Google Android:
       Přečtěte si prosím:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Android>
+      <https://wiki.scummvm.org/index.php/Compiling_ScummVM/Android>
 
    HP webOS:
       Přečtěte si prosím:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/WebOS>
+      <https://wiki.scummvm.org/index.php/Compiling_ScummVM/WebOS>
 
    Mac OS:
    * Mac OS X
       Přečtěte si prosím:
-      <http://wiki.scummvm.org/index.php/Mac_OS_X>
+      <https://wiki.scummvm.org/index.php/Mac_OS_X>
     * Mac OS X 10.2.8
       Přečtěte si prosím:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Mac_OS_X_10.2.8>
+      <https://wiki.scummvm.org/index.php/Compiling_ScummVM/Mac_OS_X_10.2.8>
     * Mac OS X Křížová kompilace
       Přečtěte si prosím:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Mac_OS_X_Crosscompiling>
+      <https://wiki.scummvm.org/index.php/Compiling_ScummVM/Mac_OS_X_Crosscompiling>
 
    Maemo:
       Přečtěte si prosím:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Maemo>
+      <https://wiki.scummvm.org/index.php/Compiling_ScummVM/Maemo>
 
    Nintendo DS:
       Přečtěte si prosím:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Nintendo_DS>
+      <https://wiki.scummvm.org/index.php/Compiling_ScummVM/Nintendo_DS>
 
    Nintendo Wii a Gamecube:
       Přečtěte si prosím:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Wii>
+      <https://wiki.scummvm.org/index.php/Compiling_ScummVM/Wii>
 
    RaspberryPi:
       Přečtěte si prosím:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/RPI>
+      <https://wiki.scummvm.org/index.php/Compiling_ScummVM/RPI>
 
    Sega Dreamcast:
       Přečtěte si prosím:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Dreamcast>
+      <https://wiki.scummvm.org/index.php/Compiling_ScummVM/Dreamcast>
 
    Sony Playstation:
    * Sony PlayStation 2
       Přečtěte si prosím:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/PlayStation_2>
+      <https://wiki.scummvm.org/index.php/Compiling_ScummVM/PlayStation_2>
    * Sony PlayStation 3
       Přečtěte si prosím:
-      <http://wiki.scummvm.org/index.php/PlayStation_3#Building_from_source>
+      <https://wiki.scummvm.org/index.php/PlayStation_3#Building_from_source>
    * Sony PlayStation Portable
       Přečtěte si prosím:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/PlayStation_Portable>
+      <https://wiki.scummvm.org/index.php/Compiling_ScummVM/PlayStation_Portable>
 
    Symbian:
       Přečtěte si prosím:
-      <http://wiki.scummvm.org/index.php/Compiling_ScummVM/Symbian>
+      <https://wiki.scummvm.org/index.php/Compiling_ScummVM/Symbian>
 
 
 10.0) Poděkování
 ----- ----------
 Prosím přečtěte si náš rozsáhlý seznam lidí, kterým chceme poděkovat na
 
-<http://www.scummvm.org/credits/>
+<https://www.scummvm.org/credits/>
 
 
 
@@ -2134,5 +2134,5 @@ Prosím přečtěte si náš rozsáhlý seznam lidí, kterým chceme poděkovat 
 ------------------------------------------------------------------------
 Hodně Štěstí a Šťastné Adventurování!
 Tým ScummVM.
-<http://www.scummvm.org/>
+<https://www.scummvm.org/>
 ------------------------------------------------------------------------

@@ -48,29 +48,16 @@ public:
 };
 
 int AudioBufferStream::readBuffer(int16 *buffer, const int numSamples) {
-	_audioBuffer->enterCriticalSection();
-	int samplesToRead = MIN((const int)numSamples, (const int)_audioBuffer->size());
-
-	for (int idx = 0; idx < samplesToRead; ++idx)
-		*buffer++ = _audioBuffer->pop();
-
-	_audioBuffer->leaveCriticalSection();
-	return samplesToRead;
+	return _audioBuffer->read(buffer, numSamples);
 }
 
 bool AudioBufferStream::endOfData() const {
-	return _audioBuffer->_finished;
+	return _audioBuffer->isFinished();
 }
 
 /*------------------------------------------------------------------------*/
 
-CWaveFile::CWaveFile() : _audioStream(nullptr),
-		_waveData(nullptr), _waveSize(0), _dataSize(0), _headerSize(0),
-		_rate(0), _flags(0), _wavType(0), _soundType(Audio::Mixer::kPlainSoundType) {
-	setup();
-}
-
-CWaveFile::CWaveFile(QSoundManager *owner) : _audioStream(nullptr),
+CWaveFile::CWaveFile(Audio::Mixer *mixer) : _mixer(mixer), _pendingAudioStream(nullptr),
 		_waveData(nullptr), _waveSize(0), _dataSize(0), _headerSize(0),
 		_rate(0), _flags(0), _wavType(0), _soundType(Audio::Mixer::kPlainSoundType) {
 	setup();
@@ -85,19 +72,17 @@ void CWaveFile::setup() {
 }
 
 CWaveFile::~CWaveFile() {
-	if (_audioStream) {
-		//_soundManager->soundFreed(_soundHandle);
-		delete _audioStream;
-	}
+	// Delete any pending audio stream if it wasn't used
+	delete _pendingAudioStream;
 
 	if (_disposeAudioBuffer == DisposeAfterUse::YES && _audioBuffer)
 		delete _audioBuffer;
 
-	delete[] _waveData;
+	free(_waveData);
 }
 
 uint CWaveFile::getDurationTicks() const {
-	if (!_audioStream)
+	if (!_rate)
 		return 0;
 
 	// FIXME: The original uses acmStreamSize to calculate
@@ -105,19 +90,17 @@ uint CWaveFile::getDurationTicks() const {
 	// method works, for now I'm using a simple ratio of a
 	// sample output to input value
 	double newSize = (double)_dataSize * (1475712.0 / 199836.0);
-	return (uint)(newSize * 1000.0 / _audioStream->getRate());
+	return (uint)(newSize * 1000.0 / _rate);
 }
 
 bool CWaveFile::loadSound(const CString &name) {
-	assert(!_audioStream);
-
 	StdCWadFile file;
 	if (!file.open(name))
 		return false;
 
 	Common::SeekableReadStream *stream = file.readStream();
 	uint wavSize = stream->size();
-	byte *data = new byte[wavSize];
+	byte *data = (byte *)malloc(wavSize);
 	stream->read(data, wavSize);
 
 	load(data, wavSize);
@@ -139,8 +122,6 @@ bool CWaveFile::loadSpeech(CDialogueFile *dialogueFile, int speechIndex) {
 }
 
 bool CWaveFile::loadMusic(const CString &name) {
-	assert(!_audioStream);
-
 	StdCWadFile file;
 	if (!file.open(name))
 		return false;
@@ -161,7 +142,7 @@ bool CWaveFile::loadMusic(CAudioBuffer *buffer, DisposeAfterUse::Flag disposeAft
 	_disposeAudioBuffer = disposeAfterUse;
 	_loadMode = LOADMODE_AUDIO_BUFFER;
 
-	_audioStream = new AudioBufferStream(_audioBuffer);
+	_pendingAudioStream = new AudioBufferStream(_audioBuffer);
 	return true;
 }
 
@@ -176,27 +157,23 @@ void CWaveFile::load(byte *data, uint dataSize) {
 	_headerSize = wavStream.pos();
 }
 
-Audio::SeekableAudioStream *CWaveFile::audioStream() {
-	if (!_audioStream) {
-		// No stream yet, so create one and give it control of the raw wave data
-		assert(_waveData);
-		_audioStream = Audio::makeWAVStream(
-			new Common::MemoryReadStream(_waveData, _waveSize, DisposeAfterUse::YES),
+Audio::SeekableAudioStream *CWaveFile::createAudioStream() {
+	Audio::SeekableAudioStream *stream;
+
+	if (_pendingAudioStream) {
+		stream = _pendingAudioStream;
+		_pendingAudioStream = nullptr;
+	} else {
+		// Create a new ScummVM audio stream for the wave file data
+		stream = Audio::makeWAVStream(
+			new Common::MemoryReadStream(_waveData, _waveSize, DisposeAfterUse::NO),
 			DisposeAfterUse::YES);
-		_waveData = nullptr;
 	}
 
-	return _audioStream;
+	_rate = stream->getRate();
+	return stream;
 }
 
-
-uint CWaveFile::getFrequency() {
-	return audioStream()->getRate();
-}
-
-void CWaveFile::reset() {
-	audioStream()->rewind();
-}
 
 const int16 *CWaveFile::lock() {
 	enum { kWaveFormatPCM = 1 };
@@ -204,7 +181,7 @@ const int16 *CWaveFile::lock() {
 	switch (_loadMode) {
 	case LOADMODE_SCUMMVM:
 		// Sanity checking that only raw 16-bit LE 22Khz waves can be locked
-		assert(_waveData && _rate == 22050);
+		assert(_waveData && _rate == AUDIO_SAMPLING_RATE);
 		assert(_flags == (Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_16BITS));
 		assert(_wavType == kWaveFormatPCM);
 
@@ -220,4 +197,18 @@ void CWaveFile::unlock(const int16 *ptr) {
 	// No implementation needed in ScummVM
 }
 
-} // End of namespace Titanic z
+Audio::SoundHandle CWaveFile::play(int numLoops, byte volume) {
+	Audio::SeekableAudioStream *audioStream = createAudioStream();
+	Audio::SoundHandle handle;
+
+	Audio::AudioStream *stream = audioStream;
+	if (numLoops != 0)
+		stream = new Audio::LoopingAudioStream(audioStream,
+			(numLoops == -1) ? 0 : numLoops);
+
+	_mixer->playStream(_soundType, &handle, stream, -1,
+		volume, 0, DisposeAfterUse::YES);
+	return handle;
+}
+
+} // End of namespace Titanic

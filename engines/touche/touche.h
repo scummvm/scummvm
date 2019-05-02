@@ -330,6 +330,7 @@ enum {
 	kScreenHeight = 400,
 	kRoomHeight = 352,
 	kStartupEpisode = 90,
+	// TODO: If the following truncation is intentional (it probably is) it should be clearly marked as such
 	kCycleDelay = 1000 / (1193180 / 32768),
 	kIconWidth = 58,
 	kIconHeight = 42,

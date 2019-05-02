@@ -540,7 +540,7 @@ Common::Error TeenAgentEngine::run() {
 
 	Common::EventManager *_event = _system->getEventManager();
 
-	initGraphics(kScreenWidth, kScreenHeight, false);
+	initGraphics(kScreenWidth, kScreenHeight);
 	console = new Console(this);
 
 	scene = new Scene(this);

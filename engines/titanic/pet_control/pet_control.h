@@ -148,9 +148,9 @@ public:
 	virtual Rect getBounds() const;
 
 	/**
-	 * Setups the sections within the PET
+	 * Resets the PET, including all the sections within it
 	 */
-	void setup();
+	void reset();
 
 	/**
 	 * Called after loading a game has finished
@@ -297,6 +297,11 @@ public:
 	bool checkNode(const CString &name);
 
 	/**
+	 * Handles updates to the sound levels
+	 */
+	void syncSoundSettings();
+
+	/**
 	 * Play a sound
 	 */
 	void playSound(int soundNum);
@@ -433,10 +438,10 @@ public:
 	}
 
 	/**
-	 * Returns true if the Rooms list has a room with the given flags
+	 * Returns true if the player is in the current or previously assigned rooms
 	 */
-	bool hasRoomFlags() const {
-		return _rooms.hasRoomFlags(getRoomFlags());
+	bool isInAssignedRoom() const {
+		return _rooms.isAssignedRoom(getRoomFlags());
 	}
 
 	uint getRoomFlags() const {

@@ -40,7 +40,8 @@ public:
 
 	virtual bool open();
 	virtual void close();
-	virtual bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate = false);
+	virtual bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate = false,
+		Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
 	virtual void stop();
 	virtual bool isPlaying() const;
 	virtual void setVolume(byte volume);

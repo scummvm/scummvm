@@ -44,7 +44,7 @@ private:
 	int _fieldC8;
 	CString _soundName1;
 	CString _soundName2;
-	bool _fieldE4;
+	bool _soundActive;
 public:
 	CLASSDEF;
 	CGondolierMixer();

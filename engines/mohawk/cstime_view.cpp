@@ -305,6 +305,8 @@ void CSTimeModule::defaultMoveProc(Feature *feature) {
 				done = true;
 				break;
 			}
+			// fall through
+			// FIXME: Unclear if fall through is intentional...
 		case 0:
 			// TODO: set ptr +176 to 1
 			feature->_done = true;

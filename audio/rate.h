@@ -46,7 +46,7 @@ enum {
 };
 
 static inline void clampedAdd(int16& a, int b) {
-	register int val;
+	int val;
 #ifdef OUTPUT_UNSIGNED_AUDIO
 	val = (a ^ 0x8000) + b;
 #else

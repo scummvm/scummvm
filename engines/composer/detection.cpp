@@ -98,6 +98,20 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV1
 	},
 
+	// Magic Tales: Baba Yaga and the Magic Geese German- from bug #10171
+	{
+		{
+			"babayaga",
+			"",
+			AD_ENTRY1s("book.ini", "2a20e73d33ecd0f2fa8123d4f9862f90", 3814),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV1
+	},
+
 	// Magic Tales: Imo and the King - from bug #3485018
 	{
 		{
@@ -120,6 +134,20 @@ static const ComposerGameDescription gameDescriptions[] = {
 			AD_ENTRY1("imo and the king", "b0277885fec943b5f19409f35b33964c"),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV1
+	},
+
+	// Magic Tales: Imo and the King German - from bug #10199
+	{
+		{
+			"imoking",
+			"",
+			AD_ENTRY1s("book.ini", "5925c6d4bf85d89b17208be4fcace5e8", 3274),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOASPECT)
 		},
@@ -243,6 +271,22 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV2
 	},
 
+	{ // Provided by msSeven - from bug Trac #10399
+		{
+			"darby",
+			0,
+			{
+				{"page99.rsc", 0, "ca350397f0c009649afc0cb6145921f0", 1286480},
+				AD_LISTEND
+			},
+			Common::FR_FRA,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV2
+	},
+
 	{ // Provided by Strangerke, "CD-Rom 100% Malin" Pack
 		{
 			"darby",
@@ -321,7 +365,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"gregory",
 			0,
 			AD_ENTRY1("book.ini", "e54fc5c00de5f94e908a969e445af5d0"),
-			Common::EN_ANY,
+			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOASPECT)
@@ -442,7 +486,7 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Magic Composer Engine";
+		return "Magic Composer";
 	}
 
 	virtual const char *getOriginalCopyright() const {
@@ -483,10 +527,9 @@ SaveStateList ComposerMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
-	Common::String pattern = Common::String::format("%s.??", target);
+	Common::String pattern = Common::String::format("%s.##", target);
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
@@ -503,12 +546,13 @@ SaveStateList ComposerMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 
 bool Composer::ComposerEngine::hasFeature(EngineFeature f) const {
-	return (f == kSupportsRTL 
-		|| f == kSupportsSavingDuringRuntime 
+	return (f == kSupportsRTL
+		|| f == kSupportsSavingDuringRuntime
 		|| f == kSupportsLoadingDuringRuntime);
 }
 

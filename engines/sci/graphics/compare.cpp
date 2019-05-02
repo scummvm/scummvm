@@ -224,15 +224,7 @@ void GfxCompare::kernelBaseSetter(reg_t object) {
 		if (scaleSignal & kScaleSignalDoScaling) {
 			celRect = getNSRect(object);
 		} else {
-			if (tmpView->isSci2Hires())
-				tmpView->adjustToUpscaledCoordinates(y, x);
-
 			tmpView->getCelRect(loopNo, celNo, x, y, z, celRect);
-
-			if (tmpView->isSci2Hires()) {
-				tmpView->adjustBackUpscaledCoordinates(celRect.top, celRect.left);
-				tmpView->adjustBackUpscaledCoordinates(celRect.bottom, celRect.right);
-			}
 		}
 
 		celRect.bottom = y + 1;

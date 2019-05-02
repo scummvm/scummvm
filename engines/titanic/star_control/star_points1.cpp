@@ -22,12 +22,15 @@
 
 #include "titanic/star_control/star_points1.h"
 #include "titanic/star_control/star_camera.h"
+#include "titanic/star_control/surface_area.h"
+#include "titanic/support/files_manager.h"
 #include "titanic/titanic.h"
+
+#include "common/math.h"
 
 namespace Titanic {
 
 #define ARRAY_COUNT 876
-const double FACTOR = 2 * M_PI / 360.0;
 
 CStarPoints1::CStarPoints1() {
 }
@@ -46,14 +49,15 @@ bool CStarPoints1::initialize() {
 		double v2 = stream->readSint32LE();
 		entry._flag = stream->readUint32LE() != 0;
 
-		v1 *= 0.015 * FACTOR;
-		v2 *= 0.0099999998 * FACTOR;
+		v1 *= Common::deg2rad<double>(0.015);
+		v2 *= Common::deg2rad<double>(0.0099999998);
 
 		entry._x = cos(v2) * 3000000.0 * cos(v1);
 		entry._y = sin(v1) * 3000000.0 * cos(v2);
 		entry._z = sin(v2) * 3000000.0;
 	}
 
+	delete stream;
 	return true;
 }
 
