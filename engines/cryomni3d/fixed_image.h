@@ -71,6 +71,7 @@ public:
 	/* These functions and attributes are used in image handler */
 	void load(const Common::String &image);
 	void manage();
+	void updateSurface(const Graphics::Surface *newSurface);
 	const Graphics::Surface *surface() const { return _imageSurface; }
 	void changeCallback(CallbackFunctor *callback) { delete _callback; _callback = callback; }
 	Common::Point getZoneCenter(unsigned int zoneId) const;
