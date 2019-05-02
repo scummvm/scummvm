@@ -1,5 +1,5 @@
 /*
-README to .guide converter $VER: RM2AG.rx 0.15 (25.01.2018)
+README to .guide converter $VER: RM2AG.rexx 0.15 (25.01.2018)
 
 This script converts the pure ASCII-text based README file of ScummVM to a
 basic Amiga guide file.
@@ -19,7 +19,7 @@ IF READCH(check_readme,14) = 'ScummVM README' THEN
 ELSE DO
 	SAY "Not the README file. Aborting!"
 	CLOSE(readme_read)
-	EXIT 0
+	EXIT 20
 END
 
 /* If it's the proper file, lets start converting */
