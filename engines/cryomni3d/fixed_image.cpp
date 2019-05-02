@@ -42,7 +42,7 @@ ZonFixedImage::~ZonFixedImage() {
 	delete _imageDecoder;
 }
 
-void ZonFixedImage::run(const Common::Functor1<ZonFixedImage *, void> *callback) {
+void ZonFixedImage::run(const CallbackFunctor *callback) {
 	_exit = false;
 	_zonesMode = kZonesMode_None;
 

@@ -65,7 +65,7 @@ public:
 
 	void run(const CallbackFunctor *callback);
 
-	/* THis function is used to refresh image after various events */
+	/* This function is used to refresh image after various events */
 	void display() const;
 
 	/* These functions and attributes are used in image handler */
@@ -96,7 +96,7 @@ public:
 	Common::KeyState _key;
 
 protected:
-	const Common::Functor1<ZonFixedImage *, void> *_callback;
+	const CallbackFunctor *_callback;
 	CryOmni3DEngine &_engine;
 	Inventory &_inventory;
 	const Sprites &_sprites;
