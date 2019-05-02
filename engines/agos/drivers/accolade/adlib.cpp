@@ -153,9 +153,10 @@ private:
 		byte   currentA0hReg;
 		byte   currentB0hReg;
 		int16  volumeAdjust;
+		byte   velocity;
 
 		ChannelEntry() : currentInstrumentPtr(NULL), currentNote(0),
-						currentA0hReg(0), currentB0hReg(0), volumeAdjust(0) { }
+						currentA0hReg(0), currentB0hReg(0), volumeAdjust(0), velocity(0) { }
 	};
 
 	byte _percussionReg;
@@ -257,8 +258,17 @@ void MidiDriver_Accolade_AdLib::close() {
 }
 
 void MidiDriver_Accolade_AdLib::setVolume(byte volume) {
-	_masterVolume = volume;
-	//renewNotes(-1, true);
+	// Set the master volume in range from -128 to 127
+	_masterVolume = CLIP<int>(-128 + volume, -128, 127);
+	for (int i = 0; i < AGOS_ADLIB_VOICES_COUNT; i++) {
+		// Adjust channel volume with the master volume and re-set registers
+		byte adjustedVelocity = _channels[i].velocity * ((float) (128 + _masterVolume) / 128);
+		noteOnSetVolume(i, 1, adjustedVelocity);
+		if (i <= AGOS_ADLIB_VOICES_PERCUSSION_START) {
+			// Set second operator for FM voices + first percussion
+			noteOnSetVolume(i, 2, adjustedVelocity);
+		}
+	}
 }
 
 void MidiDriver_Accolade_AdLib::onTimer() {
@@ -376,12 +386,11 @@ void MidiDriver_Accolade_AdLib::noteOn(byte FMvoiceChannel, byte note, byte velo
 	int16 channelVolumeAdjust = _channels[FMvoiceChannel].volumeAdjust;
 	channelVolumeAdjust += adjustedVelocity;
 	channelVolumeAdjust = CLIP<int16>(channelVolumeAdjust, 0, 0x7F);
-
-	// TODO: adjust to global volume
-	// original drivers had a global volume variable, which was 0 for full volume, -64 for half volume
-	// and -128 for mute
-
-	adjustedVelocity = channelVolumeAdjust;
+	
+	// adjust velocity with the master volume
+	byte volumeAdjust = adjustedVelocity * ((float) (128 + _masterVolume) / 128);
+	
+	adjustedVelocity = volumeAdjust;
 
 	if (!_musicDrvMode) {
 		// INSTR.DAT
@@ -441,6 +450,8 @@ void MidiDriver_Accolade_AdLib::noteOn(byte FMvoiceChannel, byte note, byte velo
 		adjustedVelocity = adjustedVelocity >> 1; // divide by 2
 	}
 
+	// Save velocity in the case volume will need to be changed
+	_channels[FMvoiceChannel].velocity = adjustedVelocity;
 	// Set volume of voice channel
 	noteOnSetVolume(FMvoiceChannel, 1, adjustedVelocity);
 	if (FMvoiceChannel <= AGOS_ADLIB_VOICES_PERCUSSION_START) {
