@@ -34,9 +34,8 @@
 namespace Dragons {
 
 
-Scene::Scene(DragonsEngine *vm, Screen *screen, ScriptOpcodes *scriptOpcodes, BigfileArchive *bigfileArchive, ActorManager *actorManager, DragonRMS *dragonRMS, DragonINIResource *dragonINIResource)
-		: _vm(vm), _screen(screen), _scriptOpcodes(scriptOpcodes), _stage(0), _bigfileArchive(bigfileArchive), _actorManager(actorManager), _dragonRMS(dragonRMS), _dragonINIResource(dragonINIResource) {
-	_backgroundLoader = new BackgroundResourceLoader(_bigfileArchive, _dragonRMS);
+Scene::Scene(DragonsEngine *vm, Screen *screen, ScriptOpcodes *scriptOpcodes, BigfileArchive *bigfileArchive, ActorManager *actorManager, DragonRMS *dragonRMS, DragonINIResource *dragonINIResource, BackgroundResourceLoader *backgroundResourceLoader)
+		: _vm(vm), _screen(screen), _scriptOpcodes(scriptOpcodes), _stage(0), _bigfileArchive(bigfileArchive), _actorManager(actorManager), _dragonRMS(dragonRMS), _dragonINIResource(dragonINIResource), _backgroundLoader(backgroundResourceLoader) {
 	data_80063392 = 2;
 	_data_800633ee = 0;
 }
@@ -321,6 +320,10 @@ void Scene::draw() {
 			_screen->copyRectToSurface(*_stage->getMgLayer(), 0, 0, rect);
 		} else if (priority == 3) {
 			_screen->copyRectToSurface(*_stage->getFgLayer(), 0, 0, rect);
+		} else if (priority == 4) { //TODO check if this is the correct priority
+			if (_vm->isFlagSet(ENGINE_FLAG_80)) {
+				_vm->_inventory->draw();
+			}
 		}
 
 		for (uint16 i = 0; i < DRAGONS_ENGINE_NUM_ACTORS; i++) {

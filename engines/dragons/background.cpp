@@ -169,20 +169,20 @@ Graphics::Surface *Background::loadGfxLayer(TileMap &tileMap, byte *tiles) {
 		for(int x = 0; x < tileMap.w; x++) {
 			uint16 idx = READ_LE_UINT16(&tileMap.map[(y * tileMap.w + x) * 2]) + tileMap.tileIndexOffset;
 			//debug("tileIdx: %d", idx);
-			drawTileToSurface(surface, tiles + idx * 0x100, x * TILE_WIDTH, y * TILE_HEIGHT);
+			drawTileToSurface(surface, _palette, tiles + idx * 0x100, x * TILE_WIDTH, y * TILE_HEIGHT);
 		}
 	}
 	return surface;
 }
 
-void Background::drawTileToSurface(Graphics::Surface *surface, byte *tile, uint32 x, uint32 y) {
+void drawTileToSurface(Graphics::Surface *surface, byte *palette, byte *tile, uint32 x, uint32 y) {
 	byte *pixels = (byte *)surface->getPixels();
 	for(int ty = 0; ty < TILE_HEIGHT; ty++) {
 		for(int tx = 0; tx < TILE_WIDTH; tx++) {
 			uint32 cidx = *tile;
 			uint32 offset = (y + ty) * surface->pitch + (x + tx) * 2;
-			pixels[offset] = _palette[cidx * 2];
-			pixels[offset + 1] = _palette[cidx * 2 + 1];
+			pixels[offset] = palette[cidx * 2];
+			pixels[offset + 1] = palette[cidx * 2 + 1];
 			tile++;
 		}
 	}
@@ -216,6 +216,7 @@ void Background::overlayImage(uint16 layerNum, byte *data, int16 x, int16 y, int
 		for(int j = 0; j < w; j++ ) {
 			int16 idx = READ_LE_UINT16(data) + _tileMap[layerNum].tileIndexOffset;
 			drawTileToSurface(_layer[layerNum],
+					_palette,
 					_tileDataOffset + idx * 0x100,
 					(j + x) * TILE_WIDTH,
 					(i + y) * TILE_HEIGHT);
@@ -231,7 +232,7 @@ void Background::restoreTiles(uint16 layerNum, int16 x, int16 y, int16 w, int16 
 		for(int x = 0; x < tmw; x++) {
 			uint16 idx = READ_LE_UINT16(&_tileMap[layerNum].map[(y * _tileMap[layerNum].w + x) * 2]) + _tileMap[layerNum].tileIndexOffset;
 			//debug("tileIdx: %d", idx);
-			drawTileToSurface(_layer[layerNum], _tileDataOffset + idx * 0x100, x * TILE_WIDTH, y * TILE_HEIGHT);
+			drawTileToSurface(_layer[layerNum], _palette, _tileDataOffset + idx * 0x100, x * TILE_WIDTH, y * TILE_HEIGHT);
 		}
 	}
 }
@@ -250,6 +251,10 @@ BackgroundResourceLoader::BackgroundResourceLoader(BigfileArchive *bigFileArchiv
 Background *BackgroundResourceLoader::load(uint32 sceneId) {
 	char filename[] = "nnnn.scr";
 	memcpy(filename, _dragonRMS->getSceneName(sceneId), 4);
+	return load(filename);
+}
+
+Background *BackgroundResourceLoader::load(const char *filename) {
 	debug("Loading %s", filename);
 	uint32 size;
 	byte *scrData = _bigFileArchive->load(filename, size);

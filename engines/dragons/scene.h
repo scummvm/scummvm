@@ -30,6 +30,7 @@ namespace Dragons {
 class DragonsEngine;
 class ActorManager;
 class Background;
+class Bag;
 class DragonRMS;
 class BackgroundResourceLoader;
 class DragonINIResource;
@@ -56,9 +57,10 @@ private:
 
 	int16 _currentSceneId;
 	int16 _data_800633ee;
+	Bag *bag;
 
 public:
-	Scene(DragonsEngine *vm, Screen *screen, ScriptOpcodes *scriptOpcodes, BigfileArchive *bigfileArchive, ActorManager *actorManager, DragonRMS *_dragonRMS, DragonINIResource *_dragonINIResource);
+	Scene(DragonsEngine *vm, Screen *screen, ScriptOpcodes *scriptOpcodes, BigfileArchive *bigfileArchive, ActorManager *actorManager, DragonRMS *_dragonRMS, DragonINIResource *_dragonINIResource, BackgroundResourceLoader *backgroundResourceLoader);
 
 	void loadScene(uint32 sceneId, uint32 cameraPointId);
 	int16 getPriorityAtPosition(Common::Point pos);
