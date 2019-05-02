@@ -54,6 +54,10 @@ void Cursor::init(ActorManager *actorManager, DragonINIResource *dragonINIResour
 	data_8007283c = 0;
 	_cursorActivationSeqOffset = 0;
 	data_800728b0_cursor_seqID = 0;
+
+	for(int i = 0x17; i < 0x29; i++) {
+		actorManager->loadActor(0, i); //TODO hack this should be with inventory
+	}
 }
 
 

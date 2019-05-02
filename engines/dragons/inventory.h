@@ -29,6 +29,9 @@ namespace Dragons {
 
 class Actor;
 class ActorManager;
+class BackgroundResourceLoader;
+class Background;
+class Bag;
 
 class Inventory {
 public:
@@ -39,11 +42,11 @@ private:
 	int16 _screenPositionIndex;
 	Actor *_actor;
 	int16 _type;
-
+	Bag *_bag;
 public:
 	Inventory(DragonsEngine *vm);
 
-	void init(ActorManager *actorManager);
+	void init(ActorManager *actorManager, BackgroundResourceLoader *backgroundResourceLoader, Bag *bag);
 	void loadScene(uint32 sceneId);
 	bool isActorSet() { return true; }
 
@@ -68,7 +71,13 @@ public:
 	void setActorFlag400();
 	void setPriority(uint16 priority);
 
-	void actor_related_80030e88();
+	void openInventory();
+	void closeInventory();
+
+	void draw();
+private:
+	void animateBagIn();
+	void animateBagOut();
 };
 
 } // End of namespace Dragons

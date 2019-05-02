@@ -4,6 +4,7 @@ MODULE_OBJS := \
     actor.o \
     actorresource.o \
     background.o \
+    bag.o \
     bigfile.o \
     cursor.o \
 	detection.o \

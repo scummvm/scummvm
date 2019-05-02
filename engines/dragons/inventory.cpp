@@ -24,7 +24,9 @@
 #include "dragons.h"
 #include "dragonrms.h"
 #include "dragonini.h"
+#include "background.h"
 #include "inventory.h"
+#include "bag.h"
 
 namespace Dragons {
 
@@ -40,9 +42,10 @@ Inventory::Inventory(DragonsEngine *vm) : _vm(vm) {
 	_sequenceId = 0;
 	_screenPositionIndex = 0;
 	_old_showing_value = 0;
+	_bag = NULL;
 }
 
-void Inventory::init(ActorManager *actorManager) {
+void Inventory::init(ActorManager *actorManager, BackgroundResourceLoader *backgroundResourceLoader, Bag *bag) {
 	_actor = actorManager->loadActor(1, 1); //Load inventory
 	_actor->x_pos = 2;
 	_actor->y_pos = 0;
@@ -55,6 +58,7 @@ void Inventory::init(ActorManager *actorManager) {
 	_sequenceId = 0;
 	_type = 0;
 	_old_showing_value = 0;
+	_bag = bag;
 }
 
 
@@ -99,7 +103,23 @@ void Inventory::setActorSequenceId(int32 sequenceId) {
 	}
 }
 
-void Inventory::actor_related_80030e88() {
+void Inventory::openInventory() {
+	//TODO 0x80030e8c
+	_sequenceId = 4;
+
+	if (!_vm->isFlagSet(ENGINE_FLAG_400000)) {
+		_sequenceId = 2;
+	}
+	_actor->updateSequence(_sequenceId);
+	_screenPositionIndex = 1;
+	_actor->x_pos = positionTable[_screenPositionIndex].x;
+	if ((_sequenceId == 0) || (_sequenceId == 2)) {
+		_actor->x_pos = positionTable[_screenPositionIndex].x + 0x32;
+	}
+	_actor->y_pos = positionTable[_screenPositionIndex].y;
+	animateBagIn();
+
+	//TODO 0x800310e0 update cursor position.
 
 	for(int i = 0; i < 0x29; i++) {
 		Actor *item = _vm->_actorManager->getActor(i + 0x17);
@@ -117,6 +137,74 @@ void Inventory::actor_related_80030e88() {
 			item->setFlag(ACTOR_FLAG_40);
 			item->priorityLayer = 6;
 		}
+	}
+}
+
+void Inventory::animateBagIn() {
+	_vm->clearFlags(ENGINE_FLAG_8);
+	_vm->setFlags(ENGINE_FLAG_80);
+
+	Common::Point pos = _bag->getPosition();
+	pos.y = -228;
+	int16 accel = 8;
+
+	while (pos.y < 0) {
+		pos.y += accel;
+		_bag->updatePosition(pos);
+		_vm->waitForFrames(1);
+		accel += 2;
+	}
+
+	_vm->playSound(0x8001);
+
+	// TODO wait here
+
+	pos.y = 0;
+	_bag->updatePosition(pos);
+
+	_vm->setFlags(ENGINE_FLAG_8);
+	_vm->setFlags(ENGINE_FLAG_10);
+}
+
+void Inventory::animateBagOut() {
+	_vm->playSound(0x8000);
+	Common::Point pos = _bag->getPosition();
+	if (pos.y != 0xc8) {
+		for (;pos.y != 0xc8; pos.y += 0x19) {
+			_bag->updatePosition(pos);
+			_vm->waitForFrames(1);
+		}
+	}
+	_vm->clearFlags(ENGINE_FLAG_80);
+}
+
+void Inventory::closeInventory() {
+	_vm->_actorManager->clearActorFlags(0x17);
+	_screenPositionIndex = _vm->_dragonRMS->getInventoryPosition(_vm->getCurrentSceneId());
+
+	if (!_vm->isFlagSet(ENGINE_FLAG_400000)) {
+		_sequenceId = 0;
+	}
+	else {
+		if (_old_showing_value == 2) {
+			_sequenceId = 3;
+		}
+		else {
+			_sequenceId = 1;
+		}
+	}
+	_actor->updateSequence(_sequenceId);
+	_actor->x_pos = positionTable[_screenPositionIndex].x;
+	if (((_sequenceId == 0) || (_sequenceId == 2)) && ((_screenPositionIndex == 1 || (_screenPositionIndex == 3)))) {
+		_actor->x_pos += 0x32;
+	}
+	_actor->y_pos = positionTable[_screenPositionIndex].y;
+	animateBagOut();
+}
+
+void Inventory::draw() {
+	if(_bag) {
+		_bag->draw();
 	}
 }
 

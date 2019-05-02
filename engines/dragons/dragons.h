@@ -61,7 +61,7 @@ enum Flags {
 	ENGINE_FLAG_10 = 0x10,
 	ENGINE_FLAG_20 = 0x20,
 	ENGINE_FLAG_40 = 0x40,
-	ENGINE_FLAG_80 = 0x80,
+	ENGINE_FLAG_80 = 0x80, // Inventory bag visible
 	ENGINE_FLAG_100 = 0x100,
 	ENGINE_FLAG_200 = 0x200,
 	ENGINE_FLAG_400 = 0x400,
@@ -215,7 +215,6 @@ private:
 	void FUN_8003130c();
 	void FUN_80038890();
 	void walkFlickerToObject();
-	void FUN_80031480();
 	void FUN_80038994();
 
 	void FUN_8002931c();

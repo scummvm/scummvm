@@ -31,6 +31,8 @@ namespace Dragons {
 class PriorityLayer;
 class Background;
 
+void drawTileToSurface(Graphics::Surface *surface, byte *palette, byte *tile, uint32 x, uint32 y);
+
 class BackgroundResourceLoader {
 private:
 	BigfileArchive *_bigFileArchive;
@@ -38,6 +40,7 @@ private:
 public:
 	BackgroundResourceLoader(BigfileArchive *bigFileArchive, DragonRMS *dragonRMS);
 	Background *load(uint32 sceneId);
+	Background *load(const char *filename);
 };
 
 struct TileMap {
@@ -80,7 +83,6 @@ public:
 private:
 	Common::Point *loadPoints(Common::SeekableReadStream &stream);
 	Graphics::Surface *loadGfxLayer(TileMap &tileMap, byte *tiles);
-	void drawTileToSurface(Graphics::Surface *surface, byte *tile, uint32 x, uint32 y);
 };
 
 class PriorityLayer {

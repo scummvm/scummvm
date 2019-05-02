@@ -40,6 +40,7 @@
 #include "screen.h"
 #include "sequenceopcodes.h"
 #include "scriptopcodes.h"
+#include "bag.h"
 
 namespace Dragons {
 
@@ -131,13 +132,14 @@ Common::Error DragonsEngine::run() {
 	ActorResourceLoader *actorResourceLoader = new ActorResourceLoader(_bigfileArchive);
 	_actorManager = new ActorManager(actorResourceLoader);
 	_scriptOpcodes = new ScriptOpcodes(this, _dragonFLG);
-	_scene = new Scene(this, _screen, _scriptOpcodes, _bigfileArchive, _actorManager, _dragonRMS, _dragonINIResource);
+	_backgroundResourceLoader = new BackgroundResourceLoader(_bigfileArchive, _dragonRMS);
+	_scene = new Scene(this, _screen, _scriptOpcodes, _bigfileArchive, _actorManager, _dragonRMS, _dragonINIResource, _backgroundResourceLoader);
 	_flags = 0x1046;
 	_flags &= 0x1c07040;
 	_flags |= 0x26;
 
 	_cursor->init(_actorManager, _dragonINIResource);
-	_inventory->init(_actorManager);
+	_inventory->init(_actorManager, _backgroundResourceLoader, new Bag(_bigfileArchive, _screen));
 
 	uint16 sceneId = 0x12;
 	_dragonINIResource->getFlickerRecord()->sceneId = sceneId; //TODO
@@ -424,7 +426,7 @@ void DragonsEngine::gameLoop()
 						else {
 							_counter = 0;
 							_inventory->setType(1);
-							_inventory->actor_related_80030e88();
+							_inventory->openInventory();
 							joined_r0x80027a38:
 							if (data_8006f3a8 == 0) {
 								_cursor->_sequenceID = 1;
@@ -514,7 +516,7 @@ void DragonsEngine::gameLoop()
 						_counter = 0;
 						_inventory->setType(1);
 						_inventory->_old_showing_value = uVar6;
-						_inventory->actor_related_80030e88();
+						_inventory->openInventory();
 						goto joined_r0x80027a38;
 					}
 					if (checkForActionButtonRelease() && isFlagSet(ENGINE_FLAG_8)) goto LAB_80027ab4;
@@ -528,7 +530,7 @@ void DragonsEngine::gameLoop()
 		if (checkForInventoryButtonRelease()) {
 			_counter = 0;
 			LAB_80027970:
-			FUN_80031480();
+			_inventory->closeInventory();
 			uVar6 = _inventory->_old_showing_value;
 			_inventory->_old_showing_value = _inventory->getType();
 			actorId = uVar3;
@@ -540,7 +542,7 @@ void DragonsEngine::gameLoop()
 			_counter = 0;
 			if ((_cursor->_iniUnderCursor & 0x8000) != 0) {
 				if (_cursor->_iniUnderCursor == 0x8001) {
-					FUN_80031480();
+					_inventory->closeInventory();
 					_inventory->setType(0);
 					if (_inventory->_old_showing_value == 2) {
 						FUN_80038994();
@@ -548,7 +550,7 @@ void DragonsEngine::gameLoop()
 				}
 				else {
 					if (_cursor->_iniUnderCursor != 0x8002) goto LAB_8002790c;
-					FUN_80031480();
+					_inventory->closeInventory();
 					_inventory->setType(2);
 					if (_inventory->_old_showing_value != 2) {
 						FUN_80038890();
@@ -1253,10 +1255,6 @@ void DragonsEngine::walkFlickerToObject()
 	}
 	bit_flags_8006fbd8 = 0;
 	return;
-}
-
-void DragonsEngine::FUN_80031480() {
-	error("FUN_80031480"); //TODO
 }
 
 void DragonsEngine::FUN_80038994() {
