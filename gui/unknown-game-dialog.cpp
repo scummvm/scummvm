@@ -174,7 +174,7 @@ Common::String UnknownGameDialog::generateBugtrackerURL() {
 	// Remove the filesystem path from the bugtracker report.
 	// The path is on the first line between single quotes. We strip everything except the last level.
 	int path_start = -1, path_size = 0;
-	for (int i = 0 ; i < report.size() ; ++i) {
+	for (uint i = 0 ; i < report.size() ; ++i) {
 		char c = report[i];
 		if (c == '\'') {
 			if (path_start == -1)
