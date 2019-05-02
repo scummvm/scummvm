@@ -327,6 +327,8 @@ private:
 
 	void playInGameVideo(const Common::String &filename, bool restoreCursorPalette = true);
 
+	void loadBMPs(const char *pattern, Graphics::Surface *bmps, unsigned int count);
+
 	unsigned int getMusicId(unsigned int level, unsigned int placeId) const;
 	bool musicWouldChange(unsigned int level, unsigned int placeId) const;
 	void musicUpdate();

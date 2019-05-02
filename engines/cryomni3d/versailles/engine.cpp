@@ -1537,5 +1537,25 @@ void CryOmni3DEngine_Versailles::playInGameVideo(const Common::String &filename,
 	g_system->showMouse(true);
 }
 
+void CryOmni3DEngine_Versailles::loadBMPs(const char *pattern, Graphics::Surface *bmps,
+        unsigned int count) {
+	Image::BitmapDecoder bmpDecoder;
+	Common::File file;
+
+	for (unsigned int i = 0; i < count; i++) {
+		Common::String bmp = Common::String::format(pattern, i);
+
+		if (!file.open(bmp)) {
+			error("Failed to open BMP file: %s", bmp.c_str());
+		}
+		if (!bmpDecoder.loadStream(file)) {
+			error("Failed to load BMP file: %s", bmp.c_str());
+		}
+		bmps[i].copyFrom(*bmpDecoder.getSurface());
+		bmpDecoder.destroy();
+		file.close();
+	}
+}
+
 } // End of namespace Versailles
 } // End of namespace CryOmni3D
