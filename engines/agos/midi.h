@@ -123,7 +123,8 @@ public:
 
 private:
 	kMusicMode _musicMode;
-
+	MusicType musicType;
+	
 private:
 	Common::SeekableReadStream *simon2SetupExtractFile(const Common::String &requestedFileName);
 };
