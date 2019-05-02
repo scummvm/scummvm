@@ -1217,6 +1217,7 @@ for ac_option in $@; do
 	--enable-cloud)               _cloud=yes             ;;
 	--disable-cloud)              _cloud=no              ;;
 	--enable-updates)             _updates=yes           ;;
+	--disable-updates)            _updates=no            ;;
 	--enable-libunity)            _libunity=yes          ;;
 	--disable-libunity)           _libunity=no           ;;
 	--enable-bink)                _bink=yes              ;;
