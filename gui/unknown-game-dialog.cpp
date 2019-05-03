@@ -38,14 +38,21 @@ enum {
 	kCopyToClipboard = 'cpcl',
 	kOpenBugtrackerURL = 'ourl',
 	kClose = 'clse',
+	kAddAnyway = 'adda',
 	kScrollContainerReflow = 'SCRf'
 };
 
-UnknownGameDialog::UnknownGameDialog(const DetectionResults &detectionResults) :
+UnknownGameDialog::UnknownGameDialog(const DetectedGame &detectedGame) :
 		Dialog(30, 20, 260, 124),
-		_detectionResults(detectionResults) {
+		_detectedGame(detectedGame) {
 	// For now place the buttons with a default place and size. They will be resized and moved when rebuild() is called.
-	_closeButton = new ButtonWidget(this, 0, 0, 0, 0, _("Close"), 0, kClose);
+	_closeButton = new ButtonWidget(this, 0, 0, 0, 0, detectedGame.canBeAdded ? _("Cancel") : _("Close"), 0, kClose);
+
+	if (detectedGame.canBeAdded) {
+		_addAnywayButton = new ButtonWidget(this, 0, 0, 0, 0, _("Add anyway"), 0, kAddAnyway);
+	} else {
+		_addAnywayButton = nullptr;
+	}
 
 	//Check if we have clipboard functionality
 	if (g_system->hasFeature(OSystem::kFeatureClipboardSupport)) {
@@ -76,6 +83,8 @@ void UnknownGameDialog::reflowLayout() {
 }
 
 void UnknownGameDialog::rebuild() {
+	// TODO: Use a theme layout dialog definition
+
 	// First remove the old text widgets
 	for (uint i = 0; i < _textWidgets.size() ; i++) {
 		_textContainer->removeWidget(_textWidgets[i]);
@@ -91,7 +100,7 @@ void UnknownGameDialog::rebuild() {
 	int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 0);
 	int buttonWidth = g_gui.xmlEval()->getVar("Globals.Button.Width", 0);
 
-	Common::String reportTranslated = _detectionResults.generateUnknownGameReport(true);
+	Common::String reportTranslated = generateUnknownGameReport(_detectedGame, true, true);
 
 	// Check if we have clipboard functionality and expand the reportTranslated message if needed...
 	if (g_system->hasFeature(OSystem::kFeatureClipboardSupport)) {
@@ -116,7 +125,9 @@ void UnknownGameDialog::rebuild() {
 	_h = MIN(screenH - 20, lineCount * kLineHeight + kLineHeight + buttonHeight + 24);
 
 	int closeButtonWidth = MAX(buttonWidth, g_gui.getFont().getStringWidth(_closeButton->getLabel()) + 10);
-	int copyToClipboardButtonWidth = 0, openBugtrackerURLButtonWidth = 0, totalButtonWidth = closeButtonWidth;
+	int copyToClipboardButtonWidth = 0, openBugtrackerURLButtonWidth = 0, addAnywayButtonWidth = 0;
+	int totalButtonWidth = closeButtonWidth;
+
 	if (_copyToClipboardButton) {
 		copyToClipboardButtonWidth = MAX(buttonWidth, g_gui.getFont().getStringWidth(_copyToClipboardButton->getLabel()) + 10);
 		totalButtonWidth += copyToClipboardButtonWidth + 10;
@@ -124,6 +135,10 @@ void UnknownGameDialog::rebuild() {
 	if (_openBugTrackerUrlButton) {
 		openBugtrackerURLButtonWidth = MAX(buttonWidth, g_gui.getFont().getStringWidth(_openBugTrackerUrlButton->getLabel()) + 10);
 		totalButtonWidth += openBugtrackerURLButtonWidth + 10;
+	}
+	if (_addAnywayButton) {
+		addAnywayButtonWidth = MAX(buttonWidth, g_gui.getFont().getStringWidth(_addAnywayButton->getLabel()) + 10);
+		totalButtonWidth += addAnywayButtonWidth + 10;
 	}
 
 	_w = MAX(MAX(maxlineWidth, 0) + 16 + scrollbarWidth, totalButtonWidth) + 20;
@@ -133,7 +148,12 @@ void UnknownGameDialog::rebuild() {
 	_y = (g_system->getOverlayHeight() - _h) / 2;
 
 	// Now move the buttons and text container to their proper place
-	int buttonPos = _w - closeButtonWidth - 10;
+	int buttonPos = _w - 10;
+	if (_addAnywayButton) {
+		buttonPos -= addAnywayButtonWidth + 5;
+		_addAnywayButton->resize(buttonPos, _h - buttonHeight - 8, addAnywayButtonWidth, buttonHeight);
+	}
+	buttonPos -= closeButtonWidth + 5;
 	_closeButton->resize(buttonPos, _h - buttonHeight - 8, closeButtonWidth, buttonHeight);
 	if (_copyToClipboardButton) {
 		buttonPos -= copyToClipboardButtonWidth + 5;
@@ -156,7 +176,7 @@ void UnknownGameDialog::rebuild() {
 	}
 }
 
-Common::String UnknownGameDialog::encodeUrlString(const Common::String& string) {
+Common::String UnknownGameDialog::encodeUrlString(const Common::String &string) {
 	Common::String encoded;
 	for (uint i = 0 ; i < string.size() ; ++i) {
 		char c = string[i];
@@ -170,34 +190,10 @@ Common::String UnknownGameDialog::encodeUrlString(const Common::String& string) 
 }
 
 Common::String UnknownGameDialog::generateBugtrackerURL() {
-	Common::String report = _detectionResults.generateUnknownGameReport(false);
-	// Remove the filesystem path from the bugtracker report.
-	// The path is on the first line between single quotes. We strip everything except the last level.
-	int path_start = -1, path_size = 0;
-	for (uint i = 0 ; i < report.size() ; ++i) {
-		char c = report[i];
-		if (c == '\'') {
-			if (path_start == -1)
-				path_start = i + 1;
-			else
-				break;
-		} else if (path_start != -1 && (c == '/' || c == '\\')) {
-			path_size = 1 + i - path_start;
-		} else if (c == '\n') {
-			path_size = 0;
-			break;
-		}
-	}
-	if (path_size > 0)
-		report.erase(path_start, path_size);
+	Common::String report = generateUnknownGameReport(_detectedGame, false, false);
 	report = encodeUrlString(report);
 
-	// Pass engine name if there is only one.
-	Common::String engineName = "unknown";
-	Common::StringArray engines = _detectionResults.getUnknownGameEngines();
-	if (engines.size() == 1)
-		engineName = engines.front();
-	engineName = encodeUrlString(engineName);
+	Common::String engineName = encodeUrlString(_detectedGame.engineName);
 
 	return Common::String::format(
 		"https://www.scummvm.org/unknowngame?"
@@ -210,8 +206,7 @@ Common::String UnknownGameDialog::generateBugtrackerURL() {
 void UnknownGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch(cmd) {
 	case kCopyToClipboard: {
-		// TODO: Remove the filesystem path from the report
-		Common::String report = _detectionResults.generateUnknownGameReport(false);
+		Common::String report = generateUnknownGameReport(_detectedGame, false, false);
 
 		if (g_system->setTextInClipboard(report)) {
 			g_system->displayMessageOnOSD(
@@ -222,8 +217,12 @@ void UnknownGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 
 		break;
 	}
 	case kClose:
+		// The user cancelled adding the game
+		setResult(-1);
+		close();
+		break;
+	case kAddAnyway:
 		// When the detection entry comes from the fallback detector, the game can be added / launched anyways.
-		// TODO: Add a button to cancel adding the game. And make it clear that launching the game may not work properly.
 		close();
 		break;
 	case kOpenBugtrackerURL:

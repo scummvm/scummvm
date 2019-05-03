@@ -142,6 +142,7 @@ struct DetectedGame {
 	Common::Language language;
 	Common::Platform platform;
 	Common::String path;
+	Common::String shortPath;
 	Common::String extra;
 
 	/**
@@ -202,6 +203,14 @@ public:
 	DetectedGames listRecognizedGames() const;
 
 	/**
+	 * List all the games that were detected
+	 *
+	 * That includes entries that don't have enough information to be added to the
+	 * configuration manager.
+	 */
+	DetectedGames listDetectedGames() const;
+
+	/**
 	 * Were unknown game variants found by the engines?
 	 *
 	 * When unknown game variants are found, an unknown game report can be generated.
@@ -209,21 +218,26 @@ public:
 	bool foundUnknownGames() const;
 
 	/**
-	 * Generate a report that we found an unknown game variant, together with the file
-	 * names, sizes and MD5 sums.
+	 * Generate a report that we found an unknown game variant.
 	 *
-	 * @param translate translate the report to the currently active GUI language
-	 * @param wordwrapAt word wrap the text part of the report after a number of characters
+	 * @see ::generateUnknownGameReport
 	 */
 	Common::String generateUnknownGameReport(bool translate, uint32 wordwrapAt = 0) const;
-
-	/**
-	 * Get the list of engines for which an unknown game variant was found.
-	 */
-	Common::StringArray getUnknownGameEngines() const;
 
 private:
 	DetectedGames _detectedGames;
 };
+
+/**
+ * Generate a report that we found an unknown game variant, together with the file
+ * names, sizes and MD5 sums.
+ *
+ * @param translate translate the report to the currently active GUI language
+ * @param fullPath include the full path where the files are located, otherwise only the name
+ *                 of last component of the path is included
+ * @param wordwrapAt word wrap the text part of the report after a number of characters
+ */
+Common::String generateUnknownGameReport(const DetectedGames &detectedGames, bool translate, bool fullPath, uint32 wordwrapAt = 0);
+Common::String generateUnknownGameReport(const DetectedGame &detectedGame, bool translate, bool fullPath, uint32 wordwrapAt = 0);
 
 #endif
