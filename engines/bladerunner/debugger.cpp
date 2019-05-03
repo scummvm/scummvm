@@ -1952,7 +1952,7 @@ void Debugger::drawWalkboxes() {
 			Vector3 start = _vm->_view->calculateScreenPosition(walkbox->vertices[j]);
 			Vector3 end = _vm->_view->calculateScreenPosition(walkbox->vertices[(j + 1) % walkbox->vertexCount]);
 			_vm->_surfaceFront.drawLine(start.x, start.y, end.x, end.y, _vm->_surfaceFront.format.RGBToColor(255, 255, 0));
-			Vector3 pos = _vm->_view->calculateScreenPosition(0.5 * (start + end));
+			Vector3 pos = _vm->_view->calculateScreenPosition(0.5 * (walkbox->vertices[j] + walkbox->vertices[(j + 1) % walkbox->vertexCount]));
 			_vm->_mainFont->drawColor(walkbox->name, _vm->_surfaceFront, pos.x, pos.y, _vm->_surfaceFront.format.RGBToColor(255, 255, 0));
 		}
 	}
