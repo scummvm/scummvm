@@ -44,12 +44,11 @@ private:
 	 * \defgroup vm fields
 	 * @{
 	 */
-	CharHandler stream_char_handler;
-	UnicharHandler stream_unichar_handler, glkio_unichar_han_ptr;
-
 	bool vm_exited_cleanly;
 	uint gamefile_start, gamefile_len;
 	char *init_err, *init_err2;
+	UnicharHandler stream_unichar_handler, glkio_unichar_han_ptr;
+	CharHandler stream_char_handler;
 
 	byte *memmap;
 	byte *stack;
