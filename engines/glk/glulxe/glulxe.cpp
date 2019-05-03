@@ -74,16 +74,6 @@ void Glulxe::runGame() {
 	profile_quit();
 }
 
-Common::Error Glulxe::loadGameData(strid_t file) {
-	// TODO
-	return Common::kNoError;
-}
-
-Common::Error Glulxe::saveGameData(strid_t file, const Common::String &desc) {
-	// TODO
-	return Common::kNoError;
-}
-
 bool Glulxe::is_gamefile_valid() {
 	if (_gameFile.size() < 8) {
 		GUIErrorMessage(_("This is too short to be a valid Glulx file."));

@@ -411,12 +411,12 @@ public:
 	/**
 	 * Load a savegame from the passed stream
 	 */
-	virtual Common::Error loadGameData(strid_t file) override;
+	virtual Common::Error loadGameData(strid_t str) override;
 
 	/**
 	 * Save the game to the passed stream
 	 */
-	virtual Common::Error saveGameData(strid_t file, const Common::String &desc) override;
+	virtual Common::Error saveGameData(strid_t str, const Common::String &desc) override;
 
 	/**
 	 * \defgroup Main access methods
@@ -933,20 +933,6 @@ public:
 	 * Clean up memory when the VM shuts down.
 	 */
 	void final_serial();
-
-	/**
-	 * Write the state to the output stream. This returns 0 on success, 1 on failure.
-	 */
-	uint perform_save(strid_t str);
-
-	/**
-	 * Pull a state pointer from a stream. This returns 0 on success, 1 on failure. Note that if it succeeds,
-	 * the frameptr, localsbase, and valstackbase registers are invalid; they must be rebuilt from the stack.
-	 *
-	 * If fromshell is true, the restore is being invoked by the library shell (an autorestore of some kind).
-	 * This currently happens only in iosglk.
-	 */
-	uint perform_restore(strid_t str, int fromshell);
 
 	/**
 	 * Add a state pointer to the undo chain. This returns 0 on success, 1 on failure.

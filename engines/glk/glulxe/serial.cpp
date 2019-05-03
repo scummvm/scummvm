@@ -232,7 +232,7 @@ uint Glulxe::perform_restoreundo() {
 	return res;
 }
 
-uint Glulxe::perform_save(strid_t str) {
+Common::Error Glulxe::saveGameData(strid_t str, const Common::String &desc) {
 	dest_t dest;
 	int ix;
 	uint res, lx, val;
@@ -246,8 +246,8 @@ uint Glulxe::perform_save(strid_t str) {
 		fatal_error("Streams are only available in Glk I/O system.");
 	}
 
-	if (str == 0)
-		return 1;
+	if (str == nullptr)
+		return Common::kUnknownError;
 
 	dest.ismem = false;
 	dest.size = 0;
@@ -358,16 +358,17 @@ uint Glulxe::perform_save(strid_t str) {
 
 	/* All done. */
 
-	return res;
+	return res ? Common::kUnknownError : Common::kNoError;
 }
 
-uint Glulxe::perform_restore(strid_t str, int fromshell) {
+Common::Error Glulxe::loadGameData(strid_t str) {
 	dest_t dest;
 	int ix;
 	uint lx, res, val;
 	uint filestart, filelen = 0;
 	uint heapsumlen = 0;
 	uint *heapsumarr = nullptr;
+	bool fromshell = false;
 
 	/* If profiling is enabled and active then fail. */
 #if VM_PROFILING
@@ -384,7 +385,7 @@ uint Glulxe::perform_restore(strid_t str, int fromshell) {
 	}
 
 	if (str == 0)
-		return 1;
+		return Common::kUnknownError;
 
 	dest.ismem = false;
 	dest.size = 0;
@@ -402,7 +403,7 @@ uint Glulxe::perform_restore(strid_t str, int fromshell) {
 	}
 	if (res == 0 && val != IFFID('F', 'O', 'R', 'M')) {
 		/* ### bad header */
-		return 1;
+		return Common::kUnknownError;
 	}
 	if (res == 0) {
 		res = read_long(&dest, &filelen);
@@ -414,7 +415,7 @@ uint Glulxe::perform_restore(strid_t str, int fromshell) {
 	}
 	if (res == 0 && val != IFFID('I', 'F', 'Z', 'S')) { /* ### ? */
 		/* ### bad header */
-		return 1;
+		return Common::kUnknownError;
 	}
 
 	while (res == 0 && dest.pos < filestart + filelen) {
@@ -435,7 +436,7 @@ uint Glulxe::perform_restore(strid_t str, int fromshell) {
 				res = read_byte(&dest, &dummy);
 				if (res == 0 && Mem1(ix) != dummy) {
 					/* ### non-matching header */
-					return 1;
+					return Common::kUnknownError;
 				}
 			}
 		} else if (chunktype == IFFID('C', 'M', 'e', 'm')) {
@@ -453,7 +454,7 @@ uint Glulxe::perform_restore(strid_t str, int fromshell) {
 
 		if (chunkstart + chunklen != dest.pos) {
 			/* ### funny chunk length */
-			return 1;
+			return Common::kUnknownError;
 		}
 
 		if ((chunklen & 1) != 0) {
@@ -473,9 +474,9 @@ uint Glulxe::perform_restore(strid_t str, int fromshell) {
 	}
 
 	if (res)
-		return 1;
+		return Common::kUnknownError;
 
-	return 0;
+	return Common::kNoError;
 }
 
 int Glulxe::reposition_write(dest_t *dest, uint pos) {
