@@ -37,6 +37,10 @@ static const Common::Point positionTable[4] = {
 		{0xce,0x9e}
 };
 
+static const int16 bagBounceTable[4] = {
+		-5, -0xa, -5, 0
+};
+
 Inventory::Inventory(DragonsEngine *vm) : _vm(vm) {
 	_type = 0;
 	_sequenceId = 0;
@@ -131,7 +135,7 @@ void Inventory::openInventory() {
 			item->field_e = 0x100;
 			item->priorityLayer = 0;
 			item->updateSequence(_vm->getINI(_vm->unkArray_uint16[i] - 1)->field_8 * 2 + 10);
-			item->setFlag(ACTOR_FLAG_200); //80 + 40
+			item->setFlag(ACTOR_FLAG_200);
 			item->setFlag(ACTOR_FLAG_100);
 			item->setFlag(ACTOR_FLAG_80);
 			item->setFlag(ACTOR_FLAG_40);
@@ -148,6 +152,7 @@ void Inventory::animateBagIn() {
 	pos.y = -228;
 	int16 accel = 8;
 
+	// Drop bag down into position.
 	while (pos.y < 0) {
 		pos.y += accel;
 		_bag->updatePosition(pos);
@@ -157,10 +162,12 @@ void Inventory::animateBagIn() {
 
 	_vm->playSound(0x8001);
 
-	// TODO wait here
-
-	pos.y = 0;
-	_bag->updatePosition(pos);
+	// Shake bag at the end.
+	for (int i = 0; i < 4; i++) {
+		pos.y = bagBounceTable[i];
+		_bag->updatePosition(pos);
+		_vm->waitForFrames(2);
+	}
 
 	_vm->setFlags(ENGINE_FLAG_8);
 	_vm->setFlags(ENGINE_FLAG_10);
