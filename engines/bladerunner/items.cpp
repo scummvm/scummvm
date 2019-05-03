@@ -65,6 +65,13 @@ void Items::getWidthHeight(int itemId, int *width, int *height) const {
 	_items[itemIndex]->getWidthHeight(width, height);
 }
 
+void Items::getAnimationId(int itemId, int *animationId) const {
+	int itemIndex = findItem(itemId);
+	assert(itemIndex != -1);
+
+	_items[itemIndex]->getAnimationId(animationId);
+}
+
 void Items::tick() {
 	int setId = _vm->_scene->getSetId();
 	for (int i = 0; i < (int)_items.size(); i++) {

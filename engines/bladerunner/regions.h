@@ -38,7 +38,7 @@ class Regions {
 
 	struct Region {
 		Common::Rect rectangle;
-		int          type;
+		int          type;     // Arrow Icon on mouse-over (has meaning only for Exits) 0: Upward , 1: Right, 2: Downward, 3: Left
 		int          present;
 	};
 

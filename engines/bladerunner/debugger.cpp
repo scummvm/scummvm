@@ -37,6 +37,7 @@
 #include "bladerunner/savefile.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
+#include "bladerunner/items.h"
 #include "bladerunner/screen_effects.h"
 #include "bladerunner/settings.h"
 #include "bladerunner/set.h"
@@ -106,8 +107,9 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 	registerCmd("subtitle", WRAP_METHOD(Debugger, cmdSubtitle));
 	registerCmd("vk", WRAP_METHOD(Debugger, cmdVk));
 	registerCmd("mazescore", WRAP_METHOD(Debugger, cmdMazeScore));
-	registerCmd("boundbox", WRAP_METHOD(Debugger, cmdBoundBox));
-	registerCmd("obstacle", WRAP_METHOD(Debugger, cmdObstacle));
+	registerCmd("object", WRAP_METHOD(Debugger, cmdObject));
+	registerCmd("item", WRAP_METHOD(Debugger, cmdItem));
+	registerCmd("region", WRAP_METHOD(Debugger, cmdRegion));
 }
 
 Debugger::~Debugger() {
@@ -1083,7 +1085,7 @@ bool Debugger::cmdSubtitle(int argc, const char **argv) {
 * Toggle showing Maze score on the fly as subtitle during the Police Maze Course
 */
 bool Debugger::cmdMazeScore(int argc, const char **argv) {
-bool invalidSyntax = false;
+	bool invalidSyntax = false;
 
 	if (argc != 2) {
 		invalidSyntax = true;
@@ -1107,25 +1109,399 @@ bool invalidSyntax = false;
 
 	if (invalidSyntax) {
 		debugPrintf("Toggle showing the Maze Score as a subtitle during the Shooting Grounds Course\n");
-		debugPrintf("Usage: %s toggle", argv[0]);
+		debugPrintf("Usage: %s toggle\n", argv[0]);
+	}
+	return true;
+}
+
+
+/**
+* Add, remove or edit flags or bounding box for an object to debug some issues whereby existing obstacle layout does not prevent
+* characters from walking where they shouldn't
+*
+* Notes: with regard to Bound box / the clickable area for an object, item or region
+* 1. The code for what a mouse click will refer to is in BladeRunnerEngine::handleMouseAction() -- under if (mainButton) clause
+*    Clickable 3d areas for boxes are determined based on scene information that translates the 2d mouse position into
+*    a "3d" position in the view. (see: Mouse::getXYZ)
+*    This 3d position must be within the bounding box of the 3d object
+*
+* 2. For items, the mouse-over (Item::isUnderMouse) depends on the screenRectangle dimensions (Common::Rect) and specifies the
+*    targetable area for the item. The screenRectangle is calculated at every tick() of the item and depends on the item's animation,
+*    current frame and thus facing angle.
+*    The item's bounding box still determines the clickable area for the item. It is calculated at item's setup() or setXYZ()
+*    and depends on the item's position (vector), height and width.
+*/
+bool Debugger::cmdObject(int argc, const char **argv) {
+	bool invalidSyntax = false;
+
+	if (argc < 3) {
+		invalidSyntax = true;
+	} else {
+		Common::String modeName = argv[1];
+		modeName.toLowercase();
+		if (modeName == "add" && argc == 9) {
+			// add object mode
+			// first add to set and then to scene
+			Common::String custObjName = "CUSTOMOBJ";
+			Common::String custObjNameSuffix = argv[2];
+			custObjName = custObjName + custObjNameSuffix;
+			//
+			// plain 3d objects (non-items) are added to the Set by reading the specific data for that Set
+			// Their count is also stored in the Set's data,
+			// if there's a need for a permanent extra obstacle in the Set, the code in set.cpp will have to be overridden (hard coded patch)
+			//
+			// For the debugger's purposes it should be harmless to add custom objects to test blocking pathways or other functions
+			// they will persist in Save/Load but should go away when exiting a Set
+			if (_vm->_scene->_set->_objectCount > 85) { //85 is the size of the _objects array in set.cpp
+				debugPrintf("Unable to add more objects in the set\n");
+			} else {
+				_vm->_scene->_set->_objectCount++;
+				int objectId = _vm->_scene->_set->_objectCount;
+				_vm->_scene->_set->_objects[objectId].name = custObjName.c_str();
+
+				float x0, y0, z0, x1, y1, z1;
+				x0 = atof(argv[3]);
+				y0 = atof(argv[4]);
+				z0 = atof(argv[5]);
+				x1 = atof(argv[6]);
+				y1 = atof(argv[7]);
+				z1 = atof(argv[8]);
+
+				_vm->_scene->_set->_objects[objectId].bbox = BoundingBox(x0, y0, z0, x1, y1, z1);
+				_vm->_scene->_set->_objects[objectId].isObstacle = 0; // init as false
+				_vm->_scene->_set->_objects[objectId].isClickable = 0;// init as false
+				_vm->_scene->_set->_objects[objectId].isHotMouse = 0;
+				_vm->_scene->_set->_objects[objectId].unknown1 = 0;
+				_vm->_scene->_set->_objects[objectId].isTarget = 0;   // init as false
+				//
+				if (_vm->_sceneObjects->addObject(objectId + kSceneObjectOffsetObjects,
+				                                  _vm->_scene->_set->_objects[objectId].bbox,
+				                                  false,
+				                                  false,
+				                                  _vm->_scene->_set->_objects[objectId].unknown1,
+				                                  false)
+				) {
+					debugPrintf("Object: %d: %s was added to set and scene\n", objectId, custObjName.c_str());
+				} else {
+					debugPrintf("Failed to add object: %d: %s to the scene\n", objectId, custObjName.c_str());
+				}
+				return true;
+			}
+		} else if ((modeName == "remove" && argc == 3)
+		            || (modeName == "flags" && argc == 6)
+					|| (modeName == "bounds" && argc == 9)
+		            || (modeName == "list" && argc == 3)
+		) {
+			// remove object mode, show properties or edit flags
+			int objectId = atoi(argv[2]);
+			if (objectId >= 0 && objectId < _vm->_scene->_set->_objectCount) {
+				Common::String objName = _vm->_scene->objectGetName(objectId);
+				if (modeName == "list") {
+					// list properties
+					const BoundingBox &bbox = _vm->_scene->_set->_objects[objectId].bbox;
+					Vector3 a, b;
+					bbox.getXYZ(&a.x, &a.y, &a.z, &b.x, &b.y, &b.z);
+					Vector3 pos = _vm->_view->calculateScreenPosition(0.5 * (a + b));
+					// Intentional? When loading a game, in the loaded Scene:
+					// an object can be an non-obstacle as a sceneObject but an obstacle as a Set object.
+					// and this seems to be considered as a non-obstacle by the game in that Scene.
+					// These are objects that the Unobstacle_Object() is called for when a scene is loaded (SceneLoaded())
+					// So the sceneObject property overrides the Set object property in these cases
+					// Eg. in PS01 BOX38 (object id: 19)
+					// This inconsistency is fixed if you exit and re-enter the scene.
+					debugPrintf("%d: %s (Clk: %s, Trg: %s, Obs: %s), Pos(%02.2f,%02.2f,%02.2f)\n     Bbox(%02.2f,%02.2f,%02.2f) ~ (%02.2f,%02.2f,%02.2f)\n",
+					            objectId, objName.c_str(),
+					            _vm->_scene->_set->_objects[objectId].isClickable? "T" : "F",
+					            _vm->_scene->_set->_objects[objectId].isTarget?    "T" : "F",
+					            _vm->_scene->_set->_objects[objectId].isObstacle?  "T" : "F",
+					            pos.x, pos.y, pos.z,
+					            a.x, a.y, a.z, b.x, b.y, b.z);
+				} else if (modeName == "remove") {
+					// scene's objectSetIsObstacle will update obstacle and walkpath
+					_vm->_scene->objectSetIsObstacle(objectId, false, !_vm->_sceneIsLoading, true);
+					// remove only from scene objects (keep in Set)
+					if (!_vm->_sceneIsLoading && _vm->_sceneObjects->remove(objectId + kSceneObjectOffsetObjects)) {
+						debugPrintf("Object: %d: %s was removed\n", objectId, objName.c_str());
+					} else {
+						debugPrintf("Failed to remove object: %d: %s\n", objectId, objName.c_str());
+					}
+				} else if (modeName == "bounds") {
+					Vector3 positionBottomRight(atof(argv[3]), atof(argv[4]), atof(argv[5]));
+					Vector3 positionTopLeft(atof(argv[6]), atof(argv[7]), atof(argv[8]));
+					_vm->_scene->_set->_objects[objectId].bbox.setXYZ(positionBottomRight.x, positionBottomRight.y, positionBottomRight.z, positionTopLeft.x, positionTopLeft.y, positionTopLeft.z);
+					if (!_vm->_sceneIsLoading && _vm->_sceneObjects->remove(objectId + kSceneObjectOffsetObjects)){
+						_vm->_sceneObjects->addObject(objectId + kSceneObjectOffsetObjects,
+						                               _vm->_scene->_set->_objects[objectId].bbox,
+						                               _vm->_scene->_set->_objects[objectId].isClickable,
+						                               _vm->_scene->_set->_objects[objectId].isObstacle,
+						                               _vm->_scene->_set->_objects[objectId].unknown1,
+						                               _vm->_scene->_set->_objects[objectId].isTarget);
+						// scene's objectSetIsObstacle will update obstacle and walkpath
+						_vm->_scene->objectSetIsObstacle(objectId, _vm->_scene->_set->_objects[objectId].isObstacle, !_vm->_sceneIsLoading, true);
+						debugPrintf("New bounds: (%02.2f,%02.2f,%02.2f) ~ (%02.2f,%02.2f,%02.2f)\n",
+						             positionBottomRight.x, positionBottomRight.y, positionBottomRight.z,
+						             positionTopLeft.x,   positionTopLeft.y,   positionTopLeft.z);
+					}
+				} else {
+					// edit flags
+					bool newClickable = atoi(argv[3])? true : false;
+					bool newTarget    = atoi(argv[4])? true : false;
+					bool newObstacle  = atoi(argv[5])? true : false;
+					// scene's objectSetIsObstacle will update obstacle and walkpath
+					_vm->_scene->objectSetIsObstacle(objectId, newObstacle, !_vm->_sceneIsLoading, true);
+					_vm->_scene->objectSetIsClickable(objectId, newClickable, !_vm->_sceneIsLoading);
+					_vm->_scene->objectSetIsTarget(objectId, newTarget, !_vm->_sceneIsLoading);
+
+					debugPrintf("Setting obj %d: %s as clickable: %s, target: %s, obstacle: %s\n", objectId, objName.c_str(), newClickable? "T":"F", newTarget? "T":"F", newObstacle? "T":"F");
+				}
+				return true;
+			} else {
+				debugPrintf("Invalid object id %d was specified\n", objectId);
+				return true;
+			}
+		} else {
+			invalidSyntax = true;
+		}
+	}
+
+	if (invalidSyntax) {
+		debugPrintf("Add, edit flags, bounds or remove a 3d object obstacle in the current scene\n");
+		debugPrintf("Use debugger command List with \"obj\" argument to view available targets for this command\n");
+		debugPrintf("Floats:   brX, brY, brZ, tlX, tlY, tlZ, posX, posY, posZ\n");
+		debugPrintf("Integers: id, incId\n");
+		debugPrintf("Boolean (1: true, 0: false): isObstacle, isClickable, isTarget\n");
+		debugPrintf("Usage 1: %s add    <incId> <brX> <brY> <brZ>  <tlX> <tlY> <tlZ>\n", argv[0]);
+		debugPrintf("Usage 2: %s list   <id>\n", argv[0]);
+		debugPrintf("Usage 3: %s flags  <id> <isClickable> <isTarget> <isObstacle>\n", argv[0]);
+		debugPrintf("Usage 4: %s bounds <id> <brX> <brY> <brZ>  <tlX> <tlY> <tlZ>\n", argv[0]);
+		debugPrintf("Usage 5: %s remove <id>\n", argv[0]);
 	}
 	return true;
 }
 
 /**
-* Change Bound box for objects to debug click box optimization
+* Add a new, remove or edit flags and bounds for an existing item
 */
-bool Debugger::cmdBoundBox(int argc, const char **argv) {
-	// TODO
+bool Debugger::cmdItem(int argc, const char **argv) {
+	bool invalidSyntax = false;
+
+	if (argc < 3) {
+		invalidSyntax = true;
+	} else {
+		Common::String modeName = argv[1];
+		modeName.toLowercase();
+		int itemId = atoi(argv[2]);
+		if (itemId < 0) {
+			debugPrintf("Invalid item id: %d specified. Item id must be an integer >=0\n", itemId);
+			return true;
+		}
+
+		if (modeName == "add" && argc == 10) {
+			// add item mode
+			if (_vm->_sceneObjects->findById(itemId + kSceneObjectOffsetItems) == -1) {
+				Vector3 itemPosition(atof(argv[3]), atof(argv[4]), atof(argv[5]));
+				int itemFacing = atoi(argv[6]);
+				int itemHeight = atoi(argv[7]);
+				int itemWidth = atoi(argv[8]);
+				int itemAnimationId = atoi(argv[9]);
+				if (_vm->_items->addToWorld(itemId, itemAnimationId, _vm->_scene->_setId, itemPosition, itemFacing, itemHeight, itemWidth, false, true, false, true)) {
+					debugPrintf("Item: %d was added to set and scene\n", itemId);
+				} else {
+					debugPrintf("Failed to add item: %d to the scene\n", itemId);
+				}
+				return true;
+			} else {
+				debugPrintf("Item: %d is already in the scene\n", itemId);
+			}
+		} else if ((modeName == "remove" && argc == 3)
+		            || (modeName == "flags" && argc == 5)
+		            || (modeName == "bounds" && argc == 9)
+		            || (modeName == "list" && argc == 3)
+		) {
+			// remove item mode, show properties or edit flags
+			if (_vm->_sceneObjects->findById(itemId + kSceneObjectOffsetItems) != -1) {
+				if (modeName == "list") {
+					// list properties
+					float xpos_curr, ypos_curr, zpos_curr, x0_curr, y0_curr, z0_curr, x1_curr, y1_curr, z1_curr;
+					int currHeight, currWidth;
+					int itemAnimationId;
+					int facing_curr = _vm->_items->getFacing(itemId);
+					_vm->_items->getWidthHeight(itemId, &currWidth, &currHeight);
+					_vm->_items->getXYZ(itemId, &xpos_curr, &ypos_curr, &zpos_curr );
+					_vm->_items->getBoundingBox(itemId).getXYZ(&x0_curr, &y0_curr, &z0_curr, &x1_curr, &y1_curr, &z1_curr);
+					_vm->_items->getAnimationId(itemId, &itemAnimationId);
+					const Common::Rect &screenRect = _vm->_items->getScreenRectangle(itemId);
+					debugPrintf("Item %d (Trg: %s, Vis/Clk: %s) Pos(%02.2f,%02.2f,%02.2f), Face: %d, Height: %d, Width: %d AnimId: %d\n ScrRct(%d,%d,%d,%d) Bbox(%02.2f,%02.2f,%02.2f) ~ (%02.2f,%02.2f,%02.2f)\n",
+					            itemId,
+					            _vm->_items->isTarget(itemId)?  "T" : "F",
+					            _vm->_items->isVisible(itemId)? "T" : "F",
+					            xpos_curr, ypos_curr, zpos_curr,
+					            facing_curr, currWidth, currHeight, itemAnimationId,
+					            screenRect.top, screenRect.left, screenRect.bottom, screenRect.right,
+					            x0_curr, y0_curr, z0_curr, x1_curr, y1_curr, z1_curr);
+				} else if (modeName == "remove") {
+					if (_vm->_sceneObjects->remove(itemId + kSceneObjectOffsetItems)) {
+						debugPrintf("Item: %d was removed\n", itemId);
+					} else {
+						debugPrintf("Failed to remove item: %d\n", itemId);
+					}
+				} else if (modeName == "bounds") {
+					// change position and facing to affect the screen rectangle
+					Vector3 newPosition(atof(argv[3]), atof(argv[4]), atof(argv[5]));
+					int newFacing = atoi(argv[6]);
+					int newHeight = atoi(argv[7]);
+					int newWidth =  atoi(argv[8]);
+					//// setXYZ recalculates the item's bounding box
+					//_vm->_items->setXYZ(itemId, newPosition);
+					//// facing affects the angle and thus the screenRect in the next tick()
+					_vm->_items->setFacing(itemId, newFacing);
+					if (_vm->_sceneObjects->remove(itemId + kSceneObjectOffsetItems)) {
+						float x0_new, y0_new, z0_new, x1_new, y1_new, z1_new;
+						bool targetable = _vm->_items->isTarget(itemId);
+						bool obstacle = _vm->_items->isVisible(itemId);
+						bool polizeMazeEnemy = _vm->_items->isPoliceMazeEnemy(itemId);
+						int itemAnimationId = -1;
+						_vm->_items->getAnimationId(itemId, &itemAnimationId);
+						_vm->_items->addToWorld(itemId, itemAnimationId, _vm->_scene->_setId, newPosition, newFacing, newHeight, newWidth, targetable, obstacle, polizeMazeEnemy, true);
+						_vm->_items->getBoundingBox(itemId).getXYZ(&x0_new, &y0_new, &z0_new, &x1_new, &y1_new, &z1_new);
+						debugPrintf("New Pos(%02.2f,%02.2f,%02.2f), Face: %d, Height: %d, Width: %d\n Bbox(%02.2f,%02.2f,%02.2f) ~ (%02.2f,%02.2f,%02.2f)\n",
+						            newPosition.x, newPosition.y, newPosition.z,
+						            newFacing, newHeight, newWidth,
+						            x0_new, y0_new, z0_new, x1_new, y1_new, z1_new);
+					}
+				} else {
+					// edit flags
+					bool newObstacle  = (atoi(argv[3]) != 0);
+					bool newTarget    = (atoi(argv[4]) != 0);
+					_vm->_items->setIsObstacle(itemId, newObstacle);
+					_vm->_items->setIsTarget(itemId, newTarget);
+					debugPrintf("Setting item %d as visible/clickable: %s and target: %s\n", itemId, newObstacle? "T":"F", newTarget? "T":"F");
+				}
+				return true;
+			} else {
+				debugPrintf("No item was found with the specified id: %d\n", itemId);
+				return true;
+			}
+		} else {
+			invalidSyntax = true;
+		}
+	}
+
+	if (invalidSyntax) {
+		debugPrintf("Add, edit flags, bounds or remove an item in the current scene\n");
+		debugPrintf("Use debugger command List with \"items\" argument to view available targets for this command\n");
+		debugPrintf("Floats:   posX, posY, posZ\n");
+		debugPrintf("Integers: id, facing, height, width, animationId\n");
+		debugPrintf("Boolean (1: true, 0: false): isVisible, isTarget\n");
+		debugPrintf("Usage 1: %s add    <id> <posX> <posY> <posZ> <facing> <height> <width> <animationId>\n", argv[0]);
+		debugPrintf("Usage 2: %s list   <id>\n", argv[0]);
+		debugPrintf("Usage 3: %s flags  <id> <isVisible> <isTarget>\n", argv[0]);
+		debugPrintf("Usage 4: %s bounds <id> <posX> <posY> <posZ>  <facing> <height> <width>\n", argv[0]);
+		debugPrintf("Usage 5: %s remove <id>\n", argv[0]);
+	}
 	return true;
 }
 
 /**
-* Add or remove obstacle to debug some issues whereby existing obstacle layout does not prevent
-* characters from walking where they shouldn't
+* Add a new or remove an existing region (plain or exit) into/from a specified slot in the _regions or _exits arrays respectively
 */
-bool Debugger::cmdObstacle(int argc, const char **argv) {
-	// TODO
+bool Debugger::cmdRegion(int argc, const char **argv) {
+	bool invalidSyntax = false;
+
+	if (argc < 4) {
+		invalidSyntax = true;
+	} else {
+		Common::String regionTypeName = argv[1];
+		regionTypeName.toLowercase();
+
+		Regions *regions = nullptr;
+		if (regionTypeName == "reg") {
+			regions = _vm->_scene->_regions;
+		} else if (regionTypeName == "exit") {
+			regions = _vm->_scene->_exits;
+		} else {
+			debugPrintf("Invalid region name type was specified: %s\n", regionTypeName.c_str());
+			return true;
+		}
+
+		Common::String modeName = argv[2];
+		modeName.toLowercase();
+		int regionID = atoi(argv[3]);
+		if (regionID < 0 || regionID >= 10) {
+			debugPrintf("A region id has to be an integer within [0, 9]\n");
+			return true;
+		}
+		if (modeName == "add" && ((regionTypeName == "reg" && argc == 8) || (regionTypeName == "exit" && argc == 9)) ){
+			// add region mode
+			if (!regions->_regions[regionID].present) {
+				int type = 0;
+				int topY    = atoi(argv[4]);
+				int leftX   = atoi(argv[5]);
+				int bottomY = atoi(argv[6]);
+				int rightX  = atoi(argv[7]);
+				if (regionTypeName == "exit") {
+					type = atoi(argv[8]);
+				}
+				Common::Rect newRect(topY, leftX, bottomY, rightX);
+				regions->add(regionID, newRect, type);
+				debugPrintf("Adding %s: %d (t:%d l:%d b:%d r:%d) of type %d\n", regionTypeName.c_str(), regionID, newRect.top, newRect.left, newRect.bottom, newRect.right, type);
+				return true;
+			} else {
+				debugPrintf("There already is an %s with the specified id: %d. Please select another slot id\n", regionTypeName.c_str(), regionID);
+				return true;
+			}
+		} else if ((modeName == "remove" && argc == 4)
+		           || (modeName == "list" && argc == 4)
+		           || (modeName == "bounds" && argc == 8)) {
+			if (regions->_regions[regionID].present) {
+				Common::Rect origRect = regions->_regions[regionID].rectangle;
+				int type = regions->_regions[regionID].type;
+				if (modeName == "remove") {
+					if (regions->remove(regionID)) {
+						debugPrintf("Removed %s: %d (t:%d l:%d b:%d r:%d) of type: %d\n", regionTypeName.c_str(), regionID, origRect.top, origRect.left, origRect.bottom, origRect.right, type);
+					} else {
+						debugPrintf("Unable to remove %s: %d for unexpected reasons\n", regionTypeName.c_str(), regionID);
+					}
+				} else if (modeName == "bounds") {
+					int topY, leftX, bottomY, rightX = 0;
+					topY    = atoi(argv[4]);
+					leftX   = atoi(argv[5]);
+					bottomY = atoi(argv[6]);
+					rightX  = atoi(argv[7]);
+
+					if (regions->remove(regionID)) {
+						Common::Rect newRect(topY, leftX, bottomY, rightX);
+						regions->add(regionID, newRect, type);
+						debugPrintf("Bounds %s: %d (t:%d l:%d b:%d r:%d)\n", modeName.c_str(), regionID, newRect.top, newRect.left, newRect.bottom, newRect.right);
+					}
+				} else {
+					// list properties
+					debugPrintf("%s: %d (t:%d l:%d b:%d r:%d) of type: %d\n", regionTypeName.c_str(), regionID, origRect.top, origRect.left, origRect.bottom, origRect.right, type);
+				}
+				return true;
+			} else {
+				debugPrintf("The %s id %d specified does not exist in the scene\n", regionTypeName.c_str(), regionID);
+				return true;
+			}
+		} else {
+			invalidSyntax = true;
+		}
+	}
+
+	if (invalidSyntax) {
+		debugPrintf("Add, edit bounds or remove a region (\"reg\": for plain region, \"exit\": for exit) in the current scene\n");
+		debugPrintf("Use debugger command List with \"reg\" argument to view available targets for this command\n");
+		debugPrintf("An exit type can be in [0, 3] and determines the type of arrow icon on mouse-over\n0: Upward , 1: Right, 2: Downward, 3: Left\n");
+		debugPrintf("Integers: id, topY, leftX, bottomY, rightX, type\n");
+		debugPrintf("Usage 1: %s reg  add    <id> <topY> <leftX> <bottomY> <rightX>\n", argv[0]);
+		debugPrintf("Usage 2: %s reg  remove <id>\n", argv[0]);
+		debugPrintf("Usage 3: %s reg  list   <id>\n", argv[0]);
+		debugPrintf("Usage 4: %s reg  bounds <id> <topY> <leftX> <bottomY> <rightX>\n", argv[0]);
+		debugPrintf("Usage 5: %s exit add    <id> <topY> <leftX> <bottomY> <rightX> <type>\n", argv[0]);
+		debugPrintf("Usage 6: %s exit remove <id>\n", argv[0]);
+		debugPrintf("Usage 7: %s exit list   <id>\n", argv[0]);
+		debugPrintf("Usage 8: %s exit bounds <id> <topY> <leftX> <bottomY> <rightX>\n", argv[0]);
+	}
 	return true;
 }
 
@@ -1168,10 +1544,6 @@ bool Debugger::cmdVk(int argc, const char **argv) {
 *
 * Similar to draw but only list items instead of drawing
 * Maybe keep this separate from the draw command, even though some code gets repeated here
-* DONE: Provide more info (bbox or position)
-* DONE: For actors show current goal too.
-* TODO: For items provide friendly name (enum in constants!)
-* DONE: Split items in items, actors and objects?
 */
 bool Debugger::cmdList(int argc, const char **argv) {
 	if (argc != 2) {
@@ -1188,8 +1560,9 @@ bool Debugger::cmdList(int argc, const char **argv) {
 			SceneObjects::SceneObject *sceneObject = &_vm->_sceneObjects->_sceneObjects[_vm->_sceneObjects->_sceneObjectsSortedByDistance[i]];
 
 			if (sceneObject->type == kSceneObjectTypeActor) {
-				debugPrintf("%02d. %s (Clk: %s, Trg: %s, Prs: %s, Obs: %s, Mvg: %s), Goal: %d, Pos(%02.2f,%02.2f,%02.2f)\n",
-				             count, _vm->_textActorNames->getText(sceneObject->id - kSceneObjectOffsetActors),
+				debugPrintf("%d: %s (Clk: %s, Trg: %s, Prs: %s, Obs: %s, Mvg: %s), Goal: %d, Pos(%02.2f,%02.2f,%02.2f)\n",
+				             sceneObject->id - kSceneObjectOffsetActors,
+				             _vm->_textActorNames->getText(sceneObject->id - kSceneObjectOffsetActors),
 				             sceneObject->isClickable? "T" : "F",
 				             sceneObject->isTarget?    "T" : "F",
 				             sceneObject->isPresent?   "T" : "F",
@@ -1217,8 +1590,9 @@ bool Debugger::cmdList(int argc, const char **argv) {
 				debugPrintf("%02d. Unknown object type\n", count);
 				++count;
 			} else if (sceneObject->type == kSceneObjectTypeObject) {
-				debugPrintf("%02d. %s (Clk: %s, Trg: %s, Prs: %s, Obs: %s, Mvg: %s), Pos(%02.2f,%02.2f,%02.2f)\n     Bbox(%02.2f,%02.2f,%02.2f) ~ (%02.2f,%02.2f,%02.2f)\n",
-				             count, _vm->_scene->objectGetName(sceneObject->id - kSceneObjectOffsetObjects).c_str(),
+				debugPrintf("%d: %s (Clk: %s, Trg: %s, Prs: %s, Obs: %s, Mvg: %s), Pos(%02.2f,%02.2f,%02.2f)\n     Bbox(%02.2f,%02.2f,%02.2f) ~ (%02.2f,%02.2f,%02.2f)\n",
+				             sceneObject->id - kSceneObjectOffsetObjects,
+				             _vm->_scene->objectGetName(sceneObject->id - kSceneObjectOffsetObjects).c_str(),
 				             sceneObject->isClickable? "T" : "F",
 				             sceneObject->isTarget?    "T" : "F",
 				             sceneObject->isPresent?   "T" : "F",
@@ -1240,41 +1614,49 @@ bool Debugger::cmdList(int argc, const char **argv) {
 				const BoundingBox &bbox = sceneObject->boundingBox;
 				Vector3 a, b;
 				bbox.getXYZ(&a.x, &a.y, &a.z, &b.x, &b.y, &b.z);
-				Vector3 pos = _vm->_view->calculateScreenPosition(0.5 * (a + b));
-				char itemText[40];
-				sprintf(itemText, "item %i", sceneObject->id - kSceneObjectOffsetItems);
-				debugPrintf("%02d. %s (Clk: %s, Trg: %s, Prs: %s, Obs: %s, Mvg: %s), Pos(%02.2f,%02.2f,%02.2f)\n    Bbox(%02.2f,%02.2f,%02.2f) ~ (%02.2f,%02.2f,%02.2f)\n",
-				             count, itemText,
+				//Vector3 pos = _vm->_view->calculateScreenPosition(0.5 * (a + b));
+				Vector3 pos;
+				int currHeight, currWidth;
+				_vm->_items->getXYZ(sceneObject->id - kSceneObjectOffsetItems, &pos.x, &pos.y, &pos.z);
+				_vm->_items->getWidthHeight(sceneObject->id - kSceneObjectOffsetItems, &currWidth, &currHeight);
+				const Common::Rect &screenRect = _vm->_items->getScreenRectangle(sceneObject->id - kSceneObjectOffsetItems);
+				debugPrintf("Id %i, Pos(%02.2f,%02.2f,%02.2f), Face: %d, Height: %d, Width: %d, ScrRct(%d,%d,%d,%d)\n Clk: %s, Trg: %s, Prs: %s, Vis: %s, Mvg: %s Bbox(%02.2f,%02.2f,%02.2f)~(%02.2f,%02.2f,%02.2f)\n",
+				             sceneObject->id - kSceneObjectOffsetItems,
+				             pos.x, pos.y, pos.z,
+				             _vm->_items->getFacing(sceneObject->id - kSceneObjectOffsetItems), currHeight, currWidth,
+				             screenRect.top, screenRect.left, screenRect.bottom, screenRect.right,
 				             sceneObject->isClickable? "T" : "F",
 				             sceneObject->isTarget?    "T" : "F",
 				             sceneObject->isPresent?   "T" : "F",
 				             sceneObject->isObstacle?  "T" : "F",
 				             sceneObject->isMoving?    "T" : "F",
-				             pos.x, pos.y, pos.z,
 				             a.x, a.y, a.z, b.x, b.y, b.z);
 				++count;
 			}
 		}
 		debugPrintf("%d items were found in scene.\n", count);
 	} else if (arg == "reg") {
-		debugPrintf("Listing regions: \n");
+		debugPrintf("Listing plain regions: \n");
 		int count = 0;
 		//list regions
 		for (int i = 0; i < 10; i++) {
 			Regions::Region *region = &_vm->_scene->_regions->_regions[i];
 			if (!region->present) continue;
-			debugPrintf("%02d. Region slot: %d\n", count, i);
+			Common::Rect r = region->rectangle;
+			debugPrintf("Region slot: %d (t:%d l:%d b:%d r:%d)\n", i, r.top, r.left, r.bottom, r.right);
 			++count;
 		}
 
+		debugPrintf("Listing exits: \n");
 		//list exits
 		for (int i = 0; i < 10; i++) {
 			Regions::Region *region = &_vm->_scene->_exits->_regions[i];
 			if (!region->present) continue;
-			debugPrintf("%02d. Exit slot: %d\n", count, i);
+			Common::Rect r = region->rectangle;
+			debugPrintf("Exit slot: %d (t:%d l:%d b:%d r:%d)\n", i, r.top, r.left, r.bottom, r.right);
 			++count;
 		}
-		debugPrintf("%d regions were found in scene.\n", count);
+		debugPrintf("%d regions (plain and exits) were found in scene.\n", count);
 	} else if (arg == "way") {
 		debugPrintf("Listing waypoints: \n");
 		int count = 0;
@@ -1284,7 +1666,8 @@ bool Debugger::cmdList(int argc, const char **argv) {
 				continue;
 			}
 			char waypointText[40];
-			sprintf(waypointText, "waypoint %i", i);
+			Vector3 a = waypoint->position;
+			sprintf(waypointText, "Waypoint %i, Pos(%02.2f,%02.2f,%02.2f)", i, a.x, a.y, a.z);
 			debugPrintf("%02d. %s\n", count, waypointText);
 			++count;
 		}
@@ -1296,7 +1679,8 @@ bool Debugger::cmdList(int argc, const char **argv) {
 				continue;
 			}
 			char coverText[40];
-			sprintf(coverText, "cover %i", i);
+			Vector3 a = cover->position;
+			sprintf(coverText, "Cover %i, Pos(%02.2f,%02.2f,%02.2f)", i, a.x, a.y, a.z);
 			debugPrintf("%02d. %s\n", count, coverText);
 			++count;
 		}
@@ -1308,7 +1692,8 @@ bool Debugger::cmdList(int argc, const char **argv) {
 				continue;
 			}
 			char fleeText[40];
-			sprintf(fleeText, "flee %i", i);
+			Vector3 a = flee->position;
+			sprintf(fleeText, "Flee %i, Pos(%02.2f,%02.2f,%02.2f)", i, a.x, a.y, a.z);
 			debugPrintf("%02d. %s\n", count, fleeText);
 			++count;
 		}

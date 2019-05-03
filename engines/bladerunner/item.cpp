@@ -70,6 +70,10 @@ void Item::getWidthHeight(int *width, int *height) const {
 	*height = _height;
 }
 
+void Item::getAnimationId(int *animationId) const {
+	*animationId = _animationId;
+}
+
 void Item::setFacing(int facing) {
 	_facing = facing;
 	_angle = _facing * (M_PI / 512.0f);
@@ -125,6 +129,9 @@ bool Item::tick(Common::Rect *screenRect, bool special) {
 	return isVisibleFlag;
 }
 
+// setXYZ() recalculates the item's bounding box,
+// but in addition to the item's (Vector3) position
+// it takes into account the item's width and height
 void Item::setXYZ(Vector3 position) {
 	_position = position;
 	int halfWidth = _width / 2;

@@ -77,8 +77,9 @@ public:
 	bool cmdOverlay(int argc, const char **argv);
 	bool cmdSubtitle(int argc, const char **argv);
 	bool cmdMazeScore(int argc, const char **argv);
-	bool cmdBoundBox(int argc, const char **argv);
-	bool cmdObstacle(int argc, const char **argv);
+	bool cmdObject(int argc, const char **argv);
+	bool cmdItem(int argc, const char **argv);
+	bool cmdRegion(int argc, const char **argv);
 	bool cmdList(int argc, const char **argv);
 	bool cmdVk(int argc, const char **argv);
 
