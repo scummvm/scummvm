@@ -98,7 +98,7 @@ struct FileReference {
 	/**
 	 * Constructor
 	 */
-	FileReference() : _rock(0), _slotNumber(-1), _fileType(fileusage_Data), _textMode(false) {}
+	FileReference();
 
 	/**
 	 * Constructor

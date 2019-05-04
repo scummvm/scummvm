@@ -677,6 +677,7 @@ void Glulxe::unparse_glk_args(dispatch_splot_t *splot, const char **proto, int d
 						opref = garglist[gargnum]._opaqueref;
 						if (opref) {
 							gidispatch_rock_t objrock = gidispatch_get_objrock(opref, *cx - 'a');
+							assert(objrock.ptr);
 							thisval = ((classref_t *)objrock.ptr)->id;
 						} else {
 							thisval = 0;
