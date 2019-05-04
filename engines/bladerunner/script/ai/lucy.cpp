@@ -817,7 +817,7 @@ bool AIScriptLucy::ChangeAnimationMode(int mode) {
 		_animationFrame = 0;
 		break;
 
-	case 48:
+	case kAnimationModeDie:
 		_animationState = 7;
 		_animationFrame = 0;
 		break;

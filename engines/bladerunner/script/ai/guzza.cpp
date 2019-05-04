@@ -953,7 +953,7 @@ bool AIScriptGuzza::ChangeAnimationMode(int mode) {
 		_animationFrame = 0;
 		break;
 
-	case 48:
+	case kAnimationModeDie:
 		_animationState = 28;
 		_animationFrame = 0;
 		break;

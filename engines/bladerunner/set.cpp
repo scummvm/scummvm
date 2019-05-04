@@ -90,6 +90,7 @@ bool Set::open(const Common::String &name) {
 		_objects[i].isTarget = 0;
 		s->skip(4);
 	}
+	patchInAdditionalObjectsInSet();
 
 	_walkboxCount = s->readUint32LE();
 	assert(_walkboxCount <= 95);
@@ -424,12 +425,58 @@ void Set::load(SaveFileReadStream &f) {
 * TODO If we have many such cases, perhaps we could use a lookup table
 *		using sceneId, objectId (or name) as keys
 */
-void Set::overrideSceneObjectInfo(int objectId) const { // For bugfixes with respect to clickable/targetable box positioning/bounding box
-	if (_vm->_scene->getSceneId() == kSceneBB06) { /// Sebastian's room with doll
-		if (_objects[objectId].name == "BOX31") { // dollhouse box in BB06
+void Set::overrideSceneObjectInfo(int objectId) const {
+	switch (_vm->_scene->getSceneId()) {
+	case kSceneBB06:
+		// Sebastian's room with doll
+		if (objectId == 3 && _objects[objectId].name == "BOX31") {
+			// dollhouse box in BB06
 			_objects[objectId].bbox.setXYZ(-161.47f, 30.0f, 53.75f, -110.53f, 69.81f, 90.90f);
 		}
+		break;
+	case kSceneUG09:
+		// block passage to buggy pipe
+		if (objectId == 7 && _objects[objectId].name == "BOXS FOR ARCHWAY 01") {
+			_objects[objectId].bbox.setXYZ(-168.99f, 151.38f, -139.10f, -105.95f, 239.59f, 362.70);
+		}
+		break;
+	default:
+		return;
 	}
+}
+
+/**
+* Used for adding objects in a Set mainly to fix a few "McCoy walking to places he should not" issues
+* This is called in Set::open()
+* Note:
+* - ScummVM (post fix) save games will have the extra objects information
+* - Original save games will not have the extra objects if the save game room scene was an affected scene
+*   but they will get them if the player exits and re-enters. The code anticipates not finding an object in a scene
+*   so this should not be an issue.
+*/
+void Set::patchInAdditionalObjectsInSet() {
+	Common::String custObjName;
+	int objectId = _objectCount;
+	BoundingBox bbox;
+	switch (_vm->_scene->getSceneId()) {
+	case kSceneUG13:
+		// Underground homeless place
+		// block passage to empty elevator chute
+		bbox = BoundingBox(-80.00f, 35.78f, -951.75f, 74.36f, 364.36f, -810.56f);
+		custObjName = "ELEVBLOCK";
+		break;
+	default:
+		return;
+	}
+
+	_objectCount++;
+	_objects[objectId].name = custObjName.c_str();
+	_objects[objectId].bbox = bbox;
+	_objects[objectId].isObstacle  = 0; // init as false - Can be changed in Scene script eg. SceneLoaded() with (Un)Obstacle_Object()
+	_objects[objectId].isClickable = 0; // init as false - Can be changed in Scene script eg. SceneLoaded() with (Un)Clickable_Object()
+	_objects[objectId].isHotMouse  = 0;
+	_objects[objectId].unknown1    = 0;
+	_objects[objectId].isTarget    = 0; // init as false - Can be changed in Scene script eg. SceneLoaded() with (Un_)Combat_Target_Object
 }
 
 } // End of namespace BladeRunner

@@ -457,7 +457,7 @@ bool AIScriptChew::ChangeAnimationMode(int mode) {
 		}
 		break;
 
-	case 48:
+	case kAnimationModeDie:
 		_animationFrame = 0;
 		_animationState = 11;
 		break;

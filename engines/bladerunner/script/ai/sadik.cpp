@@ -330,7 +330,7 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case kGoalSadikUG18Move:
 		Actor_Set_Targetable(kActorSadik, true);
-		World_Waypoint_Set(436, 89, -356.11f, 0.0f, 652.42f);
+		World_Waypoint_Set(436, kSetUG18, -356.11f, 0.0f, 652.42f);
 		AI_Movement_Track_Flush(kActorSadik);
 		AI_Movement_Track_Append_Run(kActorSadik, 436, 0);
 		AI_Movement_Track_Repeat(kActorSadik);

@@ -1122,6 +1122,10 @@ int Actor::getAnimationMode() const {
 	return _animationMode;
 }
 
+int Actor::getAnimationId() const {
+	return _animationId;
+}
+
 void Actor::setGoal(int goalNumber) {
 	int oldGoalNumber = _goalNumber;
 	_goalNumber = goalNumber;

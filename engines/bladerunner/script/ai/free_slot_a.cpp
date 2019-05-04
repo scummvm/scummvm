@@ -44,8 +44,8 @@ void AIScriptFreeSlotA::Initialize() {
 	_fallHeightCurrent = 0.0f; // not initialized in original
 	_fallHeightTarget = 0.0f; // not initialized in original
 
-	World_Waypoint_Set(525, 45, -780.0f, -615.49f, 2611.0f);
-	World_Waypoint_Set(526, 45, -780.0f, -615.49f, 2759.0f);
+	World_Waypoint_Set(525, kSetKP02, -780.0f, -615.49f, 2611.0f);
+	World_Waypoint_Set(526, kSetKP02, -780.0f, -615.49f, 2759.0f);
 }
 
 bool AIScriptFreeSlotA::Update() {
@@ -97,7 +97,7 @@ bool AIScriptFreeSlotA::Update() {
 			if (Actor_Query_Which_Set_In(kActorFreeSlotA) != Player_Query_Current_Set()) {
 				Game_Flag_Reset(kFlagRatWalkingAround);
 				Game_Flag_Reset(kFlagUG15BridgeWillBreak);
-				Actor_Set_Goal_Number(kActorFreeSlotA, false);
+				Actor_Set_Goal_Number(kActorFreeSlotA, 0);
 			}
 			break;
 
@@ -118,7 +118,7 @@ bool AIScriptFreeSlotA::Update() {
 		} else if (Actor_Query_Goal_Number(kActorFreeSlotA) == 405
 		        && Actor_Query_Which_Set_In(kActorMcCoy) == kSceneKP05
 		) {
-			Actor_Set_Targetable(kActorFreeSlotA, 1);
+			Actor_Set_Targetable(kActorFreeSlotA, true);
 			Actor_Set_Goal_Number(kActorFreeSlotA, 406);
 		}
 		return true;
@@ -213,7 +213,6 @@ bool AIScriptFreeSlotA::ShotAtAndHit() {
 		Actor_Set_Goal_Number(kActorFreeSlotA, kGoalFreeSlotAUG15Die);
 		return true;
 	}
-
 	return false;
 }
 
@@ -236,14 +235,14 @@ bool AIScriptFreeSlotA::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case kGoalFreeSlotAUG15WalkOut:
 		Actor_Force_Stop_Walking(kActorMcCoy);
 		AI_Movement_Track_Flush(kActorFreeSlotA);
-		World_Waypoint_Set(444, 87, -48.75f, 44.66f, 87.57f);
+		World_Waypoint_Set(444, kSetUG15, -48.75f, 44.66f, 87.57f);
 		AI_Movement_Track_Append(kActorFreeSlotA, 444, 1);
 		AI_Movement_Track_Repeat(kActorFreeSlotA);
 		break;
 
 	case kGoalFreeSlotAUG15RunToOtherSide:
 		AI_Movement_Track_Flush(kActorFreeSlotA);
-		World_Waypoint_Set(444, 87, -237.0f, 48.07f, 208.0f);
+		World_Waypoint_Set(444, kSetUG15, -237.0f, 48.07f, 208.0f);
 		AI_Movement_Track_Append(kActorFreeSlotA, 444, 1);
 		AI_Movement_Track_Repeat(kActorFreeSlotA);
 		Actor_Set_Targetable(kActorFreeSlotA, true);
@@ -251,7 +250,7 @@ bool AIScriptFreeSlotA::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case kGoalFreeSlotAUG15RunBack:
 		AI_Movement_Track_Flush(kActorFreeSlotA);
-		World_Waypoint_Set(444, 87, 3.52f, 52.28f, 90.68f);
+		World_Waypoint_Set(444, kSetUG15, 3.52f, 52.28f, 90.68f);
 		AI_Movement_Track_Append(kActorFreeSlotA, 444, 0);
 		AI_Movement_Track_Repeat(kActorFreeSlotA);
 		break;
@@ -407,9 +406,10 @@ bool AIScriptFreeSlotA::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 5:
+		// a bug? This is an animation for Maggie (exploding)
 		*animation = 874;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(874) - 1) { // bug? shuld not be '-1'
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(874) - 1) {
 			Actor_Change_Animation_Mode(kActorFreeSlotA, kAnimationModeIdle);
 		}
 		break;
@@ -430,10 +430,11 @@ bool AIScriptFreeSlotA::UpdateAnimation(int *animation, int *frame) {
 	case 7:
 		*animation = 859;
 		_animationFrame++;
-		if (_animationFrame == 0) {
+		if (_animationFrame == 1) {
 			Ambient_Sounds_Play_Sound(kSfxRATTY5, 99, 0, 0, 25);
 		}
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(859) - 1) { // bug? shuld not be '-1'
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(859) - 1) {
+			// -1 in the clause is ok here since the next _animationState is 8 which will maintain the last frame (Slice_Animation_Query_Number_Of_Frames(859) - 1)
 			_animationFrame = Slice_Animation_Query_Number_Of_Frames(859) - 1;
 			_animationState = 8;
 			Actor_Set_Goal_Number(kActorFreeSlotA, kGoalFreeSlotAGone);
@@ -444,7 +445,6 @@ bool AIScriptFreeSlotA::UpdateAnimation(int *animation, int *frame) {
 		*animation = 859;
 		_animationFrame = Slice_Animation_Query_Number_Of_Frames(859) - 1;
 		break;
-
 	default:
 		break;
 	}
@@ -502,7 +502,7 @@ bool AIScriptFreeSlotA::ChangeAnimationMode(int mode) {
 		_animationFrame = 0;
 		break;
 
-	case 48:
+	case kAnimationModeDie:
 		_animationState = 7;
 		_animationFrame = 0;
 		break;
@@ -558,9 +558,9 @@ void AIScriptFreeSlotA::goToRandomUGxx() {
 		break;
 
 	case 2:
-		World_Waypoint_Set(463, 74, 144.98f, -50.13f, -175.75f);
-		World_Waypoint_Set(464, 74, 105.6f, -50.13f, -578.46f);
-		World_Waypoint_Set(465, 74, 62.0f, -50.13f, -574.0f);
+		World_Waypoint_Set(463, kSetUG01, 144.98f, -50.13f, -175.75f);
+		World_Waypoint_Set(464, kSetUG01, 105.6f, -50.13f, -578.46f);
+		World_Waypoint_Set(465, kSetUG01, 62.0f, -50.13f, -574.0f);
 		AI_Movement_Track_Append(kActorFreeSlotA, 463, 1);
 		AI_Movement_Track_Append(kActorFreeSlotA, 464, 1);
 		AI_Movement_Track_Append(kActorFreeSlotA, 465, 5);
@@ -576,9 +576,9 @@ void AIScriptFreeSlotA::goToRandomUGxx() {
 		break;
 
 	case 4:
-		World_Waypoint_Set(463, 77, -22.7f, 6.39f, 33.12f);
-		World_Waypoint_Set(464, 77, -6.70f, -1.74f, -362.88f);
-		World_Waypoint_Set(465, 77, 164.0f, 11.87f, -1013.0f);
+		World_Waypoint_Set(463, kSetUG04, -22.7f, 6.39f, 33.12f);
+		World_Waypoint_Set(464, kSetUG04, -6.70f, -1.74f, -362.88f);
+		World_Waypoint_Set(465, kSetUG04, 164.0f, 11.87f, -1013.0f);
 		AI_Movement_Track_Append(kActorFreeSlotA, 463, 2);
 		AI_Movement_Track_Append(kActorFreeSlotA, 464, 0);
 		AI_Movement_Track_Append(kActorFreeSlotA, 465, 0);
@@ -600,64 +600,75 @@ void AIScriptFreeSlotA::goToRandomUGxx() {
 		if (Actor_Query_In_Set(kActorClovis, kSetUG07)) {
 			AI_Movement_Track_Append(kActorFreeSlotA, 39, 10);
 		} else {
-			World_Waypoint_Set(463, 80, -88.78f, -12.21f, -184.08f);
-			World_Waypoint_Set(464, 80, 250.0f, -12.21f, -342.0f);
-			World_Waypoint_Set(465, 80, -164.78f, -12.21f, -832.08f);
+			World_Waypoint_Set(463, kSetUG07, -88.78f, -12.21f, -184.08f);
+			World_Waypoint_Set(464, kSetUG07, 250.0f, -12.21f, -342.0f);
+			World_Waypoint_Set(465, kSetUG07, -164.78f, -12.21f, -832.08f);
 			AI_Movement_Track_Append(kActorFreeSlotA, 463, 5);
 			AI_Movement_Track_Append(kActorFreeSlotA, 464, 1);
 		}
 		break;
 
 	case 8:
-		World_Waypoint_Set(463, 80, -88.78f, -12.21f, -184.08f);
-		World_Waypoint_Set(464, 80, 250.0f, -12.21f, -342.0f);
-		World_Waypoint_Set(465, 80, -164.78f, -12.21f, -832.08f);
+		World_Waypoint_Set(463, kSetUG07, -88.78f, -12.21f, -184.08f);
+		World_Waypoint_Set(464, kSetUG07, 250.0f, -12.21f, -342.0f);
+		World_Waypoint_Set(465, kSetUG07, -164.78f, -12.21f, -832.08f);
 		AI_Movement_Track_Append(kActorFreeSlotA, 464, 5);
 		AI_Movement_Track_Append(kActorFreeSlotA, 463, 1);
 		break;
 
 	case 9:
-		World_Waypoint_Set(463, 80, -88.78f, -12.21f, -184.08f);
-		World_Waypoint_Set(464, 80, 250.0f, -12.21f, -342.0f);
-		World_Waypoint_Set(465, 80, -164.78f, -12.21f, -832.08f);
+		World_Waypoint_Set(463, kSetUG07, -88.78f, -12.21f, -184.08f);
+		World_Waypoint_Set(464, kSetUG07, 250.0f, -12.21f, -342.0f);
+		World_Waypoint_Set(465, kSetUG07, -164.78f, -12.21f, -832.08f);
 		AI_Movement_Track_Append(kActorFreeSlotA, 464, 5);
 		AI_Movement_Track_Append(kActorFreeSlotA, 465, 1);
 		break;
 
 	case 10:
-		World_Waypoint_Set(463, 80, -88.78f, -12.21f, -184.08f);
-		World_Waypoint_Set(464, 80, 250.0f, -12.21f, -342.0f);
-		World_Waypoint_Set(465, 80, -164.78f, -12.21f, -832.08f);
+		World_Waypoint_Set(463, kSetUG07, -88.78f, -12.21f, -184.08f);
+		World_Waypoint_Set(464, kSetUG07, 250.0f, -12.21f, -342.0f);
+		World_Waypoint_Set(465, kSetUG07, -164.78f, -12.21f, -832.08f);
 		AI_Movement_Track_Append(kActorFreeSlotA, 465, 5);
 		AI_Movement_Track_Append(kActorFreeSlotA, 464, 1);
 		break;
 
 	case 11:
-		World_Waypoint_Set(463, 82, 91.0f, 156.94f, -498.0f);
-		World_Waypoint_Set(464, 82, -149.0f, 156.94f, -498.0f);
+		World_Waypoint_Set(463, kSetUG09, 91.0f, 156.94f, -498.0f);
+		World_Waypoint_Set(464, kSetUG09, -149.0f, 156.94f, -498.0f);
 		AI_Movement_Track_Append(kActorFreeSlotA, 463, 5);
 		AI_Movement_Track_Append(kActorFreeSlotA, 464, 1);
 		break;
 
 	case 12:
-		World_Waypoint_Set(463, 82, 91.0f, 156.94f, -498.0f);
-		World_Waypoint_Set(464, 82, -149.0f, 156.94f, -498.0f);
+		World_Waypoint_Set(463, kSetUG09, 91.0f, 156.94f, -498.0f);
+		World_Waypoint_Set(464, kSetUG09, -149.0f, 156.94f, -498.0f);
 		AI_Movement_Track_Append(kActorFreeSlotA, 464, 5);
 		AI_Movement_Track_Append(kActorFreeSlotA, 463, 1);
 		break;
 
 	case 13:
-		World_Waypoint_Set(463, 82, -152.51f, 277.31f, 311.98f);
-		World_Waypoint_Set(464, 82, -124.51f, 275.08f, 319.98f);
+#if BLADERUNNER_ORIGINAL_BUGS
+		// this makes the rat appear on the pipe (top left) but this is buggy
+		// since it appears floating there
+		World_Waypoint_Set(463, kSetUG09, -152.51f, 277.31f, 311.98f);
+		World_Waypoint_Set(464, kSetUG09, -124.51f, 275.08f, 319.98f);
 		AI_Movement_Track_Append(kActorFreeSlotA, 463, 1);
 		AI_Movement_Track_Append(kActorFreeSlotA, 464, 8);
 		AI_Movement_Track_Append(kActorFreeSlotA, 463, 1);
+#else
+		// replacing with something more normal
+		World_Waypoint_Set(463, kSetUG09, 91.0f, 156.94f, -498.0f);
+		World_Waypoint_Set(464, kSetUG09, -29.60f, 156.94f, -498.0f);
+		AI_Movement_Track_Append(kActorFreeSlotA, 463, 4);
+		AI_Movement_Track_Append(kActorFreeSlotA, 464, 1);
+		AI_Movement_Track_Append(kActorFreeSlotA, 463, 1);
+#endif
 		break;
 
 	case 14:
-		World_Waypoint_Set(463, 84, -360.67f, 21.39f, 517.55f);
-		World_Waypoint_Set(464, 84, -250.67f, 21.39f, 477.55f);
-		World_Waypoint_Set(465, 84, -248.67f, 21.39f, -1454.45f);
+		World_Waypoint_Set(463, kSetUG12, -360.67f, 21.39f, 517.55f);
+		World_Waypoint_Set(464, kSetUG12, -250.67f, 21.39f, 477.55f);
+		World_Waypoint_Set(465, kSetUG12, -248.67f, 21.39f, -1454.45f);
 		AI_Movement_Track_Append(kActorFreeSlotA, 463, 1);
 		AI_Movement_Track_Append(kActorFreeSlotA, 464, 8);
 		AI_Movement_Track_Append(kActorFreeSlotA, 465, 1);

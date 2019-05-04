@@ -447,7 +447,7 @@ bool AIScriptLuther::ChangeAnimationMode(int mode) {
 		_animationFrame = 0;
 		break;
 
-	case 48:
+	case kAnimationModeDie:
 		_animationState = 12;
 		_animationFrame = 0;
 		break;

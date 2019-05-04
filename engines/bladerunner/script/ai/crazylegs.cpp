@@ -36,7 +36,7 @@ void AIScriptCrazylegs::Initialize() {
 
 	_flag = false;
 
-	World_Waypoint_Set(360, 41, -103.0f, 40.63f, -53.0f);
+	World_Waypoint_Set(360, kSetHF05, -103.0f, 40.63f, -53.0f);
 	Actor_Put_In_Set(kActorCrazylegs, kSetHF05);
 	Actor_Set_At_XYZ(kActorCrazylegs, -33.0f, 40.63f, 16.0f, 845);
 }

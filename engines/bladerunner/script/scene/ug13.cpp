@@ -82,9 +82,18 @@ void SceneScriptUG13::SceneLoaded() {
 	Unobstacle_Object("BOX FOR ARCHWAY 02", true);
 	Unobstacle_Object("STAIR_RAIL", true);
 	Unobstacle_Object("DISC_LEFT", true);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	if (Game_Flag_Query(kFlagUG08ElevatorUp)) {
+		Obstacle_Object("ELEVBLOCK", true);
+	} else {
+		Unobstacle_Object("ELEVBLOCK", true);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Clickable_Object("BASKET");
 	Clickable_Object("BOLLARD");
 	Unclickable_Object("BASKET");
+
 	if ( Global_Variable_Query(kVariableChapter) >= 3
 	 && !Actor_Clue_Query(kActorMcCoy, kClueOriginalRequisitionForm)
 	 &&  Game_Flag_Query(kFlagCT04HomelessKilledByMcCoy)
@@ -115,12 +124,20 @@ bool SceneScriptUG13::ClickedOn3DObject(const char *objectName, bool a2) {
 				Scene_Loop_Start_Special(kSceneLoopModeOnce, 0, false);
 				Game_Flag_Reset(kFlagUG08ElevatorUp);
 				Game_Flag_Set(kFlagUG13CallElevator);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+				Unobstacle_Object("ELEVBLOCK", true);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 				return true;
 			} else {
 				Scene_Loop_Set_Default(4);
 				Scene_Loop_Start_Special(kSceneLoopModeOnce, 3, false);
 				Game_Flag_Set(kFlagUG08ElevatorUp);
 				Scene_Exit_Remove(0);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+				Obstacle_Object("ELEVBLOCK", true);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 				return true;
 			}
 		}

@@ -47,7 +47,7 @@ void AIScriptIzo::Initialize() {
 	Actor_Set_Goal_Number(kActorIzo, 0);
 	Actor_Put_In_Set(kActorIzo, kSetHC01_HC02_HC03_HC04);
 	Actor_Set_At_XYZ(kActorIzo, 591.0f, 0.14f, 25.0f, 540);
-	World_Waypoint_Set(349, 70, -14.7f, -4.01f, 224.5f);
+	World_Waypoint_Set(349, kSetRC03, -14.7f, -4.01f, 224.5f);
 }
 
 bool AIScriptIzo::Update() {
@@ -984,7 +984,7 @@ bool AIScriptIzo::ChangeAnimationMode(int mode) {
 		_animationFrame = 0;
 		break;
 
-	case 48:
+	case kAnimationModeDie:
 		_animationState = 19;
 		_animationFrame = 0;
 		break;
@@ -1080,10 +1080,10 @@ void AIScriptIzo::dialogueWithIzo() {
 void AIScriptIzo::modifyWaypoints() {
 	switch (Random_Query(1, 10) - 1) {
 	case 0:
-		World_Waypoint_Set(484, 54, -212.58f, 23.38f, -1859.45f);
-		World_Waypoint_Set(485, 54, 355.49f, 31.66f, -859.81f);
-		World_Waypoint_Set(486, 11, -323.89f, -24.0f, 35.58f);
-		World_Waypoint_Set(487, 11, -211.89f, -24.0f, 35.58f);
+		World_Waypoint_Set(484, kSetNR01, -212.58f, 23.38f, -1859.45f);
+		World_Waypoint_Set(485, kSetNR01, 355.49f, 31.66f, -859.81f);
+		World_Waypoint_Set(486, kSetNR02, -323.89f, -24.0f, 35.58f);
+		World_Waypoint_Set(487, kSetNR02, -211.89f, -24.0f, 35.58f);
 		AI_Movement_Track_Append(kActorIzo, 484, 1);
 		AI_Movement_Track_Append(kActorIzo, 485, 10);
 		AI_Movement_Track_Append(kActorIzo, 486, 1);
@@ -1094,25 +1094,25 @@ void AIScriptIzo::modifyWaypoints() {
 		break;
 
 	case 1:
-		World_Waypoint_Set(484, 13, -1335.0f, 0.0f, -542.0f);
-		World_Waypoint_Set(485, 13, -1027.0f, 0.0f, -542.0f);
+		World_Waypoint_Set(484, kSetNR05_NR08, -1335.0f, 0.0f, -542.0f);
+		World_Waypoint_Set(485, kSetNR05_NR08, -1027.0f, 0.0f, -542.0f);
 		AI_Movement_Track_Append(kActorIzo, 484, 1);
 		AI_Movement_Track_Append(kActorIzo, 485, 20);
 		AI_Movement_Track_Append(kActorIzo, 484, 1);
 		break;
 
 	case 2:
-		World_Waypoint_Set(484, 37, -352.16f, 8.0f, -379.24f);
-		World_Waypoint_Set(485, 37, 108.2f, 8.0f, -934.80f);
+		World_Waypoint_Set(484, kSetHF01, -352.16f, 8.0f, -379.24f);
+		World_Waypoint_Set(485, kSetHF01, 108.2f, 8.0f, -934.80f);
 		AI_Movement_Track_Append(kActorIzo, 484, 1);
 		AI_Movement_Track_Append(kActorIzo, 485, 1);
 		break;
 
 	case 3:
-		World_Waypoint_Set(484, 39, 589.59f, 47.76f, -1153.76f);
-		World_Waypoint_Set(485, 39, 481.59f, 47.76f, -429.76f);
-		World_Waypoint_Set(486, 38, 524.0f, 47.76f, -562.0f);
-		World_Waypoint_Set(487, 38, -10.0f, 47.76f, -327.0f);
+		World_Waypoint_Set(484, kSetHF03, 589.59f, 47.76f, -1153.76f);
+		World_Waypoint_Set(485, kSetHF03, 481.59f, 47.76f, -429.76f);
+		World_Waypoint_Set(486, kSetHF02, 524.0f, 47.76f, -562.0f);
+		World_Waypoint_Set(487, kSetHF02, -10.0f, 47.76f, -327.0f);
 		AI_Movement_Track_Append(kActorIzo, 484, 1);
 		AI_Movement_Track_Append(kActorIzo, 485, 1);
 		AI_Movement_Track_Append(kActorIzo, 486, 1);

@@ -525,7 +525,7 @@ bool AIScriptMutant2::ChangeAnimationMode(int mode) {
 		_var1 = 1;
 		break;
 
-	case 48:
+	case kAnimationModeDie:
 		_animationState = 6;
 		_animationFrame = 0;
 		break;

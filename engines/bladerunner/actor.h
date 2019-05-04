@@ -134,6 +134,7 @@ public:
 	Vector3 getXYZ() const;
 	int getFacing() const;
 	int getAnimationMode() const;
+	int getAnimationId() const;
 
 	Vector3 getPosition() const { return _position; }
 

@@ -1092,7 +1092,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		}
 		break;
 
-	case 48:
+	case kAnimationModeDie:
 		*animation = 33;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
@@ -1102,7 +1102,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		}
 		break;
 
-	case 49:
+	case kAnimationModeCombatDie:
 		*animation = 34;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {

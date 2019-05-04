@@ -273,6 +273,11 @@ void ActorCombat::hitAttempt() {
 
 		if (enemyHp <= 0) {
 			if (!enemy->isRetired()) {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+				// make sure the dead enemy won't pick a pending movement track and re-spawn
+				enemy->_movementTrack->flush();
+#endif
 				if (enemy->inCombat()) {
 					enemy->changeAnimationMode(kAnimationModeCombatDie, false);
 				} else {
