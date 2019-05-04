@@ -377,6 +377,7 @@ const GlulxeGameDescription GLULXE_GAMES[] = {
 	ENTRY1("countingcrabs", "090728", "ffc19674d99b4d6f530bb00287c83c7e", 1508676),
 	ENTRY1("crackcoldone", "170706", "c2d5bf64a0aadaead7640b5750826d55", 627136),
 	ENTRY1("crackcoldone", "170711", "d64bd51d8fe05dc190ac3589e11b6ea6", 627136),
+	ENTRY1("cragne", "181208", "082f518c0120d2323ce340bef8a2d5a9", 8869096),
 	ENTRY1("damesdeadites", "150116", "c34b65232be2c25e558c31349e62b716", 812810),
 	ENTRY0("dansenocturne", "9a60eadb746e34c7364cbe423b712e0c", 810990),
 	ENTRY1("darkcarnival", "130924", "e5102c61fcb3b192c6455f214f6ca01d", 1733174),
