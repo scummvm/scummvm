@@ -221,7 +221,7 @@ int32 DumpFile::pos() const { return _handle->pos(); }
 
 bool DumpFile::seek(int32 offset, int whence) {
 	SeekableWriteStream *ws = dynamic_cast<SeekableWriteStream *>(_handle);
-	return ws ? ws->seek(offset, whence) : -1;
+	return ws ? ws->seek(offset, whence) : false;
 }
 
 int32 DumpFile::size() const {
