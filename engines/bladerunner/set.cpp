@@ -434,10 +434,20 @@ void Set::overrideSceneObjectInfo(int objectId) const {
 			_objects[objectId].bbox.setXYZ(-161.47f, 30.0f, 53.75f, -110.53f, 69.81f, 90.90f);
 		}
 		break;
+	case kSceneBB51:
+		// Sebastian's room with chess and egg boiler
+		if (objectId == 0 && _objects[objectId].name == "V2CHESSTBL01") {
+			// Chess
+			_objects[objectId].bbox.setXYZ(114.55f, 20.83f, -67.91f, 153.58f, 28.14f, -29.16f);
+		} else if (objectId == 1 && _objects[objectId].name == "TOP02") {
+			// egg boiler
+			_objects[objectId].bbox.setXYZ(60.00f, 16.00f, -141.21f, 91.60f, 39.94f, -116.00f);
+		}
+		break;
 	case kSceneUG09:
 		// block passage to buggy pipe
 		if (objectId == 7 && _objects[objectId].name == "BOXS FOR ARCHWAY 01") {
-			_objects[objectId].bbox.setXYZ(-168.99f, 151.38f, -139.10f, -105.95f, 239.59f, 362.70);
+			_objects[objectId].bbox.setXYZ(-168.99f, 151.38f, -139.10f, -105.95f, 239.59f, 362.70f);
 		}
 		break;
 	default:
