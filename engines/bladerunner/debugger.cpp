@@ -1155,8 +1155,8 @@ bool Debugger::cmdObject(int argc, const char **argv) {
 			if (_vm->_scene->_set->_objectCount > 85) { //85 is the size of the _objects array in set.cpp
 				debugPrintf("Unable to add more objects in the set\n");
 			} else {
-				_vm->_scene->_set->_objectCount++;
 				int objectId = _vm->_scene->_set->_objectCount;
+				_vm->_scene->_set->_objectCount++;
 				_vm->_scene->_set->_objects[objectId].name = custObjName.c_str();
 
 				float x0, y0, z0, x1, y1, z1;
