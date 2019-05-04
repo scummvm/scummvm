@@ -211,6 +211,37 @@ public:
 };
 
 /**
+ * Derived abstract base class for write streams streams that are seekable
+ */
+class SeekableWriteStream : public WriteStream {
+public:
+	/**
+	 * Sets the stream position indicator for the stream. The new position,
+	 * measured in bytes, is obtained by adding offset bytes to the position
+	 * specified by whence. If whence is set to SEEK_SET, SEEK_CUR, or
+	 * SEEK_END, the offset is relative to the start of the file, the current
+	 * position indicator, or end-of-file, respectively. A successful call
+	 * to the seek() method clears the end-of-file indicator for the stream.
+	 *
+	 * @note The semantics of any implementation of this method are
+	 * supposed to match those of ISO C fseek().
+	 *
+	 * @param offset        the relative offset in bytes
+	 * @param whence        the seek reference: SEEK_SET, SEEK_CUR, or SEEK_END
+	 * @return true on success, false in case of a failure
+	 */
+	virtual bool seek(int32 offset, int whence = SEEK_SET) = 0;
+
+	/**
+	 * Obtains the current size of the stream, measured in bytes.
+	 * If this value is unknown or can not be computed, -1 is returned.
+	 *
+	 * @return the size of the stream, or -1 if an error occurred
+	 */
+	virtual int32 size() const = 0;
+};
+
+/**
  * Generic interface for a readable data stream.
  */
 class ReadStream : virtual public Stream {
