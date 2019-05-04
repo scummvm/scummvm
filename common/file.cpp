@@ -219,4 +219,14 @@ bool DumpFile::flush() {
 
 int32 DumpFile::pos() const { return _handle->pos(); }
 
+bool DumpFile::seek(int32 offset, int whence) {
+	SeekableWriteStream *ws = dynamic_cast<SeekableWriteStream *>(_handle);
+	return ws ? ws->seek(offset, whence) : -1;
+}
+
+int32 DumpFile::size() const {
+	SeekableWriteStream *ws = dynamic_cast<SeekableWriteStream *>(_handle);
+	return ws ? ws->size() : -1;
+}
+
 } // End of namespace Common

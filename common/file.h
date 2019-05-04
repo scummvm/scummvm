@@ -134,7 +134,7 @@ public:
  * Some design ideas:
  *  - automatically drop all files into dumps/ dir? Might not be desired in all cases
  */
-class DumpFile : public WriteStream, public NonCopyable {
+class DumpFile : public SeekableWriteStream, public NonCopyable {
 protected:
 	/** File handle to the actual file; 0 if no file is open. */
 	WriteStream *_handle;
@@ -158,11 +158,14 @@ public:
 	bool err() const;
 	void clearErr();
 
-	virtual uint32 write(const void *dataPtr, uint32 dataSize);
+	virtual uint32 write(const void *dataPtr, uint32 dataSize) override;
 
-	virtual bool flush();
+	virtual bool flush() override;
 
-	virtual int32 pos() const;
+	virtual int32 pos() const override;
+
+	virtual bool seek(int32 offset, int whence = SEEK_SET) override;
+	virtual int32 size() const override;
 };
 
 } // End of namespace Common
