@@ -54,7 +54,11 @@ void SceneScriptCT08::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(2, 115, 87, 137, 267, 3);
 
 	if (Game_Flag_Query(kFlagMcCoyTiedDown)) {
+#if BLADERUNNER_ORIGINAL_BUGS
 		Scene_2D_Region_Add(0, 185, 185, 230, 230);
+#else
+		Scene_2D_Region_Add(0, 155, 180, 214, 235);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxRAIN10,   100, 1, 1);
@@ -81,7 +85,11 @@ void SceneScriptCT08::SceneLoaded() {
 	Obstacle_Object("ASHTRAY", true);
 	Unobstacle_Object("BLANKET03", true);
 	if (!Actor_Clue_Query(kActorMcCoy, kClueRagDoll)) {
+#if BLADERUNNER_ORIGINAL_BUGS
 		Item_Add_To_World(kItemRagDoll, kModelAnimationRagDoll, kSetCT08_CT51_UG12, 44.0f, 0.0f, -95.0f, 540, 12, 12, false, true, false, true);
+#else
+		Item_Add_To_World(kItemRagDoll, kModelAnimationRagDoll, kSetCT08_CT51_UG12, 44.0f, 3.0f, -100.0f, 540, 12, 12, false, true, false, true);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 	if (!Actor_Clue_Query(kActorMcCoy, kClueCheese)) {
 		Item_Add_To_World(kItemCheese, kModelAnimationCheese, kSetCT08_CT51_UG12, -102.0f, 2.0f, 41.0f, 432, 6, 6, false, true, false, true);

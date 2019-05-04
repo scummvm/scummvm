@@ -1442,7 +1442,7 @@ bool Debugger::cmdRegion(int argc, const char **argv) {
 				if (regionTypeName == "exit") {
 					type = atoi(argv[8]);
 				}
-				Common::Rect newRect(topY, leftX, bottomY, rightX);
+				Common::Rect newRect(leftX, topY, rightX, bottomY);
 				regions->add(regionID, newRect, type);
 				debugPrintf("Adding %s: %d (t:%d l:%d b:%d r:%d) of type %d\n", regionTypeName.c_str(), regionID, newRect.top, newRect.left, newRect.bottom, newRect.right, type);
 				return true;
@@ -1470,9 +1470,9 @@ bool Debugger::cmdRegion(int argc, const char **argv) {
 					rightX  = atoi(argv[7]);
 
 					if (regions->remove(regionID)) {
-						Common::Rect newRect(topY, leftX, bottomY, rightX);
+						Common::Rect newRect(leftX, topY, rightX, bottomY);
 						regions->add(regionID, newRect, type);
-						debugPrintf("Bounds %s: %d (t:%d l:%d b:%d r:%d)\n", modeName.c_str(), regionID, newRect.top, newRect.left, newRect.bottom, newRect.right);
+						debugPrintf("Bounds %s: %d (t:%d l:%d b:%d r:%d)\n", regionTypeName.c_str(), regionID, newRect.top, newRect.left, newRect.bottom, newRect.right);
 					}
 				} else {
 					// list properties

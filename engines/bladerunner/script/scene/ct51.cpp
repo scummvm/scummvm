@@ -45,7 +45,12 @@ void SceneScriptCT51::SceneLoaded() {
 	Unobstacle_Object("BLANKET03", true);
 	Clickable_Object("BED02");
 	if (!Actor_Clue_Query(kActorMcCoy, kClueRagDoll)) {
+#if BLADERUNNER_ORIGINAL_BUGS
 		Item_Add_To_World(kItemRagDoll, kModelAnimationRagDoll, kSetCT08_CT51_UG12, 44.0f, 0.0f, -95.0f, 540, 24, 24, false, true, false, true);
+#else
+		// fix click-box overlap with clickable bed
+		Item_Add_To_World(kItemRagDoll, kModelAnimationRagDoll, kSetCT08_CT51_UG12, 44.0f, 3.0f, -100.0f, 540, 24, 24, false, true, false, true);
+#endif
 	}
 	if (!Actor_Clue_Query(kActorMcCoy, kClueMoonbus1)) {
 		Item_Add_To_World(kItemMoonbusPhoto, kModelAnimationPhoto, kSetCT08_CT51_UG12, 44.0f, 0.0f, -22.0f, 0, 12, 12, false, true, false, true);
