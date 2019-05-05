@@ -139,7 +139,7 @@ void AIScriptFreeSlotB::ClickedByPlayer() {
 	if (Actor_Query_Goal_Number(kActorFreeSlotB) != 599)
 		return; //false;
 
-	Actor_Face_Actor(kActorMcCoy, kActorFreeSlotB, 1);
+	Actor_Face_Actor(kActorMcCoy, kActorFreeSlotB, true);
 	if (Random_Query(1, 2) == 1) {
 		Actor_Says(kActorMcCoy, 8655, 16);
 	} else {

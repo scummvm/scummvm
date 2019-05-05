@@ -113,12 +113,12 @@ void AIScriptGuzza::ClickedByPlayer() {
 		}
 		//TODO: test this, looks like a bug in game
 		if (Random_Query(1, 4) == 1) {
-			AI_Movement_Track_Pause(4);
+			AI_Movement_Track_Pause(kActorGuzza);
 			Actor_Says(kActorMcCoy, 4005, 15);
 			Actor_Says(kActorGuzza, 780, -1);
 			AI_Movement_Track_Unpause(kActorGuzza);
 		} else if (Random_Query(1, 4) == 2) {
-			AI_Movement_Track_Pause(4);
+			AI_Movement_Track_Pause(kActorGuzza);
 			Actor_Says(kActorMcCoy, 3970, 14);
 			Actor_Says(kActorGuzza, 780, -1);
 			AI_Movement_Track_Unpause(kActorGuzza);

@@ -366,7 +366,7 @@ enum Clues {
 	kClueChinaBar = 260,
 	kCluePlasticExplosive = 261,
 	kClueDogCollar2 = 262,
-	kClueKingstonKitchenBox2 = 263,
+	kClueKingstonKitchenBox2 = 263, // ESPER hard-copy
 	kClueCrystalsCigarette = 264,
 	kClueSpinnerKeys = 265,
 	kClueAct2Ended = 266,
@@ -1126,7 +1126,7 @@ enum Flags {
 	kFlagHF05PoliceAttacked = 684,
 	kFlagClovisLyingDown = 685,
 	kFlagNotUsed686 = 686,
-	// 687 is never used
+	kFlagMcCoyCommentsOnFans = 687, // Re-purposed. Original: 687 is never used
 	kFlagPS05TV0 = 688,
 	kFlagPS05TV1 = 689,
 	kFlagPS05TV2 = 690,

@@ -364,7 +364,7 @@ void AIScriptSteele::ClickedByPlayer() {
 		return; //true;
 	}
 
-	AI_Movement_Track_Pause(1);
+	AI_Movement_Track_Pause(kActorSteele);
 	Actor_Face_Actor(kActorSteele, kActorMcCoy, true);
 	Actor_Face_Actor(kActorMcCoy, kActorSteele, true);
 
@@ -384,7 +384,7 @@ void AIScriptSteele::ClickedByPlayer() {
 		Actor_Says(kActorSteele, 1750, 15);
 		break;
 	}
-	AI_Movement_Track_Unpause(1);
+	AI_Movement_Track_Unpause(kActorSteele);
 
 	return; //false;
 }

@@ -385,7 +385,7 @@ void AIScriptOfficerGrayford::ClickedByPlayer() {
 			_animationState = 37;
 			_animationFrame = 0;
 		}
-		Actor_Face_Actor(kActorOfficerGrayford, kActorMcCoy, 1);
+		Actor_Face_Actor(kActorOfficerGrayford, kActorMcCoy, true);
 		Actor_Says(kActorOfficerGrayford, 190, 19);
 		Actor_Set_Goal_Number(kActorOfficerGrayford, 105);
 		break;
@@ -535,7 +535,7 @@ bool AIScriptOfficerGrayford::GoalChanged(int currentGoalNumber, int newGoalNumb
 		Player_Gains_Control();
 
 		if (Actor_Query_Goal_Number(kActorMoraji) == kGoalMorajiDead) {
-			Actor_Face_Actor(kActorOfficerGrayford, kActorMoraji, 1);
+			Actor_Face_Actor(kActorOfficerGrayford, kActorMoraji, true);
 		} else {
 			Actor_Face_Waypoint(kActorOfficerGrayford, 97, 1);
 		}
