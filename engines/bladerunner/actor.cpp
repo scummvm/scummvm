@@ -723,6 +723,14 @@ void Actor::tickCombat() {
 
 bool Actor::draw(Common::Rect *screenRect) {
 	Vector3 drawPosition(_position.x, -_position.z, _position.y + 2.0);
+
+#if !BLADERUNNER_ORIGINAL_BUGS
+	// In the original game, Moraji appears to be floating above the ground a bit
+	if (_id == kActorMoraji && _setId == kSetDR01_DR02_DR04) {
+		drawPosition.z -= 6.0f;
+	}
+#endif
+
 	float drawAngle = M_PI - _facing * (M_PI / 512.0f);
 	float drawScale = _scale;
 

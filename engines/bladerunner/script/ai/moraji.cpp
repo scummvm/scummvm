@@ -189,7 +189,7 @@ bool AIScriptMoraji::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case kGoalMorajiDie:
-		// Added check here  to have Moraji death speech SFX
+		// Added check here to have Moraji death speech SFX
 		// when shot by McCoy outside the Dermo Design Lab
 		if (_vm->_cutContent && Game_Flag_Query(kFlagDR04McCoyShotMoraji)) {
 			// original code used no voice here
