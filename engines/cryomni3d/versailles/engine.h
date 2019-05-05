@@ -126,14 +126,14 @@ struct GameVariables {
 		kCollectPortfolio, // OK
 		kSketchState, // OK
 		kFakeSketchChatState, // OK
-		kCollectNourriture,
-		kCollectPlume,
-		kStatePamphletReligion,
+		kCollectFood, // OK
+		kCollectQuill, // OK
+		kStateLampoonReligion, // OK
 		kCollectPetiteCle3,
 		kCollectGravure,
 		kCollectCordon,
-		kCollectPlanVauban,            // 20
-		kCollectPlanVauban2,
+		kCollectVaubanBlueprint1, // OK// 20
+		kCollectVaubanBlueprint2, // OK
 		kCollectEchelle,
 		kLostCordon,
 		kDescendreLustre,
@@ -143,7 +143,7 @@ struct GameVariables {
 		kStateBombe,
 		kInkSpilled, // OK
 		kCollectedPaperOnTable, // OK  // 30
-		kCoffreUnlocked,
+		kSafeUnlocked, // OK
 		//kUselessVar,
 		kCollectedPaperInTrunk = 33, // OK
 		kBrushColor, // OK
@@ -151,8 +151,8 @@ struct GameVariables {
 		kUnlockedAttic, // OK
 		kHasPlayedLebrun, // OK
 		kWarnedIncomplete,
-		kUsedPlanVauban1,
-		kUsedPlanVauban2,              // 40
+		kUsedVaubanBlueprint1, // OK
+		kUsedVaubanBlueprint2, // OK   // 40
 		kSeenMemorandum,
 		kCollectScissors, // OK
 		kSavedCountdown, // TODO: calculate it in real time
@@ -397,7 +397,7 @@ private:
 	static const MsgBoxParameters kFixedimageMsgBoxParameters;
 	static const FixedImageConfiguration kFixedImageConfiguration;
 
-	//Objects
+	// Objects
 	template<unsigned int ID>
 	void genericDisplayObject();
 	void obj_105();
@@ -406,6 +406,8 @@ private:
 	void obj_118();
 	void obj_121();
 	void obj_125();
+	void obj_126();
+	void obj_126hk(Graphics::ManagedSurface &surface);
 
 	// Fixed image
 	template<unsigned int ID>
@@ -431,6 +433,27 @@ private:
 	IMG_CB(32203);
 	IMG_CB(32204);
 	IMG_CB(32204b);
+	IMG_CB(34131);
+	IMG_CB(34132);
+	IMG_CB(34172);
+	IMG_CB(34173);
+	IMG_CB(34173b);
+	IMG_CB(34173c);
+	IMG_CB(34174);
+	IMG_CB(34174b);
+	IMG_CB(34174c);
+	IMG_CB(34174d);
+	IMG_CB(34174e);
+	IMG_CB(34174f);
+	static const unsigned int kSafeDigitsCount = 12;
+	static const unsigned int kSafeDigitsX[];
+	static const unsigned int kSafeDigitsY[];
+	static const char *kSafeDates[];
+	bool handleSafe(ZonFixedImage *fimg);
+	void drawSafeDigits(Graphics::ManagedSurface &surface, const Graphics::Surface(&bmpDigits)[10],
+	                    const unsigned char (&safeDigits)[kSafeDigitsCount]);
+	bool checkSafeDigits(unsigned char (&safeDigits)[kSafeDigitsCount]);
+
 	IMG_CB(41202);
 	IMG_CB(41202b);
 	IMG_CB(41801);
@@ -458,6 +481,20 @@ private:
 	IMG_CB(43190d);
 	IMG_CB(43190e);
 	IMG_CB(43190f);
+	IMG_CB(44071);
+	IMG_CB(44071b);
+	IMG_CB(44161);
+	IMG_CB(44161b);
+	IMG_CB(44161c);
+	IMG_CB(44161d);
+	IMG_CB(44161e);
+	IMG_CB(44161f);
+	static const unsigned int kEpigraphMaxLetters = 32;
+	static const char *kEpigraphContent;
+	static const char *kEpigraphPassword;
+	bool handleEpigraph(ZonFixedImage *fimg);
+	void drawEpigraphLetters(Graphics::ManagedSurface &surface,
+	                         const Graphics::Surface(&bmpLetters)[26], const Common::String &letters);
 
 	IMG_CB(88001);
 	IMG_CB(88001b);
@@ -496,6 +533,13 @@ private:
 	FILTER_EVENT(3, 23);
 	bool filterEventLevel3Obj23151();
 	void collectLampoonArchitecture(const ZonFixedImage *fimg = nullptr);
+
+	INIT_PLACE(4, 9);
+	FILTER_EVENT(4, 10);
+	FILTER_EVENT(4, 12_13_14);
+	FILTER_EVENT(4, 15);
+	FILTER_EVENT(4, 16);
+	FILTER_EVENT(4, 17);
 
 #undef FILTER_EVENT
 #undef INIT_PLACE

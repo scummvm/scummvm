@@ -582,7 +582,6 @@ void CryOmni3DEngine_Versailles::initPlacesStates() {
 		SET_PLACE_STATE(23, nullptr, FILTER_EVENT(3, 23), nullptr);
 		SET_PLACE_STATE(24, nullptr, nullptr, "VS30");
 	} else if (_currentLevel == 4) {
-		// TODO: implement functions
 		SET_PLACE_STATE(1, nullptr, nullptr, "VS35");
 		SET_PLACE_STATE(2, nullptr, nullptr, "VS40");
 		SET_PLACE_STATE(3, nullptr, nullptr, "VS40");
@@ -591,15 +590,15 @@ void CryOmni3DEngine_Versailles::initPlacesStates() {
 		SET_PLACE_STATE(6, nullptr, nullptr, nullptr);
 		SET_PLACE_STATE(7, nullptr, nullptr, "VS17");
 		SET_PLACE_STATE(8, nullptr, nullptr, "VS17");
-		SET_PLACE_STATE(9, nullptr, nullptr, nullptr);
-		SET_PLACE_STATE(10, nullptr, nullptr, "VS18");
+		SET_PLACE_STATE(9, INIT_PLACE(4, 9), nullptr, nullptr);
+		SET_PLACE_STATE(10, nullptr, FILTER_EVENT(4, 10), "VS18");
 		SET_PLACE_STATE(11, nullptr, nullptr, "VS20");
-		SET_PLACE_STATE(12, nullptr, nullptr, "VS31");
-		SET_PLACE_STATE(13, nullptr, nullptr, "VS31");
-		SET_PLACE_STATE(14, nullptr, nullptr, "VS31");
-		SET_PLACE_STATE(15, nullptr, nullptr, "VS36");
-		SET_PLACE_STATE(16, nullptr, nullptr, nullptr);
-		SET_PLACE_STATE(17, nullptr, nullptr, nullptr);
+		SET_PLACE_STATE(12, nullptr, FILTER_EVENT(4, 12_13_14), "VS31");
+		SET_PLACE_STATE(13, nullptr, FILTER_EVENT(4, 12_13_14), "VS31");
+		SET_PLACE_STATE(14, nullptr, FILTER_EVENT(4, 12_13_14), "VS31");
+		SET_PLACE_STATE(15, nullptr, FILTER_EVENT(4, 15), "VS36");
+		SET_PLACE_STATE(16, nullptr, FILTER_EVENT(4, 16), nullptr);
+		SET_PLACE_STATE(17, nullptr, FILTER_EVENT(4, 17), nullptr);
 	} else if (_currentLevel == 5) {
 		// TODO: implement functions
 		SET_PLACE_STATE(1, nullptr, nullptr, "VS35");
