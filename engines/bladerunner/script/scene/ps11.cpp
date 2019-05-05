@@ -755,12 +755,12 @@ bool SceneScriptPS11::ClickedOnActor(int actorId) {
 bool SceneScriptPS11::ClickedOnItem(int itemId, bool combatMode) {
 	if (Player_Query_Combat_Mode()) {
 		switch (itemId) {
-		case kItemPS11Target4:              // fall-through
+		case kItemPS11Target4:              // fall through
 		case kItemPS11Target15:
 			Sound_Play(kSfxMALEHURT, 50, 0, 0, 50);
 			break;
-		case kItemPS11Target7:              // fall-through
-		case kItemPS11Target8:              // fall-through
+		case kItemPS11Target7:              // fall through
+		case kItemPS11Target8:              // fall through
 		case kItemPS11Target13:
 			Sound_Play(kSfxFEMHURT2, 50, 0, 0, 50);
 			break;

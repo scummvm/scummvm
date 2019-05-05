@@ -1436,13 +1436,28 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 
 	case kAnimationModeSit:
 		switch (_animationState) {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		// Sometimes the animationState will be 0 here (seems to happen randomly if skipping fast through the dialogue)
+		// and this would cause Clovis to not switch to his sitting animation
+		// and thus the BB11 rooftop scene would get stuck there
+		case 0:
+			// fall through
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		case 4:
+			// fall through
 		case 5:
+			// fall through
 		case 6:
+			// fall through
 		case 7:
+			// fall through
 		case 8:
+			// fall through
 		case 9:
+			// fall through
 		case 10:
+			// fall through
 		case 11:
 			_animationState = 3;
 			_animationFrame = 0;

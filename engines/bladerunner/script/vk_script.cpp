@@ -511,7 +511,7 @@ void VKScript::SCRIPT_VK_DLL_McCoy_Asks_Question(int actorId, int questionId) {
 			case kActorBulletBob:
 				// debug("Last Bullet Bob Question!");
 				// don't break for BOB
-				// fall-through
+				// fall through
 			default:
 				VK_Subject_Reacts(5, 0, 0, 100);
 			}

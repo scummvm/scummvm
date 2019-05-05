@@ -503,7 +503,7 @@ bool SceneScriptPS10::ClickedOnItem(int itemId, bool combatMode) {
 		case kItemPS10Target4:
 			Sound_Play(kSfxFEMHURT2, 50, 0, 0, 50);
 			break;
-		case kItemPS10Target5:              // fall-through
+		case kItemPS10Target5:              // fall through
 		case kItemPS10Target7:
 			Sound_Play(kSfxMALEHURT, 50, 0, 0, 50);
 			break;

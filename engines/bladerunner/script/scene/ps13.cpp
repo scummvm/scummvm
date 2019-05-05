@@ -694,11 +694,11 @@ bool SceneScriptPS13::ClickedOnActor(int actorId) {
 bool SceneScriptPS13::ClickedOnItem(int itemId, bool a2) {
 	if (Player_Query_Combat_Mode()) {
 		switch (itemId) {
-		case kItemPS13Target3:             // fall-through
+		case kItemPS13Target3:             // fall through
 		case kItemPS13Target5:
 			Sound_Play(kSfxFEMHURT2, 50, 0, 0, 50);
 			break;
-		case kItemPS13Target10:            // fall-through
+		case kItemPS13Target10:            // fall through
 		case kItemPS13Target11:
 			Sound_Play(kSfxMALEHURT, 50, 0, 0, 50);
 			break;
@@ -710,8 +710,8 @@ bool SceneScriptPS13::ClickedOnItem(int itemId, bool a2) {
 		Item_Spin_In_World(itemId);
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		switch (itemId) {
-		case kItemPS13Target10:            // fall-through
-		case kItemPS13Target11:            // fall-through
+		case kItemPS13Target10:            // fall through
+		case kItemPS13Target11:            // fall through
 		case kItemPS13Target12:
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
@@ -727,18 +727,18 @@ bool SceneScriptPS13::ClickedOnItem(int itemId, bool a2) {
 			Item_Flag_As_Non_Target(kItemPS13Target11);
 			Item_Flag_As_Non_Target(kItemPS13Target12);
 			break;
-		case kItemPS13Target1:             // fall-through
-		case kItemPS13Target2:             // fall-through
-		case kItemPS13Target3:             // fall-through
-		case kItemPS13Target4:             // fall-through
-		case kItemPS13Target5:             // fall-through
-		case kItemPS13Target6:             // fall-through
-		case kItemPS13Target7:             // fall-through
-		case kItemPS13Target8:             // fall-through
-		case kItemPS13Target9:             // fall-through
-		case kItemPS13Target13:            // fall-through
-		case kItemPS13Target14:            // fall-through
-		case kItemPS13Target15:            // fall-through
+		case kItemPS13Target1:             // fall through
+		case kItemPS13Target2:             // fall through
+		case kItemPS13Target3:             // fall through
+		case kItemPS13Target4:             // fall through
+		case kItemPS13Target5:             // fall through
+		case kItemPS13Target6:             // fall through
+		case kItemPS13Target7:             // fall through
+		case kItemPS13Target8:             // fall through
+		case kItemPS13Target9:             // fall through
+		case kItemPS13Target13:            // fall through
+		case kItemPS13Target14:            // fall through
+		case kItemPS13Target15:            // fall through
 		default:
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
