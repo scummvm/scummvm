@@ -2251,14 +2251,14 @@ unsigned short ebcdic_mm[] = { 0xC2C9, 0xC785, 0x95C4, 0x8981, 0x95E2, 0xA8E2, 0
 void _ebcdic() { char* s = (char*) ebcdic_mm; s = (char*) ebcdic_ii; }
 int main() { _ascii (); _ebcdic (); return 0; }
 EOF
-$CXX $CXXFLAGS -c -o $TMPO.o tmp_endianness_check.cpp
-if $_strings $TMPO.o | grep BIGenDianSyS >/dev/null; then
+$CXX $CXXFLAGS -o $TMPO$HOSTEXEEXT tmp_endianness_check.cpp
+if $_strings $TMPO$HOSTEXEEXT | grep BIGenDianSyS >/dev/null; then
 	_endian=big
-elif $_strings $TMPO.o | grep LiTTleEnDian >/dev/null; then
+elif $_strings $TMPO$HOSTEXEEXT | grep LiTTleEnDian >/dev/null; then
 	_endian=little
 fi
 echo $_endian;
-cc_check_clean tmp_endianness_check.cpp
+cc_check_clean tmp_endianness_check.cpp tmp_endianness_check.dwo
 
 case $_endian in
 	big)
