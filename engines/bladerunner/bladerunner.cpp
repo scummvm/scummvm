@@ -340,8 +340,10 @@ Common::Error BladeRunnerEngine::run() {
 			// finished the game.
 			// Maybe its purpose was debugging (?) by renaming it to .SAV and also
 			// for the game to "know" if the player has already finished the game at least once (?)
-			// although that latter one seems not to be used for anything.
-			autoSaveGame(4, true);
+			// although that latter one seems not to be used for anything, or maybe it was planned
+			// to be used for a sequel (?). We will never know.
+			// Disabling as in current state it will only fill-up save slots
+			// autoSaveGame(4, true);
 			_endCredits->show();
 		}
 	}
