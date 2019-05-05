@@ -173,7 +173,7 @@ void CryOmni3DEngine_Versailles::saveGame(bool visit, unsigned int saveNum,
 	out->writeDoubleBE(_omni3dMan.getBeta());
 
 	// Places states
-	assert(_placeStates.size() < 100);
+	assert(_placeStates.size() <= 100);
 	Common::Array<PlaceState>::const_iterator placeIt = _placeStates.begin();
 	for (unsigned int i = 0; placeIt != _placeStates.end(); placeIt++, i++) {
 		out->writeUint32BE(placeIt->state);
