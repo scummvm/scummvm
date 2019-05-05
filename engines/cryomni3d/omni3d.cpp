@@ -90,10 +90,10 @@ void Omni3DManager::updateCoords(int xDelta, int yDelta, bool useOldSpeed) {
 	_ySpeed *= 0.6;
 
 	if (useOldSpeed) {
-		if (abs(_xSpeed) < 0.001) {
+		if (fabs(_xSpeed) < 0.001) {
 			_xSpeed = 0.;
 		}
-		if (abs(_ySpeed) < 0.001) {
+		if (fabs(_ySpeed) < 0.001) {
 			_ySpeed = 0.;
 		}
 	}

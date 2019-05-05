@@ -1322,7 +1322,7 @@ void CryOmni3DEngine_Versailles::animateWarpTransition(const Transition *transit
 		// TODO: countdown
 		g_system->updateScreen();
 
-		if (abs(oldDeltaAlpha - deltaAlpha) < 0.001 && abs(oldDeltaBeta - deltaBeta) < 0.001) {
+		if (fabs(oldDeltaAlpha - deltaAlpha) < 0.001 && fabs(oldDeltaBeta - deltaBeta) < 0.001) {
 			exit = true;
 		}
 		oldDeltaAlpha = deltaAlpha;
