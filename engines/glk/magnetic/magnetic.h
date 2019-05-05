@@ -84,6 +84,11 @@ private:
 	bool is_gamefile_valid();
 
 	/**
+	 * \defgroup Emu
+	 * @{
+	 */
+
+	/**
 	 * Loads the interpreter with a game
 	 * @return	0 = failure, 1 = success(without graphics or graphics failed),
 	 *		2 = success(with graphics)
@@ -105,7 +110,16 @@ private:
 	 */
 	void ms_freemem();
 
-	// Graphics
+	/**@}*/
+
+	/**
+	 * \defgroup Graphics support methods
+	 * @{
+	 */
+
+	byte init_gfx1(size_t size);
+
+	byte init_gfx2(size_t size);
 
 	/**
 	 * Displays or hides a picture
@@ -114,28 +128,25 @@ private:
 	 *
 	 * @remarks		For retrieving the raw data of a picture call ms_extract
 	 */
-	void ms_showpic(int c, byte mode) {
-		// TODO
-	}
+	void ms_showpic(int c, byte mode);
 
 	void write_reg(int i, int s, uint32 val) {
 		// TODO
 	}
 
-	// Sound
+	/**@}*/
+
+	/**
+	 * \defgroup Sound support methods
+	 * @{
+	 */
+
 
 	void init_snd(uint param) {
 		// TODO
 	}
 
-	byte init_gfx1(byte *header) {
-		// TODO
-		return 0;
-	}
-	byte init_gfx2(byte *header) {
-		// TODO
-		return 0;
-	}
+	/**@}*/
 public:
 	/**
 	 * Constructor

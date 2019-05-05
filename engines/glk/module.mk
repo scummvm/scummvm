@@ -73,6 +73,7 @@ MODULE_OBJS := \
 	glulxe/vm.o \
 	magnetic/detection.o \
 	magnetic/emu.o \
+	magnetic/graphics.o \
 	magnetic/magnetic.o \
 	scott/detection.o \
 	scott/scott.o \

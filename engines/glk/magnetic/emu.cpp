@@ -29,8 +29,8 @@ static const char *no_hints = "[Hints are not available.]\n";
 static const char *not_supported = "[This function is not supported.]\n";
 
 int Magnetic::ms_init(bool restarting) {
-	byte header[42], header2[8];
-	uint32 i, dict_size, string2_size, code_size, dec;
+	byte header[42];
+	uint32 i, j, dict_size, string2_size, code_size, dec;
 
 	ms_stop();
 
@@ -145,8 +145,7 @@ int Magnetic::ms_init(bool restarting) {
 			_hintFile.seek(0);
 
 			if (_hintFile.readUint32BE() == MKTAG('M', 'a', 'H', 't')) {
-				byte buf[8];
-				uint16 i, j, blkcnt, elcnt, ntype, elsize, conidx;
+				uint16 blkcnt, elcnt, ntype, elsize, conidx;
 
 				// Allocate memory for hints
 				hints = new ms_hint[MAX_HINTS];
@@ -210,12 +209,12 @@ int Magnetic::ms_init(bool restarting) {
 	if (!_gfxFile.isOpen() || _gfxFile.size() < 8)
 		return 1;
 	_gfxFile.seek(0);
-	_gfxFile.read(header2, 8);
+	uint tag = _gfxFile.readUint32BE();
 
-	if (version < 4 && READ_BE_UINT32(header2) == MKTAG('M', 'a', 'P', 'i'))
-		return init_gfx1(header2);
-	else if (version == 4 && READ_BE_UINT32(header2) == MKTAG('M', 'a', 'P', '2'))
-		return init_gfx2(header2);
+	if (version < 4 && tag == MKTAG('M', 'a', 'P', 'i'))
+		return init_gfx1(_gfxFile.readUint32LE() - 8);
+	else if (version == 4 && tag == MKTAG('M', 'a', 'P', '2'))
+		return init_gfx2(_gfxFile.readUint16LE());
 
 	return 1;
 }
