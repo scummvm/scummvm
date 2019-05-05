@@ -100,8 +100,9 @@ void CryOmni3DEngine_Versailles::getSavesList(bool visit, Common::StringArray &s
 			Common::InSaveFile *in = _saveFileMan->openForLoading(*file);
 #endif
 			if (in) {
-				in->read(saveName, SAVE_DESCRIPTION_LEN);
-				saveNames.push_back(saveName);
+				if (in->read(saveName, SAVE_DESCRIPTION_LEN) == SAVE_DESCRIPTION_LEN) {
+					saveNames.push_back(saveName);
+				}
 				delete in;
 			}
 		}
