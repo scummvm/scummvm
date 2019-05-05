@@ -102,8 +102,8 @@ void CryOmni3DEngine_Versailles::setupObjects() {
 	SET_OBJECT(143, 122);
 	SET_OBJECT(101, 123);
 	SET_OBJECT(204, 124);
-	SET_OBJECT(10, 125); // TODO:
-	SET_OBJECT(112, 126); // TODO: EPIL.gif
+	SET_OBJECT_CB(10, 125);
+	SET_OBJECT_CB(112, 126);
 	SET_OBJECT_GENERIC_CB(90, 127, 17);
 	SET_OBJECT(216, 128);
 	SET_OBJECT_GENERIC_CB(32, 129, 18);
@@ -172,10 +172,25 @@ void CryOmni3DEngine_Versailles::obj_121() {
 }
 
 void CryOmni3DEngine_Versailles::obj_125() {
-	if (_gameVariables[GameVariables::kStatePamphletReligion]) {
+	if (_gameVariables[GameVariables::kStateLampoonReligion]) {
 		displayObject(imagesObjects[15]);
 	} else {
 		displayObject(imagesObjects[14]);
+	}
+}
+
+void CryOmni3DEngine_Versailles::obj_126() {
+	displayObject(imagesObjects[16], &CryOmni3DEngine_Versailles::obj_126hk);
+}
+
+void CryOmni3DEngine_Versailles::obj_126hk(Graphics::ManagedSurface &surface) {
+	Graphics::Surface bmpLetters[26];
+	loadBMPs("bomb_%02d.bmp", bmpLetters, 26);
+
+	drawEpigraphLetters(surface, bmpLetters, kEpigraphPassword);
+
+	for (unsigned int i = 0; i < 26; i++) {
+		bmpLetters[i].free();
 	}
 }
 
@@ -333,8 +348,8 @@ void CryOmni3DEngine_Versailles::setupImgScripts() {
 	SET_SCRIPT_BY_ID(43146);
 	SET_SCRIPT_BY_ID(43160);
 	SET_SCRIPT_BY_ID(43190);
-	//SET_SCRIPT_BY_ID(44071); // TODO: implement it
-	//SET_SCRIPT_BY_ID(44161); // TODO: implement it
+	SET_SCRIPT_BY_ID(44071);
+	SET_SCRIPT_BY_ID(44161);
 	//SET_SCRIPT_BY_ID(45130); // TODO: implement it // Almost dumb
 	//SET_SCRIPT_BY_ID(45270); // TODO: implement it
 	//SET_SCRIPT_BY_ID(45280); // TODO: implement it // Almost dumb
@@ -810,6 +825,397 @@ IMG_CB(32204b) {
 			break;
 		}
 	}
+}
+
+IMG_CB(34131) {
+	fimg->load("43ZA_1.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+	}
+}
+
+IMG_CB(34132) {
+	fimg->load("43ZB_2.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+	}
+}
+
+IMG_CB(34172) {
+	playInGameVideo("43X3_10");
+	// Force reload of the place
+	if (_nextPlaceId == -1u) {
+		_nextPlaceId = _currentPlaceId;
+	}
+	fimg->_exit = true;
+}
+
+IMG_CB(34173) {
+	fimg->load("43X3_2.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneUse) {
+			// WORKAROUND: The video doesn't exist there is only a fixed image unused in original game. We will use it.
+			/*
+			playInGameVideo("43X3_21");
+			// Force reload of the place
+			if (_nextPlaceId == -1u) {
+			    _nextPlaceId = _currentPlaceId;
+			}
+			*/
+
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_34173b);
+			fimg->changeCallback(functor);
+			break;
+		}
+	}
+}
+
+// WORKAROUND: In original game an empty clickable drawer is displayed
+// Happily for them, when you click on an area and change zones, the next zone
+// under the cursor get activated too (fixed in fixed_image.cpp). So you don't
+// see what happens. You just get the reminder and see the empty drawer.
+IMG_CB(34173b) {
+	// 43X3_21 doesn't have a ZON file, use the one of 43X3_22
+	fimg->load("43X3_21.GIF", "43X3_22.ZON");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneUse && !_inventory.inInventoryByNameID(129)) {
+			// Collect reminder
+			collectObject(129, fimg);
+			setGameTime(3, 4);
+
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_34173c);
+			fimg->changeCallback(functor);
+			break;
+		}
+	}
+}
+
+IMG_CB(34173c) {
+	fimg->load("43X3_22.GIF");
+	// WORKAROUND: Drawer is empty, just disable the use zone
+	fimg->disableZone(0);
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+	}
+}
+
+IMG_CB(34174) {
+	fimg->load("43X3_42.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneUse) {
+			// Open the door
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_34174b);
+			fimg->changeCallback(functor);
+			break;
+		}
+	}
+}
+
+IMG_CB(34174b) {
+	// Door is open but safe is closed
+	fimg->load("43X3_40.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneUse) {
+			if (_gameVariables[GameVariables::kSafeUnlocked]) {
+				// Open the safe
+				ZonFixedImage::CallbackFunctor *functor =
+				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+				            &CryOmni3DEngine_Versailles::img_34174c);
+				fimg->changeCallback(functor);
+				break;
+			}
+			_dialogsMan["{JOUEUR-ALLER-BUREAU-LOUVOIS}"] = 'Y';
+			if (handleSafe(fimg)) {
+				// Unlocked the safe
+				_gameVariables[GameVariables::kSafeUnlocked] = 1;
+				_dialogsMan["{JOUEUR-ALLER-BUREAU-LOUVOIS}"] = 'N';
+				// Open it
+				ZonFixedImage::CallbackFunctor *functor =
+				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+				            &CryOmni3DEngine_Versailles::img_34174c);
+				fimg->changeCallback(functor);
+				break;
+			}
+		}
+	}
+}
+
+IMG_CB(34174c) {
+	// Dispatch to the correct state
+	if (_gameVariables[GameVariables::kCollectVaubanBlueprint1] &&
+	        _gameVariables[GameVariables::kCollectVaubanBlueprint2]) {
+		// Safe is empty
+		ZonFixedImage::CallbackFunctor *functor =
+		    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+		            &CryOmni3DEngine_Versailles::img_34174f);
+		fimg->changeCallback(functor);
+		return;
+	}
+	if (!_gameVariables[GameVariables::kCollectVaubanBlueprint1] &&
+	        _gameVariables[GameVariables::kCollectVaubanBlueprint2] == 1) {
+		// Blueprint 1 is there not the 2nd one
+		ZonFixedImage::CallbackFunctor *functor =
+		    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+		            &CryOmni3DEngine_Versailles::img_34174e);
+		fimg->changeCallback(functor);
+		return;
+	}
+	if (_gameVariables[GameVariables::kCollectVaubanBlueprint1] &&
+	        !_gameVariables[GameVariables::kCollectVaubanBlueprint2]) {
+		// Blueprint 2 is there not the 1st one
+		ZonFixedImage::CallbackFunctor *functor =
+		    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+		            &CryOmni3DEngine_Versailles::img_34174d);
+		fimg->changeCallback(functor);
+		return;
+	}
+
+	playInGameVideo("cofouv");
+	// Force reload of the place
+	if (_nextPlaceId == -1u) {
+		_nextPlaceId = _currentPlaceId;
+	}
+
+	// Safe has both blueprints
+	fimg->load("43X3_30.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneUse) {
+			if (fimg->_currentZone == 0) {
+				// Collect 1st blueprint
+				collectObject(131, fimg);
+				_dialogsMan["{JOUEUR-TROUVE-PLANS-VAUBAN}"] = 'Y';
+				_gameVariables[GameVariables::kCollectVaubanBlueprint1] = 1;
+
+				ZonFixedImage::CallbackFunctor *functor =
+				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+				            &CryOmni3DEngine_Versailles::img_34174d);
+				fimg->changeCallback(functor);
+				break;
+			} else if (fimg->_currentZone == 1) {
+				// Collect 2nd blueprint
+				collectObject(132, fimg);
+				_gameVariables[GameVariables::kCollectVaubanBlueprint2] = 1;
+
+				ZonFixedImage::CallbackFunctor *functor =
+				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+				            &CryOmni3DEngine_Versailles::img_34174e);
+				fimg->changeCallback(functor);
+				break;
+			}
+		}
+	}
+}
+
+IMG_CB(34174d) {
+	// Safe has only blueprint 2
+	fimg->load("43X3_43.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneUse) {
+			// Collect 2nd blueprint
+			collectObject(132, fimg);
+			_gameVariables[GameVariables::kCollectVaubanBlueprint2] = 1;
+
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_34174f);
+			fimg->changeCallback(functor);
+			break;
+		}
+	}
+}
+
+IMG_CB(34174e) {
+	// Safe has only blueprint 1
+	fimg->load("43X3_41.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneUse) {
+			// Collect 1st blueprint
+			collectObject(131, fimg);
+			_dialogsMan["{JOUEUR-TROUVE-PLANS-VAUBAN}"] = 'Y';
+			_gameVariables[GameVariables::kCollectVaubanBlueprint1] = 1;
+
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_34174f);
+			fimg->changeCallback(functor);
+			break;
+		}
+	}
+}
+
+IMG_CB(34174f) {
+	// Safe is empty
+	fimg->load("43X3_45.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneUse) {
+			// Close safe
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_34174b);
+			fimg->changeCallback(functor);
+			break;
+		}
+	}
+}
+
+bool CryOmni3DEngine_Versailles::handleSafe(ZonFixedImage *fimg) {
+	bool success = false;
+	Common::RandomSource rnd("VersaillesSafe");
+	Graphics::Surface bmpDigits[10];
+	unsigned char safeDigits[kSafeDigitsCount];
+	Graphics::ManagedSurface tempSurf;
+
+	loadBMPs("coff_%02d.bmp", bmpDigits, 10);
+	for (unsigned int i = 0; i < kSafeDigitsCount; i++) {
+		safeDigits[i] = rnd.getRandomNumber(9);
+	}
+
+	fimg->load("43x3_cof.GIF");
+	const Graphics::Surface *fimgSurface = fimg->surface();
+	tempSurf.create(fimgSurface->w, fimgSurface->h, fimgSurface->format);
+	tempSurf.blitFrom(*fimgSurface);
+	drawSafeDigits(tempSurf, bmpDigits, safeDigits);
+	fimg->updateSurface(&tempSurf.rawSurface());
+
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			break;
+		}
+		if (fimg->_zoneUse) {
+			if (fimg->_currentZone == 15) {
+				// Safe handle
+
+				// Animate handle
+				playInGameVideo("43x3_poi");
+				// Force reload of the place
+				if (_nextPlaceId == -1u) {
+					_nextPlaceId = _currentPlaceId;
+				}
+
+				// Redraw our safe image
+				fimg->display();
+
+				if (checkSafeDigits(safeDigits)) {
+					success = true;
+					break;
+				}
+			} else if (fimg->_currentZone < kSafeDigitsCount) {
+				// Safe digit
+				safeDigits[fimg->_currentZone] = (safeDigits[fimg->_currentZone] + 1) % 10;
+				// Reset the surface and redraw digits on it
+				tempSurf.blitFrom(*fimgSurface);
+				drawSafeDigits(tempSurf, bmpDigits, safeDigits);
+				fimg->updateSurface(&tempSurf.rawSurface());
+
+				waitMouseRelease();
+			}
+		}
+	}
+
+	for (unsigned int i = 0; i < 10; i++) {
+		bmpDigits[i].free();
+	}
+	return success;
+}
+
+const unsigned int CryOmni3DEngine_Versailles::kSafeDigitsX[] = { 267, 318, 370, 421 };
+const unsigned int CryOmni3DEngine_Versailles::kSafeDigitsY[] = { 148, 230, 311 };
+
+void CryOmni3DEngine_Versailles::drawSafeDigits(Graphics::ManagedSurface &surface,
+        const Graphics::Surface(&bmpDigits)[10], const unsigned char (&safeDigits)[kSafeDigitsCount]) {
+	for (unsigned int i = 0; i < ARRAYSIZE(safeDigits); i++) {
+		const Graphics::Surface &digit = bmpDigits[safeDigits[i]];
+		Common::Point dst(kSafeDigitsX[i % 4], kSafeDigitsY[i / 4]);
+		surface.transBlitFrom(digit, dst);
+	}
+}
+
+const char *CryOmni3DEngine_Versailles::kSafeDates[] = { "1643", "1668", "1674" };
+bool CryOmni3DEngine_Versailles::checkSafeDigits(unsigned char (&safeDigits)[kSafeDigitsCount]) {
+	unsigned int dateChecked;
+	for (dateChecked = 0; dateChecked < ARRAYSIZE(kSafeDates); dateChecked++) {
+		const char *checkDate = kSafeDates[dateChecked];
+		// Find the date in one of safe digits lines
+		unsigned int line;
+		for (line = 0; line < kSafeDigitsCount; line += 4) {
+			unsigned int digit;
+			for (digit = 0; digit < 4; digit++) {
+				if (safeDigits[line + digit] != checkDate[digit] - '0') {
+					break;
+				}
+			}
+			if (digit == 4) {
+				// Check was a success: go to next date
+				break;
+			}
+			// Failure: try next line
+		}
+		if (line >= kSafeDigitsCount) {
+			// All lines were tested and none had the date: failure
+			return false;
+		}
+	}
+	// All dates were found
+	return true;
 }
 
 IMG_CB(41202) {
@@ -1650,6 +2056,301 @@ IMG_CB(43190f) {
 			fimg->_exit = true;
 			break;
 		}
+	}
+}
+
+IMG_CB(44071) {
+	// Dispatch to the correct state
+	if (_gameVariables[GameVariables::kCollectFood]) {
+		// Draw plate with less food
+		ZonFixedImage::CallbackFunctor *functor =
+		    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+		            &CryOmni3DEngine_Versailles::img_44071b);
+		fimg->changeCallback(functor);
+		return;
+	}
+
+	// There we have a full plate
+	fimg->load("41B_bboy.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneUse) {
+			// Collected food
+			collectObject(124, fimg);
+			_gameVariables[GameVariables::kCollectFood] = 1;
+			// Draw plate with less food
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_44071b);
+			fimg->changeCallback(functor);
+			break;
+		}
+	}
+}
+
+IMG_CB(44071b) {
+	// There we have less food on plate
+	fimg->load("41B_bbo2.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+	}
+}
+
+IMG_CB(44161) {
+	// Dispatch to the correct state
+	if (_gameVariables[GameVariables::kCollectQuill] == 1 && !_inventory.inInventoryByNameID(126)) {
+		// We have collected quill but not solved epigraph yet
+		ZonFixedImage::CallbackFunctor *functor =
+		    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+		            &CryOmni3DEngine_Versailles::img_44161b);
+		fimg->changeCallback(functor);
+		return;
+	} else if (_gameVariables[GameVariables::kUsedVaubanBlueprint1] == 1 &&
+	           _gameVariables[GameVariables::kUsedVaubanBlueprint2] == 1) {
+		// We have used vauban blueprints: display the solution
+		ZonFixedImage::CallbackFunctor *functor =
+		    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+		            &CryOmni3DEngine_Versailles::img_44161f);
+		fimg->changeCallback(functor);
+		return;
+	} else if (_gameVariables[GameVariables::kCollectQuill] == 1 &&
+	           _inventory.inInventoryByNameID(126)) {
+		// We have collected quill and epigraph
+		ZonFixedImage::CallbackFunctor *functor =
+		    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+		            &CryOmni3DEngine_Versailles::img_44161c);
+		fimg->changeCallback(functor);
+		return;
+	}
+
+	// There we have blueprints, quill and epigraph on desk
+	fimg->load("42X2_20.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneUse && fimg->_currentZone == 0 && currentGameTime() >= 2) {
+			// Collected quill
+			collectObject(128, fimg);
+			_gameVariables[GameVariables::kCollectQuill] = 1;
+			// Try to solve epigraph
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_44161b);
+			fimg->changeCallback(functor);
+			break;
+		} else if (fimg->_zoneSee) {
+			// Look at blueprints
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_44161d);
+			fimg->changeCallback(functor);
+			break;
+		}
+	}
+}
+
+IMG_CB(44161b) {
+	// There we have blueprints and epigraph on desk.
+	fimg->load("42X2_10.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_usedObject && fimg->_usedObject->idOBJ() == 128 && fimg->_currentZone == 1) {
+			if (handleEpigraph(fimg)) {
+				// Epigraph is solved
+				_inventory.removeByNameID(128);
+				collectObject(126, fimg, false);
+				_dialogsMan["{JOUEUR_POSSEDE_EPIGRAPHE}"] = 'Y';
+				setPlaceState(16, 2);
+				// No more epigraphe nor quill
+				ZonFixedImage::CallbackFunctor *functor =
+				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+				            &CryOmni3DEngine_Versailles::img_44161c);
+				fimg->changeCallback(functor);
+			}
+			// If failed to solve: just display this image again
+			break;
+		} else if (fimg->_zoneSee) {
+			// Look at blueprints
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_44161d);
+			fimg->changeCallback(functor);
+			break;
+		}
+	}
+}
+
+IMG_CB(44161c) {
+	// There we have no quill nor epigraph anymore
+	fimg->load("42X2_11.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneSee) {
+			// Look at blueprints
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_44161d);
+			fimg->changeCallback(functor);
+			break;
+		}
+	}
+}
+
+IMG_CB(44161d) {
+	// Look at blueprints
+	fimg->load("VAU1.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_usedObject && fimg->_usedObject->idOBJ() == 131) {
+			// Overlay blueprints
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_44161e);
+			fimg->changeCallback(functor);
+			break;
+		}
+	}
+}
+
+IMG_CB(44161e) {
+	// Look at blueprints
+	fimg->load("VAUB22.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_usedObject && fimg->_usedObject->idOBJ() == 132) {
+			// Overlay blueprints
+			_gameVariables[GameVariables::kUsedVaubanBlueprint1] = 1;
+			_gameVariables[GameVariables::kUsedVaubanBlueprint2] = 1;
+			_inventory.removeByNameID(131);
+			_inventory.removeByNameID(132);
+			setGameTime(4, 4);
+			// Look at the final result
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_44161f);
+			fimg->changeCallback(functor);
+			break;
+		}
+	}
+}
+
+IMG_CB(44161f) {
+	// Look at blueprints result
+	fimg->load("VAU.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+	}
+}
+
+bool CryOmni3DEngine_Versailles::handleEpigraph(ZonFixedImage *fimg) {
+	bool success = false;
+	Graphics::Surface bmpLetters[26];
+	Common::String password;
+	Graphics::ManagedSurface tempSurf;
+
+	loadBMPs("bomb_%02d.bmp", bmpLetters, 26);
+
+	fimg->load("EPIL.GIF");
+	const Graphics::Surface *fimgSurface = fimg->surface();
+	tempSurf.create(fimgSurface->w, fimgSurface->h, fimgSurface->format);
+	// No need to customize image yet
+
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			break;
+		}
+		if (fimg->_zoneUse) {
+			if (password.size() >= kEpigraphMaxLetters) {
+				continue;
+			}
+			// Find which letter got clicked
+			char letter = kEpigraphContent[fimg->_currentZone];
+			password += letter;
+			// Reset the surface and redraw digits on it
+			tempSurf.blitFrom(*fimgSurface);
+			drawEpigraphLetters(tempSurf, bmpLetters, password);
+			fimg->updateSurface(&tempSurf.rawSurface());
+
+			waitMouseRelease();
+		} else if (fimg->_key.keycode) {
+			Common::KeyCode keyCode = fimg->_key.keycode;
+			if (keyCode == Common::KEYCODE_BACKSPACE) {
+				password.deleteLastChar();
+			} else {
+				if (password.size() >= kEpigraphMaxLetters) {
+					continue;
+				}
+				if (keyCode >= Common::KEYCODE_a &&
+				        keyCode <= Common::KEYCODE_z &&
+				        strchr(kEpigraphContent, keyCode - Common::KEYCODE_a + 'A')) {
+					password += keyCode - Common::KEYCODE_a + 'A';
+				} else {
+					continue;
+				}
+			}
+			// Reset the surface and redraw digits on it
+			tempSurf.blitFrom(*fimgSurface);
+			drawEpigraphLetters(tempSurf, bmpLetters, password);
+			fimg->updateSurface(&tempSurf.rawSurface());
+		}
+
+		if (password == kEpigraphPassword) {
+			success = true;
+			break;
+		}
+	}
+
+	for (unsigned int i = 0; i < 26; i++) {
+		bmpLetters[i].free();
+	}
+	return success;
+}
+
+const char *CryOmni3DEngine_Versailles::kEpigraphContent = "FELIXFORTUNADIVINUMEXPLORATUMACTUIIT";
+const char *CryOmni3DEngine_Versailles::kEpigraphPassword = "LELOUPETLATETE";
+
+void CryOmni3DEngine_Versailles::drawEpigraphLetters(Graphics::ManagedSurface &surface,
+        const Graphics::Surface(&bmpLetters)[26], const Common::String &letters) {
+	for (unsigned int i = 0; i < letters.size() && i < kEpigraphMaxLetters; i++) {
+		unsigned int letterId = 0;
+		if (letters[i] >= 'A' && letters[i] <= 'Z') {
+			letterId = letters[i] - 'A';
+		}
+		const Graphics::Surface &letter = bmpLetters[letterId];
+		Common::Point dst(34 * i + 4, 380);
+		surface.transBlitFrom(letter, dst);
 	}
 }
 
@@ -2560,6 +3261,174 @@ void CryOmni3DEngine_Versailles::collectLampoonArchitecture(const ZonFixedImage 
 		setPlaceState(22, 2);
 	}
 	_dialogsMan["{JOUEUR_POSSEDE_PAMPHLET_ARCHI}"] = 'Y';
+}
+
+INIT_PLACE(4, 9) {
+	if (currentGameTime() == 4 && !_inventory.inInventoryByNameID(125)) {
+		_dialogsMan.play("4_MAI");
+		_forcePaletteUpdate = true;
+		// Force reload of the place
+		if (_nextPlaceId == -1u) {
+			_nextPlaceId = _currentPlaceId;
+		}
+	}
+}
+
+FILTER_EVENT(4, 10) {
+	if (*event == 24104 && _inventory.selectedObject()) {
+		_dialogsMan["{JOUEUR-PRESENTE-OBJET-HUISSIER}"] = 'Y';
+		_dialogsMan.play("41C_HUI");
+
+		_forcePaletteUpdate = true;
+		// Force reload of the place
+		if (_nextPlaceId == -1u) {
+			_nextPlaceId = _currentPlaceId;
+		}
+
+		_dialogsMan["{JOUEUR-PRESENTE-OBJET-HUISSIER}"] = 'N';
+		_inventory.deselectObject();
+		return true;
+	} else if (*event == 24105 && _inventory.selectedObject()) {
+		if (_inventory.selectedObject()->idOBJ() == 127) {
+			_dialogsMan["{JOUEUR-MONTRE-PAMPHLET-GOUVERNEMENT}"] = 'Y';
+		} else if (_inventory.selectedObject()->idOBJ() == 125) {
+			_dialogsMan["{JOUEUR-MONTRE-PAMPHLET-RELIGION}"] = 'Y';
+		} else if (_inventory.selectedObject()->idOBJ() == 126) {
+			_dialogsMan["{JOUEUR-MONTRE-PAPIER-CROISSY}"] = 'Y';
+		} else {
+			_dialogsMan["{JOUEUR-MONTRE-TOUT-AUTRE-OBJET}"] = 'Y';
+		}
+		_dialogsMan.play("42C_BON");
+
+		_forcePaletteUpdate = true;
+		// Force reload of the place
+		if (_nextPlaceId == -1u) {
+			_nextPlaceId = _currentPlaceId;
+		}
+
+		_dialogsMan["{JOUEUR-MONTRE-PAMPHLET-GOUVERNEMENT}"] = 'N';
+		_dialogsMan["{JOUEUR-MONTRE-PAMPHLET-RELIGION}"] = 'N';
+		_dialogsMan["{JOUEUR-MONTRE-PAPIER-CROISSY}"] = 'N';
+		_dialogsMan["{JOUEUR-MONTRE-TOUT-AUTRE-OBJET}"] = 'N';
+		_inventory.deselectObject();
+		return true;
+	} else if (*event == 11 && currentGameTime() < 3) {
+		// Closed
+		displayMessageBoxWarp(2);
+		return false;
+	} else {
+		return true;
+	}
+}
+
+FILTER_EVENT(4, 12_13_14) {
+	if (*event != 34131 && *event != 34132) {
+		// Not for us
+		return true;
+	}
+
+	if (!_inventory.selectedObject() ||
+	        _inventory.selectedObject()->idOBJ() != 130) {
+		// Not using scope: do nothing
+		return false;
+	}
+
+	// Using scope
+	const char *video;
+	FixedImgCallback callback;
+
+	if (*event == 34131) {
+		video = "43ZA_1";
+		callback = &CryOmni3DEngine_Versailles::img_34131;
+	} else if (*event == 34132) {
+		video = "43ZB_2";
+		callback = &CryOmni3DEngine_Versailles::img_34132;
+	}
+
+	playInGameVideo(video);
+
+	// Force reload of the place
+	if (_nextPlaceId == -1u) {
+		_nextPlaceId = _currentPlaceId;
+	}
+
+	handleFixedImg(callback);
+
+	// Don't pass the event: it has been handled
+	return false;
+}
+
+FILTER_EVENT(4, 15) {
+	if (*event == 17 && (_dialogsMan["BONTEMPS-VU-PAPIER-CROISSY"] == 'N' ||
+	                     _dialogsMan["BONTEMPS-VU-PAMPHLET-GOUVERNEMENT"] == 'N')) {
+		// Closed
+		displayMessageBoxWarp(2);
+		return false;
+	}
+
+	return true;
+}
+
+FILTER_EVENT(4, 16) {
+	if (*event == 24161 && _inventory.selectedObject()) {
+		unsigned int idOBJ = _inventory.selectedObject()->idOBJ();
+		if (idOBJ == 124) {
+			_dialogsMan["{JOUEUR-DONNE-REPAS}"] = 'Y';
+		} else {
+			_dialogsMan["{JOUEUR-MONTRE-TOUT-AUTRE-OBJET}"] = 'Y';
+		}
+		_dialogsMan.play("41X2_CRO");
+
+		_forcePaletteUpdate = true;
+		// Force reload of the place
+		if (_nextPlaceId == -1u) {
+			_nextPlaceId = _currentPlaceId;
+		}
+
+		_dialogsMan["{JOUEUR-DONNE-REPAS}"] = 'N';
+		_dialogsMan["{JOUEUR-MONTRE-TOUT-AUTRE-OBJET}"] = 'N';
+
+		if (idOBJ == 124) {
+			_inventory.removeByNameID(124);
+			playInGameVideo("41X2_CR1");
+			setGameTime(2, 4);
+		}
+		_inventory.deselectObject();
+		return true;
+	} else if (*event == 34162) {
+		if (!_inventory.inInventoryByNameID(127)) {
+			collectObject(127);
+			_forcePaletteUpdate = true;
+		} else {
+			// Nothing there anymore
+			displayMessageBoxWarp(21);
+		}
+
+		// Don't pass the event: it has been handled
+		return false;
+	}
+	return true;
+}
+
+FILTER_EVENT(4, 17) {
+	if (*event == 34171) {
+		collectObject(130);
+		setPlaceState(17, 1);
+		return false;
+	} else if (*event == 34172) {
+		unsigned int fakePlaceId = getFakeTransition(*event);
+		fakeTransition(fakePlaceId);
+		handleFixedImg(&CryOmni3DEngine_Versailles::img_34172);
+		return false;
+	} else if (*event == 34173) {
+		handleFixedImg(&CryOmni3DEngine_Versailles::img_34173);
+		return false;
+	} else if (*event == 34174) {
+		handleFixedImg(&CryOmni3DEngine_Versailles::img_34174);
+		return false;
+	}
+
+	return true;
 }
 
 #undef FILTER_EVENT

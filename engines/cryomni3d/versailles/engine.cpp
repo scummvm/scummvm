@@ -611,7 +611,7 @@ void CryOmni3DEngine_Versailles::changeLevel(int level) {
 		}
 		// TODO: countdown
 		_inventory.clear();
-	} else if (_currentLevel <= 3) {
+	} else if (_currentLevel <= 4) {
 		// TODO: remove this when we implemented all levels
 	} else {
 		error("New level %d is not implemented (yet)", level);

@@ -72,8 +72,9 @@ bool CryOmni3DEngine_Versailles::preprocessDialog(const Common::String &sequence
 	if (_currentLevel == 4 && _currentPlaceId == 10 && currentGameTime() == 3 &&
 	        sequence.hasPrefix("42C_BON") && _gameVariables[GameVariables::kWarnedIncomplete] == 0 &&
 	        _dialogsMan["{JOUEUR-MONTRE-PAMPHLET-RELIGION}"] == 'Y' &&
-	        (!_inventory.inInventoryByNameID(127) || _gameVariables[GameVariables::kUsedPlanVauban1] == 0 ||
-	         _gameVariables[GameVariables::kUsedPlanVauban2] == 0)) {
+	        (!_inventory.inInventoryByNameID(127) ||
+	         _gameVariables[GameVariables::kUsedVaubanBlueprint1] == 0 ||
+	         _gameVariables[GameVariables::kUsedVaubanBlueprint2] == 0)) {
 		displayMessageBoxWarp(18);
 		_gameVariables[GameVariables::kWarnedIncomplete] = 1;
 		return 0;
@@ -81,8 +82,9 @@ bool CryOmni3DEngine_Versailles::preprocessDialog(const Common::String &sequence
 	if (_currentLevel == 5 && _currentPlaceId == 10 && currentGameTime() == 3 &&
 	        sequence.hasPrefix("42C_BON") && _gameVariables[GameVariables::kWarnedIncomplete] == 0 &&
 	        _dialogsMan["{JOUEUR-MONTRE-PAMPHLET-RELIGION}"] == 'Y' &&
-	        (!_inventory.inInventoryByNameID(127) || _gameVariables[GameVariables::kUsedPlanVauban1] == 0 ||
-	         _gameVariables[GameVariables::kUsedPlanVauban2] == 0)) {
+	        (!_inventory.inInventoryByNameID(127) ||
+	         _gameVariables[GameVariables::kUsedVaubanBlueprint1] == 0 ||
+	         _gameVariables[GameVariables::kUsedVaubanBlueprint2] == 0)) {
 		displayMessageBoxWarp(18);
 		_gameVariables[GameVariables::kWarnedIncomplete] = 1;
 		return 0;
@@ -148,11 +150,11 @@ void CryOmni3DEngine_Versailles::postprocessDialog(const Common::String &sequenc
 			collectObject(141);
 			playTransitionEndLevel(5);
 		}
-		if (sequence == "52A4_LAC" && _gameVariables[GameVariables::kStatePamphletReligion] != 3 &&
+		if (sequence == "52A4_LAC" && _gameVariables[GameVariables::kStateLampoonReligion] != 3 &&
 		        _dialogsMan["LACHAIZE-DIT-REFORME"] == 'Y' && _dialogsMan["LACHAIZE-DIT-DRAGONNADES"] == 'Y' &&
 		        _dialogsMan["LACHAIZE-TROUVE-ECROUELLES"] == 'Y') {
 			_inventory.removeByNameID(125);
-			_gameVariables[GameVariables::kStatePamphletReligion] = 3;
+			_gameVariables[GameVariables::kStateLampoonReligion] = 3;
 			collectObject(125);
 			_inventory.deselectObject();
 		}
