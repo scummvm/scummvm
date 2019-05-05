@@ -337,8 +337,8 @@ void HNMDecoder::HNM4VideoTrack::decodeIntraframe(Common::SeekableReadStream *st
 }
 
 HNMDecoder::DPCMAudioTrack::DPCMAudioTrack(uint16 channels, uint16 bits, unsigned int sampleRate,
-        Audio::Mixer::SoundType soundType) : AudioTrack(soundType), _channels(channels), _bits(bits),
-	_audioStream(nullptr), _gotLUT(false), _lastSample(0) {
+        Audio::Mixer::SoundType soundType) : AudioTrack(soundType), _audioStream(nullptr),
+	_gotLUT(false), _lastSample(0) {
 	if (bits != 16) {
 		error("Unsupported audio bits");
 	}

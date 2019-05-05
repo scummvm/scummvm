@@ -45,7 +45,6 @@ public:
 private:
 	Graphics::Surface *_surface;
 	int _width, _height;
-	int _bitsPerPixel;
 };
 
 } // End of namespace Image
