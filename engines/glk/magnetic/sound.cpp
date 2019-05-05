@@ -48,5 +48,45 @@ byte Magnetic::init_snd(size_t size) {
 	return 2;
 }
 
+int16 Magnetic::find_name_in_sndheader(const Common::String &name) {
+	int16 header_pos = 0;
+
+	while (header_pos < snd_hsize) {
+		const char *hname = (const char *)(snd_hdr + header_pos);
+		if (name == hname)
+			return header_pos;
+		header_pos += 18;
+	}
+
+	return -1;
+}
+
+byte *Magnetic::sound_extract(const Common::String &name, uint32 *length, uint16 *tempo) {
+	uint32 offset = 0;
+	int16 header_pos = -1;
+
+	if (header_pos < 0)
+		header_pos = find_name_in_sndheader(name);
+	if (header_pos < 0)
+		return 0;
+
+	*tempo = READ_BE_UINT16(snd_hdr + header_pos + 8);
+	offset = READ_BE_UINT32(snd_hdr + header_pos + 10);
+	*length = READ_BE_UINT32(snd_hdr + header_pos + 14);
+
+	if (offset != 0) {
+		if (!snd_buf)
+			return nullptr;
+		if (!_sndFile.seek(offset))
+			return nullptr;
+		if (_sndFile.read(snd_buf, *length) != *length)
+			return nullptr;
+
+		return snd_buf;
+	}
+
+	return nullptr;
+}
+
 } // End of namespace Magnetic
 } // End of namespace Glk

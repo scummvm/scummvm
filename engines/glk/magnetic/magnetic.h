@@ -135,6 +135,27 @@ private:
 	 */
 	void ms_showpic(int c, byte mode);
 
+	/**
+	 * Returns true if a given line is blank
+	 */
+	bool is_blank(uint16 line, uint16 width) const;
+
+	byte *ms_extract1(byte pic, uint16 *w, uint16 *h, uint16 *pal);
+
+	int16 find_name_in_header(const Common::String &name, bool upper);
+
+	void extract_frame(const picture *pic);
+
+	byte *ms_extract2(const char *name, uint16 *w, uint16 *h, uint16 *pal, byte *is_anim);
+
+	byte *ms_extract(uint32 pic, uint16 *w, uint16 *h, uint16 *pal, byte *is_anim);
+
+	byte ms_animate(ms_position **positions, uint16 *count);
+
+	byte *ms_get_anim_frame(int16 number, uint16 *width, uint16 *height, byte **mask);
+
+	bool ms_anim_is_repeating() const { return anim_repeat;	}
+
 	void write_reg(int i, int s, uint32 val) {
 		// TODO
 	}
@@ -147,6 +168,10 @@ private:
 	 */
 
 	byte init_snd(size_t size);
+
+	int16 find_name_in_sndheader(const Common::String &name);
+
+	byte *sound_extract(const Common::String &name, uint32 *length, uint16 *tempo);
 
 	/**@}*/
 public:

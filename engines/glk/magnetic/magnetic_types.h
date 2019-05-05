@@ -40,8 +40,8 @@ namespace Magnetic {
 #define MAX_HITEMS 25
 
 struct lookup {
-	uint16 flag;
-	uint16 count;
+	int16 flag;
+	int16 count;
 
 	lookup() : flag(0), count(0) {}
 };
