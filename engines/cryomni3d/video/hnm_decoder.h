@@ -106,8 +106,6 @@ private:
 	protected:
 		Audio::AudioStream *getAudioStream() const { return _audioStream; }
 	private:
-		uint16 _channels;
-		uint16 _bits;
 		Audio::QueuingAudioStream *_audioStream;
 		bool _gotLUT;
 		uint16 _lut[256];
