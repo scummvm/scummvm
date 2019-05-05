@@ -2629,6 +2629,8 @@ FILTER_EVENT(1, 14) {
 		} else if (*event == 31143) {
 			video = "10D2_3";
 			callback = &CryOmni3DEngine_Versailles::img_31143;
+		} else {
+			error("BUG: Shouldn't be here");
 		}
 	} else if (_currentLevel == 2 || _placeStates[14].state == 1) {
 		if (*event == 31142) {
@@ -2637,6 +2639,8 @@ FILTER_EVENT(1, 14) {
 		} else if (*event == 31143) {
 			video = "11D2_1";
 			callback = &CryOmni3DEngine_Versailles::img_31143b;
+		} else {
+			error("BUG: Shouldn't be here");
 		}
 	} else {
 		error("Invalid state in filter event 1/14: level: %d/ placeState: %d", _currentLevel,
@@ -3343,6 +3347,8 @@ FILTER_EVENT(4, 12_13_14) {
 	} else if (*event == 34132) {
 		video = "43ZB_2";
 		callback = &CryOmni3DEngine_Versailles::img_34132;
+	} else {
+		error("BUG: Shouldn't be here");
 	}
 
 	playInGameVideo(video);
