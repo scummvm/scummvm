@@ -65,7 +65,8 @@ void ZonFixedImage::run(const CallbackFunctor *callback) {
 	_imageSurface = nullptr;
 }
 
-void ZonFixedImage::load(const Common::String &image) {
+// Just pass a const char * for zone because it's for workarounds and constructing a null String at almost each load call is inefficient
+void ZonFixedImage::load(const Common::String &image, const char *zone) {
 	_imageSurface = nullptr;
 	delete _imageDecoder;
 	_imageDecoder = nullptr;
@@ -76,7 +77,9 @@ void ZonFixedImage::load(const Common::String &image) {
 	}
 	_imageSurface = _imageDecoder->getSurface();
 
-	loadZones(image);
+	const Common::String &zoneFName = zone == nullptr ? image : zone;
+	loadZones(zoneFName);
+
 #if 0
 	// This is not correct but to debug zones I think it's OK
 	Graphics::Surface *tmpSurf = (Graphics::Surface *) _imageSurface;

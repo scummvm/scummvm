@@ -69,7 +69,7 @@ public:
 	void display() const;
 
 	/* These functions and attributes are used in image handler */
-	void load(const Common::String &image);
+	void load(const Common::String &image, const char *zone = nullptr);
 	void manage();
 	void updateSurface(const Graphics::Surface *newSurface);
 	const Graphics::Surface *surface() const { return _imageSurface; }
