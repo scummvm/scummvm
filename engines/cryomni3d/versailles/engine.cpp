@@ -35,7 +35,10 @@
 
 #include "cryomni3d/versailles/engine.h"
 
-//#define DEBUG_FAST_START 1
+// 0 or commented: All videos and options screen
+// 1: Skip videos at startup and at game start
+// 2: Directly start a new game
+#define DEBUG_FAST_START 1
 
 namespace CryOmni3D {
 namespace Versailles {
@@ -803,7 +806,7 @@ void CryOmni3DEngine_Versailles::gameStep() {
 		}
 		unsigned int actionId = handleWarp();
 		debug("handleWarp returned %u", actionId);
-		// TODO: handle keyboard levels 4 and 5
+		// Don't handle keyboard for levels 4 and 5, it was a debug leftover
 
 		// Get selected object there to detect when it has just been deselected
 		Object *selectedObject = _inventory.selectedObject();
