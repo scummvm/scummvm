@@ -106,6 +106,11 @@ private:
 	bool ms_is_running() const { return running; }
 
 	/**
+	 * Returns true if running a Magnetic Windows game
+	 */
+	bool ms_is_magwin() const { return version == 4; }
+
+	/**
 	 * Frees all allocated ressources
 	 */
 	void ms_freemem();
@@ -141,10 +146,7 @@ private:
 	 * @{
 	 */
 
-
-	void init_snd(uint param) {
-		// TODO
-	}
+	byte init_snd(size_t size);
 
 	/**@}*/
 public:
