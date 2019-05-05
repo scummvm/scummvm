@@ -419,6 +419,10 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 			AI_Movement_Track_Append(kActorOfficerLeary, 387, 15);
 			AI_Movement_Track_Repeat(kActorOfficerLeary);
 			break;
+#if BLADERUNNER_ORIGINAL_BUGS
+		// Gaff is waiting at MA07 and he will trigger a non-interactive dialogue with McCoy.
+		// When the police officer is there as well he will kill McCoy because player cannot control him.
+
 		case 7:
 			AI_Movement_Track_Append(kActorOfficerLeary, 394, 15);
 			AI_Movement_Track_Append(kActorOfficerLeary, 395, 0);
@@ -430,6 +434,10 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 			AI_Movement_Track_Append(kActorOfficerLeary, 35, 30);
 			AI_Movement_Track_Repeat(kActorOfficerLeary);
 			break;
+#else
+		case 7:
+			// fall through
+#endif
 		case 8:
 			switch (Random_Query(1, 7)) {
 			case 1:
@@ -486,7 +494,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 			default:
 				return false;
 			}
-			// fall through
+			// fall through, a bug in original game?
 		case 9:
 			if (Random_Query(1, 2) - 1 == 1) {
 				AI_Movement_Track_Append(kActorOfficerLeary, 433, 10);
@@ -503,7 +511,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 			AI_Movement_Track_Append(kActorOfficerLeary, 420, 10);
 			AI_Movement_Track_Append(kActorOfficerLeary, 35, 30);
 			AI_Movement_Track_Repeat(kActorOfficerLeary);
-			// fall through
+			// fall through, a bug in original game?
 		case 10:
 			AI_Movement_Track_Append(kActorOfficerLeary, 310, 0);
 			AI_Movement_Track_Append(kActorOfficerLeary, 307, 0);

@@ -654,6 +654,10 @@ bool AIScriptOfficerGrayford::GoalChanged(int currentGoalNumber, int newGoalNumb
 			Actor_Set_Goal_Number(kActorOfficerGrayford, 305);
 			return true;
 
+#if BLADERUNNER_ORIGINAL_BUGS
+		// Gaff is waiting at MA07 and he will trigger a non-interactive dialogue with McCoy.
+		// When the police officer is there as well he will kill McCoy because player cannot control him.
+
 		case 7:
 			AI_Movement_Track_Append(kActorOfficerGrayford, 394, 15);
 			AI_Movement_Track_Append(kActorOfficerGrayford, 395, 0);
@@ -666,6 +670,10 @@ bool AIScriptOfficerGrayford::GoalChanged(int currentGoalNumber, int newGoalNumb
 			AI_Movement_Track_Repeat(kActorOfficerGrayford);
 			Actor_Set_Goal_Number(kActorOfficerGrayford, 305);
 			return true;
+#else
+		case 7:
+			// fall through
+#endif
 
 		case 8:
 			switch (Random_Query(1, 7)) {
