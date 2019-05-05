@@ -183,6 +183,7 @@ void ZonFixedImage::manage() {
 	_zoneUse = false;
 	_zoneSpeak = false;
 	_usedObject = nullptr;
+	_key.reset();
 
 	// Force poll events even when we must refresh the cursor
 	if (!_engine.pollEvents() && !_refreshCursor) {
