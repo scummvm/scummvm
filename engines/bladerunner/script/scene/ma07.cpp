@@ -54,6 +54,11 @@ void SceneScriptMA07::InitializeScene() {
 
 void SceneScriptMA07::SceneLoaded() {
 	Obstacle_Object("BARRICADE", true);
+	if(_vm->_cutContent) {
+		if (Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelShouldBeOutsideMcCoysAct3) {
+			Actor_Set_Goal_Number(kActorRachael, kGoalRachaelIsOutsideMcCoysBuildingAct3);
+		}
+	}
 }
 
 bool SceneScriptMA07::MouseClick(int x, int y) {
@@ -134,9 +139,11 @@ void SceneScriptMA07::PlayerWalkedIn() {
 		Game_Flag_Reset(kFlagPS14toMA07);
 	}
 
-	if (Actor_Query_Goal_Number(kActorRachael) == 300) {
-		Actor_Set_Goal_Number(kActorRachael, 305);
-	}
+	if (Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsOutsideMcCoysBuildingAct3) {
+		Actor_Set_Goal_Number(kActorRachael, kGoalRachaelIsOutWalksToPoliceHQAct3);
+	} else if (_vm->_cutContent && Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsOutsideMcCoysBuildingAct4) {
+		Actor_Set_Goal_Number(kActorRachael, kGoalRachaelIsOutWalksToPoliceHQAct4);
+    }
 
 	if (Game_Flag_Query(kFlagMA06toMA07)) {
 		Game_Flag_Reset(kFlagMA06toMA07);
@@ -166,6 +173,20 @@ void SceneScriptMA07::PlayerWalkedIn() {
 }
 
 void SceneScriptMA07::PlayerWalkedOut() {
+	if (_vm->_cutContent) {
+		if (Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsOutsideMcCoysBuildingAct3
+			|| Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsOutWalksToPoliceHQAct3
+			|| Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsOutFleeingToPoliceHQAct3
+		) {
+			Actor_Set_Goal_Number(kActorRachael, kGoalRachaelAtEndOfAct3IfNotMetWithMcCoy);
+		} else if (Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsOutResumesWalkToPoliceHQAct3) {
+			Actor_Set_Goal_Number(kActorRachael, kGoalRachaelAtEndOfAct3IfMetWithMcCoy);
+		} else if (Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsOutsideMcCoysBuildingAct4
+			|| Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsOutWalksToPoliceHQAct4
+		) {
+			Actor_Set_Goal_Number(kActorRachael, kGoalRachaelAtEndOfAct4);
+		}
+	}
 }
 
 void SceneScriptMA07::DialogueQueueFlushed(int a1) {

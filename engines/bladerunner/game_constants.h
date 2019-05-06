@@ -1685,6 +1685,61 @@ enum GameItems {
 };
 
 enum GameModelAnimations {
+	kModelAnimationMcCoyWithGunIdle              =   0,
+	kModelAnimationMcCoyWithGunGotHitRight       =   1,
+	kModelAnimationMcCoyWithGunGotHitLeft        =   2,
+	kModelAnimationMcCoyWithGunWalking           =   3,
+	kModelAnimationMcCoyWithGunRunning           =   4,
+	kModelAnimationMcCoyWithGunShotDead          =   5,
+	kModelAnimationMcCoyWithGunClimbStairsUp     =   6,
+	kModelAnimationMcCoyWithGunClimbStairsDown   =   7,
+	kModelAnimationMcCoyWithGunUnholsterGun      =   8,
+	kModelAnimationMcCoyWithGunHolsterGun        =   9,
+	kModelAnimationMcCoyWithGunAiming            =  10,
+	kModelAnimationMcCoyWithGunStopAimResumeIdle =  11,
+	kModelAnimationMcCoyWithGunShooting          =  12,
+	kModelAnimationMcCoyWalking                  =  13,
+	kModelAnimationMcCoyRunning                  =  14,
+	kModelAnimationMcCoyClimbStairsUp            =  15,
+	kModelAnimationMcCoyClimbStairsDown          =  16,
+	kModelAnimationMcCoyGotHitRight              =  17,
+	kModelAnimationMcCoyFallsOnHisBack           =  18,
+	kModelAnimationMcCoyIdle                     =  19,
+	kModelAnimationMcCoyProtestingTalk           =  20,
+	kModelAnimationMcCoyScratchHeadTalk          =  21,
+	kModelAnimationMcCoyPointingTalk             =  22,
+	kModelAnimationMcCoyUpsetTalk                =  23,
+	kModelAnimationMcCoyDismissiveTalk           =  24,
+	kModelAnimationMcCoyScratchEarTalk           =  25,
+	kModelAnimationMcCoyHandsOnWaistTalk         =  26,
+	kModelAnimationMcCoyScratchEarLongerTalk     =  27,
+	kModelAnimationMcCoyDodgeAndDrawGun          =  28,
+	kModelAnimationMcCoyLeaningOver              =  29,
+	kModelAnimationMcCoyThrowsBeggarInTrash      =  30,
+	kModelAnimationMcCoyDiesInAgony              =  31,
+	kModelAnimationMcCoyGivesFromPocket          =  32,
+	kModelAnimationMcCoyLeaningOverSearching     =  33,
+	kModelAnimationMcCoyLeaningOverResumeIdle    =  34,
+	kModelAnimationMcCoyEntersSpinner            =  35,
+	kModelAnimationMcCoyExitsSpinner             =  36,
+	kModelAnimationMcCoyClimbsLadderUp           =  37,
+	kModelAnimationMcCoyClimbsLadderDown         =  38,
+	kModelAnimationMcCoyRecoversFromPassingOut   =  39,
+	kModelAnimationMcCoyGiveMovement             =  40,
+	kModelAnimationMcCoySittingToUseConsole      =  41,
+	kModelAnimationMcCoyWithGunGrabbedByArm0     =  42,
+	kModelAnimationMcCoyWithGunGrabbedByArm1     =  43,
+	kModelAnimationMcCoyWithGunGrabbedByArmHurt  =  44,
+	kModelAnimationMcCoyWithGunGrabbedByArmFreed =  45,
+	kModelAnimationMcCoyTiedInChairIdle          =  46,
+	kModelAnimationMcCoyTiedInChairMoving        =  47,
+	kModelAnimationMcCoyTiedInChairFreed         =  48,
+	kModelAnimationMcCoyStartled                 =  49,
+	kModelAnimationMcCoyCrouchingDown            =  50,
+	kModelAnimationMcCoyCrouchedIdle             =  51,
+	kModelAnimationMcCoyCrouchedGetsUp           =  52,
+	kModelAnimationMcCoyDrinkingBooze            =  53,
+	//
 	kModelAnimationBulletBobsTrackingGun       = 440,
 	kModelAnimationMaleTargetEmptyHandsActive  = 441,
 	kModelAnimationMaleTargetEmptyHandsDead    = 442, // 441+1
@@ -2204,6 +2259,26 @@ enum GoalBulletBob {
 	kGoalBulletBobGone = 99
 };
 
+enum GoalRachael {
+	kGoalRachaelDefault                        =   0,
+	kGoalRachaelLeavesAfterTyrellMeeting       = 200,
+	kGoalRachaelShouldBeOutsideMcCoysAct3      = 211, // added Rachael goal
+	kGoalRachaelShouldBeInElevatorMcCoysAct3   = 212, // added Rachael goal
+	kGoalRachaelIsOutsideMcCoysBuildingAct3    = 300,
+	kGoalRachaelIsInsideMcCoysElevatorAct3     = 302, // added Rachael goal
+	kGoalRachaelIsInsideElevatorStartTalkAct3  = 303, // added Rachael goal
+	kGoalRachaelIsOutWalksToPoliceHQAct3       = 305,
+	kGoalRachaelIsOutResumesWalkToPoliceHQAct3 = 306,
+	kGoalRachaelIsOutFleeingToPoliceHQAct3     = 307, // added Rachael goal
+	kGoalRachaelAtEndOfAct3IfNotMetWithMcCoy   = 399, // added Rachael goal
+	kGoalRachaelAtEndOfAct3IfMetWithMcCoy      = 400,
+	kGoalRachaelIsInsideMcCoysElevatorAct4     = 402, // added Rachael goal
+	kGoalRachaelIsInsideElevatorStartTalkAct4  = 403, // added Rachael goal
+	kGoalRachaelIsOutsideMcCoysBuildingAct4    = 404, // added Rachael goal
+	kGoalRachaelIsOutWalksToPoliceHQAct4       = 405, // added Rachael goal
+	kGoalRachaelAtEndOfAct4                    = 499  // added Rachael goal
+};
+
 enum GoalRunciter {
 	kGoalRunciterDefault = 0,
 	kGoalRunciterRC02WalkAround = 1,
@@ -2559,7 +2634,7 @@ enum SFXSounds {
 	kSfxDRAMB5   = 111,  //           - Looping
 	kSfxFACTAMB2 = 112,  //             Looping
 	kSfxDRRAIN1  = 113,  // unused    - Looping
-	kSfxSPINUP1  = 114,  // used only once
+	kSfxSPINUP1  = 114,  // elevator sound
 	kSfxSPINOPN3 = 115,  // unused
 	kSfxSPINOPN4 = 116,
 	kSfxCARUP3   = 117,

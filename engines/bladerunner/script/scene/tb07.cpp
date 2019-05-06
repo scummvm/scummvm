@@ -293,7 +293,7 @@ void SceneScriptTB07::McCoyTalkWithRachaelAndTyrell() {
 	Actor_Says(kActorTyrell, 20, 3);
 	Actor_Says(kActorTyrell, 30, 12);
 	Actor_Says(kActorMcCoy, 5425, 18);
-	Actor_Set_Goal_Number(kActorRachael, 200);
+	Actor_Set_Goal_Number(kActorRachael, kGoalRachaelLeavesAfterTyrellMeeting);
 	Actor_Says(kActorTyrell, 40, 15);
 	Actor_Start_Speech_Sample(kActorTyrell, 50);
 	Loop_Actor_Walk_To_XYZ(kActorTyrell, -10.0f, 12.0f, 100.0f, 0, false, false, 0);
