@@ -197,19 +197,16 @@ void UIImagePicker::draw(Graphics::Surface &surface) {
 			continue;
 		}
 
-		if (i == _hoveredImageIndex && i == _pressedImageIndex && _isButtonDown) {
-			if (!_vm->_mouse->isDisabled()) {
-				if (img.shapeDown) {
-					img.shapeDown->draw(surface, img.rect.left, img.rect.top);
-				}
-			}
-		} else if (i == _hoveredImageIndex && !_isButtonDown) {
-			if (!_vm->_mouse->isDisabled()) {
-				if (img.shapeHovered) {
-					img.shapeHovered->draw(surface, img.rect.left, img.rect.top);
-				}
-			}
+		if (i == _hoveredImageIndex && i == _pressedImageIndex && _isButtonDown
+			&& !_vm->_mouse->isDisabled()
+			&& img.shapeDown) {
+			img.shapeDown->draw(surface, img.rect.left, img.rect.top);
+		} else if (i == _hoveredImageIndex && !_isButtonDown
+			&& !_vm->_mouse->isDisabled()
+			&& img.shapeHovered) {
+			img.shapeHovered->draw(surface, img.rect.left, img.rect.top);
 		} else {
+			// this shape should always be the fall back shape to prevent blinking
 			if (img.shapeUp) {
 				img.shapeUp->draw(surface, img.rect.left, img.rect.top);
 			}
