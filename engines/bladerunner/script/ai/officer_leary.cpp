@@ -494,7 +494,8 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 			default:
 				return false;
 			}
-			// fall through, a bug in original game?
+			// is falling through here - a bug in original game?
+			// fall through
 		case 9:
 			if (Random_Query(1, 2) - 1 == 1) {
 				AI_Movement_Track_Append(kActorOfficerLeary, 433, 10);
@@ -511,7 +512,8 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 			AI_Movement_Track_Append(kActorOfficerLeary, 420, 10);
 			AI_Movement_Track_Append(kActorOfficerLeary, 35, 30);
 			AI_Movement_Track_Repeat(kActorOfficerLeary);
-			// fall through, a bug in original game?
+			// is falling through here - a bug in original game?
+			// fall through
 		case 10:
 			AI_Movement_Track_Append(kActorOfficerLeary, 310, 0);
 			AI_Movement_Track_Append(kActorOfficerLeary, 307, 0);
