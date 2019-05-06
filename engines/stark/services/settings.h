@@ -117,6 +117,15 @@ public:
 	/** The codepage text is encoded in or this version of the game */
 	Common::CodePage getTextCodePage() const;
 
+	/**
+	 * Should the font settings from 'gui.ini' be ignored.
+	 *
+	 * Some versions of the game, especially the GOG.com version have a version of 'gui.ini'
+	 * that causes poor visuals. We just ignore the settings from the game and use the
+	 * default values from ResidualVM.
+	 */
+	bool shouldIgnoreFontSettings() const;
+
 private:
 	Audio::Mixer *_mixer;
 	bool _hasLowRes;

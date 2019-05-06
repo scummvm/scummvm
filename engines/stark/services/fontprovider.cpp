@@ -23,6 +23,7 @@
 #include "engines/stark/services/fontprovider.h"
 
 #include "engines/stark/services/services.h"
+#include "engines/stark/services/settings.h"
 #include "engines/stark/gfx/driver.h"
 
 #include "common/archive.h"
@@ -55,20 +56,22 @@ void FontProvider::initFonts() {
 	_ttfFileMap["Arial_tlj"] = "arial_tlj.ttf";
 
 	// Load the font settings from gui.ini when possible
-	Common::INIFile gui;
-	if (gui.loadFromFile("gui.ini")) {
-		readFontEntry(&gui, _smallFont,        "smallfont", "smallheight");
-		readFontEntry(&gui, _bigFont,          "bigfont",   "bigheight");
-		readFontEntry(&gui, _customFonts[0],   "font0",     "fontsize0");
-		readFontEntry(&gui, _customFonts[1],   "font1",     "fontsize1");
-		readFontEntry(&gui, _customFonts[2],   "font2",     "fontsize2");
-		readFontEntry(&gui, _customFonts[3],   "font3",     "fontsize3");
-		readFontEntry(&gui, _customFonts[4],   "font4",     "fontsize4");
-		readFontEntry(&gui, _customFonts[5],   "font5",     "fontsize5");
-		readFontEntry(&gui, _customFonts[6],   "font6",     "fontsize6");
-		readFontEntry(&gui, _customFonts[7],   "font7",     "fontsize7");
-	} else {
-		warning("Unable to open 'gui.ini' to read the font settings");
+	if (!StarkSettings->shouldIgnoreFontSettings()) {
+		Common::INIFile gui;
+		if (gui.loadFromFile("gui.ini")) {
+			readFontEntry(&gui, _smallFont,        "smallfont", "smallheight");
+			readFontEntry(&gui, _bigFont,          "bigfont",   "bigheight");
+			readFontEntry(&gui, _customFonts[0],   "font0",     "fontsize0");
+			readFontEntry(&gui, _customFonts[1],   "font1",     "fontsize1");
+			readFontEntry(&gui, _customFonts[2],   "font2",     "fontsize2");
+			readFontEntry(&gui, _customFonts[3],   "font3",     "fontsize3");
+			readFontEntry(&gui, _customFonts[4],   "font4",     "fontsize4");
+			readFontEntry(&gui, _customFonts[5],   "font5",     "fontsize5");
+			readFontEntry(&gui, _customFonts[6],   "font6",     "fontsize6");
+			readFontEntry(&gui, _customFonts[7],   "font7",     "fontsize7");
+		} else {
+			warning("Unable to open 'gui.ini' to read the font settings");
+		}
 	}
 
 	// Default fonts

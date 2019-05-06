@@ -58,6 +58,7 @@ Settings::Settings(Audio::Mixer *mixer, const ADGameDescription *gd) :
 	ConfMan.registerDefault(_boolKey[kTimeSkip], false);
 	ConfMan.registerDefault(_intKey[kSaveLoadPage], 0);
 	ConfMan.registerDefault("replacement_png_premultiply_alpha", false);
+	ConfMan.registerDefault("ignore_font_settings", true);
 
 	// Use the FunCom logo video to check low-resolution fmv
 	Common::SeekableReadStream *lowResFMV = StarkArchiveLoader->getExternalFile("1402_lo_res.bbb", "Global/");
@@ -107,6 +108,10 @@ Common::CodePage Settings::getTextCodePage() const {
 	default:
 		return Common::kWindows1252;
 	}
+}
+
+bool Settings::shouldIgnoreFontSettings() const {
+	return ConfMan.getBool("ignore_font_settings") && _language == Common::EN_ANY;
 }
 
 } // End of namespace Stark
