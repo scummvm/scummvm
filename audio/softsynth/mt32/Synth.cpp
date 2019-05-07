@@ -1753,6 +1753,13 @@ Bit32s Synth::getMasterTunePitchDelta() const {
 	return extensions.masterTunePitchDelta;
 }
 
+MidiEvent::MidiEvent() {
+	shortMessageData = 0;
+	sysexData = NULL;
+	sysexLength = 0;
+	timestamp = 0;
+}
+
 MidiEvent::~MidiEvent() {
 	if (sysexData != NULL) {
 		delete[] sysexData;
@@ -1782,7 +1789,6 @@ void MidiEvent::setSysex(const Bit8u *useSysexData, Bit32u useSysexLength, Bit32
 }
 
 MidiEventQueue::MidiEventQueue(Bit32u useRingBufferSize) : ringBuffer(new MidiEvent[useRingBufferSize]), ringBufferMask(useRingBufferSize - 1) {
-	memset(ringBuffer, 0, useRingBufferSize * sizeof(MidiEvent));
 	reset();
 }
 

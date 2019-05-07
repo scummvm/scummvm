@@ -32,6 +32,7 @@ struct MidiEvent {
 	Bit32u sysexLength;
 	Bit32u timestamp;
 
+	MidiEvent();
 	~MidiEvent();
 	void setShortMessage(Bit32u shortMessageData, Bit32u timestamp);
 	void setSysex(const Bit8u *sysexData, Bit32u sysexLength, Bit32u timestamp);
