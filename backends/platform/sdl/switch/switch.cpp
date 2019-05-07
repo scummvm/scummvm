@@ -21,9 +21,7 @@
  */
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
-#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 
-#include <sys/stat.h>
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "backends/platform/sdl/switch/switch.h"

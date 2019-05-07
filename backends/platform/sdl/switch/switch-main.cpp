@@ -22,9 +22,6 @@
 
 #include <switch.h>
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_stdout
-#define FORBIDDEN_SYMBOL_EXCEPTION_stderr
-
 #include "common/scummsys.h"
 #include "backends/platform/sdl/switch/switch.h"
 #include "backends/plugins/sdl/sdl-provider.h"
