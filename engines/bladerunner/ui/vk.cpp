@@ -198,6 +198,16 @@ void VK::tick() {
 
 	draw();
 
+	if ( _vm->_debugger->_showStatsVk
+		&& !_vm->_actors[_actorId]->isSpeeching()
+		&& !_vm->_actors[kActorMcCoy]->isSpeeching()
+		&& !_vm->_actors[kActorAnsweringMachine]->isSpeeching()
+		&& !_isClosing
+	) {
+		_vm->_subtitles->setGameSubsText(Common::String::format("Calibration: %02d Ratio: %02d Anxiety: %02d%%\nReplicant: %02d%% Human: %02d%%", _calibration, _calibrationRatio, _anxiety, _replicantProbability, _humanProbability), true);
+		_vm->_subtitles->show();
+	}
+
 	_vm->_subtitles->tick(_vm->_surfaceFront);
 
 	_vm->blitToScreen(_vm->_surfaceFront);
@@ -281,7 +291,7 @@ void VK::subjectReacts(int intensity, int humanResponse, int replicantResponse, 
 
 	if (humanResponse != 0) {
 		_humanProbability = CLIP(_humanProbability + humanResponse + _calibration, 0, 100);
-//		debug("Human probability is %d, human response is %d, calibration is %d", _humanProbability, humanResponse,_calibration);
+		// debug("Human probability is %d, human response is %d, calibration is %d", _humanProbability, humanResponse,_calibration);
 		if (_humanProbability >= 80 && !_isClosing) {
 			closeVK = false;
 			if (_vm->_debugger->_playFullVk
@@ -312,7 +322,7 @@ void VK::subjectReacts(int intensity, int humanResponse, int replicantResponse, 
 
 	if (replicantResponse != 0) {
 		_replicantProbability = CLIP(_replicantProbability + replicantResponse - _calibration, 0, 100);
-//		debug("Replicant probability is %d, replicant response is %d, calibration is %d", _replicantProbability, replicantResponse, _calibration);
+		// debug("Replicant probability is %d, replicant response is %d, calibration is %d", _replicantProbability, replicantResponse, _calibration);
 		if (_replicantProbability >= 80 && !_isClosing) {
 			closeVK = false;
 			if (_vm->_debugger->_playFullVk

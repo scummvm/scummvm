@@ -86,6 +86,7 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 	_viewWalkboxes = false;
 	_viewZBuffer = false;
 	_playFullVk = false;
+	_showStatsVk = false;
 	_showMazeScore = false;
 
 	registerCmd("anim", WRAP_METHOD(Debugger, cmdAnimation));
@@ -1506,7 +1507,7 @@ bool Debugger::cmdRegion(int argc, const char **argv) {
 }
 
 /**
-* Toggle playing a full VK session (full)
+* Toggle playing a full VK session (full) and showing current test statistics as subtitles
 * Only available in VK mode
 */
 bool Debugger::cmdVk(int argc, const char **argv) {
@@ -1528,6 +1529,9 @@ bool Debugger::cmdVk(int argc, const char **argv) {
 		if (argc == 2 && argName == "full") {
 			_playFullVk = !_playFullVk;
 			debugPrintf("Playing full V-K session = %s\n", _playFullVk ? "True":"False");
+		} else if (argc == 2 && argName == "stats") {
+			_showStatsVk = !_showStatsVk;
+			debugPrintf("Showing V-K session statistics= %s\n", _showStatsVk ? "True":"False");
 		} else {
 			invalidSyntax = true;
 		}
@@ -1535,7 +1539,8 @@ bool Debugger::cmdVk(int argc, const char **argv) {
 
 	if (invalidSyntax) {
 		debugPrintf("Toggle playing the full VK session instead of the at most 10 questions of the vanilla mode\n");
-		debugPrintf("Usage: %s full\n", argv[0]);
+		debugPrintf("Also, toggle showing statistics for the current session\n");
+		debugPrintf("Usage: %s (full|stats)\n", argv[0]);
 	}
 	return true;
 

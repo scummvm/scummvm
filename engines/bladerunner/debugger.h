@@ -54,6 +54,7 @@ public:
 	bool _viewWalkboxes;
 	bool _viewZBuffer;
 	bool _playFullVk;
+	bool _showStatsVk;
 	bool _showMazeScore;
 
 	Debugger(BladeRunnerEngine *vm);
