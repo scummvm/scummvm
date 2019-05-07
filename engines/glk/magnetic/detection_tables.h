@@ -38,7 +38,7 @@ struct MagneticGameDescription {
 	Common::Language _language;
 };
 
-const MagneticDescriptor MAGNETIC_GAME_LIST[] = {
+const PlainGameDescriptor MAGNETIC_GAME_LIST[] = {
 	{ "magnetic", "Magnetic Scrolls Game" },
 
 	{ nullptr, nullptr }

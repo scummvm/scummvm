@@ -20,30 +20,16 @@
  *
  */
 
-#ifndef GLK_GLULXE_DETECTION
-#define GLK_GLULXE_DETECTION
+#ifndef GLK_MAGNETIC_DETECTION
+#define GLK_MAGNETIC_DETECTION
 
 #include "common/fs.h"
 #include "common/hash-str.h"
 #include "engines/game.h"
+#include "glk/detection.h"
 
 namespace Glk {
 namespace Magnetic {
-
-/**
- * Magnetic game descriptior
- */
-struct MagneticDescriptor {
-	const char *gameId;
-	const char *description;
-
-	operator PlainGameDescriptor() const {
-		PlainGameDescriptor pd;
-		pd.gameId = gameId;
-		pd.description = description;
-		return pd;
-	}
-};
 
 /**
  * Meta engine for Magnetic interpreter
@@ -58,7 +44,7 @@ public:
 	/**
 	 * Returns a game description for the given game Id, if it's supported
 	 */
-	static MagneticDescriptor findGame(const char *gameId);
+	static GameDescriptor findGame(const char *gameId);
 
 	/**
 	 * Detect supported games
