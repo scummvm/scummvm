@@ -20,67 +20,36 @@
  *
  */
 
-#ifndef GLK_HUGO_TYPES
-#define GLK_HUGO_TYPES
-
-#include "common/scummsys.h"
+#include "glk/hugo/hugo.h"
 
 namespace Glk {
 namespace Hugo {
 
-#define HUGO_FILE	strid_t
-#define MAX_CONTEXT_COMMANDS	32
-#define MAXBUFFER 255
-#define MAXUNDO 1024
+void Hugo::hugo_init_screen() {
+	// Open the main window...
+	mainwin = currentwin = glk_window_open(0, 0, 0, wintype_TextBuffer, 1);
+	assert(mainwin);
 
-/**
- * Library/engine globals
- */
-enum EngineGlobals {
-	object = 0,
-	xobject = 1,
-	self = 2,
-	wordcount = 3,
-	player = 4,
-	actor = 5,
-	location = 6,
-	verbroutine = 7,
-	endflag = 8,
-	prompt = 9,
-	objectcount = 10,
-	system_status = 11
-};
+	// ...and set it up for default output
+	glk_set_window(mainwin);
 
-/**
- * Library/engine properties
- */
-enum EngineProperties {
-	before = 1,
-	after = 2,
-	noun = 3,
-	adjective = 4,
-	article = 5
-};
+	// By setting the width and height so high, we're basically forcing the Glk library
+	// to deal with text-wrapping and page ends
+	SCREENWIDTH = 0x7fff;
+	SCREENHEIGHT = 0x7fff;
+	FIXEDCHARWIDTH = 1;
+	FIXEDLINEHEIGHT = 1;
 
-/**
- * "display" object properties
- */
-enum ObjectProperties {
-	screenwidth = 1,
-	screenheight = 2,
-	linelength = 3,
-	windowlines = 4,
-	cursor_column = 5,
-	cursor_row = 6,
-	hasgraphics = 7,
-	title_caption = 8,
-	hasvideo = 9,
-	needs_repaint = 10,
-	pointer_x = 11,
-	pointer_y = 12
-};
+	hugo_settextwindow(1, 1,
+		SCREENWIDTH/FIXEDCHARWIDTH, SCREENHEIGHT/FIXEDLINEHEIGHT);
+}
+
+void Hugo::hugo_cleanup_screen() {
+}
+
+void Hugo::hugo_settextwindow(int left, int top, int right, int bottom) {
+	// TODO
+}
 
 } // End of namespace Hugo
 } // End of namespace Glk
-
-#endif

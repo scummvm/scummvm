@@ -72,6 +72,7 @@ MODULE_OBJS := \
 	glulxe/string.o \
 	glulxe/vm.o \
 	hugo/detection.o \
+	hugo/heglk.o \
 	hugo/hugo.o \
 	magnetic/detection.o \
 	magnetic/emu.o \
