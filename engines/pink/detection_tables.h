@@ -191,6 +191,17 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// German
+	{
+		"pokus",
+		0,
+		AD_ENTRY1s("HPP.orb", "a396a310e9d42ff43798ffdee2589a1a", 543000636),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NONE)
+	},
+
 	// Hebrew
 	{
 		"pokus",
