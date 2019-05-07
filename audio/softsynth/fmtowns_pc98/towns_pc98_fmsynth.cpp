@@ -987,7 +987,6 @@ bool TownsPC98_FmSynth::init() {
 
 	_chanInternal = new ChanInternal[_numChan];
 	for (int i = 0; i < _numChan; i++) {
-		memset(&_chanInternal[i], 0, sizeof(ChanInternal));
 		for (int j = 0; j < 4; ++j)
 			_chanInternal[i].opr[j] = new TownsPC98_FmSynthOperator(_timerbase, _rtt, _oprRates, _oprRateshift, _oprAttackDecay, _oprFrq, _oprSinTbl, _oprLevelOut, _oprDetune);
 	}
