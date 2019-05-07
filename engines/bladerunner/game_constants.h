@@ -901,9 +901,9 @@ enum Flags {
 	// 459 is never used
 	kFlagSteeleWalkingAround = 460,
 	kFlagMaggieHasBomb = 461,
-	kFlagPS04GuzzaLeft = 462,
+	kFlagGuzzaIsMovingAround = 462,
 	kFlagHC01GuzzaWalk = 463,
-	kFlagHC01GuzzaPrepare= 464,
+	kFlagHC01GuzzaPrepare = 464,
 	kFlagMcCoyArrested = 465,
 	kFlagBB10Shelf1Available = 466,
 	kFlagBB10Shelf2Available = 467,
@@ -2104,23 +2104,29 @@ enum GoalGordo {
 };
 
 enum GoalGuzza {
-	kGoalGuzzaLeaveOffice = 100,
-	kGoalGuzzaGoToHawkersCircle1 = 101,
-	kGoalGuzzaGoToOffice = 102,
-	kGoalGuzzaGoToHawkersCircle2 = 103,
-	kGoalGuzzaGoToFreeSlotB = 104,
-	kGoalGuzzaGoToFreeSlotG = 105,
-	kGoalGuzzaSitAtNR03 = 201,
-	kGoalGuzzaUG18Wait = 300,
-	kGoalGuzzaUG18Target = 301,
-	kGoalGuzzaUG18WillGetShotBySadik = 302,
-	kGoalGuzzaUG18HitByMcCoy = 303,
-	kGoalGuzzaUG18MissedByMcCoy = 304,
-	kGoalGuzzaUG18ShotByMcCoy = 305,
-	kGoalGuzzaUG18ShootMcCoy = 306,
-	kGoalGuzzaUG18FallDown = 307,
-	kGoalGuzzaUG18ShotBySadik = 390,
-	kGoalGuzzaGone = 599
+
+	kGoalGuzzaDefault                 =   0, // added goal
+	kGoalGuzzaLeftOffice              = 100,
+	kGoalGuzzaGoToHawkersCircle1      = 101,
+	kGoalGuzzaAtOffice                = 102,
+	kGoalGuzzaGoToHawkersCircle2      = 103,
+	kGoalGuzzaGoToFreeSlotB           = 104,
+	kGoalGuzzaGoToFreeSlotG           = 105,
+	kGoalGuzzaCallFavorsForHoboShoot1 = 106, // added goal
+	kGoalGuzzaCallFavorsForHoboShoot2 = 107, // added goal
+	kGoalGuzzaCalledFavorsForHobo     = 108, // added goal
+	kGoalGuzzaWasAtNR03               = 200,
+	kGoalGuzzaSitAtNR03               = 201,
+	kGoalGuzzaUG18Wait                = 300,
+	kGoalGuzzaUG18Target              = 301,
+	kGoalGuzzaUG18WillGetShotBySadik  = 302,
+	kGoalGuzzaUG18HitByMcCoy          = 303,
+	kGoalGuzzaUG18MissedByMcCoy       = 304,
+	kGoalGuzzaUG18ShotByMcCoy         = 305,
+	kGoalGuzzaUG18ShootMcCoy          = 306,
+	kGoalGuzzaUG18FallDown            = 307,
+	kGoalGuzzaUG18ShotBySadik         = 390,
+	kGoalGuzzaGone                    = 599
 };
 
 enum GoalClovis {

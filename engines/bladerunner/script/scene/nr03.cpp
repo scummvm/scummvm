@@ -265,7 +265,7 @@ void SceneScriptNR03::SceneFrameAdvanced(int frame) {
 		rotateActorOnTable(frame);
 	} else if (frame == 110) {
 		if (Actor_Query_Goal_Number(kActorGuzza) == kGoalGuzzaSitAtNR03) {
-			Actor_Set_Goal_Number(kActorGuzza, 200);
+			Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaWasAtNR03);
 		} else if (!Game_Flag_Query(kFlagNR03toNR05)) {
 			Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyNRxxSitAtTable);
 			Player_Gains_Control();

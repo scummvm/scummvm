@@ -62,7 +62,7 @@ bool AIScriptLucy::Update() {
 
 	if (Global_Variable_Query(kVariableChapter) == 4
 	 && Actor_Query_Goal_Number(kActorLucy) == kGoalLucyGone
-	 && Actor_Query_Which_Set_In(kActorLucy) != 99
+	 && Actor_Query_Which_Set_In(kActorLucy) != kSetFreeSlotI
 	) {
 		if (Actor_Query_Which_Set_In(kActorLucy) != Player_Query_Current_Set()) {
 			Actor_Put_In_Set(kActorLucy, kSetFreeSlotI);

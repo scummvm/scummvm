@@ -96,7 +96,12 @@ bool SceneScriptPS01::ClickedOnExit(int exitId) {
 
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1877.9f, 16592.0f, -2975.0f, 0, true, false, 0)) {
+#if BLADERUNNER_ORIGINAL_BUGS
 			Actor_Set_At_XYZ(kActorMcCoy, 1872.0f, 16592.0f, -2975.0f, 870);
+#else
+			// reduce glitch with spinner door
+			Actor_Set_At_XYZ(kActorMcCoy, 1872.0f, 16592.0f, -2994.0f, 870);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Game_Flag_Reset(kFlagMcCoyInChinaTown);
 			Game_Flag_Reset(kFlagMcCoyInRunciters);
 			Game_Flag_Reset(kFlagMcCoyInMcCoyApartment);

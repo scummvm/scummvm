@@ -1380,7 +1380,7 @@ bool Debugger::cmdItem(int argc, const char **argv) {
 				}
 				return true;
 			} else {
-				debugPrintf("No item was found with the specified id: %d\n", itemId);
+				debugPrintf("No item was found with the specified id: %d in the scene\n", itemId);
 				return true;
 			}
 		} else {
@@ -1565,7 +1565,7 @@ bool Debugger::cmdList(int argc, const char **argv) {
 			SceneObjects::SceneObject *sceneObject = &_vm->_sceneObjects->_sceneObjects[_vm->_sceneObjects->_sceneObjectsSortedByDistance[i]];
 
 			if (sceneObject->type == kSceneObjectTypeActor) {
-				debugPrintf("%d: %s (Clk: %s, Trg: %s, Prs: %s, Obs: %s, Mvg: %s), Goal: %d, Animation: %d:%d\n    Pos(%02.2f,%02.2f,%02.2f)\n",
+				debugPrintf("%d: %s (Clk: %s, Trg: %s, Prs: %s, Obs: %s, Mvg: %s)\n    Goal: %d, Set: %d, Anim mode: %d id:%d\n    Pos(%02.2f,%02.2f,%02.2f)\n",
 				             sceneObject->id - kSceneObjectOffsetActors,
 				             _vm->_textActorNames->getText(sceneObject->id - kSceneObjectOffsetActors),
 				             sceneObject->isClickable? "T" : "F",
@@ -1574,6 +1574,7 @@ bool Debugger::cmdList(int argc, const char **argv) {
 				             sceneObject->isObstacle?  "T" : "F",
 				             sceneObject->isMoving?    "T" : "F",
 				             _vm->_actors[sceneObject->id - kSceneObjectOffsetActors]->getGoal(),
+				             _vm->_actors[sceneObject->id - kSceneObjectOffsetActors]->getSetId(),
 				             _vm->_actors[sceneObject->id - kSceneObjectOffsetActors]->getAnimationMode(),
 				             _vm->_actors[sceneObject->id - kSceneObjectOffsetActors]->getAnimationId(),
 				             _vm->_actors[sceneObject->id - kSceneObjectOffsetActors]->getPosition().x,
