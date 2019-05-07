@@ -54,10 +54,6 @@ void Cursor::init(ActorManager *actorManager, DragonINIResource *dragonINIResour
 	data_8007283c = 0;
 	_cursorActivationSeqOffset = 0;
 	data_800728b0_cursor_seqID = 0;
-
-	for(int i = 0x17; i < 0x29; i++) {
-		actorManager->loadActor(0, i); //TODO hack this should be with inventory
-	}
 }
 
 
@@ -120,7 +116,7 @@ void Cursor::update() {
 		}
 	}
 
-	if (_vm->data_8006f3a8 == 0) {
+	if (_vm->iniItemInHand == 0) {
 		if (_actor->_sequenceID != 0x84) {
 			_actor->updateSequence(0x84);
 		}
@@ -176,13 +172,14 @@ int16 Cursor::updateINIUnderCursor() {
 		}
 	}
 
-	// _iniUnderCursor = 0; //TODO remove this once we complete function.
-
 	// TODO 0x80028940
 	int16 inventoryType = _vm->_inventory->getType();
 	if (inventoryType == 1) {
-		// Might be open inventory bag.
-		//TODO 0x80028da8
+		int16 invIni = _vm->_inventory->getIniAtPosition(_x, _y);
+		if (invIni > 0) {
+			_iniUnderCursor = invIni;
+			return _iniUnderCursor;
+		}
 	} else {
 		if (inventoryType < 2) {
 			if (inventoryType != 0) {
@@ -337,7 +334,7 @@ void Cursor::selectPreviousCursor() {
 		_sequenceID = 0x10001;
 	}
 	if (_sequenceID == -1) {
-		_sequenceID = _vm->data_8006f3a8 == 0 ? 4 : 5;
+		_sequenceID = _vm->iniItemInHand == 0 ? 4 : 5;
 	}
 }
 

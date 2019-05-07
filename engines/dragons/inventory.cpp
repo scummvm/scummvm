@@ -41,6 +41,24 @@ static const int16 bagBounceTable[4] = {
 		-5, -0xa, -5, 0
 };
 
+static const int16 invXPosTable[41] = {
+				0x0080, 0x00a0, 0x00c0, 0x0060, 0x0080, 0x00a0, 0x00c0, 0x00e0,
+				0x0100, 0x0020, 0x0040, 0x0060, 0x0080, 0x00a0, 0x00c0, 0x00e0,
+				0x0100, 0x0020, 0x0040, 0x0060, 0x0080, 0x00a0, 0x00c0, 0x00e0,
+				0x0100, 0x0020, 0x0040, 0x0060, 0x0080, 0x00a0, 0x00c0, 0x00e0,
+				0x0100, 0x0020, 0x0040, 0x0060, 0x0080, 0x00a0, 0x00c0, 0x00e0,
+				0x0100
+};
+
+static const int16 invYPosTable[41] = {
+				0x0028, 0x0028, 0x0028, 0x0040, 0x0040, 0x0040, 0x0040, 0x0040,
+				0x0040, 0x0058, 0x0058, 0x0058, 0x0058, 0x0058, 0x0058, 0x0058,
+				0x0058, 0x0070, 0x0070, 0x0070, 0x0070, 0x0070, 0x0070, 0x0070,
+				0x0070, 0x0088, 0x0088, 0x0088, 0x0088, 0x0088, 0x0088, 0x0088,
+				0x0088, 0x00a0, 0x00a0, 0x00a0, 0x00a0, 0x00a0, 0x00a0, 0x00a0,
+				0x00a0
+};
+
 Inventory::Inventory(DragonsEngine *vm) : _vm(vm) {
 	_type = 0;
 	_sequenceId = 0;
@@ -49,7 +67,7 @@ Inventory::Inventory(DragonsEngine *vm) : _vm(vm) {
 	_bag = NULL;
 }
 
-void Inventory::init(ActorManager *actorManager, BackgroundResourceLoader *backgroundResourceLoader, Bag *bag) {
+void Inventory::init(ActorManager *actorManager, BackgroundResourceLoader *backgroundResourceLoader, Bag *bag, DragonINIResource *dragonIniResource) {
 	_actor = actorManager->loadActor(1, 1); //Load inventory
 	_actor->x_pos = 2;
 	_actor->y_pos = 0;
@@ -63,6 +81,18 @@ void Inventory::init(ActorManager *actorManager, BackgroundResourceLoader *backg
 	_type = 0;
 	_old_showing_value = 0;
 	_bag = bag;
+
+	for(int i = 0x17; i < 0x29; i++) {
+		actorManager->loadActor(0, i); // TODO need to share resource between inventory item actors.
+	}
+
+	int j = 0;
+	for (int i=0; i < dragonIniResource->totalRecords() && j < 0x29; i++ ) {
+		DragonINI *ini = dragonIniResource->getRecord(i);
+		if (ini->sceneId == 1) {
+			_vm->unkArray_uint16[j++] = i + 1;
+		}
+	}
 }
 
 
@@ -128,10 +158,11 @@ void Inventory::openInventory() {
 	for(int i = 0; i < 0x29; i++) {
 		Actor *item = _vm->_actorManager->getActor(i + 0x17);
 
-		item->x_pos = 0x28; //TODO
-		item->y_pos = 0x28;
+		item->x_pos = item->target_x_pos = invXPosTable[i] + 0x10;
+		item->y_pos = item->target_y_pos = invYPosTable[i] + 0xc;
 
 		if (_vm->unkArray_uint16[i]) {
+			item->flags = 0; //clear all flags
 			item->field_e = 0x100;
 			item->priorityLayer = 0;
 			item->updateSequence(_vm->getINI(_vm->unkArray_uint16[i] - 1)->field_8 * 2 + 10);
@@ -213,6 +244,19 @@ void Inventory::draw() {
 	if(_bag) {
 		_bag->draw();
 	}
+}
+
+uint16 Inventory::getIniAtPosition(int16 x, int16 y) {
+	for (int i = 0; i < 0x29; i++) {
+		if (_vm->unkArray_uint16[i]) {
+			Actor *item = _vm->_actorManager->getActor(i + 0x17);
+			if (item->x_pos - 0x10 <= x && x < item->x_pos + 0x10
+				&& item->y_pos - 0xc <= y && y < item->y_pos + 0xc) {
+				return _vm->unkArray_uint16[i];
+			}
+		}
+	}
+	return 0;
 }
 
 } // End of namespace Dragons

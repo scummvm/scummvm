@@ -127,7 +127,7 @@ public:
 	uint16 data_800633fa;
 	Inventory *_inventory;
 	Cursor *_cursor;
-	uint16 data_8006f3a8;
+	uint16 iniItemInHand;
 
 	uint16 unkArray_uint16[42];
 	opCode1AStruct opCode1A_tbl[8];
@@ -196,14 +196,12 @@ public:
 	void reset_screen_maybe();
 
 private:
-	void gameLoopOld();
 	void gameLoop();
 	void updateHandler();
 	void updatePathfindingActors();
 	uint32 calulateTimeLeft();
 	void wait();
 	uint16 getIniFromImg();
-	uint16 updateINIUnderCursor();
 	void runINIScripts();
 	void engineFlag0x20UpdateFunction();
 
