@@ -1694,7 +1694,6 @@ switch)
 	datarootdir='${prefix}/data'
 	datadir='${datarootdir}'
 	docdir='${prefix}/doc'
-	PKG_CONFIG_LIBDIR=$DEVKITPRO/portlibs/switch/lib/pkgconfig
 	;;
 tizen)
  	_host_os=tizen
@@ -3404,14 +3403,7 @@ if test -n "$_host"; then
 		switch)
 			_backend="switch"
 			_opengl_mode=gles2
-			_build_scalers=yes
-			_build_hq_scalers=yes
-			_dynamic_modules=no
 			_vkeybd=yes
-			_mt32emu=yes
-			_vorbis=yes
-			_tremor=no
-			_eventrec=no
 			_port_mk="backends/platform/sdl/switch/switch.mk"
 			;;
 		tizen)
