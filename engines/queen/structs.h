@@ -85,6 +85,10 @@ struct Area {
 	//! entry in ObjectData, object lying in this area
 	uint16 object;
 
+	Area()
+		: mapNeighbors(0), bottomScaleFactor(0), topScaleFactor(0), object(0) {
+	}
+
 	void readFromBE(byte *&ptr) {
 		mapNeighbors = (int16)READ_BE_UINT16(ptr); ptr += 2;
 		box.readFromBE(ptr);

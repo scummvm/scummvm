@@ -54,11 +54,11 @@ void Grid::readDataFrom(uint16 numObjects, uint16 numRooms, byte *&ptr) {
 
 	_objMax[0] = 0;
 	_areaMax[0] = 0;
-	memset(&_area[0], 0, sizeof(Area) * MAX_AREAS_NUMBER);
+	// _area[0][] cleared by default constructor
 	for (i = 1; i <= _numRoomAreas; i++) {
 		_objMax[i] = (int16)READ_BE_INT16(ptr); ptr += 2;
 		_areaMax[i] = (int16)READ_BE_INT16(ptr); ptr += 2;
-		memset(&_area[i][0], 0, sizeof(Area));
+		// _area[i][0] cleared by default constructor
 		for (j = 1; j <= _areaMax[i]; j++) {
 			assert(j < MAX_AREAS_NUMBER);
 			_area[i][j].readFromBE(ptr);
@@ -66,7 +66,7 @@ void Grid::readDataFrom(uint16 numObjects, uint16 numRooms, byte *&ptr) {
 	}
 
 	_objectBox = new Box[numObjects + 1];
-	memset(&_objectBox[0], 0, sizeof(Box));
+	// _objectBox[0] cleared by default constructor
 	for (i = 1; i <= numObjects; i++) {
 		_objectBox[i].readFromBE(ptr);
 	}
