@@ -40,7 +40,9 @@ Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 		physical_windowwidth(0), physical_windowheight(0), physical_windowtop(0),
 		physical_windowleft(0), physical_windowbottom(0), physical_windowright(0),
 		inwindow(0), charwidth(0), lineheight(0), current_text_x(0), current_text_y(0),
-		undoptr(0), undoturn(0), undoinvalid(0), undorecord(0) {
+		undoptr(0), undoturn(0), undoinvalid(0), undorecord(0),
+		in_valid_window(false), glk_fcolor(DEF_FCOLOR), glk_bgcolor(DEF_BGCOLOR),
+		mainwin_bgcolor(0), glk_current_font(0), just_cleared_screen(false) {
 #if !defined (COMPILE_V25)
 	Common::fill(&context_command[0][0], &context_command[MAX_CONTEXT_COMMANDS][64], 0);
 	context_commands = 0;

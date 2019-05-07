@@ -105,6 +105,12 @@ private:
 	int undoturn;
 	char undoinvalid;
 	char undorecord;
+
+	bool in_valid_window;
+	int glk_fcolor, glk_bgcolor;
+	int mainwin_bgcolor;
+	int glk_current_font;
+	bool just_cleared_screen;
 private:
 	/**
 	 * \defgroup heglk

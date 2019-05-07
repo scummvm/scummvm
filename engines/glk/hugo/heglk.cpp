@@ -45,6 +45,7 @@ void Hugo::hugo_init_screen() {
 }
 
 void Hugo::hugo_cleanup_screen() {
+	// No implementation
 }
 
 void Hugo::hugo_settextwindow(int left, int top, int right, int bottom) {

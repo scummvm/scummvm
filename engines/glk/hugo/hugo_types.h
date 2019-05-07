@@ -28,10 +28,23 @@
 namespace Glk {
 namespace Hugo {
 
-#define HUGO_FILE	strid_t
 #define MAX_CONTEXT_COMMANDS	32
 #define MAXBUFFER 255
 #define MAXUNDO 1024
+#define CHARWIDTH 1
+
+#define HUGO_FILE	strid_t
+#define MAXPATH         256
+#define MAXFILENAME     256
+#define MAXDRIVE        256
+#define MAXDIR          256
+#define MAXEXT          256
+
+#define DEF_PRN         ""
+#define DEF_FCOLOR      0
+#define DEF_BGCOLOR     15
+#define DEF_SLFCOLOR	15
+#define DEF_SLBGCOLOR	1
 
 /**
  * Library/engine globals
