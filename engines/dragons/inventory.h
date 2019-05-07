@@ -32,6 +32,7 @@ class ActorManager;
 class BackgroundResourceLoader;
 class Background;
 class Bag;
+class DragonINIResource;
 
 class Inventory {
 public:
@@ -46,7 +47,7 @@ private:
 public:
 	Inventory(DragonsEngine *vm);
 
-	void init(ActorManager *actorManager, BackgroundResourceLoader *backgroundResourceLoader, Bag *bag);
+	void init(ActorManager *actorManager, BackgroundResourceLoader *backgroundResourceLoader, Bag *bag, DragonINIResource *dragonIniResource);
 	void loadScene(uint32 sceneId);
 	bool isActorSet() { return true; }
 
@@ -75,6 +76,7 @@ public:
 	void closeInventory();
 
 	void draw();
+	uint16 getIniAtPosition(int16 x, int16 y);
 private:
 	void animateBagIn();
 	void animateBagOut();

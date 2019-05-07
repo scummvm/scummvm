@@ -992,14 +992,14 @@ void ScriptOpcodes::opCode_Unk7(ScriptOpCall &scriptOpCall) {
 		}
 
 		if (sceneId == 1) {
-			if (_vm->data_8006f3a8 != 0) {
+			if (_vm->iniItemInHand != 0) {
 				uint16 freeSlot = 0;
 				for( ;_vm->unkArray_uint16[freeSlot] != 0; freeSlot++) {
 					if (_vm->unkArray_uint16[freeSlot] == 0) {
 						break;
 					}
 				}
-				_vm->unkArray_uint16[freeSlot] = _vm->data_8006f3a8;
+				_vm->unkArray_uint16[freeSlot] = _vm->iniItemInHand;
 				if (_vm->_inventory->getType() == 1) {
 					Actor *actor = _vm->_actorManager->getActor(freeSlot + 0x17);
 					actor->flags = 0;
@@ -1019,7 +1019,7 @@ void ScriptOpcodes::opCode_Unk7(ScriptOpCall &scriptOpCall) {
 			_vm->_cursor->data_800728b0_cursor_seqID = 5;
 			_vm->_cursor->_sequenceID = 5;
 			_vm->_cursor->data_8007283c = _vm->getINI(field2 - 1)->field_8 * 2 + 10;
-			_vm->data_8006f3a8 = field2;
+			_vm->iniItemInHand = field2;
 		}
 	}
 	ini->sceneId = sceneId;

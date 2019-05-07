@@ -66,7 +66,7 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	run_func_ptr_unk_countdown_timer = 0;
 	data_8006a3a0_flag = 0;
 	data_800633fa = 0;
-	data_8006f3a8 = 0;
+	iniItemInHand = 0;
 	_inventory = new Inventory(this);
 	_cursor = new Cursor(this);
 
@@ -139,7 +139,7 @@ Common::Error DragonsEngine::run() {
 	_flags |= 0x26;
 
 	_cursor->init(_actorManager, _dragonINIResource);
-	_inventory->init(_actorManager, _backgroundResourceLoader, new Bag(_bigfileArchive, _screen));
+	_inventory->init(_actorManager, _backgroundResourceLoader, new Bag(_bigfileArchive, _screen), _dragonINIResource);
 
 	uint16 sceneId = 0x12;
 	_dragonINIResource->getFlickerRecord()->sceneId = sceneId; //TODO
@@ -163,75 +163,6 @@ Common::Error DragonsEngine::run() {
 
 	debug("Ok");
 	return Common::kNoError;
-}
-
-// Not used any more.....
-void DragonsEngine::gameLoopOld() {
-	_counter = 0;
-	bit_flags_8006fbd8 = 0;
-	while (!shouldQuit()) {
-		updateHandler();
-		updateEvents();
-
-		if (getCurrentSceneId() != 2) {
-			_sceneId1 = getCurrentSceneId();
-		}
-
-		_counter++;
-		DragonINI *flickerIni = _dragonINIResource->getFlickerRecord();
-		if (_counter >= 1200 && flickerIni->actor->resourceID == 0xe) { // 0xe == flicker.act
-			Actor *actor = flickerIni->actor;
-			actor->_sequenceID2 = 2;
-			flickerIni->field_20_actor_field_14 = 2;
-
-			actor->updateSequence(getINI(0xc2)->sceneId == 1 ? 0x30 : 2);
-			_counter = 0;
-			setFlags(Dragons::ENGINE_FLAG_80000000);
-		}
-
-		if (_flags & Dragons::ENGINE_FLAG_80000000) {
-			if (flickerIni->actor->flags & Dragons::ACTOR_FLAG_4) {
-				_counter = 0;
-				clearFlags(Dragons::ENGINE_FLAG_80000000);
-			}
-		}
-
-		if (bit_flags_8006fbd8 == 0) {
-			setFlags(Dragons::ENGINE_FLAG_8);
-		}
-
-		if (flickerIni->sceneId == getCurrentSceneId()) {
-			uint16 id = getIniFromImg();
-			if (id != 0) {
-				// 0x80026cac
-				error("todo 0x80026cac run script");
-			} else {
-				// 0x80026d34
-				// $s4_1 = 0;
-			}
-		} else {
-			// 0x80026d34
-			// $s4_1 = 0;
-		}
-
-		// 0x80026d38
-		_cursor->updateINIUnderCursor();
-
-		if (_rightMouseButtonUp && !isFlagSet(ENGINE_FLAG_20000000) && !isFlagSet(ENGINE_FLAG_400)) {
-			_cursor->selectPreviousCursor();
-		}
-
-		// Action input
-		if (_leftMouseButtonUp && !isFlagSet(ENGINE_FLAG_20000000) && !isFlagSet(ENGINE_FLAG_400)) {
-			//TODO
-		}
-
-		runINIScripts();
-
-		_scene->draw();
-		_screen->updateScreen();
-		wait();
-	}
 }
 
 uint16 DragonsEngine::ipt_img_file_related()
@@ -359,7 +290,7 @@ void DragonsEngine::gameLoop()
 //		actorId = CheckButtonMapPress_CycleUp(0);
 //		if (((actorId & 0xffff) != 0) && isInputEnabled()) {
 //			_cursor->_sequenceID = _cursor->_sequenceID + 1;
-//			if (data_8006f3a8 == 0) {
+//			if (iniItemInHand == 0) {
 //				bVar1 = _cursor->_sequenceID < 5;
 //			}
 //			else {
@@ -428,7 +359,7 @@ void DragonsEngine::gameLoop()
 							_inventory->setType(1);
 							_inventory->openInventory();
 							joined_r0x80027a38:
-							if (data_8006f3a8 == 0) {
+							if (iniItemInHand == 0) {
 								_cursor->_sequenceID = 1;
 								actorId = uVar3;
 							}
@@ -446,7 +377,7 @@ void DragonsEngine::gameLoop()
 							if (_cursor->_iniUnderCursor == 0x8002) {
 								LAB_80027294:
 								uVar7 = 0;
-								if (data_8006f3a8 == 0) {
+								if (iniItemInHand == 0) {
 									if ((bit_flags_8006fbd8 & 3) != 1) {
 										sequenceId = _dragonVAR->getVar(7);
 										uVar7 = _inventory->_old_showing_value;
@@ -464,8 +395,8 @@ void DragonsEngine::gameLoop()
 									if (uVar7 < 0x29) {
 										_cursor->_sequenceID = 1;
 										waitForFrames(1);
-										uVar6 = data_8006f3a8;
-										data_8006f3a8 = 0;
+										uVar6 = iniItemInHand;
+										iniItemInHand = 0;
 										_cursor->_iniUnderCursor = 0;
 										unkArray_uint16[(uint)uVar7] = uVar6;
 										actorId = uVar3;
@@ -502,7 +433,7 @@ void DragonsEngine::gameLoop()
 								clearFlags(ENGINE_FLAG_8);
 							}
 							_scriptOpcodes->_data_800728c0 = _cursor->data_80072890;
-							_cursor->data_80072890 = data_8006f3a8;
+							_cursor->data_80072890 = iniItemInHand;
 						}
 					}
 				}
@@ -566,7 +497,7 @@ void DragonsEngine::gameLoop()
 					_cursor->data_800728b0_cursor_seqID = _cursor->_sequenceID;
 					_cursor->data_80072890 = _cursor->_iniUnderCursor;
 					if (4 < _cursor->_sequenceID) {
-						_cursor->data_80072890 = data_8006f3a8;
+						_cursor->data_80072890 = iniItemInHand;
 						_scriptOpcodes->_data_800728c0 = _cursor->_iniUnderCursor;
 					}
 					clearFlags(ENGINE_FLAG_8);
@@ -582,10 +513,10 @@ void DragonsEngine::gameLoop()
 				}
 				puVar9 = unkArray_uint16 + (actorId_00 & 0xffff);
 				Actor *actor = _actorManager->getActor(actorId_00 + 0x17);
-				*puVar9 = data_8006f3a8;
+				*puVar9 = iniItemInHand;
 				_cursor->data_8007283c = actor->_sequenceID;
 				actor->clearFlag(ACTOR_FLAG_40);
-				data_8006f3a8 = _cursor->_iniUnderCursor;
+				iniItemInHand = _cursor->_iniUnderCursor;
 				_cursor->_sequenceID = 5;
 				actorId = uVar3;
 				if (*puVar9 != 0) {
@@ -593,7 +524,7 @@ void DragonsEngine::gameLoop()
 					actor->flags = 0;
 					actor->priorityLayer = 0;
 					actor->field_e = 0x100;
-					actor->updateSequence(getINI((uint)*puVar9 - 1)->field_1a_flags_maybe * 2 + 10); //TODO this doesn't look right
+					actor->updateSequence(getINI((uint)*puVar9 - 1)->field_8 * 2 + 10);
 					actor->setFlag(ACTOR_FLAG_40);
 					actor->setFlag(ACTOR_FLAG_80);
 					actor->setFlag(ACTOR_FLAG_100);
@@ -604,27 +535,30 @@ void DragonsEngine::gameLoop()
 				goto LAB_80026a74;
 			}
 			uVar6 = 0;
-			if (data_8006f3a8 == 0) goto LAB_80027b58;
+			if (iniItemInHand == 0) goto LAB_80027b58;
+			//drop item back into inventory
 			actorId = 0;
 			do {
 				Actor *actor = _actorManager->getActor(actorId + 0x17);
-				if (((((int)(short)actor->x_pos + -0x10 <= (int)_cursor->_x) &&
+				if (((((int)(short)actor->x_pos - 0x10 <= (int)_cursor->_x) &&
 					  ((int)_cursor->_x < (int)(short)actor->x_pos + 0x10)) &&
-					 ((int)(short)actor->y_pos + -0xc <= (int)_cursor->_y)) &&
-					(actorId = (uint)uVar6, (int)_cursor->_y < (int)(short)actor->y_pos + 0xc)) break;
+					 ((int)(short)actor->y_pos - 0xc <= (int)_cursor->_y)) &&
+					(actorId = (uint)uVar6, (int)_cursor->_y < (int)(short)actor->y_pos + 0xc)) {
+					break;
+				}
 				uVar6 = uVar6 + 1;
 				actorId = (uint)uVar6;
 			} while (uVar6 < 0x29);
 			if (actorId != 0x29) {
 				actorId_00 = (uint)(ushort)(uVar6 + 0x17);
-				unkArray_uint16[actorId] = data_8006f3a8;
+				unkArray_uint16[actorId] = iniItemInHand;
 				Actor *actor = _actorManager->getActor(actorId_00);
 				actor->flags = 0;
 				actor->priorityLayer = 0;
 				actor->field_e = 0x100;
-				data_8006f3a8 = 0;
+				iniItemInHand = 0;
 				actor->updateSequence(
-						 getINI((uint)unkArray_uint16[actorId] - 1)->field_1a_flags_maybe * 2 + 10);
+						 getINI((uint)unkArray_uint16[actorId] - 1)->field_8 * 2 + 10);
 				uVar6 = _cursor->_sequenceID;
 				actor->setFlag(ACTOR_FLAG_40);
 				actor->setFlag(ACTOR_FLAG_80);
@@ -637,7 +571,7 @@ void DragonsEngine::gameLoop()
 			}
 		}
 		LAB_8002790c:
-		if ((data_8006f3a8 == 0) ||
+		if ((iniItemInHand == 0) ||
 			(((ushort)(_cursor->_x - 10U) < 300 && ((ushort)(_cursor->_y - 10U) < 0xb4))))
 			goto LAB_80027b58;
 		_cursor->_sequenceID = 5;
@@ -800,10 +734,12 @@ void DragonsEngine::updateActorSequences() {
 
 			if (actor->flags & Dragons::ACTOR_FLAG_1) {
 				actor->resetSequenceIP();
-				actor->flags &= 0xeff6; //TODO rewrite using ACTOR_FLAG_nnn
+				//clear flag mask 0xeff6;
+				actor->clearFlag(ACTOR_FLAG_1);
+				actor->clearFlag(ACTOR_FLAG_8);
+				actor->clearFlag(ACTOR_FLAG_1000);
 				actor->field_7a = 0;
 			}
-			//TODO execute sequence Opcode here.
 			OpCall opCall;
 			opCall._result = 1;
 			while (opCall._result == 1) {
@@ -882,22 +818,6 @@ uint16 DragonsEngine::getIniFromImg() {
 		}
 
 	}
-	return 0;
-}
-
-uint16 DragonsEngine::updateINIUnderCursor() {
-	int32 x = (_cursorPosition.x + _scene->_camera.x) / 32;
-	int32 y = (_cursorPosition.y + _scene->_camera.y) / 8;
-
-	if (_flags & Dragons::ENGINE_FLAG_10) {
-
-		if (_inventory->getSequenceId() == 0 || _inventory->getSequenceId() == 2) {
-//TODO
-		} else {
-
-		}
-	}
-
 	return 0;
 }
 
