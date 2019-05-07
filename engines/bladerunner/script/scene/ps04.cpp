@@ -26,7 +26,7 @@ namespace BladeRunner {
 
 enum kPS04Loops {
 	kPS04LoopPanToPS04                 = 0, //   0 -  29
-	kPS04LoopMainLoop                  = 1, //  30 -  90 (actually 31-90)
+	kPS04LoopMainLoop                  = 1  //  30 -  90 (actually 31-90)
 };
 
 void SceneScriptPS04::InitializeScene() {
