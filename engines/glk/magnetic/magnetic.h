@@ -188,7 +188,7 @@ public:
 	/**
 	 * Returns the running interpreter type
 	 */
-	virtual InterpreterType getInterpreterType() const override { return INTERPRETER_GLULXE; }
+	virtual InterpreterType getInterpreterType() const override { return INTERPRETER_MAGNETIC; }
 
 	/**
 	 * Load a savegame from the passed stream
