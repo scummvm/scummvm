@@ -71,6 +71,8 @@ MODULE_OBJS := \
 	glulxe/serial.o \
 	glulxe/string.o \
 	glulxe/vm.o \
+	hugo/detection.o \
+	hugo/hugo.o \
 	magnetic/detection.o \
 	magnetic/emu.o \
 	magnetic/graphics.o \
