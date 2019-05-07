@@ -46,7 +46,7 @@ GameDescriptor HugoMetaEngine::findGame(const char *gameId) {
 }
 
 bool HugoMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
-	const char *const EXTENSIONS[] = { ".mag", ".rsc", nullptr };
+	const char *const EXTENSIONS[] = { ".hex", nullptr };
 
 	// Loop through the files of the folder
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
@@ -64,12 +64,7 @@ bool HugoMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &ga
 		Common::File gameFile;
 		if (!gameFile.open(*file))
 			continue;
-		if (gameFile.readUint32BE() != MKTAG('M', 'a', 'S', 'c')) {
-			gameFile.close();
-			continue;
-		}
 
-		gameFile.seek(0);
 		Common::String md5 = Common::computeStreamMD5AsString(gameFile, 5000);
 		size_t filesize = gameFile.size();
 		gameFile.close();

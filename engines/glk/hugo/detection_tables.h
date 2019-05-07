@@ -41,6 +41,8 @@ struct HugoGameDescription {
 const PlainGameDescriptor HUGO_GAME_LIST[] = {
 	{ "hugo", "Hugo IF Game" },
 
+	{ "annoyotron2", "Aggravatron: Annoyotron II" },
+
 	{ nullptr, nullptr }
 };
 
@@ -49,6 +51,7 @@ const PlainGameDescriptor HUGO_GAME_LIST[] = {
 #define TABLE_END_MARKER { nullptr, nullptr, nullptr, 0, Common::EN_ANY }
 
 const HugoGameDescription HUGO_GAMES[] = {
+	ENTRY0("annoyotron2", "944056721054fd1c9af9d1e95e63ce52", 66762),
 	TABLE_END_MARKER
 };
 
