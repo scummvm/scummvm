@@ -87,16 +87,6 @@ void OSystem_Switch::initBackend() {
 	OSystem_SDL::initBackend();
 }
 
-bool OSystem_Switch::hasFeature(Feature f) {
-	
-	if (f == kFeatureDisplayLogFile)
-		return false;
-	if (f == kFeatureOpenUrl)
-		return false;
-
-	return OSystem_SDL::hasFeature(f);
-}
-
 void OSystem_Switch::logMessage(LogMessageType::Type type, const char *message) {
 	printf("%s\n", message);
 }
