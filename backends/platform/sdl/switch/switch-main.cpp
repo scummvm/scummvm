@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
 	int res = scummvm_main(argc, argv);
 
 	// Free OSystem
-	delete (OSystem_Switch *)g_system;
+	g_system->destroy();
 
 #ifdef __SWITCH_DEBUG__
 	socketExit();

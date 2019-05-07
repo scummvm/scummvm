@@ -1688,7 +1688,7 @@ samsungtv)
 	;;
 switch)
 	_host_os=switch
-	_host_cpu=arm
+	_host_cpu=aarch64
 	_host_alias=aarch64-none-elf
 	test "x$prefix" = xNONE && prefix=.
 	datarootdir='${prefix}/data'
