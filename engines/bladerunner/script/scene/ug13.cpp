@@ -66,7 +66,7 @@ void SceneScriptUG13::InitializeScene() {
 	}
 
 	if (Game_Flag_Query(kFlagUG08toUG13)) {
-		Scene_Loop_Start_Special(0, 0, 0);
+		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
 		Scene_Loop_Set_Default(1);
 	} else if (Game_Flag_Query(kFlagUG08ElevatorUp)) {
 		Scene_Loop_Set_Default(4);

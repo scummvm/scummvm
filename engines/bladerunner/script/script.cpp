@@ -577,12 +577,12 @@ bool ScriptBase::Loop_Actor_Walk_To_Waypoint(int actorId, int waypointId, int pr
 	return result;
 }
 
-bool ScriptBase::Loop_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int proximity, bool interruptible, bool run, bool a7) {
-	debugC(kDebugScript, "Loop_Actor_Walk_To_XYZ(%d, %f, %f, %f, %d, %d, %d, %d)", actorId, x, y, z, proximity, interruptible, run, a7);
+bool ScriptBase::Loop_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int proximity, bool interruptible, bool run, bool force) {
+	debugC(kDebugScript, "Loop_Actor_Walk_To_XYZ(%d, %f, %f, %f, %d, %d, %d, %d)", actorId, x, y, z, proximity, interruptible, run, force);
 	_vm->gameWaitForActive();
 
 	if (_vm->_runningActorId == actorId) {
-		if (a7) {
+		if (force) {
 			_vm->_runningActorId = -1;
 		} else {
 			run = true;

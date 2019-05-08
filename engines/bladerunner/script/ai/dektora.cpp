@@ -1057,7 +1057,7 @@ bool AIScriptDektora::UpdateAnimation(int *animation, int *frame) {
 		if (_animationFrame == 8
 		 && Actor_Query_In_Set(kActorDektora, kSetNR10)
 		) {
-			Scene_Loop_Start_Special(2, 4, 1);
+			Scene_Loop_Start_Special(kSceneLoopModeOnce, 4, true);
 		}
 
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(157)) {

@@ -107,7 +107,7 @@ protected:
 	bool Loop_Actor_Walk_To_Item(int actorId, int itemId, int proximity, bool interruptible, bool run);
 	bool Loop_Actor_Walk_To_Scene_Object(int actorId, const char *objectName, int proximity, bool interruptible, bool run);
 	bool Loop_Actor_Walk_To_Waypoint(int actorId, int waypointId, int proximity, bool interruptible, bool run);
-	bool Loop_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int proximity, bool interruptible, bool run, bool a7);
+	bool Loop_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int proximity, bool interruptible, bool run, bool force);
 	void Async_Actor_Walk_To_Waypoint(int actorId, int waypointId, int proximity, bool run);
 	void Async_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int proximity, bool run);
 	void Actor_Force_Stop_Walking(int actorId);

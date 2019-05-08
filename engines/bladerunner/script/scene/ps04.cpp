@@ -51,7 +51,8 @@ void SceneScriptPS04::InitializeScene() {
 	Ambient_Sounds_Add_Sound(kSfxSCANNER5, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxSCANNER6, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxSCANNER7, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
-	Scene_Loop_Start_Special(kPS04LoopPanToPS04, 0, 0);
+
+	Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kPS04LoopPanToPS04, false);
 	Scene_Loop_Set_Default(kPS04LoopMainLoop);
 }
 
@@ -358,20 +359,26 @@ void SceneScriptPS04::dialogueWithGuzza() {
 		Actor_Says(kActorGuzza, 620, 32);
 		if (_vm->_cutContent) {
 			// add a fade-out here while Guzza calls-in for favors
-			Scene_Loop_Start_Special(kPS04LoopPanToPS04, 0, 0);
+			Scene_Loop_Start_Special(kSceneLoopModeOnce, kPS04LoopPanToPS04, true);
 			Scene_Loop_Set_Default(kPS04LoopMainLoop);
-			Delay(2000);
+			Delay(1000);
+			Actor_Face_Actor(kActorGuzza, kActorMcCoy, true);
+			Delay(1000);
 		}
-		Actor_Face_Actor(kActorGuzza, kActorMcCoy, true);
 		Actor_Says(kActorGuzza, 700, 34);
 		Actor_Says(kActorMcCoy, 4100, 13);
 		Actor_Says(kActorGuzza, 710, 31);
 		Actor_Says(kActorGuzza, 720, 34);
 		Actor_Says(kActorMcCoy, 4105, 18);
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -668.0f, -350.85f, 962.0f, 0, false, false, 0);
+#if BLADERUNNER_ORIGINAL_BUGS
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -668.0f, -350.85f, 962.0f, 0, false, false, false);
+#else
+		// enforce stop running (if was running) - McCoy running in Guzza's office in this scene looks bad
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -668.0f, -350.85f, 962.0f, 0, false, false, true);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorGuzza, 730, 32);
 		Actor_Face_Actor(kActorMcCoy, kActorGuzza, true);
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -716.0f, -354.85f, 1042.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -716.0f, -354.85f, 1042.0f, 0, false, false, false);
 		Actor_Face_Actor(kActorGuzza, kActorMcCoy, true);
 		Actor_Says(kActorGuzza, 740, 31);
 		Actor_Says(kActorGuzza, 750, 32);
