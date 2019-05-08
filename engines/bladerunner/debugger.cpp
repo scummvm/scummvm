@@ -848,199 +848,199 @@ bool Debugger::cmdOverlay(int argc, const char **argv) {
 
 	if (argc != 1 && argc != 2 && argc != 3 && argc != 5) {
 		invalidSyntax = true;
-	}
-
-	if (_vm->_chapters->hasOpenResources()) {
-		chapterIdOverlaysAvailableInt = MIN(_vm->_chapters->currentResourceId(), 3);
-	}
-	if (chapterIdOverlaysAvailableInt == -1) {
-		debugPrintf("No available open resources to load VQAs from.\n Giving up.\n");
-		return true;
-	}
-
-	// Normally, don't force-load the MODE.MIX resource
-	if (!_vm->isArchiveOpen("MODE.MIX")) {
-//		if (_vm->openArchive("MODE.MIX") { // Note: This will force-load MODE.MIX. Use with caution!
-//			debugPrintf("Warning: MODE.MIX resources were force-loaded.\n Please, don't use game's menu modes (KIA, ESPER, Voigt-Kampff, Spinner GPS, Scores or Elevator) before executing an \"%s reset\" from the debugger!\n", argv[0]);
-//			modeMixOverlaysAvailableFlg = true;
-//		}
 	} else {
-		modeMixOverlaysAvailableFlg = true;
-	}
+		if (_vm->_chapters->hasOpenResources()) {
+			chapterIdOverlaysAvailableInt = MIN(_vm->_chapters->currentResourceId(), 3);
+		}
+		if (chapterIdOverlaysAvailableInt == -1) {
+			debugPrintf("No available open resources to load VQAs from.\n Giving up.\n");
+			return true;
+		}
 
-	if (argc == 1) {
-		// print info for all overlays loaded for the scene
-		uint8 countOfLoadedOverlaysInScene = 0;
-		debugPrintf("name animationId startFrame endFrame\n");
+		// Normally, don't force-load the MODE.MIX resource
+		if (!_vm->isArchiveOpen("MODE.MIX")) {
+	//		if (_vm->openArchive("MODE.MIX") { // Note: This will force-load MODE.MIX. Use with caution!
+	//			debugPrintf("Warning: MODE.MIX resources were force-loaded.\n Please, don't use game's menu modes (KIA, ESPER, Voigt-Kampff, Spinner GPS, Scores or Elevator) before executing an \"%s reset\" from the debugger!\n", argv[0]);
+	//			modeMixOverlaysAvailableFlg = true;
+	//		}
+		} else {
+			modeMixOverlaysAvailableFlg = true;
+		}
 
-		for (int i = 0; i < _vm->_overlays->kOverlayVideos; ++i) {
-			if (_vm->_overlays->_videos[i].loaded) {
-				countOfLoadedOverlaysInScene++;
-				VQADecoder::LoopInfo &loopInfo =_vm->_overlays->_videos[i].vqaPlayer->_decoder._loopInfo;
-				for (int j = 0; j < loopInfo.loopCount; ++j) {
-					debugPrintf("%s %2d %4d %4d\n", _vm->_overlays->_videos[i].name.c_str(), j, loopInfo.loops[j].begin, loopInfo.loops[j].end);
+		if (argc == 1) {
+			// print info for all overlays loaded for the scene
+			uint8 countOfLoadedOverlaysInScene = 0;
+			debugPrintf("name animationId startFrame endFrame\n");
+
+			for (int i = 0; i < _vm->_overlays->kOverlayVideos; ++i) {
+				if (_vm->_overlays->_videos[i].loaded) {
+					countOfLoadedOverlaysInScene++;
+					VQADecoder::LoopInfo &loopInfo =_vm->_overlays->_videos[i].vqaPlayer->_decoder._loopInfo;
+					for (int j = 0; j < loopInfo.loopCount; ++j) {
+						debugPrintf("%s %2d %4d %4d\n", _vm->_overlays->_videos[i].name.c_str(), j, loopInfo.loops[j].begin, loopInfo.loops[j].end);
+					}
 				}
 			}
-		}
 
-		if ( countOfLoadedOverlaysInScene > 0) {
-			debugPrintf("  ** %d overlays are loaded in scene **\n", countOfLoadedOverlaysInScene);
-		} else {
-			debugPrintf("  ** No overlays loaded in scene **\n");
-		}
-
-		return true;
-	}
-
-	if (argc == 2) {
-		Common::String argName = argv[1];
-
-		if (argName == "reset") {
-		// Reset (remove) the overlays loaded for the scene
-			_vm->_overlays->removeAll();
-			// And return to original VQA for this scene
-			const Common::String origSceneName = _vm->_gameInfo->getSceneName(_vm->_scene->_sceneId);
-
-			Common::String origVqaName;
-			if (chapterIdOverlaysAvailableInt == 1) {
-				origVqaName = Common::String::format("%s.VQA", origSceneName.c_str());
+			if ( countOfLoadedOverlaysInScene > 0) {
+				debugPrintf("  ** %d overlays are loaded in scene **\n", countOfLoadedOverlaysInScene);
 			} else {
-				origVqaName = Common::String::format("%s_%d.VQA", origSceneName.c_str(), chapterIdOverlaysAvailableInt);
+				debugPrintf("  ** No overlays loaded in scene **\n");
 			}
 
-			if (_vm->_scene->_vqaPlayer != nullptr) {
-				delete _vm->_scene->_vqaPlayer;
+			return true;
+		}
+
+		if (argc == 2) {
+			Common::String argName = argv[1];
+
+			if (argName == "reset") {
+			// Reset (remove) the overlays loaded for the scene
+				_vm->_overlays->removeAll();
+				// And return to original VQA for this scene
+				const Common::String origSceneName = _vm->_gameInfo->getSceneName(_vm->_scene->_sceneId);
+
+				Common::String origVqaName;
+				if (chapterIdOverlaysAvailableInt == 1) {
+					origVqaName = Common::String::format("%s.VQA", origSceneName.c_str());
+				} else {
+					origVqaName = Common::String::format("%s_%d.VQA", origSceneName.c_str(), chapterIdOverlaysAvailableInt);
+				}
+
+				if (_vm->_scene->_vqaPlayer != nullptr) {
+					delete _vm->_scene->_vqaPlayer;
+				}
+
+				_vm->_scene->_vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceBack, origVqaName);
+				if (!_vm->_scene->_vqaPlayer->open()) {
+					debugPrintf("Error: Could not open player while reseting\nto scene VQA named: %s!\n", (origVqaName + ".VQA").c_str());
+					return true;
+				}
+				_vm->_scene->startDefaultLoop();
+				_vm->_scene->advanceFrame();
+
+
+			} else if (argName == "avail") {
+			// List the available overlays in the loaded resources
+				const uint dispColCount = 5;
+				uint colCountIter = 0;
+				uint16 itemIter = 0;
+
+				debugPrintf("Available overlays in the loaded resources:\n");
+				for (itemIter = 0; overlaysList[itemIter].resourceId != 0; ++itemIter) {
+					if ( (overlaysList[itemIter].resourceId == chapterIdOverlaysAvailableInt)
+						|| ( modeMixOverlaysAvailableFlg && overlaysList[itemIter].resourceId == 6)
+					) {
+						debugPrintf("%s ", overlaysList[itemIter].name);
+						colCountIter = (colCountIter + 1) % dispColCount;
+						if ( colCountIter == 0) {
+							debugPrintf("\n");
+						}
+					}
+				}
+				// final new line if needed
+				if ( colCountIter % dispColCount != 0) {
+					debugPrintf("\n");
+				}
+				if (!modeMixOverlaysAvailableFlg) {
+					debugPrintf("Note: MODE.MIX resources are currently not loaded.\n");
+				}
+
+			} else if (argName.size() > 12) {
+				debugPrintf("The specified name is too long. It should be up to 12 characters.\n");
+				invalidSyntax = true;
+			} else {
+				debugPrintf("Invalid command usage\n");
+				invalidSyntax = true;
+			}
+		}
+
+		if (!invalidSyntax && (argc == 3 || argc == 5)) {
+			Common::String overlayName = argv[1];
+			overlayName.toUppercase();
+
+			int overlayAnimationId = atoi(argv[2]);
+			bool loopForever = false;
+			LoopSetModes startNowFlag = kLoopSetModeEnqueue;
+
+			if (argc == 5 && atoi(argv[3]) != 0) {
+				loopForever = true;
 			}
 
-			_vm->_scene->_vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceBack, origVqaName);
-			if (!_vm->_scene->_vqaPlayer->open()) {
-				debugPrintf("Error: Could not open player while reseting\nto scene VQA named: %s!\n", (origVqaName + ".VQA").c_str());
+			if (argc == 5 && atoi(argv[4]) != 0) {
+				startNowFlag = kLoopSetModeImmediate;
+			}
+
+			if (overlayAnimationId < 0) {
+				debugPrintf("Animation id value must be >= 0!\n");
 				return true;
 			}
-			_vm->_scene->startDefaultLoop();
-			_vm->_scene->advanceFrame();
 
-
-		} else if (argName == "avail") {
-		// List the available overlays in the loaded resources
-			const uint dispColCount = 5;
-			uint colCountIter = 0;
+			// Check if specified overlay name exists AND is available
 			uint16 itemIter = 0;
-
-			debugPrintf("Available overlays in the loaded resources:\n");
 			for (itemIter = 0; overlaysList[itemIter].resourceId != 0; ++itemIter) {
 				if ( (overlaysList[itemIter].resourceId == chapterIdOverlaysAvailableInt)
 					|| ( modeMixOverlaysAvailableFlg && overlaysList[itemIter].resourceId == 6)
 				) {
-					debugPrintf("%s ", overlaysList[itemIter].name);
-					colCountIter = (colCountIter + 1) % dispColCount;
-					if ( colCountIter == 0) {
-						debugPrintf("\n");
+					if (strcmp(overlaysList[itemIter].name, overlayName.c_str()) == 0){
+						break;
 					}
 				}
 			}
-			// final new line if needed
-			if ( colCountIter % dispColCount != 0) {
-				debugPrintf("\n");
-			}
-			if (!modeMixOverlaysAvailableFlg) {
-				debugPrintf("Note: MODE.MIX resources are currently not loaded.\n");
-			}
-
-		} else if (argName.size() > 12) {
-			debugPrintf("The specified name is too long. It should be up to 12 characters.\n");
-			invalidSyntax = true;
-		} else {
-			debugPrintf("Invalid command usage\n");
-			invalidSyntax = true;
-		}
-	}
-
-	if (argc == 3 || argc == 5) {
-		Common::String overlayName = argv[1];
-		overlayName.toUppercase();
-
-		int overlayAnimationId = atoi(argv[2]);
-		bool loopForever = false;
-		LoopSetModes startNowFlag = kLoopSetModeEnqueue;
-
-		if (argc == 5 && atoi(argv[3]) != 0) {
-			loopForever = true;
-		}
-
-		if (argc == 5 && atoi(argv[4]) != 0) {
-			startNowFlag = kLoopSetModeImmediate;
-		}
-
-		if (overlayAnimationId < 0) {
-			debugPrintf("Animation id value must be >= 0!\n");
-			return true;
-		}
-
-		// Check if specified overlay name exists AND is available
-		uint16 itemIter = 0;
-		for (itemIter = 0; overlaysList[itemIter].resourceId != 0; ++itemIter) {
-			if ( (overlaysList[itemIter].resourceId == chapterIdOverlaysAvailableInt)
-				|| ( modeMixOverlaysAvailableFlg && overlaysList[itemIter].resourceId == 6)
-			) {
-				if (strcmp(overlaysList[itemIter].name, overlayName.c_str()) == 0){
-					break;
-				}
-			}
-		}
-		if (overlaysList[itemIter].resourceId == 0 ) {
-			debugPrintf("No available resource was found by that name!\nPerhaps it exists in another chapter.\n");
-			return true;
-		}
-
-		if (overlaysList[itemIter].isOverlayVQA) {
-			//
-			// Attempt to load the overlay in an empty slot
-			// even if it's not already loaded for the scene (in _vm->_overlays->_videos)
-			int overlayVideoIdx = _vm->_overlays->play(overlayName, overlayAnimationId, loopForever, startNowFlag, 0);
-			if( overlayVideoIdx == -1 ) {
-				debugPrintf("Could not load the overlay animation: %s in this scene. Try reseting overlays first to free up slots!\n", overlayName.c_str());
-			} else {
-				debugPrintf("Loading overlay animation: %s...\n", overlayName.c_str());
-
-				VQADecoder::LoopInfo &loopInfo =_vm->_overlays->_videos[overlayVideoIdx].vqaPlayer->_decoder._loopInfo;
-				int overlayAnimationLoopCount = loopInfo.loopCount;
-				if (overlayAnimationLoopCount == 0) {
-					debugPrintf("Error: No valid loops were found for overlay animation named: %s!\n", overlayName.c_str());
-					_vm->_overlays->remove(overlayName.c_str());
-				} else if (overlayAnimationId >= overlayAnimationLoopCount) {
-					debugPrintf("Invalid loop id: %d for overlay animation: %s. Try from 0 to %d.\n",  overlayAnimationId, overlayName.c_str(), overlayAnimationLoopCount-1);
-				} else {
-					// print info about available loops too
-					debugPrintf("Animation: %s loaded. Running loop %d...\n", overlayName.c_str(), overlayAnimationId);
-					for (int j = 0; j < overlayAnimationLoopCount; ++j) {
-						debugPrintf("%s %2d %4d %4d\n", _vm->_overlays->_videos[overlayVideoIdx].name.c_str(), j, loopInfo.loops[j].begin, loopInfo.loops[j].end);
-					}
-				}
-			}
-		} else {
-			if (_vm->_scene->_vqaPlayer != nullptr) {
-				delete _vm->_scene->_vqaPlayer;
-			}
-			_vm->_scene->_vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceBack, overlayName + ".VQA");
-			if (!_vm->_scene->_vqaPlayer->open()) {
-				debugPrintf("Error: Could not open player for scene VQA named: %s!\n", (overlayName + ".VQA").c_str());
+			if (overlaysList[itemIter].resourceId == 0 ) {
+				debugPrintf("No available resource was found by that name!\nPerhaps it exists in another chapter.\n");
 				return true;
 			}
 
-			VQADecoder::LoopInfo &loopInfo =_vm->_scene->_vqaPlayer->_decoder._loopInfo;
-			int sceneAnimationLoopCount = loopInfo.loopCount;
-			if (sceneAnimationLoopCount == 0) {
-				debugPrintf("Error: No valid loops were found for scene animation named: %s!\n", (overlayName + ".VQA").c_str());
-			} else if (overlayAnimationId >= sceneAnimationLoopCount) {
-				debugPrintf("Invalid loop id: %d for scene animation: %s. Try from 0 to %d.\n",  overlayAnimationId, overlayName.c_str(), sceneAnimationLoopCount-1);
+			if (overlaysList[itemIter].isOverlayVQA) {
+				//
+				// Attempt to load the overlay in an empty slot
+				// even if it's not already loaded for the scene (in _vm->_overlays->_videos)
+				int overlayVideoIdx = _vm->_overlays->play(overlayName, overlayAnimationId, loopForever, startNowFlag, 0);
+				if( overlayVideoIdx == -1 ) {
+					debugPrintf("Could not load the overlay animation: %s in this scene. Try reseting overlays first to free up slots!\n", overlayName.c_str());
+				} else {
+					debugPrintf("Loading overlay animation: %s...\n", overlayName.c_str());
+
+					VQADecoder::LoopInfo &loopInfo =_vm->_overlays->_videos[overlayVideoIdx].vqaPlayer->_decoder._loopInfo;
+					int overlayAnimationLoopCount = loopInfo.loopCount;
+					if (overlayAnimationLoopCount == 0) {
+						debugPrintf("Error: No valid loops were found for overlay animation named: %s!\n", overlayName.c_str());
+						_vm->_overlays->remove(overlayName.c_str());
+					} else if (overlayAnimationId >= overlayAnimationLoopCount) {
+						debugPrintf("Invalid loop id: %d for overlay animation: %s. Try from 0 to %d.\n",  overlayAnimationId, overlayName.c_str(), overlayAnimationLoopCount-1);
+					} else {
+						// print info about available loops too
+						debugPrintf("Animation: %s loaded. Running loop %d...\n", overlayName.c_str(), overlayAnimationId);
+						for (int j = 0; j < overlayAnimationLoopCount; ++j) {
+							debugPrintf("%s %2d %4d %4d\n", _vm->_overlays->_videos[overlayVideoIdx].name.c_str(), j, loopInfo.loops[j].begin, loopInfo.loops[j].end);
+						}
+					}
+				}
 			} else {
-				// ignore the specified loopForever and startNow flags
-				// just do a kSceneLoopModeOnce, without immediate start
-				_vm->_scene->loopStartSpecial(kSceneLoopModeOnce, overlayAnimationId, false);
-				debugPrintf("Scene animation: %s loaded. Running loop %d...\n", overlayName.c_str(), overlayAnimationId);
-				for (int j = 0; j < sceneAnimationLoopCount; ++j) {
-					debugPrintf("%s %2d %4d %4d\n", overlayName.c_str(), j, loopInfo.loops[j].begin, loopInfo.loops[j].end);
+				if (_vm->_scene->_vqaPlayer != nullptr) {
+					delete _vm->_scene->_vqaPlayer;
+				}
+				_vm->_scene->_vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceBack, overlayName + ".VQA");
+				if (!_vm->_scene->_vqaPlayer->open()) {
+					debugPrintf("Error: Could not open player for scene VQA named: %s!\n", (overlayName + ".VQA").c_str());
+					return true;
+				}
+
+				VQADecoder::LoopInfo &loopInfo =_vm->_scene->_vqaPlayer->_decoder._loopInfo;
+				int sceneAnimationLoopCount = loopInfo.loopCount;
+				if (sceneAnimationLoopCount == 0) {
+					debugPrintf("Error: No valid loops were found for scene animation named: %s!\n", (overlayName + ".VQA").c_str());
+				} else if (overlayAnimationId >= sceneAnimationLoopCount) {
+					debugPrintf("Invalid loop id: %d for scene animation: %s. Try from 0 to %d.\n",  overlayAnimationId, overlayName.c_str(), sceneAnimationLoopCount-1);
+				} else {
+					// ignore the specified loopForever and startNow flags
+					// just do a kSceneLoopModeOnce, without immediate start
+					_vm->_scene->loopStartSpecial(kSceneLoopModeOnce, overlayAnimationId, false);
+					debugPrintf("Scene animation: %s loaded. Running loop %d...\n", overlayName.c_str(), overlayAnimationId);
+					for (int j = 0; j < sceneAnimationLoopCount; ++j) {
+						debugPrintf("%s %2d %4d %4d\n", overlayName.c_str(), j, loopInfo.loops[j].begin, loopInfo.loops[j].end);
+					}
 				}
 			}
 		}
@@ -1551,190 +1551,257 @@ bool Debugger::cmdVk(int argc, const char **argv) {
 * Maybe keep this separate from the draw command, even though some code gets repeated here
 */
 bool Debugger::cmdList(int argc, const char **argv) {
-	if (argc != 2) {
-		debugPrintf("Enables debug listing of actors, scene objects, items, waypoints, regions, lights, fogs and walk-boxes.\n");
-		debugPrintf("Usage: %s (act | obj | items | way | reg | lit | fog | walk )\n", argv[0]);
-		return true;
-	}
+	bool invalidSyntax = false;
 
-	Common::String arg = argv[1];
-	if (arg == "act") {
-		debugPrintf("Listing scene actors: \n");
-		int count = 0;
-		for (int i = 0; i < _vm->_sceneObjects->_count; i++) {
-			SceneObjects::SceneObject *sceneObject = &_vm->_sceneObjects->_sceneObjects[_vm->_sceneObjects->_sceneObjectsSortedByDistance[i]];
+	if (argc < 2) {
+		invalidSyntax = true;
+	} else {
+		Common::String arg = argv[1];
+		if (arg == "act") {
+			if (argc == 2) {
+				debugPrintf("Listing scene actors: \n");
+				int count = 0;
+				for (int i = 0; i < _vm->_sceneObjects->_count; i++) {
+					SceneObjects::SceneObject *sceneObject = &_vm->_sceneObjects->_sceneObjects[_vm->_sceneObjects->_sceneObjectsSortedByDistance[i]];
 
-			if (sceneObject->type == kSceneObjectTypeActor) {
-				debugPrintf("%d: %s (Clk: %s, Trg: %s, Prs: %s, Obs: %s, Mvg: %s)\n    Goal: %d, Set: %d, Anim mode: %d id:%d\n    Pos(%02.2f,%02.2f,%02.2f)\n",
-				             sceneObject->id - kSceneObjectOffsetActors,
-				             _vm->_textActorNames->getText(sceneObject->id - kSceneObjectOffsetActors),
-				             sceneObject->isClickable? "T" : "F",
-				             sceneObject->isTarget?    "T" : "F",
-				             sceneObject->isPresent?   "T" : "F",
-				             sceneObject->isObstacle?  "T" : "F",
-				             sceneObject->isMoving?    "T" : "F",
-				             _vm->_actors[sceneObject->id - kSceneObjectOffsetActors]->getGoal(),
-				             _vm->_actors[sceneObject->id - kSceneObjectOffsetActors]->getSetId(),
-				             _vm->_actors[sceneObject->id - kSceneObjectOffsetActors]->getAnimationMode(),
-				             _vm->_actors[sceneObject->id - kSceneObjectOffsetActors]->getAnimationId(),
-				             _vm->_actors[sceneObject->id - kSceneObjectOffsetActors]->getPosition().x,
-				             _vm->_actors[sceneObject->id - kSceneObjectOffsetActors]->getPosition().y,
-				             _vm->_actors[sceneObject->id - kSceneObjectOffsetActors]->getPosition().z);
-				++count;
+					if (sceneObject->type == kSceneObjectTypeActor) {
+						Actor *actor = _vm->_actors[sceneObject->id - kSceneObjectOffsetActors];
+						debugPrintf("%d: %s (Clk: %s, Trg: %s, Prs: %s, Obs: %s, Mvg: %s)\n    Goal: %d, Set: %d, Anim mode: %d id:%d\n    Pos(%02.2f,%02.2f,%02.2f)\n",
+									 sceneObject->id - kSceneObjectOffsetActors,
+									 _vm->_textActorNames->getText(sceneObject->id - kSceneObjectOffsetActors),
+									 sceneObject->isClickable? "T" : "F",
+									 sceneObject->isTarget?    "T" : "F",
+									 sceneObject->isPresent?   "T" : "F",
+									 sceneObject->isObstacle?  "T" : "F",
+									 sceneObject->isMoving?    "T" : "F",
+									 actor->getGoal(),
+									 actor->getSetId(),
+									 actor->getAnimationMode(),
+									 actor->getAnimationId(),
+									 actor->getPosition().x,
+									 actor->getPosition().y,
+									 _vm->_actors[sceneObject->id - kSceneObjectOffsetActors]->getPosition().z);
+						++count;
+					}
+				}
+				debugPrintf("%d actors were found in scene.\n", count);
+			} else if (argc == 3) {
+				// list properties for specific actor regardless of the set/ scene they are in
+				int actorId = atoi(argv[2]);
+				if (actorId > 0 && actorId < _vm->kActorCount) {
+					debugPrintf("Showing properties for actor: %d:%s \n", actorId, _vm->_textActorNames->getText(actorId));
+					Actor *actor = _vm->_actors[actorId];
+
+					bool isReplicant = false;
+					switch (actorId) {
+					case kActorIzo:
+						isReplicant = _vm->_gameFlags->query(kFlagIzoIsReplicant);
+						break;
+					case kActorGordo:
+						isReplicant = _vm->_gameFlags->query(kFlagGordoIsReplicant);
+						break;
+					case kActorLucy:
+						isReplicant = _vm->_gameFlags->query(kFlagLucyIsReplicant);
+						break;
+					case kActorDektora:
+						isReplicant = _vm->_gameFlags->query(kFlagDektoraIsReplicant);
+						break;
+					case kActorSadik:
+						isReplicant = _vm->_gameFlags->query(kFlagSadikIsReplicant);
+						break;
+					case kActorLuther:
+						isReplicant = _vm->_gameFlags->query(kFlagLutherLanceIsReplicant);
+						break;
+					default:
+						isReplicant = false;
+						break;
+					}
+
+					debugPrintf("%d: %s (Mvg: %s, Walk:%s, Run:%s, Ret:%s, Trg: %s, Cmb: %s, Rep: %s)\n    Hp: %d, Fac: %d, Friend: %d\n    Goal: %d, Set: %d, Anim mode: %d id:%d\n    Pos(%02.2f,%02.2f,%02.2f), Walkbx:%d\n",
+						actorId,
+						_vm->_textActorNames->getText(actorId),
+						actor->isMoving()?  "T" : "F",
+						actor->isWalking()? "T" : "F",
+						actor->isRunning()? "T" : "F",
+						actor->isRetired()? "T" : "F",
+						actor->isTarget()?  "T" : "F",
+						actor->inCombat()?  "T" : "F",
+						isReplicant?        "T" : "F",
+						actor->getCurrentHP(),
+						actor->getFacing(),
+						actor->getFriendlinessToOther(kActorMcCoy),
+						actor->getGoal(),
+						actor->getSetId(),
+						actor->getAnimationMode(),
+						actor->getAnimationId(),
+						actor->getPosition().x,
+						actor->getPosition().y,
+						actor->getPosition().z,
+						actor->getWalkbox());
+				} else {
+					debugPrintf("Invalid actor id: %d was specified\n", actorId);
+					return true;
+				}
+			} else {
+				invalidSyntax = true;
 			}
-		}
-		debugPrintf("%d actors were found in scene.\n", count);
-	} else if (arg == "obj") {
-		debugPrintf("Listing scene objects: \n");
-		int count = 0;
-		for (int i = 0; i < _vm->_sceneObjects->_count; i++) {
-			SceneObjects::SceneObject *sceneObject = &_vm->_sceneObjects->_sceneObjects[_vm->_sceneObjects->_sceneObjectsSortedByDistance[i]];
-			const BoundingBox &bbox = sceneObject->boundingBox;
-			Vector3 a, b;
-			bbox.getXYZ(&a.x, &a.y, &a.z, &b.x, &b.y, &b.z);
-			Vector3 pos = _vm->_view->calculateScreenPosition(0.5 * (a + b));
-
-			if (sceneObject->type == kSceneObjectTypeUnknown) {
-				debugPrintf("%02d. Unknown object type\n", count);
-				++count;
-			} else if (sceneObject->type == kSceneObjectTypeObject) {
-				debugPrintf("%d: %s (Clk: %s, Trg: %s, Prs: %s, Obs: %s, Mvg: %s), Pos(%02.2f,%02.2f,%02.2f)\n     Bbox(%02.2f,%02.2f,%02.2f) ~ (%02.2f,%02.2f,%02.2f)\n",
-				             sceneObject->id - kSceneObjectOffsetObjects,
-				             _vm->_scene->objectGetName(sceneObject->id - kSceneObjectOffsetObjects).c_str(),
-				             sceneObject->isClickable? "T" : "F",
-				             sceneObject->isTarget?    "T" : "F",
-				             sceneObject->isPresent?   "T" : "F",
-				             sceneObject->isObstacle?  "T" : "F",
-				             sceneObject->isMoving?    "T" : "F",
-				             pos.x, pos.y, pos.z,
-				             a.x, a.y, a.z, b.x, b.y, b.z);
-				++count;
-			}
-		}
-		debugPrintf("%d objects were found in scene.\n", count);
-	} else if (arg == "items") {
-		debugPrintf("Listing scene items: \n");
-		int count = 0;
-		for (int i = 0; i < _vm->_sceneObjects->_count; i++) {
-			SceneObjects::SceneObject *sceneObject = &_vm->_sceneObjects->_sceneObjects[_vm->_sceneObjects->_sceneObjectsSortedByDistance[i]];
-
-			if (sceneObject->type == kSceneObjectTypeItem) {
+		} else if (arg == "obj") {
+			debugPrintf("Listing scene objects: \n");
+			int count = 0;
+			for (int i = 0; i < _vm->_sceneObjects->_count; i++) {
+				SceneObjects::SceneObject *sceneObject = &_vm->_sceneObjects->_sceneObjects[_vm->_sceneObjects->_sceneObjectsSortedByDistance[i]];
 				const BoundingBox &bbox = sceneObject->boundingBox;
 				Vector3 a, b;
 				bbox.getXYZ(&a.x, &a.y, &a.z, &b.x, &b.y, &b.z);
-				//Vector3 pos = _vm->_view->calculateScreenPosition(0.5 * (a + b));
-				Vector3 pos;
-				int currHeight, currWidth;
-				_vm->_items->getXYZ(sceneObject->id - kSceneObjectOffsetItems, &pos.x, &pos.y, &pos.z);
-				_vm->_items->getWidthHeight(sceneObject->id - kSceneObjectOffsetItems, &currWidth, &currHeight);
-				const Common::Rect &screenRect = _vm->_items->getScreenRectangle(sceneObject->id - kSceneObjectOffsetItems);
-				debugPrintf("Id %i, Pos(%02.2f,%02.2f,%02.2f), Face: %d, Height: %d, Width: %d, ScrRct(%d,%d,%d,%d)\n Clk: %s, Trg: %s, Prs: %s, Vis: %s, Mvg: %s Bbox(%02.2f,%02.2f,%02.2f)~(%02.2f,%02.2f,%02.2f)\n",
-				             sceneObject->id - kSceneObjectOffsetItems,
-				             pos.x, pos.y, pos.z,
-				             _vm->_items->getFacing(sceneObject->id - kSceneObjectOffsetItems), currHeight, currWidth,
-				             screenRect.top, screenRect.left, screenRect.bottom, screenRect.right,
-				             sceneObject->isClickable? "T" : "F",
-				             sceneObject->isTarget?    "T" : "F",
-				             sceneObject->isPresent?   "T" : "F",
-				             sceneObject->isObstacle?  "T" : "F",
-				             sceneObject->isMoving?    "T" : "F",
-				             a.x, a.y, a.z, b.x, b.y, b.z);
+				Vector3 pos = _vm->_view->calculateScreenPosition(0.5 * (a + b));
+
+				if (sceneObject->type == kSceneObjectTypeUnknown) {
+					debugPrintf("%02d. Unknown object type\n", count);
+					++count;
+				} else if (sceneObject->type == kSceneObjectTypeObject) {
+					debugPrintf("%d: %s (Clk: %s, Trg: %s, Prs: %s, Obs: %s, Mvg: %s), Pos(%02.2f,%02.2f,%02.2f)\n     Bbox(%02.2f,%02.2f,%02.2f) ~ (%02.2f,%02.2f,%02.2f)\n",
+								 sceneObject->id - kSceneObjectOffsetObjects,
+								 _vm->_scene->objectGetName(sceneObject->id - kSceneObjectOffsetObjects).c_str(),
+								 sceneObject->isClickable? "T" : "F",
+								 sceneObject->isTarget?    "T" : "F",
+								 sceneObject->isPresent?   "T" : "F",
+								 sceneObject->isObstacle?  "T" : "F",
+								 sceneObject->isMoving?    "T" : "F",
+								 pos.x, pos.y, pos.z,
+								 a.x, a.y, a.z, b.x, b.y, b.z);
+					++count;
+				}
+			}
+			debugPrintf("%d objects were found in scene.\n", count);
+		} else if (arg == "items") {
+			debugPrintf("Listing scene items: \n");
+			int count = 0;
+			for (int i = 0; i < _vm->_sceneObjects->_count; i++) {
+				SceneObjects::SceneObject *sceneObject = &_vm->_sceneObjects->_sceneObjects[_vm->_sceneObjects->_sceneObjectsSortedByDistance[i]];
+
+				if (sceneObject->type == kSceneObjectTypeItem) {
+					const BoundingBox &bbox = sceneObject->boundingBox;
+					Vector3 a, b;
+					bbox.getXYZ(&a.x, &a.y, &a.z, &b.x, &b.y, &b.z);
+					//Vector3 pos = _vm->_view->calculateScreenPosition(0.5 * (a + b));
+					Vector3 pos;
+					int currHeight, currWidth;
+					_vm->_items->getXYZ(sceneObject->id - kSceneObjectOffsetItems, &pos.x, &pos.y, &pos.z);
+					_vm->_items->getWidthHeight(sceneObject->id - kSceneObjectOffsetItems, &currWidth, &currHeight);
+					const Common::Rect &screenRect = _vm->_items->getScreenRectangle(sceneObject->id - kSceneObjectOffsetItems);
+					debugPrintf("Id %i, Pos(%02.2f,%02.2f,%02.2f), Face: %d, Height: %d, Width: %d, ScrRct(%d,%d,%d,%d)\n Clk: %s, Trg: %s, Prs: %s, Vis: %s, Mvg: %s Bbox(%02.2f,%02.2f,%02.2f)~(%02.2f,%02.2f,%02.2f)\n",
+								 sceneObject->id - kSceneObjectOffsetItems,
+								 pos.x, pos.y, pos.z,
+								 _vm->_items->getFacing(sceneObject->id - kSceneObjectOffsetItems), currHeight, currWidth,
+								 screenRect.top, screenRect.left, screenRect.bottom, screenRect.right,
+								 sceneObject->isClickable? "T" : "F",
+								 sceneObject->isTarget?    "T" : "F",
+								 sceneObject->isPresent?   "T" : "F",
+								 sceneObject->isObstacle?  "T" : "F",
+								 sceneObject->isMoving?    "T" : "F",
+								 a.x, a.y, a.z, b.x, b.y, b.z);
+					++count;
+				}
+			}
+			debugPrintf("%d items were found in scene.\n", count);
+		} else if (arg == "reg") {
+			debugPrintf("Listing plain regions: \n");
+			int count = 0;
+			//list regions
+			for (int i = 0; i < 10; i++) {
+				Regions::Region *region = &_vm->_scene->_regions->_regions[i];
+				if (!region->present) continue;
+				Common::Rect r = region->rectangle;
+				debugPrintf("Region slot: %d (t:%d l:%d b:%d r:%d)\n", i, r.top, r.left, r.bottom, r.right);
 				++count;
 			}
-		}
-		debugPrintf("%d items were found in scene.\n", count);
-	} else if (arg == "reg") {
-		debugPrintf("Listing plain regions: \n");
-		int count = 0;
-		//list regions
-		for (int i = 0; i < 10; i++) {
-			Regions::Region *region = &_vm->_scene->_regions->_regions[i];
-			if (!region->present) continue;
-			Common::Rect r = region->rectangle;
-			debugPrintf("Region slot: %d (t:%d l:%d b:%d r:%d)\n", i, r.top, r.left, r.bottom, r.right);
-			++count;
-		}
 
-		debugPrintf("Listing exits: \n");
-		//list exits
-		for (int i = 0; i < 10; i++) {
-			Regions::Region *region = &_vm->_scene->_exits->_regions[i];
-			if (!region->present) continue;
-			Common::Rect r = region->rectangle;
-			debugPrintf("Exit slot: %d (t:%d l:%d b:%d r:%d)\n", i, r.top, r.left, r.bottom, r.right);
-			++count;
-		}
-		debugPrintf("%d regions (plain and exits) were found in scene.\n", count);
-	} else if (arg == "way") {
-		debugPrintf("Listing waypoints: \n");
-		int count = 0;
-		for (int i = 0; i < _vm->_waypoints->_count; i++) {
-			Waypoints::Waypoint *waypoint = &_vm->_waypoints->_waypoints[i];
-			if(waypoint->setId != _vm->_scene->getSetId()) {
-				continue;
+			debugPrintf("Listing exits: \n");
+			//list exits
+			for (int i = 0; i < 10; i++) {
+				Regions::Region *region = &_vm->_scene->_exits->_regions[i];
+				if (!region->present) continue;
+				Common::Rect r = region->rectangle;
+				debugPrintf("Exit slot: %d (t:%d l:%d b:%d r:%d)\n", i, r.top, r.left, r.bottom, r.right);
+				++count;
 			}
-			char waypointText[40];
-			Vector3 a = waypoint->position;
-			sprintf(waypointText, "Waypoint %i, Pos(%02.2f,%02.2f,%02.2f)", i, a.x, a.y, a.z);
-			debugPrintf("%02d. %s\n", count, waypointText);
-			++count;
-		}
-
-		// list combat cover waypoints
-		for (int i = 0; i < (int)_vm->_combat->_coverWaypoints.size(); i++) {
-			Combat::CoverWaypoint *cover = &_vm->_combat->_coverWaypoints[i];
-			if (cover->setId != _vm->_scene->getSetId()) {
-				continue;
+			debugPrintf("%d regions (plain and exits) were found in scene.\n", count);
+		} else if (arg == "way") {
+			debugPrintf("Listing waypoints: \n");
+			int count = 0;
+			for (int i = 0; i < _vm->_waypoints->_count; i++) {
+				Waypoints::Waypoint *waypoint = &_vm->_waypoints->_waypoints[i];
+				if(waypoint->setId != _vm->_scene->getSetId()) {
+					continue;
+				}
+				char waypointText[40];
+				Vector3 a = waypoint->position;
+				sprintf(waypointText, "Waypoint %i, Pos(%02.2f,%02.2f,%02.2f)", i, a.x, a.y, a.z);
+				debugPrintf("%02d. %s\n", count, waypointText);
+				++count;
 			}
-			char coverText[40];
-			Vector3 a = cover->position;
-			sprintf(coverText, "Cover %i, Pos(%02.2f,%02.2f,%02.2f)", i, a.x, a.y, a.z);
-			debugPrintf("%02d. %s\n", count, coverText);
-			++count;
-		}
 
-		// list combat flee waypoints
-		for (int i = 0; i < (int)_vm->_combat->_fleeWaypoints.size(); i++) {
-			Combat::FleeWaypoint *flee = &_vm->_combat->_fleeWaypoints[i];
-			if (flee->setId != _vm->_scene->getSetId()) {
-				continue;
+			// list combat cover waypoints
+			for (int i = 0; i < (int)_vm->_combat->_coverWaypoints.size(); i++) {
+				Combat::CoverWaypoint *cover = &_vm->_combat->_coverWaypoints[i];
+				if (cover->setId != _vm->_scene->getSetId()) {
+					continue;
+				}
+				char coverText[40];
+				Vector3 a = cover->position;
+				sprintf(coverText, "Cover %i, Pos(%02.2f,%02.2f,%02.2f)", i, a.x, a.y, a.z);
+				debugPrintf("%02d. %s\n", count, coverText);
+				++count;
 			}
-			char fleeText[40];
-			Vector3 a = flee->position;
-			sprintf(fleeText, "Flee %i, Pos(%02.2f,%02.2f,%02.2f)", i, a.x, a.y, a.z);
-			debugPrintf("%02d. %s\n", count, fleeText);
-			++count;
-		}
-		debugPrintf("%d waypoints were found in scene.\n", count);
-	} else if (arg == "walk") {
-		debugPrintf("Listing walkboxes: \n");
-		// list walkboxes
-		for (int i = 0; i < _vm->_scene->_set->_walkboxCount; i++) {
-			Set::Walkbox *walkbox = &_vm->_scene->_set->_walkboxes[i];
 
-			debugPrintf("%02d. Walkbox %s, vertices: %d\n", i, walkbox->name.c_str(), walkbox->vertexCount);
+			// list combat flee waypoints
+			for (int i = 0; i < (int)_vm->_combat->_fleeWaypoints.size(); i++) {
+				Combat::FleeWaypoint *flee = &_vm->_combat->_fleeWaypoints[i];
+				if (flee->setId != _vm->_scene->getSetId()) {
+					continue;
+				}
+				char fleeText[40];
+				Vector3 a = flee->position;
+				sprintf(fleeText, "Flee %i, Pos(%02.2f,%02.2f,%02.2f)", i, a.x, a.y, a.z);
+				debugPrintf("%02d. %s\n", count, fleeText);
+				++count;
+			}
+			debugPrintf("%d waypoints were found in scene.\n", count);
+		} else if (arg == "walk") {
+			debugPrintf("Listing walkboxes: \n");
+			// list walkboxes
+			for (int i = 0; i < _vm->_scene->_set->_walkboxCount; i++) {
+				Set::Walkbox *walkbox = &_vm->_scene->_set->_walkboxes[i];
+
+				debugPrintf("%02d. Walkbox %s, vertices: %d\n", i, walkbox->name.c_str(), walkbox->vertexCount);
+			}
+			debugPrintf("%d walkboxes were found in scene.\n", _vm->_scene->_set->_walkboxCount);
+		} else if (arg == "fog") {
+			debugPrintf("Listing fogs: \n");
+			int count = 0;
+			for (Fog *fog = _vm->_scene->_set->_effects->_fogs; fog != nullptr; fog = fog->_next) {
+				debugPrintf("%02d. Fog %s\n", count, fog->_name.c_str());
+				++count;
+			}
+			debugPrintf("%d fogs were found in scene.\n", count);
+		} else if (arg == "lit") {
+			debugPrintf("Listing lights: \n");
+			// list lights
+			for (int i = 0; i < (int)_vm->_lights->_lights.size(); i++) {
+				Light *light = _vm->_lights->_lights[i];
+				debugPrintf("%02d. Light %s\n", i, light->_name.c_str());
+			}
+			debugPrintf("%d lights were found in scene.\n", (int)_vm->_lights->_lights.size());
+		} else {
+			debugPrintf("Invalid item type was specified.\n");
 		}
-		debugPrintf("%d walkboxes were found in scene.\n", _vm->_scene->_set->_walkboxCount);
-	} else if (arg == "fog") {
-		debugPrintf("Listing fogs: \n");
-		int count = 0;
-		for (Fog *fog = _vm->_scene->_set->_effects->_fogs; fog != nullptr; fog = fog->_next) {
-			debugPrintf("%02d. Fog %s\n", count, fog->_name.c_str());
-			++count;
-		}
-		debugPrintf("%d fogs were found in scene.\n", count);
-	} else if (arg == "lit") {
-		debugPrintf("Listing lights: \n");
-		// list lights
-		for (int i = 0; i < (int)_vm->_lights->_lights.size(); i++) {
-			Light *light = _vm->_lights->_lights[i];
-			debugPrintf("%02d. Light %s\n", i, light->_name.c_str());
-		}
-		debugPrintf("%d lights were found in scene.\n", (int)_vm->_lights->_lights.size());
-	} else {
-		debugPrintf("Invalid item type was specified.\n");
 	}
 
+	if (invalidSyntax) {
+		debugPrintf("Enables debug listing of actors, scene objects, items, waypoints, regions, lights, fogs and walk-boxes.\n");
+		debugPrintf("Usage 1: %s (act | obj | items | way | reg | lit | fog | walk )\n", argv[0]);
+		debugPrintf("Usage 2: %s act <actorId>\n", argv[0]);
+	}
 	return true;
 }
 
