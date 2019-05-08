@@ -119,6 +119,26 @@ void SceneScriptAR01::InitializeScene() {
 void SceneScriptAR01::SceneLoaded() {
 	Obstacle_Object("DF_BOOTH", true);
 	Unobstacle_Object("SPINNER BODY", true);
+
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	if (Global_Variable_Query(kVariableChapter) < 4
+	    && !Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)
+	    && !Game_Flag_Query(kFlagScorpionsInAR02)
+	) {
+		// the kFlagScorpionsInAR02 flag helps keep track of the item in AR
+		// and make it not blink in and out of existence
+		// in the transition from AR01 to AR02
+		Game_Flag_Set(kFlagScorpionsInAR02);
+		Item_Add_To_World(kItemScorpions, kModelAnimationCageOfScorpions, kSetAR01_AR02, -442.84f, 36.77f, -1144.51f, 360, 36, 36, false, true, false, true);
+	} else if (Global_Variable_Query(kVariableChapter) >= 4
+	           && !Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)
+	           && Game_Flag_Query(kFlagScorpionsInAR02)
+	) {
+		Game_Flag_Reset(kFlagScorpionsInAR02);
+		Item_Remove_From_World(kItemScorpions);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 bool SceneScriptAR01::MouseClick(int x, int y) {

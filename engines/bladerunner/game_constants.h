@@ -552,7 +552,7 @@ enum Flags {
 	kFlagHC02toHC04 = 110,
 	kFlagPS07KleinTalkClues = 111,
 	// 112 is never used
-	// 113 is never used
+	kFlagScorpionsInAR02 = 113, // // Re-purposed. Original: 113 is never used
 	kFlagRC03toRC01 = 114,
 	kFlagRC01toRC03 = 115,
 	kFlagRC03toAR02 = 116,
