@@ -28,8 +28,6 @@
 
 namespace Pink {
 
-extern bool g_skipping;
-
 class ActionSfx;
 
 class ActionPlayWithSfx : public ActionPlay {
