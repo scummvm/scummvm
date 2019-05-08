@@ -26,7 +26,7 @@ namespace Glk {
 namespace Hugo {
 
 Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
-		mainwin(nullptr), currentwin(nullptr), address_scale(16),
+		mainwin(nullptr), currentwin(nullptr), secondwin(nullptr), auxwin(nullptr), address_scale(16),
 		SCREENWIDTH(0), SCREENHEIGHT(0), FIXEDCHARWIDTH(0), FIXEDLINEHEIGHT(0),
 		game_version(0), object_size(0), game(nullptr), script(nullptr), save(nullptr),
 		playback(nullptr), record(nullptr), io(nullptr), ioblock('\0'), ioerror('\0'),
@@ -40,18 +40,16 @@ Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 		physical_windowwidth(0), physical_windowheight(0), physical_windowtop(0),
 		physical_windowleft(0), physical_windowbottom(0), physical_windowright(0),
 		inwindow(0), charwidth(0), lineheight(0), current_text_x(0), current_text_y(0),
-		undoptr(0), undoturn(0), undoinvalid(0), undorecord(0),
+		undoptr(0), undoturn(0), undoinvalid(0), undorecord(0), context_commands(0),
 		in_valid_window(false), glk_fcolor(DEF_FCOLOR), glk_bgcolor(DEF_BGCOLOR),
-		mainwin_bgcolor(0), glk_current_font(0), just_cleared_screen(false) {
-#if !defined (COMPILE_V25)
+		mainwin_bgcolor(0), glk_current_font(0), just_cleared_screen(false), secondwin_bottom(0) {
 	Common::fill(&context_command[0][0], &context_command[MAX_CONTEXT_COMMANDS][64], 0);
-	context_commands = 0;
-#endif
-
 	Common::fill(&id[0], &id[3], '\0');
 	Common::fill(&serial[0], &serial[9], '\0');
 	Common::fill(&pbuffer[0], &pbuffer[MAXBUFFER * 2 + 1], 0);
 	Common::fill(&undostack[0][0], &undostack[MAXUNDO][5], 0);
+	Common::fill(&buffer[0], &buffer[MAXBUFFER + MAXWORDS], '\0');
+	Common::fill(&var[0], &var[MAXLOCALS + MAXGLOBALS], 0);
 }
 
 // TODO: Proper method implementations

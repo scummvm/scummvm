@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "glk/glk_api.h"
+#include "glk/hugo/hugo_defines.h"
 #include "glk/hugo/hugo_types.h"
 
 namespace Glk {
@@ -36,6 +37,7 @@ namespace Hugo {
 class Hugo : public GlkAPI {
 private:
 	winid_t mainwin, currentwin;
+	winid_t secondwin, auxwin;
 
 	/**
 	 * address_scale refers to the factor by which addresses are multiplied to
@@ -74,10 +76,8 @@ private:
 	int events;
 	int dictcount;
 	int syncount;
-#if !defined (COMPILE_V25)
 	char context_command[MAX_CONTEXT_COMMANDS][64];
 	int context_commands;
-#endif
 	unsigned char *mem;
 	int loaded_in_memory;
 	unsigned int defseg;
@@ -111,6 +111,13 @@ private:
 	int mainwin_bgcolor;
 	int glk_current_font;
 	bool just_cleared_screen;
+	int secondwin_bottom;
+
+	// heparse
+	char buffer[MAXBUFFER + MAXWORDS];
+
+	// heexpr
+	int var[MAXLOCALS + MAXGLOBALS];
 private:
 	/**
 	 * \defgroup heglk
@@ -125,9 +132,132 @@ private:
 	/**
 	 * Does whatever has to be done to clean up the display pre-termination
 	 */
-	void hugo_cleanup_screen();
+	void hugo_cleanup_screen() {
+		// No implementation
+	}
+
+	int hugo_getkey() const {
+		// Not needed here--single-character events are handled solely by hugo_waitforkey(), below
+		return 0;
+	}
+
+	/**
+	 * Gets a line of input from the keyboard, storing it in <buffer>.
+	 */
+	void hugo_getline(const char *prmpt);
+
+	/**
+	 * Provided to be replaced by multitasking systems where cycling while waiting
+	 * for a keystroke may not be such a hot idea.
+	 */
+	int hugo_waitforkey();
+
+	/**
+	 * Returns true if a keypress is waiting to be retrieved.
+	 */
+	int hugo_iskeywaiting();
+
+	/**
+	 * Waits for 1/n seconds.  Returns false if waiting is unsupported.
+	 */
+	int hugo_timewait(int n);
+
+	/**
+	 * Clears everything on the screen, moving the cursor to the top-left corner of the screen
+	 */
+	void hugo_clearfullscreen();
+
+	/**
+	 * Clears the currently defined window, moving the cursor to the top-left corner of the window
+	 */
+	void hugo_clearwindow();
+
+	/**
+	 * This function does whatever is necessary to set the system up for a standard text display
+	 */
+	void hugo_settextmode();
 
 	void hugo_settextwindow(int left, int top, int right, int bottom);
+
+	/**
+	 * Specially accommodated in GetProp() While the engine thinks that the linelength is 0x7fff,
+	this tells things like the display object the actual length.  (Defined as ACTUAL_LINELENGTH)
+	*/
+	int heglk_get_linelength();
+
+	/**
+	 * Similar to heglk_get_linelength().  (Defined as ACTUAL_SCREENHEIGHT)
+	 */
+	int heglk_get_screenheight();
+
+	void hugo_settextpos(int x, int y);
+
+	/**
+	 * Essentially the same as printf() without formatting, since printf() generally doesn't take
+	 * into account color setting, font changes, windowing, etc.
+	 *
+	 * The newline character '\n' must be explicitly included at the end of a line in order to
+	 * produce a linefeed.  The new cursor position is set to the end of this printed text.
+	 * Upon hitting the right edge of the screen, the printing position wraps to the start
+	 * of the next line.
+	 */
+	void hugo_print(const char *a);
+
+	/**
+	 * Scroll the text window
+	 */
+	void hugo_scrollwindowup() {
+		// No implementation. Glk takes care of it
+	}
+
+	/**
+	 * Set the font
+	 * @param f		The <f> argument is a mask containing any or none of:
+	 *				BOLD_FONT, UNDERLINE_FONT, ITALIC_FONT, PROP_FONT.
+	 */
+	void hugo_font(int f);
+
+	/**
+	 * Set the foreground (print) color
+	 */
+	void hugo_settextcolor(int c);
+
+	/**
+	 * Set the background color
+	 */
+	void hugo_setbackcolor(int c);
+
+	/**
+	 * Color-setting functions should always pass the color through hugo_color()
+	 * in order to properly set default fore/background colors
+	 */
+	int hugo_color(int c);
+
+	/**
+	 * Get the width of a character
+	 * @remarks		As given here, this function works only for non-proportional printing.
+	 * For proportional printing, hugo_charwidth() should return the width of the supplied
+	 * character in the current font and style.
+	*/
+	int hugo_charwidth(char a) const;
+
+	/**
+	 * Return the width of a string
+	 */
+	int hugo_textwidth(const char *a) const;
+
+	/**
+	 * Return the length of a string
+	 */
+	int hugo_strlen(const char *a) const;
+
+	void hugo_setgametitle(const char *t);
+
+	int hugo_hasvideo() const;
+
+	int hugo_playvideo(HUGO_FILE infile, long reslength, char loop_flag, char background, int volume);
+
+	void hugo_stopvideo();
 
 	/**@}*/
 private:
