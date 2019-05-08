@@ -2112,9 +2112,6 @@ enum GoalGuzza {
 	kGoalGuzzaGoToHawkersCircle2      = 103,
 	kGoalGuzzaGoToFreeSlotB           = 104,
 	kGoalGuzzaGoToFreeSlotG           = 105,
-	kGoalGuzzaCallFavorsForHoboShoot1 = 106, // added goal
-	kGoalGuzzaCallFavorsForHoboShoot2 = 107, // added goal
-	kGoalGuzzaCalledFavorsForHobo     = 108, // added goal
 	kGoalGuzzaWasAtNR03               = 200,
 	kGoalGuzzaSitAtNR03               = 201,
 	kGoalGuzzaUG18Wait                = 300,

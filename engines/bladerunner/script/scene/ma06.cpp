@@ -145,8 +145,8 @@ void SceneScriptMA06::PlayerWalkedIn() {
 		){
 			// Act 4 deleted scene case with Rachael
 			//
-			// TODO fix animationsDo an Optimization pass
-			// TODO Skip panel selection but actually set the target floor and "MOVE elevator" to LOBBY (Floor > 1)
+			// TODO fix animations - Do an Optimization pass
+			// TODO Test - Skip panel selection but actually set the target floor and "MOVE elevator" to LOBBY (Floor > 1)
 			//
 			Game_Flag_Reset(kFlagMA06toMA01);
 			Game_Flag_Reset(kFlagMA06ToMA02);
@@ -210,7 +210,6 @@ void SceneScriptMA06::PlayerWalkedOut() {
 		}
 		else if (Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsInsideElevatorStartTalkAct4) {
 			Actor_Set_Goal_Number(kActorRachael, kGoalRachaelIsOutsideMcCoysBuildingAct4);
-			// don't reset kEDSFlagRachaelInElevatorChapter4JUSTEncountered here but in the ma07.cpp script (walked-in_ where mcCoy will automatically go (so no problems of inconsistency there)
 		}
 	}
 }

@@ -131,40 +131,6 @@ bool SceneScriptPS04::ClickedOn2DRegion(int region) {
 }
 
 void SceneScriptPS04::SceneFrameAdvanced(int frame) {
-	if (_vm->_cutContent) {
-		// custom code added for fading out and back in when Guzza calls in favors
-		// TODO keep this?
-		Set_Fade_Color(0, 0, 0);
-		if (frame > 5 && frame < 30) {
-			// transition scene
-			if ( Actor_Query_Goal_Number(kActorGuzza) == kGoalGuzzaCalledFavorsForHobo) {
-				Set_Fade_Density(0.0f);
-				if (Global_Variable_Query(kVariableChapter) == 1) {
-					Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaDefault);
-				} else if (Global_Variable_Query(kVariableChapter) < 4) {
-					Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaAtOffice);
-				}
-			}
-		}
-		else if (frame >= 79 && frame < 90) {
-			if ( frame == 79 && Actor_Query_Goal_Number(kActorGuzza) == kGoalGuzzaCallFavorsForHoboShoot1) {
-				Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaCallFavorsForHoboShoot2);
-			}
-			if ( Actor_Query_Goal_Number(kActorGuzza) == kGoalGuzzaCallFavorsForHoboShoot2) {
-				// Fading out
-				Set_Fade_Density((frame - 79) / 10.0f);
-			}
-		} else if (frame == 90) {
-			if ( Actor_Query_Goal_Number(kActorGuzza) == kGoalGuzzaCallFavorsForHoboShoot2) {
-				// Faded out
-				Set_Fade_Density(1.0f);
-				Scene_Loop_Start_Special(kPS04LoopPanToPS04, 0, 0);
-				Scene_Loop_Set_Default(kPS04LoopMainLoop);
-				Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaCalledFavorsForHobo);
-			}
-		}
-		// end of: custom code added for fading out and back in when Guzza calls in favors
-	}
 }
 
 void SceneScriptPS04::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
@@ -392,8 +358,9 @@ void SceneScriptPS04::dialogueWithGuzza() {
 		Actor_Says(kActorGuzza, 620, 32);
 		if (_vm->_cutContent) {
 			// add a fade-out here while Guzza calls-in for favors
-			Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaCallFavorsForHoboShoot1);
-			Delay(4000);
+			Scene_Loop_Start_Special(kPS04LoopPanToPS04, 0, 0);
+			Scene_Loop_Set_Default(kPS04LoopMainLoop);
+			Delay(2000);
 		}
 		Actor_Face_Actor(kActorGuzza, kActorMcCoy, true);
 		Actor_Says(kActorGuzza, 700, 34);
