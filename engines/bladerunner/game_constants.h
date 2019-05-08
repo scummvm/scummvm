@@ -552,7 +552,7 @@ enum Flags {
 	kFlagHC02toHC04 = 110,
 	kFlagPS07KleinTalkClues = 111,
 	// 112 is never used
-	kFlagScorpionsInAR02 = 113, // // Re-purposed. Original: 113 is never used
+	kFlagScorpionsInAR02 = 113,   // Re-purposed. Original: 113 is never used
 	kFlagRC03toRC01 = 114,
 	kFlagRC01toRC03 = 115,
 	kFlagRC03toAR02 = 116,
@@ -1165,7 +1165,7 @@ enum Flags {
 	kFlagZubenBountyPaid = 723,
 	kFlagUG15BridgeBreaks = 724,
 	kFlagCT11DogWrapperAvailable = 725,
-	kFlagAR02Entered = 726,
+	kFlagAR02Entered = 726,  // Now: never checked (superseded by new kFlagScorpionsInAR02). Original: used to track if McCoy visited AR02 in order to remove scorpion's cage item if Dektora buys it
 	kFlagPS04WeaponsOrderForm = 727,
 	kFlagDR01Visited = 728,                     // Re-purposed. Original: 728 is never used
 	kFlagNR08DektoraShow = 729

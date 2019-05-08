@@ -56,10 +56,18 @@ bool AIScriptDektora::Update() {
 			 &&  Player_Query_Current_Scene() != kSceneAR01
 			 &&  Player_Query_Current_Scene() != kSceneAR02
 			) {
+#if BLADERUNNER_ORIGINAL_BUGS
 				if (Game_Flag_Query(kFlagAR02Entered)) {
 					Item_Remove_From_World(kItemScorpions);
 				}
 				Game_Flag_Set(kFlagAR02DektoraBoughtScorpions);
+#else
+				if (Game_Flag_Query(kFlagScorpionsInAR02)) {
+					Item_Remove_From_World(kItemScorpions);
+					Game_Flag_Reset(kFlagScorpionsInAR02);
+				}
+				Game_Flag_Set(kFlagAR02DektoraBoughtScorpions);
+#endif
 			}
 		}
 		return true;
