@@ -2486,7 +2486,6 @@ case $_host_os in
 				append_var CXXFLAGS "-march=armv5te"
 				append_var CXXFLAGS "-mtune=xscale"
 				append_var CXXFLAGS "-mfloat-abi=softfp"
-				append_var LDFLAGS "-mthumb"
 				ABI="armeabi"
 				;;
 			android-v7a | android-arm-v7a)
