@@ -84,7 +84,14 @@ enum WMETargetExecutable {
 	WME_1_9_2,  // DEAD:CODE 2010
 	WME_1_9_3,  // DEAD:CODE 2012, released as "1.10.1 beta"
 	WME_LITE,
-	LATEST_VERSION
+	LATEST_VERSION,
+	FOXTAIL_OLDEST_VERSION,
+	FOXTAIL_1_2_227,
+	FOXTAIL_1_2_230,
+	FOXTAIL_1_2_304,
+	FOXTAIL_1_2_362,
+	FOXTAIL_1_2_527,
+	FOXTAIL_LATEST_VERSION
 };
 
 class BaseFileManager;
@@ -128,6 +135,12 @@ public:
 	Common::Language getLanguage() const { return _language; }
 	WMETargetExecutable getTargetExecutable() const {
 		return _targetExecutable;
+	}
+	static bool isFoxTailCheck(WMETargetExecutable t, WMETargetExecutable v1=FOXTAIL_OLDEST_VERSION, WMETargetExecutable v2=FOXTAIL_LATEST_VERSION) {
+		return t >= v1 && t <= v2;
+	}
+	bool isFoxTail(WMETargetExecutable v1=FOXTAIL_OLDEST_VERSION, WMETargetExecutable v2=FOXTAIL_LATEST_VERSION) const {
+		return isFoxTailCheck(_targetExecutable, v1, v2);
 	}
 };
 
