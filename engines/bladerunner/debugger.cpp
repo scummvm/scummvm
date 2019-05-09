@@ -1588,7 +1588,7 @@ bool Debugger::cmdList(int argc, const char **argv) {
 			} else if (argc == 3) {
 				// list properties for specific actor regardless of the set/ scene they are in
 				int actorId = atoi(argv[2]);
-				if (actorId > 0 && actorId < _vm->kActorCount) {
+				if (actorId >= 0 && actorId < _vm->kActorCount) {
 					debugPrintf("Showing properties for actor: %d:%s \n", actorId, _vm->_textActorNames->getText(actorId));
 					Actor *actor = _vm->_actors[actorId];
 
