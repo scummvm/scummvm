@@ -307,8 +307,10 @@ void ScriptOpcodes::opActorLoadSequence(ScriptOpCall &scriptOpCall) {
 		ini->actor->flags |= Dragons::ACTOR_FLAG_2000;
 	}
 
-	assert(ini->actor->_actorResource);
-	assert(ini->actor->_actorResource->_id == ini->actorResourceId); // TODO need to rework selecting resourceId for an actor.
+	if (!ini->actor->_actorResource || ini->actor->_actorResource->_id != ini->actorResourceId) {
+		ini->actor->_actorResource = _vm->_actorManager->getActorResource(ini->actorResourceId);
+	}
+
 	ini->actor->updateSequence(sequenceId);
 
 	if (field0 & 0x8000) {
@@ -381,7 +383,12 @@ void ScriptOpcodes::opUnk15PropertiesRelated(ScriptOpCall &scriptOpCall) {
 void ScriptOpcodes::opUnk20(ScriptOpCall &scriptOpCall) {
 	ARG_INT16(field0);
 	ARG_INT16(field2);
-	//TODO do we need this? It looks like it is pre-loading scene data.
+
+	_vm->data_800633fc = 0;
+
+	if (field2 >= 2) {
+		//TODO do we need this? It looks like it is pre-loading the next scene's data.
+	}
 }
 
 bool ScriptOpcodes::checkPropertyFlag(ScriptOpCall &scriptOpCall) {

@@ -73,7 +73,7 @@ public:
 	Actor *loadActor(uint32 resourceId, uint16 actorId);
 	Actor *getActor(uint16 actorId);
 	void clearActorFlags(uint16 startingActorId);
-
+	ActorResource *getActorResource(uint32 resourceId);
 private:
 	Actor *findFreeActor(int16 resourceID);
 };

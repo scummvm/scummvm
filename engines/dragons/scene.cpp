@@ -188,8 +188,10 @@ void Scene::loadSceneData(uint32 sceneId, uint32 cameraPointId) {
 	_vm->clearUnkFlags(Dragons::ENGINE_UNK1_FLAG_10);
 	_vm->setFlags(Dragons::ENGINE_FLAG_20);
 	// TODO reset vsync_updater_function
+
 	_vm->setFlags(Dragons::ENGINE_FLAG_200);
 	_actorManager->clearActorFlags(2);
+	_vm->data_800633fc = 0;
 	// TODO 0x8002fff0
 
 	for(int i=0;i < _dragonINIResource->totalRecords(); i++) {
