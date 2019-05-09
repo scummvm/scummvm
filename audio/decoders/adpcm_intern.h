@@ -68,7 +68,7 @@ public:
 
 	virtual bool rewind();
 	virtual bool seek(const Timestamp &where) { return false; }
-	virtual Timestamp getLength() const { return -1; }
+	virtual Timestamp getLength() const { return Timestamp(); }
 
 	/**
 	 * This table is used by some ADPCM variants (IMA and OKI) to adjust the
