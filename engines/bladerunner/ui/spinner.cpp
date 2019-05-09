@@ -431,9 +431,13 @@ void Spinner::tickDescription() {
 		return;
 	}
 
-	_vm->_actors[_actorId]->speechPlay(_sentenceId, false);
-	_actorId = -1;
-	_sentenceId = -1;
+	if (!_vm->_mouse->isDisabled()) {
+		// mouse can mouse when disab;ed so hover callbacks will work, while the cursor is invisible
+		// so postpone the speech until mouse is invisible again
+		_vm->_actors[_actorId]->speechPlay(_sentenceId, false);
+		_actorId = -1;
+		_sentenceId = -1;
+	}
 }
 
 void Spinner::playSpeechLine(int actorId, int sentenceId, float duration) {
