@@ -137,6 +137,18 @@ void Actor::setup(int actorId) {
 	for (int i = 0; i != actorCount; ++i)
 		_friendlinessToOther[i] = 50;
 
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	// if player actor was not idle and had an active _walkInfo then
+	// upon starting a new game, the player actpr wpi;d be put on the old _walkInfo
+	_walkInfo->reset();
+//	// delete _walkInfo and re-allocate it (a reset method would probably be better)
+//	if (_walkInfo != nullptr) {
+//		delete(_walkInfo);
+//	}
+//	_walkInfo = new ActorWalk(_vm);
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 	_combatInfo->setup();
 	_clues->removeAll();
 	_movementTrack->flush();

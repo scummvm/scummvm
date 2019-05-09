@@ -162,11 +162,11 @@ void KIASectionLoad::scrollBoxCallback(void *callbackData, void *source, int lin
 
 	if (mouseButton == 0 && source == self->_scrollBox && lineData >= 0) {
 		if (lineData == self->_newGameEasyLineId) {
-			self->_vm->newGame(0);
+			self->_vm->newGame(kGameDifficultyEasy);
 		} else if (lineData == self->_newGameMediumLineId) {
-			self->_vm->newGame(1);
+			self->_vm->newGame(kGameDifficultyMedium);
 		} else if (lineData == self->_newGameHardLineId) {
-			self->_vm->newGame(2);
+			self->_vm->newGame(kGameDifficultyHard);
 		} else {
 			self->_vm->loadGameState(self->_saveList[lineData].getSaveSlot());
 		}

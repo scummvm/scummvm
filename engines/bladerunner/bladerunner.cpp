@@ -325,7 +325,7 @@ Common::Error BladeRunnerEngine::run() {
 		}
 		// TODO: why is game starting new game here when everything is done in startup?
 		//  else {
-		// 	newGame(1);
+		// 	newGame(kGameDifficultyMedium);
 		// }
 
 		gameLoop();
