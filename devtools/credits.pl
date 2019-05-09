@@ -1038,6 +1038,7 @@ begin_credits("Credits");
 			end_section();
 
 			begin_section("GUI");
+				add_person("Max Horn", "Fingolfin", "(retired)");
 				add_person("Vicent Marti", "tanoku", "");
 				add_person("Eugene Sandulenko", "sev", "");
 				add_person("Johannes Schickel", "LordHoto", "(retired)");
