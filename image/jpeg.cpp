@@ -184,7 +184,7 @@ void outputMessage(j_common_ptr cinfo) {
 }
 
 J_COLOR_SPACE fromScummvmPixelFormat(const Graphics::PixelFormat &format) {
-#if defined(JCS_EXTENSIONS) or defined(JCS_ALPHA_EXTENSIONS)
+#if defined(JCS_EXTENSIONS) || defined(JCS_ALPHA_EXTENSIONS)
 	struct PixelFormatMapping {
 		Graphics::PixelFormat pixelFormat;
 		J_COLOR_SPACE bigEndianColorSpace;
@@ -200,7 +200,7 @@ J_COLOR_SPACE fromScummvmPixelFormat(const Graphics::PixelFormat &format) {
 		{ Graphics::PixelFormat(3, 8, 8, 8, 0, 16,  8,  0,  0), JCS_EXT_RGB,  JCS_EXT_BGR  },
 		{ Graphics::PixelFormat(3, 8, 8, 8, 0,  0,  8, 16,  0), JCS_EXT_BGR,  JCS_EXT_RGB  }
 #endif
-#if defined(JCS_EXTENSIONS) and defined(JCS_ALPHA_EXTENSIONS)
+#if defined(JCS_EXTENSIONS) && defined(JCS_ALPHA_EXTENSIONS)
 		,
 #endif
 #ifdef JCS_ALPHA_EXTENSIONS
