@@ -75,7 +75,7 @@ bool SceneScriptDR05::ClickedOn3DObject(const char *objectName, bool a2) {
 			Actor_Says(kActorMcCoy, 1020, 14);
 			Actor_Says(kActorMoraji, 90, 13);
 		} else {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 57.61f, 0.3f, 69.27f, 0, true, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 57.61f, 0.3f, 69.27f, 0, true, false, false)) {
 				Actor_Face_Object(kActorMcCoy, "T2 DOORWAY", true);
 				Actor_Says(kActorMcCoy, 8522, 13);
 				Actor_Says(kActorMcCoy, 8521, 14);
@@ -125,7 +125,7 @@ bool SceneScriptDR05::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptDR05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -22.0f, 0.3f, 221.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -22.0f, 0.3f, 221.0f, 0, true, false, false)) {
 			Game_Flag_Reset(kFlagNotUsed232);
 			Game_Flag_Set(kFlagDR05toDR04);
 			Set_Enter(kSetDR01_DR02_DR04, kSceneDR04);
@@ -164,7 +164,7 @@ void SceneScriptDR05::PlayerWalkedIn() {
 	}
 
 	if (Game_Flag_Query(kFlagDR05BombExploded)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -10.0f, 0.3f, 133.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -10.0f, 0.3f, 133.0f, 0, false, false, false);
 		if (!Game_Flag_Query(kFlagDR05ExplodedEntered)) {
 			Game_Flag_Set(kFlagDR05ExplodedEntered);
 			if (Game_Flag_Query(kFlagSadikIsReplicant)) {
@@ -183,7 +183,7 @@ void SceneScriptDR05::PlayerWalkedIn() {
 			}
 		}
 	} else {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -10.0f, 0.3f, 133.0f, 0, false, true, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -10.0f, 0.3f, 133.0f, 0, false, true, false);
 	}
 
 	if (!Game_Flag_Query(kFlagDR05MorajiTalk)

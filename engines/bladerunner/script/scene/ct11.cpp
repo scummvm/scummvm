@@ -107,7 +107,7 @@ bool SceneScriptCT11::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptCT11::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 121.0f, 9.68f, -42.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 121.0f, 9.68f, -42.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagCT11toCT09);
 			Set_Enter(kSetCT09, kSceneCT09);
 		}
@@ -115,8 +115,8 @@ bool SceneScriptCT11::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -300.0f, 9.68f, 66.0f, 0, true, false, 0)) {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -400.0f, 9.68f, -70.0f, 0, true, false, 0);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -300.0f, 9.68f, 66.0f, 0, true, false, false)) {
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -400.0f, 9.68f, -70.0f, 0, true, false, false);
 			Game_Flag_Set(kFlagCT11toCT12);
 			Set_Enter(kSetCT01_CT12, kSceneCT12);
 		}
@@ -124,7 +124,7 @@ bool SceneScriptCT11::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 290.0f, 0.0f, 635.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 290.0f, 0.0f, 635.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagCT11toDR01);
 			Game_Flag_Reset(kFlagMcCoyInChinaTown);
 			Game_Flag_Set(kFlagMcCoyInDNARow);
@@ -137,7 +137,7 @@ bool SceneScriptCT11::ClickedOnExit(int exitId) {
 
 bool SceneScriptCT11::ClickedOn2DRegion(int region) {
 	if (region == 0 && Game_Flag_Query(kFlagCT11DogWrapperAvailable)) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 686.0f, 0.0f, 658.0f, 12, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 686.0f, 0.0f, 658.0f, 12, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 47, false);
 			Item_Remove_From_World(kItemDogWrapper);
 			Actor_Clue_Acquire(kActorMcCoy, kClueLichenDogWrapper, false, -1);
@@ -153,7 +153,7 @@ bool SceneScriptCT11::ClickedOn2DRegion(int region) {
 	}
 
 	if (region == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 686.0f, 0.0f, 658.0f, 12, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 686.0f, 0.0f, 658.0f, 12, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 47, false);
 			int cluesFound = 0;
 			if (Actor_Clue_Query(kActorMcCoy, kClueCrowdInterviewB)) {
@@ -200,15 +200,15 @@ void SceneScriptCT11::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptCT11::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagCT12toCT11)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -358.0f, 9.68f, 32.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -358.0f, 9.68f, 32.0f, 0, false, false, false);
 		Game_Flag_Reset(kFlagCT12toCT11);
 	} else if (Game_Flag_Query(kFlagDR01toCT11)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 329.0f, 0.0f, 617.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 329.0f, 0.0f, 617.0f, 0, false, false, false);
 		Game_Flag_Reset(kFlagDR01toCT11);
 	} else {
 		Player_Loses_Control();
 		Actor_Set_Immunity_To_Obstacles(kActorMcCoy, true);
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 125.0f, 9.68f, 74.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 125.0f, 9.68f, 74.0f, 0, false, false, false);
 		Actor_Set_Immunity_To_Obstacles(kActorMcCoy, false);
 		Player_Gains_Control();
 		Game_Flag_Reset(kFlagCT09toCT11);

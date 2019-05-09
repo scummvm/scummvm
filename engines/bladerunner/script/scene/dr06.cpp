@@ -72,7 +72,7 @@ bool SceneScriptDR06::MouseClick(int x, int y) {
 
 bool SceneScriptDR06::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("BOX16", objectName)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -743.0f, 136.6f, -1091.0f, 0, true, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -743.0f, 136.6f, -1091.0f, 0, true, false, false);
 		Actor_Face_Object(kActorMcCoy, "BOX16", true);
 		if (!Game_Flag_Query(kFlagDR06JesterActive)) {
 			Overlay_Play("DR06over", 1, true, true, 0);
@@ -91,7 +91,7 @@ bool SceneScriptDR06::ClickedOn3DObject(const char *objectName, bool a2) {
 			Actor_Face_Object(kActorMcCoy, "X2_MON01A04", true);
 			Actor_Says(kActorMcCoy, 8570, 13);
 		} else {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -684.94f, 136.6f, -1136.12f, 0, true, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -684.94f, 136.6f, -1136.12f, 0, true, false, false)) {
 				Actor_Face_Object(kActorMcCoy, "X2_MON01A04", true);
 				Actor_Says(kActorAnsweringMachine, 10, 3);
 				Actor_Says(kActorAnsweringMachine, 20, 3);
@@ -113,7 +113,7 @@ bool SceneScriptDR06::ClickedOn3DObject(const char *objectName, bool a2) {
 	}
 
 	if (Object_Query_Click("X2_MON01D01", objectName)) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -645.34f, 136.6f, -1047.37f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -645.34f, 136.6f, -1047.37f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 329, false);
 			if ( Actor_Clue_Query(kActorMcCoy, kClueFolder)
 			 &&  Actor_Clue_Query(kActorMcCoy, kClueGuzzaFramedMcCoy)
@@ -136,7 +136,7 @@ bool SceneScriptDR06::ClickedOn3DObject(const char *objectName, bool a2) {
 #if BLADERUNNER_ORIGINAL_BUGS
 	if ( Object_Query_Click("X2_KEYBRD02", objectName) // a bug? there is no X2_KEYBRD02 only X2KEYBRD02
 	 && !Game_Flag_Query(kFlagDR06KeyboardChecked)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -655.57f, 136.6f, -1092.64f, 0, true, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -655.57f, 136.6f, -1092.64f, 0, true, false, false);
 		Actor_Face_Object(kActorMcCoy, "X2_KEYBRD02", true);
 		Actor_Voice_Over(830, kActorVoiceOver);
 		Actor_Voice_Over(840, kActorVoiceOver);
@@ -146,7 +146,7 @@ bool SceneScriptDR06::ClickedOn3DObject(const char *objectName, bool a2) {
 #else
 	if ( Object_Query_Click("X2KEYBRD02", objectName) // Use X2KEYBRD02 in place of X2_KEYBRD02
 	 && !Game_Flag_Query(kFlagDR06KeyboardChecked)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -655.57f, 136.6f, -1092.64f, 0, true, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -655.57f, 136.6f, -1092.64f, 0, true, false, false);
 		Actor_Face_Object(kActorMcCoy, "X2KEYBRD02", true);
 		Actor_Voice_Over(830, kActorVoiceOver);
 		Actor_Voice_Over(840, kActorVoiceOver);
@@ -156,7 +156,7 @@ bool SceneScriptDR06::ClickedOn3DObject(const char *objectName, bool a2) {
 #endif // BLADERUNNER_ORIGINAL_BUGS
 
 	if (Object_Query_Click("X2_TORSO04HIRES", objectName)) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -700.0f, 136.6f, -1133.0f, 4, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -700.0f, 136.6f, -1133.0f, 4, true, false, false)) {
 			Actor_Face_Object(kActorMcCoy, "x2_TORSO04HIRES", true);
 			if (Global_Variable_Query(kVariableDR06MannequinHeadOpened) > 12) {
 				return true;
@@ -207,7 +207,7 @@ bool SceneScriptDR06::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptDR06::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -733.0f, 136.6f, -980.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -733.0f, 136.6f, -980.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagDR06toDR04);
 			Set_Enter(kSetDR01_DR02_DR04, kSceneDR04);
 		}
@@ -215,7 +215,7 @@ bool SceneScriptDR06::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -707.57f, 136.6f, -1132.64f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -707.57f, 136.6f, -1132.64f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagDR06toUG16);
 			Set_Enter(kSetUG16, kSceneUG16);
 		}
@@ -236,7 +236,7 @@ void SceneScriptDR06::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptDR06::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagDR04toDR06)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -729.57f, 136.6f, -1016.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -729.57f, 136.6f, -1016.0f, 0, false, false, false);
 	}
 	Game_Flag_Reset(kFlagDR04toDR06);
 	Game_Flag_Reset(kFlagUG16toDR06);
@@ -244,7 +244,7 @@ void SceneScriptDR06::PlayerWalkedIn() {
 
 void SceneScriptDR06::PlayerWalkedOut() {
 	Overlay_Remove("DR06over");
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(0);
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(false);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 }
 

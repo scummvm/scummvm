@@ -150,13 +150,13 @@ bool SceneScriptNR11::ClickedOn3DObject(const char *objectName, bool combatMode)
 			Scene_Loop_Set_Default(kNR11LoopMainLoopFires);
 			Scene_Loop_Start_Special(kSceneLoopModeOnce, kNR11LoopGunshots, true);
 		} else if (Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR11Hiding) {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 24.0f, 0.33f, 0.0f, 0, true, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 24.0f, 0.33f, 0.0f, 0, true, false, false)) {
 				Actor_Face_XYZ(kActorMcCoy, -180.0f, 0.0f, -170.0f, true);
 				untargetEverything();
 				Actor_Set_Goal_Number(kActorSteele, kGoalSteeleNR11StopWaiting);
 				if (Actor_Query_Friendliness_To_Other(kActorDektora, kActorMcCoy) < 30) {
 					Actor_Set_At_XYZ(kActorDektora, 0.5f, 0.33f, -162.0f, 0);
-					Loop_Actor_Walk_To_XYZ(kActorDektora, -24.0f, 0.33f, -35.4f, 0, false, true, 0);
+					Loop_Actor_Walk_To_XYZ(kActorDektora, -24.0f, 0.33f, -35.4f, 0, false, true, false);
 					Actor_Face_Actor(kActorMcCoy, kActorDektora, true);
 					Actor_Change_Animation_Mode(kActorDektora, 71);
 					Delay(500);
@@ -171,7 +171,7 @@ bool SceneScriptNR11::ClickedOn3DObject(const char *objectName, bool combatMode)
 					) {
 						Music_Play(kMusicLoveSong, 35, 0, 3, -1, 0, 0);
 					}
-					Loop_Actor_Walk_To_XYZ(kActorDektora, -135.0f, 0.33f, -267.0f, 0, false, false, 0);
+					Loop_Actor_Walk_To_XYZ(kActorDektora, -135.0f, 0.33f, -267.0f, 0, false, false, false);
 					Actor_Face_Actor(kActorDektora, kActorMcCoy, true);
 					Actor_Face_Actor(kActorMcCoy, kActorDektora, true);
 					Actor_Clue_Acquire(kActorMcCoy, kClueDektoraInterview4, true, kActorDektora);
@@ -236,7 +236,7 @@ bool SceneScriptNR11::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptNR11::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 100.0f, 1.75f, -8.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 100.0f, 1.75f, -8.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagNR11toNR10);
 			Set_Enter(kSetNR10, kSceneNR10);
 			return true;

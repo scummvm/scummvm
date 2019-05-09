@@ -387,7 +387,7 @@ void AIScriptRachael::FledCombat() {
 void AIScriptRachael::dialogue_start() {
 	if (_vm->_cutContent) {
 			Actor_Face_Actor(kActorRachael, kActorMcCoy, true);
-			Loop_Actor_Walk_To_Actor(kActorRachael, kActorMcCoy, 84, 0, false);
+			Loop_Actor_Walk_To_Actor(kActorRachael, kActorMcCoy, 84, false, false);
 			if(_vm->_cutContent) {
 				Actor_Says(kActorMcCoy, 2735, 14);              // MetAtYourUnclesOffice
 			}
@@ -402,7 +402,7 @@ void AIScriptRachael::dialogue_start() {
 			Actor_Says(kActorRachael, 40, 15);                  // ThankYouForAsking
 	} else {
 		// original code -- un-triggered
-		Loop_Actor_Walk_To_Actor(kActorRachael, kActorMcCoy, 84, 0, false);
+		Loop_Actor_Walk_To_Actor(kActorRachael, kActorMcCoy, 84, false, false);
 		Actor_Says(kActorRachael, 0, 15);                   // I remember you mr mcCoy
 		Actor_Says(kActorMcCoy, 2740, 13);
 		Actor_Says(kActorRachael, 10, 14);

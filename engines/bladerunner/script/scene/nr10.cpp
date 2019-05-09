@@ -95,7 +95,7 @@ bool SceneScriptNR10::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptNR10::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -152.78f, 2.84f, -238.43f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -152.78f, 2.84f, -238.43f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagNR10toNR09);
 			Set_Enter(kSetNR09, kSceneNR09);
 			return true;
@@ -103,7 +103,7 @@ bool SceneScriptNR10::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 11.5f, 2.84f, -304.46f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 11.5f, 2.84f, -304.46f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 55, false);
 			Loop_Actor_Travel_Ladder(kActorMcCoy, 8, true, kAnimationModeIdle);
 			Game_Flag_Set(kFlagNR10toNR11);

@@ -148,7 +148,7 @@ bool SceneScriptHC03::ClickedOnItem(int itemId, bool combatMode) {
 
 bool SceneScriptHC03::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 607.0f, 0.14f, 9.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 607.0f, 0.14f, 9.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagHC03toHC01);
 			Set_Enter(kSetHC01_HC02_HC03_HC04, kSceneHC01);
 		}
@@ -156,7 +156,7 @@ bool SceneScriptHC03::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 628.0f, 2.04f, -123.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 628.0f, 2.04f, -123.0f, 0, true, false, false)) {
 			if (!Game_Flag_Query(kFlagHC03TrapDoorOpen)) {
 				Scene_Loop_Set_Default(kHC03LoopMainCageOpenTrapDoorOpen);
 				Scene_Loop_Start_Special(kSceneLoopModeOnce, kHC03LoopTrapDoorOpening, true);

@@ -108,8 +108,8 @@ bool SceneScriptBB01::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptBB01::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -140.0f, 9.0f, 818.0f, 0, true, false, 0);
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -233.0f, 9.0f, 846.0f, 0, true, false, 0)) {
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -140.0f, 9.0f, 818.0f, 0, true, false, false);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -233.0f, 9.0f, 846.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagBB01toDR02);
 			Game_Flag_Reset(kFlagMcCoyInBradburyBuilding);
 			Game_Flag_Set(kFlagMcCoyInDNARow);
@@ -119,7 +119,7 @@ bool SceneScriptBB01::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -125.39f, 9.0f, 372.45f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -125.39f, 9.0f, 372.45f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagBB01toBB02);
 			Set_Enter(kSetBB02_BB04_BB06_BB51, kSceneBB02);
 		}
@@ -127,7 +127,7 @@ bool SceneScriptBB01::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 43.0f, 0.0f, 1062.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 43.0f, 0.0f, 1062.0f, 0, true, false, false)) {
 			Game_Flag_Reset(kFlagMcCoyInChinaTown);
 			Game_Flag_Reset(kFlagMcCoyInRunciters);
 			Game_Flag_Reset(kFlagMcCoyInMcCoyApartment);
@@ -252,7 +252,7 @@ void SceneScriptBB01::PlayerWalkedIn() {
 		if (!Game_Flag_Query(kFlagBB01VisitedFirstTimeWithSpinner) && Game_Flag_Query(kFlagSpinnerAtBB01)) {
 			Game_Flag_Set(kFlagBB01VisitedFirstTimeWithSpinner);
 		}
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 43.0f, 0.0f, 954.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 43.0f, 0.0f, 954.0f, 0, false, false, false);
 	}
 }
 

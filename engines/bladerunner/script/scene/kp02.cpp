@@ -79,7 +79,7 @@ bool SceneScriptKP02::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptKP02::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1040.0f, -615.49f, 2903.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1040.0f, -615.49f, 2903.0f, 0, true, false, false)) {
 			if (Actor_Query_Goal_Number(kActorFreeSlotB) == 406
 			 || Actor_Query_Goal_Number(kActorFreeSlotA) == 406
 			) {
@@ -102,7 +102,7 @@ bool SceneScriptKP02::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -884.0f, -615.49f, 3065.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -884.0f, -615.49f, 3065.0f, 0, true, false, false)) {
 			if (Actor_Query_Goal_Number(kActorFreeSlotB) == 406
 			 || Actor_Query_Goal_Number(kActorFreeSlotA) == 406
 			) {
@@ -138,7 +138,7 @@ void SceneScriptKP02::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptKP02::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagKP01toKP02)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -884.0f, -615.49f, 3035.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -884.0f, -615.49f, 3035.0f, 0, false, false, false);
 		Game_Flag_Reset(kFlagKP01toKP02);
 	}
 

@@ -334,7 +334,7 @@ bool AIScriptMaggie::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case kGoalMaggieKP05McCoyEntred:
 		Scene_Exits_Disable();
-		Loop_Actor_Walk_To_XYZ(kActorMaggie, -734.0, 0.0, -432.0, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMaggie, -734.0, 0.0, -432.0, 0, false, false, false);
 		Actor_Face_Actor(kActorMaggie, kActorMcCoy, true);
 		Actor_Change_Animation_Mode(kActorMaggie, 56);
 		Actor_Face_Actor(kActorMcCoy, kActorMaggie, true);

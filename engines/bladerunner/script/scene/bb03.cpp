@@ -86,8 +86,8 @@ bool SceneScriptBB03::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptBB03::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 176.0f, 60.16f, -64.0f, 0, true, false, 0)) {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 176.0f, 60.16f, 0.0f, 0, false, false, 0);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 176.0f, 60.16f, -64.0f, 0, true, false, false)) {
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 176.0f, 60.16f, 0.0f, 0, false, false, false);
 			Game_Flag_Set(kFlagBB03toBB04);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -97,7 +97,7 @@ bool SceneScriptBB03::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 20.0f, 60.16f, 0.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 20.0f, 60.16f, 0.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagBB03toBB02);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -107,7 +107,7 @@ bool SceneScriptBB03::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 204.0f, 60.16f, -164.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 204.0f, 60.16f, -164.0f, 0, true, false, false)) {
 			if (Global_Variable_Query(kVariableChapter) < 4) {
 				if (Actor_Query_Goal_Number(kActorSebastian) == 200) {
 					Actor_Says(kActorSebastian, 70, kAnimationModeTalk);
@@ -147,12 +147,12 @@ void SceneScriptBB03::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptBB03::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagBB05toBB03)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 164.0f, 60.16f, -164.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 164.0f, 60.16f, -164.0f, 0, false, false, false);
 		Game_Flag_Reset(kFlagBB05toBB03);
 	}
 
 	if (Game_Flag_Query(kFlagBB04toBB03)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 176.0f, 60.16f, -64.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 176.0f, 60.16f, -64.0f, 0, false, false, false);
 		Game_Flag_Reset(kFlagBB04toBB03);
 	}
 }

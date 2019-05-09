@@ -41,7 +41,7 @@ void SceneScriptPS03::InitializeScene() {
 	if (Global_Variable_Query(kVariableChapter) > 1) {
 		Scene_Exit_Add_2D_Exit(2, 358, 245, 411, 288, 0);
 	}
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(0);
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(false);
 	Ambient_Sounds_Add_Looping_Sound(kSfxPSAMB6, 35, 0, 1);
 	Ambient_Sounds_Add_Sound(kSfxPSDOOR1, 5, 50,  7,  7, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxPSDOOR2, 5, 50,  7,  7, -100, 100, -101, -101, 0, 0);
@@ -76,7 +76,7 @@ bool SceneScriptPS03::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptPS03::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 #if BLADERUNNER_ORIGINAL_BUGS
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -674.0f, -354.0f, 550.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -674.0f, -354.0f, 550.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagPS03toPS04);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -84,7 +84,7 @@ bool SceneScriptPS03::ClickedOnExit(int exitId) {
 		}
 #else
 		// Make McCoy move more forward till he reaches the exit to avoid blinking out at transition to PS03
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -674.0f, -354.0f, 690.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -674.0f, -354.0f, 690.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagPS03toPS04);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -94,7 +94,7 @@ bool SceneScriptPS03::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -569.54f, -354.62f, -1076.15f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -569.54f, -354.62f, -1076.15f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Set_Enter(kSetPS02, kScenePS02);
@@ -107,7 +107,7 @@ bool SceneScriptPS03::ClickedOnExit(int exitId) {
 	}
 	if (exitId == 2) {
 #if BLADERUNNER_ORIGINAL_BUGS
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -875.0f, -354.0f, -1241.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -875.0f, -354.0f, -1241.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagPS03toPS14);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -115,7 +115,7 @@ bool SceneScriptPS03::ClickedOnExit(int exitId) {
 		}
 #else
 		// exit Police Station earlier (lower z) to avoid some glitch of blending McCoy with background
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -875.0f, -354.0f, -1231.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -875.0f, -354.0f, -1231.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagPS03toPS14);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);

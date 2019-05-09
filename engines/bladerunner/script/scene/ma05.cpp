@@ -90,8 +90,8 @@ bool SceneScriptMA05::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptMA05::ClickedOnExit(int exitId) {
 	if (exitId == kMA05ExitMA04) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 956.17f, 1579.0f, 0, 0, false, 0)) {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 956.17f, 1579.0f, 0, 0, false, 0);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 956.17f, 1579.0f, 0, false, false, false)) {
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 956.17f, 1579.0f, 0, false, false, false);
 			Game_Flag_Set(kFlagMA05toMA04);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -137,7 +137,7 @@ void SceneScriptMA05::PlayerWalkedIn() {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 	if (Global_Variable_Query(kVariableChapter) == 2 || Global_Variable_Query(kVariableChapter) == 3) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 953.97f, 1564.0f, 0, false, false, 1);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 953.97f, 1564.0f, 0, false, false, true);
 	}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 	//return false;

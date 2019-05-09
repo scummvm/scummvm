@@ -106,9 +106,9 @@ bool SceneScriptKP03::ClickedOn3DObject(const char *objectName, bool combatMode)
 			saveSteele();
 		} else {
 			if (Game_Flag_Query(kFlagKP01toKP03)) {
-				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -137.0f, -36.55f, 26.0f, 0, 0, true, 0);
+				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -137.0f, -36.55f, 26.0f, 0, false, true, false);
 			} else if (Game_Flag_Query(kFlagKP05toKP03)) {
-				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -50.0f, -36.55f, 78.0f, 0, 0, true, 0);
+				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -50.0f, -36.55f, 78.0f, 0, false, true, false);
 			}
 
 			if (Game_Flag_Query(kFlagKP03BombActive)) {
@@ -148,7 +148,7 @@ bool SceneScriptKP03::ClickedOnExit(int exitId) {
 		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleKP03ShootMcCoy);
 	} else {
 		if (exitId == 0) {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1.0f, -36.55f, 111.0f, 0, true, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1.0f, -36.55f, 111.0f, 0, true, false, false)) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Music_Stop(2);
@@ -161,7 +161,7 @@ bool SceneScriptKP03::ClickedOnExit(int exitId) {
 		}
 
 		if (exitId == 1) {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -321.0f, -36.55f, 26.0f, 0, true, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -321.0f, -36.55f, 26.0f, 0, true, false, false)) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Music_Stop(2);
@@ -258,7 +258,7 @@ void SceneScriptKP03::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptKP03::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagKP05toKP03)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1.0f, -36.55f, 87.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1.0f, -36.55f, 87.0f, 0, false, false, false);
 	}
 
 	if (Actor_Query_Is_In_Current_Set(kActorSteele)
@@ -295,7 +295,7 @@ void SceneScriptKP03::saveSteele() {
 	Actor_Says(kActorSteele, 480, 60);
 	Actor_Face_Object(kActorMcCoy, "BRACK MID", true);
 	Actor_Says(kActorMcCoy, 2185, 14);
-	Loop_Actor_Walk_To_XYZ(kActorSteele, -137.0f, -36.55f, 26.0f, 0, false, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorSteele, -137.0f, -36.55f, 26.0f, 0, false, false, false);
 	Actor_Face_Object(kActorSteele, "BRACK MID", true);
 	Actor_Says(kActorSteele, 490, 58);
 	Actor_Says(kActorMcCoy, 2190, 14);
@@ -309,7 +309,7 @@ void SceneScriptKP03::saveSteele() {
 	Actor_Set_Goal_Number(kActorSteele, kGoalSteeleKP03Leave);
 	Actor_Says(kActorMcCoy, 2195, 14);
 	Ambient_Sounds_Play_Sound(kSfxLABMISC6, 40, -60, -60, 0);
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1.0f, -36.55f, 111.0f, 0, false, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1.0f, -36.55f, 111.0f, 0, false, false, false);
 	Actor_Set_Goal_Number(kActorSteele, kGoalSteeleKP05Enter);
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);

@@ -95,7 +95,7 @@ bool SceneScriptMA02::ClickedOn3DObject(const char *objectName, bool a2) {
 	}
 
 	if (Object_Query_Click("BAR-MAIN", objectName)) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -29.0f, -140.4f, 298.0f, 36, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -29.0f, -140.4f, 298.0f, 36, true, false, false)) {
 			Actor_Face_Object(kActorMcCoy, "BAR-MAIN", true);
 			if (Global_Variable_Query(kVariableChapter) < 4) {
 				Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieMA02GetFed);
@@ -139,7 +139,7 @@ bool SceneScriptMA02::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptMA02::ClickedOnExit(int exitId) {
 	if (exitId == kMA02ExitMA06) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 23.19f, -144.12f, 378.27f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 23.19f, -144.12f, 378.27f, 0, true, false, false)) {
 			Music_Stop(10);
 			Game_Flag_Set(kFlagMA02toMA06);
 			Set_Enter(kSetMA06, kSceneMA06);
@@ -148,7 +148,7 @@ bool SceneScriptMA02::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == kMA02ExitMA04) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -168.0f, -144.13f, 10.27f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -168.0f, -144.13f, 10.27f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagMA02ToMA04);
 			Set_Enter(kSetMA04, kSceneMA04);
 		}
@@ -173,7 +173,7 @@ void SceneScriptMA02::PlayerWalkedIn() {
 	}
 
 	if (Game_Flag_Query(kFlagMA04ToMA02)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -148.12f, -144.13f, 34.27f, 0, true, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -148.12f, -144.13f, 34.27f, 0, true, false, false);
 	}
 
 	if ( Global_Variable_Query(kVariableChapter) == 4
@@ -182,7 +182,7 @@ void SceneScriptMA02::PlayerWalkedIn() {
 		Game_Flag_Set(kFlagUG07Empty);
 		Game_Flag_Set(kFlagMA02RajifTalk);
 		talkWithRajif();
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 23.19f, -144.12f, 378.27f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 23.19f, -144.12f, 378.27f, 0, false, false, false);
 		Game_Flag_Set(kFlagMA02toMA06);
 		Set_Enter(kSetMA06, kSceneMA06);
 		//	return true;

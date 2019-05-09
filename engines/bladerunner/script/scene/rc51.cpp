@@ -77,7 +77,7 @@ bool SceneScriptRC51::ClickedOnActor(int actorId) {
 
 bool SceneScriptRC51::ClickedOnItem(int itemId, bool a2) {
 	if (itemId == kItemChopstickWrapper) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 17.97f, -1238.89f, 108053.5f, 0, false, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 17.97f, -1238.89f, 108053.5f, 0, false, false, false)) {
 			Actor_Face_Item(kActorMcCoy, kItemChopstickWrapper, true);
 			Actor_Clue_Acquire(kActorMcCoy, kClueChopstickWrapper, true, -1);
 			Item_Remove_From_World(kItemChopstickWrapper);
@@ -118,7 +118,7 @@ bool SceneScriptRC51::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptRC51::ClickedOnExit(int exitId) {
 	if (exitId == kRC51ExitRC02) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -8.87f, -1238.89f, 108173.27f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -8.87f, -1238.89f, 108173.27f, 0, true, false, false)) {
 			Set_Enter(kSetRC02_RC51, kSceneRC02);
 			return true;
 		}

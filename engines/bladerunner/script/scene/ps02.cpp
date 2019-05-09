@@ -30,7 +30,7 @@ void SceneScriptPS02::InitializeScene() {
 
 	Scene_Exit_Add_2D_Exit(0, 0, 0, 240, 479, 3);
 
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(0);
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(false);
 	Ambient_Sounds_Add_Looping_Sound(kSfxESPLOOP1, 20, 1, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxELEAMB3,  20, 1, 1);
 	Ambient_Sounds_Add_Sound(kSfxCROSLOCK, 3, 20, 12, 16, 0, 0, -101, -101, 0, 0);
@@ -55,35 +55,35 @@ bool SceneScriptPS02::ClickedOn3DObject(const char *objectName, bool a2) {
 	 || Object_Query_Click("E.D00R02", objectName)
 	) {
 		if (Game_Flag_Query(kFlagPS02toPS01)) {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -5.0f, -40.0f, -15.0f, 0, true, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -5.0f, -40.0f, -15.0f, 0, true, false, false)) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Set_Enter(kSetPS01, kScenePS01);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 3, true);
 			}
 		} else if (Game_Flag_Query(kFlagPS02toPS05)) {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -5.0f, -40.0f, -15.0f, 0, true, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -5.0f, -40.0f, -15.0f, 0, true, false, false)) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Set_Enter(kSetPS05, kScenePS05);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 3, true);
 			}
 		} else if (Game_Flag_Query(kFlagPS02toPS07)) {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -5.0f, -40.0f, -15.0f, 0, true, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -5.0f, -40.0f, -15.0f, 0, true, false, false)) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Set_Enter(kSetPS07, kScenePS07);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 3, true);
 			}
 		} else if (Game_Flag_Query(kFlagPS02toPS03)) {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -5.0f, -40.0f, -15.0f, 0, true, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -5.0f, -40.0f, -15.0f, 0, true, false, false)) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Set_Enter(kSetPS03, kScenePS03);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 3, true);
 			}
 		} else if (Game_Flag_Query(kFlagPS02toPS09)) {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -5.0f, -40.0f, -15.0f, 0, true, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -5.0f, -40.0f, -15.0f, 0, true, false, false)) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Set_Enter(kSetPS09, kScenePS09);

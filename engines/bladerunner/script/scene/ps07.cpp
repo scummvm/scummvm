@@ -169,7 +169,7 @@ bool SceneScriptPS07::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptPS07::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 609.07f, 0.22f, -598.67f, 0, 0, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 609.07f, 0.22f, -598.67f, 0, false, false, false)) {
 			Set_Enter(kSetPS02, kScenePS02);
 		}
 		return true;
@@ -188,7 +188,7 @@ void SceneScriptPS07::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptPS07::PlayerWalkedIn() {
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 561.07f, 0.34f, -606.67f, 6, 0, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 561.07f, 0.34f, -606.67f, 6, false, false, false);
 	Game_Flag_Reset(kFlagPS02toPS07);
 	//return false;
 }

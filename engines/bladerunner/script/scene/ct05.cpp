@@ -140,7 +140,7 @@ bool SceneScriptCT05::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptCT05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -128.42f, -109.91f, 112.83f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -128.42f, -109.91f, 112.83f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagCT05toCT12);
 			if (Actor_Query_Goal_Number(kActorGaff) == kGoalGaffCT12WaitForMcCoy) {
 				Overlay_Remove("ct05over");
@@ -151,7 +151,7 @@ bool SceneScriptCT05::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -308.18f, -109.91f, 674.77f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -308.18f, -109.91f, 674.77f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagCT05toCT04);
 			if (Actor_Query_Goal_Number(kActorGaff) == kGoalGaffCT12WaitForMcCoy) {
 				Overlay_Remove("ct05over");
@@ -164,7 +164,7 @@ bool SceneScriptCT05::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 71.99f, -109.91f, 288.79f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 71.99f, -109.91f, 288.79f, 0, true, false, false)) {
 			Footstep_Sound_Override_On(2);
 			Actor_Face_Object(kActorMcCoy, "STAIR 2", true);
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 9, true, kAnimationModeIdle);
@@ -219,9 +219,9 @@ void SceneScriptCT05::PlayerWalkedIn() {
 		Player_Loses_Control();
 		Game_Flag_Reset(kFlagCT04toCT05);
 		if (Player_Query_Combat_Mode()) {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -308.18f, -109.91f, 674.77f, 0, false, true, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -308.18f, -109.91f, 674.77f, 0, false, true, false);
 		} else {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -308.18f, -109.91f, 674.77f, 0, false, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -308.18f, -109.91f, 674.77f, 0, false, false, false);
 		}
 		Player_Gains_Control();
 	}

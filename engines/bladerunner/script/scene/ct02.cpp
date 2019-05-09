@@ -226,7 +226,7 @@ void SceneScriptCT02::dialogueWithZuben() {
 
 bool SceneScriptCT02::ClickedOnActor(int actorId) {
 	if (actorId == kActorZuben && Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT01WalkToCT02) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -255.02f, -145.11f, 212.42f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -255.02f, -145.11f, 212.42f, 0, true, false, false)) {
 			Actor_Face_Actor(kActorMcCoy, kActorZuben, true);
 			Actor_Face_Actor(kActorZuben, kActorMcCoy, true);
 			if (!Game_Flag_Query(kFlagCT02ZubenTalk)) {
@@ -248,7 +248,7 @@ bool SceneScriptCT02::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptCT02::ClickedOnExit(int exitId) {
 	if (exitId == kCT02ExitCT01) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -111.2f, -145.11f, 243.28f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -111.2f, -145.11f, 243.28f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagCT02toCT01walk);
@@ -260,9 +260,9 @@ bool SceneScriptCT02::ClickedOnExit(int exitId) {
 	if (exitId == kCT02ExitCT03) {
 		bool v1;
 		if (Player_Query_Combat_Mode()) {
-			v1 = Loop_Actor_Walk_To_XYZ(kActorMcCoy, -154.83f, -145.11f, -82.61f, 0, 1, true, 0);
+			v1 = Loop_Actor_Walk_To_XYZ(kActorMcCoy, -154.83f, -145.11f, -82.61f, 0, true, true, false);
 		} else {
-			v1 = Loop_Actor_Walk_To_XYZ(kActorMcCoy, -154.83f, -145.11f, -82.61f, 0, 1, false, 0);
+			v1 = Loop_Actor_Walk_To_XYZ(kActorMcCoy, -154.83f, -145.11f, -82.61f, 0, true, false, false);
 		}
 		if (!v1) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);

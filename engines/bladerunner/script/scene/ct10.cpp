@@ -65,7 +65,7 @@ bool SceneScriptCT10::MouseClick(int x, int y) {
 }
 
 void SceneScriptCT10::checkCabinet() {
-	if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 10.6f, 0.0f, -50.5f, 0, true, false, 0)) {
+	if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 10.6f, 0.0f, -50.5f, 0, true, false, false)) {
 		Player_Loses_Control();
 		Actor_Face_Heading(kActorMcCoy, 0, false);
 		Sound_Play(kSfxDRAWER1, 100, 0, 0, 50);
@@ -82,7 +82,7 @@ void SceneScriptCT10::checkCabinet() {
 
 bool SceneScriptCT10::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("TUB", objectName)) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -41.0f, 0.0f, -106.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -41.0f, 0.0f, -106.0f, 0, true, false, false)) {
 			Player_Loses_Control();
 			Actor_Face_Heading(kActorMcCoy, 850, false);
 			Actor_Change_Animation_Mode(kActorMcCoy, 38);
@@ -96,7 +96,7 @@ bool SceneScriptCT10::ClickedOn3DObject(const char *objectName, bool a2) {
 				Item_Pickup_Spin_Effect(kModelAnimationStrangeScale, 364, 214);
 			}
 			Delay(1000);
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -41.0f, 0.0f, -82.0f, 0, 0, false, 1);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -41.0f, 0.0f, -82.0f, 0, false, false, true);
 			Player_Gains_Control();
 		}
 		return true;
@@ -121,8 +121,8 @@ bool SceneScriptCT10::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptCT10::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -93.0f, 0.0f, -38.0f, 0, true, false, 0)) {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -121.0f, 0.0f, -78.0f, 0, false, false, 0);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -93.0f, 0.0f, -38.0f, 0, true, false, false)) {
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -121.0f, 0.0f, -78.0f, 0, false, false, false);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagCT10toCT09);
@@ -146,8 +146,8 @@ void SceneScriptCT10::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptCT10::PlayerWalkedIn() {
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -93.0f, 0.0f, -38.0f, 0, 0, false, 0);
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -49.0f, 0.0f, -38.0f, 0, 0, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -93.0f, 0.0f, -38.0f, 0, false, false, false);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -49.0f, 0.0f, -38.0f, 0, false, false, false);
 	if (!Game_Flag_Query(kFlagCT10Entered)) {
 		Actor_Voice_Over(450, kActorVoiceOver);
 		Actor_Voice_Over(460, kActorVoiceOver);

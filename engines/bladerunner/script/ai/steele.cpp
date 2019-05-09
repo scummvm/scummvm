@@ -326,7 +326,7 @@ void AIScriptSteele::CompletedMovementTrack() {
 		Actor_Says(kActorSteele, 670, 59);
 		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleKP06Leave);
 		Player_Set_Combat_Mode(kActorSteele);
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -731.0f, 8.26f, -657.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -731.0f, 8.26f, -657.0f, 0, false, false, false);
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		Game_Flag_Set(kFlagKP06toKP07);
@@ -667,7 +667,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case kGoalSteeleLeaveTB02:
-		Loop_Actor_Walk_To_XYZ(kActorSteele, -187.82f, 0.08f, 1460.74f, 0, 0, 0, 0);
+		Loop_Actor_Walk_To_XYZ(kActorSteele, -187.82f, 0.08f, 1460.74f, 0, false, false, false);
 		Actor_Face_Heading(kActorSteele, 802, false);
 		Loop_Actor_Travel_Stairs(kActorSteele, 10, false, kAnimationModeIdle);
 		AI_Movement_Track_Flush(kActorSteele);
@@ -863,7 +863,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case kGoalSteeleNR11Enter:
 		if (comp_distance(kActorMcCoy, -4.0, 0.33f, 0.0f, 100.0f, 0.33f, -4.0f) < 48.0f) {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 32.0f, 0.33f, 17.0f, 0, false, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 32.0f, 0.33f, 17.0f, 0, false, false, false);
 		}
 		AI_Countdown_Timer_Reset(kActorSteele, kActorTimerAIScriptCustomTask0);
 		Player_Loses_Control();
@@ -1287,7 +1287,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case kGoalSteeleNR01StartChapter4:
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -281.0f, 31.93f, -1061.0f, 0, false, true, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -281.0f, 31.93f, -1061.0f, 0, false, true, false);
 		Actor_Face_Heading(kActorMcCoy, 45, false);
 		Loop_Actor_Travel_Stairs(kActorMcCoy, 3, false, kAnimationModeIdle);
 		Global_Variable_Set(kVariableChapter, 4);

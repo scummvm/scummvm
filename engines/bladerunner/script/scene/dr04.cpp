@@ -49,7 +49,7 @@ void SceneScriptDR04::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(1, 443, 264, 488, 353, 0);
 	Scene_Exit_Add_2D_Exit(2, 222, 110, 269, 207, 0);
 
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(0);
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(false);
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 50,    1,   1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxFIREBD1, 55, -100,   1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxHUMMER1, 28, -100, 100);
@@ -160,7 +160,7 @@ bool SceneScriptDR04::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -761.0f, -0.04f, 97.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -761.0f, -0.04f, 97.0f, 0, true, false, false)) {
 			Async_Actor_Walk_To_XYZ(kActorMcCoy, -683.0f, -0.04f, 43.0f, 0, false);
 			Game_Flag_Set(kFlagDR04toDR01);
 			Set_Enter(kSetDR01_DR02_DR04, kSceneDR01);
@@ -169,7 +169,7 @@ bool SceneScriptDR04::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1067.0f, 7.18f, 421.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1067.0f, 7.18f, 421.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagNotUsed232);
 			Game_Flag_Set(kFlagDR04toDR05);
 			Set_Enter(kSetDR05, kSceneDR05);
@@ -178,12 +178,12 @@ bool SceneScriptDR04::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -851.0f, 6.98f, 560.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -851.0f, 6.98f, 560.0f, 0, true, false, false)) {
 			Footstep_Sound_Override_On(3);
 			Actor_Set_Immunity_To_Obstacles(kActorMcCoy, true);
 			Actor_Face_Heading(kActorMcCoy, 512, false);
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 7, true, kAnimationModeIdle);
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -899.0f, 71.64f, 647.0f, 0, false, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -899.0f, 71.64f, 647.0f, 0, false, false, false);
 			Actor_Face_Heading(kActorMcCoy, 0, false);
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 7, true, kAnimationModeIdle);
 			Actor_Set_Immunity_To_Obstacles(kActorMcCoy, false);
@@ -280,10 +280,10 @@ void SceneScriptDR04::PlayerWalkedIn() {
 			Actor_Set_Immunity_To_Obstacles(kActorMcCoy, true);
 			Actor_Face_Heading(kActorMcCoy, 512, false);
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 7, false, kAnimationModeIdle);
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -851.0f, 71.64f, 647.0f, 0, false, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -851.0f, 71.64f, 647.0f, 0, false, false, false);
 			Actor_Face_Heading(kActorMcCoy, 0, false);
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 7, false, kAnimationModeIdle);
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -774.85f, 7.18f, 386.67f, 0, false, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -774.85f, 7.18f, 386.67f, 0, false, false, false);
 			Actor_Set_Immunity_To_Obstacles(kActorMcCoy, false);
 			Footstep_Sound_Override_Off();
 		}

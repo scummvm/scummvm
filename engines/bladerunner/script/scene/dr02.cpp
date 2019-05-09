@@ -41,7 +41,7 @@ void SceneScriptDR02::InitializeScene() {
 		Scene_Exit_Add_2D_Exit(2, 95, 0, 148, 292, 0);
 	}
 
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(0);
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(false);
 	Ambient_Sounds_Remove_All_Looping_Sounds(0);
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 50, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxHUMMER3, 27, 85, 1);
@@ -120,7 +120,7 @@ bool SceneScriptDR02::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptDR02::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -835.0f, -0.04f, -118.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -835.0f, -0.04f, -118.0f, 0, true, false, false)) {
 			Async_Actor_Walk_To_XYZ(kActorMcCoy, -727.0f, -0.04f, -118.0f, 0, false);
 			Game_Flag_Set(kFlagDR02toDR01);
 			Set_Enter(kSetDR01_DR02_DR04, kSceneDR01);
@@ -131,7 +131,7 @@ bool SceneScriptDR02::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1162.0f, 7.18f, -322.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1162.0f, 7.18f, -322.0f, 0, true, false, false)) {
 			if (Global_Variable_Query(kVariableChapter) > 2) {
 				Actor_Says(kActorMcCoy, 8522, 15);
 			} else {
@@ -143,7 +143,7 @@ bool SceneScriptDR02::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1258.0f, 7.18f, -314.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1258.0f, 7.18f, -314.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagDR02toBB01);
 			Game_Flag_Reset(kFlagMcCoyInDNARow);
 			Game_Flag_Set(kFlagMcCoyInBradburyBuilding);

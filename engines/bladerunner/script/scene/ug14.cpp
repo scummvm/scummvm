@@ -85,7 +85,7 @@ bool SceneScriptUG14::ClickedOnExit(int exitId) {
 
 	if (exitId == 0) {
 		if (v1) {
-			if (Loop_Actor_Walk_To_XYZ(kActorMcCoy, 141.47f, 128.92f, -150.16f, 0, true, false, 0)) {
+			if (Loop_Actor_Walk_To_XYZ(kActorMcCoy, 141.47f, 128.92f, -150.16f, 0, true, false, false)) {
 				return false;
 			}
 			Actor_Face_XYZ(kActorMcCoy, -14.53f, 12.12f, -150.16f, true);
@@ -94,7 +94,7 @@ bool SceneScriptUG14::ClickedOnExit(int exitId) {
 			Footstep_Sound_Override_Off();
 		}
 
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -278.0f, 12.97f, -152.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -278.0f, 12.97f, -152.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagUG14toUG19);
@@ -105,7 +105,7 @@ bool SceneScriptUG14::ClickedOnExit(int exitId) {
 
 	if (exitId == 1) {
 		if (!v1) {
-			if (Loop_Actor_Walk_To_XYZ(kActorMcCoy, -14.53f, 12.12f, -150.16f, 0, true, false, 0)) {
+			if (Loop_Actor_Walk_To_XYZ(kActorMcCoy, -14.53f, 12.12f, -150.16f, 0, true, false, false)) {
 				return false;
 			}
 			Actor_Face_XYZ(kActorMcCoy, 141.47f, 128.92f, -150.16f, true);
@@ -114,7 +114,7 @@ bool SceneScriptUG14::ClickedOnExit(int exitId) {
 			Footstep_Sound_Override_Off();
 		}
 
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -50.0f, 129.0f, -814.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -50.0f, 129.0f, -814.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagUG14toUG12);
@@ -125,7 +125,7 @@ bool SceneScriptUG14::ClickedOnExit(int exitId) {
 
 	if (exitId == 2) {
 		if (!v1) {
-			if (Loop_Actor_Walk_To_XYZ(kActorMcCoy, -14.53f, 12.12f, -150.16f, 0, true, false, 0)) {
+			if (Loop_Actor_Walk_To_XYZ(kActorMcCoy, -14.53f, 12.12f, -150.16f, 0, true, false, false)) {
 				return false;
 			}
 			Actor_Face_XYZ(kActorMcCoy, 141.47f, 128.92f, -150.16f, true);
@@ -134,11 +134,11 @@ bool SceneScriptUG14::ClickedOnExit(int exitId) {
 			Footstep_Sound_Override_Off();
 		}
 
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 157.0f, 128.92f, -108.01f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 157.0f, 128.92f, -108.01f, 0, true, false, false)) {
 			Footstep_Sound_Override_On(3);
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 6, true, kAnimationModeIdle);
 			Footstep_Sound_Override_Off();
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 233.0f, 186.04f, -32.0f, 0, false, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 233.0f, 186.04f, -32.0f, 0, false, false, false);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagUG14toUG10);
@@ -161,18 +161,18 @@ void SceneScriptUG14::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptUG14::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagUG19toUG14)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -250.0f, 12.97f, -152.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -250.0f, 12.97f, -152.0f, 0, false, false, false);
 		Game_Flag_Reset(kFlagUG19toUG14);
 	} else if (Game_Flag_Query(kFlagUG12toUG14)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -50.0f, 129.0f, -604.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -50.0f, 129.0f, -604.0f, 0, false, false, false);
 		Game_Flag_Reset(kFlagUG12toUG14);
 	} else {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 157.0f, 186.04f, -44.01f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 157.0f, 186.04f, -44.01f, 0, false, false, false);
 		Actor_Face_Heading(kActorMcCoy, 10, false);
 		Footstep_Sound_Override_On(3);
 		Loop_Actor_Travel_Stairs(kActorMcCoy, 6, false, kAnimationModeIdle);
 		Footstep_Sound_Override_Off();
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 157.0f, 128.92f, -148.01f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 157.0f, 128.92f, -148.01f, 0, false, false, false);
 		Actor_Face_Heading(kActorMcCoy, 807, false);
 		Game_Flag_Reset(kFlagUG10toUG14);
 	}

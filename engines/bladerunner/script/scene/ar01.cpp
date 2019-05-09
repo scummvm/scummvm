@@ -160,7 +160,7 @@ bool SceneScriptAR01::ClickedOnActor(int actorId) {
 
 	if (actorId == kActorFishDealer) {
 		Actor_Set_Goal_Number(kActorFishDealer, 2);
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -120.73f, 0.0f, 219.17f, 12, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -120.73f, 0.0f, 219.17f, 12, true, false, false)) {
 			Actor_Face_Actor(kActorMcCoy, kActorFishDealer, true);
 			Actor_Face_Actor(kActorFishDealer, kActorMcCoy, true);
 			if (!Game_Flag_Query(kFlagAR01FishDealerTalk)) {
@@ -222,8 +222,8 @@ bool SceneScriptAR01::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptAR01::ClickedOnExit(int exitId) {
 	if (exitId == kAR01ExitHC01) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -358.0, 0.0, -149.0, 0, true, false, 0)) {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -477.0, 0.0, -149.0, 0, false, false, 0);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -358.0, 0.0, -149.0, 0, true, false, false)) {
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -477.0, 0.0, -149.0, 0, false, false, false);
 			Game_Flag_Set(kFlagAR01toHC01);
 			Game_Flag_Set(kFlagHC01GuzzaPrepare);
 			Game_Flag_Reset(kFlagMcCoyInAnimoidRow);
@@ -235,7 +235,7 @@ bool SceneScriptAR01::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == kAR01ExitAR02) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -182.0, 0.0, -551.0, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -182.0, 0.0, -551.0, 0, true, false, false)) {
 			Game_Flag_Set(kFlagAR01toAR02);
 			Async_Actor_Walk_To_XYZ(kActorMcCoy, -222.0, 0.0, -690.0, 0, false);
 			Set_Enter(kSetAR01_AR02, kSceneAR02);
@@ -252,7 +252,7 @@ bool SceneScriptAR01::ClickedOnExit(int exitId) {
 		if (Game_Flag_Query(kFlagDNARowAvailable)) {
 			Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationDNARow, true);
 		}
-		int v1 = Loop_Actor_Walk_To_XYZ(kActorMcCoy, -164.0f, 0.0f, 332.0f, 0, true, false, 0);
+		int v1 = Loop_Actor_Walk_To_XYZ(kActorMcCoy, -164.0f, 0.0f, 332.0f, 0, true, false, false);
 		Actor_Face_Heading(kActorMcCoy, 545, false);
 		if (Actor_Query_Goal_Number(kActorIzo) >= kGoalIzoTakePhoto
 		 && Actor_Query_Goal_Number(kActorIzo) <= kGoalIzoEscape
@@ -260,8 +260,8 @@ bool SceneScriptAR01::ClickedOnExit(int exitId) {
 			Player_Loses_Control();
 			Actor_Put_In_Set(kActorIzo, kSetAR01_AR02);
 			Actor_Set_At_XYZ(kActorIzo, -448.0, 0.0, 130.0, 0);
-			Loop_Actor_Walk_To_XYZ(kActorIzo, -323.0f, 0.64f, 101.74f, 48, false, true, 0);
-			Loop_Actor_Walk_To_Actor(kActorIzo, kActorMcCoy, 48, 0, true);
+			Loop_Actor_Walk_To_XYZ(kActorIzo, -323.0f, 0.64f, 101.74f, 48, false, true, false);
+			Loop_Actor_Walk_To_Actor(kActorIzo, kActorMcCoy, 48, false, true);
 			Actor_Face_Actor(kActorIzo, kActorMcCoy, true);
 			Actor_Change_Animation_Mode(kActorIzo, kAnimationModeCombatAttack);
 			Actor_Says(kActorMcCoy, 1800, 21);
@@ -405,7 +405,7 @@ void SceneScriptAR01::PlayerWalkedIn() {
 		Game_Flag_Set(kFlagAR01Entered);
 	}
 	if (Game_Flag_Query(kFlagHC01toAR01)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -358.0f, 0.0f, -149.0f, 0, true, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -358.0f, 0.0f, -149.0f, 0, true, false, false);
 		Game_Flag_Reset(kFlagHC01toAR01);
 	}
 	if (Actor_Query_Goal_Number(kActorPhotographer) < 199) {

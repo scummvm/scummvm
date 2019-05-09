@@ -143,7 +143,7 @@ bool SceneScriptTB06::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptTB06::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -16.0f, 149.0f, -427.0f, 12, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -16.0f, 149.0f, -427.0f, 12, true, false, false)) {
 			Game_Flag_Set(kFlagTB06toTB05);
 			Set_Enter(kSetTB05, kSceneTB05);
 			Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 2, true);
@@ -176,7 +176,7 @@ void SceneScriptTB06::PlayerWalkedIn() {
 	) {
 		Actor_Face_Actor(kActorMcCoy, kActorMarcus, true);
 		Actor_Says(kActorMcCoy, 5290, kAnimationModeTalk);
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -10.0f, 149.0f, -631.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -10.0f, 149.0f, -631.0f, 0, false, false, false);
 		AI_Movement_Track_Pause(kActorPhotographer);
 		Actor_Face_Actor(kActorMcCoy, kActorPhotographer, true);
 		Actor_Face_Actor(kActorPhotographer, kActorMcCoy, true);

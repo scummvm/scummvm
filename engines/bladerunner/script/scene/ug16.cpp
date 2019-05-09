@@ -79,7 +79,7 @@ bool SceneScriptUG16::MouseClick(int x, int y) {
 
 bool SceneScriptUG16::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("QUADPATCH05", objectName)) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 194.0f, -35.0f, 160.8f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 194.0f, -35.0f, 160.8f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 870, false);
 			if (!Game_Flag_Query(kFlagUG16FolderFound)
 			 &&  Game_Flag_Query(kFlagLutherLanceAreDead)
@@ -105,7 +105,7 @@ bool SceneScriptUG16::ClickedOn3DObject(const char *objectName, bool a2) {
 	}
 
 	if (Object_Query_Click("SCREEN 01", objectName)) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 194.0f, -35.0f, 160.8f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 194.0f, -35.0f, 160.8f, 0, true, false, false)) {
 
 			Actor_Face_Heading(kActorMcCoy, 870, false);
 
@@ -146,7 +146,7 @@ bool SceneScriptUG16::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptUG16::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -322.0f, -34.0f, -216.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -322.0f, -34.0f, -216.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagUG16toUG15b);
@@ -156,7 +156,7 @@ bool SceneScriptUG16::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -322.0f, -34.0f, -404.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -322.0f, -34.0f, -404.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagUG16toUG15a);
@@ -166,7 +166,7 @@ bool SceneScriptUG16::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -316.78f, -34.88f, -533.27f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -316.78f, -34.88f, -533.27f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 0, false);
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 13, true, kAnimationModeIdle);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
@@ -203,7 +203,7 @@ void SceneScriptUG16::PlayerWalkedIn() {
 	 &&  Actor_Query_Is_In_Current_Set(kActorLuther)
 	) {
 		Player_Loses_Control();
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 120.29f, -35.67f, 214.8f, 310, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 120.29f, -35.67f, 214.8f, 310, false, false, false);
 		Actor_Face_Actor(kActorMcCoy, kActorLuther, true);
 		Actor_Says(kActorLuther, 0, 6);
 		Actor_Says(kActorLuther, 30, 13);

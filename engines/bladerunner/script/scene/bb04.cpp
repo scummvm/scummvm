@@ -84,9 +84,9 @@ bool SceneScriptBB04::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptBB04::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -92.0f, -26.6f, 45.0f, 0,  true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -92.0f, -26.6f, 45.0f, 0,  true, false, false)) {
 			Player_Loses_Control();
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -15.0f, -25.17f, 45.0f, 0, false, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -15.0f, -25.17f, 45.0f, 0, false, false, false);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagBB04toBB02);
@@ -97,7 +97,7 @@ bool SceneScriptBB04::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -107.0f, -26.6f, 397.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -107.0f, -26.6f, 397.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagBB04toBB03);
@@ -120,7 +120,7 @@ void SceneScriptBB04::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptBB04::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagBB02toBB04)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -92.0f, -26.6f, 45.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -92.0f, -26.6f, 45.0f, 0, false, false, false);
 		Player_Gains_Control();
 		Game_Flag_Reset(kFlagBB02toBB04);
 	}

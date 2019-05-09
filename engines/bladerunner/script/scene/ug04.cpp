@@ -99,7 +99,7 @@ bool SceneScriptUG04::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptUG04::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -172.0f, 16.29f, -735.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -172.0f, 16.29f, -735.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagUG04toUG03);
 			Set_Enter(kSetUG03, kSceneUG03);
 		}
@@ -107,7 +107,7 @@ bool SceneScriptUG04::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 0.0f, -1.74f, -2400.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 0.0f, -1.74f, -2400.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagUG04toUG05);
 			Set_Enter(kSetUG05, kSceneUG05);
 		}
@@ -115,7 +115,7 @@ bool SceneScriptUG04::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 164.0f, 11.87f, -1013.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 164.0f, 11.87f, -1013.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagUG04toUG06);
 			Set_Enter(kSetUG06, kSceneUG06);
 		}
@@ -139,7 +139,7 @@ void SceneScriptUG04::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptUG04::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagUG06toUG04)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 60.0f, -1.74f, -976.0f, 6, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 60.0f, -1.74f, -976.0f, 6, false, false, false);
 		Game_Flag_Reset(kFlagUG06toUG04);
 	}
 }

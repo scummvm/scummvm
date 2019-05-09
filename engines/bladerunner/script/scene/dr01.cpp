@@ -129,7 +129,7 @@ bool SceneScriptDR01::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptDR01::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -835.0f, -0.04f, -118.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -835.0f, -0.04f, -118.0f, 0, true, false, false)) {
 			Async_Actor_Walk_To_XYZ(kActorMcCoy, -911.0f, -0.04f, -118.0f, 0, false);
 			Ambient_Sounds_Adjust_Looping_Sound(kSfxFACTAMB2, 10, -100, 1);
 			Game_Flag_Set(kFlagDR01toDR02);
@@ -139,7 +139,7 @@ bool SceneScriptDR01::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -711.0f, -0.04f, 70.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -711.0f, -0.04f, 70.0f, 0, true, false, false)) {
 			Async_Actor_Walk_To_XYZ(kActorMcCoy, -796.0f, -0.04f, 166.0f, 0, false);
 			Game_Flag_Set(kFlagDR01toDR04);
 			Set_Enter(kSetDR01_DR02_DR04, kSceneDR04);
@@ -148,7 +148,7 @@ bool SceneScriptDR01::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -372.0f, -0.04f, -82.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -372.0f, -0.04f, -82.0f, 0, true, false, false)) {
 			Game_Flag_Reset(kFlagMcCoyInChinaTown);
 			Game_Flag_Reset(kFlagMcCoyInRunciters);
 			Game_Flag_Reset(kFlagMcCoyInMcCoyApartment);
@@ -216,7 +216,7 @@ bool SceneScriptDR01::ClickedOnExit(int exitId) {
 			default:
 				Player_Loses_Control();
 				Game_Flag_Set(kFlagMcCoyInDNARow);
-				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -447.39f, 0.16f, -92.38f, 0, false, true, 0);
+				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -447.39f, 0.16f, -92.38f, 0, false, true, false);
 				Player_Gains_Control();
 				break;
 			}
@@ -229,7 +229,7 @@ bool SceneScriptDR01::ClickedOnExit(int exitId) {
 		Actor_Query_XYZ(kActorMcCoy, &x, &y, &z);
 		bool v7 = false;
 		if (-1200 < x) {
-			v7 = Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1236.4f, -0.04f, -13.91f, 0, 1, false, 0);
+			v7 = Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1236.4f, -0.04f, -13.91f, 0, true, false, false);
 		}
 		if (!v7) {
 			Game_Flag_Set(kFlagDR01toCT11);
@@ -267,7 +267,7 @@ void SceneScriptDR01::PlayerWalkedIn() {
 	        && !Game_Flag_Query(kFlagDR04toDR01)
 	) {
 		Player_Loses_Control();
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -447.39f, 0.16f, -92.38f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -447.39f, 0.16f, -92.38f, 0, false, false, false);
 		if (!Game_Flag_Query(kFlagDR01Visited)) {
 			Game_Flag_Set(kFlagDR01Visited);
 			// Make use of the kFlagDirectorsCut like in CT01 case

@@ -41,7 +41,7 @@ void SceneScriptPS04::InitializeScene() {
 		Actor_Change_Animation_Mode(kActorGuzza, 53);
 	}
 	Scene_Exit_Add_2D_Exit(0, 347, 113, 469, 302, 0);
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(0);
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(false);
 	Ambient_Sounds_Add_Looping_Sound(kSfxPSAMB6, 16, 1, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxRTONE3, 50, 1, 1);
 	Ambient_Sounds_Add_Sound(kSfxSCANNER1, 9, 40, 20, 20, 0, 0, -101, -101, 0, 0);
@@ -116,7 +116,7 @@ bool SceneScriptPS04::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptPS04::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -668.0f, -350.85f, 962.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -668.0f, -350.85f, 962.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagPS04toPS03);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -243,7 +243,7 @@ void SceneScriptPS04::dialogueWithGuzza() {
 			Actor_Says(kActorMcCoy, 3925, 18);
 			Actor_Face_Actor(kActorGuzza, kActorMcCoy, true);
 			Actor_Says(kActorGuzza, 170, 33);
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -716.0f, -354.85f, 1042.0f, 0, false, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -716.0f, -354.85f, 1042.0f, 0, false, false, false);
 			Actor_Face_Actor(kActorMcCoy, kActorGuzza, true);
 			Actor_Says(kActorMcCoy, 3930, 13);
 			Actor_Face_Actor(kActorGuzza, kActorMcCoy, true);

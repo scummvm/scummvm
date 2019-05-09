@@ -77,7 +77,7 @@ bool SceneScriptHF07::ClickedOnExit(int exitId) {
 			Async_Actor_Walk_To_XYZ(kActorLucy, 235.0f, 58.43f, -100.0f, 0, false);
 		}
 
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 318.0f, 71.43f, -102.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 318.0f, 71.43f, -102.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagHF07toHF05);
 			if (!Game_Flag_Query(kFlagHF01TalkToLovedOne)) {
 				Actor_Face_Heading(kActorMcCoy, 0, false);
@@ -99,7 +99,7 @@ bool SceneScriptHF07::ClickedOnExit(int exitId) {
 			Async_Actor_Walk_To_XYZ(kActorLucy, -73.0f, 58.43f, -7.0f, 0, false);
 		}
 
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -84.0f, 58.43f, -105.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -84.0f, 58.43f, -105.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagHF07toUG06);

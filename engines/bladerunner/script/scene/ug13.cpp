@@ -111,7 +111,7 @@ bool SceneScriptUG13::MouseClick(int x, int y) {
 
 bool SceneScriptUG13::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("BOLLARD", objectName)) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 7.0f, 44.0f, -695.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 7.0f, 44.0f, -695.0f, 0, true, false, false)) {
 			Actor_Face_Object(kActorMcCoy, "BOLLARD", true);
 			if (Game_Flag_Query(kFlagUG08ElevatorUp)) {
 				Scene_Loop_Set_Default(1);
@@ -149,7 +149,7 @@ bool SceneScriptUG13::ClickedOnActor(int actorId) {
 	if (actorId == kActorTransient
 	 && Global_Variable_Query(kVariableChapter) == 4
 	) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -248.0f, 44.0f, -390.0f, 12, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -248.0f, 44.0f, -390.0f, 12, true, false, false)) {
 			Actor_Face_Actor(kActorMcCoy, kActorTransient, true);
 			if (Actor_Query_Goal_Number(kActorTransient) != 6
 			 && Actor_Query_Goal_Number(kActorTransient) != 599
@@ -209,7 +209,7 @@ bool SceneScriptUG13::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptUG13::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -32.0f, 54.63f, -883.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -32.0f, 54.63f, -883.0f, 0, true, false, false)) {
 			Player_Loses_Control();
 			Game_Flag_Set(kFlagUG13toUG08);
 			Game_Flag_Set(kFlagUG08ElevatorUp);
@@ -220,7 +220,7 @@ bool SceneScriptUG13::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 39.0f, 52.94f, -528.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 39.0f, 52.94f, -528.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagUG13toUG15);
 			Set_Enter(kSetUG15, kSceneUG15);
 		}
@@ -228,7 +228,7 @@ bool SceneScriptUG13::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -267.0f, 44.0f, -795.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -267.0f, 44.0f, -795.0f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 830, false);
 			Footstep_Sound_Override_On(3);
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 11, true, kAnimationModeIdle);
@@ -254,7 +254,7 @@ bool SceneScriptUG13::ClickedOnExit(int exitId) {
 					return true;
 				}
 			}
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -477.0f, 141.9f, -870.0f, 0, false, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -477.0f, 141.9f, -870.0f, 0, false, false, false);
 			Game_Flag_Set(kFlagUG13toUG18);
 			Set_Enter(kSetUG18, kSceneUG18);
 		}
@@ -304,18 +304,18 @@ void SceneScriptUG13::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptUG13::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagUG18toUG13)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -389.0f, 143.0f, -844.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -389.0f, 143.0f, -844.0f, 0, false, false, false);
 		Actor_Face_Heading(kActorMcCoy, 325, false);
 		Footstep_Sound_Override_On(3);
 		Loop_Actor_Travel_Stairs(kActorMcCoy, 11, false, kAnimationModeIdle);
 		Footstep_Sound_Override_Off();
 		Game_Flag_Reset(kFlagUG18toUG13);
 	} else if (Game_Flag_Query(kFlagUG15toUG13)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, 44.0f, -528.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, 44.0f, -528.0f, 0, false, false, false);
 		Game_Flag_Reset(kFlagUG15toUG13);
 	} else {
 		// arrived from elevator (going down)
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -60.0f, 55.24f, -816.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -60.0f, 55.24f, -816.0f, 0, false, false, false);
 		Game_Flag_Reset(kFlagUG08toUG13);
 		Player_Gains_Control();
 	}

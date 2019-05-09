@@ -101,7 +101,7 @@ bool SceneScriptHC01::ClickedOnActor(int actorId) {
 	 )
 	) {
 		AI_Movement_Track_Pause(kActorIzo);
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 624.43f, 0.14f, 83.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 624.43f, 0.14f, 83.0f, 0, true, false, false)) {
 			if (!Game_Flag_Query(kFlagHC01IzoTalk1)) {
 				Actor_Face_Actor(kActorIzo, kActorMcCoy, true);
 				Actor_Says_With_Pause(kActorIzo, 10, 0.2f, 13);
@@ -149,7 +149,7 @@ bool SceneScriptHC01::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptHC01::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 814.0f, 0.14f, 153.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 814.0f, 0.14f, 153.0f, 0, true, false, false)) {
 			Music_Adjust(12, 0, 2);
 			Game_Flag_Set(kFlagHC01toAR01);
 			Set_Enter(kSetAR01_AR02, kSceneAR01);
@@ -160,7 +160,7 @@ bool SceneScriptHC01::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 607.0f, 0.14f, 9.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 607.0f, 0.14f, 9.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagHC01toHC03);
 			Set_Enter(kSetHC01_HC02_HC03_HC04, kSceneHC03);
 		}
@@ -168,7 +168,7 @@ bool SceneScriptHC01::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 105.0f, 0.14f, 103.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 105.0f, 0.14f, 103.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagHC01toHC02);
 			Async_Actor_Walk_To_XYZ(kActorMcCoy, -57.0f, 0.14f, 83.0f, 0, false);
 			Set_Enter(kSetHC01_HC02_HC03_HC04, kSceneHC02);
@@ -219,7 +219,7 @@ void SceneScriptHC01::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptHC01::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagHC02toHC01)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 105.0f, 0.14f, 103.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 105.0f, 0.14f, 103.0f, 0, false, false, false);
 		Game_Flag_Reset(kFlagHC02toHC01);
 	}
 

@@ -406,7 +406,7 @@ bool SceneScriptRC01::ClickedOnItem(int itemId, bool a2) {
 			I_Sez("JM: It's hard to imagine that thing on either a car or a horse.");
 			I_Sez("MG: McCoy! What a witty chap...");
 			I_Sez("JM: He keeps me chuckling non-stop!\n");
-			Loop_Actor_Walk_To_Actor(kActorOfficerLeary, kActorMcCoy, 36, 0, false);
+			Loop_Actor_Walk_To_Actor(kActorOfficerLeary, kActorMcCoy, 36, false, false);
 		}
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
@@ -423,14 +423,14 @@ void SceneScriptRC01::walkToCenter() {
 	Player_Loses_Control();
 	Game_Flag_Set(kFlagMcCoyInRunciters);
 	Actor_Set_Immunity_To_Obstacles(kActorMcCoy, true);
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -151.98f, -0.3f, 318.15f, 0, 0, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -151.98f, -0.3f, 318.15f, 0, false, false, false);
 	Actor_Set_Immunity_To_Obstacles(kActorMcCoy, false);
 	Player_Gains_Control();
 }
 
 bool SceneScriptRC01::ClickedOnExit(int exitId) {
 	if (exitId == kRC01ExitRC02) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -174.77f, 5.55f, 25.95f, 12, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -174.77f, 5.55f, 25.95f, 12, true, false, false)) {
 			if (Game_Flag_Query(kFlagRC02RunciterTalkWithGun)) {
 				Actor_Says(kActorMcCoy, 8522, 14);
 			} else {
@@ -458,10 +458,10 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 			Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationDNARow, true);
 		}
 		I_Sez("MG: Leaving already?  The fun is just beginning!");
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -151.98f, -0.3f, 318.15f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -151.98f, -0.3f, 318.15f, 0, true, false, false)) {
 			Player_Loses_Control();
 			Actor_Set_Immunity_To_Obstacles(kActorMcCoy, true);
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -10.98f, -0.3f, 318.15f, 0, 0, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -10.98f, -0.3f, 318.15f, 0, false, false, false);
 			if ( Game_Flag_Query(kFlagDNARowAvailable)
 			 && !Game_Flag_Query(kFlagDNARowAvailableTalk)
 			) {
@@ -594,7 +594,7 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == kRC01ExitRC03) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -471.98f, -0.3f, 258.15f, 4, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -471.98f, -0.3f, 258.15f, 4, true, false, false)) {
 			Game_Flag_Set(kFlagRC01toRC03);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -670,20 +670,23 @@ void SceneScriptRC01::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptRC01::PlayerWalkedIn() {
-	if (Game_Flag_Query(kFlagSpinnerAtRC01) && !Game_Flag_Query(kFlagRC02toRC01) && !Game_Flag_Query(kFlagRC03toRC01)) {
+	if (Game_Flag_Query(kFlagSpinnerAtRC01)
+	    && !Game_Flag_Query(kFlagRC02toRC01)
+	    && !Game_Flag_Query(kFlagRC03toRC01)
+	) {
 		walkToCenter();
 	}
 
 	if (Game_Flag_Query(kFlagRC03toRC01)) {
 		Player_Loses_Control();
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -415.98f, -0.30f, 262.15f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -415.98f, -0.30f, 262.15f, 0, false, false, false);
 		Player_Gains_Control();
 		Game_Flag_Reset(kFlagRC03toRC01);
 	}
 
 	if (Game_Flag_Query(kFlagRC02toRC01)) {
 		Player_Loses_Control();
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -203.45f, 5.55f, 85.05f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -203.45f, 5.55f, 85.05f, 0, false, false, false);
 		Player_Gains_Control();
 		Game_Flag_Reset(kFlagRC02toRC01);
 

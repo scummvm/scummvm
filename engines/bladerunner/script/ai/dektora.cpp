@@ -90,7 +90,7 @@ bool AIScriptDektora::Update() {
 
 				if (comp_distance(kActorMcCoy, _x, _y, _z) > 12.0f) {
 					Actor_Query_XYZ(kActorMcCoy, &_x, &_y, &_z);
-					Async_Actor_Walk_To_XYZ(kActorDektora, _x, _y, _z, 36, 0);
+					Async_Actor_Walk_To_XYZ(kActorDektora, _x, _y, _z, 36, false);
 				}
 				break;
 
@@ -309,7 +309,7 @@ void AIScriptDektora::Retired(int byActorId) {
 			Player_Loses_Control();
 			Delay(2000);
 			Player_Set_Combat_Mode(false);
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, -41.58f, 72.0f, 0, true, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, -41.58f, 72.0f, 0, true, false, false);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagKP07toKP06);
@@ -489,7 +489,7 @@ bool AIScriptDektora::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case kGoalDektoraNR11Burning:
 		Game_Flag_Set(kFlagNR11DektoraBurning);
 		Actor_Set_Targetable(kActorDektora, true);
-		Loop_Actor_Walk_To_XYZ(kActorDektora, -135.0f, 0.33f, -267.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorDektora, -135.0f, 0.33f, -267.0f, 0, false, false, false);
 		Actor_Face_Actor(kActorMcCoy, kActorDektora, true);
 		if (Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleNR11StopShooting) {
 			Actor_Face_Actor(kActorSteele, kActorDektora, true);

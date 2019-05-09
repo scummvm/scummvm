@@ -62,7 +62,7 @@ bool SceneScriptPS15::ClickedOnActor(int actorId) {
 		 )
 		 && !Actor_Clue_Query(kActorMcCoy, kClueShippingForm)
 		) {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -256.0f, -113.43f, 43.51f, 0, true, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -256.0f, -113.43f, 43.51f, 0, true, false, false)) {
 				Actor_Face_Actor(kActorMcCoy, kActorSergeantWalls, true);
 				Actor_Face_Actor(kActorSergeantWalls, kActorMcCoy, true);
 				Actor_Says(kActorMcCoy, 4470, 17);
@@ -115,7 +115,7 @@ bool SceneScriptPS15::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptPS15::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -360.0f, -113.43f, 50.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -360.0f, -113.43f, 50.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagPS15toPS05);
@@ -125,7 +125,7 @@ bool SceneScriptPS15::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -183.58f, -113.43f, 91.7f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -183.58f, -113.43f, 91.7f, 0, true, false, false)) {
 			Actor_Says(kActorMcCoy, 4440, 18);
 			Actor_Says(kActorSergeantWalls, 150, 17);
 #if BLADERUNNER_ORIGINAL_BUGS
@@ -154,7 +154,7 @@ void SceneScriptPS15::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptPS15::PlayerWalkedIn() {
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -326.93f, -113.43f, 101.42f, 0, false, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -326.93f, -113.43f, 101.42f, 0, false, false, false);
 	if (!Game_Flag_Query(kFlagPS15Entered)) {
 		Actor_Face_Actor(kActorMcCoy, kActorSergeantWalls, true);
 		Actor_Face_Actor(kActorSergeantWalls, kActorMcCoy, true);

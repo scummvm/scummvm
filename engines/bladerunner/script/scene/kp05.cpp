@@ -77,7 +77,7 @@ bool SceneScriptKP05::ClickedOnActor(int actorId) {
 
 bool SceneScriptKP05::ClickedOnItem(int itemId, bool a2) {
 	if (itemId == kItemPowerSource) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1058.0f, 0.0f, 852.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1058.0f, 0.0f, 852.0f, 0, true, false, false)) {
 			Actor_Face_Item(kActorMcCoy, kItemPowerSource, true);
 			Actor_Clue_Acquire(kActorMcCoy, kCluePowerSource, true, -1);
 			Item_Remove_From_World(kItemPowerSource);
@@ -89,7 +89,7 @@ bool SceneScriptKP05::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptKP05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -802.0f, 0.0f, 972.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -802.0f, 0.0f, 972.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagKP05toKP03);
@@ -99,7 +99,7 @@ bool SceneScriptKP05::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1142.0f, 0.0f, 932.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1142.0f, 0.0f, 932.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagKP05toKP04);
@@ -109,7 +109,7 @@ bool SceneScriptKP05::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -868.0f, 0.0f, -68.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -868.0f, 0.0f, -68.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagKP05toKP06);
@@ -135,10 +135,10 @@ void SceneScriptKP05::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagKP06toKP05)) {
 		Game_Flag_Reset(kFlagKP06toKP05);
 	} else if (Game_Flag_Query(kFlagKP04toKP05)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1110.0f, 0.0f, 932.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1110.0f, 0.0f, 932.0f, 0, false, false, false);
 		Game_Flag_Reset(kFlagKP04toKP05);
 	} else {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -846.0f, 0.0f, 972.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -846.0f, 0.0f, 972.0f, 0, false, false, false);
 		Game_Flag_Query(kFlagKP03toKP05); // bug in game?
 	}
 

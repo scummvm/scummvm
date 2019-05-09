@@ -70,7 +70,7 @@ bool SceneScriptTB05::MouseClick(int x, int y) {
 
 bool SceneScriptTB05::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("MONITOR05", objectName)) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 122.54f, 147.12f, -197.17f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 122.54f, 147.12f, -197.17f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 38, false);
 
 			if (!Actor_Clue_Query(kActorMcCoy, kClueDNAMarcus)
@@ -142,7 +142,7 @@ bool SceneScriptTB05::ClickedOnActor(int actorId) {
 
 bool SceneScriptTB05::ClickedOnItem(int itemId, bool a2) {
 	if (itemId == kItemDragonflyEarring) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 54.0f, 147.12f, -209.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 54.0f, 147.12f, -209.0f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 126, false);
 			Item_Remove_From_World(kItemDragonflyEarring);
 			Item_Pickup_Spin_Effect(kModelAnimationDragonflyEarring, 295, 408);
@@ -155,7 +155,7 @@ bool SceneScriptTB05::ClickedOnItem(int itemId, bool a2) {
 	}
 
 	if (itemId == kItemTyrellSalesPamphlet) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 107.89f, 147.12f, -156.26f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 107.89f, 147.12f, -156.26f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 126, false);
 			Item_Remove_From_World(kItemTyrellSalesPamphlet);
 			Item_Pickup_Spin_Effect(kModelAnimationTyrellSalesPamphlet, 449, 431);
@@ -174,7 +174,7 @@ bool SceneScriptTB05::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptTB05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 23.0f, 151.53f, -205.0f, 12, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 23.0f, 151.53f, -205.0f, 12, true, false, false)) {
 			Game_Flag_Set(kFlagTB05toTB06);
 			Set_Enter(kSetTB06, kSceneTB06);
 			Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 2, true);
@@ -182,7 +182,7 @@ bool SceneScriptTB05::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 14.0f, 147.12f, 123.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 14.0f, 147.12f, 123.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagTB05toTB02);
 			Set_Enter(kSetTB02_TB03, kSceneTB02);
 		}

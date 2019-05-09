@@ -89,7 +89,7 @@ bool SceneScriptCT04::ClickedOn3DObject(const char *objectName, bool a2) {
 		 && !Game_Flag_Query(kFlagCT04HomelessBodyThrownAway)
 		 &&  Global_Variable_Query(kVariableChapter) == 1
 		) {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -147.41f, -621.3f, 724.57f, 0, true, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -147.41f, -621.3f, 724.57f, 0, true, false, false)) {
 				Player_Loses_Control();
 				Actor_Face_Heading(kActorMcCoy, 792, false);
 				Actor_Put_In_Set(kActorTransient, kSetFreeSlotI);
@@ -214,7 +214,7 @@ bool SceneScriptCT04::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptCT04::ClickedOnExit(int exitId) {
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -82.86f, -621.3f, 769.03f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -82.86f, -621.3f, 769.03f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			if (Actor_Query_Goal_Number(kActorTransient) == kGoalTransientDefault) {
@@ -226,7 +226,7 @@ bool SceneScriptCT04::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -187.0f, -621.3f, 437.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -187.0f, -621.3f, 437.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagCT04toCT03);

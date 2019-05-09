@@ -114,7 +114,7 @@ bool SceneScriptUG10::ClickedOnExit(int exitId) {
 		 )
 		 || Game_Flag_Query(kFlagUG10GateOpen)
 		) {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 235.0f, 1.15f, 29.0f, 0, true, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 235.0f, 1.15f, 29.0f, 0, true, false, false)) {
 				Game_Flag_Set(kFlagUG10toUG01);
 				Set_Enter(kSetUG01, kSceneUG01);
 				return true;
@@ -128,10 +128,10 @@ bool SceneScriptUG10::ClickedOnExit(int exitId) {
 		 )
 		 || Game_Flag_Query(kFlagUG10GateOpen)
 		) {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1.83f, 1.15f, -410.8f, 0, true, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1.83f, 1.15f, -410.8f, 0, true, false, false)) {
 				Actor_Face_Heading(kActorMcCoy, 0, false);
-				Loop_Actor_Travel_Stairs(kActorMcCoy, 9, 1, kAnimationModeIdle);
-				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -92.0f, 81.83f, -652.0f, 0, false, false, 0);
+				Loop_Actor_Travel_Stairs(kActorMcCoy, 9, true, kAnimationModeIdle);
+				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -92.0f, 81.83f, -652.0f, 0, false, false, false);
 				Game_Flag_Set(kFlagUG10toUG03);
 				Set_Enter(kSetUG03, kSceneUG03);
 				return true;
@@ -145,7 +145,7 @@ bool SceneScriptUG10::ClickedOnExit(int exitId) {
 		 )
 		 || Game_Flag_Query(kFlagUG10GateOpen)
 		) {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -385.0f, 1.15f, 57.44f, 0, true, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -385.0f, 1.15f, 57.44f, 0, true, false, false)) {
 				Actor_Face_Heading(kActorMcCoy, 1001, false);
 				Loop_Actor_Travel_Ladder(kActorMcCoy, 1, true, kAnimationModeIdle);
 				Game_Flag_Set(kFlagUG10toUG07);
@@ -161,7 +161,7 @@ bool SceneScriptUG10::ClickedOnExit(int exitId) {
 		 )
 		 || Game_Flag_Query(kFlagUG10GateOpen)
 		) {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 2.5f, 1.15f, 405.0f, 0, true, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 2.5f, 1.15f, 405.0f, 0, true, false, false)) {
 				Game_Flag_Set(kFlagUG10toUG14);
 				Set_Enter(kSetUG14, kSceneUG14);
 				return true;
@@ -179,7 +179,7 @@ bool SceneScriptUG10::ClickedOn2DRegion(int region) {
 	if (region == 0 && !Player_Query_Combat_Mode()) {
 		if (x >= 120.0f) {
 			Actor_Says(kActorMcCoy, 8525, 3);
-		} else if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 4.98f, 0.38f, 83.15f, 0, true, false, 0)) {
+		} else if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 4.98f, 0.38f, 83.15f, 0, true, false, false)) {
 			if (!Game_Flag_Query(kFlagUG10GateOpen)) {
 				Scene_Loop_Set_Default(4);
 				Scene_Loop_Start_Special(kSceneLoopModeOnce, 3, false);
@@ -230,13 +230,13 @@ void SceneScriptUG10::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 void SceneScriptUG10::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagUG14toUG10)) {
 		Game_Flag_Reset(kFlagUG14toUG10);
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 2.5f, 1.15f, 377.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 2.5f, 1.15f, 377.0f, 0, false, false, false);
 	} else if (Game_Flag_Query(kFlagUG01toUG10)) {
 		Game_Flag_Reset(kFlagUG01toUG10);
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 207.0f, 1.15f, 29.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 207.0f, 1.15f, 29.0f, 0, false, false, false);
 	} else if (Game_Flag_Query(kFlagUG03toUG10)) {
 		Game_Flag_Reset(kFlagUG03toUG10);
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1.83f, 81.33f, -518.8f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1.83f, 81.33f, -518.8f, 0, false, false, false);
 		Actor_Face_Heading(kActorMcCoy, 506, false);
 		Loop_Actor_Travel_Stairs(kActorMcCoy, 9, false, kAnimationModeIdle);
 	}

@@ -77,7 +77,7 @@ bool SceneScriptHF05::MouseClick(int x, int y) {
 
 bool SceneScriptHF05::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("TOP CON", objectName)) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 95.0f, 40.63f, 308.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 95.0f, 40.63f, 308.0f, 0, true, false, false)) {
 			Actor_Face_Object(kActorMcCoy, "TOP CON", true);
 			if (Actor_Query_In_Set(kActorCrazylegs, kSetHF05)
 			 && Actor_Query_Goal_Number(kActorCrazylegs) != kGoalCrazyLegsShotAndHit
@@ -104,7 +104,7 @@ bool SceneScriptHF05::ClickedOn3DObject(const char *objectName, bool a2) {
 			Unobstacle_Object("MONTE CARLO DRY", true);
 
 			if (getCompanionActor() != kActorMcCoy) {
-				Loop_Actor_Walk_To_XYZ(getCompanionActor(), 181.54f, 40.63f, 388.09f, 0, false, true, 0);
+				Loop_Actor_Walk_To_XYZ(getCompanionActor(), 181.54f, 40.63f, 388.09f, 0, false, true, false);
 				Actor_Face_Actor(kActorMcCoy, getCompanionActor(), true);
 				Actor_Face_Actor(getCompanionActor(), kActorMcCoy, true);
 				Actor_Says(kActorMcCoy, 1785, kAnimationModeTalk);
@@ -122,7 +122,7 @@ bool SceneScriptHF05::ClickedOn3DObject(const char *objectName, bool a2) {
 				ADQ_Add(kActorVoiceOver, 940, -1);
 				Ambient_Sounds_Play_Sound(kSfxLABMISC2, 50, 99, 0, 0);
 				Delay(1500);
-				Loop_Actor_Walk_To_XYZ(kActorMcCoy, 181.54f, 40.63f, 388.09f, 0, false, true, 0);
+				Loop_Actor_Walk_To_XYZ(kActorMcCoy, 181.54f, 40.63f, 388.09f, 0, false, true, false);
 				Actor_Face_Heading(kActorMcCoy, 0, false);
 				Actor_Change_Animation_Mode(kActorMcCoy, 23);
 				Actor_Clue_Lose(kActorMcCoy, kClueBomb);
@@ -182,7 +182,7 @@ bool SceneScriptHF05::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptHF05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 483.0f, 40.63f, -189.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 483.0f, 40.63f, -189.0f, 0, true, false, false)) {
 			if (!Game_Flag_Query(kFlagHF05PoliceAttacked)) {
 				Game_Flag_Set(kFlagHF05toHF01);
 				Set_Enter(kSetHF01, kSceneHF01);
@@ -192,7 +192,7 @@ bool SceneScriptHF05::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 330.0f, 40.63f, -85.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 330.0f, 40.63f, -85.0f, 0, true, false, false)) {
 			if (!Game_Flag_Query(kFlagHF05PoliceAttacked)) {
 				int affectionTowardsActor = getAffectionTowardsActor();
 				if (Game_Flag_Query(kFlagHF05PoliceArrived)
@@ -210,7 +210,7 @@ bool SceneScriptHF05::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 277.0f, 40.63f, 410.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 277.0f, 40.63f, 410.0f, 0, true, false, false)) {
 			if (!Game_Flag_Query(kFlagHF05PoliceAttacked)) {
 				Game_Flag_Set(kFlagHF05toHF06);
 				Set_Enter(kSetHF06, kSceneHF06);
@@ -303,7 +303,7 @@ void SceneScriptHF05::PlayerWalkedIn() {
 			Actor_Force_Stop_Walking(affectionTowardsActor);
 			if (Game_Flag_Query(kFlagHF01toHF05)) {
 				Actor_Set_At_XYZ(affectionTowardsActor, 506.81f, 40.63f, -140.92f, 0);
-				Async_Actor_Walk_To_Waypoint(affectionTowardsActor, 437, 36, 0);
+				Async_Actor_Walk_To_Waypoint(affectionTowardsActor, 437, 36, false);
 			} else if (Game_Flag_Query(kFlagHF06toHF05)) {
 				Actor_Set_At_XYZ(affectionTowardsActor, 288.0f, 40.63f, 410.0f, 909);
 			} else if (Game_Flag_Query(kFlagHF07toHF05)) {
@@ -336,7 +336,7 @@ void SceneScriptHF05::PlayerWalkedIn() {
 			talkWithCrazylegs3(affectionTowardsActor);
 		}
 	} else if (Game_Flag_Query(kFlagHF01toHF05)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 399.0f, 40.63f, -85.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 399.0f, 40.63f, -85.0f, 0, false, false, false);
 	} else if (Game_Flag_Query(kFlagHF07toHF05)) {
 		Actor_Set_At_XYZ(kActorMcCoy, 346.0f, 4.63f, -151.0f, 603);
 		Loop_Actor_Travel_Stairs(kActorMcCoy, 4, true, kAnimationModeIdle);
@@ -685,7 +685,7 @@ void SceneScriptHF05::talkWithCrazylegs3(int affectionTowardsActor) {
 		Actor_Face_Actor(kActorMcCoy, affectionTowardsActor, true);
 		Actor_Says(kActorMcCoy, 1745, kAnimationModeTalk);
 		Async_Actor_Walk_To_XYZ(affectionTowardsActor, 309.0f, 40.63f, 402.0f, 0, false);
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 277.0f, 40.63f, 410.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 277.0f, 40.63f, 410.0f, 0, false, false, false);
 		Game_Flag_Set(kFlagHF05toHF06);
 		Set_Enter(kSetHF06, kSceneHF06);
 	}
@@ -700,7 +700,7 @@ void SceneScriptHF05::talkWithCrazyLegs1() {
 		ADQ_Add(kActorCrazylegs, 150, 18);
 		ADQ_Add(kActorCrazylegs, 160, 17);
 	}
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 307.0f, 40.63f, 184.0f, 0, false, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 307.0f, 40.63f, 184.0f, 0, false, false, false);
 	Loop_Actor_Walk_To_Actor(kActorCrazylegs, kActorMcCoy, 72, false, false);
 	Ambient_Sounds_Play_Sound(kSfxLABMISC4, 99, 99, 0, 0);
 	Actor_Face_Actor(kActorCrazylegs, kActorMcCoy, true);
@@ -733,7 +733,7 @@ void SceneScriptHF05::talkWithCrazyLegs1() {
 	Actor_Says(kActorCrazylegs, 270, kAnimationModeTalk);
 	Actor_Says(kActorCrazylegs, 280, 12);
 	Async_Actor_Walk_To_XYZ(kActorCrazylegs, 276.0f, 40.63f, 182.0f, 12, false);
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 335.0f, 40.63f, 131.0f, 12, false, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 335.0f, 40.63f, 131.0f, 12, false, false, false);
 	Actor_Face_Object(kActorCrazylegs, "MONTE CARLO DRY", true);
 	Actor_Face_Object(kActorMcCoy, "MONTE CARLO DRY", true);
 	Actor_Says(kActorCrazylegs, 290, 14);

@@ -149,7 +149,7 @@ bool SceneScriptRC03::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptRC03::ClickedOnExit(int exitId) {
 	if (exitId == 0) { // To Runciter's shop
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 298.0f, -4.0f, 405.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 298.0f, -4.0f, 405.0f, 0, true, false, false)) {
 			if (Game_Flag_Query(kFlagRC04McCoyShotBob)) {
 				Game_Flag_Set(kFlagBulletBobDead);
 			}
@@ -168,7 +168,7 @@ bool SceneScriptRC03::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 1) { // to Animoid Row (Scorpion/Insect Lady)
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -469.0f, -4.0f, 279.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -469.0f, -4.0f, 279.0f, 0, true, false, false)) {
 			if (Game_Flag_Query(kFlagRC04McCoyShotBob)) {
 				Game_Flag_Set(kFlagBulletBobDead);
 			}
@@ -180,7 +180,7 @@ bool SceneScriptRC03::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 2) { // to sewers
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 147.51f, -4.0f, 166.48f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 147.51f, -4.0f, 166.48f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagRC03toUG01);
 			Game_Flag_Reset(kFlagMcCoyInRunciters);
 			Game_Flag_Set(kFlagMcCoyInUnderground);
@@ -201,7 +201,7 @@ bool SceneScriptRC03::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 3) { // to Hawker's Circle (Mama Izabella's Kingston Kitchen)
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -487.0f, 1.0f, 116.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -487.0f, 1.0f, 116.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagRC03toHC04);
 			Game_Flag_Reset(kFlagMcCoyInRunciters);
 			Game_Flag_Set(kFlagMcCoyInHawkersCircle);
@@ -222,7 +222,7 @@ bool SceneScriptRC03::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 4) { // To Bullet Bob's
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -22.0f, 1.0f, -63.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -22.0f, 1.0f, -63.0f, 0, true, false, false)) {
 			if (Global_Variable_Query(kVariableChapter) == 3
 			 || Global_Variable_Query(kVariableChapter) == 5
 			 || Game_Flag_Query(kFlagBulletBobDead)
@@ -291,7 +291,7 @@ void SceneScriptRC03::PlayerWalkedIn() {
 				Actor_Set_Goal_Number(kActorSteele, kGoalSteeleApprehendIzo);
 			}
 			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeDodge);
-			Loop_Actor_Walk_To_XYZ(kActorIzo, 180.0f, -4.0f, 184.0f, 0, false, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorIzo, 180.0f, -4.0f, 184.0f, 0, false, false, false);
 			Actor_Change_Animation_Mode(kActorIzo, 6);
 			if (!Game_Flag_Query(kFlagIzoIsReplicant)) {
 				Actor_Set_Goal_Number(kActorSteele, kGoalSteeleApprehendIzo);
@@ -317,7 +317,7 @@ void SceneScriptRC03::PlayerWalkedIn() {
 			Actor_Set_At_Waypoint(kActorSteele, 203, 0);
 		}
 		talkWithSteele();
-		Async_Actor_Walk_To_Waypoint(kActorSteele, 174, 0, 0);
+		Async_Actor_Walk_To_Waypoint(kActorSteele, 174, 0, false);
 		Actor_Set_Goal_Number(kActorIzo, 200);
 		Player_Gains_Control();
 	}

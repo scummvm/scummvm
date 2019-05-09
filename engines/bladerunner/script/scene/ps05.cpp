@@ -36,7 +36,7 @@ void SceneScriptPS05::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(1, 330, 90, 436, 198, 0);
 	Scene_Exit_Add_2D_Exit(2, 476, 96, 524, 240, 1);
 	Scene_2D_Region_Add(0, 519, 107, 537, 122);
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(0);
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(false);
 	Ambient_Sounds_Add_Looping_Sound(kSfxRUMLOOP1, 50, 1, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxLABAMB3,  80, 0, 1);
 	Ambient_Sounds_Add_Sound(kSfxPHONE1, 5, 50,  8,  8, -100, 100, -101, -101, 0, 0);
@@ -68,7 +68,7 @@ bool SceneScriptPS05::ClickedOn3DObject(const char *objectName, bool a2) {
 		Actor_Face_Object(kActorMcCoy, "WATER FOUNTAIN", true);
 		Actor_Says(kActorMcCoy, 3490, 18);
 	}
-	if (Object_Query_Click("ASHTRAY", objectName) && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, 662.0f, 0.37f, -180.0f, 0, 1, false, 0)) {
+	if (Object_Query_Click("ASHTRAY", objectName) && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, 662.0f, 0.37f, -180.0f, 0, true, false, false)) {
 		Actor_Face_Object(kActorMcCoy, "ASHTRAY", true);
 		Actor_Voice_Over(1770, kActorVoiceOver);
 		Actor_Voice_Over(1780, kActorVoiceOver);
@@ -96,7 +96,7 @@ bool SceneScriptPS05::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptPS05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 2, 24, 1, false)) {
+		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 2, 24, true, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Set_Enter(kSetPS15, kScenePS15);
@@ -104,7 +104,7 @@ bool SceneScriptPS05::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 635.0f, 0.0f, -598.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 635.0f, 0.0f, -598.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Set_Enter(kSetPS02, kScenePS02);
@@ -112,7 +112,7 @@ bool SceneScriptPS05::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 742.52f, 0.37f, -457.69f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 742.52f, 0.37f, -457.69f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagPS05toPS06);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -124,7 +124,7 @@ bool SceneScriptPS05::ClickedOnExit(int exitId) {
 }
 
 bool SceneScriptPS05::ClickedOn2DRegion(int region) {
-	if (region == 0 && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, 694.78f, 0.37f, -321.05f, 0, 1, false, 0)) {
+	if (region == 0 && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, 694.78f, 0.37f, -321.05f, 0, true, false, false)) {
 		Actor_Face_Heading(kActorMcCoy, 130, false);
 		View_Score_Board();
 	}

@@ -82,10 +82,10 @@ bool AIScriptMcCoy::Update() {
 	case kGoalMcCoyNRxxStandUp:
 		Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyDefault);
 		if (Player_Query_Current_Set() == kSetNR03) {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -166.0f, -70.19f, -501.0f, 0, false, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -166.0f, -70.19f, -501.0f, 0, false, false, false);
 			Actor_Face_Heading(kActorMcCoy, 300, false);
 		} else {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -461.0f, 0.0f, -373.0f, 0, false, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -461.0f, 0.0f, -373.0f, 0, false, false, false);
 		}
 		Player_Gains_Control();
 		return true;

@@ -68,7 +68,7 @@ bool SceneScriptHF06::ClickedOn3DObject(const char *objectName, bool a2) {
 	 || Object_Query_Click("BOX30", objectName)
 	 || Object_Query_Click("HOOD BOX", objectName)
 	) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 14.33f, 367.93f, 399.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 14.33f, 367.93f, 399.0f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 486, true);
 			if (Actor_Query_In_Set(kActorDektora, kSetHF06)
 			 && Actor_Query_Goal_Number(kActorDektora) != kGoalDektoraGone
@@ -92,7 +92,7 @@ bool SceneScriptHF06::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("BOX19", objectName)
 	 || Object_Query_Click("BOX21", objectName)
 	) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 290.0f, 367.93f, 318.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 290.0f, 367.93f, 318.0f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 85, true);
 			Actor_Says(kActorMcCoy, 8522, 0);
 		}
@@ -100,7 +100,7 @@ bool SceneScriptHF06::ClickedOn3DObject(const char *objectName, bool a2) {
 	}
 
 	if (Object_Query_Click("BOX13", objectName)) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 63.0f, 367.93f, 120.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 63.0f, 367.93f, 120.0f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 568, true);
 			Actor_Says(kActorMcCoy, 8522, 0);
 		}
@@ -138,7 +138,7 @@ bool SceneScriptHF06::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptHF06::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 170.0f, 367.93f, 497.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 170.0f, 367.93f, 497.0f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 730, false);
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 2, false, kAnimationModeIdle);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
@@ -261,7 +261,7 @@ void SceneScriptHF06::steelInterruption() {
 	}
 
 	Actor_Set_Targetable(actorId, true);
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 14.33f, 367.93f, 399.0f, 0, false, true, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 14.33f, 367.93f, 399.0f, 0, false, true, false);
 	Actor_Face_Heading(kActorMcCoy, 486, true);
 	addAmbientSounds();
 	Actor_Put_In_Set(kActorSteele, kSetHF06);
@@ -279,7 +279,7 @@ void SceneScriptHF06::steelInterruption() {
 	Player_Set_Combat_Mode(true);
 	Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAim);
 	Actor_Change_Animation_Mode(kActorSteele, kAnimationModeCombatWalk);
-	Loop_Actor_Walk_To_XYZ(kActorSteele, 92.0f, 367.93f, 107.0f, 0, false, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorSteele, 92.0f, 367.93f, 107.0f, 0, false, false, false);
 	Actor_Face_Actor(kActorSteele, kActorMcCoy, true);
 	Actor_Change_Animation_Mode(kActorSteele, kAnimationModeCombatIdle);
 	Actor_Says(kActorSteele, 290, 58);

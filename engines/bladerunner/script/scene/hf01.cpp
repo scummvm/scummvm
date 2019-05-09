@@ -115,7 +115,7 @@ bool SceneScriptHF01::ClickedOnActor(int actorId) {
 	if (actorId == kActorMia
 	 || actorId == kActorMurray
 	) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 504.04f, 8.0f, -242.17f, 12, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 504.04f, 8.0f, -242.17f, 12, true, false, false)) {
 			ADQ_Flush();
 			Actor_Face_Actor(kActorMcCoy, kActorMurray, true);
 			if (!Game_Flag_Query(kFlagHF01MurrayMiaTalk)) {
@@ -170,7 +170,7 @@ bool SceneScriptHF01::ClickedOnActor(int actorId) {
 					talkWithLucy();
 				}
 				Async_Actor_Walk_To_XYZ(affectionTowardsActor, -175.0f, 8.0f, -617.0f, 0, false);
-				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -137.0f, 8.0f, -577.0f, 0, false, false, 1);
+				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -137.0f, 8.0f, -577.0f, 0, false, false, true);
 				Game_Flag_Set(kFlagHF01toHF05);
 				Set_Enter(kSetHF05, kSceneHF05);
 			}
@@ -185,7 +185,7 @@ bool SceneScriptHF01::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptHF01::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -202.0f, 8.0f, -619.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -202.0f, 8.0f, -619.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagHF01toHF05);
 			Set_Enter(kSetHF05, kSceneHF05);
 		}
@@ -193,8 +193,8 @@ bool SceneScriptHF01::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 124.0f, 8.0f, -724.0f, 0, true, false, 0)) {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 124.0f, 8.0f, -880.0f, 0, false, false, 0);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 124.0f, 8.0f, -724.0f, 0, true, false, false)) {
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 124.0f, 8.0f, -880.0f, 0, false, false, false);
 			Game_Flag_Set(kFlagHF01toHF03);
 			Set_Enter(kSetHF03, kSceneHF03);
 		}
@@ -202,8 +202,8 @@ bool SceneScriptHF01::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 406.0f, 8.0f, -717.0f, 0, true, false, 0)) {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 406.0f, 8.0f, -813.0f, 0, false, false, 0);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 406.0f, 8.0f, -717.0f, 0, true, false, false)) {
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 406.0f, 8.0f, -813.0f, 0, false, false, false);
 			Game_Flag_Set(kFlagHF01toHF02);
 			Set_Enter(kSetHF02, kSceneHF02);
 		}
@@ -211,7 +211,7 @@ bool SceneScriptHF01::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 3) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 100.0f, 0.0f, -260.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 100.0f, 0.0f, -260.0f, 0, true, false, false)) {
 			Game_Flag_Reset(kFlagMcCoyInChinaTown);
 			Game_Flag_Reset(kFlagMcCoyInRunciters);
 			Game_Flag_Reset(kFlagMcCoyInMcCoyApartment);
@@ -285,7 +285,7 @@ bool SceneScriptHF01::ClickedOnExit(int exitId) {
 				break;
 			default:
 				Game_Flag_Set(kFlagMcCoyInHysteriaHall);
-				Loop_Actor_Walk_To_XYZ(kActorMcCoy, 100.0f, 0.0f, -300.0f, 0, true, false, 0);
+				Loop_Actor_Walk_To_XYZ(kActorMcCoy, 100.0f, 0.0f, -300.0f, 0, true, false, false);
 				break;
 			}
 		}
@@ -389,11 +389,11 @@ void SceneScriptHF01::PlayerWalkedIn() {
 	}
 
 	if (Game_Flag_Query(kFlagHF03toHF01)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 124.0f, 8.0f, -724.0f, 0, true, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 124.0f, 8.0f, -724.0f, 0, true, false, false);
 	} else if (Game_Flag_Query(kFlagHF02toHF01)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 406.0f, 8.0f, -717.0f, 0, true, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 406.0f, 8.0f, -717.0f, 0, true, false, false);
 	} else if (!Game_Flag_Query(kFlagHF05toHF01)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 100.0f, 0.0f, -300.0f, 0, true, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 100.0f, 0.0f, -300.0f, 0, true, false, false);
 	}
 
 	Game_Flag_Reset(kFlagHF03toHF01);

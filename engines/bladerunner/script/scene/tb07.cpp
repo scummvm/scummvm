@@ -89,7 +89,7 @@ bool SceneScriptTB07::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptTB07::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 68.0f, 12.0f, 288.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 68.0f, 12.0f, 288.0f, 0, true, false, false)) {
 #if BLADERUNNER_ORIGINAL_BUGS
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -163,7 +163,7 @@ bool SceneScriptTB07::ClickedOnExit(int exitId) {
 					break;
 				default:
 					Game_Flag_Set(kFlagMcCoyInTyrellBuilding);
-					Loop_Actor_Walk_To_XYZ(kActorMcCoy, 44.0f, 12.0f, 176.0f, 0, false, false, 0);
+					Loop_Actor_Walk_To_XYZ(kActorMcCoy, 44.0f, 12.0f, 176.0f, 0, false, false, false);
 					break;
 				}
 			}
@@ -189,7 +189,7 @@ void SceneScriptTB07::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptTB07::PlayerWalkedIn() {
 	int chapter = Global_Variable_Query(kVariableChapter);
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 44.0f, 12.0f, 176.0f, 0, false, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 44.0f, 12.0f, 176.0f, 0, false, false, false);
 	if ((chapter == 2
 	  || chapter == 3
 	 )
@@ -221,14 +221,14 @@ void SceneScriptTB07::DialogueQueueFlushed(int a1) {
 void SceneScriptTB07::McCoyTalkWithRachaelAndTyrell() {
 	Game_Flag_Set(kFlagTB07RachaelTalk);
 	Delay(1500);
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 44.98f, 12.0f, 49.79f, 0, false, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 44.98f, 12.0f, 49.79f, 0, false, false, false);
 	Actor_Face_Heading(kActorMcCoy, 178, true);
 	Delay(3000);
 	Actor_Put_In_Set(kActorRachael, kSetTB07);
 	Actor_Set_At_XYZ(kActorRachael, -260.15f, 12.0f, -19.16f, 256);
 	Actor_Change_Animation_Mode(kActorRachael, 0);
 	Outtake_Play(kOuttakeRachel, true, -1);
-	Loop_Actor_Walk_To_XYZ(kActorRachael, -146.15f, 12.0f, -5.84f, 0, false, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorRachael, -146.15f, 12.0f, -5.84f, 0, false, false, false);
 	Actor_Face_Actor(kActorRachael, kActorMcCoy, true);
 	Actor_Says(kActorRachael, 480, 14);
 	Actor_Face_Actor(kActorMcCoy, kActorRachael, true);
@@ -238,7 +238,7 @@ void SceneScriptTB07::McCoyTalkWithRachaelAndTyrell() {
 	Actor_Says(kActorMcCoy, 5320, 15);
 	Actor_Says_With_Pause(kActorMcCoy, 5325, 1.0f, 19);
 	Actor_Start_Speech_Sample(kActorRachael, 500);
-	Loop_Actor_Walk_To_XYZ(kActorRachael, -60.15f, 12.0f, 60.84f, 0, false, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorRachael, -60.15f, 12.0f, 60.84f, 0, false, false, false);
 	Actor_Face_Actor(kActorRachael, kActorMcCoy, true);
 	Actor_Face_Actor(kActorMcCoy, kActorRachael, true);
 	Actor_Says(kActorMcCoy, 5330, 14);
@@ -247,7 +247,7 @@ void SceneScriptTB07::McCoyTalkWithRachaelAndTyrell() {
 	Actor_Says(kActorRachael, 520, 17);
 	Actor_Says(kActorMcCoy, 5340, 3);
 	Actor_Start_Speech_Sample(kActorRachael, 530);
-	Loop_Actor_Walk_To_XYZ(kActorRachael, -4.15f, 12.0f, 54.73f, 0, false, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorRachael, -4.15f, 12.0f, 54.73f, 0, false, false, false);
 	Actor_Says(kActorRachael, 540, 16);
 	Actor_Says(kActorMcCoy, 5345, 18);
 	Actor_Says(kActorRachael, 550, 13);
@@ -260,7 +260,7 @@ void SceneScriptTB07::McCoyTalkWithRachaelAndTyrell() {
 	Actor_Says(kActorMcCoy, 5365, 13);
 	Actor_Says_With_Pause(kActorRachael, 600, 1.0f, 12);
 	Actor_Says(kActorMcCoy, 5370, 3);
-	Loop_Actor_Walk_To_XYZ(kActorRachael, -24.15f, 12.0f, -10.84f, 0, false, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorRachael, -24.15f, 12.0f, -10.84f, 0, false, false, false);
 	Actor_Says(kActorRachael, 610, 13);
 	Actor_Face_Actor(kActorMcCoy, kActorRachael, true);
 	Actor_Says(kActorMcCoy, 5375, 18);
@@ -285,7 +285,7 @@ void SceneScriptTB07::McCoyTalkWithRachaelAndTyrell() {
 	Scene_Loop_Set_Default(kTB07LoopMainShadeDown);
 	Scene_Loop_Start_Special(kSceneLoopModeOnce, kTB07LoopShadeDrop, false);
 	Actor_Start_Speech_Sample(kActorTyrell, 0);
-	Loop_Actor_Walk_To_XYZ(kActorTyrell, 44.0f, 12.0f, 176.0f, 0, false, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorTyrell, 44.0f, 12.0f, 176.0f, 0, false, false, false);
 	Actor_Face_Actor(kActorTyrell, kActorMcCoy, true);
 	Actor_Face_Actor(kActorMcCoy, kActorTyrell, true);
 	Actor_Face_Actor(kActorRachael, kActorTyrell, true);
@@ -296,7 +296,7 @@ void SceneScriptTB07::McCoyTalkWithRachaelAndTyrell() {
 	Actor_Set_Goal_Number(kActorRachael, kGoalRachaelLeavesAfterTyrellMeeting);
 	Actor_Says(kActorTyrell, 40, 15);
 	Actor_Start_Speech_Sample(kActorTyrell, 50);
-	Loop_Actor_Walk_To_XYZ(kActorTyrell, -10.0f, 12.0f, 100.0f, 0, false, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorTyrell, -10.0f, 12.0f, 100.0f, 0, false, false, false);
 	Actor_Face_Actor(kActorTyrell, kActorMcCoy, true);
 	Actor_Face_Actor(kActorMcCoy, kActorTyrell, true);
 	Actor_Says(kActorMcCoy, 5430, 17);
@@ -313,7 +313,7 @@ void SceneScriptTB07::McCoyTalkWithRachaelAndTyrell() {
 	Actor_Says(kActorTyrell, 100, 14);
 	Actor_Clue_Acquire(kActorMcCoy, kClueRachaelInterview, false, kActorRachael);
 	Actor_Clue_Acquire(kActorMcCoy, kClueTyrellInterview, false, kActorTyrell);
-	Loop_Actor_Walk_To_XYZ(kActorTyrell, -260.15f, 12.0f, -19.16f, 0, false, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorTyrell, -260.15f, 12.0f, -19.16f, 0, false, false, false);
 }
 
 } // End of namespace BladeRunner

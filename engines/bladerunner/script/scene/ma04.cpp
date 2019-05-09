@@ -125,7 +125,7 @@ bool SceneScriptMA04::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptMA04::ClickedOnExit(int exitId) {
 	if (exitId == kMA04ExitMA02) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7099.0f, 954.0f, 1866.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7099.0f, 954.0f, 1866.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagMA04ToMA02);
 			Set_Enter(kSetMA02_MA04, kSceneMA02);
 		}
@@ -134,14 +134,14 @@ bool SceneScriptMA04::ClickedOnExit(int exitId) {
 	if (exitId == kMA04ExitMA05) {
 		float x, y, z;
 		Actor_Query_XYZ(kActorMcCoy, &x, &y, &z);
-		if (z <= 1677.0f || !Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 955.0f, 1675.0f, 0, true, false, 0)) {
+		if (z <= 1677.0f || !Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 955.0f, 1675.0f, 0, true, false, false)) {
 			if (isPhoneMessageWaiting() || isPhoneRinging()) {
 				Overlay_Remove("MA04OVER");
 			}
 #if BLADERUNNER_ORIGINAL_BUGS
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 955.0f, 1675.0f, 0, false, false, 1);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 955.0f, 1675.0f, 0, false, false, true);
 #else
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 955.0f, 1627.0f, 0, false, false, 1);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 955.0f, 1627.0f, 0, false, false, true);
 #endif // BLADERUNNER_ORIGINAL_BUGS
 			Game_Flag_Set(kFlagMA04toMA05);
 			if (Global_Variable_Query(kVariableChapter) != 2 && Global_Variable_Query(kVariableChapter) != 3) {
@@ -152,11 +152,11 @@ bool SceneScriptMA04::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == kMA04ExitKitchen) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7115.0f, 954.0f, 1742.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7115.0f, 954.0f, 1742.0f, 0, true, false, false)) {
 			int sounds[] = {kSfxBARSFX1, kSfxTOILET1, kSfxDRAIN1X, kSfxWASH1, kSfxGARGLE1};
 			Ambient_Sounds_Play_Sound(sounds[Random_Query(0, 4)], 50, 0, 0, 0);
 			Delay(3000);
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7139.0f, 954.0f, 1746.0f, 0, true, false, 1);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7139.0f, 954.0f, 1746.0f, 0, true, false, true);
 		}
 	}
 	return false;
@@ -171,7 +171,7 @@ bool SceneScriptMA04::ClickedOn2DRegion(int region) {
 		return true;
 	}
 	if (region == kMA04RegionPhone) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7176.0f, 954.0f, 1806.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7176.0f, 954.0f, 1806.0f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 256, false);
 			if (isPhoneRinging()) {
 				Actor_Says(kActorMcCoy, 2680, 0);
@@ -260,9 +260,9 @@ void SceneScriptMA04::PlayerWalkedIn() {
 		Overlay_Play("MA04OVER", 0, 1, 0, 0);
 	}
 	if (Game_Flag_Query(kFlagMA04McCoySleeping)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7139.0f, 954.0f, 1746.0f, 0, true, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7139.0f, 954.0f, 1746.0f, 0, true, false, false);
 	} else if (Game_Flag_Query(kFlagMA02ToMA04)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7143.0f, 954.0f, 1868.0f, 0, true, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7143.0f, 954.0f, 1868.0f, 0, true, false, false);
 	}
 	Game_Flag_Reset(kFlagMA02ToMA04);
 	Game_Flag_Reset(kFlagMA05toMA04);
@@ -270,7 +270,7 @@ void SceneScriptMA04::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagChapter1Ended)) {
 		if (Global_Variable_Query(kVariableChapter) == 2 && !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallGuzza)) {
 			Sound_Play(kSfxVIDFONE1, 100, 0, 0, 50);
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7176.0f, 954.0f, 1806.0f, 0, false, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7176.0f, 954.0f, 1806.0f, 0, false, false, false);
 			Actor_Face_Heading(kActorMcCoy, 256, true);
 			Actor_Says(kActorMcCoy, 2680, 0);
 			Sound_Play(kSfxSPNBEEP9, 100, 0, 0, 50);
@@ -305,11 +305,11 @@ void SceneScriptMA04::PlayerWalkedIn() {
 	if ((Game_Flag_Query(kFlagZubenRetired) || Game_Flag_Query(kFlagZubenSpared)) && !Game_Flag_Query(kFlagChapter1Ending)) {
 		Music_Play(kMusicBRBlues, 52, 0, 2, -1, 0, 0);
 		Player_Loses_Control();
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 955.0f, 1677.0f, 0, true, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 955.0f, 1677.0f, 0, true, false, false);
 		if (isPhoneMessageWaiting() || isPhoneRinging()) {
 			Overlay_Remove("MA04OVER");
 		}
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 955.0f, 1675.0f, 0, true, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 955.0f, 1675.0f, 0, true, false, false);
 		Game_Flag_Set(kFlagChapter1Ending);
 		Async_Actor_Walk_To_XYZ(kActorMcCoy, -7204.0f, 956.17f, 1568.0f, 0, false);
 		Set_Enter(kSetMA05, kSceneMA05);

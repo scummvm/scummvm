@@ -90,7 +90,7 @@ bool SceneScriptHC04::ClickedOn3DObject(const char *objectName, bool a2) {
 
 bool SceneScriptHC04::ClickedOnActor(int actorId) {
 	if (actorId == kActorIsabella) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -155.0f, 0.0f, -475.0f, 12, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -155.0f, 0.0f, -475.0f, 12, true, false, false)) {
 			Actor_Face_Actor(kActorMcCoy, kActorIsabella, true);
 			Actor_Face_Actor(kActorIsabella, kActorMcCoy, true);
 			if (!Game_Flag_Query(kFlagHC04IsabellaTalk)) {
@@ -114,7 +114,7 @@ bool SceneScriptHC04::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptHC04::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -108.0f, 0.14f, -639.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -108.0f, 0.14f, -639.0f, 0, true, false, false)) {
 			Music_Stop(2);
 			Game_Flag_Set(kFlagHC04toRC03);
 			Game_Flag_Reset(kFlagMcCoyInHawkersCircle);
@@ -125,7 +125,7 @@ bool SceneScriptHC04::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -72.0f, 0.14f, -399.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -72.0f, 0.14f, -399.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagHC04toHC02);
 			Set_Enter(kSetHC01_HC02_HC03_HC04, kSceneHC02);
 		}

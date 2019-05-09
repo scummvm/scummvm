@@ -128,10 +128,10 @@ bool SceneScriptUG05::ClickedOnExit(int exitId) {
 		if ( Game_Flag_Query(kFlagHF05PoliceArrived)
 		 && !Game_Flag_Query(kFlagHF07Hole)
 		) {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -356.35f, 132.77f, -1092.36f, 0, false, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -356.35f, 132.77f, -1092.36f, 0, false, false, false);
 			Game_Flag_Set(kFlagUG06toHF07);
 			Set_Enter(kSetHF07, kSceneHF07);
-		} else if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -156.72f, 3.03f, -1118.17f, 0, true, false, 0)) {
+		} else if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -156.72f, 3.03f, -1118.17f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 760, false);
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 3, true, kAnimationModeIdle);
 			Game_Flag_Set(kFlagUG06toHF07);
@@ -141,7 +141,7 @@ bool SceneScriptUG05::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 4.0f, -11.67f, -4.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 4.0f, -11.67f, -4.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagUG05toUG04);
 			Set_Enter(kSetUG04, kSceneUG04);
 		}
@@ -150,7 +150,7 @@ bool SceneScriptUG05::ClickedOnExit(int exitId) {
 
 	if (exitId == 2) {
 		if (!Game_Flag_Query(kFlagHF01TalkToLovedOne)) {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 0.0f, -1.37f, -1500.0f, 0, true, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 0.0f, -1.37f, -1500.0f, 0, true, false, false)) {
 				if (!Game_Flag_Query(kFlagUG05TalkAboutTunnel)) {
 					Actor_Voice_Over(2600, kActorVoiceOver);
 					Actor_Voice_Over(2610, kActorVoiceOver);
@@ -162,7 +162,7 @@ bool SceneScriptUG05::ClickedOnExit(int exitId) {
 			int affectionTowardsActor = getAffectionTowardsActor();
 			bool v2;
 			if (affectionTowardsActor == -1) {
-				v2 = Loop_Actor_Walk_To_XYZ(kActorMcCoy, 0.0f, -1.37f, -1500.0f, 0, true, false, 0) != 0;
+				v2 = Loop_Actor_Walk_To_XYZ(kActorMcCoy, 0.0f, -1.37f, -1500.0f, 0, true, false, false) != 0;
 			} else {
 				v2 = Loop_Actor_Walk_To_Actor(kActorMcCoy, affectionTowardsActor, 30, true, false) != 0;
 			}
@@ -224,7 +224,7 @@ void SceneScriptUG05::PlayerWalkedIn() {
 		if ( Game_Flag_Query(kFlagHF05PoliceArrived)
 		 && !Game_Flag_Query(kFlagHF07Hole)
 		) {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -288.35f, 132.77f, -1092.36f, 0, true, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -288.35f, 132.77f, -1092.36f, 0, true, false, false);
 		} else {
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 2, false, kAnimationModeIdle);
 		}

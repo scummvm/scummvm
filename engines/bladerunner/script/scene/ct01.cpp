@@ -156,7 +156,7 @@ bool SceneScriptCT01::ClickedOn3DObject(const char *objectName, bool a2) {
 bool SceneScriptCT01::ClickedOnActor(int actorId) {
 	if (actorId == kActorHowieLee) {
 		Actor_Set_Goal_Number(kActorHowieLee, 50);
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -335.23f, -6.5f, 578.97f, 12, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -335.23f, -6.5f, 578.97f, 12, true, false, false)) {
 			Actor_Face_Actor(kActorMcCoy, kActorHowieLee, true);
 			Actor_Face_Actor(kActorHowieLee, kActorMcCoy, true);
 			if (!Game_Flag_Query(kFlagCT01McCoyTalkedToHowieLee)) {
@@ -192,7 +192,7 @@ bool SceneScriptCT01::ClickedOnActor(int actorId) {
 	}
 
 	if (actorId == kActorZuben) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -335.23f, -6.5f, 578.97f, 12, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -335.23f, -6.5f, 578.97f, 12, true, false, false)) {
 			Actor_Face_Actor(kActorMcCoy, kActorZuben, true);
 			Actor_Says(kActorMcCoy, 355, 18);
 			if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenDefault) {
@@ -210,7 +210,7 @@ bool SceneScriptCT01::ClickedOnActor(int actorId) {
 
 	if (actorId == kActorGordo) {
 		if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoDefault) {
-			if (Loop_Actor_Walk_To_XYZ(kActorMcCoy, -338.1f, -6.5f, 419.65f, 6, true, false, 0)) {
+			if (Loop_Actor_Walk_To_XYZ(kActorMcCoy, -338.1f, -6.5f, 419.65f, 6, true, false, false)) {
 				return false;
 			}
 		}
@@ -254,7 +254,7 @@ bool SceneScriptCT01::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptCT01::ClickedOnExit(int exitId) {
 	if (exitId == kCT01ExitCT02) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -327.5f, -6.5f, 352.28f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -327.5f, -6.5f, 352.28f, 0, true, false, false)) {
 			Player_Loses_Control();
 			Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 106, 0, false, false);
 			Player_Gains_Control();
@@ -265,7 +265,7 @@ bool SceneScriptCT01::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == kCT01ExitCT03) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -259.0f, -6.5f, 710.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -259.0f, -6.5f, 710.0f, 0, true, false, false)) {
 			Game_Flag_Reset(kFlagArrivedFromSpinner1);
 			Set_Enter(kSetCT03_CT04, kSceneCT03);
 		}
@@ -273,7 +273,7 @@ bool SceneScriptCT01::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == kCT01ExitCT12) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -419.0f, -6.5f, 696.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -419.0f, -6.5f, 696.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagCT01toCT12);
 			Game_Flag_Reset(kFlagArrivedFromSpinner1);
 			Set_Enter(kSetCT01_CT12, kSceneCT12);
@@ -282,9 +282,9 @@ bool SceneScriptCT01::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == kCT01ExitSpinner) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -314.0f, -6.5f, 326.0f, 0, true, false, 0)) {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -330.0f, -6.5f, 221.0f, 0, false, true, 0);
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -530.0f, -6.5f, 241.0f, 0, false, true, 0);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -314.0f, -6.5f, 326.0f, 0, true, false, false)) {
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -330.0f, -6.5f, 221.0f, 0, false, true, false);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -530.0f, -6.5f, 241.0f, 0, false, true, false);
 			Game_Flag_Reset(kFlagMcCoyInChinaTown);
 			Game_Flag_Reset(kFlagMcCoyInRunciters);
 			Game_Flag_Reset(kFlagMcCoyInMcCoyApartment);
@@ -378,9 +378,9 @@ bool SceneScriptCT01::ClickedOnExit(int exitId) {
 			default:
 				Game_Flag_Set(kFlagMcCoyInChinaTown);
 				Player_Loses_Control();
-				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -530.0f, -6.5f, 241.0f, 0, false, true, 0);
-				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -330.0f, -6.5f, 221.0f, 0, false, true, 0);
-				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -314.0f, -6.5f, 326.0f, 0, false, false, 0);
+				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -530.0f, -6.5f, 241.0f, 0, false, true, false);
+				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -330.0f, -6.5f, 221.0f, 0, false, true, false);
+				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -314.0f, -6.5f, 326.0f, 0, false, false, false);
 				Player_Gains_Control();
 				break;
 			}
@@ -449,14 +449,14 @@ void SceneScriptCT01::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptCT01::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagCT02toCT01walk)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -327.2f, -6.5f, 352.28f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -327.2f, -6.5f, 352.28f, 0, false, false, false);
 		Game_Flag_Reset(kFlagCT02toCT01walk);
 	} else {
 		if (!Game_Flag_Query(kFlagArrivedFromSpinner1)) {
 			Game_Flag_Reset(kFlagArrivedFromSpinner1); // a bug? why reset a flag that is already cleared?
 			return;
 		}
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -330.0f, -6.5f, 221.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -330.0f, -6.5f, 221.0f, 0, false, false, false);
 		if (_vm->_cutContent) {
 			// unpause generic walkers here, less chance to collide with McCOy while he enters the scene
 			if( Game_Flag_Query(kFlagArrivedFromSpinner1)
@@ -465,7 +465,7 @@ void SceneScriptCT01::PlayerWalkedIn() {
 				Game_Flag_Reset(kFlagGenericWalkerWaiting);
 			}
 		}
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -314.0f, -6.5f, 326.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -314.0f, -6.5f, 326.0f, 0, false, false, false);
 
 		if (!Game_Flag_Query(kFlagCT01Visited)) {
 			Game_Flag_Set(kFlagCT01Visited);

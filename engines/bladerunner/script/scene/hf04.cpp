@@ -93,7 +93,7 @@ bool SceneScriptHF04::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptHF04::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1132.27f, -0.31f, -113.46f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1132.27f, -0.31f, -113.46f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagHF04toHF03);
@@ -173,7 +173,7 @@ void SceneScriptHF04::PlayerWalkedIn() {
 		Player_Set_Combat_Mode(true);
 		Music_Play(kMusicBatl226M, 60, 0, 2, -1, 0, 0);
 	}
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -45.0f, -0.31f, 307.0f, 0, false, true, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -45.0f, -0.31f, 307.0f, 0, false, true, false);
 	Delay(2500);
 }
 

@@ -117,7 +117,7 @@ bool SceneScriptCT06::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptCT06::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 20.41f, -58.23f, -2.17f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 20.41f, -58.23f, -2.17f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagCT06toCT05);
@@ -128,7 +128,7 @@ bool SceneScriptCT06::ClickedOnExit(int exitId) {
 	}
 	if (exitId == 1) {
 		if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT06HideAtFreeSlotA) {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 203.91f, -58.02f, 0.47f, 0, 1, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 203.91f, -58.02f, 0.47f, 0, true, false, false)) {
 				Ambient_Sounds_Remove_Sound(kSfxZUBWLK1, true);
 				Ambient_Sounds_Remove_Sound(kSfxZUBWLK2, true);
 				Ambient_Sounds_Remove_Sound(kSfxZUBWLK3, true);
@@ -139,7 +139,7 @@ bool SceneScriptCT06::ClickedOnExit(int exitId) {
 			}
 			return true;
 		}
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 203.91f, -58.02f, 0.47f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 203.91f, -58.02f, 0.47f, 0, true, false, false)) {
 			if (Global_Variable_Query(kVariableChapter) < 3) {
 				Actor_Face_Object(kActorMcCoy, "DOOR", true);
 				Actor_Says(kActorMcCoy, 8522, 12);

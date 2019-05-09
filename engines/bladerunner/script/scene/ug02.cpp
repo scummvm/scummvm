@@ -175,13 +175,13 @@ bool SceneScriptUG02::ClickedOnExit(int exitId) {
 		if ( Game_Flag_Query(kFlagUG02FromUG01)
 		 || !walkToCenter()
 		) {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -202.0f, 120.16f, -74.0f, 0, 1, Player_Query_Combat_Mode(), 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -202.0f, 120.16f, -74.0f, 0, true, Player_Query_Combat_Mode(), false)) {
 				Actor_Face_Heading(kActorMcCoy, 270, false);
 				Footstep_Sound_Override_On(2);
 				Loop_Actor_Travel_Stairs(kActorMcCoy, 4, false, kAnimationModeIdle);
 				Footstep_Sound_Override_Off();
-				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -96.57f, 74.87f, -271.28f, 0, false, Player_Query_Combat_Mode(), 0);
-				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -95.0f, 74.87f, -503.0f, 0, false, Player_Query_Combat_Mode(), 0);
+				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -96.57f, 74.87f, -271.28f, 0, false, Player_Query_Combat_Mode(), false);
+				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -95.0f, 74.87f, -503.0f, 0, false, Player_Query_Combat_Mode(), false);
 				Game_Flag_Set(kFlagUG02toUG01);
 				Set_Enter(kSetUG01, kSceneUG01);
 			}
@@ -194,10 +194,10 @@ bool SceneScriptUG02::ClickedOnExit(int exitId) {
 			if (walkToCenter()) {
 				return true;
 			}
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -368.75f, 155.75f,  -63.0f, 0, false, false, 0);
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -340.75f, 155.75f, -119.0f, 0, false, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -368.75f, 155.75f,  -63.0f, 0, false, false, false);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -340.75f, 155.75f, -119.0f, 0, false, false, false);
 		}
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -304.75f, 155.75f, -171.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -304.75f, 155.75f, -171.0f, 0, false, false, false);
 		Actor_Face_Heading(kActorMcCoy, 14, false);
 		Loop_Actor_Travel_Ladder(kActorMcCoy, 9, true, kAnimationModeIdle);
 		Game_Flag_Set(kFlagUG02toHC03);
@@ -228,7 +228,7 @@ void SceneScriptUG02::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 void SceneScriptUG02::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagUG01toUG02)) {
 		Actor_Set_At_XYZ(kActorMcCoy, -106.01f, 84.13f, -228.62f, 575);
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -148.0f, 84.13f, -67.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -148.0f, 84.13f, -67.0f, 0, false, false, false);
 		Actor_Face_Heading(kActorMcCoy, 761, false);
 		Footstep_Sound_Override_On(2);
 		Loop_Actor_Travel_Stairs(kActorMcCoy, 4, true, kAnimationModeIdle);
@@ -237,7 +237,7 @@ void SceneScriptUG02::PlayerWalkedIn() {
 		Game_Flag_Set(kFlagUG02FromUG01);
 	} else if (Game_Flag_Query(kFlagHC03toUG02)) {
 		Actor_Set_At_XYZ(kActorMcCoy, -304.75f, 265.0f, -171.0f, 0);
-		Loop_Actor_Travel_Ladder(kActorMcCoy, 9, false, 0);
+		Loop_Actor_Travel_Ladder(kActorMcCoy, 9, false, kAnimationModeIdle);
 		Game_Flag_Reset(kFlagHC03toUG02);
 		Game_Flag_Reset(kFlagUG02FromUG01);
 	} else {
@@ -259,9 +259,9 @@ void SceneScriptUG02::DialogueQueueFlushed(int a1) {
 bool SceneScriptUG02::walkToCenter() {
 	if (!Game_Flag_Query(kFlagUG02FromUG01)) {
 		int combatMode = Player_Query_Combat_Mode();
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -340.75f, 155.75f, -119.0f, 0, 0, combatMode, 0);
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -368.75f, 155.75f,  -63.0f, 0, 0, combatMode, 0);
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy,  -365.0f, 155.65f,  -19.0f, 0, 0, combatMode, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -340.75f, 155.75f, -119.0f, 0, false, combatMode, false);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -368.75f, 155.75f,  -63.0f, 0, false, combatMode, false);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy,  -365.0f, 155.65f,  -19.0f, 0, false, combatMode, false);
 		Actor_Face_Heading(kActorMcCoy, 318, false);
 		Footstep_Sound_Override_On(2);
 		Loop_Actor_Travel_Stairs(kActorMcCoy, 4, false, kAnimationModeIdle);
@@ -270,7 +270,7 @@ bool SceneScriptUG02::walkToCenter() {
 		return false;
 	}
 
-	if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -312.75f, 120.16f, 1.01f, 0, true, false, 0)) {
+	if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -312.75f, 120.16f, 1.01f, 0, true, false, false)) {
 		Actor_Face_Heading(kActorMcCoy, 830, false);
 		Footstep_Sound_Override_On(2);
 		Loop_Actor_Travel_Stairs(kActorMcCoy, 4, true, kAnimationModeIdle);

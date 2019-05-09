@@ -114,7 +114,7 @@ bool SceneScriptNR04::ClickedOn3DObject(const char *objectName, bool a2) {
 	}
 
 	if ( Object_Query_Click("TORUS01", objectName)
-	 && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, 18.56f, 0.0f, 38.86f, 0, true, false, 0)
+	 && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, 18.56f, 0.0f, 38.86f, 0, true, false, false)
 	 && !Game_Flag_Query(kFlagNR04DiscFound)
 	) {
 		Unclickable_Object("TORUS01");
@@ -153,7 +153,7 @@ bool SceneScriptNR04::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptNR04::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 45.0f, 0.0f, -106.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 45.0f, 0.0f, -106.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagNR04toNR03);
@@ -302,7 +302,7 @@ void SceneScriptNR04::PlayerWalkedIn() {
 	Game_Flag_Reset(kFlagNR03toNR04);
 #endif // BLADERUNNER_ORIGINAL_BUGS
 
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 53.0f, 0.0f, -26.0f, 0, false, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 53.0f, 0.0f, -26.0f, 0, false, false, false);
 	if (Game_Flag_Query(kFlagAR02DektoraBoughtScorpions)) {
 		Overlay_Play("nr04over", 0, true, false, 0);
 		Delay(4000);

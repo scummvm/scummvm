@@ -90,7 +90,7 @@ bool SceneScriptHC02::ClickedOn3DObject(const char *objectName, bool a2) {
 
 bool SceneScriptHC02::ClickedOnActor(int actorId) {
 	if (actorId == kActorHawkersBarkeep) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -150.51f, 0.14f, 62.74f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -150.51f, 0.14f, 62.74f, 0, true, false, false)) {
 			Actor_Face_Actor(kActorMcCoy, kActorHawkersBarkeep, true);
 			if (!Game_Flag_Query(kFlagHC02HawkersBarkeepIntroduction)) {
 				Actor_Says(kActorMcCoy, 1225, 13);
@@ -174,7 +174,7 @@ bool SceneScriptHC02::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptHC02::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 7.0f, 0.14f, 79.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 7.0f, 0.14f, 79.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagHC02toHC01);
@@ -184,7 +184,7 @@ bool SceneScriptHC02::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -76.0f, 0.14f, -339.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -76.0f, 0.14f, -339.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagHC02toHC04);
@@ -226,7 +226,7 @@ void SceneScriptHC02::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptHC02::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagHC04toHC02)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -76.0f, 0.14f, -339.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -76.0f, 0.14f, -339.0f, 0, false, false, false);
 		Game_Flag_Reset(kFlagHC04toHC02);
 	}
 }

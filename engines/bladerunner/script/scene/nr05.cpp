@@ -124,7 +124,7 @@ bool SceneScriptNR05::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptNR05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -444.0f, 0.0f, -451.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -444.0f, 0.0f, -451.0f, 0, true, false, false)) {
 			Player_Loses_Control();
 			Music_Stop(2);
 			Player_Set_Combat_Mode(false);
@@ -138,7 +138,7 @@ bool SceneScriptNR05::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -777.56f, 0.0f, -166.86f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -777.56f, 0.0f, -166.86f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagNR05toNR08);
 			Set_Enter(kSetNR05_NR08, kSceneNR08);
 		}
@@ -194,7 +194,7 @@ void SceneScriptNR05::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 void SceneScriptNR05::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagNR08toNR05)) {
 		Music_Stop(2);
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -697.56f, 0.0f, -174.86f, 0, true, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -697.56f, 0.0f, -174.86f, 0, true, false, false);
 		Game_Flag_Reset(kFlagNR08toNR05);
 	}
 	//	return false;

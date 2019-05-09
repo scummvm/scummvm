@@ -334,7 +334,7 @@ bool AIScriptEarlyQ::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		break;
 
 	case kGoalEarlyQNR04GoToMcCoy:
-		Loop_Actor_Walk_To_Actor(kActorEarlyQ, 0, 36, 0, 0);
+		Loop_Actor_Walk_To_Actor(kActorEarlyQ, 0, 36, false, false);
 		AI_Countdown_Timer_Reset(kActorEarlyQ, kActorTimerAIScriptCustomTask0);
 		AI_Countdown_Timer_Start(kActorEarlyQ, kActorTimerAIScriptCustomTask0, 4);
 		break;
@@ -353,7 +353,7 @@ bool AIScriptEarlyQ::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Says(kActorEarlyQ, 160, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 3410, kAnimationModeCombatAim);
 		_vm->_aiScripts->callChangeAnimationMode(kActorMcCoy, kAnimationModeCombatIdle);
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 31.22f, 0.0f, 267.51f, 0, true, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 31.22f, 0.0f, 267.51f, 0, true, false, false);
 		Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR04SitDown);
 		break;
 

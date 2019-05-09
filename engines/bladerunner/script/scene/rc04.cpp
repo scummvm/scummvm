@@ -438,7 +438,7 @@ bool SceneScriptRC04::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptRC04::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 45.0f, 0.15f, 68.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 45.0f, 0.15f, 68.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagRC04toRC03);
 			Set_Enter(kSetRC03, kSceneRC03);
 		}

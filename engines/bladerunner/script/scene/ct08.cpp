@@ -127,7 +127,7 @@ bool SceneScriptCT08::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptCT08::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -183.0f, 0.0f, 128.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -183.0f, 0.0f, 128.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagCT08toCT09);
@@ -137,8 +137,8 @@ bool SceneScriptCT08::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -11.0f, 0.0f, -156.0f, 0, true, false, 0)) {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 0.0f, 0.0f, -102.0f, 0, false, false, 0);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -11.0f, 0.0f, -156.0f, 0, true, false, false)) {
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 0.0f, 0.0f, -102.0f, 0, false, false, false);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagCT08toCT51);
@@ -148,7 +148,7 @@ bool SceneScriptCT08::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -143.0f, 0.0f, -92.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -143.0f, 0.0f, -92.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagCT08toCT06);
@@ -161,7 +161,7 @@ bool SceneScriptCT08::ClickedOnExit(int exitId) {
 
 bool SceneScriptCT08::ClickedOn2DRegion(int region) {
 	if (region == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -108.0f, 0.0f, -178.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -108.0f, 0.0f, -178.0f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 512, false);
 			Game_Flag_Reset(kFlagMcCoyTiedDown);
 			Player_Set_Combat_Mode_Access(true);
@@ -196,7 +196,7 @@ void SceneScriptCT08::PlayerWalkedIn() {
 	} else if (Game_Flag_Query(kFlagCT06toCT08)) {
 		Game_Flag_Reset(kFlagCT06toCT08);
 	} else {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -156.0f, 0.0f, 128.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -156.0f, 0.0f, 128.0f, 0, false, false, false);
 		Game_Flag_Reset(kFlagCT09toCT08);
 	}
 }

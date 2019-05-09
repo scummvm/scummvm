@@ -87,7 +87,7 @@ bool SceneScriptPS01::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptPS01::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1920.0f, 16581.0f, -2653.0f, 12, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1920.0f, 16581.0f, -2653.0f, 12, true, false, false)) {
 			Game_Flag_Set(kflagPS01toPS02);
 			Set_Enter(kSetPS02, kScenePS02);
 		}
@@ -95,7 +95,7 @@ bool SceneScriptPS01::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1877.9f, 16592.0f, -2975.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1877.9f, 16592.0f, -2975.0f, 0, true, false, false)) {
 #if BLADERUNNER_ORIGINAL_BUGS
 			Actor_Set_At_XYZ(kActorMcCoy, 1872.0f, 16592.0f, -2975.0f, 870);
 #else

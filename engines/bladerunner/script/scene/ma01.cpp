@@ -107,11 +107,11 @@ bool SceneScriptMA01::ClickedOnExit(int exitId) {
 
 	if (exitId == kMA01ExitMA06) {
 		if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenFled) {
-			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1446.0f, 0.0f, -725.0f, 72, true, false, 0)) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1446.0f, 0.0f, -725.0f, 72, true, false, false)) {
 				Actor_Set_Goal_Number(kActorZuben, kGoalZubenMA01AttackMcCoy);
 				Scene_Exits_Disable();
 			}
-		} else if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1446.0f, 0.0f, -725.0f, 12, true, false, 0)) {
+		} else if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1446.0f, 0.0f, -725.0f, 12, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagMA01toMA06);
@@ -121,7 +121,7 @@ bool SceneScriptMA01::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == kMA01ExitSpinner) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 381.0f, 0.0f, 54.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 381.0f, 0.0f, 54.0f, 0, true, false, false)) {
 			Player_Loses_Control();
 			Actor_Face_Heading(kActorMcCoy, 736, false);
 			Game_Flag_Reset(kFlagMcCoyInChinaTown);

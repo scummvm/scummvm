@@ -67,7 +67,7 @@ bool SceneScriptUG17::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptUG17::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1000.0f, 67.96f, -1539.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1000.0f, 67.96f, -1539.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagUG17toUG15);
@@ -77,7 +77,7 @@ bool SceneScriptUG17::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1013.0f, 67.96f, -1892.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1013.0f, 67.96f, -1892.0f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 89, false);
 			if (Global_Variable_Query(kVariableChapter) == 5) {
 				Actor_Says(kActorMcCoy, 8522, 14);
@@ -106,7 +106,7 @@ void SceneScriptUG17::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptUG17::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagUG15toUG17)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 961.0f, 67.96f, -1539.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 961.0f, 67.96f, -1539.0f, 0, false, false, false);
 		Game_Flag_Reset(kFlagUG15toUG17);
 	}
 	//return false;

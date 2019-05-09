@@ -77,7 +77,7 @@ bool SceneScriptNR02::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("VID PHONE 01", objectName)
 	 || Object_Query_Click("VID PHONE 02", objectName)
 	) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -191.9f, -24.0f, 62.15f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -191.9f, -24.0f, 62.15f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 13, false);
 			if ( Actor_Clue_Query(kActorMcCoy, kClueFolder)
 			 &&  Actor_Clue_Query(kActorMcCoy, kClueGuzzaFramedMcCoy)
@@ -107,7 +107,7 @@ bool SceneScriptNR02::ClickedOnActor(int actorId) {
 	if (actorId == kActorGordo
 	 && Actor_Query_Goal_Number(kActorGordo) == kGoalGordoNR02WaitAtBar
 	) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 67.37f, -24.0f, 389.32f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 67.37f, -24.0f, 389.32f, 0, true, false, false)) {
 			Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR02TalkToMcCoy);
 		}
 	}
@@ -118,7 +118,7 @@ bool SceneScriptNR02::ClickedOnItem(int itemId, bool a2) {
 	if (itemId == kItemGordosLighterReplicant
 	 || itemId == kItemGordosLighterHuman
 	) {
-		if(!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 109.38f, -24.0f, 420.5f, 0, true, false, 0)) {
+		if(!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 109.38f, -24.0f, 420.5f, 0, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 423, false);
 			if (itemId == kItemGordosLighterReplicant) {
 				Item_Remove_From_World(kItemGordosLighterReplicant);
@@ -138,7 +138,7 @@ bool SceneScriptNR02::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptNR02::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -283.0f, -24.0f, 326.0f, 0, true, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -283.0f, -24.0f, 326.0f, 0, true, false, false)) {
 			if (Actor_Query_Goal_Number(kActorGordo) < kGoalGordoNR01WaitAndAttack
 			 || Actor_Query_Goal_Number(kActorGordo) > kGoalGordoNR01WaitAndTakeHostage
 			) {
@@ -186,7 +186,7 @@ void SceneScriptNR02::PlayerWalkedIn() {
 		Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR02NextAct);
 	}
 
-	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -203.0f, -24.0f, 334.0f, 0, false, false, 0);
+	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -203.0f, -24.0f, 334.0f, 0, false, false, false);
 	//return false;
 }
 

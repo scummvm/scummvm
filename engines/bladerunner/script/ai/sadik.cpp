@@ -243,7 +243,7 @@ void AIScriptSadik::Retired(int byActorId) {
 			Player_Loses_Control();
 			Delay(2000);
 			Player_Set_Combat_Mode(false);
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, -41.58f, 72.0f, 0, true, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, -41.58f, 72.0f, 0, true, false, false);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagKP07toKP06);
@@ -407,7 +407,7 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case 413:
-		Loop_Actor_Walk_To_XYZ(kActorSadik, -1062.0f, 0.0f, 219.0f, 0, false, true, 0);
+		Loop_Actor_Walk_To_XYZ(kActorSadik, -1062.0f, 0.0f, 219.0f, 0, false, true, false);
 		Actor_Set_Targetable(kActorSadik, true);
 		Non_Player_Actor_Combat_Mode_On(kActorSadik, kActorCombatStateIdle, true, kActorMcCoy, 9, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, -1, -1, 15, 300, false);
 		Actor_Set_Goal_Number(kActorSadik, 450);
@@ -447,14 +447,14 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case kGoalSadikUG18NeedsReactorCoreFromMcCoy:
-		Loop_Actor_Walk_To_XYZ(kActorSadik, -961.0f, 0.0f, -778.0f, 0, false, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorSadik, -961.0f, 0.0f, -778.0f, 0, false, false, false);
 		Actor_Face_Heading(kActorSadik, 150, false);
 		return true;
 
 	case 417:
 		Actor_Face_Actor(kActorSadik, kActorMcCoy, true);
 		Actor_Says(kActorSadik, 320, kAnimationModeTalk);
-		Loop_Actor_Walk_To_XYZ(kActorSadik, -857.0f, 0.0f, -703.0f, 0, false, true, 0);
+		Loop_Actor_Walk_To_XYZ(kActorSadik, -857.0f, 0.0f, -703.0f, 0, false, true, false);
 		Actor_Says(kActorMcCoy, 2330, kAnimationModeTalk);
 		Actor_Says(kActorSadik, 330, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 2335, kAnimationModeTalk);
