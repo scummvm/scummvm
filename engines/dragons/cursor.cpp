@@ -175,11 +175,8 @@ int16 Cursor::updateINIUnderCursor() {
 	// TODO 0x80028940
 	int16 inventoryType = _vm->_inventory->getType();
 	if (inventoryType == 1) {
-		int16 invIni = _vm->_inventory->getIniAtPosition(_x, _y);
-		if (invIni > 0) {
-			_iniUnderCursor = invIni;
-			return _iniUnderCursor;
-		}
+		_iniUnderCursor = _vm->_inventory->getIniAtPosition(_x, _y);
+		return _iniUnderCursor;
 	} else {
 		if (inventoryType < 2) {
 			if (inventoryType != 0) {

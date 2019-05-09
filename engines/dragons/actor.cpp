@@ -82,10 +82,14 @@ void ActorManager::clearActorFlags(uint16 startingActorId) {
 	}
 }
 
-Actor *ActorManager::loadActor(uint32 resourceId, uint16 actorId) {
+Actor *ActorManager::loadActor(uint32 resourceId, uint16 actorId) { //TODO should we rename this. loadActorResource or updateActorResource
 	Actor *actor = getActor(actorId);
 	actor->_actorResource = _actorResourceLoader->load(resourceId);
 	return actor;
+}
+
+ActorResource *ActorManager::getActorResource(uint32 resourceId) {
+	return _actorResourceLoader->load(resourceId);
 }
 
 Actor::Actor(uint16 id) : _actorID(id) {
