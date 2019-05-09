@@ -16,7 +16,7 @@ public class ScummVMEventsHoneycomb extends ScummVMEvents {
 			_scummvm.pushEvent(JE_JOYSTICK, e.getAction(),
 					   (int)(e.getAxisValue(MotionEvent.AXIS_X)*100),
 					   (int)(e.getAxisValue(MotionEvent.AXIS_Y)*100),
-					   0, 0);
+					   0, 0, 0);
 			return true;
 		}
 

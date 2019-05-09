@@ -70,8 +70,8 @@ public class MouseHelper {
 	}
 
 	public boolean onMouseEvent(MotionEvent e, boolean hover) {
-		_scummvm.pushEvent(ScummVMEvents.JE_MOUSE_MOVE, (int)e.getX(), (int)e.getY(), 0, 0, 0);
-		
+		_scummvm.pushEvent(ScummVMEvents.JE_MOUSE_MOVE, (int)e.getX(), (int)e.getY(), 0, 0, 0, 0);
+
 		int buttonState = e.getButtonState();
 
 		boolean lmbDown = (buttonState & MotionEvent.BUTTON_PRIMARY) == MotionEvent.BUTTON_PRIMARY;
@@ -84,14 +84,14 @@ public class MouseHelper {
 		if (lmbDown) {
 			if (!_lmbPressed) {
 				// left mouse button was pressed just now
-				_scummvm.pushEvent(ScummVMEvents.JE_LMB_DOWN, (int)e.getX(), (int)e.getY(), e.getButtonState(), 0, 0);
+				_scummvm.pushEvent(ScummVMEvents.JE_LMB_DOWN, (int)e.getX(), (int)e.getY(), e.getButtonState(), 0, 0, 0);
 			}
 
 			_lmbPressed = true;
 		} else {
 			if (_lmbPressed) {
 				// left mouse button was released just now
-				_scummvm.pushEvent(ScummVMEvents.JE_LMB_UP, (int)e.getX(), (int)e.getY(), e.getButtonState(), 0, 0);
+				_scummvm.pushEvent(ScummVMEvents.JE_LMB_UP, (int)e.getX(), (int)e.getY(), e.getButtonState(), 0, 0, 0);
 			}
 
 			_lmbPressed = false;
@@ -101,14 +101,14 @@ public class MouseHelper {
 		if (rmbDown) {
 			if (!_rmbPressed) {
 				// right mouse button was pressed just now
-				_scummvm.pushEvent(ScummVMEvents.JE_RMB_DOWN, (int)e.getX(), (int)e.getY(), e.getButtonState(), 0, 0);
+				_scummvm.pushEvent(ScummVMEvents.JE_RMB_DOWN, (int)e.getX(), (int)e.getY(), e.getButtonState(), 0, 0, 0);
 			}
 
 			_rmbPressed = true;
 		} else {
 			if (_rmbPressed) {
 				// right mouse button was released just now
-				_scummvm.pushEvent(ScummVMEvents.JE_RMB_UP, (int)e.getX(), (int)e.getY(), e.getButtonState(), 0, 0);
+				_scummvm.pushEvent(ScummVMEvents.JE_RMB_UP, (int)e.getX(), (int)e.getY(), e.getButtonState(), 0, 0, 0);
 				_rmbGuardTime = System.currentTimeMillis();
 			}
 
@@ -119,14 +119,14 @@ public class MouseHelper {
 		if (mmbDown) {
 			if (!_mmbPressed) {
 				// middle mouse button was pressed just now
-				_scummvm.pushEvent(ScummVMEvents.JE_MMB_DOWN, (int)e.getX(), (int)e.getY(), e.getButtonState(), 0, 0);
+				_scummvm.pushEvent(ScummVMEvents.JE_MMB_DOWN, (int)e.getX(), (int)e.getY(), e.getButtonState(), 0, 0, 0);
 			}
 
 			_mmbPressed = true;
 		} else {
 			if (_mmbPressed) {
 				// middle mouse button was released just now
-				_scummvm.pushEvent(ScummVMEvents.JE_MMB_UP, (int)e.getX(), (int)e.getY(), e.getButtonState(), 0, 0);
+				_scummvm.pushEvent(ScummVMEvents.JE_MMB_UP, (int)e.getX(), (int)e.getY(), e.getButtonState(), 0, 0, 0);
 			}
 
 			_mmbPressed = false;

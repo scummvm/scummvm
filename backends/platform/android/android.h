@@ -210,7 +210,7 @@ public:
 	}
 
 public:
-	void pushEvent(int type, int arg1, int arg2, int arg3, int arg4, int arg5);
+	void pushEvent(int type, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6);
 
 private:
 	Common::Queue<Common::Event> _event_queue;

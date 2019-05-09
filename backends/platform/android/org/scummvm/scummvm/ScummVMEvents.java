@@ -57,14 +57,14 @@ public class ScummVMEvents implements
 	}
 
 	final public void sendQuitEvent() {
-		_scummvm.pushEvent(JE_QUIT, 0, 0, 0, 0, 0);
+		_scummvm.pushEvent(JE_QUIT, 0, 0, 0, 0, 0, 0);
 	}
 
 	public boolean onTrackballEvent(MotionEvent e) {
 		_scummvm.pushEvent(JE_BALL, e.getAction(),
 							(int)(e.getX() * e.getXPrecision() * 100),
 							(int)(e.getY() * e.getYPrecision() * 100),
-							0, 0);
+							0, 0, 0);
 		return true;
 	}
 
@@ -155,7 +155,7 @@ public class ScummVMEvents implements
 					return true;
 			}
 
-			_scummvm.pushEvent(JE_SYS_KEY, action, keyCode, 0, 0, 0);
+			_scummvm.pushEvent(JE_SYS_KEY, action, keyCode, 0, 0, 0, 0);
 
 			return true;
 		}
@@ -172,7 +172,7 @@ public class ScummVMEvents implements
 			for (KeyEvent s : es) {
 				_scummvm.pushEvent(JE_KEY, s.getAction(), s.getKeyCode(),
 					s.getUnicodeChar() & KeyCharacterMap.COMBINING_ACCENT_MASK,
-					s.getMetaState(), s.getRepeatCount());
+					s.getMetaState(), s.getRepeatCount(), 0);
 			}
 
 			return true;
@@ -186,7 +186,7 @@ public class ScummVMEvents implements
 		case KeyEvent.KEYCODE_DPAD_CENTER:
 			_scummvm.pushEvent(JE_DPAD, action, keyCode,
 								(int)(e.getEventTime() - e.getDownTime()),
-								e.getRepeatCount(), 0);
+								e.getRepeatCount(), 0, 0);
 			return true;
 		case KeyEvent.KEYCODE_BUTTON_A:
 		case KeyEvent.KEYCODE_BUTTON_B:
@@ -205,13 +205,13 @@ public class ScummVMEvents implements
 		case KeyEvent.KEYCODE_BUTTON_MODE:
 			_scummvm.pushEvent(JE_GAMEPAD, action, keyCode,
 								(int)(e.getEventTime() - e.getDownTime()),
-								e.getRepeatCount(), 0);
+								e.getRepeatCount(), 0, 0);
 			return true;
 		}
 
 		_scummvm.pushEvent(JE_KEY, action, keyCode,
 					e.getUnicodeChar() & KeyCharacterMap.COMBINING_ACCENT_MASK,
-					e.getMetaState(), e.getRepeatCount());
+					e.getMetaState(), e.getRepeatCount(), 0);
 
 		return true;
 	}
@@ -235,7 +235,7 @@ public class ScummVMEvents implements
 
 		if (pointer > 0) {
 			_scummvm.pushEvent(JE_MULTI, pointer, action & 0xff, // ACTION_MASK
-								(int)e.getX(), (int)e.getY(), 0);
+								(int)e.getX(), (int)e.getY(), 0, 0);
 			return true;
 		}
 
@@ -245,7 +245,7 @@ public class ScummVMEvents implements
 	// OnGestureListener
 	@Override
 	final public boolean onDown(MotionEvent e) {
-		_scummvm.pushEvent(JE_DOWN, (int)e.getX(), (int)e.getY(), 0, 0, 0);
+		_scummvm.pushEvent(JE_DOWN, (int)e.getX(), (int)e.getY(), 0, 0, 0, 0);
 		return true;
 	}
 
@@ -268,7 +268,7 @@ public class ScummVMEvents implements
 	final public boolean onScroll(MotionEvent e1, MotionEvent e2,
 									float distanceX, float distanceY) {
 		_scummvm.pushEvent(JE_SCROLL, (int)e1.getX(), (int)e1.getY(),
-							(int)e2.getX(), (int)e2.getY(), 0);
+							(int)e2.getX(), (int)e2.getY(), 0, 0);
 
 		return true;
 	}
@@ -280,7 +280,7 @@ public class ScummVMEvents implements
 	@Override
 	final public boolean onSingleTapUp(MotionEvent e) {
 		_scummvm.pushEvent(JE_TAP, (int)e.getX(), (int)e.getY(),
-							(int)(e.getEventTime() - e.getDownTime()), 0, 0);
+							(int)(e.getEventTime() - e.getDownTime()), 0, 0, 0);
 
 		return true;
 	}
@@ -294,7 +294,7 @@ public class ScummVMEvents implements
 	@Override
 	final public boolean onDoubleTapEvent(MotionEvent e) {
 		_scummvm.pushEvent(JE_DOUBLE_TAP, (int)e.getX(), (int)e.getY(),
-							e.getAction(), 0, 0);
+							e.getAction(), 0, 0, 0);
 
 		return true;
 	}
