@@ -249,7 +249,10 @@ bool SceneScriptRC01::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("DOOR LEFT", objectName)) {
 		if (!Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "DOOR LEFT", 48, true, false)) {
 			Actor_Face_Object(kActorMcCoy, "DOOR LEFT", true);
-			if (!Actor_Clue_Query(kActorMcCoy, kClueDoorForced2) && Actor_Query_In_Set(kActorOfficerLeary, kSetRC01) && Global_Variable_Query(kVariableChapter) > 0) {
+			if (!Actor_Clue_Query(kActorMcCoy, kClueDoorForced2)
+			    && Actor_Query_In_Set(kActorOfficerLeary, kSetRC01)
+			    && Global_Variable_Query(kVariableChapter) > 0
+			) {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 				bool officerLearyWasInterrogatingTheCrowd = Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyRC01CrowdInterrogation
@@ -270,8 +273,12 @@ bool SceneScriptRC01::ClickedOn3DObject(const char *objectName, bool a2) {
 			}
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-			else if (!Actor_Clue_Query(kActorMcCoy, kClueDoorForced2) && !Actor_Clue_Query(kActorMcCoy, kClueDoorForced1) && !Actor_Query_In_Set(kActorOfficerLeary, kSetRC01) && Global_Variable_Query(kVariableChapter) == 1) {
+			else if (!Actor_Clue_Query(kActorMcCoy, kClueDoorForced2)
+			         && !Actor_Clue_Query(kActorMcCoy, kClueDoorForced1)
+			         && !Actor_Query_In_Set(kActorOfficerLeary, kSetRC01)
+			         && Global_Variable_Query(kVariableChapter) == 1) {
 				if (_vm->_cutContent) {
+					// keep in mind, this line in only available in Act 1
 					Actor_Voice_Over(1870, kActorVoiceOver);
 				} else {
 					Actor_Says(kActorMcCoy, 8570, 14);

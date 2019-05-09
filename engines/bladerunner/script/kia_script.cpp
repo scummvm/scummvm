@@ -46,7 +46,9 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorOfficerLeary, 0);
 		break;
 	case kClueDoorForced1:
-		if (_vm->_cutContent) {
+		if (_vm->_cutContent && _vm->_gameVars[kVariableChapter] == 1) {
+			// unfortunately this line is only available in TLK1 (so only Act 1)
+			// it will be silent in subsequent Acts
 			KIA_Play_Actor_Dialogue(kActorVoiceOver, 1870);
 		}
 		break;
