@@ -75,6 +75,42 @@ enum ObjectProperties {
 	pointer_y = 12
 };
 
+/**
+ * Fatal errors
+ */
+enum ERROR_TYPE {
+	MEMORY_E = 1,   ///< out of memory
+	OPEN_E,         ///< error opening file
+	READ_E,         ///< error reading from file
+	WRITE_E,        ///< error writing to file
+	EXPECT_VAL_E,   ///< expecting value
+	UNKNOWN_OP_E,   ///< unknown operation
+	ILLEGAL_OP_E,   ///< illegal operation
+	OVERFLOW_E,     ///< overflow
+	DIVIDE_E		///< divide by zero
+};
+
+/**
+ * A structure used for disambiguation in MatchObject()
+ */
+struct pobject_structure {
+	int obj;		///< the actual object number
+	char type;		///< referred to by noun or adjective
+
+	pobject_structure() : obj(0), type(0) {}
+};
+
+/**
+ * Structure used for navigating {...} blocks:
+ */
+struct CODE_BLOCK {
+	int type;			///< see #defines, below
+	long brk;			///< break address, or 0 to indicate NOP
+	long returnaddr;	///< used only for do-while loops
+
+	CODE_BLOCK() : type(0), brk(0), returnaddr(0) {}
+};
+
 } // End of namespace Hugo
 } // End of namespace Glk
 

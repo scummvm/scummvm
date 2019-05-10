@@ -25,8 +25,10 @@
 
 #include "common/scummsys.h"
 #include "glk/glk_api.h"
+#include "glk/hugo/htokens.h"
 #include "glk/hugo/hugo_defines.h"
 #include "glk/hugo/hugo_types.h"
+#include "glk/hugo/stringfn.h"
 
 namespace Glk {
 namespace Hugo {
@@ -34,7 +36,7 @@ namespace Hugo {
 /**
  * Hugo game interpreter
  */
-class Hugo : public GlkAPI {
+class Hugo : public GlkAPI, public HTokens, public StringFunctions {
 private:
 	winid_t mainwin, currentwin;
 	winid_t secondwin, auxwin;
@@ -46,9 +48,12 @@ private:
 	 */
 	int address_scale;
 
+	// hemisc
+	char gamefile[255];
 	int game_version;
 	int object_size;
-	HUGO_FILE game;
+	//HUGO_FILE game;
+	Common::SeekableReadStream *game;
 	HUGO_FILE script;
 	HUGO_FILE save;
 	HUGO_FILE playback;
@@ -100,6 +105,7 @@ private:
 	int inwindow;
 	int charwidth, lineheight, FIXEDCHARWIDTH, FIXEDLINEHEIGHT;
 	int current_text_x, current_text_y;
+	bool skipping_more;
 	int undostack[MAXUNDO][5];
 	int undoptr;
 	int undoturn;
@@ -113,11 +119,83 @@ private:
 	bool just_cleared_screen;
 	int secondwin_bottom;
 
-	// heparse
-	char buffer[MAXBUFFER + MAXWORDS];
-
 	// heexpr
 	int var[MAXLOCALS + MAXGLOBALS];
+
+	// heobject
+	int display_object;				///< i.e., non-existent (yet)
+	char display_needs_repaint;		///< for display object
+	int display_pointer_x, display_pointer_y;
+
+	// heparse
+	char buffer[MAXBUFFER + MAXWORDS];
+	char errbuf[MAXBUFFER + 1];				///< last invalid input
+	char line[1025];						///< line buffer
+
+	int words;								///< parsed word count
+	char *word[MAXWORDS + 1];				///< breakdown into words
+	unsigned int wd[MAXWORDS + 1];			///<     "      "   dict. entries
+	unsigned int parsed_number;				///< needed for numbers in input
+
+	signed char remaining;					///< multiple commands in input
+	char parseerr[MAXBUFFER + 1];			///< for passing to RunPrint, etc.
+	char parsestr[MAXBUFFER + 1];			///< for passing quoted string
+	char xverb;								///< flag; 0 = regular verb
+	char starts_with_verb;					///< input line; 0 = no verb word
+	unsigned int grammaraddr;				///< address in grammar
+	char *obj_parselist;					///< objects with noun/adjective
+	int domain, odomain;					///< of object(s)
+	int objlist[MAXOBJLIST];				///< for objects of verb
+	char objcount;							///< of objlist
+	char parse_allflag;						///< for "all" in MatchObject
+	pobject_structure pobjlist[MAXPOBJECTS];	///< for possible objects
+	int pobjcount;							///< of pobjlist
+	int pobj;								///< last remaining suspect
+	int obj_match_state;					///< see MatchCommand() for details
+	char objword_cache[MAXWORDS];			///< for MatchWord() xobject, etc.
+	char object_is_number;					///< number used in player command
+	unsigned int objgrammar;				///< for 2nd pass
+	int objstart;							///<  "   "   "
+	int objfinish;							///<  "   "   "
+	char addflag;							///< true if adding to objlist[]
+	int speaking;							///< if command is addressed to obj.
+
+	char oops[MAXBUFFER + 1];				///< illegal word
+	int oopscount;							///< # of corrections in a row
+
+	char parse_called_twice;
+	char reparse_everything;
+	char punc_string[64];					///< punctuation string
+
+	char full_buffer;
+	/**
+	 * to MatchObject()
+	 * Necessary for proper disambiguation when addressing a character;
+	 * i.e., when 'held' doesn't refer to held by the player, etc.
+	 */
+	char recursive_call;
+	int parse_location;						///< usually var[location]
+
+	// herun
+	int passlocal[MAXLOCALS];		///< locals passed to routine
+	int arguments_passed;			///< when calling routine
+	int ret;						///< return value and returning flag
+	char retflag;
+	bool during_player_input;
+	char override_full;
+	bool game_reset;				///< for restore, undo, etc.
+
+	CODE_BLOCK code_block[MAXSTACKDEPTH];
+	int stack_depth;
+	int tail_recursion;
+	long tail_recursion_addr;
+
+	// Used by RunWindow for setting current window dimensions:
+	int last_window_top, last_window_bottom, last_window_left, last_window_right;
+	int lowest_windowbottom,				///< in text lines
+		physical_lowest_windowbottom;		///< in pixels or text lines
+	bool just_left_window;
+
 private:
 	/**
 	 * \defgroup heglk
@@ -260,6 +338,161 @@ private:
 	void hugo_stopvideo();
 
 	/**@}*/
+
+	/**
+	 * \defgroup hemisc
+	 * @{
+	 */
+
+	/**
+	 * The all-purpose printing routine that takes care of word-wrapping.
+	 */
+	void AP(const char *a);
+
+	/**
+	 * Used whenever a routine is called, assumes the routine address and begins
+	 * with the arguments (if any).
+	 */
+	int CallRoutine(unsigned int addr);
+
+	/**
+	 * Adds a command to the context command list.  A zero value (i.e., an empty string)
+	 * resets the list.
+	 */
+	void ContextCommand();
+
+	/**
+	 * Dynamically creates a new dictionary entry.
+	 */
+	unsigned int Dict();
+
+	/**
+	 * Generates a fatal error
+	 */
+	void FatalError(int n);
+
+	void FileIO();
+
+	void Flushpbuffer();
+
+	void GetCommand();
+
+	/**
+	 * From any address <addr>; the segment must be defined prior to calling the function.
+	 */
+	char *GetString(long addr);
+
+	/**
+	 * Get text block from position <textaddr> in the text bank.  If the game was not fully loaded
+	 * in memory, i.e., if loaded_in_memory is not true, the block is read from disk.
+	 */
+	char *GetText(long textaddr);
+
+	/**
+	 * From the dictionary table.
+	 */
+	char *GetWord(unsigned int w);
+
+	void HandleTailRecursion(long addr);
+
+	void InitGame();
+
+	void LoadGame();
+
+	/**
+	 * Must be called before running every new routine, i.e. before calling RunRoutine().
+	 * Unfortunately, the current locals must be saved in a temp array prior to calling.
+	 * The argument n gives the number of arguments passed.
+	 */
+	void PassLocals(int n);
+
+	inline unsigned char Peek(long a) {
+		return MEM(defseg * 16L + a);
+	}
+
+	inline unsigned int PeekWord(long a) {
+		return (unsigned char)MEM(defseg * 16L + a) + (unsigned char)MEM(defseg * 16L + a + 1) * 256;
+	}
+
+	inline void Poke(unsigned int a, unsigned char v) {
+		SETMEM(defseg * 16L + a, v);
+	}
+
+	inline void PokeWord(unsigned int a, unsigned int v) {
+		SETMEM(defseg * 16L + a, (char)(v % 256));
+		SETMEM(defseg * 16L + a + 1, (char)(v / 256));
+	}
+
+	/**
+	 * Returns <a> as a hex-number string in XXXXXX format.
+	 */
+	static const char *PrintHex(long a);
+
+	/**
+	 * Print to client display taking into account cursor relocation,
+	 * font changes, color setting, and window scrolling.
+	 */
+	void Printout(char *a);
+
+	int RecordCommands();
+
+	/**
+	 * Formats:
+	 *
+	 * end of turn:    (0, undoturn, 0, 0, 0)
+	 * move obj.:      (MOVE_T, obj., parent, 0, 0)
+	 * property:       (PROP_T, obj., prop., # or PROP_ROUTINE, val.)
+	 * attribute:      (ATTR_T, obj., attr., 0 or 1, 0)
+	 * variable:       (VAR_T, var., value, 0, 0)
+	 * array:          (ARRAYDATA_T, array addr., element, val., 0)
+	 * dict:           (DICT_T, entry length, 0, 0, 0)
+	 * word setting:   (WORD_T, word number, new word, 0, 0)
+	 */
+	void SaveUndo(int a, int b, int c, int d, int e);
+
+	/**
+	 * Properly sets up the code_block structure for the current stack depth depending
+	 * on if this is a called block (RUNROUTINE_BLOCK) or otherwise.
+	 */
+	void SetStackFrame(int depth, int type, long brk, long returnaddr);
+
+	void SetupDisplay();
+
+	/**
+	 * The method is passed <a> as the string and <*i> as the position in the string.
+	 * The character(s) at a[*i], a[*(i+1)], etc. are converted into a single Latin-1
+	 * (i.e., greater than 127) character value.
+	 *
+	 * Assume that the AP() has already encountered a control character ('\'),
+	 * and that a[*i]... is one of:
+	 *
+	 * `a	accent grave on following character (e.g., 'a')
+	 * 'a	accent acute on following character (e.g., 'a')
+	 * ~n	tilde on following (e.g., 'n' or 'N')
+	 * :a	umlaut on following (e.g., 'a')
+	 * ^a	circumflex on following (e.g., 'a')
+	 * ,c	cedilla on following (e.g., 'c' or 'C')
+	 * <	Spanish left quotation marks
+	 * >	Spanish right quotation marks
+	 * !	upside-down exclamation mark
+	 * ?	upside-down question mark
+	 * ae	ae ligature
+	 * AE	AE ligature
+	 * c	cents symbol
+	 * L	British pound
+	 * Y	Japanese Yen
+	 * -	em (long) dash
+	 * #nnn	character value given by nnn
+	 *
+	 * Note that the return value is a single character--which will be either unchanged
+	 * or a Latin-1 character value.
+	 */
+	char SpecialChar(const char *a, int *i);
+
+	int Undo();
+
+
+	/**@}*/
 private:
 	/**
 	 * Allocate memory block
@@ -292,6 +525,20 @@ public:
 	 * Save the game to the passed stream
 	 */
 	virtual Common::Error saveGameData(strid_t file, const Common::String &desc) override;
+
+	// TODO: Stubs to be Properly implemented
+	int GetValue() { return 0; }
+	void PlayGame() {}
+	void hugo_closefiles() {}
+	void RunRoutine(long v) {}
+	unsigned int FindWord(const char *a) { return 0; }
+	void PromptMore() {}
+	void hugo_stopsample() {}
+	void hugo_stopmusic() {}
+	void SetAttribute(int obj, int attr, int c) {}
+	unsigned int PropAddr(int obj, int p, unsigned int offset) { return 0; }
+	int GetProp(int obj, int p, int n, char s) { return 0; }
+	void MoveObj(int obj, int p) {}
 };
 
 } // End of namespace Hugo

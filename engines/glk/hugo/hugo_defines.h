@@ -28,6 +28,11 @@
 namespace Glk {
 namespace Hugo {
 
+#define HEVERSION 3
+#define HEREVISION 3
+#define HEINTERIM ".0"
+
+#define MAXOBJLIST 32
 #define MAX_CONTEXT_COMMANDS	32
 #define MAXBUFFER 255
 #define MAXUNDO 1024
@@ -120,6 +125,20 @@ browsing.
 /* Property-table indicators */
 #define PROP_END          255
 #define PROP_ROUTINE      255
+
+#define MEM(addr) (mem[addr])
+#define SETMEM(addr, n) (mem[addr] = n)
+#define GETMEMADDR(addr) (&mem[addr])
+#define HUGO_PTR
+
+#define RESET_STACK_DEPTH (-1)
+
+#define RUNROUTINE_BLOCK  1
+#define CONDITIONAL_BLOCK 2
+#define DOWHILE_BLOCK     3
+
+#define TAIL_RECURSION_ROUTINE          (-1)
+#define TAIL_RECURSION_PROPERTY         (-2)
 
 } // End of namespace Hugo
 } // End of namespace Glk

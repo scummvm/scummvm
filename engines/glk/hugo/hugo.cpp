@@ -40,29 +40,54 @@ Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 		physical_windowwidth(0), physical_windowheight(0), physical_windowtop(0),
 		physical_windowleft(0), physical_windowbottom(0), physical_windowright(0),
 		inwindow(0), charwidth(0), lineheight(0), current_text_x(0), current_text_y(0),
-		undoptr(0), undoturn(0), undoinvalid(0), undorecord(0), context_commands(0),
-		in_valid_window(false), glk_fcolor(DEF_FCOLOR), glk_bgcolor(DEF_BGCOLOR),
-		mainwin_bgcolor(0), glk_current_font(0), just_cleared_screen(false), secondwin_bottom(0) {
+		skipping_more(false), undoptr(0), undoturn(0), undoinvalid(0), undorecord(0),
+		context_commands(0), in_valid_window(false), glk_fcolor(DEF_FCOLOR), glk_bgcolor(DEF_BGCOLOR),
+		mainwin_bgcolor(0), glk_current_font(0), just_cleared_screen(false), secondwin_bottom(0),
+		// heobject
+		display_object(-1), display_needs_repaint(0), display_pointer_x(0), display_pointer_y(0),
+		// heparse
+		words(0), parsed_number(0), remaining(0), xverb(0), starts_with_verb(0),
+		grammaraddr(0), obj_parselist(nullptr), domain(0), odomain(0), objcount(0),
+		parse_allflag(false), pobjcount(0), pobj(0), obj_match_state(0), object_is_number(0),
+		objgrammar(0), objstart(0), objfinish(0), addflag(0), speaking(0), oopscount(0),
+		parse_called_twice(0), reparse_everything(0), full_buffer(false), recursive_call(false),
+		parse_location(0),
+
+		// herun
+		arguments_passed(0), ret(0), retflag(0), during_player_input(false), override_full(0),
+		game_reset(false), stack_depth(0), tail_recursion(0), tail_recursion_addr(0),
+		last_window_top(0), last_window_bottom(0), last_window_left(0), last_window_right(0),
+		lowest_windowbottom(0), physical_lowest_windowbottom(0), just_left_window(false) {
 	Common::fill(&context_command[0][0], &context_command[MAX_CONTEXT_COMMANDS][64], 0);
 	Common::fill(&id[0], &id[3], '\0');
 	Common::fill(&serial[0], &serial[9], '\0');
 	Common::fill(&pbuffer[0], &pbuffer[MAXBUFFER * 2 + 1], 0);
 	Common::fill(&undostack[0][0], &undostack[MAXUNDO][5], 0);
-	Common::fill(&buffer[0], &buffer[MAXBUFFER + MAXWORDS], '\0');
 	Common::fill(&var[0], &var[MAXLOCALS + MAXGLOBALS], 0);
-}
+	
+	// heparse
+	Common::fill(&buffer[0], &buffer[MAXBUFFER + MAXWORDS], '\0');
+	Common::fill(&errbuf[0], &errbuf[MAXBUFFER + 1], 0);
+	Common::fill(&line[0], &line[1025], 0);
+	Common::fill(&word[0], &word[MAXWORDS + 1], nullptr);
+	Common::fill(&wd[0], &wd[MAXWORDS + 1], 0);
+	Common::fill(&parseerr[0], &parseerr[MAXBUFFER + 1], '\0');
+	Common::fill(&parsestr[0], &parsestr[MAXBUFFER + 1], '\0');
+	Common::fill(&objlist[0], &objlist[MAXOBJLIST], 0);
+	Common::fill(&objword_cache[0], &objword_cache[MAXWORDS], 0);
+	Common::fill(&oops[0], &oops[MAXBUFFER + 1], '\0');
+	Common::fill(&punc_string[0], &punc_string[64], '\0');
 
-// TODO: Proper method implementations
-void SetupDisplay() {}
-void LoadGame() {}
-void PlayGame() {}
-void hugo_closefiles() {}
+	// herun
+	Common::fill(&passlocal[0], &passlocal[MAXLOCALS], 0);
+}
 
 void Hugo::runGame() {
 	hugo_init_screen();
 
 	SetupDisplay();
 
+	strcpy(gamefile, getFilename().c_str());
 	strcpy(pbuffer, "");
 
 	gameseg = 0;

@@ -73,7 +73,10 @@ MODULE_OBJS := \
 	glulxe/vm.o \
 	hugo/detection.o \
 	hugo/heglk.o \
+	hugo/hemisc.o \
+	hugo/htokens.o \
 	hugo/hugo.o \
+	hugo/stringfn.o \
 	magnetic/detection.o \
 	magnetic/emu.o \
 	magnetic/graphics.o \

@@ -82,8 +82,8 @@ void Hugo::hugo_getline(const char *prmpt) {
 
 							/* Copy the input to the script file (if open) */
 	if (script) {
-		Common::String line = Common::String::format("%s%s\n", prompt, buffer);
-		script->putBuffer(line.c_str(), line.size());
+		Common::String text = Common::String::format("%s%s\n", prompt, buffer);
+		script->putBuffer(text.c_str(), text.size());
 	}
 }
 
