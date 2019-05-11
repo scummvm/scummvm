@@ -2695,6 +2695,7 @@ FILTER_EVENT(2, 1) {
 			_inventory.removeByNameID(98);
 			setGameTime(2, 2);
 		}
+		_inventory.deselectObject();
 	} else if (*event == 31101) {
 		if (!_inventory.selectedObject() && currentGameTime() > 1) {
 			const char *video;
