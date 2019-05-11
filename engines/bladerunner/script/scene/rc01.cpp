@@ -278,7 +278,7 @@ bool SceneScriptRC01::ClickedOn3DObject(const char *objectName, bool a2) {
 			         && !Actor_Query_In_Set(kActorOfficerLeary, kSetRC01)
 			         && Global_Variable_Query(kVariableChapter) == 1) {
 				if (_vm->_cutContent) {
-					// keep in mind, this line in only available in Act 1
+					// keep in mind, this line in only available in Act 1 (1.TLK) unless _vm->_cutContent is selected (provided that cut content now loads all TLKs)
 					Actor_Voice_Over(1870, kActorVoiceOver);
 				} else {
 					Actor_Says(kActorMcCoy, 8570, 14);

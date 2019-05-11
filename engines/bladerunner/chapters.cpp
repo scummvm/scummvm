@@ -39,8 +39,18 @@ bool Chapters::enterChapter(int chapter) {
 	if (!_vm->openArchive(Common::String::format("VQA%d.MIX", MIN(id, 3))))
 		return false;
 
-	if (!_vm->openArchive(Common::String::format("%d.TLK", MIN(id, 3))))
-		return false;
+	if (_vm->_cutContent) {
+		for (int chi = 1; chi < 4; ++chi) {
+			if (!_vm->isArchiveOpen(Common::String::format("%d.TLK", chi))
+			    && !_vm->openArchive(Common::String::format("%d.TLK", chi))
+			){
+				return false;
+			}
+		}
+	} else {
+		if (!_vm->openArchive(Common::String::format("%d.TLK", MIN(id, 3))))
+			return false;
+	}
 
 	if (!_vm->openArchive(Common::String::format("OUTTAKE%d.MIX", id)))
 		return false;
@@ -61,7 +71,15 @@ void Chapters::closeResources() {
 	}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 	_vm->closeArchive(Common::String::format("VQA%d.MIX", MIN(id, 3)));
-	_vm->closeArchive(Common::String::format("%d.TLK", MIN(id, 3)));
+	if (_vm->_cutContent) {
+		for (int chi = 1; chi < 4; ++chi) {
+			if (_vm->isArchiveOpen(Common::String::format("%d.TLK", chi))) {
+				_vm->closeArchive(Common::String::format("%d.TLK", chi));
+			}
+		}
+	} else {
+		_vm->closeArchive(Common::String::format("%d.TLK", MIN(id, 3)));
+	}
 	_vm->closeArchive(Common::String::format("OUTTAKE%d.MIX", id));
 	_hasOpenResources = false;
 }
