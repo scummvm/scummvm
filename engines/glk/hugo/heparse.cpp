@@ -27,6 +27,8 @@ namespace Hugo {
 
 #define STARTS_AS_NUMBER(a) (((a[0]>='0' && a[0]<='9') || a[0]=='-')?1:0)
 
+static char EMPTY[1] = { 0 };
+
 void Hugo::AddAllObjects(int loc) {
 	int i;
 
@@ -363,7 +365,7 @@ void Hugo::KillWord(int a) {
 
 	for (i=a; i<words; i++)
 		word[i] = word[i+1];
-	word[words] = "";
+	word[words] = EMPTY;
 
 	RemoveWord(a);
 	words--;
@@ -371,7 +373,7 @@ void Hugo::KillWord(int a) {
 
 int Hugo::MatchCommand() {
 	int i, j, flag, a, mw = 0, gotspeaker = 0;
-	int wordnum;
+	int wordnum = 0;
 	int numverbs = 0;
 	bool nextverb = false;
 	unsigned int ptr, verbptr, nextgrammar;
@@ -2102,7 +2104,8 @@ NextSyn:
 		{
 			if (strcmp(word[i+1], "~and"))
 			{
-				word[i] = "~and";
+				static char *END = "~and";
+				word[i] = END;
 				wd[i] = FindWord("~and");
 			}
 			else
@@ -2112,7 +2115,7 @@ NextSyn:
 		if (wd[i]==period)
 		{
 			wd[i] = 0;
-			word[i] = "";
+			word[i] = EMPTY;
 		}
 	}
 
@@ -2331,7 +2334,7 @@ void Hugo::SeparateWords() {
 
 	for (i=0; i<MAXWORDS+1; i++)
 	{
-		word[i] = "";
+		word[i] = EMPTY;
 		wd[i] = 0;
 	}
 	word[1] = buffer;

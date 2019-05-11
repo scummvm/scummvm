@@ -25,6 +25,8 @@
 namespace Glk {
 namespace Hugo {
 
+static char EMPTY[1] = { 0 };
+
 void Hugo::AP(const char *a) {
 	char sticky = false, skipspchar = false, startofline = 0;
 	int i, alen, plen, cwidth;
@@ -461,6 +463,7 @@ int Hugo::CallRoutine(unsigned int addr) {
 #endif
 	arg = 0;
 	tail_recursion = 0;
+	Common::fill(&temppass[0], &temppass[MAXLOCALS], 0);
 
 	/* Pass local variables to routine, if specified */
 	if (MEM(codeptr)==OPEN_BRACKET_T)
@@ -980,7 +983,6 @@ char *Hugo::GetText(long textaddr) {
 char *Hugo::GetWord(unsigned int w) {
 	char *b;
 	unsigned short a;
-	static char *EMPTY = "";
 
 	a = w;
 

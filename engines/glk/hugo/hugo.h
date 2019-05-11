@@ -1010,6 +1010,12 @@ private:
 		return _random.getRandomNumber(0xffffff);
 	}
 
+	char *itoa(int value, char *str, int base) {
+		assert(base == 10);
+		sprintf(str, "%d", value);
+		return str;
+	}
+
 	/**@}*/
 private:
 	/**

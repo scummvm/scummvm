@@ -106,5 +106,11 @@ char *StringFunctions::GetTempString() {
 	return r;
 }
 
+char *StringFunctions::strlwr(char *s) {
+	for (char *sp = s; *sp; ++sp)
+		*sp = tolower(*sp);
+	return s;
+}
+
 } // End of namespace Hugo
 } // End of namespace Glk

@@ -721,7 +721,7 @@ NormalTermination:
 #endif
 }
 
-void Hugo::RunIf(char override) {
+void Hugo::RunIf(char ovrride) {
 	char t, tempinexpr;
 	long enterptr, skip;
 
@@ -741,8 +741,7 @@ void Hugo::RunIf(char override) {
 			codeptr += 2;
 
 			/* Check if we've already done an elseif */
-			if (override && t==ELSEIF_T)
-			{
+			if (ovrride && (t == ELSEIF_T)) {
 				codeptr = skip+enterptr;
 				return;
 			}
@@ -789,7 +788,7 @@ PasstoBlock:
 			enterptr = codeptr;
 			codeptr += 2;
 
-			if (override)
+			if (ovrride)
 			{
 				codeptr = skip+enterptr;
 				return;
@@ -2528,7 +2527,7 @@ int Hugo::RunSystem() {
 #ifndef NO_STRFTIME
 			TimeDate td;
 			g_system->getTimeAndDate(td);
-			sprintf(parseerr, "%Y-%m-%d %H:%M:%S", td.tm_year, td.tm_mon, td.tm_mday,
+			sprintf(parseerr, "%d-%.2d-%.2d %d:%.2d:%.2d", td.tm_year, td.tm_mon, td.tm_mday,
 				td.tm_hour, td.tm_min, td.tm_sec);
 #else
 			hugo_gettimeformatted(parseerr);
@@ -2606,7 +2605,7 @@ void Hugo::RunWindow() {
 	temp_current_text_y = current_text_y;
 
 	tempscript = script;
-	script = false;
+	script = nullptr;
 	restore_default_bgcolor = default_bgcolor;
 
 	/* v2.4 is the first version to support proper windowing */

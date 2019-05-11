@@ -56,6 +56,8 @@ public:
 	char *Rtrim(char a[]);
 
 	char *hugo_strcpy(char *s, const char *t);
+
+	char *strlwr(char *s);
 };
 
 
