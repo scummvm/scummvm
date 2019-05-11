@@ -32,7 +32,7 @@ namespace Hugo {
 #define HEREVISION 3
 #define HEINTERIM ".0"
 #define GLK
-#define DEBUGGER
+#define DEBUGGER 1
 
 #define MAXOBJLIST 32
 #define MAX_CONTEXT_COMMANDS	32
@@ -44,9 +44,10 @@ namespace Hugo {
 #define MAX_MOBJ 16     /* maximum number of matchable object words */
 #define MAXBUFFER 255
 #define MAXUNDO 1024
-
+#define MAXCALLS 99
+#define MAXBREAKPOINTS 99
+#define MAX_CODE_HISTORY 99
 #define CHARWIDTH 1
-#define STAT_UNAVAILABLE (-1)
 
 #define HUGO_FILE	strid_t
 #define MAXPATH         256
@@ -149,13 +150,20 @@ browsing.
 #define TAIL_RECURSION_ROUTINE          (-1)
 #define TAIL_RECURSION_PROPERTY         (-2)
 
+#define STAT_UNAVAILABLE	((short)-1)
+
+#define PRINTFATALERROR(a)	error("%s", a)
+
 #if defined (DEBUGGER)
 #define VIEW_CALLS 0
 #define VIEW_LOCALS 1
 #define CODE_WINDOW 2
-#endif
+#define VIEW_BREAKPOINTS 3
+#define VIEW_WATCH 4
 
-#define PRINTFATALERROR(a)	error("%s", a)
+#define FORCE_REDRAW 1
+
+#endif
 
 } // End of namespace Hugo
 } // End of namespace Glk

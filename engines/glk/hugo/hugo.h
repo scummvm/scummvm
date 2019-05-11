@@ -24,6 +24,7 @@
 #define GLK_HUGO_HUGO
 
 #include "common/scummsys.h"
+#include "common/str.h"
 #include "glk/glk_api.h"
 #include "glk/hugo/htokens.h"
 #include "glk/hugo/hugo_defines.h"
@@ -177,8 +178,8 @@ private:
 	char parse_called_twice;
 	char reparse_everything;
 	char punc_string[64];					///< punctuation string
+	bool  full_buffer;
 
-	char full_buffer;
 	/**
 	 * to MatchObject()
 	 * Necessary for proper disambiguation when addressing a character;
@@ -223,13 +224,12 @@ private:
 	bool debugger_interrupt;
 	bool debugger_skip;
 	bool runtime_error;
-	int currentroutine;
+	uint currentroutine;
 	bool complex_prop_breakpoint;
 	bool trace_complex_prop_routine;
 	char *objectname[MAX_OBJECT];
 	char *propertyname[MAX_PROPERTY];
-//	CODE code[999];
-	CALL call[999];
+	CALL call[MAXCALLS];
 	int routines;
 	int properties;
 	WINDOW window[99];
@@ -239,6 +239,20 @@ private:
 	long this_codeptr;
 	int debug_workspace;
 	int attributes;
+	int original_dictcount;
+	int buffered_code_lines;
+	bool debugger_has_stepped_back;
+	bool debugger_step_back;
+	int debugger_collapsing;
+	int runaway_counter;
+	int history_count;
+	int active_screen;
+	int step_nest;
+	BREAKPOINT breakpoint[MAXBREAKPOINTS];
+	BREAKPOINT watch[MAXBREAKPOINTS];
+	int code_history[MAX_CODE_HISTORY];
+	int dbnest_history[MAX_CODE_HISTORY];
+	int history_last;
 #endif
 private:
 	/**
@@ -822,6 +836,86 @@ private:
 	/**@}*/
 
 	/**
+	* \defgroup herun
+	* @{
+	*/
+
+	void RunDo();
+
+	void RunEvents();
+
+	void playGame();
+
+	void RunIf(char override);
+
+	void RunInput();
+
+	/**
+	 * (All the debugger range-checking is important because invalid memory writes due
+	 * to invalid object location calculations are a good way to crash the system.)
+	 */
+	void RunMove();
+
+	void RunPrint();
+
+	int RunRestart();
+
+	int RestoreGameData();
+
+	int RunRestore();
+
+	/**
+	 * This is the main loop for running each line of code in sequence;
+	 * the main switch statement is based on the first token in each line.
+	 * 
+	 * This routine is relatively complex, especially given the addition of debugger control.
+	 * Basically it is structured like this:
+	 *
+	 * 1.  If this is the debugger build, see what debugger information has to be set up upon
+	 * calling this block of code
+	 *
+	 * 2.  Get the next token, and as long as it isn't CLOSE_BRACE_T ('}')...
+	 *
+	 * 3.  ...If this is the debugger build, see if there is a standing debugger_interrupt
+	 * to pass control back to the debugger, and perform all operations for stepping
+	 * tracing, breakpoints, etc.
+	 *
+	 * 4.  ...See what token we're dealing with and execute accordingly
+	 *
+	 * 5.  ...Loop back to (2)
+	 *
+	 * 6.  If this is the debugger build, do whatever is necessary to tidy up after finishing
+	 * this block of code
+	 *
+	 * There's a bit of a trick involved since the original language design uses "{...}"
+	 * structures for both conditionals and blocks that necessitate another (i.e., nested) call
+	 * to RunRoutine(). The call_block structure array and stack_depth variable are the
+	 * navigation guides.
+	 */
+	void RunRoutine(long addr);
+
+	int SaveGameData();
+
+	int RunSave();
+
+	int RunScriptSet();
+
+	/**
+	 * As in 'x = string(<array>, "<string>"[, maxlen]'.
+	 */
+	int RunString();
+
+	int RunSystem();
+
+	void SaveWindowData(SAVED_WINDOW_DATA *spw);
+
+	void RestoreWindowData(SAVED_WINDOW_DATA *spw);
+
+	void RunWindow();
+
+	/**@}*/
+
+	/**
 	* \defgroup Miscellaneous
 	* @{
 	*/
@@ -833,9 +927,70 @@ private:
 	int hugo_fgetc(Common::SeekableReadStream *s) {
 		return s->readByte();
 	}
+	int hugo_fgetc(strid_t s) {
+		Common::SeekableReadStream *ws = *s;
+		return hugo_fgetc(ws);
+	}
+
+	int hugo_fputc(int c, Common::WriteStream *s) {
+		s->writeByte(c);
+		return s->err() ? EOF : 0;
+	}
+	int hugo_fputc(int c, strid_t s) {
+		Common::WriteStream *ws = *s;
+		return hugo_fputc(c, ws);
+	}
+
+	char *hugo_fgets(char *buf, int max, Common::SeekableReadStream *s) {
+		char *ptr = buf;
+		char c;
+		while (s->pos() < s->size() && (c = hugo_fgetc(s)) != '\n')
+			*ptr++ = c;
+		return buffer;
+	}
+	char *hugo_fgets(char *buf, int max, strid_t s) {
+		Common::SeekableReadStream *rs = *s;
+		return hugo_fgets(buf, max, rs);
+	}
+
+	size_t hugo_fread(void *ptr, size_t size, size_t count, Common::SeekableReadStream *s) {
+		return s->read(ptr, size * count);
+	}
+
+	int hugo_fprintf(Common::WriteStream *s, const char *fmt, ...) {
+		va_list va;
+		va_start(va, fmt);
+		Common::String text = Common::String::vformat(fmt, va);
+		va_end(va);
+
+		s->write(text.c_str(), text.size());
+		return s->err() ? -1 : 0;
+	}
+	int hugo_fprintf(strid_t s, const char *fmt, ...) {
+		va_list va;
+		va_start(va, fmt);
+		Common::String text = Common::String::vformat(fmt, va);
+		va_end(va);
+
+		Common::WriteStream *str = *s;
+		str->write(text.c_str(), text.size());
+		return str->err() ? -1 : 0;
+	}
+
+	int hugo_fputs(const char *str, Common::WriteStream *s) {
+		return s->write(str, strlen(str)) == strlen(str) ? 0 : -1;
+	}
+	int hugo_fputs(const char *str, strid_t s) {
+		Common::WriteStream *ws = *s;
+		return hugo_fputs(str, ws);
+	}
 
 	bool hugo_ferror(Common::SeekableReadStream *s) const {
 		return s->err();
+	}
+	bool hugo_ferror(strid_t s) const {
+		Common::SeekableReadStream *rs = *s;
+		return hugo_ferror(rs);
 	}
 
 	long hugo_ftell(Common::SeekableReadStream *s) {
@@ -849,10 +1004,6 @@ private:
 
 	void hugo_exit(const char *msg) {
 		error("%s", line);
-	}
-
-	size_t hugo_fread(void *ptr, size_t size, size_t count, Common::SeekableReadStream *s) {
-		return s->read(ptr, size * count);
 	}
 
 	uint hugo_rand() {
@@ -894,9 +1045,23 @@ private:
 
 	void SwitchtoDebugger() {}
 
+	void Debugger() {}
+	
+	void UpdateDebugScreen() {}
+
+	void SwitchtoGame() {}
+
 	void DebuggerFatal(DEBUGGER_ERROR err) { error("Debugger error"); }
 
+	void AddLinetoCodeWindow(int lineNum) {}
+
 	void RecoverLastGood() {}
+
+	void SetupWatchEval(int num) {}
+
+	bool EvalWatch() { return false; }
+
+	void RunSet(int v) {}
 #endif
 public:
 	/**
@@ -925,20 +1090,16 @@ public:
 	virtual Common::Error saveGameData(strid_t file, const Common::String &desc) override;
 
 	// TODO: Stubs to be Properly implemented
-	void PlayGame() {}
 	void hugo_closefiles() {}
-	void RunRoutine(long v) {}
 	unsigned int FindWord(const char *a) { return 0; }
 	void hugo_stopsample() {}
 	void hugo_stopmusic() {}
 	int hugo_hasgraphics() { return 0; }
 	int hugo_writetoscript(const char *s) { return 0; }
-	short RunSave() { return 0; }
-	short RunRestore() { return 0; }
-	short RunScriptSet() { return 0; }
-	short RunRestart() { return 0; }
-	short RunString() { return 0; }
-	short RunSystem() { return 0; }
+	void DisplayPicture() {}
+	void PlayMusic() {}
+	void PlaySample() {}
+	void PlayVideo() {}
 };
 
 } // End of namespace Hugo

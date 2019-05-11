@@ -100,6 +100,13 @@ struct pobject_structure {
 	pobject_structure() : obj(0), type(0) {}
 };
 
+struct SAVED_WINDOW_DATA {
+	int left, top, right, bottom;
+	int width, height, charwidth, lineheight;
+	int currentpos, currentline;
+	int currentfont;
+};
+
 /**
  * Structure used for navigating {...} blocks:
  */
@@ -133,8 +140,19 @@ struct CALL {
 
 struct WINDOW {
 	int count;
+	bool changed;
 
-	WINDOW() : count(99) {}
+	WINDOW() : count(99), changed(false) {}
+};
+
+struct BREAKPOINT {
+	bool isbreak;
+	long addr;
+	const char *in;
+	int count;
+
+	BREAKPOINT() : isbreak(false), addr(0), in(nullptr), count(0) {
+	}
 };
 #endif
 

@@ -68,7 +68,10 @@ Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 		debugger_finish(false), debugger_run(false), debugger_interrupt(false),
 		debugger_skip(false), runtime_error(false), currentroutine(false),
 		complex_prop_breakpoint(false), trace_complex_prop_routine(false), routines(0),
-		properties(0), current_locals(0), this_codeptr(0), debug_workspace(0), attributes(0)
+		properties(0), current_locals(0), this_codeptr(0), debug_workspace(0), attributes(0),
+		original_dictcount(0), buffered_code_lines(0), debugger_has_stepped_back(false),
+		debugger_step_back(false), debugger_collapsing(0), runaway_counter(0), history_count(0),
+		active_screen(0), step_nest(0), history_last(0)
 #endif
 		{
 	// heexpr
@@ -107,6 +110,8 @@ Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 	Common::fill(&propertyname[0], &propertyname[MAX_PROPERTY], (char *)nullptr);
 	Common::fill(&codeline[0][0], &codeline[9][100], 0);
 	Common::fill(&localname[0][0], &localname[9][100], 0);
+	Common::fill(&code_history[0], &code_history[MAX_CODE_HISTORY], 0);
+	Common::fill(&dbnest_history[0], &dbnest_history[MAX_CODE_HISTORY], 0);
 #endif
 }
 
@@ -122,7 +127,7 @@ void Hugo::runGame() {
 
 	LoadGame();
 
-	PlayGame();
+	playGame();
 
 	hugo_cleanup_screen();
 
