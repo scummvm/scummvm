@@ -237,8 +237,71 @@ private:
 	char localname[9][100];
 	int current_locals;
 	long this_codeptr;
+	int debug_workspace;
+	int attributes;
 #endif
 private:
+	/**
+	 * \defgroup heexpr
+	 * @{
+	 */
+
+	 /**
+	  * The new-and-improved expression evaluator.  Evaluates the current expression
+	  * (or sub-expression therein) beginning at eval[p].
+	  */
+	int EvalExpr(int p);
+
+	/**
+	 * Called by GetValue(); does the actual dirty work of returning a value from a
+	 * simple data type.
+	 */
+	int GetVal();
+
+	/**
+	 * Does any reckoning for more sophisticated constructions.
+	 */
+	int GetValue();
+
+	/**
+	 * Actually performs the increment given below by IsIncrement.
+	 */
+	int Increment(int a, char inctype);
+
+	/**
+	 * If an increment/decrement is next up (i.e. ++, --, or +=, *=, etc.),
+	 * then sets incdec equal to the increment/decrement and repositions codeptr.
+	 * Returns the token number of the operation, if any.
+	 */
+	char IsIncrement(long addr);
+
+	/**
+	 *  Returns the precedence ranking of the operator represented by token[t].
+	 * The lower the return value, the higher the rank in terms of processing order.
+	 */
+	int Precedence(int t);
+
+	/**
+	 * Reads the current expression from the current code position into eval[],
+	 * using the following key:
+	 *
+	 * if eval[n] is 0, eval[n+1] is a value
+	 * if eval[n] is 1, eval[n+1] is a token
+	 *
+	 * <inexpr> is used in various routines to keep track of whether or not we're currently
+	 * reading an expression.  If <inexpr> is 1, we're in an expression; if 2, we may have
+	 * to step back one code position if encountering a closing parentheses.
+	 */
+	void SetupExpr();
+
+	/**
+	 * Cuts off straggling components of eval[] after an expression or sub-expression
+	 * has been successfully evaluated.
+	 */
+	void TrimExpr(int ptr);
+
+	/**@}*/
+
 	/**
 	 * \defgroup heglk
 	 * @{
@@ -660,6 +723,10 @@ private:
 		return s->read(ptr, size * count);
 	}
 
+	uint hugo_rand() {
+		return _random.getRandomNumber(0xffffff);
+	}
+
 	/**@}*/
 private:
 	/**
@@ -695,7 +762,6 @@ public:
 	virtual Common::Error saveGameData(strid_t file, const Common::String &desc) override;
 
 	// TODO: Stubs to be Properly implemented
-	int GetValue() { return 0; }
 	void PlayGame() {}
 	void hugo_closefiles() {}
 	void RunRoutine(long v) {}
@@ -704,6 +770,12 @@ public:
 	void hugo_stopmusic() {}
 	int hugo_hasgraphics() { return 0; }
 	int hugo_writetoscript(const char *s) { return 0; }
+	short RunSave() { return 0; }
+	short RunRestore() { return 0; }
+	short RunScriptSet() { return 0; }
+	short RunRestart() { return 0; }
+	short RunString() { return 0; }
+	short RunSystem() { return 0; }
 };
 
 } // End of namespace Hugo

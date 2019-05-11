@@ -68,7 +68,7 @@ Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 		debugger_finish(false), debugger_run(false), debugger_interrupt(false),
 		debugger_skip(false), runtime_error(false), currentroutine(false),
 		complex_prop_breakpoint(false), trace_complex_prop_routine(false), routines(0),
-		properties(0), current_locals(0), this_codeptr(0)
+		properties(0), current_locals(0), this_codeptr(0), debug_workspace(0), attributes(0)
 #endif
 		{
 	// heexpr
@@ -103,8 +103,8 @@ Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 
 #ifdef DEBUGGER
 	debug_line[0] = '\0';
-	Common::fill(&objectname[0], &objectname[MAX_OBJECT], nullptr);
-	Common::fill(&propertyname[0], &propertyname[MAX_PROPERTY], nullptr);
+	Common::fill(&objectname[0], &objectname[MAX_OBJECT], (char *)nullptr);
+	Common::fill(&propertyname[0], &propertyname[MAX_PROPERTY], (char *)nullptr);
 	Common::fill(&codeline[0][0], &codeline[9][100], 0);
 	Common::fill(&localname[0][0], &localname[9][100], 0);
 #endif

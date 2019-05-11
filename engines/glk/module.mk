@@ -72,6 +72,7 @@ MODULE_OBJS := \
 	glulxe/string.o \
 	glulxe/vm.o \
 	hugo/detection.o \
+	hugo/heexpr.o \
 	hugo/heglk.o \
 	hugo/hemisc.o \
 	hugo/heobject.o \

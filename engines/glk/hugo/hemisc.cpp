@@ -978,7 +978,7 @@ char *Hugo::GetText(long textaddr) {
 }
 
 const char *Hugo::GetWord(unsigned int w) {
-	static char *b;
+	static const char *b;
 	unsigned short a;
 
 	a = w;
