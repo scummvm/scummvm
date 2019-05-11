@@ -974,6 +974,8 @@ IMG_CB(34174b) {
 				fimg->changeCallback(functor);
 				break;
 			}
+			// If failed to solve: just display this image again
+			break;
 		}
 	}
 }
