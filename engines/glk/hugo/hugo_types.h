@@ -120,6 +120,10 @@ struct CODE_BLOCK {
 };
 
 #if defined (DEBUGGER)
+enum DEBUGGER_ERROR {
+	D_MEMORY_ERROR
+};
+
 struct CALL {
 	long addr;
 	bool param;

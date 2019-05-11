@@ -220,6 +220,9 @@ private:
 	bool debugger_step_over;
 	bool debugger_finish;
 	bool debugger_run;
+	bool debugger_interrupt;
+	bool debugger_skip;
+	bool runtime_error;
 	int currentroutine;
 	bool complex_prop_breakpoint;
 	bool trace_complex_prop_routine;
@@ -227,11 +230,13 @@ private:
 	char *propertyname[MAX_PROPERTY];
 //	CODE code[999];
 	CALL call[999];
+	int routines;
 	int properties;
 	WINDOW window[99];
 	int codeline[9][100];
 	char localname[9][100];
 	int current_locals;
+	long this_codeptr;
 #endif
 private:
 	/**
@@ -469,7 +474,9 @@ private:
 	 * Print to client display taking into account cursor relocation,
 	 * font changes, color setting, and window scrolling.
 	 */
-	void Printout(char *a);
+	void Printout(char *a, int no_scrollback_linebreak);
+
+	void PromptMore();
 
 	int RecordCommands();
 
@@ -558,6 +565,12 @@ private:
 	const char *RoutineName(long loc) { return "Routine"; }
 
 	void AddStringtoCodeWindow(const char *str) {}
+
+	void SwitchtoDebugger() {}
+
+	void DebuggerFatal(DEBUGGER_ERROR err) { error("Debugger error"); }
+
+	void RecoverLastGood() {}
 #endif
 
 	int Child(int obj);
@@ -612,6 +625,42 @@ private:
 	int Youngest(int obj);
 
 	/**@}*/
+
+	/**
+	* \defgroup Miscellaneous
+	* @{
+	*/
+
+	int hugo_fseek(Common::SeekableReadStream *s, long int offset, int whence) {
+		return s->seek(offset, whence);
+	}
+
+	int hugo_fgetc(Common::SeekableReadStream *s) {
+		return s->readByte();
+	}
+
+	bool hugo_ferror(Common::SeekableReadStream *s) const {
+		return s->err();
+	}
+
+	long hugo_ftell(Common::SeekableReadStream *s) {
+		return s->pos();
+	}
+
+	int hugo_fclose(strid_t f) {
+		delete f;
+		return 0;
+	}
+
+	void hugo_exit(const char *msg) {
+		error("%s", line);
+	}
+
+	size_t hugo_fread(void *ptr, size_t size, size_t count, Common::SeekableReadStream *s) {
+		return s->read(ptr, size * count);
+	}
+
+	/**@}*/
 private:
 	/**
 	 * Allocate memory block
@@ -651,10 +700,10 @@ public:
 	void hugo_closefiles() {}
 	void RunRoutine(long v) {}
 	unsigned int FindWord(const char *a) { return 0; }
-	void PromptMore() {}
 	void hugo_stopsample() {}
 	void hugo_stopmusic() {}
 	int hugo_hasgraphics() { return 0; }
+	int hugo_writetoscript(const char *s) { return 0; }
 };
 
 } // End of namespace Hugo

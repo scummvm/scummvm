@@ -65,9 +65,10 @@ Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 		arrexpr(0), multiprop(0), set_value(0)
 #if defined (DEBUGGER)
 		, debug_eval(false), debug_eval_error(false), debugger_step_over(false),
-		debugger_finish(false), debugger_run(false), currentroutine(false),
-		complex_prop_breakpoint(false), trace_complex_prop_routine(false), properties(0),
-		current_locals(0)
+		debugger_finish(false), debugger_run(false), debugger_interrupt(false),
+		debugger_skip(false), runtime_error(false), currentroutine(false),
+		complex_prop_breakpoint(false), trace_complex_prop_routine(false), routines(0),
+		properties(0), current_locals(0), this_codeptr(0)
 #endif
 		{
 	// heexpr
