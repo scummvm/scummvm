@@ -593,7 +593,8 @@ unsigned int CryOmni3DEngine_Versailles::displayFilePicker(const Graphics::Surfa
 
 	setCursor(181);
 
-	unsigned int fileListOffset = 0; // TODO: store in config
+	unsigned int fileListOffset = CLIP(ConfMan.getInt(_isVisiting ? "visits_list_off" :
+	                                   "saves_list_off"), 0, 100 - 6);
 
 	unsigned int boxHovered = -1;
 	unsigned int boxSelected = -1;
@@ -796,7 +797,7 @@ unsigned int CryOmni3DEngine_Versailles::displayFilePicker(const Graphics::Surfa
 	}
 	if (boxSelected != -1u) {
 		saveName = savesList[boxSelected + fileListOffset];
-		// TODO: save list offset
+		ConfMan.setInt(_isVisiting ? "visits_list_off" : "saves_list_off", fileListOffset);
 		return boxSelected + fileListOffset + 1;
 	} else {
 		return -1;
