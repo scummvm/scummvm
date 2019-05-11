@@ -916,6 +916,23 @@ private:
 	/**@}*/
 
 	/**
+	 * \defgroup heglk
+	 * @{
+	 */
+
+	/**
+	 * If gotvalue is passed as -1, then no value has already been as the (potential) object, etc.
+	 * comprising the first part of the object.property, for example, to be set.
+	 */
+	void RunSet(int gotvalue);
+
+	unsigned int GetAnonymousFunction(long addr);
+
+	int SetCompound(int t);
+
+	 /**@}*/
+
+	/**
 	* \defgroup Miscellaneous
 	* @{
 	*/
@@ -1066,8 +1083,6 @@ private:
 	void SetupWatchEval(int num) {}
 
 	bool EvalWatch() { return false; }
-
-	void RunSet(int v) {}
 #endif
 public:
 	/**

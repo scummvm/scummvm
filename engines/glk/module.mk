@@ -78,6 +78,7 @@ MODULE_OBJS := \
 	hugo/heobject.o \
 	hugo/heparse.o \
 	hugo/herun.o \
+	hugo/heset.o \
 	hugo/htokens.o \
 	hugo/hugo.o \
 	hugo/stringfn.o \
