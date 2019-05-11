@@ -163,7 +163,7 @@ RestartDebugger:
 	/* If no gamefile is loaded, jump immediately to the debugger
 	   interrupt function.
 	*/
-	if (game==NULL) Debugger();
+	if (game==nullptr) Debugger();
 #endif
 
 	stack_depth = RESET_STACK_DEPTH;
@@ -271,7 +271,7 @@ FreshInput:
 							{
 								if (hugo_fclose(playback))
 									FatalError(READ_E);
-								playback = NULL;
+								playback = nullptr;
 								GetCommand();
 							}
 							else
@@ -635,7 +635,7 @@ EndofCommand:
 	if (playback)
 	{
 		if (hugo_fclose(playback)) FatalError(READ_E);
-		playback = NULL;
+		playback = nullptr;
 	}
 
 	Flushpbuffer();
@@ -702,7 +702,7 @@ NormalTermination:
 
 	debugger_collapsing = false;
 
-	if ((game!=NULL) && !RunRestart())
+	if ((game!=nullptr) && !RunRestart())
 		DebugMessageBox("Restart Error", "Unable to restart");
 
 	SwitchtoGame();
@@ -1115,7 +1115,7 @@ int Hugo::RunRestart() {
 	{
 		if (hugo_fclose(playback))
 			FatalError(READ_E);
-		playback = NULL;
+		playback = nullptr;
 	}
 
 	if (active_screen!=DEBUGGER)
@@ -1169,7 +1169,7 @@ int Hugo::RestoreGameData() {
 	{
 		AP("Incorrect save file.");
 		if (hugo_fclose(save)) FatalError(READ_E);
-		save = NULL;
+		save = nullptr;
 		return 0;
 	}
 
@@ -1179,7 +1179,7 @@ int Hugo::RestoreGameData() {
 	{
 		AP("Save file created by different version.");
 		if (hugo_fclose(save)) FatalError(READ_E);
-		save = NULL;
+		save = nullptr;
 		return 0;
 	}
 
@@ -1258,7 +1258,7 @@ RestoreError:
 
 int Hugo::RunRestore() {
 #if !defined (GLK)
-	save = NULL;
+	save = nullptr;
 
 	/* stdio implementation */
 	hugo_getfilename("to restore", savefile);
@@ -1273,7 +1273,7 @@ int Hugo::RunRestore() {
 	/* Glk implementation */
 	frefid_t savefile;
 
-	save = NULL;
+	save = nullptr;
 
 	savefile = glk_fileref_create_by_prompt(fileusage_SavedGame | fileusage_BinaryMode,
 		filemode_Read, 0);
@@ -1281,7 +1281,7 @@ int Hugo::RunRestore() {
 	if (glk_fileref_does_file_exist(savefile))
 		save = glk_stream_open_file(savefile, filemode_Read, 0);
 	else
-		save = NULL;
+		save = nullptr;
 	glk_fileref_destroy(savefile);
 	if (!save) return 0;
 
@@ -1290,7 +1290,7 @@ int Hugo::RunRestore() {
 	if (!RestoreGameData()) goto RestoreError;
 
 	if (hugo_fclose(save)) FatalError(READ_E);
-	save = NULL;
+	save = nullptr;
 
 #if !defined (GLK)
 	strcpy(savefile, line);
@@ -1302,7 +1302,7 @@ int Hugo::RunRestore() {
 
 RestoreError:
 	if ((save) && hugo_fclose(save)) FatalError(READ_E);
-	save = NULL;
+	save = nullptr;
 	game_reset = false;
 	return 0;
 }
@@ -1413,7 +1413,7 @@ void Hugo::RunRoutine(long addr) {
 			}
 
 			/* If not object.property or an event */
-			if (strchr(debug_line, '.')==NULL && strstr(debug_line, "vent ")==NULL)
+			if (strchr(debug_line, '.')==nullptr && strstr(debug_line, "vent ")==nullptr)
 			{
 				strcat(debug_line, "(");
 				for (i=0; i<arguments_passed; i++)
@@ -2302,7 +2302,7 @@ int Hugo::RunSave() {
 #endif
 
 #if !defined (GLK)
-	save = NULL;
+	save = nullptr;
 
 	/* stdio implementation */
 	hugo_getfilename("to save", savefile);
@@ -2319,7 +2319,7 @@ int Hugo::RunSave() {
 	/* Glk implementation */
 	frefid_t savefile;
 
-	save = NULL;
+	save = nullptr;
 
 	savefile = glk_fileref_create_by_prompt(fileusage_SavedGame | fileusage_BinaryMode,
 		filemode_Write, 0);
@@ -2333,7 +2333,7 @@ int Hugo::RunSave() {
 	if (!SaveGameData()) goto SaveError;
 	
 	if (hugo_fclose(save)) FatalError(WRITE_E);
-	save = NULL;
+	save = nullptr;
 
 #if !defined (GLK)
 	strcpy(savefile, line);
@@ -2343,7 +2343,7 @@ int Hugo::RunSave() {
 
 SaveError:
 	if ((save) && hugo_fclose(save)) FatalError(WRITE_E);
-	save = NULL;
+	save = nullptr;
 	return 0;
 }
 
@@ -2388,7 +2388,7 @@ int Hugo::RunScriptSet() {
 			if (script)
 			{
 				if (hugo_fclose(script)) return (0);
-				script = NULL;
+				script = nullptr;
 				return 1;
 			}
 			break;

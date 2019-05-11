@@ -71,7 +71,7 @@ private:
 	int listLength(ParamElem a[]);
 	
 	/**
-	 * Compact a list, i.e remove any NULL elements
+	 * Compact a list, i.e remove any nullptr elements
 	 */
 	void listCompact(ParamElem a[]);
 	

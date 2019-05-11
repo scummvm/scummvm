@@ -52,7 +52,7 @@ void Hugo::hugo_getline(const char *prmpt) {
 	window that hasn't been created, switch as a failsafe
 	to mainwin
 	*/
-	if (currentwin == NULL)
+	if (currentwin == nullptr)
 		glk_set_window(currentwin = mainwin);
 
 	/* Print prompt */
@@ -97,7 +97,7 @@ int Hugo::hugo_waitforkey() {
 	window that hasn't been created, switch as a failsafe
 	to mainwin
 	*/
-	if (currentwin == NULL)
+	if (currentwin == nullptr)
 		glk_set_window(currentwin = mainwin);
 
 #if defined (NO_KEYPRESS_CURSOR)
@@ -211,7 +211,7 @@ void Hugo::hugo_clearwindow() {
 	not really a window
 	*/
 	if (inwindow && currentwin == mainwin) return;
-	if (currentwin == NULL) return;
+	if (currentwin == nullptr) return;
 
 	glk_window_clear(currentwin);
 
@@ -227,7 +227,7 @@ void Hugo::hugo_clearwindow() {
 		stream_result_t sr;
 
 		glk_window_close(auxwin, &sr);
-		auxwin = NULL;
+		auxwin = nullptr;
 		glk_set_window(currentwin = mainwin);
 	}
 
@@ -256,11 +256,11 @@ void Hugo::hugo_settextwindow(int left, int top, int right, int bottom) {
 		in_valid_window = false;
 
 		/* Glk-illegal floating window; setting currentwin
-		to NULL will tell hugo_print() not to print in it:
+		to nullptr will tell hugo_print() not to print in it:
 		*/
 		if (bottom<physical_windowbottom / FIXEDLINEHEIGHT + 1)
 		{
-			currentwin = NULL;
+			currentwin = nullptr;
 			glk_set_window(mainwin);
 			return;
 		}
@@ -313,7 +313,7 @@ void Hugo::hugo_settextwindow(int left, int top, int right, int bottom) {
 		}
 		else
 		{
-			currentwin = NULL;
+			currentwin = nullptr;
 			glk_set_window(mainwin);
 			secondwin_bottom = 0;
 			return;
@@ -329,37 +329,37 @@ void Hugo::hugo_settextwindow(int left, int top, int right, int bottom) {
 }
 
 int Hugo::heglk_get_linelength() {
-	static uint32 width;
+	static uint width;
 
 	// Try to use whatever fixed-width linelength is available
 	if (secondwin)
-		glk_window_get_size(secondwin, &width, NULL);
+		glk_window_get_size(secondwin, &width, nullptr);
 	else if (auxwin)
-		glk_window_get_size(auxwin, &width, NULL);
+		glk_window_get_size(auxwin, &width, nullptr);
 
 	// Otherwise try to approximate it by the proportionally spaced linelength
 	else
-		glk_window_get_size(mainwin, &width, NULL);
+		glk_window_get_size(mainwin, &width, nullptr);
 
 	// -1 to override automatic line wrapping
 	return width - 1;
 }
 
 int Hugo::heglk_get_screenheight() {
-	static uint32 height = 0, mainheight = 0;
+	static uint height = 0, mainheight = 0;
 
 	if (secondwin)
-		glk_window_get_size(secondwin, NULL, &height);
+		glk_window_get_size(secondwin, nullptr, &height);
 	else if (auxwin)
-		glk_window_get_size(auxwin, NULL, &height);
+		glk_window_get_size(auxwin, nullptr, &height);
 
-	glk_window_get_size(mainwin, NULL, &mainheight);
+	glk_window_get_size(mainwin, nullptr, &mainheight);
 
 	return height + mainheight;
 }
 
 void Hugo::hugo_settextpos(int x, int y) {
-	if (currentwin == NULL) return;
+	if (currentwin == nullptr) return;
 
 	// Try to determine if we're trying to position fixed-width text in the main window,
 	// as in a menu, for example
@@ -374,7 +374,7 @@ void Hugo::hugo_settextpos(int x, int y) {
 			/* If not, create it, making it 100% of
 			mainwin's height
 			*/
-			if (auxwin == NULL)
+			if (auxwin == nullptr)
 			{
 				auxwin = glk_window_open(mainwin,
 					winmethod_Below | winmethod_Proportional,
@@ -398,7 +398,7 @@ void Hugo::hugo_settextpos(int x, int y) {
 
 		/* Close auxwin */
 		glk_window_close(auxwin, &sr);
-		auxwin = NULL;
+		auxwin = nullptr;
 
 		/* Clear the screen (both windows) */
 		glk_window_clear(mainwin);
@@ -425,7 +425,7 @@ void Hugo::hugo_print(const char *a) {
 	/* Can't print in a Glk-illegal window since it hasn't been
 	created
 	*/
-	if (currentwin == NULL) return;
+	if (currentwin == nullptr) return;
 
 	/* In lieu of colors, in case we're highlighting something
 	such as a menu selection:

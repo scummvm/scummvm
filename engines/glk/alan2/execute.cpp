@@ -234,7 +234,7 @@ bool Execute::confirm(MsgKind msgno) {
 #ifdef USE_READLINE
 	if (!readline(buf)) return true;
 #else
-	if (gets(buf) == NULL) return true;
+	if (gets(buf) == nullptr) return true;
 #endif
 
 #endif
@@ -260,7 +260,7 @@ void Execute::quit() {
 #ifdef USE_READLINE
 	if (!readline(buf)) terminate(0);
 #else
-	if (gets(buf) == NULL) terminate(0);
+	if (gets(buf) == nullptr) terminate(0);
 #endif
 #endif
 
@@ -682,17 +682,17 @@ void Execute::dscrobj(Aword obj) {
 
 
 void Execute::dscract(Aword act) {
-	ScrElem *scr = NULL;
+	ScrElem *scr = nullptr;
 
 	if (_acts[act - ACTMIN].script != 0) {
 		for (scr = (ScrElem *) addrTo(_acts[act - ACTMIN].scradr); !endOfTable(scr); scr++)
 			if (scr->code == _acts[act - ACTMIN].script)
 				break;
 		if (endOfTable(scr))
-			scr = NULL;
+			scr = nullptr;
 	}
 
-	if (scr != NULL && scr->dscr != 0)
+	if (scr != nullptr && scr->dscr != 0)
 		_vm->_interpreter->interpret(scr->dscr);
 	else if (_acts[act - ACTMIN].dscr != 0)
 		_vm->_interpreter->interpret(_acts[act - ACTMIN].dscr);

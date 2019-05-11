@@ -75,7 +75,7 @@ char *Parser::gettoken(char *tokenBuffer) {
 	static char *marker;
 	static char oldch;
 
-	if (tokenBuffer == NULL)
+	if (tokenBuffer == nullptr)
 		*marker = oldch;
 	else
 		marker = tokenBuffer;
@@ -92,7 +92,7 @@ char *Parser::gettoken(char *tokenBuffer) {
 		while (*marker != '\"') marker++;
 		marker++;
 	} else if (*marker == '\0' || *marker == '\n')
-		return NULL;
+		return nullptr;
 	else
 		marker++;
 
@@ -128,7 +128,7 @@ void Parser::agetline() {
 			quit();
 		}
 #else
-		if (fgets(buf, LISTLEN, stdin) == NULL) {
+		if (fgets(buf, LISTLEN, stdin) == nullptr) {
 			newline();
 			quit();
 		}
@@ -148,12 +148,12 @@ void Parser::agetline() {
 
 		token = gettoken(isobuf);
 
-		if (token != NULL && strcmp("debug", token) == 0 && _vm->header->debug) {
+		if (token != nullptr && strcmp("debug", token) == 0 && _vm->header->debug) {
 			dbgflg = true;
 			debug();
-			token = NULL;
+			token = nullptr;
 		}
-	} while (token == NULL);
+	} while (token == nullptr);
 
   eol = false;
   lin = 1;
@@ -212,7 +212,7 @@ void Parser::scan() {
 			unknown(token);
 
 		wrds[i] = EOF;
-		eol = (token = gettoken(NULL)) == NULL;
+		eol = (token = gettoken(nullptr)) == nullptr;
 	} while (!eol);
 }
 
@@ -377,10 +377,10 @@ void Parser::unambig(ParamElem plst[]) {
 	static ParamElem *savlst;	// Saved list for backup at EOF
 	int firstWord, lastWord;	// The words the player used
 
-	if (refs == NULL)
+	if (refs == nullptr)
 		refs = new ParamElem[MAXENTITY + 1];
 
-	if (savlst == NULL)
+	if (savlst == nullptr)
 		savlst = new ParamElem[MAXENTITY + 1];
 
 	if (isLiteral(wrds[wrdidx])) {
@@ -490,12 +490,12 @@ void Parser::unambig(ParamElem plst[]) {
 }
 
 void Parser::simple(ParamElem olst[]) {
-	static ParamElem *tlst = NULL;
+	static ParamElem *tlst = nullptr;
 	int savidx = wrdidx;
 	bool savplur = false;
 	int i;
 
-	if (tlst == NULL)
+	if (tlst == nullptr)
 		tlst = new ParamElem[MAXENTITY + 1];
 
 	tlst[0].code = (Aword)EOF;
@@ -549,9 +549,9 @@ void Parser::complex(ParamElem olst[]) {
 	// they work on words.Below all is converted to indices into the
 	// entity tables.Particularly this goes for literals...
 
-	static ParamElem *alst = NULL;
+	static ParamElem *alst = nullptr;
 
-	if (alst == NULL)
+	if (alst == nullptr)
 		alst = new ParamElem[MAXENTITY + 1];
 
 	if (isAll(wrds[wrdidx])) {
@@ -653,18 +653,18 @@ AltElem *Parser::findalt(Aword vrbsadr, Aword param) {
 	AltElem *alt;
 
 	if (vrbsadr == 0)
-		return NULL;
+		return nullptr;
 
 	for (vrb = (VrbElem *)addrTo(vrbsadr); !endOfTable(vrb); vrb++) {
 		if ((int)vrb->code == _vm->cur.vrb) {
 			for (alt = (AltElem *)addrTo(vrb->alts); !endOfTable(alt); alt++)
 				if (alt->param == param || alt->param == 0)
 					return alt;
-			return NULL;
+			return nullptr;
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 bool Parser::trycheck(Aaddr adr, bool act) {
@@ -732,10 +732,10 @@ void Parser::tryMatch(ParamElem mlstArr[]) {
 	ClaElem *cla;			// Pointer to class definitions
 	bool anyPlural = false;	// Any parameter that was plural?
 	int i, p;
-	static ParamElem *tlst = NULL; // List of params found by complex()
-	static bool *checked = NULL; // Corresponding parameter checked?
+	static ParamElem *tlst = nullptr; // List of params found by complex()
+	static bool *checked = nullptr; // Corresponding parameter checked?
 
-	if (tlst == NULL) {
+	if (tlst == nullptr) {
 		tlst = new ParamElem[MAXENTITY + 1];
 		checked = new bool[MAXENTITY + 1];
 	}
@@ -930,7 +930,7 @@ void Parser::action(ParamElem plst[]) {
 }
 
 void Parser::parse() {
-	if (mlst == NULL) {		// Allocate large enough paramlists
+	if (mlst == nullptr) {		// Allocate large enough paramlists
 		mlst = new ParamElem[MAXENTITY + 1];
 		mlst[0].code = (Aword)EOF;
 		pmlst = new ParamElem[MAXENTITY + 1];

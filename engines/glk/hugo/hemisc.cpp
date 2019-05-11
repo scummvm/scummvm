@@ -734,7 +734,7 @@ if (n==UNKNOWN_OP_E || n==ILLEGAL_OP_E || n==EXPECT_VAL_E || n==OVERFLOW_E)
 
 	hugo_closefiles();
 	hugo_blockfree(mem);
-	mem = NULL;
+	mem = nullptr;
 	error("Error code: %d", (int)n);
 }
 
@@ -786,16 +786,16 @@ void Hugo::FileIO() {
 	{
 #if !defined (GLK)
 		/* stdio implementation */
-		if ((io = HUGO_FOPEN(fileiopath, "wb"))==NULL) goto LeaveFileIO;
+		if ((io = HUGO_FOPEN(fileiopath, "wb"))==nullptr) goto LeaveFileIO;
 #else
 		/* Glk implementation */
-		frefid_t fref = NULL;
+		frefid_t fref = nullptr;
 
 		fref = glk_fileref_create_by_name(fileusage_Data | fileusage_BinaryMode,
 			fileiopath, 0);
 		io = glk_stream_open_file(fref, filemode_Write, 0);
 		glk_fileref_destroy(fref);
-		if (io==NULL) goto LeaveFileIO;
+		if (io==nullptr) goto LeaveFileIO;
 #endif
 		ioblock = 1;
 	}
@@ -803,16 +803,16 @@ void Hugo::FileIO() {
 	{
 #if !defined (GLK)
 		/* stdio implementation */
-		if ((io = HUGO_FOPEN(fileiopath, "rb"))==NULL) goto LeaveFileIO;
+		if ((io = HUGO_FOPEN(fileiopath, "rb"))==nullptr) goto LeaveFileIO;
 #else
 		/* Glk implementation */
-		frefid_t fref = NULL;
+		frefid_t fref = nullptr;
 
 		fref = glk_fileref_create_by_name(fileusage_Data | fileusage_BinaryMode,
 			fileiopath, 0);
 		io = glk_stream_open_file(fref, filemode_Read, 0);
 		glk_fileref_destroy(fref);
-		if (io==NULL) goto LeaveFileIO;
+		if (io==nullptr) goto LeaveFileIO;
 #endif
 		ioblock = 2;
 	}
@@ -834,7 +834,7 @@ void Hugo::FileIO() {
 	if (ioerror) retflag = 0;
 
 	hugo_fclose(io);
-	io = NULL;
+	io = nullptr;
 	ioblock = 0;
 
 LeaveFileIO:
@@ -1098,16 +1098,16 @@ void Hugo::LoadGame() {
 #if defined (DEBUGGER)
 	if (!strcmp(gamefile, ""))
 	{
-		game = NULL;
+		game = nullptr;
 		strcpy(gamefile, "(no file)");
 		return;
 	}
 #endif
 
 #if !defined (GLK) /* since in Glk the game stream is always open */
-	if ((game = TrytoOpen(gamefile, "rb", "games"))==NULL)
+	if ((game = TrytoOpen(gamefile, "rb", "games"))==nullptr)
 	{
-		if ((game = TrytoOpen(gamefile, "rb", "object"))==NULL)
+		if ((game = TrytoOpen(gamefile, "rb", "object"))==nullptr)
 			FatalError(OPEN_E);
 	}
 #endif
@@ -1154,7 +1154,7 @@ void Hugo::LoadGame() {
 #endif
 		hugo_closefiles();
 		hugo_blockfree(mem);
-		mem = NULL;
+		mem = nullptr;
 
 		hugo_exit(line);
 	}
@@ -1173,7 +1173,7 @@ void Hugo::LoadGame() {
 #endif
 		hugo_closefiles();
 		hugo_blockfree(mem);
-		mem = NULL;
+		mem = nullptr;
 		hugo_exit(line);           /* ditto */
 	}
 
@@ -1198,10 +1198,10 @@ void Hugo::LoadGame() {
 
 #ifndef LOADGAMEDATA_REPLACED
 	/* Allocate as much memory as is required */
-	if ((!loaded_in_memory) || (mem = (unsigned char *)hugo_blockalloc(filelength))==NULL)
+	if ((!loaded_in_memory) || (mem = (unsigned char *)hugo_blockalloc(filelength))==nullptr)
 	{
 		loaded_in_memory = 0;
-		if ((mem = (unsigned char *)hugo_blockalloc(codeend))==NULL)
+		if ((mem = (unsigned char *)hugo_blockalloc(codeend))==nullptr)
 			FatalError(MEMORY_E);
 	}
 
@@ -1321,7 +1321,7 @@ signed char def_slbgcolor = DEF_SLBGCOLOR;
 void ParseCommandLine(int argc, char *argv[])
 {
 	char drive[MAXDRIVE], dir[MAXDIR], fname[MAXFILENAME], ext[MAXEXT];
-	char* game_file_arg = NULL;
+	char* game_file_arg = nullptr;
 
 #if defined(GCC_UNIX) && defined(DO_COLOR)
         int ch;
@@ -1345,7 +1345,7 @@ void ParseCommandLine(int argc, char *argv[])
 	    default:
 	      Banner();
 	      if (mem) hugo_blockfree(mem);
-	      mem = NULL;
+	      mem = nullptr;
 	      exit(0);
 	  }
 	}
@@ -1358,11 +1358,11 @@ void ParseCommandLine(int argc, char *argv[])
 	}
 #endif
 
-	if (game_file_arg==NULL)
+	if (game_file_arg==nullptr)
 	{
 		Banner();
 		if (mem) hugo_blockfree(mem);
-		mem = NULL;
+		mem = nullptr;
 		exit(0);
 	}
 
@@ -1617,7 +1617,7 @@ void Hugo::Printout(char *a, int no_scrollback_linebreak) {
 		hugo_setbackcolor(bgcolor);
 	}
 
-#if defined (AMIGA)
+#if defined (AMIGA) && !defined (GLK)
 	else
 	{
 		if (currentpos + l >= physical_windowwidth)
@@ -1750,7 +1750,7 @@ void Hugo::PromptMore() {
 	{
 		if (hugo_fclose(playback))
 			FatalError(READ_E);
-		playback = NULL;
+		playback = nullptr;
 	}
 	else if (playback && k=='+')
 		skipping_more = true;
@@ -1802,7 +1802,7 @@ int Hugo::RecordCommands() {
 				strcpy(recordfile, line);
 #else
 				/* Glk implementation */
-				frefid_t fref = NULL;
+				frefid_t fref = nullptr;
 
 				fref = glk_fileref_create_by_prompt(fileusage_Transcript | fileusage_TextMode,
 					filemode_Write, 0);
@@ -1824,7 +1824,7 @@ int Hugo::RecordCommands() {
 			{
 				if (hugo_fclose(record)) return (0);
 
-				record = NULL;
+				record = nullptr;
 				return 1;
 			}
 			break;
@@ -1844,7 +1844,7 @@ int Hugo::RecordCommands() {
 				strcpy(recordfile, line);
 #else
 				/* Glk implementation */
-				frefid_t fref = NULL;
+				frefid_t fref = nullptr;
 
 				fref = glk_fileref_create_by_prompt(fileusage_InputRecord | fileusage_TextMode,
 					filemode_Read, 0);
@@ -2173,7 +2173,7 @@ HUGO_FILE TrytoOpen(char *f, char *p, char *d)
 		}
 	}
 
-	return NULL;            /* return NULL if not openable */
+	return nullptr;            /* return nullptr if not openable */
 }
 
 #endif	/* GLK */

@@ -39,7 +39,7 @@ void SaveLoad::save() {
 	// TODO
 #if 0
 	frefid_t fref = glk_fileref_create_by_prompt(fileusage_SavedGame, filemode_Write, 0);
-	if (fref == NULL)
+	if (fref == nullptr)
 		_vm->printError(M_SAVEFAILED);
 
 	strcpy(str, garglk_fileref_get_name(fref));
@@ -53,12 +53,12 @@ void SaveLoad::save() {
 
 	// TODO
 #if 0
-	if ((savfil = fopen(str, READ_MODE)) != NULL)
+	if ((savfil = fopen(str, READ_MODE)) != nullptr)
 		// It already existed
 		if (!confirm(M_SAVEOVERWRITE))
 			_vm->printError(MSGMAX);            // Return to player without saying anything
 
-	if ((savfil = fopen(str, WRITE_MODE)) == NULL)
+	if ((savfil = fopen(str, WRITE_MODE)) == nullptr)
 		_vm->printError(M_SAVEFAILED);
 #endif
 
@@ -124,7 +124,7 @@ void SaveLoad::restore() {
 	// TODO
 #if 0
 	frefid_t fref = glk_fileref_create_by_prompt(fileusage_SavedGame, filemode_Read, 0);
-	if (fref == NULL)
+	if (fref == nullptr)
 		_vm->printError(M_SAVEFAILED);
 
 	strcpy(str, garglk_fileref_get_name(fref));
