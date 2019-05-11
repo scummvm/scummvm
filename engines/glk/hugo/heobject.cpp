@@ -504,7 +504,7 @@ void Hugo::MoveObj(int obj, int p) {
 	}
 }
 
-char *Hugo::Name(int obj) {
+const char *Hugo::Name(int obj) {
 	int p;
 
 	p = GetProp(obj, 0, 1, 0);
@@ -512,7 +512,7 @@ char *Hugo::Name(int obj) {
 	if (p)
 		return GetWord((unsigned int)p);
 	else
-		return 0;
+		return nullptr;
 }
 
 int Hugo::Parent(int obj) {

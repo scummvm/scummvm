@@ -550,7 +550,7 @@ ContextCommandLoop:
 	}
 	else if (context_commands < MAX_CONTEXT_COMMANDS)
 	{
-		char *cc;
+		const char *cc;
 
 		strncpy(context_command[context_commands], cc = GetWord(n), 64);
 		context_command[context_commands][63] = '\0';
@@ -977,7 +977,7 @@ char *Hugo::GetText(long textaddr) {
 	return g;
 }
 
-char *Hugo::GetWord(unsigned int w) {
+const char *Hugo::GetWord(unsigned int w) {
 	static char *b;
 	unsigned short a;
 

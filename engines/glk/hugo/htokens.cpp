@@ -21,7 +21,7 @@
  */
 
 #include "glk/hugo/htokens.h"
-#include "Common/algorithm.h"
+#include "common/algorithm.h"
 
 namespace Glk {
 namespace Hugo {

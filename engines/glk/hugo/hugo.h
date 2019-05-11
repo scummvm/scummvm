@@ -144,7 +144,7 @@ private:
 	char line[1025];						///< line buffer
 
 	int words;								///< parsed word count
-	char *word[MAXWORDS + 1];				///< breakdown into words
+	const char *word[MAXWORDS + 1];			///< breakdown into words
 	unsigned int wd[MAXWORDS + 1];			///<     "      "   dict. entries
 	unsigned int parsed_number;				///< needed for numbers in input
 
@@ -433,7 +433,7 @@ private:
 	/**
 	 * From the dictionary table.
 	 */
-	char *GetWord(unsigned int w);
+	const char *GetWord(unsigned int w);
 
 	void HandleTailRecursion(long addr);
 
@@ -597,7 +597,7 @@ private:
 
 	void MoveObj(int obj, int p);
 
-	char *Name(int obj);
+	const char *Name(int obj);
 
 	int Parent(int obj);
 
@@ -665,9 +665,9 @@ private:
 	/**
 	 * Allocate memory block
 	 */
-	void *hugo_blockalloc(size_t num) { return new byte[num]; }
+	void *hugo_blockalloc(size_t num) { return malloc(num); }
 
-	void hugo_blockfree(void *block) { delete[] block; }
+	void hugo_blockfree(void *block) { free(block); }
 public:
 	/**
 	 * Constructor

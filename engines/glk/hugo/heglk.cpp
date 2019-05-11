@@ -74,6 +74,8 @@ void Hugo::hugo_getline(const char *prmpt) {
 				gotline = true;
 			}
 			break;
+		default:
+			break;
 		}
 	}
 
@@ -82,7 +84,7 @@ void Hugo::hugo_getline(const char *prmpt) {
 
 							/* Copy the input to the script file (if open) */
 	if (script) {
-		Common::String text = Common::String::format("%s%s\n", prompt, buffer);
+		Common::String text = Common::String::format("%s%s\n", prmpt, buffer);
 		script->putBuffer(text.c_str(), text.size());
 	}
 }
@@ -121,6 +123,8 @@ int Hugo::hugo_waitforkey() {
 			if (ev.window == currentwin) {
 				gotchar = true;
 			}
+			break;
+		default:
 			break;
 		}
 	}
@@ -278,9 +282,7 @@ void Hugo::hugo_settextwindow(int left, int top, int right, int bottom) {
 			glk_stylehint_set(wintype_TextGrid, style_Subheader, stylehint_ReverseColor, 1);
 			glk_stylehint_set(wintype_TextGrid, style_Emphasized, stylehint_ReverseColor, 1);
 
-			winid_t p;
-
-			p = glk_window_get_parent(mainwin);
+			//winid_t p = glk_window_get_parent(mainwin);
 			secondwin = glk_window_open(mainwin,//p,
 				winmethod_Above | winmethod_Fixed,
 				bottom,

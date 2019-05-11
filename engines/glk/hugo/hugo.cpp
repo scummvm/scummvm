@@ -86,7 +86,7 @@ Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 	Common::fill(&buffer[0], &buffer[MAXBUFFER + MAXWORDS], '\0');
 	Common::fill(&errbuf[0], &errbuf[MAXBUFFER + 1], 0);
 	Common::fill(&line[0], &line[1025], 0);
-	Common::fill(&word[0], &word[MAXWORDS + 1], nullptr);
+	Common::fill(&word[0], &word[MAXWORDS + 1], (const char *)nullptr);
 	Common::fill(&wd[0], &wd[MAXWORDS + 1], 0);
 	Common::fill(&parseerr[0], &parseerr[MAXBUFFER + 1], '\0');
 	Common::fill(&parsestr[0], &parsestr[MAXBUFFER + 1], '\0');

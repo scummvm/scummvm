@@ -153,7 +153,7 @@ browsing.
 #define CODE_WINDOW 2
 #endif
 
-#define PRINTFATALERROR(a)	error(a)
+#define PRINTFATALERROR(a)	error("%s", a)
 
 } // End of namespace Hugo
 } // End of namespace Glk
