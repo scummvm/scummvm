@@ -1544,7 +1544,7 @@ void Hugo::Printout(char *a, int no_scrollback_linebreak) {
 		}
 
 		if (script && (unsigned char)b[0]>=' ')
-			if (hugo_writetoscript(b) < 0) FatalError(WRITE_E);
+			if (hugo_fprintf(script, "%s", b) < 0) FatalError(WRITE_E);
 
 #if defined (SCROLLBACK_DEFINED)
 		if (!inwindow && (unsigned char)b[0]>=' ')
@@ -1655,7 +1655,8 @@ void Hugo::Printout(char *a, int no_scrollback_linebreak) {
 
 		if (script && !no_scrollback_linebreak)
 		{
-			if (hugo_writetoscript("\n")<0) FatalError(WRITE_E);
+			if (hugo_fprintf(script, "%s", "\n")<0)
+				FatalError(WRITE_E);
 		}
 
 #if defined (SCROLLBACK_DEFINED)

@@ -333,6 +333,10 @@ private:
 		// No implementation
 	}
 
+	void hugo_closefiles() {
+		// Glk closes all files on exit
+	}
+
 	int hugo_getkey() const {
 		// Not needed here--single-character events are handled solely by hugo_waitforkey(), below
 		return 0;
@@ -1111,12 +1115,9 @@ public:
 	virtual Common::Error saveGameData(strid_t file, const Common::String &desc) override;
 
 	// TODO: Stubs to be Properly implemented
-	void hugo_closefiles() {}
-	unsigned int FindWord(const char *a) { return 0; }
 	void hugo_stopsample() {}
 	void hugo_stopmusic() {}
 	int hugo_hasgraphics() { return 0; }
-	int hugo_writetoscript(const char *s) { return 0; }
 	void DisplayPicture() {}
 	void PlayMusic() {}
 	void PlaySample() {}
