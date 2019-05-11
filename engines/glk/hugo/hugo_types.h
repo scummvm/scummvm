@@ -107,9 +107,32 @@ struct CODE_BLOCK {
 	int type;			///< see #defines, below
 	long brk;			///< break address, or 0 to indicate NOP
 	long returnaddr;	///< used only for do-while loops
+#if defined (DEBUGGER)
+	int dbnest;			///< for recovering from 'break'
+#endif
 
-	CODE_BLOCK() : type(0), brk(0), returnaddr(0) {}
+	CODE_BLOCK() : type(0), brk(0), returnaddr(0)
+#if defined (DEBUGGER)
+	, dbnest(0)
+#endif
+	{
+	}
 };
+
+#if defined (DEBUGGER)
+struct CALL {
+	long addr;
+	bool param;
+
+	CALL() : addr(0), param(false) {}
+};
+
+struct WINDOW {
+	int count;
+
+	WINDOW() : count(99) {}
+};
+#endif
 
 } // End of namespace Hugo
 } // End of namespace Glk

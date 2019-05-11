@@ -26,8 +26,12 @@ namespace Glk {
 namespace Hugo {
 
 Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
-		mainwin(nullptr), currentwin(nullptr), secondwin(nullptr), auxwin(nullptr), address_scale(16),
+		mainwin(nullptr), currentwin(nullptr), secondwin(nullptr), auxwin(nullptr), 
+		runtime_warnings(false), dbnest(0), address_scale(16),
 		SCREENWIDTH(0), SCREENHEIGHT(0), FIXEDCHARWIDTH(0), FIXEDLINEHEIGHT(0),
+		// heexpr
+		evalcount(0), incdec(0), getaddress(0), inexpr(0), inobj(0),
+		// hemisc
 		game_version(0), object_size(0), game(nullptr), script(nullptr), save(nullptr),
 		playback(nullptr), record(nullptr), io(nullptr), ioblock('\0'), ioerror('\0'),
 		codestart(0), objtable(0), eventtable(0), proptable(0), arraytable(0), dicttable(0), 
@@ -52,18 +56,30 @@ Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 		objgrammar(0), objstart(0), objfinish(0), addflag(0), speaking(0), oopscount(0),
 		parse_called_twice(0), reparse_everything(0), full_buffer(false), recursive_call(false),
 		parse_location(0),
-
 		// herun
 		arguments_passed(0), ret(0), retflag(0), during_player_input(false), override_full(0),
 		game_reset(false), stack_depth(0), tail_recursion(0), tail_recursion_addr(0),
 		last_window_top(0), last_window_bottom(0), last_window_left(0), last_window_right(0),
-		lowest_windowbottom(0), physical_lowest_windowbottom(0), just_left_window(false) {
+		lowest_windowbottom(0), physical_lowest_windowbottom(0), just_left_window(false),
+		// heset
+		arrexpr(0), multiprop(0), set_value(0)
+#if defined (DEBUGGER)
+		, debug_eval(false), debug_eval_error(false), debugger_step_over(false),
+		debugger_finish(false), debugger_run(false), currentroutine(false),
+		complex_prop_breakpoint(false), trace_complex_prop_routine(false), properties(0),
+		current_locals(0)
+#endif
+		{
+	// heexpr
+	Common::fill(&eval[0], &eval[MAX_EVAL_ELEMENTS], 0);
+	Common::fill(&var[0], &var[MAXLOCALS + MAXGLOBALS], 0);
+
+	// hemisc		
 	Common::fill(&context_command[0][0], &context_command[MAX_CONTEXT_COMMANDS][64], 0);
 	Common::fill(&id[0], &id[3], '\0');
 	Common::fill(&serial[0], &serial[9], '\0');
 	Common::fill(&pbuffer[0], &pbuffer[MAXBUFFER * 2 + 1], 0);
 	Common::fill(&undostack[0][0], &undostack[MAXUNDO][5], 0);
-	Common::fill(&var[0], &var[MAXLOCALS + MAXGLOBALS], 0);
 	
 	// heparse
 	Common::fill(&buffer[0], &buffer[MAXBUFFER + MAXWORDS], '\0');
@@ -80,6 +96,17 @@ Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 
 	// herun
 	Common::fill(&passlocal[0], &passlocal[MAXLOCALS], 0);
+
+	// heset
+	game_title[0] = '\0';
+
+#ifdef DEBUGGER
+	debug_line[0] = '\0';
+	Common::fill(&objectname[0], &objectname[MAX_OBJECT], nullptr);
+	Common::fill(&propertyname[0], &propertyname[MAX_PROPERTY], nullptr);
+	Common::fill(&codeline[0][0], &codeline[9][100], 0);
+	Common::fill(&localname[0][0], &localname[9][100], 0);
+#endif
 }
 
 void Hugo::runGame() {

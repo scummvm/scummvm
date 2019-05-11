@@ -31,9 +31,16 @@ namespace Hugo {
 #define HEVERSION 3
 #define HEREVISION 3
 #define HEINTERIM ".0"
+#define GLK
+#define DEBUGGER
 
 #define MAXOBJLIST 32
 #define MAX_CONTEXT_COMMANDS	32
+#define MAX_EVAL_ELEMENTS 256
+#define MAX_GAME_TITLE 64
+#define MAX_DEBUG_LINE 256
+#define MAX_OBJECT 999
+#define MAX_PROPERTY 999
 #define MAXBUFFER 255
 #define MAXUNDO 1024
 #define CHARWIDTH 1
@@ -139,6 +146,12 @@ browsing.
 
 #define TAIL_RECURSION_ROUTINE          (-1)
 #define TAIL_RECURSION_PROPERTY         (-2)
+
+#if defined (DEBUGGER)
+#define VIEW_CALLS 0
+#define VIEW_LOCALS 1
+#define CODE_WINDOW 2
+#endif
 
 } // End of namespace Hugo
 } // End of namespace Glk

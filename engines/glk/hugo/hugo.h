@@ -40,6 +40,8 @@ class Hugo : public GlkAPI, public HTokens, public StringFunctions {
 private:
 	winid_t mainwin, currentwin;
 	winid_t secondwin, auxwin;
+	bool runtime_warnings;
+	int dbnest;
 
 	/**
 	 * address_scale refers to the factor by which addresses are multiplied to
@@ -47,6 +49,18 @@ private:
 	 * 64K * 16 = 1024K of memory.
 	 */
 	int address_scale;
+
+	// heexpr
+	int eval[MAX_EVAL_ELEMENTS];		///< expression components
+	int evalcount;						///< # of expr. components
+	int var[MAXLOCALS + MAXGLOBALS];	///< variables
+	int incdec;							///< value is being incremented/dec.
+	char getaddress;					///< true when finding &routine
+	char inexpr;						///< true when in expression
+	char inobj;							///< true when in object compound
+
+	int last_precedence;
+
 
 	// hemisc
 	char gamefile[255];
@@ -118,9 +132,6 @@ private:
 	int glk_current_font;
 	bool just_cleared_screen;
 	int secondwin_bottom;
-
-	// heexpr
-	int var[MAXLOCALS + MAXGLOBALS];
 
 	// heobject
 	int display_object;				///< i.e., non-existent (yet)
@@ -196,6 +207,32 @@ private:
 		physical_lowest_windowbottom;		///< in pixels or text lines
 	bool just_left_window;
 
+	// heset
+	char game_title[MAX_GAME_TITLE];
+	char arrexpr;							///< true when assigning array
+	char multiprop;							///< true in multiple prop. assign.
+	int set_value;
+
+#if defined (DEBUGGER)
+	char debug_line[MAX_DEBUG_LINE];
+	bool debug_eval;
+	bool debug_eval_error;
+	bool debugger_step_over;
+	bool debugger_finish;
+	bool debugger_run;
+	int currentroutine;
+	bool complex_prop_breakpoint;
+	bool trace_complex_prop_routine;
+	char *objectname[MAX_OBJECT];
+	char *propertyname[MAX_PROPERTY];
+//	CODE code[999];
+	CALL call[999];
+	int properties;
+	WINDOW window[99];
+	int codeline[9][100];
+	char localname[9][100];
+	int current_locals;
+#endif
 private:
 	/**
 	 * \defgroup heglk
@@ -491,6 +528,88 @@ private:
 
 	int Undo();
 
+	/**@}*/
+
+	/**
+	 * \defgroup heobject - Object/property/attribute management functions
+	 * @{
+	 */
+
+#if defined (DEBUGGER)
+	int CheckinRange(uint v1, uint v2, const char *v3) {
+		// TODO: Where the heck is this actualy implemented in Gargoyle
+		return 1;
+	}
+
+	 /**
+	  * Shorthand since many of these object functions may call CheckinRange() if the debugger
+	  * is running and runtime_warnings is set.
+	 */
+	int CheckObjectRange(int obj);
+
+	void DebugRunRoutine(long addr) {}
+
+	void RuntimeWarning(const char *msg) {}
+
+	void DebugMessageBox(const char *title, const char *msg) {}
+
+	bool IsBreakpoint(long loc) const { return false; }
+
+	const char *RoutineName(long loc) { return "Routine"; }
+
+	void AddStringtoCodeWindow(const char *str) {}
+#endif
+
+	int Child(int obj);
+
+	int Children(int obj);
+
+	int Elder(int obj);
+
+	/**
+	 * Returns one of four sets of 32 attributes.
+	 */
+	unsigned long GetAttributes(int obj, int attribute_set);
+
+	/**
+	 * Returns the value of '<obj>.<p> #<n>'  If <s> is true, the self global
+	 * is not set to <obj> in order to facilitate <obj>..<p> calls.
+	 */
+	int GetProp(int obj, int p, int n, char s);
+
+	/**
+	 * Returns the value of the last object above <obj> in the tree before object 0.
+	 */
+	int GrandParent(int obj);
+
+	void MoveObj(int obj, int p);
+
+	char *Name(int obj);
+
+	int Parent(int obj);
+
+	/**
+	 * Returns address of <obj>.<p> (with <offset> provided for additive properties--
+	 * i.e. subsequent calls with the same <obj> and <p>.
+	 */
+	unsigned int PropAddr(int obj, int p, unsigned int offset);
+
+	/**
+	 * Writes (puts) one of four sets of 32 attributes.
+	 */
+	void PutAttributes(int obj, unsigned long a, int attribute_set);
+
+	/**
+	 * Set an attribute
+	 * c = 1 for set, 0 for clear
+	 */
+	void SetAttribute(int obj, int attr, int c);
+
+	int Sibling(int obj);
+
+	int TestAttribute(int obj, int attr, int nattr);
+
+	int Youngest(int obj);
 
 	/**@}*/
 private:
@@ -535,10 +654,7 @@ public:
 	void PromptMore() {}
 	void hugo_stopsample() {}
 	void hugo_stopmusic() {}
-	void SetAttribute(int obj, int attr, int c) {}
-	unsigned int PropAddr(int obj, int p, unsigned int offset) { return 0; }
-	int GetProp(int obj, int p, int n, char s) { return 0; }
-	void MoveObj(int obj, int p) {}
+	int hugo_hasgraphics() { return 0; }
 };
 
 } // End of namespace Hugo

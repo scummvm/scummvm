@@ -74,6 +74,7 @@ MODULE_OBJS := \
 	hugo/detection.o \
 	hugo/heglk.o \
 	hugo/hemisc.o \
+	hugo/heobject.o \
 	hugo/htokens.o \
 	hugo/hugo.o \
 	hugo/stringfn.o \
