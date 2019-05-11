@@ -977,13 +977,14 @@ char *Hugo::GetText(long textaddr) {
 	return g;
 }
 
-const char *Hugo::GetWord(unsigned int w) {
-	static const char *b;
+char *Hugo::GetWord(unsigned int w) {
+	char *b;
 	unsigned short a;
+	static char *EMPTY = "";
 
 	a = w;
 
-	if (a==0) return "";
+	if (a==0) return EMPTY;
 
 	if (a==PARSE_STRING_VAL) return parseerr;
 	if (a==SERIAL_STRING_VAL) return serial;
@@ -991,8 +992,7 @@ const char *Hugo::GetWord(unsigned int w) {
 	/* bounds-checking to avoid some sort of memory arena error */
 	if ((long)(a+dicttable*16L) > codeend)
 	{
-		b = "";
-		return b;
+		return EMPTY;
 	}
 
 	defseg = dicttable;

@@ -41,8 +41,10 @@ namespace Hugo {
 #define MAX_DEBUG_LINE 256
 #define MAX_OBJECT 999
 #define MAX_PROPERTY 999
+#define MAX_MOBJ 16     /* maximum number of matchable object words */
 #define MAXBUFFER 255
 #define MAXUNDO 1024
+
 #define CHARWIDTH 1
 #define STAT_UNAVAILABLE (-1)
 

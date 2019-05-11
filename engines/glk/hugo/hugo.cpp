@@ -53,7 +53,7 @@ Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 		words(0), parsed_number(0), remaining(0), xverb(0), starts_with_verb(0),
 		grammaraddr(0), obj_parselist(nullptr), domain(0), odomain(0), objcount(0),
 		parse_allflag(false), pobjcount(0), pobj(0), obj_match_state(0), object_is_number(0),
-		objgrammar(0), objstart(0), objfinish(0), addflag(0), speaking(0), oopscount(0),
+		objgrammar(0), objstart(0), objfinish(0), addflag(false), speaking(0), oopscount(0),
 		parse_called_twice(0), reparse_everything(0), full_buffer(false), recursive_call(false),
 		parse_location(0),
 		// herun
@@ -86,7 +86,7 @@ Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 	Common::fill(&buffer[0], &buffer[MAXBUFFER + MAXWORDS], '\0');
 	Common::fill(&errbuf[0], &errbuf[MAXBUFFER + 1], 0);
 	Common::fill(&line[0], &line[1025], 0);
-	Common::fill(&word[0], &word[MAXWORDS + 1], (const char *)nullptr);
+	Common::fill(&word[0], &word[MAXWORDS + 1], (char *)nullptr);
 	Common::fill(&wd[0], &wd[MAXWORDS + 1], 0);
 	Common::fill(&parseerr[0], &parseerr[MAXBUFFER + 1], '\0');
 	Common::fill(&parsestr[0], &parsestr[MAXBUFFER + 1], '\0');

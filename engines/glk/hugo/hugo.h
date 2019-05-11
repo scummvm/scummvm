@@ -144,7 +144,7 @@ private:
 	char line[1025];						///< line buffer
 
 	int words;								///< parsed word count
-	const char *word[MAXWORDS + 1];			///< breakdown into words
+	char *word[MAXWORDS + 1];				///< breakdown into words
 	unsigned int wd[MAXWORDS + 1];			///<     "      "   dict. entries
 	unsigned int parsed_number;				///< needed for numbers in input
 
@@ -168,7 +168,7 @@ private:
 	unsigned int objgrammar;				///< for 2nd pass
 	int objstart;							///<  "   "   "
 	int objfinish;							///<  "   "   "
-	char addflag;							///< true if adding to objlist[]
+	bool addflag;							///< true if adding to objlist[]
 	int speaking;							///< if command is addressed to obj.
 
 	char oops[MAXBUFFER + 1];				///< illegal word
@@ -496,7 +496,7 @@ private:
 	/**
 	 * From the dictionary table.
 	 */
-	const char *GetWord(unsigned int w);
+	char *GetWord(unsigned int w);
 
 	void HandleTailRecursion(long addr);
 
@@ -604,38 +604,6 @@ private:
 	 * \defgroup heobject - Object/property/attribute management functions
 	 * @{
 	 */
-
-#if defined (DEBUGGER)
-	int CheckinRange(uint v1, uint v2, const char *v3) {
-		// TODO: Where the heck is this actualy implemented in Gargoyle
-		return 1;
-	}
-
-	 /**
-	  * Shorthand since many of these object functions may call CheckinRange() if the debugger
-	  * is running and runtime_warnings is set.
-	 */
-	int CheckObjectRange(int obj);
-
-	void DebugRunRoutine(long addr) {}
-
-	void RuntimeWarning(const char *msg) {}
-
-	void DebugMessageBox(const char *title, const char *msg) {}
-
-	bool IsBreakpoint(long loc) const { return false; }
-
-	const char *RoutineName(long loc) { return "Routine"; }
-
-	void AddStringtoCodeWindow(const char *str) {}
-
-	void SwitchtoDebugger() {}
-
-	void DebuggerFatal(DEBUGGER_ERROR err) { error("Debugger error"); }
-
-	void RecoverLastGood() {}
-#endif
-
 	int Child(int obj);
 
 	int Children(int obj);
@@ -690,6 +658,170 @@ private:
 	/**@}*/
 
 	/**
+	 * \defgroup heparse
+	 * @{
+	 */
+
+	void AddAllObjects(int loc);
+
+	/**
+	 * Adds the object <obj> to objlist[], making all related adjustments.
+	 */
+	void AddObj(int obj);
+
+	/**
+	 * Adds <obj> as a contender to the possible object list, noting that it was referred
+	 * to as either a noun or an adjective.
+	 */
+	void AddPossibleObject(int obj, char type, unsigned int w);
+
+	/**
+	 * Move the address in the grammar table past the current token.
+	 */
+	void AdvanceGrammar();
+
+	/**
+	 * For when it's only necessary to know if word[wn] is an object word for any object,
+	 * not a particular object.  Returns 1 for an object word or -1 for a non-object word.
+	 */
+	int AnyObjWord(int wn);
+
+	/**
+	 * The non_grammar argument is true when called from a non-grammar function such as RunEvents().
+	 */
+	int Available(int obj, char non_grammar);
+
+	void CallLibraryParse();
+
+	/**
+	 * Takes into account the preset domain for checking an object's presence;
+	 * <domain> is 0, -1, or an object number..
+	 */
+	int DomainObj(int obj);
+
+	/**
+	 * Returns the dictionary address of <a>.
+	 */
+	unsigned int FindWord(char *a);
+
+	/**
+	 * Checks to see if <obj> is in objlist[].
+	 */
+	int InList(int obj);
+
+	/**
+	 * Deletes word[a].
+	 */
+	void KillWord(int a);
+
+	/**
+	 * Here, briefly, is how MatchCommand() works:
+	 *
+	 * 1.  Match the verb.
+	 *
+	 * 2.  If no match, check to see if the line begins with an object (character)
+	 * and try to match it.
+	 *
+	 * 3.  If found, try to match a syntax for that verb, including objects, dictionary words,
+	 * numbers, attributes, and routines.  If any objects are specified, skip over them for now,
+	 * marking the start and finish.  This is done mostly in MatchWord().
+	 *
+	 * 4.  Match the xobject, if there is one--via MatchObject().
+	 *
+	 * 5.  If all is well, return to match the objects that were previously skipped over,
+	 * loading them into objlist[]. Once again, this is done by MatchObject().
+	 *
+	 * (The reason the objects are initially skipped is because it may be necessary to know 
+	 * where to look for them--this may require knowing what the xobject is, if the syntax
+	 * is something like:
+	 *
+	 * "get" <object> "from" <xobject>)
+	 *
+	 * The variable <obj_match_state> is the indicator of what stage object-matching is at:
+	 *
+	 * obj_match_state = 0  - haven't matched anything yet
+	 *
+	 * obj_match_state = 1  - xobject has been matched
+	 *
+	 * obj_match_state = 2  - matching object(s), loading objlist[]
+	 *
+	 * obj_match_state = 5  - matching first word/name, i.e., "Bob, <do something>"
+	 */
+	int MatchCommand();
+
+	/**
+	 * The argument is the word number we're starting matching on.
+	 *
+	 * NOTE:  recusive_call is set to 0 if this is the first call. MatchObject() sets it to 1
+	 * when calling itself when asking for clarification as to which object is meant.
+	 *
+	 * Return true on a recursive call to allow parsing to continue.
+	 */
+	bool MatchObject(int *wordnum);
+
+	int MatchWord(int *wordnum);
+
+	/**
+	 * Returns true if the specified object has the specified word as an adjective or noun
+	 * (as specified by type).
+	 */
+	int ObjWordType(int obj, unsigned int w, int type);
+
+	/**
+	 * Returns <adjective> if the word at dictionary address <w> is an adjective of <obj>,
+	 * or <noun> if it is a noun.
+	 */
+	int ObjWord(int obj, unsigned int w);
+
+	/**
+	 * Turns word[] into dictionary addresses stored in wd[].  Takes care of fingering illegal
+	 * (unknown) words and doing alterations such as compounds, removals, and synonyms.
+	 */
+	int Parse();
+
+	void ParseError(int e, int a);
+
+	/**
+	 * Deletes wd[a].
+	 */
+	void RemoveWord(int a);
+
+	/**
+	 * Call FindObject(0, 0) to reset library's disambiguation mechanism.
+	 */
+	void ResetFindObject();
+
+	/**
+	 * Splits <buffer> into the word[] array.  Also does nifty things such as turning time
+	 * values such as hh:mm into a single number (representing minutes from midnight).
+	 */
+	void SeparateWords();
+
+	/**
+	 * Removes object <obj> from objlist[], making all related adjustments.
+	 */
+	void SubtractObj(int obj);
+
+	/**
+	 * Removes <obj> as a possible contender for object disambiguation.
+	 */
+	void SubtractPossibleObject(int obj);
+
+	/**
+	 * Called by MatchObject() to see if <obj> is available, and add it to or subtract
+	 * it from objlist[] accordingly.
+	 */
+	void TryObj(int obj);
+
+	/**
+	 * Checks first of all to see if an object is available, then checks if it meets
+	 * all the qualifications demanded by the grammar syntax.
+	 */
+	int ValidObj(int obj);
+
+	/**@}*/
+
+	/**
 	* \defgroup Miscellaneous
 	* @{
 	*/
@@ -735,6 +867,37 @@ private:
 	void *hugo_blockalloc(size_t num) { return malloc(num); }
 
 	void hugo_blockfree(void *block) { free(block); }
+
+#if defined (DEBUGGER)
+	int CheckinRange(uint v1, uint v2, const char *v3) {
+		// TODO: Where the heck is this actualy implemented in Gargoyle
+		return 1;
+	}
+
+	/**
+	* Shorthand since many of these object functions may call CheckinRange() if the debugger
+	* is running and runtime_warnings is set.
+	*/
+	int CheckObjectRange(int obj);
+
+	void DebugRunRoutine(long addr) {}
+
+	void RuntimeWarning(const char *msg) {}
+
+	void DebugMessageBox(const char *title, const char *msg) {}
+
+	bool IsBreakpoint(long loc) const { return false; }
+
+	const char *RoutineName(long loc) { return "Routine"; }
+
+	void AddStringtoCodeWindow(const char *str) {}
+
+	void SwitchtoDebugger() {}
+
+	void DebuggerFatal(DEBUGGER_ERROR err) { error("Debugger error"); }
+
+	void RecoverLastGood() {}
+#endif
 public:
 	/**
 	 * Constructor
