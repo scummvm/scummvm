@@ -106,6 +106,7 @@ static const char *const selectorNameTable[] = {
 	"handsOn",      // system selector
 	"localize",     // Freddy Pharkas
 	"put",          // Police Quest 1 VGA
+	"changeState",  // Quest For Glory 1 VGA, QFG4
 	"hide",         // Quest For Glory 1 VGA, QFG4
 	"say",          // Quest For Glory 1 VGA, QFG4
 	"script",       // Quest For Glory 1 VGA
@@ -172,7 +173,6 @@ static const char *const selectorNameTable[] = {
 	"advanceCurIcon", // QFG4
 	"amount",       // QFG4
 	"approachVerbs", // QFG4
-	"changeState",  // QFG4
 	"cue",          // QFG4
 	"curIcon",      // QFG4
 	"curInvIcon",   // QFG4
@@ -214,6 +214,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_handsOn,
 	SELECTOR_localize,
 	SELECTOR_put,
+	SELECTOR_changeState,
 	SELECTOR_hide,
 	SELECTOR_say,
 	SELECTOR_script,
@@ -281,7 +282,6 @@ enum ScriptPatcherSelectors {
 	SELECTOR_advanceCurIcon,
 	SELECTOR_amount,
 	SELECTOR_approachVerbs,
-	SELECTOR_changeState,
 	SELECTOR_cue,
 	SELECTOR_curIcon,
 	SELECTOR_curInvIcon,
@@ -8220,6 +8220,85 @@ static const uint16 qfg1vgaPatchMacGiantFight[] = {
 	PATCH_END
 };
 
+// Dag-Nab-It, the dagger game in room 340, mistakenly leaves inventory enabled.
+//  Using a throwable item, such as a dagger, locks up the game.
+//
+// We fix this by disabling inventory controls on this screen. Sierra attempted
+//  to do this in the Mac version but introduced a new bug which we also fix.
+//
+// Applies to: PC Floppy
+// Responsible method: dagnabitScript:changeState
+// Fixes bug: #10958
+static const uint16 qfg1vgaSignatureDagnabitInventory[] = {
+	0x38, SIG_SELECTOR16(disable),          // pushi disable
+	0x39, 0x03,                             // pushi 03
+	0x78,                                   // push1
+	0x39, SIG_MAGICDWORD, 0x05,             // pushi 05
+	0x39, 0x09,                             // pushi 09
+	0x81, 0x45,                             // lag 45
+	0x4a, 0x0a,                             // send 0a [ mainIconBar disable: 1 5 9 ]
+	0x35, 0x01,                             // ldi 01
+	0xa3, 0x13,                             // sal 13
+	0x32, SIG_UINT16(0x0278),               // jmp 0278 [ end of method ]
+	SIG_ADDTOOFFSET(+625),
+	0x38, SIG_SELECTOR16(changeState),      // pushi changeState
+	0x78,                                   // push1
+	0x78,                                   // push1
+	SIG_END
+};
+
+static const uint16 qfg1vgaPatchDagnabitInventory[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x39, 0x05,                             // pushi 05
+	PATCH_ADDTOOFFSET(+5),
+	0x39, 0x07,                             // pushi 07 [ "use" inventory icon ]
+	0x39, 0x08,                             // pushi 08 [ inventory ]
+	0x81, 0x45,                             // lag 45
+	0x4a, 0x0e,                             // send 0e [ mainIconBar disable: 1 5 9 7 8 ]
+	0x78,                                   // push1
+	0xab, 0x13,                             // ssl 13
+	PATCH_ADDTOOFFSET(+629),
+	0x76,                                   // push0 [ state 0 re-disables inventory ]
+	PATCH_END
+};
+
+// The Mac version of Dag-Nab-It, the dagger game in room 340, introduced a bug
+//  that sends a message to a non-object when clicking during the start.
+//
+// The PC version left inventory enabled and Sierra fixed this in Mac. Sierra
+//  also attempted to clear the inventory cursor, but this was done in a way
+//  that leaves the icon bar in an illegal state. mainIconBar:curInvIcon is
+//  set to zero but mainIconBar:curIcon remains set to the "use" icon item.
+//  Clicking anywhere during the initial two seconds causes IconBar:handleEvent
+//  to query curInvIcon:message but since curInvIcon is zero this is an error.
+//
+// We fix this with a deceptively simple patch that prevents the "use" icon from
+//  ending up as mainIconBar:curIcon. rm340:init runs a complex sequence of icon
+//  disabling and enabling. Patching a redundant mainIconBar:disable to include
+//  "use" prevents the subsequent call to handsOff from cycling through enabled
+//  icons and landing on "use" as the new curIcon, preventing the illegal state.
+//
+// Applies to: Mac Floppy
+// Responsible method: rm340:init
+// Fixes bug: #10958
+static const uint16 qfg1vgaSignatureMacDagnabitIconBar[] = {
+	0x38, SIG_SELECTOR16(disable),          // pushi disable
+	0x39, 0x03,                             // pushi 03
+	0x78,                                   // push1
+	SIG_MAGICDWORD,
+	0x39, 0x05,                             // pushi 05
+	0x39, 0x08,                             // pushi 08
+	0x81, 0x45,                             // lag 45
+	0x4a, 0x0a,                             // send 0a [ mainIconBar disable: 1 5 8 ]
+	SIG_END
+};
+
+static const uint16 qfg1vgaPatchMacDagnabitIconBar[] = {
+	PATCH_ADDTOOFFSET(+6),
+	0x39, 0x07,                             // pushi 07 [ "use" inventory icon ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                            patch
 static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 	{  true,     0, "inventory weight warning",                    1, qfg1vgaSignatureInventoryWeightWarn, qfg1vgaPatchInventoryWeightWarn },
@@ -8240,6 +8319,8 @@ static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 	{  true,   331, "moving to crusher",                           1, qfg1vgaSignatureMoveToCrusher,       qfg1vgaPatchMoveToCrusher },
 	{  true,   331, "moving to crusher from card game",            1, qfg1vgaSignatureCrusherCardGame,     qfg1vgaPatchCrusherCardGame },
 	{  true,   332, "thieves' guild cashier fix",                  1, qfg1vgaSignatureThievesGuildCashier, qfg1vgaPatchThievesGuildCashier },
+	{  true,   340, "dagnabit inventory fix",                      1, qfg1vgaSignatureDagnabitInventory,   qfg1vgaPatchDagnabitInventory },
+	{  true,   340, "mac: dagnabit icon bar fix",                  1, qfg1vgaSignatureMacDagnabitIconBar,  qfg1vgaPatchMacDagnabitIconBar },
 	{  true,   603, "mac: logo mouse-up fix",                      1, qfg1vgaSignatureMacLogoIntroSkip,    qfg1vgaPatchMacLogoIntroSkip },
 	{  true,   814, "window text temp space",                      1, qfg1vgaSignatureTempSpace,           qfg1vgaPatchTempSpace },
 	{  true,   814, "dialog header offset",                        3, qfg1vgaSignatureDialogHeader,        qfg1vgaPatchDialogHeader },
