@@ -2251,7 +2251,7 @@ unsigned short ebcdic_mm[] = { 0xC2C9, 0xC785, 0x95C4, 0x8981, 0x95E2, 0xA8E2, 0
 void _ebcdic() { char* s = (char*) ebcdic_mm; s = (char*) ebcdic_ii; }
 int main() { _ascii (); _ebcdic (); return 0; }
 EOF
-$CXX $CXXFLAGS -o $TMPO$HOSTEXEEXT tmp_endianness_check.cpp
+$CXX $LDFLAGS $CXXFLAGS -o $TMPO$HOSTEXEEXT tmp_endianness_check.cpp
 if $_strings $TMPO$HOSTEXEEXT | grep BIGenDianSyS >/dev/null; then
 	_endian=big
 elif $_strings $TMPO$HOSTEXEEXT | grep LiTTleEnDian >/dev/null; then
