@@ -600,41 +600,40 @@ void CryOmni3DEngine_Versailles::initPlacesStates() {
 		SET_PLACE_STATE(16, nullptr, FILTER_EVENT(4, 16), nullptr);
 		SET_PLACE_STATE(17, nullptr, FILTER_EVENT(4, 17), nullptr);
 	} else if (_currentLevel == 5) {
-		// TODO: implement functions
 		SET_PLACE_STATE(1, nullptr, nullptr, "VS35");
 		SET_PLACE_STATE(2, nullptr, nullptr, "VS35");
 		SET_PLACE_STATE(3, nullptr, nullptr, "VS36");
 		SET_PLACE_STATE(4, nullptr, nullptr, "VS36");
 		SET_PLACE_STATE(5, nullptr, nullptr, "VS36");
-		SET_PLACE_STATE(6, nullptr, nullptr, "VS30");
+		SET_PLACE_STATE(6, INIT_PLACE(5, 6), nullptr, "VS30");
 		SET_PLACE_STATE(7, nullptr, nullptr, "VS30");
 		SET_PLACE_STATE(8, nullptr, nullptr, "VS30");
-		SET_PLACE_STATE(9, nullptr, nullptr, "VS39");
+		SET_PLACE_STATE(9, nullptr, FILTER_EVENT(5, 9), "VS39");
 		SET_PLACE_STATE(10, nullptr, nullptr, "VS28");
 		SET_PLACE_STATE(11, nullptr, nullptr, "VS16");
 		SET_PLACE_STATE(12, nullptr, nullptr, "VS30");
 		SET_PLACE_STATE(13, nullptr, nullptr, "VS27");
-		SET_PLACE_STATE(14, nullptr, nullptr, "VS26");
-		SET_PLACE_STATE(15, nullptr, nullptr, "VS25");
-		SET_PLACE_STATE(16, nullptr, nullptr, "VS24");
+		SET_PLACE_STATE(14, nullptr, FILTER_EVENT(5, 14), "VS26");
+		SET_PLACE_STATE(15, nullptr, FILTER_EVENT(5, 15), "VS25");
+		SET_PLACE_STATE(16, nullptr, FILTER_EVENT(5, 16), "VS24");
 		SET_PLACE_STATE(17, nullptr, nullptr, "VS25");
 		SET_PLACE_STATE(18, nullptr, nullptr, nullptr);
 		SET_PLACE_STATE(19, nullptr, nullptr, nullptr);
-		SET_PLACE_STATE(20, nullptr, nullptr, nullptr);
+		SET_PLACE_STATE(20, nullptr, FILTER_EVENT(3_5, 20), nullptr);
 		SET_PLACE_STATE(21, nullptr, nullptr, "VS28");
 		SET_PLACE_STATE(22, nullptr, nullptr, nullptr);
-		SET_PLACE_STATE(23, nullptr, nullptr, nullptr);
+		SET_PLACE_STATE(23, nullptr, FILTER_EVENT(5, 23), nullptr);
 		SET_PLACE_STATE(24, nullptr, nullptr, nullptr);
 		SET_PLACE_STATE(25, nullptr, nullptr, nullptr);
 		SET_PLACE_STATE(26, nullptr, nullptr, "VS16");
-		SET_PLACE_STATE(27, nullptr, nullptr, "VS16");
-		SET_PLACE_STATE(28, nullptr, nullptr, nullptr);
-		SET_PLACE_STATE(29, nullptr, nullptr, "VS24");
+		SET_PLACE_STATE(27, nullptr, FILTER_EVENT(5, 27), "VS16");
+		SET_PLACE_STATE(28, nullptr, FILTER_EVENT(5, 28), nullptr);
+		SET_PLACE_STATE(29, nullptr, FILTER_EVENT(5, 29), "VS24");
 		SET_PLACE_STATE(30, nullptr, nullptr, nullptr);
 		SET_PLACE_STATE(31, nullptr, nullptr, nullptr);
 		SET_PLACE_STATE(32, nullptr, nullptr, nullptr);
-		SET_PLACE_STATE(33, nullptr, nullptr, nullptr);
-		SET_PLACE_STATE(34, nullptr, nullptr, nullptr);
+		SET_PLACE_STATE(33, nullptr, FILTER_EVENT(5, 33), nullptr);
+		SET_PLACE_STATE(34, nullptr, FILTER_EVENT(5, 34), nullptr);
 	} else if (_currentLevel == 6) {
 		// TODO: implement functions
 		SET_PLACE_STATE(1, nullptr, nullptr, "VS34");

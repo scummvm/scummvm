@@ -129,14 +129,14 @@ struct GameVariables {
 		kCollectFood, // OK
 		kCollectQuill, // OK
 		kStateLampoonReligion, // OK
-		kCollectPetiteCle3,
-		kCollectGravure,
-		kCollectCordon,
+		kCollectSmallKey3, // OK
+		kCollectEngraving, // OK
+		kCollectCord, // OK
 		kCollectVaubanBlueprint1, // OK// 20
 		kCollectVaubanBlueprint2, // OK
-		kCollectEchelle,
-		kLostCordon,
-		kDescendreLustre,
+		kLadderState, // OK
+		kOpenedCurtain, // OK
+		kLoweredChandelier, // OK
 		kOrangerRatisse,
 		kDiscussedLabyrOrder,
 		kUsedBougieAllumee,
@@ -153,7 +153,7 @@ struct GameVariables {
 		kWarnedIncomplete,
 		kUsedVaubanBlueprint1, // OK
 		kUsedVaubanBlueprint2, // OK   // 40
-		kSeenMemorandum,
+		kSeenMemorandum, // OK
 		kCollectScissors, // OK
 		kSavedCountdown, // TODO: calculate it in real time
 		kMax
@@ -489,6 +489,12 @@ private:
 	IMG_CB(44161d);
 	IMG_CB(44161e);
 	IMG_CB(44161f);
+	IMG_CB(45130);
+	IMG_CB(45270);
+	IMG_CB(45270b);
+	IMG_CB(45270c);
+	IMG_CB(45270d);
+	IMG_CB(45280);
 	static const unsigned int kEpigraphMaxLetters = 32;
 	static const char *kEpigraphContent;
 	static const char *kEpigraphPassword;
@@ -499,6 +505,7 @@ private:
 	IMG_CB(88001);
 	IMG_CB(88001b);
 	IMG_CB(88001c);
+	IMG_CB(88002);
 	IMG_CB(88004);
 	IMG_CB(88004b);
 #undef IMG_CB
@@ -540,6 +547,20 @@ private:
 	FILTER_EVENT(4, 15);
 	FILTER_EVENT(4, 16);
 	FILTER_EVENT(4, 17);
+
+	INIT_PLACE(5, 6);
+	FILTER_EVENT(5, 9);
+	FILTER_EVENT(5, 14);
+	FILTER_EVENT(5, 15);
+	FILTER_EVENT(5, 16);
+	void filterEventLevel5UpdatePlaceStates();
+	//FILTER_EVENT(3_5, 20);
+	FILTER_EVENT(5, 23);
+	FILTER_EVENT(5, 27);
+	FILTER_EVENT(5, 28);
+	FILTER_EVENT(5, 29);
+	FILTER_EVENT(5, 33);
+	FILTER_EVENT(5, 34);
 
 #undef FILTER_EVENT
 #undef INIT_PLACE

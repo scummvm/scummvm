@@ -348,11 +348,11 @@ void CryOmni3DEngine_Versailles::setupImgScripts() {
 	SET_SCRIPT_BY_ID(43190);
 	SET_SCRIPT_BY_ID(44071);
 	SET_SCRIPT_BY_ID(44161);
-	//SET_SCRIPT_BY_ID(45130); // TODO: implement it
-	//SET_SCRIPT_BY_ID(45270); // TODO: implement it
-	//SET_SCRIPT_BY_ID(45280); // TODO: implement it
+	SET_SCRIPT_BY_ID(45130);
+	SET_SCRIPT_BY_ID(45270);
+	SET_SCRIPT_BY_ID(45280);
 	SET_SCRIPT_BY_ID(88001);
-	//SET_SCRIPT_BY_ID(88002); // TODO: implement it
+	SET_SCRIPT_BY_ID(88002);
 	//SET_SCRIPT_BY_ID(88003); // TODO: implement it
 	SET_SCRIPT_BY_ID(88004);
 #undef SET_SCRIPT_BY_ID
@@ -2354,6 +2354,136 @@ void CryOmni3DEngine_Versailles::drawEpigraphLetters(Graphics::ManagedSurface &s
 	}
 }
 
+IMG_CB(45130) {
+	fimg->load("52M2.GIF");
+	_dialogsMan["{JOUEUR-VU-PLANS-SALON-DIANE}"] = 'Y';
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+	}
+}
+
+IMG_CB(45270) {
+	fimg->load("51A4_11.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneUse) {
+			if (fimg->_currentZone == 0) {
+				// Open left drawer
+				ZonFixedImage::CallbackFunctor *functor =
+				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+				            &CryOmni3DEngine_Versailles::img_45270b);
+				fimg->changeCallback(functor);
+				break;
+			} else if (fimg->_currentZone == 1) {
+				// Open middle drawer
+				ZonFixedImage::CallbackFunctor *functor =
+				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+				            &CryOmni3DEngine_Versailles::img_45270c);
+				fimg->changeCallback(functor);
+				break;
+			} else if (fimg->_currentZone == 2) {
+				// Open right drawer
+				ZonFixedImage::CallbackFunctor *functor =
+				    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+				            &CryOmni3DEngine_Versailles::img_45270d);
+				fimg->changeCallback(functor);
+				break;
+			}
+		}
+	}
+}
+
+IMG_CB(45270b) {
+	fimg->load("51A4_22.GIF");
+	if (!_gameVariables[GameVariables::kCollectSmallKey3]) {
+		// Collected small key 3
+		collectObject(135, fimg);
+		_gameVariables[GameVariables::kCollectSmallKey3] = 1;
+	}
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneUse) {
+			// Close drawer
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_45270);
+			fimg->changeCallback(functor);
+			break;
+		}
+	}
+}
+
+IMG_CB(45270c) {
+	fimg->load("51A4_32.GIF");
+	if (!_gameVariables[GameVariables::kCollectEngraving]) {
+		// Collected engraving
+		collectObject(134, fimg);
+		_gameVariables[GameVariables::kCollectEngraving] = 1;
+	}
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneUse) {
+			// Close drawer
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_45270);
+			fimg->changeCallback(functor);
+			break;
+		}
+	}
+}
+
+IMG_CB(45270d) {
+	fimg->load("51A4_12.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneUse) {
+			// Close drawer
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_45270);
+			fimg->changeCallback(functor);
+			break;
+		}
+	}
+}
+
+IMG_CB(45280) {
+	if (_gameVariables[GameVariables::kOpenedCurtain]) {
+		fimg->load("53I_LUST.GIF");
+		_gameVariables[GameVariables::kSeenMemorandum] = 1;
+		while (1) {
+			fimg->manage();
+			if (fimg->_exit || fimg->_zoneLow) {
+				fimg->_exit = true;
+				break;
+			}
+		}
+	} else {
+		fimg->_exit = true;
+	}
+}
+
 IMG_CB(88001) {
 	if (!_inventory.inInventoryByNameID(121) &&
 	        _gameVariables[GameVariables::kMedalsDrawerStatus] == 3) {
@@ -2457,6 +2587,25 @@ IMG_CB(88001c) {
 			            &CryOmni3DEngine_Versailles::img_88001);
 			fimg->changeCallback(functor);
 			break;
+		}
+	}
+}
+
+IMG_CB(88002) {
+	fimg->load("53Z1c_10.GIF");
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneUse) {
+			if (_currentLevel == 7) {
+				// You will need something to reach the bomb
+				displayMessageBox(kFixedimageMsgBoxParameters, fimg->surface(), 10,
+				                  fimg->getZoneCenter(fimg->_currentZone),
+				                  Common::Functor0Mem<void, ZonFixedImage>(fimg, &ZonFixedImage::manage));
+			}
 		}
 	}
 }
@@ -3432,6 +3581,345 @@ FILTER_EVENT(4, 17) {
 		return false;
 	} else if (*event == 34174) {
 		handleFixedImg(&CryOmni3DEngine_Versailles::img_34174);
+		return false;
+	}
+
+	return true;
+}
+
+INIT_PLACE(5, 6) {
+	if (currentGameTime() == 2) {
+		setPlaceState(27, 2);
+	}
+}
+
+FILTER_EVENT(5, 9) {
+	if (*event == 25090 && _inventory.selectedObject()) {
+		unsigned int idOBJ = _inventory.selectedObject()->idOBJ();
+		if (currentGameTime() < 4) {
+			if (idOBJ == 125 && _gameVariables[GameVariables::kStateLampoonReligion] == 3) {
+				_dialogsMan["{JOUEUR-MONTRE-PAMPHLET-RELIGION}"] = 'Y';
+			} else if (idOBJ == 115) {
+				_dialogsMan["{JOUEUR-MONTRE-PAMPHLET-ARCHITECTURE}"] = 'Y';
+			} else {
+				_dialogsMan["{JOUEUR-MONTRE-TOUT-AUTRE-OBJET}"] = 'Y';
+			}
+
+			_dialogsMan.play("53N_BON");
+
+			_forcePaletteUpdate = true;
+			// Force reload of the place
+			if (_nextPlaceId == -1u) {
+				_nextPlaceId = _currentPlaceId;
+			}
+
+			if (_dialogsMan["{JOUEUR-MONTRE-PAMPHLET-RELIGION}"] == 'Y' && currentGameTime() != 3) {
+				setGameTime(3, 5);
+				_inventory.removeByNameID(125);
+			}
+
+			_dialogsMan["{JOUEUR-MONTRE-PAMPHLET-RELIGION}"] = 'N';
+			_dialogsMan["{JOUEUR-MONTRE-PAMPHLET-ARCHITECTURE}"] = 'N';
+			_dialogsMan["{JOUEUR-MONTRE-TOUT-AUTRE-OBJET}"] = 'N';
+
+			_inventory.deselectObject();
+		} else {
+			if (_inventory.inInventoryByNameID(135) && _inventory.inInventoryByNameID(116)) {
+				_dialogsMan["{JOUEUR-POSSEDE-CLEF-3-ET-4}"] = 'Y';
+			}
+			// Useless?
+			_dialogsMan["{JOUEUR-MONTRE-TOUT-AUTRE-OBJET}"] = 'N';
+
+			if (idOBJ == 137) {
+				_dialogsMan["{JOUEUR-MONTRE-MEMORANDUM}"] = 'Y';
+			} else {
+				_dialogsMan["{JOUEUR-MONTRE-TOUT-AUTRE-OBJET}"] = 'Y';
+			}
+
+			_dialogsMan.play("54I_BON");
+
+			_forcePaletteUpdate = true;
+			// Force reload of the place
+			if (_nextPlaceId == -1u) {
+				_nextPlaceId = _currentPlaceId;
+			}
+
+			_dialogsMan["{JOUEUR-MONTRE-MEMORANDUM}"] = 'N';
+			_dialogsMan["{JOUEUR-MONTRE-TOUT-AUTRE-OBJET}"] = 'N';
+
+			_inventory.deselectObject();
+		}
+	}
+
+	return true;
+}
+
+FILTER_EVENT(5, 14) {
+	if (*event == 25142 && _inventory.selectedObject()) {
+		unsigned int idOBJ = _inventory.selectedObject()->idOBJ();
+		if (idOBJ == 125) {
+			_dialogsMan["{JOUEUR-MONTRE-PAMPHLET-RELIGION}"] = 'Y';
+		} else {
+			_dialogsMan["{JOUEUR-MONTRE-TOUT-AUTRE-OBJET}"] = 'Y';
+		}
+
+		_dialogsMan.play("52L_BOU");
+
+		_forcePaletteUpdate = true;
+		// Force reload of the place
+		if (_nextPlaceId == -1u) {
+			_nextPlaceId = _currentPlaceId;
+		}
+
+		_dialogsMan["{JOUEUR-MONTRE-PAMPHLET-RELIGION}"] = 'N';
+		_dialogsMan["{JOUEUR-MONTRE-TOUT-AUTRE-OBJET}"] = 'N';
+		_inventory.deselectObject();
+	}
+
+	return true;
+}
+
+FILTER_EVENT(5, 15) {
+	if (*event == 16 && _gameVariables[GameVariables::kLoweredChandelier]) {
+		*event = 29;
+	}
+
+	return true;
+}
+
+FILTER_EVENT(5, 16) {
+	if (*event == 35162) {
+		// Don't move the ladder when there is a guard
+		if (_placeStates[16].state != 0) {
+			// Take back the ladder from the scaffolding
+			if (_gameVariables[GameVariables::kLadderState] == 2) {
+				collectObject(108);
+				_gameVariables[GameVariables::kLadderState] = 1;
+				filterEventLevel5UpdatePlaceStates();
+			}
+		}
+		// Handled here
+		return false;
+	} else if (*event == 35160) {
+		// Don't move the ladder when there is a guard
+		if (_placeStates[16].state != 0) {
+			if (_gameVariables[GameVariables::kLadderState] == 0) {
+				// Take the ladder from the curtain
+				collectObject(108);
+				_gameVariables[GameVariables::kLadderState] = 1;
+				filterEventLevel5UpdatePlaceStates();
+			} else if (_gameVariables[GameVariables::kLadderState] == 1 &&
+			           _inventory.selectedObject() &&
+			           _inventory.selectedObject()->idOBJ() == 108) {
+				// Put back the ladder
+				_inventory.removeByNameID(108);
+				_gameVariables[GameVariables::kLadderState] = 0;
+				filterEventLevel5UpdatePlaceStates();
+			}
+		}
+		// Handled here
+		return false;
+	} else if (*event == 35161) {
+		// Don't move the ladder when there is a guard
+		if (_placeStates[16].state != 0) {
+			if (!_gameVariables[GameVariables::kOpenedCurtain] &&
+			        _inventory.selectedObject() &&
+			        _inventory.selectedObject()->idOBJ() == 133) {
+				// Try to open the curtain
+				if (_gameVariables[GameVariables::kLadderState]) {
+					// Ladder is not near the curtain
+					// Cannot reach the covering
+					displayMessageBoxWarp(4);
+				} else {
+					_inventory.removeByNameID(133);
+					_gameVariables[GameVariables::kOpenedCurtain] = 1;
+					filterEventLevel5UpdatePlaceStates();
+				}
+			}
+		}
+		// Handled here
+		return false;
+	} else if (*event == 28) {
+		// Try to go to scaffolding
+		if (_gameVariables[GameVariables::kLadderState] == 1 &&
+		        _inventory.selectedObject() &&
+		        _inventory.selectedObject()->idOBJ() == 108) {
+			// Put the ladder on the scaffolding
+			_inventory.removeByNameID(108);
+			_gameVariables[GameVariables::kLadderState] = 2;
+			filterEventLevel5UpdatePlaceStates();
+		}
+		// Don't move if there is no ladder on the scaffolding
+		// Don't take selected object into account
+		return _gameVariables[GameVariables::kLadderState] == 2;
+	} else if (*event == 15 && _inventory.inInventoryByNameID(108)) {
+		// Cannot move carrying ladder
+		displayMessageBoxWarp(20);
+		return false;
+	} else {
+		return true;
+	}
+}
+
+void CryOmni3DEngine_Versailles::filterEventLevel5UpdatePlaceStates() {
+	// Place 28 (mirror of 16 with chandelier on the floor) only depends on curtain state
+	setPlaceState(28, _gameVariables[GameVariables::kOpenedCurtain]);
+	if (!_gameVariables[GameVariables::kOpenedCurtain]) {
+		// Curtain is closed
+		switch (_gameVariables[GameVariables::kLadderState]) {
+		case 0:
+			// Ladder is near the curtain
+			setPlaceState(16, 2);
+			break;
+		case 1:
+			// Ladder is with us
+			setPlaceState(16, 4);
+			break;
+		case 2:
+			// Ladder is on the scaffolding
+			setPlaceState(16, 5);
+			break;
+		}
+	} else {
+		// Curtain is opened
+		switch (_gameVariables[GameVariables::kLadderState]) {
+		case 0:
+			// Ladder is near the curtain
+			setPlaceState(16, 1);
+			break;
+		case 1:
+			// Ladder is with us
+			setPlaceState(16, 3);
+			break;
+		case 2:
+			// Ladder is on the scaffolding
+			setPlaceState(16, 6);
+			break;
+		}
+	}
+}
+
+FILTER_EVENT(5, 23) {
+	if (*event != 32) {
+		return true;
+	}
+
+	// Event 32 only
+	// Try to open attic door
+	if (_inventory.selectedObject() &&
+	        _inventory.selectedObject()->idOBJ() == 140) {
+		_gameVariables[GameVariables::kUnlockedAttic] = 1;
+		_inventory.removeByNameID(140);
+		return true;
+	} else if (_gameVariables[GameVariables::kUnlockedAttic] != 1) {
+		// Locked
+		displayMessageBoxWarp(1);
+		return false;
+	} else {
+		return true;
+	}
+}
+
+FILTER_EVENT(5, 27) {
+	if (*event == 25270) {
+		if (_inventory.selectedObject()) {
+			unsigned int idOBJ = _inventory.selectedObject()->idOBJ();
+			if (idOBJ == 115) {
+				_dialogsMan["{JOUEUR-MONTRE-PAMPHLET-ARCHITECTURE}"] = 'Y';
+			} else if (idOBJ == 125) {
+				_dialogsMan["{JOUEUR-MONTRE-PAMPHLET-RELIGION}"] = 'Y';
+			} else if (idOBJ == 134) {
+				_dialogsMan["{JOUEUR-MONTRE-ECROUELLES}"] = 'Y';
+			}
+
+			_dialogsMan.play("52A4_LAC");
+
+			_forcePaletteUpdate = true;
+			// Force reload of the place
+			if (_nextPlaceId == -1u) {
+				_nextPlaceId = _currentPlaceId;
+			}
+
+			_dialogsMan["{JOUEUR-MONTRE-PAMPHLET-ARCHITECTURE}"] = 'N';
+			_dialogsMan["{JOUEUR-MONTRE-PAMPHLET-RELIGION}"] = 'N';
+			_dialogsMan["{JOUEUR-MONTRE-ECROUELLES}"] = 'N';
+
+			if (_dialogsMan["LACHAIZE-TROUVE-ECROUELLES"] == 'Y') {
+				_inventory.removeByNameID(134);
+			}
+			_inventory.deselectObject();
+		}
+	} else if (*event == 35270) {
+		if (!_inventory.inInventoryByNameID(133)) {
+			collectObject(133);
+			_gameVariables[GameVariables::kCollectCord] = 1;
+			setPlaceState(27, 1);
+		}
+		// Handled here
+		return false;
+	} else if (*event > 0 && *event < 10000 && currentGameTime() == 1 &&
+	           _gameVariables[GameVariables::kCollectCord]) {
+		setGameTime(2, 5);
+	}
+
+	return true;
+}
+
+FILTER_EVENT(5, 28) {
+	if (*event == 45280 && !_gameVariables[GameVariables::kOpenedCurtain]) {
+		// Too dark
+		displayMessageBoxWarp(7);
+	}
+
+	return true;
+}
+
+FILTER_EVENT(5, 29) {
+	if (*event == 35290 && _placeStates[29].state == 0) {
+		// Collect memorandum
+		collectObject(137);
+		setPlaceState(29, 1);
+		// Handled here
+		return false;
+	}
+
+	return true;
+}
+
+FILTER_EVENT(5, 33) {
+	if (*event == 35330 && !_gameVariables[GameVariables::kLoweredChandelier]) {
+		unsigned int fakePlaceId = getFakeTransition(*event);
+		fakeTransition(fakePlaceId);
+
+		playInGameVideo("LUSTRE");
+		// setPlaceState will force reload
+
+		setPlaceState(33, 1);
+		setGameTime(4, 5);
+
+		_gameVariables[GameVariables::kLoweredChandelier] = 1;
+
+		// Handled here
+		return false;
+	}
+
+	return true;
+}
+
+FILTER_EVENT(5, 34) {
+	if (*event == 35) {
+		fakeTransition(*event);
+
+		playInGameVideo("53z1c_10");
+
+		executeSeeAction(88002);
+
+		_forcePaletteUpdate = true;
+		// Force reload of the place
+		if (_nextPlaceId == -1u) {
+			_nextPlaceId = _currentPlaceId;
+		}
+		// Handled here
 		return false;
 	}
 
