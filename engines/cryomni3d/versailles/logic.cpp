@@ -247,23 +247,21 @@ static const char *imagesPaintings[] = {
 	// Now let's put dumb images, those without description and any special action, they are not synced with _paintingsTitles
 	"30Q_1.GIF",      // 48: 43060
 	"30Q_2.GIF",      // 49: 43061
-	"52M2.GIF",       // 50: 45130 // Almost dumb
-	"53I_LUST.GIF",   // 51: 45280 // Almost dumb
-	"DUC.GIF",        // 52: 46001
-	"COQ.GIF",        // 53: 46002
-	"CHAT.GIF",       // 54: 46003
-	"DRAGON.GIF",     // 55: 46004
-	"GRUE.GIF",       // 56: 46005
-	"RENARD.GIF",     // 57: 46006
-	"POULE.GIF",      // 58: 46007
-	"LOUP.GIF",       // 59: 46008
-	"MILAN.GIF",      // 60: 46009
-	"GRENOU.GIF",     // 61: 46010
-	"AIGLE.GIF",      // 62: 46011
-	"SOURIS.GIF",     // 63: 46012
-	"CYGNE.GIF",      // 64: 46013 and 46440
-	"LOUPTETE.GIF",   // 65: 46014
-	"CANNES.GIF",     // 66: 46015
+	"DUC.GIF",        // 50: 46001
+	"COQ.GIF",        // 51: 46002
+	"CHAT.GIF",       // 52: 46003
+	"DRAGON.GIF",     // 53: 46004
+	"GRUE.GIF",       // 54: 46005
+	"RENARD.GIF",     // 55: 46006
+	"POULE.GIF",      // 56: 46007
+	"LOUP.GIF",       // 57: 46008
+	"MILAN.GIF",      // 58: 46009
+	"GRENOU.GIF",     // 59: 46010
+	"AIGLE.GIF",      // 60: 46011
+	"SOURIS.GIF",     // 61: 46012
+	"CYGNE.GIF",      // 62: 46013 and 46440
+	"LOUPTETE.GIF",   // 63: 46014
+	"CANNES.GIF",     // 64: 46015
 };
 
 // Setup array for all see actions
@@ -324,22 +322,22 @@ void CryOmni3DEngine_Versailles::setupImgScripts() {
 #define SET_SCRIPT_BY_DUMB(id, image) _imgScripts[id] = &CryOmni3DEngine_Versailles::genericDumbImage<image>
 	SET_SCRIPT_BY_DUMB(43060, 48);
 	SET_SCRIPT_BY_DUMB(43061, 49);
-	SET_SCRIPT_BY_DUMB(46001, 52);
-	SET_SCRIPT_BY_DUMB(46002, 53);
-	SET_SCRIPT_BY_DUMB(46003, 54);
-	SET_SCRIPT_BY_DUMB(46004, 55);
-	SET_SCRIPT_BY_DUMB(46005, 56);
-	SET_SCRIPT_BY_DUMB(46006, 57);
-	SET_SCRIPT_BY_DUMB(46007, 58);
-	SET_SCRIPT_BY_DUMB(46008, 59);
-	SET_SCRIPT_BY_DUMB(46009, 60);
-	SET_SCRIPT_BY_DUMB(46010, 61);
-	SET_SCRIPT_BY_DUMB(46011, 62);
-	SET_SCRIPT_BY_DUMB(46012, 63);
-	SET_SCRIPT_BY_DUMB(46013, 64);
-	SET_SCRIPT_BY_DUMB(46014, 65);
-	SET_SCRIPT_BY_DUMB(46015, 66);
-	SET_SCRIPT_BY_DUMB(46440, 64); // Same as 46013
+	SET_SCRIPT_BY_DUMB(46001, 50);
+	SET_SCRIPT_BY_DUMB(46002, 51);
+	SET_SCRIPT_BY_DUMB(46003, 52);
+	SET_SCRIPT_BY_DUMB(46004, 53);
+	SET_SCRIPT_BY_DUMB(46005, 54);
+	SET_SCRIPT_BY_DUMB(46006, 55);
+	SET_SCRIPT_BY_DUMB(46007, 56);
+	SET_SCRIPT_BY_DUMB(46008, 57);
+	SET_SCRIPT_BY_DUMB(46009, 58);
+	SET_SCRIPT_BY_DUMB(46010, 59);
+	SET_SCRIPT_BY_DUMB(46011, 60);
+	SET_SCRIPT_BY_DUMB(46012, 61);
+	SET_SCRIPT_BY_DUMB(46013, 62);
+	SET_SCRIPT_BY_DUMB(46014, 63);
+	SET_SCRIPT_BY_DUMB(46015, 64);
+	SET_SCRIPT_BY_DUMB(46440, 62); // Same as 46013
 #undef SET_SCRIPT_BY_DUMB
 	// From now specific handlers for anything that is not a painting
 	SET_SCRIPT_BY_ID(41801);
@@ -350,9 +348,9 @@ void CryOmni3DEngine_Versailles::setupImgScripts() {
 	SET_SCRIPT_BY_ID(43190);
 	SET_SCRIPT_BY_ID(44071);
 	SET_SCRIPT_BY_ID(44161);
-	//SET_SCRIPT_BY_ID(45130); // TODO: implement it // Almost dumb
+	//SET_SCRIPT_BY_ID(45130); // TODO: implement it
 	//SET_SCRIPT_BY_ID(45270); // TODO: implement it
-	//SET_SCRIPT_BY_ID(45280); // TODO: implement it // Almost dumb
+	//SET_SCRIPT_BY_ID(45280); // TODO: implement it
 	SET_SCRIPT_BY_ID(88001);
 	//SET_SCRIPT_BY_ID(88002); // TODO: implement it
 	//SET_SCRIPT_BY_ID(88003); // TODO: implement it
