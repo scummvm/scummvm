@@ -62,12 +62,16 @@ private:
 
 	int last_precedence;
 
+	// hemedia
+	schanid_t mchannel;
+	schanid_t schannel;
+	long resids[2][MAXRES];
+	int numres[2];
 
 	// hemisc
 	char gamefile[255];
 	int game_version;
 	int object_size;
-	//HUGO_FILE game;
 	Common::SeekableReadStream *game;
 	HUGO_FILE script;
 	HUGO_FILE save;
@@ -187,6 +191,13 @@ private:
 	 */
 	char recursive_call;
 	int parse_location;						///< usually var[location]
+
+	// heres
+	HUGO_FILE resource_file;
+	int extra_param;
+	char loaded_filename[MAX_RES_PATH];
+	char loaded_resname[MAX_RES_PATH];
+	char resource_type = 0;
 
 	// herun
 	int passlocal[MAXLOCALS];		///< locals passed to routine
@@ -619,6 +630,35 @@ private:
 	/**@}*/
 
 	/**
+	 * \defgroup hemedia
+	 * @{
+	 */
+
+	int loadres(HUGO_FILE infile, int reslen, int type);
+
+	int hugo_hasgraphics();
+
+	int hugo_displaypicture(HUGO_FILE infile, long reslen);
+
+	void initsound();
+
+	void initmusic();
+
+	int hugo_playmusic(HUGO_FILE infile, long reslen, char loop_flag);
+
+	void hugo_musicvolume(int vol);
+
+	void hugo_stopmusic();
+
+	int hugo_playsample(HUGO_FILE infile, long reslen, char loop_flag);
+
+	void hugo_samplevolume(int vol);
+
+	void hugo_stopsample();
+
+	/**@}*/
+
+	/**
 	 * \defgroup heobject - Object/property/attribute management functions
 	 * @{
 	 */
@@ -840,6 +880,41 @@ private:
 	/**@}*/
 
 	/**
+	 * \defgroup heres
+	 * @{
+	 */
+
+	void DisplayPicture();
+
+	void PlayMusic();
+
+	void PlaySample();
+
+	void PlayVideo();
+
+	/**
+	 * Assumes that filename/resname contain a resourcefile name and a resource name.
+	 * If resname is "", filename contains the path of the resource on disk.
+	 * Returns the length of the resource if if the named resource is found.
+	 *
+	 * If FindResource() returns non-zero, the file is hot, i.e., it is open and positioned
+	 * to the start of the resource.
+	 *
+	 * Note that resourcefiles are expected to be in (if not the current directory) "object" or "games",
+	 * and on-disk resources in (if not the given directory) "source" or "resource" (where these are the
+	 * environment variables "HUGO_...", not actual on-disk directories).
+	 */
+	long FindResource(char *filename, char *resname);
+
+	/**
+	 * Processes resourcefile/filename (and resource, if applicable).
+	 * Returns 0 if a valid 0 parameter is passed as in "music 0" or "sound 0".
+	 */
+	int GetResourceParameters(char *filename, char *resname, int restype);
+
+	/**@}*/
+
+	/**
 	* \defgroup herun
 	* @{
 	*/
@@ -934,7 +1009,7 @@ private:
 
 	int SetCompound(int t);
 
-	 /**@}*/
+	/**@}*/
 
 	/**
 	* \defgroup Miscellaneous
@@ -943,6 +1018,10 @@ private:
 
 	int hugo_fseek(Common::SeekableReadStream *s, long int offset, int whence) {
 		return s->seek(offset, whence);
+	}
+	int hugo_fseek(strid_t s, long int offset, int whence) {
+		Common::SeekableReadStream *rs = *s;
+		return hugo_fseek(rs, offset, whence);
 	}
 
 	int hugo_fgetc(Common::SeekableReadStream *s) {
@@ -976,6 +1055,10 @@ private:
 
 	size_t hugo_fread(void *ptr, size_t size, size_t count, Common::SeekableReadStream *s) {
 		return s->read(ptr, size * count);
+	}
+	size_t hugo_fread(void *ptr, size_t size, size_t count, strid_t s) {
+		Common::SeekableReadStream *rs = *s;
+		return hugo_fread(ptr, size, count, rs);
 	}
 
 	int hugo_fprintf(Common::WriteStream *s, const char *fmt, ...) {
@@ -1016,6 +1099,10 @@ private:
 
 	long hugo_ftell(Common::SeekableReadStream *s) {
 		return s->pos();
+	}
+	long hugo_ftell(strid_t s) {
+		Common::SeekableReadStream *rs = *s;
+		return hugo_ftell(rs);
 	}
 
 	int hugo_fclose(strid_t f) {
@@ -1113,15 +1200,6 @@ public:
 	 * Save the game to the passed stream
 	 */
 	virtual Common::Error saveGameData(strid_t file, const Common::String &desc) override;
-
-	// TODO: Stubs to be Properly implemented
-	void hugo_stopsample() {}
-	void hugo_stopmusic() {}
-	int hugo_hasgraphics() { return 0; }
-	void DisplayPicture() {}
-	void PlayMusic() {}
-	void PlaySample() {}
-	void PlayVideo() {}
 };
 
 } // End of namespace Hugo

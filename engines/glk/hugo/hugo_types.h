@@ -90,6 +90,19 @@ enum ERROR_TYPE {
 	DIVIDE_E		///< divide by zero
 };
 
+enum RESOURCE_TYPE {
+	JPEG_R,			///< JPEG image
+	WAVE_R,			///< RIFF WAVE audio sample
+	MOD_R,			///< MOD music module
+	S3M_R,			///< S3M music module
+	XM_R,			///< XM music module
+	MIDI_R,			///< MIDI music
+	MP3_R,			///< MP3 audio layer
+	AVI_R,			///< Video for Windows
+	MPEG_R,			///< MPEG video
+	UNKNOWN_R
+};
+
 /**
  * A structure used for disambiguation in MatchObject()
  */

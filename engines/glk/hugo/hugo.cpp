@@ -31,6 +31,8 @@ Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 		SCREENWIDTH(0), SCREENHEIGHT(0), FIXEDCHARWIDTH(0), FIXEDLINEHEIGHT(0),
 		// heexpr
 		evalcount(0), incdec(0), getaddress(0), inexpr(0), inobj(0),
+		// hemedia
+		mchannel(nullptr), schannel(nullptr),
 		// hemisc
 		game_version(0), object_size(0), game(nullptr), script(nullptr), save(nullptr),
 		playback(nullptr), record(nullptr), io(nullptr), ioblock('\0'), ioerror('\0'),
@@ -56,6 +58,8 @@ Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 		objgrammar(0), objstart(0), objfinish(0), addflag(false), speaking(0), oopscount(0),
 		parse_called_twice(0), reparse_everything(0), full_buffer(false), recursive_call(false),
 		parse_location(0),
+		// heres
+		resource_file(nullptr), extra_param(0), resource_type(0),
 		// herun
 		arguments_passed(0), ret(0), retflag(0), during_player_input(false), override_full(0),
 		game_reset(false), stack_depth(0), tail_recursion(0), tail_recursion_addr(0),
@@ -78,6 +82,10 @@ Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 	Common::fill(&eval[0], &eval[MAX_EVAL_ELEMENTS], 0);
 	Common::fill(&var[0], &var[MAXLOCALS + MAXGLOBALS], 0);
 
+	// hemedia
+	Common::fill(&resids[0][0], &resids[2][MAXRES], 0);
+	numres[0] = numres[1] = 0;
+
 	// hemisc		
 	Common::fill(&context_command[0][0], &context_command[MAX_CONTEXT_COMMANDS][64], 0);
 	Common::fill(&id[0], &id[3], '\0');
@@ -97,6 +105,10 @@ Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 	Common::fill(&objword_cache[0], &objword_cache[MAXWORDS], 0);
 	Common::fill(&oops[0], &oops[MAXBUFFER + 1], '\0');
 	Common::fill(&punc_string[0], &punc_string[64], '\0');
+
+	// heres
+	Common::fill(&loaded_filename[0], &loaded_filename[MAX_RES_PATH], '\0');
+	Common::fill(&loaded_resname[0], &loaded_resname[MAX_RES_PATH], '\0');
 
 	// herun
 	Common::fill(&passlocal[0], &passlocal[MAXLOCALS], 0);

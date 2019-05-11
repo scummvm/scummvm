@@ -74,9 +74,11 @@ MODULE_OBJS := \
 	hugo/detection.o \
 	hugo/heexpr.o \
 	hugo/heglk.o \
+	hugo/hemedia.o \
 	hugo/hemisc.o \
 	hugo/heobject.o \
 	hugo/heparse.o \
+	hugo/heres.o \
 	hugo/herun.o \
 	hugo/heset.o \
 	hugo/htokens.o \

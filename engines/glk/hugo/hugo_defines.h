@@ -31,8 +31,12 @@ namespace Hugo {
 #define HEVERSION 3
 #define HEREVISION 3
 #define HEINTERIM ".0"
+
 #define GLK
 #define DEBUGGER 1
+#define GRAPHICS_SUPPORTED
+#define SOUND_SUPPORTED
+#define SETTITLE_SUPPORTED
 
 #define MAXOBJLIST 32
 #define MAX_CONTEXT_COMMANDS	32
@@ -47,6 +51,8 @@ namespace Hugo {
 #define MAXCALLS 99
 #define MAXBREAKPOINTS 99
 #define MAX_CODE_HISTORY 99
+#define MAX_RES_PATH 255
+#define MAXRES 1024
 #define CHARWIDTH 1
 
 #define HUGO_FILE	strid_t
@@ -150,7 +156,11 @@ browsing.
 #define TAIL_RECURSION_ROUTINE          (-1)
 #define TAIL_RECURSION_PROPERTY         (-2)
 
+/* For system_status: */
 #define STAT_UNAVAILABLE	((short)-1)
+#define STAT_NOFILE 		101
+#define STAT_NORESOURCE		102
+#define STAT_LOADERROR		103
 
 #define PRINTFATALERROR(a)	error("%s", a)
 
@@ -162,6 +172,9 @@ browsing.
 #define VIEW_WATCH 4
 
 #define FORCE_REDRAW 1
+
+#define PIC 0
+#define SND 1
 
 #endif
 

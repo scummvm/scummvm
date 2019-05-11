@@ -2104,8 +2104,8 @@ NextSyn:
 		{
 			if (strcmp(word[i+1], "~and"))
 			{
-				static char *END = "~and";
-				word[i] = END;
+				static char AND[5] = "~and";
+				word[i] = AND;
 				wd[i] = FindWord("~and");
 			}
 			else
