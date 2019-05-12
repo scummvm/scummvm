@@ -82,6 +82,9 @@ void SpecialOpcodes::initOpcodes() {
 
 	OPCODE(0x5e, spcUnk5e);
 	OPCODE(0x5f, spcUnk5f);
+
+	OPCODE(0x7b, spcSetCameraXToZero);
+
 }
 
 #undef OPCODE
@@ -190,6 +193,10 @@ void SpecialOpcodes::panCamera(int16 mode) {
 		_vm->_dragonINIResource->setFlickerRecord(_vm->getINI(0));
 	}
 	return;
+}
+
+void SpecialOpcodes::spcSetCameraXToZero() {
+	_vm->_scene->_camera.x = 0;
 }
 
 } // End of namespace Dragons

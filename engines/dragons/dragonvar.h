@@ -31,10 +31,12 @@ class BigfileArchive;
 class DragonVAR {
 private:
 	byte *_data;
+	BigfileArchive *_bigfileArchive;
 public:
 	virtual ~DragonVAR();
 
 	DragonVAR(BigfileArchive *bigfileArchive);
+	void reset();
 	uint16 getVar(uint16 offset);
 	void setVar(uint16 offset, uint16 value);
 };

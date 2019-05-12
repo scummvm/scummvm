@@ -22,6 +22,7 @@
 #ifndef SCUMMVM_DRAGONFLG_H
 #define SCUMMVM_DRAGONFLG_H
 
+#include "common/stream.h"
 #include "common/system.h"
 
 namespace Dragons {
@@ -30,11 +31,13 @@ class BigfileArchive;
 
 class Properties {
 public:
-	Properties();
+	Properties(uint count);
+	~Properties();
 	void init(uint count, byte *properties);
 	void clear();
 	bool get(uint32 propertyId);
 	void set(uint32 propertyId, bool value);
+	void save(uint numberToWrite, Common::WriteStream *out);
 private:
 	uint _count;
 	byte *_properties;
@@ -46,13 +49,16 @@ class DragonFLG {
 private:
 	byte *_data;
 	uint32_t _dataSize;
-	Properties properties;
+	Properties *properties;
 public:
 	virtual ~DragonFLG();
 
 	DragonFLG(BigfileArchive *bigfileArchive);
 	bool get(uint32 propertyId);
 	void set(uint32 propertyId, bool value);
+
+	void saveState(Common::WriteStream *out);
+	void loadState(Common::ReadStream *in);
 };
 
 } // End of namespace Dragons

@@ -27,13 +27,22 @@ namespace Dragons {
 
 // Properties
 
-Properties::Properties()
-		: _count(0), _properties(0) {
+Properties::Properties(uint count)
+		: _count(count) {
+	_properties = (byte *)malloc(getSize());
+	if(!_properties) {
+		error("Failed to allocate mem for properties");
+	}
+	memset(_properties, 0, getSize());
+}
+
+Properties::~Properties() {
+	free(_properties);
 }
 
 void Properties::init(uint count, byte *properties) {
-	_count = count;
-	_properties = properties;
+	assert(count <= getSize());
+	memcpy(_properties, properties, count);
 }
 
 void Properties::clear() {
@@ -71,23 +80,42 @@ void Properties::getProperyPos(uint32 propertyId, uint &index, byte &mask) {
 	mask = 1 << (propertyId & 7);
 }
 
+void Properties::save(uint numberToWrite, Common::WriteStream *out) {
+	assert(numberToWrite % 8 == 0);
+	assert(numberToWrite <= _count);
+	out->write(_properties, numberToWrite / 8);
+}
+
 DragonFLG::DragonFLG(BigfileArchive *bigfileArchive) {
 	_data = bigfileArchive->load("dragon.flg", _dataSize);
-	properties.init(288, _data);
+	properties = new Properties(288);
+	properties->init(_dataSize, _data);
 }
 
 DragonFLG::~DragonFLG() {
-	if (_data) {
-		delete _data;
-	}
+	delete _data;
 }
 
 bool DragonFLG::get(uint32 propertyId) {
-	return properties.get(propertyId);
+	return properties->get(propertyId);
 }
 
 void DragonFLG::set(uint32 propertyId, bool value) {
-	properties.set(propertyId, value);
+	properties->set(propertyId, value);
+}
+
+void DragonFLG::saveState(Common::WriteStream *out) {
+	properties->save(128, out); // save first 80 flags.
+}
+
+void DragonFLG::loadState(Common::ReadStream *in) {
+	byte savedState[0x10];
+
+	properties->init(_dataSize, _data);
+
+	in->read(savedState, 0x10);
+	properties->init(0x10, savedState);
+
 }
 
 } // End of namespace Dragons

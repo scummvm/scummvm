@@ -127,7 +127,6 @@ public:
 	uint16 data_800633fa;
 	Inventory *_inventory;
 	Cursor *_cursor;
-	uint16 iniItemInHand;
 
 	uint16 unkArray_uint16[42];
 	opCode1AStruct opCode1A_tbl[8];
@@ -157,7 +156,8 @@ private:
 	bool _leftMouseButtonUp;
 	bool _rightMouseButtonUp;
 	bool _iKeyUp;
-
+protected:
+	virtual bool hasFeature(EngineFeature f) const;
 public:
 	DragonsEngine(OSystem *syst);
 	~DragonsEngine();
@@ -168,6 +168,11 @@ public:
 	const char *getSavegameFilename(int num);
 	static Common::String getSavegameFilename(const Common::String &target, int num);
 	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, SaveHeader &header, bool skipThumbnail = true);
+
+	virtual Common::Error loadGameState(int slot);
+	virtual bool canLoadGameStateCurrently();
+	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+	virtual bool canSaveGameStateCurrently();
 
 	void updateActorSequences();
 	void setFlags(uint32 flags);
@@ -198,6 +203,8 @@ public:
 	void reset_screen_maybe();
 
 private:
+	bool savegame(const char *filename, const char *description);
+	bool loadgame(const char *filename);
 	void gameLoop();
 	void updateHandler();
 	void updatePathfindingActors();

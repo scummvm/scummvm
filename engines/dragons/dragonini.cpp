@@ -26,14 +26,19 @@
 namespace Dragons {
 
 #define DRAGON_INI_STRUCT_SIZE 0x22
-DragonINIResource::DragonINIResource(BigfileArchive *bigfileArchive) {
+DragonINIResource::DragonINIResource(BigfileArchive *bigfileArchive): _bigfileArchive(bigfileArchive), _dragonINI(0) {
+	reset();
+}
+
+void DragonINIResource::reset() {
 	uint32 fileSize;
-	byte *data = bigfileArchive->load("dragon.ini", fileSize);
+	byte *data = _bigfileArchive->load("dragon.ini", fileSize);
 	Common::SeekableReadStream *readStream = new Common::MemoryReadStream(data, fileSize, DisposeAfterUse::YES);
 
-	_count = fileSize / DRAGON_INI_STRUCT_SIZE;
-
-	_dragonINI = new DragonINI[_count];
+	if (!_dragonINI) {
+		_count = fileSize / DRAGON_INI_STRUCT_SIZE;
+		_dragonINI = new DragonINI[_count];
+	}
 
 	for(int i=0; i < _count; i++) {
 		_dragonINI[i].id = (uint16)i;

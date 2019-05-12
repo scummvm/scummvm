@@ -65,11 +65,13 @@ struct DragonINI
 
 class DragonINIResource {
 private:
+	BigfileArchive *_bigfileArchive;
 	DragonINI *_dragonINI;
 	uint16 _count;
 	DragonINI *_flickerINI;
 public:
 	DragonINIResource(BigfileArchive *bigfileArchive);
+	void reset();
 	uint16 totalRecords() { return _count; }
 	DragonINI *getRecord(uint16 index);
 	void setFlickerRecord(DragonINI *dragonINI);
