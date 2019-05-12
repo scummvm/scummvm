@@ -76,7 +76,6 @@ public:
 	void reset();
 	void resume();
 
-	void playSpeechLine(int actorId, int sentenceId, float duration);
 	void destinationFocus(int destination);
 	void setupDescription(int actorId, int sentenceId);
 	void resetDescription();
