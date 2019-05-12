@@ -24,16 +24,12 @@
 
 namespace Dragons {
 
-DragonVAR::DragonVAR(BigfileArchive *bigfileArchive) {
-	uint32 size;
-	_data = bigfileArchive->load("dragon.var", size);
-	assert(size == 30);
+DragonVAR::DragonVAR(BigfileArchive *bigfileArchive): _bigfileArchive(bigfileArchive), _data(0) {
+	reset();
 }
 
 DragonVAR::~DragonVAR() {
-	if (_data) {
 		delete _data;
-	}
 }
 
 uint16 DragonVAR::getVar(uint16 offset) {
@@ -46,6 +42,13 @@ void DragonVAR::setVar(uint16 offset, uint16 value) {
 	assert(_data);
 	assert(offset < 15);
 	WRITE_LE_INT16(_data + offset * 2, value);
+}
+
+void DragonVAR::reset() {
+	delete _data;
+	uint32 size;
+	_data = _bigfileArchive->load("dragon.var", size);
+	assert(size == 30);
 }
 
 } // End of namespace Dragons

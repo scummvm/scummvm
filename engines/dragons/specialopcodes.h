@@ -68,6 +68,7 @@ protected:
 	void spcUnk5e();
 	void spcUnk5f();
 
+	void spcSetCameraXToZero(); //0x7b
 private:
 	void panCamera(int16 mode);
 };

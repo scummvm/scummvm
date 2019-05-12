@@ -51,6 +51,7 @@ void Cursor::init(ActorManager *actorManager, DragonINIResource *dragonINIResour
 	dragonINIResource->getFlickerRecord()->actor = _actor; //TODO is this correct?
 	dragonINIResource->getFlickerRecord()->field_1a_flags_maybe |= Dragons::INI_FLAG_1;
 	_iniUnderCursor = 0;
+	iniItemInHand = 0;
 	data_8007283c = 0;
 	_cursorActivationSeqOffset = 0;
 	data_800728b0_cursor_seqID = 0;
@@ -116,7 +117,7 @@ void Cursor::update() {
 		}
 	}
 
-	if (_vm->iniItemInHand == 0) {
+	if (iniItemInHand == 0) {
 		if (_actor->_sequenceID != 0x84) {
 			_actor->updateSequence(0x84);
 		}
@@ -331,7 +332,7 @@ void Cursor::selectPreviousCursor() {
 		_sequenceID = 0x10001;
 	}
 	if (_sequenceID == -1) {
-		_sequenceID = _vm->iniItemInHand == 0 ? 4 : 5;
+		_sequenceID = iniItemInHand == 0 ? 4 : 5;
 	}
 }
 

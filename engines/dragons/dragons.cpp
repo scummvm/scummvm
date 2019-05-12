@@ -66,7 +66,6 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	run_func_ptr_unk_countdown_timer = 0;
 	data_8006a3a0_flag = 0;
 	data_800633fa = 0;
-	iniItemInHand = 0;
 	_inventory = new Inventory(this);
 	_cursor = new Cursor(this);
 
@@ -141,8 +140,21 @@ Common::Error DragonsEngine::run() {
 	_cursor->init(_actorManager, _dragonINIResource);
 	_inventory->init(_actorManager, _backgroundResourceLoader, new Bag(_bigfileArchive, _screen), _dragonINIResource);
 
+	_dragonVAR->setVar(1, 1);
+
+	_scene->setSceneId(2);
+	byte *obd = _dragonOBD->getObdAtOffset(0x2c5a); //TODO read value from dragon.spt + 0xc
+	ScriptOpCall scriptOpCall;
+	scriptOpCall._code = obd + 4;
+	scriptOpCall._codeEnd = scriptOpCall._code + READ_LE_UINT32(obd);
+	_scriptOpcodes->runScript(scriptOpCall);
+
 	uint16 sceneId = 0x12;
-	_dragonINIResource->getFlickerRecord()->sceneId = sceneId; //TODO
+	if(getINI(0)->sceneId == 0) {
+		getINI(0)->sceneId = sceneId; //TODO
+	} else {
+		_scene->setSceneId(getINI(0)->sceneId);
+	}
 	_sceneId1 = sceneId;
 	_scene->loadScene(sceneId, 0x1e);
 
@@ -209,7 +221,6 @@ void DragonsEngine::gameLoop()
 	actorId = 0;
 
 	while(!shouldQuit()) {
-		LAB_80026a74:
 		_scene->draw();
 		_screen->updateScreen();
 		wait();
@@ -290,7 +301,7 @@ void DragonsEngine::gameLoop()
 //		actorId = CheckButtonMapPress_CycleUp(0);
 //		if (((actorId & 0xffff) != 0) && isInputEnabled()) {
 //			_cursor->_sequenceID = _cursor->_sequenceID + 1;
-//			if (iniItemInHand == 0) {
+//			if (_cursor->iniItemInHand == 0) {
 //				bVar1 = _cursor->_sequenceID < 5;
 //			}
 //			else {
@@ -359,7 +370,7 @@ void DragonsEngine::gameLoop()
 							_inventory->setType(1);
 							_inventory->openInventory();
 							joined_r0x80027a38:
-							if (iniItemInHand == 0) {
+							if (_cursor->iniItemInHand == 0) {
 								_cursor->_sequenceID = 1;
 								actorId = uVar3;
 							}
@@ -368,7 +379,7 @@ void DragonsEngine::gameLoop()
 								actorId = uVar3;
 							}
 						}
-						goto LAB_80026a74;
+						continue;
 					}
 					uVar6 = _inventory->getType();
 					if (checkForActionButtonRelease() && isFlagSet(ENGINE_FLAG_8)) {
@@ -377,7 +388,7 @@ void DragonsEngine::gameLoop()
 							if (_cursor->_iniUnderCursor == 0x8002) {
 								LAB_80027294:
 								uVar7 = 0;
-								if (iniItemInHand == 0) {
+								if (_cursor->iniItemInHand == 0) {
 									if ((bit_flags_8006fbd8 & 3) != 1) {
 										sequenceId = _dragonVAR->getVar(7);
 										uVar7 = _inventory->_old_showing_value;
@@ -395,12 +406,12 @@ void DragonsEngine::gameLoop()
 									if (uVar7 < 0x29) {
 										_cursor->_sequenceID = 1;
 										waitForFrames(1);
-										uVar6 = iniItemInHand;
-										iniItemInHand = 0;
+										uVar6 = _cursor->iniItemInHand;
+										_cursor->iniItemInHand = 0;
 										_cursor->_iniUnderCursor = 0;
 										unkArray_uint16[(uint)uVar7] = uVar6;
 										actorId = uVar3;
-										goto LAB_80026a74;
+										continue;
 									}
 								}
 							}
@@ -413,7 +424,7 @@ void DragonsEngine::gameLoop()
 								_inventory->_old_showing_value = uVar6;
 								FUN_80038890();
 								actorId = uVar3;
-								goto LAB_80026a74;
+								continue;
 							}
 						}
 						LAB_80027ab4:
@@ -433,7 +444,7 @@ void DragonsEngine::gameLoop()
 								clearFlags(ENGINE_FLAG_8);
 							}
 							_scriptOpcodes->_data_800728c0 = _cursor->data_80072890;
-							_cursor->data_80072890 = iniItemInHand;
+							_cursor->data_80072890 = _cursor->iniItemInHand;
 						}
 					}
 				}
@@ -456,7 +467,7 @@ void DragonsEngine::gameLoop()
 			LAB_80027b58:
 			runINIScripts();
 			actorId = uVar3;
-			goto LAB_80026a74;
+			continue;
 		}
 		if (checkForInventoryButtonRelease()) {
 			_counter = 0;
@@ -466,7 +477,7 @@ void DragonsEngine::gameLoop()
 			_inventory->_old_showing_value = _inventory->getType();
 			actorId = uVar3;
 			_inventory->setType(uVar6);
-			goto LAB_80026a74;
+			continue;
 		}
 		uVar6 = _inventory->getType();
 		if (checkForActionButtonRelease() && isFlagSet(ENGINE_FLAG_8)) {
@@ -489,7 +500,7 @@ void DragonsEngine::gameLoop()
 				}
 				_inventory->_old_showing_value = uVar6;
 				actorId = uVar3;
-				goto LAB_80026a74;
+				continue;
 			}
 			if (_cursor->_iniUnderCursor != 0) {
 				actorId_00 = 0;
@@ -497,7 +508,7 @@ void DragonsEngine::gameLoop()
 					_cursor->data_800728b0_cursor_seqID = _cursor->_sequenceID;
 					_cursor->data_80072890 = _cursor->_iniUnderCursor;
 					if (4 < _cursor->_sequenceID) {
-						_cursor->data_80072890 = iniItemInHand;
+						_cursor->data_80072890 = _cursor->iniItemInHand;
 						_scriptOpcodes->_data_800728c0 = _cursor->_iniUnderCursor;
 					}
 					clearFlags(ENGINE_FLAG_8);
@@ -513,10 +524,10 @@ void DragonsEngine::gameLoop()
 				}
 				puVar9 = unkArray_uint16 + (actorId_00 & 0xffff);
 				Actor *actor = _actorManager->getActor(actorId_00 + 0x17);
-				*puVar9 = iniItemInHand;
+				*puVar9 = _cursor->iniItemInHand;
 				_cursor->data_8007283c = actor->_sequenceID;
 				actor->clearFlag(ACTOR_FLAG_40);
-				iniItemInHand = _cursor->_iniUnderCursor;
+				_cursor->iniItemInHand = _cursor->_iniUnderCursor;
 				_cursor->_sequenceID = 5;
 				actorId = uVar3;
 				if (*puVar9 != 0) {
@@ -532,10 +543,10 @@ void DragonsEngine::gameLoop()
 					actor->priorityLayer = 6;
 					actorId = uVar3;
 				}
-				goto LAB_80026a74;
+				continue;
 			}
 			uVar6 = 0;
-			if (iniItemInHand == 0) goto LAB_80027b58;
+			if (_cursor->iniItemInHand == 0) goto LAB_80027b58;
 			//drop item back into inventory
 			actorId = 0;
 			do {
@@ -551,12 +562,12 @@ void DragonsEngine::gameLoop()
 			} while (uVar6 < 0x29);
 			if (actorId != 0x29) {
 				actorId_00 = (uint)(ushort)(uVar6 + 0x17);
-				unkArray_uint16[actorId] = iniItemInHand;
+				unkArray_uint16[actorId] = _cursor->iniItemInHand;
 				Actor *actor = _actorManager->getActor(actorId_00);
 				actor->flags = 0;
 				actor->priorityLayer = 0;
 				actor->field_e = 0x100;
-				iniItemInHand = 0;
+				_cursor->iniItemInHand = 0;
 				actor->updateSequence(
 						 getINI((uint)unkArray_uint16[actorId] - 1)->field_8 * 2 + 10);
 				uVar6 = _cursor->_sequenceID;
@@ -571,7 +582,7 @@ void DragonsEngine::gameLoop()
 			}
 		}
 		LAB_8002790c:
-		if ((iniItemInHand == 0) ||
+		if ((_cursor->iniItemInHand == 0) ||
 			(((ushort)(_cursor->_x - 10U) < 300 && ((ushort)(_cursor->_y - 10U) < 0xb4))))
 			goto LAB_80027b58;
 		_cursor->_sequenceID = 5;
@@ -651,45 +662,6 @@ void DragonsEngine::updateHandler() {
 	// TODO data_8006a3a0 logic. @ 0x8001c2f4
 
 	data_8006a3a0_flag &= ~0x40;
-}
-
-const char *DragonsEngine::getSavegameFilename(int num) {
-	static Common::String filename;
-	filename = getSavegameFilename(_targetName, num);
-	return filename.c_str();
-}
-
-Common::String DragonsEngine::getSavegameFilename(const Common::String &target, int num) {
-	assert(num >= 0 && num <= 999);
-	return Common::String::format("%s.%03d", target.c_str(), num);
-}
-
-#define DRAGONS_SAVEGAME_VERSION 0
-
-kReadSaveHeaderError
-DragonsEngine::readSaveHeader(Common::SeekableReadStream *in, SaveHeader &header, bool skipThumbnail) {
-
-	header.version = in->readUint32LE();
-	if (header.version > DRAGONS_SAVEGAME_VERSION)
-		return kRSHEInvalidVersion;
-
-	byte descriptionLen = in->readByte();
-	header.description = "";
-	while (descriptionLen--) {
-		header.description += (char) in->readByte();
-	}
-
-	if (!Graphics::loadThumbnail(*in, header.thumbnail, skipThumbnail)) {
-		return kRSHEIoError;
-	}
-
-	header.flags = in->readUint32LE();
-
-	header.saveDate = in->readUint32LE();
-	header.saveTime = in->readUint32LE();
-	header.playTime = in->readUint32LE();
-
-	return ((in->eos() || in->err()) ? kRSHEIoError : kRSHENoError);
 }
 
 uint32 DragonsEngine::calulateTimeLeft() {
@@ -1182,12 +1154,40 @@ void DragonsEngine::FUN_80038994() {
 }
 
 void DragonsEngine::FUN_8002931c() {
+
+	DragonINI *flicker = _dragonINIResource->getFlickerRecord();
+	if (flicker && flicker->actor) {
+		flicker->actor->clearFlag(ACTOR_FLAG_10);
+		if (getCurrentSceneId() != 0x2e || !flicker->actor->_actorResource || flicker->actor->_actorResource->_id != 0x91) {
+			flicker->actor->setFlag(ACTOR_FLAG_4);
+		}
+	}
+//TODO
+//	uVar1 = FUN_80023830(9);
+//	local_30 = 0x11;
+//	local_2c = local_280[(uint)DAT_800728b0 * 9 + (uVar1 & 0xffff)];
+//	FlickerTalkMaybe(&local_30);
 	error("FUN_8002931c"); //TODO
 }
 
 void DragonsEngine::reset_screen_maybe() {
 	data_8006a3a0_flag &= ~0x10;
 	//TODO
+}
+
+bool DragonsEngine::canLoadGameStateCurrently() {
+	return isInputEnabled();
+}
+
+bool DragonsEngine::canSaveGameStateCurrently() {
+	return isInputEnabled() && _inventory->getType() != 1;
+}
+
+bool DragonsEngine::hasFeature(Engine::EngineFeature f) const {
+	return
+		// TODO (f == kSupportsRTL) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
 }
 
 } // End of namespace Dragons

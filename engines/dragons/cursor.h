@@ -42,6 +42,7 @@ public:
 	int16 _y;
 	int16 data_8007283c;
 	int16 _cursorActivationSeqOffset;
+	uint16 iniItemInHand;
 private:
 	DragonsEngine *_vm;
 	Actor *_actor;
