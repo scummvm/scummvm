@@ -16,6 +16,7 @@ MODULE_OBJS := \
     dragonvar.o \
 	dragons.o \
 	inventory.o \
+	saveload.o \
 	scene.o \
 	screen.o \
 	scriptopcodes.o \
