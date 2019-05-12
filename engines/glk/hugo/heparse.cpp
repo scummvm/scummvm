@@ -284,7 +284,7 @@ int Hugo::DomainObj(int obj) {
 	return yes;
 }
 
-unsigned int Hugo::FindWord(char *a) {
+unsigned int Hugo::FindWord(const char *a) {
 	unsigned int ptr = 0;
 	int i, p, alen;
 

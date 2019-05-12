@@ -197,7 +197,7 @@ private:
 	int extra_param;
 	char loaded_filename[MAX_RES_PATH];
 	char loaded_resname[MAX_RES_PATH];
-	char resource_type = 0;
+	char resource_type;
 
 	// herun
 	int passlocal[MAXLOCALS];		///< locals passed to routine
@@ -760,7 +760,7 @@ private:
 	/**
 	 * Returns the dictionary address of <a>.
 	 */
-	unsigned int FindWord(char *a);
+	unsigned int FindWord(const char *a);
 
 	/**
 	 * Checks to see if <obj> is in objlist[].

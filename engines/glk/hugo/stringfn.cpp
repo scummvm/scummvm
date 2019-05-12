@@ -112,5 +112,11 @@ char *StringFunctions::strlwr(char *s) {
 	return s;
 }
 
+char *StringFunctions::strupr(char *s) {
+	for (char *sp = s; *sp; ++sp)
+		*sp = toupper(*sp);
+	return s;
+}
+
 } // End of namespace Hugo
 } // End of namespace Glk

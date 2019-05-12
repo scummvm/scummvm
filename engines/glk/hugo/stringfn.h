@@ -58,6 +58,8 @@ public:
 	char *hugo_strcpy(char *s, const char *t);
 
 	char *strlwr(char *s);
+
+	char *strupr(char *s);
 };
 
 

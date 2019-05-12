@@ -63,7 +63,7 @@ int Hugo::loadres(HUGO_FILE infile, int reslen, int type) {
 
 	while (reslen > 0)
 	{
-		n = hugo_fread(buf, 1, reslen < sizeof buf ? reslen : sizeof buf, infile);
+		n = hugo_fread(buf, 1, reslen < (int)sizeof(buf) ? reslen : sizeof(buf), infile);
 		if (n <= 0)
 			break;
 		glk_put_buffer_stream(stream, buf, n);
