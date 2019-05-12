@@ -37,10 +37,13 @@ lib*.a
 /Icon.*
 /scummvm-conf.cpp
 /tmp_*.cpp
+
 /README
 /README.html
 /NEWS
 /NEWS.html
+/doc/de/NEUES
+/doc/de/NEUES.html
 
 /build
 /staging
