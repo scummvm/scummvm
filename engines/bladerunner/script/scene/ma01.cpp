@@ -269,12 +269,41 @@ void SceneScriptMA01::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptMA01::PlayerWalkedIn() {
+	if (_vm->_cutContent) {
+		if (!Game_Flag_Query(kFlagCT01Visited) && !Actor_Clue_Query(kActorMcCoy, kClueDispatchHitAndRun)) {
+			Actor_Clue_Acquire(kActorMcCoy, kClueDispatchHitAndRun, false, kActorDispatcher);
+			ADQ_Add(kActorDispatcher, 80, kAnimationModeTalk);
+			if (Game_Flag_Query(kFlagRC01PoliceDone)) {
+				ADQ_Add(kActorOfficerLeary, 340, kAnimationModeTalk);  // sector 3 - go ahead
+			} else {
+				ADQ_Add(kActorOfficerGrayford, 360, kAnimationModeTalk);  // sector 3 - go ahead
+			}
+			ADQ_Add(kActorDispatcher, 90, kAnimationModeTalk);
+			ADQ_Add(kActorDispatcher, 100, kAnimationModeTalk);
+			ADQ_Add(kActorDispatcher, 110, kAnimationModeTalk);
+			if (Game_Flag_Query(kFlagRC01PoliceDone)) {
+				ADQ_Add(kActorOfficerLeary, 350, kAnimationModeTalk);  // sector 3 - responding code 3
+			} else {
+				ADQ_Add(kActorOfficerGrayford, 370, kAnimationModeTalk);  // sector 3 - responding code 3
+			}
+			ADQ_Add_Pause(1000);
+			ADQ_Add(kActorDispatcher, 120, kAnimationModeTalk);
+			ADQ_Add(kActorDispatcher, 130, kAnimationModeTalk);
+			ADQ_Add(kActorDispatcher, 140, kAnimationModeTalk);
+			ADQ_Add(kActorDispatcher, 150, kAnimationModeTalk);
+		}
+	}
 }
 
 void SceneScriptMA01::PlayerWalkedOut() {
 	Actor_Set_Invisible(kActorMcCoy, false);
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
+
+	if (_vm->_cutContent) {
+		ADQ_Flush(); // for dispatcher queue cleanup
+	}
+
 	if (!Game_Flag_Query(kFlagMA01toMA06)) {
 		if (Global_Variable_Query(kVariableChapter) == 1) {
 			Outtake_Play(kOuttakeTowards2, true, -1);

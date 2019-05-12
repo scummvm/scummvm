@@ -127,17 +127,22 @@ void AIScriptMcCoy::CompletedMovementTrack() {
 
 void AIScriptMcCoy::ReceivedClue(int clueId, int fromActorId) {
 	switch (clueId) {
+	case kClueDispatchHitAndRun: // added case for cut content
+		// fall through
 	case kClueChopstickWrapper:
+		// fall through
 	case kClueSushiMenu:
 		Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationChinatown, true);
 		break;
 
 	case kClueDragonflyEarring:
+		// fall through
 	case kClueBombingSuspect:
 		Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationAnimoidRow, true);
 		break;
 
 	case kClueKingstonKitchenBox1:
+		// fall through
 	case kClueKingstonKitchenBox2:
 		if (Query_Difficulty_Level() == kGameDifficultyEasy) {
 			Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationAnimoidRow, true);
@@ -149,17 +154,24 @@ void AIScriptMcCoy::ReceivedClue(int clueId, int fromActorId) {
 		break;
 
 	case kClueHysteriaToken:
+		// fall through
 	case kClueCarRegistration1:
+		// fall through
 	case kClueCarRegistration2:
+		// fall through
 	case kClueCarRegistration3:
+		// fall through
 	case kClueLichenDogWrapper:
 		Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationHysteriaHall, true);
 		Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationNightclubRow, true);
 		break;
 
 	case kClueWeaponsCache:
+		// fall through
 	case kClueWeaponsOrderForm:
+		// fall through
 	case kClueShippingForm:
+		// fall through
 	case kCluePoliceIssueWeapons:
 		Global_Variable_Increment(kVariableCorruptedGuzzaEvidence, 1);
 		break;
@@ -169,20 +181,27 @@ void AIScriptMcCoy::ReceivedClue(int clueId, int fromActorId) {
 		break;
 
 	case kClueHomelessManKid:
+		// fall through
 	case kClueOriginalRequisitionForm:
 		Global_Variable_Increment(kVariableCorruptedGuzzaEvidence, 3);
 		break;
 
 	case kClueScaryChair:
+		// fall through
 	case kClueIzosStashRaided:
 		Global_Variable_Increment(kVariableCorruptedGuzzaEvidence, 2);
 		break;
 
 	case kClueDNATyrell:
+		// fall through
 	case kClueDNASebastian:
+		// fall through
 	case kClueDNAChew:
+		// fall through
 	case kClueDNAMoraji:
+		// fall through
 	case kClueDNALutherLance:
+		// fall through
 	case kClueDNAMarcus:
 		Global_Variable_Increment(kVariableDNAEvidence, 1);
 		break;
@@ -196,10 +215,15 @@ void AIScriptMcCoy::ReceivedClue(int clueId, int fromActorId) {
 		Actor_Voice_Over(3320, kActorVoiceOver);
 		switch (clueId) {
 		case kClueWeaponsCache:
+			// fall through
 		case kClueWeaponsOrderForm:
+			// fall through
 		case kClueGuzzasCash:
+			// fall through
 		case kCluePoliceIssueWeapons:
+			// fall through
 		case kClueIzosStashRaided:
+			// fall through
 		case kClueOriginalRequisitionForm:
 			Actor_Voice_Over(3340, kActorVoiceOver);
 			Actor_Voice_Over(3350, kActorVoiceOver);
