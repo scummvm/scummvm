@@ -45,6 +45,8 @@
  */
 #if defined(__amigaos4__)
 	#include "backends/fs/amigaos4/amigaos4-fs-factory.h"
+#elif defined(__MORPHOS__)
+	#include "backends/fs/morphos/morphos-fs-factory.h"
 #elif defined(POSIX)
 	#include "backends/fs/posix/posix-fs-factory.h"
 #elif defined(RISCOS)
@@ -73,6 +75,8 @@ public:
 OSystem_NULL::OSystem_NULL() {
 	#if defined(__amigaos4__)
 		_fsFactory = new AmigaOSFilesystemFactory();
+	#elif defined(__MORPHOS__)	
+		_fsFactory = new MorphOSFilesystemFactory();
 	#elif defined(POSIX)
 		_fsFactory = new POSIXFilesystemFactory();
 	#elif defined(RISCOS)
