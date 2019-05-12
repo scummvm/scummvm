@@ -117,8 +117,8 @@ protected:
 	void Actor_Clue_Acquire(int actorId, int clueId, bool unknownFlag, int fromActorId);
 	void Actor_Clue_Lose(int actorId, int clueId);
 	bool Actor_Clue_Query(int actorId, int clueId);
-	void Actor_Clues_Transfer_New_To_Mainframe(int actorId);
-	void Actor_Clues_Transfer_New_From_Mainframe(int actorId);
+	bool Actor_Clues_Transfer_New_To_Mainframe(int actorId);
+	bool Actor_Clues_Transfer_New_From_Mainframe(int actorId);
 	void Actor_Set_Invisible(int actorId, bool isInvisible);
 	void Actor_Set_Immunity_To_Obstacles(int actorId, bool isImmune);
 	void Item_Add_To_World(int itemId, int animationId, int setId, float x, float y, float z, signed int facing, int height, int width, bool isTargetable, bool isObstacle, bool isPoliceMazeEnemy, bool updateOnly);

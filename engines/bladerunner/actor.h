@@ -254,7 +254,7 @@ public:
 	void acquireClue(int clueId, bool unknownFlag, int fromActorId);
 	void loseClue(int clueId);
 	bool hasClue(int clueId) const;
-	void copyClues(int actorId);
+	bool copyClues(int actorId);
 	void acquireCluesByRelations();
 
 	int soundVolume() const;

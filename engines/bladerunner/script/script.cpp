@@ -740,14 +740,14 @@ bool ScriptBase::Actor_Clue_Query(int actorId, int clueId) {
 	return _vm->_actors[actorId]->hasClue(clueId);
 }
 
-void ScriptBase::Actor_Clues_Transfer_New_To_Mainframe(int actorId) {
+bool ScriptBase::Actor_Clues_Transfer_New_To_Mainframe(int actorId) {
 	debugC(kDebugScript, "Actor_Clues_Transfer_New_To_Mainframe(%d)", actorId);
-	_vm->_actors[actorId]->copyClues(kActorVoiceOver);
+	return _vm->_actors[actorId]->copyClues(kActorVoiceOver);
 }
 
-void ScriptBase::Actor_Clues_Transfer_New_From_Mainframe(int actorId) {
+bool ScriptBase::Actor_Clues_Transfer_New_From_Mainframe(int actorId) {
 	debugC(kDebugScript, "Actor_Clues_Transfer_New_From_Mainframe(%d)", actorId);
-	_vm->_actors[kActorVoiceOver]->copyClues(actorId);
+	return _vm->_actors[kActorVoiceOver]->copyClues(actorId);
 }
 
 void ScriptBase::Actor_Set_Invisible(int actorId, bool isInvisible) {
