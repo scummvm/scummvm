@@ -217,6 +217,13 @@ MODULE_OBJS += \
 	midi/camd.o
 endif
 
+ifdef MORPHOS
+MODULE_OBJS += \
+	fs/morphos/morphos-fs.o \
+	fs/morphos/morphos-fs-factory.o \
+	midi/camd.o
+endif
+
 ifdef RISCOS
 MODULE_OBJS += \
 	events/riscossdl/riscossdl-events.o \
