@@ -1112,6 +1112,8 @@ void Hugo::LoadGame() {
 		if ((game = TrytoOpen(gamefile, "rb", "object"))==nullptr)
 			FatalError(OPEN_E);
 	}
+#else
+	game = &_gameFile;
 #endif
 
 	hugo_fseek(game, 0, SEEK_END);
@@ -1202,7 +1204,7 @@ void Hugo::LoadGame() {
 	/* Allocate as much memory as is required */
 	if ((!loaded_in_memory) || (mem = (unsigned char *)hugo_blockalloc(filelength))==nullptr)
 	{
-		loaded_in_memory = 0;
+		loaded_in_memory = false;
 		if ((mem = (unsigned char *)hugo_blockalloc(codeend))==nullptr)
 			FatalError(MEMORY_E);
 	}

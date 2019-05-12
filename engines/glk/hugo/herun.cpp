@@ -299,6 +299,8 @@ FreshInput:
 							goto NormalTermination;
 						runaway_counter = 0;
 #endif
+						if (shouldQuit())
+							return;
 
 						SeparateWords();
 

@@ -61,8 +61,10 @@ void Hugo::hugo_getline(const char *prmpt) {
 	/* Request line input */
 	glk_request_line_event(currentwin, buffer, MAXBUFFER, 0);
 
-	while (!gotline)
-	{
+	while (!gotline) {
+		if (shouldQuit())
+			return;
+
 		/* Grab an event */
 		glk_select(&ev);
 

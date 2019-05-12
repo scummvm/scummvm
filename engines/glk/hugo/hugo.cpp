@@ -30,7 +30,7 @@ Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 		runtime_warnings(false), dbnest(0), address_scale(16),
 		SCREENWIDTH(0), SCREENHEIGHT(0), FIXEDCHARWIDTH(0), FIXEDLINEHEIGHT(0),
 		// heexpr
-		evalcount(0), incdec(0), getaddress(0), inexpr(0), inobj(0),
+		evalcount(0), incdec(0), getaddress(0), inexpr(0), inobj(0), last_precedence(0),
 		// hemedia
 		mchannel(nullptr), schannel(nullptr),
 		// hemisc
@@ -39,7 +39,7 @@ Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 		codestart(0), objtable(0), eventtable(0), proptable(0), arraytable(0), dicttable(0), 
 		syntable(0), initaddr(0), mainaddr(0), parseaddr(0), parseerroraddr(0), 
 		findobjectaddr(0), endgameaddr(0), speaktoaddr(0), performaddr(0), 
-		objects(0), events(0), dictcount(0), syncount(0), mem(nullptr), loaded_in_memory(0),
+		objects(0), events(0), dictcount(0), syncount(0), mem(nullptr), loaded_in_memory(true),
 		defseg(0), gameseg(0), codeptr(0), codeend(0), currentpos(0), currentline(0), full(0),
 		def_fcolor(0), def_bgcolor(0), def_slfcolor(0), def_slbgcolor(0), fcolor(0), bgcolor(0),
 		icolor(0), default_bgcolor(0), currentfont(0), capital(0), textto(0),
@@ -83,15 +83,15 @@ Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 	Common::fill(&var[0], &var[MAXLOCALS + MAXGLOBALS], 0);
 
 	// hemedia
-	Common::fill(&resids[0][0], &resids[2][MAXRES], 0);
+	Common::fill(&resids[0][0], &resids[2][0], 0);
 	numres[0] = numres[1] = 0;
 
 	// hemisc		
-	Common::fill(&context_command[0][0], &context_command[MAX_CONTEXT_COMMANDS][64], 0);
+	Common::fill(&context_command[0][0], &context_command[MAX_CONTEXT_COMMANDS][0], 0);
 	Common::fill(&id[0], &id[3], '\0');
 	Common::fill(&serial[0], &serial[9], '\0');
 	Common::fill(&pbuffer[0], &pbuffer[MAXBUFFER * 2 + 1], 0);
-	Common::fill(&undostack[0][0], &undostack[MAXUNDO][5], 0);
+	Common::fill(&undostack[0][0], &undostack[MAXUNDO][0], 0);
 	
 	// heparse
 	Common::fill(&buffer[0], &buffer[MAXBUFFER + MAXWORDS], '\0');
@@ -120,8 +120,8 @@ Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 	debug_line[0] = '\0';
 	Common::fill(&objectname[0], &objectname[MAX_OBJECT], (char *)nullptr);
 	Common::fill(&propertyname[0], &propertyname[MAX_PROPERTY], (char *)nullptr);
-	Common::fill(&codeline[0][0], &codeline[9][100], 0);
-	Common::fill(&localname[0][0], &localname[9][100], 0);
+	Common::fill(&codeline[0][0], &codeline[9][0], 0);
+	Common::fill(&localname[0][0], &localname[9][0], 0);
 	Common::fill(&code_history[0], &code_history[MAX_CODE_HISTORY], 0);
 	Common::fill(&dbnest_history[0], &dbnest_history[MAX_CODE_HISTORY], 0);
 #endif

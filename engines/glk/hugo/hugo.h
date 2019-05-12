@@ -59,7 +59,6 @@ private:
 	char getaddress;					///< true when finding &routine
 	char inexpr;						///< true when in expression
 	char inobj;							///< true when in object compound
-
 	int last_precedence;
 
 	// hemedia
@@ -103,7 +102,7 @@ private:
 	char context_command[MAX_CONTEXT_COMMANDS][64];
 	int context_commands;
 	unsigned char *mem;
-	int loaded_in_memory;
+	bool loaded_in_memory;
 	unsigned int defseg;
 	unsigned int gameseg;
 	long codeptr;
@@ -243,7 +242,7 @@ private:
 	CALL call[MAXCALLS];
 	int routines;
 	int properties;
-	WINDOW window[99];
+	WINDOW window[9];
 	int codeline[9][100];
 	char localname[9][100];
 	int current_locals;
@@ -1017,7 +1016,7 @@ private:
 	*/
 
 	int hugo_fseek(Common::SeekableReadStream *s, long int offset, int whence) {
-		return s->seek(offset, whence);
+		return !s->seek(offset, whence);
 	}
 	int hugo_fseek(strid_t s, long int offset, int whence) {
 		Common::SeekableReadStream *rs = *s;
