@@ -1304,7 +1304,7 @@ static const SciScriptPatcherEntry freddypharkasSignatures[] = {
 	{  true,     0, "CD: score early disposal",                    1, freddypharkasSignatureScoreDisposal, freddypharkasPatchScoreDisposal },
 	{  true,    15, "Mac: broken inventory",                       1, freddypharkasSignatureMacInventory,  freddypharkasPatchMacInventory },
 	{  true,   110, "intro scaling workaround",                    2, freddypharkasSignatureIntroScaling,  freddypharkasPatchIntroScaling },
-	{  true,   200, "Mac: skip broken hop singh scene",            1, freddypharkasSignatureMacHopSingh,   freddypharkasPatchMacHopSingh },
+	{  false,  200, "Mac: skip broken hop singh scene",            1, freddypharkasSignatureMacHopSingh,   freddypharkasPatchMacHopSingh },
 	{  true,   235, "CD: canister pickup hang",                    3, freddypharkasSignatureCanisterHang,  freddypharkasPatchCanisterHang },
 	{  true,   270, "Mac: easter egg hang",                        1, freddypharkasSignatureMacEasterEgg,  freddypharkasPatchMacEasterEgg },
 	{  true,   320, "ladder event issue",                          2, freddypharkasSignatureLadderEvent,   freddypharkasPatchLadderEvent },
@@ -13841,6 +13841,11 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 
 			// Do additional game-specific initialization
 			switch (gameId) {
+			case GID_FREDDYPHARKAS:
+				if (_isMacSci11 && !g_sci->getResMan()->testResource(ResourceId(kResourceTypeView, 844))) {
+					enablePatch(signatureTable, "Mac: skip broken hop singh scene");
+				}
+				break;
 			case GID_KQ5:
 				if (g_sci->_features->useAltWinGMSound()) {
 					// See the explanation in the kq5SignatureWinGMSignals comment
