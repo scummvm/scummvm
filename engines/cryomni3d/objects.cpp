@@ -31,7 +31,6 @@ Object *Objects::findObjectByNameID(unsigned int nameID) {
 			return it;
 		}
 	}
-	// TODO: check if 111 and 112 are called and should be filtered out or not
 	error("nameID not found %u", nameID);
 }
 
