@@ -2,7 +2,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen experimentellen
 Programmcodes finden Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
-2.1.0 (??.??.2018)
+#### 2.1.0 (??.??.2018)
  SCUMM:
    - Lippensynchronisation für v6- und v7+-Spiele hinzugefügt.
 
@@ -14,7 +14,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Bewegung des Mauszeigers ist nun gleichmäßiger.
    - Einstell-Möglichkeit für Mauszeiger-Geschwindigkeit und Joystick-Deadzone hinzugefügt.
 
-2.0.0 (17.12.2017)
+#### 2.0.0 (17.12.2017)
  Neue Spiele:
    - Unterstützung für Full Pipe hinzugefügt.
    - Unterstützung für Hi-Res Adventure #3: Cranston Manor hinzugefügt.
@@ -212,7 +212,7 @@ Programmcodes finden Sie auf Englisch unter:
      automatisch das erste Gerät ausgewählt.
    - Verhalten des Datei-Browsers verbessert.
 
-1.9.0 (17.10.2016)
+#### 1.9.0 (17.10.2016)
  Neue Spiele:
    - Unterstützung für Myst hinzugefügt.
    - Unterstützung für Myst: Masterpiece Edition hinzugefügt.
@@ -283,7 +283,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für automatische Aktualisierungen über WinSparkle hinzugefügt.
 
 
-1.8.1 (25.05.2016)
+#### 1.8.1 (25.05.2016)
  Neue Portierungen:
    - Portierung für den Nintendo 3DS hinzugefügt.
    - Portierung für Android SDL hinzugefügt.
@@ -370,7 +370,7 @@ Programmcodes finden Sie auf Englisch unter:
  GCW0-Portierung:
    - Verbesserte Unterstützung für die in ScummVM integrierte Dokumentation.
 
-1.8.0 (04.03.2016)
+#### 1.8.0 (04.03.2016)
  Neue Spiele:
    - Unterstützung für Rex Nebular and the Cosmic Gender Bender hinzugefügt.
    - Unterstützung für Sfinx hinzugefügt.
@@ -475,7 +475,7 @@ Programmcodes finden Sie auf Englisch unter:
  Tinsel:
    - Unterstützung für AdLib-Musik in Discworld 1 verbessert.
 
-1.7.0 (21.07.2014)
+#### 1.7.0 (21.07.2014)
  Neue Spiele:
    - Unterstützung für Chivalry is Not Dead hinzugefügt.
    - Unterstützung für Return to Ringworld hinzugefügt.
@@ -575,7 +575,7 @@ Programmcodes finden Sie auf Englisch unter:
  Tizen-Portierung:
    - Die BADA-Portierung wurde mit Tizen zusammengeführt/aktualisiert.
 
-1.6.0 (31.05.2013)
+#### 1.6.0 (31.05.2013)
  Neue Spiele:
    - Unterstützung für 3 Skulls of the Toltecs hinzugefügt.
    - Unterstützung für Eye of the Beholder hinzugefügt.
@@ -668,7 +668,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung hinzugefügt für verbesserte Musik von James Woodcock.
      http://www.jameswoodcock.co.uk/category/scummvm-music-enhancement-project/
 
-1.5.0 (27.07.2012)
+#### 1.5.0 (27.07.2012)
  Neue Spiele:
    - Unterstützung für Backyard Baseball 2003 hinzugefügt.
    - Unterstützung für Blue Force hinzugefügt.
@@ -744,7 +744,7 @@ Programmcodes finden Sie auf Englisch unter:
      (Die Stapelverarbeitungsdatei migration.bat kann verwendet werden, um die
      Spielstände vom alten Standard-Verzeichnis in das neue zu kopieren.)
 
-1.4.1 (27.01.2012)
+#### 1.4.1 (27.01.2012)
  AGOS:
    - Das Laden von Videos direkt aus InstallShield-Archiven in der
      Windows-Version von Floyd - Es gibt noch Helden korrigiert.
@@ -776,7 +776,7 @@ Programmcodes finden Sie auf Englisch unter:
      nicht alle Kanäle zurückgesetzt wurden und somit einige Noten falsch
      klangen.
 
-1.4.0 (11.11.2011)
+#### 1.4.0 (11.11.2011)
  Neue Spiele:
    - Unterstützung für Lands of Lore: The Throne of Chaos hinzugefügt.
    - Unterstützung für Blue's Birthday Adventure hinzugefügt.
@@ -842,7 +842,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Plugins bei Android 3.x repariert.
    - Standardmäßigen Speicherort für Spielstände auf SD-Karte verschoben.
 
-1.3.1 (12.07.2011)
+#### 1.3.1 (12.07.2011)
  Allgemein:
    - Audiogeräte-Erkennung und Zurückgreifen auf Alternativen verbessert.
      Es sollten keine stillen Fehler mehr aufgrund ungültiger Audiogeräte
@@ -870,7 +870,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Grafikfehler in FM-TOWNS-Versionen von Spielen auf ARM-Geräten beseitigt
      (Android, iPhone, usw.).
 
-1.3.0 (28.05.2011)
+#### 1.3.0 (28.05.2011)
  Neue Spiele:
    - Unterstützung für Backyard Baseball hinzugefügt.
    - Unterstützung für Backyard Baseball 2001 hinzugefügt.
@@ -1026,7 +1026,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für ladbare Module hinzugefügt.
    - 16-Bit-Mauszeiger in HE-Spielen korrigiert.
 
-1.2.1 (19.12.2010)
+#### 1.2.1 (19.12.2010)
  Allgemein:
    - Ungarische Übersetzung hinzugefügt.
    - Brasilianisch-portugiesische Übersetzung hinzugefügt.
@@ -1041,7 +1041,7 @@ Programmcodes finden Sie auf Englisch unter:
  Lure:
    - Mehrere Bewegungsfehler bei Nicht-Spielern beseitigt.
 
-1.2.0 (15.10.2010)
+#### 1.2.0 (15.10.2010)
  Neue Spiele:
    - Unterstützung für Fascination hinzugefügt.
 
@@ -1164,7 +1164,7 @@ Programmcodes finden Sie auf Englisch unter:
 
  Wii-Portierung:
    - Unterstützung für USB2-Massenspeichergeräte hinzugefügt (erfordert
-     The Homebrew Channel >= v1.0.8 mit IOS58).
+     The Homebrew Channel >= v1.#### 0.8 mit IOS58).
 
  GameCube-Portierung:
    - Unterstützung für DVDs mit ISO9660-Dateisystem hinzugefügt.
@@ -1180,9 +1180,9 @@ Programmcodes finden Sie auf Englisch unter:
    - System von GP2XWIZ in GPH umbenannt, um die Bandbreite der unterstützten
      Geräte besser wiederzuspiegeln.
 
-1.1.1 (02.05.2010)
+#### 1.1.1 (02.05.2010)
  Neue Portierungen:
-   - Portierung für Nintendo 64 hinzugefügt. (Eigentlich schon in 1.1.0
+   - Portierung für Nintendo 64 hinzugefügt. (Eigentlich schon in #### 1.#### 1.0
      hinzugefügt, aber es wurde vergessen, dies zu erwähnen.)
 
  Allgemein:
@@ -1212,7 +1212,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Mehrere Abstürze und weitere Rückschrittsfehler in Nippon Safes beseitigt,
      einschließlich der Fehler 2969211, 2969232, 2969234, 2969257, 2970141.
 
- Portierung für Wii/GameCube (Erwähnung bei 1.1.0 ebenfalls vergessen):
+ Portierung für Wii/GameCube (Erwähnung bei #### 1.#### 1.0 ebenfalls vergessen):
    - Unterstützung für Spiele, die 16-Bit-Grafik verwenden, hinzugefügt.
    - Vollständige Grafiküberholung (neue Bildschirm-Modi, bessere Leistung,
      Bildglättung, Einstellungen für feinkörnige Übertastung)
@@ -1227,13 +1227,13 @@ Programmcodes finden Sie auf Englisch unter:
      verwendet werden. Lesen Sie die beiliegende Datei READMII.txt für weitere
      Informationen.
 
- PSP-Portierung (Erwähnung bei 1.1.0 ebenfalls vergessen):
+ PSP-Portierung (Erwähnung bei #### 1.#### 1.0 ebenfalls vergessen):
    - Plugin-Unterstützung hinzugefügt, was es auf der PSP Phat ermöglicht, jedes
      Spiel laufen zu lassen.
    - Neue virtuelle Tastatur hinzugefügt, die für schnelle D-Pad-Eingabe
      optimiert ist.
 
-1.1.0 (04.04.2010)
+#### 1.1.0 (04.04.2010)
  Neue Spiele:
    - Unterstützung für Blue's Art Time Activities hinzugefügt.
    - Unterstützung für Blue's Reading Time Activities hinzugefügt.
@@ -1273,7 +1273,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für Kanji-Renderung in japanischer Version von
      Monkey Island Sega CD hinzugefügt.
 
-1.0.0 (15.11.2009)
+#### 1.0.0 (15.11.2009)
  Neue Portierungen:
    - Portierung für MotoEZX und MotoMAGX hinzugefügt.
 
@@ -1358,7 +1358,7 @@ Programmcodes finden Sie auf Englisch unter:
  WinCE-Portierung:
    - Kompatibilität mit VGA-Geräten verbessert.
 
-1.0.0rc1 (31.08.2009)
+#### 1.0.0rc1 (31.08.2009)
  Neue Spiele:
    - Unterstützung für Discworld hinzugefügt.
    - Unterstützung für Discworld 2 - Vermutlich vermisst hinzugefügt.
@@ -1423,7 +1423,7 @@ Programmcodes finden Sie auf Englisch unter:
      Geräte mit höherer Farbentiefe)
    - Unterstützung für MPEG-2 und FLAC eingestellt.
 
-0.13.1 (27.04.2009)
+#### 0.13.1 (27.04.2009)
  AGOS:
    - Absturz nach Wiedergabe von OmniTV-Video in Floyd - Es gibt noch Helden
      beseitigt.
@@ -1477,7 +1477,7 @@ Programmcodes finden Sie auf Englisch unter:
  WinCE-Portierung:
    - Problem behoben, das bei VGA-Geräten zu zufälligen Abstürzen führen konnte.
 
-0.13.0 (28.02.2009)
+#### 0.13.0 (28.02.2009)
  Allgemein:
    - MIDI-Treiber für Atari ST / FreeMint hinzugefügt.
    - „Laden“-Schaltfläche zu Startmenü hinzugefügt (nicht von allen Engines
@@ -1515,7 +1515,7 @@ Programmcodes finden Sie auf Englisch unter:
  SCUMM:
    - Funkspruch-Effekt in The Dig integriert.
 
-0.12.0 (31.08.2008)
+#### 0.12.0 (31.08.2008)
  Neue Spiele:
    - Unterstützung für The Legend of Kyrandia: Book Two: Hand of Fate
      hinzugefügt.
@@ -1530,7 +1530,7 @@ Programmcodes finden Sie auf Englisch unter:
 
  Allgemein:
    - CAMD-MIDI-Treiber für AmigaOS4 hinzugefügt.
-   - PS2-Portierung wiederbelebt (war sie schon in 0.11.1, aber es wurde
+   - PS2-Portierung wiederbelebt (war sie schon in #### 0.11.1, aber es wurde
      in den Veröffentlichungshinweisen vergessen).
    - Zahlreiche Speicherlecks in allen Engines gestopft (Teil der Aufgaben des
      GSoC '08).
@@ -1556,7 +1556,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für AdLib-MIDI-Kombination in Monkey Island 1
      (Diskettenversion) hinzugefügt.
 
-0.11.1 (29.02.2008)
+#### 0.11.1 (29.02.2008)
  SCUMM:
    - Verbesserungen für Untersystem von Digital iMUSE. Dies behebt verschiedene
      Störungen in The Curse of Monkey Island.
@@ -1590,7 +1590,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Palettenstörung in Erben der Erde beseitigt, wenn man die Karte anschaut,
      während man sich am Dock befindet.
 
-0.11.0 (15.01.2008)
+#### 0.11.0 (15.01.2008)
  Neue Spiele:
    - Unterstützung für Elvira: Mistress of the Dark hinzugefügt.
    - Unterstützung für Elvira 2: The Jaws of Cerberus hinzugefügt.
@@ -1682,7 +1682,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für F200-Touchscreen
    - Verschiedene Fehler in Eingabe-Code beseitigt.
 
-0.10.0 (20.06.2007)
+#### 0.10.0 (20.06.2007)
  Neue Spiele:
    - Engine Cinematique evo 1 hinzugefügt. Momentan wird nur Future Wars
      unterstützt.
@@ -1756,7 +1756,7 @@ Programmcodes finden Sie auf Englisch unter:
 
  Symbian-Portierung:
    - Unterstützung für MP3 bei S60v3- und UIQ3-Versionen hinzugefügt.
-   - Umstieg auf SDL 1.2.11 für Fehlerbeseitigungen und Verbesserungen
+   - Umstieg auf SDL #### 1.2.11 für Fehlerbeseitigungen und Verbesserungen
    - Verbesserte Leistung für S60v3 und UIQ3 mittels ARM Target.
    - Eingeschränkte Unterstützung für Geräte von Symbian OS9 bedingt durch
      Compiler-Probleme
@@ -1782,7 +1782,7 @@ Programmcodes finden Sie auf Englisch unter:
    - PalmOS Porting SDK wird nun verwendet, was die Verwendung der
      Standardbibliotheken der Programmiersprache C ermöglicht.
 
-0.9.1 (29.10.2006)
+#### 0.9.1 (29.10.2006)
  Neue Portierungen:
    - Portierung für Nintendo DS hinzugefügt.
    - Portierung für GP2X hinzugefügt.
@@ -1846,7 +1846,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Mehrere Fehler beseitigt.
    - Unterstützung für 2002-basierende Geräte wieder hinzugefügt.
 
-0.9.0 (25.06.2006)
+#### 0.9.0 (25.06.2006)
  Neue Spiele:
    - Kyra-Engine hinzugefügt (für die Kyrandia-Reihe). Momentan wird nur der
      erste Teil der Reihe unterstützt.
@@ -1908,7 +1908,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Hinzugefügt: Überall: Modus für umgekehrtes Querformat
    - Beseitigt: PocketPC: Dialoge abgeschnitten/nicht neu gezeichnet
 
-0.8.2 (08.02.2006)
+#### 0.8.2 (08.02.2006)
  Allgemein:
    - Zusammensetzen von OS-X-Paket bei Verwendung von GCC 3.3 repariert.
 
@@ -1928,7 +1928,7 @@ Programmcodes finden Sie auf Englisch unter:
    - QVGA-Smartphone-Erkennung repariert (diesmal wirklich :p).
    - Problem mit Doppelrechtsklick bei Smartphone behoben.
 
-0.8.1 (31.01.2006)
+#### 0.8.1 (31.01.2006)
  Allgemein:
    - Kompilierung mit GCC 2.95 repariert.
    - LaTex-Dokumentation repariert.
@@ -2013,7 +2013,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Patches von Knakos (Fehlerbeseitigung bei QVGA-Smartphones, einfachere
      Tastenzuweisung und vereinfachter Konsolenwechsel)
 
-0.8.0 (30.10.2005)
+#### 0.8.0 (30.10.2005)
  Neue Spiele:
    - SAGA-Engine hinzugefügt (für die Spiele „I Have No Mouth, and I Must
      Scream“ und „Erben der Erde“).
@@ -2072,9 +2072,9 @@ Programmcodes finden Sie auf Englisch unter:
      compress_sword2 komprimiert wurden, werden natürlich immer noch denselben
      Fehler haben. Möglicherweise wollen Sie diese neu erzeugen.
 
-0.7.1 (27.03.2005)
+#### 0.7.1 (27.03.2005)
  Allgemein:
-   - MT-32-Emulator hinzugefügt [er wurde eigentlich schon in Version 0.7.0
+   - MT-32-Emulator hinzugefügt [er wurde eigentlich schon in Version #### 0.7.0
      hinzugefügt, aber wir haben vergessen, ihn in dieser Datei zu
      erwähnen :-) ].
    - MPEG-Filmwiedergabe für Baphomets Fluch 1 & 2 nun weniger speicherhungrig
@@ -2094,11 +2094,11 @@ Programmcodes finden Sie auf Englisch unter:
    - Zonentastenaktion beim Smartphone repariert (nun der Taste 9 zugewiesen).
    - Experimentelle Fehlerbeseitigung Dritter für VGA-Modus (SE-VGA)
    - Tastenzuweisungsoption im Startmenü hinzugefügt
-     (ab Version 1.2.0 in deutscher Lokalisation zu finden unter:
+     (ab Version #### 1.2.0 in deutscher Lokalisation zu finden unter:
      Optionen / Sonstiges / Tasten).
    - Abhängigkeit von AYGSHELL.DLL beseitigt, um auf Plattformen mit CE .Net zu
      funktionieren.
-   - Probleme mit Tastenzuweisung behoben, die sich in 0.7.0 eingeschlichen
+   - Probleme mit Tastenzuweisung behoben, die sich in #### 0.7.0 eingeschlichen
      haben.
    - Interaktive Action-Sequenz in Vollgas sollte spielbarer sein.
    - Neue Tastenzuweisungsoption „FT Cheat“, um alle Action-Sequenzen in Vollgas
@@ -2114,7 +2114,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Absturz beseitigt, wenn man mit spanischem Text in Diskettenversion mit dem
      Gärtner redet.
 
-0.7.0 (24.12.2004)
+#### 0.7.0 (24.12.2004)
  Neue Spiele:
    - 26 Titel von Humongous Entertainment hinzugefügt; nur wenige sind
      durchspielbar.
@@ -2178,7 +2178,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Umgehungslösungen für einige seltene Skriptfehler hinzugefügt, durch deren
      Auftreten man das Spiel nicht mehr gewinnen konnte.
 
-0.6.1b (03.08.2004)
+#### 0.6.1b (03.08.2004)
  Allgemein:
    - Fehler bei Kopieren und Einfügen im Startmenü beseitigt, der den
      Speicherpfad beschädigen konnte.
@@ -2191,7 +2191,7 @@ Programmcodes finden Sie auf Englisch unter:
  Simon:
    - Durch VOC verursachten Absturz beseitigt.
 
-0.6.1 (25.07.2004)
+#### 0.6.1 (25.07.2004)
  Allgemein:
    - Sound-Störung beseitigt, wenn zwei oder mehr Ogg-Vorbis-Sounds als
      Datenstrom aus demselben Datei-Handle ausgegeben werden, z. B. im Vorspann
@@ -2214,7 +2214,7 @@ Programmcodes finden Sie auf Englisch unter:
  Simon:
    - Abstürze in einigen internationalen Versionen beseitigt.
 
-0.6.0 (14.03.2004)
+#### 0.6.0 (14.03.2004)
  Neue Spiele:
    - Engine für Baphomets Fluch 1 hinzugefügt.
    - Engine für Baphomets Fluch 2 hinzugefügt.
@@ -2271,7 +2271,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Tastaturunterstützung für Kanonenkampf in Curse of Monkey Island
    - Tastaturunterstützung für Rennfahr-Szene in Vollgas
 
-0.5.1 (06.08.2003)
+#### 0.5.1 (06.08.2003)
 - Programm-Code für Spielstände von Beneath a Steel Sky umgeschrieben (siehe
   Hinweis in README unter „Known Bugs“).
 - Beseitigung von Fehlern beim Überspringen von Dialogen sowie bei der
@@ -2290,7 +2290,7 @@ Programmcodes finden Sie auf Englisch unter:
   nicht im oberen Teil des Bildschirms verwenden konnte, indem zu einer
   fehlerbereinigten Version von SDL verlinkt wurde.
 
-0.5.0 (02.08.2003)
+#### 0.5.0 (02.08.2003)
 - Verbesserte Versionen von Maniac Mansion und Zak McKracken werden nun
   unterstützt und sind komplett durchspielbar.
 - Unterstützung für Amiga-Version von Monkey Island 1 hinzugefügt.
@@ -2308,7 +2308,7 @@ Programmcodes finden Sie auf Englisch unter:
 - Option für Seitenverhältniskorrektur hinzugefügt.
 - Viele weitere Fehlerbeseitigungen, Verbesserungen und Optimierungen
 
-0.4.1 (25.05.2003)
+#### 0.4.1 (25.05.2003)
 - Filter AdvMame3x hinzugefügt.
 - Absturz in Curse of Monkey Island (und wahrscheinlich auch anderen Spielen)
   beseitigt.
@@ -2316,7 +2316,7 @@ Programmcodes finden Sie auf Englisch unter:
 - Absturz in SDL-System beseitigt.
 - Mehrere Fehler bei iMuse beseitigt.
 
-0.4.0 (11.05.2003)
+#### 0.4.0 (11.05.2003)
 - Unterstützung für Curse of Monkey Island (experimentell)
 - Unterstützung für EGA-Versionen von Loom, Monkey Island und Indy3 hinzugefügt.
 - Verbesserte Musikunterstützung in Indy3 und Diskettenversionen von
@@ -2333,7 +2333,7 @@ Programmcodes finden Sie auf Englisch unter:
 - Neuer Programm-Code für das Speichern und Laden (einfacher zu erweitern,
   während Kompatibilität erhalten wird)
 - Dreamcast-Portierung funktioniert nun mit neuen Spielen, für welche die
-  Unterstützung in Version 0.3.0b hinzukam.
+  Unterstützung in Version #### 0.3.0b hinzukam.
 - Neue offizieller PalmOS-Portierung
 - Verschiedene kleine und nicht so kleine Fehlerbeseitigungen für SCUMM-Spiele
 - Großes Speicherleck bei The Dig/ComI beseitigt.
@@ -2341,7 +2341,7 @@ Programmcodes finden Sie auf Englisch unter:
   hinzugefügt.
 - Programm-Code-Säuberungen
 
-0.3.0b (08.12.2002)
+#### 0.3.0b (08.12.2002)
 - Massive Säuberungsarbeiten bei iMUSE. Die Musik in Sam & Max wird nun korrekt
   abgespielt.
 - Viele Fehlerbeseitigungen für Zak256 + Unterstützung für Sound und Musik
@@ -2363,7 +2363,7 @@ Programmcodes finden Sie auf Englisch unter:
 - Neue Benutzeroberfläche im Spiel
 - Startmenü mit Spieleliste
 
-0.2.0 (14.04.2002)
+#### 0.2.0 (14.04.2002)
 - Engine-Kern umgeschrieben.
 - Verbesserte Benutzeroberfläche im Spiel, einschließlich
   Optionen-/Lautstärke-Einstellungen
@@ -2380,12 +2380,12 @@ Programmcodes finden Sie auf Englisch unter:
 - Experimentelle Unterstützung für V7-SCUMM-Spiele (Vollgas/The Dig)
 - Experimentelle Unterstützung für V3-SCUMM-Spiele (Zak256/Indy3)
 
-0.1.0 (13.01.2002)
+#### 0.1.0 (13.01.2002)
 - Eine Menge Änderungen
 
-0.0.2 (12.10.2001)
+#### 0.0.2 (12.10.2001)
 - Fehlerbeseitigungen
 - Unterstützung für Laden & Speichern
 
-0.0.1 (08.10.2001)
+#### 0.0.1 (08.10.2001)
 - Erste Version

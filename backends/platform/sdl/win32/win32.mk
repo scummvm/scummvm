@@ -26,7 +26,7 @@ win32dist: all
 	cp $(srcdir)/COPYING.OFL $(WIN32PATH)/COPYING.OFL.txt
 	cp $(srcdir)/COPYRIGHT $(WIN32PATH)/COPYRIGHT.txt
 	cp $(srcdir)/doc/cz/PrectiMe $(WIN32PATH)/doc/cz/PrectiMe.txt
-	cp $(srcdir)/doc/de/NEUES $(WIN32PATH)/doc/de/NEUES.txt
+	cp $(srcdir)/doc/de/NEUES.md $(WIN32PATH)/doc/de/NEUES.txt
 	cp $(srcdir)/doc/QuickStart $(WIN32PATH)/doc/QuickStart.txt
 	cp $(srcdir)/doc/es/InicioRapido $(WIN32PATH)/doc/es/InicioRapido.txt
 	cp $(srcdir)/doc/fr/DemarrageRapide $(WIN32PATH)/doc/fr/DemarrageRapide.txt
