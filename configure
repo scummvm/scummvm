@@ -218,6 +218,7 @@ _windres=windres
 _stagingpath="staging"
 _win32path="c:/scummvm"
 _amigaospath="Games:ScummVM"
+_morphospath="PROGDIR:"
 _staticlibpath=
 _xcodetoolspath=
 _sparklepath=
@@ -1725,6 +1726,11 @@ ppc-amigaos)
 	_host_cpu=powerpc
 	_host_alias=$_host
 	;;
+ppc-morphos)
+	_host_os=morphos
+	_host_cpu=powerpc
+	_host_alias=$_host
+	;;
 ps3)
 	_host_os=ps3
 	_host_cpu=powerpc
@@ -2618,6 +2624,18 @@ case $_host_os in
 		_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
 		_nuked_opl=no
 		;;
+	morphos*)
+		append_var LDFLAGS "-Wl,--export-dynamic"
+		append_var LDFLAGS "-L/usr/local/lib"
+		# We have to use 'long' for our 4 byte typedef because MorphOS already typedefs (u)int32
+		# as (unsigned) long, and consequently we'd get a compiler error otherwise.
+		type_4_byte='long'
+		# Supress format warnings as the long 4 byte causes noisy warnings.
+		append_var CXXFLAGS "-Wno-format"
+		add_line_to_config_mk 'MORPHOS = 1'
+		_port_mk="backends/platform/sdl/morphos/morphos.mk"
+		_nuked_opl=no
+		;;
 	android)
 		case $_host in
 			android-arm-v7a)
@@ -3435,6 +3453,28 @@ if test -n "$_host"; then
 
 			_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
 			;;
+		ppc-morphos)
+			# PPC Linker requires this to fix relocation errors
+			append_var CXXFLAGS "-mlongcall"
+
+			# Only static builds link successfully on buildbot
+			LDFLAGS=`echo $LDFLAGS | sed 's/-use-dynld//'`
+			append_var LDFLAGS "-static"
+
+			_port_mk="backends/platform/sdl/morphos/morphos.mk"
+			;;
+		
+	
+
+
+			append_var DEFINES "-DDISABLE_SID"
+			append_var DEFINES "-DDISABLE_NES_APU"
+			append_var CXXFLAGS "-fno-exceptions"
+			append_var CXXFLAGS "-fno-rtti"
+			_backend="ps2"
+			_build_scalers=no
+			_mt32emu=no
+			;;
 		ps3)
 			_timidity=no
 			_vkeybd=yes
@@ -3848,7 +3888,7 @@ esac
 #
 echo_n "Checking if host is POSIX compliant... "
 case $_host_os in
-	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps3 | psp2 | psp | riscos | wii)
+	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | morphos* | n64 | ps3 | psp2 | psp | riscos | wii)
 		_posix=no
 		;;
 	3ds | android | androidsdl | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | ios7 | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | switch | uclinux*)
@@ -4705,6 +4745,9 @@ if test "$_libcurl" != "no"; then
 			# macOS does not allow static libs, overriding
 			darwin*)
 				LIBCURL_LIBS=`$_libcurlconfig --libs`
+			;;
+			morphos*)
+				append_var LIBCURL_LIBS "-lpthread"
 			;;
 			psp2*)
 				append_var LIBCURL_LIBS "-lssl -lcrypto"
@@ -5921,6 +5964,7 @@ WINDRESFLAGS := $WINDRESFLAGS
 STAGINGPATH=$_stagingpath
 WIN32PATH=$_win32path
 AMIGAOSPATH=$_amigaospath
+MORPHOSPATH=$_morphospath
 STATICLIBPATH=$_staticlibpath
 XCODETOOLSPATH=$_xcodetoolspath
 SPARKLEPATH=$_sparklepath
