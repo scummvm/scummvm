@@ -480,6 +480,12 @@ void Set::patchInAdditionalObjectsInSet() {
 	int objectId = _objectCount;
 	BoundingBox bbox;
 	switch (_vm->_scene->getSceneId()) {
+	case kScenePS05:
+		// block actual passage to ESPER room because
+		// it causes McCoy to sometimes go behind the wall
+		bbox = BoundingBox(730.50f, -0.0f, -481.10f, 734.51f, 144.75f, -437.55f);
+		custObjName = "MAINFBLOCK";
+		break;
 	case kSceneUG13:
 		// Underground homeless place
 		// block passage to empty elevator chute

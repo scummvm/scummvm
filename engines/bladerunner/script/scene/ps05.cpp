@@ -29,8 +29,13 @@ void SceneScriptPS05::InitializeScene() {
 		Setup_Scene_Information(547.59f, 0.18f, -216.84f, 334);
 	} else if (Game_Flag_Query(kFlagPS02toPS05)) {
 		Setup_Scene_Information(635.0f, 0.0f, -598.0f, 475);
-	} else { // kFlagPS06toPS05 || kFlagPS15toPS05
+	} else { // kFlagPS06toPS05 || kFlagPS15toPS05, but for some reason kFlagPS06toPS05 is then set in PlayerWalkedIn
+#if BLADERUNNER_ORIGINAL_BUGS
 		Setup_Scene_Information(630.72f, 0.38f, -469.26f, 400);
+#else
+		// exiting from PS15
+		Setup_Scene_Information(553.24f, 0.37f, -422.97f, 400);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 	Scene_Exit_Add_2D_Exit(0, 218, 98, 280, 246, 3);
 	Scene_Exit_Add_2D_Exit(1, 330, 90, 436, 198, 0);
@@ -49,6 +54,10 @@ void SceneScriptPS05::InitializeScene() {
 
 void SceneScriptPS05::SceneLoaded() {
 	Obstacle_Object("WATER FOUNTAIN", true);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Obstacle_Object("MAINFBLOCK", true);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Clickable_Object("WATER FOUNTAIN");
 	Clickable_Object("ASHTRAY");
 	Clickable_Object("FIRE EXTINGISHER");
@@ -57,6 +66,11 @@ void SceneScriptPS05::SceneLoaded() {
 	Clickable_Object("WANTED POSTERS");
 	Unclickable_Object("WATER FOUNTAIN");
 	Unclickable_Object("CUP");
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Unclickable_Object("FIRE EXTINGISHER");
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 }
 
 bool SceneScriptPS05::MouseClick(int x, int y) {
@@ -112,12 +126,21 @@ bool SceneScriptPS05::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 2) {
+#if BLADERUNNER_ORIGINAL_BUGS
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 742.52f, 0.37f, -457.69f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagPS05toPS06);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Set_Enter(kSetPS06, kScenePS06);
 		}
+#else
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 715.52f, 0.37f, -457.69f, 0, true, false, false)) {
+			Game_Flag_Set(kFlagPS05toPS06);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Set_Enter(kSetPS06, kScenePS06);
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		return true;
 	}
 	return false;
@@ -143,7 +166,11 @@ void SceneScriptPS05::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptPS05::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagPS06toPS05)) {
+#if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Set_At_XYZ(kActorMcCoy, 718.72f, 0.37f, -461.26f, 600);
+#else
+		Actor_Set_At_XYZ(kActorMcCoy, 710.14f, 0.37f, -455.48f, 600);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	} else if (Game_Flag_Query(kFlagPS02toPS05)) {
 		selectNextTvNews();
 		turnOnTV();
