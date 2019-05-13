@@ -606,29 +606,15 @@ MusicEntry *EMISound::initMusicTableDemo(const Common::String &filename) {
 	return musicTable;
 }
 
-MusicEntry *EMISound::initMusicTableRetail(MusicEntry *table, const Common::String &filename) {
+void EMISound::initMusicTableRetail(MusicEntry *musicTable, const Common::String filename) {
 	Common::SeekableReadStream *data = g_resourceloader->openNewStreamFile(filename);
 
 	// Remember to check, in case we forgot to copy over those files from the CDs.
 	if (!data) {
 		warning("Couldn't open %s", filename.c_str());
-		delete[] table;
-		return nullptr;
+		return;
 	}
 	
-	MusicEntry *musicTable = table;
-	if (!table) {
-		_numMusicStates = 126;
-		musicTable = new MusicEntry[_numMusicStates];
-		for (int i = 0; i < 126; ++i) {
-			musicTable->_x = 0;
-			musicTable->_y = 0;
-			musicTable->_sync = 0;
-			musicTable->_trim = 0;
-			musicTable->_id = i;
-		}
-	}
-
 	TextSplitter *ts = new TextSplitter(filename, data);
 	int id, x, y, sync, trim;
 	char musicfilename[64];
@@ -656,19 +642,19 @@ MusicEntry *EMISound::initMusicTableRetail(MusicEntry *table, const Common::Stri
 	}
 	delete ts;
 	delete data;
-	return musicTable;
 }
 
-void tableLoadErrorDialog(const char *filename) {
+void tableLoadErrorDialog() {
 	const char *errorMessage = nullptr;
-	errorMessage =  "ERROR: Missing file for music-support.\n"
+	errorMessage =  "ERROR: Not enough music tracks found!\n"
 	"Escape from Monkey Island has two versions of FullMonkeyMap.imt,\n"
 	"you need to copy both files from both CDs to Textures/, and rename\n"
 	"them as follows to get music-support in-game: \n"
 	"CD 1: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap1.imt\"\n"
-	"CD 2: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap2.imt\"";
+	"CD 2: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap2.imt\"\n"
+	"\n"
+	"Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.int";
 	GUI::displayErrorDialog(errorMessage);
-	error("Missing file %s", filename);
 }
 
 void EMISound::initMusicTable() {
@@ -680,16 +666,38 @@ void EMISound::initMusicTable() {
 		_numMusicStates = ARRAYSIZE(emiPS2MusicTable);
 		_musicPrefix = "";
 	} else {
-		_musicTable = nullptr;
-		_musicTable = initMusicTableRetail(_musicTable, "Textures/FullMonkeyMap1.imt");
-		if (_musicTable == nullptr) {
-			tableLoadErrorDialog("Textures/FullMonkeyMap1.imt");
+		MusicEntry *musicTable = new MusicEntry[126];
+		for (int i = 0; i < 126; ++i) {
+			musicTable[i]._x = 0;
+			musicTable[i]._y = 0;
+			musicTable[i]._sync = 0;
+			musicTable[i]._trim = 0;
+			musicTable[i]._id = i;
 		}
-		_musicTable = initMusicTableRetail(_musicTable, "Textures/FullMonkeyMap2.imt");
-		if (_musicTable == nullptr) {
-			tableLoadErrorDialog("Textures/FullMonkeyMap2.imt");
+
+		initMusicTableRetail(musicTable, "Textures/FullMonkeyMap1.imt");
+		initMusicTableRetail(musicTable, "Textures/FullMonkeyMap2.imt");
+		initMusicTableRetail(musicTable, "Textures/FullMonkeyMap.imt");
+
+		/* There seem to be 69+60 music tracks, for a total of 125 unique tracks. */
+		int numTracks = 0;
+		for (int i = 0; i < 126; i++) {
+			if (!musicTable[i]._filename.empty()) {
+				numTracks++;
+			}
 		}
-		_musicPrefix = "Textures/spago/"; // Default to high-quality music.
+
+		warning("Found %d music tracks, expected at least 100", numTracks);
+		if (numTracks < 100) {
+			delete[] musicTable;
+			_numMusicStates = 0;
+			_musicTable = nullptr;
+			tableLoadErrorDialog();
+		} else {
+			_numMusicStates = 126;
+			_musicTable = musicTable;
+			_musicPrefix = "Textures/spago/"; // Default to high-quality music.
+		}
 	}
 }
 
