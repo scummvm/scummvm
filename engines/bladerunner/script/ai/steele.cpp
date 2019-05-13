@@ -448,6 +448,10 @@ void AIScriptSteele::EnteredScene(int sceneId) {
 	 &&  Actor_Query_In_Set(kActorSteele, kSetCT03_CT04)
 	 &&  Game_Flag_Query(kFlagCT04HomelessKilledByMcCoy)
 	 && !Game_Flag_Query(kFlagCT04HomelessBodyInDumpster)
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	 && !Game_Flag_Query(kFlagCT04HomelessBodyThrownAway)
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	 && !Game_Flag_Query(kFlagCT04HomelessBodyFound)
 	) {
 		Game_Flag_Set(kFlagCT04HomelessBodyFound);

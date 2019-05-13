@@ -203,6 +203,10 @@ void AIScriptHowieLee::EnteredScene(int sceneId) {
 		if ( Game_Flag_Query(kFlagCT04HomelessKilledByMcCoy)
 		 && !Game_Flag_Query(kFlagCT04HomelessBodyInDumpster)
 		 && !Game_Flag_Query(kFlagCT04HomelessBodyFound)
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		 && !Game_Flag_Query(kFlagCT04HomelessBodyThrownAway)
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		) {
 			Game_Flag_Set(kFlagCT04HomelessBodyFound);
 			// return false;
@@ -211,6 +215,10 @@ void AIScriptHowieLee::EnteredScene(int sceneId) {
 		if (Game_Flag_Query(kFlagCT04HomelessKilledByMcCoy)
 		 &&  Game_Flag_Query(kFlagCT04HomelessBodyInDumpster)
 		 && !Game_Flag_Query(kFlagCT04HomelessBodyFound)
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		 && !Game_Flag_Query(kFlagCT04HomelessBodyThrownAway)
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		 &&  Random_Query(1, 10) == 1
 		) {
 			Game_Flag_Set(kFlagCT04HomelessBodyFound);
