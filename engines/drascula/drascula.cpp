@@ -274,7 +274,11 @@ Common::Error DrasculaEngine::run() {
 	// Check if a save is loaded from the launcher
 	int directSaveSlotLoading = ConfMan.getInt("save_slot");
 	if (directSaveSlotLoading >= 0) {
+		// Set the current chapter to -1. This forces the load to happen
+		// later during the game loop, and not now.
+		currentChapter = -1;
 		loadGame(directSaveSlotLoading);
+		currentChapter++;
 	}
 
 	checkCD();
