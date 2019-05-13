@@ -966,7 +966,7 @@ void CryOmni3DEngine_Versailles::executeTransition(unsigned int nextPlaceId) {
 
 	_nextPlaceId = nextPlaceId;
 
-	Common::String animation = transition->animations[animationId];
+	Common::String animation = animationId == -1u ? "" : transition->animations[animationId];
 	animation.toUppercase();
 	debug("Transition animation: %s", animation.c_str());
 	if (animation.hasPrefix("NOT_FLI")) {
@@ -1015,7 +1015,7 @@ void CryOmni3DEngine_Versailles::executeTransition(unsigned int nextPlaceId) {
 		unsigned int nextNextPlaceId = nextPlace->transitions[transitionNum].dstId;
 
 		animationId = determineTransitionAnimation(nextPlaceId, nextNextPlaceId, &transition);
-		animation = transition->animations[animationId];
+		animation = animationId == -1u ? "" : transition->animations[animationId];
 
 		animation.toUppercase();
 		if (animation.hasPrefix("NOT_FLI")) {
@@ -1074,7 +1074,11 @@ unsigned int CryOmni3DEngine_Versailles::determineTransitionAnimation(unsigned i
 		error("Invalid dst state");
 	}
 
-	if (animsNum <= 1) {
+	if (animsNum == 0) {
+		return -1;
+	}
+
+	if (animsNum == 1) {
 		return 0;
 	}
 
