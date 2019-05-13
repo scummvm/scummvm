@@ -17,6 +17,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed incorrect cursor movement when it's controlled using the keyboard.
    - Updated the Roland MT-32 emulation code to Munt 2.3.0.
 
+ Drascula:
+   - Fixed loading game from launcher when the game had been saved in chapter 1.
+
  Full Pipe:
    - Fixed playtime not being restored when loading a savegame.
    - Fixed a bug that leads to enormous memory consumption in scene 22.
