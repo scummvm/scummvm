@@ -97,7 +97,7 @@ void SceneScriptMA06::PlayerWalkedIn() {
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 40.0f, 1.35f, 0.0f, 0, false, false, false);
 	Actor_Face_Object(kActorMcCoy, "panel", true);
 	Delay(500);
-
+	bool normalElevatorBusiness = true;
 	if (_vm->_cutContent) {
 		//
 		// McCoy + Rachael meetings
@@ -105,6 +105,7 @@ void SceneScriptMA06::PlayerWalkedIn() {
 		if ((Game_Flag_Query(kFlagMA07toMA06) || Game_Flag_Query(kFlagMA01toMA06))
 		     && Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsInsideMcCoysElevatorAct3
 		){
+			normalElevatorBusiness = false;
 			// Act 3 Deleted scene (can happen within the elevator or outside the building)
 			// Skip floor panel selection - force go to MCCOY 88F
 			Game_Flag_Reset(kFlagMA06toMA01);
@@ -143,6 +144,7 @@ void SceneScriptMA06::PlayerWalkedIn() {
 		} else if (Game_Flag_Query(kFlagMA02toMA06)
 			&& Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsInsideMcCoysElevatorAct4
 		){
+			normalElevatorBusiness = false;
 			// Act 4 deleted scene case with Rachael
 			//
 			// TODO fix animations - Do an Optimization pass
@@ -174,29 +176,33 @@ void SceneScriptMA06::PlayerWalkedIn() {
 			Sound_Play(kSfxELDOORO2, 100, 50, 50, 50);
 		} else {
 			// normal elevator business
-			activateElevator();
-
-			if (isElevatorOnDifferentFloor()) {
-				Sound_Play(kSfxSPINUP1, 25, 0, 0, 50);
-				Delay(4000);
-			}
-
-			Game_Flag_Reset(kFlagMA01toMA06);
-			Game_Flag_Reset(kFlagMA02toMA06);
-			Game_Flag_Reset(kFlagMA07toMA06);
-
-			if (Game_Flag_Query(kFlagMA06toMA01)) {
-				Set_Enter(kSetMA01, kSceneMA01);
-			} else if (Game_Flag_Query(kFlagMA06ToMA02)) {
-				Set_Enter(kSetMA02_MA04, kSceneMA02);
-			} else {
-				Set_Enter(kSetMA07, kSceneMA07);
-			}
-
-			Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kMA06LoopDoorClose, true);
-			Sound_Play(kSfxELDOORO2, 100, 50, 50, 50);
+			normalElevatorBusiness = true;
 		}
 	} // end of cut content
+	if (normalElevatorBusiness) {
+		// normal elevator business
+		activateElevator();
+
+		if (isElevatorOnDifferentFloor()) {
+			Sound_Play(kSfxSPINUP1, 25, 0, 0, 50);
+			Delay(4000);
+		}
+
+		Game_Flag_Reset(kFlagMA01toMA06);
+		Game_Flag_Reset(kFlagMA02toMA06);
+		Game_Flag_Reset(kFlagMA07toMA06);
+
+		if (Game_Flag_Query(kFlagMA06toMA01)) {
+			Set_Enter(kSetMA01, kSceneMA01);
+		} else if (Game_Flag_Query(kFlagMA06ToMA02)) {
+			Set_Enter(kSetMA02_MA04, kSceneMA02);
+		} else {
+			Set_Enter(kSetMA07, kSceneMA07);
+		}
+
+		Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kMA06LoopDoorClose, true);
+		Sound_Play(kSfxELDOORO2, 100, 50, 50, 50);
+	}
 }
 
 void SceneScriptMA06::PlayerWalkedOut() {
