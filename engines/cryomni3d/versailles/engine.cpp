@@ -38,7 +38,7 @@
 // 0 or commented: All videos and options screen
 // 1: Skip videos at startup and at game start
 // 2: Directly start a new game
-#define DEBUG_FAST_START 1
+//#define DEBUG_FAST_START 1
 
 namespace CryOmni3D {
 namespace Versailles {
