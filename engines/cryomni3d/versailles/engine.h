@@ -137,8 +137,8 @@ struct GameVariables {
 		kLadderState, // OK
 		kOpenedCurtain, // OK
 		kLoweredChandelier, // OK
-		kOrangerRatisse,
-		kDiscussedLabyrOrder,
+		kCombedOrangeTree, // OK
+		kMaineTalked, // OK
 		kUsedBougieAllumee,
 		kStateBombe,
 		kInkSpilled, // OK
@@ -408,6 +408,8 @@ private:
 	void obj_125();
 	void obj_126();
 	void obj_126hk(Graphics::ManagedSurface &surface);
+	void obj_142();
+	void obj_142hk(Graphics::ManagedSurface &surface);
 
 	// Fixed image
 	template<unsigned int ID>
@@ -561,6 +563,11 @@ private:
 	FILTER_EVENT(5, 29);
 	FILTER_EVENT(5, 33);
 	FILTER_EVENT(5, 34);
+
+	FILTER_EVENT(6, 1);
+	FILTER_EVENT(6, 3);
+	FILTER_EVENT(6, Orangery);
+	FILTER_EVENT(6, 19);
 
 #undef FILTER_EVENT
 #undef INIT_PLACE

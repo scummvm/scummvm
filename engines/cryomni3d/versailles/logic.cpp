@@ -119,7 +119,7 @@ void CryOmni3DEngine_Versailles::setupObjects() {
 	SET_OBJECT_GENERIC_CB(0, 139, 24);
 	SET_OBJECT(31, 140); // 45
 	SET_OBJECT_GENERIC_CB(87, 141, 25);
-	SET_OBJECT(95, 142); // TODO: LABYR.gif
+	SET_OBJECT_CB(95, 142);
 	SET_OBJECT(157, 143);
 	SET_OBJECT(168, 144);
 	SET_OBJECT(65, 145); // 50
@@ -192,6 +192,71 @@ void CryOmni3DEngine_Versailles::obj_126hk(Graphics::ManagedSurface &surface) {
 	for (unsigned int i = 0; i < 26; i++) {
 		bmpLetters[i].free();
 	}
+}
+
+void CryOmni3DEngine_Versailles::obj_142() {
+	// Display a marker only when in maze
+	if (_currentLevel == 6 && _currentPlaceId >= 14 && _currentPlaceId <= 44) {
+		displayObject(imagesObjects[26], &CryOmni3DEngine_Versailles::obj_142hk);
+	} else {
+		displayObject(imagesObjects[26]);
+	}
+}
+
+void CryOmni3DEngine_Versailles::obj_142hk(Graphics::ManagedSurface &surface) {
+	const Common::Point markers[] = {
+		Common::Point(135, 403), // 14
+		Common::Point(136, 321), // 15
+		Common::Point(225, 109),
+		Common::Point(441,  88),
+		Common::Point(505,  78),
+		Common::Point(550,  82),
+		Common::Point(479, 242), // 20
+		Common::Point(529, 333),
+		Common::Point(466, 407),
+		Common::Point(359, 411),
+		Common::Point(305, 415),
+		Common::Point(217, 405), // 25
+		Common::Point(216, 325),
+		Common::Point(280, 378),
+		Common::Point(340, 313),
+		Common::Point(282, 313),
+		Common::Point(253, 285), // 30
+		Common::Point(225, 258),
+		Common::Point(154, 255),
+		Common::Point(219, 188),
+		Common::Point(294, 251),
+		Common::Point(341, 242), // 35
+		Common::Point(308, 206),
+		Common::Point(270, 172),
+		Common::Point(363, 161),
+		Common::Point(416, 201),
+		Common::Point(513, 195), // 40
+		Common::Point(412, 311),
+		Common::Point(446, 280),
+		Common::Point(377, 347),
+		Common::Point(448, 356),
+	};
+
+	unsigned int id = _currentPlaceId - 14;
+	assert(id < ARRAYSIZE(markers));
+
+	/*
+	_fontManager.setSurface(&surface);
+	_fontManager.setCurrentFont(4);
+	_fontManager.setTransparentBackground(true);
+	_fontManager.setForeColor(241);
+	for(id = 0; id < ARRAYSIZE(markers); id++) {
+	*/
+	// Why - 20? Ask to game creators, it's like that in the code
+	unsigned int spriteX = markers[id].x - _sprites.getCursor(4).getWidth() / 2 - 20;
+	unsigned int spriteY = markers[id].y - _sprites.getCursor(4).getHeight() / 2;
+	surface.transBlitFrom(_sprites.getSurface(4), Common::Point(spriteX, spriteY),
+	                      _sprites.getKeyColor(4));
+	/*
+	_fontManager.displayInt(markers[id].x - 10, markers[id].y, id + 14);
+	}
+	*/
 }
 
 // This array contains images for all paintings it must be kept in sync with _paintingsTitles
@@ -3919,6 +3984,97 @@ FILTER_EVENT(5, 34) {
 		if (_nextPlaceId == -1u) {
 			_nextPlaceId = _currentPlaceId;
 		}
+		// Handled here
+		return false;
+	}
+
+	return true;
+}
+
+FILTER_EVENT(6, 1) {
+	if (*event == 36010 && _placeStates[1].state == 0) {
+		collectObject(144);
+		setPlaceState(1, 1);
+		// Handled here
+		return false;
+	}
+
+	return true;
+}
+
+FILTER_EVENT(6, 3) {
+	if (!filterEventLevel6PlaceOrangery(event)) {
+		// Handled
+		return false;
+	} else if (*event == 36030 && _placeStates[3].state == 0) {
+		collectObject(143);
+		setPlaceState(3, 1);
+		// Handled here
+		return false;
+	} else if (*event == 1) {
+		// To apothecary
+		displayMessageBoxWarp(17);
+	}
+
+	return true;
+}
+
+FILTER_EVENT(6, Orangery) {
+	if (*event == 36000) {
+		if (_inventory.selectedObject() &&
+		        _inventory.selectedObject()->idOBJ() == 143) {
+			_gameVariables[GameVariables::kCombedOrangeTree]++; // Not used afterwards
+			displayMessageBoxWarp(5);
+		}
+		// Handled here
+		return false;
+	} else if (*event == 36001) {
+		if (_inventory.selectedObject() &&
+		        _inventory.selectedObject()->idOBJ() == 143) {
+			displayMessageBoxWarp(6);
+		}
+		// Handled here
+		return false;
+	}
+
+	return true;
+}
+
+FILTER_EVENT(6, 19) {
+	if (*event == 26190 && _inventory.selectedObject() &&
+	        _placeStates[19].state == 0) {
+		if (!_gameVariables[GameVariables::kMaineTalked]) {
+			if (_inventory.selectedObject()->idOBJ() == 144) {
+				_dialogsMan["{JOUEUR-DONNE-AUTRE-MEDICAMENT}"] = 'Y';
+			}
+
+			_dialogsMan.play("61_DUC");
+		} else {
+			if (_inventory.selectedObject()->idOBJ() == 144) {
+				_dialogsMan["{JOUEUR-DONNE-SIROP-DE-ROSE}"] = 'Y';
+				_dialogsMan.setIgnoreNoEndOfConversation(true);
+			}
+
+			_dialogsMan.play("62_DUC");
+			_dialogsMan.setIgnoreNoEndOfConversation(false);
+		}
+
+		_forcePaletteUpdate = true;
+		// Force reload of the place
+		if (_nextPlaceId == -1u) {
+			_nextPlaceId = _currentPlaceId;
+		}
+
+		_dialogsMan["{JOUEUR-DONNE-AUTRE-MEDICAMENT}"] = 'N';
+		_dialogsMan["{JOUEUR-DONNE-SIROP-DE-ROSE}"] = 'N';
+
+		_inventory.deselectObject();
+	} else if (*event > 0 && *event < 10000 && _dialogsMan["{DUC_MAIN_A_PARLE}"] == 'Y') {
+		_gameVariables[GameVariables::kMaineTalked] = 1;
+		_whoSpeaksWhere[PlaceActionKey(19, 16190)] = "62_DUC";
+	} else if (*event == 36190 && _placeStates[19].state == 1) {
+		collectObject(142);
+		setGameTime(2, 6);
 		// Handled here
 		return false;
 	}
