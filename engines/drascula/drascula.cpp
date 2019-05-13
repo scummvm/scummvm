@@ -279,6 +279,8 @@ Common::Error DrasculaEngine::run() {
 
 	checkCD();
 
+	allocMemory();
+
 	while (!shouldQuit()) {
 		int i;
 		takeObject = 0;
@@ -318,8 +320,6 @@ Common::Error DrasculaEngine::run() {
 		for (i = 0; i < 8; i++)
 			actorFrames[i] = 0;
 		actorFrames[kFrameVonBraun] = 1;
-
-		allocMemory();
 
 		_subtitlesDisabled = !ConfMan.getBool("subtitles");
 
@@ -382,6 +382,8 @@ Common::Error DrasculaEngine::run() {
 		currentChapter++;
 	}
 
+	freeMemory();
+
 	return Common::kNoError;
 }
 
@@ -391,7 +393,6 @@ void DrasculaEngine::endChapter() {
 	black();
 	MusicFadeout();
 	stopMusic();
-	freeMemory();
 }
 
 bool DrasculaEngine::runCurrentChapter() {
