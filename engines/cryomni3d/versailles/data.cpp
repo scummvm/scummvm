@@ -97,7 +97,7 @@ void CryOmni3DEngine_Versailles::setupMessages() {
 	    "Il est conseill" "\x8e" " de SAUVEGARDER votre partie maintenant.");
 	SET_MESSAGE(
 	    19,
-	    "Attention : Vous allez pouvoir terminer ce niveau, mais vous n'avez peut-" "\x89" "tre"
+	    "Attention : Vous allez pouvoir terminer ce niveau, mais vous n'avez peut-" "\x90" "tre"
 	    " pas effectu" "\x8e" " toutes les actions necessaires pour la suite. "
 	    "Il est conseill" "\x8e" " de SAUVEGARDER votre partie maintenant.");
 	SET_MESSAGE(20, "Vous ne pouvez pas vous d" "\x8e" "placer en portant une " "\x8e" "chelle!");
@@ -134,7 +134,7 @@ void CryOmni3DEngine_Versailles::setupMessages() {
 	SET_MESSAGE(54, "Annuler");
 	SET_MESSAGE(55, "libre");
 	SET_MESSAGE(56, "sans nom");
-	SET_MESSAGE(57, "Attention : la partie en cours va " "\x89" "tre abandonn" "\x8e" "e.");
+	SET_MESSAGE(57, "Attention : la partie en cours va " "\x90" "tre abandonn" "\x8e" "e.");
 	SET_MESSAGE(58, "Retour");
 	SET_MESSAGE(59, "Le chateau");
 	SET_MESSAGE(60, "Retour Menu Principal");
@@ -205,7 +205,7 @@ void CryOmni3DEngine_Versailles::setupMessages() {
 	SET_MESSAGE(126, "Epigraphe");
 	SET_MESSAGE(127, "Pamphlet sur le gouvernement");
 	SET_MESSAGE(128, "Plume");
-	SET_MESSAGE(129, "Pense-b" "\x89" "te");
+	SET_MESSAGE(129, "Pense-b" "\x90" "te");
 	SET_MESSAGE(130, "Lunette");
 	SET_MESSAGE(131, "Plan Vauban");
 	SET_MESSAGE(132, "Plan Vauban");
@@ -230,7 +230,7 @@ void CryOmni3DEngine_Versailles::setupPaintingsTitles() {
 #define SET_PAINTING_TITLE(str) _paintingsTitles.push_back(str)
 	SET_PAINTING_TITLE("\"Entr" "\x8e" "e des animaux dans l'arche\"\rGerolamo Bassano"); // 0: 41201
 	SET_PAINTING_TITLE("\"Le repas d'Emma" "\x9f" "s\"\rJacopo Bassano"); // 1: 41202
-	SET_PAINTING_TITLE("\"La Madeleine aux pieds de J\x8esus Christ\"\rSustris"); // 2: 41203
+	SET_PAINTING_TITLE("\"La Madeleine aux pieds de J" "\x8e" "sus Christ\"\rSustris"); // 2: 41203
 	SET_PAINTING_TITLE("\"La sortie de l'arche\"\rGerolamo Bassano"); // 3: 41204
 	SET_PAINTING_TITLE("\"Le frappement du rocher\"\rJacopo Bassano"); // 4: 41205
 	SET_PAINTING_TITLE("\"La Bataille d'Arbelles\"\rJoseph Parrocel"); // 5: 41301
@@ -277,7 +277,7 @@ void CryOmni3DEngine_Versailles::setupPaintingsTitles() {
 	SET_PAINTING_TITLE("\"Marie de m" "\x8e" "dicis\"\rVan Dyck"); // 39: 43150
 	SET_PAINTING_TITLE("\"Hercule luttant contre Achelous\"\rGuido R" "\x8e" "ni"); // 40: 43151
 	SET_PAINTING_TITLE("\"Le Centaure Nessus porte Dejanire\"\rGuido R" "\x8e" "ni"); // 41: 43152
-	SET_PAINTING_TITLE("\"Saint Franìois d'Assise r" "\x8e" "confort" "\x8e" " apr" "\x8f"
+	SET_PAINTING_TITLE("\"Saint Fran" "\x8d" "ois d'Assise r" "\x8e" "confort" "\x8e" " apr" "\x8f"
 	                   "s sa stigmatisation\"\rSeghers"); // 42: 43153
 	SET_PAINTING_TITLE("\"Thomiris faisant tremper la t" "\x90"
 	                   "te de Cyrus dans le sang\"\rRubens"); // 43: 43154
