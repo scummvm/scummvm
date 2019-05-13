@@ -21,6 +21,7 @@
  */
 
 #include "bladerunner/script/scene_script.h"
+#include "common/debug.h"
 
 namespace BladeRunner {
 
@@ -33,6 +34,12 @@ enum kMA06Loops {
 
 void SceneScriptMA06::InitializeScene() {
 	Setup_Scene_Information(40.0f, 1.0f, -20.0f, 400);
+
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Ambient_Sounds_Remove_All_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxELEAMB3,  50, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxAPRTFAN1, 33, 0, 1);
@@ -232,6 +239,7 @@ void SceneScriptMA06::activateElevator() {
 	Game_Flag_Reset(kFlagMA06toMA01);
 	Game_Flag_Reset(kFlagMA06ToMA02);
 	Game_Flag_Reset(kFlagMA06toMA07);
+	int floor = 0;
 	while (true) {
 		if (Game_Flag_Query(kFlagMA06ToMA02)) {
 			break;
@@ -245,7 +253,15 @@ void SceneScriptMA06::activateElevator() {
 
 		Actor_Says(kActorAnsweringMachine, 80, kAnimationModeTalk);
 		Player_Gains_Control();
-		int floor = Elevator_Activate(kElevatorMA);
+		floor = Elevator_Activate(kElevatorMA);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		// Fix for a crash/ freeze bug;
+		//  To reproduce original issue: in Act 4, visit Rajiff, then exit to ground floor. Re-enter elevator and press Alt+F4
+		if (floor < 0) {
+			break;
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Player_Loses_Control();
 
 		Scene_Loop_Start_Special(kSceneLoopModeOnce, kMA06LoopMainLoop, true);
