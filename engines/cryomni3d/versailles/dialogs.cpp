@@ -300,10 +300,11 @@ void CryOmni3DEngine_Versailles::dialogShowDuMaineLeaves() {
 }
 
 void CryOmni3DEngine_Versailles::dialogShowTransitionScene() {
+	playTransitionEndLevel(6);
 }
 
 void CryOmni3DEngine_Versailles::dialogShowEndOfGame() {
-	playTransitionEndLevel(6);
+	doGameOver();
 }
 
 void CryOmni3DEngine_Versailles::dialogShowLeBrunGives() {
