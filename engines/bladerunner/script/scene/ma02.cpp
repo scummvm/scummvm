@@ -71,7 +71,7 @@ void SceneScriptMA02::InitializeScene() {
 	 &&  Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)
 	 && !Actor_Clue_Query(kActorMcCoy, kClueCrystalsCigarette)
 	) {
-		Overlay_Play("MA02OVER", 0, 1, 0, 0);
+		Overlay_Play("MA02OVER", 0, true, false, 0);
 	}
 }
 

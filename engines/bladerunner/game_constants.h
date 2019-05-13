@@ -143,7 +143,7 @@ enum Clues {
 	kClueLicensePlate = 37,
 	kClueLicensePlateMatch = 38,
 	kClueLabPaintTransfer = 39,
-	kClueDispatchHitAndRun = 40, // is never acquired
+	kClueDispatchHitAndRun = 40, // is now acquired in restored Cut Content
 	kClueInceptShotRoy = 41,
 	kClueInceptShotsLeon = 42,
 	kCluePhoneCallGuzza = 43,
@@ -446,7 +446,7 @@ enum Flags {
 	kFlagRC02Left = 4,
 	// 5 is never used
 	kFlagRC02RunciterInterview = 6,
-	// 7 is never used
+	kFlagCT01TalkToHowieAboutDeadZuben = 7, // Re-purposed. Original: 7 is never used
 	kFlagRC01toRC02 = 8,
 	kFlagRC02toRC01 = 9,
 	kFlagDR01toDR04 = 10,
@@ -469,7 +469,7 @@ enum Flags {
 	kFlagCT01Evidence1Linked = 27,
 	kFlagCT01Evidence2Linked = 28,
 	kFlagCT01ZubenLeft = 29,
-	kFlagNotUsed30 = 30,  // is never set
+	kFlagCT01TalkToHowieAfterZubenMissing = 30,  // New, it is now set/unset to restore cut content there. Original: is never set
 	kFlagCT01ZubenGone = 31,
 	kFlagCT01GordoTalk = 32,
 	kFlagMA02toMA06 = 33,
@@ -2245,6 +2245,18 @@ enum GoalLuther {
 	kGoalLutherDie = 498,
 	kGoalLutherDead = 499,
 	kGoalLutherGone = 599
+};
+
+enum GoalHowieLee {
+	kGoalHowieLeeDefault              =   0,
+	kGoalHowieLeeMovesInDiner01       =   1,
+	kGoalHowieLeeMovesInDiner02       =   2,
+	kGoalHowieLeeMovesInDiner03       =   3,
+	kGoalHowieLeeGoesToCT04GarbageBin =   4,
+	kGoalHowieLeeGoesToFreeSlotH      =   5,
+	kGoalHowieLeeMovesInDiner06       =   6, // Unused goal?
+	kGoalHowieLeeStopMoving           =  50,
+	kGoalHowieLeeGoesToFreeSlotC      = 100
 };
 
 enum GoalTransient {
