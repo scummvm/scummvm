@@ -1752,6 +1752,18 @@ enum GameModelAnimations {
 	kModelAnimationFemaleTargetWithGunActive   = 449,
 	kModelAnimationFemaleTargetWithGunDead     = 450, // 449+1
 
+	kModelAnimationRachaelWalking                  = 822,
+	kModelAnimationRachaelIdle                     = 823,
+	kModelAnimationRachaelIdleOscilate             = 824, // unused
+	kModelAnimationRachaelTalkSoftNod              = 825,
+	kModelAnimationRachaelTalkNodToLeft            = 826,
+	kModelAnimationRachaelTalkSuggestWithNodToLeft = 827,
+	kModelAnimationRachaelTalkIndiffWithNodToLeft  = 828,
+	kModelAnimationRachaelTalkOfferPointing        = 829,
+	kModelAnimationRachaelTalkHaltMovement         = 830,
+	kModelAnimationRachaelTalkHandOnChest          = 831,
+	kModelAnimationRachaelTalkHandWaveToRight      = 832,
+
 	kModelAnimationBadge                       = 931,
 	kModelAnimationBomb                        = 932,
 	kModelAnimationCandy                       = 933,

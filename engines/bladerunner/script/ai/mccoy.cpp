@@ -48,7 +48,7 @@ void AIScriptMcCoy::Initialize() {
 	_animationLoopFrameMin = 0;
 	_animationLoopFrameMax = 3;
 	_animationStateNextSpecial = 3;
-	_animationNextSpecial = 20;
+	_animationNextSpecial = kModelAnimationMcCoyProtestingTalk;
 	_nextSoundId = -1;
 	_NR10SteeleShooting = false;
 	_fallSpeed = 0;
@@ -623,7 +623,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 			_animationState = _animationStateNextSpecial;
 			*animation = _animationNextSpecial;
 			_animationStateNextSpecial = 4;
-			_animationNextSpecial = 20;
+			_animationNextSpecial = kModelAnimationMcCoyProtestingTalk;
 		} else if (_animationFrame <= 4 && Game_Flag_Query(kFlagMcCoyAnimation1)) {
 			Game_Flag_Reset(kFlagMcCoyAnimation1);
 			*animation = kModelAnimationMcCoyIdle;
@@ -1472,11 +1472,11 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		if (_animationState < 3 || _animationState > 12) {
 			_animationState = 13;
 			_animationStateNext = 3;
-			_animationNext = 20;
+			_animationNext = kModelAnimationMcCoyProtestingTalk;
 		} else {
 			Game_Flag_Reset(kFlagMcCoyAnimation1);
 			_animationStateNextSpecial = 4;
-			_animationNextSpecial = 20;
+			_animationNextSpecial = kModelAnimationMcCoyProtestingTalk;
 		}
 		break;
 
@@ -1564,11 +1564,11 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		if (_animationState < 3 || _animationState > 12) {
 			_animationState = 13;
 			_animationStateNext = 5;
-			_animationNext = 21;
+			_animationNext = kModelAnimationMcCoyScratchHeadTalk;
 		} else {
 			Game_Flag_Reset(kFlagMcCoyAnimation1);
 			_animationStateNextSpecial = 5;
-			_animationNextSpecial = 21;
+			_animationNextSpecial = kModelAnimationMcCoyScratchHeadTalk;
 		}
 		break;
 
@@ -1577,11 +1577,11 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		if (_animationState < 3 || _animationState > 12) {
 			_animationState = 13;
 			_animationStateNext = 6;
-			_animationNext = 27;
+			_animationNext = kModelAnimationMcCoyScratchEarLongerTalk;
 		} else {
 			Game_Flag_Reset(kFlagMcCoyAnimation1);
 			_animationStateNextSpecial = 6;
-			_animationNextSpecial = 27;
+			_animationNextSpecial = kModelAnimationMcCoyScratchEarLongerTalk;
 		}
 		break;
 
@@ -1590,11 +1590,11 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		if (_animationState < 3 || _animationState > 12) {
 			_animationState = 13;
 			_animationStateNext = 7;
-			_animationNext = 22;
+			_animationNext = kModelAnimationMcCoyPointingTalk;
 		} else {
 			Game_Flag_Reset(kFlagMcCoyAnimation1);
 			_animationStateNextSpecial = 7;
-			_animationNextSpecial = 22;
+			_animationNextSpecial = kModelAnimationMcCoyPointingTalk;
 		}
 		break;
 
@@ -1602,11 +1602,11 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		if (_animationState < 3 || _animationState > 12) {
 			_animationState = 13;
 			_animationStateNext = 8;
-			_animationNext = 23;
+			_animationNext = kModelAnimationMcCoyUpsetTalk;
 		} else {
 			Game_Flag_Reset(kFlagMcCoyAnimation1);
 			_animationStateNextSpecial = 8;
-			_animationNextSpecial = 23;
+			_animationNextSpecial = kModelAnimationMcCoyUpsetTalk;
 		}
 		break;
 
@@ -1614,11 +1614,11 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		if (_animationState < 3 || _animationState > 12) {
 			_animationState = 13;
 			_animationStateNext = 9;
-			_animationNext = 24;
+			_animationNext = kModelAnimationMcCoyDismissiveTalk;
 		} else {
 			Game_Flag_Reset(kFlagMcCoyAnimation1);
 			_animationStateNextSpecial = 9;
-			_animationNextSpecial = 24;
+			_animationNextSpecial = kModelAnimationMcCoyDismissiveTalk;
 		}
 		break;
 
@@ -1626,11 +1626,11 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		if (_animationState < 3 || _animationState > 12) {
 			_animationState = 13;
 			_animationStateNext = 10;
-			_animationNext = 25;
+			_animationNext = kModelAnimationMcCoyScratchEarTalk;
 		} else {
 			Game_Flag_Reset(kFlagMcCoyAnimation1);
 			_animationStateNextSpecial = 10;
-			_animationNextSpecial = 25;
+			_animationNextSpecial = kModelAnimationMcCoyScratchEarTalk;
 		}
 		break;
 
@@ -1638,11 +1638,11 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		if (_animationState < 3 || _animationState > 12) {
 			_animationState = 13;
 			_animationStateNext = 11;
-			_animationNext = 26;
+			_animationNext = kModelAnimationMcCoyHandsOnWaistTalk;
 		} else {
 			Game_Flag_Reset(kFlagMcCoyAnimation1);
 			_animationStateNextSpecial = 11;
-			_animationNextSpecial = 26;
+			_animationNextSpecial = kModelAnimationMcCoyHandsOnWaistTalk;
 		}
 		break;
 
@@ -1650,11 +1650,11 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		if (_animationState < 3 || _animationState > 12) {
 			_animationState = 13;
 			_animationStateNext = 12;
-			_animationNext = 27;
+			_animationNext = kModelAnimationMcCoyScratchEarLongerTalk;
 		} else {
 			Game_Flag_Reset(kFlagMcCoyAnimation1);
 			_animationStateNextSpecial = 12;
-			_animationNextSpecial = 27;
+			_animationNextSpecial = kModelAnimationMcCoyScratchEarLongerTalk;
 		}
 		break;
 

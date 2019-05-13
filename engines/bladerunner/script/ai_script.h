@@ -420,7 +420,7 @@ DECLARE_SCRIPT(Rachael)
 	void dialogue_start();
 	void dialogue_agenda1();
 	void dialogue_agenda2();
-	void dialogue_agenda3();
+	void dialogue_act4();
 END_SCRIPT
 
 DECLARE_SCRIPT(GeneralDoll)

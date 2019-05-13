@@ -74,7 +74,11 @@ void SceneScriptUG04::InitializeScene() {
 }
 
 void SceneScriptUG04::SceneLoaded() {
-	Obstacle_Object("NAV", true);
+#if BLADERUNNER_ORIGINAL_BUGS
+	Obstacle_Object("NAV", true); // a bug? this object does not exist in the scene
+#else
+	Obstacle_Object("VAN", true);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Unobstacle_Object("RUBBLE", true);
 	Unobstacle_Object("FLOOR DEBRIS WADS", true);
 	Unobstacle_Object("FLOOR DEBRIS WADS01", true);

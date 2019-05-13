@@ -158,16 +158,15 @@ void SceneScriptMA06::PlayerWalkedIn() {
 			Actor_Set_Goal_Number(kActorRachael, kGoalRachaelIsInsideElevatorStartTalkAct4);
 			//
 			Delay(500);
+			Game_Flag_Reset(kFlagMA01toMA06);
+			Game_Flag_Reset(kFlagMA02toMA06);
+			Game_Flag_Reset(kFlagMA07toMA06);
 			Ambient_Sounds_Adjust_Looping_Sound(kSfxSPINUP1,  0, 0, 1);
 			Ambient_Sounds_Adjust_Looping_Sound(kSfxAPRTFAN1, 0, 0, 1);
 			Ambient_Sounds_Adjust_Looping_Sound(kSfxELEAMB3,  0, 0, 1);
 			Ambient_Sounds_Remove_Looping_Sound(kSfxSPINUP1,  1);         // stop elev moving sound
 			Ambient_Sounds_Remove_Looping_Sound(kSfxAPRTFAN1, 1);         // stop other ambient
 			Ambient_Sounds_Remove_Looping_Sound(kSfxELEAMB3,  1);         // stop other ambient
-
-			Game_Flag_Reset(kFlagMA01toMA06);
-			Game_Flag_Reset(kFlagMA02toMA06);
-			Game_Flag_Reset(kFlagMA07toMA06);
 
 //			Player_Gains_Control();
 			Set_Enter(kSetMA07, kSceneMA07);

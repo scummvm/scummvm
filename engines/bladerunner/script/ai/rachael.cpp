@@ -162,6 +162,10 @@ bool AIScriptRachael::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		}
 		break;
 
+	case kGoalRachaelIsInsideElevatorStartTalkAct4:
+		dialogue_act4();
+		break;
+
 	case kGoalRachaelIsOutWalksToPoliceHQAct4:
 		// added goal for restored content
 		// fall through
@@ -195,101 +199,101 @@ bool AIScriptRachael::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 bool AIScriptRachael::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
-		*animation = 823;
+		*animation = kModelAnimationRachaelIdle;
 		_animationFrame++;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(823) - 1) {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationRachaelIdle) - 1) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 1:
-		*animation = 822;
+		*animation = kModelAnimationRachaelWalking;
 		_animationFrame++;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(822) - 1) {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationRachaelWalking) - 1) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 2:
 		if (!_animationFrame && _flag) {
-			*animation = 823;
+			*animation = kModelAnimationRachaelIdle;
 			_animationState = 0;
 		} else {
-			*animation = 825;
+			*animation = kModelAnimationRachaelTalkSoftNod;
 			_animationFrame++;
-			if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(825) - 1) {
+			if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationRachaelTalkSoftNod) - 1) {
 				_animationFrame = 0;
 			}
 		}
 		break;
 
 	case 3:
-		*animation = 826;
+		*animation = kModelAnimationRachaelTalkNodToLeft;
 		_animationFrame++;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(826) - 1) {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationRachaelTalkNodToLeft) - 1) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 825;
+			*animation = kModelAnimationRachaelTalkSoftNod;
 		}
 		break;
 
 	case 4:
-		*animation = 827;
+		*animation = kModelAnimationRachaelTalkSuggestWithNodToLeft;
 		_animationFrame++;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(827) - 1) {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationRachaelTalkSuggestWithNodToLeft) - 1) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 825;
+			*animation = kModelAnimationRachaelTalkSoftNod;
 		}
 		break;
 
 	case 5:
-		*animation = 828;
+		*animation = kModelAnimationRachaelTalkIndiffWithNodToLeft;
 		_animationFrame++;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(828) - 1) {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationRachaelTalkIndiffWithNodToLeft) - 1) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 825;
+			*animation = kModelAnimationRachaelTalkSoftNod;
 		}
 		break;
 
 	case 6:
-		*animation = 829;
+		*animation = kModelAnimationRachaelTalkOfferPointing;
 		_animationFrame++;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(829) - 1) {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationRachaelTalkOfferPointing) - 1) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 825;
+			*animation = kModelAnimationRachaelTalkSoftNod;
 		}
 		break;
 
 	case 7:
-		*animation = 830;
+		*animation = kModelAnimationRachaelTalkHaltMovement;
 		_animationFrame++;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(830) - 1) {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationRachaelTalkHaltMovement) - 1) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 825;
+			*animation = kModelAnimationRachaelTalkSoftNod;
 		}
 		break;
 
 	case 8:
-		*animation = 831;
+		*animation = kModelAnimationRachaelTalkHandOnChest;
 		_animationFrame++;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(831) - 1) {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationRachaelTalkHandOnChest) - 1) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 825;
+			*animation = kModelAnimationRachaelTalkSoftNod;
 		}
 		break;
 
 	case 9:
-		*animation = 832;
+		*animation = kModelAnimationRachaelTalkHandWaveToRight;
 		_animationFrame++;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(832) - 1) {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationRachaelTalkHandWaveToRight) - 1) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 825;
+			*animation = kModelAnimationRachaelTalkSoftNod;
 		}
 		break;
 
@@ -304,10 +308,10 @@ bool AIScriptRachael::UpdateAnimation(int *animation, int *frame) {
 bool AIScriptRachael::ChangeAnimationMode(int mode) {
 	switch (mode) {
 	case kAnimationModeIdle:
-		if (_animationState >= 2 && _animationState <= 9) {
+		if (_animationState >= 2 && _animationState <= 9) { // talking states
 			_flag = 1;
 		} else {
-			_animationState = 0;
+			_animationState = 0; // idle state
 			_animationFrame = 0;
 		}
 		break;
@@ -531,46 +535,46 @@ void AIScriptRachael::dialogue_agenda2() {
 }
 
 // Not used in the game
-void AIScriptRachael::dialogue_agenda3() {
-	Actor_Says(kActorMcCoy, 2865, 3);   // Lobby
+void AIScriptRachael::dialogue_act4() {
+	Actor_Says(kActorMcCoy, 2865, 17);   // Lobby
 	if (_vm->_cutContent) {
-		Game_Flag_Set(kFlagMA06toMA07);
-		Ambient_Sounds_Add_Looping_Sound(kSfxSPINUP1, 75, 0, 1);
+		Game_Flag_Set(kFlagMA06toMA07); // to Ground Floor / Lobby
 		Delay(500);
+		AI_Movement_Track_Pause(kActorRachael);
 		Actor_Face_Actor(kActorRachael, kActorMcCoy, true);
 	}
-	Actor_Says(kActorRachael, 320, 3);  //  McCoy
-	Actor_Says(kActorRachael, 330, 3);  //  RachaelRememberMe
+	Actor_Says(kActorRachael, 320, 12);  //  McCoy
+	Actor_Says(kActorRachael, 330, 17);  //  RachaelRememberMe
 	if (_vm->_cutContent) {
 		Actor_Face_Actor(kActorMcCoy, kActorRachael, true);
 	}
-	Actor_Says(kActorMcCoy, 2870, 3);   //  Jesus DontKnowWhatIRememberAnyMore
-	Actor_Says(kActorRachael, 340, 3);  //  NowYouLookInTrouble
-	Actor_Says(kActorMcCoy, 2875, 3);   //  Saw me here before
-	Actor_Says(kActorRachael, 350, 3);  //  YesWhatHappened
-	Actor_Says(kActorMcCoy, 2880, 3);   //  Suddenly
-	Actor_Says(kActorMcCoy, 2885, 3);   //  MyAnimalMaggiePrizedPosessionDisappeared
-	Actor_Says(kActorRachael, 360, 3);  //  ImSorry
-	Actor_Says(kActorRachael, 370, 3);  //  IKnowTheFeeling
-	Actor_Says(kActorMcCoy, 2890, 3);   //  You do?
-	Actor_Says(kActorRachael, 380, 3);  //  EverythingWeBelieve
-	Actor_Says(kActorRachael, 390, 3);  //  WhatIsReality
-	Actor_Says(kActorRachael, 400, 3);  //  MaybeAllSomeoneElsesFantasy
-	Actor_Says(kActorMcCoy, 2895, 3);   //  That would make us a fantasy
-	Actor_Says(kActorRachael, 410, 3);  //  ThatsRightAndInTheBlinkOfAnEyeGoesAway
-	Actor_Says(kActorMcCoy, 2900, 3);   //  But just yesterday
-	Actor_Says(kActorRachael, 420, 3);  //  YesterdayTwoMonthsAgo
-	Actor_Says(kActorMcCoy, 2905, 3);   //  ButIfWeBothRemembered
-	Actor_Says(kActorRachael, 430, 3);  //  CopiesOnlyCopies
-	Actor_Says(kActorRachael, 440, 3);  //  OnlyThingWeCanTrustIsNow
-	Actor_Says(kActorMcCoy, 2910, 3);   //  NotLosingMyMindEscapedReplicant
-	Actor_Says(kActorMcCoy, 2920, 3);   //  SomeoneSettingMeUpUsingMe
-	Actor_Says(kActorRachael, 450, 3);  //  NothingWrongWithAcceptingWhatYouAre
-	Actor_Says(kActorMcCoy, 2925, 3);   //  NotAReplicantGoddamnit
-	Actor_Says(kActorMcCoy, 2930, 3);   //  MaybeYouCanHelpMeYouAreTyrellsNiece
-	Actor_Says(kActorRachael, 460, 3);  //  Why not take that V-K test
-	Actor_Says(kActorMcCoy, 2935, 3);   //  YeahGoodIdeaMaybeIllDoThat
-	Actor_Says(kActorRachael, 470, 3);  //  Hope you get the answers looking for McCoy.
+	Actor_Says(kActorMcCoy, 2870, 13);   //  Jesus DontKnowWhatIRememberAnyMore
+	Actor_Says(kActorRachael, 340, 12);  //  NowYouLookInTrouble
+	Actor_Says(kActorMcCoy, 2875, 15);   //  Saw me here before
+	Actor_Says(kActorRachael, 350, 3);   //  YesWhatHappened
+	Actor_Says(kActorMcCoy, 2880, 16);   //  Suddenly
+	Actor_Says(kActorMcCoy, 2885, 12);   //  MyAnimalMaggiePrizedPosessionDisappeared
+	Actor_Says(kActorRachael, 360, 3);   //  ImSorry
+	Actor_Says(kActorRachael, 370, 3);   //  IKnowTheFeeling
+	Actor_Says(kActorMcCoy, 2890, 18);   //  You do?
+	Actor_Says(kActorRachael, 380, 18);  //  EverythingWeBelieve
+	Actor_Says(kActorRachael, 390, 12);  //  WhatIsReality
+	Actor_Says(kActorRachael, 400, 13);  //  MaybeAllSomeoneElsesFantasy
+	Actor_Says(kActorMcCoy, 2895, 14);   //  That would make us a fantasy
+	Actor_Says(kActorRachael, 410, 15);  //  ThatsRightAndInTheBlinkOfAnEyeGoesAway
+	Actor_Says(kActorMcCoy, 2900, 16);   //  But just yesterday
+	Actor_Says(kActorRachael, 420, 14);  //  YesterdayTwoMonthsAgo
+	Actor_Says(kActorMcCoy, 2905, 13);   //  ButIfWeBothRemembered
+	Actor_Says(kActorRachael, 430, 16);  //  CopiesOnlyCopies
+	Actor_Says(kActorRachael, 440, 12);  //  OnlyThingWeCanTrustIsNow
+	Actor_Says(kActorMcCoy, 2910, 14);   //  NotLosingMyMindEscapedReplicant
+	Actor_Says(kActorMcCoy, 2920, 17);   //  SomeoneSettingMeUpUsingMe
+	Actor_Says(kActorRachael, 450, 3);   //  NothingWrongWithAcceptingWhatYouAre
+	Actor_Says(kActorMcCoy, 2925, 15);   //  NotAReplicantGoddamnit
+	Actor_Says(kActorMcCoy, 2930, 14);   //  MaybeYouCanHelpMeYouAreTyrellsNiece
+	Actor_Says(kActorRachael, 460, 13);  //  Why not take that V-K test
+	Actor_Says(kActorMcCoy, 2935, 19);   //  YeahGoodIdeaMaybeIllDoThat
+	Actor_Says(kActorRachael, 470, 18);  //  Hope you get the answers looking for McCoy.
 }
 
 } // End of namespace BladeRunner
