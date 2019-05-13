@@ -138,6 +138,7 @@ bool SceneScriptCT12::ClickedOnActor(int actorId) {
 	}
 
 	// cut off feature? grayford never visit CT12 as goal 308 is never triggered
+	// bug? Marking this as a bug to revisit at a later time
 	if (actorId == kActorOfficerGrayford
 	 && Global_Variable_Query(kVariableChapter) == 4
 	 && Game_Flag_Query(kFlagUG18GuzzaScene)

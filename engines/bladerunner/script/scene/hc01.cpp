@@ -125,6 +125,15 @@ bool SceneScriptHC01::ClickedOnActor(int actorId) {
 		}
 		AI_Movement_Track_Unpause(kActorIzo);
 	}
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	// barkeep is click-able from afar
+	// Add behavior similar to Howie Lee (CT12), Hasan, and Insect Dealer (AR01).
+	else if (actorId == kActorHawkersBarkeep) {
+		Actor_Face_Actor(kActorMcCoy, actorId, true);
+		Actor_Says(kActorMcCoy, 8910, 14);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	return false;
 }
 
