@@ -1863,6 +1863,14 @@ void BladeRunnerEngine::playerGainsControl() {
 void BladeRunnerEngine::playerDied() {
 	playerLosesControl();
 
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	_ambientSounds->removeAllNonLoopingSounds(true);
+	_ambientSounds->removeAllLoopingSounds(4);
+	_music->stop(4);
+	_audioSpeech->stopSpeech();
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 	int timeWaitEnd = _time->current() + 5000;
 	while (_time->current() < timeWaitEnd) {
 		gameTick();
@@ -1946,8 +1954,15 @@ bool BladeRunnerEngine::loadGame(Common::SeekableReadStream &stream) {
 	SaveFileReadStream s(stream);
 
 	_ambientSounds->removeAllNonLoopingSounds(true);
+#if BLADERUNNER_ORIGINAL_BUGS
 	_ambientSounds->removeAllLoopingSounds(1);
 	_music->stop(2);
+#else
+	// loading into another game that also has music would
+	// two music tracks to overlap and none was stopped
+	_ambientSounds->removeAllLoopingSounds(0);
+	_music->stop(0);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	_audioSpeech->stopSpeech();
 	_actorDialogueQueue->flush(true, false);
 	_screenEffects->_entries.clear();
