@@ -1985,12 +1985,36 @@ bool BladeRunnerEngine::loadGame(Common::SeekableReadStream &stream) {
 	_scene->_set->load(s);
 	for (uint i = 0; i != _gameInfo->getGlobalVarCount(); ++i) {
 		_gameVars[i] = s.readInt();
+		if (i == 3 && _gameVars[i] != kBladeRunnerScummVMVersion) {
+			warning("This game was saved using an older version of the engine (v%d), currently the engine is at v%d", _gameVars[i], kBladeRunnerScummVMVersion);
+		}
 	}
 	_music->load(s);
 	// _audioPlayer->load(s) // zero func
 	// _audioSpeech->load(s) // zero func
 	_combat->load(s);
 	_gameFlags->load(s);
+
+	if ((_gameFlags->query(kFlagGamePlayedInRestoredContentMode) && !_cutContent)
+	    || (!_gameFlags->query(kFlagGamePlayedInRestoredContentMode) && _cutContent)
+	){
+		Common::String warningMsg;
+		if (!_cutContent) {
+			warningMsg = "WARNING: This game was saved in Restored Cut Content mode, but you are playing in Original Content mode. The mode will be adjusted to Restored Cut Content for this session until you completely Quit the game.";
+		} else {
+			warningMsg = "WARNING: This game was saved in Original Content mode, but you are playing in Restored Cut Content mode. The mode will be adjusted to Original Content mode for this session until you completely Quit the game.";
+		}
+		GUI::MessageDialog dialog(warningMsg, "Continue", 0);
+		dialog.runModal();
+		_cutContent = !_cutContent;
+		// force a Key Up event, since we need it to remove the KIA
+		// but it's lost due to the modal dialogue
+		Common::EventManager *eventMan = _system->getEventManager();
+		Common::Event event;
+		event.type = Common::EVENT_KEYUP;
+		eventMan->pushEvent(event);
+	}
+
 	_items->load(s);
 	_sceneObjects->load(s);
 	_ambientSounds->load(s);
@@ -2018,7 +2042,6 @@ bool BladeRunnerEngine::loadGame(Common::SeekableReadStream &stream) {
 
 	_settings->setNewSetAndScene(_settings->getSet(), _settings->getScene());
 	_settings->setChapter(_settings->getChapter());
-
 	return true;
 }
 

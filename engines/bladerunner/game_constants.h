@@ -441,7 +441,7 @@ enum SpinnerDestinations {
 enum Flags {
 	kFlagNotUsed0 = 0, // is never checked
 	kFlagRC02Entered = 1,
-	// 2 is never used
+	kFlagGamePlayedInRestoredContentMode = 2, // Re-purposed. Original: 2 is never used
 	kFlagRC01GotOfficersStatement = 3,
 	kFlagRC02Left = 4,
 	// 5 is never used
@@ -1174,7 +1174,8 @@ enum Flags {
 enum Variables {
 	kVariableChapter = 1,
 	kVariableChinyen = 2,
-	// variables 3 - 8 are not used
+	kVariableGameVersion = 3, // re-purposed, original: not used, so it would have value of 0 in the classic version
+	// variables 4 - 8 are not used
 	kVariablePoliceMazeScore = 9,
 	kVariablePoliceMazePS10TargetCounter = 10,
 	kVariablePoliceMazePS11TargetCounter = 11,

@@ -110,6 +110,11 @@ public:
 	static const int kArchiveCount = 12; // +2 to original value (10) to accommodate for SUBTITLES.MIX and one extra resource file, to allow for capability of loading all VQAx.MIX and the MODE.MIX file (debug purposes)
 	static const int kActorCount = 100;
 	static const int kActorVoiceOver = kActorCount - 1;
+	// Incremental number to keep track of significant revisions of the ScummVM bladerunner engine
+	// that could potentially introduce incompatibilities with old save files or require special actions to restore compatibility
+	// This is stored in game global variable "kVariableGameVersion"
+	// Original (classic) save game files will have version number of 0
+	static const int kBladeRunnerScummVMVersion = 1; // 1: alpha testing (since May 15, 2019)
 
 	bool _gameIsRunning;
 	bool _windowIsActive;

@@ -61,6 +61,7 @@ void InitScript::Init_Globals() {
 	Global_Variable_Set(kVariableGenericWalkerConfig, 2);
 	Global_Variable_Set(kVariableChapter, 1);
 	Global_Variable_Set(kVariableChinyen, 100);
+	Global_Variable_Set(kVariableGameVersion, _vm->kBladeRunnerScummVMVersion);
 
 	Set_Score(0, 0);
 	Set_Score(1, 64);
@@ -125,6 +126,10 @@ void InitScript::Init_Game_Flags() {
 
 	Game_Flag_Set(kFlagMcCoyInRunciters);
 	Game_Flag_Set(kFlagSpinnerAtRC01);
+
+	if (_vm->_cutContent) {
+		Game_Flag_Set(kFlagGamePlayedInRestoredContentMode);
+	}
 }
 
 void InitScript::Init_Clues() {

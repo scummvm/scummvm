@@ -219,6 +219,9 @@ void SceneScriptCT02::dialogueWithZuben() {
 		Actor_Clue_Acquire(kActorMcCoy, kClueZubenRunsAway, true, -1);
 		Actor_Set_Goal_Number(kActorZuben, kGoalZubenCT02PushPot);
 		Game_Flag_Set(kFlagCT02PotTipped);
+		if (_vm->_cutContent) {
+			Game_Flag_Set(kFlagCT01TalkToHowieAfterZubenMissing);
+		}
 		Scene_Loop_Set_Default(kCT02LoopMainPotTipped);
 		Scene_Loop_Start_Special(kSceneLoopModeOnce, kCT02LoopTippingPot, true);
 	}

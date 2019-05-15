@@ -312,10 +312,6 @@ void SceneScriptMA04::PlayerWalkedIn() {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 955.0f, 1675.0f, 0, true, false, false);
 		Game_Flag_Set(kFlagChapter1Ending);
 
-		if (_vm->_cutContent) {
-			Game_Flag_Set(kFlagCT01TalkToHowieAfterZubenMissing);
-		}
-
 		Async_Actor_Walk_To_XYZ(kActorMcCoy, -7204.0f, 956.17f, 1568.0f, 0, false);
 		Set_Enter(kSetMA05, kSceneMA05);
 	}
