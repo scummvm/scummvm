@@ -34,7 +34,7 @@ Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 		// hemedia
 		mchannel(nullptr), schannel(nullptr),
 		// hemisc
-		game_version(0), object_size(0), game(nullptr), script(nullptr), save(nullptr),
+		game_version(0), object_size(24), game(nullptr), script(nullptr), save(nullptr),
 		playback(nullptr), record(nullptr), io(nullptr), ioblock('\0'), ioerror('\0'),
 		codestart(0), objtable(0), eventtable(0), proptable(0), arraytable(0), dicttable(0), 
 		syntable(0), initaddr(0), mainaddr(0), parseaddr(0), parseerroraddr(0), 
