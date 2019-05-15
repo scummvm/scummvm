@@ -1133,10 +1133,7 @@ private:
 	void hugo_blockfree(void *block) { free(block); }
 
 #if defined (DEBUGGER)
-	int CheckinRange(uint v1, uint v2, const char *v3) {
-		// TODO: Where the heck is this actualy implemented in Gargoyle
-		return 1;
-	}
+	int CheckinRange(uint v1, uint v2, const char *v3) { return 1; }
 
 	/**
 	* Shorthand since many of these object functions may call CheckinRange() if the debugger
@@ -1144,7 +1141,7 @@ private:
 	*/
 	int CheckObjectRange(int obj);
 
-	void DebugRunRoutine(long addr) {}
+	void DebugRunRoutine(long addr) { RunRoutine(addr); }
 
 	void RuntimeWarning(const char *msg) {}
 
