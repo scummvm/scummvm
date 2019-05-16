@@ -55,6 +55,13 @@ void FontProvider::initFonts() {
 	_ttfFileMap["Zapf Chance Italic"] = "Zapf Chance Italic.Ttf";
 	_ttfFileMap["Arial_tlj"] = "arial_tlj.ttf";
 
+	// Clear any previously used fonts
+	_smallFont = FontHolder();
+	_bigFont   = FontHolder();
+	for (uint i = 0; i < ARRAYSIZE(_customFonts); i++) {
+		_customFonts[i] = FontHolder();
+	}
+
 	// Load the font settings from gui.ini when possible
 	if (!StarkSettings->shouldIgnoreFontSettings()) {
 		Common::INIFile gui;
