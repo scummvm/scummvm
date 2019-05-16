@@ -59,7 +59,7 @@ GameDescriptor TADSMetaEngine::findGame(const char *gameId) {
 }
 
 bool TADSMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &gameList) {
-	const char *const EXTENSIONS[] = { ".gam", nullptr };
+	const char *const EXTENSIONS[] = { ".gam", ".t3", nullptr };
 
 	// Loop through the files of the folder
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
@@ -68,7 +68,8 @@ bool TADSMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &ga
 			continue;
 
 		Common::String filename = file->getName();
-		bool hasExt = Blorb::hasBlorbExt(filename), isBlorb = false;
+		bool hasExt = Blorb::hasBlorbExt(filename), isBlorb = true;
+		int tadsVersion = -1;
 		for (const char *const *ext = &EXTENSIONS[0]; *ext && !hasExt; ++ext)
 			hasExt = filename.hasSuffixIgnoreCase(*ext);
 		if (!hasExt)
@@ -81,10 +82,21 @@ bool TADSMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &ga
 		Common::String md5 = Common::computeStreamMD5AsString(gameFile, 5000);
 		size_t filesize = gameFile.size();
 		gameFile.seek(0);
-		isBlorb = Blorb::isBlorb(gameFile, ID_TAD2) || Blorb::isBlorb(gameFile, ID_TAD3);
+		if (Blorb::isBlorb(gameFile, ID_TAD2))
+			tadsVersion = 2;
+		else if (Blorb::isBlorb(gameFile, ID_TAD3))
+			tadsVersion = 3;
+		else
+			isBlorb = false;
+
+		if (!isBlorb)
+			// Figure out the TADS version
+			tadsVersion = getTADSVersion(gameFile);
+
 		gameFile.close();
 
-		if (!isBlorb && Blorb::hasBlorbExt(filename))
+		if (tadsVersion == -1)
+			// Not a TADS game, or Blorb containing TADS game, so can be ignored
 			continue;
 
 		// Check for known games
@@ -95,15 +107,15 @@ bool TADSMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &ga
 		DetectedGame gd;
 		if (!p->_gameId) {
 			if (gDebugLevel > 0) {
-				// Print an entry suitable for putting into the detection_tables.h, using the
+				// Print an entry suitable for putting into the detection_tables.h
 				Common::String fname = filename;
 				const char *dot = strchr(fname.c_str(), '.');
 				if (dot)
 					fname = Common::String(fname.c_str(), dot);
 
-				debug("ENTRY0(\"%s\", \"%s\", %u),", fname.c_str(), md5.c_str(), (uint)filesize);
+				debug("TADS%d ENTRY0(\"%s\", \"%s\", %u),", tadsVersion, fname.c_str(), md5.c_str(), (uint)filesize);
 			}
-			const GameDescriptor &desc = TADS2_GAME_LIST[0];
+			const GameDescriptor &desc = tadsVersion == 2 ? TADS2_GAME_LIST[0] : TADS3_GAME_LIST[0];
 			gd = DetectedGame(desc._gameId, desc._description, Common::UNK_LANG, Common::kPlatformUnknown);
 		} else {
 			PlainGameDescriptor gameDesc = findGame(p->_gameId);
@@ -128,6 +140,21 @@ void TADSMetaEngine::detectClashes(Common::StringMap &map) {
 			error("Duplicate game Id found - %s", pd->gameId);
 		map[pd->gameId] = "";
 	}
+}
+
+int TADSMetaEngine::getTADSVersion(Common::SeekableReadStream &game) {
+	// Read in the start of the file
+	char buffer[16];
+	game.seek(0);
+	game.read(buffer, 16);
+
+	// Check for valid game headers
+	if (memcmp(buffer, "TADS2 bin\n\r\032", 12) == 0)
+		return 2;
+	else if (memcmp(buffer, "T3-image\r\n\032", 11) == 0)
+		return 3;
+	else
+		return -1;
 }
 
 } // End of namespace TADS
