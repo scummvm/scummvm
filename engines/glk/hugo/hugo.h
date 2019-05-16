@@ -39,6 +39,7 @@ namespace Hugo {
  */
 class Hugo : public GlkAPI, public HTokens, public StringFunctions {
 private:
+	int _savegameSlot;
 	winid_t mainwin, currentwin;
 	winid_t secondwin, auxwin;
 	bool runtime_warnings;

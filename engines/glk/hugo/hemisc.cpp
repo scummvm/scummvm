@@ -1071,6 +1071,9 @@ void Hugo::InitGame() {
 		}
 	}
 	
+#if defined (GLK)
+	if (_savegameSlot == -1) {
+#endif
 #if defined (DEBUGGER)
 	for (i=0; i<MAXLOCALS; i++) strcpy(localname[i], "");
 	window[VIEW_LOCALS].count = current_locals = 0;
@@ -1081,7 +1084,9 @@ void Hugo::InitGame() {
 	PassLocals(0);
 	RunRoutine((long)initaddr*address_scale);
 #endif
-
+#if defined (GLK)
+	}
+#endif
 	ret = 0;
 	retflag = 0;
 	var[actor] = var[player];

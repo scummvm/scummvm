@@ -21,6 +21,7 @@
  */
 
 #include "glk/hugo/hugo.h"
+#include "common/config-manager.h"
 
 namespace Glk {
 namespace Hugo {
@@ -115,6 +116,9 @@ Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 
 	// heset
 	game_title[0] = '\0';
+
+	// Miscellaneous
+	_savegameSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 
 #ifdef DEBUGGER
 	debug_line[0] = '\0';

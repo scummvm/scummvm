@@ -177,9 +177,18 @@ RestartDebugger:
 
 Start:
 	stack_depth = 0;
-
 	strcpy(errbuf, "");
 	strcpy(oops, "");
+
+#if defined (GLK)
+	// Handle any savegame selected directly from the ScummVM launcher
+	if (_savegameSlot != -1) {
+		if (loadGameState(_savegameSlot).getCode() != Common::kNoError) {
+			GUIErrorMessage("Loading failed");
+			_savegameSlot = -1;
+		}
+	}
+#endif
 
 	do
 	{
@@ -261,7 +270,16 @@ FreshInput:
 						debugger_has_stepped_back = false;
 						window[VIEW_LOCALS].changed = true;
 #endif
-						if (!playback)
+#if defined (GLK)
+						if (_savegameSlot != -1) {
+							// Trigger a "look" command so that players will get some initial text
+							// after loading a savegame directly from the launcher
+							_savegameSlot = -1;
+							strcpy(buffer, "look");
+						}
+						else
+#endif
+					if (!playback)
 						{
 							GetCommand();
 						}
