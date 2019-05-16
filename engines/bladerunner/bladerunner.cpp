@@ -83,6 +83,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/debug-channels.h"
+#include "common/translation.h"
 #include "gui/message.h"
 
 #include "engines/util.h"
@@ -312,7 +313,7 @@ Common::Error BladeRunnerEngine::run() {
 
 	if (!startup(hasSavegames)) {
 		shutdown();
-		return Common::Error(Common::kUnknownError, "Failed to initialize resources");
+		return Common::Error(Common::kUnknownError, _("Failed to initialize resources"));
 	}
 
 	if (warnUserAboutUnsupportedGame()) {
@@ -875,7 +876,7 @@ void BladeRunnerEngine::gameTick() {
 
 	if (!_kia->isOpen() && !_sceneScript->isInsideScript() && !_aiScripts->isInsideScript()) {
 		if (!_settings->openNewScene()) {
-			Common::Error runtimeError = Common::Error(Common::kUnknownError, "A required game resource was not found");
+			Common::Error runtimeError = Common::Error(Common::kUnknownError, _("A required game resource was not found"));
 			GUI::MessageDialog dialog(runtimeError.getDesc());
 			dialog.runModal();
 			return;
@@ -2000,11 +2001,11 @@ bool BladeRunnerEngine::loadGame(Common::SeekableReadStream &stream) {
 	){
 		Common::String warningMsg;
 		if (!_cutContent) {
-			warningMsg = "WARNING: This game was saved in Restored Cut Content mode, but you are playing in Original Content mode. The mode will be adjusted to Restored Cut Content for this session until you completely Quit the game.";
+			warningMsg = _("WARNING: This game was saved in Restored Cut Content mode, but you are playing in Original Content mode. The mode will be adjusted to Restored Cut Content for this session until you completely Quit the game.");
 		} else {
-			warningMsg = "WARNING: This game was saved in Original Content mode, but you are playing in Restored Cut Content mode. The mode will be adjusted to Original Content mode for this session until you completely Quit the game.";
+			warningMsg = _("WARNING: This game was saved in Original Content mode, but you are playing in Restored Cut Content mode. The mode will be adjusted to Original Content mode for this session until you completely Quit the game.");
 		}
-		GUI::MessageDialog dialog(warningMsg, "Continue", 0);
+		GUI::MessageDialog dialog(warningMsg, _("Continue"), 0);
 		dialog.runModal();
 		_cutContent = !_cutContent;
 		// force a Key Up event, since we need it to remove the KIA
