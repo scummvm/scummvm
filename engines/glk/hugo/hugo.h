@@ -181,7 +181,7 @@ private:
 	char parse_called_twice;
 	char reparse_everything;
 	char punc_string[64];					///< punctuation string
-	bool  full_buffer;
+	byte full_buffer;
 
 	/**
 	 * to MatchObject()

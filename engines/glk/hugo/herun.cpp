@@ -250,7 +250,7 @@ Start:
 				do
 				{
 FreshInput:
-					if (full_buffer != true)
+					if (full_buffer != 1)
 					{
 						newinput = true;
 						speaking = 0;
@@ -325,7 +325,7 @@ FreshInput:
 RecordedNewline:;
 						}
 					}
-					else full_buffer = false;
+					else full_buffer = 0;
 
 					if (!strcmp(buffer, "") || buffer[0]=='.')
 					{

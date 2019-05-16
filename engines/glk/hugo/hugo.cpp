@@ -56,7 +56,7 @@ Hugo::Hugo(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 		grammaraddr(0), obj_parselist(nullptr), domain(0), odomain(0), objcount(0),
 		parse_allflag(false), pobjcount(0), pobj(0), obj_match_state(0), object_is_number(0),
 		objgrammar(0), objstart(0), objfinish(0), addflag(false), speaking(0), oopscount(0),
-		parse_called_twice(0), reparse_everything(0), full_buffer(false), recursive_call(false),
+		parse_called_twice(0), reparse_everything(0), full_buffer(0), recursive_call(false),
 		parse_location(0),
 		// heres
 		resource_file(nullptr), extra_param(0), resource_type(0),
