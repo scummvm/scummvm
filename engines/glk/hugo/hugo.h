@@ -1040,9 +1040,9 @@ private:
 	char *hugo_fgets(char *buf, int max, Common::SeekableReadStream *s) {
 		char *ptr = buf;
 		char c;
-		while (s->pos() < s->size()) {
+		while (s->pos() < s->size() && --max > 0) {
 			c = hugo_fgetc(s);
-			if (c == '\n' || c == '\0' || (max-- == 0))
+			if (c == '\n' || c == '\0')
 				break;
 			*ptr++ = c;
 		}
