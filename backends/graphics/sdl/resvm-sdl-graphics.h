@@ -54,6 +54,9 @@ public:
 		 */
 		bool openGLFrameBuffer;
 
+		/** Supported levels of MSAA when using the OpenGL renderers */
+		Common::Array<uint> openGLAntiAliasLevels;
+
 		Capabilities() :
 				desktopWidth(0), desktopHeight(0),
 				openGLFrameBuffer(false) {}

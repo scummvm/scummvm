@@ -669,6 +669,18 @@ public:
 #endif
 
 	/**
+	 * !!! ResidualVM specific method !!!
+	 *
+	 * Retrieve a list of supported levels of anti-aliasting.
+	 * Anti-aliasing only works when using one of the hardware
+	 * accelerated renderers. An empty list means anti-aliasing
+	 * is not supported.
+	 */
+	virtual Common::Array<uint> getSupportedAntiAliasingLevels() const {
+		return Common::Array<uint>();
+	}
+
+	/**
 	 * !!! Not used in ResidualVM !!!
 	 *
 	 * Retrieve a list of all hardware shaders supported by this backend.

@@ -199,6 +199,7 @@ void OSystem_SDL::initBackend() {
 	detectDesktopResolution();
 #ifdef USE_OPENGL
 	detectFramebufferSupport();
+	detectAntiAliasingSupport();
 #endif
 // ResidualVM specific code end
 
@@ -305,6 +306,52 @@ void OSystem_SDL::detectFramebufferSupport() {
 #endif
 #endif
 }
+
+void OSystem_SDL::detectAntiAliasingSupport() {
+	_capabilities.openGLAntiAliasLevels.clear();
+
+	int requestedSamples = 2;
+	while (requestedSamples <= 32) {
+		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, requestedSamples);
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		SDL_Window *window = SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 32, 32, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
+		if (window) {
+			SDL_GLContext glContext = SDL_GL_CreateContext(window);
+			if (glContext) {
+				int actualSamples = 0;
+				SDL_GL_GetAttribute(SDL_GL_MULTISAMPLESAMPLES, &actualSamples);
+
+				if (actualSamples == requestedSamples) {
+					_capabilities.openGLAntiAliasLevels.push_back(requestedSamples);
+				}
+
+				SDL_GL_DeleteContext(glContext);
+			}
+
+			SDL_DestroyWindow(window);
+		}
+#else
+		SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=9000,9000"));
+		SDL_SetVideoMode(32, 32, 0, SDL_OPENGL);
+		SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=center"));
+
+		int actualSamples = 0;
+		SDL_GL_GetAttribute(SDL_GL_MULTISAMPLESAMPLES, &actualSamples);
+
+		if (actualSamples == requestedSamples) {
+			_capabilities.openGLAntiAliasLevels.push_back(requestedSamples);
+		}
+#endif
+
+		requestedSamples *= 2;
+	}
+
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 0);
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
+}
+
 #endif // USE_OPENGL
 // End of ResidualVM specific code
 
@@ -422,6 +469,10 @@ void OSystem_SDL::launcherInitSize(uint w, uint h) {
 	bool fullscreen = ConfMan.getBool("fullscreen");
 
 	setupScreen(w, h, fullscreen, matchingRendererType != Graphics::kRendererTypeTinyGL);
+}
+
+Common::Array<uint> OSystem_SDL::getSupportedAntiAliasingLevels() const {
+	return _capabilities.openGLAntiAliasLevels;
 }
 // End of ResidualVM specific code
 

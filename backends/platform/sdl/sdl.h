@@ -91,6 +91,8 @@ public:
 	virtual void setupScreen(uint screenW, uint screenH, bool fullscreen, bool accel3d) override;
 	// ResidualVM specific code
 	virtual void launcherInitSize(uint w, uint h) override;
+	// ResidualVM specific code
+	Common::Array<uint> getSupportedAntiAliasingLevels() const;
 
 protected:
 	bool _inited;
@@ -119,6 +121,7 @@ protected:
 	// Graphics capabilities
 	void detectDesktopResolution();
 	void detectFramebufferSupport();
+	void detectAntiAliasingSupport();
 	ResVmSdlGraphicsManager::Capabilities _capabilities;
 	// End of ResidualVM specific code
 

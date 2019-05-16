@@ -169,6 +169,8 @@ void OptionsDialog::init() {
 	_vsyncCheckbox = 0;  // ResidualVM specific
 	_rendererTypePopUpDesc = 0; // ResidualVM specific
 	_rendererTypePopUp = 0; // ResidualVM specific
+	_antiAliasPopUpDesc = 0; // ResidualVM specific
+	_antiAliasPopUp = 0; // ResidualVM specific
 	_enableAudioSettings = false;
 	_midiPopUp = 0;
 	_midiPopUpDesc = 0;
@@ -338,10 +340,19 @@ void OptionsDialog::build() {
 			_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
 		}
 
-		_vsyncCheckbox->setState(ConfMan.getBool("vsync", _domain)); // ResidualVM specific
+		// ResidualVM specific -- Start
+		_vsyncCheckbox->setState(ConfMan.getBool("vsync", _domain));
 
-		_rendererTypePopUp->setEnabled(true); // ResidualVM specific
-		_rendererTypePopUp->setSelectedTag(Graphics::parseRendererTypeCode(ConfMan.get("renderer", _domain))); // ResidualVM specific
+		_rendererTypePopUp->setEnabled(true);
+		_rendererTypePopUp->setSelectedTag(Graphics::parseRendererTypeCode(ConfMan.get("renderer", _domain)));
+
+		_antiAliasPopUp->setEnabled(true);
+		if (ConfMan.hasKey("antialiasing", _domain)) {
+			_antiAliasPopUp->setSelectedTag(ConfMan.getInt("antialiasing", _domain));
+		} else {
+			_antiAliasPopUp->setSelectedTag(-1);
+		}
+		// ResidualVM specific -- End
 	}
 
 	// Shader options
@@ -534,6 +545,13 @@ void OptionsDialog::apply() {
 			} else {
 				ConfMan.removeKey("renderer", _domain);
 			}
+
+			if (_antiAliasPopUp->getSelectedTag() != (uint32)-1) {
+				uint level = _antiAliasPopUp->getSelectedTag();
+				ConfMan.setInt("antialiasing", level, _domain);
+			} else {
+				ConfMan.removeKey("antialiasing", _domain);
+			}
 			// ResidualVM specific -- End
 
 		} else {
@@ -546,6 +564,7 @@ void OptionsDialog::apply() {
 			ConfMan.removeKey("render_mode", _domain);
 #endif
 			ConfMan.removeKey("renderer", _domain); // ResidualVM specific
+			ConfMan.removeKey("antialiasing", _domain); // ResidualVM specific
 			ConfMan.removeKey("vsync", _domain); // ResidualVM specific
 		}
 	}
@@ -911,6 +930,7 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	// ResidualVM specific:
 	_vsyncCheckbox->setEnabled(enabled);
 	_rendererTypePopUp->setEnabled(enabled);
+	_antiAliasPopUp->setEnabled(enabled);
 }
 
 void OptionsDialog::setAudioSettingsState(bool enabled) {
@@ -1139,6 +1159,21 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	const Graphics::RendererTypeDescription *rt = Graphics::listRendererTypes();
 	for (; rt->code; ++rt) {
 		_rendererTypePopUp->appendEntry(_(rt->description), rt->id);
+	}
+
+	_antiAliasPopUpDesc = new StaticTextWidget(boss, prefix + "grAntiAliasPopupDesc", _("Anti-aliasing:"));
+	_antiAliasPopUp = new PopUpWidget(boss, prefix + "grAntiAliasPopup");
+	_antiAliasPopUp->appendEntry(_("<default>"), -1);
+	_antiAliasPopUp->appendEntry("");
+	_antiAliasPopUp->appendEntry(_("Disabled"), 0);
+	const Common::Array<uint> levels = g_system->getSupportedAntiAliasingLevels();
+	for (uint i = 0; i < levels.size(); i++) {
+		_antiAliasPopUp->appendEntry(Common::String::format("%dx", levels[i]), levels[i]);
+	}
+	if (levels.empty()) {
+		// Don't show the anti-aliasing selection menu when it is not supported
+		_antiAliasPopUpDesc->setVisible(false);
+		_antiAliasPopUp->setVisible(false);
 	}
 	// ResidualVM specific -- End
 

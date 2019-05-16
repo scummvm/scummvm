@@ -325,6 +325,14 @@
 						type = 'PopUp'
 				/>
 			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
+				<widget name = 'grAntiAliasPopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'grAntiAliasPopup'
+						type = 'PopUp'
+				/>
+			</layout>
 			<!-- ResidualVM specific - End -->
 		</layout>
 	</dialog>

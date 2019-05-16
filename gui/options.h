@@ -148,6 +148,8 @@ private:
 	CheckboxWidget *_vsyncCheckbox; // ResidualVM specific
 	StaticTextWidget *_rendererTypePopUpDesc; // ResidualVM specific
 	PopUpWidget *_rendererTypePopUp; // ResidualVM specific
+	StaticTextWidget *_antiAliasPopUpDesc; // ResidualVM specific
+	PopUpWidget *_antiAliasPopUp; // ResidualVM specific
 	StaticTextWidget *_renderModePopUpDesc;
 	PopUpWidget *_renderModePopUp;
 

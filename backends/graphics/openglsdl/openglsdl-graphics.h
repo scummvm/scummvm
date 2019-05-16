@@ -130,6 +130,7 @@ protected:
 
 	OpenGL::FrameBuffer *_frameBuffer;
 	OpenGL::FrameBuffer *createFramebuffer(uint width, uint height);
+	bool shouldRenderToFramebuffer() const;
 
 	bool isVSyncEnabled() const;
 };

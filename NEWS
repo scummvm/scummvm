@@ -4,6 +4,7 @@
 
 	General:
 	- Enabled the window to be resized
+	- Added a GUI option to enable anti-aliasing
 	- Added support for saving screenshots
 
 	Myst III changes:
