@@ -73,7 +73,6 @@ private:
 	int object_size;
 	Common::SeekableReadStream *game;
 	HUGO_FILE script;
-	HUGO_FILE save;
 	HUGO_FILE playback;
 	HUGO_FILE record;
 	HUGO_FILE io; char ioblock; char ioerror;
@@ -972,8 +971,6 @@ private:
 	 */
 	void RunRoutine(long addr);
 
-	int SaveGameData();
-
 	int RunSave();
 
 	int RunScriptSet();
@@ -1043,9 +1040,14 @@ private:
 	char *hugo_fgets(char *buf, int max, Common::SeekableReadStream *s) {
 		char *ptr = buf;
 		char c;
-		while (s->pos() < s->size() && (c = hugo_fgetc(s)) != '\n')
+		while (s->pos() < s->size()) {
+			c = hugo_fgetc(s);
+			if (c == '\n' || c == '\0' || (max-- == 0))
+				break;
 			*ptr++ = c;
-		return buffer;
+		}
+		*ptr++ = '\0';
+		return buf;
 	}
 	char *hugo_fgets(char *buf, int max, strid_t s) {
 		Common::SeekableReadStream *rs = *s;
@@ -1190,12 +1192,12 @@ public:
 	/**
 	 * Load a savegame from the passed stream
 	 */
-	virtual Common::Error loadGameData(strid_t file) override;
+	virtual Common::Error loadGameData(strid_t save) override;
 
 	/**
 	 * Save the game to the passed stream
 	 */
-	virtual Common::Error saveGameData(strid_t file, const Common::String &desc) override;
+	virtual Common::Error saveGameData(strid_t save, const Common::String &desc) override;
 };
 
 } // End of namespace Hugo

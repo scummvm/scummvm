@@ -36,6 +36,8 @@ namespace Hugo {
 #define GRAPHICS_SUPPORTED
 #define SOUND_SUPPORTED
 #define SETTITLE_SUPPORTED
+#define SAVEGAMEDATA_REPLACED
+#define RESTOREGAMEDATA_REPLACED
 
 // There's a bunch of debugging code in the original Hugo sources behind DEBUGGER defines,
 // but doesn't actually have any implementation of them. I've put in some stub methods,
