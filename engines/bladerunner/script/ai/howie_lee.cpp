@@ -76,10 +76,8 @@ bool AIScriptHowieLee::Update() {
 	// It might cause a blink-in issue, depending when update() will be called for Howie
 	// This is kept as a backup while similar code is placed in the CT01 and CT02 scenes InitializeScene()
 	// that will handle Howie appearing there immediately (fix for blink in)
-	if ( Game_Flag_Query(kFlagMcCoyInChinaTown)
-	 && !Actor_Query_In_Set(kActorHowieLee, kSetCT01_CT12)
-	 && Global_Variable_Query(kVariableChapter) == 1 // added condition - in cut content don't force Howie to return to CT01 here after Act 1
-	) {
+	if (Game_Flag_Query(kFlagMcCoyInChinaTown)
+	    && !Actor_Query_In_Set(kActorHowieLee, kSetCT01_CT12)) {
 		AI_Movement_Track_Flush(kActorHowieLee);
 		AI_Movement_Track_Append(kActorHowieLee, 67, 0); // in kSetCT01_CT12
 		Actor_Set_Goal_Number(kActorHowieLee, kGoalHowieLeeDefault);
@@ -131,15 +129,14 @@ void AIScriptHowieLee::CompletedMovementTrack() {
 	if (Actor_Query_Goal_Number(kActorHowieLee) == kGoalHowieLeeMovesInDiner03) {
 		if (_vm->_cutContent) {
 			//
-			// *after Act 1* Howie will be going to the Garbage Bin "regularly"
+			// *after Act 1* Howie will be going to the Garbage Bin "semi-regularly"
 			// if McCoy is not in scenes CT01 and CT12 (where Howie is visible working at the diner)
 			// otherwise he'll do the short cycle (goals 0, 1, 2, 3)
-			// This will result in Howie not being at the Diner sometimes even when McCoy is in Chinatown area
-			// This won't happen in Act 1, since he is most useful during that Act
 			if (Global_Variable_Query(kVariableChapter) > 1
 			    && Player_Query_Current_Scene() != kSceneCT01
 			    && Player_Query_Current_Scene() != kSceneCT12
 			    && Player_Query_Current_Scene() != kSceneCT04
+			    && Random_Query(1, 5) == 1
 			) {
 				Actor_Set_Goal_Number(kActorHowieLee, kGoalHowieLeeGoesToCT04GarbageBin);
 				return; // true;

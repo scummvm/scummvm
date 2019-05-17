@@ -364,6 +364,11 @@ void SceneScriptPS04::dialogueWithGuzza() {
 			Delay(1000);
 			Actor_Face_Actor(kActorGuzza, kActorMcCoy, true);
 			Delay(1000);
+			// if McCoy confesses before the body is dumped, then the body should be found (even if in dumpster)
+			if (!Game_Flag_Query(kFlagCT04HomelessBodyThrownAway)) {
+				Game_Flag_Set(kFlagCT04HomelessBodyFound);
+				// return false;
+			}
 		}
 		Actor_Says(kActorGuzza, 700, 34);
 		Actor_Says(kActorMcCoy, 4100, 13);

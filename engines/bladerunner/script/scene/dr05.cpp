@@ -111,7 +111,7 @@ bool SceneScriptDR05::ClickedOnItem(int itemId, bool a2) {
 
 	if (itemId == kItemChain
 	 && Player_Query_Combat_Mode()
-	 && Actor_Query_Goal_Number(kActorMoraji) == kGoalOfficerLearyDefault
+	 && Actor_Query_Goal_Number(kActorMoraji) == kGoalMorajiDefault
 	) {
 		Overlay_Play("DR05OVER", 1, false, true, 0);
 		Item_Remove_From_World(kItemChain);

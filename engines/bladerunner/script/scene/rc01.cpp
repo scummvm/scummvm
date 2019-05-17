@@ -113,6 +113,15 @@ void SceneScriptRC01::InitializeScene() {
 		}
 	} else {
 		if (!Game_Flag_Query(kFlagRC02toRC01) && !Game_Flag_Query(kFlagRC03toRC01)) {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+			// set leary at his original position since otherwise he may overlap badly
+			// with scenery during the video loop of the spinner landing
+			// This only applies in Act 1, before the flag kFlagRC01PoliceDone is set
+			if (Actor_Query_Is_In_Current_Set(kActorOfficerLeary)) {
+				Actor_Set_At_XYZ(kActorOfficerLeary, -261.80f, 6.00f, 79.58f, 512);
+			}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kRC01LoopInshotWithCrowd, false);
 		}
 		Scene_Loop_Set_Default(kRC01LoopWithCrowd);

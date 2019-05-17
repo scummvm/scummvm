@@ -118,8 +118,7 @@ void SceneScriptCT01::InitializeScene() {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 	if (!Actor_Query_In_Set(kActorHowieLee, kSetCT01_CT12)
-	    && Global_Variable_Query(kVariableChapter) == 1
-	) {
+	    && Global_Variable_Query(kVariableChapter) < 4) {
 		AI_Movement_Track_Flush(kActorHowieLee);
 		AI_Movement_Track_Append(kActorHowieLee, 67, 0); // in kSetCT01_CT12
 		Actor_Set_Goal_Number(kActorHowieLee, kGoalHowieLeeDefault);
