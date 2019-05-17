@@ -99,6 +99,7 @@ MODULE_OBJS := \
 	tads/tads2/error.o \
 	tads/tads2/error_handling.o \
 	tads/tads2/file_io.o \
+	tads/tads2/line_source_file.o \
 	tads/tads2/memory_cache.o \
 	tads/tads2/memory_cache_heap.o \
 	tads/tads2/memory_cache_loader.o \

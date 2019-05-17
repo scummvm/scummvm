@@ -28,6 +28,8 @@
 #define GLK_TADS_TADS2_FILE_IO
 
 #include "glk/tads/tads2/lib.h"
+#include "glk/tads/tads2/memory_cache_loader.h"
+#include "glk/tads/tads2/object.h"
 
 namespace Glk {
 namespace TADS {
@@ -35,6 +37,9 @@ namespace TADS2 {
 
 /* forward declarations */
 struct voccxdef;
+struct tokpdef;
+struct tokthdef;
+struct tokcxdef;
 
 /* load-on-demand context (passed in by mcm in load callback) */
 typedef struct fiolcxdef fiolcxdef;
@@ -65,20 +70,16 @@ void fiowrt(struct mcmcxdef *mctx, voccxdef *vctx,
 #define FIOFLIN2  0x80                            /* new-style line records */
 
 /* read game from binary file; sets up loader callback context */
-void fiord(struct mcmcxdef *mctx, voccxdef *vctx,
-           struct tokcxdef *tctx,
-           char *fname, char *exename,
-           struct fiolcxdef *setupctx, objnum *preinit, uint *flagp,
-           struct tokpdef *path, uchar **fmtsp, uint *fmtlp,
-           uint *pcntptr, int flags, struct appctxdef *appctx,
-           char *argv0);
+void fiord(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx, char *fname,
+	char *exename, fiolcxdef *setupctx, objnum *preinit, uint *flagp,
+	tokpdef *path, uchar **fmtsp, uint *fmtlp, uint *pcntptr, int flags,
+	appctxdef *appctx, char *argv0);
 
 /* shut down load-on-demand subsystem, close load file */
 void fiorcls(fiolcxdef *ctx);
 
 /* loader callback - load an object on demand */
-void OS_LOADDS fioldobj(void *ctx, mclhd handle, uchar *ptr,
-                        ushort siz);
+void OS_LOADDS fioldobj(void *ctx, mclhd handle, uchar *ptr, ushort siz);
 
 /* 
  *   Save a game - returns TRUE on failure.  We'll save the file to

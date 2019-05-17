@@ -56,6 +56,7 @@ void TADS2::runGame() {
 }
 
 void TADS2::trdmain1(errcxdef *errctx) {
+#ifdef TODO
 	osfildef  *swapfp = (osfildef *)0;
 	runcxdef   runctx;
 	bifcxdef   bifctx;
@@ -99,7 +100,7 @@ void TADS2::trdmain1(errcxdef *errctx) {
 	char      *charmap = 0;                           /* character map file */
 	int        charmap_none;       /* explicitly do not use a character set */
 	int        doublespace = TRUE;        /* formatter double-space setting */
-#ifdef TODO
+
 	NOREG((&loadopen))
 
 		/* initialize the output formatter */

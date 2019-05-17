@@ -134,7 +134,7 @@ void varused();
  *   anything outside of the normal ASCII set as spaces. 
  */
 #define t_isspace(c) \
-    (((unsigned char)(c)) <= 127 && isspace((unsigned char)(c)))
+    (((unsigned char)(c)) <= 127 && Common::isSpace((unsigned char)(c)))
 
 
 /* round a size to worst-case alignment boundary */

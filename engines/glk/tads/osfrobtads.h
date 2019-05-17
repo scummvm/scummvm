@@ -38,6 +38,12 @@
 namespace Glk {
 namespace TADS {
 
+#define OSPATHCHAR '/'
+#define OSPATHALT ""
+#define OSPATHURL "/"
+#define OSPATHSEP ':'
+#define OS_NEWLINE_SEQ "\n"
+
 
 /* Defined for Gargoyle. */
 #define HAVE_STDINT_
@@ -92,8 +98,12 @@ namespace TADS {
 
 #define OSFNMAX 255
 
-/* File handle structure for osfxxx functions. */
-typedef Common::SeekableReadStream osfildef;
+/**
+ * File handle structure for osfxxx functions
+ * Note that we need to define it as a Common::Stream since the type is used by
+ * TADS for both reading and writing files
+ */
+typedef Common::Stream osfildef;
 
 /* Directory handle for searches via os_open_dir() et al. */
 typedef Common::FSNode *osdirhdl_t;
@@ -188,18 +198,18 @@ osfildef *osfoprwt(const char *fname, os_filetype_t typ);
 #define osfoprs osfoprt
 
 /* Open binary file for reading. */
-osfildef *osfoprb(const char *fname, os_filetype_t typ);
+inline osfildef *osfoprb(const char *fname, os_filetype_t typ);
 
 /* Open binary file for reading/writing.  If the file already exists,
  * keep the existing contents.  Create a new file if it doesn't already
  * exist. */
 osfildef*
-osfoprwb( const char* fname, os_filetype_t typ );
+osfoprwb(const char *fname, os_filetype_t typ);
 
-/* Open binary file for reading/writing.  If the file already exists,
+/* Open binary file for writing.  If the file already exists,
  * truncate the existing contents.  Create a new file if it doesn't
  * already exist. */
-#define osfoprwtb(fname,typ) (fopen((fname),"w+b"))
+inline osfildef *osfoprwtb(const char *fname, os_filetype_t typ);
 
 /* Get a line of text from a text file. */
 #define osfgets fgets
@@ -208,7 +218,7 @@ osfoprwb( const char* fname, os_filetype_t typ );
 #define osfputs fputs
 
 /* Write bytes to file. */
-#define osfwb(fp,buf,bufl) (fwrite((buf),(bufl),1,(fp))!=1)
+inline bool osfwb(osfildef *fp, void *buf, size_t count);
 
 /* Flush buffered writes to a file. */
 #define osfflush fflush

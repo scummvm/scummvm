@@ -20,35 +20,14 @@
  *
  */
 
-#include "glk/tads/osfrobtads.h"
-#include "common/file.h"
+#include "glk/tads/tads2/line_source_file.h"
 
 namespace Glk {
 namespace TADS {
+namespace TADS2 {
 
-osfildef *osfoprb(const char *fname, os_filetype_t typ) {
-	Common::File f;
-	if (f.open(fname))
-		return f.readStream(f.size());
-	else
-		return nullptr;
-}
 
-osfildef *osfoprwtb(const char *fname, os_filetype_t typ) {
-	Common::DumpFile *df = new Common::DumpFile();
-	if (df->open(fname))
-		return df;
-	delete df;
-	return nullptr;
-}
 
-int osfrb(osfildef *fp, void *buf, size_t count) {
-	return dynamic_cast<Common::ReadStream *>(fp)->read(buf, count);
-}
-
-bool osfwb(osfildef *fp, void *buf, size_t count) {
-	return dynamic_cast<Common::WriteStream *>(fp)->write(buf, count) != count;
-}
-
+} // End of namespace TADS2
 } // End of namespace TADS
 } // End of namespace Glk

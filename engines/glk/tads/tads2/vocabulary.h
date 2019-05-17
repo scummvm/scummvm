@@ -27,6 +27,7 @@
 #ifndef GLK_TADS_TADS2_VOCABULARY
 #define GLK_TADS_TADS2_VOCABULARY
 
+#include "common/util.h"
 #include "glk/tads/tads2/lib.h"
 #include "glk/tads/tads2/object.h"
 #include "glk/tads/tads2/property.h"
@@ -645,11 +646,11 @@ void vocdusave_me(voccxdef *ctx, objnum old_me);
 uint vochsh(uchar *t, int len);
 
 /* TADS versions of isalpha, isspace, isdigit, etc */
-#define vocisupper(c) ((uchar)(c) <= 127 && isupper((uchar)(c)))
-#define vocislower(c) ((uchar)(c) <= 127 && islower((uchar)(c)))
-#define vocisalpha(c) ((uchar)(c) > 127 || isalpha((uchar)(c)))
-#define vocisspace(c) ((uchar)(c) <= 127 && isspace((uchar)(c)))
-#define vocisdigit(c) ((uchar)(c) <= 127 && isdigit((uchar)(c)))
+#define vocisupper(c) ((uchar)(c) <= 127 && Common::isUpper((uchar)(c)))
+#define vocislower(c) ((uchar)(c) <= 127 && Common::isLower((uchar)(c)))
+#define vocisalpha(c) ((uchar)(c) > 127 || Common::isAlpha((uchar)(c)))
+#define vocisspace(c) ((uchar)(c) <= 127 && Common::isSpace((uchar)(c)))
+#define vocisdigit(c) ((uchar)(c) <= 127 && Common::isDigit((uchar)(c)))
 
 
 /*

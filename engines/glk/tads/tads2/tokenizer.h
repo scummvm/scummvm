@@ -26,6 +26,7 @@
 #include "glk/tads/tads2/lib.h"
 #include "glk/tads/tads2/error_handling.h"
 #include "glk/tads/tads2/line_source.h"
+#include "glk/tads/tads2/line_source_file.h"
 #include "glk/tads/tads2/memory_cache.h"
 
 namespace Glk {
@@ -356,7 +357,7 @@ struct tokcxdef {
     int       tokcxifcnt;           /* number of #endif's we expect to find */
     char      tokcxif[TOKIFNEST];       /* #if state for each nesting level */
     int       tokcxifcur;             /* current #if state, obeying nesting */
-    struct    linfdef  *tokcxhdr;    /* list of previously included headers */
+    linfdef  *tokcxhdr;              /* list of previously included headers */
     tokscdef *tokcxsc[1];                        /* special character table */
 };
 
@@ -453,16 +454,16 @@ void tok_write_defines(tokcxdef *ctx, osfildef *fp, errcxdef *ec);
 
 /* determine if a char is a valid non-initial character in a symbol name */
 #define TOKISSYM(c) \
-    (isalpha((uchar)(c)) || isdigit((uchar)(c)) || (c)=='_' || (c)=='$')
+    (Common::isAlpha((uchar)(c)) || Common::isDigit((uchar)(c)) || (c)=='_' || (c)=='$')
 
 /* numeric conversion and checking macros */
 #define TOKISHEX(c) \
-    (isdigit((uchar)(c))||((c)>='a'&&(c)<='f')||((c)>='A'&&(c)<='F'))
+    (Common::isDigit((uchar)(c))||((c)>='a'&&(c)<='f')||((c)>='A'&&(c)<='F'))
 #define TOKISOCT(c) \
-    (isdigit((uchar)(c))&&!((c)=='8'||(c)=='9'))
+    (Common::isDigit((uchar)(c))&&!((c)=='8'||(c)=='9'))
 
 #define TOKHEX2INT(c) \
-    (isdigit((uchar)c)?(c)-'0':((c)>='a'?(c)-'a'+10:(c)-'A'+10))
+    (Common::isDigit((uchar)c)?(c)-'0':((c)>='a'?(c)-'a'+10:(c)-'A'+10))
 #define TOKOCT2INT(c) ((c)-'0')
 #define TOKDEC2INT(c) ((c)-'0')
 
