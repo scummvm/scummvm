@@ -1343,6 +1343,7 @@ int MidiDriver_PC9801::open() {
 			return MERR_CANNOT_CONNECT;
 		_pc98a->setSoundEffectChanMask(0);
 		_pc98a->ssgSetVolume(205);
+		_pc98a->writeReg(0, 0x26, 256 - _baseTempo / 288);
 		_ready = true;
 	}
 
