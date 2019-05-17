@@ -92,13 +92,22 @@ MODULE_OBJS := \
 	scott/detection.o \
 	scott/scott.o \
 	tads/detection.o \
+	tads/osfrobtads.o \
 	tads/tads.o \
+	tads/tads2/character_map.o \
 	tads/tads2/data.o \
-	tads/tads2/ler.o \
+	tads/tads2/error.o \
+	tads/tads2/error_handling.o \
+	tads/tads2/file_io.o \
+	tads/tads2/memory_cache.o \
+	tads/tads2/memory_cache_heap.o \
+	tads/tads2/memory_cache_loader.o \
+	tads/tads2/memory_cache_swap.o \
 	tads/tads2/os.o \
 	tads/tads2/regex.o \
+	tads/tads2/run.o \
 	tads/tads2/tads2.o \
-	tads/tads2/tads2_cmap.o \
+	tads/tads2/tokenizer.o \
 	tads/tads2/vocabulary.o \
 	tads/tads3/tads3.o
 

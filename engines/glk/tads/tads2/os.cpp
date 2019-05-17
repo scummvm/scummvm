@@ -26,6 +26,7 @@ namespace Glk {
 namespace TADS {
 namespace TADS2 {
 
+#if 0
 OS::OS(OSystem *syst, const GlkGameDescription &gameDesc) : TADS(syst, gameDesc),
 		status_mode(0) {
 	Common::fill(&status_left[0], &status_left[OSS_STATUS_STRING_LEN], '\0');
@@ -345,6 +346,7 @@ int OS::oss_getc_from_window(winid_t win) {
 	buffered_char = oss_convert_keystroke_to_tads(ev.val1);
 	return 0;
 }
+#endif
 
 } // End of namespace TADS2
 } // End of namespace TADS

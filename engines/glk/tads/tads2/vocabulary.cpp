@@ -20,6 +20,7 @@
  *
  */
 
+#include "glk/tads/tads2/run.h"
 #include "glk/tads/tads2/vocabulary.h"
 
 namespace Glk {

@@ -20,50 +20,13 @@
  *
  */
 
-#ifndef GLK_TADS_TADS2_DATA
-#define GLK_TADS_TADS2_DATA
-
-#include "common/scummsys.h"
+#include "glk/tads/tads2/object.h"
 
 namespace Glk {
 namespace TADS {
 namespace TADS2 {
 
-enum DataType {
-	DAT_NUMBER  =  1,
-	DAT_OBJECT  =  2,
-	DAT_SSTRING =  3,
-	DAT_BASEPTR =  4,
-	DAT_NIL     =  5,		///< nil, as in FALSE or empty list
-	DAT_CODE    =  6,
-	DAT_LIST    =  7,
-	DAT_TRUE    =  8,		///< inverse of nil
-	DAT_DSTRING =  9,
-	DAT_FNADDR  = 10,		///< a function address
-	DAT_TPL     = 11,		///< template list pointer
-	DAT_PROPNUM = 13,		///< a property number
-	DAT_DEMAND  = 14,		///< special flag: use callback to set on use
-	DAT_SYN     = 15,		///< synonym to indicated property value
-	DAT_REDIR   = 16,		///< redirection to different object
-	DAT_TPL2    = 17		///< new-style template
-};
-typedef DataType dattyp;
 
-class Data {
-private:
-	DataType _type;
-	void *_ptr;
-public:
-	/**
-	 * Constructor
-	 */
-	Data(DataType type);
-
-	/**
-	 * Return the size of the data
-	 */
-	size_t size() const;
-};
 
 } // End of namespace TADS2
 } // End of namespace TADS

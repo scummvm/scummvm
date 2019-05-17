@@ -20,50 +20,38 @@
  *
  */
 
-#ifndef GLK_TADS_TADS2_DATA
-#define GLK_TADS_TADS2_DATA
+/*
+ * Memory cache heap manager
+ *
+ * This is the low-level heap manager, which maintains a list of non-relocatable,
+ * non-swappable blocks of memory.  The cache manager uses the heap manager for
+ * its basic storage needs.
+ */
 
-#include "common/scummsys.h"
+#ifndef GLK_TADS_TADS2_MEMORY_CACHE_HEAP
+#define GLK_TADS_TADS2_MEMORY_CACHE_HEAP
+
+#include "glk/tads/tads2/lib.h"
+#include "glk/tads/tads2/error_handling.h"
 
 namespace Glk {
 namespace TADS {
 namespace TADS2 {
 
-enum DataType {
-	DAT_NUMBER  =  1,
-	DAT_OBJECT  =  2,
-	DAT_SSTRING =  3,
-	DAT_BASEPTR =  4,
-	DAT_NIL     =  5,		///< nil, as in FALSE or empty list
-	DAT_CODE    =  6,
-	DAT_LIST    =  7,
-	DAT_TRUE    =  8,		///< inverse of nil
-	DAT_DSTRING =  9,
-	DAT_FNADDR  = 10,		///< a function address
-	DAT_TPL     = 11,		///< template list pointer
-	DAT_PROPNUM = 13,		///< a property number
-	DAT_DEMAND  = 14,		///< special flag: use callback to set on use
-	DAT_SYN     = 15,		///< synonym to indicated property value
-	DAT_REDIR   = 16,		///< redirection to different object
-	DAT_TPL2    = 17		///< new-style template
-};
-typedef DataType dattyp;
+/**
+ *   Allocate a block of memory; returns pointer to the block.
+ *   An out-of-memory error is signalled if insufficient memory
+ *   is available.  The comment is for debugging purposes only.
+ */
+uchar *mchalo(errcxdef *ctx, size_t siz, char *comment);
 
-class Data {
-private:
-	DataType _type;
-	void *_ptr;
-public:
-	/**
-	 * Constructor
-	 */
-	Data(DataType type);
+/* allocate a structure */
+#define MCHNEW(errctx, typ, comment) \
+ ((typ *)mchalo(errctx, sizeof(typ), comment))
 
-	/**
-	 * Return the size of the data
-	 */
-	size_t size() const;
-};
+/* free a block of memory */
+/* void mchfre(uchar *ptr); */
+#define mchfre(ptr) (osfree(ptr))
 
 } // End of namespace TADS2
 } // End of namespace TADS
