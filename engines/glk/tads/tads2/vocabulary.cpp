@@ -24,6 +24,7 @@
 #include "glk/tads/tads2/vocabulary.h"
 #include "glk/tads/tads2/error.h"
 #include "glk/tads/tads2/memory_cache_heap.h"
+#include "glk/tads/os_glk.h"
 
 namespace Glk {
 namespace TADS {

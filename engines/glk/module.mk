@@ -100,11 +100,13 @@ MODULE_OBJS := \
 	tads/tads2/error_handling.o \
 	tads/tads2/file_io.o \
 	tads/tads2/line_source_file.o \
+	tads/tads2/list.o \
 	tads/tads2/memory_cache.o \
 	tads/tads2/memory_cache_heap.o \
 	tads/tads2/memory_cache_loader.o \
 	tads/tads2/memory_cache_swap.o \
 	tads/tads2/os.o \
+	tads/tads2/output.o \
 	tads/tads2/regex.o \
 	tads/tads2/run.o \
 	tads/tads2/tads2.o \

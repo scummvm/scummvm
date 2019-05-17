@@ -67,9 +67,6 @@ namespace Glk {
 namespace TADS {
 namespace TADS2 {
 
-// TODO: Clean away use of jmp_buf, since ScummVM doesn't allow it
-struct jmp_buf {};
-
 /**
  * Maximum length of a facility identifier
  */
@@ -86,7 +83,7 @@ struct errdef {
     char           errfac[ERRFACMAX+1];        /* facility of current error */
     erradef        erraav[10];                      /* parameters for error */
     int            erraac;                   /* count of parameters in argc */
-    jmp_buf        errbuf;           /* jump buffer for current error frame */
+    //jmp_buf        errbuf;        ScummVM doesn't support using jump buffers
 };
 
 #define ERRBUFSIZ 512
@@ -120,7 +117,7 @@ struct errcxdef {
 #define ERRBEGIN(ctx) \
   { \
     errdef fr_; \
-    if ((fr_.errcode = setjmp(fr_.errbuf)) == 0) \
+    if (1 /*(fr_.errcode = setjmp(fr_.errbuf)) == 0 */) \
     { \
       fr_.errprv = (ctx)->errcxptr; \
       (ctx)->errcxptr = &fr_;

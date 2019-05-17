@@ -20,43 +20,28 @@
  *
  */
 
-#include "glk/tads/osfrobtads.h"
-#include "common/file.h"
+/* List definitions
+ *
+ * A TADS run-time list is essentially a packed counted array.
+ * The first thing in a list is a ushort, which specifies the
+ * number of elements in the list.  The list elements are then
+ * packed into the list immediately following.
+ */
+
+#ifndef GLK_TADS_TADS2_LIST
+#define GLK_TADS_TADS2_LIST
+
+#include "glk/tads/tads2/lib.h"
 
 namespace Glk {
 namespace TADS {
+namespace TADS2 {
 
-osfildef *osfoprb(const char *fname, os_filetype_t typ) {
-	Common::File f;
-	if (f.open(fname))
-		return f.readStream(f.size());
-	else
-		return nullptr;
-}
+/* advance a list pointer/size pair to the next element of a list */
+void lstadv(uchar **lstp, uint *sizp);
 
-osfildef *osfoprwtb(const char *fname, os_filetype_t typ) {
-	Common::DumpFile *df = new Common::DumpFile();
-	if (df->open(fname))
-		return df;
-	delete df;
-	return nullptr;
-}
-
-int osfrb(osfildef *fp, void *buf, size_t count) {
-	return dynamic_cast<Common::ReadStream *>(fp)->read(buf, count);
-}
-
-bool osfwb(osfildef *fp, void *buf, size_t count) {
-	return dynamic_cast<Common::WriteStream *>(fp)->write(buf, count) != count;
-}
-
-void osfflush(osfildef *fp) {
-	dynamic_cast<Common::WriteStream *>(fp)->flush();
-}
-
-osfildef *osfopwt(const char *fname, os_filetype_t typ) {
-	return osfoprwtb(fname, typ);
-}
-
+} // End of namespace TADS2
 } // End of namespace TADS
 } // End of namespace Glk
+
+#endif

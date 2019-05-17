@@ -393,8 +393,7 @@ int os_get_zoneinfo_key(char *buf, size_t buflen);
  *   timezone's clock settings, name(s), and rules for recurring annual
  *   changes between standard time and daylight time, if applicable.
  */
-struct os_tzrule_t
-{
+struct os_tzrule_t {
     /* 
      *   Day of year, 1-365, NEVER counting Feb 29; set to 0 if not used.
      *   Corresponds to the "J" format in Unix TZ strings.  (Called "Julian
@@ -448,8 +447,7 @@ struct os_tzrule_t
     /* time of day, in seconds after midnight (e.g., 2AM is 120 == 2*60*60) */
     int time;
 };
-struct os_tzinfo_t
-{
+struct os_tzinfo_t {
     /*
      *   The local offset from GMT, in seconds, for standard time and
      *   daylight time in this zone.  These values are positive for zones

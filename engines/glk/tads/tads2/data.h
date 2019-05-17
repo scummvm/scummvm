@@ -47,23 +47,10 @@ enum DataType {
 	DAT_REDIR   = 16,		///< redirection to different object
 	DAT_TPL2    = 17		///< new-style template
 };
-typedef DataType dattyp;
+typedef int dattyp;
 
-class Data {
-private:
-	DataType _type;
-	void *_ptr;
-public:
-	/**
-	 * Constructor
-	 */
-	Data(DataType type);
-
-	/**
-	 * Return the size of the data
-	 */
-	size_t size() const;
-};
+/* determine the size of a piece of data */
+uint datsiz(dattyp typ, void *valptr);
 
 } // End of namespace TADS2
 } // End of namespace TADS

@@ -46,14 +46,10 @@ namespace Glk {
 namespace TADS {
 namespace TADS2 {
 
-/* Forward declarations */
-struct runcxdef;
-struct runufdef;
-struct voccxdef;
+/* forward declarations */
+struct bifcxdef;
 
-/**
- * Stack element - the stack is an array of these structures
- */
+/* stack element - the stack is an array of these structures */
 struct runsdef {
     uchar  runstyp;                                      /* type of element */
     union {
@@ -61,50 +57,36 @@ struct runsdef {
         objnum  runsvobj;                                   /* object value */
         prpnum  runsvprp;                          /* property number value */
         uchar  *runsvstr;                              /* string/list value */
-    }      runsv;
-
-
-	/**
-	 * Determine size of a data item
-	 */
-	int runsiz() const;
+    } runsv;
 };
 
-/**
- * External function control structure
- */
+/* external function control structure */
 struct runxdef {
     char    runxnam[TOKNAMMAX + 1];            /* name of external function */
     int   (*runxptr)(void *);          /* pointer to memory containing code */
 };
 
-/**
- * External function context structure - passed to user exits
- */
+/* external function context structure - passed to user exits */
 struct runuxdef {
-    runcxdef *runuxctx;		/* run-time context */
-    runufdef *runuxvec;		/* vector of functions */
-    int runuxargc;					/* count of arguments to function */
+    struct runcxdef osfar_t *runuxctx;                  /* run-time context */
+    struct runufdef osfar_t *runuxvec;               /* vector of functions */
+    int                      runuxargc;   /* count of arguments to function */
 };
 
-/**
- * External function callback vector
- */
+/* external function callback vector */
 struct runufdef {
-    int    (*runuftyp)(runuxdef *);         /* type of top of stack */
-    long   (*runufnpo)(runuxdef *);                 /* pop a number */
-    uchar *(*runufspo)(runuxdef *);                 /* pop a string */
-    void   (*runufdsc)(runuxdef *); /* discard item at top of stack */
-    void   (*runufnpu)(runuxdef *, long);          /* push a number */
-    void   (*runufspu)(runuxdef *, uchar *); /* push alloc'd string */
-    void   (*runufcspu)(runuxdef *, char *);     /* push a C-string */
-    uchar *(*runufsal)(runuxdef *, int);   /* allocate a new string */
-    void   (*runuflpu)(runuxdef *, int);/* push DAT_TRUE or DAT_NIL */
+    int    (osfar_t *runuftyp)(runuxdef *);         /* type of top of stack */
+    long   (osfar_t *runufnpo)(runuxdef *);                 /* pop a number */
+    uchar *(osfar_t *runufspo)(runuxdef *);                 /* pop a string */
+    void   (osfar_t *runufdsc)(runuxdef *); /* discard item at top of stack */
+    void   (osfar_t *runufnpu)(runuxdef *, long);          /* push a number */
+    void   (osfar_t *runufspu)(runuxdef *, uchar *); /* push alloc'd string */
+    void   (osfar_t *runufcspu)(runuxdef *, char *);     /* push a C-string */
+    uchar *(osfar_t *runufsal)(runuxdef *, int);   /* allocate a new string */
+    void   (osfar_t *runuflpu)(runuxdef *, int);/* push DAT_TRUE or DAT_NIL */
 };
 
-/**
- * Execution context
- */
+/* execution context */
 struct runcxdef {
     errcxdef   *runcxerr;                       /* error management context */
     mcmcxdef   *runcxmem;    /* cache manager context for object references */
@@ -120,8 +102,8 @@ struct runcxdef {
     void       *runcxbcx;        /* context for built-in callback functions */
     void     (**runcxbi)(struct bifcxdef *ctx, int argc);
                                                       /* built-in functions */
-    dbgcxdef *runcxdbg;                          /* debugger context */
-    voccxdef *runcxvoc;             /* player command parser context */
+    struct dbgcxdef *runcxdbg;                          /* debugger context */
+    struct voccxdef *runcxvoc;             /* player command parser context */
     void      (*runcxdmd)(void *ctx, objnum obj, prpnum prp);
                                          /* demand-loader callback function */
     void       *runcxdmc;                 /* demand-loader callback context */
@@ -130,120 +112,66 @@ struct runcxdef {
     uint        runcxlofs;        /* offset of last line record encountered */
     char       *runcxgamename;                     /* name of the .GAM file */
     char       *runcxgamepath;      /* absolute directory path of .GAM file */
-
-	/**
-	 * Execute a function, given the function object number
-	 */
-	void runfn(noreg objnum objn, int argc);
-
-	/**
-	 * Execute p-code given a pointer to the code.  p is the actual pointer
-	 * to the first byte of code to be executed. self is the object to be
-	 * used for the special 'self' pseudo-object, and target is the object
-	 * whose data are actually being executed.  targprop is the property being
-	 * executed; 0 is used for functions.
-	 */
-	void runexe(uchar *p, objnum self, objnum target,
-		prpnum targprop, int argc);
-
-	/**
-	 * Push a value onto the stack
-	 */
-	void runpush(dattyp typ, runsdef *val);
-
-	/**
-	 * Push a value onto the stack that's already in the heap
-	 */
-	void runrepush(runsdef *val);
-
-	/**
-	 * Push a number onto the stack
-	 */
-	void runpnum(long val);
-
-	/**
-	 * Push an object onto the stack
-	 */
-	void runpobj(objnum obj);
-
-	/**
-	 * push nil
-	 */
-	void runpnil(runcxdef *ctx);
-
-	/**
-	 * push a value onto the stack from a buffer (propdef, list)
-	 */
-	void runpbuf(int typ, void *val);
-
-	/**
-	 * Push a counted-length string onto the stack
-	 */
-	void runpstr(char *str, int len, int sav);
-
-	/**
-	 * Push a C-style string onto the stack, converting escape codes.  If
-	 * the character contains backslashes, newline, or tab characters, we'll
-	 * convert these characters to their escaped equivalent.
-	 */
-	void runpushcstr(char *str, size_t len, int sav);
-
-	/**
-	 * Push a property onto the stack.  codepp is a pointer to the caller's
-	 * code pointer, which will be updated if necessary; callobj and
-	 * callofsp are the object and starting offset within the object of the
-	 * code being executed by the caller, which are needed to update
-	 * *codepp.  Property 0 is used if a function is being executed.  obj
-	 * and prop are the object and property number whose value is to be
-	 * pushed.  If 'inh' is TRUE, it means that only a property inherited
-	 * by 'obj' is to be considered; this is used for "pass"/"inherited"
-	 * operations, with the current target object given as 'obj'.
-	 */
-	void runpprop(uchar *noreg *codepp, objnum callobj,
-		prpnum callprop, noreg objnum obj, prpnum prop, int inh,
-		int argc, objnum self);
-
-	/**
-	 * compare magnitudes of numbers/strings on top of stack; strcmp-like value
-	 */
-	int runmcmp(runcxdef *ctx);
-
-	/**
-	 * True if items at top of stack are equal, FALSE otherwise
-	 */
-	int runeq(runcxdef *ctx);
-
-	/**
-	 * Garbage collect heap, making sure 'siz' bytes are available afterwards
-	 */
-	void runhcmp(uint siz, uint below,
-		runsdef *val1, runsdef *val2, runsdef *val3);
-
-	/**
-	 * Find a sublist within a list, returning pointer to sublist or null
-	 */
-	uchar *runfind(uchar *list, runsdef *item);
-
-	/**
-	 * Restore code pointer from object.property + offset
-	 */
-	uchar *runcprst(uint ofs, objnum obj, prpnum prop);
-
-	/**
-	 * Add two runsdef values, returning result in *val
-	 */
-	void runadd(runsdef *val2, uint below);
-
-	/**
-	 * Subtract val2 from val, returning result in *val; return TRUE if
-	 * value changed, FALSE otherwise (this is returned when subtracting
-	 * something from a list that isn't in the list)
-	 */
-	int runsub(runsdef *val2, uint below);
 };
 
+/* execute a function, given the function object number */
+void runfn(runcxdef *ctx, noreg objnum objn, int argc);
+
+/*
+ *   Execute p-code given a pointer to the code.  p is the actual pointer
+ *   to the first byte of code to be executed. self is the object to be
+ *   used for the special 'self' pseudo-object, and target is the object
+ *   whose data are actually being executed.  targprop is the property being
+ *   executed; 0 is used for functions. 
+ */
+void runexe(runcxdef *ctx, uchar *p, objnum self, objnum target,
+            prpnum targprop, int argc);
+
+/* push a value onto the stack */
+void runpush(runcxdef *ctx, dattyp typ, runsdef *val);
+
+/* push a value onto the stack that's already in the heap */
+void runrepush(runcxdef *ctx, runsdef *val);
+
+/* push a number onto the stack */
+void runpnum(runcxdef *ctx, long val);
+
+/* push an object onto the stack */
+void runpobj(runcxdef *ctx, objnum obj);
+
+/* push nil */
+void runpnil(runcxdef *ctx);
+
+/* push a value onto the stack from a buffer (propdef, list) */
+void runpbuf(runcxdef *ctx, int typ, void *val);
+
+/* push a counted-length string onto the stack */
+void runpstr(runcxdef *ctx, char *str, int len, int sav);
+
+/*
+ *   Push a C-style string onto the stack, converting escape codes.  If
+ *   the character contains backslashes, newline, or tab characters, we'll
+ *   convert these characters to their escaped equivalent.
+ */
+void runpushcstr(runcxdef *ctx, char *str, size_t len, int sav);
+
+/*
+ *   Push a property onto the stack.  codepp is a pointer to the caller's
+ *   code pointer, which will be updated if necessary; callobj and
+ *   callofsp are the object and starting offset within the object of the
+ *   code being executed by the caller, which are needed to update
+ *   *codepp.  Property 0 is used if a function is being executed.  obj
+ *   and prop are the object and property number whose value is to be
+ *   pushed.  If 'inh' is TRUE, it means that only a property inherited
+ *   by 'obj' is to be considered; this is used for "pass"/"inherited"
+ *   operations, with the current target object given as 'obj'.
+ */
+void runpprop(runcxdef *ctx, uchar *noreg *codepp, objnum callobj,
+              prpnum callprop, noreg objnum obj, prpnum prop, int inh,
+              int argc, objnum self);
+
 /* top level runpprop, when caller is not executing in an object */
-/* void runppr(objnum obj, prpnum prp, int argc); */
+/* void runppr(runcxdef *ctx, objnum obj, prpnum prp, int argc); */
 #define runppr(ctx, obj, prp, argc) \
  runpprop(ctx, (uchar **)0, (objnum)0, (prpnum)0, obj, prp, FALSE, argc, obj)
 
@@ -252,7 +180,7 @@ struct runcxdef {
 #define rundisc(ctx) (runstkund(ctx), (--((ctx)->runcxsp)))
 
 /* pop the top element on the stack */
-/* void runpop(runsdef *val); */
+/* void runpop(runcxdef *ctx, runsdef *val); */
 #define runpop(ctx, v) \
  (runstkund(ctx), memcpy(v, (--((ctx)->runcxsp)), (size_t)sizeof(runsdef)))
 
@@ -327,6 +255,17 @@ struct runcxdef {
 /* int runclog(int log); */
 #define runclog(l) ((l) ? DAT_TRUE : DAT_NIL)
 
+/* compare magnitudes of numbers/strings on top of stack; strcmp-like value */
+int runmcmp(runcxdef *ctx);
+
+/* TRUE if items at top of stack are equal, FALSE otherwise */
+int runeq(runcxdef *ctx);
+
+/* check for stack underflow */
+/* void runstkund(runcxdef *ctx); */
+
+/* check for stack overflow */
+/* void runstkovf(runcxdef *ctx); */
 
 /* 
  *   Check to ensure we have enough arguments to pass to a function or method
@@ -352,7 +291,7 @@ struct runcxdef {
 #endif /* RUNFAST */
 
 /* reserve space in heap, collecting garbage if necessary */
-/* void runhres(uint siz, uint below); */
+/* void runhres(runcxdef *ctx, uint siz, uint below); */
 #define runhres(ctx, siz, below) \
  ((uint)((ctx)->runcxhtop - (ctx)->runcxhp) > (uint)(siz) ? DISCARD 0 : \
  (runhcmp(ctx, siz, below, (runsdef *)0, (runsdef *)0, (runsdef *)0),\
@@ -371,9 +310,31 @@ struct runcxdef {
  ((uint)((ctx)->runcxhtop - (ctx)->runcxhp) > (uint)(siz) ? DISCARD 0 : \
  (runhcmp(ctx, siz, below, val1, val2, val3), DISCARD 0))
 
+/* garbage collect heap, making sure 'siz' bytes are available afterwards */
+void runhcmp(runcxdef *ctx, uint siz, uint below,
+             runsdef *val1, runsdef *val2, runsdef *val3);
+
+/* determine size of a data item */
+int runsiz(runsdef *item);
+
+/* find a sublist within a list, returning pointer to sublist or NULL */
+uchar *runfind(uchar *list, runsdef *item);
+
+/* add two runsdef values, returning result in *val */
+void runadd(runcxdef *ctx, runsdef *val, runsdef *val2, uint below);
+
+/*
+ *   subtract val2 from val, returning result in *val; return TRUE if
+ *   value changed, FALSE otherwise (this is returned when subtracting
+ *   something from a list that isn't in the list) 
+ */
+int runsub(runcxdef *ctx, runsdef *val, runsdef *val2, uint below);
+
+/* restore code pointer from object.property + offset */
+uchar *runcprst(runcxdef *ctx, uint ofs, objnum obj, prpnum prop);
 
 /* leave a stack frame, removing arguments */
-/* void runleave(uint parms); */
+/* void runleave(runcxdef *ctx, uint parms); */
 #define runleave(ctx, parms) \
  (((ctx)->runcxsp = (ctx)->runcxbp), \
   ((ctx)->runcxbp = (runsdef *)((--((ctx)->runcxsp))->runsv.runsvstr)), \
@@ -385,6 +346,27 @@ struct runcxdef {
                      ((ctx)->runcxhp = (ctx)->runcxheap), \
                      dbgrst(ctx->runcxdbg))
 
+/* set up runtime status line display */
+void runistat(struct voccxdef *vctx, struct runcxdef *rctx,
+                  struct tiocxdef *tctx);
+
+/* signal a run-time error - allows debugger trapping */
+void runsign(runcxdef *ctx, int err);
+
+/* sign a run-time error with zero arguments */
+#define runsig(ctx, err) (errargc((ctx)->runcxerr,0),runsign(ctx,err))
+
+/* signal a run-time error with one argument */
+#define runsig1(ctx, err, typ, arg) \
+  (errargv((ctx)->runcxerr,0,typ,arg),errargc((ctx)->runcxerr,1),\
+   runsign(ctx,err))
+
+/* draw status line */
+void runstat(void);
+
+/* initialize output status */
+void runistat(struct voccxdef *vctx, struct runcxdef *rctx,
+              struct tiocxdef *tctx);
 
 } // End of namespace TADS2
 } // End of namespace TADS

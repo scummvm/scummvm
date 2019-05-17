@@ -38,13 +38,6 @@
 namespace Glk {
 namespace TADS {
 
-#define OSPATHCHAR '/'
-#define OSPATHALT ""
-#define OSPATHURL "/"
-#define OSPATHSEP ':'
-#define OS_NEWLINE_SEQ "\n"
-
-
 /* Defined for Gargoyle. */
 #define HAVE_STDINT_
 
@@ -178,7 +171,7 @@ int osfmode( const char* fname, int follow_links, unsigned long* mode,
 #define osfoprt(fname,typ) (fopen((fname),"r"))
 
 /* Open text file for writing. */
-#define osfopwt(fname,typ) (fopen((fname),"w"))
+osfildef *osfopwt(const char *fname, os_filetype_t typ);
 
 /* Open text file for reading and writing, keeping the file's existing
  * contents if the file already exists or creating a new file if no
@@ -221,7 +214,7 @@ inline osfildef *osfoprwtb(const char *fname, os_filetype_t typ);
 inline bool osfwb(osfildef *fp, void *buf, size_t count);
 
 /* Flush buffered writes to a file. */
-#define osfflush fflush
+inline void osfflush(osfildef *fp);
 
 /* Read bytes from file. */
 int osfrb(osfildef *fp, void *buf, size_t count);

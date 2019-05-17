@@ -20,43 +20,23 @@
  *
  */
 
-#include "glk/tads/osfrobtads.h"
-#include "common/file.h"
+#include "glk/tads/tads2/list.h"
+#include "glk/tads/tads2/data.h"
 
 namespace Glk {
 namespace TADS {
+namespace TADS2 {
 
-osfildef *osfoprb(const char *fname, os_filetype_t typ) {
-	Common::File f;
-	if (f.open(fname))
-		return f.readStream(f.size());
-	else
-		return nullptr;
+void lstadv(uchar **lstp, uint *sizp)
+{
+	uint siz;
+
+	siz = datsiz(**lstp, (*lstp) + 1) + 1;
+	assert(siz <= *sizp);
+	*lstp += siz;
+	*sizp -= siz;
 }
 
-osfildef *osfoprwtb(const char *fname, os_filetype_t typ) {
-	Common::DumpFile *df = new Common::DumpFile();
-	if (df->open(fname))
-		return df;
-	delete df;
-	return nullptr;
-}
-
-int osfrb(osfildef *fp, void *buf, size_t count) {
-	return dynamic_cast<Common::ReadStream *>(fp)->read(buf, count);
-}
-
-bool osfwb(osfildef *fp, void *buf, size_t count) {
-	return dynamic_cast<Common::WriteStream *>(fp)->write(buf, count) != count;
-}
-
-void osfflush(osfildef *fp) {
-	dynamic_cast<Common::WriteStream *>(fp)->flush();
-}
-
-osfildef *osfopwt(const char *fname, os_filetype_t typ) {
-	return osfoprwtb(fname, typ);
-}
-
+} // End of namespace TADS2
 } // End of namespace TADS
 } // End of namespace Glk

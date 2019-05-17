@@ -23,6 +23,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_isalnum
 #define FORBIDDEN_SYMBOL_EXCEPTION_isalpha
 #define FORBIDDEN_SYMBOL_EXCEPTION_isdigit
+#define FORBIDDEN_SYMBOL_EXCEPTION_isxdigit
 #define FORBIDDEN_SYMBOL_EXCEPTION_isnumber
 #define FORBIDDEN_SYMBOL_EXCEPTION_islower
 #define FORBIDDEN_SYMBOL_EXCEPTION_isspace
@@ -130,6 +131,11 @@ bool isAlpha(int c) {
 bool isDigit(int c) {
 	ENSURE_ASCII_CHAR(c);
 	return isdigit((byte)c);
+}
+
+bool isXDigit(int c) {
+	ENSURE_ASCII_CHAR(c);
+	return isxdigit((byte)c);
 }
 
 bool isLower(int c) {

@@ -76,20 +76,12 @@ typedef uint32         uint32_t;
 #define bic(va, bt) ((va) &= ~(bt))
 
 /*
- *   noreg/NOREG - use for variables changed in error-protected code that
- *   are used in error handling code.  Use 'noreg' on the declaration like
- *   a storage class qualifier.  Use 'NOREG' as an argument call, passing
- *   the addresses of all variables declared noreg.  For non-ANSI
- *   compilers, a routine osnoreg(/o_ void *arg0, ... _o/) must be
- *   defined.
+ *   noreg/NOREG - was used for variables changed in error-protected code that
+ *   are used in error handling code. However, since ScummVM doesn't support
+ *   setjmp for portability reasons, the following can be left as blank defines
  */
-#ifdef OSANSI
-# define noreg volatile
-# define NOREG(arglist)
-#else /* OSANSI */
 # define noreg
-# define NOREG(arglist) osnoreg arglist ;
-#endif /* OSANSI */
+# define NOREG(arglist)
 
 /* 
  *   Linting directives.  You can define these before including this file
@@ -135,27 +127,6 @@ void varused();
  */
 #define t_isspace(c) \
     (((unsigned char)(c)) <= 127 && Common::isSpace((unsigned char)(c)))
-
-
-/* round a size to worst-case alignment boundary */
-#define osrndsz(s) (((s)+3) & ~3)
-
-/* round a pointer to worst-case alignment boundary */
-#define osrndpt(p) ((uchar *)((((unsigned long)(p)) + 3) & ~3))
-
-/* read unaligned portable unsigned 2-byte value, returning int */
-#define osrp2(p) READ_LE_UINT16(p)
-
-/* read unaligned portable signed 2-byte value, returning int */
-#define osrp2s(p) READ_LE_INT16(p)
-
-/* write int to unaligned portable 2-byte value */
-#define oswp2(p, i) WRITE_LE_UINT16(p, i)
-#define oswp2s(p, i) WRITE_LE_INT16(p, i)
-
-/* read unaligned portable 4-byte value, returning unsigned long */
-#define osrp4(p) READ_LE_UINT32(p)
-#define osrp4s(p) READ_LE_INT32(p)
 
 } // End of namespace TADS2
 } // End of namespace TADS
