@@ -37,7 +37,7 @@
 #include "glk/tads/tads2/object.h"
 #include "glk/tads/tads2/memory_cache.h"
 #include "glk/tads/tads2/memory_cache_swap.h"
-#include "glk/tads/tads2/opcode_defs.h"
+#include "glk/tads/tads2/opcode.h"
 #include "glk/tads/tads2/property.h"
 #include "glk/tads/tads2/text_io.h"
 #include "glk/tads/tads2/tokenizer.h"

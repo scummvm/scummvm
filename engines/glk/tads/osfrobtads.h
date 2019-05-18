@@ -181,14 +181,14 @@ osfildef *osfoprwt(const char *fname, os_filetype_t typ);
 /* Open text file for reading/writing.  If the file already exists,
  * truncate the existing contents.  Create a new file if it doesn't
  * already exist. */
-#define osfoprwtt(fname,typ) (fopen((fname),"w+"))
+#define osfoprwtt(fname,typ) osfoprwt
 
 /* Open binary file for writing. */
-#define osfopwb(fname,typ) (fopen((fname),"wb"))
+#define osfopwb(fname,typ) osfoprwtb(fname, typ)
 
 /* Open source file for reading - use the appropriate text or binary
  * mode. */
-#define osfoprs osfoprt
+#define osfoprs osfoprb
 
 /* Open binary file for reading. */
 inline osfildef *osfoprb(const char *fname, os_filetype_t typ);
@@ -205,13 +205,13 @@ osfoprwb(const char *fname, os_filetype_t typ);
 inline osfildef *osfoprwtb(const char *fname, os_filetype_t typ);
 
 /* Get a line of text from a text file. */
-#define osfgets fgets
+char *osfgets(char *buf, size_t count, osfildef *fp);
 
 /* Write a line of text to a text file. */
 #define osfputs fputs
 
 /* Write bytes to file. */
-inline bool osfwb(osfildef *fp, void *buf, size_t count);
+inline bool osfwb(osfildef *fp, const void *buf, size_t count);
 
 /* Flush buffered writes to a file. */
 inline void osfflush(osfildef *fp);
@@ -220,13 +220,13 @@ inline void osfflush(osfildef *fp);
 int osfrb(osfildef *fp, void *buf, size_t count);
 
 /* Read bytes from file and return the number of bytes read. */
-#define osfrbc(fp,buf,bufl) (fread((buf),1,(bufl),(fp)))
+#define osfrbc(fp,buf,bufl) osfrb(fp,buf,bufl)
 
 /* Get the current seek location in the file. */
-#define osfpos ftell
+inline int osfpos(osfildef *fp);
 
 /* Seek to a location in the file. */
-#define osfseek fseek
+inline int osfseek(osfildef *fp, int ofs, int origin);
 
 /* Close a file. */
 #define osfcls delete
@@ -263,6 +263,8 @@ int os_file_stat( const char* fname, int follow_links,
  * just define this as an empty macro.
  */
 #define os_progress(fname,linenum)
+
+bool os_locate(const char *fname, int flen, const char *arg0, char *buf, size_t bufsiz);
 
 } // End of namespace TADS
 } // End of namespace Glk

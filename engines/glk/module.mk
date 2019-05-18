@@ -103,10 +103,11 @@ MODULE_OBJS := \
 	tads/tads2/list.o \
 	tads/tads2/memory_cache.o \
 	tads/tads2/memory_cache_heap.o \
-	tads/tads2/memory_cache_loader.o \
 	tads/tads2/memory_cache_swap.o \
+	tads/tads2/object.o \
 	tads/tads2/os.o \
 	tads/tads2/output.o \
+	tads/tads2/post_compilation.o \
 	tads/tads2/regex.o \
 	tads/tads2/run.o \
 	tads/tads2/tads2.o \

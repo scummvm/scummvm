@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GLK_TADS_TADS2_OPCODE_DEFS
-#define GLK_TADS_TADS2_OPCODE_DEFS
+#ifndef GLK_TADS_TADS2_OPCODE
+#define GLK_TADS_TADS2_OPCODE
 
 /*
  * Opcode definitions
