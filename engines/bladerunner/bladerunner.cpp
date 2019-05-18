@@ -112,7 +112,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 
 	_sitcomMode       = false;
 	_shortyMode       = false;
-	_cutContent       = true;
+	_cutContent       = Common::String(desc->gameId).contains("bladerunner-final");
 
 	_playerLosesControlCounter = 0;
 
@@ -447,7 +447,6 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	_sitcomMode = ConfMan.getBool("sitcom");
 	_shortyMode = ConfMan.getBool("shorty");
-	_cutContent = ConfMan.getBool("cutcontent");
 
 	_items = new Items(this);
 

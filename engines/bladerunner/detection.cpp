@@ -37,6 +37,7 @@ namespace BladeRunner {
 
 static const PlainGameDescriptor bladeRunnerGames[] = {
 	{"bladerunner", "Blade Runner"},
+	{"bladerunner-final", "Blade Runner with restored content"},
 	{0, 0}
 };
 
@@ -57,15 +58,6 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Game will shrink the actors and make their voices high pitched"),
 			"shorty",
 			false
-		}
-	},
-	{
-		GAMEOPTION_CUT_CONTENT,
-		{
-			_s("Restore cut content"),
-			_s("Restore content which was cut from the original game"),
-			"cutcontent",
-			true
 		}
 	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
