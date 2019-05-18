@@ -2142,8 +2142,8 @@ Programmcodes finden Sie auf Englisch unter:
      Benutzeroberfläche gibt.
    - Anstatt des aktuellen Verzeichnisses wird nun folgendes Standardverzeichnis
      auf folgenden Plattformen für Spielstände verwendet:
-         Mac OS X:            $HOME/Documents/ScummVM Savegames/
-         Andere UNIX-Systeme: $HOME/.scummvm/
+        - Mac OS X:            $HOME/Documents/ScummVM Savegames/
+        - Andere UNIX-Systeme: $HOME/.scummvm/
    - Neuen „Über“-Dialog mit rollender Liste aller Mitwirkenden hinzugefügt.
 
  SCUMM:
