@@ -57,7 +57,7 @@ public:
 	~VisualExplodingImage() override;
 
 	/** Prepare exploding the specified image */
-	void initFromSurface(const Graphics::Surface *surface);
+	void initFromSurface(const Graphics::Surface *surface, uint originalWidth, uint originalHeight);
 
 	/** Render the image at the specified position */
 	void render(const Common::Point &position);
@@ -67,7 +67,7 @@ private:
 		ExplosionUnit();
 
 		void setPosition(int x, int y);
-		void setExplosionSettings(const Common::Point &center, const Common::Point &amplitude);
+		void setExplosionSettings(const Common::Point &center, const Common::Point &amplitude, float scale);
 		void setColor(uint32 color, const Graphics::PixelFormat &format);
 		void update();
 		void draw(Graphics::Surface *surface);
@@ -75,6 +75,7 @@ private:
 		Math::Vector2d _position;
 		Math::Vector2d _speed;
 		Math::Vector2d _center;
+		float _scale;
 
 		int _stillImageTimeRemaining;
 		int _explosionFastAccelerationTimeRemaining;
@@ -86,6 +87,9 @@ private:
 	Gfx::SurfaceRenderer *_surfaceRenderer;
 	Gfx::Texture *_texture;
 	Graphics::Surface *_surface;
+
+	uint _originalWidth;
+	uint _originalHeight;
 
 	Common::Array<ExplosionUnit> _units;
 };

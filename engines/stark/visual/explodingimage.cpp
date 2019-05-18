@@ -39,7 +39,9 @@ VisualExplodingImage::VisualExplodingImage(Gfx::Driver *gfx) :
 		Visual(TYPE),
 		_gfx(gfx),
 		_texture(nullptr),
-		_surface(nullptr) {
+		_surface(nullptr),
+		_originalWidth(0),
+		_originalHeight(0) {
 	_surfaceRenderer = _gfx->createSurfaceRenderer();
 }
 
@@ -52,12 +54,13 @@ VisualExplodingImage::~VisualExplodingImage() {
 	delete _surfaceRenderer;
 }
 
-void VisualExplodingImage::initFromSurface(const Graphics::Surface *surface) {
+void VisualExplodingImage::initFromSurface(const Graphics::Surface *surface, uint originalWidth, uint originalHeight) {
 	assert(!_surface && !_texture);
 
-	// Decode the XMG
 	_surface = new Graphics::Surface();
 	_surface->copyFrom(*surface);
+	_originalWidth  = originalWidth;
+	_originalHeight = originalHeight;
 
 	_texture = _gfx->createTexture(_surface);
 	_texture->setSamplingFilter(StarkSettings->getImageSamplingFilter());
@@ -67,12 +70,14 @@ void VisualExplodingImage::initFromSurface(const Graphics::Surface *surface) {
 
 	Common::Point explosionCenter(_surface->w / 2, _surface->h / 2);
 	Common::Point explosionAmplitude(48, 16);
+	explosionAmplitude.x *= _surface->w / (float)originalWidth;
+	explosionAmplitude.y *= _surface->h / (float)originalHeight;
 
 	uint index = 0;
 	for (uint y = 0; y < _surface->h; y++) {
 		for (uint x = 0; x < _surface->w; x++, index++) {
 			_units[index].setPosition(x, y);
-			_units[index].setExplosionSettings(explosionCenter, explosionAmplitude);
+			_units[index].setExplosionSettings(explosionCenter, explosionAmplitude, _surface->w / (float)originalWidth);
 			_units[index].setColor(*static_cast<uint32 *>(_surface->getBasePtr(x, y)), _surface->format);
 		}
 	}
@@ -88,10 +93,11 @@ void VisualExplodingImage::render(const Common::Point &position) {
 	}
 
 	_texture->update(_surface);
-	_surfaceRenderer->render(_texture, position);
+	_surfaceRenderer->render(_texture, position, _originalWidth, _originalHeight);
 }
 
 VisualExplodingImage::ExplosionUnit::ExplosionUnit() :
+		_scale(1.f),
 		_stillImageTimeRemaining(33 * 33),
 		_explosionFastAccelerationTimeRemaining(25 * 33),
 		_mainColor(0),
@@ -103,7 +109,7 @@ void VisualExplodingImage::ExplosionUnit::setPosition(int x, int y) {
 	_position = Math::Vector2d(x, y);
 }
 
-void VisualExplodingImage::ExplosionUnit::setExplosionSettings(const Common::Point &center, const Common::Point &amplitude) {
+void VisualExplodingImage::ExplosionUnit::setExplosionSettings(const Common::Point &center, const Common::Point &amplitude, float scale) {
 	_center = Math::Vector2d(center.x, center.y);
 
 	_speed.setX(cos(StarkRandomSource->getRandomNumber(M_PI * 100)) * (float)amplitude.x);
@@ -113,6 +119,7 @@ void VisualExplodingImage::ExplosionUnit::setExplosionSettings(const Common::Poi
 	float magnitude = _position.getDistanceTo(_speed);
 	_speed -= _position;
 	_speed = _speed / _speed.getMagnitude() * -magnitude;
+	_scale = scale;
 }
 
 void VisualExplodingImage::ExplosionUnit::setColor(uint32 color, const Graphics::PixelFormat &format) {
@@ -133,12 +140,12 @@ void VisualExplodingImage::ExplosionUnit::update() {
 		return;
 	}
 
-	if (_position.getDistanceTo(_center) <= 1.f) {
+	if (_position.getDistanceTo(_center) <= 1.f * _scale) {
 		// Units near the center stay there (to make it look like they enter the chest)
 		return;
 	}
 
-	Math::Vector2d speed = _speed.getNormalized() * 0.6f;
+	Math::Vector2d speed = _speed.getNormalized() * 0.6f * _scale;
 	_position += speed;
 
 	// Update the acceleration to units move towards the center

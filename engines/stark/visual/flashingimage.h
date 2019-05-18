@@ -57,7 +57,7 @@ public:
 	~VisualFlashingImage() override;
 
 	/** Prepare flashing the specified image */
-	void initFromSurface(const Graphics::Surface *surface);
+	void initFromSurface(const Graphics::Surface *surface, uint originalWidth, uint originalHeight);
 
 	/** Render the image at the specified position */
 	void render(const Common::Point &position);
@@ -68,6 +68,9 @@ private:
 	Gfx::Driver *_gfx;
 	Gfx::SurfaceRenderer *_surfaceRenderer;
 	Gfx::Texture *_texture;
+
+	uint _originalWidth;
+	uint _originalHeight;
 
 	int _flashingTimeRemaining;
 	float _fadeLevel;

@@ -109,7 +109,7 @@ void Button::startImageExplosion(VisualImageXMG *image) {
 
 	stopImageExplosion();
 	_explodingImageAnimation = new VisualExplodingImage(StarkGfx);
-	_explodingImageAnimation->initFromSurface(image->getSurface());
+	_explodingImageAnimation->initFromSurface(image->getSurface(), image->getWidth(), image->getHeight());
 }
 
 void Button::stopImageExplosion() {
@@ -122,7 +122,7 @@ void Button::startImageFlashing(VisualImageXMG *image) {
 
 	stopImageFlashing();
 	_flashingImageAnimation = new VisualFlashingImage(StarkGfx);
-	_flashingImageAnimation->initFromSurface(image->getSurface());
+	_flashingImageAnimation->initFromSurface(image->getSurface(), image->getWidth(), image->getHeight());
 }
 
 void Button::stopImageFlashing() {

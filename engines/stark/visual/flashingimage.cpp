@@ -43,7 +43,9 @@ VisualFlashingImage::VisualFlashingImage(Gfx::Driver *gfx) :
 		_texture(nullptr),
 		_fadeLevelIncreasing(true),
 		_fadeLevel(0),
-		_flashingTimeRemaining(150 * 33) {
+		_flashingTimeRemaining(150 * 33),
+		_originalWidth(0),
+		_originalHeight(0) {
 	_surfaceRenderer = _gfx->createSurfaceRenderer();
 }
 
@@ -52,8 +54,11 @@ VisualFlashingImage::~VisualFlashingImage() {
 	delete _surfaceRenderer;
 }
 
-void VisualFlashingImage::initFromSurface(const Graphics::Surface *surface) {
+void VisualFlashingImage::initFromSurface(const Graphics::Surface *surface, uint originalWidth, uint originalHeight) {
 	assert(!_texture);
+
+	_originalWidth  = originalWidth;
+	_originalHeight = originalHeight;
 
 	_texture = _gfx->createTexture(surface);
 	_texture->setSamplingFilter(StarkSettings->getImageSamplingFilter());
@@ -82,7 +87,7 @@ void VisualFlashingImage::render(const Common::Point &position) {
 	updateFadeLevel();
 
 	_surfaceRenderer->setFadeLevel(_fadeLevel);
-	_surfaceRenderer->render(_texture, position);
+	_surfaceRenderer->render(_texture, position, _originalWidth, _originalHeight);
 }
 
 } // End of namespace Stark
