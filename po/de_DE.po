@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-05-17 22:58+0200\n"
-"PO-Revision-Date: 2019-05-04 13:36+0000\n"
+"PO-Revision-Date: 2019-05-18 08:31+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -748,9 +748,8 @@ msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM konnte im gewählten Verzeichnis kein Spiel finden!"
 
 #: gui/launcher.cpp:588
-#, fuzzy
 msgid "Unknown variant"
-msgstr "Unbekannter Fehler"
+msgstr "Unbekannte Spiele-Variante"
 
 #: gui/launcher.cpp:594
 msgid "Pick the game:"
@@ -1692,9 +1691,8 @@ msgid "Antialiased"
 msgstr "Kantenglättung"
 
 #: gui/unknown-game-dialog.cpp:52
-#, fuzzy
 msgid "Add anyway"
-msgstr "Trotzdem starten"
+msgstr "Trotzdem hinzufügen"
 
 #: gui/unknown-game-dialog.cpp:59
 msgid "Copy to clipboard"
@@ -2617,9 +2615,8 @@ msgid "Freefont License"
 msgstr "Freefont-Lizenz"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:224
-#, fuzzy
 msgid "OFL License"
-msgstr "GPL-Lizenz"
+msgstr "OFL-Lizenz"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:225
 msgid "BSD License"
@@ -3156,11 +3153,11 @@ msgstr "Zwischensequenz \"%s\" nicht gefunden!"
 
 #: engines/bladerunner/bladerunner.cpp:316
 msgid "Failed to initialize resources"
-msgstr ""
+msgstr "Konnte Ressourcen nicht initialisieren"
 
 #: engines/bladerunner/bladerunner.cpp:879
 msgid "A required game resource was not found"
-msgstr ""
+msgstr "Eine benötigte Spiel-Ressource konnte nicht gefunden werden"
 
 #: engines/bladerunner/bladerunner.cpp:2004
 msgid ""
@@ -3168,6 +3165,10 @@ msgid ""
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
 "Content for this session until you completely Quit the game."
 msgstr ""
+"WARNUNG: Dieses Spiel wurde im \"Entfernte Inhalte wiederherstellen\"-Modus "
+"gespeichert. Sie spielen das Spiel jedoch im \"Original-Inhalte\"-Modus. Der "
+"Modus wird für diese Spielesitzung auf \"Entfernte Inhalte wiederherstellen\""
+" gesetzt, bis Sie das Spiel komplett beenden."
 
 #: engines/bladerunner/bladerunner.cpp:2006
 msgid ""
@@ -3175,10 +3176,14 @@ msgid ""
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
 "mode for this session until you completely Quit the game."
 msgstr ""
+"WARNUNG: Dieses Spiel wurde im \"Original-Inhalte\"-Modus gespeichert. Sie "
+"spielen das Spiel jedoch im \"Entfernte Inhalte wiederherstellen\"-Modus. "
+"Der Modus wird für diese Spielesitzung auf \"Original-Inhalte\" gesetzt, bis "
+"Sie das Spiel komplett beenden."
 
 #: engines/bladerunner/bladerunner.cpp:2008
 msgid "Continue"
-msgstr ""
+msgstr "Fortsetzen"
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:111
 msgid "Color Blind Mode"
@@ -3705,6 +3710,17 @@ msgid ""
 "should be located in the AmigaDOS system 'Fonts/' folder.\n"
 "Please copy them into the EOB game data directory.\n"
 msgstr ""
+"Diese AMIGA-Version benötigt die folgenden Font-Dateien:\n"
+"\n"
+"EOBF6.FONT\n"
+"EOBF6/6\n"
+"EOBF8.FONT\n"
+"EOBF8/8\n"
+"\n"
+"Wenn Sie das originale Installationsprogramm zur Installation\n"
+"verwendet haben, sollten sich diese Dateien im Ordner 'Fonts/'\n"
+"Ihrer AmigaDOS-Installation befinden. Bitte kopieren Sie diese\n"
+"Dateien in das Spieldaten-Verzeichnis von EOB.\n"
 
 #: engines/kyra/graphics/screen_eob.cpp:2262
 msgid ""
@@ -3727,6 +3743,25 @@ msgid ""
 "Please copy the correct font files into your EOB II game data directory.\n"
 "\n"
 msgstr ""
+"Diese AMIGA-Version benötigt die folgenden Font-Dateien:\n"
+"\n"
+"EOBF6.FONT\n"
+"EOBF6/6\n"
+"EOBF8.FONT\n"
+"EOBF8/8\n"
+"\n"
+"Dies ist eine lokalisierte (nicht-englische) Version von EOB II, die "
+"sprachspezifische Zeichen\n"
+"verwendet, die in speziellen Font-Dateien zusammen mit Ihrem Spiel "
+"ausgeliefert wurden.\n"
+"Sie können die Font-Dateien der englischen Version oder eines EOB I-Spiels "
+"nicht verwenden.\n"
+"\n"
+"Das Spiel wird fortgesetzt, aber die sprachspezifischen Zeichen werden nicht "
+"dargestellt.\n"
+"Bitte kopieren Sie die korrenten Font-Dateien in Ihr EOB II-Spielverzeichnis."
+"\n"
+"\n"
 
 #: engines/kyra/sound/sound_midi.cpp:72
 msgid ""
