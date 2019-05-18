@@ -2,7 +2,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen experimentellen
 Programmcodes finden Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.1.0 (??.??.2018)
+#### 2.1.0 (??.??.2019)
  SCUMM:
    - Lippensynchronisation für v6- und v7+-Spiele hinzugefügt.
 
@@ -1164,7 +1164,7 @@ Programmcodes finden Sie auf Englisch unter:
 
  Wii-Portierung:
    - Unterstützung für USB2-Massenspeichergeräte hinzugefügt (erfordert
-     The Homebrew Channel >= v1.0.8 mit IOS58).
+     The Homebrew Channel >= v1.#### 0.8 mit IOS58).
 
  GameCube-Portierung:
    - Unterstützung für DVDs mit ISO9660-Dateisystem hinzugefügt.
@@ -1182,7 +1182,7 @@ Programmcodes finden Sie auf Englisch unter:
 
 #### 1.1.1 (02.05.2010)
  Neue Portierungen:
-   - Portierung für Nintendo 64 hinzugefügt. (Eigentlich schon in 1.1.0
+   - Portierung für Nintendo 64 hinzugefügt. (Eigentlich schon in #### 1.#### 1.0
      hinzugefügt, aber es wurde vergessen, dies zu erwähnen.)
 
  Allgemein:
@@ -1212,7 +1212,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Mehrere Abstürze und weitere Rückschrittsfehler in Nippon Safes beseitigt,
      einschließlich der Fehler 2969211, 2969232, 2969234, 2969257, 2970141.
 
- Portierung für Wii/GameCube (Erwähnung bei 1.1.0 ebenfalls vergessen):
+ Portierung für Wii/GameCube (Erwähnung bei #### 1.#### 1.0 ebenfalls vergessen):
    - Unterstützung für Spiele, die 16-Bit-Grafik verwenden, hinzugefügt.
    - Vollständige Grafiküberholung (neue Bildschirm-Modi, bessere Leistung,
      Bildglättung, Einstellungen für feinkörnige Übertastung)
@@ -1227,7 +1227,7 @@ Programmcodes finden Sie auf Englisch unter:
      verwendet werden. Lesen Sie die beiliegende Datei READMII.txt für weitere
      Informationen.
 
- PSP-Portierung (Erwähnung bei 1.1.0 ebenfalls vergessen):
+ PSP-Portierung (Erwähnung bei #### 1.#### 1.0 ebenfalls vergessen):
    - Plugin-Unterstützung hinzugefügt, was es auf der PSP Phat ermöglicht, jedes
      Spiel laufen zu lassen.
    - Neue virtuelle Tastatur hinzugefügt, die für schnelle D-Pad-Eingabe
@@ -1530,7 +1530,7 @@ Programmcodes finden Sie auf Englisch unter:
 
  Allgemein:
    - CAMD-MIDI-Treiber für AmigaOS4 hinzugefügt.
-   - PS2-Portierung wiederbelebt (war sie schon in 0.11.1, aber es wurde
+   - PS2-Portierung wiederbelebt (war sie schon in #### 0.11.1, aber es wurde
      in den Veröffentlichungshinweisen vergessen).
    - Zahlreiche Speicherlecks in allen Engines gestopft (Teil der Aufgaben des
      GSoC '08).
@@ -1756,7 +1756,7 @@ Programmcodes finden Sie auf Englisch unter:
 
  Symbian-Portierung:
    - Unterstützung für MP3 bei S60v3- und UIQ3-Versionen hinzugefügt.
-   - Umstieg auf SDL 1.2.11 für Fehlerbeseitigungen und Verbesserungen
+   - Umstieg auf SDL #### 1.2.11 für Fehlerbeseitigungen und Verbesserungen
    - Verbesserte Leistung für S60v3 und UIQ3 mittels ARM Target.
    - Eingeschränkte Unterstützung für Geräte von Symbian OS9 bedingt durch
      Compiler-Probleme
@@ -2074,9 +2074,9 @@ Programmcodes finden Sie auf Englisch unter:
 
 #### 0.7.1 (27.03.2005)
  Allgemein:
-   - MT-32-Emulator hinzugefügt (er wurde eigentlich schon in Version 0.7.0
+   - MT-32-Emulator hinzugefügt [er wurde eigentlich schon in Version #### 0.7.0
      hinzugefügt, aber wir haben vergessen, ihn in dieser Datei zu
-     erwähnen :-)).
+     erwähnen :-) ].
    - MPEG-Filmwiedergabe für Baphomets Fluch 1 & 2 nun weniger speicherhungrig
 
  SCUMM:
@@ -2094,11 +2094,11 @@ Programmcodes finden Sie auf Englisch unter:
    - Zonentastenaktion beim Smartphone repariert (nun der Taste 9 zugewiesen).
    - Experimentelle Fehlerbeseitigung Dritter für VGA-Modus (SE-VGA)
    - Tastenzuweisungsoption im Startmenü hinzugefügt
-     (ab Version 1.2.0 in deutscher Lokalisation zu finden unter:
+     (ab Version #### 1.2.0 in deutscher Lokalisation zu finden unter:
      Optionen / Sonstiges / Tasten).
    - Abhängigkeit von AYGSHELL.DLL beseitigt, um auf Plattformen mit CE .Net zu
      funktionieren.
-   - Probleme mit Tastenzuweisung behoben, die sich in 0.7.0 eingeschlichen
+   - Probleme mit Tastenzuweisung behoben, die sich in #### 0.7.0 eingeschlichen
      haben.
    - Interaktive Action-Sequenz in Vollgas sollte spielbarer sein.
    - Neue Tastenzuweisungsoption „FT Cheat“, um alle Action-Sequenzen in Vollgas
@@ -2142,8 +2142,8 @@ Programmcodes finden Sie auf Englisch unter:
      Benutzeroberfläche gibt.
    - Anstatt des aktuellen Verzeichnisses wird nun folgendes Standardverzeichnis
      auf folgenden Plattformen für Spielstände verwendet:
-        - Mac OS X:            $HOME/Documents/ScummVM Savegames/
-        - Andere UNIX-Systeme: $HOME/.scummvm/
+         Mac OS X:            $HOME/Documents/ScummVM Savegames/
+         Andere UNIX-Systeme: $HOME/.scummvm/
    - Neuen „Über“-Dialog mit rollender Liste aller Mitwirkenden hinzugefügt.
 
  SCUMM:
@@ -2333,7 +2333,7 @@ Programmcodes finden Sie auf Englisch unter:
 - Neuer Programm-Code für das Speichern und Laden (einfacher zu erweitern,
   während Kompatibilität erhalten wird)
 - Dreamcast-Portierung funktioniert nun mit neuen Spielen, für welche die
-  Unterstützung in Version 0.3.0b hinzukam.
+  Unterstützung in Version #### 0.3.0b hinzukam.
 - Neue offizieller PalmOS-Portierung
 - Verschiedene kleine und nicht so kleine Fehlerbeseitigungen für SCUMM-Spiele
 - Großes Speicherleck bei The Dig/ComI beseitigt.

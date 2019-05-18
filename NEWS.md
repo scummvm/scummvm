@@ -1,7 +1,7 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.1.0 (2018-??-??)
+#### 2.1.0 (2019-??-??)
 
  New games:
    - Might and Magic IV - Clouds of Xeen.
@@ -16,9 +16,6 @@ For a more comprehensive changelog of the latest experimental code, see:
      window or screen area.
    - Fixed incorrect cursor movement when it's controlled using the keyboard.
    - Updated the Roland MT-32 emulation code to Munt 2.3.0.
-
- Drascula:
-   - Fixed loading game from launcher when the game had been saved in chapter 1.
 
  Full Pipe:
    - Fixed playtime not being restored when loading a savegame.
