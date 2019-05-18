@@ -376,6 +376,9 @@ bool OpenGLSdlGraphicsManager::createOrUpdateGLContext(uint gameWidth, uint game
 			_glContext = SDL_GL_GetCurrentContext();
 			if (!_glContext) {
 				_glContext = SDL_GL_CreateContext(_window->getSDLWindow());
+				if (_glContext) {
+					glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+				}
 			}
 
 			if (_glContext) {
