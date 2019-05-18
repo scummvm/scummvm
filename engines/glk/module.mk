@@ -94,8 +94,10 @@ MODULE_OBJS := \
 	tads/detection.o \
 	tads/osfrobtads.o \
 	tads/tads.o \
+	tads/tads2/built_in.o \
 	tads/tads2/character_map.o \
 	tads/tads2/data.o \
+	tads/tads2/debug.o \
 	tads/tads2/error.o \
 	tads/tads2/error_handling.o \
 	tads/tads2/file_io.o \

@@ -81,6 +81,10 @@ char *osfgets(char *buf, size_t count, osfildef *fp) {
 	return buf;
 }
 
+int osfputs(const char *str, osfildef *fp) {
+	return dynamic_cast<Common::WriteStream *>(fp)->write(str, strlen(str)) == strlen(str) ? 0 : -1;
+}
+
 bool os_locate(const char *fname, int flen, const char *arg0, char *buf, size_t bufsiz) {
 	Common::String name = !flen ? Common::String(fname) : Common::String(fname, fname + flen);
 

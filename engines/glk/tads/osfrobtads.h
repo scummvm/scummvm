@@ -168,7 +168,7 @@ int osfmode( const char* fname, int follow_links, unsigned long* mode,
 #define osrealloc realloc
 
 /* Open text file for reading. */
-#define osfoprt(fname,typ) (fopen((fname),"r"))
+#define osfoprt(fname,typ) osfoprb(fname,typ)
 
 /* Open text file for writing. */
 osfildef *osfopwt(const char *fname, os_filetype_t typ);
@@ -208,7 +208,7 @@ inline osfildef *osfoprwtb(const char *fname, os_filetype_t typ);
 char *osfgets(char *buf, size_t count, osfildef *fp);
 
 /* Write a line of text to a text file. */
-#define osfputs fputs
+int osfputs(const char *str, osfildef *fp);
 
 /* Write bytes to file. */
 inline bool osfwb(osfildef *fp, const void *buf, size_t count);
