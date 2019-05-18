@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-05-17 22:58+0200\n"
-"PO-Revision-Date: 2019-02-08 23:19+0000\n"
-"Last-Translator: jepael <kermespersialainen@gmail.com>\n"
+"PO-Revision-Date: 2019-05-22 17:48+0000\n"
+"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -736,9 +736,8 @@ msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM ei löytänyt yhtään peliä kyseisestä hakemistosta!"
 
 #: gui/launcher.cpp:588
-#, fuzzy
 msgid "Unknown variant"
-msgstr "Tuntematon virhe"
+msgstr "Tuntematon versio"
 
 #: gui/launcher.cpp:594
 msgid "Pick the game:"
@@ -1669,9 +1668,8 @@ msgid "Antialiased"
 msgstr "Antialiasoitu"
 
 #: gui/unknown-game-dialog.cpp:52
-#, fuzzy
 msgid "Add anyway"
-msgstr "Pelaa silti"
+msgstr "Lisää silti"
 
 #: gui/unknown-game-dialog.cpp:59
 msgid "Copy to clipboard"
@@ -2587,9 +2585,8 @@ msgid "Freefont License"
 msgstr "Freefont-lisenssi"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:224
-#, fuzzy
 msgid "OFL License"
-msgstr "GPL-lisenssi"
+msgstr "OFL-lisenssi"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:225
 msgid "BSD License"
@@ -3122,11 +3119,11 @@ msgstr "Videotiedostoa '%s' ei löytynyt!"
 
 #: engines/bladerunner/bladerunner.cpp:316
 msgid "Failed to initialize resources"
-msgstr ""
+msgstr "Resurssien alustus epäonnistui"
 
 #: engines/bladerunner/bladerunner.cpp:879
 msgid "A required game resource was not found"
-msgstr ""
+msgstr "Pakollista pelin resurssia ei löydetty"
 
 #: engines/bladerunner/bladerunner.cpp:2004
 msgid ""
@@ -3134,6 +3131,10 @@ msgid ""
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
 "Content for this session until you completely Quit the game."
 msgstr ""
+"VAROITUS: Tämä pelitallennus on tehty 'Leikatut kohtaukset palautettu'-"
+"tilassa, mutta pelaat tällä hetkellä 'Alkuperäinen sisältö'-tilassa. "
+"Pelisessio muutetaan 'Leikatut kohtaukset palautettu'-tilaan ja se on "
+"voimassa kunnes poistut kokonaan pelistä."
 
 #: engines/bladerunner/bladerunner.cpp:2006
 msgid ""
@@ -3141,10 +3142,14 @@ msgid ""
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
 "mode for this session until you completely Quit the game."
 msgstr ""
+"VAROITUS: Tämä pelitallennus on tehty 'Alkuperäinen sisältö'-tilassa, mutta "
+"pelaat tällä hetkellä 'Leikatut kohtaukset palautettu'-tilassa. Pelisessio "
+"muutetaan 'Alkuperäinen sisältö'-tilaan ja se on voimassa kunnes poistut "
+"kokonaan pelistä."
 
 #: engines/bladerunner/bladerunner.cpp:2008
 msgid "Continue"
-msgstr ""
+msgstr "Jatka"
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:111
 msgid "Color Blind Mode"
@@ -3665,6 +3670,16 @@ msgid ""
 "should be located in the AmigaDOS system 'Fonts/' folder.\n"
 "Please copy them into the EOB game data directory.\n"
 msgstr ""
+"Tämä AMIGA-versio tarvitsee seuraavat fonttitiedostot:\n"
+"\n"
+"EOBF6.FONT\n"
+"EOBF6/6\n"
+"EOBF8.FONT\n"
+"EOBF8/8\n"
+"\n"
+"Jos käytit alkuperäistä asennusohjelmaa, näiden tiedostojen\n"
+"pitäisi löytyä AmigaDOS:in 'Fonts/'-hakemistosta.\n"
+"Ole hyvä ja kopioi ne EOB-pelidatahakemistoon.\n"
 
 #: engines/kyra/graphics/screen_eob.cpp:2262
 msgid ""
@@ -3687,6 +3702,24 @@ msgid ""
 "Please copy the correct font files into your EOB II game data directory.\n"
 "\n"
 msgstr ""
+"Tämä AMIGA-versio tarvitsee seuraavat fonttitiedostot:\n"
+"\n"
+"EOBF6.FONT\n"
+"EOBF6/6\n"
+"EOBF8.FONT\n"
+"EOBF8/8\n"
+"\n"
+"Tämä on lokalisoitu (ei-englanninkielinen) versio EOB II:sta joka käyttää "
+"kielikohtaisia merkkejä.\n"
+"Nämä ovat saatavilla ainoastaan pelisi mukana tulleista fonttitiedostoista. "
+"Et voi käyttää\n"
+"fonttitiedostoja pelin englanninkielisestä versiosta tai mistään EOB I-pelin "
+"versiosta, kuten\n"
+"ilmeisesti yrität tehdä.\n"
+"\n"
+"Peli jatkuu, mutta kielikohtaisia merkkejä ei näytetä.\n"
+"Ole hyvä ja kopioi oikeat fonttitiedostot EOB II-pelidatahakemistoosi.\n"
+"\n"
 
 #: engines/kyra/sound/sound_midi.cpp:72
 msgid ""
