@@ -165,8 +165,9 @@ DO WHILE EOF(readme_read) = 0
 	*/
 	IF POS('[here](',working_line) > 0 THEN DO
 		working_line=INSERT('@{"',working_line,POS('[',working_line)-1)
-		working_line=INSERT('" "',working_line,POS(']',working_line))
-		working_line=INSERT('"}',working_line,POS(')',working_line))
+		working_line=INSERT('" link ',working_line,POS(']',working_line))
+		working_line=INSERT('/main}',working_line,POS(')',working_line))
+		working_line=COMPRESS(working_line,'()')
 	END
 
 	/*
