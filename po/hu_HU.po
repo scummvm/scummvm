@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-05-17 22:58+0200\n"
-"PO-Revision-Date: 2018-12-22 09:14+0000\n"
+"PO-Revision-Date: 2019-05-22 17:48+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -737,9 +737,8 @@ msgid "ScummVM could not find any game in the specified directory!"
 msgstr "A ScummVM nem talált egy játékot sem a választott mappában!"
 
 #: gui/launcher.cpp:588
-#, fuzzy
 msgid "Unknown variant"
-msgstr "Ismeretlen hiba"
+msgstr "Ismeretlen változat"
 
 #: gui/launcher.cpp:594
 msgid "Pick the game:"
@@ -931,7 +930,7 @@ msgstr "Képméretarány korrekció"
 
 #: gui/options.cpp:1096
 msgid "Correct aspect ratio for 320x200 games"
-msgstr "Helyes oldalarány a 320x200 játékokhoz"
+msgstr "Helyes képarány a 320x200 játékokhoz"
 
 #: gui/options.cpp:1104
 msgid "Preferred device:"
@@ -1663,9 +1662,8 @@ msgid "Antialiased"
 msgstr "Élsimított"
 
 #: gui/unknown-game-dialog.cpp:52
-#, fuzzy
 msgid "Add anyway"
-msgstr "Indítás így is"
+msgstr "Add hozzá így is"
 
 #: gui/unknown-game-dialog.cpp:59
 msgid "Copy to clipboard"
@@ -2408,7 +2406,7 @@ msgstr "Windows MIDI"
 #: backends/platform/ds/arm9/source/dsoptions.cpp:56
 #: engines/scumm/dialogs.cpp:287
 msgid "~C~lose"
-msgstr "Bezár"
+msgstr "~B~ezár"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:57
 msgid "ScummVM Main Menu"
@@ -2582,9 +2580,8 @@ msgid "Freefont License"
 msgstr "Freefont Licensz"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:224
-#, fuzzy
 msgid "OFL License"
-msgstr "GPL Licensz"
+msgstr "OFL Licensz"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:225
 msgid "BSD License"
@@ -3114,11 +3111,11 @@ msgstr "'%s' átvezetõ fájl nem található!"
 
 #: engines/bladerunner/bladerunner.cpp:316
 msgid "Failed to initialize resources"
-msgstr ""
+msgstr "Nem sikerült inicializálni az erõforrásokat"
 
 #: engines/bladerunner/bladerunner.cpp:879
 msgid "A required game resource was not found"
-msgstr ""
+msgstr "A szükséges játékforrás nem található"
 
 #: engines/bladerunner/bladerunner.cpp:2004
 msgid ""
@@ -3126,6 +3123,9 @@ msgid ""
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
 "Content for this session until you completely Quit the game."
 msgstr ""
+"FIGYELMEZTETÉS: A játék visszaállított vágott tartalom módban lett mentve, "
+"de az eredeti tartalom módban játszol. Az üzemmódot a visszaállított vágott "
+"tartalomra állítom be, amíg teljesen ki nem lépsz a játékból."
 
 #: engines/bladerunner/bladerunner.cpp:2006
 msgid ""
@@ -3133,10 +3133,13 @@ msgid ""
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
 "mode for this session until you completely Quit the game."
 msgstr ""
+"FIGYELMEZTETÉS: A játék eredeti tartalom módban lett mentve, de "
+"visszaállított vágott tartalom módban játszol. Az üzemmódot eredeti tartalom "
+"módra állítom be, amíg teljesen ki nem lépsz a játékból."
 
 #: engines/bladerunner/bladerunner.cpp:2008
 msgid "Continue"
-msgstr ""
+msgstr "Folytatás"
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:111
 msgid "Color Blind Mode"
@@ -3501,11 +3504,11 @@ msgstr "Hit point sáv grafika engedélyezése"
 #. I18N: L/R stands for Left/Right
 #: engines/kyra/detection.cpp:138
 msgid "Fight Button L/R Swap"
-msgstr ""
+msgstr "Harc Gomb B/J csere"
 
 #: engines/kyra/detection.cpp:139
 msgid "Left button to attack, right button to pick up items"
-msgstr ""
+msgstr "Bal gomb a támadás, jobb gomb a tárgyak felvétele"
 
 #: engines/kyra/engine/eobcommon.cpp:352 engines/kyra/engine/lol.cpp:481
 msgid "Move Forward"
@@ -3659,6 +3662,16 @@ msgid ""
 "should be located in the AmigaDOS system 'Fonts/' folder.\n"
 "Please copy them into the EOB game data directory.\n"
 msgstr ""
+"Ez az AMIGA verzió a következõ fontfájlokat igényli:\n"
+"\n"
+"EOBF6.FONT\n"
+"EOBF6/6\n"
+"EOBF8.FONT\n"
+"EOBF8/8\n"
+"\n"
+"Ha az eredeti telepítõt használod a telepítéshez, ezeknek a fájloknak\n"
+"Az AmigaDOS rendszer 'Fonts/' mappájában kell lennie.\n"
+"Kérlek, másold ezeket az EOB játék mappájába.\n"
 
 #: engines/kyra/graphics/screen_eob.cpp:2262
 msgid ""
@@ -3681,6 +3694,23 @@ msgid ""
 "Please copy the correct font files into your EOB II game data directory.\n"
 "\n"
 msgstr ""
+"Ez az AMIGA verzió a következõ fontfájlokat igényli:\n"
+"\n"
+"EOBF6.FONT\n"
+"EOBF6/6\n"
+"EOBF8.FONT\n"
+"EOBF8/8\n"
+"\n"
+"Ez az EOB II lokalizált (nem angol) változata, amely nyelvspecifikus "
+"karaktereket használ\n"
+"csak a játékhoz kapott betûtípusfájlokat tartalmazhat. Nem használhatod az "
+"angol\n"
+"változatból vagy bármely EOB I játékból származó fájlokat, amelyek látszólag "
+"ugyanazok.\n"
+"\n"
+"A játék folytatódik, de a nyelvspecifikus karakterek nem jelennek meg.\n"
+"Kérjük, másold át a helyes fontfájlokat az EOB II játék mappájába.\n"
+"\n"
 
 #: engines/kyra/sound/sound_midi.cpp:72
 msgid ""
