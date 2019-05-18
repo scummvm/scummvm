@@ -26,7 +26,6 @@ win32dist: all
 	cp $(srcdir)/COPYING.OFL $(WIN32PATH)/COPYING.OFL.txt
 	cp $(srcdir)/COPYRIGHT $(WIN32PATH)/COPYRIGHT.txt
 	cp $(srcdir)/doc/cz/PrectiMe $(WIN32PATH)/doc/cz/PrectiMe.txt
-	cp $(srcdir)/doc/de/NEUES $(WIN32PATH)/doc/de/NEUES.txt
 	cp $(srcdir)/doc/QuickStart $(WIN32PATH)/doc/QuickStart.txt
 	cp $(srcdir)/doc/es/InicioRapido $(WIN32PATH)/doc/es/InicioRapido.txt
 	cp $(srcdir)/doc/fr/DemarrageRapide $(WIN32PATH)/doc/fr/DemarrageRapide.txt
@@ -36,11 +35,13 @@ win32dist: all
 	cp $(srcdir)/doc/de/Schnellstart $(WIN32PATH)/doc/de/Schnellstart.txt
 	cp $(srcdir)/doc/se/Snabbstart $(WIN32PATH)/doc/se/Snabbstart.txt
 ifdef USE_PANDOC
-	cp NEWS $(WIN32PATH)/NEWS.txt
-	cp README $(WIN32PATH)/README.txt
+	cp NEWS$(PANDOCEXT) $(WIN32PATH)/NEWS.txt
+	cp README$(PANDOCEXT) $(WIN32PATH)/README.txt
+	cp doc/de/NEUES$(PANDOCEXT) $(WIN32PATH)/doc/de/NEUES.txt
 else
 	cp $(srcdir)/NEWS.md $(WIN32PATH)/NEWS.txt
 	cp $(srcdir)/README.md $(WIN32PATH)/README.txt
+	cp $(srcdir)/doc/de/NEUES.md $(WIN32PATH)/doc/de/NEUES.txt
 endif
 	cp $(WIN32SDLDOCPATH)/README-SDL.txt $(WIN32PATH)/README-SDL.txt
 	cp $(srcdir)/doc/de/LIESMICH $(WIN32PATH)/doc/de/LIESMICH.txt

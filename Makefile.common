@@ -13,7 +13,7 @@ all: $(EXECUTABLE).dwp
 endif
 
 ifdef USE_PANDOC
-all: README$(PANDOCEXT) NEWS$(PANDOCEXT)
+all: README$(PANDOCEXT) NEWS$(PANDOCEXT) doc/de/NEUES$(PANDOCEXT)
 endif
 
 ######################################################################
@@ -237,11 +237,9 @@ VERFILE := $(DISTDIR)/$(DISTNAME)/base/internal_version.h
 
 ifdef USE_PANDOC
 # Convert README.md and NEWS.md to plain text for any platform that might require it
-README$(PANDOCEXT): ${srcdir}/README.md
-	$(QUIET_PANDOC)$(PANDOC) -f gfm -t $(PANDOCFORMAT) -o $@ $<
-
-NEWS$(PANDOCEXT): ${srcdir}/NEWS.md
-	$(QUIET_PANDOC)$(PANDOC) -f gfm -t $(PANDOCFORMAT) -o $@ $<
+%$(PANDOCEXT): ${srcdir}/%.md
+	$(QUIET)$(MKDIR) $(*D)
+	$(QUIET_PANDOC)$(PANDOC) -f gfm -t $(PANDOCFORMAT) --metadata pagetitle=$(basename $(notdir $@)) -s -o $@ $<
 endif
 
 # TODO git via $(GITROOT)
@@ -281,7 +279,10 @@ endif
 DIST_FILES_DOCS_languages=cz da de es fr it no-nb se
 DIST_FILES_DOCS_cz:=$(addprefix $(srcdir)/doc/cz/,PrectiMe)
 DIST_FILES_DOCS_da:=$(addprefix $(srcdir)/doc/da/,HurtigStart)
-DIST_FILES_DOCS_de:=$(addprefix $(srcdir)/doc/de/,LIESMICH NEUES Schnellstart)
+DIST_FILES_DOCS_de:=$(addprefix $(srcdir)/doc/de/,LIESMICH NEUES.md Schnellstart)
+ifdef USE_PANDOC
+DIST_FILES_DOCS_de+=doc/de/NEUES$(PANDOCEXT)
+endif
 DIST_FILES_DOCS_es:=$(addprefix $(srcdir)/doc/es/,InicioRapido)
 DIST_FILES_DOCS_fr:=$(addprefix $(srcdir)/doc/fr/,DemarrageRapide)
 DIST_FILES_DOCS_it:=$(addprefix $(srcdir)/doc/it/,GuidaRapida)

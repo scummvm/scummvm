@@ -48,7 +48,7 @@ riscosdist: $(APP_NAME)/docs/ScummVM,3d6 # $(APP_NAME)/docs/de/ScummVM,3d6 $(APP
 README=${srcdir}/README.md
 NEWS=${srcdir}/NEWS.md
 $(APP_NAME)/docs/de/ScummVM,3d6: README=${srcdir}/doc/de/LIESMICH
-$(APP_NAME)/docs/de/ScummVM,3d6: NEWS=${srcdir}/doc/de/NEUES
+$(APP_NAME)/docs/de/ScummVM,3d6: NEWS=${srcdir}/doc/de/NEUES.md
 $(APP_NAME)/docs/cz/ScummVM,3d6: README=${srcdir}/doc/cz/PrectiMe
 $(APP_NAME)/docs/se/ScummVM,3d6: README=${srcdir}/doc/se/LasMig
 
