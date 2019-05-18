@@ -25,7 +25,7 @@
 #include "glk/tads/tads2/error.h"
 #include "glk/tads/tads2/os.h"
 #include "glk/tads/tads2/text_io.h"
-#include "glk/tads/osfrobtads.h"
+#include "glk/tads/os_frob_tads.h"
 #include "glk/tads/os_glk.h"
 #include "common/algorithm.h"
 

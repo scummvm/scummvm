@@ -963,14 +963,14 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 }
 
 /* read binary file */
-void fiord(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx, char *fname,
-           char *exename, fiolcxdef *setupctx, objnum *preinit, uint *flagp,
+void fiord(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx, const char *fname,
+           const char *exename, fiolcxdef *setupctx, objnum *preinit, uint *flagp,
            tokpdef *path, uchar **fmtsp, uint *fmtlp, uint *pcntptr,
            int flags, struct appctxdef *appctx, char *argv0)
 {
     osfildef *fp;
     ulong     startofs;
-    char     *display_fname;
+    const char     *display_fname;
     
     /* presume there will be no need to run preinit */
     *preinit = MCMONINV;
@@ -1034,7 +1034,7 @@ void fiord(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx, char *fname,
         char suffix_lc[4];
         char suffix_uc[4];
         int i;
-        char *base_name;
+        const char *base_name;
 
         /* use the game or executable filename, as appropriate */
         base_name = display_fname;

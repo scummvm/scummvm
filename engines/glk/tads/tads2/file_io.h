@@ -42,9 +42,7 @@ struct tokthdef;
 struct tokcxdef;
 
 /* load-on-demand context (passed in by mcm in load callback) */
-typedef struct fiolcxdef fiolcxdef;
-struct fiolcxdef
-{
+struct fiolcxdef {
     osfildef *fiolcxfp;                        /* file pointer of load file */
     errcxdef *fiolcxerr;                          /* error handling context */
     ulong     fiolcxst;                          /* starting offset in file */
@@ -70,8 +68,8 @@ void fiowrt(struct mcmcxdef *mctx, voccxdef *vctx,
 #define FIOFLIN2  0x80                            /* new-style line records */
 
 /* read game from binary file; sets up loader callback context */
-void fiord(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx, char *fname,
-	char *exename, fiolcxdef *setupctx, objnum *preinit, uint *flagp,
+void fiord(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx, const char *fname,
+	const char *exename, fiolcxdef *setupctx, objnum *preinit, uint *flagp,
 	tokpdef *path, uchar **fmtsp, uint *fmtlp, uint *pcntptr, int flags,
 	appctxdef *appctx, char *argv0);
 

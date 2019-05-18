@@ -362,7 +362,7 @@ void runsign(runcxdef *ctx, int err);
    runsign(ctx,err))
 
 /* draw status line */
-void runstat(void);
+void runstat();
 
 /* initialize output status */
 void runistat(struct voccxdef *vctx, struct runcxdef *rctx,

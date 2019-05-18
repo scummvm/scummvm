@@ -29,7 +29,7 @@ namespace Glulxe {
 
 Glulxe *g_vm;
 
-Glulxe::Glulxe(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc), _random("glulxe"),
+Glulxe::Glulxe(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
 		vm_exited_cleanly(false), gamefile_start(0), gamefile_len(0), memmap(nullptr), stack(nullptr),
 		ramstart(0), endgamefile(0), origendmem(0),  stacksize(0), startfuncaddr(0), checksum(0),
 		stackptr(0), frameptr(0), pc(0), prevpc(0), origstringtable(0), stringtable(0), valstackbase(0),

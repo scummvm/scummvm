@@ -27,6 +27,15 @@ namespace Glk {
 namespace TADS {
 namespace TADS2 {
 
+osfildef *oserrop(const char *arg0) {
+	char  buf[128];
+
+	if (!os_locate("tadserr.msg", 11, arg0, buf, sizeof(buf)))
+		return((osfildef *)0);
+
+	return(osfoprb(buf, OSFTERRS));
+}
+
 long os_get_sys_clock_ms() {
 	return g_system->getMillis();
 }

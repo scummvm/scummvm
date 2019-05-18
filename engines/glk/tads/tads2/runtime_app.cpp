@@ -20,30 +20,16 @@
  *
  */
 
-#include "glk/tads/tads.h"
-#include "glk/tads/os_glk.h"
-#include "common/config-manager.h"
-#include "common/translation.h"
-
 namespace Glk {
 namespace TADS {
+namespace TADS2 {
 
-TADS *g_vm;
+char G_tads_oem_app_name[] = "GlkTADS";
+char G_tads_oem_display_mode[] = "text-only";
+char G_tads_oem_dbg_name[] = "tdb";
+char G_tads_oem_author[] = "Maintained by ScummVM\n";
+int G_tads_oem_copyright_prefix = true;
 
-TADS::TADS(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc) {
-	g_vm = this;
-	os_init(nullptr, nullptr, 0, 0, 0);
-}
-
-Common::Error TADS::loadGameData(strid_t file) {
-	// TODO
-	return Common::kNoError;
-}
-
-Common::Error TADS::saveGameData(strid_t file, const Common::String &desc) {
-	// TODO
-	return Common::kNoError;
-}
-
+} // End of namespace TADS2
 } // End of namespace TADS
 } // End of namespace Glk

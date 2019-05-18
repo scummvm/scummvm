@@ -149,63 +149,6 @@ void tok_write_defines(tokcxdef *ctx, osfildef *fp, errcxdef *ec)
     }
 }
 
-/*
- *   Read preprocessor state from a file 
- */
-void tok_read_defines(tokcxdef *ctx, osfildef *fp, errcxdef *ec)
-{
-    int        i;
-    tokdfdef **dfp;
-    tokdfdef  *df;
-    char       buf[4];
-
-    /* write each element of the hash chains */
-    for (i = TOKDFHSHSIZ, dfp = ctx->tokcxdf ; i ; ++dfp, --i)
-    {
-        /* read this hash chain */
-        for (;;)
-        {
-            /* read the next entry's header, and stop if this is the end */
-            if (osfrb(fp, buf, 4)) errsig(ec, ERR_RDGAM);
-            if (osrp2(buf) == 0) break;
-
-            /* set up a new symbol of the appropriate size */
-            df = (tokdfdef *)mchalo(ec,
-                                    (sizeof(tokdfdef) + osrp2(buf)
-                                     + osrp2(buf+2) - 1),
-                                    "tok_read_defines");
-            df->explen = osrp2(buf+2);
-            df->nm = df->expan + df->explen;
-            df->len = osrp2(buf);
-
-            /* read the rest of the symbol */
-            if (osfrb(fp, df->nm, df->len)
-                || (df->explen != 0 && osfrb(fp, df->expan, df->explen)))
-                errsig(ec, ERR_RDGAM);
-
-            /*
-             *   If a symbol with this name already exists in the table,
-             *   discard the new one -- the symbols defined by -D and the
-             *   current set of built-in symbols takes precedence over the
-             *   set loaded from the file.  
-             */
-            if (tok_find_define(ctx, df->nm, df->len))
-            {
-                /* simply discard this symbol */
-                mchfre(df);
-            }
-            else
-            {
-                /* link it into this hash chain */
-                df->nxt = *dfp;
-                *dfp = df;
-            }
-        }
-    }
-}
-
-
-
 /* compute a #define symbol's hash value */
 static int tokdfhsh(char *sym, int len)
 {

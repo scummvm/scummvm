@@ -24,53 +24,15 @@
 #define GLK_TADS_TADS2
 
 #include "glk/tads/tads.h"
-#include "glk/tads/tads2/error_handling.h"
-#include "glk/tads/tads2/appctx.h"
 
 namespace Glk {
 namespace TADS {
 namespace TADS2 {
 
-/*
- *   Run-time version number 
- */
-#define  TADS_RUNTIME_VERSION   "2.5.17"
-
-# define TRD_HEAPSIZ  4096
-# define TRD_STKSIZ   200
-# define TRD_UNDOSIZ  (16 * 1024)
-# define TDD_HEAPSIZ  4096
-# define TDD_STKSIZ   200
-# define TDD_UNDOSIZ  (16 * 1024)
-# define TDD_POOLSIZ  (2 * 1024)
-# define TDD_LCLSIZ   0
-
-# define ERR_TRUS_OS_FIRST    100
-# define ERR_TRUS_OS_LAST      99
-
 /**
  * TADS 2 game interpreter
  */
 class TADS2 : public TADS {
-private:
-	// STUBS
-	void os_printz(const Common::String &s) {}
-	void tio_set_html_expansion(unsigned int html_char_val,
-		const char *expansion, size_t expansion_len) {}
-private:
-	/**
-	 * \defgroup trd
-	 * @{
-	 */
-
-	void trdmain1(errcxdef *errctx);
-
-	/**
-	 * printf-style formatting
-	 */
-	void trdptf(const char *fmt, ...);
-
-	/**@}*/
 public:
 	/**
 	 * Constructor

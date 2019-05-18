@@ -61,7 +61,7 @@
 #define GLK_TADS_TADS2_ERROR_HANDLING
 
 #include "glk/tads/tads2/lib.h"
-#include "glk/tads/osfrobtads.h"
+#include "glk/tads/os_frob_tads.h"
 
 namespace Glk {
 namespace TADS {

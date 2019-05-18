@@ -221,6 +221,11 @@ public:
 	 * Generate a beep
 	 */
 	void beep();
+
+	/**
+	 * Get a random number
+	 */
+	uint getRandomNumber(uint max) { return _random.getRandomNumber(max); }
 };
 
 extern GlkEngine *g_vm;

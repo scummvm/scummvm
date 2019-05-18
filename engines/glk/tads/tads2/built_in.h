@@ -28,7 +28,9 @@
 #ifndef GLK_TADS_TADS2_BUILT_IN
 #define GLK_TADS_TADS2_BUILT_IN
 
+#include "glk/tads/tads2/built_in.h"
 #include "glk/tads/tads2/error.h"
+#include "glk/tads/tads2/list.h"
 #include "glk/tads/tads2/run.h"
 #include "glk/tads/tads2/text_io.h"
 #include "glk/tads/tads2/regex.h"
@@ -65,7 +67,7 @@ struct bifcxdef {
     biffildef bifcxfile[BIFFILMAX];          /* file handles for fopen, etc */
     int       bifcxsafetyr;                 /* file I/O safety level - read */
     int       bifcxsafetyw;                /* file I/O safety level - write */
-    char     *bifcxsavext;        /* saved game extension (null by default) */
+    const char *bifcxsavext;      /* saved game extension (null by default) */
     appctxdef *bifcxappctx;                     /* host application context */
     re_context bifcxregex;          /* regular expression searching context */
 

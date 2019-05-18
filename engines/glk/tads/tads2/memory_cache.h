@@ -30,7 +30,7 @@
 #include "glk/tads/tads2/lib.h"
 #include "glk/tads/tads2/memory_cache_loader.h"
 #include "glk/tads/tads2/memory_cache_swap.h"
-#include "glk/tads/osfrobtads.h"
+#include "glk/tads/os_frob_tads.h"
 
 namespace Glk {
 namespace TADS {

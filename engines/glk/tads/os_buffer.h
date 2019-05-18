@@ -20,30 +20,29 @@
  *
  */
 
-#include "glk/tads/tads.h"
-#include "glk/tads/os_glk.h"
-#include "common/config-manager.h"
-#include "common/translation.h"
+/* OS-layer functions and macros.
+ *
+ * This file does not introduce any curses (or other screen-API)
+ * dependencies; it can be used for both the interpreter as well as the
+ * compiler.
+ */
+
+/* Text IO Buffering
+ */
+
+#ifndef GLK_TADS_OS_BUFFER
+#define GLK_TADS_OS_BUFFER
 
 namespace Glk {
 namespace TADS {
 
-TADS *g_vm;
+extern void os_put_buffer(const char *buf, size_t len);
 
-TADS::TADS(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc) {
-	g_vm = this;
-	os_init(nullptr, nullptr, 0, 0, 0);
-}
+extern void os_get_buffer(char *buf, size_t len, size_t init);
 
-Common::Error TADS::loadGameData(strid_t file) {
-	// TODO
-	return Common::kNoError;
-}
-
-Common::Error TADS::saveGameData(strid_t file, const Common::String &desc) {
-	// TODO
-	return Common::kNoError;
-}
+extern char *os_fill_buffer(char *buf, size_t len);
 
 } // End of namespace TADS
 } // End of namespace Glk
+
+#endif

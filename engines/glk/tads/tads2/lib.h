@@ -46,9 +46,6 @@ typedef unsigned long  ub4;
 typedef signed long    sb4;
 typedef long           b4;
 typedef int            eword;
-typedef int32          int32_t;
-typedef uint32         uint32_t;
-
 
 /* maximum/minimum portable values for various types */
 #define UB4MAXVAL  0xffffffffUL

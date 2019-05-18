@@ -82,7 +82,6 @@ private:
 	 * to autorestore an initial game state, if the library has that capability. (Currently, only iosglk does.)
 	 */
 	void(*library_autorestore_hook)(void);
-	Common::RandomSource _random;
 
 	/**@}*/
 

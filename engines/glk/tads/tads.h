@@ -59,6 +59,8 @@ public:
 	virtual Common::Error saveGameData(strid_t file, const Common::String &desc) override;
 };
 
+extern TADS *g_vm;
+
 } // End of namespace TADS
 } // End of namespace Glk
 

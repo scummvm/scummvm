@@ -24,6 +24,7 @@
 #define GLK_TADS_TADS2_APPCTX
 
 #include "common/scummsys.h"
+#include "glk/tads/os_frob_tads.h"
 
 namespace Glk {
 namespace TADS {

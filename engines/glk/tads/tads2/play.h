@@ -20,30 +20,27 @@
  *
  */
 
-#include "glk/tads/tads.h"
-#include "glk/tads/os_glk.h"
-#include "common/config-manager.h"
-#include "common/translation.h"
+/*
+ * Implementation of main gameplay loop
+ */
+#ifndef GLK_TADS_TADS2_PLAY
+#define GLK_TADS_TADS2_PLAY
+
+#include "glk/tads/tads2/lib.h"
+#include "glk/tads/tads2/object.h"
+#include "glk/tads/tads2/run.h"
+#include "glk/tads/tads2/vocabulary.h"
+#include "glk/tads/tads2/tokenizer.h"
 
 namespace Glk {
 namespace TADS {
+namespace TADS2 {
 
-TADS *g_vm;
+void plygo(runcxdef *run, voccxdef *voc,
+	tiocxdef *tio, objnum preinit, char *restore_fname);
 
-TADS::TADS(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc) {
-	g_vm = this;
-	os_init(nullptr, nullptr, 0, 0, 0);
-}
-
-Common::Error TADS::loadGameData(strid_t file) {
-	// TODO
-	return Common::kNoError;
-}
-
-Common::Error TADS::saveGameData(strid_t file, const Common::String &desc) {
-	// TODO
-	return Common::kNoError;
-}
-
+} // End of namespace TADS2
 } // End of namespace TADS
 } // End of namespace Glk
+
+#endif
