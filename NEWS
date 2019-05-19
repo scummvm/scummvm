@@ -1,9 +1,18 @@
 0.4.0 (YYYY-MM-DD)
 	New Games:
-	- ...
+	- The Longest Journey is now supported
 
 	General:
-	- ...
+	- Enabled the window to be resized
+	- Added support for saving screenshots
+
+	Myst III changes:
+	- Added automatic saves
+	- Added support for playing with a game controller
+	- Added support for inverting the mouse y axis using ctrl-i
+	- Fixed music tracks sometimes not playing (#1522)
+	- Fixed music tracks sometimes incorrectly restarting (#1476)
+	- Fixed a crash when opening the menu while on the Amateria tracks (#1514)
 
 0.3.1 (2018-06-13)
 	Myst III changes:
