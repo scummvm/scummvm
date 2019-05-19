@@ -92,7 +92,7 @@ int os_init(int *argc, char *argv[], const char *prompt,
     /* close statuswin; reopened on request */
     g_vm->glk_window_close(statuswin, 0);
 
-    statuswin = NULL;
+    statuswin = nullptr;
 
     g_vm->glk_set_window(mainwin);
 

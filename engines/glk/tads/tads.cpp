@@ -32,7 +32,6 @@ TADS *g_vm;
 
 TADS::TADS(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc) {
 	g_vm = this;
-	os_init(nullptr, nullptr, 0, 0, 0);
 }
 
 bool TADS::hasFeature(EngineFeature f) const {

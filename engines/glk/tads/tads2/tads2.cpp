@@ -23,6 +23,7 @@
 #include "glk/tads/tads2/tads2.h"
 #include "glk/tads/tads2/appctx.h"
 #include "glk/tads/tads2/runtime_app.h"
+#include "glk/tads/tads2/os.h"
 
 namespace Glk {
 namespace TADS {
@@ -32,11 +33,18 @@ TADS2::TADS2(OSystem *syst, const GlkGameDescription &gameDesc) : TADS(syst, gam
 }
 
 void TADS2::runGame() {
+	// Initialize the OS layer
+	os_init(nullptr, nullptr, 0, 0, 0);
+	os_instbrk(true);
+
 	char name[255];
 	strcpy(name, getFilename().c_str());
 	char *argv[2] = { nullptr, name };
 
 	trdmain(2, argv, nullptr, ".sav");
+
+	os_instbrk(false);
+	os_uninit();
 }
 
 } // End of namespace TADS2
