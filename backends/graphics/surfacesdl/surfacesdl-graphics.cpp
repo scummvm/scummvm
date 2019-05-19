@@ -31,7 +31,9 @@
 #include "engines/engine.h"
 #include "graphics/pixelbuffer.h"
 #include "graphics/surface.h"
+#ifdef USE_PNG
 #include "image/png.h"
+#endif
 
 SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window, const Capabilities &capabilities)
 	:

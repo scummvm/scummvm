@@ -37,7 +37,9 @@
 #include "graphics/opengl/system_headers.h"
 #include "graphics/opengl/texture.h"
 #include "graphics/opengl/tiledsurface.h"
+#ifdef USE_PNG
 #include "image/png.h"
+#endif
 
 OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window, const Capabilities &capabilities)
 	:
