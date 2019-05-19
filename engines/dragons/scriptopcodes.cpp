@@ -346,7 +346,7 @@ void ScriptOpcodes::opUnk14PropertiesRelated(ScriptOpCall &scriptOpCall) {
 		localScriptOpCall._field8 = scriptOpCall._field8;
 		localScriptOpCall._result = 0;
 
-		executeScriptLoop(scriptOpCall);
+		executeScriptLoop(localScriptOpCall);
 
 		if (scriptOpCall._field8 == 1) {
 			scriptOpCall._result = localScriptOpCall._result;
