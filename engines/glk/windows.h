@@ -74,6 +74,11 @@ public:
 		iterator &operator++();
 
 		/**
+		 * Move to previous
+		 */
+		iterator &operator--();
+
+		/**
 		 * Equality test
 		 */
 		bool operator==(const iterator &i) {

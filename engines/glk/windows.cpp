@@ -187,10 +187,21 @@ void Windows::windowClose(Window *win, StreamResult *result) {
 				return;
 			}
 
-			if (!(pairWin->_dir & winmethod_Arbitrary)) {
-				sibWin = (index = ((int)pairWin->_children.size() - 1)) ?
-					pairWin->_children.front() : pairWin->_children[index + 1];
+			// Detach window being closed from parent pair window
+			pairWin->_children.remove_at(index);
+			win->_parent = nullptr;
 
+			if (!(pairWin->_dir & winmethod_Arbitrary)) {
+				// Get the remaining child window
+				assert(pairWin->_children.size() == 1);
+				sibWin = pairWin->_children.front();
+
+				// Detach it from the pair window
+				index = pairWin->_children.indexOf(sibWin);
+				assert(index >= 0);
+				pairWin->_children.remove_at(index);
+
+				// Set up window as either the singular root, or grandparent pair window if one exists
 				grandparWin = dynamic_cast<PairWindow *>(pairWin->_parent);
 				if (!grandparWin) {
 					_rootWin = sibWin;
@@ -453,7 +464,12 @@ uint Windows::rgbShift(uint color) {
 /*--------------------------------------------------------------------------*/
 
 Windows::iterator &Windows::iterator::operator++() {
-	_current = _windows->iterateTreeOrder(_current);
+	_current = _current->_next;
+	return *this;
+}
+
+Windows::iterator &Windows::iterator::operator--() {
+	_current = _current->_prev;
 	return *this;
 }
 
