@@ -300,7 +300,7 @@ bool BaseFileManager::registerPackages() {
 				}
 			}
 			debugC(kWintermuteDebugFileAccess, "Registering %s %s", fileIt->getPath().c_str(), fileIt->getName().c_str());
-			registerPackage((*fileIt), "", searchSignature);
+			registerPackage((*fileIt), fileName, searchSignature);
 		}
 	}
 
@@ -311,7 +311,8 @@ bool BaseFileManager::registerPackages() {
 
 bool BaseFileManager::registerPackage(Common::FSNode file, const Common::String &filename, bool searchSignature) {
 	PackageSet *pack = new PackageSet(file, filename, searchSignature);
-	_packages.add(file.getName(), pack, pack->getPriority() , true);
+	_packages.add(filename, pack, pack->getPriority() , true);
+	_versions[filename] = pack->getVersion();
 
 	return STATUS_OK;
 }
@@ -348,6 +349,16 @@ Common::SeekableReadStream *BaseFileManager::openPkgFile(const Common::String &f
 	return file;
 }
 
+//////////////////////////////////////////////////////////////////////////
+uint32 BaseFileManager::getPackageVersion(const Common::String &filename) {
+	Common::HashMap<Common::String, uint32>::iterator it = _versions.find(filename);
+	if (it != _versions.end()) {
+		return it->_value;
+	}
+	return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////
 bool BaseFileManager::hasFile(const Common::String &filename) {
 	if (scumm_strnicmp(filename.c_str(), "savegame:", 9) == 0) {
 		BasePersistenceManager pm(BaseEngine::instance().getGameTargetName());

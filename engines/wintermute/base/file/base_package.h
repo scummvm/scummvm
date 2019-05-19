@@ -78,8 +78,11 @@ public:
 	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
 
 	int getPriority() const { return _priority; }
+	uint32 getVersion() const { return _version; }
+
 private:
 	byte _priority;
+	uint32 _version;
 	Common::Array<BasePackage *> _packages;
 	Common::HashMap<Common::String, Common::ArchiveMemberPtr> _files;
 	Common::HashMap<Common::String, Common::ArchiveMemberPtr>::iterator _filesIter;

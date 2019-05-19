@@ -2405,6 +2405,45 @@ ScValue *BaseGame::scGetProperty(const Common::String &name) {
 		}
 		return _scValue;
 	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] BuildVersion (RO)
+	// Used to display full game version at options.script in UpdateControls()
+	// Returns FoxTail engine version number as a dotted string
+	//////////////////////////////////////////////////////////////////////////
+	else if (name == "BuildVersion") {
+		if (BaseEngine::instance().getTargetExecutable() == FOXTAIL_1_2_227) {
+			_scValue->setString("1.2.227");
+		} else if (BaseEngine::instance().getTargetExecutable() == FOXTAIL_1_2_230) {
+			_scValue->setString("1.2.230");
+		} else if (BaseEngine::instance().getTargetExecutable() == FOXTAIL_1_2_304) {
+			_scValue->setString("1.2.304");
+		} else if (BaseEngine::instance().getTargetExecutable() == FOXTAIL_1_2_362) {
+			_scValue->setString("1.2.362");
+		} else if (BaseEngine::instance().getTargetExecutable() == FOXTAIL_1_2_527) {
+			_scValue->setString("1.2.527");
+		} else {
+			_scValue->setString("UNKNOWN");
+		}
+		return _scValue;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] GameVersion (RO)
+	// Used to display full game version at options.script in UpdateControls()
+	// Returns FoxTail version number as a string
+	//////////////////////////////////////////////////////////////////////////
+	else if (name == "GameVersion") {
+		uint32 gameVersion = 0;
+		BaseFileManager *fileManager = BaseEngine::instance().getFileManager();
+		if (fileManager) {
+			gameVersion = fileManager->getPackageVersion("data.dcp");
+		}
+		char tmp[16];
+		sprintf(tmp,"%u",gameVersion);
+		_scValue->setString(tmp);
+		return _scValue;
+	}
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
