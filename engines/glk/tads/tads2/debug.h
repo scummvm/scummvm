@@ -25,6 +25,7 @@
 
 #include "glk/tads/tads2/lib.h"
 #include "glk/tads/tads2/object.h"
+#include "glk/tads/os_glk.h"
 
 namespace Glk {
 namespace TADS {
@@ -181,7 +182,7 @@ void dbgclin(struct tokcxdef *tokctx, objnum objn, uint ofs);
  *   the program define the appropriate implementation through the linker.
  */
 #ifdef DBG_OFF
-#define dbgpresent() (FALSE)
+#define dbgpresent() (false)
 #else
 int dbgpresent();
 #endif
@@ -545,22 +546,22 @@ void trcsho(void);
  */
 
 #ifdef DBG_OFF
-# define dbgenter(ctx, bp, self, target, prop, binum, argc)
-# define dbgleave(ctx, exittype)
-# define dbgdump(ctx)
-# define dbgrst(ctx) ((void)0)
-# define dbgframe(ctx, frofs, linofs)
-# define dbgssi(ctx, ofs, instr, err, p)
+#define dbgenter(ctx, bp, self, target, prop, binum, argc)
+#define dbgleave(ctx, exittype)
+#define dbgdump(ctx) ((void)0)
+#define dbgrst(ctx) ((void)0)
+#define dbgframe(ctx, frofs, linofs)
+#define dbgssi(ctx, ofs, instr, err, p) ((void)0)
 #else /* DBG_OFF */
-# define dbgenter(ctx, bp, self, target, prop, binum, argc) \
+#define dbgenter(ctx, bp, self, target, prop, binum, argc) \
    dbgent(ctx, bp, self, target, prop, binum, argc)
-# define dbgleave(ctx, exittype) dbglv(ctx, exittype)
-# define dbgdump(ctx) dbgds(ctx)
-# define dbgrst(ctx) ((ctx)->dbgcxfcn = (ctx)->dbgcxdep = 0)
-# define dbgframe(ctx, frofs, linofs) \
+#define dbgleave(ctx, exittype) dbglv(ctx, exittype)
+#define dbgdump(ctx) dbgds(ctx)
+#define dbgrst(ctx) ((ctx)->dbgcxfcn = (ctx)->dbgcxdep = 0)
+#define dbgframe(ctx, frofs, linofs) \
    (((ctx)->dbgcxfrm[(ctx)->dbgcxfcn - 1].dbgffr = (frofs)), \
     ((ctx)->dbgcxfrm[(ctx)->dbgcxfcn - 1].dbgflin = (linofs)))
-# define dbgssi(ctx, ofs, instr, err, p) dbgss(ctx, ofs, instr, err, p)
+#define dbgssi(ctx, ofs, instr, err, p) dbgss(ctx, ofs, instr, err, p)
 #endif /* DBG_OFF */
 
 /* ======================================================================== */

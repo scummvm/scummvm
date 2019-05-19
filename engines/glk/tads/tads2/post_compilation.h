@@ -46,34 +46,34 @@ struct supcxdef {
 };
 
 /* set up contents list for one object for demand-on-load */
-inline void supcont(void *ctx, objnum obj, prpnum prp);
+extern void supcont(void *ctx, objnum obj, prpnum prp);
 
 /* set up inherited vocabulary (called before executing game) */
-inline void supivoc(supcxdef *ctx);
+extern void supivoc(supcxdef *ctx);
 
 /* find required objects/functions */
-inline void supfind(errcxdef *ctx, tokthdef *tab, voccxdef *voc,
+extern void supfind(errcxdef *ctx, tokthdef *tab, voccxdef *voc,
              objnum *preinit, int warnlevel, int casefold);
 
 /* set up reserved words */
-inline void suprsrv(supcxdef *sup, void (*bif[])(struct bifcxdef *, int),
+extern void suprsrv(supcxdef *sup, void (*bif[])(struct bifcxdef *, int),
              toktdef *tab, int fncntmax, int v1compat, char *new_do,
              int casefold);
 
 /* set up built-in functions without symbol table (for run-time) */
-inline void supbif(supcxdef *sup, void (*bif[])(struct bifcxdef *, int),
+extern void supbif(supcxdef *sup, void (*bif[])(struct bifcxdef *, int),
             int bifsiz);
 
 /* log an undefined-object error */
-inline void sup_log_undefobj(mcmcxdef *mctx, errcxdef *ec, int err,
+extern void sup_log_undefobj(mcmcxdef *mctx, errcxdef *ec, int err,
                       char *sym_name, int sym_name_len, objnum objn);
 
 /* set up inherited vocabulary for a particular object */
-inline void supivoc1(supcxdef *sup, voccxdef *ctx, vocidef *v, objnum target,
+extern void supivoc1(supcxdef *sup, voccxdef *ctx, vocidef *v, objnum target,
               int inh_from_obj, int flags);
 
 /* get name of an object out of symbol table */
-inline void supgnam(char *buf, tokthdef *tab, objnum objn);
+extern void supgnam(char *buf, tokthdef *tab, objnum objn);
 
 /* table of built-in functions */
 struct supbidef {

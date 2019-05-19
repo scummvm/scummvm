@@ -53,6 +53,84 @@ void tok_read_defines(tokcxdef *tctx, osfildef *fp, errcxdef *ec)
 }
 
 /* dummy debugger functions */
+
+int dbgbpset(dbgcxdef *ctx, char *addr, int *bpnum) { return 0; }
+
+int dbgbpat(dbgcxdef *ctx, objnum objn, objnum self,
+	uint ofs, int *bpnum, char *bpname, int toggle,
+	char *condition, int *did_set) { return 0; }
+
+int dbgbpatid(dbgcxdef *ctx, int bpnum, objnum target, objnum self,
+	uint ofs, char *bpname, int toggle, char *cond,
+	int *did_set) { return 0; }
+
+int dbgisbp(dbgcxdef *ctx, objnum target, objnum self, uint ofs, int *bpnum) { return 0; }
+
+int dbgisbpena(dbgcxdef *ctx, int bpnum) { return 0; }
+
+int dbgbpdel(dbgcxdef *ctx, int bpnum) { return 0; }
+
+int dbgbpdis(dbgcxdef *ctx, int bpnum, int disable) { return 0; }
+
+int dbgbpsetcond(dbgcxdef *ctx, int bpnum, char *cond) { return 0; }
+
+void dbgbplist(dbgcxdef *ctx, void(*dispfn)(void *ctx, const char *str, int len), void *dispctx) {}
+
+void dbgbpenum(dbgcxdef *ctx, void(*cbfunc)(void *cbctx, int bpnum, const char *desc,
+		const char *cond, int disabled), void *cbctx) {}
+
+void dbgbpeach(dbgcxdef *ctx, void(*fn)(void *, int, uchar *, uint), void *fnctx) {}
+
+int dbgbpgetinfo(dbgcxdef *ctx, int bpnum, char *descbuf, size_t descbuflen,
+	char *condbuf, size_t condbuflen) { return 0; }
+
+int dbgeval(dbgcxdef *ctx, char *expr,
+	void(*dispfn)(void *dispctx, const char *str, int strl),
+	void *dispctx, int level, int showtype) { return 0; }
+
+int dbgevalext(dbgcxdef *ctx, char *expr,
+	void(*dispfn)(void *dispctx, const char *str, int strl),
+	void *dispctx, int level, int showtype, dattyp *dat,
+	void(*aggcb)(void *aggctx, const char *subname,
+		int subnamelen, const char *relationship),
+	void *aggctx, int speculative) { return 0 ;}
+
+void dbgenumlcl(dbgcxdef *ctx, int level,
+	void(*func)(void *ctx, const char *lclnam, size_t lclnamlen),
+	void *cbctx) {}
+
+int dbgcompile(dbgcxdef *ctx, char *expr, dbgfdef *fr, objnum *objn,
+	int speculative) { return 0; }
+
+void dbgwhere(dbgcxdef *ctx, char *buf) {}
+
+int dbgwxset(dbgcxdef *ctx, char *expr, int *wxnum, int level) { return 0; }
+
+int dbgwxdel(dbgcxdef *ctx, int wxnum) { return 0; }
+
+void dbgwxupd(dbgcxdef *ctx,
+	void(*dispfn)(void *dispctx, const char *txt, int len),
+	void *dispctx) {}
+
+void dbgswitch(struct lindef **linp, struct lindef *newlin) {}
+
+void dbguini(dbgcxdef *ctx, const char *game_filename) {}
+
+void dbguini2(dbgcxdef *ctx) {}
+
+int dbgu_err_resume(dbgcxdef *ctx) { return 0; }
+
+int dbgu_find_src(const char *origname, int origlen,
+	char *fullname, size_t full_len, int must_find_file) { return 0; }
+
+void dbgucmd(dbgcxdef *ctx, int bphit, int err, unsigned int *exec_ofs) {}
+
+void dbguquitting(dbgcxdef *ctx) {}
+
+void dbguterm(dbgcxdef *ctx) {}
+
+void dbguerr(dbgcxdef *ctx, int errnum, char *msg) {}
+
 void trchid(void) {}
 void trcsho(void) {}
 

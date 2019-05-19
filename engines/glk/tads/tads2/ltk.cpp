@@ -130,15 +130,15 @@ void ltk_free(void *mem) {
 * ltk_errlog - ERRor LOGging function.  Logs an error from the LER
 * system.
 */
-void ltk_errlog(void *ctx, char *fac, int errno, int argc, erradef *argv) {
+void ltk_errlog(void *ctx, char *fac, int errCode, int argc, erradef *argv) {
 	char buf[128];                                  /* formatted error buffer */
 	char msg[128];                                          /* message buffer */
 
 															/* $$$ filter out error #504 $$$ */
-	if (errno == 504) return;
+	if (errCode == 504) return;
 
 	/* get the error message into msg */
-	errmsg((errcxdef *)ctx, msg, sizeof(msg), errno);
+	errmsg((errcxdef *)ctx, msg, sizeof(msg), errCode);
 
 	/* format the error message */
 	errfmt(buf, (int)sizeof(buf), msg, argc, argv);

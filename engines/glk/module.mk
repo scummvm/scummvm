@@ -92,9 +92,11 @@ MODULE_OBJS := \
 	scott/detection.o \
 	scott/scott.o \
 	tads/detection.o \
+	tads/os_banners.o \
 	tads/os_buffer.o \
 	tads/os_glk.o \
 	tads/os_frob_tads.o \
+	tads/os_parse.o \
 	tads/tads.o \
 	tads/tads2/built_in.o \
 	tads/tads2/character_map.o \
@@ -106,6 +108,7 @@ MODULE_OBJS := \
 	tads/tads2/error_message.o \
 	tads/tads2/execute_command.o \
 	tads/tads2/file_io.o \
+	tads/tads2/get_string.o \
 	tads/tads2/line_source_file.o \
 	tads/tads2/list.o \
 	tads/tads2/ltk.o \

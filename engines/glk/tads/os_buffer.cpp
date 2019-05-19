@@ -21,6 +21,7 @@
  */
 
 #include "glk/tads/os_buffer.h"
+#include "glk/tads/os_parse.h"
 #include "glk/tads/tads.h"
 
 namespace Glk {
@@ -50,10 +51,6 @@ char *os_fill_buffer(char *buf, size_t len)
 static uint32 *input = 0;
 static uint max = 0;
 
-extern uint os_parse_chars(const char *buf, uint buflen, uint32 *out, uint outlen);
-
-extern uint os_prepare_chars(uint32 *buf, uint buflen, char *out, uint outlen);
-
 void os_put_buffer(const char *buf, size_t len) {
     uint *out;
     uint outlen;
@@ -66,7 +63,7 @@ void os_put_buffer(const char *buf, size_t len) {
         return;
     outlen = len;
 
-    outlen = os_parse_chars(buf, len, out, outlen);
+    outlen = os_parse_chars((const unsigned char *)buf, len, out, outlen);
 
     if (outlen)
         g_vm->glk_put_buffer_uni(out, outlen);
@@ -81,13 +78,13 @@ void os_get_buffer(char *buf, size_t len, size_t init) {
     max = len;
 
     if (init)
-        os_parse_chars(buf, init + 1, input, len);
+        os_parse_chars((const unsigned char *)buf, init + 1, input, len);
 
     g_vm->glk_request_line_event_uni(mainwin, input, len - 1, init);
 }
 
 char *os_fill_buffer(char *buf, size_t len) {
-    uint res = os_prepare_chars(input, len, buf, max);
+    uint res = os_prepare_chars(input, len, (unsigned char *)buf, max);
     buf[res] = '\0';
 
     free(input);

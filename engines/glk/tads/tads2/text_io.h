@@ -212,8 +212,7 @@ void out_set_doublespace(int dbl);
  *   call directly for graphical implementations.  We'll use formatted
  *   text for text-only implementations.  
  */
-int tio_askfile(const char *prompt, char *fname_buf, int fname_buf_len,
-                int prompt_type, os_filetype_t file_type);
+int tio_askfile(const char *prompt, char *reply, int replen, int prompt_type, os_filetype_t file_type);
 
 /*
  *   Display a dialog, using a system-defined dialog (via os_input_dialog)

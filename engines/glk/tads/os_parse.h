@@ -20,46 +20,24 @@
  *
  */
 
-#include "glk/tads/tads2/post_compilation.h"
-#include "glk/tads/tads2/error.h"
-#include "glk/tads/tads2/os.h"
+/* TADS OS interface file type definitions
+ *
+ * Defines certain datatypes used in the TADS operating system interface
+ */
+
+#ifndef GLK_TADS_OS_PARSE
+#define GLK_TADS_OS_PARSE
+
+#include "common/scummsys.h"
 
 namespace Glk {
 namespace TADS {
-namespace TADS2 {
 
-void supcont(void *ctx, objnum obj, prpnum prp) {
-		// No implementation
-}
+extern uint os_parse_chars(const unsigned char *buf, uint buflen, uint32 *out, uint outlen);
 
-void supivoc(supcxdef *ctx) {
-	// No implementation
-}
+extern uint os_prepare_chars(const uint32 *buf, uint buflen, unsigned char *out, uint outlen);
 
-void supfind(errcxdef *ctx, tokthdef *tab, voccxdef *voc,
-		objnum *preinit, int warnlevel, int casefold) {
-	// No implementation
-}
-
-void suprsrv(supcxdef *sup, void(*bif[])(struct bifcxdef *, int),
-		toktdef *tab, int fncntmax, int v1compat, char *new_do, int casefold) {
-	// No implementation
-}
-
-void supbif(supcxdef *sup, void(*bif[])(struct bifcxdef *, int), int bifsiz) {
-	// No implementation
-}
-
-void sup_log_undefobj(mcmcxdef *mctx, errcxdef *ec, int err,
-		char *sym_name, int sym_name_len, objnum objn) {
-	// No implementation
-}
-
-void supivoc1(supcxdef *sup, voccxdef *ctx, vocidef *v, objnum target,
-		int inh_from_obj, int flags) {
-	// No implementation
-}
-
-} // End of namespace TADS2
 } // End of namespace TADS
 } // End of namespace Glk
+
+#endif

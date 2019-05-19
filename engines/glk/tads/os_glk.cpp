@@ -44,6 +44,11 @@ uint mainbg;
 uint statusfg;
 uint statusbg;
 
+int G_os_pagelength;
+int G_os_linewidth;
+int G_os_moremode;
+char G_os_gamename[OSFNMAX];
+
 /* ------------------------------------------------------------------------ */
 
 /* 
@@ -993,10 +998,106 @@ long os_get_sys_clock_ms() {
 	return g_system->getMillis();
 }
 
+void os_xlat_html4(unsigned int html4_char, char *result, size_t result_len) {
+	/* Return all standard Latin-1 characters as-is */
+	if (html4_char <= 128 || (html4_char >= 160 && html4_char <= 255))
+		result[0] = (unsigned char)html4_char;
+	else {
+		switch (html4_char) {
+		case 130:                                      /* single back quote */
+			result[0] = '`'; break;
+		case 132:                                      /* double back quote */
+			result[0] = '\"'; break;
+		case 153:                                             /* trade mark */
+			strcpy(result, "(tm)"); return;
+		case 140:                                            /* OE ligature */
+		case 338:                                            /* OE ligature */
+			strcpy(result, "OE"); return;
+		case 339:                                            /* oe ligature */
+			strcpy(result, "oe"); return;
+		case 159:                                                   /* Yuml */
+			result[0] = (char)255;
+		case 376:                                        /* Y with diaresis */
+			result[0] = 'Y'; break;
+		case 352:                                           /* S with caron */
+			result[0] = 'S'; break;
+		case 353:                                           /* s with caron */
+			result[0] = 's'; break;
+		case 150:                                                /* en dash */
+		case 8211:                                               /* en dash */
+			result[0] = '-'; break;
+		case 151:                                                /* em dash */
+		case 8212:                                               /* em dash */
+			strcpy(result, "--"); return;
+		case 145:                                      /* left single quote */
+		case 8216:                                     /* left single quote */
+			result[0] = '`'; break;
+		case 146:                                     /* right single quote */
+		case 8217:                                    /* right single quote */
+		case 8218:                                    /* single low-9 quote */
+			result[0] = '\''; break;
+		case 147:                                      /* left double quote */
+		case 148:                                     /* right double quote */
+		case 8220:                                     /* left double quote */
+		case 8221:                                    /* right double quote */
+		case 8222:                                    /* double low-9 quote */
+			result[0] = '\"'; break;
+		case 8224:                                                /* dagger */
+		case 8225:                                         /* double dagger */
+		case 8240:                                        /* per mille sign */
+			result[0] = ' '; break;
+		case 139:                       /* single left-pointing angle quote */
+		case 8249:                      /* single left-pointing angle quote */
+			result[0] = '<'; break;
+		case 155:                      /* single right-pointing angle quote */
+		case 8250:                     /* single right-pointing angle quote */
+			result[0] = '>'; break;
+		case 8482:                                           /* small tilde */
+			result[0] = '~'; break;
+
+		default:
+			/* unmappable character - return space */
+			result[0] = (unsigned char)' ';
+		}
+	}
+	result[1] = 0;
+}
+
 #ifndef os_tzset
 void os_tzset() {}
 #endif
 
+void os_nonstop_mode(int flag) {}
+
+void os_advise_load_charmap(const char *id, const char *ldesc, const char *sysinfo) {}
+
+void os_gen_charmap_filename(char *filename, char *internal_id, char *argv0) {}
+
+int os_input_dialog(int icon_id, const char *prompt, int standard_button_set,
+	const char **buttons, int button_count, int default_index, int cancel_index) {
+	// CUrrently unsupported
+	return 0;
+}
+
+void os_flush() {
+	g_vm->glk_tick();
+}
+
+char *os_strlwr(char *s) {
+	for (char *p = s; *p; ++p)
+		*p = tolower(*p);
+	return s;
+}
+
+void os_expause() {
+#ifdef USE_EXPAUSE
+	os_printz("(Strike any key to exit...)");
+	os_flush();
+	os_waitc();
+#endif /* USE_EXPAUSE */
+}
+
+void os_plain(void) {}
 
 } // End of namespace TADS
 } // End of namespace Glk

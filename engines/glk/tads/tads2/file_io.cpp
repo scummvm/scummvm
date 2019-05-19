@@ -1769,6 +1769,12 @@ ret_error:
     return TRUE;
 }
 
+void fioxor(uchar *p, uint siz, uint seed, uint inc)
+{
+	for (; siz; seed += inc, --siz)
+		*p++ ^= (uchar)seed;
+}
+
 } // End of namespace TADS2
 } // End of namespace TADS
 } // End of namespace Glk

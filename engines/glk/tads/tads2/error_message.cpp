@@ -27,58 +27,42 @@ namespace Glk {
 namespace TADS {
 namespace TADS2 {
 
-	
-/*--------------------------------- lerini ---------------------------------*/
-/*
- * lerini - allocate and initialize an error context.  Returns a
- * pointer to an initialized error context if successful, 0 otherwise.
- */
 errcxdef *lerini() {
-  errcxdef *errcx;                                         /* error context */
+	errcxdef *errcx;                                         /* error context */
   
-  /* allocate an error context */
-  if (!(errcx = (errcxdef *)ltk_suballoc(sizeof(errcxdef))))
-  {
-    /* failure */
-    return((errcxdef *)0);
-  }
+	// allocate an error context
+	if (!(errcx = (errcxdef *)ltk_suballoc(sizeof(errcxdef)))) {
+		// failure
+		return((errcxdef *)0);
+	}
 
-  /* initialize the error context */
-  errcx->errcxfp  = (osfildef *)0;                  /* no error file handle */
-  errcx->errcxofs = 0;                      /* no offset in argument buffer */
-  errcx->errcxlog = ltk_errlog;                    /* error logging routine */
-  errcx->errcxlgc = errcx;                         /* error logging context */
+	// initialize the error context
+	errcx->errcxfp  = (osfildef *)0;                  /* no error file handle */
+	errcx->errcxofs = 0;                      /* no offset in argument buffer */
+	errcx->errcxlog = ltk_errlog;                    /* error logging routine */
+	errcx->errcxlgc = errcx;                         /* error logging context */
 
-  /* return the new context */
-  return(errcx);
+	// return the new context
+	return errcx;
 }
 
-
-/*--------------------------------- lerfre ---------------------------------*/
-/*
- * lerfre - FREe error context allocated by errini.
- */
-void lerfre(errcxdef *errcx) {
-  /* free the context */
-  ltk_subfree(errcx);
-}
-
-
-/*--------------------------------- errmsg ---------------------------------*/
-/*
- * errmsg - format error message number 'err' into the given buffer.
- */
-void errmsg(errcxdef *ctx, char *outbuf, int outbufl, uint err) {
-  sprintf(outbuf, "Error #%d occured.", err);
-}
-
-/*--------------------------------- errini ---------------------------------*/
-/*
- * errini - initialize error system.
- */
 void errini(errcxdef *ctx, char *arg0) {
-    VARUSED(ctx);
-    VARUSED(arg0);
+	VARUSED(ctx);
+	VARUSED(arg0);
+}
+
+void errini(errcxdef *ctx, osfildef *fp) {
+	VARUSED(ctx);
+	VARUSED(fp);
+}
+
+void lerfre(errcxdef *errcx) {
+	// free the context
+	ltk_subfree(errcx);
+}
+
+void errmsg(errcxdef *ctx, char *outbuf, uint outbufl, uint err) {
+	sprintf(outbuf, "Error #%d occured.", err);
 }
 
 } // End of namespace TADS2

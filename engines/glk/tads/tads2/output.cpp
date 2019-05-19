@@ -3554,6 +3554,33 @@ void out_set_doublespace(int dbl)
     doublespace = dbl;
 }
 
+int tio_askfile(const char *prompt, char *reply, int replen, int prompt_type, os_filetype_t file_type) {
+	// let the OS layer handle it
+	return os_askfile(prompt, reply, replen, prompt_type, file_type);
+}
+
+int tio_input_dialog(int icon_id, const char *prompt, int standard_button_set,
+	const char **buttons, int button_count,
+	int default_index, int cancel_index) {
+	// call the OS implementation
+	return os_input_dialog(icon_id, prompt, standard_button_set,
+		buttons, button_count,
+		default_index, cancel_index);
+}
+
+void outfmt(tiocxdef *ctx, uchar *txt) {
+    uint len;
+
+    VARUSED(ctx);
+
+    /* read the length prefix */
+    len = osrp2(txt) - 2;
+    txt += 2;
+
+    /* write out the string */
+    tioputslen(ctx, (char *)txt, len);
+}
+
 } // End of namespace TADS2
 } // End of namespace TADS
 } // End of namespace Glk
