@@ -55,6 +55,7 @@ void Cursor::init(ActorManager *actorManager, DragonINIResource *dragonINIResour
 	data_8007283c = 0;
 	_cursorActivationSeqOffset = 0;
 	data_800728b0_cursor_seqID = 0;
+	data_80072890 = 0;
 }
 
 

@@ -75,7 +75,7 @@ ScriptOpcodes::~ScriptOpcodes() {
 void ScriptOpcodes::execOpcode(ScriptOpCall &scriptOpCall) {
 	if (!_opcodes[scriptOpCall._op])
 		error("ScriptOpcodes::execOpcode() Unimplemented opcode %d (0x%X)", scriptOpCall._op, scriptOpCall._op);
-	debug(3, "execScriptOpcode(%d) %s", scriptOpCall._op, _opcodeNames[scriptOpCall._op].c_str());
+	debug("execScriptOpcode(%d) %s", scriptOpCall._op, _opcodeNames[scriptOpCall._op].c_str());
 	(*_opcodes[scriptOpCall._op])(scriptOpCall);
 }
 
@@ -342,7 +342,7 @@ void ScriptOpcodes::opUnk14PropertiesRelated(ScriptOpCall &scriptOpCall) {
 	if (checkPropertyFlag(scriptOpCall)) {
 		ScriptOpCall localScriptOpCall;
 		localScriptOpCall._code = scriptOpCall._code + 4;
-		localScriptOpCall._codeEnd = localScriptOpCall._code + READ_LE_UINT32(scriptOpCall._code);
+		localScriptOpCall._codeEnd = localScriptOpCall._code + READ_LE_UINT16(scriptOpCall._code);
 		localScriptOpCall._field8 = scriptOpCall._field8;
 		localScriptOpCall._result = 0;
 
@@ -356,7 +356,7 @@ void ScriptOpcodes::opUnk14PropertiesRelated(ScriptOpCall &scriptOpCall) {
 			}
 		}
 
-		scriptOpCall._code = localScriptOpCall._code + READ_LE_UINT16(scriptOpCall._code);
+		scriptOpCall._code = localScriptOpCall._code + READ_LE_UINT16(scriptOpCall._code + 2);
 	} else {
 		scriptOpCall._code += 4 + READ_LE_UINT16(scriptOpCall._code);
 	}

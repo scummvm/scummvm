@@ -57,31 +57,16 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	_dragonRMS = NULL;
 	_backgroundResourceLoader = NULL;
 	_screen = NULL;
-	_nextUpdatetime = 0;
-	_flags = 0;
-	_unkFlags1 = 0;
 	_sequenceOpcodes = new SequenceOpcodes(this);
 	_scriptOpcodes = NULL;
 	_engine = this;
-	run_func_ptr_unk_countdown_timer = 0;
-	data_8006a3a0_flag = 0;
-	data_800633fa = 0;
 	_inventory = new Inventory(this);
 	_cursor = new Cursor(this);
 
 	_leftMouseButtonUp = false;
 	_rightMouseButtonUp = false;
 	_iKeyUp = false;
-
-	for(int i = 0; i < 8; i++) {
-		opCode1A_tbl[i].field0 = 0;
-		opCode1A_tbl[i].field2 = 0;
-		opCode1A_tbl[i].field4 = 0;
-		opCode1A_tbl[i].field6 = 0;
-		opCode1A_tbl[i].field8 = 0;
-	}
-
-	memset(unkArray_uint16, 0, sizeof(unkArray_uint16));
+	reset();
 }
 
 DragonsEngine::~DragonsEngine() {
@@ -133,30 +118,8 @@ Common::Error DragonsEngine::run() {
 	_scriptOpcodes = new ScriptOpcodes(this, _dragonFLG);
 	_backgroundResourceLoader = new BackgroundResourceLoader(_bigfileArchive, _dragonRMS);
 	_scene = new Scene(this, _screen, _scriptOpcodes, _bigfileArchive, _actorManager, _dragonRMS, _dragonINIResource, _backgroundResourceLoader);
-	_flags = 0x1046;
-	_flags &= 0x1c07040;
-	_flags |= 0x26;
 
-	_cursor->init(_actorManager, _dragonINIResource);
-	_inventory->init(_actorManager, _backgroundResourceLoader, new Bag(_bigfileArchive, _screen), _dragonINIResource);
-
-	_dragonVAR->setVar(1, 1);
-
-	_scene->setSceneId(2);
-	byte *obd = _dragonOBD->getObdAtOffset(0x2c5a); //TODO read value from dragon.spt + 0xc
-	ScriptOpCall scriptOpCall;
-	scriptOpCall._code = obd + 4;
-	scriptOpCall._codeEnd = scriptOpCall._code + READ_LE_UINT32(obd);
-	_scriptOpcodes->runScript(scriptOpCall);
-
-	uint16 sceneId = 0x12;
-	if(getINI(0)->sceneId == 0) {
-		getINI(0)->sceneId = sceneId; //TODO
-	} else {
-		_scene->setSceneId(getINI(0)->sceneId);
-	}
-	_sceneId1 = sceneId;
-	_scene->loadScene(sceneId, 0x1e);
+	loadScene(0);
 
 	_scene->draw();
 	_screen->updateScreen();
@@ -702,7 +665,7 @@ void DragonsEngine::updateActorSequences() {
 			!(actor->flags & Dragons::ACTOR_FLAG_4) &&
 			!(actor->flags & Dragons::ACTOR_FLAG_400) &&
 			(actor->sequenceTimer == 0 || actor->flags & Dragons::ACTOR_FLAG_1)) {
-			debug("Actor[%d] execute sequenceOp", actorId);
+			debug(3, "Actor[%d] execute sequenceOp", actorId);
 
 			if (actor->flags & Dragons::ACTOR_FLAG_1) {
 				actor->resetSequenceIP();
@@ -1167,7 +1130,8 @@ void DragonsEngine::FUN_8002931c() {
 //	local_30 = 0x11;
 //	local_2c = local_280[(uint)DAT_800728b0 * 9 + (uVar1 & 0xffff)];
 //	FlickerTalkMaybe(&local_30);
-	error("FUN_8002931c"); //TODO
+
+error("FUN_8002931c"); //TODO
 }
 
 void DragonsEngine::reset_screen_maybe() {
@@ -1188,6 +1152,60 @@ bool DragonsEngine::hasFeature(Engine::EngineFeature f) const {
 		// TODO (f == kSupportsRTL) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
+}
+
+void DragonsEngine::loadScene(uint16 sceneId) {
+	_flags = 0x1046;
+	_flags &= 0x1c07040;
+	_flags |= 0x26;
+	_unkFlags1 = 0;
+
+	_scriptOpcodes->_data_800728c0 = 0; //TODO this should be reset in scriptopcode.
+	_cursor->init(_actorManager, _dragonINIResource);
+	_inventory->init(_actorManager, _backgroundResourceLoader, new Bag(_bigfileArchive, _screen), _dragonINIResource);
+
+	if (sceneId > 2) {
+		_dragonVAR->setVar(1, 1);
+	}
+
+	if (sceneId > 2) { //TODO remove this restriction to enable intro sequence.
+		_scene->setSceneId(2);
+		byte *obd = _dragonOBD->getFromSpt(3);
+		ScriptOpCall scriptOpCall;
+		scriptOpCall._code = obd + 4;
+		scriptOpCall._codeEnd = scriptOpCall._code + READ_LE_UINT32(obd);
+		_scriptOpcodes->runScript(scriptOpCall);
+	} else {
+		sceneId = 0x12; // HACK the first scene. TODO remove this
+	}
+
+	if(getINI(0)->sceneId == 0) {
+		getINI(0)->sceneId = sceneId; //TODO
+	} else {
+		_scene->setSceneId(getINI(0)->sceneId);
+	}
+	_sceneId1 = sceneId;
+	_scene->loadScene(sceneId, 0x1e);
+}
+
+void DragonsEngine::reset() {
+	_nextUpdatetime = 0;
+	_flags = 0;
+	_unkFlags1 = 0;
+	run_func_ptr_unk_countdown_timer = 0;
+	data_8006a3a0_flag = 0;
+	data_800633fa = 0;
+
+	for(int i = 0; i < 8; i++) {
+		opCode1A_tbl[i].field0 = 0;
+		opCode1A_tbl[i].field2 = 0;
+		opCode1A_tbl[i].field4 = 0;
+		opCode1A_tbl[i].field6 = 0;
+		opCode1A_tbl[i].field8 = 0;
+	}
+
+	memset(unkArray_uint16, 0, sizeof(unkArray_uint16));
+
 }
 
 } // End of namespace Dragons
