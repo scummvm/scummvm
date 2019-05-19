@@ -124,33 +124,16 @@ bool DragonsEngine::loadgame(const char *filename) {
 
 	g_engine->setTotalPlayTime(header.playTime * 1000);
 
+	reset();
 	// TODO load game state here. _gameState->read(in);
 	uint16 newSceneId = (uint16)in->readByte();
 	_dragonFLG->loadState(in);
-	_dragonFLG->set(165, false);
 
 	_dragonVAR->reset();
 
-	_dragonVAR->setVar(1, 1);
-
 	_dragonINIResource->reset();
 
-	_flags = 0x1046;
-	_flags &= 0x1c07040;
-	_flags |= 0x26;
-	_unkFlags1 = 0;
-
-	_cursor->init(_actorManager, _dragonINIResource);
-//	_inventory->init(_actorManager, _backgroundResourceLoader, new Bag(_bigfileArchive, _screen), _dragonINIResource);
-
-	if(getINI(0)->sceneId == 0) {
-		getINI(0)->sceneId = newSceneId; //TODO
-	} else {
-		_scene->setSceneId(getINI(0)->sceneId);
-	}
-	_sceneId1 = newSceneId;
-
-	_scene->loadScene(newSceneId, 0x1e); //TODO
+	loadScene(newSceneId);
 
 	delete in;
 	return true;

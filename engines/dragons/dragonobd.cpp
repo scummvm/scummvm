@@ -28,7 +28,10 @@ namespace Dragons {
 DragonOBD::DragonOBD(BigfileArchive *bigfileArchive) {
 	uint32 size;
 	byte *optData = bigfileArchive->load("dragon.opt", size);
-	optReadStream = new Common::MemoryReadStream(optData, size, DisposeAfterUse::NO);
+	optReadStream = new Common::MemoryReadStream(optData, size, DisposeAfterUse::YES);
+
+	byte *sptData = bigfileArchive->load("dragon.spt", size);
+	sptReadStream = new Common::MemoryReadStream(sptData, size, DisposeAfterUse::YES);
 
 	_data = bigfileArchive->load("dragon.obd", _dataSize);
 }
@@ -44,11 +47,17 @@ DragonOBD::~DragonOBD() {
 		delete _data;
 	}
 	delete optReadStream;
+	delete sptReadStream;
 }
 
 byte *DragonOBD::getFromOpt(uint32 index) {
 	optReadStream->seek(index * 8);
 	return getObdAtOffset(optReadStream->readUint32LE());
+}
+
+byte *DragonOBD::getFromSpt(uint32 index) {
+	sptReadStream->seek(index * 4);
+	return getObdAtOffset(sptReadStream->readUint32LE());
 }
 
 } // End of namespace Dragons

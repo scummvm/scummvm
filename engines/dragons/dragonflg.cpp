@@ -75,9 +75,8 @@ uint32 Properties::getSize() {
 
 void Properties::getProperyPos(uint32 propertyId, uint &index, byte &mask) {
 	assert(propertyId < _count);
-	propertyId &= 0xFFFF;
-	index = propertyId >> 3;
-	mask = 1 << (propertyId & 7);
+	index = propertyId / 8;
+	mask = 1 << (propertyId % 8);
 }
 
 void Properties::save(uint numberToWrite, Common::WriteStream *out) {

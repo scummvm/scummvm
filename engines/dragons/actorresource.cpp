@@ -79,7 +79,7 @@ bool ActorResource::load(uint32 id, byte *dataStart, Common::SeekableReadStream 
 		_frames[i].frameDataOffset = &dataStart[frameDataOffset];
 		_frames[i].flags = stream.readUint16LE();
 		_frames[i].field_c = stream.readUint16LE();
-		debug("Frame[%d] @%X, xOffset: %d field_2: %d (%d, %d) offset: %X, flags: %X field_c: %d",
+		debug(3, "Frame[%d] @%X, xOffset: %d field_2: %d (%d, %d) offset: %X, flags: %X field_c: %d",
 				i, offset, _frames[i].xOffset, _frames[i].yOffset, _frames[i].width, _frames[i].height, frameDataOffset, _frames[i].flags, _frames[i].field_c);
 	}
 
@@ -110,7 +110,7 @@ Graphics::Surface *ActorResource::loadFrame(ActorFrame &actorFrame, byte *palett
 
 	int32 blockSize = ((actorFrame.width / 2) * actorFrame.height * 2) / 4;
 
-	debug("Frame blockSize: %d width: %d height: %d", blockSize, actorFrame.width, actorFrame.height);
+	debug(3, "Frame blockSize: %d width: %d height: %d", blockSize, actorFrame.width, actorFrame.height);
 
 	byte *data = actorFrame.frameDataOffset;
 

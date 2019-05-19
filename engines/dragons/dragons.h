@@ -202,6 +202,10 @@ public:
 
 	void reset_screen_maybe();
 
+	void loadScene(uint16 sceneId);
+
+	void reset();
+
 private:
 	bool savegame(const char *filename, const char *description);
 	bool loadgame(const char *filename);
