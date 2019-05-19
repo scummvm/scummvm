@@ -34,6 +34,7 @@
 #include "engines/wintermute/ad/ad_sentence.h"
 #include "engines/wintermute/base/base_active_rect.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_parser.h"
@@ -67,6 +68,10 @@ AdEntity::AdEntity(BaseGame *inGame) : AdTalkHolder(inGame) {
 	_walkToX = _walkToY = 0;
 	_walkToDir = DI_NONE;
 
+#ifdef ENABLE_FOXTAIL
+	_hintX = _hintY = -1;
+#endif
+
 	_theora = nullptr;
 }
 
@@ -97,6 +102,16 @@ TDirection AdEntity::getWalkToDir() const {
 const char *AdEntity::getItemName() const {
 	return _item;
 }
+
+#ifdef ENABLE_FOXTAIL
+int32 AdEntity::getHintX() const {
+	return _hintX;
+}
+
+int32 AdEntity::getHintY() const {
+	return _hintY;
+}
+#endif
 
 //////////////////////////////////////////////////////////////////////////
 bool AdEntity::loadFile(const char *filename) {
@@ -164,6 +179,10 @@ TOKEN_DEF(WALK_TO_X)
 TOKEN_DEF(WALK_TO_Y)
 TOKEN_DEF(WALK_TO_DIR)
 TOKEN_DEF(SAVE_STATE)
+#ifdef ENABLE_FOXTAIL
+TOKEN_DEF(HINT_X)
+TOKEN_DEF(HINT_Y)
+#endif
 TOKEN_DEF_END
 //////////////////////////////////////////////////////////////////////////
 bool AdEntity::loadBuffer(char *buffer, bool complete) {
@@ -210,6 +229,10 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE(WALK_TO_Y)
 	TOKEN_TABLE(WALK_TO_DIR)
 	TOKEN_TABLE(SAVE_STATE)
+#ifdef ENABLE_FOXTAIL
+	TOKEN_TABLE(HINT_X)
+	TOKEN_TABLE(HINT_Y)
+#endif
 	TOKEN_TABLE_END
 
 	char *params;
@@ -487,6 +510,14 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 				i = DI_NONE;
 			}
 			_walkToDir = (TDirection)i;
+#ifdef ENABLE_FOXTAIL
+		case TOKEN_HINT_X:
+			parser.scanStr(params, "%d", &_hintX);
+			break;
+		case TOKEN_HINT_Y:
+			parser.scanStr(params, "%d", &_hintY);
+			break;
+#endif
 		}
 		break;
 
@@ -900,6 +931,24 @@ ScValue *AdEntity::scGetProperty(const Common::String &name) {
 		return _scValue;
 	}
 
+#ifdef ENABLE_FOXTAIL
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] HintX
+	//////////////////////////////////////////////////////////////////////////
+	else if (name == "HintX") {
+		_scValue->setInt(_hintX);
+		return _scValue;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] HintY
+	//////////////////////////////////////////////////////////////////////////
+	else if (name == "HintY") {
+		_scValue->setInt(_hintY);
+		return _scValue;
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// WalkToDirection
 	//////////////////////////////////////////////////////////////////////////
@@ -950,6 +999,24 @@ bool AdEntity::scSetProperty(const char *name, ScValue *value) {
 		_walkToY = value->getInt();
 		return STATUS_OK;
 	}
+
+#ifdef ENABLE_FOXTAIL
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] HintX
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "HintX") == 0) {
+		_hintX = value->getInt();
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// HintY
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "HintY") == 0) {
+		_hintY = value->getInt();
+		return STATUS_OK;
+	}
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// WalkToDirection
@@ -1011,6 +1078,11 @@ bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	if (_walkToDir != DI_NONE) {
 		buffer->putTextIndent(indent + 2, "WALK_TO_DIR=%d\n", (int)_walkToDir);
 	}
+
+#ifdef ENABLE_FOXTAIL
+	buffer->putTextIndent(indent + 2, "HINT_X=%d\n", _hintX);
+	buffer->putTextIndent(indent + 2, "HINT_Y=%d\n", _hintY);
+#endif
 
 	for (uint32 i = 0; i < _scripts.size(); i++) {
 		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
@@ -1107,6 +1179,13 @@ bool AdEntity::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferSint32(TMEMBER_INT(_walkToDir));
 
 	persistMgr->transferPtr(TMEMBER_PTR(_theora));
+
+#ifdef ENABLE_FOXTAIL
+    if (BaseEngine::instance().isFoxTail(FOXTAIL_1_2_527, FOXTAIL_LATEST_VERSION)) { 
+	    persistMgr->transferSint32(TMEMBER(_hintX));
+	    persistMgr->transferSint32(TMEMBER(_hintY));
+	}
+#endif
 
 	return STATUS_OK;
 }

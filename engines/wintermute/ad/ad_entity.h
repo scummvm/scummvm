@@ -55,6 +55,11 @@ public:
 	TDirection getWalkToDir() const;
 	const char* getItemName() const;
 
+#ifdef ENABLE_FOXTAIL
+	int32 getHintX() const;
+	int32 getHintY() const;
+#endif
+
 	// scripting interface
 	virtual ScValue *scGetProperty(const Common::String &name) override;
 	virtual bool scSetProperty(const char *name, ScValue *value) override;
@@ -67,6 +72,11 @@ private:
 	TDirection _walkToDir;
 	char *_item;
 	TEntityType _subtype;
+
+#ifdef ENABLE_FOXTAIL
+	int32 _hintX;
+	int32 _hintY;
+#endif
 };
 
 } // End of namespace Wintermute
