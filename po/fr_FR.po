@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-05-17 22:58+0200\n"
-"PO-Revision-Date: 2019-04-29 19:03+0000\n"
+"PO-Revision-Date: 2019-05-22 17:48+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -745,9 +745,8 @@ msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM n'a pas trouvé de jeu dans le répertoire sélectionné !"
 
 #: gui/launcher.cpp:588
-#, fuzzy
 msgid "Unknown variant"
-msgstr "Erreur inconnue"
+msgstr "Variante inconnue"
 
 #: gui/launcher.cpp:594
 msgid "Pick the game:"
@@ -1686,9 +1685,8 @@ msgid "Antialiased"
 msgstr "Anti-crénelé"
 
 #: gui/unknown-game-dialog.cpp:52
-#, fuzzy
 msgid "Add anyway"
-msgstr "Je comprends"
+msgstr "Ajouter quand même"
 
 #: gui/unknown-game-dialog.cpp:59
 msgid "Copy to clipboard"
@@ -2612,9 +2610,8 @@ msgid "Freefont License"
 msgstr "Licence FreeFont"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:224
-#, fuzzy
 msgid "OFL License"
-msgstr "Licence GPL"
+msgstr "Licence OFL"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:225
 msgid "BSD License"
@@ -3151,11 +3148,11 @@ msgstr "Fichier de séquence '%s' non trouvé !"
 
 #: engines/bladerunner/bladerunner.cpp:316
 msgid "Failed to initialize resources"
-msgstr ""
+msgstr "Échec de l'initialisation des ressources"
 
 #: engines/bladerunner/bladerunner.cpp:879
 msgid "A required game resource was not found"
-msgstr ""
+msgstr "Une ressource de jeu nécessaire n'a pas été trouvée"
 
 #: engines/bladerunner/bladerunner.cpp:2004
 msgid ""
@@ -3163,6 +3160,9 @@ msgid ""
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
 "Content for this session until you completely Quit the game."
 msgstr ""
+"ATTENTION : Ce jeu a été sauvegardé en mode Contenu Montage Restauré, mais "
+"vous jouez en mode Contenu Original. Le mode sera réglé sur Contenu Montage "
+"Restauré pour cette session jusqu'à ce que vous quittiez complètement le jeu."
 
 #: engines/bladerunner/bladerunner.cpp:2006
 msgid ""
@@ -3170,10 +3170,13 @@ msgid ""
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
 "mode for this session until you completely Quit the game."
 msgstr ""
+"ATTENTION : Ce jeu a été sauvegardé en mode Contenu Original, mais vous "
+"jouez en mode Contenu Montage Restauré. Le mode sera ajusté au mode Contenu "
+"Original pour cette session jusqu'à ce que vous quittiez complètement le jeu."
 
 #: engines/bladerunner/bladerunner.cpp:2008
 msgid "Continue"
-msgstr ""
+msgstr "Continuer"
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:111
 msgid "Color Blind Mode"
@@ -3697,6 +3700,19 @@ msgid ""
 "should be located in the AmigaDOS system 'Fonts/' folder.\n"
 "Please copy them into the EOB game data directory.\n"
 msgstr ""
+"Cette version AMIGA nécessite les fichiers de polices de caractères suivants:"
+"\n"
+"\n"
+"EOBF6.FONT\n"
+"EOBF6/6\n"
+"EOBF8.FONT\n"
+"EOBF8/8\n"
+"\n"
+"Si vous avez utilisé le programme d'installation d'origine pour "
+"l'installation,\n"
+"ces fichiers doivent se trouver dans le dossier 'Fonts/' du système AmigaDOS."
+"\n"
+"Veuillez les copier dans le répertoire de données de jeu de EOB.\n"
 
 #: engines/kyra/graphics/screen_eob.cpp:2262
 msgid ""
@@ -3719,6 +3735,26 @@ msgid ""
 "Please copy the correct font files into your EOB II game data directory.\n"
 "\n"
 msgstr ""
+"Cette version AMIGA nécessite les fichiers de polices de caractères suivants:"
+"\n"
+"\n"
+"EOBF6.FONT\n"
+"EOBF6/6\n"
+"EOBF8.FONT\n"
+"EOBF8/8\n"
+"\n"
+"Il s'agit d'une version localisée (non anglaise) de EOB II qui utilise des "
+"caractères spécifiques à la langue\n"
+"contenu uniquement dans les fichiers de polices spécifiques fournis avec "
+"votre jeu. Vous ne pouvez pas utiliser\n"
+"la police de la version anglaise ou de n'importe quel jeu EOB I, cequi "
+"semble être ce que vous faites.\n"
+"\n"
+"Le jeu va continuer, mais les caractères spécifiques à la langue ne "
+"s'afficheront pas.\n"
+"Veuillez copier les fichiers de polices corrects dans le répertoire de "
+"données de jeu de EOB II.\n"
+"\n"
 
 #: engines/kyra/sound/sound_midi.cpp:72
 msgid ""
