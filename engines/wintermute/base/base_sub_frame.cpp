@@ -434,6 +434,57 @@ bool BaseSubFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 		return STATUS_OK;
 	}
 
+#ifdef ENABLE_FOXTAIL
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] GetHeight
+	// Used to find sprite center at methods.script in fix_offset()
+	// Return value is integer
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "GetHeight") == 0) {
+		stack->correctParams(0);
+		if (_surface) {
+			stack->pushInt(_surface->getHeight());
+		} else {
+			stack->pushNULL();
+		}
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] GetWidth
+	// Used to find sprite center at methods.script in fix_offset()
+	// Return value is integer
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "GetWidth") == 0) {
+		stack->correctParams(0);
+		if (_surface) {
+			stack->pushInt(_surface->getWidth());
+		} else {
+			stack->pushNULL();
+		}
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] GetPixelAt
+	// Used for dynamic light at mixing.script in make_RGB() and make_HSV()
+	// Return value is passed to Game.GetRValue(), Game.GetGValue(), etc...
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "GetPixelAt") == 0) {
+		stack->correctParams(2);
+		int x = stack->pop()->getInt();
+		int y = stack->pop()->getInt();
+		byte r, g, b, a;
+		if (_surface && _surface->getPixel(x, y, &r, &g, &b, &a)) {
+			uint32 pixel = BYTETORGBA(r, g, b, a);
+			stack->pushInt(pixel);
+		} else {
+			stack->pushNULL();
+		}
+		return STATUS_OK;
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// SetImage
 	//////////////////////////////////////////////////////////////////////////
