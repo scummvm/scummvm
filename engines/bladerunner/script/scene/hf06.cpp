@@ -160,8 +160,8 @@ void SceneScriptHF06::SceneFrameAdvanced(int frame) {
 
 void SceneScriptHF06::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
 	if (actorId == kActorSteele
-	 && oldGoal != 599
-	 && newGoal == 599
+	 && oldGoal != kGoalSteeleGone
+	 && newGoal == kGoalSteeleGone
 	) {
 		Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorSteele, 24, false, false);
 		Actor_Says(kActorSteele, 250, -1);

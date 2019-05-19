@@ -294,9 +294,9 @@ void SceneScriptMA04::PlayerWalkedIn() {
 				Game_Flag_Set(kFlagRC01ChromeDebrisTaken);
 				Item_Remove_From_World(kItemChromeDebris);
 			}
-			Actor_Set_Goal_Number(kActorOfficerLeary, 99);
+			Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyEndOfAct1);
 			Actor_Put_In_Set(kActorOfficerLeary, kSetFreeSlotC);
-			Actor_Set_At_Waypoint(kActorOfficerLeary, 35, 0);
+			Actor_Set_At_Waypoint(kActorOfficerLeary, 35, 0); // kSetFreeSlotC
 			Autosave_Game(0);
 		}
 		//return false;

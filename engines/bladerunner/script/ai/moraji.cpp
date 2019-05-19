@@ -122,7 +122,7 @@ bool AIScriptMoraji::ShotAtAndHit() {
 		if (Actor_Query_Goal_Number(kActorMoraji) == kGoalMorajiLayDown) {
 			Game_Flag_Set(kFlagDR04McCoyShotMoraji);
 			Actor_Set_Goal_Number(kActorMoraji, kGoalMorajiDie);
-			Actor_Set_Goal_Number(kActorOfficerGrayford, 101);
+			Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordArrivesToDR04);
 			return true;
 		} else {
 			return false;

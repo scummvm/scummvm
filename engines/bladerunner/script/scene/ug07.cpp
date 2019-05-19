@@ -178,8 +178,8 @@ void SceneScriptUG07::PlayerWalkedIn() {
 	if ( Global_Variable_Query(kVariableChapter) == 4
 	 && !Game_Flag_Query(kFlagUG07Empty)
 	) {
-		Actor_Set_Goal_Number(kActorOfficerLeary, 307);
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 307);
+		Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyBlockingUG07);
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordBlockingUG07);
 	}
 
 	if (Game_Flag_Query(kFlagUG08toUG07)) {
@@ -190,14 +190,14 @@ void SceneScriptUG07::PlayerWalkedIn() {
 
 void SceneScriptUG07::PlayerWalkedOut() {
 	if (Global_Variable_Query(kVariableChapter) == 4
-	 && (Actor_Query_Goal_Number(kActorOfficerLeary) == 307
-	  || Actor_Query_Goal_Number(kActorOfficerGrayford) == 307
+	 && (Actor_Query_Goal_Number(kActorOfficerLeary) == kGoalOfficerLearyBlockingUG07
+	  || Actor_Query_Goal_Number(kActorOfficerGrayford) == kGoalOfficerGrayfordBlockingUG07
 	 )
 	) {
 		Non_Player_Actor_Combat_Mode_Off(kActorOfficerLeary);
 		Non_Player_Actor_Combat_Mode_Off(kActorOfficerGrayford);
-		Actor_Set_Goal_Number(kActorOfficerLeary, 306);
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 306);
+		Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyPrepareToHuntAroundAct4);
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordPrepareToHuntAroundAct4);
 	}
 
 	if (Actor_Query_In_Set(kActorClovis, kSetUG07)) {

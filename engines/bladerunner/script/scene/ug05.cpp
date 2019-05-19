@@ -192,7 +192,7 @@ void SceneScriptUG05::PlayerWalkedIn() {
 
 			Actor_Put_In_Set(kActorOfficerGrayford, kSetUG05);
 			Actor_Set_At_XYZ(kActorOfficerGrayford, 4.22f, -1.37f, -925.0f, 750);
-			Actor_Set_Goal_Number(kActorOfficerGrayford, 599);
+			Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordDead);
 			Actor_Retired_Here(kActorOfficerGrayford, 70, 36, true, -1);
 
 			int affectionTowardsActor = getAffectionTowardsActor();

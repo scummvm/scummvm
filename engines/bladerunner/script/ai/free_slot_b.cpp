@@ -534,10 +534,10 @@ void AIScriptFreeSlotB::processGoal301() {
 		AI_Movement_Track_Append(kActorFreeSlotB, 466, 1);
 #else
 		// replacing with something more normal
-		World_Waypoint_Set(466, kSetUG09, -152.51f, 156.94f, -498.0f);
+		World_Waypoint_Set(466, kSetUG09, -149.0f,  156.94f, -498.0f);
 		World_Waypoint_Set(547, kSetUG09,  -32.60f, 156.94f, -498.0f);
-		AI_Movement_Track_Append(kActorFreeSlotB, 466, 4);
-		AI_Movement_Track_Append(kActorFreeSlotB, 547, 1);
+		AI_Movement_Track_Append(kActorFreeSlotB, 466, 1);
+		AI_Movement_Track_Append(kActorFreeSlotB, 547, 2);
 		AI_Movement_Track_Append(kActorFreeSlotB, 466, 1);
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		break;

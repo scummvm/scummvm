@@ -2378,11 +2378,61 @@ enum GoalOfficerLeary {
 	kGoalOfficerLearyDefault = 0,
 	kGoalOfficerLearyRC01WalkToCrowd = 1,
 #if BLADERUNNER_ORIGINAL_BUGS
-	kGoalOfficerLearyRC01CrowdInterrogation = 2
+	kGoalOfficerLearyRC01CrowdInterrogation = 2,
 #else
 	kGoalOfficerLearyRC01CrowdInterrogation = 2,
-	kGoalOfficerLearyRC01ResumeWalkToCrowd = 4
+	kGoalOfficerLearyRC01ResumeWalkToCrowd = 4, // added OfficerLeary goal
 #endif // BLADERUNNER_ORIGINAL_BUGS
+	kGoalOfficerLearyPoliceDoneFromRC01 = 3,
+	kGoalOfficerLearyEndOfAct1 = 99,
+	kGoalOfficerLearyVisitsBulletBob = 102, // un-triggered
+	kGoalOfficerLearyStartOfAct4 = 300,
+	kGoalOfficerLearyHuntingAroundAct4 = 305,
+	kGoalOfficerLearyPrepareToHuntAroundAct4 = 306,
+	kGoalOfficerLearyBlockingUG07 = 307,
+	// 308 - 309 un-triggered?
+	kGoalOfficerLearyAttackMcCoyAct4 = 310,
+	kGoalOfficerLearyStartOfAct5 = 400,
+	kGoalOfficerLearyDummyGoalAct5 = 410,
+	kGoalOfficerLearyPoliceWait120SecondsToAttackHF05 = 420,
+	kGoalOfficerLearyPoliceWait60SecondsToAttackHF05 = 425,
+	kGoalOfficerLearyPoliceAboutToAttackHF05 = 430,
+	kGoalOfficerLearyDead = 599
+};
+
+
+enum GoalOfficerGrayford {
+	kGoalOfficerGrayfordDefault = 0,
+	kGoalOfficerGrayfordWalksInPS03a = 1,
+	kGoalOfficerGrayfordWalksInPS03b = 2,
+	kGoalOfficerGrayfordWalksInPS03c = 3,
+	kGoalOfficerGrayfordWalksInPS03d = 4,
+	kGoalOfficerGrayfordWalksInFreeSlotC = 5,
+	kGoalOfficerGrayfordWalksInPS09a = 6,
+	kGoalOfficerGrayfordWalksInPS09b = 7,
+	kGoalOfficerGrayfordWalksInPS09c = 8,
+	kGoalOfficerGrayfordWalksInPS03e = 9,
+	kGoalOfficerGrayfordPrepareToRestartWalkAround = 10,
+	kGoalOfficerGrayfordStopAndTalk1 = 99, // this is used temporarily to make him stop and talk
+	kGoalOfficerGrayfordArrivesToDR04 = 101,
+	kGoalOfficerGrayfordArrivedAtDR04 = 102,
+	kGoalOfficerGrayfordTalkToMcCoyAndReportAtDR04 = 103,
+	kGoalOfficerGrayfordPatrolsAtDR04a = 104,
+	kGoalOfficerGrayfordPatrolsAtDR04b = 105,
+	kGoalOfficerGrayfordStopPatrolToTalkToMcCoyAtDR04 = 106,
+	kGoalOfficerGrayfordLeavesWithMorajiCorpseDR04 = 110,
+	kGoalOfficerGrayfordArrestMcCoyInTB03Act4 = 399, // TB02_TB03
+	kGoalOfficerGrayfordStopAndTalkDR04 = 199, // this is used temporarily to make him stop and talk while at UG04 (Moraji's death scene)
+	kGoalOfficerGrayfordStartOfAct4 = 300,
+	kGoalOfficerGrayfordHuntingAroundAct4 = 305,
+	kGoalOfficerGrayfordPrepareToHuntAroundAct4 = 306,
+	kGoalOfficerGrayfordBlockingUG07 = 307,
+	kGoalOfficerGrayfordArrestsMcCoyAct4CT12 = 308,
+	kGoalOfficerGrayfordAttackMcCoyAct4 = 310,
+	kGoalOfficerGrayfordStartOfAct5 = 400,
+	kGoalOfficerGrayfordDummyGoalAct5 = 410,
+	kGoalOfficerGrayfordPoliceAboutToAttackHF05 = 430,
+	kGoalOfficerGrayfordDead = 599
 };
 
 enum GoalHanoi {

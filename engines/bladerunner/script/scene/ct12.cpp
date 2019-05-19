@@ -145,7 +145,7 @@ bool SceneScriptCT12::ClickedOnActor(int actorId) {
 	) {
 		Actor_Face_Actor(kActorOfficerGrayford, kActorMcCoy, true);
 		Actor_Face_Actor(kActorMcCoy, kActorOfficerGrayford, true);
-		Actor_Says(kActorMcCoy, 710, kAnimationModeTalk);
+		Actor_Says(kActorMcCoy, 710, kAnimationModeTalk); // Hold it! I'm not a Replicant, I got proof!
 		Actor_Says(kActorOfficerGrayford, 20, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 715, kAnimationModeTalk);
 		Actor_Says(kActorOfficerGrayford, 30, kAnimationModeTalk);
@@ -156,9 +156,9 @@ bool SceneScriptCT12::ClickedOnActor(int actorId) {
 		Actor_Says(kActorMcCoy, 725, kAnimationModeTalk);
 		Actor_Says(kActorOfficerGrayford, 70, kAnimationModeTalk);
 		Actor_Says(kActorOfficerGrayford, 80, kAnimationModeTalk);
-		Actor_Says(kActorOfficerGrayford, 90, kAnimationModeTalk);
-		Actor_Says(kActorOfficerGrayford, 100, kAnimationModeTalk);
-		Actor_Says(kActorOfficerGrayford, 110, kAnimationModeTalk);
+		Actor_Says(kActorOfficerGrayford, 90, kAnimationModeTalk); // if you are lying...
+		Actor_Says(kActorOfficerGrayford, 100, kAnimationModeTalk); // you gonna wish...
+		Actor_Says(kActorOfficerGrayford, 110, kAnimationModeTalk); // Take him in!
 		Game_Flag_Set(kFlagUnpauseGenWalkers);
 		Game_Flag_Set(kFlagMcCoyFreedOfAccusations);
 		Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyStartChapter5);

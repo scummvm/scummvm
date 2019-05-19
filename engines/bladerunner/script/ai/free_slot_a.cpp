@@ -659,7 +659,7 @@ void AIScriptFreeSlotA::goToRandomUGxx() {
 		// replacing with something more normal
 		World_Waypoint_Set(463, kSetUG09, 91.0f, 156.94f, -498.0f);
 		World_Waypoint_Set(464, kSetUG09, -29.60f, 156.94f, -498.0f);
-		AI_Movement_Track_Append(kActorFreeSlotA, 463, 4);
+		AI_Movement_Track_Append(kActorFreeSlotA, 463, 1);
 		AI_Movement_Track_Append(kActorFreeSlotA, 464, 1);
 		AI_Movement_Track_Append(kActorFreeSlotA, 463, 1);
 #endif
