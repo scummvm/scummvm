@@ -122,43 +122,43 @@ bool AIScriptOfficerLeary::Update() {
 		case kSetDR01_DR02_DR04:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
-				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 0, 4, 7, 8, -1, -1, -1, 10, 300, 0);
+				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 0, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
 		case kSetBB01:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
-				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 1, 4, 7, 8, -1, -1, -1, 10, 300, 0);
+				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 1, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
 		case kSetCT11:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
-				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 5, 4, 7, 8, -1, -1, -1, 10, 300, 0);
+				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 5, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
 		case kSetMA07:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
-				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 7, 4, 7, 8, -1, -1, -1, 10, 300, 0);
+				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 7, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
 		case kSetNR01:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
-				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 3, 4, 7, 8, -1, -1, -1, 10, 300, 0);
+				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 3, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
 		case kSetRC03:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
-				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 18, 4, 7, 8, -1, -1, -1, 10, 300, 0);
+				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 18, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
 		case kSetUG01:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
-				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 11, 4, 7, 8, -1, -1, -1, 10, 300, 0);
+				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 11, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
 		case kSetUG04:
@@ -166,31 +166,31 @@ bool AIScriptOfficerLeary::Update() {
 		case kSetUG06:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
-				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 10, 4, 7, 8, -1, -1, -1, 10, 300, 0);
+				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 10, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
 		case kSetUG08:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
-				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 13, 4, 7, 8, -1, -1, -1, 10, 300, 0);
+				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 13, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
 		case kSetUG10:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
-				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 14, 4, 7, 8, -1, -1, -1, 10, 300, 0);
+				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 14, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
 		case kSetUG12:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
-				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 16, 4, 7, 8, -1, -1, -1, 10, 300, 0);
+				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 16, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
 		case kSetUG14:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
-				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 17, 4, 7, 8, -1, -1, -1, 10, 300, 0);
+				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 17, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
 		}
@@ -238,7 +238,7 @@ void AIScriptOfficerLeary::CompletedMovementTrack() {
 	}
 	if (goal == kGoalOfficerLearyBlockingUG07) {
 		// UG07 before McCoy visits his apartment in Act 4
-		Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 0, 1, kActorMcCoy, 12, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, -1, -1, 15, 300, 0);
+		Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 12, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, -1, -1, 15, 300, false);
 	}
 	if (goal == 308) {
 		// goal 308 (and 309) are never triggered in the original code

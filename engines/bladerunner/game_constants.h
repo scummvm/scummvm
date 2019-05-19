@@ -1765,6 +1765,23 @@ enum GameModelAnimations {
 	kModelAnimationRachaelTalkHandOnChest          = 831,
 	kModelAnimationRachaelTalkHandWaveToRight      = 832,
 
+	kModelAnimationHysteriaPatron1DanceStandingUpSemiSitAndUp = 877,
+	kModelAnimationHysteriaPatron1DanceStandingUpLeftMotion   = 878,
+	kModelAnimationHysteriaPatron1DanceStandingUpStowingMoney = 879, // original unused
+	kModelAnimationHysteriaPatron1DanceSplitsDuckAndDown      = 880,
+	kModelAnimationHysteriaPatron1DanceSplitsSemiUpAndDown    = 881,
+	kModelAnimationHysteriaPatron1DanceSplitsBackAndForth     = 882,
+	kModelAnimationHysteriaPatron1DanceStandingUpToSplits     = 883,
+	kModelAnimationHysteriaPatron1DanceSplitsToStandingUp     = 884,
+	kModelAnimationHysteriaPatron2DanceHandsBellyMotion       = 885, // most used
+	kModelAnimationHysteriaPatron2DanceHandsUpLeftMotion      = 886,
+	kModelAnimationHysteriaPatron2DanceHandsUpSitAndUp        = 887,
+	kModelAnimationHysteriaPatron2DanceHandsDownHipsSwirl     = 888,
+	kModelAnimationHysteriaPatron2DanceHandsDownLegSwirl      = 889,
+	kModelAnimationHysteriaPatron2DanceHandsDownLeanBackForth = 890,
+	kModelAnimationHysteriaPatron2DanceHandsUpToHandsDown     = 891,
+	kModelAnimationHysteriaPatron2DanceHandsDownToHandsUp     = 892,
+
 	kModelAnimationBadge                       = 931,
 	kModelAnimationBomb                        = 932,
 	kModelAnimationCandy                       = 933,

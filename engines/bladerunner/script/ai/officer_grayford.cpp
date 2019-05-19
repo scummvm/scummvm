@@ -292,7 +292,7 @@ void AIScriptOfficerGrayford::ReceivedClue(int clueId, int fromActorId) {
 
 void AIScriptOfficerGrayford::ClickedByPlayer() {
 	switch (Actor_Query_Goal_Number(kActorOfficerGrayford)) {
-	case 1:
+	case kGoalOfficerGrayfordWalksInPS03a:
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
 		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordStopAndTalk1);
 		Actor_Face_Actor(kActorMcCoy, kActorOfficerGrayford, true);
@@ -303,10 +303,10 @@ void AIScriptOfficerGrayford::ClickedByPlayer() {
 			Actor_Says(kActorMcCoy, 4515, 13);
 			Actor_Says(kActorOfficerGrayford, 230, 13);
 		}
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 1);
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordWalksInPS03a);
 		break;
 
-	case 2:
+	case kGoalOfficerGrayfordWalksInPS03b:
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
 		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordStopAndTalk1);
 		Actor_Face_Actor(kActorMcCoy, kActorOfficerGrayford, true);
@@ -317,10 +317,10 @@ void AIScriptOfficerGrayford::ClickedByPlayer() {
 			Actor_Says(kActorMcCoy, 4515, 13);
 			Actor_Says(kActorOfficerGrayford, 330, 13);
 		}
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 2);
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordWalksInPS03b);
 		break;
 
-	case 3:
+	case kGoalOfficerGrayfordWalksInPS03c:
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
 		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordStopAndTalk1);
 		Actor_Face_Actor(kActorMcCoy, kActorOfficerGrayford, true);
@@ -330,10 +330,10 @@ void AIScriptOfficerGrayford::ClickedByPlayer() {
 		} else {
 			Actor_Says(kActorMcCoy, 5075, 14); // bug in the original? Matches the above statement
 		}
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 3);
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordWalksInPS03c);
 		break;
 
-	case 4:
+	case kGoalOfficerGrayfordWalksInPS03d:
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
 		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordStopAndTalk1);
 		Actor_Face_Actor(kActorMcCoy, kActorOfficerGrayford, true);
@@ -345,25 +345,25 @@ void AIScriptOfficerGrayford::ClickedByPlayer() {
 			Actor_Says(kActorMcCoy, 4515, 13);
 			Actor_Says(kActorOfficerGrayford, 330, 13);
 		}
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 4);
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordWalksInPS03d);
 		break;
 
-	case 7:
+	case kGoalOfficerGrayfordWalksInPS09b:
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
 		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordStopAndTalk1);
 		Actor_Face_Actor(kActorMcCoy, kActorOfficerGrayford, true);
 		Actor_Says(kActorMcCoy, 4515, 14);
 		Actor_Says(kActorOfficerGrayford, 330, 13);
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 7);
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordWalksInPS09b);
 		break;
-
-	case 8:
+// asdf goals 6 and 9?
+	case kGoalOfficerGrayfordWalksInPS09c:
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
 		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordStopAndTalk1);
 		Actor_Face_Actor(kActorMcCoy, kActorOfficerGrayford, true);
 		Actor_Face_Actor(kActorOfficerGrayford, kActorMcCoy, true);
 		Actor_Says(kActorMcCoy, 5075, 13);
-		Actor_Set_Goal_Number(kActorOfficerGrayford, 8);
+		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordWalksInPS09c);
 		break;
 
 	case kGoalOfficerGrayfordPatrolsAtDR04a:

@@ -121,7 +121,7 @@ void AIScriptFreeSlotB::CompletedMovementTrack() {
 		break;
 
 	case 406:
-		Non_Player_Actor_Combat_Mode_On(kActorFreeSlotB, 0, 0, 0, 8, 4, 7, 8, 0, 0, 100, 5, 300, 0);
+		Non_Player_Actor_Combat_Mode_On(kActorFreeSlotB, kActorCombatStateIdle, false, kActorMcCoy, 8, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 5, 300, false);
 		break;
 
 	default:
@@ -195,7 +195,7 @@ bool AIScriptFreeSlotB::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case 302:
 		Actor_Set_Targetable(kActorFreeSlotB, true);
-		Non_Player_Actor_Combat_Mode_On(kActorFreeSlotB, 0, 0, 0, 8, 4, 7, 8, 25, 0, 75, 5, 300, 0);
+		Non_Player_Actor_Combat_Mode_On(kActorFreeSlotB, kActorCombatStateIdle, false, kActorMcCoy, 8, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 25, 0, 75, 5, 300, false);
 		break;
 
 	case 400:
