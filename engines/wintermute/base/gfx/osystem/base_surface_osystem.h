@@ -81,6 +81,17 @@ public:
 		}
 		return _height;
 	}
+	bool getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a) override {
+		if (!_loaded) {
+			finishLoad();
+		}
+		if (_surface) {
+			uint32 pixel = getPixelAt(_surface, x, y);
+			_surface->format.colorToARGB(pixel, *a, *r, *g, *b);
+			return STATUS_OK;
+		}
+		return STATUS_FAILED;
+	}
 
 	Graphics::AlphaType getAlphaType() const { return _alphaType; }
 private:
