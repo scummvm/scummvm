@@ -35,6 +35,14 @@ TADS::TADS(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gam
 	os_init(nullptr, nullptr, 0, 0, 0);
 }
 
+bool TADS::hasFeature(EngineFeature f) const {
+	// The TADS codebases rely on a lot of static globals, so RTL can't be supported
+	if (f == kSupportsRTL)
+		return false;
+
+	return GlkAPI::hasFeature(f);
+}
+
 Common::Error TADS::loadGameData(strid_t file) {
 	// TODO
 	return Common::kNoError;

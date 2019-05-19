@@ -86,7 +86,7 @@ protected:
 	/**
 	  * Returns true whether a given feature is supported by the engine
 	  */
-	virtual bool hasFeature(EngineFeature f) const;
+	virtual bool hasFeature(EngineFeature f) const override;
 
 	/**
 	 * Setup the video mode
@@ -137,16 +137,6 @@ public:
 	virtual bool canSaveGameStateCurrently() override {
 		return true;
 	}
-
-	/**
-	 * Returns the bitset of game features
-	 */
-	uint32 getFeatures() const;
-
-	/**
-	 * Returns whether the game is a demo
-	 */
-	bool isDemo() const;
 
 	/**
 	 * Returns the language
