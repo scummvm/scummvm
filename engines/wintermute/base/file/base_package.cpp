@@ -142,6 +142,8 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 		debugC(kWintermuteDebugFileAccess | kWintermuteDebugLog, "  Warning: package file '%s' is outdated.", filename.c_str());
 	}
 	_priority = hdr._priority;
+	_version  = hdr._gameVersion;
+
 	// new in v2
 	if (hdr._packageVersion == PACKAGE_VERSION) {
 		uint32 dirOffset;
