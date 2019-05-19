@@ -30,7 +30,7 @@ OPEN(guide_write,'README.guide','W')
 Prepare the Amiga guide file, add the intro and fixed text.
 */
 WRITELN(guide_write,'@DATABASE ScummVM README.guide')
-WRITELN(guide_write,'@$VER: ScummVM Readme 2.0.0 (12.07.2017)')
+WRITELN(guide_write,'@$VER: ScummVM Readme @VERSION@')
 WRITELN(guide_write,'@(C) by The ScummVM team')
 WRITELN(guide_write,'@AUTHOR The ScummVM team')
 WRITELN(guide_write,'@WORDWRAP')
