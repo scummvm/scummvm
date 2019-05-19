@@ -237,6 +237,8 @@ Steam version and demo from Steam are missing the `fonts` directory.
 The required fonts can be copied over from demo version obtained from
 different sources or a GOG or retail version.
 
+Mixing files from different versions of the game is not supported.
+
 ### 5.2. Running the game ###
 
 1. Prepare the game directory as specified above.
