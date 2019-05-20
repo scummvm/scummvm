@@ -418,7 +418,7 @@ void CryOmni3DEngine_Versailles::setupImgScripts() {
 	SET_SCRIPT_BY_ID(45280);
 	SET_SCRIPT_BY_ID(88001);
 	SET_SCRIPT_BY_ID(88002);
-	//SET_SCRIPT_BY_ID(88003); // TODO: implement it
+	SET_SCRIPT_BY_ID(88003);
 	SET_SCRIPT_BY_ID(88004);
 #undef SET_SCRIPT_BY_ID
 }
@@ -2675,6 +2675,381 @@ IMG_CB(88002) {
 	}
 }
 
+IMG_CB(88003) {
+	// Dispatch to the correct state
+	if (_gameVariables[GameVariables::kBombState] >= 1 &&
+	        _gameVariables[GameVariables::kBombState] <= 5) {
+		FixedImgCallback callback;
+		switch (_gameVariables[GameVariables::kBombState]) {
+		case 1:
+			callback = &CryOmni3DEngine_Versailles::img_88003b;
+			break;
+		case 2:
+			callback = &CryOmni3DEngine_Versailles::img_88003c;
+			break;
+		case 3:
+			callback = &CryOmni3DEngine_Versailles::img_88003d;
+			break;
+		case 4:
+			callback = &CryOmni3DEngine_Versailles::img_88003e;
+			break;
+		case 5:
+			callback = &CryOmni3DEngine_Versailles::img_88003f;
+			break;
+		}
+		ZonFixedImage::CallbackFunctor *functor =
+		    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this, callback);
+		fimg->changeCallback(functor);
+		return;
+	}
+
+	fimg->load("70Z_10.GIF");
+
+	// Draw countdown there and not in fixed image class directly
+	Graphics::ManagedSurface tempSurf;
+	const Graphics::Surface *fimgSurface = fimg->surface();
+	tempSurf.create(fimgSurface->w, fimgSurface->h, fimgSurface->format);
+	tempSurf.blitFrom(*fimgSurface);
+	drawCountdown(&tempSurf);
+	fimg->updateSurface(&tempSurf.rawSurface());
+
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_currentZone == 0 && fimg->_usedObject &&
+		        fimg->_usedObject->idOBJ() == 145) {
+			// Now we know how to reach the bomb
+			_gameVariables[GameVariables::kBombState] = 1;
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_88003b);
+			fimg->changeCallback(functor);
+			break;
+		}
+		if (fimg->_zoneUse) {
+			if (_currentLevel == 7) {
+				// You will need something to reach the bomb
+				displayMessageBox(kFixedimageMsgBoxParameters, fimg->surface(), 10,
+				                  fimg->getZoneCenter(fimg->_currentZone),
+				                  Common::Functor0Mem<void, ZonFixedImage>(fimg, &ZonFixedImage::manage));
+			}
+		}
+		if (countDown()) {
+			// Countdown has changed: refresh surface
+			drawCountdown(&tempSurf);
+			fimg->updateSurface(&tempSurf.rawSurface());
+		}
+	}
+}
+
+IMG_CB(88003b) {
+	fimg->load("70Z_11.GIF");
+
+	// Draw countdown there and not in fixed image class directly
+	Graphics::ManagedSurface tempSurf;
+	const Graphics::Surface *fimgSurface = fimg->surface();
+	tempSurf.create(fimgSurface->w, fimgSurface->h, fimgSurface->format);
+	tempSurf.blitFrom(*fimgSurface);
+	drawCountdown(&tempSurf);
+	fimg->updateSurface(&tempSurf.rawSurface());
+
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_currentZone == 0 && fimg->_usedObject &&
+		        fimg->_usedObject->idOBJ() == 97) {
+			// Unlock first line with key 1
+			_gameVariables[GameVariables::kBombState] = 2;
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_88003c);
+			fimg->changeCallback(functor);
+			break;
+		}
+		if (countDown()) {
+			// Countdown has changed: refresh surface
+			drawCountdown(&tempSurf);
+			fimg->updateSurface(&tempSurf.rawSurface());
+		}
+	}
+}
+
+IMG_CB(88003c) {
+	fimg->load("70Z_12.GIF");
+
+	// Draw countdown there and not in fixed image class directly
+	Graphics::ManagedSurface tempSurf;
+	const Graphics::Surface *fimgSurface = fimg->surface();
+	tempSurf.create(fimgSurface->w, fimgSurface->h, fimgSurface->format);
+	tempSurf.blitFrom(*fimgSurface);
+	drawCountdown(&tempSurf);
+	fimg->updateSurface(&tempSurf.rawSurface());
+
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_currentZone == 1 && fimg->_usedObject &&
+		        fimg->_usedObject->idOBJ() == 116) {
+			// Unlock second line with key 2
+			_gameVariables[GameVariables::kBombState] = 3;
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_88003d);
+			fimg->changeCallback(functor);
+			break;
+		}
+		if (countDown()) {
+			// Countdown has changed: refresh surface
+			drawCountdown(&tempSurf);
+			fimg->updateSurface(&tempSurf.rawSurface());
+		}
+	}
+}
+
+IMG_CB(88003d) {
+	fimg->load("70Z_13.GIF");
+
+	// Draw countdown there and not in fixed image class directly
+	Graphics::ManagedSurface tempSurf;
+	const Graphics::Surface *fimgSurface = fimg->surface();
+	tempSurf.create(fimgSurface->w, fimgSurface->h, fimgSurface->format);
+	tempSurf.blitFrom(*fimgSurface);
+	drawCountdown(&tempSurf);
+	fimg->updateSurface(&tempSurf.rawSurface());
+
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_currentZone == 2 && fimg->_usedObject &&
+		        fimg->_usedObject->idOBJ() == 135) {
+			// Unlock third line with key 3
+			_gameVariables[GameVariables::kBombState] = 4;
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_88003e);
+			fimg->changeCallback(functor);
+			break;
+		}
+		if (countDown()) {
+			// Countdown has changed: refresh surface
+			drawCountdown(&tempSurf);
+			fimg->updateSurface(&tempSurf.rawSurface());
+		}
+	}
+}
+
+IMG_CB(88003e) {
+	fimg->load("70Z_14.GIF");
+
+	// Draw countdown there and not in fixed image class directly
+	Graphics::ManagedSurface tempSurf;
+	const Graphics::Surface *fimgSurface = fimg->surface();
+	tempSurf.create(fimgSurface->w, fimgSurface->h, fimgSurface->format);
+	tempSurf.blitFrom(*fimgSurface);
+	drawCountdown(&tempSurf);
+	fimg->updateSurface(&tempSurf.rawSurface());
+
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_currentZone == 3 && fimg->_usedObject &&
+		        fimg->_usedObject->idOBJ() == 136) {
+			// Unlock fourth line with key 4
+			_gameVariables[GameVariables::kBombState] = 5;
+			ZonFixedImage::CallbackFunctor *functor =
+			    new Common::Functor1Mem<ZonFixedImage *, void, CryOmni3DEngine_Versailles>(this,
+			            &CryOmni3DEngine_Versailles::img_88003f);
+			fimg->changeCallback(functor);
+			break;
+		}
+		if (countDown()) {
+			// Countdown has changed: refresh surface
+			drawCountdown(&tempSurf);
+			fimg->updateSurface(&tempSurf.rawSurface());
+		}
+	}
+}
+
+IMG_CB(88003f) {
+	fimg->load("70Z_15.GIF");
+
+	// Draw countdown there and not in fixed image class directly
+	Graphics::ManagedSurface tempSurf;
+	const Graphics::Surface *fimgSurface = fimg->surface();
+	tempSurf.create(fimgSurface->w, fimgSurface->h, fimgSurface->format);
+	tempSurf.blitFrom(*fimgSurface);
+	drawCountdown(&tempSurf);
+	fimg->updateSurface(&tempSurf.rawSurface());
+
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			fimg->_exit = true;
+			break;
+		}
+		if (fimg->_zoneUse) {
+			if (handleBomb(fimg)) {
+				playInGameVideo("COFFRE");
+				_forcePaletteUpdate = true;
+				// Force reload of the place
+				if (_nextPlaceId == -1u) {
+					_nextPlaceId = _currentPlaceId;
+				}
+				playTransitionEndLevel(7);
+				break;
+			}
+		}
+		if (countDown()) {
+			// Countdown has changed: refresh surface
+			drawCountdown(&tempSurf);
+			fimg->updateSurface(&tempSurf.rawSurface());
+		}
+	}
+}
+
+bool CryOmni3DEngine_Versailles::handleBomb(ZonFixedImage *fimg) {
+	bool success = false;
+	Common::RandomSource rnd("VersaillesBomb");
+	Graphics::Surface bmpLetters[26];
+	unsigned char bombPossibilites[60][5];
+	unsigned char bombCurrentLetters[60];
+	Graphics::ManagedSurface tempSurf;
+
+	const unsigned int kBombPasswordLength = strlen(kBombPassword);
+	if (kBombPasswordLength >= kBombPasswordMaxLength) {
+		error("Bomb password is too long");
+	}
+
+	loadBMPs("bomb_%02d.bmp", bmpLetters, 26);
+	for (unsigned int i = 0; i < kBombPasswordLength; i++) {
+		bombPossibilites[i][0] = toupper(kBombPassword[i]);
+		for (unsigned int j = 1; j < 5; j++) {
+			bool foundSameLetter;
+			do {
+				foundSameLetter = false;
+				bombPossibilites[i][j] = rnd.getRandomNumberRng('A', 'Z');
+				for (unsigned int k = 0; k < j; k++) {
+					if (bombPossibilites[i][k] == bombPossibilites[i][j]) {
+						foundSameLetter = true;
+					}
+				}
+			} while (foundSameLetter);
+		}
+		bombCurrentLetters[i] = rnd.getRandomNumber(4);
+	}
+
+	if (kBombPasswordLength <= kBombPasswordSmallLength) {
+		fimg->load("70z_16.GIF");
+	} else {
+		fimg->load("70z_17.GIF");
+	}
+	const Graphics::Surface *fimgSurface = fimg->surface();
+	tempSurf.create(fimgSurface->w, fimgSurface->h, fimgSurface->format);
+	tempSurf.blitFrom(*fimgSurface);
+	drawBombLetters(tempSurf, bmpLetters, kBombPasswordLength, bombPossibilites, bombCurrentLetters);
+	drawCountdown(&tempSurf);
+	fimg->updateSurface(&tempSurf.rawSurface());
+
+	while (1) {
+		fimg->manage();
+		if (fimg->_exit || fimg->_zoneLow) {
+			break;
+		}
+		if (fimg->_zoneUse) {
+			if (fimg->_currentZone < kBombPasswordLength) {
+				// Safe digit
+				bombCurrentLetters[fimg->_currentZone] = (bombCurrentLetters[fimg->_currentZone] + 1) % 5;
+				// Reset the surface and redraw letters on it
+				tempSurf.blitFrom(*fimgSurface);
+				drawBombLetters(tempSurf, bmpLetters, kBombPasswordLength, bombPossibilites, bombCurrentLetters);
+				drawCountdown(&tempSurf);
+				fimg->updateSurface(&tempSurf.rawSurface());
+
+				waitMouseRelease();
+
+				// Check if password is OK
+				success = true;
+				for (unsigned int i = 0; i < kBombPasswordLength; i++) {
+					unsigned char letterChar = bombPossibilites[i][bombCurrentLetters[i]];
+					if (letterChar != kBombPassword[i]) {
+						success = false;
+						break;
+					}
+				}
+				if (success) {
+					break;
+				}
+			}
+		}
+		if (countDown()) {
+			// Countdown has changed: refresh surface
+			drawCountdown(&tempSurf);
+			fimg->updateSurface(&tempSurf.rawSurface());
+		}
+	}
+
+	for (unsigned int i = 0; i < 26; i++) {
+		bmpLetters[i].free();
+	}
+	return success;
+}
+
+const char *CryOmni3DEngine_Versailles::kBombPassword = "JEMENVAISMAISLETATDEMEURERATOUJOURS";
+// We use brace elision here because it's dumped from the EXE
+const unsigned short CryOmni3DEngine_Versailles::kBombLettersPos[2][kBombPasswordMaxLength][2] = {
+	{
+		26, 91, 84, 89, 141, 89, 202, 88, 261, 87, 322, 86, 384, 85, 448, 84,
+		512, 83, 576, 83, 26, 175, 84, 175, 142, 174, 202, 174, 260, 174, 322,
+		174, 384, 173, 448, 173, 512, 173, 576, 172, 26, 261, 84, 261, 141,
+		261, 202, 261, 261, 262, 322, 262, 383, 262, 447, 263, 512, 263, 576,
+		263, 26, 344, 84, 345, 142, 346, 202, 347, 260, 348, 322, 349, 384,
+		350, 448, 351, 512, 352, 576, 352
+	},
+	{
+		42, 26, 100, 24, 155, 22, 214, 19, 271, 18, 330, 15, 389, 14, 451, 11,
+		515, 8, 576, 6, 45, 102, 100, 102, 156, 101, 215, 100, 272, 99, 331,
+		98, 391, 97, 453, 96, 515, 94, 578, 94, 44, 184, 101, 184, 157, 184,
+		215, 183, 272, 183, 331, 183, 391, 182, 453, 182, 515, 182, 577, 181,
+		44, 267, 101, 267, 157, 267, 215, 268, 272, 268, 331, 268, 390, 269,
+		453, 269, 515, 269, 578, 269, 45, 348, 101, 349, 156, 349, 215, 351,
+		271, 351, 331, 351, 391, 353, 453, 354, 515, 355, 577, 356, 44, 434,
+		101, 435, 156, 436, 215, 437, 272, 437, 331, 437, 391, 439, 453, 440,
+		515, 441, 578, 442
+	},
+};
+
+void CryOmni3DEngine_Versailles::drawBombLetters(Graphics::ManagedSurface &surface,
+        const Graphics::Surface(&bmpLetters)[26], const unsigned int kBombPasswordLength,
+        const unsigned char (&bombPossibilites)[kBombPasswordMaxLength][5],
+        const unsigned char (&bombCurrentLetters)[kBombPasswordMaxLength]) {
+	unsigned int table = kBombPasswordLength <= kBombPasswordSmallLength ? 0 : 1;
+	for (unsigned int i = 0; i < kBombPasswordLength; i++) {
+		unsigned char letterChar = bombPossibilites[i][bombCurrentLetters[i]];
+		unsigned int letterId = 0;
+		if (letterChar >= 'A' && letterChar <= 'Z') {
+			letterId = letterChar - 'A';
+		}
+		const Graphics::Surface &letter = bmpLetters[letterId];
+		Common::Point dst(kBombLettersPos[table][i][0], kBombLettersPos[table][i][1]);
+		surface.transBlitFrom(letter, dst);
+	}
+}
+
 IMG_CB(88004) {
 	fimg->load("31j31.gif");
 	while (1) {
@@ -4075,6 +4450,112 @@ FILTER_EVENT(6, 19) {
 	} else if (*event == 36190 && _placeStates[19].state == 1) {
 		collectObject(142);
 		setGameTime(2, 6);
+		// Handled here
+		return false;
+	}
+
+	return true;
+}
+
+FILTER_EVENT(7, 2) {
+	if (*event == 37021) {
+		if (_inventory.selectedObject() &&
+		        _inventory.selectedObject()->idOBJ() == 103) {
+			// Light the candle
+			_inventory.removeByNameID(103);
+			collectObject(102);
+		}
+		// Handled here
+		return false;
+	} else if (*event == 37022) {
+		if (!_inventory.inInventoryByNameID(97)) {
+			collectObject(97);
+			_inventory.deselectObject();
+		} else {
+			// Jar is empty
+			displayMessageBoxWarp(11);
+		}
+		// Handled here
+		return false;
+	} else if (*event == 7) {
+		// Stairs
+		if (_gameVariables[GameVariables::kUsedLitCandle]) {
+			return true;
+		}
+
+		if (_inventory.selectedObject() &&
+		        _inventory.selectedObject()->idOBJ() == 102) {
+			// Now you can go
+			displayMessageBoxWarp(12);
+			_inventory.removeByNameID(102);
+			_inventory.deselectObject();
+			// Save it for later
+			_gameVariables[GameVariables::kUsedLitCandle] = 1;
+
+			return true;
+		}
+
+		// Didn't used lit candle and not using it now: denied
+		// Too dark
+		displayMessageBoxWarp(7);
+		return false;
+	}
+
+	return true;
+}
+
+FILTER_EVENT(7, 9) {
+	if (*event == 37090) {
+		if (_placeStates[9].state == 0) {
+			// Get the candle snuffer
+			collectObject(145);
+			_inventory.deselectObject();
+			setPlaceState(9, 1);
+		}
+		// Handled here
+		return false;
+	}
+
+	return true;
+}
+
+FILTER_EVENT(7, 10_11_13) {
+	if (*event == 37131) {
+		if (_inventory.selectedObject() &&
+		        _inventory.selectedObject()->idOBJ() == 143 &&
+		        !_inventory.inInventoryByNameID(136)) {
+			collectObject(136);
+			// WORKAROUND: Deselect the tool
+			_inventory.deselectObject();
+		}
+		// Handled here
+		return false;
+	} else if (*event == 37132) {
+		if (_inventory.selectedObject() &&
+		        _inventory.selectedObject()->idOBJ() == 143) {
+			// Nothing in this orange tree
+			displayMessageBoxWarp(5);
+		}
+		// Handled here
+		return false;
+	}
+
+	return true;
+}
+
+FILTER_EVENT(7, 20) {
+	if (*event == 21) {
+		fakeTransition(*event);
+
+		playInGameVideo("70z_10");
+
+		executeSeeAction(88003);
+
+		_forcePaletteUpdate = true;
+		// Force reload of the place
+		if (_nextPlaceId == -1u) {
+			_nextPlaceId = _currentPlaceId;
+		}
 		// Handled here
 		return false;
 	}
