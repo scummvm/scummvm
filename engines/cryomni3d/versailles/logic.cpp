@@ -4085,5 +4085,85 @@ FILTER_EVENT(6, 19) {
 #undef FILTER_EVENT
 #undef INIT_PLACE
 
+// Countdown
+
+void CryOmni3DEngine_Versailles::initCountdown() {
+	strcpy(_countdownValue, "05:00");
+	if (_gameVariables[GameVariables::kSavedCountdown]) {
+		unsigned int counter = _gameVariables[GameVariables::kSavedCountdown];
+		_countdownValue[4] = counter;
+		counter >>= 8;
+		_countdownValue[3] = counter;
+		counter >>= 8;
+		_countdownValue[1] = counter;
+		counter >>= 8;
+		_countdownValue[0] = counter;
+	}
+}
+
+void CryOmni3DEngine_Versailles::syncCountdown() {
+	unsigned int counter = 0;
+	counter |= _countdownValue[0];
+	counter <<= 8;
+	counter |= _countdownValue[1];
+	counter <<= 8;
+	counter |= _countdownValue[3];
+	counter <<= 8;
+	counter |= _countdownValue[4];
+	_gameVariables[GameVariables::kSavedCountdown] = counter;
+}
+
+bool CryOmni3DEngine_Versailles::doCountDown() {
+	if (g_system->getMillis() > _countdownNextEvent) {
+		_countdownNextEvent = g_system->getMillis() + 1000;
+		// Decrement countdown
+		_countdownValue[4]--;
+		if (_countdownValue[4] < '0') {
+			_countdownValue[4] = '9';
+			_countdownValue[3]--;
+			if (_countdownValue[3] < '0') {
+				_countdownValue[3] = '5';
+				_countdownValue[1]--;
+				if (_countdownValue[1] < '0') {
+					_countdownValue[1] = '9';
+					_countdownValue[0]--;
+					if (_countdownValue[0] < '0') {
+						// Finished!
+						_countingDown = false;
+						playTransitionEndLevel(8);
+						_abortCommand = AbortGameOver;
+					}
+				}
+			}
+		}
+
+		// Redraw surface
+		_countdownSurface.clear(0);
+		_fontManager.setCurrentFont(3);
+		_fontManager.setTransparentBackground(true);
+		_fontManager.setForeColor(241);
+		_fontManager.setLineHeight(14);
+		_fontManager.setSpaceWidth(0);
+		_fontManager.setCharSpacing(1);
+		_fontManager.setSurface(&_countdownSurface);
+
+		_fontManager.displayStr(0, 2, _countdownValue);
+
+		// Surface changed: need redraw
+		return true;
+	} else {
+		return false;
+	}
+}
+
+void CryOmni3DEngine_Versailles::doDrawCountdown(Graphics::ManagedSurface *surface) {
+	if (surface) {
+		surface->blitFrom(_countdownSurface, Common::Point(600, 0));
+	} else {
+		g_system->copyRectToScreen(_countdownSurface.getPixels(), _countdownSurface.pitch, 600, 0,
+		                           _countdownSurface.w, _countdownSurface.h);
+	}
+}
+
 } // End of namespace Versailles
 } // End of namespace CryOmni3D

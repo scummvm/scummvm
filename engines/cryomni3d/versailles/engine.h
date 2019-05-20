@@ -155,7 +155,7 @@ struct GameVariables {
 		kUsedVaubanBlueprint2, // OK   // 40
 		kSeenMemorandum, // OK
 		kCollectScissors, // OK
-		kSavedCountdown, // TODO: calculate it in real time
+		kSavedCountdown, // OK
 		kMax
 	};
 };
@@ -309,7 +309,7 @@ private:
 	bool canVisit() const;
 	Common::String getSaveFileName(bool visit, unsigned int saveNum) const;
 	void getSavesList(bool visit, Common::Array<Common::String> &saveNames);
-	void saveGame(bool visit, unsigned int saveNum, const Common::String &saveName) const;
+	void saveGame(bool visit, unsigned int saveNum, const Common::String &saveName);
 	bool loadGame(bool visit, unsigned int saveNum);
 
 	void animateCursor(const Object *object);
@@ -396,6 +396,20 @@ private:
 	static const MsgBoxParameters kWarpMsgBoxParameters;
 	static const MsgBoxParameters kFixedimageMsgBoxParameters;
 	static const FixedImageConfiguration kFixedImageConfiguration;
+
+	// Countdown
+	void initCountdown();
+	void syncCountdown();
+	inline bool countDown() { if (_countingDown) { return doCountDown(); } else { return false; } }
+	inline void drawCountdown(Graphics::ManagedSurface *surface = nullptr) { if (_countingDown) { doDrawCountdown(surface); } }
+	void drawCountdownVideo(unsigned int frameNum) { drawCountdown(); }
+
+	bool _countingDown;
+	unsigned int _countdownNextEvent;
+	char _countdownValue[6];
+	Graphics::ManagedSurface _countdownSurface;
+	bool doCountDown();
+	void doDrawCountdown(Graphics::ManagedSurface *surface);
 
 	// Objects
 	template<unsigned int ID>

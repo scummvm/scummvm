@@ -191,7 +191,6 @@ void ZonFixedImage::manage() {
 	// Force poll events even when we must refresh the cursor
 	if (!_engine.pollEvents() && !_refreshCursor) {
 		g_system->updateScreen();
-		// TODO: countdown even when no events
 		return;
 	}
 	_refreshCursor = false;
@@ -266,7 +265,6 @@ void ZonFixedImage::manage() {
 
 	}
 
-	// TODO: handle countdown
 	g_system->updateScreen();
 }
 
