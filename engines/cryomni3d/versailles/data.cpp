@@ -680,27 +680,26 @@ void CryOmni3DEngine_Versailles::initPlacesStates() {
 		SET_PLACE_STATE(43, nullptr, nullptr, "VS33");
 		SET_PLACE_STATE(44, nullptr, nullptr, "VS33");
 	} else if (_currentLevel == 7) {
-		// TODO: implement functions
 		SET_PLACE_STATE(1, nullptr, nullptr, nullptr);
-		SET_PLACE_STATE(2, nullptr, nullptr, nullptr);
+		SET_PLACE_STATE(2, nullptr, FILTER_EVENT(7, 2), nullptr);
 		SET_PLACE_STATE(3, nullptr, nullptr, nullptr);
 		SET_PLACE_STATE(4, nullptr, nullptr, nullptr);
 		SET_PLACE_STATE(5, nullptr, nullptr, nullptr);
 		SET_PLACE_STATE(6, nullptr, nullptr, nullptr);
-		SET_PLACE_STATE(7, nullptr, nullptr, nullptr);
+		SET_PLACE_STATE(7, nullptr, nullptr, nullptr); // Filter is a leftover
 		SET_PLACE_STATE(8, nullptr, nullptr, nullptr);
-		SET_PLACE_STATE(9, nullptr, nullptr, nullptr);
-		SET_PLACE_STATE(10, nullptr, nullptr, "VS33");
-		SET_PLACE_STATE(11, nullptr, nullptr, "VS33");
+		SET_PLACE_STATE(9, nullptr, FILTER_EVENT(7, 9), nullptr);
+		SET_PLACE_STATE(10, nullptr, FILTER_EVENT(7, 10_11_13), "VS31");
+		SET_PLACE_STATE(11, nullptr, FILTER_EVENT(7, 10_11_13), "VS31");
 		SET_PLACE_STATE(12, nullptr, nullptr, nullptr);
-		SET_PLACE_STATE(13, nullptr, nullptr, "VS33");
+		SET_PLACE_STATE(13, nullptr, FILTER_EVENT(7, 10_11_13), "VS31");
 		SET_PLACE_STATE(14, nullptr, nullptr, nullptr);
 		SET_PLACE_STATE(15, nullptr, nullptr, nullptr);
 		SET_PLACE_STATE(16, nullptr, nullptr, nullptr);
 		SET_PLACE_STATE(17, nullptr, nullptr, nullptr);
 		SET_PLACE_STATE(18, nullptr, nullptr, nullptr);
 		SET_PLACE_STATE(19, nullptr, nullptr, nullptr);
-		SET_PLACE_STATE(20, nullptr, nullptr, nullptr);
+		SET_PLACE_STATE(20, nullptr, FILTER_EVENT(7, 20), nullptr);
 		SET_PLACE_STATE(21, nullptr, nullptr, nullptr);
 		SET_PLACE_STATE(22, nullptr, nullptr, nullptr);
 		SET_PLACE_STATE(23, nullptr, nullptr, nullptr);

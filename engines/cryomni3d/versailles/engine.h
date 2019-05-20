@@ -139,8 +139,8 @@ struct GameVariables {
 		kLoweredChandelier, // OK
 		kCombedOrangeTree, // OK
 		kMaineTalked, // OK
-		kUsedBougieAllumee,
-		kStateBombe,
+		kUsedLitCandle, // OK
+		kBombState, // OK
 		kInkSpilled, // OK
 		kCollectedPaperOnTable, // OK  // 30
 		kSafeUnlocked, // OK
@@ -505,23 +505,38 @@ private:
 	IMG_CB(44161d);
 	IMG_CB(44161e);
 	IMG_CB(44161f);
-	IMG_CB(45130);
-	IMG_CB(45270);
-	IMG_CB(45270b);
-	IMG_CB(45270c);
-	IMG_CB(45270d);
-	IMG_CB(45280);
 	static const unsigned int kEpigraphMaxLetters = 32;
 	static const char *kEpigraphContent;
 	static const char *kEpigraphPassword;
 	bool handleEpigraph(ZonFixedImage *fimg);
 	void drawEpigraphLetters(Graphics::ManagedSurface &surface,
 	                         const Graphics::Surface(&bmpLetters)[26], const Common::String &letters);
+	IMG_CB(45130);
+	IMG_CB(45270);
+	IMG_CB(45270b);
+	IMG_CB(45270c);
+	IMG_CB(45270d);
+	IMG_CB(45280);
 
 	IMG_CB(88001);
 	IMG_CB(88001b);
 	IMG_CB(88001c);
 	IMG_CB(88002);
+	IMG_CB(88003);
+	IMG_CB(88003b);
+	IMG_CB(88003c);
+	IMG_CB(88003d);
+	IMG_CB(88003e);
+	IMG_CB(88003f);
+	static const unsigned int kBombPasswordSmallLength = 40;
+	static const unsigned int kBombPasswordMaxLength = 60;
+	static const unsigned short kBombLettersPos[2][kBombPasswordMaxLength][2];
+	static const char *kBombPassword;
+	bool handleBomb(ZonFixedImage *fimg);
+	void drawBombLetters(Graphics::ManagedSurface &surface, const Graphics::Surface(&bmpLetters)[26],
+	                     const unsigned int kBombPasswordLength,
+	                     const unsigned char (&bombPossibilites)[kBombPasswordMaxLength][5],
+	                     const unsigned char (&bombCurrentLetters)[kBombPasswordMaxLength]);
 	IMG_CB(88004);
 	IMG_CB(88004b);
 #undef IMG_CB
@@ -583,6 +598,10 @@ private:
 	FILTER_EVENT(6, Orangery);
 	FILTER_EVENT(6, 19);
 
+	FILTER_EVENT(7, 2);
+	FILTER_EVENT(7, 9);
+	FILTER_EVENT(7, 10_11_13);
+	FILTER_EVENT(7, 20);
 #undef FILTER_EVENT
 #undef INIT_PLACE
 

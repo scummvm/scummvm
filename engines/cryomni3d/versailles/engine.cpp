@@ -614,10 +614,8 @@ void CryOmni3DEngine_Versailles::changeLevel(int level) {
 		}
 		initCountdown();
 		_inventory.clear();
-	} else if (_currentLevel <= 6) {
-		// TODO: remove this when we implemented all levels
-	} else {
-		error("New level %d is not implemented (yet)", level);
+	} else if (_currentLevel > 7) {
+		error("New level %d is not implemented", level);
 	}
 
 	_gameVariables[GameVariables::kCurrentTime] = 1;
@@ -693,7 +691,8 @@ void CryOmni3DEngine_Versailles::initNewLevel(int level) {
 		error("Invalid level %d", level);
 	}
 
-	// TODO: countdown
+	// Level 7 starts countdown
+	_countingDown = (level == 7);
 	initPlacesStates();
 	initWhoSpeaksWhere();
 	setupLevelWarps(level);
@@ -1469,6 +1468,7 @@ void CryOmni3DEngine_Versailles::displayObject(const Common::String &imgName,
 
 void CryOmni3DEngine_Versailles::executeSeeAction(unsigned int actionId) {
 	if (_currentLevel == 7 && _currentPlaceId != 20) {
+		// Don't display fixed images unless it's the bomb
 		// Not enough time for paintings
 		displayMessageBoxWarp(14);
 		return;
