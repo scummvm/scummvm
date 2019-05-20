@@ -1368,6 +1368,49 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
+#ifdef ENABLE_FOXTAIL
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] GetSaveSlotDescriptionTimestamp
+	// Return struct with "Description" and "Timestamp" fields in 1.2.362-
+	// Return array  with "Description" and "Timestamp" items  in 1.2.527+
+	// Timestamps should be comparable types
+	// Used to sort saved games by timestamps at save.script & load.script
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "GetSaveSlotDescriptionTimestamp") == 0) {
+		stack->correctParams(1);
+		int slot = stack->pop()->getInt();
+
+		TimeDate time;
+		SaveLoad::getSaveSlotTimestamp(slot, &time);
+		stack->pushInt(time.tm_sec);
+		stack->pushInt(time.tm_min);
+		stack->pushInt(time.tm_hour);
+		stack->pushInt(time.tm_mday);
+		stack->pushInt(time.tm_mon + 1);
+		stack->pushInt(time.tm_year + 1900);
+		stack->pushInt(6);
+		BaseScriptable *date = makeSXDate(_gameRef, stack);
+		stack->pushNative(date, false);
+
+		Common::String desc = SaveLoad::getSaveSlotDescription(slot);
+		stack->pushString(desc.c_str());
+
+		BaseScriptable *obj;
+		if (BaseEngine::instance().isFoxTail(FOXTAIL_1_2_527, FOXTAIL_LATEST_VERSION)) {
+			stack->pushInt(2);
+			obj = makeSXArray(_gameRef, stack);
+		} else {
+			stack->pushInt(0);
+			obj = makeSXObject(_gameRef, stack);
+			obj->scSetProperty("Description", stack->pop());
+			obj->scSetProperty("Timestamp", stack->pop());
+		}
+		stack->pushNative(obj, false);
+
+		return STATUS_OK;
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// EmptySaveSlot
 	//////////////////////////////////////////////////////////////////////////
