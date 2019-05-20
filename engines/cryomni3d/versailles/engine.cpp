@@ -1208,6 +1208,12 @@ bool CryOmni3DEngine_Versailles::handleWarpMouse(unsigned int *actionId,
 		g_system->copyRectToScreen(original->getPixels(), original->pitch, 0, 0, original->w, original->h);
 		drawCountdown();
 
+		// Fade in palette to avoid displaying toolbar on a black screen
+		if (_fadedPalette) {
+			fadeInPalette(_mainPalette);
+			_fadedPalette = false;
+		}
+
 		bool mustRedraw = displayToolbar(original);
 		// Don't redraw if we abort game
 		if (_abortCommand != AbortNoAbort) {
