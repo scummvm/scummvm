@@ -108,8 +108,10 @@ public:
 	void fillSurface(byte color);
 	void setCursor(const Graphics::Cursor &cursor) const;
 	void setCursor(unsigned int cursorId) const;
+	typedef void (CryOmni3DEngine::*HNMCallback)(unsigned int frameNum);
 	void playHNM(const Common::String &filename,
-	             Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
+	             Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType,
+	             HNMCallback beforeDraw = nullptr, HNMCallback afterDraw = nullptr);
 	void displayHLZ(const Common::String &filename);
 
 	bool pollEvents();
