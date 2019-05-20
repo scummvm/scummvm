@@ -1363,10 +1363,8 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "GetSaveSlotDescription") == 0) {
 		stack->correctParams(1);
 		int slot = stack->pop()->getInt();
-		char desc[512];
-		desc[0] = '\0';
-		SaveLoad::getSaveSlotDescription(slot, desc);
-		stack->pushString(desc);
+		Common::String desc = SaveLoad::getSaveSlotDescription(slot);
+		stack->pushString(desc.c_str());
 		return STATUS_OK;
 	}
 
