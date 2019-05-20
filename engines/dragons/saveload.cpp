@@ -134,6 +134,7 @@ bool DragonsEngine::loadgame(const char *filename) {
 	_dragonINIResource->reset();
 
 	loadScene(newSceneId);
+	setFlags(ENGINE_FLAG_8); //Re-enable cursor TODO should we need to do this?
 
 	delete in;
 	return true;

@@ -60,6 +60,7 @@ protected:
 	void spcClearEngineFlag8(); // 0x14
 	void spcSetEngineFlag8(); // 0x15
 
+	void spcLoadScene1(); // 0x49
 	void spcUnk4e();
 	void spcUnk4f();
 
