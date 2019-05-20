@@ -111,51 +111,50 @@ enum AbortCommand {
 
 struct GameVariables {
 	enum Var {
-		// TODO: make these enum members more correct
-		kCollectScore = 0, // OK       // 0
-		kUnlockHiddenDoor, // OK
-		kAlreadyWent3_19, // OK
-		kMedalsDrawerStatus, // OK
-		kCurrentTime, // OK
-		kGotMedalsSolution, // OK
-		kCabinetDrawerStatus, // OK
-		kDecipherScore, // OK
-		kCollectLampoonArchitecture, // OK
-		kGotRevealedPaper, // OK
-		kCollectKey, // OK             // 10
-		kCollectPortfolio, // OK
-		kSketchState, // OK
-		kFakeSketchChatState, // OK
-		kCollectFood, // OK
-		kCollectQuill, // OK
-		kStateLampoonReligion, // OK
-		kCollectSmallKey3, // OK
-		kCollectEngraving, // OK
-		kCollectCord, // OK
-		kCollectVaubanBlueprint1, // OK// 20
-		kCollectVaubanBlueprint2, // OK
-		kLadderState, // OK
-		kOpenedCurtain, // OK
-		kLoweredChandelier, // OK
-		kCombedOrangeTree, // OK
-		kMaineTalked, // OK
-		kUsedLitCandle, // OK
-		kBombState, // OK
-		kInkSpilled, // OK
-		kCollectedPaperOnTable, // OK  // 30
-		kSafeUnlocked, // OK
+		kCollectScore = 0,             // 0
+		kUnlockHiddenDoor,
+		kAlreadyWent3_19,
+		kMedalsDrawerStatus,
+		kCurrentTime,
+		kGotMedalsSolution,
+		kCabinetDrawerStatus,
+		kDecipherScore,
+		kCollectLampoonArchitecture,
+		kGotRevealedPaper,
+		kCollectKey,                   // 10
+		kCollectPortfolio,
+		kSketchState,
+		kFakeSketchChatState,
+		kCollectFood,
+		kCollectQuill,
+		kStateLampoonReligion,
+		kCollectSmallKey3,
+		kCollectEngraving,
+		kCollectCord,
+		kCollectVaubanBlueprint1,      // 20
+		kCollectVaubanBlueprint2,
+		kLadderState,
+		kOpenedCurtain,
+		kLoweredChandelier,
+		kCombedOrangeTree,
+		kMaineTalked,
+		kUsedLitCandle,
+		kBombState,
+		kInkSpilled,
+		kCollectedPaperOnTable,        // 30
+		kSafeUnlocked,
 		//kUselessVar,
-		kCollectedPaperInTrunk = 33, // OK
-		kBrushColor, // OK
-		kUsedScissors, // OK
-		kUnlockedAttic, // OK
-		kHasPlayedLebrun, // OK
+		kCollectedPaperInTrunk = 33,
+		kBrushColor,
+		kUsedScissors,
+		kUnlockedAttic,
+		kHasPlayedLebrun,
 		kWarnedIncomplete,
-		kUsedVaubanBlueprint1, // OK
-		kUsedVaubanBlueprint2, // OK   // 40
-		kSeenMemorandum, // OK
-		kCollectScissors, // OK
-		kSavedCountdown, // OK
+		kUsedVaubanBlueprint1,
+		kUsedVaubanBlueprint2,         // 40
+		kSeenMemorandum,
+		kCollectScissors,
+		kSavedCountdown,
 		kMax
 	};
 };

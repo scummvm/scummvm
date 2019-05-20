@@ -795,10 +795,8 @@ void CryOmni3DEngine_Versailles::setGameTime(unsigned int newTime, unsigned int 
 void CryOmni3DEngine_Versailles::gameStep() {
 	while (!_abortCommand) {
 		if (_nextPlaceId != -1u) {
-			// TODO: check selected object == -2 if needed
 			if (_placeStates[_nextPlaceId].initPlace) {
 				(this->*_placeStates[_nextPlaceId].initPlace)();
-				// TODO: check selected object == -2 if needed
 			}
 			doPlaceChange();
 			musicUpdate();
@@ -871,7 +869,6 @@ void CryOmni3DEngine_Versailles::gameStep() {
 			// Click on nothing with an object: deselect it
 			_inventory.setSelectedObject(nullptr);
 		}
-		// TODO: selected_object == -2 if needed
 	}
 }
 
