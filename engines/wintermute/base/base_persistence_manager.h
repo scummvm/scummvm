@@ -69,6 +69,7 @@ public:
 	uint32 _offset;
 
 	bool getIsSaving() { return _saving; }
+	TimeDate getSavedTimestamp() { return _savedTimestamp; }
 
 	uint32 _richBufferSize;
 	byte *_richBuffer;

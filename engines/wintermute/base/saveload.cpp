@@ -182,6 +182,18 @@ Common::String SaveLoad::getSaveSlotDescription(int slot) {
 	return description;
 }
 
+void SaveLoad::getSaveSlotTimestamp(int slot, TimeDate *time) {
+	memset(time, 0, sizeof(TimeDate));
+	Common::String filename = getSaveSlotFilename(slot);
+	BasePersistenceManager *pm = new BasePersistenceManager();
+	if (pm) {
+		if ((pm->initLoad(filename))) {
+			*time = pm->getSavedTimestamp();
+		}
+		delete pm;
+	}
+}
+
 bool SaveLoad::isSaveSlotUsed(int slot) {
 	Common::String filename = getSaveSlotFilename(slot);
 	BasePersistenceManager *pm = new BasePersistenceManager();
