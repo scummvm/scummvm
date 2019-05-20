@@ -410,9 +410,6 @@ bool Toolbar::displayToolbar(const Graphics::Surface *original) {
 	                                 _bgSurface.w, original->h));
 	_engine->makeTranslucent(_bgSurface, subset);
 
-	// Draw the original surface on the surface to use for toolbar
-	g_system->copyRectToScreen(original->getPixels(), original->pitch, 0, 0, original->w, original->h);
-
 	// WORKAROUND: Reset the inventory status at init to let sprites highlighted until toolbar is hidden
 	_inventorySelected = -1;
 	_inventoryHovered = -1;
@@ -478,8 +475,6 @@ void Toolbar::handleToolbarEvents(const Graphics::Surface *original) {
 
 	// No need of original surface because the toolbar is fully displayed
 	drawToolbar(original);
-
-	// TODO: countdown
 
 	g_system->copyRectToScreen(_destSurface.getPixels(), _destSurface.pitch, 0,
 	                           original->h - _destSurface.h, _destSurface.w, _destSurface.h);

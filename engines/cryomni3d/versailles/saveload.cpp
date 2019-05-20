@@ -114,7 +114,7 @@ void CryOmni3DEngine_Versailles::getSavesList(bool visit, Common::StringArray &s
 }
 
 void CryOmni3DEngine_Versailles::saveGame(bool visit, unsigned int saveNum,
-        const Common::String &saveName) const {
+        const Common::String &saveName) {
 	if (visit && saveNum == 1) {
 		error("Can't erase bootstrap visit");
 	}
@@ -132,6 +132,9 @@ void CryOmni3DEngine_Versailles::saveGame(bool visit, unsigned int saveNum,
 	                                       ))) {
 		return;
 	}
+
+	// Sync countdown to game variable before saving it to file
+	syncCountdown();
 
 	// Write save name
 	char saveNameC[SAVE_DESCRIPTION_LEN];
@@ -292,6 +295,7 @@ bool CryOmni3DEngine_Versailles::loadGame(bool visit, unsigned int saveNum) {
 	if (_gameVariables[GameVariables::kCurrentTime] == 0) {
 		_gameVariables[GameVariables::kCurrentTime] = 1;
 	}
+	initCountdown();
 
 	// Everything has been loaded, setup new level
 	// We will set places states and warp coordinates just after that to avoid them from being reset
@@ -306,8 +310,6 @@ bool CryOmni3DEngine_Versailles::loadGame(bool visit, unsigned int saveNum) {
 	        placeIt != _placeStates.end() && i < ARRAYSIZE(placesStates); placeIt++, i++) {
 		placeIt->state = placesStates[i];
 	}
-
-	// TODO: countdown
 
 	return true;
 }

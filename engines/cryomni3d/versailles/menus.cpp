@@ -882,7 +882,8 @@ void CryOmni3DEngine_Versailles::displayMessageBox(const MsgBoxParameters &param
 	rct.grow(-6);
 	_fontManager.setupBlock(rct);
 	_fontManager.displayBlockText(msg);
-	// TODO: countdown
+
+	drawCountdown(&dstSurface);
 
 	g_system->copyRectToScreen(dstSurface.getPixels(), dstSurface.pitch, 0, 0,
 	                           dstSurface.w, dstSurface.h);

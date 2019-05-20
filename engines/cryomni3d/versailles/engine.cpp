@@ -54,7 +54,8 @@ CryOmni3DEngine_Versailles::CryOmni3DEngine_Versailles(OSystem *syst,
 	_currentPlace(nullptr), _currentWarpImage(nullptr), _fixedImage(nullptr),
 	_transitionAnimateWarp(true), _forceRedrawWarp(false), _forcePaletteUpdate(false),
 	_fadedPalette(false), _loadedSave(-1), _dialogsMan(this),
-	_musicVolumeFactor(1.), _musicCurrentFile(nullptr) {
+	_musicVolumeFactor(1.), _musicCurrentFile(nullptr),
+	_countingDown(false), _countdownNextEvent(0) {
 }
 
 CryOmni3DEngine_Versailles::~CryOmni3DEngine_Versailles() {
@@ -126,6 +127,8 @@ Common::Error CryOmni3DEngine_Versailles::run() {
 	// Documentation is needed by noone at init time, let's do it last
 	initDocPeopleRecord();
 	_docManager.init(&_sprites, &_fontManager, &_messages, this);
+
+	_countdownSurface.create(40, 15, Graphics::PixelFormat::createFormatCLUT8());
 
 	initGraphics(640, 480);
 	setMousePos(Common::Point(320, 200));
@@ -609,7 +612,7 @@ void CryOmni3DEngine_Versailles::changeLevel(int level) {
 		        it++) {
 			*it = 0;
 		}
-		// TODO: countdown
+		initCountdown();
 		_inventory.clear();
 	} else if (_currentLevel <= 6) {
 		// TODO: remove this when we implemented all levels
@@ -1166,7 +1169,7 @@ int CryOmni3DEngine_Versailles::handleWarp() {
 			const Graphics::Surface *result = _omni3dMan.getSurface();
 			g_system->copyRectToScreen(result->getPixels(), result->pitch, 0, 0, result->w, result->h);
 			if (!exit) {
-				// TODO: countdown
+				drawCountdown();
 				g_system->updateScreen();
 				if (firstDraw && _fadedPalette) {
 					fadeInPalette(_mainPalette);
@@ -1179,14 +1182,13 @@ int CryOmni3DEngine_Versailles::handleWarp() {
 			const Graphics::Surface *result = _omni3dMan.getSurface();
 			g_system->copyRectToScreen(result->getPixels(), result->pitch, 0, 0, result->w, result->h);
 			if (!exit) {
-				// TODO: countdown
+				drawCountdown();
 				g_system->updateScreen();
 			}
-			// TODO: cursorUseZones
 			moving = false;
 		} else {
 			if (!exit) {
-				// TODO: countdown
+				// Countdown is updated as soon as it changes
 				g_system->updateScreen();
 			}
 		}
@@ -1203,6 +1205,11 @@ bool CryOmni3DEngine_Versailles::handleWarpMouse(unsigned int *actionId,
 	        getNextKey().keycode == Common::KEYCODE_SPACE) {
 		// Prepare background using alpha
 		const Graphics::Surface *original = _omni3dMan.getSurface();
+
+		// Display surface with countdown before showing toolbar just to be sure
+		g_system->copyRectToScreen(original->getPixels(), original->pitch, 0, 0, original->w, original->h);
+		drawCountdown();
+
 		bool mustRedraw = displayToolbar(original);
 		// Don't redraw if we abort game
 		if (_abortCommand != AbortNoAbort) {
@@ -1216,7 +1223,16 @@ bool CryOmni3DEngine_Versailles::handleWarpMouse(unsigned int *actionId,
 		return false;
 	}
 
-	// TODO: countdown
+	if (countDown()) {
+		// Time has changed: need redraw
+		// Don't redraw if we abort game
+		if (_abortCommand != AbortNoAbort) {
+			return true;
+		}
+
+		_forceRedrawWarp = true;
+		redrawWarp();
+	}
 
 	const Object *selectedObj = _inventory.selectedObject();
 	if (selectedObj) {
@@ -1323,7 +1339,7 @@ void CryOmni3DEngine_Versailles::animateWarpTransition(const Transition *transit
 
 		const Graphics::Surface *result = _omni3dMan.getSurface();
 		g_system->copyRectToScreen(result->getPixels(), result->pitch, 0, 0, result->w, result->h);
-		// TODO: countdown
+		drawCountdown();
 		g_system->updateScreen();
 
 		if (fabs(oldDeltaAlpha - deltaAlpha) < 0.001 && fabs(oldDeltaBeta - deltaBeta) < 0.001) {
@@ -1344,7 +1360,7 @@ void CryOmni3DEngine_Versailles::redrawWarp() {
 	if (_forceRedrawWarp) {
 		const Graphics::Surface *result = _omni3dMan.getSurface();
 		g_system->copyRectToScreen(result->getPixels(), result->pitch, 0, 0, result->w, result->h);
-		// TODO: countdown
+		drawCountdown();
 		g_system->updateScreen();
 		_forceRedrawWarp = false;
 	}
@@ -1534,7 +1550,8 @@ void CryOmni3DEngine_Versailles::playInGameVideo(const Common::String &filename,
 	g_system->showMouse(false);
 	lockPalette(0, 241);
 	// Videos are like music because if you mute music in game it will mute videos soundtracks
-	playHNM(filename, Audio::Mixer::kMusicSoundType);
+	playHNM(filename, Audio::Mixer::kMusicSoundType, nullptr,
+	        static_cast<HNMCallback>(&CryOmni3DEngine_Versailles::drawCountdownVideo));
 	clearKeys();
 	unlockPalette();
 	if (restoreCursorPalette) {
