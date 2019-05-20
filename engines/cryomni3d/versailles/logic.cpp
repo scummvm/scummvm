@@ -1242,8 +1242,8 @@ bool CryOmni3DEngine_Versailles::handleSafe(ZonFixedImage *fimg) {
 	return success;
 }
 
-const unsigned int CryOmni3DEngine_Versailles::kSafeDigitsX[] = { 267, 318, 370, 421 };
-const unsigned int CryOmni3DEngine_Versailles::kSafeDigitsY[] = { 148, 230, 311 };
+const unsigned short CryOmni3DEngine_Versailles::kSafeDigitsX[] = { 267, 318, 370, 421 };
+const unsigned short CryOmni3DEngine_Versailles::kSafeDigitsY[] = { 148, 230, 311 };
 
 void CryOmni3DEngine_Versailles::drawSafeDigits(Graphics::ManagedSurface &surface,
         const Graphics::Surface(&bmpDigits)[10], const unsigned char (&safeDigits)[kSafeDigitsCount]) {

@@ -462,8 +462,8 @@ private:
 	IMG_CB(34174e);
 	IMG_CB(34174f);
 	static const unsigned int kSafeDigitsCount = 12;
-	static const unsigned int kSafeDigitsX[];
-	static const unsigned int kSafeDigitsY[];
+	static const unsigned short kSafeDigitsX[];
+	static const unsigned short kSafeDigitsY[];
 	static const char *kSafeDates[];
 	bool handleSafe(ZonFixedImage *fimg);
 	void drawSafeDigits(Graphics::ManagedSurface &surface, const Graphics::Surface(&bmpDigits)[10],
