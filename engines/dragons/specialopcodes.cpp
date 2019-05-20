@@ -74,6 +74,8 @@ void SpecialOpcodes::initOpcodes() {
 	OPCODE(0x14, spcClearEngineFlag8);
 	OPCODE(0x15, spcSetEngineFlag8);
 
+	OPCODE(0x49, spcLoadScene1);
+
 	OPCODE(0x4e, spcUnk4e);
 	OPCODE(0x4f, spcUnk4f);
 
@@ -197,6 +199,10 @@ void SpecialOpcodes::panCamera(int16 mode) {
 
 void SpecialOpcodes::spcSetCameraXToZero() {
 	_vm->_scene->_camera.x = 0;
+}
+
+void SpecialOpcodes::spcLoadScene1() {
+	// TODO spcLoadScene1 knights around the table.
 }
 
 } // End of namespace Dragons

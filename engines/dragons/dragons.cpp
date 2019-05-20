@@ -19,6 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+#include "common/config-manager.h"
 #include "engines/util.h"
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
@@ -119,7 +120,11 @@ Common::Error DragonsEngine::run() {
 	_backgroundResourceLoader = new BackgroundResourceLoader(_bigfileArchive, _dragonRMS);
 	_scene = new Scene(this, _screen, _scriptOpcodes, _bigfileArchive, _actorManager, _dragonRMS, _dragonINIResource, _backgroundResourceLoader);
 
-	loadScene(0);
+	if (ConfMan.hasKey("save_slot")) {
+		loadGameState(ConfMan.getInt("save_slot"));
+	} else {
+		loadScene(0);
+	}
 
 	_scene->draw();
 	_screen->updateScreen();
