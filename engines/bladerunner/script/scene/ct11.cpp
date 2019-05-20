@@ -85,6 +85,11 @@ void SceneScriptCT11::SceneLoaded() {
 		Unobstacle_Object("RIM RF", true);
 		Unobstacle_Object("DOOR RIGHT", true);
 		Unobstacle_Object("BUMPER REAR", true);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		// this street sign blocks police officers from moving to waypoint 386 after they reach waypoint 242
+		Unobstacle_Object("STREET SIGN", true);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 	Unclickable_Object("TRASH CAN");
 }

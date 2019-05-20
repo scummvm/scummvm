@@ -1580,7 +1580,7 @@ bool Debugger::cmdList(int argc, const char **argv) {
 									 actor->getAnimationId(),
 									 actor->getPosition().x,
 									 actor->getPosition().y,
-									 _vm->_actors[sceneObject->id - kSceneObjectOffsetActors]->getPosition().z);
+									 actor->getPosition().z);
 						++count;
 					}
 				}

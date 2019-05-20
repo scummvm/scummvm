@@ -871,7 +871,7 @@ void Actor::stopWalking(bool value) {
 	}
 
 	if (isWalking()) {
-		_walkInfo->stop(_id, true, _animationModeCombatIdle, 0);
+		_walkInfo->stop(_id, true, _animationModeCombatIdle, kAnimationModeIdle);
 	} else if (inCombat()) {
 		changeAnimationMode(_animationModeCombatIdle, false);
 	} else {

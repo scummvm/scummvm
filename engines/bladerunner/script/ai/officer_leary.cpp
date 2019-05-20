@@ -21,6 +21,7 @@
  */
 
 #include "bladerunner/script/ai_script.h"
+//#include "common/debug.h"
 
 namespace BladeRunner {
 
@@ -121,6 +122,7 @@ bool AIScriptOfficerLeary::Update() {
 		switch (Actor_Query_Which_Set_In(kActorOfficerLeary)) {
 		case kSetDR01_DR02_DR04:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
+//				asdf restore
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 0, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
@@ -169,12 +171,14 @@ bool AIScriptOfficerLeary::Update() {
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 10, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
+// asdf Missing UG07 case -  would be a type 10 combat, 12 flee?
 		case kSetUG08:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateIdle, true, kActorMcCoy, 13, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
+// asdf Missing UG09 case -  would be a type ?? //
 		case kSetUG10:
 			if (Actor_Query_Which_Set_In(kActorOfficerLeary) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyAttackMcCoyAct4);
@@ -233,6 +237,7 @@ void AIScriptOfficerLeary::CompletedMovementTrack() {
 		return;
 	}
 	if (goal == kGoalOfficerLearyHuntingAroundAct4) {
+//		debug("Leary completed Movement");
 		Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyPrepareToHuntAroundAct4);
 		return;
 	}
@@ -378,10 +383,13 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 		Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyHuntingAroundAct4);
 		return true;
 	case kGoalOfficerLearyHuntingAroundAct4:
+//		debug("Flushing Leary movement track");
 		AI_Movement_Track_Flush(kActorOfficerLeary);
-		switch (Random_Query(1, 10)) {
+		switch (Random_Query(1, 10)) { // asdf restore
+//		switch (1) {
 		case 1:
 			// kSetNR01
+//			debug("leary 1 kSetNR01");
 			AI_Movement_Track_Append(kActorOfficerLeary, 398, 15);
 			AI_Movement_Track_Append(kActorOfficerLeary, 399, 0);
 			AI_Movement_Track_Append(kActorOfficerLeary, 400, 0);
@@ -393,6 +401,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 			break;
 		case 2:
 			// kSetCT11
+//			debug("leary 2 kSetCT11");
 			AI_Movement_Track_Append(kActorOfficerLeary, 385, 10);
 			AI_Movement_Track_Append(kActorOfficerLeary, 242, 2);
 			AI_Movement_Track_Append(kActorOfficerLeary, 386, 2);
@@ -401,6 +410,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 			break;
 		case 3:
 			// kSetDR01_DR02_DR04
+//			debug("leary 3 kSetDR01_DR02_DR04");
 			AI_Movement_Track_Append(kActorOfficerLeary, 390, 10);
 			AI_Movement_Track_Append(kActorOfficerLeary, 391, 0);
 			AI_Movement_Track_Append(kActorOfficerLeary, 392, 5);
@@ -410,6 +420,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 			break;
 		case 4:
 			// kSetRC03 -> kSetFreeSlotC
+//			debug("leary 4 kSetRC03 -> kSetFreeSlotC");
 			AI_Movement_Track_Append(kActorOfficerLeary, 381, 15);
 			AI_Movement_Track_Append(kActorOfficerLeary, 382, 0);
 			AI_Movement_Track_Append(kActorOfficerLeary, 383, 15);
@@ -420,6 +431,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 			break;
 		case 5:
 			// kSetBB01 -> kSetFreeSlotC
+//			debug("leary 5 kSetBB01 -> kSetFreeSlotC");
 			AI_Movement_Track_Append(kActorOfficerLeary, 388, 10);
 			AI_Movement_Track_Append(kActorOfficerLeary, 389, 10);
 			AI_Movement_Track_Append(kActorOfficerLeary, 35, 30); // kSetFreeSlotC
@@ -427,6 +439,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 			break;
 		case 6:
 			// kSetCT11 - identical to case 2
+//			debug("leary 6 kSetCT11 - identical to case 2");
 			AI_Movement_Track_Append(kActorOfficerLeary, 385, 10);
 			AI_Movement_Track_Append(kActorOfficerLeary, 242, 2);
 			AI_Movement_Track_Append(kActorOfficerLeary, 386, 2);
@@ -452,15 +465,18 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 #else
 		case 7:
 			// kSetFreeSlotC
+//			debug("leary 7 MA07 changed to kSetFreeSlotC");
 			// just put him away for a few seconds
 			AI_Movement_Track_Append(kActorOfficerLeary, 35, 30); // kSetFreeSlotC
 			AI_Movement_Track_Repeat(kActorOfficerLeary);
 			break;
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		case 8:
-			switch (Random_Query(1, 7)) {
+			switch (Random_Query(1, 7)) { // asdf restore
+//			switch (1) {
 			case 1:
 				// kSetUG10 -> kSetFreeSlotC
+//				debug("leary 8-1  kSetUG10 -> kSetFreeSlotC");
 				AI_Movement_Track_Append(kActorOfficerLeary, 302, 0);
 				AI_Movement_Track_Append(kActorOfficerLeary, 407, 0);
 				AI_Movement_Track_Append(kActorOfficerLeary, 408, 0);
@@ -469,6 +485,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 				break;
 			case 2:
 				// kSetUG14
+//				debug("leary 8-2 kSetUG14");
 				AI_Movement_Track_Append(kActorOfficerLeary, 536, 0);
 				AI_Movement_Track_Append(kActorOfficerLeary, 537, 0);
 				AI_Movement_Track_Append(kActorOfficerLeary, 538, 1);
@@ -478,6 +495,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 				break;
 			case 3:
 				// kSetUG04 -> kSetFreeSlotC
+//				debug("leary 8-3 kSetUG04 -> kSetFreeSlotC");
 				AI_Movement_Track_Append(kActorOfficerLeary, 296, 10);
 				AI_Movement_Track_Append(kActorOfficerLeary, 409, 2);
 				AI_Movement_Track_Append(kActorOfficerLeary, 296, 10);
@@ -486,6 +504,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 				break;
 			case 4:
 				// kSetUG05 -> kSetFreeSlotC
+//				debug("leary 8-4 kSetUG05 -> kSetFreeSlotC");
 				AI_Movement_Track_Append(kActorOfficerLeary, 411, 10);
 				AI_Movement_Track_Append(kActorOfficerLeary, 412, 5);
 				AI_Movement_Track_Append(kActorOfficerLeary, 411, 0);
@@ -494,6 +513,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 				break;
 			case 5:
 				// kSetUG06 -> kSetFreeSlotC
+//				debug("leary 8-5 kSetUG06 -> kSetFreeSlotC");
 				AI_Movement_Track_Append(kActorOfficerLeary, 413, 10);
 				AI_Movement_Track_Append(kActorOfficerLeary, 414, 0);
 				AI_Movement_Track_Append_With_Facing(kActorOfficerLeary, 431, 0, 1017);
@@ -503,6 +523,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 				break;
 			case 6:
 				// kSetUG07 -> kSetFreeSlotC
+//				debug("leary 8-6 kSetUG07 -> kSetFreeSlotC");
 				AI_Movement_Track_Append(kActorOfficerLeary, 415, 0);
 				AI_Movement_Track_Append_With_Facing(kActorOfficerLeary, 416, 0, 620);
 				AI_Movement_Track_Append(kActorOfficerLeary, 417, 0);
@@ -512,6 +533,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 				break;
 			case 7:
 				// kSetUG01 -> kSetFreeSlotC
+//				debug("leary 8-7 kSetUG01 -> kSetFreeSlotC");
 				AI_Movement_Track_Append(kActorOfficerLeary, 405, 10);
 				AI_Movement_Track_Append(kActorOfficerLeary, 406, 0);
 				AI_Movement_Track_Append(kActorOfficerLeary, 35, 30); // kSetFreeSlotC
@@ -526,8 +548,10 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 			break;
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		case 9:
-			if (Random_Query(1, 2) == 2) {
+			if (Random_Query(1, 2) == 2) { // asdf restore
+//			if (1) {
 				// kSetUG09 -> kSetFreeSlotC
+//				debug("leary 9-2 kSetUG09 -> kSetFreeSlotC");
 				AI_Movement_Track_Append(kActorOfficerLeary, 433, 10);
 				AI_Movement_Track_Append(kActorOfficerLeary, 434, 0);
 				AI_Movement_Track_Append(kActorOfficerLeary, 435, 0);
@@ -536,6 +560,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 				return false;
 			}
 			// kSetUG08 -> kSetFreeSlotC
+//			debug("leary 9-1 kSetUG08 -> kSetFreeSlotC");
 			AI_Movement_Track_Append(kActorOfficerLeary, 420, 10);
 			AI_Movement_Track_Append(kActorOfficerLeary, 422, 2);
 			AI_Movement_Track_Append(kActorOfficerLeary, 421, 1);
@@ -550,6 +575,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		case 10:
 			// kSetUG12 -> kSetFreeSlotC
+//			debug("leary 10 kSetUG12 -> kSetFreeSlotC");
 			AI_Movement_Track_Append(kActorOfficerLeary, 310, 0);
 			AI_Movement_Track_Append(kActorOfficerLeary, 307, 0);
 			AI_Movement_Track_Append(kActorOfficerLeary, 309, 0);
@@ -568,6 +594,7 @@ bool AIScriptOfficerLeary::GoalChanged(int currentGoalNumber, int newGoalNumber)
 	case kGoalOfficerLearyPrepareToHuntAroundAct4:
 		// aux goal in order to immediately switch back to kGoalOfficerLearyHuntingAroundAct4 goal
 		// and run GoalChanged() for kGoalOfficerLearyHuntingAroundAct4 again
+//		debug("Setting Leary goal to kGoalOfficerLearyHuntingAroundAct4");
 		Actor_Set_Goal_Number(kActorOfficerLeary, kGoalOfficerLearyHuntingAroundAct4);
 		return true;
 	case kGoalOfficerLearyBlockingUG07:
@@ -1296,6 +1323,7 @@ void AIScriptOfficerLeary::SetAnimationState(int animationState, int animationFr
 }
 
 bool AIScriptOfficerLeary::ReachedMovementTrackWaypoint(int waypointId) {
+//	debug("Leary reached waypoint: %d", waypointId);
 	if (waypointId == 57 || waypointId == 58) {
 		// Interrogating crowd in kSetRC01
 		Game_Flag_Set(kFlagOfficerLearyTakingNotes);
