@@ -1000,6 +1000,7 @@ void CryOmni3DEngine_Versailles::executeTransition(unsigned int nextPlaceId) {
 	Common::String warpFile = nextPlace->warps[nextState];
 	warpFile.toUppercase();
 	if (warpFile.hasPrefix("NOT_STOP")) {
+		debug("Got not stop");
 		unsigned int transitionNum;
 		// Determine transition to take
 		if (nextPlace->getNumTransitions() == 1) {
@@ -1015,8 +1016,9 @@ void CryOmni3DEngine_Versailles::executeTransition(unsigned int nextPlaceId) {
 
 		animationId = determineTransitionAnimation(nextPlaceId, nextNextPlaceId, &transition);
 		animation = animationId == -1u ? "" : transition->animations[animationId];
-
 		animation.toUppercase();
+
+		debug("Transition animation: %s", animation.c_str());
 		if (animation.hasPrefix("NOT_FLI")) {
 			return;
 		}
@@ -1544,7 +1546,10 @@ void CryOmni3DEngine_Versailles::playInGameVideo(const Common::String &filename,
 		return;
 	}
 
-	g_system->showMouse(false);
+	if (restoreCursorPalette) {
+		// WORKAROUND: Don't mess with mouse when not restoring cursors palette
+		g_system->showMouse(false);
+	}
 	lockPalette(0, 241);
 	// Videos are like music because if you mute music in game it will mute videos soundtracks
 	playHNM(filename, Audio::Mixer::kMusicSoundType, nullptr,
@@ -1554,8 +1559,9 @@ void CryOmni3DEngine_Versailles::playInGameVideo(const Common::String &filename,
 	if (restoreCursorPalette) {
 		// Restore cursors colors as 2 first ones may have been erased by the video
 		setPalette(&_cursorPalette[3 * 240], 240, 248);
+		// WORKAROUND: Don't mess with mouse when not restoring cursors palette
+		g_system->showMouse(true);
 	}
-	g_system->showMouse(true);
 }
 
 void CryOmni3DEngine_Versailles::loadBMPs(const char *pattern, Graphics::Surface *bmps,
