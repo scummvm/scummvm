@@ -64,6 +64,7 @@ protected:
 	void spcUnk4e();
 	void spcUnk4f();
 
+	void spcClearEngineFlag0x4000000(); // 0x53
 	void spcSetEngineFlag0x4000000(); // 0x54
 	void spcSetCursorSequenceIdToZero(); // 0x55
 	void spcUnk5e();
