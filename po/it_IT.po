@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-05-17 22:58+0200\n"
-"PO-Revision-Date: 2019-02-13 11:42+0000\n"
+"PO-Revision-Date: 2019-05-22 17:48+0000\n"
 "Last-Translator: Paolo Bossi <pbossi86@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -745,9 +745,8 @@ msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM non ha potuto trovare nessun gioco nella cartella specificata!"
 
 #: gui/launcher.cpp:588
-#, fuzzy
 msgid "Unknown variant"
-msgstr "Errore sconosciuto"
+msgstr "Variante del gioco sconosciuta"
 
 #: gui/launcher.cpp:594
 msgid "Pick the game:"
@@ -1678,9 +1677,8 @@ msgid "Antialiased"
 msgstr "Con antialiasing"
 
 #: gui/unknown-game-dialog.cpp:52
-#, fuzzy
 msgid "Add anyway"
-msgstr "Avvia comunque"
+msgstr "Aggiungi comunque"
 
 #: gui/unknown-game-dialog.cpp:59
 msgid "Copy to clipboard"
@@ -2604,9 +2602,8 @@ msgid "Freefont License"
 msgstr "Licenza Freefont"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:224
-#, fuzzy
 msgid "OFL License"
-msgstr "Licenza GPL"
+msgstr "Licenza OPL"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:225
 msgid "BSD License"
@@ -3140,11 +3137,11 @@ msgstr "File della sequenza di intermezzo '%s' non trovato!"
 
 #: engines/bladerunner/bladerunner.cpp:316
 msgid "Failed to initialize resources"
-msgstr ""
+msgstr "Inizializzazione risorse fallita"
 
 #: engines/bladerunner/bladerunner.cpp:879
 msgid "A required game resource was not found"
-msgstr ""
+msgstr "Una risorsa richiesta dal gioco non è stata trovata"
 
 #: engines/bladerunner/bladerunner.cpp:2004
 msgid ""
@@ -3152,6 +3149,10 @@ msgid ""
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
 "Content for this session until you completely Quit the game."
 msgstr ""
+"ATTENZIONE: Questa partita è stata salvata in Modalità con Contenuto "
+"Tagliato, ma stai giocando in Modalità Originale. Si passerà in Modalità con "
+"contenuto tagliato per questa sessione di gioco, fino all'uscita  dal gioco "
+"definitiva."
 
 #: engines/bladerunner/bladerunner.cpp:2006
 msgid ""
@@ -3159,10 +3160,14 @@ msgid ""
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
 "mode for this session until you completely Quit the game."
 msgstr ""
+"ATTENZIONE: Questa partita è stata salvata in Modalità Originale, ma stai "
+"giocando in Modalità con Contenuto Tagliato. Si passerà in Modalità "
+"Originale per questa sessione di gioco, fino all'uscita  dal gioco "
+"definitiva."
 
 #: engines/bladerunner/bladerunner.cpp:2008
 msgid "Continue"
-msgstr ""
+msgstr "Continua"
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:111
 msgid "Color Blind Mode"
