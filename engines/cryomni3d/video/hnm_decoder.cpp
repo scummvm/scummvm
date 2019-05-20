@@ -35,12 +35,15 @@
 namespace Video {
 
 // When no sound display a frame every 80ms
-HNMDecoder::HNMDecoder(bool loop) : _regularFrameDelay(80), _videoTrack(nullptr),
-	_audioTrack(nullptr), _stream(nullptr), _loop(loop) {
+HNMDecoder::HNMDecoder(bool loop, byte *initialPalette) : _regularFrameDelay(80),
+	_videoTrack(nullptr), _audioTrack(nullptr), _stream(nullptr),
+	_loop(loop), _initialPalette(initialPalette) {
 }
 
 HNMDecoder::~HNMDecoder() {
 	close();
+
+	delete[] _initialPalette;
 
 	// We don't deallocate _videoTrack and _audioTrack as they are owned by base class
 }
@@ -79,7 +82,7 @@ bool HNMDecoder::loadStream(Common::SeekableReadStream *stream) {
 		frameCount = 0;
 	}
 
-	_videoTrack = new HNM4VideoTrack(width, height, frameSize, frameCount, _regularFrameDelay);
+	_videoTrack = new HNM4VideoTrack(width, height, frameSize, frameCount, _regularFrameDelay, _initialPalette);
 	if (soundBits != 0 && soundChannels != 0) {
 		// HNM4 is 22050Hz
 		_audioTrack = new DPCMAudioTrack(soundChannels, soundBits, 22050, getSoundType());
@@ -149,13 +152,18 @@ void HNMDecoder::readNextPacket() {
 }
 
 HNMDecoder::HNM4VideoTrack::HNM4VideoTrack(uint32 width, uint32 height, uint32 frameSize,
-        uint32 frameCount, uint32 regularFrameDelay) :
+        uint32 frameCount, uint32 regularFrameDelay, const byte *initialPalette) :
 	_frameCount(frameCount), _regularFrameDelay(regularFrameDelay), _nextFrameStartTime(0) {
 
 	restart();
 
 	_curFrame = -1;
-	memset(_palette, 0, 256 * 3);
+	// Get the currently loaded palette for undefined colors
+	if (initialPalette) {
+		memcpy(_palette, initialPalette, 256 * 3);
+	} else {
+		memset(_palette, 0, 256 * 3);
+	}
 
 	if (width * height != frameSize) {
 		error("Invalid frameSize");

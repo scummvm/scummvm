@@ -43,7 +43,7 @@ namespace Video {
  */
 class HNMDecoder : public VideoDecoder {
 public:
-	HNMDecoder(bool loop = false);
+	HNMDecoder(bool loop = false, byte *initialPalette = nullptr);
 	virtual ~HNMDecoder();
 	bool loadStream(Common::SeekableReadStream *stream);
 	void readNextPacket();
@@ -55,7 +55,7 @@ private:
 	class HNM4VideoTrack : public VideoTrack {
 	public:
 		HNM4VideoTrack(uint32 width, uint32 height, uint32 frameSize, uint32 frameCount,
-		               uint32 regularFrameDelay);
+		               uint32 regularFrameDelay, const byte *initialPalette = nullptr);
 		~HNM4VideoTrack();
 
 		// When _frameCount is 0, it means we are looping
@@ -113,6 +113,7 @@ private:
 	};
 
 	bool _loop;
+	byte *_initialPalette;
 
 	uint32 _regularFrameDelay;
 	// These two pointer are owned by VideoDecoder
