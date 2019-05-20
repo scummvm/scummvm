@@ -118,7 +118,11 @@ void CryOmni3DEngine::playHNM(const Common::String &filename, Audio::Mixer::Soun
 	const char *const extensions[] = { "hns", "hnm", nullptr };
 	Common::String fname(prepareFileName(filename, extensions));
 
-	Video::VideoDecoder *videoDecoder = new Video::HNMDecoder();
+	byte *currentPalette = new byte[256 * 3];
+	g_system->getPaletteManager()->grabPalette(currentPalette, 0, 256);
+
+	// Pass the ownership of currentPalette to HNMDecoder
+	Video::VideoDecoder *videoDecoder = new Video::HNMDecoder(false, currentPalette);
 	videoDecoder->setSoundType(soundType);
 
 	if (!videoDecoder->loadFile(fname)) {
