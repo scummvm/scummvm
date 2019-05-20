@@ -114,7 +114,8 @@ Common::String CryOmni3DEngine::prepareFileName(const Common::String &baseName,
 	return baseName;
 }
 
-void CryOmni3DEngine::playHNM(const Common::String &filename, Audio::Mixer::SoundType soundType) {
+void CryOmni3DEngine::playHNM(const Common::String &filename, Audio::Mixer::SoundType soundType,
+                              HNMCallback beforeDraw, HNMCallback afterDraw) {
 	const char *const extensions[] = { "hns", "hnm", nullptr };
 	Common::String fname(prepareFileName(filename, extensions));
 
@@ -137,6 +138,7 @@ void CryOmni3DEngine::playHNM(const Common::String &filename, Audio::Mixer::Soun
 	uint16 height = videoDecoder->getHeight();
 
 	bool skipVideo = false;
+	unsigned int frameNum = 0;
 	while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
 		if (videoDecoder->needsUpdate()) {
 			const Graphics::Surface *frame = videoDecoder->decodeNextFrame();
@@ -147,10 +149,15 @@ void CryOmni3DEngine::playHNM(const Common::String &filename, Audio::Mixer::Soun
 					setPalette(palette, 0, 256);
 				}
 
-				// TODO: beforeDraw
+				if (beforeDraw) {
+					(this->*beforeDraw)(frameNum);
+				}
 				g_system->copyRectToScreen(frame->getPixels(), frame->pitch, 0, 0, width, height);
-				// TODO: afterDraw
+				if (afterDraw) {
+					(this->*afterDraw)(frameNum);
+				}
 
+				frameNum++;
 			}
 		}
 		g_system->updateScreen();
