@@ -496,6 +496,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_QFG3,          851,    32, -1,            "ProjObj", "doit",                            NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // near the end, when throwing the spear of death, bug #5282
 	{ GID_QFG4,           -1,    15, -1,     "charInitScreen", "dispatchEvent",                   NULL,     5,     5, { WORKAROUND_FAKE,   0 } }, // floppy version, when viewing the character screen
 	{ GID_QFG4,           -1,    23, -1,     "tellerControls", "dispatchEvent",                   NULL,     6,     6, { WORKAROUND_FAKE,   0 } }, // floppy version, when using keyboard controls in the conversation interface
+	{ GID_QFG4,           -1,    50, -1,     "sSearchMonster", "changeState",                     NULL,     2,     2, { WORKAROUND_FAKE,   0 } }, // CD version, when searching a chernovy or revenant with speech disabled
 	{ GID_QFG4,           -1, 64917, -1,       "controlPlane", "setBitmap",                       NULL,     3,     3, { WORKAROUND_FAKE,   0 } }, // floppy version, when entering the game menu
 	{ GID_QFG4,           -1, 64917, -1,              "Plane", "setBitmap",                       NULL,     3,     3, { WORKAROUND_FAKE,   0 } }, // floppy version, happens sometimes in fight scenes
 	{ GID_QFG4,          380,    80, -1,           "myButton", "select",                          NULL,     2,     2, { WORKAROUND_FAKE,   1 } }, // CD version, when clicking on a puzzle piece for the keyhole scrambled picture puzzle
