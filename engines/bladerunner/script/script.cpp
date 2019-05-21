@@ -43,6 +43,10 @@
 #include "bladerunner/set.h"
 #include "bladerunner/settings.h"
 #include "bladerunner/set_effects.h"
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+#include "bladerunner/screen_effects.h"
+#endif // BLADERUNNER_ORIGINAL_BUGS
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/script/police_maze.h"
@@ -807,6 +811,27 @@ void ScriptBase::Set_Subtitle_Text_On_Screen(Common::String displayText) {
 	_vm->_subtitles->setGameSubsText(displayText, true);
 	_vm->_subtitles->show();
 }
+
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+void ScriptBase::Screen_Effect_Skip(int effectInc) {
+	debugC(kDebugScript, "Screen_Effect_Skip(%d)", effectInc);
+	_vm->_screenEffects->toggleEntry(effectInc, true);
+	_vm->_scene->advanceFrame(false);
+}
+
+void ScriptBase::Screen_Effect_Restore(int effectInc) {
+	debugC(kDebugScript, "Screen_Effect_Restore(%d)", effectInc);
+	_vm->_screenEffects->toggleEntry(effectInc, false);
+	_vm->_scene->advanceFrame(false);
+}
+
+void ScriptBase::Screen_Effect_Restore_All() {
+	debugC(kDebugScript, "Screen_Effect_Restore_All()");
+	_vm->_screenEffects->toggleEntry(-1, false);
+	_vm->_scene->advanceFrame(false);
+}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 int ScriptBase::Animation_Open() {
 	//This is not implemented in game

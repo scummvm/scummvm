@@ -1965,6 +1965,10 @@ bool BladeRunnerEngine::loadGame(Common::SeekableReadStream &stream) {
 #endif // BLADERUNNER_ORIGINAL_BUGS
 	_audioSpeech->stopSpeech();
 	_actorDialogueQueue->flush(true, false);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	_screenEffects->toggleEntry(-1, false); // clear the skip list
+#endif
 	_screenEffects->_entries.clear();
 
 	int size = s.readInt();

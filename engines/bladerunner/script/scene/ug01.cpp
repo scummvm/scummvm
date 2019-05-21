@@ -24,6 +24,12 @@
 
 namespace BladeRunner {
 
+enum kUG01Loops {
+	kUG01LoopMainLoop         = 0, //   0 -  60
+	kUG01LoopSteamDissapating = 2, //  61 - 120
+	kUG01LoopMainLoopNoSteam  = 3  // 121 - 181
+};
+
 void SceneScriptUG01::InitializeScene() {
 	if (Game_Flag_Query(kFlagUG10toUG01)) {
 		Setup_Scene_Information(34.47f, -50.13f, -924.11f, 500);
@@ -37,7 +43,13 @@ void SceneScriptUG01::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(1, 144,   0, 210, 104, 0);
 	Scene_Exit_Add_2D_Exit(2,   0, 173, 139, 402, 3);
 
+#if BLADERUNNER_ORIGINAL_BUGS
 	Ambient_Sounds_Add_Looping_Sound(kSfxSTMLOOP7, 28, 0, 1);
+#else
+	if (!Game_Flag_Query(kFlagUG01SteamOff)) {
+		Ambient_Sounds_Add_Looping_Sound(kSfxSTMLOOP7, 28, 0, 1);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED1,   40, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxUGBED2,   40, 0, 1);
 	Ambient_Sounds_Add_Sound(kSfxBBDRIP1,  2,  20, 20, 25, -100, 100, -100,  100, 0, 0);
@@ -60,9 +72,9 @@ void SceneScriptUG01::InitializeScene() {
 	Ambient_Sounds_Add_Sound(kSfxBBGRN3,   5,  50, 17, 37,    0, 100, -101, -101, 0, 0);
 
 	if (Game_Flag_Query(kFlagUG01SteamOff)) {
-		Scene_Loop_Set_Default(3);
+		Scene_Loop_Set_Default(kUG01LoopMainLoopNoSteam);
 	} else {
-		Scene_Loop_Set_Default(0);
+		Scene_Loop_Set_Default(kUG01LoopMainLoop);
 	}
 }
 
@@ -71,6 +83,12 @@ void SceneScriptUG01::SceneLoaded() {
 	Unobstacle_Object("BEAM03", true);
 	Unobstacle_Object("BEAM04", true);
 	Clickable_Object("PIPES_FG_LFT");
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	if (Game_Flag_Query(kFlagUG01SteamOff)) {
+		Screen_Effect_Skip(0);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 bool SceneScriptUG01::MouseClick(int x, int y) {
@@ -82,9 +100,18 @@ bool SceneScriptUG01::ClickedOn3DObject(const char *objectName, bool a2) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -9.0f, -50.13f, -148.0f, 0, true, false, false)
 		 && !Game_Flag_Query(kFlagUG01SteamOff)
 		) {
+#if BLADERUNNER_ORIGINAL_BUGS
 			Actor_Says(kActorMcCoy, 8525, 13);
-			Scene_Loop_Set_Default(3);
-			Scene_Loop_Start_Special(kSceneLoopModeOnce, 2, true);
+			Scene_Loop_Set_Default(kUG01LoopMainLoopNoSteam);
+			Scene_Loop_Start_Special(kSceneLoopModeOnce, kUG01LoopSteamDissapating, true);
+#else
+			Sound_Play(kSfxSQUEAK1,  40, 0, 0, 50);
+			Screen_Effect_Skip(0);
+			Scene_Loop_Set_Default(kUG01LoopMainLoopNoSteam);
+			Scene_Loop_Start_Special(kSceneLoopModeOnce, kUG01LoopSteamDissapating, false);
+			Sound_Play(kSfxSTEAM6A,  40, 0, 0, 50);
+			Ambient_Sounds_Remove_Looping_Sound(kSfxSTMLOOP7, 2);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Game_Flag_Set(kFlagUG01SteamOff);
 		} else {
 			Actor_Says(kActorMcCoy, 8525, 13);
@@ -180,6 +207,10 @@ void SceneScriptUG01::PlayerWalkedIn() {
 void SceneScriptUG01::PlayerWalkedOut() {
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Screen_Effect_Restore_All();
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 void SceneScriptUG01::DialogueQueueFlushed(int a1) {
