@@ -100,16 +100,16 @@ void HDBGame::readMPC(const Common::String &filename) {
 				DataFile* dirEntry = new DataFile();
 				
 				for (int fileNameIndex = 0; fileNameIndex < 64; fileNameIndex++) {
-					dirEntry->fileName[fileNameIndex] = file.readByte();
+					dirEntry->fileName[fileNameIndex] = _file.readByte();
 				}
 				dirEntry->fileName[64] = '\0';
 
-				dirEntry->filePosition = file.readUint32LE();
-				dirEntry->fileLength = file.readUint32LE();
-				dirEntry->unknownField1 = file.readUint32LE();
-				dirEntry->unknownField2 = file.readUint32LE();
+				dirEntry->filePosition = _file.readUint32LE();
+				dirEntry->fileLength = _file.readUint32LE();
+				dirEntry->unknownField1 = _file.readUint32LE();
+				dirEntry->unknownField2 = _file.readUint32LE();
 
-				gameData.push_back(dirEntry);
+				_gameData.push_back(dirEntry);
 			}
 
 		} else {
