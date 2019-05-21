@@ -351,6 +351,70 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 			return true;
 		}
 
+		// FPFP CD has several message sequences where audio and text were left
+		//  out of sync. This is probably because this version didn't formally
+		//  support text mode. Most of these texts just say "Dummy Msg". All the
+		//  real text is there but it's either concatenated or in a different
+		//  tuple. We extract and return the correct text. Fixes #10964
+		if (g_sci->getGameId() == GID_FREDDYPHARKAS && g_sci->isCD() &&
+			g_sci->getLanguage() == Common::EN_ANY && !g_sci->isDemo()) {
+			byte textSeq = 0;
+			uint32 substringIndex = 0;
+			uint32 substringLength = 0;
+
+			// lever brothers' introduction
+			if (stack.getModule() == 220 && t.noun == 24 && t.verb == 0 && t.cond == 0) {
+				switch (t.seq) {
+				case 1: textSeq = 1; substringIndex = 0;   substringLength = 25; break;
+				case 2: textSeq = 1; substringIndex = 26;  substringLength = 20; break;
+				case 3: textSeq = 1; substringIndex = 47;  substringLength = 58; break;
+				case 4: textSeq = 1; substringIndex = 106; substringLength = 34; break;
+				case 5: textSeq = 1; substringIndex = 141; substringLength = 27; break;
+				case 6: textSeq = 1; substringIndex = 169; substringLength = 29; break;
+				case 7: textSeq = 1; substringIndex = 199; substringLength = 52; break;
+				case 8: textSeq = 1; substringIndex = 252; substringLength = 37; break;
+				}
+			}
+
+			// kenny's introduction
+			if (stack.getModule() == 220 && t.noun == 30 && t.verb == 0 && t.cond == 0) {
+				switch (t.seq) {
+				case 3: textSeq = 3; substringIndex = 0;  substringLength = 14;  break;
+				case 4: textSeq = 3; substringIndex = 15; substringLength = 245; break;
+				case 5: textSeq = 4; break;
+				}
+			}
+
+			// helen swatting flies
+			if (stack.getModule() == 660 && t.noun == 35 && t.verb == 0 && t.cond == 0) {
+				switch (t.seq) {
+				case 1: textSeq = 1; substringIndex = 0;   substringLength = 42; break;
+				case 2: textSeq = 1; substringIndex = 43;  substringLength = 93; break;
+				case 3: textSeq = 1; substringIndex = 137; substringLength = 72; break;
+				case 4: textSeq = 2; break;
+				case 5: textSeq = 1; substringIndex = 210; substringLength = 57; break;
+				case 6: textSeq = 3; break;
+				}
+			}
+
+			// find the original message record and the record that contains the
+			//  correct text, then use the correct substring. the original must
+			//  be used to preserve its correct talker and tuple values.
+			if (textSeq != 0 && reader->findRecord(t, record)) {
+				MessageTuple textTuple(t.noun, t.verb, t.cond, textSeq);
+				MessageRecord textRecord;
+				if (reader->findRecord(textTuple, textRecord)) {
+					uint32 textLength = (substringLength == 0) ? textRecord.length : substringLength;
+					if (substringIndex + textLength <= textRecord.length) {
+						record.string = textRecord.string + substringIndex;
+						record.length = textLength;
+						delete reader;
+						return true;
+					}
+				}
+			}
+		}
+
 		if (!reader->findRecord(t, record)) {
 			// Tuple not found
 			if (recurse && (stack.size() > 1)) {
@@ -387,7 +451,7 @@ int MessageState::nextMessage(reg_t buf) {
 
 	if (!buf.isNull()) {
 		if (getRecord(_cursorStack, true, record)) {
-			outputString(buf, processString(record.string));
+			outputString(buf, processString(record.string, record.length));
 			_lastReturned = record.tuple;
 			_lastReturnedModule = _cursorStack.getModule();
 			_cursorStack.top().seq++;
@@ -521,13 +585,13 @@ bool MessageState::stringStage(Common::String &outstr, const Common::String &inS
 	return false;
 }
 
-Common::String MessageState::processString(const char *s) {
+Common::String MessageState::processString(const char *s, uint32 maxLength) {
 	Common::String outStr;
 	Common::String inStr = Common::String(s);
 
 	uint index = 0;
 
-	while (index < inStr.size()) {
+	while (index < inStr.size() && index < maxLength) {
 		// Check for hex escape sequence
 		if (stringHex(outStr, inStr, index))
 			continue;
