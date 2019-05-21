@@ -190,6 +190,12 @@ void SceneScriptCT08::PlayerWalkedIn() {
 		Scene_Exits_Disable();
 		Game_Flag_Reset(kFlagCT51toCT08);
 		Game_Flag_Reset(kFlagCT06toCT08);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		// if player clicked through fast enough in BB roof encounter, the fight music would be (auto-)saved here
+		// and would be restored when loading the auto-save
+		Music_Stop(0);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Autosave_Game(1);
 	} else if (Game_Flag_Query(kFlagCT51toCT08)) {
 		Game_Flag_Reset(kFlagCT51toCT08);
