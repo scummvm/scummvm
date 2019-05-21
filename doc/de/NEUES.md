@@ -3,8 +3,93 @@ Programmcodes finden Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
 #### 2.1.0 (??.??.2019)
+
+ Neue Spiele:
+   - Might and Magic IV - Clouds of Xeen.
+   - Might and Magic V - Darkside of Xeen.
+   - Might and Magic - World of Xeen.
+   - Might and Magic - World of Xeen 2 CD Talkie (mit Sprachausgabe).
+   - Might and Magic - Swords of Xeen.
+
+ Allgemein:
+   - Verbesserte Performance der grafischen Benutzeroberfläche.
+   - Skalier-Optionen hinzugefügt, die steuern, wie das ScummVM-Fenster auf
+     dem Bildschirm dargestellt wird.
+   - Fehlerhafte Steuerung des Mauszeigers korrigiert, wenn dieser über die Tastatur
+     gesteuert wird.
+   - Code der Roland MT-32-Emulation auf Munt 2.3.0 aktualisiert.
+
+ Drascula:
+   - Fehler beim Laden eines in Kapitel 1 gespeicherten Spielstands korrigiert.
+
+ Full Pipe:
+   - Die Spielzeit wird nun korrekt wiederhergestellt, wenn ein Spielstand geladen wird.
+   - Fehler behoben, der zu einem enormen Speicherverbrauch in Szene 22 führt.
+
+ Kyra:
+   - Unterstützung für die Amiga-Version von Eye of the Beholder I + II hinzugefügt.
+   - Unterstützung für die FM-Towns-Version von Eye of the Beholder II hinzugefügt.
+   - Mehrere Fehlerkorrekturen.
+
+ MOHAWK:
+   - Hauptmenü für die 25th Anniversary Edition von Myst ME hinzugefügt.
+   - Hauptmenü für die 25th Anniversary Edition von Riven hinzugefügt.
+   - Automatisches Speichern in Speicherplatz 0 für Myst und Riven hinzugefügt.
+   - Tastenkürzel für das Laden und Speichern von Spielständen wie im Handbuch
+     von Myst und Riven dokumentiert hinzugefügt.
+   - Absturz im Observatorium in Myst behoben.
+   - Absturz auf Jungle Island in Riven behoben.
+   - Benutzerfreundlichkeit für einige Puzzles in Myst und Riven verbessert.
+   - Korrektur mehrerer Abstürze, Grafik- und Sound-Fehler in Myst und Riven.
+
+ SCI:
+   - Absturz in Police Quest IV: Open Season behoben.
+   - Grafikeffekte in Quest for Glory I (VGA) verbessert.
+
  SCUMM:
    - Lippensynchronisation für v6- und v7+-Spiele hinzugefügt.
+   - Verbesserung der Audio-Qualität in den Spielen von Humongous Entertainment durch Verwendung
+     des Miles AdLib-Treibers.
+   - Potenzielle Stabel-Überläufe in The Dig und Full Throttle behoben.
+   - Sprachausgabe in der U-Boot-Szene von Indiana Jones and the Fate of Atlantis korrigiert.
+     Benutzer müssen nun die Datei monster.sou mit einer aktuellen Version der scummvm-tools
+     neu erstellen, damit diese Fehlerkorrektur auch bei komprimierten Audiodateien greift.
+   - Fehler in der deutschen Version von SPY Fox 3: Operation Ozone korrigiert. Das Spiel kann
+     nun komplett durchgespielt werden.
+
+ SKY:
+   - Workaround für einen Fehler des Originalspiels hinzugefügt, der die Darstellung des Intros
+     verbessert. Bilder werden nun nicht mehr abgeschnitten, sondern korrekt dargestellt, da diese
+     im Vollbild-Format (320x200px) in den Spieldaten enthalten sind.
+
+ Tinsel:
+   - Fehler beim Laden von Spielständen in Discworld 1 korrigiert, der auftritt, wenn Rincewind einen Gegenstand trägt.
+   - Fehler korrigiert, der einen Absturz in Discworld 1 verursachen kann.
+   - In Discworld 1 werden Gegenstände, die abgelegt werden und sich nie im Gepäck oder in Rincewinds Inventar
+     befanden, nun korrekt im Gepäck abgelegt, anstatt verloren zu gehen.
+
+ Titanic:
+   - Fehler korrigiert, der das Spiel zum Absturz bringen kann, wenn ein Stockwerk manuell angewählt wird.
+   - Der Text-Parser wird nun zwischen den einzelnen Sätzen einer Unterhaltung korrekt zurückgesetzt.
+   - Fehler korrigiert, der zu einer fehlerhaften Darstellung des Mauszeigers führen kann.
+   - Fehler korrigiert, der zu einer Animations-Schleife des Barbots führen kann, wenn vor ihm ein Spielstand geladen wurde.
+   - Fehler korrigiert, der zum Absturz führen kann, wenn der Papagei danach gefragt wird, wer das Schiff sabotiert hat.
+
+ Tucker:
+   - Mehrere Grafikfehler in Bud Tucker in Double Trouble behoben.
+   - Mehrere Probleme mit der Darstellung von Zeichen und Untertiteln behoben.
+   - Fehlerhafte Sound-Effekte korrigiert.
+   - Die Blasen im "Plugs Shop" sind nun immer sichtbar.
+   - Fehlende Animation hinzugefügt, wenn sich Ego und Billie auf dem Boot befinden.
+   - Fehler korrigiert, der in der zweiten Museums-Szene zu einer Sackgasse führen kann.
+   - Bud kann den begehbaren Bereich nun nicht mehr verlassen, wenn er den Club besucht.
+   - Bud kann außerdem nicht mehr durch geschlossene Türen gehen.
+   - Im Inventar kann nun das Mausrad zum scrollen verwendet werden.
+   - Die Sprachausgabe kann nun übersprungen werden.
+   - Verbesserte Behandlung von Spielständen sowie Unterstützung für automatisches Speichern hinzugefügt.
+
+ ZVISION:
+   - Grafikfehler in Zork: Grand Inquisitor behoben.
 
  PS Vita-Portierung:
    - Unterstützung für Touch-Steuerung hinzugefügt.
@@ -12,7 +97,10 @@ Programmcodes finden Sie auf Englisch unter:
  PSP-Portierung:
    - Unterstützung für Seitenverhältniskorrektur hinzugefügt.
    - Bewegung des Mauszeigers ist nun gleichmäßiger.
-   - Einstell-Möglichkeit für Mauszeiger-Geschwindigkeit und Joystick-Deadzone hinzugefügt.
+   - Einstellungsmöglichkeit für Mauszeiger-Geschwindigkeit und Joystick-Deadzone hinzugefügt.
+
+ SDL-Portierung:
+   - Unterstützung für Gamecontroller hinzugefügt.
 
 #### 2.0.0 (17.12.2017)
  Neue Spiele:
