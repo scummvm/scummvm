@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-05-17 22:58+0200\n"
+"POT-Creation-Date: 2019-05-22 19:49+0200\n"
 "PO-Revision-Date: 2019-05-22 17:48+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -3150,11 +3150,11 @@ msgstr "Fichier de séquence '%s' non trouvé !"
 msgid "Failed to initialize resources"
 msgstr "Échec de l'initialisation des ressources"
 
-#: engines/bladerunner/bladerunner.cpp:879
+#: engines/bladerunner/bladerunner.cpp:892
 msgid "A required game resource was not found"
 msgstr "Une ressource de jeu nécessaire n'a pas été trouvée"
 
-#: engines/bladerunner/bladerunner.cpp:2004
+#: engines/bladerunner/bladerunner.cpp:2021
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -3164,7 +3164,7 @@ msgstr ""
 "vous jouez en mode Contenu Original. Le mode sera réglé sur Contenu Montage "
 "Restauré pour cette session jusqu'à ce que vous quittiez complètement le jeu."
 
-#: engines/bladerunner/bladerunner.cpp:2006
+#: engines/bladerunner/bladerunner.cpp:2023
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -3174,7 +3174,7 @@ msgstr ""
 "jouez en mode Contenu Montage Restauré. Le mode sera ajusté au mode Contenu "
 "Original pour cette session jusqu'à ce que vous quittiez complètement le jeu."
 
-#: engines/bladerunner/bladerunner.cpp:2008
+#: engines/bladerunner/bladerunner.cpp:2025
 msgid "Continue"
 msgstr "Continuer"
 
@@ -3700,8 +3700,8 @@ msgid ""
 "should be located in the AmigaDOS system 'Fonts/' folder.\n"
 "Please copy them into the EOB game data directory.\n"
 msgstr ""
-"Cette version AMIGA nécessite les fichiers de polices de caractères suivants:"
-"\n"
+"Cette version AMIGA nécessite les fichiers de polices de caractères "
+"suivants:\n"
 "\n"
 "EOBF6.FONT\n"
 "EOBF6/6\n"
@@ -3710,8 +3710,8 @@ msgstr ""
 "\n"
 "Si vous avez utilisé le programme d'installation d'origine pour "
 "l'installation,\n"
-"ces fichiers doivent se trouver dans le dossier 'Fonts/' du système AmigaDOS."
-"\n"
+"ces fichiers doivent se trouver dans le dossier 'Fonts/' du système "
+"AmigaDOS.\n"
 "Veuillez les copier dans le répertoire de données de jeu de EOB.\n"
 
 #: engines/kyra/graphics/screen_eob.cpp:2262
@@ -3735,8 +3735,8 @@ msgid ""
 "Please copy the correct font files into your EOB II game data directory.\n"
 "\n"
 msgstr ""
-"Cette version AMIGA nécessite les fichiers de polices de caractères suivants:"
-"\n"
+"Cette version AMIGA nécessite les fichiers de polices de caractères "
+"suivants:\n"
 "\n"
 "EOBF6.FONT\n"
 "EOBF6/6\n"
