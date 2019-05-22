@@ -29,7 +29,7 @@ addons:
     packages:
     - sdl2
     - sdl2_net
-    - curl-openssl
+    - curl
     - jpeg-turbo
     - libmpeg2
     - a52dec
