@@ -44,7 +44,6 @@ addons:
     - freetype
     - zlib
     - pandoc
-    update: true
 
 branches:
  only:
