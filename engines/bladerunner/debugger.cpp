@@ -142,9 +142,9 @@ Debugger::~Debugger() {
 }
 
 bool Debugger::cmdAnimation(int argc, const char **argv) {
-	if (argc != 2 && argc != 3) {
+	if (argc != 2 && argc != 4) {
 		debugPrintf("Get or set animation mode of the actor.\n");
-		debugPrintf("Usage: %s <actorId> [<animationMode>]\n", argv[0]);
+		debugPrintf("Usage: %s <actorId> [<animationMode> <showDamageAnimationWhenMoving>]\n", argv[0]);
 		return true;
 	}
 
@@ -160,14 +160,16 @@ bool Debugger::cmdAnimation(int argc, const char **argv) {
 		return true;
 	}
 
-	if (argc == 3) {
+	if (argc == 4) {
 		int animationMode = atoi(argv[2]);
-		debugPrintf("actorAnimationMode(%i) = %i\n", actorId, animationMode);
+		int showDmgWhenMoving = atoi(argv[3]);
+		actor->setFlagDamageAnimIfMoving(showDmgWhenMoving!=0);
 		actor->changeAnimationMode(animationMode, true);
+		debugPrintf("actorAnimationMode(%i) = %i, showDamageWhenMoving = %i\n", actorId, animationMode, actor->getFlagDamageAnimIfMoving());
 		return false;
 	}
 
-	debugPrintf("actorAnimationMode(%i) = %i\n", actorId, actor->getAnimationMode());
+	debugPrintf("actorAnimationMode(%i) = %i, showDamageWhenMoving = %i, inCombat = %i\n", actorId, actor->getAnimationMode(), actor->getFlagDamageAnimIfMoving(), actor->inCombat());
 	return true;
 }
 
@@ -1791,7 +1793,7 @@ bool Debugger::cmdList(int argc, const char **argv) {
 
 					if (sceneObject->type == kSceneObjectTypeActor) {
 						Actor *actor = _vm->_actors[sceneObject->id - kSceneObjectOffsetActors];
-						debugPrintf("%d: %s (Clk: %s, Trg: %s, Prs: %s, Obs: %s, Mvg: %s)\n    Goal: %d, Set: %d, Anim mode: %d id:%d\n    Pos(%02.2f,%02.2f,%02.2f)\n",
+						debugPrintf("%d: %s (Clk: %s, Trg: %s, Prs: %s, Obs: %s, Mvg: %s)\n    Goal: %d, Set: %d, Anim mode: %d id:%d showDmg: %s inCombat: %s\n    Pos(%02.2f,%02.2f,%02.2f)\n",
 									 sceneObject->id - kSceneObjectOffsetActors,
 									 _vm->_textActorNames->getText(sceneObject->id - kSceneObjectOffsetActors),
 									 sceneObject->isClickable? "T" : "F",
@@ -1803,6 +1805,8 @@ bool Debugger::cmdList(int argc, const char **argv) {
 									 actor->getSetId(),
 									 actor->getAnimationMode(),
 									 actor->getAnimationId(),
+									 actor->getFlagDamageAnimIfMoving()? "T" : "F",
+									 actor->inCombat()? "T" : "F",
 									 actor->getPosition().x,
 									 actor->getPosition().y,
 									 actor->getPosition().z);
@@ -1842,7 +1846,7 @@ bool Debugger::cmdList(int argc, const char **argv) {
 						break;
 					}
 
-					debugPrintf("%d: %s (Mvg: %s, Walk:%s, Run:%s, Ret:%s, Trg: %s, Cmb: %s, Rep: %s)\n    Hp: %d, Fac: %d, Friend: %d\n    Goal: %d, Set: %d, Anim mode: %d id:%d\n    Pos(%02.2f,%02.2f,%02.2f), Walkbx:%d\n",
+					debugPrintf("%d: %s (Mvg: %s, Walk:%s, Run:%s, Ret:%s, Trg: %s, Rep: %s)\n    Hp: %d, Fac: %d, Friend: %d\n    Goal: %d, Set: %d, Anim mode: %d id:%d showDmg: %s inCombat: %s\n    Pos(%02.2f,%02.2f,%02.2f), Walkbx:%d\n",
 						actorId,
 						_vm->_textActorNames->getText(actorId),
 						actor->isMoving()?  "T" : "F",
@@ -1850,7 +1854,6 @@ bool Debugger::cmdList(int argc, const char **argv) {
 						actor->isRunning()? "T" : "F",
 						actor->isRetired()? "T" : "F",
 						actor->isTarget()?  "T" : "F",
-						actor->inCombat()?  "T" : "F",
 						isReplicant?        "T" : "F",
 						actor->getCurrentHP(),
 						actor->getFacing(),
@@ -1859,6 +1862,8 @@ bool Debugger::cmdList(int argc, const char **argv) {
 						actor->getSetId(),
 						actor->getAnimationMode(),
 						actor->getAnimationId(),
+						actor->getFlagDamageAnimIfMoving()? "T" : "F",
+						actor->inCombat()? "T" : "F",
 						actor->getPosition().x,
 						actor->getPosition().y,
 						actor->getPosition().z,
