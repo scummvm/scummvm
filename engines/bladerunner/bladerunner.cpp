@@ -317,36 +317,50 @@ Common::Error BladeRunnerEngine::run() {
 	}
 
 	if (warnUserAboutUnsupportedGame()) {
+		// improvement: Use a do-while() loop to handle the normal end-game state
+		// so that the game won't exit abruptly after end credits
+		do {
+			// additional code for gracefully handling end-game after _endCredits->show()
+			_gameOver = false;
+			_gameIsRunning = true;
+			if (_mouse->isDisabled()) {
+				// force a mouse enable here since otherwise, after end-game,
+				// we need extra call(s) to mouse->enable to get the _disabledCounter to 0
+				_mouse->enable(true);
+			}
+			// end of additional code for gracefully handling end-game
 
-		if (ConfMan.hasKey("save_slot")) {
-			loadGameState(ConfMan.getInt("save_slot"));
-		} else if (hasSavegames) {
-			_kia->_forceOpen = true;
-			_kia->open(kKIASectionLoad);
-		}
-		// TODO: why is game starting new game here when everything is done in startup?
-		//  else {
-		// 	newGame(kGameDifficultyMedium);
-		// }
+			if (ConfMan.hasKey("save_slot") && ConfMan.getInt("save_slot") != -1) {
+				loadGameState(ConfMan.getInt("save_slot"));
+				ConfMan.set("save_slot", "-1");
+			} else if (hasSavegames) {
+				_kia->_forceOpen = true;
+				_kia->open(kKIASectionLoad);
+			}
+			// TODO: why is game starting new game here when everything is done in startup?
+			//  else {
+			// 	newGame(kGameDifficultyMedium);
+			// }
 
-		gameLoop();
+			gameLoop();
 
-		_mouse->disable();
+			_mouse->disable();
 
-		if (_gameOver) {
-			// In the original game this created a single "END_GAME_STATE.END"
-			// which had the a valid format of a save game but was never accessed
-			// from the loading screen. (Due to the .END extension)
-			// It was also a single file that was overwritten each time the player
-			// finished the game.
-			// Maybe its purpose was debugging (?) by renaming it to .SAV and also
-			// for the game to "know" if the player has already finished the game at least once (?)
-			// although that latter one seems not to be used for anything, or maybe it was planned
-			// to be used for a sequel (?). We will never know.
-			// Disabling as in current state it will only fill-up save slots
-			// autoSaveGame(4, true);
-			_endCredits->show();
-		}
+			if (_gameOver) {
+				// In the original game this created a single "END_GAME_STATE.END"
+				// which had the a valid format of a save game but was never accessed
+				// from the loading screen. (Due to the .END extension)
+				// It was also a single file that was overwritten each time the player
+				// finished the game.
+				// Maybe its purpose was debugging (?) by renaming it to .SAV and also
+				// for the game to "know" if the player has already finished the game at least once (?)
+				// although that latter one seems not to be used for anything, or maybe it was planned
+				// to be used for a sequel (?). We will never know.
+				// Disabling as in current state it will only fill-up save slots
+				// autoSaveGame(4, true);
+				_endCredits->show();
+			}
+		} while (_gameOver); // if main game loop ended and _gameOver == false, then shutdown
 	}
 
 	shutdown();

@@ -218,8 +218,8 @@ void Mouse::disable() {
 	_randomCountdownY = 0;
 }
 
-void Mouse::enable() {
-	if (--_disabledCounter <= 0) {
+void Mouse::enable(bool force) {
+	if (force || --_disabledCounter <= 0) {
 		_disabledCounter = 0;
 	}
 }

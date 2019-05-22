@@ -512,28 +512,42 @@ int AIScriptSteele::GetFriendlinessModifierIfGetsClue(int otherActorId, int clue
 
 	switch (clueId) {
 	case kClueMcCoyRecoveredHoldensBadge:
+		// fall through
 	case kClueMcCoyRetiredLucy:
+		// fall through
 	case kClueMcCoyRetiredDektora:
+		// fall through
 	case kClueMcCoyRetiredSadik:
+		// fall through
 	case kClueMcCoyShotZubenInTheBack:
+		// fall through
 	case kClueMcCoyRetiredLutherLance:
+		// fall through
 	case kClueClovisOrdersMcCoysDeath:
+		// fall through
 	case kClueMcCoyIsKind:
+		// fall through
 	case kClueMcCoyIsInsane:
 		return 5;
 
 	case kClueMcCoyKilledRunciter1:
+		// fall through
 	case kClueMcCoyShotGuzza:
+		// fall through
 	case kClueMcCoyKilledRunciter2:
-		return 0;
+		return 0; // TODO shouldn't this be a negative number?
 
 	case kClueMcCoyLetZubenEscape:
 		return -4;
 
 	case kClueMcCoyWarnedIzo:
+		// fall through
 	case kClueMcCoyHelpedIzoIzoIsAReplicant:
+		// fall through
 	case kClueMcCoyHelpedDektora:
+		// fall through
 	case kClueMcCoyHelpedLucy:
+		// fall through
 	case kClueMcCoyHelpedGordo:
 		return -5;
 
