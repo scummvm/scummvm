@@ -58,7 +58,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed an issue in the wig maker room in the German version of SPY Fox 3: Operation Ozone
      which makes the game completable.
 
-Sherlock:
+ Sherlock:
    - Fixed crash in Spanish version talking to lady in Tailor shop
 
  SKY:
