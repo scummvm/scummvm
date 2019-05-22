@@ -3217,6 +3217,8 @@ int os_get_sysinfo(int code, void *param, long *result);
 #define os_remainder_long(a, b)  ((a) % (b))
 #endif
 
+int memicmp(const char *s1, const char *s2, int len);
+
 } // End of namespace TADS
 } // End of namespace Glk
 

@@ -641,8 +641,10 @@ unsigned char *os_gets(unsigned char *buf, size_t buflen)
  *   routine with use_timeout==false.  The regular os_gets() would not
  *   satisfy this need, because it cannot resume an interrupted input.)  
  */
+#if defined GLK_TIMERS && defined GLK_MODULE_LINE_ECHO
 static char * timebuf = NULL;
 static size_t timelen = 0;
+#endif
 
 int os_gets_timeout(unsigned char *buf, size_t bufl,
                     unsigned long timeout_in_milliseconds, int use_timeout)
@@ -1098,6 +1100,13 @@ void os_expause() {
 }
 
 void os_plain(void) {}
+
+int memicmp(const char *s1, const char *s2, int len) {
+	Common::String cs1(s1, len);
+	Common::String cs2(s2, len);
+
+	return cs1.compareToIgnoreCase(cs2);
+}
 
 } // End of namespace TADS
 } // End of namespace Glk

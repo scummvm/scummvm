@@ -33,6 +33,8 @@
 #ifndef GLK_TADS_OS_BUFFER
 #define GLK_TADS_OS_BUFFER
 
+#include "common/scummsys.h"
+
 namespace Glk {
 namespace TADS {
 

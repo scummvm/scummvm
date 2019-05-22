@@ -403,7 +403,8 @@ void linfglop2(lindef *lin, uchar *buf)
 /* save line source information to binary (.gam) file; TRUE ==> error */
 int linfwrt(lindef *lin, osfildef *fp)
 {
-#   define  linf ((linfdef *)lin)
+#define linf ((linfdef *)lin)
+#define UCHAR_MAX 255
     uchar   buf[UCHAR_MAX + 6];
     size_t  len;
     uint    pgcnt;

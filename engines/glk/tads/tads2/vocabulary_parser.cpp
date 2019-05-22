@@ -686,7 +686,7 @@ struct vocerr_va_info
  *   vocerr_va().  
  */
 static void vocerr_va_prep(voccxdef *ctx, struct vocerr_va_info *info,
-                           int err, char *f, va_list argptr)
+                           int err, const char *f, va_list argptr)
 {
     /* 
      *   presume that we'll use the given format string, instead of one
@@ -874,7 +874,7 @@ static void vocerr_va_prep(voccxdef *ctx, struct vocerr_va_info *info,
  *   property re-initialized for the call to this routine.  
  */
 static void vocerr_va(voccxdef *ctx, struct vocerr_va_info *info,
-                      int err, char *f, va_list argptr)
+                      int err, const char *f, va_list argptr)
 {
     char *buf;
     
@@ -896,7 +896,7 @@ static void vocerr_va(voccxdef *ctx, struct vocerr_va_info *info,
 /* 
  *   display a parser informational message 
  */
-void vocerr_info(voccxdef *ctx, int err, char *f, ...)
+void vocerr_info(voccxdef *ctx, int err, const char *f, ...)
 {
     va_list argptr;
     struct vocerr_va_info info;
@@ -915,7 +915,7 @@ void vocerr_info(voccxdef *ctx, int err, char *f, ...)
 /* 
  *   display a parser error 
  */
-void vocerr(voccxdef *ctx, int err, char *f, ...)
+void vocerr(voccxdef *ctx, int err, const char *f, ...)
 {
     va_list argptr;
     struct vocerr_va_info info;

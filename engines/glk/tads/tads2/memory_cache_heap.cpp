@@ -30,7 +30,7 @@ namespace TADS2 {
 /* global to keep track of all allocations */
 IF_DEBUG(ulong mchtotmem;)
 
-uchar *mchalo(errcxdef *ctx, size_t siz, char *comment) {
+uchar *mchalo(errcxdef *ctx, size_t siz, const char *comment) {
     uchar *ret;
 
     VARUSED(comment);

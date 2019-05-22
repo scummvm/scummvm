@@ -902,7 +902,7 @@ void bifrnd(bifcxdef *ctx, int argc)
 /* 
  *   case-insensitive substring matching 
  */
-static char *bif_stristr(const char *s1, const char *s2)
+static const char *bif_stristr(const char *s1, const char *s2)
 {
     size_t s1len;
     size_t s2len;
@@ -913,7 +913,7 @@ static char *bif_stristr(const char *s1, const char *s2)
     {
         /* if this is a match, return this substring */
         if (memicmp(s1, s2, s2len) == 0)
-            return (char *)s1;
+            return (const char *)s1;
     }
 
     return 0;
@@ -4146,7 +4146,7 @@ void bifinpdlg(bifcxdef *ctx, int argc)
     uchar *p;
     char prompt[256];
     char lblbuf[256];
-    char *labels[10];
+    const char *labels[10];
     char *dst;
     char *xp;
     uint len;

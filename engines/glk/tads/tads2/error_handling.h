@@ -74,7 +74,7 @@ namespace TADS2 {
 
 union erradef {
     int   erraint;                                      /* integer argument */
-    char *errastr;                                  /* text string argument */
+    const char *errastr;                            /* text string argument */
 };
 
 struct errdef {
@@ -99,7 +99,7 @@ typedef struct errmfdef errmfdef;
 
 struct errcxdef {
     errdef   *errcxptr;                              /* current error frame */
-    void    (*errcxlog)(void *, char *fac, int err, int argc, erradef *);
+    void    (*errcxlog)(void *, const char *fac, int err, int argc, erradef *);
                                          /* error logging callback function */
     void     *errcxlgc;               /* context for error logging callback */
     int       errcxofs;                        /* offset in argument buffer */
@@ -187,7 +187,7 @@ char *errstr(errcxdef *ctx, const char *str, int len);
 
 /* signal an error with argument count already set */
 #ifdef ERR_NO_MACRO
-void errsign(errcxdef *ctx, int e, char *facility);
+void errsign(errcxdef *ctx, int e, const char *facility);
 #else /* ERR_NO_MACRO */
 # ifdef DEBUG
 void errjmp(jmp_buf buf, int e);
@@ -206,7 +206,7 @@ void errjmp(jmp_buf buf, int e);
 
 /* signal an error with no arguments */
 #ifdef ERR_NO_MACRO
-void errsigf(errcxdef *ctx, char *facility, int err);
+void errsigf(errcxdef *ctx, const char *facility, int err);
 #else /* ERR_NO_MACRO */
 #define errsigf(ctx, fac, e) (errargc(ctx,0),errsign(ctx,e,fac))
 #endif /* ERR_NO_MACRO */
@@ -270,7 +270,7 @@ void errrse1(errcxdef *ctx, errdef *fr);
 
 /* log an error (no signalling, just reporting) */
 #ifdef ERR_NO_MACRO
-void errlogn(errcxdef *ctx, int err, char *facility);
+void errlogn(errcxdef *ctx, int err, const char *facility);
 #else /* ERR_NO_MACRO */
 
 #define errlogn(ctx,err,fac) \
@@ -282,7 +282,7 @@ void errlogn(errcxdef *ctx, int err, char *facility);
 
 /* log an error with no arguments */
 #ifdef ERR_NO_MACRO
-void errlogf(errcxdef *ctx, char *facility, int err);
+void errlogf(errcxdef *ctx, const char *facility, int err);
 #else /* ERR_NO_MACRO */
 
 /* void errlogf(errcxdef *ctx, char *facility, int err); */

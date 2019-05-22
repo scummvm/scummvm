@@ -192,7 +192,7 @@ static uchar    *fmstop;                          /* format string area top */
 static objnum    cmdActor;                                 /* current actor */
 
 /* forward declarations of static functions */
-static void outstring_stream(out_stream_info *stream, char *s);
+static void outstring_stream(out_stream_info *stream, const char *s);
 static void outchar_noxlat_stream(out_stream_info *stream, char c);
 static char out_parse_entity(char *outbuf, size_t outbuf_size,
                              char **sp, size_t *slenp);
@@ -1077,8 +1077,8 @@ static void outflushn_stream(out_stream_info *stream, int nl)
     }
     else
     {
-        char *suffix = nullptr; /* extra text to add after the flushed text */
-        int   countnl = 0;         /* true if line counts for [more] paging */
+        const char *suffix = nullptr; /* extra text to add after the flushed text */
+        int   countnl = 0;               /* true if line counts for [more] paging */
 
         /* null-terminate the buffer at the current position */
         stream->linebuf[++i] = '\0';
@@ -1621,7 +1621,7 @@ static void outchar_stream(out_stream_info *stream, char c)
 /* 
  *   write out a string, translating to the local system character set 
  */
-static void outstring_stream(out_stream_info *stream, char *s)
+static void outstring_stream(out_stream_info *stream, const char *s)
 {
     /* write out each character in the string */
     for ( ; *s ; ++s)
@@ -1813,7 +1813,7 @@ static char read_tag(char *dst, size_t dstlen, int *is_end_tag,
  *   display a string of a given length to a given stream 
  */
 static int outformatlen_stream(out_stream_info *stream,
-                               char *s, size_t slen)
+                               const char *s, size_t slen)
 {
     char     c;
     int      done = 0;

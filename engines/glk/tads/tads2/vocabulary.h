@@ -609,7 +609,7 @@ void vocrevert(voccxdef *ctx);
 void vocdmnclr(voccxdef *ctx);
 
 /* display a parser error message */
-void vocerr(voccxdef *ctx, int err, char *f, ...);
+void vocerr(voccxdef *ctx, int err, const char *f, ...);
 
 /* 
  *   display a parser informational error message - this will display the
@@ -617,7 +617,7 @@ void vocerr(voccxdef *ctx, int err, char *f, ...);
  *   words, and should be used when providing information, such as objects
  *   we're assuming by default 
  */
-void vocerr_info(voccxdef *ctx, int err, char *f, ...);
+void vocerr_info(voccxdef *ctx, int err, const char *f, ...);
 
 /* client undo callback - undoes a daemon/fuse/notifier */
 void vocdundo(void *ctx, uchar *data);

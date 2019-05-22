@@ -93,7 +93,7 @@ int errfmt(char *outbuf, int outbufl, const char *fmt, int argc, const erradef *
                     static struct
                     {
                         int   tokid;
-                        char *toknam;
+                        const char *toknam;
                     } toklist[] =
                     {
                         { TOKTSEM, "semicolon" },
@@ -106,7 +106,7 @@ int errfmt(char *outbuf, int outbufl, const char *fmt, int argc, const erradef *
                         { TOKTWHILE, "\"while\"" },
                         { TOKTLPAR, "left paren ('(')" },
                         { TOKTEQ, "'='" },
-                        { 0, (char *)0 }
+                        { 0, (const char *)nullptr }
                     };
                     
                     for (i = 0 ; toklist[i].toknam ; ++i)
@@ -185,7 +185,7 @@ void errsign(errcxdef *ctx, int e) {
 }
 
 /* enter a string argument */
-char *errstr(errcxdef *ctx, char *str, int len) {
+char *errstr(errcxdef *ctx, const char *str, int len) {
     char *ret = &ctx->errcxbuf[ctx->errcxofs];
     
     memcpy(ret, str, (size_t)len);

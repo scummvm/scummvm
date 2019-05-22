@@ -130,7 +130,7 @@ void ltk_free(void *mem) {
 * ltk_errlog - ERRor LOGging function.  Logs an error from the LER
 * system.
 */
-void ltk_errlog(void *ctx, char *fac, int errCode, int argc, erradef *argv) {
+void ltk_errlog(void *ctx, const char *fac, int errCode, int argc, erradef *argv) {
 	char buf[128];                                  /* formatted error buffer */
 	char msg[128];                                          /* message buffer */
 
@@ -152,7 +152,7 @@ void ltk_errlog(void *ctx, char *fac, int errCode, int argc, erradef *argv) {
 /*
 * ltk_dlg - DiaLog.  Puts the given message in a dialog box.
 */
-void ltk_dlg(char *title, char *msg, ...) {
+void ltk_dlg(const char *title, const char *msg, ...) {
 	va_list  argp;                                             /* printf args */
 	char     inbuf[80];                                       /* input buffer */
 	char     outbuf[160];                    /* allow inbuf to double in size */

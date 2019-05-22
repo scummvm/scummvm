@@ -34,7 +34,7 @@ int errfmt(char *outbuf, int outbufl, char *fmt, int argc, erradef *argv)
     int    argi   = 0;
     int    len;
     char   buf[20];
-	char  *p = nullptr;
+    const char  *p = nullptr;
     char   fmtchar;
 
     while (*fmt != '\0' && outbufl > 1)
@@ -148,7 +148,7 @@ void errjmp(jmp_buf buf, int e)
 #ifdef ERR_NO_MACRO
 
 /* base error signal function */
-void errsign(errcxdef *ctx, int e, char *facility)
+void errsign(errcxdef *ctx, int e, const char *facility)
 {
     strncpy(ctx->errcxptr->errfac, facility, ERRFACMAX);
     ctx->errcxptr->errfac[ERRFACMAX] = '\0';
@@ -161,7 +161,7 @@ void errsign(errcxdef *ctx, int e, char *facility)
 }
 
 /* signal an error with no arguments */
-void errsigf(errcxdef *ctx, char *facility, int e)
+void errsigf(errcxdef *ctx, const char *facility, int e)
 {
     errargc(ctx, 0);
     errsign(ctx, e, facility);
@@ -188,7 +188,7 @@ void errrse1(errcxdef *ctx, errdef *fr)
 }
 
 /* log an error: base function */
-void errlogn(errcxdef *ctx, int err, char *facility)
+void errlogn(errcxdef *ctx, int err, const char *facility)
 {
     ctx->errcxofs = 0;
     (*ctx->errcxlog)(ctx->errcxlgc, facility, err, ctx->errcxptr->erraac,
@@ -196,7 +196,7 @@ void errlogn(errcxdef *ctx, int err, char *facility)
 }
 
 /* log an error with no arguments */
-void errlogf(errcxdef *ctx, char *facility, int err)
+void errlogf(errcxdef *ctx, const char *facility, int err)
 {
     errargc(ctx, 0);
     errlogn(ctx, err, facility);

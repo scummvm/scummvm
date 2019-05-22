@@ -43,7 +43,7 @@ namespace TADS2 {
  *   An out-of-memory error is signalled if insufficient memory
  *   is available.  The comment is for debugging purposes only.
  */
-uchar *mchalo(errcxdef *ctx, size_t siz, char *comment);
+uchar *mchalo(errcxdef *ctx, size_t siz, const char *comment);
 
 /* allocate a structure */
 #define MCHNEW(errctx, typ, comment) \

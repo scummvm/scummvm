@@ -55,7 +55,7 @@ enum os_filetype_t {
 	OSFTT3IMG = 12,                  /* T3 image file (.t3 - formerly .t3x) */
 	OSFTT3OBJ = 13,                                /* T3 object file (.t3o) */
 	OSFTT3SYM = 14,                         /* T3 symbol export file (.t3s) */
-	OSFTT3SAV = 15,                           /* T3 saved state file (.t3v) */
+	OSFTT3SAV = 15                            /* T3 saved state file (.t3v) */
 };
 
 } // End of namespace TADS

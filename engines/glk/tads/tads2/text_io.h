@@ -92,7 +92,7 @@ uint tiocapturesize(tiocxdef *ctx);
 void outfmt(tiocxdef *ctx, uchar *txt);
 
 /* format a null-terminated (C-style) string to the display */
-int outformat(char *s);
+int outformat(const char *s);
 
 /* format a counted-length string, which may not be null-terminated */
 int outformatlen(char *s, uint len);

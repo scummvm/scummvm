@@ -56,13 +56,13 @@ extern void ltkfre();
  * printf-style arguments must be passed in also, if the message
  * requires them.  
  */
-extern void ltk_dlg(char *title, char *msg, ...);
+extern void ltk_dlg(const char *title, const char *msg, ...);
 
 
 /*
  * ltk_errlog - Error logging function for LER routines.
  */
-extern void ltk_errlog(void *ctx, char *fac, int errCode, int agrc, erradef *argv);
+extern void ltk_errlog(void *ctx, const char *fac, int errCode, int agrc, erradef *argv);
 
 
 /*
