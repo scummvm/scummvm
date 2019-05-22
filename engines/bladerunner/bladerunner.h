@@ -296,7 +296,7 @@ public:
 
 	bool playerHasControl();
 	void playerLosesControl();
-	void playerGainsControl();
+	void playerGainsControl(bool force = false);
 	void playerDied();
 
 	bool saveGame(Common::WriteStream &stream, Graphics::Surface &thumbnail);

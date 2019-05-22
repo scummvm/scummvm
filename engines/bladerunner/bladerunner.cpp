@@ -323,6 +323,10 @@ Common::Error BladeRunnerEngine::run() {
 			// additional code for gracefully handling end-game after _endCredits->show()
 			_gameOver = false;
 			_gameIsRunning = true;
+			if (!playerHasControl()) {
+				// force a player gains control
+				playerGainsControl(true);
+			}
 			if (_mouse->isDisabled()) {
 				// force a mouse enable here since otherwise, after end-game,
 				// we need extra call(s) to mouse->enable to get the _disabledCounter to 0
@@ -1861,16 +1865,21 @@ void BladeRunnerEngine::playerLosesControl() {
 	}
 }
 
-void BladeRunnerEngine::playerGainsControl() {
-	if (_playerLosesControlCounter == 0) {
+void BladeRunnerEngine::playerGainsControl(bool force) {
+	if (!force && _playerLosesControlCounter == 0) {
 		warning("Unbalanced call to BladeRunnerEngine::playerGainsControl");
 	}
 
-	if (_playerLosesControlCounter > 0)
-		--_playerLosesControlCounter;
-
-	if (_playerLosesControlCounter == 0) {
-		_mouse->enable();
+	if (force) {
+		_playerLosesControlCounter = 0;
+		_mouse->enable(force);
+	} else {
+		if (_playerLosesControlCounter > 0) {
+			--_playerLosesControlCounter;
+		}
+		if (_playerLosesControlCounter == 0) {
+			_mouse->enable();
+		}
 	}
 }
 
