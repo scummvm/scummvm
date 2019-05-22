@@ -206,8 +206,13 @@ void SceneScriptNR08::PlayerWalkedIn() {
 	}
 
 	if (Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR08ReadyToRun) {
+#if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Face_Heading(kActorDektora, 790, false);
 		Loop_Actor_Travel_Stairs(kActorDektora, 8, true, kAnimationModeIdle);
+#else
+		Actor_Face_Heading(kActorDektora, 831, false);
+		Loop_Actor_Travel_Stairs(kActorDektora, 7, true, kAnimationModeIdle);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR08GoToNR10);
 	}
 

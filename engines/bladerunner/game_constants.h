@@ -1686,6 +1686,7 @@ enum GameItems {
 };
 
 enum GameModelAnimations {
+	// McCoy animations
 	kModelAnimationMcCoyWithGunIdle              =   0,
 	kModelAnimationMcCoyWithGunGotHitRight       =   1,
 	kModelAnimationMcCoyWithGunGotHitLeft        =   2,
@@ -1740,6 +1741,45 @@ enum GameModelAnimations {
 	kModelAnimationMcCoyCrouchedIdle             =  51,
 	kModelAnimationMcCoyCrouchedGetsUp           =  52,
 	kModelAnimationMcCoyDrinkingBooze            =  53,
+	// Dektora animations
+	kModelAnimationDektoraCombatIdle             = 134,
+	kModelAnimationDektoraCombatWalkingA         = 135,
+	kModelAnimationDektoraCombatWalkingB         = 136,
+	kModelAnimationDektoraCombatGotHitRight      = 137,
+	kModelAnimationDektoraCombatGotHitLeft       = 138,
+	kModelAnimationDektoraCombatBegin            = 139, // assumes fighting pose
+	kModelAnimationDektoraCombatEnd              = 140, // exits combat mode
+	kModelAnimationDektoraCombatLegAttack        = 141,
+	kModelAnimationDektoraCombatPunchAttack      = 142,
+	kModelAnimationDektoraWalking                = 143,
+	kModelAnimationDektoraRunning                = 144, // fast walking
+	kModelAnimationDektoraClimbStairsUp          = 145,
+	kModelAnimationDektoraClimbStairsDown        = 146,
+	kModelAnimationDektoraFrontShoveMove         = 147,
+	kModelAnimationDektoraBackDodgeMove          = 148,
+	kModelAnimationDektoraFallsDead              = 149,
+	kModelAnimationDektoraSittingIdle            = 150,
+	kModelAnimationDektoraSittingShootingGun     = 151, // unused?
+	kModelAnimationDektoraSittingSubtleTalking   = 152,
+	kModelAnimationDektoraSittingIntenseTalking  = 153,
+	kModelAnimationDektoraSittingPullingGunOut   = 154,
+	kModelAnimationDektoraSittingHoldingGun      = 155,
+	kModelAnimationDektoraStandingIdle           = 156, // slow nod left right, could be talking too
+	kModelAnimationDektoraStandingTalkGestureA   = 157, // dismissive / questioning
+	kModelAnimationDektoraStandingNodShort       = 158, // could be talking too
+	kModelAnimationDektoraStandingTalkAgreeing   = 159,
+	kModelAnimationDektoraStandingTalkGestureB   = 160, // mellow
+	kModelAnimationDektoraStandingTalkGestureC   = 161, // move both hands
+	kModelAnimationDektoraStandingTalkGestureD   = 162, // appreciative
+	kModelAnimationDektoraInFlamesA              = 163,
+	kModelAnimationDektoraInFlamesGotHit         = 164, // unused?
+	kModelAnimationDektoraInFlamesStartFalling   = 165,
+	kModelAnimationDektoraInFlamesB              = 166,
+	kModelAnimationDektoraInFlamesEndFalling     = 167,
+	kModelAnimationDektoraDancingA               = 168,
+	kModelAnimationDektoraDancingB               = 169,
+	kModelAnimationDektoraDancingC               = 170,
+	kModelAnimationDektoraDancingFinale          = 171,
 	//
 	kModelAnimationBulletBobsTrackingGun       = 440,
 	kModelAnimationMaleTargetEmptyHandsActive  = 441,
@@ -1752,7 +1792,7 @@ enum GameModelAnimations {
 	kModelAnimationFemaleTargetWithBabyDead    = 448, // 447+1
 	kModelAnimationFemaleTargetWithGunActive   = 449,
 	kModelAnimationFemaleTargetWithGunDead     = 450, // 449+1
-
+	// Rachael Animations
 	kModelAnimationRachaelWalking                  = 822,
 	kModelAnimationRachaelIdle                     = 823,
 	kModelAnimationRachaelIdleOscilate             = 824, // unused

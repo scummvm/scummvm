@@ -214,10 +214,12 @@ bool SceneScriptNR11::ClickedOn3DObject(const char *objectName, bool combatMode)
 					Game_Flag_Set(kFlagDektoraRanAway);
 				}
 			} else {
+				// TODO why put this here? Could be a bug.
+				// There's a chance that McCoy will say this while "searching" for hidden Dektora
 				if (Random_Query(1, 2) == 1) {
-					Actor_Says(kActorMcCoy, 8575, 14);
+					Actor_Says(kActorMcCoy, 8575, 14); // More useless junk.
 				} else {
-					Actor_Says(kActorMcCoy, 8580, 14);
+					Actor_Says(kActorMcCoy, 8580, 14); // Nothing else there
 				}
 			}
 		}
