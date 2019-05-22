@@ -29,6 +29,7 @@
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/scriptables/script_engine.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "common/memstream.h"
@@ -618,8 +619,14 @@ bool ScScript::executeInstruction() {
 						_state = SCRIPT_WAITING_SCRIPT;
 						_waitScript->copyParameters(_stack);
 					}
+#ifdef ENABLE_FOXTAIL
+				} else if (BaseEngine::instance().isFoxTail() && strcmp(methodName, "LoadItems") == 0 && strcmp(_threadEvent,"AfterLoad") == 0) {
+					_stack->correctParams(0);
+					_gameRef->LOG(0, "Method '%s' is called in unbreakable mode of '%s' event and was ignored", methodName, _threadEvent);
+					_stack->pushNULL();
+#endif
 				} else {
-					// can call methods in unbreakable mode
+					// cannot call methods in unbreakable mode
 					_stack->correctParams(0);
 					runtimeError("Cannot call method '%s'. Ignored.", methodName);
 					_stack->pushNULL();
