@@ -387,7 +387,7 @@ void Mouse::tick(int x, int y) {
 	int actorId = Actor::findTargetUnderMouse(_vm, x, y);
 	int itemId = _vm->_items->findTargetUnderMouse(x, y);
 
-	bool isObject = isTarget && sceneObjectId >= kSceneObjectOffsetObjects && sceneObjectId <= 293;
+	bool isObject = isTarget && sceneObjectId >= kSceneObjectOffsetObjects && sceneObjectId <= (95 + kSceneObjectOffsetObjects);
 
 	if (!_vm->_playerActor->isMoving()) {
 		if (actorId >= 0) {
@@ -412,7 +412,7 @@ void Mouse::tick(int x, int y) {
 			break;
 		}
 
-		if (!_vm->_playerActor->isMoving() && animationMode != kAnimationModeCombatAim && animationMode != 22 && animationMode != 49) {
+		if (!_vm->_playerActor->isMoving() && animationMode != kAnimationModeCombatAim && animationMode != kAnimationModeCombatHit && animationMode != kAnimationModeCombatDie) {
 			_vm->_playerActor->changeAnimationMode(kAnimationModeCombatAim, false);
 		}
 	} else {
@@ -427,7 +427,7 @@ void Mouse::tick(int x, int y) {
 			cursorId = 10;
 			break;
 		}
-		if (!_vm->_playerActor->isMoving() && animationMode != kAnimationModeCombatIdle && animationMode != 22 && animationMode != 49) {
+		if (!_vm->_playerActor->isMoving() && animationMode != kAnimationModeCombatIdle && animationMode != kAnimationModeCombatHit && animationMode != kAnimationModeCombatDie) {
 			_vm->_playerActor->changeAnimationMode(kAnimationModeCombatIdle, false);
 		}
 	}

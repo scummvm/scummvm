@@ -767,6 +767,8 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 17:
+		// this is just frame 0 always, McCoy doesn't animated shoot in this animation State
+		// animation state 21 is for the full shooting animation
 		*animation = kModelAnimationMcCoyWithGunShooting;
 		_animationFrame = 0;
 		// weird, but thats in game code
@@ -809,6 +811,12 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 17;
 			_animationFrame = 0;
 			*animation = kModelAnimationMcCoyWithGunShooting;
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+			// Resume combat idle position even when shot at a target -- if it's no longer a target (dead or moved)
+			ChangeAnimationMode(kAnimationModeCombatIdle);
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 			if (Actor_Query_Goal_Number(kActorMcCoy) == kGoalMcCoyNR11Shoot) {
 				_animationFrame = 0;
 				_animationState = 21;
