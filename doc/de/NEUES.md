@@ -57,6 +57,10 @@ Programmcodes finden Sie auf Englisch unter:
    - Fehler in der deutschen Version von SPY Fox 3: Operation Ozone korrigiert. Das Spiel kann
      nun komplett durchgespielt werden.
 
+ Sherlock:
+   - Absturz in der spanischen Version behoben, der auftritt, wenn mit der Dame im Geschäft des 
+     Schneiders gesprochen wird.
+
  SKY:
    - Workaround für einen Fehler des Originalspiels hinzugefügt, der die Darstellung des Intros
      verbessert. Bilder werden nun nicht mehr abgeschnitten, sondern korrekt dargestellt, da diese
