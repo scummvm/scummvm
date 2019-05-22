@@ -58,6 +58,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed an issue in the wig maker room in the German version of SPY Fox 3: Operation Ozone
      which makes the game completable.
 
+Sherlock:
+   - Fixed crash in Spanish version talking to lady in Tailor shop
+
  SKY:
    - Added workaround for original game bug to improve intro and not cut off images which exist
      as fullscreen (320x200px) in the game data files.
