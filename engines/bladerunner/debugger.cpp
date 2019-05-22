@@ -108,6 +108,7 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 	_showMazeScore = false;
 
 	registerCmd("anim", WRAP_METHOD(Debugger, cmdAnimation));
+	registerCmd("health", WRAP_METHOD(Debugger, cmdHealth));
 	registerCmd("draw", WRAP_METHOD(Debugger, cmdDraw));
 	registerCmd("list", WRAP_METHOD(Debugger, cmdList));
 	registerCmd("flag", WRAP_METHOD(Debugger, cmdFlag));
@@ -170,6 +171,41 @@ bool Debugger::cmdAnimation(int argc, const char **argv) {
 	}
 
 	debugPrintf("actorAnimationMode(%i) = %i, showDamageWhenMoving = %i, inCombat = %i\n", actorId, actor->getAnimationMode(), actor->getFlagDamageAnimIfMoving(), actor->inCombat());
+	return true;
+}
+
+bool Debugger::cmdHealth(int argc, const char **argv) {
+	if (argc != 2 && argc != 4) {
+		debugPrintf("Get or set health for the actor.\n");
+		debugPrintf("Usage: %s <actorId> [<health> <max health>]\n", argv[0]);
+		return true;
+	}
+
+	int actorId = atoi(argv[1]);
+
+	Actor *actor = nullptr;
+	if (actorId >= 0 && actorId < (int)_vm->_gameInfo->getActorCount()) {
+		actor = _vm->_actors[actorId];
+	}
+
+	if (actor == nullptr) {
+		debugPrintf("Unknown actor %i\n", actorId);
+		return true;
+	}
+
+	if (argc == 4) {
+		int currHealth = atoi(argv[2]);
+		int maxHealth = atoi(argv[3]);
+		currHealth = CLIP(currHealth, 0, 100);
+		maxHealth = CLIP(maxHealth, 0, 100);
+		if (currHealth > maxHealth) {
+			debugPrintf("Actor's current health cannot be greater than their max health\n");
+			return true;
+		}
+		actor->setHealth(currHealth, maxHealth);
+	}
+
+	debugPrintf("actor health(%i) = %i, max: %i\n", actorId, actor->getCurrentHP(), actor->getMaxHP());
 	return true;
 }
 
