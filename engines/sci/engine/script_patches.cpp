@@ -11294,6 +11294,110 @@ static const uint16 qfg4LeftoversPatch[] = {
 	PATCH_END
 };
 
+// The runes puzzle in room 800 often rejects the correct answer. When a letter
+//  is selected it turns red but it's not applied until after a 30 tick delay
+//  with no visual indicator. If a letter is clicked during that delay then the
+//  previous letter is silently skipped, which is common since the correct
+//  answer contains the same letter consecutively.
+//
+// There are two approaches to fixing this: remove the delay or disable input
+//  during it. We do both. Letters are now applied as soon as they turn red, but
+//  the delay prevented the puzzle from ending abruptly, and so we still pause
+//  after the puzzle is solved but disable input. This preserves the puzzle's
+//  external behavior while making it impossible to click too fast.
+//
+// This bug is in all versions but the CD version exacerbates it with its broken
+//  dial. Sierra upgraded the Cycle classes which changed the behavior the dial
+//  depends on. CycleTo no longer supports wrapping around cel ranges and so the
+//  dial can't move from "C" to "O" (cels 7 to 0) and doesn't spin around when
+//  selecting the same letter twice as it did in floppy.
+//
+// Applies to: All versions
+// Responsible methods: proc_58 in script 801, runePuz:handleEvent, sTurnTheDial:changeState
+// Fixes bug: #10965
+static const uint16 qfg4RunesPuzzleSignature1[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x0163),           // pushi 0163
+	0x45, 0x02, SIG_UINT16(0x0002),     // callb proc0_2 [ set flag 355, puzzle is solved ]
+	0x38, SIG_SELECTOR16(dispose),      // pushi dispose
+	0x76,                               // push0
+	0x72, SIG_UINT16(0x0010),           // lofsa runesPuz
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ runesPuz dispose: ]
+	SIG_END
+};
+
+static const uint16 qfg4RunesPuzzlePatch1[] = {
+	PATCH_ADDTOOFFSET(+7),
+	0x32, PATCH_UINT16(0x0007),         // jmp 0007 [ don't exit puzzle immediately ]
+	PATCH_END
+};
+
+static const uint16 qfg4RunesPuzzleSignature2[] = {
+	// runePuz:handleEvent
+	0x63, SIG_ADDTOOFFSET(+1),          // pToa register [ always zero, the following code is unused ]
+	SIG_MAGICDWORD,
+	0x31, 0x21,                         // bnt 21 [ handle mouse/key down events ]
+	0x39, 0x04,                         // pushi 04
+	0x39, SIG_ADDTOOFFSET(+1),          // pushi type
+	0x76,                               // push0
+	0x87, 0x01,                         // lap 01
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ event type? ]
+	SIG_ADDTOOFFSET(+1349),
+	// sTurnTheDial:changeState
+	0x30, SIG_UINT16(0x0112),           // bnt 0112 [ state 2 ]
+	SIG_ADDTOOFFSET(+268),
+	0x35, 0x1e,                         // ldi 1e
+	0x65, SIG_ADDTOOFFSET(+1),          // aTop ticks
+	0x33, 0x20,                         // jmp 20 [ end of method ]
+	0x3c,                               // dup
+	0x35, 0x02,                         // ldi 02
+	0x1a,                               // eq?
+	0x31, 0x1a,                         // bnt 1a [ end of method ]
+	0x76,                               // push0
+	0x40, SIG_ADDTOOFFSET(+2),          // call proc_58 [ apply letter to puzzle ]
+	      SIG_UINT16(0x0000),
+	0x38, SIG_SELECTOR16(canControl),   // pushi canControl
+	0x78,                               // push1
+	0x78,                               // push1
+	0x51, SIG_ADDTOOFFSET(+1),          // class User
+	0x4a, SIG_UINT16(0x0006),           // send 06 [ User canControl: 1 (unnecessary) ]
+	0x38, SIG_SELECTOR16(dispose),      // pushi dispose
+	0x76,                               // push0
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa sTurnTheDial
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ sTurnTheDial dispose: (unnecessary) ]
+	SIG_END
+};
+
+static const uint16 qfg4RunesPuzzlePatch2[] = {
+	// runePuz:handleEvent
+	0x78,                               // push1
+	0x38, PATCH_UINT16(0x0163),         // pushi 0163
+	0x45, 0x04, PATCH_UINT16(0x0002),   // callb proc0_3 [ is puzzle solved? ]
+	0x31, 0x1b,                         // bnt 1b   [ handle mouse/key down events ]
+	0x32, PATCH_UINT16(0x01ec),         // jmp 01ec [ ignore events if puzzle is solved ]
+	PATCH_ADDTOOFFSET(+1350),
+	// sTurnTheDial:changeState
+	0x30, PATCH_UINT16(0x0123),         // bnt 0123 [ state 2 ]
+	PATCH_ADDTOOFFSET(+268),
+	0x76,                               // push0
+	0x40, PATCH_GETORIGINALUINT16ADJUST(+1648, +12), // call proc_58 [ apply letter to puzzle ]
+	      PATCH_UINT16(0x0000),
+	0x39, 0x01,                         // push1
+	0x38, PATCH_UINT16(0x0163),         // pushi 0163
+	0x45, 0x04, PATCH_UINT16(0x0002),   // callb proc0_3 [ is puzzle solved? ]
+	0x31, 0x10,                         // bnt 10 [ end of method ]
+	0x35, 0x1e,                         // ldi 1e
+	0x65, PATCH_GETORIGINALBYTE(+1637), // aTop ticks [ pause 30 ticks before exiting puzzle ]
+	0x33, 0x0a,                         // jmp 0a [ end of method ]
+	0x38, PATCH_SELECTOR16(dispose),    // pushi dispose
+	0x76,                               // push0
+	0x72, PATCH_UINT16(0x0010),         // lofsa runesPuz
+	0x4a, PATCH_UINT16(0x0004),         // send 04 [ runesPuz dispose: ]
+	0x3a,                               // toss
+	0x48,                               // ret
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qfg4AutosaveSignature,         qfg4AutosavePatch },
@@ -11352,6 +11456,8 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   710, "fix tentacle retraction for mage (2/2)",      1, qfg4PitRopeMageSignature2,     qfg4PitRopeMagePatch2 },
 	{  true,   800, "fix setScaler calls",                         1, qfg4SetScalerSignature,        qfg4SetScalerPatch },
 	{  true,   800, "fix grapnel removing hero's scaler",          1, qfg4RopeScalerSignature,       qfg4RopeScalerPatch },
+	{  true,   801, "fix runes puzzle (1/2)",                      1, qfg4RunesPuzzleSignature1,     qfg4RunesPuzzlePatch1 },
+	{  true,   801, "fix runes puzzle (2/2)",                      1, qfg4RunesPuzzleSignature2,     qfg4RunesPuzzlePatch2 },
 	{  true,   803, "fix sliding down slope",                      1, qfg4SlidingDownSlopeSignature, qfg4SlidingDownSlopePatch },
 	{  true,   810, "fix conditional void calls",                  1, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
 	{  true,   830, "fix conditional void calls",                  2, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
