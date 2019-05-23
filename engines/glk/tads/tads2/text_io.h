@@ -95,7 +95,7 @@ void outfmt(tiocxdef *ctx, uchar *txt);
 int outformat(const char *s);
 
 /* format a counted-length string, which may not be null-terminated */
-int outformatlen(char *s, uint len);
+int outformatlen(const char *s, uint len);
 
 /* flush output, with specified newline mode */
 void outflushn(int nl);

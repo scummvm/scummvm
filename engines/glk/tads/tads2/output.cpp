@@ -194,8 +194,7 @@ static objnum    cmdActor;                                 /* current actor */
 /* forward declarations of static functions */
 static void outstring_stream(out_stream_info *stream, const char *s);
 static void outchar_noxlat_stream(out_stream_info *stream, char c);
-static char out_parse_entity(char *outbuf, size_t outbuf_size,
-                             char **sp, size_t *slenp);
+static char out_parse_entity(char *outbuf, size_t outbuf_size, const char **sp, size_t *slenp);
 
 
 /* ------------------------------------------------------------------------ */
@@ -1741,7 +1740,7 @@ static void out_pop_stream()
  *   Get the next character, writing the previous character to the given
  *   output stream if it's not null. 
  */
-static char nextout_copy(char **s, size_t *slen,
+static char nextout_copy(const char **s, size_t *slen,
                          char prv, out_stream_info *stream)
 {
     /* if there's a stream, write the previous character to the stream */
@@ -1759,7 +1758,7 @@ static char nextout_copy(char **s, size_t *slen,
  *   the next character after the tag name.
  */
 static char read_tag(char *dst, size_t dstlen, int *is_end_tag,
-                     char **s, size_t *slen, out_stream_info *stream)
+                     const char **s, size_t *slen, out_stream_info *stream)
 {
     char c;
     
@@ -2722,12 +2721,10 @@ static int outformatlen_stream(out_stream_info *stream,
 /*
  *   Parse an HTML entity markup 
  */
-static char out_parse_entity(char *outbuf, size_t outbuf_size,
-                             char **sp, size_t *slenp)
-{
+static char out_parse_entity(char *outbuf, size_t outbuf_size, const char **sp, size_t *slenp) {
     char  ampbuf[10];
     char *dst;
-    char *orig_s;
+    const char *orig_s;
     size_t orig_slen;
     const amp_tbl_t *ampptr;
     size_t lo, hi, cur;
@@ -2988,8 +2985,7 @@ void tio_set_html_expansion(unsigned int html_char_val,
 /*
  *   Write out a c-style (null-terminated) string.
  */
-int outformat(char *s)
-{
+int outformat(const char *s) {
     return outformatlen(s, strlen(s));
 }
 
@@ -2999,11 +2995,10 @@ int outformat(char *s)
  *   This routine sends out a string, one character at a time (via outchar).
  *   Escape codes ('\n', and so forth) are handled here.
  */
-int outformatlen(char *s, uint slen)
-{
+int outformatlen(const char *s, uint slen) {
     char     c;
     uint     orig_slen;
-    char    *orig_s;
+    const char *orig_s;
     int      ret;
     int      called_filter;
 

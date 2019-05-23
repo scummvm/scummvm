@@ -281,7 +281,7 @@ void runrepush(runcxdef *ctx, runsdef *val)
 }
 
 /* push a counted-length string onto the stack */
-void runpstr(runcxdef *ctx, char *str, int len, int sav)
+void runpstr(runcxdef *ctx, const char *str, int len, int sav)
 {
 	runsdef val;
 

@@ -789,9 +789,7 @@ static void trdmain1(errcxdef *ec, int argc, char *argv[],
 #endif
 
 /* log an error */
-static void trdlogerr(void *ctx0, char *fac, int err,
-                      int argc, erradef *argv)
-{
+static void trdlogerr(void *ctx0, const char *fac, int err, int argc, erradef *argv) {
     errcxdef *ctx = (errcxdef *)ctx0;
     char      buf[256];
     char      msg[256];

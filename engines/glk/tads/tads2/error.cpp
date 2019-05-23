@@ -184,16 +184,6 @@ void errsign(errcxdef *ctx, int e) {
 #endif
 }
 
-/* enter a string argument */
-char *errstr(errcxdef *ctx, const char *str, int len) {
-    char *ret = &ctx->errcxbuf[ctx->errcxofs];
-    
-    memcpy(ret, str, (size_t)len);
-    ret[len] = '\0';
-    ctx->errcxofs += len + 1;
-    return(ret);
-}
-
 /* log an error: base function */
 void errlogn(errcxdef *ctx, int err) {
 	error("errlogn");

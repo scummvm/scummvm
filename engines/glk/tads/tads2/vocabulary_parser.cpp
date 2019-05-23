@@ -667,7 +667,7 @@ struct vocerr_va_info
     char user_msg[400];
 
     /* the sprintf-style format string to display */
-    char *fmt;
+    const char *fmt;
 
     /* 
      *   Pointer to the output buffer to use to format the string 'fmt' with
@@ -734,7 +734,7 @@ static void vocerr_va_prep(voccxdef *ctx, struct vocerr_va_info *info,
             };
             struct argbuf_t  args[5];
             struct argbuf_t *argp;
-            char  *p;
+            const char  *p;
 
             /* 
              *   Retrieve the arguments by examining the format string.  We

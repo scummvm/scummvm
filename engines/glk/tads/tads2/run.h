@@ -146,7 +146,7 @@ void runpnil(runcxdef *ctx);
 void runpbuf(runcxdef *ctx, int typ, void *val);
 
 /* push a counted-length string onto the stack */
-void runpstr(runcxdef *ctx, char *str, int len, int sav);
+void runpstr(runcxdef *ctx, const char *str, int len, int sav);
 
 /*
  *   Push a C-style string onto the stack, converting escape codes.  If
