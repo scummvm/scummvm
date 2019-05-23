@@ -2448,7 +2448,7 @@ static int outformatlen_stream(out_stream_info *stream,
                          || !scumm_stricmp(tagbuf, "em")
                          || !scumm_stricmp(tagbuf, "strong"))
                 {
-                    int attr;
+                    int attr = 0;
                     
                     /* choose the attribute flag */
                     switch (tagbuf[0])

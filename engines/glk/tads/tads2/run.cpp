@@ -1096,15 +1096,19 @@ void runexe(runcxdef *ctx, uchar *p0, objnum self, objnum target,
 	runsdef   val;                           /* stack element (for pushing) */
 	runsdef   val2;     /* another one (for popping in two-op instructions) */
 	uint      ofs;                   /* offset in code of current execution */
-	prpnum    prop;                         /* property number, when needed */
-	objnum    obj;                            /* object number, when needed */
+	prpnum    prop = 0;                     /* property number, when needed */
+	objnum    obj = 0;                        /* object number, when needed */
 	runsdef  *noreg rstsp;        /* sp to reset to on DISCARD instructions */
-	uchar    *lstp;                                         /* list pointer */
+	uchar    *lstp = nullptr;                               /* list pointer */
 	int       nargc;                   /* argument count of called function */
 	runsdef  *valp;
 	runsdef  *stkval;
-	int       i;
+	int       i = 0;
 	int       brkchk;
+	runsdef  val3;
+	int      asityp;
+	int      asiext = 0;
+	int      lclnum = 0;
 
 #ifndef DBG_OFF
 	int       err;
@@ -1954,11 +1958,6 @@ resume_from_error:
 			default:
 				if ((opc & OPCASI_MASK) == OPCASI_MASK)
 				{
-					runsdef  val3;
-					int      asityp;
-					int      asiext;
-					int      lclnum;
-
 					valp = &val;
 					stkval = &val;
 

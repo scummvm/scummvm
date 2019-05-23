@@ -57,7 +57,11 @@ struct runsdef {
         objnum  runsvobj;                                   /* object value */
         prpnum  runsvprp;                          /* property number value */
         uchar  *runsvstr;                              /* string/list value */
-    } runsv;
+	} runsv;
+
+	runsdef() : runstyp(0) {
+		runsv.runsvnum = 0;
+	}
 };
 
 /* external function control structure */
