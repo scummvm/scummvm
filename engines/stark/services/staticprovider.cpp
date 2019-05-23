@@ -133,7 +133,7 @@ Resources::Location *StaticProvider::loadLocation(const char *locationName) {
 	_location->onEnterLocation();
 
 	// Start background music
-	Common::Array<Resources::Sound *> sounds = _location->listChildren<Resources::Sound>(Resources::Sound::kSoundSub3);
+	Common::Array<Resources::Sound *> sounds = _location->listChildren<Resources::Sound>(Resources::Sound::kSoundBackground);
 	for (uint i = 0; i < sounds.size(); i++) {
 		sounds[i]->play();
 	}
