@@ -49,6 +49,7 @@ void OSystem_Switch::initBackend() {
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", false);
 	ConfMan.registerDefault("gfx_mode", "2x");
+	ConfMan.registerDefault("filtering", true);
 	ConfMan.registerDefault("output_rate", 48000);
 	ConfMan.registerDefault("touchpad_mouse_mode", true);
 
@@ -63,6 +64,9 @@ void OSystem_Switch::initBackend() {
 	}
 	if (!ConfMan.hasKey("gfx_mode")) {
 		ConfMan.set("gfx_mode", "2x");
+	}
+	if (!ConfMan.hasKey("filtering")) {
+		ConfMan.setBool("filtering", true);
 	}
 	if (!ConfMan.hasKey("output_rate")) {
 		ConfMan.setInt("output_rate", 48000);
