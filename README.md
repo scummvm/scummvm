@@ -32,7 +32,7 @@ itself originally had a few unintentional ways to get the game stuck).
 ### 2.1. Which games does ResidualVM support? ###
 
 Currently ResidualVM supports Grim Fandango and Escape from Monkey Island,
-as well Myst III and The Longest Journey.
+as well as Myst III and The Longest Journey.
 
 #### 2.1.1. GrimE games support ####
 
@@ -221,7 +221,7 @@ Key           | Binding
 ### 5.1. Required files ###
 
 You will need to copy the data files from your The Longest Journey CDs,
-DVD or digital distributiion into one directory. Specifically, you'll
+DVD or digital distribution into one directory. Specifically, you'll
 need:
   * The `1a`—`79` directories (only `4f` for demo version).
   * The `global` directory.
@@ -265,7 +265,7 @@ Key             | Binding
 `F7`            | Game settings
 `F8`            | Save a screenshot
 `F9`            | Toggle subtitles on and off
-`F10`           | Quit game and return to to main menu
+`F10`           | Quit game and return to main menu
 `A`             | Cycle back through inventory cursor items
 `S`             | Cycle forward through inventory cursor items
 `I`             | Inventory
@@ -482,7 +482,7 @@ some of the asset types. By leveraging this capability, users can create
 mods for the game. These are the currently supported modding features:
 
   * Load mods from the `mods` directory inside the game data path.
-  Each mod should be its own directory in the `mods` subdirectory.
+  Each mod should be in its own directory in the `mods` subdirectory.
   Mods are loaded in alphabetical order.
 
   * Load external PNG files instead of the XMG files inside the game
@@ -524,7 +524,7 @@ https://github.com/residualvm/residualvm/issues
 Please read the Wiki regarding how to report bugs properly first though:
 http://wiki.residualvm.org/index.php?title=Reporting_Bugs
 
-Remember to always have the following information in your bug reports:
+Remember to always provide the following information in your bug reports:
   * Information about the game (e.g. *Escape from Monkey Island, PS2
     version*).
   * Language of game (*English*, *German*, *...*).
