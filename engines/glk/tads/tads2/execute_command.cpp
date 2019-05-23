@@ -1687,11 +1687,8 @@ static void exesaveit(voccxdef *ctx, vocoldef *dolist)
             ctx->voccxthm[i] = dolist[i].vocolobj;
             if (dbg)
             {
-				static char *STR1 = ", ";
-				static char *STR2 = "]\\n";
-
                 runppr(rcx, dolist[i].vocolobj, PRP_SDESC, 0);
-                tioputs(ctx->voccxtio, i+1 < cnt ? STR1 : STR2);
+                tioputs(ctx->voccxtio, i+1 < cnt ? ", " : "]\\n");
             }
         }
     }

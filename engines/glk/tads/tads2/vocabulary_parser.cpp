@@ -1200,7 +1200,7 @@ static int voc_check_special(voccxdef *ctx, const char *wrd, int checktyp)
         char  *endp;
         char   typ;
         int    len;
-        int    wrdlen = strlen((char *)wrd);
+        int    wrdlen = strlen(wrd);
         
         for (p = ctx->voccxspp, endp = p + ctx->voccxspl ;
              p < endp ; )
@@ -2516,9 +2516,7 @@ static int vocg1o(voccxdef *ctx, char *cmd[], int typelist[],
 
     /* show trace message if in debug mode */
 	if (ctx->voccxflg & VOCCXFDBG) {
-		static char *CHECK = ". Checking for actor\\n";
-		static char *READING = ". Reading noun phrase\\n";
-		tioputs(ctx->vocxtio, chkact ? CHECK : READING);
+		tioputs(ctx->vocxtio, chkact ? ". Checking for actor\\n" : ". Reading noun phrase\\n");
 	}
 
     /* try the user parseNounPhrase hook */
@@ -5300,11 +5298,9 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
         else if (inlist[inpos].vocolflg == VOCS_IT ||
                  (inlist[inpos].vocolflg == VOCS_THEM && ctx->voccxthc == 0))
         {
-			static char *IT = "it";
-			static char *THEM = "them";
             err = vocsetit(ctx, ctx->voccxit, accprop, cmdActor,
                            cmdVerb, cmdPrep, &outlist[outpos],
-                           inlist[inpos].vocolflg == VOCS_IT ? IT : THEM,
+                           inlist[inpos].vocolflg == VOCS_IT ? "it" : "them",
                            (char)(inlist[inpos].vocolflg == VOCS_IT
                                   ? VOCW_IT : VOCW_THEM), defprop, silent);
             if (err != 0)
@@ -6803,11 +6799,8 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
                 }
                 else if (vocspec(diswordlist[0], VOCW_ANY))
                 {
-                    static char *anynm = "any";
-
                     /* choose the first object arbitrarily */
-                    vocout(&outlist[outpos++], list1[i], VOCS_ALL,
-                           anynm, anynm);
+					vocout(&outlist[outpos++], list1[i], VOCS_ALL, "any", "any");
                     break;
                 }
                 else
