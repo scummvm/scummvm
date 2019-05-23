@@ -99,6 +99,10 @@ Gfx::Texture::SamplingFilter Settings::getImageSamplingFilter() const {
 	return ConfMan.getBool("use_linear_filtering") ? Gfx::Texture::kLinear : Gfx::Texture::kNearest;
 }
 
+bool Settings::isFontAntialiasingEnabled() const {
+	return ConfMan.getBool("enable_font_antialiasing");
+}
+
 Common::CodePage Settings::getTextCodePage() const {
 	switch (_language) {
 	case Common::PL_POL:

@@ -91,6 +91,7 @@ private:
 	Gfx::Driver *_gfx;
 	Gfx::SurfaceRenderer *_surfaceRenderer;
 	Gfx::Texture *_texture;
+	Gfx::Texture *_bgTexture;
 
 	Common::String _text;
 	Color _color;

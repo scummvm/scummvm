@@ -45,6 +45,11 @@
 #include FT_TRUETYPE_TABLES_H
 #include FT_TRUETYPE_TAGS_H
 
+// ResidualVM specific
+#if FREETYPE_MAJOR > 2 || ( FREETYPE_MAJOR == 2 &&  FREETYPE_MINOR >= 9)
+#include FT_TRUETYPE_DRIVER_H
+#endif
+
 namespace Graphics {
 
 namespace {
@@ -111,7 +116,7 @@ public:
 	TTFFont();
 	virtual ~TTFFont();
 
-	bool load(Common::SeekableReadStream &stream, int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, const uint32 *mapping);
+	bool load(Common::SeekableReadStream &stream, int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, bool stemDarkening, const uint32 *mapping);
 
 	virtual int getFontHeight() const;
 
@@ -178,7 +183,7 @@ TTFFont::~TTFFont() {
 	}
 }
 
-bool TTFFont::load(Common::SeekableReadStream &stream, int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, const uint32 *mapping) {
+bool TTFFont::load(Common::SeekableReadStream &stream, int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, bool stemDarkening, const uint32 *mapping) {
 	if (!g_ttf.isInitialized())
 		return false;
 
@@ -211,6 +216,18 @@ bool TTFFont::load(Common::SeekableReadStream &stream, int size, TTFSizeMode siz
 		g_ttf.closeFont(_face);
 
 		return false;
+	}
+
+	// RedisualVM specific
+	if (stemDarkening) {
+#if FREETYPE_MAJOR > 2 || ( FREETYPE_MAJOR == 2 &&  FREETYPE_MINOR >= 9)
+		FT_Parameter param;
+		param.tag = FT_PARAM_TAG_STEM_DARKENING;
+		param.data = &stemDarkening;
+		FT_Face_Properties(_face, 1, &param);
+#else
+		warning("Stem darkening is not available with this version of FreeType");
+#endif
 	}
 
 	// Check whether we have kerning support
@@ -657,10 +674,10 @@ void TTFFont::assureCached(uint32 chr) const {
 	}
 }
 
-Font *loadTTFFont(Common::SeekableReadStream &stream, int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, const uint32 *mapping) {
+Font *loadTTFFont(Common::SeekableReadStream &stream, int size, TTFSizeMode sizeMode, uint dpi, TTFRenderMode renderMode, bool stemDarkening, const uint32 *mapping) {
 	TTFFont *font = new TTFFont();
 
-	if (!font->load(stream, size, sizeMode, dpi, renderMode, mapping)) {
+	if (!font->load(stream, size, sizeMode, dpi, renderMode, stemDarkening, mapping)) {
 		delete font;
 		return 0;
 	}
@@ -679,7 +696,7 @@ Font *loadTTFFontFromArchive(const Common::String &filename, int size, TTFSizeMo
 		return 0;
 	}
 
-	Font *font = loadTTFFont(f, size, sizeMode, dpi, renderMode, mapping);
+	Font *font = loadTTFFont(f, size, sizeMode, dpi, renderMode, false, mapping);
 
 	delete archive;
 	return font;

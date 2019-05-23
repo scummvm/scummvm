@@ -130,8 +130,12 @@ FontProvider::FontHolder::FontHolder(FontProvider *fontProvider, const Common::S
 	// Initialize the font
 	Common::SeekableReadStream *s = SearchMan.createReadStreamForMember(ttfFileName);
 	if (s) {
+		Graphics::TTFRenderMode renderMode = StarkSettings->isFontAntialiasingEnabled() ?
+		            Graphics::kTTFRenderModeLight : Graphics::kTTFRenderModeMonochrome;
+		bool stemDarkening = StarkSettings->isFontAntialiasingEnabled();
+
 		_font = Common::SharedPtr<Graphics::Font>(
-				Graphics::loadTTFFont(*s, _scaledHeight, Graphics::kTTFSizeModeCell, 0, Graphics::kTTFRenderModeMonochrome)
+				Graphics::loadTTFFont(*s, _scaledHeight, Graphics::kTTFSizeModeCell, 0, renderMode, stemDarkening)
 		);
 		delete s;
 	} else {

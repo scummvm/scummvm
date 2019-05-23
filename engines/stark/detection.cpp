@@ -335,8 +335,9 @@ static const ADGameDescription gameDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
-#define GAMEOPTION_ASSETS_MOD       GUIO_GAMEOPTIONS1
-#define GAMEOPTION_LINEAR_FILTERING GUIO_GAMEOPTIONS2
+#define GAMEOPTION_ASSETS_MOD        GUIO_GAMEOPTIONS1
+#define GAMEOPTION_LINEAR_FILTERING  GUIO_GAMEOPTIONS2
+#define GAMEOPTION_FONT_ANTIALIASING GUIO_GAMEOPTIONS3
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
@@ -357,6 +358,15 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			true
 		}
 	},
+	{
+		GAMEOPTION_FONT_ANTIALIASING,
+		{
+			_s("Enable font anti-aliasing"),
+			_s("When font anti-aliasing is enabled, the text is smoother."),
+			"enable_font_antialiasing",
+			true
+		}
+	},
 
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
@@ -365,7 +375,7 @@ class StarkMetaEngine : public AdvancedMetaEngine {
 public:
 	StarkMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(ADGameDescription), starkGames, optionsList) {
 		_singleId = "stark";
-		_guiOptions = GUIO3(GUIO_NOMIDI, GAMEOPTION_ASSETS_MOD, GAMEOPTION_LINEAR_FILTERING);
+		_guiOptions = GUIO4(GUIO_NOMIDI, GAMEOPTION_ASSETS_MOD, GAMEOPTION_LINEAR_FILTERING, GAMEOPTION_FONT_ANTIALIASING);
 	}
 
 	const char *getName() const override {

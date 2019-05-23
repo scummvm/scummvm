@@ -117,6 +117,9 @@ public:
 	/** The codepage text is encoded in or this version of the game */
 	Common::CodePage getTextCodePage() const;
 
+	/** Should TrueType fonts be rendered with anti-aliasing? */
+	bool isFontAntialiasingEnabled() const;
+
 	/**
 	 * Should the font settings from 'gui.ini' be ignored.
 	 *
