@@ -11398,6 +11398,31 @@ static const uint16 qfg4RunesPuzzlePatch2[] = {
 	PATCH_END
 };
 
+// The script that determines how much money a revenant has is missing the first
+//  parameter to kRandom, which should be zero as it is with other monsters.
+//  Instead of awarding the intended 15 to 40 kopeks, it always awards 15 and
+//  reseeds the random number generator to 25.
+//
+// Applies to: All versions
+// Responsible method: sSearchMonster:changeState(1)
+// Fixes bug: #10966
+static const uint16 qfg4SearchRevenantSignature[] = {
+	0x39, 0x0f,                         // pushi 0f
+	0x78,                               // push1
+	0x39, SIG_MAGICDWORD, 0x19,         // pushi 19
+	0x43, 0x5d, SIG_UINT16(0x0002),     // callk Random 02
+	0x02,                               // add [ 15 + Random 25 ]
+	SIG_END
+};
+
+static const uint16 qfg4SearchRevenantPatch[] = {
+	0x39, 0x02,                         // pushi 02
+	0x39, 0x0f,                         // pushi 0f
+	0x39, 0x28,                         // pushi 28
+	0x43, 0x5d, PATCH_UINT16(0x0004),   // callk Random 04 [ Random 15 40 ]
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qfg4AutosaveSignature,         qfg4AutosavePatch },
@@ -11413,6 +11438,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,    28, "fix lingering rations icon after eating",     1, qfg4LeftoversSignature,        qfg4LeftoversPatch },
 	{  true,    31, "fix setScaler calls",                         1, qfg4SetScalerSignature,        qfg4SetScalerPatch },
 	{  true,    41, "fix conditional void calls",                  3, qfg4ConditionalVoidSignature,  qfg4ConditionalVoidPatch },
+	{  true,    50, "fix random revenant kopeks",                  1, qfg4SearchRevenantSignature,   qfg4SearchRevenantPatch },
 	{  true,    83, "fix incorrect array type",                    1, qfg4TrapArrayTypeSignature,    qfg4TrapArrayTypePatch },
 	{  true,   270, "fix town gate after a staff dream",           1, qfg4DreamGateSignature,        qfg4DreamGatePatch },
 	{  true,   320, "fix pathfinding at the inn",                  1, qfg4InnPathfindingSignature,   qfg4InnPathfindingPatch },
