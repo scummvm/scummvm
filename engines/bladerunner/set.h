@@ -107,8 +107,12 @@ public:
 
 private:
 	static bool isXZInWalkbox(float x, float z, const Walkbox &walkbox);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
 	void overrideSceneObjectInfo(int objectId) const;
 	void patchInAdditionalObjectsInSet();
+	void patchOutBadObjectsFromSet();
+#endif // BLADERUNNER_ORIGINAL_BUGS
 };
 
 } // End of namespace BladeRunner

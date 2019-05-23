@@ -1507,8 +1507,9 @@ void ScriptBase::Clickable_Object(const char *objectName) {
 void ScriptBase::Unclickable_Object(const char *objectName) {
 	debugC(kDebugScript, "Unclickable_Object(%s)", objectName);
 	int objectId = _vm->_scene->findObject(objectName);
-	if (objectId == -1)
+	if (objectId == -1) {
 		return;
+	}
 	_vm->_scene->objectSetIsClickable(objectId, false, !_vm->_sceneIsLoading);
 }
 

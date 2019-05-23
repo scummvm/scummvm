@@ -70,7 +70,10 @@ void SceneScriptNR11::SceneLoaded() {
 		Clickable_Object("CLOTHING02");
 		Clickable_Object("BOX27");
 		Clickable_Object("BOX39");
+#if BLADERUNNER_ORIGINAL_BUGS
+		// in our bugfixes this object is removed
 		Clickable_Object("BOX44");
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Clickable_Object("DRESS");
 		Clickable_Object("COATRACK");
 		Clickable_Object("COLUMN3 DETS");
@@ -85,7 +88,10 @@ void SceneScriptNR11::SceneLoaded() {
 		Combat_Target_Object("CLOTHING02");
 		Combat_Target_Object("BOX27");
 		Combat_Target_Object("BOX39");
+#if BLADERUNNER_ORIGINAL_BUGS
+		// in our bugfixes this object is removed
 		Combat_Target_Object("BOX44");
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Combat_Target_Object("DRESS");
 		Combat_Target_Object("COATRACK");
 		Combat_Target_Object("COLUMN3 DETS");
@@ -101,7 +107,10 @@ void SceneScriptNR11::SceneLoaded() {
 		Unclickable_Object("CLOTHING02");
 		Unclickable_Object("BOX27");
 		Unclickable_Object("BOX39");
+#if BLADERUNNER_ORIGINAL_BUGS
+		// in our bugfixes this object is removed
 		Unclickable_Object("BOX44");
+#endif
 		Unclickable_Object("DRESS");
 		Unclickable_Object("COATRACK");
 		Unclickable_Object("COLUMN3 DETS");
@@ -125,7 +134,10 @@ bool SceneScriptNR11::ClickedOn3DObject(const char *objectName, bool combatMode)
 	if (Object_Query_Click("CLOTHING02", objectName)
 	 || Object_Query_Click("BOX27", objectName)
 	 || Object_Query_Click("BOX39", objectName)
+#if BLADERUNNER_ORIGINAL_BUGS
+	 // in our bugfixes this object is removed
 	 || Object_Query_Click("BOX44", objectName)
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	 || Object_Query_Click("DRESS", objectName)
 	 || Object_Query_Click("COATRACK", objectName)
 	 || Object_Query_Click("COLUMN3 DETS", objectName)
@@ -410,7 +422,10 @@ void SceneScriptNR11::untargetEverything() {
 	Un_Combat_Target_Object("CLOTHING02");
 	Un_Combat_Target_Object("BOX27");
 	Un_Combat_Target_Object("BOX39");
+#if BLADERUNNER_ORIGINAL_BUGS
+	// in our bugfixes this object is removed
 	Un_Combat_Target_Object("BOX44");
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Un_Combat_Target_Object("DRESS");
 	Un_Combat_Target_Object("COATRACK");
 	Un_Combat_Target_Object("COLUMN3 DETS");
