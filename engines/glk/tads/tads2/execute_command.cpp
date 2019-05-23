@@ -2645,7 +2645,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
                 {
                     uchar   *l = runpoplst(rcx);
                     uint     lstsiz;
-                    objnum   defobj;
+                    objnum   defobj = 0;
                     int      objcnt;
                     objnum   newprep;
                     runsdef  val;
@@ -2841,7 +2841,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
                 {
                     uchar   *l = runpoplst(rcx);
                     uint     lstsiz;
-                    objnum   defobj;
+                    objnum   defobj = 0;
                     int      objcnt;
                     runsdef  val;
                     objnum   o;
@@ -3218,7 +3218,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
                 uchar   *l = runpoplst(rcx);
                 uint     lstsiz;
                 int      objcnt;
-                objnum   defobj;
+                objnum   defobj = 0;
                 objnum   o;
                 runsdef  val;
                 
@@ -3469,9 +3469,9 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
                     }
                     else
                     {
-                        int is_him;
-                        int is_her;
-                        int is_them;
+                        int is_him = 0;
+                        int is_her = 0;
+                        int is_them = 0;
 
                         /* run through the objects and check him/her */
                         for (i = 0 ; i < vcnt ; ++i)

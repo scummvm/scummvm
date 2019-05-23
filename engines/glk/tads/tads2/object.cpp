@@ -42,11 +42,11 @@ uint objgetp(mcmcxdef *mctx, objnum objn, prpnum prop, dattyp *typptr)
     uint    retval;                       /* property offset, if we find it */
     uint    ignprop; /* ignored property - use if real property isn't found */
     uchar   pbuf[2];                  /* property number in portable format */
-    uchar  *indp;
+    uchar  *indp = nullptr;
     uchar  *indbase;
     int     last;
     int     first;
-    int     cur;
+    int     cur = 0;
     
     oswp2(pbuf, prop);            /* get property number in portable foramt */
     objptr = (objdef *)mcmlck(mctx, objn);      /* get a lock on the object */
@@ -192,7 +192,7 @@ static uint objgetap0(mcmcxdef *ctx, noreg objnum obj, prpnum prop,
 {
     uchar  *sc;
     ushort  sccnt;
-    ushort  psav;
+    ushort  psav = 0;
     dattyp  typsav = DAT_NIL;
     objnum  osavn = MCMONINV;
     uchar  *o1;
@@ -240,7 +240,7 @@ static uint objgetap0(mcmcxdef *ctx, noreg objnum obj, prpnum prop,
         /* if we found the property, remember it */
         if (poff != 0)
         {
-            int isdesc;
+            int isdesc = 0;
             
             /* if we have a previous object, determine lineage */
             if (found)

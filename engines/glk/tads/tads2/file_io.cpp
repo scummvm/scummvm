@@ -50,7 +50,7 @@ void OS_LOADDS fioldobj(void *ctx0, mclhd handle, uchar *ptr, ushort siz)
     osfildef   *fp = ctx->fiolcxfp;
     char        buf[7];
     errcxdef   *ec = ctx->fiolcxerr;
-    uint        rdsiz;
+    uint        rdsiz = 0;
     
     /* figure out what type of object is to be loaded */
     osfseek(fp, seekpos + ctx->fiolcxst, OSFSK_SET);
@@ -714,8 +714,8 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
             uchar *p;
             uchar *bufp;
             ulong  bsiz;
-            int    len1;
-            int    len2;
+            int    len1 = 0;
+            int    len2 = 0;
             
             /* do it in a single file read, if we can, for speed */
             curpos = osfpos(fp) - startofs;

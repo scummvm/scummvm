@@ -1189,8 +1189,8 @@ void bifsub(bifcxdef *ctx, int argc)
 /* cvtstr - convert value to a string */
 void bifcvs(bifcxdef *ctx, int argc)
 {
-    char *p;
-    int   len;
+    char *p = nullptr;
+    int   len = 0;
     char  buf[30];
     
     bifcntargs(ctx, 1, argc);

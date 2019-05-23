@@ -87,7 +87,7 @@ linfdef *linfini(mcmcxdef *mctx, errcxdef *ec, char *filename,
     int       i;
     objnum   *objp;
     linfdef  *linf;
-    osfildef *fp;
+    osfildef *fp = nullptr;
     char      fbuf[OSFNMAX + 1];
     tokpdef   fakepath;
     int       len;
@@ -404,8 +404,8 @@ void linfglop2(lindef *lin, uchar *buf)
 int linfwrt(lindef *lin, osfildef *fp)
 {
 #define linf ((linfdef *)lin)
-#define UCHAR_MAX 255
-    uchar   buf[UCHAR_MAX + 6];
+#define BYTE_MAX 255
+    uchar   buf[BYTE_MAX + 6];
     size_t  len;
     uint    pgcnt;
     uchar  *objp;
@@ -413,7 +413,7 @@ int linfwrt(lindef *lin, osfildef *fp)
 
     buf[0] = lin->linid;
     len = strlen(linf->linfnam);
-    if (len > UCHAR_MAX)
+    if (len > BYTE_MAX)
         return FALSE;
     buf[1] = (uchar)len;
     oswp4(buf + 2, linf->linfcrec);
