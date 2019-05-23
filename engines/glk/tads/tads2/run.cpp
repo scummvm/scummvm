@@ -298,9 +298,9 @@ void runpstr(runcxdef *ctx, const char *str, int len, int sav)
 }
 
 /* push a C-style string, converting escape codes */
-void runpushcstr(runcxdef *ctx, char *str, size_t len, int sav)
+void runpushcstr(runcxdef *ctx, const char *str, size_t len, int sav)
 {
-	char    *p;
+	const char *p;
 	char    *dst;
 	size_t   need;
 	runsdef  val;

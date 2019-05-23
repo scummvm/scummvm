@@ -547,7 +547,7 @@ void trcsho(void);
 
 #ifdef DBG_OFF
 #define dbgenter(ctx, bp, self, target, prop, binum, argc)
-#define dbgleave(ctx, exittype)
+#define dbgleave(ctx, exittype) ((void)0)
 #define dbgdump(ctx) ((void)0)
 #define dbgrst(ctx) ((void)0)
 #define dbgframe(ctx, frofs, linofs)

@@ -111,7 +111,7 @@ void outreset(void);
  *   (in particular, if no more input is available from the keyboard),
  *   zero on success.  
  */
-int getstring(char *prompt, char *buf, int bufl);
+int getstring(const char *prompt, char *buf, int bufl);
 
 /* set capitalize-next-character mode on/off */
 void outcaps(void);
@@ -133,7 +133,7 @@ int tiologcls(tiocxdef *ctx);
  *   caller should not include any newlines in the text being displayed
  *   here.  
  */
-void out_logfile_print(char *txt, int nl);
+void out_logfile_print(const char *txt, int nl);
 
 
 /*

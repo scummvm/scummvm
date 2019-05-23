@@ -31,6 +31,7 @@ namespace Glk {
 namespace TADS {
 namespace TADS2 {
 
+#define BYTE_MAX 0xff
 
 /* initialize a pre-allocated linfdef, skipping debugger page setup */
 void linfini2(mcmcxdef *mctx, linfdef *linf,
@@ -404,7 +405,6 @@ void linfglop2(lindef *lin, uchar *buf)
 int linfwrt(lindef *lin, osfildef *fp)
 {
 #define linf ((linfdef *)lin)
-#define BYTE_MAX 255
     uchar   buf[BYTE_MAX + 6];
     size_t  len;
     uint    pgcnt;
@@ -440,7 +440,7 @@ int linfwrt(lindef *lin, osfildef *fp)
 int linfload(osfildef *fp, dbgcxdef *dbgctx, errcxdef *ec, tokpdef *path)
 {
     linfdef *linf;
-    uchar    buf[UCHAR_MAX + 6];
+    uchar    buf[BYTE_MAX + 6];
     uint     pgcnt;
     uchar   *objp;
     mcmon   *objn;

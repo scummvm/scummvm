@@ -68,7 +68,7 @@ vocwdef *vocwget(voccxdef *ctx, uint idx)
 #endif /*VOCW_IN_CACHE */
 
 /* hash value is based on first 6 characters only to allow match-in-6 */
-uint vochsh(uchar *t, int len)
+uint vochsh(const uchar *t, int len)
 {
     uint ret = 0;
     
@@ -80,7 +80,7 @@ uint vochsh(uchar *t, int len)
 }
 
 /* copy vocabulary word, and convert to lower case */
-static void voccpy(uchar *dst, uchar *src, int len)
+static void voccpy(uchar *dst, const uchar *src, int len)
 {
     for ( ; len ; --len, ++dst, ++src)
         *dst = vocisupper(*src) ? tolower(*src) : *src;

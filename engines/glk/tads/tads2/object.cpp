@@ -419,7 +419,7 @@ void objdelp(mcmcxdef *mctx, objnum objn, prpnum prop, int mark_only)
  *   pointer is null, no undo information is kept.  
  */
 void objsetp(mcmcxdef *ctx, objnum objn, prpnum prop, dattyp typ,
-             void *val, objucxdef *undoctx)
+             const void *val, objucxdef *undoctx)
 {
     objdef *objptr;
     prpdef *p;

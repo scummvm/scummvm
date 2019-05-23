@@ -56,7 +56,7 @@ extern int scrquiet;
  *   output flushing.  Prompting is to be done by the caller.  This
  *   routine should be called instead of os_gets.
  */
-int getstring(char *prompt, char *buf, int bufl)
+int getstring(const char *prompt, char *buf, int bufl)
 {
     char  *result;
     int    savemoremode;

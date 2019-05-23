@@ -3203,7 +3203,7 @@ int tiologcls(tiocxdef *ctx)
  *   caller should not include any newlines in the text being displayed
  *   here.  
  */
-void out_logfile_print(char *txt, int nl)
+void out_logfile_print(const char *txt, int nl)
 {
     /* if there's no log file, there's nothing to do */
     if (logfp == 0)

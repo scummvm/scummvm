@@ -224,7 +224,7 @@ static void trdusage(errcxdef *ec)
         errmsg(ec, buf, (uint)sizeof(buf), ERR_TRUSPARM);
 
         /* format in the application name */
-        argv[0].errastr = (char *)ec->errcxappctx->usage_app_name;
+        argv[0].errastr = ec->errcxappctx->usage_app_name;
         errfmt(buf2, (int)sizeof(buf2), buf, 1, argv);
         
         /* display it */

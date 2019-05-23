@@ -32,7 +32,7 @@ namespace TADS {
 namespace TADS2 {
 
 
-static char *type_names[] =
+static const char *type_names[] =
 {
     "article", "adj", "noun", "prep", "verb", "special", "plural",
     "unknown"
@@ -203,10 +203,10 @@ void voc_push_objlist(voccxdef *ctx, objnum objlist[], int cnt)
  *   byte.  The list is bounded by firstwrd and lastwrd, inclusive of
  *   both.  
  */
-static void voc_push_strlist(voccxdef *ctx, char *firstwrd, char *lastwrd)
+static void voc_push_strlist(voccxdef *ctx, const char *firstwrd, const char *lastwrd)
 {
     size_t curlen;
-    char *p;
+    const char *p;
     uint lstsiz;
     uchar *lstp;
 
@@ -390,7 +390,7 @@ static void voc_push_toklist(voccxdef *ctx, char *wordlist[], int cnt)
 int vocread(voccxdef *ctx, objnum actor, objnum verb,
             char *buf, int bufl, int type)
 {
-    char *prompt;
+    const char *prompt;
     int ret;
 
     /* presume we'll return success */
@@ -528,7 +528,7 @@ int vocread(voccxdef *ctx, objnum actor, objnum verb,
  *   the user's entry, the second is the reference word in the dictionary.)
  *   Returns TRUE if the words match, FALSE otherwise.
  */
-static int voceq(uchar *s1, uint l1, uchar *s2, uint l2)
+static int voceq(const uchar *s1, uint l1, uchar *s2, uint l2)
 {
     uint i;
 
@@ -599,7 +599,7 @@ vocwdef *vocfnw(voccxdef *voccx, vocseadef *search_ctx)
 }
 
 /* find the first vocdef matching a set of words */
-vocwdef *vocffw(voccxdef *ctx, char *wrd, int len, char *wrd2, int len2,
+vocwdef *vocffw(voccxdef *ctx, const char *wrd, int len, const char *wrd2, int len2,
                 int p, vocseadef *search_ctx)
 {
     uint     hshval;
@@ -607,15 +607,15 @@ vocwdef *vocffw(voccxdef *ctx, char *wrd, int len, char *wrd2, int len2,
     vocwdef *vw, *vwf = nullptr;
 
     /* get the word's hash value */
-    hshval = vochsh((uchar *)wrd, len);
+    hshval = vochsh((const uchar *)wrd, len);
 
     /* scan the hash list until we run out of entries, or find a match */
     for (v = ctx->voccxhsh[hshval], vf = 0 ; v != 0 && vf == 0 ;
          v = v->vocnxt)
     {
         /* if this word matches, look at the objects in its list */
-        if (voceq((uchar *)wrd, len, v->voctxt, v->voclen)
-            && voceq((uchar *)wrd2, len2, v->voctxt + v->voclen, v->vocln2))
+        if (voceq((const uchar *)wrd, len, v->voctxt, v->voclen)
+            && voceq((const uchar *)wrd2, len2, v->voctxt + v->voclen, v->vocln2))
         {
             /* look for a suitable object in the vocwdef list */
             for (vw = vocwget(ctx, v->vocwlst) ; vw ;
@@ -646,9 +646,9 @@ vocwdef *vocffw(voccxdef *ctx, char *wrd, int len, char *wrd2, int len2,
         search_ctx->vw = vw;
 
         /* save the search criteria */
-        search_ctx->wrd1 = (uchar *)wrd;
+        search_ctx->wrd1 = (const uchar *)wrd;
         search_ctx->len1 = len;
-        search_ctx->wrd2 = (uchar *)wrd2;
+        search_ctx->wrd2 = (const uchar *)wrd2;
         search_ctx->len2 = len2;
     }
 
@@ -970,7 +970,7 @@ void vocerr(voccxdef *ctx, int err, const char *f, ...)
  */
 int try_unknown_verb(voccxdef *ctx, objnum actor,
                      char **cmd, int *typelist, int wrdcnt, int *next_start,
-                     int do_fuses, int vocerr_err, char *vocerr_msg, ...)
+                     int do_fuses, int vocerr_err, const char *vocerr_msg, ...)
 {
     int  show_msg;
     va_list  argptr;
@@ -1169,7 +1169,7 @@ int try_unknown_verb(voccxdef *ctx, objnum actor,
 #define vocisspec(wrd) \
    (vocisupper(*wrd) || (!vocisalpha(*wrd) && *wrd != '\'' && *wrd != '-'))
 
-static vocspdef vocsptab[] =
+static const vocspdef vocsptab[] =
 {
     { "of",     VOCW_OF   },
     { "and",    VOCW_AND  },
@@ -1191,7 +1191,7 @@ static vocspdef vocsptab[] =
 };
 
 /* test a word to see if it's a particular special word */
-static int voc_check_special(voccxdef *ctx, char *wrd, int checktyp)
+static int voc_check_special(voccxdef *ctx, const char *wrd, int checktyp)
 {
     /* search the user or built-in special table, as appropriate */
     if (ctx->voccxspp)
@@ -1219,13 +1219,13 @@ static int voc_check_special(voccxdef *ctx, char *wrd, int checktyp)
     }
     else
     {
-        vocspdef *x;
+        const vocspdef *x;
         
         for (x = vocsptab ; x->vocspin ; ++x)
         {
             /* if it matches in type and text, we have a match */
             if (x->vocspout == checktyp
-                && !strncmp((char *)wrd, x->vocspin, (size_t)6))
+                && !strncmp((const char *)wrd, x->vocspin, (size_t)6))
                 return TRUE;
         }
     }
@@ -1240,7 +1240,7 @@ int voctok(voccxdef *ctx, char *cmd, char *outbuf, char **wrd,
            int lower, int cvt_ones, int show_errors)
 {
     int       i;
-    vocspdef *x;
+    const vocspdef *x;
     int       l;
     char     *p;
     char     *w;
@@ -1355,8 +1355,7 @@ int voctok(voccxdef *ctx, char *cmd, char *outbuf, char **wrd,
             {
                 for (x = vocsptab ; x->vocspin ; ++x)
                 {
-                    if (!strncmp((char *)wrd[i-1], (char *)x->vocspin,
-                                 (size_t)6)
+                    if (!strncmp((char *)wrd[i-1], x->vocspin, (size_t)6)
                         && (cvt_ones ||
                             (x->vocspout != VOCW_ONE
                              && x->vocspout != VOCW_ONES))
@@ -1933,7 +1932,7 @@ static int vocisect_flags(objnum *list1, uint *flags1,
 static int vocgol(voccxdef *ctx, objnum *list, uint *flags, char **wrdlst,
                   int *typlst, int first, int cur, int last, int ofword)
 {
-    char      *wrd;
+    const char *wrd;
     int        typ;
     vocwdef   *v;
     int        cnt;
@@ -2437,7 +2436,7 @@ void voc_make_obj_name(voccxdef *ctx, char *namebuf, char *cmd[],
  *   Make an object name from a list entry 
  */
 void voc_make_obj_name_from_list(voccxdef *ctx, char *namebuf,
-                                 char *cmd[], char *firstwrd, char *lastwrd)
+                                 char *cmd[], const char *firstwrd, const char *lastwrd)
 {
     int i, i1, i2;
     
@@ -2583,7 +2582,7 @@ static int vocg1o(voccxdef *ctx, char *cmd[], int typelist[],
             n++;
             if (!cmd[n])
             {
-                char *p;
+                const char *p;
                 int   ver;
                 
                 if (vocspec(cmd[cur], VOCW_ALL))
@@ -4628,7 +4627,7 @@ int vocchkvis(voccxdef *ctx, objnum obj, objnum cmdActor)
 }
 
 /* set {numObj | strObj}.value, as appropriate */
-void vocsetobj(voccxdef *ctx, objnum obj, dattyp typ, void *val,
+void vocsetobj(voccxdef *ctx, objnum obj, dattyp typ, const void *val,
                vocoldef *inobj, vocoldef *outobj)
 {
     *outobj = *inobj;
@@ -4638,7 +4637,7 @@ void vocsetobj(voccxdef *ctx, objnum obj, dattyp typ, void *val,
 
 /* set up a vocoldef */
 static void vocout(vocoldef *outobj, objnum obj, int flg,
-                   char *fst, char *lst)
+                   const char *fst, const char *lst)
 {
     outobj->vocolobj = obj;
     outobj->vocolflg = flg;
@@ -4765,7 +4764,7 @@ static void voc_get_spec_str(voccxdef *ctx, char vocw_id,
 /* set it/him/her */
 static int vocsetit(voccxdef *ctx, objnum obj, int accprop,
                     objnum actor, objnum verb, objnum prep,
-                    vocoldef *outobj, char *default_name, char vocw_id,
+                    vocoldef *outobj, const char *default_name, char vocw_id,
                     prpnum defprop, int silent)
 {
     if (obj == MCMONINV || !vocchkaccess(ctx, obj, (prpnum)accprop,
@@ -4858,7 +4857,7 @@ static int voc_disambig_hook(voccxdef *ctx, objnum verb, objnum actor,
                              objnum prep, objnum otherobj,
                              prpnum accprop, prpnum verprop,
                              objnum *objlist, uint *flags, int *objcount,
-                             char *firstwrd, char *lastwrd,
+                             const char *firstwrd, const char *lastwrd,
                              int num_wanted, int is_ambig, char *resp,
                              int silent)
 {
@@ -5477,7 +5476,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
             int       lpos = inpos;
             int       i = 0;
             int       cnt;
-            char     *p;
+            const char *p;
             int       cnt2, cnt3;
             int       trying_again;
             int       user_count = 0;
@@ -6985,7 +6984,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
                              *   use "such" 
                              */
                             if (i != cnt2) {
-                                char *last;
+                                const char *last;
 
                                 /* clear the word buffer */
                                 newobj[0] = '\0';

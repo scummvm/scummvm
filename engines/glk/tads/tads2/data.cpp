@@ -32,7 +32,7 @@ namespace TADS {
 namespace TADS2 {
 
 /* return size of a data value */
-uint datsiz(dattyp typ, void *val)
+uint datsiz(dattyp typ, const void *val)
 {
     switch(typ)
     {
@@ -45,7 +45,7 @@ uint datsiz(dattyp typ, void *val)
     case DAT_SSTRING:
     case DAT_DSTRING:
     case DAT_LIST:
-        return(osrp2((char *)val));
+        return(osrp2((const char *)val));
 
     case DAT_NIL:
     case DAT_TRUE:
@@ -59,10 +59,10 @@ uint datsiz(dattyp typ, void *val)
         
     case DAT_TPL:
         /* template is counted array of 10-byte entries, plus length byte */
-        return(1 + ((*(uchar *)val) * VOCTPLSIZ));
+        return(1 + ((*(const uchar *)val) * VOCTPLSIZ));
 
     case DAT_TPL2:
-        return(1 + ((*(uchar *)val) * VOCTPL2SIZ));
+        return(1 + ((*(const uchar *)val) * VOCTPL2SIZ));
 
     default:
         return(0);

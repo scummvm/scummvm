@@ -163,8 +163,8 @@ struct vocddef {
 /* vocabulary object list entry */
 struct vocoldef {
     objnum  vocolobj;                           /* object matching the word */
-    char   *vocolfst;         /* first word in cmd[] that identified object */
-    char   *vocollst;          /* last word in cmd[] that identified object */
+    const char *vocolfst;     /* first word in cmd[] that identified object */
+    const char *vocollst;      /* last word in cmd[] that identified object */
     char   *vocolhlst;      /* hypothetical last word, if we trimmed a prep */
     int     vocolflg;                           /* special flags (ALL, etc) */
 };
@@ -346,14 +346,14 @@ void vociren(voccxdef *ctx, objnum oldnum, objnum newnum);
 struct vocseadef {
     vocdef  *v;
     vocwdef *vw;
-    uchar   *wrd1;
+    const uchar *wrd1;
     int      len1;
-    uchar   *wrd2;
+    const uchar *wrd2;
     int      len2;
 };
 
 /* find first word matching a given word */
-vocwdef *vocffw(voccxdef *ctx, char *wrd, int len, char *wrd2, int len2,
+vocwdef *vocffw(voccxdef *ctx, const char *wrd, int len, const char *wrd2, int len2,
                 int p, vocseadef *search_ctx);
 
 /* find next word */
@@ -435,7 +435,7 @@ int try_preparse_cmd(voccxdef *ctx, char **cmd, int wrdcnt,
  */
 int try_unknown_verb(voccxdef *ctx, objnum actor,
                      char **cmd, int *typelist, int wrdcnt, int *next_start,
-                     int do_fuses, int err, char *msg, ...);
+                     int do_fuses, int err, const char *msg, ...);
 
 /* find a template */
 int voctplfnd(voccxdef *ctx, objnum verb_in, objnum prep,
@@ -445,7 +445,7 @@ int voctplfnd(voccxdef *ctx, objnum verb_in, objnum prep,
 void voc_make_obj_name(voccxdef *ctx, char *namebuf, char *cmd[],
                        int firstwrd, int lastwrd);
 void voc_make_obj_name_from_list(voccxdef *ctx, char *namebuf,
-                                 char *cmd[], char *firstwrd, char *lastwrd);
+                                 char *cmd[], const char *firstwrd, const char *lastwrd);
 
 /*
  *   check noun - determines whether the next set of words is a valid noun
@@ -506,7 +506,7 @@ void vocnoreach(voccxdef *ctx, objnum *list1, int cnt,
                 int multi_base_index, int multi_total_count);
 
 /* set {numObj | strObj}.value, as appropriate */
-void vocsetobj(voccxdef *ctx, objnum obj, dattyp typ, void *val,
+void vocsetobj(voccxdef *ctx, objnum obj, dattyp typ, const void *val,
                vocoldef *inobj, vocoldef *outobj);
 
 /* macros to read values out of templates */
@@ -565,7 +565,7 @@ void vocsetobj(voccxdef *ctx, objnum obj, dattyp typ, void *val,
 
 /* structure for special internal word table */
 struct vocspdef {
-    char *vocspin;
+    const char *vocspin;
     char  vocspout;
 };
 
@@ -643,7 +643,7 @@ void vocdusave_delobj(voccxdef *ctx, objnum objn);
 void vocdusave_me(voccxdef *ctx, objnum old_me);
 
 /* compute vocabulary word hash value */
-uint vochsh(uchar *t, int len);
+uint vochsh(const uchar *t, int len);
 
 /* TADS versions of isalpha, isspace, isdigit, etc */
 #define vocisupper(c) ((uchar)(c) <= 127 && Common::isUpper((uchar)(c)))

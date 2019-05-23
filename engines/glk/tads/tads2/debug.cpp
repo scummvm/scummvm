@@ -188,12 +188,12 @@ int dbgnam(dbgcxdef *ctx, char *outbuf, int typ, int val)
 }
 
 /* send a buffer value (as from a list) to ui callback for display */
-static void dbgpbval(dbgcxdef *ctx, dattyp typ, uchar *val,
+static void dbgpbval(dbgcxdef *ctx, dattyp typ, const uchar *val,
                      void (*dispfn)(void *, const char *, int),
                      void *dispctx)
 {
     char  buf[TOKNAMMAX + 1];
-    char *p = buf;
+    const char *p = buf;
     uint  len;
 
     switch(typ)
@@ -209,7 +209,7 @@ static void dbgpbval(dbgcxdef *ctx, dattyp typ, uchar *val,
         
     case DAT_SSTRING:
         len = osrp2(val) - 2;
-        p = (char *)val + 2;
+        p = (const char *)val + 2;
         break;
         
     case DAT_NIL:
@@ -220,10 +220,10 @@ static void dbgpbval(dbgcxdef *ctx, dattyp typ, uchar *val,
     case DAT_LIST:
         (*dispfn)(dispctx, "[", 1);
         len = osrp2(val) - 2;
-        p = (char *)val + 2;
+        p = (const char *)val + 2;
         while (len)
         {
-            dbgpbval(ctx, (dattyp)*p, (uchar *)(p + 1), dispfn, dispctx);
+            dbgpbval(ctx, (dattyp)*p, (const uchar *)(p + 1), dispfn, dispctx);
             lstadv((uchar **)&p, &len);
             if (len) (*dispfn)(dispctx, " ", 1);
         }
@@ -265,8 +265,8 @@ void dbgpval(dbgcxdef *ctx, runsdef *val,
 {
     uchar   buf[TOKNAMMAX + 1];
     uint    len;
-    uchar  *p = buf;
-    char   *typ = 0;
+    const uchar  *p = buf;
+    const char *typ = 0;
     
     switch(val->runstyp)
     {
@@ -288,27 +288,28 @@ void dbgpval(dbgcxdef *ctx, runsdef *val,
         break;
         
     case DAT_NIL:
-        p = (uchar *)"nil";
+        p = (const uchar *)"nil";
         len = 3;
         break;
 
-    case DAT_LIST:
+    case DAT_LIST: {
         if (showtype) (*dispfn)(dispctx, "list: ", 6);
         (*dispfn)(dispctx, "[", 1);
         len = osrp2(val->runsv.runsvstr) - 2;
-        p = val->runsv.runsvstr + 2;
+        uchar *up = val->runsv.runsvstr + 2;
         while (len)
         {
-            dbgpbval(ctx, (dattyp)*p, (uchar *)(p + 1), dispfn, dispctx);
-            lstadv(&p, &len);
+            dbgpbval(ctx, (dattyp)*up, (const uchar *)(up + 1), dispfn, dispctx);
+            lstadv(&up, &len);
             if (len) (*dispfn)(dispctx, " ", 1);
         }
         (*dispfn)(dispctx, "]", 1);
         len = 0;
+	p = up;
         break;
-        
+    } 
     case DAT_TRUE:
-        p = (uchar *)"true";
+        p = (const uchar *)"true";
         len = 4;
         break;
         
@@ -323,7 +324,7 @@ void dbgpval(dbgcxdef *ctx, runsdef *val,
         break;
         
     default:
-        p = (uchar *)"[unknown type]";
+        p = (const uchar *)"[unknown type]";
         len = 14;
         break;
     }
@@ -356,7 +357,7 @@ void dbgpval(dbgcxdef *ctx, runsdef *val,
 
     /* display the text */
     if (len != 0)
-        (*dispfn)(dispctx, (char *)p, len);
+        (*dispfn)(dispctx, (const char *)p, len);
 
     /* add a closing quote if it's a string and we showed an open quote */
     if (val->runstyp == DAT_SSTRING && !(typ && showtype))
@@ -446,7 +447,7 @@ static void dbgdsdisp(void *ctx, const char *buf, int bufl)
     if (buf[0] == '\n')
         tioflush((tiocxdef *)ctx);
     else
-        tioputslen((tiocxdef *)ctx, (char *)buf, bufl);
+        tioputslen((tiocxdef *)ctx, (const char *)buf, bufl);
 }
 
 /* dump the stack */

@@ -2264,7 +2264,7 @@ static void voc_askobj_indirect(voccxdef *ctx, vocoldef *dolist,
     cnt = voclistlen(dolist);
     for (len = 0, i = 0 ; i < cnt ; )
     {
-        char *p;
+        const char *p;
         size_t curlen;
         int j;
             
@@ -2331,7 +2331,7 @@ static void voc_askobj_indirect(voccxdef *ctx, vocoldef *dolist,
      */
     for (i = 0 ; i < cnt ; )
     {
-        char *p;
+        const char *p;
         uchar *subp;
         uchar *subsubp;
         size_t curlen;
@@ -3427,7 +3427,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
                     int   i;
                     int   vcnt;
                     int   distinct;
-                    char *lastfst;
+                    const char *lastfst;
 
                     /*
                      *   If possible, tailor the pronoun to the situation

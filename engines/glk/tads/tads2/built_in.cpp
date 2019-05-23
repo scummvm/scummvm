@@ -1189,7 +1189,7 @@ void bifsub(bifcxdef *ctx, int argc)
 /* cvtstr - convert value to a string */
 void bifcvs(bifcxdef *ctx, int argc)
 {
-    char *p = nullptr;
+    const char *p = nullptr;
     int   len = 0;
     char  buf[30];
     
@@ -1973,7 +1973,7 @@ void bifsct(bifcxdef *bifctx, int argc)
  *   Portable keystroke mappings.  We map the extended key codes to these
  *   strings, so that the TADS code can access arrow keys and the like.  
  */
-static char *ext_key_names[] =
+static const char *ext_key_names[] =
 {
     "[up]",                                                   /* CMD_UP - 1 */
     "[down]",                                               /* CMD_DOWN - 2 */
@@ -2142,8 +2142,8 @@ void bifwrd(bifcxdef *ctx, int argc)
     int       ob;
     vocoldef *v;
     uchar     buf[128];
-    uchar    *dst;
-    uchar    *src;
+    uchar *dst;
+    const uchar *src;
     uint      len;
     runsdef   val;
     
@@ -2169,13 +2169,13 @@ void bifwrd(bifcxdef *ctx, int argc)
     /* now build a list of strings from the words, if there are any */
     if (v != 0 && voclistlen(v) != 0 && v->vocolfst != 0 && v->vocollst != 0)
     {
-        for (dst = buf + 2, src = (uchar *)v->vocolfst ;
-             src <= (uchar *)v->vocollst ; src += len + 1)
+        for (dst = buf + 2, src = (const uchar *)v->vocolfst ;
+             src <= (const uchar *)v->vocollst ; src += len + 1)
         {
             *dst++ = DAT_SSTRING;
-            len = strlen((char *)src);
+            len = strlen((const char *)src);
             oswp2(dst, len + 2);
-            strcpy((char *)dst + 2, (char *)src);
+            strcpy((char *)dst + 2, (const char *)src);
             dst += len + 2;
         }
     }

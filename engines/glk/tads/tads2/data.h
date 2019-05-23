@@ -50,7 +50,7 @@ enum DataType {
 typedef int dattyp;
 
 /* determine the size of a piece of data */
-uint datsiz(dattyp typ, void *valptr);
+uint datsiz(dattyp typ, const void *valptr);
 
 } // End of namespace TADS2
 } // End of namespace TADS

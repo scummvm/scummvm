@@ -153,7 +153,7 @@ void runpstr(runcxdef *ctx, const char *str, int len, int sav);
  *   the character contains backslashes, newline, or tab characters, we'll
  *   convert these characters to their escaped equivalent.
  */
-void runpushcstr(runcxdef *ctx, char *str, size_t len, int sav);
+void runpushcstr(runcxdef *ctx, const char *str, size_t len, int sav);
 
 /*
  *   Push a property onto the stack.  codepp is a pointer to the caller's

@@ -275,7 +275,7 @@ objdef *objexp(mcmcxdef *ctx, objnum obj, ushort *siz);
  *   undo information is retained. 
  */
 void objsetp(mcmcxdef *ctx, objnum obj, prpnum prop,
-             dattyp typ, void *val, objucxdef *undoctx);
+             dattyp typ, const void *val, objucxdef *undoctx);
 
 /* 
  *   Delete a property.  If mark_only is true, we'll only mark the
