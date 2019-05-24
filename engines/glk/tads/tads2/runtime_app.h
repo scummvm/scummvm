@@ -51,13 +51,13 @@ extern int G_tads_oem_copyright_prefix;
  *   application container context is optional; pass null if no context is
  *   required.  
  */
-int trdmain(int argc, char **argv, appctxdef *appctx, char *save_ext);
+int trdmain(int argc, char **argv, appctxdef *appctx, const char *save_ext);
 
 /*
  *   Main debugger subsystem entrypoint.  Works like trdmain(), but starts
  *   the game under the debugger.  
  */
-int tddmain(int argc, char **argv, appctxdef *appctx, char *save_ext);
+int tddmain(int argc, char **argv, appctxdef *appctx, const char *save_ext);
 
 /*
  *   close and delete the swap file 

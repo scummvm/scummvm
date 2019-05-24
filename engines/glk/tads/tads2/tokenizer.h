@@ -334,10 +334,10 @@ struct tokcxdef {
     void     *tokcxscx;    /* context for string storage callback functions */
     ushort  (*tokcxsst)(void *ctx);
                /* start storing a string; return offset of string's storage */
-    void    (*tokcxsad)(void *ctx, char *str, ushort len);
+    void    (*tokcxsad)(void *ctx, const char *str, ushort len);
                                               /* add characters to a string */
     void    (*tokcxsend)(void *ctx);               /* finish storing string */
-    char     *tokcxmsav[TOKMACNEST]; /* saved positions for macro expansion */
+    const char *tokcxmsav[TOKMACNEST]; /* saved positions for macro expansion */
     ushort    tokcxmsvl[TOKMACNEST];   /* saved lengths for macro expansion */
     int       tokcxmlvl;                             /* macro nesting level */
     int       tokcxflg;                                            /* flags */
@@ -350,7 +350,7 @@ struct tokcxdef {
     tokdef    tokcxcur;                                    /* current token */
     char     *tokcxbuf;                            /* buffer for long lines */
     ushort    tokcxbsz;                         /* size of long line buffer */
-    char     *tokcxptr;                         /* pointer into line source */
+    const char *tokcxptr;                       /* pointer into line source */
     ushort    tokcxlen;                         /* length of text in buffer */
     uchar     tokcxinx[256];                   /* special character indices */
     tokdfdef *tokcxdf[TOKDFHSHSIZ];       /* hash table for #define symbols */
@@ -429,8 +429,8 @@ int toknext(tokcxdef *ctx);
 int tokget1(tokcxdef *ctx, tokdef *tok, int consume);
 
 /* add a symbol to the #define symbol table */
-void tok_add_define(tokcxdef *ctx, char *sym, int len,
-                    char *expan, int explen);
+void tok_add_define(tokcxdef *ctx, const char *sym, int len,
+                    const char *expan, int explen);
 
 /* 
  *   add a symbol to the #define symbol table, folding case if we're

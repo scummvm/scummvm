@@ -75,13 +75,13 @@ struct linfdef {
 };
 
 /* initialize a file line source, opening the file for the line source */
-linfdef *linfini(mcmcxdef *mctx, errcxdef *errctx, char *filename,
+linfdef *linfini(mcmcxdef *mctx, errcxdef *errctx, const char *filename,
                  int flen, tokpdef *path, int must_find_file,
                  int new_line_records);
 
 /* initialize a pre-allocated linfdef, skipping debugger page setup */
 void linfini2(mcmcxdef *mctx, linfdef *linf,
-              char *filename, int flen, osfildef *fp, int new_line_records);
+              const char *filename, int flen, osfildef *fp, int new_line_records);
 
 /* get next line from line source */
 int linfget(lindef *lin);

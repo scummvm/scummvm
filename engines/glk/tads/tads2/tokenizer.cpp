@@ -39,11 +39,11 @@ static char tokmac3[]  = "),nil))";
 static char tokmac4[]  = ")";
 
 /* forward definition of static functions */
-static int tokdfhsh(char *sym, int len);
+static int tokdfhsh(const char *sym, int len);
 
 
 /* find a #define symbol */
-static tokdfdef *tok_find_define(tokcxdef *ctx, char *sym, int len)
+static tokdfdef *tok_find_define(tokcxdef *ctx, const char *sym, int len)
 {
     int       hsh;
     tokdfdef *df;
@@ -150,7 +150,7 @@ void tok_write_defines(tokcxdef *ctx, osfildef *fp, errcxdef *ec)
 }
 
 /* compute a #define symbol's hash value */
-static int tokdfhsh(char *sym, int len)
+static int tokdfhsh(const char *sym, int len)
 {
     uint hsh;
 
@@ -160,8 +160,8 @@ static int tokdfhsh(char *sym, int len)
 }
 
 /* convert a #define symbol to lower case if folding case */
-static char *tok_casefold_defsym(tokcxdef *ctx, char *outbuf,
-                                 char *src, int len)
+static const char *tok_casefold_defsym(tokcxdef *ctx, char *outbuf,
+                                 const char *src, int len)
 {
     if (ctx->tokcxflg & TOKCXCASEFOLD)
     {
@@ -205,8 +205,8 @@ void tok_case_fold(tokcxdef *ctx, tokdef *tok)
 }
 
 /* add a symbol to the #define symbol table, folding case if necessary */
-void tok_add_define_cvtcase(tokcxdef *ctx, char *sym, int len,
-                            char *expan, int explen)
+void tok_add_define_cvtcase(tokcxdef *ctx, const char *sym, int len,
+                            const char *expan, int explen)
 {
     char mysym[TOKNAMMAX];
     
@@ -218,7 +218,7 @@ void tok_add_define_cvtcase(tokcxdef *ctx, char *sym, int len,
 }
 
 /* add a symbol to the #define symbol table */
-void tok_add_define(tokcxdef *ctx, char *sym, int len,
+void tok_add_define(tokcxdef *ctx, const char *sym, int len,
                     char *expan, int explen)
 {
     int       hsh;
@@ -261,7 +261,7 @@ void tok_add_define_num_cvtcase(tokcxdef *ctx, char *sym, int len, int num)
 }
 
 /* undefine a #define symbol */
-void tok_del_define(tokcxdef *ctx, char *sym, int len)
+void tok_del_define(tokcxdef *ctx, const char *sym, int len)
 {
     int       hsh;
     tokdfdef *df;
@@ -290,7 +290,7 @@ void tok_del_define(tokcxdef *ctx, char *sym, int len)
 }
 
 /* scan a #define symbol to see how long it is */
-static int tok_scan_defsym(tokcxdef *ctx, char *p, int len)
+static int tok_scan_defsym(tokcxdef *ctx, const char *p, int len)
 {
     int symlen;
 
@@ -307,11 +307,11 @@ static int tok_scan_defsym(tokcxdef *ctx, char *p, int len)
 }
 
 /* process a #define */
-static void tokdefine(tokcxdef *ctx, char *p, int len)
+static void tokdefine(tokcxdef *ctx, const char *p, int len)
 {
-    char *sym;
+    const char *sym;
     int   symlen;
-    char *expan;
+    const char *expan;
     char  mysym[TOKNAMMAX];
     
     /* get the symbol */
@@ -374,10 +374,10 @@ static void tok_update_if_stat(tokcxdef *ctx)
 }
 
 /* process an #ifdef or a #ifndef */
-static void tok_ifdef_ifndef(tokcxdef *ctx, char *p, int len, int is_ifdef)
+static void tok_ifdef_ifndef(tokcxdef *ctx, const char *p, int len, int is_ifdef)
 {
     int   symlen;
-    char *sym;
+    const char *sym;
     int   stat;
     int   found;
     char  mysym[TOKNAMMAX];
@@ -416,38 +416,38 @@ static void tok_ifdef_ifndef(tokcxdef *ctx, char *p, int len, int is_ifdef)
 }
 
 /* process a #error */
-static void tok_p_error(tokcxdef *ctx, char *p, int len)
+static void tok_p_error(tokcxdef *ctx, const char *p, int len)
 {
     errlog1(ctx->tokcxerr, ERR_P_ERROR,
             ERRTSTR, errstr(ctx->tokcxerr, p, len));
 }
 
 /* process a #ifdef */
-static void tokifdef(tokcxdef *ctx, char *p, int len)
+static void tokifdef(tokcxdef *ctx, const char *p, int len)
 {
     tok_ifdef_ifndef(ctx, p, len, TRUE);
 }
 
 /* process a #ifndef */
-static void tokifndef(tokcxdef *ctx, char *p, int len)
+static void tokifndef(tokcxdef *ctx, const char *p, int len)
 {
     tok_ifdef_ifndef(ctx, p, len, FALSE);
 }
 
 /* process a #if */
-static void tokif(tokcxdef *ctx, char *p, int len)
+static void tokif(tokcxdef *ctx, const char *p, int len)
 {
     errsig(ctx->tokcxerr, ERR_PIF_NA);
 }
 
 /* process a #elif */
-static void tokelif(tokcxdef *ctx, char *p, int len)
+static void tokelif(tokcxdef *ctx, const char *p, int len)
 {
     errsig(ctx->tokcxerr, ERR_PELIF_NA);
 }
 
 /* process a #else */
-static void tokelse(tokcxdef *ctx, char *p, int len)
+static void tokelse(tokcxdef *ctx, const char *p, int len)
 {
     int cnt;
     
@@ -471,7 +471,7 @@ static void tokelse(tokcxdef *ctx, char *p, int len)
 }
 
 /* process a #endif */
-static void tokendif(tokcxdef *ctx, char *p, int len)
+static void tokendif(tokcxdef *ctx, const char *p, int len)
 {
     /* if we're not expecting #endif, it's an error */
     if (ctx->tokcxifcnt == 0)
@@ -488,9 +488,9 @@ static void tokendif(tokcxdef *ctx, char *p, int len)
 }
 
 /* process a #undef */
-static void tokundef(tokcxdef *ctx, char *p, int len)
+static void tokundef(tokcxdef *ctx, const char *p, int len)
 {
-    char *sym;
+    const char *sym;
     int   symlen;
     char  mysym[TOKNAMMAX];
     
@@ -514,7 +514,7 @@ static void tokundef(tokcxdef *ctx, char *p, int len)
 }
 
 /* process a #pragma directive */
-static void tokpragma(tokcxdef *ctx, char *p, int len)
+static void tokpragma(tokcxdef *ctx, const char *p, int len)
 {
     /* ignore empty pragmas */
     if (len == 0)
@@ -549,15 +549,15 @@ static void tokpragma(tokcxdef *ctx, char *p, int len)
 }
 
 /* process a #include directive */
-static void tokinclude(tokcxdef *ctx, char *p, int len)
+static void tokinclude(tokcxdef *ctx, const char *p, int len)
 {
     linfdef *child;
     tokpdef *path;
-    char    *fname;
+    const char *fname;
     int      match;
     int      flen;
     linfdef *lin;
-    char    *q;
+    const char *q;
     size_t   flen2;
 
     /* find the filename portion */
@@ -749,14 +749,14 @@ static int tokgetlin(tokcxdef *ctx, int dopound)
         if (dopound && ctx->tokcxlen != 0 && ctx->tokcxptr[0] == '#'
             && !(ctx->tokcxlin->linflg & LINFNOINC))
         {
-            char   *p;
+            const char *p;
             int     len;
-            static  struct
+            static const struct
             {
-                char  *nm;
+                const char *nm;
                 int    len;
                 int    ok_in_if;
-                void (*fn)(tokcxdef *, char *, int);
+                void (*fn)(tokcxdef *, const char *, int);
             }
             *dirp, dir[] =
             {
@@ -850,7 +850,7 @@ static int tokgetlin(tokcxdef *ctx, int dopound)
 /* get the next token, removing it from the input stream */
 int toknext(tokcxdef *ctx)
 {
-    char   *p;
+    const char *p;
     tokdef *tok = &ctx->tokcxcur;
     int     len;
 
@@ -949,20 +949,21 @@ nexttoken:
     {
         int       l;
         int       hash;
-        char     *q;
+        const char *q;
+	char     *tq;
         toktdef  *tab;
         int       found = FALSE;
         uchar     thischar;
         tokdfdef *df;
         
-        for (hash = 0, l = 0, q = tok->toknam ;
+        for (hash = 0, l = 0, tq = tok->toknam ;
              len != 0 && TOKISSYM(*p) && l < TOKNAMMAX ;
              (thischar = ((Common::isUpper((uchar)*p)
                            && (ctx->tokcxflg & TOKCXCASEFOLD))
                           ? Common::isLower((uchar)*p) : *p)),
              (hash = ((hash + thischar) & (TOKHASHSIZE - 1))),
-             (*q++ = thischar), ++p, --len, ++l) ;
-        *q = '\0';
+             (*tq++ = thischar), ++p, --len, ++l) ;
+        *tq = '\0';
         if (len != 0 && TOKISSYM(*p))
         {
             while (len != 0 && TOKISSYM(*p)) ++p, --len;
@@ -1081,7 +1082,7 @@ nexttoken:
     else if (*p == '"' || *p == '\'')
     {
         char  delim;                 /* closing delimiter we're looking for */
-        char *strstart;                       /* pointer to start of string */
+        const char *strstart;                 /* pointer to start of string */
         int   warned;
         
         delim = *p;

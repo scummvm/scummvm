@@ -35,7 +35,7 @@ namespace TADS2 {
 
 /* initialize a pre-allocated linfdef, skipping debugger page setup */
 void linfini2(mcmcxdef *mctx, linfdef *linf,
-              char *filename, int flen, osfildef *fp, int new_line_records)
+              const char *filename, int flen, osfildef *fp, int new_line_records)
 {
     /* set up method pointers */
     linf->linflin.lingetp = linfget;
@@ -81,7 +81,7 @@ void linfini2(mcmcxdef *mctx, linfdef *linf,
  *   linfdef even if we can't find the file, reserving the maximum space
  *   for its path name to be filled in later. 
  */
-linfdef *linfini(mcmcxdef *mctx, errcxdef *ec, char *filename,
+linfdef *linfini(mcmcxdef *mctx, errcxdef *ec, const char *filename,
                  int flen, tokpdef *path, int must_find_file,
                  int new_line_records)
 {

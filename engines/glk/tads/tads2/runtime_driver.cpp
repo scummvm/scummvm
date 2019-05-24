@@ -254,7 +254,7 @@ static void trdusage_s(errcxdef *ec)
 
 
 static void trdmain1(errcxdef *ec, int argc, char *argv[],
-                     appctxdef *appctx, char *save_ext)
+                     appctxdef *appctx, const char *save_ext)
 {
     osfildef  *swapfp = (osfildef *)0;
     runcxdef   runctx;
@@ -857,7 +857,7 @@ void trd_close_swapfile(runcxdef *runctx)
 }
 
 /* main - called by os main after setting up arguments */
-int trdmain(int argc, char *argv[], appctxdef *appctx, char *save_ext)
+int trdmain(int argc, char *argv[], appctxdef *appctx, const char *save_ext)
 {
     errcxdef  errctx;
     int       err;
