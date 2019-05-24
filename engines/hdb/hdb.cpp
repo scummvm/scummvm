@@ -27,6 +27,8 @@
 #include "common/debug-channels.h"
 #include "common/file.h"
 #include "common/error.h"
+#include "graphics/surface.h"
+#include "graphics/palette.h"
 
 #include "hdb.h"
 #include "console.h"
@@ -47,26 +49,34 @@ HDBGame::~HDBGame() {
 
 Common::Error HDBGame::run() {
 	// Initializes Graphics
-	initGraphics(800, 600);
+	Graphics::PixelFormat format = g_system->getScreenFormat();
+	initGraphics(800, 600, &format);
 	_console = new Console();
 
-
 	readMPC("hyperdemo.mpc");
+		
+	while (!shouldQuit()) {
 
-	bool quit = false;
-
-	while (!quit) {
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
-				quit = true;
+			case Common::EVENT_RTL:
+				break;
+			case Common::EVENT_KEYDOWN:
+				debug("Key was pressed.");
 				break;
 			default:
 				break;
 			}
 		}
-
+		
+		Graphics::Surface screen;
+		screen.create(800, 600, g_system->getScreenFormat());
+		screen.drawLine(100, 100, 200, 200, 0xffffffff);
+		
+		g_system->copyRectToScreen(screen.getBasePtr(0, 0), screen.pitch, 0, 0, 800, 600);
+		
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
@@ -85,7 +95,6 @@ void HDBGame::readMPC(const Common::String &filename) {
 		_dataHeader.signature[4] = '\0';
 
 		if (_dataHeader.isValid()) {
-			debug("Valid MPC file");
 			_dataHeader.dirOffset = _file.readUint32LE();
 
 			// FIXME: The MPC archive format considers dirOffset to be a uint32.
