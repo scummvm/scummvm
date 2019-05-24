@@ -86,7 +86,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Die Blasen im "Plugs Shop" sind nun immer sichtbar.
    - Fehlende Animation hinzugefügt, wenn sich Ego und Billie auf dem Boot befinden.
    - Fehler korrigiert, der in der zweiten Museums-Szene zu einer Sackgasse führen kann.
-   - Bud kann den begehbaren Bereich nun nicht mehr verlassen, wenn er den Club besucht.
+   - Bud kann sich nun nicht mehr außerhalb des begehbaren Bereichs bewegen, wenn er den Club besucht.
    - Bud kann außerdem nicht mehr durch geschlossene Türen gehen.
    - Im Inventar kann nun das Mausrad zum scrollen verwendet werden.
    - Die Sprachausgabe kann nun übersprungen werden.
