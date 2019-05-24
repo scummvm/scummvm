@@ -50,8 +50,8 @@ public:
 	void render(const Texture *texture, const Common::Point &dest, uint width, uint height) override;
 
 private:
-	Math::Vector2d normalizeOriginalCoordinates(float x, float y) const;
-	Math::Vector2d normalizeCurrentCoordinates(float x, float y) const;
+	Math::Vector2d normalizeOriginalCoordinates(int x, int y) const;
+	Math::Vector2d normalizeCurrentCoordinates(int x, int y) const;
 
 	OpenGLSDriver *_gfx;
 	OpenGL::Shader *_shader;
