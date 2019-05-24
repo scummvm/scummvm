@@ -2780,7 +2780,7 @@ case $_host_os in
 		;;
 	mingw*)
 		append_var DEFINES "-DWIN32"
-		append_var DEFINES "-D__USE_MINGW_ANSI_STDIO=0"
+		# append_var DEFINES "-D__USE_MINGW_ANSI_STDIO=0"  # Modern MinGW does not need it
 		append_var LDFLAGS "-static-libgcc -static-libstdc++"
 		append_var LIBS "-lmingw32 -lwinmm -lgdi32"
 		append_var OBJS "dists/scummvm.o"
