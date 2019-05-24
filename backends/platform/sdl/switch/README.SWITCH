@@ -3,11 +3,9 @@ ScummVM-Switch README
 
 Installation
 ============
- - Copy the relevant game datafiles to your sd card (location doesn't matter).
- - Install ScummVM like any other homebrew.
- - After installation you should have a file `/switch/scummvm/scummvm.nro`
- - Run ScummVM and use the launcher to add games and run them.
- - Press the plus key to return to the launcher and play another game.
+ - The latest daily version of ScummVM for Switch is [here](https://buildbot.scummvm.org/snapshots/master/switch-master-latest.zip) (needs to be unzipped).
+ - Copy the scummvm folder to your SD card into the folder /switch/ so that you have a folder `/switch/scummvm` with `scummvm.nro` and other folders inside.
+ - Launch ScummVM using your favorite method to launch homebrew on the Switch
 
 Notes
 =====
@@ -16,26 +14,35 @@ Notes
 
 Building the source code
 ========================
+This port of ScummVM to the Switch is based on SDL2. It uses the open source SDK provided by devkitPro.
+
 To build ScummVM for Switch:
 
-- Obtain the ScummVM source code from https://github.com/scummvm/scummvm
+ - Obtain the ScummVM source code (https://github.com/scummvm/scummvm)
 
-- Install devkitPro for Switch (https://switchbrew.org/wiki/Setting_up_Development_Environment)
+ - Install the development tools for Switch following the official instructions (https://devkitpro.org/wiki/Getting_Started)
 
-- Ensure your $DEVKITPRO variable is set via `export DEVKITPRO="/opt/devkitpro"`
+ - Install libraries via
+```
+sudo dkp-pacman -S switch-portlibs
+```
 
-- Ensure your $DEVKITA64 variable is set via `export DEVKITA64="/opt/devkitpro/devkitA64"`
+ - Create a subdirectory somewhere outside the source folder for your ScummVM build and cd into it
 
-- Ensure devkitPro binaries are in your path via `export PATH="$DEVKITA64/bin:$DEVKITPRO/tools/bin:$PATH"`
+ - Execute the command (once a curl-config script exists for devkitA64, the --disable-libcurl could be omitted)
+```
+../scummvm/configure --host=switch --disable-libcurl
+```
 
-- Install libraries via `sudo -E dkp-pacman -S switch-portlibs` (or just `pacman -S switch-portlibs`)
-
-- Create a subdirectory somewhere outside the source folder for your ScummVM build and cd into it
-
-- Execute the command `configure --host=switch`
-
-- Execute the command `make scummvm_switch.zip`
+ - Execute the command
+```
+make scummvm_switch.zip
+```
 
 Port Authors
 ============
 cpasjuste
+
+Thanks
+======
+[devkitPro](https://devkitpro.org devkitPro) and [Switchbrew](https://switchbrew.org/) teams
