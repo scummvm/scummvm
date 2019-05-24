@@ -3228,7 +3228,7 @@ if test -n "$_host"; then
 		*mingw32*)
 			_sdlconfig=$_host-sdl-config
 			_windres=$_host-windres
-			_ar="$_host-ar cru"
+			_ar="$_host-ar cr"
 			_ranlib=$_host-ranlib
 			;;
 		mips-sgi*)
