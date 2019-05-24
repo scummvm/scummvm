@@ -24,7 +24,21 @@ To build ScummVM for Switch:
 
  - Install libraries via
 ```
-sudo dkp-pacman -S switch-portlibs
+sudo dkp-pacman -S \
+switch-sdl2 \
+switch-libmad \
+switch-libogg \
+switch-libvorbis \
+switch-flac \
+switch-libtheora \
+switch-libpng \
+switch-libjpeg-turbo \
+switch-zlib \
+switch-freetype \
+switch-sdl2_net \
+switch-curl \
+switch-libtimidity \
+switch-pkg-config
 ```
 
  - Create a subdirectory somewhere outside the source folder for your ScummVM build and cd into it
