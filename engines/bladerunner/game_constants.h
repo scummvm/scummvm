@@ -1175,7 +1175,10 @@ enum Variables {
 	kVariableChapter = 1,
 	kVariableChinyen = 2,
 	kVariableGameVersion = 3, // re-purposed, original: not used, so it would have value of 0 in the classic version
-	// variables 4 - 8 are not used
+	kVariableUG18CountUpForNextTrainAction = 4, // re-purposed, original: not used
+	kVariableUG18StateOfTrains = 5,             // re-purposed, original: not used
+	kVariableUG18StateOfGuzzaCorpse = 6,        // re-purposed, original: not used
+	// variables 7 - 8 are not used
 	kVariablePoliceMazeScore = 9,
 	kVariablePoliceMazePS10TargetCounter = 10,
 	kVariablePoliceMazePS11TargetCounter = 11,

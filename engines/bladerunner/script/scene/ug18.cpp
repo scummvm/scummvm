@@ -24,11 +24,46 @@
 
 namespace BladeRunner {
 
+enum kUG18Loops {
+	kUG18LoopTrainsArriving            = 0, //   0 -  59
+	kUG18LoopMainLoop                  = 1, //  60 - 120 (4 seconds in 15 fps)
+	kUG18LoopTrainsLeaving             = 3, // 121 - 180
+	kUG18LoopMainLoopNoTrains          = 4  // 181 - 241 (4 seconds in 15 fps)
+};
+
+static const int kUG18TrainsSecondsOfLoopNoTrains    =    4;
+static const int kUG18TrainsSecondsOfLoopWithTrains  =    4;
+static const int kUG18TrainsCountUpMaxMarginWalkedIn =   12;
+static const int kUG18TrainsCountUpMinMarginWalkedIn =    4;
+static const int kUG18TrainsCountUpTargetRegular     =  600;
+static const int kUG18TrainsCountUpMinMarginRegular  =   65;
+
+// values for re-purposed global variable kVariableUG18StateOfTrains
+enum kUG18TrainsState {
+	kUG18NoTrains                      = 0,
+	kUG18TrainsUnloading               = 1
+};
+
+// values for re-purposed global variable kVariableUG18StateOfGuzzaCorpse
+enum kUG18StateOfGuzzaCorpse {
+	kUG18GuzzaNoCorpse           = 0,
+	kUG18GuzzaCorpseFloatsDown   = 1,
+	kUG18GuzzaCorpseStuckInPipes = 2,
+	kUG18GuzzaCorpseDissolves    = 3
+};
+
 void SceneScriptUG18::InitializeScene() {
 	Setup_Scene_Information(-684.71f, 0.0f, 171.59f, 0);
 	Game_Flag_Reset(kFlagUG13toUG18);
 
 	Scene_Exit_Add_2D_Exit(0, 0, 158, 100, 340, 3);
+	if (_vm->_cutContent) {
+		if (!Game_Flag_Query(kFlagUG18GuzzaScene)) {
+			Overlay_Play("UG18OVER", 0, true, false, 0); // Railing in center platform is intact
+		} else {
+			Overlay_Play("UG18OVER", 2, true, false, 0); // Railing has broken outwards (state after Guzza fell)
+		}
+	}
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTRUNOFF, 71, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxBOILPOT2, 45, 0, 1);
@@ -57,7 +92,23 @@ void SceneScriptUG18::InitializeScene() {
 	Ambient_Sounds_Add_Sound(kSfxZUBWLK3,  5,  50, 27, 37, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxZUBWLK4,  5,  50, 27, 37, -100, 100, -101, -101, 0, 0);
 
-	Scene_Loop_Set_Default(4);
+	if (_vm->_cutContent) {
+		if (Global_Variable_Query(kVariableUG18StateOfTrains) == kUG18NoTrains) {
+			Scene_Loop_Set_Default(kUG18LoopMainLoopNoTrains);
+			Global_Variable_Set(kVariableUG18CountUpForNextTrainAction, Random_Query(kUG18TrainsCountUpTargetRegular - kUG18TrainsCountUpMaxMarginWalkedIn, kUG18TrainsCountUpTargetRegular - kUG18TrainsCountUpMinMarginWalkedIn));
+		} else {
+			if (Random_Query(0, 1)) {
+				Scene_Loop_Set_Default(kUG18LoopMainLoop);
+				// don't set the kVariableUG18CountUpForNextTrainAction here, we only want this to play once before transitioning to trains leaving
+			} else {
+				Global_Variable_Set(kVariableUG18StateOfTrains, kUG18NoTrains);
+				Scene_Loop_Set_Default(kUG18LoopMainLoopNoTrains);
+				Global_Variable_Set(kVariableUG18CountUpForNextTrainAction, Random_Query(0, kUG18TrainsCountUpTargetRegular - kUG18TrainsCountUpMinMarginRegular));
+			}
+		}
+	} else {
+		Scene_Loop_Set_Default(kUG18LoopMainLoopNoTrains);
+	}
 
 	if ( Game_Flag_Query(kFlagCallWithGuzza)
 	 && !Game_Flag_Query(kFlagUG18GuzzaScene)
@@ -138,6 +189,69 @@ bool SceneScriptUG18::ClickedOn2DRegion(int region) {
 }
 
 void SceneScriptUG18::SceneFrameAdvanced(int frame) {
+//	kUG18LoopTrainsArriving            = 0, //   0 -  59
+//	kUG18LoopMainLoop                  = 1, //  60 - 120
+//	kUG18LoopTrainsLeaving             = 3, // 121 - 180
+//	kUG18LoopMainLoopNoTrains          = 4  // 181 - 241
+	if (_vm->_cutContent) {
+		if (frame == 0) {
+			Ambient_Sounds_Play_Sound(Random_Query(kSfxBBGRN1, kSfxBBGRN3), 35, 0, 30, 50);
+			Ambient_Sounds_Play_Sound(kSfxLIGHTON, 25, 0, 30, 50);
+		}
+
+		if (frame == 2) {
+			Ambient_Sounds_Play_Sound(kSfxSUBWAY1, 24, 0, 30, 50);
+		}
+
+		if (frame == 60) {
+			Ambient_Sounds_Play_Sound(kSfxPIPER1, 25, 30, 30, 0);
+			if (Random_Query(1, 3)) {
+				Ambient_Sounds_Play_Sound(kSfxSQUEAK2, 32, 30, 30, 50);
+			} else {
+				Ambient_Sounds_Play_Sound(kSfxSQUEAK4, 34, 30, 30, 50);
+			}
+		}
+
+		if (frame == 68) {
+			Ambient_Sounds_Play_Sound(kSfxSTEAM3, 66, 30, 30, 50);
+		}
+
+		if (frame == 70) {
+			Ambient_Sounds_Play_Sound(kSfxSTEAM6A, 66, 30, 30, 50);
+		}
+
+		if (frame == 115) {
+			Ambient_Sounds_Play_Sound(kSfxMTLDOOR2, 40, 30, 30, 50);
+		}
+
+		if (frame == 128) {
+			Ambient_Sounds_Play_Sound(kSfxSUBWAY1, 24, 30, 0, 50);
+		}
+
+		if (frame == 119     //  end of main loop unloading // works better the using the 120 value
+		   || frame ==  240 // end of main loop no trains
+		) {
+			if (Global_Variable_Query(kVariableUG18CountUpForNextTrainAction) < kUG18TrainsCountUpTargetRegular) {
+				if (Global_Variable_Query(kVariableUG18StateOfTrains) == kUG18NoTrains) {
+					Global_Variable_Increment(kVariableUG18CountUpForNextTrainAction, kUG18TrainsSecondsOfLoopNoTrains); // add seconds
+				} else {
+					Global_Variable_Increment(kVariableUG18CountUpForNextTrainAction, kUG18TrainsSecondsOfLoopWithTrains); // add seconds
+				}
+			} else {
+				if (Global_Variable_Query(kVariableUG18StateOfTrains) == kUG18NoTrains) {
+					Global_Variable_Set(kVariableUG18StateOfTrains, kUG18TrainsUnloading);
+					Scene_Loop_Set_Default(kUG18LoopMainLoop);
+					Scene_Loop_Start_Special(kSceneLoopModeOnce, kUG18LoopTrainsArriving, false);
+					// don't set the kVariableUG18CountUpForNextTrainAction here, we only want this to play once before transitioning to trains leaving
+				} else {
+					Global_Variable_Set(kVariableUG18StateOfTrains, kUG18NoTrains);
+					Scene_Loop_Set_Default(kUG18LoopMainLoopNoTrains);
+					Scene_Loop_Start_Special(kSceneLoopModeOnce, kUG18LoopTrainsLeaving, true);
+					Global_Variable_Set(kVariableUG18CountUpForNextTrainAction, Random_Query(0, kUG18TrainsCountUpTargetRegular - kUG18TrainsCountUpMinMarginRegular));
+				}
+			}
+		}
+	}
 }
 
 void SceneScriptUG18::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
@@ -210,6 +324,30 @@ void SceneScriptUG18::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptUG18::PlayerWalkedIn() {
+	if (_vm->_cutContent) {
+		if (Game_Flag_Query(kFlagUG18GuzzaScene)) {
+			switch (Global_Variable_Query(kVariableUG18StateOfGuzzaCorpse)) {
+			case kUG18GuzzaCorpseFloatsDown:
+				Global_Variable_Set(kVariableUG18StateOfGuzzaCorpse, kUG18GuzzaCorpseStuckInPipes);
+				// same logic as using the BB06OVER for doll explosion case in BB06
+				Overlay_Play("UG18OVR2", 0, true, true,  0);
+				Overlay_Play("UG18OVR2", 1, true, false, 0);
+				break;
+			case kUG18GuzzaCorpseStuckInPipes:
+				Global_Variable_Set(kVariableUG18StateOfGuzzaCorpse, kUG18GuzzaCorpseDissolves);
+				Overlay_Play("UG18OVR2", 1, true, true,  0);
+				Overlay_Play("UG18OVR2", 2, false, false, 0);
+				break;
+			case kUG18GuzzaCorpseDissolves:
+				Global_Variable_Set(kVariableUG18StateOfGuzzaCorpse, kUG18GuzzaNoCorpse);
+				Overlay_Remove("UG18OVR2");
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, -488.71f, 0.0f, 123.59f, 0, false, false, false);
 
 	if ( Game_Flag_Query(kFlagCallWithGuzza)
@@ -224,6 +362,9 @@ void SceneScriptUG18::PlayerWalkedIn() {
 }
 
 void SceneScriptUG18::PlayerWalkedOut() {
+	if (_vm->_cutContent) {
+		Overlay_Remove("UG18OVER");
+	}
 }
 
 void SceneScriptUG18::DialogueQueueFlushed(int a1) {
@@ -254,7 +395,14 @@ void SceneScriptUG18::DialogueQueueFlushed(int a1) {
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAttack);
 		Sound_Play(kSfxLGCAL3, 100, 0, 0, 50);
 		Actor_Change_Animation_Mode(kActorGuzza, 61);
-		Overlay_Play("UG18over", 1, false, true, 0);
+		if (_vm->_cutContent) {
+			// same logic as using the BB06OVER for doll explosion case in BB06
+			Overlay_Play("UG18OVER", 1, true, true,  0);
+			Overlay_Play("UG18OVER", 2, true, false, 0);
+			Global_Variable_Set(kVariableUG18StateOfGuzzaCorpse, kUG18GuzzaCorpseFloatsDown);
+		} else {
+			Overlay_Play("UG18OVER", 1, false, true, 0);
+		}
 		Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaUG18FallDown);
 		Player_Gains_Control();
 		ADQ_Add_Pause(2000);
