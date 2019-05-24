@@ -304,7 +304,11 @@ void SceneScriptUG13::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptUG13::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagUG18toUG13)) {
+#if BLADERUNNER_ORIGINAL_BUGS
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -389.0f, 143.0f, -844.0f, 0, false, false, false);
+#else
+		Actor_Set_At_XYZ(kActorMcCoy, -389.0f, 143.0f, -844.0f, 325);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Face_Heading(kActorMcCoy, 325, false);
 		Footstep_Sound_Override_On(3);
 		Loop_Actor_Travel_Stairs(kActorMcCoy, 11, false, kAnimationModeIdle);

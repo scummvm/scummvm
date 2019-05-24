@@ -477,6 +477,29 @@ void Set::overrideSceneObjectInfo(int objectId) const {
 			_objects[objectId].bbox.setXYZ(-168.99f, 151.38f, -139.10f, -105.95f, 239.59f, 362.70f);
 		}
 		break;
+
+	case kSceneUG13:
+		// fix obstacles map / stairs glitch
+		if (objectId == 31 && _objects[objectId].name == "BOX FOR ELEVATR WAL") {
+			_objects[objectId].bbox.setXYZ(-337.79f, 35.78f, -918.73f, -282.79f, 364.36f, -804.54f);
+		} else if (objectId == 32 && _objects[objectId].name == "BOX FOR ELEVATR WAL") {
+			_objects[objectId].bbox.setXYZ(-455.47f, 35.78f, -1071.24f, -335.98f, 364.36f, -824.54f);
+		}
+		break;
+
+	case kSceneUG18:
+		// fix obstacles map
+		if (objectId == 1 && _objects[objectId].name == "PIT_RAIL 03") {
+			_objects[objectId].bbox.setXYZ(-615.83f, 0.0f, -1237.04f, -602.30f, 37.66f, -13.48f);
+		} else  if (objectId == 4 && _objects[objectId].name == "WALL_LEFT") {
+			_objects[objectId].bbox.setXYZ(-1310.70f, 0.0f, -2105.59f, -910.95f, 840.0f, -111.55f);
+		} else  if (objectId == 5 && _objects[objectId].name == "OBSTACLE1") {
+			_objects[objectId].bbox.setXYZ(91.00f, -1.87f, 375.75f, 476.37f, 61.18f, 955.24f);
+		} else  if (objectId == 6 && _objects[objectId].name == "OBSTACLE02") {
+			_objects[objectId].bbox.setXYZ(-1191.22f, -1.87f, -2105.59f, -606.15f, 61.18f, -937.04f);
+		}
+		break;
+
 	default:
 		return;
 	}

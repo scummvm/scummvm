@@ -122,9 +122,11 @@ void SceneScriptUG18::InitializeScene() {
 
 void SceneScriptUG18::SceneLoaded() {
 	Obstacle_Object("MACHINE_01", true);
+#if BLADERUNNER_ORIGINAL_BUGS
 	Unobstacle_Object("PLATFM_RAIL 01", true);
 	Unobstacle_Object("PLATFM_RAIL 02", true);
 	Unobstacle_Object("OBSTACLE1", true);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Clickable_Object("MACHINE_01");
 	Unclickable_Object("MACHINE_01");
 
