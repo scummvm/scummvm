@@ -57,6 +57,9 @@ void OpenGLSSurfaceRenderer::render(const Texture *texture, const Common::Point 
 		_shader->setUniform("verSizeWH", normalizeOriginalCoordinates(width, height));
 	}
 
+	Common::Rect nativeViewport = _gfx->getViewport();
+	_shader->setUniform("viewport", Math::Vector2d(nativeViewport.width(), nativeViewport.height()));
+
 	texture->bind();
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
@@ -66,16 +69,7 @@ void OpenGLSSurfaceRenderer::render(const Texture *texture, const Common::Point 
 
 Math::Vector2d OpenGLSSurfaceRenderer::normalizeOriginalCoordinates(int x, int y) const {
 	Common::Rect viewport = _gfx->getUnscaledViewport();
-
-	Math::Vector2d normalized(x / (float)viewport.width(), y / (float)viewport.height());
-
-	// Align vertex coordinates to the native pixel grid
-	// This ensures text does not get garbled by nearest neighbors scaling
-	Common::Rect nativeViewport = _gfx->getViewport();
-	normalized.setX(floorf((normalized.getX() * nativeViewport.width())) / nativeViewport.width());
-	normalized.setY(floorf((normalized.getY() * nativeViewport.height())) / nativeViewport.height());
-
-	return normalized;
+	return Math::Vector2d(x / (float)viewport.width(), y / (float)viewport.height());
 }
 
 Math::Vector2d OpenGLSSurfaceRenderer::normalizeCurrentCoordinates(int x, int y) const {
