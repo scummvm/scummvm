@@ -254,7 +254,7 @@ Common::Error BladeRunnerEngine::loadGameState(int slot) {
 	if (!BladeRunner::SaveFileManager::readHeader(*saveFile, header)) {
 		error("Invalid savegame");
 	}
-
+	setTotalPlayTime(header._playTime);
 	loadGame(*saveFile);
 
 	delete saveFile;
@@ -284,6 +284,7 @@ Common::Error BladeRunnerEngine::saveGameState(int slot, const Common::String &d
 
 	BladeRunner::SaveFileHeader header;
 	header._name = desc;
+	header._playTime = getTotalPlayTime();
 
 	BladeRunner::SaveFileManager::writeHeader(*saveFile, header);
 	_time->pause();

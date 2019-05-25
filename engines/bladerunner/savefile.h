@@ -53,13 +53,14 @@ struct SaveFileHeader {
 	int                _day;
 	int                _hour;
 	int                _minute;
+	uint32             _playTime;
 	Graphics::Surface *_thumbnail;
 };
 
 class SaveFileManager {
 private:
 	static const uint32 kTag = MKTAG('B', 'R', 'S', 'V');
-	static const uint32 kVersion = 1;
+	static const uint32 kVersion = 2;
 
 public:
 	static const uint32 kNameLength = 32;

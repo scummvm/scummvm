@@ -108,6 +108,8 @@ bool BladeRunnerMetaEngine::hasFeature(MetaEngineFeature f) const {
 		f == kSupportsDeleteSave ||
 		f == kSavesSupportMetaInfo ||
 		f == kSavesSupportThumbnail ||
+		f == kSavesSupportCreationDate ||
+		f == kSavesSupportPlayTime ||
 		f == kSimpleSavesNames;
 }
 

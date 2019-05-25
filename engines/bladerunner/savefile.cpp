@@ -79,6 +79,7 @@ SaveStateDescriptor SaveFileManager::queryMetaInfos(const Common::String &target
 	desc.setThumbnail(header._thumbnail);
 	desc.setSaveDate(header._year, header._month, header._day);
 	desc.setSaveTime(header._hour, header._minute);
+	desc.setPlayTime(header._playTime);
 	return desc;
 }
 
@@ -105,7 +106,7 @@ bool SaveFileManager::readHeader(Common::SeekableReadStream &in, SaveFileHeader 
 	}
 
 	header._version = s.readByte();
-	if (header._version != kVersion) {
+	if (header._version > kVersion) {
 		warning("Unsupported version of save file %u, supported is %u", header._version, kVersion);
 		return false;
 	}
@@ -117,6 +118,11 @@ bool SaveFileManager::readHeader(Common::SeekableReadStream &in, SaveFileHeader 
 	header._day    = s.readUint16LE();
 	header._hour   = s.readUint16LE();
 	header._minute = s.readUint16LE();
+
+	header._playTime = 0;
+	if (header._version >= 2) {
+		header._playTime = s.readUint32LE();
+	}
 
 	header._thumbnail = nullptr;
 
@@ -166,6 +172,8 @@ bool SaveFileManager::writeHeader(Common::WriteStream &out, SaveFileHeader &head
 	s.writeUint16LE(td.tm_mday);
 	s.writeUint16LE(td.tm_hour);
 	s.writeUint16LE(td.tm_min);
+
+	s.writeUint32LE(header._playTime);
 
 	return true;
 }
