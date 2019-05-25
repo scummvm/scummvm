@@ -74,9 +74,23 @@ void OSystem_Win32::init() {
 	OSystem_SDL::init();
 }
 
+WORD GetCurrentSubsystem() {
+	// HMODULE is the module base address. And the PIMAGE_DOS_HEADER is located at the beginning.
+	PIMAGE_DOS_HEADER EXEHeader = (PIMAGE_DOS_HEADER)GetModuleHandle(NULL);
+	assert(EXEHeader->e_magic == IMAGE_DOS_SIGNATURE);
+	// PIMAGE_NT_HEADERS is bitness dependant.
+	// Conveniently, since it's for our own process, it's always the correct bitness.
+	// IMAGE_NT_HEADERS has to be found using a byte offset from the EXEHeader,
+	// which requires the ugly cast.
+	PIMAGE_NT_HEADERS PEHeader = (PIMAGE_NT_HEADERS)(((char*)EXEHeader) + EXEHeader->e_lfanew);
+	assert(PEHeader->Signature == IMAGE_NT_SIGNATURE);
+	return PEHeader->OptionalHeader.Subsystem;
+}
+
 void OSystem_Win32::initBackend() {
-	// Console window is enabled by default on Windows
-	ConfMan.registerDefault("console", true);
+	// The console window is enabled for the console subsystem,
+	// since Windows already creates the console window for us
+	ConfMan.registerDefault("console", GetCurrentSubsystem() == IMAGE_SUBSYSTEM_WINDOWS_CUI);
 
 	// Enable or disable the window console window
 	if (ConfMan.getBool("console")) {
