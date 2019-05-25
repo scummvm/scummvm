@@ -21,7 +21,6 @@
  */
 
 #include "bladerunner/script/scene_script.h"
-
 namespace BladeRunner {
 
 enum kUG18Loops {
@@ -291,7 +290,7 @@ void SceneScriptUG18::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 			if (Actor_Query_Friendliness_To_Other(kActorClovis, kActorMcCoy) > 55
 			 && Game_Flag_Query(kFlagMcCoyRetiredHuman)
 			) {
-				Actor_Says(kActorClovis, 660, 13);
+				Actor_Says(kActorClovis, 660, 13); // Brother, you killed a human...
 				Actor_Says(kActorMcCoy, 5995, 13);
 				Actor_Says(kActorClovis, 670, 13);
 				Actor_Says(kActorMcCoy, 6000, 13);
@@ -314,6 +313,7 @@ void SceneScriptUG18::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 			break;
 
 		case 305:
+			// never triggered
 			Actor_Change_Animation_Mode(kActorSadik, kAnimationModeCombatAttack);
 			Sound_Play(kSfxLGCAL1, 100, 0, 0, 50);
 			Actor_Force_Stop_Walking(kActorMcCoy);
@@ -376,24 +376,40 @@ void SceneScriptUG18::DialogueQueueFlushed(int a1) {
 		Actor_Change_Animation_Mode(kActorSadik, kAnimationModeCombatAttack);
 		Sound_Play(kSfxLGCAL3, 100, 0, 0, 50);
 		Actor_Change_Animation_Mode(kActorGuzza, kAnimationModeCombatHit);
-		ADQ_Add(kActorClovis, 630, 13);
+		ADQ_Add(kActorClovis, 630, 13); // "Whatever is born of mortal birth, must be consumed with the earth."
 		Actor_Set_Goal_Number(kActorClovis, kGoalClovisUG18SadikWillShootGuzza);
 		break;
 
 	case kGoalGuzzaUG18ShotByMcCoy:
 		// Bug in the game, shot animation is not reset so McCoy looks still while he is shooting
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAim);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAttack);
 		Sound_Play(kSfxLGCAL2, 100, 0, 0, 50);
 		Actor_Change_Animation_Mode(kActorGuzza, kAnimationModeCombatHit);
 		Delay(900);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAim);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAttack);
 		Sound_Play(kSfxLGCAL3, 100, 0, 0, 50);
 		Actor_Change_Animation_Mode(kActorGuzza, kAnimationModeCombatHit);
 		Delay(1100);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAim);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAttack);
 		Sound_Play(kSfxLGCAL1, 100, 0, 0, 50);
 		Actor_Change_Animation_Mode(kActorGuzza, kAnimationModeCombatHit);
 		Delay(900);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAim);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAttack);
 		Sound_Play(kSfxLGCAL3, 100, 0, 0, 50);
 		Actor_Change_Animation_Mode(kActorGuzza, 61);
@@ -408,11 +424,15 @@ void SceneScriptUG18::DialogueQueueFlushed(int a1) {
 		Actor_Set_Goal_Number(kActorGuzza, kGoalGuzzaUG18FallDown);
 		Player_Gains_Control();
 		ADQ_Add_Pause(2000);
-		ADQ_Add(kActorSadik, 360, -1);
+		ADQ_Add(kActorSadik, 360, -1); // The Hunter, he do us a favor...
 		ADQ_Add_Pause(2000);
-		ADQ_Add(kActorClovis, 650, 14);
+		ADQ_Add(kActorClovis, 650, 14); // So, what should we do with this detective.
 		ADQ_Add(kActorSadik, 370, 14);
-		ADQ_Add(kActorClovis, 1320, 14);
+		ADQ_Add(kActorClovis, 1320, 14); // Perhaps you're right
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		Actor_Retired_Here(kActorGuzza, 72, 32, true, kActorMcCoy);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Set_Goal_Number(kActorClovis, kGoalClovisUG18GuzzaDied);
 		break;
 
@@ -441,6 +461,19 @@ void SceneScriptUG18::DialogueQueueFlushed(int a1) {
 		Actor_Change_Animation_Mode(kActorSadik, kAnimationModeCombatAttack);
 		Sound_Play(kSfxLGCAL3, 100, 0, 0, 50);
 		Actor_Change_Animation_Mode(kActorGuzza, 61);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		// don't allow code to reach the overlay animation if the dialogue queue is not flushed
+		// otherwise this animation is stored and if the player saves the game during the queued dialogue
+		// then upon re-load it would play immediately (before Guzza falls)
+		ADQ_Wait_For_All_Queued_Dialogue();
+#endif // BLADERUNNER_ORIGINAL_BUGS
+		if (_vm->_cutContent) {
+			// same logic as using the BB06OVER for doll explosion case in BB06
+			Overlay_Play("UG18OVER", 1, true, true,  0);
+			Overlay_Play("UG18OVER", 2, true, false, 0);
+			Global_Variable_Set(kVariableUG18StateOfGuzzaCorpse, kUG18GuzzaCorpseFloatsDown);
+		}
 		ADQ_Add_Pause(2000);
 		ADQ_Add(kActorClovis, 650, 14);
 		ADQ_Add(kActorSadik, 370, 14);
@@ -452,11 +485,20 @@ void SceneScriptUG18::DialogueQueueFlushed(int a1) {
 		break;
 
 	case kGoalClovisUG18GuzzaDied:
+#if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Set_Goal_Number(kActorSadik, kGoalSadikUG18Move);
+#else
+		// otherwise this gets repeated whenever dialogue queue re-empties
+		if (Actor_Query_Goal_Number(kActorSadik) == kGoalSadikUG18Wait) {
+			Actor_Set_Goal_Number(kActorSadik, kGoalSadikUG18Move);
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		break;
 	}
 
 	if (Actor_Query_Goal_Number(kActorSadik) == kGoalSadikUG18WillShootMcCoy) {
+		// Bug in the original game - Why is Sadik set to die animation here?
+		// never triggered
 		Actor_Change_Animation_Mode(kActorSadik, kAnimationModeDie);
 		Actor_Set_Goal_Number(kActorSadik, kGoalSadikUG18PrepareShootMcCoy);
 		Actor_Set_Goal_Number(kActorClovis, kGoalClovisUG18Leave);
@@ -574,7 +616,7 @@ void SceneScriptUG18::talkWithClovis() {
 	ADQ_Add(kActorGuzza, 1180, 58);
 	ADQ_Add(kActorClovis, 610, 13);
 	ADQ_Add(kActorGuzza, 1190, 60);
-	ADQ_Add(kActorClovis, 620, 13);
+	ADQ_Add(kActorClovis, 620, 13); // Lieutenant, we have everything we need...
 	ADQ_Add(kActorGuzza, 1200, 59);
 }
 

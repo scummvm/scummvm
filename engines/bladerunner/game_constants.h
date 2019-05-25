@@ -2302,7 +2302,7 @@ enum GoalSadik {
 	kGoalSadikUG18PrepareShootMcCoy = 307,
 	kGoalSadikUG18ShootMcCoy = 308,
 	kGoalSadikUG18Leave = 310,
-	kGoalSadikUG18NeedsReactorCoreFromMcCoy = 416,
+	kGoalSadikKP06NeedsReactorCoreFromMcCoy = 416,
 	kGoalSadikGone = 599
 };
 

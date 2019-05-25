@@ -124,7 +124,7 @@ bool SaveFileManager::readHeader(Common::SeekableReadStream &in, SaveFileHeader 
 	int32 pos = s.pos();
 	int32 sizeOfSaveFile = s.size();
 	if (sizeOfSaveFile > 0 && sizeOfSaveFile < (int32) (pos + 4 + kThumbnailSize)) {
-		warning("Unexpected end of save file %s (%02d:%02d %02d/%02d/%04d) reached. Size of file was: %d bytes",
+		warning("Unexpected end of save file \"%s\" (%02d:%02d %02d/%02d/%04d) reached. Size of file was: %d bytes",
 		         header._name.c_str(),
 		         header._hour,
 		         header._minute,

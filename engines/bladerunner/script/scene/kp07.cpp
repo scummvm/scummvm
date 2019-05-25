@@ -178,7 +178,7 @@ void SceneScriptKP07::PlayerWalkedIn() {
 			Actor_Says(kActorClovis, 1240, 3);
 			Actor_Says(kActorMcCoy, 8500, 3);
 			Actor_Says(kActorClovis, 1250, 3);
-			if (Actor_Query_Goal_Number(kActorSadik) == kGoalSadikUG18NeedsReactorCoreFromMcCoy) {
+			if (Actor_Query_Goal_Number(kActorSadik) == kGoalSadikKP06NeedsReactorCoreFromMcCoy) {
 				Actor_Put_In_Set(kActorSadik, kSetKP07);
 				Global_Variable_Increment(kVariableReplicantsSurvivorsAtMoonbus, 1);
 				Actor_Set_At_XYZ(kActorSadik, -12.0f, -41.58f, 72.0f, 0);
