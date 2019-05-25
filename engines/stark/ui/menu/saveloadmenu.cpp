@@ -314,6 +314,8 @@ void SaveDataWidget::loadSaveDataElements() {
 		if (metadata.version >= 9) {
 			Graphics::Surface *thumb = metadata.readGameScreenThumbnail(&stream);
 			_texture->update(thumb);
+			_texture->setSamplingFilter(StarkSettings->getImageSamplingFilter());
+
 			thumb->free();
 			delete thumb;
 		}
