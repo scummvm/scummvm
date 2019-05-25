@@ -52,7 +52,7 @@ static uint32 *input = 0;
 static uint max = 0;
 
 void os_put_buffer(const char *buf, size_t len) {
-    uint *out;
+    uint32 *out;
     uint outlen;
 
     if (!len)

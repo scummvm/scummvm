@@ -364,7 +364,7 @@ uint parse_cp1251(const unsigned char *buf, uint buflen, uint32 *out, uint outle
     return outpos;
 }
 
-uint prepare_cp1251(const uint *buf, uint buflen,
+static uint prepare_cp1251(const uint32 *buf, uint buflen,
                       unsigned char *out, uint outlen)
 {
     uint pos = 0;
@@ -572,7 +572,7 @@ uint parse_cp1252(const unsigned char *buf, uint buflen, uint32 *out, uint outle
     return outpos;
 }
 
-uint prepare_cp1252(const uint *buf, uint buflen,
+static uint prepare_cp1252(const uint32 *buf, uint buflen,
                       unsigned char *out, uint outlen)
 {
     uint pos = 0;
@@ -776,7 +776,7 @@ uint parse_mac(const unsigned char *buf, uint buflen, uint32 *out, uint outlen) 
     return outpos;
 }
 
-uint prepare_mac(const uint *buf, uint buflen, unsigned char *out, uint outlen) {
+static uint prepare_mac(const uint32 *buf, uint buflen, unsigned char *out, uint outlen) {
     uint pos = 0;
     uint outpos = 0;
     uint res;
