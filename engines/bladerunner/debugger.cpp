@@ -38,6 +38,7 @@
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/items.h"
+#include "bladerunner/item_pickup.h"
 #include "bladerunner/screen_effects.h"
 #include "bladerunner/settings.h"
 #include "bladerunner/set.h"
@@ -1601,6 +1602,15 @@ bool Debugger::cmdItem(int argc, const char **argv) {
 				debugPrintf("No item was found with the specified id: %d in the scene\n", itemId);
 				return true;
 			}
+		} else if (modeName == "spin" && argc == 3) {
+			int itemAnimationId = atoi(argv[2]);
+			if (itemAnimationId >=0 && itemAnimationId <= 996) {
+				_vm->_itemPickup->setup(itemAnimationId, 320, 240);
+				return false; // close the debugger
+			} else {
+				debugPrintf("Valid value range for item animation Ids is [0, 996]\n");
+				return true;
+			}
 		} else {
 			invalidSyntax = true;
 		}
@@ -1617,6 +1627,7 @@ bool Debugger::cmdItem(int argc, const char **argv) {
 		debugPrintf("Usage 3: %s flags  <id> <isVisible> <isTarget>\n", argv[0]);
 		debugPrintf("Usage 4: %s bounds <id> <posX> <posY> <posZ>  <facing> <height> <width>\n", argv[0]);
 		debugPrintf("Usage 5: %s remove <id>\n", argv[0]);
+		debugPrintf("Usage 6: %s spin <animationId>\n", argv[0]);
 	}
 	return true;
 }

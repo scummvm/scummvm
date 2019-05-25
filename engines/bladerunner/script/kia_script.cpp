@@ -663,11 +663,11 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		{
 			int dnaEvidences = Global_Variable_Query(kVariableDNAEvidence);
 			if (dnaEvidences == 1) {
-				KIA_Play_Slice_Model(kModelAnimationDNAEvidenceOnePart);
+				KIA_Play_Slice_Model(kModelAnimationDNAEvidence01OutOf6);
 			} else if (dnaEvidences == 2) {
-				KIA_Play_Slice_Model(kModelAnimationDNAEvidenceTwoParts);
+				KIA_Play_Slice_Model(kModelAnimationDNAEvidence03OutOf6);
 			} else if (dnaEvidences == 3) {
-				KIA_Play_Slice_Model(kModelAnimationDNAEvidenceThreeParts);
+				KIA_Play_Slice_Model(kModelAnimationDNAEvidence04OutOf6);
 			} else if (dnaEvidences >= 4) {
 				KIA_Play_Slice_Model(kModelAnimationDNAEvidenceComplete);
 			}

@@ -1862,7 +1862,7 @@ enum GameModelAnimations {
 	kModelAnimationWeaponsOrderForm            = 965,
 	kModelAnimationShellCasings                = 966,
 	kModelAnimationSlug                        = 967,
-//	kModelAnimation                            = 968, // unused - a knife?
+//	kModelAnimationKnife                       = 968, // unused - a knife? - spins badly
 	kModelAnimationStrangeScale                = 969,
 	kModelAnimationHysteriaToken               = 970,
 	kModelAnimationToyDog                      = 971,
@@ -1882,14 +1882,14 @@ enum GameModelAnimations {
 	kModelAnimationCrystalsCigarette           = 985,
 	kModelAnimationSpinnerKeys                 = 986,
 	kModelAnimationBriefcase                   = 987,
-	kModelAnimationDNAEvidenceOnePart          = 988,
-//	kModelAnimation                            = 989, // unused?
-	kModelAnimationDNAEvidenceTwoParts         = 990,
-	kModelAnimationDNAEvidenceThreeParts       = 991,
-//	kModelAnimation                            = 992, // unused?
+	kModelAnimationDNAEvidence01OutOf6         = 988,
+//	kModelAnimationDNAEvidence02OutOf6         = 989, // unused - actual 2 parts of DNA
+	kModelAnimationDNAEvidence03OutOf6         = 990, // used for two parts found
+	kModelAnimationDNAEvidence04OutOf6         = 991, // used for three parts found
+//	kModelAnimationDNAEvidence05OutOf6         = 992, // unused - actual 5 parts of DNA
 	kModelAnimationDNAEvidenceComplete         = 993,
-//	kModelAnimation                            = 994, // unused?
-    kModelAnimationAmmoType01                  = 995, // from Bullet Bob's
+//	kModelAnimationAmmoType00                  = 994, // unused - simple bullet
+	kModelAnimationAmmoType01                  = 995, // from Bullet Bob's
 	kModelAnimationAmmoType02                  = 996  // from Izo stash (Act 4)
 };
 
