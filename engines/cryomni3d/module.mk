@@ -1,19 +1,19 @@
 MODULE := engines/cryomni3d
 
 MODULE_OBJS = \
+	image/codecs/hlz.o \
+	image/hlz.o \
+	video/hnm_decoder.o \
 	cryomni3d.o \
-	omni3d.o \
 	detection.o \
-	mouse_boxes.o \
 	dialogs_manager.o \
 	fixed_image.o \
 	font_manager.o \
+	mouse_boxes.o \
 	objects.o \
+	omni3d.o \
 	sprites.o \
-	wam_parser.o \
-	video/hnm_decoder.o \
-	image/hlz.o \
-	image/codecs/hlz.o
+	wam_parser.o
 
 ifdef ENABLE_VERSAILLES
 MODULE_OBJS += \
