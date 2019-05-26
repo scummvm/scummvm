@@ -73,10 +73,10 @@ void FontManager::loadFont(Common::ReadStream &font_fl) {
 	font_fl.read(font->comment, sizeof(font->comment));
 	//debug("Comment %s", font.comment);
 
-	for (unsigned int i = 0; i < Font::kCharactersCount; i++) {
+	for (uint i = 0; i < Font::kCharactersCount; i++) {
 		uint16 h = font_fl.readUint16BE();
 		uint16 w = font_fl.readUint16BE();
-		unsigned int sz = font->chars[i].setup(w, h);
+		uint sz = font->chars[i].setup(w, h);
 		//debug("Char %d sz %dx%d %d", i, w, h, sz);
 		font->chars[i].offX = font_fl.readSint16BE();
 		font->chars[i].offY = font_fl.readSint16BE();
@@ -100,7 +100,7 @@ void FontManager::setCurrentFont(int currentFont) {
 	setSpaceWidth(0);
 }
 
-void FontManager::setSpaceWidth(unsigned int additionalSpace) {
+void FontManager::setSpaceWidth(uint additionalSpace) {
 	if (_currentFont) {
 		_spaceWidth = additionalSpace + _currentFont->chars[0].printedWidth;
 	} else {
@@ -108,16 +108,16 @@ void FontManager::setSpaceWidth(unsigned int additionalSpace) {
 	}
 }
 
-unsigned int FontManager::displayStr_(unsigned int x, unsigned int y,
-                                      const Common::String &text) const {
-	unsigned int offset = 0;
+uint FontManager::displayStr_(uint x, uint y,
+                              const Common::String &text) const {
+	uint offset = 0;
 	for (Common::String::const_iterator it = text.begin(); it != text.end(); it++) {
 		offset += displayChar(x + offset, y, *it);
 	}
 	return offset;
 }
 
-unsigned int FontManager::displayChar(unsigned int x, unsigned int y, unsigned char c) const {
+uint FontManager::displayChar(uint x, uint y, unsigned char c) const {
 	if (!_currentFont) {
 		error("There is no current font");
 	}
@@ -154,8 +154,8 @@ unsigned int FontManager::displayChar(unsigned int x, unsigned int y, unsigned c
 #endif
 }
 
-unsigned int FontManager::getStrWidth(const Common::String &text) const {
-	unsigned int width = 0;
+uint FontManager::getStrWidth(const Common::String &text) const {
+	uint width = 0;
 	for (Common::String::const_iterator it = text.begin(); it != text.end(); it++) {
 		unsigned char c = *it;
 		if (c == ' ') {
@@ -181,12 +181,12 @@ bool FontManager::displayBlockText(const Common::String &text,
 	if (begin != text.end()) {
 		_blockTextRemaining = nullptr;
 		while (ptr != text.end() && !notEnoughSpace) {
-			unsigned int finalPos;
+			uint finalPos;
 			bool has_cr;
 			calculateWordWrap(text, &ptr, &finalPos, &has_cr, words);
-			unsigned int spacesWidth = (words.size() - 1) * _spaceWidth;
-			unsigned int remainingSpace = (_blockRect.right - finalPos);
-			unsigned int spaceConsumed = 0;
+			uint spacesWidth = (words.size() - 1) * _spaceWidth;
+			uint remainingSpace = (_blockRect.right - finalPos);
+			uint spaceConsumed = 0;
 			double spaceWidthPerWord;
 			if (words.size() == 1) {
 				spaceWidthPerWord = _spaceWidth;
@@ -194,7 +194,7 @@ bool FontManager::displayBlockText(const Common::String &text,
 				spaceWidthPerWord = (double)spacesWidth / (double)words.size();
 			}
 			Common::Array<Common::String>::const_iterator word;
-			unsigned int word_i;
+			uint word_i;
 			for (word = words.begin(), word_i = 0; word != words.end(); word++, word_i++) {
 				_blockPos.x += displayStr_(_blockPos.x, _blockPos.y, *word);
 				if (!_justifyText || has_cr) {
@@ -218,7 +218,7 @@ bool FontManager::displayBlockText(const Common::String &text,
 	return notEnoughSpace;
 }
 
-unsigned int FontManager::getLinesCount(const Common::String &text, unsigned int width) {
+uint FontManager::getLinesCount(const Common::String &text, uint width) {
 	if (text.size() == 0) {
 		// One line even if it's empty
 		return 1;
@@ -228,13 +228,13 @@ unsigned int FontManager::getLinesCount(const Common::String &text, unsigned int
 		return getStrWidth(text) / width + 3;
 	}
 
-	unsigned int lineCount = 0;
+	uint lineCount = 0;
 	Common::String::const_iterator textP = text.begin();
-	unsigned int len = text.size();
+	uint len = text.size();
 
 	while (len > 0) {
 		Common::String buffer;
-		unsigned int lineWidth = 0;
+		uint lineWidth = 0;
 		lineCount++;
 		while (lineWidth < width && len > 0 && *textP != '\r') {
 			buffer += *(textP++);
@@ -277,12 +277,12 @@ unsigned int FontManager::getLinesCount(const Common::String &text, unsigned int
 }
 
 void FontManager::calculateWordWrap(const Common::String &text,
-                                    Common::String::const_iterator *position, unsigned int *finalPos, bool *hasCr,
+                                    Common::String::const_iterator *position, uint *finalPos, bool *hasCr,
                                     Common::Array<Common::String> &words) const {
 	*hasCr = false;
-	unsigned int offset = 0;
+	uint offset = 0;
 	bool wordWrap = false;
-	unsigned int lineWidth = _blockRect.right - _blockRect.left;
+	uint lineWidth = _blockRect.right - _blockRect.left;
 	Common::String::const_iterator ptr = *position;
 
 	words.clear();
@@ -299,7 +299,7 @@ void FontManager::calculateWordWrap(const Common::String &text,
 		Common::String::const_iterator begin = ptr;
 		for (; ptr != text.end() && *ptr != '\r' && *ptr != ' '; ptr++) { }
 		Common::String word(begin, ptr);
-		unsigned int width = getStrWidth(word);
+		uint width = getStrWidth(word);
 		if (width + offset >= lineWidth) {
 			wordWrap = true;
 			// word is too long: just put pointer back at begining
@@ -329,10 +329,10 @@ FontManager::Character::~Character() {
 	delete[] data;
 }
 
-unsigned int FontManager::Character::setup(uint16 width, uint16 height) {
+uint FontManager::Character::setup(uint16 width, uint16 height) {
 	w = width;
 	h = height;
-	unsigned int sz = w * h;
+	uint sz = w * h;
 	data = new byte[sz];
 	return sz;
 }

@@ -37,7 +37,7 @@ class FontManager;
 
 class MouseBoxes {
 public:
-	MouseBoxes(unsigned int size);
+	MouseBoxes(uint size);
 	virtual ~MouseBoxes();
 
 	void reset();

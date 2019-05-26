@@ -44,22 +44,22 @@ public:
 
 	void loadFonts(const Common::Array<Common::String> &fontFiles);
 	void setCurrentFont(int currentFont);
-	unsigned int getCurrentFont() { return _currentFontId; }
+	uint getCurrentFont() { return _currentFontId; }
 	void setTransparentBackground(bool transparent) { _transparentBackground = transparent; }
-	void setSpaceWidth(unsigned int additionalSpace);
+	void setSpaceWidth(uint additionalSpace);
 	void setForeColor(byte color) { _foreColor = color; }
 	void setLineHeight(int h) { _lineHeight = h; }
 	int lineHeight() { return _lineHeight; }
-	void setCharSpacing(unsigned int w) { _charSpacing = w; }
+	void setCharSpacing(uint w) { _charSpacing = w; }
 	void setSurface(Graphics::ManagedSurface *surface) { _currentSurface = surface; }
 
 	int getFontMaxHeight() { return _currentFont->maxHeight; }
 
-	void displayInt(unsigned int x, unsigned int y, int value) const { displayStr_(x, y, Common::String::format("%d", value)); }
-	void displayStr(unsigned int x, unsigned int y, const Common::String &text) const { displayStr_(x, y, text); }
-	unsigned int getStrWidth(const Common::String &text) const;
+	void displayInt(uint x, uint y, int value) const { displayStr_(x, y, Common::String::format("%d", value)); }
+	void displayStr(uint x, uint y, const Common::String &text) const { displayStr_(x, y, text); }
+	uint getStrWidth(const Common::String &text) const;
 
-	unsigned int getLinesCount(const Common::String &text, unsigned int width);
+	uint getLinesCount(const Common::String &text, uint width);
 
 	void setupBlock(const Common::Rect &block, bool justifyText = false) { _blockRect = block; _blockPos.x = block.left; _blockPos.y = block.top; _justifyText = justifyText; }
 	bool displayBlockText(const Common::String &text) { return displayBlockText(text, text.begin()); }
@@ -69,10 +69,10 @@ public:
 
 private:
 	void loadFont(Common::ReadStream &font_fl);
-	unsigned int displayStr_(unsigned int x, unsigned int y, const Common::String &text) const;
-	unsigned int displayChar(unsigned int x, unsigned int y, unsigned char c) const;
+	uint displayStr_(uint x, uint y, const Common::String &text) const;
+	uint displayChar(uint x, uint y, unsigned char c) const;
 	void calculateWordWrap(const Common::String &text, Common::String::const_iterator *position,
-	                       unsigned int *finalPos, bool *has_br, Common::Array<Common::String> &words) const;
+	                       uint *finalPos, bool *has_br, Common::Array<Common::String> &words) const;
 
 	struct Character {
 		uint16 h;
@@ -86,7 +86,7 @@ private:
 		Character();
 		~Character();
 
-		unsigned int setup(uint16 width, uint16 height);
+		uint setup(uint16 width, uint16 height);
 	};
 
 	struct Font {
@@ -99,10 +99,10 @@ private:
 
 	Common::Array<Font *> _fonts;
 	const Font *_currentFont;
-	unsigned int _currentFontId;
+	uint _currentFontId;
 	bool _transparentBackground;
-	unsigned int _spaceWidth;
-	unsigned int _charSpacing;
+	uint _spaceWidth;
+	uint _charSpacing;
 
 	byte _foreColor;
 

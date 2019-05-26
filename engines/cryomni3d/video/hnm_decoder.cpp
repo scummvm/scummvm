@@ -82,7 +82,8 @@ bool HNMDecoder::loadStream(Common::SeekableReadStream *stream) {
 		frameCount = 0;
 	}
 
-	_videoTrack = new HNM4VideoTrack(width, height, frameSize, frameCount, _regularFrameDelay, _initialPalette);
+	_videoTrack = new HNM4VideoTrack(width, height, frameSize, frameCount, _regularFrameDelay,
+	                                 _initialPalette);
 	if (soundBits != 0 && soundChannels != 0) {
 		// HNM4 is 22050Hz
 		_audioTrack = new DPCMAudioTrack(soundChannels, soundBits, 22050, getSoundType());
@@ -202,8 +203,8 @@ void HNMDecoder::HNM4VideoTrack::decodePalette(Common::SeekableReadStream *strea
 		if (size < 2) {
 			break;
 		}
-		unsigned int start = stream->readByte();
-		unsigned int count = stream->readByte();
+		uint start = stream->readByte();
+		uint count = stream->readByte();
 		size -= 2;
 
 		if (start == 255 && count == 255) {
@@ -244,7 +245,7 @@ void HNMDecoder::HNM4VideoTrack::decodeInterframe(Common::SeekableReadStream *st
 	uint16 width = _surface.w;
 	bool eop = false;
 
-	unsigned int currentPos = 0;
+	uint currentPos = 0;
 
 	while (!eop) {
 		if (size < 1) {
@@ -344,7 +345,7 @@ void HNMDecoder::HNM4VideoTrack::decodeIntraframe(Common::SeekableReadStream *st
 	_nextNextFrameDelay = -1u;
 }
 
-HNMDecoder::DPCMAudioTrack::DPCMAudioTrack(uint16 channels, uint16 bits, unsigned int sampleRate,
+HNMDecoder::DPCMAudioTrack::DPCMAudioTrack(uint16 channels, uint16 bits, uint sampleRate,
         Audio::Mixer::SoundType soundType) : AudioTrack(soundType), _audioStream(nullptr),
 	_gotLUT(false), _lastSample(0) {
 	if (bits != 16) {
@@ -369,7 +370,7 @@ Audio::Timestamp HNMDecoder::DPCMAudioTrack::decodeSound(Common::SeekableReadStr
 		stream->read(_lut, 256 * sizeof(*_lut));
 		size -= 256 * sizeof(*_lut);
 #ifndef SCUMM_LITTLE_ENDIAN
-		for (unsigned int i = 0; i < 256; i++) {
+		for (uint i = 0; i < 256; i++) {
 			_lut[i] = FROM_LE_16(_lut[i]);
 		}
 #endif

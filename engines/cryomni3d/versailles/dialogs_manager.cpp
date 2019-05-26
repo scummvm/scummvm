@@ -52,7 +52,7 @@ bool Versailles_DialogsManager::play(const Common::String &sequence) {
 	if (didSth && slowStop) {
 		if (_engine->showSubtitles()) {
 			bool skip = false;
-			unsigned int end = g_system->getMillis() + 2000;
+			uint end = g_system->getMillis() + 2000;
 			while (!g_engine->shouldQuit() && g_system->getMillis() < end && !skip) {
 				g_system->updateScreen();
 				if (_engine->pollEvents() &&
@@ -150,11 +150,11 @@ void Versailles_DialogsManager::playDialog(const Common::String &video, const Co
 	if (_engine->showSubtitles()) {
 		Common::Rect block = settings.textRect;
 
-		unsigned int lines = fontManager.getLinesCount(text, block.width() - 8);
+		uint lines = fontManager.getLinesCount(text, block.width() - 8);
 		if (lines == 0) {
 			lines = 5;
 		}
-		unsigned int blockHeight = fontManager.lineHeight() * lines + 6;
+		uint blockHeight = fontManager.lineHeight() * lines + 6;
 		block.setHeight(blockHeight);
 
 		if (block.bottom >= 480) {
@@ -181,13 +181,13 @@ void Versailles_DialogsManager::playDialog(const Common::String &video, const Co
 		// Empty wave file
 		delete audioDecoder;
 
-		unsigned int duration = 100 * text.size();
+		uint duration = 100 * text.size();
 		if (duration < 1000) {
 			duration = 1000;
 		}
 
 		bool skipWait = false;
-		unsigned int end = g_system->getMillis() + duration;
+		uint end = g_system->getMillis() + duration;
 		while (!g_engine->shouldQuit() && g_system->getMillis() < end && !skipWait) {
 			if (_engine->pollEvents() && _engine->checkKeysPressed(1, Common::KEYCODE_SPACE)) {
 				skipWait = true;
@@ -238,7 +238,7 @@ void Versailles_DialogsManager::displayMessage(const Common::String &text) {
 	_engine->displayMessageBoxWarp(text);
 }
 
-unsigned int Versailles_DialogsManager::askPlayerQuestions(const Common::String &video,
+uint Versailles_DialogsManager::askPlayerQuestions(const Common::String &video,
         const Common::StringArray &questions) {
 	if (_lastImage.empty()) {
 		loadFrame(video);
@@ -258,11 +258,11 @@ unsigned int Versailles_DialogsManager::askPlayerQuestions(const Common::String 
 	int16 tops[5];
 	int16 bottoms[5];
 	int16 currentHeight = 0;
-	unsigned int questionId = 0;
+	uint questionId = 0;
 	for (Common::StringArray::const_iterator it = questions.begin(); it != questions.end();
 	        it++, questionId++) {
 		tops[questionId] = currentHeight;
-		unsigned int lines = fontManager.getLinesCount(*it, 598);
+		uint lines = fontManager.getLinesCount(*it, 598);
 		if (lines == 0) {
 			lines = 1;
 		}
@@ -288,7 +288,7 @@ unsigned int Versailles_DialogsManager::askPlayerQuestions(const Common::String 
 
 	bool finished = false;
 	bool update = true;
-	unsigned int selectedQuestion = -1;
+	uint selectedQuestion = -1;
 	while (!finished) {
 		if (update) {
 			update = false;

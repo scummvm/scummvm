@@ -25,7 +25,7 @@
 
 namespace CryOmni3D {
 
-Object *Objects::findObjectByNameID(unsigned int nameID) {
+Object *Objects::findObjectByNameID(uint nameID) {
 	for (iterator it = begin(); it != end(); it++) {
 		if (it->valid() && it->idOBJ() == nameID) {
 			return it;
@@ -34,7 +34,7 @@ Object *Objects::findObjectByNameID(unsigned int nameID) {
 	error("nameID not found %u", nameID);
 }
 
-Object *Objects::findObjectByIconID(unsigned int iconID) {
+Object *Objects::findObjectByIconID(uint iconID) {
 	for (iterator it = begin(); it != end(); it++) {
 		if (it->valid() && it->idCA() == iconID) {
 			return it;
@@ -60,12 +60,12 @@ void Inventory::add(Object *obj) {
 	error("No more room in inventory");
 }
 
-void Inventory::remove(unsigned int position) {
+void Inventory::remove(uint position) {
 	(*this)[position] = nullptr;
 	(*_changeCallback)(-1u);
 }
 
-void Inventory::removeByIconID(unsigned int iconID) {
+void Inventory::removeByIconID(uint iconID) {
 	for (iterator it = begin(); it != end(); it++) {
 		if ((*it) && (*it)->idCA() == iconID) {
 			deselectObject();
@@ -76,7 +76,7 @@ void Inventory::removeByIconID(unsigned int iconID) {
 	// Don't bail out
 }
 
-void Inventory::removeByNameID(unsigned int nameID) {
+void Inventory::removeByNameID(uint nameID) {
 	for (iterator it = begin(); it != end(); it++) {
 		if ((*it) && (*it)->idOBJ() == nameID) {
 			deselectObject();
@@ -87,7 +87,7 @@ void Inventory::removeByNameID(unsigned int nameID) {
 	// Don't bail out
 }
 
-bool Inventory::inInventoryByIconID(unsigned int iconID) const {
+bool Inventory::inInventoryByIconID(uint iconID) const {
 	for (const_iterator it = begin(); it != end(); it++) {
 		if ((*it) && (*it)->idCA() == iconID) {
 			return true;
@@ -96,7 +96,7 @@ bool Inventory::inInventoryByIconID(unsigned int iconID) const {
 	return false;
 }
 
-bool Inventory::inInventoryByNameID(unsigned int nameID) const {
+bool Inventory::inInventoryByNameID(uint nameID) const {
 	for (const_iterator it = begin(); it != end(); it++) {
 		if ((*it) && (*it)->idOBJ() == nameID) {
 			return true;

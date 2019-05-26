@@ -37,13 +37,13 @@ void WAMParser::loadStream(Common::ReadStream &stream) {
 	stream.read(str, 16);
 	stream.readUint32LE();
 
-	unsigned int nPlaces = stream.readByte();
+	uint nPlaces = stream.readByte();
 	//debug("nPlaces = %u", nPlaces);
-	for (unsigned int i = 0; i < nPlaces; i++) {
+	for (uint i = 0; i < nPlaces; i++) {
 		Place place;
-		unsigned int nWarps = stream.readByte();
+		uint nWarps = stream.readByte();
 		//debug("nWarps = %u", nWarps);
-		for (unsigned int k = 0; k < 8; k++) {
+		for (uint k = 0; k < 8; k++) {
 			stream.read(str, 16);
 			//debug("Warp: %.16s", str);
 			if (nWarps > 0) {
@@ -58,20 +58,20 @@ void WAMParser::loadStream(Common::ReadStream &stream) {
 		Place *oldPlace = findPlaceById_(place.placeId);
 		if (oldPlace) {
 			debug("Found duplicate place %u at %u, removing it", place.placeId,
-			      (unsigned int)(oldPlace - _places.begin()));
+			      (uint)(oldPlace - _places.begin()));
 			_places.erase(oldPlace);
 		}
 		//debug("nPlaceId = %u", place.placeId);
 		stream.readUint32LE();
-		unsigned int nTransitions = stream.readByte();
+		uint nTransitions = stream.readByte();
 		//debug("nTransitions = %u", nTransitions);
-		unsigned int nZones = stream.readByte();
+		uint nZones = stream.readByte();
 		//debug("nZones = %u", nZones);
-		for (unsigned int j = 0; j < nTransitions; j++) {
+		for (uint j = 0; j < nTransitions; j++) {
 			Transition trans;
 			stream.readUint32LE();
-			unsigned int nAnimations = stream.readByte();
-			for (unsigned int k = 0; k < 8; k++) {
+			uint nAnimations = stream.readByte();
+			for (uint k = 0; k < 8; k++) {
 				stream.read(str, 16);
 				if (nAnimations > 0) {
 					trans.animations.push_back(str);
@@ -87,7 +87,7 @@ void WAMParser::loadStream(Common::ReadStream &stream) {
 			trans.dstBeta = stream.readDoubleLE();
 			place.transitions.push_back(trans);
 		}
-		for (unsigned int j = 0; j < nZones; j++) {
+		for (uint j = 0; j < nZones; j++) {
 			Zone zone;
 			zone.zoneId = stream.readSint32LE();
 			zone.rct.left = stream.readSint32LE();
@@ -101,7 +101,7 @@ void WAMParser::loadStream(Common::ReadStream &stream) {
 	}
 }
 
-const Place *WAMParser::findPlaceById(unsigned int placeId) const {
+const Place *WAMParser::findPlaceById(uint placeId) const {
 	for (Common::Array<Place>::const_iterator it = _places.begin(); it != _places.end(); it++) {
 		if (it->placeId == placeId) {
 			return it;
@@ -110,7 +110,7 @@ const Place *WAMParser::findPlaceById(unsigned int placeId) const {
 	return nullptr;
 }
 
-Place *WAMParser::findPlaceById_(unsigned int placeId) {
+Place *WAMParser::findPlaceById_(uint placeId) {
 	for (Common::Array<Place>::iterator it = _places.begin(); it != _places.end(); it++) {
 		if (it->placeId == placeId) {
 			return it;
@@ -179,7 +179,7 @@ void Place::setupWarpConstraints(Omni3DManager &omni3d) const {
 	}
 }
 
-unsigned int Place::hitTest(const Common::Point &point) const {
+uint Place::hitTest(const Common::Point &point) const {
 	for (Common::Array<Zone>::const_iterator it = zones.begin(); it != zones.end(); it++) {
 		if (it->action) {
 			if (it->rct.contains(point)) {
@@ -203,7 +203,7 @@ unsigned int Place::hitTest(const Common::Point &point) const {
 	return 0;
 }
 
-const Transition *Place::findTransition(unsigned int nextPlaceId) const {
+const Transition *Place::findTransition(uint nextPlaceId) const {
 	for (Common::Array<Transition>::const_iterator it = transitions.begin(); it != transitions.end();
 	        it++) {
 		if (it->dstId == nextPlaceId) {

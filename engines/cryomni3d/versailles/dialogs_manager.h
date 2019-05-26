@@ -50,8 +50,8 @@ protected:
 	void playDialog(const Common::String &video, const Common::String &sound,
 	                const Common::String &text, const SubtitlesSettings &settings) override;
 	void displayMessage(const Common::String &text) override;
-	unsigned int askPlayerQuestions(const Common::String &video,
-	                                const Common::StringArray &questions) override;
+	uint askPlayerQuestions(const Common::String &video,
+	                        const Common::StringArray &questions) override;
 
 private:
 	CryOmni3DEngine_Versailles *_engine;

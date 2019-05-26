@@ -51,13 +51,13 @@ public:
 
 	Graphics::Surface &getBackgroundSurface() { return _bgSurface; }
 	bool displayToolbar(const Graphics::Surface *original);
-	void inventoryChanged(unsigned int newPosition);
-	unsigned int inventoryOffset() const { return _inventoryOffset; }
-	void setInventoryOffset(unsigned int offset) { _inventoryOffset = offset; }
+	void inventoryChanged(uint newPosition);
+	uint inventoryOffset() const { return _inventoryOffset; }
+	void setInventoryOffset(uint offset) { _inventoryOffset = offset; }
 	void setInventoryEnabled(bool enabled) { _inventoryEnabled = enabled; }
 
 private:
-	typedef unsigned int (Toolbar::*ZoneCallback)(unsigned int dragStatus);
+	typedef uint(Toolbar::*ZoneCallback)(uint dragStatus);
 	struct Zone {
 		Common::Rect rect;
 		uint16 imageMain;
@@ -73,21 +73,21 @@ private:
 	Inventory *_inventory;
 	CryOmni3DEngine *_engine;
 
-	static const unsigned int kTextOffset = 13;
+	static const uint kTextOffset = 13;
 
 	void addZone(uint16 cursorMainId, uint16 cursorSecondaryId, Common::Point position,
 	             ZoneCallback callback);
 	void updateZones();
 	Common::Array<Zone>::const_iterator hitTestZones(const Common::Point &mousePos) const;
-	unsigned int captureEvent(const Common::Point &mousePos, unsigned int dragStatus);
+	uint captureEvent(const Common::Point &mousePos, uint dragStatus);
 	void drawToolbar(const Graphics::Surface *original);
 	void handleToolbarEvents(const Graphics::Surface *original);
 
 	bool _inventoryEnabled;
-	unsigned int _inventoryMaxOffset;
-	unsigned int _inventoryOffset;
-	unsigned int _inventoryHovered;
-	unsigned int _inventorySelected;
+	uint _inventoryMaxOffset;
+	uint _inventoryOffset;
+	uint _inventoryHovered;
+	uint _inventorySelected;
 
 	Object *_backup_selected_object;
 	bool _mouse_in_options;
@@ -96,19 +96,19 @@ private:
 
 	bool _parentMustRedraw;
 	bool _shortExit;
-	unsigned int _position;
+	uint _position;
 
 	Graphics::Surface _bgSurface;
 	Graphics::ManagedSurface _destSurface;
 
-	template<unsigned int N>
-	unsigned int callbackInventory(unsigned int dragStatus) { return callbackInventory(N, dragStatus); }
-	unsigned int callbackInventory(unsigned int invId, unsigned int dragStatus);
-	unsigned int callbackInventoryPrev(unsigned int dragStatus);
-	unsigned int callbackInventoryNext(unsigned int dragStatus);
-	unsigned int callbackViewObject(unsigned int dragStatus);
-	unsigned int callbackOptions(unsigned int dragStatus);
-	unsigned int callbackDocumentation(unsigned int dragStatus);
+	template<uint N>
+	uint callbackInventory(uint dragStatus) { return callbackInventory(N, dragStatus); }
+	uint callbackInventory(uint invId, uint dragStatus);
+	uint callbackInventoryPrev(uint dragStatus);
+	uint callbackInventoryNext(uint dragStatus);
+	uint callbackViewObject(uint dragStatus);
+	uint callbackOptions(uint dragStatus);
+	uint callbackDocumentation(uint dragStatus);
 };
 
 } // End of namespace Versailles

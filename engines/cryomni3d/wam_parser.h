@@ -36,43 +36,43 @@ namespace CryOmni3D {
 class Omni3DManager;
 
 struct Zone {
-	unsigned int zoneId;
-	unsigned int action;
+	uint zoneId;
+	uint action;
 	Common::Rect rct;
 };
 
 struct Transition {
-	unsigned int dstId;
+	uint dstId;
 	double srcAlpha;
 	double srcBeta;
 	double dstAlpha;
 	double dstBeta;
 	Common::Array<Common::String> animations;
-	unsigned int getNumAnimations() const { return animations.size(); }
+	uint getNumAnimations() const { return animations.size(); }
 };
 
 struct Place {
-	unsigned int placeId;
+	uint placeId;
 	Common::Array<Common::String> warps;
 	Common::Array<Transition> transitions;
 	Common::Array<Zone> zones;
 
-	unsigned int getNumStates() const { return warps.size(); }
-	unsigned int getNumTransitions() const { return transitions.size(); }
+	uint getNumStates() const { return warps.size(); }
+	uint getNumTransitions() const { return transitions.size(); }
 	void setupWarpConstraints(Omni3DManager &omni3d) const;
-	unsigned int hitTest(const Common::Point &point) const;
-	const Transition *findTransition(unsigned int nextPlaceId) const;
+	uint hitTest(const Common::Point &point) const;
+	const Transition *findTransition(uint nextPlaceId) const;
 };
 
 class WAMParser {
 public:
 	void loadStream(Common::ReadStream &stream);
-	const Place *findPlaceById(unsigned int placeId) const;
+	const Place *findPlaceById(uint placeId) const;
 
 private:
 	// For duplicate finding
 	// We use a different name because else it gets chosen before the const one and fails because it's private
-	Place *findPlaceById_(unsigned int placeId);
+	Place *findPlaceById_(uint placeId);
 	Common::Array<Place> _places;
 };
 

@@ -52,7 +52,7 @@ void CryOmni3DEngine_Versailles::musicUpdate() {
 		return;
 	}
 
-	unsigned int musicId = getMusicId(_currentLevel, _currentPlaceId);
+	uint musicId = getMusicId(_currentLevel, _currentPlaceId);
 	const char *musicBName = kMusicFiles[_currentLevel - 1][musicId];
 	assert(musicBName != nullptr);
 
@@ -131,15 +131,15 @@ void CryOmni3DEngine_Versailles::musicSetQuiet(bool quiet) {
 	}
 }
 
-bool CryOmni3DEngine_Versailles::musicWouldChange(unsigned int level, unsigned int placeId) const {
-	unsigned int musicId = getMusicId(level, placeId);
+bool CryOmni3DEngine_Versailles::musicWouldChange(uint level, uint placeId) const {
+	uint musicId = getMusicId(level, placeId);
 	const char *musicFile = kMusicFiles[_currentLevel - 1][musicId];
 
 	return musicFile != _musicCurrentFile;
 }
 
-unsigned int CryOmni3DEngine_Versailles::getMusicId(unsigned int level,
-        unsigned int placeId) const {
+uint CryOmni3DEngine_Versailles::getMusicId(uint level,
+        uint placeId) const {
 	// No need of place state
 	switch (level) {
 	case 1:

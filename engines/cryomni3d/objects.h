@@ -38,39 +38,39 @@ public:
 	Object() : _valid(false), _idCA(-1), _idCl(-1), _idSA(-1), _idSl(-1), _idOBJ(-1),
 		_viewCallback(nullptr) {}
 
-	Object(const Sprites &sprites, unsigned int idCA, unsigned int idOBJ) : _idCA(idCA),
+	Object(const Sprites &sprites, uint idCA, uint idOBJ) : _idCA(idCA),
 		_idCl(sprites.calculateSpriteId(idCA, 1)), _idSA(sprites.calculateSpriteId(idCA, 2)),
 		_idSl(sprites.calculateSpriteId(idCA, 3)),
 		_valid(true), _idOBJ(idOBJ), _viewCallback(nullptr) {}
 
 	~Object() { delete _viewCallback; }
 
-	unsigned int valid() const { return _valid; }
-	unsigned int idCA() const { return _idCA; }
-	unsigned int idCl() const { return _idCl; }
-	unsigned int idSA() const { return _idSA; }
-	unsigned int idSl() const { return _idSl; }
-	unsigned int idOBJ() const { return _idOBJ; }
+	uint valid() const { return _valid; }
+	uint idCA() const { return _idCA; }
+	uint idCl() const { return _idCl; }
+	uint idSA() const { return _idSA; }
+	uint idSl() const { return _idSl; }
+	uint idOBJ() const { return _idOBJ; }
 	ViewCallback viewCallback() const { return _viewCallback; }
 	// Takes ownership of the pointer
 	void setViewCallback(ViewCallback callback) { _viewCallback = callback; }
 
-	void rename(unsigned int newIdOBJ) { _idOBJ = newIdOBJ; }
+	void rename(uint newIdOBJ) { _idOBJ = newIdOBJ; }
 
 private:
-	unsigned int _idOBJ;
-	unsigned int _idCA;
-	unsigned int _idCl;
-	unsigned int _idSA;
-	unsigned int _idSl;
+	uint _idOBJ;
+	uint _idCA;
+	uint _idCl;
+	uint _idSA;
+	uint _idSl;
 	bool _valid;
 	ViewCallback _viewCallback;
 };
 
 class Objects : public Common::Array<Object> {
 public:
-	Object *findObjectByNameID(unsigned int nameID);
-	Object *findObjectByIconID(unsigned int iconID);
+	Object *findObjectByNameID(uint nameID);
+	Object *findObjectByIconID(uint iconID);
 private:
 };
 
@@ -78,15 +78,15 @@ class Inventory : public Common::Array<Object *> {
 public:
 	Inventory() : _selectedObject(nullptr), _changeCallback(nullptr) { }
 	~Inventory() { delete _changeCallback; }
-	void init(unsigned int count, Common::Functor1<unsigned int, void> *changeCallback) { _changeCallback = changeCallback; resize(count); }
+	void init(uint count, Common::Functor1<uint, void> *changeCallback) { _changeCallback = changeCallback; resize(count); }
 
 	void clear();
 	void add(Object *);
-	void remove(unsigned int position);
-	void removeByNameID(unsigned int nameID);
-	void removeByIconID(unsigned int iconID);
-	bool inInventoryByNameID(unsigned int nameID) const;
-	bool inInventoryByIconID(unsigned int iconID) const;
+	void remove(uint position);
+	void removeByNameID(uint nameID);
+	void removeByIconID(uint iconID);
+	bool inInventoryByNameID(uint nameID) const;
+	bool inInventoryByIconID(uint iconID) const;
 
 	Object *selectedObject() const { return _selectedObject; }
 	void setSelectedObject(Object *obj) { _selectedObject = obj; }
@@ -94,7 +94,7 @@ public:
 
 private:
 	Object *_selectedObject;
-	Common::Functor1<unsigned int, void> *_changeCallback;
+	Common::Functor1<uint, void> *_changeCallback;
 };
 
 } // End of namespace CryOmni3D

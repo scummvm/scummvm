@@ -97,7 +97,7 @@ void Versailles_Documentation::init(const Sprites *sprites, FontManager *fontMan
 		error("Can't open %s", kAllDocsFile);
 	}
 
-	unsigned int allDocsSize = allDocsFile.size();
+	uint allDocsSize = allDocsFile.size();
 	char *allDocs = new char[allDocsSize + 1];
 	char *end = allDocs + allDocsSize;
 	allDocsFile.read(allDocs, allDocsSize);
@@ -188,7 +188,7 @@ void Versailles_Documentation::handleDocInGame(const Common::String &record) {
 	bool end = false;
 	while (!end) {
 		inGamePrepareRecord(docSurface, boxes);
-		unsigned int action = inGameHandleRecord(docSurface, boxes, nextRecord);
+		uint action = inGameHandleRecord(docSurface, boxes, nextRecord);
 		switch (action) {
 		case 0:
 			// Back
@@ -280,7 +280,7 @@ Common::String Versailles_Documentation::docAreaHandleSummary() {
 	Image::BitmapDecoder bmpDecoder;
 	Common::File file;
 
-	for (unsigned int i = 0; i < ARRAYSIZE(categories); i++) {
+	for (uint i = 0; i < ARRAYSIZE(categories); i++) {
 		if (!categories[i].bmp) {
 			// No BMP to load
 			continue;
@@ -330,14 +330,14 @@ Common::String Versailles_Documentation::docAreaHandleSummary() {
 	g_system->showMouse(true);
 
 	bool redraw = true;
-	unsigned int hoveredBox = -1;
-	unsigned int selectedBox = -1;
+	uint hoveredBox = -1;
+	uint selectedBox = -1;
 
 	while (selectedBox == -1u) {
 		if (redraw) {
 			// Draw without worrying of already modified areas, that's handled when recomputing hoveredBox
-			for (unsigned int i = 0; i < ARRAYSIZE(categories); i++) {
-				unsigned int foreColor = 243;
+			for (uint i = 0; i < ARRAYSIZE(categories); i++) {
+				uint foreColor = 243;
 				if (i == hoveredBox) {
 					foreColor = 241;
 					if (categories[hoveredBox].highlightedImg.getPixels() != nullptr) {
@@ -347,8 +347,8 @@ Common::String Versailles_Documentation::docAreaHandleSummary() {
 				}
 				_fontManager->setForeColor(foreColor);
 				if (categories[i].title) {
-					unsigned int x = categories[i].linesPos.right - _fontManager->getStrWidth(*categories[i].title);
-					unsigned int y = categories[i].linesPos.bottom - _fontManager->getFontMaxHeight() - 5;
+					uint x = categories[i].linesPos.right - _fontManager->getStrWidth(*categories[i].title);
+					uint y = categories[i].linesPos.bottom - _fontManager->getFontMaxHeight() - 5;
 					_fontManager->displayStr(x, y, *categories[i].title);
 
 					// Draw line to text
@@ -373,7 +373,7 @@ Common::String Versailles_Documentation::docAreaHandleSummary() {
 				// Don't change highlighted icon when clicking
 				Common::Point mouse = _engine->getMousePos();
 				bool foundBox = false;
-				for (unsigned int i = 0; i < ARRAYSIZE(categories); i++) {
+				for (uint i = 0; i < ARRAYSIZE(categories); i++) {
 					if (boxes.hitTest(i, mouse)) {
 						foundBox = true;
 						if (i != hoveredBox) {
@@ -446,11 +446,11 @@ Common::String Versailles_Documentation::docAreaHandleTimeline() {
 	_fontManager->setCurrentFont(0);
 
 	MouseBoxes boxes(ARRAYSIZE(kTimelineEntries) + 1);
-	for (unsigned int box_id = 0; box_id < ARRAYSIZE(kTimelineEntries); box_id++) {
+	for (uint box_id = 0; box_id < ARRAYSIZE(kTimelineEntries); box_id++) {
 		boxes.setupBox(box_id, kTimelineEntries[box_id].x, kTimelineEntries[box_id].y,
 		               kTimelineEntries[box_id].x + 30, kTimelineEntries[box_id].y + 20);
 	}
-	const unsigned int leaveBoxId = ARRAYSIZE(kTimelineEntries);
+	const uint leaveBoxId = ARRAYSIZE(kTimelineEntries);
 	boxes.setupBox(leaveBoxId, 639 - _sprites->getCursor(105).getWidth(),
 	               479 - _sprites->getCursor(105).getHeight(), 640, 480);
 
@@ -458,13 +458,13 @@ Common::String Versailles_Documentation::docAreaHandleTimeline() {
 	g_system->showMouse(true);
 
 	bool redraw = true;
-	unsigned int hoveredBox = -1;
-	unsigned int selectedBox = -1;
+	uint hoveredBox = -1;
+	uint selectedBox = -1;
 
 	while (selectedBox == -1u) {
 		if (redraw) {
 			// Draw without worrying of already modified areas, that's handled when recomputing hoveredBox
-			for (unsigned int i = 0; i < ARRAYSIZE(kTimelineEntries); i++) {
+			for (uint i = 0; i < ARRAYSIZE(kTimelineEntries); i++) {
 				_fontManager->setForeColor(i == hoveredBox ? 241 : 243);
 				_fontManager->displayStr(kTimelineEntries[i].x, kTimelineEntries[i].y, kTimelineEntries[i].year);
 			}
@@ -482,7 +482,7 @@ Common::String Versailles_Documentation::docAreaHandleTimeline() {
 			if (!_engine->getCurrentMouseButton()) {
 				// Don't change highlighted date when clicking
 				bool foundBox = false;
-				for (unsigned int i = 0; i < ARRAYSIZE(kTimelineEntries); i++) {
+				for (uint i = 0; i < ARRAYSIZE(kTimelineEntries); i++) {
 					if (boxes.hitTest(i, mouse)) {
 						foundBox = true;
 						if (i != hoveredBox) {
@@ -526,8 +526,8 @@ Common::String Versailles_Documentation::docAreaHandleTimeline() {
 	}
 }
 
-unsigned int Versailles_Documentation::docAreaHandleRecords(const Common::String &record) {
-	unsigned int action = -1;
+uint Versailles_Documentation::docAreaHandleRecords(const Common::String &record) {
+	uint action = -1;
 
 	_currentRecord = record;
 	_visitTrace.clear();
@@ -639,7 +639,7 @@ void Versailles_Documentation::docAreaPrepareNavigation() {
 		_categoryStartRecord = "VS00";
 		_categoryEndRecord = "VS37";
 		_categoryTitle = (*_messages)[72];
-		unsigned int id = atoi(_currentRecord.c_str() + 2);
+		uint id = atoi(_currentRecord.c_str() + 2);
 		if (id >= 16 && id <= 40) {
 			_currentMapLayout = true;
 		}
@@ -681,7 +681,7 @@ void Versailles_Documentation::docAreaPrepareRecord(Graphics::ManagedSurface &su
 		_fontManager->setCharSpacing(1);
 		_fontManager->setSurface(&surface);
 		_fontManager->setForeColor(243);
-		for (unsigned int box_id = 10; box_id < ARRAYSIZE(kTimelineEntries) + 10; box_id++) {
+		for (uint box_id = 10; box_id < ARRAYSIZE(kTimelineEntries) + 10; box_id++) {
 			boxes.display(box_id, *_fontManager);
 		}
 	}
@@ -689,7 +689,7 @@ void Versailles_Documentation::docAreaPrepareRecord(Graphics::ManagedSurface &su
 	drawRecordBoxes(surface, true, boxes);
 }
 
-unsigned int Versailles_Documentation::docAreaHandleRecord(Graphics::ManagedSurface &surface,
+uint Versailles_Documentation::docAreaHandleRecord(Graphics::ManagedSurface &surface,
         MouseBoxes &boxes, Common::String &nextRecord) {
 	// Hovering is only handled for timeline entries
 	_engine->setCursor(181);
@@ -697,8 +697,8 @@ unsigned int Versailles_Documentation::docAreaHandleRecord(Graphics::ManagedSurf
 
 	bool first = true;
 	bool redraw = true;
-	unsigned int hoveredBox = -1;
-	unsigned int action = -1;
+	uint hoveredBox = -1;
+	uint action = -1;
 
 	while (action == -1u) {
 		if (redraw) {
@@ -716,7 +716,7 @@ unsigned int Versailles_Documentation::docAreaHandleRecord(Graphics::ManagedSurf
 			Common::Point mouse = _engine->getMousePos();
 			if (_currentInTimeline) {
 				bool foundBox = false;
-				for (unsigned int i = 10; i < 10 + ARRAYSIZE(kTimelineEntries); i++) {
+				for (uint i = 10; i < 10 + ARRAYSIZE(kTimelineEntries); i++) {
 					if (boxes.hitTest(i, mouse)) {
 						foundBox = true;
 						if (i != hoveredBox) {
@@ -764,8 +764,8 @@ unsigned int Versailles_Documentation::docAreaHandleRecord(Graphics::ManagedSurf
 						items.push_back(it->title);
 					}
 					Common::Rect iconRect = boxes.getBoxRect(2);
-					unsigned int selectedItem = handlePopupMenu(surface, Common::Point(iconRect.right, iconRect.top),
-					                            true, 20, items);
+					uint selectedItem = handlePopupMenu(surface, Common::Point(iconRect.right, iconRect.top),
+					                                    true, 20, items);
 					if (selectedItem != -1u) {
 						nextRecord = _currentLinks[selectedItem].record;
 						action = 2;
@@ -776,8 +776,8 @@ unsigned int Versailles_Documentation::docAreaHandleRecord(Graphics::ManagedSurf
 						items.push_back(it->title);
 					}
 					Common::Rect iconRect = boxes.getBoxRect(3);
-					unsigned int selectedItem = handlePopupMenu(surface, Common::Point(iconRect.right, iconRect.top),
-					                            true, 20, items);
+					uint selectedItem = handlePopupMenu(surface, Common::Point(iconRect.right, iconRect.top),
+					                                    true, 20, items);
 					if (selectedItem != -1u) {
 						nextRecord = _allLinks[selectedItem].record;
 						action = 3;
@@ -792,7 +792,7 @@ unsigned int Versailles_Documentation::docAreaHandleRecord(Graphics::ManagedSurf
 					Common::StringArray items;
 					items.push_back((*_messages)[61]);
 					items.push_back((*_messages)[62]);
-					unsigned int selectedItem = handlePopupMenu(surface, boxes.getBoxOrigin(1), false, 20, items);
+					uint selectedItem = handlePopupMenu(surface, boxes.getBoxOrigin(1), false, 20, items);
 					if (selectedItem == 0) {
 						action = 1;
 					} else if (selectedItem == 1) {
@@ -808,7 +808,7 @@ unsigned int Versailles_Documentation::docAreaHandleRecord(Graphics::ManagedSurf
 					// Handle quit menu
 					Common::StringArray items;
 					items.push_back((*_messages)[60]);
-					unsigned int selectedItem = handlePopupMenu(surface, boxes.getBoxOrigin(6), false, 20, items);
+					uint selectedItem = handlePopupMenu(surface, boxes.getBoxOrigin(6), false, 20, items);
 					if (selectedItem == 0) {
 						action = 6;
 					}
@@ -841,7 +841,7 @@ unsigned int Versailles_Documentation::docAreaHandleRecord(Graphics::ManagedSurf
 					action = -1;
 					continue;
 				}
-				unsigned int recordId = hmIt->_value.id;
+				uint recordId = hmIt->_value.id;
 				if (action == 4) {
 					recordId++;
 				} else if (action == 5) {
@@ -865,16 +865,16 @@ Common::String Versailles_Documentation::docAreaHandleGeneralMap() {
 		Common::Rect areaPos;
 		const char *record;
 		const char *bmp;
-		unsigned int messageId;
+		uint messageId;
 		const Common::String *message;
 		Common::Point messagePos;
 		Graphics::Surface highlightedImg;
 
-		Area(const Common::Point &areaPos_, const char *bmp_, unsigned int messageId_,
+		Area(const Common::Point &areaPos_, const char *bmp_, uint messageId_,
 		     const char *record_ = nullptr) :
 			areaPos(areaPos_.x, areaPos_.y, areaPos_.x, areaPos_.y), record(record_), bmp(bmp_),
 			messageId(messageId_), message(nullptr) { }
-		Area(const Common::Rect &areaPos_, unsigned int messageId_, const char *record_ = nullptr) :
+		Area(const Common::Rect &areaPos_, uint messageId_, const char *record_ = nullptr) :
 			areaPos(areaPos_), record(record_), bmp(nullptr), messageId(messageId_), message(nullptr) { }
 	} areas[] = {
 		Area(Common::Point(174, 181), "APL.bmp", 74),
@@ -905,7 +905,7 @@ Common::String Versailles_Documentation::docAreaHandleGeneralMap() {
 	Image::BitmapDecoder bmpDecoder;
 	Common::File file;
 
-	for (unsigned int i = 0; i < ARRAYSIZE(areas); i++) {
+	for (uint i = 0; i < ARRAYSIZE(areas); i++) {
 		if (areas[i].bmp) {
 			if (!file.open(areas[i].bmp)) {
 				error("Failed to open BMP file: %s", areas[i].bmp);
@@ -920,7 +920,7 @@ Common::String Versailles_Documentation::docAreaHandleGeneralMap() {
 			areas[i].areaPos.setHeight(areas[i].highlightedImg.h);
 		}
 		areas[i].message = &(*_messages)[areas[i].messageId];
-		unsigned int lineWidth = _fontManager->getStrWidth(*areas[i].message);
+		uint lineWidth = _fontManager->getStrWidth(*areas[i].message);
 		areas[i].messagePos.x = (areas[i].areaPos.left + areas[i].areaPos.right) / 2 - lineWidth / 2;
 		areas[i].messagePos.y = areas[i].areaPos.top - 40;
 		if (areas[i].messagePos.x < 8) {
@@ -956,8 +956,8 @@ Common::String Versailles_Documentation::docAreaHandleGeneralMap() {
 	g_system->showMouse(true);
 
 	bool redraw = true;
-	unsigned int hoveredBox = -1;
-	unsigned int selectedBox = -1;
+	uint hoveredBox = -1;
+	uint selectedBox = -1;
 
 	while (selectedBox == -1u) {
 		if (redraw) {
@@ -967,10 +967,10 @@ Common::String Versailles_Documentation::docAreaHandleGeneralMap() {
 					mapSurface.transBlitFrom(areas[hoveredBox].highlightedImg,
 					                         Common::Point(areas[hoveredBox].areaPos.left, areas[hoveredBox].areaPos.top));
 				} else {
-					unsigned int middleX = (areas[hoveredBox].areaPos.left + areas[hoveredBox].areaPos.right) / 2;
-					unsigned int middleY = (areas[hoveredBox].areaPos.top + areas[hoveredBox].areaPos.bottom) / 2;
-					unsigned int spriteX = middleX - _sprites->getCursor(163).getWidth() / 2;
-					unsigned int spriteY = middleY - _sprites->getCursor(163).getHeight() / 2;
+					uint middleX = (areas[hoveredBox].areaPos.left + areas[hoveredBox].areaPos.right) / 2;
+					uint middleY = (areas[hoveredBox].areaPos.top + areas[hoveredBox].areaPos.bottom) / 2;
+					uint spriteX = middleX - _sprites->getCursor(163).getWidth() / 2;
+					uint spriteY = middleY - _sprites->getCursor(163).getHeight() / 2;
 					mapSurface.transBlitFrom(_sprites->getSurface(163), Common::Point(spriteX, spriteY),
 					                         _sprites->getKeyColor(163));
 				}
@@ -988,7 +988,7 @@ Common::String Versailles_Documentation::docAreaHandleGeneralMap() {
 			                         _sprites->getKeyColor(105));
 			/*
 			// For debugging only
-			for(unsigned int i = 0; i < ARRAYSIZE(areas); i++) {
+			for(uint i = 0; i < ARRAYSIZE(areas); i++) {
 			    mapSurface.frameRect(areas[i].areaPos, 0);
 			}
 			*/
@@ -1005,8 +1005,8 @@ Common::String Versailles_Documentation::docAreaHandleGeneralMap() {
 			if (!_engine->getCurrentMouseButton()) {
 				// Don't change highlighted icon when clicking
 				bool foundBox = false;
-				unsigned int oldHoveredBox = hoveredBox;
-				for (unsigned int i = 0; i < ARRAYSIZE(areas); i++) {
+				uint oldHoveredBox = hoveredBox;
+				for (uint i = 0; i < ARRAYSIZE(areas); i++) {
 					if (boxes.hitTest(i, mouse)) {
 						if (i != hoveredBox) {
 							hoveredBox = i;
@@ -1064,18 +1064,18 @@ Common::String Versailles_Documentation::docAreaHandleCastleMap() {
 		Common::Rect areaPos;
 		bool fillArea;
 		const char *record;
-		unsigned int messageId;
+		uint messageId;
 		Common::String message;
 		Common::Point messagePos;
 		Common::Rect areaPos1;
 		Common::Rect areaPos2;
 
 		Area(const Common::Rect &areaPos_, const char *record_, bool fillArea_ = true,
-		     unsigned int messageId_ = -1) :
+		     uint messageId_ = -1) :
 			areaPos(areaPos_), record(record_), fillArea(fillArea_), messageId(messageId_) { }
 		Area(const Common::Rect &areaPos_, const Common::Rect &areaPos1_,
 		     const Common::Rect &areaPos2_, const char *record_, bool fillArea_ = true,
-		     unsigned int messageId_ = -1) :
+		     uint messageId_ = -1) :
 			areaPos(areaPos_), areaPos1(areaPos1_), areaPos2(areaPos2_),
 			record(record_), fillArea(fillArea_), messageId(messageId_) { }
 	} areas[] = {
@@ -1117,14 +1117,14 @@ Common::String Versailles_Documentation::docAreaHandleCastleMap() {
 
 	MouseBoxes boxes(ARRAYSIZE(areas) + 1);
 
-	for (unsigned int i = 0; i < ARRAYSIZE(areas); i++) {
+	for (uint i = 0; i < ARRAYSIZE(areas); i++) {
 		if (areas[i].messageId != -1u) {
 			areas[i].message = (*_messages)[areas[i].messageId];
 		} else {
 			areas[i].message = getRecordTitle(areas[i].record);
 		}
-		unsigned int lineWidth = _fontManager->getStrWidth(areas[i].message);
-		unsigned int right;
+		uint lineWidth = _fontManager->getStrWidth(areas[i].message);
+		uint right;
 		if (areas[i].areaPos2.right) {
 			right = areas[i].areaPos2.right;
 		} else {
@@ -1173,8 +1173,8 @@ Common::String Versailles_Documentation::docAreaHandleCastleMap() {
 	g_system->showMouse(true);
 
 	bool redraw = true;
-	unsigned int hoveredBox = -1;
-	unsigned int selectedBox = -1;
+	uint hoveredBox = -1;
+	uint selectedBox = -1;
 
 	while (selectedBox == -1u) {
 		if (redraw) {
@@ -1198,10 +1198,10 @@ Common::String Versailles_Documentation::docAreaHandleCastleMap() {
 						mapSurface.fillRect(rect, 243);
 					}
 				} else {
-					unsigned int middleX = (areas[hoveredBox].areaPos.left + areas[hoveredBox].areaPos.right) / 2;
-					unsigned int middleY = (areas[hoveredBox].areaPos.top + areas[hoveredBox].areaPos.bottom) / 2;
-					unsigned int spriteX = middleX - _sprites->getCursor(163).getWidth() / 2;
-					unsigned int spriteY = middleY - _sprites->getCursor(163).getHeight() / 2;
+					uint middleX = (areas[hoveredBox].areaPos.left + areas[hoveredBox].areaPos.right) / 2;
+					uint middleY = (areas[hoveredBox].areaPos.top + areas[hoveredBox].areaPos.bottom) / 2;
+					uint spriteX = middleX - _sprites->getCursor(163).getWidth() / 2;
+					uint spriteY = middleY - _sprites->getCursor(163).getHeight() / 2;
 					mapSurface.transBlitFrom(_sprites->getSurface(163), Common::Point(spriteX, spriteY),
 					                         _sprites->getKeyColor(163));
 				}
@@ -1218,7 +1218,7 @@ Common::String Versailles_Documentation::docAreaHandleCastleMap() {
 			                         _sprites->getKeyColor(105));
 			/*
 			// For debugging only
-			for(unsigned int i = 0; i < ARRAYSIZE(areas); i++) {
+			for(uint i = 0; i < ARRAYSIZE(areas); i++) {
 			    mapSurface.frameRect(areas[i].areaPos, 0);
 			    if (areas[i].areaPos1.right) {
 			        mapSurface.frameRect(areas[i].areaPos1, 0);
@@ -1241,8 +1241,8 @@ Common::String Versailles_Documentation::docAreaHandleCastleMap() {
 			if (!_engine->getCurrentMouseButton()) {
 				// Don't change highlighted icon when clicking
 				bool foundBox = false;
-				unsigned int oldHoveredBox = hoveredBox;
-				for (unsigned int i = 0; i < ARRAYSIZE(areas); i++) {
+				uint oldHoveredBox = hoveredBox;
+				for (uint i = 0; i < ARRAYSIZE(areas); i++) {
 					if (boxes.hitTest(i, mouse)) {
 						if (i != hoveredBox) {
 							hoveredBox = i;
@@ -1313,7 +1313,7 @@ void Versailles_Documentation::inGamePrepareRecord(Graphics::ManagedSurface &sur
 	_currentHasMap = false;
 
 	if (_currentRecord.hasPrefix("VS")) {
-		unsigned int id = atoi(_currentRecord.c_str() + 2);
+		uint id = atoi(_currentRecord.c_str() + 2);
 		if (id >= 16 && id <= 40) {
 			_currentMapLayout = true;
 		}
@@ -1334,12 +1334,12 @@ void Versailles_Documentation::inGamePrepareRecord(Graphics::ManagedSurface &sur
 	drawRecordBoxes(surface, false, boxes);
 }
 
-unsigned int Versailles_Documentation::inGameHandleRecord(Graphics::ManagedSurface &surface,
+uint Versailles_Documentation::inGameHandleRecord(Graphics::ManagedSurface &surface,
         MouseBoxes &boxes, Common::String &nextRecord) {
 	_engine->setCursor(181);
 	g_system->showMouse(true);
 
-	unsigned int action = -1;
+	uint action = -1;
 
 	g_system->copyRectToScreen(surface.getPixels(), surface.pitch, 0, 0, surface.w, surface.h);
 
@@ -1360,8 +1360,8 @@ unsigned int Versailles_Documentation::inGameHandleRecord(Graphics::ManagedSurfa
 						items.push_back(it->title);
 					}
 					Common::Rect iconRect = boxes.getBoxRect(2);
-					unsigned int selectedItem = handlePopupMenu(surface, Common::Point(iconRect.right, iconRect.top),
-					                            true, 20, items);
+					uint selectedItem = handlePopupMenu(surface, Common::Point(iconRect.right, iconRect.top),
+					                                    true, 20, items);
 					if (selectedItem != -1u) {
 						nextRecord = _currentLinks[selectedItem].record;
 						action = 2;
@@ -1464,7 +1464,7 @@ void Versailles_Documentation::drawRecordData(Graphics::ManagedSurface &surface,
 
 	Common::String text = getRecordData(_currentRecord, title, subtitle, caption, hyperlinks);*/
 
-	unsigned int lineHeight = 21;
+	uint lineHeight = 21;
 	_fontManager->setCurrentFont(4);
 	_fontManager->setTransparentBackground(true);
 	_fontManager->setSpaceWidth(1);
@@ -1539,22 +1539,22 @@ void Versailles_Documentation::drawRecordData(Graphics::ManagedSurface &surface,
 void Versailles_Documentation::setupRecordBoxes(bool inDocArea, MouseBoxes &boxes) {
 	// Layout of bar in doc area is Quit | Back |   | Previous | Category | Next |   | Trace | Hyperlinks | All records
 	// Layout of bar in game is ==> Trace | Hyperlinks | Quit
-	unsigned int allRecordsX = 640 - _sprites->getCursor(19).getWidth();
-	unsigned int hyperlinksX = allRecordsX - _sprites->getCursor(242).getWidth() - 10;
-	unsigned int traceX = hyperlinksX - _sprites->getCursor(105).getWidth() - 10;
+	uint allRecordsX = 640 - _sprites->getCursor(19).getWidth();
+	uint hyperlinksX = allRecordsX - _sprites->getCursor(242).getWidth() - 10;
+	uint traceX = hyperlinksX - _sprites->getCursor(105).getWidth() - 10;
 
 	if (_visitTrace.size()) {
 		boxes.setupBox(0, traceX, 480 - _sprites->getCursor(105).getHeight() - 3,
 		               traceX + _sprites->getCursor(105).getWidth(), 480);
 	}
 	if (inDocArea) {
-		unsigned int backX = _sprites->getCursor(225).getWidth() + 10; //Right to quit button
+		uint backX = _sprites->getCursor(225).getWidth() + 10; //Right to quit button
 
 		_fontManager->setCurrentFont(0);
 		_fontManager->setTransparentBackground(true);
 		_fontManager->setSpaceWidth(0);
 		_fontManager->setCharSpacing(1);
-		unsigned int categoryHalfWidth = _fontManager->getStrWidth(_categoryTitle) / 2;
+		uint categoryHalfWidth = _fontManager->getStrWidth(_categoryTitle) / 2;
 		unsigned nextX = 320 + categoryHalfWidth + 20;
 		unsigned prevX = 320 - categoryHalfWidth - 20 - _sprites->getCursor(76).getWidth();
 
@@ -1574,13 +1574,13 @@ void Versailles_Documentation::setupRecordBoxes(bool inDocArea, MouseBoxes &boxe
 		// Map
 		boxes.setupBox(8, 403, 305, 622, 428);
 		if (_currentInTimeline) {
-			for (unsigned int box_id = 0; box_id < ARRAYSIZE(kTimelineEntries); box_id++) {
+			for (uint box_id = 0; box_id < ARRAYSIZE(kTimelineEntries); box_id++) {
 				boxes.setupBox(10 + box_id, kTimelineEntries[box_id].x, kTimelineEntries[box_id].y,
 				               kTimelineEntries[box_id].x + 30, kTimelineEntries[box_id].y + 15, kTimelineEntries[box_id].year);
 			}
 		}
 	} else {
-		unsigned int quitInGameX = 640 - _sprites->getCursor(105).getWidth();
+		uint quitInGameX = 640 - _sprites->getCursor(105).getWidth();
 		boxes.setupBox(1, quitInGameX, 480 - _sprites->getCursor(105).getHeight(),
 		               quitInGameX + _sprites->getCursor(105).getWidth(), 480);
 	}
@@ -1629,28 +1629,28 @@ void Versailles_Documentation::drawRecordBoxes(Graphics::ManagedSurface &surface
 	}
 }
 
-unsigned int Versailles_Documentation::handlePopupMenu(const Graphics::ManagedSurface
+uint Versailles_Documentation::handlePopupMenu(const Graphics::ManagedSurface
         &originalSurface,
-        const Common::Point &anchor, bool rightAligned, unsigned int itemHeight,
+        const Common::Point &anchor, bool rightAligned, uint itemHeight,
         const Common::StringArray &items) {
 
-	unsigned int maxTextWidth = 0;
+	uint maxTextWidth = 0;
 
 	_fontManager->setCurrentFont(4);
 	_fontManager->setTransparentBackground(true);
 	_fontManager->setCharSpacing(1);
 
 	for (Common::StringArray::const_iterator it = items.begin(); it != items.end(); it++) {
-		unsigned int width = _fontManager->getStrWidth(*it);
+		uint width = _fontManager->getStrWidth(*it);
 		if (width > maxTextWidth) {
 			maxTextWidth = width;
 		}
 	}
 
-	unsigned int width = maxTextWidth + 2 * kPopupMenuMargin;
-	unsigned int height = itemHeight * items.size() + 2 * kPopupMenuMargin;
+	uint width = maxTextWidth + 2 * kPopupMenuMargin;
+	uint height = itemHeight * items.size() + 2 * kPopupMenuMargin;
 
-	unsigned int hiddenItems = 0;
+	uint hiddenItems = 0;
 	int top = anchor.y - height;
 	while (top < 0) {
 		hiddenItems++;
@@ -1669,7 +1669,7 @@ unsigned int Versailles_Documentation::handlePopupMenu(const Graphics::ManagedSu
 	surface.copyFrom(originalSurface);
 
 	MouseBoxes boxes(shownItems);
-	for (unsigned int i = 0; i < shownItems; i++) {
+	for (uint i = 0; i < shownItems; i++) {
 		boxes.setupBox(i, popupRect.left + kPopupMenuMargin,
 		               popupRect.top + kPopupMenuMargin + i * itemHeight,
 		               popupRect.right - kPopupMenuMargin,
@@ -1680,12 +1680,12 @@ unsigned int Versailles_Documentation::handlePopupMenu(const Graphics::ManagedSu
 
 	bool fullRedraw = true;
 	bool redraw = true;
-	unsigned int hoveredBox = -1;
-	unsigned int action = -1;
-	unsigned int lastShownItem = items.size() - 1;
-	unsigned int firstShownItem = lastShownItem - shownItems + 1;
+	uint hoveredBox = -1;
+	uint action = -1;
+	uint lastShownItem = items.size() - 1;
+	uint firstShownItem = lastShownItem - shownItems + 1;
 
-	unsigned int slowScrollNextEvent = g_system->getMillis() + 250;
+	uint slowScrollNextEvent = g_system->getMillis() + 250;
 
 	Common::Point mouse;
 
@@ -1695,7 +1695,7 @@ unsigned int Versailles_Documentation::handlePopupMenu(const Graphics::ManagedSu
 				surface.fillRect(popupRect, 247);
 				fullRedraw = false;
 			}
-			for (unsigned int i = 0; i < shownItems; i++) {
+			for (uint i = 0; i < shownItems; i++) {
 				if (i == 0 && firstShownItem != 0) {
 					// There are items before the first one: display an arrow
 					surface.transBlitFrom(_sprites->getSurface(162),
@@ -1727,8 +1727,8 @@ unsigned int Versailles_Documentation::handlePopupMenu(const Graphics::ManagedSu
 			}
 			mouse = _engine->getMousePos();
 
-			unsigned int newHovered = -1;
-			for (unsigned int i = 0; i < shownItems; i++) {
+			uint newHovered = -1;
+			for (uint i = 0; i < shownItems; i++) {
 				if (boxes.hitTest(i, mouse)) {
 					newHovered = i;
 					break;
@@ -1808,7 +1808,7 @@ char *Versailles_Documentation::getDocPartAddress(char *start, char *end, const 
 	}
 	char *foundPos = nullptr;
 	const char *pattern;
-	unsigned int patternLen;
+	uint patternLen;
 	for (const char **patternP = patterns; *patternP && !foundPos; patternP++) {
 		pattern = *patternP;
 		patternLen = strlen(pattern);
@@ -1886,7 +1886,7 @@ const char *Versailles_Documentation::getRecordSubtitle(char *start, char *end) 
 		return nullptr;
 	}
 
-	unsigned int ln = strlen(ret);
+	uint ln = strlen(ret);
 	char *p = ret + ln + 1; // Got to end of line and check next line
 	for (; p < end && *p && *p != '\r' && *p != '=' ; p++) { }
 	if (*p == '=') {
@@ -1907,7 +1907,7 @@ void Versailles_Documentation::getRecordHyperlinks(char *start, char *end,
 	const char *const hyperlinksPatterns[] = { "SAVOIR-PLUS 1=", "SAVOIR-PLUS 2=", "SAVOIR-PLUS 3=" };
 
 	hyperlinks.clear();
-	for (unsigned int hyperlinkId = 0; hyperlinkId < ARRAYSIZE(hyperlinksPatterns); hyperlinkId++) {
+	for (uint hyperlinkId = 0; hyperlinkId < ARRAYSIZE(hyperlinksPatterns); hyperlinkId++) {
 		const char *patterns[] = { hyperlinksPatterns[hyperlinkId], nullptr };
 		const char *ret = getDocPartAddress(start, end, patterns);
 		if (ret) {

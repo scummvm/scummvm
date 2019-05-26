@@ -136,7 +136,7 @@ void CryOmni3DEngine::playHNM(const Common::String &filename, Audio::Mixer::Soun
 	uint16 height = videoDecoder->getHeight();
 
 	bool skipVideo = false;
-	unsigned int frameNum = 0;
+	uint frameNum = 0;
 	while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
 		if (videoDecoder->needsUpdate()) {
 			const Graphics::Surface *frame = videoDecoder->decodeNextFrame();
@@ -224,7 +224,7 @@ void CryOmni3DEngine::setCursor(const Graphics::Cursor &cursor) const {
 	                         cursor.getHotspotX(), cursor.getHotspotY(), cursor.getKeyColor());
 }
 
-void CryOmni3DEngine::setCursor(unsigned int cursorId) const {
+void CryOmni3DEngine::setCursor(uint cursorId) const {
 	const Graphics::Cursor &cursor = _sprites.getCursor(cursorId);
 	g_system->setMouseCursor(cursor.getSurface(), cursor.getWidth(), cursor.getHeight(),
 	                         cursor.getHotspotX(), cursor.getHotspotY(), cursor.getKeyColor());
@@ -234,7 +234,7 @@ bool CryOmni3DEngine::pollEvents() {
 	Common::Event event;
 	bool hasEvents = false;
 
-	unsigned int oldMouseButton = getCurrentMouseButton();
+	uint oldMouseButton = getCurrentMouseButton();
 
 	while (g_system->getEventManager()->pollEvent(event)) {
 		if (event.type == Common::EVENT_KEYDOWN) {
@@ -245,7 +245,7 @@ bool CryOmni3DEngine::pollEvents() {
 	g_system->delayMillis(10);
 
 	_dragStatus = kDragStatus_NoDrag;
-	unsigned int currentMouseButton = getCurrentMouseButton();
+	uint currentMouseButton = getCurrentMouseButton();
 	if (!oldMouseButton && currentMouseButton == 1) {
 		// Starting the drag
 		_dragStatus = kDragStatus_Pressed;
@@ -276,11 +276,11 @@ bool CryOmni3DEngine::pollEvents() {
 	return hasEvents;
 }
 
-void CryOmni3DEngine::setAutoRepeatClick(unsigned int millis) {
+void CryOmni3DEngine::setAutoRepeatClick(uint millis) {
 	_autoRepeatNextEvent = g_system->getMillis() + millis;
 }
 
-unsigned int CryOmni3DEngine::getCurrentMouseButton() {
+uint CryOmni3DEngine::getCurrentMouseButton() {
 	int mask = g_system->getEventManager()->getButtonState();
 	if (mask & 0x1) {
 		return 1;
@@ -325,13 +325,13 @@ bool CryOmni3DEngine::checkKeysPressed() {
 	}
 }
 
-bool CryOmni3DEngine::checkKeysPressed(unsigned int numKeys, ...) {
+bool CryOmni3DEngine::checkKeysPressed(uint numKeys, ...) {
 	bool found = false;
 	Common::KeyCode kc = getNextKey().keycode;
 	while (!found && kc != Common::KEYCODE_INVALID) {
 		va_list va;
 		va_start(va, numKeys);
-		for (unsigned int i = 0; i < numKeys; i++) {
+		for (uint i = 0; i < numKeys; i++) {
 			// Compiler says that KeyCode is promoted to int, so we need this ugly cast
 			Common::KeyCode match = (Common::KeyCode) va_arg(va, int);
 			if (match == kc) {
@@ -372,19 +372,19 @@ void CryOmni3DEngine::fadeOutPalette() {
 	uint16 delta[256 * 3];
 
 	g_system->getPaletteManager()->grabPalette(palOut, 0, 256);
-	for (unsigned int i = 0; i < 256 * 3; i++) {
+	for (uint i = 0; i < 256 * 3; i++) {
 		palWork[i] = palOut[i] << 8;
 		delta[i] = palWork[i] / 25;
 	}
 
-	for (unsigned int step = 0; step < 25 && !g_engine->shouldQuit(); step++) {
-		for (unsigned int i = 0; i < 256 * 3; i++) {
+	for (uint step = 0; step < 25 && !g_engine->shouldQuit(); step++) {
+		for (uint i = 0; i < 256 * 3; i++) {
 			palWork[i] -= delta[i];
 			palOut[i] = palWork[i] >> 8;
 		}
 		setPalette(palOut, 0, 256);
 		// Wait 50ms between each steps but refresh screen every 10ms
-		for (unsigned int i = 0; i < 5; i++) {
+		for (uint i = 0; i < 5; i++) {
 			g_system->updateScreen();
 			g_system->delayMillis(10);
 		}
@@ -399,19 +399,19 @@ void CryOmni3DEngine::fadeInPalette(const byte *palette) {
 
 	memset(palOut, 0, sizeof(palOut));
 	memset(palWork, 0, sizeof(palWork));
-	for (unsigned int i = 0; i < 256 * 3; i++) {
+	for (uint i = 0; i < 256 * 3; i++) {
 		delta[i] = (palette[i] << 8) / 25;
 	}
 
 	setBlackPalette();
-	for (unsigned int step = 0; step < 25 && !g_engine->shouldQuit(); step++) {
-		for (unsigned int i = 0; i < 256 * 3; i++) {
+	for (uint step = 0; step < 25 && !g_engine->shouldQuit(); step++) {
+		for (uint i = 0; i < 256 * 3; i++) {
 			palWork[i] += delta[i];
 			palOut[i] = palWork[i] >> 8;
 		}
 		setPalette(palOut, 0, 256);
 		// Wait 50ms between each steps but refresh screen every 10ms
-		for (unsigned int i = 0; i < 5; i++) {
+		for (uint i = 0; i < 5; i++) {
 			g_system->updateScreen();
 			g_system->delayMillis(10);
 		}

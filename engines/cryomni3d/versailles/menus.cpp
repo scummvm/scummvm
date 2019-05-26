@@ -60,7 +60,7 @@ void CryOmni3DEngine_Versailles::drawMenuTitle(Graphics::ManagedSurface *surface
 	_fontManager.setCurrentFont(oldFont);
 }
 
-unsigned int CryOmni3DEngine_Versailles::displayOptions() {
+uint CryOmni3DEngine_Versailles::displayOptions() {
 	Common::Array<int> menuEntries;
 	menuEntries.push_back(26);
 	menuEntries.push_back(27);
@@ -84,9 +84,9 @@ unsigned int CryOmni3DEngine_Versailles::displayOptions() {
 
 	int drawState = 1;
 
-	unsigned int volumeCursorMiddleY = _sprites.getCursor(102).getHeight() / 2;
-	unsigned int volume = CLIP(ConfMan.getInt("sfx_volume"), 0, 256);
-	unsigned int soundVolumeY = ((283 * (256 - volume)) >> 8) + 101;
+	uint volumeCursorMiddleY = _sprites.getCursor(102).getHeight() / 2;
+	uint volume = CLIP(ConfMan.getInt("sfx_volume"), 0, 256);
+	uint soundVolumeY = ((283 * (256 - volume)) >> 8) + 101;
 	byte volumeForeColor = 243;
 
 	Graphics::ManagedSurface optionsSurface;
@@ -98,10 +98,10 @@ unsigned int CryOmni3DEngine_Versailles::displayOptions() {
 	setCursor(181);
 	g_system->showMouse(true);
 
-	unsigned int hoveredBox = -1;
-	unsigned int selectedBox;
+	uint hoveredBox = -1;
+	uint selectedBox;
 	int selectedMsg = 0;
-	unsigned int volumeBox;
+	uint volumeBox;
 	bool resetScreen = true;
 	bool forceEvents = true;
 
@@ -132,10 +132,10 @@ unsigned int CryOmni3DEngine_Versailles::displayOptions() {
 			optionsSurface.hLine(544, 429, 613, volumeForeColor); // minus 1 because hLine draws inclusive
 
 			boxes.reset();
-			unsigned int boxId = 0;
-			unsigned int top = 195;
-			unsigned int bottom;
-			unsigned int width;
+			uint boxId = 0;
+			uint top = 195;
+			uint bottom;
+			uint width;
 
 			for (Common::Array<int>::iterator it = menuEntries.begin(); it != menuEntries.end(); it++) {
 				if (*it == 30 && !ConfMan.getBool("subtitles")) {
@@ -156,7 +156,7 @@ unsigned int CryOmni3DEngine_Versailles::displayOptions() {
 				} else if (*it == -42 && canVisit()) {
 					*it = 42;
 				} else if (*it == 48) {
-					unsigned int omni3D_speed = ConfMan.getInt("omni3d_speed");
+					uint omni3D_speed = ConfMan.getInt("omni3d_speed");
 					switch (omni3D_speed) {
 					case 1:
 						*it = 51;
@@ -215,7 +215,7 @@ unsigned int CryOmni3DEngine_Versailles::displayOptions() {
 		if (pollEvents() || forceEvents) { // always call pollEvents
 			forceEvents = false;
 			Common::Point mouse = getMousePos();
-			unsigned int boxId = 0;
+			uint boxId = 0;
 			Common::Array<int>::iterator it;
 			for (it = menuEntries.begin(); it != menuEntries.end(); it++) {
 				if (boxes.hitTest(boxId, mouse)) {
@@ -319,7 +319,7 @@ unsigned int CryOmni3DEngine_Versailles::displayOptions() {
 				Common::String saveName;
 				bool wasVisiting = _isVisiting;
 				_isVisiting = false;
-				unsigned int saveNumber = displayFilePicker(bgFrame, false, saveName);
+				uint saveNumber = displayFilePicker(bgFrame, false, saveName);
 				if (saveNumber == -1u) {
 					_isVisiting = wasVisiting;
 					drawState = 1;
@@ -334,7 +334,7 @@ unsigned int CryOmni3DEngine_Versailles::displayOptions() {
 				Common::String saveName;
 				bool wasVisiting = _isVisiting;
 				_isVisiting = true;
-				unsigned int saveNumber = displayFilePicker(bgFrame, false, saveName);
+				uint saveNumber = displayFilePicker(bgFrame, false, saveName);
 				if (saveNumber == -1u) {
 					_isVisiting = wasVisiting;
 					drawState = 1;
@@ -347,7 +347,7 @@ unsigned int CryOmni3DEngine_Versailles::displayOptions() {
 				waitMouseRelease();
 			} else if (selectedMsg == 29) {
 				Common::String saveName;
-				unsigned int saveNumber = displayFilePicker(bgFrame, true, saveName);
+				uint saveNumber = displayFilePicker(bgFrame, true, saveName);
 				if (saveNumber != -1u) {
 					saveGame(_isVisiting, saveNumber, saveName);
 				}
@@ -475,11 +475,11 @@ unsigned int CryOmni3DEngine_Versailles::displayOptions() {
 	return selectedMsg;
 }
 
-unsigned int CryOmni3DEngine_Versailles::displayYesNoBox(Graphics::ManagedSurface &surface,
-        const Common::Rect &position, unsigned int msg_id) {
-	unsigned int confirmWidth = _fontManager.getStrWidth(_messages[53]);
-	unsigned int cancelWidth = _fontManager.getStrWidth(_messages[54]);
-	unsigned int oldFont = _fontManager.getCurrentFont();
+uint CryOmni3DEngine_Versailles::displayYesNoBox(Graphics::ManagedSurface &surface,
+        const Common::Rect &position, uint msg_id) {
+	uint confirmWidth = _fontManager.getStrWidth(_messages[53]);
+	uint cancelWidth = _fontManager.getStrWidth(_messages[54]);
+	uint oldFont = _fontManager.getCurrentFont();
 
 	_fontManager.setSurface(&surface);
 	_fontManager.setForeColor(240);
@@ -500,11 +500,11 @@ unsigned int CryOmni3DEngine_Versailles::displayYesNoBox(Graphics::ManagedSurfac
 
 	bool end = false;
 	bool redraw = true;
-	unsigned int result = -1u;
+	uint result = -1u;
 
 	while (!end || redraw) {
 		if (redraw) {
-			for (unsigned int boxId = 0; boxId < 2; boxId++) {
+			for (uint boxId = 0; boxId < 2; boxId++) {
 				if (boxId == result) {
 					_fontManager.setForeColor(240);
 				} else {
@@ -520,7 +520,7 @@ unsigned int CryOmni3DEngine_Versailles::displayYesNoBox(Graphics::ManagedSurfac
 
 		if (pollEvents()) {
 			Common::Point mouse = getMousePos();
-			unsigned int hit_result = -1u;
+			uint hit_result = -1u;
 			if (boxes.hitTest(1, mouse)) {
 				hit_result = 1;
 			} else if (boxes.hitTest(0, mouse)) {
@@ -549,7 +549,7 @@ unsigned int CryOmni3DEngine_Versailles::displayYesNoBox(Graphics::ManagedSurfac
 	return result;
 }
 
-unsigned int CryOmni3DEngine_Versailles::displayFilePicker(const Graphics::Surface *bgFrame,
+uint CryOmni3DEngine_Versailles::displayFilePicker(const Graphics::Surface *bgFrame,
         bool saveMode, Common::String &saveName) {
 	Graphics::ManagedSurface surface(bgFrame->w, bgFrame->h, bgFrame->format);
 	surface.blitFrom(*bgFrame);
@@ -579,10 +579,10 @@ unsigned int CryOmni3DEngine_Versailles::displayFilePicker(const Graphics::Surfa
 
 	// Yes/No buttons
 	const Common::String &okMsg = _messages[53];
-	unsigned int okWidth = _fontManager.getStrWidth(okMsg);
+	uint okWidth = _fontManager.getStrWidth(okMsg);
 	boxes.setupBox(6, 246, 430, 246 + okWidth, 450, &okMsg);
 	const Common::String &cancelMsg = _messages[54];
-	unsigned int cancelWidth = _fontManager.getStrWidth(cancelMsg);
+	uint cancelWidth = _fontManager.getStrWidth(cancelMsg);
 	boxes.setupBox(7, 146, 430, 146 + cancelWidth, 450, &cancelMsg);
 
 	// Up/Down buttons
@@ -593,19 +593,19 @@ unsigned int CryOmni3DEngine_Versailles::displayFilePicker(const Graphics::Surfa
 
 	setCursor(181);
 
-	unsigned int fileListOffset = CLIP(ConfMan.getInt(_isVisiting ? "visits_list_off" :
-	                                   "saves_list_off"), 0, 100 - 6);
+	uint fileListOffset = CLIP(ConfMan.getInt(_isVisiting ? "visits_list_off" :
+	                           "saves_list_off"), 0, 100 - 6);
 
-	unsigned int boxHovered = -1;
-	unsigned int boxSelected = -1;
+	uint boxHovered = -1;
+	uint boxSelected = -1;
 
 	bool textCursorState = false;
-	unsigned int textCursorNextState = 0;
-	unsigned int textCursorPos = -1;
+	uint textCursorNextState = 0;
+	uint textCursorPos = -1;
 
 	bool autoRepeatInhibit = false;
-	unsigned int autoRepeatDelay = 250;
-	unsigned int autoRepeatEndInhibit = 0;
+	uint autoRepeatDelay = 250;
+	uint autoRepeatEndInhibit = 0;
 
 	bool finished = false;
 	bool filesListChanged = true;
@@ -613,7 +613,7 @@ unsigned int CryOmni3DEngine_Versailles::displayFilePicker(const Graphics::Surfa
 	while (!finished) {
 		if (filesListChanged || redraw) {
 			if (filesListChanged) {
-				for (unsigned int file = 0, fileY = 280; file < 6; file++, fileY += 20) {
+				for (uint file = 0, fileY = 280; file < 6; file++, fileY += 20) {
 					boxes.setupBox(file, 146, fileY, 408, fileY + 14, &savesList[file + fileListOffset]);
 				}
 				// Redraw background as file list changed
@@ -621,7 +621,7 @@ unsigned int CryOmni3DEngine_Versailles::displayFilePicker(const Graphics::Surfa
 				filesListChanged = false;
 			}
 			// Don't redraw the scroll buttons
-			for (unsigned int box = 0; box < 8; box++) {
+			for (uint box = 0; box < 8; box++) {
 				if (box == boxSelected) {
 					// Selected
 					_fontManager.setForeColor(240);
@@ -661,12 +661,12 @@ unsigned int CryOmni3DEngine_Versailles::displayFilePicker(const Graphics::Surfa
 		g_system->updateScreen();
 		pollEvents();
 		Common::KeyState key = getNextKey();
-		unsigned int mousePressed = getCurrentMouseButton();
+		uint mousePressed = getCurrentMouseButton();
 
 		if (!mousePressed) {
 			bool boxFound = false;
 			// Don't handle scroll arrows hovering
-			for (unsigned int box = 0; box < 8; box++) {
+			for (uint box = 0; box < 8; box++) {
 				if (boxes.hitTest(box, getMousePos())) {
 					boxFound = true;
 					if (boxHovered != box) {
@@ -733,7 +733,7 @@ unsigned int CryOmni3DEngine_Versailles::displayFilePicker(const Graphics::Surfa
 			}
 			if (g_system->getMillis() > textCursorNextState) {
 				textCursorNextState = g_system->getMillis() + 200; // Blink at 200ms period
-				unsigned int width = _fontManager.getStrWidth(savesList[boxSelected + fileListOffset]);
+				uint width = _fontManager.getStrWidth(savesList[boxSelected + fileListOffset]);
 				Common::Rect boxRct = boxes.getBoxRect(boxSelected);
 				textCursorPos = boxRct.left + width;
 				textCursorState = !textCursorState;
@@ -742,7 +742,7 @@ unsigned int CryOmni3DEngine_Versailles::displayFilePicker(const Graphics::Surfa
 		}
 		if (!autoRepeatInhibit) {
 			bool autoRepeatTrigger = false;
-			unsigned int oldFileListOffset = fileListOffset;
+			uint oldFileListOffset = fileListOffset;
 			if (mousePressed) {
 				if (boxes.hitTest(8, getMousePos()) && fileListOffset > 0) {
 					fileListOffset--;
@@ -827,9 +827,9 @@ void CryOmni3DEngine_Versailles::displayMessageBox(const MsgBoxParameters &param
 	_fontManager.setSpaceWidth(params.spaceWidth);
 	_fontManager.setCharSpacing(params.charSpacing);
 
-	unsigned int width = params.initialWidth;
-	unsigned int height = params.initialHeight;
-	unsigned int lineCount = 0;
+	uint width = params.initialWidth;
+	uint height = params.initialHeight;
+	uint lineCount = 0;
 	Common::Point pt = position;
 	Common::Rect rct;
 
@@ -868,7 +868,7 @@ void CryOmni3DEngine_Versailles::displayMessageBox(const MsgBoxParameters &param
 			tooLarge = true;
 		}
 		lineCount = _fontManager.getLinesCount(msg, rct.width() - 12);
-		if (lineCount && lineCount * _fontManager.lineHeight() + 18 < (unsigned int)rct.height()) {
+		if (lineCount && lineCount * _fontManager.lineHeight() + 18 < (uint)rct.height()) {
 			notEnough = false;
 		}
 	}
@@ -889,7 +889,7 @@ void CryOmni3DEngine_Versailles::displayMessageBox(const MsgBoxParameters &param
 	                           dstSurface.w, dstSurface.h);
 
 	waitMouseRelease();
-	unsigned int disappearTime = g_system->getMillis() + msg.size() * params.timeoutChar * 10;
+	uint disappearTime = g_system->getMillis() + msg.size() * params.timeoutChar * 10;
 	bool finished = false;
 	while (!finished) {
 		g_system->updateScreen();
@@ -962,8 +962,8 @@ void CryOmni3DEngine_Versailles::displayCredits() {
 	char line[256];
 	bool end = false;
 	bool calculatedScreen = false;
-	unsigned int lineHeight = 20;
-	unsigned int currentY = 0;
+	uint lineHeight = 20;
+	uint currentY = 0;
 	int32 fileOffset = 0;
 	bool skipScreen = false;
 
@@ -985,7 +985,7 @@ void CryOmni3DEngine_Versailles::displayCredits() {
 					}
 					skipScreen = false;
 					// Wait
-					unsigned int endScreenTime = g_system->getMillis() + 6000;
+					uint endScreenTime = g_system->getMillis() + 6000;
 					while (g_system->getMillis() < endScreenTime && !skipScreen) {
 						g_system->updateScreen();
 						if (pollEvents()) {
@@ -1054,7 +1054,7 @@ void CryOmni3DEngine_Versailles::displayCredits() {
 		} else {
 			// Text
 			if (calculatedScreen) {
-				unsigned int width = _fontManager.getStrWidth(line);
+				uint width = _fontManager.getStrWidth(line);
 				// Center around 315
 				_fontManager.displayStr(315 - width / 2, currentY, line);
 			}

@@ -72,7 +72,7 @@ void Sprites::loadSprites(Common::ReadStream &spr_fl) {
 
 		uint16 w = spr_fl.readUint16BE();
 		uint16 h = spr_fl.readUint16BE();
-		unsigned int sz = cursor->setup(w, h);
+		uint sz = cursor->setup(w, h);
 		cursor->_offX = spr_fl.readUint32BE();
 		cursor->_offY = spr_fl.readUint32BE();
 
@@ -81,7 +81,7 @@ void Sprites::loadSprites(Common::ReadStream &spr_fl) {
 	}
 }
 
-void Sprites::setupMapTable(const unsigned int *table, unsigned int size) {
+void Sprites::setupMapTable(const uint *table, uint size) {
 	delete _map;
 	_map = nullptr;
 	// Reset the reverse mapping
@@ -89,11 +89,11 @@ void Sprites::setupMapTable(const unsigned int *table, unsigned int size) {
 		(*it)->_constantId = -1;
 	}
 	if (table) {
-		_map = new Common::Array<unsigned int>(table, size);
+		_map = new Common::Array<uint>(table, size);
 
 		// Sweep all the mapping and set its reverse values
-		unsigned int i = 0;
-		for (Common::Array<unsigned int>::const_iterator it = _map->begin(); it != _map->end(); it++, i++) {
+		uint i = 0;
+		for (Common::Array<uint>::const_iterator it = _map->begin(); it != _map->end(); it++, i++) {
 			_cursors[*it]->_constantId = i;
 		}
 
@@ -101,7 +101,7 @@ void Sprites::setupMapTable(const unsigned int *table, unsigned int size) {
 		// Normally we don't have any unreachable sprties from constants,
 		// as it could be time consuming, this should be fixed in the static map
 		// Count unswept values
-		unsigned int unswept = 0;
+		uint unswept = 0;
 		for (Common::Array<CryoCursor *>::iterator it = _cursors.begin(); it != _cursors.end(); it++) {
 			if ((*it)->_constantId == -1u) {
 				unswept++;
@@ -128,13 +128,13 @@ void Sprites::setupMapTable(const unsigned int *table, unsigned int size) {
 	}
 }
 
-void Sprites::setSpriteHotspot(unsigned int spriteId, unsigned int x, unsigned int y) {
+void Sprites::setSpriteHotspot(uint spriteId, uint x, uint y) {
 	MAP_ID(spriteId);
 	_cursors[spriteId]->_offX = x;
 	_cursors[spriteId]->_offY = y;
 }
 
-void Sprites::replaceSprite(unsigned int oldSpriteId, unsigned int newSpriteId) {
+void Sprites::replaceSprite(uint oldSpriteId, uint newSpriteId) {
 	MAP_ID(oldSpriteId);
 	MAP_ID(newSpriteId);
 	if (_cursors[oldSpriteId]->refCnt > 1) {
@@ -146,11 +146,11 @@ void Sprites::replaceSprite(unsigned int oldSpriteId, unsigned int newSpriteId) 
 	_cursors[oldSpriteId]->refCnt++;
 }
 
-void Sprites::replaceSpriteColor(unsigned int spriteId, byte currentColor, byte newColor) {
+void Sprites::replaceSpriteColor(uint spriteId, byte currentColor, byte newColor) {
 	MAP_ID(spriteId);
 
 	byte *data = _cursors[spriteId]->_data;
-	unsigned int size = _cursors[spriteId]->_width * _cursors[spriteId]->_height;
+	uint size = _cursors[spriteId]->_width * _cursors[spriteId]->_height;
 	for (; size > 0; size--, data++) {
 		if (*data == currentColor) {
 			*data = newColor;
@@ -158,7 +158,7 @@ void Sprites::replaceSpriteColor(unsigned int spriteId, byte currentColor, byte 
 	}
 }
 
-unsigned int Sprites::getSpritesCount() const {
+uint Sprites::getSpritesCount() const {
 	if (_map) {
 		return _map->size();
 	} else {
@@ -166,7 +166,7 @@ unsigned int Sprites::getSpritesCount() const {
 	}
 }
 
-unsigned int Sprites::revMapSpriteId(unsigned int id) const {
+uint Sprites::revMapSpriteId(uint id) const {
 	if (_map) {
 		if (id >= _cursors.size()) {
 			error("revMapSpriteId is out of bounds: %d/%d", id, _cursors.size());
@@ -177,14 +177,14 @@ unsigned int Sprites::revMapSpriteId(unsigned int id) const {
 	return id;
 }
 
-unsigned int Sprites::calculateSpriteId(unsigned int baseId, unsigned int offset) const {
+uint Sprites::calculateSpriteId(uint baseId, uint offset) const {
 	if (_map) {
 		MAP_ID(baseId);
 		baseId += offset;
 		if (baseId >= _cursors.size()) {
 			error("Calculate sprite is out of bounds: %d/%d", baseId, _cursors.size());
 		}
-		unsigned int spriteId = _cursors[baseId]->_constantId;
+		uint spriteId = _cursors[baseId]->_constantId;
 		if (spriteId == -1u) {
 			error("Sprite %d is unreachable", baseId);
 		}
@@ -194,7 +194,7 @@ unsigned int Sprites::calculateSpriteId(unsigned int baseId, unsigned int offset
 	}
 }
 
-const Graphics::Surface &Sprites::getSurface(unsigned int spriteId) const {
+const Graphics::Surface &Sprites::getSurface(uint spriteId) const {
 	MAP_ID(spriteId);
 
 	CryoCursor *cursor = _cursors[spriteId];
@@ -204,7 +204,7 @@ const Graphics::Surface &Sprites::getSurface(unsigned int spriteId) const {
 	return *_surface;
 }
 
-const Graphics::Cursor &Sprites::getCursor(unsigned int spriteId) const {
+const Graphics::Cursor &Sprites::getCursor(uint spriteId) const {
 	MAP_ID(spriteId);
 
 	return *_cursors[spriteId];
@@ -219,10 +219,10 @@ Sprites::CryoCursor::~CryoCursor() {
 	delete[] _data;
 }
 
-unsigned int Sprites::CryoCursor::setup(uint16 width, uint16 height) {
+uint Sprites::CryoCursor::setup(uint16 width, uint16 height) {
 	_width = width;
 	_height = height;
-	unsigned int sz = _width * _height;
+	uint sz = _width * _height;
 	_data = new byte[sz];
 	return sz;
 }

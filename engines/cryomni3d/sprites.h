@@ -44,23 +44,23 @@ public:
 	virtual ~Sprites();
 
 	void loadSprites(Common::ReadStream &spr_fl);
-	void setupMapTable(const unsigned int *table, unsigned int size);
+	void setupMapTable(const uint *table, uint size);
 
-	void setSpriteHotspot(unsigned int spriteId, unsigned int x, unsigned int y);
+	void setSpriteHotspot(uint spriteId, uint x, uint y);
 
-	void replaceSprite(unsigned int oldSpriteId, unsigned int newSpriteId);
+	void replaceSprite(uint oldSpriteId, uint newSpriteId);
 
-	unsigned int getSpritesCount() const;
+	uint getSpritesCount() const;
 
-	void replaceSpriteColor(unsigned int spriteId, byte currentColor, byte newColor);
+	void replaceSpriteColor(uint spriteId, byte currentColor, byte newColor);
 
-	const Graphics::Surface &getSurface(unsigned int spriteId) const;
-	const Graphics::Cursor &getCursor(unsigned int spriteId) const;
+	const Graphics::Surface &getSurface(uint spriteId) const;
+	const Graphics::Cursor &getCursor(uint spriteId) const;
 
-	unsigned int revMapSpriteId(unsigned int id) const;
-	unsigned int calculateSpriteId(unsigned int baseId, unsigned int offset) const;
+	uint revMapSpriteId(uint id) const;
+	uint calculateSpriteId(uint baseId, uint offset) const;
 
-	byte getKeyColor(unsigned int spriteId) const { return 0; }
+	byte getKeyColor(uint spriteId) const { return 0; }
 
 private:
 	class CryoCursor : public Graphics::Cursor {
@@ -77,17 +77,17 @@ private:
 		virtual byte getPaletteStartIndex() const override { return 0; }
 		virtual uint16 getPaletteCount() const override { return 0; }
 
-		unsigned int setup(uint16 width, uint16 height);
+		uint setup(uint16 width, uint16 height);
 
 		uint16 _width;
 		uint16 _height;
 		int16 _offX;
 		int16 _offY;
-		unsigned int _constantId;
+		uint _constantId;
 
 		byte *_data;
 
-		unsigned int refCnt;
+		uint refCnt;
 
 		CryoCursor();
 		virtual ~CryoCursor();
@@ -96,7 +96,7 @@ private:
 	// Pointer to avoid to mutate Sprites when asking for a cursor
 	Graphics::Surface *_surface;
 	Common::Array<CryoCursor *> _cursors;
-	Common::Array<unsigned int> *_map;
+	Common::Array<uint> *_map;
 };
 
 } // End of namespace CryOmni3D

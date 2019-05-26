@@ -73,7 +73,7 @@ Toolbar::~Toolbar() {
 	_destSurface.free();
 }
 
-void Toolbar::inventoryChanged(unsigned int newPosition) {
+void Toolbar::inventoryChanged(uint newPosition) {
 	if (newPosition != -1u && newPosition > _inventoryOffset) {
 		_inventoryOffset = newPosition - 7;
 	}
@@ -103,8 +103,8 @@ const {
 	return it;
 }
 
-unsigned int Toolbar::captureEvent(const Common::Point &mousePos, unsigned int dragStatus) {
-	unsigned int result = 0;
+uint Toolbar::captureEvent(const Common::Point &mousePos, uint dragStatus) {
+	uint result = 0;
 	Common::Array<Zone>::const_iterator it = hitTestZones(mousePos);
 	if (it != _zones.end()) {
 		result = (this->*(it->callback))(dragStatus);
@@ -162,7 +162,7 @@ void Toolbar::updateZones() {
 	}
 }
 
-unsigned int Toolbar::callbackInventory(unsigned int invId, unsigned int dragStatus) {
+uint Toolbar::callbackInventory(uint invId, uint dragStatus) {
 	if (!_inventoryEnabled) {
 		return 0;
 	}
@@ -206,7 +206,7 @@ unsigned int Toolbar::callbackInventory(unsigned int invId, unsigned int dragSta
 
 }
 
-unsigned int Toolbar::callbackInventoryPrev(unsigned int dragStatus) {
+uint Toolbar::callbackInventoryPrev(uint dragStatus) {
 	if (!_inventoryEnabled) {
 		return 0;
 	}
@@ -221,7 +221,7 @@ unsigned int Toolbar::callbackInventoryPrev(unsigned int dragStatus) {
 	return 0;
 }
 
-unsigned int Toolbar::callbackInventoryNext(unsigned int dragStatus) {
+uint Toolbar::callbackInventoryNext(uint dragStatus) {
 	if (!_inventoryEnabled) {
 		return 0;
 	}
@@ -235,7 +235,7 @@ unsigned int Toolbar::callbackInventoryNext(unsigned int dragStatus) {
 	return 0;
 }
 
-unsigned int Toolbar::callbackViewObject(unsigned int dragStatus) {
+uint Toolbar::callbackViewObject(uint dragStatus) {
 	if (!_inventoryEnabled) {
 		return 0;
 	}
@@ -274,7 +274,7 @@ unsigned int Toolbar::callbackViewObject(unsigned int dragStatus) {
 	}
 }
 
-unsigned int Toolbar::callbackOptions(unsigned int dragStatus) {
+uint Toolbar::callbackOptions(uint dragStatus) {
 	_mouse_in_options = true;
 
 	switch (dragStatus) {
@@ -300,7 +300,7 @@ unsigned int Toolbar::callbackOptions(unsigned int dragStatus) {
 	}
 }
 
-unsigned int Toolbar::callbackDocumentation(unsigned int dragStatus) {
+uint Toolbar::callbackDocumentation(uint dragStatus) {
 	_mouse_in_options = true;
 
 	switch (dragStatus) {
@@ -372,7 +372,7 @@ void Toolbar::drawToolbar(const Graphics::Surface *original) {
 	if (_inventoryEnabled && _inventoryHovered != -1u) {
 		Object *obj = (*_inventory)[_inventoryHovered];
 
-		unsigned int zoneId = _inventoryHovered - _inventoryOffset;
+		uint zoneId = _inventoryHovered - _inventoryOffset;
 		if (zoneId >= 8) {
 			// The object is hidden: huh?
 			return;
@@ -383,8 +383,8 @@ void Toolbar::drawToolbar(const Graphics::Surface *original) {
 		_fontManager->setCurrentFont(5);
 		_fontManager->setTransparentBackground(true);
 		const Common::String &objName = (*_messages)[obj->idOBJ()];
-		unsigned int x = 195 - _fontManager->getStrWidth(objName);
-		unsigned int startX = _zones[zoneId].rect.left + kTextOffset;
+		uint x = 195 - _fontManager->getStrWidth(objName);
+		uint startX = _zones[zoneId].rect.left + kTextOffset;
 		_fontManager->displayStr(x, 38 + _position, objName);
 		_destSurface.hLine(x, 54 + _position, startX - 1, 243); // minus 1 because hLine draws inclusive
 		_destSurface.vLine(startX, 42 + _position, 54 + _position, 243);
@@ -546,8 +546,8 @@ void Toolbar::handleToolbarEvents(const Graphics::Surface *original) {
 			// The 2nd above condition is maybe useless because when the mouse button is down the selected object is always null
 			bool shouldHover = false;
 			Common::Array<Zone>::const_iterator zoneIt = hitTestZones(mousePosInToolbar);
-			unsigned int zoneId = zoneIt - _zones.begin();
-			unsigned int inventoryId = zoneId + _inventoryOffset;
+			uint zoneId = zoneIt - _zones.begin();
+			uint inventoryId = zoneId + _inventoryOffset;
 			if (zoneId < 8 && inventoryId < _inventory->size() && (*_inventory)[inventoryId] != nullptr) {
 				// It's the inventory
 				shouldHover = true;
