@@ -1923,6 +1923,14 @@ bool Debugger::cmdList(int argc, const char **argv) {
 				invalidSyntax = true;
 			}
 		} else if (arg == "obj") {
+			debugPrintf("View info\nCamera position: (%5.2f, %5.2f, %5.2f), Viewport position: (%5.2f, %5.2f, %5.2f), FoVx: %2.2f\n",
+						_vm->_view->_cameraPosition.x,
+						_vm->_view->_cameraPosition.y,
+						_vm->_view->_cameraPosition.z,
+						_vm->_view->_viewportPosition.x,
+						_vm->_view->_viewportPosition.y,
+						_vm->_view->_viewportPosition.z,
+						_vm->_view->_fovX);
 			debugPrintf("Listing scene objects: \n");
 			int count = 0;
 			for (int i = 0; i < _vm->_sceneObjects->_count; i++) {
