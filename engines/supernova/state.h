@@ -192,7 +192,7 @@ public:
 	bool airless();
 	void shock();
 	Common::EventType getMouseInput();
-	uint16 getKeyInput(bool blockForPrintChar = false);
+	int getKeyInput();
 	void getInput();
 	void wait(int ticks);
 	void waitOnInput(int ticks);

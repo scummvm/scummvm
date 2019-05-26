@@ -1579,29 +1579,11 @@ void GameManager::drawInventory() {
 	}
 }
 
-uint16 GameManager::getKeyInput(bool blockForPrintChar) {
+int GameManager::getKeyInput() {
 	while (!_vm->shouldQuit()) {
 		updateEvents();
 		if (_keyPressed) {
-			if (blockForPrintChar) {
-				if (Common::isPrint(_key.keycode) ||
-					_key.keycode == Common::KEYCODE_BACKSPACE ||
-					_key.keycode == Common::KEYCODE_DELETE ||
-					_key.keycode == Common::KEYCODE_RETURN ||
-					_key.keycode == Common::KEYCODE_SPACE ||
-					_key.keycode == Common::KEYCODE_ESCAPE ||
-					_key.keycode == Common::KEYCODE_UP ||
-					_key.keycode == Common::KEYCODE_DOWN ||
-					_key.keycode == Common::KEYCODE_LEFT ||
-					_key.keycode == Common::KEYCODE_RIGHT) {
-					if (_key.flags & Common::KBD_SHIFT)
-						return toupper(_key.ascii);
-					else
-						return tolower(_key.ascii);
-				}
-			} else {
-				return _key.ascii;
-			}
+			return _key.ascii;
 		}
 		g_system->updateScreen();
 		g_system->delayMillis(_vm->_delay);
@@ -1805,7 +1787,7 @@ void GameManager::edit(Common::String &input, int x, int y, uint length) {
 			_vm->renderBox(_vm->_screen->getTextCursorPos().x, y - 1, 1, 9, kColorWhite99);
 		}
 
-		getKeyInput(true);
+		getKeyInput();
 		if (_vm->shouldQuit())
 			break;
 		switch (_key.keycode) {
