@@ -28,7 +28,7 @@
 
 namespace CryOmni3D {
 
-MouseBoxes::MouseBoxes(unsigned int size) {
+MouseBoxes::MouseBoxes(uint size) {
 	_boxes.resize(size);
 }
 
@@ -36,7 +36,7 @@ MouseBoxes::~MouseBoxes() {
 }
 
 void MouseBoxes::reset() {
-	unsigned int sz = _boxes.size();
+	uint sz = _boxes.size();
 	_boxes.clear();
 	_boxes.resize(sz);
 }

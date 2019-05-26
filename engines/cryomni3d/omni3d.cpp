@@ -142,14 +142,14 @@ void Omni3DManager::updateImageCoords() {
 
 	double tmp = (2048 * 65536) - 2048 * 65536 / (2. * M_PI) * _alpha;
 
-	unsigned int k = 0;
-	for (unsigned int i = 0; i < 31; i++) {
+	uint k = 0;
+	for (uint i = 0; i < 31; i++) {
 		double v11 = _anglesH[i] + _beta;
 		double v26 = sin(v11);
 		double v25 = cos(v11) * _hypothenusesH[i];
 
-		unsigned int offset = 80;
-		unsigned int j;
+		uint offset = 80;
+		uint j;
 		for (j = 0; j < 20; j++) {
 			double v16 = atan2(_oppositeV[j], v25);
 			double v17 = v16 * _helperValue;
@@ -187,12 +187,12 @@ const Graphics::Surface *Omni3DManager::getSurface() {
 	}
 
 	if (_dirty) {
-		unsigned int off = 2;
+		uint off = 2;
 		byte *dst = (byte *)_surface.getBasePtr(0, 0);
 		const byte *src = (const byte *)_sourceSurface->getBasePtr(0, 0);
 
-		for (unsigned int i = 0; i < 30; i++) {
-			for (unsigned int j = 0; j < 40; j++) {
+		for (uint i = 0; i < 30; i++) {
+			for (uint j = 0; j < 40; j++) {
 				int x1  = (_imageCoords[off + 2] - _imageCoords[off + 0]) >> 4;
 				int y1  = (_imageCoords[off + 3] - _imageCoords[off + 1]) >> 4;
 				int x1_ = (_imageCoords[off + 82 + 2] - _imageCoords[off + 82 + 0]) >> 4;
@@ -208,14 +208,14 @@ const Graphics::Surface *Omni3DManager::getSurface() {
 				int x2 = (((_imageCoords[off + 0] >> 0) * 2) + dx2) >> 1;
 				int y2 = (((_imageCoords[off + 1] >> 5) * 2) + dy2) >> 1;
 
-				for (unsigned int y = 0; y < 16; y++) {
-					unsigned int px = (x2 * 2 + x1) * 16;
-					unsigned int py = (y2 * 2 + y1) / 2;
-					unsigned int deltaX = x1 * 32;
-					unsigned int deltaY = y1;
+				for (uint y = 0; y < 16; y++) {
+					uint px = (x2 * 2 + x1) * 16;
+					uint py = (y2 * 2 + y1) / 2;
+					uint deltaX = x1 * 32;
+					uint deltaY = y1;
 
-					for (unsigned int x = 0; x < 16; x++) {
-						unsigned int srcOff = (py & 0x1ff800) | (px >> 21);
+					for (uint x = 0; x < 16; x++) {
+						uint srcOff = (py & 0x1ff800) | (px >> 21);
 						dst[x] = src[srcOff];
 						px += deltaX;
 						py += deltaY;
@@ -257,7 +257,7 @@ Common::Point Omni3DManager::mapMouseCoords(const Common::Point &mouse) {
 	int smallX = mouse.x & 0xf, squareX = mouse.x >> 4;
 	int smallY = mouse.y & 0xf, squareY = mouse.y >> 4;
 
-	unsigned int off = 82 * squareY + 2 * squareX;
+	uint off = 82 * squareY + 2 * squareX;
 
 	pt.x = ((_imageCoords[off + 2] +
 	         smallY * ((_imageCoords[off + 84] - _imageCoords[off + 2]) >> 4) +

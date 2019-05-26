@@ -163,7 +163,7 @@ void ZonFixedImage::loadZones(const Common::String &image) {
 	}
 }
 
-Common::Point ZonFixedImage::getZoneCenter(unsigned int zoneId) const {
+Common::Point ZonFixedImage::getZoneCenter(uint zoneId) const {
 	if (zoneId >= _zones.size()) {
 		error("Invalid zoneId %u/%u", zoneId, _zones.size());
 	}

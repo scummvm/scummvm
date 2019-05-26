@@ -42,7 +42,7 @@ void DialogsManager::loadGTO(const Common::String &gtoFileName) {
 	delete[] _gtoBuffer;
 	_gtoBuffer = nullptr;
 
-	unsigned int gtoSize = gtoFile.size();
+	uint gtoSize = gtoFile.size();
 	_gtoBuffer = new char[gtoSize];
 	gtoFile.read(_gtoBuffer, gtoSize);
 	gtoFile.close();
@@ -54,7 +54,7 @@ void DialogsManager::loadGTO(const Common::String &gtoFileName) {
 
 void DialogsManager::populateLabels() {
 	/* Get labels count and populate the labels array */
-	unsigned int numLabels;
+	uint numLabels;
 	const char *labelsP = strstr(_gtoBuffer, "LABELS=");
 	if (labelsP) {
 		labelsP += sizeof("LABELS=") - 1;
@@ -77,7 +77,7 @@ void DialogsManager::populateLabels() {
 }
 
 const char *DialogsManager::findLabel(const char *label, const char **realLabel) const {
-	unsigned int labelLen = 0;
+	uint labelLen = 0;
 	/* Truncate input label */
 	for (const char *labelP = label;
 	        *labelP != '\0' &&
@@ -115,7 +115,7 @@ Common::String DialogsManager::getLabelSound(const char *label) const {
 }
 
 const char *DialogsManager::findSequence(const char *sequence) const {
-	unsigned int sequenceLen = strlen(sequence);
+	uint sequenceLen = strlen(sequence);
 
 	const char *lineP;
 	for (lineP = _gtoBuffer; lineP != nullptr; lineP = nextLine(lineP)) {
@@ -226,7 +226,7 @@ const char *DialogsManager::previousMatch(const char *currentPtr, const char *st
 		return nullptr;
 	}
 
-	unsigned int matchLen = strlen(str);
+	uint matchLen = strlen(str);
 	for (; currentPtr >= _gtoBuffer; currentPtr--) {
 		if (*currentPtr == str[0]) {
 			if (!strncmp(currentPtr, str, matchLen)) {
@@ -308,7 +308,7 @@ bool DialogsManager::play(const Common::String &sequence, bool &slowStop) {
 			for (; *questionEnd != '>'; questionEnd++) { }
 			questions.push_back(Common::String(questionStart, questionEnd));
 		}
-		unsigned int eocInserted = -1;
+		uint eocInserted = -1;
 		if (!endOfConversationFound && questions.size() > 0) {
 			eocInserted = questions.size();
 			questions.push_back(_endOfConversationText);
@@ -321,7 +321,7 @@ bool DialogsManager::play(const Common::String &sequence, bool &slowStop) {
 
 		if (gotoList[0].label.hasPrefix("JOU")) {
 			// We must give a subject
-			unsigned int playerChoice = askPlayerQuestions(video, questions);
+			uint playerChoice = askPlayerQuestions(video, questions);
 			didSomething = true;
 			// -1 when shouldQuit
 			if (playerChoice == -1u || playerChoice == eocInserted) {

@@ -107,8 +107,8 @@ public:
 
 	void fillSurface(byte color);
 	void setCursor(const Graphics::Cursor &cursor) const;
-	void setCursor(unsigned int cursorId) const;
-	typedef void (CryOmni3DEngine::*HNMCallback)(unsigned int frameNum);
+	void setCursor(uint cursorId) const;
+	typedef void (CryOmni3DEngine::*HNMCallback)(uint frameNum);
 	void playHNM(const Common::String &filename,
 	             Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType,
 	             HNMCallback beforeDraw = nullptr, HNMCallback afterDraw = nullptr);
@@ -117,13 +117,13 @@ public:
 	bool pollEvents();
 	Common::Point getMousePos();
 	void setMousePos(const Common::Point &point);
-	unsigned int getCurrentMouseButton();
+	uint getCurrentMouseButton();
 	Common::KeyState getNextKey();
 	bool checkKeysPressed();
-	bool checkKeysPressed(unsigned int numKeys, ...);
+	bool checkKeysPressed(uint numKeys, ...);
 	void clearKeys() { _keysPressed.clear(); }
 	void waitMouseRelease();
-	void setAutoRepeatClick(unsigned int millis);
+	void setAutoRepeatClick(uint millis);
 	DragStatus getDragStatus() { return _dragStatus; }
 
 	Common::String prepareFileName(const Common::String &baseName, const char *extension) const {
@@ -136,7 +136,7 @@ public:
 	virtual bool displayToolbar(const Graphics::Surface *original) = 0;
 	virtual bool hasPlaceDocumentation() = 0;
 	virtual bool displayPlaceDocumentation() = 0;
-	virtual unsigned int displayOptions() = 0;
+	virtual uint displayOptions() = 0;
 	virtual bool shouldAbort() { return g_engine->shouldQuit(); }
 
 	virtual void makeTranslucent(Graphics::Surface &dst, const Graphics::Surface &src) const = 0;
@@ -161,11 +161,11 @@ protected:
 
 	DragStatus _dragStatus;
 	Common::Point _dragStart;
-	unsigned int _autoRepeatNextEvent;
+	uint _autoRepeatNextEvent;
 
 private:
-	unsigned int _lockPaletteStartRW;
-	unsigned int _lockPaletteEndRW;
+	uint _lockPaletteStartRW;
+	uint _lockPaletteEndRW;
 };
 
 } // End of namespace CryOmni3D

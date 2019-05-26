@@ -129,7 +129,7 @@ void CryOmni3DEngine_Versailles::setupObjects() {
 #undef SET_OBJECT
 }
 
-template<unsigned int ID>
+template<uint ID>
 void CryOmni3DEngine_Versailles::genericDisplayObject() {
 	displayObject(imagesObjects[ID]);
 }
@@ -189,7 +189,7 @@ void CryOmni3DEngine_Versailles::obj_126hk(Graphics::ManagedSurface &surface) {
 
 	drawEpigraphLetters(surface, bmpLetters, kEpigraphPassword);
 
-	for (unsigned int i = 0; i < 26; i++) {
+	for (uint i = 0; i < 26; i++) {
 		bmpLetters[i].free();
 	}
 }
@@ -238,7 +238,7 @@ void CryOmni3DEngine_Versailles::obj_142hk(Graphics::ManagedSurface &surface) {
 		Common::Point(448, 356),
 	};
 
-	unsigned int id = _currentPlaceId - 14;
+	uint id = _currentPlaceId - 14;
 	assert(id < ARRAYSIZE(markers));
 
 	/*
@@ -249,8 +249,8 @@ void CryOmni3DEngine_Versailles::obj_142hk(Graphics::ManagedSurface &surface) {
 	for(id = 0; id < ARRAYSIZE(markers); id++) {
 	*/
 	// Why - 20? Ask to game creators, it's like that in the code
-	unsigned int spriteX = markers[id].x - _sprites.getCursor(4).getWidth() / 2 - 20;
-	unsigned int spriteY = markers[id].y - _sprites.getCursor(4).getHeight() / 2;
+	uint spriteX = markers[id].x - _sprites.getCursor(4).getWidth() / 2 - 20;
+	uint spriteY = markers[id].y - _sprites.getCursor(4).getHeight() / 2;
 	surface.transBlitFrom(_sprites.getSurface(4), Common::Point(spriteX, spriteY),
 	                      _sprites.getKeyColor(4));
 	/*
@@ -424,7 +424,7 @@ void CryOmni3DEngine_Versailles::setupImgScripts() {
 }
 
 // Generic handler for dumb fixed images
-template<unsigned int ID>
+template<uint ID>
 void CryOmni3DEngine_Versailles::genericDumbImage(ZonFixedImage *fimg) {
 	fimg->load(imagesPaintings[ID]);
 	while (1) {
@@ -446,7 +446,7 @@ void CryOmni3DEngine_Versailles::genericDumbImage(ZonFixedImage *fimg) {
     } while (false)
 
 // Generic handler for paintings fixed images
-template<unsigned int ID>
+template<uint ID>
 void CryOmni3DEngine_Versailles::genericPainting(ZonFixedImage *fimg) {
 	fimg->load(imagesPaintings[ID]);
 	while (1) {
@@ -1189,7 +1189,7 @@ bool CryOmni3DEngine_Versailles::handleSafe(ZonFixedImage *fimg) {
 	Graphics::ManagedSurface tempSurf;
 
 	loadBMPs("coff_%02d.bmp", bmpDigits, 10);
-	for (unsigned int i = 0; i < kSafeDigitsCount; i++) {
+	for (uint i = 0; i < kSafeDigitsCount; i++) {
 		safeDigits[i] = rnd.getRandomNumber(9);
 	}
 
@@ -1236,7 +1236,7 @@ bool CryOmni3DEngine_Versailles::handleSafe(ZonFixedImage *fimg) {
 		}
 	}
 
-	for (unsigned int i = 0; i < 10; i++) {
+	for (uint i = 0; i < 10; i++) {
 		bmpDigits[i].free();
 	}
 	return success;
@@ -1247,7 +1247,7 @@ const unsigned short CryOmni3DEngine_Versailles::kSafeDigitsY[] = { 148, 230, 31
 
 void CryOmni3DEngine_Versailles::drawSafeDigits(Graphics::ManagedSurface &surface,
         const Graphics::Surface(&bmpDigits)[10], const unsigned char (&safeDigits)[kSafeDigitsCount]) {
-	for (unsigned int i = 0; i < ARRAYSIZE(safeDigits); i++) {
+	for (uint i = 0; i < ARRAYSIZE(safeDigits); i++) {
 		const Graphics::Surface &digit = bmpDigits[safeDigits[i]];
 		Common::Point dst(kSafeDigitsX[i % 4], kSafeDigitsY[i / 4]);
 		surface.transBlitFrom(digit, dst);
@@ -1256,13 +1256,13 @@ void CryOmni3DEngine_Versailles::drawSafeDigits(Graphics::ManagedSurface &surfac
 
 const char *CryOmni3DEngine_Versailles::kSafeDates[] = { "1643", "1668", "1674" };
 bool CryOmni3DEngine_Versailles::checkSafeDigits(unsigned char (&safeDigits)[kSafeDigitsCount]) {
-	unsigned int dateChecked;
+	uint dateChecked;
 	for (dateChecked = 0; dateChecked < ARRAYSIZE(kSafeDates); dateChecked++) {
 		const char *checkDate = kSafeDates[dateChecked];
 		// Find the date in one of safe digits lines
-		unsigned int line;
+		uint line;
 		for (line = 0; line < kSafeDigitsCount; line += 4) {
-			unsigned int digit;
+			uint digit;
 			for (digit = 0; digit < 4; digit++) {
 				if (safeDigits[line + digit] != checkDate[digit] - '0') {
 					break;
@@ -1506,7 +1506,7 @@ IMG_CB(41802) {
 			break;
 		}
 		if (fimg->_usedObject && fimg->_currentZone == 0) {
-			unsigned int objID = fimg->_usedObject->idOBJ();
+			uint objID = fimg->_usedObject->idOBJ();
 			if (objID == 100) {
 				playInGameVideo("12E2_24");
 				// Force reload of the place
@@ -1553,7 +1553,7 @@ IMG_CB(41802b) {
 			break;
 		}
 		if (fimg->_usedObject && fimg->_currentZone == 0) {
-			unsigned int objID = fimg->_usedObject->idOBJ();
+			uint objID = fimg->_usedObject->idOBJ();
 			if (objID == 100) {
 				playInGameVideo("12E2_24");
 				// Force reload of the place
@@ -1598,7 +1598,7 @@ IMG_CB(41802c) {
 			break;
 		}
 		if (fimg->_usedObject && fimg->_currentZone == 0) {
-			unsigned int objID = fimg->_usedObject->idOBJ();
+			uint objID = fimg->_usedObject->idOBJ();
 			if (objID == 100) {
 				playInGameVideo("12E2_24");
 				// Force reload of the place
@@ -1633,7 +1633,7 @@ IMG_CB(41802d) {
 			break;
 		}
 		if (fimg->_usedObject && fimg->_currentZone == 0) {
-			unsigned int objID = fimg->_usedObject->idOBJ();
+			uint objID = fimg->_usedObject->idOBJ();
 			if (objID == 100) {
 				playInGameVideo("12E2_24");
 				// Force reload of the place
@@ -2397,7 +2397,7 @@ bool CryOmni3DEngine_Versailles::handleEpigraph(ZonFixedImage *fimg) {
 		}
 	}
 
-	for (unsigned int i = 0; i < 26; i++) {
+	for (uint i = 0; i < 26; i++) {
 		bmpLetters[i].free();
 	}
 	return success;
@@ -2408,8 +2408,8 @@ const char *CryOmni3DEngine_Versailles::kEpigraphPassword = "LELOUPETLATETE";
 
 void CryOmni3DEngine_Versailles::drawEpigraphLetters(Graphics::ManagedSurface &surface,
         const Graphics::Surface(&bmpLetters)[26], const Common::String &letters) {
-	for (unsigned int i = 0; i < letters.size() && i < kEpigraphMaxLetters; i++) {
-		unsigned int letterId = 0;
+	for (uint i = 0; i < letters.size() && i < kEpigraphMaxLetters; i++) {
+		uint letterId = 0;
 		if (letters[i] >= 'A' && letters[i] <= 'Z') {
 			letterId = letters[i] - 'A';
 		}
@@ -2930,20 +2930,20 @@ bool CryOmni3DEngine_Versailles::handleBomb(ZonFixedImage *fimg) {
 	unsigned char bombCurrentLetters[60];
 	Graphics::ManagedSurface tempSurf;
 
-	const unsigned int kBombPasswordLength = strlen(kBombPassword);
+	const uint kBombPasswordLength = strlen(kBombPassword);
 	if (kBombPasswordLength >= kBombPasswordMaxLength) {
 		error("Bomb password is too long");
 	}
 
 	loadBMPs("bomb_%02d.bmp", bmpLetters, 26);
-	for (unsigned int i = 0; i < kBombPasswordLength; i++) {
+	for (uint i = 0; i < kBombPasswordLength; i++) {
 		bombPossibilites[i][0] = toupper(kBombPassword[i]);
-		for (unsigned int j = 1; j < 5; j++) {
+		for (uint j = 1; j < 5; j++) {
 			bool foundSameLetter;
 			do {
 				foundSameLetter = false;
 				bombPossibilites[i][j] = rnd.getRandomNumberRng('A', 'Z');
-				for (unsigned int k = 0; k < j; k++) {
+				for (uint k = 0; k < j; k++) {
 					if (bombPossibilites[i][k] == bombPossibilites[i][j]) {
 						foundSameLetter = true;
 					}
@@ -2984,7 +2984,7 @@ bool CryOmni3DEngine_Versailles::handleBomb(ZonFixedImage *fimg) {
 
 				// Check if password is OK
 				success = true;
-				for (unsigned int i = 0; i < kBombPasswordLength; i++) {
+				for (uint i = 0; i < kBombPasswordLength; i++) {
 					unsigned char letterChar = bombPossibilites[i][bombCurrentLetters[i]];
 					if (letterChar != kBombPassword[i]) {
 						success = false;
@@ -3003,7 +3003,7 @@ bool CryOmni3DEngine_Versailles::handleBomb(ZonFixedImage *fimg) {
 		}
 	}
 
-	for (unsigned int i = 0; i < 26; i++) {
+	for (uint i = 0; i < 26; i++) {
 		bmpLetters[i].free();
 	}
 	return success;
@@ -3034,13 +3034,13 @@ const unsigned short CryOmni3DEngine_Versailles::kBombLettersPos[2][kBombPasswor
 };
 
 void CryOmni3DEngine_Versailles::drawBombLetters(Graphics::ManagedSurface &surface,
-        const Graphics::Surface(&bmpLetters)[26], const unsigned int kBombPasswordLength,
+        const Graphics::Surface(&bmpLetters)[26], const uint kBombPasswordLength,
         const unsigned char (&bombPossibilites)[kBombPasswordMaxLength][5],
         const unsigned char (&bombCurrentLetters)[kBombPasswordMaxLength]) {
-	unsigned int table = kBombPasswordLength <= kBombPasswordSmallLength ? 0 : 1;
-	for (unsigned int i = 0; i < kBombPasswordLength; i++) {
+	uint table = kBombPasswordLength <= kBombPasswordSmallLength ? 0 : 1;
+	for (uint i = 0; i < kBombPasswordLength; i++) {
 		unsigned char letterChar = bombPossibilites[i][bombCurrentLetters[i]];
-		unsigned int letterId = 0;
+		uint letterId = 0;
 		if (letterChar >= 'A' && letterChar <= 'Z') {
 			letterId = letterChar - 'A';
 		}
@@ -3103,7 +3103,7 @@ IMG_CB(88004b) {
 #undef IMG_CB
 
 // Init place and filter event
-#define FILTER_EVENT(level, place) bool CryOmni3DEngine_Versailles::filterEventLevel ## level ## Place ## place(unsigned int *event)
+#define FILTER_EVENT(level, place) bool CryOmni3DEngine_Versailles::filterEventLevel ## level ## Place ## place(uint *event)
 #define INIT_PLACE(level, place) void CryOmni3DEngine_Versailles::initPlaceLevel ## level ## Place ## place()
 
 FILTER_EVENT(1, 1) {
@@ -3194,7 +3194,7 @@ FILTER_EVENT(1, 7) {
 FILTER_EVENT(1, 14) {
 	if (*event == 31141 && _placeStates[14].state == 0) {
 		// Open the curtain
-		unsigned int fakePlaceId = getFakeTransition(*event);
+		uint fakePlaceId = getFakeTransition(*event);
 		fakeTransition(fakePlaceId);
 		playInGameVideo("10D2_1");
 		setPlaceState(14, 1);
@@ -3236,7 +3236,7 @@ FILTER_EVENT(1, 14) {
 		      _placeStates[14].state);
 	}
 
-	unsigned int fakePlaceId = getFakeTransition(*event);
+	uint fakePlaceId = getFakeTransition(*event);
 	fakeTransition(fakePlaceId);
 
 	playInGameVideo(video);
@@ -3257,7 +3257,7 @@ FILTER_EVENT(2, 1) {
 		_dialogsMan["{JOUEUR-MONTRE-UN-PAMPHLET}"] = 'N';
 		_dialogsMan["{JOUEUR-MONTRE-TOUT-AUTRE-OBJET}"] = 'N';
 		_dialogsMan["{JOUEUR-MONTRE-PAPIER-ECRIT-ENCRE-SYMPATHIQUE}"] = 'N';
-		unsigned int idOBJ = _inventory.selectedObject()->idOBJ();
+		uint idOBJ = _inventory.selectedObject()->idOBJ();
 		if (idOBJ == 96  || idOBJ == 101 || idOBJ == 115 ||
 		        idOBJ == 125 || idOBJ == 127) {
 			_dialogsMan["{JOUEUR-MONTRE-UN-PAMPHLET}"] = 'Y';
@@ -3373,7 +3373,7 @@ FILTER_EVENT(2, 2) {
 	assert(callback != nullptr);
 
 	// Adjust viewpoint for video
-	unsigned int fakePlaceId = getFakeTransition(*event);
+	uint fakePlaceId = getFakeTransition(*event);
 	fakeTransition(fakePlaceId);
 
 	playInGameVideo(video);
@@ -3395,7 +3395,7 @@ FILTER_EVENT(2, 2) {
 
 FILTER_EVENT(2, 5) {
 	if (*event == 22501 && _inventory.selectedObject()) {
-		unsigned int idOBJ = _inventory.selectedObject()->idOBJ();
+		uint idOBJ = _inventory.selectedObject()->idOBJ();
 		if (idOBJ == 96) {
 			if (!_inventory.inInventoryByNameID(101)) {
 				_dialogsMan["{JOUEUR-MONTRE-PAMPHLET-ARTS}"] = 'Y';
@@ -3480,7 +3480,7 @@ FILTER_EVENT(2, 9) {
 FILTER_EVENT(2, 11) {
 	if (*event == 22111 && _inventory.selectedObject()) {
 		bool gameOver = false;
-		unsigned int idOBJ = _inventory.selectedObject()->idOBJ();
+		uint idOBJ = _inventory.selectedObject()->idOBJ();
 		if (idOBJ == 107) {
 			_dialogsMan["{JOUEUR-MONTRE-TITRE-FABLE-APPARU-SUR-ESQUISSE}"] = 'Y';
 		} else if (idOBJ == 109) {
@@ -3510,7 +3510,7 @@ FILTER_EVENT(2, 11) {
 
 FILTER_EVENT(2, 12) {
 	if (*event == 22121 && _inventory.selectedObject()) {
-		unsigned int idOBJ = _inventory.selectedObject()->idOBJ();
+		uint idOBJ = _inventory.selectedObject()->idOBJ();
 		if (idOBJ == 105) {
 			_dialogsMan["{LE JOUEUR-PRESENTE-AUTRES-ESQUISSES-OU-ESQUISSE-NON-TRIEES}"] = 'Y';
 			_dialogsMan["{JOUEUR-A-MONTRE-ESQUISSES-NON-TRIEES-LEBRUN}"] = 'Y';
@@ -3967,7 +3967,7 @@ FILTER_EVENT(4, 15) {
 
 FILTER_EVENT(4, 16) {
 	if (*event == 24161 && _inventory.selectedObject()) {
-		unsigned int idOBJ = _inventory.selectedObject()->idOBJ();
+		uint idOBJ = _inventory.selectedObject()->idOBJ();
 		if (idOBJ == 124) {
 			_dialogsMan["{JOUEUR-DONNE-REPAS}"] = 'Y';
 		} else {
@@ -4012,7 +4012,7 @@ FILTER_EVENT(4, 17) {
 		setPlaceState(17, 1);
 		return false;
 	} else if (*event == 34172) {
-		unsigned int fakePlaceId = getFakeTransition(*event);
+		uint fakePlaceId = getFakeTransition(*event);
 		fakeTransition(fakePlaceId);
 		handleFixedImg(&CryOmni3DEngine_Versailles::img_34172);
 		return false;
@@ -4035,7 +4035,7 @@ INIT_PLACE(5, 6) {
 
 FILTER_EVENT(5, 9) {
 	if (*event == 25090 && _inventory.selectedObject()) {
-		unsigned int idOBJ = _inventory.selectedObject()->idOBJ();
+		uint idOBJ = _inventory.selectedObject()->idOBJ();
 		if (currentGameTime() < 4) {
 			if (idOBJ == 125 && _gameVariables[GameVariables::kStateLampoonReligion] == 3) {
 				_dialogsMan["{JOUEUR-MONTRE-PAMPHLET-RELIGION}"] = 'Y';
@@ -4096,7 +4096,7 @@ FILTER_EVENT(5, 9) {
 
 FILTER_EVENT(5, 14) {
 	if (*event == 25142 && _inventory.selectedObject()) {
-		unsigned int idOBJ = _inventory.selectedObject()->idOBJ();
+		uint idOBJ = _inventory.selectedObject()->idOBJ();
 		if (idOBJ == 125) {
 			_dialogsMan["{JOUEUR-MONTRE-PAMPHLET-RELIGION}"] = 'Y';
 		} else {
@@ -4263,7 +4263,7 @@ FILTER_EVENT(5, 23) {
 FILTER_EVENT(5, 27) {
 	if (*event == 25270) {
 		if (_inventory.selectedObject()) {
-			unsigned int idOBJ = _inventory.selectedObject()->idOBJ();
+			uint idOBJ = _inventory.selectedObject()->idOBJ();
 			if (idOBJ == 115) {
 				_dialogsMan["{JOUEUR-MONTRE-PAMPHLET-ARCHITECTURE}"] = 'Y';
 			} else if (idOBJ == 125) {
@@ -4328,7 +4328,7 @@ FILTER_EVENT(5, 29) {
 
 FILTER_EVENT(5, 33) {
 	if (*event == 35330 && !_gameVariables[GameVariables::kLoweredChandelier]) {
-		unsigned int fakePlaceId = getFakeTransition(*event);
+		uint fakePlaceId = getFakeTransition(*event);
 		fakeTransition(fakePlaceId);
 
 		playInGameVideo("LUSTRE");
@@ -4571,7 +4571,7 @@ FILTER_EVENT(7, 20) {
 void CryOmni3DEngine_Versailles::initCountdown() {
 	strcpy(_countdownValue, "05:00");
 	if (_gameVariables[GameVariables::kSavedCountdown]) {
-		unsigned int counter = _gameVariables[GameVariables::kSavedCountdown];
+		uint counter = _gameVariables[GameVariables::kSavedCountdown];
 		_countdownValue[4] = counter;
 		counter >>= 8;
 		_countdownValue[3] = counter;
@@ -4583,7 +4583,7 @@ void CryOmni3DEngine_Versailles::initCountdown() {
 }
 
 void CryOmni3DEngine_Versailles::syncCountdown() {
-	unsigned int counter = 0;
+	uint counter = 0;
 	counter |= _countdownValue[0];
 	counter <<= 8;
 	counter |= _countdownValue[1];

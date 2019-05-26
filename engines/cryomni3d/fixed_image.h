@@ -35,16 +35,16 @@ struct Surface;
 namespace CryOmni3D {
 
 struct FixedImageConfiguration {
-	unsigned int spriteNothing;
-	unsigned int spriteLow;
-	unsigned int spriteHigh;
-	unsigned int spriteLeft;
-	unsigned int spriteRight;
-	unsigned int spriteQuestion;
-	unsigned int spriteListen;
-	unsigned int spriteSee;
-	unsigned int spriteUse;
-	unsigned int spriteSpeak;
+	uint spriteNothing;
+	uint spriteLow;
+	uint spriteHigh;
+	uint spriteLeft;
+	uint spriteRight;
+	uint spriteQuestion;
+	uint spriteListen;
+	uint spriteSee;
+	uint spriteUse;
+	uint spriteSpeak;
 
 	int16 toolbarTriggerY;
 };
@@ -74,13 +74,13 @@ public:
 	void updateSurface(const Graphics::Surface *newSurface);
 	const Graphics::Surface *surface() const { return _imageSurface; }
 	void changeCallback(CallbackFunctor *callback) { delete _callback; _callback = callback; }
-	Common::Point getZoneCenter(unsigned int zoneId) const;
-	void disableZone(unsigned int zoneId) { _zones[zoneId].valid = false; }
+	Common::Point getZoneCenter(uint zoneId) const;
+	void disableZone(uint zoneId) { _zones[zoneId].valid = false; }
 
 	ZonesMode _zonesMode;
 
 	/* These attributes are read by the image handler to check what action player did */
-	unsigned int _currentZone;
+	uint _currentZone;
 	bool _exit;
 	bool _zoneLow;
 	bool _zoneHigh;

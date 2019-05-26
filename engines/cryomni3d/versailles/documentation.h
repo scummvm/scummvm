@@ -53,16 +53,16 @@ private:
 	Common::String docAreaHandleTimeline();
 	Common::String docAreaHandleGeneralMap();
 	Common::String docAreaHandleCastleMap();
-	unsigned int docAreaHandleRecords(const Common::String &record);
+	uint docAreaHandleRecords(const Common::String &record);
 
 	void docAreaPrepareNavigation();
 	void docAreaPrepareRecord(Graphics::ManagedSurface &surface, MouseBoxes &boxes);
-	unsigned int docAreaHandleRecord(Graphics::ManagedSurface &surface, MouseBoxes &boxes,
-	                                 Common::String &nextRecord);
+	uint docAreaHandleRecord(Graphics::ManagedSurface &surface, MouseBoxes &boxes,
+	                         Common::String &nextRecord);
 
 	void inGamePrepareRecord(Graphics::ManagedSurface &surface, MouseBoxes &boxes);
-	unsigned int inGameHandleRecord(Graphics::ManagedSurface &surface, MouseBoxes &boxes,
-	                                Common::String &nextRecord);
+	uint inGameHandleRecord(Graphics::ManagedSurface &surface, MouseBoxes &boxes,
+	                        Common::String &nextRecord);
 
 	void setupRecordBoxes(bool inDocArea, MouseBoxes &boxes);
 	void setupTimelineBoxes(MouseBoxes &boxes);
@@ -71,14 +71,14 @@ private:
 	                    const Common::String &subtitle, const Common::String &caption);
 	void drawRecordBoxes(Graphics::ManagedSurface &surface, bool inDocArea, MouseBoxes &boxes);
 
-	unsigned int handlePopupMenu(const Graphics::ManagedSurface &surface,
-	                             const Common::Point &anchor, bool rightAligned, unsigned int itemHeight,
-	                             const Common::StringArray &items);
+	uint handlePopupMenu(const Graphics::ManagedSurface &surface,
+	                     const Common::Point &anchor, bool rightAligned, uint itemHeight,
+	                     const Common::StringArray &items);
 
 	struct RecordInfo {
-		unsigned int id;
-		unsigned int position;
-		unsigned int size;
+		uint id;
+		uint position;
+		uint size;
 	};
 
 	struct LinkInfo {
@@ -88,8 +88,8 @@ private:
 
 	struct TimelineEntry {
 		char year[8];
-		unsigned int x;
-		unsigned int y;
+		uint x;
+		uint y;
 	};
 	static const TimelineEntry kTimelineEntries[];
 
@@ -112,7 +112,7 @@ private:
 	static const char *kAllDocsFile;
 	static const char *kLinksDocsFile;
 
-	static const unsigned int kPopupMenuMargin = 5;
+	static const uint kPopupMenuMargin = 5;
 
 	CryOmni3DEngine *_engine;
 	FontManager *_fontManager;
@@ -122,7 +122,7 @@ private:
 	Common::StringArray _recordsOrdered;
 	Common::HashMap<Common::String, RecordInfo> _records;
 	char *_linksData;
-	unsigned int _linksSize;
+	uint _linksSize;
 
 	Common::Array<LinkInfo> _allLinks;
 

@@ -51,10 +51,10 @@ class ZonFixedImage;
 namespace CryOmni3D {
 namespace Versailles {
 struct PlaceStateActionKey {
-	unsigned int placeId;
-	unsigned int placeState;
-	unsigned int actionId;
-	PlaceStateActionKey(unsigned int placeId_, unsigned int placeState_, unsigned int actionId_) :
+	uint placeId;
+	uint placeState;
+	uint actionId;
+	PlaceStateActionKey(uint placeId_, uint placeState_, uint actionId_) :
 		placeId(placeId_), placeState(placeState_), actionId(actionId_) {}
 
 	bool operator==(const PlaceStateActionKey &other) const {
@@ -63,9 +63,9 @@ struct PlaceStateActionKey {
 };
 
 struct PlaceActionKey {
-	unsigned int placeId;
-	unsigned int actionId;
-	PlaceActionKey(unsigned int placeId_, unsigned int actionId_) :
+	uint placeId;
+	uint actionId;
+	PlaceActionKey(uint placeId_, uint actionId_) :
 		placeId(placeId_), actionId(actionId_) {}
 
 	bool operator==(const PlaceActionKey &other) const {
@@ -170,7 +170,7 @@ struct SoundIds {
 
 struct PlaceState {
 	typedef void (CryOmni3DEngine_Versailles::*InitFunc)();
-	typedef bool (CryOmni3DEngine_Versailles::*FilterEventFunc)(unsigned int *event);
+	typedef bool (CryOmni3DEngine_Versailles::*FilterEventFunc)(uint *event);
 
 	PlaceState() : initPlace(nullptr), filterEvent(nullptr), docImage(nullptr), state(0) {}
 	PlaceState(InitFunc initPlace_, FilterEventFunc filterEvent_, const char *docImage_) :
@@ -179,18 +179,18 @@ struct PlaceState {
 	InitFunc initPlace;
 	FilterEventFunc filterEvent;
 	const char *docImage;
-	unsigned int state;
+	uint state;
 };
 
 struct LevelInitialState {
-	unsigned int placeId;
+	uint placeId;
 	double alpha;
 	double beta;
 };
 
 struct FakeTransitionActionPlace {
-	unsigned int actionId;
-	unsigned int placeId;
+	uint actionId;
+	uint placeId;
 };
 
 typedef void (CryOmni3DEngine_Versailles::*FixedImgCallback)(ZonFixedImage *);
@@ -198,14 +198,14 @@ typedef void (CryOmni3DEngine_Versailles::*FixedImgCallback)(ZonFixedImage *);
 struct MsgBoxParameters {
 	int font;
 	byte foreColor;
-	unsigned int lineHeight;
-	unsigned int spaceWidth;
-	unsigned int charSpacing;
-	unsigned int initialWidth;
-	unsigned int incrementWidth;
-	unsigned int initialHeight;
-	unsigned int incrementHeight;
-	unsigned int timeoutChar;
+	uint lineHeight;
+	uint spaceWidth;
+	uint charSpacing;
+	uint initialWidth;
+	uint incrementWidth;
+	uint initialHeight;
+	uint incrementHeight;
+	uint timeoutChar;
 };
 
 class CryOmni3DEngine_Versailles : public CryOmni3DEngine {
@@ -230,7 +230,7 @@ public:
 	virtual bool displayToolbar(const Graphics::Surface *original) override { return _toolbar.displayToolbar(original); };
 	virtual bool hasPlaceDocumentation() override;
 	virtual bool displayPlaceDocumentation() override;
-	virtual unsigned int displayOptions() override;
+	virtual uint displayOptions() override;
 	virtual bool shouldAbort() override { return g_engine->shouldQuit() || _abortCommand != AbortNoAbort; }
 
 private:
@@ -256,65 +256,65 @@ private:
 	void initDocPeopleRecord();
 	void setupLevelActionsMask();
 
-	unsigned int currentGameTime() const { return _gameVariables[GameVariables::kCurrentTime]; }
-	void setGameTime(unsigned int newTime, unsigned int level);
+	uint currentGameTime() const { return _gameVariables[GameVariables::kCurrentTime]; }
+	void setGameTime(uint newTime, uint level);
 	void updateGameTimeDialVariables();
 
 	void gameStep();
 	void doGameOver();
 
-	void setPlaceState(unsigned int placeId, unsigned int newState);
+	void setPlaceState(uint placeId, uint newState);
 	void doPlaceChange();
-	void executeTransition(unsigned int nextPlaceId);
-	void fakeTransition(unsigned int dstPlaceId);
-	unsigned int determineTransitionAnimation(unsigned int srcId, unsigned int dstId,
-	        const Transition **transition);
+	void executeTransition(uint nextPlaceId);
+	void fakeTransition(uint dstPlaceId);
+	uint determineTransitionAnimation(uint srcId, uint dstId,
+	                                  const Transition **transition);
 
-	unsigned int getFakeTransition(unsigned int actionId) const;
-	void fixActionId(unsigned int *actionId) const;
+	uint getFakeTransition(uint actionId) const;
+	void fixActionId(uint *actionId) const;
 
 	int handleWarp();
-	bool handleWarpMouse(unsigned int *actionId, unsigned int movingCuror);
+	bool handleWarpMouse(uint *actionId, uint movingCuror);
 	void animateWarpTransition(const Transition *transition);
 	void redrawWarp();
 
 	void handleFixedImg(const FixedImgCallback &callback);
-	void executeSeeAction(unsigned int actionId);
+	void executeSeeAction(uint actionId);
 
-	void executeSpeakAction(unsigned int actionId);
+	void executeSpeakAction(uint actionId);
 	void setupDialogShows();
 	bool preprocessDialog(const Common::String &sequence);
 	void postprocessDialog(const Common::String &sequence);
 
-	void executeDocAction(unsigned int actionId);
+	void executeDocAction(uint actionId);
 
 	void drawMenuTitle(Graphics::ManagedSurface *surface, byte color);
-	unsigned int displayFilePicker(const Graphics::Surface *bgFrame, bool saveMode,
-	                               Common::String &saveName);
-	unsigned int displayYesNoBox(Graphics::ManagedSurface &surface, const Common::Rect &position,
-	                             unsigned int msg_id);
+	uint displayFilePicker(const Graphics::Surface *bgFrame, bool saveMode,
+	                       Common::String &saveName);
+	uint displayYesNoBox(Graphics::ManagedSurface &surface, const Common::Rect &position,
+	                     uint msg_id);
 	void displayMessageBox(const MsgBoxParameters &params, const Graphics::Surface *surface,
-	                       unsigned int msg_id, const Common::Point &position,
+	                       uint msg_id, const Common::Point &position,
 	                       const Common::Functor0<void> &callback) { displayMessageBox(params, surface, _messages[msg_id], position, callback); }
 	void displayMessageBox(const MsgBoxParameters &params, const Graphics::Surface *surface,
 	                       const Common::String &msg, const Common::Point &position,
 	                       const Common::Functor0<void> &callback);
 	void displayMessageBoxWarp(const Common::String &message);
-	void displayMessageBoxWarp(unsigned int msg_id) { displayMessageBoxWarp(_messages[msg_id]); }
+	void displayMessageBoxWarp(uint msg_id) { displayMessageBoxWarp(_messages[msg_id]); }
 	void displayCredits();
 
 	void warpMsgBoxCB();
 
 	bool canVisit() const;
-	Common::String getSaveFileName(bool visit, unsigned int saveNum) const;
+	Common::String getSaveFileName(bool visit, uint saveNum) const;
 	void getSavesList(bool visit, Common::Array<Common::String> &saveNames);
-	void saveGame(bool visit, unsigned int saveNum, const Common::String &saveName);
-	bool loadGame(bool visit, unsigned int saveNum);
+	void saveGame(bool visit, uint saveNum, const Common::String &saveName);
+	bool loadGame(bool visit, uint saveNum);
 
 	void animateCursor(const Object *object);
 	void collectObject(Object *object, const ZonFixedImage *fimg = nullptr,
 	                   bool showObject = true);
-	void collectObject(unsigned int nameID, const ZonFixedImage *fimg = nullptr,
+	void collectObject(uint nameID, const ZonFixedImage *fimg = nullptr,
 	                   bool showObject = true) { collectObject(_objects.findObjectByNameID(nameID), fimg, showObject); }
 	typedef void (CryOmni3DEngine_Versailles::*DisplayObjectHook)(Graphics::ManagedSurface &surface);
 	void displayObject(const Common::String &imgName, DisplayObjectHook hook = nullptr);
@@ -326,10 +326,10 @@ private:
 
 	void playInGameVideo(const Common::String &filename, bool restoreCursorPalette = true);
 
-	void loadBMPs(const char *pattern, Graphics::Surface *bmps, unsigned int count);
+	void loadBMPs(const char *pattern, Graphics::Surface *bmps, uint count);
 
-	unsigned int getMusicId(unsigned int level, unsigned int placeId) const;
-	bool musicWouldChange(unsigned int level, unsigned int placeId) const;
+	uint getMusicId(uint level, uint placeId) const;
+	bool musicWouldChange(uint level, uint placeId) const;
 	void musicUpdate();
 	void musicPause();
 	void musicResume();
@@ -337,11 +337,11 @@ private:
 	void musicSetQuiet(bool quiet);
 
 	Common::StringArray _messages;
-	static const unsigned int kSpritesMapTable[];
-	static const unsigned int kSpritesMapTableSize;
+	static const uint kSpritesMapTable[];
+	static const uint kSpritesMapTableSize;
 	static const LevelInitialState kLevelInitialStates[];
 	static const FakeTransitionActionPlace kFakeTransitions[];
-	Common::HashMap<unsigned int, FixedImgCallback> _imgScripts;
+	Common::HashMap<uint, FixedImgCallback> _imgScripts;
 	Common::Array<Common::String> _paintingsTitles;
 
 	Toolbar _toolbar;
@@ -353,35 +353,35 @@ private:
 	bool _forceRedrawWarp;
 
 	byte *_transparentPaletteMap;
-	unsigned int _transparentSrcStart;
-	unsigned int _transparentSrcStop;
-	unsigned int _transparentDstStart;
-	unsigned int _transparentDstStop;
-	unsigned int _transparentNewStart;
-	unsigned int _transparentNewStop;
+	uint _transparentSrcStart;
+	uint _transparentSrcStop;
+	uint _transparentDstStart;
+	uint _transparentDstStop;
+	uint _transparentNewStart;
+	uint _transparentNewStop;
 
 	bool _isPlaying;
 	bool _isVisiting;
 	AbortCommand _abortCommand;
-	unsigned int _loadedSave;
+	uint _loadedSave;
 
 	int _omni3dSpeed;
 
-	unsigned int _currentLevel;
+	uint _currentLevel;
 	Versailles_DialogsManager _dialogsMan;
 
 	Omni3DManager _omni3dMan;
 	ZonFixedImage *_fixedImage;
 
-	Common::Array<unsigned int> _gameVariables;
+	Common::Array<uint> _gameVariables;
 	Common::Array<PlaceState> _placeStates;
-	Common::HashMap<PlaceStateActionKey, unsigned int> _actionMasks;
+	Common::HashMap<PlaceStateActionKey, uint> _actionMasks;
 	Common::HashMap<PlaceActionKey, Common::String> _whoSpeaksWhere;
-	Common::HashMap<unsigned int, const char *> _docPeopleRecord;
+	Common::HashMap<uint, const char *> _docPeopleRecord;
 	bool _transitionAnimateWarp;
-	unsigned int _nextPlaceId;
+	uint _nextPlaceId;
 	WAMParser _wam;
-	unsigned int _currentPlaceId;
+	uint _currentPlaceId;
 	const Place *_currentPlace;
 	const Image::ImageDecoder *_currentWarpImage;
 
@@ -401,17 +401,17 @@ private:
 	void syncCountdown();
 	inline bool countDown() { if (_countingDown) { return doCountDown(); } else { return false; } }
 	inline void drawCountdown(Graphics::ManagedSurface *surface = nullptr) { if (_countingDown) { doDrawCountdown(surface); } }
-	void drawCountdownVideo(unsigned int frameNum) { drawCountdown(); }
+	void drawCountdownVideo(uint frameNum) { drawCountdown(); }
 
 	bool _countingDown;
-	unsigned int _countdownNextEvent;
+	uint _countdownNextEvent;
 	char _countdownValue[6];
 	Graphics::ManagedSurface _countdownSurface;
 	bool doCountDown();
 	void doDrawCountdown(Graphics::ManagedSurface *surface);
 
 	// Objects
-	template<unsigned int ID>
+	template<uint ID>
 	void genericDisplayObject();
 	void obj_105();
 	void obj_106();
@@ -425,9 +425,9 @@ private:
 	void obj_142hk(Graphics::ManagedSurface &surface);
 
 	// Fixed image
-	template<unsigned int ID>
+	template<uint ID>
 	void genericDumbImage(ZonFixedImage *fimg);
-	template<unsigned int ID>
+	template<uint ID>
 	void genericPainting(ZonFixedImage *fimg);
 #define IMG_CB(name) void img_ ## name(ZonFixedImage *fimg)
 	IMG_CB(31101);
@@ -460,7 +460,7 @@ private:
 	IMG_CB(34174d);
 	IMG_CB(34174e);
 	IMG_CB(34174f);
-	static const unsigned int kSafeDigitsCount = 12;
+	static const uint kSafeDigitsCount = 12;
 	static const unsigned short kSafeDigitsX[];
 	static const unsigned short kSafeDigitsY[];
 	static const char *kSafeDates[];
@@ -504,7 +504,7 @@ private:
 	IMG_CB(44161d);
 	IMG_CB(44161e);
 	IMG_CB(44161f);
-	static const unsigned int kEpigraphMaxLetters = 32;
+	static const uint kEpigraphMaxLetters = 32;
 	static const char *kEpigraphContent;
 	static const char *kEpigraphPassword;
 	bool handleEpigraph(ZonFixedImage *fimg);
@@ -527,20 +527,20 @@ private:
 	IMG_CB(88003d);
 	IMG_CB(88003e);
 	IMG_CB(88003f);
-	static const unsigned int kBombPasswordSmallLength = 40;
-	static const unsigned int kBombPasswordMaxLength = 60;
+	static const uint kBombPasswordSmallLength = 40;
+	static const uint kBombPasswordMaxLength = 60;
 	static const unsigned short kBombLettersPos[2][kBombPasswordMaxLength][2];
 	static const char *kBombPassword;
 	bool handleBomb(ZonFixedImage *fimg);
 	void drawBombLetters(Graphics::ManagedSurface &surface, const Graphics::Surface(&bmpLetters)[26],
-	                     const unsigned int kBombPasswordLength,
+	                     const uint kBombPasswordLength,
 	                     const unsigned char (&bombPossibilites)[kBombPasswordMaxLength][5],
 	                     const unsigned char (&bombCurrentLetters)[kBombPasswordMaxLength]);
 	IMG_CB(88004);
 	IMG_CB(88004b);
 #undef IMG_CB
 
-#define FILTER_EVENT(level, place) bool filterEventLevel ## level ## Place ## place(unsigned int *event)
+#define FILTER_EVENT(level, place) bool filterEventLevel ## level ## Place ## place(uint *event)
 #define INIT_PLACE(level, place) void initPlaceLevel ## level ## Place ## place()
 	FILTER_EVENT(1, 1);
 	FILTER_EVENT(1, 2);

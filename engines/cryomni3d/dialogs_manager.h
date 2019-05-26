@@ -48,14 +48,14 @@ public:
 		_ignoreNoEndOfConversation(false) { }
 	virtual ~DialogsManager();
 
-	void init(unsigned int size, const Common::String &endOfConversationText) { _dialogsVariables.resize(size); _endOfConversationText = endOfConversationText; }
+	void init(uint size, const Common::String &endOfConversationText) { _dialogsVariables.resize(size); _endOfConversationText = endOfConversationText; }
 	void loadGTO(const Common::String &gtoFile);
 
-	void setupVariable(unsigned int id, const Common::String &variable) { _dialogsVariables[id] = DialogVariable(variable, 'N'); }
+	void setupVariable(uint id, const Common::String &variable) { _dialogsVariables[id] = DialogVariable(variable, 'N'); }
 	void reinitVariables();
-	unsigned int size() const { return _dialogsVariables.size(); }
-	byte &operator[](unsigned int idx) { return _dialogsVariables[idx].value; }
-	const byte &operator[](unsigned int idx) const { return _dialogsVariables[idx].value; }
+	uint size() const { return _dialogsVariables.size(); }
+	byte &operator[](uint idx) { return _dialogsVariables[idx].value; }
+	const byte &operator[](uint idx) const { return _dialogsVariables[idx].value; }
 	byte &operator[](const Common::String &name) { return find(name).value; }
 	const byte &operator[](const Common::String &name) const { return find(name).value; }
 
@@ -69,8 +69,8 @@ protected:
 	virtual void playDialog(const Common::String &video, const Common::String &sound,
 	                        const Common::String &text, const SubtitlesSettings &settings) = 0;
 	virtual void displayMessage(const Common::String &text) = 0;
-	virtual unsigned int askPlayerQuestions(const Common::String &video,
-	                                        const Common::StringArray &questions) = 0;
+	virtual uint askPlayerQuestions(const Common::String &video,
+	                                const Common::StringArray &questions) = 0;
 
 private:
 	struct Goto {

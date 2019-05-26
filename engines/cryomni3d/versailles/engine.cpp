@@ -116,7 +116,7 @@ Common::Error CryOmni3DEngine_Versailles::run() {
 	_transparentNewStop = 254;
 
 	// Inventory has a size of 50
-	_inventory.init(50, new Common::Functor1Mem<unsigned int, void, Toolbar>(&_toolbar,
+	_inventory.init(50, new Common::Functor1Mem<uint, void, Toolbar>(&_toolbar,
 	                &Toolbar::inventoryChanged));
 
 	// Init toolbar after we have setup sprites and fonts
@@ -152,7 +152,7 @@ Common::Error CryOmni3DEngine_Versailles::run() {
 	bool stopGame = false;
 	while (!stopGame) {
 		bool exitLoop = false;
-		unsigned int nextStep = 0;
+		uint nextStep = 0;
 #if defined(DEBUG_FAST_START) && DEBUG_FAST_START>=2
 		nextStep = 27;
 		// Called in options
@@ -300,7 +300,7 @@ void CryOmni3DEngine_Versailles::setupSprites() {
 	}
 	_sprites.loadSprites(file);
 
-	for (unsigned int i = 0; i < _sprites.getSpritesCount(); i++) {
+	for (uint i = 0; i < _sprites.getSpritesCount(); i++) {
 		const Graphics::Cursor &cursor = _sprites.getCursor(i);
 		if (cursor.getWidth() != 32 || cursor.getHeight() != 32) {
 			_sprites.setSpriteHotspot(i, 8, 8);
@@ -367,7 +367,7 @@ void CryOmni3DEngine_Versailles::setMainPaletteColor(byte color, byte red, byte 
 }
 
 struct transparentScore {
-	unsigned int score;
+	uint score;
 	byte redScaled;
 	byte greenScaled;
 
@@ -380,8 +380,8 @@ static transparentScore transparentCalculateScore(byte red, byte green, byte blu
 	transparentScore ret;
 	ret.score = 10 * (blue + 3 * (red + 2 * green)) / 30;
 	if (ret.score) {
-		ret.redScaled = ((unsigned int)red) * 256 / ret.score;
-		ret.greenScaled = ((unsigned int)green) * 256 / ret.score;
+		ret.redScaled = ((uint)red) * 256 / ret.score;
+		ret.greenScaled = ((uint)green) * 256 / ret.score;
 	} else {
 		ret.redScaled = 0;
 		ret.greenScaled = 0;
@@ -393,26 +393,26 @@ void CryOmni3DEngine_Versailles::calculateTransparentMapping() {
 	// Calculate colors proximity array
 	transparentScore *proximities = new transparentScore[256];
 
-	for (unsigned int i = _transparentSrcStart; i < _transparentSrcStop; i++) {
+	for (uint i = _transparentSrcStart; i < _transparentSrcStop; i++) {
 		proximities[i] = transparentCalculateScore(_mainPalette[3 * i + 0], _mainPalette[3 * i + 1],
 		                 _mainPalette[3 * i + 2]);
 	}
 
-	unsigned int newColorsNextId = _transparentNewStart;
-	unsigned int newColorsCount = 0;
-	for (unsigned int i = _transparentDstStart; i < _transparentDstStop; i++) {
-		byte transparentRed = ((unsigned int)_mainPalette[3 * i + 0]) * 60 / 128;
-		byte transparentGreen = ((unsigned int)_mainPalette[3 * i + 1]) * 50 / 128;
-		byte transparentBlue = ((unsigned int)_mainPalette[3 * i + 2]) * 35 / 128;
+	uint newColorsNextId = _transparentNewStart;
+	uint newColorsCount = 0;
+	for (uint i = _transparentDstStart; i < _transparentDstStop; i++) {
+		byte transparentRed = ((uint)_mainPalette[3 * i + 0]) * 60 / 128;
+		byte transparentGreen = ((uint)_mainPalette[3 * i + 1]) * 50 / 128;
+		byte transparentBlue = ((uint)_mainPalette[3 * i + 2]) * 35 / 128;
 
 		// Find nearest color
 		transparentScore newColorScore = transparentCalculateScore(transparentRed, transparentGreen,
 		                                 transparentBlue);
-		unsigned int distanceMin = -1u;
-		unsigned int nearestId = -1u;
-		for (unsigned int j = _transparentSrcStart; j < _transparentSrcStop; j++) {
+		uint distanceMin = -1u;
+		uint nearestId = -1u;
+		for (uint j = _transparentSrcStart; j < _transparentSrcStop; j++) {
 			if (j != i && newColorScore.dScore(proximities[j]) < 15) {
-				unsigned int distance = newColorScore.dRed(proximities[j]) + newColorScore.dGreen(proximities[j]);
+				uint distance = newColorScore.dRed(proximities[j]) + newColorScore.dGreen(proximities[j]);
 				if (distance < distanceMin) {
 					distanceMin = distance;
 					nearestId = j;
@@ -450,8 +450,8 @@ void CryOmni3DEngine_Versailles::makeTranslucent(Graphics::Surface &dst,
 
 	const byte *srcP = (const byte *) src.getPixels();
 	byte *dstP = (byte *) dst.getPixels();
-	for (unsigned int y = 0; y < dst.h; y++) {
-		for (unsigned int x = 0; x < dst.w; x++) {
+	for (uint y = 0; y < dst.h; y++) {
+		for (uint x = 0; x < dst.w; x++) {
 			dstP[x] = _transparentPaletteMap[srcP[x]];
 		}
 		dstP += dst.pitch;
@@ -608,7 +608,7 @@ void CryOmni3DEngine_Versailles::changeLevel(int level) {
 
 	if (_currentLevel == 1) {
 		_dialogsMan.reinitVariables();
-		for (Common::Array<unsigned int>::iterator it = _gameVariables.begin(); it != _gameVariables.end();
+		for (Common::Array<uint>::iterator it = _gameVariables.begin(); it != _gameVariables.end();
 		        it++) {
 			*it = 0;
 		}
@@ -667,7 +667,7 @@ void CryOmni3DEngine_Versailles::initNewLevel(int level) {
 		// Create a first SearchSet in which we will add all others to easily cleanup the mess
 		Common::SearchSet *visitFiles = new Common::SearchSet();
 
-		for (unsigned int lvl = 1; lvl <= 7; lvl++) {
+		for (uint lvl = 1; lvl <= 7; lvl++) {
 			Common::SearchSet *visitFilesAnimacti = new Common::SearchSet();
 			Common::SearchSet *visitFilesWarp = new Common::SearchSet();
 			Common::SearchSet *visitFilesImgFix = new Common::SearchSet();
@@ -719,7 +719,7 @@ void CryOmni3DEngine_Versailles::setupLevelWarps(int level) {
 	_omni3dMan.setBeta(initialState.beta);
 }
 
-void CryOmni3DEngine_Versailles::setGameTime(unsigned int newTime, unsigned int level) {
+void CryOmni3DEngine_Versailles::setGameTime(uint newTime, uint level) {
 	if (_currentLevel != level) {
 		error("Level %u != current level %u", level, _currentLevel);
 	}
@@ -804,7 +804,7 @@ void CryOmni3DEngine_Versailles::gameStep() {
 		if (_forcePaletteUpdate) {
 			redrawWarp();
 		}
-		unsigned int actionId = handleWarp();
+		uint actionId = handleWarp();
 		debug("handleWarp returned %u", actionId);
 		// Don't handle keyboard for levels 4 and 5, it was a debug leftover
 
@@ -888,7 +888,7 @@ void CryOmni3DEngine_Versailles::doGameOver() {
 
 void CryOmni3DEngine_Versailles::doPlaceChange() {
 	const Place *nextPlace = _wam.findPlaceById(_nextPlaceId);
-	unsigned int state = _placeStates[_nextPlaceId].state;
+	uint state = _placeStates[_nextPlaceId].state;
 	if (state == -1u) {
 		state = 0;
 	}
@@ -942,9 +942,9 @@ void CryOmni3DEngine_Versailles::doPlaceChange() {
 	}
 }
 
-void CryOmni3DEngine_Versailles::setPlaceState(unsigned int placeId, unsigned int newState) {
-	unsigned int numStates = _wam.findPlaceById(placeId)->getNumStates();
-	unsigned int oldState = _placeStates[placeId].state;
+void CryOmni3DEngine_Versailles::setPlaceState(uint placeId, uint newState) {
+	uint numStates = _wam.findPlaceById(placeId)->getNumStates();
+	uint oldState = _placeStates[placeId].state;
 
 	if (newState > numStates) {
 		warning("CryOmni3DEngine_Versailles::setPlaceState: newState '%d' > numStates '%d'",
@@ -959,9 +959,9 @@ void CryOmni3DEngine_Versailles::setPlaceState(unsigned int placeId, unsigned in
 	}
 }
 
-void CryOmni3DEngine_Versailles::executeTransition(unsigned int nextPlaceId) {
+void CryOmni3DEngine_Versailles::executeTransition(uint nextPlaceId) {
 	const Transition *transition;
-	unsigned int animationId = determineTransitionAnimation(_currentPlaceId, nextPlaceId, &transition);
+	uint animationId = determineTransitionAnimation(_currentPlaceId, nextPlaceId, &transition);
 
 	_nextPlaceId = nextPlaceId;
 
@@ -992,7 +992,7 @@ void CryOmni3DEngine_Versailles::executeTransition(unsigned int nextPlaceId) {
 	_omni3dMan.setAlpha(transition->dstAlpha);
 	_omni3dMan.setBeta(-transition->dstBeta);
 
-	unsigned int nextState = _placeStates[nextPlaceId].state;
+	uint nextState = _placeStates[nextPlaceId].state;
 	if (nextState == -1u) {
 		nextState = 0;
 	}
@@ -1001,7 +1001,7 @@ void CryOmni3DEngine_Versailles::executeTransition(unsigned int nextPlaceId) {
 	warpFile.toUppercase();
 	if (warpFile.hasPrefix("NOT_STOP")) {
 		debug("Got not stop");
-		unsigned int transitionNum;
+		uint transitionNum;
 		// Determine transition to take
 		if (nextPlace->getNumTransitions() == 1) {
 			// Only one
@@ -1012,7 +1012,7 @@ void CryOmni3DEngine_Versailles::executeTransition(unsigned int nextPlaceId) {
 		} else {
 			transitionNum = 0;
 		}
-		unsigned int nextNextPlaceId = nextPlace->transitions[transitionNum].dstId;
+		uint nextNextPlaceId = nextPlace->transitions[transitionNum].dstId;
 
 		animationId = determineTransitionAnimation(nextPlaceId, nextNextPlaceId, &transition);
 		animation = animationId == -1u ? "" : transition->animations[animationId];
@@ -1038,7 +1038,7 @@ void CryOmni3DEngine_Versailles::executeTransition(unsigned int nextPlaceId) {
 	}
 }
 
-void CryOmni3DEngine_Versailles::fakeTransition(unsigned int dstPlaceId) {
+void CryOmni3DEngine_Versailles::fakeTransition(uint dstPlaceId) {
 	// No need of animation, caller will take care
 	// We just setup the camera in good place for the caller
 	const Place *srcPlace = _wam.findPlaceById(_currentPlaceId);
@@ -1050,8 +1050,8 @@ void CryOmni3DEngine_Versailles::fakeTransition(unsigned int dstPlaceId) {
 	_omni3dMan.setBeta(-transition->dstBeta);
 }
 
-unsigned int CryOmni3DEngine_Versailles::determineTransitionAnimation(unsigned int srcPlaceId,
-        unsigned int dstPlaceId, const Transition **transition_) {
+uint CryOmni3DEngine_Versailles::determineTransitionAnimation(uint srcPlaceId,
+        uint dstPlaceId, const Transition **transition_) {
 	const Place *srcPlace = _wam.findPlaceById(srcPlaceId);
 	const Place *dstPlace = _wam.findPlaceById(dstPlaceId);
 	const Transition *transition = srcPlace->findTransition(dstPlaceId);
@@ -1060,12 +1060,12 @@ unsigned int CryOmni3DEngine_Versailles::determineTransitionAnimation(unsigned i
 		*transition_ = transition;
 	}
 
-	unsigned int srcNumStates = srcPlace->getNumStates();
-	unsigned int dstNumStates = dstPlace->getNumStates();
-	unsigned int animsNum = transition->getNumAnimations();
+	uint srcNumStates = srcPlace->getNumStates();
+	uint dstNumStates = dstPlace->getNumStates();
+	uint animsNum = transition->getNumAnimations();
 
-	unsigned int srcState = _placeStates[srcPlaceId].state;
-	unsigned int dstState = _placeStates[dstPlaceId].state;
+	uint srcState = _placeStates[srcPlaceId].state;
+	uint dstState = _placeStates[dstPlaceId].state;
 
 	if (srcState >= srcNumStates) {
 		error("Invalid src state");
@@ -1108,11 +1108,11 @@ int CryOmni3DEngine_Versailles::handleWarp() {
 	bool leftButtonPressed = false;
 	bool firstDraw = true;
 	bool moving = true;
-	unsigned int actionId;
+	uint actionId;
 	g_system->showMouse(true);
 	while (!leftButtonPressed && !exit) {
 		int xDelta = 0, yDelta = 0;
-		unsigned int movingCursor = -1;
+		uint movingCursor = -1;
 
 		pollEvents();
 		Common::Point mouse = getMousePos();
@@ -1195,8 +1195,8 @@ int CryOmni3DEngine_Versailles::handleWarp() {
 	return actionId;
 }
 
-bool CryOmni3DEngine_Versailles::handleWarpMouse(unsigned int *actionId,
-        unsigned int movingCursor) {
+bool CryOmni3DEngine_Versailles::handleWarpMouse(uint *actionId,
+        uint movingCursor) {
 	fixActionId(actionId);
 
 	if (getCurrentMouseButton() == 2 ||
@@ -1265,10 +1265,10 @@ bool CryOmni3DEngine_Versailles::handleWarpMouse(unsigned int *actionId,
 	return false;
 }
 
-void CryOmni3DEngine_Versailles::fixActionId(unsigned int *actionId) const {
+void CryOmni3DEngine_Versailles::fixActionId(uint *actionId) const {
 	PlaceStateActionKey mask = PlaceStateActionKey(_currentPlaceId, _placeStates[_currentPlaceId].state,
 	                           *actionId);
-	Common::HashMap<PlaceStateActionKey, unsigned int>::const_iterator it = _actionMasks.find(mask);
+	Common::HashMap<PlaceStateActionKey, uint>::const_iterator it = _actionMasks.find(mask);
 	if (it != _actionMasks.end()) {
 		*actionId = it->_value;
 		return;
@@ -1382,9 +1382,9 @@ void CryOmni3DEngine_Versailles::animateCursor(const Object *obj) {
 
 	bool cursorWasVisible = g_system->showMouse(true);
 
-	for (unsigned int i = 4; i > 0; i--) {
+	for (uint i = 4; i > 0; i--) {
 		// Wait 100ms
-		for (unsigned int j = 10; j > 0; j--) {
+		for (uint j = 10; j > 0; j--) {
 			// pollEvents sleeps 10ms
 			pollEvents();
 			g_system->updateScreen();
@@ -1392,7 +1392,7 @@ void CryOmni3DEngine_Versailles::animateCursor(const Object *obj) {
 		setCursor(obj->idSA());
 		g_system->updateScreen();
 		// Wait 100ms
-		for (unsigned int j = 10; j > 0; j--) {
+		for (uint j = 10; j > 0; j--) {
 			// pollEvents sleeps 10ms
 			pollEvents();
 			g_system->updateScreen();
@@ -1471,7 +1471,7 @@ void CryOmni3DEngine_Versailles::displayObject(const Common::String &imgName,
 	setMousePos(Common::Point(320, 240)); // Center of screen
 }
 
-void CryOmni3DEngine_Versailles::executeSeeAction(unsigned int actionId) {
+void CryOmni3DEngine_Versailles::executeSeeAction(uint actionId) {
 	if (_currentLevel == 7 && _currentPlaceId != 20) {
 		// Don't display fixed images unless it's the bomb
 		// Not enough time for paintings
@@ -1487,7 +1487,7 @@ void CryOmni3DEngine_Versailles::executeSeeAction(unsigned int actionId) {
 	}
 }
 
-void CryOmni3DEngine_Versailles::executeSpeakAction(unsigned int actionId) {
+void CryOmni3DEngine_Versailles::executeSpeakAction(uint actionId) {
 	PlaceActionKey key(_currentPlaceId, actionId);
 	Common::HashMap<PlaceActionKey, Common::String>::iterator it = _whoSpeaksWhere.find(key);
 	g_system->showMouse(true);
@@ -1502,14 +1502,14 @@ void CryOmni3DEngine_Versailles::executeSpeakAction(unsigned int actionId) {
 	}
 }
 
-void CryOmni3DEngine_Versailles::executeDocAction(unsigned int actionId) {
+void CryOmni3DEngine_Versailles::executeDocAction(uint actionId) {
 	if (_currentLevel == 7) {
 		// Not enough time for doc
 		displayMessageBoxWarp(13);
 		return;
 	}
 
-	Common::HashMap<unsigned int, const char *>::iterator it = _docPeopleRecord.find(actionId);
+	Common::HashMap<uint, const char *>::iterator it = _docPeopleRecord.find(actionId);
 	if (it == _docPeopleRecord.end() || !it->_value) {
 		warning("Missing documentation record for action %u", actionId);
 		return;
@@ -1537,7 +1537,7 @@ void CryOmni3DEngine_Versailles::handleFixedImg(const FixedImgCallback &callback
 	}
 }
 
-unsigned int CryOmni3DEngine_Versailles::getFakeTransition(unsigned int actionId) const {
+uint CryOmni3DEngine_Versailles::getFakeTransition(uint actionId) const {
 	for (const FakeTransitionActionPlace *ft = kFakeTransitions; ft->actionId != 0; ft++) {
 		if (ft->actionId == actionId) {
 			return ft->placeId;
@@ -1571,11 +1571,11 @@ void CryOmni3DEngine_Versailles::playInGameVideo(const Common::String &filename,
 }
 
 void CryOmni3DEngine_Versailles::loadBMPs(const char *pattern, Graphics::Surface *bmps,
-        unsigned int count) {
+        uint count) {
 	Image::BitmapDecoder bmpDecoder;
 	Common::File file;
 
-	for (unsigned int i = 0; i < count; i++) {
+	for (uint i = 0; i < count; i++) {
 		Common::String bmp = Common::String::format(pattern, i);
 
 		if (!file.open(bmp)) {

@@ -25,7 +25,7 @@
 namespace CryOmni3D {
 namespace Versailles {
 
-const unsigned int CryOmni3DEngine_Versailles::kSpritesMapTable[] = {
+const uint CryOmni3DEngine_Versailles::kSpritesMapTable[] = {
 	/*   0 */ 242, 240, 243, 241, 256,  93,  97,  94, 160,  98, 178, 161, 179, 196, 197, 244,
 	/*  16 */ 142, 245, 143, 254,  95,  99, 113,  96, 100, 180, 114, 181,  73, 144,  74, 250,
 	/*  32 */ 202, 145, 170, 251, 203, 130, 206, 171,  49, 131, 207, 115, 116, 222,  75,  85,
@@ -43,7 +43,7 @@ const unsigned int CryOmni3DEngine_Versailles::kSpritesMapTable[] = {
 	/* 224 */  80, 221,   1, 263,  78,  67, 174, 212,  68, 175, 213, 190, 191, 238,   0, 239,
 	/* 240 */ 224,  77, 146,   2, 147,  79, 158, 176, 159, 177, 194, 192, 195, 193, /*-1u, -1u*/
 };
-const unsigned int CryOmni3DEngine_Versailles::kSpritesMapTableSize = ARRAYSIZE(kSpritesMapTable);
+const uint CryOmni3DEngine_Versailles::kSpritesMapTableSize = ARRAYSIZE(kSpritesMapTable);
 
 const LevelInitialState CryOmni3DEngine_Versailles::kLevelInitialStates[] = {
 	{  1, M_PI,   0. }, // Level 1
@@ -504,7 +504,7 @@ void CryOmni3DEngine_Versailles::setupDialogVariables() {
 	SET_DIAL_VARIABLE(136, "{CURRENT_GAME_TIME5}");
 	SET_DIAL_VARIABLE(137, "{JOUEUR_POSSEDE_EPIGRAPHE}");
 #undef SET_DIAL_VARIABLE
-	for (unsigned int i = 0; i < ARRAYSIZE(videoSubSettings); i++) {
+	for (uint i = 0; i < ARRAYSIZE(videoSubSettings); i++) {
 		const VideoSubSetting &vss = videoSubSettings[i];
 		_dialogsMan.registerSubtitlesSettings(
 		    vss.videoName,
