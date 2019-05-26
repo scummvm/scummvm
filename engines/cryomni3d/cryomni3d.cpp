@@ -347,6 +347,8 @@ bool CryOmni3DEngine::checkKeysPressed(unsigned int numKeys, ...) {
 }
 
 void CryOmni3DEngine::copySubPalette(byte *dst, const byte *src, uint start, uint num) {
+	assert(start < 256);
+	assert(start + num < 256);
 	memcpy(&dst[3 * start], &src[3 * start], 3 * num * sizeof(*dst));
 }
 
