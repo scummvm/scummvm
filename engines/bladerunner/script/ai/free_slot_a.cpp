@@ -541,6 +541,10 @@ void AIScriptFreeSlotA::FledCombat() {
 }
 
 void AIScriptFreeSlotA::checkIfOnBridge() {
+	if (_vm->_cutContent && Query_Difficulty_Level() == kGameDifficultyEasy) {
+		// Make the bridge indestructible on easy mode for the enhanced version
+		return;
+	}
 	float x, y, z;
 	Actor_Query_XYZ(kActorFreeSlotA, &x, &y, &z);
 	// bug? this should probably check if McCoy is close enough because bridge will break long after rat died and player tries to walk through
