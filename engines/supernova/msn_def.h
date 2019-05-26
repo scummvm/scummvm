@@ -289,7 +289,8 @@ enum StringId {
 	kStringTelomat13, kStringTelomat14, kStringTelomat15, kStringTelomat16, kStringTelomat17,
 	kStringTelomat18, kStringTelomat19, kStringTelomat20, kStringTelomat21, kStringAlarm,
 	// 650
-	kStringLeaveGame, kStringYes, kStringNo,
+	kStringLeaveGame, kStringYes, kStringNo, kStringHelpOverview1, kStringHelpOverview2,
+	kStringHelpOverview3, kStringHelpOverview4, kStringHelpOverview5, kStringHelpOverview6, kStringHelpOverview7,
 
 	// Add two placeholder strings at the end for variable text
 	kStringPlaceholder1, kStringPlaceholder2,

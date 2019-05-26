@@ -819,9 +819,16 @@ const char *gameText[] = {
 	"Spiel abbrechen?", // kStringLeaveGame
 	"Ja", // kStringYes
 	"Nein", // kStringNo
+	"F1    Hilfe",  // kStringHelpOverview1
+	"F2    Anleitung",  // kStringHelpOverview2
+	// 655
+	"F3    Programminformationen",  //kStringHelpOverview3
+	"F4    Textgeschwindigkeit",    //kStringHelpOverview4
+	"F5    Laden / Speichern",  // kStringHelpOverview5
+	"ESC   Vorspann \201berspringen",   // kStringHelpOverview6
+	"Alt-X Programm abbrechen",     // kStringHelpOverview7
+	// 660
 	NULL
 };
-
-
 
 #endif // GAMETEXT_H
