@@ -383,6 +383,9 @@ static byte processColorBits(uint16 &bits, bool &odd, bool secondPal) {
 		break;
 	case 0x5: // 101 (color)
 		color = 2 + !odd;
+		break;
+	default:
+		break;
 	}
 
 	if (secondPal)
@@ -477,9 +480,9 @@ static void renderPixelRowMono(byte *dst, byte *src) {
 static void copyEvenSurfaceRows(Graphics::Surface &surf) {
 	byte *src = (byte *)surf.getPixels();
 
-	for (uint y = 0; y < surf.h / 2; ++y) {
+	for (uint16 y = 0; y < surf.h / 2; ++y) {
 		byte *dst = src + surf.pitch;
-		for (uint x = 0; x < surf.w; ++x)
+		for (uint16 x = 0; x < surf.w; ++x)
 			dst[x] = ALTCOL(src[x]);
 		src += surf.pitch * 2;
 	}
@@ -553,8 +556,8 @@ void Display::createFont() {
 	byte *buf = (byte *)_font->getPixels();
 	byte *bufInv = buf + (_font->h / 2) * _font->pitch;
 
-	for (uint row = 0; row < _font->h / 2; row += 2) {
-		for (uint col = 0; col < _font->w; ++col)
+	for (uint16 row = 0; row < _font->h / 2; row += 2) {
+		for (uint16 col = 0; col < _font->w; ++col)
 			bufInv[col] = (buf[col] ? 0 : 1);
 
 		buf += _font->pitch * 2;

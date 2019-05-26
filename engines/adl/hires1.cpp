@@ -398,7 +398,7 @@ void HiRes1Engine::printString(const Common::String &str) {
 
 Common::String HiRes1Engine::loadMessage(uint idx) const {
 	StreamPtr stream(_messages[idx]->createReadStream());
-	return readString(*stream, APPLECHAR('\r')) + APPLECHAR('\r');
+	return readString(*stream, APPLEBYTE('\r')) + APPLEBYTE('\r');
 }
 
 void HiRes1Engine::printMessage(uint idx) {
