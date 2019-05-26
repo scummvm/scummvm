@@ -20,7 +20,7 @@
  *
  */
 
-#include "engines/cryomni3d/omni3d.h"
+#include "cryomni3d/omni3d.h"
 
 #include "common/rect.h"
 

@@ -21,7 +21,7 @@
  */
 
 
-#include "engines/cryomni3d/objects.h"
+#include "cryomni3d/objects.h"
 
 namespace CryOmni3D {
 

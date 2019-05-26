@@ -25,8 +25,8 @@
 
 #include "common/func.h"
 
-#include "engines/cryomni3d/cryomni3d.h"
-#include "engines/cryomni3d/objects.h"
+#include "cryomni3d/cryomni3d.h"
+#include "cryomni3d/objects.h"
 
 namespace Graphics {
 struct Surface;
