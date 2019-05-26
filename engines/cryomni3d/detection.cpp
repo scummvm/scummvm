@@ -70,21 +70,7 @@ Common::Language CryOmni3DEngine::getLanguage() const {
 
 bool CryOmni3DEngine::hasFeature(EngineFeature f) const {
 	return false;
-//		(f == kSupportsRTL);
 }
-
-/*
-#ifdef ENABLE_MYST
-
-bool MohawkEngine_Myst::hasFeature(EngineFeature f) const {
-    return
-        MohawkEngine::hasFeature(f)
-        || (f == kSupportsLoadingDuringRuntime)
-        || (f == kSupportsSavingDuringRuntime);
-}
-
-#endif
-*/
 
 } // End of Namespace CryOmni3D
 
@@ -95,29 +81,7 @@ static const PlainGameDescriptor cryomni3DGames[] = {
 
 #include "cryomni3d/detection_tables.h"
 
-/*
-static const char *directoryGlobs[] = {
-    "all",
-    "assets1",
-    "data",
-    "program",
-    "95instal",
-    "Rugrats Adventure Game",
-    0
-};
-*/
-
 static const ADExtraGuiOptionsMap optionsList[] = {
-	/*{
-	        GAMEOPTION_PLAY_MYST_FLYBY,
-	        {
-	                _s("Play the Myst fly by movie"),
-	                _s("The Myst fly by movie was not played by the original engine."),
-	                "playmystflyby",
-	                false
-	        }
-	},*/
-
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
@@ -127,7 +91,6 @@ public:
 		        sizeof(CryOmni3D::CryOmni3DGameDescription), cryomni3DGames, optionsList) {
 		//_singleId = "cryomni3d";
 		_maxScanDepth = 2;
-		//_directoryGlobs = directoryGlobs;
 	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles,
@@ -192,37 +155,14 @@ SaveStateList CryOmni3DMetaEngine::listSavesForPrefix(const char *prefix,
 SaveStateList CryOmni3DMetaEngine::listSaves(const char *target) const {
 	SaveStateList saveList;
 
-	/*
-	// Loading games is only supported in Myst/Riven currently.
-	saveList = listSavesForPrefix("myst", "mys");
-
-	for (SaveStateList::iterator save = saveList.begin(); save != saveList.end(); ++save) {
-	    // Read the description from the save
-	    int slot = save->getSaveSlot();
-	    Common::String description = Mohawk::MystGameState::querySaveDescription(slot);
-	    save->setDescription(description);
-	}
-	*/
-
 	return saveList;
 }
 
 void CryOmni3DMetaEngine::removeSaveState(const char *target, int slot) const {
 
-	/*
-	// Removing saved games is only supported in Myst/Riven currently.
-	if (strstr(target, "myst")) {
-	    Mohawk::MystGameState::deleteSave(slot);
-	}
-	*/
 }
 
 SaveStateDescriptor CryOmni3DMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	/*
-	if (strstr(target, "myst")) {
-	    return Mohawk::MystGameState::querySaveMetaInfos(slot);
-	}
-	*/
 	return SaveStateDescriptor();
 }
 

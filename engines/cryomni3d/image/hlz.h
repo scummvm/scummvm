@@ -20,14 +20,6 @@
  *
  */
 
-/**
- * @file
- * Image decoder used in engines:
- *  - hugo
- *  - mohawk
- *  - wintermute
- */
-
 #ifndef CRYOMNI3D_IMAGE_HLZ_H
 #define CRYOMNI3D_IMAGE_HLZ_H
 
