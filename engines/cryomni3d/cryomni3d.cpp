@@ -38,8 +38,6 @@
 #include "cryomni3d/image/hlz.h"
 #include "cryomni3d/video/hnm_decoder.h"
 
-#include <stdarg.h> // For va_list etc.
-
 namespace CryOmni3D {
 
 CryOmni3DEngine::CryOmni3DEngine(OSystem *syst,
