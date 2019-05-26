@@ -347,6 +347,9 @@ void SceneScriptPS09::dialogueWithGrigorian() {
 			Actor_Says(kActorGrigorian, 170, 15);
 			Actor_Says(kActorGrigorian, 180, 16);
 			Actor_Says(kActorMcCoy, 4315, 18);
+			if (_vm->_cutContent) {
+				Actor_Says(kActorGrigorian, 190, kAnimationModeTalk); // Everything and anything.
+			}
 			Actor_Says(kActorGrigorian, 200, 13);
 			return;
 		}
@@ -359,11 +362,17 @@ void SceneScriptPS09::dialogueWithGrigorian() {
 		Actor_Says(kActorGrigorian, 220, 13);
 		Actor_Says(kActorGrigorian, 230, 14);
 		Actor_Says(kActorMcCoy, 4320, 14);
+		if (_vm->_cutContent) {
+			Actor_Says(kActorMcCoy, 4325, kAnimationModeTalk); // What else do you guys do besides wave signs
+		}
 		Actor_Says(kActorGrigorian, 240, 16);
 		Actor_Says(kActorGrigorian, 250, 15);
 		Actor_Says(kActorMcCoy, 4330, 13);
 		Actor_Says(kActorGrigorian, 260, 13);
 		Actor_Says(kActorGrigorian, 270, 12);
+		if (_vm->_cutContent) {
+			Actor_Says(kActorGrigorian, 280, 12); // A way for the slaves to escape
+		}
 		Actor_Says(kActorMcCoy, 4335, 18);
 		Actor_Says(kActorGrigorian, 290, 15);
 		Actor_Says(kActorMcCoy, 4340, 13);
@@ -391,6 +400,9 @@ void SceneScriptPS09::dialogueWithGrigorian() {
 			Actor_Says(kActorCrazylegs, 1080, kAnimationModeTalk);
 		} else {
 			Actor_Says(kActorGrigorian, 320, 13);
+			if (_vm->_cutContent) {
+				Actor_Says(kActorGrigorian, 330, kAnimationModeTalk); // Friends with access to vehicles
+			}
 			Actor_Says(kActorGrigorian, 340, 14);
 			Actor_Says(kActorGrigorian, 350, 12);
 			Actor_Says(kActorMcCoy, 4375, 18);

@@ -104,6 +104,9 @@ bool SceneScriptHC01::ClickedOnActor(int actorId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 624.43f, 0.14f, 83.0f, 0, true, false, false)) {
 			if (!Game_Flag_Query(kFlagHC01IzoTalk1)) {
 				Actor_Face_Actor(kActorIzo, kActorMcCoy, true);
+				if (_vm->_cutContent) {
+					Actor_Says_With_Pause(kActorIzo,  0, 0.2f, 13);
+				}
 				Actor_Says_With_Pause(kActorIzo, 10, 0.2f, 13);
 				Actor_Face_Actor(kActorMcCoy, kActorIzo, true);
 				Actor_Says(kActorIzo, 20, 17);
@@ -273,16 +276,37 @@ void SceneScriptHC01::dialogueWithIzo() {
 	} else if (Actor_Clue_Query(kActorMcCoy, kClueShellCasings)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1040, 4, 4, 6); // SHELL CASINGS
 	}
+#if BLADERUNNER_ORIGINAL_BUGS
 	if (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1050, -1, 3, 8); // GRIGORIAN 1
 	} else if (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1060, -1, 3, 8); // GRIGORIAN 2
 	}
+#else
+	// When McCoy has kClueGrigorianInterviewB1 then Izo is a Replicant
+	// and when he has kClueGrigorianInterviewB2 then Izo is a human
+	// However the dialogue menu options are actually reversed in the original
+	// and inconsistent with what Grigorian says in his interviews.
+	// The 1050 dialogue menu option belongs to the case where Izo is a Replicant
+	// because in that dialogue McCoy mentions that Grigorian described him to a tee (which he does in kClueGrigorianInterviewB1)
+	// And the 1060 dialogue menu option belongs to the case where Izo is a human
+	// because in that dialogue McCoy talks about how Izo is a psychopath and was thrown out of CARS
+	// which is what Grigorian says in kClueGrigorianInterviewB2
+	if (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB1)) {
+		DM_Add_To_List_Never_Repeat_Once_Selected(1050, -1, 3, 8); // GRIGORIAN 1
+	} else if (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewB2)) {
+		DM_Add_To_List_Never_Repeat_Once_Selected(1060, -1, 3, 8); // GRIGORIAN 2
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	if (Dialogue_Menu_Query_List_Size() == 0) {
 		Actor_Says_With_Pause(kActorMcCoy, 1105, 1.2f, 13);
 		if (Actor_Query_Friendliness_To_Other(kActorIzo, kActorMcCoy) < 50) {
 			Actor_Says(kActorIzo, 550, 15);
+			if (_vm->_cutContent) {
+				Actor_Says(kActorMcCoy, 1220, 14); // you can bet...
+				Actor_Says(kActorIzo, 560, kAnimationModeTalk); // i'll be here
+			}
 		} else {
 			Actor_Says(kActorIzo, 250, 13);
 			Actor_Modify_Friendliness_To_Other(kActorIzo, kActorMcCoy, -1);
@@ -319,11 +343,17 @@ void SceneScriptHC01::dialogueWithIzo() {
 		if (answer == 1020) { // DRAGONFLY JEWERLY
 			Dialogue_Menu_Remove_From_List(1020);
 			Actor_Says(kActorMcCoy, 1065, 15);
-			Actor_Says(kActorIzo, 160, kAnimationModeTalk);
-			Actor_Says(kActorMcCoy, 1110, 16);
-			Actor_Says(kActorIzo, 170, kAnimationModeTalk);
-			Actor_Says(kActorIzo, 180, kAnimationModeTalk);
-			Actor_Says(kActorIzo, 190, 12);
+			if (_vm->_cutContent && Game_Flag_Query(kFlagIzoIsReplicant)) {
+				// Restored: if Izo is a Replicant, he would probably lie
+				// so this line goes here
+				Actor_Says(kActorIzo, 150, kAnimationModeTalk);
+			} else {
+				Actor_Says(kActorIzo, 160, kAnimationModeTalk);
+				Actor_Says(kActorMcCoy, 1110, 16);
+				Actor_Says(kActorIzo, 170, kAnimationModeTalk);
+				Actor_Says(kActorIzo, 180, kAnimationModeTalk);
+				Actor_Says(kActorIzo, 190, 12);
+			}
 			if (Query_Difficulty_Level() < kGameDifficultyHard) {
 				Actor_Modify_Friendliness_To_Other(kActorIzo, kActorMcCoy, -2);
 			}
@@ -370,20 +400,20 @@ void SceneScriptHC01::dialogueWithIzo() {
 			Actor_Says(kActorIzo, 350, 12);
 			end = true;
 		}
-		if (answer == 1050) { // GRIGORIAN 1
+		if (answer == 1050) { // GRIGORIAN 1 // Izo is Replicant
 			Dialogue_Menu_Remove_From_List(1050);
-			Actor_Says(kActorMcCoy, 1090, 18);
+			Actor_Says(kActorMcCoy, 1090, 18); // Ever consort with a group called CARS? C.A.R.S.?
 			Actor_Says(kActorIzo, 360, 14);
 			Actor_Says(kActorMcCoy, 1150, 17);
 			Actor_Says(kActorIzo, 370, 13);
 			Actor_Says(kActorMcCoy, 1155, 15);
 			Actor_Says(kActorIzo, 380, 12);
-			Actor_Says(kActorMcCoy, 1160, 14);
-			Actor_Says(kActorMcCoy, 1165, 18);
+			Actor_Says(kActorMcCoy, 1160, 14); // He described you to a tee
+			Actor_Says(kActorMcCoy, 1165, 18); // Even down to that stupid little ponytail you got.
 			Actor_Says(kActorIzo, 390, 16);
-			Actor_Says(kActorMcCoy, 1170, 12);
+			Actor_Says(kActorMcCoy, 1170, 12); // What would you say if I told you Grigorian named you
 			Actor_Says(kActorIzo, 400, 13);
-			Actor_Says(kActorMcCoy, 1180, 14);
+			Actor_Says(kActorMcCoy, 1180, 14); // So, you're denying all involvement?
 			Actor_Says(kActorIzo, 410, 12);
 			Actor_Says(kActorIzo, 420, 16);
 			Actor_Says(kActorIzo, 430, 17);
@@ -394,15 +424,15 @@ void SceneScriptHC01::dialogueWithIzo() {
 			}
 			end = true;
 		}
-		if (answer == 1060) { // GRIGORIAN 2
+		if (answer == 1060) { // GRIGORIAN 2 - Izo is a human, ex member of CARS
 			Dialogue_Menu_Remove_From_List(1060);
 			Actor_Says(kActorMcCoy, 1095, 15);
-			Actor_Says_With_Pause(kActorMcCoy, 1100, 1.2f, 18);
+			Actor_Says_With_Pause(kActorMcCoy, 1100, 1.2f, 18); // That go for your old buddy Spencer Grigorian, too?
 			Actor_Says(kActorIzo, 450, 12);
 			Actor_Says(kActorIzo, 460, 13);
-			Actor_Says(kActorMcCoy, 1185, 18);
+			Actor_Says(kActorMcCoy, 1185, 18); // Calfskin?
 			Actor_Says(kActorIzo, 470, 14);
-			Actor_Says(kActorMcCoy, 1190, 14);
+			Actor_Says(kActorMcCoy, 1190, 14); // Grigorian said you were thrown out of C.A.R.S.
 			Actor_Says(kActorIzo, 480, 13);
 			Actor_Says(kActorMcCoy, 1195, 16);
 			Actor_Says(kActorMcCoy, 1200, 18);
@@ -420,6 +450,9 @@ void SceneScriptHC01::dialogueWithIzo() {
 			end = true;
 		}
 		if (answer == 100) { // DONE
+			if (_vm->_cutContent) {
+				Actor_Says(kActorMcCoy, 1215, 16); // All right
+			}
 			end = true;
 		}
 	} while (!end);
