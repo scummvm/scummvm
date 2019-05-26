@@ -1862,7 +1862,7 @@ enum GameModelAnimations {
 	kModelAnimationWeaponsOrderForm            = 965,
 	kModelAnimationShellCasings                = 966,
 	kModelAnimationSlug                        = 967,
-//	kModelAnimationKnife                       = 968, // unused - a knife? - spins badly
+//	kModelAnimationKnife                       = 968, // unused - 3 frames - a knife? - spins badly
 	kModelAnimationStrangeScale                = 969,
 	kModelAnimationHysteriaToken               = 970,
 	kModelAnimationToyDog                      = 971,

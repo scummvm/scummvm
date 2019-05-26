@@ -229,8 +229,8 @@ void SceneScriptUG18::SceneFrameAdvanced(int frame) {
 			Ambient_Sounds_Play_Sound(kSfxSUBWAY1, 24, 30, 0, 50);
 		}
 
-		if (frame == 119     //  end of main loop unloading // works better the using the 120 value
-		   || frame ==  240 // end of main loop no trains
+		if (frame == 119    //  end of main loop unloading // works better than using the 120 value
+		   || frame ==  240 //  end of main loop no trains
 		) {
 			if (Global_Variable_Query(kVariableUG18CountUpForNextTrainAction) < kUG18TrainsCountUpTargetRegular) {
 				if (Global_Variable_Query(kVariableUG18StateOfTrains) == kUG18NoTrains) {
