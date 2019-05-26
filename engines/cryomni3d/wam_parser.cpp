@@ -22,8 +22,8 @@
 
 #include "common/stream.h"
 
-#include "engines/cryomni3d/wam_parser.h"
-#include "engines/cryomni3d/omni3d.h"
+#include "cryomni3d/wam_parser.h"
+#include "cryomni3d/omni3d.h"
 
 namespace CryOmni3D {
 

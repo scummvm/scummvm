@@ -20,7 +20,7 @@
  *
  */
 
-#include "engines/cryomni3d/fixed_image.h"
+#include "cryomni3d/fixed_image.h"
 
 #include "common/file.h"
 #include "common/system.h"

@@ -24,7 +24,7 @@
 #include "common/file.h"
 #include "graphics/surface.h"
 
-#include "engines/cryomni3d/sprites.h"
+#include "cryomni3d/sprites.h"
 
 // #define SPRTIES_DEBUG
 

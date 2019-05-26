@@ -24,7 +24,7 @@
 #include "common/file.h"
 #include "graphics/managed_surface.h"
 
-#include "engines/cryomni3d/font_manager.h"
+#include "cryomni3d/font_manager.h"
 
 namespace CryOmni3D {
 

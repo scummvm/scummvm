@@ -33,9 +33,9 @@
 
 #include "engines/engine.h"
 
-#include "font_manager.h"
-#include "objects.h"
-#include "sprites.h"
+#include "cryomni3d/font_manager.h"
+#include "cryomni3d/objects.h"
+#include "cryomni3d/sprites.h"
 
 class OSystem;
 
