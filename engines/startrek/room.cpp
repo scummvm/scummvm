@@ -259,7 +259,7 @@ void Room::loadActorStandAnim(int actorIndex) {
 		_vm->removeActorFromScreen(actorIndex);
 	else {
 		Actor *actor = &_vm->_actorList[actorIndex];
-		if (actor->animationString[0] == '\0')
+		if (actor->animationString.empty())
 			_vm->removeActorFromScreen(actorIndex);
 		else
 			_vm->initStandAnim(actorIndex);
@@ -447,10 +447,10 @@ void Room::endMission(int16 score, int16 arg1, int16 arg2) {
 		_vm->loadActorAnimWithRoomScaling(i, anim, actor->sprite.pos.x, actor->sprite.pos.y);
 	}
 
-	_vm->_kirkActor->animationString[0] = '\0';
-	_vm->_spockActor->animationString[0] = '\0';
-	_vm->_mccoyActor->animationString[0] = '\0';
-	_vm->_redshirtActor->animationString[0] = '\0';
+	_vm->_kirkActor->animationString.clear();
+	_vm->_spockActor->animationString.clear();
+	_vm->_mccoyActor->animationString.clear();
+	_vm->_redshirtActor->animationString.clear();
 
 	playSoundEffectIndex(8);
 

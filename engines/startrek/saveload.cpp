@@ -237,6 +237,8 @@ bool StarTrekEngine::saveOrLoadGameData(Common::SeekableReadStream *in, Common::
 		ser.syncAsUint32LE(_roomFrameCounter);
 		ser.syncAsUint32LE(_frameIndex); // FIXME: redundant
 
+		byte filler = 0;
+
 		// Serialize the "actor" class
 		for (int i = 0; i < NUM_ACTORS; i++) {
 			Actor *a = &_actorList[i];
@@ -258,7 +260,10 @@ bool StarTrekEngine::saveOrLoadGameData(Common::SeekableReadStream *in, Common::
 			ser.syncAsUint16LE(a->field62);
 			ser.syncAsUint16LE(a->triggerActionWhenAnimFinished);
 			ser.syncAsUint16LE(a->finishedAnimActionParam);
-			ser.syncBytes((byte *)a->animationString2, 8);
+			ser.syncString(a->animationString2);
+			filler = 0;
+			for (uint i = 0; i < 8 - a->animationString2.size() - 1; ++i)
+				ser.syncAsByte(filler);	// make sure that exactly 8 bytes are synced
 			ser.syncAsUint16LE(a->field70);
 			ser.syncAsUint16LE(a->field72);
 			ser.syncAsUint16LE(a->field74);
@@ -276,7 +281,10 @@ bool StarTrekEngine::saveOrLoadGameData(Common::SeekableReadStream *in, Common::
 			ser.syncAsByte(a->direction);
 			ser.syncAsUint16LE(a->field94);
 			ser.syncAsUint16LE(a->field96);
-			ser.syncBytes((byte *)a->animationString, 10);
+			ser.syncString(a->animationString);
+			filler = 0;
+			for (uint i = 0; i < 10 - a->animationString.size() - 1; ++i)
+				ser.syncAsByte(filler);	// make sure that exactly 10 bytes are synced
 			ser.syncAsUint16LE(a->fielda2);
 			ser.syncAsUint16LE(a->fielda4);
 			ser.syncAsUint16LE(a->fielda6);

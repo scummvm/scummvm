@@ -268,7 +268,7 @@ void StarTrekEngine::runTransportSequence(const Common::String &name) {
 		int x = crewmanTransportPositions[i][0];
 		int y = crewmanTransportPositions[i][1];
 		loadActorAnim(i, filename, x, y, 1.0);
-		_actorList[i].animationString[0] = '\0';
+		_actorList[i].animationString.clear();
 	}
 
 	if (_missionToLoad.equalsIgnoreCase("feather") && name[4] == 'b') {
