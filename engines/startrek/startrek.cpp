@@ -553,9 +553,13 @@ SharedPtr<FileStream> StarTrekEngine::loadFile(Common::String filename, int file
 
 	delete dataFile;
 	delete dataRunFile;
-	byte *data = (byte *)malloc(stream->size());
-	stream->read(data, stream->size());
-	return SharedPtr<FileStream>(new FileStream(data, stream->size(), bigEndian));
+
+	int32 size = stream->size();
+	byte *data = (byte *)malloc(size);
+	stream->read(data, size);
+	delete stream;
+
+	return SharedPtr<FileStream>(new FileStream(data, size, bigEndian));
 }
 
 SharedPtr<FileStream> StarTrekEngine::loadFileWithParams(Common::String filename, bool unk1, bool unk2, bool unk3) {
