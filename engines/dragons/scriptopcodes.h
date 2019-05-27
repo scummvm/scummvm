@@ -62,6 +62,7 @@ public:
 	~ScriptOpcodes();
 	void runScript(ScriptOpCall &scriptOpCall);
 	void runScript3(ScriptOpCall &scriptOpCall);
+	bool runScript4(ScriptOpCall &scriptOpCall);
 	void execOpcode(ScriptOpCall &scriptOpCall);
 	void executeScriptLoop(ScriptOpCall &scriptOpCall);
 	int16 FUN_800297d8(ScriptOpCall &scriptOpCall);
@@ -101,6 +102,9 @@ protected:
 	void opUnk15PropertiesRelated(ScriptOpCall &scriptOpCall);
 	void opUnk16(ScriptOpCall &scriptOpCall);
 	void opUnk17(ScriptOpCall &scriptOpCall);
+	void opUnk18(ScriptOpCall &scriptOpCall);
+	void opUnk1B(ScriptOpCall &scriptOpCall);
+	void opSetActorFlag0x1000(ScriptOpCall &scriptOpCall);
 	void opPlayMusic(ScriptOpCall &scriptOpCall);
 	void opUnk20(ScriptOpCall &scriptOpCall);
 

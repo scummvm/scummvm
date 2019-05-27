@@ -229,21 +229,17 @@ void DragonsEngine::gameLoop()
 			actorId_00 = uVar3 & 0xffff;
 			if (actorId_00 == 0) goto LAB_80026d34;
 			if (actorId_00 != (actorId & 0xffff)) {
-				//TODO implement this
-				error("actorId_00 != (actorId & 0xffff)");
-//				buffer = (void *)((int)dragon_Obd_Offset + dragon_Opt_Offset[actorId_00 - 1].obdOffset);
-//				local_30.code = (void *)((int)buffer + 8);
-//				uVar4 = read_int32(buffer);
-//				local_30.codeEnd = (void *)(uVar4 + (int)local_30.code);
-//				actorId = run_script_field8_eq_4(&local_30);
-//				if ((actorId & 0xffff) != 0) {
-//					local_30.codeEnd =
-//							(void *)((uint)*(ushort *)((int)local_30.code + 2) +
-//									 (int)(void *)((int)local_30.code + 4));
-//					local_30.code = (void *)((int)local_30.code + 4);
-//					run_script(&local_30);
-//					_counter = 0;
-//				}
+				byte *obd = _dragonOBD->getFromOpt(actorId_00 - 1);
+				ScriptOpCall scriptOpCall;
+				scriptOpCall._code = obd + 8;
+				scriptOpCall._codeEnd = scriptOpCall._code + READ_LE_UINT32(obd);
+
+				if(_scriptOpcodes->runScript4(scriptOpCall)) {
+					scriptOpCall._codeEnd = scriptOpCall._code + 4 + READ_LE_UINT16(scriptOpCall._code + 2);
+					scriptOpCall._code += 4;
+					_scriptOpcodes->runScript(scriptOpCall);
+					_counter = 0;
+				}
 			}
 		}
 		else {

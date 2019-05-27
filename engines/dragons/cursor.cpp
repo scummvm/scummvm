@@ -223,7 +223,7 @@ int16 Cursor::updateIniFromScene() {
 				// 0x80028a24
 				if (ini->field_2 != -1) {
 					IMG *img = _vm->_dragonIMG->getIMG((uint32)ini->field_2);
-					if (img->field_e - 1 >= 2) {
+					if (img->field_e - 1 >= 1) { // TODO this is >= 2 in the original.
 						if (cursorTileX >= img->x && cursorTileX < img->x + img->w && cursorTileY >= img->y && cursorTileY < img->y + img->h) {
 							cursorOverIni = i + 1;
 						}
