@@ -306,6 +306,7 @@ void BbdouInventory::cause0x1B0001(TriggerFunction *triggerFunction, uint32 call
 
 	foundSceneId = _activeInventorySceneId;
 	foundVerbId = triggerFunction->_verbId;
+	foundObjectId = 0;
 	foundObjectId2 = 0;
 
 	if (triggerFunction->_verbId == 0x1B0008) {
