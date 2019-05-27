@@ -113,6 +113,10 @@ void ScriptOpcodes::initOpcodes() {
 
 	OPCODE(0x16, opUnk16);
 	OPCODE(0x17, opUnk17);
+	OPCODE(0x18, opUnk18);
+
+	OPCODE(0x1B, opUnk1B);
+	OPCODE(0x1C, opSetActorFlag0x1000);
 
 	OPCODE(0x1F, opPlayMusic);
 	OPCODE(0x20, opUnk20);
@@ -146,6 +150,14 @@ void ScriptOpcodes::runScript3(ScriptOpCall &scriptOpCall) {
 	scriptOpCall._result = 0;
 	_data_80071f5c = 0;
 	executeScriptLoop(scriptOpCall);
+}
+
+bool ScriptOpcodes::runScript4(ScriptOpCall &scriptOpCall) {
+	scriptOpCall._field8 = 4;
+	scriptOpCall._result = 0;
+	_data_80071f5c = 0;
+	executeScriptLoop(scriptOpCall);
+	return scriptOpCall._result;
 }
 
 void ScriptOpcodes::executeScriptLoop(ScriptOpCall &scriptOpCall) {
@@ -943,6 +955,50 @@ void ScriptOpcodes::opUnk17(ScriptOpCall &scriptOpCall) {
 
 }
 
+
+void ScriptOpcodes::opUnk18(ScriptOpCall &scriptOpCall) {
+	ARG_INT16(field0);
+	ARG_INT16(field2);
+	ARG_INT16(field4);
+	ARG_INT16(field6);
+	ARG_INT16(field8);
+	ARG_INT16(fieldA);
+
+	if (scriptOpCall._field8 != 0) {
+		return;
+	}
+	//TODO implement me!
+	error("opUnk18");
+}
+
+void ScriptOpcodes::opUnk1B(ScriptOpCall &scriptOpCall) {
+	ARG_SKIP(2);
+	ARG_INT16(iniId);
+
+	if (scriptOpCall._field8 != 0) {
+		return;
+	}
+
+	DragonINI *ini = _vm->getINI(iniId - 1);
+	if (ini->field_1a_flags_maybe & 1) {
+		while (ini->actor->isFlagSet(ACTOR_FLAG_10)) {
+			_vm->waitForFrames(1);
+		}
+	}
+}
+
+void ScriptOpcodes::opSetActorFlag0x1000(ScriptOpCall &scriptOpCall) {
+	ARG_SKIP(2);
+	ARG_INT16(iniId);
+
+	if (scriptOpCall._field8 != 0) {
+		return;
+	}
+
+	DragonINI *ini = _vm->getINI(iniId - 1);
+	ini->actor->isFlagSet(ACTOR_FLAG_1000);
+}
+
 void ScriptOpcodes::opCode_Unk7(ScriptOpCall &scriptOpCall) {
 	ARG_INT16(field0);
 	ARG_INT16(field2);
@@ -994,8 +1050,21 @@ void ScriptOpcodes::opCode_Unk7(ScriptOpCall &scriptOpCall) {
 		}
 
 		if (ini->sceneId == 1) {
-			//TODO 0x8002d218
-			error("0x8002d218");
+			if ((uint)_vm->_cursor->iniItemInHand - 1 == ini->id) {
+				_vm->_cursor->data_800728b0_cursor_seqID = 0;
+				_vm->_cursor->_sequenceID = 0;
+				_vm->_cursor->iniItemInHand = 0;
+			}
+			else {
+				for (int i = 0; i < 0x29; i++) {
+					if (_vm->unkArray_uint16[i] - 1 == ini->id) {
+						_vm->unkArray_uint16[i] = 0;
+						if (_vm->_inventory->getType() == 1) {
+							ini->actor->clearFlag(ACTOR_FLAG_40);
+						}
+					}
+				}
+			}
 		}
 
 		if (sceneId == 1) {
