@@ -42,6 +42,7 @@
 #include "sequenceopcodes.h"
 #include "scriptopcodes.h"
 #include "bag.h"
+#include "talk.h"
 
 namespace Dragons {
 
@@ -63,6 +64,7 @@ DragonsEngine::DragonsEngine(OSystem *syst) : Engine(syst) {
 	_engine = this;
 	_inventory = new Inventory(this);
 	_cursor = new Cursor(this);
+	_talk = NULL;
 
 	_leftMouseButtonUp = false;
 	_rightMouseButtonUp = false;
@@ -108,6 +110,7 @@ void DragonsEngine::updateEvents() {
 Common::Error DragonsEngine::run() {
 	_screen = new Screen();
 	_bigfileArchive = new BigfileArchive("bigfile.dat", Common::Language::EN_ANY);
+	_talk = new Talk(this, _bigfileArchive);
 	_dragonFLG = new DragonFLG(_bigfileArchive);
 	_dragonIMG = new DragonIMG(_bigfileArchive);
 	_dragonOBD = new DragonOBD(_bigfileArchive);
@@ -666,7 +669,7 @@ void DragonsEngine::updateActorSequences() {
 			!(actor->flags & Dragons::ACTOR_FLAG_4) &&
 			!(actor->flags & Dragons::ACTOR_FLAG_400) &&
 			(actor->sequenceTimer == 0 || actor->flags & Dragons::ACTOR_FLAG_1)) {
-			debug(3, "Actor[%d] execute sequenceOp", actorId);
+			debug(5, "Actor[%d] execute sequenceOp", actorId);
 
 			if (actor->flags & Dragons::ACTOR_FLAG_1) {
 				actor->resetSequenceIP();
@@ -1164,6 +1167,7 @@ void DragonsEngine::loadScene(uint16 sceneId) {
 	_scriptOpcodes->_data_800728c0 = 0; //TODO this should be reset in scriptopcode.
 	_cursor->init(_actorManager, _dragonINIResource);
 	_inventory->init(_actorManager, _backgroundResourceLoader, new Bag(_bigfileArchive, _screen), _dragonINIResource);
+	_talk->init();
 
 	if (sceneId > 2) {
 		_dragonVAR->setVar(1, 1);
@@ -1179,6 +1183,8 @@ void DragonsEngine::loadScene(uint16 sceneId) {
 	} else {
 		sceneId = 0x12; // HACK the first scene. TODO remove this
 	}
+
+	_inventory->loadInventoryItemsFromSave();
 
 	if(getINI(0)->sceneId == 0) {
 		getINI(0)->sceneId = sceneId; //TODO

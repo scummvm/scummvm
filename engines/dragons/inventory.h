@@ -77,6 +77,7 @@ public:
 
 	void draw();
 	uint16 getIniAtPosition(int16 x, int16 y);
+	void loadInventoryItemsFromSave();
 private:
 	void animateBagIn();
 	void animateBagOut();
