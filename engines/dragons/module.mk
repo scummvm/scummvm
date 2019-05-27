@@ -21,7 +21,8 @@ MODULE_OBJS := \
 	screen.o \
 	scriptopcodes.o \
 	sequenceopcodes.o \
-	specialopcodes.o
+	specialopcodes.o \
+	talk.o
 
 MODULE_DIRS += \
 	engines/dragons

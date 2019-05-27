@@ -110,7 +110,7 @@ Graphics::Surface *ActorResource::loadFrame(ActorFrame &actorFrame, byte *palett
 
 	int32 blockSize = ((actorFrame.width / 2) * actorFrame.height * 2) / 4;
 
-	debug(3, "Frame blockSize: %d width: %d height: %d", blockSize, actorFrame.width, actorFrame.height);
+	debug(5, "Frame blockSize: %d width: %d height: %d", blockSize, actorFrame.width, actorFrame.height);
 
 	byte *data = actorFrame.frameDataOffset;
 

@@ -86,13 +86,7 @@ void Inventory::init(ActorManager *actorManager, BackgroundResourceLoader *backg
 		actorManager->loadActor(0, i); // TODO need to share resource between inventory item actors.
 	}
 
-	int j = 0;
-	for (int i=0; i < dragonIniResource->totalRecords() && j < 0x29; i++ ) {
-		DragonINI *ini = dragonIniResource->getRecord(i);
-		if (ini->sceneId == 1) {
-			_vm->unkArray_uint16[j++] = i + 1;
-		}
-	}
+	loadInventoryItemsFromSave();
 }
 
 
@@ -257,6 +251,16 @@ uint16 Inventory::getIniAtPosition(int16 x, int16 y) {
 		}
 	}
 	return 0;
+}
+
+void Inventory::loadInventoryItemsFromSave() {
+	int j = 0;
+	for (int i=0; i < _vm->_dragonINIResource->totalRecords() && j < 0x29; i++ ) {
+		DragonINI *ini = _vm->_dragonINIResource->getRecord(i);
+		if (ini->sceneId == 1) {
+			_vm->unkArray_uint16[j++] = i + 1;
+		}
+	}
 }
 
 } // End of namespace Dragons

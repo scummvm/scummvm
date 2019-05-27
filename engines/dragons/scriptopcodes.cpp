@@ -32,6 +32,7 @@
 #include "dragons/scriptopcodes.h"
 #include "dragons/specialopcodes.h"
 #include "dragons/actor.h"
+#include "dragons/talk.h"
 #include "scriptopcodes.h"
 
 
@@ -783,8 +784,10 @@ void ScriptOpcodes::opUnk12LoadScene(ScriptOpCall &scriptOpCall) {
 
 void ScriptOpcodes::opCodeActorTalk(ScriptOpCall &scriptOpCall) {
 	ARG_SKIP(2);
-	ARG_INT16(actorId);
-	ARG_SKIP(6);
+	ARG_INT16(iniId);
+	ARG_INT16(startSequenceId);
+	ARG_INT16(endSequenceId);
+	ARG_SKIP(2);
 	ARG_UINT32(textIndex);
 
 	if (scriptOpCall._field8 != 0) {
@@ -792,7 +795,40 @@ void ScriptOpcodes::opCodeActorTalk(ScriptOpCall &scriptOpCall) {
 	}
 
 	//TODO implement actor talk.
-	debug("Actor talk: 0x%04x and text 0x%04x", actorId, textIndex);
+
+	char *dialog = NULL;
+	int sVar2 = -1; //TODO FUN_8001ca48(textIndex);
+
+	if (!_vm->isUnkFlagSet(1) && (!_vm->isFlagSet(ENGINE_FLAG_1000_TEXT_ENABLED) || sVar2 == -1)) {
+		dialog = _vm->_talk->loadText(textIndex);
+	}
+
+	ushort uVar1;
+	int iVar2;
+	uint uVar3;
+
+	DragonINI *ini = iniId == 0 ? _vm->_dragonINIResource->getFlickerRecord() : _vm->getINI(iniId - 1);
+
+	if ((ini->field_1a_flags_maybe & 1) == 0) {
+		IMG *img = _vm->_dragonIMG->getIMG(ini->field_2);
+
+		int y = img->field_e == 0 ? img->y : img->y << 3;
+
+		_vm->_talk->FUN_8003239c(dialog,
+				(int)(((uint)img->field_a - (uint)_vm->_scene->_camera.x) * 0x10000) >> 0x13,
+				(int)(((y - 8) - (uint)_vm->_scene->_camera.y) * 0x10000) >> 0x13,
+				READ_LE_INT16(_vm->_dragonOBD->getFromOpt(iniId) + 6),
+				1,
+				ini->actor, startSequenceId, endSequenceId, textIndex);
+	}
+	else {
+		_vm->_talk->FUN_8003239c(dialog,
+								 (int)(((uint)ini->actor->x_pos - (uint)_vm->_scene->_camera.x) * 0x10000) >> 0x13,
+								 (int)(((ini->actor->y_pos - ini->actor->frame->yOffset) - (uint)_vm->_scene->_camera.y) * 0x10000) >> 0x13,
+								 READ_LE_INT16(_vm->_dragonOBD->getFromOpt(iniId) + 6),
+								 1,
+								 ini->actor, startSequenceId, endSequenceId, textIndex);
+	}
 }
 
 void ScriptOpcodes::opCode_UnkA_setsProperty(ScriptOpCall &scriptOpCall) {

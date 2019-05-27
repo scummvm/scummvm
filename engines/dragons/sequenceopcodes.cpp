@@ -64,7 +64,7 @@ void SequenceOpcodes::execOpcode(Actor *control, OpCall &opCall) {
 	assert(opCall._op < DRAGONS_NUM_SEQ_OPCODES);
 	if (!_opcodes[opCall._op])
 		error("SequenceOpcodes::execOpcode() Unimplemented opcode %d", opCall._op);
-	debug(3, "execSequenceOpcode(%d) %s", opCall._op, _opcodeNames[opCall._op].c_str());
+	debug(4, "execSequenceOpcode(%d) %s", opCall._op, _opcodeNames[opCall._op].c_str());
 	(*_opcodes[opCall._op])(control, opCall);
 }
 
@@ -117,7 +117,7 @@ void SequenceOpcodes::updateReturn(OpCall &opCall, uint16 size) {
 
 void SequenceOpcodes::opSetFramePointer(Actor *actor, OpCall &opCall) {
 	ARG_INT16(framePointer);
-	debug(3, "set frame pointer %X", framePointer);
+	debug(4, "set frame pointer %X", framePointer);
 	actor->loadFrame((uint16)framePointer);
 	actor->flags |= Dragons::ACTOR_FLAG_2;
 	actor->sequenceTimer = actor->field_c;
@@ -135,7 +135,7 @@ void SequenceOpcodes::opJmp(Actor *actor, OpCall &opCall) {
 	if (!(actor->flags & Dragons::ACTOR_FLAG_1000)) {
 		byte *newOffset = actor->getSeqIpAtOffset((uint32)newIp);
 		opCall._deltaOfs = (int32)(newOffset - actor->_seqCodeIp); //opCall._code);
-		debug(3, "opJump delta: %d", opCall._deltaOfs);
+		debug(5, "opJump delta: %d", opCall._deltaOfs);
 	} else {
 		updateReturn(opCall, 1);
 	}
@@ -144,14 +144,14 @@ void SequenceOpcodes::opJmp(Actor *actor, OpCall &opCall) {
 void SequenceOpcodes::opSetFieldC(Actor *actor, OpCall &opCall) {
 	ARG_INT16(newFieldC);
 	actor->field_c = (uint16)newFieldC;
-	debug(3, "set fieldC: %d", newFieldC);
+	debug(5, "set fieldC: %d", newFieldC);
 	updateReturn(opCall, 1);
 }
 
 void SequenceOpcodes::opSetSequenceTimer(Actor *actor, OpCall &opCall) {
 	ARG_INT16(newSeqTimer);
 	actor->sequenceTimer = (uint16)newSeqTimer;
-	debug(3, "set sequenceTimer: %d", newSeqTimer);
+	debug(5, "set sequenceTimer: %d", newSeqTimer);
 	updateReturn(opCall, 1);
 	opCall._result = 0;
 }
@@ -163,7 +163,7 @@ void SequenceOpcodes::opUpdateXYResetSeqTimer(Actor *actor, OpCall &opCall) {
 	actor->y_pos += yOffset;
 	actor->sequenceTimer = actor->field_c;
 
-	debug(3, "update actor %d XY offset (%d,%d) new values (%d, %d) %d", actor->_actorID, xOffset, yOffset, actor->x_pos, actor->y_pos, actor->sequenceTimer);
+	debug(5, "update actor %d XY offset (%d,%d) new values (%d, %d) %d", actor->_actorID, xOffset, yOffset, actor->x_pos, actor->y_pos, actor->sequenceTimer);
 	updateReturn(opCall, 1);
 }
 
@@ -210,7 +210,7 @@ void SequenceOpcodes::opUpdateFlags(Actor *actor, OpCall &opCall) {
 
 void SequenceOpcodes::opPlaySound(Actor *actor, OpCall &opCall) {
 	ARG_INT16(soundId);
-	debug(3, "opPlaySound actorId: %d soundId: %d", actor->_actorID, soundId);
+	debug(5, "opPlaySound actorId: %d soundId: %d", actor->_actorID, soundId);
 
 	_vm->playSound((uint16)soundId);
 	updateReturn(opCall, 1);

@@ -161,7 +161,7 @@ void Actor::loadFrame(uint16 frameOffset) {
 
 	surface = _actorResource->loadFrame(*frame, NULL); // TODO paletteId == 0xf1 ? getEngine()->getBackgroundPalette() : NULL);
 
-	debug(3, "ActorId: %d load frame header: (%d,%d) palette: %X", _actorID, frame->width, frame->height, paletteId);
+	debug(5, "ActorId: %d load frame header: (%d,%d) palette: %X", _actorID, frame->width, frame->height, paletteId);
 
 	flags |= Dragons::ACTOR_FLAG_8; //TODO check if this is the right spot. engine sets it at 0x800185b0
 
