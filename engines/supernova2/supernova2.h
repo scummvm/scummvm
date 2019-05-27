@@ -50,6 +50,7 @@ public:
 	~Supernova2Engine();
 
 	virtual Common::Error run();
+	virtual bool hasFeature(EngineFeature f) const;
 
 	bool _allowLoadGame;
 	bool _allowSaveGame;
