@@ -40,7 +40,8 @@ void SceneScriptUG15::InitializeScene() {
 	} else {
 		Setup_Scene_Information(-238.0f, 48.07f,  222.0f, 180);
 		if (Game_Flag_Query(kFlagUG15RatShot)
-		 && Random_Query(1, 10) == 10
+		 && (Random_Query(1, 10) == 10)
+		 && !(_vm->_cutContent && Query_Difficulty_Level() == kGameDifficultyEasy)
 		) {
 			Game_Flag_Reset(kFlagUG15RatShot);
 		}
