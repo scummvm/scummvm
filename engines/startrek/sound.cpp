@@ -35,7 +35,7 @@ namespace StarTrek {
 // Main Sound Functions
 
 Sound::Sound(StarTrekEngine *vm) : _vm(vm) {
-	_midiDevice = MT_INVALID;
+	_midiDevice = MT_AUTO;
 	_midiDriver = nullptr;
 	_loopingMidiTrack = false;
 

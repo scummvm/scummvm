@@ -410,8 +410,8 @@ void StarTrekEngine::awayMissionUseObject(int16 clickedObject) {
 	else if (_awayMission.activeObject == OBJECT_MCCOY && _room->actionHasCode(ACTION_USE, OBJECT_IMEDKIT, _awayMission.passiveObject, 0))
 		tryWalkToHotspot = true;
 	// CHECKME: Identical to the previous check, thus never used
-	else if (_awayMission.activeObject == OBJECT_MCCOY && _room->actionHasCode(ACTION_USE, OBJECT_IMEDKIT, _awayMission.passiveObject, 0))
-		tryWalkToHotspot = true;
+	//else if (_awayMission.activeObject == OBJECT_MCCOY && _room->actionHasCode(ACTION_USE, OBJECT_IMEDKIT, _awayMission.passiveObject, 0))
+	//	tryWalkToHotspot = true;
 	else if (_awayMission.activeObject == OBJECT_SPOCK && _room->actionHasCode(ACTION_USE, OBJECT_ISTRICOR, _awayMission.passiveObject, 0))
 		tryWalkToHotspot = true;
 

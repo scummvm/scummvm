@@ -67,6 +67,7 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	DebugMan.addDebugChannel(kDebugGeneral, "general", "General");
 
 	_gfx = nullptr;
+	_activeMenu = nullptr;
 	_sound = nullptr;
 	_macResFork = nullptr;
 
@@ -104,6 +105,8 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 }
 
 StarTrekEngine::~StarTrekEngine() {
+	delete _activeMenu->nextMenu;
+	delete _activeMenu;
 	delete _gfx;
 	delete _sound;
 	delete _macResFork;
@@ -418,11 +421,15 @@ SharedPtr<FileStream> StarTrekEngine::loadFile(Common::String filename, int file
 	// The Judgment Rites demo has its files not in the standard archive
 	if (getGameType() == GType_STJR && (getFeatures() & GF_DEMO)) {
 		Common::File *file = new Common::File();
-		if (!file->open(filename.c_str()))
+		if (!file->open(filename.c_str())) {
+			delete file;
 			error("Could not find file \'%s\'", filename.c_str());
-		byte *data = (byte *)malloc(file->size());
-		file->read(data, file->size());
-		return SharedPtr<FileStream>(new FileStream(data, file->size(), bigEndian));
+		}
+		int32 size = file->size();
+		byte *data = (byte *)malloc(size);
+		file->read(data, size);
+		delete file;
+		return SharedPtr<FileStream>(new FileStream(data, size, bigEndian));
 	}
 
 	Common::SeekableReadStream *indexFile = 0;

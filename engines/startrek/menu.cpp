@@ -499,8 +499,8 @@ void StarTrekEngine::loadMenuButtons(String mnuFilename, int xpos, int ypos) {
 	if (_activeMenu == nullptr)
 		_keyboardControlsMouseOutsideMenu = _keyboardControlsMouse;
 
-	SharedPtr<Menu> oldMenu = _activeMenu;
-	_activeMenu = SharedPtr<Menu>(new Menu());
+	Menu *oldMenu = _activeMenu;
+	_activeMenu = new Menu();
 	_activeMenu->nextMenu = oldMenu;
 
 	SharedPtr<FileStream> stream = loadFile(mnuFilename + ".MNU");
@@ -851,7 +851,9 @@ void StarTrekEngine::unloadMenuButtons() {
 			_gfx->delSprite(sprite);
 	}
 
+	Menu *prevMenu = _activeMenu;
 	_activeMenu = _activeMenu->nextMenu;
+	delete prevMenu;
 
 	if (_activeMenu == nullptr)
 		_keyboardControlsMouse = _keyboardControlsMouseOutsideMenu;

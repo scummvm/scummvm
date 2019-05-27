@@ -42,11 +42,15 @@ namespace StarTrek {
 class StarTrekEngine;
 class Room;
 
+#include "common/pack-start.h"	// START STRUCT PACKING
+
 // Per-room action functions
 struct RoomAction {
 	const Action action;
 	void (Room::*funcPtr)();
 };
+
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 // Offsets of data in RDF files
 

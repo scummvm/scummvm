@@ -162,7 +162,7 @@ struct Menu {
 	SharedPtr<FileStream> menuFile;
 	uint16 numButtons;
 	int16 selectedButton;
-	SharedPtr<Menu> nextMenu;
+	Menu *nextMenu;
 };
 
 // Special events that can be returned by handleMenuEvents.
@@ -646,7 +646,7 @@ private:
 	uint32 _textboxVar2;
 	uint16 _textboxVar6;
 	bool _textboxHasMultipleChoices;
-	SharedPtr<Menu> _activeMenu;
+	Menu *_activeMenu;
 	// Saved value of StarTrekEngine::_keyboardControlsMouse when menus are up
 	bool _keyboardControlsMouseOutsideMenu;
 
