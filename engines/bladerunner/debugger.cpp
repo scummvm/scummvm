@@ -107,6 +107,7 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 	_playFullVk = false;
 	_showStatsVk = false;
 	_showMazeScore = false;
+	_showMouseClickInfo = false;
 
 	registerCmd("anim", WRAP_METHOD(Debugger, cmdAnimation));
 	registerCmd("health", WRAP_METHOD(Debugger, cmdHealth));
@@ -131,6 +132,7 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 	registerCmd("object", WRAP_METHOD(Debugger, cmdObject));
 	registerCmd("item", WRAP_METHOD(Debugger, cmdItem));
 	registerCmd("region", WRAP_METHOD(Debugger, cmdRegion));
+	registerCmd("click", WRAP_METHOD(Debugger, cmdClick));
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 	registerCmd("effect", WRAP_METHOD(Debugger, cmdEffect));
@@ -1731,6 +1733,36 @@ bool Debugger::cmdRegion(int argc, const char **argv) {
 		debugPrintf("Usage 6: %s exit remove <id>\n", argv[0]);
 		debugPrintf("Usage 7: %s exit list   <id>\n", argv[0]);
 		debugPrintf("Usage 8: %s exit bounds <id> <topY> <leftX> <bottomY> <rightX>\n", argv[0]);
+	}
+	return true;
+}
+
+/**
+* Toggle showing mouse click info in the text console (not the debugger window)
+*/
+bool Debugger::cmdClick(int argc, const char **argv) {
+	bool invalidSyntax = false;
+
+	if (argc != 2) {
+		invalidSyntax = true;
+	} else {
+		//
+		// set a debug variable to enable showing the mouse click info
+		//
+		Common::String argName = argv[1];
+		argName.toLowercase();
+		if (argc == 2 && argName == "toggle") {
+			_showMouseClickInfo = !_showMouseClickInfo;
+			debugPrintf("Showing mouse click info = %s\n", _showMouseClickInfo ? "True":"False");
+			return false; // close the debugger console
+		} else {
+			invalidSyntax = true;
+		}
+	}
+
+	if (invalidSyntax) {
+		debugPrintf("Toggle showing mouse info (on mouse click) in the text console\n");
+		debugPrintf("Usage: %s toggle\n", argv[0]);
 	}
 	return true;
 }

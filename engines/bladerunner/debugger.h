@@ -85,6 +85,7 @@ public:
 	bool _playFullVk;
 	bool _showStatsVk;
 	bool _showMazeScore;
+	bool _showMouseClickInfo;
 
 	Debugger(BladeRunnerEngine *vm);
 	~Debugger();
@@ -111,6 +112,7 @@ public:
 	bool cmdObject(int argc, const char **argv);
 	bool cmdItem(int argc, const char **argv);
 	bool cmdRegion(int argc, const char **argv);
+	bool cmdClick(int argc, const char **argv);
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 	bool cmdEffect(int argc, const char **argv);

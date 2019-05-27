@@ -1358,6 +1358,26 @@ void BladeRunnerEngine::handleMouseAction(int x, int y, bool mainButton, bool bu
 		int exitIndex = _scene->_exits->getRegionAtXY(x, y);
 		int regionIndex = _scene->_regions->getRegionAtXY(x, y);
 
+		if (_debugger->_showMouseClickInfo) {
+			// Region has highest priority when overlapping
+			debug("Mouse: %02.2f, %02.2f, %02.2f", scenePosition.x, scenePosition.y, scenePosition.z);
+			if ((sceneObjectId < kSceneObjectOffsetActors || sceneObjectId >= kSceneObjectOffsetItems) && exitIndex >= 0) {
+				debug("Clicked on Region-Exit=%d", exitIndex);
+			} else if (regionIndex >= 0) {
+				debug("Clicked on Region-Regular=%d", regionIndex);
+			}
+			// In debug mode we're interested in *all* object/actors/items under mouse click
+			if (sceneObjectId >= kSceneObjectOffsetActors && sceneObjectId < kSceneObjectOffsetItems) {
+				debug("Clicked on Actor: %d", sceneObjectId  - kSceneObjectOffsetActors);
+			}
+			if (sceneObjectId >= kSceneObjectOffsetItems && sceneObjectId < kSceneObjectOffsetObjects) {
+				debug("Clicked on Item: %d", sceneObjectId  - kSceneObjectOffsetItems);
+			}
+			if (sceneObjectId >= kSceneObjectOffsetObjects && sceneObjectId <= (95 + kSceneObjectOffsetObjects) ) {
+				debug("Clicked on Object: %d", sceneObjectId - kSceneObjectOffsetObjects);
+			}
+		}
+
 		if ((sceneObjectId < kSceneObjectOffsetActors || sceneObjectId >= kSceneObjectOffsetItems) && exitIndex >= 0) {
 			handleMouseClickExit(exitIndex, x, y, buttonDown);
 		} else if (regionIndex >= 0) {
@@ -1368,7 +1388,7 @@ void BladeRunnerEngine::handleMouseAction(int x, int y, bool mainButton, bool bu
 			handleMouseClickActor(sceneObjectId - kSceneObjectOffsetActors, mainButton, buttonDown, scenePosition, x, y);
 		} else if (sceneObjectId >= kSceneObjectOffsetItems && sceneObjectId < kSceneObjectOffsetObjects) {
 			handleMouseClickItem(sceneObjectId - kSceneObjectOffsetItems, buttonDown);
-		} else if (sceneObjectId >= kSceneObjectOffsetObjects && sceneObjectId <= 293) {
+		} else if (sceneObjectId >= kSceneObjectOffsetObjects && sceneObjectId <= (95 + kSceneObjectOffsetObjects)) {
 			handleMouseClick3DObject(sceneObjectId - kSceneObjectOffsetObjects, buttonDown, isClickable, isTarget);
 		}
 	} else if (buttonDown) {
