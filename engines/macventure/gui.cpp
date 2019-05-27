@@ -802,6 +802,7 @@ void Gui::updateWindow(WindowReference winID, bool containerOpen) {
 			ObjID child = children[i].obj;
 			BlitMode mode = kBlitDirect;
 			bool off = !_engine->isObjVisible(child);
+			// CHECKME: Since flag = 0, this always evaluates to false
 			if (flag || !off || !_engine->isObjClickable(child)) {
 				mode = kBlitBIC;
 				if (off || flag) {
@@ -1021,9 +1022,8 @@ WindowReference Gui::getObjWindow(ObjID objID) {
 	case 0xfffd: return kSelfWindow;
 	case 0xfffe: return kOutConsoleWindow;
 	case 0xffff: return kCommandsWindow;
+	default: return findObjWindow(objID);
 	}
-
-	return findObjWindow(objID);
 }
 
 WindowReference Gui::findObjWindow(ObjID objID) {
@@ -1250,7 +1250,7 @@ void Gui::invertWindowColors(WindowReference winID) {
 }
 
 bool Gui::tryCloseWindow(WindowReference winID) {
-	WindowData data = findWindowData(winID);
+	//WindowData data = findWindowData(winID);
 	Graphics::MacWindow *win = findWindow(winID);
 	_wm.removeWindow(win);
 	if (winID < 0x80) {
