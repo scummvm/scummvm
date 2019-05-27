@@ -49,11 +49,11 @@ HDBGame::~HDBGame() {
 
 Common::Error HDBGame::run() {
 	// Initializes Graphics
-	Graphics::PixelFormat format = g_system->getScreenFormat();
+	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	initGraphics(800, 600, &format);
 	_console = new Console();
 
-	readMPC("hyperdemo.mpc");
+	//readMPC("hyperdemo.mpc");
 		
 	while (!shouldQuit()) {
 
@@ -83,7 +83,7 @@ Common::Error HDBGame::run() {
 
 	return Common::kNoError;
 }
-
+/*
 void HDBGame::readMPC(const Common::String &filename) {	
 	if (!_file.open(filename)) {
 		error("readMPC(): Error reading MPC file");
@@ -125,6 +125,6 @@ void HDBGame::readMPC(const Common::String &filename) {
 			debug("Invalid MPC file");
 		}
 	}
-}
+}*/
 
 } // End of namespace HDB
