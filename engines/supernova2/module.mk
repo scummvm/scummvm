@@ -2,6 +2,8 @@ MODULE := engines/supernova2
 
 MODULE_OBJS := \
 	detection.o \
+	state.o \
+	console.o \
 	supernova2.o
 
 MODULE_DIRS += \
