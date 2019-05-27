@@ -594,6 +594,8 @@ public:
 	void demon6TalkToKirk();
 	void demon6TalkToRedshirt();
 	void demon6TalkToStephen();
+	void demon6StephenIsInsulted();
+	void demon6StephenDescribesItemsInCase();
 	void demon6UseBerryOnStephen();
 	void demon6UseBerryOnSynthesizer();
 	void demon6MccoyReachedSynthesizer();
@@ -627,6 +629,8 @@ public:
 	void demon6GetCase();
 	void demon6KirkReachedCase();
 	int demon6ShowCase(int visible);
+	int demon6ShowCaseProcessInput(Sprite *sprites, Sprite *buttonSprite, int visible);
+	int demon6ShowCaseProcessSelection(Sprite *sprites, Sprite *clickedSprite, int visible);
 
 	// TUG0
 	void tug0Tick1();

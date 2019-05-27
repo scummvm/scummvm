@@ -233,6 +233,44 @@ void Room::demon6UseAnythingOnWorkspace() {
 	showText(TX_DEM6N020);
 }
 
+void Room::demon6StephenIsInsulted() {
+	showText(TX_SPEAKER_STEPHEN, TX_DEM6_030);
+	_roomVar.demon.insultedStephenRecently = true;
+	_awayMission->demon.insultedStephen = true;
+}
+
+void Room::demon6StephenDescribesItemsInCase() {
+	while (true) {
+		showText(TX_SPEAKER_STEPHEN, TX_DEM6_051);
+		TextRef choices2[] = { TX_SPEAKER_STEPHEN, TX_DEM6_045, TX_DEM6_046, TX_DEM6_047, TX_DEM6_048, TX_DEM6_049, TX_DEM6_050, TX_BLANK };
+		TextRef choice = showText(choices2);
+
+		switch (choice) {
+		case 0:
+			showText(TX_SPEAKER_STEPHEN, TX_DEM6_040);
+			break;
+		case 1:
+			showText(TX_SPEAKER_STEPHEN, TX_DEM6_033);
+			break;
+		case 2:
+			showText(TX_SPEAKER_STEPHEN, TX_DEM6_036);
+			break;
+		case 3:
+			showText(TX_SPEAKER_STEPHEN, TX_DEM6_038);
+			break;
+		case 4:
+			showText(TX_SPEAKER_STEPHEN, TX_DEM6_039);
+			break;
+		case 5:
+			showText(TX_SPEAKER_STEPHEN, TX_DEM6_041);
+			_roomVar.demon.caseOpened = true;
+			return;
+		default:
+			showText(TX_DIALOG_ERROR);
+		}
+	}
+}
+
 void Room::demon6UseCrewmanOnCase() {
 	if (_roomVar.demon.stephenInRoom) {
 		if (_roomVar.demon.insultedStephenRecently)
@@ -242,55 +280,22 @@ void Room::demon6UseCrewmanOnCase() {
 		TextRef choice = showText(choices1);
 
 		if (choice == 0) {
-insult:
-			showText(TX_SPEAKER_STEPHEN, TX_DEM6_030);
-			_roomVar.demon.insultedStephenRecently = true;
-			_awayMission->demon.insultedStephen = true;
+			demon6StephenIsInsulted();
 		} else if (choice == 1) {
 			showText(TX_SPEAKER_STEPHEN, TX_DEM6_034);
-explain:
-			while (true) {
-				showText(TX_SPEAKER_STEPHEN, TX_DEM6_051);
-				TextRef choices2[] = {TX_SPEAKER_STEPHEN, TX_DEM6_045, TX_DEM6_046, TX_DEM6_047, TX_DEM6_048, TX_DEM6_049, TX_DEM6_050, TX_BLANK};
-				choice = showText(choices2);
-
-				switch (choice) {
-				case 0:
-					showText(TX_SPEAKER_STEPHEN, TX_DEM6_040);
-					break;
-				case 1:
-					showText(TX_SPEAKER_STEPHEN, TX_DEM6_033);
-					break;
-				case 2:
-					showText(TX_SPEAKER_STEPHEN, TX_DEM6_036);
-					break;
-				case 3:
-					showText(TX_SPEAKER_STEPHEN, TX_DEM6_038);
-					break;
-				case 4:
-					showText(TX_SPEAKER_STEPHEN, TX_DEM6_039);
-					break;
-				case 5:
-					showText(TX_SPEAKER_STEPHEN, TX_DEM6_041);
-					_roomVar.demon.caseOpened = true;
-					return;
-				default:
-					goto error;
-				}
-			}
+			demon6StephenDescribesItemsInCase();
 		} else if (choice == 2) {
 			showText(TX_SPEAKER_STEPHEN, TX_DEM6_031);
 			TextRef choices3[] = {TX_SPEAKER_KIRK, TX_DEM6_001, TX_DEM6_006, TX_BLANK};
 			choice = showText(choices3);
 
 			if (choice == 0)
-				goto insult;
+				demon6StephenIsInsulted();
 			else if (choice == 1)
-				goto explain;
+				demon6StephenDescribesItemsInCase();
 			else
-				goto error;
+				showText(TX_DIALOG_ERROR);
 		} else {
-error:
 			showText(TX_DIALOG_ERROR);
 		}
 	} else {
@@ -465,7 +470,6 @@ int Room::demon6ShowCase(int visible) {
 	}
 
 	Sprite buttonSprite;
-	_vm->_gfx->addSprite(&buttonSprite);
 
 	// BUGFIX: use draw mode 2 so the entire button is clickable (not just non-transparent parts)
 	buttonSprite.drawMode = 2;
@@ -476,9 +480,23 @@ int Room::demon6ShowCase(int visible) {
 	buttonSprite.bitmapChanged = true;
 	buttonSprite.bitmap = _vm->_gfx->loadBitmap("donebutt");
 
+	_vm->_gfx->addSprite(&buttonSprite);
 	_vm->_gfx->forceDrawAllSprites();
 	_vm->_gfx->fadeinScreen();
 
+	visible = demon6ShowCaseProcessInput(sprites, &buttonSprite, visible);
+
+	_vm->_gfx->fadeoutScreen();
+	_vm->_gfx->popSprites();
+	_vm->_gfx->loadPri(_vm->_screenName);
+	_vm->_gfx->setBackgroundImage(_vm->_gfx->loadBitmap(_vm->_screenName));
+	_vm->_gfx->copyBackgroundScreen();
+	_vm->_gfx->forceDrawAllSprites();
+
+	return visible;
+}
+
+int Room::demon6ShowCaseProcessInput(Sprite *sprites, Sprite *buttonSprite, int visible) {
 	bool exitLoop = false;
 
 	while (!exitLoop) {
@@ -492,35 +510,11 @@ int Room::demon6ShowCase(int visible) {
 			break;
 
 		case TREKEVENT_LBUTTONDOWN: {
-lclick:
 			Sprite *clickedSprite = _vm->_gfx->getSpriteAt(_vm->_gfx->getMousePos());
-			if (clickedSprite == &buttonSprite)
+			if (clickedSprite == buttonSprite)
 				exitLoop = true;
-			else if (clickedSprite != nullptr) {
-				while (clickedSprite->pos.y < SCREEN_HEIGHT) { // Move the selected item down and off the screen.
-					clickedSprite->drawPriority = 8;
-					clickedSprite->bitmapChanged = true;
-					_vm->_gfx->drawAllSprites();
-
-					// WORKAROUND: original game had no bound on how fast the items move
-					// off the screen. Here I bind it to the tick event.
-					// (This was probably the intended behaviour since the original game
-					// does check the clock cycle, but doesn't do a proper comparison with
-					// it.)
-					while (event.type != TREKEVENT_TICK) {
-						if (!_vm->popNextEvent(&event))
-							continue;
-					}
-					clickedSprite->pos.y++;
-				}
-
-				clickedSprite->dontDrawNextFrame();
-				_vm->_gfx->drawAllSprites();
-				_vm->_gfx->delSprite(clickedSprite);
-				clickedSprite->bitmap.reset();
-				int i = clickedSprite - sprites;
-				visible ^= (0x10 >> i);
-			}
+			else if (clickedSprite != nullptr)
+				visible = demon6ShowCaseProcessSelection(sprites, clickedSprite, visible);
 			break;
 		}
 
@@ -536,8 +530,14 @@ lclick:
 
 			case Common::KEYCODE_RETURN:
 			case Common::KEYCODE_KP_ENTER:
-			case Common::KEYCODE_F1:
-				goto lclick;
+			case Common::KEYCODE_F1: {
+				Sprite *clickedSprite = _vm->_gfx->getSpriteAt(_vm->_gfx->getMousePos());
+				if (clickedSprite == buttonSprite)
+					exitLoop = true;
+				else if (clickedSprite != nullptr)
+					visible = demon6ShowCaseProcessSelection(sprites, clickedSprite, visible);
+				break;
+			}
 
 			case Common::KEYCODE_F2:
 				exitLoop = true;
@@ -553,13 +553,36 @@ lclick:
 		}
 	}
 
-	_vm->_gfx->fadeoutScreen();
-	_vm->_gfx->popSprites();
-	_vm->_gfx->loadPri(_vm->_screenName);
-	_vm->_gfx->setBackgroundImage(_vm->_gfx->loadBitmap(_vm->_screenName));
-	_vm->_gfx->copyBackgroundScreen();
-	_vm->_gfx->forceDrawAllSprites();
+	return visible;
+}
 
+int Room::demon6ShowCaseProcessSelection(Sprite *sprites, Sprite *clickedSprite, int visible) {
+	while (clickedSprite->pos.y < SCREEN_HEIGHT) { // Move the selected item down and off the screen.
+		clickedSprite->drawPriority = 8;
+		clickedSprite->bitmapChanged = true;
+		_vm->_gfx->drawAllSprites();
+
+		// WORKAROUND: original game had no bound on how fast the items move
+		// off the screen. Here I bind it to the tick event.
+		// (This was probably the intended behaviour since the original game
+		// does check the clock cycle, but doesn't do a proper comparison with
+		// it.)
+		TrekEvent event;
+
+		while (event.type != TREKEVENT_TICK) {
+			if (!_vm->popNextEvent(&event))
+				continue;
+		}
+		clickedSprite->pos.y++;
+	}
+
+	clickedSprite->dontDrawNextFrame();
+	_vm->_gfx->drawAllSprites();
+	_vm->_gfx->delSprite(clickedSprite);
+	clickedSprite->bitmap.reset();
+	int i = clickedSprite - sprites;
+	visible ^= (0x10 >> i);
+	
 	return visible;
 }
 
