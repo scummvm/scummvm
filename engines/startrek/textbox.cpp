@@ -358,38 +358,24 @@ int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset
 				break;
 
 			case TEXTBUTTON_SCROLLUP:
-				scrollOffset -= numTextboxLines;
-				goto readjustScrollUp;
-
-			case TEXTBUTTON_SCROLLDOWN:
-				scrollOffset += numTextboxLines;
-				goto readjustScrollDown;
-
 			case TEXTBUTTON_SCROLLUP_ONELINE:
-				scrollOffset--;
-				goto readjustScrollUp;
-
-			case TEXTBUTTON_SCROLLDOWN_ONELINE:
-				scrollOffset++;
-				goto readjustScrollDown;
-
-			case TEXTBUTTON_GOTO_TOP:
-				scrollOffset = 0;
-				goto readjustScrollUp;
-
-			case TEXTBUTTON_GOTO_BOTTOM:
-				scrollOffset = numTextLines - numTextboxLines;
-				goto readjustScrollDown;
-
-readjustScrollUp:
-				enableMenuButtons(1 << TEXTBUTTON_SCROLLDOWN);
+				scrollOffset -= (textboxReturnCode == TEXTBUTTON_SCROLLUP ? numTextboxLines : 1);
 				if (scrollOffset < 0)
 					scrollOffset = 0;
 				if (scrollOffset == 0)
 					disableMenuButtons(1 << TEXTBUTTON_SCROLLUP);
+				enableMenuButtons(1 << TEXTBUTTON_SCROLLDOWN);
 				goto readjustScroll;
 
-readjustScrollDown:
+			case TEXTBUTTON_GOTO_TOP:
+				scrollOffset = 0;
+				disableMenuButtons(1 << TEXTBUTTON_SCROLLUP);
+				enableMenuButtons(1 << TEXTBUTTON_SCROLLDOWN);
+				goto readjustScroll;
+
+			case TEXTBUTTON_SCROLLDOWN:
+			case TEXTBUTTON_SCROLLDOWN_ONELINE:
+				scrollOffset += (textboxReturnCode == TEXTBUTTON_SCROLLDOWN ? numTextboxLines : 1);
 				enableMenuButtons(1 << TEXTBUTTON_SCROLLUP);
 				if (scrollOffset >= numTextLines)
 					scrollOffset -= numTextboxLines;
@@ -397,6 +383,12 @@ readjustScrollDown:
 					scrollOffset = numTextLines - 1;
 				if (scrollOffset + numTextboxLines >= numTextLines)
 					disableMenuButtons(1 << TEXTBUTTON_SCROLLDOWN);
+				goto readjustScroll;
+
+			case TEXTBUTTON_GOTO_BOTTOM:
+				scrollOffset = numTextLines - numTextboxLines;
+				enableMenuButtons(1 << TEXTBUTTON_SCROLLUP);
+				disableMenuButtons(1 << TEXTBUTTON_SCROLLDOWN);
 				goto readjustScroll;
 
 readjustScroll:
@@ -410,27 +402,28 @@ readjustScroll:
 				break;
 
 			case TEXTBUTTON_PREVCHOICE:
-				choiceIndex--;
-				if (!loopChoices && choiceIndex == 0) {
-					disableMenuButtons(1 << TEXTBUTTON_PREVCHOICE);
-				} else {
-					if (choiceIndex < 0)
-						choiceIndex = numChoices - 1;
-				}
-				enableMenuButtons(1 << TEXTBUTTON_NEXTCHOICE);
-				goto reloadText;
-
 			case TEXTBUTTON_NEXTCHOICE:
-				enableMenuButtons(1 << TEXTBUTTON_PREVCHOICE);
-				choiceIndex++;
-				if (!loopChoices && choiceIndex == numChoices - 1) {
-					disableMenuButtons(1 << TEXTBUTTON_NEXTCHOICE);
+				if (textboxReturnCode == TEXTBUTTON_PREVCHOICE) {
+					choiceIndex--;
+					if (!loopChoices && choiceIndex == 0) {
+						disableMenuButtons(1 << TEXTBUTTON_PREVCHOICE);
+					}
+					else {
+						if (choiceIndex < 0)
+							choiceIndex = numChoices - 1;
+					}
+					enableMenuButtons(1 << TEXTBUTTON_NEXTCHOICE);
 				} else {
-					choiceIndex %= numChoices;
+					enableMenuButtons(1 << TEXTBUTTON_PREVCHOICE);
+					choiceIndex++;
+					if (!loopChoices && choiceIndex == numChoices - 1) {
+						disableMenuButtons(1 << TEXTBUTTON_NEXTCHOICE);
+					}
+					else {
+						choiceIndex %= numChoices;
+					}
 				}
-				goto reloadText;
 
-reloadText:
 				scrollOffset = 0;
 				lineFormattedText = readLineFormattedText(textGetter, var, choiceIndex, textBitmap, numTextboxLines, &numTextLines);
 				if (numTextLines <= numTextboxLines) {

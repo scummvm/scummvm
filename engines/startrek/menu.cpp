@@ -337,7 +337,6 @@ int StarTrekEngine::showActionMenu() {
 			break;
 
 		case TREKEVENT_LBUTTONDOWN:
-selectAndExit:
 			displayMenu = false;
 			addEventBack = true;
 			break;
@@ -404,7 +403,9 @@ exitMenu:
 			case Common::KEYCODE_RETURN:
 			case Common::KEYCODE_KP_ENTER:
 			case Common::KEYCODE_F1: // Exit menu with whatever is selected
-				goto selectAndExit;
+				displayMenu = false;
+				addEventBack = true;
+				break;
 
 			case Common::KEYCODE_PAGEUP:
 			case Common::KEYCODE_KP9:
