@@ -119,7 +119,7 @@ Common::String AdlEngine::readString(Common::ReadStream &stream, byte until) con
 			break;
 
 		str += b;
-	}
+	};
 
 	return str;
 }
@@ -209,13 +209,21 @@ Common::String AdlEngine::inputString(byte prompt) const {
 			return s;
 		}
 
-		if (b < 0xa0 && b == (Common::KEYCODE_BACKSPACE | 0x80) && !s.empty()) {
-			_display->moveCursorBackward();
-			_display->setCharAtCursor(APPLEBYTE(' '));
-			s.deleteLastChar();
-		} else if (s.size() < 255) {
-			s += b;
-			_display->printString(Common::String(b));
+		if (b < 0xa0) {
+			switch (b) {
+			case Common::KEYCODE_BACKSPACE | 0x80:
+				if (!s.empty()) {
+					_display->moveCursorBackward();
+					_display->setCharAtCursor(APPLECHAR(' '));
+					s.deleteLastChar();
+				}
+				break;
+			};
+		} else {
+			if (s.size() < 255) {
+				s += b;
+				_display->printString(Common::String(b));
+			}
 		}
 	}
 }
@@ -225,7 +233,7 @@ byte AdlEngine::inputKey(bool showCursor) const {
 
 	// If debug script is active, we fake a return press for the text overflow handling
 	if (_inputScript && !_scriptPaused)
-		return APPLEBYTE('\r');
+		return APPLECHAR('\r');
 
 	if (showCursor)
 		_display->showCursor(true);
@@ -244,12 +252,12 @@ byte AdlEngine::inputKey(bool showCursor) const {
 			default:
 				if (event.kbd.ascii >= 0x20 && event.kbd.ascii < 0x80)
 					key = convertKey(event.kbd.ascii);
-			}
+			};
 		}
 
 		// If debug script was activated in the meantime, abort input
 		if (_inputScript && !_scriptPaused)
-			return APPLEBYTE('\r');
+			return APPLECHAR('\r');
 
 		_display->updateTextScreen();
 		g_system->delayMillis(16);
@@ -909,11 +917,11 @@ Common::Error AdlEngine::saveGameState(int slot, const Common::String &desc) {
 	char name[SAVEGAME_NAME_LEN] = { };
 
 	if (!desc.empty())
-		Common::strlcpy(name, desc.c_str(), sizeof(name) - 1);
+		strncpy(name, desc.c_str(), sizeof(name) - 1);
 	else {
 		Common::String defaultName("Save ");
 		defaultName += 'A' + slot;
-		Common::strlcpy(name, defaultName.c_str(), sizeof(name) - 1);
+		strncpy(name, defaultName.c_str(), sizeof(name) - 1);
 	}
 
 	outFile->write(name, sizeof(name));
@@ -984,7 +992,7 @@ byte AdlEngine::convertKey(uint16 ascii) const {
 
 Common::String AdlEngine::getLine() {
 	while (1) {
-		Common::String line = inputString(APPLEBYTE('?'));
+		Common::String line = inputString(APPLECHAR('?'));
 
 		if (shouldQuit() || _isRestoring)
 			return Common::String();
@@ -1020,10 +1028,8 @@ Common::String AdlEngine::getWord(const Common::String &line, uint &index) const
 
 	// Copy up to 8 characters
 	while (1) {
-		if (copied < 8) {
-			str.setChar(line[index], copied);
-			copied++;
-		}
+		if (copied < 8)
+			str.setChar(line[index], copied++);
 
 		index++;
 

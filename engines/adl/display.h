@@ -52,7 +52,6 @@ enum DisplayMode {
 };
 
 #define APPLECHAR(C) ((char)((C) | 0x80))
-#define APPLEBYTE(C) ((byte)((C) | 0x80))
 
 class Display {
 public:

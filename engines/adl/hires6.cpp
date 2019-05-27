@@ -214,7 +214,7 @@ void HiRes6Engine::runIntro() {
 		error("Failed to open disk volume 0");
 
 	stream.reset(files->createReadStream("\010\010\010\010\010\010"));
-	Common::String copyright(readStringAt(*stream, 0x103, APPLEBYTE('\r')));
+	Common::String copyright(readStringAt(*stream, 0x103, APPLECHAR('\r')));
 
 	delete files;
 
