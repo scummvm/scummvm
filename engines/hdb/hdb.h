@@ -35,6 +35,20 @@
 #include "engines/util.h"
 #include "console.h"
 
+#define MAX_SNDCACHE_MEM	0x400000	// 4Mb of sounds in memory
+#define MAX_TILES_CACHED	3500		// Max no of tiles in memory at once
+#define GFX_CACHE_LIMIT		0x800000
+
+/*
+	Subsystems
+*/
+
+#include "file-manager.h"
+
+/*
+	Game System Singletons
+*/
+
 struct ADGameDescription;
 
 namespace HDB {
