@@ -40,6 +40,7 @@
 #include "graphics/palette.h"
 #include "graphics/thumbnail.h"
 #include "gui/saveload.h"
+#include <stdio.h>
 
 #include "supernova2/supernova2.h"
 
@@ -68,18 +69,116 @@ Supernova2Engine::~Supernova2Engine() {
 
 Common::Error Supernova2Engine::run() {
 	init();
+	int i = 0;
 
 	while (!shouldQuit()) {
 		uint32 start = _system->getMillis();
+		Common::String str = getGameString(i);
+		if (str == _nullString)
+			break;
 		int end = _delay - (_system->getMillis() - start);
 		if (end > 0)
 			_system->delayMillis(end);
+		i++;
 	}
 
 	return Common::kNoError;
 }
 
 void Supernova2Engine::init() {
+	Graphics::ModeList modes;
+	modes.push_back(Graphics::Mode(320, 200));
+	modes.push_back(Graphics::Mode(640, 480));
+	initGraphicsModes(modes);
+	initGraphics(320, 200);
+
+	Common::Error status = loadGameStrings();
+	if (status.getCode() != Common::kNoError)
+		error("Failed reading game strings");
+
+	setTotalPlayTime(0);
+}
+
+Common::Error Supernova2Engine::loadGameStrings() {
+	Common::String cur_lang = ConfMan.get("language");
+	Common::String string_id("TEXT");
+
+	// Note: we don't print any warning or errors here if we cannot find the file
+	// or the format is not as expected. We will get those warning when reading the
+	// strings anyway (actually the engine will even refuse to start).
+	Common::File f;
+	if (!f.open(SUPERNOVA2_DAT)) {
+		GUIErrorMessageFormat(_("Unable to locate the '%s' engine data file."), SUPERNOVA2_DAT);
+		return Common::kReadingFailed;
+	}
+
+	// Validate the data file header
+	char id[5], lang[5];
+	id[4] = lang[4] = '\0';
+	f.read(id, 3);
+	if (strncmp(id, "MS2", 3) != 0) {
+		GUIErrorMessageFormat(_("The '%s' engine data file is corrupt."), SUPERNOVA2_DAT);
+		return Common::kReadingFailed;
+	}
+
+	int version = f.readByte();
+	if (version != SUPERNOVA2_DAT_VERSION) {
+		GUIErrorMessageFormat(
+			_("Incorrect version of the '%s' engine data file found. Expected %d but got %d."),
+			SUPERNOVA2_DAT, SUPERNOVA2_DAT_VERSION, version);
+		return Common::kReadingFailed;
+	}
+
+	while (!f.eos()) {
+		f.read(id, 4);
+		f.read(lang, 4);
+		uint32 size = f.readUint32LE();
+		if (f.eos())
+			break;
+		if (string_id == id && cur_lang == lang) {
+			while (size > 0) {
+				Common::String s;
+				char ch;
+				while ((ch = (char)f.readByte()) != '\0')
+					s += ch;
+				_gameStrings.push_back(s);
+				size -= s.size() + 1;
+			}
+			return Common::kNoError;
+		} else
+			f.skip(size);
+	}
+
+	Common::Language l = Common::parseLanguage(cur_lang);
+	GUIErrorMessageFormat(_("Unable to locate the text for %s language in '%s' engine data file."), Common::getLanguageDescription(l), SUPERNOVA2_DAT);
+	return Common::kReadingFailed;
+}
+
+const Common::String &Supernova2Engine::getGameString(int idx) const {
+	if (idx < 0 || idx >= (int)_gameStrings.size())
+		return _nullString;
+	return _gameStrings[idx];
+}
+
+void Supernova2Engine::setGameString(int idx, const Common::String &string) {
+	if (idx < 0)
+		return;
+	while ((int)_gameStrings.size() <= idx)
+		_gameStrings.push_back(Common::String());
+	_gameStrings[idx] = string;
+}
+
+bool Supernova2Engine::hasFeature(EngineFeature f) const {
+	switch (f) {
+	case kSupportsRTL:
+		return true;
+	case kSupportsLoadingDuringRuntime:
+		return true;
+	case kSupportsSavingDuringRuntime:
+		return true;
+	default:
+		return false;
+	}
 }
 
 }
