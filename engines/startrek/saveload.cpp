@@ -148,7 +148,7 @@ bool StarTrekEngine::loadGame(int slot) {
 			Actor *a = &_actorList[i];
 			if (a->spriteDrawn) {
 				if (a->animType != 1)
-					a->animFile = loadFile(Common::String(a->animFilename) + ".anm");
+					a->animFile = loadFile(a->animFilename + ".anm");
 				_gfx->addSprite(&a->sprite);
 				a->sprite.setBitmap(loadAnimationFrame(a->bitmapFilename, a->scale));
 			}
@@ -243,12 +243,19 @@ bool StarTrekEngine::saveOrLoadGameData(Common::SeekableReadStream *in, Common::
 		for (int i = 0; i < NUM_ACTORS; i++) {
 			Actor *a = &_actorList[i];
 			ser.syncAsUint16LE(a->spriteDrawn);
-			ser.syncBytes((byte *)a->animFilename, 16);
+			ser.syncString(a->animFilename);
+			filler = 0;
+			for (uint j = 0; j < 16 - a->animFilename.size() - 1; ++j)
+				ser.syncAsByte(filler);	// make sure that exactly 16 bytes are synced
+
 			ser.syncAsUint16LE(a->animType);
 
 			a->sprite.saveLoadWithSerializer(ser);
 
-			ser.syncBytes((byte *)a->bitmapFilename, 10);
+			ser.syncString(a->bitmapFilename);
+			filler = 0;
+			for (uint j = 0; j < 10 - a->bitmapFilename.size() - 1; ++j)
+				ser.syncAsByte(filler);	// make sure that exactly 10 bytes are synced
 			a->scale.saveLoadWithSerializer(ser);
 			// Can't save "animFile" (will be reloaded)
 			ser.syncAsUint16LE(a->numAnimFrames);
@@ -262,7 +269,7 @@ bool StarTrekEngine::saveOrLoadGameData(Common::SeekableReadStream *in, Common::
 			ser.syncAsUint16LE(a->finishedAnimActionParam);
 			ser.syncString(a->animationString2);
 			filler = 0;
-			for (uint i = 0; i < 8 - a->animationString2.size() - 1; ++i)
+			for (uint j = 0; j < 8 - a->animationString2.size() - 1; ++j)
 				ser.syncAsByte(filler);	// make sure that exactly 8 bytes are synced
 			ser.syncAsUint16LE(a->field70);
 			ser.syncAsUint16LE(a->field72);
@@ -283,7 +290,7 @@ bool StarTrekEngine::saveOrLoadGameData(Common::SeekableReadStream *in, Common::
 			ser.syncAsUint16LE(a->field96);
 			ser.syncString(a->animationString);
 			filler = 0;
-			for (uint i = 0; i < 10 - a->animationString.size() - 1; ++i)
+			for (uint j = 0; j < 10 - a->animationString.size() - 1; ++j)
 				ser.syncAsByte(filler);	// make sure that exactly 10 bytes are synced
 			ser.syncAsUint16LE(a->fielda2);
 			ser.syncAsUint16LE(a->fielda4);
