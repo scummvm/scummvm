@@ -73,6 +73,7 @@ AudioVolumeResourceSource::AudioVolumeResourceSource(ResourceManager *resMan, co
 		}
 
 		lastEntry->size = fileStream->size() - lastEntry->offset;
+		break;
 	}
 
 	resMan->disposeVolumeFileStream(fileStream, this);
@@ -448,7 +449,7 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 			// works
 			if ((n & kEndOfMapFlag) == kEndOfMapFlag) {
 				const uint32 bytesLeft = mapRes->cend() - ptr;
-				if (bytesLeft >= entrySize) {
+				if (bytesLeft >= entrySize && entrySize > 0) {
 					warning("End of %s reached, but %u entries remain", mapResId.toString().c_str(), bytesLeft / entrySize);
 				}
 				break;

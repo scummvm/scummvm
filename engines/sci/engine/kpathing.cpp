@@ -825,10 +825,10 @@ int PathfindingState::findNearPoint(const Common::Point &p, Polygon *polygon, Co
 		u = ((p.x - p1.x) * (p2.x - p1.x) + (p.y - p1.y) * (p2.y - p1.y)) / (float)p1.sqrDist(p2);
 
 		// Clip to edge
-		if (u < 0.0f)
-			u = 0.0f;
-		if (u > 1.0f)
-			u = 1.0f;
+		if (u < 0.0F)
+			u = 0.0F;
+		if (u > 1.0F)
+			u = 1.0F;
 
 		new_point.x = p1.x + u * (p2.x - p1.x);
 		new_point.y = p1.y + u * (p2.y - p1.y);
@@ -1022,6 +1022,9 @@ static Common::Point *fixup_start_point(PathfindingState *s, const Common::Point
 				if (start != *new_start)
 					s->_prependPoint = new Common::Point(start);
 			}
+			break;
+		default:
+			break;
 		}
 
 		++it;
@@ -1079,6 +1082,9 @@ static Common::Point *fixup_end_point(PathfindingState *s, const Common::Point &
 				if ((type == POLY_NEAREST_ACCESS) && (end != *new_end))
 					s->_appendPoint = new Common::Point(end);
 			}
+			break;
+		default:
+			break;
 		}
 
 		++it;
@@ -1499,8 +1505,10 @@ static reg_t output_path(PathfindingState *p, EngineState *s) {
 
 	int offset = 0;
 
-	if (p->_prependPoint)
-		writePoint(arrayRef, offset++, *p->_prependPoint);
+	if (p->_prependPoint) {
+		writePoint(arrayRef, offset, *p->_prependPoint);
+		offset++;
+	}
 
 	vertex = p->vertex_end;
 	for (int i = path_len - 1; i >= 0; i--) {
@@ -1820,8 +1828,8 @@ reg_t kIntersections(EngineState *s, int argc, reg_t *argv) {
 
 			// If intersection point lies on both the query line segment and the poly
 			// line segment, add it to the output
-			if (((PointInRect(Common::Point(intersectionX, intersectionY), pSourceX, pSourceY, pDestX, pDestY))
-				&& PointInRect(Common::Point(intersectionX, intersectionY), qSourceX, qSourceY, qDestX, qDestY))) {
+			if (PointInRect(Common::Point(intersectionX, intersectionY), pSourceX, pSourceY, pDestX, pDestY)
+				&& PointInRect(Common::Point(intersectionX, intersectionY), qSourceX, qSourceY, qDestX, qDestY)) {
 				outBuf[outCount * 3] = make_reg(0, intersectionX);
 				outBuf[outCount * 3 + 1] = make_reg(0, intersectionY);
 				outBuf[outCount * 3 + 2] = make_reg(0, curIndex);
@@ -1878,7 +1886,7 @@ static float pointSegDistance(const Common::Point &a, const Common::Point &b,
 	FloatPoint bp(b-p);
 
 	// Check if the projection of p on the line a-b lies between a and b
-	if (ba*pa >= 0.0f && ba*bp >= 0.0f) {
+	if (ba * pa >= 0.0F && ba * bp >= 0.0F) {
 		// If yes, return the (squared) distance of p to the line a-b:
 		// translate a to origin, project p and subtract
 		float linedist = (ba*((ba*pa)/(ba*ba)) - pa).norm();
@@ -1940,12 +1948,12 @@ static bool segSegIntersect(const Vertex *v1, const Vertex *v2, Common::Point &i
 
 	if (!len_dc) error("zero length edge in polygon");
 
-	if (pointSegDistance(c, d, a) <= 2.0f) {
+	if (pointSegDistance(c, d, a) <= 2.0F) {
 		intp = a;
 		return true;
 	}
 
-	if (pointSegDistance(c, d, b) <= 2.0f) {
+	if (pointSegDistance(c, d, b) <= 2.0F) {
 		intp = b;
 		return true;
 	}
@@ -1968,7 +1976,7 @@ static bool segSegIntersect(const Vertex *v1, const Vertex *v2, Common::Point &i
 static int intersectDir(const Vertex *v1, const Vertex *v2) {
 	Common::Point p1 = v1->_next->v - v1->v;
 	Common::Point p2 = v2->_next->v - v2->v;
-	return (p1.x*p2.y - p2.x*p1.y);
+	return (p1.x * p2.y - p2.x * p1.y);
 }
 
 // Direction of edge in degrees from pos. x-axis, between -180 and 180
@@ -2191,12 +2199,12 @@ bool mergeSinglePolygon(Polygon &work, const Polygon &polygon) {
 			// edge of poly. Because it starts at polyv->_next, it will skip
 			// the correct re-entry and proceed to the next.
 
-			const Vertex *workv2;
+			const Vertex *workv2 = workv;
 			const Vertex *polyv2 = polyv->_next;
 
 			intersects = false;
 
-			uint pi2, wi2;
+			uint pi2, wi2 = 0;
 			for (pi2 = 0; pi2 < polygonSize; ++pi2, polyv2 = polyv2->_next) {
 
 				int newAngle = edgeDir(polyv2);
@@ -2457,8 +2465,10 @@ reg_t kMergePoly(EngineState *s, int argc, reg_t *argv) {
 	Vertex *vertex;
 	uint32 n = 0;
 	CLIST_FOREACH(vertex, &work.vertices) {
-		if (vertex == work.vertices._head || vertex->v != vertex->_prev->v)
-			writePoint(arrayRef, n++, vertex->v);
+		if (vertex == work.vertices._head || vertex->v != vertex->_prev->v) {
+			writePoint(arrayRef, n, vertex->v);
+			n++;
+		}
 	}
 
 	writePoint(arrayRef, n, Common::Point(POLY_LAST_POINT, POLY_LAST_POINT));
