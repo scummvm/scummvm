@@ -43,6 +43,7 @@ void StarTrekEngine::pollEvents(bool queueEvents) {
 
 			// WORKAROUND: this improves the responsiveness of the mouse.
 			_system->updateScreen();
+			_system->delayMillis(10);
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:

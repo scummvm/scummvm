@@ -1027,6 +1027,7 @@ void StarTrekEngine::showRepublicMap(int16 arg0, int16 turbolift) {
 		_gfx->setBackgroundImage(_gfx->loadBitmap("veng9b"));
 		_gfx->copyBackgroundScreen();
 		_system->updateScreen();
+		_system->delayMillis(10);
 		_gfx->setPri(15);
 		_gfx->fadeinScreen();
 
@@ -1077,6 +1078,7 @@ void StarTrekEngine::showRepublicMap(int16 arg0, int16 turbolift) {
 	_gfx->setBackgroundImage(_gfx->loadBitmap("veng9"));
 	_gfx->copyBackgroundScreen();
 	_system->updateScreen();
+	_system->delayMillis(10);
 	_gfx->setPri(15);
 
 	Sprite someSprite;
@@ -1162,6 +1164,7 @@ lclick:
 	_gfx->setBackgroundImage(_gfx->loadBitmap(_screenName));
 	_gfx->copyBackgroundScreen();
 	_system->updateScreen();
+	_system->delayMillis(10);
 
 	_gfx->drawAllSprites();
 

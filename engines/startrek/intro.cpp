@@ -50,6 +50,7 @@ void StarTrekEngine::playIntro() {
 	_sound->playVoc("logo");
 	_gfx->copyBackgroundScreen();
 	_system->updateScreen();
+	_system->delayMillis(10);
 	_gfx->fadeinScreen();
 
 	uint32 clockTicks = _clockTicks;

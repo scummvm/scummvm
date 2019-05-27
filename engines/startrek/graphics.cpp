@@ -131,6 +131,7 @@ void Graphics::clearScreenAndPriBuffer() {
 	surface->fillRect(_screenRect, 0);
 	_vm->_system->unlockScreen();
 	_vm->_system->updateScreen();
+	_vm->_system->delayMillis(10);
 }
 
 void Graphics::loadPalette(const Common::String &paletteName) {
@@ -200,6 +201,7 @@ void Graphics::setPaletteFadeLevel(byte *palData, int fadeLevel) {
 	// FIXME: this isn't supposed to flush changes to graphics, only palettes.
 	// Might not matter...
 	_vm->_system->updateScreen();
+	_vm->_system->delayMillis(10);
 }
 
 void Graphics::incPaletteFadeLevel() {
@@ -636,6 +638,7 @@ void Graphics::updateScreen() {
 	}
 
 	_vm->_system->updateScreen();
+	_vm->_system->delayMillis(10);
 }
 
 Sprite *Graphics::getSpriteAt(int16 x, int16 y) {
@@ -759,8 +762,10 @@ void Graphics::drawBackgroundImage(const char *filename) {
 
 	_vm->_system->getPaletteManager()->setPalette(palette, 0, 256);
 	_vm->_system->copyRectToScreen(pixels, width, xoffset, yoffset, width, height);
-	_vm->_system->updateScreen();
+	//_vm->_system->updateScreen();
+	//_vm->_system->delayMillis(10);
 
+	delete[] pixels;
 	delete[] palette;
 }
 

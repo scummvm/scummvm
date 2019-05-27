@@ -262,6 +262,7 @@ void StarTrekEngine::runTransportSequence(const Common::String &name) {
 	_gfx->loadPalette("palette");
 	_gfx->drawDirectToScreen(bgImage);
 	_system->updateScreen();
+	_system->delayMillis(10);
 
 	for (int i = 0; i < (_awayMission.redshirtDead ? 3 : 4); i++) {
 		Common::String filename = getCrewmanAnimFilename(i, name);
@@ -604,7 +605,7 @@ void StarTrekEngine::playMovieMac(Common::String filename) {
 			if (event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE)
 				continuePlaying = false;
 
-		g_system->delayMillis(10);
+		_system->delayMillis(10);
 	}
 
 	delete qtDecoder;
