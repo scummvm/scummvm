@@ -497,7 +497,8 @@ void Graphics::drawAllSprites(bool updateScreenFlag) {
 					if (rect.isEmpty())
 						spr->rect2Valid = 0;
 					else {
-						spr->rectangle2 = getRectEncompassing(spr->drawRect, spr->lastDrawRect);
+						spr->rectangle2 = spr->drawRect;
+						spr->rectangle2.extend(spr->lastDrawRect);
 						spr->rect2Valid = 1;
 					}
 				} else {
@@ -560,7 +561,7 @@ void Graphics::drawAllSprites(bool updateScreenFlag) {
 
 					if (rect1.width() != 0 && rect1.height() != 0) {
 						if (mustRedrawSprite)
-							rect2 = getRectEncompassing(rect1, rect2);
+							rect2.extend(rect1);
 						else
 							rect2 = rect1;
 						mustRedrawSprite = true;
