@@ -40,15 +40,17 @@
 #include "graphics/palette.h"
 #include "graphics/thumbnail.h"
 #include "gui/saveload.h"
-#include <stdio.h>
 
 #include "supernova2/supernova2.h"
+#include "supernova2/state.h"
 
 
 namespace Supernova2 {
 
 Supernova2Engine::Supernova2Engine(OSystem *syst)
 	: Engine(syst)
+	, _console(nullptr)
+	, _gm(nullptr)
 	, _allowLoadGame(true)
 	, _allowSaveGame(true)
 	, _sleepAutoSave(nullptr)
@@ -64,22 +66,21 @@ Supernova2Engine::Supernova2Engine(OSystem *syst)
 Supernova2Engine::~Supernova2Engine() {
 	DebugMan.clearAllDebugChannels();
 
+	delete _console;
+	delete _gm;
 	delete _sleepAutoSave;
 }
 
 Common::Error Supernova2Engine::run() {
 	init();
-	int i = 0;
 
 	while (!shouldQuit()) {
 		uint32 start = _system->getMillis();
-		Common::String str = getGameString(i);
-		if (str == _nullString)
-			break;
+		_console->onFrame();
+		_system->updateScreen();
 		int end = _delay - (_system->getMillis() - start);
 		if (end > 0)
 			_system->delayMillis(end);
-		i++;
 	}
 
 	return Common::kNoError;
@@ -96,6 +97,8 @@ void Supernova2Engine::init() {
 	if (status.getCode() != Common::kNoError)
 		error("Failed reading game strings");
 
+	_gm = new GameManager(this);
+	_console = new Console(this, _gm);
 	setTotalPlayTime(0);
 }
 

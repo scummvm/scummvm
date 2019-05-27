@@ -30,6 +30,8 @@
 #include "engines/engine.h"
 #include "common/file.h"
 
+#include "supernova2/console.h"
+
 namespace Common {
 	class MemoryReadWriteStream;
 }
@@ -43,6 +45,8 @@ namespace Supernova2 {
 #define SUPERNOVA2_DAT_VERSION 1
 
 class GuiElement;
+class console;
+class GameManager;
 
 class Supernova2Engine : public Engine {
 public:
@@ -52,6 +56,8 @@ public:
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
 
+	GameManager *_gm;
+	Console *_console;
 	bool _allowLoadGame;
 	bool _allowSaveGame;
 	Common::StringArray _gameStrings;
