@@ -66,7 +66,7 @@ PersonaAnimation::PersonaAnimation(int num, VariableStack *&stacky) {
 	theSprites = nullptr;
 	numFrames = num;
 	frames = new AnimFrame[num];
-	int a = num, frameNum, howMany;
+	int a = num, frameNum = 0, howMany = 0;
 
 	while (a) {
 		a--;

@@ -38,7 +38,7 @@ MovieStates movieIsPlaying = nothing;
 
 int movieIsEnding = 0;
 
-float movieAspect = 1.6;
+float movieAspect = 1.6F;
 #if 0
 typedef struct audioBuffers {
 	char *buffer;
