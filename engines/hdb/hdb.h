@@ -40,14 +40,10 @@
 #define GFX_CACHE_LIMIT		0x800000
 
 /*
-	Subsystems
+	Subsystem Includes
 */
 
 #include "file-manager.h"
-
-/*
-	Game System Singletons
-*/
 
 struct ADGameDescription;
 
@@ -72,34 +68,13 @@ public:
 
 private:
 	Console *_console;
-	Common::File _file;
+	
+	/*
+	Game System Pointers
+	*/
 
-	struct {
-		byte signature[5]; // 4 Bytes + '\0'
-		uint32 dirOffset;
-		uint32 dirSize;
-
-		bool isValid() {
-			return	(signature[0] == 'M') &&
-					(signature[1] == 'P') &&
-					(signature[2] == 'C') &&
-					(signature[3] == 'U') &&
-					(signature[4] == '\0');
-		}
-
-	} _dataHeader;
-
-	struct DataFile {
-		byte fileName[65]; // 65 Bytes + '\0'
-		uint32 filePosition;
-		uint32 fileLength;
-		uint32 unknownField1;
-		uint32 unknownField2;
-	};
-
-	Common::Array<DataFile*> _gameData;
-
-	void readMPC(const Common::String &fileName);
+	FileMan* _fileMan;
+	
 };
 
 }// End of namespace HDB
