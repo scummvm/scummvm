@@ -169,6 +169,7 @@ void Room::mudd1SpockPressedRedButton() {
 
 		// ENHANCEMENT: Original text was just "(Spock raises eyebrow)" without any audio.
 		// This changes it to a narration to make it flow better.
+		// TODO: This needs to be refactored
 		showText(TX_DEM0N009);
 		break;
 

@@ -654,7 +654,7 @@ String StarTrekEngine::readTextFromArrayWithChoices(int choiceIndex, uintptr dat
 	const char *headerText = textArray[0];
 	const char *mainText = textArray[choiceIndex + 1];
 
-	if (*mainText == '\0')
+	if (mainText == nullptr || *mainText == '\0')
 		return Common::String(); // Technically should be nullptr...
 
 	if (headerTextOutput != nullptr) {

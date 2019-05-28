@@ -26,6 +26,7 @@
 #include "common/rect.h"
 #include "common/ptr.h"
 #include "common/str.h"
+#include "common/hashmap.h"
 
 #include "startrek/action.h"
 #include "startrek/awaymission.h"
@@ -35,7 +36,6 @@
 #include "startrek/text.h"
 
 using Common::SharedPtr;
-
 
 namespace StarTrek {
 
@@ -143,6 +143,8 @@ public:
 	 */
 	Common::Point getSpawnPosition(int crewmanIndex);
 
+	int showText(TextRef speaker, TextRef text, bool fromRDF = false);
+
 public:
 	byte *_rdfData;
 
@@ -154,7 +156,10 @@ private:
 	int _numRoomActions;
 
 	int _roomIndex; // ie. for DEMON2, this is 2
+	Common::HashMap<int, Common::String> _lookMessages;
+	Common::HashMap<int, Common::String> _talkMessages;
 
+	void loadRoomMessages();
 
 	int findFunctionPointer(int action, void (Room::*funcPtr)());
 
@@ -181,9 +186,8 @@ private:
 	 * Cmd 0x03
 	 */
 	int showRoomSpecificText(const char **textAddr);
-	int showText(const TextRef *text);
-	int showText(TextRef speaker, TextRef text);
-	int showText(TextRef text);
+	int showText(const TextRef *text, bool fromRDF = false);
+	int showText(TextRef text, bool fromRDF = false);
 	/**
 	 * Cmd 0x04
 	 */

@@ -98,61 +98,61 @@ extern const char *const g_gameStrings[] = {
 	"#COMP\\COMPU193#TLTDH gas: The chemical compound tantalum bi-lithium thalo-dihydroxide. Colorless, odorless, nonflammable gaseous at 1 atm and temperatures within the human norm. Early anesthetic among Vulcans and Romulans, in whom it produces laughter, feelings of exhiliration, euphoria; sometimes leading to unconsciousness. In post-industrial/pre-spaceflight era, a social problem evolved when crude TLTDH became popular to \"cook up\" from non-conductive tantalo-lithial compounds commonly used as electrical insulation.",
 
 
-	"#DEM0\\DEM0_001#Doctor, you need to investigate the possibility of disease, mental or physical, among these people, before we go chasing up the mountains. Prelate Angiven, may we see those who have encountered the demons?",
-	"#DEM0\\DEM0_002#Aside from seeing demons, has any hard data been collected? Any evidence I could see?",
-	"#DEM0\\DEM0_003#Been seeing ghosts and bogeymen eh? I find that a little hard to believe.",
-	"#DEM0\\DEM0_004#C'mon Bones, the cold will improve your circulation.",
-	"#DEM0\\DEM0_005#Demons? Gates of Hell? This is the 23rd Century!",
-	"#DEM0\\DEM0_006#I'm Captain James T. Kirk of the U.S.S. Enterprise. We have received word that alien lifeforms are creating problems at your mining facilities at Idyll Mountain. Tell me more.",
-	"#DEM0\\DEM0_007#Later Ensign. We have work to do.",
-	"#DEM0\\DEM0_008#Most High Prelate Angiven, I am honored to meet you. I consider it my divine duty to assist you in any possible way with the spawn of the devil.",
-	"#DEM0\\DEM0_009#This planet's as beautiful as everyone says it is.",
-	"#DEM0\\DEM0_010#What can you tell me about the mine itself?",
-	"#DEM0\\DEM0_011#You look rather cold, Bones.",
-	"#DEM0\\DEM0_012#You're wasting the time of a starship capable of destroying this planet with campfire stories? No wonder you were dumped out here in the middle of nowhere.",
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
 	"#DEM0\\DEM0_013#Captain, Doctor McCoy is correct.",
-	"#DEM0\\DEM0_014#Captain, demons and supernatural creatures are, almost by definition, illogical. Yet it is evident these people believe what they have seen. Barring illness or mass hysteria, I agree that a real problem seems to exist.",
+	"",	// RDF
 	"#DEM0\\DEM0_015#Burning down their house is not the best way to gain their confidence Jim!",
 	"#DEM0\\DEM0_016#Captain, the flora on this planet is very interesting. I wonder how useful it may be for medicinal purposes.",
 	"#DEM0\\DEM0_017#Quite the vandal aren't we, Jim?",
-	"#DEM0\\DEM0_018#His blood pressure's up a bit, but he believes he's telling the truth.",
-	"#DEM0\\DEM0_019#I don't know if the problem is real, the result of a new illness, or mass hysteria. But at the very least, there's an injured miner who needs my help.",
-	"#DEM0\\DEM0_020#Jim! Are you out of your mind?",
-	"#DEM0\\DEM0_021#Jim, I am not picking up any unusual life here, just native lifeforms and the settlers. The colonists are all human, except for the one Tellarite. If there are demons here, they don't register on my tricorder.",
-	"#DEM0\\DEM0_022#The man's in perfect health.",
-	"#DEM0\\DEM0_023#I'm not cold, I'm freezing! And that damn transporter just had to set me down in the middle of a snow drift!",
-	"#DEM0\\DEM0_024#Some people get too much circulation!",
-	"#DEM0\\DEM0_025#Well...",
-	"#DEM0\\DEM0_026#You mean you've never built a snowman, ensign?",
-	"#DEM0\\DEM0_027#The trees. The fresh air. The freezing cold...",
-	"#DEM0\\DEM0_028#Captain, reading the rocks in this area, I find that this locality may have been disturbed in the distant past. Recent disturbances created by the colonists' construction and mining prevent me from discovering anything further.",
-	"#DEM0\\DEM0_029#A centimeter of snow does not technically constitute a drift, Doctor.",
-	"#DEM0\\DEM0_030#They are already gathered in the chapel, and will cooperate in any way with you. First door on my right.",
-	"#DEM0\\DEM0_031#A skeptic would consider everything merely anecdotal or unproven. My people will gladly tell you their own stories, so you need not hear it secondhand through me.",
-	"#DEM0\\DEM0_032#Captain Kirk. I had no idea we were blessed with one of our order in the ranks of Starfleet. We believe we have located the very Gates of Hell below Idyll Mountain.",
-	"#DEM0\\DEM0_033#Starfleet recognizes our freedom to worship and believe as we see fit, Captain. I am surprised that you do not share that feeling. Rest assured that Starfleet Command will be informed of your rudeness.",
-	"#DEM0\\DEM0_034#Thank you for your courtesy, Kirk. May you receive the guidance and protection of our God as you complete this divine mission.",
-	"#DEM0\\DEM0_035#The area is exceptionally stable tectonically, and easy for our machinery to work in, praise God. We've mined for hafnium and a variety of useful trace elements. The deeper we dig, however, the more anomalous the variety of minerals seems to be. Our Ignaciate, Brother Stephen, has his own theories about why this might be. Either way, the anomalies inspired Brother Kandrey to conduct studies inside the mine. Yesterday, he reported discovering a strange door -- a gate to Hell, surely, for the demons caused a cave-in immediately. Kandrey was trapped, unconscious, and the demons prevent us from rescuing him. We can only hope he is still alive.",
-	"#DEM0\\DEM0_036#This is so much better, gentlefolk. We are honored at your presence and hope you will find peace here in our haven.",
-	"#DEM0\\DEM0_037#We need your help, Kirk. You may have no respect for our beliefs, but I hope you will look beyond that. Godspeed.",
-	"#DEM0\\DEM0_038#Certainly, Captain Kirk. Not aliens, per se -- we have encountered what we believe are demons at Idyll Mountain, creatures surely emerging from the very gates of Hell. Our God would not test us thus without reason, so we believe your might and insight are our God's method to help us discover what is going on.",
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
 	"#DEM0\\DEM0_039#Aw, Captain, please don't melt the snow. I've never seen it before.",
 	"#DEM0\\DEM0_040#Is he always this trigger happy on ground missions?",
-	"#DEM0\\DEM0_041#And doctors say that patients complain too much!",
-	"#DEM0\\DEM0_042#I've never even thrown a snowball. Do you think anyone would mind?",
-	"#DEM0\\DEM0_043#I've never seen snow like this before. This is great!",
-	"#DEM0\\DEM0_044#Of course, sir.",
-	"#DEM0\\DEM0N000#A beautiful, snow covered scene with a path leading off to Mount Idyll.",
-	"#DEM0\\DEM0N001#A quickly constructed spartan shelter, primarily used by fledgling colonies.",
-	"#DEM0\\DEM0N002#Dr. Leonard McCoy, the finest doctor in Starfleet, wishes that he were on a warmer planet.",
-	"#DEM0\\DEM0N003#Ensign Everts, who has never been this close to snow before in his life, gazes with child-like fascination at the ground.",
-	"#DEM0\\DEM0N004#High Prelate Angiven waits patiently for you to decide what you will do next.",
-	"#DEM0\\DEM0N005#James Tiberius Kirk, Captain of the Enterprise. He's always happy to run an errand of mercy.",
-	"#DEM0\\DEM0N006#On the other side of the trees is Idyll Mountain. A tall, forbidding place. You have a vague feeling of danger.",
-	"#DEM0\\DEM0N007#Remnants of a recent snowfall cover the ground.",
-	"#DEM0\\DEM0N008#Some colonists.",
-	"#DEM0\\DEM0N009#Spock raises an eyebrow.",
-	"#DEM0\\DEM0N010#Various bushes and shrubs grow along the edge of the forest.",
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"#DEM0\\DEM0N009#Spock raises an eyebrow.",	// kept because it's used as an enhancement in mudd1
+	"",	// RDF
 	"All mining equipment use this road.",
 
 
@@ -367,37 +367,37 @@ extern const char *const g_gameStrings[] = {
 	"#DEM4\\DEM4N014#You fit the key into the slot, but you cannot find a way to turn it.",
 
 
-	"#DEM5\\DEM5_001#Just thinking to myself. Don't mind me.",
-	"#DEM5\\DEM5_002#Can you tell us what they looked like?",
-	"#DEM5\\DEM5_003#It will be good to help them for a change.",
-	"#DEM5\\DEM5_004#Not the good ones, that's for sure.",
-	"#DEM5\\DEM5_005#The demons didn't follow you?",
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
 	"#DEM5\\DEM5_006#I detect various pieces of mining equipment but nothing of note.",
 	"#DEM5\\DEM5_007#May I suggest using a more diplomatic approach to questioning the colonists. Force will gain us little, if anything.",
 	"#DEM5\\DEM5_008#Jim, that wouldn't be wise.",
 	"#DEM5\\DEM5_009#Jim, these need to be processed first!",
 	"#DEM5\\DEM5_010#This man is getting worse. We've got to find those berries before he dies.",
-	"#DEM5\\DEM5_011#Jim, I've completed my study. I find no evidence for physical or mental disturbances among the colonists, causing them to see hallucinations. There must be other reasons for what these people are seeing.",
-	"#DEM5\\DEM5_012#Jim, this man has suffered severe physical injuries to his head and arm. The wounds have been adequately cared for; however, he has developed the Nugaireyn infection. If not treated swiftly, the effects can be fatal. The infection can normally be treated with Hypo-Dytoxin, but there's none on the Enterprise.",
-	"#DEM5\\DEM5_013#The alien's lifesigns seem stress-elevated. Otherwise he appears fundamentally healthy.",
-	"#DEM5\\DEM5_014#The man is suffering moderately from the effects of his age, but seems healthy, alert, and in fine spirits.",
-	"#DEM5\\DEM5_015#The man seems worried and stressed, but all body functions appear within normal limits.",
-	"#DEM5\\DEM5_016#This man has recently suffered a nasty but non-life-threatening wound. The damage has been adequately cared for. The man's vital effects are attributable to shock and stress.",
-	"#DEM5\\DEM5_017#This man needs help, Jim, and I wouldn't want to put it off for too long.",
-	"#DEM5\\DEM5_018#By our standards yes. Here the Acolytes prefer a simpler life style; unfortunately, this is one of the consequences.",
-	"#DEM5\\DEM5_019#Neither were some of my professors.",
-	"#DEM5\\DEM5_020#So did I, but I became one anyway.",
-	"#DEM5\\DEM5_021#The Acolytes did a lot of good work for the needy in this quadrant.",
-	"#DEM5\\DEM5_022#Why, Spock, you two should get along fine, he sounds just like you.",
-	"#DEM5\\DEM5_023#You know Jim, they can take a captain out of a starship, and a science officer out of his lab, but you can never retire a doctor.",
-	"#DEM5\\DEM5_024#Captain, a Krognik-demon has a decidedly wolfish appearance. Brother Grisnash, is this not the traditional shape of the Evil One and his minions among Tellarites?",
-	"#DEM5\\DEM5_025#I believe this may be significant, Captain.",
-	"#DEM5\\DEM5_026#That is not logical, doctor.",
-	"#DEM5\\DEM5_027#The medical methods of these people seem primitive to me, doctor.",
-	"#DEM5\\DEM5_028#I am Brother Grisnash. I went up the mountainside in solitary prayer, seeking to face my fears. Indeed I found them.  A bellowing Krognik-demon with sharp teeth and a long snout descended upon me in a rush of wind.",
-	"#DEM5\\DEM5_029#It is.",
-	"#DEM5\\DEM5_030#Brother Kandrey was -- is -- my partner. I was on the communications link when the demons caused the rockfall and silenced him.  He said he'd found a strange door with devilish writing.  Truly he came upon the Gate of Hell itself.",
-	"#DEM5\\DEM5_031#You tread close to unholy knowledge, Brother Stephen!",
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
 	"#DEM5\\DEM5_032#Ahh, I see you found the berries. Meet me in my lab.",
 	"#DEM5\\DEM5_033#Good, you have found the berries. Bring them to my lab quickly.",
 	"#DEM5\\DEM5_034#I am worried about Brother Chub. Can you examine him, Doctor?",
@@ -406,27 +406,27 @@ extern const char *const g_gameStrings[] = {
 	"#DEM5\\DEM5_037#Those are Laraxian berries. They grow wild by the mine entrance.",
 	"#DEM5\\DEM5_038#Time is of the essence, you must hurry and retrieve the berry.",
 	"#DEM5\\DEM5_039#What an interesting artifact. Hmmm... It appears to have been damaged. When you have a chance, take it to my lab and we'll see if it can be repaired.",
-	"#DEM5\\DEM5_040#I may be of some assistance. The Laraxian Berry grows near the mouth of the cave. If I could acquire it, I would be able to synthesize the Hypo-Dytoxin from the berry. Unfortunately, the demons prevent us from approaching the cave entrance. perhaps you could retrieve it for me.",
-	"#DEM5\\DEM5_041#I am Brother Stephen, an Ignaciate, following the holy teachings with mind and soul alike. I believe the anomalous mineral readings, in combination with evidence of ancient disturbances in this otherwise highly stable geologic location indicates previous habitation of the region, eons ago.",
-	"#DEM5\\DEM5_042#I appreciate your prayers, Brother Roberts. Captain, if you and your people go up the mountain, I hope afterward you will visit me in my study, which is next door. I am too old to make the trek myself, but I am eager for knowledge. In return, I will offer you what insights our God grants these old eyes.",
-	"#DEM5\\DEM5_043#I would be equally honored to discuss medicine with you, Doctor, as science with your Vulcan associate.  Let me continue. I believe our God made humans, aliens -- and demons all.  If I could get a real demon into my study, I would bless our God for the opportunity, as I thank Him for everything in this life.",
-	"#DEM5\\DEM5_044#My mom wanted me to become a doctor. Honest. But I hated my biology classes.",
-	"#DEM5\\DEM5_045#My uncle John lived with the Acolytes a long time ago. He died in their service, helping plague victims on New Ontario VI twenty years ago.",
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
 	"#DEM5\\DEM5L027#Thank you. You are most kind.",
 	"#DEM5\\DEM5L028#You'll understand if I don't stand up, I hope. I am not well.",
 	"#DEM5\\DEM5L029#I headed up the party that sought to rescue Brother Kandrey. Without warning, the demons appeared and attacked us as we approached the mine!",
 	"#DEM5\\DEM5L030#Like the demons that have plagued devout folk since before our people left the Earth. Huge muscular demons, with ruddy skin. Truly the manifestation of Evil, with batwings, horns and talons, and a pointed tail. God preserve us all. One tore open my arm and I surely would have perished -- but for my companions who bore me back down the mountain.",
 	"#DEM5\\DEM5L031#No.",
-	"#DEM5\\DEM5N000#A chapel typical of the Acolytes of the Stars.",
-	"#DEM5\\DEM5N001#A grim-faced miner-colonist nods curtly at you.",
-	"#DEM5\\DEM5N002#A majestic view of Mt. Idyll can be seen through the skylight.",
-	"#DEM5\\DEM5N003#A sturdy man of advanced years, whose blue eyes meet yours with clarity, curiosity, and directness.",
-	"#DEM5\\DEM5N004#Boxes of supplies and mining equipment litter the floor.",
-	"#DEM5\\DEM5N005#Ensign Everts cannot take his eyes off the sight of Mount Idyll.",
-	"#DEM5\\DEM5N006#James Kirk takes time to rest and ponder the remainder of the mission.",
-	"#DEM5\\DEM5N007#McCoy looks anxiously about the room.",
-	"#DEM5\\DEM5N008#Spock waits for your command, patient as ever.",
-	"#DEM5\\DEM5N009#The Tellarite appears completely at home surrounded by humans, but the wrinkling on his brow indicates a great deal of worry.",
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
+	"",	// RDF
 	"#DEM5\\DEM5N010#He is too busy consoling the wounded man.",
 	"#DEM5\\DEM5N011#He is too busy consoling the wounded man.",
 	"#DEM5\\DEM5N012#They are too heavy to move.",

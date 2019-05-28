@@ -114,11 +114,53 @@ Room::Room(StarTrekEngine *vm, const Common::String &name) : _vm(vm), _awayMissi
 		_numRoomActions = 0;
 	}
 
+	loadRoomMessages();
 	memset(&_roomVar, 0, sizeof(_roomVar));
 }
 
 Room::~Room() {
+	_lookMessages.clear();
+	_talkMessages.clear();
 	delete[] _rdfData;
+}
+
+void Room::loadRoomMessages() {
+	// TODO: There are some more messages which are not stored in that offset
+	uint16 messagesOffset = readRdfWord(32);
+	byte *text = _rdfData + messagesOffset;
+	int messageNum;
+	bool isTalkMessage;
+
+	do {
+		while (*text != '#')
+			text++;
+
+		if (text[5] != '\\')
+			error("loadRoomMessages: Invalid message");
+
+		isTalkMessage = (text[10] == '_');
+
+		// TODO: There are also 'L' messages (look at something, but has a talker).
+		// These clash with the normal talk ones (with underscores)
+		if (text[10] == 'L') {
+			while (*text != '\0')
+				text++;
+
+			continue;
+		}
+
+		sscanf((const char *)(text + 11), "%3d", &messageNum);
+		if (text[14] != '#')
+			error("loadRoomMessages: Invalid message");
+
+		if (isTalkMessage)
+			_talkMessages[messageNum] = Common::String((const char *)text);
+		else
+			_lookMessages[messageNum] = Common::String((const char *)text);
+
+		while (*text != '\0')
+			text++;
+	} while (*(text + 1) == '#');
 }
 
 uint16 Room::readRdfWord(int offset) {
@@ -298,30 +340,38 @@ int Room::showRoomSpecificText(const char **array) {
 	return _vm->showText(&StarTrekEngine::readTextFromArrayWithChoices, (uintptr)array, 20, 20, textColor, true, false, false);
 }
 
-int Room::showText(const TextRef *textIDs) {
+int Room::showText(const TextRef *textIDs, bool fromRDF) {
 	int numIDs = 0;
+	int retval;
 	while (textIDs[numIDs] != TX_BLANK)
 		numIDs++;
 
 	const char **text = (const char **)malloc(sizeof(const char *) * (numIDs + 1));
-	for (int i = 0; i <= numIDs; i++)
-		text[i] = g_gameStrings[textIDs[i]];
-	int retval = showRoomSpecificText(text);
+
+	for (int i = 0; i <= numIDs; i++) {
+		// TODO: This isn't nice, but it's temporary till we migrate to reading text from RDF files
+		if (i > 0 && fromRDF)
+			text[i] = (textIDs[0] == TX_NULL) ? _lookMessages[textIDs[i]].c_str() : _talkMessages[textIDs[i]].c_str();
+		else
+			text[i] = g_gameStrings[textIDs[i]];
+	}
+
+	retval = showRoomSpecificText(text);
 	free(text);
 
 	return retval;
 }
 
-int Room::showText(TextRef speaker, TextRef text) {
+int Room::showText(TextRef speaker, TextRef text, bool fromRDF) {
 	TextRef textIDs[3];
 	textIDs[0] = speaker;
 	textIDs[1] = text;
 	textIDs[2] = TX_BLANK;
-	return showText(textIDs);
+	return showText(textIDs, fromRDF);
 }
 
-int Room::showText(TextRef text) {
-	return showText(TX_NULL, text);
+int Room::showText(TextRef text, bool fromRDF) {
+	return showText(TX_NULL, text, fromRDF);
 }
 
 void Room::giveItem(int item) {
