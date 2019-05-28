@@ -44,7 +44,7 @@ public:
 	};
 
 public:
-	static const int kNumImageFiles = 45;
+	static const int kNumImageFiles = 47;
 
 public:
 	ResourceManager();

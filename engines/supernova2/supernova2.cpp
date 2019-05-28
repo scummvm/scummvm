@@ -41,6 +41,8 @@
 #include "graphics/thumbnail.h"
 #include "gui/saveload.h"
 
+#include "supernova2/resman.h"
+#include "supernova2/screen.h"
 #include "supernova2/supernova2.h"
 #include "supernova2/state.h"
 
@@ -51,6 +53,8 @@ Supernova2Engine::Supernova2Engine(OSystem *syst)
 	: Engine(syst)
 	, _console(nullptr)
 	, _gm(nullptr)
+	, _resMan(nullptr)
+	, _screen(nullptr)
 	, _allowLoadGame(true)
 	, _allowSaveGame(true)
 	, _sleepAutoSave(nullptr)
@@ -68,6 +72,8 @@ Supernova2Engine::~Supernova2Engine() {
 
 	delete _console;
 	delete _gm;
+	delete _resMan;
+	delete _screen;
 	delete _sleepAutoSave;
 }
 
@@ -76,6 +82,8 @@ Common::Error Supernova2Engine::run() {
 
 	while (!shouldQuit()) {
 		uint32 start = _system->getMillis();
+		_gm->updateEvents();
+		_gm->executeRoom();
 		_console->onFrame();
 		_system->updateScreen();
 		int end = _delay - (_system->getMillis() - start);
@@ -97,9 +105,24 @@ void Supernova2Engine::init() {
 	if (status.getCode() != Common::kNoError)
 		error("Failed reading game strings");
 
+	_resMan = new ResourceManager();
 	_gm = new GameManager(this);
+	_screen = new Screen(this, _resMan);
 	_console = new Console(this, _gm);
 	setTotalPlayTime(0);
+}
+
+bool Supernova2Engine::hasFeature(EngineFeature f) const {
+	switch (f) {
+	case kSupportsRTL:
+		return true;
+	case kSupportsLoadingDuringRuntime:
+		return true;
+	case kSupportsSavingDuringRuntime:
+		return true;
+	default:
+		return false;
+	}
 }
 
 Common::Error Supernova2Engine::loadGameStrings() {
@@ -171,17 +194,215 @@ void Supernova2Engine::setGameString(int idx, const Common::String &string) {
 	_gameStrings[idx] = string;
 }
 
-bool Supernova2Engine::hasFeature(EngineFeature f) const {
-	switch (f) {
-	case kSupportsRTL:
-		return true;
-	case kSupportsLoadingDuringRuntime:
-		return true;
-	case kSupportsSavingDuringRuntime:
-		return true;
-	default:
-		return false;
+void Supernova2Engine::renderImage(int section) {
+	if (section > 128)
+		_gm->_currentRoom->setSectionVisible(section - 128, false);
+	else
+		_gm->_currentRoom->setSectionVisible(section, true);
+
+	_screen->renderImage(section);
+}
+
+void Supernova2Engine::renderImage(ImageId id, bool removeImage) {
+	_gm->_currentRoom->setSectionVisible(_screen->getImageInfo(id)->section, !removeImage);
+	_screen->renderImage(id, removeImage);
+}
+
+bool Supernova2Engine::setCurrentImage(int filenumber) {
+	return _screen->setCurrentImage(filenumber);
+}
+
+void Supernova2Engine::restoreScreen() {
+	_screen->restoreScreen();
+}
+
+void Supernova2Engine::renderRoom(Room &room) {
+	_screen->renderRoom(room);
+}
+
+void Supernova2Engine::renderMessage(const char *text, MessagePosition position) {
+	_gm->_messageDuration = (Common::strnlen(text, 512) + 20) * _textSpeed / 10;
+	_screen->renderMessage(text, position);
+}
+
+void Supernova2Engine::renderMessage(const Common::String &text, MessagePosition position) {
+	_gm->_messageDuration = (text.size() + 20) * _textSpeed / 10;
+	_screen->renderMessage(text, position);
+}
+
+void Supernova2Engine::renderMessage(StringId stringId, MessagePosition position, Common::String var1, Common::String var2) {
+	_gm->_messageDuration = (getGameString(stringId).size() + 20) * _textSpeed / 10;
+	_screen->renderMessage(stringId, position, var1, var2);
+}
+
+void Supernova2Engine::removeMessage() {
+	_screen->removeMessage();
+}
+
+void Supernova2Engine::renderText(const uint16 character) {
+	_screen->renderText(character);
+}
+
+void Supernova2Engine::renderText(const char *text) {
+	_screen->renderText(text);
+}
+
+void Supernova2Engine::renderText(const Common::String &text) {
+	_screen->renderText(text);
+}
+
+void Supernova2Engine::renderText(StringId stringId) {
+	_screen->renderText(stringId);
+}
+
+void Supernova2Engine::paletteBrightness() {
+	_screen->paletteBrightness();
+}
+
+void Supernova2Engine::paletteFadeOut() {
+	_screen->paletteFadeOut();
+}
+
+void Supernova2Engine::paletteFadeIn() {
+	_screen->paletteFadeIn(255);
+}
+
+void Supernova2Engine::setColor63(byte value) {
+	_screen->setColor63(value);
+}
+
+/*void Supernova2Engine::setTextSpeed() {
+	const Common::String &textSpeedString = getGameString(kStringTextSpeed);
+	int stringWidth = Screen::textWidth(textSpeedString);
+	int textX = (kScreenWidth - stringWidth) / 2;
+	int textY = 100;
+	stringWidth += 4;
+	int boxX = stringWidth > 110 ? (kScreenWidth - stringWidth) / 2 : 105;
+	int boxY = 97;
+	int boxWidth = stringWidth > 110 ? stringWidth : 110;
+	int boxHeight = 27;
+
+	_gm->animationOff();
+	_gm->saveTime();
+	saveScreen(boxX, boxY, boxWidth, boxHeight);
+
+	renderBox(boxX, boxY, boxWidth, boxHeight, kColorBlue);
+	renderText(textSpeedString, textX, textY, kColorWhite99); // Text speed
+
+	// Find the closest index in kTextSpeed for the current _textSpeed.
+	// Important note: values in kTextSpeed decrease with the index.
+	int speedIndex = 0;
+	while (speedIndex < 4 && _textSpeed < (kTextSpeed[speedIndex] + kTextSpeed[speedIndex+1]) / 2)
+		++speedIndex;
+
+	char nbString[2];
+	nbString[1] = 0;
+	for (int i = 0; i < 5; ++i) {
+		byte color = i == speedIndex ? kColorWhite63 : kColorWhite35;
+		renderBox(110 + 21 * i, 111, 16, 10, color);
+
+		nbString[0] = '1' + i;
+		renderText(nbString, 115 + 21 * i, 112, kColorWhite99);
 	}
+	do {
+		_gm->getInput();
+		int key = _gm->_keyPressed ? _gm->_key.keycode : Common::KEYCODE_INVALID;
+		if (!_gm->_keyPressed && _gm->_mouseClicked && _gm->_mouseY >= 111 && _gm->_mouseY < 121 && (_gm->_mouseX + 16) % 21 < 16)
+			key = Common::KEYCODE_0 - 5 + (_gm->_mouseX + 16) / 21;
+		if (key == Common::KEYCODE_ESCAPE)
+			break;
+		else if (key >= Common::KEYCODE_1 && key <= Common::KEYCODE_5) {
+			speedIndex = key - Common::KEYCODE_1;
+			_textSpeed = kTextSpeed[speedIndex];
+			ConfMan.setInt("textspeed", _textSpeed);
+			break;
+		}
+	} while (!shouldQuit());
+	_gm->resetInputState();
+
+	restoreScreen();
+	_gm->loadTime();
+	_gm->animationOn();
+}*/
+
+/*bool Supernova2Engine::quitGameDialog() {
+	bool quit = false;
+
+	GuiElement guiQuitBox;
+	guiQuitBox.setColor(kColorRed, kColorWhite99, kColorRed, kColorWhite99);
+	guiQuitBox.setSize(112, 97, 112 + 96, 97 + 27);
+	guiQuitBox.setText(getGameString(kStringLeaveGame).c_str());
+	guiQuitBox.setTextPosition(guiQuitBox.left + 3, guiQuitBox.top + 3);
+	GuiElement guiQuitYes;
+	guiQuitYes.setColor(kColorWhite35, kColorWhite99, kColorWhite35, kColorWhite99);
+	guiQuitYes.setSize(115, 111, 158, 121);
+	guiQuitYes.setText(getGameString(kStringYes).c_str());
+	guiQuitYes.setTextPosition(132, 112);
+	GuiElement guiQuitNo;
+	guiQuitNo.setColor(kColorWhite35, kColorWhite99, kColorWhite35, kColorWhite99);
+	guiQuitNo.setSize(162, 111, 205, 121);
+	guiQuitNo.setText(getGameString(kStringNo).c_str());
+	guiQuitNo.setTextPosition(173, 112);
+
+	_gm->animationOff();
+	_gm->saveTime();
+	saveScreen(guiQuitBox);
+
+	renderBox(guiQuitBox);
+	renderText(guiQuitBox);
+	renderBox(guiQuitYes);
+	renderText(guiQuitYes);
+	renderBox(guiQuitNo);
+	renderText(guiQuitNo);
+
+	do {
+		_gm->getInput();
+		if (_gm->_keyPressed) {
+			if (_gm->_key.keycode == Common::KEYCODE_j) {
+				quit = true;
+				break;
+			} else if (_gm->_key.keycode == Common::KEYCODE_n) {
+				quit = false;
+				break;
+			}
+		}
+		if (_gm->_mouseClicked) {
+			if (guiQuitYes.contains(_gm->_mouseX, _gm->_mouseY)) {
+				quit = true;
+				break;
+			} else if (guiQuitNo.contains(_gm->_mouseX, _gm->_mouseY)) {
+				quit = false;
+				break;
+			}
+		}
+	} while (true);
+
+	_gm->resetInputState();
+	restoreScreen();
+	_gm->loadTime();
+	_gm->animationOn();
+
+	return quit;
+}*/
+
+void Supernova2Engine::renderText(const uint16 character, int x, int y, byte color) {
+	_screen->renderText(character, x, y, color);
+}
+
+void Supernova2Engine::renderText(const char *text, int x, int y, byte color) {
+	_screen->renderText(text, x, y, color);
+}
+
+void Supernova2Engine::renderText(const Common::String &text, int x, int y, byte color) {
+	_screen->renderText(text, x, y, color);
+}
+
+void Supernova2Engine::renderText(StringId stringId, int x, int y, byte color) {
+	_screen->renderText(stringId, x, y, color);
+}
+
+void Supernova2Engine::renderBox(int x, int y, int width, int height, byte color) {
+	_screen->renderBox(x, y, width, height, color);
 }
 
 }

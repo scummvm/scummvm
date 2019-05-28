@@ -164,12 +164,10 @@ void ResourceManager::initCursorGraphics() {
 }
 
 void ResourceManager::initImages() {
-	for (int i = 0; i < 44; ++i) {
+	for (int i = 0; i < kNumImageFiles; ++i) {
 		if (!_images[i].init(i))
 			error("Failed reading image file ms2_data.%03d", i);
 	}
-	if (!_images[44].init(55))
-			error("Failed reading image file ms2_data.055");
 }
 
 //TODO
@@ -194,10 +192,8 @@ Audio::AudioStream *ResourceManager::getSoundStream(MusicId index) {
 }*/
 
 const MS2Image *ResourceManager::getImage(int filenumber) const {
-	if (filenumber < 44)
+	if (filenumber < 47)
 		return &_images[filenumber];
-	else if (filenumber == 55)
-		return &_images[44];
 	else
 		return nullptr;
 }

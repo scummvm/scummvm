@@ -74,6 +74,26 @@ private:
 	bool _seen;
 };
 
+class Intro : public Room {
+public:
+	Intro(Supernova2Engine *vm, GameManager *gm);
+	virtual void onEntrance();
+
+private:
+	bool animate(int section1, int section2, int duration);
+	bool animate(int section1, int section2, int duration, MessagePosition position,
+				 StringId text);
+	bool animate(int section1, int section2, int section3, int section4, int duration,
+				 MessagePosition position, StringId text);
+
+	void titleScreen();
+	void titleFadeIn();
+	void cutscene();
+	void leaveCutscene();
+
+	bool _shouldExit;
+	Common::String _introText;
+};
 
 }
 #endif // SUPERNOVA2_ROOMS_H
