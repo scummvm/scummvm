@@ -61,6 +61,7 @@ namespace StarTrek {
 
 class StarTrekEngine;
 class Room;
+class Console;
 
 typedef String(StarTrekEngine::*TextGetterFunc)(int, uintptr, String *);
 
@@ -776,14 +777,15 @@ public:
 
 	Graphics *_gfx;
 	Sound *_sound;
+	Console *_console;
 	SharedPtr<IWFile> _iwFile;
+	SharedPtr<Room> _room;
 
 private:
 	Common::RandomSource _randomSource;
 	Common::SineTable _sineTable;
 
 	Common::MacResManager *_macResFork;
-	SharedPtr<Room> _room;
 };
 
 // Static function
