@@ -25,7 +25,7 @@
 #include "graphics/palette.h"
 #include "gui/message.h"
 
-//#include "supernova2/screen.h"
+#include "supernova2/screen.h"
 #include "supernova2/supernova2.h"
 #include "supernova2/state.h"
 
