@@ -134,6 +134,8 @@ public:
 public:
 	Screen(SupernovaEngine *vm, ResourceManager *resMan);
 
+	int getScreenWidth() const;
+	int getScreenHeight() const;
 	int getViewportBrightness() const;
 	void setViewportBrightness(int brightness);
 	int getGuiBrightness() const;

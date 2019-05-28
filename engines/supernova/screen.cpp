@@ -187,6 +187,14 @@ Screen::Screen(SupernovaEngine *vm, ResourceManager *resMan)
 	CursorMan.showMouse(true);
 }
 
+int Screen::getScreenWidth() const {
+	return _screenWidth;
+}
+
+int Screen::getScreenHeight() const {
+	return _screenHeight;
+}
+
 int Screen::getGuiBrightness() const {
 	return _guiBrightness;
 }
