@@ -2,6 +2,7 @@ MODULE := engines/petka
 
 MODULE_OBJS = \
     detection.o \
+    file_mgr.o \
     petka.o
 
 # This module can be built as a plugin
