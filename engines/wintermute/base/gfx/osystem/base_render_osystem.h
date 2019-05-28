@@ -69,6 +69,7 @@ public:
 	bool initRenderer(int width, int height, bool windowed) override;
 	bool flip() override;
 	virtual bool indicatorFlip();
+	virtual bool forcedFlip();
 	bool fill(byte r, byte g, byte b, Common::Rect *rect = nullptr) override;
 	Graphics::PixelFormat getPixelFormat() const override;
 	void fade(uint16 alpha) override;
