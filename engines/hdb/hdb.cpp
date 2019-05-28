@@ -54,6 +54,8 @@ Common::Error HDBGame::run() {
 	_console = new Console();
 
 	//readMPC("hyperdemo.mpc");
+
+	Common::String s1("Tests");
 		
 	while (!shouldQuit()) {
 
@@ -83,48 +85,5 @@ Common::Error HDBGame::run() {
 
 	return Common::kNoError;
 }
-/*
-void HDBGame::readMPC(const Common::String &filename) {	
-	if (!_file.open(filename)) {
-		error("readMPC(): Error reading MPC file");
-	} else {
-		_dataHeader.signature[0] = _file.readByte();
-		_dataHeader.signature[1] = _file.readByte();
-		_dataHeader.signature[2] = _file.readByte();
-		_dataHeader.signature[3] = _file.readByte();
-		_dataHeader.signature[4] = '\0';
-
-		if (_dataHeader.isValid()) {
-			_dataHeader.dirOffset = _file.readUint32LE();
-
-			// FIXME: The MPC archive format considers dirOffset to be a uint32.
-			// However, File::seekg() takes an int32 as the offset, hence this 
-			// would break if the dirOffset was larger than 2^31.
-
-			_file.seek((int32)_dataHeader.dirOffset, SEEK_SET);
-
-			_dataHeader.dirSize = _file.readUint32LE();
-			
-			for (uint32 fileIndex = 0; fileIndex < _dataHeader.dirSize; fileIndex++) {
-				DataFile* dirEntry = new DataFile();
-				
-				for (int fileNameIndex = 0; fileNameIndex < 64; fileNameIndex++) {
-					dirEntry->fileName[fileNameIndex] = _file.readByte();
-				}
-				dirEntry->fileName[64] = '\0';
-
-				dirEntry->filePosition = _file.readUint32LE();
-				dirEntry->fileLength = _file.readUint32LE();
-				dirEntry->unknownField1 = _file.readUint32LE();
-				dirEntry->unknownField2 = _file.readUint32LE();
-
-				_gameData.push_back(dirEntry);
-			}
-
-		} else {
-			debug("Invalid MPC file");
-		}
-	}
-}*/
 
 } // End of namespace HDB
