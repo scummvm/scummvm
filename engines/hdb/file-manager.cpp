@@ -33,49 +33,53 @@ bool FileMan::openMSD(const Common::String &filename) {
 	if (!_msdFile->open(filename)) {
 		error("FileMan::openMSD(): Error reading the MSD file");
 		return false;
-	} else {
-		dataHeader.id[0] = _msdFile->readByte();
-		dataHeader.id[1] = _msdFile->readByte();
-		dataHeader.id[2] = _msdFile->readByte();
-		dataHeader.id[3] = _msdFile->readByte();
+	}
 
-		if (!strncmp(dataHeader.id, MSD_IDENT_COMPRESSED, 4)) {
-			_compressed = true;
-			debug("COMPRESSED FILE");
-			return false;
-		} else if (!strncmp(dataHeader.id, MSD_IDENT_UNCOMPRESSED, 4)) {
-			_compressed = false;
+	_msdFile->read(&dataHeader.id, 4);
+	
+	if (dataHeader.id == MKTAG('M', 'P', 'C', 'C')) {
+		_compressed = true;
+		debug("COMPRESSED FILE");
+		return false;
+	}
+	else if (dataHeader.id == MKTAG('M', 'P', 'C', 'U')) {
+		_compressed = false;
 
-			offset = _msdFile->readUint32LE();
-			_msdFile->seek((int32)offset, SEEK_SET);
+		offset = _msdFile->readUint32LE();
+		_msdFile->seek((int32)offset, SEEK_SET);
 
-			// Note: The MPC archive format assumes the offset to be uint32,
-			// but Common::File::seek() takes the offset as int32. 
+		// Note: The MPC archive format assumes the offset to be uint32,
+		// but Common::File::seek() takes the offset as int32. 
 
-			dataHeader.dirSize = _msdFile->readUint32LE();
+		dataHeader.dirSize = _msdFile->readUint32LE();
 
-			for (uint32 fileIndex = 0; fileIndex < dataHeader.dirSize; fileIndex++) {
-				MSDEntry* dirEntry = new MSDEntry();
+		for (uint32 fileIndex = 0; fileIndex < dataHeader.dirSize; fileIndex++) {
+			MSDEntry *dirEntry = new MSDEntry();
 
-				for (int fileNameIndex = 0; fileNameIndex < 64; fileNameIndex++) {
-					dirEntry->filename[fileNameIndex] = _msdFile->readByte();
-				}
-
-				dirEntry->offset = _msdFile->readUint32LE();
-				dirEntry->length = _msdFile->readUint32LE();
-				dirEntry->ulength = _msdFile->readUint32LE();
-				dirEntry->type = (DataType)_msdFile->readUint32LE();
-
-				_dir.push_back(dirEntry);
+			for (int fileNameIndex = 0; fileNameIndex < 64; fileNameIndex++) {
+				dirEntry->filename[fileNameIndex] = _msdFile->readByte();
 			}
 
-			return true;
+			dirEntry->offset = _msdFile->readUint32LE();
+			dirEntry->length = _msdFile->readUint32LE();
+			dirEntry->ulength = _msdFile->readUint32LE();
+			dirEntry->type = (DataType)_msdFile->readUint32LE();
 
-		} else {
-			error("Invalid MPC File.");
-			return false;
+			_dir.push_back(dirEntry);
 		}
+
+		return true;
+
 	}
-}
+	
+	error("Invalid MPC File.");
+	return false;
 
 }
+
+void FileMan::closeMSD() {
+	_dir.clear();
+	_msdFile->close();
+}
+
+} // End of Namespace HDB

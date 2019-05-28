@@ -44,9 +44,9 @@ enum DataType {
 
 struct MSDEntry {
 	char	filename[64];	// filename
-	long	offset;			// offset in MSD file of data
-	long	length;			// compressed length of data
-	long	ulength;		// uncompressed length
+	int32	offset;			// offset in MSD file of data
+	int32	length;			// compressed length of data
+	int32	ulength;		// uncompressed length
 	DataType	type;		// type of data
 };
 
@@ -55,7 +55,7 @@ struct MSDEntry {
 // gfx data follows the structure in the .msd
 // The imagesize will always be 2048 bytes (32*32*2)
 struct Tile32Type {
-	long	flags;			// bit flags
+	int32	flags;			// bit flags
 	char	name[64];		// name of graphic
 };
 
@@ -81,33 +81,31 @@ struct FontType {
 // each character in a font has width info and
 // an offset from the beginning of the font chunk
 struct CharInfo {
-	short	width;		// in pixels, of the character
-	long	offset;		// from the start of the font charInfo chunk
+	int16	width;		// in pixels, of the character
+	int32	offset;		// from the start of the font charInfo chunk
 };
 
 class FileMan {
 private:
 
-	Common::File* _msdFile;
-	Common::Array<MSDEntry*> _dir;
-	MSDEntry* _dirEntry;
+	Common::File *_msdFile;
+	Common::Array<MSDEntry *> _dir;
 	int _numEntries;
 	bool _compressed;
 
 public:
 
 	struct {
-		char id[4];
-		unsigned long dirSize;
+		uint32 id;
+		uint32 dirSize;
 	} dataHeader;
 
 	long readOffset;
 	
 	bool openMSD(const Common::String &filename);
-};
+	void closeMSD();
 
-#define MSD_IDENT_COMPRESSED "MPCC"
-#define MSD_IDENT_UNCOMPRESSED "MPCU"
+};
 
 } // End of Namespace HDB
 
