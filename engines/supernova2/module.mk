@@ -3,6 +3,10 @@ MODULE := engines/supernova2
 MODULE_OBJS := \
 	detection.o \
 	state.o \
+	graphics.o \
+	resman.o \
+	rooms.o \
+	screen.o \
 	console.o \
 	supernova2.o
 

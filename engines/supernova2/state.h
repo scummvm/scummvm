@@ -26,8 +26,8 @@
 #include "common/events.h"
 #include "common/rect.h"
 #include "common/keyboard.h"
-//#include "supernova/rooms.h"
-//#include "supernova/sound.h"
+#include "supernova2/rooms.h"
+//#include "supernova2/sound.h"
 
 namespace Supernova2 {
 
@@ -71,4 +71,4 @@ private:
 
 }
 
-#endif // SUPERNOVA_STATE_H
+#endif // SUPERNOVA2_STATE_H
