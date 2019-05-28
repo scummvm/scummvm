@@ -5,7 +5,6 @@ MODULE_OBJS = \
 	awaymission.o \
 	bitmap.o \
 	common.o \
-	console.o \
 	detection.o \
 	events.o \
 	filestream.o \

@@ -37,7 +37,6 @@
 #include "engines/util.h"
 #include "video/qt_decoder.h"
 
-#include "startrek/console.h"
 #include "startrek/filestream.h"
 #include "startrek/iwfile.h"
 #include "startrek/lzss.h"
@@ -108,18 +107,14 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 StarTrekEngine::~StarTrekEngine() {
 	delete _activeMenu->nextMenu;
 	delete _activeMenu;
-
-	delete _console;
-	delete _sound;
 	delete _gfx;
-
+	delete _sound;
 	delete _macResFork;
 }
 
 Common::Error StarTrekEngine::run() {
 	_gfx = new Graphics(this);
 	_sound = new Sound(this);
-	_console = new Console(this);
 
 	if (getPlatform() == Common::kPlatformMacintosh) {
 		_macResFork = new Common::MacResManager();

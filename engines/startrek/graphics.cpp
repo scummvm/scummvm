@@ -20,7 +20,6 @@
  */
 
 #include "startrek/common.h"
-#include "startrek/console.h"
 #include "startrek/graphics.h"
 
 #include "common/algorithm.h"
@@ -638,7 +637,6 @@ void Graphics::updateScreen() {
 		_mouseWarpY = -1;
 	}
 
-	//_vm->_console->onFrame();
 	_vm->_system->updateScreen();
 	_vm->_system->delayMillis(10);
 }

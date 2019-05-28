@@ -19,7 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include "startrek/console.h"
 #include "startrek/startrek.h"
 
 namespace StarTrek {
@@ -62,9 +61,6 @@ void StarTrekEngine::pollEvents(bool queueEvents) {
 			break;
 
 		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL))
-				_console->attach();
-
 			if (queueEvents) {
 				trekEvent.type = TREKEVENT_KEYDOWN;
 				addEventToQueue(trekEvent);
