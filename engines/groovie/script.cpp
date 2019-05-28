@@ -50,7 +50,7 @@ namespace Groovie {
 
 Script::Script(GroovieEngine *vm, EngineVersion version) :
 	_code(NULL), _savedCode(NULL), _stacktop(0), _debugger(NULL), _vm(vm),
-	_videoFile(NULL), _videoRef(0), _staufsMove(NULL), _lastCursor(0xff),
+	_videoFile(NULL), _videoRef(-1), _staufsMove(NULL), _lastCursor(0xff),
 	_version(version), _random("GroovieScripts"), _tlcGame(0), _t11hGame(0) {
 
 	// Initialize the opcode set depending on the engine version
@@ -585,7 +585,7 @@ bool Script::playvideofromref(uint32 fileref) {
 
 		// Close the previous video file
 		if (_videoFile) {
-			_videoRef = 0;
+			_videoRef = -1;
 			delete _videoFile;
 		}
 
@@ -631,7 +631,7 @@ bool Script::playvideofromref(uint32 fileref) {
 			// Close the file
 			delete _videoFile;
 			_videoFile = NULL;
-			_videoRef = 0;
+			_videoRef = -1;
 
 			// Clear the input events while playing the video
 			_eventMouseClicked = 0;
