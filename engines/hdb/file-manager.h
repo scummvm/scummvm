@@ -27,6 +27,8 @@
 #include "common/file.h"
 #include "common/error.h"
 
+#define MPCIterator Common::Array<MPCEntry *>::iterator
+
 namespace HDB {
 
 // Each entry in a MSD file is of the following types
@@ -42,7 +44,7 @@ enum DataType {
 	ENDOFTYPES
 };
 
-struct MSDEntry {
+struct MPCEntry {
 	char	filename[64];	// filename
 	int32	offset;			// offset in MSD file of data
 	int32	length;			// compressed length of data
@@ -88,8 +90,8 @@ struct CharInfo {
 class FileMan {
 private:
 
-	Common::File *_msdFile;
-	Common::Array<MSDEntry *> _dir;
+	Common::File *_mpcFile;
+	Common::Array<MPCEntry *> _dir;
 	int _numEntries;
 	bool _compressed;
 
@@ -100,10 +102,19 @@ public:
 		uint32 dirSize;
 	} dataHeader;
 
-	long readOffset;
+	uint32 readOffset;
 	
-	bool openMSD(const Common::String &filename);
-	void closeMSD();
+	bool openMPC(const Common::String &filename);
+	void closeMPC();
+	/*
+		TODO: Implement the loadData functions for the various
+		DataTypes as they are encountered.
+
+		void loadData(char *string, uint32 *length);
+	*/
+	MPCEntry **findFirstData(char *string, DataType type);
+	MPCEntry **findNextData(MPCIterator it);
+	int findAmount(char *string, DataType type);
 
 };
 
