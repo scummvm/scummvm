@@ -35,4 +35,4 @@ Console::~Console() {
 	_visible = false;
 }
 
-} // End of namespace Plumbers
+} // End of namespace HDB
