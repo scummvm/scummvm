@@ -27,15 +27,15 @@
 
 namespace HDB {
 
-bool FileMan::openMSD(const Common::String &filename) {
+bool FileMan::openMPC(const Common::String &filename) {
 	uint32 offset;
 
-	if (!_msdFile->open(filename)) {
+	if (!_mpcFile->open(filename)) {
 		error("FileMan::openMSD(): Error reading the MSD file");
 		return false;
 	}
 
-	_msdFile->read(&dataHeader.id, 4);
+	_mpcFile->read(&dataHeader.id, 4);
 	
 	if (dataHeader.id == MKTAG('M', 'P', 'C', 'C')) {
 		_compressed = true;
@@ -45,25 +45,25 @@ bool FileMan::openMSD(const Common::String &filename) {
 	else if (dataHeader.id == MKTAG('M', 'P', 'C', 'U')) {
 		_compressed = false;
 
-		offset = _msdFile->readUint32LE();
-		_msdFile->seek((int32)offset, SEEK_SET);
+		offset = _mpcFile->readUint32LE();
+		_mpcFile->seek((int32)offset, SEEK_SET);
 
 		// Note: The MPC archive format assumes the offset to be uint32,
 		// but Common::File::seek() takes the offset as int32. 
 
-		dataHeader.dirSize = _msdFile->readUint32LE();
+		dataHeader.dirSize = _mpcFile->readUint32LE();
 
 		for (uint32 fileIndex = 0; fileIndex < dataHeader.dirSize; fileIndex++) {
-			MSDEntry *dirEntry = new MSDEntry();
+			MPCEntry *dirEntry = new MPCEntry();
 
 			for (int fileNameIndex = 0; fileNameIndex < 64; fileNameIndex++) {
-				dirEntry->filename[fileNameIndex] = _msdFile->readByte();
+				dirEntry->filename[fileNameIndex] = _mpcFile->readByte();
 			}
 
-			dirEntry->offset = _msdFile->readUint32LE();
-			dirEntry->length = _msdFile->readUint32LE();
-			dirEntry->ulength = _msdFile->readUint32LE();
-			dirEntry->type = (DataType)_msdFile->readUint32LE();
+			dirEntry->offset = _mpcFile->readUint32LE();
+			dirEntry->length = _mpcFile->readUint32LE();
+			dirEntry->ulength = _mpcFile->readUint32LE();
+			dirEntry->type = (DataType)_mpcFile->readUint32LE();
 
 			_dir.push_back(dirEntry);
 		}
@@ -77,9 +77,49 @@ bool FileMan::openMSD(const Common::String &filename) {
 
 }
 
-void FileMan::closeMSD() {
+void FileMan::closeMPC() {
 	_dir.clear();
-	_msdFile->close();
+	_mpcFile->close();
+}
+
+MPCEntry **FileMan::findFirstData(char *string, DataType type) {
+	Common::String fileString;
+	
+	for (MPCIterator it = _dir.begin(); it != _dir.end(); it++) {
+		fileString = (*it)->filename;
+		if (fileString.contains(string)) {
+			if ((*it)->type == type) {
+				return it;
+			}
+		}
+	}
+	return NULL;
+}
+
+MPCEntry **FileMan::findNextData(MPCIterator begin) {
+	Common::String fileString;
+
+	for (MPCIterator it = begin+1; it != _dir.end(); it++) {
+		fileString = (*it)->filename;
+		if (fileString.contains((*begin)->filename)) {
+			if ((*it)->type == (*begin)->type) {
+				return it;
+			}
+		}
+	}
+	return NULL;
+}
+
+int FileMan::findAmount(char *string, DataType type) {
+	int count = 0;
+	
+	MPCIterator it = findFirstData(string, type);
+	while (it && (*it)->type == type) {
+		count++;
+		it = findNextData(it);
+	}
+
+	return count;
 }
 
 } // End of Namespace HDB
