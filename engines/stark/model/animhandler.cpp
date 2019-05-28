@@ -110,6 +110,11 @@ void AnimHandler::animate(uint32 time) {
 	if (_candidateAnim && _anim && _anim->getBoneCount() != _model->getBones().size()) {
 		// We changed to an incompatible model
 		enactCandidate();
+
+		// And the anim we were previously blending with is incompatible as well
+		if (_blendAnim && _blendAnim->getBoneCount() != _model->getBones().size()) {
+			stopBlending();
+		}
 	}
 
 	if (_candidateAnim && _framesBeforeCandidateReady > 0) {
