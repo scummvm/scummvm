@@ -748,11 +748,60 @@ void ScriptOpcodes::opUnk10(ScriptOpCall &scriptOpCall) {
 
 void ScriptOpcodes::opUnk11FlickerTalk(ScriptOpCall &scriptOpCall) {
 	ARG_SKIP(2);
-	ARG_INT16(actorId)
+	ARG_INT16(iniId)
 	ARG_UINT32(textIndex)
 	// TODO implement me!
 
-    debug("Main actor talk: 0x%04x and text 0x%04x", actorId, textIndex);
+    debug("Main actor talk: 0x%04x and text 0x%04x", iniId, textIndex);
+
+	if (textIndex == 0) {
+		return;
+	}
+	Actor *actor = NULL;
+	if (iniId == 0) {
+		//TODO playSoundFromTxtIndex(textIndex);
+		actor = _vm->_dragonINIResource->getFlickerRecord()->actor;
+		if (!_vm->isFlagSet(ENGINE_FLAG_2000000)) {
+			if (_vm->getCurrentSceneId() == 0x32) {
+				_vm->getINI(0x2b1)->actor->updateSequence(2);
+			}
+			else {
+				actor->setFlag(ACTOR_FLAG_2000);
+				if (actor->_sequenceID2 != -1) {
+					actor->updateSequence(actor->_sequenceID2 + 0x10);
+				}
+			}
+		}
+		else {
+			if (actor->_sequenceID == 5) {
+				actor->updateSequence(0x10);
+			}
+		}
+	}
+	// TODO sVar1 = findTextToDtSpeechIndex(textIndex);
+//	pcVar2 = (char *)0x0;
+//	if (((unkFlags1 & 1) == 0) && (((engine_flags_maybe & 0x1000) == 0 || (sVar1 == -1)))) {
+//		pcVar2 = load_string_from_dragon_txt(textIndex,acStack2016);
+//	}
+//	FUN_80031d98((uint)iniId,pcVar2,textIndex);
+	if (iniId == 0) {
+		if (!_vm->isFlagSet(ENGINE_FLAG_2000000)) {
+			if (_vm->getCurrentSceneId() != 0x32) {
+				actor->setFlag(ACTOR_FLAG_4);
+				actor->clearFlag(ACTOR_FLAG_2000);
+				_vm->waitForFrames(1);
+				return;
+			}
+			_vm->getINI(0x2b1)->actor->updateSequence(1);
+
+		}
+		else {
+			if (actor->_sequenceID != 0x10) {
+				return;
+			}
+			actor->updateSequence(5);
+		}
+	}
 }
 
 void ScriptOpcodes::opUnk12LoadScene(ScriptOpCall &scriptOpCall) {

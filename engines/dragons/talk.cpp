@@ -44,6 +44,7 @@ char *Talk::loadText(uint32 textIndex) {
 	sprintf(filename, "drag%04d.txt", fileNo);
 	uint32 size;
 	byte *data = _bigfileArchive->load(filename, size);
+	debug("DIALOG: %s, %d", filename, fileOffset);
 	printWideText(data + 10 + fileOffset);
 	delete data;
 	return NULL; //TODO fix me
