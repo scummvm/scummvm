@@ -434,6 +434,83 @@ void SupernovaEngine::showHelpScreen() {
 	_gm->animationOn();
 }
 
+Common::Error SupernovaEngine::showTextReader(const char *filename) {
+	Common::File file;
+
+	if (!file.open(filename)) {
+		GUIErrorMessageFormat(_("Unable to find '%s' in game folder."), filename);
+		return Common::kReadingFailed;
+	}
+	Common::SeekableReadStream *stream = file.readStream(file.size());
+	int linesInFile = 0;
+	while (!stream->eos()) {
+		stream->readLine();
+		++linesInFile;
+	}
+	--linesInFile;
+	stream->seek(0);
+	stream->clearErr();
+
+	if (_screen->isMessageShown())
+		_screen->removeMessage();
+	_gm->animationOff();
+	_gm->saveTime();
+	paletteFadeOut();
+	g_system->fillScreen(kColorWhite35);
+	for (int y = 6; y < (200 - kFontHeight); y += (kFontHeight + 2)) {
+		Common::String line = stream->readLine();
+		if (stream->eos())
+			break;
+		_screen->renderText(line, 6, y, kColorWhite99);
+	}
+	paletteFadeIn();
+
+	const int linesPerPage = 19;
+	int lineNumber = 0;
+	bool exitReader = false;
+	do {
+		stream->seek(0);
+		stream->clearErr();
+		for (int i = 0; i < lineNumber; ++i)
+			stream->readLine();
+		g_system->fillScreen(kColorWhite35);
+		for (int y = 6; y < (_screen->getScreenHeight() - kFontHeight); y += (kFontHeight + 2)) {
+			Common::String line = stream->readLine();
+			if (stream->eos())
+				break;
+			_screen->renderText(line, 6, y, kColorWhite99);
+		}
+		_gm->getKeyInput();
+		switch (_gm->_key.keycode) {
+		case Common::KEYCODE_ESCAPE:
+			exitReader = true;
+			break;
+		case Common::KEYCODE_UP:
+			lineNumber = lineNumber > 0 ? lineNumber - 1 : 0;
+			break;
+		case Common::KEYCODE_DOWN:
+			lineNumber = lineNumber < linesInFile - (linesPerPage + 1) ? lineNumber + 1
+			                                                           : linesInFile - linesPerPage;
+			break;
+		case Common::KEYCODE_PAGEUP:
+			lineNumber = lineNumber > linesPerPage ? lineNumber - linesPerPage : 0;
+			break;
+		case Common::KEYCODE_PAGEDOWN:
+			lineNumber = lineNumber < linesInFile - (linesPerPage * 2) ? lineNumber + linesPerPage
+			                                                           : linesInFile - linesPerPage;
+			break;
+		default:
+			break;
+		}
+	} while (!exitReader && !shouldQuit());
+
+	paletteFadeOut();
+	_gm->loadTime();
+	_gm->animationOn();
+
+	return Common::kNoError;
+}
+
 bool SupernovaEngine::quitGameDialog() {
 	bool quit = false;
 

@@ -585,10 +585,12 @@ void GameManager::processInput(Common::KeyState &state) {
 		_vm->showHelpScreen();
 		break;
 	case Common::KEYCODE_F2:
-		// show game doc
+		// show game manual
+		_vm->showTextReader("msn.doc");
 		break;
 	case Common::KEYCODE_F3:
 		// show game info
+		_vm->showTextReader("msn.inf");
 		break;
 	case Common::KEYCODE_F4:
 		_vm->setTextSpeed();

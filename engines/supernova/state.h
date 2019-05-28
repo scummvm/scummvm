@@ -23,6 +23,7 @@
 #ifndef SUPERNOVA_STATE_H
 #define SUPERNOVA_STATE_H
 
+#include "common/error.h"
 #include "common/events.h"
 #include "common/rect.h"
 #include "common/keyboard.h"
