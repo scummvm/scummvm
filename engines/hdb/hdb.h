@@ -35,15 +35,12 @@
 #include "engines/util.h"
 #include "console.h"
 
+#include "game.h"
+#include "file-manager.h"
+
 #define MAX_SNDCACHE_MEM	0x400000	// 4Mb of sounds in memory
 #define MAX_TILES_CACHED	3500		// Max no of tiles in memory at once
 #define GFX_CACHE_LIMIT		0x800000
-
-/*
-	Subsystem Includes
-*/
-
-#include "file-manager.h"
 
 struct ADGameDescription;
 
@@ -52,6 +49,13 @@ namespace HDB {
 enum HDBDebugChannels {
 	kDebugExample1 = 1 << 0,
 	kDebugExample2 = 1 << 1
+};
+
+enum GameState {
+	GAME_TITLE,
+	GAME_MENU,
+	GAME_PLAY,
+	GAME_LOADING
 };
 
 class HDBGame : public Engine {
@@ -66,6 +70,15 @@ public:
 	const char *getGameId() const;
 	Common::Platform getPlatform() const;
 
+	// Game related members;
+
+	bool init();
+
+	void start();
+	void changeGameState();
+
+	bool gameShutdown;
+
 private:
 	Console *_console;
 	
@@ -74,7 +87,12 @@ private:
 	*/
 
 	FileMan* _fileMan;
-	
+
+	// Game Variables
+
+	GameState gameState;
+	bool voiceless;
+
 };
 
 }// End of namespace HDB

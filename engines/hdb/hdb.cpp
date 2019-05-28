@@ -28,7 +28,6 @@
 #include "common/file.h"
 #include "common/error.h"
 #include "graphics/surface.h"
-#include "graphics/palette.h"
 
 #include "hdb.h"
 #include "console.h"
@@ -47,16 +46,68 @@ HDBGame::~HDBGame() {
 	DebugMan.clearAllDebugChannels();
 }
 
+bool HDBGame::init() {
+	voiceless = false;
+
+	/*
+		Game Subsystem Initializations
+	*/
+
+	// Init _fileMan
+	if (_fileMan->openMPC("hyperdemo.mpc")) {
+		gameShutdown = false;
+		return true;
+	}
+
+	error("FileMan::openMPC: Cannot find the hyperspace.mpc data file.");
+	return false;
+}
+
+void HDBGame::start() {
+	gameState = GameState::GAME_TITLE;
+}
+
+/*
+	Changes the current GameState to the next one.
+	Game State Transitions are deterministic: each state can
+	only a particular state. The next state is held in gameState.
+
+	TODO: All the functionality hasn't been implemented yet since
+	their subsystems are incomplete. This section needs to be periodically
+	updated as soon as the subsytems are improved.
+*/
+void HDBGame::changeGameState() {
+
+	switch (gameState) {
+	case GameState::GAME_TITLE:
+		gameState = GameState::GAME_MENU;
+		break;
+	case GameState::GAME_MENU:
+		gameState = GameState::GAME_PLAY;
+		break;
+	case GameState::GAME_PLAY:
+		gameState = GameState::GAME_MENU;
+		break;
+	}
+}
+
 Common::Error HDBGame::run() {
 	// Initializes Graphics
 	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	initGraphics(800, 600, &format);
 	_console = new Console();
 
-	//readMPC("hyperdemo.mpc");
+	/*
+	if (!_game->init()) {
+		error("Couldn't initialize Game.");
+		return Common::kUnknownError;
+	}
 
-	Common::String s1("Tests");
-		
+	_game->start();
+	
+	_game->mainLoop();
+	*/
+	
 	while (!shouldQuit()) {
 
 		Common::Event event;
