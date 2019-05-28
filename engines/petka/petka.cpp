@@ -22,16 +22,21 @@
 
 #include "common/debug-channels.h"
 #include "common/error.h"
+#include "common/ini-file.h"
+#include "common/stream.h"
 
 #include "engines/util.h"
 
+#include "petka/file_mgr.h"
 #include "petka/petka.h"
 
 namespace Petka {
 
 PetkaEngine::PetkaEngine(OSystem *system, const ADGameDescription *desc)
-	: Engine(system), _console(nullptr), _desc(desc) {
+	: Engine(system), _console(nullptr), _fileMgr(nullptr), _desc(desc) {
 	DebugMan.addDebugChannel(kPetkaDebugGeneral, "general", "General issues");
+	_part = 0;
+	_chapter = 0;
 }
 
 PetkaEngine::~PetkaEngine() {
@@ -44,8 +49,53 @@ Common::Error PetkaEngine::run() {
 	initGraphics(640, 480, &format);
 
 	_console = new Console(this);
+	_fileMgr.reset(new FileMgr());
+	loadStores();
 
 	return Common::kNoError;
+}
+
+void PetkaEngine::loadStores() {
+	_fileMgr->closeAll();
+
+	_fileMgr->openStore("patch.str");
+	_fileMgr->openStore("main.str");
+
+	Common::INIFile parts;
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_fileMgr->getFileStream("PARTS.INI"));
+
+	if (!stream || !parts.loadFromStream(*stream)) {
+		return;
+	}
+
+	Common::String backgroundStoreName;
+	Common::String flcStoreName;
+	Common::String wavStoreName;
+	Common::String sfxStoreName;
+	Common::String musicStoreName;
+	Common::String speechStoreName;
+
+	const Common::String section = Common::String::format("Part %d", _part);
+
+	parts.getKey("CurrentPath", section, _currentPath);
+	parts.getKey("PathSpeech", section, _speechPath);
+
+	parts.getKey("Background", section, backgroundStoreName);
+	parts.getKey("Flics", section, flcStoreName);
+	parts.getKey("Wavs", section, wavStoreName);
+	parts.getKey("SFX", section, sfxStoreName);
+	parts.getKey("Music", section, musicStoreName);
+	parts.getKey("Speech", section, speechStoreName);
+
+	parts.getKey("Chapter", Common::String::format("Part %d Chapter %d", _part, _chapter), _chapterStoreName);
+
+	_fileMgr->openStore(backgroundStoreName);
+	_fileMgr->openStore(flcStoreName);
+	_fileMgr->openStore(wavStoreName);
+	_fileMgr->openStore(sfxStoreName);
+	_fileMgr->openStore(musicStoreName);
+	_fileMgr->openStore(speechStoreName);
+	_fileMgr->openStore(_chapterStoreName);
 }
 
 } // End of namespace Petka

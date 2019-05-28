@@ -20,52 +20,39 @@
  *
  */
 
-#ifndef PETKA_PETKA_H
-#define PETKA_PETKA_H
+#ifndef PETKA_FILE_MGR_H
+#define PETKA_FILE_MGR_H
 
-#include "engines/engine.h"
+#include "common/array.h"
 
-#include "gui/debugger.h"
-
-struct ADGameDescription;
+namespace Common {
+	class File;
+	class SeekableReadStream;
+}
 
 namespace Petka {
 
-class Console;
-class FileMgr;
-
-enum {
-	kPetkaDebugGeneral = 1 << 0,
-};
-
-class PetkaEngine : public Engine {
+class FileMgr {
 public:
-	PetkaEngine(OSystem *syst, const ADGameDescription *desc);
-	~PetkaEngine();
+	~FileMgr();
 
-	virtual Common::Error run();
+	bool openStore(const Common::String &name);
+	void closeStore(const Common::String &name);
+	void closeAll();
+
+	Common::SeekableReadStream *getFileStream(const Common::String &name);
 
 private:
-	void loadStores();
-
-private:
-	Console *_console;
-	Common::ScopedPtr<FileMgr> _fileMgr;
-	const ADGameDescription *_desc;
-
-	Common::String _currentPath;
-	Common::String _speechPath;
-
-	Common::String _chapterStoreName;
-
-	uint8 _part;
-	uint8 _chapter;
-};
-
-class Console : public GUI::Debugger {
-public:
-	Console(PetkaEngine *vm) {}
-	virtual ~Console() {}
+	struct Description {
+		Common::String name;
+		uint32 offset;
+		uint32 size;
+	};
+	struct Store {
+		Common::File *file;
+		Common::Array<Description> descriptions;
+	};
+	Common::Array<Store> _stores;
 };
 
 } // End of namespace Petka
