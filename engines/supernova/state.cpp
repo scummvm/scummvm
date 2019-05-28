@@ -582,6 +582,7 @@ void GameManager::processInput(Common::KeyState &state) {
 	switch (state.keycode) {
 	case Common::KEYCODE_F1:
 		// help
+		_vm->showHelpScreen();
 		break;
 	case Common::KEYCODE_F2:
 		// show game doc

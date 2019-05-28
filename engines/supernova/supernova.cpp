@@ -410,6 +410,30 @@ void SupernovaEngine::setTextSpeed() {
 	_gm->animationOn();
 }
 
+void SupernovaEngine::showHelpScreen() {
+	if (_screen->isMessageShown())
+		_screen->removeMessage();
+	_gm->animationOff();
+	_gm->saveTime();
+
+	paletteFadeOut();
+	renderImage(kImageHelpScreen);
+	renderBox(100, 100, 192, 78, kColorWhite35);
+	renderText(kStringHelpOverview1, 105, 105, kColorWhite99);
+	renderText(kStringHelpOverview2, 105, 115, kColorWhite99);
+	renderText(kStringHelpOverview3, 105, 125, kColorWhite99);
+	renderText(kStringHelpOverview4, 105, 135, kColorWhite99);
+	renderText(kStringHelpOverview5, 105, 145, kColorWhite99);
+	renderText(kStringHelpOverview6, 105, 155, kColorWhite99);
+	renderText(kStringHelpOverview7, 105, 165, kColorWhite99);
+	paletteFadeIn();
+	_gm->getKeyInput();
+
+	paletteFadeOut();
+	_gm->loadTime();
+	_gm->animationOn();
+}
+
 bool SupernovaEngine::quitGameDialog() {
 	bool quit = false;
 
