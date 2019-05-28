@@ -41,6 +41,11 @@ public:
 	GameManager(Supernova2Engine *vm);
 	~GameManager();
 
+	void updateEvents();
+	void processInput(Common::KeyState &state);
+	//void processInput();
+	void executeRoom();
+
 	Supernova2Engine *_vm;
 	Common::KeyState _key;
 	Common::EventType _mouseClickType;
@@ -48,7 +53,11 @@ public:
 	bool _keyPressed;
 	int _mouseX;
 	int _mouseY;
+	Room *_currentRoom;
+	bool _newRoom;
+	Room *_rooms[NUMROOMS];
 	GameState _state;
+	bool _processInput;
 	bool _guiEnabled;
 	bool _animationEnabled;
 	uint _timePaused;
@@ -64,6 +73,10 @@ public:
 	byte _rowsStart[6];
 
 	void initState();
+	void initRooms();
+	void getInput();
+	void changeRoom(RoomId id);
+	void resetInputState();
 
 private:
 	int _prevImgId;

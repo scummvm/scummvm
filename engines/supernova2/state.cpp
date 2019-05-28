@@ -45,13 +45,16 @@ namespace Supernova2 {
 GameManager::GameManager(Supernova2Engine *vm)
 	: _vm(vm)
     , _mouseClickType(Common::EVENT_INVALID) {
-		initState();
+	initRooms();
+	changeRoom(INTRO);
+	initState();
 }
 
 GameManager::~GameManager() {
 }
 
 void GameManager::initState() {
+	_processInput = false;
 	_guiEnabled = true;
 	_animationEnabled = true;
 	_mouseClicked = false;
@@ -73,6 +76,140 @@ void GameManager::initState() {
 	}
 
 	_prevImgId = 0;
+}
+
+void GameManager::initRooms() {
+	_rooms[INTRO] = new Intro(_vm, this);
+}
+
+void GameManager::updateEvents() {
+	if (_animationEnabled && !_vm->_screen->isMessageShown() && _animationTimer == 0)
+		_currentRoom->animation();
+
+	_mouseClicked = false;
+	_keyPressed = false;
+	Common::Event event;
+	while (g_system->getEventManager()->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_KEYDOWN:
+			_keyPressed = true;
+			processInput(event.kbd);
+			break;
+		case Common::EVENT_LBUTTONUP:
+			// fallthrough
+		case Common::EVENT_RBUTTONUP:
+			if (_currentRoom->getId() != INTRO)
+				return;
+			_mouseClicked = true;
+			// fallthrough
+		case Common::EVENT_MOUSEMOVE:
+			_mouseClickType = event.type;
+			_mouseX = event.mouse.x;
+			_mouseY = event.mouse.y;
+			if (_guiEnabled)
+				//processInput();
+			break;
+		default:
+			break;
+		}
+	}
+}
+void GameManager::processInput(Common::KeyState &state) {
+	_key = state;
+
+	switch (state.keycode) {
+	case Common::KEYCODE_F1:
+		// help
+		break;
+	case Common::KEYCODE_F2:
+		// show game doc
+		break;
+	case Common::KEYCODE_F3:
+		// show game info
+		break;
+	case Common::KEYCODE_F4:
+		//_vm->setTextSpeed();
+		break;
+	case Common::KEYCODE_F5:
+		// load/save
+		break;
+	case Common::KEYCODE_x:
+		if (state.flags & Common::KBD_ALT) {
+			//if (_vm->quitGameDialog())
+				_vm->quitGame();
+		}
+		break;
+	case Common::KEYCODE_d:
+		if (state.flags & Common::KBD_CTRL)
+			_vm->_console->attach();
+		break;
+	default:
+		break;
+	}
+}
+
+void GameManager::getInput() {
+	while (!_vm->shouldQuit()) {
+		updateEvents();
+		if (_mouseClicked || _keyPressed)
+			break;
+		g_system->updateScreen();
+		g_system->delayMillis(_vm->_delay);
+	}
+}
+
+void GameManager::changeRoom(RoomId id) {
+	_currentRoom = _rooms[id];
+	_newRoom = true;
+}
+
+void GameManager::resetInputState() {
+//	setObjectNull(_inputObject[0]);
+//	setObjectNull(_inputObject[1]);
+//	_inputVerb = ACTION_WALK;
+	_processInput = false;
+	_mouseClicked = false;
+	_keyPressed = false;
+	_key.reset();
+	_mouseClickType = Common::EVENT_MOUSEMOVE;
+
+	//processInput();
+}
+
+void GameManager::executeRoom() {
+	if (_processInput && !_vm->_screen->isMessageShown() && _guiEnabled) {
+//		handleInput();
+		if (_mouseClicked) {
+			Common::Event event;
+			event.type = Common::EVENT_MOUSEMOVE;
+			event.mouse = Common::Point(0, 0);
+			_vm->getEventManager()->pushEvent(event);
+			event.type = Common::EVENT_MOUSEMOVE;
+			event.mouse = Common::Point(_mouseX, _mouseY);
+			_vm->getEventManager()->pushEvent(event);
+		}
+
+		resetInputState();
+	}
+
+	if (_guiEnabled) {
+		if (!_vm->_screen->isMessageShown()) {
+			g_system->fillScreen(kColorBlack);
+			_vm->renderRoom(*_currentRoom);
+		}
+//		drawMapExits();
+//		drawInventory();
+//		drawStatus();
+//		drawCommandBox();
+	}
+
+	//if (_vm->_screen->getViewportBrightness() == 0)
+	//	_vm->paletteFadeIn();
+
+	if (!_currentRoom->hasSeen() && _newRoom) {
+		_newRoom = false;
+		_currentRoom->onEntrance();
+	}
 }
 }
 

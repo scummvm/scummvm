@@ -180,4 +180,53 @@ bool Room::interact(Action verb, Object &obj1, Object &obj2) {
 	return false;
 }
 
+Intro::Intro(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = -1;
+	_id = INTRO;
+}
+
+void Intro::onEntrance() {
+	_gm->_guiEnabled = false;
+	_vm->_allowSaveGame = false;
+	_vm->_allowLoadGame = false;
+	titleScreen();
+}
+
+void Intro::titleScreen() {
+	_vm->_system->fillScreen(kColorBlack);
+	_vm->_screen->setViewportBrightness(0);
+	_vm->_screen->setGuiBrightness(0);
+	_vm->paletteBrightness();
+	_vm->setCurrentImage(1);
+	_vm->renderImage(0);
+	_vm->paletteFadeIn();
+	_gm->getInput();
+}
+
+void Intro::titleFadeIn() {
+}
+
+bool Intro::animate(int section1, int section2, int duration) {
+	return true;
+}
+
+bool Intro::animate(int section1, int section2, int duration,
+					MessagePosition position, StringId textId) {
+	return true;
+}
+
+bool Intro::animate(int section1, int section2, int section3, int section4,
+					int duration, MessagePosition position, StringId textId) {
+	return true;
+}
+
+void Intro::cutscene() {
+}
+
+void Intro::leaveCutscene() {
+}
+
 }

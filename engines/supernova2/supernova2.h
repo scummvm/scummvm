@@ -31,6 +31,10 @@
 #include "common/file.h"
 
 #include "supernova2/console.h"
+#include "supernova2/graphics.h"
+#include "supernova2/ms2_def.h"
+#include "supernova2/rooms.h"
+#include "supernova2/imageid.h"
 
 namespace Common {
 	class MemoryReadWriteStream;
@@ -45,8 +49,10 @@ namespace Supernova2 {
 #define SUPERNOVA2_DAT_VERSION 1
 
 class GuiElement;
+class ResourceManager;
 class console;
 class GameManager;
+class Screen;
 
 class Supernova2Engine : public Engine {
 public:
@@ -58,6 +64,8 @@ public:
 
 	GameManager *_gm;
 	Console *_console;
+	ResourceManager *_resMan;
+	Screen *_screen;
 	bool _allowLoadGame;
 	bool _allowSaveGame;
 	Common::StringArray _gameStrings;
@@ -81,6 +89,29 @@ public:
 	void setGameString(int idx, const Common::String &string);
 
 	// forwarding calls
+	void paletteFadeIn();
+	void paletteFadeOut();
+	void paletteBrightness();
+	void renderImage(int section);
+	void renderImage(ImageId id, bool removeImage = false);
+	bool setCurrentImage(int filenumber);
+	void restoreScreen();
+	void renderRoom(Room &room);
+	void renderMessage(const char *text, MessagePosition position = kMessageNormal);
+	void renderMessage(const Common::String &text, MessagePosition position = kMessageNormal);
+	void renderMessage(StringId stringId, MessagePosition position = kMessageNormal,
+					   Common::String var1 = "", Common::String var2 = "");
+	void removeMessage();
+	void renderText(const uint16 character);
+	void renderText(const char *text);
+	void renderText(const Common::String &text);
+	void renderText(StringId stringId);
+	void renderText(const uint16 character, int x, int y, byte color);
+	void renderText(const char *text, int x, int y, byte color);
+	void renderText(const Common::String &text, int x, int y, byte color);
+	void renderText(StringId stringId, int x, int y, byte color);
+	void renderBox(int x, int y, int width, int height, byte color);
+	void setColor63(byte value);
 };
 
 }
