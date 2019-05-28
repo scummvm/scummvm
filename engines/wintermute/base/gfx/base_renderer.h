@@ -116,6 +116,7 @@ public:
 	 * essentially, just copies the region defined by the _indicator-variables.
 	 */
 	virtual bool indicatorFlip() = 0;
+	virtual bool forcedFlip() = 0;
 	virtual void initLoop();
 	virtual bool setup2D(bool force = false);
 	virtual bool setupLines();
@@ -223,6 +224,8 @@ protected:
 	Rect32 _monitorRect;
 private:
 	Common::Array<BaseActiveRect *> _rectList;
+	bool displaySaveloadImage();
+	bool displaySaveloadLines();
 };
 
 BaseRenderer *makeOSystemRenderer(BaseGame *inGame); // Implemented in BRenderSDL.cpp

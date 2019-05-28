@@ -32,6 +32,7 @@
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/base_sub_frame.h"
 #include "engines/wintermute/base/base_region.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
 
@@ -372,6 +373,26 @@ bool BaseRenderer::displayIndicator() {
 	if (!_indicatorDisplay || !_indicatorProgress) {
 		return STATUS_OK;
 	}
+
+#ifdef ENABLE_FOXTAIL
+	if (BaseEngine::instance().isFoxTail()) {
+		_hasDrawnSaveLoadImage = false;
+		fill(0, 0, 0);
+		displaySaveloadLines();
+		displaySaveloadImage();
+		forcedFlip();
+		return STATUS_OK;
+	}
+#endif
+	
+	displaySaveloadImage();
+	displaySaveloadLines();
+	indicatorFlip();
+	return STATUS_OK;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseRenderer::displaySaveloadImage() {
 	if (_saveLoadImage && !_hasDrawnSaveLoadImage) {
 		Rect32 rc;
 		rc.setRect(0, 0, _saveLoadImage->getWidth(), _saveLoadImage->getHeight());
@@ -384,6 +405,11 @@ bool BaseRenderer::displayIndicator() {
 		_hasDrawnSaveLoadImage = true;
 	}
 
+	return STATUS_OK;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseRenderer::displaySaveloadLines() {
 	if ((!_indicatorDisplay && _indicatorWidth <= 0) || _indicatorHeight <= 0) {
 		return STATUS_OK;
 	}
@@ -395,9 +421,6 @@ bool BaseRenderer::displayIndicator() {
 
 	setup2D();
 	_indicatorWidthDrawn = curWidth;
-	if (_indicatorWidthDrawn) {
-		indicatorFlip();
-	}
 	return STATUS_OK;
 }
 
