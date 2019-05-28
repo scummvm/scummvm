@@ -102,10 +102,11 @@ int AgiEngine::agiInit() {
 	}
 
 	// clear view table
-	for (i = 0; i < SCREENOBJECTS_MAX; i++)
-		memset(&_game.screenObjTable[i], 0, sizeof(struct ScreenObjEntry));
+	for (i = 0; i < SCREENOBJECTS_MAX; i++) {
+		_game.screenObjTable[i].reset();
+	}
 
-	memset(&_game.addToPicView, 0, sizeof(struct ScreenObjEntry));
+	_game.addToPicView.reset();
 
 	_words->clearEgoWords();
 
@@ -214,7 +215,7 @@ int AgiEngine::agiDeinit() {
 	agiUnloadResources();    // unload resources in memory
 	_loader->unloadResource(RESOURCETYPE_LOGIC, 0);
 	ec = _loader->deinit();
-	unloadObjects();
+	_objects.clear();
 	_words->unloadDictionary();
 
 	clearImageStack();
@@ -385,8 +386,6 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	_intobj = NULL;
 
 	memset(&_stringdata, 0, sizeof(struct StringData));
-
-	_objects = NULL;
 
 	_restartGame = false;
 

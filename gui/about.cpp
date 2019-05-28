@@ -57,8 +57,8 @@ enum {
 
 static const char *copyright_text[] = {
 "",
-"C0""Copyright (C) 2001-2017 The ScummVM Team",
-"C0""http://www.scummvm.org",
+"C0""Copyright (C) 2001-2019 The ScummVM Team",
+"C0""https://www.scummvm.org",
 "",
 "C0""ScummVM is the legal property of its developers, whose names are too numerous to list here. Please refer to the COPYRIGHT file distributed with this binary.",
 "",
@@ -110,16 +110,16 @@ AboutDialog::AboutDialog()
 	engines += _("Available engines:");
 	addLine(engines.c_str());
 
-	const EnginePlugin::List &plugins = EngineMan.getPlugins();
-	EnginePlugin::List::const_iterator iter = plugins.begin();
+	const PluginList &plugins = EngineMan.getPlugins();
+	PluginList::const_iterator iter = plugins.begin();
 	for (; iter != plugins.end(); ++iter) {
 		Common::String str;
 		str = "C0";
-		str += (**iter).getName();
+		str += (*iter)->getName();
 		addLine(str.c_str());
 
 		str = "C2";
-		str += (**iter)->getOriginalCopyright();
+		str += (*iter)->get<MetaEngine>().getOriginalCopyright();
 		addLine(str.c_str());
 
 		//addLine("");
@@ -180,8 +180,8 @@ void AboutDialog::close() {
 	Dialog::close();
 }
 
-void AboutDialog::drawDialog() {
-	Dialog::drawDialog();
+void AboutDialog::drawDialog(DrawLayer layerToDraw) {
+	Dialog::drawDialog(layerToDraw);
 
 	setTextDrawableArea(Common::Rect(_x, _y, _x + _w, _y + _h));
 
@@ -242,7 +242,9 @@ void AboutDialog::drawDialog() {
 				str++;
 
 		if (*str)
-			g_gui.theme()->drawText(Common::Rect(_x + _xOff, y, _x + _w - _xOff, y + g_gui.theme()->getFontHeight()), str, state, align, ThemeEngine::kTextInversionNone, 0, false, ThemeEngine::kFontStyleBold, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
+			g_gui.theme()->drawText(Common::Rect(_x + _xOff, y, _x + _w - _xOff, y + g_gui.theme()->getFontHeight()),
+			                        str, state, align, ThemeEngine::kTextInversionNone, 0, false,
+			                        ThemeEngine::kFontStyleBold, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
 		y += _lineHeight;
 	}
 }
@@ -268,7 +270,7 @@ void AboutDialog::handleTickle() {
 			_scrollPos = 0;
 			_scrollTime += kScrollStartDelay;
 		}
-		drawDialog();
+		drawDialog(kDrawLayerForeground);
 	}
 }
 

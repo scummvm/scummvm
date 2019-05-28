@@ -23,6 +23,7 @@
 #include "titanic/game/head_slot.h"
 #include "titanic/core/project_item.h"
 #include "titanic/game/brain_slot.h"
+#include "titanic/game_manager.h"
 
 namespace Titanic {
 
@@ -139,11 +140,15 @@ bool CHeadSlot::LoadSuccessMsg(CLoadSuccessMsg *msg) {
 bool CHeadSlot::TimerMsg(CTimerMsg *msg) {
 	if (compareViewNameTo("Titania.Node 15.S") && CBrainSlot::_numAdded == 5
 			&& _occupied) {
-		if (_senseState == "Working" && !_workingFlag) {
-			playMovie(_frameNum2, _frameNum3, 0);
-			_workingFlag = true;
-		} else if (_senseState == "Random") {
-			playMovie(_frameNum2, _frameNum4, 0);
+		// WORKAROUND: Fix original bug where returning to Titania closeup when all the brain slots
+		// were inserted in an incorrect order, would result in endless busy cursor
+		if (getGameManager()->_gameState._mode != GSMODE_CUTSCENE) {
+			if (_senseState == "Working" && !_workingFlag) {
+				playMovie(_frameNum2, _frameNum3, 0);
+				_workingFlag = true;
+			} else if (_senseState == "Random") {
+				playMovie(_frameNum2, _frameNum4, 0);
+			}
 		}
 	}
 

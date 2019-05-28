@@ -572,7 +572,7 @@ void TownsMidiOutputChannel::keyOff() {
 
 void TownsMidiOutputChannel::keyOnSetFreq(uint16 frq) {
 	uint16 note = (frq << 1) >> 8;
-	frq = (_freqMSB[note] << 11) | _freqLSB[note] ;
+	frq = (_freqMSB[note] << 11) | _freqLSB[note];
 	out(0xa4, frq >> 8);
 	out(0xa0, frq & 0xff);
 	//out(0x28, 0x00);

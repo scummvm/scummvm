@@ -48,6 +48,7 @@ typedef struct {
 	Common::List<InternalEvent> _events;
 	NSLock *_eventLock;
 	SoftKeyboard *_keyboardView;
+	BOOL _keyboardVisible;
 
 	EAGLContext *_context;
 	GLuint _viewRenderbuffer;
@@ -119,6 +120,10 @@ typedef struct {
 - (void)updateMouseCursor;
 
 - (void)deviceOrientationChanged:(UIDeviceOrientation)orientation;
+
+- (void)showKeyboard;
+- (void)hideKeyboard;
+- (BOOL)isKeyboardShown;
 
 - (void)applicationSuspend;
 

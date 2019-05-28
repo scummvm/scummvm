@@ -28,32 +28,33 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
+class SaveFileReadStream;
+class SaveFileWriteStream;
 
 class ActorCombat {
 	BladeRunnerEngine *_vm;
 
-private:
-//	int _actorId;
-//	int _combatOn;
-//	int _field2;
-//	int _field3;
-//	int _otherActorId;
-//	int _field5;
-//	int _field6;
-//	int _field7;
-//	int _field8;
-//	int _field9;
-//	int _field10;
-//	int _field11;
-//	int _field12;
-//	int _actorHp;
-//	int _field14;
-//	int _field15;
-	Vector3 actorPosition;
-	Vector3 otherActorPosition;
-//	int _availableCoversCount;
-//	int _availableFleeWaypointsCount;
-//	int _field24;
+	int _actorId;
+	bool _active;
+	int _state;
+	bool _rangedAttack;
+	int _enemyId;
+	int _waypointType;
+	int _damage;
+	int _fleeRatio;
+	int _coverRatio;
+	int _attackRatio;
+	int _fleeRatioConst;
+	int _coverRatioConst;
+	int _attackRatioConst;
+	int _actorHp;
+	int _range;
+	bool _unstoppable;
+	Vector3 _actorPosition;
+	Vector3 _enemyPosition;
+	int _coversWaypointCount;
+	int _fleeWaypointsCount;
+	int _fleeingTowards;
 
 public:
 	ActorCombat(BladeRunnerEngine *vm);
@@ -61,10 +62,41 @@ public:
 
 	void setup();
 
+	void combatOn(int actorId, int initialState, bool rangedAttack, int enemyId, int waypointType, int fleeRatio, int coverRatio, int attackRatio, int damage, int range, bool unstoppable);
+	void combatOff();
+
+	void tick();
+
 	void hitAttempt();
 
-	void combatOn(int actorId, int a3, int a4, int otherActorId, int a6, int a7, int a8, int a9, int a10, int a11, int a12);
-	void combatOff();
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
+
+private:
+	void reset();
+
+	void cover();
+	void approachToCloseAttack();
+	void approachToRangedAttack();
+	void uncover();
+	void aim();
+	void rangedAttack();
+	void closeAttack();
+	void flee();
+
+	void faceEnemy();
+
+	int getCoefficientCloseAttack() const;
+	int getCoefficientRangedAttack() const;
+
+	int getDamageCloseAttack(int min, int max) const;
+	int getDamageRangedAttack(int min, int max) const;
+
+	int calculateAttackRatio() const;
+	int calculateCoverRatio() const;
+	int calculateFleeRatio() const;
+
+	bool findClosestPositionToEnemy(Vector3 &output) const;
 };
 
 } // End of namespace BladeRunner

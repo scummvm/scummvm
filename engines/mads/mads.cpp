@@ -159,7 +159,7 @@ void MADSEngine::saveOptions() {
 }
 
 Common::Error MADSEngine::run() {
-	initGraphics(MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT, false);
+	initGraphics(MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT);
 	initialize();
 
 	// Run the game

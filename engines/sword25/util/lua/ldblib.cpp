@@ -204,7 +204,7 @@ static int db_setupvalue (lua_State *L) {
 
 
 
-static const char KEY_HOOK = 'h';
+static /*const*/ char KEY_HOOK = 'h';
 
 
 static void hookf (lua_State *L, lua_Debug *ar) {

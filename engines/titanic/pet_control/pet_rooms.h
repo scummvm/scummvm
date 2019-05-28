@@ -164,9 +164,10 @@ public:
 	bool changeLocationClass(PassengerClass newClassNum);
 
 	/**
-	 * Returns true if a room glyph exists with the given flags
+	 * Returns true if the specified location is the current or
+	 * previously assigned room
 	 */
-	bool hasRoomFlags(uint roomFlags) const;
+	bool isAssignedRoom(uint roomFlags) const;
 
 	/**
 	 * Returns the room flags for the player's currently assigned room

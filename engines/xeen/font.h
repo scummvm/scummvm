@@ -33,7 +33,16 @@ namespace Xeen {
 
 enum Justify { JUSTIFY_NONE = 0, JUSTIFY_CENTER = 1, JUSTIFY_RIGHT = 2 };
 
-class FontSurface: public XSurface {
+struct FontData {
+	static const byte *_fontData;
+	static Common::Point *_fontWritePos;
+	static byte _textColors[4];
+	static byte _bgColor;
+	static bool _fontReduced;
+	static Justify _fontJustify;
+};
+
+class FontSurface: public XSurface, public FontData {
 private:
 	const char *_displayString;
 	bool _msgWraps;
@@ -68,12 +77,7 @@ private:
 	 */
 	void writeChar(char c, const Common::Rect &clipRect);
 public:
-	const byte *_fontData;
-	Common::Point _writePos;
-	byte _textColors[4];
-	byte _bgColor;
-	bool _fontReduced;
-	Justify _fontJustify;
+	Common::Point &_writePos;
 public:
 	FontSurface();
 	FontSurface(int wv, int hv);
@@ -94,6 +98,13 @@ public:
 	 *		justification is set, the message will be written at _writePos
 	 */
 	const char *writeString(const Common::String &s, const Common::Rect &clipRect);
+
+	/**
+	 * Write a charcter to the window
+	 * @param c			Character
+	 * @param clipRect	Window bounds to display string within
+	 */
+	void writeCharacter(char c, const Common::Rect &clipRect);
 };
 
 } // End of namespace Xeen

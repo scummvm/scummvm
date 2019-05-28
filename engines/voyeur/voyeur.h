@@ -312,7 +312,7 @@ struct VoyeurSavegameHeader {
 	/**
 	 * Read in the header from the specified file
 	 */
-	bool read(Common::InSaveFile *f);
+	bool read(Common::InSaveFile *f, bool skipThumbnail = true);
 
 	/**
 	 * Write out header information to the specified file

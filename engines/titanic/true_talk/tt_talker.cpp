@@ -34,7 +34,12 @@ void TTtalker::speechStarted(const CString &dialogueStr, uint dialogueId, uint s
 	msg.execute(_npc, nullptr, MSGFLAG_BREAK_IF_HANDLED);
 }
 
-TTtalker::~TTtalker() {
+void TTtalker::endSpeech(int val) {
+	_done = true;
+	_talkEndState = val;
+}
+
+void TTtalker::speechEnded() {
 	CPetControl *petControl = _npc->getPetControl();
 	if (petControl)
 		// Add in final line
@@ -43,11 +48,6 @@ TTtalker::~TTtalker() {
 	// Notify the end of the speech
 	CTrueTalkNotifySpeechEndedMsg endedMsg(_talkEndState, _dialogueId);
 	endedMsg.execute(_npc, nullptr, MSGFLAG_BREAK_IF_HANDLED);
-}
-
-void TTtalker::endSpeech(int val) {
-	_done = true;
-	_talkEndState = val;
 }
 
 } // End of namespace Titanic

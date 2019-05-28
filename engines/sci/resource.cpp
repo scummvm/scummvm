@@ -224,10 +224,14 @@ void Resource::unalloc() {
 }
 
 void Resource::writeToStream(Common::WriteStream *stream) const {
-	stream->writeByte(getType() | 0x80); // 0x80 is required by old Sierra SCI, otherwise it wont accept the patch file
-	stream->writeByte(_headerSize);
-	if (_headerSize > 0)
+	if (_headerSize == 0) {
+		// create patch file header
+		stream->writeByte(getType() | 0x80); // 0x80 is required by old Sierra SCI, otherwise it wont accept the patch file
+		stream->writeByte(_headerSize);
+	} else {
+		// use existing patch file header
 		stream->write(_header, _headerSize);
+	}
 	stream->write(_data, _size);
 }
 
@@ -476,12 +480,14 @@ void MacResourceForkResourceSource::decompressResource(Common::SeekableReadStrea
 	bool canBeCompressed = !(g_sci && g_sci->getGameId() == GID_KQ6) && isCompressableResource(resource->_id.getType());
 	uint32 uncompressedSize = 0;
 
+#ifdef ENABLE_SCI32_MAC
 	// GK2 Mac is crazy. In its Patches resource fork, picture 2315 is not
 	// compressed and it is hardcoded in the executable to say that it's
 	// not compressed. Why didn't they just add four zeroes to the end of
 	// the resource? (Checked with PPC disasm)
 	if (g_sci && g_sci->getGameId() == GID_GK2 && resource->_id.getType() == kResourceTypePic && resource->_id.getNumber() == 2315)
 		canBeCompressed = false;
+#endif
 
 	// Get the uncompressed size from the end of the resource
 	if (canBeCompressed && stream->size() > 4) {
@@ -1611,7 +1617,7 @@ void ResourceManager::readResourcePatchesBase36() {
 			SearchMan.listMatchingMembers(files, "A???????.???");
 			SearchMan.listMatchingMembers(files, "B???????.???");
 		} else {
-			SearchMan.listMatchingMembers(files, "#???????.???");
+			SearchMan.listMatchingMembers(files, "\\#???????.???");
 #ifdef ENABLE_SCI32
 			SearchMan.listMatchingMembers(files, "S???????.???");
 			SearchMan.listMatchingMembers(files, "T???????.???");
@@ -1624,7 +1630,8 @@ void ResourceManager::readResourcePatchesBase36() {
 
 			// The S/T prefixes often conflict with non-patch files and generate
 			// spurious warnings about invalid patches
-			if (name.hasSuffix(".DLL") || name.hasSuffix(".EXE") || name.hasSuffix(".TXT") || name.hasSuffix(".OLD") || name.hasSuffix(".WIN") || name.hasSuffix(".DOS")) {
+			if (name.hasSuffix(".DLL") || name.hasSuffix(".EXE") || name.hasSuffix(".TXT") || name.hasSuffix(".OLD") || name.hasSuffix(".WIN") || name.hasSuffix(".DOS") ||
+				name.hasSuffix(".HLP") || name.hasSuffix(".DRV")) {
 				continue;
 			}
 
@@ -1803,7 +1810,7 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 				}
 			}
 
-			addResource(resId, source, offset & (((~bMask) << 24) | 0xFFFFFF), 0, map->getLocationName());
+			addResource(resId, source, offset & ((((byte)~bMask) << 24) | 0xFFFFFF), 0, map->getLocationName());
 		}
 	} while (!fileStream->eos());
 
@@ -1926,10 +1933,14 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 						volumeName = "RESAUD.001";
 					}
 				} else if (resId.getNumber() == 65535) {
-					if (g_sci->getGameId() == GID_RAMA && Common::File::exists("RESOURCE.SFX")) {
-						volumeName = "RESOURCE.SFX";
-					} else {
-						volumeName = Common::String::format("RESSFX.%03d", mapVolumeNr);
+					volumeName = Common::String::format("RESSFX.%03d", mapVolumeNr);
+
+					if (g_sci->getGameId() == GID_RAMA && !Common::File::exists(volumeName)) {
+						if (Common::File::exists("RESOURCE.SFX")) {
+							volumeName = "RESOURCE.SFX";
+						} else if (Common::File::exists("RESSFX.001")) {
+							volumeName = "RESSFX.001";
+						}
 					}
 				} else {
 					volumeName = Common::String::format("RESAUD.%03d", mapVolumeNr);
@@ -2059,7 +2070,11 @@ bool ResourceManager::validateResource(const ResourceId &resourceId, const Commo
 
 Resource *ResourceManager::addResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size, const Common::String &sourceMapLocation) {
 	// Adding new resource only if it does not exist
-	if (_resMap.contains(resId) == false) {
+	// Hoyle 4 contains each audio resource twice. The first file is in an unknown
+	// format and only static sounds are heard when it's played. The second file
+	// is a typical SOL audio file. We therefore skip the first audio file and add
+	// second one for this game.
+	if (_resMap.contains(resId) == false || (resId.getType() == kResourceTypeAudio && g_sci && g_sci->getGameId() == GID_HOYLE4)) {
 		return updateResource(resId, src, offset, size, sourceMapLocation);
 	} else {
 		return _resMap.getVal(resId);
@@ -2092,7 +2107,12 @@ Resource *ResourceManager::updateResource(ResourceId resId, ResourceSource *src,
 		return res;
 	}
 
-	if (validateResource(resId, sourceMapLocation, src->getLocationName(), offset, size, volumeFile->size())) {
+	// Resources from MacResourceForkResourceSource do not have a source size
+	// since the source "volume file" is the empty data fork, and they don't
+	// have an offset either since the MacResManager handles this, so trying to
+	// validate these resources using the normal validation would always fail
+	if (src->getSourceType() == kSourceMacResourceFork ||
+		validateResource(resId, sourceMapLocation, src->getLocationName(), offset, size, volumeFile->size())) {
 		if (res == nullptr) {
 			res = new Resource(this, resId);
 			_resMap.setVal(resId, res);
@@ -2912,6 +2932,9 @@ Common::String ResourceManager::findSierraGameId(const bool isBE) {
 		heap = findResource(ResourceId(kResourceTypeScript, 0), false);
 
 		Resource *vocab = findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SELECTORS), false);
+		if (!vocab)
+			return "";
+
 		const uint16 numSelectors = isBE ? vocab->getUint16BEAt(0) : vocab->getUint16LEAt(0);
 		for (uint16 i = 0; i < numSelectors; ++i) {
 			uint16 selectorOffset;

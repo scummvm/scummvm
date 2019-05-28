@@ -77,10 +77,10 @@ namespace MPAL {
  * Decompresses an LZO compressed resource
  */
 int lzo1x_decompress(const byte *in, uint32 in_len, byte *out, uint32 *out_len) {
-	register byte *op;
-	register const byte *ip;
-	register uint32 t = 0;
-	register const byte *m_pos;
+	byte *op;
+	const byte *ip;
+	uint32 t = 0;
+	const byte *m_pos;
 
 	const byte * const ip_end = in + in_len;
 
@@ -94,9 +94,9 @@ int lzo1x_decompress(const byte *in, uint32 in_len, byte *out, uint32 *out_len) 
 		if (t < 4)
 			goto match_next;
 		assert(t > 0);
-		do
+		do {
 			*op++ = *ip++;
-		while (--t > 0);
+		} while (--t > 0);
 		goto first_literal_run;
 	}
 
@@ -116,9 +116,9 @@ int lzo1x_decompress(const byte *in, uint32 in_len, byte *out, uint32 *out_len) 
 		*op++ = *ip++;
 		*op++ = *ip++;
 		*op++ = *ip++;
-		do
+		do {
 			*op++ = *ip++;
-		while (--t > 0);
+		} while (--t > 0);
 
 first_literal_run:
 		t = *ip++;
@@ -186,9 +186,9 @@ match:
 copy_match:
 				*op++ = *m_pos++;
 				*op++ = *m_pos++;
-				do
+				do {
 					*op++ = *m_pos++;
-				while (--t > 0);
+				} while (--t > 0);
 			}
 
 match_done:

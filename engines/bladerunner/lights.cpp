@@ -31,7 +31,6 @@ Lights::Lights(BladeRunnerEngine *vm) {
 	_ambientLightColor.g = 0.0;
 	_ambientLightColor.b = 0.0;
 
-	_lights.clear();
 	_frame = 0;
 }
 
@@ -39,13 +38,13 @@ Lights::~Lights() {
 	reset();
 }
 
-void Lights::read(Common::ReadStream *stream, int framesCount) {
+void Lights::read(Common::ReadStream *stream, int frameCount) {
 	_ambientLightColor.r = stream->readFloatLE();
 	_ambientLightColor.g = stream->readFloatLE();
 	_ambientLightColor.b = stream->readFloatLE();
 
-	uint _lightsCount = stream->readUint32LE();
-	for (uint i = 0; i < _lightsCount; i++) {
+	uint _lightCount = stream->readUint32LE();
+	for (uint i = 0; i < _lightCount; i++) {
 		Light *light;
 		int type = stream->readUint32LE();
 		switch (type) {
@@ -68,7 +67,7 @@ void Lights::read(Common::ReadStream *stream, int framesCount) {
 			light = new Light();
 		}
 
-		light->read(stream, framesCount, _frame, 0);
+		light->read(stream, frameCount, _frame, 0);
 		_lights.push_back(light);
 	}
 }
@@ -83,10 +82,11 @@ void Lights::removeAnimated() {
 
 void Lights::readVqa(Common::ReadStream *stream) {
 	removeAnimated();
-	if (stream->eos())
+	if (stream->eos()) {
 		return;
+	}
 
-	int framesCount = stream->readUint32LE();
+	int frameCount = stream->readUint32LE();
 	int count = stream->readUint32LE();
 	for (int i = 0; i < count; i++) {
 		int lightType = stream->readUint32LE();
@@ -110,7 +110,7 @@ void Lights::readVqa(Common::ReadStream *stream) {
 		default:
 			light = new Light();
 		}
-		light->readVqa(stream, framesCount, _frame, 1);
+		light->readVqa(stream, frameCount, _frame, 1);
 		_lights.push_back(light);
 	}
 }

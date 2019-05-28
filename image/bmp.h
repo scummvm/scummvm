@@ -37,6 +37,7 @@
 
 namespace Common {
 class SeekableReadStream;
+class WriteStream;
 }
 
 namespace Graphics {
@@ -65,6 +66,14 @@ private:
 	byte *_palette;
 	uint16 _paletteColorCount;
 };
+
+/**
+ * Outputs an uncompressed BMP stream of the given input surface.
+ *
+ * @param bottomUp Flip the vertical axis so pixel data is drawn from the
+ * bottom up, instead of from the top down.
+ */
+bool writeBMP(Common::WriteStream &out, const Graphics::Surface &input, const bool bottomUp = false);
 
 } // End of namespace Image
 

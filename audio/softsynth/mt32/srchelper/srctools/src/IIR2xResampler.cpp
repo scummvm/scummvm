@@ -16,12 +16,12 @@
 
 #include <cstddef>
 
-#include "IIR2xResampler.h"
+#include "../include/IIR2xResampler.h"
 
 namespace SRCTools {
 
 	// Avoid denormals degrading performance, using biased input
-	static const BufferedSample BIAS = 1e-35f;
+	static const BufferedSample BIAS = 1e-20f;
 
 	// Sharp elliptic filter with symmetric ripple: N=18, Ap=As=-106 dB, fp=0.238, fs = 0.25 (in terms of sample rate)
 	static const IIRCoefficient FIR_BEST = 0.0014313792470984f;
@@ -132,7 +132,7 @@ IIRResampler::~IIRResampler() {
 
 IIR2xInterpolator::IIR2xInterpolator(const Quality quality) :
 	IIRResampler(quality),
-	phase()
+	phase(1)
 {
 	for (unsigned int chIx = 0; chIx < IIR_RESAMPER_CHANNEL_COUNT; ++chIx) {
 		lastInputSamples[chIx] = 0;
@@ -141,7 +141,7 @@ IIR2xInterpolator::IIR2xInterpolator(const Quality quality) :
 
 IIR2xInterpolator::IIR2xInterpolator(const unsigned int useSectionsCount, const IIRCoefficient useFIR, const IIRSection useSections[]) :
 	IIRResampler(useSectionsCount, useFIR, useSections),
-	phase()
+	phase(1)
 {
 	for (unsigned int chIx = 0; chIx < IIR_RESAMPER_CHANNEL_COUNT; ++chIx) {
 		lastInputSamples[chIx] = 0;

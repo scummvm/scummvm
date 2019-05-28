@@ -24,8 +24,26 @@
 
 namespace Sludge {
 
-bool fileToStack(const Common::String &filename, StackHandler *sH);
-bool stackToFile(const Common::String &filename, const Variable &from);
+struct StackHandler;
+struct Variable;
+
+class CustomSaveHelper {
+public:
+	static bool fileToStack(const Common::String &filename, StackHandler *sH);
+	static bool stackToFile(const Common::String &filename, const Variable &from);
+
+	static uint16 _saveEncoding;
+
+private:
+	static const char UTF8_CHECKER[];
+	static char _encode1;
+	static char _encode2;
+
+	static void writeStringEncoded(const Common::String checker, Common::WriteStream *stream);
+	static Common::String readStringEncoded(Common::SeekableReadStream *fp);
+	static char *readTextPlain(Common::SeekableReadStream *fp);
+
+};
 
 } // End of namespace Sludge
 

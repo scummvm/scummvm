@@ -31,7 +31,9 @@ namespace Common {
 
 OutSaveFile::OutSaveFile(WriteStream *w): _wrapped(w) {}
 
-OutSaveFile::~OutSaveFile() {}
+OutSaveFile::~OutSaveFile() {
+	delete _wrapped;
+}
 
 bool OutSaveFile::err() const { return _wrapped->err(); }
 

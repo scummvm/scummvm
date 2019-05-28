@@ -347,7 +347,7 @@ void CMSEmulator::portWriteIntern(int chip, int offset, int data) {
 class CMSMusicPlugin : public NullMusicPlugin {
 public:
 	const char *getName() const {
-		return _s("Creative Music System Emulator");
+		return _s("Creative Music System emulator");
 	}
 
 	const char *getId() const {

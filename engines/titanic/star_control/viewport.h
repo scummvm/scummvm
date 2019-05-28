@@ -35,7 +35,7 @@ namespace Titanic {
  * For starview it should be white
  * For skyview it should be pink
  */
-enum StarColor { WHITE = 0, PINK = 2 };	
+enum StarColor { WHITE = 0, PINK = 2 };
 
 /**
  * Implements the viewport functionality for viewing the star field in
@@ -111,14 +111,14 @@ public:
 	 * The view has changed between starview and skyview
 	 * Change the enum that tracks the color of the stars
 	 * Also change the X coordinate pixel offset used for star drawing
-	 */	
+	 */
 	void changeStarColorPixel(StarMode mode, double pixelOffSet);
 	void reposition(double factor);
 
 	/**
 	 * Applys a rotation matrix to the current
 	 * orientation
-	 */	
+	 */
 	void changeOrientation(const FMatrix &matrix);
 
 	FPose getPose();
@@ -148,15 +148,15 @@ public:
 	/**
 	 * Sets the center vector y angle
 	 * The actual center y value doesn't
-	 * change untill reset is called 
-	 */		
+	 * change untill reset is called
+	 */
 	void setCenterYAngle(double angleDegrees);
 
 	/**
 	 * Sets the center vector z angle
 	 * The actual center z value doesn't
-	 * change untill reset is called 
-	 */	
+	 * change untill reset is called
+	 */
 	void setCenterZAngle(double angleDegrees);
 };
 

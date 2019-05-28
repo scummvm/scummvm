@@ -278,7 +278,7 @@ bool CParrot::MovieEndMsg(CMovieEndMsg *msg) {
 
 		if (_takeOff) {
 			// Perch has been taken, so take off
-			loadMovie("z168.avi", false);
+			loadMovie(TRANSLATE("z168.avi", "z191.avi"), false);
 			playClip("Take Off", MOVIE_NOTIFY_OBJECT);
 			setPosition(Point(20, 10));
 			_npcFlags |= NPCFLAG_TAKE_OFF;
@@ -697,7 +697,7 @@ bool CParrot::PutParrotBackMsg(CPutParrotBackMsg *msg) {
 
 bool CParrot::PreEnterViewMsg(CPreEnterViewMsg *msg) {
 	if (_state == PARROT_IN_CAGE) {
-		loadMovie("z167.avi", false);
+		loadMovie(TRANSLATE("z167.avi", "z190.avi"), false);
 		loadFrame(0);
 	}
 
@@ -711,7 +711,7 @@ bool CParrot::PanningAwayFromParrotMsg(CPanningAwayFromParrotMsg *msg) {
 		_panTarget = nullptr;
 	} else if (_takeOff) {
 		_panTarget = msg->_target;
-		loadMovie("z168.avi", false);
+		loadMovie(TRANSLATE("z168.avi", "z191.avi"), false);
 		stopMovie();
 		playClip("Take Off", MOVIE_NOTIFY_OBJECT);
 		_npcFlags |= NPCFLAG_TAKE_OFF;

@@ -77,6 +77,7 @@ MODULE_OBJS := \
 	sound/drivers/fmtowns.o \
 	sound/drivers/midi.o \
 	sound/drivers/pcjr.o \
+	sound/drivers/pc9801.o \
 	video/seq_decoder.o
 
 

@@ -49,7 +49,6 @@
 #include "common/translation.h"
 #include "engines/util.h"
 #include "graphics/scaler.h"
-#include "graphics/thumbnail.h"
 #include "graphics/screen.h"
 #include "gui/saveload.h"
 
@@ -191,7 +190,7 @@ void TitanicEngine::setRoomNames() {
 bool TitanicEngine::canLoadGameStateCurrently() {
 	CGameManager *gameManager = _window->_gameManager;
 	CScreenManager *screenMan = CScreenManager::_screenManagerPtr;
-	
+
 	if (!gameManager)
 		// Allow loading from copyright screen and continue dialogs
 		return true;
@@ -256,11 +255,6 @@ CString TitanicEngine::getSavegameName(int slot) {
 
 		TitanicSavegameHeader header;
 		bool isValid = CProjectItem::readSavegameHeader(&file, header);
-		if (header._thumbnail) {
-			header._thumbnail->free();
-			delete header._thumbnail;
-		}
-
 		file.close();
 
 		if (isValid)
@@ -280,18 +274,6 @@ void TitanicEngine::syncSoundSettings() {
 			pet->syncSoundSettings();
 		}
 	}
-}
-
-void TitanicEngine::GUIError(const char *msg, ...) {
-	char buffer[STRINGBUFLEN];
-	va_list va;
-
-	// Generate the full error message
-	va_start(va, msg);
-	vsnprintf(buffer, STRINGBUFLEN, msg, va);
-	va_end(va);
-
-	GUIErrorMessage(buffer);
 }
 
 

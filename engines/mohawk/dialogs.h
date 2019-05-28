@@ -53,51 +53,34 @@ public:
 
 	void setInfoText(const Common::String &message);
 
-	virtual void handleMouseDown(int x, int y, int button, int clickCount) {
+	void handleMouseDown(int x, int y, int button, int clickCount) override {
 		setResult(0);
 		close();
 	}
 
-	virtual void handleKeyDown(Common::KeyState state) {
+	void handleKeyDown(Common::KeyState state) override {
 		setResult(state.ascii);
 		close();
 	}
 
-	virtual void reflowLayout();
+	void reflowLayout() override;
 };
 
 class PauseDialog : public InfoDialog {
 public:
 	PauseDialog(MohawkEngine* vm, const Common::String &message);
-	virtual void handleKeyDown(Common::KeyState state);
+	void handleKeyDown(Common::KeyState state) override;
 };
 
 #if defined(ENABLE_MYST) || defined(ENABLE_RIVEN)
 
 class MohawkOptionsDialog : public GUI::Dialog {
 public:
-	MohawkOptionsDialog(MohawkEngine *_vm);
-	virtual ~MohawkOptionsDialog();
+	explicit MohawkOptionsDialog();
+	~MohawkOptionsDialog() override;
 
-	virtual void open() override;
-	virtual void reflowLayout() override;
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
-
-	int getLoadSlot() const {return _loadSlot;}
-
-private:
-	MohawkEngine *_vm;
-
-	GUI::ButtonWidget    *_loadButton;
-	GUI::ButtonWidget    *_saveButton;
-
-	GUI::SaveLoadChooser *_loadDialog;
-	GUI::SaveLoadChooser *_saveDialog;
-
-	int _loadSlot;
-
-	void save();
-	void load();
+	void reflowLayout() override;
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 };
 
 #endif
@@ -108,14 +91,48 @@ class MohawkEngine_Myst;
 
 class MystOptionsDialog : public MohawkOptionsDialog {
 public:
-	MystOptionsDialog(MohawkEngine_Myst *vm);
-	virtual ~MystOptionsDialog();
+	explicit MystOptionsDialog(MohawkEngine_Myst *vm);
+	~MystOptionsDialog() override;
 
-	virtual void open() override;
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	enum ResultAction {
+		kActionNone = 1,
+		kActionDropPage,
+		kActionShowMap,
+		kActionGoToMenu,
+		kActionShowCredits
+	};
+
+	void setCanDropPage(bool canDropPage);
+	void setCanShowMap(bool canShowMap);
+	void setCanReturnToMenu(bool canReturnToMenu);
+
+	void open() override;
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+
+	int getLoadSlot() const { return _loadSlot; }
+	int getSaveSlot() const { return _saveSlot; }
+	Common::String getSaveDescription() const { return _saveDescription; }
 
 private:
+	void save();
+	void load();
+
 	MohawkEngine_Myst *_vm;
+
+	GUI::ButtonWidget    *_loadButton;
+	GUI::ButtonWidget    *_saveButton;
+	GUI::ButtonWidget    *_quitButton;
+
+	GUI::SaveLoadChooser *_loadDialog;
+	GUI::SaveLoadChooser *_saveDialog;
+
+	int _loadSlot;
+	int _saveSlot;
+	Common::String _saveDescription;
+
+	bool _canDropPage;
+	bool _canShowMap;
+	bool _canReturnToMenu;
 
 	GUI::CheckboxWidget *_zipModeCheckbox;
 	GUI::CheckboxWidget *_transitionsCheckbox;
@@ -133,11 +150,11 @@ class MohawkEngine_Riven;
 
 class RivenOptionsDialog : public MohawkOptionsDialog {
 public:
-	RivenOptionsDialog(MohawkEngine_Riven *vm);
-	virtual ~RivenOptionsDialog();
+	explicit RivenOptionsDialog(MohawkEngine_Riven *vm);
+	~RivenOptionsDialog() override;
 
-	virtual void open() override;
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+	void open() override;
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
 private:
 	MohawkEngine_Riven *_vm;

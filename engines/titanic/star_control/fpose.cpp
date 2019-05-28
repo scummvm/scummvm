@@ -24,6 +24,8 @@
 #include "titanic/star_control/matrix_transform.h"
 #include "titanic/star_control/matrix_inv.h"
 
+#include "common/math.h"
+
 namespace Titanic {
 
 // Non-member functions
@@ -91,9 +93,8 @@ void FPose::identity() {
 
 // Source: https://en.wikipedia.org/wiki/Rotation_matrix
 void FPose::setRotationMatrix(Axis axis, float amount) {
-	const float ROTATION = (float)(2 * M_PI / 360.0);
-	float sinVal = sin(amount * ROTATION);
-	float cosVal = cos(amount * ROTATION);
+	float sinVal = sin(Common::deg2rad<float>(amount));
+	float cosVal = cos(Common::deg2rad<float>(amount));
 
 	switch (axis) {
 	case X_AXIS:

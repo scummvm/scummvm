@@ -256,6 +256,7 @@ void CGameManager::updateMovies() {
 				}
 
 				eventsList.remove(movieEvent);
+				delete movieEvent;
 			}
 
 			repeatFlag = true;

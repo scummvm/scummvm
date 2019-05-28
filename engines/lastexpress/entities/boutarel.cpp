@@ -39,23 +39,23 @@ namespace LastExpress {
 
 Boutarel::Boutarel(LastExpressEngine *engine) : Entity(engine, kEntityBoutarel) {
 	ADD_CALLBACK_FUNCTION(Boutarel, reset);
-	ADD_CALLBACK_FUNCTION(Boutarel, playSound);
-	ADD_CALLBACK_FUNCTION(Boutarel, draw);
-	ADD_CALLBACK_FUNCTION(Boutarel, updateFromTime);
-	ADD_CALLBACK_FUNCTION(Boutarel, updatePosition);
-	ADD_CALLBACK_FUNCTION(Boutarel, enterExitCompartment);
-	ADD_CALLBACK_FUNCTION(Boutarel, enterExitCompartment2);
+	ADD_CALLBACK_FUNCTION_S(Boutarel, playSound);
+	ADD_CALLBACK_FUNCTION_S(Boutarel, draw);
+	ADD_CALLBACK_FUNCTION_I(Boutarel, updateFromTime);
+	ADD_CALLBACK_FUNCTION_SII(Boutarel, updatePosition);
+	ADD_CALLBACK_FUNCTION_SI(Boutarel, enterExitCompartment);
+	ADD_CALLBACK_FUNCTION_SI(Boutarel, enterExitCompartment2);
 	ADD_CALLBACK_FUNCTION(Boutarel, callbackActionOnDirection);
 	ADD_CALLBACK_FUNCTION(Boutarel, callbackActionRestaurantOrSalon);
-	ADD_CALLBACK_FUNCTION(Boutarel, updateEntity);
-	ADD_CALLBACK_FUNCTION(Boutarel, function11);
+	ADD_CALLBACK_FUNCTION_II(Boutarel, updateEntity);
+	ADD_CALLBACK_FUNCTION_I(Boutarel, function11);
 	ADD_CALLBACK_FUNCTION(Boutarel, enterTableWithMmeBoutarel);
 	ADD_CALLBACK_FUNCTION(Boutarel, leaveTableWithMmeBoutarel);
-	ADD_CALLBACK_FUNCTION(Boutarel, function14);
-	ADD_CALLBACK_FUNCTION(Boutarel, function15);
-	ADD_CALLBACK_FUNCTION(Boutarel, function16);
-	ADD_CALLBACK_FUNCTION(Boutarel, function17);
-	ADD_CALLBACK_FUNCTION(Boutarel, function18);
+	ADD_CALLBACK_FUNCTION_I(Boutarel, function14);
+	ADD_CALLBACK_FUNCTION_IS(Boutarel, function15);
+	ADD_CALLBACK_FUNCTION_IS(Boutarel, function16);
+	ADD_CALLBACK_FUNCTION_IS(Boutarel, function17);
+	ADD_CALLBACK_FUNCTION_I(Boutarel, function18);
 	ADD_CALLBACK_FUNCTION(Boutarel, chapter1);
 	ADD_CALLBACK_FUNCTION(Boutarel, function20);
 	ADD_CALLBACK_FUNCTION(Boutarel, chapter1Handler);
@@ -214,7 +214,7 @@ IMPLEMENT_FUNCTION_I(11, Boutarel, function11, bool)
 				break;
 
 			case kChapter1:
-				getSound()->playSound(kEntityBoutarel, "MRB1075", kFlagInvalid, 60);
+				getSound()->playSound(kEntityBoutarel, "MRB1075", kSoundVolumeEntityDefault, 60);
 				break;
 
 			case kChapter3:
@@ -257,8 +257,8 @@ IMPLEMENT_FUNCTION(12, Boutarel, enterTableWithMmeBoutarel)
 
 		if (getEntities()->isInSalon(kEntityPlayer)) {
 			getEntities()->updateFrame(kEntityBoutarel);
-			getEntityData(kEntityMmeBoutarel)->location = getData()->location;
-			getEntityData(kEntityTables2)->location = getData()->location;
+			getEntityData(kEntityMmeBoutarel)->field_4A1 = getData()->field_4A1;
+			getEntityData(kEntityTables2)->field_4A1 = getData()->field_4A1;
 		}
 		break;
 	}
@@ -742,8 +742,8 @@ IMPLEMENT_FUNCTION(21, Boutarel, chapter1Handler)
 			if (getEntities()->isPlayerPosition(kCarRedSleeping, 54) || getEntities()->isPlayerPosition(kCarRedSleeping, 44))
 				getScenes()->loadSceneFromPosition(kCarRedSleeping, 10);
 
-			getEntities()->updatePositionExit(kEntityBoutarel, kCarRedSleeping, 54);
-			getEntities()->updatePositionExit(kEntityBoutarel, kCarRedSleeping, 44);
+			getEntities()->updatePositionEnter(kEntityBoutarel, kCarRedSleeping, 54);
+			getEntities()->updatePositionEnter(kEntityBoutarel, kCarRedSleeping, 44);
 
 			setCallback(4);
 			setup_playSound("MRB1074");
@@ -836,7 +836,7 @@ IMPLEMENT_FUNCTION(24, Boutarel, chapter2Handler)
 		break;
 
 	case kActionNone:
-		Entity::timeCheckCallback(kTime1759500, params->param2, 1, false, WRAP_SETUP_FUNCTION_B(Boutarel, setup_function14));
+		Entity::timeCheckCallback(kTime1759500, params->param2, 1, true, WRAP_SETUP_FUNCTION_B(Boutarel, setup_function14));
 		break;
 
 	case kActionDefault:
@@ -961,7 +961,7 @@ IMPLEMENT_FUNCTION(29, Boutarel, function29)
 			}
 		}
 
-		Entity::timeCheckCallback(kTime2002500, params->param4, 1, true, WRAP_SETUP_FUNCTION_B(Boutarel, setup_function14));
+		Entity::timeCheckCallback(kTime2002500, params->param4, 2, true, WRAP_SETUP_FUNCTION_B(Boutarel, setup_function14));
 		break;
 
 	case kActionDefault:
@@ -974,7 +974,7 @@ IMPLEMENT_FUNCTION(29, Boutarel, function29)
 			break;
 
 		case 1:
-			Entity::timeCheckCallback(kTime2002500, params->param4, 1, true, WRAP_SETUP_FUNCTION_B(Boutarel, setup_function14));
+			Entity::timeCheckCallback(kTime2002500, params->param4, 2, true, WRAP_SETUP_FUNCTION_B(Boutarel, setup_function14));
 			break;
 
 		case 2:

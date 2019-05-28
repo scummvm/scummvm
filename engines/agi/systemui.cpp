@@ -872,7 +872,7 @@ bool SystemUI::askForVerification(const char *verifyText, const char *button1Tex
 
 	_text->closeWindow();
 
-	if (_askForVerificationCancelled)
+	if (_askForVerificationCancelled || _vm->shouldQuit())
 		return false;
 	return true;
 }

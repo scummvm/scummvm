@@ -162,8 +162,8 @@ void SavePoints::call(EntityIndex entity2, EntityIndex entity1, ActionIndex acti
 	point.action = action;
 	point.entity2 = entity2;
 
-	assert(param.size() <= 5);
-	strncpy((char *)&point.param.charValue, param.c_str(), 5);
+	assert(param.size() <= 6); // "MUS%03d"
+	strncpy((char *)&point.param.charValue, param.c_str(), 6);
 
 	Callback *callback = getCallback(entity1);
 	if (callback != NULL && callback->isValid()) {
@@ -230,6 +230,8 @@ bool SavePoints::updateEntityFromData(const SavePoint &savepoint) {
 void SavePoints::saveLoadWithSerializer(Common::Serializer &s) {
 
 	// Serialize savepoint data
+	if (s.isLoading())
+		_data.clear();
 	uint32 dataSize = (s.isLoading() ? _savePointsMaxSize : _data.size());
 	for (uint i = 0; i < dataSize; i++) {
 		if (s.isLoading()) {

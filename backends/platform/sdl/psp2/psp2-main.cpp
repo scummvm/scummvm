@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
 	scePowerSetBusClockFrequency(222);
 	scePowerSetGpuClockFrequency(222);
 	scePowerSetGpuXbarClockFrequency(166);
-	
+
 	// Create our OSystem instance
 	g_system = new OSystem_PSP2();
 	assert(g_system);
@@ -56,8 +56,8 @@ int main(int argc, char *argv[]) {
 	int res = scummvm_main(argc, argv);
 
 	// Free OSystem
-	delete (OSystem_PSP2 *)g_system;
-	
+	g_system->destroy();
+
 #ifdef __PSP2_DEBUG__
 	psp2shell_exit();
 #endif

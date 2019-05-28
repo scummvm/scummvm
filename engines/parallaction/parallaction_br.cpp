@@ -430,8 +430,8 @@ void Parallaction_br::parseLocation(const char *filename) {
 		restoreOrSaveZoneFlags(*ait, visited);
 
 		// load the script
-		if ((*ait)->_scriptName) {
-			loadProgram(*ait, (*ait)->_scriptName);
+		if (!(*ait)->_scriptName.empty()) {
+			loadProgram(*ait, (*ait)->_scriptName.c_str());
 		}
 	}
 

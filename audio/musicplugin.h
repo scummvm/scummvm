@@ -112,11 +112,6 @@ public:
 	virtual Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const = 0;
 };
 
-
-// Music plugins
-
-typedef PluginSubclass<MusicPluginObject> MusicPlugin;
-
 /**
  * Singleton class which manages all Music plugins.
  */
@@ -125,7 +120,7 @@ private:
 	friend class Common::Singleton<SingletonBaseType>;
 
 public:
-	const MusicPlugin::List &getPlugins() const;
+	const PluginList &getPlugins() const;
 };
 
 /** Convenience shortcut for accessing the Music manager. */

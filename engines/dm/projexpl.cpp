@@ -429,7 +429,8 @@ void ProjExpl::processEvents48To49(TimelineEvent *event) {
 	if (projectileMovesToOtherSquare) {
 		sourceMapX = destinationMapX;
 		sourceMapY = destinationMapY;
-		destinationMapX += _vm->_dirIntoStepCountEast[projectileDirection], destinationMapY += _vm->_dirIntoStepCountNorth[projectileDirection];
+		destinationMapX += _vm->_dirIntoStepCountEast[projectileDirection];
+		destinationMapY += _vm->_dirIntoStepCountNorth[projectileDirection];
 		Square destSquare = _vm->_dungeonMan->getSquare(destinationMapX, destinationMapY);
 		ElementType destSquareType = destSquare.getType();
 		if ((destSquareType == kDMElementTypeWall) ||
@@ -481,6 +482,7 @@ void ProjExpl::processEvent25(TimelineEvent *event) {
 	CreatureInfo *creatureInfo = nullptr;
 
 	CreatureType creatureType;
+	creatureType = kDMCreatureTypeGiantScorpion; // Value of 0 as default to avoid possible uninitialized usage
 	if (groupThing != _vm->_thingEndOfList) {
 		group = (Group *)_vm->_dungeonMan->getThingData(groupThing);
 		creatureType = group->_type;
@@ -502,10 +504,10 @@ void ProjExpl::processEvent25(TimelineEvent *event) {
 	case 0xFF82:
 		if (!(attack >>= 1))
 			break;
+		// fall through
 	case 0xFF80:
 		if (curSquareType == kDMElementTypeDoor)
 			_vm->_groupMan->groupIsDoorDestoryedByAttack(mapX, mapY, attack, true, 0);
-
 		break;
 	case 0xFF83:
 		if ((groupThing != _vm->_thingEndOfList) && getFlag(creatureInfo->_attributes, kDMCreatureMaskNonMaterial)) {

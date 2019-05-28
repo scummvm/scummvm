@@ -26,7 +26,6 @@
 #include "mohawk/console.h"
 #include "mohawk/mohawk.h"
 #include "mohawk/resource_cache.h"
-#include "mohawk/myst_scripts.h"
 #include "mohawk/video.h"
 
 #include "audio/mixer.h"
@@ -47,6 +46,7 @@ class MystSound;
 class MystArea;
 class MystAreaImageSwitch;
 class MystAreaHover;
+class MystCard;
 
 // Engine Debug Flags
 enum {
@@ -75,7 +75,8 @@ enum MystStack {
 	kSeleniticStack,		// Selenitic Age
 	kDemoSlidesStack,		// Demo Slideshow
 	kDemoPreviewStack,		// Demo Myst Library Preview
-	kStoneshipStack			// Stoneship Age
+	kStoneshipStack,		// Stoneship Age
+	kMenuStack				// Main menu
 };
 
 // Transitions
@@ -94,8 +95,6 @@ enum TransitionType {
 	kTransitionCopy			= 11,
 	kNoTransition			= 999
 };
-
-const uint16 kMasterpieceOnly = 0xFFFF;
 
 struct MystCondition {
 	uint16 var;
@@ -123,52 +122,8 @@ enum {
 	// Other positive values are PlayNewSound of that id
 };
 
-// View flags
-enum {
-	kMystZipDestination = (1 << 0)
-};
-
-struct MystView {
-	uint16 flags;
-
-	// Image Data
-	Common::Array<MystCondition> conditionalImages;
-	uint16 mainImage;
-
-	// Sound Data
-	MystSoundBlock soundBlock;
-
-	// Script Resources
-	enum ScriptResourceType {
-		kResourceImage = 1,
-		kResourceSound = 2,
-		kResourceSwitch = 3,
-		kResourceImageNoCache = 4,
-		kResourceSoundNoCache = 5
-	};
-
-	struct ScriptResource {
-		ScriptResourceType type;
-		uint16 id;
-		uint16 switchVar;
-		ScriptResourceType switchResourceType;
-		Common::Array<int16> switchResourceIds;
-	};
-	Common::Array<ScriptResource> scriptResources;
-
-	// Resource ID's
-	uint16 rlst;
-	uint16 hint;
-	uint16 init;
-	uint16 exit;
-};
-
-struct MystCursorHint {
-	uint16 id;
-	int16 cursor;
-
-	MystCondition variableHint;
-};
+typedef Common::SharedPtr<MystCard> MystCardPtr;
+typedef Common::SharedPtr<MystScriptParser> MystScriptParserPtr;
 
 class MohawkEngine_Myst : public MohawkEngine {
 protected:
@@ -176,19 +131,19 @@ protected:
 
 public:
 	MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription *gamedesc);
-	virtual ~MohawkEngine_Myst();
+	~MohawkEngine_Myst() override;
 
 	Common::SeekableReadStream *getResource(uint32 tag, uint16 id) override;
 	Common::Array<uint16> getResourceIDList(uint32 type) const;
+	void cachePreload(uint32 tag, uint16 id);
 
-	void changeToStack(uint16 stack, uint16 card, uint16 linkSrcSound, uint16 linkDstSound);
+	void changeToStack(MystStack stackId, uint16 card, uint16 linkSrcSound, uint16 linkDstSound);
 	void changeToCard(uint16 card, TransitionType transition);
-	uint16 getCurCard() { return _curCard; }
-	uint16 getCurStack() { return _curStack; }
+	MystCard *getCard() { return _card.get(); };
+	MystCardPtr getCardPtr() { return _card; };
 	void setMainCursor(uint16 cursor);
 	uint16 getMainCursor() { return _mainCursor; }
-	void checkCursorHints();
-	MystArea *forceUpdateClickedResource();
+	void refreshCursor();
 	bool wait(uint32 duration, bool skippable = false);
 
 	/** Update the game state according to events and update the screen */
@@ -197,115 +152,85 @@ public:
 	MystSoundBlock readSoundBlock(Common::ReadStream *stream) const;
 	void applySoundBlock(const MystSoundBlock &block);
 
-	bool _needsPageDrop;
-	bool _needsShowMap;
-	bool _needsShowDemoMenu;
-	bool _needsShowCredits;
-
 	bool _showResourceRects;
 
 	VideoManager *_video;
 	MystSound *_sound;
 	MystGraphics *_gfx;
 	MystGameState *_gameState;
-	MystScriptParser *_scriptParser;
-	Common::Array<MystArea *> _resources;
+	MystScriptParserPtr _stack;
 	Common::RandomSource *_rnd;
 
 	MystArea *loadResource(Common::SeekableReadStream *rlstStream, MystArea *parent);
-	void setResourceEnabled(uint16 resourceId, bool enable);
-	void redrawArea(uint16 var, bool update = true);
 	void redrawResource(MystAreaImageSwitch *resource, bool update = true);
-	void drawResourceImages();
-	void drawCardBackground();
-	uint16 getCardBackgroundId();
-
-	template<class T>
-	T *getViewResource(uint index);
 
 	void setCacheState(bool state) { _cache.enabled = state; }
 	bool getCacheState() { return _cache.enabled; }
 
 	VideoEntryPtr playMovie(const Common::String &name, MystStack stack);
+	VideoEntryPtr playMovieFullscreen(const Common::String &name, MystStack stack);
 	VideoEntryPtr findVideo(const Common::String &name, MystStack stack);
 	void playMovieBlocking(const Common::String &name, MystStack stack, uint16 x, uint16 y);
-	void playFlybyMovie(const Common::String &name);
+	void playFlybyMovie(MystStack stack);
 	void waitUntilMovieEnds(const VideoEntryPtr &video);
+	Common::String selectLocalizedMovieFilename(const Common::String &movieName);
 
 	void playSoundBlocking(uint16 id);
 
 	GUI::Debugger *getDebugger() override { return _console; }
 
+	/**
+	 * Is the game currently interactive
+	 *
+	 * When the game is interactive, the user can interact with the game world
+	 * and perform other operations such as loading saved games, ...
+	 */
+	bool isInteractive();
 	bool canLoadGameStateCurrently() override;
 	bool canSaveGameStateCurrently() override;
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	void tryAutoSaving();
 	bool hasFeature(EngineFeature f) const override;
+
+	void resumeFromMainMenu();
+
+	void runLoadDialog();
+	void runSaveDialog();
+	void runOptionsDialog();
 
 private:
 	MystConsole *_console;
 	MystOptionsDialog *_optionsDialog;
-	MystScriptParser *_prevStack;
 	ResourceCache _cache;
-	void cachePreload(uint32 tag, uint16 id);
 
-	uint16 _curStack;
-	uint16 _curCard;
-	MystView _view;
+	MystScriptParserPtr _prevStack;
 
-	bool _runExitScript;
+	MystCardPtr _card;
+	MystCardPtr _prevCard;
+	uint32 _lastSaveTime;
 
 	bool hasGameSaveSupport() const;
+	void pauseEngineIntern(bool pause) override;
+
+	void goToMainMenu();
 
 	void dropPage();
 
-	void loadCard();
-	void unloadCard();
-	void runInitScript();
-	void runExitScript();
-
-	void loadHelp(uint16 id);
-
-	void loadResources();
-	void drawResourceRects();
-	void checkCurrentResource();
-	void updateActiveResource();
-
 	Common::String wrapMovieFilename(const Common::String &movieName, uint16 stack);
 
-	/** Area of type kMystAreaHover being hovered by the mouse, if any */
-	MystAreaHover *_hoverResource;
-
-	/** Active area being hovered by the mouse, if any */
-	MystArea *_activeResource;
-
-	/** Active area being clicked on / dragged, if any */
-	MystArea *_clickedResource;
+	void loadStackArchives(MystStack stackId);
+	void loadArchive(const char *archiveName, const char *language, bool mandatory);
 
 	// Input
 	bool _mouseClicked;
 	bool _mouseMoved;
 	bool _escapePressed;
-	bool _interactive; // Is the game currently interactive
+	bool _waitingOnBlockingOperation;
 
-	Common::Array<MystCursorHint> _cursorHints;
-	void loadCursorHints();
 	uint16 _currentCursor;
 	uint16 _mainCursor; // Also defines the current page being held (white, blue, red, or none)
-
-	void pauseEngineIntern(bool) override;
 };
-
-template<class T>
-T *MohawkEngine_Myst::getViewResource(uint index) {
-	T *resource = dynamic_cast<T *>(_resources[index]);
-
-	if (!resource) {
-		error("View resource '%d' has unexpected type", index);
-	}
-
-	return resource;
-}
 
 } // End of namespace Mohawk
 

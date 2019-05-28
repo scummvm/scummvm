@@ -99,8 +99,7 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 		// However, since we address the heap with a 16-bit pointer, the
 		// combined size of the stack and the heap must be 64KB. So far this has
 		// worked for SCI11, SCI2 and SCI21 games. SCI3 games use a different
-		// script format, and theoretically they can exceed the 64KB boundary
-		// using relocation.
+		// script format, and they can exceed the 64KB boundary using relocation.
 		Resource *heap = resMan->findResource(ResourceId(kResourceTypeHeap, script_nr), false);
 		bufSize += heap->size();
 
@@ -698,9 +697,9 @@ int Script::relocateOffsetSci3(uint32 offset) const {
 }
 #endif
 
-bool Script::relocateLocal(SegmentId segment, int location) {
+bool Script::relocateLocal(SegmentId segment, int location, uint32 offset) {
 	if (_localsBlock)
-		return relocateBlock(_localsBlock->_locals, _localsOffset, segment, location, getHeapOffset());
+		return relocateBlock(_localsBlock->_locals, _localsOffset, segment, location, offset);
 	else
 		return false;
 }
@@ -804,7 +803,7 @@ void Script::relocateSci0Sci21(const SegmentId segmentId) {
 		// We only relocate locals and objects here, and ignore relocation of
 		// code blocks. In SCI1.1 and newer versions, only locals and objects
 		// are relocated.
-		if (!relocateLocal(segmentId, pos)) {
+		if (!relocateLocal(segmentId, pos, getHeapOffset())) {
 			// Not a local? It's probably an object or code block. If it's an
 			// object, relocate it.
 			const ObjMap::iterator end = _objects.end();
@@ -817,19 +816,23 @@ void Script::relocateSci0Sci21(const SegmentId segmentId) {
 
 #ifdef ENABLE_SCI32
 void Script::relocateSci3(const SegmentId segmentId) {
-	SciSpan<const byte> relocStart = _buf->subspan(_buf->getUint32SEAt(8));
+	SciSpan<const byte> relocEntry = _buf->subspan(_buf->getUint32SEAt(8));
 	const uint relocCount = _buf->getUint16SEAt(18);
 
-	ObjMap::iterator it;
-	for (it = _objects.begin(); it != _objects.end(); ++it) {
-		SciSpan<const byte> seeker = relocStart;
-		for (uint i = 0; i < relocCount; ++i) {
-			it->_value.relocateSci3(segmentId,
-						seeker.getUint32SEAt(0),
-						seeker.getUint32SEAt(4),
-						_script.size());
-			seeker += 10;
+	for (uint i = 0; i < relocCount; ++i) {
+		const uint location = relocEntry.getUint32SEAt(0);
+		const uint offset = relocEntry.getUint32SEAt(4);
+
+		if (!relocateLocal(segmentId, location, offset)) {
+			const ObjMap::iterator end = _objects.end();
+			for (ObjMap::iterator it = _objects.begin(); it != end; ++it) {
+				if (it->_value.relocateSci3(segmentId, location, offset, _script.size())) {
+					break;
+				}
+			}
 		}
+
+		relocEntry += 10;
 	}
 }
 #endif
@@ -973,7 +976,7 @@ void Script::initializeLocals(SegManager *segMan) {
 			const SciSpan<const byte> base = _buf->subspan(getLocalsOffset());
 
 			for (uint16 i = 0; i < getLocalsCount(); i++)
-				locals->_locals[i] = make_reg(0, base.getUint16SEAt(i * 2));
+				locals->_locals[i] = make_reg(0, base.getUint16SEAt(i * sizeof(uint16)));
 		} else {
 			// In SCI0 early, locals are set at run time, thus zero them all here
 			for (uint16 i = 0; i < getLocalsCount(); i++)
@@ -1057,11 +1060,7 @@ void Script::initializeClasses(SegManager *segMan) {
 				error("Invalid species %d(0x%x) unknown max %d(0x%x) while instantiating script %d",
 						  species, species, segMan->classTableSize(), segMan->classTableSize(), _nr);
 
-			SegmentId segmentId = segMan->getScriptSegment(_nr);
-			reg_t classOffset;
-			classOffset.setSegment(segmentId);
-			classOffset.setOffset(classpos);
-			segMan->setClassOffset(species, classOffset);
+			segMan->setClassOffset(species, make_reg32(segMan->getScriptSegment(_nr), classpos));
 		}
 
 		seeker += seeker.getUint16SEAt(2) * mult;
@@ -1192,14 +1191,7 @@ void Script::initializeObjectsSci3(SegManager *segMan, SegmentId segmentId) {
 	SciSpan<const byte> seeker = getSci3ObjectsPointer();
 
 	while (seeker.getUint16SEAt(0) == SCRIPT_OBJECT_MAGIC_NUMBER) {
-		// We call setSegment and setOffset directly here, instead of using
-		// make_reg, as in large scripts, seeker - _buf can be larger than
-		// a 16-bit integer
-		reg_t reg;
-		reg.setSegment(segmentId);
-		reg.setOffset(seeker - *_buf);
-
-		Object *obj = scriptObjInit(reg);
+		Object *obj = scriptObjInit(make_reg32(segmentId, seeker - *_buf));
 		obj->setSuperClassSelector(segMan->getClassAddress(obj->getSuperClassSelector().getOffset(), SCRIPT_GET_LOCK, 0));
 		seeker += seeker.getUint16SEAt(2);
 	}

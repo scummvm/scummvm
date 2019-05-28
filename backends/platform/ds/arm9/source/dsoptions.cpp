@@ -20,8 +20,8 @@
  *
  */
 
-#include "dsoptions.h"
 #include "dsmain.h"
+#include "dsoptions.h"
 #include "gui/dialog.h"
 #include "gui/gui-manager.h"
 #include "gui/widgets/list.h"

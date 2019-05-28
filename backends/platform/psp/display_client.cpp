@@ -204,7 +204,7 @@ void Palette::deallocate() {
 
 // Copy some of the palette to an array of colors
 //
-void Palette::getPartial(byte *colors, uint start, uint num) {
+void Palette::getPartial(byte *colors, uint start, uint num) const {
 	DEBUG_ENTER_FUNC();
 
 	assert(_values);
@@ -286,13 +286,13 @@ void Palette::print(uint32 numToPrint /* = 0 */) {
 	}
 }
 
-uint32 Palette::getRawColorAt(uint32 position) {
+uint32 Palette::getRawColorAt(uint32 position) const {
 	byte *pcolor = &_values[_pixelFormat.pixelsToBytes(position)];
 	uint32 color = _pixelFormat.getColorValueAt(pcolor);
 	return color;
 }
 
-uint32 Palette::getRGBAColorAt(uint32 position) {
+uint32 Palette::getRGBAColorAt(uint32 position) const {
 	uint32 color = getRawColorAt(position);
 	uint32 r, g, b, a;
 	_pixelFormat.colorToRgba(color, r, g, b, a);

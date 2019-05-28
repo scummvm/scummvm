@@ -28,6 +28,7 @@
 #include "avalanche/avalanche.h"
 #include "avalanche/graphics.h"
 
+#include "common/math.h"
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
@@ -68,7 +69,7 @@ GraphicManager::~GraphicManager() {
 }
 
 void GraphicManager::init() {
-	initGraphics(kScreenWidth, kScreenHeight * 2, true); // Doubling the height.
+	initGraphics(kScreenWidth, kScreenHeight * 2); // Doubling the height.
 
 	for (int i = 0; i < 64; ++i) {
 		_egaPalette[i][0] = (i >> 2 & 1) * 0xaa + (i >> 5 & 1) * 0x55;
@@ -199,7 +200,6 @@ void GraphicManager::drawToolbar() {
 
 Common::Point GraphicManager::drawArc(Graphics::Surface &surface, int16 x, int16 y, int16 stAngle, int16 endAngle, uint16 radius, Color color) {
 	Common::Point endPoint;
-	const float convfac = (float)M_PI / 180.0f;
 
 	int32 xRadius = radius;
 	int32 yRadius = radius * kScreenWidth / (8 * kScreenHeight); // Just don't ask why...
@@ -243,7 +243,7 @@ Common::Point GraphicManager::drawArc(Graphics::Surface &surface, int16 x, int16
 	uint16 deltaEnd = 91;
 
 	// Set the end point.
-	float tempTerm = endAngle * convfac;
+	float tempTerm = Common::deg2rad<float>(endAngle);
 	endPoint.x = (int16)floor(xRadius * cos(tempTerm) + 0.5) + x;
 	endPoint.y = (int16)floor(yRadius * sin(tempTerm + M_PI) + 0.5) + y;
 
@@ -254,7 +254,7 @@ Common::Point GraphicManager::drawArc(Graphics::Surface &surface, int16 x, int16
 		int16 xTemp = xNext;
 		int16 yTemp = yNext;
 		// This is used by both sin and cos.
-		tempTerm = (j + delta) * convfac;
+		tempTerm = Common::deg2rad<float>(j + delta);
 
 		xNext = (int16)floor(xRadius * cos(tempTerm) + 0.5);
 		yNext = (int16)floor(yRadius * sin(tempTerm + M_PI) + 0.5);
@@ -799,7 +799,7 @@ void GraphicManager::menuRefreshScreen() {
 }
 
 void GraphicManager::menuInitialize() {
-	initGraphics(kScreenWidth, kMenuScreenHeight, true);
+	initGraphics(kScreenWidth, kMenuScreenHeight);
 	_menu.create(kScreenWidth, kMenuScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 }
 
@@ -808,7 +808,7 @@ void GraphicManager::menuFree() {
 }
 
 void GraphicManager::menuRestoreScreen() {
-	initGraphics(kScreenWidth, 2 * kScreenHeight, true);
+	initGraphics(kScreenWidth, 2 * kScreenHeight);
 }
 
 void GraphicManager::menuLoadPictures() {

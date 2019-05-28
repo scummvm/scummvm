@@ -1170,7 +1170,7 @@ Common::Rect Score::readRect(Common::ReadStreamEndian &stream) {
 }
 
 void Score::startLoop() {
-	initGraphics(_movieRect.width(), _movieRect.height(), true);
+	initGraphics(_movieRect.width(), _movieRect.height());
 
 	_surface->create(_movieRect.width(), _movieRect.height());
 	_trailSurface->create(_movieRect.width(), _movieRect.height());

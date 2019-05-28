@@ -140,13 +140,13 @@ void Inter_v5::o5_initScreen() {
 		_vm->_width = 320;
 		_vm->_height = 200;
 
-		_vm->_video->setSize(false);
+		_vm->_video->setSize();
 
 	} else if (_vm->_global->_videoMode == 0x13) {
 		width = _vm->_width = 640;
 		height = _vm->_height = 480;
 
-		_vm->_video->setSize(true);
+		_vm->_video->setSize();
 	}
 
 	_vm->_global->_fakeVideoMode = videoMode;

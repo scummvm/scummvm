@@ -29,7 +29,7 @@ namespace CreateProjectTool {
 
 class VisualStudioProvider : public MSVCProvider {
 public:
-	VisualStudioProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version);
+	VisualStudioProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version, const MSVCVersion& msvc);
 
 protected:
 	void createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
@@ -46,7 +46,6 @@ protected:
 
 	const char *getProjectExtension();
 	const char *getPropertiesExtension();
-	int getVisualStudioVersion();
 
 	void outputConfiguration(std::ostream &project, const BuildSetup &setup, const std::string &libraries, const std::string &config, const std::string &platform, const std::string &props, const bool isWin32);
 	void outputConfiguration(const BuildSetup &setup, std::ostream &project, const std::string &toolConfig, const std::string &config, const std::string &platform, const std::string &props);

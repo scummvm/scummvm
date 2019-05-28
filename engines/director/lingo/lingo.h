@@ -24,6 +24,7 @@
 #define DIRECTOR_LINGO_LINGO_H
 
 #include "audio/audiostream.h"
+#include "common/hash-ptr.h"
 #include "common/hash-str.h"
 
 #include "director/director.h"
@@ -86,22 +87,7 @@ struct FuncDesc {
 	FuncDesc(Common::String n, const char *p) { name = n; proto = p; }
 };
 
-struct Pointer_EqualTo {
-	bool operator()(const void *x, const void *y) const { return x == y; }
-};
-
-struct Pointer_Hash {
-	uint operator()(const void *x) const {
-#ifdef SCUMM_64BITS
-		uint64 v = (uint64)x;
-		return (v >> 32) ^ (v & 0xffffffff);
-#else
-		return (uint)x;
-#endif
-	}
-};
-
-typedef Common::HashMap<void *, FuncDesc *, Pointer_Hash, Pointer_EqualTo> FuncHash;
+typedef Common::HashMap<void *, FuncDesc *> FuncHash;
 
 struct Symbol {	/* symbol table entry */
 	Common::String name;

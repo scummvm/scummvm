@@ -56,7 +56,7 @@ bool CEndExplodeShip::ActMsg(CActMsg *msg) {
 	} else if (msg->_action == "TakeOff") {
 		loadSound(TRANSLATE("a#31.wav", "a#26.wav"));
 		loadSound(TRANSLATE("a#14.wav", "a#7.wav"));
-		playGlobalSound(TRANSLATE("a#13.wav", "a#6.wav"), VOL_NORMAL, true, true, 0);
+		playAmbientSound(TRANSLATE("a#13.wav", "a#6.wav"), VOL_NORMAL, true, true, 0);
 		addTimer(1, 10212, 0);
 	}
 
@@ -72,7 +72,7 @@ bool CEndExplodeShip::TimerMsg(CTimerMsg *msg) {
 	}
 
 	if (msg->_actionVal == 3) {
-		setGlobalSoundVolume(VOL_MUTE, 2, -1);
+		setAmbientSoundVolume(VOL_MUTE, 2, -1);
 		CActMsg actMsg(_isExploding ? "ExplodeCredits" : "Credits");
 		actMsg.execute("EndGameCredits");
 	}

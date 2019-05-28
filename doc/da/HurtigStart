@@ -5,7 +5,7 @@ at se i den Engelske README-fil.
 
 For mere information, kompatibilitet lister, detaljer om donering, den
 seneste udgivelse, statusrapporter og mere, kan du besøge ScummVMs hjemme-
-side på: http://www.scummvm.org/
+side på: https://www.scummvm.org/
 
 Indholdsfortegnelse:
 --------------------
@@ -56,7 +56,7 @@ hvert spil virker i ScummVM, ved at kigge på kompatibilitetssiden. Faktisk,
 hvis du søger lidt rundt, vil du måske opdage, at ScummVM endog anvendes 
 kommercielt til genudgivelse af nogle af understøttede spil på moderne 
 platforme. Dette viser, at flere virksomheder er tilfredse med kvaliteten 
-af ​​programmet, og hvor godt det kan køre nogle af spillene.
+af programmet, og hvor godt det kan køre nogle af spillene.
 
 Hvis du har fornøjelse af ScummVM, er du velkommen til at donere ved hjælp 
 af PayPal-knappen på ScummVM's hjemmeside. Dette vil hjælpe os med at købe
@@ -73,7 +73,7 @@ følge vejledning fra den engelske README fil.
 For de utålmodige blandt jer, er her hvordan du får ScummVM op at køre 
 i fem enkle trin.
 
-1. Hent ScummVM fra <http://www.scummvm.org/downloads.php> og 
+1. Hent ScummVM fra <https://www.scummvm.org/downloads/> og 
 installere det.
 
 2. Opret en mappe på din harddisk og kopiere spillets datafiler fra de 
@@ -113,7 +113,7 @@ undermapper for understøttede spil.
 2.0) Kontakt:
 ---- --------
 Den nemmeste måde at kontakte ScummVM holdet på er ved at sende fejlrapporter 
-(se afsnit 2.1) eller ved at bruge vores fora på http://forums.scummvm.org. 
+(se afsnit 2.1) eller ved at bruge vores fora på https://forums.scummvm.org. 
 Du kan også deltage og e-maile til scummvm-devel postlisten, eller chatte 
 med os på IRC (#scummvm på irc.freenode.net). Bed os venligst ikke om at 
 understøtte et ikke-understøttet spil -- læs FAQ på vores hjemmeside først. 
@@ -128,7 +128,7 @@ og stadig forekommer i den seneste git/Daglig byggede version.
 Kontroller også listen med kendte problemer (nedenfor) og kompatibilitetslisten 
 på vores hjemmeside for spillet, for at sikre, at problemet ikke allerede er kendt:
 
-  http://www.scummvm.org/compatibility_stable.php
+  https://www.scummvm.org/compatibility/
 
 Vær venlig ikke at rapportere fejl på spil, der ikke er anført som værende 
 mulige at gennemføre i 'understøttede spil' sektionen, eller kompatibilitetslisten. 

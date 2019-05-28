@@ -299,11 +299,7 @@ void AdLibSoundDriver::setUpdateCallback(UpdateCallback upCb, void *ref) {
 void AdLibSoundDriver::setupChannel(int channel, const byte *data, int instrument, int volume) {
 	assert(channel < 4);
 	if (data) {
-		if (volume > 80) {
-			volume = 80;
-		} else if (volume < 0) {
-			volume = 0;
-		}
+		volume = CLIP(volume, 0, 80);
 		volume += volume / 4;
 
 		_channelsVolumeTable[channel] = volume;

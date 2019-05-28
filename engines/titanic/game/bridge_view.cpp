@@ -77,7 +77,7 @@ bool CBridgeView::ActMsg(CActMsg *msg) {
 			hideMouse();
 
 			CChangeMusicMsg musicMsg;
-			musicMsg._flags = 1;
+			musicMsg._action = MUSIC_STOP;
 			musicMsg.execute("BridgeAutoMusicPlayer");
 			playSound(TRANSLATE("a#42.wav", "a#35.wav"));
 			playMovie(MOVIE_NOTIFY_OBJECT);

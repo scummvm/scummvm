@@ -33,6 +33,7 @@
 #include "graphics/palette.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
+#include "engines/savestate.h"
 
 #define SAVEGAME_VERSION 1
 
@@ -65,7 +66,7 @@ public:
 	Common::Error saveGame(int slot);
 
 	void writeSavegameHeader(Common::OutSaveFile *out, const Common::String &saveName);
-	static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header);
+	WARN_UNUSED_RESULT static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header, bool skipThumbnail = true);
 	static SaveStateList listSaves(const Common::String &target);
 	static SaveStateDescriptor querySaveMetaInfos(const Common::String &fileName);
 };

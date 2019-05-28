@@ -37,8 +37,8 @@ namespace MystStacks {
 
 class Dni : public MystScriptParser {
 public:
-	Dni(MohawkEngine_Myst *vm);
-	~Dni();
+	explicit Dni(MohawkEngine_Myst *vm);
+	~Dni() override;
 
 	void disablePersistentScripts() override;
 	void runPersistentScripts() override;

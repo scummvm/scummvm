@@ -1474,7 +1474,7 @@ void Scene1500::dispatch() {
 	if (_sceneMode > 10) {
 		float yDiff = sqrt((float) (_smallShip._position.x * _smallShip._position.x) + (_smallShip._position.y * _smallShip._position.y));
 		if (yDiff > 6)
-			_smallShip.setPosition(_smallShip._position, (int) yDiff);
+			_smallShip.setPosition(_smallShip._position, (int)yDiff);
 	}
 
 	Scene::dispatch();

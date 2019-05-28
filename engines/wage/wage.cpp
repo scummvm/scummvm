@@ -106,7 +106,7 @@ WageEngine::~WageEngine() {
 Common::Error WageEngine::run() {
 	debug("WageEngine::init");
 
-	initGraphics(512, 342, true);
+	initGraphics(512, 342);
 
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);

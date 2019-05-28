@@ -20,30 +20,41 @@
  *
  */
 
-#include "bladerunner/script/scene.h"
+#include "bladerunner/script/scene_script.h"
 
 namespace BladeRunner {
 
 void SceneScriptBB51::InitializeScene() {
 	Setup_Scene_Information(101.0f, 0.0f, -25.0f, 152);
-	Game_Flag_Reset(393);
-	Scene_Exit_Add_2D_Exit(0, 615, 0, 639, 479, 1);
-	Scene_Exit_Add_2D_Exit(1, 0, 323, 241, 479, 2);
-	Ambient_Sounds_Add_Looping_Sound(103, 28, 0, 1);
-	Ambient_Sounds_Add_Sound(303, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(304, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(443, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(444, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(445, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(446, 2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(305, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(306, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(307, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(308, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(309, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Sound(310, 5, 50, 17, 27, -100, 100, -101, -101, 0, 0);
-	Scene_Loop_Start_Special(0, 0, 0);
+	Game_Flag_Reset(kFlagBB06toBB51);
+
+	Scene_Exit_Add_2D_Exit(0, 615,   0, 639, 479, 1);
+	Scene_Exit_Add_2D_Exit(1,   0, 323, 241, 479, 2);
+
+	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 28, 0, 1);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN1,  5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN2,  5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY4,  2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY5,  2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY6,  2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxSCARY7,  2, 180, 14, 16, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBGRN3,  5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBMOVE1, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBMOVE2, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxBBMOVE3, 5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHAUNT1,  5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
+	Ambient_Sounds_Add_Sound(kSfxHAUNT2,  5,  50, 17, 27, -100, 100, -101, -101, 0, 0);
+
+	Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
 	Scene_Loop_Set_Default(1);
+
+#if BLADERUNNER_ORIGINAL_BUGS // Sebastian's Doll Fix
+#else
+	if (Game_Flag_Query(kFlagBB06AndroidDestroyed)) {
+		Overlay_Play("BB06OVER", 1, true, true, 0);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 }
 
 void SceneScriptBB51::SceneLoaded() {
@@ -58,10 +69,18 @@ bool SceneScriptBB51::MouseClick(int x, int y) {
 
 bool SceneScriptBB51::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("V2CHESSTBL01", objectName)) {
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+		// acquire chess clue
+		if (!Actor_Clue_Query(kActorMcCoy, kClueChessTable)) {
+			Actor_Clue_Acquire(kActorMcCoy, kClueChessTable, true, -1);
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Face_Object(kActorMcCoy, "V2CHESSTBL01", true);
 		Actor_Voice_Over(80, kActorVoiceOver);
 		Actor_Voice_Over(90, kActorVoiceOver);
 	}
+
 	if (Object_Query_Click("TOP02", objectName)) {
 		Actor_Face_Object(kActorMcCoy, "TOP02", true);
 		Actor_Voice_Over(100, kActorVoiceOver);
@@ -81,20 +100,21 @@ bool SceneScriptBB51::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptBB51::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 76.0f, 0.0f, 79.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 76.0f, 0.0f, 79.0f, 0, true, false, false)) {
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(394);
-			Set_Enter(1, 7);
+			Game_Flag_Set(kFlagBB51toBB06a);
+			Set_Enter(kSetBB02_BB04_BB06_BB51, kSceneBB06);
 		}
 		return true;
 	}
+
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 55.0f, 0.0f, -96.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 55.0f, 0.0f, -96.0f, 0, true, false, false)) {
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(395);
-			Set_Enter(1, 7);
+			Game_Flag_Set(kFlagBB51toBB06b);
+			Set_Enter(kSetBB02_BB04_BB06_BB51, kSceneBB06);
 		}
 		return true;
 	}
@@ -106,6 +126,16 @@ bool SceneScriptBB51::ClickedOn2DRegion(int region) {
 }
 
 void SceneScriptBB51::SceneFrameAdvanced(int frame) {
+#if BLADERUNNER_ORIGINAL_BUGS // Sebastian's Doll Fix
+#else
+	// Scene Transition loop frames range from 0 to 14
+	// keep destroyedDoll overlay for 2-3 frames - to minimize weird effect
+	if (frame == 2) { // executed once during transition to BB51 (chess sub space)
+		if (Game_Flag_Query(kFlagBB06AndroidDestroyed)) {
+			Overlay_Remove("BB06OVER");
+		}
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 void SceneScriptBB51::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {

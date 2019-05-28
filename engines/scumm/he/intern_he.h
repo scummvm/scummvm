@@ -73,7 +73,7 @@ public:
 protected:
 	virtual void setupOpcodes();
 
-	virtual void saveOrLoad(Serializer *s);
+	virtual void saveLoadWithSerializer(Common::Serializer &s);
 
 	void localizeArray(int slot, byte scriptSlot);
 	void redimArray(int arrayId, int newX, int newY, int d);
@@ -163,7 +163,7 @@ protected:
 	virtual void setupScummVars();
 	virtual void resetScummVars();
 
-	virtual void saveOrLoad(Serializer *s);
+	virtual void saveLoadWithSerializer(Common::Serializer &s);
 
 	virtual void readRoomsOffsets();
 	virtual void readGlobalObjects();
@@ -222,7 +222,7 @@ public:
 protected:
 	virtual void setupOpcodes();
 
-	virtual void saveOrLoad(Serializer *s);
+	virtual void saveLoadWithSerializer(Common::Serializer &s);
 
 	virtual void redrawBGAreas();
 
@@ -490,7 +490,7 @@ protected:
 	virtual void processInput();
 	virtual void clearClickedStatus();
 
-	virtual void saveOrLoad(Serializer *s);
+	virtual void saveLoadWithSerializer(Common::Serializer &s);
 
 	virtual void readMAXS(int blockSize);
 	void setResourceOffHeap(int typeId, int resId, int val);
@@ -581,7 +581,7 @@ protected:
 
 	virtual void readMAXS(int blockSize);
 
-	virtual void saveOrLoad(Serializer *s);
+	virtual void saveLoadWithSerializer(Common::Serializer &s);
 
 	virtual void copyPalColor(int dst, int src);
 	virtual void darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor);
@@ -613,7 +613,7 @@ public:
 protected:
 	virtual void setupOpcodes();
 
-	virtual void saveOrLoad(Serializer *s);
+	virtual void saveLoadWithSerializer(Common::Serializer &s);
 
 	virtual void decodeParseString(int a, int b);
 

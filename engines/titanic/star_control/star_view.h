@@ -71,6 +71,7 @@ private:
 		CVideoSurface **surface);
 public:
 	CStarView();
+	~CStarView();
 
 	/**
 	 * Load the data for the class from file
@@ -147,14 +148,14 @@ public:
 	 * Toggles between starfield and photo modes
 	 */
 	void toggleMode();
-	
+
 	void fn11();
 
 	/**
 	 * Toggles whether the viewpoint box is visible in the starfield
 	 */
 	void toggleBox();
-	
+
 	void fn13();
 	void fn14();
 
@@ -162,7 +163,7 @@ public:
 	 * Called when the photograph is used on the navigation computer
 	 */
 	void setHasReference();
-	
+
 	/**
 	 * Handles locking in a star
 	 */

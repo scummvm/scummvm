@@ -4,14 +4,6 @@
     Debug visualizers for a few common ScummVM types for Visual Studio 2012 and up.
 
     To use, copy this file into Documents\Visual Studio 20xx\Visualizers.
-
-    Known issues:
-
-    * Lists appear to be infinite (the same elements repeat over and over again).
-      Unfortunately, Lists don't store length information, and it's not possible to
-      detect whether a Node is the last one by the Node itself.
-
-    * In HashMaps, missing and dummy nodes are shown along with the useful ones.
 -->
 
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
@@ -28,6 +20,9 @@
       </Synthetic>
       <Item Name="[channels]" Condition="format.bytesPerPixel==1">1</Item>
       <Item Name="[channels]" Condition="format.bytesPerPixel==2">2</Item>
+      <Synthetic Name="[channels]" Condition="format.bytesPerPixel==3">
+        <DisplayString>RGB</DisplayString>
+      </Synthetic>
       <Synthetic Name="[channels]" Condition="format.bytesPerPixel==4">
         <DisplayString>RGBA</DisplayString>
       </Synthetic>
@@ -39,7 +34,7 @@
   </Type>
 
   <Type Name="Common::Array&lt;*&gt;">
-    <DisplayString>{{size = {_size}}}</DisplayString>
+    <DisplayString>{{ size={_size} }}</DisplayString>
     <Expand>
       <Item Name="[size]">_size</Item>
       <Item Name="[capacity]">_capacity</Item>
@@ -51,15 +46,31 @@
   </Type>
 
   <Type Name="Common::HashMap&lt;*,*,*,*&gt;">
-    <DisplayString>{{ size = {_size} }}</DisplayString>
+    <DisplayString>{{ size={_size} }}</DisplayString>
     <Expand>
       <Item Name="[size]">_size</Item>
       <Item Name="[capacity]">_mask + 1</Item>
       <Item Name="[deleted]">_deleted</Item>
-      <IndexListItems>
-        <Size>_mask + 1</Size>
-        <ValueNode Condition="_storage[$i] &amp;&amp; _storage[$i] != (Common::HashMap&lt;$T1,$T2,$T3,$T4&gt;::Node *)1">*_storage[$i]</ValueNode>
-      </IndexListItems>
+      <CustomListItems MaxItemsPerView="5000" ExcludeView="Test">
+        <Variable Name="ctr" InitialValue="0" />
+        <Size>_size</Size>
+        <Loop>
+          <Break Condition="ctr &gt; _mask" />
+          <Item Condition="_storage[ctr] &gt; 1" Name="[{_storage[ctr]->_key}]">*_storage[ctr],view(MapHelper)</Item>
+          <Exec>ctr++</Exec>
+        </Loop>
+      </CustomListItems>
+    </Expand>
+  </Type>
+
+  <Type Name="Common::HashMap&lt;*,*,*,*&gt;::Node" IncludeView="MapHelper">
+    <DisplayString>{_value}</DisplayString>
+  </Type>
+
+  <Type Name="Common::HashMap&lt;*,*,*,*&gt;::IteratorImpl&lt;*&gt;">
+    <DisplayString>{_hashmap->_storage[_idx],na}</DisplayString>
+    <Expand>
+      <Item Name="[ptr]">_hashmap->_storage[_idx]</Item>
     </Expand>
   </Type>
 
@@ -67,25 +78,64 @@
     <DisplayString Condition="&amp;_anchor == _anchor._next">{{ empty }}</DisplayString>
     <DisplayString Condition="&amp;_anchor != _anchor._next">{{ non-empty }}</DisplayString>
     <Expand>
-      <LinkedListItems Condition="&amp;_anchor != _anchor._next">
-        <HeadPointer>_anchor._next</HeadPointer>
-        <NextPointer>_next</NextPointer>
-        <ValueNode>((Common::ListInternal::Node&lt;$T1&gt;*)this)->_data</ValueNode>
-      </LinkedListItems>
+      <CustomListItems Condition="&amp;_anchor != _anchor._next">
+        <Variable Name="head" InitialValue="&amp;_anchor"/>
+        <Variable Name="iter" InitialValue="_anchor._next"/>
+        <Loop>
+          <Break Condition="iter == head"/>
+          <Item>((Common::ListInternal::Node&lt;$T1&gt;*)iter)->_data</Item>
+          <Exec>iter = iter->_next</Exec>
+        </Loop>
+      </CustomListItems>
+    </Expand>
+  </Type>
+
+  <Type Name="Common::ListInternal::Node&lt;*&gt;">
+    <DisplayString>{_data}</DisplayString>
+  </Type>
+
+  <Type Name="Common::ListInternal::Iterator&lt;*&gt;">
+    <AlternativeType Name="Common::ListInternal::ConstIterator&lt;*&gt;" />
+    <DisplayString>{((Common::ListInternal::Node&lt;$T1&gt;*)_node)->_data}</DisplayString>
+    <Expand>
+      <Item Name="[ptr]">((Common::ListInternal::Node&lt;$T1&gt;*)_node)->_data</Item>
     </Expand>
   </Type>
 
   <Type Name="Common::String">
-    <DisplayString>{_str,[_size]}</DisplayString>
-    <StringView>_str,[_size]</StringView>
+    <DisplayString>{_str,na}</DisplayString>
+    <StringView>_str,na</StringView>
     <Expand>
       <Item Name="[size]">_size</Item>
       <Item Condition="_str != _storage" Name="[capacity]">_extern._capacity</Item>
-      <Item Condition="_str != _storage" Name="[refCount]">*_extern._refCount</Item>
+      <Item Condition="_str != _storage &amp;&amp; _extern._refCount != 0" Name="[refCount]">*_extern._refCount</Item>
       <ArrayItems>
         <Size>_size</Size>
         <ValuePointer>_str</ValuePointer>
       </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="Common::U32String">
+    <DisplayString>{_str,s32}</DisplayString>
+    <StringView>_str,s32</StringView>
+    <Expand>
+      <Item Name="[size]">_size</Item>
+      <Item Condition="_str != _storage" Name="[capacity]">_extern._capacity</Item>
+      <Item Condition="_str != _storage &amp;&amp; _extern._refCount != 0" Name="[refCount]">*_extern._refCount</Item>
+      <ArrayItems>
+        <Size>_size</Size>
+        <ValuePointer>_str</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <Type Name="Common::SharedPtr&lt;*&gt;">
+    <DisplayString Condition="_pointer == 0">nullptr</DisplayString>
+    <DisplayString Condition="_pointer != 0">{*_pointer}</DisplayString>
+    <Expand>
+      <Item Condition="_pointer != 0" Name="[ptr]">_pointer</Item>
+      <Item Condition="_refCount != 0" Name="[refCount]">*_refCount</Item>
     </Expand>
   </Type>
 </AutoVisualizer>

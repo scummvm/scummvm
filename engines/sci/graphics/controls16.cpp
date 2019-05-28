@@ -158,50 +158,50 @@ void GfxControls16::kernelTexteditChange(reg_t controlObject, reg_t eventObject)
 		eventType = readSelectorValue(_segMan, eventObject, SELECTOR(type));
 
 		switch (eventType) {
-		case SCI_EVENT_MOUSE_PRESS:
+		case kSciEventMousePress:
 			// TODO: Implement mouse support for cursor change
 			break;
-		case SCI_EVENT_KEYBOARD:
+		case kSciEventKeyDown:
 			eventKey = readSelectorValue(_segMan, eventObject, SELECTOR(message));
 			modifiers = readSelectorValue(_segMan, eventObject, SELECTOR(modifiers));
 			switch (eventKey) {
-			case SCI_KEY_BACKSPACE:
+			case kSciKeyBackspace:
 				if (cursorPos > 0) {
 					cursorPos--; text.deleteChar(cursorPos);
 					textChanged = true;
 				}
 				break;
-			case SCI_KEY_DELETE:
+			case kSciKeyDelete:
 				if (cursorPos < textSize) {
 					text.deleteChar(cursorPos);
 					textChanged = true;
 				}
 				break;
-			case SCI_KEY_HOME: // HOME
+			case kSciKeyHome:
 				cursorPos = 0; textChanged = true;
 				break;
-			case SCI_KEY_END: // END
+			case kSciKeyEnd:
 				cursorPos = textSize; textChanged = true;
 				break;
-			case SCI_KEY_LEFT: // LEFT
+			case kSciKeyLeft:
 				if (cursorPos > 0) {
 					cursorPos--; textChanged = true;
 				}
 				break;
-			case SCI_KEY_RIGHT: // RIGHT
+			case kSciKeyRight:
 				if (cursorPos + 1 <= textSize) {
 					cursorPos++; textChanged = true;
 				}
 				break;
-			case 3:	// returned in SCI1 late and newer when Control - C is pressed
-				if (modifiers & SCI_KEYMOD_CTRL) {
+			case kSciKeyEtx:
+				if (modifiers & kSciKeyModCtrl) {
 					// Control-C erases the whole line
 					cursorPos = 0; text.clear();
 					textChanged = true;
 				}
 				break;
 			default:
-				if ((modifiers & SCI_KEYMOD_CTRL) && eventKey == 99) {
+				if ((modifiers & kSciKeyModCtrl) && eventKey == 99) {
 					// Control-C in earlier SCI games (SCI0 - SCI1 middle)
 					// Control-C erases the whole line
 					cursorPos = 0; text.clear();

@@ -185,7 +185,7 @@ void CContinueSaveDialog::mouseMove(const Point &mousePos) {
 void CContinueSaveDialog::leftButtonDown(const Point &mousePos) {
 	Rect eye1(188, 190, 192, 195), eye2(209, 192, 213, 197);
 
-	if (g_vm->_events->isSpecialPressed(MK_SHIFT) &&		
+	if (g_vm->_events->isSpecialPressed(MK_SHIFT) &&
 			(eye1.contains(mousePos) || eye2.contains(mousePos))) {
 		// Show the Easter Egg "Evil Twin"
 		_evilTwinShown = true;

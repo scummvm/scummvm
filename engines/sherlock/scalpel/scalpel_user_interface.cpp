@@ -2105,7 +2105,7 @@ void ScalpelUserInterface::summonWindow(bool slideUp, int height) {
 	Screen &screen = *_vm->_screen;
 
 	// Extract the window that's been drawn on the back buffer
-	Surface tempSurface(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT - height);
+	Surface tempSurface(SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT - height, screen._backBuffer1.format);
 	Common::Rect r(0, height, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 	tempSurface.SHblitFrom(screen._backBuffer1, Common::Point(0, 0), r);
 

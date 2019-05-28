@@ -33,7 +33,7 @@
 :"ScummVM"
 
 ; UID is the app's UID
-#{"ScummVM S60v3"},(0xA0000657),1,80,0
+#{"ScummVM S60v3"},(0xA0000657),2,00,0
 
 ;Supports Series 60 v 3.0
 [0x101F7961], 0, 0, 0, {"Series60ProductID"}
@@ -62,6 +62,7 @@
 
 ; Common datafiles needed for some games
 "..\..\..\..\dists\engine-data\drascula.dat"-"c:\data\scummvm\drascula.dat"
+"..\..\..\..\dists\engine-data\fonts.dat"-"c:\data\scummvm\fonts.dat"
 "..\..\..\..\dists\engine-data\hugo.dat"-"c:\data\scummvm\hugo.dat"
 "..\..\..\..\dists\engine-data\kyra.dat"-"c:\data\scummvm\kyra.dat"
 "..\..\..\..\dists\engine-data\lure.dat"-"c:\data\scummvm\lure.dat"
@@ -77,6 +78,7 @@
 "..\..\..\vkeybd\packs\vkeybd_small.zip"-"c:\data\scummvm\vkeybd_small.zip"
 "..\..\..\..\gui\themes\translations.dat"-"c:\data\scummvm\translations.dat"
 "..\..\..\..\gui\themes\scummmodern.zip"-"c:\data\scummvm\scummmodern.zip"
+"..\..\..\..\gui\themes\scummremastered.zip"-"c:\data\scummvm\scummremastered.zip"
 
 ; Config/log files: 'empty' will automagically be removed on uninstall
 ""-"c:\data\scummvm\scummvm.ini",FILENULL

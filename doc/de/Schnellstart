@@ -5,7 +5,7 @@ sich die englische README-Datei ansehen.
 
 Für weitere Informationen, Kompatibilitätslisten, Einzelheiten zu Spenden, die
 neusten veröffentlichten Versionen, Fortschrittsberichte und mehr besuchen Sie
-bitte die ScummVM-Website unter der Adresse: http://www.scummvm.org/
+bitte die ScummVM-Website unter der Adresse: https://www.scummvm.org/
 
 
 Inhaltsverzeichnis:
@@ -83,7 +83,7 @@ bitte die Anleitung in der englischen README-Datei.
 Für die ungeduldigen unter den Anwendern ist hier in fünf einfachen Schritten
 kurz beschrieben, wie man ScummVM lauffähig macht und das Programm verwendet.
 
-1. Laden Sie ScummVM unter der Adresse http://www.scummvm.org/downloads.php
+1. Laden Sie ScummVM unter der Adresse https://www.scummvm.org/downloads/
 herunter und installieren Sie es.
 
 2. Erstellen Sie ein Verzeichnis auf Ihrer Festplatte und kopieren Sie die
@@ -130,7 +130,7 @@ nach unterstützen Spielen durchsuchen.
 ---- --------
 Der einfachste Weg, um mit dem ScummVM-Team in Verbindung zu treten, ist,
 Fehlerberichte einzusenden (siehe Abschnitt 2.1) oder durch Verwendung des
-Forums unter der Adresse http://forums.scummvm.org .
+Forums unter der Adresse https://forums.scummvm.org .
 Sie können ebenso der Mailing-Liste scummvm-devel beitreten und an diese E-Mails
 versenden oder mit uns im IRC chatten (#scummvm unter irc.freenode.net). Bitte
 fordern Sie uns nicht dazu auf, ein nicht unterstütztes Spiel zu unterstützen.
@@ -149,7 +149,7 @@ Version von git oder des Daily Builds auftritt. Bitte sehen Sie auch auf der
 Kompatibilitätsliste der ScummVM-Website für dieses Spiel nach, um
 sicherzustellen, dass das Problem nicht bereits bekannt ist:
 
-  http://www.scummvm.org/compatibility_stable.php
+  https://www.scummvm.org/compatibility/
 
 Bitte berichten Sie keine Fehler zu Spielen, die nicht als durchspielbar im
 Bereich „Supported Games“ oder der Kompatibilitätsliste aufgelistet sind.

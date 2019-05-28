@@ -48,12 +48,16 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	final public native void enableZoning(boolean enable);
 	// Feed an event to ScummVM.  Safe to call from other threads.
 	final public native void pushEvent(int type, int arg1, int arg2, int arg3,
-										int arg4, int arg5);
+										int arg4, int arg5, int arg6);
+	final public native String getCurrentCharset();
 
 	// Callbacks from C++ peer instance
 	abstract protected void getDPI(float[] values);
 	abstract protected void displayMessageOnOSD(String msg);
 	abstract protected void openUrl(String url);
+	abstract protected boolean hasTextInClipboard();
+	abstract protected byte[] getTextFromClipboard();
+	abstract protected boolean setTextInClipboard(byte[] text);
 	abstract protected boolean isConnectionLimited();
 	abstract protected void setWindowCaption(String caption);
 	abstract protected void showVirtualKeyboard(boolean enable);

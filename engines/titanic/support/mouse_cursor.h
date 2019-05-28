@@ -54,11 +54,10 @@ class CVideoSurface;
 
 class CMouseCursor {
 	struct CursorEntry {
-		CVideoSurface *_videoSurface;
-		Graphics::ManagedSurface *_transSurface;
+		Graphics::ManagedSurface *_surface;
 		Common::Point _centroid;
 
-		CursorEntry() : _videoSurface(nullptr), _transSurface(nullptr) {}
+		CursorEntry() : _surface(nullptr) {}
 		~CursorEntry();
 	};
 private:
@@ -72,7 +71,7 @@ private:
 	int _fieldE8;
 	Common::Point _moveStartPos;
 	Common::Point _moveDestPos;
-	uint _moveStartTime, _moveEndTime;
+	uint32 _moveStartTime, _moveEndTime;
 
 	/**
 	 * Load the images for each cursor

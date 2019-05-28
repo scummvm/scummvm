@@ -42,10 +42,6 @@ static const RoomDialogueId ROOM_DIALOGUE_IDS[] = {
 	{ 0, 0 }
 };
 
-static const uint PRERESPONSE_IDS_DE[] = {
-	0
-};
-
 BellbotScript::BellbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2) :
 		TTnpcScript(val1, charClass, v2, charName, v3, val2, -1, -1, -1, 0),
@@ -483,8 +479,8 @@ ScriptChangedResult BellbotScript::scriptChanged(const TTroomScript *roomScript,
 }
 
 int BellbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
-		uint val, uint tagId, uint remainder) {
-	switch (tagId) {
+		uint tag1, uint tag2, uint remainder) {
+	switch (tag2) {
 	case MKTAG('A', 'D', 'V', 'T'):
 	case MKTAG('A', 'R', 'T', 'I'):
 	case MKTAG('A', 'R', 'T', 'Y'):
@@ -505,7 +501,7 @@ int BellbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence 
 	case MKTAG('T', 'E', 'A', 'M'):
 	case MKTAG('T', 'V', 'S', 'H'):
 	case MKTAG('W', 'W', 'E', 'B'):
-		tagId = MKTAG('E', 'N', 'T', 'N');
+		tag2 = MKTAG('E', 'N', 'T', 'N');
 		break;
 	case MKTAG('A', 'C', 'T', 'R'):
 	case MKTAG('A', 'C', 'T', 'S'):
@@ -538,59 +534,59 @@ int BellbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence 
 	case MKTAG('T', 'O', 'U', 'P'):
 	case MKTAG('T', 'W', 'A', 'T'):
 	case MKTAG('W', 'E', 'A', 'T'):
-		tagId = MKTAG('P', 'R', 'S', 'N');
+		tag2 = MKTAG('P', 'R', 'S', 'N');
 		break;
 	case MKTAG('C', 'H', 'S', 'E'):
 	case MKTAG('C', 'M', 'N', 't'):
 	case MKTAG('F', 'I', 'L', 'M'):
 	case MKTAG('J', 'F', 'O', 'D'):
 	case MKTAG('L', 'I', 'Q', 'D'):
-		tagId = MKTAG('F', 'O', 'O', 'D');
+		tag2 = MKTAG('F', 'O', 'O', 'D');
 		break;
 	case MKTAG('C', 'R', 'I', 'M'):
 	case MKTAG('C', 'S', 'P', 'Y'):
 	case MKTAG('D', 'R', 'U', 'G'):
-		tagId = MKTAG('V', 'B', 'A', 'D');
+		tag2 = MKTAG('V', 'B', 'A', 'D');
 		break;
 	case MKTAG('E', 'A', 'R', 'T'):
 	case MKTAG('H', 'O', 'M', 'E'):
 	case MKTAG('N', 'P', 'L', 'C'):
 	case MKTAG('P', 'L', 'A', 'N'):
-		tagId = MKTAG('P', 'L', 'A', 'C');
+		tag2 = MKTAG('P', 'L', 'A', 'C');
 		break;
 	case MKTAG('F', 'A', 'U', 'N'):
 	case MKTAG('F', 'I', 'S', 'H'):
 	case MKTAG('F', 'L', 'O', 'R'):
-		tagId = MKTAG('N', 'A', 'T', 'R');
+		tag2 = MKTAG('N', 'A', 'T', 'R');
 		break;
 	case MKTAG('H', 'H', 'L', 'D'):
 	case MKTAG('T', 'O', 'Y', 'S'):
 	case MKTAG('W', 'E', 'A', 'P'):
-		tagId = MKTAG('M', 'A', 'C', 'H');
+		tag2 = MKTAG('M', 'A', 'C', 'H');
 		break;
 	case MKTAG('M', 'L', 'T', 'Y'):
 	case MKTAG('P', 'G', 'R', 'P'):
 	case MKTAG('P', 'T', 'I', 'C'):
-		tagId = MKTAG('G', 'R', 'U', 'P');
+		tag2 = MKTAG('G', 'R', 'U', 'P');
 		break;
 	case MKTAG('P', 'K', 'U', 'P'):
 	case MKTAG('S', 'E', 'X', '1'):
 	case MKTAG('S', 'W', 'E', 'R'):
-		tagId = MKTAG('R', 'U', 'D', 'E');
+		tag2 = MKTAG('R', 'U', 'D', 'E');
 		break;
 	case MKTAG('P', 'H', 'I', 'L'):
 	case MKTAG('R', 'C', 'K', 'T'):
-		tagId = MKTAG('S', 'C', 'I', 'E');
+		tag2 = MKTAG('S', 'C', 'I', 'E');
 		break;
 	case MKTAG('T', 'R', 'A', '2'):
 	case MKTAG('T', 'R', 'A', '3'):
-		tagId = MKTAG('T', 'R', 'A', 'V');
+		tag2 = MKTAG('T', 'R', 'A', 'V');
 		break;
 	default:
 		break;
 	}
 
-	return TTnpcScript::handleQuote(roomScript, sentence, val, tagId, remainder);
+	return TTnpcScript::handleQuote(roomScript, sentence, tag1, tag2, remainder);
 }
 
 int BellbotScript::updateState(uint oldId, uint newId, int index) {
@@ -730,86 +726,157 @@ int BellbotScript::preResponse(uint id) {
 }
 
 int BellbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence) {
-	switch (val1) {
-	case 1:
-		addResponse(getDialogueId(*srcIdP));
-		applyResponse();
-		return 2;
-
-	case 2:
-		addResponse(getDialogueId(*srcIdP));
-		addResponse(getDialogueId(getRandomNumber(2) == 1 ? 200192 : 200157));
-		addResponse(getDialogueId(200176));
-		applyResponse();
-		return 2;
-
-	case 21:
-		if (CTrueTalkManager::getStateValue(7) == 0) {
-			selectResponse(21372);
+	if (g_language == Common::EN_ANY) {
+		switch (val1) {
+		case 1:
+			addResponse(getDialogueId(*srcIdP));
 			applyResponse();
 			return 2;
-		}
 
-		if (!sentence->localWord("broken") && !sentence->contains("broken") &&
+		case 2:
+			addResponse(getDialogueId(*srcIdP));
+			addResponse(getDialogueId(getRandomNumber(2) == 1 ? 200192 : 200157));
+			addResponse(getDialogueId(200176));
+			applyResponse();
+			return 2;
+
+		case 21:
+			if (CTrueTalkManager::getStateValue(7) == 0) {
+				selectResponse(21372);
+				applyResponse();
+				return 2;
+			}
+
+			if (!sentence->localWord("broken") && !sentence->contains("broken") &&
 				CTrueTalkManager::_currentNPC) {
-			CNodeItem *node = CTrueTalkManager::_currentNPC->getNode();
-			if (node) {
-				CString nodeName = node->getName();
-				if (nodeName.containsIgnoreCase("5") || nodeName.containsIgnoreCase("6")
+				CNodeItem *node = CTrueTalkManager::_currentNPC->getNode();
+				if (node) {
+					CString nodeName = node->getName();
+					if (nodeName.containsIgnoreCase("5") || nodeName.containsIgnoreCase("6")
 						|| nodeName.containsIgnoreCase("7")) {
-					CTrueTalkManager::triggerAction(29, 2);
-					selectResponse(201571);
-					applyResponse();
-					return 2;
+						CTrueTalkManager::triggerAction(29, 2);
+						selectResponse(201571);
+						applyResponse();
+						return 2;
+					}
 				}
 			}
-		}
 
-		CTrueTalkManager::triggerAction(29, 1);
-		selectResponse(201771);
-		applyResponse();
-		return 2;
-
-	case 22:
-		if (CTrueTalkManager::getStateValue(7) == 0) {
-			selectResponse(21372);
+			CTrueTalkManager::triggerAction(29, 1);
+			selectResponse(201771);
 			applyResponse();
 			return 2;
-		}
 
-		if (!sentence->localWord("broken") && !sentence->contains("broken") &&
-			CTrueTalkManager::_currentNPC) {
-			CNodeItem *node = CTrueTalkManager::_currentNPC->getNode();
-			if (node) {
-				CString nodeName = node->getName();
-				if (nodeName.containsIgnoreCase("5") || nodeName.containsIgnoreCase("6")
+		case 22:
+			if (CTrueTalkManager::getStateValue(7) == 0) {
+				selectResponse(21372);
+				applyResponse();
+				return 2;
+			}
+
+			if (!sentence->localWord("broken") && !sentence->contains("broken") &&
+				CTrueTalkManager::_currentNPC) {
+				CNodeItem *node = CTrueTalkManager::_currentNPC->getNode();
+				if (node) {
+					CString nodeName = node->getName();
+					if (nodeName.containsIgnoreCase("5") || nodeName.containsIgnoreCase("6")
 						|| nodeName.containsIgnoreCase("7")) {
-					CTrueTalkManager::triggerAction(29, 2);
-					selectResponse(201571);
-					applyResponse();
-					return 2;
+						CTrueTalkManager::triggerAction(29, 2);
+						selectResponse(201571);
+						applyResponse();
+						return 2;
+					}
 				}
 			}
-		}
 
-		CTrueTalkManager::triggerAction(29, 1);
-		selectResponse(201771);
-		applyResponse();
-		return 2;
-
-	case 23:
-	case 24:
-		if (CTrueTalkManager::getStateValue(7) == 0) {
-			selectResponse(21372);
+			CTrueTalkManager::triggerAction(29, 1);
+			selectResponse(201771);
 			applyResponse();
 			return 2;
+
+		case 23:
+		case 24:
+			if (CTrueTalkManager::getStateValue(7) == 0) {
+				selectResponse(21372);
+				applyResponse();
+				return 2;
+			}
+
+			CTrueTalkManager::triggerAction(29, val1 == 23 ? 3 : 4);
+			break;
+
+		default:
+			break;
 		}
+	} else {
+		switch (val1) {
+		case 5001:
+		case 5021:
+			return 0;
 
-		CTrueTalkManager::triggerAction(29, val1 == 23 ? 3 : 4);
-		break;
+		case 5002:
+			addResponse(getDialogueId(*srcIdP));
+			addResponse(getDialogueId(200000));
+			applyResponse();
+			return 2;
 
-	default:
-		break;
+		case 5003:
+			addResponse(getDialogueId(*srcIdP));
+			return 2;
+
+		case 5022:
+		case 5023:
+			if (CTrueTalkManager::getStateValue(7)) {
+				bool flag = true;
+
+				if (!sentence->localWord("broken") && !sentence->contains("kaputt") &&
+					!sentence->contains("im eimer") && !sentence->contains("funktioniert nicht") &&
+					CTrueTalkManager::_currentNPC) {
+					CNodeItem *node = CTrueTalkManager::_currentNPC->getNode();
+					if (node) {
+						CString nodeName = node->getName();
+						if (nodeName.contains("5") || nodeName.contains("6") || nodeName.contains("7"))
+							flag = false;
+					}
+				}
+
+				if (flag) {
+					CTrueTalkManager::triggerAction(29, 1);
+					selectResponse(201771);
+				} else {
+					CTrueTalkManager::triggerAction(29, 2);
+					selectResponse(201554);
+				}
+			} else {
+				selectResponse(21378);
+			}
+
+			applyResponse();
+			return 2;
+
+		case 5024:
+			if (CTrueTalkManager::getStateValue(7)) {
+				CTrueTalkManager::triggerAction(29, 3);
+				return 0;
+			}
+
+			selectResponse(21378);
+			applyResponse();
+			return 2;
+
+		case 5025:
+			if (CTrueTalkManager::getStateValue(7)) {
+				CTrueTalkManager::triggerAction(29, 4);
+				return 0;
+			}
+
+			selectResponse(21378);
+			applyResponse();
+			return 2;
+
+		default:
+			return TTnpcScript::doSentenceEntry(val1, srcIdP, roomScript, sentence);
+		}
 	}
 
 	return 0;

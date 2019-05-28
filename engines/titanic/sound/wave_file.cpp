@@ -52,7 +52,7 @@ int AudioBufferStream::readBuffer(int16 *buffer, const int numSamples) {
 }
 
 bool AudioBufferStream::endOfData() const {
-	return _audioBuffer->_finished;
+	return _audioBuffer->isFinished();
 }
 
 /*------------------------------------------------------------------------*/
@@ -207,7 +207,7 @@ Audio::SoundHandle CWaveFile::play(int numLoops, byte volume) {
 			(numLoops == -1) ? 0 : numLoops);
 
 	_mixer->playStream(_soundType, &handle, stream, -1,
-		volume, 0, DisposeAfterUse::NO);
+		volume, 0, DisposeAfterUse::YES);
 	return handle;
 }
 

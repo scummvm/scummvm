@@ -318,7 +318,7 @@ private:
 	void relocateSci3(const SegmentId segmentId);
 #endif
 
-	bool relocateLocal(SegmentId segment, int location);
+	bool relocateLocal(SegmentId segment, int location, uint32 offset);
 
 #ifdef ENABLE_SCI32
 	/**

@@ -226,6 +226,9 @@ enum Movement {
 	MOVE_NONE = 0, MOVE_FORWARDS, MOVE_BACKWARDS, TURN_LEFT, TURN_RIGHT
 };
 
+enum ChangeMusicAction {
+	MUSIC_NONE = 0, MUSIC_STOP = 1, MUSIC_START = 2
+};
 
 class CMovementMsg : public CMessage {
 public:
@@ -258,7 +261,7 @@ MESSAGE0(CArmPickedUpFromTableMsg);
 MESSAGE0(CBodyInBilgeRoomMsg);
 MESSAGE1(CBowlStateChangeMsg, int, state, 0);
 MESSAGE2(CCarryObjectArrivedMsg, CString, strValue, "", int, numValue, 0);
-MESSAGE2(CChangeMusicMsg, CString, filename, "", int, flags, 0);
+MESSAGE2(CChangeMusicMsg, CString, filename, "", ChangeMusicAction, action, MUSIC_NONE);
 MESSAGE1(CChangeSeasonMsg, CString, season, "Summer");
 MESSAGE0(CCheckAllPossibleCodes);
 MESSAGE2(CCheckChevCode, int, classNum, 0, uint, chevCode, 0);

@@ -58,7 +58,7 @@ enum BreakpointAction {
 struct Breakpoint {
 	BreakpointType _type;
 	uint32 _address;     ///< Breakpoints on exports
-	reg32_t _regAddress; ///< Breakpoints on addresses
+	reg_t _regAddress; ///< Breakpoints on addresses
 	Common::String _name; ///< Breakpoints on selector names
 	BreakpointAction _action;
 };

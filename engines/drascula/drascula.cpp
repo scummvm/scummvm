@@ -70,10 +70,6 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	_talkSequences = 0;
 	_currentSaveSlot = 0;
 
-	bjX = 0;
-	bjY = 0;
-	trackBJ = 0;
-    framesWithoutAction = 0;
 	term_int = 0;
 	currentChapter = 0;
 	_loadedDifferentChapter = false;
@@ -98,14 +94,10 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	_talkSequencesSize = 0;
 	_numLangs = 0;
 	feetHeight = 0;
-	floorX1 = 0;
-	floorY1 = 0;
-	floorX2 = 0;
-	floorY2 = 0;
 	lowerLimit = 0;
 	upperLimit = 0;
 	trackFinal = 0;
-	walkToObject = 0;
+	_walkToObject = false;
 	objExit = 0;
 	_startTime = 0;
 	hasAnswer = 0;
@@ -136,11 +128,11 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	frame_y = 0;
 	curX = 0;
 	curY = 0;
-	characterMoved = 0;
+	_characterMoved = false;
 	curDirection = 0;
 	trackProtagonist = 0;
 	_characterFrame = 0;
-	characterVisible = 0;
+	_characterVisible = false;
 	roomX = 0;
 	roomY = 0;
 	checkFlags = 0;
@@ -236,7 +228,7 @@ bool DrasculaEngine::hasFeature(EngineFeature f) const {
 
 Common::Error DrasculaEngine::run() {
 	// Initialize backend
-	initGraphics(320, 200, false);
+	initGraphics(320, 200);
 
 	switch (getLanguage()) {
 	case Common::EN_ANY:
@@ -253,6 +245,9 @@ Common::Error DrasculaEngine::run() {
 		break;
 	case Common::IT_ITA:
 		_lang = kItalian;
+		break;
+	case Common::RU_RUS:
+		_lang = kRussian;
 		break;
 	default:
 		warning("Unknown game language. Falling back to English");
@@ -279,10 +274,16 @@ Common::Error DrasculaEngine::run() {
 	// Check if a save is loaded from the launcher
 	int directSaveSlotLoading = ConfMan.getInt("save_slot");
 	if (directSaveSlotLoading >= 0) {
+		// Set the current chapter to -1. This forces the load to happen
+		// later during the game loop, and not now.
+		currentChapter = -1;
 		loadGame(directSaveSlotLoading);
+		currentChapter++;
 	}
 
 	checkCD();
+
+	allocMemory();
 
 	while (!shouldQuit()) {
 		int i;
@@ -292,13 +293,13 @@ Common::Error DrasculaEngine::run() {
 		_hasName = false;
 		frame_y = 0;
 		curX = -1;
-		characterMoved = 0;
+		_characterMoved = false;
 		trackProtagonist = 3;
 		_characterFrame = 0;
-		characterVisible = 1;
+		_characterVisible = true;
 		checkFlags = 1;
 		doBreak = 0;
-		walkToObject = 0;
+		_walkToObject = false;
 
 		stepX = STEP_X;
 		stepY = STEP_Y;
@@ -313,7 +314,6 @@ Common::Error DrasculaEngine::run() {
 		vonBraunX = 120;
 		trackVonBraun = 1;
 		vonBraunHasMoved = 0;
-		framesWithoutAction = 0;
 		term_int = 0;
 		musicStopped = 0;
 		globalSpeed = 0;
@@ -324,8 +324,6 @@ Common::Error DrasculaEngine::run() {
 		for (i = 0; i < 8; i++)
 			actorFrames[i] = 0;
 		actorFrames[kFrameVonBraun] = 1;
-
-		allocMemory();
 
 		_subtitlesDisabled = !ConfMan.getBool("subtitles");
 
@@ -388,6 +386,8 @@ Common::Error DrasculaEngine::run() {
 		currentChapter++;
 	}
 
+	freeMemory();
+
 	return Common::kNoError;
 }
 
@@ -397,11 +397,11 @@ void DrasculaEngine::endChapter() {
 	black();
 	MusicFadeout();
 	stopMusic();
-	freeMemory();
 }
 
 bool DrasculaEngine::runCurrentChapter() {
 	int n;
+	int framesWithoutAction = 0;
 
 	_rightMouseButton = 0;
 
@@ -448,7 +448,7 @@ bool DrasculaEngine::runCurrentChapter() {
 			enterRoom(62);
 			curX = -20;
 			curY = 56;
-			gotoObject(65, 145);
+			walkToPoint(Common::Point(65, 145));
 		}
 
 		// REMINDER: This is a good place to debug animations
@@ -537,13 +537,13 @@ bool DrasculaEngine::runCurrentChapter() {
 	showCursor();
 
 	while (!shouldQuit()) {
-		if (characterMoved == 0) {
+		if (!_characterMoved) {
 			stepX = STEP_X;
 			stepY = STEP_Y;
 		}
-		if (characterMoved == 0 && walkToObject == 1) {
+		if (!_characterMoved && _walkToObject) {
 			trackProtagonist = trackFinal;
-			walkToObject = 0;
+			_walkToObject = false;
 		}
 
 		if (currentChapter == 2) {
@@ -554,14 +554,14 @@ bool DrasculaEngine::runCurrentChapter() {
 			// made the character start walking off screen, as his actual position was
 			// different than the displayed one
 			if (_roomNumber == 3 && (curX == 279) && (curY + curHeight == 101)) {
-				gotoObject(178, 121);
-				gotoObject(169, 135);
+				walkToPoint(Common::Point(178, 121));
+				walkToPoint(Common::Point(169, 135));
 			} else if (_roomNumber == 14 && (curX == 214) && (curY + curHeight == 121)) {
-				walkToObject = 1;
-				gotoObject(190, 130);
+				_walkToObject = true;
+				walkToPoint(Common::Point(190, 130));
 			} else if (_roomNumber == 14 && (curX == 246) && (curY + curHeight == 112)) {
-				walkToObject = 1;
-				gotoObject(190, 130);
+				_walkToObject = true;
+				walkToPoint(Common::Point(190, 130));
 			}
 		}
 
@@ -629,7 +629,7 @@ bool DrasculaEngine::runCurrentChapter() {
 			!(currentChapter == 5 && pickedObject == 16)) {
 #endif
 			_rightMouseButton = 0;
-			characterMoved = 0;
+			_characterMoved = false;
 			if (trackProtagonist == 2)
 				trackProtagonist = 1;
 			if (currentChapter == 4) {
@@ -748,8 +748,7 @@ bool DrasculaEngine::verify1() {
 		removeObject();
 	else {
 		for (l = 0; l < numRoomObjs; l++) {
-			if (_mouseX >= _objectX1[l] && _mouseY >= _objectY1[l]
-					&& _mouseX <= _objectX2[l] && _mouseY <= _objectY2[l] && doBreak == 0) {
+			if (_objectRect[l].contains(Common::Point(_mouseX, _mouseY)) && doBreak == 0) {
 				if (exitRoom(l))
 					return true;
 				if (doBreak == 1)
@@ -762,20 +761,19 @@ bool DrasculaEngine::verify1() {
 			doBreak = 1;
 
 		for (l = 0; l < numRoomObjs; l++) {
-			if (_mouseX > _objectX1[l] && _mouseY > _objectY1[l]
-					&& _mouseX < _objectX2[l] && _mouseY < _objectY2[l] && doBreak == 0) {
-				roomX = roomObjX[l];
-				roomY = roomObjY[l];
+			if (_objectRect[l].contains(Common::Point(_mouseX, _mouseY)) && doBreak == 0) {
+				roomX = _roomObject[l].x;
+				roomY = _roomObject[l].y;
 				trackFinal = trackObj[l];
 				doBreak = 1;
-				walkToObject = 1;
+				_walkToObject = true;
 				startWalking();
 			}
 		}
 
 		if (doBreak == 0) {
-			roomX = CLIP(_mouseX, floorX1, floorX2);
-			roomY = CLIP(_mouseY, floorY1 + feetHeight, floorY2);
+			roomX = CLIP<int16>(_mouseX, _walkRect.left, _walkRect.right);
+			roomY = CLIP<int16>(_mouseY, _walkRect.top + feetHeight, _walkRect.bottom);
 			startWalking();
 		}
 		doBreak = 0;
@@ -791,16 +789,15 @@ bool DrasculaEngine::verify2() {
 		if (pickupObject())
 			return true;
 	} else {
-		if (!strcmp(textName, "hacker") && _hasName) {
+		if (!strcmp(textName, _textmisc[3]) && _hasName) {
 			if (checkAction(50))
 				return true;
 		} else {
 			for (l = 0; l < numRoomObjs; l++) {
-				if (_mouseX > _objectX1[l] && _mouseY > _objectY1[l]
-						&& _mouseX < _objectX2[l] && _mouseY < _objectY2[l] && visible[l] == 1) {
+				if (_objectRect[l].contains(Common::Point(_mouseX, _mouseY)) && visible[l] == 1) {
 					trackFinal = trackObj[l];
-					walkToObject = 1;
-					gotoObject(roomObjX[l], roomObjY[l]);
+					_walkToObject = true;
+					walkToPoint(_roomObject[l]);
 					if (checkAction(objectNum[l]))
 						return true;
 					if (currentChapter == 4)

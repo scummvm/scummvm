@@ -195,7 +195,7 @@ void FullpipeEngine::lift_init(Scene *sc, int enterSeq, int exitSeq) {
 	_lift = sc->getStaticANIObject1ById(ANI_LIFT, -1);
 
 	for (uint i = 0; i < sc->_staticANIObjectList1.size(); i++) {
-		StaticANIObject *ani = (StaticANIObject *)sc->_staticANIObjectList1[i];
+		StaticANIObject *ani = sc->_staticANIObjectList1[i];
 
 		if (ani->_id == ANI_LIFTBUTTON)
 			ani->_statics = ani->getStaticsById(lift_getButtonIdP(ani->_statics->_staticsId));
@@ -205,7 +205,7 @@ void FullpipeEngine::lift_init(Scene *sc, int enterSeq, int exitSeq) {
 	if (var) {
 		for (var = var->_subVars; var; var = var->_nextVarObj) {
 			for (uint i = 0; i < sc->_staticANIObjectList1.size(); i++) {
-				StaticANIObject *ani = (StaticANIObject *)sc->_staticANIObjectList1[i];
+				StaticANIObject *ani = sc->_staticANIObjectList1[i];
 
 				if (ani->_id == ANI_LIFTBUTTON) {
 					int id = lift_getButtonIdN(ani->_statics->_staticsId);
@@ -233,7 +233,7 @@ void FullpipeEngine::lift_exitSeq(ExCommand *cmd) {
 
 	ExCommand *ex = new ExCommand(_aniMan->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
 
-	ex->_field_14 = 256;
+	ex->_z = 256;
 	ex->_messageNum = 256;
 	ex->_excFlags |= 3;
 	mq->addExCommandToEnd(ex);
@@ -257,7 +257,7 @@ void FullpipeEngine::lift_exitSeq(ExCommand *cmd) {
 
 	ex = new ExCommand(_aniMan->_id, 5, -1, 0, 0, 0, 1, 0, 0, 0);
 	ex->_param = _aniMan->_odelay;
-	ex->_field_14 = 10;
+	ex->_z = 10;
 	ex->_x = -1;
 	ex->_y = -1;
 	ex->_excFlags |= 3;
@@ -265,7 +265,7 @@ void FullpipeEngine::lift_exitSeq(ExCommand *cmd) {
 
 	ex = new ExCommand(_aniMan->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
 	ex->_excFlags |= 3;
-	ex->_field_14 = 256;
+	ex->_z = 256;
 	ex->_messageNum = 0;
 	mq->addExCommandToEnd(ex);
 
@@ -346,7 +346,7 @@ void FullpipeEngine::lift_walkAndGo() {
 
 		ex = new ExCommand(_aniMan->_id, 5, -1, 0, 0, 0, 1, 0, 0, 0);
 		ex->_param = _aniMan->_odelay;
-		ex->_field_14 = _lift->_priority + 1;
+		ex->_z = _lift->_priority + 1;
 		ex->_x = -1;
 		ex->_y = -1;
 		ex->_excFlags |= 3;
@@ -403,12 +403,12 @@ void FullpipeEngine::lift_goAnimation() {
 		int numItems = _gameLoader->_preloadItems.size();
 
 		for (int i = 0; i < numItems; i++) {
-			PreloadItem *pre = _gameLoader->_preloadItems[i];
+			PreloadItem &pre = _gameLoader->_preloadItems[i];
 
-			if (pre->preloadId2 == buttonId && pre->preloadId1 == _currentScene->_sceneId) {
+			if (pre.preloadId2 == buttonId && pre.preloadId1 == _currentScene->_sceneId) {
 				MessageQueue *mq = new MessageQueue(_globalMessageQueueList->compact());
 
-				ExCommand *ex = new ExCommand(ANI_MAN, 1, (pre->param != LiftDown ? MV_MAN_LIFTDOWN : MV_MAN_LIFTUP), 0, 0, 0, 1, 0, 0, 0);
+				ExCommand *ex = new ExCommand(ANI_MAN, 1, (pre.param != LiftDown ? MV_MAN_LIFTDOWN : MV_MAN_LIFTUP), 0, 0, 0, 1, 0, 0, 0);
 
 				ex->_param = -1;
 				ex->_field_24 = 1;
@@ -465,7 +465,7 @@ void FullpipeEngine::lift_animateButton(StaticANIObject *button) {
 
 				ExCommand *ex = new ExCommand(0, 35, SND_CMN_032, 0, 0, 0, 1, 0, 0, 0);
 				ex->_excFlags |= 3;
-				ex->_field_14 = 1;
+				ex->_z = 1;
 				ex->postMessage();
 
 				int id = lift_getButtonIdH(_lastLiftButton->_statics->_staticsId);
@@ -506,7 +506,7 @@ bool FullpipeEngine::lift_checkButton(const char *varName) {
 
 void FullpipeEngine::lift_setButtonStatics(Scene *sc, int buttonId) {
 	for (uint i = 0; i < sc->_staticANIObjectList1.size(); i++) {
-		StaticANIObject *ani = (StaticANIObject *)sc->_staticANIObjectList1[i];
+		StaticANIObject *ani = sc->_staticANIObjectList1[i];
 
 		if (ani->_id == ANI_LIFTBUTTON) {
 			int id = lift_getButtonIdN(ani->_statics->_staticsId);

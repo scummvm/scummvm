@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2017 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -81,12 +81,6 @@
 
 // Configuration
 
-// 0: Use 16-bit signed samples and refined wave generator based on logarithmic fixed-point computations and LUTs. Maximum emulation accuracy and speed.
-// 1: Use float samples in the wave generator and renderer. Maximum output quality and minimum noise.
-#ifndef MT32EMU_USE_FLOAT_SAMPLES
-#define MT32EMU_USE_FLOAT_SAMPLES 0
-#endif
-
 // If non-zero, deletes reverb buffers that are not in use to save memory.
 // If zero, keeps reverb buffers for all modes around all the time to avoid allocating/freeing in the critical path.
 #ifndef MT32EMU_REDUCE_REVERB_MEMORY
@@ -100,6 +94,10 @@
 #endif
 
 namespace MT32Emu {
+
+typedef Bit16s IntSample;
+typedef Bit32s IntSampleEx;
+typedef float FloatSample;
 
 enum PolyState {
 	POLY_Playing,
@@ -115,14 +113,6 @@ enum ReverbMode {
 	REVERB_MODE_TAP_DELAY
 };
 
-#if MT32EMU_USE_FLOAT_SAMPLES
-typedef float Sample;
-typedef float SampleEx;
-#else
-typedef Bit16s Sample;
-typedef Bit32s SampleEx;
-#endif
-
-}
+} // namespace MT32Emu
 
 #endif // #ifndef MT32EMU_INTERNALS_H

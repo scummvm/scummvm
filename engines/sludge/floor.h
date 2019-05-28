@@ -26,6 +26,9 @@
 
 namespace Sludge {
 
+class SludgeEngine;
+struct OnScreenPerson;
+
 struct FloorPolygon {
 	int numVertices;
 	int *vertexID;
@@ -39,13 +42,37 @@ struct Floor {
 	int **matrix;
 };
 
-bool initFloor();
-void setFloorNull();
-bool setFloor(int fileNum);
-void drawFloor();
-int inFloor(int x, int y);
-bool getMatchingCorners(FloorPolygon &, FloorPolygon &, int &, int &);
-bool closestPointOnLine(int &closestX, int &closestY, int x1, int y1, int x2, int y2, int xP, int yP);
+class FloorManager {
+public:
+	FloorManager(SludgeEngine *vm);
+	~FloorManager();
+
+	bool init();
+	void kill();
+
+	void setFloorNull();
+	bool setFloor(int fileNum);
+	void drawFloor();
+	int inFloor(int x, int y);
+	bool isFloorNoPolygon() { return !_currentFloor || _currentFloor->numPolygons == 0; }
+
+	// For Person collision detection
+	bool handleClosestPoint(int &setX, int &setY, int &setPoly);
+	bool doBorderStuff(OnScreenPerson *moveMe);
+
+	// Save & load
+	void save(Common::WriteStream *stream);
+	bool load(Common::SeekableReadStream *stream);
+
+private:
+	Floor *_currentFloor;
+	SludgeEngine *_vm;
+
+	bool getMatchingCorners(FloorPolygon &, FloorPolygon &, int &, int &);
+	bool closestPointOnLine(int &closestX, int &closestY, int x1, int y1, int x2, int y2, int xP, int yP);
+	bool pointInFloorPolygon(FloorPolygon &floorPoly, int x, int y);
+	bool polysShareSide(FloorPolygon &a, FloorPolygon &b);
+};
 
 } // End of namespace Sludge
 

@@ -32,13 +32,14 @@ namespace BladeRunner {
 
 class BladeRunnerEngine;
 class Items;
+class SaveFileReadStream;
+class SaveFileWriteStream;
 
 class Item {
-	BladeRunnerEngine *_vm;
-
 	friend class Items;
 
-private:
+	BladeRunnerEngine *_vm;
+
 	int          _itemId;
 	int          _setId;
 
@@ -53,7 +54,7 @@ private:
 	int          _screenX;
 	int          _screenY;
 	float        _depth;
-	bool         _isTargetable;
+	bool         _isTarget;
 	bool         _isSpinning;
 	int          _facingChange;
 	bool         _isVisible;
@@ -61,16 +62,38 @@ private:
 
 public:
 	Item(BladeRunnerEngine *vm);
-	~Item();
 
-	void getXYZ(float *x, float *y, float *z);
+	void getXYZ(float *x, float *y, float *z) const;
 	void setXYZ(Vector3 position);
-	void getWidthHeight(int *width, int *height);
+	void getWidthHeight(int *width, int *height) const;
+	void getAnimationId(int *animationId) const;
 
-	bool isTargetable();
+	const BoundingBox &getBoundingBox() { return _boundingBox; }
+	const Common::Rect &getScreenRectangle() { return _screenRectangle; }
+
+	int getFacing() const { return _facing; }
+	void setFacing(int facing);
+
+	bool isTarget() const { return _isTarget; }
+	void setIsTarget(bool val) { _isTarget = val; }
+
+	bool isSpinning() const { return _isSpinning; }
+	void spinInWorld();
+
+	bool isVisible() const { return _isVisible; }
+	void setVisible(bool val) { _isVisible = val; }
+
+	bool isPoliceMazeEnemy() const { return _isPoliceMazeEnemy; }
+	void setPoliceMazeEnemy(bool val) { _isPoliceMazeEnemy = val; }
+
 	bool tick(Common::Rect *screenRect, bool special);
 
-	void setup(int itemId, int setId, int animationId, Vector3 position, int facing, int height, int width, bool isTargetableFlag, bool isVisibleFlag, bool isPoliceMazeEnemyFlag);
+	void setup(int itemId, int setId, int animationId, Vector3 position, int facing, int height, int width, bool isTargetFlag, bool isVisibleFlag, bool isPoliceMazeEnemyFlag);
+
+	bool isUnderMouse(int mouseX, int mouseY) const;
+
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
 };
 
 }

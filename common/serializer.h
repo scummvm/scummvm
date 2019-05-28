@@ -28,12 +28,13 @@
 
 namespace Common {
 
+#define VER(x) Common::Serializer::Version(x)
 
 #define SYNC_AS(SUFFIX,TYPE,SIZE) \
 	template<typename T> \
 	void syncAs ## SUFFIX(T &val, Version minVersion = 0, Version maxVersion = kLastVersion) { \
 		if (_version < minVersion || _version > maxVersion) \
-			return;	\
+			return; \
 		if (_loadStream) \
 			val = static_cast<T>(_loadStream->read ## SUFFIX()); \
 		else { \
@@ -43,6 +44,11 @@ namespace Common {
 		_bytesSynced += SIZE; \
 	}
 
+#define SYNC_PRIMITIVE(suffix) \
+	template <typename T> \
+	static inline void suffix(Serializer &s, T &value) { \
+		s.syncAs##suffix(value); \
+	}
 
 /**
  * This class allows syncing / serializing data (primarily game savestates)
@@ -66,6 +72,17 @@ class Serializer {
 public:
 	typedef uint32 Version;
 	static const Version kLastVersion = 0xFFFFFFFF;
+
+	SYNC_PRIMITIVE(Uint32LE)
+	SYNC_PRIMITIVE(Uint32BE)
+	SYNC_PRIMITIVE(Sint32LE)
+	SYNC_PRIMITIVE(Sint32BE)
+	SYNC_PRIMITIVE(Uint16LE)
+	SYNC_PRIMITIVE(Uint16BE)
+	SYNC_PRIMITIVE(Sint16LE)
+	SYNC_PRIMITIVE(Sint16BE)
+	SYNC_PRIMITIVE(Byte)
+	SYNC_PRIMITIVE(SByte)
 
 protected:
 	SeekableReadStream *_loadStream;
@@ -94,6 +111,7 @@ public:
 	// in the line "syncAsUint32LE(_version);" of
 	// "bool syncVersion(Version currentVersion)".
 	SYNC_AS(Byte, byte, 1)
+	SYNC_AS(SByte, int8, 1)
 
 	SYNC_AS(Uint16LE, uint16, 2)
 	SYNC_AS(Uint16BE, uint16, 2)
@@ -160,7 +178,7 @@ public:
 	 */
 	void skip(uint32 size, Version minVersion = 0, Version maxVersion = kLastVersion) {
 		if (_version < minVersion || _version > maxVersion)
-			return;	// Ignore anything which is not supposed to be present in this save game version
+			return; // Ignore anything which is not supposed to be present in this save game version
 
 		_bytesSynced += size;
 		if (isLoading())
@@ -176,7 +194,7 @@ public:
 	 */
 	void syncBytes(byte *buf, uint32 size, Version minVersion = 0, Version maxVersion = kLastVersion) {
 		if (_version < minVersion || _version > maxVersion)
-			return;	// Ignore anything which is not supposed to be present in this save game version
+			return; // Ignore anything which is not supposed to be present in this save game version
 
 		if (isLoading())
 			_loadStream->read(buf, size);
@@ -199,7 +217,7 @@ public:
 	 */
 	bool matchBytes(const char *magic, byte size, Version minVersion = 0, Version maxVersion = kLastVersion) {
 		if (_version < minVersion || _version > maxVersion)
-			return true;	// Ignore anything which is not supposed to be present in this save game version
+			return true; // Ignore anything which is not supposed to be present in this save game version
 
 		bool match;
 		if (isSaving()) {
@@ -220,7 +238,7 @@ public:
 	 */
 	void syncString(String &str, Version minVersion = 0, Version maxVersion = kLastVersion) {
 		if (_version < minVersion || _version > maxVersion)
-			return;	// Ignore anything which is not supposed to be present in this save game version
+			return; // Ignore anything which is not supposed to be present in this save game version
 
 		if (isLoading()) {
 			char c;
@@ -237,8 +255,18 @@ public:
 		}
 	}
 
+	template <typename T>
+	void syncArray(T *arr, size_t entries, void (*serializer)(Serializer &, T &), Version minVersion = 0, Version maxVersion = kLastVersion) {
+		if (_version < minVersion || _version > maxVersion)
+			return;
+
+		for (size_t i = 0; i < entries; ++i) {
+			serializer(*this, arr[i]);
+		}
+	}
 };
 
+#undef SYNC_PRIMITIVE
 #undef SYNC_AS
 
 

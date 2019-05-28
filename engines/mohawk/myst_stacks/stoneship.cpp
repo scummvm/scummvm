@@ -23,6 +23,7 @@
 #include "mohawk/cursors.h"
 #include "mohawk/myst.h"
 #include "mohawk/myst_areas.h"
+#include "mohawk/myst_card.h"
 #include "mohawk/myst_graphics.h"
 #include "mohawk/myst_state.h"
 #include "mohawk/myst_sound.h"
@@ -37,10 +38,14 @@ namespace Mohawk {
 namespace MystStacks {
 
 Stoneship::Stoneship(MohawkEngine_Myst *vm) :
-		MystScriptParser(vm), _state(vm->_gameState->_stoneship) {
+		MystScriptParser(vm, kStoneshipStack),
+		_state(vm->_gameState->_stoneship) {
 	setupOpcodes();
 
 	_tunnelRunning = false;
+	_tunnelNextTime = 0;
+	_tunnelAlarmSound = 0;
+	_tunnelImagesCount = 0;
 
 	_state.lightState = 0;
 	_state.generatorDepletionTime = 0;
@@ -61,6 +66,31 @@ Stoneship::Stoneship(MohawkEngine_Myst *vm) :
 		_state.generatorPowerAvailable = 2;
 	else
 		_state.generatorPowerAvailable = 0;
+
+	_batteryCharging = false;
+	_batteryDepleting = false;
+	_batteryNextTime = 0;
+	_batteryLastCharge = 0;
+	_batteryGaugeRunning = false;
+	_batteryGauge = nullptr;
+
+	_hologramTurnedOn = 0;
+	_hologramDisplay = nullptr;
+	_hologramSelection = nullptr;
+	_hologramDisplayPos = 0;
+
+	_telescopeRunning = false;
+	_telescopePosition = 0;
+	_telescopePanorama = 0;
+	_telescopeOldMouse = 0;
+	_telescopeLighthouseOff = 0;
+	_telescopeLighthouseOn = 0;
+	_telescopeLighthouseState = false;
+	_telescopeNexTime = 0;
+
+	_cloudOrbMovie = nullptr;
+	_cloudOrbSound = 0;
+	_cloudOrbStopSound = 0;
 }
 
 Stoneship::~Stoneship() {
@@ -251,9 +281,9 @@ uint16 Stoneship::getVar(uint16 var) {
 			return 0; // Closed
 		}
 	case 102: // Red page
-		return !(_globals.redPagesInBook & 8) && (_globals.heldPage != 10);
+		return !(_globals.redPagesInBook & 8) && (_globals.heldPage != kRedStoneshipPage);
 	case 103: // Blue page
-		return !(_globals.bluePagesInBook & 8) && (_globals.heldPage != 4);
+		return !(_globals.bluePagesInBook & 8) && (_globals.heldPage != kBlueStoneshipPage);
 	default:
 		return MystScriptParser::getVar(var);
 	}
@@ -305,18 +335,18 @@ void Stoneship::toggleVar(uint16 var) {
 		break;
 	case 102: // Red page
 		if (!(_globals.redPagesInBook & 8)) {
-			if (_globals.heldPage == 10)
-				_globals.heldPage = 0;
+			if (_globals.heldPage == kRedStoneshipPage)
+				_globals.heldPage = kNoPage;
 			else
-				_globals.heldPage = 10;
+				_globals.heldPage = kRedStoneshipPage;
 		}
 		break;
 	case 103: // Blue page
 		if (!(_globals.bluePagesInBook & 8)) {
-			if (_globals.heldPage == 4)
-				_globals.heldPage = 0;
+			if (_globals.heldPage == kBlueStoneshipPage)
+				_globals.heldPage = kNoPage;
 			else
-				_globals.heldPage = 4;
+				_globals.heldPage = kBlueStoneshipPage;
 		}
 		break;
 	default:
@@ -397,9 +427,9 @@ void Stoneship::o_pumpTurnOff(uint16 var, const ArgumentsArray &args) {
 			warning("Incorrect pump state");
 		}
 
-		for (uint i = 0; i < _vm->_resources.size(); i++) {
-			MystArea *resource = _vm->_resources[i];
-			if (resource->type == kMystAreaImageSwitch && resource->getImageSwitchVar() == buttonVar) {
+		for (uint i = 0; i < _vm->getCard()->_resources.size(); i++) {
+			MystArea *resource = _vm->getCard()->_resources[i];
+			if (resource->hasType(kMystAreaImageSwitch) && resource->getImageSwitchVar() == buttonVar) {
 				static_cast<MystAreaImageSwitch *>(resource)->drawConditionalDataToScreen(0, true);
 				break;
 			}
@@ -409,7 +439,7 @@ void Stoneship::o_pumpTurnOff(uint16 var, const ArgumentsArray &args) {
 
 void Stoneship::o_brotherDoorOpen(uint16 var, const ArgumentsArray &args) {
 	_brotherDoorOpen = 1;
-	_vm->redrawArea(19, 0);
+	_vm->getCard()->redrawArea(19, 0);
 	animatedUpdate(args, 5);
 }
 
@@ -425,7 +455,7 @@ void Stoneship::o_cabinBookMovie(uint16 var, const ArgumentsArray &args) {
 }
 
 void Stoneship::o_drawerOpenSirius(uint16 var, const ArgumentsArray &args) {
-	MystAreaImageSwitch *drawer = _vm->getViewResource<MystAreaImageSwitch>(args[0]);
+	MystAreaImageSwitch *drawer = _vm->getCard()->getResource<MystAreaImageSwitch>(args[0]);
 
 	if (drawer->getImageSwitchVar() == 35) {
 		drawer->drawConditionalDataToScreen(getVar(102), 0);
@@ -467,7 +497,7 @@ void Stoneship::o_telescopeMove(uint16 var, const ArgumentsArray &args) {
 }
 
 void Stoneship::o_telescopeStop(uint16 var, const ArgumentsArray &args) {
-	_vm->checkCursorHints();
+	_vm->refreshCursor();
 }
 
 void Stoneship::o_generatorStart(uint16 var, const ArgumentsArray &args) {
@@ -478,12 +508,12 @@ void Stoneship::o_generatorStart(uint16 var, const ArgumentsArray &args) {
 		_vm->_sound->playEffect(soundId);
 
 	if (_state.generatorDuration)
-		_state.generatorDuration -= _vm->_system->getMillis() - _state.generatorDepletionTime;
+		_state.generatorDuration -= _vm->getTotalPlayTime() - _state.generatorDepletionTime;
 
 	// Start charging the battery
 	_batteryDepleting = false;
 	_batteryCharging = true;
-	_batteryNextTime = _vm->_system->getMillis() + 1000;
+	_batteryNextTime = _vm->getTotalPlayTime() + 1000;
 
 	// Start handle movie
 	MystAreaVideo *movie = static_cast<MystAreaVideo *>(handle->getSubResource(0));
@@ -503,10 +533,10 @@ void Stoneship::o_generatorStop(uint16 var, const ArgumentsArray &args) {
 			_state.generatorDuration = 600000;
 
 		// Start depleting power
-		_state.generatorDepletionTime = _vm->_system->getMillis() + _state.generatorDuration;
+		_state.generatorDepletionTime = _vm->getTotalPlayTime() + _state.generatorDuration;
 		_state.generatorPowerAvailable = 1;
 		_batteryDepleting = true;
-		_batteryNextTime = _vm->_system->getMillis() + 60000;
+		_batteryNextTime = _vm->getTotalPlayTime() + 60000;
 	}
 
 	// Pause handle movie
@@ -520,7 +550,7 @@ void Stoneship::o_generatorStop(uint16 var, const ArgumentsArray &args) {
 }
 
 void Stoneship::chargeBattery_run() {
-	uint32 time = _vm->_system->getMillis();
+	uint32 time = _vm->getTotalPlayTime();
 
 	if (time > _batteryNextTime) {
 		_batteryNextTime = time + 1000;
@@ -529,7 +559,7 @@ void Stoneship::chargeBattery_run() {
 }
 
 uint16 Stoneship::batteryRemainingCharge() {
-	uint32 time = _vm->_system->getMillis();
+	uint32 time = _vm->getTotalPlayTime();
 
 	if (_state.generatorDepletionTime > time) {
 		return (_state.generatorDepletionTime - time) / 7500;
@@ -539,7 +569,7 @@ uint16 Stoneship::batteryRemainingCharge() {
 }
 
 void Stoneship::batteryDeplete_run() {
-	uint32 time = _vm->_system->getMillis();
+	uint32 time = _vm->getTotalPlayTime();
 
 	if (time > _batteryNextTime) {
 		if (_state.generatorDuration > 60000) {
@@ -560,7 +590,7 @@ void Stoneship::batteryDeplete_run() {
 }
 
 void Stoneship::o_drawerOpenAchenar(uint16 var, const ArgumentsArray &args) {
-	MystAreaImageSwitch *drawer = _vm->getViewResource<MystAreaImageSwitch>(args[0]);
+	MystAreaImageSwitch *drawer = _vm->getCard()->getResource<MystAreaImageSwitch>(args[0]);
 	drawer->drawConditionalDataToScreen(0, 0);
 	_vm->_gfx->runTransition(kTransitionTopToBottom, drawer->getRect(), 25, 5);
 }
@@ -615,7 +645,7 @@ void Stoneship::o_hologramSelectionMove(uint16 var, const ArgumentsArray &args) 
 }
 
 void Stoneship::o_hologramSelectionStop(uint16 var, const ArgumentsArray &args) {
-	_vm->checkCursorHints();
+	_vm->refreshCursor();
 }
 
 void Stoneship::o_compassButton(uint16 var, const ArgumentsArray &args) {
@@ -756,10 +786,10 @@ void Stoneship::o_drawerCloseOpened(uint16 var, const ArgumentsArray &args) {
 
 void Stoneship::drawerClose(uint16 drawer) {
 	_chestDrawersOpen = 0;
-	_vm->drawCardBackground();
-	_vm->drawResourceImages();
+	_vm->getCard()->drawBackground();
+	_vm->getCard()->drawResourceImages();
 
-	MystArea *res = _vm->_resources[drawer];
+	MystArea *res = _vm->getCard()->getResource<MystArea>(drawer);
 	_vm->_gfx->runTransition(kTransitionBottomToTop, res->getRect(), 25, 5);
 }
 
@@ -798,7 +828,7 @@ void Stoneship::o_tunnelEnter_init(uint16 var, const ArgumentsArray &args) {
 	o_tunnel_init(var, args);
 
 	_tunnelRunning = true;
-	_tunnelNextTime = _vm->_system->getMillis() + 1500;
+	_tunnelNextTime = _vm->getTotalPlayTime() + 1500;
 }
 
 void Stoneship::o_batteryGauge_init(uint16 var, const ArgumentsArray &args) {
@@ -815,8 +845,8 @@ void Stoneship::batteryGauge_run() {
 		_batteryLastCharge = batteryCharge;
 
 		// Redraw card
-		_vm->drawCardBackground();
-		_vm->drawResourceImages();
+		_vm->getCard()->drawBackground();
+		_vm->getCard()->drawResourceImages();
 		_vm->_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
 	}
 }
@@ -837,7 +867,7 @@ void Stoneship::o_tunnel_init(uint16 var, const ArgumentsArray &args) {
 }
 
 void Stoneship::tunnel_run() {
-	uint32 time = _vm->_system->getMillis();
+	uint32 time = _vm->getTotalPlayTime();
 
 	if (time > _tunnelNextTime) {
 		_tunnelNextTime = time + 1500;
@@ -874,11 +904,11 @@ void Stoneship::o_telescope_init(uint16 var, const ArgumentsArray &args) {
 
 	_telescopeRunning = true;
 	_telescopeLighthouseState = false;
-	_telescopeNexTime = _vm->_system->getMillis() + 1000;
+	_telescopeNexTime = _vm->getTotalPlayTime() + 1000;
 }
 
 void Stoneship::telescope_run() {
-	uint32 time = _vm->_system->getMillis();
+	uint32 time = _vm->getTotalPlayTime();
 
 	if (time > _telescopeNexTime) {
 
@@ -917,12 +947,12 @@ void Stoneship::o_achenarDrawers_init(uint16 var, const ArgumentsArray &args) {
 		uint16 count1 = args[0];
 		for (uint16 i = 0; i < count1; i++) {
 			debugC(kDebugScript, "Disable hotspot index %d", args[i + 1]);
-			_vm->setResourceEnabled(args[i + 1], false);
+			_vm->getCard()->setResourceEnabled(args[i + 1], false);
 		}
 		uint16 count2 = args[count1 + 1];
 		for (uint16 i = 0; i < count2; i++) {
 			debugC(kDebugScript, "Enable hotspot index %d", args[i + count1 + 2]);
-			_vm->setResourceEnabled(args[i + count1 + 2], true);
+			_vm->getCard()->setResourceEnabled(args[i + count1 + 2], true);
 		}
 	}
 }

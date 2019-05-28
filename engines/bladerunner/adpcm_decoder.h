@@ -41,7 +41,7 @@ public:
 		_predictor = predictor;
 	}
 
-	void decode(uint8 *in, size_t size, int16 *out);
+	void decode(uint8 *in, size_t size, int16 *out, bool forceLittleEndianOut);
 };
 
 } // End of namespace BladeRunner

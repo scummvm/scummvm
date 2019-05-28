@@ -28,7 +28,6 @@
 #include "common/stream.h"
 #include "common/str-array.h"
 #include "common/error.h"
-#include "common/ptr.h"
 
 namespace Common {
 
@@ -47,7 +46,7 @@ typedef SeekableReadStream InSaveFile;
  */
 class OutSaveFile: public WriteStream {
 protected:
-	ScopedPtr<WriteStream> _wrapped;
+	WriteStream *_wrapped;
 
 public:
 	OutSaveFile(WriteStream *w);

@@ -22,11 +22,28 @@ addons:
     - libfluidsynth-dev
     - libfreetype6-dev
     - zlib1g-dev
-
-before_install:
-  - "if [ ${TRAVIS_OS_NAME:-'linux'} = 'osx' ]; then brew update; fi"
-  - "if [ ${TRAVIS_OS_NAME:-'linux'} = 'osx' ]; then brew install sdl2 sdl2_net libvorbis flac mad theora faad2 libmpeg2; fi"
-
+    - libieee1284-3-dev
+    - libsndio-dev
+    - libunity-dev
+  homebrew:
+    packages:
+    - sdl2
+    - sdl2_net
+    - curl
+    - jpeg-turbo
+    - libmpeg2
+    - a52dec
+    - libogg
+    - libvorbis
+    - flac
+    - mad
+    - libpng
+    - theora
+    - faad2
+    - fluid-synth
+    - freetype
+    - zlib
+    - pandoc
 
 branches:
  only:
@@ -38,11 +55,12 @@ compiler:
 
 os:
   - linux
+  - osx
 
 dist: trusty
 
 script:
-  - ./configure --enable-all-engines
+  - ./configure --enable-all-engines --enable-opl2lpt
   - make -j 2
   - make test
   - make devtools

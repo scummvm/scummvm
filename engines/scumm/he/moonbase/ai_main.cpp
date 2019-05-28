@@ -491,6 +491,9 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 		case -1:
 			_aiState = STATE_LAUNCH;
 			break;
+
+		default:
+			break;
 		}
 
 		delete myTree;
@@ -778,8 +781,8 @@ int AI::masterControlProgram(const int paramCount, const int32 *params) {
 		}
 
 		if ((lastSource[currentPlayer] == launchAction[LAUNCH_SOURCE_HUB]) && (lastAngle[currentPlayer] == launchAction[LAUNCH_ANGLE]) && (lastPower[currentPlayer] == launchAction[LAUNCH_POWER])) {
-			randomAttenuation -= .2f;
-			randomAttenuation = MAX(randomAttenuation, 0.0f);
+			randomAttenuation -= .2F;
+			randomAttenuation = MAX(randomAttenuation, 0.0F);
 			debugC(DEBUG_MOONBASE_AI, "Attenuating...");
 		} else {
 			randomAttenuation = 1;
@@ -1643,7 +1646,7 @@ int AI::chooseTarget(int behavior) {
 		int returnBuilding = 0;
 
 		int savedTally = 0;
-		int savedDamage;
+		int savedDamage = 0;
 		float savedNumDefenses = 0;
 		int savedWorth = 0;
 
@@ -2756,9 +2759,10 @@ int AI::energyPoolSize(int pool) {
 
 	case 63:
 		return 60;
+	
+	default:
+		return 0;
 	}
-
-	return 0;
 }
 
 int AI::getMaxCollectors(int pool) {
@@ -2811,9 +2815,9 @@ int AI::simulateBuildingLaunch(int x, int y, int power, int angle, int numSteps,
 		numSteps = 1;
 
 	if (!sXSpeed && !sYSpeed) {
-		sZSpeed = (static_cast<int>(.70711 * power)) ;
-		sXSpeed = (static_cast<int>(cos(degToRad(angle)) * sZSpeed)) ;
-		sYSpeed = (static_cast<int>(sin(degToRad(angle)) * sZSpeed)) ;
+		sZSpeed = (static_cast<int>(.70711 * power));
+		sXSpeed = (static_cast<int>(cos(degToRad(angle)) * sZSpeed));
+		sYSpeed = (static_cast<int>(sin(degToRad(angle)) * sZSpeed));
 
 		sZSpeed *= SCALE_Z;
 
@@ -2959,9 +2963,9 @@ int AI::simulateWeaponLaunch(int x, int y, int power, int angle, int numSteps) {
 	if (!numSteps) numSteps = 1;
 
 	if (!sXSpeed && !sYSpeed) {
-		sZSpeed = (static_cast<int>(.70711 * power)) ;
-		sXSpeed = (static_cast<int>(cos(degToRad(angle)) * sZSpeed)) ;
-		sYSpeed = (static_cast<int>(sin(degToRad(angle)) * sZSpeed)) ;
+		sZSpeed = (static_cast<int>(.70711 * power));
+		sXSpeed = (static_cast<int>(cos(degToRad(angle)) * sZSpeed));
+		sYSpeed = (static_cast<int>(sin(degToRad(angle)) * sZSpeed));
 
 		sZSpeed *= SCALE_Z;
 

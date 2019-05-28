@@ -92,7 +92,7 @@ void Super2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 			} else if (color5 == color3 && color2 != color6) {
 				product2b = product1b = color5;
 			} else if (color5 == color3 && color2 == color6) {
-				register int r = 0;
+				int r = 0;
 
 				r += GetResult(color6, color5, color1, colorA1);
 				r += GetResult(color6, color5, color4, colorB1);
@@ -227,7 +227,7 @@ void SuperEagleTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uin
 						product2a = interpolate_1_1(color2, color3);
 					}
 				} else {
-					register int r = 0;
+					int r = 0;
 
 					r += GetResult(color6, color5, color1, colorA1);
 					r += GetResult(color6, color5, color4, colorB1);
@@ -282,8 +282,7 @@ void _2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 
 
 		for (int i = 0; i < width; ++i) {
 
-			register unsigned colorA, colorB;
-			unsigned colorC, colorD,
+			unsigned colorA, colorB, colorC, colorD,
 				colorE, colorF, colorG, colorH, colorI, colorJ, colorK, colorL, colorM, colorN, colorO;
 			unsigned product, product1, product2;
 
@@ -347,7 +346,7 @@ void _2xSaITemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 
 					product1 = colorA;
 					product2 = colorA;
 				} else {
-					register int r = 0;
+					int r = 0;
 
 					product1 = interpolate_1_1(colorA, colorC);
 					product = interpolate_1_1(colorA, colorB);

@@ -30,10 +30,12 @@
 namespace Mohawk {
 namespace MystStacks {
 
-Demo::Demo(MohawkEngine_Myst *vm) : Intro(vm) {
+Demo::Demo(MohawkEngine_Myst *vm) :
+		Intro(vm, kDemoStack),
+		_returnToMenuRunning(false),
+		_returnToMenuStep(0),
+		_returnToMenuNextTime(0) {
 	setupOpcodes();
-
-	_returnToMenuStep = 0;
 }
 
 Demo::~Demo() {
@@ -79,12 +81,12 @@ void Demo::o_fadeToBlack(uint16 var, const ArgumentsArray &args) {
 }
 
 void Demo::returnToMenu_run() {
-	uint32 time = _vm->_system->getMillis();
+	uint32 time = _vm->getTotalPlayTime();
 
 	if (time < _returnToMenuNextTime)
 		return;
 
-	switch (_returnToMenuStep){
+	switch (_returnToMenuStep) {
 	case 0:
 		_vm->_gfx->fadeToBlack();
 		_vm->changeToCard(2003, kNoTransition);
@@ -107,7 +109,7 @@ void Demo::returnToMenu_run() {
 
 void Demo::o_returnToMenu_init(uint16 var, const ArgumentsArray &args) {
 	// Used on Card 2001, 2002 and 2003
-	_returnToMenuNextTime = _vm->_system->getMillis() + 5000;
+	_returnToMenuNextTime = _vm->getTotalPlayTime() + 5000;
 	_returnToMenuRunning = true;
 }
 

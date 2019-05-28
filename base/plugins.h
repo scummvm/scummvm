@@ -28,6 +28,10 @@
 #include "common/str.h"
 #include "backends/plugins/elf/version.h"
 
+#define INCLUDED_FROM_BASE_PLUGINS_H
+#include "base/internal_plugins.h"
+#undef INCLUDED_FROM_BASE_PLUGINS_H
+
 
 /**
  * @page pagePlugins An overview of the ScummVM plugin system
@@ -72,19 +76,6 @@ extern int pluginTypeVersions[PLUGIN_TYPE_MAX];
 
 
 // Plugin linking
-
-#define STATIC_PLUGIN 1
-#define DYNAMIC_PLUGIN 2
-
-#define PLUGIN_ENABLED_STATIC(ID) \
-	(ENABLE_##ID && !PLUGIN_ENABLED_DYNAMIC(ID))
-
-#ifdef DYNAMIC_MODULES
-	#define PLUGIN_ENABLED_DYNAMIC(ID) \
-		(ENABLE_##ID && (ENABLE_##ID == DYNAMIC_PLUGIN))
-#else
-	#define PLUGIN_ENABLED_DYNAMIC(ID) 0
-#endif
 
 // see comments in backends/plugins/elf/elf-provider.cpp
 #if defined(USE_ELF_LOADER) && defined(ELF_LOADER_CXA_ATEXIT)
@@ -179,9 +170,9 @@ public:
 			//unloadPlugin();
 	}
 
-//	virtual bool isLoaded() const = 0;	// TODO
-	virtual bool loadPlugin() = 0;	// TODO: Rename to load() ?
-	virtual void unloadPlugin() = 0;	// TODO: Rename to unload() ?
+//	virtual bool isLoaded() const = 0; // TODO
+	virtual bool loadPlugin() = 0;     // TODO: Rename to load() ?
+	virtual void unloadPlugin() = 0;   // TODO: Rename to unload() ?
 
 	/**
 	 * The following functions query information from the plugin object once
@@ -189,6 +180,15 @@ public:
 	 **/
 	PluginType getType() const;
 	const char *getName() const;
+
+	template <class T>
+	T &get() const {
+		T *pluginObject = dynamic_cast<T *>(_pluginObject);
+		if (!pluginObject) {
+			error("Invalid cast of plugin %s", getName());
+		}
+		return *pluginObject;
+	}
 
 	/**
 	 * The getFileName() function gets the name of the plugin file for those
@@ -200,25 +200,6 @@ public:
 
 /** List of Plugin instances. */
 typedef Common::Array<Plugin *> PluginList;
-
-/**
- * Convenience template to make it easier defining normal Plugin
- * subclasses. Namely, the PluginSubclass will manage PluginObjects
- * of a type specified via the PO_t template parameter.
- */
-template<class PO_t>
-class PluginSubclass : public Plugin {
-public:
-	PO_t &operator*() const {
-		return *(PO_t *)_pluginObject;
-	}
-
-	PO_t *operator->() const {
-		return (PO_t *)_pluginObject;
-	}
-
-	typedef Common::Array<PluginSubclass *> List;
-};
 
 /**
  * Abstract base class for Plugin factories. Subclasses of this
@@ -339,6 +320,7 @@ public:
 
 	// Functions used only by the cached PluginManager
 	virtual void loadAllPlugins();
+	virtual void loadAllPluginsOfType(PluginType type);
 	void unloadAllPlugins();
 
 	void unloadPluginsExcept(PluginType type, const Plugin *plugin, bool deletePlugin = true);
@@ -366,7 +348,8 @@ public:
 	virtual bool loadPluginFromGameId(const Common::String &gameId);
 	virtual void updateConfigWithFileName(const Common::String &gameId);
 
-	virtual void loadAllPlugins() {} 	// we don't allow this
+	virtual void loadAllPlugins() {} 	// we don't allow these
+	virtual void loadAllPluginsOfType(PluginType type) {}
 };
 
 #endif

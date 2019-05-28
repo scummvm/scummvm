@@ -6,6 +6,20 @@
 		<description>Most recent changes with links to updates.</description>
 		<language>en</language>
 		<item>
+			<title>Version 2.0.0</title>
+			<sparkle:releaseNotesLink>
+				https://scummvm.org/frs/scummvm/2.0.0/ReleaseNotes.html
+			</sparkle:releaseNotesLink>
+			<pubDate>Sun, 17 Dec 2017 22:00:00 +0000</pubDate>
+			<enclosure url="https://www.scummvm.org/frs/scummvm/2.0.0/scummvm-2.0.0-macosx.dmg"
+						sparkle:version="2.0.0" length="19691828" type="application/octet-stream"
+						sparkle:dsaSignature="MC4CFQCWN49tZk/Rb8tXMbD0KKWzHxaaBgIVAJ2VbumjJ33xUXDzEM0C00OPI4a3" />
+			<enclosure sparkle:os="windows"
+						url="https://www.scummvm.org/frs/scummvm/2.0.0/scummvm-2.0.0-win32.exe"
+						sparkle:version="2.0.0" length="11985315" type="application/octet-stream"
+						sparkle:dsaSignature="MCwCFFP9D3bL02NxmISK2FWPnOo6iy0dAhRP6DJ94YN67pBxbpge4GdECZj4Yw==" />
+		</item>
+		<item>
 			<title>Version 1.9.0.2 (Win32-only)</title>
 			<description>
 				<![CDATA[

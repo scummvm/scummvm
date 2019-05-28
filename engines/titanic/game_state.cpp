@@ -31,16 +31,16 @@ namespace Titanic {
 
 bool CGameStateMovieList::empty() {
 	for (CGameStateMovieList::iterator i = begin(); i != end(); ) {
-		CMovieListItem *movieItem = *i;
+		CMovie *movie = *i;
 
-		if (movieItem->_item->isActive()) {
+		if (movie->isActive()) {
 			++i;
 		} else {
 			i = erase(i);
 		}
 	}
 
-	return List<CMovieListItem>::empty();
+	return Common::List<CMovie *>::empty();
 }
 
 /*------------------------------------------------------------------------*/
@@ -163,7 +163,7 @@ void CGameState::checkForViewChange() {
 }
 
 void CGameState::addMovie(CMovie *movie) {
-	_movieList.push_back(new CMovieListItem(movie));
+	_movieList.push_back(movie);
 	setMode(GSMODE_CUTSCENE);
 }
 

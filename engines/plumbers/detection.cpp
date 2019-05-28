@@ -48,7 +48,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("GAME.BIN", 0, 41622),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -77,7 +77,7 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Plumbers Don't Wear Ties' Engine";
+		return "Plumbers Don't Wear Ties";
 	}
 
 	virtual const char *getOriginalCopyright() const {

@@ -17,7 +17,7 @@
 #
 # The package is now in the "portdist" folder.
 #
-# See http://wiki.scummvm.org/index.php/Compiling_ScummVM/WebOS for
+# See https://wiki.scummvm.org/index.php/Compiling_ScummVM/WebOS for
 # more detailed build instructions.
 #
 #

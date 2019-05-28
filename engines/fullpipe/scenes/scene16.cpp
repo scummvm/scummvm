@@ -86,7 +86,7 @@ void scene16_initScene(Scene *sc) {
 
 		StaticANIObject *ani = new StaticANIObject(g_fp->accessScene(SC_COMMON)->getStaticANIObject1ById(ANI_BEARDED_CMN, -1));
 		ani->_movement = 0;
-		ani->_statics = (Statics *)ani->_staticsList[0];
+		ani->_statics = ani->_staticsList[0];
 		sc->addStaticANIObject(ani, 1);
 	}
 
@@ -262,7 +262,7 @@ void sceneHandler16_drink() {
 
 							ex = new ExCommand(ANI_MAN, 34, 384, 0, 0, 0, 1, 0, 0, 0);
 							ex->_excFlags |= 3u;
-							ex->_field_14 = 384;
+							ex->_z = 384;
 							ex->_messageNum = 0;
 
 							mq->insertExCommandAt(2, ex);
@@ -275,7 +275,7 @@ void sceneHandler16_drink() {
 
 							ex = new ExCommand(ANI_MAN, 34, 256, 0, 0, 0, 1, 0, 0, 0);
 							ex->_excFlags |= 3u;
-							ex->_field_14 = 256;
+							ex->_z = 256;
 							ex->_messageNum = 0;
 
 							mq->addExCommandToEnd(ex);

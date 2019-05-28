@@ -234,4 +234,20 @@ class UtilTestSuite : public CxxTest::TestSuite {
 			 }
 		}
 	}
+	void test_is_punct() {
+		// isPunct should return true if the input is a punctation ascii char.
+		for (int c = 0; c < 255; c++) {
+			 if (c >= 33 && c <= 47) {
+				 TS_ASSERT_EQUALS(Common::isPunct(c), 1);
+			 } else if (c >= 58 && c <= 64) {
+				 TS_ASSERT_EQUALS(Common::isPunct(c), 1);
+			 } else if (c >= 91 && c <= 96) {
+				 TS_ASSERT_EQUALS(Common::isPunct(c), 1);
+			 } else if (c >= 123 && c <= 126) {
+				 TS_ASSERT_EQUALS(Common::isPunct(c), 1);
+			 } else {
+				 TS_ASSERT_EQUALS(Common::isPunct(c), 0);
+			 }
+		}
+	}
 };

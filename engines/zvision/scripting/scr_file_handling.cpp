@@ -95,6 +95,23 @@ void ScriptManager::parsePuzzle(Puzzle *puzzle, Common::SeekableReadStream &stre
 			// Fixes bug #6803.
 			if (_engine->getGameId() == GID_NEMESIS && puzzle->key == 19398)
 				puzzle->resultActions.push_back(new ActionAssign(_engine, 11, "19397, 0"));
+
+			// WORKAROUND for bug #10604. If the player is looking at the
+			// cigar box when Antharia Jack returns to examine the lamp,
+			// pp1f_video_flag remains 1. Later, when the player returns
+			// to pick up the lantern, the game will try to play the
+			// cutscene again, but since that script has already been
+			// run the player gets stuck in a dark room instead. We have
+			// to add the assignment action to the front, or it won't be
+			// reached because changing the location terminates the script.
+			//
+			// Fixing it this way only keeps the bug from happening. It
+			// will not repair old savegames.
+			//
+			// Note that the bug only affects the DVD version. The CD
+			// version doesn't have a separate room for the cutscene.
+			else if (_engine->getGameId() == GID_GRANDINQUISITOR && (_engine->getFeatures() & GF_DVD) && puzzle->key == 10836)
+				puzzle->resultActions.push_front(new ActionAssign(_engine, 11, "10803, 0"));
 		} else if (line.matchString("flags {", true)) {
 			setStateFlag(puzzle->key, parseFlags(stream));
 		}
@@ -137,6 +154,22 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 		entry.criteriaOperator = Puzzle::NOT_EQUAL_TO;
 		entry.argumentIsAKey = false;
 		entry.argument = 1;
+
+		criteriaList.back().push_back(entry);
+	}
+
+	// WORKAROUND for a script bug in Zork: Grand Inquisitor, room me2j
+	// (Closing the Time Tunnels). When the time tunnel is open the game
+	// shows a close-up of only the tunnel, instead of showing the entire
+	// booth. However, the scripts that draw the lever in its correct
+	// state do not test this flag, causing it to be drawn when it should
+	// not be. This fixes bug #6770.
+	if (_engine->getGameId() == GID_GRANDINQUISITOR && key == 9536) {
+		Puzzle::CriteriaEntry entry;
+		entry.key = 9404; // me2j_time_tunnel_open
+		entry.criteriaOperator = Puzzle::EQUAL_TO;
+		entry.argumentIsAKey = false;
+		entry.argument = 0;
 
 		criteriaList.back().push_back(entry);
 	}
@@ -187,6 +220,28 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 		} else {
 			sscanf(token.c_str(), "%u", &(entry.argument));
 			entry.argumentIsAKey = false;
+		}
+
+		// WORKAROUND for a script bug in Zork: Grand Inquisitor. If the
+		// fire timer is killed (e.g. by the inventory screen) with less
+		// than 10 units left, it will get stuck and never time out. We
+		// work around that by changing the condition from "greater than
+		// 10" to "greater than 0 but not 2 (the magic time-out value)".
+		//
+		// I have a sneaking suspicion that there may be other timer
+		// glitches like this, but this one makes the game unplayable
+		// and is easy to trigger.
+		if (_engine->getGameId() == GID_GRANDINQUISITOR && key == 17162) {
+			Puzzle::CriteriaEntry entry0;
+			entry0.key = 17161; // pe_fire
+			entry0.criteriaOperator = Puzzle::GREATER_THAN;
+			entry0.argumentIsAKey = false;
+			entry0.argument = 0;
+
+			criteriaList.back().push_back(entry0);
+
+			entry.criteriaOperator = Puzzle::NOT_EQUAL_TO;
+			entry.argument = 2;
 		}
 
 		criteriaList.back().push_back(entry);

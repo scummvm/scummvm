@@ -36,7 +36,7 @@ class MohawkEngine_Riven;
  */
 class RivenInventory {
 public:
-	RivenInventory(MohawkEngine_Riven *vm);
+	explicit RivenInventory(MohawkEngine_Riven *vm);
 	virtual ~RivenInventory();
 
 	/** Handle a click event in the inventory area */

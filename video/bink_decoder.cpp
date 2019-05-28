@@ -286,28 +286,31 @@ BinkDecoder::BinkVideoTrack::BinkVideoTrack(uint32 width, uint32 height, const G
 	_surface.h = height;
 	_surface.w = width;
 
-	// Give the planes a bit extra space
-	width  = _surface.w + 32;
-	height = _surface.h + 32;
+	// Compute the video dimensions in blocks
+	_yBlockWidth   = (width  +  7) >> 3;
+	_yBlockHeight  = (height +  7) >> 3;
+	_uvBlockWidth  = (width  + 15) >> 4;
+	_uvBlockHeight = (height + 15) >> 4;
 
-	_curPlanes[0] = new byte[ width       *  height      ]; // Y
-	_curPlanes[1] = new byte[(width >> 1) * (height >> 1)]; // U, 1/4 resolution
-	_curPlanes[2] = new byte[(width >> 1) * (height >> 1)]; // V, 1/4 resolution
-	_curPlanes[3] = new byte[ width       *  height      ]; // A
-	_oldPlanes[0] = new byte[ width       *  height      ]; // Y
-	_oldPlanes[1] = new byte[(width >> 1) * (height >> 1)]; // U, 1/4 resolution
-	_oldPlanes[2] = new byte[(width >> 1) * (height >> 1)]; // V, 1/4 resolution
-	_oldPlanes[3] = new byte[ width       *  height      ]; // A
+	// The planes are sized according to the number of blocks
+	_curPlanes[0] = new byte[_yBlockWidth  * 8 * _yBlockHeight  * 8]; // Y
+	_curPlanes[1] = new byte[_uvBlockWidth * 8 * _uvBlockHeight * 8]; // U, 1/4 resolution
+	_curPlanes[2] = new byte[_uvBlockWidth * 8 * _uvBlockHeight * 8]; // V, 1/4 resolution
+	_curPlanes[3] = new byte[_yBlockWidth  * 8 * _yBlockHeight  * 8]; // A
+	_oldPlanes[0] = new byte[_yBlockWidth  * 8 * _yBlockHeight  * 8]; // Y
+	_oldPlanes[1] = new byte[_uvBlockWidth * 8 * _uvBlockHeight * 8]; // U, 1/4 resolution
+	_oldPlanes[2] = new byte[_uvBlockWidth * 8 * _uvBlockHeight * 8]; // V, 1/4 resolution
+	_oldPlanes[3] = new byte[_yBlockWidth  * 8 * _yBlockHeight  * 8]; // A
 
-	// Initialize the video with solid black
-	memset(_curPlanes[0],   0,  width       *  height      );
-	memset(_curPlanes[1],   0, (width >> 1) * (height >> 1));
-	memset(_curPlanes[2],   0, (width >> 1) * (height >> 1));
-	memset(_curPlanes[3], 255,  width       *  height      );
-	memset(_oldPlanes[0],   0,  width       *  height      );
-	memset(_oldPlanes[1],   0, (width >> 1) * (height >> 1));
-	memset(_oldPlanes[2],   0, (width >> 1) * (height >> 1));
-	memset(_oldPlanes[3], 255,  width       *  height      );
+	// Initialize the video with solid green
+	memset(_curPlanes[0],   0, _yBlockWidth  * 8 * _yBlockHeight  * 8);
+	memset(_curPlanes[1],   0, _uvBlockWidth * 8 * _uvBlockHeight * 8);
+	memset(_curPlanes[2],   0, _uvBlockWidth * 8 * _uvBlockHeight * 8);
+	memset(_curPlanes[3], 255, _yBlockWidth  * 8 * _yBlockHeight  * 8);
+	memset(_oldPlanes[0],   0, _yBlockWidth  * 8 * _yBlockHeight  * 8);
+	memset(_oldPlanes[1],   0, _uvBlockWidth * 8 * _uvBlockHeight * 8);
+	memset(_oldPlanes[2],   0, _uvBlockWidth * 8 * _uvBlockHeight * 8);
+	memset(_oldPlanes[3], 255, _yBlockWidth  * 8 * _yBlockHeight  * 8);
 
 	initBundles();
 	initHuffman();
@@ -357,7 +360,7 @@ void BinkDecoder::BinkVideoTrack::decodePacket(VideoFrame &frame) {
 	// to allow for odd-sized videos.
 	assert(_curPlanes[0] && _curPlanes[1] && _curPlanes[2]);
 	YUVToRGBMan.convert420(&_surface, Graphics::YUVToRGBManager::kScaleITU, _curPlanes[0], _curPlanes[1], _curPlanes[2],
-			_surfaceWidth, _surfaceHeight, _surfaceWidth, _surfaceWidth >> 1);
+			_surfaceWidth, _surfaceHeight, _yBlockWidth * 8, _uvBlockWidth * 8);
 
 	// And swap the planes with the reference planes
 	for (int i = 0; i < 4; i++)
@@ -367,10 +370,10 @@ void BinkDecoder::BinkVideoTrack::decodePacket(VideoFrame &frame) {
 }
 
 void BinkDecoder::BinkVideoTrack::decodePlane(VideoFrame &video, int planeIdx, bool isChroma) {
-	uint32 blockWidth  = isChroma ? ((_surface.w  + 15) >> 4) : ((_surface.w  + 7) >> 3);
-	uint32 blockHeight = isChroma ? ((_surface.h + 15) >> 4) : ((_surface.h + 7) >> 3);
-	uint32 width       = isChroma ?  (_surface.w        >> 1) :   _surface.w;
-	uint32 height      = isChroma ?  (_surface.h       >> 1) :   _surface.h;
+	uint32 blockWidth  = isChroma ? _uvBlockWidth  : _yBlockWidth;
+	uint32 blockHeight = isChroma ? _uvBlockHeight : _yBlockHeight;
+	uint32 width       = blockWidth  * 8;
+	uint32 height      = blockHeight * 8;
 
 	DecodeContext ctx;
 
@@ -556,7 +559,7 @@ void BinkDecoder::BinkVideoTrack::mergeHuffmanSymbols(VideoFrame &video, byte *d
 }
 
 void BinkDecoder::BinkVideoTrack::initBundles() {
-	uint32 bw     = (_surface.w  + 7) >> 3;
+	uint32 bw     = (_surface.w + 7) >> 3;
 	uint32 bh     = (_surface.h + 7) >> 3;
 	uint32 blocks = bw * bh;
 
@@ -591,7 +594,7 @@ void BinkDecoder::BinkVideoTrack::deinitBundles() {
 
 void BinkDecoder::BinkVideoTrack::initHuffman() {
 	for (int i = 0; i < 16; i++)
-		_huffman[i] = new Common::Huffman(binkHuffmanLengths[i][15], 16, binkHuffmanCodes[i], binkHuffmanLengths[i]);
+		_huffman[i] = new Common::Huffman<Common::BitStream32LELSB>(binkHuffmanLengths[i][15], 16, binkHuffmanCodes[i], binkHuffmanLengths[i]);
 }
 
 byte BinkDecoder::BinkVideoTrack::getHuffmanSymbol(VideoFrame &video, Huffman &huffman) {
@@ -676,8 +679,8 @@ void BinkDecoder::BinkVideoTrack::blockScaledRun(DecodeContext &ctx) {
 }
 
 void BinkDecoder::BinkVideoTrack::blockScaledIntra(DecodeContext &ctx) {
-	int16 block[64];
-	memset(block, 0, 64 * sizeof(int16));
+	int32 block[64];
+	memset(block, 0, 64 * sizeof(int32));
 
 	block[0] = getBundleValue(kSourceIntraDC);
 
@@ -685,7 +688,7 @@ void BinkDecoder::BinkVideoTrack::blockScaledIntra(DecodeContext &ctx) {
 
 	IDCT(block);
 
-	int16 *src   = block;
+	int32 *src   = block;
 	byte  *dest1 = ctx.dest;
 	byte  *dest2 = ctx.dest + ctx.pitch;
 	for (int j = 0; j < 8; j++, dest1 += (ctx.pitch << 1) - 16, dest2 += (ctx.pitch << 1) - 16, src += 8) {
@@ -821,8 +824,8 @@ void BinkDecoder::BinkVideoTrack::blockResidue(DecodeContext &ctx) {
 }
 
 void BinkDecoder::BinkVideoTrack::blockIntra(DecodeContext &ctx) {
-	int16 block[64];
-	memset(block, 0, 64 * sizeof(int16));
+	int32 block[64];
+	memset(block, 0, 64 * sizeof(int32));
 
 	block[0] = getBundleValue(kSourceIntraDC);
 
@@ -842,8 +845,8 @@ void BinkDecoder::BinkVideoTrack::blockFill(DecodeContext &ctx) {
 void BinkDecoder::BinkVideoTrack::blockInter(DecodeContext &ctx) {
 	blockMotion(ctx);
 
-	int16 block[64];
-	memset(block, 0, 64 * sizeof(int16));
+	int32 block[64];
+	memset(block, 0, 64 * sizeof(int32));
 
 	block[0] = getBundleValue(kSourceInterDC);
 
@@ -1078,7 +1081,7 @@ void BinkDecoder::BinkVideoTrack::readDCS(VideoFrame &video, Bundle &bundle, int
 }
 
 /** Reads 8x8 block of DCT coefficients. */
-void BinkDecoder::BinkVideoTrack::readDCTCoeffs(VideoFrame &video, int16 *block, bool isIntra) {
+void BinkDecoder::BinkVideoTrack::readDCTCoeffs(VideoFrame &video, int32 *block, bool isIntra) {
 	int coefCount = 0;
 	int coefIdx[64];
 
@@ -1166,7 +1169,7 @@ void BinkDecoder::BinkVideoTrack::readDCTCoeffs(VideoFrame &video, int16 *block,
 	}
 
 	uint8 quantIdx = video.bits->getBits(4);
-	const uint32 *quant = isIntra ? binkIntraQuant[quantIdx] : binkInterQuant[quantIdx];
+	const int32 *quant = isIntra ? binkIntraQuant[quantIdx] : binkInterQuant[quantIdx];
 	block[0] = (block[0] * quant[0]) >> 11;
 
 	for (int i = 0; i < coefCount; i++) {
@@ -1305,7 +1308,7 @@ void BinkDecoder::BinkVideoTrack::readResidue(VideoFrame &video, int16 *block, i
 #define MUNGE_ROW(x) (((x) + 0x7F)>>8)
 #define IDCT_ROW(dest,src) IDCT_TRANSFORM(dest,0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7,MUNGE_ROW,src)
 
-static inline void IDCTCol(int16 *dest, const int16 *src) {
+static inline void IDCTCol(int32 *dest, const int32 *src) {
 	if ((src[8] | src[16] | src[24] | src[32] | src[40] | src[48] | src[56]) == 0) {
 		dest[ 0] =
 		dest[ 8] =
@@ -1320,9 +1323,9 @@ static inline void IDCTCol(int16 *dest, const int16 *src) {
 	}
 }
 
-void BinkDecoder::BinkVideoTrack::IDCT(int16 *block) {
+void BinkDecoder::BinkVideoTrack::IDCT(int32 *block) {
 	int i;
-	int16 temp[64];
+	int32 temp[64];
 
 	for (i = 0; i < 8; i++)
 		IDCTCol(&temp[i], &block[i]);
@@ -1331,7 +1334,7 @@ void BinkDecoder::BinkVideoTrack::IDCT(int16 *block) {
 	}
 }
 
-void BinkDecoder::BinkVideoTrack::IDCTAdd(DecodeContext &ctx, int16 *block) {
+void BinkDecoder::BinkVideoTrack::IDCTAdd(DecodeContext &ctx, int32 *block) {
 	int i, j;
 
 	IDCT(block);
@@ -1341,9 +1344,9 @@ void BinkDecoder::BinkVideoTrack::IDCTAdd(DecodeContext &ctx, int16 *block) {
 			 dest[j] += block[j];
 }
 
-void BinkDecoder::BinkVideoTrack::IDCTPut(DecodeContext &ctx, int16 *block) {
+void BinkDecoder::BinkVideoTrack::IDCTPut(DecodeContext &ctx, int32 *block) {
 	int i;
-	int16 temp[64];
+	int32 temp[64];
 	for (i = 0; i < 8; i++)
 		IDCTCol(&temp[i], &block[i]);
 	for (i = 0; i < 8; i++) {

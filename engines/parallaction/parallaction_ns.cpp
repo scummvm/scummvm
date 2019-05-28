@@ -46,17 +46,12 @@ class LocationName {
 
 	bool _hasCharacter;
 	bool _hasSlide;
-	char *_buf;
+	Common::String _buf;
 
 public:
 	LocationName() {
-		_buf = 0;
 		_hasSlide = false;
 		_hasCharacter = false;
-	}
-
-	~LocationName() {
-		free(_buf);
 	}
 
 	void bind(const char*);
@@ -82,7 +77,7 @@ public:
 	}
 
 	const char *c_str() const {
-		return _buf;
+		return _buf.c_str();
 	}
 };
 
@@ -106,15 +101,12 @@ public:
 	is commented out, and would definitely crash the current implementation.
 */
 void LocationName::bind(const char *s) {
-
-	free(_buf);
-
-	_buf = strdup(s);
+	_buf = s;
 	_hasSlide = false;
 	_hasCharacter = false;
 
 	Common::StringArray list;
-	char *tok = strtok(_buf, ".");
+	char *tok = strtok(_buf.begin(), ".");
 	while (tok) {
 		list.push_back(tok);
 		tok = strtok(NULL, ".");
@@ -139,8 +131,7 @@ void LocationName::bind(const char *s) {
 	}
 
 	_location = list[0];
-
-	strcpy(_buf, s);		// kept as reference
+	_buf = s;		// kept as reference
 }
 
 Parallaction_ns::Parallaction_ns(OSystem* syst, const PARALLACTIONGameDescription *gameDesc) : Parallaction(syst, gameDesc),
@@ -454,8 +445,8 @@ void Parallaction_ns::parseLocation(const char *filename) {
 	// this loads animation scripts
 	AnimationList::iterator it = _location._animations.begin();
 	for ( ; it != _location._animations.end(); ++it) {
-		if ((*it)->_scriptName) {
-			loadProgram(*it, (*it)->_scriptName);
+		if (!(*it)->_scriptName.empty()) {
+			loadProgram(*it, (*it)->_scriptName.c_str());
 		}
 	}
 

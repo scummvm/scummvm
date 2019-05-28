@@ -465,7 +465,7 @@ bool CGameObject::isSoundActive(int handle) const {
 	return false;
 }
 
-void CGameObject::playGlobalSound(const CString &resName, VolumeMode mode, bool initialMute, bool repeated,
+void CGameObject::playAmbientSound(const CString &resName, VolumeMode mode, bool initialMute, bool repeated,
 		int handleIndex, Audio::Mixer::SoundType soundType) {
 	if (handleIndex < 0 || handleIndex > 3)
 		return;
@@ -524,7 +524,7 @@ void CGameObject::setSoundVolume(int handle, uint percent, uint seconds) {
 	}
 }
 
-void CGameObject::stopGlobalSound(bool transition, int handleIndex) {
+void CGameObject::stopAmbientSound(bool transition, int handleIndex) {
 	CGameManager *gameManager = getGameManager();
 	if (!gameManager)
 		return;
@@ -550,7 +550,7 @@ void CGameObject::stopGlobalSound(bool transition, int handleIndex) {
 	}
 }
 
-void CGameObject::setGlobalSoundVolume(VolumeMode mode, uint seconds, int handleIndex) {
+void CGameObject::setAmbientSoundVolume(VolumeMode mode, uint seconds, int handleIndex) {
 	CGameManager *gameManager = getGameManager();
 	if (!gameManager)
 		return;
@@ -559,7 +559,7 @@ void CGameObject::setGlobalSoundVolume(VolumeMode mode, uint seconds, int handle
 	if (handleIndex == -1) {
 		// Iterate through calling the method for each handle
 		for (int idx = 0; idx < 3; ++idx)
-			setGlobalSoundVolume(mode, seconds, idx);
+			setAmbientSoundVolume(mode, seconds, idx);
 	} else if (handleIndex >= 0 && handleIndex <= 3 && _soundHandles[handleIndex] != -1) {
 		uint newVolume = sound._soundManager.getModeVolume(mode);
 		sound.setVolume(_soundHandles[handleIndex], newVolume, seconds);
@@ -697,6 +697,7 @@ void CGameObject::playClip(uint startFrame, uint endFrame) {
 	CRoomItem *room = gameManager->getRoom();
 
 	gameManager->playClip(clip, room, room);
+	delete clip;
 }
 
 void CGameObject::playRandomClip(const char *const *names, uint flags) {
@@ -845,24 +846,34 @@ int CGameObject::addTimer(uint firstDuration, uint repeatDuration) {
 	CTimeEventInfo *timer = new CTimeEventInfo(getTicksCount(), repeatDuration != 0,
 		firstDuration, repeatDuration, this, 0, CString());
 
-	getGameManager()->addTimer(timer);
+	CGameManager *gameMan = getGameManager();
+	if (gameMan)
+		gameMan->addTimer(timer);
 	return timer->_id;
 }
 
 void CGameObject::stopTimer(int id) {
-	getGameManager()->stopTimer(id);
+	CGameManager *gameMan = getGameManager();
+	if (gameMan)
+		gameMan->stopTimer(id);
 }
 
 int CGameObject::startAnimTimer(const CString &action, uint firstDuration, uint repeatDuration) {
-	CTimeEventInfo *timer = new CTimeEventInfo(getTicksCount(), repeatDuration > 0,
-		firstDuration, repeatDuration, this, 0, action);
-	getGameManager()->addTimer(timer);
+	CGameManager *gameMan = getGameManager();
+	if (gameMan) {
+		CTimeEventInfo *timer = new CTimeEventInfo(getTicksCount(), repeatDuration > 0,
+			firstDuration, repeatDuration, this, 0, action);
+		gameMan->addTimer(timer);
+		return timer->_id;
+	}
 
-	return timer->_id;
+	return -1;
 }
 
 void CGameObject::stopAnimTimer(int id) {
-	getGameManager()->stopTimer(id);
+	CGameManager *gameMan = getGameManager();
+	if (gameMan)
+		gameMan->stopTimer(id);
 }
 
 void CGameObject::gotoView(const CString &viewName, const CString &clipName) {
@@ -1206,28 +1217,11 @@ void CGameObject::loadSurface() {
 }
 
 bool CGameObject::changeView(const CString &viewName) {
-	return changeView(viewName, "");
+	return getRoot()->changeView(viewName, "");
 }
 
 bool CGameObject::changeView(const CString &viewName, const CString &clipName) {
-	CViewItem *newView = parseView(viewName);
-	CGameManager *gameManager = getGameManager();
-	CViewItem *oldView = gameManager->getView();
-
-	if (!oldView || !newView)
-		return false;
-
-	CMovieClip *clip = nullptr;
-	if (!clipName.empty()) {
-		clip = oldView->findNode()->findRoom()->findClip(clipName);
-	} else {
-		CLinkItem *link = oldView->findLink(newView);
-		if (link)
-			clip = link->getClip();
-	}
-
-	gameManager->_gameState.changeView(newView, clip);
-	return true;
+	return getRoot()->changeView(viewName, clipName);
 }
 
 void CGameObject::dragMove(const Point &pt) {

@@ -827,9 +827,13 @@ void SequenceDelayList::loadFromStream(Common::ReadStream *stream) {
 
 // The following classes hold the NPC schedules
 
-CharacterScheduleEntry::CharacterScheduleEntry(Action theAction, ...) {
+// The following function should really take a Action parameter, but the
+// behaviour is undefined if the last argument of a variadic function
+// undergoes default argument promotion, which might be the case for enum
+// types.
+CharacterScheduleEntry::CharacterScheduleEntry(int theAction, ...) {
 	_parent = NULL;
-	_action = theAction;
+	_action = (Action)theAction;
 
 	va_list u_Arg;
 	va_start(u_Arg, theAction);
@@ -870,8 +874,10 @@ uint16 CharacterScheduleEntry::param(int index) {
 	return _params[index];
 }
 
-void CharacterScheduleEntry::setDetails(Action theAction, ...) {
-	_action = theAction;
+// The parameter to this function should really be an Action.
+// But... (see comment above for CharacterScheduleEntry(int, ...))
+void CharacterScheduleEntry::setDetails(int theAction, ...) {
+	_action = (Action)theAction;
 	_numParams = actionNumParams[_action];
 
 	va_list list;

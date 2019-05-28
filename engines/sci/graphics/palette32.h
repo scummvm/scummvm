@@ -23,6 +23,8 @@
 #ifndef SCI_GRAPHICS_PALETTE32_H
 #define SCI_GRAPHICS_PALETTE32_H
 
+#include "common/ptr.h"
+
 namespace Sci {
 
 #pragma mark HunkPalette
@@ -233,7 +235,6 @@ struct PalCycler {
 class GfxPalette32 {
 public:
 	GfxPalette32(ResourceManager *resMan);
-	~GfxPalette32();
 
 	void saveLoadWithSerializer(Common::Serializer &s);
 
@@ -440,13 +441,13 @@ private:
 	 * operation. If this palette is not specified, `_sourcePalette` is used
 	 * instead.
 	 */
-	Palette *_varyStartPalette;
+	Common::ScopedPtr<Palette> _varyStartPalette;
 
 	/**
 	 * An optional palette used to provide target colors for a palette vary
 	 * operation.
 	 */
-	Palette *_varyTargetPalette;
+	Common::ScopedPtr<Palette> _varyTargetPalette;
 
 	/**
 	 * The minimum palette index that has been varied from the source palette.
@@ -553,7 +554,8 @@ private:
 		kNumCyclers = 10
 	};
 
-	PalCycler *_cyclers[kNumCyclers];
+	typedef Common::ScopedPtr<PalCycler> PalCyclerOwner;
+	PalCyclerOwner _cyclers[kNumCyclers];
 
 	/**
 	 * Updates the `currentCycle` of the given `cycler` by `speed` entries.
@@ -564,8 +566,8 @@ private:
 	 * The cycle map is used to detect overlapping cyclers, and to avoid
 	 * remapping to palette entries that are being cycled.
 	 *
-	 * According to SCI engine code, when two cyclers overlap, a fatal error has
-	 * occurred and the engine will display an error and then exit.
+	 * According to SSCI, when two cyclers overlap, a fatal error has occurred
+	 * and the engine will display an error and then exit.
 	 *
 	 * The color remapping system avoids attempts to remap to palette entries
 	 * that are cycling because they won't be the expected color once the cycler

@@ -74,6 +74,18 @@ int SoundCommandParser::getSoundResourceId(reg_t obj) {
 		if (resourceId && _resMan->testResource(ResourceId(kResourceTypeSound, resourceId + 1000)))
 			resourceId += 1000;
 	}
+	if (g_sci->isCD() && g_sci->getGameId() == GID_SQ4 && resourceId < 1000) {
+		// For Space Quest 4 a few additional samples and also higher quality samples were played.
+		// We must not connect this to General MIDI support, because that will get disabled
+		// in case the user hasn't also chosen a General MIDI output device.
+		// We use those samples for DOS platform as well. We do basically the same for Space Quest 3,
+		// which also contains a few samples that were not played under the original interpreter.
+		// Maybe some fan wishes to opt-out of this. In this case a game specific option should be added.
+		// For more information see enhancement/bug #10228
+		// TODO: Check, if there are also enhanced samples for any of the other General MIDI games.
+		if (_resMan->testResource(ResourceId(kResourceTypeAudio, resourceId + 1000)))
+			resourceId += 1000;
+	}
 
 	return resourceId;
 }
@@ -88,12 +100,7 @@ void SoundCommandParser::initSoundResource(MusicEntry *newSound) {
 	// a relevant audio resource, play it, otherwise switch to synthesized
 	// effects. If the resource exists, play it using map 65535 (sound
 	// effects map)
-	bool checkAudioResource = getSciVersion() >= SCI_VERSION_1_1;
-	// Hoyle 4 has garbled audio resources in place of the sound resources.
-	if (g_sci->getGameId() == GID_HOYLE4)
-		checkAudioResource = false;
-
-	if (checkAudioResource && _resMan->testResource(ResourceId(kResourceTypeAudio, newSound->resourceId))) {
+	if (getSciVersion() >= SCI_VERSION_1_1 && _resMan->testResource(ResourceId(kResourceTypeAudio, newSound->resourceId))) {
 		// Found a relevant audio resource, create an audio stream if there is
 		// no associated sound resource, or if both resources exist and the
 		// user wants the digital version.
@@ -338,11 +345,9 @@ reg_t SoundCommandParser::kDoSoundPause(EngineState *s, int argc, reg_t *argv) {
 		}
 
 #ifdef ENABLE_SCI32
-		// NOTE: The original engine also expected a global
-		// "kernel call" flag to be true in order to perform
-		// this action, but the architecture of the ScummVM
-		// implementation is so different that it doesn't
-		// matter here
+		// SSCI also expected a global "kernel call" flag to be true in order to
+		// perform this action, but the architecture of the ScummVM
+		// implementation is so different that it doesn't matter here
 		if (_soundVersion >= SCI_VERSION_2_1_EARLY && musicSlot->isSample) {
 			if (shouldPause) {
 				g_sci->_audio32->pause(ResourceId(kResourceTypeAudio, musicSlot->resourceId), musicSlot->soundObj);
@@ -445,7 +450,7 @@ reg_t SoundCommandParser::kDoSoundFade(EngineState *s, int argc, reg_t *argv) {
 		musicSlot->fadeTicker = 0;
 
 		// argv[4] is a boolean. Scripts sometimes pass strange values,
-		// but SSCI only checks for zero/non-zero. (Verified in KQ6.)
+		// but SSCI only checks for zero/non-zero. (Verified in KQ6).
 		// KQ6 room 460 even passes an object, but treating this as 'true'
 		// seems fine in that case.
 		if (argc == 5)
@@ -502,8 +507,19 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 	if (musicSlot->isSample) {
 #ifdef ENABLE_SCI32
 		if (_soundVersion >= SCI_VERSION_2) {
-			const int position = g_sci->_audio32->getPosition(ResourceId(kResourceTypeAudio, musicSlot->resourceId), musicSlot->soundObj);
+			const ResourceId audioId = ResourceId(kResourceTypeAudio, musicSlot->resourceId);
 
+			if (getSciVersion() == SCI_VERSION_3) {
+				// In SSCI the volume is first set to -1 and then reset later if
+				// a sample is playing in the audio player, but since our audio
+				// code returns -1 for not-found samples, the extra check is not
+				// needed and we can just always set it to the return value of
+				// the getVolume call
+				const int16 volume = g_sci->_audio32->getVolume(audioId, musicSlot->soundObj);
+				writeSelectorValue(_segMan, musicSlot->soundObj, SELECTOR(vol), volume);
+			}
+
+			const int16 position = g_sci->_audio32->getPosition(audioId, musicSlot->soundObj);
 			if (position == -1) {
 				processStopSound(musicSlot->soundObj, true);
 			}
@@ -613,6 +629,12 @@ reg_t SoundCommandParser::kDoSoundSendMidi(EngineState *s, int argc, reg_t *argv
 	uint16 controller = (argc == 5) ? argv[3].toUint16() : argv[2].toUint16();
 	uint16 param = (argc == 5) ? argv[4].toUint16() : argv[3].toUint16();
 
+	// This call is made in Hoyle 5 when toggling the music from the main menu.
+	// Ignore it for this game, since it doesn't use MIDI audio, and this call
+	// looks to be a leftover in Sound::mute (script 64989).
+	if (g_sci->getGameId() == GID_HOYLE5)
+		return s->r_acc;
+
 	if (argc == 4 && controller == 0xFF) {
 		midiCmd = 0xE0;	// 0xE0: pitch wheel
 		uint16 pitch = CLIP<uint16>(argv[3].toSint16() + 0x2000, 0x0000, 0x3FFF);
@@ -718,8 +740,8 @@ reg_t SoundCommandParser::kDoSoundSetVolume(EngineState *s, int argc, reg_t *arg
 #ifdef ENABLE_SCI32
 	// SSCI unconditionally sets volume if it is digital audio
 	if (_soundVersion >= SCI_VERSION_2_1_EARLY && musicSlot->isSample) {
-		_music->soundSetVolume(musicSlot, value);
-	} else
+		g_sci->_audio32->setVolume(ResourceId(kResourceTypeAudio, musicSlot->resourceId), musicSlot->soundObj, value);
+	}
 #endif
 	if (musicSlot->volume != value) {
 		musicSlot->volume = value;

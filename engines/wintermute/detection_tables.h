@@ -43,7 +43,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"conspiracao",     "Conspiracao Dumont"},
 	{"corrosion",       "Corrosion: Cold Winter Waiting"},
 	{"deadcity",        "Dead City"},
-	{"dfafadventure",        "DFAF Adventure"},
+	{"dfafadventure",   "DFAF Adventure"},
 	{"dreamcat",        "Dreamcat"},
 	{"dreaming",        "Des Reves Elastiques Avec Mille Insectes Nommes Georges"},
 	{"dirtysplit",      "Dirty Split"},
@@ -63,9 +63,10 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"mirage",          "Mirage"},
 	{"nighttrain",      "Night Train"},
 	{"oknytt",          "Oknytt"},
-	{"openquest",        "Open Quest"},
+	{"openquest",       "Open Quest"},
 	{"paintaria",       "Paintaria"},
 	{"pigeons",         "Pigeons in the Park"},
+	{"pizzamorgana",    "Pizza Morgana: Episode 1 - Monsters and Manipulations in the Magical Forest"},
 	{"projectdoom",     "Project: Doom"},
 	{"projectjoe",      "Project Joe"},
 	{"reversion1",      "Reversion: The Escape"},
@@ -91,6 +92,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"wintermute",      "Wintermute engine game"},
 	{"wtetris",         "Wilma Tetris"},
 	{"zilm",            "Zilm: A Game of Reflex"},
+	{"zbang",           "Zbang! The Game"},
 	{0, 0}
 };
 
@@ -243,7 +245,7 @@ static const WMEGameDescription gameDescriptions[] = {
 					"data.dcp", "7ebfd50d1a22370ed7b079bcaa631d62", 9070205), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
 	// DFAF Adventure
 	WME_WINENTRY("dfafadventure", "",
-		WME_ENTRY1s("data.dcp","5704ebef961176f647742aa66bd09352", 10083417), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp","5704ebef961176f647742aa66bd09352", 10083417), Common::EN_ANY, ADGF_UNSTABLE | GF_LOWSPEC_ASSETS, LATEST_VERSION),
 	// Dirty Split (Czech)
 	WME_WINENTRY("dirtysplit", "",
 		WME_ENTRY2s("czech.dcp", "08a71446467cf8f9444cfea446b46ad6", 127697934,
@@ -271,7 +273,7 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY1s("data.dcp", "4af26d97ea063fc1277ce30ae431de90", 8804073), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
 	// Dreamcat
 	WME_WINENTRY("dreamcat", "",
-		WME_ENTRY1s("data.dcp","189bd4eef29034f4ff4ed30120eaac4e", 7758040), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+		WME_ENTRY1s("data.dcp","189bd4eef29034f4ff4ed30120eaac4e", 7758040), Common::EN_ANY, ADGF_UNSTABLE | GF_LOWSPEC_ASSETS, LATEST_VERSION),
 	// Dreamscape
 	WME_WINENTRY("dreamscape", "",
 		WME_ENTRY1s("data.dcp",  "7a5752ed4446c862be9f02d7932acf54", 17034377), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
@@ -378,7 +380,7 @@ static const WMEGameDescription gameDescriptions[] = {
 					"d_sounds.dcp", "7d04dff8ca11174486bd4b7a80fdcabb", 154943401), Common::ES_ESP, ADGF_UNSTABLE, LATEST_VERSION),
 	// Open Quest
 	WME_WINENTRY("openquest", "",
-		WME_ENTRY1s("data.dcp", "16893e3fc15a211a49654ae66f684f28", 82281736), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),	
+		WME_ENTRY1s("data.dcp", "16893e3fc15a211a49654ae66f684f28", 82281736), Common::EN_ANY, ADGF_UNSTABLE | GF_LOWSPEC_ASSETS, LATEST_VERSION),
 	// Night Train Demo
 	WME_WINENTRY("nighttrain", "",
 		WME_ENTRY1s("data.dcp", "5a027ef84b083a730c9a4c85ec1d3a32", 131760816), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, LATEST_VERSION),
@@ -388,6 +390,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Pigeons in the Park
 	WME_WINENTRY("pigeons", "",
 		WME_ENTRY1s("data.dcp", "9143a5b6ff8206aefe3c4c643add3ec7", 2611100), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	// Pizza Morgana
+	WME_WINENTRY("pizzamorgana", "",
+		WME_ENTRY2s("english.dcp", "7fa6149bb44574109668ce585d6c41c9", 9282608,
+					"data.dcp",  "a69994c463ff5fcc6fe1800662f5b7d0", 34581370), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_0),
 	// Project: Doom
 	WME_WINENTRY("projectdoom", "",
 		WME_ENTRY1s("data.dcp", "d5894b65a40706845434b99870bcab92", 99223761), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
@@ -576,6 +582,8 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Zilm: A Game of Reflex 1.0
 	WME_WINENTRY("Zilm", "1.0",
 		WME_ENTRY1s("data.dcp",  "098dffaf03d8adbb4cb5633e4733e63c", 351726), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	WME_WINENTRY("zbang", "0.89",
+		WME_ENTRY1s("data.dcp",  "db9101f08d12ab95c81042d154bb0ea8", 7210044), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_7_0),
 	{
 		AD_TABLE_END_MARKER,
 		LATEST_VERSION
@@ -589,4 +597,3 @@ static const WMEGameDescription gameDescriptions[] = {
 #undef WEM_ENTRY3s
 #undef WME_WINENTRY
 #undef WME_PLATENTRY
-

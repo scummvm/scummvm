@@ -87,7 +87,7 @@ public:
 	DECLARE_FUNCTION(chapter5)
 
 private:
-	void handleAction(const SavePoint &savepoint, bool playSound = false, SoundFlag flag = kFlagInvalid, bool checkCallback = false, bool shouldUpdateEntity = false);
+	void handleAction(const SavePoint &savepoint, bool playSound = false, SoundFlag flag = kSoundVolumeEntityDefault, bool checkCallback = false, bool shouldUpdateEntity = false);
 };
 
 } // End of namespace LastExpress

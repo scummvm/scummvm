@@ -25,6 +25,7 @@
 
 #include "sludge/event.h"
 #include "sludge/freeze.h"
+#include "sludge/function.h"
 #include "sludge/graphics.h"
 #include "sludge/newfatal.h"
 #include "sludge/region.h"
@@ -36,8 +37,6 @@ namespace Sludge {
 
 extern Variable *launchResult;
 extern VariableStack *noStack;
-extern ScreenRegion *overRegion;
-extern ScreenRegion *lastRegion;
 
 EventManager::EventManager(SludgeEngine *vm) {
 	_vm = vm;
@@ -152,14 +151,14 @@ void EventManager::checkInput() {
 bool EventManager::handleInput() {
 	static int l = 0;
 
-	if (!g_sludge->launchMe.empty()) {
+	if (!_vm->launchMe.empty()) {
 		if (l) {
 			// Still paused because of spawned thingy...
 		} else {
 			l = 1;
 
-			setVariable(*launchResult, SVT_INT, 0/*launch(launchMe) > 31*/); //TODO:false value
-			g_sludge->launchMe.clear();
+			launchResult->setVariable(SVT_INT, 0/*launch(launchMe) > 31*/); //TODO:false value
+			_vm->launchMe.clear();
 			launchResult = nullptr;
 		}
 		return true;
@@ -167,8 +166,8 @@ bool EventManager::handleInput() {
 		l = 0;
 	}
 
-	if (!overRegion)
-		getOverRegion();
+	if (!_vm->_regionMan->getOverRegion())
+		_vm->_regionMan->updateOverRegion();
 
 	if (_input.justMoved) {
 		if (_currentEvents->func[kMoveMouse]) {
@@ -178,16 +177,16 @@ bool EventManager::handleInput() {
 	}
 	_input.justMoved = false;
 
-	if (lastRegion != overRegion && _currentEvents->func[kFocus]) {
+	if (_vm-> _regionMan->isRegionChanged()&& _currentEvents->func[kFocus]) {
 		VariableStack *tempStack = new VariableStack;
 		if (!checkNew(tempStack))
 			return false;
 
-		initVarNew(tempStack->thisVar);
+		ScreenRegion *overRegion = _vm->_regionMan->getOverRegion();
 		if (overRegion) {
-			setVariable(tempStack->thisVar, SVT_OBJTYPE, overRegion->thisType->objectNum);
+			tempStack->thisVar.setVariable(SVT_OBJTYPE, overRegion->thisType->objectNum);
 		} else {
-			setVariable(tempStack->thisVar, SVT_INT, 0);
+			tempStack->thisVar.setVariable(SVT_INT, 0);
 		}
 		tempStack->next = nullptr;
 		if (!startNewFunctionNum(_currentEvents->func[kFocus], 1, nullptr, tempStack))
@@ -321,8 +320,7 @@ bool EventManager::handleInput() {
 			VariableStack *tempStack = new VariableStack;
 			if (!checkNew(tempStack))
 				return false;
-			initVarNew(tempStack->thisVar);
-			makeTextVar(tempStack->thisVar, tempString);
+			tempStack->thisVar.makeTextVar(tempString);
 			tempStack->next = nullptr;
 			if (!startNewFunctionNum(_currentEvents->func[kSpace], 1, nullptr, tempStack))
 				return false;
@@ -333,7 +331,7 @@ bool EventManager::handleInput() {
 	_input.rightRelease = false;
 	_input.leftRelease = false;
 	_input.keyPressed = 0;
-	lastRegion = overRegion;
+	_vm->_regionMan->updateLastRegion();
 	return true;
 }
 

@@ -63,11 +63,13 @@ void Player_MOD::setMusicVolume(int vol) {
 }
 
 void Player_MOD::setUpdateProc(ModUpdateProc *proc, void *param, int freq) {
+	Common::StackLock lock(_mutex);
 	_playproc = proc;
 	_playparam = param;
 	_mixamt = _sampleRate / freq;
 }
 void Player_MOD::clearUpdateProc() {
+	Common::StackLock lock(_mutex);
 	_playproc = NULL;
 	_playparam = NULL;
 	_mixamt = 0;
@@ -78,6 +80,7 @@ void Player_MOD::startChannel(int id, void *data, int size, int rate, uint8 vol,
 	if (id == 0)
 		error("player_mod - attempted to start channel id 0");
 
+	Common::StackLock lock(_mutex);
 	for (i = 0; i < MOD_MAXCHANS; i++) {
 		if (!_channels[i].id)
 			break;
@@ -106,6 +109,8 @@ void Player_MOD::startChannel(int id, void *data, int size, int rate, uint8 vol,
 void Player_MOD::stopChannel(int id) {
 	if (id == 0)
 		error("player_mod - attempted to stop channel id 0");
+
+	Common::StackLock lock(_mutex);
 	for (int i = 0; i < MOD_MAXCHANS; i++) {
 		if (_channels[i].id == id) {
 			delete _channels[i].input;
@@ -121,6 +126,8 @@ void Player_MOD::stopChannel(int id) {
 void Player_MOD::setChannelVol(int id, uint8 vol) {
 	if (id == 0)
 		error("player_mod - attempted to set volume for channel id 0");
+
+	Common::StackLock lock(_mutex);
 	for (int i = 0; i < MOD_MAXCHANS; i++) {
 		if (_channels[i].id == id) {
 			_channels[i].vol = vol;
@@ -132,6 +139,8 @@ void Player_MOD::setChannelVol(int id, uint8 vol) {
 void Player_MOD::setChannelPan(int id, int8 pan) {
 	if (id == 0)
 		error("player_mod - attempted to set pan for channel id 0");
+
+	Common::StackLock lock(_mutex);
 	for (int i = 0; i < MOD_MAXCHANS; i++) {
 		if (_channels[i].id == id) {
 			_channels[i].pan = pan;
@@ -143,6 +152,8 @@ void Player_MOD::setChannelPan(int id, int8 pan) {
 void Player_MOD::setChannelFreq(int id, int freq) {
 	if (id == 0)
 		error("player_mod - attempted to set frequency for channel id 0");
+
+	Common::StackLock lock(_mutex);
 	for (int i = 0; i < MOD_MAXCHANS; i++) {
 		if (_channels[i].id == id) {
 			if (freq > 31400)	// this is about as high as WinUAE goes

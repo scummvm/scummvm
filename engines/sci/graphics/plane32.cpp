@@ -44,8 +44,8 @@ void DrawList::add(ScreenItem *screenItem, const Common::Rect &rect) {
 
 #pragma mark -
 #pragma mark Plane
-uint16 Plane::_nextObjectId = 20000;
-uint32 Plane::_nextCreationId = 0;
+uint16 Plane::_nextObjectId; // Will be initialized in Plane::init()
+uint32 Plane::_nextCreationId; // ditto
 
 Plane::Plane(const Common::Rect &gameRect, PlanePictureCodes pictureId) :
 _creationId(_nextCreationId++),
@@ -132,15 +132,15 @@ void Plane::operator=(const Plane &other) {
 }
 
 void Plane::init() {
-	_nextObjectId = 20000;
+	_nextObjectId = g_sci->_features->detectPlaneIdBase();
 	_nextCreationId = 0;
 }
 
 void Plane::convertGameRectToPlaneRect() {
-	const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
-	const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
-	const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+	const int16 screenWidth = g_sci->_gfxFrameout->getScreenWidth();
+	const int16 screenHeight = g_sci->_gfxFrameout->getScreenHeight();
+	const int16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
+	const int16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
 
 	const Ratio ratioX = Ratio(screenWidth, scriptWidth);
 	const Ratio ratioY = Ratio(screenHeight, scriptHeight);
@@ -201,10 +201,9 @@ void Plane::addPicInternal(const GuiResourceId pictureId, const Common::Point *p
 		} else {
 			screenItem->_position = celObj->_relativePosition;
 		}
-		_screenItemList.add(screenItem);
+		screenItem->_celObj.reset(celObj);
 
-		delete screenItem->_celObj;
-		screenItem->_celObj = celObj;
+		_screenItemList.add(screenItem);
 	}
 	_type = (g_sci->_features->hasTransparentPicturePlanes() && transparent) ? kPlaneTypeTransparentPicture : kPlaneTypePicture;
 }
@@ -321,9 +320,9 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 
 	for (ScreenItemList::size_type i = 0; i < screenItemCount; ++i) {
 		// Items can be added to ScreenItemList and we don't want to process
-		// those new items, but the list also can grow smaller, so we need
-		// to check that we are still within the upper bound of the list and
-		// quit if we aren't any more
+		// those new items, but the list also can grow smaller, so we need to
+		// check that we are still within the upper bound of the list and quit
+		// if we aren't any more
 		if (i >= _screenItemList.size()) {
 			break;
 		}
@@ -333,18 +332,17 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 			continue;
 		}
 
-		// NOTE: The original engine used an array without bounds checking
-		// so could just get the visible screen item directly; we need to
-		// verify that the index is actually within the valid range for
-		// the visible plane before accessing the item to avoid a range
-		// error.
+		// SSCI used an array without bounds checking so could just get the
+		// visible screen item directly; we need to verify that the index is
+		// actually within the valid range for the visible plane before
+		// accessing the item to avoid a range error.
 		const ScreenItem *visibleItem = nullptr;
 		if (i < visiblePlaneItemCount) {
 			visibleItem = visiblePlane._screenItemList[i];
 		}
 
-		// Keep erase rects for this screen item from drawing outside
-		// of its owner plane
+		// Keep erase rects for this screen item from drawing outside of its
+		// owner plane
 		Common::Rect visibleItemScreenRect;
 		if (visibleItem != nullptr) {
 			visibleItemScreenRect = visibleItem->_screenRect;
@@ -428,8 +426,8 @@ void Plane::calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList 
 	breakEraseListByPlanes(eraseList, planeList);
 	breakDrawListByPlanes(drawList, planeList);
 
-	// We store the current size of the drawlist, as we want to loop
-	// over the currently inserted entries later.
+	// The current size of the draw list is stored here, as we need to loop over
+	// only the already-inserted entries later.
 	DrawList::size_type drawListSizePrimary = drawList.size();
 	const RectList::size_type eraseListCount = eraseList.size();
 
@@ -824,8 +822,8 @@ void Plane::sync(const Plane *other, const Common::Rect &screenRect) {
 
 	convertGameRectToPlaneRect();
 	_screenRect = _planeRect;
-	// NOTE: screenRect originally was retrieved through globals
-	// instead of being passed into the function
+	// screenRect was retrieved through globals in SSCI instead of being passed
+	// into the function. We don't do that just to avoid the extra indirection
 	clipScreenRect(screenRect);
 }
 

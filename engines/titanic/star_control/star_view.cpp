@@ -43,6 +43,11 @@ CStarView::CStarView() : _camera((const CNavigationInfo *)nullptr), _owner(nullp
 	_camera.proc3(&data);
 }
 
+CStarView::~CStarView() {
+	delete _videoSurface;
+	delete _photoSurface;
+}
+
 void CStarView::load(SimpleFile *file, int param) {
 	if (!param) {
 		_camera.load(file, param);

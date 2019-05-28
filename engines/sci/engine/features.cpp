@@ -480,11 +480,12 @@ bool GameFeatures::autoDetectSci21KernelType() {
 		// don't have sounds at all, but they're using a SCI2 kernel
 		if (g_sci->getGameId() == GID_CHEST || g_sci->getGameId() == GID_KQUESTIONS) {
 			_sci21KernelType = SCI_VERSION_2;
-			return true;
+		} else if (g_sci->getGameId() == GID_RAMA && g_sci->isDemo()) {
+			_sci21KernelType = SCI_VERSION_2_1_MIDDLE;
+		} else {
+			warning("autoDetectSci21KernelType(): Sound object not loaded, assuming a SCI2.1 table");
+			_sci21KernelType = SCI_VERSION_2_1_EARLY;
 		}
-
-		warning("autoDetectSci21KernelType(): Sound object not loaded, assuming a SCI2.1 table");
-		_sci21KernelType = SCI_VERSION_2_1_EARLY;
 		return true;
 	}
 
@@ -573,12 +574,13 @@ bool GameFeatures::audioVolumeSyncUsesGlobals() const {
 	switch (g_sci->getGameId()) {
 	case GID_GK1:
 	case GID_GK2:
+	case GID_HOYLE5:
 	case GID_LSL6HIRES:
 	case GID_LSL7:
 	case GID_PHANTASMAGORIA:
 	case GID_PHANTASMAGORIA2:
+	case GID_RAMA:
 	case GID_TORIN:
-		// TODO: SCI3
 		return true;
 	default:
 		return false;
@@ -626,6 +628,14 @@ MessageTypeSyncStrategy GameFeatures::getMessageTypeSyncStrategy() const {
 	return kMessageTypeSyncStrategyNone;
 }
 
+int GameFeatures::detectPlaneIdBase() {
+	if (getSciVersion() == SCI_VERSION_2 &&
+	    g_sci->getGameId() != GID_PQ4)
+		return 0;
+	else
+		return 20000;
+}
+	
 bool GameFeatures::autoDetectMoveCountType() {
 	// Look up the script address
 	reg_t addr = getDetectionAddr("Motion", SELECTOR(doit));
@@ -703,6 +713,10 @@ bool GameFeatures::generalMidiOnly() {
 	case GID_MOTHERGOOSEHIRES:
 		return true;
 	case GID_KQ7: {
+		if (g_sci->isDemo()) {
+			return false;
+		}
+
 		SoundResource sound(13, g_sci->getResMan(), detectDoSoundType());
 		return (sound.getTrackByType(/* AdLib */ 0) == nullptr);
 	}

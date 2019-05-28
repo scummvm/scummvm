@@ -1907,6 +1907,11 @@ extern void HoldItem(int item, bool bKeepFilm) {
 				invObj = GetInvObject(item);
 				SetAuxCursor(invObj->hIconFilm);	// and is aux. cursor
 			}
+
+			// WORKAROUND: If a held item is being removed that's not in either inventory (i.e. it was picked up
+			// but never put in them), then when removing it from being held, drop it in the luggage
+			if (g_heldItem != INV_NOICON && InventoryPos(g_heldItem) == INV_HELDNOTIN)
+				AddToInventory(INV_1, g_heldItem);
 		}
 
 		g_heldItem = item;			// Item held

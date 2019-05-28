@@ -205,7 +205,7 @@ void UIInventoryScroll::process(Event &event) {
 		toggle(true);
 
 		// Wait for the mouse to be released
-		BF_GLOBALS._events.waitForPress(EVENT_BUTTON_UP);
+		g_globals->_events.waitForPress(EVENT_BUTTON_UP);
 
 		// Restore unselected version
 		toggle(false);

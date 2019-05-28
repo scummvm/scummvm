@@ -33,6 +33,9 @@
 #include "script_quotes.h"
 
 static const ScriptQuote BARBOT_QUOTES[] = {
+	{ 0x0003d722, 0x0003d372, 0x0000001e },
+	{ 0x0003d722, 0x0003d372, 0x00000032 },
+	{ 0x0003d722, 0x0003d372, 0x00000046 },
 	{ 0x00000008, 0x00000000, 0x0003D372 },
 	{ 0x00000007, 0x00000000, 0x0003D72B },
 	{ 0x00000004, 0x00000000, 0x0003D722 },
@@ -82,6 +85,10 @@ static const ScriptQuote BARBOT_QUOTES[] = {
 };
 
 static const ScriptQuote BELLBOT_QUOTES[] = {
+	{ 0x000313d6, 0x000313d7, 0x0000001e },
+	{ 0x000313d6, 0x000313d7, 0x00000032 },
+	{ 0x000313d6, 0x000313d7, 0x00000046 },
+	{ 0x000313a1, 0x000313ae, 0x0000003c },
 	{ 0x00000008, 0x00000000, 0x00031116 },
 	{ 0x00000007, 0x00000000, 0x00031447 },
 	{ 0x00000006, 0x00000000, 0x000310F9 },
@@ -163,6 +170,10 @@ static const ScriptQuote BELLBOT_QUOTES[] = {
 };
 
 static const ScriptQuote DESKBOT_QUOTES[] = {
+	{ 0x0003ae0e, 0x0003ae27, 0x0000001e },
+	{ 0x0003ae0e, 0x0003ae27, 0x00000032 },
+	{ 0x0003ae0e, 0x0003ae27, 0x00000046 },
+	{ 0x0003abe1, 0x0003ae4c, 0x0000003c },
 	{ 0x00000008, 0x00000000, 0x0003ACD0 },
 	{ 0x00000007, 0x00000000, 0x0003ACDC },
 	{ 0x00000006, 0x00000000, 0x0003ABF9 },
@@ -241,6 +252,10 @@ static const ScriptQuote DESKBOT_QUOTES[] = {
 };
 
 static const ScriptQuote DOORBOT_QUOTES[] = {
+	{ 0x000360bf, 0x000360c0, 0x0000001e },
+	{ 0x000360bf, 0x000360c0, 0x00000032 },
+	{ 0x000360bf, 0x000360c0, 0x00000046 },
+	{ 0x000360c1, 0x000360c2, 0x0000003c },
 	{ 0x00000008, 0x00000000, 0x00035F14 },
 	{ 0x00000007, 0x00000000, 0x00035F6F },
 	{ 0x00000004, 0x00000000, 0x000360BF },
@@ -316,6 +331,10 @@ static const ScriptQuote DOORBOT_QUOTES[] = {
 };
 
 static const ScriptQuote LIFTBOT_QUOTES[] = {
+	{ 0x00033694, 0x00033695, 0x0000001e },
+	{ 0x00033694, 0x00033695, 0x00000032 },
+	{ 0x00033694, 0x00033695, 0x00000046 },
+	{ 0x00033696, 0x00033697, 0x0000003c },
 	{ 0x00000008, 0x00000000, 0x00033655 },
 	{ 0x00000007, 0x00000000, 0x000335A0 },
 	{ 0x00000006, 0x00000000, 0x0003368B },
@@ -379,6 +398,10 @@ static const ScriptQuote LIFTBOT_QUOTES[] = {
 };
 
 static const ScriptQuote MAITRED_QUOTES[] = {
+	{ 0x0003f833, 0x0003f847, 0x0000001e },
+	{ 0x0003f833, 0x0003f847, 0x00000032 },
+	{ 0x0003f833, 0x0003f847, 0x00000046 },
+	{ 0x0003f94f, 0x0003f936, 0x0000003c },
 	{ 0x00000008, 0x00000000, 0x0003F967 },
 	{ 0x00000007, 0x00000000, 0x0003F995 },
 	{ 0x00000006, 0x00000000, 0x0003F833 },
@@ -429,17 +452,16 @@ static const ScriptQuote MAITRED_QUOTES[] = {
 };
 
 void writeScriptQuotes(const char *name, const ScriptQuote *quotes,
-		uint tag1, uint tag2, uint rangeStart, uint rangeEnd) {
+		uint rangeStart, uint rangeEnd, uint incr) {
 	outputFile.seek(dataOffset);
-	outputFile.writeLong(tag1);
-	outputFile.writeLong(tag2);
 	outputFile.writeLong(rangeStart);
 	outputFile.writeLong(rangeEnd);
+	outputFile.writeLong(incr);
 
 	for (; quotes->_index; ++quotes) {
+		outputFile.writeLong(quotes->_tag1);
+		outputFile.writeLong(quotes->_tag2);
 		outputFile.writeLong(quotes->_index);
-		outputFile.writeLong(quotes->_tagId);
-		outputFile.writeLong(quotes->_dialogueId);
 	}
 
 	uint size = outputFile.size() - dataOffset;
@@ -448,10 +470,10 @@ void writeScriptQuotes(const char *name, const ScriptQuote *quotes,
 }
 
 void writeAllScriptQuotes() {
-	writeScriptQuotes("Quotes/Barbot", BARBOT_QUOTES, 221376, 221375, 0, 999);
-	writeScriptQuotes("Quotes/Bellbot", BELLBOT_QUOTES, 201687, 201686, 270000, 270500);
-	writeScriptQuotes("Quotes/Deskbot", DESKBOT_QUOTES, 241191, 241166, 270000, 270500);
-	writeScriptQuotes("Quotes/Doorbot", DOORBOT_QUOTES, 221376, 221375, 0, 999);
-	writeScriptQuotes("Quotes/Liftbot", LIFTBOT_QUOTES, 210581, 210580, 0, 999);
-	writeScriptQuotes("Quotes/MaitreD", MAITRED_QUOTES, 260167, 260147, 270000, 270500);
+	writeScriptQuotes("Quotes/Barbot", BARBOT_QUOTES, 0, 999, 90);
+	writeScriptQuotes("Quotes/Bellbot", BELLBOT_QUOTES, 270000, 270500, 25);
+	writeScriptQuotes("Quotes/Deskbot", DESKBOT_QUOTES, 270000, 270500, 25);
+	writeScriptQuotes("Quotes/Doorbot", DOORBOT_QUOTES, 0, 999, 25);
+	writeScriptQuotes("Quotes/Liftbot", LIFTBOT_QUOTES, 0, 999, 57);
+	writeScriptQuotes("Quotes/MaitreD", MAITRED_QUOTES, 270000, 270500, 25);
 }

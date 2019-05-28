@@ -863,6 +863,7 @@ int main(int argc, char *argv[]) {
 	src_file = fopen("btn_1.bmp", "rb");
 	if (src_file == NULL) {
 		perror("btn_1.bmp");
+		fclose(outFile);
 		return -1;
 	}
 	fseek(src_file , 0 , SEEK_END);
@@ -878,6 +879,7 @@ int main(int argc, char *argv[]) {
 	src_file = fopen("btn_1_off.bmp", "rb");
 	if (src_file == NULL) {
 		perror("btn_1_off.bmp");
+		fclose(outFile);
 		return -1;
 	}
 	fseek(src_file , 0 , SEEK_END);
@@ -893,6 +895,7 @@ int main(int argc, char *argv[]) {
 	src_file = fopen("btn_2.bmp", "rb");
 	if (src_file == NULL) {
 		perror("btn_2.bmp");
+		fclose(outFile);
 		return -1;
 	}
 	fseek(src_file , 0 , SEEK_END);
@@ -908,6 +911,7 @@ int main(int argc, char *argv[]) {
 	src_file = fopen("btn_2_off.bmp", "rb");
 	if (src_file == NULL) {
 		perror("btn_2_off.bmp");
+		fclose(outFile);
 		return -1;
 	}
 	fseek(src_file , 0 , SEEK_END);
@@ -923,6 +927,7 @@ int main(int argc, char *argv[]) {
 	src_file = fopen("btn_3.bmp", "rb");
 	if (src_file == NULL) {
 		perror("btn_3.bmp");
+		fclose(outFile);
 		return -1;
 	}
 	fseek(src_file , 0 , SEEK_END);
@@ -938,6 +943,7 @@ int main(int argc, char *argv[]) {
 	src_file = fopen("btn_3_off.bmp", "rb");
 	if (src_file == NULL) {
 		perror("btn_3_off.bmp");
+		fclose(outFile);
 		return -1;
 	}
 	fseek(src_file , 0 , SEEK_END);
@@ -953,6 +959,7 @@ int main(int argc, char *argv[]) {
 	src_file = fopen("btn_4.bmp", "rb");
 	if (src_file == NULL) {
 		perror("btn_4.bmp");
+		fclose(outFile);
 		return -1;
 	}
 	fseek(src_file , 0 , SEEK_END);
@@ -968,6 +975,7 @@ int main(int argc, char *argv[]) {
 	src_file = fopen("btn_4_off.bmp", "rb");
 	if (src_file == NULL) {
 		perror("btn_4_off.bmp");
+		fclose(outFile);
 		return -1;
 	}
 	fseek(src_file , 0 , SEEK_END);
@@ -983,6 +991,7 @@ int main(int argc, char *argv[]) {
 	src_file = fopen("btn_5.bmp", "rb");
 	if (src_file == NULL) {
 		perror("btn_5.bmp");
+		fclose(outFile);
 		return -1;
 	}
 	fseek(src_file , 0 , SEEK_END);
@@ -998,6 +1007,7 @@ int main(int argc, char *argv[]) {
 	src_file = fopen("btn_5_off.bmp", "rb");
 	if (src_file == NULL) {
 		perror("btn_5_off.bmp");
+		fclose(outFile);
 		return -1;
 	}
 	fseek(src_file , 0 , SEEK_END);
@@ -1013,6 +1023,7 @@ int main(int argc, char *argv[]) {
 	src_file = fopen("btn_6.bmp", "rb");
 	if (src_file == NULL) {
 		perror("btn_6.bmp");
+		fclose(outFile);
 		return -1;
 	}
 	fseek(src_file , 0 , SEEK_END);
@@ -1028,6 +1039,7 @@ int main(int argc, char *argv[]) {
 	src_file = fopen("btn_6_off.bmp", "rb");
 	if (src_file == NULL) {
 		perror("btn_6_off.bmp");
+		fclose(outFile);
 		return -1;
 	}
 	fseek(src_file , 0 , SEEK_END);
@@ -1043,6 +1055,7 @@ int main(int argc, char *argv[]) {
 	src_file = fopen("btn_7.bmp", "rb");
 	if (src_file == NULL) {
 		perror("btn_7.bmp");
+		fclose(outFile);
 		return -1;
 	}
 	fseek(src_file , 0 , SEEK_END);
@@ -1058,6 +1071,7 @@ int main(int argc, char *argv[]) {
 	src_file = fopen("btn_7_off.bmp", "rb");
 	if (src_file == NULL) {
 		perror("btn_7_off.bmp");
+		fclose(outFile);
 		return -1;
 	}
 	fseek(src_file , 0 , SEEK_END);
@@ -1073,6 +1087,7 @@ int main(int argc, char *argv[]) {
 	src_file = fopen("btn_8.bmp", "rb");
 	if (src_file == NULL) {
 		perror("btn_8.bmp");
+		fclose(outFile);
 		return -1;
 	}
 	fseek(src_file , 0 , SEEK_END);
@@ -1088,6 +1103,7 @@ int main(int argc, char *argv[]) {
 	src_file = fopen("btn_8_off.bmp", "rb");
 	if (src_file == NULL) {
 		perror("btn_8_off.bmp");
+		fclose(outFile);
 		return -1;
 	}
 	fseek(src_file , 0 , SEEK_END);
@@ -1103,6 +1119,7 @@ int main(int argc, char *argv[]) {
 	src_file = fopen("btn_9.bmp", "rb");
 	if (src_file == NULL) {
 		perror("btn_9.bmp");
+		fclose(outFile);
 		return -1;
 	}
 	fseek(src_file , 0 , SEEK_END);
@@ -1118,6 +1135,7 @@ int main(int argc, char *argv[]) {
 	src_file = fopen("btn_9_off.bmp", "rb");
 	if (src_file == NULL) {
 		perror("btn_9_off.bmp");
+		fclose(outFile);
 		return -1;
 	}
 	fseek(src_file , 0 , SEEK_END);

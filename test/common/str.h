@@ -40,6 +40,15 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(str2.lastChar(), 'r');
 	}
 
+	void test_firstChar() {
+		Common::String str;
+		TS_ASSERT_EQUALS(str.firstChar(), '\0');
+		str = "first_test";
+		TS_ASSERT_EQUALS(str.firstChar(), 'f');
+		Common::String str2("bar");
+		TS_ASSERT_EQUALS(str2.firstChar(), 'b');
+	}
+
 	void test_concat1() {
 		Common::String str("foo");
 		Common::String str2("bar");
@@ -335,12 +344,16 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT(Common::matchString("monkey.s01",  "monkey.s##"));
 		TS_ASSERT(!Common::matchString("monkey.s01", "monkey.###"));
 
+		TS_ASSERT(Common::matchString("monkey.s0#", "monkey.s0\\#"));
+		TS_ASSERT(!Common::matchString("monkey.s0#", "monkey.s0#"));
+		TS_ASSERT(!Common::matchString("monkey.s01", "monkey.s0\\#"));
+
 		TS_ASSERT(!Common::String("").matchString("*_"));
 		TS_ASSERT(Common::String("a").matchString("a***"));
 	}
 
 	void test_string_printf() {
-		TS_ASSERT_EQUALS( Common::String::format(""), "" );
+		TS_ASSERT_EQUALS( Common::String::format(" "), " " );
 		TS_ASSERT_EQUALS( Common::String::format("%s", "test"), "test" );
 		TS_ASSERT_EQUALS( Common::String::format("%s.s%.02d", "monkey", 1), "monkey.s01" );
 		TS_ASSERT_EQUALS( Common::String::format("Some %s to make this string longer than the default built-in %s %d", "text", "capacity", 123456), "Some text to make this string longer than the default built-in capacity 123456" );
@@ -443,6 +456,28 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_LESS_THAN(scumm_strnicmp("abCd", "ABCde", 5), 0);
 	}
 
+	void test_wordWrap() {
+		Common::String testString("123456");
+		testString.wordWrap(10);
+		TS_ASSERT(testString == "123456");
+		testString.wordWrap(2);
+		TS_ASSERT(testString == "12\n34\n56");
+		testString = "1234 5678";
+		testString.wordWrap(4);
+		TS_ASSERT(testString == "1234\n5678");
+		testString = "12 3 45";
+		testString.wordWrap(4);
+		TS_ASSERT(testString == "12 3\n45");
+		testString = "\n1\n23 45\n\n";
+		testString.wordWrap(3);
+		TS_ASSERT(testString == "\n1\n23\n45\n\n");
+		testString = "123 ";
+		testString.wordWrap(4);
+		TS_ASSERT(testString == "123 ");
+		testString.wordWrap(3);
+		TS_ASSERT(testString == "123\n");
+	}
+
 	void test_replace() {
 		// Tests created with the results of the STL std::string class
 
@@ -515,5 +550,21 @@ class StringTestSuite : public CxxTest::TestSuite
 		s3.replace(0, 32, "");
 		TS_ASSERT_EQUALS(s3, "TestTestTest");
 		TS_ASSERT_EQUALS(s4, "TestTestTestTestTestTestTestTestTestTestTest");
+	}
+
+	void test_setChar() {
+		Common::String testString("123456");
+		testString.setChar('2', 0);
+		TS_ASSERT(testString == "223456");
+		testString.setChar('0', 5);
+		TS_ASSERT(testString == "223450");
+	}
+
+	void test_insertChar() {
+		Common::String testString("123456");
+		testString.insertChar('2', 0);
+		TS_ASSERT(testString == "2123456");
+		testString.insertChar('0', 5);
+		TS_ASSERT(testString == "21234056");
 	}
 };

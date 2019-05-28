@@ -158,10 +158,15 @@ Audio::RewindableAudioStream *makeMohawkWaveStream(Common::SeekableReadStream *s
 	// The sound in the CD version of Riven is encoded in Intel DVI ADPCM
 	// The sound in the DVD version of Riven is encoded in MPEG-2 Layer II or Intel DVI ADPCM
 	if (dataChunk.encoding == kCodecRaw) {
-		byte flags = Audio::FLAG_UNSIGNED;
+		byte flags = 0;
 
 		if (dataChunk.channels == 2)
 			flags |= Audio::FLAG_STEREO;
+
+		if (dataChunk.bitsPerSample == 16)
+			flags |= Audio::FLAG_16BITS;
+		else
+			flags |= Audio::FLAG_UNSIGNED;
 
 		return Audio::makeRawStream(dataChunk.audioData, dataChunk.sampleRate, flags);
 	} else if (dataChunk.encoding == kCodecADPCM) {
@@ -180,51 +185,18 @@ Audio::RewindableAudioStream *makeMohawkWaveStream(Common::SeekableReadStream *s
 	return nullptr;
 }
 
-Sound::Sound(MohawkEngine* vm) : _vm(vm) {
-	_midiDriver = NULL;
-	_midiParser = NULL;
-	_midiData = NULL;
-	initMidi();
+Sound::Sound(MohawkEngine* vm) :
+		_vm(vm) {
 }
 
 Sound::~Sound() {
 	stopSound();
-
-	if (_midiParser) {
-		_midiParser->unloadMusic();
-		delete _midiParser;
-	}
-
-	if (_midiDriver) {
-		_midiDriver->close();
-		delete _midiDriver;
-	}
-
-	if (_midiData)
-		delete[] _midiData;
-}
-
-void Sound::initMidi() {
-	if (!(_vm->getFeatures() & GF_HASMIDI))
-		return;
-
-	// Let's get our MIDI parser/driver
-	_midiParser = MidiParser::createParser_SMF();
-	_midiDriver = MidiDriver::createMidi(MidiDriver::detectDevice(MDT_ADLIB|MDT_MIDI));
-
-	// Set up everything!
-	_midiDriver->open();
-	_midiParser->setMidiDriver(_midiDriver);
-	_midiParser->setTimerRate(_midiDriver->getBaseTempo());
 }
 
 Audio::RewindableAudioStream *Sound::makeAudioStream(uint16 id, CueList *cueList) {
-	Audio::RewindableAudioStream *audStream = NULL;
+	Audio::RewindableAudioStream *audStream = nullptr;
 
 	switch (_vm->getGameType()) {
-	case GType_ZOOMBINI:
-		audStream = makeMohawkWaveStream(_vm->getResource(ID_SND, id));
-		break;
 	case GType_LIVINGBOOKSV1:
 		audStream = makeLivingBooksWaveStream_v1(_vm->getResource(ID_WAV, id));
 		break;
@@ -261,55 +233,7 @@ Audio::SoundHandle *Sound::playSound(uint16 id, byte volume, bool loop, CueList 
 		return &handle->handle;
 	}
 
-	return NULL;
-}
-
-void Sound::playMidi(uint16 id) {
-	uint32 idTag;
-	if (!(_vm->getFeatures() & GF_HASMIDI)) {
-		warning ("Attempting to play MIDI in a game without MIDI");
-		return;
-	}
-
-	assert(_midiDriver && _midiParser);
-
-	_midiParser->unloadMusic();
-	if (_midiData)
-		delete[] _midiData;
-
-	Common::SeekableReadStream *midi = _vm->getResource(ID_TMID, id);
-
-	idTag = midi->readUint32BE();
-	assert(idTag == ID_MHWK);
-	midi->readUint32BE(); // Skip size
-	idTag = midi->readUint32BE();
-	assert(idTag == ID_MIDI);
-
-	_midiData = new byte[midi->size() - 12]; // Enough to cover MThd/Prg#/MTrk
-
-	// Read the MThd Data
-	midi->read(_midiData, 14);
-
-	// TODO: Load patches from the Prg# section... skip it for now.
-	idTag = midi->readUint32BE();
-	assert(idTag == ID_PRG);
-	midi->skip(midi->readUint32BE());
-
-	// Read the MTrk Data
-	uint32 mtrkSize = midi->size() - midi->pos();
-	midi->read(_midiData + 14, mtrkSize);
-
-	delete midi;
-
-	// Now, play it :)
-	if (!_midiParser->loadMusic(_midiData, 14 + mtrkSize))
-		error ("Could not play MIDI music from tMID %04x\n", id);
-
-	_midiDriver->setTimerCallback(_midiParser, MidiParser::timerCallback);
-}
-
-void Sound::stopMidi() {
-	_midiParser->unloadMusic();
+	return nullptr;
 }
 
 Audio::RewindableAudioStream *Sound::makeLivingBooksWaveStream_v1(Common::SeekableReadStream *stream) {

@@ -36,17 +36,4 @@
 #undef assert
 #define assert(x)  ((x) ? 0 : (print_error("ASSERT TRIGGERED:\n\n("#x")\n%s\nline: %d", __FILE__, __LINE__)))
 
-// Typedef basic data types in a way that is compatible with the N64 SDK.
-typedef unsigned char byte;
-typedef unsigned char uint8;
-typedef signed char int8;
-typedef unsigned short int uint16;
-typedef signed short int int16;
-typedef unsigned int uint32;
-typedef signed int int32;
-
-// Define SCUMMVM_DONT_DEFINE_TYPES to prevent scummsys.h from trying to
-// re-define those data types.
-#define SCUMMVM_DONT_DEFINE_TYPES
-
-#endif
+#endif // __N64_PORTDEFS__

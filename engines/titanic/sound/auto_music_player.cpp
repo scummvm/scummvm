@@ -47,7 +47,7 @@ void CAutoMusicPlayer::load(SimpleFile *file) {
 }
 
 bool CAutoMusicPlayer::EnterRoomMsg(CEnterRoomMsg *msg) {
-	if (!_isRepeated) {
+	if (!_isEnabled) {
 		CRoomItem *room = findRoom();
 		if (msg->_newRoom == room)
 			addTimer(2000);
@@ -57,11 +57,11 @@ bool CAutoMusicPlayer::EnterRoomMsg(CEnterRoomMsg *msg) {
 }
 
 bool CAutoMusicPlayer::LeaveRoomMsg(CLeaveRoomMsg *msg) {
-	if (_isRepeated) {
+	if (_isEnabled) {
 		CRoomItem *room = findRoom();
 		if (msg->_oldRoom == room) {
 			CChangeMusicMsg changeMsg;
-			changeMsg._flags = 1;
+			changeMsg._action = MUSIC_STOP;
 			changeMsg.execute(this);
 		}
 	}

@@ -62,6 +62,7 @@
 #include <linux/cdrom.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
+#include <sys/sysmacros.h>
 #include <sys/types.h>
 
 enum {
@@ -177,13 +178,14 @@ public:
 	LinuxAudioCDManager();
 	~LinuxAudioCDManager();
 
-	bool open();
-	void close();
-	bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate = false);
+	bool open() override;
+	void close() override;
+	bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate,
+			Audio::Mixer::SoundType soundType) override;
 
 protected:
-	bool openCD(int drive);
-	bool openCD(const Common::String &drive);
+	bool openCD(int drive) override;
+	bool openCD(const Common::String &drive) override;
 
 private:
 	struct Device {
@@ -284,9 +286,10 @@ bool LinuxAudioCDManager::openCD(const Common::String &drive) {
 	return true;
 }
 
-bool LinuxAudioCDManager::play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate) {
+bool LinuxAudioCDManager::play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate,
+		Audio::Mixer::SoundType soundType) {
 	// Prefer emulation
-	if (DefaultAudioCDManager::play(track, numLoops, startFrame, duration, onlyEmulate))
+	if (DefaultAudioCDManager::play(track, numLoops, startFrame, duration, onlyEmulate, soundType))
 		return true;
 
 	// If we're set to only emulate, or have no CD drive, return here
@@ -319,7 +322,7 @@ bool LinuxAudioCDManager::play(int track, int numLoops, int startFrame, int dura
 	_emulating = true;
 
 	_mixer->playStream(
-	    Audio::Mixer::kMusicSoundType,
+	    soundType,
 	    &_handle,
 	    Audio::makeLoopingAudioStream(audioStream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops),
 	    -1,

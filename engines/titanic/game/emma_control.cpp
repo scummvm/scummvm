@@ -57,7 +57,7 @@ bool CEmmaControl::EnterViewMsg(CEnterViewMsg *msg) {
 bool CEmmaControl::StatusChangeMsg(CStatusChangeMsg *msg) {
 	_flag = !_flag;
 	setVisible(_flag);
-	CChangeMusicMsg changeMsg(_flag ? _visibleSoundName : _hiddenSoundName, 0);
+	CChangeMusicMsg changeMsg(_flag ? _visibleSoundName : _hiddenSoundName, MUSIC_NONE);
 	changeMsg.execute(findRoom(), CAutoMusicPlayer::_type,
 		MSGFLAG_SCAN | MSGFLAG_BREAK_IF_HANDLED | MSGFLAG_CLASS_DEF);
 	return true;

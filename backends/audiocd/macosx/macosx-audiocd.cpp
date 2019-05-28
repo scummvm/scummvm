@@ -72,13 +72,14 @@ public:
 	MacOSXAudioCDManager() {}
 	~MacOSXAudioCDManager();
 
-	bool open();
-	void close();
-	bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate = false);
+	bool open() override;
+	void close() override;
+	bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate,
+			Audio::Mixer::SoundType soundType) override;
 
 protected:
-	bool openCD(int drive);
-	bool openCD(const Common::String &drive);
+	bool openCD(int drive) override;
+	bool openCD(const Common::String &drive) override;
 
 private:
 	struct Drive {
@@ -209,9 +210,10 @@ MacOSXAudioCDManager::DriveList MacOSXAudioCDManager::detectAllDrives() {
 	return drives;
 }
 
-bool MacOSXAudioCDManager::play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate) {
+bool MacOSXAudioCDManager::play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate,
+		Audio::Mixer::SoundType soundType) {
 	// Prefer emulation
-	if (DefaultAudioCDManager::play(track, numLoops, startFrame, duration, onlyEmulate))
+	if (DefaultAudioCDManager::play(track, numLoops, startFrame, duration, onlyEmulate, soundType))
 		return true;
 
 	// If we're set to only emulate, or have no CD drive, return here
@@ -248,7 +250,7 @@ bool MacOSXAudioCDManager::play(int track, int numLoops, int startFrame, int dur
 	// Fake emulation since we're really playing an AIFF file
 	_emulating = true;
 
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_handle,
+	_mixer->playStream(soundType, &_handle,
 	                   Audio::makeLoopingAudioStream(seekStream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops), -1, _cd.volume, _cd.balance);
 	return true;
 }

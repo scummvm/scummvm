@@ -42,7 +42,7 @@ public:
 	/**
 	 * Returns the top/left corner of the rect as a point
 	 */
-	operator const Point() { return Point(left, top); }
+	operator Point() { return Point(left, top); }
 
 	/**
 	 * Clear the rect

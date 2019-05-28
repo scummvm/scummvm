@@ -102,13 +102,11 @@ class MohawkEngine;
 
 class Sound {
 public:
-	Sound(MohawkEngine *vm);
+	explicit Sound(MohawkEngine *vm);
 	~Sound();
 
 	// Generic sound functions
 	Audio::SoundHandle *playSound(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume, bool loop = false, CueList *cueList = NULL);
-	void playMidi(uint16 id);
-	void stopMidi();
 	void stopSound();
 	void stopSound(uint16 id);
 	bool isPlaying(uint16 id);
@@ -117,17 +115,12 @@ public:
 
 private:
 	MohawkEngine *_vm;
-	MidiDriver *_midiDriver;
-	MidiParser *_midiParser;
-	byte *_midiData;
 
 	static Audio::RewindableAudioStream *makeLivingBooksWaveStream_v1(Common::SeekableReadStream *stream);
-	void initMidi();
 
 	Common::Array<SndHandle> _handles;
 	SndHandle *getHandle();
-	Audio::RewindableAudioStream *makeAudioStream(uint16 id, CueList *cueList = NULL);
-	uint16 convertMystID(uint16 id);
+	Audio::RewindableAudioStream *makeAudioStream(uint16 id, CueList *cueList = nullptr);
 };
 
 } // End of namespace Mohawk

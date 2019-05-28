@@ -51,7 +51,7 @@ void TattooEngine::showOpening() {
 }
 
 void TattooEngine::initialize() {
-	initGraphics(640, 480, true);
+	initGraphics(640, 480);
 
 	// Initialize the base engine
 	SherlockEngine::initialize();
@@ -202,6 +202,11 @@ void TattooEngine::saveConfig() {
 	ConfMan.setBool("transparent_windows", _transparentMenus);
 	ConfMan.setBool("subtitles", _textWindowsOn);
 	ConfMan.flushToDisk();
+}
+
+bool TattooEngine::canLoadGameStateCurrently() {
+	TattooUserInterface &ui = *(TattooUserInterface *)_ui;
+	return _canLoadSave && !ui._creditsWidget.active() && !_runningProlog;
 }
 
 bool TattooEngine::canSaveGameStateCurrently() {

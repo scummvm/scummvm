@@ -65,9 +65,7 @@ void CursorManager::pushCursor(const void *buf, uint w, uint h, int hotspotX, in
 	cur->_visible = isVisible();
 	_cursorStack.push(cur);
 
-	if (buf) {
-		g_system->setMouseCursor(cur->_data, w, h, hotspotX, hotspotY, keycolor, dontScale, format);
-	}
+	g_system->setMouseCursor(cur->_data, w, h, hotspotX, hotspotY, keycolor, dontScale, format);
 }
 
 void CursorManager::popCursor() {
@@ -80,6 +78,8 @@ void CursorManager::popCursor() {
 	if (!_cursorStack.empty()) {
 		cur = _cursorStack.top();
 		g_system->setMouseCursor(cur->_data, cur->_width, cur->_height, cur->_hotspotX, cur->_hotspotY, cur->_keycolor, cur->_dontScale, &cur->_format);
+	} else {
+		g_system->setMouseCursor(nullptr, 0, 0, 0, 0, 0);
 	}
 
 	g_system->showMouse(isVisible());
@@ -99,6 +99,7 @@ void CursorManager::popAllCursors() {
 		}
 	}
 
+	g_system->setMouseCursor(nullptr, 0, 0, 0, 0, 0);
 	g_system->showMouse(isVisible());
 }
 

@@ -21,11 +21,11 @@
  */
 
 #include "sludge/allfiles.h"
-#include "sludge/sprites.h"
 #include "sludge/fonttext.h"
 #include "sludge/graphics.h"
-#include "sludge/newfatal.h"
 #include "sludge/moreio.h"
+#include "sludge/newfatal.h"
+#include "sludge/sprites.h"
 #include "sludge/sludge.h"
 #include "sludge/version.h"
 
@@ -48,11 +48,13 @@ void TextManager::init() {
 	_loadedFontNum = 0;
 	_fontSpace = -1;
 
+	_pastePalette.init();
 	_fontTable.clear();
 }
 
 void TextManager::kill() {
 	GraphicsManager::forgetSpriteBank(_theFont);
+	_pastePalette.kill();
 }
 
 bool TextManager::isInFont(const Common::String &theText) {
@@ -110,7 +112,7 @@ void TextManager::pasteString(const Common::String &theText, int xOff, int y, Sp
 	}
 }
 
-void TextManager::pasteStringToBackdrop(const Common::String &theText, int xOff, int y, SpritePalette &thePal) {
+void TextManager::pasteStringToBackdrop(const Common::String &theText, int xOff, int y) {
 	if (_fontTable.empty())
 		return;
 
@@ -120,12 +122,12 @@ void TextManager::pasteStringToBackdrop(const Common::String &theText, int xOff,
 	for (uint32 i = 0; i < str32.size(); ++i) {
 		uint32 c = str32[i];
 		Sprite *mySprite = &_theFont.sprites[fontInTable(c)];
-		g_sludge->_gfxMan->pasteSpriteToBackDrop(xOff, y, *mySprite, thePal);
+		g_sludge->_gfxMan->pasteSpriteToBackDrop(xOff, y, *mySprite, _pastePalette);
 		xOff += mySprite->surface.w + _fontSpace;
 	}
 }
 
-void TextManager::burnStringToBackdrop(const Common::String &theText, int xOff, int y, SpritePalette &thePal) {
+void TextManager::burnStringToBackdrop(const Common::String &theText, int xOff, int y) {
 	if (_fontTable.empty())
 		return;
 
@@ -135,15 +137,9 @@ void TextManager::burnStringToBackdrop(const Common::String &theText, int xOff, 
 	for (uint i = 0; i < str32.size(); ++i) {
 		uint32 c = str32[i];
 		Sprite *mySprite = &_theFont.sprites[fontInTable(c)];
-		g_sludge->_gfxMan->burnSpriteToBackDrop(xOff, y, *mySprite, thePal);
+		g_sludge->_gfxMan->burnSpriteToBackDrop(xOff, y, *mySprite, _pastePalette);
 		xOff += mySprite->surface.w + _fontSpace;
 	}
-}
-
-void setFontColour(SpritePalette &sP, byte r, byte g, byte b) {
-	sP.originalRed = r;
-	sP.originalGreen = g;
-	sP.originalBlue = b;
 }
 
 bool TextManager::loadFont(int filenum, const Common::String &charOrder, int h) {
@@ -179,7 +175,7 @@ bool TextManager::loadFont(int filenum, const Common::String &charOrder, int h) 
 // load & save
 void TextManager::saveFont(Common::WriteStream *stream) {
 	stream->writeByte(!_fontTable.empty());
-	if (!_fontTable.empty() > 0) {
+	if (!_fontTable.empty()) {
 		stream->writeUint16BE(_loadedFontNum);
 		stream->writeUint16BE(_fontHeight);
 		writeString(_fontOrder.getUTF8String(), stream);

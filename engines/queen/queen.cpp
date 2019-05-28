@@ -324,7 +324,7 @@ bool Queen::QueenEngine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error QueenEngine::run() {
-	initGraphics(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT, false);
+	initGraphics(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT);
 
 	_resource = new Resource();
 

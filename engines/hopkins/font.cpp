@@ -281,9 +281,9 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 				int ptrb = _boxWidth - 4;
 				for (;;) {
 					lineSize = curLineSize;
-					do
+					do {
 						curChar = _tempText[tempTextIdx + curLineSize++];
-					while (curChar != ' ' && curChar != '%');
+					} while (curChar != ' ' && curChar != '%');
 					if (curLineSize >= ptrb / _fontFixedWidth) {
 						if (curChar == '%')
 							curChar = ' ';

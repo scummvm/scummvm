@@ -93,6 +93,22 @@ int ModularBackend::getShader() const {
 	return _graphicsManager->getShader();
 }
 
+const OSystem::GraphicsMode *ModularBackend::getSupportedStretchModes() const {
+	return _graphicsManager->getSupportedStretchModes();
+}
+
+int ModularBackend::getDefaultStretchMode() const {
+	return _graphicsManager->getDefaultStretchMode();
+}
+
+bool ModularBackend::setStretchMode(int mode) {
+	return _graphicsManager->setStretchMode(mode);
+}
+
+int ModularBackend::getStretchMode() const {
+	return _graphicsManager->getStretchMode();
+}
+
 void ModularBackend::resetGraphicsScale() {
 	_graphicsManager->resetGraphicsScale();
 }
@@ -111,6 +127,10 @@ Common::List<Graphics::PixelFormat> ModularBackend::getSupportedFormats() const 
 
 void ModularBackend::initSize(uint w, uint h, const Graphics::PixelFormat *format ) {
 	_graphicsManager->initSize(w, h, format);
+}
+
+void ModularBackend::initSizeHint(const Graphics::ModeList &modes) {
+	_graphicsManager->initSizeHint(modes);
 }
 
 int ModularBackend::getScreenChangeID() const {
@@ -213,6 +233,7 @@ bool ModularBackend::showMouse(bool visible) {
 }
 
 void ModularBackend::warpMouse(int x, int y) {
+	_eventManager->purgeMouseEvents();
 	_graphicsManager->warpMouse(x, y);
 }
 

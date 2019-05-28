@@ -112,8 +112,8 @@ bool RobotAudioStream::addPacket(const RobotAudioPacket &packet) {
 	// 4 (odd).
 	const int8 bufferIndex = packet.position % 4 ? 1 : 0;
 
-	// Packet 0 is the first primer, packet 2 is the second primer,
-	// packet 4+ are regular audio data
+	// Packet 0 is the first primer, packet 2 is the second primer, packet 4+
+	// are regular audio data
 	if (packet.position <= 2 && _firstPacketPosition == -1) {
 		_readHead = 0;
 		_readHeadAbs = 0;
@@ -445,10 +445,10 @@ void RobotDecoder::initVideo(const int16 x, const int16 y, const int16 scale, co
 	_maxFrameRate = _frameRate + kMaxFrameRateDrift;
 
 	if (_xResolution == 0 || _yResolution == 0) {
-		// TODO: Default values were taken from RESOURCE.CFG hires property
-		// if it exists, so need to check games' configuration files for those
-		_xResolution = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
-		_yResolution = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
+		// In SSCI, default values were taken from RESOURCE.CFG hires property
+		// if it exists, but no games seem to take advantage of this
+		_xResolution = g_sci->_gfxFrameout->getScreenWidth();
+		_yResolution = g_sci->_gfxFrameout->getScreenHeight();
 	}
 
 	if (hasPalette) {
@@ -677,10 +677,10 @@ void RobotDecoder::showFrame(const uint16 frameNo, const uint16 newX, const uint
 			if (_isHiRes) {
 				SciBitmap &bitmap = *_segMan->lookupBitmap(_celHandles[i].bitmapId);
 
-				const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-				const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
-				const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
-				const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
+				const int16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
+				const int16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
+				const int16 screenWidth = g_sci->_gfxFrameout->getScreenWidth();
+				const int16 screenHeight = g_sci->_gfxFrameout->getScreenHeight();
 
 				if (scriptWidth == kLowResX && scriptHeight == kLowResY) {
 					const Ratio lowResToScreenX(screenWidth, kLowResX);
@@ -1169,8 +1169,14 @@ bool RobotDecoder::readPartialAudioRecordAndSubmit(const int startFrame, const i
 
 uint16 RobotDecoder::getFrameSize(Common::Rect &outRect) const {
 	assert(_plane != nullptr);
-	outRect.clip(0, 0);
-	for (RobotScreenItemList::size_type i = 0; i < _screenItemList.size(); ++i) {
+
+	if (_screenItemList.size() == 0) {
+		outRect.clip(0, 0);
+		return _numFramesTotal;
+	}
+
+	outRect = _screenItemList[0]->getNowSeenRect(*_plane);
+	for (RobotScreenItemList::size_type i = 1; i < _screenItemList.size(); ++i) {
 		ScreenItem &screenItem = *_screenItemList[i];
 		outRect.extend(screenItem.getNowSeenRect(*_plane));
 	}
@@ -1386,12 +1392,8 @@ void RobotDecoder::doVersion5(const bool shouldSubmitAudio) {
 	for (RobotScreenItemList::size_type i = 0; i < screenItemCount; ++i) {
 		Common::Point position(_screenItemX[i], _screenItemY[i]);
 
-// TODO: Version 6 robot?
-//		int scaleXRemainder;
 		if (_scaleInfo.signal == kScaleSignalManual) {
 			position.x = (position.x * _scaleInfo.x) / 128;
-// TODO: Version 6 robot?
-//			scaleXRemainder = (position.x * _scaleInfo.x) % 128;
 			position.y = (position.y * _scaleInfo.y) / 128;
 		}
 
@@ -1400,8 +1402,6 @@ void RobotDecoder::doVersion5(const bool shouldSubmitAudio) {
 			celInfo.bitmap = _celHandles[i].bitmapId;
 			ScreenItem *screenItem = new ScreenItem(_planeId, celInfo, position, _scaleInfo);
 			_screenItemList[i] = screenItem;
-			// TODO: Version 6 robot?
-			// screenItem->_field_30 = scaleXRemainder;
 
 			if (_priority == -1) {
 				screenItem->_fixedPriority = false;
@@ -1414,8 +1414,6 @@ void RobotDecoder::doVersion5(const bool shouldSubmitAudio) {
 			ScreenItem *screenItem = _screenItemList[i];
 			screenItem->_celInfo.bitmap = _celHandles[i].bitmapId;
 			screenItem->_position = position;
-			// TODO: Version 6 robot?
-			// screenItem->_field_30 = scaleXRemainder;
 
 			if (_priority == -1) {
 				screenItem->_fixedPriority = false;
@@ -1461,10 +1459,10 @@ uint32 RobotDecoder::createCel5(const byte *rawVideoData, const int16 screenItem
 
 	rawVideoData += kCelHeaderSize;
 
-	const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
-	const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
-	const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
+	const int16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
+	const int16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
+	const int16 screenWidth = g_sci->_gfxFrameout->getScreenWidth();
+	const int16 screenHeight = g_sci->_gfxFrameout->getScreenHeight();
 
 	Common::Point origin;
 	if (scriptWidth == kLowResX && scriptHeight == kLowResY) {
@@ -1570,7 +1568,7 @@ void RobotDecoder::preallocateCelMemory(const byte *rawVideoData, const int16 nu
 	for (int i = 0; i < numFixedCels; ++i) {
 		CelHandleInfo &celHandle = _celHandles[i];
 
-		// NOTE: There was a check to see if the cel handle was not allocated
+		// In SSCI, there was a check to see if the cel handle was not allocated
 		// here, for some reason, which would mean that nothing was ever
 		// allocated from fixed cels, because the _celHandles array just got
 		// deleted and recreated...
@@ -1594,16 +1592,18 @@ void RobotDecoder::preallocateCelMemory(const byte *rawVideoData, const int16 nu
 			maxFrameArea = area;
 		}
 
+		const bool remap = (getSciVersion() == SCI_VERSION_3);
+
 		CelHandleInfo &celHandle = _celHandles[i];
 		if (celHandle.status == CelHandleInfo::kRobotLifetime) {
 			if (_maxCelArea[i] < area) {
 				_segMan->freeBitmap(celHandle.bitmapId);
-				_segMan->allocateBitmap(&celHandle.bitmapId, celWidth, celHeight, 255, 0, 0, _xResolution, _yResolution, kRawPaletteSize, false, false);
+				_segMan->allocateBitmap(&celHandle.bitmapId, celWidth, celHeight, 255, 0, 0, _xResolution, _yResolution, kRawPaletteSize, remap, false);
 				celHandle.area = area;
 				celHandle.status = CelHandleInfo::kFrameLifetime;
 			}
 		} else if (celHandle.status == CelHandleInfo::kNoCel) {
-			_segMan->allocateBitmap(&celHandle.bitmapId, celWidth, celHeight, 255, 0, 0, _xResolution, _yResolution, kRawPaletteSize, false, false);
+			_segMan->allocateBitmap(&celHandle.bitmapId, celWidth, celHeight, 255, 0, 0, _xResolution, _yResolution, kRawPaletteSize, remap, false);
 			celHandle.area = area;
 			celHandle.status = CelHandleInfo::kFrameLifetime;
 		} else {

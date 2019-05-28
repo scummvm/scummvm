@@ -24,6 +24,7 @@
 #include "sci/engine/message.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/seg_manager.h"
+#include "sci/engine/state.h"
 #include "sci/util.h"
 
 namespace Sci {
@@ -149,7 +150,7 @@ public:
 	}
 };
 
-#ifdef ENABLE_SCI32
+#ifdef ENABLE_SCI32_MAC
 // SCI32 Mac decided to add an extra byte (currently unknown in meaning) between
 // the talker and the string...
 class MessageReaderV4_MacSCI32 : public MessageReader {
@@ -202,6 +203,8 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 	case 4:
 #ifdef ENABLE_SCI32
 	case 5: // v5 seems to be compatible with v4
+#endif
+#ifdef ENABLE_SCI32_MAC
 		// SCI32 Mac is different than SCI32 DOS/Win here
 		if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_2_1_EARLY)
 			reader = new MessageReaderV4_MacSCI32(*res);
@@ -225,6 +228,9 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 		MessageTuple &t = stack.top();
 
 		// Fix known incorrect message tuples
+		// TODO: Add a more generic mechanism, like the one we have for
+		// script workarounds, for cases with incorrect sync resources,
+		// like the ones below.
 		if (g_sci->getGameId() == GID_QFG1VGA && stack.getModule() == 322 &&
 			t.noun == 14 && t.verb == 1 && t.cond == 19 && t.seq == 1) {
 			// Talking to Kaspar the shopkeeper - bug #3604944
@@ -241,6 +247,87 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 			t.noun == 10 && t.verb == 1 && t.cond == 0 && t.seq == 1) {
 			// Using the eye icon on Keith in the Blue Room - bug #3605654
 			t.cond = 13;
+		}
+
+		if (g_sci->getGameId() == GID_QFG4 && stack.getModule() == 16 &&
+			t.noun == 49 && t.verb == 1 && t.cond == 0 && t.seq == 2) {
+			// Examining the statue inventory item from the monastery - bug #10770
+			// The description says "squid-like monster", yet the icon is
+			// clearly an insect. It turned Chief into "an enormous beetle". We
+			// change the phrase to "monstrous insect".
+			//
+			// Note: The German string contains accented characters.
+			//  0x84 "a with diaeresis"
+			//  0x94 "o with diaeresis"
+			//
+			// Values were pulled from SCI Companion's raw message data. They
+			// are escaped that way here, as encoded bytes.
+			record.tuple = t;
+			record.refTuple = MessageTuple();
+			record.talker = 99;
+			if (g_sci->getSciLanguage() == K_LANG_GERMAN) {
+				record.string = "Die groteske Skulptur eines schrecklichen, monstr\x94sen insekts ist sorgf\x84ltig in die Einkaufstasche eingewickelt.";
+				record.length = 112;
+			} else {
+				record.string = "Carefully wrapped in a shopping bag is the grotesque sculpture of a horrible, monstrous insect.";
+				record.length = 95;
+			}
+			delete reader;
+			return true;
+		}
+
+		if (g_sci->getGameId() == GID_QFG4 && stack.getModule() == 579 &&
+			t.noun == 0 && t.verb == 0 && t.cond == 0 && t.seq == 1) {
+			// Talking with the Leshy and telling him about "bush in goo" - bug #10137
+			t.verb = 1;
+		}
+
+		if (g_sci->getGameId() == GID_QFG4 && g_sci->isCD() && stack.getModule() == 520 &&
+			t.noun == 2 && t.verb == 59 && t.cond == 0) {
+			// The CD edition mangled the Rusalka flowers dialogue. - bug #10849
+			// In the floppy edition, there are 3 lines, the first from
+			// the narrator, then two from Rusalka. The CD edition omits
+			// narration and only has the 3rd text, with the 2nd audio! The
+			// 3rd audio is orphaned but available.
+			//
+			// We only restore Rusalka's lines, providing the correct text
+			// for seq:1 to match the audio. We respond to seq:2 requests
+			// with Rusalka's last text. The orphaned audio (seq:3) has its
+			// tuple adjusted to seq:2 in resource_audio.cpp.
+			if (t.seq == 1) {
+				record.tuple = t;
+				record.refTuple = MessageTuple();
+				record.talker = 28;
+				record.string = "Thank you for the beautiful flowers.  No one has been so nice to me since I can remember.";
+				record.length = 89;
+				delete reader;
+				return true;
+			} else if (t.seq == 2) {
+				// The CD edition ships with this text at seq:1.
+				//  Look it up instead of hardcoding.
+				t.seq = 1;
+				if (!reader->findRecord(t, record)) {
+					delete reader;
+					return false;
+				}
+				t.seq = 2;             // Prevent an endless 2=1 -> 2=1 -> 2=1... loop.
+				record.tuple.seq = 2;  // Make the record seq:2 to get the seq:2 audio.
+				record.refTuple = MessageTuple();
+				delete reader;
+				return true;
+			}
+		}
+
+		if (g_sci->getGameId() == GID_LAURABOW2 && !g_sci->isCD() && stack.getModule() == 1885 &&
+			t.noun == 1 && t.verb == 6 && t.cond == 16 && t.seq == 4 &&
+			(g_sci->getEngineState()->currentRoomNumber() == 350 ||
+			 g_sci->getEngineState()->currentRoomNumber() == 360 ||
+			 g_sci->getEngineState()->currentRoomNumber() == 370)) {
+			// Asking Yvette about Tut in act 2 party - bug #10723
+			// Skip the last two lines of dialogue about a murder that hasn't occurred yet.
+			// Sierra fixed this in cd version by creating a copy of this message without those lines.
+			// Room-specific as the message is used again later where it should display in full.
+			t.seq += 2;
 		}
 
 		// Fill in known missing message tuples
@@ -262,6 +349,70 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 			record.length = 0;
 			delete reader;
 			return true;
+		}
+
+		// FPFP CD has several message sequences where audio and text were left
+		//  out of sync. This is probably because this version didn't formally
+		//  support text mode. Most of these texts just say "Dummy Msg". All the
+		//  real text is there but it's either concatenated or in a different
+		//  tuple. We extract and return the correct text. Fixes #10964
+		if (g_sci->getGameId() == GID_FREDDYPHARKAS && g_sci->isCD() &&
+			g_sci->getLanguage() == Common::EN_ANY && !g_sci->isDemo()) {
+			byte textSeq = 0;
+			uint32 substringIndex = 0;
+			uint32 substringLength = 0;
+
+			// lever brothers' introduction
+			if (stack.getModule() == 220 && t.noun == 24 && t.verb == 0 && t.cond == 0) {
+				switch (t.seq) {
+				case 1: textSeq = 1; substringIndex = 0;   substringLength = 25; break;
+				case 2: textSeq = 1; substringIndex = 26;  substringLength = 20; break;
+				case 3: textSeq = 1; substringIndex = 47;  substringLength = 58; break;
+				case 4: textSeq = 1; substringIndex = 106; substringLength = 34; break;
+				case 5: textSeq = 1; substringIndex = 141; substringLength = 27; break;
+				case 6: textSeq = 1; substringIndex = 169; substringLength = 29; break;
+				case 7: textSeq = 1; substringIndex = 199; substringLength = 52; break;
+				case 8: textSeq = 1; substringIndex = 252; substringLength = 37; break;
+				}
+			}
+
+			// kenny's introduction
+			if (stack.getModule() == 220 && t.noun == 30 && t.verb == 0 && t.cond == 0) {
+				switch (t.seq) {
+				case 3: textSeq = 3; substringIndex = 0;  substringLength = 14;  break;
+				case 4: textSeq = 3; substringIndex = 15; substringLength = 245; break;
+				case 5: textSeq = 4; break;
+				}
+			}
+
+			// helen swatting flies
+			if (stack.getModule() == 660 && t.noun == 35 && t.verb == 0 && t.cond == 0) {
+				switch (t.seq) {
+				case 1: textSeq = 1; substringIndex = 0;   substringLength = 42; break;
+				case 2: textSeq = 1; substringIndex = 43;  substringLength = 93; break;
+				case 3: textSeq = 1; substringIndex = 137; substringLength = 72; break;
+				case 4: textSeq = 2; break;
+				case 5: textSeq = 1; substringIndex = 210; substringLength = 57; break;
+				case 6: textSeq = 3; break;
+				}
+			}
+
+			// find the original message record and the record that contains the
+			//  correct text, then use the correct substring. the original must
+			//  be used to preserve its correct talker and tuple values.
+			if (textSeq != 0 && reader->findRecord(t, record)) {
+				MessageTuple textTuple(t.noun, t.verb, t.cond, textSeq);
+				MessageRecord textRecord;
+				if (reader->findRecord(textTuple, textRecord)) {
+					uint32 textLength = (substringLength == 0) ? textRecord.length : substringLength;
+					if (substringIndex + textLength <= textRecord.length) {
+						record.string = textRecord.string + substringIndex;
+						record.length = textLength;
+						delete reader;
+						return true;
+					}
+				}
+			}
 		}
 
 		if (!reader->findRecord(t, record)) {
@@ -300,7 +451,7 @@ int MessageState::nextMessage(reg_t buf) {
 
 	if (!buf.isNull()) {
 		if (getRecord(_cursorStack, true, record)) {
-			outputString(buf, processString(record.string));
+			outputString(buf, processString(record.string, record.length));
 			_lastReturned = record.tuple;
 			_lastReturnedModule = _cursorStack.getModule();
 			_cursorStack.top().seq++;
@@ -434,13 +585,13 @@ bool MessageState::stringStage(Common::String &outstr, const Common::String &inS
 	return false;
 }
 
-Common::String MessageState::processString(const char *s) {
+Common::String MessageState::processString(const char *s, uint32 maxLength) {
 	Common::String outStr;
 	Common::String inStr = Common::String(s);
 
 	uint index = 0;
 
-	while (index < inStr.size()) {
+	while (index < inStr.size() && index < maxLength) {
 		// Check for hex escape sequence
 		if (stringHex(outStr, inStr, index))
 			continue;

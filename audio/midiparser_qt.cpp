@@ -455,7 +455,7 @@ void MidiParser_QT::initCommon() {
 byte *MidiParser_QT::readWholeTrack(Common::QuickTimeParser::Track *track, uint32 &trackSize) {
 	// This just goes through all chunks and appends them together
 
-	Common::MemoryWriteStreamDynamic output;
+	Common::MemoryWriteStreamDynamic output(DisposeAfterUse::NO);
 	uint32 curSample = 0;
 
 	// Read in the note request data first

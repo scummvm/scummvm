@@ -523,9 +523,10 @@ void DreamWebEngine::candles(ReelRoutine &routine) {
 void DreamWebEngine::gates(ReelRoutine &routine) {
 	if (checkSpeed(routine)) {
 		uint16 nextReelPointer = routine.reelPointer() + 1;
+		uint16 checkIntro3ReelPointer = (getLanguage() != Common::ES_ESP) ? 110 : 111;
 		if (nextReelPointer == 116)
 			_sound->playChannel1(17);
-		if (nextReelPointer >= 110)
+		if (nextReelPointer >= checkIntro3ReelPointer)
 			routine.period = 2;
 		if (nextReelPointer == 120) {
 			_getBack = 1;
@@ -743,10 +744,12 @@ void DreamWebEngine::introMonks2(ReelRoutine &routine) {
 		}
 
 		if (nextReelPointer == 110) {
+			int introCountCheck = (getLanguage() != Common::DE_DEU && getLanguage() != Common::ES_ESP) ? 35 : 40;
+
 			_introCount++;
 			monks2text();
 
-			if (_introCount == 35)
+			if (_introCount == introCountCheck)
 				nextReelPointer = 111;
 			else
 				nextReelPointer = 98;

@@ -81,12 +81,10 @@ void DebugState::updateActiveBreakpointTypes() {
 }
 
 // Disassembles one command from the heap, returns address of next command or 0 if a ret was encountered.
-reg_t disassemble(EngineState *s, reg32_t pos, const Object *obj, bool printBWTag, bool printBytecode) {
+reg_t disassemble(EngineState *s, reg_t pos, const Object *obj, bool printBWTag, bool printBytecode) {
 	SegmentObj *mobj = s->_segMan->getSegment(pos.getSegment(), SEG_TYPE_SCRIPT);
 	Script *script_entity = NULL;
-	reg_t retval;
-	retval.setSegment(pos.getSegment());
-	retval.setOffset(pos.getOffset() + 1);
+	reg_t retval = make_reg32(pos.getSegment(), pos.getOffset() + 1);
 	uint16 param_value = 0xffff; // Suppress GCC warning by setting default value, chose value as invalid to getKernelName etc.
 	uint i = 0;
 	Kernel *kernel = g_sci->getKernel();
@@ -191,7 +189,7 @@ reg_t disassemble(EngineState *s, reg32_t pos, const Object *obj, bool printBWTa
 				debugN("\t%s[%x],", (param_value < kernel->_kernelFuncs.size()) ?
 							((param_value < kernel->getKernelNamesSize()) ? kernel->getKernelName(param_value).c_str() : "[Unknown(postulated)]")
 							: "<invalid>", param_value);
-			} else if (opcode == op_class) {
+			} else if (opcode == op_class || opcode == op_super) {
 				const reg_t classAddr = s->_segMan->getClassAddress(param_value, SCRIPT_GET_DONT_LOAD, retval.getSegment());
 				if (!classAddr.isNull()) {
 					debugN("\t%s", s->_segMan->getObjectName(classAddr));
@@ -199,15 +197,8 @@ reg_t disassemble(EngineState *s, reg32_t pos, const Object *obj, bool printBWTa
 				} else {
 					debugN(opsize ? "\t%02x" : "\t%04x", param_value);
 				}
-			} else if (opcode == op_super) {
-				if (obj != nullptr) {
-					debugN("\t%s", s->_segMan->getObjectName(obj->getSuperClassSelector()));
-					debugN(opsize ? "[%02x]" : "[%04x]", param_value);
-				} else {
-					debugN(opsize ? "\t%02x" : "\t%04x", param_value);
-				}
 
-				debugN(",");
+				debugN(", ");
 #ifdef ENABLE_SCI32
 			} else if (
 				opcode == op_pToa || opcode == op_aTop ||
@@ -227,7 +218,11 @@ reg_t disassemble(EngineState *s, reg32_t pos, const Object *obj, bool printBWTa
 					if (obj != nullptr) {
 						const Object *const super = obj->getClass(s->_segMan);
 						assert(super);
-						selectorName = kernel->getSelectorName(super->getVarSelector(param_value / 2)).c_str();
+						if (param_value / 2 < super->getVarCount()) {
+							selectorName = kernel->getSelectorName(super->getVarSelector(param_value / 2)).c_str();
+						} else {
+							selectorName = "<invalid>";
+						}
 					} else {
 						selectorName = "<unavailable>";
 					}
@@ -267,11 +262,9 @@ reg_t disassemble(EngineState *s, reg32_t pos, const Object *obj, bool printBWTa
 				retval.incOffset(2);
 			}
 
-			const uint32 offset = findOffset(param_value, script_entity, retval.getOffset());
-			reg_t addr;
-			addr.setSegment(retval.getSegment());
-			addr.setOffset(offset);
-			if (getSciVersion() == SCI_VERSION_3 && !s->_segMan->isObject(addr)) {
+			const uint32 offset = findOffset(param_value, script_entity, pos.getOffset() + bytecount);
+			reg_t addr = make_reg32(retval.getSegment(), offset);
+			if (!s->_segMan->isObject(addr)) {
 				debugN("\t\"%s\"", s->_segMan->derefString(addr));
 			} else {
 				debugN("\t%s", s->_segMan->getObjectName(addr));
@@ -284,11 +277,11 @@ reg_t disassemble(EngineState *s, reg32_t pos, const Object *obj, bool printBWTa
 			if (opsize) {
 				int8 offset = (int8)scr[retval.getOffset()];
 				retval.incOffset(1);
-				debugN("\t%02x  [%04x]", 0xff & offset, kOffsetMask & (retval.getOffset() + offset));
+				debugN("\t%02x  [%04x]", 0xff & offset, kOffsetMask & (pos.getOffset() + bytecount + offset));
 			} else {
 				int16 offset = (int16)READ_SCI11ENDIAN_UINT16(&scr[retval.getOffset()]);
 				retval.incOffset(2);
-				debugN("\t%04x  [%04x]", 0xffff & offset, kOffsetMask & (retval.getOffset() + offset));
+				debugN("\t%04x  [%04x]", 0xffff & offset, kOffsetMask & (pos.getOffset() + bytecount + offset));
 			}
 			break;
 
@@ -377,6 +370,8 @@ reg_t disassemble(EngineState *s, reg32_t pos, const Object *obj, bool printBWTa
 					case kSelectorNone:
 						debugN("INVALID");
 						break;
+					default:
+						break;
 					}
 				}
 
@@ -445,7 +440,7 @@ void SciEngine::scriptDebug() {
 		}
 
 		if (_debugState.seeking != kDebugSeekNothing) {
-			const reg32_t pc = s->xs->addr.pc;
+			const reg_t pc = s->xs->addr.pc;
 			SegmentObj *mobj = s->_segMan->getSegment(pc.getSegment(), SEG_TYPE_SCRIPT);
 
 			if (mobj) {
@@ -461,6 +456,8 @@ void SciEngine::scriptDebug() {
 				case kDebugSeekSpecialCallk:
 					if (paramb1 != _debugState.seekSpecial)
 						return;
+					// fall through
+					// FIXME: fall through intended?
 
 				case kDebugSeekCallk:
 					if (op != op_callk)
@@ -769,7 +766,7 @@ bool SciEngine::checkExportBreakpoint(uint16 script, uint16 pubfunct) {
 	return found;
 }
 
-bool SciEngine::checkAddressBreakpoint(const reg32_t &address) {
+bool SciEngine::checkAddressBreakpoint(const reg_t &address) {
 	if (!(_debugState._activeBreakpointTypes & BREAK_ADDRESS))
 		return false;
 
@@ -943,6 +940,8 @@ void debugSelectorCall(reg_t send_obj, Selector selector, int argc, StackPtr arg
 				}
 			}
 		break;
+	default:
+		break;
 	}	// switch
 }
 
@@ -988,6 +987,10 @@ void debugPropertyAccess(Object *obj, reg_t objp, unsigned int index, reg_t curV
 }
 
 void logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *kernelSubCall, EngineState *s, int argc, reg_t *argv, reg_t result) {
+	if (s->abortScriptProcessing != kAbortNone) {
+		return;
+	}
+
 	Kernel *kernel = g_sci->getKernel();
 	if (!kernelSubCall) {
 		debugN("k%s: ", kernelCall->name);
@@ -1040,7 +1043,7 @@ void logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *ke
 						// TODO: Any other segment types which could
 						// use special handling?
 
-						if (kernelCall->function == kSaid) {
+						if (kernelCall->function == &kSaid) {
 							SegmentRef saidSpec = s->_segMan->dereference(argv[parmNr]);
 							if (saidSpec.isRaw) {
 								debugN(" ('");
@@ -1086,7 +1089,8 @@ void logBacktrace() {
 		switch (call.type) {
 		case EXEC_STACK_TYPE_CALL: // Normal function
 			if (call.type == EXEC_STACK_TYPE_CALL)
-			con->debugPrintf(" %x: script %d - ", i, s->_segMan->getScript(call.addr.pc.getSegment())->getScriptNumber());
+				con->debugPrintf(" %x: script %d - ", i, s->_segMan->getScript(call.addr.pc.getSegment())->getScriptNumber());
+			
 			if (call.debugSelector != -1) {
 				con->debugPrintf("%s::%s(", objname, g_sci->getKernel()->getSelectorName(call.debugSelector).c_str());
 			} else if (call.debugExportId != -1) {

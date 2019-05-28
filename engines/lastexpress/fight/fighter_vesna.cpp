@@ -104,7 +104,7 @@ void FighterPlayerVesna::update() {
 			_opponent->handleAction(kFightAction3);
 
 		if (_opponent->getCountdown() <= 0) {
-			getSoundQueue()->removeFromQueue(kEntityTables0);
+			getSoundQueue()->stop(kEntityTables0);
 			_fight->bailout(Fight::kFightEndWin);
 			return;
 		}
@@ -151,7 +151,7 @@ FighterOpponentVesna::FighterOpponentVesna(LastExpressEngine *engine) : Opponent
 	_sequences.push_back(loadSequence("2005csbm.seq"));
 	_sequences.push_back(loadSequence("2005oam4.seq"));
 
-	getSound()->playSound(kEntityTables0, "MUS038", kFlagDefault);
+	getSound()->playSound(kEntityTables0, "MUS038", kVolumeFull);
 
 	_countdown = 4;
 	_field_38 = 30;
@@ -252,7 +252,7 @@ void FighterOpponentVesna::update() {
 			_opponent->update();
 			Fighter::update();
 
-			getSoundQueue()->removeFromQueue(kEntityTables0);
+			getSoundQueue()->stop(kEntityTables0);
 
 			// Stop processing
 			return;

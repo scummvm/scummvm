@@ -127,8 +127,8 @@ bool CServiceElevator::ServiceElevatorMsg(CServiceElevatorMsg *msg) {
 		switch (_fieldDC) {
 		case 0:
 			_string1 = "DeepSpace";
-			_string2 = "a#2.wav";
-			queueSound("z#416.wav", _soundHandle2, 50);
+			_string2 = TRANSLATE("a#2.wav", "a#54.wav");
+			queueSound(TRANSLATE("z#416.wav", "z#160.wav"), _soundHandle2, 50);
 			break;
 
 		case 1:

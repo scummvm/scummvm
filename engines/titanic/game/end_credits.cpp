@@ -45,11 +45,11 @@ void CEndCredits::load(SimpleFile *file) {
 bool CEndCredits::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (_flag) {
 		deinit();
-		stopGlobalSound(true, -1);
+		stopAmbientSound(true, -1);
 		_flag = false;
 	} else {
 		loadSound(TRANSLATE("z#41.wav", "z#573.wav"));
-		playGlobalSound(TRANSLATE("z#41.wav", "z#573.wav"), VOL_NORMAL, false, false, 0);
+		playAmbientSound(TRANSLATE("z#41.wav", "z#573.wav"), VOL_NORMAL, false, false, 0);
 		_flag = true;
 	}
 

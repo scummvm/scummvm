@@ -200,7 +200,7 @@ int LogicHEsoccer::op_1005(float x1, float y1, float z1, float x2, float y2, flo
 	*nextVelX = x2 - 2 * dot * x1;
 	*nextVelY = y2 - 2 * dot * y1;
 	*nextVelZ = z2 - 2 * dot * z1;
-	*a10 = 1.0f; // It always does this. How curious!
+	*a10 = 1.0F; // It always does this. How curious!
 
 	return 1;
 }

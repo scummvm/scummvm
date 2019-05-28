@@ -556,7 +556,7 @@ void CGE2Engine::snFlash(bool on) {
 		if (pal) {
 			memcpy(pal, _vga->_sysPal, kPalSize);
 			for (int i = 0; i < kPalCount; i++) {
-				register int c;
+				int c;
 				c = pal[i]._r << 1;
 				pal[i]._r = (c < 64) ? c : 63;
 				c = pal[i]._g << 1;
@@ -846,8 +846,14 @@ void CGE2Engine::feedSnail(Sprite *spr, Action snq, Hero *hero) {
 							v = s->labVal(snq, v >> 8);
 						break;
 					}
-					if (v >= 0)
+					if (v >= 0) {
 						s->_actionCtrl[snq]._ptr = v;
+						if (spr->_ref == 1537 && s->_actionCtrl[snq]._ptr == 26)
+						{
+							debug(1, "Carpet Clothes Horse Rehanging Workaround Triggered!");
+							s->_actionCtrl[snq]._ptr = 8;
+						}
+					}
 				}
 
 				if (s == spr)

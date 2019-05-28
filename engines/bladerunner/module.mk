@@ -1,15 +1,16 @@
 MODULE := engines/bladerunner
 
 MODULE_OBJS = \
-	adq.o \
 	actor.o \
 	actor_clues.o \
 	actor_combat.o \
+	actor_dialogue_queue.o \
 	actor_walk.o \
 	adpcm_decoder.o \
 	ambient_sounds.o \
 	archive.o \
 	aud_stream.o \
+	audio_cache.o \
 	audio_mixer.o \
 	audio_player.o \
 	audio_speech.o \
@@ -18,15 +19,15 @@ MODULE_OBJS = \
 	chapters.o \
 	combat.o \
 	crimes_database.o \
+	debugger.o \
 	decompress_lcw.o \
 	decompress_lzo.o \
 	detection.o \
 	dialogue_menu.o \
-	elevator.o \
 	fog.o \
 	font.o \
-	gameflags.o \
-	gameinfo.o \
+	game_flags.o \
+	game_info.o \
 	image.o \
 	item.o \
 	item_pickup.o \
@@ -41,21 +42,91 @@ MODULE_OBJS = \
 	outtake.o \
 	overlays.o \
 	regions.o \
+	savefile.o \
 	scene.o \
 	scene_objects.o \
 	screen_effects.o \
 	script/script.o \
-	script/init.o \
-	script/kia.o \
-	script/vk.o \
-	script/esper.o \
-	script/ai.o \
+	script/init_script.o \
+	script/kia_script.o \
+	script/vk_script.o \
+	script/esper_script.o \
+	script/police_maze.o \
+	script/ai_script.o \
+	script/ai/answering_machine.o \
+	script/ai/baker.o \
+	script/ai/blimp_guy.o \
+	script/ai/bryant.o \
+	script/ai/bullet_bob.o \
+	script/ai/chew.o \
+	script/ai/clovis.o \
+	script/ai/crazylegs.o \
+	script/ai/dektora.o \
+	script/ai/desk_clerk.o \
+	script/ai/dispatcher.o \
+	script/ai/early_q.o \
+	script/ai/early_q_bartender.o \
+	script/ai/fish_dealer.o \
+	script/ai/free_slot_a.o \
+	script/ai/free_slot_b.o \
+	script/ai/gaff.o \
+	script/ai/general_doll.o \
+	script/ai/generic_walker_a.o \
+	script/ai/generic_walker_b.o \
+	script/ai/generic_walker_c.o \
+	script/ai/gordo.o \
+	script/ai/governor_kolvig.o \
+	script/ai/grigorian.o \
+	script/ai/guzza.o \
+	script/ai/hanoi.o \
+	script/ai/hasan.o \
+	script/ai/hawkers_barkeep.o \
+	script/ai/hawkers_parrot.o \
+	script/ai/holloway.o \
+	script/ai/howie_lee.o \
+	script/ai/hysteria_patron1.o \
+	script/ai/hysteria_patron2.o \
+	script/ai/hysteria_patron3.o \
+	script/ai/insect_dealer.o \
+	script/ai/isabella.o \
+	script/ai/izo.o \
+	script/ai/klein.o \
+	script/ai/lance.o \
 	script/ai/leon.o \
+	script/ai/lockup_guard.o \
+	script/ai/lucy.o \
+	script/ai/luther.o \
 	script/ai/maggie.o \
+	script/ai/male_announcer.o \
+	script/ai/marcus.o \
 	script/ai/mccoy.o \
+	script/ai/mia.o \
+	script/ai/moraji.o \
+	script/ai/murray.o \
+	script/ai/mutant1.o \
+	script/ai/mutant2.o \
+	script/ai/mutant3.o \
+	script/ai/newscaster.o \
+	script/ai/officer_grayford.o \
 	script/ai/officer_leary.o \
+	script/ai/photographer.o \
+	script/ai/rachael.o \
+	script/ai/rajif.o \
 	script/ai/runciter.o \
-	script/scene.o \
+	script/ai/sadik.o \
+	script/ai/sebastian.o \
+	script/ai/sergeant_walls.o \
+	script/ai/shoeshine_man.o \
+	script/ai/steele.o \
+	script/ai/taffy.o \
+	script/ai/taffy_patron.o \
+	script/ai/teenager.o \
+	script/ai/the_bard.o \
+	script/ai/transient.o \
+	script/ai/tyrell.o \
+	script/ai/tyrell_guard.o \
+	script/ai/zuben.o \
+	script/scene_script.o \
 	script/scene/ar01.o \
 	script/scene/ar02.o \
 	script/scene/bb01.o \
@@ -174,10 +245,35 @@ MODULE_OBJS = \
 	shape.o \
 	slice_animations.o \
 	slice_renderer.o \
-	spinner.o \
+	subtitles.o \
 	suspects_database.o \
 	text_resource.o \
-	ui_image_picker.o \
+	time.o \
+	ui/elevator.o \
+	ui/end_credits.o \
+	ui/esper.o \
+	ui/kia.o \
+	ui/kia_log.o \
+	ui/kia_section_base.o \
+	ui/kia_section_clues.o \
+	ui/kia_section_crimes.o \
+	ui/kia_section_diagnostic.o \
+	ui/kia_section_help.o \
+	ui/kia_section_load.o \
+	ui/kia_section_pogo.o \
+	ui/kia_section_save.o \
+	ui/kia_section_settings.o \
+	ui/kia_section_suspects.o \
+	ui/kia_shapes.o \
+	ui/scores.o \
+	ui/spinner.o \
+	ui/ui_check_box.o \
+	ui/ui_container.o \
+	ui/ui_image_picker.o \
+	ui/ui_input_box.o \
+	ui/ui_scroll_box.o \
+	ui/ui_slider.o \
+	ui/vk.o \
 	view.o \
 	vqa_decoder.o \
 	vqa_player.o \

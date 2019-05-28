@@ -108,10 +108,10 @@ Parallaction::~Parallaction() {
 
 	delete _localFlagNames;
 	_char._ani.reset();
+	delete _input;
 	delete _gfx;
 	delete _soundMan;
 	delete _disk;
-	delete _input;
 }
 
 Common::Error Parallaction::init() {

@@ -83,6 +83,15 @@ void GraphicsManager::init() {
 	_currentBurnR = 0;
 	_currentBurnG = 0;
 	_currentBurnB = 0;
+
+	// Thumbnail
+	_thumbWidth = 0;
+	_thumbHeight = 0;
+
+	// Transition
+	resetRandW();
+	_brightnessLevel = 255;
+	_fadeMode = 2;
 }
 
 void GraphicsManager::kill() {
@@ -143,7 +152,7 @@ void GraphicsManager::kill() {
 }
 
 bool GraphicsManager::initGfx() {
-	initGraphics(_winWidth, _winHeight, true, _vm->getScreenPixelFormat());
+	initGraphics(_winWidth, _winHeight, _vm->getScreenPixelFormat());
 	_renderSurface.create(_winWidth, _winHeight, *_vm->getScreenPixelFormat());
 
 	if (!killResizeBackdrop(_winWidth, _winHeight))
@@ -157,6 +166,8 @@ bool GraphicsManager::initGfx() {
 void GraphicsManager::display() {
 	g_system->copyRectToScreen((byte *)_renderSurface.getPixels(), _renderSurface.pitch, 0, 0, _renderSurface.w, _renderSurface.h);
 	g_system->updateScreen();
+	if (_brightnessLevel < 255)
+		fixBrightness();
 }
 
 void GraphicsManager::clear() {

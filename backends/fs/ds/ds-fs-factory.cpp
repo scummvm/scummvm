@@ -24,9 +24,9 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 
 #if defined(__DS__)
+#include "dsmain.h" //for the isGBAMPAvailable() function
 #include "backends/fs/ds/ds-fs-factory.h"
 #include "backends/fs/ds/ds-fs.h"
-#include "dsmain.h" //for the isGBAMPAvailable() function
 
 namespace Common {
 DECLARE_SINGLETON(DSFilesystemFactory);

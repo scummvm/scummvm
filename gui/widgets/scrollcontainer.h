@@ -34,31 +34,38 @@ class ScrollContainerWidget: public Widget, public CommandSender {
 	int16 _scrolledX, _scrolledY;
 	uint16 _limitH;
 	uint32 _reflowCmd;
+	ThemeEngine::DialogBackground _backgroundType;
 
 	void recalc();
 
 public:
 	ScrollContainerWidget(GuiObject *boss, int x, int y, int w, int h, uint32 reflowCmd = 0);
 	ScrollContainerWidget(GuiObject *boss, const Common::String &name, uint32 reflowCmd = 0);
-	~ScrollContainerWidget();
+	~ScrollContainerWidget() override;
 
 	void init();
-	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
-	virtual void reflowLayout();
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+	void reflowLayout() override;
 
-	virtual bool containsWidget(Widget *) const;
+	bool containsWidget(Widget *) const override;
+
+	Common::Rect getClipRect() const override;
+
+	void setBackgroundType(ThemeEngine::DialogBackground backgroundType);
+
+	void handleMouseWheel(int x, int y, int direction) override;
 
 protected:
 	// We overload getChildY to make sure child widgets are positioned correctly.
 	// Essentially this compensates for the space taken up by the tab title header.
-	virtual int16	getChildX() const;
-	virtual int16	getChildY() const;
-	virtual uint16	getWidth() const;
-	virtual uint16	getHeight() const;
+	int16	getChildX() const override;
+	int16	getChildY() const override;
+	uint16	getWidth() const override;
+	uint16	getHeight() const override;
 
-	virtual void drawWidget();
+	void drawWidget() override;
 
-	virtual Widget *findWidget(int x, int y);
+	Widget *findWidget(int x, int y) override;
 };
 
 } // End of namespace GUI

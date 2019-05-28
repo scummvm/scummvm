@@ -23,6 +23,8 @@
 #ifndef CEDEVICE_H
 #define CEDEVICE_H
 
+#include <windows.h>
+
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/str.h"

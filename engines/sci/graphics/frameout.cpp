@@ -61,7 +61,7 @@
 namespace Sci {
 
 GfxFrameout::GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitions32 *transitions, GfxCursor32 *cursor) :
-	_isHiRes(gameIsHiRes()),
+	_isHiRes(detectHiRes()),
 	_palette(palette),
 	_cursor(cursor),
 	_segMan(segMan),
@@ -74,15 +74,13 @@ GfxFrameout::GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitio
 	_lastScreenUpdateTick(0) {
 
 	if (g_sci->getGameId() == GID_PHANTASMAGORIA) {
-		_currentBuffer = Buffer(630, 450, nullptr);
+		_currentBuffer.create(630, 450, Graphics::PixelFormat::createFormatCLUT8());
 	} else if (_isHiRes) {
-		_currentBuffer = Buffer(640, 480, nullptr);
+		_currentBuffer.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 	} else {
-		_currentBuffer = Buffer(320, 200, nullptr);
+		_currentBuffer.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	}
-	_currentBuffer.setPixels(calloc(1, _currentBuffer.screenWidth * _currentBuffer.screenHeight));
-	_screenRect = Common::Rect(_currentBuffer.screenWidth, _currentBuffer.screenHeight);
-	initGraphics(_currentBuffer.screenWidth, _currentBuffer.screenHeight, _isHiRes);
+	initGraphics(_currentBuffer.w, _currentBuffer.h);
 
 	switch (g_sci->getGameId()) {
 	case GID_HOYLE5:
@@ -91,18 +89,20 @@ GfxFrameout::GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitio
 	case GID_PHANTASMAGORIA2:
 	case GID_TORIN:
 	case GID_RAMA:
-		_currentBuffer.scriptWidth = 640;
-		_currentBuffer.scriptHeight = 480;
+		_scriptWidth = 640;
+		_scriptHeight = 480;
 		break;
 	case GID_GK2:
 	case GID_PQSWAT:
 		if (!g_sci->isDemo()) {
-			_currentBuffer.scriptWidth = 640;
-			_currentBuffer.scriptHeight = 480;
+			_scriptWidth = 640;
+			_scriptHeight = 480;
+			break;
 		}
-		break;
+		// fall through
 	default:
-		// default script width for other games is 320x200
+		_scriptWidth = 320;
+		_scriptHeight = 200;
 		break;
 	}
 }
@@ -110,7 +110,7 @@ GfxFrameout::GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitio
 GfxFrameout::~GfxFrameout() {
 	clear();
 	CelObj::deinit();
-	free(_currentBuffer.getPixels());
+	_currentBuffer.free();
 }
 
 void GfxFrameout::run() {
@@ -119,10 +119,10 @@ void GfxFrameout::run() {
 	ScreenItem::init();
 	GfxText32::init();
 
-	// NOTE: This happens in SCI::InitPlane in the actual engine,
-	// and is a background fill plane to ensure hidden planes
-	// (planes with a priority of -1) are never drawn
-	Plane *initPlane = new Plane(Common::Rect(_currentBuffer.scriptWidth, _currentBuffer.scriptHeight));
+	// This plane is created in SCI::InitPlane in SSCI, and is a background fill
+	// plane to ensure "hidden" planes (planes with negative priority) are never
+	// drawn
+	Plane *initPlane = new Plane(Common::Rect(_scriptWidth, _scriptHeight));
 	initPlane->_priority = 0;
 	_planes.add(initPlane);
 }
@@ -133,7 +133,7 @@ void GfxFrameout::clear() {
 	_showList.clear();
 }
 
-bool GfxFrameout::gameIsHiRes() const {
+bool GfxFrameout::detectHiRes() const {
 	// QFG4 is always low resolution
 	if (g_sci->getGameId() == GID_QFG4) {
 		return false;
@@ -296,8 +296,8 @@ void GfxFrameout::kernelDeletePlane(const reg_t object) {
 	}
 
 	if (plane->_created) {
-		// NOTE: The original engine calls some `AbortPlane` function that
-		// just ends up doing this anyway so we skip the extra indirection
+		// SSCI calls some `AbortPlane` function that just ends up doing this
+		// anyway, so we skip the extra indirection
 		_planes.erase(plane);
 	} else {
 		plane->_created = 0;
@@ -331,8 +331,8 @@ void GfxFrameout::kernelMovePlaneItems(const reg_t object, const int16 deltaX, c
 	for (ScreenItemList::iterator it = plane->_screenItemList.begin(); it != plane->_screenItemList.end(); ++it) {
 		ScreenItem &screenItem = **it;
 
-		// If object is a number, the screen item from the
-		// engine, not a script, and should be ignored
+		// If object is a number, the screen item from the engine, not a script,
+		// and should be ignored
 		if (screenItem._object.isNumber()) {
 			continue;
 		}
@@ -360,19 +360,19 @@ void GfxFrameout::addPlane(Plane *plane) {
 		error("Plane %04x:%04x already exists", PRINT_REG(plane->_object));
 	}
 
-	plane->clipScreenRect(_screenRect);
+	plane->clipScreenRect(Common::Rect(_currentBuffer.w, _currentBuffer.h));
 	_planes.add(plane);
 }
 
 void GfxFrameout::updatePlane(Plane &plane) {
-	// NOTE: This assertion comes from SCI engine code.
+	// This assertion comes from SSCI
 	assert(_planes.findByObject(plane._object) == &plane);
 
 	Plane *visiblePlane = _visiblePlanes.findByObject(plane._object);
-	plane.sync(visiblePlane, _screenRect);
-	// NOTE: updateScreenRect was originally called a second time here,
-	// but it is already called at the end of the Plane::Update call
-	// in the original engine anyway.
+	plane.sync(visiblePlane, Common::Rect(_currentBuffer.w, _currentBuffer.h));
+	// updateScreenRect was called a second time here in SSCI, but it is already
+	// called at the end of the sync call (also in SSCI) so there is no reason
+	// to do it again
 
 	_planes.sort();
 }
@@ -401,8 +401,8 @@ void GfxFrameout::frameOut(const bool shouldShowBits, const Common::Rect &eraseR
 		robotPlayer.doRobot();
 	}
 
-	// NOTE: The original engine allocated these as static arrays of 100
-	// pointers to ScreenItemList / RectList
+	// SSCI allocated these as static arrays of 100 pointers to
+	// ScreenItemList / RectList
 	ScreenItemListList screenItemLists;
 	EraseListList eraseLists;
 
@@ -455,12 +455,12 @@ void GfxFrameout::palMorphFrameOut(const int8 *styleRanges, PlaneShowStyle *show
 
 	int16 prevRoom = g_sci->getEngineState()->variables[VAR_GLOBAL][kGlobalVarPreviousRoomNo].toSint16();
 
-	Common::Rect rect(_currentBuffer.screenWidth, _currentBuffer.screenHeight);
+	Common::Rect rect(_currentBuffer.w, _currentBuffer.h);
 	_showList.add(rect);
 	showBits();
 
-	// NOTE: The original engine allocated these as static arrays of 100
-	// pointers to ScreenItemList / RectList
+	// SSCI allocated these as static arrays of 100 pointers to
+	// ScreenItemList / RectList
 	ScreenItemListList screenItemLists;
 	EraseListList eraseLists;
 
@@ -557,24 +557,39 @@ void GfxFrameout::directFrameOut(const Common::Rect &showRect) {
 }
 
 #ifdef USE_RGB_COLOR
+void GfxFrameout::redrawGameScreen(const Common::Rect &skipRect) const {
+	Common::ScopedPtr<Graphics::Surface> game(_currentBuffer.convertTo(g_system->getScreenFormat(), _palette->getHardwarePalette()));
+	assert(game);
+
+	Common::Rect rects[4];
+	int splitCount = splitRects(Common::Rect(game->w, game->h), skipRect, rects);
+	if (splitCount != -1) {
+		while (splitCount--) {
+			const Common::Rect &drawRect = rects[splitCount];
+			g_system->copyRectToScreen(game->getBasePtr(drawRect.left, drawRect.top), game->pitch, drawRect.left, drawRect.top, drawRect.width(), drawRect.height());
+		}
+	}
+
+	game->free();
+}
+
 void GfxFrameout::resetHardware() {
 	updateMousePositionForRendering();
-	_showList.add(Common::Rect(getCurrentBuffer().screenWidth, getCurrentBuffer().screenHeight));
+	_showList.add(Common::Rect(_currentBuffer.w, _currentBuffer.h));
 	g_system->getPaletteManager()->setPalette(_palette->getHardwarePalette(), 0, 256);
 	showBits();
 }
 #endif
 
 /**
- * Determines the parts of `middleRect` that aren't overlapped
- * by `showRect`, optimised for contiguous memory writes.
- * Returns -1 if `middleRect` and `showRect` have no intersection.
- * Returns number of returned parts (in `outRects`) otherwise.
- * (In particular, this returns 0 if `middleRect` is contained
- * in `other`.)
+ * Determines the parts of `middleRect` that aren't overlapped by `showRect`,
+ * optimised for contiguous memory writes.
  *
- * `middleRect` is modified directly to extend into the upper
- * and lower rects.
+ * `middleRect` is modified directly to extend into the upper and lower rects.
+ *
+ * @returns -1 if `middleRect` and `showRect` have no intersection, or the
+ * number of returned parts (in `outRects`) otherwise. (In particular, this
+ * returns 0 if `middleRect` is contained in `showRect`.)
  */
 int splitRectsForRender(Common::Rect &middleRect, const Common::Rect &showRect, Common::Rect(&outRects)[2]) {
 	if (!middleRect.intersects(showRect)) {
@@ -651,8 +666,7 @@ int splitRectsForRender(Common::Rect &middleRect, const Common::Rect &showRect, 
 	return splitCount;
 }
 
-// NOTE: The third rectangle parameter is only ever given a non-empty rect
-// by VMD code, via `frameOut`
+// The third rectangle parameter is only ever passed by VMD code
 void GfxFrameout::calcLists(ScreenItemListList &drawLists, EraseListList &eraseLists, const Common::Rect &eraseRect) {
 	RectList eraseList;
 	Common::Rect outRects[4];
@@ -670,8 +684,8 @@ void GfxFrameout::calcLists(ScreenItemListList &drawLists, EraseListList &eraseL
 		const Plane *outerPlane = _planes[outerPlaneIndex];
 		const Plane *visiblePlane = _visiblePlanes.findByObject(outerPlane->_object);
 
-		// NOTE: SSCI only ever checks for kPlaneTypeTransparent here, even
-		// though kPlaneTypeTransparentPicture is also a transparent plane
+		// SSCI only ever checks for kPlaneTypeTransparent here, even though
+		// kPlaneTypeTransparentPicture is also a transparent plane
 		if (outerPlane->_type == kPlaneTypeTransparent) {
 			foundTransparentPlane = true;
 		}
@@ -741,7 +755,6 @@ void GfxFrameout::calcLists(ScreenItemListList &drawLists, EraseListList &eraseL
 		}
 	}
 
-	// clean up deleted planes
 	if (deletedPlaneCount) {
 		for (int planeIndex = planeCount - 1; planeIndex >= 0; --planeIndex) {
 			Plane *plane = _planes[planeIndex];
@@ -866,7 +879,7 @@ void GfxFrameout::calcLists(ScreenItemListList &drawLists, EraseListList &eraseL
 		}
 	}
 
-	// NOTE: SSCI only looks for kPlaneTypeTransparent, not
+	// SSCI really only looks for kPlaneTypeTransparent, not
 	// kPlaneTypeTransparentPicture
 	if (foundTransparentPlane) {
 		for (PlaneList::size_type planeIndex = 0; planeIndex < planeCount; ++planeIndex) {
@@ -913,8 +926,6 @@ void GfxFrameout::drawScreenItemList(const DrawList &screenItemList) {
 		const DrawItem &drawItem = *screenItemList[i];
 		mergeToShowList(drawItem.rect, _showList, _overdrawThreshold);
 		const ScreenItem &screenItem = *drawItem.screenItem;
-		// TODO: Remove
-//		debug("Drawing item %04x:%04x to %d %d %d %d", PRINT_REG(screenItem._object), PRINT_RECT(drawItem.rect));
 		CelObj &celObj = *screenItem._celObj;
 		celObj.draw(_currentBuffer, screenItem, drawItem.rect, screenItem._mirrorX ^ celObj._mirrorX);
 	}
@@ -986,9 +997,8 @@ void GfxFrameout::showBits() {
 
 	for (RectList::const_iterator rect = _showList.begin(); rect != _showList.end(); ++rect) {
 		Common::Rect rounded(**rect);
-		// NOTE: SCI engine used BR-inclusive rects so used slightly
-		// different masking here to ensure that the width of rects
-		// was always even.
+		// SSCI uses BR-inclusive rects so has slightly different masking here
+		// to ensure that the width of rects is always even
 		rounded.left &= ~1;
 		rounded.right = (rounded.right + 1) & ~1;
 		_cursor->gonnaPaint(rounded);
@@ -998,13 +1008,12 @@ void GfxFrameout::showBits() {
 
 	for (RectList::const_iterator rect = _showList.begin(); rect != _showList.end(); ++rect) {
 		Common::Rect rounded(**rect);
-		// NOTE: SCI engine used BR-inclusive rects so used slightly
-		// different masking here to ensure that the width of rects
-		// was always even.
+		// SSCI uses BR-inclusive rects so has slightly different masking here
+		// to ensure that the width of rects is always even
 		rounded.left &= ~1;
 		rounded.right = (rounded.right + 1) & ~1;
 
-		byte *sourceBuffer = (byte *)_currentBuffer.getPixels() + rounded.top * _currentBuffer.screenWidth + rounded.left;
+		byte *sourceBuffer = (byte *)_currentBuffer.getPixels() + rounded.top * _currentBuffer.w + rounded.left;
 
 		// Sometimes screen items (especially from SCI2.1early transitions, like
 		// in the asteroids minigame in PQ4) generate zero-dimension show
@@ -1029,7 +1038,7 @@ void GfxFrameout::showBits() {
 #else
 		{
 #endif
-			g_system->copyRectToScreen(sourceBuffer, _currentBuffer.screenWidth, rounded.left, rounded.top, rounded.width(), rounded.height());
+			g_system->copyRectToScreen(sourceBuffer, _currentBuffer.w, rounded.left, rounded.top, rounded.width(), rounded.height());
 		}
 	}
 
@@ -1089,14 +1098,14 @@ void GfxFrameout::alterVmap(const Palette &palette1, const Palette &palette2, co
 
 	byte *pixels = (byte *)_currentBuffer.getPixels();
 
-	for (int pixelIndex = 0, numPixels = _currentBuffer.screenWidth * _currentBuffer.screenHeight; pixelIndex < numPixels; ++pixelIndex) {
+	for (int pixelIndex = 0, numPixels = _currentBuffer.w * _currentBuffer.h; pixelIndex < numPixels; ++pixelIndex) {
 		byte currentValue = pixels[pixelIndex];
 		int8 styleRangeValue = styleRanges[currentValue];
 		if (styleRangeValue == -1 && styleRangeValue == style) {
 			currentValue = pixels[pixelIndex] = clut[currentValue];
-			// NOTE: In original engine this assignment happens outside of the
-			// condition, but if the branch is not followed the value is just
-			// going to be the same as it was before
+			// In SSCI this assignment happens outside of the condition, but if
+			// the branch is not followed the value is just going to be the same
+			// as it was before, so we do it here instead
 			styleRangeValue = styleRanges[currentValue];
 		}
 
@@ -1110,7 +1119,7 @@ void GfxFrameout::alterVmap(const Palette &palette1, const Palette &palette2, co
 }
 
 void GfxFrameout::updateScreen(const int delta) {
-	// using OSystem::getMillis instead of Sci::getTickCount because these
+	// Using OSystem::getMillis instead of Sci::getTickCount here because these
 	// values need to be monotonically increasing for the duration of the
 	// GfxFrameout object or else the screen will stop updating
 	const uint32 now = g_system->getMillis() * 60 / 1000;
@@ -1199,20 +1208,19 @@ reg_t GfxFrameout::kernelIsOnMe(const reg_t object, const Common::Point &positio
 		return make_reg(0, 0);
 	}
 
-	// NOTE: The original engine passed a copy of the ScreenItem into isOnMe
-	// as a hack around the fact that the screen items in `_visiblePlanes`
-	// did not have their `_celObj` pointers cleared when their CelInfo was
-	// updated by `Plane::decrementScreenItemArrayCounts`. We handle this
-	// this more intelligently by clearing `_celObj` in the copy assignment
-	// operator, which is only ever called by `decrementScreenItemArrayCounts`
-	// anyway.
+	// SSCI passed a copy of the ScreenItem into isOnMe as a hack around the
+	// fact that the screen items in `_visiblePlanes` did not have their
+	// `_celObj` pointers cleared when their CelInfo was updated by
+	// `Plane::decrementScreenItemArrayCounts`. We handle this this more
+	// intelligently by clearing `_celObj` in the copy assignment operator,
+	// which is only ever called by `decrementScreenItemArrayCounts` anyway.
 	return make_reg(0, isOnMe(*screenItem, *plane, position, checkPixel));
 }
 
 bool GfxFrameout::isOnMe(const ScreenItem &screenItem, const Plane &plane, const Common::Point &position, const bool checkPixel) const {
 
 	Common::Point scaledPosition(position);
-	mulru(scaledPosition, Ratio(_currentBuffer.screenWidth, _currentBuffer.scriptWidth), Ratio(_currentBuffer.screenHeight, _currentBuffer.scriptHeight));
+	mulru(scaledPosition, Ratio(_currentBuffer.w, _scriptWidth), Ratio(_currentBuffer.h, _scriptHeight));
 	scaledPosition.x += plane._planeRect.left;
 	scaledPosition.y += plane._planeRect.top;
 
@@ -1228,7 +1236,9 @@ bool GfxFrameout::isOnMe(const ScreenItem &screenItem, const Plane &plane, const
 		scaledPosition.x -= screenItem._scaledPosition.x;
 		scaledPosition.y -= screenItem._scaledPosition.y;
 
-		mulru(scaledPosition, Ratio(celObj._xResolution, _currentBuffer.screenWidth), Ratio(celObj._yResolution, _currentBuffer.screenHeight));
+		if (getSciVersion() < SCI_VERSION_2_1_LATE) {
+			mulru(scaledPosition, Ratio(celObj._xResolution, _currentBuffer.w), Ratio(celObj._yResolution, _currentBuffer.h));
+		}
 
 		if (screenItem._scale.signal != kScaleSignalNone && screenItem._scale.x && screenItem._scale.y) {
 			scaledPosition.x = scaledPosition.x * 128 / screenItem._scale.x;
@@ -1269,9 +1279,9 @@ bool GfxFrameout::getNowSeenRect(const reg_t screenItemObject, Common::Rect &res
 
 	const ScreenItem *screenItem = plane->_screenItemList.findByObject(screenItemObject);
 	if (screenItem == nullptr) {
-		// NOTE: MGDX is assumed to use the older getNowSeenRect since it was
-		// released before SQ6, but this has not been verified since it cannot
-		// be disassembled at the moment (Phar Lap Windows-only release)
+		// MGDX is assumed to use the older getNowSeenRect since it was released
+		// before SQ6, but this has not been verified since it cannot be
+		// disassembled at the moment (Phar Lap Windows-only release)
 		// (See also kSetNowSeen32)
 		if (getSciVersion() <= SCI_VERSION_2_1_EARLY ||
 			g_sci->getGameId() == GID_SQ6 ||
@@ -1343,6 +1353,16 @@ void GfxFrameout::remapMarkRedraw() {
 
 #pragma mark -
 #pragma mark Debugging
+
+Plane *GfxFrameout::getTopVisiblePlane() {
+	for (PlaneList::const_iterator it = _visiblePlanes.begin(); it != _visiblePlanes.end(); ++it) {
+		Plane *p = *it;
+		if (p->_type == kPlaneTypePicture)
+			return p;
+	}
+
+	return nullptr;
+}
 
 void GfxFrameout::printPlaneListInternal(Console *con, const PlaneList &planeList) const {
 	for (PlaneList::const_iterator it = planeList.begin(); it != planeList.end(); ++it) {

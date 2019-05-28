@@ -22,6 +22,7 @@
 
 #include "titanic/room_flags.h"
 #include "titanic/titanic.h"
+#include "titanic/support/strings.h"
 
 namespace Titanic {
 
@@ -438,6 +439,18 @@ void CRoomFlags::changeClass(PassengerClass newClassNum) {
 	// Set new floor and room
 	setFloorNum(floorNum);
 	setRoomBits(roomNum);
+}
+
+CString CRoomFlags::getElevatorDesc() const {
+	return CString::format(g_vm->_strings[ELEVATOR_NUM].c_str(), getElevatorNum());
+}
+
+CString CRoomFlags::getFloorDesc() const {
+	return CString::format(g_vm->_strings[FLOOR_NUM].c_str(), getFloorNum());
+}
+
+CString CRoomFlags::getRoomNumDesc() const {
+	return CString::format(g_vm->_strings[ROOM_NUM].c_str(), getRoomNum());
 }
 
 bool CRoomFlags::compareClassElevator(uint flags1, uint flags2) {

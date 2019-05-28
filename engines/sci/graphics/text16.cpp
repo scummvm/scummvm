@@ -367,6 +367,8 @@ void GfxText16::Width(const char *text, int16 from, int16 len, GuiResourceId org
 					len -= CodeProcessing(text, orgFontId, 0, false);
 					break;
 				}
+				// fall through
+				// FIXME: fall through intended?
 			default:
 				textHeight = MAX<int16> (textHeight, _ports->_curPort->fontHeight);
 				textWidth += _font->getCharWidth(curChar);
@@ -471,6 +473,8 @@ void GfxText16::Draw(const char *text, int16 from, int16 len, GuiResourceId orgF
 				len -= CodeProcessing(text, orgFontId, orgPenColor, true);
 				break;
 			}
+			// fall through
+			// FIXME: fall through intended?
 		default:
 			charWidth = _font->getCharWidth(curChar);
 			// clear char

@@ -27,42 +27,51 @@
 #include "common/str.h"
 
 namespace Graphics {
-	struct Surface;
+struct Surface;
 }
 
 namespace BladeRunner {
 
 class BladeRunnerEngine;
+class SaveFileReadStream;
+class SaveFileWriteStream;
 class VQAPlayer;
 
-struct OverlayVideo {
-	bool       loaded;
-	VQAPlayer *vqaPlayer;
-	// char       name[13];
-	int32      id;
-	int        field0;
-	int        field1;
-	int        field2;
-};
-
 class Overlays {
+	friend class Debugger;
+
 	static const int kOverlayVideos = 5;
 
+	struct Video {
+		bool            loaded;
+		VQAPlayer      *vqaPlayer;
+		Common::String  name;
+		int32           hash;
+		int             loopId;
+		int             enqueuedLoopId;
+		bool            loopForever;
+		int             frame;
+	};
+
 	BladeRunnerEngine *_vm;
-	Common::Array<OverlayVideo> _videos;
+	Common::Array<Video> _videos;
 
 public:
 	Overlays(BladeRunnerEngine *vm);
 	bool init();
 	~Overlays();
 
-	int play(const Common::String &name, int a3, int a4, int a5, int a6);
+	int play(const Common::String &name, int loopId, bool loopForever, bool startNow, int a6);
+	void resume(bool isLoadingGame);
 	void remove(const Common::String &name);
 	void removeAll();
 	void tick();
 
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
+
 private:
-	int findById(int32 id) const;
+	int findByHash(int32 hash) const;
 	int findEmpty() const;
 
 	void resetSingle(int i);

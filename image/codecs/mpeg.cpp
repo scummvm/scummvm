@@ -78,8 +78,13 @@ bool MPEGDecoder::decodePacket(Common::SeekableReadStream &packet, uint32 &frame
 			if (_mpegInfo->display_fbuf) {
 				foundFrame = true;
 				const mpeg2_sequence_t *sequence = _mpegInfo->sequence;
+				const mpeg2_picture_t *picture = _mpegInfo->display_picture;
 
 				framePeriod += sequence->frame_period;
+				if (picture->nb_fields > 2) {
+					framePeriod += (sequence->frame_period / 2);
+
+				}
 
 				if (!dst) {
 					// If no destination is specified, use our internal storage

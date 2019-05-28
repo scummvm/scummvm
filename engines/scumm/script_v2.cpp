@@ -1188,7 +1188,7 @@ void ScummEngine_v2::o2_startScript() {
 		}
 	}
 
-    // WORKAROUND bug #4556: Purple Tentacle can appear in the lab, after being 
+    // WORKAROUND bug #4556: Purple Tentacle can appear in the lab, after being
     // chased out and end up stuck in the room. This bug is triggered if the player
     // enters the lab within 45 minutes of first entering the mansion and has chased Purple Tentacle
     // out. Eventually the cutscene with Purple Tentacle chasing Sandy in the lab
@@ -1211,10 +1211,9 @@ void ScummEngine_v2::o2_startScript() {
 }
 
 void ScummEngine_v2::stopScriptCommon(int script) {
-    
     // WORKAROUND bug #4112: If you enter the lab while Dr. Fred has the powered turned off
     // to repair the Zom-B-Matic, the script will be stopped and the power will never turn
-    // back on. This fix forces the power on, when the player enters the lab, 
+    // back on. This fix forces the power on, when the player enters the lab,
     // if the script which turned it off is running
     if (_game.id == GID_MANIAC && _roomResource == 4 && isScriptRunning(MM_SCRIPT(138))) {
 
@@ -1320,7 +1319,7 @@ void ScummEngine_v2::o2_putActorInRoom() {
 	// Var[245] is set to have the Disguise on in most situations
 	//
 	// We don't touch the variable in the following situations
-	//  If the Caponian is being put into the space ship room, or the current room is the 
+	//  If the Caponian is being put into the space ship room, or the current room is the
 	//  space ship and the Caponian is being put into the backroom of the telephone company (you didnt show your fan club card)
 	if (_game.id == GID_ZAK && _game.version <= 2 && act == 7) {
 		// Is script-96 cutscene done

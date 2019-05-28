@@ -56,14 +56,14 @@ struct MystScriptEntry {
 	uint16 u1;
 };
 
-typedef Common::SharedPtr<Common::Array<MystScriptEntry> > MystScript;
+typedef Common::Array<MystScriptEntry> MystScript;
 
 class MystScriptParser {
 public:
-	MystScriptParser(MohawkEngine_Myst *vm);
+	MystScriptParser(MohawkEngine_Myst *vm, MystStack stackId);
 	virtual ~MystScriptParser();
 
-	void runScript(MystScript script, MystArea *invokingResource = nullptr);
+	void runScript(const MystScript &script, MystArea *invokingResource = nullptr);
 	void runOpcode(uint16 op, uint16 var = 0, const ArgumentsArray &args = ArgumentsArray());
 	const Common::String getOpcodeDesc(uint16 op);
 	MystScript readScript(Common::SeekableReadStream *stream, MystScriptType type);
@@ -83,10 +83,12 @@ public:
 	virtual void toggleVar(uint16 var);
 	virtual bool setVarValue(uint16 var, uint16 value);
 
+	MystStack getStackId() const { return _stackId; }
 	virtual uint16 getMap() { return 0; }
 	void showMap();
 
 	void animatedUpdate(const ArgumentsArray &args, uint16 delay);
+	void soundWaitStop() const;
 
 	// Common opcodes
 	DECLARE_OPCODE(o_toggleVar);
@@ -165,7 +167,7 @@ protected:
 	int16 _tempVar; // Generic temp var used by the scripts
 	uint32 _startTime; // Generic start time used by the scripts
 
-	static const uint8 _stackMap[];
+	static const MystStack _stackMap[];
 	static const uint16 _startCard[];
 
 	void setupCommonOpcodes();
@@ -186,6 +188,8 @@ private:
 
 	MystArea *_invokingResource;
 	int32 _scriptNestingLevel;
+
+	const MystStack _stackId;
 
 	Common::String describeCommand(const MystOpcode &command, uint16 var, const ArgumentsArray &args);
 };

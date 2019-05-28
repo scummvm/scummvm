@@ -258,5 +258,33 @@
 	kFeaturesAdLib,
 	0, "show.tot", 0
 },
+{
+	{
+		"ween",
+		"Demo",
+		AD_ENTRY1("intro.stk", "aca10b973c03ba8b8b2804f4e7029ece"),
+		DE_DEU,
+		kPlatformDOS,
+		ADGF_DEMO,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeWeen,
+	kFeaturesAdLib,
+	0, 0, 0
+},
+{
+	{
+		"ween",
+		"Demo",
+		AD_ENTRY1("intro.stk", "aca10b973c03ba8b8b2804f4e7029ece"),
+		EN_GRB,
+		kPlatformDOS,
+		ADGF_DEMO,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeWeen,
+	kFeaturesAdLib,
+	0, 0, 0
+},
 
 #endif // GOB_DETECTION_TABLES_WEEN_H

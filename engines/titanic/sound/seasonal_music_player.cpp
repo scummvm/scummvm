@@ -90,44 +90,44 @@ bool CSeasonalMusicPlayer::ChangeSeasonMsg(CChangeSeasonMsg *msg) {
 
 bool CSeasonalMusicPlayer::ArboretumGateMsg(CArboretumGateMsg *msg) {
 	CChangeMusicMsg changeMsg;
-	changeMsg._flags = msg->_value ? 2 : 1;
+	changeMsg._action = msg->_value ? MUSIC_START : MUSIC_STOP;
 	changeMsg.execute(this);
 
 	return true;
 }
 
 bool CSeasonalMusicPlayer::ChangeMusicMsg(CChangeMusicMsg *msg) {
-	if (_isRepeated && msg->_flags == 1) {
-		_isRepeated = false;
-		stopGlobalSound(_transition, -1);
+	if (_isEnabled && msg->_action == MUSIC_STOP) {
+		_isEnabled = false;
+		stopAmbientSound(_transition, -1);
 	}
 
 	if (!msg->_filename.empty()) {
 		if (_isSummer) {
-			setGlobalSoundVolume(VOL_MUTE, 2, 0);
-			setGlobalSoundVolume(VOL_QUIET, 2, 1);
+			setAmbientSoundVolume(VOL_MUTE, 2, 0);
+			setAmbientSoundVolume(VOL_QUIET, 2, 1);
 		} else if (_isAutumn) {
-			setGlobalSoundVolume(VOL_MUTE, 2, 1);
-			setGlobalSoundVolume(VOL_QUIET, 2, 2);
+			setAmbientSoundVolume(VOL_MUTE, 2, 1);
+			setAmbientSoundVolume(VOL_QUIET, 2, 2);
 		} else if (_isWinter) {
-			setGlobalSoundVolume(VOL_MUTE, 2, 2);
-			setGlobalSoundVolume(VOL_QUIET, 2, 3);
+			setAmbientSoundVolume(VOL_MUTE, 2, 2);
+			setAmbientSoundVolume(VOL_QUIET, 2, 3);
 		} else if (_isSpring) {
-			setGlobalSoundVolume(VOL_MUTE, 2, 3);
-			setGlobalSoundVolume(VOL_QUIET, 2, 0);
+			setAmbientSoundVolume(VOL_MUTE, 2, 3);
+			setAmbientSoundVolume(VOL_QUIET, 2, 0);
 		}
 	}
 
-	if (!_isRepeated && msg->_flags == 2) {
-		_isRepeated = true;
+	if (!_isEnabled && msg->_action == MUSIC_START) {
+		_isEnabled = true;
 		loadSound(TRANSLATE("c#64.wav", "c#47.wav"));
 		loadSound(TRANSLATE("c#63.wav", "c#46.wav"));
 		loadSound(TRANSLATE("c#65.wav", "c#48.wav"));
 		loadSound(TRANSLATE("c#62.wav", "c#47.wav"));
-		playGlobalSound(TRANSLATE("c#64.wav", "c#47.wav"), _springMode, _isSpring, true, 0);
-		playGlobalSound(TRANSLATE("c#63.wav", "c#46.wav"), _summerMode, _isSummer, true, 1);
-		playGlobalSound(TRANSLATE("c#65.wav", "c#48.wav"), _autumnMode, _isAutumn, true, 2);
-		playGlobalSound(TRANSLATE("c#62.wav", "c#47.wav"), _winterMode, _isWinter, true, 3);
+		playAmbientSound(TRANSLATE("c#64.wav", "c#47.wav"), _springMode, _isSpring, true, 0);
+		playAmbientSound(TRANSLATE("c#63.wav", "c#46.wav"), _summerMode, _isSummer, true, 1);
+		playAmbientSound(TRANSLATE("c#65.wav", "c#48.wav"), _autumnMode, _isAutumn, true, 2);
+		playAmbientSound(TRANSLATE("c#62.wav", "c#47.wav"), _winterMode, _isWinter, true, 3);
 	}
 
 	return true;

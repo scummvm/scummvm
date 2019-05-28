@@ -56,23 +56,41 @@
 
 namespace Wage {
 
-Common::String Script::Operand::toString() {
+static Common::String toString(const Designed *d) {
+	if (!d)
+		return "<NULL>";
+	else
+		return d->toString();
+}
+
+static Common::String toString(const Common::String *d) {
+	if (!d)
+		return "<NULL>";
+	else
+		return *d;
+}
+
+static Common::String toString(int16 val) {
+	return Common::String::format("%d", val);
+}
+
+Common::String Script::Operand::toString() const {
 	switch(_type) {
 	case NUMBER:
-		return Common::String::format("%d", _value.number);
+		return Wage::toString(_value.number);
 	case STRING:
 	case TEXT_INPUT:
-		return *_value.string;
+		return Wage::toString(_value.string);
 	case OBJ:
-		return _value.obj->toString();
+		return Wage::toString(_value.obj);
 	case CHR:
-		return _value.chr->toString();
+		return Wage::toString(_value.chr);
 	case SCENE:
-		return _value.scene->toString();
+		return Wage::toString(_value.scene);
 	case CLICK_INPUT:
-		return _value.inputClick->toString();
+		return Wage::toString(_value.inputClick);
 	default:
-		error("Unhandled operand type: _type");
+		error("Unhandled operand type: %d", (int)_type);
 	}
 }
 

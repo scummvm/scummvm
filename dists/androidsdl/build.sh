@@ -8,7 +8,11 @@ if [ \! -d ../../../androidsdl ] ; then
    git clone git://github.com/pelya/commandergenius androidsdl
    cd androidsdl
    git submodule update --init project/jni/iconv/src
-   cd ../scummvm/dists/androidsdl
+   git checkout d378ee692f2e380a0ab0635c1df2eb6941b5bf58
+   cd project/jni/iconv/src
+# checkout a specific version of iconv that allows building with the specific version (d378ee692f2e380a0ab0635c1df2eb6941b5bf58) of androidsdl 
+   git checkout 07bead221ed4fa61cc8d880db3d9a5e704866097
+   cd ../../../../../scummvm/dists/androidsdl
 fi
 
 if [ \! -d scummvm/scummvm ] ; then
@@ -22,5 +26,5 @@ fi
 cd ../../../androidsdl
 ./build.sh scummvm
 
-mv project/bin/MainActivity-debug.apk ../scummvm/dists/androidsdl/scummvm-debug.apk
+mv project/app/build/outputs/apk/app-release.apk ../scummvm/dists/androidsdl/scummvm-debug.apk
 cd ../scummvm/dists/androidsdl

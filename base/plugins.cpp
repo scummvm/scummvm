@@ -22,6 +22,7 @@
 
 #include "base/plugins.h"
 
+#include "common/translation.h"
 #include "common/func.h"
 #include "common/debug.h"
 #include "common/config-manager.h"
@@ -257,7 +258,7 @@ void PluginManagerUncached::init() {
 	unloadAllPlugins();
 	_allEnginePlugins.clear();
 
-	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);	// empty the engine plugins
+	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false); // empty the engine plugins
 
 	for (ProviderList::iterator pp = _providers.begin();
 	                            pp != _providers.end();
@@ -362,7 +363,7 @@ bool PluginManagerUncached::loadNextPlugin() {
 			return true;
 		}
 	}
-	return false;	// no more in list
+	return false; // no more in list
 }
 
 /**
@@ -375,6 +376,30 @@ void PluginManager::loadAllPlugins() {
 	                            ++pp) {
 		PluginList pl((*pp)->getPlugins());
 		Common::for_each(pl.begin(), pl.end(), Common::bind1st(Common::mem_fun(&PluginManager::tryLoadPlugin), this));
+	}
+}
+
+void PluginManager::loadAllPluginsOfType(PluginType type) {
+	for (ProviderList::iterator pp = _providers.begin();
+	                            pp != _providers.end();
+	                            ++pp) {
+		PluginList pl((*pp)->getPlugins());
+		for (PluginList::iterator p = pl.begin();
+				                  p != pl.end();
+								  ++p) {
+			if ((*p)->loadPlugin()) {
+				if ((*p)->getType() == type) {
+					addToPluginsInMemList((*p));
+				} else {
+					// Plugin is wrong type
+					(*p)->unloadPlugin();
+					delete (*p);
+				}
+			} else {
+				// Plugin did not load
+				delete (*p);
+			}
+		}
 	}
 }
 
@@ -457,13 +482,11 @@ DECLARE_SINGLETON(EngineManager);
  * For the uncached version, we first try to find the plugin using the gameId
  * and only if we can't find it there, we loop through the plugins.
  **/
-GameDescriptor EngineManager::findGame(const Common::String &gameName, const EnginePlugin **plugin) const {
-	GameDescriptor result;
-
+PlainGameDescriptor EngineManager::findGame(const Common::String &gameName, const Plugin **plugin) const {
 	// First look for the game using the plugins in memory. This is critical
 	// for calls coming from inside games
-	result = findGameInLoadedPlugins(gameName, plugin);
-	if (!result.gameid().empty()) {
+	PlainGameDescriptor result = findGameInLoadedPlugins(gameName, plugin);
+	if (result.gameId) {
 		return result;
 	}
 
@@ -471,7 +494,7 @@ GameDescriptor EngineManager::findGame(const Common::String &gameName, const Eng
 	// by plugin
 	if (PluginMan.loadPluginFromGameId(gameName))  {
 		result = findGameInLoadedPlugins(gameName, plugin);
-		if (!result.gameid().empty()) {
+		if (result.gameId) {
 			return result;
 		}
 	}
@@ -480,7 +503,7 @@ GameDescriptor EngineManager::findGame(const Common::String &gameName, const Eng
 	PluginMan.loadFirstPlugin();
 	do {
 		result = findGameInLoadedPlugins(gameName, plugin);
-		if (!result.gameid().empty()) {
+		if (result.gameId) {
 			// Update with new plugin file name
 			PluginMan.updateConfigWithFileName(gameName);
 			break;
@@ -493,47 +516,112 @@ GameDescriptor EngineManager::findGame(const Common::String &gameName, const Eng
 /**
  * Find the game within the plugins loaded in memory
  **/
-GameDescriptor EngineManager::findGameInLoadedPlugins(const Common::String &gameName, const EnginePlugin **plugin) const {
+PlainGameDescriptor EngineManager::findGameInLoadedPlugins(const Common::String &gameName, const Plugin **plugin) const {
 	// Find the GameDescriptor for this target
-	const EnginePlugin::List &plugins = getPlugins();
-	GameDescriptor result;
+	const PluginList &plugins = getPlugins();
 
 	if (plugin)
 		*plugin = 0;
 
-	EnginePlugin::List::const_iterator iter;
+	PluginList::const_iterator iter;
 
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		result = (**iter)->findGame(gameName.c_str());
-		if (!result.gameid().empty()) {
+		PlainGameDescriptor pgd = (*iter)->get<MetaEngine>().findGame(gameName.c_str());
+		if (pgd.gameId) {
 			if (plugin)
 				*plugin = *iter;
-			return result;
+			return pgd;
 		}
 	}
-	return result;
+
+	return PlainGameDescriptor::empty();
 }
 
-GameList EngineManager::detectGames(const Common::FSList &fslist) const {
-	GameList candidates;
-	EnginePlugin::List plugins;
-	EnginePlugin::List::const_iterator iter;
+DetectionResults EngineManager::detectGames(const Common::FSList &fslist) const {
+	DetectedGames candidates;
+	PluginList plugins;
+	PluginList::const_iterator iter;
 	PluginManager::instance().loadFirstPlugin();
 	do {
 		plugins = getPlugins();
 		// Iterate over all known games and for each check if it might be
 		// the game in the presented directory.
 		for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-			candidates.push_back((**iter)->detectGames(fslist));
+			const MetaEngine &metaEngine = (*iter)->get<MetaEngine>();
+			DetectedGames engineCandidates = metaEngine.detectGames(fslist);
+
+			for (uint i = 0; i < engineCandidates.size(); i++) {
+				engineCandidates[i].engineName = metaEngine.getName();
+				engineCandidates[i].path = fslist.begin()->getParent().getPath();
+				engineCandidates[i].shortPath = fslist.begin()->getParent().getDisplayName();
+				candidates.push_back(engineCandidates[i]);
+			}
+
 		}
 	} while (PluginManager::instance().loadNextPlugin());
-	return candidates;
+
+	return DetectionResults(candidates);
 }
 
-const EnginePlugin::List &EngineManager::getPlugins() const {
-	return (const EnginePlugin::List &)PluginManager::instance().getPlugins(PLUGIN_TYPE_ENGINE);
+const PluginList &EngineManager::getPlugins() const {
+	return PluginManager::instance().getPlugins(PLUGIN_TYPE_ENGINE);
 }
 
+namespace {
+
+void addStringToConf(const Common::String &key, const Common::String &value, const Common::String &domain) {
+	if (!value.empty())
+		ConfMan.set(key, value, domain);
+}
+
+} // End of anonymous namespace
+
+Common::String EngineManager::createTargetForGame(const DetectedGame &game) {
+	// The auto detector or the user made a choice.
+	// Pick a domain name which does not yet exist (after all, we
+	// are *adding* a game to the config, not replacing).
+	Common::String domain = game.preferredTarget;
+
+	assert(!domain.empty());
+	if (ConfMan.hasGameDomain(domain)) {
+		int suffixN = 1;
+		Common::String gameid(domain);
+
+		while (ConfMan.hasGameDomain(domain)) {
+			domain = gameid + Common::String::format("-%d", suffixN);
+			suffixN++;
+		}
+	}
+
+	// Add the name domain
+	ConfMan.addGameDomain(domain);
+
+	// Copy all non-empty relevant values into the new domain
+	addStringToConf("gameid", game.gameId, domain);
+	addStringToConf("description", game.description, domain);
+	addStringToConf("language", Common::getLanguageCode(game.language), domain);
+	addStringToConf("platform", Common::getPlatformCode(game.platform), domain);
+	addStringToConf("path", game.path, domain);
+	addStringToConf("extra", game.extra, domain);
+	addStringToConf("guioptions", game.getGUIOptions(), domain);
+
+	// Add any extra configuration keys
+	for (Common::StringMap::iterator i = game._extraConfigEntries.begin();
+			i != game._extraConfigEntries.end(); ++i)
+		addStringToConf((*i)._key, (*i)._value, domain);
+
+	// TODO: Setting the description field here has the drawback
+	// that the user does never notice when we upgrade our descriptions.
+	// It might be nice to leave this field empty, and only set it to
+	// a value when the user edits the description string.
+	// However, at this point, that's impractical. Once we have a method
+	// to query all backends for the proper & full description of a given
+	// game target, we can change this (currently, you can only query
+	// for the generic gameid description; it's not possible to obtain
+	// a description which contains extended information like language, etc.).
+
+	return domain;
+}
 
 // Music plugins
 
@@ -543,6 +631,6 @@ namespace Common {
 DECLARE_SINGLETON(MusicManager);
 }
 
-const MusicPlugin::List &MusicManager::getPlugins() const {
-	return (const MusicPlugin::List &)PluginManager::instance().getPlugins(PLUGIN_TYPE_MUSIC);
+const PluginList &MusicManager::getPlugins() const {
+	return PluginManager::instance().getPlugins(PLUGIN_TYPE_MUSIC);
 }

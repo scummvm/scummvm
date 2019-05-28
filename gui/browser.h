@@ -25,11 +25,12 @@
 
 #include "gui/dialog.h"
 #include "common/fs.h"
+#include "common/str.h"
 
 namespace GUI {
 
 class ListWidget;
-class StaticTextWidget;
+class EditTextWidget;
 class CheckboxWidget;
 class CommandSender;
 
@@ -37,35 +38,26 @@ class BrowserDialog : public Dialog {
 public:
 	BrowserDialog(const char *title, bool dirBrowser);
 
-#ifdef MACOSX
-	~BrowserDialog();
 	virtual int runModal();
-#else
 	virtual void open();
-
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
-#endif
 
 	const Common::FSNode	&getResult() { return _choice; }
 
 protected:
-#ifdef MACOSX
-	const void *_titleRef;
-	const void *_chooseRef;
-#else
 	ListWidget		*_fileList;
-	StaticTextWidget	*_currentPath;
+	EditTextWidget	*_currentPath;
 	Common::FSNode	_node;
-	Common::FSList			_nodeContent;
+	Common::FSList	_nodeContent;
+
 	bool _showHidden;
 	CheckboxWidget *_showHiddenWidget;
-#endif
+
 	Common::FSNode	_choice;
+	Common::String	_title;
 	bool			_isDirBrowser;
 
-#ifndef MACOSX
 	void updateListing();
-#endif
 };
 
 } // End of namespace GUI

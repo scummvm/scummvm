@@ -152,8 +152,7 @@ void Object::init(const Script &owner, reg_t obj_pos, bool initVariables) {
 		const uint32 nameOffset = _propertyOffsetsSci3[0];
 		const uint32 relocOffset = owner.getRelocationOffset(nameOffset);
 		if (relocOffset != kNoRelocation) {
-			_name.setSegment(obj_pos.getSegment());
-			_name.setOffset(relocOffset + buf.getUint16SEAt(nameOffset));
+			_name = make_reg32(obj_pos.getSegment(), relocOffset + buf.getUint16SEAt(nameOffset));
 		}
 #endif
 	}

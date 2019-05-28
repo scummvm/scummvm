@@ -256,7 +256,8 @@ enum GameFeatures {
 	GF_PLANAR           = 1 << 7,
 	GF_DEMO             = 1 << 8,
 	GF_PACKED           = 1 << 9,
-	GF_BROKEN_FF_RATING = 1 << 10
+	GF_BROKEN_FF_RATING = 1 << 10,
+	GF_WAVSFX           = 1 << 11
 };
 
 enum GameFileTypes {

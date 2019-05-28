@@ -54,7 +54,8 @@ void DefaultAudioCDManager::close() {
 	stop();
 }
 
-bool DefaultAudioCDManager::play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate) {
+bool DefaultAudioCDManager::play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate,
+		Audio::Mixer::SoundType soundType) {
 	stop();
 
 	if (numLoops != 0 || startFrame != 0) {
@@ -84,7 +85,7 @@ bool DefaultAudioCDManager::play(int track, int numLoops, int startFrame, int du
 			repetitions. Finally, -1 means infinitely many
 			*/
 			_emulating = true;
-			_mixer->playStream(Audio::Mixer::kMusicSoundType, &_handle,
+			_mixer->playStream(soundType, &_handle,
 			                        Audio::makeLoopingAudioStream(stream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops), -1, _cd.volume, _cd.balance);
 			return true;
 		}

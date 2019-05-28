@@ -31,81 +31,139 @@ namespace LastExpress {
 // Sound
 //////////////////////////////////////////////////////////////////////////
 
-enum SoundType {
-	kSoundTypeNone = 0,
-	kSoundType1,
-	kSoundType2,
-	kSoundType3,
-	kSoundType4,
-	kSoundType5,
-	kSoundType6,
-	kSoundType7,
-	kSoundType8,
-	kSoundType9,
-	kSoundType10,
-	kSoundType11,
-	kSoundType12,
-	kSoundType13,
-	kSoundType14,
-	kSoundType15,
-	kSoundType16
+enum SoundTag {
+	kSoundTagNone        = 0,
+	kSoundTagAmbient     = 1,
+	kSoundTagOldAmbient  = 2,
+	kSoundTagWalla       = 3,
+	kSoundTagOldWalla    = 4,
+	kSoundTagConcert     = 5,
+	// 6 is unused
+	kSoundTagLink        = 7,
+	kSoundTagOldLink     = 8,
+	kSoundTagNIS         = 9,
+	kSoundTagOldNIS      = 10,
+	kSoundTagIntro       = 11,
+	// 12 is unused
+	kSoundTagMenu        = 13,
+	kSoundTagOldMenu     = 14,
+	kSoundTagCredits     = 15,
+	kSoundTagFirstNormal = 16
+	// every normal sound gets its own tag from an incrementing counter
+	// initialized as kSoundTagFirstNormal,
+	// so tags can have values not covered by this enum
 };
 
+/*
+    These are the flags used by the original game
+    to keep track of sound entry status.
+
+    They are directly exposed via savefiles,
+    so we should be aware of them
+    even though we don't use some of them internally.
+
+    Sound playback is asynchronous.
+    We have threads and mutexes for synchronization,
+    DOS games have main code and IRQ/interrupt handlers instead,
+    some flags come in pairs to deal with this:
+    the main code sets kSoundFlagXxxRequested as a signal
+    to the interrupt handler, the interrupt handler processes it
+    (e.g. stops using the associated buffer for Close and Mute requests)
+    and sets the corresponding result flag. The main code can proceed then
+    (e.g. release the associated buffer).
+
+    The original game has a limited number of sound buffers (namely, 6)
+    (plus 16 versions of ADPCM decoder in assembly language,
+    one for every non-zero volume, so I suppose the performance was an issue).
+    The original game has also many events that could happen in different areas
+    of the train at the same time, some of them are synchronized via the sound
+    (kActionEndSound). To deal with it, the original game uses kSoundFlagMute:
+    muted sounds don't have their own buffer, don't participate in mixing the channels,
+    but the interrupt handler still tracks their progress.
+    Non-audible sounds (e.g. because the corresponding event goes on in another car)
+    are always muted; if the number of audible sounds exceeds the number of buffers,
+    least-priority sounds are muted as well (the priority is the sum of a static
+    constant from the entry constructor and the current volume).
+
+    Normally the sound duration is read from (one of the fields
+    in the header of) the associated file. However, if the sound entry
+    is started as muted, the buffer is not allocated and no data are read;
+    in this case, the duration is estimated from file size.
+    Since HPF archives store all sizes as counts of 0x800-byte blocks,
+    this loses some precision, but nothing to really care about.
+    If a started-as-muted sound is unmuted later (Cath enters the car
+    where a dialog takes place), the exact duration is loaded from the file;
+    kSoundFlagHeaderProcessed says that the duration is exact.
+
+    We have more sound channels available, we are not so limited
+    by the performance, and we lose some control of how exactly the backend
+    processes the sound as a payment for portability, so we can afford
+    to just mix the silence without special processing of muted entries.
+*/
 enum SoundFlag {
-	kFlagInvalid     = -1,
-	kFlagNone        = 0x0,
-	kFlag2           = 0x2,
-	kFlag3           = 0x3,
-	kFlag4           = 0x4,
-	kFlag5           = 0x5,
-	kFlag6           = 0x6,
-	kFlag7           = 0x7,
-	kFlag8           = 0x8,
-	kFlag9           = 0x9,
-	kFlag10          = 0xA,
-	kFlag11          = 0xB,
-	kFlag12          = 0xC,
-	kFlag13          = 0xD,
-	kFlag14          = 0xE,
-	kFlag15          = 0xF,
-	kFlagDefault     = 0x10,
+	kSoundVolumeEntityDefault = 0xFFFFFFFF, // special value for SoundManager::playSound; choose volume based on distance to the entity
 
-	kFlagType1_2     = 0x1000000,
-	kFlagLoopedSound = 0x1001001,
-	kFlagSteam       = 0x1001007,
-	kFlagType13      = 0x3000000,
-	kFlagMenuClock   = 0x3080010,
-	kFlagType7       = 0x4000000,
-	kFlagType11      = 0x5000000,
-	kFlagMusic       = 0x5000010,
-	kFlagType3       = 0x6000000,
-	kFlagLoop        = 0x6001008,
-	kFlagType9       = 0x7000000,
-	kFlagNIS         = 0x7002010
+	kVolumeNone               = 0x0,
+	kVolume1                  = 0x1,
+	kVolume2                  = 0x2,
+	kVolume3                  = 0x3,
+	kVolume4                  = 0x4,
+	kVolume5                  = 0x5,
+	kVolume6                  = 0x6,
+	kVolume7                  = 0x7,
+	kVolume8                  = 0x8,
+	kVolume9                  = 0x9,
+	kVolume10                 = 0xA,
+	kVolume11                 = 0xB,
+	kVolume12                 = 0xC,
+	kVolume13                 = 0xD,
+	kVolume14                 = 0xE,
+	kVolume15                 = 0xF,
+	kVolumeFull               = 0x10,
+
+	kSoundVolumeMask          = 0x1F,
+
+	kSoundFlagPlayRequested   = 0x20,
+	kSoundFlagPlaying         = 0x40, // IRQ handler has seen kSoundFlagPlayRequested and has started the playback
+	kSoundFlagMuteRequested   = 0x80,
+	kSoundFlagMuteProcessed   = 0x100, // IRQ handler has seen kSoundFlagMuteRequested
+	kSoundFlagMute            = kSoundFlagMuteRequested | kSoundFlagMuteProcessed,
+	kSoundFlagCloseRequested  = 0x200, // close requested, waiting for IRQ handler to confirm
+	kSoundFlagClosed          = 0x400, // IRQ handler has seen kSoundFlagClosing and is completely done with this sound
+	kSoundFlagCloseOnDataEnd  = 0x800, // used as the opposite of kSoundFlagLooped
+	kSoundFlagLooped          = 0x1000,
+	kSoundFlagCyclicBuffer    = 0x2000, // when the decoder reaches the end of buffer, the decoder should continue from the beginning of buffer
+	kSoundFlagHasUnreadData   = 0x4000, // stream has more data
+	kSoundFlagDelayedActivate = 0x8000, // start playing at _activateTime
+	kSoundFlagHasLinkAfter    = 0x10000, // _linkAfter is valid and should be activated after this sound; used by xxx.NIS sounds for xxx.LNK
+	kSoundFlagHasSubtitles    = 0x20000,
+	kSoundFlagPaused          = 0x40000, // IRQ handler has seen kSoundFlagPauseRequested and does not use the buffer anymore
+	kSoundFlagFixedVolume     = 0x80000, // Turns off the logic of volume adjusting for entity-related sounds when distance to entity is changed
+	kSoundFlagVolumeChanging  = 0x100000, // smooth changing of the volume is in progress
+	kSoundFlagHeaderProcessed = 0x200000, // count of blocks is the accurate value from the header
+	kSoundFlagPauseRequested  = 0x400000, // used when the reader needs to change the buffer
+	kSoundFlagDecodeStall     = 0x800000, // the decoder has stopped because the reader is too slow and has not yet provided further data
+
+	kSoundTypeNormal          = 0x0000000, // everything not included in any specific category
+	kSoundTypeAmbient         = 0x1000000, // train sounds, steam, wind, restaurant sounds
+	kSoundTypeConcert         = 0x2000000, // 1917.LNK
+	kSoundTypeMenu            = 0x3000000, // menu screen, blinking egg after time travel; excluded from savefiles
+	kSoundTypeLink            = 0x4000000, // xxx.LNK linked after NIS sound, except for 1917.LNK
+	kSoundTypeIntro           = 0x5000000, // intro at game start before showing the menu
+	kSoundTypeWalla           = 0x6000000, // LOOP8A.SND by kEntityTables2
+	kSoundTypeNIS             = 0x7000000, // special entry managed by NIS code
+
+	kSoundTypeMask            = 0x7000000,
+
+	kSoundFlagKeepAfterFinish = 0x8000000, // don't free the entry when it has stopped playing; used for kSoundTypeNIS
+	kSoundFlagDecodeError     = 0x20000000, // error in compressed stream
+	kSoundFlagFading          = 0x40000000, // prevents attempts to unfade once fade is requested
+	kSoundFlagUnmuteRequested = 0x80000000  // purely informational
 };
 
-enum SoundState {
-	kSoundStateNone = 0,
-	kSoundState1    = 1,
-	kSoundState2    = 2
-};
-
-enum SoundStatus {
-	kSoundStatusClear0         = 0x10,
-	kSoundStatusFilter         = 0x1F,
-	kSoundStatus_20            = 0x20,
-	kSoundStatus_40            = 0x40,
-	kSoundStatusCached         = 0x80,
-	kSoundStatus_180           = 0x180,
-	kSoundStatusClosed         = 0x200,
-	kSoundStatus_400           = 0x400,
-	kSoundStatusClear4         = 0x800,
-	kSoundStatus_8000          = 0x8000,
-	kSoundStatus_20000         = 0x20000,
-	kSoundStatus_100000        = 0x100000,
-	kSoundStatus_20000000      = 0x20000000,
-	kSoundStatus_40000000      = 0x40000000,
-	kSoundStatusClearAll       = 0xFFFFFFE0
+enum AmbientSoundState {
+	kAmbientSoundEnabled  = 1,
+	kAmbientSoundSteam    = 2
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -274,6 +332,7 @@ enum TimeValue {
 	kTime2097000              = 2097000,	// Day 2, 14:50
 	kTimeEnterLinz            = 2099700,	// Day 2, 14:53
 	kTimeCityLinz             = 2101500,	// Day 2, 14:55
+	kTimeExitLinz             = 2105100,    // Day 2, 14:59
 	kTime2106000              = 2106000,	// Day 2, 15:00
 	kTime2110500              = 2110500,	// Day 2, 15:05
 	kTime2115000              = 2115000,	// Day 2, 15:10
@@ -373,14 +432,18 @@ enum TimeValue {
 	kTimeTrainStopped         = 2898000,	// Day 3, 05:40
 	kTime2907000              = 2907000,	// Day 3, 05:50
 	kTime2916000              = 2916000,	// Day 3, 06:00
-	kTimeCityBelgrade         = 2952000,	// Day 3, 06:40
+	kTime2934000              = 2934000,    // Day 3, 06:20
 	kTimeTrainStopped2        = 2943000,	// Day 3, 06:30
+	kTime2949300              = 2949300,    // Day 3, 06:37
+	kTimeCityBelgrade         = 2952000,	// Day 3, 06:40
 	kTime2983500              = 2983500,	// Day 3, 07:15
 	kTimeCityNish             = 3205800,	// Day 3, 11:22
 	kTimeCityTzaribrod        = 3492000,	// Day 3, 16:40
 	kTime3645000              = 3645000,	// Day 3, 19:30
 	kTimeCitySofia            = 3690000,	// Day 3, 20:20
 	kTimeCityAdrianople       = 4320900,	// Day 4, 08:01
+	kTime4914000              = 4914000,    // Day 4, 19:00
+	kTime4920300              = 4920300,    // Day 4, 19:07
 	kTime4923000              = 4923000,	// Day 4, 19:10
 	kTime4929300              = 4929300,	// Day 4, 19:17
 	kTimeCityConstantinople   = 4941000,	// Day 4, 19:30
@@ -1193,8 +1256,8 @@ enum EventIndex {
 	kEventVergesSuitcaseNightOtherEntryStart = 137,
 	kEventMertensAskTylerCompartment = 138,
 	kEventMertensAskTylerCompartmentD = 139,
-	kEventMertensPushCall = 140,
-	kEventMertensPushCallNight = 141,
+	kEventMertensPushCallNight = 140,
+	kEventMertensPushCall = 141,
 	kEventMertensAugustWaiting = 142,
 	kEventMertensAugustWaitingCompartment = 143,
 	kEventIntroBroderbrund = 144,
@@ -1240,8 +1303,8 @@ enum EventIndex {
 	kEventFrancoisTradeWhistleD = 184,
 	kEventFrancoisShowEgg = 185,
 	kEventFrancoisShowEggD = 186,
-	kEventFrancoisShowEggNight = 187,
-	kEventFrancoisShowEggNightD = 188,
+	kEventFrancoisShowEggNightD = 187,
+	kEventFrancoisShowEggNight = 188,
 	kEventKronosBringFirebird = 189,
 	kEventKronosOpenFirebird = 190,
 	kEventFinalSequence = 191,

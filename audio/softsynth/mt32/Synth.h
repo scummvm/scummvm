@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2017 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -30,6 +30,7 @@ namespace MT32Emu {
 
 class Analog;
 class BReverbModel;
+class Extensions;
 class MemoryRegion;
 class MidiEventQueue;
 class Part;
@@ -123,6 +124,7 @@ friend class RhythmPart;
 friend class SamplerateAdapter;
 friend class SoxrAdapter;
 friend class TVA;
+friend class TVF;
 friend class TVP;
 
 private:
@@ -151,7 +153,7 @@ private:
 	const char (*soundGroupNames)[9]; // Array
 
 	Bit32u partialCount;
-	Bit8u chantable[16]; // NOTE: value above 8 means that the channel is not assigned
+	Bit8u nukeme[16]; // FIXME: Nuke it. For binary compatibility only.
 
 	MidiEventQueue *midiQueue;
 	volatile Bit32u lastReceivedMIDIEventTimestamp;
@@ -186,16 +188,17 @@ private:
 	Poly *abortingPoly;
 
 	Analog *analog;
-	Renderer &renderer;
+	Renderer *renderer;
 
 	// Binary compatibility helper.
-	void *reserved;
+	Extensions &extensions;
 
 	// **************************** Implementation methods **************************
 
 	Bit32u addMIDIInterfaceDelay(Bit32u len, Bit32u timestamp);
 	bool isAbortingPoly() const { return abortingPoly != NULL; }
 
+	void writeSysexGlobal(Bit32u addr, const Bit8u *sysex, Bit32u len);
 	void readSysex(Bit8u channel, const Bit8u *sysex, Bit32u len) const;
 	void initMemoryRegions();
 	void deleteMemoryRegions();
@@ -229,6 +232,9 @@ private:
 	// partNum should be 0..7 for Part 1..8, or 8 for Rhythm
 	const Part *getPart(Bit8u partNum) const;
 
+	void resetMasterTunePitchDelta();
+	Bit32s getMasterTunePitchDelta() const;
+
 public:
 	static inline Bit16s clipSampleEx(Bit32s sampleEx) {
 		// Clamp values above 32767 to 32767, and values below -32768 to -32768
@@ -257,11 +263,11 @@ public:
 	}
 
 	static inline Bit16s convertSample(float sample) {
-		return Synth::clipSampleEx(Bit32s(sample * 16384.0f)); // This multiplier takes into account the DAC bit shift
+		return Synth::clipSampleEx(Bit32s(sample * 32768.0f)); // This multiplier corresponds to normalised floats
 	}
 
 	static inline float convertSample(Bit16s sample) {
-		return float(sample) / 16384.0f; // This multiplier takes into account the DAC bit shift
+		return float(sample) / 32768.0f; // This multiplier corresponds to normalised floats
 	}
 
 	// Returns library version as an integer in format: 0x00MMmmpp, where:
@@ -306,6 +312,10 @@ public:
 	// The queue is flushed before reallocation.
 	// Returns the actual queue size being used.
 	MT32EMU_EXPORT Bit32u setMIDIEventQueueSize(Bit32u);
+
+	// Returns current value of the global counter of samples rendered since the synth was created (at the native sample rate 32000 Hz).
+	// This method helps to compute accurate timestamp of a MIDI message to use with the methods below.
+	MT32EMU_EXPORT Bit32u getInternalRenderedSampleCount() const;
 
 	// Enqueues a MIDI event for subsequent playback.
 	// The MIDI event will be processed not before the specified timestamp.
@@ -381,7 +391,6 @@ public:
 	// Sets output gain factor for synth output channels. Applied to all output samples and unrelated with the synth's Master volume,
 	// it rather corresponds to the gain of the output analog circuitry of the hardware units. However, together with setReverbOutputGain()
 	// it offers to the user a capability to control the gain of reverb and non-reverb output channels independently.
-	// Ignored in DACInputMode_PURE
 	MT32EMU_EXPORT void setOutputGain(float gain);
 	// Returns current output gain factor for synth output channels.
 	MT32EMU_EXPORT float getOutputGain() const;
@@ -394,7 +403,6 @@ public:
 	// corresponds to the level of digital capture. Although, according to the CM-64 PCB schematic,
 	// there is a difference in the reverb analogue circuit, and the resulting output gain is 0.68
 	// of that for LA32 analogue output. This factor is applied to the reverb output gain.
-	// Ignored in DACInputMode_PURE
 	MT32EMU_EXPORT void setReverbOutputGain(float gain);
 	// Returns current output gain factor for reverb wet output channels.
 	MT32EMU_EXPORT float getReverbOutputGain() const;
@@ -403,6 +411,24 @@ public:
 	MT32EMU_EXPORT void setReversedStereoEnabled(bool enabled);
 	// Returns whether left and right output channels are swapped.
 	MT32EMU_EXPORT bool isReversedStereoEnabled() const;
+
+	// Allows to toggle the NiceAmpRamp mode.
+	// In this mode, we want to ensure that amp ramp never jumps to the target
+	// value and always gradually increases or decreases. It seems that real units
+	// do not bother to always check if a newly started ramp leads to a jump.
+	// We also prefer the quality improvement over the emulation accuracy,
+	// so this mode is enabled by default.
+	MT32EMU_EXPORT void setNiceAmpRampEnabled(bool enabled);
+	// Returns whether NiceAmpRamp mode is enabled.
+	MT32EMU_EXPORT bool isNiceAmpRampEnabled() const;
+
+	// Selects new type of the wave generator and renderer to be used during subsequent calls to open().
+	// By default, RendererType_BIT16S is selected.
+	// See RendererType for details.
+	MT32EMU_EXPORT void selectRendererType(RendererType);
+	// Returns previously selected type of the wave generator and renderer.
+	// See RendererType for details.
+	MT32EMU_EXPORT RendererType getSelectedRendererType() const;
 
 	// Returns actual sample rate used in emulation of stereo analog circuitry of hardware units.
 	// See comment for render() below.
@@ -422,14 +448,10 @@ public:
 	// NULL may be specified in place of any or all of the stream buffers to skip it.
 	// The length is in samples, not bytes. Uses NATIVE byte ordering.
 	MT32EMU_EXPORT void renderStreams(Bit16s *nonReverbLeft, Bit16s *nonReverbRight, Bit16s *reverbDryLeft, Bit16s *reverbDryRight, Bit16s *reverbWetLeft, Bit16s *reverbWetRight, Bit32u len);
-	void renderStreams(const DACOutputStreams<Bit16s> &streams, Bit32u len) {
-		renderStreams(streams.nonReverbLeft, streams.nonReverbRight, streams.reverbDryLeft, streams.reverbDryRight, streams.reverbWetLeft, streams.reverbWetRight, len);
-	}
+	MT32EMU_EXPORT void renderStreams(const DACOutputStreams<Bit16s> &streams, Bit32u len);
 	// Same as above but outputs to float streams.
 	MT32EMU_EXPORT void renderStreams(float *nonReverbLeft, float *nonReverbRight, float *reverbDryLeft, float *reverbDryRight, float *reverbWetLeft, float *reverbWetRight, Bit32u len);
-	void renderStreams(const DACOutputStreams<float> &streams, Bit32u len) {
-		renderStreams(streams.nonReverbLeft, streams.nonReverbRight, streams.reverbDryLeft, streams.reverbDryRight, streams.reverbWetLeft, streams.reverbWetRight, len);
-	}
+	MT32EMU_EXPORT void renderStreams(const DACOutputStreams<float> &streams, Bit32u len);
 
 	// Returns true when there is at least one active partial, otherwise false.
 	MT32EMU_EXPORT bool hasActivePartials() const;

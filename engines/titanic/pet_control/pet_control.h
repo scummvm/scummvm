@@ -438,10 +438,10 @@ public:
 	}
 
 	/**
-	 * Returns true if the Rooms list has a room with the given flags
+	 * Returns true if the player is in the current or previously assigned rooms
 	 */
-	bool hasRoomFlags() const {
-		return _rooms.hasRoomFlags(getRoomFlags());
+	bool isInAssignedRoom() const {
+		return _rooms.isAssignedRoom(getRoomFlags());
 	}
 
 	uint getRoomFlags() const {

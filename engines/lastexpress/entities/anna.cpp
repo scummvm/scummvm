@@ -22,6 +22,8 @@
 
 #include "lastexpress/entities/anna.h"
 
+#include "lastexpress/entities/vesna.h"
+
 #include "lastexpress/fight/fight.h"
 
 #include "lastexpress/game/action.h"
@@ -41,23 +43,23 @@ namespace LastExpress {
 
 Anna::Anna(LastExpressEngine *engine) : Entity(engine, kEntityAnna) {
 	ADD_CALLBACK_FUNCTION(Anna, reset);
-	ADD_CALLBACK_FUNCTION(Anna, draw);
-	ADD_CALLBACK_FUNCTION(Anna, updatePosition);
-	ADD_CALLBACK_FUNCTION(Anna, enterExitCompartment);
+	ADD_CALLBACK_FUNCTION_S(Anna, draw);
+	ADD_CALLBACK_FUNCTION_SII(Anna, updatePosition);
+	ADD_CALLBACK_FUNCTION_SI(Anna, enterExitCompartment);
 	ADD_CALLBACK_FUNCTION(Anna, callbackActionOnDirection);
-	ADD_CALLBACK_FUNCTION(Anna, callSavepoint);
-	ADD_CALLBACK_FUNCTION(Anna, playSound);
+	ADD_CALLBACK_FUNCTION_SIIS(Anna, callSavepoint);
+	ADD_CALLBACK_FUNCTION_S(Anna, playSound);
 	ADD_CALLBACK_FUNCTION(Anna, callbackActionRestaurantOrSalon);
-	ADD_CALLBACK_FUNCTION(Anna, savegame);
-	ADD_CALLBACK_FUNCTION(Anna, updateEntity);
-	ADD_CALLBACK_FUNCTION(Anna, updateFromTime);
+	ADD_CALLBACK_FUNCTION_II(Anna, savegame);
+	ADD_CALLBACK_FUNCTION_II(Anna, updateEntity);
+	ADD_CALLBACK_FUNCTION_I(Anna, updateFromTime);
 	ADD_CALLBACK_FUNCTION(Anna, practiceMusic);
-	ADD_CALLBACK_FUNCTION(Anna, draw2);
-	ADD_CALLBACK_FUNCTION(Anna, updateFromTicks);
-	ADD_CALLBACK_FUNCTION(Anna, compartmentLogic);
+	ADD_CALLBACK_FUNCTION_SSI(Anna, draw2);
+	ADD_CALLBACK_FUNCTION_I(Anna, updateFromTicks);
+	ADD_CALLBACK_FUNCTION_IS(Anna, compartmentLogic);
 	ADD_CALLBACK_FUNCTION(Anna, chapter1);
-	ADD_CALLBACK_FUNCTION(Anna, doWalkP1);
-	ADD_CALLBACK_FUNCTION(Anna, diningLogic);
+	ADD_CALLBACK_FUNCTION_II(Anna, doWalkP1);
+	ADD_CALLBACK_FUNCTION_I(Anna, diningLogic);
 	ADD_CALLBACK_FUNCTION(Anna, fleeTyler);
 	ADD_CALLBACK_FUNCTION(Anna, waitDinner);
 	ADD_CALLBACK_FUNCTION(Anna, goDinner);
@@ -78,13 +80,13 @@ Anna::Anna(LastExpressEngine *engine) : Entity(engine, kEntityAnna) {
 	ADD_CALLBACK_FUNCTION(Anna, goVassili);
 	ADD_CALLBACK_FUNCTION(Anna, function37);
 	ADD_CALLBACK_FUNCTION(Anna, speakTatiana);
-	ADD_CALLBACK_FUNCTION(Anna, doWalk1019);
+	ADD_CALLBACK_FUNCTION_II(Anna, doWalk1019);
 	ADD_CALLBACK_FUNCTION(Anna, leaveTatiana);
 	ADD_CALLBACK_FUNCTION(Anna, goBackToSleep);
 	ADD_CALLBACK_FUNCTION(Anna, chapter2);
 	ADD_CALLBACK_FUNCTION(Anna, inPart2);
 	ADD_CALLBACK_FUNCTION(Anna, chapter3);
-	ADD_CALLBACK_FUNCTION(Anna, exitCompartment);
+	ADD_CALLBACK_FUNCTION_I(Anna, exitCompartment);
 	ADD_CALLBACK_FUNCTION(Anna, practicing);
 	ADD_CALLBACK_FUNCTION(Anna, goLunch);
 	ADD_CALLBACK_FUNCTION(Anna, lunch);
@@ -111,7 +113,7 @@ Anna::Anna(LastExpressEngine *engine) : Entity(engine, kEntityAnna) {
 	ADD_CALLBACK_FUNCTION(Anna, goSalon4);
 	ADD_CALLBACK_FUNCTION(Anna, returnCompartment4);
 	ADD_CALLBACK_FUNCTION(Anna, enterCompartmentCathFollowsAnna);
-	ADD_CALLBACK_FUNCTION(Anna, doWalkCathFollowsAnna);
+	ADD_CALLBACK_FUNCTION_II(Anna, doWalkCathFollowsAnna);
 	ADD_CALLBACK_FUNCTION(Anna, letDownHair);
 	ADD_CALLBACK_FUNCTION(Anna, chapter5);
 	ADD_CALLBACK_FUNCTION(Anna, tiedUp);
@@ -125,7 +127,7 @@ Anna::Anna(LastExpressEngine *engine) : Entity(engine, kEntityAnna) {
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(1, Anna, reset)
-	Entity::reset(savepoint, true, true);
+	Entity::reset(savepoint, kClothes3, true);
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
@@ -311,9 +313,9 @@ IMPLEMENT_FUNCTION(12, Anna, practiceMusic)
 			}
 
 			params->param4 = 0;
-			params->param5 = 0;
+			params->param5 = 1;
 		} else {
-			getSoundQueue()->removeFromQueue(kEntityAnna);
+			getSoundQueue()->stop(kEntityAnna);
 
 			getObjects()->update(kObjectCompartmentF, kEntityAnna, kObjectLocation1, kCursorNormal, kCursorNormal);
 			getObjects()->update(kObject53, kEntityAnna, kObjectLocation1, kCursorNormal, kCursorNormal);
@@ -324,7 +326,7 @@ IMPLEMENT_FUNCTION(12, Anna, practiceMusic)
 		break;
 
 	case kActionOpenDoor:
-		getSoundQueue()->removeFromQueue(kEntityAnna);
+		getSoundQueue()->stop(kEntityAnna);
 		setCallback(3);
 		setup_playSound("LIB013");
 		break;
@@ -335,13 +337,13 @@ IMPLEMENT_FUNCTION(12, Anna, practiceMusic)
 		getObjects()->update(kObject53, kEntityAnna, kObjectLocation1, kCursorHandKnock, kCursorHand);
 		getObjects()->update(kObjectOutsideAnnaCompartment, kEntityPlayer, kObjectLocationNone, kCursorKeepValue, kCursorKeepValue);
 
-		if (getEntities()->isPlayerPosition(kCarRedSleeping, 49))
+		if (getEntities()->isPlayerPosition(kCarRedSleeping, 78))
 			getScenes()->loadSceneFromPosition(kCarRedSleeping, 49);
 
 		getEntities()->drawSequenceLeft(kEntityAnna, "418C");
 
 		if (getSoundQueue()->isBuffered(kEntityAnna))
-			getSoundQueue()->processEntry(kEntityAnna);
+			getSoundQueue()->fade(kEntityAnna);
 
 		getSound()->playSound(kEntityAnna, "ANN2135A");
 		break;
@@ -357,7 +359,7 @@ IMPLEMENT_FUNCTION(12, Anna, practiceMusic)
 		if (getEntities()->isPlayerPosition(kCarRedSleeping, 60)) {
 			++params->param3;
 			if (params->param3 == 2) {
-				setCallback(2);
+				setCallback(5);
 				setup_draw("418B");
 			}
 		}
@@ -606,6 +608,7 @@ IMPLEMENT_FUNCTION_II(17, Anna, doWalkP1, uint32, uint32)
 		break;
 
 	case kActionDefault:
+		getData()->inventoryItem = kItemNone;
 		if (getProgress().jacket == kJacketGreen) {
 			if (!getEvent(kEventGotALight) && !getEvent(kEventGotALightD) && !getEvent(kEventAugustPresentAnna) && !getEvent(kEventAugustPresentAnnaFirstIntroduction))
 				params->param3 = kItemInvalid;
@@ -729,7 +732,7 @@ IMPLEMENT_FUNCTION_I(18, Anna, diningLogic, TimeValue)
 		case 2:
 			getAction()->playAnimation(kEventDinerMindJoin);
 
-			params->param2 &= 0xFFFFFFF7;
+			params->param2 &= 0xFFFFFF7F;
 
 			if (getProgress().jacket == kJacketGreen
 			 && !getEvent(kEventAnnaGiveScarfAsk)
@@ -992,6 +995,7 @@ IMPLEMENT_FUNCTION(25, Anna, eatingDinner)
 			break;
 
 		case 2:
+			setCallback(3);
 			setup_callbackActionRestaurantOrSalon();
 			break;
 
@@ -1021,10 +1025,10 @@ IMPLEMENT_FUNCTION(26, Anna, leaveDinner)
 
 	case kActionDefault:
 		getData()->location = kLocationOutsideCompartment;
-		getEntities()->updatePositionExit(kEntityAnna, kCarRestaurant, 62);
+		getEntities()->updatePositionEnter(kEntityAnna, kCarRestaurant, 62);
 
 		setCallback(1);
-		setup_callSavepoint("001L", kEntityTables0, kActionDrawTablesWithChairs, "001H");
+		setup_callSavepoint("001L", kEntityTables0, kActionDrawTablesWithChairs, "001M");
 		break;
 
 	case kActionCallback:
@@ -1222,7 +1226,7 @@ IMPLEMENT_FUNCTION(29, Anna, waitAugust)
 		case 2:
 			getAction()->playAnimation((getEvent(kEventAugustPresentAnna) || getEvent(kEventAugustPresentAnnaFirstIntroduction)) ? kEventAnnaConversationGoodNight : kEventAnnaIntroductionRejected);
 
-			getData()->inventoryItem = (InventoryItem)(getData()->inventoryItem & kItemToggleLow);
+			getData()->inventoryItem = (InventoryItem)(getData()->inventoryItem & kItemToggleHigh);
 
 			if (getProgress().jacket == kJacketGreen
 			 && !getEvent(kEventAnnaGiveScarfAsk)
@@ -1529,7 +1533,7 @@ IMPLEMENT_FUNCTION(35, Anna, wakeNight)
 	case kActionKnock:
 	case kActionOpenDoor:
 		if (getSoundQueue()->isBuffered(kEntityAnna))
-			getSoundQueue()->processEntry(kEntityAnna);
+			getSoundQueue()->fade(kEntityAnna);
 
 		if (savepoint.action == kActionKnock)
 			getSound()->playSound(kEntityPlayer, "LIB012");
@@ -1572,7 +1576,7 @@ IMPLEMENT_FUNCTION(35, Anna, wakeNight)
 
 	case kAction226031488:
 		if (getSoundQueue()->isBuffered(kEntityAnna))
-			getSoundQueue()->processEntry(kEntityAnna);
+			getSoundQueue()->fade(kEntityAnna);
 
 		getSavePoints()->push(kEntityAnna, kEntityMax, kAction71277948);
 		break;
@@ -1698,7 +1702,7 @@ IMPLEMENT_FUNCTION_II(39, Anna, doWalk1019, CarIndex, EntityPosition)
 
 	case kActionCallback:
 		if (getCallback() == 1) {
-			getAction()->playAnimation(getData()->direction == kDirectionNone ? kEventAnnaGoodNight : kEventAnnaGoodNightInverse);
+			getAction()->playAnimation(getData()->direction == kDirectionUp ? kEventAnnaGoodNight : kEventAnnaGoodNightInverse);
 			getData()->inventoryItem = kItemNone;
 
 			getEntities()->loadSceneFromEntityPosition(getData()->car, (EntityPosition)(getData()->entityPosition + (750 * (getData()->direction == kDirectionUp ? -1 : 1))), getData()->direction == kDirectionUp);
@@ -1807,8 +1811,8 @@ IMPLEMENT_FUNCTION(41, Anna, goBackToSleep)
 		if (!Entity::updateParameter(params->param2, getState()->time, 2700))
 			break;
 
-		params->param5++;
-		switch (params->param5) {
+		params->param1++;
+		switch (params->param1) {
 		default:
 			break;
 
@@ -2071,7 +2075,7 @@ IMPLEMENT_FUNCTION(47, Anna, goLunch)
 			break;
 
 		case 4:
-			getSound()->playSound(kEntityAnna, getEvent(kEventAugustLunch) ? "Ann3136" : "Ann3136A", kFlagInvalid, 30);
+			getSound()->playSound(kEntityAnna, getEvent(kEventAugustLunch) ? "Ann3136" : "Ann3136A", kSoundVolumeEntityDefault, 30);
 			getSavePoints()->push(kEntityAnna, kEntityAugust, kAction122358304);
 
 			setCallback(5);
@@ -2127,7 +2131,7 @@ label_callback_4:
 		break;
 
 	case kActionDefault:
-		getEntities()->drawSequenceLeft(kEntityAnna, "026C");
+		getEntities()->drawSequenceLeft(kEntityAnna, "026c");
 		getData()->location = kLocationInsideCompartment;
 
 		setCallback(1);
@@ -2220,7 +2224,7 @@ IMPLEMENT_FUNCTION(50, Anna, leaveLunch)
 
 	case kActionDefault:
 		setCallback(1);
-		setup_playSound("ann3141");
+		setup_playSound("Ann3141");
 		break;
 
 	case kActionCallback:
@@ -2266,7 +2270,7 @@ IMPLEMENT_FUNCTION(51, Anna, afterLunch)
 		break;
 
 	case kActionDefault:
-		getSound()->playSound(kEntityAnna, "Aug3142", kFlagInvalid, 30);
+		getSound()->playSound(kEntityAnna, "Ann3142", kSoundVolumeEntityDefault, 30);
 		getEntities()->updatePositionEnter(kEntityAnna, kCarRestaurant, 57);
 		getEntities()->drawSequenceRight(kEntityAnna, "112A");
 		if (getEntities()->isInRestaurant(kEntityPlayer))
@@ -2401,7 +2405,7 @@ IMPLEMENT_FUNCTION(53, Anna, dressing)
 		if (params->param3) {
 			if (Entity::updateParameter(params->param6, getState()->time, 9000)) {
 				params->param4 = !params->param4;
-				getEntities()->drawSequenceLeft(kEntityAnna, params->param4 ? "417B" : "417A");
+				getEntities()->drawSequenceLeft(kEntityAnna, params->param4 ? "417A" : "417B");
 				params->param6 = 0;
 			}
 		}
@@ -2549,7 +2553,7 @@ IMPLEMENT_FUNCTION(54, Anna, giveMaxToConductor2)
 
 			if (Entity::updateParameter(params->param6, getState()->time, 9000)) {
 				params->param4 = !params->param4;
-				getEntities()->drawSequenceLeft(kEntityAnna, params->param4 ? "417B" : "417A");
+				getEntities()->drawSequenceLeft(kEntityAnna, params->param4 ? "417A" : "417B");
 				params->param6 = 0;
 			}
 		}
@@ -2729,7 +2733,7 @@ IMPLEMENT_FUNCTION(55, Anna, goConcert)
 		case 1:
 			getObjects()->update(kObjectCompartmentF, kEntityPlayer, kObjectLocation1, kCursorHandKnock, kCursorHand);
 			setCallback(2);
-			setup_updateEntity(kCarRedSleeping, kPosition_9270);
+			setup_updateEntity(kCarKronos, kPosition_9270);
 			break;
 
 		case 2:
@@ -3072,7 +3076,7 @@ IMPLEMENT_FUNCTION(61, Anna, goBaggageCompartment)
 		getState()->timeDelta = 3;
 
 		setCallback(1);
-		setup_savegame(kSavegameTypeIndex, 0);
+		setup_savegame(kSavegameTypeTime, 0);
 		break;
 
 	case kActionCallback:
@@ -3132,7 +3136,7 @@ IMPLEMENT_FUNCTION(62, Anna, function62)
 		break;
 
 	case kActionNone:
-		if (getState()->time > kTime2259000 && !params->param2) {
+		if (params->param1 && getState()->time > kTime2259000 && !params->param2) {
 			params->param2 = 1;
 			getSavePoints()->push(kEntityAnna, kEntityVesna, kAction189299008);
 			setup_deadBaggageCompartment();
@@ -3171,7 +3175,7 @@ IMPLEMENT_FUNCTION(63, Anna, deadBaggageCompartment)
 	// Anna will get killed...
 	case kAction272177921:
 		if (getSoundQueue()->isBuffered("MUS012"))
-			getSoundQueue()->processEntry("MUS012");
+			getSoundQueue()->fade("MUS012");
 
 		setCallback(1);
 		setup_savegame(kSavegameTypeEvent, kEventAnnaKilled);
@@ -3222,6 +3226,7 @@ IMPLEMENT_FUNCTION(64, Anna, baggageFight)
 			getScenes()->loadSceneFromPosition(kCarBaggage, 96);
 
 			getProgress().field_54 = 0;
+			RESET_ENTITY_STATE(kEntityVesna, Vesna, setup_inCompartment);
 			getState()->time = kTime2266200;
 
 			setup_prepareVienna();
@@ -3302,7 +3307,7 @@ label_next:
 
 	case kAction1:
 		getData()->inventoryItem = kItemNone;
-		getData()->location = kLocationInsideCompartment;
+		getEntityData(kEntityPlayer)->location = kLocationInsideCompartment;
 
 		setCallback(1);
 		setup_savegame(kSavegameTypeEvent, kEventAnnaConversation_34);
@@ -3329,9 +3334,11 @@ label_next:
 		break;
 
 	case kActionDrawScene:
-		getObjects()->update(kObject53, kEntityAnna, kObjectLocation1, kCursorHandKnock, kCursorHand);
-		params->param1 = 0;
-		params->param2 = 0;
+		if (params->param1 || params->param2) {
+			getObjects()->update(kObject53, kEntityAnna, kObjectLocation1, kCursorHandKnock, kCursorHand);
+			params->param1 = 0;
+			params->param2 = 0;
+		}
 		break;
 
 	case kActionCallback:
@@ -3743,7 +3750,7 @@ IMPLEMENT_FUNCTION(75, Anna, tiedUp)
 			else
 				getAction()->playAnimation(getEvent(kEventAnnaKissTrainHijacked) ? kEventAnnaBaggageTies3 : kEventAnnaBaggageTies4);
 
-			getScenes()->loadSceneFromPosition(kCarBaggage, 8);
+			getScenes()->loadSceneFromPosition(kCarBaggageRear, 88);
 			setup_function76();
 		}
 		break;
@@ -3806,7 +3813,7 @@ IMPLEMENT_FUNCTION(77, Anna, readyToScore)
 			getObjects()->update(kObject106, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
 			getAction()->playAnimation(kEventAnnaDialogGoToJerusalem);
 
-			getState()->time = kTimeCityConstantinople;
+			getState()->time = kTime4914000;
 			getState()->timeDelta = 0;
 
 			getSavePoints()->push(kEntityAnna, kEntityTatiana, kAction236060709);
@@ -3837,10 +3844,12 @@ IMPLEMENT_FUNCTION(78, Anna, kidnapped)
 			break;
 		}
 
-		getState()->time = kTimeInvalid2;
+		if (getEntities()->isInSalon(kEntityPlayer)) {
+			getState()->time = kTime4920300;
 
-		setCallback(getInventory()->get(kItemFirebird)->location == kObjectLocation4 ? 2 : 1);
-		setup_savegame(kSavegameTypeEvent, getInventory()->get(kItemFirebird)->location == kObjectLocation4 ? kEventKronosHostageAnna : kEventKronosHostageAnnaNoFirebird);
+			setCallback(getInventory()->get(kItemFirebird)->location == kObjectLocation4 ? 2 : 1);
+			setup_savegame(kSavegameTypeEvent, getInventory()->get(kItemFirebird)->location == kObjectLocation4 ? kEventKronosHostageAnna : kEventKronosHostageAnnaNoFirebird);
+		}
 		break;
 
 	case kActionCallback:
@@ -3855,8 +3864,8 @@ IMPLEMENT_FUNCTION(78, Anna, kidnapped)
 
 		case 2:
 			getAction()->playAnimation(kEventKronosHostageAnna);
-			getScenes()->loadSceneFromPosition(kCarRestaurant, 61);
-			getSound()->playSound(kEntityAnna, "Mus024", kFlagDefault);
+			getScenes()->loadSceneFromPosition(kCarRestaurant, 61, 1);
+			getSound()->playSound(kEntityAnna, "Mus024", kVolumeFull);
 			setup_waiting();
 			break;
 		}
@@ -3871,9 +3880,9 @@ IMPLEMENT_FUNCTION(79, Anna, waiting)
 		break;
 
 	case kActionEndSound:
-		getState()->time = kTime5933;
+		getState()->time = kTime4923000;
 		setCallback(1);
-		setup_savegame(kSavegameTypeEvent, kEventKahinaPunch);
+		setup_savegame(kSavegameTypeEvent, kEventKahinaPunchBaggageCarEntrance);
 		break;
 
 	case kActionDrawScene:
@@ -3883,7 +3892,7 @@ IMPLEMENT_FUNCTION(79, Anna, waiting)
 		}
 
 		if (getEntities()->isInSalon(kEntityPlayer) && !getEvent(kEventKahinaPunch)) {
-			getState()->time = kTime5933;
+			getState()->time = kTime4923000;
 			setCallback(2);
 			setup_savegame(kSavegameTypeEvent, kEventKahinaPunch);
 		}
@@ -3908,7 +3917,7 @@ IMPLEMENT_FUNCTION(79, Anna, waiting)
 			break;
 
 		case 2:
-			getAction()->playAnimation(kEventKahinaPunchSalon);
+			getAction()->playAnimation(kEventKahinaPunch);
 			break;
 		}
 
@@ -3927,22 +3936,22 @@ IMPLEMENT_FUNCTION(80, Anna, finalSequence)
 		if (!Entity::updateParameter(params->param1, getState()->timeTicks, 450))
 			break;
 
-		getSound()->playSound(kEntityPlayer, "Kro5001", kFlagDefault);
+		getSound()->playSound(kEntityPlayer, "Kro5001", kVolumeFull);
 		break;
 
 	case kActionEndSound:
-		getSound()->playSound(kEntityPlayer, "Kro5002", kFlagDefault);
-		getState()->time = kTime4923000;
-
-		setCallback(1);
-		setup_savegame(kSavegameTypeEvent, kEventKronosBringFirebird);
-		break;
-
-	case kActionDefault:
+		getSound()->playSound(kEntityPlayer, "Kro5002", kVolumeFull);
 		getState()->time = kTime4929300;
 
 		setCallback(2);
 		setup_savegame(kSavegameTypeEvent, kEventKahinaPunch);
+		break;
+
+	case kActionDefault:
+		getState()->time = kTime4923000;
+
+		setCallback(1);
+		setup_savegame(kSavegameTypeEvent, kEventKronosBringFirebird);
 		break;
 
 	case kActionCallback:
@@ -3952,11 +3961,11 @@ IMPLEMENT_FUNCTION(80, Anna, finalSequence)
 
 		case 1:
 			if (getSoundQueue()->isBuffered(kEntityAnna))
-				getSoundQueue()->processEntry(kEntityAnna);
+				getSoundQueue()->fade(kEntityAnna);
 
 			getAction()->playAnimation(kEventKronosBringFirebird);
 			getScenes()->loadSceneFromItem(kItemFirebird);
-			getSound()->playSound(kEntityAnna, "Mus025", kFlagDefault);
+			getSound()->playSound(kEntityAnna, "Mus025", kVolumeFull);
 			break;
 
 		case 2:
@@ -3968,7 +3977,7 @@ IMPLEMENT_FUNCTION(80, Anna, finalSequence)
 			getProgress().isEggOpen = true;
 
 			if (getSoundQueue()->isBuffered(kEntityAnna))
-				getSoundQueue()->processEntry(kEntityAnna);
+				getSoundQueue()->fade(kEntityAnna);
 
 			getAction()->playAnimation(kEventKronosOpenFirebird);
 			getScenes()->loadSceneFromPosition(kCarRestaurant, 3);
@@ -3997,8 +4006,8 @@ IMPLEMENT_FUNCTION(81, Anna, openFirebird)
 		if (!Entity::updateParameter(params->param1, getState()->timeTicks, 180))
 			break;
 
-		getSound()->playSound(kEntityTrain, "LIB069");
-		getLogic()->gameOver(kSavegameTypeIndex, 2, kSceneNone, true);
+		getSound()->playSound(kEntityTrain, "LIB069", kVolumeFull);
+		getLogic()->gameOver(kSavegameTypeIndex, 0, kSceneNone, true);
 		break;
 
 	case kActionCallback:

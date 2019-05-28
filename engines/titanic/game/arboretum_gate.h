@@ -72,31 +72,6 @@ private:
 	int _startFrameWinterOn2;
 	int _endFrameWinterOn2;
 	CString _exitViewName;
-	// German specific fields
-	int _field160;
-	int _field164;
-	int _field168;
-	int _field16C;
-	int _field170;
-	int _field174;
-	int _field178;
-	int _field17C;
-	int _field180;
-	int _field184;
-	int _field188;
-	int _field18C;
-	int _field190;
-	int _field194;
-	int _field198;
-	int _field19C;
-	int _field1A0;
-	int _field1A4;
-	int _field1A8;
-	int _field1AC;
-	int _field1B0;
-	int _field1B4;
-	int _field1B8;
-	int _field1BC;
 public:
 	CLASSDEF;
 	CArboretumGate();

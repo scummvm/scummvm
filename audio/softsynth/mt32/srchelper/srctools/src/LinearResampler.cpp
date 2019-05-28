@@ -14,7 +14,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "LinearResampler.h"
+#include "../include/LinearResampler.h"
 
 using namespace SRCTools;
 

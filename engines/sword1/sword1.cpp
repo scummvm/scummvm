@@ -94,7 +94,7 @@ SwordEngine::~SwordEngine() {
 
 Common::Error SwordEngine::init() {
 
-	initGraphics(640, 480, true);
+	initGraphics(640, 480);
 
 	if (0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1mac") ||
 	        0 == scumm_stricmp(ConfMan.get("gameid").c_str(), "sword1macdemo"))

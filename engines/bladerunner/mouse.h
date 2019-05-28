@@ -26,7 +26,7 @@
 #include "bladerunner/vector.h"
 
 namespace Graphics {
-	struct Surface;
+struct Surface;
 }
 
 namespace BladeRunner {
@@ -46,25 +46,33 @@ class Mouse {
 	int _lastFrameTime;
 	int _animCounter;
 
+	int _randomCountdownX;
+	int _randomCountdownY;
+	int _randomX;
+	int _randomY;
+
 public:
 	Mouse(BladeRunnerEngine *vm);
 	~Mouse();
 
 	void setCursor(int cursor);
 
-	void getXY(int *x, int *y);
+	void getXY(int *x, int *y) const;
+	void setMouseJitterUp();
+	void setMouseJitterDown();
 
 	void disable();
-	void enable();
-	bool isDisabled();
+	void enable(bool force = false);
+	bool isDisabled() const;
 
 	void draw(Graphics::Surface &surface, int x, int y);
 	void updateCursorFrame();
 
 	void tick(int x, int y);
+	bool isInactive() const;
 
 // private:
-	Vector3 getXYZ(int x, int y);
+	Vector3 getXYZ(int x, int y) const;
 };
 
 } // End of namespace BladeRunner

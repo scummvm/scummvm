@@ -36,9 +36,8 @@ struct BehaviorMove {
 
 struct BehaviorAnim {
 	int _staticsId;
-	int _movesCount;
 	int _flags;
-	BehaviorMove **_behaviorMoves;
+	Common::Array<BehaviorMove> _behaviorMoves;
 
 	BehaviorAnim();
 	BehaviorAnim(GameVar *var, Scene *sc, StaticANIObject *ani, int *minDelay);
@@ -52,7 +51,7 @@ struct BehaviorInfo {
 	int _flags;
 	int _subIndex;
 	int _animsCount;
-	Common::Array<BehaviorAnim *> _behaviorAnims;
+	Common::Array<BehaviorAnim> _behaviorAnims;
 
 	BehaviorInfo() { clear(); }
 
@@ -62,7 +61,7 @@ struct BehaviorInfo {
 };
 
 class BehaviorManager : public CObject {
-	Common::Array<BehaviorInfo *> _behaviors;
+	Common::Array<BehaviorInfo> _behaviors;
 	Scene *_scene;
 	bool _isActive;
 
@@ -75,8 +74,8 @@ class BehaviorManager : public CObject {
 	void initBehavior(Scene *scene, GameVar *var);
 
 	void updateBehaviors();
-	void updateBehavior(BehaviorInfo *behaviorInfo, BehaviorAnim *entry);
-	void updateStaticAniBehavior(StaticANIObject *ani, int delay, BehaviorAnim *beh);
+	void updateBehavior(BehaviorInfo &behaviorInfo, BehaviorAnim &entry);
+	void updateStaticAniBehavior(StaticANIObject &ani, int delay, const BehaviorAnim &beh);
 
 	bool setBehaviorEnabled(StaticANIObject *obj, int aniId, int quId, int flag);
 

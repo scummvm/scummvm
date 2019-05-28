@@ -33,6 +33,11 @@ class CGE2Console : public GUI::Debugger {
 public:
 	CGE2Console(CGE2Engine *vm);
 	virtual ~CGE2Console();
+
+private:
+	bool doCarpetWorkaround(int argc, const char **argv);
+
+	CGE2Engine *_vm;
 };
 
 } // End of namespace CGE

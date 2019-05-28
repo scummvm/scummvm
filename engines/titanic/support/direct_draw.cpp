@@ -40,7 +40,7 @@ void DirectDraw::setDisplayMode(int width, int height, int bpp, int refreshRate)
 	assert(bpp == 16);
 
 	Graphics::PixelFormat pixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
-	initGraphics(width, height, true, &pixelFormat);
+	initGraphics(width, height, &pixelFormat);
 }
 
 void DirectDraw::diagnostics() {

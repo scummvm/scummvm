@@ -237,7 +237,7 @@ void SoundGenSarien::playSound() {
 }
 
 uint32 SoundGenSarien::mixSound() {
-	register int i, p;
+	int i, p;
 	const int16 *src;
 	int c, b, m;
 

@@ -38,7 +38,7 @@
 
 namespace Sci {
 
-reg_t kRestartGame(EngineState *s, int argc, reg_t *argv) {
+reg_t kRestartGame16(EngineState *s, int argc, reg_t *argv) {
 	s->shrinkStackToBase();
 
 	s->abortScriptProcessing = kAbortRestartGame; // Force vm to abort ASAP
@@ -415,12 +415,26 @@ reg_t kGetConfig(EngineState *s, int argc, reg_t *argv) {
 		s->_segMan->strcpy(data, "");
 	} else if (setting == "game") {
 		// Hoyle 5 startup, specifies the number of the game to start.
-		s->_segMan->strcpy(data, "");
+		if (g_sci->getGameId() == GID_HOYLE5 &&
+			!g_sci->getResMan()->testResource(ResourceId(kResourceTypeScript, 100)) &&
+			g_sci->getResMan()->testResource(ResourceId(kResourceTypeScript, 700))) {
+			// Special case for Hoyle 5 Bridge: only one game is included (Bridge),
+			// so mimic the setting in 700.cfg and set the starting room number to 700.
+			s->_segMan->strcpy(data, "700");
+		} else {
+			s->_segMan->strcpy(data, "");
+		}
 	} else if (setting == "laptop") {
 		// Hoyle 5 startup.
 		s->_segMan->strcpy(data, "");
 	} else if (setting == "jumpto") {
 		// Hoyle 5 startup.
+		s->_segMan->strcpy(data, "");
+	} else if (setting == "klonchtsee") {
+		// Hoyle 5 - starting Solitaire.
+		s->_segMan->strcpy(data, "");
+	} else if (setting == "klonchtarr") {
+		// Hoyle 5 - starting Solitaire.
 		s->_segMan->strcpy(data, "");
 	} else if (setting == "deflang") {
 		// MGDX 4-language startup.
@@ -489,8 +503,7 @@ reg_t kIconBar(EngineState *s, int argc, reg_t *argv) {
 
 	switch (argv[0].toUint16()) {
 	case 0: // InitIconBar
-		for (int i = 0; i < argv[1].toUint16(); i++)
-			g_sci->_gfxMacIconBar->addIcon(argv[i + 2]);
+		g_sci->_gfxMacIconBar->initIcons(argv[1].toUint16(), &argv[2]);
 		break;
 	case 1: // DisposeIconBar
 		warning("kIconBar(Dispose)");
@@ -529,7 +542,7 @@ reg_t kMacPlatform(EngineState *s, int argc, reg_t *argv) {
 		// In SCI1, its usage is still unknown
 		// In SCI1.1, it's NOP
 		// In SCI32, it's used for remapping cursor ID's
-#ifdef ENABLE_SCI32
+#ifdef ENABLE_SCI32_MAC
 		if (getSciVersion() >= SCI_VERSION_2_1_EARLY) // Set Mac cursor remap
 			g_sci->_gfxCursor32->setMacCursorRemapList(argc - 1, argv + 1);
 		else
@@ -615,6 +628,8 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
+extern void showScummVMDialog(const Common::String &message);
+
 #ifdef ENABLE_SCI32
 reg_t kPlatform32(EngineState *s, int argc, reg_t *argv) {
 	enum Operation {
@@ -643,10 +658,12 @@ reg_t kPlatform32(EngineState *s, int argc, reg_t *argv) {
 		case Common::kPlatformWindows:
 			return make_reg(0, kSciPlatformWindows);
 		case Common::kPlatformMacintosh:
+#ifdef ENABLE_SCI32_MAC
 			// For Mac versions, kPlatform(0) with other args has more functionality
 			if (argc > 1)
 				return kMacPlatform(s, argc - 1, argv + 1);
 			else
+#endif
 				return make_reg(0, kSciPlatformMacintosh);
 		default:
 			error("Unknown platform %d", g_sci->getPlatform());
@@ -676,7 +693,56 @@ reg_t kWebConnect(EngineState *s, int argc, reg_t *argv) {
 reg_t kWinExec(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
+
+reg_t kWinDLL(EngineState *s, int argc, reg_t *argv) {
+	uint16 operation = argv[0].toUint16();
+	Common::String dllName = s->_segMan->getString(argv[1]);
+
+	switch (operation) {
+	case 0:	// load DLL
+		// This is originally a call to LoadLibrary() and to the Watcom function GetIndirectFunctionHandle
+		return make_reg(0, 1000);	// fake ID for loaded DLL, normally returned from Windows LoadLibrary()
+	case 1: // free DLL
+		// In the original, FreeLibrary() was called here for the loaded DLL
+		return TRUE_REG;
+	case 2:	// call DLL function
+		if (dllName == "PENGIN16.DLL") {
+			// Poker engine logic for Hoyle 5
+			// This is originally a call to the Watcom function InvokeIndirectFunction()
+			// TODO: we need to reverse the logic in PENGIN16.DLL and call it directly
+			//SciArray *data = s->_segMan->lookupArray(argv[2]);
+			warning("The Poker game logic has not been implemented yet");
+			showScummVMDialog("The Poker game logic has not been implemented yet");
+			return NULL_REG;
+		} else {
+			error("kWinDLL: Unknown DLL to invoke: %s", dllName.c_str());
+			return NULL_REG;
+		}
+	default:
+		return NULL_REG;
+	}
+}
+
 #endif
+
+reg_t kKawaHacks(EngineState *s, int argc, reg_t *argv) {
+	switch (argv[0].toUint16()) {
+	case 0: { // DoAlert
+		showScummVMDialog(s->_segMan->getString(argv[1]));
+		return NULL_REG;
+	}
+	case 1: // ZaWarudo
+		// Unused, would invert the color palette for the specified range.
+		return NULL_REG;
+	case 2: // SetTitleColors
+		// Unused, would change the colors for plain windows' title bars.
+		return NULL_REG;
+	case 3: // IsDebug
+		// Should return 1 if running with an internal debugger, 2 if we have AddMenu support, 3 if both.
+		return TRUE_REG;
+	}
+	return NULL_REG;
+}
 
 reg_t kEmpty(EngineState *s, int argc, reg_t *argv) {
 	// Placeholder for empty kernel functions which are still called from the

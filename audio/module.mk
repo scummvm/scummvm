@@ -46,6 +46,7 @@ MODULE_OBJS := \
 	softsynth/opl/dbopl.o \
 	softsynth/opl/dosbox.o \
 	softsynth/opl/mame.o \
+	softsynth/fmtowns_pc98/pc98_audio.o \
 	softsynth/fmtowns_pc98/towns_audio.o \
 	softsynth/fmtowns_pc98/towns_euphony.o \
 	softsynth/fmtowns_pc98/towns_midi.o \
@@ -60,9 +61,24 @@ MODULE_OBJS := \
 	softsynth/sid.o \
 	softsynth/wave6581.o
 
+ifndef DISABLE_NUKED_OPL
+MODULE_OBJS += \
+	softsynth/opl/nuked.o
+endif
+
+ifdef USE_A52
+MODULE_OBJS += \
+	decoders/ac3.o
+endif
+
 ifdef USE_ALSA
 MODULE_OBJS += \
 	alsa_opl.o
+endif
+
+ifdef ENABLE_OPL2LPT
+MODULE_OBJS += \
+	opl2lpt.o
 endif
 
 ifndef USE_ARM_SOUND_ASM

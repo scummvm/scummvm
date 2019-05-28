@@ -302,9 +302,9 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 		if (timerPosition > 0) {
 			do {
 				g_sci->getEngineState()->wait(1);
-				curEvent = _event->getSciEvent(SCI_EVENT_ANY);
-				if (curEvent.type == SCI_EVENT_MOUSE_PRESS ||
-					(curEvent.type == SCI_EVENT_KEYBOARD && curEvent.character == SCI_KEY_ESC) ||
+				curEvent = _event->getSciEvent(kSciEventAny);
+				if (curEvent.type == kSciEventMousePress ||
+					(curEvent.type == kSciEventKeyDown && curEvent.character == kSciKeyEsc) ||
 					g_sci->getEngineState()->abortScriptProcessing == kAbortQuitGame ||
 					g_sci->getEngineState()->_delayedRestoreGameId != -1)
 					userAbort = true;
@@ -325,9 +325,9 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 
 				do {
 					g_sci->getEngineState()->wait(1);
-					curEvent = _event->getSciEvent(SCI_EVENT_ANY);
-					if (curEvent.type == SCI_EVENT_MOUSE_PRESS ||
-						(curEvent.type == SCI_EVENT_KEYBOARD && curEvent.character == SCI_KEY_ESC) ||
+					curEvent = _event->getSciEvent(kSciEventAny);
+					if (curEvent.type == kSciEventMousePress ||
+						(curEvent.type == kSciEventKeyDown && curEvent.character == kSciKeyEsc) ||
 						g_sci->getEngineState()->abortScriptProcessing == kAbortQuitGame)
 						userAbort = true;
 					curPosition = _audio->getAudioPosition();
@@ -384,9 +384,9 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 		// Wait till syncTime passed, then show specific animation bitmap
 		do {
 			g_sci->getEngineState()->wait(1);
-			curEvent = _event->getSciEvent(SCI_EVENT_ANY);
-			if (curEvent.type == SCI_EVENT_MOUSE_PRESS ||
-				(curEvent.type == SCI_EVENT_KEYBOARD && curEvent.data == SCI_KEY_ESC) ||
+			curEvent = _event->getSciEvent(kSciEventAny);
+			if (curEvent.type == kSciEventMousePress ||
+				(curEvent.type == kSciEventKeyboard && curEvent.data == kSciKeyEsc) ||
 				g_sci->getEngineState()->abortScriptProcessing == kAbortQuitGame)
 				userAbort = true;
 			curPosition = _audio->getAudioPosition();

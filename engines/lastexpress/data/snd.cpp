@@ -342,9 +342,6 @@ static const int imaTable[1424] = {
 	-20479, -28671, -32767, -32767, -32767, -32767
 };
 
-static const int p1s[17] = { 0, 4, 3, 4, 2, 4, 3, 4, 1, 4, 3, 4,  2, 4,  3, 4,  0 };
-static const int p2s[17] = { 0, 1, 1, 3, 1, 5, 3, 7, 1, 9, 5, 11, 3, 13, 7, 15, 1 };
-
 #pragma endregion
 
 // Last Express ADPCM is similar to MS IMA mono, but inverts its nibbles
@@ -352,12 +349,23 @@ static const int p2s[17] = { 0, 1, 1, 3, 1, 5, 3, 7, 1, 9, 5, 11, 3, 13, 7, 15, 
 
 class LastExpress_ADPCMStream : public Audio::ADPCMStream {
 public:
-	LastExpress_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, uint32 blockSize, int32 filterId) :
+	LastExpress_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, uint32 blockSize, uint32 volume, bool looped) :
 			Audio::ADPCMStream(stream, disposeAfterUse, size, 44100, 1, blockSize) {
-		_currentFilterId = -1;
-		_nextFilterId = filterId;
-		_stepAdjust1 = 0;
-		_stepAdjust2 = 0;
+		_currentVolume = 0;
+		_nextVolume = volume;
+		_smoothChangeTarget = volume;
+		_volumeHoldBlocks = 0;
+		_running = true;
+		_looped = looped;
+	}
+
+	virtual bool endOfData() const {
+		return !_running || (!_looped && Audio::ADPCMStream::endOfData());
+	}
+
+	void seekToBlock(uint32 block) {
+		reset();
+		_stream->seek(_startpos + _blockAlign * block);
 	}
 
 	int readBuffer(int16 *buffer, const int numSamples) {
@@ -369,24 +377,31 @@ public:
 
 		assert(numSamples % 2 == 0);
 
-		while (samples < numSamples && !_stream->eos() && _stream->pos() < _endpos) {
+		while (_running && samples < numSamples) {
+			if (Audio::ADPCMStream::endOfData()) {
+				if (!_looped)
+					break;
+				rewind();
+			}
 			if (_blockPos[0] == _blockAlign) {
 				// read block header
 				_status.ima_ch[0].last = _stream->readSint16LE();
 				_status.ima_ch[0].stepIndex = _stream->readSint16LE() << 6;
 				_blockPos[0] = 4;
 
-				// Get current filter
-				_currentFilterId = _nextFilterId;
-				//_nextFilterId = -1; // FIXME: the filter id should be recomputed based on the sound entry status for each block
+				// sanity check against broken stream
+				if ((unsigned)_status.ima_ch[0].stepIndex >= ARRAYSIZE(stepTable) * 4) {
+					// the original game sets kSoundFlagDecodeError here and stops playing
+					_status.ima_ch[0].stepIndex = 0;
+				}
 
-				// No filter: skip decoding
-				if (_currentFilterId == -1)
+				if (!smoothVolumeChangeStep()) {
+					_running = false;
 					break;
+				}
 
-				// Compute step adjustment
-				_stepAdjust1 = p1s[_currentFilterId];
-				_stepAdjust2 = p2s[_currentFilterId];
+				// Get current volume
+				_currentVolume = _nextVolume;
 			}
 
 			for (; samples < numSamples && _blockPos[0] < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples += 2) {
@@ -397,26 +412,43 @@ public:
 				idx = data >> 4;
 				step = stepTable[idx + _status.ima_ch[0].stepIndex / 4];
 				sample = CLIP<int>(imaTable[idx + _status.ima_ch[0].stepIndex / 4] + _status.ima_ch[0].last, -32767, 32767);
-				buffer[samples] = (_stepAdjust2 * sample) >> _stepAdjust1;
+				buffer[samples] = (sample * _currentVolume) >> 4;
 
 				// Second nibble
 				idx = data & 0xF;
 				_status.ima_ch[0].stepIndex = stepTable[idx + step / 4];
 				_status.ima_ch[0].last = CLIP(imaTable[idx + step / 4] + sample, -32767, 32767);
-				buffer[samples + 1] = (_stepAdjust2 * _status.ima_ch[0].last) >> _stepAdjust1;
+				buffer[samples + 1] = (_status.ima_ch[0].last * _currentVolume) >> 4;
 			}
 		}
 
 		return samples;
 	}
 
-	void setFilterId(int32 filterId) { _nextFilterId = filterId; }
+	void setVolume(uint32 newVolume) { _smoothChangeTarget = _nextVolume = newVolume; }
+	void setVolumeSmoothly(uint32 newVolume) { _smoothChangeTarget = newVolume; }
 
 private:
-	int32 _currentFilterId;
-	int32 _nextFilterId;    // the sound filter id, -1 for none
-	int32 _stepAdjust1;
-	int32 _stepAdjust2;
+	uint32 _currentVolume;
+	uint32 _nextVolume;
+	uint32 _smoothChangeTarget;
+	uint32 _volumeHoldBlocks; // smooth change of volume keeps volume on hold for 4 blocks = 133ms for every value; this is the counter
+	bool _running, _looped;
+
+	bool smoothVolumeChangeStep() {
+		if (_nextVolume == _smoothChangeTarget)
+			return true; // the original game clears kSoundFlagVolumeChanging here
+		if (_volumeHoldBlocks <= 3) {
+			_volumeHoldBlocks++;
+			return true;
+		}
+		if (_nextVolume < _smoothChangeTarget)
+			++_nextVolume;
+		else
+			--_nextVolume;
+		_volumeHoldBlocks = 0;
+		return (_nextVolume != 0);
+	}
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -425,7 +457,6 @@ private:
 SimpleSound::SimpleSound() : _size(0), _blocks(0), _blockSize(0) {}
 
 SimpleSound::~SimpleSound() {
-	stop();
 }
 
 // Stop the sound
@@ -442,12 +473,17 @@ void SimpleSound::loadHeader(Common::SeekableReadStream *in) {
 	_blockSize = _size / _blocks;
 }
 
-LastExpress_ADPCMStream *SimpleSound::makeDecoder(Common::SeekableReadStream *in, uint32 size, int32 filterId) const {
-	return new LastExpress_ADPCMStream(in, DisposeAfterUse::YES, size, _blockSize, filterId);
+LastExpress_ADPCMStream *SimpleSound::makeDecoder(Common::SeekableReadStream *in, uint32 size, uint32 volume, bool looped) const {
+	return new LastExpress_ADPCMStream(in, DisposeAfterUse::YES, size, _blockSize, volume, looped);
 }
 
-void SimpleSound::play(Audio::AudioStream *as) {
-	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_handle, as);
+void SimpleSound::play(Audio::AudioStream *as, DisposeAfterUse::Flag autofreeStream) {
+	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_handle, as,
+		-1, Audio::Mixer::kMaxChannelVolume, 0, autofreeStream);
+}
+
+uint32 SimpleSound::getTimeMS() {
+	return g_system->getMixer()->getSoundElapsedTime(_handle);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -456,10 +492,12 @@ void SimpleSound::play(Audio::AudioStream *as) {
 StreamedSound::StreamedSound() : _as(NULL), _loaded(false) {}
 
 StreamedSound::~StreamedSound() {
+	stop(); // should execute before disposal of _as, so don't move in ~SimpleSound
+	delete _as;
 	_as = NULL;
 }
 
-bool StreamedSound::load(Common::SeekableReadStream *stream, int32 filterId) {
+bool StreamedSound::load(Common::SeekableReadStream *stream, uint32 volume, bool looped, uint32 startBlock) {
 	if (!stream)
 		return false;
 
@@ -467,11 +505,17 @@ bool StreamedSound::load(Common::SeekableReadStream *stream, int32 filterId) {
 
 	loadHeader(stream);
 
+	if (_as) {
+		stop();
+		delete _as;
+	}
 	// Start decoding the input stream
-	_as = makeDecoder(stream, _size, filterId);
+	_as = makeDecoder(stream, _size, volume, looped);
+	if (startBlock)
+		_as->seekToBlock(startBlock);
 
 	// Start playing the decoded audio stream
-	play(_as);
+	play(_as, DisposeAfterUse::NO);
 
 	_loaded = true;
 
@@ -485,11 +529,18 @@ bool StreamedSound::isFinished() {
 	return !g_system->getMixer()->isSoundHandleActive(_handle);
 }
 
-void StreamedSound::setFilterId(int32 filterId) {
+void StreamedSound::setVolume(uint32 newVolume) {
 	if (!_as)
 		return;
 
-	_as->setFilterId(filterId);
+	_as->setVolume(newVolume);
+}
+
+void StreamedSound::setVolumeSmoothly(uint32 newVolume) {
+	if (!_as)
+		return;
+
+	_as->setVolumeSmoothly(newVolume);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -501,7 +552,7 @@ AppendableSound::AppendableSound() : SimpleSound() {
 	_finished = false;
 
 	// Start playing the decoded audio stream
-	play(_as);
+	play(_as, DisposeAfterUse::YES);
 
 	// Initialize the block size
 	// TODO: get it as an argument?
@@ -510,6 +561,7 @@ AppendableSound::AppendableSound() : SimpleSound() {
 
 AppendableSound::~AppendableSound() {
 	finish();
+	stop();
 
 	_as = NULL;
 }
@@ -525,8 +577,7 @@ void AppendableSound::queueBuffer(Common::SeekableReadStream *bufferIn) {
 
 	// Setup the ADPCM decoder
 	uint32 sizeIn = (uint32)bufferIn->size();
-	LastExpress_ADPCMStream *adpcm = makeDecoder(bufferIn, sizeIn);
-	adpcm->setFilterId(16);
+	LastExpress_ADPCMStream *adpcm = makeDecoder(bufferIn, sizeIn, kVolumeFull, false);
 
 	// Queue the stream
 	_as->queueAudioStream(adpcm);

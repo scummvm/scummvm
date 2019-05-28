@@ -83,18 +83,6 @@ enum VideoFlags {
 	kStretch         = 1 << 8
 };
 
-struct VideoState {
-	Common::String fileName;
-	uint16 x;
-	uint16 y;
-	uint16 flags;
-
-	void reset() {
-		fileName = "";
-		x = y = flags = 0;
-	}
-};
-
 /**
  * Trace information about a VM function call.
  */
@@ -211,9 +199,6 @@ public:
 	};
 	uint16 _memorySegmentSize;
 	byte _memorySegment[kMemorySegmentMax];
-
-	// TODO: Excise video code from the state manager
-	VideoState _videoState;
 
 	/**
 	 * Resets the engine state.

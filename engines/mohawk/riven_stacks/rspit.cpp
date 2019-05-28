@@ -48,7 +48,12 @@ void RSpit::xrcredittime(const ArgumentArray &args) {
 	// For the record, when agehn == 4, Gehn will thank you for
 	// showing him the rebel age and then leave you to die.
 	// Otherwise, the rebels burn the book. Epic fail either way.
-	runEndGame(1, 1500);
+
+	if (_vm->_vars["agehn"] == 4) {
+		runEndGame(1, 1500, 712);
+	} else {
+		runEndGame(1, 1500, 0);
+	}
 }
 
 void RSpit::xrshowinventory(const ArgumentArray &args) {

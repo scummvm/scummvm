@@ -34,8 +34,9 @@ struct curl_slist;
 
 namespace Networking {
 
-class NetworkReadStream: public Common::MemoryReadWriteStream {
+class NetworkReadStream: public Common::ReadStream {
 	CURL *_easy;
+	Common::MemoryReadWriteStream _backingStream;
 	bool _eos, _requestComplete;
 	const byte *_sendingContentsBuffer;
 	uint32 _sendingContentsSize;
@@ -46,6 +47,26 @@ class NetworkReadStream: public Common::MemoryReadWriteStream {
 	void init(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post);
 	void init(const char *url, curl_slist *headersList, Common::HashMap<Common::String, Common::String> formFields, Common::HashMap<Common::String, Common::String> formFiles);
 
+	/**
+	 * Fills the passed buffer with _sendingContentsBuffer contents.
+	 * It works similarly to read(), expect it's not for reading
+	 * Stream's contents, but for sending our own data to the server.
+	 *
+	 * @returns how many bytes were actually read (filled in)
+	 */
+	uint32 fillWithSendingContents(char *bufferToFill, uint32 maxSize);
+
+	/**
+	* Remembers headers returned to CURL in server's response.
+	*
+	* @returns how many bytes were actually read
+	*/
+	uint32 addResponseHeaders(char *buffer, uint32 bufferSize);
+
+	static size_t curlDataCallback(char *d, size_t n, size_t l, void *p);
+	static size_t curlReadDataCallback(char *d, size_t n, size_t l, void *p);
+	static size_t curlHeadersCallback(char *d, size_t n, size_t l, void *p);
+	static int curlProgressCallbackOlder(void *p, double dltotal, double dlnow, double ultotal, double ulnow);
 public:
 	/** Send <postFields>, using POST by default. */
 	NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields, bool uploading = false, bool usingPatch = false);
@@ -114,22 +135,6 @@ public:
 	* @note This method should be called when eos() == true.
 	*/
 	Common::String responseHeaders() const;
-
-	/**
-	 * Fills the passed buffer with _sendingContentsBuffer contents.
-	 * It works similarly to read(), expect it's not for reading
-	 * Stream's contents, but for sending our own data to the server.
-	 *
-	 * @returns how many bytes were actually read (filled in)
-	 */
-	uint32 fillWithSendingContents(char *bufferToFill, uint32 maxSize);
-
-	/**
-	* Remembers headers returned to CURL in server's response.
-	*
-	* @returns how many bytes were actually read
-	*/
-	uint32 addResponseHeaders(char *buffer, uint32 bufferSize);
 
 	/** Returns a number in range [0, 1], where 1 is "complete". */
 	double getProgress() const;

@@ -35,8 +35,8 @@
 namespace LastExpress {
 
 Cooks::Cooks(LastExpressEngine *engine) : Entity(engine, kEntityCooks) {
-	ADD_CALLBACK_FUNCTION(Cooks, draw);
-	ADD_CALLBACK_FUNCTION(Cooks, playSound);
+	ADD_CALLBACK_FUNCTION_S(Cooks, draw);
+	ADD_CALLBACK_FUNCTION_S(Cooks, playSound);
 	ADD_CALLBACK_FUNCTION(Cooks, uptrainVersion);
 	ADD_CALLBACK_FUNCTION(Cooks, downtrainVersion);
 	ADD_CALLBACK_FUNCTION(Cooks, chapter1);
@@ -98,26 +98,17 @@ IMPLEMENT_FUNCTION(3, Cooks, uptrainVersion)
 			break;
 		}
 
-		if (getEntities()->isPlayerPosition(kCarRestaurant, 46)) {
+		if (getEntities()->isPlayerPosition(kCarRestaurant, 76)) {
 			getEntities()->drawSequenceLeft(kEntityCooks, "308D");
 
-			if (!getSoundQueue()->isBuffered(kEntityCooks)) {
-				if (params->param1) {
-					if (!getEntities()->hasValidFrame(kEntityCooks)) {
-						getSound()->playSound(kEntityCooks, "LIB015");
-						getEntities()->clearSequences(kEntityCooks);
-						callbackAction();
-					}
-					break;
-				}
-
+			if (!getSoundQueue()->isBuffered(kEntityCooks) && !params->param1) {
 				// Kitchen apprentice getting a lesson :D
 				getSound()->playSound(kEntityCooks, "KIT1011A");
 				params->param1 = 1;
 			}
 		}
 
-		if (params->param1 && !getEntities()->hasValidFrame(kEntityCooks)) {
+		if (params->param1 && !getEntities()->hasValidFrame(kEntityCooks) && !getSoundQueue()->isBuffered(kEntityCooks)) {
 			getSound()->playSound(kEntityCooks, "LIB015");
 			getEntities()->clearSequences(kEntityCooks);
 			callbackAction();
@@ -159,22 +150,21 @@ IMPLEMENT_FUNCTION(4, Cooks, downtrainVersion)
 
 		switch (getProgress().chapter) {
 		default:
+			getSound()->playSound(kEntityCooks, "KIT1011");
+			setCallback(3);
+			setup_draw("308B");
 			break;
 
 		case kChapter1:
-			setCallback(2);
-			setup_playSound("ZFX1011");
+			setCallback(1);
+			setup_playSound("KIT1010");
 			break;
 
 		case kChapter3:
 			setCallback(2);
-			setup_playSound("ZFX1011");
+			setup_playSound("KIT1012");
 			break;
 		}
-
-		getSound()->playSound(kEntityCooks, "KIT1011");
-		setCallback(3);
-		setup_draw("308B");
 		break;
 
 	case kActionDrawScene:
@@ -187,23 +177,14 @@ IMPLEMENT_FUNCTION(4, Cooks, downtrainVersion)
 		if (getEntities()->isPlayerPosition(kCarRestaurant, 80)) {
 			getEntities()->drawSequenceLeft(kEntityCooks, "308D");
 
-			if (!getSoundQueue()->isBuffered(kEntityCooks)) {
-				if (params->param1) {
-					if (!getEntities()->hasValidFrame(kEntityCooks)) {
-						getSound()->playSound(kEntityCooks, "LIB015");
-						getEntities()->clearSequences(kEntityCooks);
-						callbackAction();
-					}
-					break;
-				}
-
+			if (!getSoundQueue()->isBuffered(kEntityCooks) && !params->param1) {
 				// Kitchen apprentice getting a lesson :D
 				getSound()->playSound(kEntityCooks, "KIT1011A");
 				params->param1 = 1;
 			}
 		}
 
-		if (params->param1 && !getEntities()->hasValidFrame(kEntityCooks)) {
+		if (params->param1 && !getEntities()->hasValidFrame(kEntityCooks) && !getSoundQueue()->isBuffered(kEntityCooks)) {
 			getSound()->playSound(kEntityCooks, "LIB015");
 			getEntities()->clearSequences(kEntityCooks);
 			callbackAction();
@@ -225,7 +206,7 @@ IMPLEMENT_FUNCTION(4, Cooks, downtrainVersion)
 		case 3:
 			getEntities()->drawSequenceLeft(kEntityCooks, "308C");
 			getEntities()->updatePositionExit(kEntityCooks, kCarRestaurant, 75);
-			getEntities()->updatePositionEnter(kEntityCooks, kCarRestaurant, 78);
+			getEntities()->updatePositionExit(kEntityCooks, kCarRestaurant, 78);
 			break;
 		}
 		break;
@@ -388,6 +369,9 @@ IMPLEMENT_FUNCTION(9, Cooks, inKitchenBreakfast)
 		break;
 
 	case kActionDrawScene:
+		if (!getEntities()->isInKitchen(kEntityPlayer))
+			break;
+
 		if (params->param2) {
 			setCallback(1);
 			setup_playSound("ZFX1011");
@@ -419,7 +403,7 @@ IMPLEMENT_FUNCTION(10, Cooks, chapter3)
 
 		getData()->entityPosition = kPosition_5900;
 		getData()->car = kCarRestaurant;
-		getData()->inventoryItem = kItemNone;
+		getData()->inventoryItem = kItemNone; // not in the original version, but it does no harm, I suppose?
 
 		getProgress().field_4C = 0;
 

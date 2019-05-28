@@ -58,7 +58,7 @@ struct SavePoint {
 	EntityIndex entity2;
 	union {
 		uint32 intValue;
-		char charValue[5];
+		char charValue[7]; // "MUS%03d" with terminating zero
 	} param;
 
 	SavePoint() {
@@ -66,6 +66,7 @@ struct SavePoint {
 		action = kActionNone;
 		entity2 = kEntityPlayer;
 		param.intValue = 0;
+		param.charValue[6] = 0;
 	}
 
 	Common::String toString() {

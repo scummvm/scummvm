@@ -43,6 +43,7 @@ public:
 public:
 	TTconceptNode();
 	TTconceptNode(const TTconceptNode &src);
+	virtual ~TTconceptNode() {}
 
 	/**
 	 * Delete any sibling chain attached to this node

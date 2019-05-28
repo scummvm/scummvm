@@ -24,6 +24,11 @@
 #define GRAPHICS_MACGUI_MACMENU_H
 
 #include "common/str-array.h"
+#include "common/winexe_pe.h"
+
+namespace Common {
+class U32String;
+}
 
 namespace Graphics {
 
@@ -44,14 +49,18 @@ public:
 	~MacMenu();
 
 	static Common::StringArray *readMenuFromResource(Common::SeekableReadStream *res);
+	static MacMenu *createMenuFromPEexe(Common::PEResources &exe, MacWindowManager *wm);
 
 	void setCommandsCallback(void (*callback)(int, Common::String &, void *), void *data) { _ccallback = callback; _cdata = data; }
+	void setCommandsCallback(void (*callback)(int, Common::U32String &, void *), void *data) { _unicodeccallback = callback; _cdata = data; }
 
 	void addStaticMenus(const MacMenuData *data);
 	void calcDimensions();
 
 	int addMenuItem(const char *name);
+	int addMenuItem(const Common::U32String &name);
 	void addMenuSubItem(int id, const char *text, int action, int style = 0, char shortcut = 0, bool enabled = true);
+	void addMenuSubItem(int id, const Common::U32String &text, int action, int style = 0, char shortcut = 0, bool enabled = true);
 	void createSubMenuFromString(int id, const char *string, int commandId);
 	void clearSubMenu(int id);
 
@@ -60,10 +69,14 @@ public:
 
 	void enableCommand(int menunum, int action, bool state);
 	void enableCommand(const char *menuitem, const char *menuaction, bool state);
+	void enableCommand(const Common::U32String &menuitem, const Common::U32String &menuaction, bool state);
 	void disableAllMenus();
 
 	void setActive(bool active) { _menuActivated = active; }
 	bool hasAllFocus() { return _menuActivated; }
+
+	bool isVisible() { return _isVisible; }
+	void setVisible(bool visible) { _isVisible = visible; _contentIsDirty = true; }
 
 	Common::Rect _bbox;
 
@@ -73,7 +86,7 @@ private:
 
 private:
 	const Font *getMenuFont();
-	const char *getAcceleratorString(MacMenuSubItem *item, const char *prefix);
+	const Common::String getAcceleratorString(MacMenuSubItem *item, const char *prefix);
 	int calculateMenuWidth(MacMenuItem *menu);
 	void calcMenuBounds(MacMenuItem *menu);
 	void renderSubmenu(MacMenuItem *menu);
@@ -90,11 +103,13 @@ private:
 	const Font *_font;
 
 	bool _menuActivated;
+	bool _isVisible;
 
 	int _activeItem;
 	int _activeSubItem;
 
 	void (*_ccallback)(int action, Common::String &text, void *data);
+	void (*_unicodeccallback)(int action, Common::U32String &text, void *data);
 	void *_cdata;
 };
 

@@ -37,7 +37,7 @@ SetEffects::SetEffects(BladeRunnerEngine *vm) {
 	_fadeColor.b = 0.0f;
 	_fadeDensity = 0.0f;
 
-	_fogsCount = 0;
+	_fogCount = 0;
 	_fogs = nullptr;
 }
 
@@ -45,32 +45,32 @@ SetEffects::~SetEffects() {
 	reset();
 }
 
-void SetEffects::read(Common::ReadStream *stream, int framesCount) {
+void SetEffects::read(Common::ReadStream *stream, int frameCount) {
 	_distanceCoeficient = stream->readFloatLE();
 	_distanceColor.r = stream->readFloatLE();
 	_distanceColor.g = stream->readFloatLE();
 	_distanceColor.b = stream->readFloatLE();
 
-	_fogsCount = stream->readUint32LE();
+	_fogCount = stream->readUint32LE();
 	int i;
-	for (i = 0; i < _fogsCount; i++) {
+	for (i = 0; i < _fogCount; i++) {
 		int type = stream->readUint32LE();
 		Fog *fog = nullptr;
 		switch (type) {
 		case 0:
-			fog = new FogCone();
+			fog = new FogSphere();
 			break;
 		case 1:
-			fog = new FogSphere();
+			fog = new FogCone();
 			break;
 		case 2:
 			fog = new FogBox();
 			break;
+		default:
+			error("Unknown fog type %d", type);
 		}
-		if (!fog) {
-			//TODO exception, unknown fog type
-		} else {
-			fog->read(stream, framesCount);
+		if (fog != nullptr) {
+			fog->read(stream, frameCount);
 			fog->_next = _fogs;
 			_fogs = fog;
 		}
@@ -80,17 +80,21 @@ void SetEffects::read(Common::ReadStream *stream, int framesCount) {
 void SetEffects::reset() {
 	Fog *nextFog;
 
-	if (!_fogs)
+	if (!_fogs) {
 		return;
+	}
 
 	do {
 		nextFog = _fogs->_next;
-		delete this->_fogs;
-		this->_fogs = nextFog;
+		delete _fogs;
+		_fogs = nextFog;
 	} while (nextFog);
 }
 
 void SetEffects::setupFrame(int frame) {
+	for (Fog *fog = _fogs; fog != nullptr; fog = fog->_next) {
+		fog->setupFrame(frame);
+	}
 }
 
 void SetEffects::setFadeColor(float r, float g, float b) {
@@ -103,25 +107,27 @@ void SetEffects::setFadeDensity(float density) {
 	_fadeDensity = density;
 }
 
-void SetEffects::setFogColor(const char *fogName, float r, float g, float b) {
+void SetEffects::setFogColor(const Common::String &fogName, float r, float g, float b) {
 	Fog *fog = findFog(fogName);
-	if (fog == nullptr)
+	if (fog == nullptr) {
 		return;
+	}
 
 	fog->_fogColor.r = r;
 	fog->_fogColor.g = g;
 	fog->_fogColor.b = b;
 }
 
-void SetEffects::setFogDensity(const char *fogName, float density) {
+void SetEffects::setFogDensity(const Common::String &fogName, float density) {
 	Fog *fog = findFog(fogName);
-	if (fog == nullptr)
+	if (fog == nullptr) {
 		return;
+	}
 
 	fog->_fogDensity = density;
 }
 
-void SetEffects::calculateColor(Vector3 viewPosition, Vector3 position, float *outCoeficient, Color *outColor) {
+void SetEffects::calculateColor(Vector3 viewPosition, Vector3 position, float *outCoeficient, Color *outColor) const {
 	float distanceCoeficient = CLIP((position - viewPosition).length() * _distanceCoeficient, 0.0f, 1.0f);
 
 	*outCoeficient = 1.0f - distanceCoeficient;
@@ -129,7 +135,7 @@ void SetEffects::calculateColor(Vector3 viewPosition, Vector3 position, float *o
 	outColor->g = _distanceColor.g * distanceCoeficient;
 	outColor->b = _distanceColor.b * distanceCoeficient;
 
-	for (Fog *fog = this->_fogs; fog != nullptr; fog = fog->_next) {
+	for (Fog *fog = _fogs; fog != nullptr; fog = fog->_next) {
 		float fogCoeficient = 0.0f;
 		fog->calculateCoeficient(position, viewPosition, &fogCoeficient);
 		if (fogCoeficient > 0.0f) {
@@ -142,20 +148,21 @@ void SetEffects::calculateColor(Vector3 viewPosition, Vector3 position, float *o
 		}
 	}
 
-	*outCoeficient = *outCoeficient * (1.0f - this->_fadeDensity);
-	outColor->r = outColor->r * (1.0f - this->_fadeDensity) + this->_fadeColor.r * this->_fadeDensity;
-	outColor->g = outColor->g * (1.0f - this->_fadeDensity) + this->_fadeColor.g * this->_fadeDensity;
-	outColor->b = outColor->b * (1.0f - this->_fadeDensity) + this->_fadeColor.b * this->_fadeDensity;
+	*outCoeficient = *outCoeficient * (1.0f - _fadeDensity);
+	outColor->r = outColor->r * (1.0f - _fadeDensity) + _fadeColor.r * _fadeDensity;
+	outColor->g = outColor->g * (1.0f - _fadeDensity) + _fadeColor.g * _fadeDensity;
+	outColor->b = outColor->b * (1.0f - _fadeDensity) + _fadeColor.b * _fadeDensity;
 }
 
-Fog *SetEffects::findFog(const char *fogName) {
-	if (!_fogs)
+Fog *SetEffects::findFog(const Common::String &fogName) const {
+	if (!_fogs) {
 		return nullptr;
+	}
 
 	Fog *fog = _fogs;
 
 	while (fog != nullptr) {
-		if (strcmp(fogName, fog->_name) == 0) {
+		if (fogName.compareTo(fog->_name) == 0) {
 			break;
 		}
 		fog = fog->_next;

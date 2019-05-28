@@ -716,6 +716,7 @@ void GfxPalette::palVaryInit() {
 	_palVaryStepStop = 0;
 	_palVaryDirection = 0;
 	_palVaryTicks = 0;
+	_palVaryZeroTick = false;
 }
 
 bool GfxPalette::palVaryLoadTargetPalette(GuiResourceId resourceId) {
@@ -759,19 +760,13 @@ bool GfxPalette::kernelPalVaryInit(GuiResourceId resourceId, uint16 ticks, uint1
 		_palVaryStep = 1;
 		_palVaryStepStop = stepStop;
 		_palVaryDirection = direction;
+
 		// if no ticks are given, jump directly to destination
-		if (!_palVaryTicks) {
+		if (!_palVaryTicks)
 			_palVaryDirection = stepStop;
-			// sierra sci set the timer to 1 tick instead of calling it directly
-			//  we have to change this to prevent a race condition to happen in
-			//  at least freddy pharkas during nighttime. In that case kPalVary is
-			//  called right before a transition and because we load pictures much
-			//  faster, the 1 tick won't pass sometimes resulting in the palette
-			//  being daytime instead of nighttime during the transition.
-			palVaryProcess(1, true);
-		} else {
-			palVaryInstallTimer();
-		}
+		_palVaryZeroTick = (_palVaryTicks == 0); //see delayForPalVaryWorkaround()
+
+		palVaryInstallTimer();
 		return true;
 	}
 	return false;
@@ -788,14 +783,13 @@ int16 GfxPalette::kernelPalVaryReverse(int16 ticks, uint16 stepStop, int16 direc
 	_palVaryStepStop = stepStop;
 	_palVaryDirection = direction != -1 ? -direction : -_palVaryDirection;
 
-	if (!_palVaryTicks) {
+	// if no ticks are given, jump directly to destination
+	if (!_palVaryTicks)
 		_palVaryDirection = _palVaryStepStop - _palVaryStep;
-		// see palVaryInit above, we fix the code here as well
-		//  just in case
-		palVaryProcess(1, true);
-	} else {
-		palVaryInstallTimer();
-	}
+	_palVaryZeroTick = (_palVaryTicks == 0); // see delayForPalVaryWorkaround()
+
+	palVaryInstallTimer();
+
 	return kernelPalVaryGetCurrentStep();
 }
 
@@ -855,6 +849,7 @@ void GfxPalette::palVaryIncreaseSignal() {
 	// FIXME: increments from another thread aren't guaranteed to be atomic
 	if (!_palVaryPaused)
 		_palVarySignal++;
+	_palVaryZeroTick = false;
 }
 
 // Actually do the pal vary processing
@@ -862,6 +857,34 @@ void GfxPalette::palVaryUpdate() {
 	if (_palVarySignal) {
 		palVaryProcess(_palVarySignal, true);
 		_palVarySignal = 0;
+	}
+}
+
+void GfxPalette::delayForPalVaryWorkaround() {
+	if (_palVaryResourceId == -1)
+		return;
+	if (_palVaryPaused)
+		return;
+
+	// This gets called at the very beginning of kAnimate.
+	// If a zero-tick palVary is running, we delay briefly to give the
+	// palVary time to trigger. In theory there should be no reason for this
+	// to have to wait more than a tick, but we time-out after 4 ticks
+	// to be on the safe side.
+	//
+	// This prevents a race condition in Freddy Pharkas during nighttime,
+	// since we load pictures much faster than on original hardware (bug #5298).
+
+	if (_palVaryZeroTick) {
+		int i;
+		for (i = 0; i < 4; ++i) {
+			g_sci->sleep(17);
+			if (!_palVaryZeroTick)
+				break;
+		}
+		debugC(kDebugLevelGraphics, "Delayed kAnimate for kPalVary, %d times", i+1);
+		if (_palVaryZeroTick)
+			warning("Delayed kAnimate for kPalVary timed out");
 	}
 }
 

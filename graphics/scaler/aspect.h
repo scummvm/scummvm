@@ -43,18 +43,20 @@ FORCEINLINE int aspect2Real(int y) {
 /**
  * TODO: explain
  */
-void makeRectStretchable(int &x, int &y, int &w, int &h);
+void makeRectStretchable(int &x, int &y, int &w, int &h, bool interpolate);
 
 /**
  * TODO: explain
  */
+                    
 int stretch200To240(uint8 *buf,
                     uint32 pitch,
                     int width,
                     int height,
                     int srcX,
                     int srcY,
-                    int origSrcY);
+                    int origSrcY,
+                    bool interpolate);
 
 
 /**

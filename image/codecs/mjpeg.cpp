@@ -200,6 +200,7 @@ const Graphics::Surface *MJPEGDecoder::decodeFrame(Common::SeekableReadStream &s
 
 	Common::MemoryReadStream convertedStream(data, outputSize, DisposeAfterUse::YES);
 	JPEGDecoder jpeg;
+	jpeg.setOutputPixelFormat(_pixelFormat);
 
 	if (!jpeg.loadStream(convertedStream)) {
 		warning("Failed to decode MJPEG frame");
@@ -211,7 +212,10 @@ const Graphics::Surface *MJPEGDecoder::decodeFrame(Common::SeekableReadStream &s
 		delete _surface;
 	}
 
-	_surface = jpeg.getSurface()->convertTo(_pixelFormat);
+	_surface = new Graphics::Surface();
+	_surface->copyFrom(*jpeg.getSurface());
+
+	assert(_surface->format == _pixelFormat);
 
 	return _surface;
 }

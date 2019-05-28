@@ -190,23 +190,23 @@ bool CLift::StatusChangeMsg(CStatusChangeMsg *msg) {
 bool CLift::MovieEndMsg(CMovieEndMsg *msg) {
 	switch (msg->_endFrame) {
 	case 108:
-		setGlobalSoundVolume(VOL_MUTE, 1, 0);
-		setGlobalSoundVolume(VOL_QUIET, 1, 1);
+		setAmbientSoundVolume(VOL_MUTE, 1, 0);
+		setAmbientSoundVolume(VOL_QUIET, 1, 1);
 		break;
 
 	case 190:
-		setGlobalSoundVolume(VOL_MUTE, 1, 1);
-		setGlobalSoundVolume(VOL_QUIET, 1, 2);
+		setAmbientSoundVolume(VOL_MUTE, 1, 1);
+		setAmbientSoundVolume(VOL_QUIET, 1, 2);
 		break;
 
 	case 407:
-		setGlobalSoundVolume(VOL_MUTE, 1, 2);
-		setGlobalSoundVolume(VOL_QUIET, 1, 1);
+		setAmbientSoundVolume(VOL_MUTE, 1, 2);
+		setAmbientSoundVolume(VOL_QUIET, 1, 1);
 		break;
 
 	case 489:
-		setGlobalSoundVolume(VOL_MUTE, 1, 1);
-		setGlobalSoundVolume(VOL_QUIET, 1, 0);
+		setAmbientSoundVolume(VOL_MUTE, 1, 1);
+		setAmbientSoundVolume(VOL_QUIET, 1, 0);
 		break;
 
 	default: {
@@ -252,17 +252,17 @@ bool CLift::EnterRoomMsg(CEnterRoomMsg *msg) {
 		}
 
 		if (floorNum < 20) {
-			playGlobalSound(TRANSLATE("z#520.wav", "z#259.wav"), VOL_QUIET, true, true, 0);
-			playGlobalSound(TRANSLATE("z#519.wav", "z#258.wav"), VOL_MUTE, false, true, 1);
-			playGlobalSound(TRANSLATE("z#518.wav", "z#257.wav"), VOL_MUTE, false, true, 2);
+			playAmbientSound(TRANSLATE("z#520.wav", "z#259.wav"), VOL_QUIET, true, true, 0);
+			playAmbientSound(TRANSLATE("z#519.wav", "z#258.wav"), VOL_MUTE, false, true, 1);
+			playAmbientSound(TRANSLATE("z#518.wav", "z#257.wav"), VOL_MUTE, false, true, 2);
 		} else if (floorNum < 28) {
-			playGlobalSound(TRANSLATE("z#520.wav", "z#259.wav"), VOL_MUTE, false, true, 0);
-			playGlobalSound(TRANSLATE("z#519.wav", "z#258.wav"), VOL_QUIET, true, true, 1);
-			playGlobalSound(TRANSLATE("z#518.wav", "z#257.wav"), VOL_MUTE, false, true, 2);
+			playAmbientSound(TRANSLATE("z#520.wav", "z#259.wav"), VOL_MUTE, false, true, 0);
+			playAmbientSound(TRANSLATE("z#519.wav", "z#258.wav"), VOL_QUIET, true, true, 1);
+			playAmbientSound(TRANSLATE("z#518.wav", "z#257.wav"), VOL_MUTE, false, true, 2);
 		} else {
-			playGlobalSound(TRANSLATE("z#520.wav", "z#259.wav"), VOL_MUTE, false, true, 0);
-			playGlobalSound(TRANSLATE("z#519.wav", "z#258.wav"), VOL_MUTE, false, true, 1);
-			playGlobalSound(TRANSLATE("z#518.wav", "z#257.wav"), VOL_QUIET, true, true, 2);
+			playAmbientSound(TRANSLATE("z#520.wav", "z#259.wav"), VOL_MUTE, false, true, 0);
+			playAmbientSound(TRANSLATE("z#519.wav", "z#258.wav"), VOL_MUTE, false, true, 1);
+			playAmbientSound(TRANSLATE("z#518.wav", "z#257.wav"), VOL_QUIET, true, true, 2);
 		}
 	}
 
@@ -270,7 +270,7 @@ bool CLift::EnterRoomMsg(CEnterRoomMsg *msg) {
 }
 
 bool CLift::LeaveRoomMsg(CLeaveRoomMsg *msg) {
-	stopGlobalSound(true, -1);
+	stopAmbientSound(true, -1);
 
 	CPetControl *pet = getPetControl();
 	if (pet->getRoomsElevatorNum() == 4 && _hasHead && !_hasCorrectHead) {

@@ -93,11 +93,11 @@ void ImageFile::load(Common::SeekableReadStream &stream, bool skipPalette, bool 
 		}
 
 		// Load data for frame and decompress it
-		byte *data = new byte[frame._size + 4];
-		stream.read(data, frame._size);
-		Common::fill(data + frame._size, data + frame._size + 4, 0);
-		frame.decompressFrame(data, IS_ROSE_TATTOO);
-		delete[] data;
+		byte *data1 = new byte[frame._size + 4];
+		stream.read(data1, frame._size);
+		Common::fill(data1 + frame._size, data1 + frame._size + 4, 0);
+		frame.decompressFrame(data1, IS_ROSE_TATTOO);
+		delete[] data1;
 
 		push_back(frame);
 	}
@@ -376,14 +376,14 @@ void ImageFile3DO::loadAnimationFile(Common::SeekableReadStream &stream) {
 
 		//
 		// Load data for frame and decompress it
-		byte *data = new byte[celDataSize];
-		stream.read(data, celDataSize);
+		byte *data_ = new byte[celDataSize];
+		stream.read(data_, celDataSize);
 		streamLeft -= celDataSize;
 
 		// always 16 bits per pixel (RGB555)
-		decompress3DOCelFrame(frame, data, celDataSize, 16, NULL);
+		decompress3DOCelFrame(frame, data_, celDataSize, 16, NULL);
 
-		delete[] data;
+		delete[] data_;
 
 		push_back(frame);
 	}
@@ -703,7 +703,7 @@ void ImageFile3DO::load3DOCelRoomData(Common::SeekableReadStream &stream) {
 			error("load3DOCelRoomData: expected cel data, not enough bytes");
 
 		// read data into memory
-		byte  *celDataPtr = new byte[celDataSize];
+		byte *celDataPtr = new byte[celDataSize];
 
 		stream.read(celDataPtr, celDataSize);
 		streamLeft -= celDataSize;
@@ -936,15 +936,15 @@ void ImageFile3DO::loadFont(Common::SeekableReadStream &stream) {
 	stream.read(bitsTablePtr, bitsTableSize);
 
 	// Now extract all characters
-	uint16       curChar = 0;
-	const byte  *curBitsLinePtr = bitsTablePtr;
-	const byte  *curBitsPtr = NULL;
-	byte         curBitsLeft = 0;
-	uint32       curCharHeightLeft = 0;
-	uint32       curCharWidthLeft = 0;
-	byte         curBits = 0;
-	byte         curBitsReversed = 0;
-	byte         curPosX = 0;
+	uint16      curChar = 0;
+	const byte *curBitsLinePtr = bitsTablePtr;
+	const byte *curBitsPtr = NULL;
+	byte        curBitsLeft = 0;
+	uint32      curCharHeightLeft = 0;
+	uint32      curCharWidthLeft = 0;
+	byte        curBits = 0;
+	byte        curBitsReversed = 0;
+	byte        curPosX = 0;
 
 	assert(bitsTableSize >= (header_maxChar * header_fontHeight * header_bytesPerLine)); // Security
 

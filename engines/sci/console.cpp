@@ -73,7 +73,7 @@ int g_debug_simulated_key = 0;
 bool g_debug_track_mouse_clicks = false;
 
 // Refer to the "addresses" command on how to pass address parameters
-static int parse_reg_t(EngineState *s, const char *str, reg_t *dest, bool mayBeValue);
+static int parse_reg_t(EngineState *s, const char *str, reg_t *dest);
 
 Console::Console(SciEngine *engine) : GUI::Debugger(),
 	_engine(engine), _debugState(engine->_debugState) {
@@ -265,60 +265,23 @@ void Console::preEnter() {
 	_engine->pauseEngine(true);
 }
 
-extern void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState);
+extern void playVideo(Video::VideoDecoder &videoDecoder);
 
 void Console::postEnter() {
 	if (!_videoFile.empty()) {
-		Video::VideoDecoder *videoDecoder = 0;
-
-#ifdef ENABLE_SCI32
-		bool duckMode = false;
-#endif
+		Common::ScopedPtr<Video::VideoDecoder> videoDecoder;
 
 		if (_videoFile.hasSuffix(".seq")) {
-			videoDecoder = new SEQDecoder(_videoFrameDelay);
-#ifdef ENABLE_SCI32
-		} else if (_videoFile.hasSuffix(".vmd")) {
-			videoDecoder = new Video::AdvancedVMDDecoder();
-		} else if (_videoFile.hasSuffix(".duk")) {
-			duckMode = true;
-			videoDecoder = new Video::AVIDecoder();
-#endif
+			videoDecoder.reset(new SEQDecoder(_videoFrameDelay));
 		} else if (_videoFile.hasSuffix(".avi")) {
-			videoDecoder = new Video::AVIDecoder();
+			videoDecoder.reset(new Video::AVIDecoder());
 		} else {
 			warning("Unrecognized video type");
 		}
 
 		if (videoDecoder && videoDecoder->loadFile(_videoFile)) {
 			_engine->_gfxCursor->kernelHide();
-
-#ifdef ENABLE_SCI32
-			// Duck videos are 16bpp, so we need to change pixel formats
-			int oldWidth = g_system->getWidth();
-			int oldHeight = g_system->getHeight();
-			if (duckMode) {
-				Common::List<Graphics::PixelFormat> formats;
-				formats.push_back(videoDecoder->getPixelFormat());
-				initGraphics(640, 480, true, formats);
-
-				if (g_system->getScreenFormat().bytesPerPixel != videoDecoder->getPixelFormat().bytesPerPixel)
-					error("Could not switch screen format for the duck video");
-			}
-#endif
-
-			VideoState emptyState;
-			emptyState.reset();
-			emptyState.fileName = _videoFile;
-			emptyState.flags = kDoubled;	// always allow the videos to be double sized
-			playVideo(videoDecoder, emptyState);
-
-#ifdef ENABLE_SCI32
-			// Switch back to 8bpp if we played a duck video
-			if (duckMode)
-				initGraphics(oldWidth, oldHeight, oldWidth > 320);
-#endif
-
+			playVideo(*videoDecoder);
 			_engine->_gfxCursor->kernelShow();
 		} else
 			warning("Could not play video %s\n", _videoFile.c_str());
@@ -525,6 +488,9 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 	debugPrintf("Resource map version: %s\n", g_sci->getResMan()->getMapVersionDesc());
 	debugPrintf("Contains selector vocabulary (vocab.997): %s\n", hasVocab997 ? "yes" : "no");
 	debugPrintf("Has CantBeHere selector: %s\n", g_sci->getKernel()->_selectorCache.cantBeHere != -1 ? "yes" : "no");
+	if (getSciVersion() >= SCI_VERSION_2) {
+		debugPrintf("Plane id base: %d\n", g_sci->_features->detectPlaneIdBase());
+	}
 	debugPrintf("Game version (VERSION file): %s\n", gameVersion.c_str());
 	debugPrintf("\n");
 
@@ -950,7 +916,7 @@ bool Console::cmdResourceIntegrityDump(int argc, const char **argv) {
 		// with VMDs in GK2.)
 		Common::List<ResourceId> resources = _engine->getResMan()->listResources(resType);
 
-		const char *extension;
+		const char *extension = "";
 		if (videoFiles) {
 			switch (resType) {
 			case kResourceTypeRobot:
@@ -974,7 +940,7 @@ bool Console::cmdResourceIntegrityDump(int argc, const char **argv) {
 				break;
 			}
 			default:
-				extension = "";
+				break;
 			}
 		}
 
@@ -1496,7 +1462,7 @@ bool Console::cmdAudioDump(int argc, const char **argv) {
 		int numChannels = 1;
 		int bytesPerSample = 1;
 		bool sourceIs8Bit = true;
-		uint32 compressedSize;
+		uint32 compressedSize = 0;
 		uint32 decompressedSize;
 
 		if (isSol) {
@@ -1507,13 +1473,17 @@ bool Console::cmdAudioDump(int argc, const char **argv) {
 
 			// All AudioStreams must output 16-bit samples
 			bytesPerSample = 2;
-			decompressedSize = compressedSize * bytesPerSample;
+
+			decompressedSize = compressedSize;
 
 			if (flags & kCompressed) {
 				decompressedSize *= 2;
 			}
 			if (flags & k16Bit) {
 				sourceIs8Bit = false;
+			} else {
+				// 8-bit is implicitly up-converted by AudioStream to 16-bit
+				decompressedSize *= 2;
 			}
 			if (flags & kStereo) {
 				numChannels = 2;
@@ -1749,19 +1719,18 @@ bool Console::cmdParse(int argc, const char **argv) {
 	}
 
 	char *error;
-	char string[1000];
+	Common::String string = argv[1];
 
 	// Construct the string
-	strcpy(string, argv[1]);
 	for (int i = 2; i < argc; i++) {
-		strcat(string, " ");
-		strcat(string, argv[i]);
+		string += " ";
+		string += argv[i];
 	}
 
-	debugPrintf("Parsing '%s'\n", string);
+	debugPrintf("Parsing '%s'\n", string.c_str());
 
 	ResultWordListList words;
-	bool res = _engine->getVocabulary()->tokenizeString(words, string, &error);
+	bool res = _engine->getVocabulary()->tokenizeString(words, string.c_str(), &error);
 	if (res && !words.empty()) {
 		int syntax_fail = 0;
 
@@ -1803,15 +1772,14 @@ bool Console::cmdSaid(int argc, const char **argv) {
 	}
 
 	char *error;
-	char string[1000];
+	Common::String string = argv[1];
 	byte spec[1000];
 
 	int p;
 	// Construct the string
-	strcpy(string, argv[1]);
 	for (p = 2; p < argc && strcmp(argv[p],"&") != 0; p++) {
-		strcat(string, " ");
-		strcat(string, argv[p]);
+		string += " ";
+		string += argv[p];
 	}
 
 	if (p >= argc-1) {
@@ -1871,12 +1839,12 @@ bool Console::cmdSaid(int argc, const char **argv) {
 	}
 	spec[len++] = 0xFF;
 
-	debugN("Matching '%s' against:", string);
+	debugN("Matching '%s' against:", string.c_str());
 	_engine->getVocabulary()->debugDecipherSaidBlock(SciSpan<const byte>(spec, len));
 	debugN("\n");
 
 	ResultWordListList words;
-	bool res = _engine->getVocabulary()->tokenizeString(words, string, &error);
+	bool res = _engine->getVocabulary()->tokenizeString(words, string.c_str(), &error);
 	if (res && !words.empty()) {
 		int syntax_fail = 0;
 
@@ -2041,7 +2009,7 @@ bool Console::cmdPicVisualize(int argc, const char **argv) {
 
 bool Console::cmdPlayVideo(int argc, const char **argv) {
 	if (argc < 2) {
-		debugPrintf("Plays a SEQ, AVI, VMD, RBT or DUK video.\n");
+		debugPrintf("Plays a SEQ or AVI video.\n");
 		debugPrintf("Usage: %s <video file name> <delay>\n", argv[0]);
 		debugPrintf("The video file name should include the extension\n");
 		debugPrintf("Delay is only used in SEQ videos and is measured in ticks (default: 10)\n");
@@ -2051,8 +2019,7 @@ bool Console::cmdPlayVideo(int argc, const char **argv) {
 	Common::String filename = argv[1];
 	filename.toLowercase();
 
-	if (filename.hasSuffix(".seq") || filename.hasSuffix(".avi") || filename.hasSuffix(".vmd") ||
-		filename.hasSuffix(".rbt") || filename.hasSuffix(".duk")) {
+	if (filename.hasSuffix(".seq") || filename.hasSuffix(".avi")) {
 		_videoFile = filename;
 		_videoFrameDelay = (argc == 2) ? 10 : atoi(argv[2]);
 		return cmdExit(0, 0);
@@ -2120,7 +2087,7 @@ bool Console::cmdPlaneItemList(int argc, const char **argv) {
 
 	reg_t planeObject = NULL_REG;
 
-	if (parse_reg_t(_engine->_gamestate, argv[1], &planeObject, false)) {
+	if (parse_reg_t(_engine->_gamestate, argv[1], &planeObject)) {
 		debugPrintf("Invalid address passed.\n");
 		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
@@ -2148,7 +2115,7 @@ bool Console::cmdVisiblePlaneItemList(int argc, const char **argv) {
 
 	reg_t planeObject = NULL_REG;
 
-	if (parse_reg_t(_engine->_gamestate, argv[1], &planeObject, false)) {
+	if (parse_reg_t(_engine->_gamestate, argv[1], &planeObject)) {
 		debugPrintf("Invalid address passed.\n");
 		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
@@ -2223,7 +2190,7 @@ bool Console::cmdShowSavedBits(int argc, const char **argv) {
 
 	reg_t memoryHandle = NULL_REG;
 
-	if (parse_reg_t(_engine->_gamestate, argv[1], &memoryHandle, false)) {
+	if (parse_reg_t(_engine->_gamestate, argv[1], &memoryHandle)) {
 		debugPrintf("Invalid address passed.\n");
 		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
@@ -2602,6 +2569,13 @@ bool Console::cmdShowMap(int argc, const char **argv) {
 		return true;
 	}
 
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		debugPrintf("Command not available / implemented for SCI32 games.\n");
+		return true;
+	}
+#endif
+
 	int map = atoi(argv[1]);
 
 	switch (map) {
@@ -2609,7 +2583,9 @@ bool Console::cmdShowMap(int argc, const char **argv) {
 	case 1:
 	case 2:
 	case 3:
-		_engine->_gfxScreen->debugShowMap(map);
+		if (_engine->_gfxScreen) {
+			_engine->_gfxScreen->debugShowMap(map);
+		}
 		break;
 
 	default:
@@ -2635,7 +2611,7 @@ bool Console::cmdSongInfo(int argc, const char **argv) {
 
 	reg_t addr;
 
-	if (parse_reg_t(_engine->_gamestate, argv[1], &addr, false)) {
+	if (parse_reg_t(_engine->_gamestate, argv[1], &addr)) {
 		debugPrintf("Invalid address passed.\n");
 		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
@@ -2678,7 +2654,7 @@ bool Console::cmdToggleSound(int argc, const char **argv) {
 
 	reg_t id;
 
-	if (parse_reg_t(_engine->_gamestate, argv[1], &id, false)) {
+	if (parse_reg_t(_engine->_gamestate, argv[1], &id)) {
 		debugPrintf("Invalid address passed.\n");
 		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
@@ -2770,7 +2746,7 @@ bool Console::cmdGCShowReachable(int argc, const char **argv) {
 
 	reg_t addr;
 
-	if (parse_reg_t(_engine->_gamestate, argv[1], &addr, false)) {
+	if (parse_reg_t(_engine->_gamestate, argv[1], &addr)) {
 		debugPrintf("Invalid address passed.\n");
 		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
@@ -2802,7 +2778,7 @@ bool Console::cmdGCShowFreeable(int argc, const char **argv) {
 
 	reg_t addr;
 
-	if (parse_reg_t(_engine->_gamestate, argv[1], &addr, false)) {
+	if (parse_reg_t(_engine->_gamestate, argv[1], &addr)) {
 		debugPrintf("Invalid address passed.\n");
 		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
@@ -2835,7 +2811,7 @@ bool Console::cmdGCNormalize(int argc, const char **argv) {
 
 	reg_t addr;
 
-	if (parse_reg_t(_engine->_gamestate, argv[1], &addr, false)) {
+	if (parse_reg_t(_engine->_gamestate, argv[1], &addr)) {
 		debugPrintf("Invalid address passed.\n");
 		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
@@ -2956,7 +2932,7 @@ bool Console::cmdVMVars(int argc, const char **argv) {
 		printBasicVarInfo(*curValue);
 		debugPrintf("\n");
 	} else {
-		if (parse_reg_t(s, setValue, curValue, true)) {
+		if (parse_reg_t(s, setValue, curValue)) {
 			debugPrintf("Invalid value/address passed.\n");
 			debugPrintf("Check the \"addresses\" command on how to use addresses\n");
 			debugPrintf("Or pass a decimal or hexadecimal value directly (e.g. 12, 1Ah)\n");
@@ -3003,7 +2979,7 @@ bool Console::cmdValueType(int argc, const char **argv) {
 
 	reg_t val;
 
-	if (parse_reg_t(_engine->_gamestate, argv[1], &val, false)) {
+	if (parse_reg_t(_engine->_gamestate, argv[1], &val)) {
 		debugPrintf("Invalid address passed.\n");
 		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
@@ -3044,7 +3020,7 @@ bool Console::cmdViewListNode(int argc, const char **argv) {
 
 	reg_t addr;
 
-	if (parse_reg_t(_engine->_gamestate, argv[1], &addr, false)) {
+	if (parse_reg_t(_engine->_gamestate, argv[1], &addr)) {
 		debugPrintf("Invalid address passed.\n");
 		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
@@ -3067,14 +3043,14 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 	reg_t reg = NULL_REG;
 	reg_t reg_end = NULL_REG;
 
-	if (parse_reg_t(_engine->_gamestate, argv[1], &reg, false)) {
+	if (parse_reg_t(_engine->_gamestate, argv[1], &reg)) {
 		debugPrintf("Invalid address passed.\n");
 		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
 	}
 
 	if (argc > 2) {
-		if (parse_reg_t(_engine->_gamestate, argv[2], &reg_end, false)) {
+		if (parse_reg_t(_engine->_gamestate, argv[2], &reg_end)) {
 			debugPrintf("Invalid address passed.\n");
 			debugPrintf("Check the \"addresses\" command on how to use addresses\n");
 			return true;
@@ -3098,14 +3074,14 @@ bool Console::cmdDumpReference(int argc, const char **argv) {
 	reg_t reg = NULL_REG;
 	reg_t reg_end = NULL_REG;
 
-	if (parse_reg_t(_engine->_gamestate, argv[1], &reg, false)) {
+	if (parse_reg_t(_engine->_gamestate, argv[1], &reg)) {
 		debugPrintf("Invalid address passed.\n");
 		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
 	}
 
 	if (argc > 2) {
-		if (parse_reg_t(_engine->_gamestate, argv[2], &reg_end, false)) {
+		if (parse_reg_t(_engine->_gamestate, argv[2], &reg_end)) {
 			debugPrintf("Invalid address passed.\n");
 			debugPrintf("Check the \"addresses\" command on how to use addresses\n");
 			return true;
@@ -3214,7 +3190,7 @@ bool Console::cmdViewObject(int argc, const char **argv) {
 
 	reg_t addr;
 
-	if (parse_reg_t(_engine->_gamestate, argv[1], &addr, false)) {
+	if (parse_reg_t(_engine->_gamestate, argv[1], &addr)) {
 		debugPrintf("Invalid address passed.\n");
 		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
@@ -3558,7 +3534,7 @@ bool Console::cmdDisassemble(int argc, const char **argv) {
 	bool printBytecode = false;
 	bool printBWTag = false;
 
-	if (parse_reg_t(_engine->_gamestate, argv[1], &objAddr, false)) {
+	if (parse_reg_t(_engine->_gamestate, argv[1], &objAddr)) {
 		debugPrintf("Invalid address passed.\n");
 		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
@@ -3621,9 +3597,9 @@ bool Console::cmdDisassembleAddress(int argc, const char **argv) {
 	uint opCount = 1;
 	bool printBWTag = false;
 	bool printBytes = false;
-	uint16 size;
+	uint32 size;
 
-	if (parse_reg_t(_engine->_gamestate, argv[1], &vpc, false)) {
+	if (parse_reg_t(_engine->_gamestate, argv[1], &vpc)) {
 		debugPrintf("Invalid address passed.\n");
 		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
@@ -3646,7 +3622,6 @@ bool Console::cmdDisassembleAddress(int argc, const char **argv) {
 	}
 
 	do {
-		// TODO: Use a true 32-bit reg_t for the position (vpc)
 		vpc = disassemble(_engine->_gamestate, make_reg32(vpc.getSegment(), vpc.getOffset()), nullptr, printBWTag, printBytes);
 	} while ((vpc.getOffset() > 0) && (vpc.getOffset() + 6 < size) && (--opCount));
 
@@ -3812,7 +3787,7 @@ bool Console::cmdSend(int argc, const char **argv) {
 
 	reg_t object;
 
-	if (parse_reg_t(_engine->_gamestate, argv[1], &object, false)) {
+	if (parse_reg_t(_engine->_gamestate, argv[1], &object)) {
 		debugPrintf("Invalid address \"%s\" passed.\n", argv[1]);
 		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
@@ -3848,7 +3823,7 @@ bool Console::cmdSend(int argc, const char **argv) {
 	stackframe[0] = make_reg(0, selectorId);
 	stackframe[1] = make_reg(0, send_argc);
 	for (int i = 0; i < send_argc; i++) {
-		if (parse_reg_t(_engine->_gamestate, argv[3+i], &stackframe[2+i], false)) {
+		if (parse_reg_t(_engine->_gamestate, argv[3+i], &stackframe[2+i])) {
 			debugPrintf("Invalid address \"%s\" passed.\n", argv[3+i]);
 			debugPrintf("Check the \"addresses\" command on how to use addresses\n");
 			return true;
@@ -4036,7 +4011,7 @@ bool Console::cmdBreakpointAction(int argc, const char **argv) {
 
 	if (usage) {
 		debugPrintf("Change the action for the breakpoint with the specified index.\n");
-		debugPrintf("Usage: %s <breakpoint index> break|log|bt|inspect|none\n", argv[0]);
+		debugPrintf("Usage: %s <breakpoint index> break|log|bt|inspect|ignore\n", argv[0]);
 		debugPrintf("<index> * will process all breakpoints\n");
 		debugPrintf("Actions: break  : break into debugger\n");
 		debugPrintf("         log    : log without breaking\n");
@@ -4279,6 +4254,8 @@ bool Console::cmdBreakpointFunction(int argc, const char **argv) {
 	_debugState._breakpoints.push_back(bp);
 	_debugState._activeBreakpointTypes |= BREAK_EXPORT;
 
+	printBreakpoint(_debugState._breakpoints.size() - 1, bp);
+
 	return true;
 }
 
@@ -4292,7 +4269,7 @@ bool Console::cmdBreakpointAddress(int argc, const char **argv) {
 
 	reg_t addr;
 
-	if (parse_reg_t(_engine->_gamestate, argv[1], &addr, false)) {
+	if (parse_reg_t(_engine->_gamestate, argv[1], &addr)) {
 		debugPrintf("Invalid address passed.\n");
 		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
@@ -4314,6 +4291,8 @@ bool Console::cmdBreakpointAddress(int argc, const char **argv) {
 
 	_debugState._breakpoints.push_back(bp);
 	_debugState._activeBreakpointTypes |= BREAK_ADDRESS;
+
+	printBreakpoint(_debugState._breakpoints.size() - 1, bp);
 
 	return true;
 }
@@ -4514,7 +4493,7 @@ bool Console::cmdMapVocab994(int argc, const char **argv) {
 		return true;
 	}
 
-	if (parse_reg_t(_engine->_gamestate, argv[1], &reg, false)) {
+	if (parse_reg_t(_engine->_gamestate, argv[1], &reg)) {
 		debugPrintf("Invalid address passed.\n");
 		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
@@ -4596,7 +4575,7 @@ bool Console::cmdAddresses(int argc, const char **argv) {
 }
 
 // Returns 0 on success
-static int parse_reg_t(EngineState *s, const char *str, reg_t *dest, bool mayBeValue) {
+static int parse_reg_t(EngineState *s, const char *str, reg_t *dest) {
 	// Pointer to the part of str which contains a numeric offset (if any)
 	const char *offsetStr = NULL;
 
@@ -4611,14 +4590,10 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest, bool mayBeV
 		relativeOffset = true;
 
 		if (!scumm_strnicmp(str + 1, "PC", 2)) {
-			reg32_t pc = s->_executionStack.back().addr.pc;
-			dest->setSegment(pc.getSegment());
-			dest->setOffset(pc.getOffset());
+			*dest = s->_executionStack.back().addr.pc;
 			offsetStr = str + 3;
 		} else if (!scumm_strnicmp(str + 1, "P", 1)) {
-			reg32_t pc = s->_executionStack.back().addr.pc;
-			dest->setSegment(pc.getSegment());
-			dest->setOffset(pc.getOffset());
+			*dest = s->_executionStack.back().addr.pc;
 			offsetStr = str + 2;
 		} else if (!scumm_strnicmp(str + 1, "PREV", 4)) {
 			*dest = s->r_prev;
@@ -5029,14 +5004,12 @@ void Console::printReference(reg_t reg, reg_t reg_end) {
 		case SIG_TYPE_REFERENCE: {
 			switch (_engine->_gamestate->_segMan->getSegmentType(reg.getSegment())) {
 #ifdef ENABLE_SCI32
-				case SEG_TYPE_ARRAY: {
+				case SEG_TYPE_ARRAY:
 					printArray(reg);
 					break;
-				}
-				case SEG_TYPE_BITMAP: {
+				case SEG_TYPE_BITMAP:
 					printBitmap(reg);
 					break;
-				}
 #endif
 				default: {
 					const SegmentRef block = _engine->_gamestate->_segMan->dereference(reg);

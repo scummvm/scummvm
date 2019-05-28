@@ -532,41 +532,112 @@ void DreamWebEngine::intro3Text(uint16 nextReelPointer) {
 		setupTimedTemp(46, 82, 36, 56, 100, 1);
 }
 
-void DreamWebEngine::monks2text() {
-	bool isGermanCD = hasSpeech() && getLanguage() == Common::DE_DEU;
+void DreamWebEngine::monks2ShowText(uint8 textIndex, uint8 x = 36, uint8 y = 160) {
+	setupTimedTemp(textIndex, 82, x, y, 120, 1);
+}
 
-	if (_introCount == 1)
-		setupTimedTemp(8, 82, 36, 160, 120, 1);
-	else if (_introCount == (isGermanCD ? 5 : 4))
-		setupTimedTemp(9, 82, 36, 160, 120, 1);
-	else if (_introCount == (isGermanCD ? 9 : 7))
-		setupTimedTemp(10, 82, 36, 160, 120, 1);
-	else if (_introCount == 10 && !isGermanCD) {
-		if (hasSpeech())
-			_introCount = 12;
-		setupTimedTemp(11, 82, 0, 105, 120, 1);
-	} else if (_introCount == 13 && isGermanCD) {
-		_introCount = 14;
-		setupTimedTemp(11, 82, 0, 105, 120, 1);
-	} else if (_introCount == 13 && !isGermanCD) {
-		if (hasSpeech())
-			_introCount = 17;
-		else
-			setupTimedTemp(12, 82, 0, 120, 120, 1);
-	} else if (_introCount == 16 && !isGermanCD)
-		setupTimedTemp(13, 82, 0, 135, 120, 1);
-	else if (_introCount == 19)
-		setupTimedTemp(14, 82, 36, 160, 100, 1);
-	else if (_introCount == (isGermanCD ? 23 : 22))
-		setupTimedTemp(15, 82, 36, 160, 120, 1);
-	else if (_introCount == (isGermanCD ? 27 : 25))
-		setupTimedTemp(16, 82, 36, 160, 120, 1);
-	else if (_introCount == (hasSpeech() ? 27 : 28) && !isGermanCD)
-		setupTimedTemp(17, 82, 36, 160, 120, 1);
-	else if (_introCount == 30 && isGermanCD)
-		setupTimedTemp(17, 82, 36, 160, 120, 1);
-	else if (_introCount == (isGermanCD ? 35 : 31))
-		setupTimedTemp(18, 82, 36, 160, 120, 1);
+void DreamWebEngine::monks2text() {
+	if (getLanguage() != Common::DE_DEU && getLanguage() != Common::ES_ESP) {
+		switch (_introCount) {
+		case 1:
+			monks2ShowText(8);	// Keepers. The web of dreams is slowly unwinding
+			break;
+		case 4:
+			monks2ShowText(9);	// The seven evil powers on earth are joining forces
+			break;
+		case 7:
+			monks2ShowText(10);	// If they become too strong the Dreamweb will be destroyed
+			break;
+		case 10:
+			if (hasSpeech())
+				_introCount = 12;
+			monks2ShowText(11, 0, 105);	// Who will be the deliverer? (monk 1)
+			break;
+		case 13:
+			if (hasSpeech())
+				_introCount = 17;	// Skip the speech of the third monk in the CD version
+			monks2ShowText(12, 0, 120);	// When will it be? (monk 2)
+			break;
+		case 16:
+			monks2ShowText(13, 0, 135);	// We must not let the web be broken (monk 3) (floppy version only)
+			break;
+		case 19:
+			monks2ShowText(14);	// SILENCE! The chosen ones are becoming aware
+			break;
+		case 22:
+			monks2ShowText(15);	// If they discover their powers they will become too strong
+			break;
+		case 25:
+			monks2ShowText(16);	// Has the seed been planted?
+			break;
+		case 27:	// CD
+		case 28:	// Floppy
+			if ((_introCount == 27 && hasSpeech()) || (_introCount == 28 && !hasSpeech()))
+				monks2ShowText(17);	// Yes, it has grown strong and he is stirring
+			break;
+		case 31:
+			monks2ShowText(18);	// The time has come and I shall awaken him
+			break;
+		default:
+			break;
+		}
+	} else {
+		switch (_introCount) {
+		case 1:
+			monks2ShowText(8);	// W≈chter! Das Netz der Tr≈ume f≈ngt an sich aufzul÷sen
+			break;
+		case 4:	// Floppy
+		case 5:	// CD
+			if ((_introCount == 4 && !hasSpeech()) || (_introCount == 5 && hasSpeech()))
+				monks2ShowText(9);	// Die sieben b÷sen M≈chte der Erde fangen an sich zu sammeln
+			break;
+		case 7:	// Floppy
+		case 9:	// CD
+			if ((_introCount == 7 && !hasSpeech()) || (_introCount == 9 && hasSpeech()))
+				monks2ShowText(10);	// Wenn sie zu m≈chtig werden, wird das Dreamweb zerst÷rt
+			break;
+		case 10:	// Floppy
+		case 13:	// CD and floppy
+			if (_introCount == 10 && !hasSpeech()) {
+				monks2ShowText(11, 0, 105);	// Wer wird der Bote sein?
+			} else if (_introCount == 13 && hasSpeech()) {
+				_introCount = 14;
+				monks2ShowText(11, 0, 105);	// Wer wird der Bote sein?
+			} else if (_introCount == 13 && !hasSpeech()) {
+				monks2ShowText(12, 0, 120);
+			}
+			break;
+		case 16:
+			if (!hasSpeech())
+				monks2ShowText(13, 0, 135);
+			break;
+		case 19:
+			monks2ShowText(14);	// SCHWEIGT! Die Auserw≈hlten sammeln sich
+			break;
+		case 22:	// Floppy
+		case 23:	// CD
+			if ((_introCount == 22 && !hasSpeech()) || (_introCount == 23 && hasSpeech()))
+				monks2ShowText(15);	// Wenn sie ihre Kr≈fte entdecken, werden sie zu m≈chtig sein
+			break;
+		case 25:	// Floppy
+		case 27:	// CD
+			if ((_introCount == 25 && !hasSpeech()) || (_introCount == 27 && hasSpeech()))
+				monks2ShowText(16);	// Ist die Saat gepflanzt?
+			break;
+		case 28:	// Floppy
+		case 30:	// CD
+			if ((_introCount == 28 && !hasSpeech()) || (_introCount == 30 && hasSpeech()))
+				monks2ShowText(17);	// Ja. Sie ist zu einem gro‹en und stattlichen Man herangewachsen
+			break;
+		case 31:	// Floppy
+		case 35:	// CD
+			if ((_introCount == 31 && !hasSpeech()) || (_introCount == 35 && hasSpeech()))
+				monks2ShowText(18);	// Sein Name ist Ryan. Die Zeit ist gekommen, ihn zu erwecken
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 void DreamWebEngine::textForEnd() {

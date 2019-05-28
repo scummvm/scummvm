@@ -281,7 +281,7 @@ bool DrasculaEngine::loadGame(int slot) {
 	// things. Reset those before loading the savegame otherwise we may have some
 	// issues such as the protagonist being invisible after reloading a savegame.
 	if (_roomNumber == 102 && flags[1] == 2) {
-		characterVisible = 1;
+		_characterVisible = true;
 		loadPic(96, frontSurface);
 		loadPic(97, frontSurface);
 		loadPic(97, extraSurface);
@@ -317,9 +317,8 @@ bool DrasculaEngine::loadGame(int slot) {
 	takeObject = in->readSint32LE();
 	pickedObject = in->readSint32LE();
 	_loadedDifferentChapter = false;
-	if (!sscanf(currentData, "%d.ald", &roomNum)) {
+	if (!sscanf(currentData, "%d.ald", &roomNum))
 		error("Bad save format");
-	}
 
 	// When loading room 102 while being attached below the pendulum Some variables
 	// are not correctly set and can cause random crashes when calling enterRoom below.

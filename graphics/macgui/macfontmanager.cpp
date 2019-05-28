@@ -249,16 +249,21 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 }
 
 const Font *MacFontManager::getFont(MacFont macFont) {
+	Common::String name;
 	const Font *font = 0;
 
 	if (!_builtInFonts) {
-		if (macFont.getName().empty())
-			macFont.setName(getFontName(macFont.getId(), macFont.getSize(), macFont.getSlant()));
+		if (macFont.getName().empty()) {
+			name = getFontName(macFont.getId(), macFont.getSize(), macFont.getSlant());
+			macFont.setName(name);
+		}
 
 		if (!_fontRegistry.contains(macFont.getName())) {
 			// Let's try to generate name
-			if (macFont.getSlant() != kMacFontRegular)
-				macFont.setName(getFontName(macFont.getId(), macFont.getSize(), macFont.getSlant(), true));
+			if (macFont.getSlant() != kMacFontRegular) {
+				name = getFontName(macFont.getId(), macFont.getSize(), macFont.getSlant(), true);
+				macFont.setName(name);
+			}
 
 			if (!_fontRegistry.contains(macFont.getName()))
 				generateFontSubstitute(macFont);
@@ -303,8 +308,7 @@ void MacFontManager::clearFontMapping() {
 	_extraFontIds.clear();
 }
 
-const char *MacFontManager::getFontName(int id, int size, int slant, bool tryGen) {
-	static char name[128];
+const Common::String MacFontManager::getFontName(int id, int size, int slant, bool tryGen) {
 	Common::String n;
 
 	if (_extraFontNames.contains(id)) {
@@ -327,12 +331,10 @@ const char *MacFontManager::getFontName(int id, int size, int slant, bool tryGen
 		slant = 0;
 	}
 
-	snprintf(name, 128, "%s-%d-%d", n.c_str(), slant, size);
-
-	return name;
+	return Common::String::format("%s-%d-%d", n.c_str(), slant, size);
 }
 
-const char *MacFontManager::getFontName(MacFont &font) {
+const Common::String MacFontManager::getFontName(MacFont &font) {
 	return getFontName(font.getId(), font.getSize(), font.getSlant());
 }
 
@@ -375,7 +377,7 @@ void MacFontManager::generateFontSubstitute(MacFont &macFont) {
 	}
 
 	if (sizes.empty()) {
-		debug(1, "No viable substitute found for font %s", getFontName(macFont));
+		debug(1, "No viable substitute found for font %s", getFontName(macFont).c_str());
 		return;
 	}
 
@@ -400,13 +402,13 @@ void MacFontManager::generateFontSubstitute(MacFont &macFont) {
 }
 
 void MacFontManager::generateFont(MacFont &toFont, MacFont &fromFont) {
-	debugN("Found font substitute for font '%s' ", getFontName(toFont));
-	debug("as '%s'", getFontName(fromFont));
+	debugN("Found font substitute for font '%s' ", getFontName(toFont).c_str());
+	debug("as '%s'", getFontName(fromFont).c_str());
 
 	MacFONTFont *font = Graphics::MacFONTFont::scaleFont(fromFont.getFont(), toFont.getSize());
 
 	if (!font) {
-		warning("Failed to generate font '%s'", getFontName(toFont));
+		warning("Failed to generate font '%s'", getFontName(toFont).c_str());
 	}
 
 	toFont.setGenerated(true);
@@ -415,7 +417,7 @@ void MacFontManager::generateFont(MacFont &toFont, MacFont &fromFont) {
 	FontMan.assignFontToName(getFontName(toFont), font);
 	_fontRegistry.setVal(getFontName(toFont), new MacFont(toFont));
 
-	debug("Generated font '%s'", getFontName(toFont));
+	debug("Generated font '%s'", getFontName(toFont).c_str());
 }
 
 } // End of namespace Graphics

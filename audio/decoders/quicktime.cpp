@@ -344,7 +344,7 @@ bool QuickTimeAudioDecoder::QuickTimeAudioTrack::isOldDemuxing() const {
 
 AudioStream *QuickTimeAudioDecoder::QuickTimeAudioTrack::readAudioChunk(uint chunk) {
 	AudioSampleDesc *entry = (AudioSampleDesc *)_parentTrack->sampleDescs[0];
-	Common::MemoryWriteStreamDynamic *wStream = new Common::MemoryWriteStreamDynamic();
+	Common::MemoryWriteStreamDynamic *wStream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::NO);
 
 	_decoder->_fd->seek(_parentTrack->chunkOffsets[chunk]);
 

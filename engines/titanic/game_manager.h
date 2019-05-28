@@ -81,8 +81,8 @@ public:
 	CInputHandler _inputHandler;
 	CInputTranslator _inputTranslator;
 	CTreeItem *_dragItem;
-	CMusicRoom _musicRoom;
 	CSound _sound;
+	CMusicRoom _musicRoom;
 public:
 	CGameManager(CProjectItem *project, CGameView *gameView, Audio::Mixer *mixer);
 	~CGameManager();

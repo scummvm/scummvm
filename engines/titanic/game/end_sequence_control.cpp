@@ -62,7 +62,7 @@ bool CEndSequenceControl::TimerMsg(CTimerMsg *msg) {
 }
 
 bool CEndSequenceControl::MovieEndMsg(CMovieEndMsg *msg) {
-	setGlobalSoundVolume(VOL_MUTE, 2, -1);
+	setAmbientSoundVolume(VOL_MUTE, 2, -1);
 	changeView("TheEnd.Node 3.N");
 	addTimer(2, 1000, 0);
 	return true;
@@ -72,7 +72,7 @@ bool CEndSequenceControl::EnterRoomMsg(CEnterRoomMsg *msg) {
 	petHide();
 	disableMouse();
 	addTimer(1, 1000, 0);
-	playGlobalSound(TRANSLATE("a#15.wav", "a#8.wav"), VOL_NORMAL, true, true, 0, Audio::Mixer::kSpeechSoundType);
+	playAmbientSound(TRANSLATE("a#15.wav", "a#8.wav"), VOL_NORMAL, true, true, 0, Audio::Mixer::kSpeechSoundType);
 	return true;
 }
 

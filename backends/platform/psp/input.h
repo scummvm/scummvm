@@ -139,6 +139,8 @@ private:
 	Cursor *_cursor;		// to enable changing/getting cursor position
 
 	ShiftMode _shifted;
+	int32 _hiresX;			// to accumulate analog X over many frames
+	int32 _hiresY;			// to accumulate analog Y over many frames
 	bool _dpadMode;
 
 	ButtonPad _buttonPad;	// private buttonpad for dpad mode
@@ -146,7 +148,7 @@ private:
 	int32 modifyNubAxisMotion(int32 input);
 	void translateToDpadState(int dpadX, int dpadY, uint32 &buttonState);	// convert nub data to dpad data
 public:
-	Nub() : _shifted(UNSHIFTED), _dpadMode(false) { }
+	Nub() : _shifted(UNSHIFTED), _dpadMode(false), _hiresX(0), _hiresY(0) { }
 	void init() { _buttonPad.initButtons(); }
 
 	void setCursor(Cursor *cursor) { _cursor = cursor; }

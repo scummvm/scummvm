@@ -91,9 +91,10 @@ void SdlAudioCDManager::stop() {
 	_cdNumLoops = 0;
 }
 
-bool SdlAudioCDManager::play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate) {
+bool SdlAudioCDManager::play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate,
+		Audio::Mixer::SoundType soundType) {
 	// Prefer emulation
-	if (DefaultAudioCDManager::play(track, numLoops, startFrame, duration, onlyEmulate))
+	if (DefaultAudioCDManager::play(track, numLoops, startFrame, duration, onlyEmulate, soundType))
 		return true;
 
 	// If we're set to only emulate, or have no CD, return here

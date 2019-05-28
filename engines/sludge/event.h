@@ -69,7 +69,7 @@ public:
 	int &mouseY() { return _input.mouseY; }
 
 	// Events
-	void setEventFunction(EventFunctions event, int funcNum) { _currentEvents->func[event] = funcNum; } ;
+	void setEventFunction(EventFunctions event, int funcNum) { _currentEvents->func[event] = funcNum; };
 	void loadHandlers(Common::SeekableReadStream *stream);
 	void saveHandlers(Common::WriteStream *stream);
 	bool freeze(FrozenStuffStruct *frozenStuff);

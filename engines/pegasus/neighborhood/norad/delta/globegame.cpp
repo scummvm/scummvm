@@ -726,6 +726,8 @@ void GlobeGame::receiveNotification(Notification *notification, const Notificati
 						kFilterNoInput, kSpotSoundCompletedFlag);
 				break;
 			}
+			// fall through
+			// FIXME: fall through intentional?
 		case kPlayingTime:
 			_gameState = kPlayingInstructions;
 			_globeMovie.show();

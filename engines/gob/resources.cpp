@@ -98,7 +98,10 @@ Common::SeekableReadStream *TextItem::stream() const {
 
 
 Resources::TOTResourceTable::TOTResourceTable() {
-	items = 0;
+	itemsCount = 0;
+	unknown    = (byte)0;
+	items      = NULL;
+	dataOffset = 0u;
 }
 
 Resources::TOTResourceTable::~TOTResourceTable() {
@@ -118,9 +121,11 @@ Resources::EXTResourceTable::~EXTResourceTable() {
 
 
 Resources::TOTTextTable::TOTTextTable() {
-	items    = 0;
-	data     = 0;
-	needFree = false;
+	needFree   = false;
+	itemsCount = 0;
+	data       = NULL;
+	size       = 0;
+	items      = NULL;
 }
 
 Resources::TOTTextTable::~TOTTextTable() {

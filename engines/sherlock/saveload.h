@@ -105,7 +105,7 @@ public:
 	/**
 	 * Read in the header information for a savegame
 	 */
-	static bool readSavegameHeader(Common::InSaveFile *in, SherlockSavegameHeader &header);
+	WARN_UNUSED_RESULT static bool readSavegameHeader(Common::InSaveFile *in, SherlockSavegameHeader &header, bool skipThumbnail = true);
 
 	/**
 	 * Return the index of the button the mouse is over, if any

@@ -33,6 +33,7 @@
 
 #include "common/scummsys.h"
 #include "common/textconsole.h"
+#include "graphics/pixelformat.h"
 #include "image/image_decoder.h"
 
 namespace Common {
@@ -57,7 +58,10 @@ public:
 	const byte *getPalette() const { return _palette; }
 	uint16 getPaletteColorCount() const { return _paletteColorCount; }
 	void setSkipSignature(bool skip) { _skipSignature = skip; }
+
 private:
+	Graphics::PixelFormat getByteOrderRgbaPixelFormat() const;
+
 	byte *_palette;
 	uint16 _paletteColorCount;
 

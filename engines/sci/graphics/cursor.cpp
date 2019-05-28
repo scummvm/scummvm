@@ -40,8 +40,8 @@
 
 namespace Sci {
 
-GfxCursor::GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *screen)
-	: _resMan(resMan), _palette(palette), _screen(screen) {
+GfxCursor::GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *screen, GfxCoordAdjuster16 *coordAdjuster, EventManager *eventMan)
+	: _resMan(resMan), _palette(palette), _screen(screen), _coordAdjuster(coordAdjuster), _event(eventMan) {
 
 	_upscaledHires = _screen->getUpscaledHires();
 	_isVisible = true;
@@ -68,20 +68,11 @@ GfxCursor::GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *sc
 		_useSilverSQ4CDCursors = ConfMan.getBool("silver_cursors");
 	else
 		_useSilverSQ4CDCursors = false;
-
-	// _coordAdjuster and _event will be initialized later on
-	_coordAdjuster = NULL;
-	_event = NULL;
 }
 
 GfxCursor::~GfxCursor() {
 	purgeCache();
 	kernelClearZoomZone();
-}
-
-void GfxCursor::init(GfxCoordAdjuster16 *coordAdjuster, EventManager *event) {
-	_coordAdjuster = coordAdjuster;
-	_event = event;
 }
 
 void GfxCursor::kernelShow() {
@@ -113,7 +104,7 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 	byte colorMapping[4];
 	int16 x, y;
 	byte color;
-	int16 maskA, maskB;
+	uint16 maskA, maskB;
 	byte *pOut;
 	int16 heightWidth;
 
@@ -479,7 +470,7 @@ void GfxCursor::kernelMoveCursor(Common::Point pos) {
 
 	// Trigger event reading to make sure the mouse coordinates will
 	// actually have changed the next time we read them.
-	_event->getSciEvent(SCI_EVENT_PEEK);
+	_event->getSciEvent(kSciEventPeek);
 }
 
 void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNum) {

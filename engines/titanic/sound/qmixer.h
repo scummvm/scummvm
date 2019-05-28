@@ -217,7 +217,7 @@ protected:
 	Audio::Mixer *_mixer;
 public:
 	QMixer(Audio::Mixer *mixer);
-	virtual ~QMixer() {}
+	virtual ~QMixer();
 
 	/**
 	 * Initializes the mixer

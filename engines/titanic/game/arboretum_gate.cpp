@@ -21,7 +21,7 @@
  */
 
 #include "titanic/game/arboretum_gate.h"
-#include "titanic/titanic.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -69,14 +69,6 @@ CArboretumGate::CArboretumGate() : CBackground() {
 	_endFrameWinterOn1 = 364;
 	_startFrameWinterOn2 = 365;
 	_endFrameWinterOn2 = 424;
-
-	// German specific fields
-	_field160 = _field164 = _field168 = _field16C = 0;
-	_field170 = _field174 = _field178 = _field17C = 0;
-	_field180 = _field184 = _field188 = _field18C = 0;
-	_field190 = _field194 = _field198 = _field19C = 0;
-	_field1A0 = _field1A4 = _field1A8 = _field1AC = 0;
-	_field1B0 = _field1B4 = _field1B8 = _field1BC = 0;
 }
 
 void CArboretumGate::save(SimpleFile *file, int indent) {
@@ -113,31 +105,32 @@ void CArboretumGate::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_endFrameWinterOn2, indent);
 	file->writeQuotedLine(_exitViewName, indent);
 
-	if (g_vm->isGerman()) {
-		file->writeNumberLine(_field160, indent);
-		file->writeNumberLine(_field164, indent);
-		file->writeNumberLine(_field168, indent);
-		file->writeNumberLine(_field16C, indent);
-		file->writeNumberLine(_field170, indent);
-		file->writeNumberLine(_field174, indent);
-		file->writeNumberLine(_field178, indent);
-		file->writeNumberLine(_field17C, indent);
-		file->writeNumberLine(_field180, indent);
-		file->writeNumberLine(_field184, indent);
-		file->writeNumberLine(_field188, indent);
-		file->writeNumberLine(_field18C, indent);
-		file->writeNumberLine(_field190, indent);
-		file->writeNumberLine(_field194, indent);
-		file->writeNumberLine(_field198, indent);
-		file->writeNumberLine(_field19C, indent);
-		file->writeNumberLine(_field1A0, indent);
-		file->writeNumberLine(_field1A4, indent);
-		file->writeNumberLine(_field1A8, indent);
-		file->writeNumberLine(_field1AC, indent);
-		file->writeNumberLine(_field1B0, indent);
-		file->writeNumberLine(_field1B4, indent);
-		file->writeNumberLine(_field1B8, indent);
-		file->writeNumberLine(_field1BC, indent);
+	if (g_language == Common::DE_DEU) {
+		// German version replicated all the frame fields for some reason
+		file->writeNumberLine(_startFrameSpringOff, indent);
+		file->writeNumberLine(_endFrameSpringOff, indent);
+		file->writeNumberLine(_startFrameSpringOn, indent);
+		file->writeNumberLine(_endFrameSpringOn, indent);
+		file->writeNumberLine(_startFrameAutumnOff2, indent);
+		file->writeNumberLine(_endFrameAutumnOff2, indent);
+		file->writeNumberLine(_endFrameAutumnOn2, indent);
+		file->writeNumberLine(_startFrameAutumnOn2, indent);
+		file->writeNumberLine(_startFrameAutumnOff1, indent);
+		file->writeNumberLine(_endFrameAutumnOff1, indent);
+		file->writeNumberLine(_startFrameAutumnOn1, indent);
+		file->writeNumberLine(_endFrameAutumnOn1, indent);
+		file->writeNumberLine(_startFrameSummerOff, indent);
+		file->writeNumberLine(_endFrameSummerOff, indent);
+		file->writeNumberLine(_startFrameSummerOn, indent);
+		file->writeNumberLine(_endFrameSummerOn, indent);
+		file->writeNumberLine(_startFrameWinterOff2, indent);
+		file->writeNumberLine(_endFrameWinterOff2, indent);
+		file->writeNumberLine(_startFrameWinterOn2, indent);
+		file->writeNumberLine(_endFrameWinterOn2, indent);
+		file->writeNumberLine(_startFrameWinterOff1, indent);
+		file->writeNumberLine(_endFrameWinterOff1, indent);
+		file->writeNumberLine(_startFrameWinterOn1, indent);
+		file->writeNumberLine(_endFrameWinterOn1, indent);
 	}
 
 	CBackground::save(file, indent);
@@ -177,31 +170,32 @@ void CArboretumGate::load(SimpleFile *file) {
 	_endFrameWinterOn2 = file->readNumber();
 	_exitViewName = file->readString();
 
-	if (g_vm->isGerman()) {
-		_field160 = file->readNumber();
-		_field164 = file->readNumber();
-		_field168 = file->readNumber();
-		_field16C = file->readNumber();
-		_field170 = file->readNumber();
-		_field174 = file->readNumber();
-		_field178 = file->readNumber();
-		_field17C = file->readNumber();
-		_field180 = file->readNumber();
-		_field184 = file->readNumber();
-		_field188 = file->readNumber();
-		_field18C = file->readNumber();
-		_field190 = file->readNumber();
-		_field194 = file->readNumber();
-		_field198 = file->readNumber();
-		_field19C = file->readNumber();
-		_field1A0 = file->readNumber();
-		_field1A4 = file->readNumber();
-		_field1A8 = file->readNumber();
-		_field1AC = file->readNumber();
-		_field1B0 = file->readNumber();
-		_field1B4 = file->readNumber();
-		_field1B8 = file->readNumber();
-		_field1BC = file->readNumber();
+	if (g_language == Common::DE_DEU) {
+		// German version replicated all the frame fields for some reason
+		_startFrameSpringOff = file->readNumber();
+		_endFrameSpringOff = file->readNumber();
+		_startFrameSpringOn = file->readNumber();
+		_endFrameSpringOn = file->readNumber();
+		_startFrameAutumnOff2 = file->readNumber();
+		_endFrameAutumnOff2 = file->readNumber();
+		_endFrameAutumnOn2 = file->readNumber();
+		_startFrameAutumnOn2 = file->readNumber();
+		_startFrameAutumnOff1 = file->readNumber();
+		_endFrameAutumnOff1 = file->readNumber();
+		_startFrameAutumnOn1 = file->readNumber();
+		_endFrameAutumnOn1 = file->readNumber();
+		_startFrameSummerOff = file->readNumber();
+		_endFrameSummerOff = file->readNumber();
+		_startFrameSummerOn = file->readNumber();
+		_endFrameSummerOn = file->readNumber();
+		_startFrameWinterOff2 = file->readNumber();
+		_endFrameWinterOff2 = file->readNumber();
+		_startFrameWinterOn2 = file->readNumber();
+		_endFrameWinterOn2 = file->readNumber();
+		_startFrameWinterOff1 = file->readNumber();
+		_endFrameWinterOff1 = file->readNumber();
+		_startFrameWinterOn1 = file->readNumber();
+		_endFrameWinterOn1 = file->readNumber();
 	}
 
 	CBackground::load(file);

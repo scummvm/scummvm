@@ -143,24 +143,25 @@ public:
 	MidiPlayer_Midi(SciVersion version);
 	virtual ~MidiPlayer_Midi();
 
-	int open(ResourceManager *resMan);
-	void close();
-	void send(uint32 b);
-	void sysEx(const byte *msg, uint16 length);
-	bool hasRhythmChannel() const { return true; }
-	byte getPlayId() const;
-	int getPolyphony() const {
+	int open(ResourceManager *resMan) override;
+	void close() override;
+	void send(uint32 b) override;
+	void sysEx(const byte *msg, uint16 length) override;
+	bool hasRhythmChannel() const override { return true; }
+	byte getPlayId() const override;
+	int getPolyphony() const override {
 		if (g_sci && g_sci->_features->useAltWinGMSound())
 			return 16;
 		else
 			return kVoices;
 	}
-	int getFirstChannel() const;
-	int getLastChannel() const;
-	void setVolume(byte volume);
-	int getVolume();
-	void setReverb(int8 reverb);
-	void playSwitch(bool play);
+	int getFirstChannel() const override;
+	int getLastChannel() const override;
+	void setVolume(byte volume) override;
+	int getVolume() override;
+	void setReverb(int8 reverb) override;
+	void playSwitch(bool play) override;
+	virtual void initTrack(SciSpan<const byte> &) override;
 
 private:
 	bool isMt32GmPatch(const SciSpan<const byte> &data);
@@ -204,6 +205,7 @@ private:
 	int _masterVolume;
 
 	byte _reverbConfig[kReverbConfigNr][3];
+	int8 _defaultReverb;
 	Channel _channels[16];
 	uint8 _percussionMap[128];
 	int8 _keyShift[128];
@@ -220,7 +222,7 @@ private:
 	byte _sysExBuf[kMaxSysExSize];
 };
 
-MidiPlayer_Midi::MidiPlayer_Midi(SciVersion version) : MidiPlayer(version), _playSwitch(true), _masterVolume(15), _mt32Type(kMt32TypeNone), _hasReverb(false), _useMT32Track(true) {
+MidiPlayer_Midi::MidiPlayer_Midi(SciVersion version) : MidiPlayer(version), _playSwitch(true), _masterVolume(15), _mt32Type(kMt32TypeNone), _hasReverb(false), _defaultReverb(-1), _useMT32Track(true) {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI);
 	_driver = MidiDriver::createMidi(dev);
 
@@ -497,6 +499,66 @@ void MidiPlayer_Midi::playSwitch(bool play) {
 	}
 }
 
+void MidiPlayer_Midi::initTrack(SciSpan<const byte> &header) {
+	if (_version > SCI_VERSION_0_LATE)
+		return;
+
+	if (_defaultReverb >= 0)
+		// SCI0 in combination with MT-32 requires a reset of the reverb to
+		// the default value that is present in either the MT-32 patch data
+		// or MT32.DRV itself.
+		setReverb(_defaultReverb);
+
+	uint8 caps = header.getInt8At(0);
+	if (caps != 0 && (_version == SCI_VERSION_0_EARLY || caps != 2))
+		return;
+
+	uint8 readPos = 1;
+	uint8 flags = 0;
+	byte msg[9];
+	memset(msg, 0x10, 9);
+
+	if (_version == SCI_VERSION_0_EARLY) {
+		uint8 writePos = 0;
+		for (int i = 0; i < 16; ++i) {
+			flags = header.getInt8At(readPos++);
+			if (flags & 8) {
+				// If both flags 1 and 8 are set this will make the driver assign that channel to MT32 part 9.
+				// This suggests that any one channel could be the rhythm channel. I don't know whether this has any practical relevance.
+				// A channel not flagged with 8 can also be assigned to MT-32 part 9 if it just happens to be the last channel. This is how
+				// it is done in the tracks that I have seen so far. Flag 8 without flag 1 is the control channel (not handled in the driver).
+				if (flags & 1) {
+					if (i < 11) {
+						msg[8] = i;
+						writePos++;
+					}
+				} else {
+					debugC(9, kDebugLevelSound, "MidiPlayer_Midi::initTrack(): Control channel found: 0x%.02x", i);
+				}
+			} else if (i < 11 && (flags & 1)) {
+				assert(writePos < 9);
+				msg[writePos++] = i;
+			}
+		}
+
+	} else {
+		readPos = 3;
+		for (int i = 1; i < 9; ++i) {
+			readPos++;
+			flags = header.getInt8At(readPos++);
+			msg[i - 1] = (flags & 1) ? i : 0x10;
+		}
+
+		flags = header.getInt8At(readPos);
+		msg[8] = (flags & 0x80) ? 9 : 0x10;
+	}
+
+	// assign channels
+	debugC(5, kDebugLevelSound, "MidiPlayer_Midi::initTrack(): Channels assigned to MT-32 parts: 0x%.02x 0x%.02x 0x%.02x 0x%.02x 0x%.02x 0x%.02x 0x%.02x 0x%.02x 0x%.02x", msg[0], msg[1], msg[2], msg[3], msg[4], msg[5], msg[6], msg[7], msg[8]);
+ 	Sci::SciSpan<const byte> s(msg, 9);
+	sendMt32SysEx(0x10000D, s, false);
+}
+
 bool MidiPlayer_Midi::isMt32GmPatch(const SciSpan<const byte> &data) {
 	uint32 size = data.size();
 
@@ -610,7 +672,7 @@ void MidiPlayer_Midi::readMt32Patch(const SciSpan<const byte> &data) {
 	setMt32Volume(volume);
 
 	// Reverb default only used in (roughly) SCI0/SCI01
-	byte reverb = stream.readByte();
+	_defaultReverb = stream.readSByte();
 
 	_hasReverb = true;
 
@@ -648,10 +710,6 @@ void MidiPlayer_Midi::readMt32Patch(const SciSpan<const byte> &data) {
 		// Partial reserve
 		sendMt32SysEx(0x100004, stream, 9);
 	}
-
-	// Reverb for SCI0
-	if (_version <= SCI_VERSION_0_LATE)
-		setReverb(reverb);
 
 	// Send after-SysEx text
 	stream.seek(0);
@@ -780,7 +838,7 @@ void MidiPlayer_Midi::readMt32DrvData() {
 
 		if (size == 2771) {
 			// MT32.DRV in LSL2 early contains more data, like a normal patch
-			byte reverb = f.readByte();
+			_defaultReverb = f.readByte();
 
 			_hasReverb = true;
 
@@ -799,8 +857,6 @@ void MidiPlayer_Midi::readMt32DrvData() {
 			// Patches 1-48
 			sendMt32SysEx(0x50000, f, 256);
 			sendMt32SysEx(0x50200, f, 128);
-
-			setReverb(reverb);
 
 			// Send the after-SysEx text
 			f.seek(0x3d);

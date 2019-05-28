@@ -181,8 +181,8 @@ ScriptChangedResult DeskbotScript::scriptChanged(const TTroomScript *roomScript,
 }
 
 int DeskbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
-		uint val, uint tagId, uint remainder) {
-	switch (tagId) {
+		uint tag1, uint tag2, uint remainder) {
+	switch (tag2) {
 	case MKTAG('A', 'D', 'V', 'T'):
 	case MKTAG('A', 'R', 'T', 'I'):
 	case MKTAG('A', 'R', 'T', 'Y'):
@@ -202,7 +202,7 @@ int DeskbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence 
 	case MKTAG('S', 'P', 'R', 'T'):
 	case MKTAG('T', 'E', 'A', 'M'):
 	case MKTAG('T', 'V', 'S', 'H'):
-		tagId = MKTAG('E', 'N', 'T', 'N');
+		tag2 = MKTAG('E', 'N', 'T', 'N');
 		break;
 	case MKTAG('A', 'C', 'T', 'R'):
 	case MKTAG('A', 'C', 'T', 'S'):
@@ -238,60 +238,59 @@ int DeskbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence 
 	case MKTAG('T', 'W', 'A', 'T'):
 	case MKTAG('W', 'E', 'A', 'T'):
 	case MKTAG('W', 'W', 'E', 'B'):
-		tagId = MKTAG('P', 'R', 'S', 'N');
+		tag2 = MKTAG('P', 'R', 'S', 'N');
 		break;
 	case MKTAG('C', 'H', 'S', 'E'):
 	case MKTAG('C', 'M', 'N', 'T'):
 	case MKTAG('F', 'I', 'L', 'M'):
 	case MKTAG('J', 'F', 'O', 'D'):
 	case MKTAG('L', 'I', 'Q', 'D'):
-		tagId = MKTAG('F', 'O', 'O', 'D');
+		tag2 = MKTAG('F', 'O', 'O', 'D');
 		break;
 	case MKTAG('C', 'R', 'I', 'M'):
 	case MKTAG('C', 'S', 'P', 'Y'):
 	case MKTAG('D', 'R', 'U', 'G'):
-		tagId = MKTAG('V', 'B', 'A', 'D');
+		tag2 = MKTAG('V', 'B', 'A', 'D');
 		break;
 	case MKTAG('E', 'A', 'R', 'T'):
 	case MKTAG('H', 'O', 'M', 'E'):
 	case MKTAG('N', 'P', 'L', 'C'):
 	case MKTAG('P', 'L', 'A', 'N'):
-		tagId = MKTAG('P', 'L', 'A', 'C');
+		tag2 = MKTAG('P', 'L', 'A', 'C');
 		break;
 	case MKTAG('F', 'A', 'U', 'N'):
 	case MKTAG('F', 'I', 'S', 'H'):
 	case MKTAG('F', 'L', 'O', 'R'):
-		tagId = MKTAG('N', 'A', 'T', 'R');
+		tag2 = MKTAG('N', 'A', 'T', 'R');
 		break;
 	case MKTAG('H', 'H', 'L', 'D'):
 	case MKTAG('T', 'O', 'Y', 'S'):
 	case MKTAG('W', 'E', 'A', 'P'):
-		tagId = MKTAG('M', 'A', 'C', 'H');
+		tag2 = MKTAG('M', 'A', 'C', 'H');
 		break;
 	case MKTAG('M', 'L', 'T', 'Y'):
 	case MKTAG('P', 'G', 'R', 'P'):
 	case MKTAG('P', 'T', 'I', 'C'):
-		tagId = MKTAG('G', 'R', 'U', 'P');
+		tag2 = MKTAG('G', 'R', 'U', 'P');
 		break;
 	case MKTAG('P', 'K', 'U', 'P'):
 	case MKTAG('S', 'E', 'X', '1'):
 	case MKTAG('S', 'W', 'E', 'R'):
-		tagId = MKTAG('R', 'U', 'D', 'E');
+		tag2 = MKTAG('R', 'U', 'D', 'E');
 		break;
 	case MKTAG('P', 'H', 'I', 'L'):
 	case MKTAG('R', 'C', 'K', 'T'):
-		tagId = MKTAG('S', 'C', 'I', 'E');
+		tag2 = MKTAG('S', 'C', 'I', 'E');
 		break;
 	case MKTAG('T', 'R', 'A', '2'):
 	case MKTAG('T', 'R', 'A', '3'):
-		tagId = MKTAG('T', 'R', 'A', 'V');
+		tag2 = MKTAG('T', 'R', 'A', 'V');
 		break;
 	default:
 		break;
 	}
 
-	return TTnpcScript::handleQuote(roomScript, sentence, val, tagId, remainder);
-
+	return TTnpcScript::handleQuote(roomScript, sentence, tag1, tag2, remainder);
 }
 
 int DeskbotScript::updateState(uint oldId, uint newId, int index) {
@@ -364,10 +363,15 @@ exit:
 
 int DeskbotScript::preResponse(uint id) {
 	int newId = 0;
-	if (getValue(1) >= 3 && (id == 41176 || id == 41738 || id == 41413 || id == 41740))
+	if (getValue(1) >= 3 && (
+			id == (uint)TRANSLATE(41176, 41190) ||
+			id == (uint)TRANSLATE(41738, 41429) ||
+			id == (uint)TRANSLATE(41413, 41755) ||
+			id == (uint)TRANSLATE(41740, 41757)
+		)) {
 		newId = 241601;
-
-	if (id == 42114)
+	}
+	if (id == (uint)TRANSLATE(42114, 42132))
 		CTrueTalkManager::triggerAction(20, 0);
 
 	return newId;
@@ -381,48 +385,85 @@ uint DeskbotScript::getDialsBitset() const {
 }
 
 int DeskbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence) {
-	uint id;
+	uint id = *srcIdP;
 
-	switch (val1) {
-	case 1:
-		id = *srcIdP;
-		if (id == 240431 || id == 240432) {
-			switch (getValue(1)) {
-			case 1:
-				id = 240336;
-				break;
-			case 2:
-				id = addAssignedRoomDialogue();
-				break;
-			case 3:
+	if (g_language == Common::DE_DEU) {
+		if (val1 != 4501)
+			return TTnpcScript::doSentenceEntry(val1, srcIdP, roomScript, sentence);
+
+		switch (getValue(1)) {
+		case 1:
+			id = 240336;
+			break;
+
+		case 2:
+			id = addAssignedRoomDialogue();
+			break;
+
+		case 3:
+			if (id == 240431 || id == 240432) {
 				if (getValue(3) == 1) {
 					if (id == 240431)
 						id = 240432;
-				}
-				else {
+				} else {
 					if (id == 240432)
 						id = 240431;
 				}
-			default:
-				break;
 			}
+			break;
 
-			addResponse(getDialogueId(id));
-			applyResponse();
-			return 2;
+		default:
+			break;
 		}
-		break;
 
-	case 2:
-		if (getValue(1) == 1)
-			return true;
-		break;
+		addResponse(getDialogueId(id));
+		applyResponse();
+		return 2;
+	} else {
+		switch (val1) {
+		case 1:
+			if (id == 240431 || id == 240432) {
+				switch (getValue(1)) {
+				case 1:
+					id = 240336;
+					break;
+				case 2:
+					id = addAssignedRoomDialogue();
+					break;
+				case 3:
+					if (getValue(3) == 1) {
+						if (id == 240431)
+							id = 240432;
+					} else {
+						if (id == 240432)
+							id = 240431;
+					}
+				default:
+					break;
+				}
 
-	default:
-		break;
+				addResponse(getDialogueId(id));
+				applyResponse();
+				return 2;
+			}
+			break;
+
+		case 2:
+			if (getValue(1) == 1)
+				return 1;
+			break;
+
+		case 3:
+			if (getValue(1) != 1)
+				return 1;
+			break;
+
+		default:
+			break;
+		}
+
+		return 0;
 	}
-
-	return 0;
 }
 
 bool DeskbotScript::randomResponse(uint index) {

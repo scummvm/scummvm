@@ -130,9 +130,13 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 				altPos = curPos;
 				break;
 			case '#': // Function-prefix
-				if (functionPos)
-					error("multiple function markers within one menu-item");
-				functionPos = curPos;
+				// #G is used as language separator (SQ3 German Amiga) so only
+				//  treat # as a function prefix once ` has been reached
+				if (rightAlignedPos) {
+					if (functionPos)
+						error("multiple function markers within one menu-item");
+					functionPos = curPos;
+				}
 				break;
 			}
 			curPos++;
@@ -142,7 +146,7 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 		// Control/Alt/Function key mapping...
 		if (controlPos) {
 			content.setChar(SCI_MENU_REPLACE_ONCONTROL, controlPos);
-			itemEntry->keyModifier = SCI_KEYMOD_CTRL;
+			itemEntry->keyModifier = kSciKeyModCtrl;
 			tempPos = controlPos + 1;
 			if (tempPos >= contentSize)
 				error("control marker at end of item");
@@ -151,7 +155,7 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 		}
 		if (altPos) {
 			content.setChar(SCI_MENU_REPLACE_ONALT, altPos);
-			itemEntry->keyModifier = SCI_KEYMOD_ALT;
+			itemEntry->keyModifier = kSciKeyModAlt;
 			tempPos = altPos + 1;
 			if (tempPos >= contentSize)
 				error("alt marker at end of item");
@@ -165,16 +169,16 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 				error("function marker at end of item");
 			itemEntry->keyPress = content[tempPos];
 			switch (content[functionPos + 1]) {
-			case '1': itemEntry->keyPress = SCI_KEY_F1; break;
-			case '2': itemEntry->keyPress = SCI_KEY_F2; break;
-			case '3': itemEntry->keyPress = SCI_KEY_F3; break;
-			case '4': itemEntry->keyPress = SCI_KEY_F4; break;
-			case '5': itemEntry->keyPress = SCI_KEY_F5; break;
-			case '6': itemEntry->keyPress = SCI_KEY_F6; break;
-			case '7': itemEntry->keyPress = SCI_KEY_F7; break;
-			case '8': itemEntry->keyPress = SCI_KEY_F8; break;
-			case '9': itemEntry->keyPress = SCI_KEY_F9; break;
-			case '0': itemEntry->keyPress = SCI_KEY_F10; break;
+			case '1': itemEntry->keyPress = kSciKeyF1; break;
+			case '2': itemEntry->keyPress = kSciKeyF2; break;
+			case '3': itemEntry->keyPress = kSciKeyF3; break;
+			case '4': itemEntry->keyPress = kSciKeyF4; break;
+			case '5': itemEntry->keyPress = kSciKeyF5; break;
+			case '6': itemEntry->keyPress = kSciKeyF6; break;
+			case '7': itemEntry->keyPress = kSciKeyF7; break;
+			case '8': itemEntry->keyPress = kSciKeyF8; break;
+			case '9': itemEntry->keyPress = kSciKeyF9; break;
+			case '0': itemEntry->keyPress = kSciKeyF10; break;
 			default:
 				error("illegal function key specified");
 			}
@@ -197,6 +201,7 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 				separatorCount++;
 				break;
 			case '%':
+			case '#':
 				// Some multilingual sci01 games use e.g. '--!%G--!' (which doesn't really make sense)
 				separatorCount += 2;
 				curPos++;
@@ -215,7 +220,7 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 			tempPtr = itemEntry->text.c_str();
 			tempPtr = strstr(tempPtr, "Ctrl-");
 			if (tempPtr) {
-				itemEntry->keyModifier = SCI_KEYMOD_CTRL;
+				itemEntry->keyModifier = kSciKeyModCtrl;
 				itemEntry->keyPress = tolower(tempPtr[5]);
 			}
 		}
@@ -403,7 +408,7 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject, bool pauseSound) {
 	bool forceClaimed = false;
 
 	switch (eventType) {
-	case SCI_EVENT_KEYBOARD:
+	case kSciEventKeyDown:
 		keyPress = readSelectorValue(_segMan, eventObject, SELECTOR(message));
 		keyModifier = readSelectorValue(_segMan, eventObject, SELECTOR(modifiers));
 
@@ -411,14 +416,14 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject, bool pauseSound) {
 		// Ctrl+<key> is pressed, but this kMenuSelect implementation matches
 		// on modifier + printable character, so we must convert the control
 		// characters to their lower-case latin printed equivalents
-		if ((keyModifier & SCI_KEYMOD_NON_STICKY) == SCI_KEYMOD_CTRL && keyPress > 0 && keyPress < 27) {
+		if ((keyModifier & kSciKeyModNonSticky) == kSciKeyModCtrl && keyPress > 0 && keyPress < 27) {
 			keyPress += 96;
 		}
 
 		switch (keyPress) {
 		case 0:
 			break;
-		case SCI_KEY_ESC:
+		case kSciKeyEsc:
 			interactiveStart(pauseSound);
 			itemEntry = interactiveWithKeyboard();
 			interactiveEnd(pauseSound);
@@ -434,8 +439,8 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject, bool pauseSound) {
 				// to Ctrl+I or the modifier check will fail and the Tab key
 				// won't do anything. (This is also why Ctrl+I and Ctrl+Shift+I
 				// would both bring up the inventory in SSCI QFG1EGA)
-				if (keyPress == SCI_KEY_TAB) {
-					keyModifier = SCI_KEYMOD_CTRL;
+				if (keyPress == kSciKeyTab) {
+					keyModifier = kSciKeyModCtrl;
 					keyPress = 'i';
 				}
 
@@ -455,7 +460,7 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject, bool pauseSound) {
 		}
 		break;
 
-	case SCI_EVENT_SAID:
+	case kSciEventSaid:
 		while (itemIterator != itemEnd) {
 			itemEntry = *itemIterator;
 
@@ -476,7 +481,7 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject, bool pauseSound) {
 			itemEntry = NULL;
 		break;
 
-	case SCI_EVENT_MOUSE_PRESS: {
+	case kSciEventMousePress: {
 		Common::Point mousePosition;
 		mousePosition.x = readSelectorValue(_segMan, eventObject, SELECTOR(x));
 		mousePosition.y = readSelectorValue(_segMan, eventObject, SELECTOR(y));
@@ -755,34 +760,34 @@ GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
 	_paint16->bitsShow(_menuRect);
 
 	while (true) {
-		curEvent = _event->getSciEvent(SCI_EVENT_ANY);
+		curEvent = _event->getSciEvent(kSciEventAny);
 
 		switch (curEvent.type) {
-		case SCI_EVENT_KEYBOARD:
+		case kSciEventKeyDown:
 			// We don't 100% follow sierra here:
 			// - sierra didn't wrap around when changing item id
 			// - sierra allowed item id to be 0, which didn't make any sense
 			do {
 				switch (curEvent.character) {
-				case SCI_KEY_ESC:
+				case kSciKeyEsc:
 					_curMenuId = curItemEntry->menuId; _curItemId = curItemEntry->id;
 					return NULL;
-				case SCI_KEY_ENTER:
+				case kSciKeyEnter:
 					if (curItemEntry->enabled)  {
 						_curMenuId = curItemEntry->menuId; _curItemId = curItemEntry->id;
 						return curItemEntry;
 					}
 					break;
-				case SCI_KEY_LEFT:
+				case kSciKeyLeft:
 					newMenuId--; newItemId = 1;
 					break;
-				case SCI_KEY_RIGHT:
+				case kSciKeyRight:
 					newMenuId++; newItemId = 1;
 					break;
-				case SCI_KEY_UP:
+				case kSciKeyUp:
 					newItemId--;
 					break;
-				case SCI_KEY_DOWN:
+				case kSciKeyDown:
 					newItemId++;
 					break;
 				}
@@ -793,9 +798,9 @@ GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
 
 					// if we do this step again because of a separator line -> don't repeat left/right, but go down
 					switch (curEvent.character) {
-					case SCI_KEY_LEFT:
-					case SCI_KEY_RIGHT:
-						curEvent.character = SCI_KEY_DOWN;
+					case kSciKeyLeft:
+					case kSciKeyRight:
+						curEvent.character = kSciKeyDown;
 					}
 				}
 			} while (newItemEntry->separatorLine);
@@ -813,7 +818,7 @@ GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
 			}
 			break;
 
-		case SCI_EVENT_MOUSE_PRESS: {
+		case kSciEventMousePress: {
 			Common::Point mousePosition = curEvent.mousePos;
 			if (mousePosition.y < 10) {
 				// Somewhere on the menubar
@@ -846,8 +851,11 @@ GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
 			}
 			} break;
 
-		case SCI_EVENT_NONE:
+		case kSciEventNone:
 			g_sci->sleep(2500 / 1000);
+			break;
+
+		default:
 			break;
 		}
 	}
@@ -875,18 +883,21 @@ GuiMenuItemEntry *GfxMenu::interactiveWithMouse() {
 	_paint16->bitsShow(_ports->_menuRect);
 
 	while (true) {
-		curEvent = _event->getSciEvent(SCI_EVENT_ANY);
+		curEvent = _event->getSciEvent(kSciEventAny);
 
 		switch (curEvent.type) {
-		case SCI_EVENT_MOUSE_RELEASE:
+		case kSciEventMouseRelease:
 			if ((curMenuId == 0) || (curItemId == 0))
 				return NULL;
 			if ((!curItemEntry->enabled) || (curItemEntry->separatorLine))
 				return NULL;
 			return curItemEntry;
 
-		case SCI_EVENT_NONE:
+		case kSciEventNone:
 			g_sci->sleep(2500 / 1000);
+			break;
+
+		default:
 			break;
 		}
 

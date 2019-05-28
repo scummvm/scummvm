@@ -157,7 +157,7 @@ void HiRes4Engine::drawText(const Common::String &str, Common::SeekableReadStrea
 	if (shouldQuit())
 		return;
 
-	Common::Point pos(ht * 7, vt * 7.7);
+	Common::Point pos((int16)(ht * 7), (int16)(vt * 7.7f));
 
 	drawChar(99, shapeTable, pos);
 
@@ -419,7 +419,7 @@ void HiRes4Engine::runIntroLoading(Common::SeekableReadStream &adventure) {
 }
 
 void HiRes4Engine::runIntro() {
-	Common::ScopedPtr<Files_DOS33> files(new Files_DOS33());
+	Common::ScopedPtr<Files_AppleDOS> files(new Files_AppleDOS());
 	files->open(getDiskImageName(0));
 
 	while (!shouldQuit()) {
@@ -737,7 +737,7 @@ void HiRes4Engine_Atari::adjustDataBlockPtr(byte &track, byte &sector, byte &off
 }
 
 Engine *HiRes4Engine_create(OSystem *syst, const AdlGameDescription *gd) {
-	switch (gd->desc.platform) {
+	switch (getPlatform(*gd)) {
 	case Common::kPlatformApple2:
 		return new HiRes4Engine(syst, gd);
 	case Common::kPlatformAtari8Bit:

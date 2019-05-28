@@ -40,8 +40,7 @@ enum PlaneType {
 };
 
 enum PlanePictureCodes {
-	// NOTE: Any value at or below 65531 means the plane
-	// is a kPlaneTypePicture.
+	// Any value at or below 65531 means the plane is a kPlaneTypePicture
 	kPlanePic                   = 65531,
 	kPlanePicTransparentPicture = 65532,
 	kPlanePicOpaque             = 65533,
@@ -104,61 +103,52 @@ class PlaneList;
 class Plane {
 private:
 	/**
-	 * A serial used for planes that are generated inside
-	 * the graphics engine, rather than the interpreter.
+	 * A serial used for planes that are generated inside the graphics engine,
+	 * rather than the interpreter.
 	 */
 	static uint16 _nextObjectId;
 
 	/**
-	 * A serial used to identify the creation order of
-	 * planes, to ensure a stable sort order for planes
-	 * with identical priorities.
+	 * A serial used to identify the creation order of planes, to ensure a
+	 * stable sort order for planes with identical priorities.
 	 */
 	static uint32 _nextCreationId;
 
 	/**
-	 * The creation order number, which ensures a stable
-	 * sort when planes with identical priorities are added
-	 * to the plane list.
+	 * The creation order number, which ensures a stable sort when planes with
+	 * identical priorities are added to the plane list.
 	 */
 	uint32 _creationId;
 
 	/**
-	 * For planes that are used to render picture data, the
-	 * resource ID of the picture to be displayed. This
-	 * value may also be one of the special
-	 * PlanePictureCodes, in which case the plane becomes a
-	 * non-picture plane.
+	 * For planes that are used to render picture data, the resource ID of the
+	 * picture to be displayed. This value may also be one of the special
+	 * PlanePictureCodes, in which case the plane becomes a non-picture plane.
 	 */
 	GuiResourceId _pictureId;
 
 	/**
-	 * Whether or not the contents of picture planes should
-	 * be drawn horizontally mirrored. Only applies to
-	 * planes of type kPlaneTypePicture.
+	 * Whether or not the contents of picture planes should be drawn
+	 * horizontally mirrored. Only applies to planes of type kPlaneTypePicture.
 	 */
 	bool _mirrored;
 
 	/**
-	 * Whether the picture ID for this plane has changed.
-	 * This flag is set when the plane is created or updated
-	 * from a VM object, and is cleared when the plane is
-	 * synchronised to another plane (which calls
-	 * changePic).
+	 * Whether the picture ID for this plane has changed. This flag is set when
+	 * the plane is created or updated from a VM object, and is cleared when the
+	 * plane is synchronised to another plane (which calls changePic).
 	 */
 	bool _pictureChanged;
 
 	/**
-	 * Converts the dimensions of the game rect used by
-	 * scripts to the dimensions of the plane rect used to
-	 * render content to the screen. Coordinates with
-	 * remainders are rounded up to the next whole pixel.
+	 * Converts the dimensions of the game rect used by scripts to the
+	 * dimensions of the plane rect used to render content to the screen.
+	 * Coordinates with remainders are rounded up to the next whole pixel.
 	 */
 	void convertGameRectToPlaneRect();
 
 	/**
-	 * Sets the type of the plane according to its assigned
-	 * picture resource ID.
+	 * Sets the type of the plane according to its assigned picture resource ID.
 	 */
 	void setType();
 
@@ -169,80 +159,73 @@ public:
 	PlaneType _type;
 
 	/**
-	 * The color to use when erasing the plane. Only
-	 * applies to planes of type kPlaneTypeColored.
+	 * The color to use when erasing the plane. Only applies to planes of type
+	 * kPlaneTypeColored.
 	 */
 	byte _back;
 
 	/**
-	 * Whether the priority of this plane has changed.
-	 * This flag is set when the plane is updated from
-	 * another plane and cleared when draw list calculation
-	 * occurs.
+	 * Whether the priority of this plane has changed. This flag is set when the
+	 * plane is updated from another plane and cleared when draw list
+	 * calculation occurs.
 	 */
 	int _priorityChanged;
 
 	/**
-	 * A handle to the VM object corresponding to this
-	 * plane. Some planes are generated purely within the
-	 * graphics engine and have a numeric object value.
+	 * A handle to the VM object corresponding to this plane. Some planes are
+	 * generated purely within the graphics engine and have a numeric object
+	 * value.
 	 */
 	reg_t _object;
 
 	/**
-	 * The rendering priority of the plane. Higher
-	 * priorities are drawn above lower priorities.
+	 * The rendering priority of the plane. Higher priorities are drawn above
+	 * lower priorities.
 	 */
 	int16 _priority;
 
 	/**
-	 * Whether or not all screen items in this plane should
-	 * be redrawn on the next frameout, instead of just
-	 * the screen items marked as updated. This is set when
-	 * visual changes to the plane itself are made that
-	 * affect the rendering of the entire plane, and cleared
-	 * once those changes are rendered by `redrawAll`.
+	 * Whether or not all screen items in this plane should be redrawn on the
+	 * next frameout, instead of just the screen items marked as updated. This
+	 * is set when visual changes to the plane itself are made that affect the
+	 * rendering of the entire plane, and cleared once those changes are
+	 * rendered by `redrawAll`.
 	 */
 	int _redrawAllCount;
 
 	/**
 	 * Flags indicating the state of the plane.
-	 * - `created` is set when the plane is first created,
-	 *   either from a VM object or from within the engine
-	 *   itself
-	 * - `updated` is set when the plane is updated from
-	 *   another plane and the two planes' `planeRect`s do
-	 *   not match
-	 * - `deleted` is set when the plane is deleted by a
-	 *   kernel call
-	 * - `moved` is set when the plane has been moved or
-	 *   resized
+	 * - `created` is set when the plane is first created, either from a VM
+	 *   object or from within the engine itself
+	 * - `updated` is set when the plane is updated from another plane and the
+	 *   two planes' `planeRect`s do not match
+	 * - `deleted` is set when the plane is deleted by a kernel call
+	 * - `moved` is set when the plane has been moved or resized
 	 */
 	int _created, _updated, _deleted, _moved;
 
 	/**
-	 * The vanishing point for the plane. Used when
-	 * automatically calculating the correct scaling of the
-	 * plane's screen items according to their position.
+	 * The vanishing point for the plane. Used when automatically calculating
+	 * the correct scaling of the plane's screen items according to their
+	 * position.
 	 */
 	Common::Point _vanishingPoint;
 
 	/**
-	 * The position & dimensions of the plane in screen
-	 * coordinates. This rect is not clipped to the screen,
-	 * so may include coordinates that are offscreen.
+	 * The position & dimensions of the plane in screen coordinates. This rect
+	 * is not clipped to the screen, so may include coordinates that are
+	 * offscreen.
 	 */
 	Common::Rect _planeRect;
 
 	/**
-	 * The position & dimensions of the plane in game script
-	 * coordinates.
+	 * The position & dimensions of the plane in game script coordinates.
 	 */
 	Common::Rect _gameRect;
 
 	/**
-	 * The position & dimensions of the plane in screen
-	 * coordinates. This rect is clipped to the screen.
+	 * The position & dimensions of the plane in screen coordinates. This rect
+	 * is clipped to the screen.
 	 */
 	Common::Rect _screenRect;
 
@@ -257,10 +240,10 @@ public:
 	 */
 	static void init();
 
-	// NOTE: This constructor signature originally did not accept a
-	// picture ID, but some calls to construct planes with this signature
-	// immediately set the picture ID and then called setType again, so
-	// it made more sense to just make the picture ID a parameter instead.
+	// In SSCI this constructor signature did not accept a picture ID, but some
+	// calls to construct planes with this signature immediately set the picture
+	// ID and then called setType again, so it made more sense to just make the
+	// picture ID a parameter instead.
 	Plane(const Common::Rect &gameRect, PlanePictureCodes pictureId = kPlanePicColored);
 
 	Plane(const reg_t object);
@@ -284,14 +267,13 @@ public:
 	}
 
 	/**
-	 * Clips the screen rect of this plane to fit within the
-	 * given screen rect.
+	 * Clips the screen rect of this plane to fit within the given screen rect.
 	 */
 	inline void clipScreenRect(const Common::Rect &screenRect) {
-		// LSL6 hires creates planes with invalid rects; SSCI does not
-		// care about this, but `Common::Rect::clip` does, so we need to
-		// check whether or not the rect is actually valid before clipping
-		// and only clip valid rects
+		// LSL6 hires creates planes with invalid rects; SSCI does not care
+		// about this, but `Common::Rect::clip` does, so we need to check
+		// whether or not the rect is actually valid before clipping and only
+		// clip valid rects
 		if (_screenRect.isValidRect() && _screenRect.intersects(screenRect)) {
 			_screenRect.clip(screenRect);
 		} else {
@@ -305,30 +287,25 @@ public:
 	void printDebugInfo(Console *con) const;
 
 	/**
-	 * Compares the properties of the current plane against
-	 * the properties of the `other` plane (which is the
-	 * corresponding plane from the visible plane list) to
-	 * discover which properties have been changed on this
-	 * plane by a call to `update(reg_t)`.
+	 * Compares the properties of the current plane against the properties of
+	 * the `other` plane (which is the corresponding plane from the visible
+	 * plane list) to discover which properties have been changed on this plane
+	 * by a call to `update(reg_t)`.
 	 *
-	 * @note This method was originally called UpdatePlane
-	 * in SCI engine.
+	 * @note This method was called UpdatePlane in SSCI.
 	 */
 	void sync(const Plane *other, const Common::Rect &screenRect);
 
 	/**
-	 * Updates the plane to match the state of the plane
-	 * object from the virtual machine.
+	 * Updates the plane to match the state of the plane object from the VM.
 	 *
-	 * @note This method was originally called UpdatePlane
-	 * in SCI engine.
+	 * @note This method was called UpdatePlane in SSCI.
 	 */
 	void update(const reg_t object);
 
 	/**
-	 * Modifies the position of all non-pic screen items
-	 * by the given delta. If `scrollPics` is true, pic
-	 * items are also repositioned.
+	 * Modifies the position of all non-pic screen items by the given delta. If
+	 * `scrollPics` is true, pic items are also repositioned.
 	 */
 	void scrollScreenItems(const int16 deltaX, const int16 deltaY, const bool scrollPics);
 
@@ -336,47 +313,43 @@ public:
 #pragma mark Plane - Pic
 private:
 	/**
-	 * Adds all cels from the specified picture resource to
-	 * the plane as screen items. If a position is provided,
-	 * the screen items will be given that position;
-	 * otherwise, the default relative positions for each
-	 * cel will be taken from the picture resource data.
+	 * Adds all cels from the specified picture resource to the plane as screen
+	 * items. If a position is provided, the screen items will be given that
+	 * position; otherwise, the default relative positions for each cel will be
+	 * taken from the picture resource data.
 	 */
 	inline void addPicInternal(const GuiResourceId pictureId, const Common::Point *position, const bool mirrorX);
 
 	/**
-	 * Marks all screen items to be deleted that are within
-	 * this plane and match the given picture ID.
+	 * Marks all screen items to be deleted that are within this plane and match
+	 * the given picture ID.
 	 */
 	void deletePic(const GuiResourceId pictureId);
 
 	/**
-	 * Marks all screen items to be deleted that are within
-	 * this plane and are picture cels.
+	 * Marks all screen items to be deleted that are within this plane and are
+	 * picture cels.
 	 */
 	void deleteAllPics();
 
 public:
 	/**
-	 * Marks all existing screen items matching the current
-	 * picture to be deleted, then adds all cels from the
-	 * new picture resource to the plane at the given
-	 * position.
+	 * Marks all existing screen items matching the current picture to be
+	 * deleted, then adds all cels from the new picture resource to the plane at
+	 * the given position.
 	 */
 	GuiResourceId addPic(const GuiResourceId pictureId, const Common::Point &position, const bool mirrorX, const bool deleteDuplicate = true);
 
 	/**
-	 * If the plane is a picture plane, re-adds all cels
-	 * from its picture resource to the plane. Otherwise,
-	 * just clears the _pictureChanged flag.
+	 * If the plane is a picture plane, re-adds all cels from its picture
+	 * resource to the plane. Otherwise, just clears the _pictureChanged flag.
 	 */
 	void changePic();
 
 	/**
-	 * Marks all screen items to be deleted that are within
-	 * this plane and match the given picture ID, then sets
-	 * the picture ID of the plane to the new picture ID
-	 * without adding any screen items.
+	 * Marks all screen items to be deleted that are within this plane and match
+	 * the given picture ID, then sets the picture ID of the plane to the new
+	 * picture ID without adding any screen items.
 	 */
 	void deletePic(const GuiResourceId oldPictureId, const GuiResourceId newPictureId);
 
@@ -384,120 +357,111 @@ public:
 #pragma mark Plane - Rendering
 private:
 	/**
-	 * Splits all rects in the given draw list at the edges
-	 * of all higher-priority, non-transparent, intersecting
-	 * planes.
+	 * Splits all rects in the given draw list at the edges of all
+	 * higher-priority, non-transparent, intersecting planes.
 	 */
 	void breakDrawListByPlanes(DrawList &drawList, const PlaneList &planeList) const;
 
 	/**
-	 * Splits all rects in the given erase list at the
-	 * edges of higher-priority, non-transparent,
-	 * intersecting planes.
+	 * Splits all rects in the given erase list at the edges of higher-priority,
+	 * non-transparent, intersecting planes.
 	 */
 	void breakEraseListByPlanes(RectList &eraseList, const PlaneList &planeList) const;
 
 	/**
-	 * Adds the screen item at `index` into `drawList`,
-	 * ensuring it is only drawn within the bounds of
-	 * `rect`. If an existing draw list entry exists
-	 * for this screen item, it will be modified.
-	 * Otherwise, a new entry will be added.
+	 * Adds the screen item at `index` into `drawList`, ensuring it is only
+	 * drawn within the bounds of `rect`. If an existing draw list entry exists
+	 * for this screen item, it will be modified. Otherwise, a new entry will be
+	 * added.
 	 */
 	void mergeToDrawList(const DrawList::size_type index, const Common::Rect &rect, DrawList &drawList) const;
 
 	/**
-	 * Merges `rect` with an existing rect in `eraseList`,
-	 * if possible. Otherwise, adds the rect as a new entry
-	 * to `eraseList`.
+	 * Merges `rect` with an existing rect in `eraseList`, if possible.
+	 * Otherwise, adds the rect as a new entry to `eraseList`.
 	 */
 	void mergeToRectList(const Common::Rect &rect, RectList &eraseList) const;
 
 public:
 	/**
-	 * Calculates the location and dimensions of dirty rects
-	 * of the screen items in this plane and adds them to
-	 * the given draw and erase lists, and synchronises this
-	 * plane's list of screen items to the given visible
+	 * Calculates the location and dimensions of dirty rects of the screen items
+	 * in this plane and adds them to the given draw and erase lists, and
+	 * synchronises this plane's list of screen items to the given visible
 	 * plane.
 	 */
 	void calcLists(Plane &visiblePlane, const PlaneList &planeList, DrawList &drawList, RectList &eraseList);
 
 	/**
-	 * Synchronises changes to screen items from the current
-	 * plane to the visible plane and deletes screen items
-	 * from the current plane that have been marked as
-	 * deleted. If `forceUpdate` is true, all screen items
-	 * on the visible plane will be updated, even if they
-	 * are not marked as having changed.
+	 * Synchronises changes to screen items from the current plane to the
+	 * visible plane and deletes screen items from the current plane that have
+	 * been marked as deleted. If `forceUpdate` is true, all screen items on the
+	 * visible plane will be updated, even if they are not marked as having
+	 * changed.
 	 */
 	void decrementScreenItemArrayCounts(Plane *visiblePlane, const bool forceUpdate);
 
 	/**
-	 * This method is called from the highest priority plane
-	 * to the lowest priority plane.
+	 * This method is called from the highest priority plane to the lowest
+	 * priority plane.
 	 *
-	 * Adds screen items from this plane to the draw list
-	 * that must be redrawn because they intersect entries
-	 * in the `higherEraseList`.
+	 * Adds screen items from this plane to the draw list that must be redrawn
+	 * because they intersect entries in the `higherEraseList`.
 	 *
-	 * If this plane is opaque, all intersecting erase rects
-	 * in `lowerEraseList` are removed, as they would be
-	 * completely overwritten by the contents of this plane.
+	 * If this plane is opaque, all intersecting erase rects in `lowerEraseList`
+	 * are removed, as they would be completely overwritten by the contents of
+	 * this plane.
 	 *
-	 * If this plane is transparent, erase rects from the
-	 * `lowerEraseList` are added to the erase list for this
-	 * plane, so that lower planes.
+	 * If this plane is transparent, erase rects from the `lowerEraseList` are
+	 * added to the erase list for this plane, so that lower planes.
 	 *
 	 * @param drawList The draw list for this plane.
 	 * @param eraseList The erase list for this plane.
-	 * @param higherEraseList The erase list for a plane
-	 * above this plane.
+	 * @param higherEraseList The erase list for a plane above this plane.
 	 */
 	void filterDownEraseRects(DrawList &drawList, RectList &eraseList, RectList &higherEraseList) const;
 
 	/**
-	 * This method is called from the lowest priority plane
-	 * to the highest priority plane.
+	 * This method is called from the lowest priority plane to the highest
+	 * priority plane.
 	 *
-	 * Adds screen items from this plane to the draw list
-	 * that must be drawn because the lower plane is being
-	 * redrawn and potentially transparent screen items
-	 * from this plane would draw over the lower priority
-	 * plane's screen items.
+	 * Adds screen items from this plane to the draw list that must be drawn
+	 * because the lower plane is being redrawn and potentially transparent
+	 * screen items from this plane would draw over the lower priority plane's
+	 * screen items.
 	 *
 	 * This method applies only to transparent planes.
 	 *
 	 * @param drawList The draw list for this plane.
-	 * @param eraseList The erase list for a plane below
-	 * this plane.
+	 * @param eraseList The erase list for a plane below this plane.
 	 */
 	void filterUpEraseRects(DrawList &drawList, const RectList &lowerEraseList) const;
 
 	/**
-	 * This method is called from the lowest priority plane
-	 * to the highest priority plane.
+	 * This method is called from the lowest priority plane to the highest
+	 * priority plane.
 	 *
-	 * Adds screen items from this plane to the draw list
-	 * that must be drawn because the lower plane is being
-	 * redrawn and potentially transparent screen items
-	 * from this plane would draw over the lower priority
-	 * plane's screen items.
+	 * Adds screen items from this plane to the draw list that must be drawn
+	 * because the lower plane is being redrawn and potentially transparent
+	 * screen items from this plane would draw over the lower priority plane's
+	 * screen items.
 	 *
 	 * This method applies only to transparent planes.
 	 *
 	 * @param drawList The draw list for this plane.
-	 * @param lowerDrawList The draw list for a plane below
-	 * this plane.
+	 * @param lowerDrawList The draw list for a plane below this plane.
 	 */
 	void filterUpDrawRects(DrawList &drawList, const DrawList &lowerDrawList) const;
 
 	/**
-	 * Updates all of the plane's non-deleted screen items
-	 * and adds them to the given draw and erase lists.
+	 * Updates all of the plane's non-deleted screen items and adds them to the
+	 * given draw and erase lists.
 	 */
 	void redrawAll(Plane *visiblePlane, const PlaneList &planeList, DrawList &drawList, RectList &eraseList);
 
+	/**
+	 * Marks all non-deleted remapped screen items within the plane as needing
+	 * to be updated during the next frameout.
+	 */
 	void remapMarkRedraw();
 };
 
@@ -514,10 +478,9 @@ private:
 	using PlaneListBase::push_back;
 
 public:
-	// A method for finding the index of a plane inside a
-	// PlaneList is used because entries in the main plane
-	// list and visible plane list of GfxFrameout are
-	// synchronised by index
+	// A method for finding the index of a plane inside a PlaneList is used
+	// because entries in the main plane list and visible plane list of
+	// GfxFrameout are synchronised by index
 	int findIndexByObject(const reg_t object) const;
 	Plane *findByObject(const reg_t object) const;
 
@@ -527,8 +490,8 @@ public:
 	int16 getTopPlanePriority() const;
 
 	/**
-	 * Gets the priority of the top plane in the plane list
-	 * created by a game script.
+	 * Gets the priority of the top plane in the plane list created by a game
+	 * script.
 	 */
 	int16 getTopSciPlanePriority() const;
 

@@ -23,7 +23,7 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "video/video_decoder.h"
-#ifdef USE_MPEG2
+#if defined(USE_MPEG2) && defined(USE_A52)
 #include "video/mpegps_decoder.h"
 #endif
 #include "engines/util.h"
@@ -48,9 +48,11 @@ Video::VideoDecoder *ZVision::loadAnimation(const Common::String &fileName) {
 		animation = new RLFDecoder();
 	else if (tmpFileName.hasSuffix(".avi"))
 		animation = new ZorkAVIDecoder();
-#ifdef USE_MPEG2
-	else if (tmpFileName.hasSuffix(".vob"))
-		animation = new Video::MPEGPSDecoder();
+#if defined(USE_MPEG2) && defined(USE_A52)
+	else if (tmpFileName.hasSuffix(".vob")) {
+ 		double amplification = getVobAmplification(tmpFileName);
+		animation = new Video::MPEGPSDecoder(amplification);
+	}
 #endif
 	else
 		error("Unknown suffix for animation %s", fileName.c_str());
@@ -142,6 +144,99 @@ void ZVision::playVideo(Video::VideoDecoder &vid, const Common::Rect &destRect, 
 		scaled->free();
 		delete scaled;
 	}
+}
+
+double ZVision::getVobAmplification(Common::String fileName) const {
+	// For some reason, we get much lower volume in the hi-res videos than
+	// in the low-res ones. So we artificially boost the volume. This is an
+	// approximation, but I've tried to match the old volumes reasonably
+	// well.
+	//
+	// Some of these will cause audio clipping. Hopefully not enough to be
+	// noticeable.
+	double amplification = 0.0;
+	if (fileName == "em00d011.vob") {
+		// The finale.
+		amplification = 10.0;
+	} else if (fileName == "em00d021.vob") {
+		// Jack's escape and arrival at Flathead Mesa.
+		amplification = 9.0;
+	} else if (fileName == "em00d032.vob") {
+		// The Grand Inquisitor's speech.
+		amplification = 11.0;
+	} else if (fileName == "em00d122.vob") {
+		// Jack orders you to the radio tower.
+		amplification = 17.0;
+	} else if (fileName == "em3ed012.vob") {
+		// The Grand Inquisitor gets the Coconut of Quendor.
+		amplification = 12.0;
+	} else if (fileName == "g000d101.vob") {
+		// Griff gets captured.
+		amplification = 11.0;
+	} else if (fileName == "g000d111.vob") {
+		// Brog gets totemized. The music seems to be mixed much softer
+		// in this than in the low-resolution version.
+		amplification = 12.0;
+	} else if (fileName == "g000d122.vob") {
+		// Lucy gets captured.
+		amplification = 14.0;
+	} else if (fileName == "g000d302.vob") {
+		// The Grand Inquisitor visits Jack in his cell.
+		amplification = 13.0;
+	} else if (fileName == "g000d312.vob") {
+		// You get captured.
+		amplification = 14.0;
+	} else if (fileName == "g000d411.vob") {
+		// Propaganda On Parade. No need to make it as loud as the
+		// low-resolution version.
+		amplification = 11.0;
+	} else if (fileName == "pe1ed012.vob") {
+		// Jack lets you in with the lantern.
+		amplification = 14.0;
+	} else if (fileName.hasPrefix("pe1ed")) {
+		// Jack answers the door. Several different ways.
+		amplification = 17.0;
+	} else if (fileName == "pe5ed052.vob") {
+		// You get killed by the guards
+		amplification = 12.0;
+	} else if (fileName == "pe6ed012.vob") {
+		// Jack gets captured by the guards
+		amplification = 17.0;
+	} else if (fileName == "pp1ed022.vob") {
+		// Jack examines the lantern
+		amplification = 10.0;
+	} else if (fileName == "qb1ed012.vob") {
+		// Lucy gets invited to the back room
+		amplification = 17.0;
+	} else if (fileName.hasPrefix("qe1ed")) {
+		// Floyd answers the door. Several different ways.
+		amplification = 17.0;
+	} else if (fileName == "qs1ed011.vob") {
+		// Jack explains the rules of the game.
+		amplification = 16.0;
+	} else if (fileName == "qs1ed021.vob") {
+		// Jack loses the game.
+		amplification = 14.0;
+	} else if (fileName == "uc1gd012.vob") {
+		// Y'Gael appears.
+		amplification = 12.0;
+	} else if (fileName == "ue1ud012.vob") {
+		// Jack gets totemized... or what?
+		amplification = 12.0;
+	} else if (fileName == "ue2qd012.vob") {
+		// Jack agrees to totemization.
+		amplification = 10.0;
+	} else if (fileName == "g000d981.vob") {
+		// The Enterprise logo. Has no low-res version. Its volume is
+		// louder than the other logo animations.
+		amplification = 6.2;
+	} else if (fileName.hasPrefix("g000d")) {
+		// The Dolby Digital and Activision logos. They have no low-res
+		// versions, but I've used the low-resolution Activision logo
+		// (slightly different) as reference.
+		amplification = 8.5;
+	}
+	return amplification;
 }
 
 } // End of namespace ZVision

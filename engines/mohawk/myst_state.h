@@ -47,26 +47,75 @@ struct MystSaveMetadata {
 
 	uint32 totalPlayTime;
 
+	bool autoSave;
+
 	Common::String saveDescription;
 
 	MystSaveMetadata();
 	bool sync(Common::Serializer &s);
 };
 
+// Page being held
+enum HeldPage {
+	kNoPage              = 0,
+	kBlueLibraryPage     = 1,
+	kBlueSeleniticPage   = 2,
+	kBlueMechanicalPage  = 3,
+	kBlueStoneshipPage   = 4,
+	kBlueChannelwoodPage = 5,
+	kBlueFirePlacePage   = 6,
+	kRedLibraryPage      = 7,
+	kRedSeleniticPage    = 8,
+	kRedMechanicalPage   = 9,
+	kRedStoneshipPage    = 10,
+	kRedChannelwoodPage  = 11,
+	kRedFirePlacePage    = 12,
+	kWhitePage           = 13
+};
+
+// Age the player is in
+enum ActiveAge {
+	kSelenitic     = 0,
+	kStoneship     = 1,
+	kMystLibrary   = 2,
+	kMechanical    = 3,
+	kChannelwood   = 4,
+	kIntro         = 5,
+	kDni           = 6,
+	kMystStart     = 7,
+	kCredits       = 8,
+	kSirrusEnding  = 9,
+	kAchenarEnding = 10
+};
+
+// Various states that Atrus can be in when in Dni
+enum DniEnding {
+	kDniNotVisited    = 0, // Player hasn't been to Dni/K'veer yet
+	kAtrusWantsPage   = 1, // Player is in Dni with the white page
+	kAtrusLeaves      = 2, // Atrus leaves Dni after receiving the white page
+	kForgotPage       = 3, // Player has entered Dni without bringing the white page
+	kBooksDestroyed   = 4  // Atrus returns to Dni after previously leaving 
+						   // and destroying the books of his sons
+};
+
 class MystGameState {
 public:
+	static const int kAutoSaveSlot;
+
 	MystGameState(MohawkEngine_Myst*, Common::SaveFileManager*);
 	~MystGameState();
 
 	static SaveStateDescriptor querySaveMetaInfos(int slot);
 	static Common::String querySaveDescription(int slot);
 
+	void reset();
 	bool load(int slot);
-	bool save(int slot, const Common::String &desc);
+	bool save(int slot, const Common::String &desc, const Graphics::Surface *thumbnail, bool autosave);
+	bool isAutoSaveAllowed();
 	static void deleteSave(int slot);
 
-	void addZipDest(uint16 stack, uint16 view);
-	bool isReachableZipDest(uint16 stack, uint16 view);
+	void addZipDest(MystStack stack, uint16 view);
+	bool isReachableZipDest(MystStack stack, uint16 view);
 
 	/* 8 Game Global Variables :
 	   0 = Unknown - Fixed at 2
@@ -80,14 +129,14 @@ public:
 	*/
 	struct Globals {
 		uint16 u0;
-		uint16 currentAge;
-		uint16 heldPage;
+		ActiveAge currentAge;
+		HeldPage heldPage;
 		uint16 u1;
 		uint16 transitions;
 		uint16 zipMode;
 		uint16 redPagesInBook;
 		uint16 bluePagesInBook;
-		uint16 ending;
+		DniEnding ending;
 	} _globals;
 
 	/* 50 Myst Specific Variables :
@@ -297,8 +346,8 @@ private:
 	bool loadState(int slot);
 	void loadMetadata(int slot);
 	bool saveState(int slot);
-	void updateMetadateForSaving(const Common::String &desc);
-	bool saveMetadata(int slot);
+	void updateMetadateForSaving(const Common::String &desc, bool autoSave);
+	bool saveMetadata(int slot, const Graphics::Surface *thumbnail);
 
 	// The values in these regions are lists of VIEW resources
 	// which correspond to visited zip destinations

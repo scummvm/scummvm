@@ -90,7 +90,7 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Access Engine";
+		return "Access";
 	}
 
 	virtual const char *getOriginalCopyright() const {
@@ -157,11 +157,9 @@ SaveStateList AccessMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
 
 			if (in) {
-				Access::AccessEngine::readSavegameHeader(in, header);
-				saveList.push_back(SaveStateDescriptor(slot, header._saveName));
+				if (Access::AccessEngine::readSavegameHeader(in, header))
+					saveList.push_back(SaveStateDescriptor(slot, header._saveName));
 
-				header._thumbnail->free();
-				delete header._thumbnail;
 				delete in;
 			}
 		}
@@ -187,7 +185,11 @@ SaveStateDescriptor AccessMetaEngine::querySaveMetaInfos(const char *target, int
 
 	if (f) {
 		Access::AccessSavegameHeader header;
-		Access::AccessEngine::readSavegameHeader(f, header);
+		if (!Access::AccessEngine::readSavegameHeader(f, header, false)) {
+			delete f;
+			return SaveStateDescriptor();
+		}
+
 		delete f;
 
 		// Create the return descriptor

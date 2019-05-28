@@ -57,13 +57,13 @@ bool CCredits::SignalObject(CSignalObject *msg) {
 }
 
 bool CCredits::TimerMsg(CTimerMsg *msg) {
-	stopGlobalSound(true, -1);
+	stopAmbientSound(true, -1);
 	setVisible(true);
 	loadSound(TRANSLATE("a#16.wav", "a#11.wav"));
 	loadSound(TRANSLATE("a#24.wav", "a#19.wav"));
 
 	if (playCutscene(0, 18)) {
-		playGlobalSound(TRANSLATE("a#16.wav", "a#11.wav"), VOL_NORMAL, false, false, 0);
+		playAmbientSound(TRANSLATE("a#16.wav", "a#11.wav"), VOL_NORMAL, false, false, 0);
 		if (playCutscene(19, 642)) {
 			playSound(TRANSLATE("a#24.wav", "a#19.wav"));
 			playCutscene(643, 750);
@@ -77,7 +77,7 @@ bool CCredits::TimerMsg(CTimerMsg *msg) {
 	setVisible(false);
 	petShow();
 	enableMouse();
-	stopGlobalSound(true, -1);
+	stopAmbientSound(true, -1);
 	return true;
 }
 

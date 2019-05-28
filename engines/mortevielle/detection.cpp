@@ -61,7 +61,7 @@ public:
 		_flags = kADFlagUseExtraAsHint;
 	}
 	virtual const char *getName() const {
-		return "Mortevielle";
+		return "Mortville Manor";
 	}
 
 	virtual const char *getOriginalCopyright() const {

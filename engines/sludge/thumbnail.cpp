@@ -24,25 +24,34 @@
 #include "image/png.h"
 
 #include "sludge/allfiles.h"
+#include "sludge/backdrop.h"
 #include "sludge/errors.h"
 #include "sludge/graphics.h"
 #include "sludge/imgloader.h"
 #include "sludge/moreio.h"
-#include "sludge/sludger.h"
-#include "sludge/backdrop.h"
 #include "sludge/newfatal.h"
+#include "sludge/sludger.h"
 #include "sludge/version.h"
 
 namespace Sludge {
 
-int thumbWidth = 0, thumbHeight = 0;
+bool GraphicsManager::setThumbnailSize(int thumbWidth, int thumbHeight)
+{
+	if (checkSizeValide(thumbWidth, thumbHeight))
+	{
+		_thumbWidth = thumbWidth;
+		_thumbHeight = thumbHeight;
+		return true;
+	}
+	return false;
+}
 
 bool GraphicsManager::saveThumbnail(Common::WriteStream *stream) {
 
-	stream->writeUint32LE(thumbWidth);
-	stream->writeUint32LE(thumbHeight);
+	stream->writeUint32LE(_thumbWidth);
+	stream->writeUint32LE(_thumbHeight);
 
-	if (thumbWidth && thumbHeight) {
+	if (_thumbWidth && _thumbHeight) {
 		if (!freeze())
 			return false;
 
@@ -117,12 +126,12 @@ void GraphicsManager::showThumbnail(const Common::String &filename, int atX, int
 }
 
 bool GraphicsManager::skipThumbnail(Common::SeekableReadStream *stream) {
-	thumbWidth = stream->readUint32LE();
-	thumbHeight = stream->readUint32LE();
+	_thumbWidth = stream->readUint32LE();
+	_thumbHeight = stream->readUint32LE();
 
 	// Load image
 	Graphics::Surface tmp;
-	if (thumbWidth & thumbHeight) {
+	if (_thumbWidth & _thumbHeight) {
 		if (!ImgLoader::loadPNGImage(stream, &tmp))
 			return false;
 		else

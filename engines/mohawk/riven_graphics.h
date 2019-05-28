@@ -25,6 +25,12 @@
 
 #include "mohawk/graphics.h"
 
+#include "common/ustr.h"
+
+namespace Graphics {
+class Font;
+}
+
 namespace Mohawk {
 
 class MohawkEngine_Riven;
@@ -52,10 +58,17 @@ enum RivenTransitionMode {
 	kRivenTransitionModeBest     = 5003
 };
 
+enum RivenCreditsImageNumber {
+	kRivenCreditsZeroImage   = 302,
+	kRivenCreditsFirstImage  = 303,
+	kRivenCreditsSecondImage = 304,
+	kRivenCreditsLastImage   = 320
+};
+
 class RivenGraphics : public GraphicsManager {
 public:
-	RivenGraphics(MohawkEngine_Riven *vm);
-	~RivenGraphics();
+	explicit RivenGraphics(MohawkEngine_Riven *vm);
+	~RivenGraphics() override;
 
 	// Screen updates
 	void beginScreenUpdate();
@@ -91,14 +104,17 @@ public:
 	void fadeToBlack();
 	void setTransitionMode(RivenTransitionMode mode);
 
+	// Main menu
+	void drawText(const Common::U32String &text, const Common::Rect &dest, uint8 greyLevel);
+
 	// Credits
 	void beginCredits();
 	void updateCredits();
-	uint getCurCreditsImage() { return _creditsImage; }
+	uint getCurCreditsImage() const { return _creditsImage; }
 
 protected:
-	MohawkSurface *decodeImage(uint16 id);
-	MohawkEngine *getVM() { return (MohawkEngine *)_vm; }
+	MohawkSurface *decodeImage(uint16 id) override;
+	MohawkEngine *getVM() override { return (MohawkEngine *)_vm; }
 
 private:
 	MohawkEngine_Riven *_vm;
@@ -127,6 +143,11 @@ private:
 	Graphics::PixelFormat _pixelFormat;
 	void updateScreen();
 	void clearMainScreen();
+
+	// Main menu
+	Graphics::Font *_menuFont;
+	void loadMenuFont();
+	const Graphics::Font *getMenuFont() const;
 
 	// Credits
 	uint _creditsImage, _creditsPos;

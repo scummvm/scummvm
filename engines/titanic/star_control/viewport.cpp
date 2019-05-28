@@ -26,6 +26,8 @@
 #include "titanic/support/simple_file.h"
 #include "titanic/titanic.h"
 
+#include "common/math.h"
+
 namespace Titanic {
 
 CViewport::CViewport() {
@@ -107,7 +109,7 @@ void CViewport::save(SimpleFile *file, int indent) {
 	file->writeFloatLine(_centerYAngleDegrees, indent);
 	file->writeFloatLine(_centerZAngleDegrees, indent);
 	file->writeNumberLine(_width | (_height << 16), indent);
-	int field24 = (int) _starColor;
+	int field24 = (int)_starColor;
 	file->writeNumberLine(field24, indent);
 
 	for (int idx = 0; idx < 2; ++idx)
@@ -178,7 +180,7 @@ void CViewport::randomizeOrientation() {
 	FPose m1(X_AXIS, ranRotAngleX);
 	FPose m2(Y_AXIS, ranRotAngleY);
 	FPose m3(Z_AXIS, ranRotAngleZ);
-	
+
 	FPose s1(m1, m2);
 	FPose s2(s1, m3);
 
@@ -299,8 +301,8 @@ void CViewport::reset() {
 
 	_center = FPoint((double)_width * 0.5, (double)_height * 0.5);
 	_centerVector._x = MIN(_center._x, _center._y);
-	_centerVector._y = tan(_centerYAngleDegrees * Deg2Rad);
-	_centerVector._z = tan(_centerZAngleDegrees * Deg2Rad);
+	_centerVector._y = tan(Common::deg2rad<double>(_centerYAngleDegrees));
+	_centerVector._z = tan(Common::deg2rad<double>(_centerZAngleDegrees));
 }
 
 const FMatrix &CViewport::getOrientation() const {

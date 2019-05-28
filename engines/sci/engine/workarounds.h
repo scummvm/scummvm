@@ -55,12 +55,14 @@ struct SciWorkaroundEntry {
 	const char *objectName;
 	const char *methodName;
 	const uint16 *localCallSignature;
-	int index;
+	int fromIndex;
+	int toIndex;
 	SciWorkaroundSolution newValue;
 };
 
 extern const SciWorkaroundEntry arithmeticWorkarounds[];
 extern const SciWorkaroundEntry uninitializedReadWorkarounds[];
+extern const SciWorkaroundEntry uninitializedReadForParamWorkarounds[];
 extern const SciWorkaroundEntry kAbs_workarounds[];
 extern const SciWorkaroundEntry kCelHigh_workarounds[];
 extern const SciWorkaroundEntry kCelWide_workarounds[];
@@ -85,6 +87,7 @@ extern const SciWorkaroundEntry kGraphFillBoxAny_workarounds[];
 extern const SciWorkaroundEntry kGraphRedrawBox_workarounds[];
 extern const SciWorkaroundEntry kIsObject_workarounds[];
 extern const SciWorkaroundEntry kListAt_workarounds[];
+extern const SciWorkaroundEntry kLock_workarounds[];
 extern const SciWorkaroundEntry kMemory_workarounds[];
 extern const SciWorkaroundEntry kMoveCursor_workarounds[];
 extern const SciWorkaroundEntry kNewWindow_workarounds[];

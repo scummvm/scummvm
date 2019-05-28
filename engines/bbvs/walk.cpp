@@ -48,8 +48,8 @@ void BbvsEngine::startWalkObject(SceneObject *sceneObject) {
 		return;
 
 	initWalkAreas(sceneObject);
-	_sourceWalkAreaPt.x = sceneObject->x >> 16;
-	_sourceWalkAreaPt.y = sceneObject->y >> 16;
+	_sourceWalkAreaPt.x = sceneObject->x / 65536;
+	_sourceWalkAreaPt.y = sceneObject->y / 65536;
 
 	_sourceWalkArea = getWalkAreaAtPos(_sourceWalkAreaPt);
 	if (!_sourceWalkArea)
@@ -107,8 +107,8 @@ void BbvsEngine::updateWalkObject(SceneObject *sceneObject) {
 }
 
 void BbvsEngine::walkObject(SceneObject *sceneObject, const Common::Point &destPt, int walkSpeed) {
-	int deltaX = destPt.x - (sceneObject->x >> 16);
-	int deltaY = destPt.y - (sceneObject->y >> 16);
+	int deltaX = destPt.x - (sceneObject->x / 65536);
+	int deltaY = destPt.y - (sceneObject->y / 65536);
 	float distance = (float)sqrt((double)(deltaX * deltaX + deltaY * deltaY));
 	// NOTE The original doesn't have this check but without it the whole pathfinding breaks
 	if (distance > 0.0f) {
@@ -190,19 +190,19 @@ WalkInfo *BbvsEngine::addWalkInfo(int16 x, int16 y, int delta, int direction, in
 }
 
 void BbvsEngine::initWalkAreas(SceneObject *sceneObject) {
-	int16 objX = sceneObject->x >> 16;
-	int16 objY = sceneObject->y >> 16;
+	int16 objX = sceneObject->x / 65536;
+	int16 objY = sceneObject->y / 65536;
 	Common::Rect rect;
 	bool doRect = false;
 	Common::Rect *workWalkableRects;
 
 	if (_buttheadObject == sceneObject && _beavisObject->anim) {
 		rect = _beavisObject->anim->frameRects2[_beavisObject->frameIndex];
-		rect.translate(_beavisObject->x >> 16, 1 + (_beavisObject->y >> 16));
+		rect.translate(_beavisObject->x / 65536, 1 + (_beavisObject->y / 65536));
 		doRect = !rect.isEmpty();
 	} else if (_buttheadObject->anim) {
 		rect = _buttheadObject->anim->frameRects2[_buttheadObject->frameIndex];
-		rect.translate(_buttheadObject->x >> 16, 1 + (_buttheadObject->y >> 16));
+		rect.translate(_buttheadObject->x / 65536, 1 + (_buttheadObject->y / 65536));
 		doRect = !rect.isEmpty();
 	}
 
@@ -293,8 +293,8 @@ bool BbvsEngine::canButtheadWalkToDest(const Common::Point &destPt) {
 
 	_walkReachedDestArea = false;
 	initWalkAreas(_buttheadObject);
-	srcPt.x = _buttheadObject->x >> 16;
-	srcPt.y = _buttheadObject->y >> 16;
+	srcPt.x = _buttheadObject->x / 65536;
+	srcPt.y = _buttheadObject->y / 65536;
 	_sourceWalkArea = getWalkAreaAtPos(srcPt);
 	if (_sourceWalkArea) {
 		_destWalkArea = getWalkAreaAtPos(destPt);
@@ -441,7 +441,7 @@ void BbvsEngine::updateWalkableRects() {
 		Animation *anim = sceneObject->anim;
 		if (anim && _buttheadObject != sceneObject && _beavisObject != sceneObject) {
 			Common::Rect rect = sceneObject->anim->frameRects2[sceneObject->frameIndex];
-			rect.translate(sceneObject->x >> 16, sceneObject->y >> 16);
+			rect.translate(sceneObject->x / 65536, sceneObject->y / 65536);
 			int count = _walkableRectsCount;
 			_walkableRectsCount = 0;
 			for (int j = 0; j < count; ++j)

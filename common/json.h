@@ -65,7 +65,7 @@ static inline bool isinf(double x) {
 
 // Simple function to check a string 's' has at least 'n' characters
 static inline bool simplejson_wcsnlen(const char *s, size_t n) {
-	if (s == 0)
+	if (s == nullptr)
 		return false;
 
 	const char *save = s;

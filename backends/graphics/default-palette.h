@@ -51,7 +51,7 @@ public:
 		memcpy(_palette + 3 * start, colors, 3 * num);
 		setPaletteIntern(colors, start, num);
 	}
-	void grabPalette(byte *colors, uint start, uint num) {
+	void grabPalette(byte *colors, uint start, uint num) const {
 		assert(start + num <= 256);
 		memcpy(colors, _palette + 3 * start, 3 * num);
 	}

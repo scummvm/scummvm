@@ -96,6 +96,8 @@ extern void checkGlError(const char *expr, const char *file, int line);
 #define GLTHREADCHECK do {  } while (false)
 #endif
 
+class MutexManager;
+
 class OSystem_Android : public EventsBaseBackend, public PaletteManager {
 private:
 	// passed from the dark side
@@ -145,6 +147,7 @@ private:
 	bool _enable_zoning;
 	bool _virtkeybd_on;
 
+	MutexManager *_mutexManager;
 	Audio::MixerImpl *_mixer;
 	timeval _startTime;
 
@@ -157,7 +160,6 @@ private:
 	void initOverlay();
 
 #ifdef USE_RGB_COLOR
-	Common::String getPixelFormatName(const Graphics::PixelFormat &format) const;
 	void initTexture(GLESBaseTexture **texture, uint width, uint height,
 						const Graphics::PixelFormat *format);
 #endif
@@ -208,7 +210,7 @@ public:
 	}
 
 public:
-	void pushEvent(int type, int arg1, int arg2, int arg3, int arg4, int arg5);
+	void pushEvent(int type, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6);
 
 private:
 	Common::Queue<Common::Event> _event_queue;
@@ -234,7 +236,7 @@ private:
 protected:
 	// PaletteManager API
 	virtual void setPalette(const byte *colors, uint start, uint num);
-	virtual void grabPalette(byte *colors, uint start, uint num);
+	virtual void grabPalette(byte *colors, uint start, uint num) const;
 
 public:
 	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y,
@@ -266,6 +268,7 @@ public:
 								const Graphics::PixelFormat *format);
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 
+	virtual void pushEvent(const Common::Event &event);
 	virtual bool pollEvent(Common::Event &event);
 	virtual uint32 getMillis(bool skipRecord = false);
 	virtual void delayMillis(uint msecs);
@@ -287,6 +290,9 @@ public:
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s,
 											int priority = 0);
 	virtual bool openUrl(const Common::String &url);
+	virtual bool hasTextInClipboard();
+	virtual Common::String getTextFromClipboard();
+	virtual bool setTextInClipboard(const Common::String &text);
 	virtual Common::String getSystemLanguage() const;
 };
 

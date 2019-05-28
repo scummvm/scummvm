@@ -84,8 +84,12 @@ const struct GameOpt {
 	// "gameOption10" would be invalid here because it contains "gameOption1"
 	{ GUIO_GAMEOPTIONS10, "gameOptionA" },
 	{ GUIO_GAMEOPTIONS11, "gameOptionB" },
+	{ GUIO_GAMEOPTIONS12, "gameOptionC" },
+	{ GUIO_GAMEOPTIONS13, "gameOptionD" },
+	{ GUIO_GAMEOPTIONS14, "gameOptionE" },
+	{ GUIO_GAMEOPTIONS15, "gameOptionF" },
 
-	{ GUIO_NONE, 0 }
+	{ GUIO_NONE, nullptr }
 };
 
 bool checkGameGUIOption(const String &option, const String &str) {

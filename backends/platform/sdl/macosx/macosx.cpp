@@ -32,6 +32,7 @@
 #include "backends/platform/sdl/macosx/macosx.h"
 #include "backends/updates/macosx/macosx-updates.h"
 #include "backends/taskbar/macosx/macosx-taskbar.h"
+#include "backends/dialogs/macosx/macosx-dialogs.h"
 #include "backends/platform/sdl/macosx/macosx_wrapper.h"
 
 #include "common/archive.h"
@@ -47,6 +48,10 @@ OSystem_MacOSX::OSystem_MacOSX()
 	OSystem_POSIX("Library/Preferences/ScummVM Preferences") {
 }
 
+OSystem_MacOSX::~OSystem_MacOSX() {
+	releaseMenu();
+}
+
 void OSystem_MacOSX::init() {
 	// Use an iconless window on OS X, as we use a nicer external icon there.
 	_window = new SdlIconlessWindow();
@@ -54,6 +59,11 @@ void OSystem_MacOSX::init() {
 #if defined(USE_TASKBAR)
 	// Initialize taskbar manager
 	_taskbarManager = new MacOSXTaskbarManager();
+#endif
+
+#if defined(USE_SYSDIALOGS)
+	// Initialize dialog manager
+	_dialogManager = new MacOSXDialogManager();
 #endif
 
 	// Invoke parent implementation of this method
@@ -100,6 +110,12 @@ void OSystem_MacOSX::addSysArchivesToSearchSet(Common::SearchSet &s, int priorit
 bool OSystem_MacOSX::hasFeature(Feature f) {
 	if (f == kFeatureDisplayLogFile || f == kFeatureClipboardSupport || f == kFeatureOpenUrl)
 		return true;
+
+#ifdef USE_SYSDIALOGS
+	if (f == kFeatureSystemBrowserDialog)
+		return true;
+#endif
+
 	return OSystem_POSIX::hasFeature(f);
 }
 
@@ -122,6 +138,10 @@ bool OSystem_MacOSX::hasTextInClipboard() {
 
 Common::String OSystem_MacOSX::getTextFromClipboard() {
 	return getTextFromClipboardMacOSX();
+}
+
+bool OSystem_MacOSX::setTextInClipboard(const Common::String &text) {
+	return setTextInClipboardMacOSX(text);
 }
 
 bool OSystem_MacOSX::openUrl(const Common::String &url) {

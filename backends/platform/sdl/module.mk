@@ -22,6 +22,7 @@ ifdef WIN32
 MODULE_OBJS += \
 	win32/win32-main.o \
 	win32/win32-window.o \
+	win32/win32_wrapper.o \
 	win32/win32.o
 endif
 
@@ -34,6 +35,7 @@ endif
 ifdef RISCOS
 MODULE_OBJS += \
 	riscos/riscos-main.o \
+	riscos/riscos-utils.o \
 	riscos/riscos.o
 endif
 
@@ -48,6 +50,12 @@ CC=arm-vita-eabi-gcc
 MODULE_OBJS += \
 	psp2/psp2-main.o \
 	psp2/psp2.o
+endif
+
+ifdef SWITCH
+MODULE_OBJS += \
+	switch/switch-main.o \
+	switch/switch.o
 endif
 
 # We don't use rules.mk but rather manually update OBJS and MODULE_DIRS.

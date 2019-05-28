@@ -170,6 +170,10 @@ MohawkEngine_LivingBooks::~MohawkEngine_LivingBooks() {
 Common::Error MohawkEngine_LivingBooks::run() {
 	MohawkEngine::run();
 
+	if (!_mixer->isReady()) {
+		return Common::kAudioDeviceInitFailed;
+	}
+
 	_console = new LivingBooksConsole(this);
 	// Load the book info from the detected file
 	loadBookInfo(getBookInfoFileName());
@@ -837,6 +841,7 @@ void LBPage::loadBITL(uint16 resourceId) {
 			break;
 		default:
 			warning("Unknown item type %04x", type);
+			// fall through
 		case 3: // often used for buttons
 			res = new LBItem(_vm, this, rect);
 			break;

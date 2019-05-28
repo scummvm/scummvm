@@ -27,7 +27,7 @@
 
 #define DATAALIGNMENT 4
 
-#define NUM_LANGS 5
+#define NUM_LANGS 6
 #define NUM_TEXT 501
 #define NUM_TEXTD 84
 #define NUM_TEXTB 15
@@ -41,7 +41,7 @@
 #define NUM_TEXTSYS 4
 #define NUM_TEXTHIS 5
 #define NUM_TEXTVERBS 6
-#define NUM_TEXTMISC 3
+#define NUM_TEXTMISC 7
 #define NUM_TEXTD1 11
 
 typedef unsigned char   uint8;

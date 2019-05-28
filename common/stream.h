@@ -133,12 +133,10 @@ public:
 		write(&value, 4);
 	}
 
-#ifdef HAVE_INT64
 	void writeUint64LE(uint64 value) {
 		value = TO_LE_64(value);
 		write(&value, 8);
 	}
-#endif
 
 	void writeUint16BE(uint16 value) {
 		value = TO_BE_16(value);
@@ -150,12 +148,10 @@ public:
 		write(&value, 4);
 	}
 
-#ifdef HAVE_INT64
 	void writeUint64BE(uint64 value) {
 		value = TO_BE_64(value);
 		write(&value, 8);
 	}
-#endif
 
 	FORCEINLINE void writeSint16LE(int16 value) {
 		writeUint16LE((uint16)value);
@@ -165,11 +161,9 @@ public:
 		writeUint32LE((uint32)value);
 	}
 
-#ifdef HAVE_INT64
 	FORCEINLINE void writeSint64LE(int64 value) {
 		writeUint64LE((uint64)value);
 	}
-#endif
 
 	FORCEINLINE void writeSint16BE(int16 value) {
 		writeUint16BE((uint16)value);
@@ -179,11 +173,9 @@ public:
 		writeUint32BE((uint32)value);
 	}
 
-#ifdef HAVE_INT64
 	FORCEINLINE void writeSint64BE(int64 value) {
 		writeUint64BE((uint64)value);
 	}
-#endif
 
 
 	/**
@@ -216,6 +208,37 @@ public:
 	 * This writes str.size() characters, but no terminating zero byte.
 	 */
 	void writeString(const String &str);
+};
+
+/**
+ * Derived abstract base class for write streams streams that are seekable
+ */
+class SeekableWriteStream : public WriteStream {
+public:
+	/**
+	 * Sets the stream position indicator for the stream. The new position,
+	 * measured in bytes, is obtained by adding offset bytes to the position
+	 * specified by whence. If whence is set to SEEK_SET, SEEK_CUR, or
+	 * SEEK_END, the offset is relative to the start of the file, the current
+	 * position indicator, or end-of-file, respectively. A successful call
+	 * to the seek() method clears the end-of-file indicator for the stream.
+	 *
+	 * @note The semantics of any implementation of this method are
+	 * supposed to match those of ISO C fseek().
+	 *
+	 * @param offset        the relative offset in bytes
+	 * @param whence        the seek reference: SEEK_SET, SEEK_CUR, or SEEK_END
+	 * @return true on success, false in case of a failure
+	 */
+	virtual bool seek(int32 offset, int whence = SEEK_SET) = 0;
+
+	/**
+	 * Obtains the current size of the stream, measured in bytes.
+	 * If this value is unknown or can not be computed, -1 is returned.
+	 *
+	 * @return the size of the stream, or -1 if an error occurred
+	 */
+	virtual int32 size() const = 0;
 };
 
 /**
@@ -301,7 +324,6 @@ public:
 		return FROM_LE_32(val);
 	}
 
-#ifdef HAVE_INT64
 	/**
 	 * Read an unsigned 64-bit word stored in little endian (LSB first) order
 	 * from the stream and return it.
@@ -314,7 +336,6 @@ public:
 		read(&val, 8);
 		return FROM_LE_64(val);
 	}
-#endif
 
 	/**
 	 * Read an unsigned 16-bit word stored in big endian (MSB first) order
@@ -342,7 +363,6 @@ public:
 		return FROM_BE_32(val);
 	}
 
-#ifdef HAVE_INT64
 	/**
 	 * Read an unsigned 64-bit word stored in big endian (MSB first) order
 	 * from the stream and return it.
@@ -355,7 +375,6 @@ public:
 		read(&val, 8);
 		return FROM_BE_64(val);
 	}
-#endif
 
 	/**
 	 * Read a signed 16-bit word stored in little endian (LSB first) order
@@ -379,7 +398,6 @@ public:
 		return (int32)readUint32LE();
 	}
 
-#ifdef HAVE_INT64
 	/**
 	 * Read a signed 64-bit word stored in little endian (LSB first) order
 	 * from the stream and return it.
@@ -390,7 +408,6 @@ public:
 	FORCEINLINE int64 readSint64LE() {
 		return (int64)readUint64LE();
 	}
-#endif
 
 	/**
 	 * Read a signed 16-bit word stored in big endian (MSB first) order
@@ -414,7 +431,6 @@ public:
 		return (int32)readUint32BE();
 	}
 
-#ifdef HAVE_INT64
 	/**
 	 * Read a signed 64-bit word stored in big endian (MSB first) order
 	 * from the stream and return it.
@@ -425,7 +441,6 @@ public:
 	FORCEINLINE int64 readSint64BE() {
 		return (int64)readUint64BE();
 	}
-#endif
 
 	/**
 	 * Read a 32-bit floating point value stored in little endian (LSB first)
@@ -600,13 +615,11 @@ public:
 		return (_bigEndian) ? TO_BE_32(val) : TO_LE_32(val);
 	}
 
-#ifdef HAVE_INT64
 	uint64 readUint64() {
 		uint64 val;
 		read(&val, 8);
 		return (_bigEndian) ? TO_BE_64(val) : TO_LE_64(val);
 	}
-#endif
 
 	FORCEINLINE int16 readSint16() {
 		return (int16)readUint16();
@@ -616,11 +629,9 @@ public:
 		return (int32)readUint32();
 	}
 
-#ifdef HAVE_INT64
 	FORCEINLINE int64 readSint64() {
 		return (int64)readUint64();
 	}
-#endif
 };
 
 /**

@@ -654,6 +654,7 @@ public:
 	struct Track {
 		byte type;
 		byte channelCount;
+		SciSpan<const byte> header;
 		Channel *channels;
 		int16 digitalChannelNr;
 		uint16 digitalSampleRate;

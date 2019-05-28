@@ -293,9 +293,14 @@ uint32 VideoDecoder::getTimeToNextFrame() const {
 }
 
 bool VideoDecoder::endOfVideo() const {
-	for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++)
-		if (!(*it)->endOfTrack() && (!isPlaying() || (*it)->getTrackType() != Track::kTrackTypeVideo || !_endTimeSet || ((VideoTrack *)*it)->getNextFrameStartTime() < (uint)_endTime.msecs()))
+	for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++) {
+		const Track *track = *it;
+
+		bool videoEndTimeReached = _endTimeSet && track->getTrackType() == Track::kTrackTypeVideo && ((const VideoTrack *)track)->getNextFrameStartTime() >= (uint)_endTime.msecs();
+		bool endReached = track->endOfTrack() || (isPlaying() && videoEndTimeReached);
+		if (!endReached)
 			return false;
+	}
 
 	return true;
 }
@@ -910,9 +915,17 @@ bool VideoDecoder::hasFramesLeft() const {
 	// This is similar to endOfVideo(), except it doesn't take Audio into account (and returns true if not the end of the video)
 	// This is only used for needsUpdate() atm so that setEndTime() works properly
 	// And unlike endOfVideoTracks(), this takes into account _endTime
-	for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++)
-		if ((*it)->getTrackType() == Track::kTrackTypeVideo && !(*it)->endOfTrack() && (!isPlaying() || !_endTimeSet || ((VideoTrack *)*it)->getNextFrameStartTime() < (uint)_endTime.msecs()))
+	for (TrackList::const_iterator it = _tracks.begin(); it != _tracks.end(); it++) {
+		if ((*it)->getTrackType() != Track::kTrackTypeVideo)
+			continue;
+
+		const VideoTrack *track = (const VideoTrack *)*it;
+
+		bool videoEndTimeReached = _endTimeSet && track->getNextFrameStartTime() >= (uint)_endTime.msecs();
+		bool endReached = track->endOfTrack() || (isPlaying() && videoEndTimeReached);
+		if (!endReached)
 			return true;
+	}
 
 	return false;
 }

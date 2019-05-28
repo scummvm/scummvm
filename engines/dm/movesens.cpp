@@ -352,7 +352,8 @@ bool MovesensMan::getMoveResult(Thing thing, int16 mapX, int16 mapY, int16 destM
 						dungeon.setCurrentMap(mapIndexDestination);
 					}
 					direction = dungeon.getStairsExitDirection(destMapX, destMapY);
-					destMapX += _vm->_dirIntoStepCountEast[direction], destMapY += _vm->_dirIntoStepCountNorth[direction];
+					destMapX += _vm->_dirIntoStepCountEast[direction];
+					destMapY += _vm->_dirIntoStepCountNorth[direction];
 					direction = _vm->returnOppositeDir((Direction)direction);
 					thingCell = thing.getCell();
 					thingCell = _vm->normalizeModulo4((((thingCell - direction + 1) & 0x0002) >> 1) + direction);

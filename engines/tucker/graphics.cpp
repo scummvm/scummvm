@@ -109,7 +109,7 @@ void Graphics::decodeRLE_224(uint8 *dst, const uint8 *src, int w, int h) {
 	}
 }
 
-void Graphics::decodeRLE_248(uint8 *dst, const uint8 *src, int w, int h, int y1, int y2, bool xflip, bool color248Only) {
+void Graphics::decodeRLE_248(uint8 *dst, const uint8 *src, int w, int h, int y1, int y2, bool xflip, const int *whitelistReservedColors) {
 	int code = 0;
 	int color = 0;
 	for (int y = 0; y < h; ++y) {
@@ -122,7 +122,7 @@ void Graphics::decodeRLE_248(uint8 *dst, const uint8 *src, int w, int h, int y1,
 				}
 			}
 			if (color != 0) {
-				if ((color248Only || dst[offset] < 0xE0 || y + y1 < y2) && dst[offset] < 0xF8) {
+				if (( (whitelistReservedColors != nullptr && (dst[offset] & 0xE0) == 0xE0 && *(whitelistReservedColors + dst[offset] - 0xE0) == 1) || dst[offset] < 0xE0 || y + y1 < y2) && dst[offset] < 0xF8) {
 					dst[offset] = color;
 				}
 			} else {
@@ -170,10 +170,10 @@ void Graphics::drawStringChar(uint8 *dst, int xDst, int yDst, int pitch, uint8 c
 	const int w = MIN(_charset._charW, pitch - xDst);
 	dst += yDst * pitch + xDst;
 	int offset = (chr - 32) * _charset._charH * _charset._charW;
-	for (int y = 0; y < h; ++y) {
-		for (int x = 0; x < w; ++x) {
-			const int color = src[offset++];
-			if (color != 0) {
+	for (int y = 0; y < _charset._charH; ++y) {
+		for (int x = 0; x < _charset._charW; ++x, ++offset) {
+			const int color = src[offset];
+			if (y < h && x < w && color != 0) {
 				if (_charsetType == kCharsetTypeCredits) {
 					dst[x] = color;
 				} else {

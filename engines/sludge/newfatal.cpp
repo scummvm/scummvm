@@ -23,40 +23,64 @@
 #include "common/debug.h"
 
 #include "sludge/allfiles.h"
-#include "sludge/sound.h"
 #include "sludge/errors.h"
+#include "sludge/fileset.h"
+#include "sludge/newfatal.h"
 #include "sludge/sludge.h"
+#include "sludge/sound.h"
 #include "sludge/version.h"
 
+namespace Common {
+DECLARE_SINGLETON(Sludge::FatalMsgManager);
+}
+
 namespace Sludge {
-
-const char emergencyMemoryMessage[] = "Out of memory displaying error message!";
-
-extern int numResourceNames /* = 0*/;
-extern Common::String *allResourceNames /*= ""*/;
-
-int resourceForFatal = -1;
-
-const Common::String resourceNameFromNum(int i) {
-	if (i == -1)
-		return NULL;
-	if (numResourceNames == 0)
-		return "RESOURCE";
-	if (i < numResourceNames)
-		return allResourceNames[i];
-	return "Unknown resource";
-}
-
-bool hasFatal() {
-	if (!g_sludge->fatalMessage.empty())
-		return true;
-	return false;
-}
 
 int inFatal(const Common::String &str) {
 	g_sludge->_soundMan->killSoundStuff();
 	error("%s", str.c_str());
 	return true;
+}
+
+FatalMsgManager::FatalMsgManager() {
+	reset();
+}
+
+FatalMsgManager::~FatalMsgManager() {
+}
+
+void FatalMsgManager::reset() {
+	_fatalMessage = "";
+	_fatalInfo = "Initialisation error! Something went wrong before we even got started!";
+	_resourceForFatal = -1;
+}
+
+bool FatalMsgManager::hasFatal() {
+	if (!_fatalMessage.empty())
+		return true;
+	return false;
+}
+
+void FatalMsgManager::setFatalInfo(const Common::String &userFunc, const Common::String &BIF) {
+	_fatalInfo = "Currently in this sub: " + userFunc + "\nCalling: " + BIF;
+	debugC(0, kSludgeDebugFatal, "%s", _fatalInfo.c_str());
+}
+
+void FatalMsgManager::setResourceForFatal(int n) {
+	_resourceForFatal = n;
+}
+
+int FatalMsgManager::fatal(const Common::String &str1) {
+	ResourceManager *resMan = g_sludge->_resMan;
+	if (resMan->hasResourceNames() && _resourceForFatal != -1) {
+		Common::String r = resMan->resourceNameFromNum(_resourceForFatal);
+		Common::String newStr = _fatalInfo + "\nResource: " + r + "\n\n" + str1;
+		inFatal(newStr);
+	} else {
+		Common::String newStr = _fatalInfo + "\n\n" + str1;
+		inFatal(newStr);
+	}
+	return 0;
 }
 
 int checkNew(const void *mem) {
@@ -65,27 +89,6 @@ int checkNew(const void *mem) {
 		return 0;
 	}
 	return 1;
-}
-
-void setFatalInfo(const Common::String &userFunc, const Common::String &BIF) {
-	g_sludge->fatalInfo = "Currently in this sub: " + userFunc + "\nCalling: " + BIF;
-	debugC(0, kSludgeDebugFatal, "%s", g_sludge->fatalInfo.c_str());
-}
-
-void setResourceForFatal(int n) {
-	resourceForFatal = n;
-}
-
-int fatal(const Common::String &str1) {
-	if (numResourceNames && resourceForFatal != -1) {
-		Common::String r = resourceNameFromNum(resourceForFatal);
-		Common::String newStr = g_sludge->fatalInfo + "\nResource: " + r + "\n\n" + str1;
-		inFatal(newStr);
-	} else {
-		Common::String newStr = g_sludge->fatalInfo + "\n\n" + str1;
-		inFatal(newStr);
-	}
-	return 0;
 }
 
 int fatal(const Common::String &str1, const Common::String &str2) {

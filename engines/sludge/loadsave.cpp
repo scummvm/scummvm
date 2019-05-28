@@ -23,30 +23,32 @@
 #include "common/savefile.h"
 
 #include "sludge/allfiles.h"
-#include "sludge/sprites.h"
+#include "sludge/backdrop.h"
+#include "sludge/bg_effects.h"
+#include "sludge/cursors.h"
 #include "sludge/event.h"
+#include "sludge/floor.h"
 #include "sludge/fonttext.h"
-#include "sludge/newfatal.h"
-#include "sludge/variable.h"
+#include "sludge/function.h"
+#include "sludge/graphics.h"
 #include "sludge/language.h"
+#include "sludge/loadsave.h"
 #include "sludge/moreio.h"
+#include "sludge/newfatal.h"
+#include "sludge/objtypes.h"
+#include "sludge/people.h"
+#include "sludge/region.h"
+#include "sludge/savedata.h"
 #include "sludge/sludge.h"
 #include "sludge/sludger.h"
-#include "sludge/people.h"
-#include "sludge/talk.h"
-#include "sludge/objtypes.h"
-#include "sludge/backdrop.h"
-#include "sludge/region.h"
-#include "sludge/floor.h"
-#include "sludge/zbuffer.h"
-#include "sludge/cursors.h"
-#include "sludge/statusba.h"
 #include "sludge/sound.h"
-#include "sludge/loadsave.h"
-#include "sludge/bg_effects.h"
+#include "sludge/sprites.h"
+#include "sludge/statusba.h"
+#include "sludge/speech.h"
 #include "sludge/utf8.h"
+#include "sludge/variable.h"
 #include "sludge/version.h"
-#include "sludge/graphics.h"
+#include "sludge/zbuffer.h"
 
 namespace Sludge {
 
@@ -54,292 +56,30 @@ namespace Sludge {
 // From elsewhere
 //----------------------------------------------------------------------
 
+extern LoadedFunction *saverFunc;					// In function.cpp
 extern LoadedFunction *allRunningFunctions;         // In sludger.cpp
-extern const char *typeName[];                      // In variable.cpp
 extern int numGlobals;                              // In sludger.cpp
 extern Variable *globalVars;                        // In sludger.cpp
-extern Floor *currentFloor;                          // In floor.cpp
-extern SpeechStruct *speech;                        // In talk.cpp
 extern FILETIME fileTime;                           // In sludger.cpp
-extern int speechMode;                              // "    "   "
-extern byte brightnessLevel;               // "    "   "
-extern byte fadeMode;                      // In transition.cpp
-extern bool captureAllKeys;
 extern bool allowAnyFilename;
-extern uint16 saveEncoding;                 // in savedata.cpp
-
-//----------------------------------------------------------------------
-// Globals (so we know what's saved already and what's a reference
-//----------------------------------------------------------------------
-
-struct stackLibrary {
-	StackHandler *stack;
-	stackLibrary *next;
-};
-
-int stackLibTotal = 0;
-stackLibrary *stackLib = NULL;
-
-//----------------------------------------------------------------------
-// For saving and loading stacks...
-//----------------------------------------------------------------------
-void saveStack(VariableStack *vs, Common::WriteStream *stream) {
-	int elements = 0;
-	int a;
-
-	VariableStack *search = vs;
-	while (search) {
-		elements++;
-		search = search->next;
-	}
-
-	stream->writeUint16BE(elements);
-	search = vs;
-	for (a = 0; a < elements; a++) {
-		saveVariable(&search->thisVar, stream);
-		search = search->next;
-	}
-}
-
-VariableStack *loadStack(Common::SeekableReadStream *stream, VariableStack **last) {
-	int elements = stream->readUint16BE();
-	int a;
-	VariableStack *first = NULL;
-	VariableStack **changeMe = &first;
-
-	for (a = 0; a < elements; a++) {
-		VariableStack *nS = new VariableStack;
-		if (!checkNew(nS))
-			return NULL;
-		loadVariable(&(nS->thisVar), stream);
-		if (last && a == elements - 1) {
-			*last = nS;
-		}
-		nS->next = NULL;
-		(*changeMe) = nS;
-		changeMe = &(nS->next);
-	}
-
-	return first;
-}
-
-bool saveStackRef(StackHandler *vs, Common::WriteStream *stream) {
-	stackLibrary *s = stackLib;
-	int a = 0;
-	while (s) {
-		if (s->stack == vs) {
-			stream->writeByte(1);
-			stream->writeUint16BE(stackLibTotal - a);
-			return true;
-		}
-		s = s->next;
-		a++;
-	}
-	stream->writeByte(0);
-	saveStack(vs->first, stream);
-	s = new stackLibrary;
-	stackLibTotal++;
-	if (!checkNew(s))
-		return false;
-	s->next = stackLib;
-	s->stack = vs;
-	stackLib = s;
-	return true;
-}
-
-void clearStackLib() {
-	stackLibrary *k;
-	while (stackLib) {
-		k = stackLib;
-		stackLib = stackLib->next;
-		delete k;
-	}
-	stackLibTotal = 0;
-}
-
-StackHandler *getStackFromLibrary(int n) {
-	n = stackLibTotal - n;
-	while (n) {
-		stackLib = stackLib->next;
-		n--;
-	}
-	return stackLib->stack;
-}
-
-StackHandler *loadStackRef(Common::SeekableReadStream *stream) {
-	StackHandler *nsh;
-
-	if (stream->readByte()) {    // It's one we've loaded already...
-		nsh = getStackFromLibrary(stream->readUint16BE());
-		nsh->timesUsed++;
-	} else {
-		// Load the new stack
-
-		nsh = new StackHandler;
-		if (!checkNew(nsh))
-			return NULL;
-		nsh->last = NULL;
-		nsh->first = loadStack(stream, &nsh->last);
-		nsh->timesUsed = 1;
-
-		// Add it to the library of loaded stacks
-
-		stackLibrary *s = new stackLibrary;
-		if (!checkNew(s))
-			return NULL;
-		s->stack = nsh;
-		s->next = stackLib;
-		stackLib = s;
-		stackLibTotal++;
-	}
-	return nsh;
-}
-
-//----------------------------------------------------------------------
-// For saving and loading variables...
-//----------------------------------------------------------------------
-bool saveVariable(Variable *from, Common::WriteStream *stream) {
-	stream->writeByte(from->varType);
-	switch (from->varType) {
-		case SVT_INT:
-		case SVT_FUNC:
-		case SVT_BUILT:
-		case SVT_FILE:
-		case SVT_OBJTYPE:
-			stream->writeUint32LE(from->varData.intValue);
-			return true;
-
-		case SVT_STRING:
-			writeString(from->varData.theString, stream);
-			return true;
-
-		case SVT_STACK:
-			return saveStackRef(from->varData.theStack, stream);
-
-		case SVT_COSTUME:
-			saveCostume(from->varData.costumeHandler, stream);
-			return false;
-
-		case SVT_ANIM:
-			saveAnim(from->varData.animHandler, stream);
-			return false;
-
-		case SVT_NULL:
-			return false;
-
-		default:
-			fatal("Can't save variables of this type:", (from->varType < SVT_NUM_TYPES) ? typeName[from->varType] : "bad ID");
-	}
-	return true;
-}
-
-bool loadVariable(Variable *to, Common::SeekableReadStream *stream) {
-	to->varType = (VariableType)stream->readByte();
-	switch (to->varType) {
-		case SVT_INT:
-		case SVT_FUNC:
-		case SVT_BUILT:
-		case SVT_FILE:
-		case SVT_OBJTYPE:
-			to->varData.intValue = stream->readUint32LE();
-			return true;
-
-		case SVT_STRING:
-			to->varData.theString = createCString(readString(stream));
-			return true;
-
-		case SVT_STACK:
-			to->varData.theStack = loadStackRef(stream);
-			return true;
-
-		case SVT_COSTUME:
-			to->varData.costumeHandler = new Persona;
-			if (!checkNew(to->varData.costumeHandler))
-				return false;
-			loadCostume(to->varData.costumeHandler, stream);
-			return true;
-
-		case SVT_ANIM:
-			to->varData.animHandler = new PersonaAnimation ;
-			if (!checkNew(to->varData.animHandler))
-				return false;
-			loadAnim(to->varData.animHandler, stream);
-			return true;
-
-		default:
-			break;
-	}
-	return true;
-}
-
-//----------------------------------------------------------------------
-// For saving and loading functions
-//----------------------------------------------------------------------
-void saveFunction(LoadedFunction *fun, Common::WriteStream *stream) {
-	int a;
-	stream->writeUint16BE(fun->originalNumber);
-	if (fun->calledBy) {
-		stream->writeByte(1);
-		saveFunction(fun->calledBy, stream);
-	} else {
-		stream->writeByte(0);
-	}
-	stream->writeUint32LE(fun->timeLeft);
-	stream->writeUint16BE(fun->runThisLine);
-	stream->writeByte(fun->cancelMe);
-	stream->writeByte(fun->returnSomething);
-	stream->writeByte(fun->isSpeech);
-	saveVariable(&(fun->reg), stream);
-
-	if (fun->freezerLevel) {
-		fatal(ERROR_GAME_SAVE_FROZEN);
-	}
-	saveStack(fun->stack, stream);
-	for (a = 0; a < fun->numLocals; a++) {
-		saveVariable(&(fun->localVars[a]), stream);
-	}
-}
-
-LoadedFunction *loadFunction(Common::SeekableReadStream *stream) {
-	int a;
-
-	// Reserve memory...
-
-	LoadedFunction *buildFunc = new LoadedFunction;
-	if (!checkNew(buildFunc))
-		return NULL;
-
-	// See what it was called by and load if we need to...
-
-	buildFunc->originalNumber = stream->readUint16BE();
-	buildFunc->calledBy = NULL;
-	if (stream->readByte()) {
-		buildFunc->calledBy = loadFunction(stream);
-		if (!buildFunc->calledBy)
-			return NULL;
-	}
-
-	buildFunc->timeLeft = stream->readUint32LE();
-	buildFunc->runThisLine = stream->readUint16BE();
-	buildFunc->freezerLevel = 0;
-	buildFunc->cancelMe = stream->readByte();
-	buildFunc->returnSomething = stream->readByte();
-	buildFunc->isSpeech = stream->readByte();
-	loadVariable(&(buildFunc->reg), stream);
-	loadFunctionCode(buildFunc);
-
-	buildFunc->stack = loadStack(stream, NULL);
-
-	for (a = 0; a < buildFunc->numLocals; a++) {
-		loadVariable(&(buildFunc->localVars[a]), stream);
-	}
-
-	return buildFunc;
-}
 
 //----------------------------------------------------------------------
 // Save everything
 //----------------------------------------------------------------------
+
+bool handleSaveLoad() {
+	if (!g_sludge->loadNow.empty()) {
+		if (g_sludge->loadNow[0] == ':') {
+			saveGame(g_sludge->loadNow.c_str() + 1);
+			saverFunc->reg.setVariable(SVT_INT, 1);
+		} else {
+			if (!loadGame(g_sludge->loadNow))
+				return false;
+		}
+		g_sludge->loadNow.clear();
+	}
+	return true;
+}
 
 bool saveGame(const Common::String &fname) {
 	Common::OutSaveFile *fp = g_system->getSavefileManager()->openForSaving(fname);
@@ -361,23 +101,18 @@ bool saveGame(const Common::String &fname) {
 	// DON'T ADD ANYTHING NEW BEFORE THIS POINT!
 
 	fp->writeByte(allowAnyFilename);
-	fp->writeByte(captureAllKeys);
+	fp->writeByte(false); // deprecated captureAllKeys
 	fp->writeByte(true);
 	g_sludge->_txtMan->saveFont(fp);
 
 	// Save backdrop
-	fp->writeUint16BE(g_sludge->_gfxMan->getCamX());
-	fp->writeUint16BE(g_sludge->_gfxMan->getCamY());
-	fp->writeFloatLE(g_sludge->_gfxMan->getCamZoom());
-
-	fp->writeByte(brightnessLevel);
-	g_sludge->_gfxMan->saveHSI(fp);
+	g_sludge->_gfxMan->saveBackdrop(fp);
 
 	// Save event handlers
 	g_sludge->_evtMan->saveHandlers(fp);
 
 	// Save regions
-	saveRegions(fp);
+	g_sludge->_regionMan->saveRegions(fp);
 
 	g_sludge->_cursorMan->saveCursor(fp);
 
@@ -397,29 +132,21 @@ bool saveGame(const Common::String &fname) {
 	}
 
 	for (int a = 0; a < numGlobals; a++) {
-		saveVariable(&globalVars[a], fp);
+		globalVars[a].save(fp);
 	}
 
-	savePeople(fp);
+	g_sludge->_peopleMan->savePeople(fp);
 
-	if (currentFloor->numPolygons) {
-		fp->writeByte(1);
-		fp->writeUint16BE(currentFloor->originalNum);
-	} else {
-		fp->writeByte(0);
-	}
+	g_sludge->_floorMan->save(fp);
 
 	g_sludge->_gfxMan->saveZBuffer(fp);
-
 	g_sludge->_gfxMan->saveLightMap(fp);
 
-	fp->writeByte(speechMode);
-	fp->writeByte(fadeMode);
-	saveSpeech(speech, fp);
+	g_sludge->_speechMan->save(fp);
 	saveStatusBars(fp);
 	g_sludge->_soundMan->saveSounds(fp);
 
-	fp->writeUint16BE(saveEncoding);
+	fp->writeUint16BE(CustomSaveHelper::_saveEncoding);
 
 	blur_saveSettings(fp);
 
@@ -501,28 +228,18 @@ bool loadGame(const Common::String &fname) {
 	if (ssgVersion >= VERSION(1, 4)) {
 		allowAnyFilename = fp->readByte();
 	}
-	captureAllKeys = fp->readByte();
-	fp->readByte();  // updateDisplay (part of movie playing)
+	fp->readByte(); // deprecated captureAllKeys
+	fp->readByte(); // updateDisplay (part of movie playing)
 
 	g_sludge->_txtMan->loadFont(ssgVersion, fp);
 
-	killAllPeople();
-	killAllRegions();
+	g_sludge->_regionMan->kill();
 
-	int camerX = fp->readUint16BE();
-	int camerY = fp->readUint16BE();
-	float camerZ;
-	if (ssgVersion >= VERSION(2, 0)) {
-		camerZ = fp->readFloatLE();
-	} else {
-		camerZ = 1.0;
-	}
+	g_sludge->_gfxMan->loadBackdrop(ssgVersion, fp);
 
-	brightnessLevel = fp->readByte();
-
-	g_sludge->_gfxMan->loadHSI(fp, 0, 0, true);
 	g_sludge->_evtMan->loadHandlers(fp);
-	loadRegions(fp);
+
+	g_sludge->_regionMan->loadRegions(fp);
 
 	if (!g_sludge->_cursorMan->loadCursor(fp)) {
 		return false;
@@ -540,17 +257,15 @@ bool loadGame(const Common::String &fname) {
 	}
 
 	for (int a = 0; a < numGlobals; a++) {
-		unlinkVar(globalVars[a]);
-		loadVariable(&globalVars[a], fp);
+		globalVars[a].unlinkVar();
+		globalVars[a].load(fp);
 	}
 
-	loadPeople(fp);
+	g_sludge->_peopleMan->loadPeople(fp);
 
-	if (fp->readByte()) {
-		if (!setFloor(fp->readUint16BE()))
-			return false;
-	} else
-		setFloorNull();
+	if (!g_sludge->_floorMan->load(fp)) {
+		return false;
+	}
 
 	if (!g_sludge->_gfxMan->loadZBuffer(fp))
 		return false;
@@ -559,13 +274,11 @@ bool loadGame(const Common::String &fname) {
 		return false;
 	}
 
-	speechMode = fp->readByte();
-	fadeMode = fp->readByte();
-	loadSpeech(speech, fp);
+	g_sludge->_speechMan->load(fp);
 	loadStatusBars(fp);
 	g_sludge->_soundMan->loadSounds(fp);
 
-	saveEncoding = fp->readUint16BE();
+	CustomSaveHelper::_saveEncoding = fp->readUint16BE();
 
 	if (ssgVersion >= VERSION(1, 6)) {
 		if (ssgVersion < VERSION(2, 0)) {
@@ -603,8 +316,6 @@ bool loadGame(const Common::String &fname) {
 	}
 
 	delete fp;
-
-	g_sludge->_gfxMan->setCamera(camerX, camerY, camerZ);
 
 	clearStackLib();
 	return true;

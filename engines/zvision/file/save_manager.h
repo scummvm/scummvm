@@ -42,8 +42,9 @@ struct SaveGameHeader {
 	byte version;
 	Common::String saveName;
 	Graphics::Surface *thumbnail;
-	int saveYear, saveMonth, saveDay;
-	int saveHour, saveMinutes;
+	int16 saveYear, saveMonth, saveDay;
+	int16 saveHour, saveMinutes;
+	uint32 playTime;
 };
 
 class SaveManager {
@@ -64,7 +65,7 @@ private:
 
 	enum {
 		SAVE_ORIGINAL = 0,
-		SAVE_VERSION = 1
+		SAVE_VERSION  = 2
 	};
 
 	Common::MemoryWriteStreamDynamic *_tempThumbnail;
@@ -94,7 +95,7 @@ public:
 	Common::Error loadGame(int slot);
 
 	Common::SeekableReadStream *getSlotFile(uint slot);
-	bool readSaveGameHeader(Common::SeekableReadStream *in, SaveGameHeader &header);
+	bool readSaveGameHeader(Common::SeekableReadStream *in, SaveGameHeader &header, bool skipThumbnail = true);
 
 	void prepareSaveBuffer();
 	void flushSaveBuffer();

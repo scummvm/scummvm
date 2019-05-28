@@ -23,6 +23,7 @@
 #include "lastexpress/entities/rebecca.h"
 
 #include "lastexpress/game/entities.h"
+#include "lastexpress/game/inventory.h"
 #include "lastexpress/game/logic.h"
 #include "lastexpress/game/object.h"
 #include "lastexpress/game/savepoint.h"
@@ -37,25 +38,25 @@ namespace LastExpress {
 
 Rebecca::Rebecca(LastExpressEngine *engine) : Entity(engine, kEntityRebecca) {
 	ADD_CALLBACK_FUNCTION(Rebecca, reset);
-	ADD_CALLBACK_FUNCTION(Rebecca, updateFromTime);
-	ADD_CALLBACK_FUNCTION(Rebecca, playSound);
-	ADD_CALLBACK_FUNCTION(Rebecca, playSound16);
-	ADD_CALLBACK_FUNCTION(Rebecca, callSavepoint);
-	ADD_CALLBACK_FUNCTION(Rebecca, draw);
-	ADD_CALLBACK_FUNCTION(Rebecca, enterExitCompartment);
-	ADD_CALLBACK_FUNCTION(Rebecca, enterExitCompartment2);
-	ADD_CALLBACK_FUNCTION(Rebecca, enterExitCompartment3);
+	ADD_CALLBACK_FUNCTION_I(Rebecca, updateFromTime);
+	ADD_CALLBACK_FUNCTION_S(Rebecca, playSound);
+	ADD_CALLBACK_FUNCTION_S(Rebecca, playSound16);
+	ADD_CALLBACK_FUNCTION_SIIS(Rebecca, callSavepoint);
+	ADD_CALLBACK_FUNCTION_S(Rebecca, draw);
+	ADD_CALLBACK_FUNCTION_SI(Rebecca, enterExitCompartment);
+	ADD_CALLBACK_FUNCTION_SI(Rebecca, enterExitCompartment2);
+	ADD_CALLBACK_FUNCTION_SI(Rebecca, enterExitCompartment3);
 	ADD_CALLBACK_FUNCTION(Rebecca, callbackActionOnDirection);
 	ADD_CALLBACK_FUNCTION(Rebecca, callbackActionRestaurantOrSalon);
-	ADD_CALLBACK_FUNCTION(Rebecca, updateEntity);
-	ADD_CALLBACK_FUNCTION(Rebecca, updatePosition);
-	ADD_CALLBACK_FUNCTION(Rebecca, draw2);
+	ADD_CALLBACK_FUNCTION_II(Rebecca, updateEntity);
+	ADD_CALLBACK_FUNCTION_SII(Rebecca, updatePosition);
+	ADD_CALLBACK_FUNCTION_SSI(Rebecca, draw2);
 	ADD_CALLBACK_FUNCTION(Rebecca, function15);
-	ADD_CALLBACK_FUNCTION(Rebecca, function16);
-	ADD_CALLBACK_FUNCTION(Rebecca, function17);
+	ADD_CALLBACK_FUNCTION_I(Rebecca, function16);
+	ADD_CALLBACK_FUNCTION_I(Rebecca, function17);
 	ADD_CALLBACK_FUNCTION(Rebecca, function18);
 	ADD_CALLBACK_FUNCTION(Rebecca, function19);
-	ADD_CALLBACK_FUNCTION(Rebecca, function20);
+	ADD_CALLBACK_FUNCTION_I(Rebecca, function20);
 	ADD_CALLBACK_FUNCTION(Rebecca, chapter1);
 	ADD_CALLBACK_FUNCTION(Rebecca, chapter1Handler);
 	ADD_CALLBACK_FUNCTION(Rebecca, function23);
@@ -129,6 +130,11 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_SI(9, Rebecca, enterExitCompartment3, ObjectIndex)
+	if (savepoint.action == kAction4) {
+		getEntities()->exitCompartment(_entityIndex, (ObjectIndex)params->param4);
+		callbackAction();
+		return;
+	}
 	Entity::enterExitCompartment(savepoint);
 IMPLEMENT_FUNCTION_END
 
@@ -239,7 +245,7 @@ IMPLEMENT_FUNCTION_I(16, Rebecca, function16, bool)
 			if (getEntities()->isInSalon(kEntityPlayer))
 				getEntities()->updateFrame(kEntityRebecca);
 
-			setCallback(4);
+			setCallback(5);
 			setup_callbackActionOnDirection();
 			break;
 
@@ -303,7 +309,7 @@ IMPLEMENT_FUNCTION_I(17, Rebecca, function17, bool)
 			break;
 
 		case 2:
-			getEntities()->clearSequences(kEntitySophie);
+			getEntities()->clearSequences(kEntityRebecca);
 			break;
 
 		case 3:
@@ -316,7 +322,7 @@ IMPLEMENT_FUNCTION_I(17, Rebecca, function17, bool)
 			getData()->location = kLocationOutsideCompartment;
 
 			if (getProgress().chapter == kChapter3)
-				getSound()->playSound(kEntityRebecca, "Reb3005", kFlagInvalid, 75);
+				getSound()->playSound(kEntityRebecca, "Reb3005", kSoundVolumeEntityDefault, 75);
 
 			if (params->param1) {
 				setCallback(5);
@@ -442,7 +448,7 @@ IMPLEMENT_FUNCTION(19, Rebecca, function19)
 			if (getEntities()->isInRestaurant(kEntityPlayer))
 				getEntities()->updateFrame(kEntityRebecca);
 
-			setCallback(4);
+			setCallback(3);
 			setup_callbackActionOnDirection();
 			break;
 
@@ -563,6 +569,30 @@ label_callback:
 
 	case kActionKnock:
 	case kActionOpenDoor:
+		if (params->param2) {
+			getObjects()->update(kObjectCompartmentE, kEntityRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObject52, kEntityRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
+			if (savepoint.param.intValue == kObject52) {
+				setCallback(8);
+				setup_playSound(getSound()->justAMinuteCath());
+			} else if (getInventory()->hasItem(kItemPassengerList)) {
+				if (rnd(2)) {
+					setCallback(9);
+					setup_playSound(getSound()->wrongDoorCath());
+				} else {
+					setCallback(10);
+					setup_playSound(params->param4 ? "CAT1509" : (rnd(2) ? "CAT1508" : "CAT1508A"));
+				}
+			} else {
+				setCallback(11);
+				setup_playSound(getSound()->wrongDoorCath());
+			}
+		} else {
+			getObjects()->update(kObjectCompartmentE, kEntityRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
+			getObjects()->update(kObject52, kEntityRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
+			setCallback(savepoint.action == kActionKnock ? 4 : 5);
+			setup_playSound(savepoint.action == kActionKnock ? "LIB012" : "LIB013");
+		}
 		break;
 
 	case kActionDefault:
@@ -955,7 +985,7 @@ IMPLEMENT_FUNCTION(25, Rebecca, function25)
 
 		case 1:
 			setCallback(2);
-			setup_function17(false);
+			setup_function17(true);
 			break;
 
 		case 2:
@@ -1109,7 +1139,7 @@ IMPLEMENT_FUNCTION(30, Rebecca, function30)
 			}
 		}
 
-		if (!params->param3 && !params->param2 && params->param5 != kTimeInvalid) {
+		if (params->param3 && !params->param2 && params->param5 != kTimeInvalid) {
 
 			if (getState()->time <= kTime10881000) {
 				if (!getEntities()->isInSalon(kEntityPlayer) || !params->param5)
@@ -1231,13 +1261,15 @@ IMPLEMENT_FUNCTION(34, Rebecca, function34)
 		break;
 
 	case kActionNone:
-		if (params->param2 == kTimeInvalid) {
+		if (params->param2 != kTimeInvalid) {
 			if (getState()->time <= kTime1386000) {
 				if (!getEntities()->isInRestaurant(kEntityPlayer) || !params->param2)
 					params->param2 = (uint)getState()->time;
 
 				if (params->param2 >= getState()->time) {
-					Entity::timeCheckCallback(kTime2052000, params->param3, 1, WRAP_SETUP_FUNCTION(Rebecca, setup_function19));
+					if (params->param1) {
+						Entity::timeCheckCallback(kTime2052000, params->param3, 3, WRAP_SETUP_FUNCTION(Rebecca, setup_function19));
+					}
 					break;
 				}
 			}
@@ -1247,7 +1279,9 @@ IMPLEMENT_FUNCTION(34, Rebecca, function34)
 			getSavePoints()->push(kEntityRebecca, kEntityWaiter1, kAction223712416);
 		}
 
-		Entity::timeCheckCallback(kTime2052000, params->param3, 1, WRAP_SETUP_FUNCTION(Rebecca, setup_function19));
+		if (params->param1) {
+			Entity::timeCheckCallback(kTime2052000, params->param3, 3, WRAP_SETUP_FUNCTION(Rebecca, setup_function19));
+		}
 		break;
 
 	case kActionEndSound:
@@ -1337,7 +1371,7 @@ IMPLEMENT_FUNCTION(36, Rebecca, function36)
 				getSound()->playSound(kEntityRebecca, "Reb3007");
 
 				setCallback(2);
-				setup_updatePosition("118E", kCarRedSleeping, 52);
+				setup_updatePosition("118E", kCarRestaurant, 52);
 				break;
 			}
 		}
@@ -1373,7 +1407,7 @@ label_callback_3:
 		params->param5 = kTimeInvalid;
 
 		getData()->inventoryItem = kItemNone;
-		getSound()->playSound(kEntityRebecca, "Reb3008", kFlagInvalid, 60);
+		getSound()->playSound(kEntityRebecca, "Reb3008", kSoundVolumeEntityDefault, 60);
 		getEntities()->updatePositionEnter(kEntityRebecca, kCarRestaurant, 52);
 
 		setCallback(3);
@@ -1692,7 +1726,7 @@ label_callback_2:
 		break;
 
 	case kAction123712592:
-		getEntities()->drawSequenceLeft(kEntityRebecca, "BLANK");
+		getEntities()->drawSequenceLeft(kEntityWaiter1, "BLANK");
 		getSound()->playSound(kEntityRebecca, "Reb4003");
 
 		setCallback(4);
@@ -1785,7 +1819,7 @@ IMPLEMENT_FUNCTION(48, Rebecca, function48)
 		getObjects()->update(kObjectCompartmentE, kEntityRebecca, kObjectLocation1, kCursorNormal, kCursorNormal);
 
 		if (params->param1) {
-			params->param1 = 0;
+			params->param2 = 1;
 
 			setCallback(2);
 			setup_playSound(getSound()->justCheckingCath());

@@ -36,7 +36,7 @@ public:
 	PegasusChip(const ItemID, const NeighborhoodID, const RoomID, const DirectionConstant);
 	virtual ~PegasusChip();
 
-	void select();
+	void select() override;
 
 	void takeSharedArea() override;
 

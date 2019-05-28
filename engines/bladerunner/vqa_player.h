@@ -43,14 +43,15 @@ class View;
 class Lights;
 class ZBuffer;
 
-//TODO: split this into two components as it is in original game: universal vqa player, blade runner player functionality
-
 class VQAPlayer {
+	friend class Debugger;
+
 	BladeRunnerEngine           *_vm;
+	Common::String               _name;
 	Common::SeekableReadStream  *_s;
 	VQADecoder                   _decoder;
-	const uint16                *_zBuffer;
 	Audio::QueuingAudioStream   *_audioStream;
+	Graphics::Surface           *_surface;
 
 	int _frame;
 	int _frameNext;
@@ -70,17 +71,19 @@ class VQAPlayer {
 	bool   _audioStarted;
 	Audio::SoundHandle _soundHandle;
 
-	void (*_callbackLoopEnded)(void*, int frame, int loopId);
+	void (*_callbackLoopEnded)(void *, int frame, int loopId);
 	void  *_callbackData;
 
 public:
 
-	VQAPlayer(BladeRunnerEngine *vm, Graphics::Surface *surface)
+	VQAPlayer(BladeRunnerEngine *vm, Graphics::Surface *surface, const Common::String &name)
 		: _vm(vm),
+		  _name(name),
 		  _s(nullptr),
-		  _decoder(surface),
-		  _zBuffer(nullptr),
+		  _surface(surface),
+		  _decoder(),
 		  _audioStream(nullptr),
+		  _frame(-1),
 		  _frameNext(-1),
 		  _frameBegin(-1),
 		  _frameEnd(-1),
@@ -100,22 +103,24 @@ public:
 		close();
 	}
 
-	bool open(const Common::String &name);
+	bool open();
 	void close();
 
-	int  update(bool forceDraw = false);
+	int  update(bool forceDraw = false, bool advanceFrame = true, bool useTime = true, Graphics::Surface *customSurface = nullptr);
 	void updateZBuffer(ZBuffer *zbuffer);
 	void updateView(View *view);
 	void updateScreenEffects(ScreenEffects *screenEffects);
 	void updateLights(Lights *lights);
 
 	bool setBeginAndEndFrame(int begin, int end, int repeatsCount, int loopSetMode, void(*callback)(void *, int, int), void *callbackData);
-	bool setLoop(int loop, int repeatsCount, int loopSetMode, void(*callback)(void*, int, int), void* callbackData);
+	bool setLoop(int loop, int repeatsCount, int loopSetMode, void(*callback)(void*, int, int), void *callbackData);
 
 	bool seekToFrame(int frame);
 
 	int getLoopBeginFrame(int loop);
 	int getLoopEndFrame(int loop);
+
+	int getFrameCount();
 
 private:
 	void queueAudioFrame(Audio::AudioStream *audioStream);

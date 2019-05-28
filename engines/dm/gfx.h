@@ -644,7 +644,7 @@ private:
 	byte _palChangesDoorButtonAndWallOrnD3[16]; // @ G0198_auc_Graphic558_PaletteChanges_DoorButtonAndWallOrnament_D3
 	byte _palChangesDoorButtonAndWallOrnD2[16]; // @ G0199_auc_Graphic558_PaletteChanges_DoorButtonAndWallOrnament_D2
 
-	byte *bitmapWallSetWallD0L; // @ G0701_puc_Bitmap_WallSet_Wall_D0L
+	byte *_bitmapWallSetWallD0L; // @ G0701_puc_Bitmap_WallSet_Wall_D0L
 	byte *_bitmapWallSetWallD0R; // @ G0702_puc_Bitmap_WallSet_Wall_D0R
 	byte *_bitmapWallSetDoorFrameTopD2LCR; // @ G0703_puc_Bitmap_WallSet_DoorFrameTop_D2LCR
 	byte *_bitmapWallSetDoorFrameTopD1LCR; // @ G0704_puc_Bitmap_WallSet_DoorFrameTop_D1LCR

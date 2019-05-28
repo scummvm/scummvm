@@ -27,6 +27,12 @@
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/screen.h"
+#ifdef ENABLE_SCI32
+#include "sci/graphics/paint32.h"
+#include "sci/graphics/palette32.h"
+#include "sci/graphics/plane32.h"
+#include "sci/graphics/frameout.h"
+#endif
 
 #include "common/debug-channels.h"
 #include "common/list.h"
@@ -292,6 +298,7 @@ static Common::Point readPoint(SegmentRef list_r, int offset) {
 		point.x = list_r.reg[offset * 2].toUint16();
 		point.y = list_r.reg[offset * 2 + 1].toUint16();
 	}
+
 	return point;
 }
 
@@ -311,12 +318,21 @@ static void draw_line(EngineState *s, Common::Point p1, Common::Point p2, int ty
 	// Blue: Near-point access
 	// Red : Barred access
 	// Yellow: Contained access
-	int poly_colors[4] = {
-		g_sci->_gfxPalette16->kernelFindColor(0, 255, 0),	// green
-		g_sci->_gfxPalette16->kernelFindColor(0, 0, 255),	// blue
-		g_sci->_gfxPalette16->kernelFindColor(255, 0, 0),	// red
-		g_sci->_gfxPalette16->kernelFindColor(255, 255, 0)	// yellow
-	};
+	int poly_colors[4] = { 0, 0, 0, 0 };
+	
+	if (getSciVersion() <= SCI_VERSION_1_1) {
+		poly_colors[0] = g_sci->_gfxPalette16->kernelFindColor(0, 255, 0);		// green
+		poly_colors[1] = g_sci->_gfxPalette16->kernelFindColor(0, 0, 255);		// blue
+		poly_colors[2] = g_sci->_gfxPalette16->kernelFindColor(255, 0, 0);		// red
+		poly_colors[3] = g_sci->_gfxPalette16->kernelFindColor(255, 255, 0);	// yellow
+#ifdef ENABLE_SCI32
+	} else {
+		poly_colors[0] = g_sci->_gfxPalette32->matchColor(0, 255, 0);			// green
+		poly_colors[1] = g_sci->_gfxPalette32->matchColor(0, 0, 255);			// blue
+		poly_colors[2] = g_sci->_gfxPalette32->matchColor(255, 0, 0);			// red
+		poly_colors[3] = g_sci->_gfxPalette32->matchColor(255, 255, 0);			// yellow	
+#endif
+	}
 
 	// Clip
 	// FIXME: Do proper line clipping
@@ -326,17 +342,32 @@ static void draw_line(EngineState *s, Common::Point p1, Common::Point p2, int ty
 	p2.y = CLIP<int16>(p2.y, 0, height - 1);
 
 	assert(type >= 0 && type <= 3);
-	g_sci->_gfxPaint16->kernelGraphDrawLine(p1, p2, poly_colors[type], 255, 255);
+
+	if (getSciVersion() <= SCI_VERSION_1_1) {
+		g_sci->_gfxPaint16->kernelGraphDrawLine(p1, p2, poly_colors[type], 255, 255);
+#ifdef ENABLE_SCI32
+	} else {
+		Plane *topPlane = g_sci->_gfxFrameout->getTopVisiblePlane();
+		g_sci->_gfxPaint32->kernelAddLine(topPlane->_object, p1, p2, 255, poly_colors[type], kLineStyleSolid, 0, 1);
+#endif
+	}
 }
 
 static void draw_point(EngineState *s, Common::Point p, int start, int width, int height) {
 	// Colors for starting and end point
 	// Green: End point
 	// Blue: Starting point
-	int point_colors[2] = {
-		g_sci->_gfxPalette16->kernelFindColor(0, 255, 0),	// green
-		g_sci->_gfxPalette16->kernelFindColor(0, 0, 255)		// blue
-	};
+	int point_colors[2] = { 0, 0 };
+
+	if (getSciVersion() <= SCI_VERSION_1_1) {
+		point_colors[0] = g_sci->_gfxPalette16->kernelFindColor(0, 255, 0);	// green
+		point_colors[1] = g_sci->_gfxPalette16->kernelFindColor(0, 0, 255);	// blue
+#ifdef ENABLE_SCI32
+	} else {
+		point_colors[0] = g_sci->_gfxPalette32->matchColor(0, 255, 0);		// green
+		point_colors[1] = g_sci->_gfxPalette32->matchColor(0, 0, 255);		// blue
+#endif
+	}
 
 	Common::Rect rect = Common::Rect(p.x - 1, p.y - 1, p.x - 1 + 3, p.y - 1 + 3);
 
@@ -347,8 +378,17 @@ static void draw_point(EngineState *s, Common::Point p, int start, int width, in
 	rect.right = CLIP<int16>(rect.right, 0, width - 1);
 
 	assert(start >= 0 && start <= 1);
-	if (g_sci->_gfxPaint16)
+	if (getSciVersion() <= SCI_VERSION_1_1) {
 		g_sci->_gfxPaint16->kernelGraphFrameBox(rect, point_colors[start]);
+#ifdef ENABLE_SCI32
+	} else {
+		Plane *topPlane = g_sci->_gfxFrameout->getTopVisiblePlane();
+		g_sci->_gfxPaint32->kernelAddLine(topPlane->_object, Common::Point(rect.left, rect.top), Common::Point(rect.right, rect.top), 255, point_colors[start], kLineStyleSolid, 0, 1);
+		g_sci->_gfxPaint32->kernelAddLine(topPlane->_object, Common::Point(rect.right, rect.top), Common::Point(rect.right, rect.bottom), 255, point_colors[start], kLineStyleSolid, 0, 1);
+		g_sci->_gfxPaint32->kernelAddLine(topPlane->_object, Common::Point(rect.left, rect.bottom), Common::Point(rect.right, rect.bottom), 255, point_colors[start], kLineStyleSolid, 0, 1);
+		g_sci->_gfxPaint32->kernelAddLine(topPlane->_object, Common::Point(rect.left, rect.top), Common::Point(rect.left, rect.bottom), 255, point_colors[start], kLineStyleSolid, 0, 1);
+#endif
+	}
 }
 
 static void draw_polygon(EngineState *s, reg_t polygon, int width, int height) {
@@ -785,10 +825,10 @@ int PathfindingState::findNearPoint(const Common::Point &p, Polygon *polygon, Co
 		u = ((p.x - p1.x) * (p2.x - p1.x) + (p.y - p1.y) * (p2.y - p1.y)) / (float)p1.sqrDist(p2);
 
 		// Clip to edge
-		if (u < 0.0f)
-			u = 0.0f;
-		if (u > 1.0f)
-			u = 1.0f;
+		if (u < 0.0F)
+			u = 0.0F;
+		if (u > 1.0F)
+			u = 1.0F;
 
 		new_point.x = p1.x + u * (p2.x - p1.x);
 		new_point.y = p1.y + u * (p2.y - p1.y);
@@ -982,6 +1022,9 @@ static Common::Point *fixup_start_point(PathfindingState *s, const Common::Point
 				if (start != *new_start)
 					s->_prependPoint = new Common::Point(start);
 			}
+			break;
+		default:
+			break;
 		}
 
 		++it;
@@ -1039,6 +1082,9 @@ static Common::Point *fixup_end_point(PathfindingState *s, const Common::Point &
 				if ((type == POLY_NEAREST_ACCESS) && (end != *new_end))
 					s->_appendPoint = new Common::Point(end);
 			}
+			break;
+		default:
+			break;
 		}
 
 		++it;
@@ -1367,15 +1413,26 @@ static void AStar(PathfindingState *s) {
 			// This difference might lead to problems, but none are
 			// known at the time of writing.
 
-			// WORKAROUND: This check fails in QFG1VGA, room 81 (bug report #3568452).
-			// However, it is needed in other SCI1.1 games, such as LB2. Therefore, we
-			// add this workaround for that scene in QFG1VGA, until our algorithm matches
-			// better what SSCI is doing. With this workaround, QFG1VGA no longer freezes
-			// in that scene.
-			bool qfg1VgaWorkaround = (g_sci->getGameId() == GID_QFG1VGA &&
-									  g_sci->getEngineState()->currentRoomNumber() == 81);
+			// WORKAROUND: This check is needed in SCI1.1 games, such as LB2. Until our
+			// algorithm matches better what SSCI is doing, we exempt certain rooms where
+			// the check fails.
+			bool penaltyWorkaround =
+				// QFG1VGA room 81 - Hero gets stuck when walking to the SE corner (bug #6140).
+				(g_sci->getGameId() == GID_QFG1VGA && g_sci->getEngineState()->currentRoomNumber() == 81) ||
+#ifdef ENABLE_SCI32
+				// QFG4 room 563 - Hero zig-zags into the room (bug #10858).
+				// Entering from the south (564) off-screen behind an obstacle, hero
+				// fails to turn at a point on the screen edge, passes the poly's corner,
+				// then approaches the destination from deeper in the room.
+				(g_sci->getGameId() == GID_QFG4 && g_sci->getEngineState()->currentRoomNumber() == 563) ||
 
-			if (s->pointOnScreenBorder(vertex->v) && !qfg1VgaWorkaround)
+				// QFG4 room 580 - Hero zig-zags into the room (bug #10870).
+				// Entering from the south (581) off-screen behind an obstacle, as above.
+				(g_sci->getGameId() == GID_QFG4 && g_sci->getEngineState()->currentRoomNumber() == 580) ||
+#endif
+				false;
+
+			if (s->pointOnScreenBorder(vertex->v) && !penaltyWorkaround)
 				new_dist += 10000;
 
 			if (new_dist < vertex->costG) {
@@ -1448,8 +1505,10 @@ static reg_t output_path(PathfindingState *p, EngineState *s) {
 
 	int offset = 0;
 
-	if (p->_prependPoint)
-		writePoint(arrayRef, offset++, *p->_prependPoint);
+	if (p->_prependPoint) {
+		writePoint(arrayRef, offset, *p->_prependPoint);
+		offset++;
+	}
 
 	vertex = p->vertex_end;
 	for (int i = path_len - 1; i >= 0; i--) {
@@ -1538,10 +1597,14 @@ reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 			}
 
 			// Update the whole screen
-			g_sci->_gfxScreen->copyToScreen();
-			g_system->updateScreen();
-			if (!g_sci->_gfxPaint16)
-				g_system->delayMillis(2500);
+			if (getSciVersion() <= SCI_VERSION_1_1) {
+				g_sci->_gfxScreen->copyToScreen();
+				g_system->updateScreen();
+#ifdef ENABLE_SCI32
+			} else {
+				g_sci->_gfxFrameout->kernelFrameOut(true);
+#endif
+			}
 		}
 
 		PathfindingState *p = convert_polygon_set(s, poly_list, start, end, width, height, opt);
@@ -1765,8 +1828,8 @@ reg_t kIntersections(EngineState *s, int argc, reg_t *argv) {
 
 			// If intersection point lies on both the query line segment and the poly
 			// line segment, add it to the output
-			if (((PointInRect(Common::Point(intersectionX, intersectionY), pSourceX, pSourceY, pDestX, pDestY))
-				&& PointInRect(Common::Point(intersectionX, intersectionY), qSourceX, qSourceY, qDestX, qDestY))) {
+			if (PointInRect(Common::Point(intersectionX, intersectionY), pSourceX, pSourceY, pDestX, pDestY)
+				&& PointInRect(Common::Point(intersectionX, intersectionY), qSourceX, qSourceY, qDestX, qDestY)) {
 				outBuf[outCount * 3] = make_reg(0, intersectionX);
 				outBuf[outCount * 3 + 1] = make_reg(0, intersectionY);
 				outBuf[outCount * 3 + 2] = make_reg(0, curIndex);
@@ -1823,7 +1886,7 @@ static float pointSegDistance(const Common::Point &a, const Common::Point &b,
 	FloatPoint bp(b-p);
 
 	// Check if the projection of p on the line a-b lies between a and b
-	if (ba*pa >= 0.0f && ba*bp >= 0.0f) {
+	if (ba * pa >= 0.0F && ba * bp >= 0.0F) {
 		// If yes, return the (squared) distance of p to the line a-b:
 		// translate a to origin, project p and subtract
 		float linedist = (ba*((ba*pa)/(ba*ba)) - pa).norm();
@@ -1885,12 +1948,12 @@ static bool segSegIntersect(const Vertex *v1, const Vertex *v2, Common::Point &i
 
 	if (!len_dc) error("zero length edge in polygon");
 
-	if (pointSegDistance(c, d, a) <= 2.0f) {
+	if (pointSegDistance(c, d, a) <= 2.0F) {
 		intp = a;
 		return true;
 	}
 
-	if (pointSegDistance(c, d, b) <= 2.0f) {
+	if (pointSegDistance(c, d, b) <= 2.0F) {
 		intp = b;
 		return true;
 	}
@@ -1913,13 +1976,13 @@ static bool segSegIntersect(const Vertex *v1, const Vertex *v2, Common::Point &i
 static int intersectDir(const Vertex *v1, const Vertex *v2) {
 	Common::Point p1 = v1->_next->v - v1->v;
 	Common::Point p2 = v2->_next->v - v2->v;
-	return (p1.x*p2.y - p2.x*p1.y);
+	return (p1.x * p2.y - p2.x * p1.y);
 }
 
 // Direction of edge in degrees from pos. x-axis, between -180 and 180
 static int edgeDir(const Vertex *v) {
 	Common::Point p = v->_next->v - v->v;
-	int deg = (int)Common::rad2deg((float)atan2((double)p.y, (double)p.x));
+	int deg = Common::rad2deg<float,int>((float)atan2((double)p.y, (double)p.x));
 	if (deg < -180) deg += 360;
 	if (deg > 180) deg -= 360;
 	return deg;
@@ -2136,12 +2199,12 @@ bool mergeSinglePolygon(Polygon &work, const Polygon &polygon) {
 			// edge of poly. Because it starts at polyv->_next, it will skip
 			// the correct re-entry and proceed to the next.
 
-			const Vertex *workv2;
+			const Vertex *workv2 = workv;
 			const Vertex *polyv2 = polyv->_next;
 
 			intersects = false;
 
-			uint pi2, wi2;
+			uint pi2, wi2 = 0;
 			for (pi2 = 0; pi2 < polygonSize; ++pi2, polyv2 = polyv2->_next) {
 
 				int newAngle = edgeDir(polyv2);
@@ -2402,8 +2465,10 @@ reg_t kMergePoly(EngineState *s, int argc, reg_t *argv) {
 	Vertex *vertex;
 	uint32 n = 0;
 	CLIST_FOREACH(vertex, &work.vertices) {
-		if (vertex == work.vertices._head || vertex->v != vertex->_prev->v)
-			writePoint(arrayRef, n++, vertex->v);
+		if (vertex == work.vertices._head || vertex->v != vertex->_prev->v) {
+			writePoint(arrayRef, n, vertex->v);
+			n++;
+		}
 	}
 
 	writePoint(arrayRef, n, Common::Point(POLY_LAST_POINT, POLY_LAST_POINT));

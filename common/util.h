@@ -33,6 +33,9 @@
 #define IS_ALIGNED(value, alignment) \
           ((((size_t)value) & ((alignment) - 1)) == 0)
 
+#ifdef ABS
+#undef ABS
+#endif
 
 #ifdef MIN
 #undef MIN
@@ -52,6 +55,10 @@ template<typename T> inline T CLIP(T v, T amin, T amax)
  * Template method which swaps the vaulues of its two parameters.
  */
 template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
+
+#ifdef ARRAYSIZE
+#undef ARRAYSIZE
+#endif
 
 /**
  * Macro which determines the number of entries in a fixed size array.
@@ -120,7 +127,7 @@ bool isAlnum(int c);
  * false is returned.
  *
  * @param c		the character to test
- * @return		true if the character is TODO, false otherwise.
+ * @return		true if the character is alphabetic, false otherwise.
  */
 bool isAlpha(int c);
 
@@ -133,6 +140,16 @@ bool isAlpha(int c);
  * @return		true if the character is a decimal-digit, false otherwise.
  */
 bool isDigit(int c);
+
+/**
+ * Test whether the given character is a hwzadecimal-digit (0-9 or A-F).
+ * If the parameter is outside the range of a signed or unsigned char, then
+ * false is returned.
+ *
+ * @param c		the character to test
+ * @return		true if the character is a hexadecimal-digit, false otherwise.
+ */
+bool isXDigit(int c);
 
 /**
  * Test whether the given character is a lower-case letter (a-z).

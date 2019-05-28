@@ -191,12 +191,12 @@ bool MoviePlayer::load(uint32 id) {
 
 	// Need to switch to true color for PSX/MP2 videos
 	if (_decoderType == kVideoDecoderPSX || _decoderType == kVideoDecoderMP2)
-		initGraphics(g_system->getWidth(), g_system->getHeight(), true, 0);
+		initGraphics(g_system->getWidth(), g_system->getHeight(), nullptr);
 
 	if (!_decoder->loadFile(filename)) {
 		// Go back to 8bpp color
 		if (_decoderType == kVideoDecoderPSX || _decoderType == kVideoDecoderMP2)
-			initGraphics(g_system->getWidth(), g_system->getHeight(), true);
+			initGraphics(g_system->getWidth(), g_system->getHeight());
 
 		return false;
 	}
@@ -422,7 +422,7 @@ bool MoviePlayer::playVideo() {
 
 	// Need to jump back to paletted color
 	if (_decoderType == kVideoDecoderPSX || _decoderType == kVideoDecoderMP2)
-		initGraphics(g_system->getWidth(), g_system->getHeight(), true);
+		initGraphics(g_system->getWidth(), g_system->getHeight());
 
 	return !_vm->shouldQuit() && !skipped;
 }

@@ -64,7 +64,7 @@ void ChooserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		break;
 	case kListSelectionChangedCmd:
 		_chooseButton->setEnabled(item >= 0);
-		_chooseButton->draw();
+		_chooseButton->markAsDirty();
 		break;
 	case kCloseCmd:
 		setResult(-1);

@@ -22,6 +22,7 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
+#include <curl/curl.h>
 #include "backends/cloud/box/boxstorage.h"
 #include "backends/cloud/box/boxlistdirectorybyidrequest.h"
 #include "backends/cloud/box/boxtokenrefresher.h"
@@ -33,7 +34,6 @@
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/json.h"
-#include <curl/curl.h>
 
 #ifdef ENABLE_RELEASE
 #include "dists/clouds/cloud_keys.h"

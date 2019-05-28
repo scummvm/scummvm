@@ -49,6 +49,8 @@ struct RivenSaveMetadata {
 
 	uint32 totalPlayTime;
 
+	bool autoSave;
+
 	Common::String saveDescription;
 
 	RivenSaveMetadata();
@@ -57,11 +59,15 @@ struct RivenSaveMetadata {
 
 class RivenSaveLoad {
 public:
+	static const int kAutoSaveSlot;
+
 	RivenSaveLoad(MohawkEngine_Riven*, Common::SaveFileManager*);
 	~RivenSaveLoad();
 
 	Common::Error loadGame(const int slot);
-	Common::Error saveGame(const int slot, const Common::String &description);
+	Common::Error saveGame(const int slot, const Common::String &description,
+	                       const Graphics::Surface *thumbnail, bool autoSave);
+	bool isAutoSaveAllowed();
 	static void deleteSave(const int slot);
 
 	static SaveStateDescriptor querySaveMetaInfos(const int slot);
@@ -74,8 +80,8 @@ private:
 	static Common::String buildSaveFilename(const int slot);
 
 	Common::MemoryWriteStreamDynamic *genNAMESection();
-	Common::MemoryWriteStreamDynamic *genMETASection(const Common::String &desc) const;
-	Common::MemoryWriteStreamDynamic *genTHMBSection() const;
+	Common::MemoryWriteStreamDynamic *genMETASection(const Common::String &desc, bool autoSave) const;
+	Common::MemoryWriteStreamDynamic *genTHMBSection(const Graphics::Surface *thumbnail) const;
 	Common::MemoryWriteStreamDynamic *genVARSSection();
 	Common::MemoryWriteStreamDynamic *genVERSSection();
 	Common::MemoryWriteStreamDynamic *genZIPSSection();

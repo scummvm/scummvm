@@ -21,8 +21,11 @@
  */
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
+#define FORBIDDEN_SYMBOL_EXCEPTION_abort
+#define FORBIDDEN_SYMBOL_EXCEPTION_exit
 
 #include "backends/platform/ps2/systemps2.h"
+#include <kernel.h>
 
 void OSystem_PS2::initMutexes(void) {
 	ee_sema_t newSema;

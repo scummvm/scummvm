@@ -116,7 +116,7 @@ bool CComputerScreen::TimerMsg(CTimerMsg *msg) {
 		break;
 
 	case 2: {
-		CChangeMusicMsg musicMsg(CString(), 1);
+		CChangeMusicMsg musicMsg(CString(), MUSIC_STOP);
 		musicMsg.execute("HomeMusicPlayer");
 		playSound(TRANSLATE("a#33.wav", "a#28.wav"));
 		playSound(TRANSLATE("a#31.wav", "a#26.wav"));

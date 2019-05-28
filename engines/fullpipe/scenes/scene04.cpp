@@ -56,7 +56,7 @@ void scene04_speakerCallback(int *phase) {
 
 			if (scene04_speakerPhases[g_vars->scene04_speakerPhase + 6 * g_vars->scene04_speakerVariant] < 0) {
 				g_vars->scene04_speakerPhase = 0;
-				g_vars->scene04_speakerVariant = g_fp->_rnd->getRandomNumber(2);
+				g_vars->scene04_speakerVariant = g_fp->_rnd.getRandomNumber(2);
 			}
 		} else {
 			++g_vars->scene04_speakerPhase;
@@ -97,8 +97,8 @@ void scene04_initScene(Scene *sc) {
 			for (uint i = 0; i < kozsize; i++) {
 				kozmov->setDynamicPhaseIndex(i);
 
-				if (kozmov->_framePosOffsets) {
-					g_vars->scene04_jumpingKozyawki[i] = *kozmov->_framePosOffsets[kozmov->_currDynamicPhaseIndex];
+				if (kozmov->_framePosOffsets.size()) {
+					g_vars->scene04_jumpingKozyawki[i] = kozmov->_framePosOffsets[kozmov->_currDynamicPhaseIndex];
 				} else {
 					kozmov->_somePoint.x = 0;
 					kozmov->_somePoint.y = 0;
@@ -114,8 +114,8 @@ void scene04_initScene(Scene *sc) {
 			for (uint i = 0; i < kozsize; i++) {
 				kozmov->setDynamicPhaseIndex(i);
 
-				if (kozmov->_framePosOffsets) {
-					g_vars->scene04_jumpRotateKozyawki[i] = *kozmov->_framePosOffsets[kozmov->_currDynamicPhaseIndex];
+				if (kozmov->_framePosOffsets.size()) {
+					g_vars->scene04_jumpRotateKozyawki[i] = kozmov->_framePosOffsets[kozmov->_currDynamicPhaseIndex];
 				} else {
 					kozmov->_somePoint.x = 0;
 					kozmov->_somePoint.y = 0;
@@ -275,7 +275,7 @@ void sceneHandler04_checkBigBallClick() {
 
 	if (ball)
 		for (uint i = 0; i < ball->_movements.size(); i++)
-			((Movement *)ball->_movements[i])->_counterMax = 73;
+			ball->_movements[i]->_counterMax = 73;
 
 	g_vars->scene04_bigBallIn = true;
 }
@@ -518,7 +518,7 @@ void sceneHandler04_gotoLadder(ExCommand *ex) {
 		mq->addExCommandToEnd(ex2);
 
 		ExCommand *ex3 = new ExCommand(g_fp->_aniMan->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
-		ex3->_field_14 = 256;
+		ex3->_z = 256;
 		ex3->_messageNum = 0;
 		ex3->_excFlags |= 3;
 		mq->addExCommandToEnd(ex3);
@@ -709,9 +709,9 @@ MessageQueue *sceneHandler04_kozFly6(StaticANIObject *ani) {
 
 	mkQueue.ani = ani;
 	mkQueue.staticsId2 = ST_KZW_SIT;
-	mkQueue.x1 = 397 - 4 * g_fp->_rnd->getRandomNumber(1);
+	mkQueue.x1 = 397 - 4 * g_fp->_rnd.getRandomNumber(1);
 	mkQueue.field_1C = ani->_priority;
-	mkQueue.y1 = g_vars->scene04_bottle->_oy - 4 * g_fp->_rnd->getRandomNumber(1) + 109;
+	mkQueue.y1 = g_vars->scene04_bottle->_oy - 4 * g_fp->_rnd.getRandomNumber(1) + 109;
 	mkQueue.field_10 = 1;
 	mkQueue.flags = 78;
 	mkQueue.movementId = MV_KZW_JUMPROTATE;
@@ -747,8 +747,8 @@ void sceneHandler04_kozMove(Movement *mov, int from, int to, Common::Point *poin
 		mov->setDynamicPhaseIndex(i);
 
 		Common::Point *p;
-		if (mov->_framePosOffsets) {
-			p = mov->_framePosOffsets[mov->_currDynamicPhaseIndex];
+		if (mov->_framePosOffsets.size()) {
+			p = &mov->_framePosOffsets[mov->_currDynamicPhaseIndex];
 		} else {
 			p = &mov->_somePoint;
 			p->x = 0;
@@ -958,7 +958,7 @@ void sceneHandler04_walkKozyawka() {
 void sceneHandler04_bottleUpdateObjects(int off) {
 	for (Common::List<GameObject *>::iterator it = g_vars->scene04_bottleObjList.begin(); it != g_vars->scene04_bottleObjList.end(); ++it) {
 		if ((*it)->_objtype == kObjTypeStaticANIObject) {
-			StaticANIObject *st = (StaticANIObject *)*it;
+			StaticANIObject *st = static_cast<StaticANIObject *>(*it);
 
 			st->setOXY(st->_ox, off + st->_oy);
 		} else {
@@ -1003,9 +1003,7 @@ void sceneHandler04_springWobble() {
 		}
 	}
 
-	Common::Point point;
-
-	int oldpos = g_vars->scene04_spring->getCurrDimensions(point)->y - oldDynIndex;
+	int oldpos = g_vars->scene04_spring->getCurrDimensions().y - oldDynIndex;
 
 	if (g_vars->scene04_dynamicPhaseIndex) {
 		if (!g_vars->scene04_spring->_movement)
@@ -1017,7 +1015,7 @@ void sceneHandler04_springWobble() {
 	}
 
 	if (g_vars->scene04_dynamicPhaseIndex != oldDynIndex) {
-		sceneHandler04_bottleUpdateObjects(oldpos - (g_vars->scene04_spring->getCurrDimensions(point)->y - g_vars->scene04_dynamicPhaseIndex));
+		sceneHandler04_bottleUpdateObjects(oldpos - (g_vars->scene04_spring->getCurrDimensions().y - g_vars->scene04_dynamicPhaseIndex));
 	}
 }
 
@@ -1088,13 +1086,13 @@ void updateSound() {
 		return;
 
 	case 1:
-		if (!g_fp->_mixer->isSoundHandleActive(*g_fp->_soundStream2)) {
+		if (!g_fp->_mixer->isSoundHandleActive(g_fp->_soundStream2)) {
 			g_fp->playOggSound("sc4_loop.ogg", g_fp->_soundStream3);
 			g_vars->scene04_musicStage = 2;
 		}
 		break;
 	case 2:
-		if (!g_fp->_mixer->isSoundHandleActive(*g_fp->_soundStream3)) {
+		if (!g_fp->_mixer->isSoundHandleActive(g_fp->_soundStream3)) {
 			if (g_fp->_stream2playing) { // Looop it
 				g_fp->playOggSound("sc4_loop.ogg", g_fp->_soundStream3);
 			} else {
@@ -1104,7 +1102,7 @@ void updateSound() {
 		}
 		break;
 	case 3:
-		if (!g_fp->_mixer->isSoundHandleActive(*g_fp->_soundStream4)) {
+		if (!g_fp->_mixer->isSoundHandleActive(g_fp->_soundStream4)) {
 			g_vars->scene04_musicStage = 0;
 		}
 		break;
@@ -1129,7 +1127,7 @@ void sceneHandler04_bigBallOut() {
 
 	if (ball && ball->_flags & 4)
 		for (uint i = 0; i < ball->_movements.size(); i++)
-			((Movement *)ball->_movements[i])->_counterMax = 0;
+			ball->_movements[i]->_counterMax = 0;
 
 	g_vars->scene04_bigBallIn = false;
 }
@@ -1140,7 +1138,7 @@ void sceneHandler04_leaveLadder(ExCommand *ex) {
 
 	if (!(g_fp->_aniMan->_flags & 0x100)) {
 		if (getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId)->_objtype == kObjTypeMctlCompound) {
-			MctlCompound *mc = (MctlCompound *)getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId);
+			MctlCompound *mc = static_cast<MctlCompound *>(getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId));
 
 			if (mc->_motionControllers[0]->_movGraphReactObj->pointInRegion(g_fp->_sceneRect.left + ex->_x, g_fp->_sceneRect.top + ex->_y)) {
 				if (g_vars->scene04_ladder->collisionDetection(g_fp->_aniMan)) {
@@ -1255,7 +1253,7 @@ void sceneHandler04_bigBallWalkIn() {
 		 && (!ball || !(ball->_flags & 4))
 		 && g_vars->scene04_ladder->collisionDetection(g_fp->_aniMan) > 3) {
 
-		if (!g_fp->_rnd->getRandomNumber(49)) {
+		if (!g_fp->_rnd.getRandomNumber(49)) {
 			if (g_vars->scene04_bigBallFromLeft)
 				chainQueue(QU_BALL_WALKR, 0);
 			else
@@ -1316,8 +1314,6 @@ void sceneHandler04_testPlank(ExCommand *ex) {
 }
 
 void sceneHandler04_updateBottle() {
-	Common::Point point;
-
 	int yoff;
 
 	if (g_vars->scene04_hand->_movement)
@@ -1325,7 +1321,7 @@ void sceneHandler04_updateBottle() {
 	else
 		yoff = g_vars->scene04_hand->_oy;
 
-	int newy = g_vars->scene04_hand->getSomeXY(point)->y + yoff + 140;
+	int newy = g_vars->scene04_hand->getSomeXY().y + yoff + 140;
 
 	sceneHandler04_bottleUpdateObjects(newy - g_vars->scene04_spring->_oy);
 
@@ -1606,7 +1602,7 @@ int sceneHandler04(ExCommand *ex) {
 				exnew = new ExCommand(0, 35, SND_4_012, 0, 0, 0, 1, 0, 0, 0);
 			}
 
-			exnew->_field_14 = 5;
+			exnew->_z = 5;
 			exnew->_excFlags |= 2;
 			exnew->postMessage();
 			break;

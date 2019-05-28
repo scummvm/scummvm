@@ -87,6 +87,24 @@ bool MohawkEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsRTL);
 }
 
+Common::String MohawkEngine::getDatafileLanguageName(const char *prefix) const {
+	const ADGameFileDescription *fileDesc;
+	for (fileDesc = _gameDescription->desc.filesDescriptions; fileDesc->fileName; fileDesc++) {
+		if (Common::String(fileDesc->fileName).hasPrefix(prefix)) {
+			break;
+		}
+	}
+
+	if (!fileDesc->fileName) {
+		warning("Malformed detection entry");
+
+		return "";
+	}
+
+	size_t prefixLength = strlen(prefix);
+	return Common::String(&fileDesc->fileName[prefixLength], strlen(fileDesc->fileName) - prefixLength - 4);
+}
+
 #ifdef ENABLE_MYST
 
 bool MohawkEngine_Myst::hasFeature(EngineFeature f) const {
@@ -116,19 +134,12 @@ static const PlainGameDescriptor mohawkGames[] = {
 	{"myst", "Myst"},
 	{"makingofmyst", "The Making of Myst"},
 	{"riven", "Riven: The Sequel to Myst"},
-	{"zoombini", "Logical Journey of the Zoombinis"},
 	{"cstime", "Where in Time is Carmen Sandiego?"},
-	{"csworld", "Where in the World is Carmen Sandiego?"},
-	{"csamtrak", "Where in America is Carmen Sandiego? (The Great Amtrak Train Adventure)"},
 	{"carmentq", "Carmen Sandiego's ThinkQuick Challenge"},
 	{"carmentqc", "Carmen Sandiego's ThinkQuick Challenge Custom Question Creator"},
 	{"maggiesfa", "Maggie's Farmyard Adventure"},
-	{"jamesmath", "James Discovers/Explores Math"},
-	{"treehouse", "The Treehouse"},
 	{"greeneggs", "Green Eggs and Ham"},
 	{"seussabc", "Dr Seuss's ABC"},
-	{"1stdegree", "In the 1st Degree"},
-	{"csusa", "Where in the USA is Carmen Sandiego?"},
 	{"tortoise", "Aesop's Fables: The Tortoise and the Hare"},
 	{"arthur", "Arthur's Teacher Trouble"},
 	{"grandma", "Just Grandma and Me"},
@@ -147,7 +158,7 @@ static const PlainGameDescriptor mohawkGames[] = {
 	{"stellaluna", "Stellaluna"},
 	{"sheila", "Sheila Rae, the Brave"},
 	{"rugratsps", "Rugrats Print Shop" },
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 #include "mohawk/detection_tables.h"
@@ -159,7 +170,7 @@ static const char *directoryGlobs[] = {
 	"program",
 	"95instal",
 	"Rugrats Adventure Game",
-	0
+	nullptr
 };
 
 static const ADExtraGuiOptionsMap optionsList[] = {
@@ -184,25 +195,25 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
-	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override {
 		return detectGameFilebased(allFiles, fslist, Mohawk::fileBased);
 	}
 
-	virtual const char *getName() const {
+	const char *getName() const override {
 		return "Mohawk";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "Myst and Riven (C) Cyan Worlds\nMohawk OS (C) Ubisoft";
 	}
 
-	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual SaveStateList listSaves(const char *target) const;
+	bool hasFeature(MetaEngineFeature f) const override;
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	SaveStateList listSaves(const char *target) const override;
 	SaveStateList listSavesForPrefix(const char *prefix, const char *extension) const;
-	virtual int getMaximumSaveSlot() const { return 999; }
-	virtual void removeSaveState(const char *target, int slot) const;
-	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+	int getMaximumSaveSlot() const override { return 999; }
+	void removeSaveState(const char *target, int slot) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
 bool MohawkMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -340,21 +351,12 @@ bool MohawkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 			warning("CSTime support not compiled in");
 			return false;
 #endif
-		case Mohawk::GType_ZOOMBINI:
-		case Mohawk::GType_CSWORLD:
-		case Mohawk::GType_CSAMTRAK:
-		case Mohawk::GType_JAMESMATH:
-		case Mohawk::GType_TREEHOUSE:
-		case Mohawk::GType_1STDEGREE:
-		case Mohawk::GType_CSUSA:
-			warning("Unsupported Mohawk Engine");
-			return false;
 		default:
 			error("Unknown Mohawk Engine");
 		}
 	}
 
-	return (gd != 0);
+	return (gd != nullptr);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(MOHAWK)

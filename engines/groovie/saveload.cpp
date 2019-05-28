@@ -21,6 +21,7 @@
  */
 
 #include "groovie/saveload.h"
+#include "groovie/groovie.h"
 
 #include "common/system.h"
 #include "common/substream.h"
@@ -32,7 +33,7 @@
 namespace Groovie {
 
 int SaveLoad::getMaximumSlot() {
-	return 9;
+	return MAX_SAVES - 1;
 }
 
 bool SaveLoad::isSlotValid(int slot) {
@@ -40,14 +41,15 @@ bool SaveLoad::isSlotValid(int slot) {
 }
 
 Common::String SaveLoad::getSlotSaveName(const Common::String &target, int slot) {
-	return target + ".00" + ('0' + slot);
+	Common::String fileName = Common::String::format("%s.%03d", target.c_str(), slot);
+	return fileName;
 }
 
 SaveStateList SaveLoad::listValidSaves(const Common::String &target) {
 	SaveStateList list;
 
 	// Get the list of savefiles
-	Common::String pattern = target + ".00?";
+	Common::String pattern = Common::String::format("%s.0##", target.c_str());
 	Common::StringArray savefiles = g_system->getSavefileManager()->listSavefiles(pattern);
 
 	// Sort the list of filenames
@@ -56,7 +58,15 @@ SaveStateList SaveLoad::listValidSaves(const Common::String &target) {
 	// Fill the information for the existing savegames
 	Common::StringArray::iterator it = savefiles.begin();
 	while (it != savefiles.end()) {
-		int slot = it->lastChar() - '0';
+		const char *ext = strrchr(it->c_str(), '.');
+		if (!ext)
+			continue;
+
+		int slot = atoi(ext + 1);
+
+		if (!isSlotValid(slot))
+			continue;
+
 		SaveStateDescriptor descriptor;
 		Common::InSaveFile *file = SaveLoad::openForLoading(target, slot, &descriptor);
 		if (file) {
@@ -73,14 +83,14 @@ SaveStateList SaveLoad::listValidSaves(const Common::String &target) {
 Common::InSaveFile *SaveLoad::openForLoading(const Common::String &target, int slot, SaveStateDescriptor *descriptor) {
 	// Validate the slot number
 	if (!isSlotValid(slot)) {
-		return NULL;
+		return nullptr;
 	}
 
 	// Open the savefile
 	Common::String savename = getSlotSaveName(target, slot);
 	Common::InSaveFile *savefile = g_system->getSavefileManager()->openForLoading(savename);
 	if (!savefile) {
-		return NULL;
+		return nullptr;
 	}
 
 	// Read the savefile version
@@ -118,6 +128,8 @@ Common::InSaveFile *SaveLoad::openForLoading(const Common::String &target, int s
 				case 0:
 					break;
 				case 16: // @
+				// fall through intended
+				case 254: // . (generated when pressing space)
 					c = ' ';
 					break;
 				case 244: // $
@@ -145,14 +157,14 @@ Common::InSaveFile *SaveLoad::openForLoading(const Common::String &target, int s
 Common::OutSaveFile *SaveLoad::openForSaving(const Common::String &target, int slot) {
 	// Validate the slot number
 	if (!isSlotValid(slot)) {
-		return NULL;
+		return nullptr;
 	}
 
 	// Open the savefile
 	Common::String savename = getSlotSaveName(target, slot);
 	Common::OutSaveFile *savefile = g_system->getSavefileManager()->openForSaving(savename);
 	if (!savefile) {
-		return NULL;
+		return nullptr;
 	}
 
 	// Write the savefile version

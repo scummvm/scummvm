@@ -45,8 +45,9 @@ GameNebular::GameNebular(MADSEngine *vm)
 }
 
 ProtectionResult GameNebular::checkCopyProtection() {
-	//if (!ConfMan.getBool("copy_protection"))
-	//	return PROTECTION_SUCCEED;
+	// Only show copy protection dialog if explicitly wanted
+	if (!ConfMan.getBool("copy_protection"))
+		return PROTECTION_SUCCEED;
 
 	CopyProtectionDialog *dlg;
 	bool correctAnswer;
@@ -887,7 +888,7 @@ void GameNebular::step() {
 		else
 			++_globals[kTimebombTimer];
 
-		_globals[kTimebombClock] = (int) _scene._frameStartTime;
+		_globals[kTimebombClock] = (int)_scene._frameStartTime;
 	}
 }
 

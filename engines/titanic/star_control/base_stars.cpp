@@ -462,7 +462,7 @@ void CBaseStars::draw4(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClos
 			+ vector._z * pose._row3._z + pose._vector._z;
 		if (tempZ <= minVal)
 			continue;
-	
+
 		tempY = vector._x * pose._row1._y + vector._y * pose._row2._y + vector._z * pose._row3._y + pose._vector._y;
 		tempX = vector._x * pose._row1._x + vector._y * pose._row2._x + vector._z * pose._row3._x + pose._vector._x;
 		total2 = tempY * tempY + tempX * tempX + tempZ * tempZ;

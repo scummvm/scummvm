@@ -174,7 +174,7 @@ const ArchiveMemberPtr InstallShieldCabinet::getMember(const String &name) const
 
 SeekableReadStream *InstallShieldCabinet::createReadStreamForMember(const String &name) const {
 	if (!_map.contains(name))
-		return 0;
+		return nullptr;
 
 	const FileEntry &entry = _map[name];
 
@@ -195,7 +195,7 @@ SeekableReadStream *InstallShieldCabinet::createReadStreamForMember(const String
 	if (!result) {
 		warning("failed to inflate CAB file '%s'", name.c_str());
 		free(dst);
-		return 0;
+		return nullptr;
 	}
 
 	return new MemoryReadStream(dst, entry.uncompressedSize, DisposeAfterUse::YES);

@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2017 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -43,7 +43,7 @@
 #error Incompatible setting MT32EMU_API_TYPE=1
 #elif MT32EMU_API_TYPE == 2 && (MT32EMU_EXPORTS_TYPE == 0)
 #error Incompatible setting MT32EMU_API_TYPE=2
-#elif MT32EMU_API_TYPE == 3 && (MT32EMU_EXPORTS_TYPE == 0)
+#elif MT32EMU_API_TYPE == 3 && (MT32EMU_EXPORTS_TYPE == 0 || MT32EMU_EXPORTS_TYPE == 2)
 #error Incompatible setting MT32EMU_API_TYPE=3
 #endif
 #else /* #ifdef MT32EMU_API_TYPE */

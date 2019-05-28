@@ -53,7 +53,7 @@ bool CViewAutoSoundPlayer::EnterViewMsg(CEnterViewMsg *msg) {
 
 		if (_enabled) {
 			CChangeMusicMsg changeMsg;
-			changeMsg._flags = 1;
+			changeMsg._action = MUSIC_STOP;
 			changeMsg.execute(room, CAutoMusicPlayer::_type,
 				MSGFLAG_CLASS_DEF |MSGFLAG_BREAK_IF_HANDLED | MSGFLAG_SCAN);
 		}
@@ -72,7 +72,7 @@ bool CViewAutoSoundPlayer::LeaveViewMsg(CLeaveViewMsg *msg) {
 
 		if (_enabled) {
 			CChangeMusicMsg changeMsg;
-			changeMsg._flags = 2;
+			changeMsg._action = MUSIC_START;
 			changeMsg.execute(room, CAutoMusicPlayer::_type,
 				MSGFLAG_CLASS_DEF | MSGFLAG_BREAK_IF_HANDLED | MSGFLAG_SCAN);
 		}

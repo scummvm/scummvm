@@ -68,6 +68,7 @@
 
 ; Common datafiles needed for some games
 "..\..\..\..\dists\engine-data\drascula.dat"-"c:\shared\scummvm\drascula.dat"
+"..\..\..\..\dists\engine-data\fonts.dat"-"c:\shared\scummvm\fonts.dat"
 "..\..\..\..\dists\engine-data\hugo.dat"-"c:\shared\scummvm\hugo.dat"
 "..\..\..\..\dists\engine-data\kyra.dat"-"c:\shared\scummvm\kyra.dat"
 "..\..\..\..\dists\engine-data\lure.dat"-"c:\shared\scummvm\lure.dat"
@@ -83,6 +84,7 @@
 "..\..\..\vkeybd\packs\vkeybd_small.zip"-"c:\shared\scummvm\vkeybd_small.zip"
 "..\..\..\..\gui\themes\translations.dat"-"c:\shared\scummvm\translations.dat"
 "..\..\..\..\gui\themes\scummmodern.zip"-"c:\shared\scummvm\scummmodern.zip"
+"..\..\..\..\gui\themes\scummremastered.zip"-"c:\shared\scummvm\scummremastered.zip"
 
 ; Config/log files: 'empty' will automagically be removed on uninstall
 ""-"c:\shared\scummvm\scummvm.ini",FILENULL

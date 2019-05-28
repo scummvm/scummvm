@@ -60,16 +60,15 @@ PSPSaveFileManager::PSPSaveFileManager(const Common::String &defaultSavepath)
 */
 
 void PSPSaveFileManager::checkPath(const Common::FSNode &dir) {
-	const char *savePath = dir.getPath().c_str();
 	clearError();
 
 	PowerMan.beginCriticalSection();
 
 	//check if the save directory exists
-	SceUID fd = sceIoDopen(savePath);
+	SceUID fd = sceIoDopen(dir.getPath().c_str());
 	if (fd < 0) {
 		//No? then let's create it.
-		sceIoMkdir(savePath, 0777);
+		sceIoMkdir(dir.getPath().c_str(), 0777);
 	} else {
 		//it exists, so close it again.
 		sceIoDclose(fd);

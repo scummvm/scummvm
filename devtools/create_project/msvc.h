@@ -29,9 +29,11 @@ namespace CreateProjectTool {
 
 class MSVCProvider : public ProjectProvider {
 public:
-	MSVCProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version);
+	MSVCProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version, const MSVCVersion &msvcVersion);
 
 protected:
+	const MSVCVersion _msvcVersion;
+
 	StringList _enableLanguageExtensions;
 	StringList _disableEditAndContinue;
 
@@ -70,7 +72,7 @@ protected:
 	 * @param setup Description of the desired build setup.
 	 * @param isRelease       Type of property file
 	 * @param isWin32         Bitness of property file
-	 * @param enableAnalysis  PREfast support
+	 * @param configuration   Name of property file
 	 */
 	virtual void createBuildProp(const BuildSetup &setup, bool isRelease, bool isWin32, std::string configuration) = 0;
 
@@ -78,16 +80,6 @@ protected:
 	 * Get the file extension for property files
 	 */
 	virtual const char *getPropertiesExtension() = 0;
-
-	/**
-	 * Get the Visual Studio version (used by the VS shell extension to launch the correct VS version)
-	 */
-	virtual int getVisualStudioVersion() = 0;
-
-	/**
-	 * Get the Solution version (used in the sln file header)
-	 */
-	virtual int getSolutionVersion();
 
 	/**
 	 * Get the command line for the revision tool (shared between all Visual Studio based providers)
@@ -104,12 +96,12 @@ protected:
 	/**
 	 * Get the command line for copying data files to the build directory.
 	 *
-	 * @param	isWin32		   	Bitness of property file.
-	 * @param	createInstaller	true to NSIS create installer
+	 * @param	isWin32	Bitness of property file.
+	 * @param	setup	Description of the desired build setup.
 	 *
 	 * @return	The post build event.
 	 */
-	std::string getPostBuildEvent(bool isWin32, bool createInstaller) const;
+	std::string getPostBuildEvent(bool isWin32, const BuildSetup &setup) const;
 };
 
 } // End of CreateProjectTool namespace

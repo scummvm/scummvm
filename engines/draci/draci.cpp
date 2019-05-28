@@ -150,7 +150,7 @@ static SoundArchive* openAnyPossibleDubbing() {
 
 int DraciEngine::init() {
 	// Initialize graphics using following:
-	initGraphics(kScreenWidth, kScreenHeight, false);
+	initGraphics(kScreenWidth, kScreenHeight);
 
 	// Open game's archives
 	_initArchive = new BArchive(initPath);

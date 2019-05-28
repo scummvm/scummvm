@@ -872,8 +872,8 @@ ScriptChangedResult BarbotScript::scriptChanged(const TTroomScript *roomScript, 
 }
 
 int BarbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
-		uint val, uint tagId, uint remainder) {
-	switch (tagId) {
+		uint tag1, uint tag2, uint remainder) {
+	switch (tag2) {
 	case MKTAG('A', 'D', 'V', 'T'):
 	case MKTAG('A', 'R', 'T', 'I'):
 	case MKTAG('A', 'R', 'T', 'Y'):
@@ -894,7 +894,7 @@ int BarbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence *
 	case MKTAG('T', 'E', 'A', 'M'):
 	case MKTAG('T', 'U', 'S', 'H'):
 	case MKTAG('W', 'W', 'E', 'B'):
-		tagId = MKTAG('E', 'N', 'T', 'N');
+		tag2 = MKTAG('E', 'N', 'T', 'N');
 		break;
 	case MKTAG('A', 'U', 'T', 'H'):
 	case MKTAG('B', 'A', 'R', 'K'):
@@ -923,61 +923,61 @@ int BarbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence *
 	case MKTAG('T', 'D', 'V', 'P'):
 	case MKTAG('T', 'W', 'A', 'T'):
 	case MKTAG('W', 'E', 'A', 'T'):
-		tagId = MKTAG('P', 'R', 'S', 'N');
+		tag2 = MKTAG('P', 'R', 'S', 'N');
 		break;
 	case MKTAG('C', 'H', 'S', 'E'):
 	case MKTAG('C', 'M', 'N', 'T'):
 	case MKTAG('F', 'I', 'L', 'M'):
 	case MKTAG('J', 'F', 'O', 'D'):
 	case MKTAG('L', 'I', 'Q', 'D'):
-		tagId = MKTAG('F', 'O', 'O', 'D');
+		tag2 = MKTAG('F', 'O', 'O', 'D');
 		break;
 	case MKTAG('C', 'R', 'M', 'N'):
 	case MKTAG('C', 'S', 'P', 'Y'):
 	case MKTAG('U', 'B', 'A', 'D'):
-		tagId = MKTAG('V', 'B', 'A', 'D');
+		tag2 = MKTAG('V', 'B', 'A', 'D');
 		break;
 	case MKTAG('E', 'A', 'R', 'T'):
 	case MKTAG('H', 'O', 'M', 'E'):
 	case MKTAG('N', 'P', 'L', 'C'):
 	case MKTAG('P', 'L', 'A', 'C'):
 	case MKTAG('P', 'L', 'A', 'N'):
-		tagId = MKTAG('P', 'L', 'A', 'C');
+		tag2 = MKTAG('P', 'L', 'A', 'C');
 		break;
 	case MKTAG('F', 'A', 'U', 'N'):
 	case MKTAG('F', 'I', 'S', 'H'):
 	case MKTAG('F', 'L', 'O', 'R'):
-		tagId = MKTAG('N', 'A', 'T', 'R');
+		tag2 = MKTAG('N', 'A', 'T', 'R');
 		break;
 	case MKTAG('H', 'H', 'L', 'D'):
 	case MKTAG('T', 'O', 'Y', 'S'):
 	case MKTAG('W', 'E', 'A', 'P'):
-		tagId = MKTAG('M', 'A', 'C', 'H');
+		tag2 = MKTAG('M', 'A', 'C', 'H');
 			break;
 	case MKTAG('M', 'L', 'T', 'Y'):
 	case MKTAG('P', 'G', 'R', 'P'):
 	case MKTAG('P', 'T', 'I', 'C'):
-		tagId = MKTAG('G', 'R', 'U', 'P');
+		tag2 = MKTAG('G', 'R', 'U', 'P');
 		break;
 	case MKTAG('P', 'K', 'U', 'P'):
 	case MKTAG('S', 'E', 'X', '1'):
 	case MKTAG('S', 'W', 'E', 'R'):
-		tagId = MKTAG('R', 'U', 'D', 'E');
+		tag2 = MKTAG('R', 'U', 'D', 'E');
 		break;
 	case MKTAG('P', 'H', 'I', 'L'):
 	case MKTAG('R', 'C', 'K', 'T'):
 	case MKTAG('S', 'C', 'I', 'E'):
-		tagId = MKTAG('S', 'C', 'I', 'E');
+		tag2 = MKTAG('S', 'C', 'I', 'E');
 		break;
 	case MKTAG('T', 'R', 'A', '2'):
 	case MKTAG('T', 'R', 'A', '3'):
-		tagId = MKTAG('T', 'R', 'A', 'V');
+		tag2 = MKTAG('T', 'R', 'A', 'V');
 		break;
 	default:
 		break;
 	}
 
-	if (val == 36) {
+	if (tag1 == 36) {
 		switch (getValue(1)) {
 		case 1:
 			return setResponse(getDialogueId(220837), -1);
@@ -987,11 +987,11 @@ int BarbotScript::handleQuote(const TTroomScript *roomScript, const TTsentence *
 		default:
 			return setResponse(getDialogueId(220858), -1);
 		}
-	} else if (val == 61 && getValue(1) > 2) {
+	} else if (tag1 == 61 && getValue(1) > 2) {
 		return setResponse(getDialogueId(222301), -1);
 	}
 
-	return TTnpcScript::handleQuote(roomScript, sentence, val, tagId, remainder);
+	return TTnpcScript::handleQuote(roomScript, sentence, tag1, tag2, remainder);
 }
 
 int BarbotScript::updateState(uint oldId, uint newId, int index) {
@@ -1049,124 +1049,136 @@ uint BarbotScript::getDialsBitset() const {
 int BarbotScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence) {
 	uint id = 0;
 
-	if (val1 > 0x200) {
-		switch (val1 - 0x201) {
-		case 0:
-			if (getValue(4) != 2)
-				id = 250738;
-			break;
-		case 1:
-			if (getValue(4) != 3)
-				id = 250738;
-			break;
-		case 2:
-			if (getValue(4) != 0)
-				id = 250738;
-			break;
-		default:
-			break;
+	int index = val1;
+	if (g_language == Common::DE_DEU && !(val1 >= 512 && val1 <= 515))
+		index -= 1000;
+
+	switch (index) {
+	case 2:
+		if (getValue(1) != 1)
+			return 1;
+		break;
+
+	case 3:
+		if (getValue(1) != 2)
+			return 1;
+		break;
+
+	case 4:
+		if (getValue(1) != 3)
+			return 1;
+		break;
+
+	case 5:
+		if (getValue(1) == 3)
+			return 1;
+		break;
+
+	case 6:
+		if (sentence->contains("do not") || sentence->contains("have no") ||
+			sentence->contains("got no"))
+			return 1;
+		break;
+
+	case 7:
+		if (!sentence->contains(TRANSLATE("do not", "idem")) && !sentence->contains(TRANSLATE("have no", "habe kein")) &&
+				!sentence->contains("got no"))
+			return 1;
+		break;
+
+	case 8:
+		if (sentence->_field38 == 2)
+			return 1;
+		break;
+
+	case 9: {
+		uint val = CTrueTalkManager::getStateValue(3);
+		bool lemonFlag = (val & 1) != 0;
+		bool puretFlag = (val & 4) != 0;
+		bool tvFlag = (val & 8) != 0;
+
+		if (puretFlag) {
+			if (!lemonFlag) {
+				id = tvFlag ? 50369 : 250085;
+				break;
+			} else if (!tvFlag) {
+				id = 250627;
+			}
+		} else {
+			if (lemonFlag) {
+				id = tvFlag ? 50367 : 50365;
+			} else if (tvFlag) {
+				id = 50370;
+			}
 		}
-	} else if (val1 == 0x200) {
+		break;
+	}
+
+	case 10: {
+		uint val = CTrueTalkManager::getStateValue(3);
+		bool lemonFlag = (val & 1) != 0;
+		bool puretFlag = (val & 4) != 0;
+		bool tvFlag = (val & 8) != 0;
+
+		if (lemonFlag && puretFlag && tvFlag) {
+			addResponse(getDialogueId(251027));
+			applyResponse();
+			CTrueTalkManager::triggerAction(7, 0);
+			return 2;
+		} else {
+			if (getDialRegion(1) == 1) {
+				if (*srcIdP != 251650)
+					id = 251651;
+			} else {
+				addResponse(getDialRegion(0) != 0 ? 51444 : 51530);
+				applyResponse();
+				return 2;
+			}
+		}
+		break;
+	}
+
+	case 11:
+		if (CTrueTalkManager::getStateValue(2) != 0) {
+			CTrueTalkManager::triggerAction(6, 0);
+			id = 251003;
+		}
+		break;
+
+	case 12:
+		if (getDialRegion(1) == 0) {
+			addResponse(getDialogueId(251871));
+			applyResponse();
+			return 2;
+		} else if (getRandomNumber(100) > 25 && addRandomResponse(false)) {
+			return 2;
+		}
+		break;
+
+	case 512:
 		if (getValue(4) != 1)
 			id = 250738;
-	} else {
-		switch (val1) {
-		case 2:
-			if (getValue(1) != 1)
-				return 1;
-			break;
-		case 3:
-			if (getValue(1) != 2)
-				return 1;
-			break;
-		case 4:
-			if (getValue(1) != 3)
-				return 1;
-			break;
-		case 5:
-			if (getValue(1) == 3)
-				return 1;
-			break;
-		case 6:
-			if (sentence->contains("do not") || sentence->contains("have no") ||
-					sentence->contains("got no"))
-				return 1;
-			break;
-		case 7:
-			if (!sentence->contains("do not") && !sentence->contains("have no") &&
-					!sentence->contains("got no"))
-				return 1;
-			break;
-		case 8:
-			if (sentence->_field38 == 2)
-				return 1;
-			break;
-		case 9: {
-			uint val = CTrueTalkManager::getStateValue(3);
-			bool lemonFlag = (val & 1) != 0;
-			bool puretFlag = (val & 4) != 0;
-			bool tvFlag = (val & 8) != 0;
+		break;
 
-			if (puretFlag) {
-				if (!lemonFlag) {
-					id = tvFlag ? 50369 : 250085;
-					break;
-				} else if (!tvFlag) {
-					id = 250627;
-				}
-			} else {
-				if (lemonFlag) {
-					id = tvFlag ? 50367 : 50365;
-				} else if (tvFlag) {
-					id = 50370;
-				}
-			}
-			break;
-		}
+	case 513:
+		if (getValue(4) != 2)
+			id = 250738;
+		break;
 
-		case 10: {
-			uint val = CTrueTalkManager::getStateValue(3);
-			bool lemonFlag = (val & 1) != 0;
-			bool puretFlag = (val & 4) != 0;
-			bool tvFlag = (val & 8) != 0;
+	case 514:
+		if (getValue(4) != 3)
+			id = 250738;
+		break;
 
-			if (lemonFlag && puretFlag && tvFlag) {
-				addResponse(getDialogueId(251027));
-				applyResponse();
-				CTrueTalkManager::triggerAction(7, 0);
-				return 2;
-			} else {
-				if (getDialRegion(1) == 1) {
-					if (*srcIdP != 251650)
-						id = 251651;
-				} else {
-					addResponse(getDialRegion(0) != 0 ? 51444 : 51530);
-					applyResponse();
-					return 2;
-				}
-			}
-			break;
-		}
+	case 515:
+		if (getValue(4) != 0)
+			id = 250738;
+		break;
 
-		case 11:
-			if (CTrueTalkManager::getStateValue(2) != 0) {
-				CTrueTalkManager::triggerAction(6, 0);
-				id = 251003;
-			}
-			break;
-
-		case 12:
-			if (getDialRegion(1) == 0) {
-				addResponse(getDialogueId(251871));
-				applyResponse();
-				return 2;
-			} else if (getRandomNumber(100) > 25 && addRandomResponse(false)) {
-				return 2;
-			}
-
-		default:
-			break;
-		}
+	default:
+		if (g_language == Common::DE_DEU)
+			return TTnpcScript::doSentenceEntry(val1, srcIdP, roomScript, sentence);
+		break;
 	}
 
 	if (id) {

@@ -103,7 +103,7 @@ extern "C" uint32   *RGBtoYUV;
  */
 template<typename ColorMask>
 static void HQ2x_implementation(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	register int w1, w2, w3, w4, w5, w6, w7, w8, w9;
+	int w1, w2, w3, w4, w5, w6, w7, w8, w9;
 
 	const uint32 nextlineSrc = srcPitch / sizeof(uint16);
 	const uint16 *p = (const uint16 *)srcPtr;

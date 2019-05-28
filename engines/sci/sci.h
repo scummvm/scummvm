@@ -58,6 +58,8 @@ namespace Sci {
 #define GAMEOPTION_ENABLE_BLACK_LINED_VIDEO GUIO_GAMEOPTIONS9
 #define GAMEOPTION_HQ_VIDEO                 GUIO_GAMEOPTIONS10
 #define GAMEOPTION_ENABLE_CENSORING         GUIO_GAMEOPTIONS11
+#define GAMEOPTION_LARRYSCALE               GUIO_GAMEOPTIONS12
+#define GAMEOPTION_UPSCALE_VIDEOS           GUIO_GAMEOPTIONS13
 
 struct EngineState;
 class Vocabulary;
@@ -209,13 +211,15 @@ enum SciGameId {
 	GID_SQ6,
 	GID_TORIN,
 
+	GID_CATDATE,
+
 	GID_FANMADE	// FIXME: Do we really need/want this?
 };
 
 /**
  * SCI versions
  * For more information, check here:
- * http://wiki.scummvm.org/index.php/Sierra_Game_Versions#SCI_Games
+ * https://wiki.scummvm.org/index.php/Sierra_Game_Versions#SCI_Games
  */
 enum SciVersion {
 	SCI_VERSION_NONE,
@@ -224,7 +228,7 @@ enum SciVersion {
 	SCI_VERSION_01, // KQ1 and multilingual games (S.old.*)
 	SCI_VERSION_1_EGA_ONLY, // SCI 1 EGA with parser (i.e. QFG2 only)
 	SCI_VERSION_1_EARLY, // KQ5 floppy, SQ4 floppy, XMAS card 1990, Fairy tales, Jones floppy
-	SCI_VERSION_1_MIDDLE, // LSL1, Jones CD
+	SCI_VERSION_1_MIDDLE, // LSL1, Jones CD, LSL3 & SQ3 multilingual Amiga
 	SCI_VERSION_1_LATE, // Dr. Brain 1, EcoQuest 1, Longbow, PQ3, SQ1, LSL5, KQ5 CD
 	SCI_VERSION_1_1, // Dr. Brain 2, EcoQuest 1 CD, EcoQuest 2, KQ6, QFG3, SQ4CD, XMAS 1992 and many more
 	SCI_VERSION_2, // GK1, PQ4 floppy, QFG4 floppy
@@ -279,6 +283,7 @@ public:
 	/** Returns true if the game's original platform is big-endian. */
 	bool isBE() const;
 
+	bool hasParser() const;
 	bool hasMacIconBar() const;
 
 	inline ResourceManager *getResMan() const { return _resMan; }
@@ -315,7 +320,7 @@ public:
 	void scriptDebug();
 	bool checkExportBreakpoint(uint16 script, uint16 pubfunct);
 	bool checkSelectorBreakpoint(BreakpointType breakpointType, reg_t send_obj, int selector);
-	bool checkAddressBreakpoint(const reg32_t &address);
+	bool checkAddressBreakpoint(const reg_t &address);
 
 public:
 	bool checkKernelBreakpoint(const Common::String &name);

@@ -28,6 +28,7 @@
 #include "common/system.h"
 
 #include "gui/browser.h"
+#include "gui/gui-manager.h"
 #include "gui/message.h"
 #ifdef ENABLE_EVENTRECORDER
 #include "gui/onscreendialog.h"
@@ -37,6 +38,7 @@
 #include "gui/widgets/edittext.h"
 #include "gui/widgets/tab.h"
 #include "gui/widgets/popup.h"
+#include "gui/widgets/scrollcontainer.h"
 
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 #include "backends/cloud/cloudmanager.h"
@@ -71,7 +73,9 @@ enum {
 	kCmdExtraPathClear = 'PEXC',
 	kCmdGameBrowser = 'PGME',
 	kCmdSaveBrowser = 'PSAV',
-	kCmdSavePathClear = 'PSAC'
+	kCmdSavePathClear = 'PSAC',
+
+	kGraphicsTabContainerReflowCmd = 'gtcr'
 };
 
 /*
@@ -94,10 +98,10 @@ protected:
 	}
 };
 
-EditGameDialog::EditGameDialog(const String &domain, const String &desc)
+EditGameDialog::EditGameDialog(const String &domain)
 	: OptionsDialog(domain, "GameOptions") {
 	// Retrieve all game specific options.
-	const EnginePlugin *plugin = 0;
+	const Plugin *plugin = nullptr;
 	// To allow for game domains without a gameid.
 	// TODO: Is it intentional that this is still supported?
 	String gameId(ConfMan.get("gameid", domain));
@@ -105,9 +109,9 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 		gameId = domain;
 	// Retrieve the plugin, since we need to access the engine's MetaEngine
 	// implementation.
-	EngineMan.findGame(gameId, &plugin);
+	PlainGameDescriptor pgd = EngineMan.findGame(gameId, &plugin);
 	if (plugin) {
-		_engineOptions = (*plugin)->getExtraGuiOptions(domain);
+		_engineOptions = plugin->get<MetaEngine>().getExtraGuiOptions(domain);
 	} else {
 		warning("Plugin for target \"%s\" not found! Game specific settings might be missing", domain.c_str());
 	}
@@ -119,8 +123,8 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 
 	// GAME: Determine the description string
 	String description(ConfMan.get("description", domain));
-	if (description.empty() && !desc.empty()) {
-		description = desc;
+	if (description.empty() && pgd.description) {
+		description = pgd.description;
 	}
 
 	// GUI:  Add tab widget
@@ -182,13 +186,16 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	// 3) The graphics tab
 	//
 	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? _("Graphics") : _("GFX"));
+	ScrollContainerWidget *graphicsContainer = new ScrollContainerWidget(tab, "GameOptions_Graphics.Container", kGraphicsTabContainerReflowCmd);
+	graphicsContainer->setBackgroundType(ThemeEngine::kDialogBackgroundNone);
+	graphicsContainer->setTarget(this);
 
 	if (g_system->getOverlayWidth() > 320)
-		_globalGraphicsOverride = new CheckboxWidget(tab, "GameOptions_Graphics.EnableTabCheckbox", _("Override global graphic settings"), 0, kCmdGlobalGraphicsOverride);
+		_globalGraphicsOverride = new CheckboxWidget(graphicsContainer, "GameOptions_Graphics_Container.EnableTabCheckbox", _("Override global graphic settings"), 0, kCmdGlobalGraphicsOverride);
 	else
-		_globalGraphicsOverride = new CheckboxWidget(tab, "GameOptions_Graphics.EnableTabCheckbox", _c("Override global graphic settings", "lowres"), 0, kCmdGlobalGraphicsOverride);
+		_globalGraphicsOverride = new CheckboxWidget(graphicsContainer, "GameOptions_Graphics_Container.EnableTabCheckbox", _c("Override global graphic settings", "lowres"), 0, kCmdGlobalGraphicsOverride);
 
-	addGraphicControls(tab, "GameOptions_Graphics.");
+	addGraphicControls(graphicsContainer, "GameOptions_Graphics_Container.");
 
 	//
 	// 4) The audio tab
@@ -293,6 +300,11 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	new ButtonWidget(this, "GameOptions.Ok", _("OK"), 0, kOKCmd);
 }
 
+void EditGameDialog::setupGraphicsTab() {
+	OptionsDialog::setupGraphicsTab();
+	_globalGraphicsOverride->setVisible(true);
+}
+
 void EditGameDialog::open() {
 	OptionsDialog::open();
 
@@ -383,35 +395,35 @@ void EditGameDialog::open() {
 
 void EditGameDialog::apply() {
 	ConfMan.set("description", _descriptionWidget->getEditString(), _domain);
-	
+
 	Common::Language lang = (Common::Language)_langPopUp->getSelectedTag();
 	if (lang < 0)
 		ConfMan.removeKey("language", _domain);
 	else
 		ConfMan.set("language", Common::getLanguageCode(lang), _domain);
-	
+
 	String gamePath(_gamePathWidget->getLabel());
 	if (!gamePath.empty())
 		ConfMan.set("path", gamePath, _domain);
-	
+
 	String extraPath(_extraPathWidget->getLabel());
 	if (!extraPath.empty() && (extraPath != _c("None", "path")))
 		ConfMan.set("extrapath", extraPath, _domain);
 	else
 		ConfMan.removeKey("extrapath", _domain);
-	
+
 	String savePath(_savePathWidget->getLabel());
 	if (!savePath.empty() && (savePath != _("Default")))
 		ConfMan.set("savepath", savePath, _domain);
 	else
 		ConfMan.removeKey("savepath", _domain);
-	
+
 	Common::Platform platform = (Common::Platform)_platformPopUp->getSelectedTag();
 	if (platform < 0)
 		ConfMan.removeKey("platform", _domain);
 	else
 		ConfMan.set("platform", Common::getPlatformCode(platform), _domain);
-	
+
 	// Set the state of engine-specific checkboxes
 	for (uint i = 0; i < _engineOptions.size(); i++) {
 		ConfMan.setBool(_engineOptions[i].configOption, _engineCheckboxes[i]->getState(), _domain);
@@ -424,26 +436,26 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	switch (cmd) {
 	case kCmdGlobalGraphicsOverride:
 		setGraphicSettingsState(data != 0);
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 	case kCmdGlobalAudioOverride:
 		setAudioSettingsState(data != 0);
 		setSubtitleSettingsState(data != 0);
 		if (_globalVolumeOverride == NULL)
 			setVolumeSettingsState(data != 0);
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 	case kCmdGlobalMIDIOverride:
 		setMIDISettingsState(data != 0);
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 	case kCmdGlobalMT32Override:
 		setMT32SettingsState(data != 0);
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 	case kCmdGlobalVolumeOverride:
 		setVolumeSettingsState(data != 0);
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 	case kCmdChooseSoundFontCmd:
 	{
@@ -459,7 +471,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			else
 				_soundFontClearButton->setEnabled(false);
 
-			draw();
+			g_gui.scheduleTopDialogRedraw();
 		}
 		break;
 	}
@@ -477,9 +489,9 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			// FSList files = dir.listDir(FSNode::kListFilesOnly);
 
 			_gamePathWidget->setLabel(dir.getPath());
-			draw();
+			g_gui.scheduleTopDialogRedraw();
 		}
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 	}
 
@@ -491,9 +503,9 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
 			_extraPathWidget->setLabel(dir.getPath());
-			draw();
+			g_gui.scheduleTopDialogRedraw();
 		}
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 	}
 	// Change path for stored save game (perm and temp) data
@@ -508,9 +520,9 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			MessageDialog warningMessage(_("Saved games sync feature doesn't work with non-default directories. If you want your saved games to sync, use default directory."));
 			warningMessage.runModal();
 #endif
-			draw();
+			g_gui.scheduleTopDialogRedraw();
 		}
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 	}
 

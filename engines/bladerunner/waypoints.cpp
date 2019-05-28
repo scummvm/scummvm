@@ -21,71 +21,94 @@
  */
 
 #include "bladerunner/waypoints.h"
+
+#include "bladerunner/savefile.h"
+
 namespace BladeRunner {
 
 Waypoints::Waypoints(BladeRunnerEngine *vm, int count) {
 	_vm = vm;
 	_count = count;
-	_waypoints = new Waypoint[count];
+	_waypoints.resize(count);
 }
 
-Waypoints::~Waypoints() {
-	delete[] _waypoints;
-}
-
-void Waypoints::getXYZ(int waypointId, float *x, float *y, float *z) {
+void Waypoints::getXYZ(int waypointId, float *x, float *y, float *z) const {
 	*x = 0;
 	*y = 0;
 	*z = 0;
 
-	if (waypointId < 0 || waypointId >= _count || !_waypoints[waypointId]._present)
+	if (waypointId < 0 || waypointId >= _count || !_waypoints[waypointId].present) {
 		return;
+	}
 
-	*x = _waypoints[waypointId]._position.x;
-	*y = _waypoints[waypointId]._position.y;
-	*z = _waypoints[waypointId]._position.z;
+	*x = _waypoints[waypointId].position.x;
+	*y = _waypoints[waypointId].position.y;
+	*z = _waypoints[waypointId].position.z;
 }
 
-int Waypoints::getSetId(int waypointId) {
-	if (waypointId < 0 || waypointId >= _count || !_waypoints[waypointId]._present)
+int Waypoints::getSetId(int waypointId) const {
+	if (waypointId < 0 || waypointId >= _count || !_waypoints[waypointId].present) {
 		return -1;
-	return _waypoints[waypointId]._setId;
+	}
+	return _waypoints[waypointId].setId;
 }
 
 bool Waypoints::set(int waypointId, int setId, Vector3 position) {
-	if (waypointId < 0 || waypointId >= _count)
+	if (waypointId < 0 || waypointId >= _count) {
 		return false;
+	}
 
-	_waypoints[waypointId]._setId = setId;
-	_waypoints[waypointId]._position = position;
-	_waypoints[waypointId]._present = true;
+	_waypoints[waypointId].setId = setId;
+	_waypoints[waypointId].position = position;
+	_waypoints[waypointId].present = true;
 
 	return true;
 }
 
 bool Waypoints::reset(int waypointId) {
-	if (waypointId < 0 || waypointId >= _count)
+	if (waypointId < 0 || waypointId >= _count) {
 		return false;
+	}
 
-	_waypoints[waypointId]._setId = -1;
-	_waypoints[waypointId]._position.x = 0;
-	_waypoints[waypointId]._position.y = 0;
-	_waypoints[waypointId]._position.z = 0;
-	_waypoints[waypointId]._present = false;
+	_waypoints[waypointId].setId = -1;
+	_waypoints[waypointId].position.x = 0;
+	_waypoints[waypointId].position.y = 0;
+	_waypoints[waypointId].position.z = 0;
+	_waypoints[waypointId].present = false;
 
 	return true;
 }
 
-float Waypoints::getX(int waypointId) {
-	return _waypoints[waypointId]._position.x;
+float Waypoints::getX(int waypointId) const {
+	return _waypoints[waypointId].position.x;
 }
 
-float Waypoints::getY(int waypointId) {
-	return _waypoints[waypointId]._position.y;
+float Waypoints::getY(int waypointId) const {
+	return _waypoints[waypointId].position.y;
 }
 
-float Waypoints::getZ(int waypointId) {
-	return _waypoints[waypointId]._position.z;
+float Waypoints::getZ(int waypointId) const {
+	return _waypoints[waypointId].position.z;
+}
+
+void Waypoints::save(SaveFileWriteStream &f) {
+	f.writeInt(_count);
+	for (int i = 0; i < _count; ++i) {
+		Waypoint &w = _waypoints[i];
+		f.writeInt(w.setId);
+		f.writeVector3(w.position);
+		f.writeInt(w.present);
+	}
+}
+
+void Waypoints::load(SaveFileReadStream &f) {
+	_count = f.readInt();
+	for (int i = 0; i < _count; ++i) {
+		Waypoint &w = _waypoints[i];
+		w.setId = f.readInt();
+		w.position = f.readVector3();
+		w.present = f.readInt();
+	}
 }
 
 } // End of namespace BladeRunner

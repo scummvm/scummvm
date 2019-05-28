@@ -191,6 +191,7 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 	// Thumbnail
 	// First draw scene without save dialog
 	int oldMode = _interface->getMode();
+	_render->clearFlag(RF_RENDERPAUSE); // Don't show paused game message in saved thumbnail
 	_interface->setMode(kPanelMain);
 	_render->drawScene();
 

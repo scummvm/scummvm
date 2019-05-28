@@ -29,6 +29,7 @@
 #include "graphics/pixelformat.h"
 #include "graphics/screen.h"
 #include "video/avi_decoder.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -57,7 +58,7 @@ AVISurface::AVISurface(const CResourceKey &key) : _movieName(key.getString()) {
 	_decoder = new AVIDecoder();
 
 	// Load the video into it
-	if (_movieName == "y222.avi") {
+	if (_movieName == TRANSLATE("y222.avi", "y237.avi")) {
 		// The y222.avi is the bells animation for the music room.
 		// It needs on the fly fixing for the video header
 		_decoder->loadStream(new y222());
@@ -488,7 +489,12 @@ Graphics::ManagedSurface *AVISurface::duplicateTransparency() const {
 bool AVISurface::playCutscene(const Rect &r, uint startFrame, uint endFrame) {
 	if (g_vm->shouldQuit())
 		return false;
-	
+
+	// TODO: Fixes slight "jumping back" when rotating in place in Top Of Well
+	// balcony between two elevators. Need a more generalized fix at some point
+	if (_movieName == "z48.avi")
+		_currentFrame = -1;
+
 	if (_currentFrame != ((int)startFrame - 1) || startFrame == 0) {
 		// Start video playback at the desired starting frame
 		if (startFrame > 0) {
@@ -547,7 +553,7 @@ uint AVISurface::getBitDepth() const {
 
 y222::y222() {
 	_innerStream = new File();
-	_innerStream->open("y222.avi");
+	_innerStream->open(TRANSLATE("y222.avi", "y237.avi"));
 }
 
 y222::~y222() {

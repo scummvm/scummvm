@@ -92,6 +92,10 @@ enum ZVisionGameId {
 	GID_GRANDINQUISITOR = 2
 };
 
+enum ZVisionFeatures {
+	GF_DVD = (1 << 0) // ZGI DVD version
+};
+
 class ZVision : public Engine {
 public:
 	ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc);
@@ -260,6 +264,8 @@ private:
 	void pushKeyToCheatBuf(uint8 key);
 	bool checkCode(const char *code);
 	uint8 getBufferedKey(uint8 pos);
+
+	double getVobAmplification(Common::String fileName) const;
 };
 
 } // End of namespace ZVision

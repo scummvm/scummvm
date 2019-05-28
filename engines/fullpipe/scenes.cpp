@@ -530,16 +530,16 @@ void FullpipeEngine::sceneAutoScrolling() {
 	}
 }
 
-bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
+bool FullpipeEngine::sceneSwitcher(const EntranceInfo &entrance) {
 	GameVar *sceneVar;
 	Common::Point sceneDim;
 
-	Scene *scene = accessScene(entrance->_sceneId);
+	Scene *scene = accessScene(entrance._sceneId);
 
 	if (!scene)
 		return 0;
 
-	((PictureObject *)scene->_picObjList.front())->getDimensions(&sceneDim);
+	sceneDim = scene->_picObjList.front()->getDimensions();
 	_sceneWidth = sceneDim.x;
 	_sceneHeight = sceneDim.y;
 
@@ -563,7 +563,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	_updateFlag = true;
 	_flgCanOpenMap = true;
 
-	if (entrance->_sceneId == SC_DBGMENU) {
+	if (entrance._sceneId == SC_DBGMENU) {
 		_inventoryScene = 0;
 	} else {
 		_gameLoader->loadScene(SC_INV);
@@ -573,15 +573,15 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	if (_soundEnabled) {
 		if (scene->_soundList) {
 			_currSoundListCount = 2;
-			_currSoundList1[0] = accessScene(SC_COMMON)->_soundList;
-			_currSoundList1[1] = scene->_soundList;
+			_currSoundList1[0] = accessScene(SC_COMMON)->_soundList.get();
+			_currSoundList1[1] = scene->_soundList.get();
 
 			for (int i = 0; i < scene->_soundList->getCount(); i++) {
-				scene->_soundList->getSoundByIndex(i)->updateVolume();
+				scene->_soundList->getSoundByIndex(i).updateVolume();
 			}
 		} else {
 			_currSoundListCount = 1;
-			_currSoundList1[0] = accessScene(SC_COMMON)->_soundList;
+			_currSoundList1[0] = accessScene(SC_COMMON)->_soundList.get();
 		}
 	}
 
@@ -594,7 +594,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	_aniMan->setOXY(0, 0);
 
 	_aniMan2 = _aniMan;
-	MctlCompound *cmp = getSc2MctlCompoundBySceneId(entrance->_sceneId);
+	MctlCompound *cmp = getSc2MctlCompoundBySceneId(entrance._sceneId);
 	cmp->initMctlGraph();
 	cmp->attachObject(_aniMan);
 	cmp->activate();
@@ -612,7 +612,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	removeMessageHandler(2, -1);
 	_updateScreenCallback = 0;
 
-	switch (entrance->_sceneId) {
+	switch (entrance._sceneId) {
 	case SC_INTRO1:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_INTRO1");
 		scene->preloadMovements(sceneVar);
@@ -639,7 +639,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		scene01_fixEntrance();
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_1");
 		scene->preloadMovements(sceneVar);
-		scene01_initScene(scene, entrance->_field_4);
+		scene01_initScene(scene, entrance._field_4);
 		_behaviorManager->initBehavior(scene, sceneVar);
 		scene->initObjectCursors("SC_1");
 		setSceneMusicParameters(sceneVar);
@@ -854,7 +854,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 
 			scene18_initScene2(g_fp->_scene3);
 			scene18_preload();
-			scene19_setMovements(g_fp->_scene3, entrance->_field_4);
+			scene19_setMovements(g_fp->_scene3, entrance._field_4);
 
 			g_vars->scene18_inScene18p1 = true;
 		}
@@ -938,12 +938,12 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	case SC_25:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_25");
 		scene->preloadMovements(sceneVar);
-		scene25_initScene(scene, entrance->_field_4);
+		scene25_initScene(scene, entrance._field_4);
 		_behaviorManager->initBehavior(scene, sceneVar);
 		scene->initObjectCursors("SC_25");
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler25, 2);
-		scene25_setupWater(scene, entrance->_field_4);
+		scene25_setupWater(scene, entrance._field_4);
 		_updateCursorCallback = scene25_updateCursor;
 		break;
 
@@ -995,7 +995,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	case SC_30:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_30");
 		scene->preloadMovements(sceneVar);
-		scene30_initScene(scene, entrance->_field_4);
+		scene30_initScene(scene, entrance._field_4);
 		_behaviorManager->initBehavior(scene, sceneVar);
 		scene->initObjectCursors("SC_30");
 		setSceneMusicParameters(sceneVar);
@@ -1115,7 +1115,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		break;
 
 	default:
-		error("Unknown scene %d", entrance->_sceneId);
+		error("Unknown scene %d", entrance._sceneId);
 		break;
 	}
 

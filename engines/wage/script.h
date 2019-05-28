@@ -119,7 +119,7 @@ private:
 				delete _value.string;
 		}
 
-		Common::String toString();
+		Common::String toString() const;
 	};
 
 	struct ScriptText {

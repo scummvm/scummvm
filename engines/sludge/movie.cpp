@@ -20,10 +20,10 @@
  *
  */
 
-#include "sludge/newfatal.h"
-#include "sludge/timing.h"
 #include "sludge/movie.h"
+#include "sludge/newfatal.h"
 #include "sludge/sound.h"
+#include "sludge/timing.h"
 
 namespace Sludge {
 
@@ -38,7 +38,7 @@ MovieStates movieIsPlaying = nothing;
 
 int movieIsEnding = 0;
 
-float movieAspect = 1.6;
+float movieAspect = 1.6F;
 #if 0
 typedef struct audioBuffers {
 	char *buffer;
@@ -911,7 +911,8 @@ int playMovie(int fileNumber) {
 	glBindFramebuffer(GL_FRAMEBUFFER, old_fbo);
 
 	movieIsPlaying = nothing;
-	for (int i = 0; i < 10; i++) Wait_Frame();
+	for (int i = 0; i < 10; i++)
+		Wait_Frame();
 	huntKillFreeSound(fileNumber);
 
 	if (vpx_codec_destroy(&codec))

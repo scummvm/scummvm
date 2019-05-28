@@ -21,14 +21,14 @@
 '
 '/
 
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-' This script calls the makensis tool to generate a NSIS Windows installer for ScummVM
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+' This script calls the iscc tool to generate a Inno Setup Windows installer for ScummVM
 '
-' It tries to read the NSIS installation folder from the registry and then calls the
+' It tries to read the Inno Setup installation folder from the registry and then calls the
 ' command line script compiler to create the installer.
 '
 ' This is called from the postbuild.cmd batch file
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 '================================================================
 ' TODO: Reduce duplication with revision.vbs script 
@@ -43,7 +43,6 @@ Dim WshShell : Set WshShell = CreateObject("WScript.Shell")
 ' Folders
 Dim rootFolder : rootFolder = ""
 Dim targetFolder : targetFolder = ""
-Dim arch : arch = ""
 
 ' Parse our command line arguments
 If ParseCommandLine() Then
@@ -54,31 +53,20 @@ End If
 '// Installer creation
 '////////////////////////////////////////////////////////////////
 Sub CreateInstaller()
-	' Get nsis installation folder
-	Dim nsisPath : nsisPath = GetNSISPath()
-	If (nsisPath = "") Then
+	' Get inno installation folder
+	Dim innoPath : innoPath = GetInnoPath()
+	If (innoPath = "") Then
 		Exit Sub
 	End If
 
-	' Preprocess architecture
-	Select Case arch
-	Case "x86"
-		arch = "win32"
-
-	Case "x64"
-		arch = "win64"
-	End Select
-
 	' Build command line
-	Dim commandLine : commandLine = """" & nsisPath & "\makensis.exe"" /V2" & _
-	                                " /Dtop_srcdir=""" & rootFolder & """" & _
-	                                " /Dstaging_dir=""" & targetFolder & """" & _
-	                                " /DARCH=""" & arch & """" & _
-	                                " """ & rootFolder & "\dists\win32\scummvm.nsi"""
+	Dim commandLine : commandLine = """" & innoPath & "\iscc.exe"" /Qp" & _
+	                                " /O""" & targetFolder & """" & _
+	                                " """ & rootFolder & "\dists\win32\scummvm.iss"""
 
 	Dim oExec: Set oExec = WshShell.Exec(commandline)
 	If Err.Number <> 0 Then
-		Wscript.StdErr.WriteLine "Error running makensis.exe!"
+		Wscript.StdErr.WriteLine "Error running iscc.exe!"
 		Exit Sub
 	End If
 
@@ -98,25 +86,25 @@ Sub CreateInstaller()
 	End If
 End Sub
 
-Function GetNSISPath()
-	' Get the directory where NSIS (should) reside(s)
-	Dim sNSIS
+Function GetInnoPath()
+	' Get the directory where Inno Setup (should) reside(s)
+	Dim sInno
 
 	' First, try with 32-bit architecture
-	sNSIS = ReadRegistryKey("HKLM", "SOFTWARE\NSIS", "", 32)
+	sInno = ReadRegistryKey("HKLM", "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Inno Setup 5_is1", "InstallLocation", 32)
 
-	If sNSIS = "" Or IsNull(sNSIS) Then
-		' No 32-bit version of TortoiseSVN installed, try 64-bit version (doesn't hurt on 32-bit machines, it returns nothing or is ignored)
-		sNSIS = ReadRegistryKey("HKLM", "SOFTWARE\NSIS", "", 64)
+	If sInno = "" Or IsNull(sInno) Then
+		' No 32-bit version of Inno Setup installed, try 64-bit version (doesn't hurt on 32-bit machines, it returns nothing or is ignored)
+		sInno = ReadRegistryKey("HKLM", "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Inno Setup 5_is1", "InstallLocation", 64)
 	End If
 
-	' Check if Tortoise is present
-	If sNSIS = "" Then
-		Wscript.StdErr.WriteLine "NSIS not installed!"
+	' Check if Inno Setup is present
+	If sInno = "" Then
+		Wscript.StdErr.WriteLine "Inno Setup not installed!"
 		Exit Function
 	End If
 
-	GetNSISPath = sNSIS
+	GetInnoPath = sInno
 End Function
 
 '////////////////////////////////////////////////////////////////
@@ -125,8 +113,8 @@ End Function
 Function ParseCommandLine()
 	ParseCommandLine = True
 
-	If Wscript.Arguments.Count <> 3 Then
-		Wscript.StdErr.WriteLine "[Error] Invalid number of arguments (was: " & Wscript.Arguments.Count & ", expected: 3)"
+	If Wscript.Arguments.Count <> 2 Then
+		Wscript.StdErr.WriteLine "[Error] Invalid number of arguments (was: " & Wscript.Arguments.Count & ", expected: 2)"
 
 		ParseCommandLine = False
 		Exit Function
@@ -135,7 +123,6 @@ Function ParseCommandLine()
 	' Get our arguments
 	rootFolder = Wscript.Arguments.Item(0)
 	targetFolder = Wscript.Arguments.Item(1)
-	arch = Wscript.Arguments.Item(2)
 
 	' Check that the folders are valid
 	If Not FSO.FolderExists(rootFolder) Then

@@ -35,7 +35,7 @@
 namespace Pegasus {
 
 GraphicsManager::GraphicsManager(PegasusEngine *vm) : _vm(vm) {
-	initGraphics(640, 480, true, NULL);
+	initGraphics(640, 480, nullptr);
 
 	if (_vm->_system->getScreenFormat().bytesPerPixel == 1)
 		error("No true color mode available");

@@ -20,16 +20,15 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
-
 #include "common/scummsys.h"
 
 #ifdef RISCOS
 
 #include "backends/platform/sdl/riscos/riscos.h"
 #include "backends/saves/default/default-saves.h"
-#include "backends/fs/posix/posix-fs-factory.h"
-#include "backends/fs/posix/posix-fs.h"
+#include "backends/events/riscossdl/riscossdl-events.h"
+#include "backends/fs/riscos/riscos-fs-factory.h"
+#include "backends/fs/riscos/riscos-fs.h"
 
 #include <kernel.h>
 #include <swis.h>
@@ -38,19 +37,29 @@
 #define URI_Dispatch 0x4e381
 #endif
 
+#ifndef Report_Text0
+#define Report_Text0 0x54c80
+#endif
+
 void OSystem_RISCOS::init() {
 	// Initialze File System Factory
-	_fsFactory = new POSIXFilesystemFactory();
+	_fsFactory = new RISCOSFilesystemFactory();
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::init();
 }
 
 void OSystem_RISCOS::initBackend() {
+	ConfMan.registerDefault("enable_reporter", false);
+
+	// Create the events manager
+	if (_eventSource == 0)
+		_eventSource = new RISCOSSdlEventSource();
+
 	// Create the savefile manager
 	if (_savefileManager == 0) {
 		Common::String savePath = "/<Choices$Write>/ScummVM/Saves";
-		if (Posix::assureDirectoryExists(savePath))
+		if (Riscos::assureDirectoryExists(savePath))
 			_savefileManager = new DefaultSaveFileManager(savePath);
 	}
 
@@ -78,6 +87,34 @@ bool OSystem_RISCOS::openUrl(const Common::String &url) {
 	return true;
 }
 
+void OSystem_RISCOS::logMessage(LogMessageType::Type type, const char *message) {
+	OSystem_SDL::logMessage(type, message);
+
+	// Log messages using !Reporter, available from http://www.avisoft.force9.co.uk/Reporter.htm
+	if (!ConfMan.getBool("enable_reporter"))
+		return;
+
+	char colour;
+	switch (type) {
+	case LogMessageType::kError:
+		colour = 'r';
+		break;
+	case LogMessageType::kWarning:
+		colour = 'o';
+		break;
+	case LogMessageType::kInfo:
+		colour = 'l';
+		break;
+	case LogMessageType::kDebug:
+	default:
+		colour = 'f';
+		break;
+	}
+
+	Common::String report = Common::String::format("\\%c %s", colour, message);
+	_swix(Report_Text0, _IN(0), report.c_str());
+}
+
 Common::String OSystem_RISCOS::getDefaultConfigFileName() {
 	return "/<Choices$Write>/ScummVM/scummvmrc";
 }
@@ -89,7 +126,7 @@ Common::WriteStream *OSystem_RISCOS::createLogFile() {
 
 	Common::String logFile = "/<Choices$Write>/ScummVM/Logs";
 
-	if (!Posix::assureDirectoryExists(logFile)) {
+	if (!Riscos::assureDirectoryExists(logFile)) {
 		return 0;
 	}
 

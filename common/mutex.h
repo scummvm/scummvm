@@ -46,8 +46,8 @@ class StackLock {
 	void lock();
 	void unlock();
 public:
-	explicit StackLock(MutexRef mutex, const char *mutexName = NULL);
-	explicit StackLock(const Mutex &mutex, const char *mutexName = NULL);
+	explicit StackLock(MutexRef mutex, const char *mutexName = nullptr);
+	explicit StackLock(const Mutex &mutex, const char *mutexName = nullptr);
 	~StackLock();
 };
 

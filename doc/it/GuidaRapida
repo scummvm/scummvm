@@ -5,7 +5,7 @@ file README inglese.
 
 Per maggiori informazioni, liste di compatibilità, dettagli sulle
 donazioni, ultime versioni, resoconti sui progressi e altro, ti
-consigliamo di visitare il sito di ScummVM: http://www.scummvm.org/
+consigliamo di visitare il sito di ScummVM: https://www.scummvm.org/
 
 Indice dei contenuti:
 ---------------------
@@ -77,7 +77,7 @@ preferire la guida in inglese nel file README.
 Per chi non può aspettare, di seguito è spiegato come far partire
 ScummVM in cinque semplici passi.
 
-1. Scarica ScummVM da <http://www.scummvm.org/downloads.php> e
+1. Scarica ScummVM da <https://www.scummvm.org/downloads/> e
 installalo.
 
 2. Crea una cartella sul disco rigido e copia i file di gioco dal
@@ -121,7 +121,7 @@ volta ScummVM cercherà i giochi supportati in tutte le sotto-cartelle.
 ---- ---------
 Il modo più facile per contattare il team di ScummVM è attraverso la
 segnalazione di bug (vedi sezione 2.1) o tramite il forum su
-http://forums.scummvm.org. Puoi anche iscriverti alla mailing list
+https://forums.scummvm.org. Puoi anche iscriverti alla mailing list
 scummvm-devel o contattarci in chat su IRC (#scummvm su
 irc.freenode.net). Per favore non chiederci di supportare un gioco non
 supportato -- prima leggi le FAQ sul nostro sito web. Ricorda che la
@@ -137,7 +137,7 @@ riproducibile e che si verifichi nell'ultima versione giornaliera SVN.
 Controlla anche la lista dei problemi noti e la lista di compatibilità
 sul nostro sito, per assicurarti che il problema non sia già noto:
 
-  http://www.scummvm.org/compatibility_stable.php
+  https://www.scummvm.org/compatibility/
 
 Per favore non segnalare bug di giochi che non sono segnati come
 completabili nella sezione "Supported Games" o nella lista di

@@ -95,6 +95,9 @@ void SciMusic::init() {
 			deviceFlags |= MDT_TOWNS;
 	}
 
+	if (g_sci->getPlatform() == Common::kPlatformPC98)
+		deviceFlags |= MDT_PC98;
+
 	uint32 dev = MidiDriver::detectDevice(deviceFlags);
 	_musicType = MidiDriver::getMusicType(dev);
 
@@ -113,7 +116,7 @@ void SciMusic::init() {
 	case MT_ADLIB:
 		// FIXME: There's no Amiga sound option, so we hook it up to AdLib
 		if (g_sci->getPlatform() == Common::kPlatformAmiga || platform == Common::kPlatformMacintosh)
-			_pMidiDrv = MidiPlayer_AmigaMac_create(_soundVersion);
+			_pMidiDrv = MidiPlayer_AmigaMac_create(_soundVersion, platform);
 		else
 			_pMidiDrv = MidiPlayer_AdLib_create(_soundVersion);
 		break;
@@ -128,6 +131,9 @@ void SciMusic::init() {
 		break;
 	case MT_TOWNS:
 		_pMidiDrv = MidiPlayer_FMTowns_create(_soundVersion);
+		break;
+	case MT_PC98:		
+		_pMidiDrv = MidiPlayer_PC9801_create(_soundVersion);
 		break;
 	default:
 		if (ConfMan.getBool("native_fb01"))
@@ -350,8 +356,27 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 	pSnd->time = ++_timeCounter;
 
 	if (track) {
+		bool playSample;
+
+		if (_soundVersion <= SCI_VERSION_0_LATE && !_useDigitalSFX) {
+			// For SCI0 the digital sample is present in the same track as the
+			// MIDI. If the user specifically requests not to use the digital
+			// samples, play the MIDI data instead. If the MIDI portion of the
+			// track is empty however, play the digital sample anyway. This is
+			// necessary for e.g. the "Where am I?" sample in the SQ3 intro.
+			playSample = false;
+
+			if (track->channelCount == 2) {
+				SoundResource::Channel &chan = track->channels[0];
+				if (chan.data.size() < 2 || chan.data[1] == SCI_MIDI_EOT) {
+					playSample = true;
+				}
+			}
+		} else
+			playSample = (track->digitalChannelNr != -1);
+
 		// Play digital sample
-		if (track->digitalChannelNr != -1) {
+		if (playSample) {
 			const SciSpan<const byte> &channelData = track->channels[track->digitalChannelNr].data;
 			delete pSnd->pStreamAud;
 			byte flags = Audio::FLAG_UNSIGNED;
@@ -607,13 +632,7 @@ void SciMusic::soundStop(MusicEntry *pSnd) {
 
 void SciMusic::soundSetVolume(MusicEntry *pSnd, byte volume) {
 	assert(volume <= MUSIC_VOLUME_MAX);
-	if (pSnd->isSample) {
-#ifdef ENABLE_SCI32
-		if (_soundVersion >= SCI_VERSION_2_1_EARLY) {
-			g_sci->_audio32->setVolume(ResourceId(kResourceTypeAudio, pSnd->resourceId), pSnd->soundObj, volume);
-		}
-#endif
-	} else if (pSnd->pMidiParser) {
+	if (!pSnd->isSample && pSnd->pMidiParser) {
 		Common::StackLock lock(_mutex);
 		pSnd->pMidiParser->mainThreadBegin();
 		pSnd->pMidiParser->setVolume(volume);
@@ -781,8 +800,15 @@ void SciMusic::sendMidiCommand(uint32 cmd) {
 
 void SciMusic::sendMidiCommand(MusicEntry *pSnd, uint32 cmd) {
 	Common::StackLock lock(_mutex);
-	if (!pSnd->pMidiParser)
-		error("tried to cmdSendMidi on non midi slot (%04x:%04x)", PRINT_REG(pSnd->soundObj));
+	if (!pSnd->pMidiParser) {
+		// FPFP calls kDoSound SendMidi to mute and unmute its gameMusic2 sound
+		//  object but some scenes set this to an audio sample. In Act 2, room
+		//  660 sets this to audio of restaurant customers talking. Walking up
+		//  the hotel stairs from room 500 to 235 calls gameMusic2:mute and
+		//  triggers this if gameMusic2 hasn't changed. Bug #10952
+		warning("tried to cmdSendMidi on non midi slot (%04x:%04x)", PRINT_REG(pSnd->soundObj));
+		return;
+	}
 
 	pSnd->pMidiParser->mainThreadBegin();
 	pSnd->pMidiParser->sendFromScriptToDriver(cmd);

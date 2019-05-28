@@ -164,42 +164,42 @@ void AgiEngine::processScummVMEvents() {
 				switch (event.kbd.keycode) {
 				case Common::KEYCODE_LEFT:
 				case Common::KEYCODE_KP4:
-					if (_allowSynthetic || !event.synthetic)
+					if (_allowSynthetic || !event.kbdRepeat)
 						key = AGI_KEY_LEFT;
 					break;
 				case Common::KEYCODE_RIGHT:
 				case Common::KEYCODE_KP6:
-					if (_allowSynthetic || !event.synthetic)
+					if (_allowSynthetic || !event.kbdRepeat)
 						key = AGI_KEY_RIGHT;
 					break;
 				case Common::KEYCODE_UP:
 				case Common::KEYCODE_KP8:
-					if (_allowSynthetic || !event.synthetic)
+					if (_allowSynthetic || !event.kbdRepeat)
 						key = AGI_KEY_UP;
 					break;
 				case Common::KEYCODE_DOWN:
 				case Common::KEYCODE_KP2:
-					if (_allowSynthetic || !event.synthetic)
+					if (_allowSynthetic || !event.kbdRepeat)
 						key = AGI_KEY_DOWN;
 					break;
 				case Common::KEYCODE_PAGEUP:
 				case Common::KEYCODE_KP9:
-					if (_allowSynthetic || !event.synthetic)
+					if (_allowSynthetic || !event.kbdRepeat)
 						key = AGI_KEY_UP_RIGHT;
 					break;
 				case Common::KEYCODE_PAGEDOWN:
 				case Common::KEYCODE_KP3:
-					if (_allowSynthetic || !event.synthetic)
+					if (_allowSynthetic || !event.kbdRepeat)
 						key = AGI_KEY_DOWN_RIGHT;
 					break;
 				case Common::KEYCODE_HOME:
 				case Common::KEYCODE_KP7:
-					if (_allowSynthetic || !event.synthetic)
+					if (_allowSynthetic || !event.kbdRepeat)
 						key = AGI_KEY_UP_LEFT;
 					break;
 				case Common::KEYCODE_END:
 				case Common::KEYCODE_KP1:
-					if (_allowSynthetic || !event.synthetic)
+					if (_allowSynthetic || !event.kbdRepeat)
 						key = AGI_KEY_DOWN_LEFT;
 					break;
 				case Common::KEYCODE_KP5:

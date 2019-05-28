@@ -27,13 +27,6 @@
 
 namespace Sci {
 
-enum Sci32ViewNativeResolution {
-	SCI_VIEW_NATIVERES_NONE = -1,
-	SCI_VIEW_NATIVERES_320x200 = 0,
-	SCI_VIEW_NATIVERES_640x480 = 1,
-	SCI_VIEW_NATIVERES_640x400 = 2
-};
-
 struct CelInfo {
 	int16 width, height;
 	int16 scriptWidth, scriptHeight;
@@ -77,14 +70,13 @@ public:
 	void getCelSpecialHoyle4Rect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, Common::Rect &outRect) const;
 	void getCelScaledRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, int16 scaleX, int16 scaleY, Common::Rect &outRect) const;
 	const SciSpan<const byte> &getBitmap(int16 loopNo, int16 celNo);
-	void draw(const Common::Rect &rect, const Common::Rect &clipRect, const Common::Rect &clipRectTranslated, int16 loopNo, int16 celNo, byte priority, uint16 EGAmappingNr, bool upscaledHires);
-	void drawScaled(const Common::Rect &rect, const Common::Rect &clipRect, const Common::Rect &clipRectTranslated, int16 loopNo, int16 celNo, byte priority, int16 scaleX, int16 scaleY);
+	void draw(const Common::Rect &rect, const Common::Rect &clipRect, const Common::Rect &clipRectTranslated, int16 loopNo, int16 celNo, byte priority, uint16 EGAmappingNr, bool upscaledHires, uint16 scaleSignal = 0);
+	void drawScaled(const Common::Rect &rect, const Common::Rect &clipRect, const Common::Rect &clipRectTranslated, int16 loopNo, int16 celNo, byte priority, int16 scaleX, int16 scaleY, uint16 scaleSignal = 0);
 	uint16 getLoopCount() const { return _loop.size(); }
 	uint16 getCelCount(int16 loopNo) const;
 	Palette *getPalette();
 
 	bool isScaleable();
-	bool isSci2Hires();
 
 	void adjustToUpscaledCoordinates(int16 &y, int16 &x);
 	void adjustBackUpscaledCoordinates(int16 &y, int16 &x);
@@ -105,9 +97,6 @@ private:
 	Common::Array<LoopInfo> _loop;
 	bool _embeddedPal;
 	Palette _viewPalette;
-
-	// specifies scaling resolution for SCI2 views (see gk1/windows, Wolfgang in room 720)
-	Sci32ViewNativeResolution _sci2ScaleRes;
 
 	SciSpan<const byte> _EGAmapping;
 

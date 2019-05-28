@@ -23,7 +23,7 @@
 #ifndef TOWNS_PC98_AUDIODRIVER_H
 #define TOWNS_PC98_AUDIODRIVER_H
 
-#include "audio/softsynth/fmtowns_pc98/towns_pc98_fmsynth.h"
+#include "audio/softsynth/fmtowns_pc98/pc98_audio.h"
 
 class TownsPC98_MusicChannel;
 class TownsPC98_MusicChannelSSG;
@@ -32,7 +32,7 @@ class TownsPC98_SfxChannel;
 class TownsPC98_MusicChannelPCM;
 #endif
 
-class TownsPC98_AudioDriver : public TownsPC98_FmSynth {
+class TownsPC98_AudioDriver : public PC98AudioPluginDriver {
 friend class TownsPC98_MusicChannel;
 friend class TownsPC98_MusicChannelSSG;
 friend class TownsPC98_SfxChannel;
@@ -53,13 +53,17 @@ public:
 	void pause();
 	void cont();
 
-	bool looping();
-	bool musicPlaying();
+	bool looping() const;
+	bool musicPlaying() const;
 
 	void setMusicVolume(int volume);
 	void setSoundEffectVolume(int volume);
 
 private:
+	uint8 readReg(uint8 part, uint8 reg);
+	void writeReg(uint8 part, uint8 reg, uint8 val);
+	void preventRegisterWrite(bool prevent);
+
 	void timerCallbackA();
 	void timerCallbackB();
 
@@ -75,17 +79,9 @@ private:
 	TownsPC98_MusicChannelPCM *_rhythmChannel;
 #endif
 
-	const uint8 *_opnCarrier;
-	const uint8 *_opnFreqTable;
-	const uint8 *_opnFreqTableSSG;
-	const uint8 *_opnFxCmdLen;
-	const uint8 *_opnLvlPresets;
-
 	uint8 *_musicBuffer;
 	uint8 *_sfxBuffer;
-	uint8 *_trackPtr;
-	uint8 *_patches;
-	uint8 *_ssgPatches;
+	const uint8 *_patchData;
 
 	uint8 _updateChannelsFlag;
 	uint8 _updateSSGFlag;
@@ -106,10 +102,19 @@ private:
 	uint8 *_sfxData;
 	uint16 _sfxOffsets[2];
 
-	uint16 _musicVolume;
-	uint16 _sfxVolume;
+	uint8 *_trackPtr;
+	bool _regWriteProtect;
 
-	static const uint8 _drvTables[];
+	PC98AudioCore *_pc98a;
+
+	const int _numChanFM;
+	const int _numChanSSG;
+	const int _numChanRHY;
+
+	static const uint8 _channelPreset[36];
+	static const uint8 _levelPresetFMTOWNS[24];
+	static const uint8 _levelPresetPC98[24];
+	const uint8 *_levelPresets;
 
 	bool _ready;
 };

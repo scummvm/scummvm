@@ -796,8 +796,9 @@ TransparentSurface *TransparentSurface::rotoscaleT(const TransformStruct &transf
 	}
 
 	uint32 invAngle = 360 - (transform._angle % 360);
-	float invCos = cos(invAngle * M_PI / 180.0);
-	float invSin = sin(invAngle * M_PI / 180.0);
+	float invAngleRad = Common::deg2rad<uint32,float>(invAngle);
+	float invCos = cos(invAngleRad);
+	float invSin = sin(invAngleRad);
 
 	int icosx = (int)(invCos * (65536.0f * kDefaultZoomX / transform._zoom.x));
 	int isinx = (int)(invSin * (65536.0f * kDefaultZoomX / transform._zoom.x));
@@ -912,8 +913,8 @@ TransparentSurface *TransparentSurface::scaleT(uint16 newWidth, uint16 newHeight
 		*/
 		int spixelw = (srcW - 1);
 		int spixelh = (srcH - 1);
-		int sx = (int) (65536.0f * (float) spixelw / (float) (dstW - 1));
-		int sy = (int) (65536.0f * (float) spixelh / (float) (dstH - 1));
+		int sx = (int)(65536.0f * (float) spixelw / (float) (dstW - 1));
+		int sy = (int)(65536.0f * (float) spixelh / (float) (dstH - 1));
 
 		/* Maximum scaled source size */
 		int ssx = (srcW << 16) - 1;

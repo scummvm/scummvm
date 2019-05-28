@@ -61,12 +61,6 @@
 
 namespace Sci {
 
-
-#define VER(x) Common::Serializer::Version(x)
-
-
-#pragma mark -
-
 // These are serialization functions for various objects.
 
 void syncWithSerializer(Common::Serializer &s, Common::Serializable &obj) {
@@ -801,7 +795,7 @@ void SciBitmap::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncBytes(_data, _dataSize);
 
 	if (s.isLoading()) {
-		_buffer = Buffer(getWidth(), getHeight(), getPixels());
+		_buffer.init(getWidth(), getHeight(), getWidth(), getPixels(), Graphics::PixelFormat::createFormatCLUT8());
 	}
 }
 #endif
@@ -866,25 +860,25 @@ void GfxPalette::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 #ifdef ENABLE_SCI32
-static void saveLoadPalette32(Common::Serializer &s, Palette *const palette) {
-	s.syncAsUint32LE(palette->timestamp);
-	for (int i = 0; i < ARRAYSIZE(palette->colors); ++i) {
-		s.syncAsByte(palette->colors[i].used);
-		s.syncAsByte(palette->colors[i].r);
-		s.syncAsByte(palette->colors[i].g);
-		s.syncAsByte(palette->colors[i].b);
+static void saveLoadPalette32(Common::Serializer &s, Palette &palette) {
+	s.syncAsUint32LE(palette.timestamp);
+	for (int i = 0; i < ARRAYSIZE(palette.colors); ++i) {
+		s.syncAsByte(palette.colors[i].used);
+		s.syncAsByte(palette.colors[i].r);
+		s.syncAsByte(palette.colors[i].g);
+		s.syncAsByte(palette.colors[i].b);
 	}
 }
 
-static void saveLoadOptionalPalette32(Common::Serializer &s, Palette **const palette) {
+static void saveLoadOptionalPalette32(Common::Serializer &s, Common::ScopedPtr<Palette> &palette) {
 	bool hasPalette = false;
 	if (s.isSaving()) {
-		hasPalette = (*palette != nullptr);
+		hasPalette = palette;
 	}
 	s.syncAsByte(hasPalette);
 	if (hasPalette) {
 		if (s.isLoading()) {
-			*palette = new Palette;
+			palette.reset(new Palette);
 		}
 		saveLoadPalette32(s, *palette);
 	}
@@ -899,14 +893,11 @@ void GfxPalette32::saveLoadWithSerializer(Common::Serializer &s) {
 		++_version;
 
 		for (int i = 0; i < kNumCyclers; ++i) {
-			delete _cyclers[i];
-			_cyclers[i] = nullptr;
+			_cyclers[i].reset();
 		}
 
-		delete _varyTargetPalette;
-		_varyTargetPalette = nullptr;
-		delete _varyStartPalette;
-		_varyStartPalette = nullptr;
+		_varyTargetPalette.reset();
+		_varyStartPalette.reset();
 	}
 
 	s.syncAsSint16LE(_varyDirection);
@@ -928,14 +919,14 @@ void GfxPalette32::saveLoadWithSerializer(Common::Serializer &s) {
 
 	if (g_sci->_features->hasLatePaletteCode() && s.getVersion() >= 41) {
 		s.syncAsSint16LE(_gammaLevel);
-		saveLoadPalette32(s, &_sourcePalette);
+		saveLoadPalette32(s, _sourcePalette);
 		++_version;
 		_needsUpdate = true;
 		_gammaChanged = true;
 	}
 
-	saveLoadOptionalPalette32(s, &_varyTargetPalette);
-	saveLoadOptionalPalette32(s, &_varyStartPalette);
+	saveLoadOptionalPalette32(s, _varyTargetPalette);
+	saveLoadOptionalPalette32(s, _varyStartPalette);
 
 	// _nextPalette is not saved by SSCI
 
@@ -944,14 +935,15 @@ void GfxPalette32::saveLoadWithSerializer(Common::Serializer &s) {
 
 		bool hasCycler = false;
 		if (s.isSaving()) {
-			cycler = _cyclers[i];
+			cycler = _cyclers[i].get();
 			hasCycler = (cycler != nullptr);
 		}
 		s.syncAsByte(hasCycler);
 
 		if (hasCycler) {
 			if (s.isLoading()) {
-				_cyclers[i] = cycler = new PalCycler;
+				cycler = new PalCycler;
+				_cyclers[i].reset(cycler);
 			}
 
 			s.syncAsByte(cycler->fromColor);
@@ -1184,30 +1176,8 @@ void SegManager::reconstructClones() {
 
 
 bool gamestate_save(EngineState *s, Common::WriteStream *fh, const Common::String &savename, const Common::String &version) {
-	TimeDate curTime;
-	g_system->getTimeAndDate(curTime);
-
-	SavegameMetadata meta;
-	meta.version = CURRENT_SAVEGAME_VERSION;
-	meta.name = savename;
-	meta.gameVersion = version;
-	meta.saveDate = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
-	meta.saveTime = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min) & 0xFF) << 8) | ((curTime.tm_sec) & 0xFF);
-
-	Resource *script0 = g_sci->getResMan()->findResource(ResourceId(kResourceTypeScript, 0), false);
-	meta.script0Size = script0->size();
-	meta.gameObjectOffset = g_sci->getGameObject().getOffset();
-
-	// Checking here again
-// TODO: This breaks Torin autosave, is there actually any reason for it?
-//	if (s->executionStackBase) {
-//		warning("Cannot save from below kernel function");
-//		return false;
-//	}
-
-	Common::Serializer ser(0, fh);
-	sync_SavegameMetadata(ser, meta);
-	Graphics::saveThumbnail(*fh);
+	Common::Serializer ser(nullptr, fh);
+	set_savegame_metadata(ser, fh, savename, version);
 	s->saveLoadWithSerializer(ser);		// FIXME: Error handling?
 	if (g_sci->_gfxPorts)
 		g_sci->_gfxPorts->saveLoadWithSerializer(ser);
@@ -1280,15 +1250,31 @@ void gamestate_afterRestoreFixUp(EngineState *s, int savegameId) {
 		}
 		break;
 	case GID_PQ2:
-		// HACK: Same as above - enable the save game menu option when loading in PQ2 (bug #6875).
-		// It gets disabled in the game's death screen.
+		// HACK: Same as in Jones - enable the save game menu option when loading in
+		// PQ2 (bug #6875). It gets disabled in the game's death screen.
 		g_sci->_gfxMenu->kernelSetAttribute(2, 1, SCI_MENU_ATTRIBUTE_ENABLED, TRUE_REG);	// Game -> Save Game
 		break;
 #ifdef ENABLE_SCI32
+	case GID_KQ7:
+		if (Common::checkGameGUIOption(GAMEOPTION_UPSCALE_VIDEOS, ConfMan.get("guioptions"))) {
+			uint16 value = ConfMan.getBool("enable_video_upscale") ? 32 : 0;
+			s->variables[VAR_GLOBAL][kGlobalVarKQ7UpscaleVideos] = make_reg(0, value);
+		}
+		break;
 	case GID_PHANTASMAGORIA2:
 		if (Common::checkGameGUIOption(GAMEOPTION_ENABLE_CENSORING, ConfMan.get("guioptions"))) {
 			s->variables[VAR_GLOBAL][kGlobalVarPhant2CensorshipFlag] = make_reg(0, ConfMan.getBool("enable_censoring"));
 		}
+		break;
+	case GID_SHIVERS:
+		// WORKAROUND: When loading a saved game from the GMM in the same scene in
+		// Shivers, we end up with the same draw list, but the scene palette is not
+		// set properly. Normally, Shivers does a room change when showing the saved
+		// game list, which does not occur when loading directly from the GMM. When
+		// loading from the GMM, at this point all of the visible planes and items
+		// are deleted, so calling frameOut here helps reset the game palette
+		// properly, like when changing a room.
+		g_sci->_gfxFrameout->frameOut(true);
 		break;
 #endif
 	default:
@@ -1395,22 +1381,46 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	s->gameIsRestarting = GAMEISRESTARTING_RESTORE;
 }
 
-bool get_savegame_metadata(Common::SeekableReadStream *stream, SavegameMetadata *meta) {
-	assert(stream);
-	assert(meta);
+void set_savegame_metadata(Common::Serializer &ser, Common::WriteStream *fh, const Common::String &savename, const Common::String &version) {
+	TimeDate curTime;
+	g_system->getTimeAndDate(curTime);
 
-	Common::Serializer ser(stream, 0);
-	sync_SavegameMetadata(ser, *meta);
+	SavegameMetadata meta;
+	meta.version = CURRENT_SAVEGAME_VERSION;
+	meta.name = savename;
+	meta.gameVersion = version;
+	meta.saveDate = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
+	meta.saveTime = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min) & 0xFF) << 8) | ((curTime.tm_sec) & 0xFF);
+
+	Resource *script0 = g_sci->getResMan()->findResource(ResourceId(kResourceTypeScript, 0), false);
+	assert(script0);
+	meta.script0Size = script0->size();
+	meta.gameObjectOffset = g_sci->getGameObject().getOffset();
+
+	sync_SavegameMetadata(ser, meta);
+	Graphics::saveThumbnail(*fh);
+}
+
+void set_savegame_metadata(Common::WriteStream *fh, const Common::String &savename, const Common::String &version) {
+	Common::Serializer ser(nullptr, fh);
+	set_savegame_metadata(ser, fh, savename, version);
+}
+
+bool get_savegame_metadata(Common::SeekableReadStream *stream, SavegameMetadata &meta) {
+	assert(stream);
+
+	Common::Serializer ser(stream, nullptr);
+	sync_SavegameMetadata(ser, meta);
 
 	if (stream->eos())
 		return false;
 
-	if ((meta->version < MINIMUM_SAVEGAME_VERSION) ||
-	    (meta->version > CURRENT_SAVEGAME_VERSION)) {
-		if (meta->version < MINIMUM_SAVEGAME_VERSION)
+	if ((meta.version < MINIMUM_SAVEGAME_VERSION) ||
+	    (meta.version > CURRENT_SAVEGAME_VERSION)) {
+		if (meta.version < MINIMUM_SAVEGAME_VERSION)
 			warning("Old savegame version detected- can't load");
 		else
-			warning("Savegame version is %d- maximum supported is %0d", meta->version, CURRENT_SAVEGAME_VERSION);
+			warning("Savegame version is %d- maximum supported is %0d", meta.version, CURRENT_SAVEGAME_VERSION);
 
 		return false;
 	}

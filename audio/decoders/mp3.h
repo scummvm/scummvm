@@ -25,6 +25,7 @@
  * Sound decoder used in engines:
  *  - agos
  *  - draci
+ *  - glk
  *  - kyra
  *  - mohawk
  *  - queen

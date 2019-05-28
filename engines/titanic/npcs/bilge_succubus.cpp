@@ -144,7 +144,7 @@ bool CBilgeSuccUBus::PETDeliverMsg(CPETDeliverMsg *msg) {
 				playMovie(_trayOutStartFrame, _trayOutEndFrame, MOVIE_WAIT_FOR_FINISH);
 				playMovie(_sneezing1StartFrame, _sneezing1EndFrame, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 				playMovie(_sneezing2StartFrame, _sneezing2EndFrame, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
-				incTransitions();
+				lockMouse();
 			}
 		} else {
 			startTalking(this, 230012);
@@ -271,7 +271,7 @@ bool CBilgeSuccUBus::MovieEndMsg(CMovieEndMsg *msg) {
 			startTalking(this, 150);
 			CBodyInBilgeRoomMsg bodyMsg;
 			bodyMsg.execute("Service Elevator Entity");
-			decTransitions();
+			unlockMouse();
 			_sendAction = SA_SENT;
 
 		} else {

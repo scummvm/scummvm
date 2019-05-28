@@ -44,7 +44,7 @@ PngLoader::Status PngLoader::allocate() {
 
 	_buffer->setSize(_width, _height, _sizeBy);
 
-	uint32 bitsPerPixel = _bitDepth * _channels;
+	uint32 bitsPerPixel = _bitDepth;
 
 	if (_paletteSize) {	// 8 or 4-bit image
 		if (bitsPerPixel == 4) {
@@ -87,7 +87,7 @@ bool PngLoader::load() {
 
 	PSP_DEBUG_PRINT("succeded in loading image\n");
 
-	if (_paletteSize == 16)		// 4-bit
+	if (_bitDepth == 4)		// 4-bit
 		_buffer->flipNibbles();	// required because of PNG 4-bit format
 	return true;
 }
@@ -99,7 +99,7 @@ void PngLoader::warningFn(png_structp png_ptr, png_const_charp warning_msg) {
 // Read function for png library to be able to read from our SeekableReadStream
 //
 void PngLoader::libReadFunc(png_structp pngPtr, png_bytep data, png_size_t length) {
-	Common::SeekableReadStream &file = *(Common::SeekableReadStream *)pngPtr->io_ptr;
+	Common::SeekableReadStream &file = *(Common::SeekableReadStream *)png_get_io_ptr(pngPtr);
 
 	file.read(data, length);
 }
@@ -114,7 +114,7 @@ bool PngLoader::basicImageLoad() {
 
 	_infoPtr = png_create_info_struct(_pngPtr);
 	if (!_infoPtr) {
-		png_destroy_read_struct(&_pngPtr, png_infopp_NULL, png_infopp_NULL);
+		png_destroy_read_struct(&_pngPtr, NULL, NULL);
 		return false;
 	}
 	// Set the png lib to use our read function
@@ -126,11 +126,14 @@ bool PngLoader::basicImageLoad() {
 	png_read_info(_pngPtr, _infoPtr);
 	int interlaceType;
 	png_get_IHDR(_pngPtr, _infoPtr, (png_uint_32 *)&_width, (png_uint_32 *)&_height, &_bitDepth,
-		&_colorType, &interlaceType, int_p_NULL, int_p_NULL);
+		&_colorType, &interlaceType, NULL, NULL);
 	_channels = png_get_channels(_pngPtr, _infoPtr);
 
-	if (_colorType & PNG_COLOR_MASK_PALETTE)
-		_paletteSize = _infoPtr->num_palette;
+	if (_colorType & PNG_COLOR_MASK_PALETTE) {
+		int paletteSize;
+		png_get_PLTE(_pngPtr, _infoPtr, NULL, &paletteSize);
+		_paletteSize = paletteSize;
+	}
 
 	return true;
 }
@@ -141,8 +144,8 @@ bool PngLoader::findImageDimensions() {
 
 	bool status = basicImageLoad();
 
-	PSP_DEBUG_PRINT("width[%d], height[%d], paletteSize[%d], bitDepth[%d], channels[%d], rowBytes[%d]\n", _width, _height, _paletteSize, _bitDepth, _channels, _infoPtr->rowbytes);
-	png_destroy_read_struct(&_pngPtr, &_infoPtr, png_infopp_NULL);
+	PSP_DEBUG_PRINT("width[%d], height[%d], paletteSize[%d], bitDepth[%d], channels[%d], rowBytes[%d]\n", _width, _height, _paletteSize, _bitDepth, _channels, png_get_rowbytes(_pngPtr, _infoPtr));
+	png_destroy_read_struct(&_pngPtr, &_infoPtr, NULL);
 	return status;
 }
 
@@ -153,22 +156,28 @@ bool PngLoader::loadImageIntoBuffer() {
 	DEBUG_ENTER_FUNC();
 
 	if (!basicImageLoad()) {
-		png_destroy_read_struct(&_pngPtr, &_infoPtr, png_infopp_NULL);
+		png_destroy_read_struct(&_pngPtr, &_infoPtr, NULL);
 		return false;
 	}
 	png_set_strip_16(_pngPtr);		// Strip off 16 bit channels in case they occur
 
 	if (_paletteSize) {
 		// Copy the palette
-		png_colorp srcPal = _infoPtr->palette;
-		for (int i = 0; i < _infoPtr->num_palette; i++) {
-			unsigned char alphaVal = (i < _infoPtr->num_trans) ? _infoPtr->trans[i] : 0xFF;	// Load alpha if it's there
+		png_colorp srcPal;
+		int numPalette;
+		png_get_PLTE(_pngPtr, _infoPtr, &srcPal, &numPalette);
+		png_bytep transAlpha;
+		int numTrans;
+		png_color_16p transColor;
+		png_get_tRNS(_pngPtr, _infoPtr, &transAlpha, &numTrans, &transColor);
+		for (int i = 0; i < numPalette; i++) {
+			unsigned char alphaVal = (i < numTrans) ? transAlpha[i] : 0xFF;	// Load alpha if it's there
 			_palette->setSingleColorRGBA(i, srcPal->red, srcPal->green, srcPal->blue, alphaVal);
 			srcPal++;
 		}
 	} else {	// Not a palettized image
 		if (_colorType == PNG_COLOR_TYPE_GRAY && _bitDepth < 8)
-			png_set_gray_1_2_4_to_8(_pngPtr);	// Round up grayscale images
+			png_set_expand_gray_1_2_4_to_8(_pngPtr);	// Round up grayscale images
 		if (png_get_valid(_pngPtr, _infoPtr, PNG_INFO_tRNS))
 			png_set_tRNS_to_alpha(_pngPtr);		// Convert trans channel to alpha for 32 bits
 
@@ -188,18 +197,18 @@ bool PngLoader::loadImageIntoBuffer() {
 
 	unsigned char *line = (unsigned char*) malloc(rowBytes);
 	if (!line) {
-		png_destroy_read_struct(&_pngPtr, png_infopp_NULL, png_infopp_NULL);
+		png_destroy_read_struct(&_pngPtr, NULL, NULL);
 		PSP_ERROR("Couldn't allocate line\n");
 		return false;
 	}
 
 	for (size_t y = 0; y < _height; y++) {
-		png_read_row(_pngPtr, line, png_bytep_NULL);
+		png_read_row(_pngPtr, line, NULL);
 		_buffer->copyFromRect(line, rowBytes, 0, y, _width, 1);	// Copy into buffer
 	}
 	free(line);
 	png_read_end(_pngPtr, _infoPtr);
-	png_destroy_read_struct(&_pngPtr, &_infoPtr, png_infopp_NULL);
+	png_destroy_read_struct(&_pngPtr, &_infoPtr, NULL);
 
 	return true;
 }

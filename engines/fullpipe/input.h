@@ -39,8 +39,7 @@ struct CursorInfo {
 	int width;
 	int height;
 
-	CursorInfo();
-	CursorInfo(CursorInfo *src);
+	CursorInfo() { memset(this, 0, sizeof(*this)); }
 };
 
 typedef Common::Array<CursorInfo *> CursorsArray;

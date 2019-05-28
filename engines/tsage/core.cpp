@@ -93,7 +93,7 @@ InvObject::InvObject(int strip, int frame) {
 void InvObject::setCursor() {
 	if (g_vm->getGameID() != GType_Ringworld) {
 		// All other games
-		_cursorId = (CursorType)BF_GLOBALS._inventory->indexOf(this);
+		_cursorId = (CursorType)g_globals->_inventory->indexOf(this);
 		g_globals->_events.setCursor(_cursorId);
 	} else {
 		// Ringworld cursor handling
@@ -2358,8 +2358,11 @@ int SceneObject::checkRegion(const Common::Point &pt) {
 	return regionIndex;
 }
 
-void SceneObject::animate(AnimateMode animMode, ...) {
-	_animateMode = animMode;
+// The parameter to the function below should really be an AnimateMode value.
+// However passing an enum type as last argument of a variadic function may
+// result in undefined behaviour.
+void SceneObject::animate(int animMode, ...) {
+	_animateMode = (AnimateMode)animMode;
 	_updateStartFrame = g_globals->_events.getFrameNumber();
 	if (_numFrames)
 		_updateStartFrame += 60 / _numFrames;

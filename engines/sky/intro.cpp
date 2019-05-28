@@ -60,7 +60,12 @@ namespace Sky {
 #define PLAYBG			15 // play background sound
 #define LOOPBG			16 // loop background sound
 #define STOPBG			17 // stop background sound
+#define CLEARBOTTOM		18 // clear the screen
 #define SEQEND		 65535 // end of intro sequence
+
+// Modifier flag for SHOWSCREEN when we want the image to cover the entire
+// screen.
+#define FULLSCREEN		0x8000
 
 #define IC_PREPARE_TEXT 20 // commands used in COMMANDFLIRT block
 #define IC_SHOW_TEXT    21
@@ -331,20 +336,20 @@ uint16 Intro::_cdIntroSeq[] = {
 	WAITFLIRT,
 	WAITVOICE,
 	FADEDOWN,
-	SHOWSCREEN,	CD_19_LOG,
+	SHOWSCREEN | FULLSCREEN,	CD_19_LOG,
 	FADEUP,		CD_19_PAL,
 	PLAYVOICE,	CDV_19,		// Joey: "Foster! (zzzt) H-Help!"
 	WAITVOICE,
 	PLAYVOICE,	CDV_20,		// Joey: "Better make my next body move faster, Foster..."
 	FADEDOWN,
-	SHOWSCREEN,	CD_20_LOG,
+	SHOWSCREEN | FULLSCREEN,	CD_20_LOG,
 	FADEUP,		CD_19_PAL,
 	WAITVOICE,
 	LOADBG,		59496, // quiet heli
 	LOOPBG,
 	PLAYVOICE,	CDV_21,		// Foster: "He was only a robot, but, well, I loved the little guy."
 	FADEDOWN,
-	SHOWSCREEN,	CD_21_LOG,
+	SHOWSCREEN | FULLSCREEN,	CD_21_LOG,
 	FADEUP,		CD_19_PAL,
 	WAITVOICE,
 	PLAYVOICE,	CDV_22,		// Foster: "Then, as suddenly as it started, the shooting stopped."
@@ -355,7 +360,7 @@ uint16 Intro::_cdIntroSeq[] = {
 	/* fade down while Foster's saying his line */
 	FADEDOWN,
 	WAITVOICE,
-	SHOWSCREEN,	CD_24_LOG,
+	SHOWSCREEN | FULLSCREEN,	CD_24_LOG,
 	FADEUP,		CD_23_PAL,
 	PLAYVOICE,	CDV_24,		// Reich: "Whoever is in charge here, come forward..."
 	WAITVOICE,
@@ -364,7 +369,7 @@ uint16 Intro::_cdIntroSeq[] = {
 	PLAYVOICE,	CDV_26,		// Foster: "Only a fool would have argued with that firepower."
 	WAITVOICE,
 	FADEDOWN,
-	SHOWSCREEN,	CD_27_LOG,
+	SHOWSCREEN | FULLSCREEN,	CD_27_LOG,
 	FADEUP,		CD_27_PAL,
 	PLAYVOICE,	CDV_27,		// Shaman: "... I am the leader of these people... We are peaceful..."
 	WAITVOICE,
@@ -374,23 +379,25 @@ uint16 Intro::_cdIntroSeq[] = {
 	WAITVOICE,
 	BGFLIRT,	CD_27,
 		PLAYVOICE,	CDV_31,	// Reich: "We're looking for someone..."
+		WAITFLIRT,
+		CLEARBOTTOM,
 		WAITVOICE,
 		PLAYVOICE,	CDV_32,	// Reich: "Someone who doesn't belong here..."
 		WAITVOICE,
 		PLAYVOICE,	CDV_33,	// Reich: "Who wasn't born in this garbage dump..."
 		WAITVOICE,
 		PLAYVOICE,	CDV_34,	// Reich: "Who came from the city as a child..."
-	WAITFLIRT,
 	WAITVOICE,
 	PLAYVOICE,	CDV_35,		// Reich: "We want to take him home again."
 	WAITVOICE,
 	PLAYVOICE,	CDV_36,		// Foster: "My mind racing, I remembered where I'd seen that symbol before..."
 		FADEDOWN,
-		SHOWSCREEN,	CD_35_LOG,
+		SHOWSCREEN | FULLSCREEN,	CD_35_LOG,
 		FADEUP,		CD_35_PAL,
 	WAITVOICE,
 	PLAYVOICE,	CDV_37,		// Foster: "It was the day the tribe found me..."
 		DOFLIRT,	CD_35,
+	CLEARBOTTOM,
 	WAITVOICE,
 	PLAYVOICE,	CDV_38,		// Foster: "The day of the crash..."
 		DOFLIRT,	CD_37,
@@ -398,7 +405,7 @@ uint16 Intro::_cdIntroSeq[] = {
 	PLAYVOICE,	CDV_39,		// Foster: "The day my mother died."
 	WAITVOICE,
 	FADEDOWN,
-	SHOWSCREEN,	CD_40_LOG,
+	SHOWSCREEN | FULLSCREEN,	CD_40_LOG,
 	FADEUP,		CD_40_PAL,
 	PLAYVOICE,	CDV_40,		// Shaman: "You alright, city boy?"
 	WAITVOICE,
@@ -407,7 +414,7 @@ uint16 Intro::_cdIntroSeq[] = {
 	PLAYVOICE,	CDV_42,		// Foster: "R-Robert."
 	WAITVOICE,
 	FADEDOWN,
-	SHOWSCREEN,	CD_43_LOG,
+	SHOWSCREEN | FULLSCREEN,	CD_43_LOG,
 	FADEUP,		CD_43_PAL,
 	PLAYVOICE,	CDV_43,		// Shaman: "Hah! Welcome to the Gap, Robert!"
 	WAITVOICE,
@@ -421,13 +428,13 @@ uint16 Intro::_cdIntroSeq[] = {
 	DOFLIRT,	CD_45,
 	WAITVOICE,
 	FADEDOWN,
-	SHOWSCREEN,	CD_47_LOG,
+	SHOWSCREEN | FULLSCREEN,	CD_47_LOG,
 	FADEUP,		CD_47_PAL,
 	PLAYVOICE,	CDV_47,		// Foster: "His tribe was poor, but they treated me like one of their own..."
 	WAITVOICE,
 	PLAYVOICE,	CDV_48,		// Foster: "I learned how to survive in the wasteland they called the Gap..."
 	FADEDOWN,
-	SHOWSCREEN,	CD_48_LOG,
+	SHOWSCREEN | FULLSCREEN,	CD_48_LOG,
 	FADEUP,		CD_48_PAL,
 	WAITVOICE,
 	BGFLIRT,	CD_48,
@@ -500,12 +507,12 @@ uint16 Intro::_cdIntroSeq[] = {
 	FADEDOWN,
 	PLAYVOICE,	CDV_71,		// Reich: "Good. Detonate."
 	WAITVOICE,
-	SHOWSCREEN,	CD_72_LOG,
+	SHOWSCREEN | FULLSCREEN,	CD_72_LOG,
 	FADEUP,		CD_72_PAL,
 	PLAYVOICE,	CDV_72,		// Foster: "Much too late."
 	WAITVOICE,
 	FADEDOWN,
-	SHOWSCREEN,	CD_73_LOG,
+	SHOWSCREEN | FULLSCREEN,	CD_73_LOG,
 	FADEUP,		CD_73_PAL,
 	PLAYVOICE,	CDV_73,		// Foster: "Why, you murdering..."
 	WAITVOICE,
@@ -513,7 +520,7 @@ uint16 Intro::_cdIntroSeq[] = {
 	WAITVOICE,
 	PLAYVOICE,	CDV_75,		// Foster: "All I could do was wait."
 	FADEDOWN,
-	SHOWSCREEN,	CD_76_LOG,
+	SHOWSCREEN | FULLSCREEN,	CD_76_LOG,
 	FADEUP,		CD_76_PAL,
 	WAITVOICE,
 	PLAYVOICE,	CDV_76,		// Foster: "Just like on a hunt. Just like the old man taught me."
@@ -521,6 +528,7 @@ uint16 Intro::_cdIntroSeq[] = {
 	PLAYVOICE,	CDV_77,		// Foster: "Wait... and be ready."
 	WAITVOICE,
 	FADEDOWN,
+	CLEARBOTTOM,
 	SHOWSCREEN,	CD_78_LOG,
 	FADEUP,		CD_78_PAL,
 	PLAYVOICE,	CDV_78,		// Foster: "It was dawn when we reached the City."
@@ -544,10 +552,12 @@ uint16 Intro::_cdIntroSeq[] = {
 		PLAYVOICE,	CDV_85,	// Guard: "We're going to HIT!"
 		WAITVOICE,
 	WAITFLIRT,
+	CLEARBOTTOM,
 	SHOWSCREEN,	CD_102_LOG,
 	PLAYVOICE,	CDV_86,		// Foster: "Maybe I'd get some answers now."
 	DOFLIRT,	CD_102,
 	FADEDOWN,
+	// This one could be fullscreen, but that causes animation glitches.
 	SHOWSCREEN,	CD_103_LOG,
 	FADEUP,		CD_103_PAL,
 	BGFLIRT,	CD_103,
@@ -557,7 +567,7 @@ uint16 Intro::_cdIntroSeq[] = {
 	WAITVOICE,
 	STARTMUSIC,	2,
 	FADEDOWN,
-	SHOWSCREEN,	CD_104_LOG,
+	SHOWSCREEN | FULLSCREEN,	CD_104_LOG,
 	FADEUP,		CD_104_PAL,
 	DOFLIRT,	CD_104,
 	DOFLIRT,	CD_105,
@@ -565,6 +575,7 @@ uint16 Intro::_cdIntroSeq[] = {
 };
 
 uint16 Intro::_floppyIntroSeq[] = {
+	// This one could be fullscreen, but that causes animation glitches.
 	SHOWSCREEN,   60081,
 	FADEUP,       60080,
 	DOFLIRT,      60082,
@@ -591,6 +602,7 @@ uint16 Intro::_floppyIntroSeq[] = {
 		  35, IC_SHOW_TEXT,     30, 160,
 		   3, IC_REMOVE_TEXT,
 	COMMANDEND,
+	CLEARBOTTOM,
 	SHOWSCREEN,   60090,
 	COMMANDFLIRT, 60091, // => command list 4c
 		1000, IC_FX_VOLUME, 100,
@@ -599,6 +611,7 @@ uint16 Intro::_floppyIntroSeq[] = {
 		   4, IC_FX_VOLUME, 127,
 	COMMANDEND,
 	FADEDOWN,
+	// This one could be fullscreen, but that causes animation glitches.
 	SHOWSCREEN,  60093,
 	FADEUP,       60092,
 	COMMANDFLIRT, 60094, // => command list 5
@@ -606,7 +619,7 @@ uint16 Intro::_floppyIntroSeq[] = {
 	COMMANDEND,
 	WAITMUSIC,
 	FADEDOWN,
-	SHOWSCREEN,   60096,
+	SHOWSCREEN | FULLSCREEN,   60096,
 	STARTMUSIC,       2,
 	FADEUP,       60095,
 	COMMANDFLIRT, 60097, // => command list 6a
@@ -685,9 +698,9 @@ bool Intro::nextPart(uint16 *&data) {
 
 	// return false means cancel intro
 	uint16 command = *data++;
-	switch (command) {
+	switch (command & 0x7fff) {
 	case SHOWSCREEN:
-		_skyScreen->showScreen(*data++);
+		_skyScreen->showScreen(*data++, (command & FULLSCREEN) ? true : false);
 		return true;
 	case FADEUP:
 		_skyScreen->paletteFadeUp(*data++);
@@ -766,6 +779,14 @@ bool Intro::nextPart(uint16 *&data) {
 		return true;
 	case STOPBG:
 		_mixer->stopID(SOUND_BG);
+		return true;
+	case CLEARBOTTOM:
+		{
+			byte *screenBuf = _skyScreen->giveCurrent() + GAME_SCREEN_HEIGHT * GAME_SCREEN_WIDTH;
+			memset(screenBuf, 0, GAME_SCREEN_WIDTH * (FULL_SCREEN_HEIGHT - GAME_SCREEN_HEIGHT));
+			_system->copyRectToScreen(screenBuf, GAME_SCREEN_WIDTH, 0, GAME_SCREEN_HEIGHT, GAME_SCREEN_WIDTH, FULL_SCREEN_HEIGHT - GAME_SCREEN_HEIGHT);
+			_system->updateScreen();
+		}
 		return true;
 	default:
 		error("Unknown intro command %X", command);

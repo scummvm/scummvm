@@ -16,10 +16,10 @@
 
 #include "InternalResampler.h"
 
-#include <SincResampler.h>
-#include <ResamplerModel.h>
+#include "srctools/include/SincResampler.h"
+#include "srctools/include/ResamplerModel.h"
 
-#include "Synth.h"
+#include "../Synth.h"
 
 using namespace SRCTools;
 
@@ -37,11 +37,11 @@ public:
 	}
 };
 
-static FloatSampleProvider &createModel(Synth &synth, SRCTools::FloatSampleProvider &synthSource, double targetSampleRate, SampleRateConverter::Quality quality) {
+static FloatSampleProvider &createModel(Synth &synth, SRCTools::FloatSampleProvider &synthSource, double targetSampleRate, SamplerateConversionQuality quality) {
 	static const double MAX_AUDIBLE_FREQUENCY = 20000.0;
 
 	const double sourceSampleRate = synth.getStereoOutputSampleRate();
-	if (quality != SampleRateConverter::FASTEST) {
+	if (quality != SamplerateConversionQuality_FASTEST) {
 		const bool oversampledMode = synth.getStereoOutputSampleRate() == Synth::getStereoOutputSampleRate(AnalogOutputMode_OVERSAMPLED);
 		// Oversampled input allows to bypass IIR interpolation stage and, in some cases, IIR decimation stage
 		if (oversampledMode && (0.5 * sourceSampleRate) <= targetSampleRate) {
@@ -59,7 +59,7 @@ static FloatSampleProvider &createModel(Synth &synth, SRCTools::FloatSampleProvi
 
 using namespace MT32Emu;
 
-InternalResampler::InternalResampler(Synth &synth, double targetSampleRate, SampleRateConverter::Quality quality) :
+InternalResampler::InternalResampler(Synth &synth, double targetSampleRate, SamplerateConversionQuality quality) :
 	synthSource(*new SynthWrapper(synth)),
 	model(createModel(synth, synthSource, targetSampleRate, quality))
 {}

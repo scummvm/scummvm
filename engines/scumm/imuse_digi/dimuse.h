@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/mutex.h"
+#include "common/serializer.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 
@@ -48,7 +49,6 @@ enum {
 
 struct imuseDigTable;
 struct imuseComiTable;
-class Serializer;
 class ScummEngine_v7;
 struct Track;
 
@@ -136,7 +136,7 @@ public:
 	void startSound(int sound)
 		{ error("IMuseDigital::startSound(int) should be never called"); }
 
-	void saveOrLoad(Serializer *ser);
+	void saveLoadEarly(Common::Serializer &ser);
 	void resetState();
 	void setRadioChatterSFX(bool state) {
 		_radioChatterSFX = state;
@@ -161,6 +161,7 @@ public:
 	int32 getCurVoiceLipSyncHeight();
 	int32 getCurMusicLipSyncWidth(int syncId);
 	int32 getCurMusicLipSyncHeight(int syncId);
+	int32 getSoundElapsedTimeInMs(int soundId);
 };
 
 } // End of namespace Scumm
