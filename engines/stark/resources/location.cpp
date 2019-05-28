@@ -75,6 +75,12 @@ void Location::onAllLoaded() {
 	_layers = listChildren<Layer>();
 }
 
+void Location::onEnterLocation() {
+	Object::onEnterLocation();
+
+	StarkScene->setFadeLevel(1.0f);
+}
+
 void Location::onGameLoop() {
 	Object::onGameLoop();
 

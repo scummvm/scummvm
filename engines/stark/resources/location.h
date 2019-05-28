@@ -58,6 +58,7 @@ public:
 
 	// Resource API
 	void onAllLoaded() override;
+	void onEnterLocation() override;
 	void onGameLoop() override;
 	void saveLoadCurrent(ResourceSerializer *serializer) override;
 
