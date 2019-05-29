@@ -32,27 +32,81 @@ void writeImage(File& outputFile, const char *name, const char* language) {
 	char str[256];
 
 	// Read header (and check we have a binary PBM file)
-	imgFile.readString(str, 256);
-	if (strcmp(str, "P4") != 0) {
-		imgFile.close();
-		printf("File '%s' doesn't seem to be a binary pbm file! This image will be skipped.\n", fileName);
-		return;
-	}
+	// See http://netpbm.sourceforge.net/doc/pbm.html
+	// Header is in the form:
+	// - A "magic number" for identifying the file type ("P4" for binary pdm)
+	// - Whitespace (blanks, TABs, CRs, LFs).
+	// - The width in pixels of the image, formatted as ASCII characters in decimal.
+	// - Whitespace.
+	// - The height in pixels of the image, again in ASCII decimal.
+	// - A single whitespace character (usually a newline).
+	// - The raster data.
+	// Before the whitespace character that delimits the raster, any characters from a "#"
+	// through the next carriage return or newline character, is a comment and is ignored.
+	// Note that the comment can starts in the middle of a line. Note also that if you have
+	// a comment right before the raster, the newline at the end of the comment is not
+	// sufficient to delimit the raster.
 
-	// Skip comments and then read and check size
-	do {
-		imgFile.readString(str, 256);
-	} while (str[0] == '#');
 	int w = 0, h = 0;
-	if (sscanf(str, "%d %d", &w, &h) != 2 || w != 640 || h != 480) {
-		imgFile.close();
-		printf("Binary pbm file '%s' doesn't have the expected size (expected: 640x480, read: %dx%d). This image will be skipped.\n", fileName, w, h);
-		return;
-	}
+	enum PbmState { PbmMagic, PbmWidth, PbmHeight};
+	PbmState state = PbmMagic;
+	int i = 0;
+	do {
+		char c = (char)imgFile.readByte();
+		if (c == '#') {
+			do {
+				c = (char)imgFile.readByte();
+			} while (c != '\r' && c != '\n' && !imgFile.eof());
+			// If the comment is after the height, we need to read one more character
+			// before the raster data begin.
+			if (state == PbmHeight && i > 0)
+				c = (char)imgFile.readByte();
+		}
+		if (isspace(c)) {
+			if (i > 0) {
+				str[i] = 0;
+				i = 0;
+				if (state == PbmMagic) {
+					if (strcmp(str, "P4") != 0) {
+						imgFile.close();
+						printf("File '%s' doesn't seem to be a binary pbm file! This image will be skipped.\n", fileName);
+						return;
+					}
+				} else {
+					int *s = state == PbmWidth ? &w : &h;
+					if (sscanf(str, "%d", s) != 1) {
+						imgFile.close();
+						printf("Failed to read image size in binary pbm file '%s'. This image will be skipped.\n", fileName);
+						return;
+					}
+				}
+				if (state == PbmMagic)
+					state = PbmWidth;
+				else if (state == PbmWidth)
+					state = PbmHeight;
+				else {
+					// We have finished reading the header.
+					// Check the size is as expected.
+					if (w != 640 || h != 480) {
+						imgFile.close();
+						printf("Binary pbm file '%s' doesn't have the expected size (expected: 640x480, read: %dx%d). This image will be skipped.\n", fileName, w, h);
+						return;
+					}
+					// And break out of the loop.
+					break;
+				}
+			}
+		} else
+			str[i++] = c;
+		if (imgFile.eof()) {
+			printf("Unexpected end of file in '%s' while reading pbm header! This image will be skipped.\n", fileName);
+			return;
+		}
+	} while (1);
 
 	// Write block header in output file (4 bytes).
 	// We convert the image name to upper case.
-	for (int i = 0 ; i < 4 ; ++i) {
+	for (i = 0 ; i < 4 ; ++i) {
 		if (name[i] >= 97 && name[i] <= 122)
 			outputFile.writeByte(name[i] - 32);
 		else
@@ -60,7 +114,7 @@ void writeImage(File& outputFile, const char *name, const char* language) {
 	}
 	// And write the language code on 4 bytes as well (padded with 0 if needed).
 	int languageLength = strlen(language);
-	for (int i = 0 ; i < 4 ; ++i) {
+	for (i = 0 ; i < 4 ; ++i) {
 		if (i < languageLength)
 			outputFile.writeByte(language[i]);
 		else
@@ -73,7 +127,7 @@ void writeImage(File& outputFile, const char *name, const char* language) {
 	// Write all the bytes. We should have 38400 bytes (640 * 480 / 8)
 	// However we need to invert the bits has the engine expects 1 for the background and 0 for the text (black)
 	// but pbm uses 0 for white and 1 for black.
-	for (int i = 0 ; i < 38400 ; ++i) {
+	for (i = 0 ; i < 38400 ; ++i) {
 		byte b = imgFile.readByte();
 		outputFile.writeByte(~b);
 	}
