@@ -80,19 +80,24 @@ public:
 	virtual void onEntrance();
 
 private:
-	bool animate(int section1, int section2, int duration);
-	bool animate(int section1, int section2, int duration, MessagePosition position,
-				 StringId text);
-	bool animate(int section1, int section2, int section3, int section4, int duration,
-				 MessagePosition position, StringId text);
-
 	void titleScreen();
-	void titleFadeIn();
-	void cutscene();
-	void leaveCutscene();
+	bool tvSay(int mod1, int mod2, int rest, MessagePosition pos, StringId id);
+	bool tvRest(int mod1, int mod2, int rest);
+	bool displayThoughtMessage(StringId id);
+	bool thoughts1();
+	bool tvDialogue();
+	bool thoughts2();
 
-	bool _shouldExit;
+	int _restTime;
 	Common::String _introText;
+};
+
+class Airport : public Room {
+public:
+	Airport(Supernova2Engine *vm, GameManager *gm);
+	virtual void onEntrance();
+
+private:
 };
 
 }
