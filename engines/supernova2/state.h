@@ -77,6 +77,8 @@ public:
 	void getInput();
 	void changeRoom(RoomId id);
 	void wait(int ticks);
+	void waitOnInput(int ticks);
+	bool waitOnInput(int ticks, Common::KeyCode &keycode);
 	void resetInputState();
 
 private:

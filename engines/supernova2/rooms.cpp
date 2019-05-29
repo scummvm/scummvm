@@ -183,6 +183,7 @@ bool Room::interact(Action verb, Object &obj1, Object &obj2) {
 Intro::Intro(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
+	_restTime = 0;
 
 	_fileNumber = -1;
 	_id = INTRO;
@@ -206,7 +207,14 @@ void Intro::onEntrance() {
 	_gm->_guiEnabled = false;
 	_vm->_allowSaveGame = false;
 	_vm->_allowLoadGame = false;
+
 	titleScreen();
+	thoughts1() && tvDialogue() && thoughts2();
+
+	_gm->changeRoom(AIRPORT);
+	_gm->_guiEnabled = true;
+	_vm->_allowSaveGame = true;
+	_vm->_allowLoadGame = true;
 }
 
 void Intro::titleScreen() {
@@ -219,7 +227,6 @@ void Intro::titleScreen() {
 	_vm->renderImage(0);
 	_vm->paletteFadeIn();
 	_gm->wait(15);
-	//titleFadeIn();
 	_vm->renderImage(1);
 	_gm->wait(15);
 	_vm->renderImage(2);
@@ -235,48 +242,260 @@ void Intro::titleScreen() {
 		g_system->updateScreen();
 		g_system->delayMillis(_vm->_delay);
 	}
-
-	_gm->wait(1);
-	_gm->getInput();
+	_vm->paletteFadeOut();
+	CursorMan.showMouse(true);
 }
 
-void Intro::titleFadeIn() {
-	byte titlePaletteColor[] = {0xfe, 0xeb};
-	byte titleNewColor[2][3] = {{255, 255, 255}, {199, 21, 21}};
-	byte newColors[2][3];
+bool Intro::tvSay(int mod1, int mod2, int rest, MessagePosition pos, StringId id) {
+	Common::KeyCode key = Common::KEYCODE_INVALID;
+	const Common::String& text = _vm->getGameString(id);
 
-	for (int brightness = 1; brightness <= 40; ++brightness) {
-		for (int colorIndex = 0; colorIndex < 2; ++colorIndex) {
-			for (int i = 0; i < 3; ++i) {
-				newColors[colorIndex][i] = (titleNewColor[colorIndex][i] * brightness) / 40;
-			}
+	_vm->renderMessage(text, pos);
+	int animation_count = (text.size() + 20) * (10 - rest) * _vm->_textSpeed / 400;
+	_restTime =  (text.size() + 20) * rest * _vm->_textSpeed / 400;
+
+	while (animation_count) {
+		if (mod1)
+			_vm->renderImage(mod1);
+
+		if (_gm->waitOnInput(2, key)) {
+			_vm->removeMessage();
+			return key != Common::KEYCODE_ESCAPE;
 		}
+		if (mod2)
+			_vm->renderImage(mod2);
 
-		_vm->_system->getPaletteManager()->setPalette(newColors[0], titlePaletteColor[0], 1);
-		_vm->_system->getPaletteManager()->setPalette(newColors[1], titlePaletteColor[1], 1);
-		_vm->_system->updateScreen();
-		_vm->_system->delayMillis(_vm->_delay);
+		if (_gm->waitOnInput(2, key)) {
+			_vm->removeMessage();
+			return key != Common::KEYCODE_ESCAPE;
+		}
+		animation_count--;
 	}
-}
+	if (_restTime == 0)
+		_vm->removeMessage();
 
-bool Intro::animate(int section1, int section2, int duration) {
 	return true;
 }
 
-bool Intro::animate(int section1, int section2, int duration,
-					MessagePosition position, StringId textId) {
+bool Intro::tvRest(int mod1, int mod2, int rest) {
+	Common::KeyCode key = Common::KEYCODE_INVALID;
+	while (rest) {
+		_vm->renderImage(mod1);
+		if (_gm->waitOnInput(2, key)) {
+			_vm->removeMessage();
+			return key != Common::KEYCODE_ESCAPE;
+		}
+		_vm->renderImage(mod2);
+		if (_gm->waitOnInput(2, key)) {
+			_vm->removeMessage();
+			return key != Common::KEYCODE_ESCAPE;
+		}
+		rest--;
+	}
 	return true;
 }
 
-bool Intro::animate(int section1, int section2, int section3, int section4,
-					int duration, MessagePosition position, StringId textId) {
+bool Intro::displayThoughtMessage(StringId id) {
+	Common::KeyCode key = Common::KEYCODE_INVALID;
+	const Common::String& text = _vm->getGameString(id);
+	_vm->renderMessage(text, kMessageNormal);
+	if (_gm->waitOnInput((text.size() + 20) * _vm->_textSpeed / 10, key)) {
+		_vm->removeMessage();
+		return key != Common::KEYCODE_ESCAPE;
+	}
+	_vm->removeMessage();
 	return true;
 }
 
-void Intro::cutscene() {
+bool Intro::thoughts1() {
+	_vm->setCurrentImage(41);
+	_vm->renderImage(0);
+	_vm->paletteFadeIn();
+
+	if(!displayThoughtMessage(kStringIntro6))
+		return false;
+
+	if(!displayThoughtMessage(kStringIntro7))
+		return false;
+
+	if(!displayThoughtMessage(kStringIntro8))
+		return false;
+
+	_vm->paletteFadeOut();
+	return true;
 }
 
-void Intro::leaveCutscene() {
+bool Intro::thoughts2() {
+	_vm->setCurrentImage(41);
+	_vm->renderImage(0);
+	_vm->paletteFadeIn();
+
+	if(!displayThoughtMessage(kStringIntro9))
+		return false;
+
+	if(!displayThoughtMessage(kStringIntro10))
+		return false;
+
+	if(!displayThoughtMessage(kStringIntro11))
+		return false;
+
+	_vm->paletteFadeOut();
+
+	_vm->setCurrentImage(2);
+	_vm->renderImage(0);
+	_vm->renderImage(1);
+	_vm->paletteFadeIn();
+
+	for (int i = 0; i < 35; i++)
+	{
+		_vm->renderImage((i % 3) + 2);
+		_gm->wait(3);
+	}
+	_vm->paletteFadeOut();
+
+	_vm->setCurrentImage(41);
+	_vm->renderImage(0);
+	_vm->renderImage(1);
+	_vm->paletteFadeIn();
+
+	if(!displayThoughtMessage(kStringIntro12))
+		return false;
+
+	if(!displayThoughtMessage(kStringIntro13))
+		return false;
+
+	if(!displayThoughtMessage(kStringIntro14))
+		return false;
+
+	_vm->paletteFadeOut();
+	return true;
 }
 
+bool Intro::tvDialogue() {
+	_vm->setCurrentImage(39);
+	_vm->renderImage(0);
+	_vm->paletteFadeIn();
+	_gm->wait(50);
+	_vm->setCurrentImage(40);
+	_vm->renderImage(0);
+	for (int i = 1; i < 11; i++)
+	{
+		_gm->wait(3);
+		_vm->renderImage(i);
+	}
+	_gm->wait(30);
+	_vm->renderImage(11);
+	_gm->wait(60);
+
+	_vm->_system->fillScreen(kColorBlack);
+	_vm->setCurrentImage(42);
+	_vm->renderImage(0);
+
+	if(!tvSay(1, 1+128, 0, kMessageLeft, kStringIntroTV1))
+		return false;
+
+	_vm->renderImage(4);
+	_gm->wait(3);
+	_vm->renderImage(6);
+
+	if(!tvSay(8, 6, 7, kMessageLeft, kStringIntroTV2))
+		return false;
+
+	_vm->renderImage(10);
+
+	if(!tvRest(8, 6, _restTime))
+		return false;
+
+	_vm->removeMessage();
+
+	if(!tvSay(8, 6, 0, kMessageLeft, kStringIntroTV3))
+		return false;
+
+	if(!tvSay(8, 6, 0, kMessageLeft, kStringIntroTV4))
+		return false;
+
+	_vm->renderImage(10 + 128);
+	_gm->wait(3);
+	_vm->renderImage(5);
+	_gm->wait(3);
+	_vm->renderImage(7);
+
+	if(!tvSay(9, 7, 0, kMessageCenter, kStringIntroTV5))
+		return false;
+
+	if(!tvSay(9, 7, 0, kMessageCenter, kStringIntroTV6))
+		return false;
+
+	if(!tvSay(9, 7, 0, kMessageCenter, kStringIntroTV7))
+		return false;
+
+	if(!tvSay(3, 3 + 128, 0, kMessageRight, kStringIntroTV8))
+		return false;
+
+	if(!tvSay(3, 3 + 128, 0, kMessageRight, kStringIntroTV9))
+		return false;
+
+	if(!tvSay(9, 7, 0, kMessageCenter, kStringIntroTV10))
+		return false;
+
+	if(!tvSay(3, 3 + 128, 0, kMessageRight, kStringIntroTV11))
+		return false;
+
+	if(!tvSay(3, 3 + 128, 0, kMessageRight, kStringIntroTV12))
+		return false;
+
+	if(!tvSay(9, 7, 8, kMessageCenter, kStringIntroTV13))
+		return false;
+
+	_vm->renderImage(4);
+
+	if(!tvRest(9, 7, 1))
+		return false;
+
+	_vm->renderImage(4 + 128);
+
+	if(!tvRest(9, 7, 3))
+		return false;
+
+	_vm->renderImage(4);
+
+	if(!tvRest(9, 7, 1))
+		return false;
+
+	_vm->renderImage(6);
+
+	if(!tvRest(9, 7, _restTime - 5))
+		return false;
+
+	_vm->removeMessage();
+
+	if(!tvSay(3, 3 + 128, 0, kMessageRight, kStringIntroTV14))
+		return false;
+
+	if(!tvSay(3, 3 + 128, 0, kMessageRight, kStringIntroTV15))
+		return false;
+
+	if(!tvSay(9, 7, 0, kMessageCenter, kStringIntroTV16))
+		return false;
+
+	_vm->paletteFadeOut();
+	return true;
+}
+
+Airport::Airport(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 2;
+	_id = AIRPORT;
+	_shown[0] = kShownTrue;
+
+}
+
+void Airport::onEntrance() {
+	if (hasSeen() == false) {
+		_vm->renderMessage(kStringAirportEntrance);
+	}
+	setRoomSeen(true);
+}
 }

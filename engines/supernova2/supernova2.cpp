@@ -60,7 +60,7 @@ Supernova2Engine::Supernova2Engine(OSystem *syst)
 	, _sleepAutoSave(nullptr)
 	, _sleepAuoSaveVersion(-1)
 	, _delay(33)
-	, _textSpeed(1) {
+	, _textSpeed(kTextSpeed[2]) {
 	if (ConfMan.hasKey("textspeed"))
 		_textSpeed = ConfMan.getInt("textspeed");
 

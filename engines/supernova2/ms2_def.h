@@ -166,7 +166,7 @@ kString180, kString181, kString182, kString183, kString184,
 kString185, kString186, kString187, kString188, kString189,
 kString190, kString191, kString192, kString193, kString194,
 kString195, kString196, kString197, kString198, kString199,
-kString200, kString201, kString202, kString203, kString204,
+kStringAirportEntrance, kString201, kString202, kString203, kString204,
 kString205, kString206, kString207, kString208, kString209,
 kString210, kString211, kString212, kString213, kString214,
 kString215, kString216, kString217, kString218, kString219,
@@ -244,11 +244,11 @@ kString570, kString571, kString572, kString573, kString574,
 kString575, kString576, kString577, kString578, kString579,
 kString580, kString581, kString582, kString583, kString584,
 kString585, kString586, kString587, kString588, kString589,
-kString590, kString591, kString592, kString593, kString594,
-kString595, kString596, kString597, kString598, kString599,
-kString600, kString601, kString602, kString603, kString604,
-kString605, kString606, kString607, kString608, kString609,
-kString610, kString611, kString612, kString613 
+kStringIntro6, kStringIntro7, kStringIntro8, kStringIntroTV1, kStringIntroTV2,
+kStringIntroTV3, kStringIntroTV4, kStringIntroTV5, kStringIntroTV6, kStringIntroTV7,
+kStringIntroTV8, kStringIntroTV9, kStringIntroTV10, kStringIntroTV11, kStringIntroTV12,
+kStringIntroTV13, kStringIntroTV14, kStringIntroTV15, kStringIntroTV16, kStringIntro9,
+kStringIntro10, kStringIntro11, kStringIntro12, kStringIntro13, kStringIntro14
 };
 
 ObjectType operator|(ObjectType a, ObjectType b);

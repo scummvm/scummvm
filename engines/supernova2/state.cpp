@@ -80,6 +80,7 @@ void GameManager::initState() {
 
 void GameManager::initRooms() {
 	_rooms[INTRO] = new Intro(_vm, this);
+	_rooms[AIRPORT] = new Airport(_vm, this);
 }
 
 void GameManager::updateEvents() {
@@ -165,6 +166,32 @@ void GameManager::wait(int ticks) {
 		updateEvents();
 		g_system->updateScreen();
 	} while (g_system->getMillis() < end && !_vm->shouldQuit());
+}
+
+void GameManager::waitOnInput(int ticks) {
+	uint32 end = g_system->getMillis() + ticksToMsec(ticks);
+	do {
+		g_system->delayMillis(_vm->_delay);
+		updateEvents();
+		g_system->updateScreen();
+	} while (g_system->getMillis() < end && !_vm->shouldQuit() && !_keyPressed && !_mouseClicked);
+}
+
+bool GameManager::waitOnInput(int ticks, Common::KeyCode &keycode) {
+	keycode = Common::KEYCODE_INVALID;
+	uint32 end = g_system->getMillis() + ticksToMsec(ticks);
+	do {
+		g_system->delayMillis(_vm->_delay);
+		updateEvents();
+		g_system->updateScreen();
+		if (_keyPressed) {
+			keycode = _key.keycode;
+			_key.reset();
+			return true;
+		} else if (_mouseClicked)
+			return true;
+	} while (g_system->getMillis() < end  && !_vm->shouldQuit());
+	return false;
 }
 
 void GameManager::changeRoom(RoomId id) {
