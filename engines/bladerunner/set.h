@@ -110,6 +110,7 @@ private:
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 	void overrideSceneObjectInfo(int objectId) const;
+	void setupNewObjectInSet(Common::String objName, BoundingBox objBbox);
 	void patchInAdditionalObjectsInSet();
 	void patchOutBadObjectsFromSet();
 #endif // BLADERUNNER_ORIGINAL_BUGS

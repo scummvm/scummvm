@@ -49,6 +49,11 @@ void SceneScriptHF06::InitializeScene() {
 void SceneScriptHF06::SceneLoaded() {
 	Unobstacle_Object("BOX22", true);
 	Unobstacle_Object("BOX34", true);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Obstacle_Object("FRONTBLOCK1", true);
+	Obstacle_Object("FRONTBLOCK2", true);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Clickable_Object("BOX19");
 	Clickable_Object("BOX21");
 	Clickable_Object("BOX23");

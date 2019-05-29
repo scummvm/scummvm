@@ -76,6 +76,10 @@ void SceneScriptUG08::SceneLoaded() {
 	Obstacle_Object("ELEV LEGS", true);
 	Unobstacle_Object("ELEV LEGS", true);
 	Unobstacle_Object("BOX RIGHT WALL ", true);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Obstacle_Object("NORTHBLOCK", true);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 bool SceneScriptUG08::MouseClick(int x, int y) {

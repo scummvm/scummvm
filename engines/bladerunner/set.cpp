@@ -505,6 +505,17 @@ void Set::overrideSceneObjectInfo(int objectId) const {
 	}
 }
 
+void Set::setupNewObjectInSet(Common::String objName, BoundingBox objBbox) {
+	int objectId = _objectCount;
+	_objects[objectId].name = objName.c_str();
+	_objects[objectId].bbox = objBbox;
+	_objects[objectId].isObstacle  = 0; // init as false - Can be changed in Scene script eg. SceneLoaded() with (Un)Obstacle_Object()
+	_objects[objectId].isClickable = 0; // init as false - Can be changed in Scene script eg. SceneLoaded() with (Un)Clickable_Object()
+	_objects[objectId].isHotMouse  = 0;
+	_objects[objectId].unknown1    = 0;
+	_objects[objectId].isTarget    = 0; // init as false - Can be changed in Scene script eg. SceneLoaded() with (Un_)Combat_Target_Object
+	_objectCount++;
+}
 /**
 * Used for adding objects in a Set mainly to fix a few "McCoy walking to places he should not" issues
 * This is called in Set::open()
@@ -516,33 +527,46 @@ void Set::overrideSceneObjectInfo(int objectId) const {
 */
 void Set::patchInAdditionalObjectsInSet() {
 	Common::String custObjName;
-	int objectId = _objectCount;
 	BoundingBox bbox;
 	switch (_vm->_scene->getSceneId()) {
+	case kSceneHF06:
+		// block clicking / path access to northern part of the scene
+		// which causes McCoy and Police officers/ rats to go behind the map
+		bbox = BoundingBox(220.00f, 350.02f, -90.86f, 310.00f, 380.02f, -70.71f);
+		custObjName = "FRONTBLOCK1";
+		setupNewObjectInSet(custObjName, bbox);
+
+		bbox = BoundingBox(20.00f, 350.02f, -90.86f, 170.00f, 380.02f, -45.71f);
+		custObjName = "FRONTBLOCK2";
+		setupNewObjectInSet(custObjName, bbox);
+		break;
+
 	case kScenePS05:
 		// block actual passage to ESPER room because
 		// it causes McCoy to sometimes go behind the wall
 		bbox = BoundingBox(730.50f, -0.0f, -481.10f, 734.51f, 144.75f, -437.55f);
 		custObjName = "MAINFBLOCK";
+		setupNewObjectInSet(custObjName, bbox);
 		break;
+
+	case kSceneUG08:
+		// block clicking / path access to northern part of the scene
+		// which causes McCoy and Police officers/ rats to go behind the map
+		bbox = BoundingBox(-386.26f, -8.07f, -1078.99f, 100.00f, 170.63f, -478.99f);
+		custObjName = "NORTHBLOCK";
+		setupNewObjectInSet(custObjName, bbox);
+		break;
+
 	case kSceneUG13:
 		// Underground homeless place
 		// block passage to empty elevator chute
 		bbox = BoundingBox(-80.00f, 35.78f, -951.75f, 74.36f, 364.36f, -810.56f);
 		custObjName = "ELEVBLOCK";
+		setupNewObjectInSet(custObjName, bbox);
 		break;
 	default:
 		return;
 	}
-
-	_objectCount++;
-	_objects[objectId].name = custObjName.c_str();
-	_objects[objectId].bbox = bbox;
-	_objects[objectId].isObstacle  = 0; // init as false - Can be changed in Scene script eg. SceneLoaded() with (Un)Obstacle_Object()
-	_objects[objectId].isClickable = 0; // init as false - Can be changed in Scene script eg. SceneLoaded() with (Un)Clickable_Object()
-	_objects[objectId].isHotMouse  = 0;
-	_objects[objectId].unknown1    = 0;
-	_objects[objectId].isTarget    = 0; // init as false - Can be changed in Scene script eg. SceneLoaded() with (Un_)Combat_Target_Object
 }
 
 /**
