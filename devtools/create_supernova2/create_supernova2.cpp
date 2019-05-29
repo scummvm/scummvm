@@ -165,7 +165,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	// The generated file is of the form:
-	// 3 bytes: 'MSN'
+	// 3 bytes: 'MS2'
 	// 1 byte:  version
 	// -- data blocks
 	// 4 bytes: header  'IMG1' and 'IMG2' for newspaper images (for file 1 and file 2 respectively),
