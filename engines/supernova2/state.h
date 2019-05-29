@@ -76,6 +76,7 @@ public:
 	void initRooms();
 	void getInput();
 	void changeRoom(RoomId id);
+	void wait(int ticks);
 	void resetInputState();
 
 private:

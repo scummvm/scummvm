@@ -105,7 +105,7 @@ Marquee::Marquee(Screen *screen, MarqueeId id, const char *text)
 	: _text(text)
 	, _textBegin(text)
 	, _delay(0)
-	, _color(kColorLightBlue)
+	, _color(kColorPurple)
 	, _loop(false)
 	, _screen(screen) {
 	if (id == kMarqueeIntro) {
@@ -149,8 +149,8 @@ void Marquee::renderCharacter() {
 		_textWidth = Screen::textWidth(_text);
 		_x = kScreenWidth / 2 - _textWidth / 2;
 		_screen->_textCursorX = _x;
-		_color = kColorLightBlue;
-		_screen->_textColor = _color;
+		_color = kColorBlue;
+		_screen->_textColor = kColorPurple;
 		break;
 	case '^':
 		_color = kColorLightYellow;

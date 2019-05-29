@@ -186,6 +186,20 @@ Intro::Intro(Supernova2Engine *vm, GameManager *gm) {
 
 	_fileNumber = -1;
 	_id = INTRO;
+	_introText = 
+		_vm->getGameString(kStringIntro1) + '\0' + 
+		_vm->getGameString(kStringIntro2) + '\0' + 
+		_vm->getGameString(kStringIntro3) + '\0' + 
+		_vm->getGameString(kStringIntro4) + '\0' + 
+		_vm->getGameString(kStringIntro5) + '\0' + 
+		"^Matthias Neef#" + '\0' +
+		"^Sascha Otterbach#" + '\0' +
+		"^Thomas Mazzoni#" + '\0' +
+		"^Matthias Klein#" + '\0' +
+		"^Gerrit Rothmaier#" + '\0' +
+		"^Thomas Hassler#" + '\0' +
+		"^Rene Kach#" + '\0' +
+		'\233' + '\0';
 }
 
 void Intro::onEntrance() {
@@ -196,6 +210,7 @@ void Intro::onEntrance() {
 }
 
 void Intro::titleScreen() {
+	CursorMan.showMouse(false);
 	_vm->_system->fillScreen(kColorBlack);
 	_vm->_screen->setViewportBrightness(0);
 	_vm->_screen->setGuiBrightness(0);
@@ -203,10 +218,45 @@ void Intro::titleScreen() {
 	_vm->setCurrentImage(1);
 	_vm->renderImage(0);
 	_vm->paletteFadeIn();
+	_gm->wait(15);
+	//titleFadeIn();
+	_vm->renderImage(1);
+	_gm->wait(15);
+	_vm->renderImage(2);
+	const Common::String title1 = "V1.02";
+	_vm->_screen->renderText(title1, 295, 190, 3);
+
+	Marquee marquee(_vm->_screen, Marquee::kMarqueeIntro, _introText.c_str());
+	while (!_vm->shouldQuit()) {
+		_gm->updateEvents();
+		marquee.renderCharacter();
+		if (_gm->_mouseClicked || _gm->_keyPressed)
+			break;
+		g_system->updateScreen();
+		g_system->delayMillis(_vm->_delay);
+	}
+
+	_gm->wait(1);
 	_gm->getInput();
 }
 
 void Intro::titleFadeIn() {
+	byte titlePaletteColor[] = {0xfe, 0xeb};
+	byte titleNewColor[2][3] = {{255, 255, 255}, {199, 21, 21}};
+	byte newColors[2][3];
+
+	for (int brightness = 1; brightness <= 40; ++brightness) {
+		for (int colorIndex = 0; colorIndex < 2; ++colorIndex) {
+			for (int i = 0; i < 3; ++i) {
+				newColors[colorIndex][i] = (titleNewColor[colorIndex][i] * brightness) / 40;
+			}
+		}
+
+		_vm->_system->getPaletteManager()->setPalette(newColors[0], titlePaletteColor[0], 1);
+		_vm->_system->getPaletteManager()->setPalette(newColors[1], titlePaletteColor[1], 1);
+		_vm->_system->updateScreen();
+		_vm->_system->delayMillis(_vm->_delay);
+	}
 }
 
 bool Intro::animate(int section1, int section2, int duration) {

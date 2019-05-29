@@ -62,6 +62,7 @@ enum Color {
 	kColorLightGreen  = 13,
 	kColorLightYellow = 14,
 	kColorLightRed    = 15,
+	kColorPurple	  = 35,
 	kColorCursorTransparent = kColorWhite25
 };
 
