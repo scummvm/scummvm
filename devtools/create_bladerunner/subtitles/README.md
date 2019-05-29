@@ -19,7 +19,7 @@ make devtools/create_bladerunner/subtitles
 7. Launch the Blade Runner game using ScummVM.
  
 ## quotesSpreadsheetCreator (quoteSpreadsheetCreator.py)
-(requires python lib *xlwt* (tested with version 1.3.0), *wave* (included in the Python 2 Standard Library)
+(requires python libs *xlwt* (tested with version 1.3.0), *wave* (included in the Python 2 Standard Library)
 A tool to gather all the speech audio filenames in an Excel file which will include a column with links to the audio file location on the PC. By Ctrl+MouseClick on that column's entries you should be able to listen to the corresponding wav file.
 The output Excel file *out.xls* should help with the transcription of all the spoken *in-game* quotes. It also provides extra quote information such as the corresponding actor ID and quote ID per quote.
 
@@ -49,7 +49,7 @@ The tool __requires__ a valid path to the actornames.txt file; this file is incl
 
 
 ## mixResourceCreator (mixResourceCreator.py)
-(requires python lib *xlrd* (tested with version 1.2.0))
+(requires python libs *xlrd* (tested with version 1.2.0), *xlwt* (tested with version 1.3.0), *xlutils* (tested with version 2.0.0))
 A tool to process the aforementioned Excel file with the dialogue transcriptions and output text resource files (TRx) that will be packed along with the external font (see fontCreator tool) into a SUBTITLES.MIX file. Multiple TRx files will be created intermediately in order to fully support subtitles in the game. One TRx file includes all in-game spoken quotes and the rest of them correspond to any VQA video sequence that contain voice acting.
 Usage:
 ```
@@ -62,7 +62,7 @@ Syntax Notes:
 2. The "-ian" optional switch is followed by the path to the actornames.txt file -- if this is omitted then the file is assumed to reside in the current working directory.
 3. The "-cft" optional switch is followed by the path to the text configuration file "configureFontsTranslation.txt" -- if this is omitted then the file is assumed to reside in the current working directory.
 4. The "-ld" optional switch is followed by a language description for the language of the game you are exporting Text Resources from. This switch is meaningful when you also use the "-xtre" switch to export Text Resource files.
-    * Valid language values are: EN_ANY, DE_DEU, FR_FRA, IT_ITA, ES_ESP, RU_RUS 
+    * Valid language values are: EN_ANY, DE_DEU, FR_FRA, IT_ITA, ES_ESP, RU_RUS, EFIGS
     * Default language value is: EN_ANY (English)
 5. The "--trace" optional switch enables extra debug messages to be printed. 
 
