@@ -234,11 +234,11 @@ bool SceneScriptUG13::ClickedOnExit(int exitId) {
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 11, true, kAnimationModeIdle);
 			Footstep_Sound_Override_Off();
 			// This path is unreachable in the original game
-			// TEST maybe restore this condition. Probably occurs before meeting with Guzza is set
-			if (_vm->_cutContent) {
+			// Restore this condition only for hard mode. Probably occurs before meeting with Guzza is set
+			if (_vm->_cutContent && Query_Difficulty_Level() == kGameDifficultyHard) {
 				if (!Game_Flag_Query(kFlagCallWithGuzza)) {
 					// Passage to UG18 is locked
-					// This two lines of dialogue is not in the code of the original game
+					// These lines of dialogue are not in the code of the original game
 					if (Actor_Query_Goal_Number(kActorTransient) == 391
 					    || Actor_Query_Goal_Number(kActorTransient) == 395
 					    || Actor_Query_Goal_Number(kActorTransient) == 599
