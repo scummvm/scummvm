@@ -2720,7 +2720,7 @@ msgid ""
 "Aha, mich interessiert auáerdem,|ob es hier auf Axacuss etwas gibt,|das Sie "
 "besonders m”gen."
 msgstr ""
-"I see. I'm also interested in|whether there's anything here on Axacuss that "
+"I see. I'm also interested in|whether there's anything here on Axacuss |that "
 "you particularly like."
 
 #: ../../ms2/ms2_s.c:152
