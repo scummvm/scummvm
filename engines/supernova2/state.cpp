@@ -158,6 +158,15 @@ void GameManager::getInput() {
 	}
 }
 
+void GameManager::wait(int ticks) {
+	uint32 end = g_system->getMillis() + ticksToMsec(ticks);
+	do {
+		g_system->delayMillis(_vm->_delay);
+		updateEvents();
+		g_system->updateScreen();
+	} while (g_system->getMillis() < end && !_vm->shouldQuit());
+}
+
 void GameManager::changeRoom(RoomId id) {
 	_currentRoom = _rooms[id];
 	_newRoom = true;
