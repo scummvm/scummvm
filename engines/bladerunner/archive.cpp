@@ -53,6 +53,7 @@ bool MIXArchive::open(const Common::String &filename) {
 	_entryCount = _fd.readUint16LE();
 	_size       = _fd.readUint32LE();
 
+
 	_entries.resize(_entryCount);
 	for (uint16 i = 0; i != _entryCount; ++i) {
 		_entries[i].hash   = _fd.readUint32LE();

@@ -35,8 +35,6 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
-//class SaveFileReadStream;
-//class SaveFileWriteStream;
 class TextResource;
 class Font;
 
@@ -44,18 +42,26 @@ class Subtitles {
 	friend class Debugger;
 	//
 	// Subtitles could be in 6 possible languages are EN_ANY, DE_DEU, FR_FRA, IT_ITA, RU_RUS, ES_ESP
-	//                   with corresponding _vm->_languageCode values: "E", "G", "F", "I", "E", "S" (Russian version is built on top of English one)
-	static const int kMaxNumOfSubtitlesLines = 4;					// At least one quote in the game requires 4 lines to be displayed correctly
-	static const int kStartFromSubtitleLineFromTop = 2;				// Prefer drawing from this line (the top-most of available subtitle lines index is 0) by default
-	static const int kSubtitlesBottomYOffsetPx = 12;				// In pixels. This is the bottom margin beneath the subtitles space
-	static const int kMaxWidthPerLineToAutoSplitThresholdPx = 610;	// In pixels
-	static const int kMaxTextResourceEntries = 1 + 25; 				// Support in-game subs (1) and all possible VQAs (25) with spoken dialogue or translatable text!
+	// with corresponding _vm->_languageCode values: "E", "G", "F", "I", "E", "S" (Russian version is built on top of English one)
+	static const int kMaxNumOfSubtitlesLines = 4;                  // At least one quote in the game requires 4 lines to be displayed correctly
+	static const int kStartFromSubtitleLineFromTop = 2;            // Prefer drawing from this line (the top-most of available subtitle lines index is 0) by default
+	static const int kSubtitlesBottomYOffsetPx = 12;               // In pixels. This is the bottom margin beneath the subtitles space
+	static const int kMaxWidthPerLineToAutoSplitThresholdPx = 610; // In pixels
+	static const int kMaxTextResourceEntries = 1 + 25;             // Support in-game subs (1) and all possible VQAs (25) with spoken dialogue or translatable text
 	static const char *SUBTITLES_FILENAME_PREFIXES[kMaxTextResourceEntries];
 	static const char *SUBTITLES_FONT_FILENAME_EXTERNAL;
-
+	static const char *SUBTITLES_VERSION_TRENAME;
 
 	BladeRunnerEngine *_vm;
 
+	struct SubtitlesInfo {
+		Common::String versionStr;
+		Common::String dateOfCompile;
+		Common::String languageMode;
+		Common::String credits;
+	};
+
+	SubtitlesInfo  _subtitlesInfo;
 	TextResource *_vqaSubsTextResourceEntries[kMaxTextResourceEntries];
 	Font         *_subsFont;
 
@@ -69,21 +75,23 @@ class Subtitles {
 	int            _currentSubtitleLines;
 	bool           _subtitlesQuoteChanged;
 
-	bool _gameSubsResourceEntriesFound[kMaxTextResourceEntries];	// false if a TRE file did not open successfully
-	bool _subsFontsLoaded;											// false if external fonts did not load
-	bool _subtitlesSystemActive;									// true if the whole subtitles subsystem should be disabled (due to missing required resources)
+	bool _gameSubsResourceEntriesFound[kMaxTextResourceEntries]; // false if a TRE file did not open successfully
+	bool _subsFontsLoaded;                                       // false if external fonts did not load
+	bool _subtitlesSystemActive;                                 // true if the whole subtitles subsystem should be disabled (due to missing required resources)
 
 public:
 	Subtitles(BladeRunnerEngine *vm);
 	~Subtitles();
 
 	bool isSystemActive() const { return _subtitlesSystemActive; }
+	bool isSubsFontsLoaded() const { return _subsFontsLoaded; }
 
 	void init();
+	SubtitlesInfo getSubtitlesInfo() const;
 	const char *getInGameSubsText(int actorId, int speech_id);						// get the text for actorId, quoteId (in-game subs)
 	const char *getOuttakeSubsText(const Common::String &outtakesName, int frame);	// get the text for this frame if any
 
-	void setGameSubsText(Common::String dbgQuote, bool force);	// for debugging - explicit set subs text
+	void setGameSubsText(Common::String dbgQuote, bool force); // for debugging - explicit set subs text
 	bool show();
 	bool hide();
 	bool isVisible() const;

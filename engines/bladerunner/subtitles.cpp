@@ -25,7 +25,7 @@
 #include "bladerunner/font.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/audio_speech.h"
-//#include "common/debug.h"
+#include "common/debug.h"
 
 namespace BladeRunner {
 
@@ -56,6 +56,7 @@ namespace BladeRunner {
 
 const char *Subtitles::SUBTITLES_FONT_FILENAME_EXTERNAL = "SUBTLS_E.FON";
 
+const char *Subtitles::SUBTITLES_VERSION_TRENAME        = "SBTLVERS"; // addon resource file for Subtitles version info - can only be SBTLVERS.TRE
 /*
 * All entries need to have the language code appended (after a '_').
 * And all entries should get the suffix extension ".TRx"; the last letter in extension "TR*" should also be the language code
@@ -134,14 +135,16 @@ void Subtitles::init(void) {
 	for (int i = 0; i < kMaxTextResourceEntries; i++) {
 		_vqaSubsTextResourceEntries[i] = new TextResource(_vm);
 		Common::String tmpConstructedFileName = "";
+		bool localizedResource = true;
 		if (!strcmp(SUBTITLES_FILENAME_PREFIXES[i], "WSTLGO") || !strcmp(SUBTITLES_FILENAME_PREFIXES[i], "BRLOGO")) {
 			tmpConstructedFileName = Common::String(SUBTITLES_FILENAME_PREFIXES[i]) + "_E"; // Only English versions of these exist
+			localizedResource = false;
 		}
 		else {
 			tmpConstructedFileName = Common::String(SUBTITLES_FILENAME_PREFIXES[i]) + "_" + _vm->_languageCode;
 		}
 
-		if ( _vqaSubsTextResourceEntries[i]->open(tmpConstructedFileName)) {
+		if ( _vqaSubsTextResourceEntries[i]->open(tmpConstructedFileName, localizedResource)) {
 			_gameSubsResourceEntriesFound[i] = true;
 		}
 	}
@@ -168,6 +171,33 @@ void Subtitles::init(void) {
 			_subtitleLineScreenY[i] = 479 - kSubtitlesBottomYOffsetPx - ((kMaxNumOfSubtitlesLines - i) * (_subsFont->getTextHeight("") + 1));
 		}
 	}
+
+	// Loading subtitles versioning info if available
+	TextResource *versionTxtResource = new TextResource(_vm);
+	if ( versionTxtResource->open(SUBTITLES_VERSION_TRENAME, false)) {
+		_subtitlesInfo.credits = versionTxtResource->getText((uint32)0);
+		_subtitlesInfo.versionStr = versionTxtResource->getText((uint32)1);
+		_subtitlesInfo.dateOfCompile = versionTxtResource->getText((uint32)2);
+		_subtitlesInfo.languageMode = versionTxtResource->getText((uint32)3);
+		debug("Subtitles version info: v%s (%s) %s by: %s",
+		       _subtitlesInfo.versionStr.c_str(),
+		       _subtitlesInfo.dateOfCompile.c_str(),
+		       _subtitlesInfo.languageMode.c_str(),
+		       _subtitlesInfo.credits.c_str());
+		if (isSubsFontsLoaded()) {
+			debug("Subtitles font was loaded successfully.");
+		} else {
+			debug("Subtitles font could not be loaded.");
+		}
+		delete versionTxtResource;
+		versionTxtResource = nullptr;
+	} else {
+		debug("Subtitles version info: N/A");
+	}
+}
+
+Subtitles::SubtitlesInfo Subtitles::getSubtitlesInfo() const {
+	return _subtitlesInfo;
 }
 
 /**
@@ -541,6 +571,11 @@ void Subtitles::clear() {
 */
 void Subtitles::reset() {
 	clear();
+
+	_subtitlesInfo.credits = "N/A";
+	_subtitlesInfo.versionStr = "N/A";
+	_subtitlesInfo.dateOfCompile = "N/A";
+	_subtitlesInfo.languageMode = "N/A";
 
 	for (int i = 0; i != kMaxTextResourceEntries; ++i) {
 		if (_vqaSubsTextResourceEntries[i] != nullptr) {

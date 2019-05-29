@@ -43,10 +43,15 @@ TextResource::~TextResource() {
 	delete[] _strings;
 }
 
-bool TextResource::open(const Common::String &name) {
+bool TextResource::open(const Common::String &name, bool localized) {
 	assert(name.size() <= 8);
 
-	Common::String resName = Common::String::format("%s.TR%s", name.c_str(), _vm->_languageCode.c_str());
+	Common::String resName;
+	if (localized) {
+		resName = Common::String::format("%s.TR%s", name.c_str(), _vm->_languageCode.c_str());
+	} else {
+		resName = Common::String::format("%s.TRE", name.c_str());
+	}
 	Common::ScopedPtr<Common::SeekableReadStream> s(_vm->getResourceStream(resName));
 	if (!s) {
 		warning("TextResource::open(): Can not open %s", resName.c_str());

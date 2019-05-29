@@ -42,7 +42,7 @@ public:
 	TextResource(BladeRunnerEngine *vm);
 	~TextResource();
 
-	bool open(const Common::String &name);
+	bool open(const Common::String &name, bool localized = true);
 
 	const char *getText(uint32 id) const;
 	const char *getOuttakeTextByFrame(uint32 frame) const;

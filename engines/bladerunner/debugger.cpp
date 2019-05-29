@@ -1284,8 +1284,21 @@ bool Debugger::cmdSubtitle(int argc, const char **argv) {
 	if (argc != 2) {
 		invalidSyntax = true;
 	} else {
+		if (!_vm->_subtitles->isSystemActive()) {
+			debugPrintf("Subtitles system is currently disabled\n");
+		}
+
 		Common::String subtitleText = argv[1];
-		if (subtitleText == "reset") {
+		if (subtitleText == "info") {
+			debugPrintf("Subtitles version info: v%s (%s) %s by: %s\n",
+			            _vm->_subtitles->getSubtitlesInfo().versionStr.c_str(),
+			            _vm->_subtitles->getSubtitlesInfo().dateOfCompile.c_str(),
+			            _vm->_subtitles->getSubtitlesInfo().languageMode.c_str(),
+			            _vm->_subtitles->getSubtitlesInfo().credits.c_str());
+			debugPrintf("Subtitles fonts loaded: %s\n",
+			            _vm->_subtitles->isSubsFontsLoaded()? "True":"False");
+
+		} else if (subtitleText == "reset") {
 			_vm->_subtitles->setGameSubsText("", false);
 		} else {
 			debugPrintf("Showing text: %s\n", subtitleText.c_str());
@@ -1295,9 +1308,9 @@ bool Debugger::cmdSubtitle(int argc, const char **argv) {
 	}
 
 	if (invalidSyntax) {
-		debugPrintf("Show specified text as subtitle or clear the current subtitle (with the reset option).\n");
+		debugPrintf("Show subtitles info, or display and clear (reset) a specified text as subtitle or clear the current subtitle.\n");
 		debugPrintf("Use double quotes to encapsulate the text.\n");
-		debugPrintf("Usage: %s (\"<text_to_display>\" | reset)\n", argv[0]);
+		debugPrintf("Usage: %s (\"<text_to_display>\" | info | reset)\n", argv[0]);
 	}
 	return true;
 
