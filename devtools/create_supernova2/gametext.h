@@ -772,6 +772,8 @@ const char *gameText[] = {
 "\"Ich hoffe, Sie hatten einen angenehmen Flug.|Bitte verlassen Sie das Raumschiff! Auf Wiedersehen!\"",    //"I hope you had a nice flight.|Please leave the spaceship! Goodbye!"
 "W\204hrend die anderen Passagiere|aussteigen, versuchst du,|den Schock zu verarbeiten.",    //While the other passengers|are disembarking, you are trying|to handle the shock.
 "\"Ich mu\341 beweisen, da\341 dieser|Roboter der falsche Horst|Hummel ist!\", denkst du.",    //"I have to prove that this robot|is the wrong Horst|Hummel!", you think to yourself.
+"\"Diese Mistkerle von der Artus GmbH und|Commander Sumoti m\201ssen entlarvt werden!\"",
+	//"These bastards from Artus GmbH and|Commander Sumoti must be unmasked!"
 NULL
 };
 
