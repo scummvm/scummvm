@@ -809,7 +809,7 @@ void KingdomGame::writeSavegameHeader(Common::OutSaveFile *out, KingdomSavegameH
 	out->writeString(header._saveName);
 	out->writeByte('\0');
 
-	Common::MemoryWriteStreamDynamic *tempThumbnail = new Common::MemoryWriteStreamDynamic;
+	Common::MemoryWriteStreamDynamic *tempThumbnail = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 	Graphics::saveThumbnail(*tempThumbnail);
 	out->write(tempThumbnail->getData(), tempThumbnail->size());
 	delete tempThumbnail;
@@ -844,7 +844,7 @@ bool KingdomGame::readSavegameHeader(Common::InSaveFile *in, KingdomSavegameHead
 		header._saveName += ch;
 
 	// Get the thumbnail
-	header._thumbnail = Graphics::loadThumbnail(*in);
+	Graphics::loadThumbnail(*in, header._thumbnail);
 	if (!header._thumbnail)
 		return false;
 
