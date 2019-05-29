@@ -23,11 +23,11 @@
  * as translations and is required for the engine to work properly.
  */
 
-#ifndef CREATE_SUPERNOVA_H
-#define CREATE_SUPERNOVA_H
+#ifndef CREATE_SUPERNOVA2_H
+#define CREATE_SUPERNOVA2_H
 
 #define VERSION 1
 
 
 
-#endif // CREATE_SUPERNOVA_H
+#endif // CREATE_SUPERNOVA2_H
