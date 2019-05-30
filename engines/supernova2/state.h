@@ -104,6 +104,7 @@ public:
 
 	void initState();
 	void initRooms();
+	void destroyRooms();
 	void getInput();
 	void changeRoom(RoomId id);
 	void wait(int ticks);
