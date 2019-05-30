@@ -180,6 +180,7 @@ void GameManager::initState() {
 	_timePaused = false;
 	_messageDuration = 0;
 	_animationTimer = 0;
+	_taxi_possibility = 4;
 
 	_currentSentence = -1;
 	for (int i = 0 ; i < 6 ; ++i) {
@@ -187,9 +188,12 @@ void GameManager::initState() {
 		_texts[i] = kNoString;
 		_rows[i] = 0;
 		_rowsStart[i] = 0;
+		_dials[i] = 1;
 	}
 
 	_prevImgId = 0;
+
+	_state._money = 20;
 }
 
 void GameManager::initRooms() {
@@ -543,6 +547,11 @@ void GameManager::drawMapExits() {
 	}
 }
 
+void GameManager::takeMoney(int amount) {
+	_state._money += amount;
+	_vm->setGameString(kStringMoney, Common::String::format("%d Xa", _state._money));
+}
+
 void GameManager::drawStatus() {
 	int index = static_cast<int>(_inputVerb);
 	_vm->renderBox(0, 140, 320, 9, kColorWhite25);
@@ -835,7 +844,28 @@ int GameManager::invertSection(int section) {
 }
 
 bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
-	return false;
+	if (verb == ACTION_OPEN && obj1._id == WALLET) {
+		if (_rooms[TAXISTAND]->getObject(4)->_type & CARRIED)
+			_vm->renderMessage(kStringEmpty);
+		else {
+			_vm->renderMessage(kStringWalletOpen);
+			takeObject(*_rooms[TAXISTAND]->getObject(4));
+			takeObject(*_rooms[TAXISTAND]->getObject(5));
+			takeMoney(1);
+		}
+	} else if (verb == ACTION_PRESS && obj1._id == TRANSMITTER) {
+		if (_currentRoom == _rooms[TAXISTAND]) {
+			if (_currentRoom->getObject(0)->_type != EXIT) {
+				_vm->renderImage(5);
+				wait(3);
+				_vm->renderImage(6);
+				_currentRoom->getObject(0)->_type = EXIT;
+				drawMapExits();
+			}
+		}
+	} else
+		return false;
+	return true;
 }
 
 void GameManager::handleInput() {
@@ -965,6 +995,36 @@ void GameManager::executeRoom() {
 		_newRoom = false;
 		_currentRoom->onEntrance();
 	}
+}
+void GameManager::taxi() {
+	static StringId dest[] = {
+		kStringAirport,
+		kStringDowntown,
+		kStringCulturePalace,
+		kStringEarth,
+		kStringPrivateApartment,
+		kStringLeaveTaxi
+	};
+
+	static StringId answers[] = {
+		kStringPay,
+		kStringLeaveTaxi
+	};
+
+	Room *previousRoom = _currentRoom;
+	_currentRoom = _rooms[INTRO];
+	_vm->setCurrentImage(4);
+	_vm->renderImage(0);
+	_vm->renderImage(1);
+	_vm->renderImage(2);
+
+	int possibility = _taxi_possibility;
+
+	if (previousRoom == _rooms[AIRPORT]) possibility += 1;
+	else if (previousRoom == _rooms[STREET]) possibility += 2;
+	else if (previousRoom == _rooms[CULTURE_PALACE]) possibility += 4;
+	debug("%d", dialog(6, _dials, dest, 1));
+
 }
 }
 

@@ -563,7 +563,7 @@ void TaxiStand::animation() {
 
 bool TaxiStand::interact(Action verb, Object &obj1, Object &obj2) {
 	if (verb == ACTION_WALK && obj1._id == TAXI && isSectionVisible(6))
-		;//taxi
+		_gm->taxi();
 	else if ((verb == ACTION_WALK || verb == ACTION_OPEN) && obj1._id == DOOR)
 		_vm->renderMessage(obj1._description);
 	else 
