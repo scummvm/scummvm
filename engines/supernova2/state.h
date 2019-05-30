@@ -130,6 +130,7 @@ public:
 	Object _nullObject;
 	Object *_currentInputObject;
 	Object *_inputObject[2];
+	int32 _oldTime;
 	uint _timePaused;
 	bool _timerPaused;
 	int32 _messageDuration;
@@ -168,6 +169,8 @@ public:
 	void changeRoom(RoomId id);
 	void resetInputState();
 	void handleInput();
+	void handleTime();
+	void setAnimationTimer(int ticks);
 
 private:
 	int _prevImgId;
