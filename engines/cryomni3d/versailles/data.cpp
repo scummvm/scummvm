@@ -301,7 +301,7 @@ struct VideoSubSetting {
 	int16 drawBottom;
 };
 
-static const VideoSubSetting videoSubSettings[] = {
+static const VideoSubSetting kVideoSubSettings[] = {
 	{"11D_LEB", 15, 11, 190, 479, 208, 129, 562, 479},
 	{"11E_HUI", 330, 9, 620, 479, 111, 109, 321, 341},
 	{"11E_MAN", 403, 12, 630, 479, 134, 89, 390, 405},
@@ -504,8 +504,8 @@ void CryOmni3DEngine_Versailles::setupDialogVariables() {
 	SET_DIAL_VARIABLE(136, "{CURRENT_GAME_TIME5}");
 	SET_DIAL_VARIABLE(137, "{JOUEUR_POSSEDE_EPIGRAPHE}");
 #undef SET_DIAL_VARIABLE
-	for (uint i = 0; i < ARRAYSIZE(videoSubSettings); i++) {
-		const VideoSubSetting &vss = videoSubSettings[i];
+	for (uint i = 0; i < ARRAYSIZE(kVideoSubSettings); i++) {
+		const VideoSubSetting &vss = kVideoSubSettings[i];
 		_dialogsMan.registerSubtitlesSettings(
 		    vss.videoName,
 		    DialogsManager::SubtitlesSettings(

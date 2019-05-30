@@ -33,7 +33,7 @@
 namespace CryOmni3D {
 namespace Versailles {
 
-static const char *imagesObjects[] = {
+static const char *kImagesObjects[] = {
 	"PAMP.gif",   //  0:  96
 	"PAPT_2.gif", //  1:  98
 	"PAML.gif",   //  2: 101
@@ -131,56 +131,56 @@ void CryOmni3DEngine_Versailles::setupObjects() {
 
 template<uint ID>
 void CryOmni3DEngine_Versailles::genericDisplayObject() {
-	displayObject(imagesObjects[ID]);
+	displayObject(kImagesObjects[ID]);
 }
 
 void CryOmni3DEngine_Versailles::obj_105() {
-	displayObject(imagesObjects[3]);
-	displayObject(imagesObjects[4]);
-	displayObject(imagesObjects[5]);
-	displayObject(imagesObjects[6]);
+	displayObject(kImagesObjects[3]);
+	displayObject(kImagesObjects[4]);
+	displayObject(kImagesObjects[5]);
+	displayObject(kImagesObjects[6]);
 }
 
 void CryOmni3DEngine_Versailles::obj_106() {
-	displayObject(imagesObjects[6]);
-	displayObject(imagesObjects[3]);
-	displayObject(imagesObjects[4]);
+	displayObject(kImagesObjects[6]);
+	displayObject(kImagesObjects[3]);
+	displayObject(kImagesObjects[4]);
 }
 
 void CryOmni3DEngine_Versailles::obj_107() {
 	if (_gameVariables[GameVariables::kSketchState] == 3) {
-		displayObject(imagesObjects[7]);
+		displayObject(kImagesObjects[7]);
 	} else {
-		displayObject(imagesObjects[6]);
+		displayObject(kImagesObjects[6]);
 	}
 }
 
 void CryOmni3DEngine_Versailles::obj_118() {
 	if (_gameVariables[GameVariables::kDecipherScore]) {
-		displayObject(imagesObjects[11]);
+		displayObject(kImagesObjects[11]);
 	} else {
-		displayObject(imagesObjects[10]);
+		displayObject(kImagesObjects[10]);
 	}
 }
 
 void CryOmni3DEngine_Versailles::obj_121() {
 	if (_gameVariables[GameVariables::kGotMedalsSolution]) {
-		displayObject(imagesObjects[13]);
+		displayObject(kImagesObjects[13]);
 	} else {
-		displayObject(imagesObjects[12]);
+		displayObject(kImagesObjects[12]);
 	}
 }
 
 void CryOmni3DEngine_Versailles::obj_125() {
 	if (_gameVariables[GameVariables::kStateLampoonReligion]) {
-		displayObject(imagesObjects[15]);
+		displayObject(kImagesObjects[15]);
 	} else {
-		displayObject(imagesObjects[14]);
+		displayObject(kImagesObjects[14]);
 	}
 }
 
 void CryOmni3DEngine_Versailles::obj_126() {
-	displayObject(imagesObjects[16], &CryOmni3DEngine_Versailles::obj_126hk);
+	displayObject(kImagesObjects[16], &CryOmni3DEngine_Versailles::obj_126hk);
 }
 
 void CryOmni3DEngine_Versailles::obj_126hk(Graphics::ManagedSurface &surface) {
@@ -197,9 +197,9 @@ void CryOmni3DEngine_Versailles::obj_126hk(Graphics::ManagedSurface &surface) {
 void CryOmni3DEngine_Versailles::obj_142() {
 	// Display a marker only when in maze
 	if (_currentLevel == 6 && _currentPlaceId >= 14 && _currentPlaceId <= 44) {
-		displayObject(imagesObjects[26], &CryOmni3DEngine_Versailles::obj_142hk);
+		displayObject(kImagesObjects[26], &CryOmni3DEngine_Versailles::obj_142hk);
 	} else {
-		displayObject(imagesObjects[26]);
+		displayObject(kImagesObjects[26]);
 	}
 }
 
@@ -260,7 +260,7 @@ void CryOmni3DEngine_Versailles::obj_142hk(Graphics::ManagedSurface &surface) {
 }
 
 // This array contains images for all paintings it must be kept in sync with _paintingsTitles
-static const char *imagesPaintings[] = {
+static const char *kImagesPaintings[] = {
 	"10E_1.GIF",      //  0: 41201
 	nullptr,          //  1: 41202
 	"10E_3.GIF",      //  2: 41203
@@ -426,7 +426,7 @@ void CryOmni3DEngine_Versailles::setupImgScripts() {
 // Generic handler for dumb fixed images
 template<uint ID>
 void CryOmni3DEngine_Versailles::genericDumbImage(ZonFixedImage *fimg) {
-	fimg->load(imagesPaintings[ID]);
+	fimg->load(kImagesPaintings[ID]);
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
@@ -448,7 +448,7 @@ void CryOmni3DEngine_Versailles::genericDumbImage(ZonFixedImage *fimg) {
 // Generic handler for paintings fixed images
 template<uint ID>
 void CryOmni3DEngine_Versailles::genericPainting(ZonFixedImage *fimg) {
-	fimg->load(imagesPaintings[ID]);
+	fimg->load(kImagesPaintings[ID]);
 	while (1) {
 		fimg->manage();
 		if (fimg->_exit || fimg->_zoneLow) {
