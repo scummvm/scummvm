@@ -42,8 +42,59 @@ namespace Supernova2 {
 //	kStringStatusCommandPress, kStringStatusCommandPull, kStringStatusCommandUse, kStringStatusCommandTalk, kStringStatusCommandGive
 //};
 
+void Inventory::add(Object &obj) {
+	if (_numObjects < kMaxCarry) {
+		_inventory[_numObjects++] = &obj;
+		obj.setProperty(CARRIED);
+	}
+
+	if (getSize() > _inventoryScroll + 8) {
+		_inventoryScroll = getSize() - 8;
+		_inventoryScroll += _inventoryScroll % 2;
+	}
+}
+
+void Inventory::remove(Object &obj) {
+	for (int i = 0; i < _numObjects; ++i) {
+		if (_inventory[i] == &obj) {
+			if (_inventoryScroll >= 2 && getSize() % 2)
+				_inventoryScroll -= 2;
+
+			--_numObjects;
+			while (i < _numObjects) {
+				_inventory[i] = _inventory[i + 1];
+				++i;
+			}
+			obj.disableProperty(CARRIED);
+		}
+	}
+}
+
+void Inventory::clear() {
+	for (int i = 0; i < _numObjects; ++i)
+		_inventory[i]->disableProperty(CARRIED);
+	_numObjects = 0;
+	_inventoryScroll = 0;
+}
+
+Object *Inventory::get(int index) const {
+	if (index < _numObjects)
+		return _inventory[index];
+
+	return _nullObject;
+}
+
+Object *Inventory::get(ObjectId id) const {
+	for (int i = 0; i < _numObjects; ++i) {
+		if (_inventory[i]->_id == id)
+			return _inventory[i];
+	}
+
+	return _nullObject;
+}
 GameManager::GameManager(Supernova2Engine *vm)
-	: _vm(vm)
+	: _inventory(&_nullObject, _inventoryScroll)
+	, _vm(vm)
     , _mouseClickType(Common::EVENT_INVALID) {
 	initRooms();
 	changeRoom(INTRO);
@@ -54,6 +105,9 @@ GameManager::~GameManager() {
 }
 
 void GameManager::initState() {
+	_currentInputObject = &_nullObject;
+	_inputObject[0] = &_nullObject;
+	_inputObject[1] = &_nullObject;
 	_processInput = false;
 	_guiEnabled = true;
 	_animationEnabled = true;
