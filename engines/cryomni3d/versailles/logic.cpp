@@ -1242,8 +1242,8 @@ bool CryOmni3DEngine_Versailles::handleSafe(ZonFixedImage *fimg) {
 	return success;
 }
 
-const unsigned short CryOmni3DEngine_Versailles::kSafeDigitsX[] = { 267, 318, 370, 421 };
-const unsigned short CryOmni3DEngine_Versailles::kSafeDigitsY[] = { 148, 230, 311 };
+const uint16 CryOmni3DEngine_Versailles::kSafeDigitsX[] = { 267, 318, 370, 421 };
+const uint16 CryOmni3DEngine_Versailles::kSafeDigitsY[] = { 148, 230, 311 };
 
 void CryOmni3DEngine_Versailles::drawSafeDigits(Graphics::ManagedSurface &surface,
         const Graphics::Surface(&bmpDigits)[10], const unsigned char (&safeDigits)[kSafeDigitsCount]) {
@@ -3011,7 +3011,7 @@ bool CryOmni3DEngine_Versailles::handleBomb(ZonFixedImage *fimg) {
 
 const char *CryOmni3DEngine_Versailles::kBombPassword = "JEMENVAISMAISLETATDEMEURERATOUJOURS";
 // We use brace elision here because it's dumped from the EXE
-const unsigned short CryOmni3DEngine_Versailles::kBombLettersPos[2][kBombPasswordMaxLength][2] = {
+const uint16 CryOmni3DEngine_Versailles::kBombLettersPos[2][kBombPasswordMaxLength][2] = {
 	{
 		26, 91, 84, 89, 141, 89, 202, 88, 261, 87, 322, 86, 384, 85, 448, 84,
 		512, 83, 576, 83, 26, 175, 84, 175, 142, 174, 202, 174, 260, 174, 322,
