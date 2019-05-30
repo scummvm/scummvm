@@ -105,7 +105,7 @@ public:
 
 	void updateEvents();
 	void processInput(Common::KeyState &state);
-	//void processInput();
+	void processInput();
 	void executeRoom();
 
 	static StringId guiCommands[];
@@ -117,6 +117,7 @@ public:
 	bool _keyPressed;
 	int _mouseX;
 	int _mouseY;
+	int _mouseField;
 	Room *_currentRoom;
 	bool _newRoom;
 	Room *_rooms[NUMROOMS];
@@ -125,6 +126,7 @@ public:
 	bool _processInput;
 	bool _guiEnabled;
 	bool _animationEnabled;
+	Action _inputVerb;
 	Object _nullObject;
 	Object *_currentInputObject;
 	Object *_inputObject[2];
@@ -143,15 +145,23 @@ public:
 	byte _rows[6];
 	byte _rowsStart[6];
 
+	void setObjectNull(Object *&obj);
+	bool isNullObject(Object *obj);
+
 	void initState();
 	void initRooms();
 	void destroyRooms();
 	void initGui();
+	uint16 getKeyInput(bool blockForPrintChar = false);
 	void getInput();
-	void changeRoom(RoomId id);
 	void wait(int ticks);
 	void waitOnInput(int ticks);
 	bool waitOnInput(int ticks, Common::KeyCode &keycode);
+	void showMenu();
+	void drawStatus();
+	void drawCommandBox();
+	void drawInventory();
+	void changeRoom(RoomId id);
 	void resetInputState();
 
 private:

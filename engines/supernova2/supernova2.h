@@ -110,7 +110,9 @@ public:
 	void renderText(const char *text, int x, int y, byte color);
 	void renderText(const Common::String &text, int x, int y, byte color);
 	void renderText(StringId stringId, int x, int y, byte color);
+	void renderText(const GuiElement &guiElement);
 	void renderBox(int x, int y, int width, int height, byte color);
+	void renderBox(const GuiElement &guiElement);
 	void setColor63(byte value);
 };
 

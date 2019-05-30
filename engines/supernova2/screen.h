@@ -35,7 +35,7 @@ namespace Supernova2 {
 class Supernova2Engine;
 class GameManager;
 class ResourceManager;
-//class GuiElement;
+class GuiElement;
 class Room;
 class MS2Image;
 class Screen;
@@ -165,9 +165,9 @@ public:
 	void renderText(const char *text, int x, int y, byte color);
 	void renderText(const Common::String &text, int x, int y, byte color);
 	void renderText(StringId stringId, int x, int y, byte color);
-	//void renderText(const GuiElement &guiElement);
+	void renderText(const GuiElement &guiElement);
 	void renderBox(int x, int y, int width, int height, byte color);
-	//void renderBox(const GuiElement &guiElement);
+	void renderBox(const GuiElement &guiElement);
 	void setColor63(byte value);
 	Common::Point getTextCursorPos();
 	void setTextCursorPos(int x, int y);
