@@ -187,6 +187,17 @@ Intro::Intro(Supernova2Engine *vm, GameManager *gm) {
 
 	_fileNumber = -1;
 	_id = INTRO;
+
+	_objectState[0] = Object(_id, kStringKnife, kStringKnifeDescription, KNIFE, TAKE | CARRIED | COMBINABLE, 255, 255, 0);
+	_objectState[1] = Object(_id, kStringMoney, kStringDefaultDescription, MONEY, TAKE | CARRIED | COMBINABLE, 255, 255, 0);
+	_objectState[2] = Object(_id, kStringDiscman, kStringDiscmanDescription, DISCMAN, TAKE | CARRIED | COMBINABLE, 255, 255, 0);
+	_objectState[3] = Object(_id, kStringSuctionCup, kStringSuctionCupDescription, SUCTION_CUP, TAKE | COMBINABLE, 255, 255, 0);
+	_objectState[4] = Object(_id, kStringDefaultDescription, kStringDefaultDescription, NULLOBJECT, NULLTYPE, 0, 0, 0);
+	_objectState[5] = Object(_id, kStringSpecialCard, kStringSpecialCardDescription, SP_KEYCARD, TAKE | COMBINABLE, 255, 255, 0);
+	_objectState[6] = Object(_id, kStringAlarmCracker, kStringAlarmCrackerDescription, ALARM_CRACKER, TAKE | COMBINABLE, 255, 255, 0);
+	_objectState[7] = Object(_id, kStringDinosaurHead, kStringDefaultDescription, NULLOBJECT, TAKE, 255, 255, 0);
+	_objectState[8] = Object(_id, kStringKeycard, kStringDefaultDescription, MUSCARD, TAKE, 255, 255, 0);
+
 	_introText = 
 		_vm->getGameString(kStringIntro1) + '\0' + 
 		_vm->getGameString(kStringIntro2) + '\0' + 
@@ -495,6 +506,10 @@ Airport::Airport(Supernova2Engine *vm, GameManager *gm) {
 }
 
 void Airport::onEntrance() {
+	for (int i = 0; i < 3; ++i)
+		_gm->_inventory.add(*_gm->_rooms[INTRO]->getObject(i));
+
+	setRoomSeen(true);
 	if (hasSeen() == false) {
 		_vm->renderMessage(kStringAirportEntrance);
 	}
