@@ -126,11 +126,11 @@ enum ObjectId {
 
 enum StringId {
 	kNoString = -1,
-kString0, kString1, kString2, kString3, kString4,
-kString5, kString6, kString7, kString8, kString9,
-kString10, kString11, kString12, kString13, kString14,
-kString15, kString16, kString17, kString18, kString19,
-kString20, kString21, kString22, kString23, kString24,
+kStringCommandGo, kStringCommandLook, kStringCommandTake, kStringCommandOpen, kStringCommandClose,
+kStringCommandPress, kStringCommandPull, kStringCommandUse, kStringCommandTalk, kStringCommandGive,
+kString10, kStringStatusCommandGo, kStringStatusCommandLook, kStringStatusCommandTake, kStringStatusCommandOpen,
+kStringStatusCommandClose, kStringStatusCommandPress, kStringStatusCommandPull, kStringStatusCommandUse, kStringStatusCommandTalk,
+kStringStatusCommandGive, kString21, kString22, kString23, kString24,
 kString25, kString26, kString27, kStringTextSpeed, kString29,
 kString30, kString31, kString32, kString33, kString34,
 kString35, kString36, kString37, kString38, kString39,
