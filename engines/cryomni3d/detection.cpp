@@ -31,7 +31,7 @@
 #include "cryomni3d/cryomni3d.h"
 
 #ifdef ENABLE_VERSAILLES
-	#include "cryomni3d/versailles/engine.h"
+#include "cryomni3d/versailles/engine.h"
 #endif
 
 namespace CryOmni3D {
@@ -249,7 +249,7 @@ bool CryOmni3DMetaEngine::createInstance(OSystem *syst, Engine **engine,
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(CRYOMNI3D)
-	REGISTER_PLUGIN_DYNAMIC(CRYOMNI3D, PLUGIN_TYPE_ENGINE, CryOmni3DMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(CRYOMNI3D, PLUGIN_TYPE_ENGINE, CryOmni3DMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(CRYOMNI3D, PLUGIN_TYPE_ENGINE, CryOmni3DMetaEngine);
+REGISTER_PLUGIN_STATIC(CRYOMNI3D, PLUGIN_TYPE_ENGINE, CryOmni3DMetaEngine);
 #endif
