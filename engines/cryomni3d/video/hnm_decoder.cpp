@@ -72,8 +72,8 @@ bool HNMDecoder::loadStream(Common::SeekableReadStream *stream) {
 	uint16 soundChannels = stream->readUint16LE();
 	uint32 frameSize = stream->readUint32LE();
 
-	char unknownStr[16];
-	char copyright[16];
+	byte unknownStr[16];
+	byte copyright[16];
 	stream->read(unknownStr, sizeof(unknownStr));
 	stream->read(copyright, sizeof(copyright));
 
