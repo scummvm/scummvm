@@ -60,6 +60,44 @@ private:
 	int _numObjects;
 };
 
+class GuiElement : public Common::Rect {
+public:
+	GuiElement();
+
+	void setSize(int x1, int y1, int x2, int y2);
+	void setText(const char *text);
+	void setTextPosition(int x, int y);
+	void setColor(int bgColor, int textColor, int bgColorHighlighted, int textColorHightlighted);
+	void setHighlight(bool isHighlighted);
+
+	const char *getText() const {
+		return _text;
+	}
+	int getBackgroundColor() const {
+		return _bgColor;
+	}
+	int getTextColor() const {
+		return _textColor;
+	}
+	const Common::Point &getTextPos() const {
+		return _textPosition;
+	}
+	bool isHighlighted() const {
+		return _isHighlighted;
+	}
+
+private:
+	Common::Point _textPosition;
+	char _text[128];
+	int _bgColor;
+	int _textColor;
+	int _bgColorNormal;
+	int _bgColorHighlighted;
+	int _textColorNormal;
+	int _textColorHighlighted;
+	bool _isHighlighted;
+};
+
 class GameManager {
 public:
 	GameManager(Supernova2Engine *vm);
@@ -96,6 +134,9 @@ public:
 	int32 _animationTimer;
 	int _inventoryScroll;
 	int _exitList[25];
+	GuiElement _guiCommandButton[10];
+	GuiElement _guiInventory[8];
+	GuiElement _guiInventoryArrow[2];
 	// Dialog
 	int _currentSentence;
 	int _sentenceNumber[6];
@@ -105,6 +146,7 @@ public:
 	void initState();
 	void initRooms();
 	void destroyRooms();
+	void initGui();
 	void getInput();
 	void changeRoom(RoomId id);
 	void wait(int ticks);

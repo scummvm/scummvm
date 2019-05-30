@@ -92,6 +92,55 @@ Object *Inventory::get(ObjectId id) const {
 
 	return _nullObject;
 }
+
+GuiElement::GuiElement()
+	: _isHighlighted(false)
+	, _bgColorNormal(kColorWhite25)
+	, _bgColorHighlighted(kColorWhite44)
+	, _bgColor(kColorWhite25)
+	, _textColorNormal(kColorGreen)
+	, _textColorHighlighted(kColorLightGreen)
+	, _textColor(kColorGreen)
+{
+	memset(_text, 0, sizeof(_text));
+}
+
+void GuiElement::setText(const char *text) {
+	strncpy(_text, text, sizeof(_text) - 1);
+}
+
+void GuiElement::setTextPosition(int x, int y) {
+	_textPosition = Common::Point(x, y);
+}
+
+void GuiElement::setSize(int x1, int y1, int x2, int y2) {
+	this->left = x1;
+	this->top = y1;
+	this->right = x2;
+	this->bottom = y2;
+
+	_textPosition = Common::Point(x1 + 1, y1 + 1);
+}
+
+void GuiElement::setColor(int bgColor, int textColor, int bgColorHighlighted, int textColorHightlighted) {
+	_bgColor = bgColor;
+	_textColor = textColor;
+	_bgColorNormal = bgColor;
+	_textColorNormal = textColor;
+	_bgColorHighlighted = bgColorHighlighted;
+	_textColorHighlighted = textColorHightlighted;
+}
+
+void GuiElement::setHighlight(bool isHighlighted_) {
+	if (isHighlighted_) {
+		_bgColor = _bgColorHighlighted;
+		_textColor = _textColorHighlighted;
+	} else {
+		_bgColor = _bgColorNormal;
+		_textColor = _textColorNormal;
+	}
+}
+
 GameManager::GameManager(Supernova2Engine *vm)
 	: _inventory(&_nullObject, _inventoryScroll)
 	, _vm(vm)
@@ -99,6 +148,7 @@ GameManager::GameManager(Supernova2Engine *vm)
 	initRooms();
 	changeRoom(INTRO);
 	initState();
+	initGui();
 }
 
 GameManager::~GameManager() {
@@ -141,6 +191,48 @@ void GameManager::initState() {
 void GameManager::initRooms() {
 	_rooms[INTRO] = new Intro(_vm, this);
 	_rooms[AIRPORT] = new Airport(_vm, this);
+}
+
+void GameManager::initGui() {
+	int cmdCount = ARRAYSIZE(_guiCommandButton);
+	int cmdAvailableSpace = 320 - (cmdCount - 1) * 2;
+	for (int i = 0; i < cmdCount; ++i) {
+		const Common::String &text = _vm->getGameString(guiCommands[i]);
+		cmdAvailableSpace -= Screen::textWidth(text);
+	}
+
+	int commandButtonX = 0;
+	for (int i = 0; i < ARRAYSIZE(_guiCommandButton); ++i) {
+		const Common::String &text = _vm->getGameString(guiCommands[i]);
+		int width;
+		if (i < cmdCount - 1) {
+			int space = cmdAvailableSpace / (cmdCount - i);
+			cmdAvailableSpace -= space;
+			width = Screen::textWidth(text) + space;
+		} else
+			width = 320 - commandButtonX;
+
+		_guiCommandButton[i].setSize(commandButtonX, 150, commandButtonX + width, 159);
+		_guiCommandButton[i].setText(text.c_str());
+		_guiCommandButton[i].setColor(kColorWhite25, kColorDarkGreen, kColorWhite44, kColorGreen);
+		commandButtonX += width + 2;
+	}
+
+	for (int i = 0; i < ARRAYSIZE(_guiInventory); ++i) {
+		int inventoryX = 136 * (i % 2);
+		int inventoryY = 161 + 10 * (i / 2);
+
+		_guiInventory[i].setSize(inventoryX, inventoryY, inventoryX + 135, inventoryY + 9);
+		_guiInventory[i].setColor(kColorWhite25, kColorDarkRed, kColorWhite35, kColorRed);
+	}
+	_guiInventoryArrow[0].setSize(272, 161, 279, 180);
+	_guiInventoryArrow[0].setColor(kColorWhite25, kColorDarkRed, kColorWhite35, kColorRed);
+	_guiInventoryArrow[0].setText("\x82");
+	_guiInventoryArrow[0].setTextPosition(273, 166);
+	_guiInventoryArrow[1].setSize(272, 181, 279, 200);
+	_guiInventoryArrow[1].setColor(kColorWhite25, kColorDarkRed, kColorWhite35, kColorRed);
+	_guiInventoryArrow[1].setText("\x83");
+	_guiInventoryArrow[1].setTextPosition(273, 186);
 }
 
 void GameManager::updateEvents() {
