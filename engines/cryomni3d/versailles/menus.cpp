@@ -451,20 +451,20 @@ uint CryOmni3DEngine_Versailles::displayOptions() {
 	g_system->showMouse(false);
 
 	if (selectedMsg == 42) {
-		_abortCommand = AbortLoadGame;
+		_abortCommand = kAbortLoadGame;
 		// For return value
 		selectedMsg = 28;
 	} else if (selectedMsg == 28) {
-		_abortCommand = AbortLoadGame;
+		_abortCommand = kAbortLoadGame;
 	} else if (selectedMsg == 40) {
-		_abortCommand = AbortQuit;
+		_abortCommand = kAbortQuit;
 	} else if (selectedMsg == 27) {
-		_abortCommand = AbortNewGame;
+		_abortCommand = kAbortNewGame;
 		_isVisiting = false;
 	} else if (g_engine->shouldQuit()) {
 		// Fake a quit
 		selectedMsg = 40;
-		_abortCommand = AbortQuit;
+		_abortCommand = kAbortQuit;
 	}
 
 	ConfMan.flushToDisk();

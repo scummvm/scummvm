@@ -191,33 +191,33 @@ Common::Error CryOmni3DEngine_Versailles::run() {
 				_isPlaying = true;
 				_toolbar.setInventoryEnabled(!_isVisiting);
 				nextStep = 0;
-				_abortCommand = AbortNoAbort;
+				_abortCommand = kAbortNoAbort;
 
 				gameStep();
 
 				// We shouldn't return from gameStep without an abort command
-				assert(_abortCommand != AbortNoAbort);
+				assert(_abortCommand != kAbortNoAbort);
 				switch (_abortCommand) {
 				default:
 					error("Invalid abortCommand: %d", _abortCommand);
 					// Shouldn't return
 					return Common::kUnknownError;
-				case AbortFinished:
-				case AbortGameOver:
+				case kAbortFinished:
+				case kAbortGameOver:
 					// Go back to menu
 					exitLoop = true;
 					break;
-				case AbortQuit:
+				case kAbortQuit:
 					exitLoop = true;
 					stopGame = true;
 					break;
-				case AbortNewGame:
+				case kAbortNewGame:
 					nextStep = 27;
 					break;
-				case AbortLoadGame:
+				case kAbortLoadGame:
 					nextStep = 28;
 					break;
-				case AbortNextLevel:
+				case kAbortNextLevel:
 					nextStep = 65;
 					break;
 				}
@@ -564,7 +564,7 @@ void CryOmni3DEngine_Versailles::playTransitionEndLevel(int level) {
 
 	fadeOutPalette();
 	if (g_engine->shouldQuit()) {
-		_abortCommand = AbortQuit;
+		_abortCommand = kAbortQuit;
 		return;
 	}
 
@@ -578,13 +578,13 @@ void CryOmni3DEngine_Versailles::playTransitionEndLevel(int level) {
 
 	clearKeys();
 	if (g_engine->shouldQuit()) {
-		_abortCommand = AbortQuit;
+		_abortCommand = kAbortQuit;
 		return;
 	}
 
 	fadeOutPalette();
 	if (g_engine->shouldQuit()) {
-		_abortCommand = AbortQuit;
+		_abortCommand = kAbortQuit;
 		return;
 	}
 
@@ -594,9 +594,9 @@ void CryOmni3DEngine_Versailles::playTransitionEndLevel(int level) {
 	fillSurface(0);
 
 	if (level == 7 || level == 8) {
-		_abortCommand = AbortFinished;
+		_abortCommand = kAbortFinished;
 	} else {
-		_abortCommand = AbortNextLevel;
+		_abortCommand = kAbortNextLevel;
 	}
 }
 
@@ -862,7 +862,7 @@ void CryOmni3DEngine_Versailles::gameStep() {
 				}
 			} else if (actionId == 66666) {
 				// Abort
-				assert(_abortCommand != AbortNoAbort);
+				assert(_abortCommand != kAbortNoAbort);
 				return;
 			}
 		} else if (!actionId) {
@@ -883,7 +883,7 @@ void CryOmni3DEngine_Versailles::doGameOver() {
 		playInGameVideo("4gameove");
 	}
 	fillSurface(0);
-	_abortCommand = AbortGameOver;
+	_abortCommand = kAbortGameOver;
 }
 
 void CryOmni3DEngine_Versailles::doPlaceChange() {
@@ -1150,7 +1150,7 @@ int CryOmni3DEngine_Versailles::handleWarp() {
 
 		exit = handleWarpMouse(&actionId, movingCursor);
 		if (g_engine->shouldQuit()) {
-			_abortCommand = AbortQuit;
+			_abortCommand = kAbortQuit;
 			exit = true;
 		}
 		if (exit) {
@@ -1216,7 +1216,7 @@ bool CryOmni3DEngine_Versailles::handleWarpMouse(uint *actionId,
 
 		bool mustRedraw = displayToolbar(original);
 		// Don't redraw if we abort game
-		if (_abortCommand != AbortNoAbort) {
+		if (_abortCommand != kAbortNoAbort) {
 			return true;
 		}
 		if (mustRedraw) {
@@ -1230,7 +1230,7 @@ bool CryOmni3DEngine_Versailles::handleWarpMouse(uint *actionId,
 	if (countDown()) {
 		// Time has changed: need redraw
 		// Don't redraw if we abort game
-		if (_abortCommand != AbortNoAbort) {
+		if (_abortCommand != kAbortNoAbort) {
 			return true;
 		}
 
