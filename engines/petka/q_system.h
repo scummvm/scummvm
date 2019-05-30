@@ -20,38 +20,33 @@
  *
  */
 
-#ifndef PETKA_Q_MESSAGE_OBJECT_H
-#define PETKA_Q_MESSAGE_OBJECT_H
+#ifndef PETKA_Q_SYSTEM_H
+#define PETKA_Q_SYSTEM_H
 
-#include "petka/base.h"
-
-namespace Common {
-	class SeekableReadStream;
-	class INIFile;
-}
+#include "petka/q_object.h"
+#include "petka/q_object_bg.h"
 
 namespace Petka {
 
-class QVisibleObject {
-public:
-	QVisibleObject();
-protected:
-	int32 _resourceId;
-	int32 _z;
-};
+class PetkaEngine;
 
-class QMessageObject : public QVisibleObject {
+class QSystem {
 public:
-	QMessageObject();
-	void deserialize(Common::SeekableReadStream &stream, const Common::INIFile &namesIni, const Common::INIFile &castIni);
-	uint16 getId();
+	explicit QSystem(PetkaEngine &vm);
+	~QSystem();
 
-protected:
-	uint16 _id;
-	Common::String _name;
-	Common::String _nameOnScreen;
-	int32 _dialogColor;
-	Common::Array<QReaction> _reactions;
+	bool init();
+
+	void addMessage(const QMessage &msg);
+	void addMessage(uint16 objId, uint16 opcode, int16 arg1 = 0, int16 arg2 = 0, int16 arg3 = 0, int16 unk1 = 0, int16 unk2 = 0);
+	void addMessageForAllObjects(uint16 opcode, int16 arg1 = 0, int16 arg2 = 0, int16 arg3 = 0, int16 unk1 = 0, int16 unk2 = 0);
+
+private:
+	PetkaEngine &_vm;
+	Common::Array<QObject> _objs;
+	Common::Array<QObjectBG> _bgs;
+	Common::Array<QMessageObject *> _allObjects;
+	Common::Array<QMessage> _messages;
 };
 
 } // End of namespace Petka

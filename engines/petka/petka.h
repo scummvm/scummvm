@@ -34,6 +34,7 @@ namespace Petka {
 class Console;
 class FileMgr;
 class QManager;
+class QSystem;
 
 enum {
 	kPetkaDebugGeneral = 1 << 0,
@@ -54,6 +55,7 @@ private:
 	Common::ScopedPtr<Console> _console;
 	Common::ScopedPtr<FileMgr> _fileMgr;
 	Common::ScopedPtr<QManager> _resMgr;
+	Common::ScopedPtr<QSystem> _gsystem;
 	const ADGameDescription *_desc;
 
 	Common::String _currentPath;

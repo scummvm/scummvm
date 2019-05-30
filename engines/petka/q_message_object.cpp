@@ -20,7 +20,10 @@
  *
  */
 
+#include "common/ini-file.h"
 #include "common/stream.h"
+
+#include "graphics/colormasks.h"
 
 #include "petka/q_message_object.h"
 
@@ -41,10 +44,11 @@ static Common::String readString(Common::ReadStream &readStream) {
 	return str;
 }
 
-void QMessageObject::deserialize(Common::SeekableReadStream &stream) {
+void QMessageObject::deserialize(Common::SeekableReadStream &stream, const Common::INIFile &namesIni, const Common::INIFile &castIni) {
 	_id = stream.readUint16LE();
 	_name = readString(stream);
 	_reactions.resize(stream.readUint32LE());
+
 	for (uint i = 0; i < _reactions.size(); ++i) {
 		QReaction *reaction = &_reactions[i];
 		reaction->opcode = stream.readUint16LE();
@@ -60,14 +64,19 @@ void QMessageObject::deserialize(Common::SeekableReadStream &stream) {
 			msg->arg3 = stream.readUint16LE();
 		}
 	}
+
+	namesIni.getKey(_name, "all", _nameOnScreen);
+
+	Common::String rgbString;
+	if (castIni.getKey(_name, "all", rgbString)) {
+		int r, g, b;
+		sscanf(rgbString.c_str(), "%d %d %d", &r, &g, &b);
+		_dialogColor = Graphics::RGBToColor<Graphics::ColorMasks<888>>((byte)r, (byte)g, (byte)b);
+	}
 }
 
-void QMessageObject::setDialogColor(int32 color) {
-	_dialogColor = color;
-}
-
-void QMessageObject::setNameOnScreen(const Common::String &name) {
-	_nameOnScreen = name;
+uint16 QMessageObject::getId() {
+	return _id;
 }
 
 } // End of namespace Petka
