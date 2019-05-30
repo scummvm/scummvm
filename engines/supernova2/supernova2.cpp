@@ -255,6 +255,27 @@ void Supernova2Engine::renderText(StringId stringId) {
 	_screen->renderText(stringId);
 }
 
+void Supernova2Engine::renderText(const GuiElement &guiElement) {
+	_screen->renderText(guiElement);
+}
+
+void Supernova2Engine::renderText(const uint16 character, int x, int y, byte color) {
+	_screen->renderText(character, x, y, color);
+}
+
+void Supernova2Engine::renderText(const char *text, int x, int y, byte color) {
+	_screen->renderText(text, x, y, color);
+}
+
+void Supernova2Engine::renderText(const Common::String &text, int x, int y, byte color) {
+	_screen->renderText(text, x, y, color);
+}
+
+void Supernova2Engine::renderText(StringId stringId, int x, int y, byte color) {
+	_screen->renderText(stringId, x, y, color);
+}
+
+
 void Supernova2Engine::paletteBrightness() {
 	_screen->paletteBrightness();
 }
@@ -385,24 +406,12 @@ void Supernova2Engine::setColor63(byte value) {
 	return quit;
 }*/
 
-void Supernova2Engine::renderText(const uint16 character, int x, int y, byte color) {
-	_screen->renderText(character, x, y, color);
-}
-
-void Supernova2Engine::renderText(const char *text, int x, int y, byte color) {
-	_screen->renderText(text, x, y, color);
-}
-
-void Supernova2Engine::renderText(const Common::String &text, int x, int y, byte color) {
-	_screen->renderText(text, x, y, color);
-}
-
-void Supernova2Engine::renderText(StringId stringId, int x, int y, byte color) {
-	_screen->renderText(stringId, x, y, color);
-}
-
 void Supernova2Engine::renderBox(int x, int y, int width, int height, byte color) {
 	_screen->renderBox(x, y, width, height, color);
+}
+
+void Supernova2Engine::renderBox(const GuiElement &guiElement) {
+	_screen->renderBox(guiElement);
 }
 
 }

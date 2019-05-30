@@ -271,10 +271,10 @@ void Screen::renderText(const Common::String &text) {
 		renderText(text.c_str());
 }
 
-/*void Screen::renderText(const GuiElement &guiElement) {
+void Screen::renderText(const GuiElement &guiElement) {
 	renderText(guiElement.getText(), guiElement.getTextPos().x,
 			   guiElement.getTextPos().y, guiElement.getTextColor());
-}*/
+}
 
 void Screen::renderText(const uint16 character, int x, int y, byte color) {
 	char text[2];
@@ -545,10 +545,10 @@ void Screen::renderBox(int x, int y, int width, int height, byte color) {
 	_vm->_system->unlockScreen();
 }
 
-/*void Screen::renderBox(const GuiElement &guiElement) {
+void Screen::renderBox(const GuiElement &guiElement) {
 	renderBox(guiElement.left, guiElement.top, guiElement.width(),
 			  guiElement.height(), guiElement.getBackgroundColor());
-}*/
+}
 
 void Screen::initPalette() {
 	g_system->getPaletteManager()->setPalette(initVGAPalette, 0, 256);
