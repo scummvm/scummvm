@@ -23,7 +23,7 @@
 #ifndef PETKA_Q_OBJECT_H
 #define PETKA_Q_OBJECT_H
 
-#include "petka/q_object.h"
+#include "petka/q_message_object.h"
 
 namespace Petka {
 
