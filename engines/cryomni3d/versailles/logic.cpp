@@ -4612,7 +4612,7 @@ bool CryOmni3DEngine_Versailles::doCountDown() {
 						// Finished!
 						_countingDown = false;
 						playTransitionEndLevel(8);
-						_abortCommand = AbortGameOver;
+						_abortCommand = kAbortGameOver;
 					}
 				}
 			}

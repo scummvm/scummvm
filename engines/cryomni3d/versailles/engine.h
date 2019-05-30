@@ -100,13 +100,13 @@ namespace Versailles {
 class CryOmni3DEngine_Versailles;
 
 enum AbortCommand {
-	AbortNoAbort = 0,
-	AbortQuit = 1,
-	AbortLoadGame = 2,
-	AbortNewGame = 3,
-	AbortNextLevel = 5,
-	AbortFinished = 6,
-	AbortGameOver = 7
+	kAbortNoAbort = 0,
+	kAbortQuit = 1,
+	kAbortLoadGame = 2,
+	kAbortNewGame = 3,
+	kAbortNextLevel = 5,
+	kAbortFinished = 6,
+	kAbortGameOver = 7
 };
 
 struct GameVariables {
@@ -231,7 +231,7 @@ public:
 	virtual bool hasPlaceDocumentation() override;
 	virtual bool displayPlaceDocumentation() override;
 	virtual uint displayOptions() override;
-	virtual bool shouldAbort() override { return g_engine->shouldQuit() || _abortCommand != AbortNoAbort; }
+	virtual bool shouldAbort() override { return g_engine->shouldQuit() || _abortCommand != kAbortNoAbort; }
 
 private:
 	void setupFonts();
