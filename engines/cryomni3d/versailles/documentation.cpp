@@ -596,15 +596,13 @@ uint Versailles_Documentation::docAreaHandleRecords(const Common::String &record
 			nextRecord = docAreaHandleCastleMap();
 			if (nextRecord == "") {
 				// Go back to current record
-				break;
 			} else if (nextRecord != "planG") {
 				_currentRecord = nextRecord;
-				break;
 			} else {
 				// We can't go up to previous case, so let's do a round
 				action = 7;
-				break;
 			}
+			break;
 		case 9:
 			action = -1;
 			// Start of category
