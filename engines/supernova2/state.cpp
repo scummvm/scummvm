@@ -522,6 +522,23 @@ void GameManager::showMenu() {
 	drawInventory();
 }
 
+void GameManager::drawMapExits() {
+// TODO: Preload _exitList on room entry instead on every call
+	_vm->renderBox(281, 161, 39, 39, kColorWhite25);
+
+	for (int i = 0; i < 25; i++)
+		_exitList[i] = -1;
+	for (int i = 0; i < kMaxObject; i++) {
+		if (_currentRoom->getObject(i)->hasProperty(EXIT)) {
+			byte r = _currentRoom->getObject(i)->_direction;
+			_exitList[r] = i;
+			int x = 284 + 7 * (r % 5);
+			int y = 164 + 7 * (r / 5);
+			_vm->renderBox(x, y, 5, 5, kColorDarkRed);
+		}
+	}
+}
+
 void GameManager::drawStatus() {
 	int index = static_cast<int>(_inputVerb);
 	_vm->renderBox(0, 140, 320, 9, kColorWhite25);
@@ -671,14 +688,14 @@ void GameManager::executeRoom() {
 			g_system->fillScreen(kColorBlack);
 			_vm->renderRoom(*_currentRoom);
 		}
-//		drawMapExits();
+		drawMapExits();
 		drawInventory();
 		drawStatus();
 		drawCommandBox();
 	}
 
-	//if (_vm->_screen->getViewportBrightness() == 0)
-	//	_vm->paletteFadeIn();
+	if (_vm->_screen->getViewportBrightness() == 0)
+		_vm->paletteFadeIn();
 
 	if (!_currentRoom->hasSeen() && _newRoom) {
 		_newRoom = false;
