@@ -128,7 +128,7 @@ enum StringId {
 	kNoString = -1,
 kStringCommandGo, kStringCommandLook, kStringCommandTake, kStringCommandOpen, kStringCommandClose,
 kStringCommandPress, kStringCommandPull, kStringCommandUse, kStringCommandTalk, kStringCommandGive,
-kString10, kStringStatusCommandGo, kStringStatusCommandLook, kStringStatusCommandTake, kStringStatusCommandOpen,
+kStringConversationEnd, kStringStatusCommandGo, kStringStatusCommandLook, kStringStatusCommandTake, kStringStatusCommandOpen,
 kStringStatusCommandClose, kStringStatusCommandPress, kStringStatusCommandPull, kStringStatusCommandUse, kStringStatusCommandTalk,
 kStringStatusCommandGive, kPhrasalVerbParticleGiveTo, kPhrasalVerbParticleUseWith, kString23, kString24,
 kString25, kString26, kString27, kStringTextSpeed, kString29,
@@ -248,7 +248,8 @@ kStringIntro6, kStringIntro7, kStringIntro8, kStringIntroTV1, kStringIntroTV2,
 kStringIntroTV3, kStringIntroTV4, kStringIntroTV5, kStringIntroTV6, kStringIntroTV7,
 kStringIntroTV8, kStringIntroTV9, kStringIntroTV10, kStringIntroTV11, kStringIntroTV12,
 kStringIntroTV13, kStringIntroTV14, kStringIntroTV15, kStringIntroTV16, kStringIntro9,
-kStringIntro10, kStringIntro11, kStringIntro12, kStringIntro13, kStringIntro14
+kStringIntro10, kStringIntro11, kStringIntro12, kStringIntro13, kStringIntro14,
+kStringDialogSeparator
 };
 
 ObjectType operator|(ObjectType a, ObjectType b);
