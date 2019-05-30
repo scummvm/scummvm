@@ -158,6 +158,7 @@ public:
 	void waitOnInput(int ticks);
 	bool waitOnInput(int ticks, Common::KeyCode &keycode);
 	void showMenu();
+	void drawMapExits();
 	void drawStatus();
 	void drawCommandBox();
 	void drawInventory();
