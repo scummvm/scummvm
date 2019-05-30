@@ -3,7 +3,8 @@ MODULE := engines/petka
 MODULE_OBJS = \
     detection.o \
     file_mgr.o \
-    petka.o
+    petka.o \
+    q_manager.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_PETKA), DYNAMIC_PLUGIN)

@@ -33,6 +33,7 @@ namespace Petka {
 
 class Console;
 class FileMgr;
+class QManager;
 
 enum {
 	kPetkaDebugGeneral = 1 << 0,
@@ -44,6 +45,7 @@ public:
 	~PetkaEngine();
 
 	virtual Common::Error run();
+	Common::SeekableReadStream *openFile(const Common::String &name, bool addCurrentPath);
 
 private:
 	void loadStores();
@@ -51,6 +53,7 @@ private:
 private:
 	Console *_console;
 	Common::ScopedPtr<FileMgr> _fileMgr;
+	Common::ScopedPtr<QManager> _resMgr;
 	const ADGameDescription *_desc;
 
 	Common::String _currentPath;
