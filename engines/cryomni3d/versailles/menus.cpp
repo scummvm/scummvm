@@ -170,6 +170,9 @@ uint CryOmni3DEngine_Versailles::displayOptions() {
 					case 4:
 						*it = 50;
 						break;
+					default:
+						// If it is another value, menu text is 48 (normal speed) and there is nothing to do
+						break;
 					}
 				}
 
