@@ -509,10 +509,66 @@ void Airport::onEntrance() {
 	for (int i = 0; i < 3; ++i)
 		_gm->_inventory.add(*_gm->_rooms[INTRO]->getObject(i));
 
-	setRoomSeen(true);
 	if (hasSeen() == false) {
 		_vm->renderMessage(kStringAirportEntrance);
 	}
 	setRoomSeen(true);
 }
+
+TaxiStand::TaxiStand(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 3;
+	_id = TAXISTAND;
+	_shown[0] = kShownTrue;
+	_shown[1] = kShownTrue;
+	_shown[2] = kShownTrue;
+	_shown[3] = kShownFalse;
+	_shown[4] = kShownFalse;
+	_shown[5] = kShownFalse;
+	_shown[6] = kShownFalse;
+	_shown[7] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringVehicle, kStringVehicleDescription, TAXI, NULLTYPE, 2, 2, 0, NULLROOM, 11);
+	_objectState[1] = Object(_id, kStringVehicle, kStringVehicleDescription, NULLOBJECT, NULLTYPE, 1, 1, 0);
+	_objectState[2] = Object(_id, kStringEntrance, kStringEntranceDescription, DOOR, EXIT | OPENABLE | CLOSED, 3, 3, 0, NULLROOM, 1);
+	_objectState[3] = Object(_id, kStringWallet, kStringWalletDescription, WALLET, TAKE, 0, 0, 7 + 128);
+	_objectState[4] = Object(_id, kStringDevice, kStringDeviceDescription, TRANSMITTER, TAKE | PRESS, 255, 255, 0);
+	_objectState[5] = Object(_id, kStringIdCard, kStringIdCardDescription, ID_CARD, TAKE | COMBINABLE, 255, 255, 0);
+	_objectState[5] = Object(_id, kStringAirport, kStringDefaultDescription, NULLOBJECT, EXIT, 255, 255, 0, AIRPORT, 22);
+}
+
+void TaxiStand::onEntrance() {
+	setRoomSeen(true);
+}
+
+void TaxiStand::animation() {
+	if (isSectionVisible(4)) {
+		setSectionVisible(1, kShownFalse);
+		setSectionVisible(2, kShownFalse);
+		setSectionVisible(3, kShownFalse);
+		setSectionVisible(4, kShownFalse);
+	}
+	else if (isSectionVisible(3))
+		setSectionVisible(4, kShownTrue);
+	else if (isSectionVisible(2))
+		setSectionVisible(3, kShownTrue);
+	else if (isSectionVisible(1))
+		setSectionVisible(2, kShownTrue);
+	else
+		setSectionVisible(1, kShownTrue);
+	_gm->setAnimationTimer(7);
+}
+
+bool TaxiStand::interact(Action verb, Object &obj1, Object &obj2) {
+	if (verb == ACTION_WALK && obj1._id == TAXI && isSectionVisible(6))
+		;//taxi
+	else if ((verb == ACTION_WALK || verb == ACTION_OPEN) && obj1._id == DOOR)
+		_vm->renderMessage(obj1._description);
+	else 
+		return false;
+	return true;
+}
+
 }

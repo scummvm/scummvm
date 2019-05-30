@@ -100,5 +100,15 @@ public:
 private:
 };
 
+class TaxiStand : public Room {
+public:
+	TaxiStand(Supernova2Engine *vm, GameManager *gm);
+	virtual void onEntrance();
+	virtual void animation();
+	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+
+private:
+};
+
 }
 #endif // SUPERNOVA2_ROOMS_H

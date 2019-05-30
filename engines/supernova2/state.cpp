@@ -158,6 +158,7 @@ GameManager::~GameManager() {
 void GameManager::destroyRooms() {
 	delete _rooms[INTRO];
 	delete _rooms[AIRPORT];
+	delete _rooms[TAXISTAND];
 }
 
 void GameManager::initState() {
@@ -174,6 +175,7 @@ void GameManager::initState() {
 	_mouseY = -1;
 	_mouseField = -1;
 	_inventoryScroll = 0;
+	_oldTime = g_system->getMillis();
 	_timerPaused = 0;
 	_timePaused = false;
 	_messageDuration = 0;
@@ -193,6 +195,7 @@ void GameManager::initState() {
 void GameManager::initRooms() {
 	_rooms[INTRO] = new Intro(_vm, this);
 	_rooms[AIRPORT] = new Airport(_vm, this);
+	_rooms[TAXISTAND] = new TaxiStand(_vm, this);
 }
 
 void GameManager::initGui() {
@@ -238,6 +241,7 @@ void GameManager::initGui() {
 }
 
 void GameManager::updateEvents() {
+	handleTime();
 	if (_animationEnabled && !_vm->_screen->isMessageShown() && _animationTimer == 0)
 		_currentRoom->animation();
 
@@ -675,6 +679,24 @@ bool GameManager::waitOnInput(int ticks, Common::KeyCode &keycode) {
 			return true;
 	} while (g_system->getMillis() < end  && !_vm->shouldQuit());
 	return false;
+}
+
+void GameManager::setAnimationTimer(int ticks) {
+	_animationTimer = ticksToMsec(ticks);
+}
+
+void GameManager::handleTime() {
+	if (_timerPaused)
+		return;
+	int32 newTime = g_system->getMillis();
+	int32 delta = newTime - _oldTime;
+
+	if (_animationTimer > delta)
+		_animationTimer -= delta;
+	else
+		_animationTimer = 0;
+
+	_oldTime = newTime;
 }
 
 int GameManager::invertSection(int section) {
