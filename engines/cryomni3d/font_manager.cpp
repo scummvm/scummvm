@@ -61,9 +61,9 @@ void FontManager::loadFont(Common::ReadStream &font_fl) {
 	}
 
 	// 3 unknown uint16
-	font_fl.readUint16BE();
-	font_fl.readUint16BE();
-	font_fl.readUint16BE();
+	(void) font_fl.readUint16BE();
+	(void) font_fl.readUint16BE();
+	(void) font_fl.readUint16BE();
 
 	Font *font = new Font();
 

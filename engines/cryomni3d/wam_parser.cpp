@@ -32,10 +32,11 @@ void WAMParser::loadStream(Common::ReadStream &stream) {
 
 	_places.clear();
 
-	stream.readByte();
-	stream.readByte();
-	stream.read(str, 16);
-	stream.readUint32LE();
+	// These are unused and unknown values
+	(void) stream.readByte();
+	(void) stream.readByte();
+	(void) stream.read(str, 16);
+	(void) stream.readUint32LE();
 
 	uint nPlaces = stream.readByte();
 	//debug("nPlaces = %u", nPlaces);
@@ -62,14 +63,14 @@ void WAMParser::loadStream(Common::ReadStream &stream) {
 			_places.erase(oldPlace);
 		}
 		//debug("nPlaceId = %u", place.placeId);
-		stream.readUint32LE();
+		(void) stream.readUint32LE();
 		uint nTransitions = stream.readByte();
 		//debug("nTransitions = %u", nTransitions);
 		uint nZones = stream.readByte();
 		//debug("nZones = %u", nZones);
 		for (uint j = 0; j < nTransitions; j++) {
 			Transition trans;
-			stream.readUint32LE();
+			(void) stream.readUint32LE();
 			uint nAnimations = stream.readByte();
 			for (uint k = 0; k < 8; k++) {
 				stream.read(str, 16);
@@ -78,9 +79,10 @@ void WAMParser::loadStream(Common::ReadStream &stream) {
 					nAnimations--;
 				}
 			}
-			stream.readUint32LE();
+			(void) stream.readUint32LE();
 			trans.dstId = stream.readUint32LE();
-			stream.readByte();
+			// Unused byte
+			(void) stream.readByte();
 			trans.srcAlpha = stream.readDoubleLE();
 			trans.srcBeta = stream.readDoubleLE();
 			trans.dstAlpha = stream.readDoubleLE();
