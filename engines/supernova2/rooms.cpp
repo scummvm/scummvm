@@ -490,6 +490,8 @@ Airport::Airport(Supernova2Engine *vm, GameManager *gm) {
 	_id = AIRPORT;
 	_shown[0] = kShownTrue;
 
+	_objectState[0] = Object(_id, kStringSpaceship, kStringSpaceshipDescription, NULLOBJECT, NULLTYPE, 0, 0, 0, NULLROOM, 0);
+	_objectState[1] = Object(_id, kStringVehicles, kStringVehiclesDescription, NULLOBJECT, EXIT, 1, 1, 0, TAXISTAND, 8);
 }
 
 void Airport::onEntrance() {
