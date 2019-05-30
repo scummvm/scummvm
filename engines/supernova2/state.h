@@ -143,6 +143,7 @@ public:
 	// Dialog
 	int _currentSentence;
 	int _sentenceNumber[6];
+	StringId _texts[6];
 	byte _rows[6];
 	byte _rowsStart[6];
 
@@ -171,6 +172,13 @@ public:
 	void handleInput();
 	void handleTime();
 	void setAnimationTimer(int ticks);
+	int  dialog(int num, byte rowLength[6], StringId text[6], int number);
+	void sentence(int number, bool brightness);
+	void say(StringId textId);
+	void say(const char *text);
+	void reply(StringId textId, int aus1, int aus2);
+	void reply(const char *text, int aus1, int aus2);
+	void mousePosDialog(int x, int y);
 
 private:
 	int _prevImgId;

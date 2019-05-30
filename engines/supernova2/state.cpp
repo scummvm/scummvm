@@ -184,7 +184,7 @@ void GameManager::initState() {
 	_currentSentence = -1;
 	for (int i = 0 ; i < 6 ; ++i) {
 		_sentenceNumber[i] = -1;
-//		_texts[i] = kNoString;
+		_texts[i] = kNoString;
 		_rows[i] = 0;
 		_rowsStart[i] = 0;
 	}
@@ -558,6 +558,132 @@ void GameManager::drawStatus() {
 			_vm->renderText(kPhrasalVerbParticleUseWith);
 
 		_vm->renderText(_currentInputObject->_name);
+	}
+}
+
+void GameManager::sentence(int number, bool brightness) {
+	if (number < 0)
+		return;
+	_vm->renderBox(0, 141 + _rowsStart[number] * 10, 320, _rows[number] * 10 - 1, kColorWhite44);
+	if (_texts[_rowsStart[number]] == kStringDialogSeparator)
+		_vm->renderText(kStringConversationEnd, 1, 142 + _rowsStart[number] * 10, kColorRed);
+	else {
+		for (int r = _rowsStart[number]; r < _rowsStart[number] + _rows[number]; ++r)
+			_vm->renderText(_texts[r], 1, 142 + r * 10, kColorGreen);
+	}
+}
+
+void GameManager::say(StringId textId) {
+	Common::String str = _vm->getGameString(textId);
+	if (!str.empty())
+		say(str.c_str());
+}
+
+void GameManager::say(const char *text) {
+	Common::String t(text);
+	char *row[6];
+	Common::String::iterator p = t.begin();
+	uint numRows = 0;
+	while (*p) {
+		row[numRows++] = p;
+		while ((*p != '\0') && (*p != '|')) {
+			++p;
+		}
+		if (*p == '|') {
+			*p = 0;
+			++p;
+		}
+	}
+
+	_vm->renderBox(0, 138, 320, 62, kColorBlack);
+	_vm->renderBox(0, 141, 320, numRows * 10 - 1, kColorWhite25);
+	for (uint r = 0; r < numRows; ++r)
+		_vm->renderText(row[r], 1, 142 + r * 10, kColorDarkGreen);
+	waitOnInput((t.size() + 20) * _vm->_textSpeed / 10);
+	_vm->renderBox(0, 138, 320, 62, kColorBlack);
+}
+
+void GameManager::reply(StringId textId, int aus1, int aus2) {
+	Common::String str = _vm->getGameString(textId);
+	if (!str.empty())
+		reply(str.c_str(), aus1, aus2);
+}
+
+void GameManager::reply(const char *text, int aus1, int aus2) {
+	if (*text != '|')
+		_vm->renderMessage(text, kMessageTop);
+
+	for (int z = (strlen(text) + 20) * _vm->_textSpeed / 40; z > 0; --z) {
+		_vm->renderImage(aus1);
+		waitOnInput(2);
+		if (_keyPressed || _mouseClicked)
+			z = 1;
+		_vm->renderImage(aus2);
+		waitOnInput(2);
+		if (_keyPressed || _mouseClicked)
+			z = 1;
+	}
+	if (*text != '|')
+		_vm->removeMessage();
+}
+
+int GameManager::dialog(int num, byte rowLength[6], StringId text[6], int number) {
+	_vm->_allowLoadGame = false;
+	_guiEnabled = false;
+
+	bool remove[6];
+	for (int i = 0; i < 5; ++i)
+		remove[i] = _currentRoom->sentenceRemoved(i, number);
+	// The original does not initialize remove[5]!!!
+	// Set it to false/0. But maybe the loop above should use 6 instead of 5?
+	remove[5] = false;
+
+	_vm->renderBox(0, 138, 320, 62, kColorBlack);
+
+	for (int i = 0; i < 6 ; ++i)
+		_sentenceNumber[i] = -1;
+
+	int r = 0, rq = 0;
+	for (int i = 0; i < num; ++i) {
+		if (!remove[i]) {
+			_rowsStart[i] = r;
+			_rows[i] = rowLength[i];
+			for (int j = 0; j < _rows[i]; ++j, ++r, ++rq) {
+				_texts[r] = text[rq];
+				_sentenceNumber[r] = i;
+			}
+			sentence(i, false);
+		} else
+			rq += rowLength[i];
+	}
+
+	_currentSentence = -1;
+	do {
+		do {
+			updateEvents();
+			mousePosDialog(_mouseX, _mouseY);
+			g_system->updateScreen();
+			g_system->delayMillis(_vm->_delay);
+		} while (!_mouseClicked && !_vm->shouldQuit());
+	} while (_currentSentence == -1 && !_vm->shouldQuit());
+
+	_vm->renderBox(0, 138, 320, 62, kColorBlack);
+
+	if (number && _currentSentence != -1 && _texts[_rowsStart[_currentSentence]] != kStringDialogSeparator)
+		_currentRoom->removeSentence(_currentSentence, number);
+
+	_guiEnabled = true;
+	_vm->_allowLoadGame = true;
+
+	return _currentSentence;
+}
+
+void GameManager::mousePosDialog(int x, int y) {
+	int a = y < 141 ? -1 : _sentenceNumber[(y - 141) / 10];
+	if (a != _currentSentence) {
+		sentence(_currentSentence, false);
+		_currentSentence = a;
+		sentence(_currentSentence, true);
 	}
 }
 
