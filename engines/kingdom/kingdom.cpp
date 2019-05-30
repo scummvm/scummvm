@@ -160,7 +160,7 @@ bool KingdomGame::isDemo() const {
 }
 
 Common::Error KingdomGame::run() {
-	initGraphics(320, 200, false);
+	initGraphics(320, 200);
 	_console = new Console(this);
 
 	_logic = new Logic(this);
