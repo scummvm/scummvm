@@ -102,6 +102,12 @@ GameManager::GameManager(Supernova2Engine *vm)
 }
 
 GameManager::~GameManager() {
+	destroyRooms();
+}
+
+void GameManager::destroyRooms() {
+	delete _rooms[INTRO];
+	delete _rooms[AIRPORT];
 }
 
 void GameManager::initState() {
