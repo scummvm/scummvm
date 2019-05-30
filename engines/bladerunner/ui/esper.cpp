@@ -1765,6 +1765,14 @@ void ESPER::updateSelection() {
 		}
 	}
 
+	if (left > right) {
+		SWAP(left, right);
+	}
+
+	if (top > bottom) {
+		SWAP(top, bottom);
+	}
+
 	_regionSelected = findRegion(Common::Rect(left, top, right, bottom));
 	if (_regionSelected >= 0) {
 		_regionSelectedAck = true;
