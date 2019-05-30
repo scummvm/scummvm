@@ -49,6 +49,30 @@
 
 namespace Supernova2 {
 
+ObjectType operator|(ObjectType a, ObjectType b) {
+	return static_cast<ObjectType>(+a | +b);
+}
+
+ObjectType operator&(ObjectType a, ObjectType b) {
+	return static_cast<ObjectType>(+a & +b);
+}
+
+ObjectType operator^(ObjectType a, ObjectType b) {
+	return static_cast<ObjectType>(+a ^ +b);
+}
+
+ObjectType &operator|=(ObjectType &a, ObjectType b) {
+	return a = a | b;
+}
+
+ObjectType &operator&=(ObjectType &a, ObjectType b) {
+	return a = a & b;
+}
+
+ObjectType &operator^=(ObjectType &a, ObjectType b) {
+	return a = a ^ b;
+}
+
 Supernova2Engine::Supernova2Engine(OSystem *syst)
 	: Engine(syst)
 	, _console(nullptr)
