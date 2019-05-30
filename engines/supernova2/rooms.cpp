@@ -221,6 +221,7 @@ void Intro::onEntrance() {
 
 	titleScreen();
 	thoughts1() && tvDialogue() && thoughts2();
+	_vm->paletteFadeOut();
 
 	_gm->changeRoom(AIRPORT);
 	_gm->_guiEnabled = true;
@@ -489,7 +490,6 @@ bool Intro::tvDialogue() {
 	if(!tvSay(9, 7, 0, kMessageCenter, kStringIntroTV16))
 		return false;
 
-	_vm->paletteFadeOut();
 	return true;
 }
 
