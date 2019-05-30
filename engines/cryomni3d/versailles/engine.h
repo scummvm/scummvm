@@ -461,8 +461,8 @@ private:
 	IMG_CB(34174e);
 	IMG_CB(34174f);
 	static const uint kSafeDigitsCount = 12;
-	static const unsigned short kSafeDigitsX[];
-	static const unsigned short kSafeDigitsY[];
+	static const uint16 kSafeDigitsX[];
+	static const uint16 kSafeDigitsY[];
 	static const char *kSafeDates[];
 	bool handleSafe(ZonFixedImage *fimg);
 	void drawSafeDigits(Graphics::ManagedSurface &surface, const Graphics::Surface(&bmpDigits)[10],
@@ -529,7 +529,7 @@ private:
 	IMG_CB(88003f);
 	static const uint kBombPasswordSmallLength = 40;
 	static const uint kBombPasswordMaxLength = 60;
-	static const unsigned short kBombLettersPos[2][kBombPasswordMaxLength][2];
+	static const uint16 kBombLettersPos[2][kBombPasswordMaxLength][2];
 	static const char *kBombPassword;
 	bool handleBomb(ZonFixedImage *fimg);
 	void drawBombLetters(Graphics::ManagedSurface &surface, const Graphics::Surface(&bmpLetters)[26],
