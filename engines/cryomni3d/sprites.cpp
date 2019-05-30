@@ -65,8 +65,8 @@ void Sprites::loadSprites(Common::ReadStream &spr_fl) {
 		}
 
 		// 2 unknown uint32
-		spr_fl.readUint32BE();
-		spr_fl.readUint32BE();
+		(void) spr_fl.readUint32BE();
+		(void) spr_fl.readUint32BE();
 
 		CryoCursor *cursor = new CryoCursor();
 

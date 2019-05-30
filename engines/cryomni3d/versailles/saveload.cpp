@@ -235,9 +235,9 @@ bool CryOmni3DEngine_Versailles::loadGame(bool visit, uint saveNum) {
 	in->read(saveNameC, sizeof(saveNameC));
 
 	// dummy values
-	in->readUint32LE();
-	in->readUint32BE();
-	in->readUint32BE();
+	(void) in->readUint32LE();
+	(void) in->readUint32BE();
+	(void) in->readUint32BE();
 
 	// Dialog variables
 	assert(_dialogsMan.size() < 200);
@@ -245,7 +245,8 @@ bool CryOmni3DEngine_Versailles::loadGame(bool visit, uint saveNum) {
 		_dialogsMan[i] = in->readByte();
 	}
 	for (uint i = _dialogsMan.size(); i < 200; i++) {
-		in->readByte();
+		// Read the remaining bytes but don't use them
+		(void) in->readByte();
 	}
 
 	// Inventory
@@ -287,7 +288,8 @@ bool CryOmni3DEngine_Versailles::loadGame(bool visit, uint saveNum) {
 		*it = in->readUint32BE();
 	}
 	for (uint i = _gameVariables.size(); i < 100; i++) {
-		in->readUint32BE();
+		// Read the remaining variables but don't use them
+		(void) in->readUint32BE();
 	}
 
 	delete in;
