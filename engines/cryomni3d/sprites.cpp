@@ -54,13 +54,13 @@ Sprites::~Sprites() {
 }
 
 void Sprites::loadSprites(Common::ReadStream &spr_fl) {
-	byte magic[4];
-
 	while (true) {
-		if (spr_fl.read(magic, sizeof(magic)) == 0) {
+		uint32 magic = spr_fl.readUint32BE();
+		if (spr_fl.eos()) {
+			// We are EOS so last read likely failed
 			break;
 		}
-		if (memcmp(magic, "SPRI", sizeof(magic))) {
+		if (magic != MKTAG('S', 'P', 'R', 'I')) {
 			error("Invalid sprite magic");
 		}
 
