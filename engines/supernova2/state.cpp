@@ -573,12 +573,12 @@ void GameManager::drawStatus() {
 void GameManager::sentence(int number, bool brightness) {
 	if (number < 0)
 		return;
-	_vm->renderBox(0, 141 + _rowsStart[number] * 10, 320, _rows[number] * 10 - 1, kColorWhite44);
+	_vm->renderBox(0, 141 + _rowsStart[number] * 10, 320, _rows[number] * 10 - 1, brightness ? kColorWhite44 : kColorWhite25);
 	if (_texts[_rowsStart[number]] == kStringDialogSeparator)
-		_vm->renderText(kStringConversationEnd, 1, 142 + _rowsStart[number] * 10, kColorRed);
+		_vm->renderText(kStringConversationEnd, 1, 142 + _rowsStart[number] * 10, brightness ? kColorRed : kColorDarkRed);
 	else {
 		for (int r = _rowsStart[number]; r < _rowsStart[number] + _rows[number]; ++r)
-			_vm->renderText(_texts[r], 1, 142 + r * 10, kColorGreen);
+			_vm->renderText(_texts[r], 1, 142 + r * 10, brightness ? kColorGreen : kColorDarkGreen);
 	}
 }
 
