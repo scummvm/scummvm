@@ -557,6 +557,16 @@ void GameManager::drawStatus() {
 	}
 }
 
+void GameManager::takeObject(Object &obj) {
+	if (obj.hasProperty(CARRIED))
+		return;
+
+	if (obj._section != 0)
+		_vm->renderImage(obj._section);
+	obj._click = obj._click2 = 255;
+	_inventory.add(obj);
+}
+
 void GameManager::drawCommandBox() {
 	for (int i = 0; i < ARRAYSIZE(_guiCommandButton); ++i) {
 		_vm->renderBox(_guiCommandButton[i]);
@@ -667,9 +677,115 @@ bool GameManager::waitOnInput(int ticks, Common::KeyCode &keycode) {
 	return false;
 }
 
+int GameManager::invertSection(int section) {
+	if (section < 128)
+		section += 128;
+	else
+		section -= 128;
+
+	return section;
+}
+
+bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
+	return false;
+}
+
+void GameManager::handleInput() {
+	bool validCommand = genericInteract(_inputVerb, *_inputObject[0], *_inputObject[1]);
+	if (!validCommand)
+		validCommand = _currentRoom->interact(_inputVerb, *_inputObject[0], *_inputObject[1]);
+	if (!validCommand) {
+		switch (_inputVerb) {
+		case ACTION_LOOK:
+			_vm->renderMessage(_inputObject[0]->_description);
+			break;
+
+		case ACTION_WALK:
+			if (_inputObject[0]->hasProperty(CARRIED)) {
+				// You already carry this.
+				_vm->renderMessage(kStringGenericInteract1);
+			} else if (!_inputObject[0]->hasProperty(EXIT)) {
+				// You're already there.
+				_vm->renderMessage(kStringGenericInteract2);
+			} else if (_inputObject[0]->hasProperty(OPENABLE) && !_inputObject[0]->hasProperty(OPENED)) {
+				// This is closed
+				_vm->renderMessage(kStringGenericInteract3);
+			} else
+				changeRoom(_inputObject[0]->_exitRoom);
+
+			break;
+
+		case ACTION_TAKE:
+			if (_inputObject[0]->hasProperty(OPENED)) {
+				// You already have that
+				_vm->renderMessage(kStringGenericInteract4);
+			} else if (_inputObject[0]->hasProperty(UNNECESSARY)) {
+				// You do not need that.
+				_vm->renderMessage(kStringGenericInteract5);
+			} else if (!_inputObject[0]->hasProperty(TAKE)) {
+				// You can't take that.
+				_vm->renderMessage(kStringGenericInteract6);
+			} else
+				takeObject(*_inputObject[0]);
+
+			break;
+
+		case ACTION_OPEN:
+			if (!_inputObject[0]->hasProperty(OPENABLE)) {
+				// This can't be opened
+				_vm->renderMessage(kStringGenericInteract7);
+			} else if (_inputObject[0]->hasProperty(OPENED)) {
+				// This is already opened.
+				_vm->renderMessage(kStringGenericInteract8);
+			} else if (_inputObject[0]->hasProperty(CLOSED)) {
+				// This is locked.
+				_vm->renderMessage(kStringGenericInteract9);
+			} else {
+				_vm->renderImage(_inputObject[0]->_section);
+				_inputObject[0]->setProperty(OPENED);
+				byte i = _inputObject[0]->_click;
+				_inputObject[0]->_click  = _inputObject[0]->_click2;
+				_inputObject[0]->_click2 = i;
+				//_sound->play(kAudioDoorOpen);
+			}
+			break;
+
+		case ACTION_CLOSE:
+			if (!_inputObject[0]->hasProperty(OPENABLE) ||
+				(_inputObject[0]->hasProperty(CLOSED) &&
+				 _inputObject[0]->hasProperty(OPENED))) {
+				// This can't be closed.
+				_vm->renderMessage(kStringGenericInteract10);
+			} else if (!_inputObject[0]->hasProperty(OPENED)) {
+				// This is already closed.
+				_vm->renderMessage(kStringGenericInteract11);
+			} else {
+				_vm->renderImage(invertSection(_inputObject[0]->_section));
+				_inputObject[0]->disableProperty(OPENED);
+				byte i = _inputObject[0]->_click;
+				_inputObject[0]->_click  = _inputObject[0]->_click2;
+				_inputObject[0]->_click2 = i;
+				//_sound->play(kAudioDoorClose);
+			}
+			break;
+
+		case ACTION_GIVE:
+			if (_inputObject[0]->hasProperty(CARRIED)) {
+				// Better keep it!
+				_vm->renderMessage(kStringGenericInteract12);
+			}
+			break;
+
+		default:
+			// This is not possible.
+			_vm->renderMessage(kStringGenericInteract13);
+		}
+	}
+}
+
 void GameManager::executeRoom() {
 	if (_processInput && !_vm->_screen->isMessageShown() && _guiEnabled) {
-//		handleInput();
+		handleInput();
 		if (_mouseClicked) {
 			Common::Event event;
 			event.type = Common::EVENT_MOUSEMOVE;
