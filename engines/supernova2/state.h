@@ -145,6 +145,7 @@ public:
 	byte _rows[6];
 	byte _rowsStart[6];
 
+	void takeObject(Object &obj);
 	void setObjectNull(Object *&obj);
 	bool isNullObject(Object *obj);
 
@@ -152,18 +153,21 @@ public:
 	void initRooms();
 	void destroyRooms();
 	void initGui();
+	bool genericInteract(Action verb, Object &obj1, Object &obj2);
 	uint16 getKeyInput(bool blockForPrintChar = false);
 	void getInput();
 	void wait(int ticks);
 	void waitOnInput(int ticks);
 	bool waitOnInput(int ticks, Common::KeyCode &keycode);
 	void showMenu();
+	int invertSection(int section);
 	void drawMapExits();
 	void drawStatus();
 	void drawCommandBox();
 	void drawInventory();
 	void changeRoom(RoomId id);
 	void resetInputState();
+	void handleInput();
 
 private:
 	int _prevImgId;
