@@ -47,7 +47,10 @@ bool AIScriptMoraji::Update() {
 	 && !Game_Flag_Query(kFlagDR05BombActivated)
 	) {
 		AI_Countdown_Timer_Reset(kActorMoraji, kActorTimerAIScriptCustomTask2);
-		AI_Countdown_Timer_Start(kActorMoraji, kActorTimerAIScriptCustomTask2, 30);
+		int bombTime = 30; // Original value
+		if (_vm->_cutContent && Query_Difficulty_Level() == kGameDifficultyEasy)
+			bombTime += 10; // Extend the bomb timer duration when in Dermo Design (where Moraji is chained)
+		AI_Countdown_Timer_Start(kActorMoraji, kActorTimerAIScriptCustomTask2, bombTime);
 		Game_Flag_Set(kFlagDR05BombActivated);
 		return true;
 	}
