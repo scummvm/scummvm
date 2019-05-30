@@ -108,7 +108,7 @@ struct QReaction {
 	uint16 opcode;
 	byte unk1;
 	uint16 unk2;
-	Common::Array<QMessage> _messages;
+	Common::Array<QMessage> messages;
 };
 
 } // End of namespace Petka
