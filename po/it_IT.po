@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-05-26 09:29+0200\n"
+"POT-Creation-Date: 2019-05-30 11:58+0200\n"
 "PO-Revision-Date: 2019-05-26 07:29+0000\n"
 "Last-Translator: Paolo Bossi <pbossi86@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -3135,15 +3135,15 @@ msgstr ""
 msgid "Cutscene file '%s' not found!"
 msgstr "File della sequenza di intermezzo '%s' non trovato!"
 
-#: engines/bladerunner/bladerunner.cpp:316
+#: engines/bladerunner/bladerunner.cpp:317
 msgid "Failed to initialize resources"
 msgstr "Inizializzazione risorse fallita"
 
-#: engines/bladerunner/bladerunner.cpp:896
+#: engines/bladerunner/bladerunner.cpp:897
 msgid "A required game resource was not found"
 msgstr "Una risorsa richiesta dal gioco non è stata trovata"
 
-#: engines/bladerunner/bladerunner.cpp:2030
+#: engines/bladerunner/bladerunner.cpp:2051
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -3154,7 +3154,7 @@ msgstr ""
 "contenuto tagliato per questa sessione di gioco, fino all'uscita  dal gioco "
 "definitiva."
 
-#: engines/bladerunner/bladerunner.cpp:2032
+#: engines/bladerunner/bladerunner.cpp:2053
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -3165,7 +3165,7 @@ msgstr ""
 "Originale per questa sessione di gioco, fino all'uscita  dal gioco "
 "definitiva."
 
-#: engines/bladerunner/bladerunner.cpp:2034
+#: engines/bladerunner/bladerunner.cpp:2055
 msgid "Continue"
 msgstr "Continua"
 
@@ -5040,6 +5040,11 @@ msgid "Unable to locate the text for %s language in '%s' engine data file."
 msgstr ""
 "Impossibile trovare il file di localizzazione per la lingua %s nel file di "
 "dati del motore %s."
+
+#: engines/supernova/supernova.cpp:441
+#, fuzzy, c-format
+msgid "Unable to find '%s' in game folder."
+msgstr "File dati del motore '%s' non trovato."
 
 #: engines/sword1/animation.cpp:524
 #, c-format

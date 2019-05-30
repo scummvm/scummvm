@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-05-26 09:29+0200\n"
+"POT-Creation-Date: 2019-05-30 11:58+0200\n"
 "PO-Revision-Date: 2019-05-22 17:48+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -3146,15 +3146,15 @@ msgstr ""
 msgid "Cutscene file '%s' not found!"
 msgstr "Fichier de séquence '%s' non trouvé !"
 
-#: engines/bladerunner/bladerunner.cpp:316
+#: engines/bladerunner/bladerunner.cpp:317
 msgid "Failed to initialize resources"
 msgstr "Échec de l'initialisation des ressources"
 
-#: engines/bladerunner/bladerunner.cpp:896
+#: engines/bladerunner/bladerunner.cpp:897
 msgid "A required game resource was not found"
 msgstr "Une ressource de jeu nécessaire n'a pas été trouvée"
 
-#: engines/bladerunner/bladerunner.cpp:2030
+#: engines/bladerunner/bladerunner.cpp:2051
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -3164,7 +3164,7 @@ msgstr ""
 "vous jouez en mode Contenu Original. Le mode sera réglé sur Contenu Montage "
 "Restauré pour cette session jusqu'à ce que vous quittiez complètement le jeu."
 
-#: engines/bladerunner/bladerunner.cpp:2032
+#: engines/bladerunner/bladerunner.cpp:2053
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -3174,7 +3174,7 @@ msgstr ""
 "jouez en mode Contenu Montage Restauré. Le mode sera ajusté au mode Contenu "
 "Original pour cette session jusqu'à ce que vous quittiez complètement le jeu."
 
-#: engines/bladerunner/bladerunner.cpp:2034
+#: engines/bladerunner/bladerunner.cpp:2055
 msgid "Continue"
 msgstr "Continuer"
 
@@ -5079,6 +5079,11 @@ msgid "Unable to locate the text for %s language in '%s' engine data file."
 msgstr ""
 "Impossible de trouver les données pour la langue %s dans le fichier de "
 "donnée '%s'."
+
+#: engines/supernova/supernova.cpp:441
+#, fuzzy, c-format
+msgid "Unable to find '%s' in game folder."
+msgstr "Le fichier de données '%s' n'a pu être trouvé."
 
 #: engines/sword1/animation.cpp:524
 #, c-format

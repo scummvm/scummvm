@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2019-05-26 09:29+0200\n"
+"POT-Creation-Date: 2019-05-30 11:58+0200\n"
 "PO-Revision-Date: 2018-10-10 04:23+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -3151,29 +3151,29 @@ msgstr ""
 msgid "Cutscene file '%s' not found!"
 msgstr "Non se atopou o ficheiro de secuencia %s!"
 
-#: engines/bladerunner/bladerunner.cpp:316
+#: engines/bladerunner/bladerunner.cpp:317
 msgid "Failed to initialize resources"
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:896
+#: engines/bladerunner/bladerunner.cpp:897
 msgid "A required game resource was not found"
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:2030
+#: engines/bladerunner/bladerunner.cpp:2051
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
 "Content for this session until you completely Quit the game."
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:2032
+#: engines/bladerunner/bladerunner.cpp:2053
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
 "mode for this session until you completely Quit the game."
 msgstr ""
 
-#: engines/bladerunner/bladerunner.cpp:2034
+#: engines/bladerunner/bladerunner.cpp:2055
 msgid "Continue"
 msgstr ""
 
@@ -5023,6 +5023,11 @@ msgstr ""
 #: engines/supernova/supernova.cpp:220
 #, fuzzy, c-format
 msgid "Unable to locate the text for %s language in '%s' engine data file."
+msgstr "Non se puido localizar o ficheiro de datos do motor %s."
+
+#: engines/supernova/supernova.cpp:441
+#, fuzzy, c-format
+msgid "Unable to find '%s' in game folder."
 msgstr "Non se puido localizar o ficheiro de datos do motor %s."
 
 #: engines/sword1/animation.cpp:524
