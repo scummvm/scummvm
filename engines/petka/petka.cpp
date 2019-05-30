@@ -30,11 +30,12 @@
 #include "petka/file_mgr.h"
 #include "petka/petka.h"
 #include "petka/q_manager.h"
+#include "petka/q_system.h"
 
 namespace Petka {
 
 PetkaEngine::PetkaEngine(OSystem *system, const ADGameDescription *desc)
-	: Engine(system), _console(nullptr), _fileMgr(nullptr), _resMgr(nullptr), _desc(desc) {
+	: Engine(system), _console(nullptr), _fileMgr(nullptr), _resMgr(nullptr), _gsystem(nullptr), _desc(desc) {
 	DebugMan.addDebugChannel(kPetkaDebugGeneral, "general", "General issues");
 	_part = 0;
 	_chapter = 0;
@@ -51,10 +52,12 @@ Common::Error PetkaEngine::run() {
 	_console.reset(new Console(this));
 	_fileMgr.reset(new FileMgr());
 	_resMgr.reset(new QManager(*this));
+	_gsystem.reset(new QSystem(*this));
 
 	loadStores();
 	if (!_resMgr->init())
 		return Common::kNoGameDataFoundError;
+	_gsystem->init();
 
 	return Common::kNoError;
 }
