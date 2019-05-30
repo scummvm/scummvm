@@ -70,6 +70,8 @@ public:
 	//void processInput();
 	void executeRoom();
 
+	static StringId guiCommands[];
+	static StringId guiStatusCommands[];
 	Supernova2Engine *_vm;
 	Common::KeyState _key;
 	Common::EventType _mouseClickType;
