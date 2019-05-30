@@ -203,7 +203,10 @@ bool SceneScriptDR04::ClickedOn2DRegion(int region) {
 bool SceneScriptDR04::farEnoughFromExplosion() {
 	float x, y, z;
 	Actor_Query_XYZ(kActorMcCoy, &x, &y, &z);
-	return (x + 1089.94f) * (x + 1089.94f) + (z - 443.49f) * (z - 443.49f) >= (360.0f * 360.0f);
+	float blastRadius = 360.0f; // Original blast radius
+	if (_vm->_cutContent && Query_Difficulty_Level() == kGameDifficultyEasy)
+		blastRadius = 290.0f; // Allow the player to survive the bomb closer to the Dermo Design entrance
+	return (x + 1089.94f) * (x + 1089.94f) + (z - 443.49f) * (z - 443.49f) >= (blastRadius * blastRadius);
 }
 
 void SceneScriptDR04::SceneFrameAdvanced(int frame) {
