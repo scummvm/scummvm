@@ -68,33 +68,19 @@ void PetkaEngine::loadStores() {
 		return;
 	}
 
-	Common::String backgroundStoreName;
-	Common::String flcStoreName;
-	Common::String wavStoreName;
-	Common::String sfxStoreName;
-	Common::String musicStoreName;
-	Common::String speechStoreName;
-
+	const char *const names[] = {"Background", "Flics", "Wavs", "SFX", "Music", "Speech"};
 	const Common::String section = Common::String::format("Part %d", _part);
 
 	parts.getKey("CurrentPath", section, _currentPath);
 	parts.getKey("PathSpeech", section, _speechPath);
 
-	parts.getKey("Background", section, backgroundStoreName);
-	parts.getKey("Flics", section, flcStoreName);
-	parts.getKey("Wavs", section, wavStoreName);
-	parts.getKey("SFX", section, sfxStoreName);
-	parts.getKey("Music", section, musicStoreName);
-	parts.getKey("Speech", section, speechStoreName);
+	Common::String storeName;
+	for (uint i = 0; i < sizeof(names) / sizeof(char *); ++i) {
+		parts.getKey(names[i], section, storeName);
+		_fileMgr->openStore(storeName);
+	}
 
 	parts.getKey("Chapter", Common::String::format("Part %d Chapter %d", _part, _chapter), _chapterStoreName);
-
-	_fileMgr->openStore(backgroundStoreName);
-	_fileMgr->openStore(flcStoreName);
-	_fileMgr->openStore(wavStoreName);
-	_fileMgr->openStore(sfxStoreName);
-	_fileMgr->openStore(musicStoreName);
-	_fileMgr->openStore(speechStoreName);
 	_fileMgr->openStore(_chapterStoreName);
 }
 
