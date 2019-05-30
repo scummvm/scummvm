@@ -34,6 +34,7 @@ namespace Supernova2 {
 const int32 kMaxTimerValue = 0x7FFFFFFF;
 
 struct GameState {
+	int16 _money;
 };
 
 class Inventory {
@@ -146,6 +147,8 @@ public:
 	StringId _texts[6];
 	byte _rows[6];
 	byte _rowsStart[6];
+	byte _dials[6];
+	int _taxi_possibility;
 
 	void takeObject(Object &obj);
 	void setObjectNull(Object *&obj);
@@ -179,6 +182,8 @@ public:
 	void reply(StringId textId, int aus1, int aus2);
 	void reply(const char *text, int aus1, int aus2);
 	void mousePosDialog(int x, int y);
+	void takeMoney(int amount);
+	void taxi();
 
 private:
 	int _prevImgId;
