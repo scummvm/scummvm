@@ -51,7 +51,7 @@ private:
 	void loadStores();
 
 private:
-	Console *_console;
+	Common::ScopedPtr<Console> _console;
 	Common::ScopedPtr<FileMgr> _fileMgr;
 	Common::ScopedPtr<QManager> _resMgr;
 	const ADGameDescription *_desc;
