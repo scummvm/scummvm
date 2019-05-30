@@ -36,6 +36,30 @@ const int32 kMaxTimerValue = 0x7FFFFFFF;
 struct GameState {
 };
 
+class Inventory {
+public:
+	Inventory(Object *nullObject, int &inventoryScroll)
+		: _numObjects(0)
+		, _nullObject(nullObject)
+	    , _inventoryScroll(inventoryScroll) {
+		for (int i = 0; i < kMaxCarry; ++i)
+			_inventory[i] = nullptr;
+	}
+
+	void add(Object &obj);
+	void remove(Object &obj);
+	void clear();
+	Object *get(int index) const;
+	Object *get(ObjectId id) const;
+	int getSize() const { return _numObjects; }
+
+private:
+	Object *_inventory[kMaxCarry];
+	Object *_nullObject;
+	int &_inventoryScroll;
+	int _numObjects;
+};
+
 class GameManager {
 public:
 	GameManager(Supernova2Engine *vm);
@@ -56,10 +80,14 @@ public:
 	Room *_currentRoom;
 	bool _newRoom;
 	Room *_rooms[NUMROOMS];
+	Inventory _inventory;
 	GameState _state;
 	bool _processInput;
 	bool _guiEnabled;
 	bool _animationEnabled;
+	Object _nullObject;
+	Object *_currentInputObject;
+	Object *_inputObject[2];
 	uint _timePaused;
 	bool _timerPaused;
 	int32 _messageDuration;
