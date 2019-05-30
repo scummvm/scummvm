@@ -43,8 +43,8 @@ class QMessageObject : public QVisibleObject {
 public:
 	QMessageObject();
 	void deserialize(Common::SeekableReadStream &stream);
-    void setDialogColor(int32 color);
-    void setNameOnScreen(const Common::String &name);
+	void setDialogColor(int32 color);
+	void setNameOnScreen(const Common::String &name);
 
 protected:
 	int16 _id;
