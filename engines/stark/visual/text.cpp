@@ -51,6 +51,7 @@ VisualText::VisualText(Gfx::Driver *gfx) :
 		_fontCustomIndex(-1) {
 	_surfaceRenderer = _gfx->createSurfaceRenderer();
 	_surfaceRenderer->setNoScalingOverride(true);
+	_surfaceRenderer->setSnapToGrid(true);
 }
 
 VisualText::~VisualText() {

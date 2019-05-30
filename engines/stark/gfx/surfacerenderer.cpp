@@ -27,7 +27,8 @@ namespace Gfx {
 
 SurfaceRenderer::SurfaceRenderer() :
 		_noScalingOverride(false),
-		_fadeLevel(0) {
+		_fadeLevel(0),
+		_snapToGrid(false) {
 }
 
 SurfaceRenderer::~SurfaceRenderer() {
@@ -39,6 +40,10 @@ void SurfaceRenderer::setNoScalingOverride(bool noScalingOverride) {
 
 void SurfaceRenderer::setFadeLevel(float fadeLevel) {
 	_fadeLevel = fadeLevel;
+}
+
+void SurfaceRenderer::setSnapToGrid(bool snapToGrid) {
+	_snapToGrid = snapToGrid;
 }
 
 } // End of namespace Gfx

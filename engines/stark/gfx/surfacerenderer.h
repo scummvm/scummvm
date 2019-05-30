@@ -63,9 +63,15 @@ public:
 	 */
 	void setFadeLevel(float fadeLevel);
 
+	/**
+	 * Align vertex coordinates to the native pixel grid
+	 */
+	void setSnapToGrid(bool snapToGrid);
+
 protected:
 	bool _noScalingOverride;
 	float _fadeLevel;
+	bool _snapToGrid;
 };
 
 } // End of namespace Gfx
