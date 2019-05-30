@@ -42,17 +42,17 @@ PetkaEngine::PetkaEngine(OSystem *system, const ADGameDescription *desc)
 
 PetkaEngine::~PetkaEngine() {
 	DebugMan.clearAllDebugChannels();
-	delete _console;
 }
 
 Common::Error PetkaEngine::run() {
 	const Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	initGraphics(640, 480, &format);
 
-	_console = new Console(this);
+	_console.reset(new Console(this));
 	_fileMgr.reset(new FileMgr());
-	loadStores();
 	_resMgr.reset(new QManager(*this));
+
+	loadStores();
 	if (!_resMgr->init())
 		return Common::kNoGameDataFoundError;
 
