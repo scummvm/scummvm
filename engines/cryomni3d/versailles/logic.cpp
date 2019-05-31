@@ -3165,6 +3165,7 @@ FILTER_EVENT(1, 3) {
 	if (*event == 11301) {
 		while (!g_engine->shouldQuit() && _mixer->isSoundIDActive(SoundIds::kLeb001)) {
 			g_system->updateScreen();
+			g_system->delayMillis(10);
 			pollEvents();
 		}
 		clearKeys();

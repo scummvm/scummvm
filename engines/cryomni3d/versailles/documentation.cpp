@@ -367,6 +367,7 @@ Common::String Versailles_Documentation::docAreaHandleSummary() {
 			redraw = false;
 		}
 		g_system->updateScreen();
+		g_system->delayMillis(10);
 
 		if (_engine->pollEvents()) {
 			if (!_engine->getCurrentMouseButton()) {
@@ -476,6 +477,7 @@ Common::String Versailles_Documentation::docAreaHandleTimeline() {
 			redraw = false;
 		}
 		g_system->updateScreen();
+		g_system->delayMillis(10);
 
 		if (_engine->pollEvents()) {
 			Common::Point mouse = _engine->getMousePos();
@@ -704,6 +706,7 @@ uint Versailles_Documentation::docAreaHandleRecord(Graphics::ManagedSurface &sur
 			redraw = false;
 		}
 		g_system->updateScreen();
+		g_system->delayMillis(10);
 
 		if (_engine->pollEvents() || first) {
 			first = false;
@@ -997,6 +1000,7 @@ Common::String Versailles_Documentation::docAreaHandleGeneralMap() {
 			redraw = false;
 		}
 		g_system->updateScreen();
+		g_system->delayMillis(10);
 
 		if (_engine->pollEvents()) {
 			Common::Point mouse = _engine->getMousePos();
@@ -1233,6 +1237,7 @@ Common::String Versailles_Documentation::docAreaHandleCastleMap() {
 			redraw = false;
 		}
 		g_system->updateScreen();
+		g_system->delayMillis(10);
 
 		if (_engine->pollEvents()) {
 			Common::Point mouse = _engine->getMousePos();
@@ -1343,6 +1348,7 @@ uint Versailles_Documentation::inGameHandleRecord(Graphics::ManagedSurface &surf
 
 	while (action == -1u) {
 		g_system->updateScreen();
+		g_system->delayMillis(10);
 
 		if (_engine->pollEvents()) {
 			if (g_engine->shouldQuit()) {
@@ -1717,6 +1723,7 @@ uint Versailles_Documentation::handlePopupMenu(const Graphics::ManagedSurface
 			redraw = false;
 		}
 		g_system->updateScreen();
+		g_system->delayMillis(10);
 
 		if (_engine->pollEvents()) {
 			if (g_engine->shouldQuit()) {

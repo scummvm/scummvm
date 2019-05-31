@@ -214,6 +214,7 @@ uint CryOmni3DEngine_Versailles::displayOptions() {
 			drawState = 0;
 		}
 		g_system->updateScreen();
+		g_system->delayMillis(10);
 
 		if (pollEvents() || forceEvents) { // always call pollEvents
 			forceEvents = false;
@@ -520,6 +521,7 @@ uint CryOmni3DEngine_Versailles::displayYesNoBox(Graphics::ManagedSurface &surfa
 			g_system->copyRectToScreen(surface.getPixels(), surface.pitch, 0, 0, surface.w, surface.h);
 		}
 		g_system->updateScreen();
+		g_system->delayMillis(10);
 
 		if (pollEvents()) {
 			Common::Point mouse = getMousePos();
@@ -662,6 +664,8 @@ uint CryOmni3DEngine_Versailles::displayFilePicker(const Graphics::Surface *bgFr
 		}
 
 		g_system->updateScreen();
+		g_system->delayMillis(10);
+
 		pollEvents();
 		Common::KeyState key = getNextKey();
 		uint mousePressed = getCurrentMouseButton();
@@ -895,8 +899,6 @@ void CryOmni3DEngine_Versailles::displayMessageBox(const MsgBoxParameters &param
 	uint disappearTime = g_system->getMillis() + msg.size() * params.timeoutChar * 10;
 	bool finished = false;
 	while (!finished) {
-		g_system->updateScreen();
-
 		callback();
 
 		if (g_system->getMillis() > disappearTime) {
@@ -991,6 +993,8 @@ void CryOmni3DEngine_Versailles::displayCredits() {
 					uint endScreenTime = g_system->getMillis() + 6000;
 					while (g_system->getMillis() < endScreenTime && !skipScreen) {
 						g_system->updateScreen();
+						g_system->delayMillis(10);
+
 						if (pollEvents()) {
 							if (getCurrentMouseButton() == 1) {
 								skipScreen = true;

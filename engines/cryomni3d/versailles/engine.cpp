@@ -1190,6 +1190,9 @@ int CryOmni3DEngine_Versailles::handleWarp() {
 				g_system->updateScreen();
 			}
 		}
+
+		// Slow down loop but after updating screen
+		g_system->delayMillis(10);
 	}
 	g_system->showMouse(false);
 	return actionId;
@@ -1346,6 +1349,9 @@ void CryOmni3DEngine_Versailles::animateWarpTransition(const Transition *transit
 		drawCountdown();
 		g_system->updateScreen();
 
+		// Slow down transition
+		g_system->delayMillis(10);
+
 		if (fabs(oldDeltaAlpha - deltaAlpha) < 0.001 && fabs(oldDeltaBeta - deltaBeta) < 0.001) {
 			exit = true;
 		}
@@ -1373,6 +1379,9 @@ void CryOmni3DEngine_Versailles::redrawWarp() {
 
 void CryOmni3DEngine_Versailles::warpMsgBoxCB() {
 	pollEvents();
+
+	g_system->updateScreen();
+	g_system->delayMillis(10);
 }
 
 void CryOmni3DEngine_Versailles::animateCursor(const Object *obj) {
@@ -1385,17 +1394,17 @@ void CryOmni3DEngine_Versailles::animateCursor(const Object *obj) {
 	for (uint i = 4; i > 0; i--) {
 		// Wait 100ms
 		for (uint j = 10; j > 0; j--) {
-			// pollEvents sleeps 10ms
 			pollEvents();
 			g_system->updateScreen();
+			g_system->delayMillis(10);
 		}
 		setCursor(obj->idSA());
 		g_system->updateScreen();
 		// Wait 100ms
 		for (uint j = 10; j > 0; j--) {
-			// pollEvents sleeps 10ms
 			pollEvents();
 			g_system->updateScreen();
+			g_system->delayMillis(10);
 		}
 		setCursor(obj->idSl());
 		g_system->updateScreen();
@@ -1463,6 +1472,7 @@ void CryOmni3DEngine_Versailles::displayObject(const Common::String &imgName,
 			}
 		}
 		g_system->updateScreen();
+		g_system->delayMillis(10);
 	}
 	waitMouseRelease();
 	clearKeys();

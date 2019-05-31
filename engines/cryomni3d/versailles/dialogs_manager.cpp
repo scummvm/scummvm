@@ -55,6 +55,7 @@ bool Versailles_DialogsManager::play(const Common::String &sequence) {
 			uint end = g_system->getMillis() + 2000;
 			while (!g_engine->shouldQuit() && g_system->getMillis() < end && !skip) {
 				g_system->updateScreen();
+				g_system->delayMillis(10);
 				if (_engine->pollEvents() &&
 				        (_engine->checkKeysPressed(1, Common::KEYCODE_SPACE) ||
 				         _engine->getCurrentMouseButton() == 1)) {
@@ -189,6 +190,8 @@ void Versailles_DialogsManager::playDialog(const Common::String &video, const Co
 		bool skipWait = false;
 		uint end = g_system->getMillis() + duration;
 		while (!g_engine->shouldQuit() && g_system->getMillis() < end && !skipWait) {
+			g_system->updateScreen();
+			g_system->delayMillis(10);
 			if (_engine->pollEvents() && _engine->checkKeysPressed(1, Common::KEYCODE_SPACE)) {
 				skipWait = true;
 			}
@@ -224,6 +227,7 @@ void Versailles_DialogsManager::playDialog(const Common::String &video, const Co
 				}
 			}
 			g_system->updateScreen();
+			g_system->delayMillis(10);
 		}
 		_engine->_mixer->stopHandle(audioHandle);
 	}
@@ -303,6 +307,7 @@ uint Versailles_DialogsManager::askPlayerQuestions(const Common::String &video,
 			                           _lastImage.h);
 		}
 		g_system->updateScreen();
+		g_system->delayMillis(10);
 
 		if (_engine->pollEvents()) {
 			_engine->clearKeys();
