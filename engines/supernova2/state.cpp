@@ -38,6 +38,8 @@ bool GameManager::serialize(Common::WriteStream *out) {
 	// GameState
 	out->writeSint16LE(_state._money);
 	out->writeByte(_state._addressKnown);
+	out->writeByte(_state._poleMagnet);
+	out->writeByte(_state._admission);
 
 	// Inventory
 	out->writeSint32LE(_inventory.getSize());
@@ -66,6 +68,8 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 	// GameState
 	_state._money = in->readSint16LE();
 	_state._addressKnown = in->readByte();
+	_state._poleMagnet = in->readByte();
+	_state._admission = in->readByte();
 	_vm->setGameString(kStringMoney, Common::String::format("%d Xa", _state._money));
 
 	_oldTime = g_system->getMillis();
@@ -260,6 +264,8 @@ void GameManager::initState() {
 	_state._money = 20;
 	_state._addressKnown = false;
 	_state._previousRoom = _currentRoom;
+	_state._poleMagnet = false;
+	_state._admission = 0;
 }
 
 void GameManager::initRooms() {
@@ -1005,6 +1011,78 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 			taxi();
 		} else
 			_vm->renderMessage(kStringNothingHappens);
+	} else if (verb == ACTION_USE && Object::combine(obj1, obj2, ROD, MAGNET)) {
+		Object *o1, *o2;
+		if (obj2._type == ROD) {
+			o1 = &obj2;
+			o2 = &obj1;
+		} else {
+			o1 = &obj1;
+			o2 = &obj2;
+		}
+		if (!(o1->_type & CARRIED))
+			return false;
+
+		if (!(o2->_type & CARRIED))
+			takeObject(*o2);
+
+		_vm->renderMessage(kStringAttachMagnet);
+		o1->_name = kStringPoleMagnet;
+		o1->_description = kStringCunning;
+		_inventory.remove(*o2);
+	} else if (verb == ACTION_USE && Object::combine(obj1, obj2, CHIP, PLAYER)) {
+		Object *o1, *o2;
+		if (obj2._id == CHIP) {
+			o1 = &obj2;
+			o2 = &obj1;
+		} else {
+			o1 = &obj1;
+			o2 = &obj2;
+		}
+		if (!(o2->_type & CARRIED))
+			_vm->renderMessage(kStringMustBuyFirst);
+		else {
+			if (!(o1->_type & CARRIED))
+			{
+				_vm->renderImage(1);
+				_vm->renderImage(2 + 128);
+				_currentRoom->getObject(0)->_click = 255;
+			}
+			else
+				_inventory.remove(*o1);
+
+			_vm->renderMessage(kStringInsertChip);
+			if (_state._admission)
+				_state._admission = 2;
+			else
+				_state._admission = 1;
+		}
+	} else if (verb == ACTION_USE && Object::combine(obj1, obj2, DISCMAN, PLAYER)) {
+		switch (_state._admission) {
+		case 1:
+			// fall through
+		case 2:
+			_vm->renderMessage(kStringTransferCD);
+			_state._admission = 2;
+			break;
+		default:
+			_vm->renderMessage(kStringCDNotInserted);
+		}
+	} else if (verb == ACTION_OPEN && Object::combine(obj1, obj2, DISCMAN, PLAYER)) {
+		switch (_state._admission) {
+		case 1:
+			_state._admission = 0;
+			playerTakeOut();
+			break;
+		case 2:
+			_state._admission = 3;
+			playerTakeOut();
+			break;
+		default:
+			_vm->renderMessage(kStringChipNotInserted);
+		}
+	} else if (verb == ACTION_OPEN && obj1._id == DISCMAN) {
+		_vm->renderMessage(kStringWhatFor);
 	} else
 		return false;
 	return true;
@@ -1297,6 +1375,13 @@ void GameManager::taxi() {
 	} while(answer == 3 && !_vm->shouldQuit());
 	_vm->_allowSaveGame = true;
 
+}
+
+void GameManager::playerTakeOut() {
+	_vm->renderMessage(kStringRemoveChip);
+	Object *o = _rooms[APARTMENT]->getObject(0);
+	o->_section = 0;
+	takeObject(*o);
 }
 }
 
