@@ -226,8 +226,12 @@ void Intro::onEntrance() {
 	_vm->_allowLoadGame = false;
 
 	titleScreen();
-	thoughts1() && tvDialogue() && thoughts2();
+	if (!(thoughts1() && tvDialogue() && thoughts2()))
+		_gm->_rooms[AIRPORT]->setRoomSeen(true);
 	_vm->paletteFadeOut();
+
+	for (int i = 0; i < 3; ++i)
+		_gm->_inventory.add(*_gm->_rooms[INTRO]->getObject(i));
 
 	_gm->changeRoom(AIRPORT);
 	_gm->_guiEnabled = true;
@@ -512,9 +516,6 @@ Airport::Airport(Supernova2Engine *vm, GameManager *gm) {
 }
 
 void Airport::onEntrance() {
-	for (int i = 0; i < 3; ++i)
-		_gm->_inventory.add(*_gm->_rooms[INTRO]->getObject(i));
-
 	if (hasSeen() == false) {
 		_vm->renderMessage(kStringAirportEntrance);
 	}
