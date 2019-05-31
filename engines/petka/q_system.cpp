@@ -32,7 +32,8 @@
 namespace Petka {
 
 QSystem::QSystem(PetkaEngine &vm)
-	: _vm(vm), _cursor(nullptr), _case(nullptr), _star(nullptr) {}
+	: _vm(vm), _cursor(nullptr), _case(nullptr), _star(nullptr),
+	_currInterface(nullptr), _prevInterface(nullptr) {}
 
 QSystem::~QSystem() {
 
