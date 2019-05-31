@@ -20,42 +20,22 @@
  *
  */
 
-#ifndef PETKA_Q_SYSTEM_H
-#define PETKA_Q_SYSTEM_H
+#ifndef PETKA_Q_INTERFACE_H
+#define PETKA_Q_INTERFACE_H
 
-#include "petka/q_object.h"
-#include "petka/q_object_bg.h"
+#include "common/array.h"
 
 namespace Petka {
 
-class PetkaEngine;
-class QObjectCase;
-class QObjectCursor;
-class QObjectStar;
-class QInterface;
+class QVisibleObject;
 
-class QSystem {
+class QInterface {
 public:
-	explicit QSystem(PetkaEngine &vm);
-	~QSystem();
-
-	bool init();
-
-	void addMessage(const QMessage &msg);
-	void addMessage(uint16 objId, uint16 opcode, int16 arg1 = 0, int16 arg2 = 0, int16 arg3 = 0, int16 unk1 = 0, int16 unk2 = 0);
-	void addMessageForAllObjects(uint16 opcode, int16 arg1 = 0, int16 arg2 = 0, int16 arg3 = 0, int16 unk1 = 0, int16 unk2 = 0);
+	QInterface();
 
 private:
-	PetkaEngine &_vm;
-	Common::Array<QObject> _objs;
-	Common::Array<QObjectBG> _bgs;
-	Common::Array<QMessageObject *> _allObjects;
-	Common::Array<QMessage> _messages;
-	Common::ScopedPtr<QObjectCursor> _cursor;
-	Common::ScopedPtr<QObjectCase> _case;
-	Common::ScopedPtr<QObjectStar> _star;
-	QInterface *_currInterface;
-	QInterface *_prevInterface;
+	Common::Array<QVisibleObject *> _objs;
+	QVisibleObject *_objUnderCursor;
 };
 
 } // End of namespace Petka

@@ -4,6 +4,7 @@ MODULE_OBJS = \
     detection.o \
     file_mgr.o \
     petka.o \
+    q_interface.o \
     q_manager.o \
     q_message_object.o \
     q_object.o \
