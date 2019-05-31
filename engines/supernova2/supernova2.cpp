@@ -133,7 +133,14 @@ void Supernova2Engine::init() {
 	_gm = new GameManager(this);
 	_screen = new Screen(this, _resMan);
 	_console = new Console(this, _gm);
+
 	setTotalPlayTime(0);
+
+	int saveSlot = ConfMan.getInt("save_slot");
+	if (saveSlot >= 0) {
+		if (loadGameState(saveSlot).getCode() != Common::kNoError)
+			error("Failed to load save game from slot %i", saveSlot);
+	}
 }
 
 bool Supernova2Engine::hasFeature(EngineFeature f) const {
@@ -236,6 +243,14 @@ bool Supernova2Engine::setCurrentImage(int filenumber) {
 	return _screen->setCurrentImage(filenumber);
 }
 
+void Supernova2Engine::saveScreen(int x, int y, int width, int height) {
+	_screen->saveScreen(x, y, width, height);
+}
+
+void Supernova2Engine::saveScreen(const GuiElement &guiElement) {
+	_screen->saveScreen(guiElement);
+}
+
 void Supernova2Engine::restoreScreen() {
 	_screen->restoreScreen();
 }
@@ -299,6 +314,13 @@ void Supernova2Engine::renderText(StringId stringId, int x, int y, byte color) {
 	_screen->renderText(stringId, x, y, color);
 }
 
+void Supernova2Engine::renderBox(int x, int y, int width, int height, byte color) {
+	_screen->renderBox(x, y, width, height, color);
+}
+
+void Supernova2Engine::renderBox(const GuiElement &guiElement) {
+	_screen->renderBox(guiElement);
+}
 
 void Supernova2Engine::paletteBrightness() {
 	_screen->paletteBrightness();
@@ -430,12 +452,163 @@ void Supernova2Engine::setColor63(byte value) {
 	return quit;
 }*/
 
-void Supernova2Engine::renderBox(int x, int y, int width, int height, byte color) {
-	_screen->renderBox(x, y, width, height, color);
+bool Supernova2Engine::canLoadGameStateCurrently() {
+	return _allowLoadGame;
 }
 
-void Supernova2Engine::renderBox(const GuiElement &guiElement) {
-	_screen->renderBox(guiElement);
+Common::Error Supernova2Engine::loadGameState(int slot) {
+	return (loadGame(slot) ? Common::kNoError : Common::kReadingFailed);
+}
+
+bool Supernova2Engine::canSaveGameStateCurrently() {
+	// Do not allow saving when either _allowSaveGame, _animationEnabled or _guiEnabled is false
+	return _allowSaveGame && _gm->_animationEnabled && _gm->_guiEnabled;
+}
+
+Common::Error Supernova2Engine::saveGameState(int slot, const Common::String &desc) {
+	return (saveGame(slot, desc) ? Common::kNoError : Common::kWritingFailed);
+}
+
+bool Supernova2Engine::serialize(Common::WriteStream *out) {
+	if (!_gm->serialize(out))
+		return false;
+	out->writeByte(_screen->getGuiBrightness());
+	out->writeByte(_screen->getViewportBrightness());
+	return true;
+}
+
+bool Supernova2Engine::deserialize(Common::ReadStream *in, int version) {
+	if (!_gm->deserialize(in, version))
+		return false;
+	if (version >= 5) {
+		_screen->setGuiBrightness(in->readByte());
+		_screen->setViewportBrightness(in->readByte());
+	} else {
+		_screen->setGuiBrightness(255);
+		_screen->setViewportBrightness(255);
+	}
+	return true;
+}
+
+bool Supernova2Engine::loadGame(int slot) {
+	if (slot < 0)
+		return false;
+
+	// Make sure no message is displayed as this would otherwise delay the
+	// switch to the new location until a mouse click.
+	removeMessage();
+
+	if (slot == kSleepAutosaveSlot) {
+		if (_sleepAutoSave != nullptr && deserialize(_sleepAutoSave, _sleepAuoSaveVersion)) {
+			// We no longer need the sleep autosave
+			delete _sleepAutoSave;
+			_sleepAutoSave = nullptr;
+			return true;
+		}
+		// Old version used to save it literally in the kSleepAutosaveSlot, so
+		// continue to try to load it from there.
+	}
+
+	Common::String filename = Common::String::format("ms2_save.%03d", slot);
+	Common::InSaveFile *savefile = _saveFileMan->openForLoading(filename);
+	if (!savefile)
+		return false;
+
+	uint saveHeader = savefile->readUint32LE();
+	if (saveHeader != SAVEGAME_HEADER) {
+		warning("No header found in '%s'", filename.c_str());
+		delete savefile;
+		return false; //Common::kUnknownError
+	}
+
+	byte saveVersion = savefile->readByte();
+	if (saveVersion > SAVEGAME_VERSION) {
+		warning("Save game version %i not supported", saveVersion);
+		delete savefile;
+		return false; //Common::kUnknownError;
+	}
+
+	int descriptionSize = savefile->readSint16LE();
+	savefile->skip(descriptionSize);
+	savefile->skip(6);
+	setTotalPlayTime(savefile->readUint32LE() * 1000);
+	Graphics::skipThumbnail(*savefile);
+	if (!deserialize(savefile, saveVersion)) {
+		delete savefile;
+		return false;
+	};
+
+	// With version 9 onward the sleep auto-save is save at the end of a normal save.
+	delete _sleepAutoSave;
+	_sleepAutoSave = nullptr;
+	if (saveVersion >= 9) {
+		_sleepAuoSaveVersion = saveVersion;
+		byte hasAutoSave = savefile->readByte();
+		if (hasAutoSave) {
+			_sleepAutoSave = new Common::MemoryReadWriteStream(DisposeAfterUse::YES);
+			uint nb;
+			char buf[4096];
+			while ((nb = savefile->read(buf, 4096)) > 0)
+				_sleepAutoSave->write(buf, nb);
+		}
+	}
+
+	delete savefile;
+
+	return true;
+}
+
+bool Supernova2Engine::saveGame(int slot, const Common::String &description) {
+	if (slot < 0)
+		return false;
+
+	if (slot == kSleepAutosaveSlot) {
+		delete _sleepAutoSave;
+		_sleepAutoSave = new Common::MemoryReadWriteStream(DisposeAfterUse::YES);
+		_sleepAuoSaveVersion = SAVEGAME_VERSION;
+		serialize(_sleepAutoSave);
+		return true;
+	}
+
+	Common::String filename = Common::String::format("ms2_save.%03d", slot);
+	Common::OutSaveFile *savefile = _saveFileMan->openForSaving(filename);
+	if (!savefile)
+		return false;
+
+	savefile->writeUint32LE(SAVEGAME_HEADER);
+	savefile->writeByte(SAVEGAME_VERSION);
+
+	TimeDate currentDate;
+	_system->getTimeAndDate(currentDate);
+	uint32 saveDate = (currentDate.tm_mday & 0xFF) << 24 | ((currentDate.tm_mon + 1) & 0xFF) << 16 | ((currentDate.tm_year + 1900) & 0xFFFF);
+	uint16 saveTime = (currentDate.tm_hour & 0xFF) << 8 | ((currentDate.tm_min) & 0xFF);
+
+	savefile->writeSint16LE(description.size() + 1);
+	savefile->write(description.c_str(), description.size() + 1);
+	savefile->writeUint32LE(saveDate);
+	savefile->writeUint16LE(saveTime);
+	savefile->writeUint32LE(getTotalPlayTime() / 1000);
+	Graphics::saveThumbnail(*savefile);
+	serialize(savefile);
+
+	if (_sleepAutoSave == nullptr)
+		savefile->writeByte(0);
+	else {
+		savefile->writeByte(1);
+		savefile->write(_sleepAutoSave->getData(), _sleepAutoSave->size());
+	}
+
+	savefile->finalize();
+	delete savefile;
+
+	return true;
+}
+
+void Supernova2Engine::errorTempSave(bool saving) {
+	GUIErrorMessage(saving
+		? "Failed to save temporary game state. Make sure your save game directory is set in ScummVM and that you can write to it."
+		: "Failed to load temporary game state.");
+	error("Unrecoverable error");
 }
 
 }

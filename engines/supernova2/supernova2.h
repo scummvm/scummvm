@@ -60,6 +60,10 @@ public:
 	~Supernova2Engine();
 
 	virtual Common::Error run();
+	virtual Common::Error loadGameState(int slot);
+	virtual bool canLoadGameStateCurrently();
+	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+	virtual bool canSaveGameStateCurrently();
 	virtual bool hasFeature(EngineFeature f) const;
 
 	GameManager *_gm;
@@ -95,6 +99,8 @@ public:
 	void renderImage(int section);
 	void renderImage(ImageId id, bool removeImage = false);
 	bool setCurrentImage(int filenumber);
+	void saveScreen(int x, int y, int width, int height);
+	void saveScreen(const GuiElement &guiElement);
 	void restoreScreen();
 	void renderRoom(Room &room);
 	void renderMessage(const char *text, MessagePosition position = kMessageNormal);

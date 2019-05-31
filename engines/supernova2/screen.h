@@ -149,7 +149,7 @@ public:
 	void renderImage(int section);
 	bool setCurrentImage(int filenumber);
 	void saveScreen(int x, int y, int width, int height);
-	//void saveScreen(const GuiElement &guiElement);
+	void saveScreen(const GuiElement &guiElement);
 	void restoreScreen();
 	void renderRoom(Room &room);
 	void renderMessage(const char *text, MessagePosition position = kMessageNormal);

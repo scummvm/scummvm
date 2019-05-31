@@ -402,9 +402,9 @@ void Screen::saveScreen(int x, int y, int width, int height) {
 	_screenBuffer.push(x, y, width, height);
 }
 
-/*void Screen::saveScreen(const GuiElement &guiElement) {
+void Screen::saveScreen(const GuiElement &guiElement) {
 	saveScreen(guiElement.left, guiElement.top, guiElement.width(), guiElement.height());
-}*/
+}
 
 void Screen::restoreScreen() {
 	_screenBuffer.restore();
