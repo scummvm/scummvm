@@ -19,7 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-
 #include "hdb/file-manager.h"
 #include "common/debug.h"
 #include "common/file.h"
@@ -35,15 +34,11 @@ bool FileMan::openMPC(const Common::String &filename) {
 	uint32 offset;
 
 	if (!_mpcFile->open(filename)) {
-		debug("The MPC file doesn't exist.");
 		error("FileMan::openMSD(): Error reading the MSD file");
 		return false;
 	}
-	else {
-		debug("The MPC file exists");
-	}
 
-	_mpcFile->read(&dataHeader.id, 4);
+	dataHeader.id = _mpcFile->readUint32BE();
 	
 	if (dataHeader.id == MKTAG('M', 'P', 'C', 'C')) {
 		_compressed = true;
@@ -52,30 +47,30 @@ bool FileMan::openMPC(const Common::String &filename) {
 	}
 	else if (dataHeader.id == MKTAG('M', 'P', 'C', 'U')) {
 		_compressed = false;
-
-		offset = _mpcFile->readUint32LE();
-		_mpcFile->seek((int32)offset, SEEK_SET);
+		
+		offset = _mpcFile->readUint32BE();
+		_mpcFile->seek((int32)offset);
 
 		// Note: The MPC archive format assumes the offset to be uint32,
 		// but Common::File::seek() takes the offset as int32. 
-
-		dataHeader.dirSize = _mpcFile->readUint32LE();
+		
+		dataHeader.dirSize = _mpcFile->readUint32BE();
 
 		for (uint32 fileIndex = 0; fileIndex < dataHeader.dirSize; fileIndex++) {
 			MPCEntry *dirEntry = new MPCEntry();
 
-			for (int fileNameIndex = 0; fileNameIndex < 64; fileNameIndex++) {
-				dirEntry->filename[fileNameIndex] = _mpcFile->readByte();
+			for (int i = 0; i < 64; i++) {
+				dirEntry->filename[i] = _mpcFile->readByte();
 			}
-
-			dirEntry->offset = _mpcFile->readUint32LE();
-			dirEntry->length = _mpcFile->readUint32LE();
-			dirEntry->ulength = _mpcFile->readUint32LE();
-			dirEntry->type = (DataType)_mpcFile->readUint32LE();
+			
+			dirEntry->offset = _mpcFile->readUint32BE();
+			dirEntry->length = _mpcFile->readUint32BE();
+			dirEntry->ulength = _mpcFile->readUint32BE();
+			dirEntry->type = (DataType)_mpcFile->readUint32BE();
 
 			_dir.push_back(dirEntry);
 		}
-
+		
 		return true;
 
 	}

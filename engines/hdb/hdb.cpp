@@ -39,6 +39,7 @@ namespace HDB {
 HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	_console = nullptr;
 	_systemInit = false;
+	fileMan = new FileMan;
 
 	DebugMan.addDebugChannel(kDebugExample1, "Example1", "This is just an example to test");
 	DebugMan.addDebugChannel(kDebugExample2, "Example2", "This is also an example");
@@ -107,8 +108,8 @@ Common::Error HDBGame::run() {
 	initGraphics(640, 480, &format);
 	_console = new Console();
 	
-	MPCEntry *titleScreen = fileMan->findFirstData("monkeylogoscreen", DataType::TYPE_PIC);
-	debug("Hi");
+//	MPCEntry *titleScreen = fileMan->findFirstData("monkeylogoscreen", DataType::TYPE_PIC);
+//	debug("Hi");
 	//Common::MemoryReadStream *stream = new Common::MemoryReadStream((byte *)titleScreen, titleScreen->ulength);
 	//if (titleScreen == NULL) {
 		//debug("titleScreen: NULL");
