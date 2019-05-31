@@ -94,7 +94,6 @@ private:
 
 	Common::File *_mpcFile;
 	Common::Array<MPCEntry *> _dir;
-	int _numEntries;
 	bool _compressed;
 
 public:
