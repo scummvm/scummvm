@@ -56,6 +56,8 @@ bool FileMan::openMPC(const Common::String &filename) {
 		
 		dataHeader.dirSize = _mpcFile->readUint32BE();
 
+		debug(8, "MPC: Read %d entries", dataHeader.dirSize);
+
 		for (uint32 fileIndex = 0; fileIndex < dataHeader.dirSize; fileIndex++) {
 			MPCEntry *dirEntry = new MPCEntry();
 
