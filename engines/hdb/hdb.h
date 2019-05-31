@@ -70,6 +70,12 @@ public:
 	const char *getGameId() const;
 	Common::Platform getPlatform() const;
 
+	/*
+	Game System Pointers
+	*/
+
+	FileMan* fileMan;
+
 	// Game related members;
 
 	bool init();
@@ -81,17 +87,11 @@ public:
 
 private:
 	Console *_console;
-	
-	/*
-	Game System Pointers
-	*/
-
-	FileMan* _fileMan;
 
 	// Game Variables
 
-	GameState gameState;
-	bool voiceless;
+	GameState _gameState;
+	bool _voiceless;
 
 };
 
