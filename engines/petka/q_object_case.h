@@ -20,37 +20,15 @@
  *
  */
 
-#ifndef PETKA_Q_SYSTEM_H
-#define PETKA_Q_SYSTEM_H
+#ifndef PETKA_Q_OBJECT_CASE_H
+#define PETKA_Q_OBJECT_CASE_H
 
 #include "petka/q_object.h"
-#include "petka/q_object_bg.h"
 
 namespace Petka {
 
-class PetkaEngine;
-class QObjectCase;
-class QObjectCursor;
+class QObjectCase : public QObject {
 
-class QSystem {
-public:
-	explicit QSystem(PetkaEngine &vm);
-	~QSystem();
-
-	bool init();
-
-	void addMessage(const QMessage &msg);
-	void addMessage(uint16 objId, uint16 opcode, int16 arg1 = 0, int16 arg2 = 0, int16 arg3 = 0, int16 unk1 = 0, int16 unk2 = 0);
-	void addMessageForAllObjects(uint16 opcode, int16 arg1 = 0, int16 arg2 = 0, int16 arg3 = 0, int16 unk1 = 0, int16 unk2 = 0);
-
-private:
-	PetkaEngine &_vm;
-	Common::Array<QObject> _objs;
-	Common::Array<QObjectBG> _bgs;
-	Common::Array<QMessageObject *> _allObjects;
-	Common::Array<QMessage> _messages;
-	Common::ScopedPtr<QObjectCursor> _cursor;
-	Common::ScopedPtr<QObjectCase> _case;
 };
 
 } // End of namespace Petka
