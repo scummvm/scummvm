@@ -444,7 +444,7 @@ enum Flags {
 	kFlagGamePlayedInRestoredContentMode = 2, // Re-purposed. Original: 2 is never used
 	kFlagRC01GotOfficersStatement = 3,
 	kFlagRC02Left = 4,
-	// 5 is never used
+	kFlagMcCoyCommentsOnMurderedAnimals = 5, // Re-purposed. Original: 5 is never used
 	kFlagRC02RunciterInterview = 6,
 	kFlagCT01TalkToHowieAboutDeadZuben = 7, // Re-purposed. Original: 7 is never used
 	kFlagRC01toRC02 = 8,

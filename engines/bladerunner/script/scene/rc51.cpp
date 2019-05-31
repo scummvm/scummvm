@@ -47,6 +47,19 @@ void SceneScriptRC51::SceneLoaded() {
 	Unclickable_Object("GRL_DSK");
 	Unclickable_Object("GRL_DSKLEG");
 	Unclickable_Object("CURTAIN");
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Unclickable_Object("SCRTY CA03");
+	Unclickable_Object("DRAPE01");
+	Unclickable_Object("DRAPE02");
+	Unclickable_Object("DRAPE03");
+	Unclickable_Object("DRAPE04");
+	Unclickable_Object("DRAPE05");
+	Unclickable_Object("DRAPE06");
+	Unclickable_Object("DRAPE07");
+	Unclickable_Object("DRAPE08");
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
 	if (!Game_Flag_Query(kFlagRC51ChopstickWrapperTaken)) {
 		Item_Add_To_World(kItemChopstickWrapper, kModelAnimationChopstickWrapper, kSetRC02_RC51, 47.56f, -1238.89f, 108048.61f, 0, 6, 18, false, true, false, true);
 	}
