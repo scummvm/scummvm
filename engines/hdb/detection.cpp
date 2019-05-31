@@ -47,6 +47,15 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_DEMO,
 		GUIO1(GUIO_NONE)
 	},
+	{
+		"hdb",
+		"",
+		AD_ENTRY1s("hyperdemo.mpc", "f3bc878e179f00b8666a9846f3d9f9f5", 5236568),
+		Common::EN_ANY,
+		Common::kPlatformUnknown,
+		ADGF_DEMO,
+		GUIO1(GUIO_NONE)
+	},
 	AD_TABLE_END_MARKER
 };
 } // End of namespace HDB

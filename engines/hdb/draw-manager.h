@@ -48,6 +48,7 @@ public:
 	bool init();
 //	void saveToFile(const Common::String &filename);
 //	void loadFromFile(const Common::String &filename);
+	void loadTile32(char *name, uint32 *length);
 
 	bool cursorDisplay;
 	int cursorX, cursorY;

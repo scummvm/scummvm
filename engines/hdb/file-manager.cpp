@@ -31,8 +31,12 @@ bool FileMan::openMPC(const Common::String &filename) {
 	uint32 offset;
 
 	if (!_mpcFile->open(filename)) {
+		debug("The MPC file doesn't exist.");
 		error("FileMan::openMSD(): Error reading the MSD file");
 		return false;
+	}
+	else {
+		debug("The MPC file exists");
 	}
 
 	_mpcFile->read(&dataHeader.id, 4);
@@ -82,17 +86,20 @@ void FileMan::closeMPC() {
 	_mpcFile->close();
 }
 
-MPCEntry **FileMan::findFirstData(char *string, DataType type) {
+MPCEntry *FileMan::findFirstData(const char *string, DataType type) {
 	Common::String fileString;
-	
-	for (MPCIterator it = _dir.begin(); it != _dir.end(); it++) {
+
+	debug("Hello");
+
+	int i = 0;
+	/*for (MPCIterator it = _dir.begin(); it != _dir.end(); it++) {
 		fileString = (*it)->filename;
 		if (fileString.contains(string)) {
 			if ((*it)->type == type) {
 				return it;
 			}
 		}
-	}
+	}*/
 	return NULL;
 }
 
@@ -109,7 +116,7 @@ MPCEntry **FileMan::findNextData(MPCIterator begin) {
 	}
 	return NULL;
 }
-
+/*
 int FileMan::findAmount(char *string, DataType type) {
 	int count = 0;
 	
@@ -120,6 +127,6 @@ int FileMan::findAmount(char *string, DataType type) {
 	}
 
 	return count;
-}
+}*/
 
 } // End of Namespace HDB
