@@ -194,6 +194,8 @@ void GameManager::initState() {
 	_prevImgId = 0;
 
 	_state._money = 20;
+	_state._addressKnown = false;
+	_state._previousRoom = _currentRoom;
 }
 
 void GameManager::initRooms() {
@@ -547,6 +549,74 @@ void GameManager::drawMapExits() {
 	}
 }
 
+void GameManager::edit(Common::String &input, int x, int y, uint length) {
+	bool isEditing = true;
+	uint cursorIndex = input.size();
+	// NOTE: Pixels for char needed = kFontWidth + 2px left and right side bearing
+	int overdrawWidth = ((int)((length + 1) * (kFontWidth + 2)) > (kScreenWidth - x)) ?
+						kScreenWidth - x : (length + 1) * (kFontWidth + 2);
+
+	while (isEditing) {
+		_vm->_screen->setTextCursorPos(x, y);
+		_vm->_screen->setTextCursorColor(kColorWhite99);
+		_vm->renderBox(x, y - 1, overdrawWidth, 9, kColorWhite35);
+		for (uint i = 0; i < input.size(); ++i) {
+			// Draw char highlight depending on cursor position
+			if (i == cursorIndex) {
+				_vm->renderBox(_vm->_screen->getTextCursorPos().x, y - 1,
+							   Screen::textWidth(input[i]), 9, kColorWhite99);
+				_vm->_screen->setTextCursorColor(kColorWhite35);
+				_vm->renderText(input[i]);
+				_vm->_screen->setTextCursorColor(kColorWhite99);
+			} else
+				_vm->renderText(input[i]);
+		}
+
+		if (cursorIndex == input.size()) {
+			_vm->renderBox(_vm->_screen->getTextCursorPos().x + 1, y - 1, 6, 9, kColorWhite35);
+			_vm->renderBox(_vm->_screen->getTextCursorPos().x, y - 1, 1, 9, kColorWhite99);
+		}
+
+		getKeyInput(true);
+		if (_vm->shouldQuit())
+			break;
+		switch (_key.keycode) {
+		case Common::KEYCODE_RETURN:
+		case Common::KEYCODE_ESCAPE:
+			isEditing = false;
+			break;
+		case Common::KEYCODE_UP:
+		case Common::KEYCODE_DOWN:
+			cursorIndex = input.size();
+			break;
+		case Common::KEYCODE_LEFT:
+			if (cursorIndex != 0)
+				--cursorIndex;
+			break;
+		case Common::KEYCODE_RIGHT:
+			if (cursorIndex != input.size())
+				++cursorIndex;
+			break;
+		case Common::KEYCODE_DELETE:
+			if (cursorIndex != input.size())
+				input.deleteChar(cursorIndex);
+			break;
+		case Common::KEYCODE_BACKSPACE:
+			if (cursorIndex != 0) {
+				--cursorIndex;
+				input.deleteChar(cursorIndex);
+			}
+			break;
+		default:
+			if (Common::isPrint(_key.ascii) && input.size() < length) {
+				input.insertChar(_key.ascii, cursorIndex);
+				++cursorIndex;
+			}
+			break;
+		}
+	}
+}
+
 void GameManager::takeMoney(int amount) {
 	_state._money += amount;
 	_vm->setGameString(kStringMoney, Common::String::format("%d Xa", _state._money));
@@ -641,11 +711,8 @@ int GameManager::dialog(int num, byte rowLength[6], StringId text[6], int number
 	_guiEnabled = false;
 
 	bool remove[6];
-	for (int i = 0; i < 5; ++i)
+	for (int i = 0; i < 6; ++i)
 		remove[i] = _currentRoom->sentenceRemoved(i, number);
-	// The original does not initialize remove[5]!!!
-	// Set it to false/0. But maybe the loop above should use 6 instead of 5?
-	remove[5] = false;
 
 	_vm->renderBox(0, 138, 320, 62, kColorBlack);
 
@@ -996,6 +1063,80 @@ void GameManager::executeRoom() {
 		_currentRoom->onEntrance();
 	}
 }
+
+void GameManager::leaveTaxi() {
+	_currentRoom = _state._previousRoom;
+	_vm->renderRoom(*_currentRoom);
+	_guiEnabled = true;
+}
+
+void GameManager::taxiUnknownDestination() {
+	_vm->renderImage(invertSection(2));
+	_vm->renderImage(0);
+	_vm->renderImage(1);
+	_vm->renderImage(4);
+	waitOnInput(_vm->_textSpeed * 3);
+	_vm->renderImage(invertSection(4));
+	_vm->renderImage(0);
+	_vm->renderImage(1);
+	_vm->renderImage(2);
+}
+
+void GameManager::taxiPayment(int price, int destination) {
+	static StringId answers[] = {
+		kStringPay,
+		kStringLeaveTaxi
+	};
+	if (dialog(2, _dials, answers, 0)) {
+		leaveTaxi();
+	} else if (_state._money < price) {
+		Common::String t = _vm->getGameString(kStringNotEnoughMoney);
+		_vm->renderMessage(t);
+		waitOnInput((t.size() + 20) * _vm->_textSpeed / 10);
+		_vm->removeMessage();
+		leaveTaxi();
+	} else {
+		takeMoney(-price);
+		_vm->renderImage(invertSection(5));
+		_vm->renderImage(invertSection(6));
+		_vm->renderImage(0);
+		_vm->renderImage(1);
+		_vm->renderImage(3);
+
+		Common::String t = _vm->getGameString(kStringTaxiAccelerating);
+		_vm->renderMessage(t);
+		waitOnInput((t.size() + 20) * _vm->_textSpeed / 10);
+		_vm->removeMessage();
+
+		_vm->paletteFadeOut();
+		_vm->_system->fillScreen(kColorBlack);
+		_vm->paletteFadeIn();
+
+		Common::String t2 = _vm->getGameString(kString5MinutesLater);
+		_vm->renderMessage(t2);
+		waitOnInput((t2.size() + 20) * _vm->_textSpeed / 10);
+		_vm->removeMessage();
+
+		switch (destination) {
+		case 0:
+			changeRoom(TAXISTAND);
+			break;
+		case 1:
+			changeRoom(STREET);
+			break;
+		case 2:
+			changeRoom(CULTURE_PALACE);
+			break;
+		case 10:
+			changeRoom(CITY1);
+			break;
+		case 11:
+			changeRoom(CITY2);
+			break;
+		}
+	}
+}
+
 void GameManager::taxi() {
 	static StringId dest[] = {
 		kStringAirport,
@@ -1005,25 +1146,80 @@ void GameManager::taxi() {
 		kStringPrivateApartment,
 		kStringLeaveTaxi
 	};
+	Common::String input;
+	int possibility = _taxi_possibility;
+	bool paid = false;
 
-	static StringId answers[] = {
-		kStringPay,
-		kStringLeaveTaxi
-	};
-
-	Room *previousRoom = _currentRoom;
+	_state._previousRoom = _currentRoom;
 	_currentRoom = _rooms[INTRO];
 	_vm->setCurrentImage(4);
 	_vm->renderImage(0);
 	_vm->renderImage(1);
 	_vm->renderImage(2);
 
-	int possibility = _taxi_possibility;
+	if (_state._previousRoom == _rooms[TAXISTAND]) possibility += 1;
+	else if (_state._previousRoom == _rooms[STREET]) possibility += 2;
+	else if (_state._previousRoom == _rooms[CULTURE_PALACE]) possibility += 4;
+	int answer;
+	do {
+		_currentRoom->removeSentenceByMask(possibility, 1);
+		switch (answer = dialog(6, _dials, dest, 1)) {
+		case 3:
+			_taxi_possibility += 8;
+			possibility += 8;
+			taxiUnknownDestination();
+			break;
+		case 5:
+			leaveTaxi();
+			break;
+		case 4:
+			_vm->renderMessage(kStringAddress);
+			do {
+				edit(input, 101, 70, 18);
+			} while ((_key.keycode != Common::KEYCODE_RETURN) && (_key.keycode != Common::KEYCODE_ESCAPE) && !_vm->shouldQuit());
 
-	if (previousRoom == _rooms[AIRPORT]) possibility += 1;
-	else if (previousRoom == _rooms[STREET]) possibility += 2;
-	else if (previousRoom == _rooms[CULTURE_PALACE]) possibility += 4;
-	debug("%d", dialog(6, _dials, dest, 1));
+			_vm->removeMessage();
+			if (_key.keycode == Common::KEYCODE_ESCAPE) {
+				leaveTaxi();
+				break;
+			}
+			input.toUppercase();
+			if (input == "115AY2,96A" || input == "115AY2,96B")
+				answer = 10;
+			else if (input == "341,105A" || input == "341,105B") {
+				if (_state._addressKnown)
+					answer = 11;
+				else {
+					Common::String t = _vm->getGameString(kStringCheater);
+					_vm->renderMessage(t);
+					waitOnInput((t.size() + 20) * _vm->_textSpeed / 10);
+					_vm->removeMessage();
+
+					leaveTaxi();
+					break;
+				}
+			} else {
+				answer = 3;
+				input = "";
+				taxiUnknownDestination();
+				break;
+			}
+			_vm->renderImage(invertSection(2));
+			_vm->renderImage(0);
+			_vm->renderImage(1);
+			_vm->renderImage(6);
+			taxiPayment(14, answer);
+			break;
+		default:
+			_vm->renderImage(invertSection(2));
+			_vm->renderImage(0);
+			_vm->renderImage(1);
+			_vm->renderImage(5);
+			taxiPayment(8, answer);
+			break;
+		}
+	_rooms[INTRO]->addAllSentences(1);
+	} while(answer == 3 && !_vm->shouldQuit());
 
 }
 }
