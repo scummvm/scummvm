@@ -39,6 +39,10 @@ void SceneScriptHC01::InitializeScene() {
 		Scene_Exit_Add_2D_Exit(1, 394, 229, 485, 371, 1);
 	}
 	Scene_Exit_Add_2D_Exit(2, 117, 0, 286, 319, 0);
+	if (_vm->_cutContent && !Game_Flag_Query(kFlagMcCoyCommentsOnAnimoids)) {
+		Scene_2D_Region_Add(0, 110, 385, 200, 450); // cage 1
+		Scene_2D_Region_Add(1, 20, 249, 110, 319);  // cage 2
+	}
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 50, 50, 0);
 	Ambient_Sounds_Add_Looping_Sound(kSfxHCLOOP1,  50, 50, 0);
@@ -191,6 +195,18 @@ bool SceneScriptHC01::ClickedOnExit(int exitId) {
 }
 
 bool SceneScriptHC01::ClickedOn2DRegion(int region) {
+	if (_vm->_cutContent) {
+		if (!Game_Flag_Query(kFlagMcCoyCommentsOnAnimoids) && (region == 0 || region == 1) ) {
+			Game_Flag_Set(kFlagMcCoyCommentsOnAnimoids);
+			//Actor_Face_Heading(kActorMcCoy, 389, false);
+			Actor_Face_XYZ(kActorMcCoy, 740.89f, 60.29f, 220.12f, true);
+			Actor_Voice_Over(890, kActorVoiceOver);
+			Actor_Voice_Over(900, kActorVoiceOver);
+			Scene_2D_Region_Remove(0);
+			Scene_2D_Region_Remove(1);
+			return true;
+		}
+	}
 	return false;
 }
 
