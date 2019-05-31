@@ -26,6 +26,8 @@
 #include "common/array.h"
 #include "common/file.h"
 #include "common/error.h"
+#include "common/stream.h"
+#include "common/memstream.h"
 
 #define MPCIterator Common::Array<MPCEntry *>::iterator
 
@@ -112,9 +114,10 @@ public:
 
 		void loadData(char *string, uint32 *length);
 	*/
-	MPCEntry **findFirstData(char *string, DataType type);
+
+	MPCEntry *findFirstData(const char *string, DataType type);
 	MPCEntry **findNextData(MPCIterator it);
-	int findAmount(char *string, DataType type);
+	//int findAmount(char *string, DataType type);
 
 };
 

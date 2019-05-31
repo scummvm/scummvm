@@ -90,6 +90,7 @@ private:
 
 	// Game Variables
 
+	bool _systemInit;
 	GameState _gameState;
 	bool _voiceless;
 

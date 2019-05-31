@@ -31,6 +31,11 @@ DrawMan::DrawMan() {
 
 bool DrawMan::init() {
 	_systemInit = true;
+	return true;
+}
+
+void DrawMan::loadTile32(char *name, uint32 *length) {
+	
 }
 
 }

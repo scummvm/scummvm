@@ -28,6 +28,8 @@
 #include "common/file.h"
 #include "common/error.h"
 #include "graphics/surface.h"
+#include "common/stream.h"
+#include "common/memstream.h"
 
 #include "hdb.h"
 #include "console.h"
@@ -36,6 +38,7 @@ namespace HDB {
 
 HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	_console = nullptr;
+	_systemInit = false;
 
 	DebugMan.addDebugChannel(kDebugExample1, "Example1", "This is just an example to test");
 	DebugMan.addDebugChannel(kDebugExample2, "Example2", "This is also an example");
@@ -53,9 +56,10 @@ bool HDBGame::init() {
 		Game Subsystem Initializations
 	*/
 
-	// Init _fileMan
+	// Init fileMan
 	if (fileMan->openMPC("hyperdemo.mpc")) {
 		gameShutdown = false;
+		_systemInit = true;
 		return true;
 	}
 
@@ -92,22 +96,27 @@ void HDBGame::changeGameState() {
 }
 
 Common::Error HDBGame::run() {
-	// Initializes Graphics
-	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
-	initGraphics(640, 320, &format);
-	_console = new Console();
 
-	/*
-	if (!_game->init()) {
-		error("Couldn't initialize Game.");
-		return Common::kUnknownError;
+	// Initialize System
+	if (!_systemInit) {
+		init();
 	}
 
-	_game->start();
+	// Initializes Graphics
+	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	initGraphics(640, 480, &format);
+	_console = new Console();
 	
-	_game->mainLoop();
-	*/
-	
+	MPCEntry *titleScreen = fileMan->findFirstData("monkeylogoscreen", DataType::TYPE_PIC);
+	debug("Hi");
+	//Common::MemoryReadStream *stream = new Common::MemoryReadStream((byte *)titleScreen, titleScreen->ulength);
+	//if (titleScreen == NULL) {
+		//debug("titleScreen: NULL");
+	//}
+	//else {
+		//debug("Works.");
+	//}
+
 	while (!shouldQuit()) {
 
 		Common::Event event;
@@ -125,10 +134,10 @@ Common::Error HDBGame::run() {
 		}
 		
 		Graphics::Surface screen;
-		screen.create(800, 600, g_system->getScreenFormat());
+		screen.create(640, 480, g_system->getScreenFormat());
 		screen.drawLine(100, 100, 200, 200, 0xffffffff);
 		
-		g_system->copyRectToScreen(screen.getBasePtr(0, 0), screen.pitch, 0, 0, 800, 600);
+		g_system->copyRectToScreen(screen.getBasePtr(0, 0), screen.pitch, 0, 0, 640, 480);
 		
 		g_system->updateScreen();
 		g_system->delayMillis(10);
