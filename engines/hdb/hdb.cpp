@@ -47,14 +47,14 @@ HDBGame::~HDBGame() {
 }
 
 bool HDBGame::init() {
-	voiceless = false;
+	_voiceless = false;
 
 	/*
 		Game Subsystem Initializations
 	*/
 
 	// Init _fileMan
-	if (_fileMan->openMPC("hyperdemo.mpc")) {
+	if (fileMan->openMPC("hyperdemo.mpc")) {
 		gameShutdown = false;
 		return true;
 	}
@@ -64,7 +64,7 @@ bool HDBGame::init() {
 }
 
 void HDBGame::start() {
-	gameState = GameState::GAME_TITLE;
+	_gameState = GameState::GAME_TITLE;
 }
 
 /*
@@ -78,15 +78,15 @@ void HDBGame::start() {
 */
 void HDBGame::changeGameState() {
 
-	switch (gameState) {
+	switch (_gameState) {
 	case GameState::GAME_TITLE:
-		gameState = GameState::GAME_MENU;
+		_gameState = GameState::GAME_MENU;
 		break;
 	case GameState::GAME_MENU:
-		gameState = GameState::GAME_PLAY;
+		_gameState = GameState::GAME_PLAY;
 		break;
 	case GameState::GAME_PLAY:
-		gameState = GameState::GAME_MENU;
+		_gameState = GameState::GAME_MENU;
 		break;
 	}
 }
@@ -94,7 +94,7 @@ void HDBGame::changeGameState() {
 Common::Error HDBGame::run() {
 	// Initializes Graphics
 	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
-	initGraphics(800, 600, &format);
+	initGraphics(640, 320, &format);
 	_console = new Console();
 
 	/*
