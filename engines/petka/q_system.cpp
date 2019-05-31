@@ -26,12 +26,13 @@
 #include "petka/petka.h"
 #include "petka/q_object_case.h"
 #include "petka/q_object_cursor.h"
+#include "petka/q_object_star.h"
 #include "petka/q_system.h"
 
 namespace Petka {
 
 QSystem::QSystem(PetkaEngine &vm)
-	: _vm(vm), _cursor(nullptr), _case(nullptr) {}
+	: _vm(vm), _cursor(nullptr), _case(nullptr), _star(nullptr) {}
 
 QSystem::~QSystem() {
 
@@ -83,8 +84,11 @@ bool QSystem::init() {
 
 	_cursor.reset(new QObjectCursor());
 	_case.reset(new QObjectCase());
+	_star.reset(new QObjectStar());
+
 	_allObjects.push_back(_cursor.get());
 	_allObjects.push_back(_case.get());
+	_allObjects.push_back(_star.get());
 	return true;
 }
 
