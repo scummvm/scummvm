@@ -129,7 +129,10 @@ RoomId Room::getId() const {
 }
 
 void Room::setSectionVisible(uint section, bool visible) {
-	_shown[section] = visible ? kShownTrue : kShownFalse;
+	if (section < kMaxSection)
+		_shown[section] = visible ? kShownTrue : kShownFalse;
+	else
+		_shown[section - 128] = visible ? kShownFalse : kShownTrue;
 }
 
 bool Room::isSectionVisible(uint index) const {
@@ -573,6 +576,112 @@ bool TaxiStand::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->taxi();
 	else if ((verb == ACTION_WALK || verb == ACTION_OPEN) && obj1._id == DOOR)
 		_vm->renderMessage(obj1._description);
+	else 
+		return false;
+	return true;
+}
+
+Street::Street(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 5;
+	_id = STREET;
+	_shown[0] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringEntrance, kStringDefaultDescription, NULLOBJECT, EXIT, 0, 0, 0, GAMES, 10);
+	_objectState[1] = Object(_id, kStringStaircase, kStringStaircaseDescription, NULLOBJECT, NULLTYPE, 2, 2, 0);
+	_objectState[2] = Object(_id, kStringBusinessStreet, kStringBusinessStreetDescription, REAR_STREET, EXIT, 3, 3, 0, KIOSK, 3);
+	_objectState[3] = Object(_id, kStringRod, kStringLooksMetal, ROD, COMBINABLE, 7, 7, 22);
+	_objectState[4] = Object(_id, kStringRod, kStringLooksMetal, ROD, COMBINABLE, 6, 6, 0);
+	_objectState[5] = Object(_id, kStringPost, kStringLooksMetal, NULLOBJECT, NULLTYPE, 4, 4, 0);
+	_objectState[6] = Object(_id, kStringRailing, kStringLooksMetal, NULLOBJECT, NULLTYPE, 5, 5, 0);
+}
+
+void Street::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Street::animation() {
+	static int ltab[36] = {
+		8, 9 + 128, 10, 11 + 128, 6, 12, 13 + 128, 9, 14, 15 + 128, 19,
+		16, 17 + 128, 9 + 128, 18, 19 + 128, 6 + 128, 20, 21 + 128,
+		8 + 128, 9, 10 + 128, 11, 6, 12 + 128, 13, 14 + 128, 15, 19,
+		16 + 128, 17, 18 + 128, 19 + 128, 6 + 128, 20 + 128, 21
+	};
+
+	static int i, banks, light;
+
+	if (isSectionVisible(7))
+		setSectionVisible(7, kShownFalse);
+	else
+		setSectionVisible(7, kShownTrue);
+
+	if (++i == 4) {
+		i = 0;
+		switch (banks) {
+		case 0:
+			setSectionVisible(1, kShownTrue);
+			break;
+		case 1:
+			setSectionVisible(2, kShownTrue);
+			break;
+		case 2:
+			setSectionVisible(3, kShownTrue);
+			break;
+		case 3:
+			setSectionVisible(4, kShownTrue);
+			break;
+		case 4:
+			setSectionVisible(5, kShownTrue);
+			break;
+		case 5:
+			// fall through
+		case 7:
+			// fall through
+		case 9:
+			setSectionVisible(1, kShownFalse);
+			setSectionVisible(2, kShownFalse);
+			setSectionVisible(3, kShownFalse);
+			setSectionVisible(4, kShownFalse);
+			setSectionVisible(5, kShownFalse);
+			break;
+		case 6:
+			// fall through
+		case 8:
+			setSectionVisible(1, kShownTrue);
+			setSectionVisible(2, kShownTrue);
+			setSectionVisible(3, kShownTrue);
+			setSectionVisible(4, kShownTrue);
+			setSectionVisible(5, kShownTrue);
+			break;
+		}
+		banks++;
+		if (banks == 10) banks = 0;
+	}
+	setSectionVisible(ltab[light], kShownTrue);
+	light++;
+	if (light == 36)
+		light = 0;
+	_gm->setAnimationTimer(2);
+}
+
+bool Street::interact(Action verb, Object &obj1, Object &obj2) {
+	if (verb == ACTION_USE && Object::combine(obj1, obj2, KNIFE, ROD)) {
+		if (getObject(3)->_type & CARRIED)
+			_vm->renderMessage(kStringAlreadyHavePole);
+		else {
+			_vm->renderMessage(kStringSawPole);
+			_gm->takeObject(*getObject(3));
+		}
+	}
+	else if (verb == ACTION_WALK && obj1._id == REAR_STREET) {
+		Common::String text = _vm->getGameString(kStringOnlyShop);
+		_vm->renderMessage(text);
+		_gm->waitOnInput((text.size() + 20) * _vm->_textSpeed / 10);
+		_vm->removeMessage();
+		return false;
+	}
 	else 
 		return false;
 	return true;

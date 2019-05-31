@@ -111,5 +111,14 @@ public:
 private:
 };
 
+class Street : public Room {
+public:
+	Street(Supernova2Engine *vm, GameManager *gm);
+	virtual void onEntrance();
+	virtual void animation();
+	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+
+private:
+};
 }
 #endif // SUPERNOVA2_ROOMS_H

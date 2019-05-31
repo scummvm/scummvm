@@ -51,7 +51,7 @@ bool GameManager::serialize(Common::WriteStream *out) {
 
 	// Rooms
 	out->writeByte(_currentRoom->getId());
-	for (int i = 0; i < 3; ++i) {
+	for (int i = 0; i < 4; ++i) {
 		_rooms[i]->serialize(out);
 	}
 
@@ -82,7 +82,7 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 
 	// Rooms
 	RoomId curRoomId = static_cast<RoomId>(in->readByte());
-	for (int i = 0; i < 3; ++i) {
+	for (int i = 0; i < 4; ++i) {
 		_rooms[i]->deserialize(in, version);
 	}
 	changeRoom(curRoomId);
@@ -222,6 +222,7 @@ void GameManager::destroyRooms() {
 	delete _rooms[INTRO];
 	delete _rooms[AIRPORT];
 	delete _rooms[TAXISTAND];
+	delete _rooms[STREET];
 }
 
 void GameManager::initState() {
@@ -265,6 +266,7 @@ void GameManager::initRooms() {
 	_rooms[INTRO] = new Intro(_vm, this);
 	_rooms[AIRPORT] = new Airport(_vm, this);
 	_rooms[TAXISTAND] = new TaxiStand(_vm, this);
+	_rooms[STREET] = new Street(_vm, this);
 }
 
 void GameManager::initGui() {
@@ -992,7 +994,17 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 				_currentRoom->getObject(0)->_type = EXIT;
 				drawMapExits();
 			}
-		}
+		} else if (_currentRoom == _rooms[STREET]	      ||
+				   _currentRoom == _rooms[CULTURE_PALACE] ||
+				   _currentRoom == _rooms[CITY1]          ||
+				   _currentRoom == _rooms[CITY2]) {
+			Common::String t = _vm->getGameString(kStringTaxiArrives);
+			_vm->renderMessage(t);
+			waitOnInput((t.size() + 20) * _vm->_textSpeed / 10);
+			_vm->removeMessage();
+			taxi();
+		} else
+			_vm->renderMessage(kStringNothingHappens);
 	} else
 		return false;
 	return true;
