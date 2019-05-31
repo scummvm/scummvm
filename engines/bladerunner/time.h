@@ -44,6 +44,7 @@ public:
 	int  getPauseStart();
 	int  resume();
 	bool isLocked();
+	void resetPauseStart();
 };
 
 } // End of namespace BladeRunner

@@ -255,7 +255,9 @@ void Actor::timerUpdate(int timerId) {
 	if (_timersLeft[timerId] <= 0) {
 		switch (timerId) {
 		case kActorTimerAIScriptCustomTask0:
+			// fall through
 		case kActorTimerAIScriptCustomTask1:
+			// fall through
 		case kActorTimerAIScriptCustomTask2:
 			if (!_vm->_aiScripts->isInsideScript() && !_vm->_sceneScript->isInsideScript()) {
 				_vm->_aiScripts->timerExpired(_id, timerId);
@@ -1397,6 +1399,7 @@ void Actor::save(SaveFileWriteStream &f) {
 
 	uint32 now = _vm->_time->getPauseStart();
 	for (int i = 0; i < kActorTimers; ++i) {
+		// this effectively stores the next timeDiff to be applied to timer i (in timerUpdate)
 		f.writeInt(now - _timersLast[i]);
 	}
 

@@ -70,4 +70,13 @@ bool Time::isLocked() {
 	return _pauseCount > 0;
 }
 
+// To be called before loading a new game, since
+// the offset should be reset to zero and _pauseStart should be current() (ie currentSystem() - _start)
+// TODO Explore if it would make sense to only use the Engine methods for time accounting (pauseEngine, get/setTotalPlatTime)
+//      or do we need separated/independent time accounting and pausing?
+void Time::resetPauseStart() {
+	_offset = 0;
+	_pauseStart = current();
+}
+
 } // End of namespace BladeRunner
