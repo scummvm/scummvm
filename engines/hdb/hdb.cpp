@@ -69,7 +69,7 @@ bool HDBGame::init() {
 }
 
 void HDBGame::start() {
-	_gameState = GameState::GAME_TITLE;
+	_gameState = GAME_TITLE;
 }
 
 /*
@@ -84,14 +84,16 @@ void HDBGame::start() {
 void HDBGame::changeGameState() {
 
 	switch (_gameState) {
-	case GameState::GAME_TITLE:
-		_gameState = GameState::GAME_MENU;
+	case GAME_TITLE:
+		_gameState = GAME_MENU;
 		break;
-	case GameState::GAME_MENU:
-		_gameState = GameState::GAME_PLAY;
+	case GAME_MENU:
+		_gameState = GAME_PLAY;
 		break;
-	case GameState::GAME_PLAY:
-		_gameState = GameState::GAME_MENU;
+	case GAME_PLAY:
+		_gameState = GAME_MENU;
+		break;
+	case GAME_LOADING:
 		break;
 	}
 }
