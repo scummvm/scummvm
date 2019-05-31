@@ -27,6 +27,10 @@
 
 namespace HDB {
 
+FileMan::FileMan() {
+	_mpcFile = new Common::File;
+}
+
 bool FileMan::openMPC(const Common::String &filename) {
 	uint32 offset;
 

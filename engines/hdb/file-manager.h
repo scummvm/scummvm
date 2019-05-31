@@ -99,6 +99,8 @@ private:
 
 public:
 
+	FileMan();
+
 	struct {
 		uint32 id;
 		uint32 dirSize;
