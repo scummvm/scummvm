@@ -120,6 +120,12 @@ void SceneScriptCT12::SceneLoaded() {
 	Unobstacle_Object("SPINNER BODY", true);
 	Unobstacle_Object("HOWFLOOR", true);
 	Unclickable_Object("TURBINE");
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Unclickable_Object("OBJECT03");
+	Unclickable_Object("OBJECT04");
+	Unclickable_Object("OBJECT05");
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 bool SceneScriptCT12::MouseClick(int x, int y) {

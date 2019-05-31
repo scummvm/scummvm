@@ -146,6 +146,11 @@ void SceneScriptCT01::SceneLoaded() {
 	Unclickable_Object("TURBINE");
 	Unclickable_Object("SPINNER BODY");
 	Unclickable_Object("OBJECT04");
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Unclickable_Object("OBJECT03");
+	Unclickable_Object("OBJECT05");
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 bool SceneScriptCT01::MouseClick(int x, int y) {

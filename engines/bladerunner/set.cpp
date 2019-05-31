@@ -579,27 +579,38 @@ void Set::patchInAdditionalObjectsInSet() {
 */
 void Set::patchOutBadObjectsFromSet() {
 	int removedIndexRef = 0;
-	switch (_vm->_scene->getSceneId()) {
-	case kSceneNR11:
-		for (int objectId = 0; objectId < _objectCount; ++objectId) {
+	bool removeCurrObj = false;
+	for (int objectId = 0; objectId < _objectCount; ++objectId) {
+		switch (_vm->_scene->getSceneId()) {
+		case kSceneNR11:
 			if ((objectId == 46 && _objects[objectId].name == "BOX53")
 			    || (objectId == 36 && _objects[objectId].name == "BOX43")
-				|| (objectId == 37 && _objects[objectId].name == "BOX44")
+			    || (objectId == 37 && _objects[objectId].name == "BOX44")
 			    || (objectId == 13 && _objects[objectId].name == "LOFT04")
 			) {
 				// Removing obj 46, 36, 37 (BOX53, BOX43, BOX44) fixes paths in the scene
 				// Removing obj 13 (LOFT04) fixes duplicate named box that confuses the engine
-				_objects[objectId].name = Common::String::format("REMOVED%02d", removedIndexRef++);
-				_objects[objectId].isObstacle  = 0;
-				_objects[objectId].isClickable = 0;
-				_objects[objectId].isHotMouse  = 0;
-				_objects[objectId].unknown1    = 0;
-				_objects[objectId].isTarget    = 0;
+				removeCurrObj = true;
 			}
+			break;
+		case kSceneDR02:
+			if ((objectId == 44 && _objects[objectId].name == "TRASH CAN WITH FIRE")) {
+				// Removing obj 44 (TRASH CAN WITH FIRE) fixes duplicate named box (id: 29) that confuses the engine
+				removeCurrObj = true;
+			}
+			break;
+		default:
+			break;
 		}
-		break;
-	default:
-		break;
+		if (removeCurrObj) {
+			removeCurrObj = false;
+			_objects[objectId].name = Common::String::format("REMOVED%02d", removedIndexRef++);
+			_objects[objectId].isObstacle  = 0;
+			_objects[objectId].isClickable = 0;
+			_objects[objectId].isHotMouse  = 0;
+			_objects[objectId].unknown1    = 0;
+			_objects[objectId].isTarget    = 0;
+		}
 	}
 	return;
 }

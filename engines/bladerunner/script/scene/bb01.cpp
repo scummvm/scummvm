@@ -88,6 +88,12 @@ void SceneScriptBB01::InitializeScene() {
 
 void SceneScriptBB01::SceneLoaded() {
 	Obstacle_Object("COLUME", true);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Unclickable_Object("OBJECT03");
+	Unclickable_Object("OBJECT04");
+	Unclickable_Object("OBJECT05");
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 bool SceneScriptBB01::MouseClick(int x, int y) {
