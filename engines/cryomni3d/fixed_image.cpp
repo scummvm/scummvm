@@ -191,6 +191,7 @@ void ZonFixedImage::manage() {
 	// Force poll events even when we must refresh the cursor
 	if (!_engine.pollEvents() && !_refreshCursor) {
 		g_system->updateScreen();
+		g_system->delayMillis(10);
 		return;
 	}
 	_refreshCursor = false;
@@ -266,6 +267,7 @@ void ZonFixedImage::manage() {
 	}
 
 	g_system->updateScreen();
+	g_system->delayMillis(10);
 }
 
 void ZonFixedImage::handleMouseZones(const Common::Array<Zone>::const_iterator &currentZone) {

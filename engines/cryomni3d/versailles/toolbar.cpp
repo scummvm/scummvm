@@ -423,7 +423,10 @@ bool Toolbar::displayToolbar(const Graphics::Surface *original) {
 		g_system->copyRectToScreen(_destSurface.getPixels(), _destSurface.pitch, 0,
 		                           original->h - _destSurface.h, _destSurface.w, _destSurface.h);
 		g_system->updateScreen();
-		// pollEvents will slow down the animation because it waits 10ms
+
+		// Slow down animation
+		g_system->delayMillis(10);
+
 		_engine->pollEvents();
 		if (g_engine->shouldQuit()) {
 			return false;
@@ -449,7 +452,10 @@ bool Toolbar::displayToolbar(const Graphics::Surface *original) {
 		g_system->copyRectToScreen(_destSurface.getPixels(), _destSurface.pitch, 0,
 		                           original->h - _destSurface.h, _destSurface.w, _destSurface.h);
 		g_system->updateScreen();
-		// pollEvents will slow down the animation because it waits 10ms
+
+		// Slow down animation
+		g_system->delayMillis(10);
+
 		_engine->pollEvents();
 		if (g_engine->shouldQuit()) {
 			return false;
@@ -584,6 +590,7 @@ void Toolbar::handleToolbarEvents(const Graphics::Surface *original) {
 		}
 
 		g_system->updateScreen();
+		g_system->delayMillis(10);
 	}
 
 	// Hide description when finished and selected object

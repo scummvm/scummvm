@@ -26,6 +26,7 @@
 #include "common/config-manager.h"
 #include "common/error.h"
 #include "common/file.h"
+#include "common/system.h"
 
 #include "cryomni3d/versailles/engine.h"
 
@@ -110,13 +111,13 @@ void CryOmni3DEngine_Versailles::musicStop() {
 		int realVolume = (musicVol * channelVol) / Audio::Mixer::kMaxChannelVolume;
 		bool skip = false;
 		while (realVolume > 0 && !skip) {
-			// pollEvents waits for 10ms
 			realVolume -= 2;
 			channelVol = CLIP((realVolume * Audio::Mixer::kMaxChannelVolume) / musicVol, 0, 255);
 			_mixer->setChannelVolume(_musicHandle, channelVol);
 			if (pollEvents() && checkKeysPressed(1, Common::KEYCODE_SPACE)) {
 				skip = true;
 			}
+			g_system->delayMillis(10);
 		}
 	}
 	_mixer->stopHandle(_musicHandle);

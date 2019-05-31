@@ -159,6 +159,7 @@ void CryOmni3DEngine::playHNM(const Common::String &filename, Audio::Mixer::Soun
 			}
 		}
 		g_system->updateScreen();
+		g_system->delayMillis(10);
 
 		if (pollEvents() && checkKeysPressed()) {
 			skipVideo = true;
@@ -214,6 +215,7 @@ void CryOmni3DEngine::displayHLZ(const Common::String &filename) {
 			}
 		}
 		g_system->updateScreen();
+		g_system->delayMillis(10);
 	}
 
 	delete imageDecoder;
@@ -242,7 +244,6 @@ bool CryOmni3DEngine::pollEvents() {
 		}
 		hasEvents = true;
 	}
-	g_system->delayMillis(10);
 
 	_dragStatus = kDragStatus_NoDrag;
 	uint currentMouseButton = getCurrentMouseButton();
@@ -294,6 +295,8 @@ uint CryOmni3DEngine::getCurrentMouseButton() {
 void CryOmni3DEngine::waitMouseRelease() {
 	while (g_system->getEventManager()->getButtonState() != 0 && !g_engine->shouldQuit()) {
 		pollEvents();
+		g_system->updateScreen();
+		g_system->delayMillis(10);
 	}
 }
 
