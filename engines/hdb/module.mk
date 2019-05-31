@@ -2,6 +2,8 @@ MODULE := engines/hdb
 
 MODULE_OBJS := \
 	detection.o \
+	draw-manager.o \
+	file-manager.o \
 	hdb.o \
 	console.o
 
