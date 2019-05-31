@@ -40,6 +40,11 @@ void SceneScriptDR02::InitializeScene() {
 	if (Game_Flag_Query(kFlagBB01Available)) {
 		Scene_Exit_Add_2D_Exit(2, 95, 0, 148, 292, 0);
 	}
+	if (_vm->_cutContent) {
+		// improved navigation of this set of scenes
+		Scene_Exit_Add_2D_Exit(3,  0,   0,  34, 479, 3);
+		Scene_Exit_Add_2D_Exit(4, 34, 445, 605, 479, 2);
+	}
 
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(false);
 	Ambient_Sounds_Remove_All_Looping_Sounds(0);
@@ -72,6 +77,8 @@ void SceneScriptDR02::SceneLoaded() {
 	Obstacle_Object("PARKMETR01", true);
 	Obstacle_Object("Z2ENTRYDR", true);
 	Obstacle_Object("Z2DR2", true);
+	// there are two objects named "TRASH CAN WITH FIRE" in the scene (but not visible)
+	// and none of them have to be set clickable
 	Clickable_Object("TRASH CAN WITH FIRE");
 	Clickable_Object("U2 CHEWDOOR");
 	Clickable_Object("MMTRASHCAN");
@@ -86,6 +93,9 @@ void SceneScriptDR02::SceneLoaded() {
 	Clickable_Object("TRANSFORMER 01");
 	Clickable_Object("TRANSFORMER 02");
 	Clickable_Object("V2CANPIPE02");
+	// there are two objects named "TRASH CAN WITH FIRE" in the scene (but not visible)
+	// and none of them have to be set clickable
+	// and also reseting them here would only reset one of them - and one remains as clickable
 	Unclickable_Object("TRASH CAN WITH FIRE");
 	Unclickable_Object("U2 CHEWDOOR");
 	Unclickable_Object("MMTRASHCAN");
@@ -129,6 +139,25 @@ bool SceneScriptDR02::ClickedOnExit(int exitId) {
 		Ambient_Sounds_Adjust_Looping_Sound(kSfxBIGFAN2, 14, -101, 1);
 		return true;
 	}
+
+	if (_vm->_cutContent
+	    && (exitId == 3 || exitId == 4)) {
+	    if ((exitId == 3 && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1162.45f, 0.78f, -167.45f, 0, true, false, false))
+		    || (exitId == 4 && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, -975.17f, 0.42f, -120.04f, 0, true, false, false))
+		) {
+			if (exitId == 3) {
+				Async_Actor_Walk_To_XYZ(kActorMcCoy, -1176.40f, 0.58f, -86.02f, 0, false);
+			} else {
+				Async_Actor_Walk_To_XYZ(kActorMcCoy, -845.00f, 0.37f, -31.60f, 0, false);
+			}
+			Game_Flag_Set(kFlagDR02toDR01);
+			Set_Enter(kSetDR01_DR02_DR04, kSceneDR01);
+		}
+		Ambient_Sounds_Adjust_Looping_Sound(kSfxHUMMER3, 12, -101, 1);
+		Ambient_Sounds_Adjust_Looping_Sound(kSfxBIGFAN2, 14, -101, 1);
+		return true;
+	}
+
 
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1162.0f, 7.18f, -322.0f, 0, true, false, false)) {
