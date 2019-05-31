@@ -37,6 +37,8 @@ struct GameState {
 	int16 _money;
 	bool _addressKnown;
 	Room *_previousRoom;
+	bool _poleMagnet;
+	char _admission;
 };
 
 class Inventory {
@@ -192,6 +194,7 @@ public:
 	void leaveTaxi();
 	void taxiUnknownDestination();
 	void taxiPayment(int price, int destination);
+	void playerTakeOut();
 
 private:
 	int _prevImgId;
