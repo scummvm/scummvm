@@ -774,6 +774,7 @@ const char *gameText[] = {
 "\"Ich mu\341 beweisen, da\341 dieser|Roboter der falsche Horst|Hummel ist!\", denkst du.",    //"I have to prove that this robot|is the wrong Horst|Hummel!", you think to yourself.
 "\"Diese Mistkerle von der Artus GmbH und|Commander Sumoti m\201ssen entlarvt werden!\"",
 	//"These bastards from Artus GmbH and|Commander Sumoti must be unmasked!"
+"|", //Dialog separator
 NULL
 };
 
