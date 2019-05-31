@@ -31,6 +31,69 @@
 
 namespace Supernova2 {
 
+bool GameManager::serialize(Common::WriteStream *out) {
+	if (out->err())
+		return false;
+
+	// GameState
+	out->writeSint16LE(_state._money);
+	out->writeByte(_state._addressKnown);
+
+	// Inventory
+	out->writeSint32LE(_inventory.getSize());
+	out->writeSint32LE(_inventoryScroll);
+	for (int i = 0; i < _inventory.getSize(); ++i) {
+		Object *objectStateBegin = _rooms[_inventory.get(i)->_roomId]->getObject(0);
+		byte objectIndex = _inventory.get(i) - objectStateBegin;
+		out->writeSint32LE(_inventory.get(i)->_roomId);
+		out->writeSint32LE(objectIndex);
+	}
+
+	// Rooms
+	out->writeByte(_currentRoom->getId());
+	for (int i = 0; i < 3; ++i) {
+		_rooms[i]->serialize(out);
+	}
+
+	return !out->err();
+}
+
+
+bool GameManager::deserialize(Common::ReadStream *in, int version) {
+	if (in->err())
+		return false;
+
+	// GameState
+	_state._money = in->readSint16LE();
+	_state._addressKnown = in->readByte();
+	_vm->setGameString(kStringMoney, Common::String::format("%d Xa", _state._money));
+
+	_oldTime = g_system->getMillis();
+
+	// Inventory
+	int inventorySize = in->readSint32LE();
+	_inventoryScroll = in->readSint32LE();
+	_inventory.clear();
+	for (int i = 0; i < inventorySize; ++i) {
+		RoomId objectRoom = static_cast<RoomId>(in->readSint32LE());
+		int objectIndex = in->readSint32LE();
+		_inventory.add(*_rooms[objectRoom]->getObject(objectIndex));
+	}
+
+	// Rooms
+	RoomId curRoomId = static_cast<RoomId>(in->readByte());
+	for (int i = 0; i < 3; ++i) {
+		_rooms[i]->deserialize(in, version);
+	}
+	changeRoom(curRoomId);
+
+	// Some additional variables
+	_state._previousRoom = _rooms[INTRO];
+	_guiEnabled = true;
+	_animationEnabled = true;
+
+	return !in->err();
+}
 
 StringId GameManager::guiCommands[] = {
 	kStringCommandGo, kStringCommandLook, kStringCommandTake, kStringCommandOpen, kStringCommandClose,
@@ -1138,6 +1201,7 @@ void GameManager::taxiPayment(int price, int destination) {
 }
 
 void GameManager::taxi() {
+	_vm->_allowSaveGame = false;
 	static StringId dest[] = {
 		kStringAirport,
 		kStringDowntown,
@@ -1148,7 +1212,6 @@ void GameManager::taxi() {
 	};
 	Common::String input;
 	int possibility = _taxi_possibility;
-	bool paid = false;
 
 	_state._previousRoom = _currentRoom;
 	_currentRoom = _rooms[INTRO];
@@ -1220,6 +1283,7 @@ void GameManager::taxi() {
 		}
 	_rooms[INTRO]->addAllSentences(1);
 	} while(answer == 3 && !_vm->shouldQuit());
+	_vm->_allowSaveGame = true;
 
 }
 }

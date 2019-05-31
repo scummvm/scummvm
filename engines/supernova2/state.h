@@ -110,6 +110,8 @@ public:
 	void processInput(Common::KeyState &state);
 	void processInput();
 	void executeRoom();
+	bool serialize(Common::WriteStream *out);
+	bool deserialize(Common::ReadStream *in, int version);
 
 	static StringId guiCommands[];
 	static StringId guiStatusCommands[];
