@@ -8,6 +8,7 @@ MODULE_OBJS = \
     q_message_object.o \
     q_object.o \
     q_object_bg.o \
+    q_object_cursor.o \
     q_system.o
 
 # This module can be built as a plugin
