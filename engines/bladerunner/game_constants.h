@@ -847,7 +847,7 @@ enum Flags {
 	kFlagHC02HawkersBarkeepBraceletTalk = 405,
 	kFlagUnused406 = 406, // is never checked
 	kFlagUnused407 = 407, // is never checked
-	// 408 is never used
+	kFlagMcCoyCommentsOnStatues = 408, // re-purposed. Original: 408 is never used
 	kFlagMA01GaffApproachMcCoy = 409,
 	kFlagBB06AndroidDestroyed = 410,
 	kFlagKP02toUG12 = 411,

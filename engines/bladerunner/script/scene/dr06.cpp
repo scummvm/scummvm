@@ -37,6 +37,11 @@ void SceneScriptDR06::InitializeScene() {
 	) {
 		Scene_Exit_Add_2D_Exit(1, 0, 272, 46, 477, 2);
 	}
+	if (_vm->_cutContent && !Game_Flag_Query(kFlagMcCoyCommentsOnFans)) {
+		Scene_2D_Region_Add(0, 300,  80, 360, 190); // statue 1
+		Scene_2D_Region_Add(1,  60, 120, 155, 260); // statue 2
+		Scene_2D_Region_Add(2, 378, 270, 420, 320); // statue 3
+	}
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxSKINBED1, 25, 0, 1);
 	Ambient_Sounds_Add_Sound(kSfxSWEEP3, 5, 60, 20, 20, -100, 100, -101, -101, 0, 0);
@@ -225,6 +230,18 @@ bool SceneScriptDR06::ClickedOnExit(int exitId) {
 }
 
 bool SceneScriptDR06::ClickedOn2DRegion(int region) {
+if (_vm->_cutContent) {
+		if (!Game_Flag_Query(kFlagMcCoyCommentsOnStatues) && (region == 0 || region == 1 || region == 2) ) {
+			Game_Flag_Set(kFlagMcCoyCommentsOnStatues);
+			Actor_Face_Heading(kActorMcCoy, 88, true);
+			Actor_Voice_Over(810, kActorVoiceOver);
+			Actor_Voice_Over(820, kActorVoiceOver);
+			Scene_2D_Region_Remove(0);
+			Scene_2D_Region_Remove(1);
+			Scene_2D_Region_Remove(2);
+			return true;
+		}
+	}
 	return false;
 }
 
