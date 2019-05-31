@@ -35,6 +35,8 @@ const int32 kMaxTimerValue = 0x7FFFFFFF;
 
 struct GameState {
 	int16 _money;
+	bool _addressKnown;
+	Room *_previousRoom;
 };
 
 class Inventory {
@@ -165,6 +167,7 @@ public:
 	void waitOnInput(int ticks);
 	bool waitOnInput(int ticks, Common::KeyCode &keycode);
 	void showMenu();
+	void edit(Common::String &input, int x, int y, uint length);
 	int invertSection(int section);
 	void drawMapExits();
 	void drawStatus();
@@ -184,6 +187,9 @@ public:
 	void mousePosDialog(int x, int y);
 	void takeMoney(int amount);
 	void taxi();
+	void leaveTaxi();
+	void taxiUnknownDestination();
+	void taxiPayment(int price, int destination);
 
 private:
 	int _prevImgId;

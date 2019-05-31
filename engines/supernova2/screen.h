@@ -42,7 +42,7 @@ class Screen;
 
 const int kScreenWidth  = 320;
 const int kScreenHeight = 200;
-const int kFontWidth = 5;
+const int kFontWidth = 4;
 const int kFontHeight = 8;
 
 enum Color {

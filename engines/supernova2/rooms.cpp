@@ -136,6 +136,12 @@ bool Room::isSectionVisible(uint index) const {
 	return _shown[index] == kShownTrue;
 }
 
+void Room::removeSentenceByMask(int mask, int number) {
+	if (number > 0) {
+		_sentenceRemoved[number - 1] |= mask;
+	}
+}
+
 void Room::removeSentence(int sentence, int number) {
 	if (number > 0)
 		_sentenceRemoved[number - 1] |= (1 << sentence);

@@ -523,7 +523,7 @@ void Screen::renderMessage(const char *text, MessagePosition position) {
 	int message_width = rowWidthMax + 6;
 	int message_height = numRows * 9 + 5;
 	saveScreen(message_columns, message_rows, message_width, message_height);
-	renderBox(message_columns, message_rows, message_width, message_height, kColorWhite35);
+	renderBox(message_columns, message_rows, message_width, message_height, kColorWhite25);
 	for (uint i = 0; i < numRows; ++i) {
 		renderText(row[i], x, y, textColor);
 		y += 9;

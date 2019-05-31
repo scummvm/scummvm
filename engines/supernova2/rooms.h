@@ -48,6 +48,7 @@ public:
 	void setSectionVisible(uint section, bool visible);
 	bool isSectionVisible(uint index) const;
 	void removeSentence(int sentence, int number);
+	void removeSentenceByMask(int mask, int number);
 	void addSentence(int sentence, int number);
 	void addAllSentences(int number);
 	bool sentenceRemoved(int sentence, int number);
