@@ -115,7 +115,7 @@ bool Supernova2MetaEngine::createInstance(OSystem *syst, Engine **engine, const 
 
 SaveStateList Supernova2MetaEngine::listSaves(const char *target) const {
 	Common::StringArray filenames;
-	Common::String pattern("msn_save.###");
+	Common::String pattern("ms2_save.###");
 
 	filenames = g_system->getSavefileManager()->listSavefiles(pattern);
 
