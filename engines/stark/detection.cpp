@@ -177,6 +177,34 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO_NONE
 	},
+	
+	// The Longest Journey
+	// Italian DVD version
+	{
+		"tlj", "DVD", {
+			{"x.xarc", 0, "de8327850d7bba90b690b141eaa23f61", 3032},
+			{"chapters.ini", 0, "9a81ea4e6f5b84511dd4e56d04a64e2e", 498},
+			{nullptr, 0, nullptr, 0}
+		},
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO_NONE
+	},
+
+	// The Longest Journey
+	// Italian 4CD
+	{
+		"tlj", "4 CD", {
+			{"x.xarc", 0, "a0559457126caadab0cadac02d35f26f", 3032},
+			{"chapters.ini", 0, "9a81ea4e6f5b84511dd4e56d04a64e2e", 498},
+			{nullptr, 0, nullptr, 0}
+		},
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO_NONE
+	},
 
 	// The Longest Journey
 	// Dutch 4CD
