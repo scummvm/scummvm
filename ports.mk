@@ -314,10 +314,11 @@ osxsnap: bundle
 	$(XCODETOOLSPATH)/SetFile -t ttro -c ttxt ./ResidualVM-snapshot/doc/*/*
 	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ResidualVM-snapshot/doc/*/*
 	$(XCODETOOLSPATH)/CpMac -r $(bundle_name) ./ResidualVM-snapshot/
-	cp $(srcdir)/dists/macosx/DS_Store ./ResidualVM-snapshot/.DS_Store
-	cp $(srcdir)/dists/macosx/background.jpg ./ResidualVM-snapshot/background.jpg
-	$(XCODETOOLSPATH)/SetFile -a V ./ResidualVM-snapshot/.DS_Store
-	$(XCODETOOLSPATH)/SetFile -a V ./ResidualVM-snapshot/background.jpg
+# ResidualVM missing background file:
+#	cp $(srcdir)/dists/macosx/DS_Store ./ResidualVM-snapshot/.DS_Store
+#	cp $(srcdir)/dists/macosx/background.jpg ./ResidualVM-snapshot/background.jpg
+#	$(XCODETOOLSPATH)/SetFile -a V ./ResidualVM-snapshot/.DS_Store
+#	$(XCODETOOLSPATH)/SetFile -a V ./ResidualVM-snapshot/background.jpg
 	hdiutil create -ov -format UDZO -imagekey zlib-level=9 -fs HFS+ \
 					-srcfolder ResidualVM-snapshot \
 					-volname "ResidualVM" \
