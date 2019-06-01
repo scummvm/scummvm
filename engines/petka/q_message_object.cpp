@@ -52,8 +52,8 @@ void QMessageObject::deserialize(Common::SeekableReadStream &stream, const Commo
 	for (uint i = 0; i < _reactions.size(); ++i) {
 		QReaction *reaction = &_reactions[i];
 		reaction->opcode = stream.readUint16LE();
-		reaction->unk1 = stream.readByte();
-		reaction->unk2 = stream.readUint16LE();
+		reaction->status = stream.readByte();
+		reaction->senderId = stream.readUint16LE();
 		reaction->messages.resize(stream.readUint32LE());
 		for (uint j = 0; j < reaction->messages.size(); ++j) {
 			QMessage *msg = &reaction->messages[j];
