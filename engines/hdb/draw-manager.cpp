@@ -38,6 +38,10 @@ void DrawMan::loadTile32(char *name, uint32 *length) {
 	
 }
 
+Picture::~Picture() {
+	_surface.free();
+}
+
 Graphics::Surface Picture::load(Common::SeekableReadStream *stream) {
 	_width = stream->readUint32LE();
 	_height = stream->readUint32LE();
@@ -62,6 +66,10 @@ Graphics::Surface Picture::load(Common::SeekableReadStream *stream) {
 	}
 
 	return _surface;
+}
+
+Tile::~Tile() {
+	_surface.free();
 }
 
 Graphics::Surface Tile::load(Common::SeekableReadStream *stream) {
