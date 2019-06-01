@@ -97,13 +97,13 @@ void QSystem::addMessage(const QMessage &msg) {
 	_messages.push_back(msg);
 }
 
-void QSystem::addMessage(uint16 objId, uint16 opcode, int16 arg1, int16 arg2, int16 arg3, int16 unk1, int16 unk2) {
-	_messages.push_back({objId, opcode, arg1, arg2, arg3, unk1, unk2});
+void QSystem::addMessage(uint16 objId, uint16 opcode, int16 arg1, int16 arg2, int16 arg3, int16 unk, QMessageObject *sender) {
+	_messages.push_back({objId, opcode, arg1, arg2, arg3, sender, unk});
 }
 
-void QSystem::addMessageForAllObjects(uint16 opcode, int16 arg1, int16 arg2, int16 arg3, int16 unk1, int16 unk2) {
+void QSystem::addMessageForAllObjects(uint16 opcode, int16 arg1, int16 arg2, int16 arg3, int16 unk, QMessageObject *sender) {
 	for (uint i = 0; i < _allObjects.size(); ++i) {
-		_messages.push_back({_allObjects[i]->getId(), opcode, arg1, arg2, arg3, unk1, unk2});
+		_messages.push_back({_allObjects[i]->getId(), opcode, arg1, arg2, arg3, sender, unk});
 	}
 }
 

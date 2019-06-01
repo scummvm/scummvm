@@ -94,14 +94,16 @@ enum Opcode {
 	kToMap = 63 // ??? MessageNumber
 };
 
+class QMessageObject;
+
 struct QMessage {
 	uint16 objId;
 	uint16 opcode;
 	int16 arg1;
 	int16 arg2;
 	int16 arg3;
-	int32 unk1;
-	int32 unk2;
+	QMessageObject *sender;
+	int32 unk;
 };
 
 struct QReaction {
