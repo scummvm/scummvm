@@ -106,8 +106,8 @@ struct QMessage {
 
 struct QReaction {
 	uint16 opcode;
-	byte unk1;
-	uint16 unk2;
+	byte status;
+	uint16 senderId;
 	Common::Array<QMessage> messages;
 };
 
