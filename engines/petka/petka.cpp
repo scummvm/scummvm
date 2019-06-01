@@ -34,11 +34,15 @@
 
 namespace Petka {
 
+PetkaEngine *g_vm;
+
 PetkaEngine::PetkaEngine(OSystem *system, const ADGameDescription *desc)
-	: Engine(system), _console(nullptr), _fileMgr(nullptr), _resMgr(nullptr), _gsystem(nullptr), _desc(desc) {
+	: Engine(system), _console(nullptr), _fileMgr(nullptr), _resMgr(nullptr),
+	_qsystem(nullptr), _desc(desc), _rnd("petka") {
 	DebugMan.addDebugChannel(kPetkaDebugGeneral, "general", "General issues");
 	_part = 0;
 	_chapter = 0;
+	g_vm = this;
 }
 
 PetkaEngine::~PetkaEngine() {
@@ -52,12 +56,12 @@ Common::Error PetkaEngine::run() {
 	_console.reset(new Console(this));
 	_fileMgr.reset(new FileMgr());
 	_resMgr.reset(new QManager(*this));
-	_gsystem.reset(new QSystem(*this));
+	_qsystem.reset(new QSystem(*this));
 
 	loadStores();
 	if (!_resMgr->init())
 		return Common::kNoGameDataFoundError;
-	_gsystem->init();
+	_qsystem->init();
 
 	return Common::kNoError;
 }
@@ -93,6 +97,14 @@ void PetkaEngine::loadStores() {
 
 	parts.getKey("Chapter", Common::String::format("Part %d Chapter %d", _part, _chapter), _chapterStoreName);
 	_fileMgr->openStore(_chapterStoreName);
+}
+
+QSystem *PetkaEngine::getQSystem() const {
+	return _qsystem.get();
+}
+
+Common::RandomSource &PetkaEngine::getRnd() {
+	return _rnd;
 }
 
 } // End of namespace Petka

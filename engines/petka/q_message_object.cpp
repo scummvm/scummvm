@@ -25,6 +25,8 @@
 
 #include "graphics/colormasks.h"
 
+#include "petka/petka.h"
+#include "petka/q_system.h"
 #include "petka/q_message_object.h"
 
 namespace Petka {
@@ -75,8 +77,64 @@ void QMessageObject::deserialize(Common::SeekableReadStream &stream, const Commo
 	}
 }
 
-uint16 QMessageObject::getId() {
+uint16 QMessageObject::getId() const {
 	return _id;
+}
+
+const Common::String &QMessageObject::getName() const {
+	return _name;
+}
+
+void QMessageObject::processMessage(const QMessage &msg) {
+	for (uint i = 0; i < _reactions.size(); ++i) {
+		QReaction &r = _reactions[i];
+		if (r.opcode != msg.opcode ||
+		(r.status != -1 && r.status != _status) ||
+		(r.senderId != -1 && r.senderId != msg.sender->_id)) {
+			continue;
+		}
+		for (uint j = 0; j < r.messages.size(); ++j) {
+			QMessage &rMsg = r.messages[j];
+			if (r.opcode == kCheck && g_vm->getQSystem()->findObject(rMsg.objId)->_status != rMsg.arg1) {
+				break;
+			}
+			if (rMsg.opcode == kIf &&
+			(rMsg.arg1 == -1 || rMsg.arg1 != msg.arg1) &&
+			(rMsg.arg2 == -1 || rMsg.arg2 != msg.arg2) &&
+			(rMsg.arg3 == -1 || rMsg.arg3 != msg.arg3)) {
+				break;
+			}
+			if (rMsg.opcode == kRandom && rMsg.arg2 != -1) {
+				rMsg.arg1 = (int16)g_vm->getRnd().getRandomNumber((uint)(rMsg.arg2 - 1));
+			}
+			g_vm->getQSystem()->addMessage(rMsg.objId, rMsg.opcode, rMsg.arg1, rMsg.arg2, rMsg.arg3, rMsg.unk, rMsg.sender);
+
+			switch (rMsg.opcode) {
+			case kPlay:
+				break;
+			case kWalk:
+			case kWalkTo:
+				break;
+			case kWalkVich:
+				break;
+			}
+		}
+	}
+
+	switch (msg.opcode) {
+	case kSet:
+		break;
+	case kStatus:
+		_status = (int8)msg.arg1;
+		break;
+	case kHide:
+		break;
+	case kZBuffer:
+		break;
+	case kPassive:
+		break;
+	}
+
 }
 
 } // End of namespace Petka

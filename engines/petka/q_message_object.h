@@ -35,6 +35,8 @@ namespace Petka {
 class QVisibleObject {
 public:
 	QVisibleObject();
+	virtual ~QVisibleObject() {};
+
 protected:
 	int32 _resourceId;
 	int32 _z;
@@ -43,11 +45,17 @@ protected:
 class QMessageObject : public QVisibleObject {
 public:
 	QMessageObject();
+
 	void deserialize(Common::SeekableReadStream &stream, const Common::INIFile &namesIni, const Common::INIFile &castIni);
-	uint16 getId();
+
+	uint16 getId() const;
+	const Common::String &getName() const;
+
+	virtual void processMessage(const QMessage &msg);
 
 protected:
 	uint16 _id;
+	int8 _status;
 	Common::String _name;
 	Common::String _nameOnScreen;
 	int32 _dialogColor;
