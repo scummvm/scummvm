@@ -110,16 +110,19 @@ Common::Error HDBGame::run() {
 	initGraphics(640, 480, &format);
 	_console = new Console();
 	
-//	MPCEntry *titleScreen = fileMan->findFirstData("monkeylogoscreen", DataType::TYPE_PIC);
-//	debug("Hi");
-	//Common::MemoryReadStream *stream = new Common::MemoryReadStream((byte *)titleScreen, titleScreen->ulength);
-	//if (titleScreen == NULL) {
-		//debug("titleScreen: NULL");
-	//}
-	//else {
-		//debug("Works.");
-	//}
-
+	
+	MPCEntry **titleMPC = fileMan->findFirstData("monkeylogoscreen", DataType::TYPE_PIC);
+	if (titleMPC == NULL) {
+		debug("The TitleScreen MPC entry can't be found.");
+		return Common::kReadingFailed;
+	}
+	MPCEntry *titleScreen = *titleMPC;
+	fileMan->seek(titleScreen->offset, SEEK_SET);
+	Common::SeekableReadStream *stream = fileMan->readStream(titleScreen->ulength);
+	
+	Picture *titlePic = new Picture;
+	Graphics::Surface surf = titlePic->load(stream);
+	
 	while (!shouldQuit()) {
 
 		Common::Event event;
@@ -135,12 +138,8 @@ Common::Error HDBGame::run() {
 				break;
 			}
 		}
-		
-		Graphics::Surface screen;
-		screen.create(640, 480, g_system->getScreenFormat());
-		screen.drawLine(100, 100, 200, 200, 0xffffffff);
-		
-		g_system->copyRectToScreen(screen.getBasePtr(0, 0), screen.pitch, 0, 0, 640, 480);
+
+		g_system->copyRectToScreen(surf.getBasePtr(0, 0), surf.pitch, 0, 0, surf.w, surf.h);
 		
 		g_system->updateScreen();
 		g_system->delayMillis(10);
