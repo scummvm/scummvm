@@ -35,7 +35,11 @@ void SceneScriptNR05::InitializeScene() {
 	if (Game_Flag_Query(kFlagNR08toNR05)) {
 		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kNR05LoopPanFromNR08, false);
 		Scene_Loop_Set_Default(kNR05LoopMainLoop);
+#if BLADERUNNER_ORIGINAL_BUGS
 		Setup_Scene_Information(-777.56f,  0.0f, -166.86f,   0);
+#else
+		Setup_Scene_Information(-752.09f, 0.0f, -193.58f, 258);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	} else if (Game_Flag_Query(kFlagNR03toNR05)) {
 		Setup_Scene_Information( -456.0f,  0.0f,  -611.0f,   0);
 	} else {
@@ -86,6 +90,10 @@ void SceneScriptNR05::InitializeScene() {
 
 void SceneScriptNR05::SceneLoaded() {
 	Obstacle_Object("NM1-1+", true);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Obstacle_Object("CUSTLFTBLOCK", true);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Clickable_Object("NM1-1+");
 	Unclickable_Object("NM1-1+");
 }
@@ -138,10 +146,17 @@ bool SceneScriptNR05::ClickedOnExit(int exitId) {
 	}
 
 	if (exitId == 1) {
+#if BLADERUNNER_ORIGINAL_BUGS
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -777.56f, 0.0f, -166.86f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagNR05toNR08);
 			Set_Enter(kSetNR05_NR08, kSceneNR08);
 		}
+#else
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -752.09f, 0.0f, -193.58f, 0, true, false, false)) {
+			Game_Flag_Set(kFlagNR05toNR08);
+			Set_Enter(kSetNR05_NR08, kSceneNR08);
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		return true;
 	}
 	return false;

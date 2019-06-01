@@ -480,6 +480,15 @@ void Set::overrideSceneObjectInfo(int objectId) const {
 			_objects[objectId].bbox.setXYZ(695.63f, 42.65f, -628.10f, 706.71f, 69.22f, -614.47f);
 		}
 		break;
+	case kSceneNR05:
+		if (objectId == 10 && _objects[objectId].name == "BOX08") {
+			_objects[objectId].bbox.setXYZ(-748.75f, 0.0f, -257.39f, -685.37f, 32.01f, -211.47f);
+		} else if (objectId == 11 && _objects[objectId].name == "BOX09") {
+			_objects[objectId].bbox.setXYZ(-729.00f, 0.0f, -179.27f, -690.00f, 33.47f, -15.80f);
+		} else if (objectId == 12 && _objects[objectId].name == "BOX11") {
+			_objects[objectId].bbox.setXYZ(-688.03f, 0.0f, -67.41f, -490.38f, 29.10f, -32.86f);
+		}
+		break;
 	case kSceneNR11:
 		// Right coat rack needs adjustment of bounding box
 		if (objectId == 1 && _objects[objectId].name == "COATRACK") {
@@ -565,6 +574,12 @@ void Set::patchInAdditionalObjectsInSet() {
 		setupNewObjectInSet(custObjName, bbox);
 		break;
 
+	case kSceneNR05:
+		bbox = BoundingBox(-690.0f, 0.0f, -155.0f, -640.0f, 33.47f, -100.0f);
+		custObjName = "CUSTLFTBLOCK";
+		setupNewObjectInSet(custObjName, bbox);
+		break;
+
 	case kSceneUG08:
 		// block clicking / path access to northern part of the scene
 		// which causes McCoy and Police officers/ rats to go behind the map
@@ -598,6 +613,16 @@ void Set::patchOutBadObjectsFromSet() {
 	bool removeCurrObj = false;
 	for (int objectId = 0; objectId < _objectCount; ++objectId) {
 		switch (_vm->_scene->getSceneId()) {
+		case kSceneNR05:
+			if ((objectId == 0 && _objects[objectId].name == "NM1-1+")
+			    || (objectId == 2 && _objects[objectId].name == "NM1-1+")
+			    || (objectId == 3 && _objects[objectId].name == "NM1-1+")
+			) {
+				// Remove objects that are named the same and set as clickables
+				// leave only objectId == 1, named "NM1-1+"
+				removeCurrObj = true;
+			}
+			break;
 		case kSceneNR11:
 			if ((objectId == 46 && _objects[objectId].name == "BOX53")
 			    || (objectId == 36 && _objects[objectId].name == "BOX43")
