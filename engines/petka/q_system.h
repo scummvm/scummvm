@@ -42,8 +42,8 @@ public:
 	bool init();
 
 	void addMessage(const QMessage &msg);
-	void addMessage(uint16 objId, uint16 opcode, int16 arg1 = 0, int16 arg2 = 0, int16 arg3 = 0, int16 unk1 = 0, int16 unk2 = 0);
-	void addMessageForAllObjects(uint16 opcode, int16 arg1 = 0, int16 arg2 = 0, int16 arg3 = 0, int16 unk1 = 0, int16 unk2 = 0);
+	void addMessage(uint16 objId, uint16 opcode, int16 arg1 = 0, int16 arg2 = 0, int16 arg3 = 0, int16 unk = 0, QMessageObject *sender = nullptr);
+	void addMessageForAllObjects(uint16 opcode, int16 arg1 = 0, int16 arg2 = 0, int16 arg3 = 0, int16 unk = 0, QMessageObject *sender = nullptr);
 
 private:
 	PetkaEngine &_vm;
