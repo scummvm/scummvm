@@ -75,6 +75,17 @@ private:
 
 };
 
+class Tile {
+public:
+	Graphics::Surface load(Common::SeekableReadStream *stream);
+
+private:
+	uint32 _flags;
+	char _name[64];
+
+	Graphics::Surface _surface;
+};
+
 } // End of Namespace HDB
 
 #endif // !HDB_DRAW_MANAGER_H
