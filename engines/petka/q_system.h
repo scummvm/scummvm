@@ -41,6 +41,8 @@ public:
 
 	bool init();
 
+	void update();
+
 	void addMessage(const QMessage &msg);
 	void addMessage(uint16 objId, uint16 opcode, int16 arg1 = 0, int16 arg2 = 0, int16 arg3 = 0, int32 unk = 0, QMessageObject *sender = nullptr);
 	void addMessageForAllObjects(uint16 opcode, int16 arg1 = 0, int16 arg2 = 0, int16 arg3 = 0, int32 unk = 0, QMessageObject *sender = nullptr);
@@ -53,7 +55,7 @@ private:
 	Common::Array<QObject> _objs;
 	Common::Array<QObjectBG> _bgs;
 	Common::Array<QMessageObject *> _allObjects;
-	Common::Array<QMessage> _messages;
+	Common::List<QMessage> _messages;
 	Common::ScopedPtr<QObjectCursor> _cursor;
 	Common::ScopedPtr<QObjectCase> _case;
 	Common::ScopedPtr<QObjectStar> _star;
