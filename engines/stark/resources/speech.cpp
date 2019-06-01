@@ -108,11 +108,7 @@ int32 Speech::getCharacterId() {
 }
 
 bool Speech::isPlaying() {
-	if (_soundResource) {
-		return _soundResource->isPlaying();
-	} else {
-		return _waitTimeRemaining > 0;
-	}
+	return _soundResource || _waitTimeRemaining > 0;
 }
 
 void Speech::stop() {
