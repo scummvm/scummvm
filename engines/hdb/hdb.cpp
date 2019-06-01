@@ -111,14 +111,23 @@ Common::Error HDBGame::run() {
 	_console = new Console();
 	
 	
-	Common::SeekableReadStream *stream = fileMan->findFirstData("monkeylogoscreen", DataType::TYPE_PIC);
-	if (stream == NULL) {
+	Common::SeekableReadStream *titleStream = fileMan->findFirstData("monkeylogoscreen", TYPE_PIC);
+	if (titleStream == NULL) {
 		debug("The TitleScreen MPC entry can't be found.");
 		return Common::kReadingFailed;
 	}
 
 	Picture *titlePic = new Picture;
-	Graphics::Surface surf = titlePic->load(stream);
+	Graphics::Surface surf = titlePic->load(titleStream);
+
+	Common::SeekableReadStream *tileStream = fileMan->findFirstData("t32_ground1", TYPE_TILE32);
+	if (tileStream == NULL) {
+		debug("The t32_shipwindow_lr MPC entry can't be found.");
+		return Common::kReadingFailed;
+	}
+
+	Tile *tile = new Tile;
+	Graphics::Surface surf2 = tile->load(tileStream);
 	
 	while (!shouldQuit()) {
 
@@ -137,7 +146,8 @@ Common::Error HDBGame::run() {
 		}
 
 		g_system->copyRectToScreen(surf.getBasePtr(0, 0), surf.pitch, 0, 0, surf.w, surf.h);
-		
+		g_system->copyRectToScreen(surf2.getBasePtr(0, 0), surf2.pitch, 0, 0, surf2.w, surf2.h);
+
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
