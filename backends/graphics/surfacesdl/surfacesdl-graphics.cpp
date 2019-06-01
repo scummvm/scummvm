@@ -499,6 +499,8 @@ bool SurfaceSdlGraphicsManager::saveScreenshot(const Common::String &file) const
 
 #ifdef USE_PNG
 	Common::DumpFile out;
+	uint width = _overlayScreen->getWidth();
+	uint height = _overlayScreen->getHeight();
 	if (!out.open(file)) {
 		success = false;
 	} else {
