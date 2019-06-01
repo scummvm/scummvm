@@ -111,15 +111,12 @@ Common::Error HDBGame::run() {
 	_console = new Console();
 	
 	
-	MPCEntry **titleMPC = fileMan->findFirstData("monkeylogoscreen", DataType::TYPE_PIC);
-	if (titleMPC == NULL) {
+	Common::SeekableReadStream *stream = fileMan->findFirstData("monkeylogoscreen", DataType::TYPE_PIC);
+	if (stream == NULL) {
 		debug("The TitleScreen MPC entry can't be found.");
 		return Common::kReadingFailed;
 	}
-	MPCEntry *titleScreen = *titleMPC;
-	fileMan->seek(titleScreen->offset, SEEK_SET);
-	Common::SeekableReadStream *stream = fileMan->readStream(titleScreen->ulength);
-	
+
 	Picture *titlePic = new Picture;
 	Graphics::Surface surf = titlePic->load(stream);
 	
