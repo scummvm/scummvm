@@ -38,4 +38,29 @@ void DrawMan::loadTile32(char *name, uint32 *length) {
 	
 }
 
+Graphics::Surface Picture::load(Common::SeekableReadStream *stream) {
+	_width = stream->readUint32LE();
+	_height = stream->readUint32LE();
+	stream->read(_name, 64);
+	Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
+
+	debug(8, "Picture: _width: %d, _height: %d", _width, _height);
+	debug(8, "Picture: _name: %s", _name);
+
+	_surface.create(_width, _height, format);
+	stream->readUint32LE(); // Skip Win32 Surface
+
+	uint16 *ptr;
+
+	for (uint y = 0; y < _height; y++) {
+		ptr = (uint16 *) _surface.getBasePtr(0, y);
+		for (uint x = 0; x < _width; x++) {
+			*ptr = TO_LE_16(stream->readUint16LE());
+			ptr++;
+		}
+	}
+
+	return _surface;
+}
+
 }

@@ -25,6 +25,7 @@
 
 #include "common/array.h"
 #include "common/file.h"
+#include "graphics/surface.h"
 
 #include "hdb/hdb.h"
 #include "hdb/file-manager.h"
@@ -35,7 +36,7 @@ class DrawMan {
 public:
 
 	DrawMan();
-
+	/*
 	struct Tile {
 		MPCEntry *mpcData;
 		Tile32Type *tileData;
@@ -43,7 +44,7 @@ public:
 		uint16 loaded;
 		uint16 skyIndex;
 		uint16 animIndex;
-	};
+	};*/
 
 	bool init();
 //	void saveToFile(const Common::String &filename);
@@ -52,11 +53,25 @@ public:
 
 	bool cursorDisplay;
 	int cursorX, cursorY;
-	Common::Array<Tile *> tileArray;
+//	Common::Array<Tile *> tileArray;
 
 private:
 
 	bool _systemInit;
+
+};
+
+class Picture {
+public:
+
+	Graphics::Surface load(Common::SeekableReadStream *stream);
+
+private:
+
+	uint _width, _height;
+	char _name[64];
+
+	Graphics::Surface _surface;
 
 };
 
