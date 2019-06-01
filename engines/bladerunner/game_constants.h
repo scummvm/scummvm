@@ -1076,9 +1076,9 @@ enum Flags {
 	kFlagNR11BurnedUp = 634,
 	kFlagNR11SteeleShoot = 635,
 	kFlagNR08Faded = 636,
-	// 637 is never used
+	kFlagMcCoyCommentsOnOldProjector = 637, // Re-purposed. Original: 637 is never used
 	kFlagNR07McCoyIsCop = 638,
-	// 639 is never used
+	kFlagMcCoyCommentsOnEyeOfEyeworks = 639, // Re-purposed. Original: 639 is never used
 	kFlagNR10CameraDestroyed = 640,
 	kFlagNR10toNR11 = 641, // is never checked
 	kFlagNR10McCoyBlinded = 642,

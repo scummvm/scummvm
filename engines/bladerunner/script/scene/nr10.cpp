@@ -35,6 +35,10 @@ void SceneScriptNR10::InitializeScene() {
 
 	Scene_Exit_Add_2D_Exit(0, 144, 163, 194, 318, 3);
 	Scene_Exit_Add_2D_Exit(1, 475,  95, 568, 230, 0);
+	if (_vm->_cutContent && !Game_Flag_Query(kFlagMcCoyCommentsOnOldProjector)) {
+		Scene_2D_Region_Add(0, 323,  86, 473, 320);// projector area 1
+		Scene_2D_Region_Add(1, 280, 180, 323, 212);  // projector area 2
+	}
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTDRONE1, 22, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED5,   33, 0, 1);
@@ -115,6 +119,17 @@ bool SceneScriptNR10::ClickedOnExit(int exitId) {
 }
 
 bool SceneScriptNR10::ClickedOn2DRegion(int region) {
+if (_vm->_cutContent) {
+		if (!Game_Flag_Query(kFlagMcCoyCommentsOnOldProjector) && (region == 0 || region == 1) ) {
+			Game_Flag_Set(kFlagMcCoyCommentsOnOldProjector);
+			Actor_Face_XYZ(kActorMcCoy, -28.90f, 55.00f, -133.81f, true);
+			Actor_Voice_Over(1750, kActorVoiceOver);
+			Actor_Voice_Over(1760, kActorVoiceOver);
+			Scene_2D_Region_Remove(0);
+			Scene_2D_Region_Remove(1);
+			return true;
+		}
+	}
 	return false;
 }
 

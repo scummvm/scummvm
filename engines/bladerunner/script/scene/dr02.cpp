@@ -99,7 +99,13 @@ void SceneScriptDR02::SceneLoaded() {
 	Unclickable_Object("TRASH CAN WITH FIRE");
 	Unclickable_Object("U2 CHEWDOOR");
 	Unclickable_Object("MMTRASHCAN");
-	Unclickable_Object("U2 EYE");
+	if (_vm->_cutContent) {
+		if (Game_Flag_Query(kFlagMcCoyCommentsOnEyeOfEyeworks)) {
+			Unclickable_Object("U2 EYE");
+		}
+	} else {
+		Unclickable_Object("U2 EYE");
+	}
 	Unclickable_Object("U2 E");
 	Unclickable_Object("MMNEWSP01");
 	Unclickable_Object("MMNEWSP02");
@@ -117,6 +123,16 @@ bool SceneScriptDR02::MouseClick(int x, int y) {
 }
 
 bool SceneScriptDR02::ClickedOn3DObject(const char *objectName, bool a2) {
+	if (_vm->_cutContent) {
+		if (!Game_Flag_Query(kFlagMcCoyCommentsOnEyeOfEyeworks)
+		    && (Object_Query_Click("U2 EYE", objectName))
+		) {
+			Game_Flag_Set(kFlagMcCoyCommentsOnEyeOfEyeworks);
+			Unclickable_Object("U2 EYE");
+			Actor_Voice_Over(660, kActorVoiceOver);
+			return true;
+		}
+	}
 	return false;
 }
 
