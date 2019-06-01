@@ -96,6 +96,10 @@ void SceneScriptUG15::SceneLoaded() {
 	Unobstacle_Object("LOFT01", true);
 	Obstacle_Object("NUT1", true);
 	Clickable_Object("NUT1");
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Unclickable_Object("NUT1");
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 bool SceneScriptUG15::MouseClick(int x, int y) {

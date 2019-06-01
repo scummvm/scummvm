@@ -41,11 +41,22 @@ void SceneScriptBB01::InitializeScene() {
 		Setup_Scene_Information(  43.0f, 0.0f, 1058.0f,   0);
 	}
 
+#if BLADERUNNER_ORIGINAL_BUGS
 	Scene_Exit_Add_2D_Exit(0,   0,   0,  72, 299, 3);
 	Scene_Exit_Add_2D_Exit(1, 151, 218, 322, 290, 3);
 	if (Game_Flag_Query(kFlagSpinnerAtBB01)) {
 		Scene_Exit_Add_2D_Exit(2, 0, 311, 312, 479, 2);
 	}
+#else
+	// expand the left exit downwards as much as possible, especially if Spinner is missing
+	Scene_Exit_Add_2D_Exit(1, 151, 218, 322, 290, 3);
+	if (Game_Flag_Query(kFlagSpinnerAtBB01)) {
+		Scene_Exit_Add_2D_Exit(0, 0,   0,  72, 311, 3);
+		Scene_Exit_Add_2D_Exit(2, 0, 311, 312, 479, 2);
+	} else {
+		Scene_Exit_Add_2D_Exit(0, 0,   0,  72, 400, 3);
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1,  50,    0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTRUNOFF, 25, -100, 0);
