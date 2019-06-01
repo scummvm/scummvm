@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-05-31 23:02+0200\n"
-"PO-Revision-Date: 2019-05-22 17:48+0000\n"
+"PO-Revision-Date: 2019-06-03 22:06+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -5017,9 +5017,9 @@ msgid "Unable to locate the text for %s language in '%s' engine data file."
 msgstr "Kielen %s tekstejä ei löydetty tiedostosta '%s'."
 
 #: engines/supernova/supernova.cpp:441
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to find '%s' in game folder."
-msgstr "\"%s\" pelimoottorin datatiedostoa ei löydetty."
+msgstr "Tiedostoa \"%s\" ei löydetty pelin kansiosta."
 
 #: engines/sword1/animation.cpp:524
 #, c-format
