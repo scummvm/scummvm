@@ -29,9 +29,12 @@ namespace Petka {
 
 class QObjectBG : public QMessageObject {
 public:
+	void processMessage(const QMessage &msg) override;
 
 private:
-
+	int _showMap;
+	int _fxId;
+	int _musicId;
 };
 
 } // End of namespace Petka
