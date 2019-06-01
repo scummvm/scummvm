@@ -466,6 +466,7 @@ Command               | Description
 `dumpStatic`          | Print the static level's resource sub-tree to stdout
 `enableInventoryItem` | Enable a specific inventory item
 `enableScript`        | Enable or disable script
+`extractAllTextures`  | Extract the textures used by the 3d models to `dump/`
 `forceScript`         | Force the execution of a script
 `forceAnimation`      | Force an animation to play
 `listAnimations`      | List all the animations in the current level

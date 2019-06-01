@@ -23,7 +23,10 @@
 #ifndef STARK_FORMATS_TM_H
 #define STARK_FORMATS_TM_H
 
-#include "common/scummsys.h"
+#include "engines/stark/formats/biff.h"
+
+#include "common/str.h"
+#include "graphics/surface.h"
 
 namespace Stark {
 
@@ -31,11 +34,10 @@ class ArchiveReadStream;
 
 namespace Gfx {
 class TextureSet;
+class Texture;
 }
 
 namespace Formats {
-
-class BiffObject;
 
 /**
  * A texture set loader able to read '.tm' files
@@ -49,9 +51,55 @@ public:
 	 */
 	static Gfx::TextureSet *read(ArchiveReadStream *stream);
 
+	/** Read the texture set archive from the provided stream */
+	static BiffArchive *readArchive(ArchiveReadStream *stream);
+
 private:
 	static BiffObject *biffObjectBuilder(uint32 type);
 
+};
+
+enum TextureSetType {
+	kTextureSetGroup   = 0x02faf082,
+	kTextureSetTexture = 0x02faf080
+};
+
+/**
+ * A texture contained in a '.tm' texture set archive
+ *
+ * Textures have mipmaps.
+ */
+class Texture : public BiffObject {
+public:
+	static const uint32 TYPE = kTextureSetTexture;
+
+	Texture();
+	~Texture() override;
+
+	Common::String getName() const {
+		return _name;
+	}
+
+	/**
+	 * Return a pointer to a texture ready for rendering
+	 *
+	 * The caller takes ownership of the texture.
+	 * This method can only be called successfully once
+	 * per texture. Subsequent calls return a null pointer.
+	 */
+	Gfx::Texture *acquireTexturePointer();
+
+	/** Return a RGBA copy of the pixel data */
+	Graphics::Surface *getSurface() const;
+
+	// BiffObject API
+	void readData(ArchiveReadStream *stream, uint32 dataLength) override;
+
+private:
+	Common::String _name;
+	Gfx::Texture *_texture;
+	Graphics::Surface _surface;
+	byte _u;
 };
 
 } // End of namespace Formats

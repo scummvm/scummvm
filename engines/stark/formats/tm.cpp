@@ -22,8 +22,6 @@
 
 #include "engines/stark/formats/tm.h"
 
-#include "graphics/surface.h"
-
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/texture.h"
 
@@ -35,11 +33,6 @@
 namespace Stark {
 namespace Formats {
 
-enum TextureSetType {
-	kTextureSetGroup   = 0x02faf082,
-	kTextureSetTexture = 0x02faf080
-};
-
 class TextureGroup : public BiffObject {
 public:
 	static const uint32 TYPE = kTextureSetGroup;
@@ -50,7 +43,7 @@ public:
 		_type = TYPE;
 	}
 
-	virtual ~TextureGroup() {
+	~TextureGroup() override {
 		delete[] _palette;
 	}
 
@@ -75,67 +68,61 @@ private:
 	byte *_palette;
 };
 
-class Texture : public BiffObject {
-public:
-	static const uint32 TYPE = kTextureSetTexture;
+Texture::Texture() :
+    BiffObject(),
+    _texture(nullptr),
+    _u(0) {
+	_type = TYPE;
+}
 
-	Texture() :
-			BiffObject(),
-			_texture(nullptr),
-			_u(0) {
-		_type = TYPE;
+Texture::~Texture() {
+	_surface.free();
+	delete _texture;
+}
+
+void Texture::readData(ArchiveReadStream *stream, uint32 dataLength) {
+	TextureGroup *textureGroup = static_cast<TextureGroup *>(_parent);
+
+	_name = stream->readString16();
+	_u = stream->readByte();
+
+	uint32 w = stream->readUint32LE();
+	uint32 h = stream->readUint32LE();
+	uint32 levels = stream->readUint32LE();
+
+	_texture = StarkGfx->createTexture();
+	_texture->setLevelCount(levels);
+
+	for (uint32 i = 0; i < levels; ++i) {
+		// Read the pixel data to a surface
+		Graphics::Surface level;
+		Graphics::Surface *surface = i == 0 ? &_surface : &level;
+
+		surface->create(w, h, Graphics::PixelFormat::createFormatCLUT8());
+		stream->read(surface->getPixels(), surface->w * surface->h);
+
+		// Add the mipmap level to the texture
+		_texture->addLevel(i, surface, textureGroup->getPalette());
+
+		level.free();
+
+		w /= 2;
+		h /= 2;
 	}
+}
 
-	virtual ~Texture() {
-		delete _texture;
-	}
+Gfx::Texture *Texture::acquireTexturePointer() {
+	Gfx::Texture *texture = _texture;
+	_texture = nullptr;
 
-	Common::String getName() const {
-		return _name;
-	}
+	return texture;
+}
 
-	Gfx::Texture *acquireTexturePointer() {
-		Gfx::Texture *texture = _texture;
-		_texture = nullptr;
+Graphics::Surface *Texture::getSurface() const {
+	TextureGroup *textureGroup = static_cast<TextureGroup *>(_parent);
 
-		return texture;
-	}
-
-	// BiffObject API
-	void readData(ArchiveReadStream *stream, uint32 dataLength) override {
-		TextureGroup *textureGroup = static_cast<TextureGroup *>(_parent);
-
-		_name = stream->readString16();
-		_u = stream->readByte();
-
-		uint32 w = stream->readUint32LE();
-		uint32 h = stream->readUint32LE();
-		uint32 levels = stream->readUint32LE();
-
-		_texture = StarkGfx->createTexture();
-		_texture->setLevelCount(levels);
-
-		for (uint32 i = 0; i < levels; ++i) {
-			// Read the pixel data to a surface
-			Graphics::Surface level;
-			level.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
-			stream->read(level.getPixels(), level.w * level.h);
-
-			// Add the mipmap level to the texture
-			_texture->addLevel(i, &level, textureGroup->getPalette());
-
-			level.free();
-
-			w /= 2;
-			h /= 2;
-		}
-	}
-
-private:
-	Common::String _name;
-	Gfx::Texture *_texture;
-	byte _u;
-};
+	return _surface.convertTo(Gfx::Driver::getRGBAPixelFormat(), textureGroup->getPalette());
+}
 
 Gfx::TextureSet *TextureSetReader::read(ArchiveReadStream *stream) {
 	BiffArchive archive = BiffArchive(stream, &biffObjectBuilder);
@@ -148,6 +135,10 @@ Gfx::TextureSet *TextureSetReader::read(ArchiveReadStream *stream) {
 	}
 
 	return textureSet;
+}
+
+BiffArchive *TextureSetReader::readArchive(ArchiveReadStream *stream) {
+	return new BiffArchive(stream, &biffObjectBuilder);
 }
 
 BiffObject *TextureSetReader::biffObjectBuilder(uint32 type) {

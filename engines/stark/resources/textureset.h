@@ -63,6 +63,9 @@ public:
 	/** Obtain the texture to be rendered */
 	Gfx::TextureSet *getTexture();
 
+	/** Extract the texture set archive to the dump directory relative to the current directory */
+	void extractArchive();
+
 protected:
 	void printData() override;
 

@@ -32,6 +32,7 @@
 #include "engines/stark/resources/script.h"
 #include "engines/stark/resources/knowledgeset.h"
 #include "engines/stark/resources/item.h"
+#include "engines/stark/resources/textureset.h"
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/services/dialogplayer.h"
 #include "engines/stark/services/global.h"
@@ -47,9 +48,7 @@
 namespace Stark {
 
 Console::Console() :
-		GUI::Debugger(),
-		_testDecompilerTotalScripts(0),
-		_testDecompilerOKScripts(0) {
+		GUI::Debugger() {
 	registerCmd("dumpArchive",          WRAP_METHOD(Console, Cmd_DumpArchive));
 	registerCmd("dumpRoot",             WRAP_METHOD(Console, Cmd_DumpRoot));
 	registerCmd("dumpStatic",           WRAP_METHOD(Console, Cmd_DumpStatic));
@@ -72,6 +71,7 @@ Console::Console() :
 	registerCmd("changeChapter",        WRAP_METHOD(Console, Cmd_ChangeChapter));
 	registerCmd("changeKnowledge",      WRAP_METHOD(Console, Cmd_ChangeKnowledge));
 	registerCmd("enableInventoryItem",  WRAP_METHOD(Console, Cmd_EnableInventoryItem));
+	registerCmd("extractAllTextures",   WRAP_METHOD(Console, Cmd_ExtractAllTextures));
 }
 
 Console::~Console() {
@@ -371,10 +371,14 @@ bool Console::Cmd_DecompileScript(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::Cmd_TestDecompiler(int argc, const char **argv) {
-	_testDecompilerTotalScripts = 0;
-	_testDecompilerOKScripts = 0;
+class ArchiveVisitor {
+public:
+	virtual ~ArchiveVisitor() {}
+	virtual void acceptLevelArchive(Resources::Level *level) = 0;
+	virtual void acceptLocationArchive(Resources::Location *location) = 0;
+};
 
+void Console::walkAllArchives(ArchiveVisitor *visitor) {
 	ArchiveLoader *archiveLoader = new ArchiveLoader();
 
 	// Temporarily replace the global archive loader with our instance
@@ -398,8 +402,8 @@ bool Console::Cmd_TestDecompiler(int argc, const char **argv) {
 		archiveLoader->load(levelArchive);
 		level = archiveLoader->useRoot<Resources::Level>(levelArchive);
 
-		// Decompile all the scripts in the level archive
-		decompileScriptChildren(level);
+		// Visit the level archive
+		visitor->acceptLevelArchive(level);
 
 		Common::Array<Resources::Location *> locations = level->listChildren<Resources::Location>();
 
@@ -414,8 +418,8 @@ bool Console::Cmd_TestDecompiler(int argc, const char **argv) {
 			archiveLoader->load(locationArchive);
 			location = archiveLoader->useRoot<Resources::Location>(locationArchive);
 
-			// Decompile all the scripts in the location archive
-			decompileScriptChildren(location);
+			// Visit the location archive
+			visitor->acceptLocationArchive(location);
 
 			archiveLoader->returnRoot(locationArchive);
 			archiveLoader->unloadUnused();
@@ -429,33 +433,86 @@ bool Console::Cmd_TestDecompiler(int argc, const char **argv) {
 	StarkArchiveLoader = gameArchiveLoader;
 
 	delete archiveLoader;
+}
 
-	debugPrintf("Successfully decompiled %d scripts out of %d\n", _testDecompilerOKScripts, _testDecompilerTotalScripts);
+class DecompilingArchiveVisitor : public ArchiveVisitor {
+public:
+	DecompilingArchiveVisitor() :
+	    _totalScripts(0),
+	    _okScripts(0) {}
+
+	void acceptLevelArchive(Resources::Level *level) override {
+		decompileScriptChildren(level);
+	}
+
+	void acceptLocationArchive(Resources::Location *location) override {
+		decompileScriptChildren(location);
+	}
+
+	int getTotalScripts() const { return _totalScripts; }
+	int getOKScripts() const { return _okScripts; }
+
+private:
+	int _totalScripts;
+	int _okScripts;
+
+	void decompileScriptChildren(Resources::Object *resource) {
+		Common::Array<Resources::Script *> scripts = resource->listChildrenRecursive<Resources::Script>();
+
+		for (uint i = 0; i < scripts.size(); i++) {
+			Resources::Script *script = scripts[i];
+
+			Tools::Decompiler decompiler(script);
+			_totalScripts++;
+
+			Common::String result;
+			if (decompiler.getError() == "") {
+				result = "OK";
+				_okScripts++;
+			} else {
+				result = decompiler.getError();
+			}
+
+			debug("%d - %s: %s", script->getIndex(), script->getName().c_str(), result.c_str());
+		}
+	}
+};
+
+bool Console::Cmd_TestDecompiler(int argc, const char **argv) {
+	DecompilingArchiveVisitor visitor;
+	walkAllArchives(&visitor);
+
+	debugPrintf("Successfully decompiled %d scripts out of %d\n", visitor.getOKScripts(), visitor.getTotalScripts());
 
 	return true;
 }
 
-void Console::decompileScriptChildren(Resources::Object *level) {
-	Common::Array<Resources::Script *> scripts = level->listChildrenRecursive<Resources::Script>();
-
-	for (uint j = 0; j < scripts.size(); j++) {
-		Resources::Script *script = scripts[j];
-
-		Tools::Decompiler *decompiler = new Tools::Decompiler(script);
-		_testDecompilerTotalScripts++;
-
-		Common::String result;
-		if (decompiler->getError() == "") {
-			result = "OK";
-			_testDecompilerOKScripts++;
-		} else {
-			result = decompiler->getError();
-		}
-
-		debug("%d - %s: %s", script->getIndex(), script->getName().c_str(), result.c_str());
-
-		delete decompiler;
+class TextureExtractingArchiveVisitor : public ArchiveVisitor {
+public:
+	void acceptLevelArchive(Resources::Level *level) override {
+		decompileScriptChildren(level);
 	}
+
+	void acceptLocationArchive(Resources::Location *location) override {
+		decompileScriptChildren(location);
+	}
+
+private:
+	void decompileScriptChildren(Resources::Object *resource) {
+		Common::Array<Resources::TextureSet *> textureSets = resource->listChildrenRecursive<Resources::TextureSet>();
+
+		for (uint i = 0; i < textureSets.size(); i++) {
+			Resources::TextureSet *textureSet = textureSets[i];
+			textureSet->extractArchive();
+		}
+	}
+};
+
+bool Console::Cmd_ExtractAllTextures(int argc, const char **argv) {
+	TextureExtractingArchiveVisitor visitor;
+	walkAllArchives(&visitor);
+
+	return true;
 }
 
 Common::Array<Resources::Anim *> Console::listAllLocationAnimations() const {

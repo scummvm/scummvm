@@ -33,6 +33,8 @@ class Object;
 class Script;
 }
 
+class ArchiveVisitor;
+
 class Console : public GUI::Debugger {
 public:
 	Console();
@@ -61,14 +63,12 @@ private:
 	bool Cmd_ChangeLocation(int argc, const char **argv);
 	bool Cmd_ChangeChapter(int argc, const char **argv);
 	bool Cmd_ChangeKnowledge(int argc, const char **argv);
+	bool Cmd_ExtractAllTextures(int argc, const char **argv);
 
 	Common::Array<Resources::Anim *> listAllLocationAnimations() const;
-
 	Common::Array<Resources::Script *> listAllLocationScripts() const;
-	void decompileScriptChildren(Stark::Resources::Object *level);
 
-	int _testDecompilerTotalScripts;
-	int _testDecompilerOKScripts;
+	void walkAllArchives(ArchiveVisitor *visitor);
 };
 
 } // End of namespace Stark

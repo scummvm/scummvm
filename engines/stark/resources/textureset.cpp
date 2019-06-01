@@ -28,6 +28,9 @@
 #include "engines/stark/services/archiveloader.h"
 #include "engines/stark/services/services.h"
 
+#include "common/file.h"
+#include "image/png.h"
+
 namespace Stark {
 namespace Resources {
 
@@ -55,6 +58,45 @@ void TextureSet::onPostRead() {
 
 	_textureSet = Formats::TextureSetReader::read(stream);
 
+	delete stream;
+}
+
+static Common::String stripExtension(const Common::String &filename) {
+	if (filename.hasSuffixIgnoreCase(".bmp")) {
+		return Common::String(filename.c_str(), filename.size() - 4);
+	}
+	return filename;
+}
+
+void TextureSet::extractArchive() {
+	ArchiveReadStream *stream = StarkArchiveLoader->getFile(_filename, _archiveName);
+	Formats::BiffArchive *archive = Formats::TextureSetReader::readArchive(stream);
+
+	Common::Array<Formats::Texture *> textures = archive->listObjectsRecursive<Formats::Texture>();
+	for (uint i = 0; i < textures.size(); i++) {
+		Common::String filename = "dump/" + _filename + "/" + stripExtension(textures[i]->getName()) + ".png";
+
+		if (Common::File::exists(filename)) {
+			continue;
+		}
+
+		Common::DumpFile out;
+		if (!out.open(filename, true)) {
+			warning("Unable to open file '%s' for writing", filename.c_str());
+			return;
+		}
+
+		Graphics::Surface *surface = textures[i]->getSurface();
+
+		Image::writePNG(out, *surface);
+
+		out.close();
+
+		surface->free();
+		delete surface;
+	}
+
+	delete archive;
 	delete stream;
 }
 
