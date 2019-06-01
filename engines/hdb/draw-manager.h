@@ -64,6 +64,8 @@ private:
 class Picture {
 public:
 
+	~Picture();
+
 	Graphics::Surface load(Common::SeekableReadStream *stream);
 
 private:
@@ -77,6 +79,9 @@ private:
 
 class Tile {
 public:
+
+	~Tile();
+
 	Graphics::Surface load(Common::SeekableReadStream *stream);
 
 private:
