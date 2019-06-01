@@ -39,6 +39,7 @@
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/stateprovider.h"
+#include "engines/stark/services/userinterface.h"
 
 #include "common/random.h"
 
@@ -88,7 +89,10 @@ void Location::onGameLoop() {
 	if (april) {
 		_idleActionWaitMs -= StarkGlobal->getMillisecondsPerGameloop();
 		if (_idleActionWaitMs <= 0) {
-			if (!april->getActionAnim() && april->getAnimActivity() == Anim::kActorActivityIdle) {
+			if (!april->getActionAnim()
+			    && april->getAnimActivity() == Anim::kActorActivityIdle
+			    && StarkUserInterface->isInteractive()) {
+
 				Anim *idleAction = april->getIdleActionAnim();
 				if (idleAction) {
 					april->playActionAnim(idleAction);
