@@ -97,14 +97,30 @@ void QSystem::addMessage(const QMessage &msg) {
 	_messages.push_back(msg);
 }
 
-void QSystem::addMessage(uint16 objId, uint16 opcode, int16 arg1, int16 arg2, int16 arg3, int16 unk, QMessageObject *sender) {
+void QSystem::addMessage(uint16 objId, uint16 opcode, int16 arg1, int16 arg2, int16 arg3, int32 unk, QMessageObject *sender) {
 	_messages.push_back({objId, opcode, arg1, arg2, arg3, sender, unk});
 }
 
-void QSystem::addMessageForAllObjects(uint16 opcode, int16 arg1, int16 arg2, int16 arg3, int16 unk, QMessageObject *sender) {
+void QSystem::addMessageForAllObjects(uint16 opcode, int16 arg1, int16 arg2, int16 arg3, int32 unk, QMessageObject *sender) {
 	for (uint i = 0; i < _allObjects.size(); ++i) {
 		_messages.push_back({_allObjects[i]->getId(), opcode, arg1, arg2, arg3, sender, unk});
 	}
+}
+
+QMessageObject *QSystem::findObject(int16 id) {
+	for (uint i = 0; i < _allObjects.size(); ++i) {
+		if (_allObjects[i]->getId() == id)
+			return _allObjects[i];
+	}
+	return nullptr;
+}
+
+QMessageObject *QSystem::findObject(const Common::String &name) {
+	for (uint i = 0; i < _allObjects.size(); ++i) {
+		if (_allObjects[i]->getName() == name)
+			return _allObjects[i];
+	}
+	return nullptr;
 }
 
 }

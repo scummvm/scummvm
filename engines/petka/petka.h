@@ -23,6 +23,8 @@
 #ifndef PETKA_PETKA_H
 #define PETKA_PETKA_H
 
+#include "common/random.h"
+
 #include "engines/engine.h"
 
 #include "gui/debugger.h"
@@ -48,6 +50,9 @@ public:
 	virtual Common::Error run();
 	Common::SeekableReadStream *openFile(const Common::String &name, bool addCurrentPath);
 
+	QSystem *getQSystem() const;
+	Common::RandomSource &getRnd();
+
 private:
 	void loadStores();
 
@@ -55,8 +60,10 @@ private:
 	Common::ScopedPtr<Console> _console;
 	Common::ScopedPtr<FileMgr> _fileMgr;
 	Common::ScopedPtr<QManager> _resMgr;
-	Common::ScopedPtr<QSystem> _gsystem;
+	Common::ScopedPtr<QSystem> _qsystem;
 	const ADGameDescription *_desc;
+
+	Common::RandomSource _rnd;
 
 	Common::String _currentPath;
 	Common::String _speechPath;
@@ -72,6 +79,8 @@ public:
 	Console(PetkaEngine *vm) {}
 	virtual ~Console() {}
 };
+
+extern PetkaEngine *g_vm;
 
 } // End of namespace Petka
 
