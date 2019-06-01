@@ -117,7 +117,7 @@ public:
 	bool pollEvents();
 	Common::Point getMousePos();
 	void setMousePos(const Common::Point &point);
-	uint getCurrentMouseButton();
+	uint getCurrentMouseButton() { return _lastMouseButton; }
 	Common::KeyState getNextKey();
 	bool checkKeysPressed();
 	bool checkKeysPressed(uint numKeys, ...);
@@ -161,6 +161,7 @@ protected:
 
 	DragStatus _dragStatus;
 	Common::Point _dragStart;
+	uint _lastMouseButton;
 	uint _autoRepeatNextEvent;
 
 private:

@@ -234,15 +234,42 @@ void CryOmni3DEngine::setCursor(uint cursorId) const {
 
 bool CryOmni3DEngine::pollEvents() {
 	Common::Event event;
+	int buttonMask;
 	bool hasEvents = false;
 
-	uint oldMouseButton = getCurrentMouseButton();
+	// Don't take into transitional clicks for the drag
+	buttonMask = g_system->getEventManager()->getButtonState();
+	uint oldMouseButton;
+	if (buttonMask & 0x1) {
+		oldMouseButton = 1;
+	} else if (buttonMask & 0x2) {
+		oldMouseButton = 2;
+	} else {
+		oldMouseButton = 0;
+	}
 
+	int transitionalMask = 0;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		if (event.type == Common::EVENT_KEYDOWN) {
 			_keysPressed.push(event.kbd);
+		} else if (event.type == Common::EVENT_LBUTTONDOWN) {
+			transitionalMask |= Common::EventManager::LBUTTON;
+		} else if (event.type == Common::EVENT_RBUTTONDOWN) {
+			transitionalMask |= Common::EventManager::RBUTTON;
 		}
 		hasEvents = true;
+	}
+
+	// Merge current button state with any buttons pressed since last poll
+	// That's to avoid missed clicks
+	buttonMask = g_system->getEventManager()->getButtonState() |
+	             transitionalMask;
+	if (buttonMask & 0x1) {
+		_lastMouseButton = 1;
+	} else if (buttonMask & 0x2) {
+		_lastMouseButton = 2;
+	} else {
+		_lastMouseButton = 0;
 	}
 
 	_dragStatus = kDragStatus_NoDrag;
@@ -281,19 +308,8 @@ void CryOmni3DEngine::setAutoRepeatClick(uint millis) {
 	_autoRepeatNextEvent = g_system->getMillis() + millis;
 }
 
-uint CryOmni3DEngine::getCurrentMouseButton() {
-	int mask = g_system->getEventManager()->getButtonState();
-	if (mask & 0x1) {
-		return 1;
-	} else if (mask & 0x2) {
-		return 2;
-	} else {
-		return 0;
-	}
-}
-
 void CryOmni3DEngine::waitMouseRelease() {
-	while (g_system->getEventManager()->getButtonState() != 0 && !g_engine->shouldQuit()) {
+	while (getCurrentMouseButton() != 0 && !g_engine->shouldQuit()) {
 		pollEvents();
 		g_system->updateScreen();
 		g_system->delayMillis(10);
