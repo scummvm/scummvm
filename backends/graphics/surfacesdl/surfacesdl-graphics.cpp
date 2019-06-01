@@ -499,8 +499,6 @@ bool SurfaceSdlGraphicsManager::saveScreenshot(const Common::String &file) const
 
 #ifdef USE_PNG
 	Common::DumpFile out;
-	uint width = _overlayScreen->getWidth();
-	uint height = _overlayScreen->getHeight();
 	if (!out.open(file)) {
 		success = false;
 	} else {
@@ -511,7 +509,7 @@ bool SurfaceSdlGraphicsManager::saveScreenshot(const Common::String &file) const
 
 		Graphics::PixelFormat format(3, 8, 8, 8, 0, 16, 8, 0, 0);
 		Graphics::Surface data;
-		data.init(width, height, screen->pitch, screen->pixels, format);
+		data.init(screen->w, screen->h, screen->pitch, screen->pixels, format);
 		success = Image::writePNG(out, data);
 
 		SDL_UnlockSurface(screen);

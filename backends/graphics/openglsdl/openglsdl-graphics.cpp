@@ -113,6 +113,7 @@ void OpenGLSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, bool
 	_lockAspectRatio = ConfMan.getBool("aspect_ratio");
 	_vsync = ConfMan.getBool("vsync");
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
 	bool needsWindowReset = false;
 	if (_window->getSDLWindow()) {
 		// The anti-aliasing setting cannot be changed without recreating the window.
@@ -129,15 +130,14 @@ void OpenGLSdlGraphicsManager::setupScreen(uint gameWidth, uint gameHeight, bool
 		}
 	}
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
 	// Clear the GL context when going from / to the launcher
 	SDL_GL_DeleteContext(_glContext);
 	_glContext = nullptr;
-#endif
 
 	if (needsWindowReset) {
 		_window->destroyWindow();
 	}
+#endif
 
 	createOrUpdateScreen();
 
