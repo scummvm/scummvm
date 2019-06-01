@@ -54,41 +54,6 @@ struct MPCEntry {
 	DataType	type;		// type of data
 };
 
-// data structure for a TILE32
-// the actual 16-bit "565" PocketPC-formatted
-// gfx data follows the structure in the .msd
-// The imagesize will always be 2048 bytes (32*32*2)
-struct Tile32Type {
-	int32	flags;			// bit flags
-	char	name[64];		// name of graphic
-};
-
-// data structure for a PIC
-// the actual 16-bit "565" PocketPC-formatted
-// gfx data follows the structure in the .msd
-struct PicType {
-	int		width, height;	// width & height of pic
-	char	name[64];		// name of pic
-};
-
-// data structure for a FONT
-// the actual 16-bit "565" PocketPC-formatted
-// gfx data follows the structure in the .msd
-struct FontType {
-	int		type;		// 0 = mono, 1 = proportional
-	int		numChars;	// how many characters in font
-	int		height;		// height of entire font
-	int		kerning;	// space between chars
-	int		leading;	// space between lines
-};
-
-// each character in a font has width info and
-// an offset from the beginning of the font chunk
-struct CharInfo {
-	int16	width;		// in pixels, of the character
-	int32	offset;		// from the start of the font charInfo chunk
-};
-
 class FileMan {
 private:
 
@@ -109,6 +74,8 @@ public:
 	
 	bool openMPC(const Common::String &filename);
 	void closeMPC();
+	void seek(int32 offset, int flag);
+
 	/*
 		TODO: Implement the loadData functions for the various
 		DataTypes as they are encountered.
@@ -116,9 +83,11 @@ public:
 		void loadData(char *string, uint32 *length);
 	*/
 
-	MPCEntry *findFirstData(const char *string, DataType type);
+	MPCEntry **findFirstData(const char *string, DataType type);
 	MPCEntry **findNextData(MPCIterator it);
 	//int findAmount(char *string, DataType type);
+
+	Common::SeekableReadStream *readStream(uint32 length);
 
 };
 

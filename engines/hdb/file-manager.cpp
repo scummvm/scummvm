@@ -87,19 +87,21 @@ void FileMan::closeMPC() {
 	_mpcFile->close();
 }
 
-MPCEntry *FileMan::findFirstData(const char *string, DataType type) {
+void FileMan::seek(int32 offset, int flag) {
+	_mpcFile->seek(offset, flag);
+}
+
+MPCEntry **FileMan::findFirstData(const char *string, DataType type) {
 	Common::String fileString;
-
-	debug("Hello");
-
-	/*for (MPCIterator it = _dir.begin(); it != _dir.end(); it++) {
+	
+	for (MPCIterator it = _dir.begin(); it != _dir.end(); it++) {
 		fileString = (*it)->filename;
 		if (fileString.contains(string)) {
 			if ((*it)->type == type) {
 				return it;
 			}
 		}
-	}*/
+	}
 	return NULL;
 }
 
@@ -128,5 +130,17 @@ int FileMan::findAmount(char *string, DataType type) {
 
 	return count;
 }*/
+
+Common::SeekableReadStream *FileMan::readStream(uint32 length) {
+	byte *buffer = new byte[length];
+	byte *origin = buffer;
+
+	for (uint32 i = 0; i < length; i++) {
+		*buffer = _mpcFile->readByte();
+		buffer++;
+	}
+
+	return new Common::MemoryReadStream(origin, length);
+}
 
 } // End of Namespace HDB
