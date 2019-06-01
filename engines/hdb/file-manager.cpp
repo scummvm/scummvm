@@ -117,7 +117,7 @@ Common::SeekableReadStream *FileMan::findFirstData(const char *string, DataType 
 	_mpcFile->read(buffer, file->ulength);
 
 	// Return buffer wrapped in a MemoryReadStream
-	return new Common::MemoryReadStream(buffer, file->ulength);
+	return new Common::MemoryReadStream(buffer, file->ulength, DisposeAfterUse::YES);
 }
 
 /*
