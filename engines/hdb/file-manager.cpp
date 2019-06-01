@@ -91,20 +91,36 @@ void FileMan::seek(int32 offset, int flag) {
 	_mpcFile->seek(offset, flag);
 }
 
-MPCEntry **FileMan::findFirstData(const char *string, DataType type) {
+Common::SeekableReadStream *FileMan::findFirstData(const char *string, DataType type) {
 	Common::String fileString;
-	
+	MPCEntry *file = NULL;
+
+	// Find MPC Entry
 	for (MPCIterator it = _dir.begin(); it != _dir.end(); it++) {
 		fileString = (*it)->filename;
 		if (fileString.contains(string)) {
 			if ((*it)->type == type) {
-				return it;
+				file = *it;
+				break;
 			}
 		}
 	}
-	return NULL;
+
+	if (file == NULL) {
+		return NULL;
+	}
+
+	// Load corresponding file into a buffer
+	_mpcFile->seek(file->offset);
+	byte *buffer = new byte[file->ulength];
+
+	_mpcFile->read(buffer, file->ulength);
+
+	// Return buffer wrapped in a MemoryReadStream
+	return new Common::MemoryReadStream(buffer, file->ulength);
 }
 
+/*
 MPCEntry **FileMan::findNextData(MPCIterator begin) {
 	Common::String fileString;
 
@@ -118,7 +134,7 @@ MPCEntry **FileMan::findNextData(MPCIterator begin) {
 	}
 	return NULL;
 }
-/*
+
 int FileMan::findAmount(char *string, DataType type) {
 	int count = 0;
 	
@@ -130,17 +146,5 @@ int FileMan::findAmount(char *string, DataType type) {
 
 	return count;
 }*/
-
-Common::SeekableReadStream *FileMan::readStream(uint32 length) {
-	byte *buffer = new byte[length];
-	byte *origin = buffer;
-
-	for (uint32 i = 0; i < length; i++) {
-		*buffer = _mpcFile->readByte();
-		buffer++;
-	}
-
-	return new Common::MemoryReadStream(origin, length);
-}
 
 } // End of Namespace HDB

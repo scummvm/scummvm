@@ -83,8 +83,8 @@ public:
 		void loadData(char *string, uint32 *length);
 	*/
 
-	MPCEntry **findFirstData(const char *string, DataType type);
-	MPCEntry **findNextData(MPCIterator it);
+	Common::SeekableReadStream *findFirstData(const char *string, DataType type);
+	//MPCEntry **findNextData(MPCIterator it);
 	//int findAmount(char *string, DataType type);
 
 	Common::SeekableReadStream *readStream(uint32 length);
