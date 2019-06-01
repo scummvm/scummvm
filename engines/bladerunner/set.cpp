@@ -436,6 +436,22 @@ void Set::load(SaveFileReadStream &f) {
 */
 void Set::overrideSceneObjectInfo(int objectId) const {
 	switch (_vm->_scene->getSceneId()) {
+	case kSceneRC02:
+		// improve path for Runciter to his desk
+		// this won't fix the issue entirely (of Runciter awkwardly walking around the cage to reach his desk)
+		// but it make it less of an occurrence
+		if (objectId == 0 && _objects[objectId].name == "TABLETOP") {
+			_objects[objectId].bbox.setXYZ(9.0f, -1235.57f, 108386.98f, 47.90f, -1214.99f, 108410.42f);
+		} else if (objectId == 2 && _objects[objectId].name == "OUTR_DESK") {
+			_objects[objectId].bbox.setXYZ(-4.0f, -1239.81f, 108315.97f, 83.98f, -1185.50f, 108387.42f);
+		} else if (objectId == 42 && _objects[objectId].name == "P_BURN01") {
+			_objects[objectId].bbox.setXYZ(-4.0f, -1239.81f, 108312.98f, 87.98f, -1185.50f, 108388.19f);
+		} else if (objectId == 15 && _objects[objectId].name == "POLE_ROP01") {
+			_objects[objectId].bbox.setXYZ(-76.48f, -1239.31f, 108308.19f, -56.32f, -1191.11f, 108326.42f);
+		} else if (objectId == 16 && _objects[objectId].name == "POLE_ROP02") {
+			_objects[objectId].bbox.setXYZ(-75.17f, -1239.29f, 108340.13f, -56.32f, -1221.16f, 108365.65f);
+		}
+		break;
 	case kSceneBB06:
 		// Sebastian's room with doll
 		if (objectId == 3 && _objects[objectId].name == "BOX31") {

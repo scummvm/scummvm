@@ -72,6 +72,10 @@ void SceneScriptRC02::SceneLoaded() {
 	Unobstacle_Object("LEGS", true);
 	Unobstacle_Object("SLATS01", true);
 	Unobstacle_Object("DRAPE07", true);
+	if (_vm->_cutContent) {
+		// improvement: broaden path for Runciter to his desk
+		Unobstacle_Object("GRD ROPE04", true);
+	}
 	Clickable_Object("SCRTY CA03");
 	Unclickable_Object("GRL_DSKLEG");
 	Unclickable_Object("CURTAIN");
