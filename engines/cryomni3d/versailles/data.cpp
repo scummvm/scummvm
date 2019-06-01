@@ -534,7 +534,8 @@ void CryOmni3DEngine_Versailles::initPlacesStates() {
 		SET_PLACE_STATE(5, nullptr, nullptr, nullptr);
 		SET_PLACE_STATE(6, nullptr, nullptr, nullptr);
 		SET_PLACE_STATE(7, nullptr, nullptr, nullptr); // Filter is a leftover
-		SET_PLACE_STATE(8, nullptr, nullptr, nullptr);
+		// WORKAROUND: Missing VS21
+		SET_PLACE_STATE(8, nullptr, nullptr, "VS21");
 		SET_PLACE_STATE(9, nullptr, nullptr, nullptr);
 		SET_PLACE_STATE(10, nullptr, nullptr, "VS31");
 		SET_PLACE_STATE(11, nullptr, nullptr, "VS31");
@@ -549,7 +550,8 @@ void CryOmni3DEngine_Versailles::initPlacesStates() {
 		SET_PLACE_STATE(5, nullptr, FILTER_EVENT(2, 5), nullptr);
 		SET_PLACE_STATE(6, nullptr, nullptr, "VS19");
 		SET_PLACE_STATE(7, nullptr, nullptr, nullptr);
-		SET_PLACE_STATE(8, nullptr, nullptr, nullptr);
+		// WORKAROUND: Missing VS21
+		SET_PLACE_STATE(8, nullptr, nullptr, "VS21");
 		SET_PLACE_STATE(9, INIT_PLACE(2, 9), FILTER_EVENT(2, 9), "VS23");
 		SET_PLACE_STATE(10, nullptr, nullptr, "VS31");
 		SET_PLACE_STATE(11, nullptr, FILTER_EVENT(2, 11), "VS31");
@@ -715,7 +717,8 @@ void CryOmni3DEngine_Versailles::initPlacesStates() {
 		SET_PLACE_STATE(3, nullptr, nullptr, "VS40");
 		SET_PLACE_STATE(4, nullptr, nullptr, "VS36");
 		SET_PLACE_STATE(5, nullptr, nullptr, nullptr);
-		SET_PLACE_STATE(6, nullptr, nullptr, nullptr);
+		// WORKAROUND: Missing VS30
+		SET_PLACE_STATE(6, nullptr, nullptr, "VS30");
 		SET_PLACE_STATE(7, nullptr, nullptr, "VS30");
 		SET_PLACE_STATE(8, nullptr, nullptr, "VS30");
 		SET_PLACE_STATE(9, nullptr, nullptr, "VS39");
@@ -748,7 +751,8 @@ void CryOmni3DEngine_Versailles::initPlacesStates() {
 		SET_PLACE_STATE(36, nullptr, nullptr, "VS23");
 		SET_PLACE_STATE(37, nullptr, nullptr, "VS22");
 		SET_PLACE_STATE(38, nullptr, nullptr, "VS20");
-		SET_PLACE_STATE(39, nullptr, nullptr, nullptr);
+		// WORKAROUND: In original game VS19 is in 49 and should be in 39
+		SET_PLACE_STATE(39, nullptr, nullptr, "VS19");
 		SET_PLACE_STATE(40, nullptr, nullptr, "VS18");
 		SET_PLACE_STATE(41, nullptr, nullptr, nullptr);
 		SET_PLACE_STATE(42, nullptr, nullptr, "VS17");
@@ -758,7 +762,7 @@ void CryOmni3DEngine_Versailles::initPlacesStates() {
 		SET_PLACE_STATE(46, nullptr, nullptr, nullptr);
 		SET_PLACE_STATE(47, nullptr, nullptr, nullptr);
 		SET_PLACE_STATE(48, nullptr, nullptr, nullptr);
-		SET_PLACE_STATE(49, nullptr, nullptr, "VS19");
+		SET_PLACE_STATE(49, nullptr, nullptr, nullptr);
 	}
 #undef INIT_PLACE
 #undef FILTER_EVENT
