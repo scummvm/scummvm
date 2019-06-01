@@ -24,6 +24,31 @@
 
 namespace Petka {
 
+void QObjectBG::processMessage(const QMessage &msg) {
+	QMessageObject::processMessage(msg);
+	switch (msg.opcode) {
+	case kSet:
+		_resourceId = msg.arg1;
+	case kMusic:
+		_musicId = msg.arg1;
+		break;
+	case kBGsFX:
+		_fxId = msg.arg1;
+		break;
+	case kMap:
+		_showMap = msg.arg1 != 0;
+		break;
+	case kNoMap:
+		_showMap = 0;
+		break;
+	case kGoTo:
+		break;
+	case kSetSeq:
+		break;
+	case kEndSeq:
+		break;
+	}
 
+}
 
 } // End of namespace Petka
