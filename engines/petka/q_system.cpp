@@ -123,4 +123,22 @@ QMessageObject *QSystem::findObject(const Common::String &name) {
 	return nullptr;
 }
 
+void QSystem::update() {
+	for (Common::List<QMessage>::iterator it = _messages.begin(); it != _messages.end();) {
+		bool removeMsg = false;
+		for (uint j = 0; j < _allObjects.size(); ++j) {
+			if (it->objId == _allObjects[j]->getId()) {
+				_allObjects[j]->processMessage(*it);
+				removeMsg = true;
+				break;
+			}
+		}
+		if (removeMsg) {
+			it = _messages.erase(it);
+		} else {
+			++it;
+		}
+	}
+}
+
 }
