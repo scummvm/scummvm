@@ -86,6 +86,35 @@ Common::Error CryOmni3DEngine_Versailles::run() {
 	SearchMan.addSubDirectoryMatching(gameDataDir, "music", 1);
 	SearchMan.addSubDirectoryMatching(gameDataDir, "sound", 1);
 
+	// Sometimes files are taken from other levels
+	// Original game has a logic based on the first character of the file name.
+	// We can't do this here so we put in lower priority all the levels as a fallback
+
+	// Create a first SearchSet in which we will add all others to group everything
+	Common::SearchSet *fallbackFiles = new Common::SearchSet();
+
+	for (uint lvl = 1; lvl <= 7; lvl++) {
+		Common::SearchSet *fallbackFilesAnimacti = new Common::SearchSet();
+		Common::SearchSet *fallbackFilesWarp = new Common::SearchSet();
+		Common::SearchSet *fallbackFilesImgFix = new Common::SearchSet();
+
+		fallbackFilesAnimacti->addSubDirectoryMatching(gameDataDir, Common::String::format(
+		            "animacti/level%d", lvl), 2);
+		fallbackFilesWarp->addSubDirectoryMatching(gameDataDir, Common::String::format(
+		            "warp/level%d/cyclo", lvl), 2);
+		fallbackFilesWarp->addSubDirectoryMatching(gameDataDir, Common::String::format(
+		            "warp/level%d/hnm", lvl), 2);
+		fallbackFilesImgFix->addSubDirectoryMatching(gameDataDir, Common::String::format(
+		            "img_fix/level%d", lvl), 2);
+
+		fallbackFiles->add(Common::String::format("__fallbackFiles_animacti_%d", lvl),
+		                   fallbackFilesAnimacti);
+		fallbackFiles->add(Common::String::format("__fallbackFiles_warp_%d", lvl), fallbackFilesWarp);
+		fallbackFiles->add(Common::String::format("__fallbackFiles_img_fix_%d", lvl), fallbackFilesImgFix);
+	}
+
+	SearchMan.add("__fallbackFiles", fallbackFiles);
+
 	setupMessages();
 
 	_dialogsMan.init(138, _messages[22]);
@@ -637,15 +666,15 @@ void CryOmni3DEngine_Versailles::initNewLevel(int level) {
 	// SearchMan can't add several times the same basename
 	// We create several SearchSet with different names that we add to SearchMan instead
 
-	// Visiting uses all levels
-	SearchMan.remove("__visitFiles");
-
 	SearchMan.remove("__levelFiles_animacti");
 	SearchMan.remove("__levelFiles_warp");
 	SearchMan.remove("__levelFiles_img_fix");
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	if (level >= 1 && level <= 7) {
+		// Add current level directories to the search set to be looked up first
+		// If a file is not found in the current level, find it with the fallback
+
 		Common::SearchSet *levelFilesAnimacti = new Common::SearchSet();
 		Common::SearchSet *levelFilesWarp = new Common::SearchSet();
 		Common::SearchSet *levelFilesImgFix = new Common::SearchSet();
@@ -663,30 +692,7 @@ void CryOmni3DEngine_Versailles::initNewLevel(int level) {
 		SearchMan.add("__levelFiles_warp", levelFilesWarp);
 		SearchMan.add("__levelFiles_img_fix", levelFilesImgFix);
 	} else if (level == 8 && _isVisiting) {
-		// In visit mode, we take files from all levels, happily they have unique names
-		// Create a first SearchSet in which we will add all others to easily cleanup the mess
-		Common::SearchSet *visitFiles = new Common::SearchSet();
-
-		for (uint lvl = 1; lvl <= 7; lvl++) {
-			Common::SearchSet *visitFilesAnimacti = new Common::SearchSet();
-			Common::SearchSet *visitFilesWarp = new Common::SearchSet();
-			Common::SearchSet *visitFilesImgFix = new Common::SearchSet();
-
-			visitFilesAnimacti->addSubDirectoryMatching(gameDataDir, Common::String::format(
-			            "animacti/level%d", lvl), 1);
-			visitFilesWarp->addSubDirectoryMatching(gameDataDir, Common::String::format(
-			        "warp/level%d/cyclo", lvl), 1);
-			visitFilesWarp->addSubDirectoryMatching(gameDataDir, Common::String::format(
-			        "warp/level%d/hnm", lvl), 1);
-			visitFilesImgFix->addSubDirectoryMatching(gameDataDir, Common::String::format(
-			            "img_fix/level%d", lvl), 1);
-
-			visitFiles->add(Common::String::format("__visitFiles_animacti_%d", lvl), visitFilesAnimacti);
-			visitFiles->add(Common::String::format("__visitFiles_warp_%d", lvl), visitFilesWarp);
-			visitFiles->add(Common::String::format("__visitFiles_img_fix_%d", lvl), visitFilesImgFix);
-		}
-
-		SearchMan.add("__visitFiles", visitFiles);
+		// In visit mode, we take files from all levels so we use the fallback mechanism
 	} else {
 		error("Invalid level %d", level);
 	}
