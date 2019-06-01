@@ -69,6 +69,16 @@ void SceneScriptUG03::SceneLoaded() {
 	Clickable_Object("CHAIR_SEAT");
 	Clickable_Object("CHAIR_STRAPLEGLEFT");
 	Clickable_Object("CHAIR_STRAPLEGRIGHT");
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	if (Actor_Clue_Query(kActorMcCoy, kClueScaryChair)) {
+		Unclickable_Object("CHAIR_HEADZAPPER");
+		Unclickable_Object("CHAIR_BACK");
+		Unclickable_Object("CHAIR_SEAT");
+		Unclickable_Object("CHAIR_STRAPLEGLEFT");
+		Unclickable_Object("CHAIR_STRAPLEGRIGHT");
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 bool SceneScriptUG03::MouseClick(int x, int y) {
@@ -79,6 +89,11 @@ bool SceneScriptUG03::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("CHAIR_BACK", objectName)
 	 || Object_Query_Click("CHAIR_SEAT", objectName)
 	 || Object_Query_Click("CHAIR_HEADZAPPER", objectName)
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	 || Object_Query_Click("CHAIR_STRAPLEGLEFT", objectName)
+	 || Object_Query_Click("CHAIR_STRAPLEGRIGHT", objectName)
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	) {
 		if (!Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "CHAIR_BACK", 36, true, false)) {
 			Actor_Face_Object(kActorMcCoy, "CHAIR_BACK", true);
@@ -89,6 +104,14 @@ bool SceneScriptUG03::ClickedOn3DObject(const char *objectName, bool a2) {
 				Actor_Voice_Over(2580, kActorVoiceOver);
 				Actor_Voice_Over(2590, kActorVoiceOver);
 				Actor_Clue_Acquire(kActorMcCoy, kClueScaryChair, true, -1);
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+				Unclickable_Object("CHAIR_HEADZAPPER");
+				Unclickable_Object("CHAIR_BACK");
+				Unclickable_Object("CHAIR_SEAT");
+				Unclickable_Object("CHAIR_STRAPLEGLEFT");
+				Unclickable_Object("CHAIR_STRAPLEGRIGHT");
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			}
 		}
 	}

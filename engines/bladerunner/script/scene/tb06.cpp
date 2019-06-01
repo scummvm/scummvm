@@ -177,14 +177,29 @@ void SceneScriptTB06::PlayerWalkedIn() {
 		Actor_Face_Actor(kActorMcCoy, kActorMarcus, true);
 		Actor_Says(kActorMcCoy, 5290, kAnimationModeTalk);
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -10.0f, 149.0f, -631.0f, 0, false, false, false);
-		AI_Movement_Track_Pause(kActorPhotographer);
-		Actor_Face_Actor(kActorMcCoy, kActorPhotographer, true);
-		Actor_Face_Actor(kActorPhotographer, kActorMcCoy, true);
-		Actor_Says(kActorPhotographer, 0, kAnimationModeTalk);
-		Actor_Says(kActorMcCoy, 5295, kAnimationModeTalk);
-		Actor_Face_Actor(kActorPhotographer, kActorMarcus, true);
-		Actor_Says(kActorPhotographer, 10, kAnimationModeTalk);
-		AI_Movement_Track_Unpause(kActorPhotographer);
+
+		bool talkWithPhotographer = false;
+#if BLADERUNNER_ORIGINAL_BUGS
+		talkWithPhotographer = true;
+#else
+		// It's possible for McCoy to go to AR01 (so the kActorPhotographer will go away from TB06)
+		// without ever going into this scene (TB06)
+		// so later on in the Act, if McCoy visits this scene the Photographer would be gone
+		// but the dialogue would play as if he was there. This fixes that bug.
+		if (Actor_Query_Is_In_Current_Set(kActorPhotographer)) {
+			talkWithPhotographer = true;
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
+		if (talkWithPhotographer) {
+			AI_Movement_Track_Pause(kActorPhotographer);
+			Actor_Face_Actor(kActorMcCoy, kActorPhotographer, true);
+			Actor_Face_Actor(kActorPhotographer, kActorMcCoy, true);
+			Actor_Says(kActorPhotographer, 0, kAnimationModeTalk);
+			Actor_Says(kActorMcCoy, 5295, kAnimationModeTalk);
+			Actor_Face_Actor(kActorPhotographer, kActorMarcus, true);
+			Actor_Says(kActorPhotographer, 10, kAnimationModeTalk);
+			AI_Movement_Track_Unpause(kActorPhotographer);
+		}
 		Game_Flag_Set(kFlagTB06Introduction);
 		//return true;
 		return;

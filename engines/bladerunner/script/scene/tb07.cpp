@@ -61,6 +61,10 @@ void SceneScriptTB07::InitializeScene() {
 void SceneScriptTB07::SceneLoaded() {
 	Obstacle_Object("EAGLE01", true);
 	Clickable_Object("EAGLE01");
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Unclickable_Object("EAGLE01");
+#endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
 bool SceneScriptTB07::MouseClick(int x, int y) {

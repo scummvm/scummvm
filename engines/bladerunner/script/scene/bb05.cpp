@@ -75,6 +75,10 @@ void SceneScriptBB05::SceneLoaded() {
 	Clickable_Object("BOX06");
 	Unclickable_Object("BOX06");
 	Unclickable_Object("BOX14");
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Unclickable_Object("PINHEAD");
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	if (Actor_Query_Goal_Number(kActorSebastian) == 200) {
 		Actor_Set_Goal_Number(kActorGeneralDoll, 299);
 		Actor_Put_In_Set(kActorGeneralDoll, kSetFreeSlotG);

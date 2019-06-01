@@ -53,6 +53,10 @@ void SceneScriptMA06::InitializeScene() {
 void SceneScriptMA06::SceneLoaded() {
 	Obstacle_Object("PANEL", true);
 	Clickable_Object("PANEL");
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Unclickable_Object("PANEL");
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	if (_vm->_cutContent) {
 		if (Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelShouldBeInElevatorMcCoysAct3) {
 			// Put Rachael in set for her first cut scene (Act 3) when it plays out in the elevator

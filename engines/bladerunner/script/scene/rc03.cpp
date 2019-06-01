@@ -124,6 +124,10 @@ void SceneScriptRC03::SceneLoaded() {
 	Unclickable_Object("BOX-BBCOLUMN02");
 	Unclickable_Object("BOX-BBCOLUMN03");
 	Unclickable_Object("BOX-BBCOLUMN04");
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Unclickable_Object("PARKING METER 01");
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Unclickable_Object("PARKING METER 02");
 	Unclickable_Object("PARKING METER 03");
 	Unclickable_Object("TRASH CAN WITH FIRE");

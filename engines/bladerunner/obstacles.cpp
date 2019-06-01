@@ -33,7 +33,7 @@
 #include "common/debug.h"
 
 #define DISABLE_PATHFINDING 0
-#define USE_PATHFINDING_EXPERIMENTAL_FIX_2 1 // Alternate Fix: Allows polygons merged on one point
+#define USE_PATHFINDING_EXPERIMENTAL_FIX_2 0 // Alternate Fix: Allows polygons merged on one point
 
 #define WITHIN_TOLERANCE(a, b) (((a) - 0.009) < (b) && ((a) + 0.009) > (b))
 

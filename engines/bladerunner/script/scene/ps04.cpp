@@ -62,6 +62,10 @@ void SceneScriptPS04::SceneLoaded() {
 	Unobstacle_Object("B.DOOR", true);
 	Unobstacle_Object("B.CHAIR01", true);
 	Unclickable_Object("CHAIR07");
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	Unclickable_Object("FLOOR");
+#endif // BLADERUNNER_ORIGINAL_BUGS
 
 	if ( Global_Variable_Query(kVariableChapter) == 2
 	 && !Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm)
