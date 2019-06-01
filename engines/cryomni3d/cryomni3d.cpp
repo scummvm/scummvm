@@ -388,11 +388,15 @@ void CryOmni3DEngine::fadeOutPalette() {
 		setPalette(palOut, 0, 256);
 		// Wait 50ms between each steps but refresh screen every 10ms
 		for (uint i = 0; i < 5; i++) {
+			pollEvents();
 			g_system->updateScreen();
 			g_system->delayMillis(10);
 		}
 	}
 	setBlackPalette();
+	pollEvents();
+	g_system->updateScreen();
+	clearKeys();
 }
 
 void CryOmni3DEngine::fadeInPalette(const byte *palette) {
@@ -415,12 +419,15 @@ void CryOmni3DEngine::fadeInPalette(const byte *palette) {
 		setPalette(palOut, 0, 256);
 		// Wait 50ms between each steps but refresh screen every 10ms
 		for (uint i = 0; i < 5; i++) {
+			pollEvents();
 			g_system->updateScreen();
 			g_system->delayMillis(10);
 		}
 	}
 	setPalette(palette, 0, 256);
+	pollEvents();
 	g_system->updateScreen();
+	clearKeys();
 }
 
 void CryOmni3DEngine::setBlackPalette() {
