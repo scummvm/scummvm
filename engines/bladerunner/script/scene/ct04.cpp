@@ -41,6 +41,9 @@ void SceneScriptCT04::InitializeScene() {
 
 	Scene_Exit_Add_2D_Exit(0, 590,  0, 639, 479, 1);
 	Scene_Exit_Add_2D_Exit(1, 194, 84, 320, 274, 0);
+	if (_vm->_cutContent) {
+		Scene_Exit_Add_2D_Exit(2, 0, 440, 590, 479, 2);
+	}
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1,  50,    1, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTAMBR1,  15, -100, 1);
@@ -233,6 +236,17 @@ bool SceneScriptCT04::ClickedOnExit(int exitId) {
 			Set_Enter(kSetCT03_CT04, kSceneCT03);
 		}
 		return true;
+	}
+	if (_vm->_cutContent) {
+		if (exitId == 2) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -106.94f, -619.08f, 429.20f, 0, true, false, false)) {
+				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
+				Ambient_Sounds_Remove_All_Looping_Sounds(1);
+				Game_Flag_Set(kFlagCT04toCT03);
+				Set_Enter(kSetCT03_CT04, kSceneCT03);
+			}
+			return true;
+		}
 	}
 	return false;
 }

@@ -48,6 +48,9 @@ void SceneScriptDR04::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0, 589,   0, 639, 479, 1);
 	Scene_Exit_Add_2D_Exit(1, 443, 264, 488, 353, 0);
 	Scene_Exit_Add_2D_Exit(2, 222, 110, 269, 207, 0);
+	if (_vm->_cutContent) {
+		Scene_Exit_Add_2D_Exit(3, 0, 440, 589, 479, 2);
+	}
 
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(false);
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 50,    1,   1);
@@ -166,6 +169,17 @@ bool SceneScriptDR04::ClickedOnExit(int exitId) {
 			Set_Enter(kSetDR01_DR02_DR04, kSceneDR01);
 		}
 		return true;
+	}
+
+	if (_vm->_cutContent) {
+		if (exitId == 3) {
+			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -716.17f, 0.12f, 132.48f, 0, true, false, false)) {
+				Async_Actor_Walk_To_XYZ(kActorMcCoy, -509.21f, 0.16f, 44.97f, 0, false);
+				Game_Flag_Set(kFlagDR04toDR01);
+				Set_Enter(kSetDR01_DR02_DR04, kSceneDR01);
+			}
+			return true;
+		}
 	}
 
 	if (exitId == 1) {
