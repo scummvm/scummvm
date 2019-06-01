@@ -75,7 +75,7 @@ public:
 	Game System Pointers
 	*/
 
-	FileMan* fileMan;
+	FileMan *fileMan;
 
 	// Game related members;
 
