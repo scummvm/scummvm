@@ -136,6 +136,7 @@ done
 #ResidualVM defaults: faad=no, opengles=no, tremor=no mt32emu=no, translation=no,
 # flac=no, seq_midi=no, snd_io=no, timidity=no fluidsynth=no, opengles2=no
 # eventrec=no, build_scalers=no, build_hq_scalers=no, sdlnet=no, libcurl=no, cloud=no
+# theoradec=no
 #
 # Default lib behaviour yes/no/auto
 _ogg=auto
@@ -157,7 +158,7 @@ _sparkle=auto
 _osxdockplugin=auto
 _jpeg=auto
 _png=auto
-_theoradec=auto
+_theoradec=no
 _faad=no
 _fluidsynth=no
 _glew=auto
