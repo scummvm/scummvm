@@ -66,7 +66,7 @@ bool ResVmSdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &even
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 
-byte mapSDLControllerButtonToResVM(Uint8 sdlButton) {
+static int mapSDLControllerButtonToResVM(Uint8 sdlButton) {
 	Common::JoystickButton resvmButtons[] = {
 	    Common::JOYSTICK_BUTTON_A,
 	    Common::JOYSTICK_BUTTON_B,
@@ -111,7 +111,7 @@ bool ResVmSdlEventSource::handleControllerButton(const SDL_Event &ev, Common::Ev
 			}
 		}
 #endif
-		byte button = mapSDLControllerButtonToResVM(ev.cbutton.button);
+		int button = mapSDLControllerButtonToResVM(ev.cbutton.button);
 		if (button == -1) {
 			return false;
 		}
