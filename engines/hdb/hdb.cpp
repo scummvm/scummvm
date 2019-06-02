@@ -138,6 +138,8 @@ Common::Error HDBGame::run() {
 
 	Tile *tile = new Tile;
 	Graphics::Surface surf2 = tile->load(tileStream);
+
+	lua->executeFile("test.lua");
 	
 	while (!shouldQuit()) {
 
