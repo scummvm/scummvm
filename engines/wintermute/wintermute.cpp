@@ -157,6 +157,15 @@ int WintermuteEngine::init() {
 		}
 	#endif
 
+	if (_gameDescription->adDesc.flags & GF_3D_ASSETS) {
+		GUI::MessageDialog dialog("This game requires 3D characters support, which is not implemented yet.", "Start anyway", "Cancel");
+		if (dialog.runModal() != GUI::kMessageOK) {
+			delete _game;
+			_game = nullptr;
+			return false;
+		}
+	}
+
 	_game = new AdGame(_targetName);
 	if (!_game) {
 		return 1;
