@@ -40,6 +40,7 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 	_console = nullptr;
 	_systemInit = false;
 	fileMan = new FileMan;
+	lua = new LuaScript;
 
 	DebugMan.addDebugChannel(kDebugExample1, "Example1", "This is just an example to test");
 	DebugMan.addDebugChannel(kDebugExample2, "Example2", "This is also an example");
@@ -47,6 +48,8 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 
 HDBGame::~HDBGame() {
 	delete _console;
+	delete fileMan;
+	delete lua;
 	DebugMan.clearAllDebugChannels();
 }
 
