@@ -87,8 +87,6 @@ public:
 	//MPCEntry **findNextData(MPCIterator it);
 	//int findAmount(char *string, DataType type);
 
-	Common::SeekableReadStream *readStream(uint32 length);
-
 };
 
 } // End of Namespace HDB
