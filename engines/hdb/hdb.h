@@ -35,9 +35,9 @@
 #include "engines/util.h"
 #include "console.h"
 
-#include "game.h"
-#include "file-manager.h"
-#include "draw-manager.h"
+#include "hdb/file-manager.h"
+#include "hdb/draw-manager.h"
+#include "hdb/lua-script.h"
 
 #define MAX_SNDCACHE_MEM	0x400000	// 4Mb of sounds in memory
 #define MAX_TILES_CACHED	3500		// Max no of tiles in memory at once
@@ -76,6 +76,7 @@ public:
 	*/
 
 	FileMan *fileMan;
+	LuaScript *lua;
 
 	// Game related members;
 
