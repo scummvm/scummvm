@@ -74,6 +74,11 @@ void Location::onAllLoaded() {
 	Object::onAllLoaded();
 
 	_layers = listChildren<Layer>();
+
+	Layer *threeDLayer = findChildWithSubtype<Layer>(Layer::kLayer3D);
+	if (threeDLayer) {
+		_modelItems = threeDLayer->listChildren<ModelItem>(Item::kItemModel);
+	}
 }
 
 void Location::onEnterLocation() {
@@ -429,15 +434,8 @@ void Location::registerCharacterItem(int32 character, ItemVisual *item) {
 	}
 }
 
-Common::Array<ItemVisual *> Location::listCharacters() const {
-	Common::Array<ItemVisual *> characters;
-
-	CharacterMap::const_iterator it;
-	for (it = _characterItemMap.begin(); it != _characterItemMap.end(); it++) {
-		characters.push_back(it->_value);
-	}
-
-	return characters;
+const Common::Array<ModelItem *> &Location::listModelItems() const {
+	return _modelItems;
 }
 
 void Location::printData() {

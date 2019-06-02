@@ -262,11 +262,11 @@ void Walk::doWalkCollisionSimple() {
 	}
 
 	Resources::Location *location = StarkGlobal->getCurrent()->getLocation();
-	Common::Array<Resources::ItemVisual *> characters = location->listCharacters();
+	Common::Array<Resources::ModelItem *> characters = location->listModelItems();
 
 	// Check if any of the other characters is in our way
 	for (uint i = 0; i < characters.size(); i++) {
-		Resources::FloorPositionedItem *otherItem = dynamic_cast<Resources::FloorPositionedItem *>(characters[i]);
+		Resources::ModelItem *otherItem = characters[i];
 		if (!otherItem || !otherItem->isEnabled() || otherItem == _item) continue;
 
 		Math::Vector3d otherPosition = otherItem->getPosition3D();
@@ -303,12 +303,12 @@ void Walk::doWalkCollisionAvoid() {
 	Math::Vector3d newPosition = _item3D->getPosition3D();
 
 	Resources::Location *location = StarkGlobal->getCurrent()->getLocation();
-	Common::Array<Resources::ItemVisual *> characters = location->listCharacters();
+	Common::Array<Resources::ModelItem *> characters = location->listModelItems();
 
 	// Check if we're colliding with another character, but going away from it.
 	// In that case, the collision is being solved. There is nothing to do.
 	for (uint i = 0; i < characters.size(); i++) {
-		Resources::FloorPositionedItem *otherItem = dynamic_cast<Resources::FloorPositionedItem *>(characters[i]);
+		Resources::FloorPositionedItem *otherItem = characters[i];
 		if (!otherItem || !otherItem->isEnabled() || otherItem == _item) continue;
 
 		Math::Vector3d otherPosition = otherItem->getPosition3D();

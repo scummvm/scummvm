@@ -115,8 +115,8 @@ public:
 	/** Register an item as a character to the location */
 	void registerCharacterItem(int32 character, ItemVisual *item);
 
-	/** Get the list of characters present in the location */
-	Common::Array<ItemVisual *> listCharacters() const;
+	/** Get the list of items with a 3d model present in the location */
+	const Common::Array<ModelItem *> &listModelItems() const;
 
 	/** Reset animation blending for all the items in the location */
 	void resetAnimationBlending();
@@ -174,6 +174,8 @@ private:
 
 	typedef Common::HashMap<int32, ItemVisual *> CharacterMap;
 	CharacterMap _characterItemMap;
+
+	Common::Array<ModelItem *> _modelItems;
 
 	int32 _rumbleDurationRemaining;
 
