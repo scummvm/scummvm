@@ -23,12 +23,15 @@
 #include "common/lua/lua.h"
 #include "common/lua/lauxlib.h"
 #include "common/lua/lualib.h"
+#include "common/debug.h"
+
 #include "hdb/lua-script.h"
 
 namespace HDB {
 
 LuaScript::LuaScript() {
 	_state = NULL;
+	_systemInit = false;
 }
 
 LuaScript::~LuaScript() {
@@ -45,11 +48,17 @@ bool LuaScript::init() {
 		return false;
 	}
 
+	_systemInit = true;
+
 	return true;
 }
 
 bool LuaScript::executeFile(const Common::String &filename) {
 	
+	if (!_systemInit) {
+		return false;
+	}
+
 	Common::File *file = new Common::File;
 
 	if (!file->open(filename)) {
@@ -80,6 +89,11 @@ bool LuaScript::registerStdLibs() {
 }
 
 bool LuaScript::executeChunk(const char *chunk, uint chunkSize, const Common::String &chunkName) const {
+	
+	if (!_systemInit) {
+		return false;
+	}
+	
 	// Compile Chunk
 	if (luaL_loadbuffer(_state, chunk, chunkSize, chunkName.c_str())) {
 		error("Couldn't compile \"%s\": %s", chunkName.c_str(), lua_tostring(_state, -1));
@@ -96,6 +110,7 @@ bool LuaScript::executeChunk(const char *chunk, uint chunkSize, const Common::St
 		return false;
 	}
 
+	debug("Chunk successfully executed");
 	return true;
 }
 

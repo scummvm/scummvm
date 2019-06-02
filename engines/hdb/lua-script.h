@@ -43,6 +43,7 @@ public:
 
 private:
 	lua_State *_state;
+	bool _systemInit;
 
 	bool registerStdLibs();
 	bool executeChunk(const char *chunk, uint chunkSize, const Common::String &chunkName) const;
