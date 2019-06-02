@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 
 %:
-	dh $@ --parallel --max-parallel=4
+	dh $@ --parallel --max-parallel=`nproc`
 
 ifeq ($(DEB_BUILD_ARCH_OS),hurd)
 ARCH_OPTS:= --disable-alsa

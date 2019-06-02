@@ -1,21 +1,14 @@
 #! /bin/sh
 
-# This simple script is called from the upstream makefile whenever someone
-# calls "make deb".  It adds a changelog entry to the top of debian/changelog
-# so that the version number is correct.
+rm -rf debian
+cp -R dists/debian debian
 
-VERSION=`cat base/internal_version.h | grep SCUMMVM_VERSION | cut -d\" -f2`-`date +%Y%m%d`
-USERNAME=`whoami`
-GECOS=`getent passwd $USERNAME | awk '-F[,:]' '{print $5}'`
-DOMAIN=`hostname --fqdn`
+VERSION=`cat base/internal_version.h | grep SCUMMVM_VERSION | cut -d\" -f2`
 DATE=`date -R`
 
-cat << __eof > debian/changelog
-residualvm ($VERSION) experimental; urgency=low
+echo "residualvm ($VERSION) stable; urgency=low
 
-  * GIT snapshot.
-
-    Build-date: $DATE
+  * Build-date: $DATE
 
     Please don't file bugs you find in this package in the Debian Bug Tracking
     system, use the ResidualVM team's own bug tracker instead.  You can find this
@@ -23,4 +16,4 @@ residualvm ($VERSION) experimental; urgency=low
 
  -- Pawel Kolodziejski <aquadran@residualvm.org>  $DATE
 
-__eof
+" > debian/changelog
