@@ -61,14 +61,21 @@ bool HDBGame::init() {
 	*/
 
 	// Init fileMan
-	if (fileMan->openMPC("hyperdemo.mpc")) {
-		gameShutdown = false;
-		_systemInit = true;
-		return true;
+	if (!fileMan->openMPC("hyperdemo.mpc")) {
+		error("FileMan::openMPC: Cannot find the hyperspace.mpc data file.");
+		return false;
 	}
 
-	error("FileMan::openMPC: Cannot find the hyperspace.mpc data file.");
-	return false;
+	// Init Lua
+	if (!lua->init()) {
+		error("LuaScript::int: Cannot initialize LuaScript.");
+		return false;
+	}
+
+	gameShutdown = false;
+	_systemInit = true;
+
+	return true;
 }
 
 void HDBGame::start() {
