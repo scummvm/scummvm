@@ -170,9 +170,11 @@ Common::String ArchiveReadStream::readString() {
 	uint32 length = readUint32LE();
 
 	// Read the string
-	char *data = new char[length];
+	char *data = new char[length + 1];
 	read(data, length);
-	Common::String string(data, length);
+	data[length] = '\0';
+
+	Common::String string(data);
 	delete[] data;
 
 	return string;
@@ -183,9 +185,11 @@ Common::String ArchiveReadStream::readString16() {
 	uint16 length = readUint16LE();
 
 	// Read the string
-	char *data = new char[length];
+	char *data = new char[length + 1];
 	read(data, length);
-	Common::String string(data, length);
+	data[length] = '\0';
+
+	Common::String string(data);
 	delete[] data;
 
 	return string;

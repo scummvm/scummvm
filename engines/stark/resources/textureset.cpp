@@ -74,7 +74,10 @@ void TextureSet::extractArchive() {
 
 	Common::Array<Formats::Texture *> textures = archive->listObjectsRecursive<Formats::Texture>();
 	for (uint i = 0; i < textures.size(); i++) {
-		Common::String filename = "dump/" + _filename + "/" + stripExtension(textures[i]->getName()) + ".png";
+		Common::String filename = Common::String::format(
+		            "dump/%s/%s.png",
+		            _filename.c_str(),
+		            stripExtension(textures[i]->getName()).c_str());
 
 		if (Common::File::exists(filename)) {
 			continue;
