@@ -511,6 +511,20 @@ mods for the game. These are the currently supported modding features:
   for instance `mods/[my_mod]/08/02/xarc/011001.bik` is the animation where
   the tree spirit lifts the egg back into the nest.
 
+  * Load replacement textures for the 3d models.
+    Each original `tm` file contains several textures, each with its
+  associated mipmaps. The replacement files are `zip` archives containing
+  `dds` packaged textures. The replacement archives must be placed at the root
+  of the mod directory and be named after the `tm` file they replace:
+  `mods/[my_mod]/april_waitress.tm.zip`.
+    Each `zip` archive must contain all the textures from the replaced `tm`
+  file. The textures need to be encoded in uncompressed RGB or RGBA `dds`
+  files with mipmaps. Files inside the archive must be named according
+  to the replaced texture name, but with the `bmp` extension replaced with
+  `dds`: `backdress-highres-battic.dds`
+    The `extractAllTextures` console command can be used to extract the `tm`
+  files to `png` files.
+
 Contact us if you need further capabilities for your mod.
 
 ## 9. Bug reports

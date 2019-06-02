@@ -96,7 +96,7 @@ public:
 	const Texture *getTexture(const Common::String &name) const;
 
 private:
-	typedef Common::HashMap<Common::String, Texture *> TextureMap;
+	typedef Common::HashMap<Common::String, Texture *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> TextureMap;
 
 	TextureMap _texMap;
 };
