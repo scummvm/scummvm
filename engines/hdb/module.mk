@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	draw-manager.o \
 	file-manager.o \
 	hdb.o \
+	lua-script.o \
 	console.o
 
 MODULE_DIRS += \
