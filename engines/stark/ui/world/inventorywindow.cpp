@@ -93,7 +93,13 @@ void InventoryWindow::close() {
 }
 
 void InventoryWindow::setSelectedInventoryItem(int16 selectedInventoryItem) {
-	_selectedInventoryItem = selectedInventoryItem;
+	// The first 4 elements are UI elements (Eye, Mouth, Hand, ...)
+	// Scripts pass 0 when they want to clear the selected inventory item
+	if (selectedInventoryItem < 4) {
+		_selectedInventoryItem = -1;
+	} else {
+		_selectedInventoryItem = selectedInventoryItem;
+	}
 }
 
 int16 InventoryWindow::getSelectedInventoryItem() const {
