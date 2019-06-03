@@ -38,6 +38,7 @@ Scene::Scene(Gfx::Driver *gfx) :
 		_farClipPlane(64000.0),
 		_fadeLevel(1.0),
 		_floatOffset(0.0),
+		_shouldRenderShadows(true),
 		_maxShadowLength(0.075f) {
 }
 
@@ -167,6 +168,11 @@ void Scene::setFloatOffset(float floatOffset) {
 
 float Scene::getFloatOffset() const {
 	return _floatOffset;
+}
+
+void Scene::setupShadows(bool enabled, float length) {
+	_shouldRenderShadows = enabled;
+	_maxShadowLength = length;
 }
 
 } // End of namespace Stark

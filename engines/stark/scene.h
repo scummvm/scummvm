@@ -88,7 +88,8 @@ public:
 	float getFloatOffset() const;
 
 	/** Access the maximum length of the horizontal light direction for casting shadows */
-	void setMaxShadowLength(float length) { _maxShadowLength = length; }
+	void setupShadows(bool enabled, float length);
+	bool shouldRenderShadows() const { return _shouldRenderShadows; }
 	float getMaxShadowLength() const { return _maxShadowLength; }
 
 private:
@@ -111,6 +112,7 @@ private:
 	Math::Angle _swayAngle;
 	float _floatOffset;
 
+	bool _shouldRenderShadows;
 	float _maxShadowLength;
 };
 

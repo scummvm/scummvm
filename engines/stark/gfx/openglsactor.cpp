@@ -118,7 +118,9 @@ void OpenGLSActorRenderer::render(const Math::Vector3d &position, float directio
 
 	_shader->unbind();
 
-	if (_castsShadow && StarkSettings->getBoolSetting(Settings::kShadow)) {
+	if (_castsShadow
+	        && StarkScene->shouldRenderShadows()
+	        && StarkSettings->getBoolSetting(Settings::kShadow)) {
 		glEnable(GL_BLEND);
 		glEnable(GL_STENCIL_TEST);
 

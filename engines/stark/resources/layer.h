@@ -131,6 +131,7 @@ public:
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
 	void onAllLoaded() override;
+	void onEnterLocation() override;
 
 	// Layer API
 	Gfx::RenderEntryArray listRenderEntries() override;
@@ -141,7 +142,7 @@ public:
 protected:
 	void printData() override;
 
-	uint32 _field_54;
+	bool _shouldRenderShadows;
 	uint32 _maxShadowLength;
 	float _nearClipPlane;
 	float _farClipPlane;

@@ -181,7 +181,7 @@ Layer3D::~Layer3D() {
 
 Layer3D::Layer3D(Object *parent, byte subType, uint16 index, const Common::String &name) :
 		Layer(parent, subType, index, name),
-		_field_54(1),
+		_shouldRenderShadows(true),
 		_maxShadowLength(75),
 		_nearClipPlane(100.0),
 		_farClipPlane(64000.0),
@@ -191,7 +191,7 @@ Layer3D::Layer3D(Object *parent, byte subType, uint16 index, const Common::Strin
 void Layer3D::readData(Formats::XRCReadStream *stream) {
 	Layer::readData(stream);
 
-	_field_54 = stream->readUint32LE();
+	_shouldRenderShadows = stream->readBool();
 	_nearClipPlane = stream->readFloatLE();
 	_farClipPlane = stream->readFloatLE();
 	if (stream->isDataLeft()) {
@@ -209,6 +209,12 @@ void Layer3D::onAllLoaded() {
 	camera->setClipPlanes(_nearClipPlane, _farClipPlane);
 }
 
+void Layer3D::onEnterLocation() {
+	Layer::onEnterLocation();
+
+	StarkScene->setupShadows(_shouldRenderShadows, _maxShadowLength / 1000.0f);
+}
+
 Gfx::RenderEntry *Layer3D::getBackgroundRenderEntry() {
 	if (!_backgroundItem) {
 		return nullptr;
@@ -218,9 +224,6 @@ Gfx::RenderEntry *Layer3D::getBackgroundRenderEntry() {
 }
 
 Gfx::RenderEntryArray Layer3D::listRenderEntries() {
-	// Set the shadow length
-	StarkScene->setMaxShadowLength(_maxShadowLength / 1000.0f);
-
 	// Sort the items by distance to the camera
 	Gfx::RenderEntryArray itemEntries;
 	for (uint i = 0; i < _items.size(); i++) {
@@ -256,7 +259,7 @@ Gfx::RenderEntryArray Layer3D::listRenderEntries() {
 void Layer3D::printData() {
 	Layer::printData();
 
-	debug("field_54: %d", _field_54);
+	debug("shouldRenderShadows: %d", _shouldRenderShadows);
 	debug("maxShadowLength: %d", _maxShadowLength);
 	debug("nearClipPlane: %f", _nearClipPlane);
 	debug("farClipPlane: %f", _farClipPlane);
