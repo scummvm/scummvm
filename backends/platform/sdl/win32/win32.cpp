@@ -145,8 +145,11 @@ bool OSystem_Win32::displayLogFile() {
 	                            NULL,
 	                            &startupInfo,
 	                            &processInformation);
-	if (result)
+	if (result) {
+		CloseHandle(processInformation.hProcess);
+		CloseHandle(processInformation.hThread);
 		return true;
+	}
 
 	return false;
 }
