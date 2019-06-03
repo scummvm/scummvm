@@ -29,6 +29,20 @@
 namespace HDB {
 const char *HDBGame::getGameId() const { return _gameDescription->gameId; }
 Common::Platform HDBGame::getPlatform() const { return _gameDescription->platform; }
+
+const char *HDBGame::getGameFile() const {
+	return _gameDescription->filesDescriptions[0].fileName;
+}
+
+void HDBGame::setGameFlags() {
+	_voiceless = false;
+	if (_gameDescription->flags & ADGF_DEMO) {
+		_isDemo = true;
+		return;
+	}
+	_isDemo = false;
+}
+
 } // End of namespace HDB
 
 static const PlainGameDescriptor hdbGames[] = {

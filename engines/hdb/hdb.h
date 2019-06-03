@@ -69,6 +69,8 @@ public:
 	// Detection related members;
 	const ADGameDescription *_gameDescription;
 	const char *getGameId() const;
+	const char *getGameFile() const;
+	void setGameFlags();
 	Common::Platform getPlatform() const;
 
 	/*
@@ -95,6 +97,7 @@ private:
 	bool _systemInit;
 	GameState _gameState;
 	bool _voiceless;
+	bool _isDemo;
 
 };
 
