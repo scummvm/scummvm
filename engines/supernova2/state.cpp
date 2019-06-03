@@ -40,6 +40,7 @@ bool GameManager::serialize(Common::WriteStream *out) {
 	out->writeByte(_state._addressKnown);
 	out->writeByte(_state._poleMagnet);
 	out->writeByte(_state._admission);
+	out->writeByte(_state._tipsy);
 
 	// Inventory
 	out->writeSint32LE(_inventory.getSize());
@@ -70,6 +71,7 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 	_state._addressKnown = in->readByte();
 	_state._poleMagnet = in->readByte();
 	_state._admission = in->readByte();
+	_state._tipsy = in->readByte();
 	_vm->setGameString(kStringMoney, Common::String::format("%d Xa", _state._money));
 
 	_oldTime = g_system->getMillis();
@@ -333,6 +335,7 @@ void GameManager::initState() {
 	_state._previousRoom = _currentRoom;
 	_state._poleMagnet = false;
 	_state._admission = 0;
+	_state._tipsy = false;
 }
 
 void GameManager::initRooms() {

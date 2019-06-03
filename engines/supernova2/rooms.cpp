@@ -737,10 +737,23 @@ bool Games::interact(Action verb, Object &obj1, Object &obj2) {
 Cabin::Cabin(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
+	_paid = false;
 
-	_fileNumber = 6;
+	_fileNumber = 7;
 	_id = CABIN;
 	_shown[0] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 255, 255, 0, GAMES, 22);
+	_objectState[1] = Object(_id, kStringHood, kStringHoodDescription, NULLOBJECT, NULLTYPE, 0, 0, 0);
+	_objectState[2] = Object(_id, kString400Xa, kStringDefaultDescription, PRIZE, TAKE, 255, 255, 2 + 180);
+	_objectState[3] = Object(_id, kString10Xa, kStringDefaultDescription, BACK_MONEY, TAKE, 255, 255, 2 + 128);
+	_objectState[4] = Object(_id, kStringSlot, kStringSlotDescription1, SLOT1, COMBINABLE, 2, 2, 0);
+	_objectState[5] = Object(_id, kStringSlot, kStringSlotDescription2, NULLOBJECT, COMBINABLE, 3, 3, 0);
+	_objectState[6] = Object(_id, kStringChair, kStringChairDescription, CHAIR, NULLTYPE, 4, 4, 0);
+	_objectState[7] = Object(_id, kStringScribble, kStringDefaultDescription, SCRIBBLE1, NULLTYPE, 5, 5, 0);
+	_objectState[8] = Object(_id, kStringScribble, kStringDefaultDescription, SCRIBBLE2, NULLTYPE, 6, 6, 0);
+	_objectState[9] = Object(_id, kStringFace, kStringFaceDescription, NULLOBJECT, NULLTYPE, 7, 7, 0);
+	_objectState[10] = Object(_id, kStringSign, kStringDefaultDescription, SIGN, UNNECESSARY, 1, 1, 0);
 }
 
 void Cabin::onEntrance() {
@@ -748,9 +761,72 @@ void Cabin::onEntrance() {
 }
 
 void Cabin::animation() {
+	if (_paid) {
+		if (isSectionVisible(1))
+			_vm->renderImage(1 + 128);
+		else
+			_vm->renderImage(1);
+	}
+	_gm->setAnimationTimer(4);
 }
 
 bool Cabin::interact(Action verb, Object &obj1, Object &obj2) {
+	if (verb == ACTION_USE && Object::combine(obj1, obj2, MONEY, SLOT1)) {
+		if (isSectionVisible(2))
+			_vm->renderMessage(kStringTakeMoney);
+		else if (_paid)
+			_vm->renderMessage(kStringAlreadyPaid);
+		else if (_gm->_state._money < 10)
+			_vm->renderMessage(kStringNoMoney);
+		else {
+			_vm->renderMessage(kStringPay10Xa);
+			_gm->takeMoney(-10);
+			_paid = true;
+		}
+	}
+	else if (verb == ACTION_USE && obj1._id == CHAIR) {
+		if (_paid) {
+			if (_var2) {
+				_vm->paletteFadeOut();
+				_vm->setCurrentImage(31);
+				_vm->renderImage(0);
+				_vm->paletteFadeIn();
+				_paid = true;
+				_gm->waitOnInput(100000);
+				_vm->paletteFadeOut();
+				_vm->setCurrentImage(7);
+				_vm->renderImage(0);
+				setSectionVisible(1, kShownFalse);
+				_paid = false;
+				_vm->renderRoom(*this);
+				_vm->renderImage(2);
+				_gm->drawMapExits();
+				_gm->drawInventory();
+				_gm->drawStatus();
+				_gm->drawCommandBox();
+				_vm->paletteFadeIn();
+				getObject(3)->_click = 8;
+			} else {
+				_gm->_state._tipsy = false;
+				_vm->paletteFadeOut();
+				_vm->_system->fillScreen(kColorBlack);
+				Common::String text = _vm->getGameString(kStringWillPassOut);
+				_vm->renderMessage(text);
+				_gm->waitOnInput((text.size() + 20) * _vm->_textSpeed / 10);
+				_vm->removeMessage();
+				_vm->saveGame(kSleepAutosaveSlot, "autosave");
+				_gm->_inventory.clear();
+				_gm->changeRoom(PYRAMID);
+				_gm->drawStatus();
+				_gm->drawInventory();
+				_gm->drawMapExits();
+				_gm->drawCommandBox();
+			}
+		} else
+			_vm->renderMessage(kStringRest);
+	}
+	else 
+		return false;
 	return true;
 }
 
