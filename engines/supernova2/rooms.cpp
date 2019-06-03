@@ -287,14 +287,14 @@ bool Intro::tvSay(int mod1, int mod2, int rest, MessagePosition pos, StringId id
 
 		if (_gm->waitOnInput(2, key)) {
 			_vm->removeMessage();
-			return key != Common::KEYCODE_ESCAPE;
+			return key != Common::KEYCODE_ESCAPE && !_vm->shouldQuit();
 		}
 		if (mod2)
 			_vm->renderImage(mod2);
 
 		if (_gm->waitOnInput(2, key)) {
 			_vm->removeMessage();
-			return key != Common::KEYCODE_ESCAPE;
+			return key != Common::KEYCODE_ESCAPE && !_vm->shouldQuit();
 		}
 		animation_count--;
 	}
@@ -310,12 +310,12 @@ bool Intro::tvRest(int mod1, int mod2, int rest) {
 		_vm->renderImage(mod1);
 		if (_gm->waitOnInput(2, key)) {
 			_vm->removeMessage();
-			return key != Common::KEYCODE_ESCAPE;
+			return key != Common::KEYCODE_ESCAPE && !_vm->shouldQuit();
 		}
 		_vm->renderImage(mod2);
 		if (_gm->waitOnInput(2, key)) {
 			_vm->removeMessage();
-			return key != Common::KEYCODE_ESCAPE;
+			return key != Common::KEYCODE_ESCAPE && !_vm->shouldQuit();
 		}
 		rest--;
 	}
@@ -328,13 +328,16 @@ bool Intro::displayThoughtMessage(StringId id) {
 	_vm->renderMessage(text, kMessageNormal);
 	if (_gm->waitOnInput((text.size() + 20) * _vm->_textSpeed / 10, key)) {
 		_vm->removeMessage();
-		return key != Common::KEYCODE_ESCAPE;
+		return key != Common::KEYCODE_ESCAPE && !_vm->shouldQuit();
 	}
 	_vm->removeMessage();
 	return true;
 }
 
 bool Intro::thoughts1() {
+	if(_vm->shouldQuit())
+		return false;
+
 	_vm->setCurrentImage(41);
 	_vm->renderImage(0);
 	_vm->paletteFadeIn();
@@ -353,6 +356,9 @@ bool Intro::thoughts1() {
 }
 
 bool Intro::thoughts2() {
+	if(_vm->shouldQuit())
+		return false;
+
 	_vm->setCurrentImage(41);
 	_vm->renderImage(0);
 	_vm->paletteFadeIn();
@@ -399,6 +405,9 @@ bool Intro::thoughts2() {
 }
 
 bool Intro::tvDialogue() {
+	if(_vm->shouldQuit())
+		return false;
+
 	_vm->setCurrentImage(39);
 	_vm->renderImage(0);
 	_vm->paletteFadeIn();
@@ -429,6 +438,7 @@ bool Intro::tvDialogue() {
 
 	if(!tvSay(8, 6, 7, kMessageLeft, kStringIntroTV2))
 		return false;
+	debug("%d", _vm->shouldQuit());
 
 	_vm->renderImage(10);
 
