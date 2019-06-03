@@ -568,11 +568,10 @@ int Room::demon6ShowCaseProcessSelection(Sprite *sprites, Sprite *clickedSprite,
 		// does check the clock cycle, but doesn't do a proper comparison with
 		// it.)
 		TrekEvent event;
-
-		while (event.type != TREKEVENT_TICK) {
+		do {
 			if (!_vm->popNextEvent(&event))
 				continue;
-		}
+		} while (event.type != TREKEVENT_TICK);
 		clickedSprite->pos.y++;
 	}
 
