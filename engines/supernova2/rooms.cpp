@@ -834,9 +834,33 @@ Kiosk::Kiosk(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 19;
 	_id = KIOSK;
 	_shown[0] = kShownTrue;
+	_shown[1] = kShownFalse;
+	_shown[2] = kShownTrue;
+	_shown[3] = kShownTrue;
+	_shown[4] = kShownTrue;
+	_shown[5] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 255, 255, 0, STREET, 22);
+	_objectState[1] = Object(_id, kStringBooks, kStringDefaultDescription, BOOKS, UNNECESSARY, 0, 0, 0);
+	_objectState[2] = Object(_id, kStringDictionary, kStringDefaultDescription, LEXICON, UNNECESSARY, 1, 1, 0);
+	_objectState[3] = Object(_id, kStringPlant, kStringDefaultDescription, PLANT, UNNECESSARY, 2, 2, 0);
+	_objectState[4] = Object(_id, kStringMask, kStringDefaultDescription, BMASK, UNNECESSARY, 4, 4, 2 + 128);
+	_objectState[5] = Object(_id, kStringSnake, kStringDefaultDescription, SNAKE, UNNECESSARY, 3, 3, 0);
+	_objectState[6] = Object(_id, kStringCup, kStringDefaultDescription, CUP, UNNECESSARY, 5, 5, 0);
+	_objectState[7] = Object(_id, kStringJoystick, kStringDefaultDescription, JOYSTICK, UNNECESSARY, 6, 6, 0);
+	_objectState[8] = Object(_id, kStringToothbrush, kStringToothbrushDescription, TOOTHBRUSH, TAKE, 7, 7, 5 + 128);
+	_objectState[9] = Object(_id, kStringMusic, kStringMusicDescription, PLAYER, TAKE | COMBINABLE, 8, 8, 4 + 128);
+	_objectState[10] = Object(_id, kStringBottle, kStringBottleDescription, BOTTLE, TAKE, 9, 9, 3 + 128);
+	_objectState[11] = Object(_id, kStringBottle, kStringDefaultDescription, BOTTLE1, UNNECESSARY, 10, 10, 0);
+	_objectState[12] = Object(_id, kStringBottle, kStringDefaultDescription, BOTTLE2, UNNECESSARY, 11, 11, 0);
+	_objectState[13] = Object(_id, kStringBottle, kStringDefaultDescription, BOTTLE3, UNNECESSARY, 12, 12, 0);
+	_objectState[14] = Object(_id, kStringBottle, kStringDefaultDescription, BOTTLE4, UNNECESSARY, 13, 13, 0);
+	_objectState[15] = Object(_id, kStringBox, kStringDefaultDescription, BOX, UNNECESSARY, 14, 14, 0);
+	_objectState[16] = Object(_id, kStringFace, kStringDefaultDescription, FACES, UNNECESSARY, 15, 15, 0);
+	_objectState[17] = Object(_id, kStringSeller, kStringDefaultDescription, SELLER, TALK, 16, 16, 0);
 }
 
 void Kiosk::onEntrance() {
