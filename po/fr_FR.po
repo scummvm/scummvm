@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2019-05-31 23:02+0200\n"
 "PO-Revision-Date: 2019-06-03 22:13+0000\n"
-"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
+"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -5080,7 +5080,7 @@ msgstr ""
 "donnée '%s'."
 
 #: engines/supernova/supernova.cpp:441
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to find '%s' in game folder."
 msgstr "Le fichier '%s' n'a pu être trouvé dans le dossier du jeu."
 
