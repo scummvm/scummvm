@@ -433,7 +433,6 @@ int ScEngine::getNumScripts(int *running, int *waiting, int *persistent) {
 			numPersistent++;
 			break;
 		default:
-			warning("ScEngine::GetNumScripts - unhandled enum");
 			break;
 		}
 		numTotal++;
