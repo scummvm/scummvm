@@ -42,30 +42,20 @@ struct AudioInfo {
 	int _offsetEnd;
 };
 
-//static Common::MemoryReadStream *convertToMod(const char *filename, int version = 1);
+static Common::MemoryReadStream *convertToMod(const char *filename, int version = 2);
 
-/*static const AudioInfo audioInfo[kAudioNumSamples] = {
-	{44,     0,    -1},
-	{45,     0,    -1},
-	{46,     0,  2510},
-	{46,  2510,  4020},
-	{46,  4020,    -1},
-	{47,     0, 24010},
-	{47, 24010,    -1},
-	{48,     0,  2510},
-	{48,  2510, 10520},
-	{48, 10520, 13530},
-	{48, 13530,    -1},
-	{50,     0, 12786},
-	{50, 12786,    -1},
-	{51,     0,    -1},
+static const AudioInfo audioInfo[kAudioNumSamples] = {
+	{55,     18230,    -1},
+	{47,     0,    16010},
+	{47,     16010,    -1},
+	{49,     8010,    -1},
+	{49,     0,    8010},
+	{52,     0,    -1},
 	{53,     0,    -1},
-	{54,     0,  8010},
-	{54,  8010, 24020},
-	{54, 24020, 30030},
-	{54, 30030, 31040},
-	{54, 31040,    -1}
-};*/
+	{54,     0,    -1},
+	{55,     0,    -1},
+	{56,     0,    -1},
+};
 
 static const byte mouseNormal[64] = {
 	0xff,0x3f,0xff,0x1f,0xff,0x0f,0xff,0x07,
@@ -94,12 +84,11 @@ static const byte mouseWait[64] = {
 
 ResourceManager::ResourceManager()
 	: _audioRate(11931) {
-	//initSoundFiles();
+	initSoundFiles();
 	initGraphics();
 }
 
-//TODO
-/*void ResourceManager::initSoundFiles() {
+void ResourceManager::initSoundFiles() {
 	// Sound
 	// Note:
 	//   - samples start with a header of 6 bytes: 01 SS SS 00 AD 00
@@ -109,7 +98,7 @@ ResourceManager::ResourceManager()
 	Common::File file;
 
 	for (int i = 0; i < kAudioNumSamples; ++i) {
-		if (!file.open(Common::String::format("msn_data.%03d", audioInfo[i]._filenumber))) {
+		if (!file.open(Common::String::format("ms2_data.%03d", audioInfo[i]._filenumber))) {
 			error("File %s could not be read!", file.getName());
 		}
 
@@ -132,9 +121,9 @@ ResourceManager::ResourceManager()
 													streamFlag, DisposeAfterUse::YES));
 	}
 
-	_musicIntroBuffer.reset(convertToMod("msn_data.052"));
-	_musicOutroBuffer.reset(convertToMod("msn_data.049"));
-}*/
+	_musicIntroBuffer.reset(convertToMod("ms2_data.052"));
+	_musicOutroBuffer.reset(convertToMod("ms2_data.049"));
+}
 
 void ResourceManager::initGraphics() {
 	Screen::initPalette();
@@ -170,8 +159,7 @@ void ResourceManager::initImages() {
 	}
 }
 
-//TODO
-/*Audio::SeekableAudioStream *ResourceManager::getSoundStream(AudioId index) {
+Audio::SeekableAudioStream *ResourceManager::getSoundStream(AudioId index) {
 	Audio::SeekableAudioStream *stream = _soundSamples[index].get();
 	stream->rewind();
 
@@ -189,7 +177,7 @@ Audio::AudioStream *ResourceManager::getSoundStream(MusicId index) {
 	default:
 		error("Invalid music constant in playAudio()");
 	}
-}*/
+}
 
 const MS2Image *ResourceManager::getImage(int filenumber) const {
 	if (filenumber < 47)
@@ -209,10 +197,8 @@ const byte *ResourceManager::getImage(CursorId id) const {
 	}
 }
 
-//TODO
-/*
 static Common::MemoryReadStream *convertToMod(const char *filename, int version) {
-	// MSN format
+	// MS2 format
 	struct {
 		uint16 seg;
 		uint16 start;
@@ -396,6 +382,6 @@ static Common::MemoryReadStream *convertToMod(const char *filename, int version)
 
 	return new Common::MemoryReadStream(buffer.getData(), buffer.size(), DisposeAfterUse::YES);
 }
-*/
+
 
 }

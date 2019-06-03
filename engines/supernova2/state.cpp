@@ -972,6 +972,18 @@ void GameManager::handleTime() {
 	_oldTime = newTime;
 }
 
+void GameManager::pauseTimer(bool pause) {
+	if (pause == _timerPaused)
+		return;
+
+	if (pause) {
+		_timerPaused = true;
+	} else {
+		_oldTime = g_system->getMillis();
+		_timerPaused = false;
+	}
+}
+
 int GameManager::invertSection(int section) {
 	if (section < 128)
 		section += 128;
@@ -990,6 +1002,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 			takeObject(*_rooms[TAXISTAND]->getObject(4));
 			takeObject(*_rooms[TAXISTAND]->getObject(5));
 			takeMoney(1);
+			_vm->playSound(kAudioSuccess);
 		}
 	} else if (verb == ACTION_PRESS && obj1._id == TRANSMITTER) {
 		if (_currentRoom == _rooms[TAXISTAND]) {
@@ -997,6 +1010,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 				_vm->renderImage(5);
 				wait(3);
 				_vm->renderImage(6);
+				_vm->playSound(kAudioTaxiOpen);
 				_currentRoom->getObject(0)->_type = EXIT;
 				drawMapExits();
 			}
@@ -1064,6 +1078,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		case 2:
 			_vm->renderMessage(kStringTransferCD);
 			_state._admission = 2;
+			_vm->playSound(kAudioSuccess);
 			break;
 		default:
 			_vm->renderMessage(kStringCDNotInserted);
@@ -1258,6 +1273,9 @@ void GameManager::taxiPayment(int price, int destination) {
 
 		Common::String t = _vm->getGameString(kStringTaxiAccelerating);
 		_vm->renderMessage(t);
+		_vm->playSound(kAudioTaxiLeaving);
+		while(_vm->_sound->isPlaying())
+			wait(1);
 		waitOnInput((t.size() + 20) * _vm->_textSpeed / 10);
 		_vm->removeMessage();
 
@@ -1267,6 +1285,9 @@ void GameManager::taxiPayment(int price, int destination) {
 
 		Common::String t2 = _vm->getGameString(kString5MinutesLater);
 		_vm->renderMessage(t2);
+		_vm->playSound(kAudioTaxiArriving);
+		while(_vm->_sound->isPlaying())
+			wait(1);
 		waitOnInput((t2.size() + 20) * _vm->_textSpeed / 10);
 		_vm->removeMessage();
 

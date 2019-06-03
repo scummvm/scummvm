@@ -42,6 +42,7 @@
 #include "gui/saveload.h"
 
 #include "supernova2/resman.h"
+#include "supernova2/sound.h"
 #include "supernova2/screen.h"
 #include "supernova2/supernova2.h"
 #include "supernova2/state.h"
@@ -77,6 +78,7 @@ Supernova2Engine::Supernova2Engine(OSystem *syst)
 	: Engine(syst)
 	, _console(nullptr)
 	, _gm(nullptr)
+	, _sound(nullptr)
 	, _resMan(nullptr)
 	, _screen(nullptr)
 	, _allowLoadGame(true)
@@ -99,6 +101,7 @@ Supernova2Engine::~Supernova2Engine() {
 	delete _resMan;
 	delete _screen;
 	delete _sleepAutoSave;
+	delete _sound;
 }
 
 Common::Error Supernova2Engine::run() {
@@ -130,6 +133,7 @@ void Supernova2Engine::init() {
 		error("Failed reading game strings");
 
 	_resMan = new ResourceManager();
+	_sound = new Sound(_mixer, _resMan);
 	_gm = new GameManager(this);
 	_screen = new Screen(this, _resMan);
 	_console = new Console(this, _gm);
@@ -155,6 +159,12 @@ bool Supernova2Engine::hasFeature(EngineFeature f) const {
 		return false;
 	}
 }
+
+void Supernova2Engine::pauseEngineIntern(bool pause) {
+	_mixer->pauseAll(pause);
+	_gm->pauseTimer(pause);
+}
+
 
 Common::Error Supernova2Engine::loadGameStrings() {
 	Common::String cur_lang = ConfMan.get("language");
@@ -223,6 +233,14 @@ void Supernova2Engine::setGameString(int idx, const Common::String &string) {
 	while ((int)_gameStrings.size() <= idx)
 		_gameStrings.push_back(Common::String());
 	_gameStrings[idx] = string;
+}
+
+void Supernova2Engine::playSound(AudioId sample) {
+	_sound->play(sample);
+}
+
+void Supernova2Engine::playSound(MusicId index) {
+	_sound->play(index);
 }
 
 void Supernova2Engine::renderImage(int section) {
@@ -609,6 +627,10 @@ void Supernova2Engine::errorTempSave(bool saving) {
 		? "Failed to save temporary game state. Make sure your save game directory is set in ScummVM and that you can write to it."
 		: "Failed to load temporary game state.");
 	error("Unrecoverable error");
+}
+
+void Supernova2Engine::stopSound() {
+	_sound->stop();
 }
 
 }

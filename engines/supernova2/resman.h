@@ -27,7 +27,7 @@
 #include "common/ptr.h"
 
 #include "supernova2/graphics.h"
-//#include "supernova/sound.h"
+#include "supernova2/sound.h"
 
 
 namespace Common {
@@ -49,8 +49,8 @@ public:
 public:
 	ResourceManager();
 
-	//Audio::SeekableAudioStream *getSoundStream(AudioId index);
-	//Audio::AudioStream *getSoundStream(MusicId index);
+	Audio::SeekableAudioStream *getSoundStream(AudioId index);
+	Audio::AudioStream *getSoundStream(MusicId index);
 	const MS2Image *getImage(int filenumber) const;
 	const byte *getImage(CursorId id) const;
 
@@ -61,11 +61,11 @@ private:
 	void initImages();
 
 private:
-	//Common::ScopedPtr<Audio::SeekableAudioStream> _soundSamples[kAudioNumSamples];
-	//Common::ScopedPtr<Common::MemoryReadStream> _musicIntroBuffer;
-	//Common::ScopedPtr<Common::MemoryReadStream> _musicOutroBuffer;
-	//Common::ScopedPtr<Audio::AudioStream> _musicIntro;
-	//Common::ScopedPtr<Audio::AudioStream> _musicOutro;
+	Common::ScopedPtr<Audio::SeekableAudioStream> _soundSamples[kAudioNumSamples];
+	Common::ScopedPtr<Common::MemoryReadStream> _musicIntroBuffer;
+	Common::ScopedPtr<Common::MemoryReadStream> _musicOutroBuffer;
+	Common::ScopedPtr<Audio::AudioStream> _musicIntro;
+	Common::ScopedPtr<Audio::AudioStream> _musicOutro;
 	int _audioRate;
 	MS2Image _images[kNumImageFiles];
 	byte _cursorNormal[256];
