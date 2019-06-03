@@ -53,7 +53,7 @@ bool GameManager::serialize(Common::WriteStream *out) {
 
 	// Rooms
 	out->writeByte(_currentRoom->getId());
-	for (int i = 0; i < 4; ++i) {
+	for (int i = 0; i < 5; ++i) {
 		_rooms[i]->serialize(out);
 	}
 
@@ -86,7 +86,7 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 
 	// Rooms
 	RoomId curRoomId = static_cast<RoomId>(in->readByte());
-	for (int i = 0; i < 4; ++i) {
+	for (int i = 0; i < 5; ++i) {
 		_rooms[i]->deserialize(in, version);
 	}
 	changeRoom(curRoomId);
@@ -227,6 +227,7 @@ void GameManager::destroyRooms() {
 	delete _rooms[AIRPORT];
 	delete _rooms[TAXISTAND];
 	delete _rooms[STREET];
+	delete _rooms[GAMES];
 }
 
 void GameManager::initState() {
@@ -273,6 +274,7 @@ void GameManager::initRooms() {
 	_rooms[AIRPORT] = new Airport(_vm, this);
 	_rooms[TAXISTAND] = new TaxiStand(_vm, this);
 	_rooms[STREET] = new Street(_vm, this);
+	_rooms[GAMES] = new Games(_vm, this);
 }
 
 void GameManager::initGui() {
