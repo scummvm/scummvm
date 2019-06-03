@@ -39,6 +39,7 @@ struct GameState {
 	Room *_previousRoom;
 	bool _poleMagnet;
 	char _admission;
+	bool _tipsy;
 };
 
 class Inventory {

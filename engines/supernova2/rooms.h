@@ -138,6 +138,8 @@ public:
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 
 private:
+	bool _paid;
+	bool _var2; // Not sure what this variable means yet
 };
 
 class Kiosk : public Room {
