@@ -28,9 +28,9 @@
 #include "agos/agos.h"
 #include "agos/midi.h"
 
-#include "agos/drivers/accolade/adlib.cpp"
-
 #include "agos/drivers/accolade/mididriver.h"
+#include "agos/drivers/accolade/adlib.h"
+#include "agos/drivers/accolade/mt32.h"
 #include "agos/drivers/simon1/adlib.h"
 // Miles Audio for Simon 2
 #include "audio/miles.h"

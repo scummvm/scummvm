@@ -21,16 +21,13 @@
  */
 
 #include "agos/drivers/accolade/mididriver.h"
-
-#include "common/system.h"
-#include "common/textconsole.h"
+#include "agos/drivers/accolade/adlib.h"
 
 #include "audio/fmopl.h"
 #include "audio/mididrv.h"
 
 namespace AGOS {
 
-#define AGOS_ADLIB_VOICES_COUNT 11
 #define AGOS_ADLIB_VOICES_MELODIC_COUNT 6
 #define AGOS_ADLIB_VOICES_PERCUSSION_START 6
 #define AGOS_ADLIB_VOICES_PERCUSSION_COUNT 5
@@ -67,18 +64,6 @@ const byte percussionKeyNoteChannelTable[] = {
 	0x08, 0x08, 0x08, 0x08, 0x0A, 0x0F, 0x0F, 0x08, 0x0F, 0x08
 };
 
-struct InstrumentEntry {
-	byte reg20op1; // Amplitude Modulation / Vibrato / Envelope Generator Type / Keyboard Scaling Rate / Modulator Frequency Multiple
-	byte reg40op1; // Level Key Scaling / Total Level
-	byte reg60op1; // Attack Rate / Decay Rate
-	byte reg80op1; // Sustain Level / Release Rate
-	byte reg20op2; // Amplitude Modulation / Vibrato / Envelope Generator Type / Keyboard Scaling Rate / Modulator Frequency Multiple
-	byte reg40op2; // Level Key Scaling / Total Level
-	byte reg60op2; // Attack Rate / Decay Rate
-	byte reg80op2; // Sustain Level / Release Rate
-	byte regC0;    // Feedback / Algorithm, bit 0 - set -> both operators in use
-};
-
 // hardcoded, dumped from Accolade music system (INSTR.DAT variant)
 const uint16 frequencyLookUpTable[12] = {
 	0x02B2, 0x02DB, 0x0306, 0x0334, 0x0365, 0x0399, 0x03CF,
@@ -108,83 +93,6 @@ const uint16 frequencyLookUpTableMusicDrv[12] = {
 // feature was at least definitely disabled for Simon, the Sorcerer 1 demo and for the Waxworks demo too.
 //
 // I have currently not implemented dynamic channel allocation.
-
-class MidiDriver_Accolade_AdLib : public MidiDriver {
-public:
-	MidiDriver_Accolade_AdLib();
-	virtual ~MidiDriver_Accolade_AdLib();
-
-	// MidiDriver
-	int open();
-	void close();
-	void send(uint32 b);
-	MidiChannel *allocateChannel() { return NULL; }
-	MidiChannel *getPercussionChannel() { return NULL; }
-
-	bool isOpen() const { return _isOpen; }
-	uint32 getBaseTempo() { return 1000000 / OPL::OPL::kDefaultCallbackFrequency; }
-
-	void setVolume(byte volume);
-	virtual uint32 property(int prop, uint32 param);
-
-	bool setupInstruments(byte *instrumentData, uint16 instrumentDataSize, bool useMusicDrvFile);
-
-	void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc);
-
-private:
-	bool _musicDrvMode;
-
-	// from INSTR.DAT/MUSIC.DRV - simple mapping between MIDI channel and MT32 channel
-	byte _channelMapping[AGOS_MIDI_CHANNEL_COUNT];
-	// from INSTR.DAT/MUSIC.DRV - simple mapping between MIDI instruments and MT32 instruments
-	byte _instrumentMapping[AGOS_MIDI_INSTRUMENT_COUNT];
-	// from INSTR.DAT/MUSIC.DRV - volume adjustment per instrument
-	signed char _instrumentVolumeAdjust[AGOS_MIDI_INSTRUMENT_COUNT];
-	// simple mapping between MIDI key notes and MT32 key notes
-	byte _percussionKeyNoteMapping[AGOS_MIDI_KEYNOTE_COUNT];
-
-	// from INSTR.DAT/MUSIC.DRV - adlib instrument data
-	InstrumentEntry *_instrumentTable;
-	byte            _instrumentCount;
-
-	struct ChannelEntry {
-		const  InstrumentEntry *currentInstrumentPtr;
-		byte   currentNote;
-		byte   currentA0hReg;
-		byte   currentB0hReg;
-		int16  volumeAdjust;
-		byte   velocity;
-
-		ChannelEntry() : currentInstrumentPtr(NULL), currentNote(0),
-						currentA0hReg(0), currentB0hReg(0), volumeAdjust(0), velocity(0) { }
-	};
-
-	byte _percussionReg;
-
-	OPL::OPL *_opl;
-	int _masterVolume;
-
-	Common::TimerManager::TimerProc _adlibTimerProc;
-	void *_adlibTimerParam;
-
-	bool _isOpen;
-
-	// stores information about all FM voice channels
-	ChannelEntry _channels[AGOS_ADLIB_VOICES_COUNT];
-
-	void onTimer();
-
-	void resetAdLib();
-	void resetAdLibOperatorRegisters(byte baseRegister, byte value);
-	void resetAdLibFMVoiceChannelRegisters(byte baseRegister, byte value);
-
-	void programChange(byte FMvoiceChannel, byte mappedInstrumentNr, byte MIDIinstrumentNr);
-	void programChangeSetInstrument(byte FMvoiceChannel, byte mappedInstrumentNr, byte MIDIinstrumentNr);
-	void setRegister(int reg, int value);
-	void noteOn(byte FMvoiceChannel, byte note, byte velocity);
-	void noteOnSetVolume(byte FMvoiceChannel, byte operatorReg, byte adjustedVelocity);
-	void noteOff(byte FMvoiceChannel, byte note, bool dontCheckNote);
-};
 
 MidiDriver_Accolade_AdLib::MidiDriver_Accolade_AdLib()
 		: _masterVolume(15), _opl(0),
