@@ -561,6 +561,18 @@ static const WMEGameDescription gameDescriptions[] = {
 	// The Kite (Version 1.3.e)
 	WME_WINENTRY("thekite", "Version 1.3.e",
 		WME_ENTRY1s("data.dcp", "9761827b51370263b7623721545d7627", 47382987), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	// The Kite (Version 1.4.e) (English)
+	WME_WINENTRY("thekite", "Version 1.4.e",
+		WME_ENTRY1s("data.dcp", "b7b72a291c614ad45ae6a4e9c8d55f97", 47240677), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
+	// The Kite (Version 1.4.f) (French)
+	WME_WINENTRY("thekite", "Version 1.4.f",
+		WME_ENTRY1s("data.dcp", "a1e2e8a1a0c54b2bd3f7a3b628e9483c", 47341826), Common::FR_FRA, ADGF_UNSTABLE, LATEST_VERSION),
+	// The Kite (Version 1.4.i) (Italian)
+	WME_WINENTRY("thekite", "Version 1.4.i",
+		WME_ENTRY1s("data.dcp", "69a58ff96306ec80114e0c4b3339a405", 47312894), Common::IT_ITA, ADGF_UNSTABLE, LATEST_VERSION),
+	// The Kite (Version 1.4.r) (Russian)
+	WME_WINENTRY("thekite", "Version 1.4.r",
+		WME_ENTRY1s("data.dcp", "16618c3488b07fae5d00fb94c408d2b8", 47472358), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
 	// Fairy Tales About Toshechka and Boshechka
 	WME_WINENTRY("tib", "",
 		WME_ENTRY1s("data.dcp", "87d296ef3f46570ed18f000d3885db77", 340264526), Common::RU_RUS, ADGF_UNSTABLE, LATEST_VERSION),
