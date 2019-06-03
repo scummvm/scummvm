@@ -53,7 +53,7 @@ bool GameManager::serialize(Common::WriteStream *out) {
 
 	// Rooms
 	out->writeByte(_currentRoom->getId());
-	for (int i = 0; i < 5; ++i) {
+	for (int i = 0; i < NUMROOMS; ++i) {
 		_rooms[i]->serialize(out);
 	}
 
@@ -86,7 +86,7 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 
 	// Rooms
 	RoomId curRoomId = static_cast<RoomId>(in->readByte());
-	for (int i = 0; i < 5; ++i) {
+	for (int i = 0; i < NUMROOMS; ++i) {
 		_rooms[i]->deserialize(in, version);
 	}
 	changeRoom(curRoomId);
@@ -228,6 +228,72 @@ void GameManager::destroyRooms() {
 	delete _rooms[TAXISTAND];
 	delete _rooms[STREET];
 	delete _rooms[GAMES];
+	delete _rooms[CABIN];
+	delete _rooms[KIOSK];
+	delete _rooms[CULTURE_PALACE];
+	delete _rooms[CASHBOX];
+	delete _rooms[CITY1];
+	delete _rooms[CITY2];
+	delete _rooms[ELEVATOR];
+	delete _rooms[APARTMENT];
+	delete _rooms[SHIP];
+	delete _rooms[PYRAMID];
+	delete _rooms[PYR_ENTRANCE];
+	delete _rooms[UPSTAIRS1];
+	delete _rooms[DOWNSTAIRS1];
+	delete _rooms[BOTTOM_RIGHT_DOOR];
+	delete _rooms[BOTTOM_LEFT_DOOR];
+	delete _rooms[UPSTAIRS2];
+	delete _rooms[DOWNSTAIRS2];
+	delete _rooms[UPPER_DOOR];
+	delete _rooms[PUZZLE_FRONT];
+	delete _rooms[PUZZLE_BEHIND];
+	delete _rooms[FORMULA1_F];
+	delete _rooms[FORMULA1_N];
+	delete _rooms[FORMULA2_F];
+	delete _rooms[FORMULA2_N];
+	delete _rooms[TOMATO_F];
+	delete _rooms[TOMATO_N];
+	delete _rooms[MONSTER_F];
+	delete _rooms[MONSTER1_N];
+	delete _rooms[MONSTER2_N];
+	delete _rooms[UPSTAIRS3];
+	delete _rooms[DOWNSTAIRS3];
+	delete _rooms[LGANG1];
+	delete _rooms[LGANG2];
+	delete _rooms[HOLE_ROOM];
+	delete _rooms[IN_HOLE];
+	delete _rooms[BODENTUER];
+	delete _rooms[BODENTUER_U];
+	delete _rooms[BST_DOOR];
+	delete _rooms[HALL];
+	delete _rooms[COFFIN_ROOM];
+	delete _rooms[MASK];
+	delete _rooms[MUSEUM];
+	delete _rooms[MUS_EING];
+	delete _rooms[MUS1];
+	delete _rooms[MUS2];
+	delete _rooms[MUS3];
+	delete _rooms[MUS4];
+	delete _rooms[MUS5];
+	delete _rooms[MUS6];
+	delete _rooms[MUS7];
+	delete _rooms[MUS8];
+	delete _rooms[MUS9];
+	delete _rooms[MUS10];
+	delete _rooms[MUS11];
+	delete _rooms[MUS_RUND];
+	delete _rooms[MUS12];
+	delete _rooms[MUS13];
+	delete _rooms[MUS14];
+	delete _rooms[MUS15];
+	delete _rooms[MUS16];
+	delete _rooms[MUS17];
+	delete _rooms[MUS18];
+	delete _rooms[MUS19];
+	delete _rooms[MUS20];
+	delete _rooms[MUS21];
+	delete _rooms[MUS22];
 }
 
 void GameManager::initState() {
@@ -275,6 +341,72 @@ void GameManager::initRooms() {
 	_rooms[TAXISTAND] = new TaxiStand(_vm, this);
 	_rooms[STREET] = new Street(_vm, this);
 	_rooms[GAMES] = new Games(_vm, this);
+	_rooms[CABIN] = new Cabin(_vm, this);
+	_rooms[KIOSK] = new Kiosk(_vm, this);
+	_rooms[CULTURE_PALACE] = new CulturePalace(_vm, this);
+	_rooms[CASHBOX] = new Cashbox(_vm, this);
+	_rooms[CITY1] = new City1(_vm, this);
+	_rooms[CITY2] = new City2(_vm, this);
+	_rooms[ELEVATOR] = new Elevator(_vm, this);
+	_rooms[APARTMENT] = new Apartment(_vm, this);
+	_rooms[SHIP] = new Ship(_vm, this);
+	_rooms[PYRAMID] = new Pyramid(_vm, this);
+	_rooms[PYR_ENTRANCE] = new PyrEntrance(_vm, this);
+	_rooms[UPSTAIRS1] = new Upstairs1(_vm, this);
+	_rooms[DOWNSTAIRS1] = new Downstairs1(_vm, this);
+	_rooms[BOTTOM_RIGHT_DOOR] = new BottomRightDoor(_vm, this);
+	_rooms[BOTTOM_LEFT_DOOR] = new BottomLeftDoor(_vm, this);
+	_rooms[UPSTAIRS2] = new Upstairs2(_vm, this);
+	_rooms[DOWNSTAIRS2] = new Downstairs2(_vm, this);
+	_rooms[UPPER_DOOR] = new UpperDoor(_vm, this);
+	_rooms[PUZZLE_FRONT] = new PuzzleFront(_vm, this);
+	_rooms[PUZZLE_BEHIND] = new PuzzleBehind(_vm, this);
+	_rooms[FORMULA1_F] = new Formula1F(_vm, this);
+	_rooms[FORMULA1_N] = new Formula1N(_vm, this);
+	_rooms[FORMULA2_F] = new Formula2F(_vm, this);
+	_rooms[FORMULA2_N] = new Formula2N(_vm, this);
+	_rooms[TOMATO_F] = new TomatoF(_vm, this);
+	_rooms[TOMATO_N] = new TomatoN(_vm, this);
+	_rooms[MONSTER_F] = new MonsterF(_vm, this);
+	_rooms[MONSTER1_N] = new Monster1N(_vm, this);
+	_rooms[MONSTER2_N] = new Monster2N(_vm, this);
+	_rooms[UPSTAIRS3] = new Upstairs3(_vm, this);
+	_rooms[DOWNSTAIRS3] = new Downstairs3(_vm, this);
+	_rooms[LGANG1] = new LGang1(_vm, this);
+	_rooms[LGANG2] = new LGang2(_vm, this);
+	_rooms[HOLE_ROOM] = new HoleRoom(_vm, this);
+	_rooms[IN_HOLE] = new InHole(_vm, this);
+	_rooms[BODENTUER] = new Bodentuer(_vm, this);
+	_rooms[BODENTUER_U] = new BodentuerU(_vm, this);
+	_rooms[BST_DOOR] = new BstDoor(_vm, this);
+	_rooms[HALL] = new Hall(_vm, this);
+	_rooms[COFFIN_ROOM] = new CoffinRoom(_vm, this);
+	_rooms[MASK] = new Mask(_vm, this);
+	_rooms[MUSEUM] = new Museum(_vm, this);
+	_rooms[MUS_EING] = new MusEing(_vm, this);
+	_rooms[MUS1] = new Mus1(_vm, this);
+	_rooms[MUS2] = new Mus2(_vm, this);
+	_rooms[MUS3] = new Mus3(_vm, this);
+	_rooms[MUS4] = new Mus4(_vm, this);
+	_rooms[MUS5] = new Mus5(_vm, this);
+	_rooms[MUS6] = new Mus6(_vm, this);
+	_rooms[MUS7] = new Mus7(_vm, this);
+	_rooms[MUS8] = new Mus8(_vm, this);
+	_rooms[MUS9] = new Mus9(_vm, this);
+	_rooms[MUS10] = new Mus10(_vm, this);
+	_rooms[MUS11] = new Mus11(_vm, this);
+	_rooms[MUS_RUND] = new MusRund(_vm, this);
+	_rooms[MUS12] = new Mus12(_vm, this);
+	_rooms[MUS13] = new Mus13(_vm, this);
+	_rooms[MUS14] = new Mus14(_vm, this);
+	_rooms[MUS15] = new Mus15(_vm, this);
+	_rooms[MUS16] = new Mus16(_vm, this);
+	_rooms[MUS17] = new Mus17(_vm, this);
+	_rooms[MUS18] = new Mus18(_vm, this);
+	_rooms[MUS19] = new Mus19(_vm, this);
+	_rooms[MUS20] = new Mus20(_vm, this);
+	_rooms[MUS21] = new Mus21(_vm, this);
+	_rooms[MUS22] = new Mus22(_vm, this);
 }
 
 void GameManager::initGui() {

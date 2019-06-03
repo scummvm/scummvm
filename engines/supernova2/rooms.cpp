@@ -734,4 +734,1324 @@ bool Games::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
+Cabin::Cabin(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = CABIN;
+	_shown[0] = kShownTrue;
+}
+
+void Cabin::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Cabin::animation() {
+}
+
+bool Cabin::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Kiosk::Kiosk(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = KIOSK;
+	_shown[0] = kShownTrue;
+}
+
+void Kiosk::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Kiosk::animation() {
+}
+
+bool Kiosk::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+CulturePalace::CulturePalace(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = CULTURE_PALACE;
+	_shown[0] = kShownTrue;
+}
+
+void CulturePalace::onEntrance() {
+	setRoomSeen(true);
+}
+
+void CulturePalace::animation() {
+}
+
+bool CulturePalace::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Cashbox::Cashbox(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = CASHBOX;
+	_shown[0] = kShownTrue;
+}
+
+void Cashbox::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Cashbox::animation() {
+}
+
+bool Cashbox::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+City1::City1(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = CITY1;
+	_shown[0] = kShownTrue;
+}
+
+void City1::onEntrance() {
+	setRoomSeen(true);
+}
+
+void City1::animation() {
+}
+
+bool City1::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+City2::City2(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = CITY2;
+	_shown[0] = kShownTrue;
+}
+
+void City2::onEntrance() {
+	setRoomSeen(true);
+}
+
+void City2::animation() {
+}
+
+bool City2::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Elevator::Elevator(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = ELEVATOR;
+	_shown[0] = kShownTrue;
+}
+
+void Elevator::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Elevator::animation() {
+}
+
+bool Elevator::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Apartment::Apartment(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = APARTMENT;
+	_shown[0] = kShownTrue;
+}
+
+void Apartment::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Apartment::animation() {
+}
+
+bool Apartment::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Ship::Ship(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = SHIP;
+	_shown[0] = kShownTrue;
+}
+
+void Ship::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Ship::animation() {
+}
+
+bool Ship::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Pyramid::Pyramid(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = PYRAMID;
+	_shown[0] = kShownTrue;
+}
+
+void Pyramid::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Pyramid::animation() {
+}
+
+bool Pyramid::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+PyrEntrance::PyrEntrance(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = PYR_ENTRANCE;
+	_shown[0] = kShownTrue;
+}
+
+void PyrEntrance::onEntrance() {
+	setRoomSeen(true);
+}
+
+void PyrEntrance::animation() {
+}
+
+bool PyrEntrance::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Upstairs1::Upstairs1(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = UPSTAIRS1;
+	_shown[0] = kShownTrue;
+}
+
+void Upstairs1::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Upstairs1::animation() {
+}
+
+bool Upstairs1::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Downstairs1::Downstairs1(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = DOWNSTAIRS1;
+	_shown[0] = kShownTrue;
+}
+
+void Downstairs1::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Downstairs1::animation() {
+}
+
+bool Downstairs1::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+BottomRightDoor::BottomRightDoor(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = BOTTOM_RIGHT_DOOR;
+	_shown[0] = kShownTrue;
+}
+
+void BottomRightDoor::onEntrance() {
+	setRoomSeen(true);
+}
+
+void BottomRightDoor::animation() {
+}
+
+bool BottomRightDoor::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+BottomLeftDoor::BottomLeftDoor(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = BOTTOM_LEFT_DOOR;
+	_shown[0] = kShownTrue;
+}
+
+void BottomLeftDoor::onEntrance() {
+	setRoomSeen(true);
+}
+
+void BottomLeftDoor::animation() {
+}
+
+bool BottomLeftDoor::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Upstairs2::Upstairs2(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = UPSTAIRS2;
+	_shown[0] = kShownTrue;
+}
+
+void Upstairs2::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Upstairs2::animation() {
+}
+
+bool Upstairs2::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Downstairs2::Downstairs2(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = DOWNSTAIRS2;
+	_shown[0] = kShownTrue;
+}
+
+void Downstairs2::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Downstairs2::animation() {
+}
+
+bool Downstairs2::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+UpperDoor::UpperDoor(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = UPPER_DOOR;
+	_shown[0] = kShownTrue;
+}
+
+void UpperDoor::onEntrance() {
+	setRoomSeen(true);
+}
+
+void UpperDoor::animation() {
+}
+
+bool UpperDoor::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+PuzzleFront::PuzzleFront(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = PUZZLE_FRONT;
+	_shown[0] = kShownTrue;
+}
+
+void PuzzleFront::onEntrance() {
+	setRoomSeen(true);
+}
+
+void PuzzleFront::animation() {
+}
+
+bool PuzzleFront::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+PuzzleBehind::PuzzleBehind(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = PUZZLE_BEHIND;
+	_shown[0] = kShownTrue;
+}
+
+void PuzzleBehind::onEntrance() {
+	setRoomSeen(true);
+}
+
+void PuzzleBehind::animation() {
+}
+
+bool PuzzleBehind::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Formula1F::Formula1F(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = FORMULA1_F;
+	_shown[0] = kShownTrue;
+}
+
+void Formula1F::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Formula1F::animation() {
+}
+
+bool Formula1F::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Formula1N::Formula1N(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = FORMULA1_N;
+	_shown[0] = kShownTrue;
+}
+
+void Formula1N::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Formula1N::animation() {
+}
+
+bool Formula1N::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Formula2F::Formula2F(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = FORMULA2_F;
+	_shown[0] = kShownTrue;
+}
+
+void Formula2F::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Formula2F::animation() {
+}
+
+bool Formula2F::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Formula2N::Formula2N(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = FORMULA2_N;
+	_shown[0] = kShownTrue;
+}
+
+void Formula2N::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Formula2N::animation() {
+}
+
+bool Formula2N::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+TomatoF::TomatoF(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = TOMATO_F;
+	_shown[0] = kShownTrue;
+}
+
+void TomatoF::onEntrance() {
+	setRoomSeen(true);
+}
+
+void TomatoF::animation() {
+}
+
+bool TomatoF::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+TomatoN::TomatoN(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = TOMATO_N;
+	_shown[0] = kShownTrue;
+}
+
+void TomatoN::onEntrance() {
+	setRoomSeen(true);
+}
+
+void TomatoN::animation() {
+}
+
+bool TomatoN::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+MonsterF::MonsterF(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = MONSTER_F;
+	_shown[0] = kShownTrue;
+}
+
+void MonsterF::onEntrance() {
+	setRoomSeen(true);
+}
+
+void MonsterF::animation() {
+}
+
+bool MonsterF::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Monster1N::Monster1N(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = MONSTER1_N;
+	_shown[0] = kShownTrue;
+}
+
+void Monster1N::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Monster1N::animation() {
+}
+
+bool Monster1N::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Monster2N::Monster2N(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = MONSTER2_N;
+	_shown[0] = kShownTrue;
+}
+
+void Monster2N::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Monster2N::animation() {
+}
+
+bool Monster2N::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Upstairs3::Upstairs3(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = UPSTAIRS3;
+	_shown[0] = kShownTrue;
+}
+
+void Upstairs3::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Upstairs3::animation() {
+}
+
+bool Upstairs3::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Downstairs3::Downstairs3(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = DOWNSTAIRS3;
+	_shown[0] = kShownTrue;
+}
+
+void Downstairs3::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Downstairs3::animation() {
+}
+
+bool Downstairs3::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+LGang1::LGang1(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = LGANG1;
+	_shown[0] = kShownTrue;
+}
+
+void LGang1::onEntrance() {
+	setRoomSeen(true);
+}
+
+void LGang1::animation() {
+}
+
+bool LGang1::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+LGang2::LGang2(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = LGANG2;
+	_shown[0] = kShownTrue;
+}
+
+void LGang2::onEntrance() {
+	setRoomSeen(true);
+}
+
+void LGang2::animation() {
+}
+
+bool LGang2::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+HoleRoom::HoleRoom(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = HOLE_ROOM;
+	_shown[0] = kShownTrue;
+}
+
+void HoleRoom::onEntrance() {
+	setRoomSeen(true);
+}
+
+void HoleRoom::animation() {
+}
+
+bool HoleRoom::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+InHole::InHole(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = IN_HOLE;
+	_shown[0] = kShownTrue;
+}
+
+void InHole::onEntrance() {
+	setRoomSeen(true);
+}
+
+void InHole::animation() {
+}
+
+bool InHole::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Bodentuer::Bodentuer(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = BODENTUER;
+	_shown[0] = kShownTrue;
+}
+
+void Bodentuer::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Bodentuer::animation() {
+}
+
+bool Bodentuer::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+BodentuerU::BodentuerU(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = BODENTUER_U;
+	_shown[0] = kShownTrue;
+}
+
+void BodentuerU::onEntrance() {
+	setRoomSeen(true);
+}
+
+void BodentuerU::animation() {
+}
+
+bool BodentuerU::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+BstDoor::BstDoor(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = BST_DOOR;
+	_shown[0] = kShownTrue;
+}
+
+void BstDoor::onEntrance() {
+	setRoomSeen(true);
+}
+
+void BstDoor::animation() {
+}
+
+bool BstDoor::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Hall::Hall(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = HALL;
+	_shown[0] = kShownTrue;
+}
+
+void Hall::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Hall::animation() {
+}
+
+bool Hall::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+CoffinRoom::CoffinRoom(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = COFFIN_ROOM;
+	_shown[0] = kShownTrue;
+}
+
+void CoffinRoom::onEntrance() {
+	setRoomSeen(true);
+}
+
+void CoffinRoom::animation() {
+}
+
+bool CoffinRoom::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Mask::Mask(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = MASK;
+	_shown[0] = kShownTrue;
+}
+
+void Mask::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Mask::animation() {
+}
+
+bool Mask::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Museum::Museum(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = MUSEUM;
+	_shown[0] = kShownTrue;
+}
+
+void Museum::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Museum::animation() {
+}
+
+bool Museum::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+MusEing::MusEing(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = MUS_EING;
+	_shown[0] = kShownTrue;
+}
+
+void MusEing::onEntrance() {
+	setRoomSeen(true);
+}
+
+void MusEing::animation() {
+}
+
+bool MusEing::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Mus1::Mus1(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = MUS1;
+	_shown[0] = kShownTrue;
+}
+
+void Mus1::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Mus1::animation() {
+}
+
+bool Mus1::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Mus2::Mus2(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = MUS2;
+	_shown[0] = kShownTrue;
+}
+
+void Mus2::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Mus2::animation() {
+}
+
+bool Mus2::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Mus3::Mus3(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = MUS3;
+	_shown[0] = kShownTrue;
+}
+
+void Mus3::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Mus3::animation() {
+}
+
+bool Mus3::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Mus4::Mus4(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = MUS4;
+	_shown[0] = kShownTrue;
+}
+
+void Mus4::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Mus4::animation() {
+}
+
+bool Mus4::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Mus5::Mus5(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = MUS5;
+	_shown[0] = kShownTrue;
+}
+
+void Mus5::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Mus5::animation() {
+}
+
+bool Mus5::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Mus6::Mus6(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = MUS6;
+	_shown[0] = kShownTrue;
+}
+
+void Mus6::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Mus6::animation() {
+}
+
+bool Mus6::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Mus7::Mus7(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = MUS7;
+	_shown[0] = kShownTrue;
+}
+
+void Mus7::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Mus7::animation() {
+}
+
+bool Mus7::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Mus8::Mus8(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = MUS8;
+	_shown[0] = kShownTrue;
+}
+
+void Mus8::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Mus8::animation() {
+}
+
+bool Mus8::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Mus9::Mus9(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = MUS9;
+	_shown[0] = kShownTrue;
+}
+
+void Mus9::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Mus9::animation() {
+}
+
+bool Mus9::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Mus10::Mus10(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = MUS10;
+	_shown[0] = kShownTrue;
+}
+
+void Mus10::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Mus10::animation() {
+}
+
+bool Mus10::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Mus11::Mus11(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = MUS11;
+	_shown[0] = kShownTrue;
+}
+
+void Mus11::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Mus11::animation() {
+}
+
+bool Mus11::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+MusRund::MusRund(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = MUS_RUND;
+	_shown[0] = kShownTrue;
+}
+
+void MusRund::onEntrance() {
+	setRoomSeen(true);
+}
+
+void MusRund::animation() {
+}
+
+bool MusRund::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Mus12::Mus12(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = MUS12;
+	_shown[0] = kShownTrue;
+}
+
+void Mus12::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Mus12::animation() {
+}
+
+bool Mus12::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Mus13::Mus13(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = MUS13;
+	_shown[0] = kShownTrue;
+}
+
+void Mus13::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Mus13::animation() {
+}
+
+bool Mus13::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Mus14::Mus14(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = MUS14;
+	_shown[0] = kShownTrue;
+}
+
+void Mus14::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Mus14::animation() {
+}
+
+bool Mus14::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Mus15::Mus15(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = MUS15;
+	_shown[0] = kShownTrue;
+}
+
+void Mus15::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Mus15::animation() {
+}
+
+bool Mus15::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Mus16::Mus16(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = MUS16;
+	_shown[0] = kShownTrue;
+}
+
+void Mus16::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Mus16::animation() {
+}
+
+bool Mus16::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Mus17::Mus17(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = MUS17;
+	_shown[0] = kShownTrue;
+}
+
+void Mus17::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Mus17::animation() {
+}
+
+bool Mus17::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Mus18::Mus18(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = MUS18;
+	_shown[0] = kShownTrue;
+}
+
+void Mus18::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Mus18::animation() {
+}
+
+bool Mus18::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Mus19::Mus19(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = MUS19;
+	_shown[0] = kShownTrue;
+}
+
+void Mus19::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Mus19::animation() {
+}
+
+bool Mus19::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Mus20::Mus20(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = MUS20;
+	_shown[0] = kShownTrue;
+}
+
+void Mus20::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Mus20::animation() {
+}
+
+bool Mus20::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Mus21::Mus21(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = MUS21;
+	_shown[0] = kShownTrue;
+}
+
+void Mus21::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Mus21::animation() {
+}
+
+bool Mus21::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
+Mus22::Mus22(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = MUS22;
+	_shown[0] = kShownTrue;
+}
+
+void Mus22::onEntrance() {
+	setRoomSeen(true);
+}
+
+void Mus22::animation() {
+}
+
+bool Mus22::interact(Action verb, Object &obj1, Object &obj2) {
+	return true;
+}
+
 }
