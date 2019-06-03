@@ -258,6 +258,7 @@ void Intro::titleScreen() {
 	const Common::String title1 = "V1.02";
 	_vm->_screen->renderText(title1, 295, 190, 3);
 
+	_vm->playSound(kMusicIntro);
 	Marquee marquee(_vm->_screen, Marquee::kMarqueeIntro, _introText.c_str());
 	while (!_vm->shouldQuit()) {
 		_gm->updateEvents();
@@ -267,6 +268,7 @@ void Intro::titleScreen() {
 		g_system->updateScreen();
 		g_system->delayMillis(_vm->_delay);
 	}
+	_vm->stopSound();
 	_vm->paletteFadeOut();
 	CursorMan.showMouse(true);
 }
@@ -408,8 +410,10 @@ bool Intro::tvDialogue() {
 		_gm->wait(3);
 		_vm->renderImage(i);
 	}
+	_vm->playSound(kAudioIntroDing);
 	_gm->wait(30);
 	_vm->renderImage(11);
+	_vm->playSound(kAudioIntroDing);
 	_gm->wait(60);
 
 	_vm->_system->fillScreen(kColorBlack);
@@ -673,6 +677,7 @@ bool Street::interact(Action verb, Object &obj1, Object &obj2) {
 		else {
 			_vm->renderMessage(kStringSawPole);
 			_gm->takeObject(*getObject(3));
+			_vm->playSound(kAudioSuccess);
 		}
 	}
 	else if (verb == ACTION_WALK && obj1._id == REAR_STREET) {

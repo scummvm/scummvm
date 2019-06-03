@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	rooms.o \
 	screen.o \
 	console.o \
+	sound.o \
 	supernova2.o
 
 MODULE_DIRS += \

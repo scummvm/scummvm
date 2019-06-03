@@ -27,7 +27,7 @@
 #include "common/rect.h"
 #include "common/keyboard.h"
 #include "supernova2/rooms.h"
-//#include "supernova2/sound.h"
+#include "supernova2/sound.h"
 
 namespace Supernova2 {
 
@@ -181,6 +181,7 @@ public:
 	void resetInputState();
 	void handleInput();
 	void handleTime();
+	void pauseTimer(bool pause);
 	void setAnimationTimer(int ticks);
 	int  dialog(int num, byte rowLength[6], StringId text[6], int number);
 	void sentence(int number, bool brightness);

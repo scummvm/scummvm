@@ -34,6 +34,7 @@
 #include "supernova2/graphics.h"
 #include "supernova2/ms2_def.h"
 #include "supernova2/rooms.h"
+#include "supernova2/sound.h"
 #include "supernova2/imageid.h"
 
 namespace Common {
@@ -50,6 +51,7 @@ namespace Supernova2 {
 
 class GuiElement;
 class ResourceManager;
+class Sound;
 class console;
 class GameManager;
 class Screen;
@@ -65,9 +67,11 @@ public:
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 	virtual bool canSaveGameStateCurrently();
 	virtual bool hasFeature(EngineFeature f) const;
+	virtual void pauseEngineIntern(bool pause);
 
 	GameManager *_gm;
 	Console *_console;
+	Sound *_sound;
 	ResourceManager *_resMan;
 	Screen *_screen;
 	bool _allowLoadGame;
@@ -93,6 +97,8 @@ public:
 	void setGameString(int idx, const Common::String &string);
 
 	// forwarding calls
+	void playSound(AudioId sample);
+	void playSound(MusicId index);
 	void paletteFadeIn();
 	void paletteFadeOut();
 	void paletteBrightness();
@@ -120,6 +126,7 @@ public:
 	void renderBox(int x, int y, int width, int height, byte color);
 	void renderBox(const GuiElement &guiElement);
 	void setColor63(byte value);
+	void stopSound();
 };
 
 }
