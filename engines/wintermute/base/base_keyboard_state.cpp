@@ -81,7 +81,7 @@ bool BaseKeyboardState::scCallMethod(ScScript *script, ScStack *stack, ScStack *
 	if (strcmp(name, "IsKeyDown") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
-		int vKey;
+		uint32 vKeyCode;
 
 		if (val->_type == VAL_STRING && strlen(val->getString()) > 0) {
 			const char *str = val->getString();
@@ -89,12 +89,12 @@ bool BaseKeyboardState::scCallMethod(ScScript *script, ScStack *stack, ScStack *
 			if (temp >= 'A' && temp <= 'Z') {
 				temp += ('a' - 'A');
 			}
-			vKey = (int)temp;
+			vKeyCode = (int)temp;
 		} else {
-			vKey = val->getInt();
+			vKeyCode = vKeyToKeyCode(val->getInt());
 		}
 
-		bool isDown = _keyStates[vKeyToKeyCode(vKey)];
+		bool isDown = _keyStates[vKeyCode];
 
 		stack->pushBool(isDown);
 		return STATUS_OK;
