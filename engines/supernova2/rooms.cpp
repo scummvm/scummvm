@@ -702,4 +702,36 @@ bool Street::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
+Games::Games(Supernova2Engine *vm, GameManager *gm) {
+	_vm = vm;
+	_gm = gm;
+
+	_fileNumber = 6;
+	_id = GAMES;
+	_shown[0] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringPoster, kStringPosterDescription, POSTER, UNNECESSARY, 3, 3, 0);
+	_objectState[1] = Object(_id, kStringCabin, kStringCabinFree, NULLOBJECT, EXIT, 1, 1, 0, CABIN, 9);
+	_objectState[2] = Object(_id, kStringCabin, kStringCabinOccupied, OCCUPIED_CABIN, NULLTYPE, 0, 0, 0);
+	_objectState[3] = Object(_id, kStringFeet, kStringFeetDescription, NULLOBJECT, NULLTYPE, 2, 2, 0);
+	_objectState[4] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 255, 255, 0, STREET, 22);
+}
+
+void Games::onEntrance() {
+	setRoomSeen(true);
+}
+
+bool Games::interact(Action verb, Object &obj1, Object &obj2) {
+	if (verb == ACTION_WALK && obj1._id == OCCUPIED_CABIN) {
+		_vm->renderMessage(kStringCabinOccupiedSay);
+	}
+	else if (verb == ACTION_LOOK && obj1._id == POSTER) {
+		_gm->_taxi_possibility &= ~4; // add culture palace
+		return false;
+	}
+	else 
+		return false;
+	return true;
+}
+
 }

@@ -120,5 +120,13 @@ public:
 
 private:
 };
+class Games : public Room {
+public:
+	Games(Supernova2Engine *vm, GameManager *gm);
+	virtual void onEntrance();
+	virtual bool interact(Action verb, Object &obj1, Object &obj2);
+
+private:
+};
 }
 #endif // SUPERNOVA2_ROOMS_H
