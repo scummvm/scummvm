@@ -287,7 +287,7 @@ void SceneScriptCT12::PlayerWalkedIn() {
 		Actor_Says(kActorMcCoy, 690, kAnimationModeTalk);
 		Actor_Clue_Acquire(kActorMcCoy, kClueGaffsInformation, true, kActorGaff);
 		Game_Flag_Set(kFlagGaffApproachedMcCoyAboutZuben);
-		CDB_Set_Crime(kClueZuben, kCrimeMoonbusHijacking);
+		CDB_Set_Crime(kClueZubenSquadPhoto, kCrimeMoonbusHijacking);
 
 		if (Game_Flag_Query(kFlagGaffApproachedMcCoyAboutZuben)
 		 && Game_Flag_Query(kFlagZubenRetired)

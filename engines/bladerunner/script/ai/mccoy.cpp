@@ -246,10 +246,12 @@ void AIScriptMcCoy::ReceivedClue(int clueId, int fromActorId) {
 		Actor_Clue_Acquire(kActorMcCoy, kClueGuzzaFramedMcCoy, true, -1);
 
 		if (clueId == kClueFolder) {
+			// if McCoy just got the folder
 			Actor_Voice_Over(2780, kActorVoiceOver);
 			Actor_Voice_Over(2800, kActorVoiceOver);
 			Actor_Voice_Over(2810, kActorVoiceOver);
 		} else if (Actor_Clue_Query(kActorMcCoy, kClueFolder)) {
+			// if McCoy already had the folder
 			Actor_Voice_Over(3430, kActorVoiceOver);
 			Actor_Voice_Over(3440, kActorVoiceOver);
 			Actor_Voice_Over(3450, kActorVoiceOver);
@@ -259,6 +261,7 @@ void AIScriptMcCoy::ReceivedClue(int clueId, int fromActorId) {
 			Actor_Voice_Over(3490, kActorVoiceOver);
 			Actor_Voice_Over(3500, kActorVoiceOver);
 		} else {
+			// if McCoy never got the folder
 			Actor_Voice_Over(3510, kActorVoiceOver);
 			Actor_Voice_Over(3520, kActorVoiceOver);
 			Actor_Voice_Over(3530, kActorVoiceOver);

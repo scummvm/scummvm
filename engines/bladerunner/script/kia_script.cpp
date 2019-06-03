@@ -121,7 +121,7 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorMcCoy, 410);
 		KIA_Play_Actor_Dialogue(kActorZuben, 50);
 		break;
-	case kClueZuben:
+	case kClueZubenSquadPhoto:
 		KIA_Play_Photograph(33);
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 350);
 		break;
@@ -489,7 +489,17 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		break;
 	case kClueGordosLighterReplicant:
 		KIA_Play_Slice_Model(kModelAnimationGordosLighterReplicant);
-		KIA_Play_Actor_Dialogue(kActorVoiceOver, 350);
+		if (_vm->_cutContent) {
+			if (Actor_Clue_Query(kActorMcCoy, kClueZubenSquadPhoto)) {
+				KIA_Play_Actor_Dialogue(kActorVoiceOver, 1450);
+			} else {
+				KIA_Play_Actor_Dialogue(kActorVoiceOver, 350);
+			}
+			KIA_Play_Actor_Dialogue(kActorVoiceOver, 1460);
+			KIA_Play_Actor_Dialogue(kActorVoiceOver, 1470);
+		} else {
+			KIA_Play_Actor_Dialogue(kActorVoiceOver, 350);
+		}
 		break;
 	case kClueGordosLighterHuman:
 		KIA_Play_Slice_Model(kModelAnimationGordosLighterHuman);

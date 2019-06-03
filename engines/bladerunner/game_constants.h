@@ -123,7 +123,7 @@ enum Clues {
 	kClueCrowdInterviewB = 17,
 	kClueZubenRunsAway = 18,
 	kClueZubenInterview = 19,
-	kClueZuben = 20,
+	kClueZubenSquadPhoto = 20,
 	kClueBigManLimping = 21,
 	kClueRunciterInterviewA = 22,
 	kClueRunciterInterviewB1 = 23,

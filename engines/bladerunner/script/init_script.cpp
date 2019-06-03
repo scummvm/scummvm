@@ -2288,7 +2288,7 @@ void InitScript::Init_SDB() {
 	}
 	SDB_Add_Replicant_Clue(kSuspectZuben, kClueHowieLeeInterview);
 	SDB_Add_Replicant_Clue(kSuspectZuben, kClueZubenRunsAway);
-	SDB_Add_Replicant_Clue(kSuspectZuben, kClueZuben);
+	SDB_Add_Replicant_Clue(kSuspectZuben, kClueZubenSquadPhoto);
 	SDB_Add_Replicant_Clue(kSuspectZuben, kClueZubenTalksAboutLucy1);
 	SDB_Add_Replicant_Clue(kSuspectZuben, kClueZubenTalksAboutLucy2);
 	SDB_Add_Non_Replicant_Clue(kSuspectZuben, kClueLimpingFootprints);
@@ -2301,7 +2301,7 @@ void InitScript::Init_SDB() {
 	SDB_Add_Identity_Clue(kSuspectZuben, kClueZubenRunsAway);
 	SDB_Add_Identity_Clue(kSuspectZuben, kClueZubenInterview);
 	SDB_Add_Identity_Clue(kSuspectZuben, kClueLucyInterview);
-	SDB_Add_Photo_Clue(kSuspectZuben, kClueZuben, 33);
+	SDB_Add_Photo_Clue(kSuspectZuben, kClueZubenSquadPhoto, 33);
 
 	SDB_Set_Actor(kSuspectLucy, kActorLucy);
 	SDB_Set_Sex(kSuspectLucy, 0);
@@ -2436,7 +2436,7 @@ void InitScript::Init_CDB() {
 	CDB_Set_Crime(kClueZubenInterview, kCrimeAnimalMurder);
 	CDB_Set_Crime(kClueLucy, kCrimeAnimalMurder);
 	CDB_Set_Crime(kClueDragonflyAnklet, kCrimeAnimalMurder);
-	CDB_Set_Crime(kClueZuben, kCrimeAnimalMurder);
+	CDB_Set_Crime(kClueZubenSquadPhoto, kCrimeAnimalMurder);
 
 	CDB_Set_Crime(kCluePhoneCallGuzza, kCrimeEisendullerMurder);
 	CDB_Set_Crime(kClueDragonflyEarring, kCrimeEisendullerMurder);
@@ -2514,7 +2514,7 @@ void InitScript::Init_CDB() {
 	CDB_Set_Clue_Asset_Type(kClueCrowdInterviewA, kClueTypeAudioRecording);
 	CDB_Set_Clue_Asset_Type(kClueCrowdInterviewB, kClueTypeAudioRecording);
 	CDB_Set_Clue_Asset_Type(kClueZubenInterview, kClueTypeAudioRecording);
-	CDB_Set_Clue_Asset_Type(kClueZuben, kClueTypePhotograph);
+	CDB_Set_Clue_Asset_Type(kClueZubenSquadPhoto, kClueTypePhotograph);
 	CDB_Set_Clue_Asset_Type(kClueBigManLimping, kClueTypeAudioRecording);
 	CDB_Set_Clue_Asset_Type(kClueRunciterInterviewA, kClueTypeAudioRecording);
 	CDB_Set_Clue_Asset_Type(kClueRunciterInterviewB1, kClueTypeAudioRecording);

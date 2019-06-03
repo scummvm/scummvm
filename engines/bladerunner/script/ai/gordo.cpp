@@ -1700,7 +1700,7 @@ void AIScriptGordo::dialogue2() {
 	} else if (answer == 830) { // LET GO
 		Actor_Says(kActorMcCoy, 3100, 16);
 		Actor_Says(kActorGordo, 240, 14);
-		if (Actor_Clue_Query(0, 102)) {
+		if (Actor_Clue_Query(kActorMcCoy, kClueStolenCheese)) {
 			Actor_Says(kActorMcCoy, 3105, 15);
 			Actor_Says(kActorMcCoy, 3110, 17);
 			Actor_Says(kActorGordo, 250, 13);

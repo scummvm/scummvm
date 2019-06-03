@@ -91,7 +91,7 @@ bool SceneScriptCT06::ClickedOnActor(int actorId) {
 		Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorZuben, 24, true, false);
 		Actor_Face_Actor(kActorMcCoy, kActorZuben, true);
 		if (!Game_Flag_Query(kFlagCT06ZubenPhoto)) {
-			Actor_Clue_Acquire(kActorMcCoy, kClueZuben, true, -1);
+			Actor_Clue_Acquire(kActorMcCoy, kClueZubenSquadPhoto, true, -1);
 			Item_Pickup_Spin_Effect(kModelAnimationPhoto, 340, 369);
 			Actor_Voice_Over(350, kActorVoiceOver);
 			Actor_Voice_Over(360, kActorVoiceOver);
