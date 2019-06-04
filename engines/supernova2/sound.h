@@ -42,7 +42,8 @@ enum AudioId {
 
 enum MusicId {
 	kMusicIntro = 52,
-	kMusicOutro = 56
+	kMusicMadMonkeys = 56,
+	kMusicOutro = 55
 };
 
 class Sound {

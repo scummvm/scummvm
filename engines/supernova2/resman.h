@@ -63,8 +63,10 @@ private:
 private:
 	Common::ScopedPtr<Audio::SeekableAudioStream> _soundSamples[kAudioNumSamples];
 	Common::ScopedPtr<Common::MemoryReadStream> _musicIntroBuffer;
+	Common::ScopedPtr<Common::MemoryReadStream> _musicMadMonkeysBuffer;
 	Common::ScopedPtr<Common::MemoryReadStream> _musicOutroBuffer;
 	Common::ScopedPtr<Audio::AudioStream> _musicIntro;
+	Common::ScopedPtr<Audio::AudioStream> _musicMadMonkeys;
 	Common::ScopedPtr<Audio::AudioStream> _musicOutro;
 	int _audioRate;
 	MS2Image _images[kNumImageFiles];
