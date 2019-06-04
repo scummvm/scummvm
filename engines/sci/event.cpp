@@ -253,6 +253,11 @@ SciEvent EventManager::getScummVMEvent() {
 		}
 	}
 
+	// Handle keyboard events for the rest of the function
+	if (ev.type != Common::EVENT_KEYDOWN && ev.type != Common::EVENT_KEYUP) {
+		return noEvent;
+	}
+
 	// Check for Control-Shift-D (debug console)
 	if (ev.type == Common::EVENT_KEYDOWN && ev.kbd.hasFlags(Common::KBD_CTRL | Common::KBD_SHIFT) && ev.kbd.keycode == Common::KEYCODE_d) {
 		// Open debug console
