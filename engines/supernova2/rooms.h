@@ -166,14 +166,17 @@ private:
 	bool _var3;
 };
 
-class Cashbox : public Room {
+class Checkout : public Room {
 public:
-	Cashbox(Supernova2Engine *vm, GameManager *gm);
+	Checkout(Supernova2Engine *vm, GameManager *gm);
 	virtual void onEntrance();
 	virtual void animation();
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 
 private:
+	bool _var1;
+	bool _var2;
+	bool _var3;
 };
 
 class City1 : public Room {

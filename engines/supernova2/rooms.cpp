@@ -1003,7 +1003,7 @@ CulturePalace::CulturePalace(Supernova2Engine *vm, GameManager *gm) {
 	_var2 = false;
 	_var3 = false;
 
-	_objectState[0] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 1, 1, 0, CASHBOX, 6);
+	_objectState[0] = Object(_id, kStringEntrance, kStringDefaultDescription, NULLOBJECT, EXIT, 1, 1, 0, CHECKOUT, 6);
 	_objectState[1] = Object(_id, kStringCulturePalace, kStringFascinating, NULLOBJECT, NULLTYPE, 0, 0, 0);
 	_objectState[2] = Object(_id, kStringTaxis, kStringTaxisDescription, NULLOBJECT, NULLTYPE, 3, 3, 0);
 	_objectState[3] = Object(_id, kStringAxacussan, kStringDefaultDescription, AXACUSSER, TALK, 4, 4, 0);
@@ -1041,11 +1041,10 @@ void CulturePalace::notEnoughMoney() {
 }
 
 bool CulturePalace::interact(Action verb, Object &obj1, Object &obj2) {
-	static StringId dial1[4] = {
+	static StringId dial1[3] = {
 		kStringHorstHummel,
 		kStringNiceWeather,
 		kStringTellTicket,
-		kStringForMusicConcert
 	};
 	static byte dials1[] = {1, 1, 2};
 
@@ -1133,7 +1132,7 @@ bool CulturePalace::interact(Action verb, Object &obj1, Object &obj2) {
 					_gm->reply(kStringIdiot, 0, 0);
 					_var2 = false;
 					_var3 = true;
-					_gm->_rooms[CASHBOX]->addSentence(1,1);
+					_gm->_rooms[CHECKOUT]->addSentence(1,1);
 					_gm->drawStatus();
 					_gm->drawInventory();
 					_gm->drawMapExits();
@@ -1155,23 +1154,45 @@ bool CulturePalace::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
-Cashbox::Cashbox(Supernova2Engine *vm, GameManager *gm) {
+Checkout::Checkout(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
-	_id = CASHBOX;
+	_fileNumber = 21;
+	_id = CHECKOUT;
 	_shown[0] = kShownTrue;
+
+	_var1 = false;
+	_var2 = false;
+	_var3 = false;
+
+	_objectState[0] = Object(_id, kStringEntrance, kStringDefaultDescription, KP_ENTRANCE, EXIT, 0, 0, 0, NULLROOM, 3);
+	_objectState[1] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 255, 255, 0, CULTURE_PALACE, 22);
+	_objectState[2] = Object(_id, kStringAxacussian, kStringDefaultDescription, AXACUSSER, TALK, 1, 1, 0);
 }
 
-void Cashbox::onEntrance() {
+void Checkout::onEntrance() {
+	if (!_var3) {
+		_var3 = true;
+		_gm->reply(kStringAtMusicContest, 1, 1 + 128);
+		_gm->say(kStringNoImitation);
+		_gm->reply(kStringGoodJoke, 1, 1 + 128);
+		_gm->say(kStringIAmHorstHummel);
+		_gm->reply(kStringCommon, 1, 1 + 128);
+		_gm->say(kStringIWillProof);
+		_gm->say(kStringIWillPerform);
+		_gm->drawStatus();
+		_gm->drawInventory();
+		_gm->drawMapExits();
+		_gm->drawCommandBox();
+	}
 	setRoomSeen(true);
 }
 
-void Cashbox::animation() {
+void Checkout::animation() {
 }
 
-bool Cashbox::interact(Action verb, Object &obj1, Object &obj2) {
+bool Checkout::interact(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
