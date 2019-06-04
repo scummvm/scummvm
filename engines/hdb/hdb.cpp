@@ -141,15 +141,16 @@ Common::Error HDBGame::run() {
 	Tile *tile = new Tile;
 	Graphics::Surface surf2 = tile->load(tileStream);
 
-	/*Common::SeekableReadStream *luaStream = fileMan->findFirstData("CINE_INTRO_DEMO_LUA", TYPE_BINARY);
-	int32 luaLength = fileMan->getLength("CINE_INTRO_DEMO_LUA", TYPE_BINARY);
+	Common::SeekableReadStream *luaStream = fileMan->findFirstData("MAP00_DEMO_LUA", TYPE_BINARY);
+	int32 luaLength = fileMan->getLength("MAP00_DEMO_LUA", TYPE_BINARY);
 	if (luaStream == NULL) {
-		debug("The CINE_INTRO_DEMO_LUA MPC entry can't be found.");
+		debug("The MAP00_DEMO_LUA MPC entry can't be found.");
 		return Common::kReadingFailed;
 	}
 
-	lua->executeMPC(luaStream, "CINE_INTRO_DEMO_LUA", luaLength);
-	*/
+	lua->initScript(luaStream, "MAP00_DEMO_LUA", luaLength);
+	//lua->executeMPC(luaStream, "CINE_INTRO_DEMO_LUA", luaLength);
+	
 	while (!shouldQuit()) {
 
 		Common::Event event;

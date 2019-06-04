@@ -38,14 +38,15 @@ public:
 	~LuaScript();
 
 	bool init();
-	//bool executeMPC(Common::SeekableReadStream *stream);
+	bool initScript(Common::SeekableReadStream *stream, const char *name, int32 length);
+	bool executeMPC(Common::SeekableReadStream *stream, const char *name, int32 length);
 	bool executeFile(const Common::String &filename);
 
 private:
 	lua_State *_state;
 	bool _systemInit;
 
-	bool registerStdLibs();
+	bool registerExtensions();
 	bool executeChunk(const char *chunk, uint chunkSize, const Common::String &chunkName) const;
 };
 
