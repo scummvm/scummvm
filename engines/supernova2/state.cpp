@@ -237,7 +237,7 @@ void GameManager::destroyRooms() {
 	delete _rooms[CABIN];
 	delete _rooms[KIOSK];
 	delete _rooms[CULTURE_PALACE];
-	delete _rooms[CASHBOX];
+	delete _rooms[CHECKOUT];
 	delete _rooms[CITY1];
 	delete _rooms[CITY2];
 	delete _rooms[ELEVATOR];
@@ -353,7 +353,7 @@ void GameManager::initRooms() {
 	_rooms[CABIN] = new Cabin(_vm, this);
 	_rooms[KIOSK] = new Kiosk(_vm, this);
 	_rooms[CULTURE_PALACE] = new CulturePalace(_vm, this);
-	_rooms[CASHBOX] = new Cashbox(_vm, this);
+	_rooms[CHECKOUT] = new Checkout(_vm, this);
 	_rooms[CITY1] = new City1(_vm, this);
 	_rooms[CITY2] = new City2(_vm, this);
 	_rooms[ELEVATOR] = new Elevator(_vm, this);

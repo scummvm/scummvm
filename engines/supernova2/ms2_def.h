@@ -81,7 +81,7 @@ enum Action {
 
 enum RoomId {
 	INTRO,AIRPORT,TAXISTAND,STREET,GAMES,CABIN,KIOSK,
-	CULTURE_PALACE,CASHBOX,CITY1,CITY2,ELEVATOR,APARTMENT,SHIP,
+	CULTURE_PALACE,CHECKOUT,CITY1,CITY2,ELEVATOR,APARTMENT,SHIP,
 
 	PYRAMID,PYR_ENTRANCE,UPSTAIRS1,DOWNSTAIRS1,
 	BOTTOM_RIGHT_DOOR,BOTTOM_LEFT_DOOR,UPSTAIRS2,DOWNSTAIRS2,
@@ -209,8 +209,8 @@ kString395, kString396, kString397, kString398, kString399,
 kString400, kString401, kString402, kString403, kString404,
 kString405, kString406, kString407, kString408, kString409,
 kString410, kString411, kString412, kString413, kString414,
-kString415, kString416, kString417, kString418, kString419,
-kString420, kString421, kString422, kString423, kString424,
+kString415, kStringAtMusicContest, kStringNoImitation, kStringGoodJoke, kStringCommon,
+kStringIWillProof, kStringIWillPerform, kString422, kString423, kString424,
 kString425, kString426, kString427, kString428, kString429,
 kString430, kString431, kString432, kString433, kString434,
 kString435, kString436, kString437, kString438, kString439,
@@ -236,7 +236,7 @@ kString530, kString531, kString532, kString533, kString534,
 kString535, kString536, kString537, kString538, kString539,
 kString540, kString541, kString542, kString543, kString544,
 kString545, kString546, kStringFascinating, kStringTaxis, kStringTaxisDescription,
-kStringAxacussan, kStringParticipationCard, kString552, kString553, kString554,
+kStringAxacussan, kStringParticipationCard, kStringAxacussian, kString553, kString554,
 kString555, kString556, kString557, kString558, kString559,
 kString560, kString561, kString562, kString563, kString564,
 kString565, kString566, kString567, kString568, kString569,
@@ -249,7 +249,7 @@ kStringIntroTV3, kStringIntroTV4, kStringIntroTV5, kStringIntroTV6, kStringIntro
 kStringIntroTV8, kStringIntroTV9, kStringIntroTV10, kStringIntroTV11, kStringIntroTV12,
 kStringIntroTV13, kStringIntroTV14, kStringIntroTV15, kStringIntroTV16, kStringIntro9,
 kStringIntro10, kStringIntro11, kStringIntro12, kStringIntro13, kStringIntro14,
-kStringDialogSeparator, kStringForMusicConcert
+kStringDialogSeparator
 };
 
 ObjectType operator|(ObjectType a, ObjectType b);
