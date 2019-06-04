@@ -455,28 +455,6 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 				break;
 			}
 
-			// GK1CD has a message whose audio36 resource has the wrong tuple and never plays.
-			//  The message tuple is 420 2 32 0 1 but the audio36 tuple is 420 2 32 3 1. bug #10819
-			if (g_sci->getGameId() == GID_GK1 && g_sci->isCD() &&
-				map->_mapNumber == 420 && n == 0x02200301) {
-				n = 0x02200001;
-			}
-
-			// QFG4CD has a message whose audio36 resource has the wrong tuple and never plays.
-			//  The message tuple is 510 23 1 0 1 but the audio36 tuple is 510 199 1 0 1. bug #10848
-			if (g_sci->getGameId() == GID_QFG4 && g_sci->isCD() &&
-				map->_mapNumber == 510 && n == 0xc7010001) {
-				n = 0x17010001;
-			}
-
-			// QFG4CD has an orphaned audio36 resource that additionally has the wrong tuple.
-			//  The audio36 tuple is 520 2 59 0 3. The message would be 520 2 59 0 2. bug #10849
-			//  We restore the missing message in message.cpp.
-			if (g_sci->getGameId() == GID_QFG4 && g_sci->isCD() &&
-				map->_mapNumber == 520 && n == 0x023b0003) {
-				n = 0x023b0002;
-			}
-
 			if (isEarly) {
 				offset = ptr.getUint32LE();
 				ptr += 4;
@@ -492,14 +470,6 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 				// FIXME: The sync36 resource seems to be two bytes too big in KQ6CD
 				// (bytes taken from the RAVE resource right after it)
 				if (syncSize > 0) {
-					// TODO: Add a mechanism to handle cases with missing resources like the ones below
-					//
-					// LB2CD is missing the sync resource for message 1885 1 6 30 2 but it's a duplicate
-					//  of 1885 1 6 16 2 which does have a sync resource so use that for both. bug #9956
-					if (g_sci->getGameId() == GID_LAURABOW2 && map->_mapNumber == 1885 && n == 0x01061002) {
-						addResource(ResourceId(kResourceTypeSync36, map->_mapNumber, 0x01061e02), src, offset, syncSize, map->getLocationName());
-					}
-
 					addResource(ResourceId(kResourceTypeSync36, map->_mapNumber, n & 0xffffff3f), src, offset, syncSize, map->getLocationName());
 				}
 			}
