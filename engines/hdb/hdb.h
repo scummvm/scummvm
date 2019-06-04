@@ -47,6 +47,10 @@ struct ADGameDescription;
 
 namespace HDB {
 
+enum GameFeatures {
+	ADGF_TALKIE = 1 << 0
+};
+
 enum HDBDebugChannels {
 	kDebugExample1 = 1 << 0,
 	kDebugExample2 = 1 << 1
@@ -70,7 +74,7 @@ public:
 	const ADGameDescription *_gameDescription;
 	const char *getGameId() const;
 	const char *getGameFile() const;
-	void setGameFlags();
+	uint32 getGameFlags() const;
 	Common::Platform getPlatform() const;
 
 	/*
@@ -96,8 +100,6 @@ private:
 
 	bool _systemInit;
 	GameState _gameState;
-	bool _voiceless;
-	bool _isDemo;
 
 };
 

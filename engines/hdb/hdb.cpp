@@ -54,14 +54,11 @@ HDBGame::~HDBGame() {
 }
 
 bool HDBGame::init() {
-	_voiceless = false;
-
 	/*
 		Game Subsystem Initializations
 	*/
 
 	// Init fileMan
-	setGameFlags();
 
 	if (!fileMan->openMPC(getGameFile())) {
 		error("FileMan::openMPC: Cannot find the hyperspace.mpc data file.");
