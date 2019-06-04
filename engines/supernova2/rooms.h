@@ -160,6 +160,10 @@ public:
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 
 private:
+	void notEnoughMoney();
+	bool _var1;
+	bool _var2;
+	bool _var3;
 };
 
 class Cashbox : public Room {
