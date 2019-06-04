@@ -157,7 +157,8 @@ int WintermuteEngine::init() {
 		}
 	#endif
 
-	if (_gameDescription->adDesc.flags & GF_3D_ASSETS) {
+	Common::ArchiveMemberList actors3d;
+	if (BaseEngine::instance().getFileManager()->listMatchingMembers(actors3d, "*.act3d")) {
 		GUI::MessageDialog dialog("This game requires 3D characters support, which is not implemented yet.", "Start anyway", "Cancel");
 		if (dialog.runModal() != GUI::kMessageOK) {
 			delete _game;

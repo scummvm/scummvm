@@ -393,7 +393,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Pizza Morgana
 	WME_WINENTRY("pizzamorgana", "",
 		WME_ENTRY2s("english.dcp", "7fa6149bb44574109668ce585d6c41c9", 9282608,
-					"data.dcp",  "a69994c463ff5fcc6fe1800662f5b7d0", 34581370), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO | GF_3D_ASSETS, WME_1_9_0),
+					"data.dcp",  "a69994c463ff5fcc6fe1800662f5b7d0", 34581370), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_0),
 	// Project: Doom
 	WME_WINENTRY("projectdoom", "",
 		WME_ENTRY1s("data.dcp", "d5894b65a40706845434b99870bcab92", 99223761), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
@@ -583,7 +583,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("Zilm", "1.0",
 		WME_ENTRY1s("data.dcp",  "098dffaf03d8adbb4cb5633e4733e63c", 351726), Common::EN_ANY, ADGF_UNSTABLE, LATEST_VERSION),
 	WME_WINENTRY("zbang", "0.89",
-		WME_ENTRY1s("data.dcp",  "db9101f08d12ab95c81042d154bb0ea8", 7210044), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO | GF_3D_ASSETS, WME_1_7_0),
+		WME_ENTRY1s("data.dcp",  "db9101f08d12ab95c81042d154bb0ea8", 7210044), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_7_0),
 	{
 		AD_TABLE_END_MARKER,
 		LATEST_VERSION
