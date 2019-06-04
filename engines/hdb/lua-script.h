@@ -48,6 +48,7 @@ private:
 
 	bool registerExtensions();
 	bool executeChunk(const char *chunk, uint chunkSize, const Common::String &chunkName) const;
+	void stripComments(char *chunk);
 };
 
 }
