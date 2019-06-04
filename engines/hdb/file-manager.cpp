@@ -120,6 +120,28 @@ Common::SeekableReadStream *FileMan::findFirstData(const char *string, DataType 
 	return new Common::MemoryReadStream(buffer, file->ulength, DisposeAfterUse::YES);
 }
 
+int32 FileMan::getLength(const char *string, DataType type) {
+	Common::String fileString;
+	MPCEntry *file = NULL;
+
+	// Find MPC Entry
+	for (MPCIterator it = _dir.begin(); it != _dir.end(); it++) {
+		fileString = (*it)->filename;
+		if (fileString.contains(string)) {
+			if ((*it)->type == type) {
+				file = *it;
+				break;
+			}
+		}
+	}
+
+	if (file == NULL) {
+		return 0;
+	}
+
+	return file->ulength;
+}
+
 /*
 MPCEntry **FileMan::findNextData(MPCIterator begin) {
 	Common::String fileString;

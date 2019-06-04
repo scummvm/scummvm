@@ -40,7 +40,7 @@ LuaScript::~LuaScript() {
 	}
 }
 
-bool LuaScript::init() {
+/*bool LuaScript::init() {
 	// Create new lua_State and initialize the Std Libs
 	_state = luaL_newstate();
 	if (!_state || !registerStdLibs()) {
@@ -51,9 +51,117 @@ bool LuaScript::init() {
 	_systemInit = true;
 
 	return true;
+}*/
+
+struct VarInit {
+	char *realName;
+	char *luaName;
+} luaGlobalStrings[] = {
+	{ "Map00",	"MAP00"},
+	{NULL, NULL}
+};
+
+// For AI States, to be implemented
+struct NumberInit {
+	int value;
+	char *luaName;
+} luaGlobalValues[] = {
+	{NULL, NULL}
+};
+
+struct FuncInit {
+	char *luaName;
+	int (*function) (lua_State *L);
+} luaFuncs[] = {
+	{NULL, NULL}
+};
+
+bool LuaScript::initScript(Common::SeekableReadStream *stream, const char *name, int32 length) {
+
+	if (_systemInit) {
+		return false;
+	}
+
+	// Initialize Lua Environment
+	_state = lua_open();
+	if (_state == NULL) {
+		error("Couldn't initialize Lua script.");
+		return false;
+	}
+	luaL_openlibs(_state);
+
+	_systemInit = true;
+
+	// Register Extensions
+	for (int i = 0; luaFuncs[i].luaName; i++) {
+		lua_register(_state, luaFuncs[i].luaName, luaFuncs[i].function);
+	}
+
+	// Register Lua Globals
+
+	for (int i = 0; luaGlobalStrings[i].realName; i++) {
+		lua_pushstring(_state, luaGlobalStrings[i].realName);
+		lua_setglobal(_state, luaGlobalStrings[i].luaName);
+	}
+
+	for (int j = 0; luaGlobalValues[j].luaName; j++) {
+		lua_pushnumber(_state, luaGlobalValues[j].value);
+		lua_setglobal(_state, luaGlobalValues[j].luaName);
+	}
+
+	/*
+		TODO: Set the last mapName as a global
+		after implementing the map-manager.
+	*/
+
+	// Set the lowest printable line
+	lua_pushnumber(_state, 480 - 14);
+	lua_setglobal(_state, "BOTTOM_Y");
+
+	/*
+		TODO: Load the sound names and entity
+		spawn names into Lua once they are implemented.
+	*/
+
+	/*
+		TODO: Find what from where the global.lua
+		is to be loaded, and execute it.
+	*/
+
+	// Load script and execute it
+
+	if (!executeMPC(stream, "level code", length)) {
+		error("LuaScript::initScript: 'level code' failed to execute");
+		return false;
+	}
+
+	lua_getglobal(_state, "level_init");
+	lua_pcall(_state, 0, 0, 0);
+
+	return true;
 }
 
-bool LuaScript::executeFile(const Common::String &filename) {
+bool LuaScript::executeMPC(Common::SeekableReadStream *stream, const char *name, int32 length) {
+
+	if (!_systemInit) {
+		return false;
+	}
+
+	const char *chunk = new char[length];
+	stream->read((void *)chunk, length);
+
+	if (!executeChunk(chunk, length, name)) {
+		delete[] chunk;
+		
+		return false;
+	}
+
+	delete[] chunk;
+
+	return true;
+}
+
+/*bool LuaScript::executeFile(const Common::String &filename) {
 	
 	if (!_systemInit) {
 		return false;
@@ -80,13 +188,7 @@ bool LuaScript::executeFile(const Common::String &filename) {
 	delete file;
 
 	return true;
-}
-
-bool LuaScript::registerStdLibs() {
-	luaL_openlibs(_state);
-	
-	return true;
-}
+}*/
 
 bool LuaScript::executeChunk(const char *chunk, uint chunkSize, const Common::String &chunkName) const {
 	
@@ -110,7 +212,6 @@ bool LuaScript::executeChunk(const char *chunk, uint chunkSize, const Common::St
 		return false;
 	}
 
-	debug("Chunk successfully executed");
 	return true;
 }
 

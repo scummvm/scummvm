@@ -84,6 +84,7 @@ public:
 	*/
 
 	Common::SeekableReadStream *findFirstData(const char *string, DataType type);
+	int32 getLength(const char *string, DataType type);
 	//MPCEntry **findNextData(MPCIterator it);
 	//int findAmount(char *string, DataType type);
 
