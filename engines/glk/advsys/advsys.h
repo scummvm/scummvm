@@ -34,7 +34,22 @@ namespace AdvSys {
  */
 class AdvSys : public GlkAPI {
 private:
+	winid_t _window;
+private:
+	/**
+	 * Engine initialization
+	 */
+	bool initialize();
 
+	/**
+	 * Engine cleanup
+	 */
+	void deinitialize();
+
+	/**
+	 * Print a string to the window
+	 */
+	void print(const char *msg);
 public:
 	/**
 	 * Constructor

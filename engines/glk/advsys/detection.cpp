@@ -22,6 +22,8 @@
 
 #include "glk/advsys/detection.h"
 #include "glk/advsys/detection_tables.h"
+#include "glk/advsys/game.h"
+#include "common/debug.h"
 #include "common/file.h"
 #include "common/md5.h"
 #include "engines/game.h"
@@ -62,6 +64,12 @@ bool AdvSysMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &
 		Common::File gameFile;
 		if (!gameFile.open(*file))
 			continue;
+
+		Header hdr(&gameFile);
+		if (!hdr._valid)
+			continue;
+
+		gameFile.seek(0);
 		Common::String md5 = Common::computeStreamMD5AsString(gameFile, 5000);
 		int32 filesize = gameFile.size();
 
@@ -76,6 +84,15 @@ bool AdvSysMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &
 			DetectedGame gd(p->_gameId, gameDesc.description, Common::EN_ANY, Common::kPlatformUnknown);
 			gd.addExtraEntry("filename", file->getName());
 
+			gameList.push_back(gd);
+		} else {
+			if (gDebugLevel > 0) {
+				// Print an entry suitable for putting into the detection_tables.h
+				debug("ENTRY0(\"%s\", \"%s\", %u),", filename.c_str(), md5.c_str(), (uint)filesize);
+			}
+
+			const PlainGameDescriptor &desc = ADVSYS_GAME_LIST[0];
+			DetectedGame gd(desc.gameId, desc.description, Common::UNK_LANG, Common::kPlatformUnknown);
 			gameList.push_back(gd);
 		}
 	}

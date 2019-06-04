@@ -21,12 +21,37 @@
  */
 
 #include "glk/advsys/advsys.h"
+#include "common/translation.h"
 
 namespace Glk {
 namespace AdvSys {
 
 void AdvSys::runGame() {
-	// TODO
+	if (!initialize()) {
+		GUIErrorMessage(_("Could not start AdvSys game"));
+		return;
+	}
+
+	// TODO: play game
+	print("ADVINT v1.2 - Copyright (c) 1986, by David Betz\n");
+
+
+	deinitialize();
+}
+
+bool AdvSys::initialize() {
+	_window = glk_window_open(0, 0, 0, wintype_TextBuffer, 1);
+	if (_window)
+		return false;
+
+	return true;
+}
+
+void AdvSys::deinitialize() {
+}
+
+void AdvSys::print(const char *msg) {
+	glk_put_string_stream(glk_window_get_stream(_window), msg);
 }
 
 Common::Error AdvSys::loadGameData(strid_t save) {

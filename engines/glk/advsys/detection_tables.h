@@ -37,10 +37,25 @@ struct AdvSysGame {
 };
 
 const PlainGameDescriptor ADVSYS_GAME_LIST[] = {
+	{ "advsys", "AdvSys Game" },
+
+	{ "bustedadvsys", "Busted!" },
+	{ "starshipcolumbus", "Starship Columbus" },
+	{ "elves87", "Elves '87" },
+	{ "keytotime", "The Key to Time" },
+	{ "onehand", "The Sound of One Hand Clapping" },
+	{ "pirating", "Pirating" },
+
 	{ nullptr, nullptr }
 };
 
 const AdvSysGame ADVSYS_GAMES[] = {
+	{ "2246a2686a07c714868680eaf980ece9", "bustedadvsys", 79091 },
+	{ "120d7041dfa000c9a313a8b0ae9cef33", "starshipcolumbus", 76032 },
+	{ "746963e82552f95b5e743fe24ecd1ec3", "elves87", 77947 },
+	{ "892217ab8d902a732e82c55efd22931d", "keytotime", 24941 },
+	{ "3a2a3cc24709ff3272f3a15d09b5e63e", "onehand", 95762 },
+	{  "e55fff2ac51a8a16b979541e8d3210d8", "pirating", 29529 },
 
 	{ nullptr, nullptr, 0 }
 };
