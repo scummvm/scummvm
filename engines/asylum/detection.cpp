@@ -150,12 +150,12 @@ public:
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
 
-protected:
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-
-	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const
+	{
 		return detectGameFilebased(allFiles, fslist, Asylum::fileBasedFallback);
 	}
+protected:
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 };
 
 bool AsylumMetaEngine::hasFeature(MetaEngineFeature f) const {
