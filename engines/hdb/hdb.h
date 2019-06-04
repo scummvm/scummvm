@@ -103,6 +103,8 @@ private:
 
 };
 
+static HDBGame *g_hdb;
+
 }// End of namespace HDB
 
 #endif

@@ -39,6 +39,7 @@ namespace HDB {
 HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	_console = nullptr;
 	_systemInit = false;
+	g_hdb = this;
 	fileMan = new FileMan;
 	lua = new LuaScript;
 
@@ -48,6 +49,7 @@ HDBGame::HDBGame(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst
 
 HDBGame::~HDBGame() {
 	delete _console;
+	delete g_hdb;
 	delete fileMan;
 	delete lua;
 	DebugMan.clearAllDebugChannels();
