@@ -763,9 +763,9 @@ void Cabin::onEntrance() {
 void Cabin::animation() {
 	if (_paid) {
 		if (isSectionVisible(1))
-			_vm->renderImage(1 + 128);
+			setSectionVisible(1, kShownFalse);
 		else
-			_vm->renderImage(1);
+			setSectionVisible(1, kShownTrue);
 	}
 	_gm->setAnimationTimer(4);
 }
@@ -995,9 +995,19 @@ CulturePalace::CulturePalace(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 20;
 	_id = CULTURE_PALACE;
 	_shown[0] = kShownTrue;
+
+	_var1 = false;
+	_var2 = false;
+	_var3 = false;
+
+	_objectState[0] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 1, 1, 0, CASHBOX, 6);
+	_objectState[1] = Object(_id, kStringCulturePalace, kStringFascinating, NULLOBJECT, NULLTYPE, 0, 0, 0);
+	_objectState[2] = Object(_id, kStringTaxis, kStringTaxisDescription, NULLOBJECT, NULLTYPE, 3, 3, 0);
+	_objectState[3] = Object(_id, kStringAxacussan, kStringDefaultDescription, AXACUSSER, TALK, 4, 4, 0);
+	_objectState[4] = Object(_id, kStringParticipationCard, kStringDefaultDescription, CARD, TAKE, 255, 255, 0);
 }
 
 void CulturePalace::onEntrance() {
@@ -1005,9 +1015,143 @@ void CulturePalace::onEntrance() {
 }
 
 void CulturePalace::animation() {
+	static int i;
+	if (isSectionVisible(4))
+		setSectionVisible(4, kShownFalse);
+	else
+		setSectionVisible(4, kShownTrue);
+	i--;
+	if (i <= 0) {
+		if (isSectionVisible(3)) {
+			setSectionVisible(3, kShownFalse);
+			i = 4;
+		} else {
+			setSectionVisible(3, kShownTrue);
+			i = 10;
+		}
+	}
+	_gm->setAnimationTimer(2);
+}
+
+void CulturePalace::notEnoughMoney() {
+	_gm->reply(kStringWhat, 2, 1);
+	_gm->reply(kStringNotInformed, 2, 1);
+	_vm->renderImage(1 + 128);
+	setSectionVisible(2, kShownFalse);
 }
 
 bool CulturePalace::interact(Action verb, Object &obj1, Object &obj2) {
+	static StringId dial1[4] = {
+		kStringHorstHummel,
+		kStringNiceWeather,
+		kStringTellTicket,
+		kStringForMusicConcert
+	};
+	static byte dials1[] = {1, 1, 2};
+
+	static StringId dial2[2] = {
+		kStringHereIsXa,
+		kStringYouAreCrazy
+	};
+	static StringId dial3[4] = {
+		kString500Xa,
+		kString1000Xa,
+		kString5000Xa,
+		kString10000Xa
+	};
+
+	int e;
+	if (verb == ACTION_TALK && obj1._id == AXACUSSER) {
+		if (_var3) {
+			_vm->renderImage(1);
+			_gm->reply(kStringThankYou, 2, 1);
+		} else if (_var2) {
+			_vm->renderImage(1);
+			_gm->reply(kStringWhatYouOffer, 2, 1);
+		} else {
+			_gm->say(kStringHello2);
+			_vm->renderImage(1);
+			_gm->reply(kStringWhatYouWant, 2, 1);
+			addSentence(1, 1);
+			switch (_gm->dialog(3, dials1, dial1, 1)) {
+			case 0:
+				_gm->reply(kStringWhoAreYou, 2, 1);
+				_gm->say(kStringHorstHummel2);
+				_gm->reply(kStringNeverHeard, 2, 1);
+				_gm->say(kStringYouDontKnow);
+				_gm->say(kStringImOnTV);
+				_gm->reply(kStringIDontKnow, 2, 1);
+				_gm->say(kStringFunny);
+				break;
+			case 1:
+				_gm->reply(kStringAha, 2, 1);
+				break;
+			case 2:
+				_gm->reply(kStringICan, 2, 1);
+				_gm->say(kStringFromWhom);
+				_gm->reply(kStringCost, 2, 1);
+				if(!_gm->_state._money)
+					addSentence(2, 1);
+				else if (_gm->dialog(2, _gm->_dials, dial2, 0)) {
+					_gm->reply(kStringAsYouSay, 2, 1);
+					addSentence(2, 1);
+				} else {
+					_gm->takeMoney(-1);
+					_gm->reply(kStringGetCard, 2, 1);
+					_gm->reply(kStringOnlyParticipation, 2, 1);
+					_gm->say(kStringWhatForIt);
+					_gm->reply(kStringMakeOffer, 2, 1);
+					_var2 = true;
+				}
+				break;
+			}
+		}
+		_vm->renderImage(1 + 128);
+		setSectionVisible(2, kShownFalse);
+		_gm->drawStatus();
+		_gm->drawInventory();
+		_gm->drawMapExits();
+		_gm->drawCommandBox();
+	}
+	else if (verb == ACTION_GIVE && obj2._id == AXACUSSER && _var2) {
+		_vm->renderImage(1);
+		if (obj1._id != MONEY)
+			notEnoughMoney();
+		else {
+			if (_gm->_state._money >= 10000) {
+				if ((e = _gm->dialog(4, _gm->_dials, dial3, 0)) >= 2) {
+					_gm->reply(kStringGoodOffer, 2, 1);
+					_vm->playSound(kAudioSuccess);
+					_gm->reply(kStringGiveCard, 2, 1);
+					if (e == 2)
+						_gm->takeMoney(-5000);
+					else
+						_gm->takeMoney(-10000);
+					_gm->takeObject(*getObject(4));
+					_vm->renderImage(1 + 128);
+					setSectionVisible(2, false);
+					_gm->reply(kStringIdiot, 0, 0);
+					_var2 = false;
+					_var3 = true;
+					_gm->_rooms[CASHBOX]->addSentence(1,1);
+					_gm->drawStatus();
+					_gm->drawInventory();
+					_gm->drawMapExits();
+					_gm->drawCommandBox();
+				} else {
+					notEnoughMoney();
+					_gm->drawStatus();
+					_gm->drawInventory();
+					_gm->drawMapExits();
+					_gm->drawCommandBox();
+				}
+			}
+			else 
+				notEnoughMoney();
+		}
+	}
+	else 
+		return false;
 	return true;
 }
 
