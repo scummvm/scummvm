@@ -36,6 +36,7 @@ enum AudioId {
 	kAudioTaxiOpen,
 	kAudioTaxiLeaving,
 	kAudioTaxiArriving,
+	kAudioKiosk,
 	kAudioNumSamples = 10 //TODO find out how many samples there are
 };
 
