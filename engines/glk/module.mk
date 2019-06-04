@@ -25,6 +25,8 @@ MODULE_OBJS := \
 	window_pair.o \
 	window_text_buffer.o \
 	window_text_grid.o \
+	advsys/advsys.o \
+	advsys/detection.o \
 	alan2/alan2.o \
 	alan2/decode.o \
 	alan2/detection.o \
