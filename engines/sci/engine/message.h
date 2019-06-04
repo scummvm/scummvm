@@ -56,6 +56,7 @@ public:
 	}
 
 	int getModule() const { return _module; }
+	void setModule(int module) { _module = module; }
 
 private:
 	int _module;

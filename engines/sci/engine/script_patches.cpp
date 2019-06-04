@@ -2091,28 +2091,6 @@ static const uint16 gk1Day5MoselyVevePointsPatch[] = {
 	PATCH_END
 };
 
-// GK1 english pc floppy has a missing message when showing certain items to
-//  Magentia in room 290 such as the flashlight. This triggers an error message.
-//  We fix this by passing GkMessager:say the correct cond as later versions do.
-//
-// Applies to: English PC Floppy 1.0
-// Responsible method: magentia:doVerb
-// Fixes bug: #10782
-static const uint16 gk1ShowMagentiaItemSignature[] = {
-	SIG_MAGICDWORD,
-	0x76,                           // push0
-	0x39, 0x23,                     // pushi 23 [ invalid message cond ]
-	0x76,                           // push0
-	0x81, 0x5b,                     // lag global[5b] [ GkMessager ]
-	SIG_END
-};
-
-static const uint16 gk1ShowMagentiaItemPatch[] = {
-	PATCH_ADDTOOFFSET(+1),
-	0x39, 0x00,                     // pushi 0 [ "Does this mean anything to you?" ]
-	PATCH_END
-};
-
 // The day 5 snake attack has speed, audio, and graphics problems.
 //  These occur in all versions and also in Sierra's interpreter.
 //
@@ -2459,85 +2437,6 @@ static const uint16 gk1GranRoomInitPatch[] = {
 	PATCH_END
 };
 
-// Using the money on the fortune teller Lorelei is scripted to respond with
-//  a different message depending on whether she's sitting or dancing. This
-//  feature manages to have three bugs which all occur in Sierra's interpreter.
-//
-// Bug 1: The script transposes the sitting and dancing responses.
-//        We reverse the test so that the right messages are attempted.
-//
-// Bug 2: The script passes the wrong message tuple when Lorelei is sitting
-//        and so a missing message error occurs. We pass the right tuple.
-//
-// Bug 3: The audio36 resource for message 420 2 32 0 1 has the wrong tuple and
-//        so no audio plays when using the money on Lorelei while dancing.
-//        This is a CD resource bug which we fix in the audio loader.
-//
-// Applies to: All PC Floppy and CD versions. TODO: Test Mac, should apply
-// Responsible method: lorelei:doVerb(32)
-// Fixes bug: #10819
-static const uint16 gk1LoreleiMoneySignature[] = {
-	0x30, SIG_UINT16(0x000d),           // bnt 000d [ lorelei is sitting ]
-	SIG_ADDTOOFFSET(+19),
-	SIG_MAGICDWORD,
-	0x7a,                               // push2        [ noun ]
-	0x8f, 0x01,                         // lsp param[1] [ verb (32d) ]
-	0x39, 0x03,                         // pushi 03     [ cond ]
-	SIG_END
-};
-
-static const uint16 gk1LoreleiMoneyPatch[] = {
-	0x2e, PATCH_UINT16(0x000d),         // bt 000d [ lorelei is dancing ]
-	PATCH_ADDTOOFFSET(+22),
-	0x39, 0x02,                         // pushi 02 [ correct cond ]
-	PATCH_END
-};
-
-// Using "Operate" on the fortune teller Lorelei's right chair causes a
-//  missing message error when she's standing in english pc floppy.
-//  We fix the message tuple as Sierra did in later versions.
-//
-// Applies to: English PC Floppy 1.0
-// Responsible method: chair2:doVerb(8)
-// Fixes bug: #10820
-static const uint16 gk1OperateLoreleiChairSignature[] = {
-	// we have to reach far ahead of the doVerb method for a unique byte
-	//  sequence to base a signature off of. chair2:doVerb has no unique bytes
-	//  and is surrounded by doVerb methods which are duplicates of others.
-	SIG_MAGICDWORD,
-	0x72, SIG_UINT16(0x023a),           // lofsa sPickupVeil
-	0x36,                               // push
-	SIG_ADDTOOFFSET(+913),
-	0x39, 0x03,                         // pushi 03 [ cond ]
-	0x81, 0x5b,                         // lag global[5b] [ gkMessager ]
-	SIG_END
-};
-
-static const uint16 gk1OperateLoreleiChairPatch[] = {
-	PATCH_ADDTOOFFSET(+917),
-	0x39, 0x07,                         // pushi 07 [ correct cond ]
-	PATCH_END
-};
-
-// Using the photocopy of the veve on the artist causes a missing message error
-//  after giving the sketch from the lake and then the original veve file.
-//  This is due to using the wrong verb in the message tuple, which we fix.
-//
-// Applies to: All PC Floppy and CD versions. TODO: Test Mac, should apply
-// Responsible method: artist:doVerb(24)
-// Fixes bug: #10818
-static const uint16 gk1ArtistVeveCopySignature[] = {
-	SIG_MAGICDWORD,
-	0x39, 0x30,                         // pushi 30 [ verb: original veve file ]
-	0x39, 0x1f,                         // pushi 1f [ cond ]
-	SIG_END
-};
-
-static const uint16 gk1ArtistVeveCopyPatch[] = {
-	0x39, 0x18,                         // pushi 18 [ verb: veve photocopy ]
-	PATCH_END
-};
-
 // After phoning Wolfgang on day 7, Gabriel is placed beyond room 220's obstacle
 //  boundary and can walk through walls and behind the room. This also occurs in
 //  the original. The script inconsistently uses accessible and inaccessible
@@ -2577,12 +2476,8 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   260, "fix day 5 snake attack (1/2)",                1, gk1Day5SnakeAttackSignature1,     gk1Day5SnakeAttackPatch1 },
 	{  true,   260, "fix day 5 snake attack (2/2)",                1, gk1Day5SnakeAttackSignature2,     gk1Day5SnakeAttackPatch2 },
 	{  true,   280, "fix pathfinding in Madame Cazanoux's house",  1, gk1CazanouxPathfindingSignature,  gk1CazanouxPathfindingPatch },
-	{  true,   290, "fix magentia missing message",                1, gk1ShowMagentiaItemSignature,     gk1ShowMagentiaItemPatch },
 	{  true,   380, "fix Gran's room obstacles and ego flicker",   1, gk1GranRoomInitSignature,         gk1GranRoomInitPatch },
 	{  true,   410, "fix day 2 binoculars lockup",                 1, gk1Day2BinocularsLockupSignature, gk1Day2BinocularsLockupPatch },
-	{  true,   410, "fix artist veve photocopy missing message",   1, gk1ArtistVeveCopySignature,       gk1ArtistVeveCopyPatch },
-	{  true,   420, "fix lorelei chair missing message",           1, gk1OperateLoreleiChairSignature,  gk1OperateLoreleiChairPatch },
-	{  true,   420, "fix lorelei money messages",                  1, gk1LoreleiMoneySignature,         gk1LoreleiMoneyPatch },
 	{  true,   710, "fix day 9 vine swing speech playing",         1, gk1Day9VineSwingSignature,        gk1Day9VineSwingPatch },
 	{  true,   710, "fix day 9 mummy animation (floppy)",          1, gk1MummyAnimateFloppySignature,   gk1MummyAnimateFloppyPatch },
 	{  true,   710, "fix day 9 mummy animation (cd)",              1, gk1MummyAnimateCDSignature,       gk1MummyAnimateCDPatch },
@@ -5824,33 +5719,6 @@ static const uint16 laurabow2PatchFixAct4Initialization[] = {
 	PATCH_END
 };
 
-// LB2 Floppy 1.0 attempts to show a non-existent message when using the
-//  carbon paper on the desk lamp in room 550.
-//
-// deskLamp:<noname300>(39), which is really doVerb, attempts to show a message
-//  for its own noun (5) instead of the expected noun (45) when the lamp is off.
-//  This results in "<Messager> 550: 5, 39, 6, 1 not found".
-//
-// We fix this the way Sierra did in version 1.1 by passing the correct noun.
-//
-// Applies to: English floppy 1.000
-// Responsible method: deskLamp:<noname300>(39), which is really doVerb
-// Fixes bug: #10706
-static const uint16 laurabow2SignatureMissingDeskLampMessage[] = {
-	SIG_MAGICDWORD,
-	0x33, 0x1a,                         // jmp 1a
-	0x38, SIG_UINT16(0x0127),           // pushi 127h [ say, hardcoded as we only patch one floppy version ]
-	0x39, 0x03,                         // pushi 3
-	0x67, 0x1a,                         // pTos 1a [ deskLamp noun (5) ]
-	SIG_END
-};
-
-static const uint16 laurabow2PatchMissingDeskLampMessage[] = {
-	PATCH_ADDTOOFFSET(+7),
-	0x39, 0x2d,                         // pushi 45d [ correct message noun ]
-	PATCH_END
-};
-
 // The armor exhibit rooms (440 and 448) have event handlers that fail to handle
 //  all events, preventing messages from being displayed.
 //
@@ -6196,7 +6064,6 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   550, "CD/Floppy: fix back rub east entrance lockup",   1, laurabow2SignatureFixBackRubEastEntranceLockup, laurabow2PatchFixBackRubEastEntranceLockup },
 	{  true,   550, "CD/Floppy: fix disappearing desk items",         1, laurabow2SignatureFixDisappearingDeskItems,     laurabow2PatchFixDisappearingDeskItems },
 	{  true,    26, "Floppy: fix act 4 initialization",               1, laurabow2SignatureFixAct4Initialization,        laurabow2PatchFixAct4Initialization },
-	{  true,   550, "Floppy: missing desk lamp message",              1, laurabow2SignatureMissingDeskLampMessage,       laurabow2PatchMissingDeskLampMessage },
 	{  true,   440, "CD/Floppy: handle armor room events",            1, laurabow2SignatureHandleArmorRoomEvents,        laurabow2PatchHandleArmorRoomEvents },
 	{  true,   448, "CD/Floppy: handle armor hall room events",       1, laurabow2SignatureHandleArmorRoomEvents,        laurabow2PatchHandleArmorRoomEvents },
 	{  true,   600, "Floppy: fix bugs with meat",                     1, laurabow2FloppySignatureFixBugsWithMeat,        laurabow2FloppyPatchFixBugsWithMeat },
@@ -11873,27 +11740,6 @@ static const uint16 sq4PatchEgaIntroDelay[] = {
 	PATCH_END
 };
 
-// Talking in room 520 results in a missing message due to passing the wrong
-//  modNum to the narrator.
-//
-// Applies to: English PC CD
-// Responsible method: rm520:doVerb(2)
-// Fixes bug #10915
-static const uint16 sq4CdSignatureMazeTalkMessage[] = {
-	0x38, SIG_SELECTOR16(modNum),       // pushi modNum
-	SIG_MAGICDWORD,
-	0x78,                               // push1
-	0x38, SIG_UINT16(0x01fe),           // pushi 01fe [ incorrect modNum: 510 ]
-	0x38, SIG_SELECTOR16(say),          // pushi say
-	SIG_END,
-};
-
-static const uint16 sq4CdPatchMazeTalkMessage[] = {
-	PATCH_ADDTOOFFSET(+4),
-	0x38, PATCH_UINT16(0x01f4),         // pushi 01f4 [ correct modNum: 500 ]
-	PATCH_END
-};
-
 // Talking to the red shopper in the mall has a 5% chance of a funny message but
 //  this script is broken in the CD version. After the first time the wrong
 //  message tuple is attempted by the narrator as its modNum value is cleared.
@@ -12613,7 +12459,6 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,   406, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
 	{  true,   410, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
 	{  true,   411, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
-	{  true,   520, "CD: maze talk message fix",                      1, sq4CdSignatureMazeTalkMessage,                 sq4CdPatchMazeTalkMessage },
 	{  true,   545, "CD: vohaul pocketpal text+speech fix",           1, sq4CdSignatureVohaulPocketPalTextSpeech,       sq4CdPatchVohaulPocketPalTextSpeech },
 	{  true,   610, "CD: biker bar door fix",                         1, sq4CdSignatureBikerBarDoor,                    sq4CdPatchBikerBarDoor },
 	{  true,   610, "CD: biker hands-on fix",                         3, sq4CdSignatureBikerHandsOn,                    sq4CdPatchBikerHandsOn },

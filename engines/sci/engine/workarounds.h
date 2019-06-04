@@ -113,6 +113,49 @@ extern const SciWorkaroundEntry kScrollWindowAdd_workarounds[];
 
 extern SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *workaroundList, SciCallOrigin *trackOrigin);
 
+enum SciMessageWorkaroundType {
+	MSG_WORKAROUND_NONE,        // only used by terminator or when no workaround was found
+	MSG_WORKAROUND_REMAP,       // use a different tuple instead
+	MSG_WORKAROUND_FAKE,        // use a hard-coded response
+	MSG_WORKAROUND_EXTRACT      // use text from a different record, optionally a substring
+};
+
+enum SciMedia {
+	SCI_MEDIA_ALL,
+	SCI_MEDIA_FLOPPY,
+	SCI_MEDIA_CD
+};
+
+struct SciMessageWorkaroundSolution {
+	SciMessageWorkaroundType type;
+	int module;
+	byte noun;
+	byte verb;
+	byte cond;
+	byte seq;
+	byte talker;
+	uint32 substringIndex;
+	uint32 substringLength;
+	const char *text;
+};
+
+struct SciMessageWorkaroundEntry {
+	SciGameId gameId;
+	SciMedia media;
+	kLanguage language;
+	int roomNumber;
+	int module;
+	byte noun;
+	byte verb;
+	byte cond;
+	byte seq;
+	SciMessageWorkaroundSolution solution;
+};
+
+extern SciMessageWorkaroundSolution findMessageWorkaround(int module, byte noun, byte verb, byte cond, byte seq);
+extern ResourceId remapAudio36ResourceId(const ResourceId &resourceId);
+extern ResourceId remapSync36ResourceId(const ResourceId &resourceId);
+
 } // End of namespace Sci
 
 #endif // SCI_ENGINE_WORKAROUNDS_H

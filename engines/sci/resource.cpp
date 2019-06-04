@@ -31,6 +31,7 @@
 #include "common/memstream.h"
 #endif
 
+#include "sci/engine/workarounds.h"
 #include "sci/parser/vocabulary.h"
 #include "sci/resource.h"
 #include "sci/resource_intern.h"
@@ -1134,6 +1135,12 @@ Common::List<ResourceId> ResourceManager::listResources(ResourceType type, int m
 }
 
 Resource *ResourceManager::findResource(ResourceId id, bool lock) {
+	// remap known incorrect audio36 and sync36 resource ids
+	if (id.getType() == kResourceTypeAudio36) {
+		id = remapAudio36ResourceId(id);
+	} else if (id.getType() == kResourceTypeSync36) {
+		id = remapSync36ResourceId(id);
+	}
 	Resource *retval = testResource(id);
 
 	if (!retval)
