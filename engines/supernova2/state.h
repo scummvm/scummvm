@@ -33,6 +33,8 @@ namespace Supernova2 {
 
 const int32 kMaxTimerValue = 0x7FFFFFFF;
 
+enum EventFunction { kNoFn, kSoberFn};
+
 struct GameState {
 	int16 _money;
 	bool _addressKnown;
@@ -40,6 +42,8 @@ struct GameState {
 	bool _poleMagnet;
 	char _admission;
 	bool _tipsy;
+	EventFunction _eventCallback;
+	uint32 _eventTime;
 };
 
 class Inventory {
@@ -197,6 +201,8 @@ public:
 	void taxiUnknownDestination();
 	void taxiPayment(int price, int destination);
 	void playerTakeOut();
+	void sober();
+	void playCD();
 
 private:
 	int _prevImgId;

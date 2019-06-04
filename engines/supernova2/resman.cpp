@@ -122,6 +122,7 @@ void ResourceManager::initSoundFiles() {
 	}
 
 	_musicIntroBuffer.reset(convertToMod("ms2_data.052"));
+	_musicMadMonkeysBuffer.reset(convertToMod("ms2_data.056"));
 	_musicOutroBuffer.reset(convertToMod("ms2_data.049"));
 }
 
@@ -171,6 +172,9 @@ Audio::AudioStream *ResourceManager::getSoundStream(MusicId index) {
 	case kMusicIntro:
 		_musicIntro.reset(Audio::makeProtrackerStream(_musicIntroBuffer.get()));
 		return _musicIntro.get();
+	case kMusicMadMonkeys:
+		_musicMadMonkeys.reset(Audio::makeProtrackerStream(_musicMadMonkeysBuffer.get()));
+		return _musicMadMonkeys.get();
 	case kMusicOutro:
 		_musicOutro.reset(Audio::makeProtrackerStream(_musicOutroBuffer.get()));
 		return _musicOutro.get();

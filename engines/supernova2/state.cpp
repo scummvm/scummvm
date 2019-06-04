@@ -41,6 +41,8 @@ bool GameManager::serialize(Common::WriteStream *out) {
 	out->writeByte(_state._poleMagnet);
 	out->writeByte(_state._admission);
 	out->writeByte(_state._tipsy);
+	out->writeUint32LE(_state._eventTime);
+	out->writeSint32LE(_state._eventCallback);
 
 	// Inventory
 	out->writeSint32LE(_inventory.getSize());
@@ -72,6 +74,8 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 	_state._poleMagnet = in->readByte();
 	_state._admission = in->readByte();
 	_state._tipsy = in->readByte();
+	_state._eventTime = in->readUint32LE();
+	_state._eventCallback = (EventFunction)in->readSint32LE();
 	_vm->setGameString(kStringMoney, Common::String::format("%d Xa", _state._money));
 
 	_oldTime = g_system->getMillis();
@@ -336,6 +340,8 @@ void GameManager::initState() {
 	_state._poleMagnet = false;
 	_state._admission = 0;
 	_state._tipsy = false;
+	_state._eventTime = kMaxTimerValue;
+	_state._eventCallback = kNoFn;
 }
 
 void GameManager::initRooms() {
@@ -458,6 +464,24 @@ void GameManager::updateEvents() {
 	handleTime();
 	if (_animationEnabled && !_vm->_screen->isMessageShown() && _animationTimer == 0)
 		_currentRoom->animation();
+
+	if (_state._eventCallback != kNoFn && g_system->getMillis() >= _state._eventTime) {
+		_vm->_allowLoadGame = false;
+		_vm->_allowSaveGame = false;
+		_state._eventTime = kMaxTimerValue;
+		EventFunction fn = _state._eventCallback;
+		_state._eventCallback = kNoFn;
+		switch (fn) {
+		case kNoFn:
+			break;
+		case kSoberFn:
+			sober();
+			break;
+		}
+		_vm->_allowLoadGame = true;
+		_vm->_allowSaveGame = true;
+		return;
+	}
 
 	_mouseClicked = false;
 	_keyPressed = false;
@@ -1220,7 +1244,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		default:
 			_vm->renderMessage(kStringCDNotInserted);
 		}
-	} else if (verb == ACTION_OPEN && Object::combine(obj1, obj2, DISCMAN, PLAYER)) {
+	} else if (verb == ACTION_OPEN && obj1._id == PLAYER) {
 		switch (_state._admission) {
 		case 1:
 			_state._admission = 0;
@@ -1235,9 +1259,54 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		}
 	} else if (verb == ACTION_OPEN && obj1._id == DISCMAN) {
 		_vm->renderMessage(kStringWhatFor);
+	} else if (verb == ACTION_PRESS && obj1._id == DISCMAN) {
+		_vm->renderMessage(kStringMMCD);
+		playCD();
+	} else if (verb == ACTION_PRESS && obj1._id == PLAYER) {
+		switch (_state._admission) {
+		case 1:
+			_vm->renderMessage(kStringChipEmpty);
+			break;
+		case 2:
+			_vm->renderMessage(kStringListeningToCD);
+			playCD();
+			break;
+		default:
+			_vm->renderMessage(kStringNoChip);
+		}
+	} else if ((verb == ACTION_OPEN || verb == ACTION_USE) &&
+			   obj1._id == BOTTLE && (obj1._type & CARRIED)) {
+		_vm->renderMessage(kStringTipsy);
+		_state._tipsy = true;
+		_state._eventTime = g_system->getMillis() + 60000;
+		_state._eventCallback = kSoberFn;
+	} else if (verb == ACTION_LOOK && obj1._id == MUSCARD) {
+		_vm->setCurrentImage(30);
+		_vm->renderImage(0);
+		//karte_an = true
+		waitOnInput(100000);
+		//karte_an = false
+		_vm->removeMessage();
+		_vm->renderRoom(*_currentRoom);
+		drawMapExits();
+		drawInventory();
+		drawStatus();
+		drawCommandBox();
 	} else
 		return false;
 	return true;
+}
+
+void GameManager::playCD() {
+		CursorMan.showMouse(false);
+		_vm->playSound(kMusicMadMonkeys);
+		Common::KeyCode k = Common::KEYCODE_INVALID;
+		while(_vm->_sound->isPlaying())
+			if (waitOnInput(1, k))
+				break;
+		_vm->_sound->stop();
+		_vm->removeMessage();
+		CursorMan.showMouse(true);
 }
 
 void GameManager::handleInput() {
@@ -1541,5 +1610,11 @@ void GameManager::playerTakeOut() {
 	o->_section = 0;
 	takeObject(*o);
 }
+
+void GameManager::sober()
+{
+	_state._tipsy = false;
+}
+
 }
 
