@@ -864,13 +864,130 @@ Kiosk::Kiosk(Supernova2Engine *vm, GameManager *gm) {
 }
 
 void Kiosk::onEntrance() {
-	setRoomSeen(true);
+	static StringId dialEntry[2] = {
+		kStringGoodEvening,
+		kStringHello
+	};
+
+	if (!hasSeen()) {
+		_gm->dialog(2, _gm->_dials, dialEntry, 0);
+		_vm->renderImage(6);
+		_vm->playSound(kAudioKiosk);
+		_gm->wait(8);
+		_vm->renderImage(6 + 128);
+		_gm->reply(kStringScaredMe, 1, 1 +128);
+		_gm->say(kStringHowSo);
+		_gm->reply(kStringDisguise, 1, 1 +128);
+		_gm->say(kStringWhatDisguise);
+		_gm->reply(kStringStopPretending, 1, 1 +128);
+		_gm->reply(kStringYouDisguised, 1, 1 +128);
+		_gm->say(kStringIAmHorstHummel);
+		_gm->reply(kStringGiveItUp, 1, 1 +128);
+		_gm->reply(kStringGestures, 1, 1 +128);
+		_gm->reply(kStringMovesDifferently, 1, 1 +128);
+		_gm->say(kStringHeIsRobot);
+		_gm->reply(kStringYouAreCrazy, 1, 1 +128);
+		_gm->say(kStringYouIdiot);
+		_gm->reply(kStringShutUp, 1, 1 +128);
+		_gm->drawStatus();
+		_gm->drawInventory();
+		_gm->drawMapExits();
+		_gm->drawCommandBox();
+		setRoomSeen(true);
+	}
 }
 
 void Kiosk::animation() {
 }
 
 bool Kiosk::interact(Action verb, Object &obj1, Object &obj2) {
+	static StringId dialPrice[2] = {
+		kStringWillTakeIt,
+		kStringTooExpensive
+	};
+	static StringId dialSay[3] = {
+		kStringWouldBuy,
+		kStringMeHorstHummel,
+		kStringHaveMusicChip
+	};
+	static StringId dialSeller[16][3] = {
+		{kStringGreatMask, kStringThreeYears, kNoString},
+		{kStringStrongDrink, kNoString, kNoString},
+		{kStringMusicDevice, kNoString, kNoString},
+		{kStringArtusToothbrush, kStringSellInBulk, kNoString},
+		{kStringRarityBooks, kNoString, kNoString},
+		{kStringEncyclopedia, kStringLargestDictionary, kStringOver400Words},
+		{kStringNotSale, kNoString, kNoString},
+		{kStringGaveOne, kStringExcited, kNoString},
+		{kStringFromGame, kNoString, kNoString},
+		{kStringRobust, kNoString, kNoString},
+		{kStringCheapSwill, kNoString, kNoString},
+		{kStringCheapSwill, kNoString, kNoString},
+		{kStringCheapSwill, kNoString, kNoString},
+		{kStringCheapSwill, kNoString, kNoString},
+		{kStringStickers, kNoString, kNoString},
+		{kStringDishes, kStringUgly, kStringSellsWell}
+	};
+
+	if (verb == ACTION_TAKE && !(obj1._type & CARRIED) &&
+		obj1._id >= BOTTLE && obj1._id <= TOOTHBRUSH) {
+		int price;
+		switch (obj1._id) {
+		case BOTTLE:
+			price = 30;
+			break;
+		case PLAYER:
+			price = 50;
+			break;
+		case TOOTHBRUSH:
+			price = 5;
+			break;
+		default:
+			break;
+		}
+		Common::String format = _vm->getGameString(kStringThatCosts);
+		Common::String cost = Common::String::format(format.c_str(), price);
+		_vm->renderMessage(cost, kMessageTop);
+		_gm->reply(cost.c_str(), 1, 1 +128);
+
+		if (_gm->_state._money < price)
+			_gm->say(dialPrice[1]);
+		else if (_gm->dialog(2, _gm->_dials, dialPrice, 0) == 0) {
+			_gm->takeObject(obj1);
+			_gm->takeMoney(-price);
+		}
+		_gm->drawStatus();
+		_gm->drawInventory();
+		_gm->drawMapExits();
+		_gm->drawCommandBox();
+	}
+	else if (verb == ACTION_LOOK && obj1._id >= BMASK && obj1._id <= FACES) {
+		for(int i = 0; i < 3; i++) {
+			_gm->reply(dialSeller[obj1._id - BMASK][i], 1, 1 + 128);
+		}
+	}
+	else if (verb == ACTION_TALK && obj1._id >= SELLER) {
+		int i = 2;
+		if (getObject(9)->_type & CARRIED)
+			i++;
+		switch (_gm->dialog(i, _gm->_dials, dialSay, 0)) {
+		case 0:
+			_gm->reply(kStringTakeALook, 1, 1 + 128);
+			break;
+		case 1:
+			_gm->reply(kStringNonsense, 1, 1 + 128);
+			break;
+		case 2:
+			_gm->reply(kStringImSorry, 1, 1 + 128);
+			break;
+		}
+		_gm->drawStatus();
+		_gm->drawInventory();
+		_gm->drawMapExits();
+		_gm->drawCommandBox();
+	}
+	else 
+		return false;
 	return true;
 }
 
