@@ -34,13 +34,8 @@ const char *HDBGame::getGameFile() const {
 	return _gameDescription->filesDescriptions[0].fileName;
 }
 
-void HDBGame::setGameFlags() {
-	_voiceless = false;
-	if (_gameDescription->flags & ADGF_DEMO) {
-		_isDemo = true;
-		return;
-	}
-	_isDemo = false;
+uint32 HDBGame::getGameFlags() const {
+	return _gameDescription->flags;
 }
 
 } // End of namespace HDB
