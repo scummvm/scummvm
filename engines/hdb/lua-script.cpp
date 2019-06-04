@@ -147,8 +147,11 @@ bool LuaScript::executeMPC(Common::SeekableReadStream *stream, const char *name,
 		return false;
 	}
 
-	const char *chunk = new char[length];
+	char *chunk = new char[length];
 	stream->read((void *)chunk, length);
+
+	// Remove C-Style comments from script
+	stripComments(chunk);
 
 	if (!executeChunk(chunk, length, name)) {
 		delete[] chunk;
@@ -215,4 +218,16 @@ bool LuaScript::executeChunk(const char *chunk, uint chunkSize, const Common::St
 	return true;
 }
 
+void LuaScript::stripComments(char *chunk) {
+	uint32 offset = 0;
+
+	while (chunk[offset]) {
+		if (chunk[offset] == '/' && chunk[offset + 1] == '/') {
+			while (chunk[offset] != 0x0d) {
+				chunk[offset++] = ' ';
+			}
+		}
+		offset++;
+	}
+}
 }
