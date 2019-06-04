@@ -53,6 +53,15 @@ LuaScript::~LuaScript() {
 	return true;
 }*/
 
+/*
+	Called from Lua, this will pop into the menu
+*/
+
+static int gotoMenu(lua_State *L) {
+	g_hdb->changeGameState();
+	return 0;
+}
+
 struct VarInit {
 	char *realName;
 	char *luaName;
@@ -73,6 +82,7 @@ struct FuncInit {
 	char *luaName;
 	int (*function) (lua_State *L);
 } luaFuncs[] = {
+	{"GotoMenu", gotoMenu},
 	{NULL, NULL}
 };
 
