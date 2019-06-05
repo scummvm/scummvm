@@ -113,6 +113,7 @@ public:
 	void renderMessage(const Common::String &text, MessagePosition position = kMessageNormal);
 	void renderMessage(StringId stringId, MessagePosition position = kMessageNormal,
 					   Common::String var1 = "", Common::String var2 = "");
+	void renderMessage(StringId stringId, int x, int y);
 	void removeMessage();
 	void renderText(const uint16 character);
 	void renderText(const char *text);

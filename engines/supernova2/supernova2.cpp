@@ -291,6 +291,10 @@ void Supernova2Engine::renderMessage(StringId stringId, MessagePosition position
 	_gm->_messageDuration = (getGameString(stringId).size() + 20) * _textSpeed / 10;
 	_screen->renderMessage(stringId, position, var1, var2);
 }
+void Supernova2Engine::renderMessage(StringId stringId, int x, int y) {
+	_gm->_messageDuration = (getGameString(stringId).size() + 20) * _textSpeed / 10;
+	_screen->renderMessage(getGameString(stringId).c_str(), kMessageNormal, x, y);
+}
 
 void Supernova2Engine::removeMessage() {
 	_screen->removeMessage();

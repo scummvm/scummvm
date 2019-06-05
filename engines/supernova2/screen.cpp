@@ -181,7 +181,7 @@ Screen::Screen(Supernova2Engine *vm, ResourceManager *resMan)
 	, _textCursorY(0)
 	, _messageShown(false) {
 
-	CursorMan.replaceCursor(_resMan->getImage(ResourceManager::kCursorNormal),
+	CursorMan.replaceCursor(_resMan->getCursor(ResourceManager::kCursorNormal),
 							16, 16, 0, 0, kColorCursorTransparent);
 	CursorMan.replaceCursorPalette(initVGAPalette, 0, 16);
 	CursorMan.showMouse(true);
@@ -203,7 +203,7 @@ void Screen::setGuiBrightness(int brightness) {
 	_guiBrightness = brightness;
 }
 
-const MS2Image *Screen::getCurrentImage() const {
+MS2Image *Screen::getCurrentImage() {
 	return _currentImage;
 }
 
@@ -460,7 +460,7 @@ int Screen::textWidth(const Common::String &text) {
 	return Screen::textWidth(text.c_str());
 }
 
-void Screen::renderMessage(const char *text, MessagePosition position) {
+void Screen::renderMessage(const char *text, MessagePosition position, int positionX, int positionY) {
 	Common::String t(text);
 	char *row[20];
 	Common::String::iterator p = t.begin();
@@ -516,6 +516,11 @@ void Screen::renderMessage(const char *text, MessagePosition position) {
 		y = 5;
 	} else {
 		y = 142;
+	}
+
+	if (positionX != -1 && positionY != -1) {
+		x = positionX;
+		y = positionY;
 	}
 
 	int message_columns = x - 3;

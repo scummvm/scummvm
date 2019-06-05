@@ -51,8 +51,8 @@ public:
 
 	Audio::SeekableAudioStream *getSoundStream(AudioId index);
 	Audio::AudioStream *getSoundStream(MusicId index);
-	const MS2Image *getImage(int filenumber) const;
-	const byte *getImage(CursorId id) const;
+	MS2Image *getImage(int filenumber);
+	const byte *getCursor(CursorId id) const;
 
 private:
 	void initSoundFiles();
