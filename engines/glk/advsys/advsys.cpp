@@ -35,13 +35,18 @@ void AdvSys::runGame() {
 	// TODO: play game
 	print("ADVINT v1.2 - Copyright (c) 1986, by David Betz\n");
 
-
 	deinitialize();
 }
 
 bool AdvSys::initialize() {
+	// Create a Glk window for the game
 	_window = glk_window_open(0, 0, 0, wintype_TextBuffer, 1);
-	if (_window)
+	if (!_window)
+		return false;
+
+	// Load the game's header
+	_header.load(&_gameFile);
+	if (!_header._valid)
 		return false;
 
 	return true;

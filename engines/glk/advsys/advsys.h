@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "glk/glk_api.h"
+#include "glk/advsys/game.h"
 
 namespace Glk {
 namespace AdvSys {
@@ -35,6 +36,7 @@ namespace AdvSys {
 class AdvSys : public GlkAPI {
 private:
 	winid_t _window;
+	Header _header;
 private:
 	/**
 	 * Engine initialization
