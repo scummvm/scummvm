@@ -48,7 +48,10 @@ public:
 	~PetkaEngine();
 
 	virtual Common::Error run();
+
 	Common::SeekableReadStream *openFile(const Common::String &name, bool addCurrentPath);
+
+	void playVideo(Common::SeekableReadStream *stream);
 
 	QSystem *getQSystem() const;
 	Common::RandomSource &getRnd();
