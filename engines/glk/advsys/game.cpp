@@ -56,21 +56,21 @@ bool Header::load(Common::ReadStream &s) {
 	_name = Common::String((const char *)data + 10, (const char *)data + 28);
 	ms.skip(18);
 	_version = ms.readUint16LE();
-	_wordTable = ms.readUint16LE();
-	_wordTypeTable = ms.readUint16LE();
-	_objectTable = ms.readUint16LE();
-	_actionTable = ms.readUint16LE();
-	_variableTable = ms.readUint16LE();
-	_dataSpace = ms.readUint16LE();
-	_codeSpace = ms.readUint16LE();
-	_dataBlock = ms.readUint16LE();
-	_messageBlock = ms.readUint16LE();
-	_initCode = ms.readUint16LE();
-	_updateCode = ms.readUint16LE();
-	_before = ms.readUint16LE();
-	_after = ms.readUint16LE();
-	_errorHandler = ms.readUint16LE();
-	_saveArea = ms.readUint16LE();
+	_wordTableOffset = ms.readUint16LE();
+	_wordTypeTableOffset = ms.readUint16LE();
+	_objectTableOffset = ms.readUint16LE();
+	_actionTableOffset = ms.readUint16LE();
+	_variableTableOffset = ms.readUint16LE();
+	_dataSpaceOffset = ms.readUint16LE();
+	_codeSpaceOffset = ms.readUint16LE();
+	_dataBlockOffset = ms.readUint16LE();
+	_messageBlockOffset = ms.readUint16LE();
+	_initCodeOffset = ms.readUint16LE();
+	_updateCodeOffset = ms.readUint16LE();
+	_beforeOffset = ms.readUint16LE();
+	_afterOffset = ms.readUint16LE();
+	_errorHandlerOffset = ms.readUint16LE();
+	_saveAreaOffset = ms.readUint16LE();
 	_saveSize = ms.readUint16LE();
 
 	return true;
@@ -89,11 +89,25 @@ bool Game::load(Common::SeekableReadStream &s) {
 	if (_headerVersion < 101 || _headerVersion > MAX_VERSION)
 		error("Wrong version number");
 
-	// Load the needed game data and decrypt it
+	// Load the needed resident game data and decrypt it
+	_residentOffset = _dataBlockOffset * 512;
+	s.seek(_residentOffset);
+
 	_data.resize(_size);
 	if (!s.read(&_data[0], _size))
 		return false;
 	decrypt(&_data[0], _size);
+
+	_residentBase = &_data[0];
+	_wordTable = &_data[_wordTableOffset];
+	_wordTypeTable = &_data[_wordTypeTableOffset];
+	_objectTable = &_data[_objectTableOffset];
+	_actionTable = &_data[_actionTableOffset];
+	_variableTable = &_data[_variableTableOffset];
+	_saveArea = &_data[_saveAreaOffset];
+	_dataSpace = &_data[_dataSpaceOffset];
+	_codeSpace = &_data[_codeSpaceOffset];
+
 
 	return true;
 }

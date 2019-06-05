@@ -45,35 +45,36 @@ public:
  */
 class Header : public Decrypter {
 public:
-	bool _valid;			///< Signals whether header is valid
-	size_t _size;			///< Size in bytes
-	uint _headerVersion;	///< Header structure version
-	Common::String _name;	///< Adventure name
-	uint _version;			///< Adventure version			
-	uint _wordTable;		///< Word table offset
-	uint _wordTypeTable;	///< Word type table offset
-	uint _objectTable;		///< Object table offset
-	uint _actionTable;		///< Action table offset
-	uint _variableTable;	///< Variable table offset
-	uint _dataSpace;		///< Data space offset
-	uint _codeSpace;		///< Code space offset
-	uint _dataBlock;		///< First data block offset
-	uint _messageBlock;		///< First message block offset
-	uint _initCode;			///< Initialization code offset
-	uint _updateCode;		///< Update code offset
-	uint _before;			///< Code offset before verb handler
-	uint _after;			///< Code offset after verb handler
-	uint _errorHandler;		///< Error handler code offset
-	uint _saveArea;			///< Save area offset
-	uint _saveSize;			///< Save area size
+	bool _valid;				///< Signals whether header is valid
+	size_t _size;				///< Resident size in bytes
+	uint _headerVersion;		///< Header structure version
+	Common::String _name;		///< Adventure name
+	uint _version;				///< Adventure version			
+	uint _wordTableOffset;		///< Word table offset
+	uint _wordTypeTableOffset;	///< Word type table offset
+	uint _objectTableOffset;	///< Object table offset
+	uint _actionTableOffset;	///< Action table offset
+	uint _variableTableOffset;	///< Variable table offset
+	uint _dataSpaceOffset;		///< Data space offset
+	uint _codeSpaceOffset;		///< Code space offset
+	uint _dataBlockOffset;		///< First data block offset
+	uint _messageBlockOffset;	///< First message block offset
+	uint _initCodeOffset;		///< Initialization code offset
+	uint _updateCodeOffset;		///< Update code offset
+	uint _beforeOffset;			///< Code offset before verb handler
+	uint _afterOffset;			///< Code offset after verb handler
+	uint _errorHandlerOffset;	///< Error handler code offset
+	uint _saveAreaOffset;		///< Save area offset
+	uint _saveSize;				///< Save area size
 public:
 	/**
 	 * Constructor
 	 */
-	Header() : _valid(false), _size(0), _headerVersion(0), _version(0), _wordTable(0),
-		_wordTypeTable(0), _objectTable(0), _actionTable(0), _variableTable(0),
-		_dataSpace(0), _codeSpace(0), _dataBlock(0), _messageBlock(0), _initCode(0),
-		_updateCode(0), _before(0), _after(0), _errorHandler(0), _saveArea(0), _saveSize(0) {
+	Header() : _valid(false), _size(0), _headerVersion(0), _version(0), _wordTableOffset(0),
+		_wordTypeTableOffset(0), _objectTableOffset(0), _actionTableOffset(0), _variableTableOffset(0),
+		_dataSpaceOffset(0), _codeSpaceOffset(0), _dataBlockOffset(0), _messageBlockOffset(0),
+		_initCodeOffset(0), _updateCodeOffset(0), _beforeOffset(0), _afterOffset(0),
+		_errorHandlerOffset(0), _saveAreaOffset(0), _saveSize(0) {
 	}
 
 	/**
@@ -94,14 +95,25 @@ public:
  */
 class Game : public Header {
 private:
-	uint _saveOffset;
+	uint _residentOffset;
 public:
 	Common::Array<byte> _data;
+	byte* _residentBase;
+	byte* _wordTable;
+	byte* _wordTypeTable;
+	byte* _objectTable;
+	byte* _actionTable;
+	byte* _variableTable;
+	byte* _saveArea;
+	byte* _dataSpace;
+	byte* _codeSpace;
 public:
 	/**
 	 * Constructor
 	 */
-	Game() : Header(), _saveOffset(0) {}
+	Game() : Header(), _residentOffset(0), _residentBase(nullptr), _wordTable(nullptr),
+		_wordTypeTable(nullptr), _objectTable(nullptr), _actionTable(nullptr),
+		_variableTable(nullptr), _saveArea(nullptr) {}
 
 	/**
 	 * Load data for the game
