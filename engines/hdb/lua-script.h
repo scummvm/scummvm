@@ -44,6 +44,8 @@ public:
 
 private:
 	lua_State *_state;
+	int _pcallErrorhandlerRegistryIndex;
+
 	Common::SeekableReadStream* _globalLuaStream;
 	int32 _globalLuaLength;
 	bool _systemInit;

@@ -635,14 +635,18 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, int32 length) {
 	*/
 
 
+	// Register panic callback function
 	lua_atpanic(_state, panicCB);
 
+	// Error handler for lua_pcall calls
+	// The code below contains a local error handler function
 	const char errorHandlerCode[] =
 		"local function ErrorHandler(message) "
 		"   return message .. '\\n' .. debug.traceback('', 2) "
 		"end "
 		"return ErrorHandler";
 
+	// Compile the code
 	if (luaL_loadbuffer(_state, errorHandlerCode, strlen(errorHandlerCode), "PCALL ERRORHANDLER") != 0) {
 		// An error occurred, so dislay the reason and exit
 		error("Couldn't compile luaL_pcall errorhandler:\n%s", lua_tostring(_state, -1));
@@ -650,7 +654,6 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, int32 length) {
 
 		return false;
 	}
-
 
 	// Running the code, the error handler function sets the top of the stack
 	if (lua_pcall(_state, 0, 1, 0) != 0) {
@@ -661,6 +664,10 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, int32 length) {
 		return false;
 	}
 
+	// Place the error handler function in the Lua registry, and remember the index
+	_pcallErrorhandlerRegistryIndex = luaL_ref(_state, LUA_REGISTRYINDEX);
+
+	// Initialize debugging callback
 	lua_sethook(_state, debugHook, LUA_MASKCALL | LUA_MASKLINE, 0);
 
 	// Load GLOBAL_LUA and execute it
@@ -754,6 +761,10 @@ bool LuaScript::executeChunk(const char *chunk, uint chunkSize, const Common::St
 
 		return false;
 	}
+
+	// Error handling function to be executed after the function is put on the stack
+	lua_rawgeti(_state, LUA_REGISTRYINDEX, _pcallErrorhandlerRegistryIndex);
+	lua_insert(_state, -2);
 
 	// Execute Chunk
 	if (lua_pcall(_state, 0, 0, 0)) {
