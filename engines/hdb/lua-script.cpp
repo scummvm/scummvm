@@ -620,21 +620,25 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, const char *name,
 		spawn names into Lua once they are implemented.
 	*/
 
-	/*
-		TODO: Find what from where the global.lua
-		is to be loaded, and execute it.
-	*/
+	// Load GLOBAL_LUA and execute it
 
+	g_hdb->fileMan->findFirstData("GLOBAL_LUA", TYPE_BINARY);
+	
+	//if (!executeMPC(globalStream, "global code", globalLength)) {
+	//	error("LuaScript::initScript: 'global code' failed to execute");
+	//	return false;
+	//}
+	
 	// Load script and execute it
 
 	if (!executeMPC(stream, "level code", length)) {
 		error("LuaScript::initScript: 'level code' failed to execute");
 		return false;
 	}
-
+	
 	lua_getglobal(_state, "level_init");
 	lua_pcall(_state, 0, 0, 0);
-
+	
 	return true;
 }
 
