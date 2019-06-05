@@ -24,7 +24,7 @@
 
 #include "engines/advancedDetector.h"
 
-#include "hdb.h"
+#include "hdb/hdb.h"
 
 namespace HDB {
 const char *HDBGame::getGameId() const { return _gameDescription->gameId; }

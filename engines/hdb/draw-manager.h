@@ -28,7 +28,6 @@
 #include "graphics/surface.h"
 
 #include "hdb/hdb.h"
-#include "hdb/file-manager.h"
 
 namespace HDB {
 
