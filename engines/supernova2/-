@@ -37,7 +37,6 @@ enum EventFunction { kNoFn, kSoberFn};
 
 struct GameState {
 	int16 _money;
-	int32 _startTime;
 	bool _addressKnown;
 	Room *_previousRoom;
 	bool _poleMagnet;

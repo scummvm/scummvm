@@ -42,6 +42,7 @@ enum AudioId {
 	kAudioAppearance1,
 	kAudioAppearance2,
 	kAudioAppearance3,
+	kAudioElevatorBell,
 	kAudioNumSamples
 };
 

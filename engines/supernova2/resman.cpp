@@ -55,7 +55,8 @@ static const AudioInfo audioInfo[kAudioNumSamples] = {
 	{55,     0,      7010},
 	{53,     5010,  30020},
 	{55,     18230,    -1},
-	{55,     17020,    18230}
+	{55,     17020, 18230},
+	{53,     0,     30020}
 };
 
 static const byte mouseNormal[64] = {
