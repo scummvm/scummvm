@@ -625,17 +625,17 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, int32 length) {
 		error("LuaScript::initScript: 'global code' failed to execute");
 		return false;
 	}
-	
+
 	// Load script and execute it
 
 	if (!executeMPC(stream, "level code", length)) {
 		error("LuaScript::initScript: 'level code' failed to execute");
 		return false;
 	}
-	
+
 	lua_getglobal(_state, "level_init");
 	lua_pcall(_state, 0, 0, 0);
-	
+
 	return true;
 }
 
@@ -656,7 +656,7 @@ bool LuaScript::executeMPC(Common::SeekableReadStream *stream, const char *name,
 
 	if (!executeChunk(chunk, length, name)) {
 		delete[] chunk;
-		
+
 		return false;
 	}
 
@@ -667,7 +667,7 @@ bool LuaScript::executeMPC(Common::SeekableReadStream *stream, const char *name,
 
 #if 0
 bool LuaScript::executeFile(const Common::String &filename) {
-	
+
 	if (!_systemInit) {
 		return false;
 	}
@@ -756,7 +756,7 @@ bool LuaScript::executeChunk(const char *chunk, uint chunkSize, const Common::St
 	if (lua_pcall(_state, 0, 0, 0)) {
 		error("An error occured while executing \"%s\": %s.", chunkName.c_str(), lua_tostring(_state, -1));
 		lua_pop(_state, -1);
-		
+
 		return false;
 	}
 
