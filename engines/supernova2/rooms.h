@@ -64,7 +64,7 @@ public:
 
 protected:
 	int _fileNumber;
-	bool _shown[kMaxSection];
+	char _shown[kMaxSection];
 	byte _sentenceRemoved[kMaxDialog];
 	Object _objectState[kMaxObject];
 	RoomId _id;
@@ -138,7 +138,6 @@ public:
 
 private:
 	bool _paid;
-	bool _var2; // Not sure what this variable means yet
 };
 
 class Kiosk : public Room {
@@ -160,9 +159,6 @@ public:
 
 private:
 	void notEnoughMoney();
-	bool _var1;
-	bool _var2;
-	bool _var3;
 };
 
 class Checkout : public Room {
@@ -174,11 +170,6 @@ public:
 
 private:
 	void appearance();
-	bool _var1;
-	int _var2;
-	bool _var3;
-	bool _var4;
-	bool _var5;
 };
 
 class City1 : public Room {
