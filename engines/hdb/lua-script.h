@@ -51,7 +51,7 @@ private:
 	bool registerExtensions();
 	bool executeChunk(const char *chunk, uint chunkSize, const Common::String &chunkName) const;
 	void sanitizeScript(char *chunk);
-	
+
 };
 
 }

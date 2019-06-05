@@ -119,8 +119,8 @@ Common::Error HDBGame::run() {
 	Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	initGraphics(640, 480, &format);
 	_console = new Console();
-	
-	
+
+
 	Common::SeekableReadStream *titleStream = fileMan->findFirstData("monkeylogoscreen", TYPE_PIC);
 	if (titleStream == NULL) {
 		debug("The TitleScreen MPC entry can't be found.");
@@ -147,7 +147,7 @@ Common::Error HDBGame::run() {
 	}
 
 	lua->initScript(luaStream, luaLength);
-	
+
 	while (!shouldQuit()) {
 
 		Common::Event event;
