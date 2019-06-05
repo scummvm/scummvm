@@ -67,6 +67,10 @@ bool HDBGame::init() {
 		error("FileMan::openMPC: Cannot find the hyperspace.mpc data file.");
 		return false;
 	}
+	if (!lua->init()) {
+		error("LuaScript::init: Couldn't load the GLOBAL_LUA code.");
+		return false;
+	}
 
 	gameShutdown = false;
 	_systemInit = true;
