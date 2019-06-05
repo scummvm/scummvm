@@ -737,7 +737,7 @@ bool Cabin::interact(Action verb, Object &obj1, Object &obj2) {
 	}
 	else if (verb == ACTION_USE && obj1._id == CHAIR) {
 		if (_paid) {
-			if (_var2) {
+			if (_shown[kMaxSection - 2]) {
 				_vm->paletteFadeOut();
 				_vm->setCurrentImage(31);
 				_vm->renderImage(0);
@@ -951,10 +951,6 @@ CulturePalace::CulturePalace(Supernova2Engine *vm, GameManager *gm) {
 	_id = CULTURE_PALACE;
 	_shown[0] = kShownTrue;
 
-	_var1 = false;
-	_var2 = false;
-	_var3 = false;
-
 	_objectState[0] = Object(_id, kStringEntrance, kStringDefaultDescription, NULLOBJECT, EXIT, 1, 1, 0, CHECKOUT, 6);
 	_objectState[1] = Object(_id, kStringCulturePalace, kStringFascinating, NULLOBJECT, NULLTYPE, 0, 0, 0);
 	_objectState[2] = Object(_id, kStringTaxis, kStringTaxisDescription, NULLOBJECT, NULLTYPE, 3, 3, 0);
@@ -1013,10 +1009,10 @@ bool CulturePalace::interact(Action verb, Object &obj1, Object &obj2) {
 
 	int e;
 	if (verb == ACTION_TALK && obj1._id == AXACUSSER) {
-		if (_var3) {
+		if (_shown[kMaxSection - 3]) {
 			_vm->renderImage(1);
 			_gm->reply(kStringThankYou, 2, 1);
-		} else if (_var2) {
+		} else if (_shown[kMaxSection - 2]) {
 			_vm->renderImage(1);
 			_gm->reply(kStringWhatYouOffer, 2, 1);
 		} else {
@@ -1052,7 +1048,7 @@ bool CulturePalace::interact(Action verb, Object &obj1, Object &obj2) {
 					_gm->reply(kStringOnlyParticipation, 2, 1);
 					_gm->say(kStringWhatForIt);
 					_gm->reply(kStringMakeOffer, 2, 1);
-					_var2 = true;
+					_shown[kMaxSection - 2] = true;
 				}
 				break;
 			}
@@ -1064,7 +1060,7 @@ bool CulturePalace::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->drawMapExits();
 		_gm->drawCommandBox();
 	}
-	else if (verb == ACTION_GIVE && obj2._id == AXACUSSER && _var2) {
+	else if (verb == ACTION_GIVE && obj2._id == AXACUSSER && _shown[kMaxSection - 2]) {
 		_vm->renderImage(1);
 		if (obj1._id != MONEY)
 			notEnoughMoney();
@@ -1082,8 +1078,8 @@ bool CulturePalace::interact(Action verb, Object &obj1, Object &obj2) {
 					_vm->renderImage(1 + 128);
 					setSectionVisible(2, false);
 					_gm->reply(kStringIdiot, 0, 0);
-					_var2 = false;
-					_var3 = true;
+					_shown[kMaxSection - 2] = false;
+					_shown[kMaxSection - 3] = true;
 					_gm->_rooms[CHECKOUT]->addSentence(1,1);
 					_gm->drawStatus();
 					_gm->drawInventory();
@@ -1114,20 +1110,14 @@ Checkout::Checkout(Supernova2Engine *vm, GameManager *gm) {
 	_id = CHECKOUT;
 	_shown[0] = kShownTrue;
 
-	_var1 = false;
-	_var2 = 0;
-	_var3 = false;
-	_var4 = false;
-	_var5 = false;
-
 	_objectState[0] = Object(_id, kStringEntrance, kStringDefaultDescription, KP_ENTRANCE, EXIT, 0, 0, 0, NULLROOM, 3);
 	_objectState[1] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT, 255, 255, 0, CULTURE_PALACE, 22);
 	_objectState[2] = Object(_id, kStringAxacussian, kStringDefaultDescription, AXACUSSER, TALK, 1, 1, 0);
 }
 
 void Checkout::onEntrance() {
-	if (!_var3) {
-		_var3 = true;
+	if (!_shown[kMaxSection - 3]) {
+		_shown[kMaxSection - 3] = true;
 		_gm->reply(kStringAtMusicContest, 1, 1 + 128);
 		_gm->say(kStringNoImitation);
 		_gm->reply(kStringGoodJoke, 1, 1 + 128);
@@ -1175,11 +1165,11 @@ bool Checkout::interact(Action verb, Object &obj1, Object &obj2) {
 		kStringCheckout13
 	};
 	if (verb == ACTION_WALK && obj1._id == KP_ENTRANCE) {
-		if (_var4) {
+		if (_shown[kMaxSection - 4]) {
 			_vm->renderImage(2);
 			_gm->reply(kStringCheckout14, 0, 0);
 			_vm->renderImage(2 + 128);
-		} else if (_var2 == 0) {
+		} else if (_shown[kMaxSection - 2] == 0) {
 			_vm->renderImage(2);
 			//_gm->reply("atnuhh", 0, 0);
 			_gm->reply(kStringCheckout15, 0, 0);
@@ -1190,13 +1180,13 @@ bool Checkout::interact(Action verb, Object &obj1, Object &obj2) {
 			} else
 				_gm->say(kStringCheckout18);
 			_gm->drawGUI();
-		} else if (_var2 == 1) {
+		} else if (_shown[kMaxSection - 2] == 1) {
 			_gm->reply(kStringCheckout19, 1, 1 + 128);
 		} else {
 			if (_gm->_state._tipsy) {
 				_vm->setCurrentImage(22);
 				_vm->renderImage(0);
-				if (_var5 && _gm->_state._admission >= 2)
+				if (_shown[kMaxSection - 5] && _gm->_state._admission >= 2)
 					appearance();
 				else {
 					_gm->dialog(3, _gm->_dials, dialStage1, 0);
@@ -1252,11 +1242,11 @@ bool Checkout::interact(Action verb, Object &obj1, Object &obj2) {
 					_vm->removeMessage();
 					_gm->say(kStringCheckout29);
 					_vm->renderRoom(*this);
-					if (_var5)
+					if (_shown[kMaxSection - 5])
 						_vm->renderMessage(kStringCheckout30);
 					else
 						_vm->renderMessage(kStringCheckout31);
-					_var4 = true;
+					_shown[kMaxSection - 4] = true;
 					_gm->drawGUI();
 				}
 			} else {
@@ -1267,11 +1257,11 @@ bool Checkout::interact(Action verb, Object &obj1, Object &obj2) {
 			}
 		}
 	} else if (verb == ACTION_GIVE && obj1._id == CHIP && obj2._id == AXACUSSER &&
-			_var2 == 1) {
+			_shown[kMaxSection - 2] == 1) {
 		_gm->_inventory.remove(obj1);
-		_var5 = true;
+		_shown[kMaxSection - 5] = true;
 		_gm->reply(kStringCheckout37, 1, 1 + 128);
-		_var2 = 2;
+		_shown[kMaxSection - 2] = 2;
 		_gm->drawGUI();
 	} else if (verb == ACTION_GIVE && obj1._id == CARD && obj2._id == AXACUSSER) {
 		_gm->_inventory.remove(*_gm->_rooms[CULTURE_PALACE]->getObject(4));
@@ -1279,19 +1269,19 @@ bool Checkout::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->reply(kStringCheckout35, 1, 1 + 128);
 		if (_gm->dialog(2, _gm->_dials, dialCheckout2, 0) == 1) {
 			_gm->reply(kStringCheckout36, 1, 1 + 128);
-			_var2 = 1;
+			_shown[kMaxSection - 2] = 1;
 		} else {
 			_gm->reply(kStringCheckout37, 1, 1 + 128);
-			_var2 = 2;
+			_shown[kMaxSection - 2] = 2;
 		}
 		_gm->drawGUI();
 	} else if (verb == ACTION_TALK && obj1._id == AXACUSSER) {
-		if (_var4) {
+		if (_shown[kMaxSection - 4]) {
 			_gm->say(kStringCheckout38);
 			_gm->reply(kStringCheckout39, 1, 1 + 128);
 			_gm->drawGUI();
 		} else {
-			switch (_var2) {
+			switch (_shown[kMaxSection - 2]) {
 			case 0:
 				addSentence(2, 1);
 				switch (_gm->dialog(3, _gm->_dials, dialCheckout1, 1)) {
