@@ -767,7 +767,7 @@ bool LuaScript::executeChunk(const char *chunk, uint chunkSize, const Common::St
 	lua_insert(_state, -2);
 
 	// Execute Chunk
-	if (lua_pcall(_state, 0, 0, 0)) {
+	if (lua_pcall(_state, 0, 0, -2)) {
 		error("An error occured while executing \"%s\": %s.", chunkName.c_str(), lua_tostring(_state, -1));
 		lua_pop(_state, -1);
 
