@@ -1596,12 +1596,23 @@ Elevator::Elevator(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 24;
 	_id = ELEVATOR;
 	_shown[0] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringSlot, kStringDefaultDescription, SLOT, COMBINABLE, 0, 0, 0);
+	_objectState[1] = Object(_id, kStringBell, kStringDefaultDescription, BELL, PRESS, 1, 1, 0);
+	_objectState[2] = Object(_id, kStringDisplay, kStringDefaultDescription, DISPLAY, NULLTYPE, 2, 2, 0);
+	_objectState[3] = Object(_id, kStringKeypad, kStringKeypadDescription, KEYPAD, PRESS, 3, 3, 0);
+	_objectState[4] = Object(_id, kStringDoor, kStringDefaultDescription, NULLOBJECT, EXIT | OPENABLE | CLOSED, 4, 4, 0, APARTMENT, 3);
+	_objectState[5] = Object(_id, kStringEntrance, kStringDefaultDescription, NULLOBJECT, EXIT | OPENABLE | OPENED | CLOSED, 4, 4, 0, APARTMENT, 3);
 }
 
 void Elevator::onEntrance() {
+	if (_gm->_state._elevatorE)
+		_objectState[5]._type &= ~OPENED;
+	else
+		_objectState[5]._type |= OPENED;
 	setRoomSeen(true);
 }
 
@@ -1609,7 +1620,204 @@ void Elevator::animation() {
 }
 
 bool Elevator::interact(Action verb, Object &obj1, Object &obj2) {
+	static StringId dialLuke1[4] = {
+		kStringElevator2,
+		kStringElevator3,
+		kStringElevator4,
+		kStringElevator5
+	};
+	static byte dialsLuke1[3] = {2,1,1};
+	static StringId dialBoss1[2] = {
+		kStringElevator6,
+		kStringElevator7
+	};
+	char input[3];
+
+	if (verb == ACTION_LOOK && obj1._id == DISPLAY) {
+		Common::String format = _vm->getGameString(kStringElevator1);
+		Common::String display = 
+			Common::String::format(format.c_str(), _gm->_state._elevatorE);
+		_vm->renderMessage(display);
+	} else if (verb == ACTION_PRESS && obj1._id == BELL) {
+		_vm->renderImage(8);
+		_vm->playSound(kAudioElevatorBell);
+		while(_vm->_sound->isPlaying())
+			_gm->wait(1);
+		_vm->renderImage(8 + 128);
+		if (_gm->_state._elevatorNumber == 4 && _gm->_state._elevatorE == 4 && !_gm->_state._toMuseum) {
+			_gm->wait(18);
+			_vm->renderImage(1);
+			_gm->wait(3);
+			_vm->renderImage(2);
+			setSectionVisible(1, kShownFalse);
+			_gm->wait(3);
+			_vm->renderImage(3);
+			setSectionVisible(2, kShownFalse);
+			_gm->reply(kStringWhatYouWant, 4, 3);
+			switch (_gm->dialog(3, dialsLuke1, dialLuke1, 1)) {
+			case 0:
+				_gm->reply(kStringElevator11, 4, 3);
+				_vm->renderImage(2);
+				setSectionVisible(3, kShownFalse);
+				_gm->wait(3);
+				_vm->renderImage(1);
+				setSectionVisible(2, kShownFalse);
+				_gm->wait(3);
+				_vm->renderImage(1 + 128);
+				_vm->renderMessage(kStringElevator12);
+				_gm->waitOnInput(_gm->_messageDuration);
+				_vm->removeMessage();
+				_vm->renderImage(1);
+				_gm->wait(3);
+				_vm->renderImage(2);
+				setSectionVisible(1, kShownFalse);
+				_gm->wait(3);
+				_vm->renderImage(3);
+				setSectionVisible(2, kShownFalse);
+				_gm->reply(kStringElevator13, 4, 3);
+				setSectionVisible(3, kShownFalse);
+				setSectionVisible(4, kShownFalse);
+				_vm->paletteFadeOut();
+				_vm->_system->fillScreen(kColorBlack);
+				_vm->paletteFadeIn();
+				_vm->renderMessage(kStringElevator14);
+				_gm->waitOnInput(_gm->_messageDuration);
+				_vm->removeMessage();
+				_vm->paletteFadeOut();
+				_vm->paletteFadeOut();
+				_vm->setCurrentImage(26);
+				_vm->renderImage(0);
+				_vm->paletteFadeIn();
+				_gm->reply(kStringElevator15, 1, 1 + 128);
+				_gm->say(kStringYes);
+				_gm->reply(kStringElevator16, 1, 1 + 128);
+				_gm->reply(kStringElevator17, 1, 1 + 128);
+				if (_gm->dialog(2, _gm->_dials, dialBoss1, 0)) {
+					_gm->reply(kStringElevator18, 1, 1 + 128);
+					_gm->reply(kStringElevator19, 1, 1 + 128);
+					_gm->say(kStringElevator20);
+				}
+				_gm->reply(kStringElevator21, 1, 1 + 128);
+				_gm->reply(kStringElevator22, 1, 1 + 128);
+				_gm->reply(kStringElevator23, 1, 1 + 128);
+				_gm->reply(kStringElevator24, 1, 1 + 128);
+				_gm->reply(kStringElevator25, 1, 1 + 128);
+				_gm->reply(kStringElevator26, 1, 1 + 128);
+				_gm->reply(kStringElevator27, 1, 1 + 128);
+				_gm->reply(kStringElevator28, 1, 1 + 128);
+				jobDescription();
+				return true;
+			case 1:
+				_gm->reply(kStringElevator59, 4, 3);
+				_vm->renderImage(2);
+				setSectionVisible(3, kShownFalse);
+				setSectionVisible(4, kShownFalse);
+				_gm->wait(3);
+				_vm->renderImage(1);
+				setSectionVisible(2, kShownFalse);
+				_vm->renderImage(1 + 128);
+				break;
+			case 2:
+				_gm->reply(kStringElevator60, 4, 3);
+				_vm->renderImage(2);
+				setSectionVisible(3, kShownFalse);
+				setSectionVisible(4, kShownFalse);
+				_gm->wait(3);
+				_vm->renderImage(1);
+				setSectionVisible(2, kShownFalse);
+				_vm->renderImage(1 + 128);
+				break;
+			}
+			_gm->drawGUI();
+		}
+		else
+			_vm->renderMessage(kStringElevator61);
+	} else
+		return false;
 	return true;
+}
+
+void Elevator::jobDescription() {
+	static StringId dialBoss2[5] = {
+		kStringElevator8,
+		kStringElevator9,
+		kStringElevator10
+	};
+	byte dialsBoss2[4] = {1,1,2,1};
+
+	_gm->reply(kStringElevator29, 1, 1 + 128);
+	_gm->reply(kStringElevator30, 1, 1 + 128);
+	_gm->reply(kStringElevator31, 1, 1 + 128);
+	_gm->reply(kStringElevator32, 1, 1 + 128);
+	_vm->setCurrentImage(30);
+	_vm->renderImage(0);
+	_gm->waitOnInput(72);
+	_gm->reply(kStringElevator33, 0, 0);
+	_gm->reply(kStringElevator34, 0, 0);
+	_gm->reply(kStringElevator35, 0, 0);
+	_gm->reply(kStringElevator36, 0, 0);
+	_gm->reply(kStringElevator37, 0, 0);
+	_gm->reply(kStringElevator38, 0, 0);
+	_gm->reply(kStringElevator39, 0, 0);
+	_gm->reply(kStringElevator40, 0, 0);
+	_gm->reply(kStringElevator41, 0, 0);
+	_gm->reply(kStringElevator42, 0, 0);
+	_gm->reply(kStringElevator43, 0, 0);
+	_gm->reply(kStringElevator44, 0, 0);
+	_gm->reply(kStringElevator45, 0, 0);
+	_gm->reply(kStringElevator46, 0, 0);
+	_gm->reply(kStringElevator47, 0, 0);
+	_gm->reply(kStringElevator48, 0, 0);
+	_vm->setCurrentImage(26);
+	_vm->renderImage(0);
+	_gm->reply(kStringElevator49, 1, 1 + 128);
+	int e;
+	do {
+		addSentence(0, 2);
+		switch (e = _gm->dialog(4, dialsBoss2, dialBoss2, 2)) {
+		case 0:
+			_gm->reply(kStringElevator50, 1, 1 + 128);
+			jobDescription();
+			return;
+		case 1:
+			_gm->reply(kStringElevator51, 1, 1 + 128);
+			break;
+		case 2:
+			_gm->reply(kStringElevator52, 1, 1 + 128);
+			break;
+		}
+		if (e == 1 || e == 2)
+			_gm->reply(kStringElevator53, 1, 1 + 128);
+	} while (e != 3);
+	_gm->reply(kStringElevator54, 1, 1 + 128);
+	_vm->paletteFadeOut();
+	_vm->_system->fillScreen(kColorBlack);
+	_vm->paletteFadeIn();
+	_vm->renderMessage(kStringElevator55);
+	_gm->waitOnInput(_gm->_messageDuration);
+	_vm->removeMessage();
+	_vm->paletteFadeOut();
+	_vm->saveGame(kSleepAutosaveSlot, "autosave");
+	_gm->_inventory.clear();
+	_gm->takeObject(*_gm->_rooms[INTRO]->getObject(3));
+	_gm->takeObject(*_gm->_rooms[INTRO]->getObject(5));
+	_gm->takeObject(*_gm->_rooms[INTRO]->getObject(6));
+	_gm->takeObject(*_gm->_rooms[INTRO]->getObject(8));
+	_vm->setCurrentImage(29);
+	_gm->changeRoom(MUSEUM);
+	_vm->renderImage(0);
+	_vm->paletteFadeIn();
+	_vm->renderMessage(kStringElevator56);
+	_gm->waitOnInput(_gm->_messageDuration);
+	_vm->removeMessage();
+	_vm->renderMessage(kStringElevator57);
+	_gm->waitOnInput(_gm->_messageDuration);
+	_vm->removeMessage();
+	_vm->renderMessage(kStringElevator58);
+	_gm->drawGUI();
+	_gm->_state._startTime = g_system->getMillis() - 2390000;
+	_gm->_state._tipsy = false;
+	_gm->_state._toMuseum = true;
 }
 
 Apartment::Apartment(Supernova2Engine *vm, GameManager *gm) {

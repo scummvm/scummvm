@@ -37,6 +37,7 @@ bool GameManager::serialize(Common::WriteStream *out) {
 
 	// GameState
 	out->writeSint16LE(_state._money);
+	out->writeSint32LE(_state._startTime);
 	out->writeByte(_state._addressKnown);
 	out->writeByte(_state._poleMagnet);
 	out->writeByte(_state._admission);
@@ -44,6 +45,7 @@ bool GameManager::serialize(Common::WriteStream *out) {
 	out->writeByte(_state._dark);
 	out->writeByte(_state._elevatorE);
 	out->writeByte(_state._elevatorNumber);
+	out->writeByte(_state._toMuseum);
 	out->writeUint32LE(_state._eventTime);
 	out->writeSint32LE(_state._eventCallback);
 
@@ -73,6 +75,7 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 
 	// GameState
 	_state._money = in->readSint16LE();
+	_state._startTime = in->readSint32LE();
 	_state._addressKnown = in->readByte();
 	_state._poleMagnet = in->readByte();
 	_state._admission = in->readByte();
@@ -80,6 +83,7 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 	_state._dark = in->readByte();
 	_state._elevatorE = in->readByte();
 	_state._elevatorNumber = in->readByte();
+	_state._toMuseum = in->readByte();
 	_state._eventTime = in->readUint32LE();
 	_state._eventCallback = (EventFunction)in->readSint32LE();
 	_vm->setGameString(kStringMoney, Common::String::format("%d Xa", _state._money));
@@ -342,6 +346,7 @@ void GameManager::initState() {
 	_prevImgId = 0;
 
 	_state._money = 20;
+	_state._startTime = 0;
 	_state._addressKnown = false;
 	_state._previousRoom = _currentRoom;
 	_state._poleMagnet = false;
@@ -350,6 +355,7 @@ void GameManager::initState() {
 	_state._dark = false;
 	_state._elevatorE = 0;
 	_state._elevatorNumber = 0;
+	_state._toMuseum = false;
 	_state._eventTime = kMaxTimerValue;
 	_state._eventCallback = kNoFn;
 }

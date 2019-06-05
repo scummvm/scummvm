@@ -200,6 +200,7 @@ public:
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 
 private:
+	void jobDescription();
 };
 
 class Apartment : public Room {
