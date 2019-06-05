@@ -22,8 +22,8 @@
 
 #include "gui/debugger.h"
 
-#include "hdb.h"
-#include "console.h"
+#include "hdb/hdb.h"
+#include "hdb/console.h"
 
 namespace HDB {
 

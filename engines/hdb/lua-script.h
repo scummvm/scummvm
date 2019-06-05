@@ -23,7 +23,7 @@
 #include "common/system.h"
 #include "common/file.h"
 
-#include "hdb/file-manager.h"
+#include "hdb/hdb.h"
 
 #ifndef HDB_LUA_SCRIPT_H
 #define HDB_LUA_SCRIPT_H
@@ -49,6 +49,7 @@ private:
 	bool registerExtensions();
 	bool executeChunk(const char *chunk, uint chunkSize, const Common::String &chunkName) const;
 	void stripComments(char *chunk);
+	
 };
 
 }

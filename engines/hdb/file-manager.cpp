@@ -19,10 +19,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "hdb/file-manager.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/error.h"
+
+#include "hdb/hdb.h"
 
 namespace HDB {
 
