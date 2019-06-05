@@ -45,8 +45,7 @@ bool AdvSys::initialize() {
 		return false;
 
 	// Load the game's header
-	_header.load(&_gameFile);
-	if (!_header._valid)
+	if (!load(_gameFile))
 		return false;
 
 	return true;

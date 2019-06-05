@@ -26,27 +26,34 @@
 namespace Glk {
 namespace AdvSys {
 
+void Decrypter::decrypt(byte *data, size_t size) {
+	for (; --size; ++data)
+		*data = ~(*data + 30);
+}
+
+/*--------------------------------------------------------------------------*/
+
 #define HEADER_SIZE 62
 
-void Header::load(Common::ReadStream *s) {
+bool Header::load(Common::ReadStream &s) {
 	_valid = false;
 	byte data[HEADER_SIZE];
 
 	// Read in the data
-	if (s->read(data, HEADER_SIZE) != HEADER_SIZE)
-		return;
-	Compression::decompress(data, HEADER_SIZE);
+	if (s.read(data, HEADER_SIZE) != HEADER_SIZE)
+		return false;
+	decrypt(data, HEADER_SIZE);
 	Common::MemoryReadStream ms(data, HEADER_SIZE, DisposeAfterUse::NO);
 
 	// Validate the header
 	_valid = !strncmp((const char*)data + 2, "ADVSYS", 6);
 	if (!_valid)
-		return;
+		return false;
 	
 	_size = ms.readUint16LE();
 	ms.skip(6);
 	_headerVersion = ms.readUint16LE();
-	_name = Common::String((const char*)data + 10, (const char*)data + 28);
+	_name = Common::String((const char *)data + 10, (const char *)data + 28);
 	ms.skip(18);
 	_version = ms.readUint16LE();
 	_wordTable = ms.readUint16LE();
@@ -65,11 +72,30 @@ void Header::load(Common::ReadStream *s) {
 	_errorHandler = ms.readUint16LE();
 	_saveArea = ms.readUint16LE();
 	_saveSize = ms.readUint16LE();
+
+	return true;
 }
 
-void Compression::decompress(byte *data, size_t size) {
-	for (; --size; ++data)
-		*data = ~(*data + 30);
+/*--------------------------------------------------------------------------*/
+
+#define MAX_VERSION 102
+
+bool Game::load(Common::SeekableReadStream &s) {
+	// Load the header
+	s.seek(0);
+	if (!Header::load(s))
+		return false;
+	
+	if (_headerVersion < 101 || _headerVersion > MAX_VERSION)
+		error("Wrong version number");
+
+	// Load the needed game data and decrypt it
+	_data.resize(_size);
+	if (!s.read(&_data[0], _size))
+		return false;
+	decrypt(&_data[0], _size);
+
+	return true;
 }
 
 } // End of namespace AdvSys

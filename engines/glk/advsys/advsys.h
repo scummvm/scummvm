@@ -33,10 +33,9 @@ namespace AdvSys {
 /**
  * AdvSys game interpreter
  */
-class AdvSys : public GlkAPI {
+class AdvSys : public GlkAPI, public Game {
 private:
 	winid_t _window;
-	Header _header;
 private:
 	/**
 	 * Engine initialization

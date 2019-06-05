@@ -23,27 +23,30 @@
 #ifndef GLK_ADVSYS_GAME
 #define GLK_ADVSYS_GAME
 
+#include "common/array.h"
 #include "common/stream.h"
 
 namespace Glk {
 namespace AdvSys {
 
 /**
- * Decompressor
+ * Data decryption
  */
-struct Compression {
+class Decrypter {
+public:
 	/**
-	 * Decompress a data block
+	 * Decrypt a data block
 	 */
-	static void decompress(byte* data, size_t size);
+	static void decrypt(byte* data, size_t size);
 };
 
 /**
  * AdvSys game header
  */
-struct Header {
+class Header : public Decrypter {
+public:
 	bool _valid;			///< Signals whether header is valid
-	size_t _size;			///< Header size in bytes
+	size_t _size;			///< Size in bytes
 	uint _headerVersion;	///< Header structure version
 	Common::String _name;	///< Adventure name
 	uint _version;			///< Adventure version			
@@ -63,7 +66,7 @@ struct Header {
 	uint _errorHandler;		///< Error handler code offset
 	uint _saveArea;			///< Save area offset
 	uint _saveSize;			///< Save area size
-
+public:
 	/**
 	 * Constructor
 	 */
@@ -76,14 +79,34 @@ struct Header {
 	/**
 	 * Constructor
 	 */
-	Header(Common::ReadStream* s) {
+	Header(Common::ReadStream &s) {
 		load(s);
 	}
 
 	/**
 	 * Load the header
 	 */
-	void load(Common::ReadStream *s);
+	bool load(Common::ReadStream &s);
+};
+
+/**
+ * Game abstraction class
+ */
+class Game : public Header {
+private:
+	uint _saveOffset;
+public:
+	Common::Array<byte> _data;
+public:
+	/**
+	 * Constructor
+	 */
+	Game() : Header(), _saveOffset(0) {}
+
+	/**
+	 * Load data for the game
+	 */
+	bool load(Common::SeekableReadStream &s);
 };
 
 } // End of namespace AdvSys
