@@ -40,7 +40,8 @@ LuaScript::~LuaScript() {
 	}
 }
 
-/*bool LuaScript::init() {
+#if 0
+bool LuaScript::init() {
 	// Create new lua_State and initialize the Std Libs
 	_state = luaL_newstate();
 	if (!_state || !registerStdLibs()) {
@@ -51,7 +52,8 @@ LuaScript::~LuaScript() {
 	_systemInit = true;
 
 	return true;
-}*/
+}
+#endif
 
 /*
 	Called from Lua, this will pop into the menu
@@ -174,7 +176,8 @@ bool LuaScript::executeMPC(Common::SeekableReadStream *stream, const char *name,
 	return true;
 }
 
-/*bool LuaScript::executeFile(const Common::String &filename) {
+#if 0
+bool LuaScript::executeFile(const Common::String &filename) {
 	
 	if (!_systemInit) {
 		return false;
@@ -201,7 +204,8 @@ bool LuaScript::executeMPC(Common::SeekableReadStream *stream, const char *name,
 	delete file;
 
 	return true;
-}*/
+}
+#endif
 
 bool LuaScript::executeChunk(const char *chunk, uint chunkSize, const Common::String &chunkName) const {
 	

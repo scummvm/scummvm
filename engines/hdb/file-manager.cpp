@@ -143,7 +143,7 @@ int32 FileMan::getLength(const char *string, DataType type) {
 	return file->ulength;
 }
 
-/*
+#if 0
 MPCEntry **FileMan::findNextData(MPCIterator begin) {
 	Common::String fileString;
 
@@ -168,6 +168,7 @@ int FileMan::findAmount(char *string, DataType type) {
 	}
 
 	return count;
-}*/
+}
+#endif
 
 } // End of Namespace HDB
