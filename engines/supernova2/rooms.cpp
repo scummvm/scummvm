@@ -1516,9 +1516,14 @@ City1::City1(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 23;
 	_id = CITY1;
 	_shown[0] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringSign, kStringSign1Description, NULLOBJECT, NULLTYPE, 2, 2, 0);
+	_objectState[1] = Object(_id, kStringSign, kStringSign2Description, NULLOBJECT, NULLTYPE, 3, 3, 0);
+	_objectState[2] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR_L, EXIT | OPENABLE, 0, 0, 1, ELEVATOR, 10);
+	_objectState[3] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR_R, EXIT | OPENABLE, 1, 1, 2, ELEVATOR, 14);
 }
 
 void City1::onEntrance() {
@@ -1529,16 +1534,36 @@ void City1::animation() {
 }
 
 bool City1::interact(Action verb, Object &obj1, Object &obj2) {
-	return true;
+	if (verb == ACTION_OPEN && obj1._id == DOOR_L) {
+		_objectState[0]._click = 255;
+	} else if (verb == ACTION_CLOSE && obj1._id == DOOR_L) {
+		_objectState[0]._click = 2;
+	} else if (verb == ACTION_OPEN && obj1._id == DOOR_R) {
+		_objectState[1]._click = 255;
+	} else if (verb == ACTION_CLOSE && obj1._id == DOOR_R) {
+		_objectState[1]._click = 3;
+	} else if (verb == ACTION_WALK && obj1._id == DOOR_L) {
+		_gm->_state._elevatorNumber = 1;
+	} else if (verb == ACTION_WALK && obj1._id == DOOR_R) {
+		_gm->_state._elevatorNumber = 2;
+	}
+	_gm->_rooms[ELEVATOR]->getObject(5)->_exitRoom = CITY1;
+	_gm->_state._elevatorE = 0;
+	return false;
 }
 
 City2::City2(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 23;
 	_id = CITY2;
 	_shown[0] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringSign, kStringSign3Description, NULLOBJECT, NULLTYPE, 2, 2, 0);
+	_objectState[1] = Object(_id, kStringSign, kStringSign4Description, NULLOBJECT, NULLTYPE, 3, 3, 0);
+	_objectState[2] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR_L, EXIT | OPENABLE, 0, 0, 1, ELEVATOR, 10);
+	_objectState[3] = Object(_id, kStringDoor, kStringDefaultDescription, DOOR_R, EXIT | OPENABLE, 1, 1, 2, ELEVATOR, 14);
 }
 
 void City2::onEntrance() {
@@ -1549,7 +1574,22 @@ void City2::animation() {
 }
 
 bool City2::interact(Action verb, Object &obj1, Object &obj2) {
-	return true;
+	if (verb == ACTION_OPEN && obj1._id == DOOR_L) {
+		_objectState[0]._click = 255;
+	} else if (verb == ACTION_CLOSE && obj1._id == DOOR_L) {
+		_objectState[0]._click = 2;
+	} else if (verb == ACTION_OPEN && obj1._id == DOOR_R) {
+		_objectState[1]._click = 255;
+	} else if (verb == ACTION_CLOSE && obj1._id == DOOR_R) {
+		_objectState[1]._click = 3;
+	} else if (verb == ACTION_WALK && obj1._id == DOOR_L) {
+		_gm->_state._elevatorNumber = 3;
+	} else if (verb == ACTION_WALK && obj1._id == DOOR_R) {
+		_gm->_state._elevatorNumber = 4;
+	}
+	_gm->_rooms[ELEVATOR]->getObject(5)->_exitRoom = CITY2;
+	_gm->_state._elevatorE = 0;
+	return false;
 }
 
 Elevator::Elevator(Supernova2Engine *vm, GameManager *gm) {

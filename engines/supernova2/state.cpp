@@ -42,6 +42,8 @@ bool GameManager::serialize(Common::WriteStream *out) {
 	out->writeByte(_state._admission);
 	out->writeByte(_state._tipsy);
 	out->writeByte(_state._dark);
+	out->writeByte(_state._elevatorE);
+	out->writeByte(_state._elevatorNumber);
 	out->writeUint32LE(_state._eventTime);
 	out->writeSint32LE(_state._eventCallback);
 
@@ -76,6 +78,8 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 	_state._admission = in->readByte();
 	_state._tipsy = in->readByte();
 	_state._dark = in->readByte();
+	_state._elevatorE = in->readByte();
+	_state._elevatorNumber = in->readByte();
 	_state._eventTime = in->readUint32LE();
 	_state._eventCallback = (EventFunction)in->readSint32LE();
 	_vm->setGameString(kStringMoney, Common::String::format("%d Xa", _state._money));
@@ -344,6 +348,8 @@ void GameManager::initState() {
 	_state._admission = 0;
 	_state._tipsy = false;
 	_state._dark = false;
+	_state._elevatorE = 0;
+	_state._elevatorNumber = 0;
 	_state._eventTime = kMaxTimerValue;
 	_state._eventCallback = kNoFn;
 }

@@ -43,6 +43,8 @@ struct GameState {
 	char _admission;
 	bool _tipsy;
 	bool _dark;
+	char _elevatorE;
+	char _elevatorNumber;
 	EventFunction _eventCallback;
 	uint32 _eventTime;
 };
