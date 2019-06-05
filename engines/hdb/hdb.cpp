@@ -67,12 +67,6 @@ bool HDBGame::init() {
 		return false;
 	}
 
-	// Init Lua
-	/*if (!lua->init()) {
-		error("LuaScript::int: Cannot initialize LuaScript.");
-		return false;
-	}*/
-
 	gameShutdown = false;
 	_systemInit = true;
 
