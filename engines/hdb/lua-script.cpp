@@ -573,7 +573,7 @@ struct FuncInit {
 	{ NULL, NULL }
 };
 
-bool LuaScript::initScript(Common::SeekableReadStream *stream, const char *name, int32 length) {
+bool LuaScript::initScript(Common::SeekableReadStream *stream, int32 length) {
 
 	if (_systemInit) {
 		return false;
