@@ -717,7 +717,6 @@ bool LuaScript::executeMPC(Common::SeekableReadStream *stream, const char *name,
 	return true;
 }
 
-#if 0
 bool LuaScript::executeFile(const Common::String &filename) {
 
 	if (!_systemInit) {
@@ -731,8 +730,10 @@ bool LuaScript::executeFile(const Common::String &filename) {
 	}
 
 	uint fileSize = file->size();
-	const char *fileData = new char[fileSize];
+	char *fileData = new char[fileSize];
 	file->read((void *)fileData, fileSize);
+
+	sanitizeScript(fileData);
 
 	if (!executeChunk(fileData, fileSize, filename)) {
 		delete[] fileData;
@@ -746,7 +747,6 @@ bool LuaScript::executeFile(const Common::String &filename) {
 
 	return true;
 }
-#endif
 
 bool LuaScript::executeChunk(const char *chunk, uint chunkSize, const Common::String &chunkName) const {
 
