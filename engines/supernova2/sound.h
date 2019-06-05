@@ -37,7 +37,12 @@ enum AudioId {
 	kAudioTaxiLeaving,
 	kAudioTaxiArriving,
 	kAudioKiosk,
-	kAudioNumSamples = 10 //TODO find out how many samples there are
+	kAudioStage1,
+	kAudioStage2,
+	kAudioAppearance1,
+	kAudioAppearance2,
+	kAudioAppearance3,
+	kAudioNumSamples
 };
 
 enum MusicId {

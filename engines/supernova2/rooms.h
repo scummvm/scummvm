@@ -89,7 +89,6 @@ private:
 	bool tvDialogue();
 	bool thoughts2();
 
-	int _restTime;
 	Common::String _introText;
 };
 
@@ -174,9 +173,12 @@ public:
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 
 private:
+	void appearance();
 	bool _var1;
-	bool _var2;
+	int _var2;
 	bool _var3;
+	bool _var4;
+	bool _var5;
 };
 
 class City1 : public Room {

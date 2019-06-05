@@ -46,15 +46,16 @@ static Common::MemoryReadStream *convertToMod(const char *filename, int version 
 
 static const AudioInfo audioInfo[kAudioNumSamples] = {
 	{55,     18230,    -1},
-	{47,     0,    16010},
+	{47,     0,     16010},
 	{47,     16010,    -1},
-	{49,     8010,    -1},
-	{49,     0,    8010},
+	{49,     8010,     -1},
+	{49,     0,      8010},
 	{53,     30020,    -1},
-	{53,     0,    -1},
-	{54,     0,    -1},
-	{55,     0,    -1},
-	{56,     0,    -1},
+	{55,     7010,  17020},
+	{55,     0,      7010},
+	{53,     5010,  30020},
+	{55,     18230,    -1},
+	{55,     17020,    18230}
 };
 
 static const byte mouseNormal[64] = {
@@ -183,14 +184,14 @@ Audio::AudioStream *ResourceManager::getSoundStream(MusicId index) {
 	}
 }
 
-const MS2Image *ResourceManager::getImage(int filenumber) const {
+MS2Image *ResourceManager::getImage(int filenumber) {
 	if (filenumber < 47)
 		return &_images[filenumber];
 	else
 		return nullptr;
 }
 
-const byte *ResourceManager::getImage(CursorId id) const {
+const byte *ResourceManager::getCursor(CursorId id) const {
 	switch (id) {
 	case kCursorNormal:
 		return _cursorNormal;

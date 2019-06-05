@@ -139,7 +139,7 @@ public:
 	void setViewportBrightness(int brightness);
 	int getGuiBrightness() const;
 	void setGuiBrightness(int brightness);
-	const MS2Image *getCurrentImage() const;
+	MS2Image *getCurrentImage();
 	const ImageInfo *getImageInfo(ImageId id) const;
 	bool isMessageShown() const;
 	void paletteFadeIn(int maxViewportBrightness);
@@ -152,7 +152,7 @@ public:
 	void saveScreen(const GuiElement &guiElement);
 	void restoreScreen();
 	void renderRoom(Room &room);
-	void renderMessage(const char *text, MessagePosition position = kMessageNormal);
+	void renderMessage(const char *text, MessagePosition position = kMessageNormal, int positionX = -1, int positionY = -1);
 	void renderMessage(const Common::String &text, MessagePosition position = kMessageNormal);
 	void renderMessage(StringId stringId, MessagePosition position = kMessageNormal,
 					   Common::String var1 = "", Common::String var2 = "");
@@ -181,7 +181,7 @@ private:
 private:
 	Supernova2Engine *_vm;
 	ResourceManager *_resMan;
-	const MS2Image *_currentImage;
+	MS2Image *_currentImage;
 	ScreenBufferStack _screenBuffer;
 	int _screenWidth;
 	int _screenHeight;

@@ -42,6 +42,7 @@ struct GameState {
 	bool _poleMagnet;
 	char _admission;
 	bool _tipsy;
+	bool _dark;
 	EventFunction _eventCallback;
 	uint32 _eventTime;
 };
@@ -145,6 +146,7 @@ public:
 	int32 _oldTime;
 	uint _timePaused;
 	bool _timerPaused;
+	int _restTime;
 	int32 _messageDuration;
 	int32 _animationTimer;
 	int _inventoryScroll;
@@ -203,6 +205,9 @@ public:
 	void playerTakeOut();
 	void sober();
 	void playCD();
+	void drawGUI();
+	bool talk(int mod1, int mod2, int rest, MessagePosition pos, StringId id);
+	bool talkRest(int mod1, int mod2, int rest);
 
 private:
 	int _prevImgId;

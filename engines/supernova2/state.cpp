@@ -41,6 +41,7 @@ bool GameManager::serialize(Common::WriteStream *out) {
 	out->writeByte(_state._poleMagnet);
 	out->writeByte(_state._admission);
 	out->writeByte(_state._tipsy);
+	out->writeByte(_state._dark);
 	out->writeUint32LE(_state._eventTime);
 	out->writeSint32LE(_state._eventCallback);
 
@@ -74,6 +75,7 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 	_state._poleMagnet = in->readByte();
 	_state._admission = in->readByte();
 	_state._tipsy = in->readByte();
+	_state._dark = in->readByte();
 	_state._eventTime = in->readUint32LE();
 	_state._eventCallback = (EventFunction)in->readSint32LE();
 	_vm->setGameString(kStringMoney, Common::String::format("%d Xa", _state._money));
@@ -316,6 +318,7 @@ void GameManager::initState() {
 	_mouseY = -1;
 	_mouseField = -1;
 	_inventoryScroll = 0;
+	_restTime = 0;
 	_oldTime = g_system->getMillis();
 	_timerPaused = 0;
 	_timePaused = false;
@@ -340,6 +343,7 @@ void GameManager::initState() {
 	_state._poleMagnet = false;
 	_state._admission = 0;
 	_state._tipsy = false;
+	_state._dark = false;
 	_state._eventTime = kMaxTimerValue;
 	_state._eventCallback = kNoFn;
 }
@@ -925,11 +929,13 @@ void GameManager::reply(const char *text, int aus1, int aus2) {
 		_vm->renderMessage(text, kMessageTop);
 
 	for (int z = (strlen(text) + 20) * _vm->_textSpeed / 40; z > 0; --z) {
-		_vm->renderImage(aus1);
+		if (aus1)
+			_vm->renderImage(aus1);
 		waitOnInput(2);
 		if (_keyPressed || _mouseClicked)
 			z = 1;
-		_vm->renderImage(aus2);
+		if (aus2)
+			_vm->renderImage(aus2);
 		waitOnInput(2);
 		if (_keyPressed || _mouseClicked)
 			z = 1;
@@ -1297,6 +1303,13 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 	return true;
 }
 
+void GameManager::drawGUI() {
+		drawMapExits();
+		drawInventory();
+		drawStatus();
+		drawCommandBox();
+}
+
 void GameManager::playCD() {
 		CursorMan.showMouse(false);
 		_vm->playSound(kMusicMadMonkeys);
@@ -1611,9 +1624,57 @@ void GameManager::playerTakeOut() {
 	takeObject(*o);
 }
 
-void GameManager::sober()
-{
+void GameManager::sober() {
 	_state._tipsy = false;
+}
+
+bool GameManager::talk(int mod1, int mod2, int rest, MessagePosition pos, StringId id) {
+	Common::KeyCode key = Common::KEYCODE_INVALID;
+	const Common::String& text = _vm->getGameString(id);
+
+	_vm->renderMessage(text, pos);
+	int animation_count = (text.size() + 20) * (10 - rest) * _vm->_textSpeed / 400;
+	_restTime =  (text.size() + 20) * rest * _vm->_textSpeed / 400;
+
+	while (animation_count) {
+		if (mod1)
+			_vm->renderImage(mod1);
+
+		if (waitOnInput(2, key)) {
+			_vm->removeMessage();
+			return key != Common::KEYCODE_ESCAPE && !_vm->shouldQuit();
+		}
+		if (mod2)
+			_vm->renderImage(mod2);
+
+		if (waitOnInput(2, key)) {
+			_vm->removeMessage();
+			return key != Common::KEYCODE_ESCAPE && !_vm->shouldQuit();
+		}
+		animation_count--;
+	}
+	if (_restTime == 0)
+		_vm->removeMessage();
+
+	return true;
+}
+
+bool GameManager::talkRest(int mod1, int mod2, int rest) {
+	Common::KeyCode key = Common::KEYCODE_INVALID;
+	while (rest) {
+		_vm->renderImage(mod1);
+		if (waitOnInput(2, key)) {
+			_vm->removeMessage();
+			return key != Common::KEYCODE_ESCAPE && !_vm->shouldQuit();
+		}
+		_vm->renderImage(mod2);
+		if (waitOnInput(2, key)) {
+			_vm->removeMessage();
+			return key != Common::KEYCODE_ESCAPE && !_vm->shouldQuit();
+		}
+		rest--;
+	}
+	return true;
 }
 
 }
