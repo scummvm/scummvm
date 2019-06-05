@@ -468,8 +468,8 @@ static int playVoice(lua_State *L) {
 */
 
 struct VarInit {
-	char *realName;
-	char *luaName;
+	const char *realName;
+	const char *luaName;
 } luaGlobalStrings[] = {
 	{ "Map00",	"MAP00"},
 	{NULL, NULL}
@@ -484,7 +484,7 @@ struct NumberInit {
 };
 
 struct FuncInit {
-	char *luaName;
+	const char *luaName;
 	int (*function) (lua_State *L);
 } luaFuncs[] = {
 	{  "Dialog",				dialog				},
@@ -698,15 +698,15 @@ bool LuaScript::executeFile(const Common::String &filename) {
 
 namespace {
 int panicCB(lua_State *L) {
-        error("Lua panic. Error message: %s", lua_isnil(L, -1) ? "" : lua_tostring(L, -1));
-        return 0;
+	error("Lua panic. Error message: %s", lua_isnil(L, -1) ? "" : lua_tostring(L, -1));
+	return 0;
 }
 
 void debugHook(lua_State *L, lua_Debug *ar) {
-        if (!lua_getinfo(L, "Sn", ar))
-                return;
+	if (!lua_getinfo(L, "Sn", ar))
+		return;
 
-        debug("LUA: %s %s: %s %d", ar->namewhat, ar->name, ar->short_src, ar->currentline);
+	debug("LUA: %s %s: %s %d", ar->namewhat, ar->name, ar->short_src, ar->currentline);
 }
 }
 
@@ -725,22 +725,22 @@ bool LuaScript::executeChunk(const char *chunk, uint chunkSize, const Common::St
 		"return ErrorHandler";
 
 	if (luaL_loadbuffer(_state, errorHandlerCode, strlen(errorHandlerCode), "PCALL ERRORHANDLER") != 0) {
-                // An error occurred, so dislay the reason and exit
-                error("Couldn't compile luaL_pcall errorhandler:\n%s", lua_tostring(_state, -1));
-                lua_pop(_state, 1);
+		// An error occurred, so dislay the reason and exit
+		error("Couldn't compile luaL_pcall errorhandler:\n%s", lua_tostring(_state, -1));
+		lua_pop(_state, 1);
 
-                return false;
-        }
+		return false;
+	}
 
 
-		// Running the code, the error handler function sets the top of the stack
-	        if (lua_pcall(_state, 0, 1, 0) != 0) {
-	                // An error occurred, so dislay the reason and exit
-	                error("Couldn't prepare luaL_pcall errorhandler:\n%s", lua_tostring(_state, -1));
-	                lua_pop(_state, 1);
+	// Running the code, the error handler function sets the top of the stack
+	if (lua_pcall(_state, 0, 1, 0) != 0) {
+		// An error occurred, so dislay the reason and exit
+		error("Couldn't prepare luaL_pcall errorhandler:\n%s", lua_tostring(_state, -1));
+		lua_pop(_state, 1);
 
-	                return false;
-	        }
+		return false;
+	}
 
 	lua_sethook(_state, debugHook, LUA_MASKCALL | LUA_MASKLINE, 0);
 
