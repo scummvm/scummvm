@@ -572,6 +572,21 @@ struct FuncInit {
 	{ NULL, NULL }
 };
 
+namespace {
+int panicCB(lua_State *L) {
+	error("Lua panic. Error message: %s", lua_isnil(L, -1) ? "" : lua_tostring(L, -1));
+	return 0;
+}
+
+void debugHook(lua_State *L, lua_Debug *ar) {
+	if (!lua_getinfo(L, "Sn", ar))
+		return;
+
+	debug("LUA: %s %s: %s %d", ar->namewhat, ar->name, ar->short_src, ar->currentline);
+}
+}
+
+
 bool LuaScript::initScript(Common::SeekableReadStream *stream, int32 length) {
 
 	if (_systemInit) {
@@ -619,6 +634,35 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, int32 length) {
 		spawn names into Lua once they are implemented.
 	*/
 
+
+	lua_atpanic(_state, panicCB);
+
+	const char errorHandlerCode[] =
+		"local function ErrorHandler(message) "
+		"   return message .. '\\n' .. debug.traceback('', 2) "
+		"end "
+		"return ErrorHandler";
+
+	if (luaL_loadbuffer(_state, errorHandlerCode, strlen(errorHandlerCode), "PCALL ERRORHANDLER") != 0) {
+		// An error occurred, so dislay the reason and exit
+		error("Couldn't compile luaL_pcall errorhandler:\n%s", lua_tostring(_state, -1));
+		lua_pop(_state, 1);
+
+		return false;
+	}
+
+
+	// Running the code, the error handler function sets the top of the stack
+	if (lua_pcall(_state, 0, 1, 0) != 0) {
+		// An error occurred, so dislay the reason and exit
+		error("Couldn't prepare luaL_pcall errorhandler:\n%s", lua_tostring(_state, -1));
+		lua_pop(_state, 1);
+
+		return false;
+	}
+
+	lua_sethook(_state, debugHook, LUA_MASKCALL | LUA_MASKLINE, 0);
+
 	// Load GLOBAL_LUA and execute it
 
 	if (!executeMPC(_globalLuaStream, "global code", _globalLuaLength)) {
@@ -638,6 +682,7 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, int32 length) {
 
 	return true;
 }
+
 
 bool LuaScript::executeMPC(Common::SeekableReadStream *stream, const char *name, int32 length) {
 
@@ -696,53 +741,11 @@ bool LuaScript::executeFile(const Common::String &filename) {
 }
 #endif
 
-namespace {
-int panicCB(lua_State *L) {
-	error("Lua panic. Error message: %s", lua_isnil(L, -1) ? "" : lua_tostring(L, -1));
-	return 0;
-}
-
-void debugHook(lua_State *L, lua_Debug *ar) {
-	if (!lua_getinfo(L, "Sn", ar))
-		return;
-
-	debug("LUA: %s %s: %s %d", ar->namewhat, ar->name, ar->short_src, ar->currentline);
-}
-}
-
 bool LuaScript::executeChunk(const char *chunk, uint chunkSize, const Common::String &chunkName) const {
 
 	if (!_systemInit) {
 		return false;
 	}
-
-	lua_atpanic(_state, panicCB);
-
-	const char errorHandlerCode[] =
-		"local function ErrorHandler(message) "
-		"   return message .. '\\n' .. debug.traceback('', 2) "
-		"end "
-		"return ErrorHandler";
-
-	if (luaL_loadbuffer(_state, errorHandlerCode, strlen(errorHandlerCode), "PCALL ERRORHANDLER") != 0) {
-		// An error occurred, so dislay the reason and exit
-		error("Couldn't compile luaL_pcall errorhandler:\n%s", lua_tostring(_state, -1));
-		lua_pop(_state, 1);
-
-		return false;
-	}
-
-
-	// Running the code, the error handler function sets the top of the stack
-	if (lua_pcall(_state, 0, 1, 0) != 0) {
-		// An error occurred, so dislay the reason and exit
-		error("Couldn't prepare luaL_pcall errorhandler:\n%s", lua_tostring(_state, -1));
-		lua_pop(_state, 1);
-
-		return false;
-	}
-
-	lua_sethook(_state, debugHook, LUA_MASKCALL | LUA_MASKLINE, 0);
 
 	// Compile Chunk
 	if (luaL_loadbuffer(_state, chunk, chunkSize, chunkName.c_str())) {
