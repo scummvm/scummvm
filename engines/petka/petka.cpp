@@ -22,10 +22,17 @@
 
 #include "common/debug-channels.h"
 #include "common/error.h"
+#include "common/events.h"
 #include "common/ini-file.h"
 #include "common/stream.h"
+#include "common/system.h"
+#include "common/file.h"
 
 #include "engines/util.h"
+
+#include "graphics/surface.h"
+
+#include "video/avi_decoder.h"
 
 #include "petka/file_mgr.h"
 #include "petka/petka.h"
@@ -52,6 +59,16 @@ PetkaEngine::~PetkaEngine() {
 Common::Error PetkaEngine::run() {
 	const Graphics::PixelFormat format(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	initGraphics(640, 480, &format);
+
+	const char *const videos[] = {"buka.avi", "skif.avi", "adv.avi"};
+	for (uint i = 0; i < sizeof(videos) / sizeof(char *); ++i) {
+		Common::File *file = new Common::File;
+		if (file->open(videos[i])) {
+			playVideo(file);
+		} else {
+			delete file;
+		}
+	}
 
 	_console.reset(new Console(this));
 	_fileMgr.reset(new FileMgr());
@@ -105,6 +122,42 @@ QSystem *PetkaEngine::getQSystem() const {
 
 Common::RandomSource &PetkaEngine::getRnd() {
 	return _rnd;
+}
+
+void PetkaEngine::playVideo(Common::SeekableReadStream *stream) {
+	Graphics::PixelFormat fmt = _system->getScreenFormat();
+
+	Video::AVIDecoder decoder;
+	if (!decoder.loadStream(stream)) {
+		return;
+	}
+
+	decoder.start();
+	while (!decoder.endOfVideo()) {
+		Common::Event event;
+		while (_eventMan->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_LBUTTONDOWN:
+			case Common::EVENT_RBUTTONDOWN:
+			case Common::EVENT_KEYDOWN:
+				decoder.close();
+				break;
+			default:
+				break;
+			}
+		}
+
+		if (decoder.needsUpdate()) {
+			const Graphics::Surface *frame = decoder.decodeNextFrame();
+			if (frame) {
+				Common::ScopedPtr<Graphics::Surface> f(frame->convertTo(fmt));
+				_system->copyRectToScreen(f->getPixels(), f->pitch, 0, 0, f->w, f->h);
+			}
+		}
+
+		_system->updateScreen();
+		_system->delayMillis(50);
+	}
 }
 
 } // End of namespace Petka
