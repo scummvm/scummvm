@@ -148,6 +148,10 @@ Common::Error HDBGame::run() {
 
 	lua->initScript(luaStream, luaLength);
 
+#if 0
+	lua->executeFile("test.lua");
+#endif
+
 	while (!shouldQuit()) {
 
 		Common::Event event;
