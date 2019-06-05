@@ -40,20 +40,19 @@ LuaScript::~LuaScript() {
 	}
 }
 
-#if 0
+
 bool LuaScript::init() {
-	// Create new lua_State and initialize the Std Libs
-	_state = luaL_newstate();
-	if (!_state || !registerStdLibs()) {
-		error("Cannot initialize Lua");
+	// Load Global Lua Code
+	_globalLuaStream = g_hdb->fileMan->findFirstData("GLOBAL_LUA", TYPE_BINARY);
+	_globalLuaLength = g_hdb->fileMan->getLength("GLOBAL_LUA", TYPE_BINARY);
+	if (_globalLuaStream == NULL || _globalLuaLength == 0) {
+		error("LuaScript::initScript: 'global code' failed to load");
 		return false;
 	}
 
-	_systemInit = true;
-
 	return true;
 }
-#endif
+
 
 /*
 	Called from Lua, this will pop into the menu
@@ -622,12 +621,10 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, int32 length) {
 
 	// Load GLOBAL_LUA and execute it
 
-	g_hdb->fileMan->findFirstData("GLOBAL_LUA", TYPE_BINARY);
-	
-	//if (!executeMPC(globalStream, "global code", globalLength)) {
-	//	error("LuaScript::initScript: 'global code' failed to execute");
-	//	return false;
-	//}
+	if (!executeMPC(_globalLuaStream, "global code", _globalLuaLength)) {
+		error("LuaScript::initScript: 'global code' failed to execute");
+		return false;
+	}
 	
 	// Load script and execute it
 

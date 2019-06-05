@@ -44,6 +44,8 @@ public:
 
 private:
 	lua_State *_state;
+	Common::SeekableReadStream* _globalLuaStream;
+	int32 _globalLuaLength;
 	bool _systemInit;
 
 	bool registerExtensions();
