@@ -1631,7 +1631,7 @@ Elevator::Elevator(Supernova2Engine *vm, GameManager *gm) {
 	_objectState[2] = Object(_id, kStringDisplay, kStringDefaultDescription, DISPLAY, NULLTYPE, 2, 2, 0);
 	_objectState[3] = Object(_id, kStringKeypad, kStringKeypadDescription, KEYPAD, PRESS, 3, 3, 0);
 	_objectState[4] = Object(_id, kStringDoor, kStringDefaultDescription, NULLOBJECT, EXIT | OPENABLE | CLOSED, 4, 4, 0, APARTMENT, 3);
-	_objectState[5] = Object(_id, kStringEntrance, kStringDefaultDescription, NULLOBJECT, EXIT | OPENABLE | OPENED | CLOSED, 4, 4, 0, APARTMENT, 3);
+	_objectState[5] = Object(_id, kStringExit, kStringDefaultDescription, NULLOBJECT, EXIT | OPENABLE | OPENED | CLOSED, 255, 255, 0, CITY1, 22);
 }
 
 void Elevator::onEntrance() {
