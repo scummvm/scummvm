@@ -35,6 +35,8 @@ struct ScriptPatch {
 	const char* replace;
 } scriptPatches[] = {
 	{"GLOBAL_LUA", "for i,npc in npcs do", "for i,npc in pairs(npcs) do"},
+	{"GLOBAL_LUA", "setglobal( npcdef.codename..\"_init\", function() return NPC_Init( npcdef ) end )", "npcdef.codename..\"_init\" = function() return NPC_Init( npcdef ) end"},
+	{"GLOBAL_LUA", "setglobal( npcdef.codename..\"_use\", function(x, y, v1, v2) return NPC_Use( npcdef, x, y, v1, v2 ) end )", "npcdef.codename..\"_use\" = function(x, y, v1, v2) return NPC_Use( npcdef, x, y, v1, v2 ) end"},
 	{NULL, NULL, NULL},
 };
 
@@ -710,7 +712,6 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, const char *scrip
 
 	return true;
 }
-
 
 bool LuaScript::executeMPC(Common::SeekableReadStream *stream, const char *name, const char *scriptName, int32 length) {
 
