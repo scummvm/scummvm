@@ -719,20 +719,21 @@ bool LuaScript::executeMPC(Common::SeekableReadStream *stream, const char *name,
 		return false;
 	}
 
-	char *chunk = new char[length];
+	char *chunk = new char[length + 1];
 	stream->read((void *)chunk, length);
+	chunk[length] = '\0'; // be on the safe side
 
 	stripComments(chunk);
-	
+
 	/*
 			Remove C-style comments from the script
 			and update the upvalue syntax for Lua 5.1.3
 	*/
-	Common::String chunkString(chunk);
+	Common::String chunkString(chunk, length);
 
 	addPatches(chunkString, scriptName);
 
-	if (!executeChunk(chunkString, length, name)) {
+	if (!executeChunk(chunkString, chunkString.size(), name)) {
 		delete[] chunk;
 
 		return false;
@@ -756,8 +757,9 @@ bool LuaScript::executeFile(const Common::String &filename) {
 	}
 
 	uint fileSize = file->size();
-	char *fileData = new char[fileSize];
+	char *fileData = new char[fileSize + 1];
 	file->read((void *)fileData, fileSize);
+	fileData[fileSize] = '\0'; // be on the safe side
 
 	stripComments(fileData);
 
@@ -765,7 +767,7 @@ bool LuaScript::executeFile(const Common::String &filename) {
 
 	addPatches(fileDataString, filename.c_str());
 
-	if (!executeChunk(fileDataString, fileSize, filename)) {
+	if (!executeChunk(fileDataString, fileDataString.size(), filename)) {
 		delete[] fileData;
 		delete file;
 
