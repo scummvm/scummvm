@@ -1535,6 +1535,8 @@ void Checkout::appearance() {
 	_vm->removeMessage();
 	_gm->changeRoom(SHIP);
 	_gm->_state._dark = true;
+	_vm->_screen->setViewportBrightness(1);
+	_vm->paletteBrightness();
 	_gm->drawGUI();
 }
 
@@ -1972,9 +1974,25 @@ Ship::Ship(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 45;
 	_id = SHIP;
 	_shown[0] = kShownTrue;
+	_shown[1] = kShownFalse;
+	_shown[2] = kShownFalse;
+	_shown[3] = kShownFalse;
+	_shown[4] = kShownFalse;
+	_shown[5] = kShownFalse;
+	_shown[6] = kShownFalse;
+	_shown[7] = kShownFalse;
+	_shown[8] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringSwitch, kStringDefaultDescription, SWITCH, PRESS | COMBINABLE, 0, 0, 0);
+	_objectState[1] = Object(_id, kStringHandle, kStringDefaultDescription, HANDLE, NULLTYPE, 255, 255, 0);
+	_objectState[2] = Object(_id, kStringHatch2, kStringDefaultDescription, NULLOBJECT, NULLTYPE, 255, 255, 0, SHIP, 19);
+	_objectState[3] = Object(_id, kStringSwitch, kStringDefaultDescription, DOOR_SWITCH, PRESS | COMBINABLE, 255, 255, 0);
+	_objectState[4] = Object(_id, kStringSpaceSuit, kStringSpaceSuitDescription, SUIT, TAKE, 255, 255, 1);
+	_objectState[5] = Object(_id, kStringCable, kStringCableDescription1, RCABLE, COMBINABLE, 255, 255, 0);
+	_objectState[6] = Object(_id, kStringCable, kStringCableDescription2, CABLE, TAKE | COMBINABLE, 255, 255, 8 + 128);
 }
 
 void Ship::onEntrance() {
@@ -1985,7 +2003,158 @@ void Ship::animation() {
 }
 
 bool Ship::interact(Action verb, Object &obj1, Object &obj2) {
+	if (verb == ACTION_PRESS && obj1._id == SWITCH) {
+		if (_gm->_state._dark) {
+			_gm->_state._dark = false;
+			_vm->_screen->setViewportBrightness(255);
+			_objectState[1]._click = 1;
+			_objectState[2]._click = 2;
+			_objectState[3]._click = 3;
+			_objectState[5]._click = 4;
+			_objectState[6]._click = 5;
+			_objectState[2]._type = EXIT | OPENABLE | CLOSED;
+			_gm->drawMapExits();
+		}
+	} else if (verb == ACTION_PRESS && obj1._id == DOOR_SWITCH &&
+			!isSectionVisible(7)) {
+		_vm->renderImage(3);
+		_gm->wait(2);
+		_vm->renderImage(6);
+		_vm->playSound(kAudioShip1);
+		while (_vm->_sound->isPlaying())
+			_gm->wait(1);
+		_vm->renderImage(6 + 128);
+		_vm->renderImage(7);
+		_objectState[3]._description = kStringShip1;
+		_objectState[2]._description = kStringShip2;
+	} else if (verb == ACTION_PULL && obj1._id == HANDLE) {
+		_vm->renderImage(2);
+		_vm->playSound(kAudioTaxiOpen);
+		obj1._click = 255;
+		_objectState[4]._click = 9;
+	} else if (verb == ACTION_TAKE && obj1._id == SUIT && !(obj1._type & CARRIED)) {
+		setSectionVisible(2, kShownFalse);
+		_gm->takeObject(obj1);
+	} else if (verb == ACTION_USE && obj1._id == SUIT) {
+		if (!(obj1._type & CARRIED)) {
+			setSectionVisible(2, kShownFalse);
+			_gm->takeObject(obj1);
+		}
+		if ((_shown[kMaxSection - 1] = !_shown[kMaxSection - 1]))
+			_vm->renderMessage(kStringShip3);
+		else
+			_vm->renderMessage(kStringShip4);
+	} else if (verb == ACTION_USE && Object::combine(obj1, obj2, CABLE, RCABLE)) {
+		_objectState[6]._description = kStringDefaultDescription;
+		if (_objectState[6]._click == 6)
+			_vm->renderImage(8 + 128);
+		if (_objectState[6]._type & CARRIED)
+			_gm->_inventory.remove(_objectState[6]);
+		if (isSectionVisible(11) || isSectionVisible(10))
+			_vm->renderMessage(kStringShip5);
+		else if (isSectionVisible(9)) {
+			_vm->renderImage(9 + 128);
+			_vm->renderImage(11);
+			if (!_shown[kMaxSection - 1])
+				kill();
+			_objectState[6]._click = 8;
+			_gm->wait(2);
+			_vm->renderImage(4);
+			_vm->playSound(kAudioShip2);
+			_gm->wait(3);
+			_vm->renderImage(5);
+			_objectState[2]._type |= OPENED;
+			_objectState[2]._description = kStringDefaultDescription;
+		} else {
+			_vm->renderImage(10);
+			if (!_shown[kMaxSection - 1])
+				kill();
+			_objectState[6]._click = 7;
+		}
+	} else if (verb == ACTION_USE && Object::combine(obj1, obj2, CABLE, DOOR_SWITCH) && isSectionVisible(7)) {
+		_objectState[6]._description = kStringDefaultDescription;
+		if (_objectState[6]._click == 5)
+			_vm->renderImage(8 + 128);
+		if (_objectState[6]._type & CARRIED)
+			_gm->_inventory.remove(_objectState[6]);
+		if (isSectionVisible(11) || isSectionVisible(9))
+			_vm->renderMessage(kStringShip5);
+		else if (isSectionVisible(10)) {
+			_vm->renderImage(10 + 128);
+			_vm->renderImage(11);
+			if (!_shown[kMaxSection - 1])
+				kill();
+			_objectState[6]._click = 8;
+			_gm->wait(2);
+			_vm->renderImage(4);
+			_vm->playSound(kAudioShip2);
+			_gm->wait(3);
+			_vm->renderImage(5);
+			_objectState[2]._type |= OPENED;
+			_objectState[2]._description = kStringDefaultDescription;
+		} else {
+			_vm->renderImage(9);
+			_objectState[6]._click = 6;
+		}
+	} else if (verb == ACTION_TAKE && obj1._id == CABLE && obj1._type & CARRIED) {
+		if (isSectionVisible(8)) {
+			obj1._description = kStringDefaultDescription;
+			_gm->takeObject(obj1);
+		} else
+			_vm->renderMessage(kStringShip6);
+	} else if (verb == ACTION_WALK && obj1._type == (EXIT | OPENABLE | CLOSED | OPENED)) {
+		_vm->setCurrentImage(46);
+		_vm->renderImage(0);
+		_gm->wait(16);
+		_vm->renderMessage(kStringShip7, kMessageRight);
+		_gm->waitOnInput(_gm->_messageDuration);
+		_vm->removeMessage();
+		_gm->reply(kStringShip8, 1, 1 + 128);
+		_vm->renderMessage(kStringShip9, kMessageRight);
+		_gm->waitOnInput(_gm->_messageDuration);
+		_vm->removeMessage();
+		_gm->reply(kStringShip10, 1, 1 + 128);
+		_gm->reply(kStringShip11, 1, 1 + 128);
+		_gm->reply(kStringShip12, 1, 1 + 128);
+		_gm->reply(kStringShip13, 1, 1 + 128);
+		_vm->renderMessage(kStringShip14, kMessageRight);
+		_gm->waitOnInput(_gm->_messageDuration);
+		_vm->removeMessage();
+		_gm->reply(kStringShip15, 1, 1 + 128);
+		_vm->renderMessage(kStringShip16, kMessageRight);
+		_gm->waitOnInput(_gm->_messageDuration);
+		_vm->removeMessage();
+		_gm->reply(kStringAha, 1, 1 + 128);
+		_gm->reply(kStringShip17, 1, 1 + 128);
+		_vm->renderMessage(kStringShip18, kMessageRight);
+		_gm->waitOnInput(_gm->_messageDuration);
+		_vm->removeMessage();
+		_gm->reply(kStringShip19, 1, 1 + 128);
+		_gm->wait(16);
+		CursorMan.showMouse(false);
+		_vm->renderImage(2);
+		for (int i = 3; i < 12; i++) {
+			_vm->renderImage(i);
+			if (i == 9)
+				_vm->playSound(kAudioShip3);
+			_gm->wait(2);
+			_vm->renderImage(i + 128);
+		}
+		_vm->renderImage(12);
+		_gm->wait(18);
+		// TODO some palette stuff
+		_vm->renderImage(13);
+		_vm->playSound(kMusicMadMonkeys);
+	} else
+		return false;
 	return true;
+}
+
+void Ship::kill() {
+	_vm->playSound(kAudioShipDeath);
+	while (_vm->_sound->isPlaying())
+		_gm->wait(1);
+	_gm->dead(kStringShip0);
 }
 
 Pyramid::Pyramid(Supernova2Engine *vm, GameManager *gm) {

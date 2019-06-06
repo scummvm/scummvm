@@ -1171,6 +1171,30 @@ void GameManager::pauseTimer(bool pause) {
 	}
 }
 
+void GameManager::dead(StringId messageId) {
+	_vm->paletteFadeOut();
+	_guiEnabled = false;
+	_vm->setCurrentImage(43);
+	_vm->renderImage(0);
+	_vm->renderMessage(messageId);
+	_vm->_sound->play(kAudioDeath);
+	_vm->paletteFadeIn();
+	getInput();
+	_vm->paletteFadeOut();
+	_vm->removeMessage();
+
+	destroyRooms();
+	initRooms();
+	initState();
+	initGui();
+	_inventory.clear();
+	changeRoom(AIRPORT);
+	g_system->fillScreen(kColorBlack);
+	_vm->paletteFadeIn();
+
+	_guiEnabled = true;
+}
+
 int GameManager::invertSection(int section) {
 	if (section < 128)
 		section += 128;
