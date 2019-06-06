@@ -28,8 +28,29 @@ MapLoader::MapLoader() {
 	_mapLoaded = false;
 }
 
-bool MapLoader::loadMap(Common::SeekableReadStream *stream) {
-	warning("STUB: MAPLOADER: LOAD MAP");
+bool MapLoader::loadMap(Common::SeekableReadStream *stream, int32 length) {
+
+	if (_mapLoaded) {
+		return false;
+	}
+
+	// Load MSM data into mapHeader
+	mapHeader = new MSMHeader;
+	stream->read(mapHeader->name, 32);
+	mapHeader->width = stream->readUint16LE();
+	mapHeader->height = stream->readUint16LE();
+	mapHeader->background = stream->readUint32LE();
+	mapHeader->foreground = stream->readUint32LE();
+	mapHeader->iconNum = stream->readUint16LE();
+	mapHeader->iconList = stream->readUint32LE();
+	mapHeader->infoNum = stream->readUint16LE();
+	mapHeader->infoList = stream->readUint32LE();
+
+	/*
+		TODO: Set the InMapName in hdb.cpp
+	*/
+
+	warning("STUB: MAPLOADER: LOAD MAP INCOMPLETE");
 	return false;
 }
 

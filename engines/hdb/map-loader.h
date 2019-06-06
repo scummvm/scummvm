@@ -27,7 +27,7 @@
 
 namespace HDB {
 
-struct MSMEntry {
+struct MSMHeader {
 	char name[32];
 	uint16 width;
 	uint16 height;
@@ -56,7 +56,7 @@ class MapLoader {
 public:
 	MapLoader();
 
-	bool loadMap(Common::SeekableReadStream *stream);
+	bool loadMap(Common::SeekableReadStream *stream, int32 length);
 	int loadTiles();
 
 	bool isLoaded() {
@@ -64,6 +64,7 @@ public:
 	}
 
 private:
+	MSMHeader *mapHeader;
 	bool _mapLoaded;
 };
 
