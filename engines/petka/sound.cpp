@@ -28,8 +28,6 @@
 
 #include "petka/petka.h"
 #include "petka/sound.h"
-#include "sound.h"
-
 
 namespace Petka {
 
@@ -73,6 +71,7 @@ void Sound::pause(bool p) {
 	g_system->getMixer()->pauseHandle(_handle, p);
 }
 
+
 Sound *SoundMgr::addSound(const Common::String &name, Audio::Mixer::SoundType type) {
 	Sound *sound = findSound(name);
 	if (sound)
@@ -83,7 +82,7 @@ Sound *SoundMgr::addSound(const Common::String &name, Audio::Mixer::SoundType ty
 }
 
 Sound *SoundMgr::findSound(const Common::String &name) const {
-	Common::HashMap<Common::String, Common::ScopedPtr<Sound>>::iterator it = _sounds.find(name);
+	SoundsMap::iterator it = _sounds.find(name);
 	return it != _sounds.end() ? it->_value.get() : nullptr;
 }
 
@@ -96,7 +95,7 @@ void SoundMgr::removeAll() {
 }
 
 void SoundMgr::removeSoundsWithType(Audio::Mixer::SoundType type) {
-	Common::HashMap<Common::String, Common::ScopedPtr<Sound>>::iterator it;
+	SoundsMap::iterator it;
 	for (it = _sounds.begin(); it != _sounds.end(); ++it) {
 		Sound *s = it->_value.get();
 		if (s->type() == type && !s->isPlaying()) {
