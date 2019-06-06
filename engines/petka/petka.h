@@ -39,6 +39,7 @@ namespace Petka {
 
 class Console;
 class FileMgr;
+class SoundMgr;
 class QManager;
 class QSystem;
 
@@ -58,6 +59,8 @@ public:
 	void playVideo(Common::SeekableReadStream *stream);
 
 	QSystem *getQSystem() const;
+	SoundMgr *soundMgr() const;
+
 	Common::RandomSource &getRnd();
 
 private:
@@ -67,6 +70,7 @@ private:
 	Common::ScopedPtr<Console> _console;
 	Common::ScopedPtr<FileMgr> _fileMgr;
 	Common::ScopedPtr<QManager> _resMgr;
+	Common::ScopedPtr<SoundMgr> _soundMgr;
 	Common::ScopedPtr<QSystem> _qsystem;
 	const ADGameDescription *_desc;
 
