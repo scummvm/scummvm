@@ -35,6 +35,7 @@
 #include "video/avi_decoder.h"
 
 #include "petka/file_mgr.h"
+#include "petka/sound.h"
 #include "petka/petka.h"
 #include "petka/q_manager.h"
 #include "petka/q_system.h"
@@ -73,6 +74,7 @@ Common::Error PetkaEngine::run() {
 	_console.reset(new Console(this));
 	_fileMgr.reset(new FileMgr());
 	_resMgr.reset(new QManager(*this));
+	_soundMgr.reset(new SoundMgr());
 	_qsystem.reset(new QSystem(*this));
 
 	loadStores();
@@ -158,6 +160,10 @@ void PetkaEngine::playVideo(Common::SeekableReadStream *stream) {
 		_system->updateScreen();
 		_system->delayMillis(50);
 	}
+}
+
+SoundMgr *PetkaEngine::soundMgr() const {
+	return _soundMgr.get();
 }
 
 } // End of namespace Petka
