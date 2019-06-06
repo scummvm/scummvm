@@ -1231,6 +1231,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		o1->_name = kStringPoleMagnet;
 		o1->_description = kStringCunning;
 		_inventory.remove(*o2);
+		_rooms[APARTMENT]->setSectionVisible(kMaxSection - 1, kShownTrue);
 	} else if (verb == ACTION_USE && Object::combine(obj1, obj2, CHIP, PLAYER)) {
 		Object *o1, *o2;
 		if (obj2._id == CHIP) {
