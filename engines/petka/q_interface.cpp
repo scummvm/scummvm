@@ -37,6 +37,7 @@ QInterfaceMain::QInterfaceMain() {
 		return;
 	_bgs.resize(stream->readUint32LE());
 	for (uint i = 0; i < _bgs.size(); ++i) {
+		_bgs[i].objId = stream->readUint16LE();
 		_bgs[i].attachedObjIds.resize(stream->readUint32LE());
 		for (uint j = 0; j < _bgs[i].attachedObjIds.size(); ++j) {
 			_bgs[i].attachedObjIds[i] = stream->readUint16LE();
