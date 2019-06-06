@@ -10,7 +10,7 @@ amigaosdist: $(EXECUTABLE)
 ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) $(AMIGAOSPATH)/extras/
 endif
-	cat ${srcdir}/README | sed -f ${srcdir}/dists/amiga/convertRM.sed > README.conv
+	cat ${srcdir}/README.md | sed -f ${srcdir}/dists/amiga/convertRM.sed > README.conv
 # AmigaOS's shell is not happy with indented comments, thus don't do it.
 # AREXX seems to have problems when ${srcdir} is '.'. It will break with a
 # "Program not found" error. Therefore we copy the script to the cwd and
