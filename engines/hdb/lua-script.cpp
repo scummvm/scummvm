@@ -667,8 +667,10 @@ bool LuaScript::initScript(Common::SeekableReadStream *stream, int32 length) {
 	// Place the error handler function in the Lua registry, and remember the index
 	_pcallErrorhandlerRegistryIndex = luaL_ref(_state, LUA_REGISTRYINDEX);
 
-	// Initialize debugging callback
-	lua_sethook(_state, debugHook, LUA_MASKCALL | LUA_MASKLINE, 0);
+	if (gDebugLevel >= 8) {
+		// Initialize debugging callback
+		lua_sethook(_state, debugHook, LUA_MASKCALL | LUA_MASKLINE, 0);
+	}
 
 	// Load GLOBAL_LUA and execute it
 
