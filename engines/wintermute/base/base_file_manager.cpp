@@ -337,6 +337,10 @@ bool BaseFileManager::hasFile(const Common::String &filename) {
 	return false;
 }
 
+int BaseFileManager::listMatchingMembers(Common::ArchiveMemberList &list, const Common::String &pattern) {
+	return _packages.listMatchingMembers(list, pattern);
+}
+
 //////////////////////////////////////////////////////////////////////////
 Common::SeekableReadStream *BaseFileManager::openFile(const Common::String &filename, bool absPathWarning, bool keepTrackOf) {
 	if (strcmp(filename.c_str(), "") == 0) {

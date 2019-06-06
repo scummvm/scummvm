@@ -29,6 +29,7 @@
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/tokenizer.h"
+#include "common/translation.h"
 
 #include "engines/util.h"
 #include "engines/wintermute/ad/ad_game.h"
@@ -149,13 +150,27 @@ int WintermuteEngine::init() {
 	// check dependencies for games with high resolution assets
 	#if not defined(USE_PNG) || not defined(USE_JPEG) || not defined(USE_VORBIS)
 		if (!(_gameDescription->adDesc.flags & GF_LOWSPEC_ASSETS)) {
-			GUI::MessageDialog dialog("This game requires PNG, JPEG and Vorbis support.");
+			GUI::MessageDialog dialog(_("This game requires PNG, JPEG and Vorbis support."));
 			dialog.runModal();
 			delete _game;
 			_game = nullptr;
 			return false;
 		}
 	#endif
+
+	Common::ArchiveMemberList actors3d;
+	if (BaseEngine::instance().getFileManager()->listMatchingMembers(actors3d, "*.act3d")) {
+		GUI::MessageDialog dialog(
+				_("This game requires 3D characters support, which is out of ScummVM's scope."),
+				_("Start anyway"),
+				_("Cancel")
+			);
+		if (dialog.runModal() != GUI::kMessageOK) {
+			delete _game;
+			_game = nullptr;
+			return false;
+		}
+	}
 
 	_game = new AdGame(_targetName);
 	if (!_game) {

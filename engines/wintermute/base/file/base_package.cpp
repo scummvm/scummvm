@@ -206,6 +206,7 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 				fileEntry->_length = length;
 				fileEntry->_compressedLength = compLength;
 				fileEntry->_flags = flags;
+				fileEntry->_filename = upcName;
 
 				_files[upcName] = Common::ArchiveMemberPtr(fileEntry);
 			} else {
