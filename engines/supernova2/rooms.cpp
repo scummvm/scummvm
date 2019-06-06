@@ -1657,7 +1657,7 @@ bool Elevator::interact(Action verb, Object &obj1, Object &obj2) {
 		kStringElevator6,
 		kStringElevator7
 	};
-	char input[3];
+	Common::String input;
 
 	if (verb == ACTION_LOOK && obj1._id == DISPLAY) {
 		Common::String format = _vm->getGameString(kStringElevator1);
@@ -1758,6 +1758,45 @@ bool Elevator::interact(Action verb, Object &obj1, Object &obj2) {
 		}
 		else
 			_vm->renderMessage(kStringElevator61);
+	} else if ((verb == ACTION_USE || verb == ACTION_PRESS) && obj1._id == KEYPAD) {
+		_vm->renderMessage(kStringElevator62);
+		do {
+			_gm->edit(input, 237, 66, 2);
+		} while ((_gm->_key.keycode != Common::KEYCODE_RETURN) && 
+				 (_gm->_key.keycode != Common::KEYCODE_ESCAPE) && !_vm->shouldQuit());
+		_vm->removeMessage();
+		if (_gm->_key.keycode == Common::KEYCODE_RETURN && input[0] != 0) {
+			for (unsigned i = 0; i < input.size(); i++) {
+				if (input[i] < '0' || input[i] > '9') {
+					_vm->renderMessage(kStringElevator63);
+					return true;
+				}
+			}
+			int64 number = input.asUint64();
+			if (number > 60)
+				_vm->renderMessage(kStringElevator63);
+			else if (number != _gm->_state._elevatorE) {
+				if (isSectionVisible(6)) {
+					_vm->renderImage(6 + 128);
+					_objectState[4]._type &= ~OPENED;
+					_vm->playSound(kAudioElevator1);
+				}
+				_vm->renderMessage(kStringElevator64);
+				_gm->_state._elevatorE = number;
+				if (number)
+					_objectState[5]._type &= ~OPENED;
+				else
+					_objectState[5]._type |= OPENED;
+			}
+		}
+	} else if (verb == ACTION_USE && Object::combine(obj1, obj2, ID_CARD, SLOT)) {
+		if (_gm->_state._elevatorNumber == 1 && _gm->_state._elevatorE == 32) {
+			_vm->renderImage(6);
+			_objectState[4]._type |= OPENED;
+			_vm->playSound(kAudioTaxiOpen);
+		}
+		else
+			_vm->renderMessage(kStringElevator65);
 	} else
 		return false;
 	return true;
@@ -1795,6 +1834,7 @@ void Elevator::jobDescription() {
 	_gm->reply(kStringElevator47, 0, 0);
 	_gm->reply(kStringElevator48, 0, 0);
 	_vm->setCurrentImage(26);
+	_vm->_system->fillScreen(kColorBlack);
 	_vm->renderImage(0);
 	_gm->reply(kStringElevator49, 1, 1 + 128);
 	int e;
