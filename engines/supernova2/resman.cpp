@@ -47,7 +47,7 @@ static Common::MemoryReadStream *convertToMod(const char *filename, int version 
 static const AudioInfo audioInfo[kAudioNumSamples] = {
 	{55,     18230,    -1},
 	{47,     0,     16010},
-	{47,     16010,    -1},
+	{47,     16010, 17020},
 	{49,     8010,     -1},
 	{49,     0,      8010},
 	{53,     30020,    -1},
@@ -56,7 +56,8 @@ static const AudioInfo audioInfo[kAudioNumSamples] = {
 	{53,     5010,  30020},
 	{55,     18230,    -1},
 	{55,     17020, 18230},
-	{53,     0,     30020}
+	{53,     0,     30020},
+	{47,     17020,    -1}
 };
 
 static const byte mouseNormal[64] = {
