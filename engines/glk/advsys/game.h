@@ -30,6 +30,18 @@ namespace Glk {
 namespace AdvSys {
 
 /**
+ * Built-in variables
+ */
+enum Variable {
+	V_ACTOR = 1,		///< Actor noun phrase number
+	V_ACTION = 2,		///< Action from phrase
+	V_DOBJECT = 3,		///< First direct object noun phrase number
+	V_NDOBJECTS = 4,	///< Number of direct object noun phrases
+	V_IOBJECT = 5,		///< Indirect object noun phrase number
+	V_OCOUNT = 6		///< Total object count
+};
+
+/**
  * Data decryption
  */
 class Decrypter {
@@ -81,23 +93,27 @@ public:
 	 * Constructor
 	 */
 	Header(Common::ReadStream &s) {
-		load(s);
+		init(s);
 	}
 
 	/**
-	 * Load the header
+	 * init the header
 	 */
-	bool load(Common::ReadStream &s);
+	bool init(Common::ReadStream &s);
 };
 
 /**
  * Game abstraction class
  */
 class Game : public Header {
-private:
-	uint _residentOffset;
 public:
 	Common::Array<byte> _data;
+	uint _residentOffset;
+	uint _wordCount;
+	uint _objectCount;
+	uint _actionCount;
+	uint _variableCount;
+
 	byte* _residentBase;
 	byte* _wordTable;
 	byte* _wordTypeTable;
@@ -111,14 +127,40 @@ public:
 	/**
 	 * Constructor
 	 */
-	Game() : Header(), _residentOffset(0), _residentBase(nullptr), _wordTable(nullptr),
+	Game() : Header(), _residentOffset(0), _wordCount(0), _objectCount(0), _actionCount(0),
+		_variableCount(0), _residentBase(nullptr), _wordTable(nullptr),
 		_wordTypeTable(nullptr), _objectTable(nullptr), _actionTable(nullptr),
 		_variableTable(nullptr), _saveArea(nullptr) {}
 
 	/**
-	 * Load data for the game
+	 * init data for the game
 	 */
-	bool load(Common::SeekableReadStream &s);
+	bool init(Common::SeekableReadStream &s);
+
+	/**
+	 * Restore savegame data from the game to it's initial state
+	 */
+	void restart(Common::SeekableReadStream& s);
+
+	/**
+	 * Save the game data to a savegame
+	 */
+	void saveGameData(Common::WriteStream& ws);
+
+	/**
+	 * Restore the game data from a savegame
+	 */
+	void loadGameData(Common::ReadStream& rs);
+
+	/**
+	 * Set a variable value
+	 */
+	void setVariable(uint variableNum, int value);
+
+	/**
+	 * Get a variable value
+	 */
+	int getVariable(uint variableNum);
 };
 
 } // End of namespace AdvSys

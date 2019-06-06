@@ -35,7 +35,7 @@ void Decrypter::decrypt(byte *data, size_t size) {
 
 #define HEADER_SIZE 62
 
-bool Header::load(Common::ReadStream &s) {
+bool Header::init(Common::ReadStream &s) {
 	_valid = false;
 	byte data[HEADER_SIZE];
 
@@ -80,10 +80,10 @@ bool Header::load(Common::ReadStream &s) {
 
 #define MAX_VERSION 102
 
-bool Game::load(Common::SeekableReadStream &s) {
+bool Game::init(Common::SeekableReadStream &s) {
 	// Load the header
 	s.seek(0);
-	if (!Header::load(s))
+	if (!Header::init(s))
 		return false;
 	
 	if (_headerVersion < 101 || _headerVersion > MAX_VERSION)
@@ -108,8 +108,37 @@ bool Game::load(Common::SeekableReadStream &s) {
 	_dataSpace = &_data[_dataSpaceOffset];
 	_codeSpace = &_data[_codeSpaceOffset];
 
+	_wordCount = READ_LE_UINT16(_wordTable);
+	_objectCount = READ_LE_UINT16(_objectTable);
+	_actionCount = READ_LE_UINT16(_actionTable);
+	_variableCount = READ_LE_UINT16(_variableTable);
+
+	setVariable(V_OCOUNT, _objectCount);
 
 	return true;
+}
+
+void Game::restart(Common::SeekableReadStream& s) {
+	s.seek(_residentOffset + _saveAreaOffset);
+	s.read(_saveArea, _saveSize);
+}
+
+void Game::saveGameData(Common::WriteStream& ws) {
+	ws.write(_saveArea, _saveSize);
+}
+
+void Game::loadGameData(Common::ReadStream& rs) {
+	rs.read(_saveArea, _saveSize);
+}
+
+void Game::setVariable(uint variableNum, int value) {
+	assert(variableNum < _variableCount);
+	WRITE_LE_UINT16(_variableTable + variableNum * 2, value);
+}
+
+int Game::getVariable(uint variableNum) {
+	assert(variableNum < _variableCount);
+	return READ_LE_UINT16(_variableTable + variableNum * 2);
 }
 
 } // End of namespace AdvSys
