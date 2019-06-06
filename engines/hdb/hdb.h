@@ -84,6 +84,7 @@ public:
 
 	FileMan *fileMan;
 	LuaScript *lua;
+	MapLoader *mapLoader;
 
 	// Game related members;
 
