@@ -25,7 +25,7 @@
 
 #include "audio/mixer.h"
 
-#include "common/hashmap.h"
+#include "common/hash-str.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -65,7 +65,8 @@ public:
 	void removeAll();
 
 private:
-	Common::HashMap<Common::String, Common::ScopedPtr<Sound>> _sounds;
+	typedef Common::HashMap<Common::String, Common::ScopedPtr<Sound>, Common::CaseSensitiveString_Hash> SoundsMap;
+	SoundsMap _sounds;
 };
 
 } // End of namespace Pink
