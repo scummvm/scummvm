@@ -46,6 +46,10 @@ bool GameManager::serialize(Common::WriteStream *out) {
 	out->writeByte(_state._elevatorE);
 	out->writeByte(_state._elevatorNumber);
 	out->writeByte(_state._toMuseum);
+	out->writeByte(_state._pyraE);
+	out->writeByte(_state._pyraS);
+	out->writeByte(_state._pyraZ);
+	out->writeByte(_state._pyraDirection);
 	out->writeUint32LE(_state._eventTime);
 	out->writeSint32LE(_state._eventCallback);
 
@@ -84,6 +88,10 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 	_state._elevatorE = in->readByte();
 	_state._elevatorNumber = in->readByte();
 	_state._toMuseum = in->readByte();
+	_state._pyraE = in->readByte();
+	_state._pyraS = in->readByte();
+	_state._pyraZ = in->readByte();
+	_state._pyraDirection = in->readByte();
 	_state._eventTime = in->readUint32LE();
 	_state._eventCallback = (EventFunction)in->readSint32LE();
 	_vm->setGameString(kStringMoney, Common::String::format("%d Xa", _state._money));
@@ -356,6 +364,10 @@ void GameManager::initState() {
 	_state._elevatorE = 0;
 	_state._elevatorNumber = 0;
 	_state._toMuseum = false;
+	_state._pyraE = 0;
+	_state._pyraS = 4;
+	_state._pyraZ = 10;
+	_state._pyraDirection = 0;
 	_state._eventTime = kMaxTimerValue;
 	_state._eventCallback = kNoFn;
 }
@@ -492,6 +504,9 @@ void GameManager::updateEvents() {
 			break;
 		case kSoberFn:
 			sober();
+			break;
+		case kPyramidEndFn:
+			pyramidEnd();
 			break;
 		}
 		_vm->_allowLoadGame = true;
@@ -1720,6 +1735,12 @@ bool GameManager::talkRest(int mod1, int mod2, int rest) {
 		rest--;
 	}
 	return true;
+}
+
+void GameManager::pyramidEnd() {
+}
+
+void GameManager::passageConstruction() {
 }
 
 }
