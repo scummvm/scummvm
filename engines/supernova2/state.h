@@ -33,7 +33,7 @@ namespace Supernova2 {
 
 const int32 kMaxTimerValue = 0x7FFFFFFF;
 
-enum EventFunction { kNoFn, kSoberFn};
+enum EventFunction { kNoFn, kSoberFn, kPyramidEndFn};
 
 struct GameState {
 	int16 _money;
@@ -49,6 +49,10 @@ struct GameState {
 	bool _toMuseum;
 	EventFunction _eventCallback;
 	uint32 _eventTime;
+	char _pyraE;
+	char _pyraS;
+	char _pyraZ;
+	char _pyraDirection;
 };
 
 class Inventory {
@@ -215,6 +219,8 @@ public:
 	void drawGUI();
 	bool talk(int mod1, int mod2, int rest, MessagePosition pos, StringId id);
 	bool talkRest(int mod1, int mod2, int rest);
+	void pyramidEnd();
+	void passageConstruction();
 
 private:
 	int _prevImgId;

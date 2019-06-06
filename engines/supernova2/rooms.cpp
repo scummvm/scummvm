@@ -2164,6 +2164,37 @@ Pyramid::Pyramid(Supernova2Engine *vm, GameManager *gm) {
 	_fileNumber = 6;
 	_id = PYRAMID;
 	_shown[0] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringRope, kStringDefaultDescription, ROPE, TAKE | COMBINABLE, 255, 255, 1 + 128);
+	_objectState[1] = Object(_id, kStringSign, kStringSignDescription, SIGN, COMBINABLE, 25, 25, 0);
+	_objectState[2] = Object(_id, kStringEntrance, kStringEntrance1Description, PYRA_ENTRANCE, EXIT, 27, 27, 0, PYR_ENTRANCE, 19);
+	_objectState[3] = Object(_id, kStringPyramid, kStringPyramidDescription, NULLOBJECT, NULLTYPE, 26, 26, 0);
+	_objectState[4] = Object(_id, kStringSun, kStringSunDescription, SUN, NULLTYPE, 28, 28, 0);
+	_objectState[5] = Object(_id, kStringOpening, kStringDefaultDescription, HOLE1, COMBINABLE, 0, 0, 0);
+	_objectState[6] = Object(_id, kStringOpening, kStringDefaultDescription, HOLE2, COMBINABLE, 1, 0, 0);
+	_objectState[7] = Object(_id, kStringOpening, kStringDefaultDescription, HOLE3, COMBINABLE, 2, 0, 0);
+	_objectState[8] = Object(_id, kStringOpening, kStringDefaultDescription, HOLE4, COMBINABLE, 3, 0, 0);
+	_objectState[9] = Object(_id, kStringOpening, kStringDefaultDescription, HOLE5, COMBINABLE, 4, 0, 0);
+	_objectState[10] = Object(_id, kStringOpening, kStringDefaultDescription, HOLE6, COMBINABLE, 5, 0, 0);
+	_objectState[11] = Object(_id, kStringOpening, kStringDefaultDescription, HOLE7, COMBINABLE, 6, 0, 0);
+	_objectState[12] = Object(_id, kStringOpening, kStringDefaultDescription, HOLE8, COMBINABLE, 7, 0, 0);
+	_objectState[13] = Object(_id, kStringOpening, kStringDefaultDescription, HOLE9, COMBINABLE, 8, 0, 0);
+	_objectState[14] = Object(_id, kStringOpening, kStringDefaultDescription, HOLE10, COMBINABLE, 9, 0, 0);
+	_objectState[15] = Object(_id, kStringOpening, kStringDefaultDescription, HOLE11, COMBINABLE, 10, 0, 0);
+	_objectState[16] = Object(_id, kStringOpening, kStringDefaultDescription, HOLE12, COMBINABLE, 11, 0, 0);
+	_objectState[17] = Object(_id, kStringOpening, kStringDefaultDescription, HOLE13, COMBINABLE, 12, 0, 0);
+	_objectState[18] = Object(_id, kStringOpening, kStringDefaultDescription, HOLE14, COMBINABLE, 13, 0, 0);
+	_objectState[19] = Object(_id, kStringOpening, kStringDefaultDescription, HOLE15, COMBINABLE, 14, 0, 0);
+	_objectState[20] = Object(_id, kStringOpening, kStringDefaultDescription, HOLE16, COMBINABLE, 15, 0, 0);
+	_objectState[21] = Object(_id, kStringOpening, kStringDefaultDescription, HOLE17, COMBINABLE, 16, 0, 0);
+	_objectState[22] = Object(_id, kStringOpening, kStringDefaultDescription, HOLE18, COMBINABLE, 17, 0, 0);
+	_objectState[23] = Object(_id, kStringOpening, kStringDefaultDescription, HOLE19, COMBINABLE, 18, 0, 0);
+	_objectState[24] = Object(_id, kStringOpening, kStringDefaultDescription, HOLE20, COMBINABLE, 19, 0, 0);
+	_objectState[25] = Object(_id, kStringOpening, kStringDefaultDescription, HOLE21, COMBINABLE, 20, 0, 0);
+	_objectState[26] = Object(_id, kStringOpening, kStringDefaultDescription, HOLE22, COMBINABLE, 21, 0, 0);
+	_objectState[27] = Object(_id, kStringOpening, kStringDefaultDescription, HOLE23, COMBINABLE, 22, 0, 0);
+	_objectState[28] = Object(_id, kStringOpening, kStringDefaultDescription, HOLE24, COMBINABLE, 23, 0, 0);
+	_objectState[29] = Object(_id, kStringOpening, kStringDefaultDescription, HOLE25, COMBINABLE, 24, 0, 0);
 }
 
 void Pyramid::onEntrance() {
@@ -2174,6 +2205,75 @@ void Pyramid::animation() {
 }
 
 bool Pyramid::interact(Action verb, Object &obj1, Object &obj2) {
+	Object *rope, *hole;
+	rope = hole = nullptr;
+
+	if (obj1._id == ROPE)
+		rope = &obj1;
+	if (obj2._id == ROPE)
+		rope = &obj2;
+	if (obj1._id >= HOLE1 && obj1._id <= HOLE25)
+		hole = &obj1;
+	if (obj2._id >= HOLE1 && obj2._id <= HOLE25)
+		hole = &obj2;
+
+	if (verb == ACTION_WALK && obj1._id == PYRA_ENTRANCE) {
+		_gm->_state._eventCallback = kPyramidEndFn;
+		_gm->_state._eventTime = g_system->getMillis() + 3600000; //hour
+		_gm->_state._pyraS = 4;
+		_gm->_state._pyraZ = 10;
+		_gm->_state._pyraDirection = 0;
+		_gm->passageConstruction();
+		return false;
+	} else if (verb == ACTION_USE && Object::combine(obj1, obj2, ROPE, SIGN)) {
+		if (rope->_type & CARRIED) {
+			_vm->renderImage(1);
+			_gm->_inventory.remove(*rope);
+			_objectState[0]._click = 29;
+		}
+		else
+			_vm->renderMessage(kStringPyramid1);
+	} else if (verb == ACTION_USE && hole != nullptr && rope != nullptr) {
+		if (rope->_type & CARRIED)
+			_vm->renderMessage(kStringPyramid2);
+		else {
+			int number = hole->_id - HOLE1;
+			int start = number / 5 * 5 + 2;
+			for (int i = 1; i <= 26; i++)
+				_vm->renderImage(i + 128);
+			for (int i = start; i <= start + number % 5; i++)
+				_vm->renderImage(i);
+			_objectState[0]._click = 30;
+			if (number == 18) {
+				_gm->_rooms[HOLE_ROOM]->setSectionVisible(16, kShownTrue);
+				_gm->_rooms[HOLE_ROOM]->getObject(2)->_click = 5;
+				_gm->_rooms[HOLE_ROOM]->getObject(3)->_type = EXIT;
+			} else {
+				_gm->_rooms[HOLE_ROOM]->setSectionVisible(16, kShownFalse);
+				_gm->_rooms[HOLE_ROOM]->getObject(2)->_click = 255;
+				_gm->_rooms[HOLE_ROOM]->getObject(3)->_type = NULLTYPE;
+			}
+		}
+	} else if (verb == ACTION_PULL && rope != nullptr && !(rope->_type & CARRIED) &&
+			!isSectionVisible(1)) {
+		for (int i = 2; i <= 26; i++)
+			_vm->renderImage(i + 128);
+		_vm->renderImage(1);
+		_objectState[0]._click = 29;
+		_gm->_rooms[HOLE_ROOM]->setSectionVisible(16, kShownFalse);
+		_gm->_rooms[HOLE_ROOM]->getObject(2)->_click = 255;
+		_gm->_rooms[HOLE_ROOM]->getObject(3)->_type = NULLTYPE;
+	} else if (verb == ACTION_TAKE && rope != nullptr && !(rope->_type & CARRIED)) {
+		for (int i = 2; i <= 26; i++)
+			_vm->renderImage(i + 128);
+		_gm->takeObject(*rope);
+		_gm->_rooms[HOLE_ROOM]->setSectionVisible(16, kShownFalse);
+		_gm->_rooms[HOLE_ROOM]->getObject(2)->_click = 255;
+		_gm->_rooms[HOLE_ROOM]->getObject(3)->_type = NULLTYPE;
+	} else if (verb == ACTION_WALK && obj1._type == SUN) {
+		_vm->renderMessage(kStringPyramid3);
+	} else
+		return false;
 	return true;
 }
 
