@@ -1890,9 +1890,26 @@ Apartment::Apartment(Supernova2Engine *vm, GameManager *gm) {
 	_vm = vm;
 	_gm = gm;
 
-	_fileNumber = 6;
+	_fileNumber = 25;
 	_id = APARTMENT;
 	_shown[0] = kShownTrue;
+	_shown[1] = kShownFalse;
+	_shown[2] = kShownFalse;
+	_shown[3] = kShownTrue;
+
+	_objectState[0] = Object(_id, kStringChip, kStringChipDescription, CHIP, TAKE | COMBINABLE, 255, 255, 1);
+	_objectState[1] = Object(_id, kStringHatch, kStringHatchDescription, HATCH, OPENABLE | CLOSED | COMBINABLE, 0, 1, 1);
+	_objectState[2] = Object(_id, kStringDefaultDescription, kStringDefaultDescription, NULLOBJECT, NULLTYPE, 255, 255, 0);
+	_objectState[3] = Object(_id, kStringMusicSystem, kStringMusicSystemDescription, MUSIC_SYSTEM, COMBINABLE, 4, 4, 0);
+	_objectState[4] = Object(_id, kStringSpeakers, kStringSpeakersDescription, NULLOBJECT, NULLTYPE, 5, 5, 0);
+	_objectState[5] = Object(_id, kStringPencils, kStringPencilsDescription, NULLOBJECT, UNNECESSARY, 6, 6, 0);
+	_objectState[6] = Object(_id, kStringMetalBlocks, kStringMetalBlocksDescription, MAGNET, TAKE | COMBINABLE, 10, 10, 3 + 128);
+	_objectState[7] = Object(_id, kStringImage, kStringImageDescription, NULLOBJECT, UNNECESSARY, 7, 7, 0);
+	_objectState[8] = Object(_id, kStringCabinet, kStringCabinetDescription, CABINET, OPENABLE | CLOSED, 8, 8, 0);
+	_objectState[9] = Object(_id, kStringChair, kStringDefaultDescription, NULLOBJECT, NULLTYPE, 9, 9, 0);
+	_objectState[10] = Object(_id, kStringElevator, kStringDefaultDescription, NULLOBJECT, EXIT, 255, 255, 0, ELEVATOR, 22);
+	_objectState[11] = Object(_id, kStringUnderBed, kStringUnderBedDescription, UNDER_BED, NULLTYPE, 11, 11, 0);
+	_objectState[12] = Object(_id, kStringKey, kStringKeyDescription, KEY, TAKE | COMBINABLE, 255, 255, 0);
 }
 
 void Apartment::onEntrance() {
@@ -1903,6 +1920,51 @@ void Apartment::animation() {
 }
 
 bool Apartment::interact(Action verb, Object &obj1, Object &obj2) {
+	if (verb == ACTION_USE && Object::combine(obj1, obj2, ROD, UNDER_BED)) {
+		if (_objectState[12]._type & CARRIED)
+			_vm->renderMessage(kStringApartment1);
+		else if (_shown[kMaxSection - 1]) {
+			_vm->renderMessage(kStringApartment2);
+			_gm->takeObject(_objectState[12]);
+			_vm->playSound(kAudioSuccess);
+		} else {
+			_vm->renderMessage(kStringApartment3);
+			_gm->waitOnInput(_gm->_messageDuration);
+			_vm->removeMessage();
+			_vm->renderMessage(kStringApartment4);
+		}
+	} else if (verb == ACTION_USE && Object::combine(obj1, obj2, KEY, HATCH)) {
+		if (_objectState[1]._type & OPENED)
+			_vm->renderMessage(kStringApartment5);
+		else {
+			_vm->renderImage(1);
+			_vm->playSound(kAudioTaxiOpen);
+			_objectState[1]._type |= OPENED;
+			_objectState[1]._click = 1;
+			if (!(_objectState[0]._type & CARRIED)) {
+				_vm->renderImage(2);
+				_objectState[0]._click = 2;
+			}
+		}
+	} else if (verb == ACTION_CLOSE && obj1._id == HATCH && obj1._type & OPENED) {
+		_vm->renderImage(1 + 128);
+		setSectionVisible(2, false);
+		_vm->playSound(kAudioElevator1);
+		obj1._type &= ~OPENED;
+		obj1._click = 0;
+		if (!(_objectState[0]._type & CARRIED))
+			_objectState[0]._click = 255;
+	} else if (verb == ACTION_TAKE && obj1._id == CHIP && !(obj1._type & CARRIED)) {
+		setSectionVisible(2, kShownFalse);
+		return false;
+	} else if (verb == ACTION_USE && Object::combine(obj1, obj2, KEY, CABINET)) {
+		_vm->renderMessage(kStringApartment6);
+	} else if (verb == ACTION_USE && Object::combine(obj1, obj2, CHIP, MUSIC_SYSTEM)) {
+		_vm->renderMessage(kStringApartment7);
+	} else if (verb == ACTION_PRESS && obj1._id == MUSIC_SYSTEM) {
+		_vm->renderMessage(kStringApartment8);
+	} else
+		return false;
 	return true;
 }
 
